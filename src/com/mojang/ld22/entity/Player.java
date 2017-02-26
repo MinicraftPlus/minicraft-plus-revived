@@ -353,6 +353,7 @@ public class Player extends Mob {
 		}
 		
 		
+		
 		if (staminaRechargeDelay % 2 == 0) {
 			move(xa, ya);
 		}

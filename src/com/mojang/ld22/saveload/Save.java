@@ -30,7 +30,6 @@ public class Save {
 	List data;
 	Player player;
 	
-	
 	public Save(Player player, String worldname) {
 		folder = new File(location);
 		extention = ".miniplussave";

@@ -8,6 +8,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class InputHandler implements MouseListener, KeyListener {
+	
 	public class Key {
 		public int presses, absorbs;
 		public boolean down, clicked;
@@ -35,7 +36,9 @@ public class InputHandler implements MouseListener, KeyListener {
 		}
 	}
 	
+	
 	public class Mouse {
+		
 		public int pressesd, absorbsd;
 		public boolean click, down;
 		
@@ -68,6 +71,7 @@ public class InputHandler implements MouseListener, KeyListener {
 	
 	
 	public List<Key> keys = new ArrayList<Key>();
+	public String lastKeyTyped = "";
 	
 	public Key up = new Key();
 	public Key down = new Key();
@@ -156,6 +160,10 @@ public class InputHandler implements MouseListener, KeyListener {
 		toggle(ke, false);
 	}
 	
+	public void keyTyped(KeyEvent ke) {
+		lastKeyTyped = String.valueOf(ke.getKeyChar());
+	}
+	
 	private void toggle(KeyEvent ke, boolean pressed) {
 		if (ke.getKeyCode() == KeyEvent.VK_NUMPAD8) up.toggle(pressed);
 		if (ke.getKeyCode() == KeyEvent.VK_NUMPAD2) down.toggle(pressed);
@@ -178,6 +186,7 @@ public class InputHandler implements MouseListener, KeyListener {
 		if (ke.getKeyCode() == KeyEvent.VK_NUMPAD0) attack.toggle(pressed);
 		if (ke.getKeyCode() == KeyEvent.VK_INSERT) attack.toggle(pressed);
 		if (ke.getKeyCode() == KeyEvent.VK_ENTER) menu.toggle(pressed);
+		if (ke.getKeyCode() == KeyEvent.VK_ENTER) enter.toggle(pressed);
 		if (ke.getKeyCode() == KeyEvent.VK_Q) craft.toggle(pressed);
 		if (ke.getKeyCode() == KeyEvent.VK_NUMPAD1) craft.toggle(pressed);
 		if (ke.getKeyCode() == KeyEvent.VK_E) craft.toggle(pressed);
@@ -263,10 +272,6 @@ public class InputHandler implements MouseListener, KeyListener {
 	if (e.getButton() == MouseEvent.BUTTON1) one.toggle(clickd);
 	if (e.getButton() == MouseEvent.BUTTON2) two.toggle(clickd);
 	if (e.getButton() == MouseEvent.BUTTON3) tri.toggle(clickd);
-	}
-	
-	public void keyTyped(KeyEvent ke) {
-		
 	}
 	
 	@Override

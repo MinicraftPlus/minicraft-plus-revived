@@ -126,7 +126,7 @@ public class Game extends Canvas implements Runnable, ActionListener{
 	public static String savedtext = "";
 	public static List notifications = new ArrayList();
 	public boolean saving = false;
-	public int savecooldown; //useless?
+	public int savecooldown;
 	public int notetick = 0;
 	
 	public Menu menu;
@@ -448,12 +448,12 @@ public class Game extends Canvas implements Runnable, ActionListener{
 		if(asTick >= astime / 8) {
 			savedtext = "";
 		}
-
+		
 		if(asTick > astime) {
 			if(autosave && player.health > 0 && !hasWon && levels[currentLevel].entities.contains(player)) {
 				new Save(player, WorldSelectMenu.worldname);
 			}
-
+			
 			asTick = 0;
 		}
 		
