@@ -38,7 +38,7 @@ public class WorldGenMenu extends Menu {
 	public WorldGenMenu() {
 	
 	}
-
+	
 	public void tick() {
 		if (input.attack.clicked) {
 			game.setMenu(new ModeMenu()); 
@@ -127,7 +127,7 @@ public class WorldGenMenu extends Menu {
 		else if (size == 2){
 		sized = sizeHuge;
 		}
-
+		
 		if (type == 0){
 		type = island;
 		}
@@ -179,7 +179,7 @@ public class WorldGenMenu extends Menu {
 		sized = sizeHuge;
 		}
 	}
-
+	
 	public void render(Screen screen) {
 		screen.clear(0);
 		if (op == 0){
@@ -238,3 +238,4 @@ public class WorldGenMenu extends Menu {
 		//Font.draw("" + theme, screen, 11 * 8 + 4, 21 * 8, Color.get(-1, 555, 555, 555));
 	}
 }
+	

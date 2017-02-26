@@ -440,15 +440,15 @@ public class ConfirmMenu extends Menu {
 	
     
     
-
-
-
+	
+	
+	
 	public void tick() {
 		
 		 if (input.attack.clicked) {
 			if (PauseMenu.title == true) {
 				game.setMenu(new TitleMenu());
-
+				
 			}
 			if (PauseMenu.newGame == true) {
 				DeadMenu.shudrespawn = false;
@@ -480,7 +480,7 @@ public class ConfirmMenu extends Menu {
 		
 		Font.draw("Are you sure you want to", screen, 2 * 8, 2 * 8, Color.get(-1, 333, 333, 333));
 		Font.draw("" + nameText, screen, 2 * 8, 3 * 8, Color.get(-1, 333, 333, 333));
-
+		
 		if (PauseMenu.respawn == true) {
 			Font.draw("(levels,inventory will be lost)", screen, 2 * 8, 4 * 8, Color.get(-1, 333, 333, 333));
 		}

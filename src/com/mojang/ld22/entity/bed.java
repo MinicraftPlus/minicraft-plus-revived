@@ -24,7 +24,7 @@ public class bed extends Furniture {
 		xr = 3;
 		yr = 2;
 	}
-
+	
 	public boolean use(Player player, int attackDir) {
 		hasBedSet = true;
 		hasBeenTrigged = true;

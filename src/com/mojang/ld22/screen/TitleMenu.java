@@ -9,27 +9,27 @@ import java.util.Random;
 public class TitleMenu extends Menu {
 	private int selected = 0;
 	protected final Random random = new Random();
-
-	private static final String[] options = { "New game", "Tutorial", "Options", "About" };
+	
+	private static final String[] options = { "New game", "Tutorial", "Options", "About", "Quit"};
 	public static boolean sentFromMenu;
 	int randcount = 60;
 	int rand = random.nextInt(randcount);
 	int count = 0;
 	boolean reverse = false;
-
+	
 	public TitleMenu() {
 	}
-
+	
 	public void tick() {
 		if (input.up.clicked) selected--;
 		if (input.down.clicked) selected++;
 		if (input.up.clicked) Sound.pickup.play(); 
 		if (input.down.clicked) Sound.pickup.play(); 
-
+		
 		int len = options.length;
 		if (selected < 0) selected += len;
 		if (selected >= len) selected -= len;
-
+		
 		if (input.r.clicked) rand = random.nextInt(randcount);
 		
 		if (reverse == false){
@@ -45,7 +45,10 @@ public class TitleMenu extends Menu {
 		}
 		
 		if (input.attack.clicked || input.menu.clicked) {
-			if (selected == 0) game.setMenu(new ModeMenu());
+			if (selected == 0) {
+				WorldSelectMenu.loadworld = false;
+				game.setMenu(new WorldSelectMenu(this));
+			}
 			if (selected == 1) {
 				try {
 					//This is for the tutorial Video
@@ -57,9 +60,10 @@ public class TitleMenu extends Menu {
 			       }}
 			if (selected == 2) {sentFromMenu = true; game.setMenu(new StartMenu());}
 			if (selected == 3) game.setMenu(new AboutMenu(this));
+			if (selected == 4) System.exit(0);
 		}
 	}
-
+	
 	public void render(Screen screen) {
 		screen.clear(0);
 		String splash;

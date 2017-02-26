@@ -11,7 +11,7 @@ public class ResourceRecipe extends Recipe {
 	private Resource resource;
 	static int number = 1;
 	
-
+	
 	public ResourceRecipe(Resource resource) {
 		super(new ResourceItem(resource, number));
 		this.resource = resource;
@@ -36,9 +36,10 @@ public class ResourceRecipe extends Recipe {
 		}
 		return number;
 	}
-
+	
 	public void craft(Player player) {
 		more(resource);
 		player.inventory.add(0, new ResourceItem(resource, number));
 	}
 }
+	

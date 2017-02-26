@@ -17,7 +17,7 @@ public class HomeMenu extends Menu {
 	boolean cgh = Player.canGoHome;
 	boolean hsh = Player.hasSetHome;
 	
-
+	
 	public void tick() {
 		if (input.menu.clicked || input.attack.clicked) {
 				game.setMenu(null);
@@ -31,9 +31,9 @@ public class HomeMenu extends Menu {
 	public void render(Screen screen) {
 		Font.renderFrame(screen, "", 1, 3, 18, 7);
 		//System.out.println(Player.sentFromHome);
-
+		
 			
-
+			
 		 if (Player.sentFromHome == true && Player.sentFromSetHome == false) {
 			 if (hsh== false) {
 				if (cgh ==true) {
@@ -56,15 +56,16 @@ public class HomeMenu extends Menu {
 				else {
 					 Font.draw("Home sweet home!", screen, 2 * 8, 4 * 8, Color.get(-1, 555, 555, 555));
 					 if (ModeMenu.hardcore) Font.draw("HardCore = -2", screen, 2 * 8, 5 * 8, Color.get(-1, 555, 555, 555));
-
-
+					
+					
 				}
 			}
 		
 		
 		
 		}
-
+		
 	}
 }
-
+	
+	

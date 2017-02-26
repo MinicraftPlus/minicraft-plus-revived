@@ -11,17 +11,17 @@ import com.mojang.ld22.level.tile.Tile;
 public class TorchResource extends Resource {
 	private List<Tile> sourceTiles;
 	private Tile targetTile;
-
+	
 	public TorchResource(String name, int sprite, int color, Tile targetTile, Tile... sourceTiles1) {
 		this(name, sprite, color, targetTile, Arrays.asList(sourceTiles1));
 	}
-
+	
 	public TorchResource(String name, int sprite, int color, Tile targetTile, List<Tile> sourceTiles) {
 		super(name, sprite, color);
 		this.sourceTiles = sourceTiles;
 		this.targetTile = targetTile;
 	}
-
+	
 	public boolean interactOn(Tile tile, Level level, int xt, int yt, Player player, int attackDir) {
 		if (sourceTiles.contains(tile)) {
 			if (Level.depthlvl == 0){
@@ -118,3 +118,4 @@ public class TorchResource extends Resource {
 		return false;
 	}
 }
+	

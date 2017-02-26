@@ -5,7 +5,7 @@ public class Sprite {
 	public int img;
 	public int col;
 	public int bits;
-
+	
 	public Sprite(int x, int y, int img, int col, int bits) {
 		this.x = x;
 		this.y = y;
@@ -14,3 +14,4 @@ public class Sprite {
 		this.bits = bits;
 	}
 }
+	

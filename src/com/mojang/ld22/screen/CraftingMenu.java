@@ -17,17 +17,17 @@ import com.mojang.ld22.sound.Sound;
 public class CraftingMenu extends Menu {
 	private Player player;
 	private int selected = 0;
-
+	
 	private List<Recipe> recipes;
-
+	
 	public CraftingMenu(List<Recipe> recipes, Player player) {
 		this.recipes = new ArrayList<Recipe>(recipes);
 		this.player = player;
-
+		
 		for (int i = 0; i < recipes.size(); i++) {
 			this.recipes.get(i).checkCanCraft(player);
 		}
-
+		
 		Collections.sort(this.recipes, new Comparator<Recipe>() {
 			public int compare(Recipe r1, Recipe r2) {
 				if (r1.canCraft && !r2.canCraft) return -1;
@@ -36,10 +36,10 @@ public class CraftingMenu extends Menu {
 			}
 		});
 	}
-
+	
 	public void tick() {
 		if (input.menu.clicked) game.setMenu(null);
-
+		
 		if (input.up.clicked)selected--;
 		if (input.down.clicked)selected++;
 		if (input.up.clicked) Sound.pickup.play(); 
@@ -49,7 +49,7 @@ public class CraftingMenu extends Menu {
 		if (len == 0) selected = 0;
 		if (selected < 0) selected += len;
 		if (selected >= len) selected -= len;
-
+		
 		if (input.attack.clicked && len > 0) {
 			Recipe r = recipes.get(selected);
 			r.checkCanCraft(player);
@@ -63,20 +63,20 @@ public class CraftingMenu extends Menu {
 			}
 		}
 	}
-
+	
 	public void render(Screen screen) {
 		Font.renderFrame(screen, "Have", 17, 1, 24, 3);
 		Font.renderFrame(screen, "Cost", 17, 4, 24, 11);
 		Font.renderFrame(screen, "Crafting", 0, 1, 16, 11);
 		renderItemList(screen, 0, 1, 16, 11, recipes, selected);
-
+		
 		if (recipes.size() > 0) {
 			Recipe recipe = recipes.get(selected);
 			int hasResultItems = player.inventory.count(recipe.resultTemplate);
 			int xo = 16 * 9;
 			screen.render(xo, 2 * 8, recipe.resultTemplate.getSprite(), recipe.resultTemplate.getColor(), 0);
 			Font.draw("" + hasResultItems, screen, xo + 8, 2 * 8, Color.get(-1, 555, 555, 555));
-
+			
 			List<Item> costs = recipe.costs;
 			for (int i = 0; i < costs.size(); i++) {
 				Item item = costs.get(i);

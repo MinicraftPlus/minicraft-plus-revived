@@ -39,8 +39,11 @@ import com.mojang.ld22.level.Level;
 import com.mojang.ld22.level.levelgen.LevelGen;
 import com.mojang.ld22.level.tile.DirtTile;
 import com.mojang.ld22.level.tile.Tile;
+import com.mojang.ld22.saveload.Save;
+import com.mojang.ld22.saveload.Load;
 import com.mojang.ld22.screen.DeadMenu;
 import com.mojang.ld22.screen.LevelTransitionMenu;
+import com.mojang.ld22.screen.LoadingMenu;
 import com.mojang.ld22.screen.Menu;
 import com.mojang.ld22.screen.StartMenu;
 import com.mojang.ld22.screen.TitleMenu;
@@ -48,15 +51,20 @@ import com.mojang.ld22.screen.WonMenu;
 import com.mojang.ld22.screen.ModeMenu;
 import com.mojang.ld22.screen.InfoMenu;
 import com.mojang.ld22.screen.WorldGenMenu;
+import com.mojang.ld22.screen.WorldSelectMenu;
 
 public class Game extends Canvas implements Runnable, ActionListener{
 	
 	private static final long serialVersionUID = 1L;
 	private static Random random = new Random();
+	public static final String gameDir = System.getenv("APPDATA") + "/.playminicraft/mods/Minicraft-Plus";
 	public static final String NAME = "Minicraft Plus";
 	public static final int HEIGHT = 192;
 	public static final int WIDTH = 288;
 	private static final int SCALE = 3;
+	
+	public static int gamespeed = 1;
+	public double nsPerTick = 1.6666666666666666E7D * (double)gamespeed;
 	
 	public static int Time = 0;
 	private BufferedImage image = new BufferedImage(WIDTH, HEIGHT, BufferedImage.TYPE_INT_RGB);
@@ -72,14 +80,14 @@ public class Game extends Canvas implements Runnable, ActionListener{
 	int newscoreTime = 72000;
 	int count = 0;
 	boolean reverse = false;
-	int scoreTime = newscoreTime;
+	public int scoreTime = newscoreTime;
 	
 	public static int multiplyer = 1;
 	public static int mtm = 300;
 	public static int multiplyertime = mtm;
 	
 	public static int ism = 1;
-
+	
 	int[] oldlvls; 
 	private int[] colors = new int[256];
 	public static int tickCount = 0;
@@ -102,9 +110,9 @@ public class Game extends Canvas implements Runnable, ActionListener{
 	public static boolean truerod = false;
 	public static boolean isfishing = false;
 	public static int fishingcount = 0;
-
-	private Level level;
-	private Level[] levels = new Level[5];
+	
+	public Level level;
+	public static Level[] levels = new Level[5];
 	static public int currentLevel = 3;
 	int hungerMinusCount;
 	public Player player;
@@ -112,6 +120,14 @@ public class Game extends Canvas implements Runnable, ActionListener{
 	int l = 128;
 	public static int acs = 25;
 	public static int ac = acs;
+	public static boolean autosave = true;
+	public int asTick = 0;
+	public static int astime = 3600; //asTime stands for Auto-Save Time! (interval)
+	public static String savedtext = "";
+	public static List notifications = new ArrayList();
+	public boolean saving = false;
+	public int savecooldown; //useless?
+	public int notetick = 0;
 	
 	public Menu menu;
 	private int playerDeadTime;
@@ -241,11 +257,11 @@ public class Game extends Canvas implements Runnable, ActionListener{
 		if(StartMenu.hasSetDiff==false)StartMenu.diff = 2;
 		tickReset = true;
 		
-
+		
 		hasWon = false;
-
+		
 		player = new Player(this, input);
-
+		
 		levels = new Level[6];	
 		currentLevel = 3;
 		ac = acs;
@@ -314,7 +330,7 @@ public class Game extends Canvas implements Runnable, ActionListener{
 		}
 		
 	}
-
+	
 	private void init() {
 		int pp = 0;
 		for (int r = 0; r < 6; r++) {
@@ -324,12 +340,12 @@ public class Game extends Canvas implements Runnable, ActionListener{
 					int gg = (g * 255 / 5);
 					int bb = (b * 255 / 5);
 					int mid = (rr * 30 + gg * 59 + bb * 11) / 100;
-
+					
 					int r1 = ((rr + mid * 1) / 2) * 230 / 255 + 10;
 					int g1 = ((gg + mid * 1) / 2) * 230 / 255 + 10;
 					int b1 = ((bb + mid * 1) / 2) * 230 / 255 + 10;
 					colors[pp++] = r1 << 16 | g1 << 8 | b1;
-
+					
 				}
 			}
 		}
@@ -339,11 +355,11 @@ public class Game extends Canvas implements Runnable, ActionListener{
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
-
+		
 		resetGame();
 		setMenu(new TitleMenu());
 	}
-
+	
 	public void run() {
 		long lastTime = System.nanoTime();
 		double unprocessed = 0;
@@ -352,9 +368,9 @@ public class Game extends Canvas implements Runnable, ActionListener{
 		int ticks = 0;
 		long lastTimer1 = System.currentTimeMillis();
 		
-
+		
 		init();
-
+		
 		while (running) {
 			long now = System.nanoTime();
 			unprocessed += (now - lastTime) / nsPerTick;
@@ -366,18 +382,18 @@ public class Game extends Canvas implements Runnable, ActionListener{
 				unprocessed -= 1;
 				shouldRender = true;
 			}
-
+			
 			try {
 				Thread.sleep(2);
 			} catch (InterruptedException e) {
 				e.printStackTrace();
 			}
-
+			
 			if (shouldRender) {
 				frames++;
 				render();
 			}
-
+			
 			if (System.currentTimeMillis() - lastTimer1 > 1000) {
 				lastTimer1 += 1000;
 				//System.out.println(ticks + " ticks, " + frames + " fps");
@@ -417,11 +433,28 @@ public class Game extends Canvas implements Runnable, ActionListener{
 	}
 	
 	}
-
+	
+	public static void changeTime(int t) {
+		Time = t;
+	}
+	
 	public void tick() {
 		if (tickReset == true){ tickCount = 0; tickReset = false;}
 		if (!paused){
 		tickCount++;		
+		}
+		
+		asTick++;
+		if(asTick >= astime / 8) {
+			savedtext = "";
+		}
+
+		if(asTick > astime) {
+			if(autosave && player.health > 0 && !hasWon && levels[currentLevel].entities.contains(player)) {
+				new Save(player, WorldSelectMenu.worldname);
+			}
+
+			asTick = 0;
 		}
 		
 		int tickSunR = 0 ;
@@ -527,7 +560,7 @@ public class Game extends Canvas implements Runnable, ActionListener{
 			input.releaseAll();
 		} else {
 			if (!player.removed && !hasWon) gameTime++;
-
+			
 			input.tick();
 			if (menu != null) {
 				menu.tick();
@@ -566,7 +599,7 @@ public class Game extends Canvas implements Runnable, ActionListener{
 			
 		
 	
-
+	
 	public void changeLevel(int dir) {
 		level.remove(player);
 		currentLevel += dir;
@@ -580,9 +613,9 @@ public class Game extends Canvas implements Runnable, ActionListener{
 		player.x = (player.x >> 4) * 16 + 8;
 		player.y = (player.y >> 4) * 16 + 8;
 		level.add(player);
-
+		
 	}
-
+	
 	public void render() {
 		BufferStrategy bs = getBufferStrategy();
 		if (bs == null) {
@@ -604,11 +637,11 @@ public class Game extends Canvas implements Runnable, ActionListener{
 					screen.render(x * 8 - ((xScroll / 4) & 7), y * 8 - ((yScroll / 4) & 7), 0, col, 0);
 				}
 		}
-
+		
 		level.renderBackground(screen, xScroll, yScroll);
 		level.renderSprites(screen, xScroll, yScroll);
 		
-
+		
 		int col0 = Color.get(-1, 555, 555, 555);
 		int col1 = Color.get(-1, -1, -1, -1);
 		
@@ -649,7 +682,7 @@ public class Game extends Canvas implements Runnable, ActionListener{
 		}
 		
 		renderGui();
-
+		
 		if (!hasFocus()) renderFocusNagger();
 		
 		for (int y = 0; y < screen.h; y++) {
@@ -658,10 +691,10 @@ public class Game extends Canvas implements Runnable, ActionListener{
 				if (cc < 255) pixels[x + y * WIDTH] = colors[cc];
 			}
 		}
-
+		
 		Graphics g = bs.getDrawGraphics();
 		g.fillRect(0, 0, getWidth(), getHeight());
-
+		
 		
 		//Remeber to make a zoom feature!!!!!!!!!!!!!!!!!!!!!!!!
 		
@@ -674,7 +707,7 @@ public class Game extends Canvas implements Runnable, ActionListener{
 		g.dispose();
 		bs.show();
 	}
-
+	
 	private void renderGui() {
 		for (int y = 0; y < 2; y++) {
 			for (int x = 0; x < 29; x++) {
@@ -690,6 +723,11 @@ public class Game extends Canvas implements Runnable, ActionListener{
 			for (int x = 12; x < 14; x++) {
 				screen.render(x * 7, screen.h - 16 + y * 8, 0 + 1 * 32, Color.get(0, 0, 0, 0), 0);
 			}
+		}
+		
+		if(saving) {
+			Font.draw("Saving... " + LoadingMenu.percentage + "%", screen, screen.w / 2 - ("Saving... " + LoadingMenu.percentage + "%").length() * 4 + 1, screen.h / 2 - 32 + 1, Color.get(-1, 111, 111, 111));
+			Font.draw("Saving... " + LoadingMenu.percentage + "%", screen, screen.w / 2 - ("Saving... " + LoadingMenu.percentage + "%").length() * 4, screen.h / 2 - 32, Color.get(-1, 4, 4, 4));
 		}
 		
 		int xfps = fra;
@@ -817,12 +855,12 @@ public class Game extends Canvas implements Runnable, ActionListener{
 		if (player.activeItem != null) {
 			player.activeItem.renderInventory(screen, 12 * 7, screen.h - 8);
 		}
-
+		
 		if (menu != null) {
 			menu.render(screen);
 		}
 	}
-
+	
 	private void renderFocusNagger() {
 		String msg = "Click to focus!";
 		paused = true;
@@ -830,7 +868,7 @@ public class Game extends Canvas implements Runnable, ActionListener{
 		int yy = (HEIGHT - 8) / 2;
 		int w = msg.length();
 		int h = 1;
-
+		
 		screen.render(xx - 8, yy - 8, 0 + 13 * 32, Color.get(-1, 1, 5, 445), 0);
 		screen.render(xx + w * 8, yy - 8, 0 + 13 * 32, Color.get(-1, 1, 5, 445), 1);
 		screen.render(xx - 8, yy + 8, 0 + 13 * 32, Color.get(-1, 1, 5, 445), 2);
@@ -843,18 +881,18 @@ public class Game extends Canvas implements Runnable, ActionListener{
 			screen.render(xx - 8, yy + y * 8, 2 + 13 * 32, Color.get(-1, 1, 5, 445), 0);
 			screen.render(xx + w * 8, yy + y * 8, 2 + 13 * 32, Color.get(-1, 1, 5, 445), 1);
 		}
-
+		
 		if ((tickCount / 20) % 2 == 0) {
 			Font.draw(msg, screen, xx, yy, Color.get(5, 333, 333, 333));
 		} else {
 			Font.draw(msg, screen, xx, yy, Color.get(5, 555, 555, 555));
 		}
 	}
-
+	
 	public void scheduleLevelChange(int dir) {
 		pendingLevelChange = dir;
 	}
-
+	
 	public static void main(String[] args) {
 		Game game = new Game();
 		game.setMinimumSize(new Dimension(WIDTH * SCALE, HEIGHT * SCALE));
@@ -868,12 +906,12 @@ public class Game extends Canvas implements Runnable, ActionListener{
 		frame.setResizable(false);
 		frame.setLocationRelativeTo(null);
 		frame.setVisible(true);
-
+		
 		game.start();
 		
 	}
-    
-    
+	
+	
 	public void won() {
 		wonTimer = 60 * 3;
 		hasWon = true;
@@ -882,7 +920,7 @@ public class Game extends Canvas implements Runnable, ActionListener{
 		sunrise.stop();
 		sunset.stop();
 	}
-
+	
 	
 	@Override
 	public void actionPerformed(ActionEvent arg0) {
@@ -890,3 +928,4 @@ public class Game extends Canvas implements Runnable, ActionListener{
 		
 	}
 }
+	

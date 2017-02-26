@@ -28,7 +28,7 @@ public class Crafting {
 	public static final List<Recipe> enchantRecipes = new ArrayList<Recipe>();
 	public static final List<Recipe> craftRecipes = new ArrayList<Recipe>();
 	public static final List<Recipe> loomRecipes = new ArrayList<Recipe>();
-
+	
 	static {
 		try {
 			if (ModeMenu.creative) {
@@ -46,7 +46,7 @@ public class Crafting {
 				craftRecipes.add(new ResourceRecipe(Resource.wdoor).addCost(Resource.plank, 0));
 				
 				workbenchRecipes.add(new FurnitureRecipe(Lantern.class).addCost(Resource.wood, 0).addCost(Resource.slime, 0).addCost(Resource.glass, 0));
-
+				
 				workbenchRecipes.add(new FurnitureRecipe(Oven.class).addCost(Resource.stone, 0));
 				workbenchRecipes.add(new FurnitureRecipe(Furnace.class).addCost(Resource.stone, 0));
 				workbenchRecipes.add(new FurnitureRecipe(Chest.class).addCost(Resource.wood, 0));
@@ -79,26 +79,26 @@ public class Crafting {
 				anvilRecipes.add(new ToolRecipe(ToolType.hoe, 2).addCost(Resource.wood, 0).addCost(Resource.ironIngot, 0));
 				anvilRecipes.add(new ToolRecipe(ToolType.pickaxe, 2).addCost(Resource.wood, 0).addCost(Resource.ironIngot, 0));
 				anvilRecipes.add(new ToolRecipe(ToolType.shovel, 2).addCost(Resource.wood, 0).addCost(Resource.ironIngot, 0));
-
+				
 				anvilRecipes.add(new ToolRecipe(ToolType.sword, 3).addCost(Resource.wood, 0).addCost(Resource.goldIngot, 0));
 				anvilRecipes.add(new ToolRecipe(ToolType.axe, 3).addCost(Resource.wood, 0).addCost(Resource.goldIngot, 0));
 				anvilRecipes.add(new ToolRecipe(ToolType.hoe, 3).addCost(Resource.wood, 0).addCost(Resource.goldIngot, 0));
 				anvilRecipes.add(new ToolRecipe(ToolType.pickaxe, 3).addCost(Resource.wood, 0).addCost(Resource.goldIngot, 0));
 				anvilRecipes.add(new ToolRecipe(ToolType.shovel, 3).addCost(Resource.wood, 0).addCost(Resource.goldIngot, 0));
-
+				
 				anvilRecipes.add(new ToolRecipe(ToolType.sword, 4).addCost(Resource.wood, 0).addCost(Resource.gem, 0));
 				anvilRecipes.add(new ToolRecipe(ToolType.axe, 4).addCost(Resource.wood, 0).addCost(Resource.gem, 0));
 				anvilRecipes.add(new ToolRecipe(ToolType.hoe, 4).addCost(Resource.wood, 0).addCost(Resource.gem, 0));
 				anvilRecipes.add(new ToolRecipe(ToolType.pickaxe, 4).addCost(Resource.wood, 0).addCost(Resource.gem, 0));
 				anvilRecipes.add(new ToolRecipe(ToolType.shovel, 4).addCost(Resource.wood, 0).addCost(Resource.gem, 0));
-
+				
 				furnaceRecipes.add(new ResourceRecipe(Resource.ironIngot).addCost(Resource.ironOre, 0).addCost(Resource.coal, 0));
 				furnaceRecipes.add(new ResourceRecipe(Resource.goldIngot).addCost(Resource.goldOre, 0).addCost(Resource.coal, 0));
 				furnaceRecipes.add(new ResourceRecipe(Resource.glass).addCost(Resource.sand, 0).addCost(Resource.coal, 0));
 				
 				ovenRecipes.add(new ResourceRecipe(Resource.bacon).addCost(Resource.rawpork, 1).addCost(Resource.coal, 1));
 				ovenRecipes.add(new ResourceRecipe(Resource.steak).addCost(Resource.rawbeef, 1).addCost(Resource.coal, 1));
-
+				
 				enchantRecipes.add(new ResourceRecipe(Resource.goldapple).addCost(Resource.apple, 0).addCost(Resource.goldIngot, 0));
 				enchantRecipes.add(new ResourceRecipe(Resource.grassseeds).addCost(Resource.seeds, 0).addCost(Resource.flower, 0));
 				ovenRecipes.add(new ResourceRecipe(Resource.bread).addCost(Resource.wheat, 0));
@@ -117,7 +117,7 @@ public class Crafting {
 			craftRecipes.add(new ResourceRecipe(Resource.wdoor).addCost(Resource.plank, 5));
 			
 			workbenchRecipes.add(new FurnitureRecipe(Lantern.class).addCost(Resource.wood, 10).addCost(Resource.slime, 5).addCost(Resource.glass, 4));
-
+			
 			workbenchRecipes.add(new ResourceRecipe(Resource.sdoor).addCost(Resource.sbrick, 5));
 			workbenchRecipes.add(new ResourceRecipe(Resource.sbrick).addCost(Resource.stone, 2));
 			workbenchRecipes.add(new ResourceRecipe(Resource.stonewall).addCost(Resource.sbrick, 3));
@@ -138,7 +138,7 @@ public class Crafting {
 			loomRecipes.add(new ResourceRecipe(Resource.yellowwool).addCost(Resource.wool, 1).addCost(Resource.flower, 1));
 			loomRecipes.add(new ResourceRecipe(Resource.blackwool).addCost(Resource.wool, 1).addCost(Resource.coal, 1));
 			loomRecipes.add(new FurnitureRecipe(bed.class).addCost(Resource.wood, 5).addCost(Resource.wool, 3));
-
+			
 			godworkbenchRecipes.add(new ToolRecipe(ToolType.sword, 4).addCost(Resource.wood, 0));
 			godworkbenchRecipes.add(new ToolRecipe(ToolType.axe, 4).addCost(Resource.wood, 0));
 			godworkbenchRecipes.add(new ToolRecipe(ToolType.hoe, 4).addCost(Resource.wood, 0));
@@ -149,7 +149,7 @@ public class Crafting {
 			godworkbenchRecipes.add(new FurnitureRecipe(Tnt.class).addCost(Resource.wood, 0));
 			godworkbenchRecipes.add(new ResourceRecipe(Resource.goldapple).addCost(Resource.wood,  0));
 			godworkbenchRecipes.add(new ResourceRecipe(Resource.gemarmor).addCost(Resource.wood, 0));
-
+			
 			workbenchRecipes.add(new ToolRecipe(ToolType.sword, 0).addCost(Resource.wood, 5));
 			workbenchRecipes.add(new ToolRecipe(ToolType.axe, 0).addCost(Resource.wood, 5));
 			workbenchRecipes.add(new ToolRecipe(ToolType.hoe, 0).addCost(Resource.wood, 5));
@@ -169,7 +169,7 @@ public class Crafting {
 			anvilRecipes.add(new ResourceRecipe(Resource.iarmor).addCost(Resource.ironIngot, 10));
 			anvilRecipes.add(new ResourceRecipe(Resource.garmor).addCost(Resource.goldIngot, 10));
 			anvilRecipes.add(new ResourceRecipe(Resource.gemarmor).addCost(Resource.gem, 65));
-
+			
 			anvilRecipes.add(new ItemRecipe(BucketItem.class).addCost(Resource.ironIngot, 5));
 			
 			anvilRecipes.add(new FurnitureRecipe(IronLantern.class).addCost(Resource.ironIngot, 8).addCost(Resource.slime, 5).addCost(Resource.glass, 4));
@@ -181,7 +181,7 @@ public class Crafting {
 			anvilRecipes.add(new ToolRecipe(ToolType.pickaxe, 2).addCost(Resource.wood, 5).addCost(Resource.ironIngot, 5));
 			anvilRecipes.add(new ToolRecipe(ToolType.shovel, 2).addCost(Resource.wood, 5).addCost(Resource.ironIngot, 5));
 			anvilRecipes.add(new ToolRecipe(ToolType.bow, 2).addCost(Resource.wood, 5).addCost(Resource.ironIngot, 5).addCost(Resource.string, 2));
-
+			
 			anvilRecipes.add(new ToolRecipe(ToolType.sword, 3).addCost(Resource.wood, 5).addCost(Resource.goldIngot, 5));
 			anvilRecipes.add(new ToolRecipe(ToolType.claymore, 3).addCostTool(ToolType.sword, 3, 1).addCost(Resource.shard, 15));
 			anvilRecipes.add(new ToolRecipe(ToolType.axe, 3).addCost(Resource.wood, 5).addCost(Resource.goldIngot, 5));
@@ -189,7 +189,7 @@ public class Crafting {
 			anvilRecipes.add(new ToolRecipe(ToolType.pickaxe, 3).addCost(Resource.wood, 5).addCost(Resource.goldIngot, 5));
 			anvilRecipes.add(new ToolRecipe(ToolType.shovel, 3).addCost(Resource.wood, 5).addCost(Resource.goldIngot, 5));
 			anvilRecipes.add(new ToolRecipe(ToolType.bow, 3).addCost(Resource.wood, 5).addCost(Resource.goldIngot, 5).addCost(Resource.string, 2));
-
+			
 			anvilRecipes.add(new ToolRecipe(ToolType.sword, 4).addCost(Resource.wood, 5).addCost(Resource.gem, 50));
 			anvilRecipes.add(new ToolRecipe(ToolType.claymore, 4).addCostTool(ToolType.sword, 4, 1).addCost(Resource.shard, 15));
 			anvilRecipes.add(new ToolRecipe(ToolType.axe, 4).addCost(Resource.wood, 5).addCost(Resource.gem, 50));
@@ -204,7 +204,7 @@ public class Crafting {
 			ovenRecipes.add(new ResourceRecipe(Resource.bacon).addCost(Resource.rawpork, 1).addCost(Resource.coal, 1));
 			ovenRecipes.add(new ResourceRecipe(Resource.steak).addCost(Resource.rawbeef, 1).addCost(Resource.coal, 1));
 			ovenRecipes.add(new ResourceRecipe(Resource.cookedfish).addCost(Resource.rawfish, 1));//.addCost(Resource.coal, 1));
-
+			
 			ovenRecipes.add(new ResourceRecipe(Resource.bread).addCost(Resource.wheat, 4));
 			
 			enchantRecipes.add(new ResourceRecipe(Resource.goldapple).addCost(Resource.apple, 1).addCost(Resource.goldIngot, 10));

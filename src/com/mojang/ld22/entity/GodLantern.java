@@ -16,7 +16,7 @@ public class GodLantern extends Furniture {
 		xr = 3;
 		yr = 2;
 	}
-
+	
 	public int getLightRadius() {
 		return 333;
 	}

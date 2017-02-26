@@ -21,24 +21,24 @@ public class TorchTile extends Tile {
 		connectsToLava = onType.connectsToLava;
 	}
 	
-
+	
 	public void render(Screen screen, Level level, int x, int y) {
 		int col0 = Color.get(320, 500, 520, -1);
 	    int col4 =  Color.get(320, 500, 520, -1);
 	    
 		onType.render(screen, level, x, y);
-
+		
 		if (level.dirtColor == 322){
 		int col = col0;
 		screen.render(x * 16 + 4, y * 16 + 4, 12 + 3 * 32, col, 0);
-
+		
 		}
 		if (level.dirtColor != 322){
 			int col = col4;
 			screen.render(x * 16 + 4, y * 16 + 4, 12 + 3 * 32, col, 0);
 	
 	}
-
+	
 	}
 	public void tick(Level level, int x, int y) {
 			if (level.getTile(x, y - 1) == Tile.grass){

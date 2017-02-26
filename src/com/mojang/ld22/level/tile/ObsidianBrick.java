@@ -18,7 +18,7 @@ public class ObsidianBrick extends Tile {
 	public ObsidianBrick(int id) {
 		super(id);
 	}
-
+	
 	public void render(Screen screen, Level level, int x, int y) {
 		
 		int col0 = Color.get(559, 559, 159, 159);
@@ -73,7 +73,7 @@ public class ObsidianBrick extends Tile {
 			}
 		
 	}
-
+	
 	public boolean interact(Level level, int xt, int yt, Player player, Item item, int attackDir) {
 		if (item instanceof ToolItem) {
 			ToolItem tool = (ToolItem) item;
@@ -98,3 +98,4 @@ public class ObsidianBrick extends Tile {
 		return true;
 	}
 }
+	

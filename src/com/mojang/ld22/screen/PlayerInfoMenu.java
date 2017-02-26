@@ -67,12 +67,12 @@ if (StartMenu.diff == StartMenu.hard) {
 
 if (StartMenu.diff == StartMenu.easy || ModeMenu.creative) {
 	Font.draw("inf", screen, (2+18) * 8, 10 * 8, Color.get(-1, 550, 550, 550));
-
+	
 	}
 	else {	Font.draw(""+cStep, screen, (2+18) * 8, 10 * 8, Color.get(-1, 550, 550, 550));
 	}
 Font.draw(" ----------------------------", screen, 1 * 8, 11 * 8, Color.get(-1, 540, 540, 540));
 Font.draw("X:Exit", screen, 2 * 8, 13 * 8, Color.get(-1, 333, 333, 333));
-
+	
 	}
 }

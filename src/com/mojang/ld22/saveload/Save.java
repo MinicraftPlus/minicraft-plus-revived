@@ -7,7 +7,7 @@ import com.mojang.ld22.entity.Entity;
 import com.mojang.ld22.entity.Inventory;
 import com.mojang.ld22.entity.Mob;
 import com.mojang.ld22.entity.Player;
-import com.mojang.ld22.entity.Spawner;
+//import com.mojang.ld22.entity.Spawner;
 import com.mojang.ld22.gfx.Color;
 import com.mojang.ld22.item.Item;
 import com.mojang.ld22.item.ResourceItem;
@@ -29,33 +29,33 @@ public class Save {
 	String extention;
 	List data;
 	Player player;
-
-
+	
+	
 	public Save(Player player, String worldname) {
-		this.folder = new File(this.location);
-		this.extention = ".miniplussave";
-		this.data = new ArrayList();
+		folder = new File(location);
+		extention = ".miniplussave";
+		data = new ArrayList();
 		this.player = player;
-		this.location += "/saves/" + worldname + "/";
-		this.folder = new File(this.location);
-		this.folder.mkdirs();
-		this.writeGame("Game", player.game);
-		this.writeWorld("Level");
-		this.writePlayer("Player", player);
-		this.writeInventory("Inventory", player.inventory);
-		this.writeEntities("Entities");
+		location += "/saves/" + worldname + "/";
+		folder = new File(location);
+		folder.mkdirs();
+		writeGame("Game", player.game);
+		writeWorld("Level");
+		writePlayer("Player", player);
+		writeInventory("Inventory", player.inventory);
+		writeEntities("Entities");
 		Game.savedtext = "Saved!";
 		Game.notifications.add("World Saved!");
-		player.game.tick = 0;
+		player.game.asTick = 0;
 		player.game.saving = false;
 	}
-
+	
 	public void writeToFile(String filename, List savedata) {
 		BufferedWriter bufferedWriter = null;
-
+		
 		try {
 			bufferedWriter = new BufferedWriter(new FileWriter(filename));
-
+			
 			for(int ex = 0; ex < savedata.size(); ++ex) {
 				bufferedWriter.write((String)savedata.get(ex));
 				bufferedWriter.write(",");
@@ -63,8 +63,8 @@ public class Save {
 					bufferedWriter.write(",");
 				}
 			}
-
-			this.data.clear();
+			
+			data.clear();
 		} catch (FileNotFoundException var15) {
 			var15.printStackTrace();
 		} catch (IOException var16) {
@@ -76,111 +76,111 @@ public class Save {
 					if(LoadingMenu.percentage > 100) {
 						LoadingMenu.percentage = 100;
 					}
-
-					this.player.game.render();
+					
+					player.game.render();
 					bufferedWriter.flush();
 					bufferedWriter.close();
 				}
 			} catch (IOException var14) {
 				var14.printStackTrace();
 			}
-
+			
 		}
-
+		
 	}
-
+	
 	public void writeGame(String filename, Game game) {
-		this.data.add(String.valueOf(Game.tickCount));
-		this.data.add(String.valueOf(Game.astime));
-		this.data.add(String.valueOf(Game.gamespeed));
-		this.data.add(String.valueOf(Game.ac));
-		this.writeToFile(this.location + filename + this.extention, this.data);
+		data.add(String.valueOf(Game.tickCount));
+		data.add(String.valueOf(Game.astime));
+		data.add(String.valueOf(Game.gamespeed));
+		data.add(String.valueOf(Game.ac));
+		writeToFile(location + filename + extention, data);
 	}
-
+	
 	public void writeWorld(String filename) {
 		int l;
 		int i;
 		int ii;
 		for(l = 0; l < Game.levels.length; ++l) {
-			this.data.add(String.valueOf(WorldGenMenu.sized));
-			this.data.add(String.valueOf(WorldGenMenu.sized));
-			this.data.add(String.valueOf(Game.levels[l].depth));
-
+			data.add(String.valueOf(WorldGenMenu.sized));
+			data.add(String.valueOf(WorldGenMenu.sized));
+			data.add(String.valueOf(Game.levels[l].depth));
+			
 			for(i = 0; i < Game.levels[l].w; ++i) {
 				for(ii = 0; ii < Game.levels[l].h; ++ii) {
-					this.data.add(String.valueOf(Game.levels[l].getTile(i, ii).id));
+					data.add(String.valueOf(Game.levels[l].getTile(i, ii).id));
 				}
 			}
-
-			this.writeToFile(this.location + filename + l + this.extention, this.data);
+			
+			writeToFile(location + filename + l + extention, data);
 		}
-
+		
 		for(l = 0; l < Game.levels.length; ++l) {
 			for(i = 0; i < Game.levels[l].w; ++i) {
 				for(ii = 0; ii < Game.levels[l].h; ++ii) {
-					this.data.add(String.valueOf(Game.levels[l].getData(i, ii)));
+					data.add(String.valueOf(Game.levels[l].getData(i, ii)));
 				}
 			}
-
-			this.writeToFile(this.location + filename + l + "data" + this.extention, this.data);
+			
+			writeToFile(location + filename + l + "data" + extention, data);
 		}
-
+		
 	}
-
+	
 	public void writePlayer(String filename, Player player) {
-		this.data.add(String.valueOf(player.x));
-		this.data.add(String.valueOf(player.y));
-		this.data.add(String.valueOf(Player.spawnx));
-		this.data.add(String.valueOf(Player.spawny));
-		this.data.add(String.valueOf(player.health));
-		this.data.add(String.valueOf(player.maxArmor));
-		this.data.add(String.valueOf(Player.score));
-		this.data.add(String.valueOf(Game.currentLevel));
+		data.add(String.valueOf(player.x));
+		data.add(String.valueOf(player.y));
+		data.add(String.valueOf(Player.spawnx));
+		data.add(String.valueOf(Player.spawny));
+		data.add(String.valueOf(player.health));
+		data.add(String.valueOf(player.maxArmor));
+		data.add(String.valueOf(Player.score));
+		data.add(String.valueOf(Game.currentLevel));
 		if(!ModeMenu.score) {
-			this.data.add(String.valueOf(ModeMenu.diff));
+			data.add(String.valueOf(ModeMenu.diff));
 		} else {
-			this.data.add(ModeMenu.diff + ";" + player.game.scoreTime);
+			data.add(ModeMenu.diff + ";" + player.game.scoreTime);
 		}
 		
 		/* potions yet be implemented
 		if(player.potioneffects.size() > 0) {
 			String subdata = "PotionEffects[";
-
+			
 			for(int i = 0; i < player.potioneffects.size(); ++i) {
 				subdata = subdata + (String)player.potioneffects.get(i) + ";" + player.potioneffectstime.get(i);
 				if(i != player.potioneffects.size() - 1) {
 					subdata = subdata + ":";
 				}
 			}
-
+			
 			subdata = subdata + "]";
-			this.data.add(subdata);
+			data.add(subdata);
 		}*/
-
-		this.data.add("[" + player.r + ";" + player.g + ";" + player.b + "]");
-		this.writeToFile(this.location + filename + this.extention, this.data);
+		
+		data.add("[" + player.r + ";" + player.g + ";" + player.b + "]");
+		writeToFile(location + filename + extention, data);
 	}
-
+	
 	public void writeInventory(String filename, Inventory inventory) {
-		if(this.player.activeItem != null) {
-			if(this.player.activeItem instanceof ResourceItem) {
-				this.data.add(this.player.activeItem.getName() + ";" + inventory.count(this.player.activeItem));
+		if(player.activeItem != null) {
+			if(player.activeItem instanceof ResourceItem) {
+				data.add(player.activeItem.getName() + ";" + inventory.count(player.activeItem));
 			} else {
-				this.data.add(this.player.activeItem.getName());
+				data.add(player.activeItem.getName());
 			}
 		}
-
+		
 		for(int i = 0; i < inventory.items.size(); ++i) {
 			if(inventory.items.get(i) instanceof ResourceItem) {
-				this.data.add(((Item)inventory.items.get(i)).getName() + ";" + inventory.count((Item)inventory.items.get(i)));
+				data.add(((Item)inventory.items.get(i)).getName() + ";" + inventory.count((Item)inventory.items.get(i)));
 			} else {
-				this.data.add(((Item)inventory.items.get(i)).getName());
+				data.add(((Item)inventory.items.get(i)).getName());
 			}
 		}
-
-		this.writeToFile(this.location + filename + this.extention, this.data);
+		
+		writeToFile(location + filename + extention, data);
 	}
-
+	
 	public void writeEntities(String filename) {
 		for(int l = 0; l < Game.levels.length; ++l) {
 			for(int i = 0; i < Game.levels[l].entities.size(); ++i) {
@@ -190,18 +190,18 @@ public class Save {
 				if(e.col1 == Color.get(-1, 0, 4, 46)) {
 					name = e.getClass().getCanonicalName().replace("com.mojang.ld22.entity.", "") + "II";
 				}
-
+				
 				if(e instanceof Mob) {
 					Mob c = (Mob)e;
 					extradata = ":" + c.health + ":" + c.maxHealth + ":" + c.lvl;
 				}
-
+				
 				int ii;
 				String var10;
 				if(e instanceof Chest) {
 					var10 = "";
 					Chest c1 = (Chest)e;
-
+					
 					for(ii = 0; ii < c1.inventory.items.size(); ++ii) {
 						if(c1.inventory.items.get(ii) instanceof ResourceItem) {
 							var10 = var10 + ((Item)c1.inventory.items.get(ii)).getName() + ";" + c1.inventory.count((Item)c1.inventory.items.get(ii)) + ":";
@@ -209,18 +209,18 @@ public class Save {
 							var10 = var10 + ((Item)c1.inventory.items.get(ii)).getName() + ":";
 						}
 					}
-
+					
 					extradata = extradata + ":" + var10;
 					if(c1.isdeathchest) {
 						name = "DeathChest";
 						extradata = extradata + ":" + "tl;" + c1.time;
 					}
 				}
-
+				
 				if(e instanceof DungeonChest) {
 					var10 = "";
 					DungeonChest var11 = (DungeonChest)e;
-
+					
 					for(ii = 0; ii < var11.inventory.items.size(); ++ii) {
 						if(!((Item)var11.inventory.items.get(ii)).getName().equals("") || !((Item)var11.inventory.items.get(ii)).getName().equals(" ")) {
 							if(var11.inventory.items.get(ii) instanceof ResourceItem) {
@@ -230,19 +230,20 @@ public class Save {
 							}
 						}
 					}
-
-					extradata = extradata + ":" + var10 + ":" + var11.islocked;
+					
+					extradata = extradata + ":" + var10 + ":" + false;//var11.islocked;
 				}
-
+				/* not reimplemented yet
 				if(e instanceof Spawner) {
 					Spawner var12 = (Spawner)e;
 					extradata = extradata + ":" + var12.mob.getClass().getCanonicalName().replace("com.mojang.ld22.entity.", "") + ":" + var12.lvl;
 				}
-
-				this.data.add(name + "[" + e.x + ":" + e.y + extradata + ":" + l + "]");
+				*/
+				data.add(name + "[" + e.x + ":" + e.y + extradata + ":" + l + "]");
 			}
 		}
-
-		this.writeToFile(this.location + filename + this.extention, this.data);
+		
+		writeToFile(location + filename + extention, data);
 	}
 }
+	

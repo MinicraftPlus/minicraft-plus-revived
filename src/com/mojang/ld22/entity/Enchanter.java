@@ -19,7 +19,7 @@ public class Enchanter extends Furniture {
 		xr = 7;
 		yr = 2;
 	}
-
+	
 	public boolean use(Player player, int attackDir) {
 		player.game.setMenu(new CraftingMenu(Crafting.enchantRecipes, player));
 		return true;

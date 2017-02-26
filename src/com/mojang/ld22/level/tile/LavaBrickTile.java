@@ -18,7 +18,7 @@ public class LavaBrickTile extends Tile {
 	public LavaBrickTile(int id) {
 		super(id);
 	}
-
+	
 	public void render(Screen screen, Level level, int x, int y) {
 		int col = Color.get(300, 300, 400, 400);
 		screen.render(x * 16 + 0, y * 16 + 0, 19 + 2 * 32, col, 0);
@@ -26,7 +26,7 @@ public class LavaBrickTile extends Tile {
 		screen.render(x * 16 + 0, y * 16 + 8, 19 + 2 * 32, col, 0);
 		screen.render(x * 16 + 8, y * 16 + 8, 19 + 2 * 32, col, 0);
 	}
-
+	
 	public boolean interact(Level level, int xt, int yt, Player player, Item item, int attackDir) {
 		if (item instanceof ToolItem) {
 			ToolItem tool = (ToolItem) item;
@@ -44,9 +44,10 @@ public class LavaBrickTile extends Tile {
 	public void bumpedInto(Level level, int x, int y, Entity entity) {
 		entity.hurt(this, x, y, 3);
 	}
-
+	
 	
 	public boolean mayPass(Level level, int x, int y, Entity e) {
 		return e.canWool();
 	}
 }
+	

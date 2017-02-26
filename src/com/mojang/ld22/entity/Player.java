@@ -77,12 +77,14 @@ public class Player extends Mob {
 	static public int xx;
 	static public int yy;
 	
+	public int r = 50, g = 50, b;
+	
 	public Player(Game game, InputHandler input) {
 		this.game = game;
 		this.input = input;
 		x = 24;
 		y = 24;
-
+		
 		stamina = maxStamina;
 		hunger = maxHunger;
 		if (ModeMenu.creative) {
@@ -104,7 +106,7 @@ public class Player extends Mob {
 			inventory.add(new BucketItem());
 			inventory.add(new BucketWaterItem());
 			inventory.add(new BucketLavaItem());
-
+			
 		
 			inventory.add(new ToolItem(ToolType.sword, 1));
 			inventory.add(new ToolItem(ToolType.sword, 2));
@@ -125,7 +127,7 @@ public class Player extends Mob {
 			inventory.add(new ToolItem(ToolType.axe,2));
 			inventory.add(new ToolItem(ToolType.axe,3));
 			inventory.add(new ToolItem(ToolType.axe,4));
-
+			
 			inventory.add(new ToolItem(ToolType.hoe, 1));
 			inventory.add(new ToolItem(ToolType.hoe, 2));
 			inventory.add(new ToolItem(ToolType.hoe, 3));
@@ -152,7 +154,7 @@ public class Player extends Mob {
 			inventory.add(new ToolItem(ToolType.claymore, 4));
 			
 			inventory.add(new ResourceItem(Resource.rod));
-
+			
 			inventory.add(new ResourceItem(Resource.wood));
 			inventory.add(new ResourceItem(Resource.stone));
 			inventory.add(new ResourceItem(Resource.flower));
@@ -188,16 +190,15 @@ public class Player extends Mob {
 			inventory.add(new ResourceItem( Resource.grassseeds));
 			inventory.add(new ResourceItem( Resource.bone));
 			inventory.add(new ResourceItem( Resource.string));
-
+			
 			inventory.add(new ResourceItem( Resource.goldapple));
 			inventory.add(new ResourceItem( Resource.lapisOre));
 			inventory.add(new ResourceItem( Resource.book));
-
+			
 			
 			inventory.add(new ResourceItem( Resource.gunp));
 			inventory.add(new ResourceItem( Resource.bookant));
-
-		
+			
 			
 			inventory.add(new PowerGloveItem());
 			
@@ -226,7 +227,7 @@ public class Player extends Mob {
 		} else {
 			if (onStairDelay > 0) onStairDelay--;
 		}
-
+		
 		if (ModeMenu.creative) {
 			if (stamina <= 10)
 			{
@@ -245,7 +246,7 @@ public class Player extends Mob {
 			if (StartMenu.diff == StartMenu.easy && hungStamCnt == 10){ hunger = hunger - 1;hungStamCnt = 0;}
 			if (StartMenu.diff == StartMenu.norm && hungStamCnt == 7){ hunger = hunger - 1;hungStamCnt = 0;}
 			if (StartMenu.diff == StartMenu.hard && hungStamCnt == 5){ hunger = hunger - 1;hungStamCnt = 0;}
-
+			
 		}
 		
 		
@@ -434,7 +435,7 @@ public class Player extends Mob {
 		boolean done = false;
 		
 		if ( (attackItem instanceof ToolItem) && this.stamina-1>=0) {
-
+		
 			ToolItem tool = (ToolItem) attackItem;
 			if (Game.ac > 0){
 			if (tool.type == ToolType.bow  && this.stamina-1>=0) {
@@ -494,7 +495,7 @@ public class Player extends Mob {
 			if (attackDir == 1) yt = (y - r + yo) >> 4;
 			if (attackDir == 2) xt = (x - r) >> 4;
 			if (attackDir == 3) xt = (x + r) >> 4;
-
+			
 			
 			if (xt >= 0 && yt >= 0 && xt < level.w && yt < level.h) {
 				if (activeItem.interactOn(level.getTile(xt, yt), level, xt, yt, this, attackDir)) {
@@ -909,7 +910,7 @@ public class Player extends Mob {
 	return true;
 		
 	}
-
+	
 		return false;
 	}
 	public boolean findStartPos(Level level) {
@@ -991,8 +992,7 @@ public boolean respawn(Level level)
 		
 	}
 	
-
-
+	
 	public boolean payStamina(int cost) {
 		if (cost > stamina) return false;
 		stamina -= cost;

@@ -7,12 +7,12 @@ import com.mojang.ld22.level.Level;
 
 public class StairsTile extends Tile {
 	private boolean leadsUp;
-
+	
 	public StairsTile(int id, boolean leadsUp) {
 		super(id);
 		this.leadsUp = leadsUp;
 	}
-
+	
 	public void render(Screen screen, Level level, int x, int y) {
 		int col0 = Color.get(322, 000, 333, 444);
 		int col1 = Color.get(321, 000, 444, 555);

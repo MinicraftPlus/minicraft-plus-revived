@@ -21,7 +21,7 @@ public class WoodWallTile extends Tile {
 	public WoodWallTile(int id) {
 		super(id);
 	}
-
+	
 	public void render(Screen screen, Level level, int x, int y) {
 		int col0 = Color.get(320, 320, 210, 210);
 		int col00 = Color.get(100, 320, 210, 430);
@@ -44,17 +44,17 @@ public class WoodWallTile extends Tile {
 		
 		int col = col0;
 		int transitionColor = col00;
-
+		
 		boolean u = level.getTile(x, y - 1) != this;
 		boolean d = level.getTile(x, y + 1) != this;
 		boolean l = level.getTile(x - 1, y) != this;
 		boolean r = level.getTile(x + 1, y) != this;
-
+		
 		boolean ul = level.getTile(x - 1, y - 1) != this;
 		boolean dl = level.getTile(x - 1, y + 1) != this;
 		boolean ur = level.getTile(x + 1, y - 1) != this;
 		boolean dr = level.getTile(x + 1, y + 1) != this;
-
+		
 		if (!u && !l) {
 			if (!ul)
 				screen.render(x * 16 + 0, y * 16 + 0, 5 + 23 * 32, col, 0);
@@ -62,7 +62,7 @@ public class WoodWallTile extends Tile {
 				screen.render(x * 16 + 0, y * 16 + 0, 7 + 22 * 32, transitionColor, 3);
 		} else
 			screen.render(x * 16 + 0, y * 16 + 0, (l ? 6 : 5) + (u ? 24 : 23) * 32, transitionColor, 3);
-
+			
 		if (!u && !r) {
 			if (!ur)
 				screen.render(x * 16 + 8, y * 16 + 0, 5 + 23 * 32, col, 0);
@@ -70,7 +70,7 @@ public class WoodWallTile extends Tile {
 				screen.render(x * 16 + 8, y * 16 + 0, 8 + 22 * 32, transitionColor, 3);
 		} else
 			screen.render(x * 16 + 8, y * 16 + 0, (r ? 4 : 5) + (u ? 24 : 23) * 32, transitionColor, 3);
-
+			
 		if (!d && !l) {
 			if (!dl)
 				screen.render(x * 16 + 0, y * 16 + 8, 5 + 23 * 32, col, 0);
@@ -89,17 +89,17 @@ public class WoodWallTile extends Tile {
 			
 			int col = col1;
 			int transitionColor = col11;
-
+			
 			boolean u = level.getTile(x, y - 1) != this;
 			boolean d = level.getTile(x, y + 1) != this;
 			boolean l = level.getTile(x - 1, y) != this;
 			boolean r = level.getTile(x + 1, y) != this;
-
+			
 			boolean ul = level.getTile(x - 1, y - 1) != this;
 			boolean dl = level.getTile(x - 1, y + 1) != this;
 			boolean ur = level.getTile(x + 1, y - 1) != this;
 			boolean dr = level.getTile(x + 1, y + 1) != this;
-
+			
 			if (!u && !l) {
 				if (!ul)
 					screen.render(x * 16 + 0, y * 16 + 0, 5 + 23 * 32, col, 0);
@@ -107,7 +107,7 @@ public class WoodWallTile extends Tile {
 					screen.render(x * 16 + 0, y * 16 + 0, 7 + 22 * 32, transitionColor, 3);
 			} else
 				screen.render(x * 16 + 0, y * 16 + 0, (l ? 6 : 5) + (u ? 24 : 23) * 32, transitionColor, 3);
-
+				
 			if (!u && !r) {
 				if (!ur)
 					screen.render(x * 16 + 8, y * 16 + 0, 5 + 23 * 32, col, 0);
@@ -115,7 +115,7 @@ public class WoodWallTile extends Tile {
 					screen.render(x * 16 + 8, y * 16 + 0, 8 + 22 * 32, transitionColor, 3);
 			} else
 				screen.render(x * 16 + 8, y * 16 + 0, (r ? 4 : 5) + (u ? 24 : 23) * 32, transitionColor, 3);
-
+				
 			if (!d && !l) {
 				if (!dl)
 					screen.render(x * 16 + 0, y * 16 + 8, 5 + 23 * 32, col, 0);
@@ -134,17 +134,17 @@ public class WoodWallTile extends Tile {
 				
 				int col = col2;
 				int transitionColor = col22;
-
+				
 				boolean u = level.getTile(x, y - 1) != this;
 				boolean d = level.getTile(x, y + 1) != this;
 				boolean l = level.getTile(x - 1, y) != this;
 				boolean r = level.getTile(x + 1, y) != this;
-
+				
 				boolean ul = level.getTile(x - 1, y - 1) != this;
 				boolean dl = level.getTile(x - 1, y + 1) != this;
 				boolean ur = level.getTile(x + 1, y - 1) != this;
 				boolean dr = level.getTile(x + 1, y + 1) != this;
-
+				
 				if (!u && !l) {
 					if (!ul)
 						screen.render(x * 16 + 0, y * 16 + 0, 5 + 23 * 32, col, 0);
@@ -152,7 +152,7 @@ public class WoodWallTile extends Tile {
 						screen.render(x * 16 + 0, y * 16 + 0, 7 + 22 * 32, transitionColor, 3);
 				} else
 					screen.render(x * 16 + 0, y * 16 + 0, (l ? 6 : 5) + (u ? 24 : 23) * 32, transitionColor, 3);
-
+					
 				if (!u && !r) {
 					if (!ur)
 						screen.render(x * 16 + 8, y * 16 + 0, 5 + 23 * 32, col, 0);
@@ -160,7 +160,7 @@ public class WoodWallTile extends Tile {
 						screen.render(x * 16 + 8, y * 16 + 0, 8 + 22 * 32, transitionColor, 3);
 				} else
 					screen.render(x * 16 + 8, y * 16 + 0, (r ? 4 : 5) + (u ? 24 : 23) * 32, transitionColor, 3);
-
+					
 				if (!d && !l) {
 					if (!dl)
 						screen.render(x * 16 + 0, y * 16 + 8, 5 + 23 * 32, col, 0);
@@ -179,17 +179,17 @@ public class WoodWallTile extends Tile {
 					
 					int col = col3;
 					int transitionColor = col33;
-
+					
 					boolean u = level.getTile(x, y - 1) != this;
 					boolean d = level.getTile(x, y + 1) != this;
 					boolean l = level.getTile(x - 1, y) != this;
 					boolean r = level.getTile(x + 1, y) != this;
-
+					
 					boolean ul = level.getTile(x - 1, y - 1) != this;
 					boolean dl = level.getTile(x - 1, y + 1) != this;
 					boolean ur = level.getTile(x + 1, y - 1) != this;
 					boolean dr = level.getTile(x + 1, y + 1) != this;
-
+					
 					if (!u && !l) {
 						if (!ul)
 							screen.render(x * 16 + 0, y * 16 + 0, 5 + 23 * 32, col, 0);
@@ -197,7 +197,7 @@ public class WoodWallTile extends Tile {
 							screen.render(x * 16 + 0, y * 16 + 0, 7 + 22 * 32, transitionColor, 3);
 					} else
 						screen.render(x * 16 + 0, y * 16 + 0, (l ? 6 : 5) + (u ? 24 : 23) * 32, transitionColor, 3);
-
+						
 					if (!u && !r) {
 						if (!ur)
 							screen.render(x * 16 + 8, y * 16 + 0, 5 + 23 * 32, col, 0);
@@ -205,7 +205,7 @@ public class WoodWallTile extends Tile {
 							screen.render(x * 16 + 8, y * 16 + 0, 8 + 22 * 32, transitionColor, 3);
 					} else
 						screen.render(x * 16 + 8, y * 16 + 0, (r ? 4 : 5) + (u ? 24 : 23) * 32, transitionColor, 3);
-
+						
 					if (!d && !l) {
 						if (!dl)
 							screen.render(x * 16 + 0, y * 16 + 8, 5 + 23 * 32, col, 0);
@@ -225,17 +225,17 @@ public class WoodWallTile extends Tile {
 				if (level.dirtColor == 222){
 					int col = col4;
 					int transitionColor = col44;
-
+					
 					boolean u = level.getTile(x, y - 1) != this;
 					boolean d = level.getTile(x, y + 1) != this;
 					boolean l = level.getTile(x - 1, y) != this;
 					boolean r = level.getTile(x + 1, y) != this;
-
+					
 					boolean ul = level.getTile(x - 1, y - 1) != this;
 					boolean dl = level.getTile(x - 1, y + 1) != this;
 					boolean ur = level.getTile(x + 1, y - 1) != this;
 					boolean dr = level.getTile(x + 1, y + 1) != this;
-
+					
 					if (!u && !l) {
 						if (!ul)
 							screen.render(x * 16 + 0, y * 16 + 0, 5 + 23 * 32, col, 0);
@@ -243,7 +243,7 @@ public class WoodWallTile extends Tile {
 							screen.render(x * 16 + 0, y * 16 + 0, 7 + 22 * 32, transitionColor, 3);
 					} else
 						screen.render(x * 16 + 0, y * 16 + 0, (l ? 6 : 5) + (u ? 24 : 23) * 32, transitionColor, 3);
-
+						
 					if (!u && !r) {
 						if (!ur)
 							screen.render(x * 16 + 8, y * 16 + 0, 5 + 23 * 32, col, 0);
@@ -251,7 +251,7 @@ public class WoodWallTile extends Tile {
 							screen.render(x * 16 + 8, y * 16 + 0, 8 + 22 * 32, transitionColor, 3);
 					} else
 						screen.render(x * 16 + 8, y * 16 + 0, (r ? 4 : 5) + (u ? 24 : 23) * 32, transitionColor, 3);
-
+						
 					if (!d && !l) {
 						if (!dl)
 							screen.render(x * 16 + 0, y * 16 + 8, 5 + 23 * 32, col, 0);
@@ -269,15 +269,15 @@ public class WoodWallTile extends Tile {
 				}
 		
 	}
-
+	
 	public boolean mayPass(Level level, int x, int y, Entity e) {
 		return false;
 	}
-
+	
 	public void hurt(Level level, int x, int y, Mob source, int dmg, int attackDir) {
 		hurt(level, x, y, dmg);
 	}
-
+	
 	public boolean interact(Level level, int xt, int yt, Player player, Item item, int attackDir) {
 		if (item instanceof ToolItem) {
 			ToolItem tool = (ToolItem) item;
@@ -299,7 +299,7 @@ public class WoodWallTile extends Tile {
 		}
 		return false;
 	}
-
+	
 	public void hurt(Level level, int x, int y, int dmg) {
 		int damage = level.getData(x, y) + dmg;
 		int wwH;
@@ -317,9 +317,10 @@ public class WoodWallTile extends Tile {
 			level.setData(x, y, damage);
 		}
 	}
-
+	
 	public void tick(Level level, int xt, int yt) {
 		int damage = level.getData(xt, yt);
 		if (damage > 0) level.setData(xt, yt, damage - 1);
 	}
 }
+	

@@ -13,7 +13,7 @@ public class HoleTile extends Tile {
 		connectsToWater = true;
 		connectsToLava= true;
 	}
-
+	
 	public void render(Screen screen, Level level, int x, int y) {
 		int col0 = Color.get(222, 222, 220, 220);
 		int col00 = Color.get(3, 222, 211, 322);
@@ -42,27 +42,27 @@ public class HoleTile extends Tile {
 		int col = col0;
 		int transitionColor1 = col00;
 		int transitionColor2 = col000;
-
+		
 		boolean u = !level.getTile(x, y - 1).connectsToLiquid();
 		boolean d = !level.getTile(x, y + 1).connectsToLiquid();
 		boolean l = !level.getTile(x - 1, y).connectsToLiquid();
 		boolean r = !level.getTile(x + 1, y).connectsToLiquid();
-
+		
 		boolean su = u && level.getTile(x, y - 1).connectsToSand;
 		boolean sd = d && level.getTile(x, y + 1).connectsToSand;
 		boolean sl = l && level.getTile(x - 1, y).connectsToSand;
 		boolean sr = r && level.getTile(x + 1, y).connectsToSand;
-
+		
 		if (!u && !l) {
 			screen.render(x * 16 + 0, y * 16 + 0, 0, col, 0);
 		} else
 			screen.render(x * 16 + 0, y * 16 + 0, (l ? 14 : 15) + (u ? 0 : 1) * 32, (su || sl) ? transitionColor2 : transitionColor1, 0);
-
+			
 		if (!u && !r) {
 			screen.render(x * 16 + 8, y * 16 + 0, 1, col, 0);
 		} else
 			screen.render(x * 16 + 8, y * 16 + 0, (r ? 16 : 15) + (u ? 0 : 1) * 32, (su || sr) ? transitionColor2 : transitionColor1, 0);
-
+			
 		if (!d && !l) {
 			screen.render(x * 16 + 0, y * 16 + 8, 2, col, 0);
 		} else
@@ -76,27 +76,27 @@ public class HoleTile extends Tile {
 			int col = col1;
 			int transitionColor1 = col11;
 			int transitionColor2 = col111;
-
+			
 			boolean u = !level.getTile(x, y - 1).connectsToLiquid();
 			boolean d = !level.getTile(x, y + 1).connectsToLiquid();
 			boolean l = !level.getTile(x - 1, y).connectsToLiquid();
 			boolean r = !level.getTile(x + 1, y).connectsToLiquid();
-
+			
 			boolean su = u && level.getTile(x, y - 1).connectsToSand;
 			boolean sd = d && level.getTile(x, y + 1).connectsToSand;
 			boolean sl = l && level.getTile(x - 1, y).connectsToSand;
 			boolean sr = r && level.getTile(x + 1, y).connectsToSand;
-
+			
 			if (!u && !l) {
 				screen.render(x * 16 + 0, y * 16 + 0, 0, col, 0);
 			} else
 				screen.render(x * 16 + 0, y * 16 + 0, (l ? 14 : 15) + (u ? 0 : 1) * 32, (su || sl) ? transitionColor2 : transitionColor1, 0);
-
+				
 			if (!u && !r) {
 				screen.render(x * 16 + 8, y * 16 + 0, 1, col, 0);
 			} else
 				screen.render(x * 16 + 8, y * 16 + 0, (r ? 16 : 15) + (u ? 0 : 1) * 32, (su || sr) ? transitionColor2 : transitionColor1, 0);
-
+				
 			if (!d && !l) {
 				screen.render(x * 16 + 0, y * 16 + 8, 2, col, 0);
 			} else
@@ -110,27 +110,27 @@ public class HoleTile extends Tile {
 			int col = col2;
 			int transitionColor1 = col22;
 			int transitionColor2 = col222;
-
+			
 			boolean u = !level.getTile(x, y - 1).connectsToLiquid();
 			boolean d = !level.getTile(x, y + 1).connectsToLiquid();
 			boolean l = !level.getTile(x - 1, y).connectsToLiquid();
 			boolean r = !level.getTile(x + 1, y).connectsToLiquid();
-
+			
 			boolean su = u && level.getTile(x, y - 1).connectsToSand;
 			boolean sd = d && level.getTile(x, y + 1).connectsToSand;
 			boolean sl = l && level.getTile(x - 1, y).connectsToSand;
 			boolean sr = r && level.getTile(x + 1, y).connectsToSand;
-
+			
 			if (!u && !l) {
 				screen.render(x * 16 + 0, y * 16 + 0, 0, col, 0);
 			} else
 				screen.render(x * 16 + 0, y * 16 + 0, (l ? 14 : 15) + (u ? 0 : 1) * 32, (su || sl) ? transitionColor2 : transitionColor1, 0);
-
+				
 			if (!u && !r) {
 				screen.render(x * 16 + 8, y * 16 + 0, 1, col, 0);
 			} else
 				screen.render(x * 16 + 8, y * 16 + 0, (r ? 16 : 15) + (u ? 0 : 1) * 32, (su || sr) ? transitionColor2 : transitionColor1, 0);
-
+				
 			if (!d && !l) {
 				screen.render(x * 16 + 0, y * 16 + 8, 2, col, 0);
 			} else
@@ -144,27 +144,27 @@ public class HoleTile extends Tile {
 			int col = col3;
 			int transitionColor1 = col33;
 			int transitionColor2 = col333;
-
+			
 			boolean u = !level.getTile(x, y - 1).connectsToLiquid();
 			boolean d = !level.getTile(x, y + 1).connectsToLiquid();
 			boolean l = !level.getTile(x - 1, y).connectsToLiquid();
 			boolean r = !level.getTile(x + 1, y).connectsToLiquid();
-
+			
 			boolean su = u && level.getTile(x, y - 1).connectsToSand;
 			boolean sd = d && level.getTile(x, y + 1).connectsToSand;
 			boolean sl = l && level.getTile(x - 1, y).connectsToSand;
 			boolean sr = r && level.getTile(x + 1, y).connectsToSand;
-
+			
 			if (!u && !l) {
 				screen.render(x * 16 + 0, y * 16 + 0, 0, col, 0);
 			} else
 				screen.render(x * 16 + 0, y * 16 + 0, (l ? 14 : 15) + (u ? 0 : 1) * 32, (su || sl) ? transitionColor2 : transitionColor1, 0);
-
+				
 			if (!u && !r) {
 				screen.render(x * 16 + 8, y * 16 + 0, 1, col, 0);
 			} else
 				screen.render(x * 16 + 8, y * 16 + 0, (r ? 16 : 15) + (u ? 0 : 1) * 32, (su || sr) ? transitionColor2 : transitionColor1, 0);
-
+				
 			if (!d && !l) {
 				screen.render(x * 16 + 0, y * 16 + 8, 2, col, 0);
 			} else
@@ -179,27 +179,27 @@ public class HoleTile extends Tile {
 			int col = col4;
 			int transitionColor1 = col44;
 			int transitionColor2 = col444;
-
+			
 			boolean u = !level.getTile(x, y - 1).connectsToLiquid();
 			boolean d = !level.getTile(x, y + 1).connectsToLiquid();
 			boolean l = !level.getTile(x - 1, y).connectsToLiquid();
 			boolean r = !level.getTile(x + 1, y).connectsToLiquid();
-
+			
 			boolean su = u && level.getTile(x, y - 1).connectsToSand;
 			boolean sd = d && level.getTile(x, y + 1).connectsToSand;
 			boolean sl = l && level.getTile(x - 1, y).connectsToSand;
 			boolean sr = r && level.getTile(x + 1, y).connectsToSand;
-
+			
 			if (!u && !l) {
 				screen.render(x * 16 + 0, y * 16 + 0, 0, col, 0);
 			} else
 				screen.render(x * 16 + 0, y * 16 + 0, (l ? 14 : 15) + (u ? 0 : 1) * 32, (su || sl) ? transitionColor2 : transitionColor1, 0);
-
+				
 			if (!u && !r) {
 				screen.render(x * 16 + 8, y * 16 + 0, 1, col, 0);
 			} else
 				screen.render(x * 16 + 8, y * 16 + 0, (r ? 16 : 15) + (u ? 0 : 1) * 32, (su || sr) ? transitionColor2 : transitionColor1, 0);
-
+				
 			if (!d && !l) {
 				screen.render(x * 16 + 0, y * 16 + 8, 2, col, 0);
 			} else
@@ -212,9 +212,10 @@ public class HoleTile extends Tile {
 		
 		
 	}
-
+	
 	public boolean mayPass(Level level, int x, int y, Entity e) {
 		return e.canSwim();
 	}
-
+	
 }
+	

@@ -10,9 +10,9 @@ import com.mojang.ld22.screen.ContainerMenu;
 
 public class DungeonChest extends Furniture {
 	public Inventory inventory = new Inventory();
-
-	public DungeonChest(Mob s) {
-		super("D.Chest");
+	
+	public DungeonChest() {
+		super("Dungeon Chest");
 		inventory.add(new ToolItem(ToolType.sword, 2));
 		inventory.add(new ToolItem(ToolType.bow, 2));
 		inventory.add(new ToolItem(ToolType.pickaxe, 4));
@@ -57,8 +57,8 @@ public class DungeonChest extends Furniture {
 		col = Color.get(-1, 222, 333, 555);
 		sprite = 1;
 		
-		  x = s.x * 41 + 0;
-		  y = s.y * 41 + 1;
+		//  x = s.x * 41 + 0;
+		//  y = s.y * 41 + 1;
 		
 	}
 	public boolean use(Player player, int attackDir) {

@@ -4,7 +4,7 @@ public class Font {
 	private static String chars = "" + //
 			"ABCDEFGHIJKLMNOPQRSTUVWXYZ      " + //
 			"0123456789.,!?'\"-+=/\\%()<>:;^@bcdefghijklmnopqrstuvwxyz";//
-
+			
 	public static void draw(String msg, Screen screen, int x, int y, int col) {
 		msg = msg.toUpperCase();
 		for (int i = 0; i < msg.length(); i++) {
@@ -14,7 +14,7 @@ public class Font {
 			}
 		}
 	}
-
+	
 	public static void renderFrame(Screen screen, String title, int x0, int y0, int x1, int y1) {
 		for (int y = y0; y <= y1; y++) {
 			for (int x = x0; x <= x1; x++) {
@@ -38,9 +38,9 @@ public class Font {
 					screen.render(x * 8, y * 8, 2 + 13 * 32, Color.get(5, 5, 5, 5), 1);
 			}
 		}
-
+		
 		draw(title, screen, x0 * 8 + 8, y0 * 8, Color.get(5, 5, 5, 550));
-
+		
 	}
 	public static void rendercraftFrame(Screen screen, String title, int x0, int y0, int x1, int y1) {
 		for (int y = y0; y <= y1; y++) {
@@ -65,9 +65,9 @@ public class Font {
 					screen.render(x * 8, y * 8, 2 + 13 * 32, Color.get(300, 300, 300, 300), 1);
 			}
 		}
-
+		
 		draw(title, screen, x0 * 8 + 8, y0 * 8, Color.get(300, 300, 300, 555));
-
+		
 	}
 	public static void renderFrameBook(Screen screen, String title, int x0, int y0, int x1, int y1) {
 			for (int y = y0; y <= y1; y++) {
@@ -91,9 +91,9 @@ public class Font {
 					else
 						screen.render(x * 8, y * 8, 2 + 13 * 32, Color.get(554, 554, 554, 554), 1);
 				}
-
+				
 			draw(title, screen, x0 * 8 + 8, y0 * 8, Color.get(-1, 222, 222, 222));
-
+			
 		}
 	}
 }

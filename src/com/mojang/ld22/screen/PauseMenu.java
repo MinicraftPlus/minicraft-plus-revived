@@ -21,7 +21,7 @@ public class PauseMenu extends Menu {
 			title = true;
 			newGame = false;
 			respawn = false;
-
+			
 			game.setMenu(new ConfirmMenu());
 			
 		 }
@@ -30,7 +30,7 @@ public class PauseMenu extends Menu {
 			 respawn = false;
 			 title = false; 
 			game.setMenu(new ConfirmMenu());
-
+			
 		 }
 		 if (input.options.clicked) {
 			 TitleMenu.sentFromMenu = false;
@@ -50,7 +50,7 @@ public class PauseMenu extends Menu {
 		Font.draw("X:Quit", screen, 2 * 8, 5 * 8, Color.get(-1, 333, 333, 333));
 		Font.draw("Z:New", screen, 2 * 8, 6 * 8, Color.get(-1, 333, 333, 333));
 		Font.draw("O:Options", screen, 2 * 8, 7 * 8, Color.get(-1, 333, 333, 333));
-
+		
 		
 	}
 }

@@ -5,17 +5,17 @@ import com.mojang.ld22.gfx.Screen;
 public class LevelTransitionMenu extends Menu {
 	private int dir;
 	private int time = 0;
-
+	
 	public LevelTransitionMenu(int dir) {
 		this.dir = dir;
 	}
-
+	
 	public void tick() {
 		time += 2;
 		if (time == 30) game.changeLevel(dir);
 		if (time == 60) game.setMenu(null);
 	}
-
+	
 	public void render(Screen screen) {
 		for (int x = 0; x < 200; x++) {
 			for (int y = 0; y < 150; y++) {
@@ -30,3 +30,4 @@ public class LevelTransitionMenu extends Menu {
 		}
 	}
 }
+	

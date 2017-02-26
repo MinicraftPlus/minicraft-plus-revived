@@ -11,11 +11,11 @@ public class InputHandler implements MouseListener, KeyListener {
 	public class Key {
 		public int presses, absorbs;
 		public boolean down, clicked;
-
+		
 		public Key() {
 			keys.add(this);
 		}
-
+		
 		public void toggle(boolean pressed) {
 			if (pressed != down) {
 				down = pressed;
@@ -24,7 +24,7 @@ public class InputHandler implements MouseListener, KeyListener {
 				presses++;
 			}
 		}
-
+		
 		public void tick() {
 			if (absorbs < presses) {
 				absorbs++;
@@ -38,11 +38,11 @@ public class InputHandler implements MouseListener, KeyListener {
 	public class Mouse {
 		public int pressesd, absorbsd;
 		public boolean click, down;
-
+		
 		public Mouse() {
 			mouse.add(this);
 		}
-
+		
 		public void toggle(boolean clickd) {
 			if (clickd != down) {
 				down = clickd;
@@ -66,9 +66,9 @@ public class InputHandler implements MouseListener, KeyListener {
 	public Mouse two = new Mouse();
 	public Mouse tri = new Mouse();
 	
-
+	
 	public List<Key> keys = new ArrayList<Key>();
-
+	
 	public Key up = new Key();
 	public Key down = new Key();
 	public Key left = new Key();
@@ -124,35 +124,38 @@ public class InputHandler implements MouseListener, KeyListener {
 	public Key a8 = new Key();
 	public Key a9 = new Key();
 	public Key a0 = new Key();
-
+	
 	public Key enter = new Key();
 	public Key delete = new Key();
-
+	public Key space = new Key();
+	public Key backspace = new Key();
+	
+	
 	public void releaseAll() {
 		for (int i = 0; i < keys.size(); i++) {
 			keys.get(i).down = false;
 		}
 	}
-
+	
 	public void tick() {
 		for (int i = 0; i < keys.size(); i++) {
 			keys.get(i).tick();
 		}
 	}
-
+	
 	public InputHandler(Game game) {
 		game.addKeyListener(this);
 		game.addMouseListener(this);
 	}
-
+	
 	public void keyPressed(KeyEvent ke) {
 		toggle(ke, true);
 	}
-
+	
 	public void keyReleased(KeyEvent ke) {
 		toggle(ke, false);
 	}
-
+	
 	private void toggle(KeyEvent ke, boolean pressed) {
 		if (ke.getKeyCode() == KeyEvent.VK_NUMPAD8) up.toggle(pressed);
 		if (ke.getKeyCode() == KeyEvent.VK_NUMPAD2) down.toggle(pressed);
@@ -166,7 +169,7 @@ public class InputHandler implements MouseListener, KeyListener {
 		if (ke.getKeyCode() == KeyEvent.VK_DOWN) down.toggle(pressed);
 		if (ke.getKeyCode() == KeyEvent.VK_LEFT) left.toggle(pressed);
 		if (ke.getKeyCode() == KeyEvent.VK_RIGHT) right.toggle(pressed);
-
+		
 		if (ke.getKeyCode() == KeyEvent.VK_TAB) menu.toggle(pressed);
 		if (ke.getKeyCode() == KeyEvent.VK_ALT) menu.toggle(pressed);
 		if (ke.getKeyCode() == KeyEvent.VK_ALT_GRAPH) menu.toggle(pressed);
@@ -178,7 +181,7 @@ public class InputHandler implements MouseListener, KeyListener {
 		if (ke.getKeyCode() == KeyEvent.VK_Q) craft.toggle(pressed);
 		if (ke.getKeyCode() == KeyEvent.VK_NUMPAD1) craft.toggle(pressed);
 		if (ke.getKeyCode() == KeyEvent.VK_E) craft.toggle(pressed);
-
+		
 		if (ke.getKeyCode() == KeyEvent.VK_ESCAPE) pause.toggle(pressed);
 		if (ke.getKeyCode() == KeyEvent.VK_N) pause.toggle(pressed);
 		
@@ -189,26 +192,28 @@ public class InputHandler implements MouseListener, KeyListener {
 		if (ke.getKeyCode() == KeyEvent.VK_T) t.toggle(pressed);
 		if (ke.getKeyCode() == KeyEvent.VK_1) sethome.toggle(pressed);
 		if (ke.getKeyCode() == KeyEvent.VK_H) home.toggle(pressed);
-
+		
 		if (ke.getKeyCode() == KeyEvent.VK_G) mode.toggle(pressed);
 		if (ke.getKeyCode() == KeyEvent.VK_1) survival.toggle(pressed);
 		if (ke.getKeyCode() == KeyEvent.VK_2) creative.toggle(pressed);
 		if (ke.getKeyCode() == KeyEvent.VK_3) hardcore.toggle(pressed);
-
+		
 		if (ke.getKeyCode() == KeyEvent.VK_F3) hardcore.toggle(pressed);
 		if (ke.getKeyCode() == KeyEvent.VK_O) options.toggle(pressed);
 		if (ke.getKeyCode() == KeyEvent.VK_S) soundOn.toggle(pressed);
 		
 		if (ke.getKeyCode() == KeyEvent.VK_S) soundOn.toggle(pressed);
-
+		
 		if (ke.getKeyCode() == KeyEvent.VK_2) dayTime.toggle(pressed);
 		if (ke.getKeyCode() == KeyEvent.VK_3) nightTime.toggle(pressed);
 		if (ke.getKeyCode() == KeyEvent.VK_I) i.toggle(pressed);
 		if (ke.getKeyCode() == KeyEvent.VK_W) w.toggle(pressed);
 		if (ke.getKeyCode() == KeyEvent.VK_L) l.toggle(pressed);
 		if (ke.getKeyCode() == KeyEvent.VK_S) s.toggle(pressed);
-
-
+		
+		if (ke.getKeyCode() == KeyEvent.VK_SPACE) space.toggle(pressed);
+		if (ke.getKeyCode() == KeyEvent.VK_BACK_SPACE) backspace.toggle(pressed);
+		
 /*
 		if (ke.getKeyCode() == KeyEvent.VK_A) nightTime.toggle(pressed);
 		if (ke.getKeyCode() == KeyEvent.VK_B) nightTime.toggle(pressed);
@@ -236,7 +241,7 @@ public class InputHandler implements MouseListener, KeyListener {
 		if (ke.getKeyCode() == KeyEvent.VK_X) nightTime.toggle(pressed);
 		if (ke.getKeyCode() == KeyEvent.VK_Y) nightTime.toggle(pressed);
 		if (ke.getKeyCode() == KeyEvent.VK_Z) nightTime.toggle(pressed);
-
+		
 		if (ke.getKeyCode() == KeyEvent.VK_1) nightTime.toggle(pressed);
 		if (ke.getKeyCode() == KeyEvent.VK_2) nightTime.toggle(pressed);
 		if (ke.getKeyCode() == KeyEvent.VK_3) nightTime.toggle(pressed);
@@ -247,10 +252,10 @@ public class InputHandler implements MouseListener, KeyListener {
 		if (ke.getKeyCode() == KeyEvent.VK_A) nightTime.toggle(pressed);
 		if (ke.getKeyCode() == KeyEvent.VK_A) nightTime.toggle(pressed);
 		if (ke.getKeyCode() == KeyEvent.VK_A) nightTime.toggle(pressed);
-
+		
 		if (ke.getKeyCode() == KeyEvent.VK_A) nightTime.toggle(pressed);
 		if (ke.getKeyCode() == KeyEvent.VK_A) nightTime.toggle(pressed);
-
+		
 */
 	}
 	
@@ -259,26 +264,27 @@ public class InputHandler implements MouseListener, KeyListener {
 	if (e.getButton() == MouseEvent.BUTTON2) two.toggle(clickd);
 	if (e.getButton() == MouseEvent.BUTTON3) tri.toggle(clickd);
 	}
-
+	
 	public void keyTyped(KeyEvent ke) {
+		
 	}
-
+	
 	@Override
 	public void mouseClicked(MouseEvent e) {
 	}
-
+	
 	@Override
 	public void mouseEntered(MouseEvent e) {
 		// TODO Auto-generated method stub
 		
 	}
-
+	
 	@Override
 	public void mouseExited(MouseEvent e) {
 		// TODO Auto-generated method stub
 		
 	}
-
+	
     public void mousePressed(MouseEvent e) {
  	  click(e, true);
     }

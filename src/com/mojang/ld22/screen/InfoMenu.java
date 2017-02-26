@@ -28,7 +28,7 @@ public class InfoMenu extends Menu {
 	public void render(Screen screen) {
 		Font.renderFrame(screen, "", 1, 3, 18, 7);
 		//System.out.println(Player.sentFromHome);
-
+		
 		
 			
 			if (Player.sentFromSetHome) {
@@ -38,14 +38,15 @@ public class InfoMenu extends Menu {
 					Font.draw("here!", screen, 2 * 8, 5 * 8, Color.get(-1, 555, 555, 555));
 		 
 				} 
-
-
+				
+				
 		}
 		
 		
 		
 		}
-
+		
 	}
-
-
+	
+	
+	

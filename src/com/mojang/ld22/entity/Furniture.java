@@ -14,7 +14,7 @@ public class Furniture extends Entity {
 	public String name;
 	public int lightTimer = 0;
 	private Player shouldTake;
-
+	
 	public Furniture(String name) {
 		this.name = name;
 		xr = 3;
@@ -68,7 +68,7 @@ public class Furniture extends Entity {
 	public boolean blocks(Entity e) {
 		return true;
 	}
-
+	
 	protected void touchedBy(Entity entity) {
 		if (entity instanceof Player && pushTime == 0) {
 			if (name != "D.Chest"){
@@ -83,7 +83,7 @@ public class Furniture extends Entity {
 		shouldTake = player;
 		}
 	}
-
+	
 	public boolean canWool() {
 		return true;
 	}

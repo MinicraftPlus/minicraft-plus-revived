@@ -15,7 +15,7 @@ public class GoldLantern extends Furniture {
 		xr = 3;
 		yr = 2;
 	}
-
+	
 	public int getLightRadius() {
 		return 15;
 	}

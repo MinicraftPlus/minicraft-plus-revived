@@ -20,7 +20,7 @@ public class StoneWallTile extends Tile {
 	public StoneWallTile(int id) {
 		super(id);
 	}
-
+	
 	public void render(Screen screen, Level level, int x, int y) {
 		int col0 = Color.get(333, 333, 333, 333);
 		int col00 = Color.get(111, 222, 333, 333);
@@ -49,17 +49,17 @@ public class StoneWallTile extends Tile {
 		int col = col0;
 		int transitionColor = col00;
 		int backColor = col000;
-
+		
 		boolean u = level.getTile(x, y - 1) != this;
 		boolean d = level.getTile(x, y + 1) != this;
 		boolean l = level.getTile(x - 1, y) != this;
 		boolean r = level.getTile(x + 1, y) != this;
-
+		
 		boolean ul = level.getTile(x - 1, y - 1) != this;
 		boolean dl = level.getTile(x - 1, y + 1) != this;
 		boolean ur = level.getTile(x + 1, y - 1) != this;
 		boolean dr = level.getTile(x + 1, y + 1) != this;
-
+		
 		if (!u && !l) {
 			if (!ul)
 				screen.render(x * 16 + 0, y * 16 + 0, 7 + 2 * 32, col, 0);
@@ -67,7 +67,7 @@ public class StoneWallTile extends Tile {
 				screen.render(x * 16 + 0, y * 16 + 0, 7 + 24 * 32, backColor, 3);
 		} else
 			screen.render(x * 16 + 0, y * 16 + 0, (l ? 6 : 5) + (u ? 27 : 26) * 32, transitionColor, 3);
-
+			
 		if (!u && !r) {
 			if (!ur)
 				screen.render(x * 16 + 8, y * 16 + 0, 7 + 2 * 32, col, 0);
@@ -75,7 +75,7 @@ public class StoneWallTile extends Tile {
 				screen.render(x * 16 + 8, y * 16 + 0, 8 + 24 * 32, backColor, 3);
 		} else
 			screen.render(x * 16 + 8, y * 16 + 0, (r ? 4 : 5) + (u ? 27 : 26) * 32, transitionColor, 3);
-
+			
 		if (!d && !l) {
 			if (!dl)
 				screen.render(x * 16 + 0, y * 16 + 8, 7 + 2 * 32, col, 0);
@@ -95,17 +95,17 @@ public class StoneWallTile extends Tile {
 			int col = col1;
 			int transitionColor = col11;
 			int backColor = col111;
-
+			
 			boolean u = level.getTile(x, y - 1) != this;
 			boolean d = level.getTile(x, y + 1) != this;
 			boolean l = level.getTile(x - 1, y) != this;
 			boolean r = level.getTile(x + 1, y) != this;
-
+			
 			boolean ul = level.getTile(x - 1, y - 1) != this;
 			boolean dl = level.getTile(x - 1, y + 1) != this;
 			boolean ur = level.getTile(x + 1, y - 1) != this;
 			boolean dr = level.getTile(x + 1, y + 1) != this;
-
+			
 			if (!u && !l) {
 				if (!ul)
 					screen.render(x * 16 + 0, y * 16 + 0, 7 + 2 * 32, col, 0);
@@ -113,7 +113,7 @@ public class StoneWallTile extends Tile {
 					screen.render(x * 16 + 0, y * 16 + 0, 7 + 24 * 32, backColor, 3);
 			} else
 				screen.render(x * 16 + 0, y * 16 + 0, (l ? 6 : 5) + (u ? 27 : 26) * 32, transitionColor, 3);
-
+				
 			if (!u && !r) {
 				if (!ur)
 					screen.render(x * 16 + 8, y * 16 + 0, 7 + 2 * 32, col, 0);
@@ -121,7 +121,7 @@ public class StoneWallTile extends Tile {
 					screen.render(x * 16 + 8, y * 16 + 0, 8 + 24 * 32, backColor, 3);
 			} else
 				screen.render(x * 16 + 8, y * 16 + 0, (r ? 4 : 5) + (u ? 27 : 26) * 32, transitionColor, 3);
-
+				
 			if (!d && !l) {
 				if (!dl)
 					screen.render(x * 16 + 0, y * 16 + 8, 7 + 2 * 32, col, 0);
@@ -141,17 +141,17 @@ public class StoneWallTile extends Tile {
 				int col = col2;
 				int transitionColor = col22;
 				int backColor = col222;
-
+				
 				boolean u = level.getTile(x, y - 1) != this;
 				boolean d = level.getTile(x, y + 1) != this;
 				boolean l = level.getTile(x - 1, y) != this;
 				boolean r = level.getTile(x + 1, y) != this;
-
+				
 				boolean ul = level.getTile(x - 1, y - 1) != this;
 				boolean dl = level.getTile(x - 1, y + 1) != this;
 				boolean ur = level.getTile(x + 1, y - 1) != this;
 				boolean dr = level.getTile(x + 1, y + 1) != this;
-
+				
 				if (!u && !l) {
 					if (!ul)
 						screen.render(x * 16 + 0, y * 16 + 0, 7 + 2 * 32, col, 0);
@@ -159,7 +159,7 @@ public class StoneWallTile extends Tile {
 						screen.render(x * 16 + 0, y * 16 + 0, 7 + 24 * 32, backColor, 3);
 				} else
 					screen.render(x * 16 + 0, y * 16 + 0, (l ? 6 : 5) + (u ? 27 : 26) * 32, transitionColor, 3);
-
+					
 				if (!u && !r) {
 					if (!ur)
 						screen.render(x * 16 + 8, y * 16 + 0, 7 + 2 * 32, col, 0);
@@ -167,7 +167,7 @@ public class StoneWallTile extends Tile {
 						screen.render(x * 16 + 8, y * 16 + 0, 8 + 24 * 32, backColor, 3);
 				} else
 					screen.render(x * 16 + 8, y * 16 + 0, (r ? 4 : 5) + (u ? 27 : 26) * 32, transitionColor, 3);
-
+					
 				if (!d && !l) {
 					if (!dl)
 						screen.render(x * 16 + 0, y * 16 + 8, 7 + 2 * 32, col, 0);
@@ -187,17 +187,17 @@ public class StoneWallTile extends Tile {
 					int col = col3;
 					int transitionColor = col33;
 					int backColor = col333;
-
+					
 					boolean u = level.getTile(x, y - 1) != this;
 					boolean d = level.getTile(x, y + 1) != this;
 					boolean l = level.getTile(x - 1, y) != this;
 					boolean r = level.getTile(x + 1, y) != this;
-
+					
 					boolean ul = level.getTile(x - 1, y - 1) != this;
 					boolean dl = level.getTile(x - 1, y + 1) != this;
 					boolean ur = level.getTile(x + 1, y - 1) != this;
 					boolean dr = level.getTile(x + 1, y + 1) != this;
-
+					
 					if (!u && !l) {
 						if (!ul)
 							screen.render(x * 16 + 0, y * 16 + 0, 7 + 2 * 32, col, 0);
@@ -205,7 +205,7 @@ public class StoneWallTile extends Tile {
 							screen.render(x * 16 + 0, y * 16 + 0, 7 + 24 * 32, backColor, 3);
 					} else
 						screen.render(x * 16 + 0, y * 16 + 0, (l ? 6 : 5) + (u ? 27 : 26) * 32, transitionColor, 3);
-
+						
 					if (!u && !r) {
 						if (!ur)
 							screen.render(x * 16 + 8, y * 16 + 0, 7 + 2 * 32, col, 0);
@@ -213,7 +213,7 @@ public class StoneWallTile extends Tile {
 							screen.render(x * 16 + 8, y * 16 + 0, 8 + 24 * 32, backColor, 3);
 					} else
 						screen.render(x * 16 + 8, y * 16 + 0, (r ? 4 : 5) + (u ? 27 : 26) * 32, transitionColor, 3);
-
+						
 					if (!d && !l) {
 						if (!dl)
 							screen.render(x * 16 + 0, y * 16 + 8, 7 + 2 * 32, col, 0);
@@ -235,17 +235,17 @@ public class StoneWallTile extends Tile {
 			int col = col4;
 			int transitionColor = col44;
 			int backColor = col444;
-
+			
 			boolean u = level.getTile(x, y - 1) != this;
 			boolean d = level.getTile(x, y + 1) != this;
 			boolean l = level.getTile(x - 1, y) != this;
 			boolean r = level.getTile(x + 1, y) != this;
-
+			
 			boolean ul = level.getTile(x - 1, y - 1) != this;
 			boolean dl = level.getTile(x - 1, y + 1) != this;
 			boolean ur = level.getTile(x + 1, y - 1) != this;
 			boolean dr = level.getTile(x + 1, y + 1) != this;
-
+			
 			if (!u && !l) {
 				if (!ul)
 					screen.render(x * 16 + 0, y * 16 + 0, 7 + 2 * 32, col, 0);
@@ -253,7 +253,7 @@ public class StoneWallTile extends Tile {
 					screen.render(x * 16 + 0, y * 16 + 0, 7 + 24 * 32, backColor, 3);
 			} else
 				screen.render(x * 16 + 0, y * 16 + 0, (l ? 6 : 5) + (u ? 27 : 26) * 32, transitionColor, 3);
-
+				
 			if (!u && !r) {
 				if (!ur)
 					screen.render(x * 16 + 8, y * 16 + 0, 7 + 2 * 32, col, 0);
@@ -261,7 +261,7 @@ public class StoneWallTile extends Tile {
 					screen.render(x * 16 + 8, y * 16 + 0, 8 + 24 * 32, backColor, 3);
 			} else
 				screen.render(x * 16 + 8, y * 16 + 0, (r ? 4 : 5) + (u ? 27 : 26) * 32, transitionColor, 3);
-
+				
 			if (!d && !l) {
 				if (!dl)
 					screen.render(x * 16 + 0, y * 16 + 8, 7 + 2 * 32, col, 0);
@@ -278,11 +278,11 @@ public class StoneWallTile extends Tile {
 				screen.render(x * 16 + 8, y * 16 + 8, (r ? 4 : 5) + (d ? 25 : 26) * 32, transitionColor, 3);
 		}
 	}
-
+	
 	public boolean mayPass(Level level, int x, int y, Entity e) {
 		return false;
 	}
-
+	
 	public void hurt(Level level, int x, int y, Mob source, int dmg, int attackDir) {
 		int playDmg;
 		if (ModeMenu.creative) playDmg = random.nextInt(5);
@@ -310,7 +310,7 @@ public class StoneWallTile extends Tile {
 		}
 		return false;
 	}
-
+	
 	public void hurt(Level level, int x, int y, int dmg) {
 		int damage = level.getData(x, y) + dmg;
 		int sbwHealth;
@@ -328,9 +328,10 @@ public class StoneWallTile extends Tile {
 			level.setData(x, y, damage);
 		}
 	}
-
+	
 	public void tick(Level level, int xt, int yt) {
 		int damage = level.getData(xt, yt);
 		if (damage > 0) level.setData(xt, yt, damage - 1);
 	}
 }
+	

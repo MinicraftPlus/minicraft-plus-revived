@@ -15,7 +15,7 @@ public class Tnt extends Furniture implements ActionListener {
 	private static int BLAST_RADIUS = 30;
 	private static int BLAST_RADIUSTWO = 2000;
 	private static int BLAST_DAMAGE = 30;
-
+	
 	protected int dir = 0;
 	private int lvl;
 	private int counter = 0;
@@ -43,8 +43,8 @@ public class Tnt extends Furniture implements ActionListener {
 		xr = 3;
 		yr = 2;
 	}
-
-
+	
+	
 	public void tick() {
 		super.tick();
 		
@@ -116,12 +116,12 @@ public class Tnt extends Furniture implements ActionListener {
 		} else {
 			fuseTime--;
 		}
-
+		
 	}
 	
-
+	
 	public void actionPerformed(ActionEvent e) {
-
+	
 		int xt = x >> 4;
 		int yt = (y - 2) >> 4;
 		if (e.getSource() == t) {

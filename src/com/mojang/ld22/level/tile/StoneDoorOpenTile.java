@@ -22,7 +22,7 @@ public class StoneDoorOpenTile extends Tile {
 	public StoneDoorOpenTile(int id) {
 		super(id);
 	}
-
+	
 	public void render(Screen screen, Level level, int x, int y) {
 		
 		int col0 = Color.get(333, 222, 222, 111);
@@ -79,7 +79,7 @@ public class StoneDoorOpenTile extends Tile {
 	public void hurt(Level level, int x, int y, Mob source, int dmg, int attackDir) {
 		level.setTile(x, y, Tile.sdc, 0);
 	}
-
+	
 	public boolean interact(Level level, int xt, int yt, Player player, Item item, int attackDir) {
 		if (item instanceof ToolItem) {
 			ToolItem tool = (ToolItem) item;

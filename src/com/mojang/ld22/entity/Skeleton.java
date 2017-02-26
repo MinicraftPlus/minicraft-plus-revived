@@ -17,7 +17,7 @@ public class Skeleton extends Mob {
 	private int randomWalkTime = 0;
 	public int arrowtime = 70 / (lvl + 1);
 	public int artime = arrowtime;
-
+	
 	public Skeleton(int lvl) {
 		if (StartMenu.diff == StartMenu.easy){
 		this.lvl = lvl;
@@ -32,7 +32,7 @@ public class Skeleton extends Mob {
 		x = random.nextInt(64 * 16);
 		y = random.nextInt(64 * 16);
 		if (ModeMenu.creative) health = maxHealth = 1;
-
+		
 		else health = maxHealth = lvl * lvl * 12;
 		}
 		
@@ -41,14 +41,14 @@ public class Skeleton extends Mob {
 		x = random.nextInt(64 * 16);
 		y = random.nextInt(64 * 16);
 		if (ModeMenu.creative) health = maxHealth = 1;
-
+		
 		else health = maxHealth = lvl * lvl * 24;
 		}
 	}
-
+	
 	public void tick() {
 		super.tick();
-
+		
 		isenemy = true;
 		
 		if (level.player != null && randomWalkTime == 0) {
@@ -95,7 +95,7 @@ public class Skeleton extends Mob {
 				}
 			}
 		}
-
+		
 		int speed = tickTime & 1;
 		if (!move(xa * speed, ya * speed) || random.nextInt(200) == 0) {
 			randomWalkTime = 45;
@@ -104,19 +104,19 @@ public class Skeleton extends Mob {
 		}
 		if (randomWalkTime > 0) randomWalkTime--;
 	}
-
+	
 	public void render(Screen screen) {
 		int xt = 8;
 		int yt = 16;
-
+		
 		int flip1 = (walkDist >> 3) & 1;
 		int flip2 = (walkDist >> 3) & 1;
-
+		
 		if (dir == 1) {
 			xt += 2;
 		}
 		if (dir > 1) {
-
+		
 			flip1 = 0;
 			flip2 = ((walkDist >> 4) & 1);
 			if (dir == 2) {
@@ -124,10 +124,10 @@ public class Skeleton extends Mob {
 			}
 			xt += 4 + ((walkDist >> 3) & 1) * 2;
 		}
-
+		
 		int xo = x - 8;
 		int yo = y - 11;
-
+		
 		int col0 = Color.get(-1, 111, 40, 444);
 		
 		int col1 = Color.get(-1, 222, 50, 555);
@@ -171,7 +171,7 @@ public class Skeleton extends Mob {
 		if (hurtTime > 0) {
 			col = Color.get(-1, 555, 555, 555);
 		}
-
+		
 		screen.render(xo + 8 * flip1, yo + 0, xt + yt * 32, col, flip1);
 		screen.render(xo + 8 - 8 * flip1, yo + 0, xt + 1 + yt * 32, col, flip1);
 		screen.render(xo + 8 * flip2, yo + 8, xt + (yt + 1) * 32, col, flip2);
@@ -186,7 +186,7 @@ public class Skeleton extends Mob {
 		if (hurtTime > 0) {
 			col = Color.get(-1, 555, 555, 555);
 		}
-
+		
 		screen.render(xo + 8 * flip1, yo + 0, xt + yt * 32, col, flip1);
 		screen.render(xo + 8 - 8 * flip1, yo + 0, xt + 1 + yt * 32, col, flip1);
 		screen.render(xo + 8 * flip2, yo + 8, xt + (yt + 1) * 32, col, flip2);
@@ -201,7 +201,7 @@ public class Skeleton extends Mob {
 		if (hurtTime > 0) {
 			col = Color.get(-1, 555, 555, 555);
 		}
-
+		
 		screen.render(xo + 8 * flip1, yo + 0, xt + yt * 32, col, flip1);
 		screen.render(xo + 8 - 8 * flip1, yo + 0, xt + 1 + yt * 32, col, flip1);
 		screen.render(xo + 8 * flip2, yo + 8, xt + (yt + 1) * 32, col, flip2);
@@ -216,7 +216,7 @@ public class Skeleton extends Mob {
 		if (hurtTime > 0) {
 			col = Color.get(-1, 555, 555, 555);
 		}
-
+		
 		screen.render(xo + 8 * flip1, yo + 0, xt + yt * 32, col, flip1);
 		screen.render(xo + 8 - 8 * flip1, yo + 0, xt + 1 + yt * 32, col, flip1);
 		screen.render(xo + 8 * flip2, yo + 8, xt + (yt + 1) * 32, col, flip2);
@@ -232,14 +232,14 @@ public class Skeleton extends Mob {
 				if (hurtTime > 0) {
 					col = Color.get(-1, 555, 555, 555);
 				}
-
+				
 				screen.render(xo + 8 * flip1, yo + 0, xt + yt * 32, col, flip1);
 				screen.render(xo + 8 - 8 * flip1, yo + 0, xt + 1 + yt * 32, col, flip1);
 				screen.render(xo + 8 * flip2, yo + 8, xt + (yt + 1) * 32, col, flip2);
 				screen.render(xo + 8 - 8 * flip2, yo + 8, xt + 1 + (yt + 1) * 32, col, flip2);
 		}
 	}
-
+	
 	protected void touchedBy(Entity entity) {
 		if (StartMenu.diff == StartMenu.easy){
 			if (entity instanceof Player) {
@@ -257,14 +257,14 @@ public class Skeleton extends Mob {
 			}
 		}
 	}
-
+	
 	public boolean canWool() {
 		return true;
 		}
-
+		
 	protected void die() {
 		super.die();
-
+		
 		if (StartMenu.diff == StartMenu.easy){
 		int count = random.nextInt(3) + 1;
 		int bookcount = random.nextInt(1) + 1;
@@ -323,7 +323,7 @@ public class Skeleton extends Mob {
 		
 		Game.multiplyer++;
 		Game.multiplyertime = Game.mtm = Game.mtm - 5;
-
+		
 	}
-
+	
 }

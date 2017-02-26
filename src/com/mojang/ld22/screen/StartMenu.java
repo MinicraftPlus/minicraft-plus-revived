@@ -14,9 +14,9 @@ public class StartMenu extends Menu {
 	public static boolean isSoundAct = true;
 	private int selected = 0;
 	String soundTest = "On";
-
+	
 	private Menu parent;
-
+	
 	public StartMenu() {
 	}
 	
@@ -65,7 +65,7 @@ public static boolean hasSetDiff = false;
 		
 		
 	}
-
+	
 	public void render(Screen screen) {
 		int col1 = Color.get(-1,500,500,500);
 		int col2 = Color.get(-1,50,50,50);
@@ -88,16 +88,16 @@ public static boolean hasSetDiff = false;
 		Font.draw("Normal", screen, 11 * 16 + 4, 8 * 8, Color.get(-1, 555, 555, 555));
 		else if (diff == 3)
 		Font.draw("Hard", screen, 11 * 16 + 4, 8 * 8, Color.get(-1, 555, 555, 555));
-
+		
 		Font.draw("Press C to return", screen, 80, screen.h - 75, Color.get(0, 555, 555, 555));
 		
 		Font.draw("<S>ound:", screen, 80, screen.h - 100, Color.get(0, 555, 555, 555));
 		if (isSoundAct) Font.draw("On", screen, 150, screen.h - 100, Color.get(0, 50, 50, 50));
 		else Font.draw("Off", screen, 150, screen.h - 100, Color.get(0, 500, 500, 500));
-
+		
 		//Font.draw("" + soundTest, screen, 90, screen.h - 90, rCol);
-
+		
 		Font.draw("Press Left and Right", screen, 67, screen.h - 150, Color.get(0, 555, 555, 555));
-
+		
 	}
 }
