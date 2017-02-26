@@ -128,6 +128,9 @@ public class InputHandler implements MouseListener, KeyListener {
 	public Key a8 = new Key();
 	public Key a9 = new Key();
 	public Key a0 = new Key();
+	public Key f2 = new Key();
+	public Key f3 = new Key();
+	
 	
 	public Key enter = new Key();
 	public Key delete = new Key();
@@ -222,6 +225,8 @@ public class InputHandler implements MouseListener, KeyListener {
 		
 		if (ke.getKeyCode() == KeyEvent.VK_SPACE) space.toggle(pressed);
 		if (ke.getKeyCode() == KeyEvent.VK_BACK_SPACE) backspace.toggle(pressed);
+		if (ke.getKeyCode() == KeyEvent.VK_F2) f2.toggle(pressed);
+		if (ke.getKeyCode() == KeyEvent.VK_F3) f3.toggle(pressed);
 		
 /*
 		if (ke.getKeyCode() == KeyEvent.VK_A) nightTime.toggle(pressed);

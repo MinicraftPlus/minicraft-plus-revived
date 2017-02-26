@@ -14,6 +14,8 @@ public class StartMenu extends Menu {
 	public static boolean isSoundAct = true;
 	private int selected = 0;
 	String soundTest = "On";
+	public static boolean unlockedskin = false;
+	public static boolean skinon = false;
 	
 	private Menu parent;
 	
@@ -46,24 +48,25 @@ public static boolean hasSetDiff = false;
 				//game.resetstartGame();
 				hasSetDiff = true;
 				if (TitleMenu.sentFromMenu){ game.setMenu(new TitleMenu());}
-				else game.setMenu(new PauseMenu());
+				else game.setMenu(new PauseMenu(game.player));
 				
 			}
 		
 		}
-		 if (input.down.clicked) {
-			 Sound.craft.play(); 
-			 System.out.println("Works!");
-			if (isSoundAct == true) {
-				isSoundAct = false;
-				
-			}
-			else   {
-				isSoundAct = true;
+		
+		if(unlockedskin && this.input.w.clicked) {
+			if(skinon) {
+				skinon = false;
+			} else {
+				skinon = true;
 			}
 		}
 		
-		
+		if (input.down.clicked) {
+			Sound.craft.play(); 
+			System.out.println("Works!");
+			isSoundAct = !isSoundAct;
+		}
 	}
 	
 	public void render(Screen screen) {
@@ -96,6 +99,15 @@ public static boolean hasSetDiff = false;
 		else Font.draw("Off", screen, 150, screen.h - 100, Color.get(0, 500, 500, 500));
 		
 		//Font.draw("" + soundTest, screen, 90, screen.h - 90, rCol);
+		
+		if(unlockedskin) {
+			Font.draw("<W>ear Suit:", screen, 80, screen.h - 110, Color.get(0, 555, 555, 555));
+			if(skinon) {
+				Font.draw("On", screen, 180, screen.h - 110, Color.get(0, 50, 50, 50));
+			} else {
+				Font.draw("Off", screen, 180, screen.h - 110, Color.get(0, 500, 500, 500));
+			}
+		}
 		
 		Font.draw("Press Left and Right", screen, 67, screen.h - 150, Color.get(0, 555, 555, 555));
 		

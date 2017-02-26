@@ -22,6 +22,7 @@ import com.mojang.ld22.item.ToolItem;
 import com.mojang.ld22.item.ToolType;
 import com.mojang.ld22.item.resource.ItemResource;
 import com.mojang.ld22.item.resource.Resource;
+import com.mojang.ld22.item.ListItems;
 import com.mojang.ld22.level.Level;
 import com.mojang.ld22.level.tile.Tile;
 import com.mojang.ld22.screen.CraftInvMenu;
@@ -88,7 +89,10 @@ public class Player extends Mob {
 		stamina = maxStamina;
 		hunger = maxHunger;
 		if (ModeMenu.creative) {
-			
+			for(int i = 0; i < ListItems.items.size(); ++i) {
+				this.inventory.add((Item)ListItems.items.get(i));
+			}
+			/*
 			inventory.add(new ResourceItem( Resource.torch));
 			
 			inventory.add(new FurnitureItem(new Workbench()));
@@ -201,7 +205,7 @@ public class Player extends Mob {
 			
 			
 			inventory.add(new PowerGloveItem());
-			
+			*/
 		}
 		else {
 		inventory.add(new FurnitureItem(new Enchanter()));
@@ -352,7 +356,24 @@ public class Player extends Mob {
 			}
 		}
 		
-		
+		if(game.saving && game.savecooldown > 0) {
+			xa = 0;
+			ya = 0;
+		}
+		/* potion effect
+		if(regen) {
+			regentick++;
+			if(regentick > 60) {
+				regentick = 0;
+				if(health < 10) {
+					health++;
+				}
+			}
+		}
+		*/
+		if(game.savecooldown > 0 && !game.saving) {
+			game.savecooldown--;
+		}
 		
 		if (staminaRechargeDelay % 2 == 0) {
 			move(xa, ya);
@@ -373,7 +394,7 @@ public class Player extends Mob {
 			}
 		}
 		if (input.pause.clicked) {
-			game.setMenu(new PauseMenu());
+			game.setMenu(new PauseMenu(this));
 			
 			}
 		if (input.craft.clicked) {

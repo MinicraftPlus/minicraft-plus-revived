@@ -12,6 +12,12 @@ import com.mojang.ld22.item.resource.Resource;
 public class Inventory {
 	public List<Item> items = new ArrayList<Item>();
 	public static List<Item> itemss = new ArrayList<Item>();
+	public boolean playerinventory = false;
+	
+	public Inventory() {}
+	public Inventory(Player player) {
+		this.playerinventory = true;
+	}
 	
 	public void add(Item item) {
 		add(items.size(), item);

@@ -24,9 +24,13 @@ import java.io.*;
 
 import com.mojang.ld22.entity.AirWizard;
 import com.mojang.ld22.entity.Entity;
+import com.mojang.ld22.entity.Enchanter;
+import com.mojang.ld22.entity.Furniture;
 import com.mojang.ld22.entity.Inventory;
 import com.mojang.ld22.entity.ItemEntity;
+import com.mojang.ld22.entity.IronLantern;
 import com.mojang.ld22.entity.Player;
+import com.mojang.ld22.entity.Workbench;
 import com.mojang.ld22.entity.bed;
 import com.mojang.ld22.gfx.Color;
 import com.mojang.ld22.gfx.Font;
@@ -35,6 +39,8 @@ import com.mojang.ld22.gfx.SpriteSheet;
 import com.mojang.ld22.item.ResourceItem;
 import com.mojang.ld22.item.resource.ItemResource;
 import com.mojang.ld22.item.resource.Resource;
+import com.mojang.ld22.item.ListItems;
+import com.mojang.ld22.item.FurnitureItem;
 import com.mojang.ld22.level.Level;
 import com.mojang.ld22.level.levelgen.LevelGen;
 import com.mojang.ld22.level.tile.DirtTile;
@@ -254,13 +260,15 @@ public class Game extends Canvas implements Runnable, ActionListener{
 		Player.hasSetHome = false;
 		Player.canGoHome = false;
 		bed.hasBedSet = false;
-		if(StartMenu.hasSetDiff==false)StartMenu.diff = 2;
+		if(!StartMenu.hasSetDiff)
+			StartMenu.diff = 2;
+		
 		tickReset = true;
-		
-		
 		hasWon = false;
 		
 		player = new Player(this, input);
+		ListItems.items.clear();
+		new ListItems();
 		
 		levels = new Level[6];	
 		currentLevel = 3;
@@ -281,7 +289,7 @@ public class Game extends Canvas implements Runnable, ActionListener{
 		
 		Player.score = 0;
 		
-		
+		/*
 		levels[4] = new Level(l, l, 1, null);
 		levels[3] = new Level(l, l, 0, levels[4]);
 		levels[2] = new Level(l, l, -1, levels[3]);
@@ -296,6 +304,94 @@ public class Game extends Canvas implements Runnable, ActionListener{
 		//System.out.println("Ready!");
 		DeadMenu.shudrespawn = true; 
 		SunRtd();
+		*/
+		if(WorldSelectMenu.loadworld) {
+			try {
+				BufferedReader f = new BufferedReader(new FileReader(gameDir + "/saves/" + WorldSelectMenu.worldname + "/Level3.miniplussave"));
+				this.l = Integer.parseInt(f.readLine().substring(0, 3));
+			} catch (FileNotFoundException var4) {
+				var4.printStackTrace();
+			} catch (NumberFormatException var5) {
+				var5.printStackTrace();
+			} catch (IOException var6) {
+				var6.printStackTrace();
+			}
+		}
+
+		if(!WorldSelectMenu.loadworld) {
+			LoadingMenu.percentage = 0;
+		} else {
+			LoadingMenu.percentage += 5;
+		}
+
+		levels[4] = new Level(this.l, this.l, 1, (Level)null);
+		if(!WorldSelectMenu.loadworld) {
+			LoadingMenu.percentage = 20;
+		} else {
+			LoadingMenu.percentage += 5;
+		}
+
+		levels[3] = new Level(this.l, this.l, 0, levels[4]);
+		if(!WorldSelectMenu.loadworld) {
+			LoadingMenu.percentage = 40;
+		} else {
+			LoadingMenu.percentage += 5;
+		}
+
+		levels[2] = new Level(this.l, this.l, -1, levels[3]);
+		if(!WorldSelectMenu.loadworld) {
+			LoadingMenu.percentage = 60;
+		} else {
+			LoadingMenu.percentage += 5;
+		}
+
+		levels[1] = new Level(this.l, this.l, -2, levels[2]);
+		if(!WorldSelectMenu.loadworld) {
+			LoadingMenu.percentage = 80;
+		} else {
+			LoadingMenu.percentage += 5;
+		}
+
+		levels[0] = new Level(this.l, this.l, -3, levels[1]);
+		if(!WorldSelectMenu.loadworld) {
+			LoadingMenu.percentage = 100;
+		} else {
+			LoadingMenu.percentage += 5;
+		}
+
+		levels[5] = new Level(this.l, this.l, -4, levels[0]);
+		if(!WorldSelectMenu.loadworld) {
+			FurnitureItem f1 = new FurnitureItem(new IronLantern());
+			Furniture l = f1.furniture;
+			l.x = 984;
+			l.y = 984;
+			levels[5].add(l);
+		}
+
+		LoadingMenu.percentage = 0;
+		if(!ModeMenu.creative) {
+			this.player.inventory.add(new FurnitureItem(new Enchanter()));
+			this.player.inventory.add(new FurnitureItem(new Workbench()));
+		}
+
+		this.level = levels[currentLevel];
+		this.player.respawn(this.level);
+		currentLevel = 3;
+		this.level.add(this.player);
+		if(WorldSelectMenu.loadworld) {
+			new Load(this, WorldSelectMenu.worldname);
+		} else {
+			tickCount = 0;
+			if(this.level.getTile(this.player.x / 16, this.player.y / 16) != Tile.sand) {
+				this.level.setTile(this.player.x / 16, this.player.y / 16, Tile.grass, 0);
+			}
+		}
+
+		DeadMenu.shudrespawn = true;
+		/*if(WorldGenMenu.theme == WorldGenMenu.hell) {
+			this.player.inventory.add(new ResourceItem(Resource.lavapotion));
+		}*/
+
 	}
 	
 	
