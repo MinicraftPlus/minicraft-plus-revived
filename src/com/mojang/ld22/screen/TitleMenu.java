@@ -48,6 +48,7 @@ public class TitleMenu extends Menu {
 				WorldSelectMenu.loadworld = false;
 				game.setMenu(new WorldSelectMenu(this));
 				//(this method should now stop getting called by Game)
+				//BUT: this object is passed to WorldSelectMenu...
 			}
 			if (selected == 1) {
 				try {

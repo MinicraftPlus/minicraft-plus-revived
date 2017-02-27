@@ -13,33 +13,39 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class WorldSelectMenu extends Menu {
-
+	/** Bug:
+		You can't press any letter when typing world names, and I've traced it to this class
+		(though I already knew this class was the problem)
+	*/
+	
 	private Menu parent;
-	private int selected = 0;
-	private int worldselected = 0;
+	
+	private int selected = 0; //index of action; load or create.
+	private int worldselected = 0;//index of selected world?
 	public static boolean loadworld = false;
 	boolean createworld = false;
-	boolean fw = false;
-	String name = "";
-	boolean hasworld = false;
 	boolean delete = false;
 	boolean rename = false;
+	boolean fw = false;//="found-world"; tells if there are any pre-existing worlds.
+	String name = "";
+	boolean hasworld = false;
 	String renamingworldname = "";
 	String location = Game.gameDir + "/saves/";
 	File folder;
-	List worldnames;
+	ArrayList<String> worldnames;
 	public static String worldname = "";
 	private static final String[] options = new String[]{"Load World", "New World"};
 	public int tick;
 	int wncol;
 	
-	
 	public WorldSelectMenu(Menu parent) {
-		folder = new File(location);
-		worldnames = new ArrayList();
+		this.parent = parent;//Always TitleMenu?
 		tick = 0;
 		wncol = Color.get(0, 5, 5, 5);
-		this.parent = parent;
+		
+		//find worlds:
+		worldnames = new ArrayList<String>();
+		folder = new File(location);
 		folder.mkdirs();
 		File[] listOfFiles = folder.listFiles();
 		
@@ -59,47 +65,41 @@ public class WorldSelectMenu extends Menu {
 		if(worldnames.size() > 0) {
 			fw = true;
 		}
-		
 	}
 	
 	public void tick() {
-		if(input.up.clicked) {
-			--selected;
-		}
+		//loadworld, createworld, rename, and delete all start as false.
 		
-		if(input.down.clicked) {
-			++selected;
-		}
+		//select action
+		if(input.up.clicked)
+			selected--;
+		if(input.down.clicked)
+			selected++;
 		
-		if(!fw) {
+		//automatically choose 
+		if(!fw)
 			selected = 1;
-		}
 		
-		byte len = 2;
-		if(selected < 0) {
+		byte len = 2; //only two choices
+		if(selected < 0)
 			selected += len;
-		}
-		
-		if(selected >= len) {
+			
+		if(selected >= len)
 			selected -= len;
-		}
+		
 		
 		if(loadworld) {
-			if(input.up.clicked) {
-				--worldselected;
-			}
+			if(input.up.clicked)
+				worldselected--;
+			if(input.down.clicked)
+				worldselected++;
 			
-			if(input.down.clicked) {
-				++worldselected;
-			}
-			
-			if(worldselected < 0) {
+			if(worldselected < 0)
 				worldselected = 0;
-			}
 			
-			if(worldselected > worldnames.size() - 1) {
+			//prevent scrolling past the last one
+			if(worldselected > worldnames.size() - 1)
 				worldselected = worldnames.size() - 1;
-			}
 		}
 		
 		if(createworld) {
@@ -119,17 +119,20 @@ public class WorldSelectMenu extends Menu {
 		
 		File world;
 		if(loadworld && input.menu.clicked && !rename) {
+			//executes when you hit enter after selecting loadworld
 			if(!delete) {
-				worldname = (String)worldnames.get(worldselected);
+				//load the game
+				worldname = worldnames.get(worldselected);
 				Sound.test.play();
 				game.resetstartGame();
 				game.setMenu((Menu)null);
 			} else {
-				world = new File(location + "/" + (String)worldnames.get(worldselected));
+				//delete the world
+				world = new File(location + "/" + worldnames.get(worldselected));
 				System.out.println(world);
 				File[] list = world.listFiles();
 				
-				for(int i = 0; i < list.length; ++i) {
+				for(int i = 0; i < list.length; i++) {
 					list[i].delete();
 				}
 				
@@ -146,27 +149,26 @@ public class WorldSelectMenu extends Menu {
 		
 		if(input.attack.clicked && !rename && !createworld) {
 			if(!delete && !rename) {
+				//return to title screen
 				createworld = false;
 				loadworld = false;
 				game.setMenu(new TitleMenu());
 			} else if(delete) {
+				//cancel delete
 				delete = false;
 			} else if(rename) {
+				//cancel rename? never will happen...
 				rename = false;
 			}
 		}
 		
-		if(input.d.clicked && !rename && !createworld) {
-			if(!delete) {
-				delete = true;
-			} else {
-				delete = false;
-			}
-		}
+		if(input.d.clicked && !rename && !createworld)//toggle delete world mode
+			delete = !delete;
 		
 		if(input.r.clicked && !rename && !createworld) {
+			//toggle rename world mode
 			if(!rename) {
-				name = (String)worldnames.get(worldselected);
+				name = worldnames.get(worldselected);
 				renamingworldname = name;
 				rename = true;
 			} else {
@@ -175,28 +177,31 @@ public class WorldSelectMenu extends Menu {
 		}
 		
 		if(rename) {
-			++tick;
+			tick++;
 			if(input.pause.clicked) {
+				//cancel renaming
 				tick = 0;
 				rename = false;
 			}
 			
 			if(input.enter.clicked && wncol == Color.get(0, 5, 5, 5)) {
+				//user hits enter with a vaild new name; name is set here:
 				worldname = name;
 				name = "";
-				world = new File(location + "/" + (String)worldnames.get(worldselected));
+				world = new File(location + "/" + worldnames.get(worldselected));
 				world.renameTo(new File(location + "/" + worldname));
 				game.setMenu(new WorldSelectMenu(parent));
 				tick = 0;
 				rename = false;
 			}
 			
-			if(tick > 1) {
+			if(tick > 1) { //currently renaming a world
 				typename();
 			}
 		}
 		
 		if(!createworld && !loadworld) {
+			//this executes at first, before you choose load or save
 			if(input.menu.clicked) {
 				System.out.println(selected);
 				if(selected == 0) {
@@ -212,6 +217,7 @@ public class WorldSelectMenu extends Menu {
 			}
 			
 			if(input.attack.clicked) {
+				//exit to title screen
 				createworld = false;
 				loadworld = false;
 				game.setMenu(new TitleMenu());
@@ -226,7 +232,7 @@ public class WorldSelectMenu extends Menu {
 		if(!createworld && !loadworld) {
 			byte var6 = 2;
 			
-			for(col = 0; col < var6; ++col) {
+			for(col = 0; col < var6; col++) {
 				if(fw || col != 0) {
 					String var7 = options[col];
 					int col1 = Color.get(0, 222, 222, 222);
@@ -277,29 +283,29 @@ public class WorldSelectMenu extends Menu {
 				
 				if(worldnames.size() > 0) {
 					Font.draw(msg, screen, centertext(msg), 20, col);
-					Font.draw((String)worldnames.get(worldselected), screen, centertext((String)worldnames.get(worldselected)), 80, col);
+					Font.draw(worldnames.get(worldselected), screen, centertext(worldnames.get(worldselected)), 80, col);
 					if(worldselected > 0) {
-						Font.draw((String)worldnames.get(worldselected - 1), screen, centertext((String)worldnames.get(worldselected - 1)), 70, col2);
+						Font.draw(worldnames.get(worldselected - 1), screen, centertext(worldnames.get(worldselected - 1)), 70, col2);
 					}
 					
 					if(worldselected > 1) {
-						Font.draw((String)worldnames.get(worldselected - 2), screen, centertext((String)worldnames.get(worldselected - 2)), 60, col2);
+						Font.draw(worldnames.get(worldselected - 2), screen, centertext(worldnames.get(worldselected - 2)), 60, col2);
 					}
 					
 					if(worldselected > 2) {
-						Font.draw((String)worldnames.get(worldselected - 3), screen, centertext((String)worldnames.get(worldselected - 3)), 50, col2);
+						Font.draw(worldnames.get(worldselected - 3), screen, centertext(worldnames.get(worldselected - 3)), 50, col2);
 					}
 					
 					if(worldselected < worldnames.size() - 1) {
-						Font.draw((String)worldnames.get(worldselected + 1), screen, centertext((String)worldnames.get(worldselected + 1)), 90, col2);
+						Font.draw(worldnames.get(worldselected + 1), screen, centertext(worldnames.get(worldselected + 1)), 90, col2);
 					}
 					
 					if(worldselected < worldnames.size() - 2) {
-						Font.draw((String)worldnames.get(worldselected + 2), screen, centertext((String)worldnames.get(worldselected + 2)), 100, col2);
+						Font.draw(worldnames.get(worldselected + 2), screen, centertext(worldnames.get(worldselected + 2)), 100, col2);
 					}
 					
 					if(worldselected < worldnames.size() - 3) {
-						Font.draw((String)worldnames.get(worldselected + 3), screen, centertext((String)worldnames.get(worldselected + 3)), 110, col2);
+						Font.draw(worldnames.get(worldselected + 3), screen, centertext(worldnames.get(worldselected + 3)), 110, col2);
 					}
 				} else {
 					game.setMenu(new TitleMenu());
@@ -340,12 +346,12 @@ public class WorldSelectMenu extends Menu {
 	}*/
 	
 	public void typename() {
-		ArrayList namedworldnames = new ArrayList();
-		int i;
+		ArrayList<String> namedworldnames = new ArrayList<String>();
 		if(createworld) {
+			//typing name of new world
 			if(worldnames.size() > 0) {
-				for(i = 0; i < worldnames.size(); ++i) {
-					if(!name.equals(((String)worldnames.get(i)).toLowerCase())) {
+				for(int i = 0; i < worldnames.size(); i++) {
+					if(!name.equals(worldnames.get(i).toLowerCase())) {
 						wncol = Color.get(0, 5, 5, 5);
 					} else {
 						wncol = Color.get(0, 500, 500, 500);
@@ -358,15 +364,17 @@ public class WorldSelectMenu extends Menu {
 		}
 		
 		if(rename) {
-			for(i = 0; i < worldnames.size(); ++i) {
-				if(!((String)worldnames.get(i)).equals(renamingworldname)) {
-					namedworldnames.add(((String)worldnames.get(i)).toLowerCase());
+			//get all worldnames besides the one you're renaming
+			for(int i = 0; i < worldnames.size(); i++) {
+				if(!worldnames.get(i).equals(renamingworldname)) {
+					namedworldnames.add(worldnames.get(i).toLowerCase());
 				}
 			}
 			
+			//check if worldname already exists
 			if(namedworldnames.size() > 0) {
-				for(i = 0; i < namedworldnames.size(); ++i) {
-					if(name.toLowerCase().equals(((String)namedworldnames.get(i)).toLowerCase())) {
+				for(int i = 0; i < namedworldnames.size(); i++) {
+					if(name.toLowerCase().equals(namedworldnames.get(i).toLowerCase())) {
 						wncol = Color.get(0, 500, 500, 500);
 						break;
 					}
@@ -376,18 +384,17 @@ public class WorldSelectMenu extends Menu {
 			} else {
 				wncol = Color.get(0, 5, 5, 5);
 			}
-		}
+		}//end rename
 		
-		if(name.equals("")) {
+		
+		if(name.equals("")) //name cannot be blank
 			wncol = Color.get(0, 500, 500, 500);
-		}
 		
-		if(input.backspace.clicked && name.length() > 0) {
+		if(input.backspace.clicked && name.length() > 0) //backspace support
 			name = name.substring(0, name.length() - 1);
-		}
 		
 		if(name.length() < 36 && input.lastKeyTyped.length() > 0) {
-			//pattern object is for filtering for valid characters.
+			//ensure only valid characters are typed.
 			java.util.regex.Pattern p = java.util.regex.Pattern.compile("[a-zA-Z0-9 ]");
 			if(p.matcher(input.lastKeyTyped).matches())
 				name += input.lastKeyTyped;
