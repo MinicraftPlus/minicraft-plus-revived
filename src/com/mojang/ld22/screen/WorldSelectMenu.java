@@ -13,10 +13,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class WorldSelectMenu extends Menu {
-	/** Bug:
-		You can't press any letter when typing world names, and I've traced it to this class
-		(though I already knew this class was the problem)
-	*/
 	
 	private Menu parent;
 	
