@@ -9,6 +9,11 @@ import java.util.List;
 
 public class InputHandler implements MouseListener, KeyListener {
 	
+	public InputHandler(Game game) {
+		game.addKeyListener(this);
+		game.addMouseListener(this);
+	}
+	
 	public class Key {
 		public int presses, absorbs;
 		public boolean down, clicked;
@@ -150,11 +155,6 @@ public class InputHandler implements MouseListener, KeyListener {
 		}
 	}
 	
-	public InputHandler(Game game) {
-		game.addKeyListener(this);
-		game.addMouseListener(this);
-	}
-	
 	public void keyPressed(KeyEvent ke) {
 		toggle(ke, true);
 	}
@@ -189,19 +189,19 @@ public class InputHandler implements MouseListener, KeyListener {
 		if (ke.getKeyCode() == KeyEvent.VK_NUMPAD0) attack.toggle(pressed);
 		if (ke.getKeyCode() == KeyEvent.VK_INSERT) attack.toggle(pressed);
 		if (ke.getKeyCode() == KeyEvent.VK_ENTER) menu.toggle(pressed);
-		if (ke.getKeyCode() == KeyEvent.VK_ENTER) enter.toggle(pressed);
+		if (ke.getKeyCode() == KeyEvent.VK_ENTER) enter.toggle(pressed);//generic
 		if (ke.getKeyCode() == KeyEvent.VK_Q) craft.toggle(pressed);
 		if (ke.getKeyCode() == KeyEvent.VK_NUMPAD1) craft.toggle(pressed);
 		if (ke.getKeyCode() == KeyEvent.VK_E) craft.toggle(pressed);
 		
 		if (ke.getKeyCode() == KeyEvent.VK_ESCAPE) pause.toggle(pressed);
-		if (ke.getKeyCode() == KeyEvent.VK_N) pause.toggle(pressed);
+		//if (ke.getKeyCode() == KeyEvent.VK_N) pause.toggle(pressed);
 		
 		if (ke.getKeyCode() == KeyEvent.VK_Z) craft.toggle(pressed);
 		if (ke.getKeyCode() == KeyEvent.VK_X) menu.toggle(pressed);
 		if (ke.getKeyCode() == KeyEvent.VK_C) attack.toggle(pressed);
-		if (ke.getKeyCode() == KeyEvent.VK_R) r.toggle(pressed);
-		if (ke.getKeyCode() == KeyEvent.VK_T) t.toggle(pressed);
+		if (ke.getKeyCode() == KeyEvent.VK_R) r.toggle(pressed);//generic
+		if (ke.getKeyCode() == KeyEvent.VK_T) t.toggle(pressed);//generic
 		if (ke.getKeyCode() == KeyEvent.VK_1) sethome.toggle(pressed);
 		if (ke.getKeyCode() == KeyEvent.VK_H) home.toggle(pressed);
 		
@@ -218,17 +218,17 @@ public class InputHandler implements MouseListener, KeyListener {
 		
 		if (ke.getKeyCode() == KeyEvent.VK_2) dayTime.toggle(pressed);
 		if (ke.getKeyCode() == KeyEvent.VK_3) nightTime.toggle(pressed);
-		if (ke.getKeyCode() == KeyEvent.VK_I) i.toggle(pressed);
-		if (ke.getKeyCode() == KeyEvent.VK_W) w.toggle(pressed);
-		if (ke.getKeyCode() == KeyEvent.VK_L) l.toggle(pressed);
-		if (ke.getKeyCode() == KeyEvent.VK_S) s.toggle(pressed);
+		if (ke.getKeyCode() == KeyEvent.VK_I) i.toggle(pressed);//generic
+		if (ke.getKeyCode() == KeyEvent.VK_W) w.toggle(pressed);//generic
+		if (ke.getKeyCode() == KeyEvent.VK_L) l.toggle(pressed);//generic
+		if (ke.getKeyCode() == KeyEvent.VK_S) s.toggle(pressed);//generic
 		
-		if (ke.getKeyCode() == KeyEvent.VK_SPACE) space.toggle(pressed);
-		if (ke.getKeyCode() == KeyEvent.VK_BACK_SPACE) backspace.toggle(pressed);
-		if (ke.getKeyCode() == KeyEvent.VK_F2) f2.toggle(pressed);
-		if (ke.getKeyCode() == KeyEvent.VK_F3) f3.toggle(pressed);
+		if (ke.getKeyCode() == KeyEvent.VK_SPACE) space.toggle(pressed);//generic
+		if (ke.getKeyCode() == KeyEvent.VK_BACK_SPACE) backspace.toggle(pressed);//generic
+		if (ke.getKeyCode() == KeyEvent.VK_F2) f2.toggle(pressed);//generic
+		if (ke.getKeyCode() == KeyEvent.VK_F3) f3.toggle(pressed);//generic
 		
-/*
+		/*
 		if (ke.getKeyCode() == KeyEvent.VK_A) nightTime.toggle(pressed);
 		if (ke.getKeyCode() == KeyEvent.VK_B) nightTime.toggle(pressed);
 		if (ke.getKeyCode() == KeyEvent.VK_C) nightTime.toggle(pressed);
@@ -269,14 +269,13 @@ public class InputHandler implements MouseListener, KeyListener {
 		
 		if (ke.getKeyCode() == KeyEvent.VK_A) nightTime.toggle(pressed);
 		if (ke.getKeyCode() == KeyEvent.VK_A) nightTime.toggle(pressed);
-		
-*/
+		*/
 	}
 	
 	private void click(MouseEvent e, boolean clickd) {
-	if (e.getButton() == MouseEvent.BUTTON1) one.toggle(clickd);
-	if (e.getButton() == MouseEvent.BUTTON2) two.toggle(clickd);
-	if (e.getButton() == MouseEvent.BUTTON3) tri.toggle(clickd);
+		if (e.getButton() == MouseEvent.BUTTON1) one.toggle(clickd);
+		if (e.getButton() == MouseEvent.BUTTON2) two.toggle(clickd);
+		if (e.getButton() == MouseEvent.BUTTON3) tri.toggle(clickd);
 	}
 	
 	@Override

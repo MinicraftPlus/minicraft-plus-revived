@@ -103,14 +103,16 @@ public class WorldSelectMenu extends Menu {
 		}
 		
 		if(createworld) {
-			typename();
+			typename(); //check for input to type worldname
 			if(input.pause.clicked) {
+				//cancel to title screen
 				createworld = false;
 				loadworld = false;
 				game.setMenu(new TitleMenu());
 			}
 			
 			if(input.enter.clicked && wncol == Color.get(0, 5, 5, 5)) {
+				//proceed to mode selection
 				worldname = name;
 				name = "";
 				game.setMenu(new ModeMenu());
@@ -119,7 +121,6 @@ public class WorldSelectMenu extends Menu {
 		
 		File world;
 		if(loadworld && input.menu.clicked && !rename) {
-			//executes when you hit enter after selecting loadworld
 			if(!delete) {
 				//load the game
 				worldname = worldnames.get(worldselected);
