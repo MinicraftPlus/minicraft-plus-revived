@@ -6,6 +6,7 @@ import com.mojang.ld22.gfx.Screen;
 import com.mojang.ld22.sound.Sound;
 
 public class StartMenu extends Menu {
+	//This is really the options menu; I don't know why it's called StartMenu...
 	public static int easy = 1;
 	public static int norm = 2;
 	public static int hard = 3;
@@ -16,14 +17,12 @@ public class StartMenu extends Menu {
 	String soundTest = "On";
 	public static boolean unlockedskin = false;
 	public static boolean skinon = false;
+	public static boolean hasSetDiff = false;
 	
 	private Menu parent;
 	
-	public StartMenu() {
-	}
+	public StartMenu() {}
 	
-	
-public static boolean hasSetDiff = false;
 	public void tick() {
 		if (input.left.clicked) selectedlr--;
 		if (input.right.clicked) selectedlr++;
@@ -62,8 +61,9 @@ public static boolean hasSetDiff = false;
 			}
 		}
 		
+		//toggles sound
 		if (input.down.clicked) {
-			Sound.craft.play(); 
+			Sound.craft.play();
 			System.out.println("Works!");
 			isSoundAct = !isSoundAct;
 		}
