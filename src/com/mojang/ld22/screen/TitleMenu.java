@@ -17,8 +17,7 @@ public class TitleMenu extends Menu {
 	int count = 0;
 	boolean reverse = false;
 	
-	public TitleMenu() {
-	}
+	public TitleMenu() {}
 	
 	public void tick() {
 		if (input.up.clicked) selected--;
@@ -48,6 +47,7 @@ public class TitleMenu extends Menu {
 			if (selected == 0) {
 				WorldSelectMenu.loadworld = false;
 				game.setMenu(new WorldSelectMenu(this));
+				//(this method should now stop getting called by Game)
 			}
 			if (selected == 1) {
 				try {
@@ -74,6 +74,7 @@ public class TitleMenu extends Menu {
 		int xo = (screen.w - w * 8) / 2;
 		int yo = 36;
 		int cols = Color.get(0, 550, 550, 550);
+		//this could be simplified so easily with better naming...
 		String a = "Also play InfinityTale!";
 		String b = "Also play Minicraft Delux!";
 		String c = "Notch is Awesome!";
@@ -141,7 +142,7 @@ public class TitleMenu extends Menu {
 			}
 		}
 		
-		for (int i = 0; i < 4; i++) {
+		for (int i = 0; i < options.length; i++) {
 			String msg = options[i];
 			int col = Color.get(0, 222, 222, 222);
 			if (i == selected) {
@@ -399,6 +400,6 @@ public class TitleMenu extends Menu {
 		
 		Font.draw("(Arrow keys to move)", screen, 65, screen.h - 25, Color.get(0, 111, 111, 111));
 		Font.draw("(X to accept, C to return)", screen, 45, screen.h - 15, Color.get(0, 111, 111, 111));
-		Font.draw("Version 1.6", screen, 1, screen.h - 190, Color.get(0, 111, 111, 111));
+		Font.draw("Version 1.6-1.8 (updating)", screen, 1, screen.h - 190, Color.get(0, 111, 111, 111));
 	}
 }

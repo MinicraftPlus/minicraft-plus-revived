@@ -27,15 +27,17 @@ public class Sound {
 	}
 	
 	public void play() {
+		if (!StartMenu.isSoundAct)
+			return;
 		try {
 			new Thread() {
 				public void run() {
-					if (StartMenu.isSoundAct) {
+					//if (StartMenu.isSoundAct) {
 					clip.play();
-					}
+					/*}
 					else {
 						
-					}
+					}*/
 				}
 			}.start();
 		} catch (Throwable e) {
