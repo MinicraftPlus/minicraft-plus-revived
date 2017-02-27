@@ -151,108 +151,127 @@ public class Game extends Canvas implements Runnable, ActionListener{
 		if (menu != null) menu.init(this, input);
 	}
 	
+	public static void changeTime(int t) {
+		Time = t;
+	}
+	
+	//called after main; main is at bottom.
 	public void start() {
 		running = true;
-		new Thread(this).start();
+		new Thread(this).start(); //calls run()
 	}
 	
 	public void stop() {
 		running = false;
 	}
 	
-	public void SunRtd(){
-		if (Time == 0){
-			daytime.stop();
-			nighttime.stop();
-			sunrise.stop();
-			sunset.stop();
-			sunrise.start();
-			//System.out.println("Starting! (Time0)");
-			if (DirtTile.dirtc == 0){
-			}
-			if (DirtTile.dirtc == 1){
-			DirtTile.dirtc--;
-			}
-		}
-		if (Time == 1){
-			Time--;
-			daytime.stop();
-			nighttime.stop();
-			sunrise.stop();
-			sunset.stop();
-			sunrise.start();
-			//System.out.println("Starting! (Time1)");
-			if (DirtTile.dirtc == 0){
-			}
-			if (DirtTile.dirtc == 1){
-			DirtTile.dirtc--;
-			}
-		}
-		if (Time == 2){
-			Time--;
-			Time--;
-			daytime.stop();
-			nighttime.stop();
-			sunrise.stop();
-			sunset.stop();
-			sunrise.start();
-			//System.out.println("Starting! (Time2)");
-			if (DirtTile.dirtc == 0){
-			}
-			if (DirtTile.dirtc == 1){
-			DirtTile.dirtc--;
-			}
-		}
-		if (Time == 3){
-			Time--;
-			Time--;
-			Time--;
-			daytime.stop();
-			nighttime.stop();
-			sunrise.stop();
-			sunset.stop();
-			sunrise.start();
-			//System.out.println("Starting! (Time3)");
-			if (DirtTile.dirtc == 0){
-			}
-			if (DirtTile.dirtc == 1){
-			DirtTile.dirtc--;
-			}
-		}
-	}
-	
-	
-	/*
-	public void actionPerformed(ActionEvent e) {
-		if (e.getSource() == sunrise) {
-			Time++;
-			System.out.println("It's Daytime!");
-			daytime.start();
-			sunrise.stop();
-	      }
-		if (e.getSource() == sunset) {
-			Time++;
-			System.out.println("It's Nighttime!");
-			nighttime.start();
-			sunset.stop();
-	      }
-		if (e.getSource() == daytime) {
-			Time++;
-			System.out.println("It's Sunset!");
-			sunset.start();
-			daytime.stop();
-	      }
-		if (e.getSource() == nighttime) {
-			Time--;
-			Time--;
-			Time--;
-			System.out.println("It's Sunrise!");
-			sunrise.start();
-			nighttime.stop();
-	      }
+	public void run() {
+		long lastTime = System.nanoTime();
+		double unprocessed = 0;
+		double nsPerTick = 1000000000.0 / 60;
+		int frames = 0;
+		int ticks = 0;
+		long lastTimer1 = System.currentTimeMillis();
 		
+		//calls setMenu with new TitleMenu (and does other things)
+		init();
+		
+		//main game loop? calls tick() and render().
+		while (running) {
+			long now = System.nanoTime();
+			unprocessed += (now - lastTime) / nsPerTick;
+			lastTime = now;
+			boolean shouldRender = true;
+			while (unprocessed >= 1) {
+				ticks++;
+				tick();
+				unprocessed -= 1;
+				shouldRender = true;
+			}
+			
+			try {
+				Thread.sleep(2);
+			} catch (InterruptedException e) {
+				e.printStackTrace();
+			}
+			
+			if (shouldRender) {
+				frames++;
+				render();
+			}
+			
+			if (System.currentTimeMillis() - lastTimer1 > 1000) {
+				lastTimer1 += 1000;
+				//System.out.println(ticks + " ticks, " + frames + " fps");
+				//Font.draw(ticks + " ticks, " + frames + " fps", screen, screen.w, screen.h, Color.get(0, 555, 555, 555));
+				fra = frames;
+				tik = ticks;
+				frames = 0;
+				ticks = 0;
+			}
+		}
 	}
-	*/
+	
+	private void init() {
+		int pp = 0;
+		for (int r = 0; r < 6; r++) {
+			for (int g = 0; g < 6; g++) {
+				for (int b = 0; b < 6; b++) {
+					int rr = (r * 255 / 5);
+					int gg = (g * 255 / 5);
+					int bb = (b * 255 / 5);
+					int mid = (rr * 30 + gg * 59 + bb * 11) / 100;
+					
+					int r1 = ((rr + mid * 1) / 2) * 230 / 255 + 10;
+					int g1 = ((gg + mid * 1) / 2) * 230 / 255 + 10;
+					int b1 = ((bb + mid * 1) / 2) * 230 / 255 + 10;
+					colors[pp++] = r1 << 16 | g1 << 8 | b1;
+					
+				}
+			}
+		}
+		try {
+			screen = new Screen(WIDTH, HEIGHT, new SpriteSheet(ImageIO.read(Game.class.getResourceAsStream("/icons.png"))));
+			lightScreen = new Screen(WIDTH, HEIGHT, new SpriteSheet(ImageIO.read(Game.class.getResourceAsStream("/icons.png"))));
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		
+		resetGame();
+		setMenu(new TitleMenu());
+	}
+	
+	public void resetGame() {
+		playerDeadTime = 0;
+		wonTimer = 0;
+		gameTime = 0;
+		Player.hasSetHome = false;
+		Player.canGoHome = false;
+		hasWon = false;
+		
+		// adds a new player
+		player = new Player(this, input);
+		//this is a boolean in deadmenu that returns if the player has died, this way you don't respawn in a new world & it saves your spawn pos
+		if (DeadMenu.shudrespawn == true) {	
+			//System.out.print("Current Level = " + currentLevel + "                                           ");
+			currentLevel = 3;
+			level = levels[currentLevel];
+			 player.respawn(level);
+			level.add(player);
+		}
+		else {
+			levels[3] = new Level(l, l, 0, levels[4]);
+			
+			level = levels[currentLevel];
+			if (currentLevel == 3)
+			currentLevel = 3;
+			if (currentLevel != 3)
+			currentLevel = 3;
+			DeadMenu.shudrespawn = true; 
+			player.findStartPos(level);
+		}
+	}
+	
 	public void resetstartGame() {
 		playerDeadTime = 0;
 		wonTimer = 0;
@@ -289,7 +308,7 @@ public class Game extends Canvas implements Runnable, ActionListener{
 		
 		Player.score = 0;
 		
-		/*
+		/* Old code; keeping until I know new code works.
 		levels[4] = new Level(l, l, 1, null);
 		levels[3] = new Level(l, l, 0, levels[4]);
 		levels[2] = new Level(l, l, -1, levels[3]);
@@ -394,144 +413,65 @@ public class Game extends Canvas implements Runnable, ActionListener{
 
 	}
 	
-	
-	public void resetGame() {
-		playerDeadTime = 0;
-		wonTimer = 0;
-		gameTime = 0;
-		Player.hasSetHome = false;
-		Player.canGoHome = false;
-		hasWon = false;
-		
-		// adds a new player
-		player = new Player(this, input);
-		//this is a boolean in deadmenu that returns if the player has died, this way you don't respawn in a new world & it saves your spawn pos
-		if (DeadMenu.shudrespawn == true) {	
-			//System.out.print("Current Level = " + currentLevel + "                                           ");
-			currentLevel = 3;
-			level = levels[currentLevel];
-			 player.respawn(level);
-			level.add(player);
-		}
-		else {
-			levels[3] = new Level(l, l, 0, levels[4]);
-			
-			level = levels[currentLevel];
-			if (currentLevel == 3)
-			currentLevel = 3;
-			if (currentLevel != 3)
-			currentLevel = 3;
-			DeadMenu.shudrespawn = true; 
-			player.findStartPos(level);
-		}
-		
-	}
-	
-	private void init() {
-		int pp = 0;
-		for (int r = 0; r < 6; r++) {
-			for (int g = 0; g < 6; g++) {
-				for (int b = 0; b < 6; b++) {
-					int rr = (r * 255 / 5);
-					int gg = (g * 255 / 5);
-					int bb = (b * 255 / 5);
-					int mid = (rr * 30 + gg * 59 + bb * 11) / 100;
-					
-					int r1 = ((rr + mid * 1) / 2) * 230 / 255 + 10;
-					int g1 = ((gg + mid * 1) / 2) * 230 / 255 + 10;
-					int b1 = ((bb + mid * 1) / 2) * 230 / 255 + 10;
-					colors[pp++] = r1 << 16 | g1 << 8 | b1;
-					
-				}
+	public void SunRtd(){
+		if (Time == 0){
+			daytime.stop();
+			nighttime.stop();
+			sunrise.stop();
+			sunset.stop();
+			sunrise.start();
+			//System.out.println("Starting! (Time0)");
+			if (DirtTile.dirtc == 0){
+			}
+			if (DirtTile.dirtc == 1){
+			DirtTile.dirtc--;
 			}
 		}
-		try {
-			screen = new Screen(WIDTH, HEIGHT, new SpriteSheet(ImageIO.read(Game.class.getResourceAsStream("/icons.png"))));
-			lightScreen = new Screen(WIDTH, HEIGHT, new SpriteSheet(ImageIO.read(Game.class.getResourceAsStream("/icons.png"))));
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
-		
-		resetGame();
-		setMenu(new TitleMenu());
-	}
-	
-	public void run() {
-		long lastTime = System.nanoTime();
-		double unprocessed = 0;
-		double nsPerTick = 1000000000.0 / 60;
-		int frames = 0;
-		int ticks = 0;
-		long lastTimer1 = System.currentTimeMillis();
-		
-		
-		init();
-		
-		while (running) {
-			long now = System.nanoTime();
-			unprocessed += (now - lastTime) / nsPerTick;
-			lastTime = now;
-			boolean shouldRender = true;
-			while (unprocessed >= 1) {
-				ticks++;
-				tick();
-				unprocessed -= 1;
-				shouldRender = true;
+		if (Time == 1){
+			Time--;
+			daytime.stop();
+			nighttime.stop();
+			sunrise.stop();
+			sunset.stop();
+			sunrise.start();
+			//System.out.println("Starting! (Time1)");
+			if (DirtTile.dirtc == 0){
 			}
-			
-			try {
-				Thread.sleep(2);
-			} catch (InterruptedException e) {
-				e.printStackTrace();
-			}
-			
-			if (shouldRender) {
-				frames++;
-				render();
-			}
-			
-			if (System.currentTimeMillis() - lastTimer1 > 1000) {
-				lastTimer1 += 1000;
-				//System.out.println(ticks + " ticks, " + frames + " fps");
-				//Font.draw(ticks + " ticks, " + frames + " fps", screen, screen.w, screen.h, Color.get(0, 555, 555, 555));
-				fra = frames;
-				tik = ticks;
-				frames = 0;
-				ticks = 0;
+			if (DirtTile.dirtc == 1){
+			DirtTile.dirtc--;
 			}
 		}
-	}
-	
-	public static void Fishing(Level level, int x, int y, Player player){
-	isfishing = true;
-	int fcatch = random.nextInt(90);
-	
-	if (ItemResource.dur == 0){
-		player.activeItem.isDepleted();
-	}
-	
-	if (fcatch <= 8){
-		System.out.print("Caught a Fish!");
-		level.add(new ItemEntity(new ResourceItem(Resource.rawfish), x + random.nextInt(11) - 5, y + random.nextInt(11) - 5));
-		isfishing = false;
-	}
-	if (fcatch == 25 || fcatch == 43 || fcatch == 72){
-		System.out.print("Caught some slime?");
-		level.add(new ItemEntity(new ResourceItem(Resource.slime), x + random.nextInt(11) - 5, y + random.nextInt(11) - 5));
-		isfishing = false;
-	}if (fcatch == 56){
-		System.out.print("Rare Armor!");
-		level.add(new ItemEntity(new ResourceItem(Resource.larmor), x + random.nextInt(11) - 5, y + random.nextInt(11) - 5));
-		isfishing = false;
-	}else {
-		System.out.print("FAIL!");
-		isfishing = false;
-	}
-	
-	}
-	
-	public static void changeTime(int t) {
-		Time = t;
+		if (Time == 2){
+			Time--;
+			Time--;
+			daytime.stop();
+			nighttime.stop();
+			sunrise.stop();
+			sunset.stop();
+			sunrise.start();
+			//System.out.println("Starting! (Time2)");
+			if (DirtTile.dirtc == 0){
+			}
+			if (DirtTile.dirtc == 1){
+			DirtTile.dirtc--;
+			}
+		}
+		if (Time == 3){
+			Time--;
+			Time--;
+			Time--;
+			daytime.stop();
+			nighttime.stop();
+			sunrise.stop();
+			sunset.stop();
+			sunrise.start();
+			//System.out.println("Starting! (Time3)");
+			if (DirtTile.dirtc == 0){
+			}
+			if (DirtTile.dirtc == 1){
+			DirtTile.dirtc--;
+			}
+		}
 	}
 	
 	public void tick() {
@@ -689,12 +629,7 @@ public class Game extends Canvas implements Runnable, ActionListener{
 				Tile.tickCount++;
 			}
 		}
-			}
-	
-		
-			
-		
-	
+	}
 	
 	public void changeLevel(int dir) {
 		level.remove(player);
@@ -711,6 +646,35 @@ public class Game extends Canvas implements Runnable, ActionListener{
 		level.add(player);
 		
 	}
+	
+	public static void Fishing(Level level, int x, int y, Player player){
+	isfishing = true;
+	int fcatch = random.nextInt(90);
+	
+	if (ItemResource.dur == 0){
+		player.activeItem.isDepleted();
+	}
+	
+	if (fcatch <= 8){
+		System.out.print("Caught a Fish!");
+		level.add(new ItemEntity(new ResourceItem(Resource.rawfish), x + random.nextInt(11) - 5, y + random.nextInt(11) - 5));
+		isfishing = false;
+	}
+	if (fcatch == 25 || fcatch == 43 || fcatch == 72){
+		System.out.print("Caught some slime?");
+		level.add(new ItemEntity(new ResourceItem(Resource.slime), x + random.nextInt(11) - 5, y + random.nextInt(11) - 5));
+		isfishing = false;
+	}if (fcatch == 56){
+		System.out.print("Rare Armor!");
+		level.add(new ItemEntity(new ResourceItem(Resource.larmor), x + random.nextInt(11) - 5, y + random.nextInt(11) - 5));
+		isfishing = false;
+	}else {
+		System.out.print("FAIL!");
+		isfishing = false;
+	}
+	
+	}
+	
 	
 	public void render() {
 		BufferStrategy bs = getBufferStrategy();

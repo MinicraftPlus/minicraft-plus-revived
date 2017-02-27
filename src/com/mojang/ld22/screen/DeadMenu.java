@@ -25,11 +25,11 @@ public class DeadMenu extends Menu {
 		if (ModeMenu.hardcore == false)
 		{
 		 if (input.menu.clicked){
-			//This makes it so the player reespawns
+			//This makes it so the player respawns
 		    shudrespawn = true;
 			//reset game function
 			game.resetGame();
-			//sets the menu to nothing 
+			//sets the menu to nothing
 			game.setMenu(null);
 		}
 		}
@@ -37,7 +37,7 @@ public class DeadMenu extends Menu {
 	
 	public void render(Screen screen) {
 		Font.renderFrame(screen, "", 1, 3, 18, 10);
-		Font.draw("You died! Aww!", screen, 2 * 8, 4 * 8, Color.get(-1, 555, 555, 555));
+		Font.draw("You died! Aww!", screen, 16, 32, Color.get(-1, 555, 555, 555));
 		
 		int seconds = game.gameTime / 60;
 		int minutes = seconds / 60;
@@ -51,12 +51,14 @@ public class DeadMenu extends Menu {
 		} else {
 			timeString = minutes + "m " + (seconds < 10 ? "0" : "") + seconds + "s";
 		}
+		
 		Font.draw("Time:", screen, 2 * 8, 5 * 8, Color.get(-1, 555, 555, 555));
 		Font.draw(timeString, screen, (2 + 5) * 8, 5 * 8, Color.get(-1, 550, 550, 550));
 		Font.draw("Score:", screen, 2 * 8, 6 * 8, Color.get(-1, 555, 555, 555));
 		Font.draw("" + game.player.score, screen, (2 + 6) * 8, 6 * 8, Color.get(-1, 550, 550, 550));
 		Font.draw("C = lose", screen, 2 * 8, 8 * 8, Color.get(-1, 333, 333, 333));
-		if (ModeMenu.hardcore == false)Font.draw("X = respawn", screen, 2 * 8, 9 * 8, Color.get(-1, 333, 333, 333));
+		if (ModeMenu.hardcore == false)
+			Font.draw("X = respawn", screen, 2 * 8, 9 * 8, Color.get(-1, 333, 333, 333));
 		
 	}
 }
