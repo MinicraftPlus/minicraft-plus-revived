@@ -124,6 +124,7 @@ public class WorldSelectMenu extends Menu {
 				game.resetstartGame();
 				game.setMenu((Menu)null);
 			} else {
+				System.out.println("delete mode");
 				//delete the world
 				world = new File(location + "/" + worldnames.get(worldselected));
 				System.out.println(world);
@@ -159,8 +160,10 @@ public class WorldSelectMenu extends Menu {
 			}
 		}
 		
-		if(input.d.clicked && !rename && !createworld)//toggle delete world mode
+		if(input.d.clicked && !rename && !createworld){//toggle delete world mode
+			System.our.println("toggle delete");
 			delete = !delete;
+		}
 		
 		if(input.r.clicked && !rename && !createworld) {
 			//toggle rename world mode

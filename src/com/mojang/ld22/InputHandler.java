@@ -5,9 +5,20 @@ import java.awt.event.KeyListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 public class InputHandler implements MouseListener, KeyListener {
+	
+	/*
+	UNFINISHED BUISNESS
+		convert all references to InputHandler (pretty much always called input)
+		from "input.[key-name].[bool]" to "input.getKey([key-name]).[bool]".
+		
+		Also, the getKey() method of InputHandler should also be made to, then.
+		This might also mean that none of the keys or maps have to be public -- only the getKey() method.
+	
+	*/
 	
 	public InputHandler(Game game) {
 		game.addKeyListener(this);
@@ -18,9 +29,7 @@ public class InputHandler implements MouseListener, KeyListener {
 		public int presses, absorbs;
 		public boolean down, clicked;
 		
-		public Key() {
-			keys.add(this);
-		}
+		public Key() {}
 		
 		public void toggle(boolean pressed) {
 			if (pressed != down) {
@@ -75,80 +84,87 @@ public class InputHandler implements MouseListener, KeyListener {
 	public Mouse tri = new Mouse();
 	
 	
-	public List<Key> keys = new ArrayList<Key>();
+	//public List<Key> keys = new ArrayList<Key>();
+	public HashMap<String,Key> keymap = new HashMap<String,Key>();
 	public String lastKeyTyped = "";
 	
-	public Key up = new Key();
-	public Key down = new Key();
-	public Key left = new Key();
-	public Key right = new Key();
-	public Key attack = new Key();
-	public Key menu = new Key();
-	public Key craft = new Key();
-	public Key pause = new Key();
-	public Key sethome = new Key();
-	public Key home = new Key();
-	public Key mode = new Key();
-	public Key survival = new Key();
-	public Key creative = new Key();
-	public Key hardcore = new Key();
-	public Key fps = new Key();
-	public Key options = new Key();
-	public Key soundOn = new Key();
-	public Key dayTime = new Key();
-	public Key nightTime = new Key();
-	public Key a = new Key();
-	public Key b = new Key();
-	public Key c = new Key();
-	public Key d = new Key();
-	public Key e = new Key();
-	public Key f = new Key();
-	public Key g = new Key();
-	public Key h = new Key();
-	public Key i = new Key();
-	public Key j = new Key();
-	public Key k = new Key();
-	public Key l = new Key();
-	public Key m = new Key();
-	public Key n = new Key();
-	public Key o = new Key();
-	public Key p = new Key();
-	public Key q = new Key();
-	public Key r = new Key();
-	public Key s = new Key();
-	public Key t = new Key();
-	public Key u = new Key();
-	public Key v = new Key();
-	public Key w = new Key();
-	public Key x = new Key();
-	public Key y = new Key();
-	public Key z = new Key();
-	public Key a1 = new Key();
-	public Key a2 = new Key();
-	public Key a3 = new Key();
-	public Key a4 = new Key();
-	public Key a5 = new Key();
-	public Key a6 = new Key();
-	public Key a7 = new Key();
-	public Key a8 = new Key();
-	public Key a9 = new Key();
-	public Key a0 = new Key();
-	public Key f2 = new Key();
-	public Key f3 = new Key();
+	keymap.add("A", new Key());
+	keymap.add("B", new Key());
+	keymap.add("C", new Key());
+	keymap.add("D", new Key());
+	keymap.add("E", new Key());
+	keymap.add("F", new Key());
+	keymap.add("G", new Key());
+	keymap.add("H", new Key());
+	keymap.add("I", new Key());
+	keymap.add("J", new Key());
+	keymap.add("K", new Key());
+	keymap.add("L", new Key());
+	keymap.add("M", new Key());
+	keymap.add("N", new Key());
+	keymap.add("O", new Key());
+	keymap.add("P", new Key());
+	keymap.add("Q", new Key());
+	keymap.add("R", new Key());
+	keymap.add("S", new Key());
+	keymap.add("T", new Key());
+	keymap.add("U", new Key());
+	keymap.add("V", new Key());
+	keymap.add("W", new Key());
+	keymap.add("X", new Key());
+	keymap.add("Y", new Key());
+	keymap.add("Z", new Key());
 	
+	keymap.add("A1", new Key());
+	keymap.add("A2", new Key());
+	keymap.add("A3", new Key());
+	keymap.add("A4", new Key());
+	keymap.add("A5", new Key());
+	keymap.add("A6", new Key());
+	keymap.add("A7", new Key());
+	keymap.add("A8", new Key());
+	keymap.add("A9", new Key());
+	keymap.add("A0", new Key());
+	keymap.add("F2", new Key());
+	keymap.add("F3", new Key());
 	
-	public Key enter = new Key();
-	public Key delete = new Key();
-	public Key space = new Key();
-	public Key backspace = new Key();
+	keymap.add("ENTER", new Key());
+	keymap.add("DELETE", new Key());
+	keymap.add("SPACE", new Key());
+	keymap.add("BACKSPACE", new Key());
 	
+	//later, a seperate map/array of keys for the action keys should be used, so that
+		//multiple keys inputs can be specified..? Actually, why would I do that?
+	
+	//would still be nice, though, as an easy way to differenciate which are the Action Keys.
+	keymap.add("UP", keymap.get("W"));
+	keymap.add("DOWN", keymap.get("S"));
+	keymap.add("LEFT", keymap.get("A"));
+	keymap.add("RIGHT", keymap.get("D"));
+	keymap.add("ATTACK", keymap.get("C"));
+	keymap.add("MENU", keymap.get("X"));
+	keymap.add("CRAFT", keymap.get("Z"));
+	keymap.add("PAUSE", keymap.get("ESCAPE"));
+	keymap.add("SETHOME", keymap.get("H"));
+	keymap.add("HOME", keymap.get("1"));
+	keymap.add("MODE", new Key());
+	keymap.add("SURVIVAL", new Key());
+	keymap.add("CREATIVE", new Key());
+	keymap.add("HARDCORE", new Key());
+	keymap.add("FPS", keymap.get("TAB"));
+	keymap.add("OPTIONS", keymap.get("O"));
+	keymap.add("SOUNDON", keymap.get("M"));
+	keymap.add("DAYTIME", new Key());
+	keymap.add("NIGHTTIME", new Key());
 	
 	public void releaseAll() {
+		Key[] keys = keymap.values().toArray(new Key[0]);
 		for (int i = 0; i < keys.size(); i++) {
 			keys.get(i).down = false;
 		}
 	}
 	
+		Key[] keys = keymap.values().toArray(new Key[0]);
 	public void tick() {
 		for (int i = 0; i < keys.size(); i++) {
 			keys.get(i).tick();
@@ -168,6 +184,7 @@ public class InputHandler implements MouseListener, KeyListener {
 	}
 	
 	private void toggle(KeyEvent ke, boolean pressed) {
+		/*
 		if (ke.getKeyCode() == KeyEvent.VK_NUMPAD8) up.toggle(pressed);
 		if (ke.getKeyCode() == KeyEvent.VK_NUMPAD2) down.toggle(pressed);
 		if (ke.getKeyCode() == KeyEvent.VK_NUMPAD4) left.toggle(pressed);
@@ -180,7 +197,7 @@ public class InputHandler implements MouseListener, KeyListener {
 		if (ke.getKeyCode() == KeyEvent.VK_DOWN) down.toggle(pressed);
 		if (ke.getKeyCode() == KeyEvent.VK_LEFT) left.toggle(pressed);
 		if (ke.getKeyCode() == KeyEvent.VK_RIGHT) right.toggle(pressed);
-		
+		*//*
 		if (ke.getKeyCode() == KeyEvent.VK_TAB) menu.toggle(pressed);
 		if (ke.getKeyCode() == KeyEvent.VK_ALT) menu.toggle(pressed);
 		if (ke.getKeyCode() == KeyEvent.VK_ALT_GRAPH) menu.toggle(pressed);
@@ -189,7 +206,7 @@ public class InputHandler implements MouseListener, KeyListener {
 		if (ke.getKeyCode() == KeyEvent.VK_NUMPAD0) attack.toggle(pressed);
 		if (ke.getKeyCode() == KeyEvent.VK_INSERT) attack.toggle(pressed);
 		if (ke.getKeyCode() == KeyEvent.VK_ENTER) menu.toggle(pressed);
-		if (ke.getKeyCode() == KeyEvent.VK_ENTER) enter.toggle(pressed);//generic
+		//if (ke.getKeyCode() == KeyEvent.VK_ENTER) enter.toggle(pressed);//generic
 		if (ke.getKeyCode() == KeyEvent.VK_Q) craft.toggle(pressed);
 		if (ke.getKeyCode() == KeyEvent.VK_NUMPAD1) craft.toggle(pressed);
 		if (ke.getKeyCode() == KeyEvent.VK_E) craft.toggle(pressed);
@@ -204,7 +221,7 @@ public class InputHandler implements MouseListener, KeyListener {
 		if (ke.getKeyCode() == KeyEvent.VK_T) t.toggle(pressed);//generic
 		if (ke.getKeyCode() == KeyEvent.VK_1) sethome.toggle(pressed);
 		if (ke.getKeyCode() == KeyEvent.VK_H) home.toggle(pressed);
-		
+		*//*
 		if (ke.getKeyCode() == KeyEvent.VK_G) mode.toggle(pressed);
 		if (ke.getKeyCode() == KeyEvent.VK_1) survival.toggle(pressed);
 		if (ke.getKeyCode() == KeyEvent.VK_2) creative.toggle(pressed);
@@ -218,7 +235,7 @@ public class InputHandler implements MouseListener, KeyListener {
 		
 		if (ke.getKeyCode() == KeyEvent.VK_2) dayTime.toggle(pressed);
 		if (ke.getKeyCode() == KeyEvent.VK_3) nightTime.toggle(pressed);
-		if (ke.getKeyCode() == KeyEvent.VK_I) i.toggle(pressed);//generic
+		*//*if (ke.getKeyCode() == KeyEvent.VK_I) i.toggle(pressed);//generic
 		if (ke.getKeyCode() == KeyEvent.VK_W) w.toggle(pressed);//generic
 		if (ke.getKeyCode() == KeyEvent.VK_L) l.toggle(pressed);//generic
 		if (ke.getKeyCode() == KeyEvent.VK_S) s.toggle(pressed);//generic
@@ -227,49 +244,13 @@ public class InputHandler implements MouseListener, KeyListener {
 		if (ke.getKeyCode() == KeyEvent.VK_BACK_SPACE) backspace.toggle(pressed);//generic
 		if (ke.getKeyCode() == KeyEvent.VK_F2) f2.toggle(pressed);//generic
 		if (ke.getKeyCode() == KeyEvent.VK_F3) f3.toggle(pressed);//generic
-		
-		/*
-		if (ke.getKeyCode() == KeyEvent.VK_A) nightTime.toggle(pressed);
-		if (ke.getKeyCode() == KeyEvent.VK_B) nightTime.toggle(pressed);
-		if (ke.getKeyCode() == KeyEvent.VK_C) nightTime.toggle(pressed);
-		if (ke.getKeyCode() == KeyEvent.VK_D) nightTime.toggle(pressed);
-		if (ke.getKeyCode() == KeyEvent.VK_E) nightTime.toggle(pressed);
-		if (ke.getKeyCode() == KeyEvent.VK_F) nightTime.toggle(pressed);
-		if (ke.getKeyCode() == KeyEvent.VK_G) nightTime.toggle(pressed);
-		if (ke.getKeyCode() == KeyEvent.VK_H) nightTime.toggle(pressed);
-		if (ke.getKeyCode() == KeyEvent.VK_I) nightTime.toggle(pressed);
-		if (ke.getKeyCode() == KeyEvent.VK_J) nightTime.toggle(pressed);
-		if (ke.getKeyCode() == KeyEvent.VK_K) nightTime.toggle(pressed);
-		if (ke.getKeyCode() == KeyEvent.VK_L) nightTime.toggle(pressed);
-		if (ke.getKeyCode() == KeyEvent.VK_M) nightTime.toggle(pressed);
-		if (ke.getKeyCode() == KeyEvent.VK_N) nightTime.toggle(pressed);
-		if (ke.getKeyCode() == KeyEvent.VK_O) nightTime.toggle(pressed);
-		if (ke.getKeyCode() == KeyEvent.VK_P) nightTime.toggle(pressed);
-		if (ke.getKeyCode() == KeyEvent.VK_Q) nightTime.toggle(pressed);
-		if (ke.getKeyCode() == KeyEvent.VK_R) nightTime.toggle(pressed);
-		if (ke.getKeyCode() == KeyEvent.VK_S) nightTime.toggle(pressed);
-		if (ke.getKeyCode() == KeyEvent.VK_T) nightTime.toggle(pressed);
-		if (ke.getKeyCode() == KeyEvent.VK_U) nightTime.toggle(pressed);
-		if (ke.getKeyCode() == KeyEvent.VK_V) nightTime.toggle(pressed);
-		if (ke.getKeyCode() == KeyEvent.VK_W) nightTime.toggle(pressed);
-		if (ke.getKeyCode() == KeyEvent.VK_X) nightTime.toggle(pressed);
-		if (ke.getKeyCode() == KeyEvent.VK_Y) nightTime.toggle(pressed);
-		if (ke.getKeyCode() == KeyEvent.VK_Z) nightTime.toggle(pressed);
-		
-		if (ke.getKeyCode() == KeyEvent.VK_1) nightTime.toggle(pressed);
-		if (ke.getKeyCode() == KeyEvent.VK_2) nightTime.toggle(pressed);
-		if (ke.getKeyCode() == KeyEvent.VK_3) nightTime.toggle(pressed);
-		if (ke.getKeyCode() == KeyEvent.VK_A) nightTime.toggle(pressed);
-		if (ke.getKeyCode() == KeyEvent.VK_A) nightTime.toggle(pressed);
-		if (ke.getKeyCode() == KeyEvent.VK_A) nightTime.toggle(pressed);
-		if (ke.getKeyCode() == KeyEvent.VK_A) nightTime.toggle(pressed);
-		if (ke.getKeyCode() == KeyEvent.VK_A) nightTime.toggle(pressed);
-		if (ke.getKeyCode() == KeyEvent.VK_A) nightTime.toggle(pressed);
-		if (ke.getKeyCode() == KeyEvent.VK_A) nightTime.toggle(pressed);
-		
-		if (ke.getKeyCode() == KeyEvent.VK_A) nightTime.toggle(pressed);
-		if (ke.getKeyCode() == KeyEvent.VK_A) nightTime.toggle(pressed);
 		*/
+		try {
+			keymap.get(ke.getKeyText(ke.getKeyCode())).toggle(pressed);
+		} catch(Exception ex) {
+			ex.printStackTrace();
+			keymap.add(ke.getKeyText(ke.getKeyCode()), new Key());
+		}
 	}
 	
 	private void click(MouseEvent e, boolean clickd) {
