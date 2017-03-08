@@ -67,10 +67,12 @@ public class Game extends Canvas implements Runnable, ActionListener{
 	public static final String NAME = "Minicraft Plus";
 	public static final int HEIGHT = 192;
 	public static final int WIDTH = 288;
-	private static final int SCALE = 3;
+	private static final int SCALE = 3;	
 	
 	public static int gamespeed = 1;
 	public double nsPerTick = 1.6666666666666666E7D * (double)gamespeed;
+	
+	public InputHandler input = new InputHandler(this);//input used in Game, Player, and just about all the *Menu classes.
 	
 	public static int Time = 0;
 	private BufferedImage image = new BufferedImage(WIDTH, HEIGHT, BufferedImage.TYPE_INT_RGB);
@@ -82,7 +84,6 @@ public class Game extends Canvas implements Runnable, ActionListener{
 	int hungerTick;
 	private Screen screen;
 	private Screen lightScreen;
-	private InputHandler input = new InputHandler(this);//input used in Game, Player, and just about all the *Menu classes.
 	int newscoreTime = 72000;
 	int count = 0;
 	boolean reverse = false;
@@ -91,7 +92,6 @@ public class Game extends Canvas implements Runnable, ActionListener{
 	public static int multiplyer = 1;
 	public static int mtm = 300;
 	public static int multiplyertime = mtm;
-	
 	public static int ism = 1;
 	
 	int[] oldlvls; 
@@ -755,11 +755,11 @@ public class Game extends Canvas implements Runnable, ActionListener{
 		
 		if (ModeMenu.creative == false)
 		{
-		if (currentLevel < 3) {
-			lightScreen.clear(0);
-			level.renderLight(lightScreen, xScroll, yScroll);
-			screen.overlay(lightScreen, xScroll, yScroll);
-		}
+			if (currentLevel < 3) {
+				lightScreen.clear(0);
+				level.renderLight(lightScreen, xScroll, yScroll);
+				screen.overlay(lightScreen, xScroll, yScroll);
+			}
 		}
 		
 		renderGui();
@@ -807,6 +807,7 @@ public class Game extends Canvas implements Runnable, ActionListener{
 		}
 		
 		if(saving) {
+			System.out.println("SAVING GAME...");
 			Font.draw("Saving... " + LoadingMenu.percentage + "%", screen, screen.w / 2 - ("Saving... " + LoadingMenu.percentage + "%").length() * 4 + 1, screen.h / 2 - 32 + 1, Color.get(-1, 111, 111, 111));
 			Font.draw("Saving... " + LoadingMenu.percentage + "%", screen, screen.w / 2 - ("Saving... " + LoadingMenu.percentage + "%").length() * 4, screen.h / 2 - 32, Color.get(-1, 4, 4, 4));
 		}

@@ -53,7 +53,6 @@ public class Load {
 	List extradata;
 	public boolean hasloadedbigworldalready;
 	
-	
 	public Load(Game game, String worldname) {
 		folder = new File(location);
 		extention = ".miniplussave";
@@ -62,6 +61,7 @@ public class Load {
 		hasloadedbigworldalready = false;
 		location += "/saves/" + worldname + "/";
 		loadGame("Game", game);
+		loadPrefs("KeyPrefs", game);
 		loadWorld("Level");
 		loadPlayer("Player", game.player);
 		loadInventory("Inventory", game.player.inventory);
@@ -86,16 +86,16 @@ public class Load {
 		try {
 			br = new BufferedReader(new FileReader(filename));
 			
-			String e;
-			List neww;
+			String curLine;
+			List curData;
 			String item;
-			Iterator var7;
-			while((e = br.readLine()) != null) {
-				neww = Arrays.asList(e.split(","));
-				var7 = neww.iterator();
+			Iterator lineIter;
+			while((curLine = br.readLine()) != null) {
+				curData = Arrays.asList(curLine.split(","));
+				lineIter = curData.iterator();
 				
-				while(var7.hasNext()) {
-					item = (String)var7.next();
+				while(lineIter.hasNext()) {
+					item = (String)lineIter.next();
 					data.add(item);
 				}
 			}
@@ -103,12 +103,12 @@ public class Load {
 			if(filename.contains("Level")) {
 				br2 = new BufferedReader(new FileReader(filename.substring(0, filename.lastIndexOf("/") + 7) + "data" + extention));
 				
-				while((e = br2.readLine()) != null) {
-					neww = Arrays.asList(e.split(","));
-					var7 = neww.iterator();
+				while((curLine = br2.readLine()) != null) {
+					curData = Arrays.asList(curLine.split(","));
+					lineIter = curData.iterator();
 					
-					while(var7.hasNext()) {
-						item = (String)var7.next();
+					while(lineIter.hasNext()) {
+						item = (String)lineIter.next();
 						extradata.add(item);
 					}
 				}
@@ -154,6 +154,15 @@ public class Load {
 			Game.changeTime(3);
 		}
 		
+	}
+	
+	public void loadPrefs(String filename, Game game) {
+		loadFromFile(location + filename + extention);
+		Iterator keys = data.iterator();
+		while(keys.hasNext()) {
+			String[] map = String.valueOf(keys.next()).split(";");
+			game.input.setKey(map[0], map[1]);
+		}
 	}
 	
 	public void loadWorld(String filename) {
@@ -252,10 +261,10 @@ public class Load {
 			
 			if(ListItems.getItem(item) instanceof ResourceItem) {
 				String name = (String)data.get(i) + ";0";
-				List neww = Arrays.asList(name.split(";"));
-				Item newItem = ListItems.getItem((String)neww.get(0));
+				List curData = Arrays.asList(name.split(";"));
+				Item newItem = ListItems.getItem((String)curData.get(0));
 				
-				for(int ii = 0; ii < Integer.parseInt((String)neww.get(1)); ++ii) {
+				for(int ii = 0; ii < Integer.parseInt((String)curData.get(1)); ++ii) {
 					if(newItem instanceof ResourceItem) {
 						ResourceItem resItem = new ResourceItem(((ResourceItem)newItem).resource);
 						inventory.add(resItem);
@@ -296,7 +305,7 @@ public class Load {
 				} else {
 					int sublist;
 					String ii;
-					List neww;
+					List curData;
 					Item newItem;
 					int ii1;
 					ResourceItem resItem;
@@ -306,10 +315,10 @@ public class Load {
 						for(sublist = 2; sublist < info.size(); ++sublist) {
 							if(ListItems.getItem((String)info.get(sublist)) instanceof ResourceItem) {
 								ii = (String)info.get(sublist) + ";0";
-								neww = Arrays.asList(ii.split(";"));
-								newItem = ListItems.getItem((String)neww.get(0));
+								curData = Arrays.asList(ii.split(";"));
+								newItem = ListItems.getItem((String)curData.get(0));
 								
-								for(ii1 = 0; ii1 < Integer.parseInt((String)neww.get(1)); ++ii1) {
+								for(ii1 = 0; ii1 < Integer.parseInt((String)curData.get(1)); ++ii1) {
 									if(newItem instanceof ResourceItem) {
 										resItem = new ResourceItem(((ResourceItem)newItem).resource);
 										var15.inventory.add(resItem);
@@ -352,10 +361,10 @@ public class Load {
 							if(sublist < info.size() - 3) {
 								if(ListItems.getItem((String)info.get(sublist)) instanceof ResourceItem) {
 									ii = (String)info.get(sublist) + ";0";
-									neww = Arrays.asList(ii.split(";"));
-									newItem = ListItems.getItem(((String)neww.get(0)).replace(" ", ""));
+									curData = Arrays.asList(ii.split(";"));
+									newItem = ListItems.getItem(((String)curData.get(0)).replace(" ", ""));
 									
-									for(ii1 = 0; ii1 < Integer.parseInt((String)neww.get(1)); ++ii1) {
+									for(ii1 = 0; ii1 < Integer.parseInt((String)curData.get(1)); ++ii1) {
 										if(newItem instanceof ResourceItem) {
 											resItem = new ResourceItem(((ResourceItem)newItem).resource);
 											dChest.inventory.add(resItem);

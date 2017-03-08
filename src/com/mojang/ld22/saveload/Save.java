@@ -21,6 +21,7 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.HashMap;
 
 public class Save {
 
@@ -39,6 +40,7 @@ public class Save {
 		folder = new File(location);
 		folder.mkdirs();
 		writeGame("Game", player.game);
+		writePrefs("KeyPrefs");
 		writeWorld("Level");
 		writePlayer("Player", player);
 		writeInventory("Inventory", player.inventory);
@@ -55,7 +57,7 @@ public class Save {
 		try {
 			bufferedWriter = new BufferedWriter(new FileWriter(filename));
 			
-			for(int ex = 0; ex < savedata.size(); ++ex) {
+			for(int ex = 0; ex < savedata.size(); ex++) {
 				bufferedWriter.write((String)savedata.get(ex));
 				bufferedWriter.write(",");
 				if(filename.contains("Level5") && ex == savedata.size() - 1) {
@@ -93,6 +95,13 @@ public class Save {
 		data.add(String.valueOf(Game.astime));
 		data.add(String.valueOf(Game.gamespeed));
 		data.add(String.valueOf(Game.ac));
+		writeToFile(location + filename + extention, data);
+	}
+	
+	public void writePrefs(String filename) {
+		String[] keyPrefs = player.game.input.getKeyPrefs();
+		for(int i = 0; i < keyPrefs.length; i++)
+			data.add(String.valueOf(keyPrefs[i]));
 		writeToFile(location + filename + extention, data);
 	}
 	
