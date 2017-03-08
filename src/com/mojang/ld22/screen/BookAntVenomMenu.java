@@ -23,9 +23,9 @@ public class BookAntVenomMenu extends Menu {
 	}
 	
 	public void tick() {
-		if (input.menu.clicked) game.setMenu(null); // this is what closes the book
-		if (input.left.clicked) pages--; // this is what turns the page back
-		if (input.right.clicked) pages++; // this is what turns the page forward
+		if (input.getKey("menu").clicked) game.setMenu(null); // this is what closes the book
+		if (input.getKey("left").clicked) pages--; // this is what turns the page back
+		if (input.getKey("right").clicked) pages++; // this is what turns the page forward
 		
 	}
 	

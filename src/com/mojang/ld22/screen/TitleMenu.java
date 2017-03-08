@@ -20,16 +20,16 @@ public class TitleMenu extends Menu {
 	public TitleMenu() {}
 	
 	public void tick() {
-		if (input.up.clicked) selected--;
-		if (input.down.clicked) selected++;
-		if (input.up.clicked) Sound.pickup.play(); 
-		if (input.down.clicked) Sound.pickup.play(); 
+		if (input.getKey("up").clicked) selected--;
+		if (input.getKey("down").clicked) selected++;
+		if (input.getKey("up").clicked) Sound.pickup.play(); 
+		if (input.getKey("down").clicked) Sound.pickup.play(); 
 		
 		int len = options.length;
 		if (selected < 0) selected += len;
 		if (selected >= len) selected -= len;
 		
-		if (input.r.clicked) rand = random.nextInt(randcount);
+		if (input.getKey("r").clicked) rand = random.nextInt(randcount);
 		
 		if (reverse == false){
 		count++;
@@ -43,7 +43,7 @@ public class TitleMenu extends Menu {
 			}
 		}
 		
-		if (input.attack.clicked || input.menu.clicked) {
+		if (input.getKey("attack").clicked || input.getKey("menu").clicked) {
 			if (selected == 0) {
 				WorldSelectMenu.loadworld = false;
 				game.setMenu(new WorldSelectMenu(this));

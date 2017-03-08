@@ -24,13 +24,13 @@ public class StartMenu extends Menu {
 	public StartMenu() {}
 	
 	public void tick() {
-		if (input.left.clicked) selectedlr--;
-		if (input.right.clicked) selectedlr++;
-		if (input.left.clicked) diff--;
-		if (input.right.clicked) diff++;
-		if (input.left.clicked) Sound.craft.play(); 
-		if (input.right.clicked) Sound.craft.play(); 
-		//if (input.mode.clicked) game.setMenu(new ModeMenu());
+		if (input.getKey("left").clicked) selectedlr--;
+		if (input.getKey("right").clicked) selectedlr++;
+		if (input.getKey("left").clicked) diff--;
+		if (input.getKey("right").clicked) diff++;
+		if (input.getKey("left").clicked) Sound.craft.play(); 
+		if (input.getKey("right").clicked) Sound.craft.play(); 
+		//if (input.getKey("mode").clicked) game.setMenu(new ModeMenu());
 		if (selectedlr > 3)
 		selectedlr = 1;
 		if (selectedlr < 1)
@@ -40,7 +40,7 @@ public class StartMenu extends Menu {
 		if (diff < 1)
 		diff = 3;
 		
-		if (input.attack.clicked) {
+		if (input.getKey("attack").clicked) {
 			if (selected == 0) {
 				Sound.test.play();
 				//if (ModeMenu.hasSetDif == false) ModeMenu.survival = true;
@@ -53,7 +53,7 @@ public class StartMenu extends Menu {
 		
 		}
 		
-		if(unlockedskin && this.input.w.clicked) {
+		if(unlockedskin && this.input.getKey("w").clicked) {
 			if(skinon) {
 				skinon = false;
 			} else {
@@ -62,7 +62,7 @@ public class StartMenu extends Menu {
 		}
 		
 		//toggles sound
-		if (input.down.clicked) {
+		if (input.getKey("down").clicked) {
 			Sound.craft.play();
 			System.out.println("Works!");
 			isSoundAct = !isSoundAct;

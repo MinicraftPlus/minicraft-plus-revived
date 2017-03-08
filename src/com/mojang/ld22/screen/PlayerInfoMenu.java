@@ -16,7 +16,7 @@ public class PlayerInfoMenu extends Menu {
 	public void tick() {
 		
 		//This is so that if the user presses x @ respawn menu, they respawn (what a concept)
-		if (input.menu.clicked) {
+		if (input.getKey("menu").clicked) {
 			game.setMenu(null); 
 		}
 	}

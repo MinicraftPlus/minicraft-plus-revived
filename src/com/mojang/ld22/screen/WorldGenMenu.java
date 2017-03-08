@@ -40,38 +40,38 @@ public class WorldGenMenu extends Menu {
 	}
 	
 	public void tick() {
-		if (input.attack.clicked) {
+		if (input.getKey("attack").clicked) {
 			game.setMenu(new ModeMenu()); 
 		}
 		
-		if (input.down.clicked) op--;
-		if (input.up.clicked) op++;
+		if (input.getKey("down").clicked) op--;
+		if (input.getKey("up").clicked) op++;
 		
 		if (op == 0){
-		if (input.left.clicked) selected--;
-		if (input.right.clicked) selected++;
-		if (input.left.clicked) theme--;
-		if (input.right.clicked) theme++;
+		if (input.getKey("left").clicked) selected--;
+		if (input.getKey("right").clicked) selected++;
+		if (input.getKey("left").clicked) theme--;
+		if (input.getKey("right").clicked) theme++;
 		}
 		
 		if (op == 1){
-		if (input.left.clicked) selectedlr--;
-		if (input.right.clicked) selectedlr++;
-		if (input.left.clicked) type--;
-		if (input.right.clicked) type++;
+		if (input.getKey("left").clicked) selectedlr--;
+		if (input.getKey("right").clicked) selectedlr++;
+		if (input.getKey("left").clicked) type--;
+		if (input.getKey("right").clicked) type++;
 		}
 		
 		if (op == 2){
-		if (input.left.clicked) selecteds--;
-		if (input.right.clicked) selecteds++;
-		if (input.left.clicked) size--;
-		if (input.right.clicked) size++;
+		if (input.getKey("left").clicked) selecteds--;
+		if (input.getKey("right").clicked) selecteds++;
+		if (input.getKey("left").clicked) size--;
+		if (input.getKey("right").clicked) size++;
 		}
 		
-		if (input.left.clicked)	Sound.craft.play(); 
-		if (input.right.clicked) Sound.craft.play(); 
-		if (input.up.clicked) Sound.craft.play(); 
-		if (input.down.clicked) Sound.craft.play(); 
+		if (input.getKey("left").clicked)	Sound.craft.play(); 
+		if (input.getKey("right").clicked) Sound.craft.play(); 
+		if (input.getKey("up").clicked) Sound.craft.play(); 
+		if (input.getKey("down").clicked) Sound.craft.play(); 
 		
 		if (op > 2)
 		op = 0;

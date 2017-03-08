@@ -25,15 +25,15 @@ public class PauseMenu extends Menu {
 	}
 
 	public void tick() {
-		if(this.input.pause.clicked) {
+		if(this.input.getKey("pause").clicked) {
 			this.game.setMenu((Menu)null);
 		}
 
-		if(this.input.up.clicked) {
+		if(this.input.getKey("up").clicked) {
 			--this.selected;
 		}
 
-		if(this.input.down.clicked) {
+		if(this.input.getKey("down").clicked) {
 			++this.selected;
 		}
 
@@ -46,7 +46,7 @@ public class PauseMenu extends Menu {
 			this.selected -= len;
 		}
 
-		if(this.input.menu.clicked) {
+		if(this.input.getKey("menu").clicked) {
 			if(this.o1 && !this.o2 && !this.o3) {
 				this.game.setMenu((Menu)null);
 				new Save(this.player, WorldSelectMenu.worldname);
@@ -64,7 +64,7 @@ public class PauseMenu extends Menu {
 			}
 		}
 
-		if(this.input.attack.clicked) {
+		if(this.input.getKey("attack").clicked) {
 			if(this.o1 && !this.o2 && !this.o3) {
 				this.game.setMenu((Menu)null);
 			}
@@ -78,7 +78,7 @@ public class PauseMenu extends Menu {
 			}
 		}
 
-		if(this.input.attack.clicked || this.input.menu.clicked) {
+		if(this.input.getKey("attack").clicked || this.input.getKey("menu").clicked) {
 			if(this.selected == 0) {
 				this.o1 = false;
 				this.o2 = false;

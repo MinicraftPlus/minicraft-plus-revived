@@ -340,10 +340,10 @@ public class Player extends Mob {
 		int xa = 0;
 		int ya = 0;
 		if (!Game.isfishing){
-		if (input.up.down) { ya--; stepCount++;}
-		if (input.down.down) {ya++; stepCount++;}
-		if (input.left.down){ xa--; stepCount++;}
-		if (input.right.down) { xa++; stepCount++;}
+		if (input.getKey("up").down) { ya--; stepCount++;}
+		if (input.getKey("down").down) {ya++; stepCount++;}
+		if (input.getKey("left").down){ xa--; stepCount++;}
+		if (input.getKey("right").down) { xa++; stepCount++;}
 		}
 		
 		xx = x;
@@ -379,7 +379,7 @@ public class Player extends Mob {
 			move(xa, ya);
 		}
 		
-		if (input.attack.clicked) {
+		if (input.getKey("attack").clicked) {
 			if (stamina == 0) {
 				
 			} else {
@@ -388,38 +388,38 @@ public class Player extends Mob {
 				attack();
 			}
 		}
-		if (input.menu.clicked) {
+		if (input.getKey("menu").clicked) {
 			if (!use()) {
 				game.setMenu(new InventoryMenu(this));
 			}
 		}
-		if (input.pause.clicked) {
+		if (input.getKey("pause").clicked) {
 			game.setMenu(new PauseMenu(this));
 			
 			}
-		if (input.craft.clicked) {
+		if (input.getKey("craft").clicked) {
 			if (!use()) {
 				game.setMenu(new CraftInvMenu(Crafting.craftRecipes, this));
 			}
 		}
-		if (input.sethome.clicked) setHome();
-		if (input.home.clicked) {
+		if (input.getKey("sethome").clicked) setHome();
+		if (input.getKey("home").clicked) {
 			goHome();
 			
 		}
-		if (input.i.clicked) {
+		if (input.getKey("i").clicked) {
 			game.setMenu(new PlayerInfoMenu()); 
 		}
 		//these are my test buttons. incase i need to debug something.
-		if (input.r.clicked) {
+		if (input.getKey("r").clicked) {
 		
 		}
-		if (input.t.clicked) {
+		if (input.getKey("t").clicked) {
 			 
 		}
 		
 		if (ModeMenu.creative) {
-			if (input.dayTime.clicked) Game.tickCount = 5900;
+			if (input.getKey("dayTime").clicked) Game.tickCount = 5900;
 		}
 		if (attackTime > 0) attackTime--;
 		

@@ -15,7 +15,7 @@ public class InfoMenu extends Menu {
 	}
 	
 	public void tick() {
-		if (input.menu.clicked || input.attack.clicked) {
+		if (input.getKey("menu").clicked || input.getKey("attack").clicked) {
 				game.setMenu(null);
 				Player.sentFromSetHome = false;
 				Player.sentFromHome = false;

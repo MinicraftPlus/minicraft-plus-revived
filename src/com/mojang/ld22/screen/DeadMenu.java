@@ -17,14 +17,14 @@ public class DeadMenu extends Menu {
 		if (inputDelay > 0) {
 			inputDelay--;
 		}
-		else if (input.attack.clicked) {
+		else if (input.getKey("attack").clicked) {
 			game.setMenu(new TitleMenu());
 		    shudrespawn = false;
 		}
 		//This is so that if the user presses x @ respawn menu, they respawn (what a concept)
 		if (ModeMenu.hardcore == false)
 		{
-		 if (input.menu.clicked){
+		 if (input.getKey("menu").clicked){
 			//This makes it so the player respawns
 		    shudrespawn = true;
 			//reset game function

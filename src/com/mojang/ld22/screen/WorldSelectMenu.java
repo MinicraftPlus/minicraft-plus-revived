@@ -67,9 +67,9 @@ public class WorldSelectMenu extends Menu {
 		//loadworld, createworld, rename, and delete all start as false.
 		
 		//select action
-		if(input.up.clicked)
+		if(input.getKey("up").clicked)
 			selected--;
-		if(input.down.clicked)
+		if(input.getKey("down").clicked)
 			selected++;
 		
 		//automatically choose 
@@ -85,9 +85,9 @@ public class WorldSelectMenu extends Menu {
 		
 		
 		if(loadworld) {
-			if(input.up.clicked)
+			if(input.getKey("up").clicked)
 				worldselected--;
-			if(input.down.clicked)
+			if(input.getKey("down").clicked)
 				worldselected++;
 			
 			if(worldselected < 0)
@@ -100,14 +100,14 @@ public class WorldSelectMenu extends Menu {
 		
 		if(createworld) {
 			typename(); //check for input to type worldname
-			if(input.pause.clicked) {
+			if(input.getKey("pause").clicked) {
 				//cancel to title screen
 				createworld = false;
 				loadworld = false;
 				game.setMenu(new TitleMenu());
 			}
 			
-			if(input.enter.clicked && wncol == Color.get(0, 5, 5, 5)) {
+			if(input.getKey("enter").clicked && wncol == Color.get(0, 5, 5, 5)) {
 				//proceed to mode selection
 				worldname = name;
 				name = "";
@@ -116,7 +116,7 @@ public class WorldSelectMenu extends Menu {
 		}
 		
 		File world;
-		if(loadworld && input.menu.clicked && !rename) {
+		if(loadworld && input.getKey("menu").clicked && !rename) {
 			if(!delete) {
 				//load the game
 				worldname = worldnames.get(worldselected);
@@ -145,7 +145,7 @@ public class WorldSelectMenu extends Menu {
 			}
 		}
 		
-		if(input.attack.clicked && !rename && !createworld) {
+		if(input.getKey("attack").clicked && !rename && !createworld) {
 			if(!delete && !rename) {
 				//return to title screen
 				createworld = false;
@@ -160,12 +160,12 @@ public class WorldSelectMenu extends Menu {
 			}
 		}
 		
-		if(input.d.clicked && !rename && !createworld){//toggle delete world mode
-			System.our.println("toggle delete");
+		if(input.getKey("d").clicked && !rename && !createworld){//toggle delete world mode
+			System.out.println("toggle delete");
 			delete = !delete;
 		}
 		
-		if(input.r.clicked && !rename && !createworld) {
+		if(input.getKey("r").clicked && !rename && !createworld) {
 			//toggle rename world mode
 			if(!rename) {
 				name = worldnames.get(worldselected);
@@ -178,13 +178,13 @@ public class WorldSelectMenu extends Menu {
 		
 		if(rename) {
 			tick++;
-			if(input.pause.clicked) {
+			if(input.getKey("pause").clicked) {
 				//cancel renaming
 				tick = 0;
 				rename = false;
 			}
 			
-			if(input.enter.clicked && wncol == Color.get(0, 5, 5, 5)) {
+			if(input.getKey("enter").clicked && wncol == Color.get(0, 5, 5, 5)) {
 				//user hits enter with a vaild new name; name is set here:
 				worldname = name;
 				name = "";
@@ -202,7 +202,7 @@ public class WorldSelectMenu extends Menu {
 		
 		if(!createworld && !loadworld) {
 			//this executes at first, before you choose load or save
-			if(input.menu.clicked) {
+			if(input.getKey("menu").clicked) {
 				System.out.println(selected);
 				if(selected == 0) {
 					loadworld = true;
@@ -216,7 +216,7 @@ public class WorldSelectMenu extends Menu {
 				}
 			}
 			
-			if(input.attack.clicked) {
+			if(input.getKey("attack").clicked) {
 				//exit to title screen
 				createworld = false;
 				loadworld = false;
@@ -390,7 +390,7 @@ public class WorldSelectMenu extends Menu {
 		if(name.equals("")) //name cannot be blank
 			wncol = Color.get(0, 500, 500, 500);
 		
-		if(input.backspace.clicked && name.length() > 0) //backspace support
+		if(input.getKey("backspace").clicked && name.length() > 0) //backspace support
 			name = name.substring(0, name.length() - 1);
 		
 		if(name.length() < 36 && input.lastKeyTyped.length() > 0) {

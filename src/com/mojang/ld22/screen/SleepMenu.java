@@ -30,7 +30,7 @@ public class SleepMenu extends Menu {
 		else {
 			selectState=1;
 			tickCount++;
-			 if (input.menu.clicked) {
+			 if (input.getKey("menu").clicked) {
 				 game.setMenu(null);
 				tickCount = 0;
 			 }
@@ -38,13 +38,13 @@ public class SleepMenu extends Menu {
 		}
 		}
 	 else if (game.isDayNoSleep) {
-		 if (input.menu.clicked) {
+		 if (input.getKey("menu").clicked) {
 			 game.setMenu(null);
 		 }
 		 selectState = 0;
 	 }
 	 if (selectState == 2) {
-		 if (input.menu.clicked) {
+		 if (input.getKey("menu").clicked) {
 			 game.setMenu(null);
 		 }
 	 }

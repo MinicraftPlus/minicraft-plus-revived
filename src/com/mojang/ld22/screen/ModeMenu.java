@@ -21,25 +21,25 @@ public class ModeMenu extends Menu {
 	private int selected = 0;
 	
 	public void tick() {
-		if (input.left.clicked) selectedlr--;
-		if (input.right.clicked) selectedlr++;
-		if (input.left.clicked) diff--;
-		if (input.right.clicked) diff++;
+		if (input.getKey("left").clicked) selectedlr--;
+		if (input.getKey("right").clicked) selectedlr++;
+		if (input.getKey("left").clicked) diff--;
+		if (input.getKey("right").clicked) diff++;
 		
-		if (input.left.clicked) Sound.craft.play(); 
-		if (input.right.clicked) Sound.craft.play();
+		if (input.getKey("left").clicked) Sound.craft.play(); 
+		if (input.getKey("right").clicked) Sound.craft.play();
 		 /*
-		if (input.survival.clicked) {
+		if (input.getKey("survival").clicked) {
 			survival = true;
 			creative = false;
 			hardcore = false;
 		}
-		if (input.creative.clicked) {
+		if (input.getKey("creative").clicked) {
 			survival = false;
 			creative = true;
 			hardcore = false;
 		}
-		if (input.hardcore.clicked) {
+		if (input.getKey("hardcore").clicked) {
 			survival = false;
 			creative = false;
 			hardcore = true;
@@ -47,17 +47,17 @@ public class ModeMenu extends Menu {
 		*/
 		//This is so that if the user presses x @ respawn menu, they respawn (what a concept)
 		//if (input.)
-		 if (input.menu.clicked) {
+		 if (input.getKey("menu").clicked) {
 				if (selected == 0) {
 					Sound.test.play();
 					game.setMenu(new LoadingMenu());
 				}
 			}
 			
-			if (input.attack.clicked) {
+			if (input.getKey("attack").clicked) {
 				game.setMenu(new TitleMenu());
 			}
-		    if (input.craft.clicked) game.setMenu(new WorldGenMenu());
+		    if (input.getKey("craft").clicked) game.setMenu(new WorldGenMenu());
 		
 			if (diff == 1) {
 				survival = true;
