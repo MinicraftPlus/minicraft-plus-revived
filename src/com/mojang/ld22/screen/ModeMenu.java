@@ -47,14 +47,14 @@ public class ModeMenu extends Menu {
 		*/
 		//This is so that if the user presses x @ respawn menu, they respawn (what a concept)
 		//if (input.)
-		 if (input.getKey("menu").clicked) {
+		 if (input.getKey("enter").clicked) {
 				if (selected == 0) {
 					Sound.test.play();
 					game.setMenu(new LoadingMenu());
 				}
 			}
 			
-			if (input.getKey("attack").clicked) {
+			if (input.getKey("escape").clicked) {
 				game.setMenu(new TitleMenu());
 			}
 		    if (input.getKey("craft").clicked) game.setMenu(new WorldGenMenu());

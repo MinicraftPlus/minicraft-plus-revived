@@ -15,13 +15,10 @@ public class InfoMenu extends Menu {
 	}
 	
 	public void tick() {
-		if (input.getKey("menu").clicked || input.getKey("attack").clicked) {
+		if (input.getKey("enter").clicked || input.getKey("escape").clicked) {
 				game.setMenu(null);
 				Player.sentFromSetHome = false;
 				Player.sentFromHome = false;
-			
-			
-		
 		}
 	}
 	

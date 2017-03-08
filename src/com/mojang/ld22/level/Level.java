@@ -520,21 +520,19 @@ public class Level {
 			int tim = Game.Time;
 			
 			if (levels == 0){
-			if (tim > 2){
-				if (rnd <= 40)
-					mob = new Slime(lvl);
-				else if(rnd <= 75)
-					mob = new Zombie(lvl);
-				else if(rnd >= 85)
-					mob = new Skeleton(lvl);
-				else 
-					mob = new Creeper(lvl);
-			
-			
-			if (mob.findStartPos(this)) {
-				this.add(mob);
-			}
-			}
+				if (tim > 2){
+					if (rnd <= 40)
+						mob = new Slime(lvl);
+					else if(rnd <= 75)
+						mob = new Zombie(lvl);
+					else if(rnd >= 85)
+						mob = new Skeleton(lvl);
+					else 
+						mob = new Creeper(lvl);
+					
+					if (mob.findStartPos(this))
+						this.add(mob);
+				}
 			}
 			
 			if (levels == 0){

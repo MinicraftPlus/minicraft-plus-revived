@@ -40,7 +40,7 @@ public class WorldGenMenu extends Menu {
 	}
 	
 	public void tick() {
-		if (input.getKey("attack").clicked) {
+		if (input.getKey("escape").clicked) {
 			game.setMenu(new ModeMenu()); 
 		}
 		

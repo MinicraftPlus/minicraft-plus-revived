@@ -13,7 +13,7 @@ public class WonMenu extends Menu {
 	
 	public void tick() {
 		//on menu button press, returns to title screen.
-		if (input.getKey("menu").clicked) {
+		if (input.getKey("enter").clicked || input.getKey("menu").clicked) {
 			game.setMenu(new TitleMenu());
 		}
 	}

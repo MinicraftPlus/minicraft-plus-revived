@@ -16,7 +16,7 @@ public class PlayerInfoMenu extends Menu {
 	public void tick() {
 		
 		//This is so that if the user presses x @ respawn menu, they respawn (what a concept)
-		if (input.getKey("menu").clicked) {
+		if (input.getKey("enter").clicked) {
 			game.setMenu(null); 
 		}
 	}
@@ -72,7 +72,7 @@ if (StartMenu.diff == StartMenu.easy || ModeMenu.creative) {
 	else {	Font.draw(""+cStep, screen, (2+18) * 8, 10 * 8, Color.get(-1, 550, 550, 550));
 	}
 Font.draw(" ----------------------------", screen, 1 * 8, 11 * 8, Color.get(-1, 540, 540, 540));
-Font.draw("X:Exit", screen, 2 * 8, 13 * 8, Color.get(-1, 333, 333, 333));
+Font.draw("Enter:Exit", screen, 2 * 8, 13 * 8, Color.get(-1, 333, 333, 333));
 	
 	}
 }

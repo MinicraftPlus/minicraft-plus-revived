@@ -40,7 +40,7 @@ public class StartMenu extends Menu {
 		if (diff < 1)
 		diff = 3;
 		
-		if (input.getKey("attack").clicked) {
+		if (input.getKey("escape").clicked) {
 			if (selected == 0) {
 				Sound.test.play();
 				//if (ModeMenu.hasSetDif == false) ModeMenu.survival = true;

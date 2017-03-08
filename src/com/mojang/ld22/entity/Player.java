@@ -1,4 +1,6 @@
 //respawn mod +dillyg10+
+//LOOK AT DECOMP PLAYER.java! ESPECIALLY AROUND LINE 500 there, and 400 here! lots of stuff.
+
 package com.mojang.ld22.entity;
 
 import java.util.List;
@@ -31,9 +33,13 @@ import com.mojang.ld22.screen.InfoMenu;
 import com.mojang.ld22.screen.InventoryMenu;
 import com.mojang.ld22.screen.PauseMenu;
 import com.mojang.ld22.screen.StartMenu;
+import com.mojang.ld22.screen.LoadingMenu;
+import com.mojang.ld22.screen.WorldSelectMenu;
 import com.mojang.ld22.sound.Sound;
 import com.mojang.ld22.screen.ModeMenu;
 import com.mojang.ld22.screen.PlayerInfoMenu;
+import com.mojang.ld22.saveload.Save;
+
 public class Player extends Mob {
 	private InputHandler input;
 	public int attackTime, attackDir;
@@ -388,43 +394,35 @@ public class Player extends Mob {
 				attack();
 			}
 		}
-		if (input.getKey("menu").clicked) {
-			if (!use()) {
-				game.setMenu(new InventoryMenu(this));
-			}
-		}
-		if (input.getKey("pause").clicked) {
+		if (input.getKey("menu").clicked && !use())
+			game.setMenu(new InventoryMenu(this));
+		if (input.getKey("pause").clicked)
 			game.setMenu(new PauseMenu(this));
-			
-			}
-		if (input.getKey("craft").clicked) {
-			if (!use()) {
-				game.setMenu(new CraftInvMenu(Crafting.craftRecipes, this));
-			}
-		}
-		if (input.getKey("sethome").clicked) setHome();
-		if (input.getKey("home").clicked) {
+		if (input.getKey("craft").clicked && !use())
+			game.setMenu(new CraftInvMenu(Crafting.craftRecipes, this));
+		if (input.getKey("sethome").clicked)
+			setHome();
+		if (input.getKey("home").clicked)
 			goHome();
-			
-		}
-		if (input.getKey("i").clicked) {
-			game.setMenu(new PlayerInfoMenu()); 
-		}
-		//these are my test buttons. incase i need to debug something.
-		if (input.getKey("r").clicked) {
 		
+		if (input.getKey("i").clicked)
+			game.setMenu(new PlayerInfoMenu());
+		
+		//these are my test buttons. incase i need to debug something.
+		if(input.getKey("r").clicked && !game.saving) {
+			game.saving = true;
+			new Save(this, WorldSelectMenu.worldname);
+			LoadingMenu.percentage = 0;
 		}
 		if (input.getKey("t").clicked) {
-			 
+			
 		}
 		
 		if (ModeMenu.creative) {
 			if (input.getKey("dayTime").clicked) Game.tickCount = 5900;
 		}
-		if (attackTime > 0) attackTime--;
-		
-		
-		
+		if (attackTime > 0)
+			attackTime--;
 		
 	}
 	

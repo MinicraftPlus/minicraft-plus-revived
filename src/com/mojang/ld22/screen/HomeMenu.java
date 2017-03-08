@@ -17,14 +17,10 @@ public class HomeMenu extends Menu {
 	boolean cgh = Player.canGoHome;
 	boolean hsh = Player.hasSetHome;
 	
-	
 	public void tick() {
-		if (input.getKey("menu").clicked || input.getKey("attack").clicked) {
-				game.setMenu(null);
-				Player.sentFromHome = false;
-			
-			
-		
+		if (input.getKey("menu").clicked/* || input.getKey("attack").clicked*/) {
+			game.setMenu(null);
+			Player.sentFromHome = false;
 		}
 	}
 	
@@ -32,10 +28,8 @@ public class HomeMenu extends Menu {
 		Font.renderFrame(screen, "", 1, 3, 18, 7);
 		//System.out.println(Player.sentFromHome);
 		
-			
-			
-		 if (Player.sentFromHome == true && Player.sentFromSetHome == false) {
-			 if (hsh== false) {
+		if (Player.sentFromHome == true && Player.sentFromSetHome == false) {
+			if (hsh== false) {
 				if (cgh ==true) {
 				Font.draw("You don't have a", screen, 2 * 8, 4 * 8, Color.get(-1, 555, 555, 555)); 
 				Font.draw("home!", screen, 2 * 8, 5 * 8, Color.get(-1, 555, 555, 555));
@@ -43,28 +37,22 @@ public class HomeMenu extends Menu {
 				else if (cgh == false) {
 					Font.draw("You can't go home", screen, 2 * 8, 4 * 8, Color.get(-1, 555, 555, 555)); 
 					
-					 Font.draw("from here!", screen, 2 * 8, 5 * 8, Color.get(-1, 555, 555, 555));
+					Font.draw("from here!", screen, 2 * 8, 5 * 8, Color.get(-1, 555, 555, 555));
 				}
 			}
 			else if (hsh == true) {
 				if (cgh == false) {
 					Font.draw("You can't go home", screen, 2 * 8, 4 * 8, Color.get(-1, 555, 555, 555)); 
 					
-					 Font.draw("from here!", screen, 2 * 8, 5 * 8, Color.get(-1, 555, 555, 555));
-					
-				}
-				else {
-					 Font.draw("Home sweet home!", screen, 2 * 8, 4 * 8, Color.get(-1, 555, 555, 555));
-					 if (ModeMenu.hardcore) Font.draw("HardCore = -2", screen, 2 * 8, 5 * 8, Color.get(-1, 555, 555, 555));
-					
-					
+					Font.draw("from here!", screen, 2 * 8, 5 * 8, Color.get(-1, 555, 555, 555));
+				} else {
+					Font.draw("Home sweet home!", screen, 2 * 8, 4 * 8, Color.get(-1, 555, 555, 555));
+					if (ModeMenu.hardcore)
+						Font.draw("HardCore = -2", screen, 2 * 8, 5 * 8, Color.get(-1, 555, 555, 555));
 				}
 			}
-		
-		
-		
+			
 		}
-		
 	}
 }
 	

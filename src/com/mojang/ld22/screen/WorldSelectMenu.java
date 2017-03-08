@@ -116,7 +116,7 @@ public class WorldSelectMenu extends Menu {
 		}
 		
 		File world;
-		if(loadworld && input.getKey("menu").clicked && !rename) {
+		if(loadworld && input.getKey("enter").clicked && !rename) {
 			if(!delete) {
 				//load the game
 				worldname = worldnames.get(worldselected);
@@ -145,7 +145,7 @@ public class WorldSelectMenu extends Menu {
 			}
 		}
 		
-		if(input.getKey("attack").clicked && !rename && !createworld) {
+		if(input.getKey("escape").clicked && !rename && !createworld) {
 			if(!delete && !rename) {
 				//return to title screen
 				createworld = false;
@@ -202,7 +202,7 @@ public class WorldSelectMenu extends Menu {
 		
 		if(!createworld && !loadworld) {
 			//this executes at first, before you choose load or save
-			if(input.getKey("menu").clicked) {
+			if(input.getKey("enter").clicked) {
 				System.out.println(selected);
 				if(selected == 0) {
 					loadworld = true;
@@ -216,7 +216,7 @@ public class WorldSelectMenu extends Menu {
 				}
 			}
 			
-			if(input.getKey("attack").clicked) {
+			if(input.getKey("escape").clicked) {
 				//exit to title screen
 				createworld = false;
 				loadworld = false;
