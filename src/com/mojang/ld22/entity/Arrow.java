@@ -48,20 +48,20 @@ public class Arrow extends Entity {
   
   x=owner.x;
   y=owner.y;
-
+	
   lifeTime = 100 * (damage + 2);
   
   
  }
  
-
+	
  public void tick() {
   time++;
   if (time >= lifeTime) {
    remove();
    return;
   }
-
+	
   x += xdir*speeddmg;
   y += ydir*speeddmg;
   List<Entity> entitylist = level.getEntities(x, y, x, y);
@@ -111,11 +111,11 @@ public class Arrow extends Entity {
   }
   
  }
-
+	
  public boolean isBlockableBy(Mob mob) {
   return false;
  }
-
+	
  public void render(Screen screen) {
   if (time >= lifeTime - 3 * 20) {
    if (time / 6 % 2 == 0) return;
@@ -126,7 +126,7 @@ public class Arrow extends Entity {
   if (xdir == 0 && ydir == -1){
     xt = 15;
     yt = 5;
-
+	
       screen.render(x - 4, y - 4, xt + yt * 32, color, 1);
      
   }   else if (xdir == 1 && ydir == 0){
@@ -137,13 +137,13 @@ public class Arrow extends Entity {
   else if (xdir == -1 && ydir == 0){
 	    xt = 13;
 	    yt = 5;
-
+	
 	      screen.render(x - 4, y - 4, xt + yt * 32, color, 1);
   }
   else if (xdir == 0 && ydir == 1) {
 	    xt = 16;
 	    yt = 5;
-
+	
 	screen.render(x - 4, y - 4, xt + yt * 32, color, 1);
 }
  }

@@ -11,7 +11,7 @@ public class TextParticle extends Entity {
 	private int time = 0;
 	public double xa, ya, za;
 	public double xx, yy, zz;
-
+	
 	public TextParticle(String msg, int x, int y, int col) {
 		this.msg = msg;
 		this.x = x;
@@ -24,7 +24,7 @@ public class TextParticle extends Entity {
 		ya = random.nextGaussian() * 0.2;
 		za = random.nextFloat() * 0.7 + 2;
 	}
-
+	
 	public void tick() {
 		time++;
 		if (time > 60) {
@@ -43,11 +43,12 @@ public class TextParticle extends Entity {
 		x = (int) xx;
 		y = (int) yy;
 	}
-
+	
 	public void render(Screen screen) {
 //		Font.draw(msg, screen, x - msg.length() * 4, y, Color.get(-1, 0, 0, 0));
 		Font.draw(msg, screen, x - msg.length() * 4 + 1, y - (int) (zz) + 1, Color.get(-1, 0, 0, 0));
 		Font.draw(msg, screen, x - msg.length() * 4, y - (int) (zz), col);
 	}
-
+	
 }
+	

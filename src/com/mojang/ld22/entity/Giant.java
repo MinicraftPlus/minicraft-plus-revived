@@ -29,7 +29,7 @@ public class Giant extends Mob {
 	int p7 = 573;
 	int p8 = 606;
 	int p9 = 604;
-
+	
 	public Giant(int lvl) {
 		
 		this.lvl = lvl;
@@ -39,9 +39,9 @@ public class Giant extends Mob {
 		x = random.nextInt(64 * 16);
 		y = random.nextInt(64 * 16);
 		health = maxHealth = 1000 + eh + eh2;
-
+		
 	}
-
+	
 	public void tick() {
 		super.tick();
 		xr = 6;
@@ -49,7 +49,7 @@ public class Giant extends Mob {
 		isenemy = true;
 		
 		wait++;
-
+		
 		if (level.player != null && randomWalkTime == 0) {
 			int xd = level.player.x - x;
 			int yd = level.player.y - y;
@@ -66,7 +66,7 @@ public class Giant extends Mob {
 				xe = xa;
 			}
 		}
-
+		
 		int speed = tickTime & 1;
 		if (!move(xa * speed, ya * speed) || random.nextInt(200) == 0) {
 			randomWalkTime = 60;
@@ -75,11 +75,11 @@ public class Giant extends Mob {
 		}
 		if (randomWalkTime > 0) randomWalkTime--;
 	}
-
+	
 	public void render(Screen screen) {
 		int xt = 25;
 		int yt = 16;
-
+		
 		int flip1 = (walkDist >> 3) & 1;
 		int flip2 = (walkDist >> 3) & 1;
 		
@@ -102,7 +102,7 @@ public class Giant extends Mob {
 			col1 = Color.get(-1, 100, 200, 300);
 		}
 		if (dir > 1) {
-
+		
 			flip1 = 1;
 			flip2 = ((walkDist >> 4) & 1);
 			col1 = Color.get(-1, 110, 220, 330);
@@ -112,12 +112,12 @@ public class Giant extends Mob {
 			}
 			xt += 2 + ((walkDist >> 4) & 1) * 2;
 		}
-
+		
 		int xo = x - 8;
 		int yo = y - 11;
-
 		
-
+		
+		
 	    
 		
 		if (hurtTime > 0) {
@@ -161,7 +161,7 @@ public class Giant extends Mob {
 			screen.render(xo + 8, yo + 16, p8, col1, flip1); // 8
 		}
 	}
-
+	
 	protected void touchedBy(Entity entity) {
 		if (StartMenu.diff == StartMenu.easy){
 			if (entity instanceof Player) {
@@ -179,23 +179,23 @@ public class Giant extends Mob {
 			}
 		}
 	}
-
+	
 	public boolean canWool() {
 		return true;
 		}
-
+		
 	protected void die() {
 		super.die();
-
+		
 		int count = random.nextInt(6) + 2;
 		for (int i = 0; i < count; i++) {
 			level.add(new ItemEntity(new ResourceItem(Resource.cloth), x + random.nextInt(11) - 5, y + random.nextInt(11) - 5));
 		}
-
+		
 		if (level.player != null) {
 			level.player.score += 200 * lvl;
 		}
-
+		
 	}
-
+	
 }

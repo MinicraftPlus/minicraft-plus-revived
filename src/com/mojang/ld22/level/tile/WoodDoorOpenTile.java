@@ -19,7 +19,7 @@ public class WoodDoorOpenTile extends Tile {
 	public WoodDoorOpenTile(int id) {
 		super(id);
 	}
-
+	
 	public void render(Screen screen, Level level, int x, int y) {
 		
 		int col0 = Color.get(210, 320, 320, 100);
@@ -73,7 +73,7 @@ public class WoodDoorOpenTile extends Tile {
 		}
 		
 	}
-
+	
 	public boolean interact(Level level, int xt, int yt, Player player, Item item, int attackDir) {
 		if (item instanceof ToolItem) {
 			ToolItem tool = (ToolItem) item;
@@ -105,3 +105,4 @@ public class WoodDoorOpenTile extends Tile {
 		return e.canWool();
 	}
 }
+	

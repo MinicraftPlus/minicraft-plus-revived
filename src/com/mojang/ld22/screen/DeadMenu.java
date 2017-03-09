@@ -8,7 +8,7 @@ import com.mojang.ld22.Game;
 
 public class DeadMenu extends Menu {
 	private int inputDelay = 60;
-	// this is an IMPORTANT bool, determines if the user should respawn or not :).
+	// this is an IMPORTANT bool, determines if the user should respawn or not. :)
 	public static boolean shudrespawn;
 	public DeadMenu() {
 	}
@@ -17,27 +17,27 @@ public class DeadMenu extends Menu {
 		if (inputDelay > 0) {
 			inputDelay--;
 		}
-		else if (input.attack.clicked) {
+		else if (input.getKey("escape").clicked) {
 			game.setMenu(new TitleMenu());
 		    shudrespawn = false;
 		}
 		//This is so that if the user presses x @ respawn menu, they respawn (what a concept)
 		if (ModeMenu.hardcore == false)
 		{
-		 if (input.menu.clicked){
-			//This makes it so the player reespawns
-		    shudrespawn = true;
-			//reset game function
-			game.resetGame();
-			//sets the menu to nothing 
-			game.setMenu(null);
-		}
+			if (input.getKey("enter").clicked){
+				//This makes it so the player respawns
+			    shudrespawn = true;
+				//reset game function
+				game.resetGame();
+				//sets the menu to nothing
+				game.setMenu(null);
+			}
 		}
 	}
 	
 	public void render(Screen screen) {
 		Font.renderFrame(screen, "", 1, 3, 18, 10);
-		Font.draw("You died! Aww!", screen, 2 * 8, 4 * 8, Color.get(-1, 555, 555, 555));
+		Font.draw("You died! Aww!", screen, 16, 32, Color.get(-1, 555, 555, 555));
 		
 		int seconds = game.gameTime / 60;
 		int minutes = seconds / 60;
@@ -51,12 +51,14 @@ public class DeadMenu extends Menu {
 		} else {
 			timeString = minutes + "m " + (seconds < 10 ? "0" : "") + seconds + "s";
 		}
+		
 		Font.draw("Time:", screen, 2 * 8, 5 * 8, Color.get(-1, 555, 555, 555));
 		Font.draw(timeString, screen, (2 + 5) * 8, 5 * 8, Color.get(-1, 550, 550, 550));
 		Font.draw("Score:", screen, 2 * 8, 6 * 8, Color.get(-1, 555, 555, 555));
 		Font.draw("" + game.player.score, screen, (2 + 6) * 8, 6 * 8, Color.get(-1, 550, 550, 550));
-		Font.draw("C = lose", screen, 2 * 8, 8 * 8, Color.get(-1, 333, 333, 333));
-		if (ModeMenu.hardcore == false)Font.draw("X = respawn", screen, 2 * 8, 9 * 8, Color.get(-1, 333, 333, 333));
+		Font.draw("Escape = lose", screen, 2 * 8, 8 * 8, Color.get(-1, 333, 333, 333));
+		if (ModeMenu.hardcore == false)
+			Font.draw("Enter = respawn", screen, 2 * 8, 9 * 8, Color.get(-1, 333, 333, 333));
 		
 	}
 }

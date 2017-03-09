@@ -15,7 +15,7 @@ public class Snake extends Mob {
 	int ye = ya;
 	private int lvl;
 	private int randomWalkTime = 0;
-
+	
 	public Snake(int lvl) {
 		if (StartMenu.diff == StartMenu.easy){
 		this.lvl = lvl;
@@ -41,7 +41,7 @@ public class Snake extends Mob {
 		if (ModeMenu.creative) health = maxHealth = 1;
 		}
 	}
-
+	
 	public void tick() {
 		super.tick();
 		
@@ -63,7 +63,7 @@ public class Snake extends Mob {
 				xe = xa;
 			}
 		}
-
+		
 		int speed = tickTime & 1;
 		if (!move(xa * speed, ya * speed) || random.nextInt(200) == 0) {
 			randomWalkTime = 25;
@@ -72,19 +72,19 @@ public class Snake extends Mob {
 		}
 		if (randomWalkTime > 0) randomWalkTime--;
 	}
-
+	
 	public void render(Screen screen) {
 		int xt = 18;
 		int yt = 18;
-
+		
 		int flip1 = (walkDist >> 3) & 1;
 		int flip2 = (walkDist >> 3) & 1;
-
+		
 		if (dir == 1) {
 			xt += 2;
 		}
 		if (dir > 1) {
-
+		
 			flip1 = 0;
 			flip2 = ((walkDist >> 4) & 1 / 2);
 			if (dir == 2) {
@@ -93,10 +93,10 @@ public class Snake extends Mob {
 			}
 			xt += 4 + ((walkDist >> 3) & 1) * 2;
 		}
-
+		
 		int xo = x - 4;
 		int yo = y - 11;
-
+		
 		int col0 = Color.get(-1, 000, 444, 40);
 		int col1 = Color.get(-1, 000, 555, 30);
 		int col2 = Color.get(-1, 000, 333, 20);
@@ -137,7 +137,7 @@ public class Snake extends Mob {
 		if (hurtTime > 0) {
 			col = Color.get(-1, 555, 555, 555);
 		}
-
+		
 		screen.render(xo + 8 * flip1, yo + 0, xt + yt * 32, col, flip1);
 		screen.render(xo + 8 - 8 * flip1, yo + 0, xt + 1 + yt * 32, col, flip1);
 		screen.render(xo + 8 * flip2, yo + 8, xt + (yt + 1) * 32, col, flip2);
@@ -153,7 +153,7 @@ public class Snake extends Mob {
 		if (hurtTime > 0) {
 			col = Color.get(-1, 555, 555, 555);
 		}
-
+		
 		screen.render(xo + 8 * flip1, yo + 0, xt + yt * 32, col, flip1);
 		screen.render(xo + 8 - 8 * flip1, yo + 0, xt + 1 + yt * 32, col, flip1);
 		screen.render(xo + 8 * flip2, yo + 8, xt + (yt + 1) * 32, col, flip2);
@@ -169,7 +169,7 @@ public class Snake extends Mob {
 		if (hurtTime > 0) {
 			col = Color.get(-1, 555, 555, 555);
 		}
-
+		
 		screen.render(xo + 8 * flip1, yo + 0, xt + yt * 32, col, flip1);
 		screen.render(xo + 8 - 8 * flip1, yo + 0, xt + 1 + yt * 32, col, flip1);
 		screen.render(xo + 8 * flip2, yo + 8, xt + (yt + 1) * 32, col, flip2);
@@ -185,7 +185,7 @@ public class Snake extends Mob {
 		if (hurtTime > 0) {
 			col = Color.get(-1, 555, 555, 555);
 		}
-
+		
 		screen.render(xo + 8 * flip1, yo + 0, xt + yt * 32, col, flip1);
 		screen.render(xo + 8 - 8 * flip1, yo + 0, xt + 1 + yt * 32, col, flip1);
 		screen.render(xo + 8 * flip2, yo + 8, xt + (yt + 1) * 32, col, flip2);
@@ -202,14 +202,14 @@ public class Snake extends Mob {
 				if (hurtTime > 0) {
 					col = Color.get(-1, 555, 555, 555);
 				}
-
+				
 				screen.render(xo + 8 * flip1, yo + 0, xt + yt * 32, col, flip1);
 				screen.render(xo + 8 - 8 * flip1, yo + 0, xt + 1 + yt * 32, col, flip1);
 				screen.render(xo + 8 * flip2, yo + 8, xt + (yt + 1) * 32, col, flip2);
 				screen.render(xo + 8 - 8 * flip2, yo + 8, xt + 1 + (yt + 1) * 32, col, flip2);
 		}
 	}
-
+	
 	protected void touchedBy(Entity entity) {
 		if (StartMenu.diff == StartMenu.easy){
 			if (entity instanceof Player) {
@@ -239,10 +239,10 @@ public class Snake extends Mob {
 	public boolean canWool() {
 		return true;
 		}
-
+		
 	protected void die() {
 		super.die();
-
+		
 		if (StartMenu.diff == StartMenu.easy){
 		int count = random.nextInt(1) + 1;
 		for (int i = 0; i < count; i++) {
@@ -251,7 +251,7 @@ public class Snake extends Mob {
 		if (level.player != null) {
 			level.player.score += 50 * lvl;
 		}
-
+		
 	}
 		if (StartMenu.diff == StartMenu.norm){
 		int count = random.nextInt(1) + 1;
@@ -261,7 +261,7 @@ public class Snake extends Mob {
 		if (level.player != null) {
 			level.player.score += 50 * lvl;
 		}
-
+		
 	}
 		if (StartMenu.diff == StartMenu.hard){
 		int count = random.nextInt(1);
@@ -271,8 +271,8 @@ public class Snake extends Mob {
 		if (level.player != null) {
 			level.player.score += 50 * lvl;
 		}
-
+		
 	}
 	}
-
+	
 }

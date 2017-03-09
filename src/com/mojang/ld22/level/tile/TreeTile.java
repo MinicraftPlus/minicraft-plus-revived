@@ -45,7 +45,7 @@ public class TreeTile extends Tile {
 		int col = col0;
 		int barkCol1 = col00;
 		int barkCol2 = col000;
-
+		
 		boolean u = level.getTile(x, y - 1) == this;
 		boolean l = level.getTile(x - 1, y) == this;
 		boolean r = level.getTile(x + 1, y) == this;
@@ -54,7 +54,7 @@ public class TreeTile extends Tile {
 		boolean ur = level.getTile(x + 1, y - 1) == this;
 		boolean dl = level.getTile(x - 1, y + 1) == this;
 		boolean dr = level.getTile(x + 1, y + 1) == this;
-
+		
 		if (u && ul && l) {
 			screen.render(x * 16 + 0, y * 16 + 0, 10 + 1 * 32, col, 0);
 		} else {
@@ -82,7 +82,7 @@ public class TreeTile extends Tile {
 		int col = col2;
 		int barkCol1 = col22;
 		int barkCol2 = col222;
-
+		
 		boolean u = level.getTile(x, y - 1) == this;
 		boolean l = level.getTile(x - 1, y) == this;
 		boolean r = level.getTile(x + 1, y) == this;
@@ -91,7 +91,7 @@ public class TreeTile extends Tile {
 		boolean ur = level.getTile(x + 1, y - 1) == this;
 		boolean dl = level.getTile(x - 1, y + 1) == this;
 		boolean dr = level.getTile(x + 1, y + 1) == this;
-
+		
 		if (u && ul && l) {
 			screen.render(x * 16 + 0, y * 16 + 0, 10 + 1 * 32, col, 0);
 		} else {
@@ -119,7 +119,7 @@ public class TreeTile extends Tile {
 		int col = col1;
 		int barkCol1 = col11;
 		int barkCol2 = col111;
-
+		
 		boolean u = level.getTile(x, y - 1) == this;
 		boolean l = level.getTile(x - 1, y) == this;
 		boolean r = level.getTile(x + 1, y) == this;
@@ -128,7 +128,7 @@ public class TreeTile extends Tile {
 		boolean ur = level.getTile(x + 1, y - 1) == this;
 		boolean dl = level.getTile(x - 1, y + 1) == this;
 		boolean dr = level.getTile(x + 1, y + 1) == this;
-
+		
 		if (u && ul && l) {
 			screen.render(x * 16 + 0, y * 16 + 0, 10 + 1 * 32, col, 0);
 		} else {
@@ -157,7 +157,7 @@ public class TreeTile extends Tile {
 			int col = col3;
 			int barkCol1 = col33;
 			int barkCol2 = col333;
-
+			
 			boolean u = level.getTile(x, y - 1) == this;
 			boolean l = level.getTile(x - 1, y) == this;
 			boolean r = level.getTile(x + 1, y) == this;
@@ -166,7 +166,7 @@ public class TreeTile extends Tile {
 			boolean ur = level.getTile(x + 1, y - 1) == this;
 			boolean dl = level.getTile(x - 1, y + 1) == this;
 			boolean dr = level.getTile(x + 1, y + 1) == this;
-
+			
 			if (u && ul && l) {
 				screen.render(x * 16 + 0, y * 16 + 0, 10 + 1 * 32, col, 0);
 			} else {
@@ -189,20 +189,20 @@ public class TreeTile extends Tile {
 			}
 		}
 	}
-
+	
 	public void tick(Level level, int xt, int yt) {
 		int damage = level.getData(xt, yt);
 		if (damage > 0) level.setData(xt, yt, damage - 1);
 	}
-
+	
 	public boolean mayPass(Level level, int x, int y, Entity e) {
 		return false;
 	}
-
+	
 	public void hurt(Level level, int x, int y, Mob source, int dmg, int attackDir) {
 		hurt(level, x, y, dmg);
 	}
-
+	
 	public boolean interact(Level level, int xt, int yt, Player player, Item item, int attackDir) {
 		if (item instanceof ToolItem) {
 			ToolItem tool = (ToolItem) item;
@@ -221,7 +221,7 @@ public class TreeTile extends Tile {
 		}
 		return false;
 	}
-
+	
 	private void hurt(Level level, int x, int y, int dmg) {
 		{
 			int count = random.nextInt(100) == 0 ? 1 : 0;
@@ -250,3 +250,4 @@ public class TreeTile extends Tile {
 		}
 	}
 }
+	

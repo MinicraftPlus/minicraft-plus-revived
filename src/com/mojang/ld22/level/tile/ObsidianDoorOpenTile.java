@@ -22,7 +22,7 @@ public class ObsidianDoorOpenTile extends Tile {
 	public ObsidianDoorOpenTile(int id) {
 		super(id);
 	}
-
+	
 	public void render(Screen screen, Level level, int x, int y) {
 		
 		int col0 = Color.get(333, 222, 222, 111);
@@ -79,7 +79,7 @@ public class ObsidianDoorOpenTile extends Tile {
 	public void hurt(Level level, int x, int y, Mob source, int dmg, int attackDir) {
 		level.setTile(x, y, Tile.odc, 0);
 	}
-
+	
 	
 	
 	public boolean mayPass(Level level, int x, int y, Entity e) {

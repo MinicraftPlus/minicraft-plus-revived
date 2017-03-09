@@ -18,7 +18,7 @@ public class WheatTile extends Tile {
 	public WheatTile(int id) {
 		super(id);
 	}
-
+	
 	public void render(Screen screen, Level level, int x, int y) {
 		int age = level.getData(x, y);
 		int icon = age / 10;
@@ -44,9 +44,9 @@ public class WheatTile extends Tile {
 		int col444 = Color.get(0, 0, 50 + (icon) * 100, 40 + (icon - 3) * 2 * 100);
 		
 		
-
+		
 		if (level.dirtColor == 322){
-
+		
 		if (Game.Time == 0){
 			int col = col0;
 			if (icon >= 3) {
@@ -148,10 +148,10 @@ public class WheatTile extends Tile {
 		}
 		return false;
 	}
-
+	
 	public void tick(Level level, int xt, int yt) {
 		if (random.nextInt(2) == 0) return;
-
+		
 		int age = level.getData(xt, yt);
 		if (!IfWater(level, xt, yt)){
 		if (age < 50) level.setData(xt, yt, age + 1);
@@ -160,7 +160,7 @@ public class WheatTile extends Tile {
 		}
 	}
 	
-
+	
 	public boolean interact(Level level, int xt, int yt, Player player, Item item, int attackDir) {
 		if (item instanceof ToolItem) {
 			ToolItem tool = (ToolItem) item;
@@ -173,26 +173,26 @@ public class WheatTile extends Tile {
 		}
 		return false;
 	}
-
+	
 	public void steppedOn(Level level, int xt, int yt, Entity entity) {
 		if (random.nextInt(60) != 0) return;
 		if (level.getData(xt, yt) < 2) return;
 		harvest(level, xt, yt);
 	}
-
+	
 	public void hurt(Level level, int x, int y, Mob source, int dmg, int attackDir) {
-
+	
 		harvest(level, x, y);
 	}
-
+	
 	private void harvest(Level level, int x, int y) {
 		int age = level.getData(x, y);
-
+		
 		int count = random.nextInt(2) + 1;
 		for (int i = 0; i < count; i++) {
 			level.add(new ItemEntity(new ResourceItem(Resource.seeds), x * 16 + random.nextInt(10) + 3, y * 16 + random.nextInt(10) + 3));
 		}
-
+		
 		count = 0;
 		if (age >= 50) {
 			count = random.nextInt(3) + 2;
@@ -208,3 +208,4 @@ public class WheatTile extends Tile {
 		level.setTile(x, y, Tile.dirt, 0);
 	}
 }
+	

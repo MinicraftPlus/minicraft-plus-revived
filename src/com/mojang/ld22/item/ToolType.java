@@ -11,12 +11,13 @@ public class ToolType {
 	public static ToolType hatchet = new ToolType("Hatchet", 10);
 	public static ToolType spade = new ToolType("Spade", 11);
 	public static ToolType pick = new ToolType("Pick", 12);
-
+	
 	public final String name;
 	public final int sprite;
-
+	
 	private ToolType(String name, int sprite) {
 		this.name = name;
 		this.sprite = sprite;
 	}
 }
+	

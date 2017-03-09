@@ -11,12 +11,12 @@ import com.mojang.ld22.gfx.Screen;
 public class ToolItem extends Item {
 	private Random random = new Random();
 	public int counts = 1;
-
+	
 	public static final int MAX_LEVEL = 5;
 	public static final String[] LEVEL_NAMES = { //
 	"Wood", "Rock", "Iron", "Gold", "Gem"//
 	};
-
+	
 	public ToolType type;
 	public int level = 0;
 	public ToolType tool;
@@ -36,13 +36,13 @@ public class ToolItem extends Item {
 	Color.get(-1, 100, 444, 550),
 	Color.get(-1, 100, 444, 055),
 	};
-
-
+	
+	
 	public ToolItem(ToolType type, int level) {
 		this.type = type;
 		this.level = level;
 	}
-
+	
 	public int getColor() {
 		if (type == ToolType.bow){
 			return BOW_COLORS[level];
@@ -50,31 +50,31 @@ public class ToolItem extends Item {
 		return LEVEL_COLORS[level];
 		}
 	}
-
+	
 	public int getSprite() {
 		return type.sprite + 5 * 32;
 	}
-
+	
 	public void renderIcon(Screen screen, int x, int y) {
 		screen.render(x, y, getSprite(), getColor(), 0);
 	}
-
+	
 	public void renderInventory(Screen screen, int x, int y) {
 		screen.render(x, y, getSprite(), getColor(), 0);
 		Font.draw(getName(), screen, x + 8, y, Color.get(-1, 555, 555, 555));
 	}
-
+	
 	public String getName() {
 		return LEVEL_NAMES[level] + " " + type.name;
 	}
-
+	
 	public void onTake(ItemEntity itemEntity) {
 	}
-
+	
 	public boolean canAttack() {
 		return true;
 	}
-
+	
 	public int getAttackDamageBonus(Entity e) {
 		if (type == ToolType.hatchet) {
 			return (level + 1) * 2 + random.nextInt(3);
@@ -90,7 +90,7 @@ public class ToolItem extends Item {
 		}
 		return 1;
 	}
-
+	
 	public boolean matches(Item item) {
 		if (item instanceof ToolItem) {
 			ToolItem other = (ToolItem) item;

@@ -19,7 +19,7 @@ public class StoneDoorClosedTile extends Tile {
 	public StoneDoorClosedTile(int id) {
 		super(id);
 	}
-
+	
 	public void render(Screen screen, Level level, int x, int y) {
 		int col0 = Color.get(333, 222, 111, 222);
 		
@@ -98,3 +98,4 @@ public class StoneDoorClosedTile extends Tile {
 		return false;
 	}
 }
+	

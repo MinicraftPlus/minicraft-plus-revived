@@ -18,9 +18,9 @@ public class WoolRedTile extends Tile {
 	public WoolRedTile(int id) {
 		super(id);
 	}
-
+	
 	public void render(Screen screen, Level level, int x, int y) {
-
+	
 		int col0 = Color.get(300, 400, 300, 400);
 		int col1 = Color.get(400, 500, 400, 500);
 		int col2 = Color.get(300, 400, 300, 400);
@@ -28,7 +28,7 @@ public class WoolRedTile extends Tile {
 	    int col4 = Color.get(500, 400, 500, 400);
 	    
 		if (level.dirtColor == 322){
-
+		
 		if (Game.Time == 0){
 		int col = col0;
 		screen.render(x * 16 + 0, y * 16 + 0, 17, col, 0);
@@ -67,7 +67,7 @@ public class WoolRedTile extends Tile {
 			screen.render(x * 16 + 8, y * 16 + 8, 17, col, 0);
 		}
 	}
-
+	
 	public boolean interact(Level level, int xt, int yt, Player player, Item item, int attackDir) {
 		if (item instanceof ToolItem) {
 			ToolItem tool = (ToolItem) item;
@@ -94,3 +94,4 @@ public class WoolRedTile extends Tile {
 		return e.canWool();
 	}
 }
+	

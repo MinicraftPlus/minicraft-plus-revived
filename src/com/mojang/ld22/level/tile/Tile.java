@@ -13,7 +13,7 @@ import com.mojang.ld22.level.Level;
 public class Tile {
 	public static int tickCount = 0;
 	protected Random random = new Random();
-
+	
 	public static Tile[] tiles = new Tile[256];
 	public static Tile grass = new GrassTile(0);
 	public static Tile rock = new RockTile(1);
@@ -101,28 +101,28 @@ public class Tile {
 	public static Tile gemOre = new OreTile(21, Resource.gem);
 	public static Tile cloudCactus = new CloudCactusTile(22);
 	public static Tile infiniteFall = new InfiniteFallTile(16);
-
+	
 	public final byte id;
-
+	
 	public boolean connectsToGrass = false;
 	public boolean connectsToSand = false;
 	public boolean connectsToLava = false;
 	public boolean connectsToWater = false;
 	public int light = 1;
-
+	
 	public Tile(int id) {
 		this.id = (byte) id;
 		if (tiles[id] != null) throw new RuntimeException("Duplicate tile ids!");
 		tiles[id] = this;
 	}
-
+	
 	public String setDataChar(){
 		return null;
 	}
 	
 	public void render(Screen screen, Level level, int x, int y) {
 	}
-
+	
 	public boolean mayPass(Level level, int x, int y, Entity e) {
 		return true;
 	}
@@ -130,24 +130,24 @@ public class Tile {
 	public boolean canLight() {
 		return false;
 	}
-
-
+	
+	
 	public int getLightRadius(Level level, int x, int y) {
 		return 0;
 	}
-
+	
 	public void hurt(Level level, int x, int y, Mob source, int dmg, int attackDir) {
 	}
-
+	
 	public void bumpedInto(Level level, int xt, int yt, Entity entity) {
 	}
-
+	
 	public void tick(Level level, int xt, int yt) {
 	}
-
+	
 	public void steppedOn(Level level, int xt, int yt, Entity entity) {
 	}
-
+	
 	public boolean interact(Level level, int xt, int yt, Player player, Item item, int attackDir) {
 		return false;
 	}
@@ -155,7 +155,7 @@ public class Tile {
 	public boolean use(Level level, int xt, int yt, Player player, int attackDir) {
 		return false;
 	}
-
+	
 	public boolean connectsToLiquid() {
 		return connectsToWater || connectsToLava;
 	}

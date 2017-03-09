@@ -1,4 +1,6 @@
 //respawn mod +dillyg10+
+//LOOK AT DECOMP PLAYER.java! ESPECIALLY AROUND LINE 500 there, and 400 here! lots of stuff.
+
 package com.mojang.ld22.entity;
 
 import java.util.List;
@@ -22,6 +24,7 @@ import com.mojang.ld22.item.ToolItem;
 import com.mojang.ld22.item.ToolType;
 import com.mojang.ld22.item.resource.ItemResource;
 import com.mojang.ld22.item.resource.Resource;
+import com.mojang.ld22.item.ListItems;
 import com.mojang.ld22.level.Level;
 import com.mojang.ld22.level.tile.Tile;
 import com.mojang.ld22.screen.CraftInvMenu;
@@ -30,9 +33,13 @@ import com.mojang.ld22.screen.InfoMenu;
 import com.mojang.ld22.screen.InventoryMenu;
 import com.mojang.ld22.screen.PauseMenu;
 import com.mojang.ld22.screen.StartMenu;
+import com.mojang.ld22.screen.LoadingMenu;
+import com.mojang.ld22.screen.WorldSelectMenu;
 import com.mojang.ld22.sound.Sound;
 import com.mojang.ld22.screen.ModeMenu;
 import com.mojang.ld22.screen.PlayerInfoMenu;
+import com.mojang.ld22.saveload.Save;
+
 public class Player extends Mob {
 	private InputHandler input;
 	public int attackTime, attackDir;
@@ -76,17 +83,23 @@ public class Player extends Mob {
 	public int invulnerableTime = 0;
 	static public int xx;
 	static public int yy;
+	public boolean showinfo;
+	
+	public int r = 50, g = 50, b;
 	
 	public Player(Game game, InputHandler input) {
 		this.game = game;
 		this.input = input;
 		x = 24;
 		y = 24;
-
+		
 		stamina = maxStamina;
 		hunger = maxHunger;
 		if (ModeMenu.creative) {
-			
+			for(int i = 0; i < ListItems.items.size(); ++i) {
+				this.inventory.add((Item)ListItems.items.get(i));
+			}
+			/*
 			inventory.add(new ResourceItem( Resource.torch));
 			
 			inventory.add(new FurnitureItem(new Workbench()));
@@ -104,7 +117,7 @@ public class Player extends Mob {
 			inventory.add(new BucketItem());
 			inventory.add(new BucketWaterItem());
 			inventory.add(new BucketLavaItem());
-
+			
 		
 			inventory.add(new ToolItem(ToolType.sword, 1));
 			inventory.add(new ToolItem(ToolType.sword, 2));
@@ -125,7 +138,7 @@ public class Player extends Mob {
 			inventory.add(new ToolItem(ToolType.axe,2));
 			inventory.add(new ToolItem(ToolType.axe,3));
 			inventory.add(new ToolItem(ToolType.axe,4));
-
+			
 			inventory.add(new ToolItem(ToolType.hoe, 1));
 			inventory.add(new ToolItem(ToolType.hoe, 2));
 			inventory.add(new ToolItem(ToolType.hoe, 3));
@@ -152,7 +165,7 @@ public class Player extends Mob {
 			inventory.add(new ToolItem(ToolType.claymore, 4));
 			
 			inventory.add(new ResourceItem(Resource.rod));
-
+			
 			inventory.add(new ResourceItem(Resource.wood));
 			inventory.add(new ResourceItem(Resource.stone));
 			inventory.add(new ResourceItem(Resource.flower));
@@ -188,19 +201,18 @@ public class Player extends Mob {
 			inventory.add(new ResourceItem( Resource.grassseeds));
 			inventory.add(new ResourceItem( Resource.bone));
 			inventory.add(new ResourceItem( Resource.string));
-
+			
 			inventory.add(new ResourceItem( Resource.goldapple));
 			inventory.add(new ResourceItem( Resource.lapisOre));
 			inventory.add(new ResourceItem( Resource.book));
-
+			
 			
 			inventory.add(new ResourceItem( Resource.gunp));
 			inventory.add(new ResourceItem( Resource.bookant));
-
-		
+			
 			
 			inventory.add(new PowerGloveItem());
-			
+			*/
 		}
 		else {
 		inventory.add(new FurnitureItem(new Enchanter()));
@@ -226,7 +238,7 @@ public class Player extends Mob {
 		} else {
 			if (onStairDelay > 0) onStairDelay--;
 		}
-
+		
 		if (ModeMenu.creative) {
 			if (stamina <= 10)
 			{
@@ -245,7 +257,7 @@ public class Player extends Mob {
 			if (StartMenu.diff == StartMenu.easy && hungStamCnt == 10){ hunger = hunger - 1;hungStamCnt = 0;}
 			if (StartMenu.diff == StartMenu.norm && hungStamCnt == 7){ hunger = hunger - 1;hungStamCnt = 0;}
 			if (StartMenu.diff == StartMenu.hard && hungStamCnt == 5){ hunger = hunger - 1;hungStamCnt = 0;}
-
+			
 		}
 		
 		
@@ -335,10 +347,10 @@ public class Player extends Mob {
 		int xa = 0;
 		int ya = 0;
 		if (!Game.isfishing){
-		if (input.up.down) { ya--; stepCount++;}
-		if (input.down.down) {ya++; stepCount++;}
-		if (input.left.down){ xa--; stepCount++;}
-		if (input.right.down) { xa++; stepCount++;}
+		if (input.getKey("up").down) { ya--; stepCount++;}
+		if (input.getKey("down").down) {ya++; stepCount++;}
+		if (input.getKey("left").down){ xa--; stepCount++;}
+		if (input.getKey("right").down) { xa++; stepCount++;}
 		}
 		
 		xx = x;
@@ -351,12 +363,30 @@ public class Player extends Mob {
 			}
 		}
 		
+		if(game.saving && game.savecooldown > 0) {
+			xa = 0;
+			ya = 0;
+		}
+		/* potion effect
+		if(regen) {
+			regentick++;
+			if(regentick > 60) {
+				regentick = 0;
+				if(health < 10) {
+					health++;
+				}
+			}
+		}
+		*/
+		if(game.savecooldown > 0 && !game.saving) {
+			game.savecooldown--;
+		}
 		
 		if (staminaRechargeDelay % 2 == 0) {
 			move(xa, ya);
 		}
 		
-		if (input.attack.clicked) {
+		if (input.getKey("attack").clicked) {
 			if (stamina == 0) {
 				
 			} else {
@@ -365,43 +395,35 @@ public class Player extends Mob {
 				attack();
 			}
 		}
-		if (input.menu.clicked) {
-			if (!use()) {
-				game.setMenu(new InventoryMenu(this));
-			}
-		}
-		if (input.pause.clicked) {
-			game.setMenu(new PauseMenu());
-			
-			}
-		if (input.craft.clicked) {
-			if (!use()) {
-				game.setMenu(new CraftInvMenu(Crafting.craftRecipes, this));
-			}
-		}
-		if (input.sethome.clicked) setHome();
-		if (input.home.clicked) {
+		if (input.getKey("menu").clicked && !use())
+			game.setMenu(new InventoryMenu(this));
+		if (input.getKey("pause").clicked)
+			game.setMenu(new PauseMenu(this));
+		if (input.getKey("craft").clicked && !use())
+			game.setMenu(new CraftInvMenu(Crafting.craftRecipes, this));
+		if (input.getKey("sethome").clicked)
+			setHome();
+		if (input.getKey("home").clicked)
 			goHome();
-			
-		}
-		if (input.i.clicked) {
-			game.setMenu(new PlayerInfoMenu()); 
-		}
-		//these are my test buttons. incase i need to debug something.
-		if (input.r.clicked) {
 		
+		if (input.getKey("i").clicked)
+			game.setMenu(new PlayerInfoMenu());
+		
+		//these are my test buttons. incase i need to debug something.
+		if(input.getKey("r").clicked && !game.saving) {
+			game.saving = true;
+			new Save(this, WorldSelectMenu.worldname);
+			LoadingMenu.percentage = 0;
 		}
-		if (input.t.clicked) {
-			 
+		if (input.getKey("t").clicked) {
+			
 		}
 		
 		if (ModeMenu.creative) {
-			if (input.dayTime.clicked) Game.tickCount = 5900;
+			if (input.getKey("dayTime").clicked) Game.tickCount = 5900;
 		}
-		if (attackTime > 0) attackTime--;
-		
-		
-		
+		if (attackTime > 0)
+			attackTime--;
 		
 	}
 	
@@ -434,7 +456,7 @@ public class Player extends Mob {
 		boolean done = false;
 		
 		if ( (attackItem instanceof ToolItem) && this.stamina-1>=0) {
-
+		
 			ToolItem tool = (ToolItem) attackItem;
 			if (Game.ac > 0){
 			if (tool.type == ToolType.bow  && this.stamina-1>=0) {
@@ -494,7 +516,7 @@ public class Player extends Mob {
 			if (attackDir == 1) yt = (y - r + yo) >> 4;
 			if (attackDir == 2) xt = (x - r) >> 4;
 			if (attackDir == 3) xt = (x + r) >> 4;
-
+			
 			
 			if (xt >= 0 && yt >= 0 && xt < level.w && yt < level.h) {
 				if (activeItem.interactOn(level.getTile(xt, yt), level, xt, yt, this, attackDir)) {
@@ -909,7 +931,7 @@ public class Player extends Mob {
 	return true;
 		
 	}
-
+	
 		return false;
 	}
 	public boolean findStartPos(Level level) {
@@ -991,8 +1013,7 @@ public boolean respawn(Level level)
 		
 	}
 	
-
-
+	
 	public boolean payStamina(int cost) {
 		if (cost > stamina) return false;
 		stamina -= cost;

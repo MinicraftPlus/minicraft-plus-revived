@@ -15,9 +15,9 @@ public class Sound {
 	public static final Sound craft = new Sound("/craft.wav");
 	public static final Sound fuse = new Sound("/fuse.wav");
 	public static final Sound explode = new Sound("/explode.wav");
-
+	
 	private AudioClip clip;
-
+	
 	private Sound(String name) {
 		try {
 			clip = Applet.newAudioClip(Sound.class.getResource(name));
@@ -25,17 +25,19 @@ public class Sound {
 			e.printStackTrace();
 		}
 	}
-
+	
 	public void play() {
+		if (!StartMenu.isSoundAct)
+			return;
 		try {
 			new Thread() {
 				public void run() {
-					if (StartMenu.isSoundAct) {
+					//if (StartMenu.isSoundAct) {
 					clip.play();
-					}
+					/*}
 					else {
 						
-					}
+					}*/
 				}
 			}.start();
 		} catch (Throwable e) {

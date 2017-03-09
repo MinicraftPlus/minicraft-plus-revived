@@ -45,6 +45,7 @@ In the end, the other repository will be depricated, and probably deleted, as th
 * Redstone
 * Fire
 * Chickens
+* Minecarts
 
   It's worth note that these are simply **ideas**, and have no garuntee of being implemented any time soon, or even at all.
 

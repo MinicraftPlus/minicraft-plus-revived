@@ -9,57 +9,58 @@ import java.util.Random;
 public class TitleMenu extends Menu {
 	private int selected = 0;
 	protected final Random random = new Random();
-
-	private static final String[] options = { "New game", "Tutorial", "Options", "About" };
+	
+	private static final String[] options = { "New game", "Tutorial", "Options", "About", "Quit"};
 	public static boolean sentFromMenu;
 	int randcount = 60;
 	int rand = random.nextInt(randcount);
 	int count = 0;
 	boolean reverse = false;
-
-	public TitleMenu() {
-	}
-
+	
+	public TitleMenu() {}
+	
 	public void tick() {
-		if (input.up.clicked) selected--;
-		if (input.down.clicked) selected++;
-		if (input.up.clicked) Sound.pickup.play(); 
-		if (input.down.clicked) Sound.pickup.play(); 
-
+		if (input.getKey("up").clicked) selected--;
+		if (input.getKey("down").clicked) selected++;
+		if (input.getKey("up").clicked) Sound.pickup.play(); 
+		if (input.getKey("down").clicked) Sound.pickup.play(); 
+		
 		int len = options.length;
 		if (selected < 0) selected += len;
 		if (selected >= len) selected -= len;
-
-		if (input.r.clicked) rand = random.nextInt(randcount);
+		
+		if (input.getKey("r").clicked) rand = random.nextInt(randcount);
 		
 		if (reverse == false){
-		count++;
-		if (count == 25){
-			reverse = true;
-		}
-		} else if (reverse == true){
+			count++;
+			if (count == 25) reverse = true;
+		} else if (reverse == true) {
 			count--;
-			if (count == 0){
-				reverse = false;
-			}
+			if (count == 0) reverse = false;
 		}
 		
-		if (input.attack.clicked || input.menu.clicked) {
-			if (selected == 0) game.setMenu(new ModeMenu());
+		if (input.getKey("enter").clicked/*input.getKey("escape").clicked || input.getKey("enter").clicked*/) {
+			if (selected == 0) {
+				WorldSelectMenu.loadworld = false;
+				game.setMenu(new WorldSelectMenu(this));
+				//(this method should now stop getting called by Game)
+				//BUT: this object is passed to WorldSelectMenu...
+			}
 			if (selected == 1) {
 				try {
 					//This is for the tutorial Video
-			         String url = "http://minicraftplus.webs.com/Tutorial.htm";
-			         java.awt.Desktop.getDesktop().browse(java.net.URI.create(url));
-			       }
-			       catch (java.io.IOException e) {
-			           System.out.println(e.getMessage());
-			       }}
+					String url = "http://minicraftplus.webs.com/Tutorial.htm";
+					java.awt.Desktop.getDesktop().browse(java.net.URI.create(url));
+				} catch (java.io.IOException e) {
+					System.out.println(e.getMessage());
+				}
+			}
 			if (selected == 2) {sentFromMenu = true; game.setMenu(new StartMenu());}
 			if (selected == 3) game.setMenu(new AboutMenu(this));
+			if (selected == 4) System.exit(0);
 		}
 	}
-
+	
 	public void render(Screen screen) {
 		screen.clear(0);
 		String splash;
@@ -70,66 +71,70 @@ public class TitleMenu extends Menu {
 		int xo = (screen.w - w * 8) / 2;
 		int yo = 36;
 		int cols = Color.get(0, 550, 550, 550);
-		String a = "Also play InfinityTale!";
-		String b = "Also play Minicraft Delux!";
-		String c = "Notch is Awesome!";
-		String d = "Dillyg10 is cool as Ice!";
-		String e = "Kill Creeper, get Gunpowder!";
-		String f = "Also play Alecraft!";
-		String g = "Also play Hackcraft!";
-		String hh = "Playminicraft.com is the bomb!";
-		String ii = "Shylor is the man!";
-		String j = "Kill Cow, get Beef!";
-		String k = "Guard13007 has too many twitters!";
-		String l = "You should read Antidious Venomi!";
-		String m = "Kill Zombie, get Cloth!";
-		String n = "Kill Slime, get Slime!";
-		String o = "Kill Skeleton, get Bones!";
-		String p = "Kill Sheep, get Wool!";
-		String q = "Kill Pig, get Porkchop!";
-		String r = "Gold > Iron";
-		String s = "Gem > Gold";
-		String t = "@MinicraftPlus on Twitter";
-		String u = "MinicraftPlus on Youtube";
-		String v = "AntVenom loves cows! Honest!";
-		String ww = "Milk is for something later!";
-		String xxs = "saying ay-oh, that creeper's KO'd!";
-		String yy = "So we back in the mine,";
-		String yt = "pickaxe swinging from side to side";
-		String z = "Life itself suspended by a thread";
-		String aa = "wenubs.com is jamming!";
-		String bb = "Gimmie a bucket!";
-		String cc = "Farming with water!";
-		String dd = "Made with 10000% Vitamin Z!";
-		String ee = "In search of Gems!";
-		String ff = "Alpha? What's that?";
-		String gg = "Beta? What's that?";
-		String hhh = "Infdev? What's that?";
-		String iii = "Test == InDev!";
-		String jj = "Too much DP!";
-		String kk = "Sugarcane is a Idea!";
-		String ll = "Y U NO BOAT!?";
-		String mm = "PBAT is in the house!";
-		String nn = "Who is SeaNanners?";
-		String oo = "Diggy! Dig... ooh! a jaffacake!";
-		String pp = "Punch the Moon!";
-		String qq = "This is String qq!";
-		String rr = "3D? What's that?";
-		String ss = "Why?";
-		String tt = "Mouse not included!";
-		String uu = "Bosses? What are those?";
-		String vv = "You are null!";
-		String www = "Story? What's that?";
-		String xxx = "Multiplayer? What's that?";
-		String yyy = "Infinite terrain? What's that?";
-		String zz = "Spiders? What are those?";
-		String aaa = "That guy is such a sly fox!";
-		String bbb = "Windows? I perfer Doors!";
-		String ccc = "3.1D is the new thing!";
-		String ddd = "hola senor!";
-		String eee = "Vote for the Dead Workers Party!";
-		String fff = "Sonic Boom!";
-		String ggg = "Hakuna Matata!";
+		
+		String[] splashes = {
+			"Also play InfinityTale!",
+			"Also play Minicraft Delux!",
+			"Notch is Awesome!",
+			"Dillyg10 is cool as Ice!",
+			"Kill Creeper, get Gunpowder!",
+			"Also play Alecraft!",
+			"Also play Hackcraft!",
+			"Playminicraft.com is the bomb!",
+			"Shylor is the man!",
+			"Kill Cow, get Beef!",
+			"Guard13007 has too many twitters!",
+			"You should read Antidious Venomi!",
+			"Kill Zombie, get Cloth!",
+			"Kill Slime, get Slime!",
+			"Kill Skeleton, get Bones!",
+			"Kill Sheep, get Wool!",
+			"Kill Pig, get Porkchop!",
+			"Gold > Iron",
+			"Gem > Gold",
+			"@MinicraftPlus on Twitter",
+			"MinicraftPlus on Youtube",
+			"AntVenom loves cows! Honest!",
+			"Milk is for something later!",
+			"saying ay-oh, that creeper's KO'd!",
+			"So we back in the mine,",
+			"pickaxe swinging from side to side",
+			"Life itself suspended by a thread",
+			"wenubs.com is jamming!",
+			"Gimmie a bucket!",
+			"Farming with water!",
+			"Made with 10000% Vitamin Z!",
+			"In search of Gems!",
+			"Alpha? What's that?",
+			"Beta? What's that?",
+			"Infdev? What's that?",
+			"Test == InDev!",
+			"Too much DP!",
+			"Sugarcane is a Idea!",
+			"Y U NO BOAT!?",
+			"PBAT is in the house!",
+			"Who is SeaNanners?",
+			"Diggy! Dig... ooh! a jaffacake!",
+			"Punch the Moon!",
+			"This is String qq!",
+			"3D? What's that?",
+			"Why?",
+			"Mouse not included!",
+			"Bosses? What are those?",
+			"You are null!",
+			"Story? What's that?",
+			"Multiplayer? What's that?",
+			"Infinite terrain? What's that?",
+			"Spiders? What are those?",
+			"That guy is such a sly fox!",
+			"Windows? I perfer Doors!",
+			"3.1D is the new thing!",
+			"hola senor!",
+			"Vote for the Dead Workers Party!",
+			"Sonic Boom!",
+			"Hakuna Matata!",
+			"MissingNo " + rand
+		};
 		
 		for (int y = 0; y < h; y++) {
 			for (int x = 0; x < w; x++) {
@@ -137,7 +142,7 @@ public class TitleMenu extends Menu {
 			}
 		}
 		
-		for (int i = 0; i < 4; i++) {
+		for (int i = 0; i < options.length; i++) {
 			String msg = options[i];
 			int col = Color.get(0, 222, 222, 222);
 			if (i == selected) {
@@ -163,6 +168,7 @@ public class TitleMenu extends Menu {
 			cols = Color.get(0, 5, 110, 110);
 		}
 		
+		/*
 		if (rand == 1){
 			splash = a;
 			xx = 55;
@@ -383,18 +389,24 @@ public class TitleMenu extends Menu {
 			xx = 55;
 		} else {
 			System.out.println(rand);
-			splash = "MissingNo";
+			splash = "MissingNo " + rand;
 			xx = 105;
-		}
+		}*/
 		
-		if (splash == yy){
+		int[] widths = {55, 45, 80, 40, 70, 70, 30, 70, 70, 15, 15, 55, 55, 45, 60, 55, 100, 100, 50, 50, 35, 35, 10, 55, 70, 15, 55, 85, 70, 35, 75, 70, 75, 65, 90, 100, 65, 95, 60, 75, 20, 85, 75, 80, 125, 70, 55, 95, 70, 45, 25, 50, 35, 50, 55, 105, 17, 105, 90, 55, 105};
+		/*
+		if (splash == splashes[23]){
 			Font.draw(yt, screen, 10, 70, cols);
 		}
-		
-		Font.draw(splash, screen, xx, 60, cols);
+		*/
+		Font.draw(splashes[rand], screen, widths[rand], 60, cols);
 		
 		Font.draw("(Arrow keys to move)", screen, 65, screen.h - 25, Color.get(0, 111, 111, 111));
-		Font.draw("(X to accept, C to return)", screen, 45, screen.h - 15, Color.get(0, 111, 111, 111));
-		Font.draw("Version 1.6", screen, 1, screen.h - 190, Color.get(0, 111, 111, 111));
+		Font.draw("(Enter to accept, Escape to return)", screen, 30, screen.h - 15, Color.get(0, 111, 111, 111));
+		Font.draw("Version 1.6-1.8 (updating)", screen, 1, screen.h - 190, Color.get(0, 111, 111, 111));
 	}
+	/*
+	private int centerX(String text) {
+		
+	}*/
 }

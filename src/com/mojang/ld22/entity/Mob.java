@@ -28,7 +28,8 @@ public class Mob extends Entity {
 	public int xx;
 	public int yy;
 	public boolean isenemy = false;
-
+	public int lvl;
+	
 	public Mob() {
 		x = y = 8;	
 		xr = 4;
@@ -36,23 +37,23 @@ public class Mob extends Entity {
 		xx = x;
 		yy = y;
 	}
-
+	
 	public void tick() {
 		tickTime++;
 		if (level.getTile(x >> 4, y >> 4) == Tile.lava) {
 			hurt(this, 4, dir ^ 1);
 		}
-
+		
 		if (health <= 0) {
 			die();
 		}
 		if (hurtTime > 0) hurtTime--;
 	}
-
+	
 	protected void die() {
 		remove();
 	}
-
+	
 	public boolean move(int xa, int ya) {
 		if (isSwimming()) {
 			if (swimTimer++ % 2 == 0) return true;
@@ -89,12 +90,12 @@ public class Mob extends Entity {
 		}
 		return super.move(xa, ya);
 	}
-
+	
 	protected boolean isWooling() {
 		Tile tile = level.getTile(x >> 0, y >> 0);
 		return tile == Tile.wool;
 	}
-
+	
 	public boolean isLight() {
 		Tile tile = level.getTile(x >> 4, y >> 4);
 		return 
@@ -135,36 +136,36 @@ public class Mob extends Entity {
 		Tile tile = level.getTile(x >> 4, y >> 4);
 		return tile == Tile.water || tile == Tile.lava || tile == Tile.lightwater;
 	}
-
+	
 	public boolean blocks(Entity e) {
 		return e.isBlockableBy(this);
 	}
-
+	
 	public void hurt(Tile tile, int x, int y, int damage) {
 		int attackDir = dir ^ 1;
 		doHurt(damage, attackDir);
 	}
-
+	
 	public void hurt(Mob mob, int damage, int attackDir) {
 		doHurt(damage, attackDir);
 	}
 	public void heal(int heal) {
 		if (hurtTime > 0) return;
-
+		
 		level.add(new TextParticle("" + heal, x, y, Color.get(-1, 50, 50, 50)));
 		health += heal;
 		if (health > maxHealth) health = maxHealth;
 	}
 	
 	public void hungerHeal(int hungerHeal) {
-
+	
 		hunger += hungerHeal;
 		if (hunger > maxHunger) hunger = maxHunger;
 	}
-
+	
 	protected void doHurt(int damage, int attackDir) {
 		if (hurtTime > 0) return;
-
+		
 		if (level.player != null) {
 			int xd = level.player.x - x;
 			int yd = level.player.y - y;
@@ -180,25 +181,25 @@ public class Mob extends Entity {
 		if (attackDir == 3) xKnockback = +6;
 		hurtTime = 10;
 	}
-
+	
 	public boolean findStartPos(Level level) {
 		int x = random.nextInt(level.w);
 		int y = random.nextInt(level.h);
 		int xx = x * 16 + 8;
 		int yy = y * 16 + 8;
-
+		
 		if (level.player != null) {
-
+		
 			int xd = level.player.x - xx;
 			int yd = level.player.y - yy;
 						
 			if (xd * xd + yd * yd < 60 * 60) return false;
 				
 		}
-
+		
 		int r = level.monsterDensity * 13;
 		if (level.getEntities(xx - r, yy - r, xx + r, yy + r).size() > 0) return false;
-
+		
 		if (level.getTile(x, y).mayPass(level, x, y, this)) {
 				if (level.getTile(x, y) != Tile.sdo){
 				if (level.getTile(x, y) != Tile.wdo){
@@ -234,7 +235,7 @@ public class Mob extends Entity {
 							
 				}}}}}}}}}}}}}}}}}}}}}}}}}}}
 		}
-
+		
 		return false;
 	}
 	public boolean findStartPosDungeon(Level level) {
@@ -242,9 +243,9 @@ public class Mob extends Entity {
 		int y = random.nextInt(level.h);
 		int xx = x * 16 + 8;
 		int yy = y * 16 + 8;
-
+		
 		if (level.player != null) {
-
+		
 			int xd = level.player.x - xx;
 			int yd = level.player.y - yy;
 						
@@ -257,17 +258,17 @@ public class Mob extends Entity {
 		r = level.monsterDensity * 22;	
 		}
 		if (level.getEntities(xx - r, yy - r, xx + r, yy + r).size() > 0) return false;
-
+		
 		if (level.getTile(x, y).mayPass(level, x, y, this)) {
 			if (level.getTile(x, y) == Tile.o){
-
+			
 			this.x = xx;
 			this.y = yy;
 			return true;
-
+			
 		}
 		}
-
+		
 		return false;
 	}
 	public boolean findStartPosCow(Level level) {
@@ -275,23 +276,23 @@ public class Mob extends Entity {
 		int y = random.nextInt(level.h);
 		int xx = x * 16 + 8;
 		int yy = y * 16 + 8;
-
+		
 		if (level.player != null) {
-
+		
 			int xd = level.player.x - xx;
 			int yd = level.player.y - yy;
 						
 			if (xd * xd + yd * yd < 80 * 80) return false;
 				
 		}
-
+		
 		if (!ModeMenu.score){
 		r = level.monsterDensity * 20;
 		} else {
 		r = level.monsterDensity * 27;	
 		}
 		if (level.getEntities(xx - r, yy - r, xx + r, yy + r).size() > 0) return false;
-
+		
 		
 		//makes it so that cows only spawn on grass or flowers.
 		if (level.getTile(x, y).mayPass(level, x, y, this)) {
@@ -318,7 +319,7 @@ public class Mob extends Entity {
 			
 			
 		}
-
+		
 		return false;
 	}
 	
@@ -327,23 +328,23 @@ public class Mob extends Entity {
 		int y = random.nextInt(level.h);
 		int xx = x * 16 + 8;
 		int yy = y * 16 + 8;
-
+		
 		if (level.player != null) {
-
+		
 			int xd = level.player.x - xx;
 			int yd = level.player.y - yy;
 						
 			if (xd * xd + yd * yd < 80 * 80) return false;
 				
 		}
-
+		
 		if (!ModeMenu.score){
 		r = level.monsterDensity * 15;
 		} else {
 		r = level.monsterDensity * 22;	
 		}
 		if (level.getEntities(xx - r, yy - r, xx + r, yy + r).size() > 0) return false;
-
+		
 		
 		//makes it so that cows only spawn on grass or flowers.
 		if (level.getTile(x, y).mayPass(level, x, y, this)) {
@@ -370,7 +371,8 @@ public class Mob extends Entity {
 			
 			
 		}
-
+		
 		return false;
 	}
 }
+	

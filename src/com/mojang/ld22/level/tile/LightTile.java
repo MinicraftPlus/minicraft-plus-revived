@@ -64,7 +64,7 @@ public class LightTile extends Tile {
 	
 	//Dirt tile 
     int col5 = Color.get(321, 321, 321 - 111, 321 - 111);
-
+	
     //Flower Tile
 	int col6 = Color.get(10, 141, 555, 440);
 	
@@ -122,22 +122,22 @@ public class LightTile extends Tile {
 		if (til == 0){
 		int col = col0;
 		int transitionColor = col00;
-
+		
 		boolean u = !level.getTile(x, y - 1).connectsToGrass;
 		boolean d = !level.getTile(x, y + 1).connectsToGrass;
 		boolean l = !level.getTile(x - 1, y).connectsToGrass;
 		boolean r = !level.getTile(x + 1, y).connectsToGrass;
-
+		
 		if (!u && !l) {
 			screen.render(x * 16 + 0, y * 16 + 0, 0, col, 0);
 		} else
 			screen.render(x * 16 + 0, y * 16 + 0, (l ? 11 : 12) + (u ? 0 : 1) * 32, transitionColor, 0);
-
+			
 		if (!u && !r) {
 			screen.render(x * 16 + 8, y * 16 + 0, 1, col, 0);
 		} else
 			screen.render(x * 16 + 8, y * 16 + 0, (r ? 13 : 12) + (u ? 0 : 1) * 32, transitionColor, 0);
-
+			
 		if (!d && !l) {
 			screen.render(x * 16 + 0, y * 16 + 8, 2, col, 0);
 		} else
@@ -149,29 +149,29 @@ public class LightTile extends Tile {
 	}else if (til == 1){
 		int col = col1;
 		int transitionColor = col11;
-
+		
 		boolean u = !level.getTile(x, y - 1).connectsToSand;
 		boolean d = !level.getTile(x, y + 1).connectsToSand;
 		boolean l = !level.getTile(x - 1, y).connectsToSand;
 		boolean r = !level.getTile(x + 1, y).connectsToSand;
-
+		
 		if (!u && !l) {
 				screen.render(x * 16 + 0, y * 16 + 0, 0, col, 0);
 		} else
 			screen.render(x * 16 + 0, y * 16 + 0, (l ? 11 : 12) + (u ? 0 : 1) * 32, transitionColor, 0);
-
+			
 		if (!u && !r) {
 			screen.render(x * 16 + 8, y * 16 + 0, 1, col, 0);
 		} else
 			screen.render(x * 16 + 8, y * 16 + 0, (r ? 13 : 12) + (u ? 0 : 1) * 32, transitionColor, 0);
-
+			
 		if (!d && !l) {
 			screen.render(x * 16 + 0, y * 16 + 8, 2, col, 0);
 		} else
 			screen.render(x * 16 + 0, y * 16 + 8, (l ? 11 : 12) + (d ? 2 : 1) * 32, transitionColor, 0);
 		if (!d && !r) {
 				screen.render(x * 16 + 8, y * 16 + 8, 3, col, 0);
-
+				
 		} else
 			screen.render(x * 16 + 8, y * 16 + 8, (r ? 13 : 12) + (d ? 2 : 1) * 32, transitionColor, 0);	
 		}
@@ -179,7 +179,7 @@ public class LightTile extends Tile {
 		int col = col2;
 		int barkCol1 = col22;
 		int barkCol2 = col222;
-
+		
 		boolean u = level.getTile(x, y - 1) == this;
 		boolean l = level.getTile(x - 1, y) == this;
 		boolean r = level.getTile(x + 1, y) == this;
@@ -188,7 +188,7 @@ public class LightTile extends Tile {
 		boolean ur = level.getTile(x + 1, y - 1) == this;
 		boolean dl = level.getTile(x - 1, y + 1) == this;
 		boolean dr = level.getTile(x + 1, y + 1) == this;
-
+		
 		if (u && ul && l) {
 			screen.render(x * 16 + 0, y * 16 + 0, 10 + 1 * 32, col, 0);
 		} else {
@@ -221,27 +221,27 @@ public class LightTile extends Tile {
 			int col = col4;
 			int transitionColor1 = col44;
 			int transitionColor2 = col444;
-
+			
 			boolean u = !level.getTile(x, y - 1).connectsToWater;
 			boolean d = !level.getTile(x, y + 1).connectsToWater;
 			boolean l = !level.getTile(x - 1, y).connectsToWater;
 			boolean r = !level.getTile(x + 1, y).connectsToWater;
-
+			
 			boolean su = u && level.getTile(x, y - 1).connectsToSand;
 			boolean sd = d && level.getTile(x, y + 1).connectsToSand;
 			boolean sl = l && level.getTile(x - 1, y).connectsToSand;
 			boolean sr = r && level.getTile(x + 1, y).connectsToSand;
-
+			
 			if (!u && !l) {
 				screen.render(x * 16 + 0, y * 16 + 0, wRandom.nextInt(4), col, wRandom.nextInt(4));
 			} else
 				screen.render(x * 16 + 0, y * 16 + 0, (l ? 14 : 15) + (u ? 0 : 1) * 32, (su || sl) ? transitionColor2 : transitionColor1, 0);
-
+				
 			if (!u && !r) {
 				screen.render(x * 16 + 8, y * 16 + 0, wRandom.nextInt(4), col, wRandom.nextInt(4));
 			} else
 				screen.render(x * 16 + 8, y * 16 + 0, (r ? 16 : 15) + (u ? 0 : 1) * 32, (su || sr) ? transitionColor2 : transitionColor1, 0);
-
+				
 			if (!d && !l) {
 				screen.render(x * 16 + 0, y * 16 + 8, wRandom.nextInt(4), col, wRandom.nextInt(4));
 			} else
@@ -260,7 +260,7 @@ public class LightTile extends Tile {
 			}
 			else if (til == 6){
 				int flowerCol = col6;
-
+				
 				screen.render(x * 16 + 0, y * 16 + 0, 1 + 1 * 32, flowerCol, 0);
 				screen.render(x * 16 + 8, y * 16 + 0, 2, Color.get(141, 141, 252, 322), 0);
 				screen.render(x * 16 + 0, y * 16 + 8, 2, Color.get(141, 141, 252, 322), 0);
@@ -330,27 +330,27 @@ public class LightTile extends Tile {
 				int col = col14;
 				int transitionColor1 = col114;
 				int transitionColor2 = col1114;
-
+				
 				boolean u = !level.getTile(x, y - 1).connectsToLiquid();
 				boolean d = !level.getTile(x, y + 1).connectsToLiquid();
 				boolean l = !level.getTile(x - 1, y).connectsToLiquid();
 				boolean r = !level.getTile(x + 1, y).connectsToLiquid();
-
+				
 				boolean su = u && level.getTile(x, y - 1).connectsToSand;
 				boolean sd = d && level.getTile(x, y + 1).connectsToSand;
 				boolean sl = l && level.getTile(x - 1, y).connectsToSand;
 				boolean sr = r && level.getTile(x + 1, y).connectsToSand;
-
+				
 				if (!u && !l) {
 					screen.render(x * 16 + 0, y * 16 + 0, 0, col, 0);
 				} else
 					screen.render(x * 16 + 0, y * 16 + 0, (l ? 14 : 15) + (u ? 0 : 1) * 32, (su || sl) ? transitionColor2 : transitionColor1, 0);
-
+					
 				if (!u && !r) {
 					screen.render(x * 16 + 8, y * 16 + 0, 1, col, 0);
 				} else
 					screen.render(x * 16 + 8, y * 16 + 0, (r ? 16 : 15) + (u ? 0 : 1) * 32, (su || sr) ? transitionColor2 : transitionColor1, 0);
-
+					
 				if (!d && !l) {
 					screen.render(x * 16 + 0, y * 16 + 8, 2, col, 0);
 				} else
@@ -421,7 +421,7 @@ public class LightTile extends Tile {
 				screen.render(x * 16 + 4, y * 16 + 4, 11 + 3 * 32, col, 0);
 			}
 	} 
-
+	
 	
 	public boolean mayPass(Level level, int x, int y, Entity e) {
 		if (til == 4){
@@ -677,12 +677,12 @@ public class LightTile extends Tile {
 		
 		int xn = xt;
 		int yn = yt;
-
+		
 		if (random.nextBoolean())
 			xn += random.nextInt(2) * 2 - 1;
 		else
 			yn += random.nextInt(2) * 2 - 1;
-
+			
 		if (level.getTile(xn, yn) == Tile.dirt) {
 			level.setTile(xn, yn, this, 0);
 		}
@@ -693,12 +693,12 @@ public class LightTile extends Tile {
 		if (til == 4){
 			int xn = xt;
 			int yn = yt;
-
+			
 			if (random.nextBoolean())
 				xn += random.nextInt(2) * 2 - 1;
 			else
 				yn += random.nextInt(2) * 2 - 1;
-
+				
 			if (level.getTile(xn, yn) == Tile.hole) {
 				level.setTile(xn, yn, this, 0);
 			}
@@ -1154,6 +1154,7 @@ public class LightTile extends Tile {
 		}
 		
 		return false;
-
+		
 	}
 }
+	

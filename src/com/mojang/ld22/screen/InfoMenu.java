@@ -15,20 +15,17 @@ public class InfoMenu extends Menu {
 	}
 	
 	public void tick() {
-		if (input.menu.clicked || input.attack.clicked) {
+		if (input.getKey("enter").clicked || input.getKey("escape").clicked) {
 				game.setMenu(null);
 				Player.sentFromSetHome = false;
 				Player.sentFromHome = false;
-			
-			
-		
 		}
 	}
 	
 	public void render(Screen screen) {
 		Font.renderFrame(screen, "", 1, 3, 18, 7);
 		//System.out.println(Player.sentFromHome);
-
+		
 		
 			
 			if (Player.sentFromSetHome) {
@@ -38,14 +35,15 @@ public class InfoMenu extends Menu {
 					Font.draw("here!", screen, 2 * 8, 5 * 8, Color.get(-1, 555, 555, 555));
 		 
 				} 
-
-
+				
+				
 		}
 		
 		
 		
 		}
-
+		
 	}
-
-
+	
+	
+	

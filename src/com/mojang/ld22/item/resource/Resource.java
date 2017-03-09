@@ -39,6 +39,7 @@ public class Resource {
 	public static Resource rawbeef = new FoodResource("Raw Beef", 20 + 4 * 32, Color.get(-1, 200, 300, 400), 1, 5);
 	public static Resource bacon = new FoodResource("Pork Chop", 20 + 4 * 32, Color.get(-1, 220, 440, 330), 3, 5);
 	public static Resource cookedfish = new FoodResource("Cooked Fish", 24 + 4 * 32, Color.get(-1, 220, 330, 440), 3, 5);
+	public static Resource cookedpork = new FoodResource("Cooked Pork", 148, Color.get(-1, 220, 440, 330), 3, 5);
 	public static Resource steak = new FoodResource("Steak", 20 + 4 * 32, Color.get(-1, 100, 333, 211), 3, 5);
 	public static Resource goldapple = new FoodResource("G.Apple", 9 + 4 * 32, Color.get(-1, 110, 440, 550), 10, 5);
 	public static Resource larmor = new ArmorResource("L.Armor", 3 + 12 * 32, Color.get(-1, 100, 211, 322), 3, 9);
@@ -49,7 +50,7 @@ public class Resource {
 	
 	public static Resource arrow = new Resource("arrow", 13 + 5 * 32, Color.get(-1, 111, 222, 430));
 	public static Resource string = new Resource("string", 25 + 4 * 32, Color.get(-1, 555, 555, 555));
-
+	
 	public static Resource coal = new Resource("Coal", 10 + 4 * 32, Color.get(-1, 000, 111, 111));
 	public static Resource ironOre = new Resource("Iron Ore", 10 + 4 * 32, Color.get(-1, 100, 322, 544));
 	public static Resource lapisOre = new Resource("Lapis", 10 + 4 * 32, Color.get(-1, 005, 115, 115));
@@ -58,7 +59,7 @@ public class Resource {
 	public static Resource goldIngot = new Resource("Gold", 11 + 4 * 32, Color.get(-1, 110, 330, 553));
 	
 	public static Resource rod = new ItemResource("Fish Rod", 6 + 5 * 32, Color.get(-1, 320, 320, 444));
-
+	
 	public static Resource rose = new Resource("Rose", 0 + 4 * 32, Color.get(-1, 100, 300, 500));
 	public static Resource gunp = new Resource("GunPowder", 2 + 4 * 32, Color.get(-1, 111, 222, 333));
 	public static Resource slime = new Resource("Slime", 10 + 4 * 32, Color.get(-1, 10, 30, 50));
@@ -70,18 +71,18 @@ public class Resource {
 	public static Resource gem = new Resource("gem", 13 + 4 * 32, Color.get(-1, 101, 404, 545));
 	public static Resource scale = new Resource("Scale", 22 + 4 * 32, Color.get(-1, 10, 30, 20));
 	public static Resource shard = new Resource("Shard", 23 + 4 * 32, Color.get(-1, 222, 333, 444));
-
+	
 	public final String name;
 	public final int sprite;
 	public final int color;
-
+	
 	public Resource(String name, int sprite, int color) {
 		if (name.length() > 20) throw new RuntimeException("Name cannot be longer than twenty characters!");
 		this.name = name;
 		this.sprite = sprite;
 		this.color = color;
 	}
-
+	
 	public boolean interactOn(Tile tile, Level level, int xt, int yt, Player player, int attackDir) {
 		return false;
 	}

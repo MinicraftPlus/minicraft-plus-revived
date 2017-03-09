@@ -21,7 +21,7 @@ public class HardRockTile extends Tile {
 	public HardRockTile(int id) {
 		super(id);
 	}
-
+	
 	public void render(Screen screen, Level level, int x, int y) {
 		int col0 = Color.get(445, 334, 223, 223);
 		int col00 = Color.get(001, 334, 445, 322);
@@ -39,17 +39,17 @@ public class HardRockTile extends Tile {
 		
 		int col = col0;
 		int transitionColor = col00;
-
+		
 		boolean u = level.getTile(x, y - 1) != this;
 		boolean d = level.getTile(x, y + 1) != this;
 		boolean l = level.getTile(x - 1, y) != this;
 		boolean r = level.getTile(x + 1, y) != this;
-
+		
 		boolean ul = level.getTile(x - 1, y - 1) != this;
 		boolean dl = level.getTile(x - 1, y + 1) != this;
 		boolean ur = level.getTile(x + 1, y - 1) != this;
 		boolean dr = level.getTile(x + 1, y + 1) != this;
-
+		
 		if (!u && !l) {
 			if (!ul)
 				screen.render(x * 16 + 0, y * 16 + 0, 0, col, 0);
@@ -57,7 +57,7 @@ public class HardRockTile extends Tile {
 				screen.render(x * 16 + 0, y * 16 + 0, 7 + 0 * 32, transitionColor, 3);
 		} else
 			screen.render(x * 16 + 0, y * 16 + 0, (l ? 6 : 5) + (u ? 2 : 1) * 32, transitionColor, 3);
-
+			
 		if (!u && !r) {
 			if (!ur)
 				screen.render(x * 16 + 8, y * 16 + 0, 1, col, 0);
@@ -65,7 +65,7 @@ public class HardRockTile extends Tile {
 				screen.render(x * 16 + 8, y * 16 + 0, 8 + 0 * 32, transitionColor, 3);
 		} else
 			screen.render(x * 16 + 8, y * 16 + 0, (r ? 4 : 5) + (u ? 2 : 1) * 32, transitionColor, 3);
-
+			
 		if (!d && !l) {
 			if (!dl)
 				screen.render(x * 16 + 0, y * 16 + 8, 2, col, 0);
@@ -84,17 +84,17 @@ public class HardRockTile extends Tile {
 			
 			int col = col1;
 			int transitionColor = col11;
-
+			
 			boolean u = level.getTile(x, y - 1) != this;
 			boolean d = level.getTile(x, y + 1) != this;
 			boolean l = level.getTile(x - 1, y) != this;
 			boolean r = level.getTile(x + 1, y) != this;
-
+			
 			boolean ul = level.getTile(x - 1, y - 1) != this;
 			boolean dl = level.getTile(x - 1, y + 1) != this;
 			boolean ur = level.getTile(x + 1, y - 1) != this;
 			boolean dr = level.getTile(x + 1, y + 1) != this;
-
+			
 			if (!u && !l) {
 				if (!ul)
 					screen.render(x * 16 + 0, y * 16 + 0, 0, col, 0);
@@ -102,7 +102,7 @@ public class HardRockTile extends Tile {
 					screen.render(x * 16 + 0, y * 16 + 0, 7 + 0 * 32, transitionColor, 3);
 			} else
 				screen.render(x * 16 + 0, y * 16 + 0, (l ? 6 : 5) + (u ? 2 : 1) * 32, transitionColor, 3);
-
+				
 			if (!u && !r) {
 				if (!ur)
 					screen.render(x * 16 + 8, y * 16 + 0, 1, col, 0);
@@ -110,7 +110,7 @@ public class HardRockTile extends Tile {
 					screen.render(x * 16 + 8, y * 16 + 0, 8 + 0 * 32, transitionColor, 3);
 			} else
 				screen.render(x * 16 + 8, y * 16 + 0, (r ? 4 : 5) + (u ? 2 : 1) * 32, transitionColor, 3);
-
+				
 			if (!d && !l) {
 				if (!dl)
 					screen.render(x * 16 + 0, y * 16 + 8, 2, col, 0);
@@ -131,17 +131,17 @@ public class HardRockTile extends Tile {
 			
 			int col = col2;
 			int transitionColor = col22;
-
+			
 			boolean u = level.getTile(x, y - 1) != this;
 			boolean d = level.getTile(x, y + 1) != this;
 			boolean l = level.getTile(x - 1, y) != this;
 			boolean r = level.getTile(x + 1, y) != this;
-
+			
 			boolean ul = level.getTile(x - 1, y - 1) != this;
 			boolean dl = level.getTile(x - 1, y + 1) != this;
 			boolean ur = level.getTile(x + 1, y - 1) != this;
 			boolean dr = level.getTile(x + 1, y + 1) != this;
-
+			
 			if (!u && !l) {
 				if (!ul)
 					screen.render(x * 16 + 0, y * 16 + 0, 0, col, 0);
@@ -149,7 +149,7 @@ public class HardRockTile extends Tile {
 					screen.render(x * 16 + 0, y * 16 + 0, 7 + 0 * 32, transitionColor, 3);
 			} else
 				screen.render(x * 16 + 0, y * 16 + 0, (l ? 6 : 5) + (u ? 2 : 1) * 32, transitionColor, 3);
-
+				
 			if (!u && !r) {
 				if (!ur)
 					screen.render(x * 16 + 8, y * 16 + 0, 1, col, 0);
@@ -157,7 +157,7 @@ public class HardRockTile extends Tile {
 					screen.render(x * 16 + 8, y * 16 + 0, 8 + 0 * 32, transitionColor, 3);
 			} else
 				screen.render(x * 16 + 8, y * 16 + 0, (r ? 4 : 5) + (u ? 2 : 1) * 32, transitionColor, 3);
-
+				
 			if (!d && !l) {
 				if (!dl)
 					screen.render(x * 16 + 0, y * 16 + 8, 2, col, 0);
@@ -176,17 +176,17 @@ public class HardRockTile extends Tile {
 				
 				int col = col3;
 				int transitionColor = col33;
-
+				
 				boolean u = level.getTile(x, y - 1) != this;
 				boolean d = level.getTile(x, y + 1) != this;
 				boolean l = level.getTile(x - 1, y) != this;
 				boolean r = level.getTile(x + 1, y) != this;
-
+				
 				boolean ul = level.getTile(x - 1, y - 1) != this;
 				boolean dl = level.getTile(x - 1, y + 1) != this;
 				boolean ur = level.getTile(x + 1, y - 1) != this;
 				boolean dr = level.getTile(x + 1, y + 1) != this;
-
+				
 				if (!u && !l) {
 					if (!ul)
 						screen.render(x * 16 + 0, y * 16 + 0, 0, col, 0);
@@ -194,7 +194,7 @@ public class HardRockTile extends Tile {
 						screen.render(x * 16 + 0, y * 16 + 0, 7 + 0 * 32, transitionColor, 3);
 				} else
 					screen.render(x * 16 + 0, y * 16 + 0, (l ? 6 : 5) + (u ? 2 : 1) * 32, transitionColor, 3);
-
+					
 				if (!u && !r) {
 					if (!ur)
 						screen.render(x * 16 + 8, y * 16 + 0, 1, col, 0);
@@ -202,7 +202,7 @@ public class HardRockTile extends Tile {
 						screen.render(x * 16 + 8, y * 16 + 0, 8 + 0 * 32, transitionColor, 3);
 				} else
 					screen.render(x * 16 + 8, y * 16 + 0, (r ? 4 : 5) + (u ? 2 : 1) * 32, transitionColor, 3);
-
+					
 				if (!d && !l) {
 					if (!dl)
 						screen.render(x * 16 + 0, y * 16 + 8, 2, col, 0);
@@ -221,17 +221,17 @@ public class HardRockTile extends Tile {
 					
 					int col = col0;
 					int transitionColor = col00;
-
+					
 					boolean u = level.getTile(x, y - 1) != this;
 					boolean d = level.getTile(x, y + 1) != this;
 					boolean l = level.getTile(x - 1, y) != this;
 					boolean r = level.getTile(x + 1, y) != this;
-
+					
 					boolean ul = level.getTile(x - 1, y - 1) != this;
 					boolean dl = level.getTile(x - 1, y + 1) != this;
 					boolean ur = level.getTile(x + 1, y - 1) != this;
 					boolean dr = level.getTile(x + 1, y + 1) != this;
-
+					
 					if (!u && !l) {
 						if (!ul)
 							screen.render(x * 16 + 0, y * 16 + 0, 0, col, 0);
@@ -239,7 +239,7 @@ public class HardRockTile extends Tile {
 							screen.render(x * 16 + 0, y * 16 + 0, 7 + 0 * 32, transitionColor, 3);
 					} else
 						screen.render(x * 16 + 0, y * 16 + 0, (l ? 6 : 5) + (u ? 2 : 1) * 32, transitionColor, 3);
-
+						
 					if (!u && !r) {
 						if (!ur)
 							screen.render(x * 16 + 8, y * 16 + 0, 1, col, 0);
@@ -247,7 +247,7 @@ public class HardRockTile extends Tile {
 							screen.render(x * 16 + 8, y * 16 + 0, 8 + 0 * 32, transitionColor, 3);
 					} else
 						screen.render(x * 16 + 8, y * 16 + 0, (r ? 4 : 5) + (u ? 2 : 1) * 32, transitionColor, 3);
-
+						
 					if (!d && !l) {
 						if (!dl)
 							screen.render(x * 16 + 0, y * 16 + 8, 2, col, 0);
@@ -271,15 +271,15 @@ public class HardRockTile extends Tile {
 		
 		
 	}
-
+	
 	public boolean mayPass(Level level, int x, int y, Entity e) {
 		return false;
 	}
-
+	
 	public void hurt(Level level, int x, int y, Mob source, int dmg, int attackDir) {
 		hurt(level, x, y, 0);
 	}
-
+	
 	public boolean interact(Level level, int xt, int yt, Player player, Item item, int attackDir) {
 		if (item instanceof ToolItem) {
 			ToolItem tool = (ToolItem) item;
@@ -294,7 +294,7 @@ public class HardRockTile extends Tile {
 		if (ModeMenu.creative) return true;
 		else {return false;}
 	}
-
+	
 	public void hurt(Level level, int x, int y, int dmg) {
 		int damage = level.getData(x, y) + dmg;
 		level.add(new SmashParticle(x * 16 + 8, y * 16 + 8));
@@ -316,9 +316,10 @@ public class HardRockTile extends Tile {
 			level.setData(x, y, damage);
 		}
 	}
-
+	
 	public void tick(Level level, int xt, int yt) {
 		int damage = level.getData(xt, yt);
 		if (damage > 0) level.setData(xt, yt, damage - 1);
 	}
 }
+	

@@ -18,7 +18,7 @@ public class StoneBrickTile extends Tile {
 	public StoneBrickTile(int id) {
 		super(id);
 	}
-
+	
 	public void render(Screen screen, Level level, int x, int y) {
 		
 		int col0 = Color.get(222, 222, 333, 333);
@@ -73,7 +73,7 @@ public class StoneBrickTile extends Tile {
 			}
 		
 	}
-
+	
 	public boolean interact(Level level, int xt, int yt, Player player, Item item, int attackDir) {
 		if (item instanceof ToolItem) {
 			ToolItem tool = (ToolItem) item;
@@ -100,3 +100,4 @@ public class StoneBrickTile extends Tile {
 		return e.canWool();
 	}
 }
+	

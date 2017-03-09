@@ -17,23 +17,23 @@ public class BookAntVenomMenu extends Menu {
 	public int pages = 0;
 	// this sets the last page
 	public int lastpage = 12;
-
+	
     // You don't need to mess with this.
 	public BookAntVenomMenu(List<Recipe> recipes, Player player) {
 	}
-
+	
 	public void tick() {
-		if (input.menu.clicked) game.setMenu(null); // this is what closes the book
-		if (input.left.clicked) pages--; // this is what turns the page back
-		if (input.right.clicked) pages++; // this is what turns the page forward
-
+		if (input.getKey("menu").clicked) game.setMenu(null); // this is what closes the book
+		if (input.getKey("left").clicked) pages--; // this is what turns the page back
+		if (input.getKey("right").clicked) pages++; // this is what turns the page forward
+		
 	}
-
+	
 	public void render(Screen screen) {
 		// These draw out the screen.
 		Font.renderFrameBook(screen, "", 14, 0, 21, 3);
 		Font.renderFrameBook(screen, "", 1, 4, 34, 20);
-
+		
 		// Don't need to mess with this
 		int xo = 12 * 11;
 		int xe = 11 * 11;
@@ -100,7 +100,7 @@ public class BookAntVenomMenu extends Menu {
 			Font.draw("So I set myself to find the", screen, 15, 14 * 9 + 4, Color.get(-1, 0, 0, 0));
 			Font.draw("creature and record my data in", screen, 15, 15 * 9 + 4, Color.get(-1, 0, 0, 0));
 			Font.draw("this journal.", screen, 15, 16 * 9 + 4, Color.get(-1, 0, 0, 0));
-
+			
 			// this is page 2
 			} else if (pages == 2) { 
 			Font.draw("His valley is supposedly some-", screen, 15, 4 * 9 + 4, Color.get(-1, 0, 0, 0));
@@ -131,7 +131,7 @@ public class BookAntVenomMenu extends Menu {
 			Font.draw("know what I will run into here.", screen, 15, 14 * 9 + 4, Color.get(-1, 0, 0, 0));
 			Font.draw("", screen, 15, 15 * 9 + 4, Color.get(-1, 0, 0, 0));
 			Font.draw("It looks like someone left a", screen, 15, 16 * 9 + 4, Color.get(-1, 0, 0, 0));
-
+			
 		    } else if (pages == 4) { 
 			Font.draw("bunch of rocks on the ground to", screen, 15, 4 * 9 + 4, Color.get(-1, 0, 0, 0));
 			Font.draw("make a trail, but since the", screen, 15, 5 * 9 + 4, Color.get(-1, 0, 0, 0));
@@ -146,7 +146,7 @@ public class BookAntVenomMenu extends Menu {
 			Font.draw("fruit. It says about how he'll", screen, 15, 14 * 9 + 4, Color.get(-1, 0, 0, 0));
 			Font.draw("be famous for his journy. I put", screen, 15, 15 * 9 + 4, Color.get(-1, 0, 0, 0));
 			Font.draw("down the book as the sky was", screen, 15, 16 * 9 + 4, Color.get(-1, 0, 0, 0));
-
+			
 			} else if (pages == 5) { 
 			Font.draw("turning dark. I chopped some wood", screen, 15, 4 * 9 + 4, Color.get(-1, 0, 0, 0));
 			Font.draw("and started a campfire. I fell", screen, 15, 5 * 9 + 4, Color.get(-1, 0, 0, 0));
@@ -161,7 +161,7 @@ public class BookAntVenomMenu extends Menu {
 			Font.draw("Nothing special about it, but", screen, 15, 14 * 9 + 4, Color.get(-1, 0, 0, 0));
 			Font.draw("there was something behind it.", screen, 15, 15 * 9 + 4, Color.get(-1, 0, 0, 0));
 			Font.draw("I couldn't believe my eyes, A", screen, 15, 16 * 9 + 4, Color.get(-1, 0, 0, 0));
-
+			
 			} else if (pages == 6) { 
 			Font.draw("large garden of fruits! I can ", screen, 15, 4 * 9 + 4, Color.get(-1, 0, 0, 0));
 			Font.draw("see Apples, Bananas, Grapes,", screen, 15, 5 * 9 + 4, Color.get(-1, 0, 0, 0));
@@ -176,7 +176,7 @@ public class BookAntVenomMenu extends Menu {
 			Font.draw("never seen it before. Is it the", screen, 15, 14 * 9 + 4, Color.get(-1, 0, 0, 0));
 			Font.draw("creature I'm searching for?", screen, 15, 15 * 9 + 4, Color.get(-1, 0, 0, 0));
 			Font.draw("It's eyes have this cold dark", screen, 15, 16 * 9 + 4, Color.get(-1, 0, 0, 0));
-
+			
 			} else if (pages == 7) { 
 			Font.draw("brown color, his hide is only", screen, 15, 4 * 9 + 4, Color.get(-1, 0, 0, 0));
 			Font.draw("partly visible on his head, the", screen, 15, 5 * 9 + 4, Color.get(-1, 0, 0, 0));
@@ -191,7 +191,7 @@ public class BookAntVenomMenu extends Menu {
 			Font.draw("cover like this. It would be the", screen, 15, 14 * 9 + 4, Color.get(-1, 0, 0, 0));
 			Font.draw("end of me for sure. But as soon", screen, 15, 15 * 9 + 4, Color.get(-1, 0, 0, 0));
 			Font.draw("my leg lifted, the creature left", screen, 15, 16 * 9 + 4, Color.get(-1, 0, 0, 0));
-
+			
 			} else if (pages == 8) { 
 			Font.draw("with some grapefruit. I cought", screen, 15, 4 * 9 + 4, Color.get(-1, 0, 0, 0));
 			Font.draw("my breath and sat down for a", screen, 15, 5 * 9 + 4, Color.get(-1, 0, 0, 0));
@@ -206,7 +206,7 @@ public class BookAntVenomMenu extends Menu {
 			Font.draw("the side and peak in from a win-", screen, 15, 14 * 9 + 4, Color.get(-1, 0, 0, 0));
 			Font.draw("dow. He is in the kitchen with", screen, 15, 15 * 9 + 4, Color.get(-1, 0, 0, 0));
 			Font.draw("the fruit, It's not too big of", screen, 15, 16 * 9 + 4, Color.get(-1, 0, 0, 0));
-
+			
 			} else if (pages == 9) { 
 			Font.draw("a room. Some light coming from", screen, 15, 4 * 9 + 4, Color.get(-1, 0, 0, 0));
 			Font.draw("the celling from a mysetrous", screen, 15, 5 * 9 + 4, Color.get(-1, 0, 0, 0));
@@ -236,7 +236,7 @@ public class BookAntVenomMenu extends Menu {
 			Font.draw("and a Picture is on it. It seems", screen, 15, 14 * 9 + 4, Color.get(-1, 0, 0, 0));
 			Font.draw("to be a female, probably from ", screen, 15, 15 * 9 + 4, Color.get(-1, 0, 0, 0));
 			Font.draw("the same race. And a small paper", screen, 15, 16 * 9 + 4, Color.get(-1, 0, 0, 0));
-
+			
 			} else if (pages == 11) { 
 			Font.draw("at the back of it. Its his name,", screen, 15, 4 * 9 + 4, Color.get(-1, 0, 0, 0));
 			Font.draw("'An-' before I could say it he ", screen, 15, 5 * 9 + 4, Color.get(-1, 0, 0, 0));

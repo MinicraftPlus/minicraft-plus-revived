@@ -19,7 +19,7 @@ public class ObsidianDoorClosedTile extends Tile {
 	public ObsidianDoorClosedTile(int id) {
 		super(id);
 	}
-
+	
 	public void render(Screen screen, Level level, int x, int y) {
 		int col0 = Color.get(559, 359, 59, 459);
 		
@@ -76,3 +76,4 @@ public class ObsidianDoorClosedTile extends Tile {
 		return false;
 	}
 }
+	

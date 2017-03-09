@@ -15,7 +15,7 @@ public class Pig extends Mob {
 	int ye = ya;
 	private int lvl;
 	private int randomWalkTime = 0;
-
+	
 	public Pig(int lvl) {
 		if (StartMenu.diff == StartMenu.easy){
 		this.lvl = lvl;
@@ -41,7 +41,7 @@ public class Pig extends Mob {
 		if (ModeMenu.creative) health = maxHealth = 1;
 		}
 	}
-
+	
 	public void tick() {
 		super.tick();
 		
@@ -74,19 +74,19 @@ public class Pig extends Mob {
 		}
 		if (randomWalkTime > 0) randomWalkTime--;
 	}
-
+	
 	public void render(Screen screen) {
 		int xt = 16;
 		int yt = 14;
-
+		
 		int flip1 = (walkDist >> 3) & 1;
 		int flip2 = (walkDist >> 3) & 1;
-
+		
 		if (dir == 1) {
 			xt += 2;
 		}
 		if (dir > 1) {
-
+		
 			flip1 = 0;
 			flip2 = ((walkDist >> 4) & 1 / 2);
 			if (dir == 2) {
@@ -95,10 +95,10 @@ public class Pig extends Mob {
 			}
 			xt += 4 + ((walkDist >> 3) & 1) * 2;
 		}
-
+		
 		int xo = x - 8;
 		int yo = y - 11;
-
+		
 		int col0 = Color.get(-1, 000, 444, 411);
 		int col1 = Color.get(-1, 000, 555, 522);
 		int col2 = Color.get(-1, 000, 333, 311);
@@ -138,7 +138,7 @@ public class Pig extends Mob {
 		if (hurtTime > 0) {
 			col = Color.get(-1, 555, 555, 555);
 		}
-
+		
 		screen.render(xo + 8 * flip1, yo + 0, xt + yt * 32, col, flip1);
 		screen.render(xo + 8 - 8 * flip1, yo + 0, xt + 1 + yt * 32, col, flip1);
 		screen.render(xo + 8 * flip2, yo + 8, xt + (yt + 1) * 32, col, flip2);
@@ -153,7 +153,7 @@ public class Pig extends Mob {
 		if (hurtTime > 0) {
 			col = Color.get(-1, 555, 555, 555);
 		}
-
+		
 		screen.render(xo + 8 * flip1, yo + 0, xt + yt * 32, col, flip1);
 		screen.render(xo + 8 - 8 * flip1, yo + 0, xt + 1 + yt * 32, col, flip1);
 		screen.render(xo + 8 * flip2, yo + 8, xt + (yt + 1) * 32, col, flip2);
@@ -168,7 +168,7 @@ public class Pig extends Mob {
 		if (hurtTime > 0) {
 			col = Color.get(-1, 555, 555, 555);
 		}
-
+		
 		screen.render(xo + 8 * flip1, yo + 0, xt + yt * 32, col, flip1);
 		screen.render(xo + 8 - 8 * flip1, yo + 0, xt + 1 + yt * 32, col, flip1);
 		screen.render(xo + 8 * flip2, yo + 8, xt + (yt + 1) * 32, col, flip2);
@@ -183,7 +183,7 @@ public class Pig extends Mob {
 		if (hurtTime > 0) {
 			col = Color.get(-1, 555, 555, 555);
 		}
-
+		
 		screen.render(xo + 8 * flip1, yo + 0, xt + yt * 32, col, flip1);
 		screen.render(xo + 8 - 8 * flip1, yo + 0, xt + 1 + yt * 32, col, flip1);
 		screen.render(xo + 8 * flip2, yo + 8, xt + (yt + 1) * 32, col, flip2);
@@ -199,22 +199,22 @@ public class Pig extends Mob {
 				if (hurtTime > 0) {
 					col = Color.get(-1, 555, 555, 555);
 				}
-
+				
 				screen.render(xo + 8 * flip1, yo + 0, xt + yt * 32, col, flip1);
 				screen.render(xo + 8 - 8 * flip1, yo + 0, xt + 1 + yt * 32, col, flip1);
 				screen.render(xo + 8 * flip2, yo + 8, xt + (yt + 1) * 32, col, flip2);
 				screen.render(xo + 8 - 8 * flip2, yo + 8, xt + 1 + (yt + 1) * 32, col, flip2);
 		}
 	}
-
-
+	
+	
 	public boolean canWool() {
 		return true;
 		}
-
+		
 	protected void die() {
 		super.die();
-
+		
 		if (StartMenu.diff == StartMenu.easy){
 		int count = random.nextInt(3) + 1;
 		for (int i = 0; i < count; i++) {
@@ -223,7 +223,7 @@ public class Pig extends Mob {
 		if (level.player != null) {
 			level.player.score += 10 * lvl;
 		}
-
+		
 	}
 		if (StartMenu.diff == StartMenu.norm){
 		int count = random.nextInt(2) + 1;
@@ -233,7 +233,7 @@ public class Pig extends Mob {
 		if (level.player != null) {
 			level.player.score += 10 * lvl;
 		}
-
+		
 	}
 		if (StartMenu.diff == StartMenu.hard){
 		int count = random.nextInt(2);
@@ -243,8 +243,8 @@ public class Pig extends Mob {
 		if (level.player != null) {
 			level.player.score += 10 * lvl;
 		}
-
+		
 	}
 	}
-
+	
 }

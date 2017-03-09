@@ -20,7 +20,7 @@ public class Creeper extends Mob {
 	private int randomWalkTime = 0;
 	private int fuseTime = 0;
 	private boolean fuseLit = false;
-
+	
 	public Creeper(int lvl) {
 		if (StartMenu.diff == StartMenu.easy){
 		this.lvl = lvl;
@@ -35,7 +35,7 @@ public class Creeper extends Mob {
 		x = random.nextInt(64 * 16);
 		y = random.nextInt(64 * 16);
 		if (ModeMenu.creative) health = maxHealth = 1;
-
+		
 		else health = maxHealth = lvl * lvl * 20;
 		}
 		
@@ -44,7 +44,7 @@ public class Creeper extends Mob {
 		x = random.nextInt(64 * 16);
 		y = random.nextInt(64 * 16);
 		if (ModeMenu.creative) health = maxHealth = 1;
-
+		
 		else health = maxHealth = lvl * lvl * 40;
 		}
 	}
@@ -61,7 +61,7 @@ public class Creeper extends Mob {
 		isenemy = true;
 		
 		if (StartMenu.diff == StartMenu.easy){
-
+		
 		
 		if(fuseTime == 0){
 			if(!fuseLit)
@@ -78,7 +78,7 @@ public class Creeper extends Mob {
 						if (yd > 0) ya = +1;
 					}
 				}
-
+				
 				int speed = tickTime & 1;
 				if (!move(xa * speed, ya * speed) || random.nextInt(200) == 0) {
 					randomWalkTime = 60;
@@ -124,7 +124,7 @@ public class Creeper extends Mob {
 		}
 	
 		if (StartMenu.diff == StartMenu.norm){
-
+		
 			
 		if(fuseTime == 0){
 			if(!fuseLit)
@@ -141,7 +141,7 @@ public class Creeper extends Mob {
 						if (yd > 0) ya = +1;
 					}
 				}
-
+				
 				int speed = tickTime & 1;
 				if (!move(xa * speed, ya * speed) || random.nextInt(200) == 0) {
 					randomWalkTime = 60;
@@ -203,7 +203,7 @@ public class Creeper extends Mob {
 						if (yd > 0) ya = +1;
 					}
 				}
-
+				
 				int speed = tickTime & 1;
 				if (!move(xa * speed, ya * speed) || random.nextInt(200) == 0) {
 					randomWalkTime = 60;
@@ -246,10 +246,10 @@ public class Creeper extends Mob {
 		} else {
 			fuseTime--;
 		}
-
+		
 		}
 	}
-
+	
 	public void render(Screen screen) {
 		int xt = 4;
 		int yt = 18;
@@ -265,10 +265,10 @@ public class Creeper extends Mob {
 		} else {
 			xt = 4;
 		}
-
+		
 		int xo = x - 8;
 		int yo = y - 11;
-
+		
 		int col0 = Color.get(-1, 10, 30, 20);
 		
 		int col1 = Color.get(-1, 20, 40, 30);
@@ -318,7 +318,7 @@ public class Creeper extends Mob {
 		if (hurtTime > 0) {
 			col = Color.get(-1, 555, 555, 555);
 		}
-
+		
 		screen.render(xo + 0, yo + 0, xt + yt * 32, col, 0);
 		screen.render(xo + 8, yo + 0, xt + 1 + yt * 32, col, 0);
 		screen.render(xo + 0, yo + 8, xt + (yt + 1) * 32, col, 0);
@@ -339,7 +339,7 @@ public class Creeper extends Mob {
 		if (hurtTime > 0) {
 			col = Color.get(-1, 555, 555, 555);
 		}
-
+		
 		screen.render(xo + 0, yo + 0, xt + yt * 32, col, 0);
 		screen.render(xo + 8, yo + 0, xt + 1 + yt * 32, col, 0);
 		screen.render(xo + 0, yo + 8, xt + (yt + 1) * 32, col, 0);
@@ -360,7 +360,7 @@ public class Creeper extends Mob {
 		if (hurtTime > 0) {
 			col = Color.get(-1, 555, 555, 555);
 		}
-
+		
 		screen.render(xo + 0, yo + 0, xt + yt * 32, col, 0);
 		screen.render(xo + 8, yo + 0, xt + 1 + yt * 32, col, 0);
 		screen.render(xo + 0, yo + 8, xt + (yt + 1) * 32, col, 0);
@@ -381,7 +381,7 @@ public class Creeper extends Mob {
 		if (hurtTime > 0) {
 			col = Color.get(-1, 555, 555, 555);
 		}
-
+		
 		screen.render(xo + 0, yo + 0, xt + yt * 32, col, 0);
 		screen.render(xo + 8, yo + 0, xt + 1 + yt * 32, col, 0);
 		screen.render(xo + 0, yo + 8, xt + (yt + 1) * 32, col, 0);
@@ -404,7 +404,7 @@ public class Creeper extends Mob {
 			if (hurtTime > 0) {
 				col = Color.get(-1, 555, 555, 555);
 			}
-
+			
 			screen.render(xo + 0, yo + 0, xt + yt * 32, col, 0);
 			screen.render(xo + 8, yo + 0, xt + 1 + yt * 32, col, 0);
 			screen.render(xo + 0, yo + 8, xt + (yt + 1) * 32, col, 0);
@@ -413,7 +413,7 @@ public class Creeper extends Mob {
 	    }
 	    
 	}
-
+	
 	protected void touchedBy(Entity entity) {
 		if (entity instanceof Player) {
 			if(fuseTime == 0){
@@ -424,7 +424,7 @@ public class Creeper extends Mob {
 			entity.hurt(this, 1, dir);
 		}
 	}
-
+	
 	protected void die() {
 		super.die();
 		
@@ -452,7 +452,7 @@ public class Creeper extends Mob {
 		
 		Game.multiplyer++;
 		Game.multiplyertime = Game.mtm = Game.mtm - 5;
-
+		
 	}
-
+	
 }

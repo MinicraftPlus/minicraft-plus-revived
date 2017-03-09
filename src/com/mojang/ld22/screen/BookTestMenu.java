@@ -17,23 +17,23 @@ public class BookTestMenu extends Menu {
 	public int pages = 1;
 	// this sets the last page
 	public int lastpage = 1;
-
+	
     // You don't need to mess with this.
 	public BookTestMenu(List<Recipe> recipes, Player player) {
 	}
-
+	
 	public void tick() {
-		if (input.menu.clicked) game.setMenu(null); // this is what closes the book
-		if (input.left.clicked) pages--; // this is what turns the page back
-		if (input.right.clicked) pages++; // this is what turns the page forward
-
+		if (input.getKey("menu").clicked) game.setMenu(null); // this is what closes the book
+		if (input.getKey("left").clicked) pages--; // this is what turns the page back
+		if (input.getKey("right").clicked) pages++; // this is what turns the page forward
+		
 	}
-
+	
 	public void render(Screen screen) {
 		// These draw out the screen.
 		Font.renderFrameBook(screen, "", 14, 0, 21, 3);
 		Font.renderFrameBook(screen, "", 1, 4, 34, 20);
-
+		
 		// Don't need to mess with this
 		int xo = 12 * 11;
 		int xe = 11 * 11;
@@ -100,7 +100,7 @@ public class BookTestMenu extends Menu {
 			Font.draw(" ", screen, 15, 14 * 9 + 4, Color.get(-1, 0, 0, 0));
 			Font.draw(" ", screen, 15, 15 * 9 + 4, Color.get(-1, 0, 0, 0));
 			Font.draw(" ", screen, 15, 16 * 9 + 4, Color.get(-1, 0, 0, 0));
-
+			
 			} 
 		
 		

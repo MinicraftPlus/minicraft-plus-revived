@@ -12,12 +12,18 @@ import com.mojang.ld22.item.resource.Resource;
 public class Inventory {
 	public List<Item> items = new ArrayList<Item>();
 	public static List<Item> itemss = new ArrayList<Item>();
-
+	public boolean playerinventory = false;
+	
+	public Inventory() {}
+	public Inventory(Player player) {
+		this.playerinventory = true;
+	}
+	
 	public void add(Item item) {
 		add(items.size(), item);
 		itemss = items;
 	}
-
+	
 	public void add(int slot, Item item) {
 		if (item instanceof ResourceItem) {
 			ResourceItem toTake = (ResourceItem) item;
@@ -34,7 +40,7 @@ public class Inventory {
 	
 	}
 	
-
+	
 	private static ResourceItem findResources(Resource resource) {
 		for (int i = 0; i < itemss.size(); i++) {
 			if (itemss.get(i) instanceof ResourceItem) {
@@ -44,7 +50,7 @@ public class Inventory {
 		}
 		return null;
 	}
-
+	
 	private ResourceItem findResource(Resource resource) {
 		for (int i = 0; i < items.size(); i++) {
 			if (items.get(i) instanceof ResourceItem) {
@@ -64,7 +70,7 @@ public class Inventory {
 		}
 		return null;
 	}
-
+	
 	public boolean hasResources(Resource r, int count) {
 		ResourceItem ri = findResource(r);
 		if (ri == null) return false;
@@ -75,7 +81,7 @@ public class Inventory {
 		if (ti == null) return false;
 		return ti.level >= level;
 	}
-
+	
 	public boolean removeResource(Resource r, int count) {
 		ResourceItem ri = findResource(r);
 		if (ri == null) return false;
@@ -119,3 +125,4 @@ public class Inventory {
 		return 0;
 	}
 }
+	
