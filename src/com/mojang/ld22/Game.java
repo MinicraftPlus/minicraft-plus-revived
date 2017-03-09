@@ -838,7 +838,7 @@ public class Game extends Canvas implements Runnable, ActionListener{
 		}
 		
 		if(saving) {
-			System.out.println("SAVING GAME...");
+			//System.out.println("SAVING GAME...");
 			Font.draw("Saving... " + LoadingMenu.percentage + "%", screen, screen.w / 2 - ("Saving... " + LoadingMenu.percentage + "%").length() * 4 + 1, screen.h / 2 - 32 + 1, Color.get(-1, 111, 111, 111));
 			Font.draw("Saving... " + LoadingMenu.percentage + "%", screen, screen.w / 2 - ("Saving... " + LoadingMenu.percentage + "%").length() * 4, screen.h / 2 - 32, Color.get(-1, 4, 4, 4));
 		}
