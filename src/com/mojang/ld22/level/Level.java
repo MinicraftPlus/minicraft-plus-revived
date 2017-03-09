@@ -597,6 +597,15 @@ public class Level {
 		}
 	}
 	
+	public void removeAllEnimies() {
+  		for (int i = 0; i < this.entities.size(); ++i) {
+				final String name = this.entities.get(i).getClass().getCanonicalName().replace("com.mojang.ld22.entity.", "");
+				if (name.equals("Slime") || name.equals("Zombie") || name.equals("Skeleton") || name.equals("Creeper")) {
+ 					this.entities.get(i).remove();
+				}
+  		}
+ 	}
+	
 	public void tick() {
 		trySpawn(1);
 		

@@ -29,6 +29,7 @@ import com.mojang.ld22.entity.Furniture;
 import com.mojang.ld22.entity.Inventory;
 import com.mojang.ld22.entity.ItemEntity;
 import com.mojang.ld22.entity.IronLantern;
+import com.mojang.ld22.entity.Mob;
 import com.mojang.ld22.entity.Player;
 import com.mojang.ld22.entity.Workbench;
 import com.mojang.ld22.entity.bed;
@@ -72,85 +73,111 @@ public class Game extends Canvas implements Runnable, ActionListener{
 	public static int gamespeed = 1;
 	public double nsPerTick = 1.6666666666666666E7D * (double)gamespeed;
 	
-	public InputHandler input = new InputHandler(this);//input used in Game, Player, and just about all the *Menu classes.
+	public InputHandler input;//input used in Game, Player, and just about all the *Menu classes.
+	private BufferedImage image, extraimage;
+	private int[] pixels, extrapixels;
+	private int[] colors;
 	
 	public static int Time = 0;
-	private BufferedImage image = new BufferedImage(WIDTH, HEIGHT, BufferedImage.TYPE_INT_RGB);
-	private int[] pixels = ((DataBufferInt) image.getRaster().getDataBuffer()).getData();
-	private boolean running = false;
-	public boolean fpscounter = false;
-	boolean initTick;
+	private Screen screen, lightScreen;
+	private boolean running;
+	public boolean fpscounter;
 	public static boolean tickReset = false;
+	boolean initTick;
 	int hungerTick;
-	private Screen screen;
-	private Screen lightScreen;
-	int newscoreTime = 72000;
-	int count = 0;
-	boolean reverse = false;
-	public int scoreTime = newscoreTime;
+	public int scoreTime, newscoreTime;
+	int count;
+	boolean reverse;
 	
-	public static int multiplyer = 1;
-	public static int mtm = 300;
+	public static int multiplyer = 1, mtm = 300, ism = 1;
 	public static int multiplyertime = mtm;
-	public static int ism = 1;
 	
-	int[] oldlvls; 
-	private int[] colors = new int[256];
 	public static int tickCount = 0;
-	public int gameTime = 0;
-	public boolean isDayNoSleep = false;
-	public int fra = 0;
-	public int tik = 0;
 	public static int dayYeahTick;
+	public int gameTime, fra, tik;
+	public boolean isDayNoSleep;
 	
-	public static boolean Load = false;
-	public static boolean fasttime = false;
+	public static boolean Load = false, fasttime = false, paused = false;
 	public static int LoadTime = 3;
-	
-	public static boolean paused = false;
 	
 	//used to display "error" messages
 	public static int infotime = 120;
-	public static boolean infoplank = false; //"can only place on planks"
-	public static boolean infosbrick = false;//"can only place on stone brick"
+	public static boolean infoplank = false, infosbrick = false;//"can only place on planks / stone brick"
 	
-	public static boolean truerod = false;
-	public static boolean isfishing = false;
+	public static boolean truerod = false, isfishing = false;
 	public static int fishingcount = 0;
 	
+	int[] oldlvls; 
 	public Level level;
 	public static Level[] levels = new Level[5];
 	static public int currentLevel = 3;
+	
 	int hungerMinusCount;
 	public Player player;
 	
 	//Most used for autosaving, or just saving.
-	int l = 128;
+	int l;
 	public static int acs = 25;
 	public static int ac = acs;
-	public static boolean autosave = true;
-	public int asTick = 0;
-	public static int astime = 3600; //asTime stands for Auto-Save Time! (interval)
+	public static boolean autosave;
+	public int asTick;
+	public static int astime; //asTime stands for Auto-Save Time! (interval)
 	public static String savedtext = ""; //to display save msg? or is that notifications?
 	public static List notifications = new ArrayList();
-	public boolean saving = false;
+	public boolean saving;
 	public int savecooldown;
-	public int notetick = 0;
+	public int notetick;
 	
 	public Menu menu;
 	private int playerDeadTime;
 	private int pendingLevelChange;
-	private int wonTimer = 0;
-	public boolean hasWon = false;
+	private int wonTimer;
+	public boolean hasWon;
 	
-	Timer sunrise = new Timer(60000, this);
-	Timer sunset = new Timer(60000, this);
-	Timer daytime = new Timer(420000, this);
-	Timer nighttime = new Timer(240000, this);
+	Timer sunrise, sunset, daytime, nighttime;
+	
+	public Game() {
+		
+		input = new InputHandler(this);
+		colors = new int[256];
+		image = new BufferedImage(WIDTH, HEIGHT, BufferedImage.TYPE_INT_RGB);
+		pixels = ((DataBufferInt) image.getRaster().getDataBuffer()).getData();
+		extraimage = new BufferedImage(288, 192, 1);
+		extrapixels = ((DataBufferInt)this.extraimage.getRaster().getDataBuffer()).getData();
+		
+		running = false;
+		fpscounter = false;
+		
+		count = 0;
+		reverse = false;
+		newscoreTime = 72000;
+		scoreTime = newscoreTime;
+		
+		isDayNoSleep = false;
+		gameTime = 0;
+		fra = 0;
+		tik = 0;
+		
+		l = 128;
+		autosave = true;
+		asTick = 0;
+		astime = 3600;
+		saving = false;
+		notetick = 0;
+		
+		wonTimer = 0;
+		hasWon = false;
+		
+		sunrise = new Timer(60000, this);
+		sunset = new Timer(60000, this);
+		daytime = new Timer(420000, this);
+		nighttime = new Timer(240000, this);
+	}
 	
 	public void setMenu(Menu menu) {
 		this.menu = menu;
-		if (menu != null) menu.init(this, input);
+		if (menu != null)
+			menu.init(this, input);
 	}
 	
 	public static void changeTime(int t) {
@@ -254,21 +281,21 @@ public class Game extends Canvas implements Runnable, ActionListener{
 		// adds a new player
 		player = new Player(this, input);
 		//this is a boolean in deadmenu that returns if the player has died, this way you don't respawn in a new world & it saves your spawn pos
-		if (DeadMenu.shudrespawn == true) {	
+		if (DeadMenu.shudrespawn) {	
 			//System.out.print("Current Level = " + currentLevel + "                                           ");
 			currentLevel = 3;
 			level = levels[currentLevel];
-			 player.respawn(level);
+			player.respawn(level);
 			level.add(player);
-		}
-		else {
+		} else {
 			levels[3] = new Level(l, l, 0, levels[4]);
 			
 			level = levels[currentLevel];
 			if (currentLevel == 3)
-			currentLevel = 3;
+				currentLevel = 3;
 			if (currentLevel != 3)
-			currentLevel = 3;
+				currentLevel = 3;
+			
 			DeadMenu.shudrespawn = true; 
 			player.findStartPos(level);
 		}
@@ -309,22 +336,6 @@ public class Game extends Canvas implements Runnable, ActionListener{
 		
 		Player.score = 0;
 		
-		/* Old code; keeping until I know new code works.
-		levels[4] = new Level(l, l, 1, null);
-		levels[3] = new Level(l, l, 0, levels[4]);
-		levels[2] = new Level(l, l, -1, levels[3]);
-		levels[1] = new Level(l, l, -2, levels[2]);
-		levels[0] = new Level(l, l, -3, levels[1]);
-		levels[5] = new Level(l, l, -4, levels[0]);
-		
-		level = levels[currentLevel];
-		player.respawn(level);
-		currentLevel = 3;
-		level.add(player);
-		//System.out.println("Ready!");
-		DeadMenu.shudrespawn = true; 
-		SunRtd();
-		*/
 		if(WorldSelectMenu.loadworld) {
 			try {
 				BufferedReader f = new BufferedReader(new FileReader(gameDir + "/saves/" + WorldSelectMenu.worldname + "/Level3.miniplussave"));
@@ -338,46 +349,40 @@ public class Game extends Canvas implements Runnable, ActionListener{
 			}
 		}
 
-		if(!WorldSelectMenu.loadworld) {
+		if(!WorldSelectMenu.loadworld)
 			LoadingMenu.percentage = 0;
-		} else {
+		else
 			LoadingMenu.percentage += 5;
-		}
 
 		levels[4] = new Level(this.l, this.l, 1, (Level)null);
-		if(!WorldSelectMenu.loadworld) {
+		if(!WorldSelectMenu.loadworld)
 			LoadingMenu.percentage = 20;
-		} else {
+		else
 			LoadingMenu.percentage += 5;
-		}
 
 		levels[3] = new Level(this.l, this.l, 0, levels[4]);
-		if(!WorldSelectMenu.loadworld) {
+		if(!WorldSelectMenu.loadworld)
 			LoadingMenu.percentage = 40;
-		} else {
+		else
 			LoadingMenu.percentage += 5;
-		}
 
 		levels[2] = new Level(this.l, this.l, -1, levels[3]);
-		if(!WorldSelectMenu.loadworld) {
+		if(!WorldSelectMenu.loadworld)
 			LoadingMenu.percentage = 60;
-		} else {
+		else
 			LoadingMenu.percentage += 5;
-		}
 
 		levels[1] = new Level(this.l, this.l, -2, levels[2]);
-		if(!WorldSelectMenu.loadworld) {
+		if(!WorldSelectMenu.loadworld)
 			LoadingMenu.percentage = 80;
-		} else {
+		else
 			LoadingMenu.percentage += 5;
-		}
 
 		levels[0] = new Level(this.l, this.l, -3, levels[1]);
-		if(!WorldSelectMenu.loadworld) {
+		if(!WorldSelectMenu.loadworld)
 			LoadingMenu.percentage = 100;
-		} else {
+		else
 			LoadingMenu.percentage += 5;
-		}
 
 		levels[5] = new Level(this.l, this.l, -4, levels[0]);
 		if(!WorldSelectMenu.loadworld) {
@@ -418,6 +423,27 @@ public class Game extends Canvas implements Runnable, ActionListener{
 	// VERY IMPORTANT METHOD!! Makes everything keep happening, I think.
 	// In the end, calls menu.tick() if there's a menu, or level.tick() if no menu.
 	public void tick() {
+		if(bed.hasBedSet) {
+			level.remove(player);
+			nsPerTick = 781250.0D;
+			if(isDayNoSleep) {
+				level.add(player);
+				nsPerTick = 1.6666666666666666E7D;
+
+				for(int i = 0; i < level.entities.size(); ++i) {
+					if(((Entity)level.entities.get(i)).level == levels[currentLevel]) {
+						int xd = level.player.x - ((Entity)level.entities.get(i)).x;
+						int yd = level.player.y - ((Entity)level.entities.get(i)).y;
+						if(xd * xd + yd * yd < 48 && level.entities.get(i) instanceof Mob && level.entities.get(i) != player) {
+							level.remove((Entity)level.entities.get(i));
+						}
+					}
+				}
+
+				bed.hasBedSet = false;
+			}
+		}
+		
 		if (tickReset) {
 			tickCount = 0;
 			tickReset = false;
@@ -439,19 +465,13 @@ public class Game extends Canvas implements Runnable, ActionListener{
 			asTick = 0;
 		}
 		
-		// tickSunR stuff mostly for bed feature?
 		
-		int tickSunR = 0;
-		//int tickDayT = 420000;
-		//int tickSunSet = 60000;
-		//int tickNight = 240000;
-		//remember the 0 dilly XD
-		if (tickCount < 54000) {
+		//int tickSunR = 0;
+		
+		if (tickCount < 54000)
 			isDayNoSleep = true;
-		}
-		if (tickCount >=54000) {
+		if (tickCount >= 54000)
 			isDayNoSleep = false;
-		}
 		
 		//duplicate?
 		if (tickReset) {
@@ -459,27 +479,23 @@ public class Game extends Canvas implements Runnable, ActionListener{
 			tickReset = false;
 		}
 		
-		if (tickCount == 0) {
+		if (tickCount == 0)
 			Time = 0;
-			tickSunR = tickSunR + 7200;
-		}
-		if (tickCount == 7200) {
+		
+		if(tickCount == 3600)
+			this.level.removeAllEnimies();
+		
+		if (tickCount == 7200)
 			Time = 1;
-			tickSunR = tickSunR + 28800;
 			
-		}
 		//4800
-		if (tickCount == 36000) {
+		if (tickCount == 36000)
 			Time = 2;
-			tickSunR = tickSunR + 7200;
 		
-		}
 		//5400
-		if (tickCount == 43200) {
+		if (tickCount == 43200)
 			Time = 3;
-			tickSunR = tickSunR + 21600;
 		
-		}
 		//7600
 		if (tickCount == 64800) {
 			Time = 0;
@@ -527,17 +543,15 @@ public class Game extends Canvas implements Runnable, ActionListener{
 		}
 		
 		//what's this for?
-		if (reverse == false) {
+		if (!reverse) {
 			count++;
-			if (count == 25) {
+			if (count == 25)
 				reverse = true;
-			}
-			} else if (reverse == true) {
-				count--;
-				if (count == 0) {
-					reverse = false;
-				}
-			}
+		} else {
+			count--;
+			if (count == 0)
+				reverse = false;
+		}
 		
 		//System.out.println(tickCount);
 		//System.out.println(bed.hasBeenTrigged);
@@ -564,11 +578,9 @@ public class Game extends Canvas implements Runnable, ActionListener{
 					if (playerDeadTime > 60) {
 						setMenu(new DeadMenu());
 					}
-				} else {
-					if (pendingLevelChange != 0) {
-						setMenu(new LevelTransitionMenu(pendingLevelChange));
-						pendingLevelChange = 0;
-					}
+				} else if (pendingLevelChange != 0) {
+					setMenu(new LevelTransitionMenu(pendingLevelChange));
+					pendingLevelChange = 0;
 				}
 				
 				//I'm guessing that this is like DeadMenu, but you can't respawn.
@@ -669,31 +681,33 @@ public class Game extends Canvas implements Runnable, ActionListener{
 	}
 	
 	public static void Fishing(Level level, int x, int y, Player player) {
-	isfishing = true;
-	int fcatch = random.nextInt(90);
-	
-	if (ItemResource.dur == 0) {
-		player.activeItem.isDepleted();
-	}
-	
-	if (fcatch <= 8) {
-		System.out.print("Caught a Fish!");
-		level.add(new ItemEntity(new ResourceItem(Resource.rawfish), x + random.nextInt(11) - 5, y + random.nextInt(11) - 5));
-		isfishing = false;
-	}
-	if (fcatch == 25 || fcatch == 43 || fcatch == 72) {
-		System.out.print("Caught some slime?");
-		level.add(new ItemEntity(new ResourceItem(Resource.slime), x + random.nextInt(11) - 5, y + random.nextInt(11) - 5));
-		isfishing = false;
-	}if (fcatch == 56) {
-		System.out.print("Rare Armor!");
-		level.add(new ItemEntity(new ResourceItem(Resource.larmor), x + random.nextInt(11) - 5, y + random.nextInt(11) - 5));
-		isfishing = false;
-	}else {
-		System.out.print("FAIL!");
-		isfishing = false;
-	}
-	
+		isfishing = true;
+		int fcatch = random.nextInt(90);
+		
+		if (ItemResource.dur == 0)
+			player.activeItem.isDepleted();
+		
+		if (fcatch <= 8) {
+			System.out.print("Caught a Fish!");
+			level.add(new ItemEntity(new ResourceItem(Resource.rawfish), x + random.nextInt(11) - 5, y + random.nextInt(11) - 5));
+			isfishing = false;
+		}
+		
+		if (fcatch == 25 || fcatch == 43 || fcatch == 32 || fcatch == 15 || fcatch == 42) {
+			System.out.print("Caught some slime?");
+			level.add(new ItemEntity(new ResourceItem(Resource.slime), x + random.nextInt(11) - 5, y + random.nextInt(11) - 5));
+			isfishing = false;
+		}
+		
+		if (fcatch == 56) {
+			System.out.print("Rare Armor!");
+			level.add(new ItemEntity(new ResourceItem(Resource.larmor), x + random.nextInt(11) - 5, y + random.nextInt(11) - 5));
+			isfishing = false;
+		} else {
+			System.out.print("FAIL!");
+			isfishing = false;
+		}
+		
 	}
 	
 	//called in game loop, a bit after tick()
@@ -730,30 +744,22 @@ public class Game extends Canvas implements Runnable, ActionListener{
 		int colVis = Color.get(-1, 555, 555, 555);
 		int colTran = Color.get(-1, -1, -1, -1);
 		int colSleep = 0;
-		if (bed.hasBeenTrigged)
-		{
-		if (isDayNoSleep) {
-			colSleep = colVis;
+		if (bed.hasBeenTrigged) {
+			if (isDayNoSleep)
+				colSleep = colVis;
+			else
+				colSleep = colTran;
+			
+			if (dayYeahTick == 600)
+				colSleep = colTran;
 		}
-		else {
-			colSleep = colTran;
-		}
-		if (dayYeahTick == 600) {
-			colSleep = colTran;
-		}
-		}
-		if (fpscounter == false) {
+		if (fpscounter == false)
 			col = col1;
-		}
-		if (fpscounter == true) {
+		else
 			col = col0;
-		}
 		
 		
-		
-		
-		
-		if (ModeMenu.creative == false)
+		if (!ModeMenu.creative)
 		{
 			if (currentLevel < 3) {
 				lightScreen.clear(0);
@@ -773,12 +779,33 @@ public class Game extends Canvas implements Runnable, ActionListener{
 			}
 		}
 		
-		Graphics g = bs.getDrawGraphics();
-		g.fillRect(0, 0, getWidth(), getHeight());
-		
 		
 		//Remeber to make a zoom feature!!!!!!!!!!!!!!!!!!!!!!!!
+			//done now..?
+		for(int g = 0; g < screen.h; g++) {
+			for(int ww = 0; ww < screen.w; ww++) {
+				boolean bool = false;
+				int xo = screen.pixels[ww + g * screen.w];
+				if(xo == 0) {
+					xo = Color.get(0, 0, 0, 0);
+					bool = true;
+				}
+
+				if(xo < 255) {
+					extrapixels[ww + g * 288] = colors[xo];
+				}
+
+				if(bool) {
+					int yo = screen.pixels[ww + g * screen.w];
+					if(yo < 255) {
+						pixels[ww + g * 288] = colors[yo];
+					}
+				}
+			}
+		}
 		
+		Graphics g = bs.getDrawGraphics();
+		g.fillRect(0, 0, getWidth(), getHeight());
 		
 		int ww = WIDTH * 3;
 		int hh = HEIGHT * 3;
@@ -790,19 +817,23 @@ public class Game extends Canvas implements Runnable, ActionListener{
 	}
 	
 	private void renderGui() {
-		for (int y = 0; y < 2; y++) {
-			for (int x = 0; x < 29; x++) {
-				screen.render(x * 7, screen.h - 16 + y * 8, 0 + 12 * 32, Color.get(-1, -1, -1, -1), 0);
+		int xfps;
+		int txlevel;
+		for(xfps = 0; xfps < 2; xfps++) {
+			for(txlevel = 0; txlevel < 29; txlevel++) {
+				screen.render(txlevel * 7, screen.h - 16 + xfps * 8, 384, Color.get(-1, -1, -1, -1), 0);
 			}
 		}
-		for (int y = 1; y < 2; y++) {
-			for (int x = 12; x < 29; x++) {
-				screen.render(x * 7, screen.h - 16 + y * 8, 0 + 1 * 32, Color.get(0, 0, 0, 0), 0);
+
+		for(xfps = 1; xfps < 2; xfps++) {
+			for(txlevel = 12; txlevel < 29; txlevel++) {
+				screen.render(txlevel * 7, screen.h - 16 + xfps * 8, 32, Color.get(0, 0, 0, 0), 0);
 			}
 		}
-		for (int y = 1; y < 2; y++) {
-			for (int x = 12; x < 14; x++) {
-				screen.render(x * 7, screen.h - 16 + y * 8, 0 + 1 * 32, Color.get(0, 0, 0, 0), 0);
+
+		for(xfps = 1; xfps < 2; xfps++) {
+			for(txlevel = 12; txlevel < 14; txlevel++) {
+				screen.render(txlevel * 7, screen.h - 16 + xfps * 8, 32, Color.get(0, 0, 0, 0), 0);
 			}
 		}
 		
@@ -812,17 +843,32 @@ public class Game extends Canvas implements Runnable, ActionListener{
 			Font.draw("Saving... " + LoadingMenu.percentage + "%", screen, screen.w / 2 - ("Saving... " + LoadingMenu.percentage + "%").length() * 4, screen.h / 2 - 32, Color.get(-1, 4, 4, 4));
 		}
 		
-		int xfps = fra;
-		int txlevel = Player.xx / 16;
+		xfps = fra;
+		txlevel = Player.xx / 16;
 		int tylevel = Player.yy / 16;
 		int col0 = Color.get(-1, 555, 555, 555);
-		Font.draw(xfps +" fps", screen, 1, screen.h - 190 , col0);
-		Font.draw("X " + txlevel, screen, 1, screen.h - 180 , col0);
-		Font.draw("Y " + tylevel, screen, 1, screen.h - 170 , col0);
-		//Font.draw("Time " + (tickCount/60), screen, 1, screen.h - 160 , col0);
-		if (ModeMenu.score) {
-		Font.draw("Score " + player.score, screen, 1, screen.h - 160 , col0);
-		}		
+		if(player.showinfo) {
+			Font.draw(xfps + " fps", screen, 1, screen.h - 190, col0);
+			Font.draw("X " + txlevel, screen, 1, screen.h - 180, col0);
+			Font.draw("Y " + tylevel, screen, 1, screen.h - 170, col0);
+			if(ModeMenu.score) {
+				Font.draw("Score " + Player.score, screen, 1, screen.h - 160, col0);
+				if(currentLevel == 5) {
+					if(levels[currentLevel].chestcount > 0) {
+						Font.draw("Chests: " + levels[currentLevel].chestcount, screen, 1, screen.h - 150, col0);
+					} else {
+						Font.draw("Chests: Complete!", screen, 1, screen.h - 150, col0);
+					}
+				}
+			} else if(currentLevel == 5) {
+				if(levels[currentLevel].chestcount > 0) {
+					Font.draw("Chests: " + levels[currentLevel].chestcount, screen, 1, screen.h - 160, col0);
+				} else {
+					Font.draw("Chests: Complete!", screen, 1, screen.h - 160, col0);
+				}
+			}
+		}
+		
 		int awh = (AirWizard.healthstat / 20);
 		if (awh == 0) {//This just turns 0% into 1% to avoid confunsion.
 			awh = 1;
@@ -838,14 +884,13 @@ public class Game extends Canvas implements Runnable, ActionListener{
 		}
 		
 		// This is the arrow counter. ^ = infinite symbol.
-		if (ModeMenu.creative == false) {
-		if (ac >= 10000) {
-		Font.draw("  x" + "^", screen, 84, screen.h - 16 , Color.get(0, 333, 444, 555));
-		} else if (ac < 10000) {
-		Font.draw("  x" + ac, screen, 84, screen.h - 16 , Color.get(0, 555, 555, 555));
-		}
-		}else if (ModeMenu.creative != false) {
-		Font.draw("  x" + "^", screen, 84, screen.h - 16 , Color.get(0, 333, 444, 555));
+		if(!ModeMenu.creative) {
+			if (ac >= 10000)
+				Font.draw("  x" + "^", screen, 84, screen.h - 16 , Color.get(0, 333, 444, 555));
+			else if (ac < 10000)
+				Font.draw("  x" + ac, screen, 84, screen.h - 16 , Color.get(0, 555, 555, 555));
+			else if (ModeMenu.creative != false)
+				Font.draw("  x" + "^", screen, 84, screen.h - 16 , Color.get(0, 333, 444, 555));
 		}
 		
 		int cols = Color.get(300, 555, 555, 555);
@@ -854,86 +899,122 @@ public class Game extends Canvas implements Runnable, ActionListener{
 		int hours = minutes / 60;
 		minutes %= 60;
 		seconds %= 60;
-		if (count <= 5) {
+		if (count <= 5)
 			cols = Color.get(500, 555, 555, 555);
-		}
-		if (count <= 10 && count > 5) {
+			
+		if (count <= 10 && count > 5)
 			cols = Color.get(400, 555, 555, 555);
-		}
-		if (count <= 15 && count > 10) {
+			
+		if (count <= 15 && count > 10)
 			cols = Color.get(300, 555, 555, 555);
-		}
-		if (count <= 20 && count > 15) {
+			
+		if (count <= 20 && count > 15)
 			cols = Color.get(200, 555, 555, 555);
-		}
-		if (count <= 25 && count > 20) {
+			
+		if (count <= 25 && count > 20)
 			cols = Color.get(100, 555, 555, 555);
+		
+		if(bed.hasBedSet) {
+			Font.draw("Sleeping...", screen, screen.w / 2 + 1 - 44, screen.h - 119, Color.get(-1, 222, 222, 222));
+			Font.draw("Sleeping...", screen, screen.w / 2 - 44, screen.h - 120, Color.get(-1, 555, 555, 555));
 		}
 		
+		if(notifications.size() > 0) {
+			++notetick;
+			if(notifications.size() > 3) {
+				notifications = notifications.subList(notifications.size() - 3, notifications.size());
+			}
+
+			if(notetick > 600) {
+				notifications.remove(0);
+				notetick = 0;
+			}
+
+			for(int i = 0; i < notifications.size(); ++i) {
+				Font.draw((String)notifications.get(i), screen, screen.w / 2 + 1 - ((String)notifications.get(i)).length() * 8 / 2, screen.h - 120 - i * 8 + 1, Color.get(-1, 111, 111, 111));
+				Font.draw((String)notifications.get(i), screen, screen.w / 2 - ((String)notifications.get(i)).length() * 8 / 2, screen.h - 120 - i * 8, Color.get(-1, 555, 555, 555));
+			}
+		}
+		/*
 		if (infoplank) {
 			Font.draw("Can only be placed on planks!", screen, 30, screen.h - 130 , Color.get(000, 555, 555, 555));
 		}
 		if (infosbrick) {
 			Font.draw("Can only be placed on st.brick!", screen, 20, screen.h - 130 , Color.get(000, 555, 555, 555));
 		}
-		
+		*/
 		if (ModeMenu.score) {
-			if (scoreTime > 18000) {
-			Font.draw("Time left " + minutes + "m " + seconds + "s", screen, 84, screen.h - 190 , Color.get(000, 555, 555, 555));
-			} else if (scoreTime < 3600) {
-			Font.draw("Time left " + minutes + "m " + seconds + "s", screen, 84, screen.h - 190 , cols);
-			} else {
-			Font.draw("Time left " + minutes + "m " + seconds + "s", screen, 84, screen.h - 190 , Color.get(330, 555, 555, 555));
-			}
-			if (multiplyer > 1 && multiplyer < 50) {
+			if (scoreTime > 18000)
+				Font.draw("Time left " + minutes + "m " + seconds + "s", screen, 84, screen.h - 190 , Color.get(000, 555, 555, 555));
+			else if (scoreTime < 3600)
+				Font.draw("Time left " + minutes + "m " + seconds + "s", screen, 84, screen.h - 190 , cols);
+			else
+				Font.draw("Time left " + minutes + "m " + seconds + "s", screen, 84, screen.h - 190 , Color.get(330, 555, 555, 555));
+			
+			if (multiplyer > 1 && multiplyer < 50)
 				Font.draw("X" + multiplyer, screen, 260, screen.h - 190 , Color.get(-1, 540, 540, 540));
-			} else if (multiplyer > 49) {
+			else if (multiplyer > 49)
 				Font.draw("X" + multiplyer, screen, 260, screen.h - 190 , Color.get(-1, 500, 500, 500));
-			}
+			
 			Font.draw(multiplyertime + " " + mtm + "", screen, 230, screen.h - 180 , Color.get(-1, 5, 5, 5));
 		}
 		
 		if (player.activeItem != null && truerod) {
 			int dura = (ItemResource.dur * 7);
-			if (dura > 100) dura = 100;
+			if (dura > 100)
+				dura = 100;
 			Font.draw(dura + "%", screen, 164, screen.h - 16 , Color.get(0, 30, 30, 30));
 		}
+		
+		if(player.activeItem != null)
+			player.activeItem.renderInventory(screen, 84, screen.h - 8);
+		
+		/*potions
+		if(player.potioneffects.size() > 0) {
+			for(i = 0; i < player.potioneffects.size(); ++i) {
+				if(player.showpotioneffects) {
+					int pcol = Color.get(PotionResource.potionColor((String)player.potioneffects.get(i)), 555, 555, 555);
+					Font.draw("(f2 to hide!)", screen, 180, screen.h - 183, Color.get(0, 555, 555, 555));
+					Font.draw((String)player.potioneffects.get(i) + " (" + ((Integer)player.potioneffectstime.get(i)).intValue() / 60 / 60 + ":" + (((Integer)player.potioneffectstime.get(i)).intValue() / 60 - 60 * (((Integer)player.potioneffectstime.get(i)).intValue() / 60 / 60)) + ")", screen, 180, screen.h - (175 - i * 8), pcol);
+				}
+			}
+		}
+		*/
 		
 		screen.render(11 * 8, screen.h - 17, 13 + 5 * 32, Color.get(-1, 111, 222, 430), 0);//arrow icon
 		
 		for (int i = 0; i < 10; i++) {
-			if (ModeMenu.creative == false) {
+			if (!ModeMenu.creative) {
+				if (i < player.health)
+					screen.render(i * 8, screen.h - 16, 0 + 12 * 32, Color.get(-1, 200, 500, 533), 0);
+				else
+					screen.render(i * 8, screen.h - 16, 0 + 12 * 32, Color.get(-1, 100, 000, 000), 0);
 				
-			
-			if (i < player.health)
-				screen.render(i * 8, screen.h - 16, 0 + 12 * 32, Color.get(-1, 200, 500, 533), 0);
-			else
-				screen.render(i * 8, screen.h - 16, 0 + 12 * 32, Color.get(-1, 100, 000, 000), 0);
-			
-			if (i < player.hunger)
-				screen.render(i * 8 + 208, screen.h - 16, 2 + 12 * 32, Color.get(-1, 100, 530, 211), 0);
-			else
-				screen.render(i * 8 + 208, screen.h - 16, 2 + 12 * 32, Color.get(-1, 100, 000, 000), 0);
-			
-			
-			if (i < player.maxArmor)
-				screen.render(i * 8 + 208, screen.h - 8, 3 + 12 * 32, Color.get(-1, 333, 444, 555), 0);
-			else
-				screen.render(i * 8 + 208, screen.h - 8, 3 + 12 * 32, Color.get(-1, -1, -1, -1), 0);
-			
-			if (player.staminaRechargeDelay > 0) {
-				if (player.staminaRechargeDelay / 4 % 2 == 0)
-					screen.render(i * 8, screen.h - 8, 1 + 12 * 32, Color.get(-1, 555, 000, 000), 0);
+				if (i < player.hunger)
+					screen.render(i * 8 + 208, screen.h - 16, 2 + 12 * 32, Color.get(-1, 100, 530, 211), 0);
 				else
-					screen.render(i * 8, screen.h - 8, 1 + 12 * 32, Color.get(-1, 110, 000, 000), 0);
-			} else {
-				if (i < player.stamina)
-					screen.render(i * 8, screen.h - 8, 1 + 12 * 32, Color.get(-1, 220, 550, 553), 0);
+					screen.render(i * 8 + 208, screen.h - 16, 2 + 12 * 32, Color.get(-1, 100, 000, 000), 0);
+				
+				
+				if (i < player.maxArmor)
+					screen.render(i * 8 + 208, screen.h - 8, 3 + 12 * 32, Color.get(-1, 333, 444, 555), 0);
 				else
-					screen.render(i * 8, screen.h - 8, 1 + 12 * 32, Color.get(-1, 110, 000, 000), 0);
+					screen.render(i * 8 + 208, screen.h - 8, 3 + 12 * 32, Color.get(-1, -1, -1, -1), 0);
+				
+				if (player.staminaRechargeDelay > 0) {
+					if (player.staminaRechargeDelay / 4 % 2 == 0)
+						screen.render(i * 8, screen.h - 8, 1 + 12 * 32, Color.get(-1, 555, 000, 000), 0);
+					else
+						screen.render(i * 8, screen.h - 8, 1 + 12 * 32, Color.get(-1, 110, 000, 000), 0);
+				} else {
+					if (i < player.stamina)
+						screen.render(i * 8, screen.h - 8, 1 + 12 * 32, Color.get(-1, 220, 550, 553), 0);
+					else
+						screen.render(i * 8, screen.h - 8, 1 + 12 * 32, Color.get(-1, 110, 000, 000), 0);
+				}
 			}
 		}
-		}
+		
 		if (player.activeItem != null) {
 			player.activeItem.renderInventory(screen, 12 * 7, screen.h - 8);
 		}

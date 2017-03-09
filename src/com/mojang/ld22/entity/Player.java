@@ -83,6 +83,7 @@ public class Player extends Mob {
 	public int invulnerableTime = 0;
 	static public int xx;
 	static public int yy;
+	public boolean showinfo;
 	
 	public int r = 50, g = 50, b;
 	
