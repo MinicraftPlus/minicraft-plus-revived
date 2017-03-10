@@ -100,7 +100,7 @@ public class WorldSelectMenu extends Menu {
 		
 		if(createworld) {
 			typename(); //check for input to type worldname
-			if(input.getKey("pause").clicked) {
+			if(input.getKey("escape").clicked) {
 				//cancel to title screen
 				createworld = false;
 				loadworld = false;
