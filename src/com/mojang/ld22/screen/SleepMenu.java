@@ -29,14 +29,14 @@ public class SleepMenu extends Menu {
 			else {
 				selectState = 1;
 				tickCount++;
-				if (input.getKey("menu").clicked)
+				if (input.getKey("enter").clicked)
 					tickCount = 0;
 			}
 		}
 		else
 			selectState = 0;
 		
-		if (input.getKey("menu").clicked)
+		if (input.getKey("enter").clicked)
 			game.setMenu(null);
 	}
 	

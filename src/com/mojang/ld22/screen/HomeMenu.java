@@ -18,7 +18,7 @@ public class HomeMenu extends Menu {
 	boolean hsh = Player.hasSetHome;
 	
 	public void tick() {
-		if (input.getKey("menu").clicked/* || input.getKey("attack").clicked*/) {
+		if (input.getKey("menu").clicked || input.getKey("enter").clicked || input.getKey("escape").clicked || input.getKey("attack").clicked) {//any button!
 			game.setMenu(null);
 			Player.sentFromHome = false;
 		}
