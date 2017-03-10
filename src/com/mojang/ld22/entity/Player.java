@@ -95,8 +95,10 @@ public class Player extends Mob {
 		
 		stamina = maxStamina;
 		hunger = maxHunger;
+		System.out.println("creative mode: " + ModeMenu.creative);
 		if (ModeMenu.creative) {
-			for(int i = 0; i < ListItems.items.size(); ++i) {
+			//NOT WORKING!!!
+			for(int i = 0; i < ListItems.items.size(); i++) {
 				this.inventory.add((Item)ListItems.items.get(i));
 			}
 			/*
@@ -215,9 +217,9 @@ public class Player extends Mob {
 			*/
 		}
 		else {
-		inventory.add(new FurnitureItem(new Enchanter()));
-		inventory.add(new FurnitureItem(new Workbench()));
-		inventory.add(new PowerGloveItem());
+			inventory.add(new FurnitureItem(new Enchanter()));
+			inventory.add(new FurnitureItem(new Workbench()));
+			inventory.add(new PowerGloveItem());
 		}
 	}
 	
@@ -225,7 +227,7 @@ public class Player extends Mob {
 		super.tick();
 		isenemy = false;
 		tickCounter++;
-	//System.out.println(tickCounter);
+		//System.out.println(tickCounter);
 		if (invulnerableTime > 0) invulnerableTime--;
 		Tile onTile = level.getTile(x >> 4, y >> 4);
 		if (onTile == Tile.stairsDown || onTile == Tile.stairsUp || onTile == Tile.lightstairsDown|| onTile == Tile.lightstairsUp) {

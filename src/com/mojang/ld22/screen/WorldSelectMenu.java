@@ -321,6 +321,7 @@ public class WorldSelectMenu extends Menu {
 					drawCentered(name, screen, 50, wncol);
 					drawCentered("A-Z, 0-9, up to 36 Characters", screen, 80, col);
 					drawCentered("(Space + Backspace as well)", screen, 92, col);
+					
 					if(wncol == Color.get(0, 500, 500, 500)) {
 						if(!name.equals("")) {
 							drawCentered("Cannot have 2 worlds", screen, 120, wncol);

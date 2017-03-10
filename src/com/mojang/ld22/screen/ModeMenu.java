@@ -8,8 +8,7 @@ import com.mojang.ld22.sound.Sound;
 import com.mojang.ld22.Game; 
 public class ModeMenu extends Menu {
 	private Menu parent;
-	public ModeMenu() {
-	}
+	
 	public static boolean survival;
 	public static boolean creative;
 	public static boolean hardcore;
@@ -18,8 +17,11 @@ public class ModeMenu extends Menu {
 	public static int mode = 1;
 	public static int loading = 0;
 	public static String[] modes = {"Survival", "Creative", "Hardcore", "Score"};
-	//private static int selectedlr = mode;
+	//private static int selectedlr = mode; //useless?
 	private int selected = 0; //useless?
+	
+	public ModeMenu() {
+	}
 	
 	public void tick() {
 		if (input.getKey("left").clicked) {
@@ -69,27 +71,10 @@ public class ModeMenu extends Menu {
 		//centerx = 60
 		Font.draw("Game Mode:  " + modes[mode-1], screen, 60, 8*8, Color.get(-1, 555, 555, 555));
 		
-		//Font.draw(, screen, 11 * 6 + 4, 8 * 8, Color.get(-1, 555, 555, 555));
-		//Font.draw(modes[mode-1], screen, 11 * 16, 8 * 8, Color.get(-1, 555, 555, 555));
-		/*
-		if (mode == 1)
-			Font.draw("Survival", screen, 11 * 16 + 4, 8 * 8, Color.get(-1, 555, 555, 555));
-		else if (mode == 2)
-			Font.draw("Creative", screen, 11 * 16 + 4, 8 * 8, Color.get(-1, 555, 555, 555));
-		else if (mode == 3)
-			Font.draw("Hardcore", screen, 11 * 16 + 4, 8 * 8, Color.get(-1, 555, 555, 555));
-		else if (mode == 4)
-			Font.draw("Score", screen, 11 * 16 + 4, 8 * 8, Color.get(-1, 555, 555, 555));
-		*/
-		
 		drawCentered("Press Enter to Start", screen, screen.h - 75, textCol);
 		
-		//if (loading == 0)
-			Font.draw("Loading...", screen, 120, screen.h - 105, (loading==0?black:color));
-		//else 
-		//	Font.draw("Loading...", screen, 120, screen.h - 105, col);
+		Font.draw("Loading...", screen, 120, screen.h - 105, (loading==0?black:color));
 		
-		//drawCentered()
 		drawCentered("Press Left and Right", screen, screen.h - 150, textCol);
 		drawCentered("Press Esc to Return", screen, screen.h - 55, textCol);
 		drawCentered("Press Z for world options", screen, screen.h - 35, textCol);

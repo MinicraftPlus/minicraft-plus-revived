@@ -5,8 +5,7 @@ import com.mojang.ld22.gfx.Color;
 import com.mojang.ld22.gfx.Font;
 import com.mojang.ld22.gfx.Screen;
 import com.mojang.ld22.Game; 
-import com.mojang
-.ld22.entity.Player;
+import com.mojang.ld22.entity.Player;
 
 public class SleepMenu extends Menu {
 	private int inputDelay = 60;
@@ -49,18 +48,5 @@ public class SleepMenu extends Menu {
 		
 		drawCentered(messages[selectState], screen, 4*8, Color.get(-1, 555, 555, 555));
 		drawCentered("Enter:Exit", screen, 5*8, Color.get(-1, 555, 555, 555));
-		/*
-		if (selectState == 0){ Font.draw("It's Day, no sleep!", screen, 2 * 8, 4 * 8, Color.get(-1, 555, 555, 555));
-		Font.draw("X:Exit", screen, 2 * 8, 5 * 8, Color.get(-1, 555, 555, 555));
-		
-		}
-		else if (selectState == 1){ Font.draw("Sleeping...", screen, 2 * 8, 4 * 8, Color.get(-1, 555, 555, 555));
-		Font.draw("X:Exit", screen, 2 * 8, 5 * 8, Color.get(-1, 555, 555, 555));
-		}
-		else if (selectState == 2){Font.draw("It's daytime!", screen, 2 * 8, 4 * 8, Color.get(-1, 555, 555, 555));
-		Font.draw("X:Exit", screen, 2 * 8, 5 * 8, Color.get(-1, 555, 555, 555));
-		
-		}
-		*/
 	}
 }

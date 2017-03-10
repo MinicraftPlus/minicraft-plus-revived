@@ -196,7 +196,6 @@ public class Load {
 		player.game.level = Game.levels[Game.currentLevel];
 		
 		String modedata = (String)data.get(8);
-		//boolean setmode = true; //useless?
 		int mode;
 		if(modedata.contains(";"))
 			mode = Integer.parseInt(modedata.substring(0, modedata.indexOf(";")));
@@ -211,31 +210,6 @@ public class Load {
 			else
 				player.game.scoreTime = 300;
 		}
-		/*
-		if(modediff == 1) {
-			ModeMenu.survival = true;
-			ModeMenu.creative = false;
-			ModeMenu.hardcore = false;
-			ModeMenu.score = false;
-		} else if(modediff == 2) {
-			ModeMenu.survival = false;
-			ModeMenu.creative = true;
-			ModeMenu.hardcore = false;
-			ModeMenu.score = false;
-		} else if(modediff == 3) {
-			ModeMenu.survival = false;
-			ModeMenu.creative = false;
-			ModeMenu.hardcore = true;
-			ModeMenu.score = false;
-		} else if(modediff == 4) {
-			ModeMenu.survival = false;
-			ModeMenu.creative = false;
-			ModeMenu.hardcore = false;
-			ModeMenu.score = true;
-			
-		}
-		*/
-		//ModeMenu.diff = modediff;
 		
 		String colors = ((String)data.get(data.size() - 1)).replace("[", "").replace("]", "");
 		List color = Arrays.asList(colors.split(";"));

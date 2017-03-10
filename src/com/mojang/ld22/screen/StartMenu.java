@@ -33,12 +33,7 @@ public class StartMenu extends Menu {
 			Sound.craft.play();
 		}
 		
-		//if (input.getKey("mode").clicked) game.setMenu(new ModeMenu());
-		/*if (selectedlr > 3)
-			selectedlr = 1;
-		if (selectedlr < 1)
-			selectedlr = 3;
-		*/if (diff > 3)
+		if (diff > 3)
 			diff = 1;
 		if (diff < 1)
 			diff = 3;
@@ -68,55 +63,27 @@ public class StartMenu extends Menu {
 	}
 	
 	public void render(Screen screen) {
+		/*
 		int col1 = Color.get(-1, 500, 500, 500);
 		int col2 = Color.get(-1, 50, 50, 50);
 		int rCol = 0;
-		
+		*/
 		int onColor = Color.get(0, 50, 50, 50),
 			offColor = Color.get(0, 500, 500, 500);
 		
-		/*
-		if (isSoundAct == true) {
-			rCol = col2;
-			soundTest = "On";
-		}
-		else {
-			rCol = col1;
-			soundTest = "Off";
-		}*/
 		screen.clear(0);
 		Font.draw("Difficulty:", screen, 11 * 6 + 4, 8 * 8, Color.get(-1, 555, 555, 555));
 		
 		String[] diffs = {"Easy", "Normal", "Hard"};
 		Font.draw(diffs[diff-1], screen, 11 * 16 + 4, 8 * 8, Color.get(-1, 555, 555, 555));
-		/*
-		if (diff == 1)
-			Font.draw("Easy", screen, 11 * 16 + 4, 8 * 8, Color.get(-1, 555, 555, 555));
-		else if (diff == 2)
-			Font.draw("Normal", screen, 11 * 16 + 4, 8 * 8, Color.get(-1, 555, 555, 555));
-		else if (diff == 3)
-			Font.draw("Hard", screen, 11 * 16 + 4, 8 * 8, Color.get(-1, 555, 555, 555));
-		*/
+		
 		Font.draw("Press Esc to return", screen, 80, screen.h - 75, Color.get(0, 555, 555, 555));
-		
 		Font.draw("<S>ound:", screen, 80, screen.h - 100, Color.get(0, 555, 555, 555));
-		
 		Font.draw((isSoundAct?"On":"Off"), screen, 180, screen.h - 100, (isSoundAct?onColor:offColor));
-		/*if (isSoundAct)
-			Font.draw("On", screen, 150, screen.h - 100, Color.get(0, 50, 50, 50));
-		else
-			Font.draw("Off", screen, 150, screen.h - 100, Color.get(0, 500, 500, 500));
-		*/
-		//Font.draw("" + soundTest, screen, 90, screen.h - 90, rCol);
 		
 		if(unlockedskin) {
 			Font.draw("<W>ear Suit:", screen, 80, screen.h - 110, Color.get(0, 555, 555, 555));
 			Font.draw((skinon?"On":"Off"), screen, 180, screen.h - 110, (skinon?onColor:offColor));
-			/*if(skinon)
-				Font.draw("On", screen, 180, screen.h - 110, Color.get(0, 50, 50, 50));
-			else
-				Font.draw("Off", screen, 180, screen.h - 110, Color.get(0, 500, 500, 500));
-			*/
 		}
 		
 		Font.draw("Press Left and Right", screen, 67, screen.h - 150, Color.get(0, 555, 555, 555));

@@ -13,25 +13,19 @@ import com.mojang.ld22.screen.WorldSelectMenu;
 public class PauseMenu extends Menu {
 	
 	private int selected, selection; //selection is set when you press enter.
-	//private boolean o1 = false;
-	//private boolean o2 = false;
-	//private boolean o3 = false;
 	Player player;
+	
 	private static final String[] options = new String[] {
 		"Return to Game", "Options", "Save Game", "Load Game", "Main Menu"
 	};
 	
-	
 	public PauseMenu(Player player) {
 		this.player = player;
-		//chosen = false;
 		selected = 0;
 		selection = -1;
-		//prevselect = selected;
 	}
 	
 	public void tick() {
-		//prevselect = selected;
 		
 		if(input.getKey("pause").clicked)
 			game.setMenu((Menu)null);
@@ -77,50 +71,8 @@ public class PauseMenu extends Menu {
 			selection = selected;
 		}
 		
-		if(input.getKey("escape").clicked || selection == 0) {
-			//if(prevselect >= 2) //if in sub-menu...right?
-				game.setMenu((Menu)null);
-		}
-		//else if(input.getKey("enter").clicked)
-			
-		
-		
-		//if(/*input.getKey("escape").clicked || */input.getKey("enter").clicked) {
-		/*	selection = selected;
-			//sets no matter the menu
-			if(selected == 0) {
-				/*o1 = false;
-				o2 = false;
-				o3 = false;
-				*///game.setMenu((Menu)null);
-		/*	}
-			
-			if(selected == 1) {
-				/*o1 = false;
-				o2 = false;
-				o3 = false;
-				*///TitleMenu.sentFromMenu = false;
-		/*		game.setMenu(new StartMenu());
-			}
-			/*
-			if(selected == 2) {
-				o1 = true;
-				o2 = false;
-				o3 = false;
-			}
-
-			if(selected == 3) {
-				o1 = false;
-				o2 = true;
-				o3 = false;
-			}
-
-			if(selected == 4) {
-				o1 = false;
-				o2 = false;
-				o3 = true;
-			}*/
-		//}
+		if(input.getKey("escape").clicked || selection == 0)
+			game.setMenu((Menu)null);
 	}
 	
 	public void render(Screen screen) {
