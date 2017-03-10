@@ -16,7 +16,6 @@ In the end, the other repository will be depricated, and probably deleted, as th
 
 ####Current Bugs / Quick Fixes:
 
-* Get "Saving" dialog to appear; make "r" key initiate save.
 * Sound effect don't always play when they should
 * beds, and dungeon chests, are sort of half-implemented at the moment
 * Some java files (Mainly the ones taken from the decompiled source code) could really use some cleaning up and simplifying, both to make them easier to follow, and easier to develop.
