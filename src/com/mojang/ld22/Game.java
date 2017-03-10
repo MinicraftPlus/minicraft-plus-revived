@@ -318,7 +318,7 @@ public class Game extends Canvas implements Runnable, ActionListener{
 		new ListItems();
 		player = new Player(this, input); //very important that this is AFTER the previous 2 statements.
 		
-		levels = new Level[6];	
+		levels = new Level[6];
 		currentLevel = 3;
 		ac = acs;
 		

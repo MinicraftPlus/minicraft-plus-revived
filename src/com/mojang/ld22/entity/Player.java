@@ -422,7 +422,15 @@ public class Player extends Mob {
 		}
 		
 		if (ModeMenu.creative) {
-			if (input.getKey("dayTime").clicked) Game.tickCount = 5900;
+			//Oh-ho-ho!
+			if (input.getKey("dayTime").clicked) {
+				Game.Time = 0;	
+				Game.tickCount = 6000;
+			}
+			if (input.getKey("nightTime").clicked) {
+				Game.Time = 3;
+				Game.tickCount = 54000;
+			}
 		}
 		if (attackTime > 0)
 			attackTime--;

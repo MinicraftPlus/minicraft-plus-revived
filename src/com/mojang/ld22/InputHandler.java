@@ -42,8 +42,8 @@ public class InputHandler implements MouseListener, KeyListener {
 		keymap.put("FPS", "TAB");
 		keymap.put("OPTIONS", "O");
 		keymap.put("SOUNDON", "M");
-		//keymap.put("DAYTIME", ""); //useless? (unreachable)
-		//keymap.put("NIGHTTIME", ""); //useless? (unreachable)
+		keymap.put("DAYTIME", "2"); //useless? (unreachable)
+		keymap.put("NIGHTTIME", "3"); //useless? (unreachable)
 		
 		game.addKeyListener(this);
 		game.addMouseListener(this);
