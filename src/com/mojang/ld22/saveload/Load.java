@@ -183,6 +183,7 @@ public class Load {
 	
 	public void loadPlayer(String filename, Player player) {
 		loadFromFile(location + filename + extention);
+		
 		player.x = Integer.parseInt((String)data.get(0));
 		player.y = Integer.parseInt((String)data.get(1));
 		Player.spawnx = Integer.parseInt((String)data.get(2));
@@ -190,46 +191,52 @@ public class Load {
 		player.health = Integer.parseInt((String)data.get(4));
 		player.maxArmor = Integer.parseInt((String)data.get(5));
 		Player.score = Integer.parseInt((String)data.get(6));
-		Game.currentLevel = Integer.parseInt((String)data.get(7));
-		Game var10001 = player.game;
-		player.game.level = Game.levels[Game.currentLevel];
-		String diffdata = (String)data.get(8);
-		boolean diff = true;
-		int var11;
-		if(diffdata.contains(";")) {
-			var11 = Integer.parseInt(diffdata.substring(0, diffdata.indexOf(";")));
-		} else {
-			var11 = Integer.parseInt(diffdata);
-		}
 		
-		if(var11 == 1) {
+		Game.currentLevel = Integer.parseInt((String)data.get(7));
+		player.game.level = Game.levels[Game.currentLevel];
+		
+		String modedata = (String)data.get(8);
+		//boolean setmode = true; //useless?
+		int mode;
+		if(modedata.contains(";"))
+			mode = Integer.parseInt(modedata.substring(0, modedata.indexOf(";")));
+		else
+			mode = Integer.parseInt(modedata);
+		
+		ModeMenu.updateModeBools(mode);
+		
+		if(mode == 4) { //score mode
+			if(modedata.length() > 1)
+				player.game.scoreTime = Integer.parseInt(modedata.substring(modedata.indexOf(";") + 1));
+			else
+				player.game.scoreTime = 300;
+		}
+		/*
+		if(modediff == 1) {
 			ModeMenu.survival = true;
 			ModeMenu.creative = false;
 			ModeMenu.hardcore = false;
 			ModeMenu.score = false;
-		} else if(var11 == 2) {
+		} else if(modediff == 2) {
 			ModeMenu.survival = false;
 			ModeMenu.creative = true;
 			ModeMenu.hardcore = false;
 			ModeMenu.score = false;
-		} else if(var11 == 3) {
+		} else if(modediff == 3) {
 			ModeMenu.survival = false;
 			ModeMenu.creative = false;
 			ModeMenu.hardcore = true;
 			ModeMenu.score = false;
-		} else if(var11 == 4) {
+		} else if(modediff == 4) {
 			ModeMenu.survival = false;
 			ModeMenu.creative = false;
 			ModeMenu.hardcore = false;
 			ModeMenu.score = true;
-			if(diffdata.length() > 1) {
-				player.game.scoreTime = Integer.parseInt(diffdata.substring(diffdata.indexOf(";") + 1));
-			} else {
-				player.game.scoreTime = 300;
-			}
+			
 		}
+		*/
+		//ModeMenu.diff = modediff;
 		
-		ModeMenu.diff = var11;
 		String colors = ((String)data.get(data.size() - 1)).replace("[", "").replace("]", "");
 		List color = Arrays.asList(colors.split(";"));
 		player.r = Integer.parseInt((String)color.get(0));

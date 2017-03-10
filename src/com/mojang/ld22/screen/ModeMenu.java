@@ -15,114 +15,83 @@ public class ModeMenu extends Menu {
 	public static boolean hardcore;
 	public static boolean score;
 	public static boolean hasSetDif;
-	public static int diff = 1;
+	public static int mode = 1;
 	public static int loading = 0;
-	private static int selectedlr = diff;
-	private int selected = 0;
+	public static String[] modes = {"Survival", "Creative", "Hardcore", "Score"};
+	//private static int selectedlr = mode;
+	private int selected = 0; //useless?
 	
 	public void tick() {
-		if (input.getKey("left").clicked) selectedlr--;
-		if (input.getKey("right").clicked) selectedlr++;
-		if (input.getKey("left").clicked) diff--;
-		if (input.getKey("right").clicked) diff++;
+		if (input.getKey("left").clicked) {
+			mode--;
+			Sound.craft.play();
+		}
+		if (input.getKey("right").clicked) {
+			mode++;
+			Sound.craft.play();
+		}
 		
-		if (input.getKey("left").clicked) Sound.craft.play(); 
-		if (input.getKey("right").clicked) Sound.craft.play();
-		 /*
-		if (input.getKey("survival").clicked) {
-			survival = true;
-			creative = false;
-			hardcore = false;
+		//This is so that if the user presses enter @ respawn menu, they respawn (what a concept)
+		if (input.getKey("enter").clicked && selected == 0) {
+			Sound.test.play();
+			game.setMenu(new LoadingMenu());
 		}
-		if (input.getKey("creative").clicked) {
-			survival = false;
-			creative = true;
-			hardcore = false;
-		}
-		if (input.getKey("hardcore").clicked) {
-			survival = false;
-			creative = false;
-			hardcore = true;
-		}
-		*/
-		//This is so that if the user presses x @ respawn menu, they respawn (what a concept)
-		//if (input.)
-		 if (input.getKey("enter").clicked) {
-				if (selected == 0) {
-					Sound.test.play();
-					game.setMenu(new LoadingMenu());
-				}
-			}
-			
-			if (input.getKey("escape").clicked) {
-				game.setMenu(new TitleMenu());
-			}
-		    if (input.getKey("craft").clicked) game.setMenu(new WorldGenMenu());
 		
-			if (diff == 1) {
-				survival = true;
-				creative = false;
-				hardcore = false;
-				score = false;
-			}
-			
-			else if (diff == 2) {
-				survival = false;
-				creative = true;
-				hardcore = false;
-				score = false;
-			}
-			
-			if (diff == 3) {
-				survival = false;
-				creative = false;
-				hardcore = true;
-				score = false;
-			}
-			if (diff == 4) {
-				survival = false;
-				creative = false;
-				hardcore = false;
-				score = true;
-			}
-			if (selectedlr > 4)
-				selectedlr = 1;
-				if (selectedlr < 1)
-				selectedlr = 4;
-				if (diff > 4)
-				diff = 1;
-				if (diff < 1)
-				diff = 4;
+		if (input.getKey("escape").clicked)
+			game.setMenu(new TitleMenu());
+		
+		if (input.getKey("craft").clicked)
+			game.setMenu(new WorldGenMenu());
+		
+		updateModeBools(mode);
+		
+		if (mode > 4)
+			mode = 1;
+		if (mode < 1)
+			mode = 4;
+	}
+	
+	public static void updateModeBools(int mode) {
+		ModeMenu.mode = mode;
+		
+		survival = mode == 1;
+		creative = mode == 2;
+		hardcore = mode == 3;
+		score = mode == 4;
 	}
 	
 	public void render(Screen screen) {
-		int col = Color.get(0, 300, 300, 300);
-		int coll = Color.get(0, 0, 0, 0);
+		int color = Color.get(0, 300, 300, 300);
+		int black = Color.get(0, 0, 0, 0);
+		int textCol = Color.get(0, 555, 555, 555);
 		screen.clear(0);
-		Font.draw("Game Mode:", screen, 11 * 6 + 4, 8 * 8, Color.get(-1, 555, 555, 555));
 		
-		if (diff == 1)
-		Font.draw("Survival", screen, 11 * 16 + 4, 8 * 8, Color.get(-1, 555, 555, 555));
-		else if (diff == 2)
-		Font.draw("Creative", screen, 11 * 16 + 4, 8 * 8, Color.get(-1, 555, 555, 555));
-		else if (diff == 3)
-		Font.draw("Hardcore", screen, 11 * 16 + 4, 8 * 8, Color.get(-1, 555, 555, 555));
-		else if (diff == 4)
-		Font.draw("Score", screen, 11 * 16 + 4, 8 * 8, Color.get(-1, 555, 555, 555));
+		//centerx = 60
+		Font.draw("Game Mode:  " + modes[mode-1], screen, 60, 8*8, Color.get(-1, 555, 555, 555));
 		
-		Font.draw("Press X to Start", screen, 80, screen.h - 75, Color.get(0, 555, 555, 555));
+		//Font.draw(, screen, 11 * 6 + 4, 8 * 8, Color.get(-1, 555, 555, 555));
+		//Font.draw(modes[mode-1], screen, 11 * 16, 8 * 8, Color.get(-1, 555, 555, 555));
+		/*
+		if (mode == 1)
+			Font.draw("Survival", screen, 11 * 16 + 4, 8 * 8, Color.get(-1, 555, 555, 555));
+		else if (mode == 2)
+			Font.draw("Creative", screen, 11 * 16 + 4, 8 * 8, Color.get(-1, 555, 555, 555));
+		else if (mode == 3)
+			Font.draw("Hardcore", screen, 11 * 16 + 4, 8 * 8, Color.get(-1, 555, 555, 555));
+		else if (mode == 4)
+			Font.draw("Score", screen, 11 * 16 + 4, 8 * 8, Color.get(-1, 555, 555, 555));
+		*/
 		
-		if (loading == 0){
-		Font.draw("Loading...", screen, 120, screen.h - 105, coll);
-		} else {
-		Font.draw("Loading...", screen, 120, screen.h - 105, col);
-		}
+		drawCentered("Press Enter to Start", screen, screen.h - 75, textCol);
 		
-		Font.draw("Press Left and Right", screen, 67, screen.h - 150, Color.get(0, 555, 555, 555));
-		Font.draw("Press C to Return", screen, 75, screen.h - 55, Color.get(0, 555, 555, 555));
-		Font.draw("Press Z for world options", screen, 50, screen.h - 35, Color.get(0, 555, 555, 555));
+		//if (loading == 0)
+			Font.draw("Loading...", screen, 120, screen.h - 105, (loading==0?black:color));
+		//else 
+		//	Font.draw("Loading...", screen, 120, screen.h - 105, col);
 		
-		
-		
+		//drawCentered()
+		drawCentered("Press Left and Right", screen, screen.h - 150, textCol);
+		drawCentered("Press Esc to Return", screen, screen.h - 55, textCol);
+		drawCentered("Press Z for world options", screen, screen.h - 35, textCol);
 	}
 }

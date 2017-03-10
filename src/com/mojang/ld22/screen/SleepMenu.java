@@ -18,42 +18,38 @@ public class SleepMenu extends Menu {
 	}
 	
 	public void tick() {
-	 if (game.isDayNoSleep == false) {
-		if (tickCount == 400) {
-			selectState=2;
-			
+		if (!game.isDayNoSleep) {
+			if (tickCount == 400) {
+				selectState = 2;
+				
 				Game.tickCount = 6000;
 				Game.Time = 1;
 				//game.setMenu(null);
-			 System.out.println("SLEEPING!");
+				System.out.println("SLEEPING!");
+			}
+			else {
+				selectState = 1;
+				tickCount++;
+				if (input.getKey("menu").clicked)
+					tickCount = 0;
+			}
 		}
-		else {
-			selectState=1;
-			tickCount++;
-			 if (input.getKey("menu").clicked) {
-				 game.setMenu(null);
-				tickCount = 0;
-			 }
-			
-		}
-		}
-	 else if (game.isDayNoSleep) {
-		 if (input.getKey("menu").clicked) {
-			 game.setMenu(null);
-		 }
-		 selectState = 0;
-	 }
-	 if (selectState == 2) {
-		 if (input.getKey("menu").clicked) {
-			 game.setMenu(null);
-		 }
-	 }
+		else
+			selectState = 0;
+		
+		if (input.getKey("menu").clicked)
+			game.setMenu(null);
 	}
 	
 	public void render(Screen screen) {
 		Font.renderFrame(screen, "", 1, 3, 21, 7);
 		//System.out.println(Player.sentFromHome);
 		
+		String[] messages = {"It's Day, no sleep!", "Sleeping...", "It's daytime!"};
+		
+		drawCentered(messages[selectState], screen, 4*8, Color.get(-1, 555, 555, 555));
+		drawCentered("Enter:Exit", screen, 5*8, Color.get(-1, 555, 555, 555));
+		/*
 		if (selectState == 0){ Font.draw("It's Day, no sleep!", screen, 2 * 8, 4 * 8, Color.get(-1, 555, 555, 555));
 		Font.draw("X:Exit", screen, 2 * 8, 5 * 8, Color.get(-1, 555, 555, 555));
 		
@@ -65,15 +61,6 @@ public class SleepMenu extends Menu {
 		Font.draw("X:Exit", screen, 2 * 8, 5 * 8, Color.get(-1, 555, 555, 555));
 		
 		}
-		
-			
-			
-		
-		
-		
-		}
-		
+		*/
 	}
-	
-	
-	
+}

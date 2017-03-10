@@ -393,20 +393,21 @@ public class TitleMenu extends Menu {
 			xx = 105;
 		}*/
 		
-		int[] widths = {55, 45, 80, 40, 70, 70, 30, 70, 70, 15, 15, 55, 55, 45, 60, 55, 100, 100, 50, 50, 35, 35, 10, 55, 70, 15, 55, 85, 70, 35, 75, 70, 75, 65, 90, 100, 65, 95, 60, 75, 20, 85, 75, 80, 125, 70, 55, 95, 70, 45, 25, 50, 35, 50, 55, 105, 17, 105, 90, 55, 105};
+		//int[] widths = {55, 45, 80, 40, 70, 70, 30, 70, 70, 15, 15, 55, 55, 45, 60, 55, 100, 100, 50, 50, 35, 35, 10, 55, 70, 15, 55, 85, 70, 35, 75, 70, 75, 65, 90, 100, 65, 95, 60, 75, 20, 85, 75, 80, 125, 70, 55, 95, 70, 45, 25, 50, 35, 50, 55, 105, 17, 105, 90, 55, 105};
 		/*
 		if (splash == splashes[23]){
 			Font.draw(yt, screen, 10, 70, cols);
 		}
 		*/
-		Font.draw(splashes[rand], screen, widths[rand], 60, cols);
 		
-		Font.draw("(Arrow keys to move)", screen, 65, screen.h - 25, Color.get(0, 111, 111, 111));
-		Font.draw("(Enter to accept, Escape to return)", screen, 30, screen.h - 15, Color.get(0, 111, 111, 111));
+		drawCentered(splashes[rand], screen, 60, cols);
+		//Font.draw(splashes[rand], screen, centertext(splashes[rand]), 60, cols);
+		
+		drawCentered("(Arrow keys to move)", screen, screen.h - 25, Color.get(0, 111, 111, 111));
+		drawCentered("(Enter to accept, Escape to return)", screen, screen.h - 15, Color.get(0, 111, 111, 111));
+		//Font.draw("(Arrow keys to move)", screen, 65, screen.h - 25, Color.get(0, 111, 111, 111));
+		//Font.draw("(Enter to accept, Escape to return)", screen, 1, screen.h - 15, Color.get(0, 111, 111, 111));
+		
 		Font.draw("Version 1.6-1.8 (updating)", screen, 1, screen.h - 190, Color.get(0, 111, 111, 111));
 	}
-	/*
-	private int centerX(String text) {
-		
-	}*/
 }

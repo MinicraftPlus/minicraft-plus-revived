@@ -144,11 +144,10 @@ public class Save {
 		data.add(String.valueOf(player.maxArmor));
 		data.add(String.valueOf(Player.score));
 		data.add(String.valueOf(Game.currentLevel));
-		if(!ModeMenu.score) {
-			data.add(String.valueOf(ModeMenu.diff));
-		} else {
-			data.add(ModeMenu.diff + ";" + player.game.scoreTime);
-		}
+		if(!ModeMenu.score)
+			data.add(String.valueOf(ModeMenu.mode));
+		else
+			data.add(ModeMenu.mode + ";" + player.game.scoreTime);
 		
 		/* potions yet be implemented
 		if(player.potioneffects.size() > 0) {

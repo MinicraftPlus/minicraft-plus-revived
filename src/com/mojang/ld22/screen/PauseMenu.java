@@ -11,89 +11,98 @@ import com.mojang.ld22.screen.TitleMenu;
 import com.mojang.ld22.screen.WorldSelectMenu;
 
 public class PauseMenu extends Menu {
-
-	private int selected = 0;
-	private boolean o1 = false;
-	private boolean o2 = false;
-	private boolean o3 = false;
+	
+	private int selected, selection; //selection is set when you press enter.
+	//private boolean o1 = false;
+	//private boolean o2 = false;
+	//private boolean o3 = false;
 	Player player;
-	private static final String[] options = new String[]{"Return to Game", "Options", "Save Game", "Load Game", "Main Menu"};
-
-
+	private static final String[] options = new String[] {
+		"Return to Game", "Options", "Save Game", "Load Game", "Main Menu"
+	};
+	
+	
 	public PauseMenu(Player player) {
-		player = player;
+		this.player = player;
+		//chosen = false;
+		selected = 0;
+		selection = -1;
+		//prevselect = selected;
 	}
-
+	
 	public void tick() {
-		if(input.getKey("pause").clicked) {
+		//prevselect = selected;
+		
+		if(input.getKey("pause").clicked)
 			game.setMenu((Menu)null);
-		}
-
-		if(input.getKey("up").clicked) {
-			--selected;
-		}
-
-		if(input.getKey("down").clicked) {
+		
+		//note: b/c comfirm menus have no cursor, "selected" doesn't matter after presing enter...
+		if(input.getKey("up").clicked)
+			selected--;
+		if(input.getKey("down").clicked)
 			selected++;
-		}
-
-		int len = options.length;
-		if(selected < 0) {
-			selected += len;
-		}
-
-		if(selected >= len) {
-			selected -= len;
-		}
-
+		
+		//int len = options.length;
+		if(selected < 0)
+			selected = options.length-1;
+		
+		if(selected >= options.length)
+			selected = 0;
+		
+		//choice chosen; input here is at confirm menu 
 		if(input.getKey("enter").clicked) {
-			if(o1 && !o2 && !o3) {
+			
+			//this one is an EXCEPTION: no comfirm menu.
+			if(selected == 1) {
+				//I bet this is used when exiting options menu to decide whether to go to title screen, or pause menu:
+				TitleMenu.sentFromMenu = false;
+				game.setMenu(new StartMenu());
+			}
+			
+			if(selection == 2) { //save game option
 				game.setMenu((Menu)null);
 				new Save(player, WorldSelectMenu.worldname);
 			}
-
-			if(!o1 && o2 && !o3) {
+			
+			if(selection == 3) { //load game option
 				WorldSelectMenu m = new WorldSelectMenu(new TitleMenu());
 				WorldSelectMenu.loadworld = true;
 				m.createworld = false;
 				game.setMenu(m);
 			}
-
-			if(!o1 && !o2 && o3) {
+			
+			if(selection == 4) //title menu
 				game.setMenu(new TitleMenu());
-			}
-		}
-
-		if(input.getKey("escape").clicked) {
-			if(o1 && !o2 && !o3) {
-				game.setMenu((Menu)null);
-			}
-
-			if(!o1 && o2 && !o3) {
-				game.setMenu((Menu)null);
-			}
-
-			if(!o1 && !o2 && o3) {
-				game.setMenu((Menu)null);
-			}
+			
+			selection = selected;
 		}
 		
-		if(input.getKey("escape").clicked || input.getKey("enter").clicked) {
-			if(selected == 0) {
-				o1 = false;
-				o2 = false;
-				o3 = false;
+		if(input.getKey("escape").clicked || selection == 0) {
+			//if(prevselect >= 2) //if in sub-menu...right?
 				game.setMenu((Menu)null);
-			}
-
-			if(selected == 1) {
-				o1 = false;
+		}
+		//else if(input.getKey("enter").clicked)
+			
+		
+		
+		//if(/*input.getKey("escape").clicked || */input.getKey("enter").clicked) {
+		/*	selection = selected;
+			//sets no matter the menu
+			if(selected == 0) {
+				/*o1 = false;
 				o2 = false;
 				o3 = false;
-				TitleMenu.sentFromMenu = false;
-				game.setMenu(new StartMenu());
+				*///game.setMenu((Menu)null);
+		/*	}
+			
+			if(selected == 1) {
+				/*o1 = false;
+				o2 = false;
+				o3 = false;
+				*///TitleMenu.sentFromMenu = false;
+		/*		game.setMenu(new StartMenu());
 			}
-
+			/*
 			if(selected == 2) {
 				o1 = true;
 				o2 = false;
@@ -110,59 +119,46 @@ public class PauseMenu extends Menu {
 				o1 = false;
 				o2 = false;
 				o3 = true;
-			}
-		}
+			}*/
+		//}
 	}
-
+	
 	public void render(Screen screen) {
 		Font.renderFrame(screen, "", 4, 2, 32, 20);
-		if(!o1 && !o2 && !o3) {
-			for(int var5 = 0; var5 < 5; ++var5) {
-				String msg1 = options[var5];
+		if(selection == -1) {
+			for(int i = 0; i < 5; i++) {
+				String msg1 = options[i];
 				int col = Color.get(-1, 222, 222, 222);
-				if(var5 == selected) {
+				if(i == selected) {
 					msg1 = ">" + msg1 + "<";
 					col = Color.get(-1, 555, 555, 555);
 				}
-
-				Font.draw(msg1, screen, (screen.w - msg1.length() * 8) / 2, (8 + var5) * 12 - 35, col);
-				Font.draw("Paused", screen, centertext("Paused"), 35, Color.get(-1, 550, 550, 550));
-				Font.draw("Arrow Keys to Scroll", screen, centertext("Arrow Keys to Scroll"), 135, Color.get(-1, 333, 333, 333));
-				Font.draw("Enter: Choose", screen, centertext("Enter: Choose"), 145, Color.get(-1, 333, 333, 333));
+				
+				drawCentered(msg1, screen, (8 + i) * 12 - 35, col);
+				drawCentered("Paused", screen, 35, Color.get(-1, 550, 550, 550));
+				drawCentered("Arrow Keys to Scroll", screen, 135, Color.get(-1, 333, 333, 333));
+				drawCentered("Enter: Choose", screen, 145, Color.get(-1, 333, 333, 333));
 			}
 		} else {
-			String msg;
-			if(o1 && !o2 && !o3) {
-				msg = "Save Game?";
-				Font.draw(msg, screen, (screen.w - msg.length() * 8) / 2, 60, Color.get(-1, 555, 555, 555));
-				msg = "X: Yes";
-				Font.draw(msg, screen, (screen.w - msg.length() * 8) / 2, 80, Color.get(-1, 555, 555, 555));
-				msg = "C: No";
-				Font.draw(msg, screen, (screen.w - msg.length() * 8) / 2, 95, Color.get(-1, 555, 555, 555));
-			} else if(!o1 && o2 && !o3) {
-				msg = "Load Game?";
-				Font.draw(msg, screen, (screen.w - msg.length() * 8) / 2, 60, Color.get(-1, 555, 555, 555));
-				msg = "Current game will";
-				Font.draw(msg, screen, (screen.w - msg.length() * 8) / 2, 70, Color.get(-1, 500, 500, 500));
-				msg = "not be saved";
-				Font.draw(msg, screen, (screen.w - msg.length() * 8) / 2, 80, Color.get(-1, 500, 500, 500));
-				msg = "X: Yes";
-				Font.draw(msg, screen, (screen.w - msg.length() * 8) / 2, 100, Color.get(-1, 555, 555, 555));
-				msg = "C: No";
-				Font.draw(msg, screen, (screen.w - msg.length() * 8) / 2, 115, Color.get(-1, 555, 555, 555));
-			} else if(!o1 && !o2 && o3) {
-				msg = "Back to Main Menu?";
-				Font.draw(msg, screen, (screen.w - msg.length() * 8) / 2 + 1, 60, Color.get(-1, 555, 555, 555));
-				msg = "Current game will";
-				Font.draw(msg, screen, (screen.w - msg.length() * 8) / 2, 70, Color.get(-1, 500, 500, 500));
-				msg = "not be saved";
-				Font.draw(msg, screen, (screen.w - msg.length() * 8) / 2, 80, Color.get(-1, 500, 500, 500));
-				msg = "X: Yes";
-				Font.draw(msg, screen, (screen.w - msg.length() * 8) / 2, 100, Color.get(-1, 555, 555, 555));
-				msg = "C: No";
-				Font.draw(msg, screen, (screen.w - msg.length() * 8) / 2, 115, Color.get(-1, 555, 555, 555));
+			int confirmY1 = 0, confirmY2 = 0;
+			if(selection == 2) {
+				drawCentered("Save Game?", screen, 60, Color.get(-1, 555, 555, 555));
+				confirmY1 = 80; confirmY2 = 95;
+			} else if(selection == 3) {
+				drawCentered("Load Game?", screen, 60, Color.get(-1, 555, 555, 555));
+				drawCentered("Current game will", screen, 70, Color.get(-1, 500, 500, 500));
+				drawCentered("not be saved", screen, 80, Color.get(-1, 500, 500, 500));
+				confirmY1 = 100; confirmY2 = 115;
+			} else if(selection == 4) {
+				drawCentered("Back to Main Menu?", screen, 60, Color.get(-1, 555, 555, 555));
+				drawCentered("Current game will", screen, 70, Color.get(-1, 500, 500, 500));
+				drawCentered("not be saved", screen, 80, Color.get(-1, 500, 500, 500));
+				confirmY1 = 100; confirmY2 = 115;
 			}
+			
+			drawCentered("Enter: Yes", screen, confirmY1, Color.get(-1, 555, 555, 555));
+			drawCentered("Esc: No", screen, confirmY2, Color.get(-1, 555, 555, 555));
 		}
-
+		
 	}
 }
