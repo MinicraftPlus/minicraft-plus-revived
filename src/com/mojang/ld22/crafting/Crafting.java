@@ -14,7 +14,7 @@ import com.mojang.ld22.entity.Oven;
 import com.mojang.ld22.entity.Lantern;
 import com.mojang.ld22.entity.Tnt;
 import com.mojang.ld22.entity.Workbench;
-import com.mojang.ld22.entity.bed;
+import com.mojang.ld22.entity.Bed;
 import com.mojang.ld22.item.BucketItem;
 import com.mojang.ld22.item.ToolType;
 import com.mojang.ld22.item.resource.Resource;
@@ -51,7 +51,7 @@ public class Crafting {
 				workbenchRecipes.add(new FurnitureRecipe(Furnace.class).addCost(Resource.stone, 0));
 				workbenchRecipes.add(new FurnitureRecipe(Chest.class).addCost(Resource.wood, 0));
 				workbenchRecipes.add(new FurnitureRecipe(Anvil.class).addCost(Resource.ironIngot, 0));
-				workbenchRecipes.add(new FurnitureRecipe(bed.class).addCost(Resource.wool, 0).addCost(Resource.wood, 0));
+				workbenchRecipes.add(new FurnitureRecipe(Bed.class).addCost(Resource.wool, 0).addCost(Resource.wood, 0));
 				
 				workbenchRecipes.add(new ResourceRecipe(Resource.rod).addCost(Resource.wood, 0).addCost(Resource.string, 0));
 				workbenchRecipes.add(new ToolRecipe(ToolType.sword, 0).addCost(Resource.wood, 0));
@@ -72,7 +72,7 @@ public class Crafting {
 				loomRecipes.add(new ResourceRecipe(Resource.greenwool).addCost(Resource.wool, 0).addCost(Resource.cactusFlower, 0));
 				loomRecipes.add(new ResourceRecipe(Resource.yellowwool).addCost(Resource.wool, 0).addCost(Resource.flower, 0));
 				loomRecipes.add(new ResourceRecipe(Resource.blackwool).addCost(Resource.wool, 0).addCost(Resource.coal, 0));
-				loomRecipes.add(new FurnitureRecipe(bed.class).addCost(Resource.wood, 0).addCost(Resource.wool, 0));
+				loomRecipes.add(new FurnitureRecipe(Bed.class).addCost(Resource.wood, 0).addCost(Resource.wool, 0));
 				
 				anvilRecipes.add(new ToolRecipe(ToolType.sword, 2).addCost(Resource.wood, 0).addCost(Resource.ironIngot, 0));
 				anvilRecipes.add(new ToolRecipe(ToolType.axe, 2).addCost(Resource.wood, 0).addCost(Resource.ironIngot, 0));
@@ -137,7 +137,7 @@ public class Crafting {
 			loomRecipes.add(new ResourceRecipe(Resource.greenwool).addCost(Resource.wool, 1).addCost(Resource.cactusFlower, 1));
 			loomRecipes.add(new ResourceRecipe(Resource.yellowwool).addCost(Resource.wool, 1).addCost(Resource.flower, 1));
 			loomRecipes.add(new ResourceRecipe(Resource.blackwool).addCost(Resource.wool, 1).addCost(Resource.coal, 1));
-			loomRecipes.add(new FurnitureRecipe(bed.class).addCost(Resource.wood, 5).addCost(Resource.wool, 3));
+			loomRecipes.add(new FurnitureRecipe(Bed.class).addCost(Resource.wood, 5).addCost(Resource.wool, 3));
 			
 			godworkbenchRecipes.add(new ToolRecipe(ToolType.sword, 4).addCost(Resource.wood, 0));
 			godworkbenchRecipes.add(new ToolRecipe(ToolType.axe, 4).addCost(Resource.wood, 0));

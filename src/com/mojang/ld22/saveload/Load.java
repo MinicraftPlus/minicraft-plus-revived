@@ -28,7 +28,7 @@ import com.mojang.ld22.entity.Snake;
 import com.mojang.ld22.entity.Tnt;
 import com.mojang.ld22.entity.Workbench;
 import com.mojang.ld22.entity.Zombie;
-import com.mojang.ld22.entity.bed;
+import com.mojang.ld22.entity.Bed;
 import com.mojang.ld22.item.Item;
 import com.mojang.ld22.item.ListItems;
 import com.mojang.ld22.item.ResourceItem;
@@ -418,7 +418,7 @@ public class Load {
 			case "Loom": return (Entity)(new Loom());
 			case "Furnace": return (Entity)(new Furnace());
 			case "Oven": return (Entity)(new Oven());
-			case "bed": return (Entity)(new bed());
+			case "Bed": return (Entity)(new Bed());
 			case "Tnt": return (Entity)(new Tnt());
 			case "Lantern": return (Entity)(new Lantern());
 			case "IronLantern": return (Entity)(new IronLantern());

@@ -153,7 +153,7 @@ public class Player extends Mob {
 		
 		/*potions not yet implemented
 		int xa;
-		if(potioneffectstime.size() > 0 && !bed.hasBedSet) {
+		if(potioneffectstime.size() > 0 && !Bed.hasBedSet) {
 			for(int onTile = 0; onTile < potioneffectstime.size(); onTile++) {
 				xa = ((Integer)potioneffectstime.get(onTile)).intValue();
 				xa--;
@@ -466,7 +466,7 @@ public class Player extends Mob {
 		if (attackTime > 0)
 			attackTime--;
 		
-		if(slowtime && !bed.hasBedSet)
+		if(slowtime && !Bed.hasBedSet)
 			game.nsPerTick = 3.3333333333333332E7D;
 	}
 	

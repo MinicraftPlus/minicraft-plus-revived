@@ -32,7 +32,7 @@ import com.mojang.ld22.entity.IronLantern;
 import com.mojang.ld22.entity.Mob;
 import com.mojang.ld22.entity.Player;
 import com.mojang.ld22.entity.Workbench;
-import com.mojang.ld22.entity.bed;
+import com.mojang.ld22.entity.Bed;
 import com.mojang.ld22.gfx.Color;
 import com.mojang.ld22.gfx.Font;
 import com.mojang.ld22.gfx.Screen;
@@ -343,7 +343,7 @@ public class Game extends Canvas implements Runnable, ActionListener{
 		gameTime = 0;
 		Player.hasSetHome = false;
 		Player.canGoHome = false;
-		bed.hasBedSet = false; //no bed
+		Bed.hasBedSet = false; //no Bed
 		
 		if(!StartMenu.hasSetDiff)
 			StartMenu.diff = 2;
@@ -476,7 +476,7 @@ public class Game extends Canvas implements Runnable, ActionListener{
 	// VERY IMPORTANT METHOD!! Makes everything keep happening, I think.
 	// In the end, calls menu.tick() if there's a menu, or level.tick() if no menu.
 	public void tick() {
-		if(bed.hasBedSet) {
+		if(Bed.hasBedSet) {
 			level.remove(player); //oh noes! jk. :D 
 			nsPerTick = 781250.0D;
 			System.out.println("SLEEPING... tickCount: " + tickCount);
@@ -484,7 +484,7 @@ public class Game extends Canvas implements Runnable, ActionListener{
 				level.add(player);
 				nsPerTick = 1.6666666666666666E7D;
 				
-				//seems this removes all entities within a certain radius of the player when you get in bed.
+				//seems this removes all entities within a certain radius of the player when you get in Bed.
 				for(int i = 0; i < level.entities.size(); ++i) {
 					if(((Entity)level.entities.get(i)).level == levels[currentLevel]) {
 						int xd = level.player.x - ((Entity)level.entities.get(i)).x;
@@ -495,7 +495,7 @@ public class Game extends Canvas implements Runnable, ActionListener{
 					}
 				}
 
-				bed.hasBedSet = false;
+				Bed.hasBedSet = false;
 			}
 		}
 		
@@ -610,7 +610,7 @@ public class Game extends Canvas implements Runnable, ActionListener{
 		}
 		
 		//System.out.println(tickCount);
-		//System.out.println(bed.hasBeenTrigged);
+		//System.out.println(Bed.hasBeenTrigged);
 		
 		//This is the general action statement thing! Regulates menus, mostly.
 		if (!hasFocus()) {
@@ -798,7 +798,7 @@ public class Game extends Canvas implements Runnable, ActionListener{
 		int colVis = Color.get(-1, 555, 555, 555);
 		int colTran = Color.get(-1, -1, -1, -1);
 		int colSleep = 0;
-		if (bed.hasBeenTrigged) {
+		if (Bed.hasBeenTrigged) {
 			if (isDayNoSleep)
 				colSleep = colVis;
 			else
@@ -955,7 +955,7 @@ public class Game extends Canvas implements Runnable, ActionListener{
 		else if (count <= 25)
 			cols = Color.get(100, 555, 555, 555);
 		
-		if(bed.hasBedSet) {
+		if(Bed.hasBedSet) {
 			Font.draw("Sleeping...", screen, screen.w / 2 + 1 - 44, screen.h - 119, Color.get(-1, 222, 222, 222));
 			Font.draw("Sleeping...", screen, screen.w / 2 - 44, screen.h - 120, Color.get(-1, 555, 555, 555));
 		}
