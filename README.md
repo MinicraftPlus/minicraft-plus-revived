@@ -1,9 +1,7 @@
 # minicraft-plus-revived
 Minicraft+, code taken from version 1.6 originally, with the goal of adding back all the features currently in 1.8.
 
-The idea is to sort of merge the [minicraft-plus-decompiled](https://github.com/chrisj42/minicraft-plus-decompiled) repository with this one, since this one has better-looking code, but the other has more features because it's further ahead.
-
-In the end, the other repository will be depricated, and probably deleted, as this one will be the pretty much the same code, but better.
+The idea is to sort of merge the decompiled code of 1.8 with this code, since this code is better-looking, but the other has more features and it's further ahead.
 
 
 ###The plan:
@@ -16,10 +14,10 @@ In the end, the other repository will be depricated, and probably deleted, as th
 
 ####Current Bugs / Quick Fixes:
 
-* Sound effect don't always play when they should
-* beds, and dungeon chests, are sort of half-implemented at the moment
-* Some java files (Mainly the ones taken from the decompiled source code) could really use some cleaning up and simplifying, both to make them easier to follow, and easier to develop.
-
+* Sound effect don't always play when they should.
+* beds, and dungeon chests, are sort of half-implemented at the moment.
+* Clean up and simplify the code in various java files to make them both easier to follow and easier to develop.
+* I have a system in place to save custom key controls, but lack the menu to edit them... I need to get that fixed.
 
 ###Long-term Goals:
 
