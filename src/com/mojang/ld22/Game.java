@@ -98,7 +98,8 @@ public class Game extends Canvas implements Runnable, ActionListener{
 	public Menu menu; // the current menu you are on.
 	public Player player; // The Player.
 	public Level level; // This is the current level you are on.
-	int[] oldlvls; 
+	int[] oldlvls; //--not used in this file
+	int worldSize; // The size of the world
 	
 	private int playerDeadTime; // the paused time when you die before the dead menu shows up.
 	private int pendingLevelChange; // used to determined if the player should change levels or not.
@@ -156,12 +157,11 @@ public class Game extends Canvas implements Runnable, ActionListener{
 	
 	//What are these..?
 	public int fra, tik;
-	boolean initTick;
-	int hungerTick; 
-	int count;
+	boolean initTick; //--not used in this file
+	int hungerTick; //--not used in this file
 	int hungerMinusCount;
-	boolean reverse;
-	int l;
+	int count; //something with colors..?
+	boolean reverse; //related to count
 	
 	
 	
@@ -185,10 +185,10 @@ public class Game extends Canvas implements Runnable, ActionListener{
 		
 		isDayNoSleep = false;
 		gameTime = 0;
-		fra = 0;
-		tik = 0;
+		fra = 0;//=frames; for run method
+		tik = 0;//=ticks; for run method
 		
-		l = 128;
+		worldSize = 128;
 		autosave = true;
 		asTick = 0;
 		astime = 3600;
@@ -231,7 +231,7 @@ public class Game extends Canvas implements Runnable, ActionListener{
 	public void run() {
 		long lastTime = System.nanoTime();
 		double unprocessed = 0;
-		double nsPerTick = 1000000000.0 / 60;
+		//double nsPerTick = 1000000000.0 / 60;
 		int frames = 0;
 		int ticks = 0;
 		long lastTimer1 = System.currentTimeMillis();
@@ -266,7 +266,7 @@ public class Game extends Canvas implements Runnable, ActionListener{
 			if (System.currentTimeMillis() - lastTimer1 > 1000) {
 				lastTimer1 += 1000;
 				//System.out.println(ticks + " ticks, " + frames + " fps");
-				//Font.draw(ticks + " ticks, " + frames + " fps", screen, screen.w, screen.h, Color.get(0, 555, 555, 555));
+				Font.draw(ticks + " ticks, " + frames + " fps", screen, screen.w, screen.h, Color.get(0, 555, 555, 555));
 				fra = frames;
 				tik = ticks;
 				frames = 0;
@@ -305,37 +305,37 @@ public class Game extends Canvas implements Runnable, ActionListener{
 		setMenu(new TitleMenu());
 	}
 	
-	/** This resets the game*/
+	/** This resets the game */
 	public void resetGame() {
+		// Resets all values
 		playerDeadTime = 0;
 		wonTimer = 0;
 		gameTime = 0;
 		Player.hasSetHome = false;
 		Player.canGoHome = false;
 		hasWon = false;
+		currentLevel = 3;
 		
 		// adds a new player
 		player = new Player(this, input);
-		//this is a boolean in deadmenu that returns if the player has died, this way you don't respawn in a new world & it saves your spawn pos
-		if (DeadMenu.shudrespawn) {	
+		
+		//"shudrespawn" returns false if on hardcore, or making a new world. if true, it keeps your world and spawn pos
+		if (DeadMenu.shudrespawn) {	// respawn, don't regenerate level.
 			//System.out.print("Current Level = " + currentLevel + "                                           ");
-			currentLevel = 3;
+			//currentLevel = 3;
 			level = levels[currentLevel];
 			player.respawn(level);
 			level.add(player);
-		} else {
-			levels[3] = new Level(l, l, 0, levels[4]);
+		} else { // new game, regenerate everything.
+			levels[3] = new Level(worldSize, worldSize, 0, levels[4]);
 			
 			level = levels[currentLevel];
-			if (currentLevel == 3)
-				currentLevel = 3;
-			if (currentLevel != 3)
-				currentLevel = 3;
 			
 			DeadMenu.shudrespawn = true; 
 			player.findStartPos(level);
 		}
 	}
+	
 	
 	public void resetstartGame() {
 		playerDeadTime = 0;
@@ -343,27 +343,28 @@ public class Game extends Canvas implements Runnable, ActionListener{
 		gameTime = 0;
 		Player.hasSetHome = false;
 		Player.canGoHome = false;
-		bed.hasBedSet = false;
+		bed.hasBedSet = false; //no bed
+		
 		if(!StartMenu.hasSetDiff)
 			StartMenu.diff = 2;
 		
-		tickReset = true;
+		tickReset = true; //indirect way of resetting tickCount? why..?
 		hasWon = false;
 		
-		ListItems.items.clear();
-		new ListItems();
+		ListItems.items.clear(); //remove all the old item objects
+		new ListItems(); //make a fresh set
 		player = new Player(this, input); //very important that this is AFTER the previous 2 statements.
 		
-		levels = new Level[6];
+		levels = new Level[6]; // 6?
 		currentLevel = 3;
 		ac = acs;
 		
 		if (WorldGenMenu.sized == WorldGenMenu.sizeNorm)
-			l = 128;
+			worldSize = 128;
 		else if (WorldGenMenu.sized == WorldGenMenu.sizeBig)
-			l = 256;
+			worldSize = 256;
 		else if (WorldGenMenu.sized == WorldGenMenu.sizeHuge)
-			l = 512;
+			worldSize = 512;
 		
 		if (ModeMenu.score) {
 			scoreTime = newscoreTime;
@@ -372,10 +373,12 @@ public class Game extends Canvas implements Runnable, ActionListener{
 		
 		Player.score = 0;
 		
+		/// LOOOOOADING..
+		
 		if(WorldSelectMenu.loadworld) {
 			try {
 				BufferedReader f = new BufferedReader(new FileReader(gameDir + "/saves/" + WorldSelectMenu.worldname + "/Level3.miniplussave"));
-				this.l = Integer.parseInt(f.readLine().substring(0, 3));
+				this.worldSize = Integer.parseInt(f.readLine().substring(0, 3));
 			} catch (FileNotFoundException var4) {
 				var4.printStackTrace();
 			} catch (NumberFormatException var5) {
@@ -384,88 +387,104 @@ public class Game extends Canvas implements Runnable, ActionListener{
 				var6.printStackTrace();
 			}
 		}
-
+		
+		//This should replace that massive thing below...
+		for(int i = 5; i >= 0; i--) {
+			if(!WorldSelectMenu.loadworld)
+				LoadingMenu.percentage = 0;
+			else
+				LoadingMenu.percentage += 5; //just make sure they think something is happening... ;D
+			
+			levels[(i-1<0?5:i-1)] = new Level(this.worldSize, this.worldSize, i-4, (i==5?(Level)null:levels[i]));
+		}
+		
+		/*
 		if(!WorldSelectMenu.loadworld)
 			LoadingMenu.percentage = 0;
 		else
-			LoadingMenu.percentage += 5;
-
-		levels[4] = new Level(this.l, this.l, 1, (Level)null);
+			LoadingMenu.percentage += 5; //just make sure they think something is happening... ;D
+		
+		levels[4] = new Level(this.worldSize, this.worldSize, 1, (Level)null);
 		if(!WorldSelectMenu.loadworld)
 			LoadingMenu.percentage = 20;
 		else
 			LoadingMenu.percentage += 5;
-
-		levels[3] = new Level(this.l, this.l, 0, levels[4]);
+		
+		levels[3] = new Level(this.worldSize, this.worldSize, 0, levels[4]);
 		if(!WorldSelectMenu.loadworld)
 			LoadingMenu.percentage = 40;
 		else
 			LoadingMenu.percentage += 5;
-
-		levels[2] = new Level(this.l, this.l, -1, levels[3]);
+		
+		levels[2] = new Level(this.worldSize, this.worldSize, -1, levels[3]);
 		if(!WorldSelectMenu.loadworld)
 			LoadingMenu.percentage = 60;
 		else
 			LoadingMenu.percentage += 5;
-
-		levels[1] = new Level(this.l, this.l, -2, levels[2]);
+		
+		levels[1] = new Level(this.worldSize, this.worldSize, -2, levels[2]);
 		if(!WorldSelectMenu.loadworld)
 			LoadingMenu.percentage = 80;
 		else
 			LoadingMenu.percentage += 5;
-
-		levels[0] = new Level(this.l, this.l, -3, levels[1]);
+		
+		levels[0] = new Level(this.worldSize, this.worldSize, -3, levels[1]);
 		if(!WorldSelectMenu.loadworld)
 			LoadingMenu.percentage = 100;
 		else
 			LoadingMenu.percentage += 5;
-
-		levels[5] = new Level(this.l, this.l, -4, levels[0]);
+		
+		levels[5] = new Level(this.worldSize, this.worldSize, -4, levels[0]);
+		*/
+		
 		if(!WorldSelectMenu.loadworld) {
 			FurnitureItem f1 = new FurnitureItem(new IronLantern());
-			Furniture l = f1.furniture;
-			l.x = 984;
-			l.y = 984;
-			levels[5].add(l);
+			Furniture f = f1.furniture;
+			f.x = 984;
+			f.y = 984;
+			levels[5].add(f);
 		}
-
+		
 		LoadingMenu.percentage = 0;
 		if(!ModeMenu.creative) {
 			this.player.inventory.add(new FurnitureItem(new Enchanter()));
 			this.player.inventory.add(new FurnitureItem(new Workbench()));
 		}
-
-		this.level = levels[currentLevel];
-		this.player.respawn(this.level);
-		currentLevel = 3;
-		this.level.add(this.player);
+		
+		
+		level = levels[currentLevel]; // sets level to the current level (3; surface)
+		player.respawn(level); // finds the start level for the player
+		currentLevel = 3; //? sets next currentlevel, maybe?
+		level.add(player);
+		
 		if(WorldSelectMenu.loadworld) {
 			new Load(this, WorldSelectMenu.worldname);
 		} else {
 			tickCount = 0;
-			if(this.level.getTile(this.player.x / 16, this.player.y / 16) != Tile.sand) {
+			if(this.level.getTile(this.player.x / 16, this.player.y / 16) != Tile.sand)
 				this.level.setTile(this.player.x / 16, this.player.y / 16, Tile.grass, 0);
-			}
 		}
-
+		
 		DeadMenu.shudrespawn = true;
 		/* not reimp. yet
 		if(WorldGenMenu.theme == WorldGenMenu.hell) {
 			this.player.inventory.add(new ResourceItem(Resource.lavapotion));
 		}*/
-
+		
 	}
 	
 	// VERY IMPORTANT METHOD!! Makes everything keep happening, I think.
 	// In the end, calls menu.tick() if there's a menu, or level.tick() if no menu.
 	public void tick() {
 		if(bed.hasBedSet) {
-			level.remove(player);
+			level.remove(player); //oh noes! jk. :D 
 			nsPerTick = 781250.0D;
+			System.out.println("SLEEPING... tickCount: " + tickCount);
 			if(isDayNoSleep) {
 				level.add(player);
 				nsPerTick = 1.6666666666666666E7D;
-
+				
+				//seems this removes all entities within a certain radius of the player when you get in bed.
 				for(int i = 0; i < level.entities.size(); ++i) {
 					if(((Entity)level.entities.get(i)).level == levels[currentLevel]) {
 						int xd = level.player.x - ((Entity)level.entities.get(i)).x;
@@ -484,6 +503,7 @@ public class Game extends Canvas implements Runnable, ActionListener{
 			tickCount = 0;
 			tickReset = false;
 		}
+		
 		if (!paused)
 			tickCount++;
 		
@@ -703,17 +723,15 @@ public class Game extends Canvas implements Runnable, ActionListener{
 	public void changeLevel(int dir) {
 		level.remove(player);
 		currentLevel += dir;
-		if (currentLevel == -1) {
+		if (currentLevel == -1)
 			currentLevel = 5;
-		}
-		if (currentLevel == 6) {
+		if (currentLevel == 6)
 			currentLevel = 0;
-		}
+		
 		level = levels[currentLevel];
 		player.x = (player.x >> 4) * 16 + 8;
 		player.y = (player.y >> 4) * 16 + 8;
 		level.add(player);
-		
 	}
 	
 	public static void Fishing(Level level, int x, int y, Player player) {
@@ -772,7 +790,7 @@ public class Game extends Canvas implements Runnable, ActionListener{
 		level.renderBackground(screen, xScroll, yScroll);
 		level.renderSprites(screen, xScroll, yScroll);
 		
-		
+		/*
 		int col0 = Color.get(-1, 555, 555, 555);
 		int col1 = Color.get(-1, -1, -1, -1);
 		
@@ -790,15 +808,12 @@ public class Game extends Canvas implements Runnable, ActionListener{
 				colSleep = colTran;
 		}
 		
-		col = fpscounter ? col0:col1;
-		
-		if (!ModeMenu.creative)
-		{
-			if (currentLevel < 3) {
-				lightScreen.clear(0);
-				level.renderLight(lightScreen, xScroll, yScroll);
-				screen.overlay(lightScreen, xScroll, yScroll);
-			}
+		col = fpscounter ? col0:col1; //pointless...
+		*/
+		if (!ModeMenu.creative && currentLevel < 3) {
+			lightScreen.clear(0);
+			level.renderLight(lightScreen, xScroll, yScroll);
+			screen.overlay(lightScreen, xScroll, yScroll);
 		}
 		
 		renderGui();
@@ -840,8 +855,8 @@ public class Game extends Canvas implements Runnable, ActionListener{
 		Graphics g = bs.getDrawGraphics();
 		g.fillRect(0, 0, getWidth(), getHeight());
 		
-		int ww = WIDTH * 3;
-		int hh = HEIGHT * 3;
+		int ww = WIDTH * SCALE;
+		int hh = HEIGHT * SCALE;
 		int xo = (getWidth() - ww) / 2;
 		int yo = (getHeight() - hh) / 2;
 		g.drawImage(image, xo, yo, ww, hh, null);
@@ -907,10 +922,10 @@ public class Game extends Canvas implements Runnable, ActionListener{
 			awh = 1;
 		
 		if (currentLevel == 4 && AirWizard.healthstat > 0) {
-			if (!ModeMenu.score)
-				Font.draw("AirWizard Health " + awh + "%", screen, 84, screen.h - 190 , Color.get(100, 50, 50, 50));
-			else
-				Font.draw("AirWizard Health " + awh + "%", screen, 84, screen.h - 180 , Color.get(100, 50, 50, 50));
+			//if (!ModeMenu.score)
+				Font.draw("AirWizard Health " + awh + "%", screen, 84, screen.h - (ModeMenu.score?180:190), Color.get(100, 50, 50, 50));
+			//else
+				//Font.draw("AirWizard Health " + awh + "%", screen, 84, screen.h - 180 , Color.get(100, 50, 50, 50));
 		}
 		
 		// This is the arrow counter. ^ = infinite symbol.

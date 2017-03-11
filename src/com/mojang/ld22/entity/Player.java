@@ -1050,17 +1050,15 @@ public class Player extends Mob {
 		while (true) {
 			int x = spawnx;
 			int y = spawny;
-			if (level.getTile(x, y) == Tile.grass && !bedSpawn) {
+			if(bedSpawn || level.getTile(x, y) == Tile.grass) {
 				this.x = spawny * 16 + 8;
 				this.y = spawnx * 16 + 8;
 				return true;
-			}
-				
-			if(bedSpawn) {
+			}/* else if (level.getTile(x, y) == Tile.grass) {
 				this.x = spawny * 16 + 8;
 				this.y = spawnx * 16 + 8;
 				return true;
-			}
+			}*/
 			
 			findStartPos(level);
 		}
