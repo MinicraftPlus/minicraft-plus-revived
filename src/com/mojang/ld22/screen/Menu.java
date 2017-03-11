@@ -23,7 +23,7 @@ public class Menu {
 	public void render(Screen screen) {
 	}
 	
-	public int centertext(String name) {
+	public static int centertext(String name) {
 		return (Game.WIDTH - name.length() * 8) / 2;
 	}
 	
