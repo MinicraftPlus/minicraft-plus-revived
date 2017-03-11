@@ -236,7 +236,7 @@ public class Level {
 		}
 		
 		if (level == -4 && !WorldSelectMenu.loadworld) {
-				for (int i = 0; i < 10 * (w / 128); ++i) {
+				for (int i = 0; i < 10 * (w / 128); i++) {
  					final DungeonChest d = new DungeonChest();
  					boolean addedchest = false;
  					final int x2 = this.random.nextInt(16 * w) / 16;
@@ -244,7 +244,7 @@ public class Level {
  					if (this.getTile(x2, y2) == Tile.o) {
 						final boolean xaxis = this.random.nextBoolean();
 						if (xaxis) {
-								for (int s = x2; s < w - s; ++s) {
+								for (int s = x2; s < w - s; s++) {
  									if (this.getTile(s, y2) == Tile.ow) {
 										d.x = s * 16 - 24;
 										d.y = y2 * 16 - 24;
@@ -252,7 +252,7 @@ public class Level {
 								}
 						}
 						else if (!xaxis) {
-								for (int s = y2; s < y2 - s; ++s) {
+								for (int s = y2; s < y2 - s; s++) {
  									if (this.getTile(x2, s) == Tile.ow) {
 										d.x = x2 * 16 - 24;
 										d.y = s * 16 - 24;
@@ -267,92 +267,89 @@ public class Level {
 								this.setTile(d.x / 16, d.y / 16, Tile.o, 0);
 						}
 						this.add(d);
-						++this.chestcount;
+						this.chestcount++;
 						addedchest = true;
  					}
 				}
 		}
 		if (level < 0 && !WorldSelectMenu.loadworld) {
-				for (int i = 0; i < 18 / -level * (w / 128); ++i) {
- 					Mob m = new Mob();
- 					final int r = this.random.nextInt(5);
- 					if (r == 1) {
-						m = new Skeleton(-level);
- 					}
- 					else if (r == 2 || r == 0) {
-						m = new Slime(-level);
- 					}
- 					else {
-						m = new Zombie(-level);
- 					}
- 					/* not reimpelemented yet
- 					final Spawner sp = new Spawner(m, -level);
- 					final int x3 = this.random.nextInt(16 * w) / 16;
- 					final int y3 = this.random.nextInt(16 * h) / 16;
- 					if (this.getTile(x3, y3) == Tile.dirt) {
-						final boolean xaxis2 = this.random.nextBoolean();
-						if (xaxis2) {
-								for (int s2 = x3; s2 < w - s2; ++s2) {
- 									if (this.getTile(s2, y3) == Tile.rock) {
-										sp.x = s2 * 16 - 24;
-										sp.y = y3 * 16 - 24;
- 									}
-								}
+			for (int i = 0; i < 18 / -level * (w / 128); i++) {
+ 				Mob m = new Mob();
+ 				final int r = this.random.nextInt(5);
+ 				if (r == 1) {
+					m = new Skeleton(-level);
+ 				}
+ 				else if (r == 2 || r == 0) {
+					m = new Slime(-level);
+ 				}
+ 				else {
+					m = new Zombie(-level);
+ 				}
+ 				/* not reimpelemented yet
+ 				final Spawner sp = new Spawner(m, -level);
+ 				final int x3 = this.random.nextInt(16 * w) / 16;
+ 				final int y3 = this.random.nextInt(16 * h) / 16;
+ 				if (this.getTile(x3, y3) == Tile.dirt) {
+					final boolean xaxis2 = this.random.nextBoolean();
+					
+					if (xaxis2) {
+						for (int s2 = x3; s2 < w - s2; s2++) {
+	 						if (this.getTile(s2, y3) == Tile.rock) {
+								sp.x = s2 * 16 - 24;
+								sp.y = y3 * 16 - 24;
+	 						}
 						}
-						else if (!xaxis2) {
-								for (int s2 = y3; s2 < y3 - s2; ++s2) {
- 									if (this.getTile(x3, s2) == Tile.rock) {
-										sp.x = x3 * 16 - 24;
-										sp.y = s2 * 16 - 24;
- 									}
-								}
-						}
-						if (sp.x == 0 && sp.y == 0) {
-								sp.x = x3 * 16 - 8;
-								sp.y = y3 * 16 - 8;
-						}
-						if (this.getTile(sp.x / 16, sp.y / 16) == Tile.rock) {
-								this.setTile(sp.x / 16, sp.y / 16, Tile.dirt, 0);
-						}
-						for (int xx = 0; xx < 5; ++xx) {
-								for (int yy = 0; yy < 5; ++yy) {
- 									if (this.noStairs(sp.x / 16 - 2 + xx, sp.y / 16 - 2 + yy)) {
-										this.setTile(sp.x / 16 - 2 + xx, sp.y / 16 - 2 + yy, Tile.sbrick, 0);
- 									}
- 									if (xx < 1 || yy < 1 || xx > 3 || yy > 3) {
-										if (xx != 2 || yy != 0) {
-												if (xx != 2 || yy != 4) {
- 													if (xx != 0 || yy != 2) {
-														if (xx != 4 || yy != 2) {
-																if (this.noStairs(sp.x / 16 - 2 + xx, sp.y / 16 - 2 + yy)) {
- 																	this.setTile(sp.x / 16 - 2 + xx, sp.y / 16 - 2 + yy, Tile.stonewall, 0);
-																}
-														}
- 													}
-												}
-										}
- 									}
-								}
-						}
-						this.add(sp);
-						if (this.random.nextInt(2) == 0) {
-								final Chest c = new Chest();
-								this.addtoinv(c.inventory, -level);
-								c.x = sp.x - 16;
-								c.y = sp.y - 16;
-								this.add(c);
-						}
-						if (this.random.nextInt(2) == 0) {
-								final Chest c = new Chest();
-								this.addtoinv(c.inventory, -level);
-								c.x = sp.x + 16;
-								c.y = sp.y + 16;
-								System.out.println("Added Chest: X = " + c.x / 16 + ", Y = " + c.y / 16 + "/" + c);
-								this.add(c);
+					} else {
+						for (int s2 = y3; s2 < y3 - s2; s2++) {
+	 						if (this.getTile(x3, s2) == Tile.rock) {
+								sp.x = x3 * 16 - 24;
+								sp.y = s2 * 16 - 24;
+	 						}
 						}
 					}
-					*/
+					
+					if (sp.x == 0 && sp.y == 0) {
+							sp.x = x3 * 16 - 8;
+							sp.y = y3 * 16 - 8;
+					}
+					
+					if (this.getTile(sp.x / 16, sp.y / 16) == Tile.rock) {
+							this.setTile(sp.x / 16, sp.y / 16, Tile.dirt, 0);
+					}
+					
+					for (int xx = 0; xx < 5; xx++) {
+						for (int yy = 0; yy < 5; yy++) {
+	 						if (this.noStairs(sp.x / 16 - 2 + xx, sp.y / 16 - 2 + yy)) {
+								this.setTile(sp.x / 16 - 2 + xx, sp.y / 16 - 2 + yy, Tile.sbrick, 0);
+								
+								if((xx < 1 || yy < 1 || xx > 3 || yy > 3) && (xx != 2 || yy != 0) && (xx != 2 || yy != 4) && (xx != 0 || yy != 2) && (xx != 4 || yy != 2)) {
+									this.setTile(sp.x / 16 - 2 + xx, sp.y / 16 - 2 + yy, Tile.stonewall, 0);
+								}
+	 						}
+						}
+					}
+					
+					this.add(sp);
+					
+					if (this.random.nextInt(2) == 0) {
+						final Chest c = new Chest();
+						this.addtoinv(c.inventory, -level);
+						c.x = sp.x - 16;
+						c.y = sp.y - 16;
+						this.add(c);
+					}
+					
+					if (this.random.nextInt(2) == 0) {
+						final Chest c = new Chest();
+						this.addtoinv(c.inventory, -level);
+						c.x = sp.x + 16;
+						c.y = sp.y + 16;
+						System.out.println("Added Chest: X = " + c.x / 16 + ", Y = " + c.y / 16 + "/" + c);
+						this.add(c);
+					}
 				}
+				*/
+			}
 		}
 		
 		if (level==1 && !WorldSelectMenu.loadworld) {
@@ -361,6 +358,38 @@ public class Level {
 			aw.y = h*8;
 			add(aw);
 			//System.out.println("Added Air Wizard! X = " + aw.x + ", Y = " + aw.y);
+		}
+	}
+	
+	public void tick() {
+		trySpawn(1);
+		
+		depthlvl = depth;
+		
+		for (int i = 0; i < w * h / 50; i++) {
+			int xt = random.nextInt(w);
+			int yt = random.nextInt(w);
+			getTile(xt, yt).tick(this, xt, yt);
+		}
+		for (int i = 0; i < entities.size(); i++) {
+			Entity e = entities.get(i);
+			int xto = e.x >> 4;
+			int yto = e.y >> 4;
+			
+			e.tick();
+			
+			if (e.removed) {
+				entities.remove(i--);
+				removeEntity(xto, yto, e);
+			} else {
+				int xt = e.x >> 4;
+				int yt = e.y >> 4;
+				
+				if (xto != xt || yto != yt) {
+					removeEntity(xto, yto, e);
+					insertEntity(xt, yt, e);
+				}
+			}
 		}
 	}
 	
@@ -537,29 +566,29 @@ public class Level {
 			
 			if (levels == 0){
 				if (tim != 3){
-				if (rnd <= 22)
-				mob = new Cow(lvl);
-				else if(rnd >= 68)
-				mob = new Pig(lvl);
-				else
-					mob = new Sheep(lvl);
-				
-				if (mob.findStartPosCow(this)) {
-					this.add(mob);
-				}
+					if (rnd <= 22)
+						mob = new Cow(lvl);
+					else if(rnd >= 68)
+						mob = new Pig(lvl);
+					else
+						mob = new Sheep(lvl);
+					
+					if (mob.findStartPosCow(this)) {
+						this.add(mob);
+					}
 				}
 				
 				if (tim == 3){
-				if (rnd <= 33)
-				mob = new Cow(lvl);
-				else if(rnd >= 68)
-					mob = new Pig(lvl);
-				else
-					mob = new Sheep(lvl);
-				
-				if (mob.findStartPosCowLight(this)) {
-					this.add(mob);
-				}
+					if (rnd <= 33)
+						mob = new Cow(lvl);
+					else if(rnd >= 68)
+						mob = new Pig(lvl);
+					else
+						mob = new Sheep(lvl);
+					
+					if (mob.findStartPosCowLight(this)) {
+						this.add(mob);
+					}
 				}
 			}
 			
@@ -592,51 +621,19 @@ public class Level {
 			
 				if (mob.findStartPosDungeon(this)) {
 					this.add(mob);
+				}
 			}
-		}
 		}
 	}
 	
-	public void removeAllEnimies() {
-  		for (int i = 0; i < this.entities.size(); ++i) {
-				final String name = this.entities.get(i).getClass().getCanonicalName().replace("com.mojang.ld22.entity.", "");
-				if (name.equals("Slime") || name.equals("Zombie") || name.equals("Skeleton") || name.equals("Creeper")) {
+	public void removeAllEnemies() {
+  		for (int i = 0; i < this.entities.size(); i++) {
+			final String name = this.entities.get(i).getClass().getCanonicalName().replace("com.mojang.ld22.entity.", "");
+			if (name.equals("Slime") || name.equals("Zombie") || name.equals("Skeleton") || name.equals("Creeper")) {
  					this.entities.get(i).remove();
-				}
+			}
   		}
  	}
-	
-	public void tick() {
-		trySpawn(1);
-		
-		depthlvl = depth;
-		
-		for (int i = 0; i < w * h / 50; i++) {
-			int xt = random.nextInt(w);
-			int yt = random.nextInt(w);
-			getTile(xt, yt).tick(this, xt, yt);
-		}
-		for (int i = 0; i < entities.size(); i++) {
-			Entity e = entities.get(i);
-			int xto = e.x >> 4;
-			int yto = e.y >> 4;
-			
-			e.tick();
-			
-			if (e.removed) {
-				entities.remove(i--);
-				removeEntity(xto, yto, e);
-			} else {
-				int xt = e.x >> 4;
-				int yt = e.y >> 4;
-				
-				if (xto != xt || yto != yt) {
-					removeEntity(xto, yto, e);
-					insertEntity(xt, yt, e);
-				}
-			}
-		}
-	}
 	
 	public List<Entity> getEntities(int x0, int y0, int x1, int y1) {
 		List<Entity> result = new ArrayList<Entity>();

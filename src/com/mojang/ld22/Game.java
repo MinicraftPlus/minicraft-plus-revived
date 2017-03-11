@@ -314,11 +314,11 @@ public class Game extends Canvas implements Runnable, ActionListener{
 		tickReset = true;
 		hasWon = false;
 		
-		player = new Player(this, input);
 		ListItems.items.clear();
 		new ListItems();
+		player = new Player(this, input); //very important that this is AFTER the previous 2 statements.
 		
-		levels = new Level[6];	
+		levels = new Level[6];
 		currentLevel = 3;
 		ac = acs;
 		
@@ -483,7 +483,7 @@ public class Game extends Canvas implements Runnable, ActionListener{
 			Time = 0;
 		
 		if(tickCount == 3600)
-			this.level.removeAllEnimies();
+			level.removeAllEnemies();
 		
 		if (tickCount == 7200)
 			Time = 1;

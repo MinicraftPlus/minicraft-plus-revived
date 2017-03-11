@@ -13,12 +13,14 @@ import com.mojang.ld22.sound.Sound;
 import com.mojang.ld22.Game; 
 
 public class LoadingMenu extends Menu implements ActionListener {
+	//this is the last menu before the game/world starts/opens.
+	//but how does stuff happen..?
 	private Menu parent;
-	Timer t = new Timer(400, this);
+	Timer t;
 	public static int percentage = 0;
 	
 	public LoadingMenu() {
-		
+		t = new Timer(400, this);
 	}
 	
 	public void tick() {
@@ -26,6 +28,7 @@ public class LoadingMenu extends Menu implements ActionListener {
 	}
 	
 	public void actionPerformed(ActionEvent e) {
+		//something MUST call this... but what?
 		game.resetstartGame();
 		game.setMenu(null);
 		t.stop();

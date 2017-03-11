@@ -13,6 +13,7 @@ import com.mojang.ld22.item.Item;
 import com.mojang.ld22.item.ResourceItem;
 import com.mojang.ld22.screen.LoadingMenu;
 import com.mojang.ld22.screen.ModeMenu;
+import com.mojang.ld22.screen.StartMenu;
 import com.mojang.ld22.screen.WorldGenMenu;
 import java.io.BufferedWriter;
 import java.io.File;
@@ -95,6 +96,8 @@ public class Save {
 		data.add(String.valueOf(Game.astime));
 		data.add(String.valueOf(Game.gamespeed));
 		data.add(String.valueOf(Game.ac));
+		data.add(String.valueOf(Game.autosave));
+		data.add(String.valueOf(StartMenu.isSoundAct));
 		writeToFile(location + filename + extention, data);
 	}
 	
@@ -109,13 +112,13 @@ public class Save {
 		int l;
 		int i;
 		int ii;
-		for(l = 0; l < Game.levels.length; ++l) {
+		for(l = 0; l < Game.levels.length; l++) {
 			data.add(String.valueOf(WorldGenMenu.sized));
 			data.add(String.valueOf(WorldGenMenu.sized));
 			data.add(String.valueOf(Game.levels[l].depth));
 			
-			for(i = 0; i < Game.levels[l].w; ++i) {
-				for(ii = 0; ii < Game.levels[l].h; ++ii) {
+			for(i = 0; i < Game.levels[l].w; i++) {
+				for(ii = 0; ii < Game.levels[l].h; ii++) {
 					data.add(String.valueOf(Game.levels[l].getTile(i, ii).id));
 				}
 			}
@@ -123,9 +126,9 @@ public class Save {
 			writeToFile(location + filename + l + extention, data);
 		}
 		
-		for(l = 0; l < Game.levels.length; ++l) {
-			for(i = 0; i < Game.levels[l].w; ++i) {
-				for(ii = 0; ii < Game.levels[l].h; ++ii) {
+		for(l = 0; l < Game.levels.length; l++) {
+			for(i = 0; i < Game.levels[l].w; i++) {
+				for(ii = 0; ii < Game.levels[l].h; ii++) {
 					data.add(String.valueOf(Game.levels[l].getData(i, ii)));
 				}
 			}
@@ -144,17 +147,16 @@ public class Save {
 		data.add(String.valueOf(player.maxArmor));
 		data.add(String.valueOf(Player.score));
 		data.add(String.valueOf(Game.currentLevel));
-		if(!ModeMenu.score) {
-			data.add(String.valueOf(ModeMenu.diff));
-		} else {
-			data.add(ModeMenu.diff + ";" + player.game.scoreTime);
-		}
+		if(!ModeMenu.score)
+			data.add(String.valueOf(ModeMenu.mode));
+		else
+			data.add(ModeMenu.mode + ";" + player.game.scoreTime);
 		
 		/* potions yet be implemented
 		if(player.potioneffects.size() > 0) {
 			String subdata = "PotionEffects[";
 			
-			for(int i = 0; i < player.potioneffects.size(); ++i) {
+			for(int i = 0; i < player.potioneffects.size(); i++) {
 				subdata = subdata + (String)player.potioneffects.get(i) + ";" + player.potioneffectstime.get(i);
 				if(i != player.potioneffects.size() - 1) {
 					subdata = subdata + ":";
@@ -178,7 +180,7 @@ public class Save {
 			}
 		}
 		
-		for(int i = 0; i < inventory.items.size(); ++i) {
+		for(int i = 0; i < inventory.items.size(); i++) {
 			if(inventory.items.get(i) instanceof ResourceItem) {
 				data.add(((Item)inventory.items.get(i)).getName() + ";" + inventory.count((Item)inventory.items.get(i)));
 			} else {
@@ -190,8 +192,8 @@ public class Save {
 	}
 	
 	public void writeEntities(String filename) {
-		for(int l = 0; l < Game.levels.length; ++l) {
-			for(int i = 0; i < Game.levels[l].entities.size(); ++i) {
+		for(int l = 0; l < Game.levels.length; l++) {
+			for(int i = 0; i < Game.levels[l].entities.size(); i++) {
 				Entity e = (Entity)Game.levels[l].entities.get(i);
 				String name = e.getClass().getName().replace("com.mojang.ld22.entity.", "");
 				String extradata = "";
@@ -210,7 +212,7 @@ public class Save {
 					var10 = "";
 					Chest c1 = (Chest)e;
 					
-					for(ii = 0; ii < c1.inventory.items.size(); ++ii) {
+					for(ii = 0; ii < c1.inventory.items.size(); ii++) {
 						if(c1.inventory.items.get(ii) instanceof ResourceItem) {
 							var10 = var10 + ((Item)c1.inventory.items.get(ii)).getName() + ";" + c1.inventory.count((Item)c1.inventory.items.get(ii)) + ":";
 						} else {
@@ -229,7 +231,7 @@ public class Save {
 					var10 = "";
 					DungeonChest var11 = (DungeonChest)e;
 					
-					for(ii = 0; ii < var11.inventory.items.size(); ++ii) {
+					for(ii = 0; ii < var11.inventory.items.size(); ii++) {
 						if(!((Item)var11.inventory.items.get(ii)).getName().equals("") || !((Item)var11.inventory.items.get(ii)).getName().equals(" ")) {
 							if(var11.inventory.items.get(ii) instanceof ResourceItem) {
 								var10 = var10 + ((Item)var11.inventory.items.get(ii)).getName() + ";" + var11.inventory.count((Item)var11.inventory.items.get(ii)) + ":";

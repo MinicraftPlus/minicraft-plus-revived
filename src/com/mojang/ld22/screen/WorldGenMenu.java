@@ -6,6 +6,8 @@ import com.mojang.ld22.gfx.Screen;
 import com.mojang.ld22.sound.Sound;
 
 public class WorldGenMenu extends Menu {
+	//this the the "more world options" menu.
+	
 	private Menu parent;
 	public static int normal = 10;
 	public static int forest = 11;
