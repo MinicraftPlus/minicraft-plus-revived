@@ -1,0 +1,15 @@
+****
+Implement potions!
+****
+Sound effects don't always play when they should; mostly it seems when other sounds should be on at the same time.
+****
+When creating a second world during the same execution (ie not closing the jar file), the loading percentage starts at 100%. Should be an easy fix.
+****
+Make the loading system more forgiving, so that if I add a requirement to the save files, the old ones will still work. The idea is that when it expects 5 options and only finds 4, it just keeps those at default.
+****
+Make window resizable, and menus will be fine.
+****
+Go though all the files and reformat them to make them easier to read. Or better yet, find a program that formats java files...
+****
+----------
+request: more health
