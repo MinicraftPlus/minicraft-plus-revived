@@ -4,6 +4,9 @@
 # Backup file
 *.java~
 
+# Text file, b/c I have many w/o need
+*.txt
+
 # Log file
 *.log
 
