@@ -35,6 +35,7 @@ import com.mojang.ld22.item.ResourceItem;
 import com.mojang.ld22.level.tile.Tile;
 import com.mojang.ld22.screen.LoadingMenu;
 import com.mojang.ld22.screen.ModeMenu;
+import com.mojang.ld22.screen.StartMenu;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
@@ -136,6 +137,15 @@ public class Load {
 		}
 		
 	}
+	/*
+	private String tryLoadData(int index, Object defaultValue) {
+		//System.out.println(defaultValue.getClass());
+		try {
+			return data.get(index);
+		} catch(IndexOutOfBoundsException ex) {
+			return defaultValue.toString();
+		}
+	}*/
 	
 	public void loadGame(String filename, Game game) {
 		loadFromFile(location + filename + extention);
@@ -143,6 +153,8 @@ public class Load {
 		Game.gamespeed = Integer.parseInt((String)data.get(2));
 		game.nsPerTick = 1.0E9D / (double)(60 * Game.gamespeed);
 		Game.ac = Integer.parseInt((String)data.get(3));
+		Game.autosave = Boolean.parseBoolean((String)data.get(4));
+		StartMenu.isSoundAct = Boolean.parseBoolean((String)data.get(5));
 		Game.tickCount = Integer.parseInt((String)data.get(0));
 		if(Game.tickCount > -1 && Game.tickCount < 7200) {
 			Game.changeTime(0);
@@ -358,7 +370,7 @@ public class Load {
 								}
 							}
 							
-							/*locking of chests not reimp. yet?
+							/*/locking of chests not reimp. yet?
 							if(sublist == info.size() - 2 && (((String)info.get(sublist)).contains("true") || ((String)info.get(sublist)).contains("false"))) {
 								dChest.islocked = Boolean.parseBoolean((String)info.get(sublist));
 							}*/
@@ -416,8 +428,6 @@ public class Load {
 			case "Snake": return (Entity)(new Snake(0));
 			default : return new Entity();
 		}
-		 
-		//return (Entity)(string.equals("Zombie")?new Zombie(0):(string.equals("Slime")?new Slime(0):(string.equals("Cow")?new Cow(0):(string.equals("Sheep")?new Sheep(0):(string.equals("Pig")?new Pig(0):(string.equals("Creeper")?new Creeper(0):(string.equals("Skeleton")?new Skeleton(0):(string.equals("Workbench")?new Workbench():(string.equals("AirWizard")?new AirWizard(false):(string.equals("AirWizardII")?new AirWizard(true):(string.equals("Chest")?new Chest():(string.equals("DeathChest")?new Chest(true):(string.equals("DungeonChest")?new DungeonChest():(string.equals("Spawner")?new Spawner(new Zombie(1), 1):(string.equals("Anvil")?new Anvil():(string.equals("Enchanter")?new Enchanter():(string.equals("Loom")?new Loom():(string.equals("Furnace")?new Furnace():(string.equals("Oven")?new Oven():(string.equals("bed")?new bed():(string.equals("Tnt")?new Tnt():(string.equals("Lantern")?new Lantern():(string.equals("IronLantern")?new IronLantern():(string.equals("GoldLantern")?new GoldLantern():(string.equals("Player")?player:(string.equals("Knight")?new Knight(0):(string.equals("Snake")?new Snake(0):new Entity())))))))))))))))))))))))))));
 	}
 }
 	
