@@ -64,78 +64,108 @@ public class Game extends Canvas implements Runnable, ActionListener{
 	
 	private static final long serialVersionUID = 1L;
 	private static Random random = new Random();
-	public static final String gameDir = System.getenv("APPDATA") + "/.playminicraft/mods/Minicraft-Plus";
-	public static final String NAME = "Minicraft Plus";
+	private static final int SCALE = 3;
+	
+	/// RENDERING
+	
+	public static final String gameDir = System.getenv("APPDATA") + "/.playminicraft/mods/Minicraft-Plus"; // The directory in which all the game files are stored; APPDATA is meant for windows...
+	public static final String NAME = "Minicraft Plus"; // This is the name on the application window
 	public static final int HEIGHT = 192;
 	public static final int WIDTH = 288;
-	private static final int SCALE = 3;	
+	//does the *scale part mean anything to the graphics, or does java accomodate it?
+	
+	private BufferedImage image, extraimage; // creates an image to be displayed on the screen.
+	private int[] pixels, extrapixels; // the array of pixels that will be displayed on the screen.
+	private int[] colors; // All of the colors, put into an array.
+	private Screen screen; // Creates the main screen
+	private Screen lightScreen; // Creates a front screen to render the darkness in caves (Fog of war).
+	
+	/// MANAGERIAL VARS AND RUNNING
 	
 	public static int gamespeed = 1;
+	
 	public double nsPerTick = 1.6666666666666666E7D * (double)gamespeed;
+	public int gameTime; // Main value in the timer used on the dead screen.
+	public boolean fpscounter; // show fps counter?
+	private boolean running; //non-static paused var..? This stores if the game is running or paused (as well).
 	
-	public InputHandler input;//input used in Game, Player, and just about all the *Menu classes.
-	private BufferedImage image, extraimage;
-	private int[] pixels, extrapixels;
-	private int[] colors;
+	/// LEVEL AND PLAYER
 	
-	public static int Time = 0;
-	private Screen screen, lightScreen;
-	private boolean running;
-	public boolean fpscounter;
-	public static boolean tickReset = false;
-	boolean initTick;
-	int hungerTick;
-	public int scoreTime, newscoreTime;
-	int count;
-	boolean reverse;
+	public static Level[] levels = new Level[5]; // This array is about the different levels.
+	public static int currentLevel = 3; // This is the level the player is on. It's set to 3, which is the surface.
 	
-	public static int multiplyer = 1, mtm = 300, ism = 1;
-	public static int multiplyertime = mtm;
-	
-	public static int tickCount = 0;
-	public static int dayYeahTick;
-	public int gameTime, fra, tik;
-	public boolean isDayNoSleep;
-	
-	public static boolean Load = false, fasttime = false, paused = false;
-	public static int LoadTime = 3;
-	
-	//used to display "error" messages
-	public static int infotime = 120;
-	public static boolean infoplank = false, infosbrick = false;//"can only place on planks / stone brick"
-	
-	public static boolean truerod = false, isfishing = false;
-	public static int fishingcount = 0;
-	
+	public InputHandler input; // input used in Game, Player, and just about all the *Menu classes.
+	public Menu menu; // the current menu you are on.
+	public Player player; // The Player.
+	public Level level; // This is the current level you are on.
 	int[] oldlvls; 
-	public Level level;
-	public static Level[] levels = new Level[5];
-	static public int currentLevel = 3;
 	
-	int hungerMinusCount;
-	public Player player;
+	private int playerDeadTime; // the paused time when you die before the dead menu shows up.
+	private int pendingLevelChange; // used to determined if the player should change levels or not.
+	private int wonTimer; // the paused time when you win before the win menu shows up.
+	public boolean hasWon; // If the player wins this is set to true
 	
-	//Most used for autosaving, or just saving.
-	int l;
+	/// TIME AND TICKS
+	
+	public static int tickCount = 0; // Used in the ticking system
+	public static boolean tickReset = false;
+	public static int Time = 0; // Facilites time of day / sunlight.
+	public static int dayYeahTick; // Bed? Sunlight?
+	
+	public static int LoadTime = 3;
+	public static boolean Load = false;
+	public static boolean fasttime = false; //fast ticks; this is probably used for sleeping.
+	public static boolean paused = false; // If the game is paused.
+	
+	public boolean isDayNoSleep; //beds and sleeping, I'll guess.
+	Timer sunrise, sunset, daytime, nighttime; //?Day-cycle Timers... I wonder how they're used?
+	
+	/// AUTOSAVE AND NOTIFICATIONS
+	
 	public static int acs = 25;
 	public static int ac = acs;
-	public static boolean autosave;
-	public int asTick;
-	public static int astime; //asTime stands for Auto-Save Time! (interval)
-	public static String savedtext = ""; //to display save msg? or is that notifications?
+	public static boolean autosave; //if autosave feature is enabled.
+	public static int astime; //stands for Auto-Save Time (interval)
+	public static String savedtext = ""; //?to display save msg, along with notifications?
 	public static List notifications = new ArrayList();
-	public boolean saving;
-	public int savecooldown;
-	public int notetick;
 	
-	public Menu menu;
-	private int playerDeadTime;
-	private int pendingLevelChange;
-	private int wonTimer;
-	public boolean hasWon;
+	public int asTick; //? Tracks time throughout the save process.
+	public boolean saving; // If the game is performing a save.
+	public int savecooldown; // Prevents saving many times too fast, I think.
+	public int notetick; // "note"= notifications. 
 	
-	Timer sunrise, sunset, daytime, nighttime;
+	/// SCORE MODE
 	
+	public static int multiplyer = 1; // Score multiplier
+	public static int mtm = 300, ism = 1;
+	public static int multiplyertime = mtm; //? time the multiplier has been going? or has left?
+	
+	public int scoreTime, newscoreTime; //more for Score mode.
+	
+	
+	/// MISCELLANEOUS
+	
+	//used to display "error" messages
+	public static int infotime = 120; //duration of message, in... ticks?
+	public static boolean infoplank = false, infosbrick = false; // "can only place on planks / stone brick"
+	
+	//fishing
+	public static boolean truerod = false, isfishing = false; // are you fishing?
+	public static int fishingcount = 0; //?how many times you've used a rod?
+	
+	
+	//What are these..?
+	public int fra, tik;
+	boolean initTick;
+	int hungerTick; 
+	int count;
+	int hungerMinusCount;
+	boolean reverse;
+	int l;
+	
+	
+	
+	/// *** CONSTRUSTOR *** ///
 	public Game() {
 		
 		input = new InputHandler(this);
@@ -174,22 +204,26 @@ public class Game extends Canvas implements Runnable, ActionListener{
 		nighttime = new Timer(240000, this);
 	}
 	
+	// Sets the current menu.
 	public void setMenu(Menu menu) {
 		this.menu = menu;
 		if (menu != null)
 			menu.init(this, input);
 	}
 	
+	// Useful if there were more in here... will be soon.
 	public static void changeTime(int t) {
 		Time = t;
 	}
 	
 	//called after main; main is at bottom.
+	/** This starts the game logic after a pause */
 	public void start() {
 		running = true;
 		new Thread(this).start(); //calls run()
 	}
 	
+	/** This pauses the game */
 	public void stop() {
 		running = false;
 	}
@@ -241,6 +275,7 @@ public class Game extends Canvas implements Runnable, ActionListener{
 		}
 	}
 	
+	
 	private void init() {
 		int pp = 0;
 		for (int r = 0; r < 6; r++) {
@@ -270,6 +305,7 @@ public class Game extends Canvas implements Runnable, ActionListener{
 		setMenu(new TitleMenu());
 	}
 	
+	/** This resets the game*/
 	public void resetGame() {
 		playerDeadTime = 0;
 		wonTimer = 0;
@@ -753,11 +789,8 @@ public class Game extends Canvas implements Runnable, ActionListener{
 			if (dayYeahTick == 600)
 				colSleep = colTran;
 		}
-		if (fpscounter == false)
-			col = col1;
-		else
-			col = col0;
 		
+		col = fpscounter ? col0:col1;
 		
 		if (!ModeMenu.creative)
 		{
@@ -869,29 +902,26 @@ public class Game extends Canvas implements Runnable, ActionListener{
 			}
 		}
 		
-		int awh = (AirWizard.healthstat / 20);
-		if (awh == 0) {//This just turns 0% into 1% to avoid confunsion.
+		int awh = AirWizard.healthstat / 20;
+		if (awh == 0) // This just turns 0% into 1% to avoid confunsion.
 			awh = 1;
-		}
-		if (currentLevel == 4) {
-			if (AirWizard.healthstat > 0) {
-				if (!ModeMenu.score) {
-			Font.draw("AirWizard Health " + awh + "%", screen, 84, screen.h - 190 , Color.get(100, 50, 50, 50));
-				} else  {
-			Font.draw("AirWizard Health " + awh + "%", screen, 84, screen.h - 180 , Color.get(100, 50, 50, 50));		
-				}
-			}
+		
+		if (currentLevel == 4 && AirWizard.healthstat > 0) {
+			if (!ModeMenu.score)
+				Font.draw("AirWizard Health " + awh + "%", screen, 84, screen.h - 190 , Color.get(100, 50, 50, 50));
+			else
+				Font.draw("AirWizard Health " + awh + "%", screen, 84, screen.h - 180 , Color.get(100, 50, 50, 50));
 		}
 		
 		// This is the arrow counter. ^ = infinite symbol.
-		if(!ModeMenu.creative) {
-			if (ac >= 10000)
+		//if(!ModeMenu.creative) {
+			if (ModeMenu.creative || ac >= 10000)
 				Font.draw("  x" + "^", screen, 84, screen.h - 16 , Color.get(0, 333, 444, 555));
-			else if (ac < 10000)
+			else
 				Font.draw("  x" + ac, screen, 84, screen.h - 16 , Color.get(0, 555, 555, 555));
-			else if (ModeMenu.creative != false)
-				Font.draw("  x" + "^", screen, 84, screen.h - 16 , Color.get(0, 333, 444, 555));
-		}
+			//else if ()
+				//Font.draw("  x" + "^", screen, 84, screen.h - 16 , Color.get(0, 333, 444, 555));
+		//}
 		
 		int cols = Color.get(300, 555, 555, 555);
 		int seconds = scoreTime/ 60;
@@ -901,17 +931,13 @@ public class Game extends Canvas implements Runnable, ActionListener{
 		seconds %= 60;
 		if (count <= 5)
 			cols = Color.get(500, 555, 555, 555);
-			
-		if (count <= 10 && count > 5)
+		else if (count <= 10)
 			cols = Color.get(400, 555, 555, 555);
-			
-		if (count <= 15 && count > 10)
+		else if (count <= 15)
 			cols = Color.get(300, 555, 555, 555);
-			
-		if (count <= 20 && count > 15)
+		else if (count <= 20)
 			cols = Color.get(200, 555, 555, 555);
-			
-		if (count <= 25 && count > 20)
+		else if (count <= 25)
 			cols = Color.get(100, 555, 555, 555);
 		
 		if(bed.hasBedSet) {
@@ -919,8 +945,14 @@ public class Game extends Canvas implements Runnable, ActionListener{
 			Font.draw("Sleeping...", screen, screen.w / 2 - 44, screen.h - 120, Color.get(-1, 555, 555, 555));
 		}
 		
+		if (infoplank)
+			notifications.add("Can only be placed on planks!");//, screen, 30, screen.h - 130 , Color.get(000, 555, 555, 555));
+		if (infosbrick)
+			notifications.add("Can only be placed on st.brick!");//, screen, 20, screen.h - 130 , Color.get(000, 555, 555, 555));
+		
+		// NOTIFICATIONS DISPLAY
 		if(notifications.size() > 0) {
-			++notetick;
+			notetick++;
 			if(notifications.size() > 3) {
 				notifications = notifications.subList(notifications.size() - 3, notifications.size());
 			}
@@ -930,19 +962,13 @@ public class Game extends Canvas implements Runnable, ActionListener{
 				notetick = 0;
 			}
 
-			for(int i = 0; i < notifications.size(); ++i) {
+			for(int i = 0; i < notifications.size(); i++) {
 				Font.draw((String)notifications.get(i), screen, screen.w / 2 + 1 - ((String)notifications.get(i)).length() * 8 / 2, screen.h - 120 - i * 8 + 1, Color.get(-1, 111, 111, 111));
 				Font.draw((String)notifications.get(i), screen, screen.w / 2 - ((String)notifications.get(i)).length() * 8 / 2, screen.h - 120 - i * 8, Color.get(-1, 555, 555, 555));
 			}
 		}
-		/*
-		if (infoplank) {
-			Font.draw("Can only be placed on planks!", screen, 30, screen.h - 130 , Color.get(000, 555, 555, 555));
-		}
-		if (infosbrick) {
-			Font.draw("Can only be placed on st.brick!", screen, 20, screen.h - 130 , Color.get(000, 555, 555, 555));
-		}
-		*/
+		
+		// SCORE MODE
 		if (ModeMenu.score) {
 			if (scoreTime > 18000)
 				Font.draw("Time left " + minutes + "m " + seconds + "s", screen, 84, screen.h - 190 , Color.get(000, 555, 555, 555));
@@ -953,21 +979,19 @@ public class Game extends Canvas implements Runnable, ActionListener{
 			
 			if (multiplyer > 1 && multiplyer < 50)
 				Font.draw("X" + multiplyer, screen, 260, screen.h - 190 , Color.get(-1, 540, 540, 540));
-			else if (multiplyer > 49)
+			else if (multiplyer >= 50)
 				Font.draw("X" + multiplyer, screen, 260, screen.h - 190 , Color.get(-1, 500, 500, 500));
 			
 			Font.draw(multiplyertime + " " + mtm + "", screen, 230, screen.h - 180 , Color.get(-1, 5, 5, 5));
 		}
 		
+		// FISHING ROD STATUS
 		if (player.activeItem != null && truerod) {
 			int dura = (ItemResource.dur * 7);
 			if (dura > 100)
 				dura = 100;
 			Font.draw(dura + "%", screen, 164, screen.h - 16 , Color.get(0, 30, 30, 30));
 		}
-		
-		if(player.activeItem != null)
-			player.activeItem.renderInventory(screen, 84, screen.h - 8);
 		
 		/*potions
 		if(player.potioneffects.size() > 0) {
@@ -981,10 +1005,26 @@ public class Game extends Canvas implements Runnable, ActionListener{
 		}
 		*/
 		
-		screen.render(11 * 8, screen.h - 17, 13 + 5 * 32, Color.get(-1, 111, 222, 430), 0);//arrow icon
+		//displays arrow icon
+		screen.render(11 * 8, screen.h - 17, 13 + 5 * 32, Color.get(-1, 111, 222, 430), 0);
 		
-		for (int i = 0; i < 10; i++) {
-			if (!ModeMenu.creative) {
+		if (!ModeMenu.creative) {
+			for (int i = 0; i < 10; i++) {
+				int color;
+				
+				color = (i < player.health) ?
+					Color.get(-1, 200, 500, 533) : Color.get(-1, 100, 000, 000);
+				screen.render(i * 8, screen.h - 16, 0 + 12 * 32, color, 0);
+				
+				color = (i < player.hunger) ?
+					Color.get(-1, 100, 530, 211) : Color.get(-1, 100, 000, 000);
+				screen.render(i * 8 + 208, screen.h - 16, 2 + 12 * 32, color, 0);
+				
+				color = (i < player.maxArmor) ?
+					Color.get(-1, 333, 444, 555) : Color.get(-1, -1, -1, -1);
+				screen.render(i * 8 + 208, screen.h - 8, 3 + 12 * 32, color, 0);
+				
+				/*
 				if (i < player.health)
 					screen.render(i * 8, screen.h - 16, 0 + 12 * 32, Color.get(-1, 200, 500, 533), 0);
 				else
@@ -995,67 +1035,72 @@ public class Game extends Canvas implements Runnable, ActionListener{
 				else
 					screen.render(i * 8 + 208, screen.h - 16, 2 + 12 * 32, Color.get(-1, 100, 000, 000), 0);
 				
-				
 				if (i < player.maxArmor)
 					screen.render(i * 8 + 208, screen.h - 8, 3 + 12 * 32, Color.get(-1, 333, 444, 555), 0);
 				else
-					screen.render(i * 8 + 208, screen.h - 8, 3 + 12 * 32, Color.get(-1, -1, -1, -1), 0);
+					screen.render(i * 8 + 208, screen.h - 8, 3 + 12 * 32, , 0);
+				*/
 				
 				if (player.staminaRechargeDelay > 0) {
-					if (player.staminaRechargeDelay / 4 % 2 == 0)
+					color = (player.staminaRechargeDelay / 4 % 2 == 0) ?
+						Color.get(-1, 555, 000, 000) : Color.get(-1, 110, 000, 000);
+					screen.render(i * 8, screen.h - 8, 1 + 12 * 32, color, 0);
+					/*if (player.staminaRechargeDelay / 4 % 2 == 0)
 						screen.render(i * 8, screen.h - 8, 1 + 12 * 32, Color.get(-1, 555, 000, 000), 0);
 					else
-						screen.render(i * 8, screen.h - 8, 1 + 12 * 32, Color.get(-1, 110, 000, 000), 0);
+						screen.render(i * 8, screen.h - 8, 1 + 12 * 32, Color.get(-1, 110, 000, 000), 0);*/
 				} else {
-					if (i < player.stamina)
+					color = (i < player.stamina) ?
+						Color.get(-1, 220, 550, 553) : Color.get(-1, 110, 000, 000);
+					screen.render(i * 8, screen.h - 8, 1 + 12 * 32, color, 0);
+					/*if (i < player.stamina)
 						screen.render(i * 8, screen.h - 8, 1 + 12 * 32, Color.get(-1, 220, 550, 553), 0);
 					else
-						screen.render(i * 8, screen.h - 8, 1 + 12 * 32, Color.get(-1, 110, 000, 000), 0);
+						screen.render(i * 8, screen.h - 8, 1 + 12 * 32, Color.get(-1, 110, 000, 000), 0);*/
 				}
 			}
 		}
 		
-		if (player.activeItem != null) {
+		if (player.activeItem != null) // shows item in bottom toolbar when in use.
 			player.activeItem.renderInventory(screen, 12 * 7, screen.h - 8);
-		}
 		
-		if (menu != null) {
+		if (menu != null) // renders menu, if present.
 			menu.render(screen);
-		}
 	}
 	
 	private void renderFocusNagger() {
 		String msg = "Click to focus!";
-		paused = true;
-		int xx = (WIDTH - msg.length() * 8) / 2;
+		paused = true; //perhaps paused is only used for this.
+		int xx = Menu.centertext(msg);
 		int yy = (HEIGHT - 8) / 2;
 		int w = msg.length();
 		int h = 1;
+		int txtcolor = Color.get(-1, 1, 5, 445);
 		
-		screen.render(xx - 8, yy - 8, 0 + 13 * 32, Color.get(-1, 1, 5, 445), 0);
-		screen.render(xx + w * 8, yy - 8, 0 + 13 * 32, Color.get(-1, 1, 5, 445), 1);
-		screen.render(xx - 8, yy + 8, 0 + 13 * 32, Color.get(-1, 1, 5, 445), 2);
-		screen.render(xx + w * 8, yy + 8, 0 + 13 * 32, Color.get(-1, 1, 5, 445), 3);
+		screen.render(xx - 8, yy - 8, 0 + 13 * 32, txtcolor, 0);
+		screen.render(xx + w * 8, yy - 8, 0 + 13 * 32, txtcolor, 1);
+		screen.render(xx - 8, yy + 8, 0 + 13 * 32, txtcolor, 2);
+		screen.render(xx + w * 8, yy + 8, 0 + 13 * 32, txtcolor, 3);
 		for (int x = 0; x < w; x++) {
-			screen.render(xx + x * 8, yy - 8, 1 + 13 * 32, Color.get(-1, 1, 5, 445), 0);
-			screen.render(xx + x * 8, yy + 8, 1 + 13 * 32, Color.get(-1, 1, 5, 445), 2);
+			screen.render(xx + x * 8, yy - 8, 1 + 13 * 32, txtcolor, 0);
+			screen.render(xx + x * 8, yy + 8, 1 + 13 * 32, txtcolor, 2);
 		}
 		for (int y = 0; y < h; y++) {
-			screen.render(xx - 8, yy + y * 8, 2 + 13 * 32, Color.get(-1, 1, 5, 445), 0);
-			screen.render(xx + w * 8, yy + y * 8, 2 + 13 * 32, Color.get(-1, 1, 5, 445), 1);
+			screen.render(xx - 8, yy + y * 8, 2 + 13 * 32, txtcolor, 0);
+			screen.render(xx + w * 8, yy + y * 8, 2 + 13 * 32, txtcolor, 1);
 		}
 		
-		if ((tickCount / 20) % 2 == 0) {
+		if ((tickCount / 20) % 2 == 0)//? I wonder what this is for?
 			Font.draw(msg, screen, xx, yy, Color.get(5, 333, 333, 333));
-		} else {
+		else
 			Font.draw(msg, screen, xx, yy, Color.get(5, 555, 555, 555));
-		}
 	}
 	
 	public void scheduleLevelChange(int dir) {
 		pendingLevelChange = dir;
 	}
 	
+	/// * The main method! * ///
 	public static void main(String[] args) {
 		Game game = new Game();
 		game.setMinimumSize(new Dimension(WIDTH * SCALE, HEIGHT * SCALE));
@@ -1070,21 +1115,21 @@ public class Game extends Canvas implements Runnable, ActionListener{
 		frame.setLocationRelativeTo(null);
 		frame.setVisible(true);
 		
-		game.start();
+		game.start(); // Start the game!
 		
 	}
-	
 	
 	public void won() {
 		wonTimer = 60 * 3;
 		hasWon = true;
+		// On win, stops the day-night cycle.
 		daytime.stop();
 		nighttime.stop();
 		sunrise.stop();
 		sunset.stop();
 	}
 	
-	
+	//?
 	@Override
 	public void actionPerformed(ActionEvent arg0) {
 		// TODO Auto-generated method stub
