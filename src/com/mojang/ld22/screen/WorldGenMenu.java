@@ -50,24 +50,24 @@ public class WorldGenMenu extends Menu {
 		if (input.getKey("up").clicked) op++;
 		
 		if (op == 0){
-		if (input.getKey("left").clicked) selected--;
-		if (input.getKey("right").clicked) selected++;
-		if (input.getKey("left").clicked) theme--;
-		if (input.getKey("right").clicked) theme++;
+			if (input.getKey("left").clicked) selected--;
+			if (input.getKey("right").clicked) selected++;
+			if (input.getKey("left").clicked) theme--;
+			if (input.getKey("right").clicked) theme++;
 		}
 		
 		if (op == 1){
-		if (input.getKey("left").clicked) selectedlr--;
-		if (input.getKey("right").clicked) selectedlr++;
-		if (input.getKey("left").clicked) type--;
-		if (input.getKey("right").clicked) type++;
+			if (input.getKey("left").clicked) selectedlr--;
+			if (input.getKey("right").clicked) selectedlr++;
+			if (input.getKey("left").clicked) type--;
+			if (input.getKey("right").clicked) type++;
 		}
 		
 		if (op == 2){
-		if (input.getKey("left").clicked) selecteds--;
-		if (input.getKey("right").clicked) selecteds++;
-		if (input.getKey("left").clicked) size--;
-		if (input.getKey("right").clicked) size++;
+			if (input.getKey("left").clicked) selecteds--;
+			if (input.getKey("right").clicked) selecteds++;
+			if (input.getKey("left").clicked) size--;
+			if (input.getKey("right").clicked) size++;
 		}
 		
 		if (input.getKey("left").clicked)	Sound.craft.play(); 
@@ -232,9 +232,9 @@ public class WorldGenMenu extends Menu {
 		}
 		}
 		
-		Font.draw("World Options", screen, 11 * 8 + 4, 3 * 8, Color.get(0, 555, 555, 555));
-		Font.draw("Arrow keys to scroll", screen, 11 * 6 + 4, 16 * 8, Color.get(-1, 555, 555, 555));
-		Font.draw("Press c to exit", screen, 11 * 7 + 8, 18 * 8, Color.get(-1, 555, 555, 555));
+		drawCentered("World Options", screen, 3 * 8, Color.get(0, 555, 555, 555));
+		drawCentered("Arrow keys to scroll", screen, 16 * 8, Color.get(-1, 555, 555, 555));
+		drawCentered("Press Esc to exit", screen, 18 * 8, Color.get(-1, 555, 555, 555));
 		//This is debug info to see if the numbers are working correctly.
 		//Font.draw("" + type, screen, 11 * 7 + 4, 21 * 8, Color.get(-1, 555, 555, 555));
 		//Font.draw("" + theme, screen, 11 * 8 + 4, 21 * 8, Color.get(-1, 555, 555, 555));
