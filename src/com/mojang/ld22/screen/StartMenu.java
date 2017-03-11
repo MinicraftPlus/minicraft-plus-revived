@@ -1,5 +1,6 @@
 package com.mojang.ld22.screen;
 
+import com.mojang.ld22.Game;
 import com.mojang.ld22.gfx.Color;
 import com.mojang.ld22.gfx.Font;
 import com.mojang.ld22.gfx.Screen;
@@ -60,6 +61,11 @@ public class StartMenu extends Menu {
 			//System.out.println("Sound toggle works!");
 			isSoundAct = !isSoundAct;
 		}
+		
+		if(input.getKey("a").clicked) {
+			Sound.craft.play();
+			Game.autosave = !Game.autosave;
+		}
 	}
 	
 	public void render(Screen screen) {
@@ -77,9 +83,12 @@ public class StartMenu extends Menu {
 		String[] diffs = {"Easy", "Normal", "Hard"};
 		Font.draw(diffs[diff-1], screen, 11 * 16 + 4, 8 * 8, Color.get(-1, 555, 555, 555));
 		
-		Font.draw("Press Esc to return", screen, 80, screen.h - 75, Color.get(0, 555, 555, 555));
-		Font.draw("<S>ound:", screen, 80, screen.h - 100, Color.get(0, 555, 555, 555));
-		Font.draw((isSoundAct?"On":"Off"), screen, 180, screen.h - 100, (isSoundAct?onColor:offColor));
+		Font.draw("<A>utosave:", screen, 80, screen.h - 100, Color.get(0, 555, 555, 555));
+		Font.draw((Game.autosave?"On":"Off"), screen, 180, screen.h - 100, (Game.autosave?onColor:offColor));
+		Font.draw("<S>ound:", screen, 80, screen.h - 75, Color.get(0, 555, 555, 555));
+		Font.draw((isSoundAct?"On":"Off"), screen, 180, screen.h - 75, (isSoundAct?onColor:offColor));
+		
+		Font.draw("Press Esc to return", screen, 80, screen.h - 50, Color.get(0, 555, 555, 555));
 		
 		if(unlockedskin) {
 			Font.draw("<W>ear Suit:", screen, 80, screen.h - 110, Color.get(0, 555, 555, 555));
