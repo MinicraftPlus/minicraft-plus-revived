@@ -483,7 +483,7 @@ public class Game extends Canvas implements Runnable, ActionListener{
 			Time = 0;
 		
 		if(tickCount == 3600)
-			this.level.removeAllEnimies();
+			level.removeAllEnemies();
 		
 		if (tickCount == 7200)
 			Time = 1;
