@@ -132,7 +132,7 @@ public class Game extends Canvas implements Runnable, ActionListener {
 	/// SCORE MODE
 	
 	public static int multiplyer = 1; // Score multiplier
-	public static int mtm = 300, ism = 1;
+	public static int mtm = 300, ism = 1; // more time stuff
 	public static int multiplyertime = mtm; //? time the multiplier has been going? or has left?
 	
 	public int scoreTime, newscoreTime; //more for Score mode.
