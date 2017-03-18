@@ -104,11 +104,11 @@ public class Game extends Canvas implements Runnable, ActionListener {
 	
 	public static int tickCount = 0; // Used in the ticking system
 	public static boolean tickReset = false;
-	public static int Time = 0; // Facilites time of day / sunlight.
+	public static int time = 0; // Facilites time of day / sunlight.
 	public static int dayYeahTick; // Bed? Sunlight?
 	
-	public static int LoadTime = 3;
-	public static boolean Load = false;
+	public static int LoadTime = 3; //Never used?
+	public static boolean Load = false; //Never used?
 	public static boolean fasttime = false; //fast ticks; this is probably used for sleeping.
 	public static boolean paused = false; // If the game is paused.
 	
@@ -132,8 +132,8 @@ public class Game extends Canvas implements Runnable, ActionListener {
 	/// SCORE MODE
 	
 	public static int multiplyer = 1; // Score multiplier
-	public static int mtm = 300, ism = 1; // more time stuff
-	public static int multiplyertime = mtm; //? time the multiplier has been going? or has left?
+	public static int mtm = 300, ism = 1; // more time stuff for score mode.
+	public static int multiplyertime = mtm; // Time left on the current multiplier.
 	
 	public int scoreTime, newscoreTime; //more for Score mode.
 	
@@ -141,15 +141,13 @@ public class Game extends Canvas implements Runnable, ActionListener {
 	
 	//used to display "error" messages
 	public static int infotime = 120; //duration of message, in... ticks?
-	public static boolean infoplank = false,
-			infosbrick = false; // "can only place on planks / stone brick"
+	public static boolean infoplank = false, infosbrick = false; // "can only place on planks / stone brick"
 
 	//fishing
 	public static boolean truerod = false, isfishing = false; // are you fishing?
-	public static int fishingcount = 0; //?how many times you've used a rod?
+	public static int fishingcount = 0; //? how many times you've used a rod?
 	
-	//What are these..?
-	public int fra, tik;
+	public int fra, tik; //these store the number of frames and ticks in the previous second; used for fps, at least.
 	boolean initTick; //--not used in this file
 	int hungerTick; //--not used in this file
 	int hungerMinusCount;
@@ -218,8 +216,10 @@ public class Game extends Canvas implements Runnable, ActionListener {
 	}
 	
 	/**
-	 * This is the main loop that runs the game. It: -keeps track of the amount of time that has
-	 * passed -fires the ticks needed to run the game -fires the command to render out the screen.
+	 * This is the main loop that runs the game. It:
+	 *	-keeps track of the amount of time that has passed
+	 *	-fires the ticks needed to run the game
+	 *	-fires the command to render out the screen.
 	 */
 	public void run() {
 		long lastTime = System.nanoTime();
@@ -266,10 +266,10 @@ public class Game extends Canvas implements Runnable, ActionListener {
 						screen.w,
 						screen.h,
 						Color.get(0, 555, 555, 555));
-				fra = frames; //are these two backups for frames and tiks
-				tik = ticks;
-				frames = 0;
-				ticks = 0;
+				fra = frames; //saves total frames in last second
+				tik = ticks; //saves total ticks in last second
+				frames = 0; //resets frames
+				ticks = 0; //resets ticks; ie, frames and ticks only are per second
 			}
 		}
 	}
@@ -323,10 +323,10 @@ public class Game extends Canvas implements Runnable, ActionListener {
 		Player.canGoHome = false;
 		hasWon = false;
 		currentLevel = 3;
-
+		
 		// adds a new player
 		player = new Player(this, input);
-
+		
 		// "shudrespawn" returns false if on hardcore, or making a new world. if true, it keeps your world and spawn pos
 		if (DeadMenu.shudrespawn) { // respawn, don't regenerate level.
 			//System.out.print("Current Level = " + currentLevel + "																					 ");
@@ -338,14 +338,14 @@ public class Game extends Canvas implements Runnable, ActionListener {
 			// new game, regenerate everything.
 			levels[3] = new Level(worldSize, worldSize, 0, levels[4]);
 
-			level =
-					levels[currentLevel]; // Set level variable to the surface (b/c currentlevel is always 3)
+			level = levels[currentLevel]; // Set level variable to the surface (b/c currentlevel is always 3)
 
 			DeadMenu.shudrespawn = true; // player should respawn on death
 			player.findStartPos(level); // finds the start position for the player
 		}
 	}
-
+	
+	// what might this be for?
 	public void resetstartGame() {
 		playerDeadTime = 0;
 		wonTimer = 0;
@@ -382,10 +382,8 @@ public class Game extends Canvas implements Runnable, ActionListener {
 
 		if (WorldSelectMenu.loadworld) {
 			try {
-				BufferedReader f =
-						new BufferedReader(
-								new FileReader(
-										gameDir + "/saves/" + WorldSelectMenu.worldname + "/Level3.miniplussave"));
+				BufferedReader f = new BufferedReader(new FileReader(
+				  gameDir + "/saves/" + WorldSelectMenu.worldname + "/Level3.miniplussave"));
 				this.worldSize = Integer.parseInt(f.readLine().substring(0, 3));
 			} catch (FileNotFoundException var4) {
 				var4.printStackTrace();
@@ -443,7 +441,9 @@ public class Game extends Canvas implements Runnable, ActionListener {
 
 		levels[5] = new Level(this.worldSize, this.worldSize, -4, levels[0]);
 		*/
-
+		
+		// if resetStartGame is called when not loading a world, add an Iron lantern at (984, 984).
+			// it seems this is only called for the dungeon level.
 		if (!WorldSelectMenu.loadworld) {
 			FurnitureItem f1 = new FurnitureItem(new IronLantern());
 			Furniture f = f1.furniture;
@@ -451,45 +451,46 @@ public class Game extends Canvas implements Runnable, ActionListener {
 			f.y = 984;
 			levels[5].add(f);
 		}
-
+		
 		LoadingMenu.percentage = 0;
-		if (!ModeMenu.creative) {
+		if (!ModeMenu.creative) {// survival inventory only
 			this.player.inventory.add(new FurnitureItem(new Enchanter()));
 			this.player.inventory.add(new FurnitureItem(new Workbench()));
 		}
-
+		
 		level = levels[currentLevel]; // sets level to the current level (3; surface)
 		player.respawn(level); // finds the start level for the player
 		currentLevel = 3; //? sets next currentlevel, maybe?
 		level.add(player);
-
+		
 		if (WorldSelectMenu.loadworld) {
 			new Load(this, WorldSelectMenu.worldname);
-		} else {
+		} else { //should execute only on dungeon level, based on above.
 			tickCount = 0;
 			if (this.level.getTile(this.player.x / 16, this.player.y / 16) != Tile.sand)
 				this.level.setTile(this.player.x / 16, this.player.y / 16, Tile.grass, 0);
 		}
-
+		
 		DeadMenu.shudrespawn = true;
 		/* not reimp. yet
 		if(WorldGenMenu.theme == WorldGenMenu.hell) {
 			this.player.inventory.add(new ResourceItem(Resource.lavapotion));
 		}*/
-
+		
 	}
-
-	// VERY IMPORTANT METHOD!! Makes everything keep happening, I think.
+	
+	// VERY IMPORTANT METHOD!! Makes everything keep happening.
 	// In the end, calls menu.tick() if there's a menu, or level.tick() if no menu.
 	public void tick() {
 		if (Bed.hasBedSet) {
+			// IN BED
 			level.remove(player); //oh noes! jk. :D
 			nsPerTick = 781250.0D;
 			System.out.println("SLEEPING... tickCount: " + tickCount);
 			if (isDayNoSleep) {
 				level.add(player);
 				nsPerTick = 1.6666666666666666E7D;
-
+				
 				//seems this removes all entities within a certain radius of the player when you get in Bed.
 				for (int i = 0; i < level.entities.size(); ++i) {
 					if (((Entity) level.entities.get(i)).level == levels[currentLevel]) {
@@ -502,24 +503,27 @@ public class Game extends Canvas implements Runnable, ActionListener {
 						}
 					}
 				}
-
+				// so this must be set to true again every tick while in bed...
 				Bed.hasBedSet = false;
 			}
 		}
-
+		
+		// tickReset is set to true when..?
 		if (tickReset) {
 			tickCount = 0;
 			tickReset = false;
 		}
-
+		
+		// Increment tickCount if the game is not paused
 		if (!paused) tickCount++;
-
+		
+		//auto-save tick; keeps track of time relative to auto-save sequence.
 		asTick++;
 		if (asTick >= astime / 8) {
 			savedtext = "";
 		}
-
-		//for autosave feature
+		
+		//for autosave feature (more)
 		if (asTick > astime) {
 			if (autosave
 					&& player.health > 0
@@ -527,43 +531,44 @@ public class Game extends Canvas implements Runnable, ActionListener {
 					&& levels[currentLevel].entities.contains(player)) {
 				new Save(player, WorldSelectMenu.worldname);
 			}
-
+			
 			asTick = 0;
 		}
-
+		
 		//int tickSunR = 0;
-
+		
 		if (tickCount < 54000) isDayNoSleep = true;
 		if (tickCount >= 54000) isDayNoSleep = false;
-
+		
 		//duplicate?
 		if (tickReset) {
 			tickCount = 0;
 			tickReset = false;
 		}
-
+		
 		if (tickCount == 0) Time = 0;
-
+		
 		if (tickCount == 3600) level.removeAllEnemies();
-
+		
 		if (tickCount == 7200) Time = 1;
-
+		
 		//4800
 		if (tickCount == 36000) Time = 2;
-
+		
 		//5400
 		if (tickCount == 43200) Time = 3;
-
+		
 		//7600
 		if (tickCount == 64800) {
 			Time = 0;
 			tickCount = 0;
 		}
-
-		//score mode only
+		
+		/// SCORE MODE ONLY
+		
 		if (ModeMenu.score) {
 			if (!paused) scoreTime--;
-
+			
 			if (scoreTime < 1 && !player.removed) {
 				setMenu(new WonMenu());
 				System.out.print(player.score);
@@ -576,15 +581,13 @@ public class Game extends Canvas implements Runnable, ActionListener {
 						player.score + (Inventory.scored(Resource.bone) * (random.nextInt(2) + 1) * ism);
 				player.score =
 						player.score + (Inventory.scored(Resource.gunp) * (random.nextInt(2) + 1) * ism);
-				player.score =
-						player.score
-								+ (Inventory.scored(Resource.bookant)
+				player.score += (Inventory.scored(Resource.bookant)
 										* (random.nextInt(2) + 1)
 										* (random.nextInt(2) + 1)
 										* ism);
 				player.remove();
 			}
-
+			
 			if (multiplyer > 1) {
 				if (multiplyertime != 0) multiplyertime--;
 				if (multiplyertime == 0) {
@@ -594,7 +597,8 @@ public class Game extends Canvas implements Runnable, ActionListener {
 			}
 			if (multiplyer > 50) multiplyer = 50;
 		}
-
+		
+		
 		//display "can only place on" messages.
 		if (infoplank || infosbrick) {
 			if (infotime > 0) {
@@ -605,7 +609,7 @@ public class Game extends Canvas implements Runnable, ActionListener {
 				infotime = 120;
 			}
 		}
-
+		
 		//what's this for?
 		if (!reverse) {
 			count++;
@@ -614,18 +618,19 @@ public class Game extends Canvas implements Runnable, ActionListener {
 			count--;
 			if (count == 0) reverse = false;
 		}
-
+		
 		//System.out.println(tickCount);
 		//System.out.println(Bed.hasBeenTrigged);
-
+		
 		//This is the general action statement thing! Regulates menus, mostly.
 		if (!hasFocus()) {
 			input.releaseAll();
 		} else {
-			if (!player.removed && !hasWon) gameTime++;
-
-			input
-					.tick(); //INPUT TICK; no other class should call this, I think...especially the *Menu classes.
+			if (!player.removed && !hasWon) {
+				gameTime++;
+			}
+			input.tick(); //INPUT TICK; no other class should call this, I think...especially the *Menu classes.
+			
 			if (menu != null) {
 				//a menu is active.
 				menu.tick();
@@ -633,7 +638,7 @@ public class Game extends Canvas implements Runnable, ActionListener {
 			} else {
 				//no menu, currently.
 				paused = false;
-
+				
 				//if player is alive, but no level change, nothing happens here.
 				if (player.removed) {
 					//makes delay between death and death menu.
@@ -658,15 +663,32 @@ public class Game extends Canvas implements Runnable, ActionListener {
 						setMenu(new WonMenu());
 					}
 				}
-
+				
 				//still in "no active menu" conditional:
 				level.tick();
 				Tile.tickCount++;
 			} //end "menu-null" conditional
 		} //end hasfocus conditional
 	} //end tick()
-
+	
+	/* This is most likely for regulating daylight cycles. */
+		// MUST BE OPTIMIZED
 	public void SunRtd() {
+		//They ALL stop everything, then start the sunrise...
+		
+		//in fact, I think I can rewrite it like this:
+		Time = 0;
+		daytime.stop();
+		nighttime.stop();
+		sunrise.stop();
+		sunset.stop();
+		sunrise.start();
+		//System.out.println("Starting! (Time0)");
+		//if (DirtTile.dirtc == 0) {}
+		if (DirtTile.dirtc == 1) {
+			DirtTile.dirtc--;
+		}
+		/*
 		if (Time == 0) {
 			daytime.stop();
 			nighttime.stop();
@@ -687,7 +709,7 @@ public class Game extends Canvas implements Runnable, ActionListener {
 			sunset.stop();
 			sunrise.start();
 			//System.out.println("Starting! (Time1)");
-			if (DirtTile.dirtc == 0) {}
+			if (DirtTile.dirtc == 0) {} //?
 			if (DirtTile.dirtc == 1) {
 				DirtTile.dirtc--;
 			}
@@ -720,19 +742,23 @@ public class Game extends Canvas implements Runnable, ActionListener {
 			if (DirtTile.dirtc == 1) {
 				DirtTile.dirtc--;
 			}
-		}
+		}*/
 	}
-
+	
+	/** This method changes the level that the player is currently on.
+	 * It takes 1 integer variable, which is used to tell the game which direction to go.
+	 * For example, 'changeLevel(1)' will make you go up a level,
+	 	while 'changeLevel(-1)' will make you go down a level. */
 	public void changeLevel(int dir) {
-		level.remove(player);
-		currentLevel += dir;
-		if (currentLevel == -1) currentLevel = 5;
-		if (currentLevel == 6) currentLevel = 0;
+		level.remove(player); // removes the player from the current level.
+		currentLevel += dir; // changes the current level by the amount
+		if (currentLevel == -1) currentLevel = 5; // fix accidental level underflow
+		if (currentLevel == 6) currentLevel = 0; // fix accidental level overflow
 
-		level = levels[currentLevel];
-		player.x = (player.x >> 4) * 16 + 8;
-		player.y = (player.y >> 4) * 16 + 8;
-		level.add(player);
+		level = levels[currentLevel]; // sets the level to the current level
+		player.x = (player.x >> 4) * 16 + 8; // sets the player's x coord (to center yourself on the stairs)
+		player.y = (player.y >> 4) * 16 + 8; // sets the player's y coord (to center yourself on the stairs)
+		level.add(player); // adds the player to the level.
 	}
 
 	public static void Fishing(Level level, int x, int y, Player player) {
@@ -774,32 +800,36 @@ public class Game extends Canvas implements Runnable, ActionListener {
 			isfishing = false;
 		}
 	}
-
+	
+	/** renders the current screen */
 	//called in game loop, a bit after tick()
 	public void render() {
-		BufferStrategy bs = getBufferStrategy();
+		BufferStrategy bs = getBufferStrategy(); // creates a buffer strategy to determine how the graphics should be buffered.
 		if (bs == null) {
-			createBufferStrategy(3);
-			requestFocus();
+			createBufferStrategy(3); // if the buffer strategy is null, then make a new one!
+			requestFocus(); // requests the focus of the screen.
 			return;
 		}
 
-		int xScroll = player.x - screen.w / 2;
-		int yScroll = player.y - (screen.h - 8) / 2;
-		if (xScroll < 16) xScroll = 16;
-		if (yScroll < 16) yScroll = 16;
-		if (xScroll > level.w * 16 - screen.w - 16) xScroll = level.w * 16 - screen.w - 16;
-		if (yScroll > level.h * 16 - screen.h - 16) yScroll = level.h * 16 - screen.h - 16;
-		if (currentLevel > 3) {
-			int col = Color.get(20, 20, 121, 121);
+		int xScroll = player.x - screen.w / 2; // scrolls the screen in the x axis.
+		int yScroll = player.y - (screen.h - 8) / 2; // scrolls the screen in the y axis.
+		
+		//stop scrolling if the screen is at the ...
+		if (xScroll < 16) xScroll = 16; // ...left border.
+		if (yScroll < 16) yScroll = 16; // ...top border.
+		if (xScroll > level.w * 16 - screen.w - 16) xScroll = level.w * 16 - screen.w - 16; // ...right border.
+		if (yScroll > level.h * 16 - screen.h - 16) yScroll = level.h * 16 - screen.h - 16; // ...bottom border.
+		if (currentLevel > 3) { // if the current level is higher than 3 (which only the sky level is)
+			int col = Color.get(20, 20, 121, 121); // background color.
 			for (int y = 0; y < 28; y++)
 				for (int x = 0; x < 48; x++) {
+					// creates the background for the sky level:
 					screen.render(x * 8 - ((xScroll / 4) & 7), y * 8 - ((yScroll / 4) & 7), 0, col, 0);
 				}
 		}
 
-		level.renderBackground(screen, xScroll, yScroll);
-		level.renderSprites(screen, xScroll, yScroll);
+		level.renderBackground(screen, xScroll, yScroll); // renders current level background
+		level.renderSprites(screen, xScroll, yScroll); // renders level sprites on screen
 
 		/*
 		int col0 = Color.get(-1, 555, 555, 555);
@@ -821,20 +851,23 @@ public class Game extends Canvas implements Runnable, ActionListener {
 
 		col = fpscounter ? col0:col1; //pointless...
 		*/
+		
+		// this creates the darkness in the caves
 		if (!ModeMenu.creative && currentLevel < 3) {
-			lightScreen.clear(0);
-			level.renderLight(lightScreen, xScroll, yScroll);
-			screen.overlay(lightScreen, xScroll, yScroll);
+			lightScreen.clear(0); // clears the light screen to a black color
+			level.renderLight(lightScreen, xScroll, yScroll); // finds (and renders) all the light from objects (like the player, lanterns, and lava).
+			screen.overlay(lightScreen, xScroll, yScroll); // overlays the light screen over the main screen.
 		}
 
-		renderGui();
+		renderGui(); //renders the GUI.
 
-		if (!hasFocus()) renderFocusNagger();
+		if (!hasFocus()) renderFocusNagger(); // calls the renderFocusNagger() method, which creates the "Click to Focus" message.
 
 		for (int y = 0; y < screen.h; y++) {
 			for (int x = 0; x < screen.w; x++) {
-				int cc = screen.pixels[x + y * screen.w];
-				if (cc < 255) pixels[x + y * WIDTH] = colors[cc];
+				// loops through all the pixels on the screen
+				int cc = screen.pixels[x + y * screen.w]; // finds a pixel on the screen.
+				if (cc < 255) pixels[x + y * WIDTH] = colors[cc]; // colors the pixel appropriately.
 			}
 		}
 
@@ -861,20 +894,24 @@ public class Game extends Canvas implements Runnable, ActionListener {
 				}
 			}
 		}
-
-		Graphics g = bs.getDrawGraphics();
-		g.fillRect(0, 0, getWidth(), getHeight());
-
+		
+		Graphics g = bs.getDrawGraphics(); // gets the graphics in which java draws the picture
+		g.fillRect(0, 0, getWidth(), getHeight()); // draws the a rect to fill the whole window (to cover last?)
+		
+		// scales the pixel size.
 		int ww = WIDTH * SCALE;
 		int hh = HEIGHT * SCALE;
+		// gets the image offset.
 		int xo = (getWidth() - ww) / 2;
 		int yo = (getHeight() - hh) / 2;
-		g.drawImage(image, xo, yo, ww, hh, null);
-		g.dispose();
-		bs.show();
+		g.drawImage(image, xo, yo, ww, hh, null); //draws the image on the window
+		g.dispose(); // releases any system resources that are using this method. (so we don't have crappy framerates)
+		bs.show(); // makes the picture visible. (probably)
 	}
-
+	
+	/** Renders the main game GUI (hearts, Stamina bolts, name of the current item, etc.) */
 	private void renderGui() {
+		// need to figure out this part.
 		int xfps;
 		int txlevel;
 		for (xfps = 0; xfps < 2; xfps++) {
@@ -910,15 +947,16 @@ public class Game extends Canvas implements Runnable, ActionListener {
 					screen.h / 2 - 32,
 					Color.get(-1, 4, 4, 4));
 		}
-
-		xfps = fra;
-		txlevel = Player.xx / 16;
-		int tylevel = Player.yy / 16;
+		
+		xfps = fra; //aha! fra is used to determine the fps!
+		txlevel = Player.xx / 16; // but what's this?
+		int tylevel = Player.yy / 16; // ...and this?
 		int col0 = Color.get(-1, 555, 555, 555);
-		if (player.showinfo) {
+		if (player.showinfo) { // renders show debug info on the screen.
 			Font.draw(xfps + " fps", screen, 1, screen.h - 190, col0);
 			Font.draw("X " + txlevel, screen, 1, screen.h - 180, col0);
 			Font.draw("Y " + tylevel, screen, 1, screen.h - 170, col0);
+			/// SCORE MODE DEBUG ONLY:
 			if (ModeMenu.score) {
 				Font.draw("Score " + Player.score, screen, 1, screen.h - 160, col0);
 				if (currentLevel == 5) {
@@ -936,117 +974,97 @@ public class Game extends Canvas implements Runnable, ActionListener {
 					Font.draw("Chests: Complete!", screen, 1, screen.h - 160, col0);
 				}
 			}
+			//end score debug
 		}
-
+		
+		/// Render AirWizard health bar: (I need to update this)
+		
 		int awh = AirWizard.healthstat / 20;
 		if (awh == 0) // This just turns 0% into 1% to avoid confunsion.
 		awh = 1;
-
+		
+		// draw AirWizard health if on the sky level, and health > 0.
 		if (currentLevel == 4 && AirWizard.healthstat > 0) {
-			//if (!ModeMenu.score)
-			Font.draw(
-					"AirWizard Health " + awh + "%",
-					screen,
-					84,
-					screen.h - (ModeMenu.score ? 180 : 190),
-					Color.get(100, 50, 50, 50));
-			//else
-			//Font.draw("AirWizard Health " + awh + "%", screen, 84, screen.h - 180 , Color.get(100, 50, 50, 50));
+			Font.draw("AirWizard Health " + awh + "%",
+			  screen, 84, screen.h - (ModeMenu.score ? 180 : 190), Color.get(100, 50, 50, 50));
 		}
-
+		
 		// This is the arrow counter. ^ = infinite symbol.
-		//if(!ModeMenu.creative) {
 		if (ModeMenu.creative || ac >= 10000)
 			Font.draw("	x" + "^", screen, 84, screen.h - 16, Color.get(0, 333, 444, 555));
-		else Font.draw("	x" + ac, screen, 84, screen.h - 16, Color.get(0, 555, 555, 555));
-		//else if ()
-		//Font.draw("	x" + "^", screen, 84, screen.h - 16 , Color.get(0, 333, 444, 555));
-		//}
-
-		int cols = Color.get(300, 555, 555, 555);
-		int seconds = scoreTime / 60;
-		int minutes = seconds / 60;
-		int hours = minutes / 60;
-		minutes %= 60;
-		seconds %= 60;
-		if (count <= 5) cols = Color.get(500, 555, 555, 555);
-		else if (count <= 10) cols = Color.get(400, 555, 555, 555);
-		else if (count <= 15) cols = Color.get(300, 555, 555, 555);
-		else if (count <= 20) cols = Color.get(200, 555, 555, 555);
-		else if (count <= 25) cols = Color.get(100, 555, 555, 555);
-
-		if (Bed.hasBedSet) {
-			Font.draw(
-					"Sleeping...",
-					screen,
-					screen.w / 2 + 1 - 44,
-					screen.h - 119,
-					Color.get(-1, 222, 222, 222));
-			Font.draw(
-					"Sleeping...", screen, screen.w / 2 - 44, screen.h - 120, Color.get(-1, 555, 555, 555));
+		else
+			Font.draw("	x" + ac, screen, 84, screen.h - 16, Color.get(0, 555, 555, 555));
+		//displays arrow icon
+		screen.render(11 * 8, screen.h - 17, 13 + 5 * 32, Color.get(-1, 111, 222, 430), 0);
+			
+		if (Bed.hasBedSet) { // twice for the shadow text effect
+			Font.draw("Sleeping...", screen, screen.w / 2 + 1 - 44, screen.h - 119, Color.get(-1, 222, 222, 222));
+			Font.draw("Sleeping...", screen, screen.w / 2 - 44, screen.h - 120, Color.get(-1, 555, 555, 555));
 		}
-
-		if (infoplank)
-			notifications.add(
-					"Can only be placed on planks!"); //, screen, 30, screen.h - 130 , Color.get(000, 555, 555, 555));
-		if (infosbrick)
-			notifications.add(
-					"Can only be placed on st.brick!"); //, screen, 20, screen.h - 130 , Color.get(000, 555, 555, 555));
-
-		// NOTIFICATIONS DISPLAY
+		
+		/// NOTIFICATIONS
+		
+		if (infoplank) notifications.add("Can only be placed on planks!"); //, screen, 30, screen.h - 130 , Color.get(000, 555, 555, 555));
+		if (infosbrick) notifications.add("Can only be placed on stone brick!"); //, screen, 20, screen.h - 130 , Color.get(000, 555, 555, 555));
+		
 		if (notifications.size() > 0) {
 			notetick++;
-			if (notifications.size() > 3) {
-				notifications = notifications.subList(notifications.size() - 3, notifications.size());
+			if (notifications.size() > 3) { //only show 3 notifs max at one time; erase old notifs?
+				notifications = notifications.subeList(notifications.size() - 3, notifications.size());
 			}
-
-			if (notetick > 600) {
+			
+			if (notetick > 600) { //display time per notification.
 				notifications.remove(0);
 				notetick = 0;
 			}
-
+			
+			// draw each current notification, with shadow text effect.
 			for (int i = 0; i < notifications.size(); i++) {
-				Font.draw(
-						(String) notifications.get(i),
-						screen,
-						screen.w / 2 + 1 - ((String) notifications.get(i)).length() * 8 / 2,
-						screen.h - 120 - i * 8 + 1,
-						Color.get(-1, 111, 111, 111));
-				Font.draw(
-						(String) notifications.get(i),
-						screen,
-						screen.w / 2 - ((String) notifications.get(i)).length() * 8 / 2,
-						screen.h - 120 - i * 8,
-						Color.get(-1, 555, 555, 555));
+				String note = ((String) notifications.get(i));
+				int x = screen.w / 2 - note.length() * 8 / 2,
+				  y = screen.h - 120 - i * 8;
+				Font.draw(note, screen, x + 1, y + 1, Color.get(-1, 111, 111, 111));
+				Font.draw(note, screen, x, y, Color.get(-1, 555, 555, 555));
 			}
 		}
-
-		// SCORE MODE
+		
+		// SCORE MODE ONLY:
+		
 		if (ModeMenu.score) {
-			if (scoreTime > 18000)
-				Font.draw(
-						"Time left " + minutes + "m " + seconds + "s",
-						screen,
-						84,
-						screen.h - 190,
-						Color.get(000, 555, 555, 555));
-			else if (scoreTime < 3600)
-				Font.draw("Time left " + minutes + "m " + seconds + "s", screen, 84, screen.h - 190, cols);
-			else
-				Font.draw(
-						"Time left " + minutes + "m " + seconds + "s",
-						screen,
-						84,
-						screen.h - 190,
-						Color.get(330, 555, 555, 555));
-
-			if (multiplyer > 1 && multiplyer < 50)
-				Font.draw("X" + multiplyer, screen, 260, screen.h - 190, Color.get(-1, 540, 540, 540));
-			else if (multiplyer >= 50)
-				Font.draw("X" + multiplyer, screen, 260, screen.h - 190, Color.get(-1, 500, 500, 500));
-
-			Font.draw(
-					multiplyertime + " " + mtm + "", screen, 230, screen.h - 180, Color.get(-1, 5, 5, 5));
+			int cols = Color.get(330, 555, 555, 555);
+			int seconds = scoreTime / 60;
+			int minutes = seconds / 60;
+			int hours = minutes / 60;
+			minutes %= 60;
+			seconds %= 60;
+			if(scoreTime > 18000) cols = Color.get(000, 555, 555, 555);
+			else if(scoreTime < 3600) {
+				if (count <= 5) cols = Color.get(500, 555, 555, 555);
+				else if (count <= 10) cols = Color.get(400, 555, 555, 555);
+				else if (count <= 15) cols = Color.get(300, 555, 555, 555);
+				else if (count <= 20) cols = Color.get(200, 555, 555, 555);
+				else if (count <= 25) cols = Color.get(100, 555, 555, 555);
+			}
+			
+			Font.draw("Time left " + minutes + "m " + seconds + "s", screen, 84, screen.h - 190, cols);
+			/*
+			if (scoreTime > 18000) {
+				Font.draw("Time left " + minutes + "m " + seconds + "s",
+				  screen, 84, screen.h - 190, Color.get(000, 555, 555, 555));
+			} else if (scoreTime < 3600) {
+				Font.draw("Time left " + minutes + "m " + seconds + "s",
+				  screen, 84, screen.h - 190, cols);
+			} else {
+				Font.draw("Time left " + minutes + "m " + seconds + "s",
+				  screen, 84, screen.h - 190, Color.get(330, 555, 555, 555));
+			}
+			*/
+			if(multiplyer > 1) {
+				int multColor = multiplyer < 50 ? Color.get(-1, 540, 540, 540) : Color.get(-1, 500, 500, 500);
+				Font.draw("X" + multiplyer, screen, 260, screen.h - 190, multColor);
+			}
+			
+			Font.draw(multiplyertime + " " + mtm + "", screen, 230, screen.h - 180, Color.get(-1, 5, 5, 5));
 		}
 
 		// FISHING ROD STATUS
@@ -1067,20 +1085,20 @@ public class Game extends Canvas implements Runnable, ActionListener {
 			}
 		}
 		*/
-
-		//displays arrow icon
-		screen.render(11 * 8, screen.h - 17, 13 + 5 * 32, Color.get(-1, 111, 222, 430), 0);
-
+		
+		// This is the status icons, like health hearts, stamina bolts, and hunger burgers.
 		if (!ModeMenu.creative) {
 			for (int i = 0; i < 10; i++) {
 				int color;
-
+				
+				// renders your current red hearts, or black hearts for damaged health.
 				color = (i < player.health) ? Color.get(-1, 200, 500, 533) : Color.get(-1, 100, 000, 000);
 				screen.render(i * 8, screen.h - 16, 0 + 12 * 32, color, 0);
-
+				
+				
 				color = (i < player.hunger) ? Color.get(-1, 100, 530, 211) : Color.get(-1, 100, 000, 000);
 				screen.render(i * 8 + 208, screen.h - 16, 2 + 12 * 32, color, 0);
-
+				
 				color = (i < player.maxArmor) ? Color.get(-1, 333, 444, 555) : Color.get(-1, -1, -1, -1);
 				screen.render(i * 8 + 208, screen.h - 8, 3 + 12 * 32, color, 0);
 
@@ -1100,20 +1118,20 @@ public class Game extends Canvas implements Runnable, ActionListener {
 				else
 					screen.render(i * 8 + 208, screen.h - 8, 3 + 12 * 32, , 0);
 				*/
-
+				
 				if (player.staminaRechargeDelay > 0) {
-					color =
-							(player.staminaRechargeDelay / 4 % 2 == 0)
-									? Color.get(-1, 555, 000, 000)
-									: Color.get(-1, 110, 000, 000);
+					// creates the white/gray blinking effect when you run out of stamina.
+					color = (player.staminaRechargeDelay / 4 % 2 == 0) ?
+					  Color.get(-1, 555, 000, 000) : Color.get(-1, 110, 000, 000);
+					
 					screen.render(i * 8, screen.h - 8, 1 + 12 * 32, color, 0);
 					/*if (player.staminaRechargeDelay / 4 % 2 == 0)
 						screen.render(i * 8, screen.h - 8, 1 + 12 * 32, Color.get(-1, 555, 000, 000), 0);
 					else
 						screen.render(i * 8, screen.h - 8, 1 + 12 * 32, Color.get(-1, 110, 000, 000), 0);*/
 				} else {
-					color =
-							(i < player.stamina) ? Color.get(-1, 220, 550, 553) : Color.get(-1, 110, 000, 000);
+					// renders your current stamina, and uncharged gray stamina.
+					color = (i < player.stamina) ? Color.get(-1, 220, 550, 553) : Color.get(-1, 110, 000, 000);
 					screen.render(i * 8, screen.h - 8, 1 + 12 * 32, color, 0);
 					/*if (i < player.stamina)
 						screen.render(i * 8, screen.h - 8, 1 + 12 * 32, Color.get(-1, 220, 550, 553), 0);
@@ -1123,44 +1141,53 @@ public class Game extends Canvas implements Runnable, ActionListener {
 			}
 		}
 
-		if (player.activeItem != null) // shows item in bottom toolbar when in use.
-		player.activeItem.renderInventory(screen, 12 * 7, screen.h - 8);
+		if (player.activeItem != null) // shows active item sprite and name in bottom toolbar, if one exists.
+			player.activeItem.renderInventory(screen, 12 * 7, screen.h - 8);
 
 		if (menu != null) // renders menu, if present.
-		menu.render(screen);
+			menu.render(screen);
 	}
-
+	
+	/** Renders the "Click to focus" box when you click off the screen. */
 	private void renderFocusNagger() {
-		String msg = "Click to focus!";
+		String msg = "Click to focus!"; // the message when you click off the screen.
 		paused = true; //perhaps paused is only used for this.
-		int xx = Menu.centertext(msg);
-		int yy = (HEIGHT - 8) / 2;
-		int w = msg.length();
+		int xx = Menu.centertext(msg); // the width of the box
+		int yy = (HEIGHT - 8) / 2; // the height of the box
+		int w = msg.length(); // length of message in characters.
 		int h = 1;
 		int txtcolor = Color.get(-1, 1, 5, 445);
-
+		
+		// renders the four corners of the box
 		screen.render(xx - 8, yy - 8, 0 + 13 * 32, txtcolor, 0);
 		screen.render(xx + w * 8, yy - 8, 0 + 13 * 32, txtcolor, 1);
 		screen.render(xx - 8, yy + 8, 0 + 13 * 32, txtcolor, 2);
 		screen.render(xx + w * 8, yy + 8, 0 + 13 * 32, txtcolor, 3);
+		
+		// renders each part of the box...
 		for (int x = 0; x < w; x++) {
-			screen.render(xx + x * 8, yy - 8, 1 + 13 * 32, txtcolor, 0);
-			screen.render(xx + x * 8, yy + 8, 1 + 13 * 32, txtcolor, 2);
+			screen.render(xx + x * 8, yy - 8, 1 + 13 * 32, txtcolor, 0); // ...top part
+			screen.render(xx + x * 8, yy + 8, 1 + 13 * 32, txtcolor, 2); // ...bottom part
 		}
 		for (int y = 0; y < h; y++) {
-			screen.render(xx - 8, yy + y * 8, 2 + 13 * 32, txtcolor, 0);
-			screen.render(xx + w * 8, yy + y * 8, 2 + 13 * 32, txtcolor, 1);
+			screen.render(xx - 8, yy + y * 8, 2 + 13 * 32, txtcolor, 0); // ...left part
+			screen.render(xx + w * 8, yy + y * 8, 2 + 13 * 32, txtcolor, 1); // ...right part
 		}
-
-		if ((tickCount / 20) % 2 == 0) //? I wonder what this is for?
-		Font.draw(msg, screen, xx, yy, Color.get(5, 333, 333, 333));
-		else Font.draw(msg, screen, xx, yy, Color.get(5, 555, 555, 555));
+		
+		//renders the focus nagger text with a flash effect...
+		if ((tickCount / 20) % 2 == 0) // ...medium yellow color
+			Font.draw(msg, screen, xx, yy, Color.get(5, 333, 333, 333));
+		else // ...bright yellow color
+			Font.draw(msg, screen, xx, yy, Color.get(5, 555, 555, 555));
 	}
-
+	
+	/** This method is called when you interact with stairs, this will give you the transition effect. While changeLevel(int) just changes the level. */
 	public void scheduleLevelChange(int dir) {
+		// same as changeLevel(). Call scheduleLevelChange(1) if you want to go up 1 level,
+		// or call with -1 to go down by 1.
 		pendingLevelChange = dir;
 	}
-
+	
 	/// * The main method! * ///
 	public static void main(String[] args) {
 		Game game = new Game();
@@ -1169,19 +1196,20 @@ public class Game extends Canvas implements Runnable, ActionListener {
 		game.setPreferredSize(new Dimension(WIDTH * SCALE, HEIGHT * SCALE));
 		JFrame frame = new JFrame(Game.NAME);
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		frame.setLayout(new BorderLayout());
-		frame.add(game, BorderLayout.CENTER);
-		frame.pack();
-		frame.setResizable(false);
-		frame.setLocationRelativeTo(null);
+		frame.setLayout(new BorderLayout()); // sets the layout of the window
+		frame.add(game, BorderLayout.CENTER); // Adds the game (which is a canvas) to the center of the screen.
+		frame.pack(); //squishes everything into the preferredSize.
+		frame.setResizable(false); // prevents the user from resizing the window.
+		frame.setLocationRelativeTo(null); // the window will pop up in the middle of the screen when launched.
 		frame.setVisible(true);
 
-		game.start(); // Start the game!
+		game.start(); // Starts the game!
 	}
-
+	
+	/** This is called when the player has won the game, obviously. */
 	public void won() {
-		wonTimer = 60 * 3;
-		hasWon = true;
+		wonTimer = 60 * 3; // the pause time before the win menu shows up.
+		hasWon = true; //confirms that the player has, indeed, won the game.
 		// On win, stops the day-night cycle.
 		daytime.stop();
 		nighttime.stop();
@@ -1193,6 +1221,6 @@ public class Game extends Canvas implements Runnable, ActionListener {
 	@Override
 	public void actionPerformed(ActionEvent arg0) {
 		// TODO Auto-generated method stub
-
+		
 	}
 }
