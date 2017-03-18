@@ -34,7 +34,7 @@ public class StoneDoorOpenTile extends Tile {
 
 		if (level.dirtColor == 322) {
 
-			if (Game.Time == 0) {
+			if (Game.time == 0) {
 				int col = col0;
 				screen.render(x * 16 + 0, y * 16 + 0, 0 + 24 * 32, col, 0);
 				screen.render(x * 16 + 8, y * 16 + 0, 1 + 24 * 32, col, 0);
@@ -42,21 +42,21 @@ public class StoneDoorOpenTile extends Tile {
 				screen.render(x * 16 + 8, y * 16 + 8, 1 + 25 * 32, col, 0);
 			}
 		}
-		if (Game.Time == 1) {
+		if (Game.time == 1) {
 			int col = col1;
 			screen.render(x * 16 + 0, y * 16 + 0, 0 + 24 * 32, col, 0);
 			screen.render(x * 16 + 8, y * 16 + 0, 1 + 24 * 32, col, 0);
 			screen.render(x * 16 + 0, y * 16 + 8, 0 + 25 * 32, col, 0);
 			screen.render(x * 16 + 8, y * 16 + 8, 1 + 25 * 32, col, 0);
 		}
-		if (Game.Time == 2) {
+		if (Game.time == 2) {
 			int col = col2;
 			screen.render(x * 16 + 0, y * 16 + 0, 0 + 24 * 32, col, 0);
 			screen.render(x * 16 + 8, y * 16 + 0, 1 + 24 * 32, col, 0);
 			screen.render(x * 16 + 0, y * 16 + 8, 0 + 25 * 32, col, 0);
 			screen.render(x * 16 + 8, y * 16 + 8, 1 + 25 * 32, col, 0);
 		}
-		if (Game.Time == 3) {
+		if (Game.time == 3) {
 			int col = col3;
 			screen.render(x * 16 + 0, y * 16 + 0, 0 + 24 * 32, col, 0);
 			screen.render(x * 16 + 8, y * 16 + 0, 1 + 24 * 32, col, 0);

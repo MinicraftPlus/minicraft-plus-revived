@@ -45,7 +45,7 @@ public class StoneWallTile extends Tile {
 
 		if (level.dirtColor == 322) {
 
-			if (Game.Time == 0) {
+			if (Game.time == 0) {
 
 				int col = col0;
 				int transitionColor = col00;
@@ -88,7 +88,7 @@ public class StoneWallTile extends Tile {
 					screen.render(
 							x * 16 + 8, y * 16 + 8, (r ? 4 : 5) + (d ? 25 : 26) * 32, transitionColor, 3);
 			}
-			if (Game.Time == 1) {
+			if (Game.time == 1) {
 
 				int col = col1;
 				int transitionColor = col11;
@@ -131,7 +131,7 @@ public class StoneWallTile extends Tile {
 					screen.render(
 							x * 16 + 8, y * 16 + 8, (r ? 4 : 5) + (d ? 25 : 26) * 32, transitionColor, 3);
 			}
-			if (Game.Time == 2) {
+			if (Game.time == 2) {
 
 				int col = col2;
 				int transitionColor = col22;
@@ -174,7 +174,7 @@ public class StoneWallTile extends Tile {
 					screen.render(
 							x * 16 + 8, y * 16 + 8, (r ? 4 : 5) + (d ? 25 : 26) * 32, transitionColor, 3);
 			}
-			if (Game.Time == 3) {
+			if (Game.time == 3) {
 
 				int col = col3;
 				int transitionColor = col33;

@@ -32,7 +32,7 @@ public class GrassTile extends Tile {
 	public static int col33 = Color.get(10, 20, 30, 100);
 
 	public void render(Screen screen, Level level, int x, int y) {
-		if (Game.Time == 0) {
+		if (Game.time == 0) {
 			int col = col0;
 			int transitionColor = col00;
 
@@ -60,7 +60,7 @@ public class GrassTile extends Tile {
 			} else
 				screen.render(x * 16 + 8, y * 16 + 8, (r ? 13 : 12) + (d ? 2 : 1) * 32, transitionColor, 0);
 		}
-		if (Game.Time == 1) {
+		if (Game.time == 1) {
 
 			int col = col1;
 			int transitionColor = col11;
@@ -89,7 +89,7 @@ public class GrassTile extends Tile {
 			} else
 				screen.render(x * 16 + 8, y * 16 + 8, (r ? 13 : 12) + (d ? 2 : 1) * 32, transitionColor, 0);
 		}
-		if (Game.Time == 2) {
+		if (Game.time == 2) {
 
 			int col = col2;
 			int transitionColor = col22;
@@ -118,7 +118,7 @@ public class GrassTile extends Tile {
 			} else
 				screen.render(x * 16 + 8, y * 16 + 8, (r ? 13 : 12) + (d ? 2 : 1) * 32, transitionColor, 0);
 		}
-		if (Game.Time == 3) {
+		if (Game.time == 3) {
 
 			int col = col3;
 			int transitionColor = col33;

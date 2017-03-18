@@ -40,7 +40,7 @@ public class TreeTile extends Tile {
 	public static int col333 = Color.get(0, 10, 100, 20);
 
 	public void render(Screen screen, Level level, int x, int y) {
-		if (Game.Time == 0) {
+		if (Game.time == 0) {
 
 			int col = col0;
 			int barkCol1 = col00;
@@ -75,7 +75,7 @@ public class TreeTile extends Tile {
 			} else {
 				screen.render(x * 16 + 8, y * 16 + 8, 10 + 3 * 32, barkCol2, 0);
 			}
-		} else if (Game.Time == 2) {
+		} else if (Game.time == 2) {
 
 			int col = col2;
 			int barkCol1 = col22;
@@ -110,7 +110,7 @@ public class TreeTile extends Tile {
 			} else {
 				screen.render(x * 16 + 8, y * 16 + 8, 10 + 3 * 32, barkCol2, 0);
 			}
-		} else if (Game.Time == 1) {
+		} else if (Game.time == 1) {
 
 			int col = col1;
 			int barkCol1 = col11;
@@ -145,7 +145,7 @@ public class TreeTile extends Tile {
 			} else {
 				screen.render(x * 16 + 8, y * 16 + 8, 10 + 3 * 32, barkCol2, 0);
 			}
-		} else if (Game.Time == 3) {
+		} else if (Game.time == 3) {
 
 			int col = col3;
 			int barkCol1 = col33;

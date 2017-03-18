@@ -453,11 +453,11 @@ public class Player extends Mob {
 		if (ModeMenu.creative) {
 			//Oh-ho-ho!
 			if (input.getKey("dayTime").clicked) {
-				Game.Time = 0;
+				Game.time = 0;
 				Game.tickCount = 6000;
 			}
 			if (input.getKey("nightTime").clicked) {
-				Game.Time = 3;
+				Game.time = 3;
 				Game.tickCount = 54000;
 			}
 		}
@@ -707,7 +707,7 @@ public class Player extends Mob {
 		}
 
 		if (level.dirtColor == 322) {
-			if (Game.Time == 0) {
+			if (Game.time == 0) {
 				int col = col0;
 				if (hurtTime > 0) {
 					col = Color.get(-1, 555, 555, 555);
@@ -753,7 +753,7 @@ public class Player extends Mob {
 				}
 			}
 
-			if (Game.Time == 1) {
+			if (Game.time == 1) {
 				int col = col1;
 				if (hurtTime > 0) {
 					col = Color.get(-1, 555, 555, 555);
@@ -799,7 +799,7 @@ public class Player extends Mob {
 				}
 			}
 
-			if (Game.Time == 2) {
+			if (Game.time == 2) {
 				int col = col2;
 				if (hurtTime > 0) {
 					col = Color.get(-1, 555, 555, 555);
@@ -845,7 +845,7 @@ public class Player extends Mob {
 				}
 			}
 
-			if (Game.Time == 3) {
+			if (Game.time == 3) {
 				int col = col3;
 				if (hurtTime > 0) {
 					col = Color.get(-1, 555, 555, 555);

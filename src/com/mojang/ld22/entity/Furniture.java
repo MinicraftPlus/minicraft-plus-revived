@@ -38,25 +38,25 @@ public class Furniture extends Entity {
 
 	public void render(Screen screen) {
 
-		if (Game.Time == 0) {
+		if (Game.time == 0) {
 			screen.render(x - 8, y - 8 - 4, sprite * 2 + 8 * 32, col0, 0);
 			screen.render(x - 0, y - 8 - 4, sprite * 2 + 8 * 32 + 1, col0, 0);
 			screen.render(x - 8, y - 0 - 4, sprite * 2 + 8 * 32 + 32, col0, 0);
 			screen.render(x - 0, y - 0 - 4, sprite * 2 + 8 * 32 + 33, col0, 0);
 		}
-		if (Game.Time == 1) {
+		if (Game.time == 1) {
 			screen.render(x - 8, y - 8 - 4, sprite * 2 + 8 * 32, col1, 0);
 			screen.render(x - 0, y - 8 - 4, sprite * 2 + 8 * 32 + 1, col1, 0);
 			screen.render(x - 8, y - 0 - 4, sprite * 2 + 8 * 32 + 32, col1, 0);
 			screen.render(x - 0, y - 0 - 4, sprite * 2 + 8 * 32 + 33, col1, 0);
 		}
-		if (Game.Time == 2) {
+		if (Game.time == 2) {
 			screen.render(x - 8, y - 8 - 4, sprite * 2 + 8 * 32, col2, 0);
 			screen.render(x - 0, y - 8 - 4, sprite * 2 + 8 * 32 + 1, col2, 0);
 			screen.render(x - 8, y - 0 - 4, sprite * 2 + 8 * 32 + 32, col2, 0);
 			screen.render(x - 0, y - 0 - 4, sprite * 2 + 8 * 32 + 33, col2, 0);
 		}
-		if (Game.Time == 3) {
+		if (Game.time == 3) {
 			screen.render(x - 8, y - 8 - 4, sprite * 2 + 8 * 32, col3, 0);
 			screen.render(x - 0, y - 8 - 4, sprite * 2 + 8 * 32 + 1, col3, 0);
 			screen.render(x - 8, y - 0 - 4, sprite * 2 + 8 * 32 + 32, col3, 0);

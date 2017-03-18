@@ -31,19 +31,19 @@ public class SaplingTile extends Tile {
 
 		if (level.dirtColor == 322) {
 
-			if (Game.Time == 0) {
+			if (Game.time == 0) {
 				int col = col0;
 				screen.render(x * 16 + 4, y * 16 + 4, 11 + 3 * 32, col, 0);
 			}
-			if (Game.Time == 1) {
+			if (Game.time == 1) {
 				int col = col1;
 				screen.render(x * 16 + 4, y * 16 + 4, 11 + 3 * 32, col, 0);
 			}
-			if (Game.Time == 2) {
+			if (Game.time == 2) {
 				int col = col2;
 				screen.render(x * 16 + 4, y * 16 + 4, 11 + 3 * 32, col, 0);
 			}
-			if (Game.Time == 3) {
+			if (Game.time == 3) {
 				int col = col3;
 				screen.render(x * 16 + 4, y * 16 + 4, 11 + 3 * 32, col, 0);
 			}

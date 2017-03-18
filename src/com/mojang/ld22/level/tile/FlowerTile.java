@@ -28,7 +28,7 @@ public class FlowerTile extends GrassTile {
 	public void render(Screen screen, Level level, int x, int y) {
 		super.render(screen, level, x, y);
 
-		if (Game.Time == 0) {
+		if (Game.time == 0) {
 			int data = level.getData(x, y);
 			int shape = (data / 16) % 2;
 			int flowerCol = col0;
@@ -38,7 +38,7 @@ public class FlowerTile extends GrassTile {
 			if (shape == 1) screen.render(x * 16 + 0, y * 16 + 8, 1 + 1 * 32, flowerCol, 0);
 			if (shape == 0) screen.render(x * 16 + 8, y * 16 + 8, 1 + 1 * 32, flowerCol, 0);
 		}
-		if (Game.Time == 1) {
+		if (Game.time == 1) {
 			int data = level.getData(x, y);
 			int shape = (data / 16) % 2;
 			int flowerCol = col1;
@@ -48,7 +48,7 @@ public class FlowerTile extends GrassTile {
 			if (shape == 1) screen.render(x * 16 + 0, y * 16 + 8, 1 + 1 * 32, flowerCol, 0);
 			if (shape == 0) screen.render(x * 16 + 8, y * 16 + 8, 1 + 1 * 32, flowerCol, 0);
 		}
-		if (Game.Time == 2) {
+		if (Game.time == 2) {
 			int data = level.getData(x, y);
 			int shape = (data / 16) % 2;
 			int flowerCol = col2;
@@ -58,7 +58,7 @@ public class FlowerTile extends GrassTile {
 			if (shape == 1) screen.render(x * 16 + 0, y * 16 + 8, 1 + 1 * 32, flowerCol, 0);
 			if (shape == 0) screen.render(x * 16 + 8, y * 16 + 8, 1 + 1 * 32, flowerCol, 0);
 		}
-		if (Game.Time == 3) {
+		if (Game.time == 3) {
 			int data = level.getData(x, y);
 			int shape = (data / 16) % 2;
 			int flowerCol = col3;

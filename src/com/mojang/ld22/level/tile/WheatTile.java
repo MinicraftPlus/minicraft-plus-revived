@@ -45,7 +45,7 @@ public class WheatTile extends Tile {
 
 		if (level.dirtColor == 322) {
 
-			if (Game.Time == 0) {
+			if (Game.time == 0) {
 				int col = col0;
 				if (icon >= 3) {
 					col = col00;
@@ -60,7 +60,7 @@ public class WheatTile extends Tile {
 				screen.render(x * 16 + 0, y * 16 + 8, 4 + 3 * 32 + icon, col, 1);
 				screen.render(x * 16 + 8, y * 16 + 8, 4 + 3 * 32 + icon, col, 1);
 			}
-			if (Game.Time == 1) {
+			if (Game.time == 1) {
 				int col = col1;
 				if (icon >= 3) {
 					col = col11;
@@ -74,7 +74,7 @@ public class WheatTile extends Tile {
 				screen.render(x * 16 + 0, y * 16 + 8, 4 + 3 * 32 + icon, col, 1);
 				screen.render(x * 16 + 8, y * 16 + 8, 4 + 3 * 32 + icon, col, 1);
 			}
-			if (Game.Time == 2) {
+			if (Game.time == 2) {
 				int col = col2;
 				if (icon >= 3) {
 					col = col22;
@@ -88,7 +88,7 @@ public class WheatTile extends Tile {
 				screen.render(x * 16 + 0, y * 16 + 8, 4 + 3 * 32 + icon, col, 1);
 				screen.render(x * 16 + 8, y * 16 + 8, 4 + 3 * 32 + icon, col, 1);
 			}
-			if (Game.Time == 3) {
+			if (Game.time == 3) {
 				int col = col3;
 				if (icon >= 3) {
 					col = col33;

@@ -126,7 +126,7 @@ public class Snake extends Mob {
 		}
 
 		if (level.dirtColor == 322) {
-			if (Game.Time == 0) {
+			if (Game.time == 0) {
 				int col = col0;
 
 				if (lvl == 2) col = Color.get(-1, 000, 555, 220);
@@ -142,7 +142,7 @@ public class Snake extends Mob {
 				screen.render(xo + 8 * flip2, yo + 8, xt + (yt + 1) * 32, col, flip2);
 				screen.render(xo + 8 - 8 * flip2, yo + 8, xt + 1 + (yt + 1) * 32, col, flip2);
 			}
-			if (Game.Time == 1) {
+			if (Game.time == 1) {
 				int col = col1;
 
 				if (lvl == 2) col = Color.get(-1, 000, 555, 220);
@@ -158,7 +158,7 @@ public class Snake extends Mob {
 				screen.render(xo + 8 * flip2, yo + 8, xt + (yt + 1) * 32, col, flip2);
 				screen.render(xo + 8 - 8 * flip2, yo + 8, xt + 1 + (yt + 1) * 32, col, flip2);
 			}
-			if (Game.Time == 2) {
+			if (Game.time == 2) {
 				int col = col2;
 
 				if (lvl == 2) col = Color.get(-1, 000, 555, 220);
@@ -174,7 +174,7 @@ public class Snake extends Mob {
 				screen.render(xo + 8 * flip2, yo + 8, xt + (yt + 1) * 32, col, flip2);
 				screen.render(xo + 8 - 8 * flip2, yo + 8, xt + 1 + (yt + 1) * 32, col, flip2);
 			}
-			if (Game.Time == 3) {
+			if (Game.time == 3) {
 				int col = col3;
 
 				if (lvl == 2) col = Color.get(-1, 000, 555, 220);

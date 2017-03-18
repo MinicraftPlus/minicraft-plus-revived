@@ -27,7 +27,7 @@ public class StairsTile extends Tile {
 		}
 
 		if (level.dirtColor == 322)
-			if (Game.Time == 0) {
+			if (Game.time == 0) {
 				int color = col0;
 				int xt = 0;
 				if (leadsUp) xt = 2;
@@ -37,7 +37,7 @@ public class StairsTile extends Tile {
 				screen.render(x * 16 + 0, y * 16 + 8, xt + 3 * 32, color, 0);
 				screen.render(x * 16 + 8, y * 16 + 8, xt + 1 + 3 * 32, color, 0);
 			}
-		if (Game.Time == 1) {
+		if (Game.time == 1) {
 			int color = col1;
 			int xt = 0;
 			if (leadsUp) xt = 2;
@@ -47,7 +47,7 @@ public class StairsTile extends Tile {
 			screen.render(x * 16 + 0, y * 16 + 8, xt + 3 * 32, color, 0);
 			screen.render(x * 16 + 8, y * 16 + 8, xt + 1 + 3 * 32, color, 0);
 		}
-		if (Game.Time == 2) {
+		if (Game.time == 2) {
 			int color = col2;
 			int xt = 0;
 			if (leadsUp) xt = 2;
@@ -57,7 +57,7 @@ public class StairsTile extends Tile {
 			screen.render(x * 16 + 0, y * 16 + 8, xt + 3 * 32, color, 0);
 			screen.render(x * 16 + 8, y * 16 + 8, xt + 1 + 3 * 32, color, 0);
 		}
-		if (Game.Time == 3) {
+		if (Game.time == 3) {
 			int color = col3;
 			int xt = 0;
 			if (leadsUp) xt = 2;

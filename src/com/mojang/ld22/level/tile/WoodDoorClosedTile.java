@@ -34,7 +34,7 @@ public class WoodDoorClosedTile extends Tile {
 
 		if (level.dirtColor == 322) {
 
-			if (Game.Time == 0) {
+			if (Game.time == 0) {
 
 				int col = col0;
 				screen.render(x * 16 + 0, y * 16 + 0, 2 + 22 * 32, col, 0);
@@ -42,7 +42,7 @@ public class WoodDoorClosedTile extends Tile {
 				screen.render(x * 16 + 0, y * 16 + 8, 2 + 23 * 32, col, 0);
 				screen.render(x * 16 + 8, y * 16 + 8, 3 + 23 * 32, col, 0);
 			}
-			if (Game.Time == 1) {
+			if (Game.time == 1) {
 
 				int col = col1;
 				screen.render(x * 16 + 0, y * 16 + 0, 2 + 22 * 32, col, 0);
@@ -50,7 +50,7 @@ public class WoodDoorClosedTile extends Tile {
 				screen.render(x * 16 + 0, y * 16 + 8, 2 + 23 * 32, col, 0);
 				screen.render(x * 16 + 8, y * 16 + 8, 3 + 23 * 32, col, 0);
 			}
-			if (Game.Time == 2) {
+			if (Game.time == 2) {
 
 				int col = col2;
 				screen.render(x * 16 + 0, y * 16 + 0, 2 + 22 * 32, col, 0);
@@ -58,7 +58,7 @@ public class WoodDoorClosedTile extends Tile {
 				screen.render(x * 16 + 0, y * 16 + 8, 2 + 23 * 32, col, 0);
 				screen.render(x * 16 + 8, y * 16 + 8, 3 + 23 * 32, col, 0);
 			}
-			if (Game.Time == 3) {
+			if (Game.time == 3) {
 
 				int col = col3;
 				screen.render(x * 16 + 0, y * 16 + 0, 2 + 22 * 32, col, 0);

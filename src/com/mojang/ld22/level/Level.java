@@ -525,7 +525,7 @@ public class Level {
 			int lvl = random.nextInt(maxLevel - minLevel + 1) + minLevel;
 			int levels = depth;
 			int rnd = random.nextInt(100);
-			int tim = Game.Time;
+			int tim = Game.time;
 
 			if (levels == 0) {
 				if (tim > 2) {

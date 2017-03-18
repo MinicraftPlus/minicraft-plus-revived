@@ -39,7 +39,7 @@ public class WaterTile extends Tile {
 		int col444 = Color.get(3, 105, 440, 550);
 
 		if (level.dirtColor == 322)
-			if (Game.Time == 0) {
+			if (Game.time == 0) {
 
 				wRandom.setSeed(
 						(tickCount + (x / 2 - y) * 4311) / 10 * 54687121l + x * 3271612l + y * 3412987161l);
@@ -96,7 +96,7 @@ public class WaterTile extends Tile {
 							(sd || sr) ? transitionColor2 : transitionColor1,
 							0);
 			}
-		if (Game.Time == 1) {
+		if (Game.time == 1) {
 
 			wRandom.setSeed(
 					(tickCount + (x / 2 - y) * 4311) / 10 * 54687121l + x * 3271612l + y * 3412987161l);
@@ -153,7 +153,7 @@ public class WaterTile extends Tile {
 						(sd || sr) ? transitionColor2 : transitionColor1,
 						0);
 		}
-		if (Game.Time == 2) {
+		if (Game.time == 2) {
 
 			wRandom.setSeed(
 					(tickCount + (x / 2 - y) * 4311) / 10 * 54687121l + x * 3271612l + y * 3412987161l);
@@ -210,7 +210,7 @@ public class WaterTile extends Tile {
 						(sd || sr) ? transitionColor2 : transitionColor1,
 						0);
 		}
-		if (Game.Time == 3) {
+		if (Game.time == 3) {
 
 			wRandom.setSeed(
 					(tickCount + (x / 2 - y) * 4311) / 10 * 54687121l + x * 3271612l + y * 3412987161l);

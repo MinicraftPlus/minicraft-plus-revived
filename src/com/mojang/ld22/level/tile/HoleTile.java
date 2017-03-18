@@ -36,7 +36,7 @@ public class HoleTile extends Tile {
 		int col444 = Color.get(3, 111, 440, 550);
 
 		if (level.dirtColor == 322)
-			if (Game.Time == 0) {
+			if (Game.time == 0) {
 
 				int col = col0;
 				int transitionColor1 = col00;
@@ -91,7 +91,7 @@ public class HoleTile extends Tile {
 							(sd || sr) ? transitionColor2 : transitionColor1,
 							0);
 			}
-		if (Game.Time == 1) {
+		if (Game.time == 1) {
 
 			int col = col1;
 			int transitionColor1 = col11;
@@ -146,7 +146,7 @@ public class HoleTile extends Tile {
 						(sd || sr) ? transitionColor2 : transitionColor1,
 						0);
 		}
-		if (Game.Time == 2) {
+		if (Game.time == 2) {
 
 			int col = col2;
 			int transitionColor1 = col22;
@@ -201,7 +201,7 @@ public class HoleTile extends Tile {
 						(sd || sr) ? transitionColor2 : transitionColor1,
 						0);
 		}
-		if (Game.Time == 3) {
+		if (Game.time == 3) {
 
 			int col = col3;
 			int transitionColor1 = col33;
