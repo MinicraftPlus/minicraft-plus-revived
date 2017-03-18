@@ -5,8 +5,12 @@ import com.mojang.ld22.gfx.Font;
 import com.mojang.ld22.gfx.Screen;
 
 public class WonMenu extends Menu {
-	private int inputDelay = 0;
-
+	private int inputDelay = 0; // variable to delay the input of the player, so they won't skip the won menu the first second.
+		//except... now they will.
+	
+	/* WonMenu & DeadMenu are very similar... scratch that, the exact same class with text changes. */
+		//i.e, see deadmenu for comments.
+	
 	public WonMenu() {}
 
 	public void tick() {

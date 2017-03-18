@@ -1,3 +1,4 @@
+//mostly new... fewer comments.
 package com.mojang.ld22.screen;
 
 import com.mojang.ld22.gfx.Color;
@@ -10,7 +11,7 @@ public class TitleMenu extends Menu {
 	private int selected = 0;
 	protected final Random random = new Random();
 
-	private static final String[] options = {"New game", "Tutorial", "Options", "About", "Quit"};
+	private static final String[] options = {"New game", "Tutorial", "Options", "About", "Quit"}; // Options that are on the main menu.
 	public static boolean sentFromMenu;
 	int randcount = 60;
 	int rand = random.nextInt(randcount);
@@ -63,18 +64,21 @@ public class TitleMenu extends Menu {
 			if (selected == 4) System.exit(0);
 		}
 	}
-
+	
+	/* This section is used to display the minicraft title */
+	
 	public void render(Screen screen) {
 		screen.clear(0);
 		String splash;
-		int h = 2;
-		int w = 15;
+		int h = 2; // Height of squares (on the spritesheet)
+		int w = 15; // Width of squares (on the spritesheet)
 		int xx = 55;
 		int titleColor = Color.get(0, 010, 131, 551);
-		int xo = (screen.w - w * 8) / 2;
-		int yo = 36;
+		int xo = (screen.w - w * 8) / 2; // X location of the title
+		int yo = 36; // Y location of the title
 		int cols = Color.get(0, 550, 550, 550);
-
+		
+		//The fun little messages that pop up.
 		String[] splashes = {
 			"Also play InfinityTale!",
 			"Also play Minicraft Delux!",
@@ -144,13 +148,14 @@ public class TitleMenu extends Menu {
 				screen.render(xo + x * 8, yo + y * 8, x + (y + 6) * 32, titleColor, 0);
 			}
 		}
-
+		
+		/* This section is used to display this options on the screen */
 		for (int i = 0; i < options.length; i++) {
 			String msg = options[i];
-			int col = Color.get(0, 222, 222, 222);
-			if (i == selected) {
-				msg = "> " + msg + " <";
-				col = Color.get(0, 555, 555, 555);
+			int col = Color.get(0, 222, 222, 222); // Color of unselected text
+			if (i == selected) { //if current option is selected...
+				msg = "> " + msg + " <"; // Add the cursors to the sides of the message
+				col = Color.get(0, 555, 555, 555); //make it selected color
 			}
 			Font.draw(msg, screen, (screen.w - msg.length() * 8) / 2, (11 + i) * 8, col);
 		}
