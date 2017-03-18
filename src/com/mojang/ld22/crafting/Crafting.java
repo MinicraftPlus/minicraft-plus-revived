@@ -20,6 +20,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class Crafting {
+	// lists that contain all their respective recipes:
 	public static final List<Recipe> anvilRecipes = new ArrayList<Recipe>();
 	public static final List<Recipe> ovenRecipes = new ArrayList<Recipe>();
 	public static final List<Recipe> furnaceRecipes = new ArrayList<Recipe>();
@@ -28,7 +29,8 @@ public class Crafting {
 	public static final List<Recipe> enchantRecipes = new ArrayList<Recipe>();
 	public static final List<Recipe> craftRecipes = new ArrayList<Recipe>();
 	public static final List<Recipe> loomRecipes = new ArrayList<Recipe>();
-
+	
+	// just adding recipes...
 	static {
 		try {
 			if (ModeMenu.creative) {
