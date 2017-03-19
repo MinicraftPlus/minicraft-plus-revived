@@ -1,15 +1,11 @@
 	####BUGS####
 ####
-Player Camera doesn't go out all the way to the edge. 
-####
 dungeon chests are sort of half-implemented at the moment; their keys don't seem to be a thing. That needs to be fixed.
 ####
 Sound effects don't always play when they should; mostly it seems when other sounds should be on at the same time.
 ####
 
 	****IDEAS****
-****
-Implement potions!
 ****
 Get AirWizard II working, including the health bar being local.
 ****
