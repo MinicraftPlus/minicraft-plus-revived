@@ -1,7 +1,5 @@
 package com.mojang.ld22.level.tile;
 
-import java.util.Random;
-
 import com.mojang.ld22.entity.Entity;
 import com.mojang.ld22.entity.Mob;
 import com.mojang.ld22.entity.Player;
@@ -9,18 +7,20 @@ import com.mojang.ld22.gfx.Screen;
 import com.mojang.ld22.item.Item;
 import com.mojang.ld22.item.resource.Resource;
 import com.mojang.ld22.level.Level;
+import java.util.Random;
 
 public class Tile {
-	public static int tickCount = 0;
+	public static int tickCount = 0; //A global tickCount used in the Lava & water tiles.
 	protected Random random = new Random();
-	
+
 	public static Tile[] tiles = new Tile[256];
-	public static Tile grass = new GrassTile(0);
+	public static Tile grass = new GrassTile(0); // creates a grass tile with the Id of 0, (I don't need to explain the other simple ones)
 	public static Tile rock = new RockTile(1);
 	public static Tile water = new WaterTile(2);
 	public static Tile flower = new FlowerTile(3);
 	public static Tile tree = new TreeTile(4);
 	public static Tile dirt = new DirtTile(5);
+	//wool
 	public static Tile wool = new WoolTile(41);
 	public static Tile redwool = new WoolRedTile(42);
 	public static Tile bluewool = new WoolBlueTile(43);
@@ -32,7 +32,7 @@ public class Tile {
 	public static Tile hole = new HoleTile(8);
 	public static Tile treeSapling = new SaplingTile(9, grass, tree);
 	public static Tile cactusSapling = new SaplingTile(10, sand, cactus);
-	public static Tile farmland = new FarmTile(11);
+	public static Tile farmland = new FarmTile(11); // farmland (tilled dirt)
 	public static Tile wheat = new WheatTile(12);
 	public static Tile lava = new LavaTile(13);
 	public static Tile stairsDown = new StairsTile(14, false);
@@ -53,7 +53,7 @@ public class Tile {
 	public static Tile odc = new ObsidianDoorClosedTile(122);
 	public static Tile odo = new ObsidianDoorOpenTile(123);
 	public static Tile hardRock = new HardRockTile(18);
-	
+	//light versions
 	public static Tile lightgrass = new LightTile(100, grass, 0);
 	public static Tile lightsand = new LightTile(101, sand, 1);
 	public static Tile lighttree = new LightTile(102, tree, 2);
@@ -81,7 +81,7 @@ public class Tile {
 	public static Tile lighto = new LightTile(63, o, 24);
 	public static Tile lightts = new LightTile(64, treeSapling, 25);
 	public static Tile lightcs = new LightTile(65, cactusSapling, 26);
-	
+
 	public static Tile torchgrass = new TorchTile(44, lightgrass);
 	public static Tile torchsand = new TorchTile(40, lightsand);
 	public static Tile torchdirt = new TorchTile(46, lightdirt);
@@ -94,16 +94,16 @@ public class Tile {
 	public static Tile torchwoolgreen = new TorchTile(53, lightgwool);
 	public static Tile torchwoolyellow = new TorchTile(54, lightywool);
 	public static Tile torchwoolblack = new TorchTile(55, lightblwool);
-	
+
 	public static Tile ironOre = new OreTile(19, Resource.ironOre);
 	public static Tile lapisOre = new OreTile(24, Resource.lapisOre);
 	public static Tile goldOre = new OreTile(20, Resource.goldOre);
 	public static Tile gemOre = new OreTile(21, Resource.gem);
-	public static Tile cloudCactus = new CloudCactusTile(22);
-	public static Tile infiniteFall = new InfiniteFallTile(16);
-	
+	public static Tile cloudCactus = new CloudCactusTile(22); // "ore" in the sky.
+	public static Tile infiniteFall = new InfiniteFallTile(16); // Air tile in the sky.
+
 	public final byte id;
-	
+
 	public boolean connectsToGrass = false;
 	public boolean connectsToSand = false;
 	public boolean connectsToLava = false;
@@ -112,42 +112,46 @@ public class Tile {
 	
 	public Tile(int id) {
 		this.id = (byte) id;
-		if (tiles[id] != null) throw new RuntimeException("Duplicate tile ids!");
+		if (tiles[id] != null) throw new RuntimeException("Duplicate tile ids!"); // You cannot have over-lapping ids
 		tiles[id] = this;
 	}
 	
-	public String setDataChar(){
+	public String setDataChar() {
 		return null;
 	}
 	
-	public void render(Screen screen, Level level, int x, int y) {
-	}
+	/** Render method, used in sub-classes */
+	public void render(Screen screen, Level level, int x, int y) {}
 	
+	/** Returns if the player can walk on it, overrides in sub-classes  */
 	public boolean mayPass(Level level, int x, int y, Entity e) {
 		return true;
 	}
-	
+
 	public boolean canLight() {
 		return false;
 	}
 	
-	
+	/** Gets the light radius of a tile, Bigger number = bigger circle */
 	public int getLightRadius(Level level, int x, int y) {
 		return 0;
 	}
 	
-	public void hurt(Level level, int x, int y, Mob source, int dmg, int attackDir) {
-	}
+	public void hurt(Level level, int x, int y, Mob source, int dmg, int attackDir) {}
 	
+	/** What happens when you run into the tile (ex: run into a cactus) */
 	public void bumpedInto(Level level, int xt, int yt, Entity entity) {
 	}
 	
+	/** Update method */
 	public void tick(Level level, int xt, int yt) {
 	}
 	
+	/** What happens when you are inside the tile (ex: lava) */
 	public void steppedOn(Level level, int xt, int yt, Entity entity) {
 	}
 	
+	/** What happens when you hit an item on a tile (ex: Pickaxe on rock) */
 	public boolean interact(Level level, int xt, int yt, Player player, Item item, int attackDir) {
 		return false;
 	}
@@ -156,6 +160,7 @@ public class Tile {
 		return false;
 	}
 	
+	/** Sees if the tile connects to Water or Lava. */
 	public boolean connectsToLiquid() {
 		return connectsToWater || connectsToLava;
 	}

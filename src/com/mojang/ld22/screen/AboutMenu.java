@@ -5,20 +5,22 @@ import com.mojang.ld22.gfx.Font;
 import com.mojang.ld22.gfx.Screen;
 
 public class AboutMenu extends Menu {
-	private Menu parent;
+	private Menu parent; // Creates a parent object to go back to
 	
+	/** The about menu is a read menu about what the game was made for. Only contains text and a black background */
 	public AboutMenu(Menu parent) {
 		this.parent = parent;
 	}
-	
+
 	public void tick() {
 		if (input.getKey("escape").clicked || input.getKey("enter").clicked) {
-			game.setMenu(parent);
+			game.setMenu(parent); //goes back to parent if either above button is pressed
 		}
 	}
 	
+	/** Renders the text on the screen */
 	public void render(Screen screen) {
-		screen.clear(0);
+		screen.clear(0); // clears the screen to make it black.
 		
 		Font.draw("About MinicraftPlus", screen, 8 * 8 + 4, 1 * 8, Color.get(0, 555, 555, 555));
 		Font.draw("Moded by David.b and +Dillyg10+", screen, 2 * 8 + 4, 3 * 8, Color.get(0, 333, 333, 333));
@@ -28,4 +30,3 @@ public class AboutMenu extends Menu {
 		Font.draw("for ludum dare 22 competition.", screen, 2 * 8 + 4, 9 * 8, Color.get(0, 333, 333, 333));
 	}
 }
-	

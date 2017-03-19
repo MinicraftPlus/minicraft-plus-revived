@@ -15,7 +15,7 @@ The idea is to sort of merge the decompiled code of 1.8 with this code, since th
 #### Current Bugs / Quick Fixes:
 
 * Sound effect don't always play when they should.
-* beds, and dungeon chests, are sort of half-implemented at the moment.
+* Potions are a big point now.
 * Clean up and simplify the code in various java files to make them both easier to follow and easier to develop.
 * I have a system in place to save custom key controls, but lack the menu to edit them... I need to get that fixed.
 

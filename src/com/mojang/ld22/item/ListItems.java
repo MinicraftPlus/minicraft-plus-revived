@@ -21,7 +21,7 @@ import com.mojang.ld22.entity.Snake;
 import com.mojang.ld22.entity.Tnt;
 import com.mojang.ld22.entity.Workbench;
 import com.mojang.ld22.entity.Zombie;
-import com.mojang.ld22.entity.bed;
+import com.mojang.ld22.entity.Bed;
 import com.mojang.ld22.item.BucketItem;
 import com.mojang.ld22.item.BucketLavaItem;
 import com.mojang.ld22.item.BucketWaterItem;
@@ -62,7 +62,7 @@ public class ListItems {
 	public Item enchanter = (new FurnitureItem(new Enchanter())).addItem();
 	public Item loom = (new FurnitureItem(new Loom())).addItem();
 	public Item tnt = (new FurnitureItem(new Tnt())).addItem();
-	public Item bed = (new FurnitureItem(new bed())).addItem();
+	public Item Bed = (new FurnitureItem(new Bed())).addItem();
 	public Item bucket = (new BucketItem()).addItem();
 	public Item wbucket = (new BucketWaterItem()).addItem();
 	public Item lbucket = (new BucketLavaItem()).addItem();
