@@ -65,7 +65,7 @@ public class ModeMenu extends Menu {
 		screen.clear(0);
 
 		//centerx = 60
-		Font.draw("Game Mode:	" + modes[mode - 1], screen, 60, 8 * 8, Color.get(-1, 555, 555, 555));
+		Font.draw("Game Mode:	" + modes[mode - 1], screen, 65, 8 * 8, Color.get(-1, 555, 555, 555));
 
 		drawCentered("Press Enter to Start", screen, screen.h - 75, textCol);
 

@@ -46,6 +46,10 @@ public class Screen {
 			pixels[i] = color; // turns each pixel into a single color (clearing the screen!)
 	}
 	
+	public int centertext(String text) {
+		return (w - text.length() * 8) / 2;
+	}
+	
 	/*
 	 * public void renderBackground() { for (int yt = yScroll >> 3; yt <= (yScroll + h) >> 3; yt++) { int yp = yt * 8 - yScroll; for (int xt = xScroll >> 3; xt <= (xScroll + w) >> 3; xt++) { int xp = xt * 8 - xScroll; int ti = (xt & (MAP_WIDTH_MASK)) + (yt & (MAP_WIDTH_MASK)) * MAP_WIDTH; render(xp, yp, tiles[ti], colors[ti], databits[ti]); } }
 	 *
@@ -62,7 +66,7 @@ public class Screen {
 
 		int xTile = tile % 32; // gets x position of the tile
 		int yTile = tile / 32; // gets y position
-		int toffs = xTile * 8 + yTile * 8 * sheet.width; // Get's the offset, the 8's represent the size of the tile. (8 by 8 pixels)
+		int toffs = xTile * 8 + yTile * 8 * sheet.width; // Gets the offset, the 8's represent the size of the tile. (8 by 8 pixels)
 
 		for (int y = 0; y < 8; y++) { // Loops 8 times (because of the height of the tile)
 			int ys = y; // current y pixel

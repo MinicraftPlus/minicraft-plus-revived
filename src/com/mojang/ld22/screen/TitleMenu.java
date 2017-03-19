@@ -169,9 +169,8 @@ public class TitleMenu extends Menu {
 		drawCentered(splashes[rand], screen, 60, cols);
 
 		drawCentered("(Arrow keys to move)", screen, screen.h - 25, Color.get(0, 111, 111, 111));
-		drawCentered(
-				"(Enter to accept, Escape to return)", screen, screen.h - 15, Color.get(0, 111, 111, 111));
-
+		drawCentered("(Enter to accept, Escape to return)", screen, screen.h - 15, Color.get(0, 111, 111, 111));
+		
 		Font.draw("Version 1.6-1.8 (updating)", screen, 1, screen.h - 190, Color.get(0, 111, 111, 111));
 	}
 }

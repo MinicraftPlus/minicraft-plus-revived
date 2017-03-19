@@ -111,7 +111,7 @@ public class InputHandler implements MouseListener, KeyListener {
 			// If the specified key does not yet exist in keyboard, then create a new Key, and put it there.
 			key = new Key(); //make new key
 			keyboard.put(keytext, key); //add it to keyboard
-			System.out.println("Added new key: \'" + keytext + "\'"); //log to console that a new key was added to the keyboard
+			//System.out.println("Added new key: \'" + keytext + "\'"); //log to console that a new key was added to the keyboard
 		}
 		
 		return key; // return the Key object.

@@ -260,12 +260,8 @@ public class Game extends Canvas implements Runnable, ActionListener {
 			if (System.currentTimeMillis() - lastTimer1 > 1000) { //updates every 1 second
 				lastTimer1 += 1000; // adds a second to the timer
 				//System.out.println(ticks + " ticks, " + frames + " fps");
-				Font.draw(
-						ticks + " ticks, " + frames + " fps",
-						screen,
-						screen.w,
-						screen.h,
-						Color.get(0, 555, 555, 555));
+				Font.draw(ticks + " ticks, " + frames + " fps",
+				  screen, screen.w, screen.h, Color.get(0, 555, 555, 555));
 				fra = frames; //saves total frames in last second
 				tik = ticks; //saves total ticks in last second
 				frames = 0; //resets frames
@@ -837,41 +833,34 @@ public class Game extends Canvas implements Runnable, ActionListener {
 	
 	/** Renders the main game GUI (hearts, Stamina bolts, name of the current item, etc.) */
 	private void renderGui() {
-		// need to figure out this part.
-		int xfps;
+		//need to figure this part out.
+		int xfps; // game fps?
 		int txlevel;
 		for (xfps = 0; xfps < 2; xfps++) {
 			for (txlevel = 0; txlevel < 29; txlevel++) {
 				screen.render(txlevel * 7, screen.h - 16 + xfps * 8, 384, Color.get(-1, -1, -1, -1), 0);
 			}
 		}
-
+		
 		for (xfps = 1; xfps < 2; xfps++) {
 			for (txlevel = 12; txlevel < 29; txlevel++) {
 				screen.render(txlevel * 7, screen.h - 16 + xfps * 8, 32, Color.get(0, 0, 0, 0), 0);
 			}
 		}
-
+		/* this seems like a duplicate.
 		for (xfps = 1; xfps < 2; xfps++) {
 			for (txlevel = 12; txlevel < 14; txlevel++) {
 				screen.render(txlevel * 7, screen.h - 16 + xfps * 8, 32, Color.get(0, 0, 0, 0), 0);
 			}
 		}
-
+		*/
 		if (saving) {
 			//System.out.println("SAVING GAME...");
-			Font.draw(
-					"Saving... " + LoadingMenu.percentage + "%",
-					screen,
-					screen.w / 2 - ("Saving... " + LoadingMenu.percentage + "%").length() * 4 + 1,
-					screen.h / 2 - 32 + 1,
-					Color.get(-1, 111, 111, 111));
-			Font.draw(
-					"Saving... " + LoadingMenu.percentage + "%",
-					screen,
-					screen.w / 2 - ("Saving... " + LoadingMenu.percentage + "%").length() * 4,
-					screen.h / 2 - 32,
-					Color.get(-1, 4, 4, 4));
+			String loadingText = "Saving... " + LoadingMenu.percentage + "%";
+			int xPos = screen.centertext(loadingText);
+			/*screen.w / 2 - loadingText.length() * 4*/
+			Font.draw(loadingText, screen, xPos+1, screen.h / 2 - 32+1, Color.get(-1, 111, 111, 111));
+			Font.draw(loadingText, screen, xPos, screen.h / 2 - 32, Color.get(-1, 4, 4, 4));
 		}
 		
 		xfps = fra; //aha! fra is used to determine the fps!

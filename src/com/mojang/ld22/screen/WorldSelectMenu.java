@@ -115,11 +115,11 @@ public class WorldSelectMenu extends Menu {
 				world = new File(location + "/" + worldnames.get(worldselected));
 				System.out.println(world);
 				File[] list = world.listFiles();
-
+				
 				for (int i = 0; i < list.length; i++) {
 					list[i].delete();
 				}
-
+				
 				world.delete();
 				createworld = false;
 				loadworld = false;
@@ -147,7 +147,7 @@ public class WorldSelectMenu extends Menu {
 		}
 
 		if (input.getKey("d").clicked && !rename && !createworld) { //toggle delete world mode
-			System.out.println("toggle delete");
+			//System.out.println("toggle delete");
 			delete = !delete;
 		}
 
@@ -189,7 +189,7 @@ public class WorldSelectMenu extends Menu {
 		if (!createworld && !loadworld) {
 			//this executes at first, before you choose load or save
 			if (input.getKey("enter").clicked) {
-				System.out.println(selected);
+				//System.out.println(selected);
 				if (selected == 0) {
 					loadworld = true;
 					createworld = false;
@@ -215,29 +215,28 @@ public class WorldSelectMenu extends Menu {
 		screen.clear(0);
 		int col;
 		if (!createworld && !loadworld) {
-			byte var6 = 2;
-
-			for (col = 0; col < var6; col++) {
+			byte numOptions = 2;
+			
+			for (col = 0; col < numOptions; col++) {
 				if (fw || col != 0) {
-					String var7 = options[col];
+					String curOption = options[col];
 					int col1 = Color.get(0, 222, 222, 222);
 					if (col == selected) {
-						var7 = "> " + var7 + " <";
+						curOption = "> " + curOption + " <";
 						col1 = Color.get(0, 555, 555, 555);
 					}
-
+					
 					if (!fw) {
-						drawCentered(var7, screen, 80, col1);
+						drawCentered(curOption, screen, 80, col1);
 					} else {
-						drawCentered(var7, screen, 80 + col * 12, col1);
+						drawCentered(curOption, screen, 80 + col * 12, col1);
 					}
 				}
 			}
-
+			
 			drawCentered("Arrow keys to move", screen, screen.h - 170, Color.get(0, 444, 444, 444));
 			drawCentered("Enter to confirm", screen, screen.h - 60, Color.get(0, 444, 444, 444));
-			drawCentered(
-					"Esc to go back to the title screen", screen, screen.h - 40, Color.get(0, 444, 444, 444));
+			drawCentered("Esc to go back to the title screen", screen, screen.h - 40, Color.get(0, 444, 444, 444));
 		} else {
 			String msg;
 			if (createworld && !loadworld) {
@@ -255,7 +254,7 @@ public class WorldSelectMenu extends Menu {
 						drawCentered("Name cannot be blank!", screen, 125, wncol);
 					}
 				}
-
+				
 				drawCentered("Press Enter to create", screen, 162, col);
 				drawCentered("Press Esc to cancel", screen, 172, col);
 			} else if (!createworld && loadworld) {
@@ -266,7 +265,7 @@ public class WorldSelectMenu extends Menu {
 					msg = "Delete World!";
 					col = Color.get(-1, 500, 500, 500);
 				}
-
+				
 				if (worldnames.size() > 0) {
 					drawCentered(msg, screen, 20, col);
 					drawCentered(worldnames.get(worldselected), screen, 80, col);
@@ -292,11 +291,7 @@ public class WorldSelectMenu extends Menu {
 				if (!delete && !rename) {
 					drawCentered("Arrow keys to move", screen, screen.h - 44, Color.get(0, 444, 444, 444));
 					drawCentered("Enter to confirm", screen, screen.h - 32, Color.get(0, 444, 444, 444));
-					drawCentered(
-							"Esc to go back to the title screen",
-							screen,
-							screen.h - 20,
-							Color.get(0, 444, 444, 444));
+					drawCentered("Esc to go back to the title screen", screen, screen.h - 20, Color.get(0, 444, 444, 444));
 					drawCentered("D to delete a world", screen, screen.h - 70, Color.get(0, 400, 400, 400));
 					drawCentered("R to rename world", screen, screen.h - 60, Color.get(0, 40, 40, 40));
 				} else if (delete) {
