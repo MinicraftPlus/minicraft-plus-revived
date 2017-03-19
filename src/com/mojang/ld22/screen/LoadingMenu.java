@@ -18,6 +18,7 @@ public class LoadingMenu extends Menu implements ActionListener {
 
 	public LoadingMenu() {
 		t = new Timer(400, this);
+		percentage = 0;
 	}
 
 	public void tick() {
@@ -26,6 +27,7 @@ public class LoadingMenu extends Menu implements ActionListener {
 
 	public void actionPerformed(ActionEvent e) {
 		//something MUST call this... but what?
+			//must be in another class.
 		game.resetstartGame();
 		game.setMenu(null);
 		t.stop();
@@ -35,10 +37,10 @@ public class LoadingMenu extends Menu implements ActionListener {
 		int col = Color.get(0, 300, 300, 300);
 		int coll = Color.get(0, 555, 555, 555);
 		screen.clear(0);
-
-		Font.draw("Loading...", screen, 110, screen.h - 105, col);
+		
+		writeCentered("Loading...", screen, screen.h - 105, col);
 		//Font.draw("This should take 4 seconds or less", screen, 10, screen.h - 185, coll);
 		//Font.draw("If not then restart because it froze", screen, 0, screen.h - 175, coll);
-		Font.draw(percentage + "%", screen, centertext(percentage + "%"), screen.h - 85, col);
+		writeCentered(percentage + "%", screen, screen.h - 85, col);
 	}
 }

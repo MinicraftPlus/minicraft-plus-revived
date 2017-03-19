@@ -325,7 +325,7 @@ public class Game extends Canvas implements Runnable, ActionListener {
 		
 		// "shudrespawn" returns false if on hardcore, or making a new world. if true, it keeps your world and spawn pos
 		if (DeadMenu.shudrespawn) { // respawn, don't regenerate level.
-			//System.out.print("Current Level = " + currentLevel + "																					 ");
+			//System.out.println("Current Level = " + currentLevel + "																					 ");
 			//currentLevel = 3;
 			level = levels[currentLevel];
 			player.respawn(level);
@@ -389,12 +389,13 @@ public class Game extends Canvas implements Runnable, ActionListener {
 				var6.printStackTrace();
 			}
 		}
-
+		
 		//This should replace that massive thing below...
+		LoadingMenu.percentage = 0;
 		for (int i = 5; i >= 0; i--) {
-			if (!WorldSelectMenu.loadworld) LoadingMenu.percentage = 0;
+			if (!WorldSelectMenu.loadworld) LoadingMenu.percentage = (5-i)*20;
 			else LoadingMenu.percentage += 5; //just make sure they think something is happening... ;D
-
+			
 			levels[(i - 1 < 0 ? 5 : i - 1)] =
 					new Level(this.worldSize, this.worldSize, i - 4, (i == 5 ? (Level) null : levels[i]));
 		}
@@ -449,10 +450,11 @@ public class Game extends Canvas implements Runnable, ActionListener {
 		}
 		
 		LoadingMenu.percentage = 0;
+		/* already taken care of in Player.java
 		if (!ModeMenu.creative) {// survival inventory only
-			this.player.inventory.add(new FurnitureItem(new Enchanter()));
-			this.player.inventory.add(new FurnitureItem(new Workbench()));
-		}
+			player.inventory.add(new FurnitureItem(new Enchanter()));
+			player.inventory.add(new FurnitureItem(new Workbench()));
+		}*/
 		
 		level = levels[currentLevel]; // sets level to the current level (3; surface)
 		player.respawn(level); // finds the start level for the player
@@ -567,7 +569,7 @@ public class Game extends Canvas implements Runnable, ActionListener {
 			
 			if (scoreTime < 1 && !player.removed) {
 				setMenu(new WonMenu());
-				System.out.print(player.score);
+				System.out.println(player.score);
 				//Extra score from drops.
 				player.score =
 						player.score + (Inventory.scored(Resource.cloth) * (random.nextInt(2) + 1) * ism);
@@ -686,31 +688,23 @@ public class Game extends Canvas implements Runnable, ActionListener {
 	public static void Fishing(Level level, int x, int y, Player player) {
 		isfishing = true;
 		int fcatch = random.nextInt(90);
-
+		
 		if (ItemResource.dur == 0) player.activeItem.isDepleted();
-
+		
 		if (fcatch <= 8) {
-			System.out.print("Caught a Fish!");
-			level.add(
-					new ItemEntity(
-							new ResourceItem(Resource.rawfish),
-							x + random.nextInt(11) - 5,
-							y + random.nextInt(11) - 5));
+			System.out.println("Caught a Fish!");
+			level.add(new ItemEntity(new ResourceItem(Resource.rawfish), x + random.nextInt(11) - 5, y + random.nextInt(11) - 5));
 			isfishing = false;
 		}
-
+		
 		if (fcatch == 25 || fcatch == 43 || fcatch == 32 || fcatch == 15 || fcatch == 42) {
-			System.out.print("Caught some slime?");
-			level.add(
-					new ItemEntity(
-							new ResourceItem(Resource.slime),
-							x + random.nextInt(11) - 5,
-							y + random.nextInt(11) - 5));
+			System.out.println("Caught some slime?");
+			level.add(new ItemEntity(new ResourceItem(Resource.slime), x + random.nextInt(11) - 5, y + random.nextInt(11) - 5));
 			isfishing = false;
 		}
 
 		if (fcatch == 56) {
-			System.out.print("Rare Armor!");
+			System.out.println("Rare Armor!");
 			level.add(
 					new ItemEntity(
 							new ResourceItem(Resource.larmor),
@@ -718,7 +712,7 @@ public class Game extends Canvas implements Runnable, ActionListener {
 							y + random.nextInt(11) - 5));
 			isfishing = false;
 		} else {
-			System.out.print("FAIL!");
+			System.out.println("FAIL!");
 			isfishing = false;
 		}
 	}
@@ -910,8 +904,8 @@ public class Game extends Canvas implements Runnable, ActionListener {
 		else
 			Font.draw("	x" + ac, screen, 84, screen.h - 16, Color.get(0, 555, 555, 555));
 		//displays arrow icon
-		screen.render(11 * 8, screen.h - 17, 13 + 5 * 32, Color.get(-1, 111, 222, 430), 0);
-			
+		screen.render(10 * 8 + 4, screen.h - 16, 13 + 5 * 32, Color.get(0, 111, 222, 430), 0);
+		
 		if (Bed.hasBedSet) { // twice for the shadow text effect
 			Font.draw("Sleeping...", screen, screen.w / 2 + 1 - 44, screen.h - 119, Color.get(-1, 222, 222, 222));
 			Font.draw("Sleeping...", screen, screen.w / 2 - 44, screen.h - 120, Color.get(-1, 555, 555, 555));
