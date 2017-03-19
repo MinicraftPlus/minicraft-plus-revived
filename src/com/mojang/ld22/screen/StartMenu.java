@@ -54,7 +54,7 @@ public class StartMenu extends Menu {
 		//toggles sound
 		if (input.getKey("s").clicked) {
 			Sound.craft.play();
-			//System.out.println("Sound toggle works!");
+			//if(com.mojang.ld22.Game.debug) System.out.println("Sound toggle works!");
 			isSoundAct = !isSoundAct;
 		}
 

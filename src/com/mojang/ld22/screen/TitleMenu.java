@@ -53,7 +53,7 @@ public class TitleMenu extends Menu {
 					String url = "http://minicraftplus.webs.com/Tutorial.htm";
 					java.awt.Desktop.getDesktop().browse(java.net.URI.create(url));
 				} catch (java.io.IOException e) {
-					System.out.println(e.getMessage());
+					if(com.mojang.ld22.Game.debug) System.out.println(e.getMessage());
 				}
 			}
 			if (selected == 2) {

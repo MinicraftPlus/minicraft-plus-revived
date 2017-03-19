@@ -49,7 +49,7 @@ public class WorldSelectMenu extends Menu {
 				String[] Files = folder2.list();
 				if (Files.length > 0 && Files[0].endsWith(".miniplussave")) {
 					worldnames.add(listOfFiles[i].getName());
-					System.out.println("World found: " + listOfFiles[i].getName());
+					if(com.mojang.ld22.Game.debug) System.out.println("World found: " + listOfFiles[i].getName());
 				}
 			}
 		}
@@ -110,10 +110,10 @@ public class WorldSelectMenu extends Menu {
 				game.resetstartGame();
 				game.setMenu((Menu) null);
 			} else {
-				System.out.println("delete mode");
+				if(com.mojang.ld22.Game.debug) System.out.println("delete mode");
 				//delete the world
 				world = new File(location + "/" + worldnames.get(worldselected));
-				System.out.println(world);
+				if(com.mojang.ld22.Game.debug) System.out.println(world);
 				File[] list = world.listFiles();
 				
 				for (int i = 0; i < list.length; i++) {
@@ -147,7 +147,7 @@ public class WorldSelectMenu extends Menu {
 		}
 
 		if (input.getKey("d").clicked && !rename && !createworld) { //toggle delete world mode
-			//System.out.println("toggle delete");
+			//if(com.mojang.ld22.Game.debug) System.out.println("toggle delete");
 			delete = !delete;
 		}
 
@@ -189,7 +189,7 @@ public class WorldSelectMenu extends Menu {
 		if (!createworld && !loadworld) {
 			//this executes at first, before you choose load or save
 			if (input.getKey("enter").clicked) {
-				//System.out.println(selected);
+				//if(com.mojang.ld22.Game.debug) System.out.println(selected);
 				if (selected == 0) {
 					loadworld = true;
 					createworld = false;
