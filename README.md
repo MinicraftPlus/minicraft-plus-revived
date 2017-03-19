@@ -12,9 +12,8 @@ The idea is to sort of merge the decompiled code of 1.8 with this code, since th
   * minecraft
   * my / other people's imagination
 
-#### Current Bugs / Quick Fixes:
+#### Current Bugs / Needed Fixes:
 
-* Potions are a big point now.
 * Sound effect don't always play when they should.
 * I have a system in place to save custom key controls, but lack the menu to edit them... I need to get that fixed.
 * Clean up and simplify the code in various java files to make them both easier to follow and easier to develop.
@@ -26,7 +25,6 @@ The idea is to sort of merge the decompiled code of 1.8 with this code, since th
 
 * Add back:
   * Spawners
-  * Potions
   * Colored Clothes
   * Experience (from 1.4)
 
