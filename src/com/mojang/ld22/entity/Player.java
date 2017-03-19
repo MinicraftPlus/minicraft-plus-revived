@@ -448,9 +448,15 @@ public class Player extends Mob {
 			new Save(this, WorldSelectMenu.worldname);
 			LoadingMenu.percentage = 0;
 		}
-		if (input.getKey("t").clicked) {}
-
-		if (ModeMenu.creative) {
+		if (input.getKey("p").clicked) {
+			//super powers toggle
+			infstamina = !infstamina;
+			infswim = !infswim;
+			health = 10;
+			stamina = 10;
+		}
+		
+		if (ModeMenu.creative || true) {
 			//Oh-ho-ho!
 			if (input.getKey("dayTime").clicked) {
 				Game.time = 0;
