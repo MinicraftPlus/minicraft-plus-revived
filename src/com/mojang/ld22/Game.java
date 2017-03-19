@@ -19,6 +19,7 @@ import com.mojang.ld22.item.FurnitureItem;
 import com.mojang.ld22.item.ListItems;
 import com.mojang.ld22.item.ResourceItem;
 import com.mojang.ld22.item.resource.ItemResource;
+import com.mojang.ld22.item.resource.PotionResource;
 import com.mojang.ld22.item.resource.Resource;
 import com.mojang.ld22.level.Level;
 import com.mojang.ld22.level.tile.DirtTile;
@@ -55,6 +56,7 @@ import javax.swing.Timer;
 public class Game extends Canvas implements Runnable, ActionListener {
 	
 	private static final long serialVersionUID = 1L;
+	public static boolean debug = false;
 	private static Random random = new Random();
 	private static final int SCALE = 3;
 	
@@ -257,7 +259,7 @@ public class Game extends Canvas implements Runnable, ActionListener {
 			
 			if (System.currentTimeMillis() - lastTimer1 > 1000) { //updates every 1 second
 				lastTimer1 += 1000; // adds a second to the timer
-				//System.out.println(ticks + " ticks, " + frames + " fps");
+				//if(com.mojang.ld22.Game.debug) System.out.println(ticks + " ticks, " + frames + " fps");
 				Font.draw(ticks + " ticks, " + frames + " fps",
 				  screen, screen.w, screen.h, Color.get(0, 555, 555, 555));
 				fra = frames; //saves total frames in last second
@@ -323,7 +325,7 @@ public class Game extends Canvas implements Runnable, ActionListener {
 		
 		// "shudrespawn" returns false if on hardcore, or making a new world. if true, it keeps your world and spawn pos
 		if (DeadMenu.shudrespawn) { // respawn, don't regenerate level.
-			//System.out.println("Current Level = " + currentLevel + "																					 ");
+			//if(com.mojang.ld22.Game.debug) System.out.println("Current Level = " + currentLevel + "																					 ");
 			//currentLevel = 3;
 			level = levels[currentLevel];
 			player.respawn(level);
@@ -468,10 +470,10 @@ public class Game extends Canvas implements Runnable, ActionListener {
 		}
 		
 		DeadMenu.shudrespawn = true;
-		/* not reimp. yet
+		
 		if(WorldGenMenu.theme == WorldGenMenu.hell) {
 			this.player.inventory.add(new ResourceItem(Resource.lavapotion));
-		}*/
+		}
 		
 	}
 	
@@ -482,7 +484,7 @@ public class Game extends Canvas implements Runnable, ActionListener {
 			// IN BED
 			level.remove(player); //oh noes! jk. :D
 			nsPerTick = 781250.0D;
-			System.out.println("SLEEPING... tickCount: " + tickCount);
+			if(com.mojang.ld22.Game.debug) System.out.println("SLEEPING... tickCount: " + tickCount);
 			if (isDayNoSleep) {
 				level.add(player);
 				nsPerTick = 1.6666666666666666E7D;
@@ -567,7 +569,7 @@ public class Game extends Canvas implements Runnable, ActionListener {
 			
 			if (scoreTime < 1 && !player.removed) {
 				setMenu(new WonMenu());
-				System.out.println(player.score);
+				if(com.mojang.ld22.Game.debug) System.out.println(player.score);
 				//Extra score from drops.
 				player.score =
 						player.score + (Inventory.scored(Resource.cloth) * (random.nextInt(2) + 1) * ism);
@@ -615,8 +617,8 @@ public class Game extends Canvas implements Runnable, ActionListener {
 			if (count == 0) reverse = false;
 		}
 		
-		//System.out.println(tickCount);
-		//System.out.println(Bed.hasBeenTrigged);
+		//if(com.mojang.ld22.Game.debug) System.out.println(tickCount);
+		//if(com.mojang.ld22.Game.debug) System.out.println(Bed.hasBeenTrigged);
 		
 		//This is the general action statement thing! Regulates menus, mostly.
 		if (!hasFocus()) {
@@ -690,19 +692,19 @@ public class Game extends Canvas implements Runnable, ActionListener {
 		if (ItemResource.dur == 0) player.activeItem.isDepleted();
 		
 		if (fcatch <= 8) {
-			System.out.println("Caught a Fish!");
+			if(com.mojang.ld22.Game.debug) System.out.println("Caught a Fish!");
 			level.add(new ItemEntity(new ResourceItem(Resource.rawfish), x + random.nextInt(11) - 5, y + random.nextInt(11) - 5));
 			isfishing = false;
 		}
 		
 		if (fcatch == 25 || fcatch == 43 || fcatch == 32 || fcatch == 15 || fcatch == 42) {
-			System.out.println("Caught some slime?");
+			if(com.mojang.ld22.Game.debug) System.out.println("Caught some slime?");
 			level.add(new ItemEntity(new ResourceItem(Resource.slime), x + random.nextInt(11) - 5, y + random.nextInt(11) - 5));
 			isfishing = false;
 		}
 
 		if (fcatch == 56) {
-			System.out.println("Rare Armor!");
+			if(com.mojang.ld22.Game.debug) System.out.println("Rare Armor!");
 			level.add(
 					new ItemEntity(
 							new ResourceItem(Resource.larmor),
@@ -710,7 +712,7 @@ public class Game extends Canvas implements Runnable, ActionListener {
 							y + random.nextInt(11) - 5));
 			isfishing = false;
 		} else {
-			System.out.println("FAIL!");
+			if(com.mojang.ld22.Game.debug) System.out.println("FAIL!");
 			isfishing = false;
 		}
 	}
@@ -823,7 +825,7 @@ public class Game extends Canvas implements Runnable, ActionListener {
 		}
 		*/
 		if (saving) {
-			//System.out.println("SAVING GAME...");
+			//if(com.mojang.ld22.Game.debug) System.out.println("SAVING GAME...");
 			String loadingText = "Saving... " + LoadingMenu.percentage + "%";
 			int xPos = screen.centertext(loadingText);
 			/*screen.w / 2 - loadingText.length() * 4*/
@@ -957,17 +959,17 @@ public class Game extends Canvas implements Runnable, ActionListener {
 			Font.draw(dura + "%", screen, 164, screen.h - 16, Color.get(0, 30, 30, 30));
 		}
 
-		/*potions
+		
 		if(player.potioneffects.size() > 0) {
-			for(i = 0; i < player.potioneffects.size(); ++i) {
+			for(int i = 0; i < player.potioneffects.size(); ++i) {
 				if(player.showpotioneffects) {
 					int pcol = Color.get(PotionResource.potionColor((String)player.potioneffects.get(i)), 555, 555, 555);
-					Font.draw("(f2 to hide!)", screen, 180, screen.h - 183, Color.get(0, 555, 555, 555));
+					Font.draw("("+input.getPhysKey("potionEffects")+" to hide!)", screen, 180, screen.h - 183, Color.get(0, 555, 555, 555));
 					Font.draw((String)player.potioneffects.get(i) + " (" + ((Integer)player.potioneffectstime.get(i)).intValue() / 60 / 60 + ":" + (((Integer)player.potioneffectstime.get(i)).intValue() / 60 - 60 * (((Integer)player.potioneffectstime.get(i)).intValue() / 60 / 60)) + ")", screen, 180, screen.h - (175 - i * 8), pcol);
 				}
 			}
 		}
-		*/
+		
 		
 		// This is the status icons, like health hearts, stamina bolts, and hunger burgers.
 		if (!ModeMenu.creative) {
@@ -1073,6 +1075,8 @@ public class Game extends Canvas implements Runnable, ActionListener {
 	
 	/// * The main method! * ///
 	public static void main(String[] args) {
+		boolean debug = (args != null && args.length > 0 && args[0].equals("--debug"));
+		Game.debug = debug;
 		Game game = new Game();
 		game.setMinimumSize(new Dimension(WIDTH * SCALE, HEIGHT * SCALE));
 		game.setMaximumSize(new Dimension(WIDTH * SCALE, HEIGHT * SCALE));
@@ -1085,7 +1089,7 @@ public class Game extends Canvas implements Runnable, ActionListener {
 		frame.setResizable(false); // prevents the user from resizing the window.
 		frame.setLocationRelativeTo(null); // the window will pop up in the middle of the screen when launched.
 		frame.setVisible(true);
-
+		
 		game.start(); // Starts the game!
 	}
 	

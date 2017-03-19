@@ -18,6 +18,7 @@ public class ResourceItem extends Item {
 	public int count = 1;
 	public int counts = 1;
 	public int level = 0;
+	public int amount = 1;
 
 	public ResourceItem(Resource resource) {
 		this.resource = resource;
@@ -26,6 +27,11 @@ public class ResourceItem extends Item {
 	public ResourceItem(Resource resource, int count) {
 		this.resource = resource;
 		this.count = count;
+	}
+	
+	public ResourceItem addamount(int amount) {
+		this.amount = amount;
+		return this;
 	}
 
 	public void ToolItem(ToolType tool, int level, int counts) {
@@ -45,7 +51,24 @@ public class ResourceItem extends Item {
 	public void renderIcon(Screen screen, int x, int y) {
 		screen.render(x, y, resource.sprite, resource.color, 0);
 	}
+	
+	public void renderInventory(Screen screen, int x, int y, boolean ininv) {
+		screen.render(x, y, this.resource.sprite, this.resource.color, 0);
+		String name = this.resource.name;
+		if(name.length() > 11 && !ininv) {
+			Font.draw(name.substring(0, 11), screen, x + 32, y, Color.get(-1, 555, 555, 555));
+		} else {
+			Font.draw(name, screen, x + 32, y, Color.get(-1, 555, 555, 555));
+		}
 
+		int cc = this.count;
+		if(cc > 999) {
+			cc = 999;
+		}
+
+		Font.draw("" + cc, screen, x + 8, y, Color.get(-1, 444, 444, 444));
+	}
+	
 	public void renderInventory(Screen screen, int x, int y) {
 		screen.render(x, y, resource.sprite, resource.color, 0);
 		Font.draw(resource.name, screen, x + 32, y, Color.get(-1, 555, 555, 555));

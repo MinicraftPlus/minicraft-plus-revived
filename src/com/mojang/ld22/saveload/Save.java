@@ -152,7 +152,6 @@ public class Save {
 		else
 			data.add(ModeMenu.mode + ";" + player.game.scoreTime);
 		
-		/* potions yet be implemented
 		if(player.potioneffects.size() > 0) {
 			String subdata = "PotionEffects[";
 			
@@ -165,7 +164,7 @@ public class Save {
 			
 			subdata = subdata + "]";
 			data.add(subdata);
-		}*/
+		}
 		
 		data.add("[" + player.r + ";" + player.g + ";" + player.b + "]");
 		writeToFile(location + filename + extention, data);

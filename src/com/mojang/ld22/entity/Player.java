@@ -122,7 +122,7 @@ public class Player extends Mob {
 		stamina = maxStamina;
 		hunger = maxHunger;
 
-		//System.out.println("creative mode: " + ModeMenu.creative);
+		//if(com.mojang.ld22.Game.debug) System.out.println("creative mode: " + ModeMenu.creative);
 		if (ModeMenu.creative) {
 			for (int i = 0; i < ListItems.items.size(); i++) {
 				inventory.add((Item) ListItems.items.get(i));
@@ -138,10 +138,10 @@ public class Player extends Mob {
 		super.tick();
 		isenemy = false;
 		tickCounter++;
-		//System.out.println(tickCounter);
+		//if(com.mojang.ld22.Game.debug) System.out.println(tickCounter);
 
-		/*potions not yet implemented
-		int xa;
+		
+		int xa, ya;
 		if(potioneffectstime.size() > 0 && !Bed.hasBedSet) {
 			for(int onTile = 0; onTile < potioneffectstime.size(); onTile++) {
 				xa = ((Integer)potioneffectstime.get(onTile)).intValue();
@@ -227,26 +227,18 @@ public class Player extends Mob {
 				}
 			}
 		}
-
-		if(input.f3.clicked && cooldowninfo == 0) {
-			if(showinfo) {
-				cooldowninfo = 10;
-				showinfo = false;
-			} else {
-				cooldowninfo = 10;
-				showinfo = true;
-			}
+		
+		if(cooldowninfo > 0) cooldowninfo--;
+		
+		if(input.getKey("fpsdisp").clicked && cooldowninfo == 0) {
+			cooldowninfo = 10;
+			showinfo = !showinfo;
 		}
 
-		if(input.f2.clicked && cooldowninfo == 0) {
-			if(showpotioneffects) {
-				cooldowninfo = 10;
-				showpotioneffects = false;
-			} else {
-				cooldowninfo = 10;
-				showpotioneffects = true;
-			}
-		}*/
+		if(input.getKey("potionEffects").clicked && cooldowninfo == 0) {
+			cooldowninfo = 10;
+			showpotioneffects = !showpotioneffects;
+		}
 
 		if (invulnerableTime > 0) invulnerableTime--;
 
@@ -375,8 +367,8 @@ public class Player extends Mob {
 			}
 		}
 
-		int xa = 0;
-		int ya = 0;
+		xa = 0;
+		ya = 0;
 		if (!Game.isfishing) {
 			if (input.getKey("up").down) {
 				ya--;
@@ -407,7 +399,7 @@ public class Player extends Mob {
 			xa = 0;
 			ya = 0;
 		}
-		/* potion effect
+		
 		if (regen) {
 			regentick++;
 			if (regentick > 60) {
@@ -417,7 +409,7 @@ public class Player extends Mob {
 				}
 			}
 		}
-		*/
+		
 		if (game.savecooldown > 0 && !game.saving) {
 			game.savecooldown--;
 		}
@@ -440,7 +432,7 @@ public class Player extends Mob {
 		if (input.getKey("sethome").clicked) setHome();
 		if (input.getKey("home").clicked) goHome();
 
-		if (input.getKey("i").clicked) game.setMenu(new PlayerInfoMenu());
+		if (input.getKey("info").clicked) game.setMenu(new PlayerInfoMenu());
 
 		//these are my test buttons. incase i need to debug something.
 		if (input.getKey("r").clicked && !game.saving) {
@@ -1018,7 +1010,7 @@ public class Player extends Mob {
 				stamina = 0;
 				sentFromHome = true;
 				game.setMenu(new HomeMenu());
-				//System.out.println(sentFromHome);
+				//if(com.mojang.ld22.Game.debug) System.out.println(sentFromHome);
 			} else {
 				game.setMenu(new HomeMenu());
 			}
@@ -1027,7 +1019,7 @@ public class Player extends Mob {
 			hasSetHome = false;
 			sentFromHome = true;
 			game.setMenu(new HomeMenu());
-			//	System.out.println(sentFromHome);
+			//	if(com.mojang.ld22.Game.debug) System.out.println(sentFromHome);
 		}
 	}
 

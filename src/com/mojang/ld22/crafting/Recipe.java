@@ -6,10 +6,12 @@ import com.mojang.ld22.gfx.Font;
 import com.mojang.ld22.gfx.Screen;
 import com.mojang.ld22.item.Item;
 import com.mojang.ld22.item.ResourceItem;
+import com.mojang.ld22.item.BucketLavaItem;
 import com.mojang.ld22.item.ToolItem;
 import com.mojang.ld22.item.ToolType;
 import com.mojang.ld22.item.resource.Resource;
 import com.mojang.ld22.screen.ListItem;
+import com.mojang.ld22.screen.ModeMenu;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -27,6 +29,11 @@ public abstract class Recipe implements ListItem {
 	/** Adds a resource cost to the list; requires a type of resource, and an amount of it. */
 	public Recipe addCost(Resource resource, int count) {
 		costs.add(new ResourceItem(resource, count));
+		return this;
+	}
+	
+	public Recipe addCostBucketLava(int counts) {
+		this.costs.add(new BucketLavaItem());
 		return this;
 	}
 	
@@ -53,6 +60,12 @@ public abstract class Recipe implements ListItem {
 				if (!player.inventory.hasTools(ti.type, ti.level)) {
 					// some recipes require tools to craft, such as the claymores.
 					canCraft = false;
+					return;
+				}
+			} else if(item instanceof BucketLavaItem) {
+				BucketLavaItem lava = (BucketLavaItem)item;
+				if(!player.inventory.hasItem(lava) && !ModeMenu.creative) {
+					this.canCraft = false;
 					return;
 				}
 			}
@@ -99,6 +112,9 @@ public abstract class Recipe implements ListItem {
 			} else if (item instanceof ToolItem) {
 				ToolItem ti = (ToolItem) item;
 				player.inventory.removeTool(ti.type, ti.level);
+			} else if(item instanceof BucketLavaItem) {
+				BucketLavaItem lava = (BucketLavaItem)item;
+				player.inventory.removeItem(lava);
 			}
 		}
 	}
