@@ -3,9 +3,9 @@ package com.mojang.ld22.gfx;
 public class Font {
 	
 	// These are all the characters that will be translated to the screen. (The spaces are important)
-	private static String chars = "" +
-			"ABCDEFGHIJKLMNOPQRSTUVWXYZ			" +
-			"0123456789.,!?'\"-+=/\\%()<>:;^@bcdefghijklmnopqrstuvwxyz";
+	private static String chars = "" + //
+                       "ABCDEFGHIJKLMNOPQRSTUVWXYZ      " + //
+                       "0123456789.,!?'\"-+=/\\%()<>:;^@bcdefghijklmnopqrstuvwxyz";//
 	
 	/* The order of the letters in the chars string is represented in the order that they appear in the sprite-sheet. */
 	

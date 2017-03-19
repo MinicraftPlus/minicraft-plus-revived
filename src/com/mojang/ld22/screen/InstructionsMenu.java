@@ -13,7 +13,7 @@ public class InstructionsMenu extends Menu {
 	}
 
 	public void tick() {
-		if (input.attack.clicked || input.menu.clicked) {
+		if (input.getKey("attack").clicked || input.getKey("menu").clicked) {
 			game.setMenu(parent);  // If the user presses the "Attack" or "Menu" button, it will go back to the parent menu.
 		}
 	}

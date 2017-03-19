@@ -201,7 +201,7 @@ public class Game extends Canvas implements Runnable, ActionListener {
 	
 	// Useful if there were more in here... will be soon.
 	public static void changeTime(int t) {
-		Time = t;
+		time = t;
 	}
 	
 	//called after main; main is at bottom.
@@ -546,21 +546,21 @@ public class Game extends Canvas implements Runnable, ActionListener {
 			tickReset = false;
 		}
 		
-		if (tickCount == 0) Time = 0;
+		if (tickCount == 0) time = 0;
 		
 		if (tickCount == 3600) level.removeAllEnemies();
 		
-		if (tickCount == 7200) Time = 1;
+		if (tickCount == 7200) time = 1;
 		
 		//4800
-		if (tickCount == 36000) Time = 2;
+		if (tickCount == 36000) time = 2;
 		
 		//5400
-		if (tickCount == 43200) Time = 3;
+		if (tickCount == 43200) time = 3;
 		
 		//7600
 		if (tickCount == 64800) {
-			Time = 0;
+			time = 0;
 			tickCount = 0;
 		}
 		
@@ -936,7 +936,7 @@ public class Game extends Canvas implements Runnable, ActionListener {
 		if (notifications.size() > 0) {
 			notetick++;
 			if (notifications.size() > 3) { //only show 3 notifs max at one time; erase old notifs?
-				notifications = notifications.subeList(notifications.size() - 3, notifications.size());
+				notifications = notifications.subList(notifications.size() - 3, notifications.size());
 			}
 			
 			if (notetick > 600) { //display time per notification.
