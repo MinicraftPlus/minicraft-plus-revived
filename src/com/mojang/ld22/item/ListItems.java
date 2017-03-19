@@ -187,7 +187,7 @@ public class ListItems {
 	public Item purpleclothes;
 	public Item cyanclothes;
 	public Item regclothes;
-	public Item potion;
+	*/public Item potion;
 	public Item speedpotion;
 	public Item lightpotion;
 	public Item swimpotion;
@@ -197,7 +197,6 @@ public class ListItems {
 	public Item lavapotion;
 	public Item shieldpotion;
 	public Item hastepotion;
-	*/
 	
 	public ListItems() {
 		this.arrow = (new ResourceItem(Resource.arrow)).addItem();
@@ -321,7 +320,7 @@ public class ListItems {
 		this.purpleclothes = (new ResourceItem(Resource.purpleclothes)).addItem();
 		this.cyanclothes = (new ResourceItem(Resource.cyanclothes)).addItem();
 		this.regclothes = (new ResourceItem(Resource.regclothes)).addItem();
-		this.potion = (new ResourceItem(Resource.potion)).addItem();
+		*/this.potion = (new ResourceItem(Resource.potion)).addItem();
 		this.speedpotion = (new ResourceItem(Resource.speedpotion)).addItem();
 		this.lightpotion = (new ResourceItem(Resource.lightpotion)).addItem();
 		this.swimpotion = (new ResourceItem(Resource.swimpotion)).addItem();
@@ -331,7 +330,6 @@ public class ListItems {
 		this.lavapotion = (new ResourceItem(Resource.lavapotion)).addItem();
 		this.shieldpotion = (new ResourceItem(Resource.shieldpotion)).addItem();
 		this.hastepotion = (new ResourceItem(Resource.hastepotion)).addItem();
-		*/
 	}
 	
 	public static Item getItem(String name) {

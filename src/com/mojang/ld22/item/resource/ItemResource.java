@@ -26,7 +26,7 @@ public class ItemResource extends Resource {
 			// Don't worry about the Crafting.workbench thing, It's what makes it work :P
 		} else if (name == "Fish Rod") {
 			if (tile == Tile.water || tile == Tile.lightwater) {
-				System.out.print("Fishing...");
+				if(com.mojang.ld22.Game.debug) System.out.println("Fishing...");
 				Game.Fishing(level, player.x - 5, player.y - 5, player);
 				dur--;
 			}

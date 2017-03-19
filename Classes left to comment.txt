@@ -1,0 +1,19 @@
+entity/Entity
+entity/Inventory
+entity/ItemEntity
+entity/Mob
+entity/Player
+entity/Slime
+entity/Zombie
+
+item/*
+item/resource/*
+
+level/Level
+level/levelgen/LevelGen
+level/tile/* (not Tile)		(unnecessary for now)
+
+saveload/*.... but they are new...
+***************
+There are more... but they are new, and have no previous comments. To find them, search for a comment on the first line of the class.
+Usually, it's "//new class, no comments." But some are "//new features, less comments." or something like that.

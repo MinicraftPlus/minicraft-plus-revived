@@ -17,7 +17,7 @@ public class Screen {
 
 	public final int w, h; // width and height of the screen
 	public int[] pixels; // pixels on the screen
-
+	
 	private SpriteSheet sheet; // the sprite sheet used in the game.
 
 	public Screen(int w, int h, SpriteSheet sheet) {
@@ -26,7 +26,7 @@ public class Screen {
 		this.h = h;
 
 		pixels = new int[w * h]; // makes new integer array for all the pixels on the screen.
-
+		
 		// Random random = new Random();
 
 		/*
@@ -46,6 +46,10 @@ public class Screen {
 			pixels[i] = color; // turns each pixel into a single color (clearing the screen!)
 	}
 	
+	public int centertext(String text) {
+		return (w - text.length() * 8) / 2;
+	}
+	
 	/*
 	 * public void renderBackground() { for (int yt = yScroll >> 3; yt <= (yScroll + h) >> 3; yt++) { int yp = yt * 8 - yScroll; for (int xt = xScroll >> 3; xt <= (xScroll + w) >> 3; xt++) { int xp = xt * 8 - xScroll; int ti = (xt & (MAP_WIDTH_MASK)) + (yt & (MAP_WIDTH_MASK)) * MAP_WIDTH; render(xp, yp, tiles[ti], colors[ti], databits[ti]); } }
 	 *
@@ -62,8 +66,8 @@ public class Screen {
 
 		int xTile = tile % 32; // gets x position of the tile
 		int yTile = tile / 32; // gets y position
-		int toffs = xTile * 8 + yTile * 8 * sheet.width; // Get's the offset, the 8's represent the size of the tile. (8 by 8 pixels)
-
+		int toffs = xTile * 8 + yTile * 8 * sheet.width; // Gets the offset, the 8's represent the size of the tile. (8 by 8 pixels)
+		
 		for (int y = 0; y < 8; y++) { // Loops 8 times (because of the height of the tile)
 			int ys = y; // current y pixel
 			if (mirrorY) ys = 7 - y; // Reverses the pixel for a mirroring effect
@@ -117,14 +121,14 @@ public class Screen {
 		if (y0 < 0) y0 = 0;
 		if (x1 > w) x1 = w;
 		if (y1 > h) y1 = h;
-		// System.out.println(x0 + ", " + x1 + " -> " + y0 + ", " + y1);
+		// if(com.mojang.ld22.Game.debug) System.out.println(x0 + ", " + x1 + " -> " + y0 + ", " + y1);
 		for (int yy = y0; yy < y1; yy++) { // loop through each y position
 			int yd = yy - y; // get distance to the previous y position.
 			yd = yd * yd; // square that distance
 			for (int xx = x0; xx < x1; xx++) { // loop though each x pos
 				int xd = xx - x; //get x delta
 				int dist = xd * xd + yd; //square x delta, then add the y delta, to get total distance.
-				// System.out.println(dist);
+				// if(com.mojang.ld22.Game.debug) System.out.println(dist);
 				if (dist <= r * r) {
 					// if the distance moved is less or equal to the radius...
 					int br = 255 - dist * 255 / (r * r); // area where light will be rendered.

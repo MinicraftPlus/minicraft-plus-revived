@@ -32,7 +32,7 @@ public class InputHandler implements MouseListener, KeyListener {
 		
 		-To get whether a key is pressed or not, use input.getKey("key"), where "key" is the name of the key, either physical or virtual. If virtual, all it does is then fetch the corrosponding key from keyboard anyway; but it allows one to change the controls while still making the same key requests in the code.
 	*/
-
+	
 	private HashMap<String, String> keymap; // The symbolic map of actions to physical key names.
 	private HashMap<String, Key> keyboard; // The actual map of key names to Key objects.
 	public String lastKeyTyped = ""; // Used for things like typing world names.
@@ -46,26 +46,28 @@ public class InputHandler implements MouseListener, KeyListener {
 	public InputHandler(Game game) {
 		keymap = new HashMap<String, String>(); //stores custom key name with physical key name in keyboard.
 		keyboard = new HashMap<String, Key>(); //stores physical keyboard keys; auto-generated :D
-
+		
 		keymap.put("UP", "UP"); //up action references up arrow key
 		keymap.put("DOWN", "DOWN"); //move down action references down arrow key
 		keymap.put("LEFT", "LEFT"); //move left action references left arrow key
 		keymap.put("RIGHT", "RIGHT"); //move right action references right arrow key
+		
 		keymap.put("ATTACK", "C"); //attack action references "C" key
 		keymap.put("MENU", "X"); //and so on... menu does various things.
 		keymap.put("CRAFT", "Z"); // open/close personal crafting window.
+		
 		keymap.put("PAUSE", "ESCAPE"); // pause the game.
 		keymap.put("SETHOME", "H"); // set your home.
 		keymap.put("HOME", "1"); // go to set home.
-		//keymap.put("MODE", ""); //useless? (unreachable)
-		//keymap.put("SURVIVAL", ""); //useless? (unreachable)
-		//keymap.put("CREATIVE", ""); //useless? (unreachable)
-		//keymap.put("HARDCORE", ""); //useless? (unreachable)
-		keymap.put("FPS", "TAB"); //SUPPOSED to toggle fps display, but I don't think it does...
-		keymap.put("OPTIONS", "O"); //displays some options?
-		keymap.put("SOUNDON", "M"); //toggles sound on and off.
-		keymap.put("DAYTIME", "2"); //sort of makes day happen, in creative mode.
-		keymap.put("NIGHTTIME", "3"); //sort of makes night happen, in creative mode.
+		//keymap.put("SOUNDON", "M"); //toggles sound on and off... well, it should...
+		
+		keymap.put("DAYTIME", "2"); //sort of makes day happen.
+		keymap.put("NIGHTTIME", "3"); //sort of makes night happen.
+		
+		keymap.put("POTIONEFFECTS", "F2"); // toggle potion effect display
+		keymap.put("FPSDISP", "F3"); // toggle fps display
+		keymap.put("INFO", "I"); // toggle player stats display
+		//keymap.put("OPTIONS", "O"); //displays some options? ...apparently not...
 		
 		game.addKeyListener(this); //add key listener to game
 		game.addMouseListener(this); //add mouse listener to game (though it's never used)
@@ -73,8 +75,10 @@ public class InputHandler implements MouseListener, KeyListener {
 	
 	/** Processes each key one by one, in keyboard. */
 	public void tick() {
-		Key[] keys = keyboard.values().toArray(new Key[0]); // Get an array of all the Key objects
-		for (int i = 0; i < keys.length; i++) keys[i].tick(); //call tick() for each one.
+		synchronized ("lock") {
+			Key[] keys = keyboard.values().toArray(new Key[0]); // Get an array of all the Key objects
+			for (int i = 0; i < keys.length; i++) keys[i].tick(); //call tick() for each one.
+		}
 	}
 	
 	/** This is used to stop all of the actions when the game is out of focus. */
@@ -82,7 +86,7 @@ public class InputHandler implements MouseListener, KeyListener {
 		//Map.Entry<String,Key>[] mappings = keymap.entrySet().toArray(new Map.Entry[0]);
 		Key[] keys = keyboard.values().toArray(new Key[0]);
 		for (int i = 0; i < keys.length; i++) {
-			//System.out.println(i+1+": " + mappings[i].getKey() + " - " + mappings[i].getValue());
+			//if(com.mojang.ld22.Game.debug) System.out.println(i+1+": " + mappings[i].getKey() + " - " + mappings[i].getValue());
 			keys[i].down = false;
 		}
 	}
@@ -93,6 +97,14 @@ public class InputHandler implements MouseListener, KeyListener {
 		keymap.put(keymapKey, keyboardKey);
 	}
 	
+	public String getPhysKey(String actionKey) {
+		actionKey = actionKey.toUpperCase();
+		if(keymap.containsKey(actionKey))
+			return keymap.get(actionKey);
+		
+		return "NO_KEY";
+	}
+	
 	/// THIS is pretty much the only way you want to be interfacing with this class; it has all the auto-create and protection functions and such built-in.
 	public Key getKey(String keytext) {
 		// if the passed-in key is blank, or null, then return null.
@@ -101,19 +113,21 @@ public class InputHandler implements MouseListener, KeyListener {
 		Key key; // make a new key to return at the end
 		keytext = keytext.toUpperCase(); // prevent errors due to improper "casing"
 		
-		// if the passed-in key matches one in keymap, then replace it with it's match, a key in keyboard.
-		if (keymap.containsKey(keytext))
-			keytext = keymap.get(keytext); // converts action name to physical key name
-		
-		if (keyboard.containsKey(keytext))
-			key = keyboard.get(keytext); // gets the key object from keyboard, if if exists.
-		else {
-			// If the specified key does not yet exist in keyboard, then create a new Key, and put it there.
-			key = new Key(); //make new key
-			keyboard.put(keytext, key); //add it to keyboard
-			System.out.println("Added new key: \'" + keytext + "\'"); //log to console that a new key was added to the keyboard
+		synchronized ("lock") {
+			// if the passed-in key matches one in keymap, then replace it with it's match, a key in keyboard.
+			if (keymap.containsKey(keytext))
+				keytext = keymap.get(keytext); // converts action name to physical key name
+			
+			if (keyboard.containsKey(keytext))
+				key = keyboard.get(keytext); // gets the key object from keyboard, if if exists.
+			else {
+				// If the specified key does not yet exist in keyboard, then create a new Key, and put it there.
+				key = new Key(); //make new key
+				keyboard.put(keytext, key); //add it to keyboard
+				
+				if(com.mojang.ld22.Game.debug) System.out.println("Added new key: \'" + keytext + "\'"); //log to console that a new key was added to the keyboard
+			}
 		}
-		
 		return key; // return the Key object.
 	}
 	

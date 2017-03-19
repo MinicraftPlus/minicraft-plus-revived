@@ -14,14 +14,15 @@ The idea is to sort of merge the decompiled code of 1.8 with this code, since th
 
 #### Current Bugs / Quick Fixes:
 
-* Sound effect don't always play when they should.
 * Potions are a big point now.
-* Clean up and simplify the code in various java files to make them both easier to follow and easier to develop.
+* Sound effect don't always play when they should.
 * I have a system in place to save custom key controls, but lack the menu to edit them... I need to get that fixed.
+* Clean up and simplify the code in various java files to make them both easier to follow and easier to develop.
 
 ### Long-term Goals:
 
 * Add commenting work done in [this repository](https://github.com/shylor/miniventure) to applicable code.
+  * Has now been done for many files; but there are still more to go...
 
 * Add back:
   * Spawners
@@ -32,6 +33,8 @@ The idea is to sort of merge the decompiled code of 1.8 with this code, since th
 * Tool and armor durability
   * Make armor cut a percent of damage, rather than act as extra hearts
 
+* Chest item transfer
+  * I personally can't stand how with chests, you always have to transfer all of a particular item, and you can't choose how much. I plan to change that.
 
 #### Ideas for future additions:
 
@@ -44,5 +47,5 @@ The idea is to sort of merge the decompiled code of 1.8 with this code, since th
 * Chickens
 * Minecarts
 
-  It's worth note that these are simply **ideas**, and have no garuntee of being implemented any time soon, or even at all.
+  It's worth note that these are simply **ideas**, and have no garuntee of being implemented any time soon, or even at all. If they become more likely to implement, they will be move to "Long Term Goals".
 

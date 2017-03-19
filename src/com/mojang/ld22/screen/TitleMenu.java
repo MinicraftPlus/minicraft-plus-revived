@@ -53,7 +53,7 @@ public class TitleMenu extends Menu {
 					String url = "http://minicraftplus.webs.com/Tutorial.htm";
 					java.awt.Desktop.getDesktop().browse(java.net.URI.create(url));
 				} catch (java.io.IOException e) {
-					System.out.println(e.getMessage());
+					if(com.mojang.ld22.Game.debug) System.out.println(e.getMessage());
 				}
 			}
 			if (selected == 2) {
@@ -166,12 +166,11 @@ public class TitleMenu extends Menu {
 		if (count <= 20 && count > 15) cols = Color.get(0, 205, 220, 220);
 		if (count <= 25 && count > 20) cols = Color.get(0, 5, 110, 110);
 
-		drawCentered(splashes[rand], screen, 60, cols);
+		writeCentered(splashes[rand], screen, 60, cols);
 
-		drawCentered("(Arrow keys to move)", screen, screen.h - 25, Color.get(0, 111, 111, 111));
-		drawCentered(
-				"(Enter to accept, Escape to return)", screen, screen.h - 15, Color.get(0, 111, 111, 111));
-
+		writeCentered("(Arrow keys to move)", screen, screen.h - 25, Color.get(0, 111, 111, 111));
+		writeCentered("(Enter to accept, Escape to return)", screen, screen.h - 15, Color.get(0, 111, 111, 111));
+		
 		Font.draw("Version 1.6-1.8 (updating)", screen, 1, screen.h - 190, Color.get(0, 111, 111, 111));
 	}
 }

@@ -19,6 +19,7 @@ import com.mojang.ld22.item.FurnitureItem;
 import com.mojang.ld22.item.ListItems;
 import com.mojang.ld22.item.ResourceItem;
 import com.mojang.ld22.item.resource.ItemResource;
+import com.mojang.ld22.item.resource.PotionResource;
 import com.mojang.ld22.item.resource.Resource;
 import com.mojang.ld22.level.Level;
 import com.mojang.ld22.level.tile.DirtTile;
@@ -55,6 +56,7 @@ import javax.swing.Timer;
 public class Game extends Canvas implements Runnable, ActionListener {
 	
 	private static final long serialVersionUID = 1L;
+	public static boolean debug = false;
 	private static Random random = new Random();
 	private static final int SCALE = 3;
 	
@@ -68,8 +70,8 @@ public class Game extends Canvas implements Runnable, ActionListener {
 	public static final int WIDTH = 288;
 	//does the *scale part mean anything to the graphics, or does java accomodate it?
 	
-	private BufferedImage image, extraimage; // creates an image to be displayed on the screen.
-	private int[] pixels, extrapixels; // the array of pixels that will be displayed on the screen.
+	private BufferedImage image; // creates an image to be displayed on the screen.
+	private int[] pixels; // the array of pixels that will be displayed on the screen.
 	private int[] colors; // All of the colors, put into an array.
 	private Screen screen; // Creates the main screen
 	private Screen lightScreen; // Creates a front screen to render the darkness in caves (Fog of war).
@@ -161,8 +163,6 @@ public class Game extends Canvas implements Runnable, ActionListener {
 		colors = new int[256];
 		image = new BufferedImage(WIDTH, HEIGHT, BufferedImage.TYPE_INT_RGB);
 		pixels = ((DataBufferInt) image.getRaster().getDataBuffer()).getData();
-		extraimage = new BufferedImage(288, 192, 1);
-		extrapixels = ((DataBufferInt) this.extraimage.getRaster().getDataBuffer()).getData();
 		
 		running = false;
 		fpscounter = false;
@@ -259,13 +259,9 @@ public class Game extends Canvas implements Runnable, ActionListener {
 			
 			if (System.currentTimeMillis() - lastTimer1 > 1000) { //updates every 1 second
 				lastTimer1 += 1000; // adds a second to the timer
-				//System.out.println(ticks + " ticks, " + frames + " fps");
-				Font.draw(
-						ticks + " ticks, " + frames + " fps",
-						screen,
-						screen.w,
-						screen.h,
-						Color.get(0, 555, 555, 555));
+				//if(com.mojang.ld22.Game.debug) System.out.println(ticks + " ticks, " + frames + " fps");
+				Font.draw(ticks + " ticks, " + frames + " fps",
+				  screen, screen.w, screen.h, Color.get(0, 555, 555, 555));
 				fra = frames; //saves total frames in last second
 				tik = ticks; //saves total ticks in last second
 				frames = 0; //resets frames
@@ -329,7 +325,7 @@ public class Game extends Canvas implements Runnable, ActionListener {
 		
 		// "shudrespawn" returns false if on hardcore, or making a new world. if true, it keeps your world and spawn pos
 		if (DeadMenu.shudrespawn) { // respawn, don't regenerate level.
-			//System.out.print("Current Level = " + currentLevel + "																					 ");
+			//if(com.mojang.ld22.Game.debug) System.out.println("Current Level = " + currentLevel + "																					 ");
 			//currentLevel = 3;
 			level = levels[currentLevel];
 			player.respawn(level);
@@ -393,12 +389,13 @@ public class Game extends Canvas implements Runnable, ActionListener {
 				var6.printStackTrace();
 			}
 		}
-
+		
 		//This should replace that massive thing below...
+		LoadingMenu.percentage = 0;
 		for (int i = 5; i >= 0; i--) {
-			if (!WorldSelectMenu.loadworld) LoadingMenu.percentage = 0;
+			if (!WorldSelectMenu.loadworld) LoadingMenu.percentage = (5-i)*20;
 			else LoadingMenu.percentage += 5; //just make sure they think something is happening... ;D
-
+			
 			levels[(i - 1 < 0 ? 5 : i - 1)] =
 					new Level(this.worldSize, this.worldSize, i - 4, (i == 5 ? (Level) null : levels[i]));
 		}
@@ -453,10 +450,11 @@ public class Game extends Canvas implements Runnable, ActionListener {
 		}
 		
 		LoadingMenu.percentage = 0;
+		/* already taken care of in Player.java
 		if (!ModeMenu.creative) {// survival inventory only
-			this.player.inventory.add(new FurnitureItem(new Enchanter()));
-			this.player.inventory.add(new FurnitureItem(new Workbench()));
-		}
+			player.inventory.add(new FurnitureItem(new Enchanter()));
+			player.inventory.add(new FurnitureItem(new Workbench()));
+		}*/
 		
 		level = levels[currentLevel]; // sets level to the current level (3; surface)
 		player.respawn(level); // finds the start level for the player
@@ -472,10 +470,10 @@ public class Game extends Canvas implements Runnable, ActionListener {
 		}
 		
 		DeadMenu.shudrespawn = true;
-		/* not reimp. yet
+		
 		if(WorldGenMenu.theme == WorldGenMenu.hell) {
 			this.player.inventory.add(new ResourceItem(Resource.lavapotion));
-		}*/
+		}
 		
 	}
 	
@@ -486,7 +484,7 @@ public class Game extends Canvas implements Runnable, ActionListener {
 			// IN BED
 			level.remove(player); //oh noes! jk. :D
 			nsPerTick = 781250.0D;
-			System.out.println("SLEEPING... tickCount: " + tickCount);
+			if(com.mojang.ld22.Game.debug) System.out.println("SLEEPING... tickCount: " + tickCount);
 			if (isDayNoSleep) {
 				level.add(player);
 				nsPerTick = 1.6666666666666666E7D;
@@ -571,7 +569,7 @@ public class Game extends Canvas implements Runnable, ActionListener {
 			
 			if (scoreTime < 1 && !player.removed) {
 				setMenu(new WonMenu());
-				System.out.print(player.score);
+				if(com.mojang.ld22.Game.debug) System.out.println(player.score);
 				//Extra score from drops.
 				player.score =
 						player.score + (Inventory.scored(Resource.cloth) * (random.nextInt(2) + 1) * ism);
@@ -619,8 +617,8 @@ public class Game extends Canvas implements Runnable, ActionListener {
 			if (count == 0) reverse = false;
 		}
 		
-		//System.out.println(tickCount);
-		//System.out.println(Bed.hasBeenTrigged);
+		//if(com.mojang.ld22.Game.debug) System.out.println(tickCount);
+		//if(com.mojang.ld22.Game.debug) System.out.println(Bed.hasBeenTrigged);
 		
 		//This is the general action statement thing! Regulates menus, mostly.
 		if (!hasFocus()) {
@@ -690,31 +688,23 @@ public class Game extends Canvas implements Runnable, ActionListener {
 	public static void Fishing(Level level, int x, int y, Player player) {
 		isfishing = true;
 		int fcatch = random.nextInt(90);
-
+		
 		if (ItemResource.dur == 0) player.activeItem.isDepleted();
-
+		
 		if (fcatch <= 8) {
-			System.out.print("Caught a Fish!");
-			level.add(
-					new ItemEntity(
-							new ResourceItem(Resource.rawfish),
-							x + random.nextInt(11) - 5,
-							y + random.nextInt(11) - 5));
+			if(com.mojang.ld22.Game.debug) System.out.println("Caught a Fish!");
+			level.add(new ItemEntity(new ResourceItem(Resource.rawfish), x + random.nextInt(11) - 5, y + random.nextInt(11) - 5));
 			isfishing = false;
 		}
-
+		
 		if (fcatch == 25 || fcatch == 43 || fcatch == 32 || fcatch == 15 || fcatch == 42) {
-			System.out.print("Caught some slime?");
-			level.add(
-					new ItemEntity(
-							new ResourceItem(Resource.slime),
-							x + random.nextInt(11) - 5,
-							y + random.nextInt(11) - 5));
+			if(com.mojang.ld22.Game.debug) System.out.println("Caught some slime?");
+			level.add(new ItemEntity(new ResourceItem(Resource.slime), x + random.nextInt(11) - 5, y + random.nextInt(11) - 5));
 			isfishing = false;
 		}
 
 		if (fcatch == 56) {
-			System.out.print("Rare Armor!");
+			if(com.mojang.ld22.Game.debug) System.out.println("Rare Armor!");
 			level.add(
 					new ItemEntity(
 							new ResourceItem(Resource.larmor),
@@ -722,7 +712,7 @@ public class Game extends Canvas implements Runnable, ActionListener {
 							y + random.nextInt(11) - 5));
 			isfishing = false;
 		} else {
-			System.out.print("FAIL!");
+			if(com.mojang.ld22.Game.debug) System.out.println("FAIL!");
 			isfishing = false;
 		}
 	}
@@ -796,30 +786,6 @@ public class Game extends Canvas implements Runnable, ActionListener {
 				if (cc < 255) pixels[x + y * WIDTH] = colors[cc]; // colors the pixel appropriately.
 			}
 		}
-
-		//Remeber to make a zoom feature!!!!!!!!!!!!!!!!!!!!!!!!
-		//done now..?
-		for (int g = 0; g < screen.h; g++) {
-			for (int ww = 0; ww < screen.w; ww++) {
-				boolean bool = false;
-				int xo = screen.pixels[ww + g * screen.w];
-				if (xo == 0) {
-					xo = Color.get(0, 0, 0, 0);
-					bool = true;
-				}
-
-				if (xo < 255) {
-					extrapixels[ww + g * 288] = colors[xo];
-				}
-
-				if (bool) {
-					int yo = screen.pixels[ww + g * screen.w];
-					if (yo < 255) {
-						pixels[ww + g * 288] = colors[yo];
-					}
-				}
-			}
-		}
 		
 		Graphics g = bs.getDrawGraphics(); // gets the graphics in which java draws the picture
 		g.fillRect(0, 0, getWidth(), getHeight()); // draws the a rect to fill the whole window (to cover last?)
@@ -837,41 +803,34 @@ public class Game extends Canvas implements Runnable, ActionListener {
 	
 	/** Renders the main game GUI (hearts, Stamina bolts, name of the current item, etc.) */
 	private void renderGui() {
-		// need to figure out this part.
-		int xfps;
+		//need to figure this part out.
+		int xfps; // game fps?
 		int txlevel;
 		for (xfps = 0; xfps < 2; xfps++) {
 			for (txlevel = 0; txlevel < 29; txlevel++) {
 				screen.render(txlevel * 7, screen.h - 16 + xfps * 8, 384, Color.get(-1, -1, -1, -1), 0);
 			}
 		}
-
+		
 		for (xfps = 1; xfps < 2; xfps++) {
 			for (txlevel = 12; txlevel < 29; txlevel++) {
 				screen.render(txlevel * 7, screen.h - 16 + xfps * 8, 32, Color.get(0, 0, 0, 0), 0);
 			}
 		}
-
+		/* this seems like a duplicate.
 		for (xfps = 1; xfps < 2; xfps++) {
 			for (txlevel = 12; txlevel < 14; txlevel++) {
 				screen.render(txlevel * 7, screen.h - 16 + xfps * 8, 32, Color.get(0, 0, 0, 0), 0);
 			}
 		}
-
+		*/
 		if (saving) {
-			//System.out.println("SAVING GAME...");
-			Font.draw(
-					"Saving... " + LoadingMenu.percentage + "%",
-					screen,
-					screen.w / 2 - ("Saving... " + LoadingMenu.percentage + "%").length() * 4 + 1,
-					screen.h / 2 - 32 + 1,
-					Color.get(-1, 111, 111, 111));
-			Font.draw(
-					"Saving... " + LoadingMenu.percentage + "%",
-					screen,
-					screen.w / 2 - ("Saving... " + LoadingMenu.percentage + "%").length() * 4,
-					screen.h / 2 - 32,
-					Color.get(-1, 4, 4, 4));
+			//if(com.mojang.ld22.Game.debug) System.out.println("SAVING GAME...");
+			String loadingText = "Saving... " + LoadingMenu.percentage + "%";
+			int xPos = screen.centertext(loadingText);
+			/*screen.w / 2 - loadingText.length() * 4*/
+			Font.draw(loadingText, screen, xPos+1, screen.h / 2 - 32+1, Color.get(-1, 111, 111, 111));
+			Font.draw(loadingText, screen, xPos, screen.h / 2 - 32, Color.get(-1, 4, 4, 4));
 		}
 		
 		xfps = fra; //aha! fra is used to determine the fps!
@@ -921,8 +880,8 @@ public class Game extends Canvas implements Runnable, ActionListener {
 		else
 			Font.draw("	x" + ac, screen, 84, screen.h - 16, Color.get(0, 555, 555, 555));
 		//displays arrow icon
-		screen.render(11 * 8, screen.h - 17, 13 + 5 * 32, Color.get(-1, 111, 222, 430), 0);
-			
+		screen.render(10 * 8 + 4, screen.h - 16, 13 + 5 * 32, Color.get(0, 111, 222, 430), 0);
+		
 		if (Bed.hasBedSet) { // twice for the shadow text effect
 			Font.draw("Sleeping...", screen, screen.w / 2 + 1 - 44, screen.h - 119, Color.get(-1, 222, 222, 222));
 			Font.draw("Sleeping...", screen, screen.w / 2 - 44, screen.h - 120, Color.get(-1, 555, 555, 555));
@@ -1000,17 +959,17 @@ public class Game extends Canvas implements Runnable, ActionListener {
 			Font.draw(dura + "%", screen, 164, screen.h - 16, Color.get(0, 30, 30, 30));
 		}
 
-		/*potions
+		
 		if(player.potioneffects.size() > 0) {
-			for(i = 0; i < player.potioneffects.size(); ++i) {
+			for(int i = 0; i < player.potioneffects.size(); ++i) {
 				if(player.showpotioneffects) {
 					int pcol = Color.get(PotionResource.potionColor((String)player.potioneffects.get(i)), 555, 555, 555);
-					Font.draw("(f2 to hide!)", screen, 180, screen.h - 183, Color.get(0, 555, 555, 555));
+					Font.draw("("+input.getPhysKey("potionEffects")+" to hide!)", screen, 180, screen.h - 183, Color.get(0, 555, 555, 555));
 					Font.draw((String)player.potioneffects.get(i) + " (" + ((Integer)player.potioneffectstime.get(i)).intValue() / 60 / 60 + ":" + (((Integer)player.potioneffectstime.get(i)).intValue() / 60 - 60 * (((Integer)player.potioneffectstime.get(i)).intValue() / 60 / 60)) + ")", screen, 180, screen.h - (175 - i * 8), pcol);
 				}
 			}
 		}
-		*/
+		
 		
 		// This is the status icons, like health hearts, stamina bolts, and hunger burgers.
 		if (!ModeMenu.creative) {
@@ -1116,6 +1075,8 @@ public class Game extends Canvas implements Runnable, ActionListener {
 	
 	/// * The main method! * ///
 	public static void main(String[] args) {
+		boolean debug = (args != null && args.length > 0 && args[0].equals("--debug"));
+		Game.debug = debug;
 		Game game = new Game();
 		game.setMinimumSize(new Dimension(WIDTH * SCALE, HEIGHT * SCALE));
 		game.setMaximumSize(new Dimension(WIDTH * SCALE, HEIGHT * SCALE));
@@ -1128,7 +1089,7 @@ public class Game extends Canvas implements Runnable, ActionListener {
 		frame.setResizable(false); // prevents the user from resizing the window.
 		frame.setLocationRelativeTo(null); // the window will pop up in the middle of the screen when launched.
 		frame.setVisible(true);
-
+		
 		game.start(); // Starts the game!
 	}
 	

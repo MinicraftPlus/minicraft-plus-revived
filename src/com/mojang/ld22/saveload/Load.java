@@ -139,7 +139,7 @@ public class Load {
 	}
 	/*
 	private String tryLoadData(int index, Object defaultValue) {
-		//System.out.println(defaultValue.getClass());
+		//if(com.mojang.ld22.Game.debug) System.out.println(defaultValue.getClass());
 		try {
 			return data.get(index);
 		} catch(IndexOutOfBoundsException ex) {
@@ -228,7 +228,7 @@ public class Load {
 		player.r = Integer.parseInt((String)color.get(0));
 		player.g = Integer.parseInt((String)color.get(1));
 		player.b = Integer.parseInt((String)color.get(2));
-		/* potions yet be implemented
+		
 		if(data.size() > 10 && ((String)data.get(data.size() - 1)).contains("PotionEffects[")) {
 			String potiondata = ((String)data.get(data.size() - 1)).replace("PotionEffects[", "").replace("]", "");
 			List effects = Arrays.asList(potiondata.split(":"));
@@ -238,7 +238,7 @@ public class Load {
 				player.potioneffects.add((String)effect.get(0));
 				player.potioneffectstime.add(Integer.valueOf(Integer.parseInt((String)effect.get(1))));
 			}
-		}*/
+		}
 		
 	}
 	
@@ -430,4 +430,3 @@ public class Load {
 		}
 	}
 }
-	

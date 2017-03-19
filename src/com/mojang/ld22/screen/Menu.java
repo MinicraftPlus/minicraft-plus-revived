@@ -26,7 +26,7 @@ public class Menu {
 		return (Game.WIDTH - name.length() * 8) / 2;
 	}
 
-	public void drawCentered(String text, Screen screen, int y, int color) {
+	public void writeCentered(String text, Screen screen, int y, int color) {
 		Font.draw(text, screen, centertext(text), y, color);
 	}
 

@@ -67,7 +67,7 @@ public class Tnt extends Furniture implements ActionListener {
 				col3 = Color.get(-1, 400, 500, 555);
 			}
 			if (ftik > 13) {
-				System.out.print("BLOW UP!");
+				if(com.mojang.ld22.Game.debug) System.out.println("BLOW UP!");
 				s.start();
 				ftik = 0;
 				flashing = false;

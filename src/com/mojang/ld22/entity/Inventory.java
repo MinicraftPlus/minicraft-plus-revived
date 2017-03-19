@@ -1,5 +1,8 @@
 package com.mojang.ld22.entity;
 
+import com.mojang.ld22.Game;
+import com.mojang.ld22.entity.Player;
+import com.mojang.ld22.item.BucketLavaItem;
 import com.mojang.ld22.item.Item;
 import com.mojang.ld22.item.ResourceItem;
 import com.mojang.ld22.item.ToolItem;
@@ -37,17 +40,7 @@ public class Inventory {
 			items.add(slot, item);
 		}
 	}
-
-	private static ResourceItem findResources(Resource resource) {
-		for (int i = 0; i < itemss.size(); i++) {
-			if (itemss.get(i) instanceof ResourceItem) {
-				ResourceItem has = (ResourceItem) itemss.get(i);
-				if (has.resource == resource) return has;
-			}
-		}
-		return null;
-	}
-
+	
 	private ResourceItem findResource(Resource resource) {
 		for (int i = 0; i < items.size(); i++) {
 			if (items.get(i) instanceof ResourceItem) {
@@ -57,7 +50,31 @@ public class Inventory {
 		}
 		return null;
 	}
-
+	
+	private static ResourceItem findResources(Resource resource) {
+		for (int i = 0; i < itemss.size(); i++) {
+			if (itemss.get(i) instanceof ResourceItem) {
+				ResourceItem has = (ResourceItem) itemss.get(i);
+				if (has.resource == resource) return has;
+			}
+		}
+		return null;
+	}
+	
+	private Item findItem(Item item) {
+		//System.out.println(item.getName());
+		
+		for(int i = 0; i < this.items.size(); ++i) {
+			Item has = (Item)this.items.get(i);
+			if(has.getName().equals(item.getName())) {
+				return has;
+			}
+		}
+		
+		//System.out.println("Is null!");
+		return null;
+	}
+	
 	private ToolItem findtool(ToolType type) {
 		for (int i = 0; i < items.size(); i++) {
 			if (items.get(i) instanceof ToolItem) {
@@ -79,6 +96,11 @@ public class Inventory {
 		if (ti == null) return false;
 		return ti.level >= level;
 	}
+	
+	public boolean hasItem(Item i) {
+		Item ti = this.findItem(i);
+		return ti != null;
+	}
 
 	public boolean removeResource(Resource r, int count) {
 		ResourceItem ri = findResource(r);
@@ -96,6 +118,16 @@ public class Inventory {
 		ti.level -= level;
 		if (ti.level <= 0) items.remove(ti);
 		return true;
+	}
+	
+	public boolean removeItem(Item i) {
+		BucketLavaItem ri = (BucketLavaItem)this.findItem(i);
+		if(ri == null) {
+			return false;
+		} else {
+			this.items.remove(ri);
+			return true;
+		}
 	}
 
 	public static int scored(Resource r) {

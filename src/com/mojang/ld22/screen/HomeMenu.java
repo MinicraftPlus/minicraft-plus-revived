@@ -29,7 +29,7 @@ public class HomeMenu extends Menu {
 
 	public void render(Screen screen) {
 		Font.renderFrame(screen, "", 1, 3, 18, 7);
-		//System.out.println(Player.sentFromHome);
+		//if(com.mojang.ld22.Game.debug) System.out.println(Player.sentFromHome);
 
 		if (Player.sentFromHome == true && Player.sentFromSetHome == false) {
 			if (hsh == false) {
