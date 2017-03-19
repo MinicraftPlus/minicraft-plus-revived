@@ -5,7 +5,7 @@ import java.awt.image.BufferedImage;
 public class SpriteSheet {
 	public int width, height; // width and height of the sprite sheet
 	public int[] pixels; // integer array of the image's pixels
-
+	
 	public SpriteSheet(BufferedImage image) {
 		//sets width and height to that of the image
 		width = image.getWidth();
