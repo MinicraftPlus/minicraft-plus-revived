@@ -68,8 +68,8 @@ public class Game extends Canvas implements Runnable, ActionListener {
 	public static final int WIDTH = 288;
 	//does the *scale part mean anything to the graphics, or does java accomodate it?
 	
-	private BufferedImage image, extraimage; // creates an image to be displayed on the screen.
-	private int[] pixels, extrapixels; // the array of pixels that will be displayed on the screen.
+	private BufferedImage image; // creates an image to be displayed on the screen.
+	private int[] pixels; // the array of pixels that will be displayed on the screen.
 	private int[] colors; // All of the colors, put into an array.
 	private Screen screen; // Creates the main screen
 	private Screen lightScreen; // Creates a front screen to render the darkness in caves (Fog of war).
@@ -161,8 +161,6 @@ public class Game extends Canvas implements Runnable, ActionListener {
 		colors = new int[256];
 		image = new BufferedImage(WIDTH, HEIGHT, BufferedImage.TYPE_INT_RGB);
 		pixels = ((DataBufferInt) image.getRaster().getDataBuffer()).getData();
-		extraimage = new BufferedImage(288, 192, 1);
-		extrapixels = ((DataBufferInt) this.extraimage.getRaster().getDataBuffer()).getData();
 		
 		running = false;
 		fpscounter = false;
@@ -784,30 +782,6 @@ public class Game extends Canvas implements Runnable, ActionListener {
 				// loops through all the pixels on the screen
 				int cc = screen.pixels[x + y * screen.w]; // finds a pixel on the screen.
 				if (cc < 255) pixels[x + y * WIDTH] = colors[cc]; // colors the pixel appropriately.
-			}
-		}
-
-		//Remeber to make a zoom feature!!!!!!!!!!!!!!!!!!!!!!!!
-		//done now..?
-		for (int g = 0; g < screen.h; g++) {
-			for (int ww = 0; ww < screen.w; ww++) {
-				boolean bool = false;
-				int xo = screen.pixels[ww + g * screen.w];
-				if (xo == 0) {
-					xo = Color.get(0, 0, 0, 0);
-					bool = true;
-				}
-
-				if (xo < 255) {
-					extrapixels[ww + g * 288] = colors[xo];
-				}
-
-				if (bool) {
-					int yo = screen.pixels[ww + g * screen.w];
-					if (yo < 255) {
-						pixels[ww + g * 288] = colors[yo];
-					}
-				}
 			}
 		}
 		
