@@ -52,8 +52,8 @@ public class Tile {
 	public static Tile ow = new ObsidianWallTile(121);
 	public static Tile odc = new ObsidianDoorClosedTile(122);
 	public static Tile odo = new ObsidianDoorOpenTile(123);
-	public static Tile hardRock = new HardRo // "ore" in the sky.ckTile(18);
-	//light versions // Air tile in the sky.
+	public static Tile hardRock = new HardRockTile(18);
+	//light versions
 	public static Tile lightgrass = new LightTile(100, grass, 0);
 	public static Tile lightsand = new LightTile(101, sand, 1);
 	public static Tile lighttree = new LightTile(102, tree, 2);
