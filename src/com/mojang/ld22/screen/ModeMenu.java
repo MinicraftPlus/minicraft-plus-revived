@@ -63,16 +63,15 @@ public class ModeMenu extends Menu {
 		int black = Color.get(0, 0, 0, 0);
 		int textCol = Color.get(0, 555, 555, 555);
 		screen.clear(0);
-
-		//centerx = 60
-		Font.draw("Game Mode:	" + modes[mode - 1], screen, 65, 8 * 8, Color.get(-1, 555, 555, 555));
-
-		drawCentered("Press Enter to Start", screen, screen.h - 75, textCol);
-
+		
+		writeCentered("Game Mode:	" + modes[mode - 1], screen, 8 * 8, Color.get(-1, 555, 555, 555));
+		
+		writeCentered("Press Enter to Start", screen, screen.h - 75, textCol);
+		
 		Font.draw("Loading...", screen, 120, screen.h - 105, (loading == 0 ? black : color));
-
-		drawCentered("Press Left and Right", screen, screen.h - 150, textCol);
-		drawCentered("Press Esc to Return", screen, screen.h - 55, textCol);
-		drawCentered("Press Z for world options", screen, screen.h - 35, textCol);
+		
+		writeCentered("Press Left and Right", screen, screen.h - 150, textCol);
+		writeCentered("Press Esc to Return", screen, screen.h - 55, textCol);
+		writeCentered("Press Z for world options", screen, screen.h - 35, textCol);
 	}
 }

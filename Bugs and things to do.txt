@@ -1,12 +1,10 @@
 	####BUGS####
 ####
-arrow icon is slightly off-center, and doesn't have a black box around it.
-####
 Enchanter and Workbench are added to the inventory twice.
 ####
 Player Camera doesn't go out all the way to the edge. 
 ####
-New world Loading percent doesn't increment at all...
+New world loading percent doesn't increment at all...
 ####
 ####
 dungeon chests are sort of half-implemented at the moment; their keys don't seem to be a thing. That needs to be fixed.
@@ -27,6 +25,8 @@ Make the loading system more forgiving, so that if I add a requirement to the sa
 Make window resizable, and menus will be fine.
 ****
 Make it so cloud tile can be placed in the sky level, on empty air tiles.
+****
+Improve creative inventory system; perhaps just make it so you always have one of everything?
 ****
 ----------
 request: more health

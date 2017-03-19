@@ -194,9 +194,9 @@ public class WorldGenMenu extends Menu {
 			}
 		}
 
-		drawCentered("World Options", screen, 3 * 8, Color.get(0, 555, 555, 555));
-		drawCentered("Arrow keys to scroll", screen, 16 * 8, Color.get(-1, 555, 555, 555));
-		drawCentered("Press Esc to exit", screen, 18 * 8, Color.get(-1, 555, 555, 555));
+		writeCentered("World Options", screen, 3 * 8, Color.get(0, 555, 555, 555));
+		writeCentered("Arrow keys to scroll", screen, 16 * 8, Color.get(-1, 555, 555, 555));
+		writeCentered("Press Esc to exit", screen, 18 * 8, Color.get(-1, 555, 555, 555));
 		//This is debug info to see if the numbers are working correctly.
 		//Font.draw("" + type, screen, 11 * 7 + 4, 21 * 8, Color.get(-1, 555, 555, 555));
 		//Font.draw("" + theme, screen, 11 * 8 + 4, 21 * 8, Color.get(-1, 555, 555, 555));

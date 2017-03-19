@@ -190,7 +190,7 @@ public class Level {
 						if (level == 0) {
 							sux = x;
 							suy = y;
-							System.out.print("X = " + sux + " " + "Y = " + suy + " ");
+							System.out.println("X = " + sux + " " + "Y = " + suy + " ");
 							setTile(x - 1, y, Tile.hardRock, 0);
 							setTile(x + 1, y, Tile.hardRock, 0);
 							setTile(x, y - 1, Tile.hardRock, 0);

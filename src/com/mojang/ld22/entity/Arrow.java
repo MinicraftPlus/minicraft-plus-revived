@@ -97,7 +97,7 @@ public class Arrow extends Entity {
 		}
 		int xt;
 		int yt;
-		//System.out.print(xdir + " " + ydir + " ");
+		//System.out.println(xdir + " " + ydir + " ");
 		if (xdir == 0 && ydir == -1) {
 			xt = 15;
 			yt = 5;
