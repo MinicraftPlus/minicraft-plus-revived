@@ -1,8 +1,11 @@
+//new class, no comments.
 package com.mojang.ld22.entity;
 
 import com.mojang.ld22.crafting.Crafting;
 import com.mojang.ld22.gfx.Color;
 import com.mojang.ld22.screen.CraftingMenu;
+
+// ...debug class..?
 
 public class WorkbenchGod extends Furniture {
 	public WorkbenchGod() {

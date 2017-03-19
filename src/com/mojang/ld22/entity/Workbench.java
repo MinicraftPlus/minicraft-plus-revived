@@ -4,6 +4,7 @@ import com.mojang.ld22.crafting.Crafting;
 import com.mojang.ld22.gfx.Color;
 import com.mojang.ld22.screen.CraftingMenu;
 
+// just another Furniture sub-class...
 public class Workbench extends Furniture {
 	public Workbench() {
 		super("Workbench");

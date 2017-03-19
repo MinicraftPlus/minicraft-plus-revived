@@ -1,3 +1,4 @@
+//new features, limited comments.
 package com.mojang.ld22.entity;
 
 import com.mojang.ld22.gfx.Color;
@@ -5,16 +6,18 @@ import com.mojang.ld22.screen.ContainerMenu;
 import com.mojang.ld22.screen.StartMenu;
 
 public class Chest extends Furniture {
-	public Inventory inventory = new Inventory();
-	public boolean isdeathchest = false;
-	public int time = 0;
-	public String name;
+	public Inventory inventory = new Inventory(); // Inventory of the chest
+	public boolean isdeathchest = false; // whether this is a death chest (from when the player dies)
+	public int time = 0; // time passed (used for death chest despawn)
+	public String name; // perhaps for deathchest name?
+	// no idea what these are for-- death chests are new!
 	int redtick = 0;
 	boolean reverse;
 
 	public Chest() {
-		super("Chest");
-
+		super("Chest"); //Name of the chest..?
+		
+		// chest colors
 		if (canLight()) {
 			col0 = Color.get(-1, 220, 331, 552);
 			col1 = Color.get(-1, 220, 331, 552);
@@ -26,11 +29,12 @@ public class Chest extends Furniture {
 			col2 = Color.get(-1, 110, 220, 441);
 			col3 = Color.get(-1, 000, 110, 330);
 		}
-
+		
 		col = Color.get(-1, 220, 331, 552);
-		sprite = 1;
+		sprite = 1; // Location of the sprite
 	}
-
+	
+	// for death chest time count, I imagine.
 	public void tick() {
 		super.tick();
 		if (isdeathchest) {
@@ -82,7 +86,8 @@ public class Chest extends Furniture {
 			}
 		}
 	}
-
+	
+	// another constructor! must also be for deathchests...
 	public Chest(boolean deathchest) {
 		super("Death Chest");
 		isdeathchest = true;
@@ -109,7 +114,8 @@ public class Chest extends Furniture {
 		col = Color.get(-1, 220, 331, 552);
 		sprite = 1;
 	}
-
+	
+	/** This is what occurs when the player uses the "Menu" command near this */
 	public boolean use(Player player, int attackDir) {
 		player.game.setMenu(new ContainerMenu(player, "Chest", inventory));
 		return true;
