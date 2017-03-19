@@ -1,15 +1,8 @@
 	####BUGS####
 ####
-Enchanter and Workbench are added to the inventory twice.
-####
 Player Camera doesn't go out all the way to the edge. 
 ####
-New world loading percent doesn't increment at all...
-####
-####
 dungeon chests are sort of half-implemented at the moment; their keys don't seem to be a thing. That needs to be fixed.
-####
-When creating a second world during the same execution (ie not closing the jar file), the loading percentage starts at 100%. Should be an easy fix.
 ####
 Sound effects don't always play when they should; mostly it seems when other sounds should be on at the same time.
 ####
