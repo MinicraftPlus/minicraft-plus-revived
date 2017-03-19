@@ -16,6 +16,7 @@ Get AirWizard II working, including the health bar being local.
 Make the loading system more forgiving, so that if I add a requirement to the save files, the old ones will still work. The idea is that when it expects 5 options and only finds 4, it just keeps those at default.
 ****
 Make window resizable, and menus will be fine.
+	I think.... I think a lot of this will simply be changing all the 8's to "scale".
 ****
 Make it so cloud tile can be placed in the sky level, on empty air tiles.
 ****
