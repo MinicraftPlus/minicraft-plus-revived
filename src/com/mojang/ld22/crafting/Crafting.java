@@ -59,13 +59,14 @@ public class Crafting {
 			workbenchRecipes.add((new FurnitureRecipe(Tnt.class)).addCost(Resource.gunp, 10).addCost(Resource.sand, 8));
 			workbenchRecipes.add((new FurnitureRecipe(Loom.class)).addCost(Resource.wood, 10).addCost(Resource.wool, 5));
 			workbenchRecipes.add((new ResourceRecipe(Resource.rod)).addCost(Resource.wood, 5).addCost(Resource.string, 3));
+			
 			loomRecipes.add((new ResourceRecipe(Resource.string)).addCost(Resource.wool, 1));
-			/*loomRecipes.add((new ResourceRecipe(Resource.redwool)).addCost(Resource.wool, 1).addCost(Resource.rose, 1));
+			loomRecipes.add((new ResourceRecipe(Resource.redwool)).addCost(Resource.wool, 1).addCost(Resource.rose, 1));
 			loomRecipes.add((new ResourceRecipe(Resource.bluewool)).addCost(Resource.wool, 1).addCost(Resource.lapisOre, 1));
 			loomRecipes.add((new ResourceRecipe(Resource.greenwool)).addCost(Resource.wool, 1).addCost(Resource.cactusFlower, 1));
 			loomRecipes.add((new ResourceRecipe(Resource.yellowwool)).addCost(Resource.wool, 1).addCost(Resource.flower, 1));
 			loomRecipes.add((new ResourceRecipe(Resource.blackwool)).addCost(Resource.wool, 1).addCost(Resource.coal, 1));
-			loomRecipes.add((new FurnitureRecipe(bed.class)).addCost(Resource.wood, 5).addCost(Resource.wool, 3));
+			loomRecipes.add((new FurnitureRecipe(Bed.class)).addCost(Resource.wood, 5).addCost(Resource.wool, 3));
 			loomRecipes.add((new ResourceRecipe(Resource.redclothes)).addCost(Resource.cloth, 5).addCost(Resource.rose, 1));
 			loomRecipes.add((new ResourceRecipe(Resource.blueclothes)).addCost(Resource.cloth, 5).addCost(Resource.lapisOre, 1));
 			loomRecipes.add((new ResourceRecipe(Resource.greenclothes)).addCost(Resource.cloth, 5).addCost(Resource.cactusFlower, 1));
@@ -75,7 +76,8 @@ public class Crafting {
 			loomRecipes.add((new ResourceRecipe(Resource.purpleclothes)).addCost(Resource.cloth, 5).addCost(Resource.lapisOre, 1).addCost(Resource.rose, 1));
 			loomRecipes.add((new ResourceRecipe(Resource.cyanclothes)).addCost(Resource.cloth, 5).addCost(Resource.lapisOre, 1).addCost(Resource.cactusFlower, 1));
 			loomRecipes.add((new ResourceRecipe(Resource.regclothes)).addCost(Resource.cloth, 5));
-			*/godworkbenchRecipes.add((new ToolRecipe(ToolType.sword, 4)).addCost(Resource.wood, 0));
+			
+			godworkbenchRecipes.add((new ToolRecipe(ToolType.sword, 4)).addCost(Resource.wood, 0));
 			godworkbenchRecipes.add((new ToolRecipe(ToolType.axe, 4)).addCost(Resource.wood, 0));
 			godworkbenchRecipes.add((new ToolRecipe(ToolType.hoe, 4)).addCost(Resource.wood, 0));
 			godworkbenchRecipes.add((new ToolRecipe(ToolType.pickaxe, 4)).addCost(Resource.wood, 0));
@@ -85,6 +87,7 @@ public class Crafting {
 			godworkbenchRecipes.add((new FurnitureRecipe(Tnt.class)).addCost(Resource.wood, 0));
 			godworkbenchRecipes.add((new ResourceRecipe(Resource.goldapple)).addCost(Resource.wood, 0));
 			godworkbenchRecipes.add((new ResourceRecipe(Resource.gemarmor)).addCost(Resource.wood, 0));
+			
 			workbenchRecipes.add((new ToolRecipe(ToolType.sword, 0)).addCost(Resource.wood, 5));
 			workbenchRecipes.add((new ToolRecipe(ToolType.axe, 0)).addCost(Resource.wood, 5));
 			workbenchRecipes.add((new ToolRecipe(ToolType.hoe, 0)).addCost(Resource.wood, 5));

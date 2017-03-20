@@ -118,7 +118,7 @@ public class Player extends Mob {
 		r = 50;
 		g = 50;
 		b = 0;
-
+		
 		stamina = maxStamina;
 		hunger = maxHunger;
 
@@ -625,7 +625,27 @@ public class Player extends Mob {
 	}
 
 	public void render(Screen screen) {
-		int col0 = Color.get(-1, 100, 110, 531);
+		int r2 = r - 50, b2 = b - 50, g2 = g - 50;
+		if(r == 50 && g == 50 && (b == 0 || b == 50)) {
+			r2 = r < 0 ? 0 : r;
+			g2 = g < 0 ? 0 : g;
+			b2 = b < 0 ? 0 : b;
+		}
+		
+		int col0 = Color.get(-1, 100, Color.rgb(r, g, b), 531);
+		int col1 = Color.get(-1, 100, Color.rgb(r, g, b), 532);
+		int col2 = Color.get(-1, 100, Color.rgb(r2, g2, b2), 421);
+		int col3 = Color.get(-1, 0, Color.rgb(r2, g2, b2), 321);
+		int col4 = Color.get(-1, 100, Color.rgb(r, g, b), 532);
+		if(isLight()) {
+			col0 = Color.get(-1, 100, Color.rgb(r, g, b), 532);
+			//col1 = Color.get(-1, 100, Color.rgb(r, g, b), 532);
+			col2 = Color.get(-1, 100, Color.rgb(r, g, b), 532);
+			col3 = Color.get(-1, 100, Color.rgb(r, g, b), 532);
+			//col4 = Color.get(-1, 100, Color.rgb(r, g, b), 532);
+		}
+		
+		/*int col0 = Color.get(-1, 100, 110, 531);
 
 		int col1 = Color.get(-1, 100, 220, 532);
 
@@ -655,7 +675,7 @@ public class Player extends Mob {
 			col3 = Color.get(-1, 0, 110, 321);
 
 			col4 = Color.get(-1, 100, 220, 532);
-		}
+		}*/
 
 		int xt = 0;
 		int yt = 14;
@@ -684,12 +704,12 @@ public class Player extends Mob {
 		if (isSwimming()) {
 			yo += 4;
 			int liquidColor = 0;
-			if (level.getTile(this.x / 16, this.y / 16) == Tile.water) {
+			if (level.getTile(x / 16, y / 16) == Tile.water) {
 				liquidColor = Color.get(-1, -1, 115, 335);
 				if (tickTime / 8 % 2 == 0) liquidColor = Color.get(-1, 335, 5, 115);
-			} else if (level.getTile(this.x / 16, this.y / 16) == Tile.lava) {
+			} else if (level.getTile(x / 16, y / 16) == Tile.lava) {
 				liquidColor = Color.get(-1, -1, 500, 300);
-				if (this.tickTime / 8 % 2 == 0) liquidColor = Color.get(-1, 300, 400, 500);
+				if (tickTime / 8 % 2 == 0) liquidColor = Color.get(-1, 300, 400, 500);
 			}
 
 			screen.render(xo + 0, yo + 3, 5 + 13 * 32, liquidColor, 0);
@@ -703,10 +723,17 @@ public class Player extends Mob {
 				attackItem.renderIcon(screen, xo + 4, yo - 4);
 			}
 		}
-
+		
+		int col = 0;
 		if (level.dirtColor == 322) {
-			if (Game.time == 0) {
-				int col = col0;
+			if(Game.time == 0) col = col0;
+			if(Game.time == 1) col = col1;
+			if(Game.time == 2) col = col2;
+			if(Game.time == 3) col = col3;
+		} else
+			col = col4;
+			//if (Game.time == 0) {
+			//	int col = col0;
 				if (hurtTime > 0) {
 					col = Color.get(-1, 555, 555, 555);
 				}
@@ -749,8 +776,8 @@ public class Player extends Mob {
 					furniture.y = yo;
 					furniture.render(screen);
 				}
-			}
-
+			//}
+			/*
 			if (Game.time == 1) {
 				int col = col1;
 				if (hurtTime > 0) {
@@ -934,7 +961,7 @@ public class Player extends Mob {
 				furniture.y = yo;
 				furniture.render(screen);
 			}
-		}
+		}*/
 	}
 
 	public void touchItem(ItemEntity itemEntity) {
@@ -957,7 +984,7 @@ public class Player extends Mob {
 	public boolean canLight() {
 		return true;
 	}
-
+	/*
 	public boolean findStartPoss(Level level) {
 		int xxs = x;
 		int yys = y;
@@ -969,7 +996,7 @@ public class Player extends Mob {
 
 		return false;
 	}
-
+	*/
 	public boolean findStartPos(Level level) {
 		while (true) {
 			int x = random.nextInt(level.w);
@@ -979,9 +1006,11 @@ public class Player extends Mob {
 				this.y = y * 16 + 8;
 				spawnx = y;
 				spawny = x;
+				//System.out.println("TILE FOUND; ID: " + level.getTile(x, y).id);
 				return true;
 			}
 		}
+		//System.out.println("you shouldn't be here...");
 	}
 
 	public void setHome() {
@@ -1028,17 +1057,20 @@ public class Player extends Mob {
 			int x = spawnx;
 			int y = spawny;
 			if (bedSpawn || level.getTile(x, y) == Tile.grass) {
+				//System.out.println("RESPAWN TILE ID: " + level.getTile(x, y).id);
+				this.x = spawny * 16 + 8;
+				this.y = spawnx * 16 + 8;
+				//System.out.println("BEDSPAWN=" + bedSpawn);
+				return true;
+			} /* else if (level.getTile(x, y) == Tile.grass) {
 				this.x = spawny * 16 + 8;
 				this.y = spawnx * 16 + 8;
 				return true;
-			} /* else if (level.getTile(x, y) == Tile.grass) {
-					this.x = spawny * 16 + 8;
-					this.y = spawnx * 16 + 8;
-					return true;
-				}*/
-
+			}*/
+			//System.out.println("you should only see this once (or not at all) per search.");
 			findStartPos(level);
 		}
+		//System.out.println("you REALLY shouldn't be here...");
 	}
 
 	public boolean payStamina(int cost) {

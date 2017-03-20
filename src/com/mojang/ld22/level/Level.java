@@ -448,7 +448,7 @@ public class Level {
 			list.get(i).render(screen);
 		}
 	}
-
+	
 	public Tile getTile(int x, int y) {
 		if (x < 0 || y < 0 || x >= w || y >= h) return Tile.rock;
 		return Tile.tiles[tiles[x + y * w]];
@@ -477,7 +477,7 @@ public class Level {
 		entity.removed = false;
 		entities.add(entity);
 		entity.init(this);
-
+		
 		insertEntity(entity.x >> 4, entity.y >> 4, entity);
 	}
 
@@ -489,7 +489,7 @@ public class Level {
 		entities.add(entity);
 		entity.init(this);
 
-		insertEntity(entity.x >> xs, entity.x >> ys, entity);
+		insertEntity(entity.x >> xs, entity.y >> ys, entity);
 	}
 
 	public void remove(Entity e) {
@@ -604,7 +604,7 @@ public class Level {
 		for (int y = yt0; y <= yt1; y++) {
 			for (int x = xt0; x <= xt1; x++) {
 				if (x < 0 || y < 0 || x >= w || y >= h) continue;
-				List<Entity> entities = entitiesInTiles[x + y * this.w];
+				List<Entity> entities = entitiesInTiles[x + y * w];
 				for (int i = 0; i < entities.size(); i++) {
 					Entity e = entities.get(i);
 					if (e.intersects(x0, y0, x1, y1)) result.add(e);

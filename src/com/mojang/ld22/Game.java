@@ -309,7 +309,7 @@ public class Game extends Canvas implements Runnable, ActionListener {
 		setMenu(new TitleMenu()); //sets menu to the title screen.
 	}
 
-	/** This resets the game */
+	/** This resets the game; well, only deadmenu calls this, though. the rest call resetStartGame. */
 	public void resetGame() {
 		// Resets all values
 		playerDeadTime = 0;
@@ -329,19 +329,24 @@ public class Game extends Canvas implements Runnable, ActionListener {
 			//currentLevel = 3;
 			level = levels[currentLevel];
 			player.respawn(level);
+		//	System.out.println("respawned player in resetGame");
 			level.add(player); // adds the player to the current level (always surface here)
 		} else {
-			// new game, regenerate everything.
+			// new game, regenerate... just the surface level?
 			levels[3] = new Level(worldSize, worldSize, 0, levels[4]);
-
+			
 			level = levels[currentLevel]; // Set level variable to the surface (b/c currentlevel is always 3)
 
 			DeadMenu.shudrespawn = true; // player should respawn on death
 			player.findStartPos(level); // finds the start position for the player
+			//System.out.println("spawned player in new surface, resetGame");
 		}
+		
+		//System.out.println("rG PLAYER SPAWN TILE ID: " + level.getTile(player.spawnx, player.spawny).id);
+		//System.out.println("rG PLAYER TILE ID: " + level.getTile(player.x / 16, player.y / 16).id+"\n");
 	}
 	
-	// what might this be for?
+	// OH! This always generates a new world! the other one doesn't; but it may generate a new surface level.
 	public void resetstartGame() {
 		playerDeadTime = 0;
 		wonTimer = 0;
@@ -465,14 +470,16 @@ public class Game extends Canvas implements Runnable, ActionListener {
 			new Load(this, WorldSelectMenu.worldname);
 		} else { //should execute only on dungeon level, based on above.
 			tickCount = 0;
-			if (this.level.getTile(this.player.x / 16, this.player.y / 16) != Tile.sand)
-				this.level.setTile(this.player.x / 16, this.player.y / 16, Tile.grass, 0);
+			//System.out.println("TILE SPAWN ID: " + level.getTile(player.spawnx, player.spawny).id);
+			//System.out.println("TILE ID: " + level.getTile(player.x / 16, player.y / 16).id+"\n");
+			//if (level.getTile(player.x / 16, player.y / 16) != Tile.sand)
+				//level.setTile(player.x / 16, player.y / 16, Tile.grass, 0);
 		}
 		
 		DeadMenu.shudrespawn = true;
 		
 		if(WorldGenMenu.theme == WorldGenMenu.hell) {
-			this.player.inventory.add(new ResourceItem(Resource.lavapotion));
+			player.inventory.add(new ResourceItem(Resource.lavapotion));
 		}
 		
 	}
@@ -665,6 +672,10 @@ public class Game extends Canvas implements Runnable, ActionListener {
 				//still in "no active menu" conditional:
 				level.tick();
 				Tile.tickCount++;
+				
+				if (input.getKey("Shift").clicked && input.getKey("0").clicked) {
+					
+				}
 			} //end "menu-null" conditional
 		} //end hasfocus conditional
 	} //end tick()
@@ -980,10 +991,11 @@ public class Game extends Canvas implements Runnable, ActionListener {
 				color = (i < player.health) ? Color.get(-1, 200, 500, 533) : Color.get(-1, 100, 000, 000);
 				screen.render(i * 8, screen.h - 16, 0 + 12 * 32, color, 0);
 				
-				
+				// renders hunger
 				color = (i < player.hunger) ? Color.get(-1, 100, 530, 211) : Color.get(-1, 100, 000, 000);
 				screen.render(i * 8 + 208, screen.h - 16, 2 + 12 * 32, color, 0);
 				
+				// renders armor
 				color = (i < player.maxArmor) ? Color.get(-1, 333, 444, 555) : Color.get(-1, -1, -1, -1);
 				screen.render(i * 8 + 208, screen.h - 8, 3 + 12 * 32, color, 0);
 
@@ -1025,7 +1037,7 @@ public class Game extends Canvas implements Runnable, ActionListener {
 				}
 			}
 		}
-
+		
 		if (player.activeItem != null) // shows active item sprite and name in bottom toolbar, if one exists.
 			player.activeItem.renderInventory(screen, 12 * 7, screen.h - 8);
 

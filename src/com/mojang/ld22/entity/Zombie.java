@@ -260,7 +260,22 @@ public class Zombie extends Mob {
 								y + random.nextInt(11) - 5));
 			}
 		}
-
+		
+		if(random.nextInt(60) == 2) {
+			level.add(new ItemEntity(new ResourceItem(Resource.ironIngot), x + random.nextInt(11) - 5, y + random.nextInt(11) - 5));
+		}
+		
+		if(random.nextInt(40) == 19) {
+			int rand = random.nextInt(3);
+			if(rand == 0) {
+				level.add(new ItemEntity(new ResourceItem(Resource.greenclothes), x + random.nextInt(11) - 5, y + random.nextInt(11) - 5));
+			} else if(rand == 1) {
+				level.add(new ItemEntity(new ResourceItem(Resource.redclothes), x + random.nextInt(11) - 5, y + random.nextInt(11) - 5));
+			} else if(rand == 2) {
+				level.add(new ItemEntity(new ResourceItem(Resource.blueclothes), x + random.nextInt(11) - 5, y + random.nextInt(11) - 5));
+			}
+		}
+		
 		if (level.player != null) {
 			level.player.score += (50 * lvl) * Game.multiplyer;
 		}

@@ -66,6 +66,7 @@ public class ListItems {
 	public Item bucket = (new BucketItem()).addItem();
 	public Item wbucket = (new BucketWaterItem()).addItem();
 	public Item lbucket = (new BucketLavaItem()).addItem();
+	
 	public Item arrow;
 	public Item torch;
 	public Item wood;
@@ -75,6 +76,7 @@ public class ListItems {
 	public Item dirt;
 	public Item sand;
 	public Item cactusFlower;
+	
 	public Item seeds;
 	public Item wheat;
 	public Item bread;
@@ -85,6 +87,7 @@ public class ListItems {
 	public Item cookedpork;
 	public Item cookedfish;
 	public Item steak;
+	
 	public Item leather;
 	public Item coal;
 	public Item ironOre;
@@ -96,12 +99,14 @@ public class ListItems {
 	public Item cloth;
 	public Item cloud;
 	public Item gem;
+	
 	public Item wool;
 	public Item redwool;
 	public Item bluewool;
 	public Item greenwool;
 	public Item yellowwool;
 	public Item blackwool;
+	
 	public Item rod;
 	public Item rose;
 	public Item plank;
@@ -122,6 +127,7 @@ public class ListItems {
 	public Item scale;
 	public Item shard;
 	//public Item key;
+	
 	public Item woodshovel;
 	public Item rockshovel;
 	public Item ironshovel;
@@ -172,12 +178,12 @@ public class ListItems {
 	public Item ironspade;
 	public Item goldspade;
 	public Item gemspade;
+	
 	public Item larmor;
 	public Item sarmor;
 	public Item iarmor;
 	public Item garmor;
 	public Item gemarmor;
-	/* not reimplemented yet
 	public Item redclothes;
 	public Item blueclothes;
 	public Item greenclothes;
@@ -187,7 +193,8 @@ public class ListItems {
 	public Item purpleclothes;
 	public Item cyanclothes;
 	public Item regclothes;
-	*/public Item potion;
+	
+	public Item potion;
 	public Item speedpotion;
 	public Item lightpotion;
 	public Item swimpotion;
@@ -310,7 +317,7 @@ public class ListItems {
 		this.iarmor = (new ResourceItem(Resource.iarmor)).addItem();
 		this.garmor = (new ResourceItem(Resource.garmor)).addItem();
 		this.gemarmor = (new ResourceItem(Resource.gemarmor)).addItem();
-		/* not reimplemented yet
+		
 		this.redclothes = (new ResourceItem(Resource.redclothes)).addItem();
 		this.blueclothes = (new ResourceItem(Resource.blueclothes)).addItem();
 		this.greenclothes = (new ResourceItem(Resource.greenclothes)).addItem();
@@ -320,7 +327,8 @@ public class ListItems {
 		this.purpleclothes = (new ResourceItem(Resource.purpleclothes)).addItem();
 		this.cyanclothes = (new ResourceItem(Resource.cyanclothes)).addItem();
 		this.regclothes = (new ResourceItem(Resource.regclothes)).addItem();
-		*/this.potion = (new ResourceItem(Resource.potion)).addItem();
+		
+		this.potion = (new ResourceItem(Resource.potion)).addItem();
 		this.speedpotion = (new ResourceItem(Resource.speedpotion)).addItem();
 		this.lightpotion = (new ResourceItem(Resource.lightpotion)).addItem();
 		this.swimpotion = (new ResourceItem(Resource.swimpotion)).addItem();
