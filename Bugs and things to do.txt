@@ -4,10 +4,14 @@ dungeon chests are sort of half-implemented at the moment; their keys don't seem
 ####
 Sound effects don't always play when they should; mostly it seems when other sounds should be on at the same time.
 ####
+"Can only be placed on stone brick" message fills up notifications list immedieately; should only print one message.
+####
 
 	****IDEAS****
 ****
 Get AirWizard II working, including the health bar being local.
+****
+Fix the whitespace; where it indents without a semicolon, mostly. I've done it before...
 ****
 Make the loading system more forgiving, so that if I add a requirement to the save files, the old ones will still work. The idea is that when it expects 5 options and only finds 4, it just keeps those at default.
 ****
@@ -17,6 +21,8 @@ Make window resizable, and menus will be fine.
 Make it so cloud tile can be placed in the sky level, on empty air tiles.
 ****
 Improve creative inventory system; perhaps just make it so you always have one of everything?
+****
+Idea to improve code for Level.java: make method "removeNearbyEntities(Entity target, int radius)" to easily remove entites near, say, the player, whenever we want.
 ****
 ----------
 request: more health
