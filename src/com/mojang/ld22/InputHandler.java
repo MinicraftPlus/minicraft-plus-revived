@@ -86,7 +86,7 @@ public class InputHandler implements MouseListener, KeyListener {
 		//Map.Entry<String,Key>[] mappings = keymap.entrySet().toArray(new Map.Entry[0]);
 		Key[] keys = keyboard.values().toArray(new Key[0]);
 		for (int i = 0; i < keys.length; i++) {
-			//if(com.mojang.ld22.Game.debug) System.out.println(i+1+": " + mappings[i].getKey() + " - " + mappings[i].getValue());
+			//if(Game.debug) System.out.println(i+1+": " + mappings[i].getKey() + " - " + mappings[i].getValue());
 			keys[i].down = false;
 		}
 	}
@@ -125,7 +125,7 @@ public class InputHandler implements MouseListener, KeyListener {
 				key = new Key(); //make new key
 				keyboard.put(keytext, key); //add it to keyboard
 				
-				if(com.mojang.ld22.Game.debug) System.out.println("Added new key: \'" + keytext + "\'"); //log to console that a new key was added to the keyboard
+				if(Game.debug) System.out.println("Added new key: \'" + keytext + "\'"); //log to console that a new key was added to the keyboard
 			}
 		}
 		return key; // return the Key object.

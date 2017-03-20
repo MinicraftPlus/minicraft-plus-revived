@@ -190,7 +190,7 @@ public class Level {
 						if (level == 0) {
 							sux = x;
 							suy = y;
-							if(com.mojang.ld22.Game.debug) System.out.println("X = " + sux + " " + "Y = " + suy + " ");
+							if(Game.debug) System.out.println("X = " + sux + " " + "Y = " + suy + " ");
 							setTile(x - 1, y, Tile.hardRock, 0);
 							setTile(x + 1, y, Tile.hardRock, 0);
 							setTile(x, y - 1, Tile.hardRock, 0);
@@ -326,7 +326,7 @@ public class Level {
 						this.addtoinv(c.inventory, -level);
 						c.x = sp.x + 16;
 						c.y = sp.y + 16;
-						if(com.mojang.ld22.Game.debug) System.out.println("Added Chest: X = " + c.x / 16 + ", Y = " + c.y / 16 + "/" + c);
+						if(Game.debug) System.out.println("Added Chest: X = " + c.x / 16 + ", Y = " + c.y / 16 + "/" + c);
 						this.add(c);
 					}
 				}
@@ -339,7 +339,7 @@ public class Level {
 			aw.x = w * 8;
 			aw.y = h * 8;
 			add(aw);
-			//if(com.mojang.ld22.Game.debug) System.out.println("Added Air Wizard! X = " + aw.x + ", Y = " + aw.y);
+			//if(Game.debug) System.out.println("Added Air Wizard! X = " + aw.x + ", Y = " + aw.y);
 		}
 	}
 

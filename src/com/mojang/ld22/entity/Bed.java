@@ -31,7 +31,7 @@ public class Bed extends Furniture {
 			Player.spawnx = this.y / 16;
 			Player.spawny = this.x / 16;
 			player.bedSpawn = true;
-			if(com.mojang.ld22.Game.debug) System.out.println(this.x + "/" + this.y + "//" + Player.spawnx + "/" + Player.spawny);
+			if(Game.debug) System.out.println(this.x + "/" + this.y + "//" + Player.spawnx + "/" + Player.spawny);
 		} else {
 			int sec = ('\ua8c0' - Game.tickCount) / 60;
 			Game.notifications.add(

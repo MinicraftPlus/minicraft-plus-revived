@@ -139,7 +139,7 @@ public class Load {
 	}
 	/*
 	private String tryLoadData(int index, Object defaultValue) {
-		//if(com.mojang.ld22.Game.debug) System.out.println(defaultValue.getClass());
+		//if(Game.debug) System.out.println(defaultValue.getClass());
 		try {
 			return data.get(index);
 		} catch(IndexOutOfBoundsException ex) {
