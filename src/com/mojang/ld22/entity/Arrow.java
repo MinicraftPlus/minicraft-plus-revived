@@ -57,7 +57,10 @@ public class Arrow extends Entity {
 		int count = random.nextInt(11);
 		for (int i = 0; i < entitylist.size(); i++) {
 			Entity hit = entitylist.get(i);
-			if (count < 9) {
+			if(hit instanceof Tile && owner instanceof Player) {
+				((Tile)hit).hurt(level, x, y, owner, 50, owner.dir);
+			}
+			else if (count < 9) {
 				if (hit != null) {
 					if (hit instanceof Mob && hit != owner && owner.isenemy == false) {
 						hit.hurt(owner, damage + 3, ((Mob) hit).dir);

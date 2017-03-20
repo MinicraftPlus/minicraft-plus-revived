@@ -189,6 +189,10 @@ public class TreeTile extends Tile {
 	}
 
 	public boolean mayPass(Level level, int x, int y, Entity e) {
+		/*if(e instanceof com.mojang.ld22.entity.Arrow) {
+			hurt(level, x, y, 25);
+			return true;
+		}*/
 		return false;
 	}
 
