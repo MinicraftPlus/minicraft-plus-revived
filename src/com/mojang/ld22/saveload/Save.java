@@ -13,7 +13,7 @@ import com.mojang.ld22.item.Item;
 import com.mojang.ld22.item.ResourceItem;
 import com.mojang.ld22.screen.LoadingMenu;
 import com.mojang.ld22.screen.ModeMenu;
-import com.mojang.ld22.screen.StartMenu;
+import com.mojang.ld22.screen.OptionsMenu;
 import com.mojang.ld22.screen.WorldGenMenu;
 import java.io.BufferedWriter;
 import java.io.File;
@@ -97,7 +97,7 @@ public class Save {
 		data.add(String.valueOf(Game.gamespeed));
 		data.add(String.valueOf(Game.ac));
 		data.add(String.valueOf(Game.autosave));
-		data.add(String.valueOf(StartMenu.isSoundAct));
+		data.add(String.valueOf(OptionsMenu.isSoundAct));
 		writeToFile(location + filename + extention, data);
 	}
 	

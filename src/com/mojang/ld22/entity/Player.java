@@ -25,7 +25,7 @@ import com.mojang.ld22.screen.LoadingMenu;
 import com.mojang.ld22.screen.ModeMenu;
 import com.mojang.ld22.screen.PauseMenu;
 import com.mojang.ld22.screen.PlayerInfoMenu;
-import com.mojang.ld22.screen.StartMenu;
+import com.mojang.ld22.screen.OptionsMenu;
 import com.mojang.ld22.screen.WorldSelectMenu;
 import com.mojang.ld22.sound.Sound;
 import java.util.ArrayList;
@@ -267,15 +267,15 @@ public class Player extends Mob {
 				staminaRechargeDelay = 40;
 				hungStamCnt++;
 				//if (isSwimming()) hungStamCnt--;
-				if (StartMenu.diff == StartMenu.easy && hungStamCnt == 10) {
+				if (OptionsMenu.diff == OptionsMenu.easy && hungStamCnt == 10) {
 					hunger = hunger - 1;
 					hungStamCnt = 0;
 				}
-				if (StartMenu.diff == StartMenu.norm && hungStamCnt == 7) {
+				if (OptionsMenu.diff == OptionsMenu.norm && hungStamCnt == 7) {
 					hunger = hunger - 1;
 					hungStamCnt = 0;
 				}
-				if (StartMenu.diff == StartMenu.hard && hungStamCnt == 5) {
+				if (OptionsMenu.diff == OptionsMenu.hard && hungStamCnt == 5) {
 					hunger = hunger - 1;
 					hungStamCnt = 0;
 				}
@@ -312,35 +312,35 @@ public class Player extends Mob {
 		if (hungerStarveDelay == 0) {
 			hungerStarveDelay = 120;
 		}
-		if (StartMenu.diff == StartMenu.norm) {
+		if (OptionsMenu.diff == OptionsMenu.norm) {
 			if (stepCount >= 10000) {
 				hunger--;
 				stepCount = 0;
 			}
 		}
 
-		if (StartMenu.diff == StartMenu.hard) {
+		if (OptionsMenu.diff == OptionsMenu.hard) {
 			if (stepCount >= 5000) {
 				hunger--;
 				stepCount = 0;
 			}
 		}
 
-		if (StartMenu.diff == StartMenu.norm) {
+		if (OptionsMenu.diff == OptionsMenu.norm) {
 			if (game.tickCount == 6000) {
 				timesTick++;
 				if (timesTick == random.nextInt(5)) hunger--;
 			}
 		}
 
-		if (StartMenu.diff == StartMenu.hard) {
+		if (OptionsMenu.diff == OptionsMenu.hard) {
 			if (game.tickCount == 6000) {
 				timesTick++;
 				if (timesTick == random.nextInt(2)) hunger--;
 			}
 		}
 
-		if (StartMenu.diff == StartMenu.easy) {
+		if (OptionsMenu.diff == OptionsMenu.easy) {
 			if (hunger == 0 && health > 5) {
 				if (hungerStarveDelay > 0) hungerStarveDelay--;
 				if (hungerStarveDelay == 0) {
@@ -349,7 +349,7 @@ public class Player extends Mob {
 			}
 		}
 
-		if (StartMenu.diff == StartMenu.norm) {
+		if (OptionsMenu.diff == OptionsMenu.norm) {
 			if (hunger == 0 && health > 3) {
 				if (hungerStarveDelay > 0) hungerStarveDelay--;
 				if (hungerStarveDelay == 0) {
@@ -358,7 +358,7 @@ public class Player extends Mob {
 			}
 		}
 
-		if (StartMenu.diff == StartMenu.hard) {
+		if (OptionsMenu.diff == OptionsMenu.hard) {
 			if (hunger == 0 && health > 0) {
 				if (hungerStarveDelay > 0) hungerStarveDelay--;
 				if (hungerStarveDelay == 0) {
@@ -679,7 +679,7 @@ public class Player extends Mob {
 
 		int xt = 0;
 		int yt = 14;
-		if (StartMenu.skinon) {
+		if (OptionsMenu.skinon) {
 			xt = 18;
 			yt = 20;
 		}
@@ -1006,11 +1006,11 @@ public class Player extends Mob {
 				this.y = y * 16 + 8;
 				spawnx = y;
 				spawny = x;
-				//System.out.println("TILE FOUND; ID: " + level.getTile(x, y).id);
+				System.out.println("TILE FOUND; ID: " + level.getTile(x, y).id);
 				return true;
 			}
 		}
-		//System.out.println("you shouldn't be here...");
+		System.out.println("you shouldn't be here...");
 	}
 
 	public void setHome() {
@@ -1057,7 +1057,7 @@ public class Player extends Mob {
 			int x = spawnx;
 			int y = spawny;
 			if (bedSpawn || level.getTile(x, y) == Tile.grass) {
-				//System.out.println("RESPAWN TILE ID: " + level.getTile(x, y).id);
+				System.out.println("RESPAWN TILE ID: " + level.getTile(x, y).id);
 				this.x = spawny * 16 + 8;
 				this.y = spawnx * 16 + 8;
 				//System.out.println("BEDSPAWN=" + bedSpawn);
@@ -1067,10 +1067,10 @@ public class Player extends Mob {
 				this.y = spawnx * 16 + 8;
 				return true;
 			}*/
-			//System.out.println("you should only see this once (or not at all) per search.");
+			System.out.println("you should only see this once (or not at all) per search.");
 			findStartPos(level);
 		}
-		//System.out.println("you REALLY shouldn't be here...");
+		System.out.println("you REALLY shouldn't be here...");
 	}
 
 	public boolean payStamina(int cost) {

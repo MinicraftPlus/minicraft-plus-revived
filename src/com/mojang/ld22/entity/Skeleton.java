@@ -7,7 +7,7 @@ import com.mojang.ld22.gfx.Screen;
 import com.mojang.ld22.item.ResourceItem;
 import com.mojang.ld22.item.resource.Resource;
 import com.mojang.ld22.screen.ModeMenu;
-import com.mojang.ld22.screen.StartMenu;
+import com.mojang.ld22.screen.OptionsMenu;
 
 public class Skeleton extends Mob {
 	int xa;
@@ -20,7 +20,7 @@ public class Skeleton extends Mob {
 	public int artime = arrowtime;
 
 	public Skeleton(int lvl) {
-		if (StartMenu.diff == StartMenu.easy) {
+		if (OptionsMenu.diff == OptionsMenu.easy) {
 			this.lvl = lvl;
 			x = random.nextInt(64 * 16);
 			y = random.nextInt(64 * 16);
@@ -28,7 +28,7 @@ public class Skeleton extends Mob {
 			else health = maxHealth = lvl * lvl * 6;
 		}
 
-		if (StartMenu.diff == StartMenu.norm) {
+		if (OptionsMenu.diff == OptionsMenu.norm) {
 			this.lvl = lvl;
 			x = random.nextInt(64 * 16);
 			y = random.nextInt(64 * 16);
@@ -36,7 +36,7 @@ public class Skeleton extends Mob {
 			else health = maxHealth = lvl * lvl * 12;
 		}
 
-		if (StartMenu.diff == StartMenu.hard) {
+		if (OptionsMenu.diff == OptionsMenu.hard) {
 			this.lvl = lvl;
 			x = random.nextInt(64 * 16);
 			y = random.nextInt(64 * 16);
@@ -239,17 +239,17 @@ public class Skeleton extends Mob {
 	}
 
 	protected void touchedBy(Entity entity) {
-		if (StartMenu.diff == StartMenu.easy) {
+		if (OptionsMenu.diff == OptionsMenu.easy) {
 			if (entity instanceof Player) {
 				//entity.hurt(this, lvl, dir);
 			}
 		}
-		if (StartMenu.diff == StartMenu.norm) {
+		if (OptionsMenu.diff == OptionsMenu.norm) {
 			if (entity instanceof Player) {
 				//entity.hurt(this, lvl, dir);
 			}
 		}
-		if (StartMenu.diff == StartMenu.hard) {
+		if (OptionsMenu.diff == OptionsMenu.hard) {
 			if (entity instanceof Player) {
 				//entity.hurt(this, lvl * 2, dir);
 			}
@@ -263,7 +263,7 @@ public class Skeleton extends Mob {
 	protected void die() {
 		super.die();
 
-		if (StartMenu.diff == StartMenu.easy) {
+		if (OptionsMenu.diff == OptionsMenu.easy) {
 			int count = random.nextInt(3) + 1;
 			int bookcount = random.nextInt(1) + 1;
 			int rand = random.nextInt(20);
@@ -302,7 +302,7 @@ public class Skeleton extends Mob {
 									y + random.nextInt(11) - 5));
 				}
 		}
-		if (StartMenu.diff == StartMenu.norm) {
+		if (OptionsMenu.diff == OptionsMenu.norm) {
 			int count = random.nextInt(2) + 1;
 			int bookcount = random.nextInt(1) + 1;
 			int rand = random.nextInt(20);
@@ -333,7 +333,7 @@ public class Skeleton extends Mob {
 									y + random.nextInt(11) - 5));
 				}
 		}
-		if (StartMenu.diff == StartMenu.hard) {
+		if (OptionsMenu.diff == OptionsMenu.hard) {
 			int count = random.nextInt(1) + 1;
 			int bookcount = random.nextInt(1) + 1;
 			int rand = random.nextInt(30);

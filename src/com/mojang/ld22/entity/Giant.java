@@ -5,7 +5,7 @@ import com.mojang.ld22.gfx.Color;
 import com.mojang.ld22.gfx.Screen;
 import com.mojang.ld22.item.ResourceItem;
 import com.mojang.ld22.item.resource.Resource;
-import com.mojang.ld22.screen.StartMenu;
+import com.mojang.ld22.screen.OptionsMenu;
 
 public class Giant extends Mob {
 	int xa;
@@ -153,17 +153,17 @@ public class Giant extends Mob {
 	}
 
 	protected void touchedBy(Entity entity) {
-		if (StartMenu.diff == StartMenu.easy) {
+		if (OptionsMenu.diff == OptionsMenu.easy) {
 			if (entity instanceof Player) {
 				entity.hurt(this, 3, dir);
 			}
 		}
-		if (StartMenu.diff == StartMenu.norm) {
+		if (OptionsMenu.diff == OptionsMenu.norm) {
 			if (entity instanceof Player) {
 				entity.hurt(this, 3, dir);
 			}
 		}
-		if (StartMenu.diff == StartMenu.hard) {
+		if (OptionsMenu.diff == OptionsMenu.hard) {
 			if (entity instanceof Player) {
 				entity.hurt(this, 4, dir);
 			}

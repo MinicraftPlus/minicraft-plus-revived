@@ -7,7 +7,7 @@ import com.mojang.ld22.gfx.Screen;
 import com.mojang.ld22.item.ResourceItem;
 import com.mojang.ld22.item.resource.Resource;
 import com.mojang.ld22.screen.ModeMenu;
-import com.mojang.ld22.screen.StartMenu;
+import com.mojang.ld22.screen.OptionsMenu;
 
 public class Snake extends Mob {
 	int xa;
@@ -18,7 +18,7 @@ public class Snake extends Mob {
 	private int randomWalkTime = 0;
 
 	public Snake(int lvl) {
-		if (StartMenu.diff == StartMenu.easy) {
+		if (OptionsMenu.diff == OptionsMenu.easy) {
 			this.lvl = lvl;
 			x = random.nextInt(64 * 16);
 			y = random.nextInt(64 * 16);
@@ -26,7 +26,7 @@ public class Snake extends Mob {
 			if (ModeMenu.creative) health = maxHealth = 1;
 		}
 
-		if (StartMenu.diff == StartMenu.norm) {
+		if (OptionsMenu.diff == OptionsMenu.norm) {
 			this.lvl = lvl;
 			x = random.nextInt(64 * 16);
 			y = random.nextInt(64 * 16);
@@ -34,7 +34,7 @@ public class Snake extends Mob {
 			if (ModeMenu.creative) health = maxHealth = 1;
 		}
 
-		if (StartMenu.diff == StartMenu.hard) {
+		if (OptionsMenu.diff == OptionsMenu.hard) {
 			this.lvl = lvl;
 			x = random.nextInt(64 * 16);
 			y = random.nextInt(64 * 16);
@@ -211,7 +211,7 @@ public class Snake extends Mob {
 	}
 
 	protected void touchedBy(Entity entity) {
-		if (StartMenu.diff == StartMenu.easy) {
+		if (OptionsMenu.diff == OptionsMenu.easy) {
 			if (entity instanceof Player) {
 				if (lvl > 1) {
 					entity.hurt(this, lvl - 1, dir);
@@ -220,7 +220,7 @@ public class Snake extends Mob {
 				}
 			}
 		}
-		if (StartMenu.diff == StartMenu.norm) {
+		if (OptionsMenu.diff == OptionsMenu.norm) {
 			if (entity instanceof Player) {
 				if (lvl > 2) {
 					entity.hurt(this, 2, dir);
@@ -229,7 +229,7 @@ public class Snake extends Mob {
 				}
 			}
 		}
-		if (StartMenu.diff == StartMenu.hard) {
+		if (OptionsMenu.diff == OptionsMenu.hard) {
 			if (entity instanceof Player) {
 				entity.hurt(this, lvl + 1, dir);
 			}
@@ -243,7 +243,7 @@ public class Snake extends Mob {
 	protected void die() {
 		super.die();
 
-		if (StartMenu.diff == StartMenu.easy) {
+		if (OptionsMenu.diff == OptionsMenu.easy) {
 			int count = random.nextInt(1) + 1;
 			for (int i = 0; i < count; i++) {
 				level.add(
@@ -256,7 +256,7 @@ public class Snake extends Mob {
 				level.player.score += 50 * lvl;
 			}
 		}
-		if (StartMenu.diff == StartMenu.norm) {
+		if (OptionsMenu.diff == OptionsMenu.norm) {
 			int count = random.nextInt(1) + 1;
 			for (int i = 0; i < count; i++) {
 				level.add(
@@ -269,7 +269,7 @@ public class Snake extends Mob {
 				level.player.score += 50 * lvl;
 			}
 		}
-		if (StartMenu.diff == StartMenu.hard) {
+		if (OptionsMenu.diff == OptionsMenu.hard) {
 			int count = random.nextInt(1);
 			for (int i = 0; i < count; i++) {
 				level.add(

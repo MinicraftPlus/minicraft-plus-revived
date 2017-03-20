@@ -7,8 +7,8 @@ import com.mojang.ld22.gfx.Font;
 import com.mojang.ld22.gfx.Screen;
 import com.mojang.ld22.sound.Sound;
 
-public class StartMenu extends Menu {
-	//This is really the options menu; I don't know why it's called StartMenu...
+public class OptionsMenu extends Menu {
+	//This is really the options menu; I don't know why it's called OptionsMenu...
 	public static int easy = 1;
 	public static int norm = 2;
 	public static int hard = 3;
@@ -23,7 +23,7 @@ public class StartMenu extends Menu {
 
 	private Menu parent;
 
-	public StartMenu() {}
+	public OptionsMenu() {}
 
 	public void tick() {
 		if (input.getKey("left").clicked) {

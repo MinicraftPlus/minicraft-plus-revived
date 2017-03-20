@@ -41,7 +41,7 @@ public class PauseMenu extends Menu {
 			if (selected == 1) {
 				//I bet this is used when exiting options menu to decide whether to go to title screen, or pause menu:
 				TitleMenu.sentFromMenu = false;
-				game.setMenu(new StartMenu());
+				game.setMenu(new OptionsMenu());
 			}
 
 			if (selection == 2) { //save game option

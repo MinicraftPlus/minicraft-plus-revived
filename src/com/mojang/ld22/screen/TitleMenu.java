@@ -58,7 +58,7 @@ public class TitleMenu extends Menu {
 			}
 			if (selected == 2) {
 				sentFromMenu = true;
-				game.setMenu(new StartMenu());
+				game.setMenu(new OptionsMenu());
 			}
 			if (selected == 3) game.setMenu(new AboutMenu(this));
 			if (selected == 4) System.exit(0);

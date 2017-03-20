@@ -35,7 +35,7 @@ import com.mojang.ld22.item.ResourceItem;
 import com.mojang.ld22.level.tile.Tile;
 import com.mojang.ld22.screen.LoadingMenu;
 import com.mojang.ld22.screen.ModeMenu;
-import com.mojang.ld22.screen.StartMenu;
+import com.mojang.ld22.screen.OptionsMenu;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
@@ -154,7 +154,7 @@ public class Load {
 		game.nsPerTick = 1.0E9D / (double)(60 * Game.gamespeed);
 		Game.ac = Integer.parseInt((String)data.get(3));
 		Game.autosave = Boolean.parseBoolean((String)data.get(4));
-		StartMenu.isSoundAct = Boolean.parseBoolean((String)data.get(5));
+		OptionsMenu.isSoundAct = Boolean.parseBoolean((String)data.get(5));
 		Game.tickCount = Integer.parseInt((String)data.get(0));
 		if(Game.tickCount > -1 && Game.tickCount < 7200) {
 			Game.changeTime(0);

@@ -3,7 +3,7 @@ package com.mojang.ld22.entity;
 
 import com.mojang.ld22.gfx.Color;
 import com.mojang.ld22.screen.ContainerMenu;
-import com.mojang.ld22.screen.StartMenu;
+import com.mojang.ld22.screen.OptionsMenu;
 
 public class Chest extends Furniture {
 	public Inventory inventory = new Inventory(); // Inventory of the chest
@@ -91,11 +91,11 @@ public class Chest extends Furniture {
 	public Chest(boolean deathchest) {
 		super("Death Chest");
 		isdeathchest = true;
-		if (StartMenu.diff == 1) {
+		if (OptionsMenu.diff == 1) {
 			time = '\u8ca0';
-		} else if (StartMenu.diff == 2) {
+		} else if (OptionsMenu.diff == 2) {
 			time = 18000;
-		} else if (StartMenu.diff == 3) {
+		} else if (OptionsMenu.diff == 3) {
 			time = 1200;
 		}
 

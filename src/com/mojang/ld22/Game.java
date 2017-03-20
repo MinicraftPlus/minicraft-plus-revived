@@ -31,7 +31,7 @@ import com.mojang.ld22.screen.LevelTransitionMenu;
 import com.mojang.ld22.screen.LoadingMenu;
 import com.mojang.ld22.screen.Menu;
 import com.mojang.ld22.screen.ModeMenu;
-import com.mojang.ld22.screen.StartMenu;
+import com.mojang.ld22.screen.OptionsMenu;
 import com.mojang.ld22.screen.TitleMenu;
 import com.mojang.ld22.screen.WonMenu;
 import com.mojang.ld22.screen.WorldGenMenu;
@@ -329,7 +329,7 @@ public class Game extends Canvas implements Runnable, ActionListener {
 			//currentLevel = 3;
 			level = levels[currentLevel];
 			player.respawn(level);
-		//	System.out.println("respawned player in resetGame");
+			System.out.println("respawned player in resetGame");
 			level.add(player); // adds the player to the current level (always surface here)
 		} else {
 			// new game, regenerate... just the surface level?
@@ -339,11 +339,11 @@ public class Game extends Canvas implements Runnable, ActionListener {
 
 			DeadMenu.shudrespawn = true; // player should respawn on death
 			player.findStartPos(level); // finds the start position for the player
-			//System.out.println("spawned player in new surface, resetGame");
+			System.out.println("spawned player in new surface, resetGame");
 		}
 		
-		//System.out.println("rG PLAYER SPAWN TILE ID: " + level.getTile(player.spawnx, player.spawny).id);
-		//System.out.println("rG PLAYER TILE ID: " + level.getTile(player.x / 16, player.y / 16).id+"\n");
+		System.out.println("rG PLAYER SPAWN TILE ID: " + level.getTile(player.spawnx, player.spawny).id);
+		System.out.println("rG PLAYER TILE ID: " + level.getTile(player.x / 16, player.y / 16).id+"\n");
 	}
 	
 	// OH! This always generates a new world! the other one doesn't; but it may generate a new surface level.
@@ -355,7 +355,7 @@ public class Game extends Canvas implements Runnable, ActionListener {
 		Player.canGoHome = false;
 		Bed.hasBedSet = false; //no bed
 
-		if (!StartMenu.hasSetDiff) StartMenu.diff = 2;
+		if (!OptionsMenu.hasSetDiff) OptionsMenu.diff = 2;
 
 		tickReset = true; //indirect way of resetting tickCount? why..?
 		hasWon = false;
@@ -470,8 +470,8 @@ public class Game extends Canvas implements Runnable, ActionListener {
 			new Load(this, WorldSelectMenu.worldname);
 		} else { //should execute only on dungeon level, based on above.
 			tickCount = 0;
-			//System.out.println("TILE SPAWN ID: " + level.getTile(player.spawnx, player.spawny).id);
-			//System.out.println("TILE ID: " + level.getTile(player.x / 16, player.y / 16).id+"\n");
+			System.out.println("TILE SPAWN ID: " + level.getTile(player.spawnx, player.spawny).id);
+			System.out.println("TILE ID: " + level.getTile(player.x / 16, player.y / 16).id+"\n");
 			//if (level.getTile(player.x / 16, player.y / 16) != Tile.sand)
 				//level.setTile(player.x / 16, player.y / 16, Tile.grass, 0);
 		}
