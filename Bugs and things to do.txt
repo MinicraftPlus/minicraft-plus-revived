@@ -9,8 +9,6 @@ Sound effects don't always play when they should; mostly it seems when other sou
 
 	****IDEAS****
 ****
-Get AirWizard II working, including the health bar being local.
-****
 Fix the whitespace; where it indents without a semicolon, mostly. I've done it before...
 ****
 Make the loading system more forgiving, so that if I add a requirement to the save files, the old ones will still work. The idea is that when it expects 5 options and only finds 4, it just keeps those at default.
@@ -26,3 +24,5 @@ Idea to improve code for Level.java: make method "removeNearbyEntities(Entity ta
 ****
 ----------
 request: more health
+quick feature: Display world name above ModeMenu screen settings.
+
