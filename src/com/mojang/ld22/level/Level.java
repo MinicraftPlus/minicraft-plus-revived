@@ -95,6 +95,8 @@ public class Level {
 				DirtTile.dirtc++;
 			}
 		}
+		
+		if(Game.debug) System.out.println("Making level " + level);
 
 		if (level == 1) {
 			dirtColor = 444;
@@ -105,6 +107,7 @@ public class Level {
 			monsterDensity = 4;
 
 		} else if (level == -4) {
+			//if(Game.debug) System.out.println("making dungeon...");
 			maps = LevelGen.createAndValidateDungeon(w, h);
 
 		} else {
@@ -119,7 +122,7 @@ public class Level {
 			for (int y = 0; y < h; y++)
 				for (int x = 0; x < w; x++) {
 					if (parentLevel.getTile(x, y) == Tile.stairsDown) {
-
+						
 						setTile(x, y, Tile.stairsUp, 0);
 						if (level == -4) {
 							setTile(x - 1, y, Tile.o, 0);
@@ -221,10 +224,10 @@ public class Level {
 		}
 
 		if (level == -4 && !WorldSelectMenu.loadworld) {
-			for (int i = 0; i < 10 * (w / 128); i++) {
+			for (int i = 0; i < 1/*10 * (w / 128)*/; i++) {
 				final DungeonChest d = new DungeonChest();
 				boolean addedchest = false;
-				final int x2 = this.random.nextInt(16 * w) / 16;
+				while(!addedchest){final int x2 = this.random.nextInt(16 * w) / 16;
 				final int y2 = this.random.nextInt(16 * h) / 16;
 				if (this.getTile(x2, y2) == Tile.o) {
 					final boolean xaxis = this.random.nextBoolean();
@@ -252,7 +255,8 @@ public class Level {
 					}
 					this.add(d);
 					this.chestcount++;
-					addedchest = true;
+					addedchest = true;}
+					if (Game.debug) System.out.println("Added dungeon chest: x="+x2+" y="+y2);
 				}
 			}
 		}
@@ -477,6 +481,12 @@ public class Level {
 		entity.removed = false;
 		entities.add(entity);
 		entity.init(this);
+		if (Game.debug) {
+			String clazz = entity.getClass().getCanonicalName();
+			if(clazz.contains("AirWizard")) {
+				System.out.println("Adding Entity to level "+depth+" at x="+entity.x+" y="+entity.y+": " + clazz);
+			}
+		}
 		
 		insertEntity(entity.x >> 4, entity.y >> 4, entity);
 	}

@@ -121,7 +121,7 @@ public class Player extends Mob {
 		
 		stamina = maxStamina;
 		hunger = maxHunger;
-
+		
 		if (ModeMenu.creative) {
 			for (int i = 0; i < ListItems.items.size(); i++) {
 				inventory.add((Item) ListItems.items.get(i));
@@ -438,25 +438,7 @@ public class Player extends Mob {
 			new Save(this, WorldSelectMenu.worldname);
 			LoadingMenu.percentage = 0;
 		}
-		if (input.getKey("p").clicked) {
-			//super powers toggle
-			infstamina = !infstamina;
-			infswim = !infswim;
-			health = 10;
-			stamina = 10;
-		}
 		
-		if (ModeMenu.creative || true) {
-			//Oh-ho-ho!
-			if (input.getKey("dayTime").clicked) {
-				Game.time = 0;
-				Game.tickCount = 6000;
-			}
-			if (input.getKey("nightTime").clicked) {
-				Game.time = 3;
-				Game.tickCount = 54000;
-			}
-		}
 		if (attackTime > 0) attackTime--;
 
 		if (slowtime && !Bed.hasBedSet) game.nsPerTick = 3.3333333333333332E7D;
@@ -489,7 +471,7 @@ public class Player extends Mob {
 		attackDir = dir;
 		attackItem = activeItem;
 		boolean done = false;
-
+		
 		if ((attackItem instanceof ToolItem) && stamina - 1 >= 0) {
 
 			ToolItem tool = (ToolItem) attackItem;

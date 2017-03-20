@@ -392,6 +392,7 @@ public class LevelGen {
 				}
 
 			map[x + y * w] = Tile.stairsDown.id;
+			//if(com.mojang.ld22.Game.debug) System.out.println("Stair down on level 3, x="+x+" y="+y);
 			count++;
 			if (WorldGenMenu.sized == 128) {
 				if (count == 6) break;
@@ -460,8 +461,9 @@ public class LevelGen {
 				for (int xx = x - 1; xx <= x + 1; xx++) {
 					if (map[xx + yy * w] != Tile.ow.id) continue stairsLoop;
 				}
-
+			
 			map[x + y * w] = Tile.ow.id;
+			if(com.mojang.ld22.Game.debug) System.out.println("Obsidian, x="+x+" y="+y);
 
 			count++;
 			if (count == 2) break;
@@ -599,8 +601,9 @@ public class LevelGen {
 					for (int xx = x - 1; xx <= x + 1; xx++) {
 						if (map[xx + yy * w] != Tile.rock.id) continue stairsLoop;
 					}
-
+					
 				map[x + y * w] = Tile.stairsDown.id;
+				if(com.mojang.ld22.Game.debug) System.out.println("stairs, x="+x+" y="+y);
 				count++;
 				if (WorldGenMenu.sized == 128) {
 					if (count == 4) break;
@@ -669,6 +672,7 @@ public class LevelGen {
 				}
 
 			map[x + y * w] = Tile.stairsDown.id;
+			if(com.mojang.ld22.Game.debug) System.out.println("sky stairs, x="+x+" y="+y);
 			count++;
 			if (count == 2) break;
 		}

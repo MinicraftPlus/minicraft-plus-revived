@@ -53,7 +53,7 @@ import javax.imageio.ImageIO;
 import javax.swing.JFrame;
 import javax.swing.Timer;
 
-public class Game extends Canvas implements Runnable {//, ActionListener {
+public class Game extends Canvas implements Runnable {
 	
 	private static final long serialVersionUID = 1L;
 	private static Random random = new Random();
@@ -106,11 +106,7 @@ public class Game extends Canvas implements Runnable {//, ActionListener {
 	public static int tickCount = 0; // Used in the ticking system
 	public static boolean tickReset = false;
 	public static int time = 0; // Facilites time of day / sunlight.
-	//public static int dayYeahTick; // Bed? Sunlight?
 	
-	//public static int LoadTime = 3; //Never used?
-	//public static boolean Load = false; //Never used?
-	//public static boolean fasttime = false; //fast ticks; this is probably used for sleeping.
 	public static boolean paused = false; // If the game is paused.
 	
 	public boolean isDayNoSleep; //beds and sleeping, I'll guess.
@@ -149,9 +145,6 @@ public class Game extends Canvas implements Runnable {//, ActionListener {
 	//public static int fishingcount = 0; //? how many times you've used a rod?
 	
 	public int fra, tik; //these store the number of frames and ticks in the previous second; used for fps, at least.
-	//boolean initTick; //--not used in this file
-	//int hungerTick; //--not used in this file
-	//int hungerMinusCount;
 	int count; //something with colors..?
 	boolean reverse; //related to count
 	
@@ -164,7 +157,6 @@ public class Game extends Canvas implements Runnable {//, ActionListener {
 		pixels = ((DataBufferInt) image.getRaster().getDataBuffer()).getData();
 		
 		running = false;
-		//fpscounter = false;
 		
 		count = 0;
 		reverse = false;
@@ -177,20 +169,14 @@ public class Game extends Canvas implements Runnable {//, ActionListener {
 		tik = 0; // the ticks processed in the previous second
 		
 		worldSize = 128;
-		autosave = true;
+		autosave = false;
 		asTick = 0;
-		astime = 3600;
+		astime = 7200;
 		saving = false;
 		notetick = 0;
 		
 		wonTimer = 0;
 		hasWon = false;
-		/*
-		sunrise = new Timer(60000, this);
-		sunset = new Timer(60000, this);
-		daytime = new Timer(420000, this);
-		nighttime = new Timer(240000, this);
-		*/
 	}
 	
 	// Sets the current menu.
@@ -258,8 +244,6 @@ public class Game extends Canvas implements Runnable {//, ActionListener {
 			if (System.currentTimeMillis() - lastTimer1 > 1000) { //updates every 1 second
 				lastTimer1 += 1000; // adds a second to the timer
 				
-				//Font.draw(ticks + " ticks, " + frames + " fps",
-				//  screen, screen.w, screen.h, Color.get(0, 555, 555, 555));
 				fra = frames; //saves total frames in last second
 				tik = ticks; //saves total ticks in last second
 				frames = 0; //resets frames
@@ -420,7 +404,7 @@ public class Game extends Canvas implements Runnable {//, ActionListener {
 			new Load(this, WorldSelectMenu.worldname);
 		} else {
 			tickCount = 0;
-			if(debug) {
+			if(debug && false) {
 				System.out.println("rsG PLAYER SPAWN ID: " + level.getTile(player.spawnx, player.spawny).id);
 				System.out.println("rsG PLAYER TILE ID: " + level.getTile((player.x - 8) / 16, (player.y - 8) / 16).id);
 				System.out.println("rsG PLAYER TILE ID 2: " + level.getTile((player.x - 8) / 16, (player.y - 8) / 16).id+"\n");
@@ -440,9 +424,9 @@ public class Game extends Canvas implements Runnable {//, ActionListener {
 	public void tick() {
 		if (Bed.hasBedSet) {
 			// IN BED
-			level.remove(player); //oh noes! jk. :D
+			level.remove(player);
 			nsPerTick = 781250.0D;
-			if (debug) System.out.println("SLEEPING... tickCount: " + tickCount);
+			//if (debug) System.out.println("SLEEPING... tickCount: " + tickCount);
 			if (isDayNoSleep) {
 				level.add(player);
 				nsPerTick = 1.6666666666666666E7D;
@@ -491,23 +475,19 @@ public class Game extends Canvas implements Runnable {//, ActionListener {
 			tickReset = false;
 		}
 		
-		if (tickCount < 54000) isDayNoSleep = true;
-		if (tickCount >= 54000) isDayNoSleep = false;
+		isDayNoSleep = tickCount < 54000;
 		
-		if (tickCount == 0) time = 0;
+		if (tickCount == 0) time = 0; // morning
 		
 		if (tickCount == 3600) level.removeAllEnemies();
 		
-		if (tickCount == 7200) time = 1;
+		if (tickCount == 7200) time = 1; // day
 		
-		//4800
-		if (tickCount == 36000) time = 2;
+		if (tickCount == 36000) time = 2; // evening
 		
-		//5400
-		if (tickCount == 43200) time = 3;
+		if (tickCount == 43200) time = 3; // night
 		
-		//7600
-		if (tickCount == 64800) {
+		if (tickCount == 64800) { // morning
 			time = 0;
 			tickCount = 0;
 		}
@@ -537,18 +517,6 @@ public class Game extends Canvas implements Runnable {//, ActionListener {
 				}
 			}
 			if (multiplyer > 50) multiplyer = 50;
-		}
-		
-		
-		//display "can only place on" messages.
-		if (infoplank || infosbrick) {
-			if (infotime > 0) {
-				infotime--;
-			} else {
-				infoplank = false;
-				infosbrick = false;
-				infotime = 120;
-			}
 		}
 		
 		//what's this for?
@@ -598,11 +566,7 @@ public class Game extends Canvas implements Runnable {//, ActionListener {
 					if (wonTimer == 0) {
 						wonTimer = 60 * 3;
 						hasWon = true;
-						/*daytime.stop();
-						nighttime.stop();
-						sunrise.stop();
-						sunset.stop();
-						*/setMenu(new WonMenu());
+						setMenu(new WonMenu());
 					}
 				}
 				
@@ -610,16 +574,32 @@ public class Game extends Canvas implements Runnable {//, ActionListener {
 				level.tick();
 				Tile.tickCount++;
 				
-				/* for debugging only
-				if (input.getKey("Shift").down && input.getKey("0").clicked) {
-					//WorldSelectMenu.loadworld = false;
-					//setMenu(new LoadingMenu());
-					DeadMenu.shudrespawn = false;
-					level.remove(player);
-					resetGame();
-					resetstartGame();
-				}*/
-				
+				//for debugging only
+				if (debug) {
+					if (input.getKey("Shift").down && input.getKey("0").clicked) {
+						//WorldSelectMenu.loadworld = false;
+						//setMenu(new LoadingMenu());
+						DeadMenu.shudrespawn = false;
+						level.remove(player);
+						//resetGame();
+						resetstartGame();
+					}
+					if (input.getKey("dayTime").clicked) {
+						Game.time = 0;
+						Game.tickCount = 6000;
+					}
+					if (input.getKey("nightTime").clicked) {
+						Game.time = 3;
+						Game.tickCount = 54000;
+					}
+					if (input.getKey("shift").down && input.getKey("g").clicked) {
+						for (int i = 0; i < ListItems.items.size(); i++) {
+							player.inventory.add((com.mojang.ld22.item.Item) ListItems.items.get(i));
+						}
+					}
+					if (input.getKey("creative").clicked) ModeMenu.updateModeBools(2);
+					if (input.getKey("survival").clicked) ModeMenu.updateModeBools(1);
+				}
 			} // end "menu-null" conditional
 		} // end hasfocus conditional
 	} // end tick()
@@ -702,21 +682,9 @@ public class Game extends Canvas implements Runnable {//, ActionListener {
 		level.renderBackground(screen, xScroll, yScroll); // renders current level background
 		level.renderSprites(screen, xScroll, yScroll); // renders level sprites on screen
 		
-		/* used for nothing... probably meant to darken everything while in bed, or something...
-		int col2 = Color.get(-1, 555, 555, 555);
-        int col3 = Color.get(-1, -1, -1, -1);
-        int col4 = fpscounter ? col2 : col3;
-        
-		int colVis = Color.get(-1, 555, 555, 555);
-        int colTran = Color.get(-1, -1, -1, -1);
-        int colSleep = Bed.hasBeenTrigged ? (
-		  (Game.isDayNoSleep && Game.dayYeahTick != 600) ? colVis : colTran
-		  ) : 0;
-		*/
-		
 		// this creates the darkness in the caves
-		if (!ModeMenu.creative && currentLevel < 3) {
-			lightScreen.clear(0); // clears the light screen to a black color
+		if (!ModeMenu.creative && (currentLevel < 3 || currentLevel == 3 && time == 3)) {
+			if(currentLevel < 3) lightScreen.clear(0); // clears the light screen to a black color
 			level.renderLight(lightScreen, xScroll, yScroll); // finds (and renders) all the light from objects (like the player, lanterns, and lava).
 			screen.overlay(lightScreen, xScroll, yScroll); // overlays the light screen over the main screen.
 		}
@@ -781,7 +749,7 @@ public class Game extends Canvas implements Runnable {//, ActionListener {
 			Font.draw(xfps + " fps", screen, 1, screen.h - 190, col0);
 			Font.draw("X " + txlevel, screen, 1, screen.h - 180, col0);
 			Font.draw("Y " + tylevel, screen, 1, screen.h - 170, col0);
-			/// SCORE MODE DEBUG ONLY:
+			/// Score mode debug:
 			if (ModeMenu.score) {
 				Font.draw("Score " + Player.score, screen, 1, screen.h - 160, col0);
 				if (currentLevel == 5) {
@@ -791,7 +759,7 @@ public class Game extends Canvas implements Runnable {//, ActionListener {
 					} else {
 						Font.draw("Chests: Complete!", screen, 1, screen.h - 150, col0);
 					}
-				}
+				} //end score debug
 			} else if (currentLevel == 5) {
 				if (levels[currentLevel].chestcount > 0) {
 					Font.draw("Chests: " + levels[currentLevel].chestcount, screen, 1, screen.h - 160, col0);
@@ -799,7 +767,7 @@ public class Game extends Canvas implements Runnable {//, ActionListener {
 					Font.draw("Chests: Complete!", screen, 1, screen.h - 160, col0);
 				}
 			}
-			//end score debug
+			
 		}
 		
 		/*
@@ -830,8 +798,8 @@ public class Game extends Canvas implements Runnable {//, ActionListener {
 		
 		/// NOTIFICATIONS
 		
-		if (infoplank) notifications.add("Can only be placed on planks!");
-		if (infosbrick) notifications.add("Can only be placed on stone brick!");
+		if (infoplank) {notifications.add("Can only be placed on planks!"); infoplank = false;}
+		if (infosbrick) {notifications.add("Can only be placed on stone brick!"); infosbrick = false;}
 		
 		if (notifications.size() > 0) {
 			notetick++;
@@ -1002,17 +970,5 @@ public class Game extends Canvas implements Runnable {//, ActionListener {
 	public void won() {
 		wonTimer = 60 * 3; // the pause time before the win menu shows up.
 		hasWon = true; //confirms that the player has, indeed, won the game.
-		// On win, stops the day-night cycle.
-		/*daytime.stop();
-		nighttime.stop();
-		sunrise.stop();
-		sunset.stop();*/
 	}
-
-	/*
-	@Override
-	public void actionPerformed(ActionEvent arg0) {
-		// TODO Auto-generated method stub
-		
-	}*/
 }
