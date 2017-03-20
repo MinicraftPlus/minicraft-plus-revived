@@ -84,18 +84,6 @@ public abstract class Recipe implements ListItem {
 		String name = resultTemplate.getName();
 		if(name == "Torch" || name == "string" || name == "Plank" || name == "St.Brick")
 			Font.draw(resultTemplate.getName() + " x2", screen, x + 8, y, textColor);
-		/*if (resultTemplate.getName() == "Torch") {
-			Font.draw(resultTemplate.getName() + " x2", screen, x + 8, y, textColor);
-		}
-		if (resultTemplate.getName() == "string") {
-			Font.draw(resultTemplate.getName() + " x2", screen, x + 8, y, textColor);
-		}
-		if (resultTemplate.getName() == "Plank") {
-			Font.draw(resultTemplate.getName() + " x2", screen, x + 8, y, textColor);
-		}
-		if (resultTemplate.getName() == "St.Brick") {
-			Font.draw(resultTemplate.getName() + " x2", screen, x + 8, y, textColor);
-		}*/
 	}
 	
 	public abstract void craft(Player player); // abstract method given to the sub-recipe classes.

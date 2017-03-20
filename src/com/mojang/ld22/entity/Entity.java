@@ -142,14 +142,13 @@ public class Entity {
 	public boolean use(Player player, int attackDir) {
 		return false;
 	}
-
+	
 	public int getLightRadius() {
 		return 0;
 	}
 
 	public void hurt(Tnt tnt, int dmg, int i) {
 		// TODO Auto-generated method stub
-
 	}
 
 	public void hurt(int i, int dmg, int dmg2) {

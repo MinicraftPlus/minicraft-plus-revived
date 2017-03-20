@@ -8,6 +8,22 @@ public class Color {
 		Note: this class still confuses me a bit, lol. -David
 	*/
 	
+	/*... he later explains:
+		The basic idea is that every sprite in the game has 4 different colors,
+			represented as shades of gray in the sprite-sheet.
+		
+		The three decimal digits in each integer are the RGB values (they range from 0 to 5).
+			The 100's represent red, the 10's represent green, and the 1's represent blue.
+		
+		-1 is a special color; it is completely transparent.
+		
+		On the Spritesheet...
+			The darkest shade (black) represents the first color,
+			the dark gray is the second color,
+			the light gray is the third color,
+			and white is the fourth color.
+	*/
+	
 	/** This returns a integer with 4 rgb color values. */
 	public static int get(int a, int b, int c, int d) {
 		//"get()"s each value, and shifts each one's bit to the left the specified number of times

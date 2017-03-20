@@ -181,7 +181,7 @@ public class LevelGen {
 				double dist = xd >= yd ? xd : yd;
 				dist = dist * dist * dist * dist;
 				dist = dist * dist * dist * dist;
-				val = val + 1 - dist * 20;
+				val += 1 - dist * 20;
 
 				if (WorldGenMenu.type == WorldGenMenu.island) {
 
@@ -291,11 +291,7 @@ public class LevelGen {
 				}
 			}
 		}
-
-		/*
-		 * for (int i = 0; i < w * h / 2800; i++) { int xs = random.nextInt(w); int ys = random.nextInt(h); for (int k = 0; k < 10; k++) { int x = xs + random.nextInt(21) - 10; int y = ys + random.nextInt(21) - 10; for (int j = 0; j < 100; j++) { int xo = x + random.nextInt(5) - random.nextInt(5); int yo = y + random.nextInt(5) - random.nextInt(5); for (int yy = yo - 1; yy <= yo + 1; yy++) for (int xx = xo - 1; xx <= xo + 1; xx++) if (xx >= 0 && yy >= 0 && xx < w && yy < h) { if (map[xx + yy * w] == Tile.grass.id) { map[xx + yy * w] = Tile.dirt.id; } } } } }
-		 */
-
+		
 		if (WorldGenMenu.theme == WorldGenMenu.forest) {
 			for (int i = 0; i < w * h / 200; i++) {
 				int x = random.nextInt(w);
@@ -428,7 +424,7 @@ public class LevelGen {
 				dist = dist * dist * dist * dist;
 				dist = dist * dist * dist * dist;
 				val = -val * 1 - 2.2;
-				val = val + 1 - dist * 2;
+				val += 1 - dist * 2;
 
 				if (val < -0.35) {
 					map[i] = Tile.ow.id;
@@ -514,7 +510,7 @@ public class LevelGen {
 				double dist = xd >= yd ? xd : yd;
 				dist = dist * dist * dist * dist;
 				dist = dist * dist * dist * dist;
-				val = val + 1 - dist * 20;
+				val += 1 - dist * 20;
 
 				if (val > -1 && wval < -1 + (depth) / 2 * 3) {
 					if (depth == 3) map[i] = Tile.lava.id;
@@ -638,7 +634,7 @@ public class LevelGen {
 				dist = dist * dist * dist * dist;
 				dist = dist * dist * dist * dist;
 				val = -val * 1 - 2.2;
-				val = val + 1 - dist * 20;
+				val += 1 - dist * 20;
 
 				if (val < -0.25) {
 					map[i] = Tile.infiniteFall.id;

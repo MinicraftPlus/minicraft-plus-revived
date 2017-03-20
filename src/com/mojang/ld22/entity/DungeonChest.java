@@ -57,10 +57,6 @@ public class DungeonChest extends Furniture {
 
 		col = Color.get(-1, 222, 333, 555);
 		sprite = 1;
-
-		//	x = s.x * 41 + 0;
-		//	y = s.y * 41 + 1;
-
 	}
 
 	public boolean use(Player player, int attackDir) {

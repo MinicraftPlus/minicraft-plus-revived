@@ -62,8 +62,6 @@ public class Inventory {
 	}
 	
 	private Item findItem(Item item) {
-		//System.out.println(item.getName());
-		
 		for(int i = 0; i < this.items.size(); ++i) {
 			Item has = (Item)this.items.get(i);
 			if(has.getName().equals(item.getName())) {
@@ -71,7 +69,6 @@ public class Inventory {
 			}
 		}
 		
-		//System.out.println("Is null!");
 		return null;
 	}
 	

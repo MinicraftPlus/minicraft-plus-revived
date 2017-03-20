@@ -31,7 +31,7 @@ public class PotionResource extends Resource {
 			player.potioneffects.add(type); // add it
 			player.potioneffectstime.add(duration); // add the time this effect will last
 			
-			switch(type) { // apply the potion effect
+			switch(type) { // apply the potion effect... though, this may not be necessary, as Player.java seems to check and apply the effects anyway...
 				case "Speed": player.speed = 2.0D; break;
 				case "Light": player.light = 2.5D; break;
 				case "Swim": player.infswim = true; break;
@@ -53,154 +53,9 @@ public class PotionResource extends Resource {
 				}
 			}
 		}
-		// the code should never reach here; it would have to think it's in the array, but then not find it
+		
+		// the code should never reach here; it would have to think it's in the array, but then not find it.
 		return false;
-		/*
-		if(type == 1) {
-			if(!player.potioneffects.contains("Speed")) {
-				player.speed = 2.0D;
-				player.potioneffects.add("Speed");
-				player.potioneffectstime.add(Integer.valueOf(4200));
-				return true;
-			}
-
-			for(int i = 0; i < player.potioneffects.size(); ++i) {
-				if(((String)player.potioneffects.get(i)).equals("Speed")) {
-					player.potioneffectstime.set(player.potioneffects.indexOf(player.potioneffects.get(i)), Integer.valueOf(4200));
-					return true;
-				}
-			}
-		}
-
-		if(type == 2) {
-			if(!player.potioneffects.contains("Light")) {
-				player.light = 2.5D;
-				player.potioneffects.add("Light");
-				player.potioneffectstime.add(Integer.valueOf(6000));
-				return true;
-			}
-
-			for(int i = 0; i < player.potioneffects.size(); ++i) {
-				if(((String)player.potioneffects.get(i)).equals("Light")) {
-					player.potioneffectstime.set(player.potioneffects.indexOf(player.potioneffects.get(i)), Integer.valueOf(6000));
-					return true;
-				}
-			}
-		}
-
-		if(type == 3) {
-			if(!player.potioneffects.contains("Swim")) {
-				player.infswim = true;
-				player.potioneffects.add("Swim");
-				player.potioneffectstime.add(Integer.valueOf(4800));
-				return true;
-			}
-
-			for(int i = 0; i < player.potioneffects.size(); ++i) {
-				if(((String)player.potioneffects.get(i)).equals("Swim")) {
-					player.potioneffectstime.set(player.potioneffects.indexOf(player.potioneffects.get(i)), Integer.valueOf(4800));
-					return true;
-				}
-			}
-		}
-
-		if(type == 4) {
-			if(!player.potioneffects.contains("Energy")) {
-				player.infstamina = true;
-				player.potioneffects.add("Energy");
-				player.potioneffectstime.add(Integer.valueOf(8400));
-				return true;
-			}
-
-			for(int i = 0; i < player.potioneffects.size(); ++i) {
-				if(((String)player.potioneffects.get(i)).equals("Energy")) {
-					player.potioneffectstime.set(player.potioneffects.indexOf(player.potioneffects.get(i)), Integer.valueOf(8400));
-					return true;
-				}
-			}
-		}
-
-		if(type == 5) {
-			if(!player.potioneffects.contains("Regen")) {
-				player.regen = true;
-				player.potioneffects.add("Regen");
-				player.potioneffectstime.add(Integer.valueOf(1800));
-				return true;
-			}
-
-			for(int i = 0; i < player.potioneffects.size(); ++i) {
-				if(((String)player.potioneffects.get(i)).equals("Regen")) {
-					player.potioneffectstime.set(player.potioneffects.indexOf(player.potioneffects.get(i)), Integer.valueOf(1800));
-					return true;
-				}
-			}
-		}
-
-		if(type == 6) {
-			if(!player.potioneffects.contains("Time")) {
-				player.slowtime = true;
-				player.potioneffects.add("Time");
-				player.potioneffectstime.add(Integer.valueOf(1800));
-				return true;
-			}
-
-			for(int i = 0; i < player.potioneffects.size(); ++i) {
-				if(((String)player.potioneffects.get(i)).equals("Time")) {
-					player.potioneffectstime.set(player.potioneffects.indexOf(player.potioneffects.get(i)), Integer.valueOf(1800));
-					return true;
-				}
-			}
-		}
-
-		if(type == 7) {
-			if(!player.potioneffects.contains("Lava")) {
-				player.lavaimmune = true;
-				player.potioneffects.add("Lava");
-				player.potioneffectstime.add(Integer.valueOf(7200));
-				return true;
-			}
-
-			for(int i = 0; i < player.potioneffects.size(); ++i) {
-				if(((String)player.potioneffects.get(i)).equals("Lava")) {
-					player.potioneffectstime.set(player.potioneffects.indexOf(player.potioneffects.get(i)), Integer.valueOf(7200));
-					return true;
-				}
-			}
-		}
-
-		if(type == 8) {
-			if(!player.potioneffects.contains("Shield")) {
-				player.shield = true;
-				player.potioneffects.add("Shield");
-				player.potioneffectstime.add(Integer.valueOf(5400));
-				return true;
-			}
-
-			for(int i = 0; i < player.potioneffects.size(); ++i) {
-				if(((String)player.potioneffects.get(i)).equals("Shield")) {
-					player.potioneffectstime.set(player.potioneffects.indexOf(player.potioneffects.get(i)), Integer.valueOf(3600));
-					return true;
-				}
-			}
-		}
-
-		if(type == 9) {
-			if(!player.potioneffects.contplayer.haste = true; ains("Haste")) {
-				player.haste = true;
-				player.potioneffects.add("Haste");
-				player.potioneffectstime.add(Integer.valueOf(4800));
-				return true;
-			}
-
-			for(int i = 0; i < player.potioneffects.size(); ++i) {
-				if(((String)player.potioneffects.get(i)).equals("Haste")) {
-					player.potioneffectstime.set(player.potioneffects.indexOf(player.potioneffects.get(i)), Integer.valueOf(4800));
-					return true;
-				}
-			}
-		}
-		return false;
-		*/
 	}
 
 	public static int potionColor(String name) {
@@ -209,6 +64,5 @@ public class PotionResource extends Resource {
 				return potionColors[i]; // because all the potion attributes are aligned, once you find the index of the name, that's the index of the color.
 		
 		return 0;
-		//name.equals("Speed")?10:(name.equals("Light")?440:(name.equals("Swim")?2:(name.equals("Energy")?510:(name.equals("Regen")?464:(name.equals("Time")?222:(name.equals("Lava")?400:(name.equals("Shield")?115:(name.equals("Haste")?303:0))))))));
 	}
 }

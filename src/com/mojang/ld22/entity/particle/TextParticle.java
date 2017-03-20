@@ -51,7 +51,6 @@ public class TextParticle extends Entity {
 	}
 
 	public void render(Screen screen) {
-		//		Font.draw(msg, screen, x - msg.length() * 4, y, Color.get(-1, 0, 0, 0));
 		Font.draw(msg, screen, x - msg.length() * 4 + 1, y - (int) (zz) + 1, Color.get(-1, 0, 0, 0)); //renders the backdrop
 		Font.draw(msg, screen, x - msg.length() * 4, y - (int) (zz), col); // renders the text
 	}

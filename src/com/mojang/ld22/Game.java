@@ -53,22 +53,30 @@ import javax.imageio.ImageIO;
 import javax.swing.JFrame;
 import javax.swing.Timer;
 
-public class Game extends Canvas implements Runnable, ActionListener {
+public class Game extends Canvas implements Runnable {//, ActionListener {
 	
 	private static final long serialVersionUID = 1L;
-	public static boolean debug = false;
 	private static Random random = new Random();
-	private static final int SCALE = 3;
 	
-	/// RENDERING
+	public static boolean debug = false;
+	public static final String gameDir = System.getenv("APPDATA") + "/.playminicraft/mods/Minicraft-Plus"; // The directory in which all the game files are stored; APPDATA is meant for windows...
 	
-	public static final String gameDir =
-			System.getenv("APPDATA")
-					+ "/.playminicraft/mods/Minicraft-Plus"; // The directory in which all the game files are stored; APPDATA is meant for windows...
+	/// MANAGERIAL VARS AND RUNNING
+	
+	public static int gamespeed = 1;
+	public static double nsPerTick = 1E9D / 60 * gamespeed;//1.6666666666666666E7D * (double) gamespeed;
+	
 	public static final String NAME = "Minicraft Plus"; // This is the name on the application window
 	public static final int HEIGHT = 192;
 	public static final int WIDTH = 288;
+	private static final int SCALE = 3;
 	//does the *scale part mean anything to the graphics, or does java accomodate it?
+	
+	public int gameTime; // Main value in the timer used on the dead screen.
+	//public boolean fpscounter; // show fps counter?
+	private boolean running; //non-static paused var..? This stores if the game is running or paused (as well).
+	
+	/// RENDERING
 	
 	private BufferedImage image; // creates an image to be displayed on the screen.
 	private int[] pixels; // the array of pixels that will be displayed on the screen.
@@ -76,25 +84,16 @@ public class Game extends Canvas implements Runnable, ActionListener {
 	private Screen screen; // Creates the main screen
 	private Screen lightScreen; // Creates a front screen to render the darkness in caves (Fog of war).
 	
-	/// MANAGERIAL VARS AND RUNNING
-	
-	public static int gamespeed = 1;
-	
-	public double nsPerTick = 1.6666666666666666E7D * (double) gamespeed;
-	public int gameTime; // Main value in the timer used on the dead screen.
-	public boolean fpscounter; // show fps counter?
-	private boolean running; //non-static paused var..? This stores if the game is running or paused (as well).
-	
 	/// LEVEL AND PLAYER
 	
-	public static Level[] levels = new Level[5]; // This array is about the different levels.
+	public static Level[] levels = new Level[6]; // This array is about the different levels.
 	public static int currentLevel = 3; // This is the level the player is on. It's set to 3, which is the surface.
 	
 	public InputHandler input; // input used in Game, Player, and just about all the *Menu classes.
 	public Menu menu; // the current menu you are on.
 	public Player player; // The Player.
 	public Level level; // This is the current level you are on.
-	int[] oldlvls; //--not used in this file
+	//int[] oldlvls; //--not used in this file
 	int worldSize; // The size of the world
 	
 	private int playerDeadTime; // the paused time when you die before the dead menu shows up.
@@ -107,19 +106,19 @@ public class Game extends Canvas implements Runnable, ActionListener {
 	public static int tickCount = 0; // Used in the ticking system
 	public static boolean tickReset = false;
 	public static int time = 0; // Facilites time of day / sunlight.
-	public static int dayYeahTick; // Bed? Sunlight?
+	//public static int dayYeahTick; // Bed? Sunlight?
 	
-	public static int LoadTime = 3; //Never used?
-	public static boolean Load = false; //Never used?
-	public static boolean fasttime = false; //fast ticks; this is probably used for sleeping.
+	//public static int LoadTime = 3; //Never used?
+	//public static boolean Load = false; //Never used?
+	//public static boolean fasttime = false; //fast ticks; this is probably used for sleeping.
 	public static boolean paused = false; // If the game is paused.
 	
 	public boolean isDayNoSleep; //beds and sleeping, I'll guess.
-	Timer sunrise, sunset, daytime, nighttime; //?Day-cycle Timers... I wonder how they're used?
+	//Timer sunrise, sunset, daytime, nighttime; //?Day-cycle Timers... I wonder how they're used?
 	
 	/// AUTOSAVE AND NOTIFICATIONS
 	
-	public static int acs = 25;
+	public static int acs = 25; // this is acSave; it keeps the value to set ac to.
 	public static int ac = acs;
 	public static boolean autosave; //if autosave feature is enabled.
 	public static int astime; //stands for Auto-Save Time (interval)
@@ -147,12 +146,12 @@ public class Game extends Canvas implements Runnable, ActionListener {
 
 	//fishing
 	public static boolean truerod = false, isfishing = false; // are you fishing?
-	public static int fishingcount = 0; //? how many times you've used a rod?
+	//public static int fishingcount = 0; //? how many times you've used a rod?
 	
 	public int fra, tik; //these store the number of frames and ticks in the previous second; used for fps, at least.
-	boolean initTick; //--not used in this file
-	int hungerTick; //--not used in this file
-	int hungerMinusCount;
+	//boolean initTick; //--not used in this file
+	//int hungerTick; //--not used in this file
+	//int hungerMinusCount;
 	int count; //something with colors..?
 	boolean reverse; //related to count
 	
@@ -165,7 +164,7 @@ public class Game extends Canvas implements Runnable, ActionListener {
 		pixels = ((DataBufferInt) image.getRaster().getDataBuffer()).getData();
 		
 		running = false;
-		fpscounter = false;
+		//fpscounter = false;
 		
 		count = 0;
 		reverse = false;
@@ -186,11 +185,12 @@ public class Game extends Canvas implements Runnable, ActionListener {
 		
 		wonTimer = 0;
 		hasWon = false;
-		
+		/*
 		sunrise = new Timer(60000, this);
 		sunset = new Timer(60000, this);
 		daytime = new Timer(420000, this);
 		nighttime = new Timer(240000, this);
+		*/
 	}
 	
 	// Sets the current menu.
@@ -224,7 +224,6 @@ public class Game extends Canvas implements Runnable, ActionListener {
 	public void run() {
 		long lastTime = System.nanoTime();
 		double unprocessed = 0;
-		double nsPerTick = 1000000000.0 / 60; // 60ns per tick
 		int frames = 0;
 		int ticks = 0;
 		long lastTimer1 = System.currentTimeMillis();
@@ -235,14 +234,13 @@ public class Game extends Canvas implements Runnable, ActionListener {
 		//main game loop? calls tick() and render().
 		while (running) {
 			long now = System.nanoTime();
-			unprocessed +=
-					(now - lastTime) / nsPerTick; //figures out the unprocessed time between now and lastTime.
+			unprocessed += (now - lastTime) / nsPerTick; //figures out the unprocessed time between now and lastTime.
 			lastTime = now;
 			boolean shouldRender = true;
 			while (unprocessed >= 1) { // If there is unprocessed time, then tick.
 				ticks++;
 				tick(); // calls the tick method (in which it calls the other tick methods throughout the code.
-				unprocessed -= 1;
+				unprocessed--;
 				shouldRender = true; // sets shouldRender to be true... maybe tick() could make it false?
 			}
 			
@@ -259,9 +257,9 @@ public class Game extends Canvas implements Runnable, ActionListener {
 			
 			if (System.currentTimeMillis() - lastTimer1 > 1000) { //updates every 1 second
 				lastTimer1 += 1000; // adds a second to the timer
-				//if(Game.debug) System.out.println(ticks + " ticks, " + frames + " fps");
-				Font.draw(ticks + " ticks, " + frames + " fps",
-				  screen, screen.w, screen.h, Color.get(0, 555, 555, 555));
+				
+				//Font.draw(ticks + " ticks, " + frames + " fps",
+				//  screen, screen.w, screen.h, Color.get(0, 555, 555, 555));
 				fra = frames; //saves total frames in last second
 				tik = ticks; //saves total ticks in last second
 				frames = 0; //resets frames
@@ -295,12 +293,8 @@ public class Game extends Canvas implements Runnable, ActionListener {
 		
 		/* This sets up the screens, and loads the icons.png spritesheet. */
 		try {
-			screen =
-					new Screen(WIDTH, HEIGHT,
-							new SpriteSheet(ImageIO.read(Game.class.getResourceAsStream("/icons.png"))));
-			lightScreen =
-					new Screen(WIDTH,HEIGHT,
-							new SpriteSheet(ImageIO.read(Game.class.getResourceAsStream("/icons.png"))));
+			screen = new Screen(WIDTH, HEIGHT, new SpriteSheet(ImageIO.read(Game.class.getResourceAsStream("/icons.png"))));
+			lightScreen = new Screen(WIDTH, HEIGHT, new SpriteSheet(ImageIO.read(Game.class.getResourceAsStream("/icons.png"))));
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
@@ -325,8 +319,8 @@ public class Game extends Canvas implements Runnable, ActionListener {
 		
 		// "shudrespawn" returns false if on hardcore, or making a new world. if true, it keeps your world and spawn pos
 		if (DeadMenu.shudrespawn) { // respawn, don't regenerate level.
-			//if(Game.debug) System.out.println("Current Level = " + currentLevel + "																					 ");
-			//currentLevel = 3;
+			if (debug) System.out.println("Current Level = " + currentLevel);
+			
 			level = levels[currentLevel];
 			player.respawn(level);
 			if (debug) System.out.println("respawned player in resetGame");
@@ -342,8 +336,10 @@ public class Game extends Canvas implements Runnable, ActionListener {
 			if (debug) System.out.println("spawned player in new surface, resetGame");
 		}
 		
-		System.out.println("rG PLAYER SPAWN TILE ID: " + level.getTile(player.spawnx, player.spawny).id);
-		System.out.println("rG PLAYER TILE ID: " + level.getTile(player.x / 16, player.y / 16).id+"\n");
+		if(debug) {
+			//System.out.println("rG PLAYER SPAWN TILE ID: " + level.getTile(player.spawnx, player.spawny).id);
+			//System.out.println("rG PLAYER TILE ID: " + level.getTile(player.x / 16, player.y / 16).id+"\n");
+		}
 	}
 	
 	// This is called when loading a saved world, among other things.
@@ -395,7 +391,6 @@ public class Game extends Canvas implements Runnable, ActionListener {
 			}
 		}
 		
-		//This should replace that massive thing below...
 		LoadingMenu.percentage = 0;
 		for (int i = 5; i >= 0; i--) {
 			if (!WorldSelectMenu.loadworld) LoadingMenu.percentage = (5-i)*20;
@@ -404,48 +399,9 @@ public class Game extends Canvas implements Runnable, ActionListener {
 			levels[(i - 1 < 0 ? 5 : i - 1)] =
 					new Level(this.worldSize, this.worldSize, i - 4, (i == 5 ? (Level) null : levels[i]));
 		}
-
-		/*
-		if(!WorldSelectMenu.loadworld)
-			LoadingMenu.percentage = 0;
-		else
-			LoadingMenu.percentage += 5; //just make sure they think something is happening... ;D
-
-		levels[4] = new Level(this.worldSize, this.worldSize, 1, (Level)null);
-		if(!WorldSelectMenu.loadworld)
-			LoadingMenu.percentage = 20;
-		else
-			LoadingMenu.percentage += 5;
-
-		levels[3] = new Level(this.worldSize, this.worldSize, 0, levels[4]);
-		if(!WorldSelectMenu.loadworld)
-			LoadingMenu.percentage = 40;
-		else
-			LoadingMenu.percentage += 5;
-
-		levels[2] = new Level(this.worldSize, this.worldSize, -1, levels[3]);
-		if(!WorldSelectMenu.loadworld)
-			LoadingMenu.percentage = 60;
-		else
-			LoadingMenu.percentage += 5;
-
-		levels[1] = new Level(this.worldSize, this.worldSize, -2, levels[2]);
-		if(!WorldSelectMenu.loadworld)
-			LoadingMenu.percentage = 80;
-		else
-			LoadingMenu.percentage += 5;
-
-		levels[0] = new Level(this.worldSize, this.worldSize, -3, levels[1]);
-		if(!WorldSelectMenu.loadworld)
-			LoadingMenu.percentage = 100;
-		else
-			LoadingMenu.percentage += 5;
-
-		levels[5] = new Level(this.worldSize, this.worldSize, -4, levels[0]);
-		*/
 		
-		// if resetStartGame is called when not loading a world, add an Iron lantern at (984, 984).
-			// it seems this is only called for the dungeon level.
+		
+		// if resetStartGame is called when not loading a world, add an Iron lantern to level 5, at (984, 984).
 		if (!WorldSelectMenu.loadworld) {
 			FurnitureItem f1 = new FurnitureItem(new IronLantern());
 			Furniture f = f1.furniture;
@@ -453,13 +409,7 @@ public class Game extends Canvas implements Runnable, ActionListener {
 			f.y = 984;
 			levels[5].add(f);
 		}
-		
 		LoadingMenu.percentage = 0;
-		/* already taken care of in Player.java
-		if (!ModeMenu.creative) {// survival inventory only
-			player.inventory.add(new FurnitureItem(new Enchanter()));
-			player.inventory.add(new FurnitureItem(new Workbench()));
-		}*/
 		
 		level = levels[currentLevel]; // sets level to the current level (3; surface)
 		player.respawn(level); // finds the start level for the player
@@ -468,15 +418,13 @@ public class Game extends Canvas implements Runnable, ActionListener {
 		
 		if (WorldSelectMenu.loadworld) {
 			new Load(this, WorldSelectMenu.worldname);
-		} else { //should execute only on dungeon level, based on above.
+		} else {
 			tickCount = 0;
 			if(debug) {
 				System.out.println("rsG PLAYER SPAWN ID: " + level.getTile(player.spawnx, player.spawny).id);
 				System.out.println("rsG PLAYER TILE ID: " + level.getTile((player.x - 8) / 16, (player.y - 8) / 16).id);
 				System.out.println("rsG PLAYER TILE ID 2: " + level.getTile((player.x - 8) / 16, (player.y - 8) / 16).id+"\n");
 			}
-			//if (level.getTile(player.x / 16, player.y / 16) != Tile.sand)
-				//level.setTile(player.x / 16, player.y / 16, Tile.grass, 0);
 		}
 		
 		DeadMenu.shudrespawn = true;
@@ -494,7 +442,7 @@ public class Game extends Canvas implements Runnable, ActionListener {
 			// IN BED
 			level.remove(player); //oh noes! jk. :D
 			nsPerTick = 781250.0D;
-			if(Game.debug) System.out.println("SLEEPING... tickCount: " + tickCount);
+			if (debug) System.out.println("SLEEPING... tickCount: " + tickCount);
 			if (isDayNoSleep) {
 				level.add(player);
 				nsPerTick = 1.6666666666666666E7D;
@@ -516,14 +464,6 @@ public class Game extends Canvas implements Runnable, ActionListener {
 			}
 		}
 		
-		// tickReset is set to true when..?
-		if (tickReset) {
-			tickCount = 0;
-			tickReset = false;
-		}
-		
-		// Increment tickCount if the game is not paused
-		if (!paused) tickCount++;
 		
 		//auto-save tick; keeps track of time relative to auto-save sequence.
 		asTick++;
@@ -533,26 +473,26 @@ public class Game extends Canvas implements Runnable, ActionListener {
 		
 		//for autosave feature (more)
 		if (asTick > astime) {
-			if (autosave
-					&& player.health > 0
-					&& !hasWon
-					&& levels[currentLevel].entities.contains(player)) {
+			if (autosave && player.health > 0 && !hasWon
+				  && levels[currentLevel].entities.contains(player)) {
 				new Save(player, WorldSelectMenu.worldname);
 			}
 			
 			asTick = 0;
 		}
 		
-		//int tickSunR = 0;
 		
-		if (tickCount < 54000) isDayNoSleep = true;
-		if (tickCount >= 54000) isDayNoSleep = false;
+		// Increment tickCount if the game is not paused
+		if (!paused) tickCount++;
 		
-		//duplicate?
+		// tickReset is used in resetstartGame.
 		if (tickReset) {
 			tickCount = 0;
 			tickReset = false;
 		}
+		
+		if (tickCount < 54000) isDayNoSleep = true;
+		if (tickCount >= 54000) isDayNoSleep = false;
 		
 		if (tickCount == 0) time = 0;
 		
@@ -581,18 +521,11 @@ public class Game extends Canvas implements Runnable, ActionListener {
 				setMenu(new WonMenu());
 				if(Game.debug) System.out.println(player.score);
 				//Extra score from drops.
-				player.score =
-						player.score + (Inventory.scored(Resource.cloth) * (random.nextInt(2) + 1) * ism);
-				player.score =
-						player.score + (Inventory.scored(Resource.slime) * (random.nextInt(2) + 1) * ism);
-				player.score =
-						player.score + (Inventory.scored(Resource.bone) * (random.nextInt(2) + 1) * ism);
-				player.score =
-						player.score + (Inventory.scored(Resource.gunp) * (random.nextInt(2) + 1) * ism);
-				player.score += (Inventory.scored(Resource.bookant)
-										* (random.nextInt(2) + 1)
-										* (random.nextInt(2) + 1)
-										* ism);
+				player.score += (Inventory.scored(Resource.cloth) * (random.nextInt(2) + 1) * ism);
+				player.score += (Inventory.scored(Resource.slime) * (random.nextInt(2) + 1) * ism);
+				player.score += (Inventory.scored(Resource.bone) * (random.nextInt(2) + 1) * ism);
+				player.score += (Inventory.scored(Resource.gunp) * (random.nextInt(2) + 1) * ism);
+				player.score += (Inventory.scored(Resource.bookant) * (random.nextInt(2) + 1) * (random.nextInt(2) + 1) * ism);
 				player.remove();
 			}
 			
@@ -665,11 +598,11 @@ public class Game extends Canvas implements Runnable, ActionListener {
 					if (wonTimer == 0) {
 						wonTimer = 60 * 3;
 						hasWon = true;
-						daytime.stop();
+						/*daytime.stop();
 						nighttime.stop();
 						sunrise.stop();
 						sunset.stop();
-						setMenu(new WonMenu());
+						*/setMenu(new WonMenu());
 					}
 				}
 				
@@ -686,9 +619,10 @@ public class Game extends Canvas implements Runnable, ActionListener {
 					resetGame();
 					resetstartGame();
 				}*/
-			} //end "menu-null" conditional
-		} //end hasfocus conditional
-	} //end tick()
+				
+			} // end "menu-null" conditional
+		} // end hasfocus conditional
+	} // end tick()
 	
 	/** This method changes the level that the player is currently on.
 	 * It takes 1 integer variable, which is used to tell the game which direction to go.
@@ -767,26 +701,17 @@ public class Game extends Canvas implements Runnable, ActionListener {
 
 		level.renderBackground(screen, xScroll, yScroll); // renders current level background
 		level.renderSprites(screen, xScroll, yScroll); // renders level sprites on screen
-
-		/*
-		int col0 = Color.get(-1, 555, 555, 555);
-		int col1 = Color.get(-1, -1, -1, -1);
-
-		int col = 0;
+		
+		/* used for nothing... probably meant to darken everything while in bed, or something...
+		int col2 = Color.get(-1, 555, 555, 555);
+        int col3 = Color.get(-1, -1, -1, -1);
+        int col4 = fpscounter ? col2 : col3;
+        
 		int colVis = Color.get(-1, 555, 555, 555);
-		int colTran = Color.get(-1, -1, -1, -1);
-		int colSleep = 0;
-		if (Bed.hasBeenTrigged) {
-			if (isDayNoSleep)
-				colSleep = colVis;
-			else
-				colSleep = colTran;
-
-			if (dayYeahTick == 600)
-				colSleep = colTran;
-		}
-
-		col = fpscounter ? col0:col1; //pointless...
+        int colTran = Color.get(-1, -1, -1, -1);
+        int colSleep = Bed.hasBeenTrigged ? (
+		  (Game.isDayNoSleep && Game.dayYeahTick != 600) ? colVis : colTran
+		  ) : 0;
 		*/
 		
 		// this creates the darkness in the caves
@@ -838,25 +763,19 @@ public class Game extends Canvas implements Runnable, ActionListener {
 				screen.render(txlevel * 7, screen.h - 16 + xfps * 8, 32, Color.get(0, 0, 0, 0), 0);
 			}
 		}
-		/* this seems like a duplicate.
-		for (xfps = 1; xfps < 2; xfps++) {
-			for (txlevel = 12; txlevel < 14; txlevel++) {
-				screen.render(txlevel * 7, screen.h - 16 + xfps * 8, 32, Color.get(0, 0, 0, 0), 0);
-			}
-		}
-		*/
+		
 		if (saving) {
-			//if(Game.debug) System.out.println("SAVING GAME...");
+			//if (Game.debug) System.out.println("SAVING GAME...");
 			String loadingText = "Saving... " + LoadingMenu.percentage + "%";
 			int xPos = screen.centertext(loadingText);
-			/*screen.w / 2 - loadingText.length() * 4*/
-			Font.draw(loadingText, screen, xPos+1, screen.h / 2 - 32+1, Color.get(-1, 111, 111, 111));
-			Font.draw(loadingText, screen, xPos, screen.h / 2 - 32, Color.get(-1, 4, 4, 4));
+			int yPos = screen.h / 2 - 32;
+			Font.draw(loadingText, screen, xPos+1, yPos+1, Color.get(-1, 111, 111, 111));
+			Font.draw(loadingText, screen, xPos, yPos, Color.get(-1, 4, 4, 4));
 		}
 		
-		xfps = fra; //aha! fra is used to determine the fps!
-		txlevel = Player.xx / 16; // but what's this?
-		int tylevel = Player.yy / 16; // ...and this?
+		xfps = fra; // fra is used to determine the fps...
+		txlevel = Player.xx / 16;
+		int tylevel = Player.yy / 16;
 		int col0 = Color.get(-1, 555, 555, 555);
 		if (player.showinfo) { // renders show debug info on the screen.
 			Font.draw(xfps + " fps", screen, 1, screen.h - 190, col0);
@@ -910,8 +829,8 @@ public class Game extends Canvas implements Runnable, ActionListener {
 		
 		/// NOTIFICATIONS
 		
-		if (infoplank) notifications.add("Can only be placed on planks!"); //, screen, 30, screen.h - 130 , Color.get(000, 555, 555, 555));
-		if (infosbrick) notifications.add("Can only be placed on stone brick!"); //, screen, 20, screen.h - 130 , Color.get(000, 555, 555, 555));
+		if (infoplank) notifications.add("Can only be placed on planks!");
+		if (infosbrick) notifications.add("Can only be placed on stone brick!");
 		
 		if (notifications.size() > 0) {
 			notetick++;
@@ -953,18 +872,7 @@ public class Game extends Canvas implements Runnable, ActionListener {
 			}
 			
 			Font.draw("Time left " + minutes + "m " + seconds + "s", screen, 84, screen.h - 190, cols);
-			/*
-			if (scoreTime > 18000) {
-				Font.draw("Time left " + minutes + "m " + seconds + "s",
-				  screen, 84, screen.h - 190, Color.get(000, 555, 555, 555));
-			} else if (scoreTime < 3600) {
-				Font.draw("Time left " + minutes + "m " + seconds + "s",
-				  screen, 84, screen.h - 190, cols);
-			} else {
-				Font.draw("Time left " + minutes + "m " + seconds + "s",
-				  screen, 84, screen.h - 190, Color.get(330, 555, 555, 555));
-			}
-			*/
+			
 			if(multiplyer > 1) {
 				int multColor = multiplyer < 50 ? Color.get(-1, 540, 540, 540) : Color.get(-1, 500, 500, 500);
 				Font.draw("X" + multiplyer, screen, 260, screen.h - 190, multColor);
@@ -1008,42 +916,16 @@ public class Game extends Canvas implements Runnable, ActionListener {
 				// renders armor
 				color = (i < player.maxArmor) ? Color.get(-1, 333, 444, 555) : Color.get(-1, -1, -1, -1);
 				screen.render(i * 8 + 208, screen.h - 8, 3 + 12 * 32, color, 0);
-
-				/*
-				if (i < player.health)
-					screen.render(i * 8, screen.h - 16, 0 + 12 * 32, Color.get(-1, 200, 500, 533), 0);
-				else
-					screen.render(i * 8, screen.h - 16, 0 + 12 * 32, Color.get(-1, 100, 000, 000), 0);
-
-				if (i < player.hunger)
-					screen.render(i * 8 + 208, screen.h - 16, 2 + 12 * 32, Color.get(-1, 100, 530, 211), 0);
-				else
-					screen.render(i * 8 + 208, screen.h - 16, 2 + 12 * 32, Color.get(-1, 100, 000, 000), 0);
-
-				if (i < player.maxArmor)
-					screen.render(i * 8 + 208, screen.h - 8, 3 + 12 * 32, Color.get(-1, 333, 444, 555), 0);
-				else
-					screen.render(i * 8 + 208, screen.h - 8, 3 + 12 * 32, , 0);
-				*/
 				
 				if (player.staminaRechargeDelay > 0) {
 					// creates the white/gray blinking effect when you run out of stamina.
 					color = (player.staminaRechargeDelay / 4 % 2 == 0) ?
 					  Color.get(-1, 555, 000, 000) : Color.get(-1, 110, 000, 000);
-					
 					screen.render(i * 8, screen.h - 8, 1 + 12 * 32, color, 0);
-					/*if (player.staminaRechargeDelay / 4 % 2 == 0)
-						screen.render(i * 8, screen.h - 8, 1 + 12 * 32, Color.get(-1, 555, 000, 000), 0);
-					else
-						screen.render(i * 8, screen.h - 8, 1 + 12 * 32, Color.get(-1, 110, 000, 000), 0);*/
 				} else {
 					// renders your current stamina, and uncharged gray stamina.
 					color = (i < player.stamina) ? Color.get(-1, 220, 550, 553) : Color.get(-1, 110, 000, 000);
 					screen.render(i * 8, screen.h - 8, 1 + 12 * 32, color, 0);
-					/*if (i < player.stamina)
-						screen.render(i * 8, screen.h - 8, 1 + 12 * 32, Color.get(-1, 220, 550, 553), 0);
-					else
-						screen.render(i * 8, screen.h - 8, 1 + 12 * 32, Color.get(-1, 110, 000, 000), 0);*/
 				}
 			}
 		}
@@ -1120,16 +1002,16 @@ public class Game extends Canvas implements Runnable, ActionListener {
 		wonTimer = 60 * 3; // the pause time before the win menu shows up.
 		hasWon = true; //confirms that the player has, indeed, won the game.
 		// On win, stops the day-night cycle.
-		daytime.stop();
+		/*daytime.stop();
 		nighttime.stop();
 		sunrise.stop();
-		sunset.stop();
+		sunset.stop();*/
 	}
 
-	//?
+	/*
 	@Override
 	public void actionPerformed(ActionEvent arg0) {
 		// TODO Auto-generated method stub
 		
-	}
+	}*/
 }

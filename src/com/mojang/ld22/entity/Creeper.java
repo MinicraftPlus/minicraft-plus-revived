@@ -446,6 +446,6 @@ public class Creeper extends Mob {
 		}
 
 		Game.multiplyer++;
-		Game.multiplyertime = Game.mtm = Game.mtm - 5;
+		Game.multiplyertime = Game.mtm -= 5;
 	}
 }

@@ -156,13 +156,13 @@ public class Save {
 			String subdata = "PotionEffects[";
 			
 			for(int i = 0; i < player.potioneffects.size(); i++) {
-				subdata = subdata + (String)player.potioneffects.get(i) + ";" + player.potioneffectstime.get(i);
+				subdata += (String)player.potioneffects.get(i) + ";" + player.potioneffectstime.get(i);
 				if(i != player.potioneffects.size() - 1) {
-					subdata = subdata + ":";
+					subdata += ":";
 				}
 			}
 			
-			subdata = subdata + "]";
+			subdata += "]";
 			data.add(subdata);
 		}
 		
@@ -213,16 +213,16 @@ public class Save {
 					
 					for(ii = 0; ii < c1.inventory.items.size(); ii++) {
 						if(c1.inventory.items.get(ii) instanceof ResourceItem) {
-							var10 = var10 + ((Item)c1.inventory.items.get(ii)).getName() + ";" + c1.inventory.count((Item)c1.inventory.items.get(ii)) + ":";
+							var10 += ((Item)c1.inventory.items.get(ii)).getName() + ";" + c1.inventory.count((Item)c1.inventory.items.get(ii)) + ":";
 						} else {
-							var10 = var10 + ((Item)c1.inventory.items.get(ii)).getName() + ":";
+							var10 += ((Item)c1.inventory.items.get(ii)).getName() + ":";
 						}
 					}
 					
-					extradata = extradata + ":" + var10;
+					extradata += ":" + var10;
 					if(c1.isdeathchest) {
 						name = "DeathChest";
-						extradata = extradata + ":" + "tl;" + c1.time;
+						extradata += ":" + "tl;" + c1.time;
 					}
 				}
 				
@@ -233,19 +233,19 @@ public class Save {
 					for(ii = 0; ii < var11.inventory.items.size(); ii++) {
 						if(!((Item)var11.inventory.items.get(ii)).getName().equals("") || !((Item)var11.inventory.items.get(ii)).getName().equals(" ")) {
 							if(var11.inventory.items.get(ii) instanceof ResourceItem) {
-								var10 = var10 + ((Item)var11.inventory.items.get(ii)).getName() + ";" + var11.inventory.count((Item)var11.inventory.items.get(ii)) + ":";
+								var10 += ((Item)var11.inventory.items.get(ii)).getName() + ";" + var11.inventory.count((Item)var11.inventory.items.get(ii)) + ":";
 							} else {
-								var10 = var10 + ((Item)var11.inventory.items.get(ii)).getName() + ":";
+								var10 += ((Item)var11.inventory.items.get(ii)).getName() + ":";
 							}
 						}
 					}
 					
-					extradata = extradata + ":" + var10 + ":" + false;//var11.islocked;
+					extradata += ":" + var10 + ":" + false;//var11.islocked;
 				}
 				/* not reimplemented yet
 				if(e instanceof Spawner) {
 					Spawner var12 = (Spawner)e;
-					extradata = extradata + ":" + var12.mob.getClass().getCanonicalName().replace("com.mojang.ld22.entity.", "") + ":" + var12.lvl;
+					extradata += ":" + var12.mob.getClass().getCanonicalName().replace("com.mojang.ld22.entity.", "") + ":" + var12.lvl;
 				}
 				*/
 				data.add(name + "[" + e.x + ":" + e.y + extradata + ":" + l + "]");
