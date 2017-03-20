@@ -41,7 +41,7 @@ public class WorldSelectMenu extends Menu {
 		folder.mkdirs();
 		File[] listOfFiles = folder.listFiles();
 
-		for (int i = 0; i < listOfFiles.length; ++i) {
+		for (int i = 0; i < listOfFiles.length; i++) {
 			if (listOfFiles[i].isDirectory()) {
 				String path = location + listOfFiles[i].getName() + "/";
 				File folder2 = new File(path);

@@ -335,11 +335,11 @@ public class Level {
 		}
 
 		if (level == 1 && !WorldSelectMenu.loadworld) {
-			AirWizard aw = new AirWizard();
+			AirWizard aw = new AirWizard(false);
 			aw.x = w * 8;
 			aw.y = h * 8;
 			add(aw);
-			//if(Game.debug) System.out.println("Added Air Wizard! X = " + aw.x + ", Y = " + aw.y);
+			if(Game.debug) System.out.println("Added Air Wizard! X = " + aw.x + ", Y = " + aw.y);
 		}
 	}
 

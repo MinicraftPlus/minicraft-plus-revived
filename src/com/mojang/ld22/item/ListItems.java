@@ -126,7 +126,7 @@ public class ListItems {
 	public Item bookant;
 	public Item scale;
 	public Item shard;
-	//public Item key;
+	public Item key;
 	
 	public Item woodshovel;
 	public Item rockshovel;
@@ -261,7 +261,7 @@ public class ListItems {
 		this.bookant = (new ResourceItem(Resource.bookant)).addItem();
 		this.scale = (new ResourceItem(Resource.scale)).addItem();
 		this.shard = (new ResourceItem(Resource.shard)).addItem();
-		//this.key = (new ResourceItem(Resource.key)).addItem();
+		this.key = (new ResourceItem(Resource.key)).addItem();
 		this.woodshovel = (new ToolItem(ToolType.shovel, 0)).addItem();
 		this.rockshovel = (new ToolItem(ToolType.shovel, 1)).addItem();
 		this.ironshovel = (new ToolItem(ToolType.shovel, 2)).addItem();
@@ -347,7 +347,7 @@ public class ListItems {
 				name = name.substring(0, name.indexOf(";"));
 			}
 			
-			for(int i = 0; i < items.size(); ++i) {
+			for(int i = 0; i < items.size(); i++) {
 				if(((Item)items.get(i)).getName().equals(name)) {
 					newItem = (Item)items.get(i);
 					return newItem;

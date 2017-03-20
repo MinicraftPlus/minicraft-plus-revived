@@ -62,7 +62,7 @@ public class Inventory {
 	}
 	
 	private Item findItem(Item item) {
-		for(int i = 0; i < this.items.size(); ++i) {
+		for(int i = 0; i < this.items.size(); i++) {
 			Item has = (Item)this.items.get(i);
 			if(has.getName().equals(item.getName())) {
 				return has;

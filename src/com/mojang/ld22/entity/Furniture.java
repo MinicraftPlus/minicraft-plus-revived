@@ -8,12 +8,12 @@ import com.mojang.ld22.item.PowerGloveItem;
 /** Many furniture classes are very similar; they might not even need to be there at all... */
 
 public class Furniture extends Entity {
-	private int pushTime = 0; // time for each push.
-	private int pushDir = -1; // the direction to push the furniture
+	protected int pushTime = 0; // time for each push.
+	protected int pushDir = -1; // the direction to push the furniture
 	public int col, col0, col1, col2, col3, sprite; // color and sprite vars.
 	public String name;
 	public int lightTimer = 0; //?
-	private Player shouldTake; // the player that should take the furniture
+	protected Player shouldTake; // the player that should take the furniture
 
 	public Furniture(String name) {
 		this.name = name;

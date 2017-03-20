@@ -46,9 +46,9 @@ public class Chest extends Furniture {
 			if (time < 3600) {
 				name = "Death Chest:" + time / 60 + "S";
 				if (!reverse) {
-					++redtick;
+					redtick++;
 				} else {
-					--redtick;
+					redtick--;
 				}
 
 				if (redtick < 5) {
@@ -78,7 +78,7 @@ public class Chest extends Furniture {
 			}
 
 			if (time > 0) {
-				--time;
+				time--;
 			}
 
 			if (time == 0) {

@@ -63,7 +63,9 @@ public class Resource {
 	public static Resource purpleclothes = new ClothesResource("Purple Clothes", 390, Color.get(-1, Color.rgb(50, 0, 100), Color.rgb(100, 0, 150), Color.rgb(200, 0, 250)), 100, 0, 150);
 	public static Resource cyanclothes = new ClothesResource("Cyan Clothes", 390, Color.get(-1, Color.rgb(0, 50, 100), Color.rgb(0, 100, 150), Color.rgb(0, 200, 250)), 0, 100, 150);
 	public static Resource regclothes = new ClothesResource("Reg Clothes", 390, Color.get(-1, Color.rgb(50, 50, 50), Color.rgb(200, 200, 200), Color.rgb(250, 250, 250)), 50, 50, 0);
-	//public static Resource key = new Resource("Key", 154, Color.get(-1, -1, 444, 550));
+	
+	public static Resource key = new Resource("Key", 154, Color.get(-1, -1, 444, 550));
+	
 	public static Resource potion = new PotionResource("Potion", 155, Color.get(-1, 333, 310, 5), 0);
 	public static Resource speedpotion = new PotionResource("Speed P.", 155, Color.get(-1, 333, 310, 10), 1);
 	public static Resource lightpotion = new PotionResource("Light P.", 155, Color.get(-1, 333, 310, 440), 2);
