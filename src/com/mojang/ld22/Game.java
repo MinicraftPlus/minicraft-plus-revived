@@ -259,7 +259,7 @@ public class Game extends Canvas implements Runnable, ActionListener {
 			
 			if (System.currentTimeMillis() - lastTimer1 > 1000) { //updates every 1 second
 				lastTimer1 += 1000; // adds a second to the timer
-				//if(com.mojang.ld22.Game.debug) System.out.println(ticks + " ticks, " + frames + " fps");
+				//if(Game.debug) System.out.println(ticks + " ticks, " + frames + " fps");
 				Font.draw(ticks + " ticks, " + frames + " fps",
 				  screen, screen.w, screen.h, Color.get(0, 555, 555, 555));
 				fra = frames; //saves total frames in last second
@@ -325,28 +325,28 @@ public class Game extends Canvas implements Runnable, ActionListener {
 		
 		// "shudrespawn" returns false if on hardcore, or making a new world. if true, it keeps your world and spawn pos
 		if (DeadMenu.shudrespawn) { // respawn, don't regenerate level.
-			//if(com.mojang.ld22.Game.debug) System.out.println("Current Level = " + currentLevel + "																					 ");
+			//if(Game.debug) System.out.println("Current Level = " + currentLevel + "																					 ");
 			//currentLevel = 3;
 			level = levels[currentLevel];
 			player.respawn(level);
-			System.out.println("respawned player in resetGame");
+			if (debug) System.out.println("respawned player in resetGame");
 			level.add(player); // adds the player to the current level (always surface here)
 		} else {
 			// new game, regenerate... just the surface level?
 			levels[3] = new Level(worldSize, worldSize, 0, levels[4]);
 			
 			level = levels[currentLevel]; // Set level variable to the surface (b/c currentlevel is always 3)
-
+			
 			DeadMenu.shudrespawn = true; // player should respawn on death
 			player.findStartPos(level); // finds the start position for the player
-			System.out.println("spawned player in new surface, resetGame");
+			if (debug) System.out.println("spawned player in new surface, resetGame");
 		}
 		
 		System.out.println("rG PLAYER SPAWN TILE ID: " + level.getTile(player.spawnx, player.spawny).id);
 		System.out.println("rG PLAYER TILE ID: " + level.getTile(player.x / 16, player.y / 16).id+"\n");
 	}
 	
-	// OH! This always generates a new world! the other one doesn't; but it may generate a new surface level.
+	// This is called when loading a saved world, among other things.
 	public void resetstartGame() {
 		playerDeadTime = 0;
 		wonTimer = 0;
@@ -470,8 +470,11 @@ public class Game extends Canvas implements Runnable, ActionListener {
 			new Load(this, WorldSelectMenu.worldname);
 		} else { //should execute only on dungeon level, based on above.
 			tickCount = 0;
-			System.out.println("TILE SPAWN ID: " + level.getTile(player.spawnx, player.spawny).id);
-			System.out.println("TILE ID: " + level.getTile(player.x / 16, player.y / 16).id+"\n");
+			if(debug) {
+				System.out.println("rsG PLAYER SPAWN ID: " + level.getTile(player.spawnx, player.spawny).id);
+				System.out.println("rsG PLAYER TILE ID: " + level.getTile((player.x - 8) / 16, (player.y - 8) / 16).id);
+				System.out.println("rsG PLAYER TILE ID 2: " + level.getTile((player.x - 8) / 16, (player.y - 8) / 16).id+"\n");
+			}
 			//if (level.getTile(player.x / 16, player.y / 16) != Tile.sand)
 				//level.setTile(player.x / 16, player.y / 16, Tile.grass, 0);
 		}
@@ -491,7 +494,7 @@ public class Game extends Canvas implements Runnable, ActionListener {
 			// IN BED
 			level.remove(player); //oh noes! jk. :D
 			nsPerTick = 781250.0D;
-			if(com.mojang.ld22.Game.debug) System.out.println("SLEEPING... tickCount: " + tickCount);
+			if(Game.debug) System.out.println("SLEEPING... tickCount: " + tickCount);
 			if (isDayNoSleep) {
 				level.add(player);
 				nsPerTick = 1.6666666666666666E7D;
@@ -576,7 +579,7 @@ public class Game extends Canvas implements Runnable, ActionListener {
 			
 			if (scoreTime < 1 && !player.removed) {
 				setMenu(new WonMenu());
-				if(com.mojang.ld22.Game.debug) System.out.println(player.score);
+				if(Game.debug) System.out.println(player.score);
 				//Extra score from drops.
 				player.score =
 						player.score + (Inventory.scored(Resource.cloth) * (random.nextInt(2) + 1) * ism);
@@ -624,8 +627,8 @@ public class Game extends Canvas implements Runnable, ActionListener {
 			if (count == 0) reverse = false;
 		}
 		
-		//if(com.mojang.ld22.Game.debug) System.out.println(tickCount);
-		//if(com.mojang.ld22.Game.debug) System.out.println(Bed.hasBeenTrigged);
+		//if(Game.debug) System.out.println(tickCount);
+		//if(Game.debug) System.out.println(Bed.hasBeenTrigged);
 		
 		//This is the general action statement thing! Regulates menus, mostly.
 		if (!hasFocus()) {
@@ -658,7 +661,8 @@ public class Game extends Canvas implements Runnable, ActionListener {
 
 				//I'm guessing that this is like DeadMenu, but you can't respawn.
 				if (wonTimer > 0) {
-					if (--wonTimer == 0) {
+					wonTimer--;
+					if (wonTimer == 0) {
 						wonTimer = 60 * 3;
 						hasWon = true;
 						daytime.stop();
@@ -673,9 +677,15 @@ public class Game extends Canvas implements Runnable, ActionListener {
 				level.tick();
 				Tile.tickCount++;
 				
-				if (input.getKey("Shift").clicked && input.getKey("0").clicked) {
-					
-				}
+				/* for debugging only
+				if (input.getKey("Shift").down && input.getKey("0").clicked) {
+					//WorldSelectMenu.loadworld = false;
+					//setMenu(new LoadingMenu());
+					DeadMenu.shudrespawn = false;
+					level.remove(player);
+					resetGame();
+					resetstartGame();
+				}*/
 			} //end "menu-null" conditional
 		} //end hasfocus conditional
 	} //end tick()
@@ -703,19 +713,19 @@ public class Game extends Canvas implements Runnable, ActionListener {
 		if (ItemResource.dur == 0) player.activeItem.isDepleted();
 		
 		if (fcatch <= 8) {
-			if(com.mojang.ld22.Game.debug) System.out.println("Caught a Fish!");
+			if(Game.debug) System.out.println("Caught a Fish!");
 			level.add(new ItemEntity(new ResourceItem(Resource.rawfish), x + random.nextInt(11) - 5, y + random.nextInt(11) - 5));
 			isfishing = false;
 		}
 		
 		if (fcatch == 25 || fcatch == 43 || fcatch == 32 || fcatch == 15 || fcatch == 42) {
-			if(com.mojang.ld22.Game.debug) System.out.println("Caught some slime?");
+			if(Game.debug) System.out.println("Caught some slime?");
 			level.add(new ItemEntity(new ResourceItem(Resource.slime), x + random.nextInt(11) - 5, y + random.nextInt(11) - 5));
 			isfishing = false;
 		}
 
 		if (fcatch == 56) {
-			if(com.mojang.ld22.Game.debug) System.out.println("Rare Armor!");
+			if(Game.debug) System.out.println("Rare Armor!");
 			level.add(
 					new ItemEntity(
 							new ResourceItem(Resource.larmor),
@@ -723,7 +733,7 @@ public class Game extends Canvas implements Runnable, ActionListener {
 							y + random.nextInt(11) - 5));
 			isfishing = false;
 		} else {
-			if(com.mojang.ld22.Game.debug) System.out.println("FAIL!");
+			if(Game.debug) System.out.println("FAIL!");
 			isfishing = false;
 		}
 	}
@@ -836,7 +846,7 @@ public class Game extends Canvas implements Runnable, ActionListener {
 		}
 		*/
 		if (saving) {
-			//if(com.mojang.ld22.Game.debug) System.out.println("SAVING GAME...");
+			//if(Game.debug) System.out.println("SAVING GAME...");
 			String loadingText = "Saving... " + LoadingMenu.percentage + "%";
 			int xPos = screen.centertext(loadingText);
 			/*screen.w / 2 - loadingText.length() * 4*/

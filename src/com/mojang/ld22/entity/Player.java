@@ -43,7 +43,7 @@ public class Player extends Mob {
 	//These 2 ints are ints saved from the first spawn - this way the spawn pos is always saved.
 	public static int spawnx = 0, spawny = 0;
 	public static int xx, yy;
-
+	
 	public Inventory inventory;
 	public Item attackItem, activeItem;
 	public boolean energy;
@@ -122,7 +122,7 @@ public class Player extends Mob {
 		stamina = maxStamina;
 		hunger = maxHunger;
 
-		//if(com.mojang.ld22.Game.debug) System.out.println("creative mode: " + ModeMenu.creative);
+		//if(Game.debug) System.out.println("creative mode: " + ModeMenu.creative);
 		if (ModeMenu.creative) {
 			for (int i = 0; i < ListItems.items.size(); i++) {
 				inventory.add((Item) ListItems.items.get(i));
@@ -138,8 +138,8 @@ public class Player extends Mob {
 		super.tick();
 		isenemy = false;
 		tickCounter++;
-		//if(com.mojang.ld22.Game.debug) System.out.println(tickCounter);
-
+		//if(Game.debug) System.out.println(tickCounter);
+		
 		
 		int xa, ya;
 		if(potioneffectstime.size() > 0 && !Bed.hasBedSet) {
@@ -1002,15 +1002,15 @@ public class Player extends Mob {
 			int x = random.nextInt(level.w);
 			int y = random.nextInt(level.h);
 			if (level.getTile(x, y) == Tile.grass) {
-				this.x = x * 16 + 8;
-				this.y = y * 16 + 8;
-				spawnx = y;
-				spawny = x;
-				System.out.println("TILE FOUND; ID: " + level.getTile(x, y).id);
+				spawnx = x;
+				spawny = y;
+				this.x = spawnx * 16 + 8;
+				this.y = spawny * 16 + 8;
+				if (Game.debug) System.out.println("START POS FOUND, TILE ID: " + level.getTile(spawnx, spawny).id);
 				return true;
 			}
 		}
-		System.out.println("you shouldn't be here...");
+		//System.out.println("you shouldn't be here...");
 	}
 
 	public void setHome() {
@@ -1039,7 +1039,7 @@ public class Player extends Mob {
 				stamina = 0;
 				sentFromHome = true;
 				game.setMenu(new HomeMenu());
-				//if(com.mojang.ld22.Game.debug) System.out.println(sentFromHome);
+				//if(Game.debug) System.out.println(sentFromHome);
 			} else {
 				game.setMenu(new HomeMenu());
 			}
@@ -1048,7 +1048,7 @@ public class Player extends Mob {
 			hasSetHome = false;
 			sentFromHome = true;
 			game.setMenu(new HomeMenu());
-			//	if(com.mojang.ld22.Game.debug) System.out.println(sentFromHome);
+			//	if(Game.debug) System.out.println(sentFromHome);
 		}
 	}
 
@@ -1056,10 +1056,10 @@ public class Player extends Mob {
 		while (true) {
 			int x = spawnx;
 			int y = spawny;
-			if (bedSpawn || level.getTile(x, y) == Tile.grass) {
-				System.out.println("RESPAWN TILE ID: " + level.getTile(x, y).id);
-				this.x = spawny * 16 + 8;
-				this.y = spawnx * 16 + 8;
+			if (bedSpawn || level.getTile(spawnx, spawny) == Tile.grass) {
+				if (Game.debug) System.out.println("RESPAWN TILE ID: " + level.getTile(spawnx, spawny).id);
+				this.x = spawnx * 16 + 8;
+				this.y = spawny * 16 + 8;
 				//System.out.println("BEDSPAWN=" + bedSpawn);
 				return true;
 			} /* else if (level.getTile(x, y) == Tile.grass) {
@@ -1067,10 +1067,10 @@ public class Player extends Mob {
 				this.y = spawnx * 16 + 8;
 				return true;
 			}*/
-			System.out.println("you should only see this once (or not at all) per search.");
+			if (Game.debug) System.out.println("you should only see this once (or not at all) per load.");
 			findStartPos(level);
 		}
-		System.out.println("you REALLY shouldn't be here...");
+		//System.out.println("you REALLY shouldn't be here...");
 	}
 
 	public boolean payStamina(int cost) {
