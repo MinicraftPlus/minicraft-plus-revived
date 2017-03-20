@@ -224,7 +224,7 @@ public class Level {
 		}
 
 		if (level == -4 && !WorldSelectMenu.loadworld) {
-			for (int i = 0; i < 1/*10 * (w / 128)*/; i++) {
+			for (int i = 0; i < (Game.debug?1:10 * (w / 128)); i++) {
 				final DungeonChest d = new DungeonChest();
 				boolean addedchest = false;
 				while(!addedchest){final int x2 = this.random.nextInt(16 * w) / 16;

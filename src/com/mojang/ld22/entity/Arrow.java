@@ -4,6 +4,7 @@ package com.mojang.ld22.entity;
 import com.mojang.ld22.gfx.Color;
 import com.mojang.ld22.gfx.Screen;
 import java.util.List;
+import com.mojang.ld22.item.ListItems;
 
 public class Arrow extends Entity {
 	private int lifeTime;
@@ -57,10 +58,8 @@ public class Arrow extends Entity {
 		int count = random.nextInt(11);
 		for (int i = 0; i < entitylist.size(); i++) {
 			Entity hit = entitylist.get(i);
-			if(hit instanceof Tile && owner instanceof Player) {
-				((Tile)hit).hurt(level, x, y, owner, 50, owner.dir);
-			}
-			else if (count < 9) {
+			
+			if (count < 9) {
 				if (hit != null) {
 					if (hit instanceof Mob && hit != owner && owner.isenemy == false) {
 						hit.hurt(owner, damage + 3, ((Mob) hit).dir);
@@ -79,8 +78,12 @@ public class Arrow extends Entity {
 					}
 				}
 			}
-			
-
+			/*
+			if(owner instanceof Player) {
+				level.getTile(x / 16, y / 16).interact(level, x, y, (Player)owner, ListItems.gempickaxe, ((Player)owner).attackDir);
+				level.getTile(x / 16, y / 16).interact(level, x, y, (Player)owner, ListItems.gemshovel, ((Player)owner).attackDir);
+			}
+			*/
 			if (level.getTile(x / 16, y / 16).mayPass(level, x / 16, y / 16, this)
 					|| level.getTile(x / 16, y / 16).connectsToWater
 					|| level.getTile(x / 16, y / 16).id == 16) {
