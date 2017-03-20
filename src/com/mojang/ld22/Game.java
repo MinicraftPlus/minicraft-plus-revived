@@ -448,7 +448,7 @@ public class Game extends Canvas implements Runnable {//, ActionListener {
 				nsPerTick = 1.6666666666666666E7D;
 				
 				//seems this removes all entities within a certain radius of the player when you get in Bed.
-				for (int i = 0; i < level.entities.size(); ++i) {
+				for (int i = 0; i < level.entities.size(); i++) {
 					if (((Entity) level.entities.get(i)).level == levels[currentLevel]) {
 						int xd = level.player.x - ((Entity) level.entities.get(i)).x;
 						int yd = level.player.y - ((Entity) level.entities.get(i)).y;
@@ -802,6 +802,7 @@ public class Game extends Canvas implements Runnable {//, ActionListener {
 			//end score debug
 		}
 		
+		/*
 		/// Render AirWizard health bar: (I need to update this)
 		
 		int awh = AirWizard.healthstat / 20;
@@ -813,7 +814,7 @@ public class Game extends Canvas implements Runnable {//, ActionListener {
 			Font.draw("AirWizard Health " + awh + "%",
 			  screen, 84, screen.h - (ModeMenu.score ? 180 : 190), Color.get(100, 50, 50, 50));
 		}
-		
+		*/
 		// This is the arrow counter. ^ = infinite symbol.
 		if (ModeMenu.creative || ac >= 10000)
 			Font.draw("	x" + "^", screen, 84, screen.h - 16, Color.get(0, 333, 444, 555));
@@ -890,7 +891,7 @@ public class Game extends Canvas implements Runnable {//, ActionListener {
 
 		
 		if(player.potioneffects.size() > 0) {
-			for(int i = 0; i < player.potioneffects.size(); ++i) {
+			for(int i = 0; i < player.potioneffects.size(); i++) {
 				if(player.showpotioneffects) {
 					int pcol = Color.get(PotionResource.potionColor((String)player.potioneffects.get(i)), 555, 555, 555);
 					Font.draw("("+input.getPhysKey("potionEffects")+" to hide!)", screen, 180, screen.h - 183, Color.get(0, 555, 555, 555));
