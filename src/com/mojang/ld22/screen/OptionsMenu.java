@@ -23,7 +23,9 @@ public class OptionsMenu extends Menu {
 
 	private Menu parent;
 
-	public OptionsMenu() {}
+	public OptionsMenu(Menu parent) {
+		this.parent = parent;
+	}
 
 	public void tick() {
 		if (input.getKey("left").clicked) {
@@ -44,8 +46,9 @@ public class OptionsMenu extends Menu {
 				//if (ModeMenu.hasSetDif == false) ModeMenu.survival = true;
 				//game.resetstartGame();
 				hasSetDiff = true;
-				if (TitleMenu.sentFromMenu) game.setMenu(new TitleMenu());
-				else game.setMenu(new PauseMenu(game.player));
+				game.setMenu(parent);
+				//if (TitleMenu.sentFromMenu) game.setMenu(new TitleMenu());
+				//else game.setMenu(new PauseMenu(game.player));
 			}
 		}
 

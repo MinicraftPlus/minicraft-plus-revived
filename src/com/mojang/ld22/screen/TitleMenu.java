@@ -11,11 +11,11 @@ public class TitleMenu extends Menu {
 	private int selected = 0;
 	protected final Random random = new Random();
 
-	private static final String[] options = {"New game", "Tutorial", "Options", "About", "Quit"}; // Options that are on the main menu.
-	public static boolean sentFromMenu;
+private static final String[] options = {"New game", "Instructions", "Tutorial", "Options", "About", "Quit"/*, "Kill"*/}; // Options that are on the main menu.
+	//public static boolean sentFromMenu;
 	int randcount = 60;
 	int rand = random.nextInt(randcount);
-	int count = 0;
+	int count = 0; // this and reverse are for the logo; they produce the fade-in/out effect.
 	boolean reverse = false;
 
 	public TitleMenu() {}
@@ -41,13 +41,14 @@ public class TitleMenu extends Menu {
 		}
 
 		if (input.getKey("enter").clicked) {
-			if (selected == 0) {
+			if (options[selected] == "New game") {
 				WorldSelectMenu.loadworld = false;
 				game.setMenu(new WorldSelectMenu(this));
 				//(this method should now stop getting called by Game)
 				//BUT: this object is passed to WorldSelectMenu...
 			}
-			if (selected == 1) {
+			if(options[selected] == "Instructions") game.setMenu(new InstructionsMenu(this));
+			if (options[selected] == "Tutorial") {
 				try {
 					//This is for the tutorial Video
 					String url = "http://minicraftplus.webs.com/Tutorial.htm";
@@ -56,12 +57,13 @@ public class TitleMenu extends Menu {
 					if(com.mojang.ld22.Game.debug) System.out.println(e.getMessage());
 				}
 			}
-			if (selected == 2) {
-				sentFromMenu = true;
-				game.setMenu(new OptionsMenu());
+			if (options[selected] == "Options") {
+				//sentFromMenu = true;
+				game.setMenu(new OptionsMenu(this));
 			}
-			if (selected == 3) game.setMenu(new AboutMenu(this));
-			if (selected == 4) System.exit(0);
+			if (options[selected] == "About") game.setMenu(new AboutMenu(this));
+			if (options[selected] == "Quit") System.exit(0);
+			//if (options[selected] == "Kill") {game.level.add(game.player); game.setMenu(null);}
 		}
 	}
 	
