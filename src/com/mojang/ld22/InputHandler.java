@@ -67,7 +67,7 @@ public class InputHandler implements MouseListener, KeyListener {
 		//keymap.put("SOUNDON", "M"); //toggles sound on and off... well, it should...
 		
 		keymap.put("POTIONEFFECTS", "F2"); // toggle potion effect display
-		keymap.put("FPSDISP", "F3"); // toggle fps display
+		//keymap.put("FPSDISP", "F3"); // toggle fps display
 		keymap.put("INFO", "I"); // toggle player stats display
 		
 		game.addKeyListener(this); //add key listener to game

@@ -47,7 +47,7 @@ public class Tile {
 	public static Tile sdo = new StoneDoorOpenTile(37);
 	public static Tile sdc = new StoneDoorClosedTile(38);
 	public static Tile lavabrick = new LavaBrickTile(39);
-	public static Tile sbrick = new StoneBrickTile(32);
+	public static Tile sbrick = new StoneBrickTile(32, false);
 	public static Tile o = new ObsidianBrick(120);
 	public static Tile ow = new ObsidianWallTile(121);
 	public static Tile odc = new ObsidianDoorClosedTile(122);

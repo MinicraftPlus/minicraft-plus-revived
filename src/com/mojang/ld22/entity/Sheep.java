@@ -10,14 +10,22 @@ import com.mojang.ld22.screen.ModeMenu;
 import com.mojang.ld22.screen.OptionsMenu;
 
 public class Sheep extends Mob {
-	int xa;
-	int ya;
-	int xe = xa;
-	int ye = ya;
+	int xa, ya, xe, ye;
 	private int lvl;
-	private int randomWalkTime = 0;
-
+	private int randomWalkTime;
+	
 	public Sheep(int lvl) {
+		xe = xa;
+		ye = ya;
+		if (lvl == 0) lvl = 1;
+		randomWalkTime = 0;
+		
+		col0 = Color.get(-1, 0, 444, 321);
+		col1 = Color.get(-1, 0, 555, 432);
+		col2 = Color.get(-1, 0, 333, 210);
+		col3 = Color.get(-1, 0, 222, 100);
+		col4 = Color.get(-1, 0, 444, 432);
+		
 		if (OptionsMenu.diff == OptionsMenu.easy) {
 			this.lvl = lvl;
 			x = random.nextInt(64 * 16);

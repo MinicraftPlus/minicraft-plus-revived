@@ -1,11 +1,7 @@
 package com.mojang.ld22.crafting;
 
-import com.mojang.ld22.crafting.ArrowRecipe;
-import com.mojang.ld22.crafting.FurnitureRecipe;
-import com.mojang.ld22.crafting.ItemRecipe;
-import com.mojang.ld22.crafting.ResourceRecipe;
-import com.mojang.ld22.crafting.ToolRecipe;
 import com.mojang.ld22.entity.Anvil;
+import com.mojang.ld22.entity.Bed;
 import com.mojang.ld22.entity.Chest;
 import com.mojang.ld22.entity.Furnace;
 import com.mojang.ld22.entity.GodLantern;
@@ -16,7 +12,6 @@ import com.mojang.ld22.entity.Loom;
 import com.mojang.ld22.entity.Oven;
 import com.mojang.ld22.entity.Tnt;
 import com.mojang.ld22.entity.Workbench;
-import com.mojang.ld22.entity.Bed;
 import com.mojang.ld22.item.BucketItem;
 import com.mojang.ld22.item.ToolType;
 import com.mojang.ld22.item.resource.Resource;

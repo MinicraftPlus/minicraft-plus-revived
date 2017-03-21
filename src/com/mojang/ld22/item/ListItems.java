@@ -2,6 +2,7 @@ package com.mojang.ld22.item;
 
 import com.mojang.ld22.entity.AirWizard;
 import com.mojang.ld22.entity.Anvil;
+import com.mojang.ld22.entity.Bed;
 import com.mojang.ld22.entity.Chest;
 import com.mojang.ld22.entity.Creeper;
 import com.mojang.ld22.entity.Enchanter;
@@ -17,20 +18,10 @@ import com.mojang.ld22.entity.Sheep;
 import com.mojang.ld22.entity.Skeleton;
 import com.mojang.ld22.entity.Slime;
 import com.mojang.ld22.entity.Snake;
-//import com.mojang.ld22.entity.Spawner;
+import com.mojang.ld22.entity.Spawner;
 import com.mojang.ld22.entity.Tnt;
 import com.mojang.ld22.entity.Workbench;
 import com.mojang.ld22.entity.Zombie;
-import com.mojang.ld22.entity.Bed;
-import com.mojang.ld22.item.BucketItem;
-import com.mojang.ld22.item.BucketLavaItem;
-import com.mojang.ld22.item.BucketWaterItem;
-import com.mojang.ld22.item.FurnitureItem;
-import com.mojang.ld22.item.Item;
-import com.mojang.ld22.item.PowerGloveItem;
-import com.mojang.ld22.item.ResourceItem;
-import com.mojang.ld22.item.ToolItem;
-import com.mojang.ld22.item.ToolType;
 import com.mojang.ld22.item.resource.Resource;
 import java.util.ArrayList;
 import java.util.List;
@@ -38,7 +29,7 @@ import java.util.List;
 public class ListItems {
 
 	public static List items = new ArrayList();
-	/* not reimplemented yet
+	
 	public Item spawnerzombie = (new FurnitureItem(new Spawner(new Zombie(1), 1))).addItem();
 	public Item spawnerslime = (new FurnitureItem(new Spawner(new Slime(1), 1))).addItem();
 	public Item spawnerknight = (new FurnitureItem(new Spawner(new Knight(1), 1))).addItem();
@@ -49,7 +40,7 @@ public class ListItems {
 	public Item spawnerairwizardii = (new FurnitureItem(new Spawner(new AirWizard(true), 1))).addItem();
 	public Item spawnerpig = (new FurnitureItem(new Spawner(new Pig(1), 1))).addItem();
 	public Item spawnersheep = (new FurnitureItem(new Spawner(new Sheep(1), 1))).addItem();
-	*/
+	
 	public Item powglove = (new PowerGloveItem()).addItem();
 	public Item workbench = (new FurnitureItem(new Workbench())).addItem();
 	public Item oven = (new FurnitureItem(new Oven())).addItem();

@@ -4,7 +4,6 @@ package com.mojang.ld22.entity;
 import com.mojang.ld22.gfx.Color;
 import com.mojang.ld22.gfx.Screen;
 import java.util.List;
-import com.mojang.ld22.item.ListItems;
 
 public class Arrow extends Entity {
 	private int lifeTime;

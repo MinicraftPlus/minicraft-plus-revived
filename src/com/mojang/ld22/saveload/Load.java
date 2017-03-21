@@ -3,6 +3,7 @@ package com.mojang.ld22.saveload;
 import com.mojang.ld22.Game;
 import com.mojang.ld22.entity.AirWizard;
 import com.mojang.ld22.entity.Anvil;
+import com.mojang.ld22.entity.Bed;
 import com.mojang.ld22.entity.Chest;
 import com.mojang.ld22.entity.Cow;
 import com.mojang.ld22.entity.Creeper;
@@ -25,11 +26,10 @@ import com.mojang.ld22.entity.Sheep;
 import com.mojang.ld22.entity.Skeleton;
 import com.mojang.ld22.entity.Slime;
 import com.mojang.ld22.entity.Snake;
-//import com.mojang.ld22.entity.Spawner;
+import com.mojang.ld22.entity.Spawner;
 import com.mojang.ld22.entity.Tnt;
 import com.mojang.ld22.entity.Workbench;
 import com.mojang.ld22.entity.Zombie;
-import com.mojang.ld22.entity.Bed;
 import com.mojang.ld22.item.Item;
 import com.mojang.ld22.item.ListItems;
 import com.mojang.ld22.item.ResourceItem;
@@ -143,7 +143,7 @@ public class Load {
 		loadFromFile(location + filename + extention);
 		Game.astime = Integer.parseInt((String)data.get(1));
 		Game.gamespeed = Integer.parseInt((String)data.get(2));
-		game.nsPerTick = 1.0E9D / (double)(60 * Game.gamespeed);
+		//game.nsPerTick = 1.0E9D / (double)(60 * Game.gamespeed);
 		Game.ac = Integer.parseInt((String)data.get(3));
 		Game.autosave = Boolean.parseBoolean((String)data.get(4));
 		OptionsMenu.isSoundAct = Boolean.parseBoolean((String)data.get(5));
@@ -333,8 +333,8 @@ public class Load {
 					newEntity.level = Game.levels[Integer.parseInt((String)info.get(info.size() - 1))];
 					currentlevel = Integer.parseInt((String)info.get(info.size() - 1));
 					Game.levels[currentlevel].add((chest instanceof Chest ? (Chest)chest : (DungeonChest)chest));
-				} /* not reimplemented yet
-				else if(newEntity instanceof Spawner)) {
+				}
+				else if(newEntity instanceof Spawner) {
 					Spawner egg = (Spawner)newEntity;
 					egg.x = Integer.parseInt((String)info.get(0));
 					egg.y = Integer.parseInt((String)info.get(1));
@@ -342,46 +342,11 @@ public class Load {
 					egg.lvl = Integer.parseInt((String)info.get(3));
 					currentlevel = Integer.parseInt((String)info.get(info.size() - 1));
 					Game.levels[currentlevel].add(egg);
-				}*/ else {
+				} else {
 					newEntity.level = Game.levels[Integer.parseInt((String)info.get(2))];
 					currentlevel = Integer.parseInt((String)info.get(2));
 					Game.levels[currentlevel].add(newEntity);
 				}
-				/* else {
-					DungeonChest dChest = (DungeonChest)newEntity;
-					Game.levels[5].chestcount++;
-					
-					for(int idx = 2; i < info.size(); idx++) {
-						String itemData = (String)info.get(idx);
-						Item item = ListItems.getItem(itemData);
-						if (item instanceof ResourceItem) {
-							int data = itemData + ";0";
-							List curData = Arrays.asList(data.split(";"));
-							Item newItem = ListItems.getItem((String)curData.get(0));
-							
-							for(int i = 0; i < Integer.parseInt((String)curData.get(1)); i++) {
-								if(newItem instanceof ResourceItem) {
-									ResourceItem resItem = new ResourceItem(((ResourceItem)newItem).resource);
-									dChest.inventory.add(resItem);
-								} else if(!item.getName().equals("")) {
-									dChest.inventory.items.add(item);
-								}
-							}
-						} else if(!item.getName().equals("")) {
-							dChest.inventory.items.add(item);
-						}
-						
-						
-						if(idx == info.size() - 2 && ) {
-							dChest.islocked = Boolean.parseBoolean(item);
-						}
-					}
-					
-					
-					newEntity.level = Game.levels[Integer.parseInt((String)info.get(info.size() - 1))];
-					currentlevel = Integer.parseInt((String)info.get(info.size() - 1));
-					Game.levels[currentlevel].add(dChest);
-				}*/
 			} // end of entity not null conditional
 		}
 	}
@@ -420,7 +385,7 @@ public class Load {
 			case "Chest": return (Entity)(new Chest());
 			case "DeathChest": return (Entity)(new Chest(true));
 			case "DungeonChest": return (Entity)(new DungeonChest());
-			//case "Spawner": return (Entity)(new Spawner(new Zombie(1), 1));
+			case "Spawner": return (Entity)(new Spawner(new Zombie(1), 1));
 			case "Anvil": return (Entity)(new Anvil());
 			case "Enchanter": return (Entity)(new Enchanter());
 			case "Loom": return (Entity)(new Loom());

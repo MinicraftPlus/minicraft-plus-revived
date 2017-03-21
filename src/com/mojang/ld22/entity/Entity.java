@@ -53,7 +53,7 @@ public class Entity {
 	public void hurt(Tile tile, int x, int y, int dmg) {}
 
 	public boolean move(int xa, int ya) {
-		if (!this.level.player.game.saving && (xa != 0 || ya != 0)) {
+		if (!level.player.game.saving && (xa != 0 || ya != 0)) {
 			boolean stopped = true;
 			if (xa != 0 && move2(xa, 0)) stopped = false;
 			if (ya != 0 && move2(0, ya)) stopped = false;

@@ -23,9 +23,9 @@ import com.mojang.ld22.screen.InfoMenu;
 import com.mojang.ld22.screen.InventoryMenu;
 import com.mojang.ld22.screen.LoadingMenu;
 import com.mojang.ld22.screen.ModeMenu;
+import com.mojang.ld22.screen.OptionsMenu;
 import com.mojang.ld22.screen.PauseMenu;
 import com.mojang.ld22.screen.PlayerInfoMenu;
-import com.mojang.ld22.screen.OptionsMenu;
 import com.mojang.ld22.screen.WorldSelectMenu;
 import com.mojang.ld22.sound.Sound;
 import java.util.ArrayList;
@@ -167,7 +167,8 @@ public class Player extends Mob {
 
 				if(((String)potioneffects.get(onTile)).contains("Time") && !slowtime) {
 					slowtime = true;
-					game.nsPerTick = 3.3333333333333332E7D;
+					//game.nsPerTick = 3.3333333333333332E7D; //.0333 of nsPerTick
+					game.gamespeed = 0.5f;
 				}
 
 				if(((String)potioneffects.get(onTile)).contains("Lava") && !lavaimmune) {
@@ -205,7 +206,8 @@ public class Player extends Mob {
 
 					if(((String)potioneffects.get(onTile)).contains("Time")) {
 						slowtime = false;
-						game.nsPerTick = 1.6666666666666666E7D;
+						//game.nsPerTick = 1.6666666666666666E7D;
+						game.gamespeed = 1;
 					}
 
 					if(((String)potioneffects.get(onTile)).contains("Lava")) {
@@ -228,7 +230,7 @@ public class Player extends Mob {
 		
 		if(cooldowninfo > 0) cooldowninfo--;
 		
-		if(input.getKey("fpsdisp").clicked && cooldowninfo == 0) {
+		if(input.getKey("F3").clicked && cooldowninfo == 0) { // shows debug info
 			cooldowninfo = 10;
 			showinfo = !showinfo;
 		}
@@ -441,7 +443,7 @@ public class Player extends Mob {
 		
 		if (attackTime > 0) attackTime--;
 
-		if (slowtime && !Bed.hasBedSet) game.nsPerTick = 3.3333333333333332E7D;
+		if (slowtime && !Bed.hasBedSet) game.gamespeed = 0.5f;//game.nsPerTick = 3.3333333333333332E7D;
 	}
 
 	private boolean use() {

@@ -18,6 +18,11 @@ public class Pig extends Mob {
 	private int randomWalkTime = 0;
 
 	public Pig(int lvl) {
+		col0 = Color.get(-1, 000, 444, 411);
+		col1 = Color.get(-1, 000, 555, 522);
+		col2 = Color.get(-1, 000, 333, 311);
+		col3 = Color.get(-1, 000, 222, 211);
+		col4 = Color.get(-1, 000, 444, 522);
 		if (OptionsMenu.diff == OptionsMenu.easy) {
 			this.lvl = lvl;
 			x = random.nextInt(64 * 16);

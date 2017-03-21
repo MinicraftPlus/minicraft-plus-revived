@@ -1,12 +1,6 @@
 package com.mojang.ld22.entity;
 
 import com.mojang.ld22.Game;
-import com.mojang.ld22.entity.AirWizard;
-import com.mojang.ld22.entity.Entity;
-import com.mojang.ld22.entity.Furniture;
-import com.mojang.ld22.entity.Inventory;
-import com.mojang.ld22.entity.ItemEntity;
-import com.mojang.ld22.entity.Player;
 import com.mojang.ld22.entity.particle.SmashParticle;
 import com.mojang.ld22.entity.particle.TextParticle;
 import com.mojang.ld22.gfx.Color;

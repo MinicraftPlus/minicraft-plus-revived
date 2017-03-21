@@ -18,6 +18,12 @@ public class Snake extends Mob {
 	private int randomWalkTime = 0;
 
 	public Snake(int lvl) {
+		this.col0 = Color.get(-1, 0, 40, 444);
+		this.col1 = Color.get(-1, 0, 30, 555);
+		this.col2 = Color.get(-1, 0, 20, 333);
+		this.col3 = Color.get(-1, 0, 10, 222);
+		this.col4 = Color.get(-1, 0, 20, 444);
+		
 		if (OptionsMenu.diff == OptionsMenu.easy) {
 			this.lvl = lvl;
 			x = random.nextInt(64 * 16);

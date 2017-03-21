@@ -14,6 +14,12 @@ public class Slime extends Mob {
 	private int lvl;
 
 	public Slime(int lvl) {
+		this.col0 = Color.get(-1, 20, 40, 10);
+		this.col1 = Color.get(-1, 20, 30, 40);
+		this.col2 = Color.get(-1, 20, 40, 10);
+		this.col3 = Color.get(-1, 10, 20, 40);
+		this.col4 = Color.get(-1, 10, 20, 30);
+		
 		if (OptionsMenu.diff == OptionsMenu.easy) {
 			this.lvl = lvl;
 			x = random.nextInt(64 * 16);

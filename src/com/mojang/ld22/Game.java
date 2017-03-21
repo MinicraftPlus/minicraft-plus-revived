@@ -1,8 +1,6 @@
 package com.mojang.ld22;
 
-import com.mojang.ld22.entity.AirWizard;
 import com.mojang.ld22.entity.Bed;
-import com.mojang.ld22.entity.Enchanter;
 import com.mojang.ld22.entity.Entity;
 import com.mojang.ld22.entity.Furniture;
 import com.mojang.ld22.entity.Inventory;
@@ -10,7 +8,6 @@ import com.mojang.ld22.entity.IronLantern;
 import com.mojang.ld22.entity.ItemEntity;
 import com.mojang.ld22.entity.Mob;
 import com.mojang.ld22.entity.Player;
-import com.mojang.ld22.entity.Workbench;
 import com.mojang.ld22.gfx.Color;
 import com.mojang.ld22.gfx.Font;
 import com.mojang.ld22.gfx.Screen;
@@ -22,7 +19,6 @@ import com.mojang.ld22.item.resource.ItemResource;
 import com.mojang.ld22.item.resource.PotionResource;
 import com.mojang.ld22.item.resource.Resource;
 import com.mojang.ld22.level.Level;
-import com.mojang.ld22.level.tile.DirtTile;
 import com.mojang.ld22.level.tile.Tile;
 import com.mojang.ld22.saveload.Load;
 import com.mojang.ld22.saveload.Save;
@@ -51,7 +47,6 @@ import java.util.*;
 import java.util.Random;
 import javax.imageio.ImageIO;
 import javax.swing.JFrame;
-import javax.swing.Timer;
 
 public class Game extends Canvas implements Runnable {
 	
@@ -62,9 +57,6 @@ public class Game extends Canvas implements Runnable {
 	public static final String gameDir = System.getenv("APPDATA") + "/.playminicraft/mods/Minicraft-Plus"; // The directory in which all the game files are stored; APPDATA is meant for windows...
 	
 	/// MANAGERIAL VARS AND RUNNING
-	
-	public static int gamespeed = 1;
-	public static double nsPerTick = 1E9D / 60 * gamespeed;//1.6666666666666666E7D * (double) gamespeed;
 	
 	public static final String NAME = "Minicraft Plus"; // This is the name on the application window
 	public static final int HEIGHT = 192;
@@ -102,6 +94,10 @@ public class Game extends Canvas implements Runnable {
 	public boolean hasWon; // If the player wins this is set to true
 	
 	/// TIME AND TICKS
+	
+	private static final int normSpeed = 60; // measured in ticks / second.
+	public static float gamespeed = 1; // measured in MULTIPLES OF NORMSPEED.
+	//public static double nsPerTick = 1E9D / 60 / gamespeed; // defaults to 60 ticks per second (written as 1 second per 60 ticks).
 	
 	public static int tickCount = 0; // Used in the ticking system
 	public static boolean tickReset = false;
@@ -220,6 +216,7 @@ public class Game extends Canvas implements Runnable {
 		//main game loop? calls tick() and render().
 		while (running) {
 			long now = System.nanoTime();
+			double nsPerTick = 1E9D / (normSpeed*gamespeed); // nanosecs per sec divided by ticks per sec = nanosecs per tick
 			unprocessed += (now - lastTime) / nsPerTick; //figures out the unprocessed time between now and lastTime.
 			lastTime = now;
 			boolean shouldRender = true;
@@ -287,7 +284,7 @@ public class Game extends Canvas implements Runnable {
 		setMenu(new TitleMenu()); //sets menu to the title screen.
 	}
 
-	/** This resets the game; well, only deadmenu calls this, though. the rest call resetStartGame. */
+	/** This resets the game to some degree; not fully, though. */
 	public void resetGame() {
 		// Resets all values
 		playerDeadTime = 0;
@@ -425,11 +422,13 @@ public class Game extends Canvas implements Runnable {
 		if (Bed.hasBedSet) {
 			// IN BED
 			level.remove(player);
-			nsPerTick = 781250.0D;
+			//nsPerTick = 781250.0D;
+			gamespeed = 20;
 			//if (debug) System.out.println("SLEEPING... tickCount: " + tickCount);
 			if (isDayNoSleep) {
 				level.add(player);
-				nsPerTick = 1.6666666666666666E7D;
+				//nsPerTick = 1.67E7D;
+				gamespeed = 1;
 				
 				//seems this removes all entities within a certain radius of the player when you get in Bed.
 				for (int i = 0; i < level.entities.size(); i++) {
@@ -599,6 +598,15 @@ public class Game extends Canvas implements Runnable {
 					}
 					if (input.getKey("creative").clicked) ModeMenu.updateModeBools(2);
 					if (input.getKey("survival").clicked) ModeMenu.updateModeBools(1);
+					
+					if (input.getKey("shift").down/* && input.getKey("b").clicked*/) {
+						// the equals is the plus key; maybe i should base getKey off of the key typed..? Would have to be the key that WOULD have been typed, though, if that's possible.
+						if (input.getKey("Equals").clicked && gamespeed >= 1) gamespeed += 1;
+						if (input.getKey("Equals").clicked && gamespeed < 1) gamespeed *= 2;
+						if (input.getKey("Minus").clicked && gamespeed > 1) gamespeed -= 1;
+						if (input.getKey("Minus").clicked && gamespeed <= 1) gamespeed /= 2;
+						//gamespeed = (gamespeed == 1 ? 20 : 1);
+					}
 				}
 			} // end "menu-null" conditional
 		} // end hasfocus conditional
@@ -747,24 +755,25 @@ public class Game extends Canvas implements Runnable {
 		int col0 = Color.get(-1, 555, 555, 555);
 		if (player.showinfo) { // renders show debug info on the screen.
 			Font.draw(xfps + " fps", screen, 1, screen.h - 190, col0);
-			Font.draw("X " + txlevel, screen, 1, screen.h - 180, col0);
-			Font.draw("Y " + tylevel, screen, 1, screen.h - 170, col0);
+			Font.draw(gamespeed+" tik/s", screen, 1, screen.h - 180, col0);
+			Font.draw("X " + txlevel, screen, 1, screen.h - 170, col0);
+			Font.draw("Y " + tylevel, screen, 1, screen.h - 160, col0);
 			/// Score mode debug:
 			if (ModeMenu.score) {
-				Font.draw("Score " + Player.score, screen, 1, screen.h - 160, col0);
+				Font.draw("Score " + Player.score, screen, 1, screen.h - 150, col0);
 				if (currentLevel == 5) {
 					if (levels[currentLevel].chestcount > 0) {
 						Font.draw(
-								"Chests: " + levels[currentLevel].chestcount, screen, 1, screen.h - 150, col0);
+								"Chests: " + levels[currentLevel].chestcount, screen, 1, screen.h - 140, col0);
 					} else {
-						Font.draw("Chests: Complete!", screen, 1, screen.h - 150, col0);
+						Font.draw("Chests: Complete!", screen, 1, screen.h - 140, col0);
 					}
 				} //end score debug
 			} else if (currentLevel == 5) {
 				if (levels[currentLevel].chestcount > 0) {
-					Font.draw("Chests: " + levels[currentLevel].chestcount, screen, 1, screen.h - 160, col0);
+					Font.draw("Chests: " + levels[currentLevel].chestcount, screen, 1, screen.h - 150, col0);
 				} else {
-					Font.draw("Chests: Complete!", screen, 1, screen.h - 160, col0);
+					Font.draw("Chests: Complete!", screen, 1, screen.h - 150, col0);
 				}
 			}
 			

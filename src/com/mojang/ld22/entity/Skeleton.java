@@ -10,16 +10,27 @@ import com.mojang.ld22.screen.ModeMenu;
 import com.mojang.ld22.screen.OptionsMenu;
 
 public class Skeleton extends Mob {
-	int xa;
-	int ya;
-	int xe = xa;
-	int ye = ya;
+	int xa, ya, xe, ye;
 	private int lvl;
-	private int randomWalkTime = 0;
-	public int arrowtime = 70 / (lvl + 1);
-	public int artime = arrowtime;
+	private int randomWalkTime;
+	public int arrowtime;
+	public int artime;
 
 	public Skeleton(int lvl) {
+		xe = xa;
+		ye = ya;
+		if(lvl == 0) lvl = 1;
+		randomWalkTime = 0;
+		arrowtime = 70 / (lvl + 1);
+		artime = arrowtime;
+		
+
+		col0 = Color.get(-1, 111, 40, 444);
+		col1 = Color.get(-1, 222, 50, 555);
+		col2 = Color.get(-1, 111, 40, 444);
+		col3 = Color.get(-1, 0, 30, 333);
+		col4 = Color.get(-1, 111, 40, 444);
+		
 		if (OptionsMenu.diff == OptionsMenu.easy) {
 			this.lvl = lvl;
 			x = random.nextInt(64 * 16);

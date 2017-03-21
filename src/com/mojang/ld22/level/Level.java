@@ -2,11 +2,15 @@ package com.mojang.ld22.level;
 
 import com.mojang.ld22.Game;
 import com.mojang.ld22.entity.AirWizard;
+import com.mojang.ld22.entity.Anvil;
+import com.mojang.ld22.entity.Chest;
 import com.mojang.ld22.entity.Cow;
 import com.mojang.ld22.entity.Creeper;
 import com.mojang.ld22.entity.DungeonChest;
 import com.mojang.ld22.entity.Entity;
+import com.mojang.ld22.entity.Inventory;
 import com.mojang.ld22.entity.Knight;
+import com.mojang.ld22.entity.Lantern;
 import com.mojang.ld22.entity.Mob;
 import com.mojang.ld22.entity.Pig;
 import com.mojang.ld22.entity.Player;
@@ -14,8 +18,15 @@ import com.mojang.ld22.entity.Sheep;
 import com.mojang.ld22.entity.Skeleton;
 import com.mojang.ld22.entity.Slime;
 import com.mojang.ld22.entity.Snake;
+import com.mojang.ld22.entity.Spawner;
+import com.mojang.ld22.entity.Tnt;
 import com.mojang.ld22.entity.Zombie;
 import com.mojang.ld22.gfx.Screen;
+import com.mojang.ld22.item.FurnitureItem;
+import com.mojang.ld22.item.ResourceItem;
+import com.mojang.ld22.item.ToolItem;
+import com.mojang.ld22.item.ToolType;
+import com.mojang.ld22.item.resource.Resource;
 import com.mojang.ld22.level.levelgen.LevelGen;
 import com.mojang.ld22.level.tile.DirtTile;
 import com.mojang.ld22.level.tile.Tile;
@@ -263,7 +274,7 @@ public class Level {
 		if (level < 0 && !WorldSelectMenu.loadworld) {
 			for (int i = 0; i < 18 / -level * (w / 128); i++) {
 				Mob m = new Mob();
-				final int r = this.random.nextInt(5);
+				int r = this.random.nextInt(5);
 				if (r == 1) {
 					m = new Skeleton(-level);
 				} else if (r == 2 || r == 0) {
@@ -271,70 +282,63 @@ public class Level {
 				} else {
 					m = new Zombie(-level);
 				}
-				/* not reimpelemented yet
-					final Spawner sp = new Spawner(m, -level);
-					final int x3 = this.random.nextInt(16 * w) / 16;
-					final int y3 = this.random.nextInt(16 * h) / 16;
-					if (this.getTile(x3, y3) == Tile.dirt) {
-					final boolean xaxis2 = this.random.nextBoolean();
-
+				
+				Spawner sp = new Spawner(m, -level);
+				int x3 = this.random.nextInt(16 * w) / 16;
+				int y3 = this.random.nextInt(16 * h) / 16;
+				if (this.getTile(x3, y3) == Tile.dirt) {
+					boolean xaxis2 = this.random.nextBoolean();
+					
 					if (xaxis2) {
 						for (int s2 = x3; s2 < w - s2; s2++) {
-								if (this.getTile(s2, y3) == Tile.rock) {
-								sp.x = s2 * 16 - 24;
-								sp.y = y3 * 16 - 24;
-								}
+							if (this.getTile(s2, y3) == Tile.rock) {
+							sp.x = s2 * 16 - 24;
+							sp.y = y3 * 16 - 24;
+							}
 						}
 					} else {
 						for (int s2 = y3; s2 < y3 - s2; s2++) {
-								if (this.getTile(x3, s2) == Tile.rock) {
-								sp.x = x3 * 16 - 24;
-								sp.y = s2 * 16 - 24;
-								}
+							if (this.getTile(x3, s2) == Tile.rock) {
+							sp.x = x3 * 16 - 24;
+							sp.y = s2 * 16 - 24;
+							}
 						}
 					}
-
+					
 					if (sp.x == 0 && sp.y == 0) {
 							sp.x = x3 * 16 - 8;
 							sp.y = y3 * 16 - 8;
 					}
 
 					if (this.getTile(sp.x / 16, sp.y / 16) == Tile.rock) {
-							this.setTile(sp.x / 16, sp.y / 16, Tile.dirt, 0);
+						this.setTile(sp.x / 16, sp.y / 16, Tile.dirt, 0);
 					}
 
 					for (int xx = 0; xx < 5; xx++) {
 						for (int yy = 0; yy < 5; yy++) {
-								if (this.noStairs(sp.x / 16 - 2 + xx, sp.y / 16 - 2 + yy)) {
+							if (this.noStairs(sp.x / 16 - 2 + xx, sp.y / 16 - 2 + yy)) {
 								this.setTile(sp.x / 16 - 2 + xx, sp.y / 16 - 2 + yy, Tile.sbrick, 0);
 
 								if((xx < 1 || yy < 1 || xx > 3 || yy > 3) && (xx != 2 || yy != 0) && (xx != 2 || yy != 4) && (xx != 0 || yy != 2) && (xx != 4 || yy != 2)) {
 									this.setTile(sp.x / 16 - 2 + xx, sp.y / 16 - 2 + yy, Tile.stonewall, 0);
 								}
-								}
+							}
 						}
 					}
 
 					this.add(sp);
-
-					if (this.random.nextInt(2) == 0) {
-						final Chest c = new Chest();
-						this.addtoinv(c.inventory, -level);
-						c.x = sp.x - 16;
-						c.y = sp.y - 16;
-						this.add(c);
-					}
-
-					if (this.random.nextInt(2) == 0) {
-						final Chest c = new Chest();
-						this.addtoinv(c.inventory, -level);
-						c.x = sp.x + 16;
-						c.y = sp.y + 16;
-						if(Game.debug) System.out.println("Added Chest: X = " + c.x / 16 + ", Y = " + c.y / 16 + "/" + c);
-						this.add(c);
+					if (Game.debug) System.out.println("Spawner added to level "+level+": x="+sp.x+" y="+sp.y);
+					for(int rpt = 1; rpt <= 2; rpt++) {
+						if (this.random.nextInt(2) == 0) {
+							Chest c = new Chest();
+							this.addtoinv(c.inventory, -level);
+							c.x = sp.x - 16;
+							c.y = sp.y - 16;
+							if(Game.debug) System.out.println("Added Chest to level "+level+": X = " + c.x / 16 + ", Y = " + c.y / 16);
+							this.add(c);
+						}
 					}
 				}
-				*/
 			}
 		}
 
@@ -377,6 +381,135 @@ public class Level {
 				}
 			}
 		}
+	}
+	
+	public void addtoinv(Inventory inventory, int chance) {
+  		if (random.nextInt(9 / chance) == 0) {
+			inventory.add(new FurnitureItem(new Tnt()));
+  		}
+  		if (random.nextInt(10 / chance) == 0) {
+			inventory.add(new FurnitureItem(new Anvil()));
+  		}
+  		if (random.nextInt(7 / chance) == 0) {
+			inventory.add(new FurnitureItem(new Lantern()));
+  		}
+  		if (random.nextInt(3 / chance) == 0) {
+			inventory.add(new ResourceItem(Resource.bread, 2));
+  		}
+  		if (random.nextInt(4 / chance) == 0) {
+			inventory.add(new ResourceItem(Resource.bread, 3));
+  		}
+  		if (random.nextInt(7 / chance) == 0) {
+			inventory.add(new ResourceItem(Resource.larmor, 1));
+  		}
+  		if (random.nextInt(50 / chance) == 0) {
+			inventory.add(new ResourceItem(Resource.goldapple, 1));
+  		}
+  		if (random.nextInt(3 / chance) == 0) {
+			inventory.add(new ResourceItem(Resource.lapisOre, 2));
+  		}
+  		if (random.nextInt(4 / chance) == 0) {
+			inventory.add(new ResourceItem(Resource.glass, 2));
+  		}
+  		if (random.nextInt(4 / chance) == 0) {
+			inventory.add(new ResourceItem(Resource.gunp, 3));
+  		}
+  		if (random.nextInt(4 / chance) == 0) {
+			inventory.add(new ResourceItem(Resource.gunp, 3));
+  		}
+  		if (random.nextInt(4 / chance) == 0) {
+			inventory.add(new ResourceItem(Resource.torch, 4));
+  		}
+  		if (random.nextInt(14 / chance) == 0) {
+			inventory.add(new ResourceItem(Resource.swimpotion, 1));
+  		}
+  		if (random.nextInt(16 / chance) == 0) {
+			inventory.add(new ResourceItem(Resource.hastepotion, 1));
+  		}
+  		if (random.nextInt(14 / chance) == 0) {
+			inventory.add(new ResourceItem(Resource.lightpotion, 1));
+  		}
+  		if (random.nextInt(14 / chance) == 0) {
+			inventory.add(new ResourceItem(Resource.speedpotion, 1));
+  		}
+  		if (random.nextInt(16 / chance) == 0) {
+			inventory.add(new ResourceItem(Resource.iarmor, 1));
+  		}
+  		if (random.nextInt(5 / chance) == 0) {
+			inventory.add(new ResourceItem(Resource.sbrick, 4));
+  		}
+  		if (random.nextInt(5 / chance) == 0) {
+			inventory.add(new ResourceItem(Resource.sbrick, 6));
+  		}
+  		if (random.nextInt(4 / chance) == 0) {
+			inventory.add(new ResourceItem(Resource.string, 3));
+  		}
+  		if (random.nextInt(4 / chance) == 0) {
+			inventory.add(new ResourceItem(Resource.bone, 2));
+  		}
+  		if (random.nextInt(3 / chance) == 0) {
+			inventory.add(new ResourceItem(Resource.bone, 1));
+  		}
+  		if (random.nextInt(6 / chance) == 0) {
+			inventory.add(new ToolItem(ToolType.hatchet, 2));
+  		}
+  		if (random.nextInt(6 / chance) == 0) {
+			inventory.add(new ToolItem(ToolType.pick, 2));
+  		}
+  		if (random.nextInt(6 / chance) == 0) {
+			inventory.add(new ToolItem(ToolType.spade, 2));
+  		}
+  		if (random.nextInt(7 / chance) == 0) {
+			inventory.add(new ToolItem(ToolType.claymore, 1));
+  		}
+  		if (random.nextInt(5 / chance) == 0) {
+			inventory.add(new ResourceItem(Resource.torch, 3));
+  		}
+  		if (random.nextInt(6 / chance) == 0) {
+			inventory.add(new ResourceItem(Resource.torch, 6));
+  		}
+  		if (random.nextInt(7 / chance) == 0) {
+			inventory.add(new ResourceItem(Resource.steak, 3));
+  		}
+  		if (random.nextInt(9 / chance) == 0) {
+			inventory.add(new ResourceItem(Resource.steak, 4));
+  		}
+  		if (random.nextInt(6 / chance) == 0) {
+			inventory.add(new ResourceItem(Resource.torch, 6));
+  		}
+  		if (random.nextInt(7 / chance) == 0) {
+			inventory.add(new ResourceItem(Resource.gem, 3));
+  		}
+  		if (random.nextInt(7 / chance) == 0) {
+			inventory.add(new ResourceItem(Resource.gem, 5));
+  		}
+  		if (random.nextInt(7 / chance) == 0) {
+			inventory.add(new ResourceItem(Resource.gem, 4));
+  		}
+  		if (random.nextInt(10 / chance) == 0) {
+			inventory.add(new ResourceItem(Resource.yellowclothes, 1));
+  		}
+  		if (random.nextInt(10 / chance) == 0) {
+			inventory.add(new ResourceItem(Resource.blackclothes, 1));
+  		}
+  		if (random.nextInt(12 / chance) == 0) {
+			inventory.add(new ResourceItem(Resource.orangeclothes, 1));
+  		}
+  		if (random.nextInt(12 / chance) == 0) {
+			inventory.add(new ResourceItem(Resource.cyanclothes, 1));
+  		}
+  		if (random.nextInt(12 / chance) == 0) {
+			inventory.add(new ResourceItem(Resource.purpleclothes, 1));
+  		}
+  		if (random.nextInt(4 / chance) == 0) {
+			inventory.add(new ResourceItem(Resource.arrow, 5));
+  		}
+  		if (inventory.items.size() < 1) {
+			inventory.add(new ResourceItem(Resource.potion, 1));
+			inventory.add(new ResourceItem(Resource.coal, 3));
+			inventory.add(new ResourceItem(Resource.apple, 3));
+			inventory.add(new ResourceItem(Resource.dirt, 7));
+  		}
 	}
 
 	public void renderBackground(Screen screen, int xScroll, int yScroll) {
@@ -441,11 +574,7 @@ public class Level {
 		}
 		screen.setOffset(0, 0);
 	}
-
-	// private void renderLight(Screen screen, int x, int y, int r) {
-	// screen.renderLight(x, y, r);
-	// }
-
+	
 	private void sortAndRender(Screen screen, List<Entity> list) {
 		Collections.sort(list, spriteSorter);
 		for (int i = 0; i < list.size(); i++) {
@@ -622,5 +751,9 @@ public class Level {
 			}
 		}
 		return result;
+	}
+	
+	public boolean noStairs(int x, int y) {
+		return getTile(x, y) != Tile.stairsDown;
 	}
 }

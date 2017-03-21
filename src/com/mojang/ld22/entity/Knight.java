@@ -18,7 +18,11 @@ public class Knight extends Mob {
 	private int randomWalkTime = 0;
 
 	public Knight(int lvl) {
-
+		this.col0 = Color.get(-1, 0, 555, 359);
+		this.col1 = Color.get(-1, 0, 555, 359);
+		this.col2 = Color.get(-1, 0, 333, 59);
+		this.col3 = Color.get(-1, 0, 333, 59);
+		this.col4 = Color.get(-1, 0, 333, 59);
 		if (OptionsMenu.diff == OptionsMenu.easy) {
 			this.lvl = lvl;
 			x = random.nextInt(64 * 16);

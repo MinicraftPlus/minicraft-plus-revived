@@ -23,6 +23,13 @@ public class Creeper extends Mob {
 	private boolean fuseLit = false;
 
 	public Creeper(int lvl) {
+		if (lvl == 0) lvl = 1;
+		this.col0 = Color.get(-1, 10, 50, 40);
+		this.col1 = Color.get(-1, 20, 50, 40);
+		this.col2 = Color.get(-1, 10, 50, 30);
+		this.col3 = Color.get(-1, 0, 50, 30);
+		this.col4 = Color.get(-1, 20, 50, 30);
+		
 		if (OptionsMenu.diff == OptionsMenu.easy) {
 			this.lvl = lvl;
 			x = random.nextInt(64 * 16);

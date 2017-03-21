@@ -17,7 +17,14 @@ public class Zombie extends Mob {
 	private int randomWalkTime = 0;
 
 	public Zombie(int lvl) {
-
+		
+		this.lvl = lvl;
+		this.col0 = Color.get(-1, 10, 152, 40);
+		this.col1 = Color.get(-1, 20, 252, 50);
+		this.col2 = Color.get(-1, 10, 152, 40);
+		this.col3 = Color.get(-1, 0, 30, 20);
+		this.col4 = Color.get(-1, 10, 42, 30);
+		
 		if (OptionsMenu.diff == OptionsMenu.easy) {
 			this.lvl = lvl;
 			x = random.nextInt(64 * 16);

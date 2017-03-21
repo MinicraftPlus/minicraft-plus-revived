@@ -7,7 +7,7 @@ import com.mojang.ld22.entity.Entity;
 import com.mojang.ld22.entity.Inventory;
 import com.mojang.ld22.entity.Mob;
 import com.mojang.ld22.entity.Player;
-//import com.mojang.ld22.entity.Spawner;
+import com.mojang.ld22.entity.Spawner;
 import com.mojang.ld22.gfx.Color;
 import com.mojang.ld22.item.Item;
 import com.mojang.ld22.item.ResourceItem;
@@ -22,7 +22,6 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.HashMap;
 
 public class Save {
 
@@ -240,12 +239,12 @@ public class Save {
 					
 					extradata += ":" + data + ":" + dChest.islocked;
 				}
-				/* not reimplemented yet
+				
 				if(e instanceof Spawner) {
-					Spawner var12 = (Spawner)e;
-					extradata += ":" + var12.mob.getClass().getCanonicalName().replace("com.mojang.ld22.entity.", "") + ":" + var12.lvl;
+					Spawner egg = (Spawner)e;
+					extradata += ":" + egg.mob.getClass().getCanonicalName().replace("com.mojang.ld22.entity.", "") + ":" + egg.lvl;
 				}
-				*/
+				
 				data.add(name + "[" + e.x + ":" + e.y + extradata + ":" + l + "]");
 			}
 		}

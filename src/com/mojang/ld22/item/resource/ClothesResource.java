@@ -1,7 +1,6 @@
 package com.mojang.ld22.item.resource;
 
 import com.mojang.ld22.entity.Player;
-import com.mojang.ld22.item.resource.Resource;
 import com.mojang.ld22.level.Level;
 import com.mojang.ld22.level.tile.Tile;
 
@@ -14,19 +13,19 @@ public class ClothesResource extends Resource {
 
 	public ClothesResource(String name, int sprite, int color, int r, int g, int b) {
 		super(name, sprite, color);
-		this.red = r;
-		this.blue = b;
-		this.green = g;
+		red = r;
+		blue = b;
+		green = g;
 	}
 	
 	// put on clothes
 	public boolean interactOn(Tile tile, Level level, int xt, int yt, Player player, int attackDir) {
-		if(player.r == this.red && player.g == this.green && player.b == this.blue) {
+		if(player.r == red && player.g == green && player.b == blue) {
 			return false;
 		} else {
-			player.r = this.red;
-			player.b = this.blue;
-			player.g = this.green;
+			player.r = red;
+			player.b = blue;
+			player.g = green;
 			return true;
 		}
 	}
