@@ -142,7 +142,7 @@ public class Load {
 	public void loadGame(String filename, Game game) {
 		loadFromFile(location + filename + extention);
 		Game.astime = Integer.parseInt((String)data.get(1));
-		Game.gamespeed = Integer.parseInt((String)data.get(2));
+		Game.gamespeed = Float.parseFloat((String)data.get(2));
 		//game.nsPerTick = 1.0E9D / (double)(60 * Game.gamespeed);
 		Game.ac = Integer.parseInt((String)data.get(3));
 		Game.autosave = Boolean.parseBoolean((String)data.get(4));
@@ -289,7 +289,7 @@ public class Load {
 				} else if(newEntity instanceof Chest || newEntity instanceof DungeonChest) {
 					Furniture chest = (Furniture)newEntity;
 					
-					for(int idx = 2; i < info.size(); idx++) {
+					for(int idx = 2; idx < info.size(); idx++) {
 						String itemData = (String)info.get(idx);
 						Item item = ListItems.getItem(itemData);
 						if (item instanceof ResourceItem) {
