@@ -74,32 +74,25 @@ public class OptionsMenu extends Menu {
 		int rCol = 0;
 		*/
 		int onColor = Color.get(0, 50, 50, 50), offColor = Color.get(0, 500, 500, 500);
-
 		screen.clear(0);
+		
 		Font.draw("Difficulty:", screen, 11 * 6 + 4, 8 * 8, Color.get(-1, 555, 555, 555));
-
 		String[] diffs = {"Easy", "Normal", "Hard"};
 		Font.draw(diffs[diff - 1], screen, 11 * 16 + 4, 8 * 8, Color.get(-1, 555, 555, 555));
-
+		
+		Font.draw("Press Left and Right", screen, 67, screen.h - 150, Color.get(0, 555, 555, 555));
+		
 		Font.draw("<A>utosave:", screen, 80, screen.h - 100, Color.get(0, 555, 555, 555));
-		Font.draw(
-				(Game.autosave ? "On" : "Off"),
-				screen,
-				180,
-				screen.h - 100,
-				(Game.autosave ? onColor : offColor));
+		Font.draw((Game.autosave?"On":"Off"), screen, 180, screen.h - 100, (Game.autosave?onColor:offColor));
+		
 		Font.draw("<S>ound:", screen, 80, screen.h - 75, Color.get(0, 555, 555, 555));
-		Font.draw(
-				(isSoundAct ? "On" : "Off"), screen, 180, screen.h - 75, (isSoundAct ? onColor : offColor));
-
-		Font.draw("Press Esc to return", screen, 80, screen.h - 50, Color.get(0, 555, 555, 555));
-
+		Font.draw((isSoundAct?"On":"Off"), screen, 180, screen.h - 75, (isSoundAct?onColor:offColor));
+		
 		if (unlockedskin) {
-			Font.draw("<W>ear Suit:", screen, 80, screen.h - 110, Color.get(0, 555, 555, 555));
-			Font.draw(
-					(skinon ? "On" : "Off"), screen, 180, screen.h - 110, (skinon ? onColor : offColor));
+			Font.draw("<W>ear Suit:", screen, 80, screen.h - 50, Color.get(0, 555, 555, 555));
+			Font.draw((skinon?"On":"Off"), screen, 180, screen.h - 50, (skinon?onColor:offColor));
 		}
 
-		Font.draw("Press Left and Right", screen, 67, screen.h - 150, Color.get(0, 555, 555, 555));
+		Font.draw("Press Esc to return", screen, 80, screen.h - 25, Color.get(0, 555, 555, 555));
 	}
 }
