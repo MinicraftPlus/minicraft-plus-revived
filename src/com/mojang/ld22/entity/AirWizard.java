@@ -84,7 +84,7 @@ public class AirWizard extends Mob {
 		if (level.player != null && randomWalkTime == 0) { // if there is a player around, and the randomWalkTime is equal to 0
 			int xd = level.player.x - x; // the horizontal distance between the player and the air wizard.
 			int yd = level.player.y - y; // the vertical distance between the player and the air wizard.
-			if (xd * xd + yd * yd < 32 * 32) { // if actual dist to player is less than 32...(using pythag theorem)
+			if (xd * xd + yd * yd < 16*16 * 2*2) { // if actual dist to player is less than 32...(using pythag theorem)
 				/* Move away from the player */
 				xa = 0; //accelerations
 				ya = 0;
@@ -93,7 +93,14 @@ public class AirWizard extends Mob {
 				if (xd > 0) xa = -1;
 				if (yd < 0) ya = +1;
 				if (yd > 0) ya = -1;
-			} else if (xd * xd + yd * yd > 80 * 80) { // if dist to player is greater than 80...
+			} else if (xd * xd + yd * yd > 16*16 * 15*15) {// 15 squares away
+				// somehow just find way to shorten vector...
+				double hypot = Math.sqrt(xd*xd + yd*yd);
+				int newxd = (int)(xd * Math.sqrt(16*16 * 15*15) / hypot);
+				int newyd = (int)(yd * Math.sqrt(16*16 * 15*15) / hypot);
+				x = level.player.x - newxd;
+				y = level.player.y - newyd;
+			} else if (xd * xd + yd * yd > 16*16 * 5*5) { // if dist to player is greater than 80...
 				/* Move towards the player */
 				xa = 0;
 				ya = 0;
