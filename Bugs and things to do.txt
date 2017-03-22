@@ -1,10 +1,12 @@
 	####BUGS####
 ####
-dungeon chests are sort of half-implemented at the moment; their keys don't seem to be a thing. That needs to be fixed.
+Airwizard health bar is off-center.
+####
+Airwizard II fails to appear when it's supposed to.
+####
+Regular "potion"s can be used even though they have no effect; they need to not do anything when someone attempts to use them.
 ####
 Sound effects don't always play when they should; mostly it seems when other sounds should be on at the same time.
-####
-"Can only be placed on stone brick" message fills up notifications list immedieately; should only print one message.
 ####
 
 	****IDEAS****
@@ -16,13 +18,15 @@ Make the loading system more forgiving, so that if I add a requirement to the sa
 Make window resizable, and menus will be fine.
 	I think.... I think a lot of this will simply be changing all the 8's to "scale".
 ****
-Make it so cloud tile can be placed in the sky level, on empty air tiles.
+Make it so cloud tile can be placed in the sky level, on empty air tiles. Otherwise, they're useful for nothing...
 ****
 Improve creative inventory system; perhaps just make it so you always have one of everything?
 ****
-Idea to improve code for Level.java: make method "removeNearbyEntities(Entity target, int radius)" to easily remove entites near, say, the player, whenever we want.
+Idea to improve code for Level.java: make method "removeNearbyEntities(Entity target, int radius)" to easily remove entites near, say, the player, whenever we want. Although, it would really only be used while sleeping...so really, it's rather pointless, as a method...
+****
+Add "experience" feature back from minicraft+ 1.4.
+****
+
 ****
 ----------
 request: more health
-quick feature: Display world name above ModeMenu screen settings.
-
