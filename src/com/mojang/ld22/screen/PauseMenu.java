@@ -49,7 +49,7 @@ public class PauseMenu extends Menu {
 				new Save(player, WorldSelectMenu.worldname);
 			}
 
-			if (selection == 3) { //load game option
+			if (selection == 3) { //load game option; can't return
 				WorldSelectMenu m = new WorldSelectMenu(new TitleMenu());
 				WorldSelectMenu.loadworld = true;
 				m.createworld = false;
@@ -57,9 +57,9 @@ public class PauseMenu extends Menu {
 			}
 
 			if (selection == 4) //title menu
-			game.setMenu(new TitleMenu());
-
-			selection = selected;
+				game.setMenu(new TitleMenu());
+			
+			if (selected != 1) selection = selected;
 		}
 
 		if (input.getKey("escape").clicked || selection == 0) game.setMenu((Menu) null);
@@ -67,6 +67,9 @@ public class PauseMenu extends Menu {
 
 	public void render(Screen screen) {
 		Font.renderFrame(screen, "", 4, 2, 32, 20);
+		
+		//if (game.debug) System.out.println("rendering pauseMenu... selection=" + selection);
+		
 		if (selection == -1) {
 			for (int i = 0; i < 5; i++) {
 				String msg1 = options[i];
