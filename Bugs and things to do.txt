@@ -26,7 +26,9 @@ Idea to improve code for Level.java: make method "removeNearbyEntities(Entity ta
 ****
 Add "experience" feature back from minicraft+ 1.4.
 ****
-
+Find something to do with Spawner.java; currently, was never even implemented in the first place, even though it was made...
 ****
 ----------
 request: more health
+
+TODO: check that airwizard costume really does allow you to walk on air tiles.
