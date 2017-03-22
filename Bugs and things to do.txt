@@ -32,3 +32,4 @@ Find something to do with Spawner.java; currently, was never even implemented in
 request: more health
 
 TODO: check that airwizard costume really does allow you to walk on air tiles.
+TODO: update README?
