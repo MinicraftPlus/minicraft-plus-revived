@@ -497,7 +497,7 @@ public class Game extends Canvas implements Runnable {
 			if (!paused) scoreTime--;
 			
 			if (scoreTime < 1 && !player.removed) {
-				setMenu(new WonMenu());
+				setMenu(new WonMenu(player));
 				if(Game.debug) System.out.println(player.score);
 				//Extra score from drops.
 				player.score += (Inventory.scored(Resource.cloth) * (random.nextInt(2) + 1) * ism);
@@ -565,7 +565,7 @@ public class Game extends Canvas implements Runnable {
 					if (wonTimer == 0) {
 						wonTimer = 60 * 3;
 						hasWon = true;
-						setMenu(new WonMenu());
+						setMenu(new WonMenu(player));
 					}
 				}
 				
@@ -840,6 +840,21 @@ public class Game extends Canvas implements Runnable {
 			int hours = minutes / 60;
 			minutes %= 60;
 			seconds %= 60;
+			
+			if(this.scoreTime > 18000) {
+				Font.draw("Time left " + minutes + "m " + seconds + "s", this.screen, 84, this.screen.h - 190, Color.get(0, 555, 555, 555));
+			} else if(this.scoreTime < 3600) {
+				Font.draw("Time left " + minutes + "m " + seconds + "s", this.screen, 84, this.screen.h - 190, cols);
+			} else {
+				Font.draw("Time left " + minutes + "m " + seconds + "s", this.screen, 84, this.screen.h - 190, Color.get(330, 555, 555, 555));
+			}
+
+			if(multiplyer > 1 && multiplyer < 50) {
+				Font.draw("X" + multiplyer, this.screen, 260, this.screen.h - 190, Color.get(-1, 540, 540, 540));
+			} else if(multiplyer > 49) {
+				Font.draw("X" + multiplyer, this.screen, 260, this.screen.h - 190, Color.get(-1, 500, 500, 500));
+			}
+			/*
 			if(scoreTime > 18000) cols = Color.get(000, 555, 555, 555);
 			else if(scoreTime < 3600) {
 				if (count <= 5) cols = Color.get(500, 555, 555, 555);
@@ -857,6 +872,7 @@ public class Game extends Canvas implements Runnable {
 			}
 			
 			Font.draw(multiplyertime + " " + mtm + "", screen, 230, screen.h - 180, Color.get(-1, 5, 5, 5));
+			*/
 		}
 
 		// FISHING ROD STATUS
