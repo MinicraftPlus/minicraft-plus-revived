@@ -7,13 +7,13 @@ import com.mojang.ld22.entity.Entity;
 import com.mojang.ld22.entity.Inventory;
 import com.mojang.ld22.entity.Mob;
 import com.mojang.ld22.entity.Player;
-//import com.mojang.ld22.entity.Spawner;
+import com.mojang.ld22.entity.Spawner;
 import com.mojang.ld22.gfx.Color;
 import com.mojang.ld22.item.Item;
 import com.mojang.ld22.item.ResourceItem;
 import com.mojang.ld22.screen.LoadingMenu;
 import com.mojang.ld22.screen.ModeMenu;
-import com.mojang.ld22.screen.StartMenu;
+import com.mojang.ld22.screen.OptionsMenu;
 import com.mojang.ld22.screen.WorldGenMenu;
 import java.io.BufferedWriter;
 import java.io.File;
@@ -22,7 +22,6 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.HashMap;
 
 public class Save {
 
@@ -97,7 +96,7 @@ public class Save {
 		data.add(String.valueOf(Game.gamespeed));
 		data.add(String.valueOf(Game.ac));
 		data.add(String.valueOf(Game.autosave));
-		data.add(String.valueOf(StartMenu.isSoundAct));
+		data.add(String.valueOf(OptionsMenu.isSoundAct));
 		writeToFile(location + filename + extention, data);
 	}
 	
@@ -156,13 +155,13 @@ public class Save {
 			String subdata = "PotionEffects[";
 			
 			for(int i = 0; i < player.potioneffects.size(); i++) {
-				subdata = subdata + (String)player.potioneffects.get(i) + ";" + player.potioneffectstime.get(i);
+				subdata += (String)player.potioneffects.get(i) + ";" + player.potioneffectstime.get(i);
 				if(i != player.potioneffects.size() - 1) {
-					subdata = subdata + ":";
+					subdata += ":";
 				}
 			}
 			
-			subdata = subdata + "]";
+			subdata += "]";
 			data.add(subdata);
 		}
 		
@@ -205,49 +204,47 @@ public class Save {
 					extradata = ":" + c.health + ":" + c.maxHealth + ":" + c.lvl;
 				}
 				
-				int ii;
-				String var10;
 				if(e instanceof Chest) {
-					var10 = "";
+					String data = "";
 					Chest c1 = (Chest)e;
 					
-					for(ii = 0; ii < c1.inventory.items.size(); ii++) {
+					for(int ii = 0; ii < c1.inventory.items.size(); ii++) {
 						if(c1.inventory.items.get(ii) instanceof ResourceItem) {
-							var10 = var10 + ((Item)c1.inventory.items.get(ii)).getName() + ";" + c1.inventory.count((Item)c1.inventory.items.get(ii)) + ":";
+							data += ((Item)c1.inventory.items.get(ii)).getName() + ";" + c1.inventory.count((Item)c1.inventory.items.get(ii)) + ":";
 						} else {
-							var10 = var10 + ((Item)c1.inventory.items.get(ii)).getName() + ":";
+							data += ((Item)c1.inventory.items.get(ii)).getName() + ":";
 						}
 					}
 					
-					extradata = extradata + ":" + var10;
+					extradata += ":" + data;
 					if(c1.isdeathchest) {
 						name = "DeathChest";
-						extradata = extradata + ":" + "tl;" + c1.time;
+						extradata += ":" + "tl;" + c1.time;
 					}
 				}
 				
 				if(e instanceof DungeonChest) {
-					var10 = "";
-					DungeonChest var11 = (DungeonChest)e;
+					String data = "";
+					DungeonChest dChest = (DungeonChest)e;
 					
-					for(ii = 0; ii < var11.inventory.items.size(); ii++) {
-						if(!((Item)var11.inventory.items.get(ii)).getName().equals("") || !((Item)var11.inventory.items.get(ii)).getName().equals(" ")) {
-							if(var11.inventory.items.get(ii) instanceof ResourceItem) {
-								var10 = var10 + ((Item)var11.inventory.items.get(ii)).getName() + ";" + var11.inventory.count((Item)var11.inventory.items.get(ii)) + ":";
+					for(int ii = 0; ii < dChest.inventory.items.size(); ii++) {
+						if(!((Item)dChest.inventory.items.get(ii)).getName().equals("") || !((Item)dChest.inventory.items.get(ii)).getName().equals(" ")) {
+							if(dChest.inventory.items.get(ii) instanceof ResourceItem) {
+								data += ((Item)dChest.inventory.items.get(ii)).getName() + ";" + dChest.inventory.count((Item)dChest.inventory.items.get(ii)) + ":";
 							} else {
-								var10 = var10 + ((Item)var11.inventory.items.get(ii)).getName() + ":";
+								data += ((Item)dChest.inventory.items.get(ii)).getName() + ":";
 							}
 						}
 					}
 					
-					extradata = extradata + ":" + var10 + ":" + false;//var11.islocked;
+					extradata += ":" + data + ":" + dChest.islocked;
 				}
-				/* not reimplemented yet
+				
 				if(e instanceof Spawner) {
-					Spawner var12 = (Spawner)e;
-					extradata = extradata + ":" + var12.mob.getClass().getCanonicalName().replace("com.mojang.ld22.entity.", "") + ":" + var12.lvl;
+					Spawner egg = (Spawner)e;
+					extradata += ":" + egg.mob.getClass().getCanonicalName().replace("com.mojang.ld22.entity.", "") + ":" + egg.lvl;
 				}
-				*/
+				
 				data.add(name + "[" + e.x + ":" + e.y + extradata + ":" + l + "]");
 			}
 		}

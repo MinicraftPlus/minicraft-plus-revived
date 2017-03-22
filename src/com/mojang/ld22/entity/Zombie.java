@@ -6,7 +6,7 @@ import com.mojang.ld22.gfx.Screen;
 import com.mojang.ld22.item.ResourceItem;
 import com.mojang.ld22.item.resource.Resource;
 import com.mojang.ld22.screen.ModeMenu;
-import com.mojang.ld22.screen.StartMenu;
+import com.mojang.ld22.screen.OptionsMenu;
 
 public class Zombie extends Mob {
 	int xa;
@@ -17,8 +17,15 @@ public class Zombie extends Mob {
 	private int randomWalkTime = 0;
 
 	public Zombie(int lvl) {
-
-		if (StartMenu.diff == StartMenu.easy) {
+		
+		this.lvl = lvl;
+		this.col0 = Color.get(-1, 10, 152, 40);
+		this.col1 = Color.get(-1, 20, 252, 50);
+		this.col2 = Color.get(-1, 10, 152, 40);
+		this.col3 = Color.get(-1, 0, 30, 20);
+		this.col4 = Color.get(-1, 10, 42, 30);
+		
+		if (OptionsMenu.diff == OptionsMenu.easy) {
 			this.lvl = lvl;
 			x = random.nextInt(64 * 16);
 			y = random.nextInt(64 * 16);
@@ -26,7 +33,7 @@ public class Zombie extends Mob {
 			else health = maxHealth = lvl * lvl * 5;
 		}
 
-		if (StartMenu.diff == StartMenu.norm) {
+		if (OptionsMenu.diff == OptionsMenu.norm) {
 			this.lvl = lvl;
 			x = random.nextInt(64 * 16);
 			y = random.nextInt(64 * 16);
@@ -34,7 +41,7 @@ public class Zombie extends Mob {
 			else health = maxHealth = lvl * lvl * 10;
 		}
 
-		if (StartMenu.diff == StartMenu.hard) {
+		if (OptionsMenu.diff == OptionsMenu.hard) {
 			this.lvl = lvl;
 			x = random.nextInt(64 * 16);
 			y = random.nextInt(64 * 16);
@@ -206,17 +213,17 @@ public class Zombie extends Mob {
 	}
 
 	protected void touchedBy(Entity entity) {
-		if (StartMenu.diff == StartMenu.easy) {
+		if (OptionsMenu.diff == OptionsMenu.easy) {
 			if (entity instanceof Player) {
 				entity.hurt(this, lvl, dir);
 			}
 		}
-		if (StartMenu.diff == StartMenu.norm) {
+		if (OptionsMenu.diff == OptionsMenu.norm) {
 			if (entity instanceof Player) {
 				entity.hurt(this, lvl, dir);
 			}
 		}
-		if (StartMenu.diff == StartMenu.hard) {
+		if (OptionsMenu.diff == OptionsMenu.hard) {
 			if (entity instanceof Player) {
 				entity.hurt(this, lvl * 2, dir);
 			}
@@ -230,7 +237,7 @@ public class Zombie extends Mob {
 	protected void die() {
 		super.die();
 
-		if (StartMenu.diff == StartMenu.easy) {
+		if (OptionsMenu.diff == OptionsMenu.easy) {
 			int count = random.nextInt(3) + 2;
 			for (int i = 0; i < count; i++) {
 				level.add(
@@ -240,7 +247,7 @@ public class Zombie extends Mob {
 								y + random.nextInt(11) - 5));
 			}
 		}
-		if (StartMenu.diff == StartMenu.norm) {
+		if (OptionsMenu.diff == OptionsMenu.norm) {
 			int count = random.nextInt(2) + 2;
 			for (int i = 0; i < count; i++) {
 				level.add(
@@ -250,7 +257,7 @@ public class Zombie extends Mob {
 								y + random.nextInt(11) - 5));
 			}
 		}
-		if (StartMenu.diff == StartMenu.hard) {
+		if (OptionsMenu.diff == OptionsMenu.hard) {
 			int count = random.nextInt(1) + 1;
 			for (int i = 0; i < count; i++) {
 				level.add(
@@ -260,12 +267,27 @@ public class Zombie extends Mob {
 								y + random.nextInt(11) - 5));
 			}
 		}
-
+		
+		if(random.nextInt(60) == 2) {
+			level.add(new ItemEntity(new ResourceItem(Resource.ironIngot), x + random.nextInt(11) - 5, y + random.nextInt(11) - 5));
+		}
+		
+		if(random.nextInt(40) == 19) {
+			int rand = random.nextInt(3);
+			if(rand == 0) {
+				level.add(new ItemEntity(new ResourceItem(Resource.greenclothes), x + random.nextInt(11) - 5, y + random.nextInt(11) - 5));
+			} else if(rand == 1) {
+				level.add(new ItemEntity(new ResourceItem(Resource.redclothes), x + random.nextInt(11) - 5, y + random.nextInt(11) - 5));
+			} else if(rand == 2) {
+				level.add(new ItemEntity(new ResourceItem(Resource.blueclothes), x + random.nextInt(11) - 5, y + random.nextInt(11) - 5));
+			}
+		}
+		
 		if (level.player != null) {
 			level.player.score += (50 * lvl) * Game.multiplyer;
 		}
 
 		Game.multiplyer++;
-		Game.multiplyertime = Game.mtm = Game.mtm - 5;
+		Game.multiplyertime = Game.mtm -= 5;
 	}
 }

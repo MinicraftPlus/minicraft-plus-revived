@@ -190,7 +190,7 @@ public class Mob extends Entity {
 
 			int xd = level.player.x - xx;
 			int yd = level.player.y - yy;
-
+			// prevents any mobs from spawning too close to the player.
 			if (xd * xd + yd * yd < 60 * 60) return false;
 		}
 

@@ -7,7 +7,7 @@ import com.mojang.ld22.gfx.Screen;
 import com.mojang.ld22.item.ResourceItem;
 import com.mojang.ld22.item.resource.Resource;
 import com.mojang.ld22.screen.ModeMenu;
-import com.mojang.ld22.screen.StartMenu;
+import com.mojang.ld22.screen.OptionsMenu;
 
 public class Knight extends Mob {
 	int xa;
@@ -18,8 +18,12 @@ public class Knight extends Mob {
 	private int randomWalkTime = 0;
 
 	public Knight(int lvl) {
-
-		if (StartMenu.diff == StartMenu.easy) {
+		this.col0 = Color.get(-1, 0, 555, 359);
+		this.col1 = Color.get(-1, 0, 555, 359);
+		this.col2 = Color.get(-1, 0, 333, 59);
+		this.col3 = Color.get(-1, 0, 333, 59);
+		this.col4 = Color.get(-1, 0, 333, 59);
+		if (OptionsMenu.diff == OptionsMenu.easy) {
 			this.lvl = lvl;
 			x = random.nextInt(64 * 16);
 			y = random.nextInt(64 * 16);
@@ -27,7 +31,7 @@ public class Knight extends Mob {
 			else health = maxHealth = lvl * lvl * 11;
 		}
 
-		if (StartMenu.diff == StartMenu.norm) {
+		if (OptionsMenu.diff == OptionsMenu.norm) {
 			this.lvl = lvl;
 			x = random.nextInt(64 * 16);
 			y = random.nextInt(64 * 16);
@@ -35,7 +39,7 @@ public class Knight extends Mob {
 			else health = maxHealth = lvl * lvl * 22;
 		}
 
-		if (StartMenu.diff == StartMenu.hard) {
+		if (OptionsMenu.diff == OptionsMenu.hard) {
 			this.lvl = lvl;
 			x = random.nextInt(64 * 16);
 			y = random.nextInt(64 * 16);
@@ -208,17 +212,17 @@ public class Knight extends Mob {
 	}
 
 	protected void touchedBy(Entity entity) {
-		if (StartMenu.diff == StartMenu.easy) {
+		if (OptionsMenu.diff == OptionsMenu.easy) {
 			if (entity instanceof Player) {
 				entity.hurt(this, lvl, dir);
 			}
 		}
-		if (StartMenu.diff == StartMenu.norm) {
+		if (OptionsMenu.diff == OptionsMenu.norm) {
 			if (entity instanceof Player) {
 				entity.hurt(this, lvl, dir);
 			}
 		}
-		if (StartMenu.diff == StartMenu.hard) {
+		if (OptionsMenu.diff == OptionsMenu.hard) {
 			if (entity instanceof Player) {
 				entity.hurt(this, lvl * 2, dir);
 			}
@@ -232,7 +236,7 @@ public class Knight extends Mob {
 	protected void die() {
 		super.die();
 
-		if (StartMenu.diff == StartMenu.easy) {
+		if (OptionsMenu.diff == OptionsMenu.easy) {
 			int count = random.nextInt(2) + 1;
 			for (int i = 0; i < count; i++) {
 				level.add(
@@ -242,7 +246,7 @@ public class Knight extends Mob {
 								y + random.nextInt(11) - 5));
 			}
 		}
-		if (StartMenu.diff == StartMenu.norm) {
+		if (OptionsMenu.diff == OptionsMenu.norm) {
 			int count = random.nextInt(3);
 			for (int i = 0; i < count; i++) {
 				level.add(
@@ -252,7 +256,7 @@ public class Knight extends Mob {
 								y + random.nextInt(11) - 5));
 			}
 		}
-		if (StartMenu.diff == StartMenu.hard) {
+		if (OptionsMenu.diff == OptionsMenu.hard) {
 			int count = random.nextInt(3);
 			for (int i = 0; i < count; i++) {
 				level.add(

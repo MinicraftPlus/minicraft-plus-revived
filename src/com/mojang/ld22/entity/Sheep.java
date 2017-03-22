@@ -7,18 +7,26 @@ import com.mojang.ld22.gfx.Screen;
 import com.mojang.ld22.item.ResourceItem;
 import com.mojang.ld22.item.resource.Resource;
 import com.mojang.ld22.screen.ModeMenu;
-import com.mojang.ld22.screen.StartMenu;
+import com.mojang.ld22.screen.OptionsMenu;
 
 public class Sheep extends Mob {
-	int xa;
-	int ya;
-	int xe = xa;
-	int ye = ya;
+	int xa, ya, xe, ye;
 	private int lvl;
-	private int randomWalkTime = 0;
-
+	private int randomWalkTime;
+	
 	public Sheep(int lvl) {
-		if (StartMenu.diff == StartMenu.easy) {
+		xe = xa;
+		ye = ya;
+		if (lvl == 0) lvl = 1;
+		randomWalkTime = 0;
+		
+		col0 = Color.get(-1, 0, 444, 321);
+		col1 = Color.get(-1, 0, 555, 432);
+		col2 = Color.get(-1, 0, 333, 210);
+		col3 = Color.get(-1, 0, 222, 100);
+		col4 = Color.get(-1, 0, 444, 432);
+		
+		if (OptionsMenu.diff == OptionsMenu.easy) {
 			this.lvl = lvl;
 			x = random.nextInt(64 * 16);
 			y = random.nextInt(64 * 16);
@@ -26,7 +34,7 @@ public class Sheep extends Mob {
 			if (ModeMenu.creative) health = maxHealth = 1;
 		}
 
-		if (StartMenu.diff == StartMenu.norm) {
+		if (OptionsMenu.diff == OptionsMenu.norm) {
 			this.lvl = lvl;
 			x = random.nextInt(64 * 16);
 			y = random.nextInt(64 * 16);
@@ -34,7 +42,7 @@ public class Sheep extends Mob {
 			if (ModeMenu.creative) health = maxHealth = 1;
 		}
 
-		if (StartMenu.diff == StartMenu.hard) {
+		if (OptionsMenu.diff == OptionsMenu.hard) {
 			this.lvl = lvl;
 			x = random.nextInt(64 * 16);
 			y = random.nextInt(64 * 16);
@@ -218,7 +226,7 @@ public class Sheep extends Mob {
 	protected void die() {
 		super.die();
 
-		if (StartMenu.diff == StartMenu.easy) {
+		if (OptionsMenu.diff == OptionsMenu.easy) {
 			int count = random.nextInt(3) + 1;
 			for (int i = 0; i < count; i++) {
 				level.add(
@@ -231,7 +239,7 @@ public class Sheep extends Mob {
 				level.player.score += 10 * lvl;
 			}
 		}
-		if (StartMenu.diff == StartMenu.norm) {
+		if (OptionsMenu.diff == OptionsMenu.norm) {
 			int count = random.nextInt(2) + 1;
 			for (int i = 0; i < count; i++) {
 				level.add(
@@ -244,7 +252,7 @@ public class Sheep extends Mob {
 				level.player.score += 10 * lvl;
 			}
 		}
-		if (StartMenu.diff == StartMenu.hard) {
+		if (OptionsMenu.diff == OptionsMenu.hard) {
 			int count = random.nextInt(2);
 			for (int i = 0; i < count; i++) {
 				level.add(

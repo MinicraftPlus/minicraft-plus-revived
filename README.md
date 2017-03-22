@@ -47,3 +47,5 @@ The idea is to sort of merge the decompiled code of 1.8 with this code, since th
 
   It's worth note that these are simply **ideas**, and have no garuntee of being implemented any time soon, or even at all. If they become more likely to implement, they will be move to "Long Term Goals".
 
+
+##### Random Note: LevelGen.java has it's own main method; use it to generate an image of a randomly generated map.

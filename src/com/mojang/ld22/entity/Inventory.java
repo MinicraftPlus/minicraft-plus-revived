@@ -1,7 +1,5 @@
 package com.mojang.ld22.entity;
 
-import com.mojang.ld22.Game;
-import com.mojang.ld22.entity.Player;
 import com.mojang.ld22.item.BucketLavaItem;
 import com.mojang.ld22.item.Item;
 import com.mojang.ld22.item.ResourceItem;
@@ -62,16 +60,13 @@ public class Inventory {
 	}
 	
 	private Item findItem(Item item) {
-		//System.out.println(item.getName());
-		
-		for(int i = 0; i < this.items.size(); ++i) {
+		for(int i = 0; i < this.items.size(); i++) {
 			Item has = (Item)this.items.get(i);
 			if(has.getName().equals(item.getName())) {
 				return has;
 			}
 		}
 		
-		//System.out.println("Is null!");
 		return null;
 	}
 	

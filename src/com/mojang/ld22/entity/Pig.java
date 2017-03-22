@@ -7,7 +7,7 @@ import com.mojang.ld22.gfx.Screen;
 import com.mojang.ld22.item.ResourceItem;
 import com.mojang.ld22.item.resource.Resource;
 import com.mojang.ld22.screen.ModeMenu;
-import com.mojang.ld22.screen.StartMenu;
+import com.mojang.ld22.screen.OptionsMenu;
 
 public class Pig extends Mob {
 	int xa;
@@ -18,7 +18,12 @@ public class Pig extends Mob {
 	private int randomWalkTime = 0;
 
 	public Pig(int lvl) {
-		if (StartMenu.diff == StartMenu.easy) {
+		col0 = Color.get(-1, 000, 444, 411);
+		col1 = Color.get(-1, 000, 555, 522);
+		col2 = Color.get(-1, 000, 333, 311);
+		col3 = Color.get(-1, 000, 222, 211);
+		col4 = Color.get(-1, 000, 444, 522);
+		if (OptionsMenu.diff == OptionsMenu.easy) {
 			this.lvl = lvl;
 			x = random.nextInt(64 * 16);
 			y = random.nextInt(64 * 16);
@@ -26,7 +31,7 @@ public class Pig extends Mob {
 			if (ModeMenu.creative) health = maxHealth = 1;
 		}
 
-		if (StartMenu.diff == StartMenu.norm) {
+		if (OptionsMenu.diff == OptionsMenu.norm) {
 			this.lvl = lvl;
 			x = random.nextInt(64 * 16);
 			y = random.nextInt(64 * 16);
@@ -34,7 +39,7 @@ public class Pig extends Mob {
 			if (ModeMenu.creative) health = maxHealth = 1;
 		}
 
-		if (StartMenu.diff == StartMenu.hard) {
+		if (OptionsMenu.diff == OptionsMenu.hard) {
 			this.lvl = lvl;
 			x = random.nextInt(64 * 16);
 			y = random.nextInt(64 * 16);
@@ -214,7 +219,7 @@ public class Pig extends Mob {
 	protected void die() {
 		super.die();
 
-		if (StartMenu.diff == StartMenu.easy) {
+		if (OptionsMenu.diff == OptionsMenu.easy) {
 			int count = random.nextInt(3) + 1;
 			for (int i = 0; i < count; i++) {
 				level.add(
@@ -227,7 +232,7 @@ public class Pig extends Mob {
 				level.player.score += 10 * lvl;
 			}
 		}
-		if (StartMenu.diff == StartMenu.norm) {
+		if (OptionsMenu.diff == OptionsMenu.norm) {
 			int count = random.nextInt(2) + 1;
 			for (int i = 0; i < count; i++) {
 				level.add(
@@ -240,7 +245,7 @@ public class Pig extends Mob {
 				level.player.score += 10 * lvl;
 			}
 		}
-		if (StartMenu.diff == StartMenu.hard) {
+		if (OptionsMenu.diff == OptionsMenu.hard) {
 			int count = random.nextInt(2);
 			for (int i = 0; i < count; i++) {
 				level.add(

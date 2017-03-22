@@ -5,7 +5,6 @@ import com.mojang.ld22.entity.Player;
 import com.mojang.ld22.item.BucketItem;
 import com.mojang.ld22.item.Item;
 
-// Needs commenting?
 public class ItemRecipe extends Recipe {
 	private Class<? extends Furniture> clazz;
 

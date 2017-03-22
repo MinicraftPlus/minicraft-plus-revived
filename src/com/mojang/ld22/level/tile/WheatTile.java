@@ -208,7 +208,7 @@ public class WheatTile extends Tile {
 							y * 16 + random.nextInt(10) + 3));
 		}
 		if (age >= 50) {
-			Player.score = Player.score + random.nextInt(5) + 1;
+			Player.score += random.nextInt(5) + 1;
 		}
 		level.setTile(x, y, Tile.dirt, 0);
 	}

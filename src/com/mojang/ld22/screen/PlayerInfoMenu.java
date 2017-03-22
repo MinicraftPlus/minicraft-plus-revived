@@ -55,23 +55,23 @@ public class PlayerInfoMenu extends Menu {
 		else
 			Font.draw("" + game.player.hunger, screen, (2 + 7) * 8, 8 * 8, Color.get(-1, 550, 550, 550));
 		Font.draw("Stamina till hunger:", screen, 2 * 8, 9 * 8, Color.get(-1, 555, 555, 555));
-		if (StartMenu.diff == StartMenu.easy) cHung = 10 - cHung;
-		if (StartMenu.diff == StartMenu.norm) cHung = 7 - cHung;
-		if (StartMenu.diff == StartMenu.hard) cHung = 5 - cHung;
+		if (OptionsMenu.diff == OptionsMenu.easy) cHung = 10 - cHung;
+		if (OptionsMenu.diff == OptionsMenu.norm) cHung = 7 - cHung;
+		if (OptionsMenu.diff == OptionsMenu.hard) cHung = 5 - cHung;
 		if (ModeMenu.creative)
 			Font.draw("inf", screen, (2 + 20) * 8, 9 * 8, Color.get(-1, 550, 550, 550));
 		if (ModeMenu.creative == false)
 			Font.draw("" + cHung, screen, (2 + 20) * 8, 9 * 8, Color.get(-1, 550, 550, 550));
 		Font.draw("Steps till hunger:", screen, 2 * 8, 10 * 8, Color.get(-1, 555, 555, 555));
 
-		if (StartMenu.diff == StartMenu.norm) {
+		if (OptionsMenu.diff == OptionsMenu.norm) {
 			cStep = 10000 - cStep;
 		}
-		if (StartMenu.diff == StartMenu.hard) {
+		if (OptionsMenu.diff == OptionsMenu.hard) {
 			cStep = 5000 - cStep;
 		}
 
-		if (StartMenu.diff == StartMenu.easy || ModeMenu.creative) {
+		if (OptionsMenu.diff == OptionsMenu.easy || ModeMenu.creative) {
 			Font.draw("inf", screen, (2 + 18) * 8, 10 * 8, Color.get(-1, 550, 550, 550));
 
 		} else {

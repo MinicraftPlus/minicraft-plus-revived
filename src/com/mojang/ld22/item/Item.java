@@ -15,7 +15,7 @@ public class Item implements ListItem {
 		if (!ListItems.items.contains(this)) {
 			ListItems.items.add(this);
 		}
-
+		
 		return this;
 	}
 

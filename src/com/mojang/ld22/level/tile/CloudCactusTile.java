@@ -12,7 +12,7 @@ import com.mojang.ld22.item.Item;
 import com.mojang.ld22.item.ToolItem;
 import com.mojang.ld22.item.ToolType;
 import com.mojang.ld22.level.Level;
-import com.mojang.ld22.screen.StartMenu;
+import com.mojang.ld22.screen.OptionsMenu;
 
 public class CloudCactusTile extends Tile {
 	public CloudCactusTile(int id) {
@@ -64,13 +64,13 @@ public class CloudCactusTile extends Tile {
 
 	public void bumpedInto(Level level, int x, int y, Entity entity) {
 		if (entity instanceof AirWizard) return;
-		if (StartMenu.diff == StartMenu.easy) {
+		if (OptionsMenu.diff == OptionsMenu.easy) {
 			entity.hurt(this, x, y, 3);
 		}
-		if (StartMenu.diff == StartMenu.norm) {
+		if (OptionsMenu.diff == OptionsMenu.norm) {
 			entity.hurt(this, x, y, 2);
 		}
-		if (StartMenu.diff == StartMenu.hard) {
+		if (OptionsMenu.diff == OptionsMenu.hard) {
 			entity.hurt(this, x, y, 1);
 		}
 	}

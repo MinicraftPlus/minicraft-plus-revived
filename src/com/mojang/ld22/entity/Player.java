@@ -23,9 +23,9 @@ import com.mojang.ld22.screen.InfoMenu;
 import com.mojang.ld22.screen.InventoryMenu;
 import com.mojang.ld22.screen.LoadingMenu;
 import com.mojang.ld22.screen.ModeMenu;
+import com.mojang.ld22.screen.OptionsMenu;
 import com.mojang.ld22.screen.PauseMenu;
 import com.mojang.ld22.screen.PlayerInfoMenu;
-import com.mojang.ld22.screen.StartMenu;
 import com.mojang.ld22.screen.WorldSelectMenu;
 import com.mojang.ld22.sound.Sound;
 import java.util.ArrayList;
@@ -43,7 +43,7 @@ public class Player extends Mob {
 	//These 2 ints are ints saved from the first spawn - this way the spawn pos is always saved.
 	public static int spawnx = 0, spawny = 0;
 	public static int xx, yy;
-
+	
 	public Inventory inventory;
 	public Item attackItem, activeItem;
 	public boolean energy;
@@ -118,11 +118,10 @@ public class Player extends Mob {
 		r = 50;
 		g = 50;
 		b = 0;
-
+		
 		stamina = maxStamina;
 		hunger = maxHunger;
-
-		//if(com.mojang.ld22.Game.debug) System.out.println("creative mode: " + ModeMenu.creative);
+		
 		if (ModeMenu.creative) {
 			for (int i = 0; i < ListItems.items.size(); i++) {
 				inventory.add((Item) ListItems.items.get(i));
@@ -138,8 +137,7 @@ public class Player extends Mob {
 		super.tick();
 		isenemy = false;
 		tickCounter++;
-		//if(com.mojang.ld22.Game.debug) System.out.println(tickCounter);
-
+		//if(Game.debug) System.out.println(tickCounter);
 		
 		int xa, ya;
 		if(potioneffectstime.size() > 0 && !Bed.hasBedSet) {
@@ -169,7 +167,8 @@ public class Player extends Mob {
 
 				if(((String)potioneffects.get(onTile)).contains("Time") && !slowtime) {
 					slowtime = true;
-					game.nsPerTick = 3.3333333333333332E7D;
+					//game.nsPerTick = 3.3333333333333332E7D; //.0333 of nsPerTick
+					game.gamespeed = 0.5f;
 				}
 
 				if(((String)potioneffects.get(onTile)).contains("Lava") && !lavaimmune) {
@@ -207,7 +206,8 @@ public class Player extends Mob {
 
 					if(((String)potioneffects.get(onTile)).contains("Time")) {
 						slowtime = false;
-						game.nsPerTick = 1.6666666666666666E7D;
+						//game.nsPerTick = 1.6666666666666666E7D;
+						game.gamespeed = 1;
 					}
 
 					if(((String)potioneffects.get(onTile)).contains("Lava")) {
@@ -230,7 +230,7 @@ public class Player extends Mob {
 		
 		if(cooldowninfo > 0) cooldowninfo--;
 		
-		if(input.getKey("fpsdisp").clicked && cooldowninfo == 0) {
+		if(input.getKey("F3").clicked && cooldowninfo == 0) { // shows debug info
 			cooldowninfo = 10;
 			showinfo = !showinfo;
 		}
@@ -267,16 +267,16 @@ public class Player extends Mob {
 				staminaRechargeDelay = 40;
 				hungStamCnt++;
 				//if (isSwimming()) hungStamCnt--;
-				if (StartMenu.diff == StartMenu.easy && hungStamCnt == 10) {
-					hunger = hunger - 1;
+				if (OptionsMenu.diff == OptionsMenu.easy && hungStamCnt == 10) {
+					hunger--;
 					hungStamCnt = 0;
 				}
-				if (StartMenu.diff == StartMenu.norm && hungStamCnt == 7) {
-					hunger = hunger - 1;
+				if (OptionsMenu.diff == OptionsMenu.norm && hungStamCnt == 7) {
+					hunger--;
 					hungStamCnt = 0;
 				}
-				if (StartMenu.diff == StartMenu.hard && hungStamCnt == 5) {
-					hunger = hunger - 1;
+				if (OptionsMenu.diff == OptionsMenu.hard && hungStamCnt == 5) {
+					hunger--;
 					hungStamCnt = 0;
 				}
 			}
@@ -312,35 +312,35 @@ public class Player extends Mob {
 		if (hungerStarveDelay == 0) {
 			hungerStarveDelay = 120;
 		}
-		if (StartMenu.diff == StartMenu.norm) {
+		if (OptionsMenu.diff == OptionsMenu.norm) {
 			if (stepCount >= 10000) {
 				hunger--;
 				stepCount = 0;
 			}
 		}
 
-		if (StartMenu.diff == StartMenu.hard) {
+		if (OptionsMenu.diff == OptionsMenu.hard) {
 			if (stepCount >= 5000) {
 				hunger--;
 				stepCount = 0;
 			}
 		}
 
-		if (StartMenu.diff == StartMenu.norm) {
+		if (OptionsMenu.diff == OptionsMenu.norm) {
 			if (game.tickCount == 6000) {
 				timesTick++;
 				if (timesTick == random.nextInt(5)) hunger--;
 			}
 		}
 
-		if (StartMenu.diff == StartMenu.hard) {
+		if (OptionsMenu.diff == OptionsMenu.hard) {
 			if (game.tickCount == 6000) {
 				timesTick++;
 				if (timesTick == random.nextInt(2)) hunger--;
 			}
 		}
 
-		if (StartMenu.diff == StartMenu.easy) {
+		if (OptionsMenu.diff == OptionsMenu.easy) {
 			if (hunger == 0 && health > 5) {
 				if (hungerStarveDelay > 0) hungerStarveDelay--;
 				if (hungerStarveDelay == 0) {
@@ -349,7 +349,7 @@ public class Player extends Mob {
 			}
 		}
 
-		if (StartMenu.diff == StartMenu.norm) {
+		if (OptionsMenu.diff == OptionsMenu.norm) {
 			if (hunger == 0 && health > 3) {
 				if (hungerStarveDelay > 0) hungerStarveDelay--;
 				if (hungerStarveDelay == 0) {
@@ -358,7 +358,7 @@ public class Player extends Mob {
 			}
 		}
 
-		if (StartMenu.diff == StartMenu.hard) {
+		if (OptionsMenu.diff == OptionsMenu.hard) {
 			if (hunger == 0 && health > 0) {
 				if (hungerStarveDelay > 0) hungerStarveDelay--;
 				if (hungerStarveDelay == 0) {
@@ -440,28 +440,10 @@ public class Player extends Mob {
 			new Save(this, WorldSelectMenu.worldname);
 			LoadingMenu.percentage = 0;
 		}
-		if (input.getKey("p").clicked) {
-			//super powers toggle
-			infstamina = !infstamina;
-			infswim = !infswim;
-			health = 10;
-			stamina = 10;
-		}
 		
-		if (ModeMenu.creative || true) {
-			//Oh-ho-ho!
-			if (input.getKey("dayTime").clicked) {
-				Game.time = 0;
-				Game.tickCount = 6000;
-			}
-			if (input.getKey("nightTime").clicked) {
-				Game.time = 3;
-				Game.tickCount = 54000;
-			}
-		}
 		if (attackTime > 0) attackTime--;
 
-		if (slowtime && !Bed.hasBedSet) game.nsPerTick = 3.3333333333333332E7D;
+		if (slowtime && !Bed.hasBedSet) game.gamespeed = 0.5f;//game.nsPerTick = 3.3333333333333332E7D;
 	}
 
 	private boolean use() {
@@ -491,7 +473,7 @@ public class Player extends Mob {
 		attackDir = dir;
 		attackItem = activeItem;
 		boolean done = false;
-
+		
 		if ((attackItem instanceof ToolItem) && stamina - 1 >= 0) {
 
 			ToolItem tool = (ToolItem) attackItem;
@@ -625,41 +607,27 @@ public class Player extends Mob {
 	}
 
 	public void render(Screen screen) {
-		int col0 = Color.get(-1, 100, 110, 531);
-
-		int col1 = Color.get(-1, 100, 220, 532);
-
-		int col2 = Color.get(-1, 100, 110, 421);
-
-		int col3 = Color.get(-1, 0, 110, 321);
-
-		int col4 = Color.get(-1, 100, 220, 532);
-
-		if (isLight()) {
-			col0 = Color.get(-1, 100, 220, 532);
-
-			col1 = Color.get(-1, 100, 220, 532);
-
-			col2 = Color.get(-1, 100, 220, 532);
-
-			col3 = Color.get(-1, 100, 220, 532);
-
-			col4 = Color.get(-1, 100, 220, 532);
-		} else {
-			col0 = Color.get(-1, 100, 110, 531);
-
-			col1 = Color.get(-1, 100, 220, 532);
-
-			col2 = Color.get(-1, 100, 110, 421);
-
-			col3 = Color.get(-1, 0, 110, 321);
-
-			col4 = Color.get(-1, 100, 220, 532);
+		int r2 = r - 50, b2 = b - 50, g2 = g - 50;
+		if(r == 50 && g == 50 && (b == 0 || b == 50)) {
+			r2 = r < 0 ? 0 : r;
+			g2 = g < 0 ? 0 : g;
+			b2 = b < 0 ? 0 : b;
+		}
+		
+		int col0 = Color.get(-1, 100, Color.rgb(r, g, b), 531);
+		int col1 = Color.get(-1, 100, Color.rgb(r, g, b), 532);
+		int col2 = Color.get(-1, 100, Color.rgb(r2, g2, b2), 421);
+		int col3 = Color.get(-1, 0, Color.rgb(r2, g2, b2), 321);
+		int col4 = Color.get(-1, 100, Color.rgb(r, g, b), 532);
+		if(isLight()) {
+			col0 = Color.get(-1, 100, Color.rgb(r, g, b), 532);
+			col2 = Color.get(-1, 100, Color.rgb(r, g, b), 532);
+			col3 = Color.get(-1, 100, Color.rgb(r, g, b), 532);
 		}
 
 		int xt = 0;
 		int yt = 14;
-		if (StartMenu.skinon) {
+		if (OptionsMenu.skinon) {
 			xt = 18;
 			yt = 20;
 		}
@@ -684,12 +652,12 @@ public class Player extends Mob {
 		if (isSwimming()) {
 			yo += 4;
 			int liquidColor = 0;
-			if (level.getTile(this.x / 16, this.y / 16) == Tile.water) {
+			if (level.getTile(x / 16, y / 16) == Tile.water) {
 				liquidColor = Color.get(-1, -1, 115, 335);
 				if (tickTime / 8 % 2 == 0) liquidColor = Color.get(-1, 335, 5, 115);
-			} else if (level.getTile(this.x / 16, this.y / 16) == Tile.lava) {
+			} else if (level.getTile(x / 16, y / 16) == Tile.lava) {
 				liquidColor = Color.get(-1, -1, 500, 300);
-				if (this.tickTime / 8 % 2 == 0) liquidColor = Color.get(-1, 300, 400, 500);
+				if (tickTime / 8 % 2 == 0) liquidColor = Color.get(-1, 300, 400, 500);
 			}
 
 			screen.render(xo + 0, yo + 3, 5 + 13 * 32, liquidColor, 0);
@@ -703,237 +671,56 @@ public class Player extends Mob {
 				attackItem.renderIcon(screen, xo + 4, yo - 4);
 			}
 		}
-
+		
+		int col = 0;
 		if (level.dirtColor == 322) {
-			if (Game.time == 0) {
-				int col = col0;
-				if (hurtTime > 0) {
-					col = Color.get(-1, 555, 555, 555);
-				}
+			if(Game.time == 0) col = col0;
+			if(Game.time == 1) col = col1;
+			if(Game.time == 2) col = col2;
+			if(Game.time == 3) col = col3;
+		} else col = col4;
+		
+		if (hurtTime > 0) {
+			col = Color.get(-1, 555, 555, 555);
+		}
+		
+		if (activeItem instanceof FurnitureItem) {
+			yt += 2;
+		}
+		screen.render(xo + 8 * flip1, yo + 0, xt + yt * 32, col, flip1);
+		screen.render(xo + 8 - 8 * flip1, yo + 0, xt + 1 + yt * 32, col, flip1);
+		if (!isSwimming()) {
+			screen.render(xo + 8 * flip2, yo + 8, xt + (yt + 1) * 32, col, flip2);
+			screen.render(xo + 8 - 8 * flip2, yo + 8, xt + 1 + (yt + 1) * 32, col, flip2);
+		}
 
-				if (activeItem instanceof FurnitureItem) {
-					yt += 2;
-				}
-				screen.render(xo + 8 * flip1, yo + 0, xt + yt * 32, col, flip1);
-				screen.render(xo + 8 - 8 * flip1, yo + 0, xt + 1 + yt * 32, col, flip1);
-				if (!isSwimming()) {
-					screen.render(xo + 8 * flip2, yo + 8, xt + (yt + 1) * 32, col, flip2);
-					screen.render(xo + 8 - 8 * flip2, yo + 8, xt + 1 + (yt + 1) * 32, col, flip2);
-				}
-
-				if (attackTime > 0 && attackDir == 2) {
-					screen.render(xo - 4, yo, 7 + 13 * 32, Color.get(-1, 555, 555, 555), 1);
-					screen.render(xo - 4, yo + 8, 7 + 13 * 32, Color.get(-1, 555, 555, 555), 3);
-					if (attackItem != null) {
-						attackItem.renderIcon(screen, xo - 4, yo + 4);
-					}
-				}
-				if (attackTime > 0 && attackDir == 3) {
-					screen.render(xo + 8 + 4, yo, 7 + 13 * 32, Color.get(-1, 555, 555, 555), 0);
-					screen.render(xo + 8 + 4, yo + 8, 7 + 13 * 32, Color.get(-1, 555, 555, 555), 2);
-					if (attackItem != null) {
-						attackItem.renderIcon(screen, xo + 8 + 4, yo + 4);
-					}
-				}
-				if (attackTime > 0 && attackDir == 0) {
-					screen.render(xo + 0, yo + 8 + 4, 6 + 13 * 32, Color.get(-1, 555, 555, 555), 2);
-					screen.render(xo + 8, yo + 8 + 4, 6 + 13 * 32, Color.get(-1, 555, 555, 555), 3);
-					if (attackItem != null) {
-						attackItem.renderIcon(screen, xo + 4, yo + 8 + 4);
-					}
-				}
-
-				if (activeItem instanceof FurnitureItem) {
-					Furniture furniture = ((FurnitureItem) activeItem).furniture;
-					furniture.x = x;
-					furniture.y = yo;
-					furniture.render(screen);
-				}
+		if (attackTime > 0 && attackDir == 2) {
+			screen.render(xo - 4, yo, 7 + 13 * 32, Color.get(-1, 555, 555, 555), 1);
+			screen.render(xo - 4, yo + 8, 7 + 13 * 32, Color.get(-1, 555, 555, 555), 3);
+			if (attackItem != null) {
+				attackItem.renderIcon(screen, xo - 4, yo + 4);
 			}
-
-			if (Game.time == 1) {
-				int col = col1;
-				if (hurtTime > 0) {
-					col = Color.get(-1, 555, 555, 555);
-				}
-
-				if (activeItem instanceof FurnitureItem) {
-					yt += 2;
-				}
-				screen.render(xo + 8 * flip1, yo + 0, xt + yt * 32, col, flip1);
-				screen.render(xo + 8 - 8 * flip1, yo + 0, xt + 1 + yt * 32, col, flip1);
-				if (!isSwimming()) {
-					screen.render(xo + 8 * flip2, yo + 8, xt + (yt + 1) * 32, col, flip2);
-					screen.render(xo + 8 - 8 * flip2, yo + 8, xt + 1 + (yt + 1) * 32, col, flip2);
-				}
-
-				if (attackTime > 0 && attackDir == 2) {
-					screen.render(xo - 4, yo, 7 + 13 * 32, Color.get(-1, 555, 555, 555), 1);
-					screen.render(xo - 4, yo + 8, 7 + 13 * 32, Color.get(-1, 555, 555, 555), 3);
-					if (attackItem != null) {
-						attackItem.renderIcon(screen, xo - 4, yo + 4);
-					}
-				}
-				if (attackTime > 0 && attackDir == 3) {
-					screen.render(xo + 8 + 4, yo, 7 + 13 * 32, Color.get(-1, 555, 555, 555), 0);
-					screen.render(xo + 8 + 4, yo + 8, 7 + 13 * 32, Color.get(-1, 555, 555, 555), 2);
-					if (attackItem != null) {
-						attackItem.renderIcon(screen, xo + 8 + 4, yo + 4);
-					}
-				}
-				if (attackTime > 0 && attackDir == 0) {
-					screen.render(xo + 0, yo + 8 + 4, 6 + 13 * 32, Color.get(-1, 555, 555, 555), 2);
-					screen.render(xo + 8, yo + 8 + 4, 6 + 13 * 32, Color.get(-1, 555, 555, 555), 3);
-					if (attackItem != null) {
-						attackItem.renderIcon(screen, xo + 4, yo + 8 + 4);
-					}
-				}
-
-				if (activeItem instanceof FurnitureItem) {
-					Furniture furniture = ((FurnitureItem) activeItem).furniture;
-					furniture.x = x;
-					furniture.y = yo;
-					furniture.render(screen);
-				}
+		}
+		if (attackTime > 0 && attackDir == 3) {
+			screen.render(xo + 8 + 4, yo, 7 + 13 * 32, Color.get(-1, 555, 555, 555), 0);
+			screen.render(xo + 8 + 4, yo + 8, 7 + 13 * 32, Color.get(-1, 555, 555, 555), 2);
+			if (attackItem != null) {
+				attackItem.renderIcon(screen, xo + 8 + 4, yo + 4);
 			}
-
-			if (Game.time == 2) {
-				int col = col2;
-				if (hurtTime > 0) {
-					col = Color.get(-1, 555, 555, 555);
-				}
-
-				if (activeItem instanceof FurnitureItem) {
-					yt += 2;
-				}
-				screen.render(xo + 8 * flip1, yo + 0, xt + yt * 32, col, flip1);
-				screen.render(xo + 8 - 8 * flip1, yo + 0, xt + 1 + yt * 32, col, flip1);
-				if (!isSwimming()) {
-					screen.render(xo + 8 * flip2, yo + 8, xt + (yt + 1) * 32, col, flip2);
-					screen.render(xo + 8 - 8 * flip2, yo + 8, xt + 1 + (yt + 1) * 32, col, flip2);
-				}
-
-				if (attackTime > 0 && attackDir == 2) {
-					screen.render(xo - 4, yo, 7 + 13 * 32, Color.get(-1, 555, 555, 555), 1);
-					screen.render(xo - 4, yo + 8, 7 + 13 * 32, Color.get(-1, 555, 555, 555), 3);
-					if (attackItem != null) {
-						attackItem.renderIcon(screen, xo - 4, yo + 4);
-					}
-				}
-				if (attackTime > 0 && attackDir == 3) {
-					screen.render(xo + 8 + 4, yo, 7 + 13 * 32, Color.get(-1, 555, 555, 555), 0);
-					screen.render(xo + 8 + 4, yo + 8, 7 + 13 * 32, Color.get(-1, 555, 555, 555), 2);
-					if (attackItem != null) {
-						attackItem.renderIcon(screen, xo + 8 + 4, yo + 4);
-					}
-				}
-				if (attackTime > 0 && attackDir == 0) {
-					screen.render(xo + 0, yo + 8 + 4, 6 + 13 * 32, Color.get(-1, 555, 555, 555), 2);
-					screen.render(xo + 8, yo + 8 + 4, 6 + 13 * 32, Color.get(-1, 555, 555, 555), 3);
-					if (attackItem != null) {
-						attackItem.renderIcon(screen, xo + 4, yo + 8 + 4);
-					}
-				}
-
-				if (activeItem instanceof FurnitureItem) {
-					Furniture furniture = ((FurnitureItem) activeItem).furniture;
-					furniture.x = x;
-					furniture.y = yo;
-					furniture.render(screen);
-				}
-			}
-
-			if (Game.time == 3) {
-				int col = col3;
-				if (hurtTime > 0) {
-					col = Color.get(-1, 555, 555, 555);
-				}
-
-				if (activeItem instanceof FurnitureItem) {
-					yt += 2;
-				}
-				screen.render(xo + 8 * flip1, yo + 0, xt + yt * 32, col, flip1);
-				screen.render(xo + 8 - 8 * flip1, yo + 0, xt + 1 + yt * 32, col, flip1);
-				if (!isSwimming()) {
-					screen.render(xo + 8 * flip2, yo + 8, xt + (yt + 1) * 32, col, flip2);
-					screen.render(xo + 8 - 8 * flip2, yo + 8, xt + 1 + (yt + 1) * 32, col, flip2);
-				}
-
-				if (attackTime > 0 && attackDir == 2) {
-					screen.render(xo - 4, yo, 7 + 13 * 32, Color.get(-1, 555, 555, 555), 1);
-					screen.render(xo - 4, yo + 8, 7 + 13 * 32, Color.get(-1, 555, 555, 555), 3);
-					if (attackItem != null) {
-						attackItem.renderIcon(screen, xo - 4, yo + 4);
-					}
-				}
-				if (attackTime > 0 && attackDir == 3) {
-					screen.render(xo + 8 + 4, yo, 7 + 13 * 32, Color.get(-1, 555, 555, 555), 0);
-					screen.render(xo + 8 + 4, yo + 8, 7 + 13 * 32, Color.get(-1, 555, 555, 555), 2);
-					if (attackItem != null) {
-						attackItem.renderIcon(screen, xo + 8 + 4, yo + 4);
-					}
-				}
-				if (attackTime > 0 && attackDir == 0) {
-					screen.render(xo + 0, yo + 8 + 4, 6 + 13 * 32, Color.get(-1, 555, 555, 555), 2);
-					screen.render(xo + 8, yo + 8 + 4, 6 + 13 * 32, Color.get(-1, 555, 555, 555), 3);
-					if (attackItem != null) {
-						attackItem.renderIcon(screen, xo + 4, yo + 8 + 4);
-					}
-				}
-
-				if (activeItem instanceof FurnitureItem) {
-					Furniture furniture = ((FurnitureItem) activeItem).furniture;
-					furniture.x = x;
-					furniture.y = yo;
-					furniture.render(screen);
-				}
+		}
+		if (attackTime > 0 && attackDir == 0) {
+			screen.render(xo + 0, yo + 8 + 4, 6 + 13 * 32, Color.get(-1, 555, 555, 555), 2);
+			screen.render(xo + 8, yo + 8 + 4, 6 + 13 * 32, Color.get(-1, 555, 555, 555), 3);
+			if (attackItem != null) {
+				attackItem.renderIcon(screen, xo + 4, yo + 8 + 4);
 			}
 		}
 
-		if (level.dirtColor != 322) {
-			int col = col4;
-			if (hurtTime > 0) {
-				col = Color.get(-1, 555, 555, 555);
-			}
-
-			if (activeItem instanceof FurnitureItem) {
-				yt += 2;
-			}
-			screen.render(xo + 8 * flip1, yo + 0, xt + yt * 32, col, flip1);
-			screen.render(xo + 8 - 8 * flip1, yo + 0, xt + 1 + yt * 32, col, flip1);
-			if (!isSwimming()) {
-				screen.render(xo + 8 * flip2, yo + 8, xt + (yt + 1) * 32, col, flip2);
-				screen.render(xo + 8 - 8 * flip2, yo + 8, xt + 1 + (yt + 1) * 32, col, flip2);
-			}
-
-			if (attackTime > 0 && attackDir == 2) {
-				screen.render(xo - 4, yo, 7 + 13 * 32, Color.get(-1, 555, 555, 555), 1);
-				screen.render(xo - 4, yo + 8, 7 + 13 * 32, Color.get(-1, 555, 555, 555), 3);
-				if (attackItem != null) {
-					attackItem.renderIcon(screen, xo - 4, yo + 4);
-				}
-			}
-			if (attackTime > 0 && attackDir == 3) {
-				screen.render(xo + 8 + 4, yo, 7 + 13 * 32, Color.get(-1, 555, 555, 555), 0);
-				screen.render(xo + 8 + 4, yo + 8, 7 + 13 * 32, Color.get(-1, 555, 555, 555), 2);
-				if (attackItem != null) {
-					attackItem.renderIcon(screen, xo + 8 + 4, yo + 4);
-				}
-			}
-			if (attackTime > 0 && attackDir == 0) {
-				screen.render(xo + 0, yo + 8 + 4, 6 + 13 * 32, Color.get(-1, 555, 555, 555), 2);
-				screen.render(xo + 8, yo + 8 + 4, 6 + 13 * 32, Color.get(-1, 555, 555, 555), 3);
-				if (attackItem != null) {
-					attackItem.renderIcon(screen, xo + 4, yo + 8 + 4);
-				}
-			}
-
-			if (activeItem instanceof FurnitureItem) {
-				Furniture furniture = ((FurnitureItem) activeItem).furniture;
-				furniture.x = x;
-				furniture.y = yo;
-				furniture.render(screen);
-			}
+		if (activeItem instanceof FurnitureItem) {
+			Furniture furniture = ((FurnitureItem) activeItem).furniture;
+			furniture.x = x;
+			furniture.y = yo;
+			furniture.render(screen);
 		}
 	}
 
@@ -957,28 +744,17 @@ public class Player extends Mob {
 	public boolean canLight() {
 		return true;
 	}
-
-	public boolean findStartPoss(Level level) {
-		int xxs = x;
-		int yys = y;
-		if (level.getTile(x, y) != Tile.dirt) {
-			this.x = xxs;
-			this.y = yys;
-			return true;
-		}
-
-		return false;
-	}
-
+	
 	public boolean findStartPos(Level level) {
 		while (true) {
 			int x = random.nextInt(level.w);
 			int y = random.nextInt(level.h);
 			if (level.getTile(x, y) == Tile.grass) {
-				this.x = x * 16 + 8;
-				this.y = y * 16 + 8;
-				spawnx = y;
-				spawny = x;
+				spawnx = x;
+				spawny = y;
+				this.x = spawnx * 16 + 8;
+				this.y = spawny * 16 + 8;
+				if (Game.debug) System.out.println("START POS FOUND, TILE ID: " + level.getTile(spawnx, spawny).id);
 				return true;
 			}
 		}
@@ -1010,7 +786,7 @@ public class Player extends Mob {
 				stamina = 0;
 				sentFromHome = true;
 				game.setMenu(new HomeMenu());
-				//if(com.mojang.ld22.Game.debug) System.out.println(sentFromHome);
+				//if (Game.debug) System.out.println(sentFromHome);
 			} else {
 				game.setMenu(new HomeMenu());
 			}
@@ -1019,26 +795,25 @@ public class Player extends Mob {
 			hasSetHome = false;
 			sentFromHome = true;
 			game.setMenu(new HomeMenu());
-			//	if(com.mojang.ld22.Game.debug) System.out.println(sentFromHome);
+			//if (Game.debug) System.out.println(sentFromHome);
 		}
 	}
 
 	public boolean respawn(Level level) {
-		while (true) {
-			int x = spawnx;
-			int y = spawny;
-			if (bedSpawn || level.getTile(x, y) == Tile.grass) {
-				this.x = spawny * 16 + 8;
-				this.y = spawnx * 16 + 8;
-				return true;
-			} /* else if (level.getTile(x, y) == Tile.grass) {
-					this.x = spawny * 16 + 8;
-					this.y = spawnx * 16 + 8;
-					return true;
-				}*/
-
-			findStartPos(level);
-		}
+		//while (true) {
+			//int x = spawnx;
+			//int y = spawny;
+			if (!(bedSpawn || level.getTile(spawnx, spawny) == Tile.grass))
+				findStartPos(level);
+			
+			//if (Game.debug) System.out.println("RESPAWN TILE ID: " + level.getTile(spawnx, spawny).id);
+			this.x = spawnx * 16 + 8;
+			this.y = spawny * 16 + 8;
+			//System.out.println("BEDSPAWN=" + bedSpawn);
+			return true;
+			//if (Game.debug) System.out.println("you should only see this once (or not at all) per load.");
+			
+		//}
 	}
 
 	public boolean payStamina(int cost) {
@@ -1072,7 +847,7 @@ public class Player extends Mob {
 	protected void die() {
 		super.die();
 		int lostscore = score / 3;
-		score = score - lostscore;
+		score -= lostscore;
 		Game.ism = 1;
 
 		//make death chest

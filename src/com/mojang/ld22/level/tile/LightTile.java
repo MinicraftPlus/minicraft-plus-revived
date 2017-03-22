@@ -15,7 +15,7 @@ import com.mojang.ld22.item.ToolType;
 import com.mojang.ld22.item.resource.Resource;
 import com.mojang.ld22.level.Level;
 import com.mojang.ld22.screen.ModeMenu;
-import com.mojang.ld22.screen.StartMenu;
+import com.mojang.ld22.screen.OptionsMenu;
 import com.mojang.ld22.sound.Sound;
 import java.util.Random;
 
@@ -474,13 +474,13 @@ public class LightTile extends Tile {
 
 	public void bumpedInto(Level level, int x, int y, Entity entity) {
 		if (til == 3) {
-			if (StartMenu.diff == StartMenu.easy) {
+			if (OptionsMenu.diff == OptionsMenu.easy) {
 				entity.hurt(this, x, y, 1);
 			}
-			if (StartMenu.diff == StartMenu.norm) {
+			if (OptionsMenu.diff == OptionsMenu.norm) {
 				entity.hurt(this, x, y, 1);
 			}
-			if (StartMenu.diff == StartMenu.hard) {
+			if (OptionsMenu.diff == OptionsMenu.hard) {
 				entity.hurt(this, x, y, 2);
 			}
 		}

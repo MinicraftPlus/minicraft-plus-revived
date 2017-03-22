@@ -4,9 +4,9 @@ import com.mojang.ld22.entity.Player;
 import com.mojang.ld22.gfx.Color;
 import com.mojang.ld22.gfx.Font;
 import com.mojang.ld22.gfx.Screen;
+import com.mojang.ld22.item.BucketLavaItem;
 import com.mojang.ld22.item.Item;
 import com.mojang.ld22.item.ResourceItem;
-import com.mojang.ld22.item.BucketLavaItem;
 import com.mojang.ld22.item.ToolItem;
 import com.mojang.ld22.item.ToolType;
 import com.mojang.ld22.item.resource.Resource;
@@ -84,18 +84,6 @@ public abstract class Recipe implements ListItem {
 		String name = resultTemplate.getName();
 		if(name == "Torch" || name == "string" || name == "Plank" || name == "St.Brick")
 			Font.draw(resultTemplate.getName() + " x2", screen, x + 8, y, textColor);
-		/*if (resultTemplate.getName() == "Torch") {
-			Font.draw(resultTemplate.getName() + " x2", screen, x + 8, y, textColor);
-		}
-		if (resultTemplate.getName() == "string") {
-			Font.draw(resultTemplate.getName() + " x2", screen, x + 8, y, textColor);
-		}
-		if (resultTemplate.getName() == "Plank") {
-			Font.draw(resultTemplate.getName() + " x2", screen, x + 8, y, textColor);
-		}
-		if (resultTemplate.getName() == "St.Brick") {
-			Font.draw(resultTemplate.getName() + " x2", screen, x + 8, y, textColor);
-		}*/
 	}
 	
 	public abstract void craft(Player player); // abstract method given to the sub-recipe classes.

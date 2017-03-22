@@ -2,6 +2,7 @@ package com.mojang.ld22.item;
 
 import com.mojang.ld22.entity.AirWizard;
 import com.mojang.ld22.entity.Anvil;
+import com.mojang.ld22.entity.Bed;
 import com.mojang.ld22.entity.Chest;
 import com.mojang.ld22.entity.Creeper;
 import com.mojang.ld22.entity.Enchanter;
@@ -17,20 +18,10 @@ import com.mojang.ld22.entity.Sheep;
 import com.mojang.ld22.entity.Skeleton;
 import com.mojang.ld22.entity.Slime;
 import com.mojang.ld22.entity.Snake;
-//import com.mojang.ld22.entity.Spawner;
+import com.mojang.ld22.entity.Spawner;
 import com.mojang.ld22.entity.Tnt;
 import com.mojang.ld22.entity.Workbench;
 import com.mojang.ld22.entity.Zombie;
-import com.mojang.ld22.entity.Bed;
-import com.mojang.ld22.item.BucketItem;
-import com.mojang.ld22.item.BucketLavaItem;
-import com.mojang.ld22.item.BucketWaterItem;
-import com.mojang.ld22.item.FurnitureItem;
-import com.mojang.ld22.item.Item;
-import com.mojang.ld22.item.PowerGloveItem;
-import com.mojang.ld22.item.ResourceItem;
-import com.mojang.ld22.item.ToolItem;
-import com.mojang.ld22.item.ToolType;
 import com.mojang.ld22.item.resource.Resource;
 import java.util.ArrayList;
 import java.util.List;
@@ -38,7 +29,7 @@ import java.util.List;
 public class ListItems {
 
 	public static List items = new ArrayList();
-	/* not reimplemented yet
+	
 	public Item spawnerzombie = (new FurnitureItem(new Spawner(new Zombie(1), 1))).addItem();
 	public Item spawnerslime = (new FurnitureItem(new Spawner(new Slime(1), 1))).addItem();
 	public Item spawnerknight = (new FurnitureItem(new Spawner(new Knight(1), 1))).addItem();
@@ -49,7 +40,7 @@ public class ListItems {
 	public Item spawnerairwizardii = (new FurnitureItem(new Spawner(new AirWizard(true), 1))).addItem();
 	public Item spawnerpig = (new FurnitureItem(new Spawner(new Pig(1), 1))).addItem();
 	public Item spawnersheep = (new FurnitureItem(new Spawner(new Sheep(1), 1))).addItem();
-	*/
+	
 	public Item powglove = (new PowerGloveItem()).addItem();
 	public Item workbench = (new FurnitureItem(new Workbench())).addItem();
 	public Item oven = (new FurnitureItem(new Oven())).addItem();
@@ -66,6 +57,7 @@ public class ListItems {
 	public Item bucket = (new BucketItem()).addItem();
 	public Item wbucket = (new BucketWaterItem()).addItem();
 	public Item lbucket = (new BucketLavaItem()).addItem();
+	
 	public Item arrow;
 	public Item torch;
 	public Item wood;
@@ -75,6 +67,7 @@ public class ListItems {
 	public Item dirt;
 	public Item sand;
 	public Item cactusFlower;
+	
 	public Item seeds;
 	public Item wheat;
 	public Item bread;
@@ -85,6 +78,7 @@ public class ListItems {
 	public Item cookedpork;
 	public Item cookedfish;
 	public Item steak;
+	
 	public Item leather;
 	public Item coal;
 	public Item ironOre;
@@ -96,12 +90,14 @@ public class ListItems {
 	public Item cloth;
 	public Item cloud;
 	public Item gem;
+	
 	public Item wool;
 	public Item redwool;
 	public Item bluewool;
 	public Item greenwool;
 	public Item yellowwool;
 	public Item blackwool;
+	
 	public Item rod;
 	public Item rose;
 	public Item plank;
@@ -121,7 +117,8 @@ public class ListItems {
 	public Item bookant;
 	public Item scale;
 	public Item shard;
-	//public Item key;
+	public Item key;
+	
 	public Item woodshovel;
 	public Item rockshovel;
 	public Item ironshovel;
@@ -172,12 +169,12 @@ public class ListItems {
 	public Item ironspade;
 	public Item goldspade;
 	public Item gemspade;
+	
 	public Item larmor;
 	public Item sarmor;
 	public Item iarmor;
 	public Item garmor;
 	public Item gemarmor;
-	/* not reimplemented yet
 	public Item redclothes;
 	public Item blueclothes;
 	public Item greenclothes;
@@ -187,7 +184,8 @@ public class ListItems {
 	public Item purpleclothes;
 	public Item cyanclothes;
 	public Item regclothes;
-	*/public Item potion;
+	
+	public Item potion;
 	public Item speedpotion;
 	public Item lightpotion;
 	public Item swimpotion;
@@ -254,7 +252,7 @@ public class ListItems {
 		this.bookant = (new ResourceItem(Resource.bookant)).addItem();
 		this.scale = (new ResourceItem(Resource.scale)).addItem();
 		this.shard = (new ResourceItem(Resource.shard)).addItem();
-		//this.key = (new ResourceItem(Resource.key)).addItem();
+		this.key = (new ResourceItem(Resource.key)).addItem();
 		this.woodshovel = (new ToolItem(ToolType.shovel, 0)).addItem();
 		this.rockshovel = (new ToolItem(ToolType.shovel, 1)).addItem();
 		this.ironshovel = (new ToolItem(ToolType.shovel, 2)).addItem();
@@ -310,7 +308,7 @@ public class ListItems {
 		this.iarmor = (new ResourceItem(Resource.iarmor)).addItem();
 		this.garmor = (new ResourceItem(Resource.garmor)).addItem();
 		this.gemarmor = (new ResourceItem(Resource.gemarmor)).addItem();
-		/* not reimplemented yet
+		
 		this.redclothes = (new ResourceItem(Resource.redclothes)).addItem();
 		this.blueclothes = (new ResourceItem(Resource.blueclothes)).addItem();
 		this.greenclothes = (new ResourceItem(Resource.greenclothes)).addItem();
@@ -320,7 +318,8 @@ public class ListItems {
 		this.purpleclothes = (new ResourceItem(Resource.purpleclothes)).addItem();
 		this.cyanclothes = (new ResourceItem(Resource.cyanclothes)).addItem();
 		this.regclothes = (new ResourceItem(Resource.regclothes)).addItem();
-		*/this.potion = (new ResourceItem(Resource.potion)).addItem();
+		
+		this.potion = (new ResourceItem(Resource.potion)).addItem();
 		this.speedpotion = (new ResourceItem(Resource.speedpotion)).addItem();
 		this.lightpotion = (new ResourceItem(Resource.lightpotion)).addItem();
 		this.swimpotion = (new ResourceItem(Resource.swimpotion)).addItem();
@@ -339,7 +338,7 @@ public class ListItems {
 				name = name.substring(0, name.indexOf(";"));
 			}
 			
-			for(int i = 0; i < items.size(); ++i) {
+			for(int i = 0; i < items.size(); i++) {
 				if(((Item)items.get(i)).getName().equals(name)) {
 					newItem = (Item)items.get(i);
 					return newItem;

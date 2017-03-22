@@ -271,10 +271,7 @@ public class ObsidianWallTile extends Tile {
 		if (item instanceof ToolItem) {
 			ToolItem tool = (ToolItem) item;
 			if (!ModeMenu.creative) {
-				if (tool.type == ToolType.pickaxe
-						&& tool.level > 2
-						&& AirWizard.healthstat
-								< 1) { // This makes it so that you can only break obsidian walls with a gem pickaxe and only after you beat the air wizard
+				if (tool.type == ToolType.pickaxe && tool.level > 2 && AirWizard.beaten) { // This makes it so that you can only break obsidian walls with a gem pickaxe and only after you beat the air wizard
 					if (player.payStamina(4 - tool.level)) {
 						hurt(level, xt, yt, random.nextInt(10) + (tool.level) * 5 + 10);
 						return true;

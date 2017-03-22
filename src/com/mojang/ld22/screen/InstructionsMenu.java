@@ -13,8 +13,8 @@ public class InstructionsMenu extends Menu {
 	}
 
 	public void tick() {
-		if (input.getKey("attack").clicked || input.getKey("menu").clicked) {
-			game.setMenu(parent);  // If the user presses the "Attack" or "Menu" button, it will go back to the parent menu.
+		if (input.getKey("escape").clicked || input.getKey("enter").clicked) {
+			game.setMenu(parent);  // If the user presses escape, it will go back to the parent menu.
 		}
 	}
 
@@ -23,18 +23,46 @@ public class InstructionsMenu extends Menu {
 		screen.clear(0); // clears the screen to be a black color.
 		
 		/* Font.draw Parameters: Font.draw(String text, Screen screen, int x, int y, int color) */
-
-		Font.draw("HOW TO PLAY", screen, 4 * 8 + 4, 1 * 8, Color.get(0, 555, 555, 555)); //draws Title text
-		Font.draw("Move your character", screen, 0 * 8 + 4, 3 * 8, Color.get(0, 333, 333, 333)); // draws text
-		Font.draw("with the arrow keys", screen, 0 * 8 + 4, 4 * 8, Color.get(0, 333, 333, 333)); // draws text
-		Font.draw("press C to attack", screen, 0 * 8 + 4, 5 * 8, Color.get(0, 333, 333, 333)); // draws text
-		Font.draw("and X to open the", screen, 0 * 8 + 4, 6 * 8, Color.get(0, 333, 333, 333)); // draws text
-		Font.draw("inventory and to", screen, 0 * 8 + 4, 7 * 8, Color.get(0, 333, 333, 333)); // draws text
-		Font.draw("use items.", screen, 0 * 8 + 4, 8 * 8, Color.get(0, 333, 333, 333)); // draws text
-		Font.draw("Select an item in", screen, 0 * 8 + 4, 9 * 8, Color.get(0, 333, 333, 333)); // draws text
-		Font.draw("the inventory to", screen, 0 * 8 + 4, 10 * 8, Color.get(0, 333, 333, 333)); // draws text
-		Font.draw("equip it.", screen, 0 * 8 + 4, 11 * 8, Color.get(0, 333, 333, 333)); // draws text
-		Font.draw("Kill the air wizard", screen, 0 * 8 + 4, 12 * 8, Color.get(0, 333, 333, 333)); // draws text
-		Font.draw("to win the game!", screen, 0 * 8 + 4, 13 * 8, Color.get(0, 333, 333, 333)); // draws text
+		
+		writeCentered("HOW TO PLAY", screen, 1 * 8, Color.get(0, 555, 555, 555)); //draws Title text
+		boolean wroteAll = writeParagraph(
+		  "Move your character with the arrow keys. Press C to attack and X to open the inventory, and to use items. Select an item in the inventory to equip it. Kill the air wizard to win the game!",
+		  screen, 0, screen.w, 24, screen.h, Color.get(0, 333, 333, 333), true);
+		
+		if (!wroteAll) System.out.println("Paragraph was truncated!");
 	}
+	
+	private boolean writeParagraph(String para, Screen screen, int minX, int maxX, int minY, int maxY, int color, boolean breakOnSentence) {
+		String[] words = para.split(" ");
+		int curWord = 0, y = minY;
+		while(curWord < words.length && y <= maxY) {
+			String line = words[curWord];
+			curWord++;
+			while(curWord < words.length && textWidth(line)+textWidth(" "+words[curWord]) < maxX - minX) {
+				line += " "+words[curWord];
+				curWord++;
+				if (breakOnSentence && words[curWord-1].charAt(words[curWord-1].length()-1) == '.')
+					break;
+			}
+			writeCentered(line, screen, y, color);
+			if (curWord < words.length || true) y += 8;
+		}
+		
+		if (y > maxY) return false;
+		else return true;
+	}
+	
+	private int textWidth(String text) {return text.length() * 8;}
+	/*
+	class Rectangle {
+		public int minX, int maxX, int minY, int maxY;
+		
+		public Rectangle(int minX, int maxX, int minY, int maxY) {
+			this.minX = minX;
+			this.maxX = maxX;
+			this.minY = minY;
+			this.maxY = maxY;
+		}
+	}
+	*/
 }

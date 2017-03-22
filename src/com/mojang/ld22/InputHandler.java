@@ -59,15 +59,16 @@ public class InputHandler implements MouseListener, KeyListener {
 		keymap.put("PAUSE", "ESCAPE"); // pause the game.
 		keymap.put("SETHOME", "H"); // set your home.
 		keymap.put("HOME", "1"); // go to set home.
-		//keymap.put("SOUNDON", "M"); //toggles sound on and off... well, it should...
-		
 		keymap.put("DAYTIME", "2"); //sort of makes day happen.
 		keymap.put("NIGHTTIME", "3"); //sort of makes night happen.
+		keymap.put("SURVIVAL", "4");
+		keymap.put("CREATIVE", "5");
+		
+		//keymap.put("SOUNDON", "M"); //toggles sound on and off... well, it should...
 		
 		keymap.put("POTIONEFFECTS", "F2"); // toggle potion effect display
-		keymap.put("FPSDISP", "F3"); // toggle fps display
+		//keymap.put("FPSDISP", "F3"); // toggle fps display
 		keymap.put("INFO", "I"); // toggle player stats display
-		//keymap.put("OPTIONS", "O"); //displays some options? ...apparently not...
 		
 		game.addKeyListener(this); //add key listener to game
 		game.addMouseListener(this); //add mouse listener to game (though it's never used)
@@ -86,7 +87,7 @@ public class InputHandler implements MouseListener, KeyListener {
 		//Map.Entry<String,Key>[] mappings = keymap.entrySet().toArray(new Map.Entry[0]);
 		Key[] keys = keyboard.values().toArray(new Key[0]);
 		for (int i = 0; i < keys.length; i++) {
-			//if(com.mojang.ld22.Game.debug) System.out.println(i+1+": " + mappings[i].getKey() + " - " + mappings[i].getValue());
+			//if(Game.debug) System.out.println(i+1+": " + mappings[i].getKey() + " - " + mappings[i].getValue());
 			keys[i].down = false;
 		}
 	}
@@ -125,7 +126,7 @@ public class InputHandler implements MouseListener, KeyListener {
 				key = new Key(); //make new key
 				keyboard.put(keytext, key); //add it to keyboard
 				
-				if(com.mojang.ld22.Game.debug) System.out.println("Added new key: \'" + keytext + "\'"); //log to console that a new key was added to the keyboard
+				if(Game.debug) System.out.println("Added new key: \'" + keytext + "\'"); //log to console that a new key was added to the keyboard
 			}
 		}
 		return key; // return the Key object.
@@ -138,14 +139,14 @@ public class InputHandler implements MouseListener, KeyListener {
 		public int presses, absorbs;
 		//down = if the key is currently physically being held down.
 		//clicked = if the key is still being processed at the current tick.
-		public boolean down, clicked;
+		public boolean down, clicked, sticky;
 		
 		public Key() {} // probably would be auto-created anyway.
 		
 		/** toggles the key down or not down. */
 		public void toggle(boolean pressed) {
-			if (pressed != down) down = pressed; // set down to the passed in value; the if statement is probably unnecessary...
-			if (pressed) presses++; //add to the number of total presses.
+			down = pressed; // set down to the passed in value; the if statement is probably unnecessary...
+			if (pressed && !sticky) presses++; //add to the number of total presses.
 		}
 		
 		/** Processes the key presses. */
@@ -154,7 +155,9 @@ public class InputHandler implements MouseListener, KeyListener {
 				absorbs++; //process them!
 				clicked = true; // make clicked true, since key presses are still being processed.
 			} else { // All key presses so far for this key have been processed.
-				clicked = false; // set clicked to false, since we're done processing.
+				if (!sticky) sticky = presses > 3;
+				else sticky = down;
+				clicked = sticky ? down : false; // set clicked to false, since we're done processing; EXCEPT -- a special case.
 				//reset the presses and absorbs, to ensure they don't get too high, or something:
 				presses = 0;
 				absorbs = 0;

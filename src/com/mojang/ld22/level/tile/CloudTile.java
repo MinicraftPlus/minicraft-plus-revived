@@ -64,7 +64,7 @@ public class CloudTile extends Tile {
 			ToolItem tool = (ToolItem) item;
 			if (tool.type == ToolType.shovel) {
 				if (player.payStamina(5)) {
-					// level.setTile(xt, yt, Tile.infiniteFall, 0);
+					// level.setTile(xt, yt, Tile.infiniteFall, 0); // would allow you to shovel cloud, I think.
 					int count = random.nextInt(2) + 1;
 					for (int i = 0; i < count; i++) {
 						level.add(
@@ -79,8 +79,4 @@ public class CloudTile extends Tile {
 		}
 		return false;
 	}
-
-	/*
-	 * public boolean interact(Level level, int xt, int yt, Player player, Item item, int attackDir) { if (item instanceof ToolItem) { ToolItem tool = (ToolItem) item; if (tool.type == ToolType.pickaxe) { if (player.payStamina(4 - tool.level)) { hurt(level, xt, yt, random.nextInt(10) + (tool.level) * 5 + 10); return true; } } } return false; }
-	 */
 }

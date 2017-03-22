@@ -53,7 +53,7 @@ public class Entity {
 	public void hurt(Tile tile, int x, int y, int dmg) {}
 
 	public boolean move(int xa, int ya) {
-		if (!this.level.player.game.saving && (xa != 0 || ya != 0)) {
+		if (!level.player.game.saving && (xa != 0 || ya != 0)) {
 			boolean stopped = true;
 			if (xa != 0 && move2(xa, 0)) stopped = false;
 			if (ya != 0 && move2(0, ya)) stopped = false;
@@ -142,14 +142,13 @@ public class Entity {
 	public boolean use(Player player, int attackDir) {
 		return false;
 	}
-
+	
 	public int getLightRadius() {
 		return 0;
 	}
 
 	public void hurt(Tnt tnt, int dmg, int i) {
 		// TODO Auto-generated method stub
-
 	}
 
 	public void hurt(int i, int dmg, int dmg2) {

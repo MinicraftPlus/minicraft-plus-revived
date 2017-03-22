@@ -1,6 +1,6 @@
 package com.mojang.ld22.sound;
 
-import com.mojang.ld22.screen.StartMenu;
+import com.mojang.ld22.screen.OptionsMenu;
 import java.applet.Applet;
 import java.applet.AudioClip;
 
@@ -28,11 +28,11 @@ public class Sound {
 	}
 
 	public void play() {
-		if (!StartMenu.isSoundAct) return;
+		if (!OptionsMenu.isSoundAct) return;
 		try {
 			new Thread() { //creates a naew thread (string of events)
 				public void run() {
-					//if (StartMenu.isSoundAct)
+					//if (OptionsMenu.isSoundAct)
 					clip.play(); // plays the sound clip when called
 				}
 			}.start(); //runs the thread

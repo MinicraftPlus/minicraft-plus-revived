@@ -12,9 +12,7 @@ public class ToolItem extends Item {
 	public int counts = 1;
 
 	public static final int MAX_LEVEL = 5;
-	public static final String[] LEVEL_NAMES = { //
-		"Wood", "Rock", "Iron", "Gold", "Gem" //
-	};
+	public static final String[] LEVEL_NAMES = {"Wood", "Rock", "Iron", "Gold", "Gem"};
 
 	public ToolType type;
 	public int level = 0;

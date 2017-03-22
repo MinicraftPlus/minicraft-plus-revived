@@ -5,7 +5,7 @@ import com.mojang.ld22.gfx.Color;
 import com.mojang.ld22.level.Level;
 import com.mojang.ld22.level.tile.Tile;
 
-public class Resource {;
+public class Resource {
 	public static Resource wood = new Resource("Wood", 1 + 4 * 32, Color.get(-1, 200, 531, 430));
 	public static Resource stone = new Resource("Stone", 2 + 4 * 32, Color.get(-1, 111, 333, 555));
 	public static Resource flower = new PlantableResource("Flower", 0 + 4 * 32, Color.get(-1, 10, 444, 330), Tile.flower, Tile.grass, Tile.lightgrass);
@@ -24,11 +24,11 @@ public class Resource {;
 	public static Resource sbrick = new PlantableResource("St.Brick", 1 + 4 * 32, Color.get(-1, 333, 444, 444), Tile.sbrick, Tile.hole, Tile.water, Tile.lighthole, Tile.lightwater, Tile.lava);
 	
 	public static Resource wool = new PlantableResource("Wool", 2 + 4 * 32, Color.get(-1, 555, 555, 555), Tile.wool, Tile.hole, Tile.lighthole, Tile.lightwater, Tile.water);
-	public static Resource redwool = new PlantableResource("Wool", 2 + 4 * 32, Color.get(-1, 100, 300, 500), Tile.redwool, Tile.hole, Tile.water, Tile.lighthole, Tile.lightwater);
-	public static Resource bluewool = new PlantableResource("Wool", 2 + 4 * 32, Color.get(-1, 005, 115, 115), Tile.bluewool, Tile.hole, Tile.water, Tile.lighthole, Tile.lightwater);
-	public static Resource greenwool = new PlantableResource("Wool", 2 + 4 * 32, Color.get(-1, 10, 40, 50), Tile.greenwool, Tile.hole, Tile.water, Tile.lighthole, Tile.lightwater);
-	public static Resource yellowwool = new PlantableResource("Wool", 2 + 4 * 32, Color.get(-1, 110, 440, 552), Tile.yellowwool, Tile.hole, Tile.water, Tile.lighthole, Tile.lightwater);
-	public static Resource blackwool = new PlantableResource("Wool", 2 + 4 * 32, Color.get(-1, 000, 111, 111), Tile.blackwool, Tile.hole, Tile.water, Tile.lighthole, Tile.lightwater);
+	public static Resource redwool = new PlantableResource("Red Wool", 2 + 4 * 32, Color.get(-1, 100, 300, 500), Tile.redwool, Tile.hole, Tile.water, Tile.lighthole, Tile.lightwater);
+	public static Resource bluewool = new PlantableResource("Blue Wool", 2 + 4 * 32, Color.get(-1, 005, 115, 115), Tile.bluewool, Tile.hole, Tile.water, Tile.lighthole, Tile.lightwater);
+	public static Resource greenwool = new PlantableResource("Green Wool", 2 + 4 * 32, Color.get(-1, 10, 40, 50), Tile.greenwool, Tile.hole, Tile.water, Tile.lighthole, Tile.lightwater);
+	public static Resource yellowwool = new PlantableResource("Yellow Wool", 2 + 4 * 32, Color.get(-1, 110, 440, 552), Tile.yellowwool, Tile.hole, Tile.water, Tile.lighthole, Tile.lightwater);
+	public static Resource blackwool = new PlantableResource("Black Wool", 2 + 4 * 32, Color.get(-1, 000, 111, 111), Tile.blackwool, Tile.hole, Tile.water, Tile.lighthole, Tile.lightwater);
 	
 	public static Resource sand = new PlantableResource("Sand", 2 + 4 * 32, Color.get(-1, 110, 440, 550), Tile.sand, Tile.dirt, Tile.lightdirt);
 	
@@ -54,6 +54,17 @@ public class Resource {;
 	public static Resource iarmor = new ArmorResource("I.Armor", 3 + 12 * 32, Color.get(-1, 100, 322, 544), 5, 9);
 	public static Resource garmor = new ArmorResource("G.Armor", 3 + 12 * 32, Color.get(-1, 110, 330, 553), 7, 9);
 	public static Resource gemarmor = new ArmorResource("Gem Armor", 3 + 12 * 32, Color.get(-1, 101, 404, 545), 10, 9);
+	public static Resource redclothes = new ClothesResource("Red Clothes", 390, Color.get(-1, Color.rgb(50, 0, 0), Color.rgb(200, 0, 0), Color.rgb(250, 0, 0)), 200, 0, 0);
+	public static Resource blueclothes = new ClothesResource("Blue Clothes", 390, Color.get(-1, Color.rgb(0, 0, 50), Color.rgb(0, 0, 200), Color.rgb(0, 0, 250)), 0, 0, 200);
+	public static Resource greenclothes = new ClothesResource("Green Clothes", 390, Color.get(-1, Color.rgb(0, 50, 0), Color.rgb(0, 200, 0), Color.rgb(0, 250, 0)), 0, 200, 0);
+	public static Resource yellowclothes = new ClothesResource("Yellow Clothes", 390, Color.get(-1, Color.rgb(50, 50, 0), Color.rgb(200, 200, 0), Color.rgb(250, 250, 0)), 200, 200, 0);
+	public static Resource blackclothes = new ClothesResource("Black Clothes", 390, Color.get(-1, Color.rgb(0, 0, 0), Color.rgb(50, 50, 50), Color.rgb(100, 100, 100)), 50, 50, 50);
+	public static Resource orangeclothes = new ClothesResource("Orange Clothes", 390, Color.get(-1, Color.rgb(100, 50, 0), Color.rgb(200, 150, 0), Color.rgb(250, 200, 0)), 150, 100, 0);
+	public static Resource purpleclothes = new ClothesResource("Purple Clothes", 390, Color.get(-1, Color.rgb(50, 0, 100), Color.rgb(100, 0, 150), Color.rgb(200, 0, 250)), 100, 0, 150);
+	public static Resource cyanclothes = new ClothesResource("Cyan Clothes", 390, Color.get(-1, Color.rgb(0, 50, 100), Color.rgb(0, 100, 150), Color.rgb(0, 200, 250)), 0, 100, 150);
+	public static Resource regclothes = new ClothesResource("Reg Clothes", 390, Color.get(-1, Color.rgb(50, 50, 50), Color.rgb(200, 200, 200), Color.rgb(250, 250, 250)), 50, 50, 0);
+	
+	public static Resource key = new Resource("Key", 154, Color.get(-1, -1, 444, 550));
 	
 	public static Resource potion = new PotionResource("Potion", 155, Color.get(-1, 333, 310, 5), 0);
 	public static Resource speedpotion = new PotionResource("Speed P.", 155, Color.get(-1, 333, 310, 10), 1);

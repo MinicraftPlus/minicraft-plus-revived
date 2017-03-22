@@ -8,7 +8,7 @@ import com.mojang.ld22.item.ResourceItem;
 import com.mojang.ld22.item.resource.Resource;
 import com.mojang.ld22.level.tile.Tile;
 import com.mojang.ld22.screen.ModeMenu;
-import com.mojang.ld22.screen.StartMenu;
+import com.mojang.ld22.screen.OptionsMenu;
 import com.mojang.ld22.sound.Sound;
 
 public class Creeper extends Mob {
@@ -23,7 +23,14 @@ public class Creeper extends Mob {
 	private boolean fuseLit = false;
 
 	public Creeper(int lvl) {
-		if (StartMenu.diff == StartMenu.easy) {
+		if (lvl == 0) lvl = 1;
+		this.col0 = Color.get(-1, 10, 50, 40);
+		this.col1 = Color.get(-1, 20, 50, 40);
+		this.col2 = Color.get(-1, 10, 50, 30);
+		this.col3 = Color.get(-1, 0, 50, 30);
+		this.col4 = Color.get(-1, 20, 50, 30);
+		
+		if (OptionsMenu.diff == OptionsMenu.easy) {
 			this.lvl = lvl;
 			x = random.nextInt(64 * 16);
 			y = random.nextInt(64 * 16);
@@ -31,7 +38,7 @@ public class Creeper extends Mob {
 			else health = maxHealth = lvl * lvl * 10;
 		}
 
-		if (StartMenu.diff == StartMenu.norm) {
+		if (OptionsMenu.diff == OptionsMenu.norm) {
 			this.lvl = lvl;
 			x = random.nextInt(64 * 16);
 			y = random.nextInt(64 * 16);
@@ -39,7 +46,7 @@ public class Creeper extends Mob {
 			else health = maxHealth = lvl * lvl * 20;
 		}
 
-		if (StartMenu.diff == StartMenu.hard) {
+		if (OptionsMenu.diff == OptionsMenu.hard) {
 			this.lvl = lvl;
 			x = random.nextInt(64 * 16);
 			y = random.nextInt(64 * 16);
@@ -59,7 +66,7 @@ public class Creeper extends Mob {
 
 		isenemy = true;
 
-		if (StartMenu.diff == StartMenu.easy) {
+		if (OptionsMenu.diff == OptionsMenu.easy) {
 
 			if (fuseTime == 0) {
 				if (!fuseLit) {
@@ -118,7 +125,7 @@ public class Creeper extends Mob {
 			}
 		}
 
-		if (StartMenu.diff == StartMenu.norm) {
+		if (OptionsMenu.diff == OptionsMenu.norm) {
 
 			if (fuseTime == 0) {
 				if (!fuseLit) {
@@ -177,7 +184,7 @@ public class Creeper extends Mob {
 			}
 		}
 
-		if (StartMenu.diff == StartMenu.hard) {
+		if (OptionsMenu.diff == OptionsMenu.hard) {
 
 			if (fuseTime == 0) {
 				if (!fuseLit) {
@@ -411,7 +418,7 @@ public class Creeper extends Mob {
 	protected void die() {
 		super.die();
 
-		if (StartMenu.diff == StartMenu.easy) {
+		if (OptionsMenu.diff == OptionsMenu.easy) {
 			int count = random.nextInt(3) + 1;
 			for (int i = 0; i < count; i++) {
 				level.add(
@@ -421,7 +428,7 @@ public class Creeper extends Mob {
 								y + random.nextInt(11) - 5));
 			}
 		}
-		if (StartMenu.diff == StartMenu.norm) {
+		if (OptionsMenu.diff == OptionsMenu.norm) {
 			int count = random.nextInt(2) + 1;
 			for (int i = 0; i < count; i++) {
 				level.add(
@@ -431,7 +438,7 @@ public class Creeper extends Mob {
 								y + random.nextInt(11) - 5));
 			}
 		}
-		if (StartMenu.diff == StartMenu.hard) {
+		if (OptionsMenu.diff == OptionsMenu.hard) {
 			int count = random.nextInt(1) + 1;
 			for (int i = 0; i < count; i++) {
 				level.add(
@@ -446,6 +453,6 @@ public class Creeper extends Mob {
 		}
 
 		Game.multiplyer++;
-		Game.multiplyertime = Game.mtm = Game.mtm - 5;
+		Game.multiplyertime = Game.mtm -= 5;
 	}
 }

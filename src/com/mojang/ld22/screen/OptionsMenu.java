@@ -7,8 +7,8 @@ import com.mojang.ld22.gfx.Font;
 import com.mojang.ld22.gfx.Screen;
 import com.mojang.ld22.sound.Sound;
 
-public class StartMenu extends Menu {
-	//This is really the options menu; I don't know why it's called StartMenu...
+public class OptionsMenu extends Menu {
+	//This is really the options menu; I don't know why it's called OptionsMenu...
 	public static int easy = 1;
 	public static int norm = 2;
 	public static int hard = 3;
@@ -23,7 +23,9 @@ public class StartMenu extends Menu {
 
 	private Menu parent;
 
-	public StartMenu() {}
+	public OptionsMenu(Menu parent) {
+		this.parent = parent;
+	}
 
 	public void tick() {
 		if (input.getKey("left").clicked) {
@@ -44,8 +46,9 @@ public class StartMenu extends Menu {
 				//if (ModeMenu.hasSetDif == false) ModeMenu.survival = true;
 				//game.resetstartGame();
 				hasSetDiff = true;
-				if (TitleMenu.sentFromMenu) game.setMenu(new TitleMenu());
-				else game.setMenu(new PauseMenu(game.player));
+				game.setMenu(parent);
+				//if (TitleMenu.sentFromMenu) game.setMenu(new TitleMenu());
+				//else game.setMenu(new PauseMenu(game.player));
 			}
 		}
 
@@ -54,7 +57,7 @@ public class StartMenu extends Menu {
 		//toggles sound
 		if (input.getKey("s").clicked) {
 			Sound.craft.play();
-			//if(com.mojang.ld22.Game.debug) System.out.println("Sound toggle works!");
+			//if(Game.debug) System.out.println("Sound toggle works!");
 			isSoundAct = !isSoundAct;
 		}
 
