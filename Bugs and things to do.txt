@@ -1,3 +1,10 @@
+Current: reimp. of Spawner .mob from type Mob to type String
+
+	---Quick TODO's---
+-remove duplicate splashes
+-check that the "this text is blue" splash is actually blue
+-
+
 	####BUGS####
 ####
 Airwizard health bar is off-center.
@@ -25,3 +32,6 @@ Fix entity removal when sleeping? I think the idea is that all mobs within a cer
 ****
 Find something to do with Npc.java; currently, was never even implemented in the first place, even though it was made...
 ****
+change the getEntity methods, and similar, so that errors, or invalid object requests, can be easily found with a "missing texture" entity, rather than defaulting to a Zombie.
+****
+Figure out why Spawners are so weirdly implemented as furniture..?
