@@ -1,28 +1,35 @@
 # minicraft-plus-revived
-Minicraft+, code taken from version 1.6 originally, with the goal of adding back all the features currently in 1.8.
+Minicraft+, a modded version of minicraft that adds many more features to the original version. To learn more about minicraft, or play it yourself, take a look at [www.playminicraft.com](https://www.playminicraft.com).
 
-The idea is to sort of merge the decompiled code of 1.8 with this code, since this code is better-looking, but the other has more features and it's further ahead.
+This mod has resumed active development after a few years of inactivity, which caused a bit of trouble; but by now, it is finally back up and running, though the code isn't the prettiest at the moment. I'm working on it, though! :D
 
+## Current Major Features:
+Here is a small share of the more major features that this mod adds to the original minicraft game:
+* More Game modes -- Creative, Hardcore, and Score mode in addition to Survival
+* Save / Load System for worlds and settings
+* Many more mobs
+* Personal crafting menu
+* Potions
+* New weapons / tools, such as claymores and torches
+* Beds
+* Mob Spawners (with loot chests)
+* expanded storyline; 4th dungeon level, and Second Boss
+* 
+* Bigger screen size
 
-### The plan:
-
-1. Finish reintegrating the 1.8 features back into the 1.6 code; and clean it up at the same time.
-2. Add new features! Use ideas from:
-  * other minicraft versions
-  * minecraft
-  * my / other people's imagination
+That's all I can remember right now; you can find a more comprehensive list in [this minecraft forum post](http://www.minecraftforum.net/forums/off-topic/general-gaming/452036-v1-6-minicraft-plus). Be aware however, that it's old; it's from many years ago before the project was abandoned.
 
 #### Current Bugs / Needed Fixes:
 
 * Sound effect don't always play when they should.
-* I have a system in place to save custom key controls, but lack the menu to edit them... I need to get that fixed.
+
 * Clean up and simplify the code in various java files to make them both easier to follow and easier to develop.
 
 ### Long-term Goals:
 
 * Add commenting work done in [this repository](https://github.com/shylor/miniventure) to applicable code.
   * Has now been done for many files; but there are still more to go...
-
+* Also, just reformat code in general; still needs more work 
 * Add back:
   * Spawners
   * Colored Clothes
