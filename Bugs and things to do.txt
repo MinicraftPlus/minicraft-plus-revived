@@ -21,7 +21,7 @@ Make window resizable, and menus will be fine.
 	I think.... I think a lot of this will simply be changing all the 8's to "scale".
 ****
 Improve creative inventory system; perhaps just make it so you always have one of everything?
-Also inventory system in general
+Also inventory system in general.
 ****
 Fix entity removal when sleeping? I think the idea is that all mobs within a certain radius are removed when you go to sleep; but that doesn't happen, and in fact, they still track you when you're in bed... I could fix that, maybe.
 ****

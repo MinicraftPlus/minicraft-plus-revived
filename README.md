@@ -14,7 +14,6 @@ Here is a small share of the more major features that this mod adds to the origi
 * Beds
 * Mob Spawners (with loot chests)
 * expanded storyline; 4th dungeon level, and Second Boss
-* 
 * Bigger screen size
 
 That's all I can remember right now; you can find a more comprehensive list in [this minecraft forum post](http://www.minecraftforum.net/forums/off-topic/general-gaming/452036-v1-6-minicraft-plus). Be aware however, that it's old; it's from many years ago before the project was abandoned.
