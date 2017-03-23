@@ -1,4 +1,3 @@
-TODO: update README
 TODO: check that airwizard costume really does allow you to walk on air tiles.
 
 	####BUGS####
@@ -21,16 +20,10 @@ Make the loading system more forgiving, so that if I add a requirement to the sa
 Make window resizable, and menus will be fine.
 	I think.... I think a lot of this will simply be changing all the 8's to "scale".
 ****
-Make it so cloud tile can be placed in the sky level, on empty air tiles. Otherwise, they're useful for nothing...
-****
 Improve creative inventory system; perhaps just make it so you always have one of everything?
 Also inventory system in general
 ****
 Fix entity removal when sleeping? I think the idea is that all mobs within a certain radius are removed when you go to sleep; but that doesn't happen, and in fact, they still track you when you're in bed... I could fix that, maybe.
 ****
-Add "experience" feature back from minicraft+ 1.4.
-****
 Find something to do with Npc.java; currently, was never even implemented in the first place, even though it was made...
 ****
-----------
-request: more health

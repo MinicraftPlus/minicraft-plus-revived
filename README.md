@@ -3,7 +3,7 @@ Minicraft+, a modded version of minicraft that adds many more features to the or
 
 This mod has resumed active development after a few years of inactivity, which caused a bit of trouble; but by now, it is finally back up and running, though the code isn't the prettiest at the moment. I'm working on it, though! :D
 
-## Current Major Features:
+## Major Features
 Here is a small share of the more major features that this mod adds to the original minicraft game:
 * More Game modes -- Creative, Hardcore, and Score mode in addition to Survival
 * Save / Load System for worlds and settings
@@ -19,31 +19,31 @@ Here is a small share of the more major features that this mod adds to the origi
 
 That's all I can remember right now; you can find a more comprehensive list in [this minecraft forum post](http://www.minecraftforum.net/forums/off-topic/general-gaming/452036-v1-6-minicraft-plus). Be aware however, that it's old; it's from many years ago before the project was abandoned.
 
-#### Current Bugs / Needed Fixes:
+### Current Goals
 
-* Sound effect don't always play when they should.
+Things I plan on implementing, _hopefully_ sooner rather than later... ;)
 
-* Clean up and simplify the code in various java files to make them both easier to follow and easier to develop.
+* Finish reformatting the code in general; it still needs some more work to get it up to standards.
+  * Add commenting work done in [this repository](https://github.com/shylor/miniventure) to applicable code. This has now been done for many files; but there are still more to go...
 
-### Long-term Goals:
+* Modify the health system; likely by redoing armor, and perhaps the hunger too, so you still regenerate some health when you're at 9/10 hunger and such
 
-* Add commenting work done in [this repository](https://github.com/shylor/miniventure) to applicable code.
-  * Has now been done for many files; but there are still more to go...
-* Also, just reformat code in general; still needs more work 
-* Add back:
-  * Spawners
-  * Colored Clothes
-  * Experience (from 1.4)
+* Make it so cloud tile can be placed in the sky level, on empty air tiles. Otherwise, they're useful for nothing...
 
-* Tool and armor durability
-  * Make armor cut a percent of damage, rather than act as extra hearts
+### Ideas for future additions
 
-* Chest item transfer
-  * I personally can't stand how with chests, you always have to transfer all of a particular item, and you can't choose how much. I plan to change that.
+Things I will probably add later, rather than sooner.
 
-#### Ideas for future additions:
+* Auto-update system -- though, I might move this up, if this actually becomes something many people use.
+* Add back Experience bar, from version 1.4
+* Make the game window resizeable; maybe even full-screen..?
 
-* Auto-update system
+
+#### Far, far away...
+
+These are simply **ideas**, and have no guarantee of being implemented any time soon, or even at all. Could be becuase they're complicated, or could be because I just haven't bothered considering them yet. :P
+If their implementation becomes more likely, they will be moved to a different section.
+
 * Multiplayer Servers
   * Custom usernames
 * Custom Skins
@@ -52,7 +52,5 @@ That's all I can remember right now; you can find a more comprehensive list in [
 * Chickens
 * Minecarts
 
-  It's worth note that these are simply **ideas**, and have no garuntee of being implemented any time soon, or even at all. If they become more likely to implement, they will be move to "Long Term Goals".
 
-
-##### Random Note: LevelGen.java has it's own main method; use it to generate an image of a randomly generated map.
+##### Random Note: LevelGen.java has it's own main method; it's used for debug purposes, to make images of the randomly generated maps that the class makes.
