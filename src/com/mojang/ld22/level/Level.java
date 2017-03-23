@@ -74,6 +74,16 @@ public class Level {
 	public static String c(int i) {
 		return "" + i;
 	}
+	
+	/// This is a solely debug method I made, to make printing repetetive stuff easier.
+	private void printLevelLoc(String prepend, int x, int y) {
+		if(!Game.debug) return;
+		
+		String[] levelNames = {"Sky", "Surface", "Iron", "Gold", "Lava", "Dungeon"};
+		String levelName = levelNames[-1*depth+1];
+		
+		System.out.println(prepend + " on " + levelName + " level: x="+x + " y="+y);
+	}
 
 	@SuppressWarnings("unchecked")
 	public Level(int w, int h, int level, Level parentLevel) {
@@ -107,8 +117,8 @@ public class Level {
 			}
 		}
 		
-		if(Game.debug) System.out.println("Making level " + level);
-
+		//if(Game.debug) System.out.println("Making level " + level);
+		
 		if (level == 1) {
 			dirtColor = 444;
 		}
@@ -116,7 +126,7 @@ public class Level {
 		else if (level < 0 && level > -4) {
 			maps = LevelGen.createAndValidateUndergroundMap(w, h, -level);
 			monsterDensity = 4;
-
+		
 		} else if (level == -4) {
 			//if(Game.debug) System.out.println("making dungeon...");
 			maps = LevelGen.createAndValidateDungeon(w, h);
@@ -125,15 +135,14 @@ public class Level {
 			maps = LevelGen.createAndValidateSkyMap(w, h); // Sky level
 			monsterDensity = 4;
 		}
-
+		
 		tiles = maps[0];
 		data = maps[1];
-
+		
 		if (parentLevel != null) {
 			for (int y = 0; y < h; y++)
 				for (int x = 0; x < w; x++) {
 					if (parentLevel.getTile(x, y) == Tile.stairsDown) {
-						
 						setTile(x, y, Tile.stairsUp, 0);
 						if (level == -4) {
 							setTile(x - 1, y, Tile.o, 0);
@@ -204,7 +213,7 @@ public class Level {
 						if (level == 0) {
 							sux = x;
 							suy = y;
-							if(Game.debug) System.out.println("X = " + sux + " " + "Y = " + suy + " ");
+							if(Game.debug) System.out.println("X = " + sux + " " + "Y = " + suy + " "); //printLevelLoc("Player start pos", sux, suy);
 							setTile(x - 1, y, Tile.hardRock, 0);
 							setTile(x + 1, y, Tile.hardRock, 0);
 							setTile(x, y - 1, Tile.hardRock, 0);
@@ -236,38 +245,40 @@ public class Level {
 
 		if (level == -4 && !WorldSelectMenu.loadworld) {
 			for (int i = 0; i < (Game.debug?1:10 * (w / 128)); i++) {
-				final DungeonChest d = new DungeonChest();
+				DungeonChest d = new DungeonChest();
 				boolean addedchest = false;
-				while(!addedchest){final int x2 = this.random.nextInt(16 * w) / 16;
-				final int y2 = this.random.nextInt(16 * h) / 16;
-				if (this.getTile(x2, y2) == Tile.o) {
-					final boolean xaxis = this.random.nextBoolean();
-					if (xaxis) {
-						for (int s = x2; s < w - s; s++) {
-							if (this.getTile(s, y2) == Tile.ow) {
-								d.x = s * 16 - 24;
-								d.y = y2 * 16 - 24;
+				while(!addedchest) {
+					int x2 = this.random.nextInt(16 * w) / 16;
+					int y2 = this.random.nextInt(16 * h) / 16;
+					if (this.getTile(x2, y2) == Tile.o) {
+						boolean xaxis = this.random.nextBoolean();
+						if (xaxis) {
+							for (int s = x2; s < w - s; s++) {
+								if (this.getTile(s, y2) == Tile.ow) {
+									d.x = s * 16 - 24;
+									d.y = y2 * 16 - 24;
+								}
+							}
+						} else if (!xaxis) {
+							for (int s = y2; s < y2 - s; s++) {
+								if (this.getTile(x2, s) == Tile.ow) {
+									d.x = x2 * 16 - 24;
+									d.y = s * 16 - 24;
+								}
 							}
 						}
-					} else if (!xaxis) {
-						for (int s = y2; s < y2 - s; s++) {
-							if (this.getTile(x2, s) == Tile.ow) {
-								d.x = x2 * 16 - 24;
-								d.y = s * 16 - 24;
-							}
+						if (d.x == 0 && d.y == 0) {
+							d.x = x2 * 16 - 8;
+							d.y = y2 * 16 - 8;
 						}
+						if (this.getTile(d.x / 16, d.y / 16) == Tile.ow) {
+							this.setTile(d.x / 16, d.y / 16, Tile.o, 0);
+						}
+						this.add(d);
+						this.chestcount++;
+						addedchest = true;
+						//if (Game.debug) printLevelLoc("Added dungeon chest", x2, y2);
 					}
-					if (d.x == 0 && d.y == 0) {
-						d.x = x2 * 16 - 8;
-						d.y = y2 * 16 - 8;
-					}
-					if (this.getTile(d.x / 16, d.y / 16) == Tile.ow) {
-						this.setTile(d.x / 16, d.y / 16, Tile.o, 0);
-					}
-					this.add(d);
-					this.chestcount++;
-					addedchest = true;}
-					if (Game.debug) System.out.println("Added dungeon chest: x="+x2+" y="+y2);
 				}
 			}
 		}
@@ -327,11 +338,11 @@ public class Level {
 					}
 
 					this.add(sp);
-					if (Game.debug) System.out.println("Spawner added to level "+level+": x="+sp.x+" y="+sp.y);
+					if (Game.debug) printLevelLoc("Added Spawner", sp.x, sp.y);
 					for(int rpt = 1; rpt <= 2; rpt++) {
-						if (this.random.nextInt(2) == 0) {
+						if (random.nextInt(2) == 0) {
 							Chest c = new Chest();
-							this.addtoinv(c.inventory, -level);
+							addtoinv(c.inventory, -level);
 							c.x = sp.x - 16;
 							c.y = sp.y - 16;
 							if(Game.debug) System.out.println("Added Chest to level "+level+": X = " + c.x / 16 + ", Y = " + c.y / 16);
@@ -347,7 +358,31 @@ public class Level {
 			aw.x = w * 8;
 			aw.y = h * 8;
 			add(aw);
-			if(Game.debug) System.out.println("Added Air Wizard! X = " + aw.x + ", Y = " + aw.y);
+			//if(Game.debug) System.out.println("Added Air Wizard I! X = " + aw.x + ", Y = " + aw.y);
+		}
+		
+		if(Game.debug) {
+			System.out.println((WorldSelectMenu.loadworld?"Loading":"Making")+" level "+level+"...");
+			
+			// print stair locations
+			for (int x = 0; x < w; x++)
+				for (int y = 0; y < h; y++)
+					if(getTile(x, y) == Tile.stairsDown)
+						printLevelLoc("stairs down", x, y);
+			
+			// print Dungeon chest and airwizard locations
+			for (int x = 0; x < w; x++) {
+				for (int y = 0; y < h; y++) {
+					for (Entity e: getEntities(x, y, x, y)) {
+						if(e instanceof DungeonChest)
+							printLevelLoc("added Dungeon chest", x, y);
+						else if (e instanceof AirWizard)
+							printLevelLoc("put AirWizard"+(((AirWizard)e).secondform?" II":""), x, y);
+						//else if (e instanceof Spawner)*/
+					}
+				}
+			}
+			
 		}
 	}
 
@@ -610,9 +645,12 @@ public class Level {
 		entity.removed = false;
 		entities.add(entity);
 		entity.init(this);
+		
 		if (Game.debug) {
 			String clazz = entity.getClass().getCanonicalName();
-			if(clazz.contains("AirWizard")) {
+			clazz = clazz.substring(clazz.lastIndexOf(".")+1);
+			String searching = "AirWizardSpawnerGiantPlayer"; //can contain any number of class names I want to print when found.
+			if(searching.contains(clazz)) {
 				System.out.println("Adding Entity to level "+depth+" at x="+entity.x+" y="+entity.y+": " + clazz);
 			}
 		}

@@ -77,7 +77,7 @@ public class LevelGen {
 			byte[][] result = createTopMap(w, h);
 
 			int[] count = new int[256];
-
+			
 			for (int i = 0; i < w * h; i++) {
 				count[result[0][i] & 0xff]++;
 			}
@@ -90,7 +90,12 @@ public class LevelGen {
 			} else {
 				if (count[Tile.stairsDown.id & 0xff] < 12) continue;
 			}
-
+			/*
+			if(com.mojang.ld22.Game.debug) {
+			for (int i = 0; i < w * h; i++) {
+				if(result[0][i] == Tile.stairsDown.id)
+					System.out.println("stairs on surface: x=");
+			}}*/
 			return result;
 
 		} while (true);
@@ -156,7 +161,7 @@ public class LevelGen {
 		} while (true);
 	}
 
-	private static byte[][] createTopMap(int w, int h) {
+	private static byte[][] createTopMap(int w, int h) { // create surface map?
 		LevelGen mnoise1 = new LevelGen(w, h, 16);
 		LevelGen mnoise2 = new LevelGen(w, h, 16);
 		LevelGen mnoise3 = new LevelGen(w, h, 16);
@@ -186,20 +191,18 @@ public class LevelGen {
 				if (WorldGenMenu.type == WorldGenMenu.island) {
 
 					if (val < -0.5) {
-						if (WorldGenMenu.theme == WorldGenMenu.hell) {
+						if (WorldGenMenu.theme == WorldGenMenu.hell)
 							map[i] = Tile.lava.id;
-						}
-						if (WorldGenMenu.theme != WorldGenMenu.hell) {
+						else
 							map[i] = Tile.water.id;
-						}
 					} else if (val > 0.5 && mval < -1.5) {
 						map[i] = Tile.rock.id;
 					} else {
 						map[i] = Tile.grass.id;
 					}
-
+					
 				} else if (WorldGenMenu.type == WorldGenMenu.box) {
-
+					
 					if (val < -1.5) {
 						if (WorldGenMenu.theme == WorldGenMenu.hell) {
 							map[i] = Tile.lava.id;
@@ -387,12 +390,12 @@ public class LevelGen {
 			int y = random.nextInt(h - 2) + 1;
 
 			for (int yy = y - 1; yy <= y + 1; yy++)
-				for (int xx = x - 1; xx <= x + 1; xx++) {
-					if (map[xx + yy * w] != Tile.rock.id) continue stairsLoop;
-				}
-
+				for (int xx = x - 1; xx <= x + 1; xx++)
+					if (map[xx + yy * w] != Tile.rock.id)
+						continue stairsLoop;
+			
 			map[x + y * w] = Tile.stairsDown.id;
-			//if(com.mojang.ld22.Game.debug) System.out.println("Stair down on level 3, x="+x+" y="+y);
+			//if(com.mojang.ld22.Game.debug) System.out.println("Stair down on surface, x="+x+" y="+y); // it doesn't work!
 			count++;
 			if (WorldGenMenu.sized == 128) {
 				if (count == 6) break;
@@ -463,7 +466,7 @@ public class LevelGen {
 				}
 			
 			map[x + y * w] = Tile.ow.id;
-			if(com.mojang.ld22.Game.debug) System.out.println("Obsidian, x="+x+" y="+y);
+			//if(com.mojang.ld22.Game.debug) System.out.println("Obsidian, x="+x+" y="+y);
 
 			count++;
 			if (count == 2) break;
@@ -603,7 +606,7 @@ public class LevelGen {
 					}
 					
 				map[x + y * w] = Tile.stairsDown.id;
-				if(com.mojang.ld22.Game.debug) System.out.println("stairs, x="+x+" y="+y);
+				//if(com.mojang.ld22.Game.debug) System.out.println("stairs, x="+x+" y="+y);
 				count++;
 				if (WorldGenMenu.sized == 128) {
 					if (count == 4) break;
@@ -672,7 +675,7 @@ public class LevelGen {
 				}
 
 			map[x + y * w] = Tile.stairsDown.id;
-			if(com.mojang.ld22.Game.debug) System.out.println("sky stairs, x="+x+" y="+y);
+			//if(com.mojang.ld22.Game.debug) System.out.println("sky stairs, x="+x+" y="+y);
 			count++;
 			if (count == 2) break;
 		}

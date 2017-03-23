@@ -34,7 +34,8 @@ import java.util.List;
 public class Player extends Mob {
 	private InputHandler input;
 	public Game game;
-
+	
+	public static int movespeed = 1;
 	public static Inventory Sinventory;
 	public static int score;
 	public static int SHealth = 10;
@@ -370,24 +371,26 @@ public class Player extends Mob {
 		xa = 0;
 		ya = 0;
 		if (!Game.isfishing) {
-			if (input.getKey("up").down) {
-				ya--;
-				stepCount++;
-			}
-			if (input.getKey("down").down) {
-				ya++;
-				stepCount++;
-			}
-			if (input.getKey("left").down) {
-				xa--;
-				stepCount++;
-			}
-			if (input.getKey("right").down) {
-				xa++;
-				stepCount++;
+			for(int moves = 1; moves <= movespeed; moves++) { // allows for multiple steps walked per tick.
+				if (input.getKey("up").down) {
+					ya--;
+					stepCount++;
+				}
+				if (input.getKey("down").down) {
+					ya++;
+					stepCount++;
+				}
+				if (input.getKey("left").down) {
+					xa--;
+					stepCount++;
+				}
+				if (input.getKey("right").down) {
+					xa++;
+					stepCount++;
+				}
 			}
 		}
-
+		
 		xx = x;
 		yy = y;
 		if (isSwimming() && tickTime % 60 == 0 && !infswim) {

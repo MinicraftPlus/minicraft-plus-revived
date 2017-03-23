@@ -599,17 +599,22 @@ public class Game extends Canvas implements Runnable {
 					if (input.getKey("creative").clicked) ModeMenu.updateModeBools(2);
 					if (input.getKey("survival").clicked) ModeMenu.updateModeBools(1);
 					
-					if (input.getKey("shift").down/* && input.getKey("b").clicked*/) {
-						// the equals is the plus key; maybe i should base getKey off of the key typed..? Would have to be the key that WOULD have been typed, though, if that's possible.
-						if (input.getKey("Equals").clicked && gamespeed >= 1) gamespeed += 1;
-						if (input.getKey("Equals").clicked && gamespeed < 1) gamespeed *= 2;
-						if (input.getKey("Minus").clicked && gamespeed > 1) gamespeed -= 1;
-						if (input.getKey("Minus").clicked && gamespeed <= 1) gamespeed /= 2;
-						//gamespeed = (gamespeed == 1 ? 20 : 1);
+					if (input.getKey("shift").down) {
+						if (input.getKey("alt").down) {
+							if (input.getKey("Equals").clicked && gamespeed >= 1) gamespeed++;
+							if (input.getKey("Equals").clicked && gamespeed < 1) gamespeed *= 2;
+							if (input.getKey("Minus").clicked && gamespeed > 1) gamespeed--;
+							if (input.getKey("Minus").clicked && gamespeed <= 1) gamespeed /= 2;
+						}
+						else {
+							if (input.getKey("Equals").clicked) Player.movespeed++;
+							if (input.getKey("Minus").clicked && Player.movespeed > 0) Player.movespeed--;
+						}
 					}
-				}
+				} // end debug only cond.
 			} // end "menu-null" conditional
 		} // end hasfocus conditional
+		
 	} // end tick()
 	
 	/** This method changes the level that the player is currently on.
