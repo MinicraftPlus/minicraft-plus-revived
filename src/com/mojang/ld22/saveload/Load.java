@@ -338,8 +338,8 @@ public class Load {
 					Spawner egg = (Spawner)newEntity;
 					egg.x = Integer.parseInt((String)info.get(0));
 					egg.y = Integer.parseInt((String)info.get(1));
-					egg.mob = getEntity((String)info.get(2), player);
 					egg.lvl = Integer.parseInt((String)info.get(3));
+					egg.setMob((String)info.get(2));
 					currentlevel = Integer.parseInt((String)info.get(info.size() - 1));
 					Game.levels[currentlevel].add(egg);
 				} else {
@@ -385,7 +385,7 @@ public class Load {
 			case "Chest": return (Entity)(new Chest());
 			case "DeathChest": return (Entity)(new Chest(true));
 			case "DungeonChest": return (Entity)(new DungeonChest());
-			case "Spawner": return (Entity)(new Spawner(new Zombie(1), 1));
+			case "Spawner": return (Entity)(new Spawner("Zombie", 1));
 			case "Anvil": return (Entity)(new Anvil());
 			case "Enchanter": return (Entity)(new Enchanter());
 			case "Loom": return (Entity)(new Loom());

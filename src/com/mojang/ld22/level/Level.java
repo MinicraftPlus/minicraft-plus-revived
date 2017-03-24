@@ -76,8 +76,9 @@ public class Level {
 	}
 	
 	/// This is a solely debug method I made, to make printing repetetive stuff easier.
+		// should be changed to accept prepend and entity, or a tile (as an Object). It will get the coordinates and class name from the object, and will divide coords by 16 if passed an entity.
 	private void printLevelLoc(String prepend, int x, int y) {
-		if(!Game.debug) return;
+		//if(!Game.debug) return;
 		
 		String[] levelNames = {"Sky", "Surface", "Iron", "Gold", "Lava", "Dungeon"};
 		String levelName = levelNames[-1*depth+1];
@@ -117,7 +118,7 @@ public class Level {
 			}
 		}
 		
-		//if(Game.debug) System.out.println("Making level " + level);
+		if(Game.debug) System.out.println((WorldSelectMenu.loadworld?"Loading":"Making")+" level "+level+"...");
 		
 		if (level == 1) {
 			dirtColor = 444;
@@ -238,7 +239,7 @@ public class Level {
 				}
 		}
 
-		entitiesInTiles = new ArrayList[w * h];
+		entitiesInTiles = new ArrayList[w * h]; // This is actually an array of arrayLists (of entities).
 		for (int i = 0; i < w * h; i++) {
 			entitiesInTiles[i] = new ArrayList<Entity>();
 		}
@@ -284,14 +285,16 @@ public class Level {
 		}
 		if (level < 0 && !WorldSelectMenu.loadworld) {
 			for (int i = 0; i < 18 / -level * (w / 128); i++) {
-				Mob m = new Mob();
+				/// for generating spawner dungeons
+				//Mob m = new Mob();
+				String m = "";
 				int r = this.random.nextInt(5);
 				if (r == 1) {
-					m = new Skeleton(-level);
+					m = "Skeleton";//new Skeleton(-level);
 				} else if (r == 2 || r == 0) {
-					m = new Slime(-level);
+					m = "Slime";//new Slime(-level);
 				} else {
-					m = new Zombie(-level);
+					m = "Zombie";//new Zombie(-level);
 				}
 				
 				Spawner sp = new Spawner(m, -level);
@@ -338,14 +341,14 @@ public class Level {
 					}
 
 					this.add(sp);
-					if (Game.debug) printLevelLoc("Added Spawner", sp.x, sp.y);
+					//if (Game.debug) printLevelLoc("Added Spawner", sp.x/16, sp.y/16);
 					for(int rpt = 1; rpt <= 2; rpt++) {
 						if (random.nextInt(2) == 0) {
 							Chest c = new Chest();
 							addtoinv(c.inventory, -level);
 							c.x = sp.x - 16;
 							c.y = sp.y - 16;
-							if(Game.debug) System.out.println("Added Chest to level "+level+": X = " + c.x / 16 + ", Y = " + c.y / 16);
+							//if(Game.debug) printLevelLoc("Added Chest", c.x/16, c.y/16);
 							this.add(c);
 						}
 					}
@@ -355,34 +358,34 @@ public class Level {
 
 		if (level == 1 && !WorldSelectMenu.loadworld) {
 			AirWizard aw = new AirWizard(false);
-			aw.x = w * 8;
-			aw.y = h * 8;
+			aw.x = w * 16 / 2;
+			aw.y = h * 16 / 2;
 			add(aw);
 			//if(Game.debug) System.out.println("Added Air Wizard I! X = " + aw.x + ", Y = " + aw.y);
 		}
 		
 		if(Game.debug) {
-			System.out.println((WorldSelectMenu.loadworld?"Loading":"Making")+" level "+level+"...");
+			//System.out.println((WorldSelectMenu.loadworld?"Loading":"Making")+" level "+level+"...");
 			
 			// print stair locations
 			for (int x = 0; x < w; x++)
 				for (int y = 0; y < h; y++)
 					if(getTile(x, y) == Tile.stairsDown)
-						printLevelLoc("stairs down", x, y);
+						printLevelLoc("Stairs down", x, y);
 			
 			// print Dungeon chest and airwizard locations
-			for (int x = 0; x < w; x++) {
-				for (int y = 0; y < h; y++) {
-					for (Entity e: getEntities(x, y, x, y)) {
+			/*//for (int x = 0; x < w; x++) {
+			//	for (int y = 0; y < h; y++) {
+					for (Entity e: getEntities(0, 0, w, h)) {
 						if(e instanceof DungeonChest)
-							printLevelLoc("added Dungeon chest", x, y);
+							printLevelLoc("Added Dungeon chest", e.x/16, e.y/16);
 						else if (e instanceof AirWizard)
-							printLevelLoc("put AirWizard"+(((AirWizard)e).secondform?" II":""), x, y);
+							printLevelLoc("Added AirWizard"+(((AirWizard)e).secondform?" II":""), e.x/16, e.y/16);
 						//else if (e instanceof Spawner)*/
-					}
-				}
-			}
-			
+			//		}
+				//}
+			//}
+			System.out.println();
 		}
 	}
 
@@ -562,9 +565,9 @@ public class Level {
 	}
 
 	private List<Entity> rowSprites = new ArrayList<Entity>();
-
+	
 	public Player player;
-
+	
 	public void renderSprites(Screen screen, int xScroll, int yScroll) {
 		int xo = xScroll >> 4;
 		int yo = yScroll >> 4;
@@ -649,9 +652,13 @@ public class Level {
 		if (Game.debug) {
 			String clazz = entity.getClass().getCanonicalName();
 			clazz = clazz.substring(clazz.lastIndexOf(".")+1);
-			String searching = "AirWizardSpawnerGiantPlayer"; //can contain any number of class names I want to print when found.
-			if(searching.contains(clazz)) {
-				System.out.println("Adding Entity to level "+depth+" at x="+entity.x+" y="+entity.y+": " + clazz);
+			String[] searching = {"StairsDown", "Spawner", "Chest", "DungeonChest", "AirWizard"}; //can contain any number of class names I want to print when found.
+			for(String search: searching) {
+				if(search.equals(clazz)) {
+					if (clazz == "AirWizard") clazz += ((AirWizard)entity).secondform ? " II" : "";
+					printLevelLoc("Adding " + clazz, entity.x/16, entity.y/16);//System.out.println("Adding Entity to level "+depth+" at x="+(entity.x/16)+" y="+(entity.y/16)+": " + clazz);
+					break;
+				}
 			}
 		}
 		

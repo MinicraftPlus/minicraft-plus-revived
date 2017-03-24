@@ -242,7 +242,7 @@ public class Save {
 				
 				if(e instanceof Spawner) {
 					Spawner egg = (Spawner)e;
-					extradata += ":" + egg.mob.getClass().getCanonicalName().replace("com.mojang.ld22.entity.", "") + ":" + egg.lvl;
+					extradata += ":" + egg.mob + ":" + egg.lvl;
 				}
 				
 				data.add(name + "[" + e.x + ":" + e.y + extradata + ":" + l + "]");
