@@ -6,6 +6,7 @@ import com.mojang.ld22.gfx.Screen;
 import com.mojang.ld22.level.Level;
 
 public class ExplodedTile extends Tile {
+	/// This class is for tiles WHILE THEY ARE EXPLODING
 	public ExplodedTile(int id) {
 		super(id);
 		connectsToSand = true;

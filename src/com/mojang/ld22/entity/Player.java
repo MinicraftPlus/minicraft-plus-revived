@@ -757,7 +757,7 @@ public class Player extends Mob {
 				spawny = y;
 				this.x = spawnx * 16 + 8;
 				this.y = spawny * 16 + 8;
-				if (Game.debug) System.out.println("START POS FOUND, TILE ID: " + level.getTile(spawnx, spawny).id);
+				//if (Game.debug) System.out.println("START POS FOUND, TILE ID: " + level.getTile(spawnx, spawny).id);
 				return true;
 			}
 		}

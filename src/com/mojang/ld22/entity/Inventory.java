@@ -115,7 +115,7 @@ public class Inventory {
 		return true;
 	}
 	
-	public boolean removeItem(Item i) {
+	public boolean removeItem(Item i) { // apparently this can only be a lava bucket...
 		BucketLavaItem ri = (BucketLavaItem)this.findItem(i);
 		if(ri == null) {
 			return false;
