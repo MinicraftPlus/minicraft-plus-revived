@@ -115,7 +115,7 @@ public class Game extends Canvas implements Runnable {
 	public static boolean autosave; //if autosave feature is enabled.
 	public static int astime; //stands for Auto-Save Time (interval)
 	public static String savedtext = ""; //?to display save msg, along with notifications?
-	public static List notifications = new ArrayList();
+	public static List<String> notifications = new ArrayList<String>();
 	
 	public int asTick; //? Tracks time throughout the save process.
 	public boolean saving; // If the game is performing a save.
@@ -474,19 +474,14 @@ public class Game extends Canvas implements Runnable {
 			tickReset = false;
 		}
 		
-		isDayNoSleep = tickCount < 54000;
+		isDayNoSleep = tickCount < 42000;
 		
-		if (tickCount == 0) time = 0; // morning
-		
+		if (tickCount <= 0) time = 0; // morning
 		if (tickCount == 3600) level.removeAllEnemies();
-		
 		if (tickCount == 7200) time = 1; // day
-		
 		if (tickCount == 36000) time = 2; // evening
-		
 		if (tickCount == 43200) time = 3; // night
-		
-		if (tickCount == 64800) { // morning
+		if (tickCount >= 64800) { // morning
 			time = 0;
 			tickCount = 0;
 		}
@@ -498,7 +493,7 @@ public class Game extends Canvas implements Runnable {
 			
 			if (scoreTime < 1 && !player.removed) {
 				setMenu(new WonMenu(player));
-				if(Game.debug) System.out.println(player.score);
+				if(Game.debug) System.out.println("final player score: "+player.score);
 				//Extra score from drops.
 				player.score += (Inventory.scored(Resource.cloth) * (random.nextInt(2) + 1) * ism);
 				player.score += (Inventory.scored(Resource.slime) * (random.nextInt(2) + 1) * ism);
@@ -512,7 +507,7 @@ public class Game extends Canvas implements Runnable {
 				if (multiplyertime != 0) multiplyertime--;
 				if (multiplyertime == 0) {
 					multiplyer = 1;
-					multiplyertime = mtm = 300;
+					multiplyertime = mtm;
 				}
 			}
 			if (multiplyer > 50) multiplyer = 50;
@@ -526,9 +521,6 @@ public class Game extends Canvas implements Runnable {
 			count--;
 			if (count == 0) reverse = false;
 		}
-		
-		//if(Game.debug) System.out.println(tickCount);
-		//if(Game.debug) System.out.println(Bed.hasBeenTrigged);
 		
 		//This is the general action statement thing! Regulates menus, mostly.
 		if (!hasFocus()) {
@@ -580,17 +572,18 @@ public class Game extends Canvas implements Runnable {
 						//setMenu(new LoadingMenu());
 						DeadMenu.shudrespawn = false;
 						level.remove(player);
-						//resetGame();
+						resetGame();
 						resetstartGame();
 					}
-					if (input.getKey("dayTime").clicked) {
-						Game.time = 0;
-						Game.tickCount = 6000;
-					}
-					if (input.getKey("nightTime").clicked) {
-						Game.time = 3;
-						Game.tickCount = 54000;
-					}
+					if (input.getKey("1").clicked) //Game.time = 0;
+						tickCount = 6000;
+					if (input.getKey("2").clicked) //Game.time = 1;
+						tickCount = 54000;
+					if (input.getKey("3").clicked) //Game.time = 2;
+						tickCount = 6000;
+					if (input.getKey("4").clicked) //Game.time = 3;
+						tickCount = 54000;
+					
 					if (input.getKey("shift").down && input.getKey("g").clicked) {
 						for (int i = 0; i < ListItems.items.size(); i++) {
 							player.inventory.add((com.mojang.ld22.item.Item) ListItems.items.get(i));
@@ -600,7 +593,7 @@ public class Game extends Canvas implements Runnable {
 					if (input.getKey("survival").clicked) ModeMenu.updateModeBools(1);
 					
 					if (input.getKey("shift").down) {
-						if (input.getKey("alt").down) {
+						if (input.getKey("alt").down && false) {
 							if (input.getKey("Equals").clicked && gamespeed >= 1) gamespeed++;
 							if (input.getKey("Equals").clicked && gamespeed < 1) gamespeed *= 2;
 							if (input.getKey("Minus").clicked && gamespeed > 1) gamespeed--;
@@ -784,19 +777,6 @@ public class Game extends Canvas implements Runnable {
 			
 		}
 		
-		/*
-		/// Render AirWizard health bar: (I need to update this)
-		
-		int awh = AirWizard.healthstat / 20;
-		if (awh == 0) // This just turns 0% into 1% to avoid confunsion.
-		awh = 1;
-		
-		// draw AirWizard health if on the sky level, and health > 0.
-		if (currentLevel == 4 && AirWizard.healthstat > 0) {
-			Font.draw("AirWizard Health " + awh + "%",
-			  screen, 84, screen.h - (ModeMenu.score ? 180 : 190), Color.get(100, 50, 50, 50));
-		}
-		*/
 		// This is the arrow counter. ^ = infinite symbol.
 		if (ModeMenu.creative || ac >= 10000)
 			Font.draw("	x" + "^", screen, 84, screen.h - 16, Color.get(0, 333, 444, 555));
@@ -817,7 +797,7 @@ public class Game extends Canvas implements Runnable {
 		
 		if (notifications.size() > 0) {
 			notetick++;
-			if (notifications.size() > 3) { //only show 3 notifs max at one time; erase old notifs?
+			if (notifications.size() > 3) { //only show 3 notifs max at one time; erase old notifs.
 				notifications = notifications.subList(notifications.size() - 3, notifications.size());
 			}
 			
@@ -830,7 +810,7 @@ public class Game extends Canvas implements Runnable {
 			for (int i = 0; i < notifications.size(); i++) {
 				String note = ((String) notifications.get(i));
 				int x = screen.w / 2 - note.length() * 8 / 2,
-				  y = screen.h - 120 - i * 8;
+				  y = screen.h - 120 - notifications.size()*8 + i * 8;
 				Font.draw(note, screen, x + 1, y + 1, Color.get(-1, 111, 111, 111));
 				Font.draw(note, screen, x, y, Color.get(-1, 555, 555, 555));
 			}
@@ -839,45 +819,23 @@ public class Game extends Canvas implements Runnable {
 		// SCORE MODE ONLY:
 		
 		if (ModeMenu.score) {
-			int cols = Color.get(330, 555, 555, 555);
 			int seconds = scoreTime / 60;
 			int minutes = seconds / 60;
 			int hours = minutes / 60;
 			minutes %= 60;
 			seconds %= 60;
 			
-			if(this.scoreTime > 18000) {
-				Font.draw("Time left " + minutes + "m " + seconds + "s", this.screen, 84, this.screen.h - 190, Color.get(0, 555, 555, 555));
-			} else if(this.scoreTime < 3600) {
-				Font.draw("Time left " + minutes + "m " + seconds + "s", this.screen, 84, this.screen.h - 190, cols);
-			} else {
-				Font.draw("Time left " + minutes + "m " + seconds + "s", this.screen, 84, this.screen.h - 190, Color.get(330, 555, 555, 555));
-			}
-
-			if(multiplyer > 1 && multiplyer < 50) {
-				Font.draw("X" + multiplyer, this.screen, 260, this.screen.h - 190, Color.get(-1, 540, 540, 540));
-			} else if(multiplyer > 49) {
-				Font.draw("X" + multiplyer, this.screen, 260, this.screen.h - 190, Color.get(-1, 500, 500, 500));
-			}
-			/*
-			if(scoreTime > 18000) cols = Color.get(000, 555, 555, 555);
-			else if(scoreTime < 3600) {
-				if (count <= 5) cols = Color.get(500, 555, 555, 555);
-				else if (count <= 10) cols = Color.get(400, 555, 555, 555);
-				else if (count <= 15) cols = Color.get(300, 555, 555, 555);
-				else if (count <= 20) cols = Color.get(200, 555, 555, 555);
-				else if (count <= 25) cols = Color.get(100, 555, 555, 555);
-			}
+			int timeCol;
+			if(scoreTime >= 18000) timeCol = Color.get(0, 555, 555, 555);
+			else if (scoreTime >= 3600) timeCol = Color.get(330, 555, 555, 555);
+			else timeCol = Color.get(330, 555, 555, 555);
 			
-			Font.draw("Time left " + minutes + "m " + seconds + "s", screen, 84, screen.h - 190, cols);
+			Font.draw("Time left " + minutes + "m " + seconds + "s", screen, 84, screen.h - 190, timeCol);
 			
 			if(multiplyer > 1) {
 				int multColor = multiplyer < 50 ? Color.get(-1, 540, 540, 540) : Color.get(-1, 500, 500, 500);
 				Font.draw("X" + multiplyer, screen, 260, screen.h - 190, multColor);
 			}
-			
-			Font.draw(multiplyertime + " " + mtm + "", screen, 230, screen.h - 180, Color.get(-1, 5, 5, 5));
-			*/
 		}
 
 		// FISHING ROD STATUS
@@ -892,7 +850,7 @@ public class Game extends Canvas implements Runnable {
 			for(int i = 0; i < player.potioneffects.size(); i++) {
 				if(player.showpotioneffects) {
 					int pcol = Color.get(PotionResource.potionColor((String)player.potioneffects.get(i)), 555, 555, 555);
-					Font.draw("("+input.getPhysKey("potionEffects")+" to hide!)", screen, 180, screen.h - 183, Color.get(0, 555, 555, 555));
+					Font.draw("("+input.getMapping("potionEffects")+" to hide!)", screen, 180, screen.h - 183, Color.get(0, 555, 555, 555));
 					Font.draw((String)player.potioneffects.get(i) + " (" + ((Integer)player.potioneffectstime.get(i)).intValue() / 60 / 60 + ":" + (((Integer)player.potioneffectstime.get(i)).intValue() / 60 - 60 * (((Integer)player.potioneffectstime.get(i)).intValue() / 60 / 60)) + ")", screen, 180, screen.h - (175 - i * 8), pcol);
 				}
 			}
