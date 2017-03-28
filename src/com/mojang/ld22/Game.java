@@ -291,7 +291,6 @@ public class Game extends Canvas implements Runnable {
 		wonTimer = 0;
 		gameTime = 0;
 		Player.hasSetHome = false;
-		Player.canGoHome = false;
 		hasWon = false;
 		currentLevel = 3;
 		
@@ -329,7 +328,6 @@ public class Game extends Canvas implements Runnable {
 		wonTimer = 0;
 		gameTime = 0;
 		Player.hasSetHome = false;
-		Player.canGoHome = false;
 		Bed.hasBedSet = false; //no bed
 
 		if (!OptionsMenu.hasSetDiff) OptionsMenu.diff = 2;

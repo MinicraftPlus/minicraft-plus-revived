@@ -40,7 +40,7 @@ public class Player extends Mob {
 	public static int score;
 	public static int SHealth = 10;
 	public static int SHunger = 10;
-	public static boolean hasSetHome, canSetHome, canGoHome, sentFromSetHome, sentFromHome;
+	public static boolean hasSetHome;
 	//These 2 ints are ints saved from the first spawn - this way the spawn pos is always saved.
 	public static int spawnx = 0, spawny = 0;
 	public static int xx, yy;
@@ -757,7 +757,6 @@ public class Player extends Mob {
 				spawny = y;
 				this.x = spawnx * 16 + 8;
 				this.y = spawny * 16 + 8;
-				//if (Game.debug) System.out.println("START POS FOUND, TILE ID: " + level.getTile(spawnx, spawny).id);
 				return true;
 			}
 		}
@@ -767,61 +766,38 @@ public class Player extends Mob {
 		if (Game.currentLevel == 3) {
 			homeSetX = this.x;
 			homeSetY = this.y;
-			//canSetHome = true;
-			//sentFromSetHome = true;
 			hasSetHome = true;
 			Game.notifications.add("Set your home!");
-			//game.setMenu(new InfoMenu());
 		} else {
-			//canSetHome = false;
-			//sentFromSetHome = true;
 			Game.notifications.add("Can't set home here!");
-			//game.setMenu(new InfoMenu());
 		}
 	}
 
 	public void goHome() {
 		if (Game.currentLevel == 3) {
-			//canGoHome = true;
-			//sentFromHome = true;
 			if (hasSetHome == true) {
 				this.x = homeSetX;
 				this.y = homeSetY;
 				if (ModeMenu.hardcore) hurt(this, 2, attackDir);
 				stamina = 0;
-				//sentFromHome = true;
-				Game.notifications.add("Home Sweet Home!");//game.setMenu(new HomeMenu());
+				Game.notifications.add("Home Sweet Home!");
 				if (ModeMenu.hardcore) Game.notifications.add("Mode penalty: -2 health");
-				//if (Game.debug) System.out.println(sentFromHome);
 			} else {
 				//can go home, but no home set.
-				Game.notifications.add("You don't have a home!");//game.setMenu(new HomeMenu());
+				Game.notifications.add("You don't have a home!");
 			}
 		} else {
-			//canGoHome = false;
-			//hasSetHome = false;
-			//sentFromHome = true;
 			Game.notifications.add("You can't go home from here!");
-			//game.setMenu(new HomeMenu());
-			//if (Game.debug) System.out.println(sentFromHome);
 		}
 	}
 
 	public boolean respawn(Level level) {
-		//while (true) {
-			//int x = spawnx;
-			//int y = spawny;
-			if (!(bedSpawn || level.getTile(spawnx, spawny) == Tile.grass))
-				findStartPos(level);
-			
-			//if (Game.debug) System.out.println("RESPAWN TILE ID: " + level.getTile(spawnx, spawny).id);
-			this.x = spawnx * 16 + 8;
-			this.y = spawny * 16 + 8;
-			//System.out.println("BEDSPAWN=" + bedSpawn);
-			return true;
-			//if (Game.debug) System.out.println("you should only see this once (or not at all) per load.");
-			
-		//}
+		if (!(bedSpawn || level.getTile(spawnx, spawny) == Tile.grass))
+			findStartPos(level);
+		
+		this.x = spawnx * 16 + 8;
+		this.y = spawny * 16 + 8;
+		return true;
 	}
 
 	public boolean payStamina(int cost) {
