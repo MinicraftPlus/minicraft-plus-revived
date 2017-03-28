@@ -18,7 +18,6 @@ public class AirWizard extends Mob {
 	private int attackDelay = 0;
 	private int attackTime = 0;
 	private int attackType = 0;
-	//public int healthstat;
 	public static boolean beaten = false;
 	public boolean secondform = false;
 	Random r = new Random();
@@ -173,11 +172,7 @@ public class AirWizard extends Mob {
 				// change colors.
 				col1 = secondform ? Color.get(-1, 2, 0, 46) : Color.get(-1, 500, 100, 555);
 				col2 = secondform ? Color.get(-1, 2, 0, 46) : Color.get(-1, 500, 100, 532);
-		}/* else if () { // ...and tickTime is divisible by 20...
-				// ...change colors... in the same way.
-				col1 = Color.get(-1, 500, 100, 555);
-				col2 = Color.get(-1, 500, 100, 532);
-		}*/
+		}
 		
 		if (hurtTime > 0) { //if the air wizards hurt time is above 0... (hurtTime value in Mob.java)
 			// turn the sprite white, momentarily.
@@ -207,9 +202,9 @@ public class AirWizard extends Mob {
 			textcol = Color.get(-1, 440, 440, 440);
 			textcol2 = Color.get(-1, 110, 110, 110);
 		}
-		
-		Font.draw(h, screen, x - h.length() / 2 + 1, y - 17, textcol2);
-		Font.draw(h, screen, x - h.length() / 2, y - 18, textcol);
+		int textwidth = h.length() * 8;
+		Font.draw(h, screen, (x - textwidth/2) + 1, y - 17, textcol2);
+		Font.draw(h, screen, (x - textwidth/2), y - 18, textcol);
 	}
 	
 	/** What happens when the player (or any entity) touches the air wizard */
@@ -240,7 +235,7 @@ public class AirWizard extends Mob {
 			level.player.game.notetick = -200;
 			OptionsMenu.unlockedskin = true;
 			BufferedWriter bufferedWriter = null;
-
+			
 			try {
 				bufferedWriter = new BufferedWriter(new FileWriter(location + "/unlocks.miniplussave", true));
 				bufferedWriter.write("AirSkin");
