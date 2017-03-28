@@ -1,5 +1,3 @@
-//respawn mod +dillyg10+
-
 package com.mojang.ld22.entity;
 
 import com.mojang.ld22.Game;
@@ -18,8 +16,6 @@ import com.mojang.ld22.level.Level;
 import com.mojang.ld22.level.tile.Tile;
 import com.mojang.ld22.saveload.Save;
 import com.mojang.ld22.screen.CraftInvMenu;
-//import com.mojang.ld22.screen.HomeMenu;
-//import com.mojang.ld22.screen.InfoMenu;
 import com.mojang.ld22.screen.InventoryMenu;
 import com.mojang.ld22.screen.LoadingMenu;
 import com.mojang.ld22.screen.ModeMenu;
