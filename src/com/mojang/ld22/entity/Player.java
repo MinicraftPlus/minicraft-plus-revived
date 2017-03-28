@@ -18,8 +18,8 @@ import com.mojang.ld22.level.Level;
 import com.mojang.ld22.level.tile.Tile;
 import com.mojang.ld22.saveload.Save;
 import com.mojang.ld22.screen.CraftInvMenu;
-import com.mojang.ld22.screen.HomeMenu;
-import com.mojang.ld22.screen.InfoMenu;
+//import com.mojang.ld22.screen.HomeMenu;
+//import com.mojang.ld22.screen.InfoMenu;
 import com.mojang.ld22.screen.InventoryMenu;
 import com.mojang.ld22.screen.LoadingMenu;
 import com.mojang.ld22.screen.ModeMenu;
@@ -767,37 +767,42 @@ public class Player extends Mob {
 		if (Game.currentLevel == 3) {
 			homeSetX = this.x;
 			homeSetY = this.y;
-			canSetHome = true;
-			sentFromSetHome = true;
+			//canSetHome = true;
+			//sentFromSetHome = true;
 			hasSetHome = true;
-			game.setMenu(new InfoMenu());
+			Game.notifications.add("Set your home!");
+			//game.setMenu(new InfoMenu());
 		} else {
-			canSetHome = false;
-			sentFromSetHome = true;
-			game.setMenu(new InfoMenu());
+			//canSetHome = false;
+			//sentFromSetHome = true;
+			Game.notifications.add("Can't set home here!");
+			//game.setMenu(new InfoMenu());
 		}
 	}
 
 	public void goHome() {
 		if (Game.currentLevel == 3) {
-			canGoHome = true;
-			sentFromHome = true;
+			//canGoHome = true;
+			//sentFromHome = true;
 			if (hasSetHome == true) {
 				this.x = homeSetX;
 				this.y = homeSetY;
 				if (ModeMenu.hardcore) hurt(this, 2, attackDir);
 				stamina = 0;
-				sentFromHome = true;
-				game.setMenu(new HomeMenu());
+				//sentFromHome = true;
+				Game.notifications.add("Home Sweet Home!");//game.setMenu(new HomeMenu());
+				if (ModeMenu.hardcore) Game.notifications.add("Mode penalty: -2 health");
 				//if (Game.debug) System.out.println(sentFromHome);
 			} else {
-				game.setMenu(new HomeMenu());
+				//can go home, but no home set.
+				Game.notifications.add("You don't have a home!");//game.setMenu(new HomeMenu());
 			}
 		} else {
-			canGoHome = false;
-			hasSetHome = false;
-			sentFromHome = true;
-			game.setMenu(new HomeMenu());
+			//canGoHome = false;
+			//hasSetHome = false;
+			//sentFromHome = true;
+			Game.notifications.add("You can't go home from here!");
+			//game.setMenu(new HomeMenu());
 			//if (Game.debug) System.out.println(sentFromHome);
 		}
 	}

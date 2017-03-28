@@ -567,7 +567,7 @@ public class Game extends Canvas implements Runnable {
 				
 				//for debugging only
 				if (debug) {
-					if (input.getKey("Shift").down && input.getKey("0").clicked) {
+					if (input.getKey("Shift-0").clicked) {
 						//WorldSelectMenu.loadworld = false;
 						//setMenu(new LoadingMenu());
 						DeadMenu.shudrespawn = false;
@@ -584,26 +584,21 @@ public class Game extends Canvas implements Runnable {
 					if (input.getKey("4").clicked) //Game.time = 3;
 						tickCount = 54000;
 					
-					if (input.getKey("shift").down && input.getKey("g").clicked) {
+					if (input.getKey("shift-g").clicked) {
 						for (int i = 0; i < ListItems.items.size(); i++) {
 							player.inventory.add((com.mojang.ld22.item.Item) ListItems.items.get(i));
 						}
 					}
 					if (input.getKey("creative").clicked) ModeMenu.updateModeBools(2);
 					if (input.getKey("survival").clicked) ModeMenu.updateModeBools(1);
-					
-					if (input.getKey("shift").down) {
-						if (input.getKey("alt").down && false) {
-							if (input.getKey("Equals").clicked && gamespeed >= 1) gamespeed++;
-							if (input.getKey("Equals").clicked && gamespeed < 1) gamespeed *= 2;
-							if (input.getKey("Minus").clicked && gamespeed > 1) gamespeed--;
-							if (input.getKey("Minus").clicked && gamespeed <= 1) gamespeed /= 2;
-						}
-						else {
-							if (input.getKey("Equals").clicked) Player.movespeed++;
-							if (input.getKey("Minus").clicked && Player.movespeed > 0) Player.movespeed--;
-						}
-					}
+					/*
+					if (input.getKey("shift-alt-equals").clicked && gamespeed >= 1) gamespeed++;
+					if (input.getKey("shift-alt-equals").clicked && gamespeed < 1) gamespeed *= 2;
+					if (input.getKey("shift-alt-minus").clicked && gamespeed > 1) gamespeed--;
+					if (input.getKey("shift-alt-minus").clicked && gamespeed <= 1) gamespeed /= 2;
+					*/
+					if (input.getKey("shift-equals").clicked) Player.movespeed++;
+					if (input.getKey("shift-minus").clicked && Player.movespeed > 0) Player.movespeed--;
 				} // end debug only cond.
 			} // end "menu-null" conditional
 		} // end hasfocus conditional

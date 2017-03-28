@@ -193,24 +193,27 @@ public class InputHandler implements MouseListener, KeyListener {
 			}
 		}
 		
+		if(fullKeytext.equals("SHIFT") || fullKeytext.equals("CTRL") || fullKeytext.equals("ALT"))
+			return key;
+		
 		//if (Game.debug) System.out.println("key requested - physical: " + fullKeytext);
 		
+		boolean foundS = false, foundC = false, foundA = false;
 		if(fullKeytext.contains("-")) {
-			//if (Game.debug) System.out.println("key combo detected");
-			boolean foundS = false, foundC = false, foundA = false;
 			for(String keyname: fullKeytext.split("-")) {
 				if(keyname.equals("SHIFT")) foundS = true;
 				if(keyname.equals("CTRL")) foundC = true;
 				if(keyname.equals("ALT")) foundA = true;
 			}
-			
-			boolean modMatch =
-			  getKey("shift").down == foundS &&
-			  getKey("ctrl").down == foundC &&
-			  getKey("alt").down == foundA;
-			
-			//if (Game.debug) System.out.println("current modifiers match request: " + modMatch);
-			
+		}
+		boolean modMatch =
+		  getKey("shift").down == foundS &&
+		  getKey("ctrl").down == foundC &&
+		  getKey("alt").down == foundA;
+		
+		//if (Game.debug) System.out.println("current modifiers match request: " + modMatch);
+		
+		if(fullKeytext.contains("-")) {
 			Key mainKey = key; // move the fetched key to a different variable
 			
 			key = new Key(); // set up return key to have proper values
@@ -218,6 +221,7 @@ public class InputHandler implements MouseListener, KeyListener {
 			key.clicked = modMatch && mainKey.clicked;
 			//if (Game.debug) System.out.println("new key: down=" + key.down + "; clicked=" + key.clicked);
 		}
+		else if(!modMatch) key = new Key();
 		
 		return key; // return the Key object.
 	}
