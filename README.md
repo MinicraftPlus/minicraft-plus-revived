@@ -36,7 +36,7 @@ Things I will probably add later, rather than sooner.
 * Auto-update system -- though, I might move this up, if this actually becomes something many people use.
 * Add back Experience bar, from version 1.4
 * Make the game window resizeable; maybe even full-screen..?
-
+* Add some nice music! Maybe pixely...
 
 #### Far, far away...
 

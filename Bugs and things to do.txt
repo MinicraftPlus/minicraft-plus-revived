@@ -44,3 +44,4 @@ Support Color.get(String) where the string is four characters, made up of t,w,b;
 ****
 Add feature to notifications display: if it starts with ":error:", then make the text red (but don't show the ":Error:" part). Any further than that, though, and it would be better to just pass it in.
 ****
+Make the "sticky keys" feature off by default on survival, and on by default on creative.
