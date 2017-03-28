@@ -434,10 +434,9 @@ public class Player extends Mob {
 			game.setMenu(new CraftInvMenu(Crafting.craftRecipes, this));
 		if (input.getKey("sethome").clicked) setHome();
 		if (input.getKey("home").clicked) goHome();
-
+		
 		if (input.getKey("info").clicked) game.setMenu(new PlayerInfoMenu());
-
-		//these are my test buttons. incase i need to debug something.
+		
 		if (input.getKey("r").clicked && !game.saving) {
 			game.saving = true;
 			new Save(this, WorldSelectMenu.worldname);
@@ -445,7 +444,7 @@ public class Player extends Mob {
 		}
 		
 		if (attackTime > 0) attackTime--;
-
+		
 		if (slowtime && !Bed.hasBedSet) game.gamespeed = 0.5f;//game.nsPerTick = 3.3333333333333332E7D;
 	}
 
