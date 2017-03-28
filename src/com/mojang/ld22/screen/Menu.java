@@ -30,14 +30,8 @@ public class Menu {
 		Font.draw(text, screen, centertext(text), y, color);
 	}
 
-	public void renderItemList(
-			Screen screen,
-			int xo,
-			int yo,
-			int x1,
-			int y1,
-			List<? extends ListItem> listItems,
-			int selected) {
+	public void renderItemList(Screen screen, int xo, int yo, int x1, int y1,
+	  List<? extends ListItem> listItems, int selected) {
 		boolean renderCursor = true;
 		if (selected < 0) {
 			selected = -selected - 1;
