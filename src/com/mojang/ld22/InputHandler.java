@@ -55,7 +55,7 @@ public class InputHandler implements MouseListener, KeyListener {
 		keymap = new HashMap<String, String>(); //stores custom key name with physical key name in keyboard.
 		keyboard = new HashMap<String, Key>(); //stores physical keyboard keys; auto-generated :D
 		
-		keymap.put("UP", "SHIFT-UP"); //up action references up arrow key
+		keymap.put("UP", "UP"); //up action references up arrow key
 		keymap.put("DOWN", "DOWN"); //move down action references down arrow key
 		keymap.put("LEFT", "LEFT"); //move left action references left arrow key
 		keymap.put("RIGHT", "RIGHT"); //move right action references right arrow key
