@@ -5,10 +5,6 @@
 
 	####BUGS####
 ####
-Airwizard health bar is off-center.
-####
-"AirWizardII Spawner" doesn't fit on the inventory selection menu GUI...
-####
 Regular "potion"s can be used even though they have no effect; they need to not do anything when someone attempts to use them.
 ####
 Sound effects don't always play when they should; mostly it seems when other sounds should be on at the same time.
@@ -20,9 +16,20 @@ I have a system in place to save custom key controls, but lack the menu to edit 
 	How about... another menu class, SelectMenu? It will parent all the cursor selection and scrollable menus; I can use it for the new KeymapMenu, and also WorldSelectMenu and InventoryMenu, with scrolling; the other menus won't use the scroll feature, but I can just make a boolean for that, I think.
 	For those menus that don't even have a cursor, though, perhaps I could just make it a Menu..? If that doesn't work, I can always make a ChoiceMenu class, super simple, that just displays two choices with no cursor, and listens for enter and escape keypresses.
 ****
+Make menu frames change size based on the largest (text) item in it. Not totally sure I want to do it...
+****
 check Tile methods; many of them have many unnecessary parameters...
 ****
 Make it so friendly mobs (sheep, pigs, cows) spawn during the day, but evil mobs don't.
+****
+change the getEntity methods, and similar, so that errors, or invalid object requests, can be easily found with a "missing texture" entity, rather than defaulting to a Zombie.
+****
+Support Color.get(String) where the string is four characters, made up of t,w,b; t=transparent, w=white, and b=black. That might look better. Of course, what WOULD look better is Color.red, Color.white, etc.
+	Maybe I could even devise Color.lighten and/or Color.darken methods, that would work for making the daylight cycle color sets.
+****
+Add feature to notifications display: if it starts with ":error:", then make the text red (but don't show the ":Error:" part). Any further than that, though, and it would be better to just pass it in.
+****
+Make the "sticky keys" feature off by default on survival, and on by default on creative.
 ****
 Make the loading system more forgiving, so that if I add a requirement to the save files, the old ones will still work. The idea is that when it expects 5 options and only finds 4, it just keeps those at default.
 ****
@@ -37,11 +44,3 @@ Fix entity removal when sleeping? I think the idea is that all mobs within a cer
 ****
 Find something to do with Npc.java, and Giant.java; currently, they were never even implemented in the first place, even though they were made...
 ****
-change the getEntity methods, and similar, so that errors, or invalid object requests, can be easily found with a "missing texture" entity, rather than defaulting to a Zombie.
-****
-Support Color.get(String) where the string is four characters, made up of t,w,b; t=transparent, w=white, and b=black. That might look better. Of course, what WOULD look better is Color.red, Color.white, etc.
-	Maybe I could even devise Color.lighten and/or Color.darken methods, that would work for making the daylight cycle color sets.
-****
-Add feature to notifications display: if it starts with ":error:", then make the text red (but don't show the ":Error:" part). Any further than that, though, and it would be better to just pass it in.
-****
-Make the "sticky keys" feature off by default on survival, and on by default on creative.

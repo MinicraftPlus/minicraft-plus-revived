@@ -29,6 +29,8 @@ Things I plan on implementing, _hopefully_ sooner rather than later... ;)
 
 * Make it so cloud tile can be placed in the sky level, on empty air tiles. Otherwise, they're useful for nothing...
 
+* ...Find lots more in "Bugs and Things to do.txt"
+
 ### Ideas for future additions
 
 Things I will probably add later, rather than sooner.
