@@ -40,6 +40,7 @@ public class InputHandler implements MouseListener, KeyListener {
 	*/
 	
 	private HashMap<String, String> keymap; // The symbolic map of actions to physical key names.
+	//private HashMap<String, Key> compoundKeys; // if used, will store the compound keys.
 	private HashMap<String, Key> keyboard; // The actual map of key names to Key objects.
 	public String lastKeyTyped = ""; // Used for things like typing world names.
 	
@@ -53,7 +54,7 @@ public class InputHandler implements MouseListener, KeyListener {
 		keymap = new HashMap<String, String>(); //stores custom key name with physical key name in keyboard.
 		keyboard = new HashMap<String, Key>(); //stores physical keyboard keys; auto-generated :D
 		
-		keymap.put("UP", "UP"); //up action references up arrow key
+		keymap.put("UP", "SHIFT-UP"); //up action references up arrow key
 		keymap.put("DOWN", "DOWN"); //move down action references down arrow key
 		keymap.put("LEFT", "LEFT"); //move left action references left arrow key
 		keymap.put("RIGHT", "RIGHT"); //move right action references right arrow key
@@ -74,12 +75,16 @@ public class InputHandler implements MouseListener, KeyListener {
 		
 		keymap.put("POTIONEFFECTS", "F2"); // toggle potion effect display
 		//keymap.put("FPSDISP", "F3"); // toggle fps display
-		keymap.put("INFO", "I"); // toggle player stats display
+		keymap.put("INFO", "SHIFT-I"); // toggle player stats display
 		
 		/*//don't NEED this...
 		for(String key: keymap.values())
 			keyboard.put(key, new Key());
 		*/
+		keyboard.put("SHIFT", new Key());
+		keyboard.put("CTRL", new Key());
+		keyboard.put("ALT", new Key());
+		
 		game.addKeyListener(this); //add key listener to game
 		game.addMouseListener(this); //add mouse listener to game (though it's never used)
 	}
@@ -99,7 +104,9 @@ public class InputHandler implements MouseListener, KeyListener {
 		private int presses, absorbs;
 		//down = if the key is currently physically being held down.
 		//clicked = if the key is still being processed at the current tick.
-		public boolean down, clicked;
+		//enabled = if the key is considered held down based on modifier/compound key presses.
+		//private boolean down;
+		public boolean down, clicked;//, enabled;
 		//sticky = true if presses reaches 3, and the key continues to be held down.
 		private boolean sticky;
 		
@@ -107,6 +114,7 @@ public class InputHandler implements MouseListener, KeyListener {
 		
 		/** toggles the key down or not down. */
 		public void toggle(boolean pressed) {
+			//if(!enabled) return;
 			down = pressed; // set down to the passed in value; the if statement is probably unnecessary...
 			if (pressed && !sticky) presses++; //add to the number of total presses.
 		}
@@ -119,11 +127,26 @@ public class InputHandler implements MouseListener, KeyListener {
 			} else { // All key presses so far for this key have been processed.
 				if (!sticky) sticky = presses > 3;
 				else sticky = down;
-				clicked = sticky ? down : false; // set clicked to false, since we're done processing; UNLESS the key has been held down for a bit, and hasn't yet been released.
+				clicked = sticky;// ? down : false; // set clicked to false, since we're done processing; UNLESS the key has been held down for a bit, and hasn't yet been released.
 				//reset the presses and absorbs, to ensure they don't get too high, or something:
 				presses = 0;
 				absorbs = 0;
 			}
+			
+			//if(!enabled) clicked = false;
+		}
+		/*
+		public boolean pressed() {
+			return down;
+		}
+		*/
+		public void release() {
+			down = false;
+			//enabled = true;
+			clicked = false;
+			presses = 0;
+			absorbs = 0;
+			sticky = false;
 		}
 		
 		//custom toString() method, I used it for debugging.
@@ -136,9 +159,10 @@ public class InputHandler implements MouseListener, KeyListener {
 	public void releaseAll() {
 		//Map.Entry<String,Key>[] mappings = keymap.entrySet().toArray(new Map.Entry[0]);
 		//Key[] keys = keyboard.values().toArray(new Key[0]);
-		for (Key key: keyboard.values()) {
+		for (Key key: keyboard.values().toArray(new Key[0])) {
 			//if(Game.debug) System.out.println(i+1+": " + mappings[i].getKey() + " - " + mappings[i].getValue());
-			key.down = false;
+			//key.down = false;
+			key.release();
 		}
 	}
 	
@@ -165,10 +189,15 @@ public class InputHandler implements MouseListener, KeyListener {
 		Key key; // make a new key to return at the end
 		keytext = keytext.toUpperCase(); // prevent errors due to improper "casing"
 		
+		String fullKeytext;
 		synchronized ("lock") {
 			// if the passed-in key matches one in keymap, then replace it with it's match, a key in keyboard.
 			if (keymap.containsKey(keytext))
 				keytext = keymap.get(keytext); // converts action name to physical key name
+			
+			fullKeytext = keytext;
+			if(keytext.contains("-"))
+				keytext = keytext.substring(keytext.lastIndexOf("-")+1);
 			
 			if (keyboard.containsKey(keytext))
 				key = keyboard.get(keytext); // gets the key object from keyboard, if if exists.
@@ -180,6 +209,33 @@ public class InputHandler implements MouseListener, KeyListener {
 				if(Game.debug) System.out.println("Added new key: \'" + keytext + "\'"); //log to console that a new key was added to the keyboard
 			}
 		}
+		
+		//if (Game.debug) System.out.println("key requested - physical: " + fullKeytext);
+		
+		if(fullKeytext.contains("-")) {
+			//if (Game.debug) System.out.println("key combo detected");
+			boolean foundS = false, foundC = false, foundA = false;
+			for(String keyname: fullKeytext.split("-")) {
+				if(keyname.equals("SHIFT")) foundS = true;
+				if(keyname.equals("CTRL")) foundC = true;
+				if(keyname.equals("ALT")) foundA = true;
+			}
+			
+			boolean modMatch =
+			  getKey("shift").down == foundS &&
+			  getKey("ctrl").down == foundC &&
+			  getKey("alt").down == foundA;
+			
+			//if (Game.debug) System.out.println("current modifiers match request: " + modMatch);
+			
+			Key mainKey = key; // move the fetched key to a different variable
+			
+			key = new Key(); // set up return key to have proper values
+			key.down = modMatch && mainKey.down;
+			key.clicked = modMatch && mainKey.clicked;
+			//if (Game.debug) System.out.println("new key: down=" + key.down + "; clicked=" + key.clicked);
+		}
+		
 		return key; // return the Key object.
 	}
 	
@@ -188,28 +244,111 @@ public class InputHandler implements MouseListener, KeyListener {
 		keytext = keytext.toUpperCase();
 		if (keyboard.containsKey(keytext))
 			return keyboard.get(keytext);
-		else
+		else {
+			//System.out.println("UNKNOWN KEYBOARD KEY: " + keytext); // it's okay really; was just checking
 			return new Key(); //won't matter where I'm calling it.
+		}
+	}
+	/*
+	private String getModifiers() {
+		String curMods = "";
+		
+		if(getPhysKey("shift").down) curMods = "shift-"+curMods;
+		if(getPhysKey("alt").down) curMods = "alt-"+curMods;
+		if(getPhysKey("ctrl").down) curMods = "ctrl-"+curMods;
+		
+		return curMods;
 	}
 	
+	private boolean isMod(String keyname) {
+		keyname = keyname.toUpperCase();
+		return keyboard.containsKey("SHIFT") && keyname.equals("SHIFT") || keyboard.containsKey("ALT") && keyname.equals("ALT") || keyboard.containsKey("CTRL") && keyname.equals("CTRL");
+	}
+	*//*
 	private void checkCompoundKeys(String mod) {
 		mod = mod.toUpperCase();
-		for(String keyname: keyboard.keySet()) {
-			if(!keyname.contains("-")) continue; // only check compound keys
-			if(!keyname.contains(mod)) continue; // only check those with this modifier
+		if (Game.debug) System.out.println("checking keys after pressing mod: " + mod);
+		
+		for(String keyname: keyboard.keySet().toArray(new String[0])) {
+			//if(!keyname.contains("-") && getPhysKey(keyname).down && !isMod(keyname)) {
+			// regular key, currently toggled to down
+				//if()
+			//}
+			if (!isMod(keyname)) {
+				getPhysKey(keyname).enabled = !getPhysKey(mod).down;// ? false : getPhysKey(keyname).pressed(); // this should always toggle the other control back on, becuase the "modified" control doesn't even exist in the first place.
+				continue;
+			}
+			else if( !keyname.contains("-") || !keyname.contains(mod) ) {
+				if (Game.debug) System.out.println("skipping key " + keyname + "...");
+				continue;
+			}
 			
+			// B/c there are not really any compound keys, nothing below this is getting executed.
+			
+			/*if(!keyname.contains("-")) {
+				
+			}*/
+			/*	if (Game.debug) System.out.println("checking non-compound or unrelated key " + keyname);
+				if(getPhysKey(keyname).down) {
+					/// detects already pressed keys, and toggles them off adding them to this toggle on
+					
+				}*/
+			//if() continue; // only check compound keys
+			//if() continue; // only check those with this modifier
+			/*if (Game.debug) System.out.println("mod " + mod + " is part of compound " + keyname);
 			// we have to check that all the keys are pressed to set it to true
+			
 			boolean pressed = true;
 			for (String compkey: keyname.split("-")) {
-				if (getKey(compkey).down == false) {
+				if (getPhysKey(compkey).pressed() == false) {
 					pressed = false;
+					if (Game.debug) System.out.println("pressCheck failed: " + compkey + " not pressed.");
 					break;
 				}
+				//if(!isMod(compkey))
+					//getKey(compkey).down = !getKey(mod).down;
 			}
-			getKey(keyname).toggle(pressed);
+			if (Game.debug) System.out.println("toggling compound " + keyname + " " + (pressed?"on":"off"));
+			getPhysKey(keyname).toggle(pressed);
+			
+			String key = keytext.substring(keytext.lastIndexOf("-")+1);
+			boolean mainMatch = getKey(mainKey).clicked;
+			key = new Key();
+			if(mainMatch && shiftMatch && ctrlMatch && altMatch
+				key.toggle(mainMatch && shiftMatch && ctrlMatch && altMatc);
+			if (Game.debug) System.out.println("toggling " + key + " key to false on mod check.");
+			//getPhysKey(key).enabled = !pressed; // one possibility: this disables / re-enables single keys when a compound key with it in them is pressed / released.
+			getPhysKey(key).enabled = false; // toggles single key off to prevent it from playing when it's not supposed to.
 			//this next statement should make it so that if you release a modifier key, the normal key is released as well; I thought it would be nice to keep it from pressing the different key if you happened to release the modifier before the main one.
-			if(pressed == false) getKey(keyname.substring(keyname.lastIndexOf("-")+1)).toggle(false);
+			/*if(pressed == false) {
+				//if (Game.debug) System.out.println("releasing main key " + key + ", of compound key "+keyname+", due to release of " + curKey + " key.");
+				getKey(key).toggle(false);
+			}*//*
 		}
+	}
+	*/
+	//called by KeyListener Event methods, below. Only accesses keyboard Keys.
+	private void toggle(String keytext, boolean pressed) {
+		keytext = keytext.toUpperCase(); //because I'm lazy
+		if (Game.debug) System.out.println("toggling " + keytext + " key to "+pressed+".");
+		getPhysKey(keytext).toggle(pressed);
+		
+		//if (Game.debug) System.out.println("keyevent: " + keytext + " - " + pressed);
+		//System.out.println(keytext + " == " + "alt" + " ? " + (keytext.equals("alt")));
+		/*if(!isMod(keytext))
+			keytext = getModifiers()+keytext;
+		*//*	//if (Game.debug) System.out.println("non-modifier: " + keytext + " toggled to " + pressed);
+			//user presses should not generate new keys; only code requests.
+			//getPhysKey(keytext).toggle(pressed); // toggle a normal key
+		//else {
+			if (Game.debug) System.out.println("toggling " + keytext + " key to "+pressed+".");
+			getPhysKey(keytext).toggle(pressed); // toggle a modifier key
+			//if (Game.debug) System.out.println("modifier key, toggling " + keytext + " to " + pressed + ".");
+		/*if(isMod(keytext))
+			checkCompoundKeys(keytext); // check that compound keys using this modifier are still set to appropriate values.
+		*///}
+		
+		//System.out.println();
 	}
 	
 	/** Used by Save.java, to save user key preferences. */
@@ -223,28 +362,9 @@ public class InputHandler implements MouseListener, KeyListener {
 		return keystore.toArray(new String[0]); //return the array of encoded key preferences.
 	}
 	
-	//called by KeyListener Event methods, below. Only accesses keyboard Keys.
-	private void toggle(KeyEvent ke, boolean pressed) {
-		String keytext = ke.getKeyText(ke.getKeyCode()).toLowerCase(); //because I'm lazy
-		
-		// this works okay... unless I release a modifier key first!
-		if(keytext != "shift" && keytext != "alt" && keytext != "ctrl") {
-			if(getPhysKey("shift").down) keytext = "shift-"+keytext;
-			if(getPhysKey("alt").down) keytext = "alt-"+keytext;
-			if(getPhysKey("ctrl").down) keytext = "ctrl-"+keytext;
-			
-			//user presses should not generate new keys; only code requests.
-			getPhysKey(keytext).toggle(pressed); // toggle a normal key
-		}
-		else {
-			getPhysKey(keytext).toggle(pressed); // toggle a modifier key
-			checkCompoundKeys(keytext); // check that compound keys using this modifier are still set to appropriate values.
-		}
-	}
-	
 	/// Event methods, many to satisfy interface requirements...
-	public void keyPressed(KeyEvent ke) { toggle(ke, true); }
-	public void keyReleased(KeyEvent ke) { toggle(ke, false); }
+	public void keyPressed(KeyEvent ke) { toggle(ke.getKeyText(ke.getKeyCode()), true); }
+	public void keyReleased(KeyEvent ke) { toggle(ke.getKeyText(ke.getKeyCode()), false); }
 	public void keyTyped(KeyEvent ke) {
 		//stores the last character typed
 		lastKeyTyped = String.valueOf(ke.getKeyChar());
