@@ -59,6 +59,7 @@ public class Game extends Canvas implements Runnable {
 	/// MANAGERIAL VARS AND RUNNING
 	
 	public static final String NAME = "Minicraft Plus"; // This is the name on the application window
+	public static final String VERSION = "1.9";
 	public static final int HEIGHT = 192;
 	public static final int WIDTH = 288;
 	private static final int SCALE = 3;
@@ -749,7 +750,8 @@ public class Game extends Canvas implements Runnable {
 			Font.draw(gamespeed+" tik/s", screen, 1, screen.h - 180, col0);
 			Font.draw("X " + txlevel, screen, 1, screen.h - 170, col0);
 			Font.draw("Y " + tylevel, screen, 1, screen.h - 160, col0);
-			/// Score mode debug:
+			
+			/// Displays number of chests left, if on dungeon level.
 			if (ModeMenu.score) {
 				Font.draw("Score " + Player.score, screen, 1, screen.h - 150, col0);
 				if (currentLevel == 5) {
@@ -759,7 +761,7 @@ public class Game extends Canvas implements Runnable {
 					} else {
 						Font.draw("Chests: Complete!", screen, 1, screen.h - 140, col0);
 					}
-				} //end score debug
+				}
 			} else if (currentLevel == 5) {
 				if (levels[currentLevel].chestcount > 0) {
 					Font.draw("Chests: " + levels[currentLevel].chestcount, screen, 1, screen.h - 150, col0);
@@ -838,19 +840,17 @@ public class Game extends Canvas implements Runnable {
 			Font.draw(dura + "%", screen, 164, screen.h - 16, Color.get(0, 30, 30, 30));
 		}
 
-		
-		if(player.potioneffects.size() > 0) {
+		/// This renders the potions overlay
+		if(player.showpotioneffects && player.potioneffects.size() > 0) {
 			for(int i = 0; i < player.potioneffects.size(); i++) {
-				if(player.showpotioneffects) {
-					int pcol = Color.get(PotionResource.potionColor((String)player.potioneffects.get(i)), 555, 555, 555);
-					Font.draw("("+input.getMapping("potionEffects")+" to hide!)", screen, 180, screen.h - 183, Color.get(0, 555, 555, 555));
-					Font.draw((String)player.potioneffects.get(i) + " (" + ((Integer)player.potioneffectstime.get(i)).intValue() / 60 / 60 + ":" + (((Integer)player.potioneffectstime.get(i)).intValue() / 60 - 60 * (((Integer)player.potioneffectstime.get(i)).intValue() / 60 / 60)) + ")", screen, 180, screen.h - (175 - i * 8), pcol);
-				}
+				int pcol = Color.get(PotionResource.potionColor((String)player.potioneffects.get(i)), 555, 555, 555);
+				Font.draw("("+input.getMapping("potionEffects")+" to hide!)", screen, 180, screen.h - 183, Color.get(0, 555, 555, 555));
+				Font.draw((String)player.potioneffects.get(i) + " (" + ((Integer)player.potioneffectstime.get(i)).intValue() / 60 / 60 + ":" + (((Integer)player.potioneffectstime.get(i)).intValue() / 60 - 60 * (((Integer)player.potioneffectstime.get(i)).intValue() / 60 / 60)) + ")", screen, 180, screen.h - (175 - i * 8), pcol);
 			}
 		}
 		
 		
-		// This is the status icons, like health hearts, stamina bolts, and hunger burgers.
+		// This is the status icons, like health hearts, stamina bolts, and hunger "burgers".
 		if (!ModeMenu.creative) {
 			for (int i = 0; i < 10; i++) {
 				int color;

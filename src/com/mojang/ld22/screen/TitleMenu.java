@@ -131,9 +131,6 @@ public class TitleMenu extends Menu {
 				"Sonic Boom!",
 				"Hakuna Matata!",
 				"Only on PlayMinicraft.com!",
-			//"Also play Minicraft Delux!",
-			//"Also play InfinityTale!",
-			//"Also play Alecraft!",
 				"Also play Hackcraft!",
 				"Also play RPGcraft!(When it's done)",
 				"Also play MiniCrate!",
@@ -348,7 +345,6 @@ public class TitleMenu extends Menu {
 		int cols = Color.get(0, 550, 550, 550);
 		
 		
-
 		for (int y = 0; y < h; y++) {
 			for (int x = 0; x < w; x++) {
 				screen.render(xo + x * 8, yo + y * 8, x + (y + 6) * 32, titleColor, 0);
@@ -388,10 +384,10 @@ public class TitleMenu extends Menu {
 				Font.draw(GameApplet.username + "!", screen, this.centertext(GameApplet.username + "!"), screen.h - 180, Color.get(0, 330, 330, 330));
 			}
 			
-			writeCentered("Version 1.8.1", screen, screen.h - 10, Color.get(0, 111, 111, 111));
+			writeCentered("Version " + Game.VERSION, screen, screen.h - 10, Color.get(0, 111, 111, 111));
 		}
 		else {
-			Font.draw("Version 1.8.1", screen, 1, screen.h - 190, Color.get(0, 111, 111, 111));
+			Font.draw("Version " + Game.VERSION, screen, 1, screen.h - 190, Color.get(0, 111, 111, 111));
 		}
 		
 		writeCentered("(Arrow keys to move)", screen, screen.h - (GameApplet.isApplet?35:25), Color.get(0, 111, 111, 111));
