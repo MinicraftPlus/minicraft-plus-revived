@@ -102,7 +102,7 @@ public class Spawner extends Furniture {
 			ToolItem tool = (ToolItem)item;
 			if(tool.type == ToolType.pickaxe) {
 				Sound.monsterHurt.play();
-				if(player.haste) {
+				if(player.potioneffects.containsKey("Haste")) {
 					dmg = tool.level + 1 + random.nextInt(5);
 				} else {
 					dmg = tool.level + 1 + random.nextInt(3);
@@ -121,7 +121,7 @@ public class Spawner extends Furniture {
 
 			if(tool.type == ToolType.pick) {
 				Sound.monsterHurt.play();
-				if(player.haste) {
+				if(player.potioneffects.containsKey("Haste")) {
 					dmg = tool.level + 1 + random.nextInt(4);
 				} else {
 					dmg = tool.level + 1 + random.nextInt(2);

@@ -60,6 +60,12 @@ public class InputHandler implements MouseListener, KeyListener {
 		keymap.put("LEFT", "LEFT"); //move left action references left arrow key
 		keymap.put("RIGHT", "RIGHT"); //move right action references right arrow key
 		
+		/*//this system does NOT really support multiple keys having the same effect, unfortunately... like you would even do that... although, it would make more sense for only one action to be reached by many keys not the other way around, so maybe I should switch the call order of keyboard and keymap....
+		keymap.put("W", "UP"); // this is a bit backwards... I wonder if it will work...
+		keymap.put("S", "DOWN");
+		keymap.put("A", "LEFT");
+		keymap.put("D", "RIGHT");
+		*/
 		keymap.put("ATTACK", "C"); //attack action references "C" key
 		keymap.put("MENU", "X"); //and so on... menu does various things.
 		keymap.put("CRAFT", "Z"); // open/close personal crafting window.
@@ -69,12 +75,14 @@ public class InputHandler implements MouseListener, KeyListener {
 		keymap.put("HOME", "H"); // go to set home.
 		//keymap.put("DAYTIME", "2"); //sort of makes day happen.
 		//keymap.put("NIGHTTIME", "3"); //sort of makes night happen.
-		keymap.put("SURVIVAL", "5");
-		keymap.put("CREATIVE", "6");
+		//keymap.put("SURVIVAL", "SHIFT-1");
+		keymap.put("SURVIVAL", "SHIFT-S");
+		//keymap.put("CREATIVE", "SHIFT-2");
+		keymap.put("CREATIVE", "SHIFT-C");
 		
 		//keymap.put("SOUNDON", "M"); //toggles sound on and off... well, it should...
 		
-		keymap.put("POTIONEFFECTS", "F2"); // toggle potion effect display
+		keymap.put("POTIONEFFECTS", "P"); // toggle potion effect display
 		//keymap.put("FPSDISP", "F3"); // toggle fps display
 		keymap.put("INFO", "SHIFT-I"); // toggle player stats display
 		

@@ -33,6 +33,7 @@ import com.mojang.ld22.entity.Zombie;
 import com.mojang.ld22.item.Item;
 import com.mojang.ld22.item.ListItems;
 import com.mojang.ld22.item.ResourceItem;
+import com.mojang.ld22.item.resource.PotionResource;
 import com.mojang.ld22.level.tile.Tile;
 import com.mojang.ld22.screen.LoadingMenu;
 import com.mojang.ld22.screen.ModeMenu;
@@ -221,14 +222,13 @@ public class Load {
 		player.g = Integer.parseInt((String)color.get(1));
 		player.b = Integer.parseInt((String)color.get(2));
 		
-		if(data.size() > 10 && ((String)data.get(data.size() - 1)).contains("PotionEffects[")) {
-			String potiondata = ((String)data.get(data.size() - 1)).replace("PotionEffects[", "").replace("]", "");
+		if(data.size() > 10 && ((String)data.get(data.size() - 2)).contains("PotionEffects[")) {
+			String potiondata = ((String)data.get(data.size() - 2)).replace("PotionEffects[", "").replace("]", "");
 			List effects = Arrays.asList(potiondata.split(":"));
 			
 			for(int i = 0; i < effects.size(); i++) {
 				List effect = Arrays.asList(((String)effects.get(i)).split(";"));
-				player.potioneffects.add((String)effect.get(0));
-				player.potioneffectstime.add(Integer.valueOf(Integer.parseInt((String)effect.get(1))));
+				PotionResource.applyPotion(player, (String)effect.get(0), Integer.parseInt((String)effect.get(1)));
 			}
 		}
 		

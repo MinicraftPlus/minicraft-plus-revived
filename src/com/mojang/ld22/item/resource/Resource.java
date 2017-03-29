@@ -6,6 +6,9 @@ import com.mojang.ld22.level.Level;
 import com.mojang.ld22.level.tile.Tile;
 
 public class Resource {
+	
+	//public static ArrayList<Resource> resList = new ArrayList<Resource>();
+	
 	public static Resource wood = new Resource("Wood", 1 + 4 * 32, Color.get(-1, 200, 531, 430));
 	public static Resource stone = new Resource("Stone", 2 + 4 * 32, Color.get(-1, 111, 333, 555));
 	public static Resource flower = new PlantableResource("Flower", 0 + 4 * 32, Color.get(-1, 10, 444, 330), Tile.flower, Tile.grass, Tile.lightgrass);
@@ -66,16 +69,17 @@ public class Resource {
 	
 	public static Resource key = new Resource("Key", 154, Color.get(-1, -1, 444, 550));
 	
-	public static Resource potion = new PotionResource("Potion", 155, Color.get(-1, 333, 310, 5), 0);
-	public static Resource speedpotion = new PotionResource("Speed P.", 155, Color.get(-1, 333, 310, 10), 1);
-	public static Resource lightpotion = new PotionResource("Light P.", 155, Color.get(-1, 333, 310, 440), 2);
-	public static Resource swimpotion = new PotionResource("Swim P.", 155, Color.get(-1, 333, 310, 3), 3);
-	public static Resource energypotion = new PotionResource("Energy P.", 155, Color.get(-1, 333, 310, 510), 4);
-	public static Resource regenpotion = new PotionResource("Regen P.", 155, Color.get(-1, 333, 310, 464), 5);
-	public static Resource timepotion = new PotionResource("Time P.", 155, Color.get(-1, 333, 310, 222), 6);
-	public static Resource lavapotion = new PotionResource("Lava P.", 155, Color.get(-1, 333, 310, 400), 7);
-	public static Resource shieldpotion = new PotionResource("Shield P.", 155, Color.get(-1, 333, 310, 115), 8);
-	public static Resource hastepotion = new PotionResource("Haste P.", 155, Color.get(-1, 333, 310, 303), 9);
+	/// the PotionResources are mapped as: (name, spriteLoc, bottleColor, effectDuration, displayColor).
+	public static Resource potion = new PotionResource("Potion", 155, Color.get(-1, 333, 310, 5), 0, 000);
+	public static Resource speedpotion = new PotionResource("Speed", 155, Color.get(-1, 333, 310, 10), 4200, 010);
+	public static Resource lightpotion = new PotionResource("Light", 155, Color.get(-1, 333, 310, 440), 6000, 440);
+	public static Resource swimpotion = new PotionResource("Swim", 155, Color.get(-1, 333, 310, 3), 4800, 002);
+	public static Resource energypotion = new PotionResource("Energy", 155, Color.get(-1, 333, 310, 510), 8400, 510);
+	public static Resource regenpotion = new PotionResource("Regen", 155, Color.get(-1, 333, 310, 464), 1800, 464);
+	public static Resource timepotion = new PotionResource("Time", 155, Color.get(-1, 333, 310, 222), 1800, 222);
+	public static Resource lavapotion = new PotionResource("Lava", 155, Color.get(-1, 333, 310, 400), 7200, 400);
+	public static Resource shieldpotion = new PotionResource("Shield", 155, Color.get(-1, 333, 310, 115), 5400, 115);
+	public static Resource hastepotion = new PotionResource("Haste", 155, Color.get(-1, 333, 310, 303), 4800, 303);
 	
 	public static Resource arrow = new Resource("arrow", 13 + 5 * 32, Color.get(-1, 111, 222, 430));
 	public static Resource string = new Resource("string", 25 + 4 * 32, Color.get(-1, 555, 555, 555));
@@ -105,7 +109,9 @@ public class Resource {
 	public final int sprite;
 	public final int color;
 
-	public Resource(String name, int sprite, int color) { if (name.length() > 20) throw new RuntimeException("Name cannot be longer than twenty characters!");
+	public Resource(String name, int sprite, int color) {
+		if (name.length() > 20)
+			throw new RuntimeException("Name cannot be longer than twenty characters!");
 		this.name = name;
 		this.sprite = sprite;
 		this.color = color;
