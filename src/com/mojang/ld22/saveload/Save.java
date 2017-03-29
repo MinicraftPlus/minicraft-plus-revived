@@ -154,13 +154,8 @@ public class Save {
 		if(player.potioneffects.size() > 0) {
 			String subdata = "PotionEffects[";
 			
-			for(java.util.Map.Entry<String, Integer> potion: player.potioneffects.entrySet()) {//int i = 0; i < player.potioneffects.size(); i++) {
-				//PotionResource.PotionEffect potion = player.potioneffects.get(i);
+			for(java.util.Map.Entry<String, Integer> potion: player.potioneffects.entrySet())
 				subdata += potion.getKey() + ";" + potion.getValue() + ":";
-				/*if(i != player.potioneffects.size() - 1) {
-					subdata += ":";
-				}*/
-			}
 			
 			subdata = subdata.substring(0, subdata.length()-1)+"]"; // cuts off extra ":" and appends "]"
 			data.add(subdata);

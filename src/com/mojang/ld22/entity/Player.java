@@ -51,7 +51,7 @@ public class Player extends Mob {
 	public int staminaRecharge, staminaRechargeDelay;
 	public int maxStamina, maxArmor, maxHunger;
 	public int homeSetX, homeSetY;
-	public boolean bedSpawn;//, slowtime;
+	public boolean bedSpawn;
 
 	private int onStairDelay;
 	public int stepCount;
@@ -70,10 +70,7 @@ public class Player extends Mob {
 	
 	public HashMap<String, Integer> potioneffects;
 	public boolean showpotioneffects;
-	/*public double light;
-	public boolean infswim, infstamina;
-	public boolean regen, lavaimmune, shield, haste;
-	*/int cooldowninfo;
+	int cooldowninfo;
 	int regentick;
 
 	public int r = 50, g = 50, b;
@@ -93,23 +90,14 @@ public class Player extends Mob {
 		maxHunger = 10;
 		
 		repeatHungerCyc = false;
-
+		
 		px = this.x;
 		py = this.y;
 		invulnerableTime = 0;
-		//speed = 1.0D;
-		/*light = 1.0D;
-		infswim = false;
-		infstamina = false;
-		regen = false;
-		slowtime = false;
-		lavaimmune = false;
-		shield = false;
-		haste = false;
-		*/potioneffects = new HashMap<String, Integer>();
-		//potioneffectstime = new ArrayList();
+		
+		potioneffects = new HashMap<String, Integer>();
 		showpotioneffects = true;
-
+		
 		showinfo = false;
 		cooldowninfo = 0;
 		regentick = 0;
@@ -137,102 +125,12 @@ public class Player extends Mob {
 		tickCounter++;
 		//if(Game.debug) System.out.println(tickCounter);
 		
-		//int xa, ya;
 		if(potioneffects.size() > 0 && !Bed.hasBedSet) {
-			for(String potionType: potioneffects.keySet().toArray(new String[0])) {//int i = 0; i < potioneffects.size(); i++) {
+			for(String potionType: potioneffects.keySet().toArray(new String[0])) {
 				if(potioneffects.get(potionType) <= 1) // if time is zero (going to be set to 0 in a moment)...
 					PotionResource.applyPotion(this, potionType, false); // automatically removes this potion effect.
-				else
-					potioneffects.put(potionType, potioneffects.get(potionType) - 1); // otherwise, replace it with one less.
-					//PotionResource.togglePotionEffect(this, false);
-					//potioneffects.remove(potionType);
+				else potioneffects.put(potionType, potioneffects.get(potionType) - 1); // otherwise, replace it with one less.
 			}
-			/*
-			for(int onTile = 0; onTile < potioneffectstime.size(); onTile++) {
-				xa = ((Integer)potioneffectstime.get(onTile)).intValue();
-				xa--;
-				potioneffectstime.set(onTile, Integer.valueOf(xa));
-				if(((String)potioneffects.get(onTile)).contains("Light") && light != 2.5D) {
-					light = 2.5D;
-				}
-
-				if(((String)potioneffects.get(onTile)).contains("Speed") && moveSpeed != 2.0D) {
-					speed = 2.0D;
-				}
-
-				if(((String)potioneffects.get(onTile)).contains("Swim") && !infswim) {
-					infswim = true;
-				}
-
-				if(((String)potioneffects.get(onTile)).contains("Energy") && !infstamina) {
-					infstamina = true;
-				}
-
-				if(((String)potioneffects.get(onTile)).contains("Regen") && !regen) {
-					regen = true;
-				}
-
-				if(((String)potioneffects.get(onTile)).contains("Time") && !slowtime) {
-					slowtime = true;
-					//game.nsPerTick = 3.3333333333333332E7D; //.0333 of nsPerTick
-					game.gamespeed = 0.5f;
-				}
-
-				if(((String)potioneffects.get(onTile)).contains("Lava") && !lavaimmune) {
-					lavaimmune = true;
-				}
-
-				if(((String)potioneffects.get(onTile)).contains("Shield") && !shield) {
-					shield = true;
-				}
-
-				if(((String)potioneffects.get(onTile)).contains("Haste") && !haste) {
-					haste = true;
-				}
-
-				if(xa == 0) {
-					if(((String)potioneffects.get(onTile)).contains("Speed")) {
-						speed = 1.0D;
-					}
-
-					if(((String)potioneffects.get(onTile)).contains("Light")) {
-						light = 1.0D;
-					}
-
-					if(((String)potioneffects.get(onTile)).contains("Swim")) {
-						infswim = false;
-					}
-
-					if(((String)potioneffects.get(onTile)).contains("Energy")) {
-						infstamina = false;
-					}
-
-					if(((String)potioneffects.get(onTile)).contains("Regen")) {
-						regen = false;
-					}
-
-					if(((String)potioneffects.get(onTile)).contains("Time")) {
-						slowtime = false;
-						//game.nsPerTick = 1.6666666666666666E7D;
-						game.gamespeed = 1;
-					}
-
-					if(((String)potioneffects.get(onTile)).contains("Lava")) {
-						lavaimmune = false;
-					}
-
-					if(((String)potioneffects.get(onTile)).contains("Shield")) {
-						shield = false;
-					}
-
-					if(((String)potioneffects.get(onTile)).contains("Haste")) {
-						haste = false;
-					}
-
-					potioneffectstime.remove(onTile);
-					potioneffects.remove(onTile);
-				}
-			}*/
 		}
 		
 		if(cooldowninfo > 0) cooldowninfo--;
@@ -455,8 +353,6 @@ public class Player extends Mob {
 		}
 		
 		if (attackTime > 0) attackTime--;
-		
-		//if (potioneffects.containsKey("Time") && !Bed.hasBedSet) game.gamespeed = 0.5f;//game.nsPerTick = 3.3333333333333332E7D;
 	}
 
 	private boolean use() {

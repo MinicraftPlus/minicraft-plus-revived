@@ -144,7 +144,6 @@ public class Load {
 		loadFromFile(location + filename + extention);
 		Game.astime = Integer.parseInt((String)data.get(1));
 		Game.gamespeed = Float.parseFloat((String)data.get(2));
-		//game.nsPerTick = 1.0E9D / (double)(60 * Game.gamespeed);
 		Game.ac = Integer.parseInt((String)data.get(3));
 		Game.autosave = Boolean.parseBoolean((String)data.get(4));
 		OptionsMenu.isSoundAct = Boolean.parseBoolean((String)data.get(5));
