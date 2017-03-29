@@ -73,8 +73,7 @@ public class InputHandler implements MouseListener, KeyListener {
 		keymap.put("PAUSE", "ESCAPE"); // pause the game.
 		keymap.put("SETHOME", "SHIFT-H"); // set your home.
 		keymap.put("HOME", "H"); // go to set home.
-		//keymap.put("DAYTIME", "2"); //sort of makes day happen.
-		//keymap.put("NIGHTTIME", "3"); //sort of makes night happen.
+		
 		//keymap.put("SURVIVAL", "SHIFT-1");
 		keymap.put("SURVIVAL", "SHIFT-S");
 		//keymap.put("CREATIVE", "SHIFT-2");
@@ -86,6 +85,7 @@ public class InputHandler implements MouseListener, KeyListener {
 		//keymap.put("FPSDISP", "F3"); // toggle fps display
 		keymap.put("INFO", "SHIFT-I"); // toggle player stats display
 		
+		// I'm not entirely sure if this is necessary, especially for ctrl and alt... but it doesn't hurt.
 		keyboard.put("SHIFT", new Key());
 		keyboard.put("CTRL", new Key());
 		keyboard.put("ALT", new Key());
