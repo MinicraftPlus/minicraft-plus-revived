@@ -162,6 +162,7 @@ public class Save {
 		}
 		
 		data.add("[" + player.r + ";" + player.g + ";" + player.b + "]");
+		data.add(String.valueOf(Player.skinon));
 		writeToFile(location + filename + extention, data);
 	}
 	

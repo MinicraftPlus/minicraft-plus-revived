@@ -38,7 +38,7 @@ public class Player extends Mob {
 	public static int score;
 	public static int SHealth = 10;
 	public static int SHunger = 10;
-	public static boolean hasSetHome;
+	public static boolean hasSetHome = false, skinon;
 	//These 2 ints are ints saved from the first spawn - this way the spawn pos is always saved.
 	public static int spawnx = 0, spawny = 0;
 	public static int xx, yy;
@@ -536,7 +536,7 @@ public class Player extends Mob {
 
 		int xt = 0;
 		int yt = 14;
-		if (OptionsMenu.skinon) {
+		if (skinon) {
 			xt = 18;
 			yt = 20;
 		}

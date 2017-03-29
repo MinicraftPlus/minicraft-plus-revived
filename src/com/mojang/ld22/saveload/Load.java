@@ -215,14 +215,14 @@ public class Load {
 				player.game.scoreTime = 300;
 		}
 		
-		String colors = ((String)data.get(data.size() - 1)).replace("[", "").replace("]", "");
+		String colors = ((String)data.get(data.size() - 2)).replace("[", "").replace("]", "");
 		List color = Arrays.asList(colors.split(";"));
 		player.r = Integer.parseInt((String)color.get(0));
 		player.g = Integer.parseInt((String)color.get(1));
 		player.b = Integer.parseInt((String)color.get(2));
 		
-		if(data.size() > 10 && ((String)data.get(data.size() - 2)).contains("PotionEffects[")) {
-			String potiondata = ((String)data.get(data.size() - 2)).replace("PotionEffects[", "").replace("]", "");
+		if(data.size() > 11 && ((String)data.get(data.size() - 3)).contains("PotionEffects[")) {
+			String potiondata = ((String)data.get(data.size() - 3)).replace("PotionEffects[", "").replace("]", "");
 			List effects = Arrays.asList(potiondata.split(":"));
 			
 			for(int i = 0; i < effects.size(); i++) {
@@ -230,7 +230,7 @@ public class Load {
 				PotionResource.applyPotion(player, (String)effect.get(0), Integer.parseInt((String)effect.get(1)));
 			}
 		}
-		
+		Player.skinon = Boolean.parseBoolean((String)data.get(data.size()-1));
 	}
 	
 	public void loadInventory(String filename, Inventory inventory) {
