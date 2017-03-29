@@ -52,6 +52,7 @@ If their implementation becomes more likely, they will be moved to a different s
 * Fire
 * Chickens
 * Minecarts
+* Milk & bad status effects
 
 
 ##### Random Note: LevelGen.java has it's own main method; it's used for debug purposes, to make images of the randomly generated maps that the class makes.
