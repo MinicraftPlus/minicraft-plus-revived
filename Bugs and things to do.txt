@@ -1,5 +1,4 @@
 	---Quick TODO's---
--remove duplicate splashes
 -add if player is wearing airwizard suit to save file
 -Add more info to player info menu
 -Switch "call order" of keyboard and keymap; makes more sense to have many keys mapping to one action than vice versa.
