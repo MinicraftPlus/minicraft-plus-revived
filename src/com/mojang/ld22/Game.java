@@ -572,13 +572,13 @@ public class Game extends Canvas implements Runnable {
 						resetstartGame();
 					}
 					if (input.getKey("1").clicked) //Game.time = 0;
-						tickCount = 6000;
+						tickCount = 64800-1;
 					if (input.getKey("2").clicked) //Game.time = 1;
-						tickCount = 54000;
+						tickCount = 7200-1;
 					if (input.getKey("3").clicked) //Game.time = 2;
-						tickCount = 6000;
+						tickCount = 36000-1;
 					if (input.getKey("4").clicked) //Game.time = 3;
-						tickCount = 54000;
+						tickCount = 43200-1;
 					
 					if (input.getKey("shift-g").clicked) {
 						for (int i = 0; i < ListItems.items.size(); i++) {
@@ -616,7 +616,7 @@ public class Game extends Canvas implements Runnable {
 		player.y = (player.y >> 4) * 16 + 8; // sets the player's y coord (to center yourself on the stairs)
 		level.add(player); // adds the player to the level.
 	}
-
+	
 	public static void Fishing(Level level, int x, int y, Player player) {
 		isfishing = true;
 		int fcatch = random.nextInt(90);
@@ -745,6 +745,7 @@ public class Game extends Canvas implements Runnable {
 		if (player.showinfo) { // renders show debug info on the screen.
 			ArrayList<String> info = new ArrayList<String>();
 			info.add(xfps + " fps");
+			info.add("speed: " + gamespeed + " tik/s");
 			info.add("walk: " + Player.moveSpeed);
 			info.add("X " + txlevel);
 			info.add("Y " + tylevel);
