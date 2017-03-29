@@ -20,8 +20,8 @@ import com.mojang.ld22.item.resource.PotionResource;
 import com.mojang.ld22.item.resource.Resource;
 import com.mojang.ld22.level.Level;
 import com.mojang.ld22.level.tile.Tile;
-import com.mojang.ld22.saveload.Load;
 import com.mojang.ld22.saveload.Save;
+import com.mojang.ld22.saveload.Load;
 import com.mojang.ld22.screen.DeadMenu;
 import com.mojang.ld22.screen.LevelTransitionMenu;
 import com.mojang.ld22.screen.LoadingMenu;
@@ -41,10 +41,7 @@ import java.awt.image.BufferStrategy;
 import java.awt.image.BufferedImage;
 import java.awt.image.DataBufferInt;
 import java.io.*;
-import java.io.BufferedReader;
-import java.io.IOException;
 import java.util.*;
-import java.util.Random;
 import javax.imageio.ImageIO;
 import javax.swing.JFrame;
 
@@ -64,6 +61,10 @@ public class Game extends Canvas implements Runnable {
 	public static final int WIDTH = 288;
 	private static final int SCALE = 3;
 	//does the *scale part mean anything to the graphics, or does java accomodate it?
+	
+	private static final int normSpeed = 60; // measured in ticks / second.
+	public static float gamespeed = 1; // measured in MULTIPLES OF NORMSPEED.
+	//public static double nsPerTick = 1E9D / 60 / gamespeed; // defaults to 60 ticks per second (written as 1 second per 60 ticks).
 	
 	public int gameTime; // Main value in the timer used on the dead screen.
 	//public boolean fpscounter; // show fps counter?
@@ -95,10 +96,6 @@ public class Game extends Canvas implements Runnable {
 	public boolean hasWon; // If the player wins this is set to true
 	
 	/// TIME AND TICKS
-	
-	private static final int normSpeed = 60; // measured in ticks / second.
-	public static float gamespeed = 1; // measured in MULTIPLES OF NORMSPEED.
-	//public static double nsPerTick = 1E9D / 60 / gamespeed; // defaults to 60 ticks per second (written as 1 second per 60 ticks).
 	
 	public static int tickCount = 0; // Used in the ticking system
 	public static boolean tickReset = false;
@@ -596,8 +593,8 @@ public class Game extends Canvas implements Runnable {
 					if (input.getKey("shift-alt-minus").clicked && gamespeed > 1) gamespeed--;
 					if (input.getKey("shift-alt-minus").clicked && gamespeed <= 1) gamespeed /= 2;
 					*/
-					if (input.getKey("shift-equals").clicked) Player.movespeed++;
-					if (input.getKey("shift-minus").clicked && Player.movespeed > 0) Player.movespeed--;
+					if (input.getKey("shift-equals").clicked) Player.moveSpeed++;
+					if (input.getKey("shift-minus").clicked && Player.moveSpeed > 0) Player.moveSpeed--;
 				} // end debug only cond.
 			} // end "menu-null" conditional
 		} // end hasfocus conditional
@@ -746,30 +743,28 @@ public class Game extends Canvas implements Runnable {
 		int tylevel = Player.yy / 16;
 		int col0 = Color.get(-1, 555, 555, 555);
 		if (player.showinfo) { // renders show debug info on the screen.
-			Font.draw(xfps + " fps", screen, 1, screen.h - 190, col0);
-			Font.draw(gamespeed+" tik/s", screen, 1, screen.h - 180, col0);
-			Font.draw("X " + txlevel, screen, 1, screen.h - 170, col0);
-			Font.draw("Y " + tylevel, screen, 1, screen.h - 160, col0);
+			ArrayList<String> info = new ArrayList<String>();
+			info.add(xfps + " fps");
+			info.add("walk: " + Player.moveSpeed);
+			info.add("X " + txlevel);
+			info.add("Y " + tylevel);
+			
+			
+			if (ModeMenu.score)
+				info.add("Score " + Player.score);
 			
 			/// Displays number of chests left, if on dungeon level.
-			if (ModeMenu.score) {
-				Font.draw("Score " + Player.score, screen, 1, screen.h - 150, col0);
-				if (currentLevel == 5) {
-					if (levels[currentLevel].chestcount > 0) {
-						Font.draw(
-								"Chests: " + levels[currentLevel].chestcount, screen, 1, screen.h - 140, col0);
-					} else {
-						Font.draw("Chests: Complete!", screen, 1, screen.h - 140, col0);
-					}
-				}
-			} else if (currentLevel == 5) {
+			if (currentLevel == 5) {
 				if (levels[currentLevel].chestcount > 0) {
-					Font.draw("Chests: " + levels[currentLevel].chestcount, screen, 1, screen.h - 150, col0);
+					info.add("Chests: " + levels[currentLevel].chestcount);
 				} else {
-					Font.draw("Chests: Complete!", screen, 1, screen.h - 150, col0);
+					info.add("Chests: Complete!");
 				}
 			}
 			
+			for(int i = 0; i < info.size(); i++) {
+				Font.draw(info.get(i), screen, 1, 2 + i*10, col0);
+			}
 		}
 		
 		// This is the arrow counter. ^ = infinite symbol.
@@ -839,13 +834,17 @@ public class Game extends Canvas implements Runnable {
 			if (dura > 100) dura = 100;
 			Font.draw(dura + "%", screen, 164, screen.h - 16, Color.get(0, 30, 30, 30));
 		}
-
+		
 		/// This renders the potions overlay
 		if(player.showpotioneffects && player.potioneffects.size() > 0) {
-			for(int i = 0; i < player.potioneffects.size(); i++) {
-				int pcol = Color.get(PotionResource.potionColor((String)player.potioneffects.get(i)), 555, 555, 555);
-				Font.draw("("+input.getMapping("potionEffects")+" to hide!)", screen, 180, screen.h - 183, Color.get(0, 555, 555, 555));
-				Font.draw((String)player.potioneffects.get(i) + " (" + ((Integer)player.potioneffectstime.get(i)).intValue() / 60 / 60 + ":" + (((Integer)player.potioneffectstime.get(i)).intValue() / 60 - 60 * (((Integer)player.potioneffectstime.get(i)).intValue() / 60 / 60)) + ")", screen, 180, screen.h - (175 - i * 8), pcol);
+			Map.Entry<String, Integer>[] effects = player.potioneffects.entrySet().toArray(new Map.Entry[0]); // the key is potion type, value is remaining potion duration.
+			for(int i = 0; i < effects.length; i++) {
+				//PotionResource.PotionEffect potion = player.potioneffects.get(i);
+				String pType = effects[i].getKey();
+				int pTime = effects[i].getValue();
+				int pcol = Color.get(PotionResource.potionColor(pType), 555, 555, 555);
+				Font.draw("("+input.getMapping("potionEffects")+" to hide!)", screen, 180, 9, Color.get(0, 555, 555, 555));
+				Font.draw(pType + " (" + (pTime / 60 / 60) + ":" + ((pTime / 60) % 60) + ")", screen, 180, 17 + i * 8, pcol);
 			}
 		}
 		
