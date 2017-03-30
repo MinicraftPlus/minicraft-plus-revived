@@ -33,7 +33,9 @@ public class InputHandler implements MouseListener, KeyListener {
 			and the values are the names of the keyboard keys you physically press to do them.
 		
 			-To get whether a key is pressed or not, use input.getKey("key"), where "key" is the name of the key, either physical or virtual. If virtual, all it does is then fetch the corrosponding key from keyboard anyway; but it allows one to change the controls while still making the same key requests in the code.
-			
+		
+		-If you want to have multiple possibilities at once when it comes to which key to press to do something, you can! just put a "|" between the mappings. For example, say you wanted both "wasd" and arrow key controls to work, at the same time. How you do this is in the construstor below, where it says "keymap.put(" UP, DOWN, LEFT, and RIGHT.
+		
 		-This class supports modifier keys as inputs. To specify a "compound" key (one using modifiders), write "MOD1-MOD2-KEY", that is, "SHIFT-ALT-D" or "ALT-F", with a "-" between the keys. ALWAYS put the actual trigger key last, after all modifiers (the modifiers are: shift, ctrl, and alt).
 		
 			--All the magic happens in the getKey() method: If the String keyname input has hyphens("-"), then it's a compound key, and it splits it up between the hyphens. Then, it compares which modifiers are currently being pressed, and which are being requested. Then, a Key object is created, which if the modifiers match, reflects the non-modifier key's "down" and "clicked" values; otherwise they're both false.
@@ -55,17 +57,11 @@ public class InputHandler implements MouseListener, KeyListener {
 		keymap = new HashMap<String, String>(); //stores custom key name with physical key name in keyboard.
 		keyboard = new HashMap<String, Key>(); //stores physical keyboard keys; auto-generated :D
 		
-		keymap.put("UP", "UP"); //up action references up arrow key
-		keymap.put("DOWN", "DOWN"); //move down action references down arrow key
-		keymap.put("LEFT", "LEFT"); //move left action references left arrow key
-		keymap.put("RIGHT", "RIGHT"); //move right action references right arrow key
+		keymap.put("UP", "UP|W"); //up action references up arrow key
+		keymap.put("DOWN", "DOWN|S"); //move down action references down arrow key
+		keymap.put("LEFT", "LEFT|A"); //move left action references left arrow key
+		keymap.put("RIGHT", "RIGHT|D"); //move right action references right arrow key
 		
-		/*//this system does NOT really support multiple keys having the same effect, unfortunately... like you would even do that... although, it would make more sense for only one action to be reached by many keys not the other way around, so maybe I should switch the call order of keyboard and keymap....
-		keymap.put("W", "UP"); // this is a bit backwards... I wonder if it will work...
-		keymap.put("S", "DOWN");
-		keymap.put("A", "LEFT");
-		keymap.put("D", "RIGHT");
-		*/
 		keymap.put("ATTACK", "C"); //attack action references "C" key
 		keymap.put("MENU", "X"); //and so on... menu does various things.
 		keymap.put("CRAFT", "Z"); // open/close personal crafting window.
@@ -74,10 +70,8 @@ public class InputHandler implements MouseListener, KeyListener {
 		keymap.put("SETHOME", "SHIFT-H"); // set your home.
 		keymap.put("HOME", "H"); // go to set home.
 		
-		//keymap.put("SURVIVAL", "SHIFT-1");
-		keymap.put("SURVIVAL", "SHIFT-S");
-		//keymap.put("CREATIVE", "SHIFT-2");
-		keymap.put("CREATIVE", "SHIFT-C");
+		keymap.put("SURVIVAL", "SHIFT-S|SHIFT-1");
+		keymap.put("CREATIVE", "SHIFT-C|SHIFT-2");
 		
 		//keymap.put("SOUNDON", "M"); //toggles sound on and off... well, it should...
 		
@@ -172,22 +166,58 @@ public class InputHandler implements MouseListener, KeyListener {
 		return "NO_KEY";
 	}
 	
+	// a debug variable to prevent a stack overflow error that kept occuring. Will likely remove soon.
+	static int tries = 0;
+	
 	/// THIS is pretty much the only way you want to be interfacing with this class; it has all the auto-create and protection functions and such built-in.
 	public Key getKey(String keytext) {
+		return getKey(keytext, true);
+	}
+	
+	private Key getKey(String keytext, boolean getFromMap) {
 		// if the passed-in key is blank, or null, then return null.
 		if (keytext == null || keytext.length() == 0) return null;
 		
 		Key key; // make a new key to return at the end
 		keytext = keytext.toUpperCase(); // prevent errors due to improper "casing"
 		
-		String fullKeytext;
+		String fullKeytext = keytext;
+		
+		if(getFromMap) {
+			synchronized ("lock") {
+				// if the passed-in key matches one in keymap, then replace it with it's match, a key in keyboard.
+				if (keymap.containsKey(keytext))
+					keytext = keymap.get(keytext); // converts action name to physical key name
+			}
+		}
+		
+		if (keytext.contains("|")) {
+			//if (Game.debug) System.out.println("multiple key poss; key: " + keytext);
+			/// multiple key possibilities exist for this action; so, combine the results of each one!
+			key = new Key();
+			/*tries++; //again, in case of stack overflow.
+			if(tries < 10) {
+			*/	for(String keyposs: keytext.split("\\|")) { // String.split() uses regex, and "|" is a special character, so it must be escaped; but the backslash must be passed in, so it needs escaping.
+					//if (Game.debug) System.out.println("poss: " + keyposs);
+					Key aKey = getKey(keyposs, false); //this time, do NOT attempt to fetch from keymap.
+					//if (Game.debug) System.out.println("fetched poss key.");
+					// it really does combine using "or":
+					key.down = key.down || aKey.down;
+					key.clicked = key.clicked || aKey.clicked;
+				}
+				//if (Game.debug) System.out.println("all key poss's checked for: " + keytext);
+			/*}
+			else {
+				System.out.println("STACKOVERFLOW on key: " + keytext);
+				Thread.dumpStack();
+				System.exit(1);
+			}*/
+			//tries = 0;
+			return key;
+		}
+		
 		synchronized ("lock") {
-			// if the passed-in key matches one in keymap, then replace it with it's match, a key in keyboard.
-			if (keymap.containsKey(keytext))
-				keytext = keymap.get(keytext); // converts action name to physical key name
-			
-			fullKeytext = keytext;
-			if(keytext.contains("-"))
+			if(keytext.contains("-")) // truncate compound keys to only the base key, no modifiers
 				keytext = keytext.substring(keytext.lastIndexOf("-")+1);
 			
 			if (keyboard.containsKey(keytext))
@@ -199,16 +229,18 @@ public class InputHandler implements MouseListener, KeyListener {
 				
 				if(Game.debug) System.out.println("Added new key: \'" + keytext + "\'"); //log to console that a new key was added to the keyboard
 			}
-		}
+		}// "key" has been set to the appropriate key Object.
 		
-		if(fullKeytext.equals("SHIFT") || fullKeytext.equals("CTRL") || fullKeytext.equals("ALT"))
-			return key;
+		keytext = fullKeytext;
 		
-		//if (Game.debug) System.out.println("key requested - physical: " + fullKeytext);
+		if(keytext.equals("SHIFT") || keytext.equals("CTRL") || keytext.equals("ALT"))
+			return key; // nothing more must be done with modifier keys.
+		
+		//if (Game.debug) System.out.println("key requested - physical: " + keytext);
 		
 		boolean foundS = false, foundC = false, foundA = false;
-		if(fullKeytext.contains("-")) {
-			for(String keyname: fullKeytext.split("-")) {
+		if(keytext.contains("-")) {
+			for(String keyname: keytext.split("-")) {
 				if(keyname.equals("SHIFT")) foundS = true;
 				if(keyname.equals("CTRL")) foundC = true;
 				if(keyname.equals("ALT")) foundA = true;
@@ -221,7 +253,7 @@ public class InputHandler implements MouseListener, KeyListener {
 		
 		//if (Game.debug) System.out.println("current modifiers match request: " + modMatch);
 		
-		if(fullKeytext.contains("-")) {
+		if(keytext.contains("-")) { // we want to return a compound key, but still care about the trigger key.
 			Key mainKey = key; // move the fetched key to a different variable
 			
 			key = new Key(); // set up return key to have proper values
