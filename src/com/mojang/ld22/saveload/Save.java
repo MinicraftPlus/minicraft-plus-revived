@@ -154,18 +154,15 @@ public class Save {
 		if(player.potioneffects.size() > 0) {
 			String subdata = "PotionEffects[";
 			
-			for(int i = 0; i < player.potioneffects.size(); i++) {
-				subdata += (String)player.potioneffects.get(i) + ";" + player.potioneffectstime.get(i);
-				if(i != player.potioneffects.size() - 1) {
-					subdata += ":";
-				}
-			}
+			for(java.util.Map.Entry<String, Integer> potion: player.potioneffects.entrySet())
+				subdata += potion.getKey() + ";" + potion.getValue() + ":";
 			
-			subdata += "]";
+			subdata = subdata.substring(0, subdata.length()-1)+"]"; // cuts off extra ":" and appends "]"
 			data.add(subdata);
 		}
 		
 		data.add("[" + player.r + ";" + player.g + ";" + player.b + "]");
+		data.add(String.valueOf(Player.skinon));
 		writeToFile(location + filename + extention, data);
 	}
 	
@@ -242,7 +239,7 @@ public class Save {
 				
 				if(e instanceof Spawner) {
 					Spawner egg = (Spawner)e;
-					extradata += ":" + egg.mob.getClass().getCanonicalName().replace("com.mojang.ld22.entity.", "") + ":" + egg.lvl;
+					extradata += ":" + egg.mob + ":" + egg.lvl;
 				}
 				
 				data.add(name + "[" + e.x + ":" + e.y + extradata + ":" + l + "]");

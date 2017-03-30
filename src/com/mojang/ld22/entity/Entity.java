@@ -9,6 +9,7 @@ import java.util.List;
 import java.util.Random;
 
 public class Entity {
+	/// I'm pretty darn sure that entity coordinates are per pixel, not per tile; this has likely been the cause of the inaccuracy of the print locations.
 	protected final Random random = new Random();
 	public int x;
 	public int y;
@@ -19,7 +20,8 @@ public class Entity {
 	public boolean removed;
 	public Level level;
 	public boolean hasspawned = false;
-	public int col = Color.get(-1, 0, 111, 222);
+	public int col = Color.get(-1, 0, 111, 222); // current Color
+	// day/night color variations, I think.
 	public int col0 = Color.get(-1, 0, 111, 222);
 	public int col1 = Color.get(-1, 0, 333, 444);
 	public int col2 = Color.get(-1, 0, 111, 222);

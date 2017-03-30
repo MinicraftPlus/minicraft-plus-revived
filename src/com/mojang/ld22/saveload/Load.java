@@ -33,6 +33,7 @@ import com.mojang.ld22.entity.Zombie;
 import com.mojang.ld22.item.Item;
 import com.mojang.ld22.item.ListItems;
 import com.mojang.ld22.item.ResourceItem;
+import com.mojang.ld22.item.resource.PotionResource;
 import com.mojang.ld22.level.tile.Tile;
 import com.mojang.ld22.screen.LoadingMenu;
 import com.mojang.ld22.screen.ModeMenu;
@@ -143,7 +144,6 @@ public class Load {
 		loadFromFile(location + filename + extention);
 		Game.astime = Integer.parseInt((String)data.get(1));
 		Game.gamespeed = Float.parseFloat((String)data.get(2));
-		//game.nsPerTick = 1.0E9D / (double)(60 * Game.gamespeed);
 		Game.ac = Integer.parseInt((String)data.get(3));
 		Game.autosave = Boolean.parseBoolean((String)data.get(4));
 		OptionsMenu.isSoundAct = Boolean.parseBoolean((String)data.get(5));
@@ -215,23 +215,22 @@ public class Load {
 				player.game.scoreTime = 300;
 		}
 		
-		String colors = ((String)data.get(data.size() - 1)).replace("[", "").replace("]", "");
+		String colors = ((String)data.get(data.size() - 2)).replace("[", "").replace("]", "");
 		List color = Arrays.asList(colors.split(";"));
 		player.r = Integer.parseInt((String)color.get(0));
 		player.g = Integer.parseInt((String)color.get(1));
 		player.b = Integer.parseInt((String)color.get(2));
 		
-		if(data.size() > 10 && ((String)data.get(data.size() - 1)).contains("PotionEffects[")) {
-			String potiondata = ((String)data.get(data.size() - 1)).replace("PotionEffects[", "").replace("]", "");
+		if(data.size() > 11 && ((String)data.get(data.size() - 3)).contains("PotionEffects[")) {
+			String potiondata = ((String)data.get(data.size() - 3)).replace("PotionEffects[", "").replace("]", "");
 			List effects = Arrays.asList(potiondata.split(":"));
 			
 			for(int i = 0; i < effects.size(); i++) {
 				List effect = Arrays.asList(((String)effects.get(i)).split(";"));
-				player.potioneffects.add((String)effect.get(0));
-				player.potioneffectstime.add(Integer.valueOf(Integer.parseInt((String)effect.get(1))));
+				PotionResource.applyPotion(player, (String)effect.get(0), Integer.parseInt((String)effect.get(1)));
 			}
 		}
-		
+		Player.skinon = Boolean.parseBoolean((String)data.get(data.size()-1));
 	}
 	
 	public void loadInventory(String filename, Inventory inventory) {
@@ -338,8 +337,8 @@ public class Load {
 					Spawner egg = (Spawner)newEntity;
 					egg.x = Integer.parseInt((String)info.get(0));
 					egg.y = Integer.parseInt((String)info.get(1));
-					egg.mob = getEntity((String)info.get(2), player);
 					egg.lvl = Integer.parseInt((String)info.get(3));
+					egg.setMob((String)info.get(2));
 					currentlevel = Integer.parseInt((String)info.get(info.size() - 1));
 					Game.levels[currentlevel].add(egg);
 				} else {
@@ -385,7 +384,7 @@ public class Load {
 			case "Chest": return (Entity)(new Chest());
 			case "DeathChest": return (Entity)(new Chest(true));
 			case "DungeonChest": return (Entity)(new DungeonChest());
-			case "Spawner": return (Entity)(new Spawner(new Zombie(1), 1));
+			case "Spawner": return (Entity)(new Spawner("Zombie", 1));
 			case "Anvil": return (Entity)(new Anvil());
 			case "Enchanter": return (Entity)(new Enchanter());
 			case "Loom": return (Entity)(new Loom());

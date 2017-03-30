@@ -2,6 +2,7 @@
 package com.mojang.ld22.screen;
 
 import com.mojang.ld22.Game;
+import com.mojang.ld22.entity.Player;
 import com.mojang.ld22.gfx.Color;
 import com.mojang.ld22.gfx.Font;
 import com.mojang.ld22.gfx.Screen;
@@ -14,7 +15,6 @@ public class OptionsMenu extends Menu {
 	public static int diff = 2;
 	public static boolean isSoundAct = true;
 	public static boolean unlockedskin = false;
-	public static boolean skinon = false;
 	public static boolean hasSetDiff = false;
 
 	private Menu parent;
@@ -40,9 +40,7 @@ public class OptionsMenu extends Menu {
 			hasSetDiff = true;
 			game.setMenu(parent);
 		}
-
-		if (unlockedskin && this.input.getKey("w").clicked) skinon = !skinon;
-
+		
 		//toggles sound
 		if (input.getKey("s").clicked) {
 			Sound.craft.play();
@@ -53,6 +51,8 @@ public class OptionsMenu extends Menu {
 			Sound.craft.play();
 			Game.autosave = !Game.autosave;
 		}
+		
+		if (unlockedskin && input.getKey("w").clicked) Player.skinon = !Player.skinon;
 	}
 
 	public void render(Screen screen) {
@@ -76,7 +76,7 @@ public class OptionsMenu extends Menu {
 		
 		if (unlockedskin) {
 			Font.draw("<W>ear Suit:", screen, 80, screen.h - 50, textColor);
-			Font.draw((skinon?"On":"Off"), screen, 180, screen.h - 50, (skinon?onColor:offColor));
+			Font.draw((Player.skinon?"On":"Off"), screen, 180, screen.h - 50, (Player.skinon?onColor:offColor));
 		}
 
 		Font.draw("Press Esc to return", screen, 80, screen.h - 25, textColor);

@@ -6,45 +6,44 @@ import com.mojang.ld22.gfx.Color;
 import com.mojang.ld22.item.Item;
 import com.mojang.ld22.item.ToolItem;
 import com.mojang.ld22.item.ToolType;
+import com.mojang.ld22.level.tile.Tile;
 import com.mojang.ld22.sound.Sound;
 import java.util.Random;
 
 public class Spawner extends Furniture {
-
-	public Entity mob;
+	
 	Random rnd = new Random();
-	int randx = 2;
-	int randy = 2;
-	int r = 90;
-	int health = 100;
-	public int lvl = 1;
-	int tick = 0;
-	boolean spawn = false;
-	int dmg = 0;
+	//public Entity mob; // I think it would be better if this were just a string.
+	public String mob;
+	public int lvl;
+	//int randx = 2;
+	//int randy = 2;
+	int r;
+	int health;
+	int tick;
+	//boolean spawn;
+	int dmg;
 	
-	
-	public Spawner(Entity m, int level) {
-		super(m.getClass().getCanonicalName().replace("com.mojang.ld22.entity.", "") + " Spawner");
-		mob = m;
+	public Spawner(String m, int level) {
+		super(m + " Spawner");
 		lvl = level;
-		/*
-			The problem with the colors is likely occuring right here; perhaps the mob's colors are not yet set at this time.
-			
-			(after checking Creeper.java) Ha! I was right!
-		*/
-		col0 = m.col1;
-		col1 = m.col2;
-		col2 = m.col3;
-		col3 = m.col4;
-		col = col2;
+		
+		health = 100;
+		r = 8*16; // activate from up to 8 blocks away
+		tick = 0;
+		dmg = 0;
+		//spawn = false;
+		
+		setMob(m);
 		sprite = 10;
 		xr = 7;
 		yr = 2;
 	}
-
+	
 	public void tick() {
 		super.tick();
-		int xd = level.player.x - x;
+		// what's all this for (the if/else below)? It seems pretty useless... I mean, why change color?
+		/*int xd = level.player.x - x;
 		int yd = level.player.y - y;
 		if(xd * xd + yd * yd < r * r) {
 			col0 = mob.col1;
@@ -57,45 +56,45 @@ public class Spawner extends Furniture {
 			col1 = mob.col4;
 			col2 = mob.col4;
 			col3 = mob.col4;
-		}
-
+		}*/
+		tick++;
 		if(tick > 180) {
 			tick = 0;
-			spawn = true;
+			trySpawn();
 		}
-
-		if(spawn && mob != null) {
-			xd = level.player.x - x;
-			yd = level.player.y - y;
-			if(xd * xd + yd * yd > r * r) {
-				return;
+	}
+	
+	private void trySpawn() {
+		int xd = level.player.x - x;
+		int yd = level.player.y - y;
+		if(xd * xd + yd * yd <= r * r) return;
+		
+		Mob newmob = getMob(mob, lvl);
+		
+		/*if(newmob instanceof Mob) {
+			newmob = (Mob)newmob;
+			//getEntity(getEntityName(newmob)), lvl);
+			/*if(col1 == Color.get(-1, 0, 4, 46)) { // unnecessary if my improvements are successful
+				newmob = getEntity(getEntityName(mob) + "II", lvl);
+			}*/
+		//}*/
+		
+		int randX = (x/16 - 1 + rnd.nextInt(2)); // the rand is really just one tile in any direction
+		int randY = (y/16 - 1 + rnd.nextInt(2));
+		Tile tile = level.getTile(randX, randY);
+		if(tile.mayPass(level, randX, randY, newmob) && tile.getLightRadius(level, randX, randY) == 0) {
+			(newmob).x = randX * 16;
+			(newmob).y = randY * 16;
+			(newmob).hasspawned = true;
+			if (com.mojang.ld22.Game.debug) System.out.println("spawning new " + mob + " on level "+lvl+": x=" + (newmob.x/16)+" y="+(newmob.y/16) + "...");
+			level.add(newmob);
+			
+			for(int i = 0; i < 6; i++) {
+				randX = rnd.nextInt(16);
+				randY = rnd.nextInt(12);
+				level.add(new FireParticle(x - 4 + randX, y - 4 + randY));
 			}
-
-			Object newmob = getEntity(mob.getClass().getCanonicalName().replace("com.mojang.ld22.entity.", ""), lvl);
-			if(newmob instanceof Mob) {
-				newmob = (Mob)newmob;
-				getEntity(newmob.getClass().getCanonicalName().replace("com.mojang.ld22.entity.", ""), lvl);
-				if(col1 == Color.get(-1, 0, 4, 46)) {
-					newmob = getEntity(mob.getClass().getCanonicalName().replace("com.mojang.ld22.entity.", "") + "II", lvl);
-				}
-			}
-
-			if(level.getTile((x - 16 + rnd.nextInt(32)) / 16, (y - 16 + rnd.nextInt(32)) / 16).mayPass(level, (x - 16 + rnd.nextInt(32)) / 16, (y - 16 + rnd.nextInt(32)) / 16, this) && level.getTile((x - 16 + rnd.nextInt(32)) / 16, (y - 16 + rnd.nextInt(32)) / 16).getLightRadius(level, (x - 16 + rnd.nextInt(32)) / 16, (y - 16 + rnd.nextInt(32)) / 16) == 0) {
-				((Entity)newmob).x = x - 16 + rnd.nextInt(32);
-				((Entity)newmob).y = y - 16 + rnd.nextInt(32);
-				((Entity)newmob).hasspawned = true;
-				level.add((Entity)newmob);
-
-				for(int i = 0; i < 6; i++) {
-					randx = rnd.nextInt(16);
-					randy = rnd.nextInt(12);
-					level.add(new FireParticle(x - 4 + randx, y - 4 + randy));
-				}
-			}
-
-			spawn = false;
 		}
-
 	}
 
 	public boolean interact(Player player, Item item, int attackDir) {
@@ -103,7 +102,7 @@ public class Spawner extends Furniture {
 			ToolItem tool = (ToolItem)item;
 			if(tool.type == ToolType.pickaxe) {
 				Sound.monsterHurt.play();
-				if(player.haste) {
+				if(player.potioneffects.containsKey("Haste")) {
 					dmg = tool.level + 1 + random.nextInt(5);
 				} else {
 					dmg = tool.level + 1 + random.nextInt(3);
@@ -122,12 +121,12 @@ public class Spawner extends Furniture {
 
 			if(tool.type == ToolType.pick) {
 				Sound.monsterHurt.play();
-				if(player.haste) {
+				if(player.potioneffects.containsKey("Haste")) {
 					dmg = tool.level + 1 + random.nextInt(4);
 				} else {
 					dmg = tool.level + 1 + random.nextInt(2);
 				}
-
+				
 				health -= dmg;
 				level.add(new TextParticle("" + dmg, x, y, Color.get(-1, 200, 300, 400)));
 				if(health < 1) {
@@ -142,42 +141,61 @@ public class Spawner extends Furniture {
 
 		return false;
 	}
-
+	
 	protected void touchedBy(Entity entity) {}
-
+	
 	public boolean use(Player player, int attackDir) {
 		return false;
 	}
-
-	public Entity getEntity(String string, int lvl) {
+	
+	public void setMob(String newmob) {
+		this.mob = newmob;
+		
+		Mob model = getMob(newmob, lvl);
+		
+		col0 = model.col1;
+		col1 = model.col2;
+		col2 = model.col3;
+		col3 = model.col4;
+		col = col2;
+	}
+	
+	public Mob getMob(String string, int lvl) {
 		switch(string) {
-			case "Zombie": return (Entity)new Zombie(lvl);
-			case "Slime": return (Entity)new Slime(lvl);
-			case "Cow": return (Entity)new Cow(lvl);
-			case "Sheep": return (Entity)new Sheep(lvl);
-			case "Pig": return (Entity)new Pig(lvl);
-			case "Creeper": return (Entity)new Creeper(lvl);
-			case "Skeleton": return (Entity)new Skeleton(lvl);
-			case "Workbench": return (Entity)new Workbench();
-			case "AirWizard": return (Entity)new AirWizard(false);
-			case "AirWizardII": return (Entity)new AirWizard(true);
-			case "Chest": return (Entity)new Chest();
+			case "Zombie": return (Mob)new Zombie(lvl);
+			case "Slime": return (Mob)new Slime(lvl);
+			case "Cow": return (Mob)new Cow(lvl);
+			case "Sheep": return (Mob)new Sheep(lvl);
+			case "Pig": return (Mob)new Pig(lvl);
+			case "Creeper": return (Mob)new Creeper(lvl);
+			case "Skeleton": return (Mob)new Skeleton(lvl);
+			//case "Workbench": return (Entity)new Workbench();
+			case "AirWizard": return (Mob)new AirWizard(false);
+			case "AirWizardII": return (Mob)new AirWizard(true);
+			// these are not mobs; only mobs should be gotten here
+			/*case "Chest": return (Entity)new Chest();
 			case "DeathChest": return (Entity)new Chest(true);
 			case "DungeonChest": return (Entity)new DungeonChest();
 			case "Anvil": return (Entity)new Anvil();
 			case "Enchanter": return (Entity)new Enchanter();
 			case "Loom": return (Entity)new Loom();
 			case "Furnace": return (Entity)new Furnace();
-			case "Spawner": return (Entity)new Spawner(new Zombie(lvl), lvl);
 			case "Oven": return (Entity)new Oven();
 			case "Bed": return (Entity)new Bed();
 			case "Tnt": return (Entity)new Tnt();
 			case "Lantern": return (Entity)new Lantern();
 			case "IronLantern": return (Entity)new IronLantern();
 			case "GoldLantern": return (Entity)new GoldLantern();
-			case "Knight": return (Entity)new Knight(lvl);
-			case "Snake": return (Entity)new Snake(lvl);
-			default: return new Zombie(lvl);
+			*/case "Knight": return (Mob)new Knight(lvl);
+			case "Snake": return (Mob)new Snake(lvl);
+			default:
+				/* spawners are NOT entities; should not pass a spawner type
+				if (string.contains(" Spawner") {
+					String type = string.split(" ")[0];
+					if(type.length() > 0)
+						return (Entity)new Spawner(type, lvl);
+				}*/
+				return (Mob)new Zombie(lvl); // fix: make a missing texture entity!
 		}
 	}
 }

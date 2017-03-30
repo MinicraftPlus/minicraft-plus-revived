@@ -30,16 +30,17 @@ public class ListItems {
 
 	public static List items = new ArrayList();
 	
-	public Item spawnerzombie = (new FurnitureItem(new Spawner(new Zombie(1), 1))).addItem();
-	public Item spawnerslime = (new FurnitureItem(new Spawner(new Slime(1), 1))).addItem();
-	public Item spawnerknight = (new FurnitureItem(new Spawner(new Knight(1), 1))).addItem();
-	public Item spawnersnake = (new FurnitureItem(new Spawner(new Snake(1), 1))).addItem();
-	public Item spawnerskeleton = (new FurnitureItem(new Spawner(new Skeleton(1), 1))).addItem();
-	public Item spawnercreeper = (new FurnitureItem(new Spawner(new Creeper(1), 1))).addItem();
-	public Item spawnerairwizard = (new FurnitureItem(new Spawner(new AirWizard(false), 1))).addItem();
-	public Item spawnerairwizardii = (new FurnitureItem(new Spawner(new AirWizard(true), 1))).addItem();
-	public Item spawnerpig = (new FurnitureItem(new Spawner(new Pig(1), 1))).addItem();
-	public Item spawnersheep = (new FurnitureItem(new Spawner(new Sheep(1), 1))).addItem();
+	public Item spawnercow = (new FurnitureItem(new Spawner("Cow", 1))).addItem();
+	public Item spawnerpig = (new FurnitureItem(new Spawner("Pig", 1))).addItem();
+	public Item spawnersheep = (new FurnitureItem(new Spawner("Sheep", 1))).addItem();
+	public Item spawnerslime = (new FurnitureItem(new Spawner("Slime", 1))).addItem();
+	public Item spawnerzombie = (new FurnitureItem(new Spawner("Zombie", 1))).addItem();
+	public Item spawnercreeper = (new FurnitureItem(new Spawner("Creeper", 1))).addItem();
+	public Item spawnerskeleton = (new FurnitureItem(new Spawner("Skeleton", 1))).addItem();
+	public Item spawnersnake = (new FurnitureItem(new Spawner("Snake", 1))).addItem();
+	public Item spawnerknight = (new FurnitureItem(new Spawner("Knight", 1))).addItem();
+	public Item spawnerairwizard = (new FurnitureItem(new Spawner("AirWizard", 1))).addItem();
+	public Item spawnerairwizardii = (new FurnitureItem(new Spawner("AirWizardII", 1))).addItem();
 	
 	public Item powglove = (new PowerGloveItem()).addItem();
 	public Item workbench = (new FurnitureItem(new Workbench())).addItem();
@@ -53,7 +54,7 @@ public class ListItems {
 	public Item enchanter = (new FurnitureItem(new Enchanter())).addItem();
 	public Item loom = (new FurnitureItem(new Loom())).addItem();
 	public Item tnt = (new FurnitureItem(new Tnt())).addItem();
-	public Item Bed = (new FurnitureItem(new Bed())).addItem();
+	public Item bed = (new FurnitureItem(new Bed())).addItem();
 	public Item bucket = (new BucketItem()).addItem();
 	public Item wbucket = (new BucketWaterItem()).addItem();
 	public Item lbucket = (new BucketLavaItem()).addItem();

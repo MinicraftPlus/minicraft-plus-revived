@@ -1,29 +1,108 @@
-TODO: check that airwizard costume really does allow you to walk on air tiles.
+	---Quick TODO's---
+-Add more info to player info menu
+
+-----------------------------------------------------------------------------------
 
 	####BUGS####
 ####
-Airwizard health bar is off-center.
-####
-Regular "potion"s can be used even though they have no effect; they need to not do anything when someone attempts to use them.
-####
 Sound effects don't always play when they should; mostly it seems when other sounds should be on at the same time.
 ####
+newly spawned zombies don't go to one health for creative..?
+####
+new worlds use the current/previous keyboard presets, rather than the default ones, when creating a new world after loading a previous one.
+####
+Many item names don't fit on the black "active item" bar at the bottom.
+####
+
+-----------------------------------------------------------------------------------
 
 	****IDEAS****
 ****
+
+Make a TextPage class or something, for the About and Instructions sections of the TitleMenu; really, it's for pages that are non-interactive, just a bunch of text.
+Also, add controls listing somewhere. Probably closely related to the below idea.
+
+****
+
 I have a system in place to save custom key controls, but lack the menu to edit them... I need to get that implemented.
+	How about... another menu class, SelectMenu? It will parent all the cursor selection and scrollable menus; I can use it for the new KeymapMenu, and also WorldSelectMenu and InventoryMenu, with scrolling; the other menus won't use the scroll feature, but I can just make a boolean for that, I think.
+	For those menus that don't even have a cursor, though, perhaps I could just make it a Menu..? If that doesn't work, I can always make a ChoiceMenu class, super simple, that just displays two choices with no cursor, and listens for enter and escape keypresses.
+
 ****
-Fix the whitespace; where it indents without a semicolon, mostly. I've done it before...
+
+check Tile methods; many of them have many unnecessary parameters...
+
 ****
+
+Make it so friendly mobs (sheep, pigs, cows) spawn during the day, but evil mobs don't.
+
+****
+
+change the getEntity methods, and similar, so that errors, or invalid object requests, can be easily found with a "missing texture" entity, rather than defaulting to a Zombie.
+
+****
+
+Support Color.get(String) where the string is four characters, made up of t,w,b; t=transparent, w=white, and b=black. That might look better. Of course, what WOULD look better is Color.red, Color.white, etc.
+	Maybe I could even devise Color.lighten and/or Color.darken methods, that would work for making the daylight cycle color sets.
+
+****
+
+Add feature to notifications display: if it starts with ":error:", then make the text red (but don't show the ":Error:" part). Any further than that, though, and it would be better to just pass it in.
+
+****
+
+Make the "sticky keys" feature off by default on survival, and on by default on creative.
+
+****
+
+-----------------------------------------------------------------------------------
+
+* * * * More complicated ideas * * * *
+
 Make the loading system more forgiving, so that if I add a requirement to the save files, the old ones will still work. The idea is that when it expects 5 options and only finds 4, it just keeps those at default.
-****
+
+* * * *
+
 Make window resizable, and menus will be fine.
-	I think.... I think a lot of this will simply be changing all the 8's to "scale".
-****
+	I think.... I think a lot of this will simply be changing all the 16's to "scale".
+	Well... maybe not. The "16" is a part of rendering; instead, I should probably just make the "pixels" bigger.
+
+* * * *
+
 Improve creative inventory system; perhaps just make it so you always have one of everything?
-Also inventory system in general.
-****
+Also inventory system in general, such as moving items to and from inventories, into chests; you should be able to choose how much of an item stack you want to transfer.
+
+* * * *
+
+Find something to do with Npc.java, and Giant.java; currently, they were never even implemented in the first place, even though they were made...
+
+* * * *
+
+-----------------------------------------------------------------------------------
+
+*?*?*?* Questionable Additions *?*?*?*
+
+remove OptionsMenu from title screen? All the features, besides sound, perhaps, seem like they should be world-specific... well.... actually, they should be *user* specific... but "users" aren't a thing at the moment, so I just assume that different worlds are different users. That probably needs to change... for now, though, I'll just leave it be.
+
+*?*?*?*
+
+Change potion checking system to get rid of bools, and just check if the potion effect exists instead of checking the bools? Could be less nice... though if I do that and use a HashMap, then I could remove both the bools, and the PotionEffect subclass...
+
+*?*?*?*
+
+Make all Class instance lists similar to ListItems, but static; so, each one has a "get" method accepting a string. Maybe I could make them all extend a "ClassList" or "InstanceList" interface or something...
+
+In a similar/related vein, make each subclass of these store their own lists of their instances, and they will just be added to the main one.
+So, for resources, PotionResource would have a static list of all the potion resources, and Resource would just add those to it's collection.
+
+Hmm... Actually, I have a better idea. How about I just instantiate everything in the list classes, but have the sub-classes record each instance? They could be recorded in a HashMap, with a string key for the name, that fetches the associated object instance.
+
+*?*?*?*
+
+Make menu frames change size based on the largest (text) item in it. Not totally sure I want to do it...
+
+*?*?*?*
+
 Fix entity removal when sleeping? I think the idea is that all mobs within a certain radius are removed when you go to sleep; but that doesn't happen, and in fact, they still track you when you're in bed... I could fix that, maybe.
-****
-Find something to do with Npc.java; currently, was never even implemented in the first place, even though it was made...
-****
+
+*?*?*?*

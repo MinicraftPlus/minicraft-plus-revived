@@ -29,6 +29,8 @@ Things I plan on implementing, _hopefully_ sooner rather than later... ;)
 
 * Make it so cloud tile can be placed in the sky level, on empty air tiles. Otherwise, they're useful for nothing...
 
+* ...Find lots more in "Bugs and Things to do.txt"
+
 ### Ideas for future additions
 
 Things I will probably add later, rather than sooner.
@@ -36,7 +38,7 @@ Things I will probably add later, rather than sooner.
 * Auto-update system -- though, I might move this up, if this actually becomes something many people use.
 * Add back Experience bar, from version 1.4
 * Make the game window resizeable; maybe even full-screen..?
-
+* Add some nice music! Maybe pixely...
 
 #### Far, far away...
 
@@ -50,6 +52,7 @@ If their implementation becomes more likely, they will be moved to a different s
 * Fire
 * Chickens
 * Minecarts
+* Milk & bad status effects
 
 
 ##### Random Note: LevelGen.java has it's own main method; it's used for debug purposes, to make images of the randomly generated maps that the class makes.

@@ -1,5 +1,3 @@
-//respawn mod +dillyg10+
-
 package com.mojang.ld22.entity;
 
 import com.mojang.ld22.Game;
@@ -14,12 +12,11 @@ import com.mojang.ld22.item.ListItems;
 import com.mojang.ld22.item.PowerGloveItem;
 import com.mojang.ld22.item.ToolItem;
 import com.mojang.ld22.item.ToolType;
+import com.mojang.ld22.item.resource.PotionResource;
 import com.mojang.ld22.level.Level;
 import com.mojang.ld22.level.tile.Tile;
 import com.mojang.ld22.saveload.Save;
 import com.mojang.ld22.screen.CraftInvMenu;
-import com.mojang.ld22.screen.HomeMenu;
-import com.mojang.ld22.screen.InfoMenu;
 import com.mojang.ld22.screen.InventoryMenu;
 import com.mojang.ld22.screen.LoadingMenu;
 import com.mojang.ld22.screen.ModeMenu;
@@ -30,17 +27,18 @@ import com.mojang.ld22.screen.WorldSelectMenu;
 import com.mojang.ld22.sound.Sound;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.HashMap;
 
 public class Player extends Mob {
 	private InputHandler input;
 	public Game game;
 	
-	public static int movespeed = 1;
+	public static int moveSpeed = 1;
 	public static Inventory Sinventory;
 	public static int score;
 	public static int SHealth = 10;
 	public static int SHunger = 10;
-	public static boolean hasSetHome, canSetHome, canGoHome, sentFromSetHome, sentFromHome;
+	public static boolean hasSetHome = false, skinon;
 	//These 2 ints are ints saved from the first spawn - this way the spawn pos is always saved.
 	public static int spawnx = 0, spawny = 0;
 	public static int xx, yy;
@@ -53,7 +51,7 @@ public class Player extends Mob {
 	public int staminaRecharge, staminaRechargeDelay;
 	public int maxStamina, maxArmor, maxHunger;
 	public int homeSetX, homeSetY;
-	public boolean slowtime, bedSpawn;
+	public boolean bedSpawn;
 
 	private int onStairDelay;
 	public int stepCount;
@@ -69,13 +67,9 @@ public class Player extends Mob {
 	public int invulnerableTime;
 	public boolean showinfo;
 	public int px, py;
-
-	public double speed;
-	public double light;
-	public boolean infswim, infstamina;
-	public boolean regen, lavaimmune, shield, haste;
+	
+	public HashMap<String, Integer> potioneffects;
 	public boolean showpotioneffects;
-	public List potioneffects, potioneffectstime;
 	int cooldowninfo;
 	int regentick;
 
@@ -85,34 +79,25 @@ public class Player extends Mob {
 		this.game = game;
 		this.input = input;
 		inventory = new Inventory();
-
+		
 		x = 24;
 		y = 24;
 		tickCounter = 0;
-
+		
 		energy = false;
 		maxStamina = 10;
 		maxArmor = 0;
 		maxHunger = 10;
-
+		
 		repeatHungerCyc = false;
-
+		
 		px = this.x;
 		py = this.y;
 		invulnerableTime = 0;
-		speed = 1.0D;
-		light = 1.0D;
-		infswim = false;
-		infstamina = false;
-		regen = false;
-		slowtime = false;
-		lavaimmune = false;
-		shield = false;
-		haste = false;
-		potioneffects = new ArrayList();
-		potioneffectstime = new ArrayList();
+		
+		potioneffects = new HashMap<String, Integer>();
 		showpotioneffects = true;
-
+		
 		showinfo = false;
 		cooldowninfo = 0;
 		regentick = 0;
@@ -133,99 +118,18 @@ public class Player extends Mob {
 			inventory.add(new PowerGloveItem());
 		}
 	}
-
+	
 	public void tick() {
 		super.tick();
 		isenemy = false;
 		tickCounter++;
 		//if(Game.debug) System.out.println(tickCounter);
 		
-		int xa, ya;
-		if(potioneffectstime.size() > 0 && !Bed.hasBedSet) {
-			for(int onTile = 0; onTile < potioneffectstime.size(); onTile++) {
-				xa = ((Integer)potioneffectstime.get(onTile)).intValue();
-				xa--;
-				potioneffectstime.set(onTile, Integer.valueOf(xa));
-				if(((String)potioneffects.get(onTile)).contains("Light") && light != 2.5D) {
-					light = 2.5D;
-				}
-
-				if(((String)potioneffects.get(onTile)).contains("Speed") && speed != 2.0D) {
-					speed = 2.0D;
-				}
-
-				if(((String)potioneffects.get(onTile)).contains("Swim") && !infswim) {
-					infswim = true;
-				}
-
-				if(((String)potioneffects.get(onTile)).contains("Energy") && !infstamina) {
-					infstamina = true;
-				}
-
-				if(((String)potioneffects.get(onTile)).contains("Regen") && !regen) {
-					regen = true;
-				}
-
-				if(((String)potioneffects.get(onTile)).contains("Time") && !slowtime) {
-					slowtime = true;
-					//game.nsPerTick = 3.3333333333333332E7D; //.0333 of nsPerTick
-					game.gamespeed = 0.5f;
-				}
-
-				if(((String)potioneffects.get(onTile)).contains("Lava") && !lavaimmune) {
-					lavaimmune = true;
-				}
-
-				if(((String)potioneffects.get(onTile)).contains("Shield") && !shield) {
-					shield = true;
-				}
-
-				if(((String)potioneffects.get(onTile)).contains("Haste") && !haste) {
-					haste = true;
-				}
-
-				if(xa == 0) {
-					if(((String)potioneffects.get(onTile)).contains("Speed")) {
-						speed = 1.0D;
-					}
-
-					if(((String)potioneffects.get(onTile)).contains("Light")) {
-						light = 1.0D;
-					}
-
-					if(((String)potioneffects.get(onTile)).contains("Swim")) {
-						infswim = false;
-					}
-
-					if(((String)potioneffects.get(onTile)).contains("Energy")) {
-						infstamina = false;
-					}
-
-					if(((String)potioneffects.get(onTile)).contains("Regen")) {
-						regen = false;
-					}
-
-					if(((String)potioneffects.get(onTile)).contains("Time")) {
-						slowtime = false;
-						//game.nsPerTick = 1.6666666666666666E7D;
-						game.gamespeed = 1;
-					}
-
-					if(((String)potioneffects.get(onTile)).contains("Lava")) {
-						lavaimmune = false;
-					}
-
-					if(((String)potioneffects.get(onTile)).contains("Shield")) {
-						shield = false;
-					}
-
-					if(((String)potioneffects.get(onTile)).contains("Haste")) {
-						haste = false;
-					}
-
-					potioneffectstime.remove(onTile);
-					potioneffects.remove(onTile);
-				}
+		if(potioneffects.size() > 0 && !Bed.hasBedSet) {
+			for(String potionType: potioneffects.keySet().toArray(new String[0])) {
+				if(potioneffects.get(potionType) <= 1) // if time is zero (going to be set to 0 in a moment)...
+					PotionResource.applyPotion(this, potionType, false); // automatically removes this potion effect.
+				else potioneffects.put(potionType, potioneffects.get(potionType) - 1); // otherwise, replace it with one less.
 			}
 		}
 		
@@ -291,9 +195,9 @@ public class Player extends Mob {
 			if (staminaRechargeDelay == 0) {
 				staminaRecharge++;
 
-				if (isSwimming() && !infswim) staminaRecharge = 0;
+				if (isSwimming() && !potioneffects.containsKey("Swim")) staminaRecharge = 0;
 
-				int charge = slowtime ? 5 : 10;
+				int charge = potioneffects.containsKey("Time") ? 5 : 10;
 				while (staminaRecharge > charge) {
 					staminaRecharge -= charge;
 					if (stamina < maxStamina) stamina++;
@@ -368,10 +272,9 @@ public class Player extends Mob {
 			}
 		}
 
-		xa = 0;
-		ya = 0;
+		int xa = 0, ya = 0;
 		if (!Game.isfishing) {
-			for(int moves = 1; moves <= movespeed; moves++) { // allows for multiple steps walked per tick.
+			for(int moves = 1; moves <= moveSpeed; moves++) { // allows for multiple steps walked per tick.
 				if (input.getKey("up").down) {
 					ya--;
 					stepCount++;
@@ -393,7 +296,7 @@ public class Player extends Mob {
 		
 		xx = x;
 		yy = y;
-		if (isSwimming() && tickTime % 60 == 0 && !infswim) {
+		if (isSwimming() && tickTime % 60 == 0 && !potioneffects.containsKey("Swim")) {
 			if (stamina > 0) stamina--;
 			else hurt(this, 1, dir ^ 1);
 		}
@@ -403,7 +306,7 @@ public class Player extends Mob {
 			ya = 0;
 		}
 		
-		if (regen) {
+		if (potioneffects.containsKey("Regen")) {
 			regentick++;
 			if (regentick > 60) {
 				regentick = 0;
@@ -418,12 +321,12 @@ public class Player extends Mob {
 		}
 
 		if (staminaRechargeDelay % 2 == 0 && this.game.savecooldown == 0 && !this.game.saving) {
-			double spd = speed * (slowtime ? 2 : 1);
+			double spd = moveSpeed * (potioneffects.containsKey("Time") ? 2 : 1);
 			move((int) (xa * spd), (int) (ya * spd));
 		}
-
+		
 		if (input.getKey("attack").clicked && stamina != 0) {
-			if (!infstamina) stamina--;
+			if (!potioneffects.containsKey("Energy")) stamina--;
 			staminaRecharge = 0;
 			attack();
 		}
@@ -434,19 +337,22 @@ public class Player extends Mob {
 			game.setMenu(new CraftInvMenu(Crafting.craftRecipes, this));
 		if (input.getKey("sethome").clicked) setHome();
 		if (input.getKey("home").clicked) goHome();
-
+		
 		if (input.getKey("info").clicked) game.setMenu(new PlayerInfoMenu());
-
-		//these are my test buttons. incase i need to debug something.
+		
 		if (input.getKey("r").clicked && !game.saving) {
 			game.saving = true;
 			new Save(this, WorldSelectMenu.worldname);
 			LoadingMenu.percentage = 0;
 		}
+		//debug feature:
+		if (Game.debug && input.getKey("shift-p").clicked) { // remove all potion effects
+			for(String potionType: potioneffects.keySet().toArray(new String[0])) {
+				PotionResource.applyPotion(this, potionType, false);
+			}
+		}
 		
 		if (attackTime > 0) attackTime--;
-
-		if (slowtime && !Bed.hasBedSet) game.gamespeed = 0.5f;//game.nsPerTick = 3.3333333333333332E7D;
 	}
 
 	private boolean use() {
@@ -630,7 +536,7 @@ public class Player extends Mob {
 
 		int xt = 0;
 		int yt = 14;
-		if (OptionsMenu.skinon) {
+		if (skinon) {
 			xt = 18;
 			yt = 20;
 		}
@@ -757,7 +663,6 @@ public class Player extends Mob {
 				spawny = y;
 				this.x = spawnx * 16 + 8;
 				this.y = spawny * 16 + 8;
-				if (Game.debug) System.out.println("START POS FOUND, TILE ID: " + level.getTile(spawnx, spawny).id);
 				return true;
 			}
 		}
@@ -767,60 +672,42 @@ public class Player extends Mob {
 		if (Game.currentLevel == 3) {
 			homeSetX = this.x;
 			homeSetY = this.y;
-			canSetHome = true;
-			sentFromSetHome = true;
 			hasSetHome = true;
-			game.setMenu(new InfoMenu());
+			Game.notifications.add("Set your home!");
 		} else {
-			canSetHome = false;
-			sentFromSetHome = true;
-			game.setMenu(new InfoMenu());
+			Game.notifications.add("Can't set home here!");
 		}
 	}
 
 	public void goHome() {
 		if (Game.currentLevel == 3) {
-			canGoHome = true;
-			sentFromHome = true;
 			if (hasSetHome == true) {
 				this.x = homeSetX;
 				this.y = homeSetY;
 				if (ModeMenu.hardcore) hurt(this, 2, attackDir);
 				stamina = 0;
-				sentFromHome = true;
-				game.setMenu(new HomeMenu());
-				//if (Game.debug) System.out.println(sentFromHome);
+				Game.notifications.add("Home Sweet Home!");
+				if (ModeMenu.hardcore) Game.notifications.add("Mode penalty: -2 health");
 			} else {
-				game.setMenu(new HomeMenu());
+				//can go home, but no home set.
+				Game.notifications.add("You don't have a home!");
 			}
 		} else {
-			canGoHome = false;
-			hasSetHome = false;
-			sentFromHome = true;
-			game.setMenu(new HomeMenu());
-			//if (Game.debug) System.out.println(sentFromHome);
+			Game.notifications.add("You can't go home from here!");
 		}
 	}
 
 	public boolean respawn(Level level) {
-		//while (true) {
-			//int x = spawnx;
-			//int y = spawny;
-			if (!(bedSpawn || level.getTile(spawnx, spawny) == Tile.grass))
-				findStartPos(level);
-			
-			//if (Game.debug) System.out.println("RESPAWN TILE ID: " + level.getTile(spawnx, spawny).id);
-			this.x = spawnx * 16 + 8;
-			this.y = spawny * 16 + 8;
-			//System.out.println("BEDSPAWN=" + bedSpawn);
-			return true;
-			//if (Game.debug) System.out.println("you should only see this once (or not at all) per load.");
-			
-		//}
+		if (!(bedSpawn || level.getTile(spawnx, spawny) == Tile.grass))
+			findStartPos(level);
+		
+		this.x = spawnx * 16 + 8;
+		this.y = spawny * 16 + 8;
+		return true;
 	}
 
 	public boolean payStamina(int cost) {
-		if (infstamina) return true;
+		if (potioneffects.containsKey("Energy")) return true;
 		else if (cost > stamina) return false;
 
 		if (cost < 0) cost = 0;
@@ -833,6 +720,7 @@ public class Player extends Mob {
 	}
 
 	public int getLightRadius() {
+		double light = potioneffects.containsKey("Light") ? 2.5D : 1;
 		double r = 3 * light;
 
 		if (ModeMenu.creative) r = 12 * light;
