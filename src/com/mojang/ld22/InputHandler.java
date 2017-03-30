@@ -166,14 +166,8 @@ public class InputHandler implements MouseListener, KeyListener {
 		return "NO_KEY";
 	}
 	
-	// a debug variable to prevent a stack overflow error that kept occuring. Will likely remove soon.
-	static int tries = 0;
-	
 	/// THIS is pretty much the only way you want to be interfacing with this class; it has all the auto-create and protection functions and such built-in.
-	public Key getKey(String keytext) {
-		return getKey(keytext, true);
-	}
-	
+	public Key getKey(String keytext) { return getKey(keytext, true); }
 	private Key getKey(String keytext, boolean getFromMap) {
 		// if the passed-in key is blank, or null, then return null.
 		if (keytext == null || keytext.length() == 0) return null;
@@ -183,7 +177,7 @@ public class InputHandler implements MouseListener, KeyListener {
 		
 		String fullKeytext = keytext;
 		
-		if(getFromMap) {
+		if(getFromMap) { // if false, we assume that keytext is a physical key.
 			synchronized ("lock") {
 				// if the passed-in key matches one in keymap, then replace it with it's match, a key in keyboard.
 				if (keymap.containsKey(keytext))
@@ -192,27 +186,15 @@ public class InputHandler implements MouseListener, KeyListener {
 		}
 		
 		if (keytext.contains("|")) {
-			//if (Game.debug) System.out.println("multiple key poss; key: " + keytext);
 			/// multiple key possibilities exist for this action; so, combine the results of each one!
 			key = new Key();
-			/*tries++; //again, in case of stack overflow.
-			if(tries < 10) {
-			*/	for(String keyposs: keytext.split("\\|")) { // String.split() uses regex, and "|" is a special character, so it must be escaped; but the backslash must be passed in, so it needs escaping.
-					//if (Game.debug) System.out.println("poss: " + keyposs);
-					Key aKey = getKey(keyposs, false); //this time, do NOT attempt to fetch from keymap.
-					//if (Game.debug) System.out.println("fetched poss key.");
-					// it really does combine using "or":
-					key.down = key.down || aKey.down;
-					key.clicked = key.clicked || aKey.clicked;
-				}
-				//if (Game.debug) System.out.println("all key poss's checked for: " + keytext);
-			/*}
-			else {
-				System.out.println("STACKOVERFLOW on key: " + keytext);
-				Thread.dumpStack();
-				System.exit(1);
-			}*/
-			//tries = 0;
+			for(String keyposs: keytext.split("\\|")) { // String.split() uses regex, and "|" is a special character, so it must be escaped; but the backslash must be passed in, so it needs escaping.
+				Key aKey = getKey(keyposs, false); //this time, do NOT attempt to fetch from keymap.
+				
+				// it really does combine using "or":
+				key.down = key.down || aKey.down;
+				key.clicked = key.clicked || aKey.clicked;
+			}
 			return key;
 		}
 		
@@ -236,8 +218,6 @@ public class InputHandler implements MouseListener, KeyListener {
 		if(keytext.equals("SHIFT") || keytext.equals("CTRL") || keytext.equals("ALT"))
 			return key; // nothing more must be done with modifier keys.
 		
-		//if (Game.debug) System.out.println("key requested - physical: " + keytext);
-		
 		boolean foundS = false, foundC = false, foundA = false;
 		if(keytext.contains("-")) {
 			for(String keyname: keytext.split("-")) {
@@ -251,15 +231,12 @@ public class InputHandler implements MouseListener, KeyListener {
 		  getKey("ctrl").down == foundC &&
 		  getKey("alt").down == foundA;
 		
-		//if (Game.debug) System.out.println("current modifiers match request: " + modMatch);
-		
 		if(keytext.contains("-")) { // we want to return a compound key, but still care about the trigger key.
 			Key mainKey = key; // move the fetched key to a different variable
 			
 			key = new Key(); // set up return key to have proper values
 			key.down = modMatch && mainKey.down;
 			key.clicked = modMatch && mainKey.clicked;
-			//if (Game.debug) System.out.println("new key: down=" + key.down + "; clicked=" + key.clicked);
 		}
 		else if(!modMatch) key = new Key();
 		
