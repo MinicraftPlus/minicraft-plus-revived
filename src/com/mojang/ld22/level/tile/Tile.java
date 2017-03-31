@@ -12,7 +12,7 @@ import java.util.Random;
 public class Tile {
 	public static int tickCount = 0; //A global tickCount used in the Lava & water tiles.
 	protected Random random = new Random();
-
+	
 	public static Tile[] tiles = new Tile[256];
 	public static Tile grass = new GrassTile(0); // creates a grass tile with the Id of 0, (I don't need to explain the other simple ones)
 	public static Tile rock = new RockTile(1);
@@ -53,7 +53,8 @@ public class Tile {
 	public static Tile odc = new ObsidianDoorClosedTile(122);
 	public static Tile odo = new ObsidianDoorOpenTile(123);
 	public static Tile hardRock = new HardRockTile(18);
-	//light versions
+	
+	// light/torch versions; ALL are ONLY used to render torch effects. Don't worry, I can fix that. ;)
 	public static Tile lightgrass = new LightTile(100, grass, 0);
 	public static Tile lightsand = new LightTile(101, sand, 1);
 	public static Tile lighttree = new LightTile(102, tree, 2);
