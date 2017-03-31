@@ -109,7 +109,7 @@ public class Game extends Canvas implements Runnable {
 	/// AUTOSAVE AND NOTIFICATIONS
 	
 	public static int acs = 25; // this is acSave; it keeps the value to set ac to.
-	public static int ac = acs;
+	public static int ac = acs; // ac = arrow count.
 	public static boolean autosave; //if autosave feature is enabled.
 	public static int astime; //stands for Auto-Save Time (interval)
 	public static String savedtext = ""; //?to display save msg, along with notifications?

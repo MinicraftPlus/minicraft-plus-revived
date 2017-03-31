@@ -91,7 +91,6 @@ public class Furniture extends Entity {
 		}
 	}
 	
-	//..?
 	public boolean canWool() {
 		return true;
 	}
