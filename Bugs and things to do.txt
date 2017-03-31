@@ -19,6 +19,10 @@ Many item names don't fit on the black "active item" bar at the bottom.
 	****IDEAS****
 ****
 
+There's a lot to do in the Tile classes... many methods have many unnecessary parameters... and the torch effects account for all the "light" and "torch" static tiles in Tile.java. I think I'll make a HashMap out of that list, as well.
+
+****
+
 Make a TextPage class or something, for the About and Instructions sections of the TitleMenu; really, it's for pages that are non-interactive, just a bunch of text.
 Also, add controls listing somewhere. Probably closely related to the below idea.
 
@@ -27,10 +31,6 @@ Also, add controls listing somewhere. Probably closely related to the below idea
 I have a system in place to save custom key controls, but lack the menu to edit them... I need to get that implemented.
 	How about... another menu class, SelectMenu? It will parent all the cursor selection and scrollable menus; I can use it for the new KeymapMenu, and also WorldSelectMenu and InventoryMenu, with scrolling; the other menus won't use the scroll feature, but I can just make a boolean for that, I think.
 	For those menus that don't even have a cursor, though, perhaps I could just make it a Menu..? If that doesn't work, I can always make a ChoiceMenu class, super simple, that just displays two choices with no cursor, and listens for enter and escape keypresses.
-
-****
-
-check Tile methods; many of them have many unnecessary parameters...
 
 ****
 
