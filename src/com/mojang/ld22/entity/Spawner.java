@@ -56,7 +56,7 @@ public class Spawner extends Furniture {
 			col1 = mob.col4;
 			col2 = mob.col4;
 			col3 = mob.col4;
-		}*/
+		} */
 		tick++;
 		if(tick > 180) {
 			tick = 0;
@@ -67,7 +67,9 @@ public class Spawner extends Furniture {
 	private void trySpawn() {
 		int xd = level.player.x - x;
 		int yd = level.player.y - y;
-		if(xd * xd + yd * yd <= r * r) return;
+		//System.out.println("spawn attempt trigged for " + mob + "; player dist: " + Math.sqrt(xd * xd + yd * yd) + "; max dist: " + r);
+		if(xd * xd + yd * yd > r * r) return;
+		//System.out.println("player in range at time, attempting mob spawn: " + mob);
 		
 		Mob newmob = getMob(mob, lvl);
 		
@@ -76,12 +78,13 @@ public class Spawner extends Furniture {
 			//getEntity(getEntityName(newmob)), lvl);
 			/*if(col1 == Color.get(-1, 0, 4, 46)) { // unnecessary if my improvements are successful
 				newmob = getEntity(getEntityName(mob) + "II", lvl);
-			}*/
-		//}*/
+			} */
+		//} */
 		
 		int randX = (x/16 - 1 + rnd.nextInt(2)); // the rand is really just one tile in any direction
 		int randY = (y/16 - 1 + rnd.nextInt(2));
 		Tile tile = level.getTile(randX, randY);
+		//System.out.println("attempting " + mob + " spawn on tile with id: " + tile.id);
 		if(tile.mayPass(level, randX, randY, newmob) && tile.getLightRadius(level, randX, randY) == 0) {
 			(newmob).x = randX * 16;
 			(newmob).y = randY * 16;
@@ -194,7 +197,7 @@ public class Spawner extends Furniture {
 					String type = string.split(" ")[0];
 					if(type.length() > 0)
 						return (Entity)new Spawner(type, lvl);
-				}*/
+				} */
 				return (Mob)new Zombie(lvl); // fix: make a missing texture entity!
 		}
 	}
