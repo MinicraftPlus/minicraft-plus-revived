@@ -1,6 +1,10 @@
 	---Quick TODO's---
+-remove commented-out code from Spawner and DungeonChest
+-rename "canWool"
+-possible bug introduced with player arrow count, going from static in Game to local in Player; check for bugs.
 -Add more info to player info menu
 
+Note to self: for more little bugs/ideas/concerns, search code for "TODO"
 -----------------------------------------------------------------------------------
 
 	####BUGS####
