@@ -1,6 +1,5 @@
 package com.mojang.ld22.item;
 
-
 import com.mojang.ld22.entity.Entity;
 import com.mojang.ld22.entity.ItemEntity;
 import com.mojang.ld22.entity.Player;

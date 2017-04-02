@@ -92,9 +92,7 @@ public class Resource {
 	public static Resource goldOre = new Resource("Gold Ore", 10 + 4 * 32, Color.get(-1, 110, 440, 553));
 	public static Resource ironIngot = new Resource("Iron", 11 + 4 * 32, Color.get(-1, 100, 322, 544));
 	public static Resource goldIngot = new Resource("Gold", 11 + 4 * 32, Color.get(-1, 110, 330, 553));
-
-	//public static Resource rod = new ItemResource("Fish Rod", 6 + 5 * 32, Color.get(-1, 320, 320, 444));
-
+	
 	public static Resource rose = new Resource("Rose", 0 + 4 * 32, Color.get(-1, 100, 300, 500));
 	public static Resource gunp = new Resource("GunPowder", 2 + 4 * 32, Color.get(-1, 111, 222, 333));
 	public static Resource slime = new Resource("Slime", 10 + 4 * 32, Color.get(-1, 10, 30, 50));

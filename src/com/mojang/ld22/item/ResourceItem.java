@@ -14,13 +14,10 @@ import com.mojang.ld22.screen.ModeMenu;
 
 public class ResourceItem extends Item {
 	public Resource resource;
-	//public ToolType tool;
 	public int count = 1;
-	//public int counts = 1;
 	public int level = 0;
 	public int amount = 1;
-	//public int dur = 1;
-
+	
 	public ResourceItem(Resource resource) {
 		this.resource = resource;
 	}
@@ -34,13 +31,7 @@ public class ResourceItem extends Item {
 		this.amount = amount;
 		return this;
 	}
-
-	/*public void ToolItem(ToolType tool, int level, int counts) {
-		this.tool = tool;
-		this.level = level;
-		this.counts = counts;
-	}*/
-
+	
 	public int getColor() {
 		return resource.color;
 	}
@@ -94,17 +85,6 @@ public class ResourceItem extends Item {
 	}
 	
 	public boolean isDepleted() {
-		//if (getName() == "Fish Rod")
-			//return ((ItemResource)resource).dur > 0
-			//ItemResource.dur = 15;
-			//count--;
-			/*if (count == 0) {
-				Game.truerod = false;
-				return true;
-			} else if (count > 0) {
-				return false;
-			}*/
-		//}
 		return count <= 0;
 	}
 }

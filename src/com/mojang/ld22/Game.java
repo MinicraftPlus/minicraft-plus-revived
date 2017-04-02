@@ -126,10 +126,6 @@ public class Game extends Canvas implements Runnable {
 	//used to display "error" messages
 	public static int infotime = 120; //duration of message, in ticks; as with all other time references (unless otherwise stated, of course)
 	public static boolean infoplank = false, infosbrick = false; // "can only place on planks / stone brick"
-
-	//fishing
-	//public static boolean truerod = false, isfishing = false; // are you fishing?
-	//public static int fishingcount = 0; //? how many times you've used a rod?
 	
 	public int fra, tik; //these store the number of frames and ticks in the previous second; used for fps, at least.
 	int count; //something with colors..?
@@ -741,9 +737,9 @@ public class Game extends Canvas implements Runnable {
 		
 		/// This renders the potions overlay
 		if(player.showpotioneffects && player.potioneffects.size() > 0) {
-			Map.Entry<String, Integer>[] effects = player.potioneffects.entrySet().toArray(new Map.Entry[0]); // the key is potion type, value is remaining potion duration.
+			Map.Entry<String, Integer>[] effects = player.potioneffects.entrySet().toArray(new Map.Entry[0]);
+				// the key is potion type, value is remaining potion duration.
 			for(int i = 0; i < effects.length; i++) {
-				//PotionResource.PotionEffect potion = player.potioneffects.get(i);
 				String pType = effects[i].getKey();
 				int pTime = effects[i].getValue();
 				int pcol = Color.get(PotionResource.potionColor(pType), 555, 555, 555);
