@@ -2,21 +2,25 @@ package com.mojang.ld22.item;
 
 import com.mojang.ld22.entity.Entity;
 import com.mojang.ld22.entity.ItemEntity;
+import com.mojang.ld22.entity.Player;
 import com.mojang.ld22.gfx.Color;
 import com.mojang.ld22.gfx.Font;
 import com.mojang.ld22.gfx.Screen;
+import com.mojang.ld22.level.Level;
+import com.mojang.ld22.level.tile.Tile;
 import java.util.Random;
 
 public class ToolItem extends Item {
 	private Random random = new Random();
-	public int counts = 1;
+	//public int counts = 1;
 
 	public static final int MAX_LEVEL = 5;
 	public static final String[] LEVEL_NAMES = {"Wood", "Rock", "Iron", "Gold", "Gem"};
 
 	public ToolType type;
 	public int level = 0;
-	public ToolType tool;
+	public int dur;
+	//public ToolType tool;
 
 	public static final int[] LEVEL_COLORS = {
 		Color.get(-1, 100, 321, 431),
@@ -37,11 +41,14 @@ public class ToolItem extends Item {
 	public ToolItem(ToolType type, int level) {
 		this.type = type;
 		this.level = level;
+		dur = type.durability;
 	}
 
 	public int getColor() {
 		if (type == ToolType.bow) {
 			return BOW_COLORS[level];
+		} else if(type == ToolType.rod) {
+			return Color.get(-1, 320, 320, 444);
 		} else {
 			return LEVEL_COLORS[level];
 		}
@@ -61,10 +68,30 @@ public class ToolItem extends Item {
 	}
 
 	public String getName() {
+		if (type == ToolType.rod) return "Fishing Rod";
 		return LEVEL_NAMES[level] + " " + type.name;
 	}
 
 	public void onTake(ItemEntity itemEntity) {}
+	
+	public boolean interactOn(Tile tile, Level level, int xt, int yt, Player player, int attackDir) {
+		if (dur <= 0) return false;
+		//if (dur == -1) return true;
+		if (type == ToolType.rod) {
+			if (tile == Tile.water || tile == Tile.lightwater) {
+				if(com.mojang.ld22.Game.debug) System.out.println("Fishing...");
+				player.goFishing(player.x - 5, player.y - 5);
+				if(!ModeMenu.creative) dur--;
+				return true;
+			}
+		}
+		
+		return false;
+	}
+	
+	public boolean isDepleted() {
+		return dur <= 0 && type.durability > 0;
+	}
 
 	public boolean canAttack() {
 		return true;

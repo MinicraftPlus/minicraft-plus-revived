@@ -19,7 +19,7 @@ import java.util.List;
 public abstract class Recipe implements ListItem {
 	public List<Item> costs = new ArrayList<Item>();  // A list of costs for the recipe
 	public boolean canCraft = false; // checks if the player can craft the recipe
-	private Resource resource;
+	Resource resource;
 	public Item resultTemplate; // the result item of the recipe
 
 	public Recipe(Item resultTemplate) {

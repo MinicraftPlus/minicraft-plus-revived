@@ -18,6 +18,8 @@ import com.mojang.ld22.item.ResourceItem;
 import com.mojang.ld22.item.resource.ItemResource;
 import com.mojang.ld22.item.resource.PotionResource;
 import com.mojang.ld22.item.resource.Resource;
+import com.mojang.ld22.item.ToolItem;
+import com.mojang.ld22.item.ToolType;
 import com.mojang.ld22.level.Level;
 import com.mojang.ld22.level.tile.Tile;
 import com.mojang.ld22.saveload.Save;
@@ -126,7 +128,7 @@ public class Game extends Canvas implements Runnable {
 	public static boolean infoplank = false, infosbrick = false; // "can only place on planks / stone brick"
 
 	//fishing
-	public static boolean truerod = false, isfishing = false; // are you fishing?
+	//public static boolean truerod = false, isfishing = false; // are you fishing?
 	//public static int fishingcount = 0; //? how many times you've used a rod?
 	
 	public int fra, tik; //these store the number of frames and ticks in the previous second; used for fps, at least.
@@ -554,39 +556,6 @@ public class Game extends Canvas implements Runnable {
 		level.add(player); // adds the player to the level.
 	}
 	
-	// TODO Get this fishing method out of here!
-	public static void Fishing(Level level, int x, int y, Player player) {
-		isfishing = true;
-		int fcatch = random.nextInt(90);
-		
-		if (ItemResource.dur == 0) player.activeItem.isDepleted();
-		
-		if (fcatch <= 8) {
-			if(Game.debug) System.out.println("Caught a Fish!");
-			level.add(new ItemEntity(new ResourceItem(Resource.rawfish), x + random.nextInt(11) - 5, y + random.nextInt(11) - 5));
-			isfishing = false;
-		}
-		
-		if (fcatch == 25 || fcatch == 43 || fcatch == 32 || fcatch == 15 || fcatch == 42) {
-			if(Game.debug) System.out.println("Caught some slime?");
-			level.add(new ItemEntity(new ResourceItem(Resource.slime), x + random.nextInt(11) - 5, y + random.nextInt(11) - 5));
-			isfishing = false;
-		}
-
-		if (fcatch == 56) {
-			if(Game.debug) System.out.println("Rare Armor!");
-			level.add(
-					new ItemEntity(
-							new ResourceItem(Resource.larmor),
-							x + random.nextInt(11) - 5,
-							y + random.nextInt(11) - 5));
-			isfishing = false;
-		} else {
-			if(Game.debug) System.out.println("FAIL!");
-			isfishing = false;
-		}
-	}
-	
 	/** renders the current screen */
 	//called in game loop, a bit after tick()
 	public void render() {
@@ -764,8 +733,8 @@ public class Game extends Canvas implements Runnable {
 		}
 
 		// FISHING ROD STATUS
-		if (player.activeItem != null && truerod) {
-			int dura = (ItemResource.dur * 7);
+		if (player.activeItem instanceof ToolItem && ((ToolItem)player.activeItem).type == ToolType.rod) {
+			int dura = ((ToolItem)player.activeItem).dur * 7;
 			if (dura > 100) dura = 100;
 			Font.draw(dura + "%", screen, 164, screen.h - 16, Color.get(0, 30, 30, 30));
 		}

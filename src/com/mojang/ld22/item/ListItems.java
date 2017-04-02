@@ -236,7 +236,6 @@ public class ListItems {
 		this.greenwool = (new ResourceItem(Resource.greenwool)).addItem();
 		this.yellowwool = (new ResourceItem(Resource.yellowwool)).addItem();
 		this.blackwool = (new ResourceItem(Resource.blackwool)).addItem();
-		this.rod = (new ResourceItem(Resource.rod)).addItem();
 		this.rose = (new ResourceItem(Resource.rose)).addItem();
 		this.plank = (new ResourceItem(Resource.plank)).addItem();
 		this.stbrick = (new ResourceItem(Resource.sbrick)).addItem();
@@ -258,6 +257,7 @@ public class ListItems {
 		this.scale = (new ResourceItem(Resource.scale)).addItem();
 		this.shard = (new ResourceItem(Resource.shard)).addItem();
 		this.key = (new ResourceItem(Resource.key)).addItem();
+		this.rod = (new ToolItem(ToolType.rod, 0)).addItem();
 		this.woodshovel = (new ToolItem(ToolType.shovel, 0)).addItem();
 		this.rockshovel = (new ToolItem(ToolType.shovel, 1)).addItem();
 		this.ironshovel = (new ToolItem(ToolType.shovel, 2)).addItem();

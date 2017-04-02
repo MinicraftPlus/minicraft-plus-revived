@@ -9,10 +9,11 @@ import com.mojang.ld22.screen.BookAntVenomMenu;
 import com.mojang.ld22.screen.BookTestMenu;
 
 public class ItemResource extends Resource {
-	public static int dur = 15;
+	//public int dur = -1; // TODO make this non-static.
 
 	public ItemResource(String name, int sprite, int color) {
 		super(name, sprite, color);
+		//if(name == "Fish Rod") dur = 15;
 	}
 
 	//This is what makes the book bring up the Book menu.
@@ -24,13 +25,15 @@ public class ItemResource extends Resource {
 		} else if (name == "Antidious") {
 			player.game.setMenu(new BookAntVenomMenu(Crafting.workbenchRecipes, player));
 			// Don't worry about the Crafting.workbench thing, It's what makes it work :P
-		} else if (name == "Fish Rod") {
+		}/* else if (name == "Fish Rod") {
 			if (tile == Tile.water || tile == Tile.lightwater) {
 				if(Game.debug) System.out.println("Fishing...");
-				Game.Fishing(level, player.x - 5, player.y - 5, player);
-				dur--;
+				player.goFishing(player.x - 5, player.y - 5);
+				//dur--;
+				//return dur <= 0;
+				//if(dur == 0 && player.activeItem == this) player.activeItem = null;
 			}
-		}
+		}*/
 		return false;
 	}
 }

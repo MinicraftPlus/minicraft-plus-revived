@@ -4,14 +4,17 @@ import com.mojang.ld22.Game;
 import com.mojang.ld22.InputHandler;
 import com.mojang.ld22.crafting.Crafting;
 import com.mojang.ld22.entity.particle.TextParticle;
+import com.mojang.ld22.entity.ItemEntity;
 import com.mojang.ld22.gfx.Color;
 import com.mojang.ld22.gfx.Screen;
 import com.mojang.ld22.item.FurnitureItem;
 import com.mojang.ld22.item.Item;
 import com.mojang.ld22.item.ListItems;
 import com.mojang.ld22.item.PowerGloveItem;
+import com.mojang.ld22.item.ResourceItem;
 import com.mojang.ld22.item.ToolItem;
 import com.mojang.ld22.item.ToolType;
+import com.mojang.ld22.item.resource.Resource;
 import com.mojang.ld22.item.resource.PotionResource;
 import com.mojang.ld22.level.Level;
 import com.mojang.ld22.level.tile.Tile;
@@ -283,7 +286,7 @@ public class Player extends Mob {
 		
 		// this is the movement detection; apparently, we shouldn't move while fishing.
 		int xa = 0, ya = 0;
-		if (!Game.isfishing) {
+		//if (!Game.isfishing) {
 			for(int moves = 1; moves <= moveSpeed; moves++) { // allows for multiple steps walked per tick.
 				if (input.getKey("up").down) {
 					ya--;
@@ -302,7 +305,7 @@ public class Player extends Mob {
 					stepCount++;
 				}
 			}
-		}
+		//}
 		
 		// TODO why is this necessary? well... x and y are updated below by Mob.java, and Entity.java in turn; perhaps it is necessary to save the previous position?
 		//This is ONLY used in Game.java, in the renderGui method...
@@ -404,50 +407,31 @@ public class Player extends Mob {
 		attackItem = activeItem; // make attackItem equal activeItem
 		boolean done = false; // we're not done yet (we just started!)
 		
-		// this is only used for bows and arrows.
 		if ((attackItem instanceof ToolItem) && stamina - 1 >= 0) {
 			// the player is holding a tool, and has stamina available.
-			
 			ToolItem tool = (ToolItem) attackItem;
-			if (ac > 0) { // if the player has arrows...
-				if (tool.type == ToolType.bow && stamina - 1 >= 0) {
-					// ...and is holding a bow...
-					if (!energy) stamina -= 0; // why??
-					switch (attackDir) {
-						//...then shoot the arrow in the right direction.
-						// TODO this could be simplified...
-						case 0:
-							level.add(new Arrow(this, 0, 1, tool.level, done));
-							if (ModeMenu.creative == false) {
-								ac--; // decrease arrow count if not in creative mode.
-							}
-							break;
-						case 1:
-							level.add(new Arrow(this, 0, -1, tool.level, done));
-							if (ModeMenu.creative == false) {
-								ac--;
-							}
-							break;
-						case 2:
-							level.add(new Arrow(this, -1, 0, tool.level, done));
-							if (ModeMenu.creative == false) {
-								ac--;
-							}
-							break;
-						case 3:
-							level.add(new Arrow(this, 1, 0, tool.level, done));
-							if (ModeMenu.creative == false) {
-								ac--;
-							}
-							break;
-						default:
-							break;
-					}
-					
-					done = true; // we have attacked!
+			
+			if (tool.type == ToolType.bow && ac > 0) { // if the player is holding a bow, and has arrows...
+				if (!energy) stamina -= 0; // must be a leftover.
+				//...then shoot the arrow in the right direction.
+				int spx = 0, spy = 0;
+				switch (attackDir) {
+					case 0: spx = 0; spy = 1; break;
+					case 1: spx = 0; spy = -1; break;
+					case 2: spx = -1; spy = 0; break;
+					case 3: spx = 1; spy = 0; break;
 				}
+				if (ModeMenu.creative == false) ac--;
+				level.add(new Arrow(this, spx, spy, tool.level, done));
+				done = true; // we have attacked!
 			}
-		} // note: this statement ONLY gets used by BOWS.
+			
+			/*if(tool.type == ToolType.rod) {
+				goFishing();
+				tool.dur--;
+				if(tool.dur == 0) activeItem = null;
+			}*/
+		}
 		
 		// if we are simply holding an item...
 		if (activeItem != null) {
@@ -514,6 +498,36 @@ public class Player extends Mob {
 		}
 	}
 	
+	public void goFishing(int x, int y) {
+		//isfishing = true;
+		int fcatch = random.nextInt(90);
+		
+		//if (activeItem instanceof ResourceItem && ((ResourceItem)activeItem).resource instanceof ItemResource && ((ItemResource)(((ResourceItem)activeItem).resource)).dur == 0) activeItem.isDepleted();
+		
+		//if(activeItem != null) activeItem.isDepleted();
+		
+		if (fcatch <= 8) {
+			if(Game.debug) System.out.println("Caught a Fish!");
+			level.add(new ItemEntity(new ResourceItem(Resource.rawfish), x + random.nextInt(11) - 5, y + random.nextInt(11) - 5));
+			//isfishing = false;
+		}
+		
+		if (fcatch == 25 || fcatch == 43 || fcatch == 32 || fcatch == 15 || fcatch == 42) {
+			if(Game.debug) System.out.println("Caught some slime?");
+			level.add(new ItemEntity(new ResourceItem(Resource.slime), x + random.nextInt(11) - 5, y + random.nextInt(11) - 5));
+			//isfishing = false;
+		}
+
+		if (fcatch == 56) {
+			if(Game.debug) System.out.println("Rare Armor!");
+			level.add(new ItemEntity(new ResourceItem(Resource.larmor), x + random.nextInt(11) - 5, y + random.nextInt(11) - 5));
+			//isfishing = false;
+		} else {
+			if(Game.debug) System.out.println("FAIL!");
+			//isfishing = false;
+		}
+	}
+	
 	/** called by other use method; this serves as a buffer in case there is no entity in front of the player. */
 	private boolean use(int x0, int y0, int x1, int y1) {
 		List<Entity> entities = level.getEntities(x0, y0, x1, y1); // gets the entities within the 4 points
@@ -529,7 +543,7 @@ public class Player extends Mob {
 		List<Entity> entities = level.getEntities(x0, y0, x1, y1);
 		for (int i = 0; i < entities.size(); i++) {
 			Entity e = entities.get(i);
-			if (e != this) if (e.interact(this, activeItem, attackDir)) return true;
+			if ( e != this && e.interact(this, activeItem, attackDir) ) return true;
 		}
 		return false;
 	}
