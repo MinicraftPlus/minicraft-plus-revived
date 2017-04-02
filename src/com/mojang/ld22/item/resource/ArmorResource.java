@@ -17,8 +17,8 @@ public class ArmorResource extends Resource {
 	}
 
 	public boolean interactOn(Tile tile, Level level, int xt, int yt, Player player, int attackDir) {
-		if (player.maxArmor < 1 && player.payStamina(staminaCost)) {
-			player.maxArmor = heal;
+		if (player.armor < 1 && player.payStamina(staminaCost)) {
+			player.armor = heal;
 			return true;
 		}
 		return false;
