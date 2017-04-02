@@ -147,15 +147,6 @@ public class Load {
 		Game.gamespeed = Float.parseFloat((String)data.get(2));
 		Game.autosave = Boolean.parseBoolean((String)data.get(3));
 		OptionsMenu.isSoundAct = Boolean.parseBoolean((String)data.get(4));
-		/*if(Game.tickCount > -1 && Game.tickCount < 7200) {
-			Game.changeTime(0);
-		} else if(Game.tickCount > 7199 && Game.tickCount < 32000) {
-			Game.changeTime(1);
-		} else if(Game.tickCount > 31999 && Game.tickCount < '\u9c40') {
-			Game.changeTime(2);
-		} else if(Game.tickCount > '\u9c3f' && Game.tickCount < '\uf3c0') {
-			Game.changeTime(3);
-		}*/
 	}
 	
 	public void loadPrefs(String filename, Game game) {

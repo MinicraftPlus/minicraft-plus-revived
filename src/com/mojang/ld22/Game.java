@@ -71,7 +71,6 @@ public class Game extends Canvas implements Runnable {
 	public static int tickCount = 0; // The number of ticks since the beginning of the game day.
 	public static int time = 0; // Facilites time of day / sunlight.
 	public static int sleepTime = 42000; //this value determines when the player allowed to sleep.
-	//public static boolean tickReset = false; // find out if this is really necessary; I would think not.
 	
 	private boolean running; // This is about more than simply being paused -- it keeps the game loop running.
 	public int gameTime; // This stores the total time (number of ticks) you've been playing your game.
@@ -93,7 +92,6 @@ public class Game extends Canvas implements Runnable {
 	public Menu menu; // the current menu you are on.
 	public Player player; // The Player.
 	public Level level; // This is the current level you are on.
-	//int[] oldlvls; //--not used in this file
 	int worldSize; // The size of the world
 	
 	private int playerDeadTime; // the time after you die before the dead menu shows up.
@@ -105,7 +103,7 @@ public class Game extends Canvas implements Runnable {
 	
 	public static boolean autosave; //if autosave feature is enabled.
 	public static int astime; //stands for Auto-Save Time (interval)
-	//public static String savedtext = ""; //	TODO this...doesn't actually do anything...
+	//public static String savedtext = ""; // TODO use this for special overlays, maybe.
 	public static List<String> notifications = new ArrayList<String>();
 	
 	public int asTick; // The time interval between autosaves.
@@ -231,7 +229,7 @@ public class Game extends Canvas implements Runnable {
 		// Resets all values
 		playerDeadTime = 0;
 		wonTimer = 0;
-		gameTime = 0;
+		gameTime = 0; // shouldn't this be kept the same, if it's a gameplay timer?
 		Player.hasSetHome = false;
 		Bed.hasBedSet = false;
 		hasWon = false;
@@ -246,7 +244,7 @@ public class Game extends Canvas implements Runnable {
 			
 			level = levels[currentLevel];
 			player.respawn(level);
-			if (debug) System.out.println("respawned player in resetGame");
+			if (debug) System.out.println("respawned player in current world, resetGame");
 			level.add(player); // adds the player to the current level (always surface here)
 		} else {
 			// new game, regenerate... just the surface level?
@@ -256,12 +254,7 @@ public class Game extends Canvas implements Runnable {
 			
 			DeadMenu.shudrespawn = true; // player should respawn on death
 			player.findStartPos(level); // finds the start position for the player
-			if (debug) System.out.println("spawned player in new surface, resetGame");
-		}
-		
-		if(debug) {
-			//System.out.println("rG PLAYER SPAWN TILE ID: " + level.getTile(player.spawnx, player.spawny).id);
-			//System.out.println("rG PLAYER TILE ID: " + level.getTile(player.x / 16, player.y / 16).id+"\n");
+			if (debug) System.out.println("spawned player in new surface level, resetGame");
 		}
 	}
 	
@@ -286,7 +279,6 @@ public class Game extends Canvas implements Runnable {
 		
 		if (!OptionsMenu.hasSetDiff) OptionsMenu.diff = 2;
 		
-		//tickReset = true; //indirect way of resetting tickCount? why..?
 		setTime(0); // resets tickCount; game starts in the morning.
 		hasWon = false;
 
@@ -351,14 +343,6 @@ public class Game extends Canvas implements Runnable {
 		
 		if (WorldSelectMenu.loadworld)// {
 			new Load(this, WorldSelectMenu.worldname);
-		/*} else {
-			tickCount = 0;
-			/*if(debug && false) {
-				System.out.println("rsG PLAYER SPAWN ID: " + level.getTile(player.spawnx, player.spawny).id);
-				System.out.println("rsG PLAYER TILE ID: " + level.getTile((player.x - 8) / 16, (player.y - 8) / 16).id);
-				System.out.println("rsG PLAYER TILE ID 2: " + level.getTile((player.x - 8) / 16, (player.y - 8) / 16).id+"\n");
-			}*/
-		//}
 		
 		DeadMenu.shudrespawn = true;
 		
@@ -410,24 +394,9 @@ public class Game extends Canvas implements Runnable {
 			asTick = 0;
 		}
 		
-		/*// tickReset is used in resetstartGame.
-		if (tickReset) {
-			tickCount = 0;
-			tickReset = false;
-		}*/
-		
 		// Increment tickCount if the game is not paused
-		if (!paused) setTime(tickCount++);
+		if (!paused) setTime(tickCount+1);
 		if (tickCount == 3600) level.removeAllEnemies();
-		/*
-		if (tickCount <= 0) time = 0; // morning
-		if (tickCount == 7200) time = 1; // day
-		if (tickCount == 36000) time = 2; // evening
-		if (tickCount == 43200) time = 3; // night
-		if (tickCount >= 64800) { // morning
-			time = 0;
-			tickCount = 0;
-		}*/
 		
 		/// SCORE MODE ONLY
 		
@@ -510,22 +479,13 @@ public class Game extends Canvas implements Runnable {
 				
 				//for debugging only
 				if (debug) {
-					if (input.getKey("Shift-0").clicked) {
-						//WorldSelectMenu.loadworld = false;
-						//setMenu(new LoadingMenu());
-						//DeadMenu.shudrespawn = false;
-						//level.remove(player);
-						//resetGame();
+					if (input.getKey("Shift-0").clicked)
 						resetstartGame();
-					}
-					if (input.getKey("1").clicked) //Game.time = 0;
-						tickCount = 64800-1;
-					if (input.getKey("2").clicked) //Game.time = 1;
-						tickCount = 7200-1;
-					if (input.getKey("3").clicked) //Game.time = 2;
-						tickCount = 36000-1;
-					if (input.getKey("4").clicked) //Game.time = 3;
-						tickCount = 43200-1;
+					
+					if (input.getKey("1").clicked) changeTimeOfDay("morning");
+					if (input.getKey("2").clicked) changeTimeOfDay("day");
+					if (input.getKey("3").clicked) changeTimeOfDay("evening");
+					if (input.getKey("4").clicked) changeTimeOfDay("night");
 					
 					if (input.getKey("shift-g").clicked) {
 						for (int i = 0; i < ListItems.items.size(); i++) {
@@ -534,14 +494,14 @@ public class Game extends Canvas implements Runnable {
 					}
 					if (input.getKey("creative").clicked) ModeMenu.updateModeBools(2);
 					if (input.getKey("survival").clicked) ModeMenu.updateModeBools(1);
-					/*
+					
 					if (input.getKey("shift-alt-equals").clicked && gamespeed >= 1) gamespeed++;
-					if (input.getKey("shift-alt-equals").clicked && gamespeed < 1) gamespeed *= 2;
+					else if (input.getKey("shift-alt-equals").clicked && gamespeed < 1) gamespeed *= 2;
 					if (input.getKey("shift-alt-minus").clicked && gamespeed > 1) gamespeed--;
-					if (input.getKey("shift-alt-minus").clicked && gamespeed <= 1) gamespeed /= 2;
-					*/
+					else if (input.getKey("shift-alt-minus").clicked && gamespeed <= 1) gamespeed /= 2;
+					
 					if (input.getKey("shift-equals").clicked) Player.moveSpeed++;
-					if (input.getKey("shift-minus").clicked && Player.moveSpeed > 0) Player.moveSpeed--;
+					if (input.getKey("shift-minus").clicked && Player.moveSpeed > 1) Player.moveSpeed--;
 				} // end debug only cond.
 			} // end "menu-null" conditional
 		} // end hasfocus conditional
@@ -562,29 +522,18 @@ public class Game extends Canvas implements Runnable {
 	}
 	
 	/// this is the proper way to change the time of day.
-	public static void changeTime(String t) {
-		switch(t) {
-			case "morning": time = 0;
-				tickCount = 64800-1;
-				break;
-			case "day": time = 1;
-				tickCount = 7200-1;
-				break;
-			case "evening": time = 2;
-				tickCount = 36000-1;
-				break;
-			case "night": time = 3;
-				tickCount = 43200-1;
-				break;
-			
-			default: System.out.println("time " + t + " does not exist.");
-		}
+	public static void changeTimeOfDay(String t) {
+		if(t.equals("morning")) setTime(0);
+		else if(t.equals("day")) setTime(7200);
+		else if(t.equals("evening")) setTime(36000);
+		else if(t.equals("night")) setTime(43200);
+		else System.out.println("time " + t + " does not exist.");
 	}
 	// this one works too.
-	public static void changeTime(int t) {
+	public static void changeTimeOfDay(int t) {
 		String[] times = {"morning", "day", "evening", "night"};
 		if(t > 0 && t < times.length)
-			changeTime(times[t]); // it just references the other one.
+			changeTimeOfDay(times[t]); // it just references the other one.
 		else
 			System.out.println("time " + t + " does not exist.");
 	}
@@ -730,10 +679,12 @@ public class Game extends Canvas implements Runnable {
 		if (player.showinfo) { // renders show debug info on the screen.
 			ArrayList<String> info = new ArrayList<String>();
 			info.add(fra + " fps");
-			info.add(gamespeed + " tik/s");
-			info.add("walk: " + Player.moveSpeed);
+			info.add("day tiks " + tickCount);
+			info.add((normSpeed * gamespeed) + " tik/sec");
+			info.add("walk spd " + Player.moveSpeed);
 			info.add("X " + txlevel);
 			info.add("Y " + tylevel);
+			//info.add("canSleep:" + (tickCount > sleepTime));
 			if (ModeMenu.score) info.add("Score " + Player.score);
 			
 			/// Displays number of chests left, if on dungeon level.
