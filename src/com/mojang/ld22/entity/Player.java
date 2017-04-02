@@ -172,7 +172,7 @@ public class Player extends Mob {
 			if (hunger < 10) hunger = 10;
 		}
 		
-		
+		// TODO this whole thing below needs comments; but more importantly, it needs optimizing.
 		if (hunger < 0) hunger = 0; // error correction?
 		else {
 			// remember: staminaRechargeDelay is a penalty delay for when the player uses up all their stamina.
