@@ -183,7 +183,7 @@ public class TitleMenu extends Menu {
 				//"try with --debug",
 				"MissingNo " + rand
 			};
-			splashes = new ArrayList<String>();
+			this.splashes = new ArrayList<String>();
 			for(int i = 0; i < splashes.length; i++)
 				if(!this.splashes.contains(splashes[i]))
 					this.splashes.add(splashes[i]);
