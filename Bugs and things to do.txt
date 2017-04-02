@@ -1,9 +1,7 @@
 	---Quick TODO's---
--remove commented-out code from Spawner.java
 -continue commeting code
--rename "canWool"
+-decide what to do about "canWool"
 -Add more info to F3 debug/info overlay
--Check out what happens if I change the Game scale factor. :P
 
 Note to self: for more little bugs/ideas/concerns, search code for "TODO"
 -----------------------------------------------------------------------------------
