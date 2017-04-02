@@ -13,8 +13,8 @@ public class Entity {
 	protected final Random random = new Random();
 	public int x;
 	public int y;
-	public static int xx;
-	public static int yy;
+	public static int xx; // static..?
+	public static int yy; // both never used, or so it seems.
 	public int xr = 6;
 	public int yr = 6;
 	public boolean removed;
@@ -111,7 +111,8 @@ public class Entity {
 				return false;
 			}
 		}
-
+		
+		// finally! THIS is where the move happens!
 		x += xa;
 		y += ya;
 		return true;

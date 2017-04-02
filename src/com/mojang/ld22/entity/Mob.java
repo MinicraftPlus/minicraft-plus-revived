@@ -9,7 +9,7 @@ import com.mojang.ld22.screen.ModeMenu;
 import com.mojang.ld22.sound.Sound;
 
 public class Mob extends Entity {
-	Player player;
+	private Player player;
 	protected int walkDist = 0;
 	protected int dir = 0;
 	public int hurtTime = 0;
@@ -38,14 +38,9 @@ public class Mob extends Entity {
 
 	public void tick() {
 		tickTime++;
-		if (level.getTile(x >> 4, y >> 4) == Tile.lava) {
-			hurt(this, 4, dir ^ 1);
-		}
-
-		if (health <= 0) {
-			die();
-		}
-		if (hurtTime > 0) hurtTime--;
+		if (level.getTile(x >> 4, y >> 4) == Tile.lava) hurt(this, 4, dir ^ 1); // lava does 4 damage
+		if (health <= 0) die(); // die if no health
+		if (hurtTime > 0) hurtTime--; // decrease invulnerable time
 	}
 
 	protected void die() {
@@ -89,11 +84,11 @@ public class Mob extends Entity {
 		return super.move(xa, ya);
 	}
 
-	protected boolean isWooling() {
+	protected boolean isWooling() { // supposed to walk at half speed on wool..?
 		Tile tile = level.getTile(x >> 0, y >> 0);
 		return tile == Tile.wool;
 	}
-
+	
 	public boolean isLight() {
 		Tile tile = level.getTile(x >> 4, y >> 4);
 		return tile == Tile.lightgrass
@@ -149,7 +144,7 @@ public class Mob extends Entity {
 
 	public void heal(int heal) {
 		if (hurtTime > 0) return;
-
+		
 		level.add(new TextParticle("" + heal, x, y, Color.get(-1, 50, 50, 50)));
 		health += heal;
 		if (health > maxHealth) health = maxHealth;
@@ -162,8 +157,9 @@ public class Mob extends Entity {
 	}
 
 	protected void doHurt(int damage, int attackDir) {
+		// this is overridden in Player.java
 		if (hurtTime > 0) return;
-
+		
 		if (level.player != null) {
 			int xd = level.player.x - x;
 			int yd = level.player.y - y;
@@ -196,7 +192,7 @@ public class Mob extends Entity {
 
 		int r = level.monsterDensity * 13;
 		if (level.getEntities(xx - r, yy - r, xx + r, yy + r).size() > 0) return false;
-
+		// TODO yeah... this DEFINATELY needs revision... will be part of the Tile system revision.
 		if (level.getTile(x, y).mayPass(level, x, y, this)) {
 			if (level.getTile(x, y) != Tile.sdo) {
 				if (level.getTile(x, y) != Tile.wdo) {
@@ -319,11 +315,12 @@ public class Mob extends Entity {
 
 		//makes it so that cows only spawn on grass or flowers.
 		if (level.getTile(x, y).mayPass(level, x, y, this)) {
-			if (level.getTile(x, y) == Tile.grass) {
+			Tile tile = level.getTile(x, y);
+			if (tile == Tile.grass || tile == Tile.lightgrass || tile == Tile.flower || tile == Tile.lightflower) {
 				this.x = xx;
 				this.y = yy;
 				return true;
-			} else if (level.getTile(x, y) == Tile.flower) {
+			}/* else if (tile == Tile.flower) {
 				this.x = xx;
 				this.y = yy;
 				return true;
@@ -336,7 +333,7 @@ public class Mob extends Entity {
 				this.x = xx;
 				this.y = yy;
 				return true;
-			}
+			}*/
 		}
 
 		return false;
