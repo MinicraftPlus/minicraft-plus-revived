@@ -1,8 +1,8 @@
 	---Quick TODO's---
--remove commented-out code from Spawner and DungeonChest
+-remove commented-out code from Spawner.java
 -rename "canWool"
--possible bug introduced with player arrow count, going from static in Game to local in Player; check for bugs.
--Add more info to player info menu
+-Add more info to F3 debug/info overlay
+-Check out what happens if I change the Game scale factor. :P
 
 Note to self: for more little bugs/ideas/concerns, search code for "TODO"
 -----------------------------------------------------------------------------------
@@ -17,10 +17,16 @@ new worlds use the current/previous keyboard presets, rather than the default on
 ####
 Many item names don't fit on the black "active item" bar at the bottom.
 ####
+Spawners emit too many entities per unit time. Make it slower. Should be super quick and easy.
+####
+Textures for my new placeable obsidian door and wall are a bit broken. I probably just need to check their Resource instances; I bet I put "Stone__" Tiles in there or something... In fact, I'm almost certain that's exactly what I did.
+####
+wierd unreprodoucable glitch: game screen went all gray for a second after pressing exit to main menu button, but the cancelling, and pressing "r" to save.
+#### 
 
 -----------------------------------------------------------------------------------
 
-	****IDEAS****
+	****IDEAS(that should probably be implemented)****
 ****
 
 There's a lot to do in the Tile classes... many methods have many unnecessary parameters... and the torch effects account for all the "light" and "torch" static tiles in Tile.java. I think I'll make a HashMap out of that list, as well.
@@ -38,59 +44,21 @@ I have a system in place to save custom key controls, but lack the menu to edit 
 
 ****
 
-Make it so friendly mobs (sheep, pigs, cows) spawn during the day, but evil mobs don't.
-
-****
-
-change the getEntity methods, and similar, so that errors, or invalid object requests, can be easily found with a "missing texture" entity, rather than defaulting to a Zombie.
-
-****
-
-Support Color.get(String) where the string is four characters, made up of t,w,b; t=transparent, w=white, and b=black. That might look better. Of course, what WOULD look better is Color.red, Color.white, etc.
-	Maybe I could even devise Color.lighten and/or Color.darken methods, that would work for making the daylight cycle color sets.
-
-****
-
-Add feature to notifications display: if it starts with ":error:", then make the text red (but don't show the ":Error:" part). Any further than that, though, and it would be better to just pass it in.
-
-****
-
-Make the "sticky keys" feature off by default on survival, and on by default on creative.
-
-****
-
------------------------------------------------------------------------------------
-
-* * * * More complicated ideas * * * *
-
 Make the loading system more forgiving, so that if I add a requirement to the save files, the old ones will still work. The idea is that when it expects 5 options and only finds 4, it just keeps those at default.
 
-* * * *
+****
 
 Make window resizable, and menus will be fine.
 	I think.... I think a lot of this will simply be changing all the 16's to "scale".
 	Well... maybe not. The "16" is a part of rendering; instead, I should probably just make the "pixels" bigger.
 
-* * * *
-
-Improve creative inventory system; perhaps just make it so you always have one of everything?
-Also inventory system in general, such as moving items to and from inventories, into chests; you should be able to choose how much of an item stack you want to transfer.
-
-* * * *
-
-Find something to do with Npc.java, and Giant.java; currently, they were never even implemented in the first place, even though they were made...
-
-* * * *
+****
 
 -----------------------------------------------------------------------------------
 
-*?*?*?* Questionable Additions *?*?*?*
+*?*?*?* Questionable Improvements (But still seem important)*?*?*?*
 
 remove OptionsMenu from title screen? All the features, besides sound, perhaps, seem like they should be world-specific... well.... actually, they should be *user* specific... but "users" aren't a thing at the moment, so I just assume that different worlds are different users. That probably needs to change... for now, though, I'll just leave it be.
-
-*?*?*?*
-
-Change potion checking system to get rid of bools, and just check if the potion effect exists instead of checking the bools? Could be less nice... though if I do that and use a HashMap, then I could remove both the bools, and the PotionEffect subclass...
 
 *?*?*?*
 
@@ -101,12 +69,7 @@ So, for resources, PotionResource would have a static list of all the potion res
 
 Hmm... Actually, I have a better idea. How about I just instantiate everything in the list classes, but have the sub-classes record each instance? They could be recorded in a HashMap, with a string key for the name, that fetches the associated object instance.
 
-*?*?*?*
-
-Make menu frames change size based on the largest (text) item in it. Not totally sure I want to do it...
+I don't know...
 
 *?*?*?*
 
-Fix entity removal when sleeping? I think the idea is that all mobs within a certain radius are removed when you go to sleep; but that doesn't happen, and in fact, they still track you when you're in bed... I could fix that, maybe.
-
-*?*?*?*
