@@ -142,12 +142,12 @@ public class Load {
 	
 	public void loadGame(String filename, Game game) {
 		loadFromFile(location + filename + extention);
+		Game.setTime(Integer.parseInt((String)data.get(0)));
 		Game.astime = Integer.parseInt((String)data.get(1));
 		Game.gamespeed = Float.parseFloat((String)data.get(2));
 		Game.autosave = Boolean.parseBoolean((String)data.get(3));
 		OptionsMenu.isSoundAct = Boolean.parseBoolean((String)data.get(4));
-		Game.tickCount = Integer.parseInt((String)data.get(0));
-		if(Game.tickCount > -1 && Game.tickCount < 7200) {
+		/*if(Game.tickCount > -1 && Game.tickCount < 7200) {
 			Game.changeTime(0);
 		} else if(Game.tickCount > 7199 && Game.tickCount < 32000) {
 			Game.changeTime(1);
@@ -155,8 +155,7 @@ public class Load {
 			Game.changeTime(2);
 		} else if(Game.tickCount > '\u9c3f' && Game.tickCount < '\uf3c0') {
 			Game.changeTime(3);
-		}
-		
+		}*/
 	}
 	
 	public void loadPrefs(String filename, Game game) {
