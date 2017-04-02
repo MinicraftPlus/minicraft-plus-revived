@@ -45,7 +45,6 @@ public class Save {
 		writePlayer("Player", player);
 		writeInventory("Inventory", player.inventory);
 		writeEntities("Entities");
-		//Game.savedtext = "Saved!";
 		Game.notifications.add("World Saved!");
 		player.game.asTick = 0;
 		player.game.saving = false;
@@ -94,7 +93,6 @@ public class Save {
 		data.add(String.valueOf(Game.tickCount));
 		data.add(String.valueOf(Game.astime));
 		data.add(String.valueOf(Game.gamespeed));
-		//data.add(String.valueOf(Game.ac));
 		data.add(String.valueOf(Game.autosave));
 		data.add(String.valueOf(OptionsMenu.isSoundAct));
 		writeToFile(location + filename + extention, data);
@@ -147,25 +145,17 @@ public class Save {
 		data.add(String.valueOf(Player.score));
 		data.add(String.valueOf(player.ac));
 		data.add(String.valueOf(Game.currentLevel));
-		/*if(!ModeMenu.score)
-			data.add(String.valueOf(ModeMenu.mode));
-		else
-			*/data.add(ModeMenu.mode + (ModeMenu.score?";"+player.game.scoreTime:""));
+		data.add(ModeMenu.mode + (ModeMenu.score?";"+player.game.scoreTime:""));
 		
-		// TODO just always have "PotionEffects[]"
-		//if(player.potioneffects.size() > 0) {
-			String subdata = "PotionEffects[";
-			
-			for(java.util.Map.Entry<String, Integer> potion: player.potioneffects.entrySet())
-				subdata += potion.getKey() + ";" + potion.getValue() + ":";
-			
-			System.out.println("potioneffect data before replace: " + subdata);
-			if(player.potioneffects.size() > 0)
-				subdata = subdata.substring(0, subdata.length()-(1))+"]"; // cuts off extra ":" and appends "]"
-			else subdata += "]";
-			System.out.println("potioneffect data: " + subdata);
-			data.add(subdata);
-		//}
+		String subdata = "PotionEffects[";
+		
+		for(java.util.Map.Entry<String, Integer> potion: player.potioneffects.entrySet())
+			subdata += potion.getKey() + ";" + potion.getValue() + ":";
+		
+		if(player.potioneffects.size() > 0)
+			subdata = subdata.substring(0, subdata.length()-(1))+"]"; // cuts off extra ":" and appends "]"
+		else subdata += "]";
+		data.add(subdata);
 		
 		data.add("[" + player.r + ";" + player.g + ";" + player.b + "]");
 		data.add(String.valueOf(Player.skinon));

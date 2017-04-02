@@ -144,7 +144,6 @@ public class Load {
 		loadFromFile(location + filename + extention);
 		Game.astime = Integer.parseInt((String)data.get(1));
 		Game.gamespeed = Float.parseFloat((String)data.get(2));
-		//Game.ac = Integer.parseInt((String)data.get(3));
 		Game.autosave = Boolean.parseBoolean((String)data.get(3));
 		OptionsMenu.isSoundAct = Boolean.parseBoolean((String)data.get(4));
 		Game.tickCount = Integer.parseInt((String)data.get(0));
@@ -187,8 +186,6 @@ public class Load {
 	
 	public void loadPlayer(String filename, Player player) {
 		loadFromFile(location + filename + extention);
-		if (Game.debug){ System.out.println("loaded player data:\007");
-			for(Object item: data) System.out.println("\t"+item);}
 		player.x = Integer.parseInt((String)data.get(0));
 		player.y = Integer.parseInt((String)data.get(1));
 		Player.spawnx = Integer.parseInt((String)data.get(2));
@@ -214,20 +211,11 @@ public class Load {
 		}
 		
 		ModeMenu.updateModeBools(mode);
-		/*
-		if(mode == 4) { //score mode
-			if(modedata.length() > 1)
-				player.game.scoreTime = Integer.parseInt(modedata.substring(modedata.indexOf(";") + 1));
-			else
-				player.game.scoreTime = 300;
-		}*/
 		
-		//if(data.size() > 12 && ((String)data.get(data.size() - 3)).contains("PotionEffects[")) {
 		if(!((String)data.get(10)).equals("PotionEffects[]")) {
 			String potiondata = ((String)data.get(10)).replace("PotionEffects[", "").replace("]", "");
-			//System.out.println("peffects: " + potiondata);
 			List effects = Arrays.asList(potiondata.split(":"));
-			//System.out.println("num effects: " + effects.size());
+			
 			for(int i = 0; i < effects.size(); i++) {
 				List effect = Arrays.asList(((String)effects.get(i)).split(";"));
 				PotionResource.applyPotion(player, (String)effect.get(0), Integer.parseInt((String)effect.get(1)));
