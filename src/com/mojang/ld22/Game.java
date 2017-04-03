@@ -61,7 +61,7 @@ public class Game extends Canvas implements Runnable {
 	public static final String VERSION = "1.9";
 	public static final int HEIGHT = 192;
 	public static final int WIDTH = 288;
-	private static final int SCALE = 3;
+	private static final float SCALE = 3;
 	//does the *scale part mean anything to the graphics, or does java accomodate it?
 	
 	/// TIME AND TICKS
@@ -583,7 +583,7 @@ public class Game extends Canvas implements Runnable {
 		level.renderSprites(screen, xScroll, yScroll); // renders level sprites on screen
 		
 		// this creates the darkness in the caves
-		if (!ModeMenu.creative && (currentLevel < 3 || currentLevel == 3 && time == 3)) {
+		if (!ModeMenu.creative && currentLevel < 3) {
 			if(currentLevel < 3) lightScreen.clear(0); // clears the light screen to a black color
 			level.renderLight(lightScreen, xScroll, yScroll); // finds (and renders) all the light from objects (like the player, lanterns, and lava).
 			screen.overlay(lightScreen, xScroll, yScroll); // overlays the light screen over the main screen.
@@ -604,9 +604,9 @@ public class Game extends Canvas implements Runnable {
 		Graphics g = bs.getDrawGraphics(); // gets the graphics in which java draws the picture
 		g.fillRect(0, 0, getWidth(), getHeight()); // draws the a rect to fill the whole window (to cover last?)
 		
-		// scales the pixel size.
-		int ww = WIDTH * SCALE;
-		int hh = HEIGHT * SCALE;
+		// scales the pixels.
+		int ww = getWindowSize().width;
+		int hh = getWindowSize().height;
 		// gets the image offset.
 		int xo = (getWidth() - ww) / 2;
 		int yo = (getHeight() - hh) / 2;
@@ -883,19 +883,23 @@ public class Game extends Canvas implements Runnable {
 		boolean debug = (args != null && args.length > 0 && args[0].equals("--debug"));
 		Game.debug = debug;
 		Game game = new Game();
-		game.setMinimumSize(new Dimension(WIDTH * SCALE, HEIGHT * SCALE));
-		game.setMaximumSize(new Dimension(WIDTH * SCALE, HEIGHT * SCALE));
-		game.setPreferredSize(new Dimension(WIDTH * SCALE, HEIGHT * SCALE));
+		//game.setMinimumSize(getWindowSize());
+		//game.setMaximumSize(getWindowSize());
+		game.setPreferredSize(getWindowSize());
 		JFrame frame = new JFrame(Game.NAME);
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		frame.setLayout(new BorderLayout()); // sets the layout of the window
 		frame.add(game, BorderLayout.CENTER); // Adds the game (which is a canvas) to the center of the screen.
 		frame.pack(); //squishes everything into the preferredSize.
-		frame.setResizable(false); // prevents the user from resizing the window.
+		//frame.setResizable(false); // prevents the user from resizing the window.
 		frame.setLocationRelativeTo(null); // the window will pop up in the middle of the screen when launched.
 		frame.setVisible(true);
 		
 		game.start(); // Starts the game!
+	}
+	
+	public static Dimension getWindowSize() {
+		return new Dimension(new Float(WIDTH * SCALE).intValue(), new Float(HEIGHT * SCALE).intValue());
 	}
 	
 	/** This is called when the player has won the game, obviously. */
