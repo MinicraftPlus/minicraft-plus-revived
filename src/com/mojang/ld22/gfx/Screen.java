@@ -68,7 +68,7 @@ public class Screen {
 	}
 	
 	/* Used for the scattered dots at the edge of the light radius underground. */
-	private int[] dither = new int[] {0, 8, 2, 10, 12, 4, 14, 6, 3, 11, 1, 9, 15, 7, 13, 5,};
+	private int[] dither = new int[] {0, 8, 2, 10, 12, 4, 14, 6, 3, 11, 1, 9, 15, 7, 13, 5};
 	
 	/** Overlays the screen with pixels */
 	public void overlay(Screen screen2, int xa, int ya) {
@@ -76,8 +76,22 @@ public class Screen {
 		int i = 0; // current pixel on the screen
 		for (int y = 0; y < h; y++) { // loop through height of screen
 			for (int x = 0; x < w; x++) { // loop through width of screen
-				/* if the current pixel divided by 10 is smaller than the dither thingy with a complicated formula then it will fill the pixel with a black color. Yep, Nailed it! */
-				if (oPixels[i] / 10 <= dither[((x + xa) & 3) + ((y + ya) & 3) * 4]) pixels[i] = 0;
+				if (oPixels[i] / 10 <= dither[((x + xa) & 3) + ((y + ya) & 3) * 4]) {
+					/* if the current pixel divided by 10 is smaller than the dither thingy with a complicated formula then it will fill the pixel with a black color. Yep, Nailed it! */
+					if(com.mojang.ld22.Game.currentLevel < 3){
+						pixels[i] = 0;
+					} else {
+						// special overlay for the surface level!
+						int r = (pixels[i] / 36) % 6; // gets the r value.
+						int g = (pixels[i] / 6) % 6; // and so on...
+						int b = pixels[i] % 6;
+						int darkenAmt = com.mojang.ld22.Game.time - 1;
+						if(r > darkenAmt) r -= darkenAmt;
+						if(g > darkenAmt) g -= darkenAmt;
+						if(b > darkenAmt) b -= darkenAmt;
+						pixels[i] = r * 36 + g * 6 + b;
+					}
+				}
 				i++; // moves to the next pixel.
 			}
 		}

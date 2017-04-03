@@ -18,6 +18,10 @@ Spawners emit too many entities per unit time. Make it slower. Should be super q
 ####
 Textures for my new placeable obsidian door and wall are a bit broken. I probably just need to check their Resource instances; I bet I put "Stone__" Tiles in there or something... In fact, I'm almost certain that's exactly what I did.
 ####
+Slimes do no damage.
+####
+Death Chests do not display time remaining.
+####
 wierd unreprodoucable glitch: game screen went all gray for a second after pressing exit to main menu button, but the cancelling, and pressing "r" to save.
 #### 
 

@@ -795,8 +795,10 @@ public class Player extends Mob {
 	
 	/** Gets the player's light radius underground */
 	public int getLightRadius() {
+		//if (Game.currentLevel == 3) return 0; // I don't want the player to have an automatic halo on the surface.
+		
 		float light = potioneffects.containsKey("Light") ? 2.5f : 1; // multiplier for the light potion effect.
-		float r = 3 * light; // the radius of the light.
+		float r = 3/*.25f*/ * light; // the radius of the light.
 
 		if (Game.currentLevel == 5) r = 5 * light; // more light than usual on dungeon level.
 
@@ -804,7 +806,7 @@ public class Player extends Mob {
 		
 		if (activeItem != null && activeItem instanceof FurnitureItem) { // if player is holding furniture
 			int rr = ((FurnitureItem) activeItem).furniture.getLightRadius(); // gets furniture light radius
-			if (rr > r) r = rr; // brings player light up to furniture light, if less.
+			if (rr > r) r = rr; // brings player light up to furniture light, if less, since the furnture is not yet part of the level and so doesn't emit light even if it should.
 		}
 
 		return (int) r; // return light radius
