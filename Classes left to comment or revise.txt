@@ -1,6 +1,5 @@
 Comment:
 
-entity/ItemEntity
 entity/Mob
 entity/Slime
 entity/Zombie
