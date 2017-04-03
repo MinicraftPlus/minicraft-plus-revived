@@ -508,11 +508,12 @@ public class Game extends Canvas implements Runnable {
 	
 	/// this is the proper way to change the tickCount.
 	public static void setTime(int ticks) {
-		if (ticks <= 0) time = 0; // morning
-		if (ticks == 7200) time = 1; // day
-		if (ticks == 36000) time = 2; // evening
-		if (ticks == 43200) time = 3; // night
-		if (ticks >= 64800) { // morning
+		if (ticks < 0) ticks = 0;
+		if (ticks < 7200) time = 0; // morning
+		else if (ticks < 36000) time = 1; // day
+		else if (ticks < 43200) time = 2; // evening
+		else if (ticks < 64800) time = 3; // night
+		else {//if(ticks >= 64800) { // morning
 			time = 0;
 			ticks = 0;
 		}
