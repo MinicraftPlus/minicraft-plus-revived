@@ -81,7 +81,7 @@ public class Inventory {
 		for (int i = 0; i < items.size(); i++) {
 			if (items.get(i) instanceof ToolItem) {
 				ToolItem hass = (ToolItem) items.get(i);
-				if (hass.type == type && (hass.level == level || hass.level > level && matchHigher) return hass; // compares ToolType and level for match.
+				if (hass.type == type && (hass.level == level || hass.level > level && matchHigher)) return hass; // compares ToolType and level for match.
 			}
 		}
 		return null;
@@ -130,9 +130,9 @@ public class Inventory {
 	
 	/** removes item from this inv. */
 	public boolean removeItem(Item i) { // This was expected to only be a lava bucket, it seems.
-		ResourceItem ri = findItem(i);
-		if(ri == null) return false;
-		else items.remove(ri); // remove the item.
+		Item item = findItem(i);
+		if(item == null) return false;
+		else items.remove(item); // remove the item.
 		
 		return true;
 	}
