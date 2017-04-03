@@ -8,6 +8,7 @@ import com.mojang.ld22.gfx.Font;
 import com.mojang.ld22.gfx.Screen;
 import com.mojang.ld22.level.Level;
 import com.mojang.ld22.level.tile.Tile;
+import com.mojang.ld22.screen.ModeMenu;
 import java.util.Random;
 
 public class ToolItem extends Item {

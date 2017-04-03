@@ -55,9 +55,9 @@ public class Spawner extends Furniture {
 		Tile tile = level.getTile(randX, randY);
 		//if (Game.debug) System.out.println("attempting " + mob + " spawn on tile with id: " + tile.id);
 		if(tile.mayPass(level, randX, randY, newmob) && tile.getLightRadius(level, randX, randY) == 0) {
-			(newmob).x = randX * 16;
-			(newmob).y = randY * 16;
-			(newmob).hasspawned = true;
+			newmob.x = randX * 16;
+			newmob.y = randY * 16;
+			//(newmob).hasspawned = true;
 			if (com.mojang.ld22.Game.debug) System.out.println("spawning new " + mob + " on level "+lvl+": x=" + (newmob.x/16)+" y="+(newmob.y/16) + "...");
 			level.add(newmob);
 			
