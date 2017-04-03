@@ -1,3 +1,23 @@
 Minicraft+ version 1.9
 
-...yeah, this needs some attention...
+
+
+
+
+----- Noteable additions in v1.8 -----
+* Spawners & underground mini-dungeons
+* Airwizard's health appears above his head
+* Added colored clothes to change the player's outfit. They are craftable in the loom, or dropped rarely by zombies.
+* You can set the timer for score mode: 20m (default), 30m, 40m, or 1h
+* "Airwizard II" boss shows up on the surface after you unlock all the locked chests
+* Once you defeat the Air Wizard, you can wear his costume by going into the settings menu. This suit allows the player to walk on air tiles.
+
+----- Noteable additions in v1.7 -----
+* Save/Load worlds
+* Updated pause menu
+* Potions
+* Added locked chests in purple dungeon.
+* Keys to open the chests are dropped by knights
+* A death chest will appear if you die, allowing you to retrieve your stuff.
+* Added an Iron Lantern at the entrance of the purple dungeon
+
