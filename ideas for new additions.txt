@@ -2,6 +2,10 @@
 
 ----
 
+change "xa" and "ya" to something else; b/c they are NOT accelerations! They're distances! Specifically, they are the distance that a given entity is about to move.
+
+----
+
 Make it so friendly mobs (sheep, pigs, cows) spawn during the day, but evil mobs don't.
 
 ----

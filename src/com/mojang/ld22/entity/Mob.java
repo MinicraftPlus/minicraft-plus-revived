@@ -320,20 +320,7 @@ public class Mob extends Entity {
 				this.x = xx;
 				this.y = yy;
 				return true;
-			}/* else if (tile == Tile.flower) {
-				this.x = xx;
-				this.y = yy;
-				return true;
 			}
-			if (level.getTile(x, y) == Tile.lightgrass) {
-				this.x = xx;
-				this.y = yy;
-				return true;
-			} else if (level.getTile(x, y) == Tile.lightflower) {
-				this.x = xx;
-				this.y = yy;
-				return true;
-			}*/
 		}
 
 		return false;

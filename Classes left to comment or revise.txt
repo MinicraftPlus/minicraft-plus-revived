@@ -1,6 +1,5 @@
 Comment:
 
-entity/Entity
 entity/Inventory
 entity/ItemEntity
 entity/Mob

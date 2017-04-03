@@ -1,6 +1,6 @@
 	---Quick TODO's---
 -continue commeting code
--decide what to do about "canWool"
+-(see note about canWool in Entity.java)
 -Add more info to F3 debug/info overlay
 
 Note to self: for more little bugs/ideas/concerns, search code for "TODO"
@@ -9,8 +9,6 @@ Note to self: for more little bugs/ideas/concerns, search code for "TODO"
 	####BUGS####
 ####
 Sound effects don't always play when they should; mostly it seems when other sounds should be on at the same time.
-####
-newly spawned zombies don't go to one health for creative..?
 ####
 new worlds use the current/previous keyboard presets, rather than the default ones, when creating a new world after loading a previous one.
 ####
