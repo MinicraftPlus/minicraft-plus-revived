@@ -3,7 +3,7 @@ package com.mojang.ld22.gfx;
 public class Color {
 	
 	/* To explain this class, you have to know how Bit-Shifting works.
-	 	David(Shaylor) made a small post, so go here if you don't already know: http://minicraftforums.com/viewtopic.php?f=9&t=2256
+	 	David made a small post, so go here if you don't already know: http://minicraftforums.com/viewtopic.php?f=9&t=2256
 		
 		Note: this class still confuses me a bit, lol. -David
 	*/
