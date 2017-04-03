@@ -584,8 +584,8 @@ public class Game extends Canvas implements Runnable {
 		level.renderSprites(screen, xScroll, yScroll); // renders level sprites on screen
 		
 		// this creates the darkness in the caves
-		if (!ModeMenu.creative && currentLevel < 3/*4 && (currentLevel < 3 || time > 1)*/) {
-			lightScreen.clear(0); // clears the light screen to a black color
+		if (!ModeMenu.creative && currentLevel < 4 && (currentLevel < 3 || time > 1)) {
+			if (currentLevel < 3) lightScreen.clear(0); // clears the light screen to a black color
 			level.renderLight(lightScreen, xScroll, yScroll); // finds (and renders) all the light from objects (like the player, lanterns, and lava).
 			screen.overlay(lightScreen, xScroll, yScroll); // overlays the light screen over the main screen.
 		}

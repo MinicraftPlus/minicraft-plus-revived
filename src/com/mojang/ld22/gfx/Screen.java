@@ -71,31 +71,29 @@ public class Screen {
 	private int[] dither = new int[] {0, 8, 2, 10, 12, 4, 14, 6, 3, 11, 1, 9, 15, 7, 13, 5};
 	
 	/** Overlays the screen with pixels */
-	public void overlay(Screen screen2, int xa, int ya) {
-		int[] oPixels = screen2.pixels;  // The Integer array of pixels to overlay the screen with.
-		int i = 0; // current pixel on the screen
-		for (int y = 0; y < h; y++) { // loop through height of screen
-			for (int x = 0; x < w; x++) { // loop through width of screen
-				if (oPixels[i] / 10 <= dither[((x + xa) & 3) + ((y + ya) & 3) * 4]) {
-					/* if the current pixel divided by 10 is smaller than the dither thingy with a complicated formula then it will fill the pixel with a black color. Yep, Nailed it! */
-					if(com.mojang.ld22.Game.currentLevel < 3){
-						pixels[i] = 0;
-					} else {
-						// special overlay for the surface level!
-						int r = (pixels[i] / 36) % 6; // gets the r value.
-						int g = (pixels[i] / 6) % 6; // and so on...
-						int b = pixels[i] % 6;
-						int darkenAmt = com.mojang.ld22.Game.time - 1;
-						if(r > darkenAmt) r -= darkenAmt;
-						if(g > darkenAmt) g -= darkenAmt;
-						if(b > darkenAmt) b -= darkenAmt;
-						pixels[i] = r * 36 + g * 6 + b;
-					}
-				}
-				i++; // moves to the next pixel.
-			}
-		}
-	}
+    public void overlay(Screen screen2, int xa, int ya) {
+        int[] oPixels = screen2.pixels;  // The Integer array of pixels to overlay the screen with.
+        int i = 0; // current pixel on the screen
+        for (int y = 0; y < h; y++) { // loop through height of screen
+            for (int x = 0; x < w; x++) { // loop through width of screen
+                if (oPixels[i] / 10 <= dither[((x + xa) & 3) + ((y + ya) & 3) * 4]) {
+                    if(com.mojang.ld22.Game.currentLevel < 3) {
+                        /* if the current pixel divided by 10 is smaller than the dither thingy with a complicated formula then it will fill the pixel with a black color. Yep, Nailed it! */
+                            pixels[i] = 0;
+                    } else {
+                            int r = (pixels[i] / 36) % 6;
+                            int g = (pixels[i] / 6) % 6;
+                            int b = pixels[i] % 6;
+                            if(r > 0) r--;
+                            if(g > 0) g--;
+                            if(b > 0) b--;
+                            pixels[i] = r * 36 + g * 6 + b;
+                    }
+                }
+                i++; // moves to the next pixel.
+            }
+        }
+    }
 
 	public void renderLight(int x, int y, int r) {
 		//applies offsets:

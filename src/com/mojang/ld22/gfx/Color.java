@@ -31,9 +31,9 @@ public class Color {
 	}
 	
 	//similar to get(), it looks like, but just one value..?
-	public static int pixel(int a) {
+	/*public static int pixel(int a) {
 		return (get(a) << 24) + (get(a) << 16) + (get(a) << 8) + get(a);
-	}
+	}*/
 	
 	//looks like an error correction system.
 	public static int rgb(int red, int green, int blue) {
