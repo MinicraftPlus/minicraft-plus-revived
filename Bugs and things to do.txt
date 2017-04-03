@@ -1,7 +1,6 @@
 	---Quick TODO's---
 -continue commeting code
 -(see note about canWool in Entity.java)
--Add more info to F3 debug/info overlay
 
 Note to self: for more little bugs/ideas/concerns, search code for "TODO"
 -----------------------------------------------------------------------------------
