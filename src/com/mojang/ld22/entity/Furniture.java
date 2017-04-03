@@ -12,7 +12,7 @@ public class Furniture extends Entity {
 	protected int pushDir = -1; // the direction to push the furniture
 	public int col, col0, col1, col2, col3, sprite; // color and sprite vars.
 	public String name;
-	public int lightTimer = 0; //?
+	//public int lightTimer = 0; //?
 	protected Player shouldTake; // the player that should take the furniture
 
 	public Furniture(String name) {

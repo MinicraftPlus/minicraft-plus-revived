@@ -14,7 +14,7 @@ public class Entity {
 	public int x, y; // x, y entity coordinates on the map
 	public static int xx, yy; // static...? both never used, or so it seems.
 	public int xr = 6, yr = 6; // x, y radius of entity
-	public boolean removed; // Determines if the entity should be removed from the level
+	public boolean removed; // Determines if the entity should be removed from the level; checked in Level.java
 	public Level level; // the level that the entity is on
 	//public boolean hasspawned = false; //? if the entity has spawned in the level yet?
 	public int col = Color.get(-1, 0, 111, 222); // current Color
