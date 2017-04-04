@@ -1,13 +1,45 @@
-Comment:
-
-item/*
-item/resource/*
+Comment from shylor's repo:
 
 level/Level
 level/levelgen/LevelGen
 level/tile/* (not Tile)
 
-saveload/*.... but they are new...
+Comment anew:
+
+entity/Arrow
+entity/Creeper
+entity/DungeonChest
+entity/Knight
+entity/Skeleton
+entity/Snake
+entity/Tnt
+entity/Spawner
+entity/(Pig/Sheep/Cow) -- will likely combine these later.
+
+(slightly more than a page:)
+item/BookItem
+item/BucketItem
+item/BucketLavaItem
+item/BucketWaterItem
+item/resource/ArmorResource
+item/resource/ClothesResource
+
+item/resource/PotionResource
+item/resource/TorchResource
+
+saveload/*
+
+screen/CraftInvMenu
+screen/LoadingMenu (about a page)
+screen/ModeMenu
+screen/OptionsMenu
+screen/PauseMenu
+screen/PlayerInfoMenu
+screen/TitleMenu
+screen/WonMenu (needs a LOT more than comments!)
+screen/WorldGenMenu
+screen/WorldSelectMenu
+
 -------------------------------------
 There are more... but they are new, and have no previous comments. To find them, search for a comment on the first line of the class.
 Usually, it's "//new class, no comments." But some are "//new features, less comments." or something like that.
