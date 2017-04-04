@@ -124,8 +124,8 @@ public class Game extends Canvas implements Runnable {
 	/// MISCELLANEOUS
 	
 	//used to display "error" messages
-	public static int infotime = 120; //duration of message, in ticks; as with all other time references (unless otherwise stated, of course)
-	public static boolean infoplank = false, infosbrick = false; // "can only place on planks / stone brick"
+	//public static int infotime = 120; //duration of message, in ticks; as with all other time references (unless otherwise stated, of course)
+	//public static boolean infoplank = false, infosbrick = false; // "can only place on planks / stone brick"
 	
 	public int fra, tik; //these store the number of frames and ticks in the previous second; used for fps, at least.
 	int count; //something with colors..?
@@ -682,8 +682,8 @@ public class Game extends Canvas implements Runnable {
 		
 		/// NOTIFICATIONS
 		
-		if (infoplank) {notifications.add("Can only be placed on planks!"); infoplank = false;}
-		if (infosbrick) {notifications.add("Can only be placed on stone brick!"); infosbrick = false;}
+		//if (infoplank) {notifications.add("Can only be placed on planks!"); infoplank = false;}
+		//if (infosbrick) {notifications.add("Can only be placed on stone brick!"); infosbrick = false;}
 		// TODO either revise the above system, or add infoobrick (obsidian placement)
 		
 		if (notifications.size() > 0) {
