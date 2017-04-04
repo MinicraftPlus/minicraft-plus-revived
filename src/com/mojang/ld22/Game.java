@@ -61,7 +61,7 @@ public class Game extends Canvas implements Runnable {
 	public static final String VERSION = "1.9";
 	public static final int HEIGHT = 192;
 	public static final int WIDTH = 288;
-	private static final float SCALE = 3;
+	private static float SCALE = 3;
 	//does the *scale part mean anything to the graphics, or does java accomodate it?
 	
 	/// TIME AND TICKS
@@ -609,8 +609,8 @@ public class Game extends Canvas implements Runnable {
 		int ww = getWindowSize().width;
 		int hh = getWindowSize().height;
 		// gets the image offset.
-		int xo = (getWidth() - ww) / 2;
-		int yo = (getHeight() - hh) / 2;
+		int xo = (getWidth() - ww) / 2 + getParent().getInsets().left;
+		int yo = (getHeight() - hh) / 2 + getParent().getInsets().top;
 		g.drawImage(image, xo, yo, ww, hh, null); //draws the image on the window
 		g.dispose(); // releases any system resources that are using this method. (so we don't have crappy framerates)
 		bs.show(); // makes the picture visible. (probably)
@@ -894,6 +894,19 @@ public class Game extends Canvas implements Runnable {
 		frame.pack(); //squishes everything into the preferredSize.
 		//frame.setResizable(false); // prevents the user from resizing the window.
 		frame.setLocationRelativeTo(null); // the window will pop up in the middle of the screen when launched.
+		
+		//System.out.println("frame size:" + frame.getWidth() + "x" + frame.getHeight());
+		frame.addComponentListener(new ComponentAdapter() {
+            public void componentResized(ComponentEvent e) {
+				float w = frame.getWidth() - frame.getInsets().left - frame.getInsets().right;
+				float h = frame.getHeight() - frame.getInsets().top - frame.getInsets().bottom;
+				Game.SCALE = Math.min(w / Game.WIDTH, h / Game.HEIGHT);
+				System.out.println("Window Resized to: " + frame.getWidth() + "x" + frame.getHeight() + ";\tnew Game Scale: " + Game.SCALE + ";\tnew game screen size: " + getWindowSize().width + "x" + getWindowSize().height);
+				//game.WIDTH = frame.getWidth();
+				//game.HEIGHT = frame.getHeight();
+            }
+        });
+		
 		frame.setVisible(true);
 		
 		game.start(); // Starts the game!
