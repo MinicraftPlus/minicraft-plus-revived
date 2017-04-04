@@ -1,4 +1,3 @@
-//new class; no comments
 //respawn mod +dillyg10+
 package com.mojang.ld22.screen;
 

@@ -53,16 +53,4 @@ public class InstructionsMenu extends Menu {
 	}
 	
 	private int textWidth(String text) {return text.length() * 8;}
-	/*
-	class Rectangle {
-		public int minX, int maxX, int minY, int maxY;
-		
-		public Rectangle(int minX, int maxX, int minY, int maxY) {
-			this.minX = minX;
-			this.maxX = maxX;
-			this.minY = minY;
-			this.maxY = maxY;
-		}
-	}
-	*/
 }

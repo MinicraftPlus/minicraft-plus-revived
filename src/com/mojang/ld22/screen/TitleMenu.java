@@ -1,4 +1,3 @@
-//mostly new... fewer comments.
 package com.mojang.ld22.screen;
 
 import com.mojang.ld22.GameApplet;

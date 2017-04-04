@@ -4,7 +4,6 @@ import com.mojang.ld22.crafting.Crafting;
 import com.mojang.ld22.gfx.Color;
 import com.mojang.ld22.screen.CraftingMenu;
 
-// just another crafting furniture class...
 public class Oven extends Furniture {
 	public Oven() {
 		super("Oven");
@@ -19,7 +18,8 @@ public class Oven extends Furniture {
 		xr = 3;
 		yr = 2;
 	}
-
+	
+	/// opens the Oven menu.
 	public boolean use(Player player, int attackDir) {
 		player.game.setMenu(new CraftingMenu(Crafting.ovenRecipes, player));
 		return true;
