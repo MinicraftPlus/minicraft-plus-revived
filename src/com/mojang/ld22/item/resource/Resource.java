@@ -9,6 +9,8 @@ public class Resource {
 	
 	//public static ArrayList<Resource> resList = new ArrayList<Resource>();
 	
+	//format: public static Resource resource = new Resource("Name", x-sprite position + y-sprite position * 32, Color.get(-1,###,###,###));
+	
 	public static Resource wood = new Resource("Wood", 1 + 4 * 32, Color.get(-1, 200, 531, 430));
 	public static Resource stone = new Resource("Stone", 2 + 4 * 32, Color.get(-1, 111, 333, 555));
 	public static Resource flower = new PlantableResource("Flower", 0 + 4 * 32, Color.get(-1, 10, 444, 330), Tile.flower, Tile.grass, Tile.lightgrass);
@@ -105,9 +107,9 @@ public class Resource {
 	public static Resource scale = new Resource("Scale", 22 + 4 * 32, Color.get(-1, 10, 30, 20));
 	public static Resource shard = new Resource("Shard", 23 + 4 * 32, Color.get(-1, 222, 333, 444));
 
-	public final String name;
-	public final int sprite;
-	public final int color;
+	public final String name; // the name of the resource
+	public final int sprite; // the sprite location of the resource
+	public final int color; // the color of the resource
 
 	public Resource(String name, int sprite, int color) {
 		if (name.length() > 20)
@@ -116,7 +118,8 @@ public class Resource {
 		this.sprite = sprite;
 		this.color = color;
 	}
-
+	
+	/** Determines what happens when the resource is used on a certain tile; used in subclasses. */
 	public boolean interactOn(Tile tile, Level level, int xt, int yt, Player player, int attackDir) {
 		return false;
 	}
