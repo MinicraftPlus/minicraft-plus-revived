@@ -1,0 +1,71 @@
+ -------- Simple Ideas --------
+
+----
+
+change "xa" and "ya" to something else; b/c they are NOT accelerations! They're distances! Specifically, they are the distance that a given entity is about to move.
+
+----
+
+Make it so friendly mobs (sheep, pigs, cows) spawn during the day, but evil mobs don't.
+
+----
+
+Add feature to notifications display: if it starts with ":error:", then make the text red (but don't show the ":Error:" part). Any further than that, though, and it would be better to just pass it in.
+
+----
+
+Make the "sticky keys" feature off by default on survival, and on by default on creative.
+
+----
+
+change inventory system to allow moving items to and from inventories, into chests; for example, you should be able to choose how much of an item stack you want to transfer.
+
+----
+
+
+
+
+ ++++++++ More Complicated Ideas ++++++++
+
+++++
+
+change the getEntity methods, and similar, so that errors, or invalid object requests, can be easily found with a "missing texture" entity, rather than defaulting to a Zombie.
+
+++++
+
+Improve creative inventory system; perhaps just make it so you always have one of everything?
+
+++++
+
+Find something to do with Npc.java, and Giant.java; currently, they were never even implemented in the first place, even though they were made...
+
+++++
+
+Turn player.score into the experience system of 1.4; or, maybe I should just make my own experience system... it wouldn't hurt to use things like colors and such from 1.4, though.
+
+++++
+
+Fix entity removal when sleeping? I think the idea is that all mobs within a certain radius are removed when you go to sleep; but that doesn't happen, and in fact, they still track you when you're in bed... I could fix that, maybe.
+
+++++
+
+Make a way to resize the font... In specific instances only, though, I'm thinking. For example, the F3 overlay.
+
+++++
+
+
+
+
+ ???????? Questionable Ideas ????????
+
+????
+
+Support Color.get(String) where the string is four characters, made up of t,w,b; t=transparent, w=white, and b=black. That might look better. Of course, what WOULD look better is Color.red, Color.white, etc.
+	Maybe I could even devise Color.lighten and/or Color.darken methods, that would work for making the daylight cycle color sets.
+
+????
+
+Make menu frames change size based on the largest (text) item in it. Not totally sure I want to do it...
+
+????
+

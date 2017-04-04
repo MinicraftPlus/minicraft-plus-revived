@@ -86,63 +86,6 @@ public class DungeonChest extends Furniture {
 			}
 			
 			return true;
-			
-			/*
-			if(player.activeItem != null) {
-				if(player.activeItem.getName().equals("Key")) {
-					if(!ModeMenu.creative) {
-						ResourceItem key = (ResourceItem)player.activeItem;
-						key.count--;
-					}
-					
-					islocked = false;
-					player.game.setMenu(new ContainerMenu(player, "Dungeon Chest", inventory));
-					col = col0 = col1 = col2 = col3 = openCol;
-					
-					level.add(new SmashParticle(x * 16 + 8, y * 16 + 8));
-					level.add(new TextParticle("-1 key", x, y, Color.get(-1, 500, 500, 500)));
-					level.chestcount--;
-					if(level.chestcount == 0) {
-						for(aw = 0; aw < 5; aw++) {
-							level.add(new ItemEntity(new ResourceItem(Resource.goldapple), x, y));
-						}
-
-						Game.notifications.add("You hear a noise from the surface!");
-						wizard = new AirWizard(true);
-						wizard.x = Game.levels[3].w / 2;
-						wizard.y = Game.levels[3].h / 2;
-						Game.levels[3].add(wizard);
-					}
-				}
-				return true;
-			} else {
-				if(player.inventory.hasResources(Resource.key, 1)) {
-					islocked = false;
-					player.game.setMenu(new ContainerMenu(player, "Dungeon Chest", inventory));
-					col = col0 = col1 = col2 = col3 = openCol;
-					
-					level.add(new SmashParticle(x * 16 + 8, y * 16 + 8));
-					level.add(new TextParticle("-1 key", x, y, Color.get(-1, 500, 500, 500)));
-					level.chestcount--;
-					if(level.chestcount == 0) {
-						for(aw = 0; aw < 5; aw++) {
-							level.add(new ItemEntity(new ResourceItem(Resource.goldapple), x, y));
-						}
-
-						Game.notifications.add("You hear a noise from the surface!");
-						wizard = new AirWizard(true);
-						wizard.x = Game.levels[3].w / 2;
-						wizard.y = Game.levels[3].h / 2;
-						Game.levels[3].add(wizard);
-					}
-					
-					if(!ModeMenu.creative) {
-						player.inventory.removeResource(Resource.key, 1);
-					}
-				}
-
-				return true;
-			}*/
 		}
 	}
 

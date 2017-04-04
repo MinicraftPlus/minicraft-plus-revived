@@ -1,6 +1,5 @@
 package com.mojang.ld22.item;
 
-
 import com.mojang.ld22.entity.Entity;
 import com.mojang.ld22.entity.ItemEntity;
 import com.mojang.ld22.entity.Player;
@@ -10,7 +9,7 @@ import com.mojang.ld22.level.tile.Tile;
 import com.mojang.ld22.screen.ListItem;
 
 public class Item implements ListItem {
-
+	
 	public Item addItem() {
 		if (!ListItems.items.contains(this)) {
 			ListItems.items.add(this);

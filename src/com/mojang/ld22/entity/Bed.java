@@ -5,11 +5,10 @@ import com.mojang.ld22.Game;
 import com.mojang.ld22.gfx.Color;
 
 public class Bed extends Furniture {
-	public static boolean hasBedSet;
+	public static boolean hasBedSet = false;
 	//public static boolean hasBeenTrigged = false;
-	public static int newSpawnY;
-	public static int newSpawnX;
-
+	public int saveSpawnX, saveSpawnY;
+	
 	public Bed() {
 		super("Bed");
 		col0 = Color.get(-1, 211, 444, 400);
@@ -26,18 +25,18 @@ public class Bed extends Furniture {
 	public boolean use(Player player, int attackDir) {
 		//hasBedSet = true;
 		//hasBeenTrigged = true;
-		if (!player.game.isDayNoSleep) {
+		if (Game.tickCount >= Game.sleepTime) {
 			hasBedSet = true;
-			Player.spawnx = this.y / 16;
-			Player.spawny = this.x / 16;
+			Player.spawnx = x / 16;
+			Player.spawny = y / 16;
 			player.bedSpawn = true;
-			if(Game.debug) System.out.println(this.x + "/" + this.y + "//" + Player.spawnx + "/" + Player.spawny);
+			if(Game.debug) System.out.println("bedPos: ("+x+","+y+"); spawnPos: ("+player.spawnx+","+player.spawny+")");
 		} else {
-			int sec = ('\ua8c0' - Game.tickCount) / 60;
+			int sec = (Game.tickCount - Game.sleepTime) / Game.normSpeed; // normSpeed is in tiks/sec.
 			Game.notifications.add(
-					"Can\'t sleep! " + (sec / 60) + "Min " + (sec - sec % 60) + " Sec left!");
+					"Can't sleep! " + (sec / 60) + "Min " + (sec - sec % 60) + " Sec left!");
 		}
-
+		
 		return true;
 	}
 }

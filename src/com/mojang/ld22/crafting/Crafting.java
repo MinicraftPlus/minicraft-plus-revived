@@ -33,19 +33,19 @@ public class Crafting {
 	static {
 		try {
 			craftRecipes.add((new FurnitureRecipe(Workbench.class)).addCost(Resource.wood, 10));
-			craftRecipes.add((new ResourceRecipe(Resource.torch)).addCost(Resource.wood, 1).addCost(Resource.coal, 1));
+			craftRecipes.add((new ResourceRecipe(Resource.torch, 2)).addCost(Resource.wood, 1).addCost(Resource.coal, 1));
 			craftRecipes.add((new ToolRecipe(ToolType.hatchet, 0)).addCost(Resource.wood, 3));
 			craftRecipes.add((new ToolRecipe(ToolType.spade, 0)).addCost(Resource.wood, 3));
 			craftRecipes.add((new ToolRecipe(ToolType.pick, 0)).addCost(Resource.wood, 3));
 			craftRecipes.add((new ToolRecipe(ToolType.hatchet, 1)).addCost(Resource.wood, 3).addCost(Resource.stone, 3));
 			craftRecipes.add((new ToolRecipe(ToolType.spade, 1)).addCost(Resource.wood, 3).addCost(Resource.stone, 3));
 			craftRecipes.add((new ToolRecipe(ToolType.pick, 1)).addCost(Resource.wood, 3).addCost(Resource.stone, 3));
-			craftRecipes.add((new ResourceRecipe(Resource.plank)).addCost(Resource.wood, 1));
+			craftRecipes.add((new ResourceRecipe(Resource.plank, 2)).addCost(Resource.wood, 1));
 			craftRecipes.add((new ResourceRecipe(Resource.plankwall)).addCost(Resource.plank, 3));
 			craftRecipes.add((new ResourceRecipe(Resource.wdoor)).addCost(Resource.plank, 5));
 			workbenchRecipes.add((new FurnitureRecipe(Lantern.class)).addCost(Resource.wood, 10).addCost(Resource.slime, 5).addCost(Resource.glass, 4));
 			workbenchRecipes.add((new ResourceRecipe(Resource.sdoor)).addCost(Resource.sbrick, 5));
-			workbenchRecipes.add((new ResourceRecipe(Resource.sbrick)).addCost(Resource.stone, 2));
+			workbenchRecipes.add((new ResourceRecipe(Resource.sbrick, 2)).addCost(Resource.stone, 2));
 			workbenchRecipes.add((new ResourceRecipe(Resource.stonewall)).addCost(Resource.sbrick, 3));
 			workbenchRecipes.add((new FurnitureRecipe(Oven.class)).addCost(Resource.stone, 15));
 			workbenchRecipes.add((new FurnitureRecipe(Furnace.class)).addCost(Resource.stone, 20));
@@ -53,9 +53,9 @@ public class Crafting {
 			workbenchRecipes.add((new FurnitureRecipe(Anvil.class)).addCost(Resource.ironIngot, 5));
 			workbenchRecipes.add((new FurnitureRecipe(Tnt.class)).addCost(Resource.gunp, 10).addCost(Resource.sand, 8));
 			workbenchRecipes.add((new FurnitureRecipe(Loom.class)).addCost(Resource.wood, 10).addCost(Resource.wool, 5));
-			workbenchRecipes.add((new ResourceRecipe(Resource.rod)).addCost(Resource.wood, 5).addCost(Resource.string, 3));
+			workbenchRecipes.add((new ToolRecipe(ToolType.rod, 0)).addCost(Resource.wood, 5).addCost(Resource.string, 3));
 			
-			loomRecipes.add((new ResourceRecipe(Resource.string)).addCost(Resource.wool, 1));
+			loomRecipes.add((new ResourceRecipe(Resource.string, 2)).addCost(Resource.wool, 1));
 			loomRecipes.add((new ResourceRecipe(Resource.redwool)).addCost(Resource.wool, 1).addCost(Resource.rose, 1));
 			loomRecipes.add((new ResourceRecipe(Resource.bluewool)).addCost(Resource.wool, 1).addCost(Resource.lapisOre, 1));
 			loomRecipes.add((new ResourceRecipe(Resource.greenwool)).addCost(Resource.wool, 1).addCost(Resource.cactusFlower, 1));

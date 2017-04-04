@@ -10,7 +10,7 @@ public class Screen {
 	public static final int BIT_MIRROR_X = 0x01;
 	public static final int BIT_MIRROR_Y = 0x02;
 
-	public final int w, h; // width and height of the screen
+	public/* final*/ int w, h; // width and height of the screen
 	public int[] pixels; // pixels on the screen
 	
 	private SpriteSheet sheet; // the sprite sheet used in the game.
@@ -68,20 +68,32 @@ public class Screen {
 	}
 	
 	/* Used for the scattered dots at the edge of the light radius underground. */
-	private int[] dither = new int[] {0, 8, 2, 10, 12, 4, 14, 6, 3, 11, 1, 9, 15, 7, 13, 5,};
+	private int[] dither = new int[] {0, 8, 2, 10, 12, 4, 14, 6, 3, 11, 1, 9, 15, 7, 13, 5};
 	
 	/** Overlays the screen with pixels */
-	public void overlay(Screen screen2, int xa, int ya) {
-		int[] oPixels = screen2.pixels;  // The Integer array of pixels to overlay the screen with.
-		int i = 0; // current pixel on the screen
-		for (int y = 0; y < h; y++) { // loop through height of screen
-			for (int x = 0; x < w; x++) { // loop through width of screen
-				/* if the current pixel divided by 10 is smaller than the dither thingy with a complicated formula then it will fill the pixel with a black color. Yep, Nailed it! */
-				if (oPixels[i] / 10 <= dither[((x + xa) & 3) + ((y + ya) & 3) * 4]) pixels[i] = 0;
-				i++; // moves to the next pixel.
-			}
-		}
-	}
+    public void overlay(Screen screen2, int xa, int ya) {
+        int[] oPixels = screen2.pixels;  // The Integer array of pixels to overlay the screen with.
+        int i = 0; // current pixel on the screen
+        for (int y = 0; y < h; y++) { // loop through height of screen
+            for (int x = 0; x < w; x++) { // loop through width of screen
+                if (oPixels[i] / 10 <= dither[((x + xa) & 3) + ((y + ya) & 3) * 4]) {
+                    if(com.mojang.ld22.Game.currentLevel < 3) {
+                        /* if the current pixel divided by 10 is smaller than the dither thingy with a complicated formula then it will fill the pixel with a black color. Yep, Nailed it! */
+                            pixels[i] = 0;
+                    } else {
+                            int r = (pixels[i] / 36) % 6;
+                            int g = (pixels[i] / 6) % 6;
+                            int b = pixels[i] % 6;
+                            if(r > 0) r--;
+                            if(g > 0) g--;
+                            if(b > 0) b--;
+                            pixels[i] = r * 36 + g * 6 + b;
+                    }
+                }
+                i++; // moves to the next pixel.
+            }
+        }
+    }
 
 	public void renderLight(int x, int y, int r) {
 		//applies offsets:
@@ -114,4 +126,12 @@ public class Screen {
 			}
 		}
 	}
+	
+	/** An experimental attempt at making the screen resizable. */
+	/*public void updateScreenSize(int width, int height) {
+		w = width;
+		h = height;
+		int[] newPixels = new int[w * h];
+		pixels = newPixels;
+	}*/
 }

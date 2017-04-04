@@ -35,11 +35,6 @@ public class InventoryMenu extends Menu {
 
 		if (input.getKey("attack").clicked && len > 0) { // If your inventory is not empty, and the player presses the "Attack" key...
 			Item item = player.inventory.items.remove(selected); // The item will be removed from the inventory
-			if (item.getName() == "Fish Rod") {//if it was a fishing rod, then fish.
-				Game.truerod = true;
-			} else {
-				Game.truerod = false;
-			}
 			player.activeItem = item; // and that item will be placed as the player's active item
 			game.setMenu(null); // the game will go back to the gameplay
 		}

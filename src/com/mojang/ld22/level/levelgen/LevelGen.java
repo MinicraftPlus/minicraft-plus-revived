@@ -70,7 +70,21 @@ public class LevelGen {
 	private void setSample(int x, int y, double value) {
 		values[(x & (w - 1)) + (y & (h - 1)) * w] = value;
 	}
-
+	
+	public static byte[][] createAndValidateMap(int w, int h, int level) {
+		if(level == 1)
+			return createAndValidateSkyMap(w, h);
+		if(level == 0)
+			return createAndValidateTopMap(w, h);
+		if(level == -4)
+			return createAndValidateDungeon(w, h);
+		
+		if(level > -4 && level > 0)
+			return createAndValidateUndergroundMap(w, h, -level - 1);
+		
+		return null;
+	}
+	
 	public static byte[][] createAndValidateTopMap(int w, int h) {
 		int attempt = 0;
 		do {
@@ -395,7 +409,7 @@ public class LevelGen {
 						continue stairsLoop;
 			
 			map[x + y * w] = Tile.stairsDown.id;
-			//if(com.mojang.ld22.Game.debug) System.out.println("Stair down on surface, x="+x+" y="+y); // it doesn't work!
+			
 			count++;
 			if (WorldGenMenu.sized == 128) {
 				if (count == 6) break;
@@ -684,22 +698,43 @@ public class LevelGen {
 	}
 
 	public static void main(String[] args) {
-		int d = 0;
+		int idx = -1;
+		
+		int[] maplvls = new int[args.length];
+		boolean valid = true;
+		if(maplvls.length > 0) {
+			for(int i = 0; i < args.length; i++) {
+				try {
+					int lvlnum = Integer.parseInt(args[i]);
+					maplvls[i] = lvlnum;
+				} catch (Exception ex) {
+					valid = false;
+					break;
+				}
+			}
+		} else valid = false;
+		
+		if(!valid) {
+			maplvls = new int[1];
+			maplvls[0] = 0;
+		}
+		
 		while (true) {
 			int w = 256;
 			int h = w;
-
-			//byte[] map = LevelGen.createAndValidateTopMap(w, h)[0];
-			byte[] map = LevelGen.createAndValidateUndergroundMap(w, h, (d++ % 3) + 1)[0];
-			//byte[] map = LevelGen.createAndValidateSkyMap(w, h)[0];
-			//byte[] map = LevelGen.createAndValidateDungeon(w, h)[0];
+			
+			int lvl = maplvls[idx++ % maplvls.length];
+			if(lvl > 1 || lvl < -4) continue;
+			byte[][] fullmap = LevelGen.createAndValidateMap(w, h, lvl);
+			if(fullmap == null) continue;
+			byte[] map = fullmap[0];
 
 			BufferedImage img = new BufferedImage(w, h, BufferedImage.TYPE_INT_RGB);
 			int[] pixels = new int[w * h];
 			for (int y = 0; y < h; y++) {
 				for (int x = 0; x < w; x++) {
 					int i = x + y * w;
-
+					
 					if (map[i] == Tile.water.id) pixels[i] = 0x000080;
 					if (map[i] == Tile.ironOre.id) pixels[i] = 0x000080;
 					if (map[i] == Tile.goldOre.id) pixels[i] = 0x000080;
@@ -720,12 +755,7 @@ public class LevelGen {
 				}
 			}
 			img.setRGB(0, 0, w, h, pixels, 0, w);
-			JOptionPane.showMessageDialog(
-					null,
-					null,
-					"Another",
-					JOptionPane.YES_NO_OPTION,
-					new ImageIcon(img.getScaledInstance(w * 2, h * 2, Image.SCALE_AREA_AVERAGING)));
+			JOptionPane.showMessageDialog(null, null, "Another Map", JOptionPane.YES_NO_OPTION, new ImageIcon(img.getScaledInstance(w * 2, h * 2, Image.SCALE_AREA_AVERAGING)));
 		}
 	}
 }

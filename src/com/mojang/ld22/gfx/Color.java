@@ -3,7 +3,7 @@ package com.mojang.ld22.gfx;
 public class Color {
 	
 	/* To explain this class, you have to know how Bit-Shifting works.
-	 	David(Shaylor) made a small post, so go here if you don't already know: http://minicraftforums.com/viewtopic.php?f=9&t=2256
+	 	David made a small post, so go here if you don't already know: http://minicraftforums.com/viewtopic.php?f=9&t=2256
 		
 		Note: this class still confuses me a bit, lol. -David
 	*/
@@ -31,9 +31,9 @@ public class Color {
 	}
 	
 	//similar to get(), it looks like, but just one value..?
-	public static int pixel(int a) {
+	/*public static int pixel(int a) {
 		return (get(a) << 24) + (get(a) << 16) + (get(a) << 8) + get(a);
-	}
+	}*/
 	
 	//looks like an error correction system.
 	public static int rgb(int red, int green, int blue) {

@@ -49,19 +49,19 @@ public class TitleMenu extends Menu {
 	boolean isblue;
 	
 	public TitleMenu() {
-		this.folder = new File(this.location);
-		this.isblue = false;
+		folder = new File(location);
+		isblue = false;
 		if(splashes.size() == 0) {
 			splashes.add("You will never see this!");
 		}
-
+		// now what's the deal with the whole "add one and then replace it" thing?
 		if(splashes.size() == 1) {
-			this.getSplashes();
+			getSplashes();
 		}
 
-		this.rand = this.random.nextInt(splashes.size());
+		rand = random.nextInt(splashes.size());
 		if(!loadedunlocks) {
-			this.getSplashes();
+			getSplashes();
 		}
 	}
 	
@@ -74,7 +74,7 @@ public class TitleMenu extends Menu {
 				"Also play Minicraft Delux!",
 				"Also play Alecraft!",
 				"Also play Hackcraft!",
-				"Also play RPGcraft!(When it's done)",
+				//"Also play RPGcraft!(When it's done)",
 				"Also play MiniCrate!",
 				"Also play MiniCraft Mob Overload!",
 				"Only on PlayMinicraft.com!",
@@ -101,15 +101,23 @@ public class TitleMenu extends Menu {
 				"Test == InDev!",
 				"Alpha? What's that?",
 				"Beta? What's that?",
-				"Infdev? What's that?",
-				"Bosses? What are those?",
+				//"Infdev? What's that?",
 				"Story? What's that?",
 				"Multiplayer? What's that?",
 				"Infinite terrain? What's that?",
-				"Spiders? What are those?",
+				"Fullscreen? What's that?",
+				"Redstone? What's that?",
+				"Bosses? What are those?",
+				//"Spiders? What are those?",
+				"Minecarts? What are those?",
+				"3D? What's that?",
+				"3.1D is the new thing!",
+				"Windows? I perfer Doors!",
+				"Mouse? I perfer Keyboard!",
 				"Mouse not included!",
 				"No spiders included!",
-				"No endermen included!",
+				"No Endermen included!",
+				"No chickens included!",
 				"Creepers included!",
 				"Skeletons included!",
 				"Knights included!",
@@ -117,38 +125,34 @@ public class TitleMenu extends Menu {
 				"Cows included!",
 				"Sheep included!",
 				"Pigs included!",
-				"Saving Now Included!",
-				"Loading Now Included!",
+				//"Saving Now Included!",
+				//"Loading Now Included!",
 				"Bigger Worlds!",
 				"World types!",
 				"World themes!",
 				"Sugarcane is a Idea!",
-				"No resize for you!",
-				"Milk is for something later!",
-				"saying ay-oh, that creeper's KO'd!",
+				"Milk is an idea!",
 				"So we back in the mine,",
 				"pickaxe swinging from side to side",
 				"Life itself suspended by a thread",
+				"In search of Gems!",
+				"saying ay-oh, that creeper's KO'd!",
+				//"Diggy! Dig... ooh! a jaffacake!",
 				//"wenubs.com is jamming!",
 				"Gimmie a bucket!",
 				"Farming with water!",
 				"Made with 10000% Vitamin Z!",
-				"In search of Gems!",
 				"Too much DP!",
 				"Y U NO BOAT!?",
 				"PBAT is in the house!",
-				"Who is SeaNanners?",
-				"Diggy! Dig... ooh! a jaffacake!",
+				//"Who is SeaNanners?",
 				"Punch the Moon!",
 				"This is String qq!",
-				"3D? What's that?",
 				"Why?",
 				"You are null!",
 				"That guy is such a sly fox!",
-				"Windows? I perfer Doors!",
-				"3.1D is the new thing!",
 				"hola senor!",
-				"Vote for the Dead Workers Party!",
+				//"Vote for the Dead Workers Party!",
 				"Sonic Boom!",
 				"Hakuna Matata!",
 				"One truth prevails!",
@@ -161,6 +165,8 @@ public class TitleMenu extends Menu {
 				"Get the High-Score!",
 				"Awesome!",
 				"Sweet!",
+				"Cool!",
+				"Radical!",
 				"Potions ftw!",
 				"Conquer the Dungeon!",
 				"Defeat the Air Wizard!",
@@ -169,11 +175,12 @@ public class TitleMenu extends Menu {
 				"Sand + Gunpowder = TNT!",
 				"Sleep at Night!",
 				"Farm at Day!",
-				"Leave a comment below!",
+				//"Leave a comment below!",
 				"Explanation Mark!",
 				"!sdrawkcab si siht",
 				"This is forwards!",
 				"why is this blue?",
+				//"try with --debug",
 				"MissingNo " + rand
 			};
 			this.splashes = new ArrayList<String>();
