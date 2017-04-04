@@ -884,7 +884,7 @@ public class Game extends Canvas implements Runnable {
 		boolean debug = (args != null && args.length > 0 && args[0].equals("--debug"));
 		Game.debug = debug;
 		Game game = new Game();
-		//game.setMinimumSize(getWindowSize());
+		game.setMinimumSize(new Dimension(1, 1));
 		//game.setMaximumSize(getWindowSize());
 		game.setPreferredSize(getWindowSize());
 		JFrame frame = new JFrame(Game.NAME);
@@ -901,7 +901,7 @@ public class Game extends Canvas implements Runnable {
 				float w = frame.getWidth() - frame.getInsets().left - frame.getInsets().right;
 				float h = frame.getHeight() - frame.getInsets().top - frame.getInsets().bottom;
 				Game.SCALE = Math.min(w / Game.WIDTH, h / Game.HEIGHT);
-				System.out.println("Window Resized to: " + frame.getWidth() + "x" + frame.getHeight() + ";\tnew Game Scale: " + Game.SCALE + ";\tnew game screen size: " + getWindowSize().width + "x" + getWindowSize().height);
+				//System.out.println("Window Resized to: " + frame.getWidth() + "x" + frame.getHeight() + ";\tnew Game Scale: " + Game.SCALE + ";\tnew game screen size: " + getWindowSize().width + "x" + getWindowSize().height);
 				//game.WIDTH = frame.getWidth();
 				//game.HEIGHT = frame.getHeight();
             }
