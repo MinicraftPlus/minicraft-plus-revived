@@ -336,22 +336,23 @@ public class ListItems {
 		this.hastepotion = (new ResourceItem(Resource.hastepotion)).addItem();
 	}
 	
+	/** fetches an item from the list given it's name. I mean, I would have just used a HashMap... */
 	public static Item getItem(String name) {
 		Item newItem = new Item();
-		if(!name.equals("")) {
-			if(name.contains(";")) {
-				name = name.substring(0, name.indexOf(";"));
+		if(!name.equals("")) { // name is not nothing
+			if(name.contains(";")) { // if has ";" in name for whatever reason...
+				name = name.substring(0, name.indexOf(";")); // cut it off, plus anything after it.
 			}
 			
-			for(int i = 0; i < items.size(); i++) {
-				if(((Item)items.get(i)).getName().equals(name)) {
-					newItem = (Item)items.get(i);
-					return newItem;
+			for(int i = 0; i < items.size(); i++) { // loop through the items
+				if(((Item)items.get(i)).getName().equals(name)) { // if names match
+					newItem = (Item)items.get(i); // set the item
+					return newItem; // return the item
 				}
 			}
 		}
 		
-		return newItem;
+		return newItem; // would return new Item();
 	}
 }
 	

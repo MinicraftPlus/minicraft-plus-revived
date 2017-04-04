@@ -1,4 +1,3 @@
-//new class, no comments.
 package com.mojang.ld22.entity;
 
 import com.mojang.ld22.crafting.Crafting;
@@ -19,9 +18,10 @@ public class Loom extends Furniture {
 		xr = 7;
 		yr = 2;
 	}
-
+	
+	/// called when the player presses menu button with the loom in front of them.
 	public boolean use(Player player, int attackDir) {
-		player.game.setMenu(new CraftingMenu(Crafting.loomRecipes, player));
+		player.game.setMenu(new CraftingMenu(Crafting.loomRecipes, player)); // open the loom menu.
 		return true;
 	}
 }
