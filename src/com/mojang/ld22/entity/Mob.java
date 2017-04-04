@@ -19,7 +19,7 @@ public class Mob extends Entity {
 	public int maxHunger = 10;
 	public int hunger = maxHunger;
 	public int swimTimer = 0; // How much we have moved in water currently, used to halve movement speed
-	//public int woolTimer = 0;
+	public int woolTimer = 0;
 	//public int lightTimer = 0;
 	public int tickTime = 0; // Incremented whenever tick() is called, is effectively the age in ticks
 	public int r;
