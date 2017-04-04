@@ -41,6 +41,10 @@ Find something to do with Npc.java, and Giant.java; currently, they were never e
 
 ++++
 
+Turn player.score into the experience system of 1.4; or, maybe I should just make my own experience system... it wouldn't hurt to use things like colors and such from 1.4, though.
+
+++++
+
 Fix entity removal when sleeping? I think the idea is that all mobs within a certain radius are removed when you go to sleep; but that doesn't happen, and in fact, they still track you when you're in bed... I could fix that, maybe.
 
 ++++

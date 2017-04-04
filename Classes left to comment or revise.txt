@@ -1,8 +1,5 @@
 Comment:
 
-entity/Slime
-entity/Zombie
-
 item/*
 item/resource/*
 
