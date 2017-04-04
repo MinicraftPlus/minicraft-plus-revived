@@ -10,7 +10,7 @@ public class Screen {
 	public static final int BIT_MIRROR_X = 0x01;
 	public static final int BIT_MIRROR_Y = 0x02;
 
-	public final int w, h; // width and height of the screen
+	public/* final*/ int w, h; // width and height of the screen
 	public int[] pixels; // pixels on the screen
 	
 	private SpriteSheet sheet; // the sprite sheet used in the game.
@@ -126,4 +126,12 @@ public class Screen {
 			}
 		}
 	}
+	
+	/** An experimental attempt at making the screen resizable. */
+	/*public void updateScreenSize(int width, int height) {
+		w = width;
+		h = height;
+		int[] newPixels = new int[w * h];
+		pixels = newPixels;
+	}*/
 }
