@@ -40,17 +40,13 @@ screen/WonMenu (needs a LOT more than comments!)
 screen/WorldGenMenu
 screen/WorldSelectMenu
 
--------------------------------------
-There are more... but they are new, and have no previous comments. To find them, search for a comment on the first line of the class.
-Usually, it's "//new class, no comments." But some are "//new features, less comments." or something like that.
-
-
 *******************************************************************************
 Classes that need attention:
 
 -Chest.java: reformat
 
 -Furniture.java: maybe combine subclasses, to remove a bunch of the bulk... or maybe, just move more of the code into this class.
+Same deal with the friendly mobs, and the evil mobs.
 
 -WonMenu.java: reformat; freshly decompiled, it seems...
 
