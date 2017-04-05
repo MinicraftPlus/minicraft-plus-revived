@@ -26,7 +26,7 @@ public class Zombie extends Mob {
 		x = random.nextInt(64 * 16);
 		y = random.nextInt(64 * 16);
 		if (ModeMenu.creative) health = maxHealth = 1;
-		else health = maxHealth = lvl * lvl * 5*Math.pow(2, OptionsMenu.diff-1); // 5, 10, 20
+		else health = maxHealth = lvl * lvl * 5*((Double)(Math.pow(2, OptionsMenu.diff-1))).intValue(); // 5, 10, 20
 		/*
 		if (OptionsMenu.diff == OptionsMenu.easy) {
 			

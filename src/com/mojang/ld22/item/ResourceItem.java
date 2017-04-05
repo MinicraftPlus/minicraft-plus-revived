@@ -19,9 +19,9 @@ public class ResourceItem extends Item {
 	public int amount = 1; // The amount of resources
 	
 	public ResourceItem(Resource resource) {
-		resource = resource;
+		this.resource = resource;
 	}
-
+	
 	public ResourceItem(Resource resource, int count) {
 		this.resource = resource;
 		this.count = count;
