@@ -16,6 +16,7 @@ public class Item implements ListItem {
 	public Item addItem() {
 		if (!ListItems.items.contains(this)) { // if this Item isn't already part of the list...
 			ListItems.items.add(this); // add it.
+			//System.out.println("adding item to list: " + getName());
 		}
 		
 		return this;
