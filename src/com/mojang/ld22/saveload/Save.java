@@ -165,7 +165,7 @@ public class Save {
 	public void writeInventory(String filename, Inventory inventory) {
 		if(player.activeItem != null) {
 			if(player.activeItem instanceof ResourceItem) {
-				data.add(player.activeItem.getName() + ";" + inventory.count(player.activeItem));
+				data.add(player.activeItem.getName() + ";" + ((ResourceItem)player.activeItem).count);
 			} else {
 				data.add(player.activeItem.getName());
 			}
@@ -173,7 +173,7 @@ public class Save {
 		
 		for(int i = 0; i < inventory.items.size(); i++) {
 			if(inventory.items.get(i) instanceof ResourceItem) {
-				data.add(((Item)inventory.items.get(i)).getName() + ";" + inventory.count((Item)inventory.items.get(i)));
+				data.add(((Item)inventory.items.get(i)).getName() + ";" + ((ResourceItem)inventory.items.get(i)).count);
 			} else {
 				data.add(((Item)inventory.items.get(i)).getName());
 			}
