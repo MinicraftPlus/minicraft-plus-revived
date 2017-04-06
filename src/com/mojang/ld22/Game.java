@@ -274,6 +274,7 @@ public class Game extends Canvas implements Runnable {
 		gameTime = 0;
 		Player.hasSetHome = false;
 		Bed.hasBedSet = false; //no bed
+		Game.gamespeed = 1;
 		
 		if (!OptionsMenu.hasSetDiff) OptionsMenu.diff = 2;
 		
@@ -498,8 +499,8 @@ public class Game extends Canvas implements Runnable {
 					if (input.getKey("shift-alt-minus").clicked && gamespeed > 1) gamespeed--;
 					else if (input.getKey("shift-alt-minus").clicked && gamespeed <= 1) gamespeed /= 2;
 					
-					if (input.getKey("shift-equals").clicked) Player.moveSpeed++;
-					if (input.getKey("shift-minus").clicked && Player.moveSpeed > 1) Player.moveSpeed--;
+					if (input.getKey("shift-equals").clicked) Player.moveSpeed+=0.5D;
+					if (input.getKey("shift-minus").clicked && Player.moveSpeed > 0.5D) Player.moveSpeed-=0.5D;
 				} // end debug only cond.
 			} // end "menu-null" conditional
 		} // end hasfocus conditional
@@ -847,7 +848,8 @@ public class Game extends Canvas implements Runnable {
 		//main game loop? calls tick() and render().
 		while (running) {
 			long now = System.nanoTime();
-			double nsPerTick = 1E9D / (normSpeed*gamespeed); // nanosecs per sec divided by ticks per sec = nanosecs per tick
+			double nsPerTick = 1E9D / normSpeed; // nanosecs per sec divided by ticks per sec = nanosecs per tick
+			if(menu == null) nsPerTick /= gamespeed;
 			unprocessed += (now - lastTime) / nsPerTick; //figures out the unprocessed time between now and lastTime.
 			lastTime = now;
 			boolean shouldRender = true;

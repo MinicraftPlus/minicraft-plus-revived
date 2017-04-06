@@ -36,7 +36,7 @@ public class Player extends Mob {
 	private InputHandler input;
 	public Game game;
 	
-	public static int moveSpeed = 1; // the number of coordinate squares to move; each tile is 16x16.
+	public static double moveSpeed = 1; // the number of coordinate squares to move; each tile is 16x16.
 	public static Inventory Sinventory; //static inventory, I guess.
 	public static int score; // the player's score
 	public static int SHealth = 10;
@@ -287,7 +287,7 @@ public class Player extends Mob {
 		// this is the movement detection; apparently, we shouldn't move while fishing.
 		int xa = 0, ya = 0;
 		//if (!Game.isfishing) {
-			for(int moves = 1; moves <= moveSpeed; moves++) { // allows for multiple steps walked per tick.
+			//for(int moves = 1; moves <= moveSpeed; moves++) { // allows for multiple steps walked per tick.
 				if (input.getKey("up").down) {
 					ya--;
 					stepCount++;
@@ -304,7 +304,7 @@ public class Player extends Mob {
 					xa++;
 					stepCount++;
 				}
-			}
+			//}
 		//}
 		
 		// TODO why is this necessary? well... x and y are updated below by Mob.java, and Entity.java in turn; perhaps it is necessary to save the previous position?
@@ -337,7 +337,7 @@ public class Player extends Mob {
 		
 		//executes if not saving; and... essentially halves speed if out of stamina.
 		if (staminaRechargeDelay % 2 == 0 && game.savecooldown == 0 && !game.saving) {
-			double spd = moveSpeed * (potioneffects.containsKey("Time") ? 1.5f : 1);
+			double spd = moveSpeed * (potioneffects.containsKey("Time") ? (potioneffects.containsKey("Speed") ? 1.5D : 2) : 1);
 			move((int) (xa * spd), (int) (ya * spd)); // THIS is where the player moves; part of Mob.java
 		}
 		
