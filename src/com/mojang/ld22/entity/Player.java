@@ -700,6 +700,9 @@ public class Player extends Mob {
 		itemEntity.take(this); // calls the take() method in ItemEntity
 		if (itemEntity.item.getName() == "arrow") {
 			ac++; // if it's an arrow, then just add to arrow count, not inventory.
+		} else if(activeItem != null && activeItem.getName() == itemEntity.item.getName() && activeItem instanceof ResourceItem && itemEntity.item instanceof ResourceItem) {
+			// picked up item matches the one in your hand
+			((ResourceItem)activeItem).count += ((ResourceItem)itemEntity.item).count;
 		} else {
 			inventory.add(itemEntity.item); // add item to inventory
 		}
