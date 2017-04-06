@@ -28,6 +28,7 @@ public class Inventory {
 	
 	/** Adds an item to a specific spot in the inventory */
 	public void add(int slot, Item item) {
+		//if (com.mojang.ld22.Game.debug && playerinventory) System.out.println("inventory: adding item to player inv: " + item.getName());
 		if (item instanceof ResourceItem) { // if the item is a resource...
 			ResourceItem toTake = (ResourceItem) item; // ...convert it into a ResourceItem object.
 			ResourceItem has = findResource(toTake.resource); // finds if the resourceItem is already in their inventory (looking for an instance of ResourceItem with the same .resource)
@@ -50,6 +51,8 @@ public class Inventory {
 				if (has.resource == resource) return has; // returns if the loop has found a ResourceItem with a matching resource in your inventory
 			}
 		}
+		// TODO should I check the activeItem too? Seems like a good idea, but I should check the code for anything that may take advantake of the absence of this feature, before I just put it in.
+		
 		return null; // else it will return null
 	}
 	
@@ -161,6 +164,7 @@ public class Inventory {
 			}
 			return count; // return count
 		}
-		return 0; // should never reach here.
+		
+		return 0; // reaches here if a ResourceItem is requested that isn't in the inventory.
 	}
 }
