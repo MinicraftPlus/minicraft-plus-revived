@@ -101,6 +101,7 @@ public class InputHandler implements MouseListener, KeyListener {
 		//presses = how many times the Key has been pressed.
 		//absorbs = how many key presses have been processed.
 		private int presses, absorbs;
+		//private float absorbEst;
 		//down = if the key is currently physically being held down.
 		//clicked = if the key is still being processed at the current tick.
 		public boolean down, clicked;
@@ -118,7 +119,12 @@ public class InputHandler implements MouseListener, KeyListener {
 		/** Processes the key presses. */
 		public void tick() {
 			if (absorbs < presses) { // If there are more key presses to process...
-				absorbs++; //process them!
+				/*absorbEst += 1 / Game.gamespeed; //process them! in such a way that is unaffected by gamespeed changes. // TODO this just isn't accurate enough to be worth implementing...
+				if(absorbEst >= 1) {
+					absorbEst--;
+					absorbs++;
+				}*/
+				absorbs++;
 				clicked = true; // make clicked true, since key presses are still being processed.
 			} else { // All key presses so far for this key have been processed.
 				if (!sticky) sticky = presses > 3;
@@ -127,6 +133,7 @@ public class InputHandler implements MouseListener, KeyListener {
 				//reset the presses and absorbs, to ensure they don't get too high, or something:
 				presses = 0;
 				absorbs = 0;
+				//absorbEst = 0;
 			}
 		}
 		
