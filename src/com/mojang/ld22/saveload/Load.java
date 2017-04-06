@@ -150,7 +150,7 @@ public class Load {
 		if(data.size() == 5) {
 			Game.setTime(Integer.parseInt((String)data.get(0)));
 			Game.astime = Integer.parseInt((String)data.get(1));
-			Game.gamespeed = Float.parseFloat((String)data.get(2));
+			//Game.gamespeed = Float.parseFloat((String)data.get(2));
 			Game.autosave = Boolean.parseBoolean((String)data.get(3));
 			OptionsMenu.isSoundAct = Boolean.parseBoolean((String)data.get(4));
 		} else {

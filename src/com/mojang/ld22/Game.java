@@ -461,7 +461,7 @@ public class Game extends Canvas implements Runnable {
 					setMenu(new LevelTransitionMenu(pendingLevelChange));
 					pendingLevelChange = 0;
 				}
-
+				
 				//I'm guessing that this is like DeadMenu, but you can't respawn.
 				if (wonTimer > 0) {
 					wonTimer--;
