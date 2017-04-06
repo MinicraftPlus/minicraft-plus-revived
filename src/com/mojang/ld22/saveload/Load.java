@@ -55,6 +55,7 @@ public class Load {
 	List data;
 	List extradata;
 	public boolean hasloadedbigworldalready;
+	boolean oldSave = false;
 	
 	public Load(Game game, String worldname) {
 		folder = new File(location);
@@ -63,6 +64,10 @@ public class Load {
 		extradata = new ArrayList();
 		hasloadedbigworldalready = false;
 		location += "/saves/" + worldname + "/";
+		
+		File testFile = new File(location + "KeyPrefs" + extention);
+		oldSave = !testFile.exists();
+		
 		loadGame("Game", game);
 		loadPrefs("KeyPrefs", game);
 		loadWorld("Level");
@@ -142,14 +147,25 @@ public class Load {
 	
 	public void loadGame(String filename, Game game) {
 		loadFromFile(location + filename + extention);
-		Game.setTime(Integer.parseInt((String)data.get(0)));
-		Game.astime = Integer.parseInt((String)data.get(1));
-		Game.gamespeed = Float.parseFloat((String)data.get(2));
-		Game.autosave = Boolean.parseBoolean((String)data.get(3));
-		OptionsMenu.isSoundAct = Boolean.parseBoolean((String)data.get(4));
+		if(data.size() == 5) {
+			Game.setTime(Integer.parseInt((String)data.get(0)));
+			Game.astime = Integer.parseInt((String)data.get(1));
+			Game.gamespeed = Float.parseFloat((String)data.get(2));
+			Game.autosave = Boolean.parseBoolean((String)data.get(3));
+			OptionsMenu.isSoundAct = Boolean.parseBoolean((String)data.get(4));
+		} else {
+			// for backwards compatibility
+			Game.astime = Integer.parseInt((String)this.data.get(1));
+			//Game.gamespeed = Integer.parseInt((String)this.data.get(2));
+			//game.nsPerTick = 1.0E9D / (double)(60 * Game.gamespeed);
+			game.player.ac = Integer.parseInt((String)this.data.get(3));
+			Game.tickCount = Integer.parseInt((String)this.data.get(0));
+			Game.autosave = false;
+		}
 	}
 	
 	public void loadPrefs(String filename, Game game) {
+		if(oldSave) return;
 		loadFromFile(location + filename + extention);
 		Iterator keys = data.iterator();
 		while(keys.hasNext()) {
@@ -183,12 +199,11 @@ public class Load {
 		player.health = Integer.parseInt((String)data.get(4));
 		player.armor = Integer.parseInt((String)data.get(5));
 		Player.score = Integer.parseInt((String)data.get(6));
-		player.ac = Integer.parseInt((String)data.get(7));
-		
-		Game.currentLevel = Integer.parseInt((String)data.get(8));
+		if(!oldSave) player.ac = Integer.parseInt((String)data.get(7));
+		Game.currentLevel = Integer.parseInt((String)data.get(oldSave?7:8));
 		player.game.level = Game.levels[Game.currentLevel];
 		
-		String modedata = (String)data.get(9);
+		String modedata = (String)data.get(oldSave?8:9);
 		int mode;
 		if(modedata.contains(";")) {
 			mode = Integer.parseInt(modedata.substring(0, modedata.indexOf(";")));
@@ -202,53 +217,90 @@ public class Load {
 		
 		ModeMenu.updateModeBools(mode);
 		
-		if(!((String)data.get(10)).equals("PotionEffects[]")) {
-			String potiondata = ((String)data.get(10)).replace("PotionEffects[", "").replace("]", "");
+		boolean hasEffects;
+		int potionIdx = 10;
+		if(oldSave) {
+			hasEffects = data.size() > 10 && ((String)data.get(data.size()-2)).contains("PotionEffects[");
+			potionIdx = data.size() - 2;
+		} else hasEffects = !((String)data.get(10)).equals("PotionEffects[]");
+		if(hasEffects) {
+			String potiondata = ((String)data.get(potionIdx)).replace("PotionEffects[", "").replace("]", "");
 			List effects = Arrays.asList(potiondata.split(":"));
 			
 			for(int i = 0; i < effects.size(); i++) {
 				List effect = Arrays.asList(((String)effects.get(i)).split(";"));
-				PotionResource.applyPotion(player, (String)effect.get(0), Integer.parseInt((String)effect.get(1)));
+				String pName = (String)effect.get(0);
+				if(oldSave) pName = pName.replace("P.", "Potion");
+				PotionResource.applyPotion(player, pName, Integer.parseInt((String)effect.get(1)));
 			}
 		}
 		
-		String colors = ((String)data.get(11)).replace("[", "").replace("]", "");
+		String colors = ((String)data.get(oldSave?data.size()-1:11)).replace("[", "").replace("]", "");
 		List color = Arrays.asList(colors.split(";"));
 		player.r = Integer.parseInt((String)color.get(0));
 		player.g = Integer.parseInt((String)color.get(1));
 		player.b = Integer.parseInt((String)color.get(2));
 		
-		Player.skinon = Boolean.parseBoolean((String)data.get(12));
+		if(!oldSave) Player.skinon = Boolean.parseBoolean((String)data.get(12));
+		else Player.skinon = false;
 	}
 	
 	public void loadInventory(String filename, Inventory inventory) {
 		loadFromFile(location + filename + extention);
 		inventory.items.clear();
+		inventory.playerinventory = true; // this is only called for the player inventory so I can do this
 		
 		for(int i = 0; i < data.size(); i++) {
 			String item = (String)data.get(i);
-			if(item.contains(";")) {
+			/*if(item.contains(";")) {
 				item = item.substring(0, item.lastIndexOf(";"));
-			}
+			}*/
 			
-			if(ListItems.getItem(item) instanceof ResourceItem) {
-				String name = (String)data.get(i) + ";0";
-				List curData = Arrays.asList(name.split(";"));
-				Item newItem = ListItems.getItem((String)curData.get(0));
+		//	if(oldSave) {
+				//System.out.println("load: old item name: \"" + item + "\"");
 				
+				//System.out.println("load: new item name: \"" + item + "\"");
+			//}
+			if(ListItems.getItem(item) instanceof ResourceItem) {
+				if(oldSave && i == 0) item = item.replace(";0", ";1");
+				List curData = Arrays.asList(item.split(";"));
+				String itemName = (String)curData.get(0);
+				if(oldSave) itemName = subOldItemName(itemName);
+				
+				Item newItem = ListItems.getItem(itemName);
+				
+				//if(oldSave) System.out.println("load: fetched resource name: \"" + newItem.getName() + "\"");
+				//System.out.println();
+				//System.out.println("load data: curdata1=" + ((String)curData.get(1)));
 				for(int ii = 0; ii < Integer.parseInt((String)curData.get(1)); ii++) {
 					if(newItem instanceof ResourceItem) {
 						ResourceItem resItem = new ResourceItem(((ResourceItem)newItem).resource);
 						inventory.add(resItem);
 					} else {
-						inventory.items.add(newItem);
+						inventory.add(newItem);
 					}
 				}
 			} else {
-				inventory.items.add(ListItems.getItem((String)data.get(i)));
+				item = subOldItemName(item);
+				Item toAdd = ListItems.getItem(item);
+				inventory.add(toAdd);
 			}
 		}
+	}
+	
+	private String subOldItemName(String oldName) {
+		if(oldName.contains(";")) oldName = oldName.substring(0, oldName.indexOf(";"));
+		oldName = oldName.replace("P.", "Potion");
 		
+		switch(oldName) {
+			//case "bed": return "Bed";
+			case "Fish Rod": return "Fishing Rod";
+			//case "Fish Rod;1": return "Fishing Rod";
+			//case "": return "";
+			//case "": return "";
+			
+			default: return oldName;
+		}
 	}
 	
 	public void loadEntities(String filename, Player player) {

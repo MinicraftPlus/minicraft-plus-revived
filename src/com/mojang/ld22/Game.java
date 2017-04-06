@@ -53,7 +53,7 @@ public class Game extends Canvas implements Runnable {
 	private static Random random = new Random();
 	
 	public static boolean debug = false;
-	public static final String gameDir = System.getenv("APPDATA") + "/.playminicraft/mods/Minicraft-Plus"; // The directory in which all the game files are stored; APPDATA is meant for windows...
+	public static final String gameDir = System.getenv("APPDATA") + "/.playminicraft/mods/Minicraft Plus"; // The directory in which all the game files are stored; APPDATA is meant for windows...
 	
 	/// MANAGERIAL VARS AND RUNNING
 	
@@ -584,7 +584,8 @@ public class Game extends Canvas implements Runnable {
 		level.renderSprites(screen, xScroll, yScroll); // renders level sprites on screen
 		
 		// this creates the darkness in the caves
-		if (!ModeMenu.creative && currentLevel < 4 && (currentLevel < 3 || time > 1)) {
+		//if (!ModeMenu.creative && currentLevel < 4 && (currentLevel < 3 || time > 1)) {
+		if (!ModeMenu.creative && currentLevel < 3) {
 			if (currentLevel < 3) lightScreen.clear(0); // clears the light screen to a black color
 			level.renderLight(lightScreen, xScroll, yScroll); // finds (and renders) all the light from objects (like the player, lanterns, and lava).
 			screen.overlay(lightScreen, xScroll, yScroll); // overlays the light screen over the main screen.
