@@ -32,8 +32,8 @@ public class Bed extends Furniture {
 			//if(Game.debug) System.out.println("bedPos: ("+(x/16)+","+(y/16)+"); spawnPos: ("+player.spawnx+","+player.spawny+")"); // debug to print the bed loc and spawn loc
 		} else {
 			// it is too early to sleep; display how much time is remaining.
-			int sec = (Game.tickCount - Game.sleepTime) / Game.normSpeed; // gets the seconds until sleeping is allowed. // normSpeed is in tiks/sec.
-			Game.notifications.add("Can't sleep! " + (sec / 60) + "Min " + (sec - sec % 60) + " Sec left!"); // add the notification displaying the time remaining in minutes and seconds.
+			int sec = (Game.sleepTime - Game.tickCount) / Game.normSpeed; // gets the seconds until sleeping is allowed. // normSpeed is in tiks/sec.
+			Game.notifications.add("Can't sleep! " + (sec / 60) + "Min " + (sec % 60) + " Sec left!"); // add the notification displaying the time remaining in minutes and seconds.
 		}
 		
 		return true;
