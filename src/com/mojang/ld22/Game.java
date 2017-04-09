@@ -402,6 +402,10 @@ public class Game extends Canvas implements Runnable {
 		if (ModeMenu.score) {
 			if (!paused) scoreTime--;
 			
+			/*if (scoreTime < 1 && !player.removed) { // GAME OVER
+				player.remove();
+				setMenu(new WonMenu(player));
+			}*/
 			if (scoreTime < 1 && !player.removed) {
 				setMenu(new WonMenu(player));
 				if(Game.debug) System.out.println("final player score: "+player.score);
@@ -630,15 +634,6 @@ public class Game extends Canvas implements Runnable {
 			screen.render(x * 7, screen.h - 16 + 1 * 8, 32, Color.get(0, 0, 0, 0), 0);
 		}
 		
-		if (saving) {
-			//if (Game.debug) System.out.println("SAVING GAME...");
-			String loadingText = "Saving... " + LoadingMenu.percentage + "%";
-			int xPos = screen.centertext(loadingText);
-			int yPos = screen.h / 2 - 32;
-			Font.draw(loadingText, screen, xPos+1, yPos+1, Color.get(-1, 111, 111, 111));
-			Font.draw(loadingText, screen, xPos, yPos, Color.get(-1, 4, 4, 4));
-		} // TODO see if I can get this and the sleeping overlay into one; maybe use savedtext...
-		
 		//int xfps = fra; // fra is the last second's fps.
 		// player.xx and yy stores previous player position.
 		int txlevel = player.x / 16;
@@ -677,18 +672,33 @@ public class Game extends Canvas implements Runnable {
 		//displays arrow icon
 		screen.render(10 * 8 + 4, screen.h - 16, 13 + 5 * 32, Color.get(0, 111, 222, 430), 0);
 		
-		if (Bed.hasBedSet) { // twice for the shadow text effect
-			Font.draw("Sleeping...", screen, screen.w / 2 + 1 - 44, screen.h - 119, Color.get(-1, 222, 222, 222));
-			Font.draw("Sleeping...", screen, screen.w / 2 - 44, screen.h - 120, Color.get(-1, 555, 555, 555));
-		} // TODO again, merge with saving dialog if possible
+		String msg = "";
+		if (saving) {
+			//if (Game.debug) System.out.println("SAVING GAME...");
+			msg = "Saving... " + LoadingMenu.percentage + "%";
+			/*int xPos = screen.centertext(loadingText);
+			int yPos = screen.h / 2 - 32;
+			Font.draw(loadingText, screen, xPos+1, yPos+1, Color.get(-1, 111, 111, 111));
+			Font.draw(loadingText, screen, xPos, yPos, Color.get(-1, 4, 4, 4));
+			*/
+		}
+		else if (Bed.hasBedSet) { // twice for the shadow text effect
+			msg = "Sleeping...";
+			//Font.draw("Sleeping...", screen, screen.w / 2 + 1 - 44, screen.h - 119, Color.get(-1, 222, 222, 222));
+			//Font.draw("Sleeping...", screen, screen.w / 2 - 44, screen.h - 120, Color.get(-1, 555, 555, 555));
+		}
+		
+		if(msg.length() > 0) {
+			Font.draw(msg, screen, screen.centertext(msg)+1, screen.h / 2 - 19, Color.get(-1, 222, 222, 222));
+			Font.draw(msg, screen, screen.centertext(msg), screen.h / 2 - 20, Color.get(-1, 555, 555, 555));
+		}
 		
 		/// NOTIFICATIONS
 		
 		//if (infoplank) {notifications.add("Can only be placed on planks!"); infoplank = false;}
 		//if (infosbrick) {notifications.add("Can only be placed on stone brick!"); infosbrick = false;}
-		// TODO either revise the above system, or add infoobrick (obsidian placement)
 		
-		if (notifications.size() > 0) {
+		if (notifications.size() > 0 && msg.length() == 0) {
 			notetick++;
 			if (notifications.size() > 3) { //only show 3 notifs max at one time; erase old notifs.
 				notifications = notifications.subList(notifications.size() - 3, notifications.size());
@@ -721,7 +731,7 @@ public class Game extends Canvas implements Runnable {
 			int timeCol;
 			if(scoreTime >= 18000) timeCol = Color.get(0, 555, 555, 555);
 			else if (scoreTime >= 3600) timeCol = Color.get(330, 555, 555, 555);
-			else timeCol = Color.get(330, 555, 555, 555);
+			else timeCol = Color.get(200, 555, 555, 555);
 			
 			Font.draw("Time left " + minutes + "m " + seconds + "s", screen, 84, screen.h - 190, timeCol);
 			
@@ -793,7 +803,7 @@ public class Game extends Canvas implements Runnable {
 	private void renderFocusNagger() {
 		String msg = "Click to focus!"; // the message when you click off the screen.
 		paused = true; //perhaps paused is only used for this.
-		int xx = Menu.centertext(msg); // the width of the box
+		int xx = screen.centertext(msg); // the width of the box
 		int yy = (HEIGHT - 8) / 2; // the height of the box
 		int w = msg.length(); // length of message in characters.
 		int h = 1;
@@ -900,15 +910,15 @@ public class Game extends Canvas implements Runnable {
 		
 		//System.out.println("frame size:" + frame.getWidth() + "x" + frame.getHeight());
 		frame.addComponentListener(new ComponentAdapter() {
-            public void componentResized(ComponentEvent e) {
+			public void componentResized(ComponentEvent e) {
 				float w = frame.getWidth() - frame.getInsets().left - frame.getInsets().right;
 				float h = frame.getHeight() - frame.getInsets().top - frame.getInsets().bottom;
 				Game.SCALE = Math.min(w / Game.WIDTH, h / Game.HEIGHT);
 				//System.out.println("Window Resized to: " + frame.getWidth() + "x" + frame.getHeight() + ";\tnew Game Scale: " + Game.SCALE + ";\tnew game screen size: " + getWindowSize().width + "x" + getWindowSize().height);
 				//game.WIDTH = frame.getWidth();
 				//game.HEIGHT = frame.getHeight();
-            }
-        });
+			}
+		});
 		
 		frame.setVisible(true);
 		
