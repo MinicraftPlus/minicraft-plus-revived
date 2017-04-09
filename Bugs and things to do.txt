@@ -7,6 +7,8 @@ Note to self: for more little bugs/ideas/concerns, search code for "TODO"
 
 	####BUGS####
 ####
+Reported: put items in chest, save, exit, reload, open chest, items are all seperated out into stacks of 1.
+####
 Sound effects don't always play when they should; mostly it seems when other sounds should be on at the same time.
 ####
 new worlds use the current/previous keyboard presets, rather than the default ones, when creating a new world after loading a previous one.
@@ -25,6 +27,15 @@ wierd unreprodoucable glitch: game screen went all gray for a second after press
 -----------------------------------------------------------------------------------
 
 	****IDEAS(that should probably be implemented)****
+****
+
+Fix up the write system, here and there: Menu writeCentered() should write the given text in the center x of the menu window; Screen writeCentered() should write a string centered in the screen's x. Font should not do anything with centering, instead, maybe it should have a drawShadowed() method? It should have a default text color, too, maybe...
+How about, just overload them all... whatever's provided, is used. 
+
+****
+
+Make a Chest class, with sub-classes DungeonChest and DeathChest.
+
 ****
 
 There's a lot to do in the Tile classes... many methods have many unnecessary parameters... and the torch effects account for all the "light" and "torch" static tiles in Tile.java. I think I'll make a HashMap out of that list, as well.
