@@ -399,13 +399,12 @@ public class Game extends Canvas implements Runnable {
 		/// SCORE MODE ONLY
 		
 		if (ModeMenu.score) {
-			if (!paused) scoreTime--;
-			
 			if (scoreTime < 1 && !player.removed) { // GAME OVER
 				setMenu(new WonMenu(player));
 				//if(Game.debug) System.out.println("final player score: "+player.score);
 				player.remove();
 			}
+			if (!paused) scoreTime--;
 			
 			if (multiplyer > 1) {
 				if (multiplyertime != 0) multiplyertime--;
@@ -718,7 +717,7 @@ public class Game extends Canvas implements Runnable {
 		// SCORE MODE ONLY:
 		
 		if (ModeMenu.score) {
-			int seconds = scoreTime / 60;
+			int seconds = (int)Math.ceil(scoreTime / (double)normSpeed);
 			int minutes = seconds / 60;
 			int hours = minutes / 60;
 			minutes %= 60;
@@ -727,9 +726,9 @@ public class Game extends Canvas implements Runnable {
 			int timeCol;
 			if(scoreTime >= 18000) timeCol = Color.get(0, 555, 555, 555);
 			else if (scoreTime >= 3600) timeCol = Color.get(330, 555, 555, 555);
-			else timeCol = Color.get(200, 555, 555, 555);
+			else timeCol = Color.get(400, 555, 555, 555);
 			
-			Font.draw("Time left " + minutes + "m " + seconds + "s", screen, 84, screen.h - 190, timeCol);
+			Font.draw("Time left " + (hours > 0 ? hours+"h ":"") + minutes + "m " + seconds + "s", screen, 84, screen.h - 190, timeCol);
 			
 			if(multiplyer > 1) {
 				int multColor = multiplyer < 50 ? Color.get(-1, 540, 540, 540) : Color.get(-1, 500, 500, 500);
