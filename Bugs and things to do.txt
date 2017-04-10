@@ -1,13 +1,12 @@
 	---Quick TODO's---
 -continue commeting code
 -(see note about canWool in Entity.java)
+-display current player score in score mode
 
 Note to self: for more little bugs/ideas/concerns, search code for "TODO"
 -----------------------------------------------------------------------------------
 
 	####BUGS####
-####
-Reported: put items in chest, save, exit, reload, open chest, items are all seperated out into stacks of 1.
 ####
 Sound effects don't always play when they should; mostly it seems when other sounds should be on at the same time.
 ####
