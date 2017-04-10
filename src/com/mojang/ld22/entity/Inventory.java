@@ -13,11 +13,8 @@ import java.util.Random;
 public class Inventory {
 	private Random random = new Random();
 	private List<Item> items = new ArrayList<Item>(); // the list of items that is in the inventory.
-	//public static List<Item> itemss = new ArrayList<Item>(); // a static list, of the last inventory that was added to with add(Item).
 	public boolean playerinventory = false; // if this is a player inventory.
 	
-	//public Inventory() {}
-		
 	public Inventory(Entity e) {
 		if(e instanceof Player)
 			this.playerinventory = true;
@@ -29,17 +26,14 @@ public class Inventory {
 	
 	public Item get(int idx) {return items.get(idx);}
 	public Item remove(int idx) {return items.remove(idx);}
-	//public boolean remove(Object item) {return items.remove(item);}
 	
 	/** Adds an item to the inventory */
 	public void add(Item item) {
 		add(items.size(), item);  // adds the item to the end of the inventory list
-		//itemss = items; // sets static inv. to this one.
 	}
 	
 	/** Adds an item to a specific spot in the inventory */
 	public void add(int slot, Item item) {
-		//if (com.mojang.ld22.Game.debug && playerinventory) System.out.println("inventory: adding item to player inv: " + item.getName());
 		if (item instanceof ResourceItem) { // if the item is a resource...
 			ResourceItem toTake = (ResourceItem) item; // ...convert it into a ResourceItem object.
 			ResourceItem has = findResource(toTake.resource); // finds if the resourceItem is already in their inventory (looking for an instance of ResourceItem with the same .resource)
@@ -66,17 +60,6 @@ public class Inventory {
 		
 		return null; // else it will return null
 	}
-	
-	/*
-	private static ResourceItem findResources(Resource resource) {
-		for (int i = 0; i < itemss.size(); i++) {
-			if (itemss.get(i) instanceof ResourceItem) {
-				ResourceItem has = (ResourceItem) itemss.get(i);
-				if (has.resource == resource) return has;
-			}
-		}
-		return null;
-	}*/
 	
 	/** like findResource, but for other items. */
 	private Item findItem(Item item) {
@@ -135,41 +118,18 @@ public class Inventory {
 	public boolean removeTool(ToolType t, int level) {
 		ToolItem ti = findtool(t, level, false); // find the exact tool.
 		if (ti == null) return false;
-		//if (ti.level < level) return false; //
-		//ti.level -= level;
-		//if (ti.level <= 0) items.remove(ti); // remove if the item was entirely used up.
 		items.remove(ti);
 		return true;
 	}
 	
 	/** removes item from this inv. */
-	public boolean removeItem(Item i) { // This was expected to only be a lava bucket, it seems.
+	public boolean removeItem(Item i) {
 		Item item = findItem(i);
 		if(item == null) return false;
 		else items.remove(item); // remove the item.
 		
 		return true;
 	}
-	
-	//Resource[] toScore = {Resource.cloth, Resource.slime, Resource.bone, Resource.gunp, Resource.bookant};
-	/** that gets the score for items...? Really, all it's doing is counting the given resource... */
-	/*public int getScore(Resource r) {
-		//int score = 0;
-		//for(Resource r: toScore) {
-			ResourceItem ri = findResource(r);
-			if (ri != null) return ri.count * (random.nextInt(2) + 1);
-		//}
-		/*
-		int lscore = 0;
-		
-		if (ri == null) {
-			lscore = 0;
-		} else if (ri != null) {
-			lscore = ri.count;
-		}
-		return lscore;*/
-		//return score;
-	//}
 	
 	/** Returns the how many of an item you have in the inventory */
 	public int count(Item item) {

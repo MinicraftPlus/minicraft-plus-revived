@@ -62,7 +62,6 @@ public class Game extends Canvas implements Runnable {
 	public static final int HEIGHT = 192;
 	public static final int WIDTH = 288;
 	private static float SCALE = 3;
-	//does the *scale part mean anything to the graphics, or does java accomodate it?
 	
 	/// TIME AND TICKS
 	
@@ -75,6 +74,7 @@ public class Game extends Canvas implements Runnable {
 	public static int sleepTime = 42000; //this value determines when the player allowed to sleep.
 	
 	private boolean running; // This is about more than simply being paused -- it keeps the game loop running.
+	public int fra, tik; //these store the number of frames and ticks in the previous second; used for fps, at least.
 	public int gameTime; // This stores the total time (number of ticks) you've been playing your game.
 	
 	/// RENDERING
@@ -121,16 +121,6 @@ public class Game extends Canvas implements Runnable {
 	public int scoreTime; // time remaining for score mode game.
 	public int newscoreTime; // time you start with in score mode.
 	
-	/// MISCELLANEOUS
-	
-	//used to display "error" messages
-	//public static int infotime = 120; //duration of message, in ticks; as with all other time references (unless otherwise stated, of course)
-	//public static boolean infoplank = false, infosbrick = false; // "can only place on planks / stone brick"
-	
-	public int fra, tik; //these store the number of frames and ticks in the previous second; used for fps, at least.
-	//int count; //something with colors..?
-	//boolean reverse; //related to count
-	
 	/// *** CONSTRUSTOR *** ///
 	public Game() {
 		running = false;
@@ -148,8 +138,6 @@ public class Game extends Canvas implements Runnable {
 		
 		newscoreTime = 72000;
 		scoreTime = newscoreTime;
-		//count = 0;
-		//reverse = false;
 		
 		autosave = false;
 		asTick = 0;
@@ -273,6 +261,7 @@ public class Game extends Canvas implements Runnable {
 		wonTimer = 0;
 		gameTime = 0;
 		Player.hasSetHome = false;
+		Player.moveSpeed = 1;
 		Bed.hasBedSet = false; //no bed
 		Game.gamespeed = 1;
 		
@@ -356,9 +345,7 @@ public class Game extends Canvas implements Runnable {
 		if (Bed.hasBedSet) {
 			// IN BED
 			level.remove(player);
-			//nsPerTick = 781250.0D;
 			gamespeed = 20;
-			//if (debug) System.out.println("SLEEPING... tickCount: " + tickCount);
 			if (tickCount <= sleepTime) { // it has reached morning.
 				level.add(player);
 				gamespeed = 1;
@@ -401,7 +388,6 @@ public class Game extends Canvas implements Runnable {
 		if (ModeMenu.score) {
 			if (scoreTime < 1 && !player.removed) { // GAME OVER
 				setMenu(new WonMenu(player));
-				//if(Game.debug) System.out.println("final player score: "+player.score);
 				player.remove();
 			}
 			if (!paused) scoreTime--;
@@ -412,16 +398,7 @@ public class Game extends Canvas implements Runnable {
 			}
 			if (multiplyer > 50) multiplyer = 50;
 		}
-		/*
-		//what's this for?
-		if (!reverse) {
-			count++;
-			if (count == 25) reverse = true;
-		} else {
-			count--;
-			if (count == 0) reverse = false;
-		}
-		*/
+		
 		//This is the general action statement thing! Regulates menus, mostly.
 		if (!hasFocus()) {
 			input.releaseAll();
@@ -508,12 +485,12 @@ public class Game extends Canvas implements Runnable {
 	
 	/// this is the proper way to change the tickCount.
 	public static void setTime(int ticks) {
-		if (ticks < 0) ticks = 0;
+		if (ticks < 0) ticks = 0; // error correct
 		if (ticks < 7200) time = 0; // morning
 		else if (ticks < 36000) time = 1; // day
 		else if (ticks < 43200) time = 2; // evening
 		else if (ticks < 64800) time = 3; // night
-		else {//if(ticks >= 64800) { // morning
+		else { // back to morning
 			time = 0;
 			ticks = 0;
 		}
@@ -629,7 +606,6 @@ public class Game extends Canvas implements Runnable {
 			screen.render(x * 7, screen.h - 16 + 1 * 8, 32, Color.get(0, 0, 0, 0), 0);
 		}
 		
-		//int xfps = fra; // fra is the last second's fps.
 		// player.xx and yy stores previous player position.
 		int txlevel = player.x / 16;
 		int tylevel = player.y / 16;
@@ -668,20 +644,8 @@ public class Game extends Canvas implements Runnable {
 		screen.render(10 * 8 + 4, screen.h - 16, 13 + 5 * 32, Color.get(0, 111, 222, 430), 0);
 		
 		String msg = "";
-		if (saving) {
-			//if (Game.debug) System.out.println("SAVING GAME...");
-			msg = "Saving... " + LoadingMenu.percentage + "%";
-			/*int xPos = screen.centertext(loadingText);
-			int yPos = screen.h / 2 - 32;
-			Font.draw(loadingText, screen, xPos+1, yPos+1, Color.get(-1, 111, 111, 111));
-			Font.draw(loadingText, screen, xPos, yPos, Color.get(-1, 4, 4, 4));
-			*/
-		}
-		else if (Bed.hasBedSet) { // twice for the shadow text effect
-			msg = "Sleeping...";
-			//Font.draw("Sleeping...", screen, screen.w / 2 + 1 - 44, screen.h - 119, Color.get(-1, 222, 222, 222));
-			//Font.draw("Sleeping...", screen, screen.w / 2 - 44, screen.h - 120, Color.get(-1, 555, 555, 555));
-		}
+		if (saving) msg = "Saving... " + LoadingMenu.percentage + "%";
+		else if (Bed.hasBedSet) msg = "Sleeping...";
 		
 		if(msg.length() > 0) {
 			Font.draw(msg, screen, screen.centertext(msg)+1, screen.h / 2 - 19, Color.get(-1, 222, 222, 222));
@@ -689,9 +653,6 @@ public class Game extends Canvas implements Runnable {
 		}
 		
 		/// NOTIFICATIONS
-		
-		//if (infoplank) {notifications.add("Can only be placed on planks!"); infoplank = false;}
-		//if (infosbrick) {notifications.add("Can only be placed on stone brick!"); infosbrick = false;}
 		
 		if (notifications.size() > 0 && msg.length() == 0) {
 			notetick++;
@@ -893,25 +854,19 @@ public class Game extends Canvas implements Runnable {
 		Game.debug = debug;
 		Game game = new Game();
 		game.setMinimumSize(new Dimension(1, 1));
-		//game.setMaximumSize(getWindowSize());
 		game.setPreferredSize(getWindowSize());
 		JFrame frame = new JFrame(Game.NAME);
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		frame.setLayout(new BorderLayout()); // sets the layout of the window
 		frame.add(game, BorderLayout.CENTER); // Adds the game (which is a canvas) to the center of the screen.
 		frame.pack(); //squishes everything into the preferredSize.
-		//frame.setResizable(false); // prevents the user from resizing the window.
 		frame.setLocationRelativeTo(null); // the window will pop up in the middle of the screen when launched.
 		
-		//System.out.println("frame size:" + frame.getWidth() + "x" + frame.getHeight());
 		frame.addComponentListener(new ComponentAdapter() {
 			public void componentResized(ComponentEvent e) {
 				float w = frame.getWidth() - frame.getInsets().left - frame.getInsets().right;
 				float h = frame.getHeight() - frame.getInsets().top - frame.getInsets().bottom;
 				Game.SCALE = Math.min(w / Game.WIDTH, h / Game.HEIGHT);
-				//System.out.println("Window Resized to: " + frame.getWidth() + "x" + frame.getHeight() + ";\tnew Game Scale: " + Game.SCALE + ";\tnew game screen size: " + getWindowSize().width + "x" + getWindowSize().height);
-				//game.WIDTH = frame.getWidth();
-				//game.HEIGHT = frame.getHeight();
 			}
 		});
 		

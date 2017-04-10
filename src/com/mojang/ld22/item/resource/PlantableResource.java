@@ -13,8 +13,7 @@ public class PlantableResource extends Resource {
 
 	public PlantableResource(String name, int sprite, int color, Tile targetTile, Tile... sourceTiles1) {
 		this(name, sprite, color, targetTile, Arrays.asList(sourceTiles1)); // calls other constructor
-		/*
-			"Obj... name" as a parameter can be used to specify an indefinite number of parameters, without making it a list! So useful...
+		/** "Obj... name" as a parameter can be used to specify an indefinite number of parameters, without making it a list! So useful...
 		*/
 	}
 
@@ -33,29 +32,12 @@ public class PlantableResource extends Resource {
 		// at this point this resource cannot be planted on the given tile.
 		
 		if (name == "Plank Wall" || name == "Wood Door") {
-			//if (!sourceTiles.contains(tile)) {
-				//Game.infoplank = true;
 				player.game.notifications.add("Can only be placed on planks!");
-			//}
 		}
-		/*if (name == "Wood Door") {
-			if (!sourceTiles.contains(tile)) {
-				//Game.infoplank = true;
-				player.game.notifications.add("Can only be placed on planks!");
-			}
-		}*/
+		
 		if (name == "St.BrickWall" || name == "Stone Door") {
-			//if (!sourceTiles.contains(tile)) {
-				//Game.infosbrick = true;
-				player.game.notifications.add("Can only be placed on stone brick!");
-			//}
+			player.game.notifications.add("Can only be placed on stone brick!");
 		}
-		/*if (name == "Stone Door") {
-			if (!sourceTiles.contains(tile)) {
-				//Game.infosbrick = true;
-				player.game.notifications.add("Can only be placed on stone brick!");
-			}
-		}*/
 		return false;
 	}
 }

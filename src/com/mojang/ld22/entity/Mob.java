@@ -55,9 +55,6 @@ public class Mob extends Entity {
 		if (isWooling()) { // same as above, for wool
 			if (woolTimer++ % 2 == 0) return true;
 		}
-		/*if (isLight()) { // this seems useless.
-			if (lightTimer++ % 8000 == 0) return true;
-		}*/
 		
 		/// These 4 following conditionals check the direction of the knockback, move the Mob accordingly, and bring knockback closer to 0.
 		if (xKnockback < 0) { // If we have negative horizontal knockback (to the left)

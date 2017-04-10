@@ -157,7 +157,6 @@ public class Load {
 			// for backwards compatibility
 			Game.astime = Integer.parseInt((String)this.data.get(1));
 			//Game.gamespeed = Integer.parseInt((String)this.data.get(2));
-			//game.nsPerTick = 1.0E9D / (double)(60 * Game.gamespeed);
 			game.player.ac = Integer.parseInt((String)this.data.get(3));
 			Game.tickCount = Integer.parseInt((String)this.data.get(0));
 			Game.autosave = false;
@@ -252,15 +251,7 @@ public class Load {
 		
 		for(int i = 0; i < data.size(); i++) {
 			String item = (String)data.get(i);
-			/*if(item.contains(";")) {
-				item = item.substring(0, item.lastIndexOf(";"));
-			}*/
 			
-		//	if(oldSave) {
-				//System.out.println("load: old item name: \"" + item + "\"");
-				
-				//System.out.println("load: new item name: \"" + item + "\"");
-			//}
 			if(ListItems.getItem(item) instanceof ResourceItem) {
 				if(oldSave && i == 0) item = item.replace(";0", ";1");
 				List curData = Arrays.asList(item.split(";"));
@@ -269,9 +260,6 @@ public class Load {
 				
 				Item newItem = ListItems.getItem(itemName);
 				
-				//if(oldSave) System.out.println("load: fetched resource name: \"" + newItem.getName() + "\"");
-				//System.out.println();
-				//System.out.println("load data: curdata1=" + ((String)curData.get(1)));
 				for(int ii = 0; ii < Integer.parseInt((String)curData.get(1)); ii++) {
 					if(newItem instanceof ResourceItem) {
 						ResourceItem resItem = new ResourceItem(((ResourceItem)newItem).resource);
@@ -293,11 +281,7 @@ public class Load {
 		oldName = oldName.replace("P.", "Potion");
 		
 		switch(oldName) {
-			//case "bed": return "Bed";
 			case "Fish Rod": return "Fishing Rod";
-			//case "Fish Rod;1": return "Fishing Rod";
-			//case "": return "";
-			//case "": return "";
 			
 			default: return oldName;
 		}
@@ -334,15 +318,6 @@ public class Load {
 						if (item instanceof ResourceItem) {
 							List curData = Arrays.asList((itemData + ";1").split(";")); // this appends ";1" to the end, meaning one item, to everything; but if it was already there, then it becomes the 3rd element in the list, which is ignored.
 							Item newItem = ListItems.getItem((String)curData.get(0));
-							
-							/*for(int ii = 0; ii < Integer.parseInt((String)curData.get(1)); ii++) {
-								if(newItem instanceof ResourceItem) {
-									ResourceItem resItem = new ResourceItem(((ResourceItem)newItem).resource);
-									addToChest(chest, resItem);
-								} else if(!item.getName().equals("")) {
-									addToChest(chest, item);
-								}
-							}*/
 						} else if(!item.getName().equals("")) {
 							addToChest(chest, item);
 						}
@@ -350,25 +325,12 @@ public class Load {
 						if(idx == info.size() - 2) {
 							if (chest instanceof Chest && itemData.contains("tl;")) {
 								((Chest)chest).time = Integer.parseInt(itemData.replace("tl;", ""));
-							} else if (chest instanceof DungeonChest) {// && ( || itemData.contains("false"))) {
-								((DungeonChest)chest).islocked = itemData.contains("true") ? true : false; //Boolean.parseBoolean(itemData);
+							} else if (chest instanceof DungeonChest) {
+								((DungeonChest)chest).islocked = itemData.contains("true") ? true : false;
 							}
 						}
 					}
-					/*
-					if (chest instanceof DungeonChest) {
-						DungeonChest dChest = (DungeonChest)chest;
-						ArrayList<String> contents = new ArrayList<String>();
-						for(int ii = 0; ii < dChest.inventory.invSize(); ii++) {
-							if(!((Item)dChest.inventory.get(ii)).getName().equals(" ") && !((Item)dChest.inventory.get(ii)).getName().equals("") && !((Item)dChest.inventory.get(ii)).getName().equals("	")) {
-								contents.add(((Item)dChest.inventory.get(ii)).getName());
-							} else {
-								dChest.inventory.remove(ii);
-							}
-						}
-						contents.add("/x=" + dChest.x / 16 + "/y=" + dChest.y / 16);
-					}
-					*/
+					
 					newEntity.level = Game.levels[Integer.parseInt((String)info.get(info.size() - 1))];
 					currentlevel = Integer.parseInt((String)info.get(info.size() - 1));
 					Game.levels[currentlevel].add((chest instanceof Chest ? (Chest)chest : (DungeonChest)chest));

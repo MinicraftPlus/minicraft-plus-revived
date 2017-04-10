@@ -36,7 +36,6 @@ public class TitleMenu extends Menu {
 	protected final Random random = new Random();
 	public static List splashes = new ArrayList<String>();
 	private static final String[] options = {"New game", "Instructions", "Tutorial", "Options", "About", "Quit"/*, "Kill"*/}; // Options that are on the main menu.
-	//public static boolean sentFromMenu;
 	int randcount = 60;
 	int rand = random.nextInt(randcount);
 	int count = 0; // this and reverse are for the logo; they produce the fade-in/out effect.
@@ -321,10 +320,7 @@ public class TitleMenu extends Menu {
 					if(com.mojang.ld22.Game.debug) System.out.println(e.getMessage());
 				}
 			}
-			if (options[selected] == "Options") {
-				//sentFromMenu = true;
-				game.setMenu(new OptionsMenu(this));
-			}
+			if (options[selected] == "Options") game.setMenu(new OptionsMenu(this));
 			if (options[selected] == "About") game.setMenu(new AboutMenu(this));
 			if (options[selected] == "Quit") System.exit(0);
 			//if (options[selected] == "Kill") {game.level.add(game.player); game.setMenu(null);}
@@ -382,15 +378,7 @@ public class TitleMenu extends Menu {
 			if(name.length() < 27) greeting = "Welcome, " + greeting;
 			
 			writeCentered(greeting, screen, 10, Color.get(0, 330, 330, 330));
-			/*if(GameApplet.username.length() < 27) {
-				writeCentered("Welcome, " + GameApplet.username + "!", screen, screen.h - 190, Color.get(0, 330, 330, 330));
-			} else {
-				
-				writeCentered(GameApplet.username + "!", screen, this.centertext(GameApplet.username + "!"), screen.h - 180, Color.get(0, 330, 330, 330));
-			}
-			
-			writeCentered("Version " + Game.VERSION, screen, screen.h - 10, Color.get(0, 111, 111, 111));
-		*/}
+		}
 		
 		Font.draw("Version " + Game.VERSION, screen, 1, 1, Color.get(0, 111, 111, 111));
 		

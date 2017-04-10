@@ -27,25 +27,6 @@ public class Zombie extends Mob {
 		y = random.nextInt(64 * 16);
 		if (ModeMenu.creative) health = maxHealth = 1;
 		else health = maxHealth = lvl * lvl * 5*((Double)(Math.pow(2, OptionsMenu.diff-1))).intValue(); // 5, 10, 20
-		/*
-		if (OptionsMenu.diff == OptionsMenu.easy) {
-			
-			
-		}
-
-		if (OptionsMenu.diff == OptionsMenu.norm) {
-			x = random.nextInt(64 * 16);
-			y = random.nextInt(64 * 16);
-			if (ModeMenu.creative) health = maxHealth = 1;
-			else health = maxHealth = lvl * lvl * 10;
-		}
-
-		if (OptionsMenu.diff == OptionsMenu.hard) {
-			x = random.nextInt(64 * 16);
-			y = random.nextInt(64 * 16);
-			if (ModeMenu.creative) health = maxHealth = 1;
-			else health = maxHealth = lvl * lvl * 20;
-		}*/
 	}
 
 	public void tick() {
@@ -269,8 +250,9 @@ public class Zombie extends Mob {
 		if (level.player != null) { // if player is on zombie level
 			level.player.score += (50 * lvl) * Game.multiplyer; // add score for zombie death
 		}
-
+		
+		// TODO implement Game.setMultiplier (maybe make it addMultiplier() and resetMultiplier()).
 		Game.multiplyer++; // add to multiplier
-		Game.multiplyertime = Game.mtm -= 5; // ?
+		Game.multiplyertime = Game.mtm -= 5;
 	}
 }

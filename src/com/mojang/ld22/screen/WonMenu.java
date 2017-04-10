@@ -22,8 +22,6 @@ public class WonMenu extends Menu {
 	private int inputDelay = 20; // variable to delay the input of the player, so they won't skip the won menu the first second.
 	Random random = new Random();
 	HashMap<String, Integer> scores;
-	//int b1, b2, b3, b4, b5, b6;
-	//String s1, s2, s3, s4, s5, s6;
 	int w, ml = 0;
 	int finalscore = 0;
 	String location = Game.gameDir;
@@ -38,39 +36,13 @@ public class WonMenu extends Menu {
 		scores.put("Gunpowder", player.inventory.count(Resource.gunp) * (random.nextInt(2) + 1) * 10);
 		scores.put("A.Book", player.inventory.count(Resource.bookant) * (random.nextInt(2) + 1) * (random.nextInt(2) + 1) * 15);
 		scores.put("Arrow", player.inventory.count(Resource.arrow) * (random.nextInt(2) + 1) * 10);
-		/*s1 = "Cloths:+" + b1;
-		s2 = "Slimes:+" + b2;
-		s3 = "Bones:+" + b3;
-		s4 = "Gunpowders:+" + b4;
-		s5 = "Books:+" + b5;
-		s6 = "Arrows:+" + b6;
-		*/
+		
 		ml = 0; // max length
 		for(String name: scores.keySet().toArray(new String[0])) {
 			ml = Math.max(name.length(), ml);
 		}
-		/*
-		if(s2.length() > ml) {
-			ml = s2.length();
-		}
-
-		if(s3.length() > ml) {
-			ml = s3.length();
-		}
-
-		if(s4.length() > ml) {
-			ml = s4.length();
-		}
-
-		if(s5.length() > ml) {
-			ml = s5.length();
-		}
-
-		if(s6.length() > ml) {
-			ml = s6.length();
-		}
-		*/
-		finalscore = Player.score;// + b1 + b2 + b3 + b4 + b5 + b6;
+		
+		finalscore = Player.score;
 		for(Integer score: scores.values().toArray(new Integer[0])) {
 			finalscore += score;
 		}
@@ -177,24 +149,8 @@ public class WonMenu extends Menu {
 		if(unlocks.size() > 0) {
 			writeUnlocks(screen, unlocks);
 		}
-		/*
-		seconds = game.gameTime / 60;
-		int minutes = seconds / 60;
-		int hours = minutes / 60;
-		minutes %= 60;
-		seconds %= 60;
-		String timeString = "";
-		if(hours > 0) {
-			timeString = hours + "h" + (minutes < 10?"0":"") + minutes + "m";
-		} else {
-			timeString = minutes + "m " + (seconds < 10?"0":"") + seconds + "s";
-		}
-		*/
+		
 		Font.draw("Player Score: " + Player.score, screen, 16, 48, Color.get(-1, 555, 555, 555));
-		//writeCentered("Final Score: " + Player.score, screen, 48, Color.get(-1, 555, 555, 555));
-		//writeCentered()
-		//StringBuilder var8 = new StringBuilder();
-		//Font.draw(, screen, 64, 48, Color.get(-1, 550, 550, 550));
 		Font.draw("<Bonuses>", screen, 16, 64, Color.get(-1, Color.rgb(0, 200, 0), Color.rgb(0, 200, 0), Color.rgb(0, 200, 0)));
 		int i = 0;
 		for(String bonus: scores.keySet().toArray(new String[0])) {
@@ -202,14 +158,8 @@ public class WonMenu extends Menu {
 			while(label.length() < ml+3) label += " ";
 			Font.draw(label+"+"+scores.get(bonus), screen, 16, 80+(i++)*8, Color.get(-1, 550, 550, 550));
 		}
-		/*Font.draw(s1, screen, 16, 80, Color.get(-1, 550, 550, 550));
-		Font.draw(s2, screen, 16, 88, Color.get(-1, 550, 550, 550));
-		Font.draw(s3, screen, 16, 96, Color.get(-1, 550, 550, 550));
-		Font.draw(s4, screen, 16, 104, Color.get(-1, 550, 550, 550));
-		Font.draw(s6, screen, 16, 112, Color.get(-1, 550, 550, 550));
-		Font.draw(s5, screen, 16, 120, Color.get(-1, 550, 550, 550));
-		*/Font.draw("Final Score: " + finalscore, screen, 16, 136, Color.get(-1, 555, 555, 555));
-		//Font.draw("" + , screen, 112, 136, Color.get(-1, 550, 550, 550));
+		
+		Font.draw("Final Score: " + finalscore, screen, 16, 136, Color.get(-1, 555, 555, 555));
 		if(finalscore == 0) {
 			Font.draw("Fail!", screen, 136, 136, Color.get(-1, 500, 500, 500));
 		}

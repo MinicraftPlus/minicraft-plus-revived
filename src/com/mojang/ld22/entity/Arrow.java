@@ -77,12 +77,7 @@ public class Arrow extends Entity {
 					}
 				}
 			}
-			/*
-			if(owner instanceof Player) {
-				level.getTile(x / 16, y / 16).interact(level, x, y, (Player)owner, ListItems.gempickaxe, ((Player)owner).attackDir);
-				level.getTile(x / 16, y / 16).interact(level, x, y, (Player)owner, ListItems.gemshovel, ((Player)owner).attackDir);
-			}
-			*/
+			
 			if (level.getTile(x / 16, y / 16).mayPass(level, x / 16, y / 16, this)
 					|| level.getTile(x / 16, y / 16).connectsToWater
 					|| level.getTile(x / 16, y / 16).id == 16) {

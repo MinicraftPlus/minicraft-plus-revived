@@ -36,15 +36,12 @@ public class Player extends Mob {
 	private InputHandler input;
 	public Game game;
 	
+	public static final int playerHurtTime = 30;
 	public static double moveSpeed = 1; // the number of coordinate squares to move; each tile is 16x16.
-	public static Inventory Sinventory; //static inventory, I guess.
 	public static int score; // the player's score
-	public static int SHealth = 10;
-	public static int SHunger = 10;
 	public static boolean hasSetHome = false, skinon;
 	//These 2 ints are ints saved from the first spawn - this way the spawn pos is always saved.
 	public static int spawnx = 0, spawny = 0; // these are stored as tile coordinates, not entity coordinates.
-	//public static int xx, yy;
 	
 	public Inventory inventory;
 	public Item attackItem, activeItem;
@@ -68,8 +65,6 @@ public class Player extends Mob {
 	boolean alreadyLostHunger;
 	boolean repeatHungerCyc;
 
-	public int invulnerableTime; // the invulnerability time the player has when hit; this replaces hurtTime of Mob.java in terms of functionality, but hurtTime is still used, to make the player flash white.
-	// TODO switch hurtTime back to original functionality; make different int for flash, or better yet, just do "if(hurtTime <= 10)" for flash duration. then the above int should be able to be removed.
 	public boolean showinfo;
 	public int px, py;
 	
@@ -103,7 +98,6 @@ public class Player extends Mob {
 		
 		px = this.x;
 		py = this.y;
-		invulnerableTime = 0;
 		
 		potioneffects = new HashMap<String, Integer>();
 		showpotioneffects = true;
@@ -134,7 +128,6 @@ public class Player extends Mob {
 		super.tick(); // ticks Mob.java
 		isenemy = false;
 		tickCounter++;
-		//if(Game.debug) System.out.println(tickCounter);
 		
 		if(potioneffects.size() > 0 && !Bed.hasBedSet) {
 			for(String potionType: potioneffects.keySet().toArray(new String[0])) {
@@ -156,7 +149,7 @@ public class Player extends Mob {
 			showpotioneffects = !showpotioneffects;
 		}
 		
-		if (invulnerableTime > 0) invulnerableTime--; // if invulnerableTime is above 0, then decrease it by 1.
+		//if (invulnerableTime > 0) invulnerableTime--; // if invulnerableTime is above 0, then decrease it by 1.
 		
 		Tile onTile = level.getTile(x >> 4, y >> 4); // gets the current tile the player is on.
 		if (onTile == Tile.stairsDown || onTile == Tile.stairsUp || onTile == Tile.lightstairsDown || onTile == Tile.lightstairsUp) {
@@ -199,10 +192,6 @@ public class Player extends Mob {
 			}
 
 			if (staminaRechargeDelay > 0) staminaRechargeDelay--;
-
-			SHealth = health; // this saves health
-			SHunger = hunger; // this saves hunger
-			Sinventory = inventory;
 
 			if (staminaRechargeDelay == 0) {
 				staminaRecharge++; // this is used to determine the time between each bolt recharge.
@@ -284,33 +273,25 @@ public class Player extends Mob {
 			}
 		}
 		
-		// this is the movement detection; apparently, we shouldn't move while fishing.
+		// this is where movement detection occurs.
 		int xa = 0, ya = 0;
-		//if (!Game.isfishing) {
-			//for(int moves = 1; moves <= moveSpeed; moves++) { // allows for multiple steps walked per tick.
-				if (input.getKey("up").down) {
-					ya--;
-					stepCount++;
-				}
-				if (input.getKey("down").down) {
-					ya++;
-					stepCount++;
-				}
-				if (input.getKey("left").down) {
-					xa--;
-					stepCount++;
-				}
-				if (input.getKey("right").down) {
-					xa++;
-					stepCount++;
-				}
-			//}
-		//}
+		if (input.getKey("up").down) {
+			ya--;
+			stepCount++;
+		}
+		if (input.getKey("down").down) {
+			ya++;
+			stepCount++;
+		}
+		if (input.getKey("left").down) {
+			xa--;
+			stepCount++;
+		}
+		if (input.getKey("right").down) {
+			xa++;
+			stepCount++;
+		}
 		
-		// TODO why is this necessary? well... x and y are updated below by Mob.java, and Entity.java in turn; perhaps it is necessary to save the previous position?
-		//This is ONLY used in Game.java, in the renderGui method...
-		//xx = x;
-		//yy = y;
 		if (isSwimming() && tickTime % 60 == 0 && !potioneffects.containsKey("Swim")) { // if drowning... :P
 			if (stamina > 0) stamina--; // take away stamina
 			else hurt(this, 1, dir ^ 1); // if no stamina, take damage.
@@ -425,12 +406,6 @@ public class Player extends Mob {
 				level.add(new Arrow(this, spx, spy, tool.level, done));
 				done = true; // we have attacked!
 			}
-			
-			/*if(tool.type == ToolType.rod) {
-				goFishing();
-				tool.dur--;
-				if(tool.dur == 0) activeItem = null;
-			}*/
 		}
 		
 		// if we are simply holding an item...
@@ -499,32 +474,23 @@ public class Player extends Mob {
 	}
 	
 	public void goFishing(int x, int y) {
-		//isfishing = true;
 		int fcatch = random.nextInt(90);
-		
-		//if (activeItem instanceof ResourceItem && ((ResourceItem)activeItem).resource instanceof ItemResource && ((ItemResource)(((ResourceItem)activeItem).resource)).dur == 0) activeItem.isDepleted();
-		
-		//if(activeItem != null) activeItem.isDepleted();
 		
 		if (fcatch <= 8) {
 			if(Game.debug) System.out.println("Caught a Fish!");
 			level.add(new ItemEntity(new ResourceItem(Resource.rawfish), x + random.nextInt(11) - 5, y + random.nextInt(11) - 5));
-			//isfishing = false;
 		}
 		
 		if (fcatch == 25 || fcatch == 43 || fcatch == 32 || fcatch == 15 || fcatch == 42) {
 			if(Game.debug) System.out.println("Caught some slime?");
 			level.add(new ItemEntity(new ResourceItem(Resource.slime), x + random.nextInt(11) - 5, y + random.nextInt(11) - 5));
-			//isfishing = false;
 		}
 
 		if (fcatch == 56) {
 			if(Game.debug) System.out.println("Rare Armor!");
 			level.add(new ItemEntity(new ResourceItem(Resource.larmor), x + random.nextInt(11) - 5, y + random.nextInt(11) - 5));
-			//isfishing = false;
 		} else {
 			if(Game.debug) System.out.println("FAIL!");
-			//isfishing = false;
 		}
 	}
 	
@@ -648,7 +614,7 @@ public class Player extends Mob {
 			if(Game.time == 3) col = col3;
 		} else col = col4;
 		
-		if (hurtTime > 0) { // if the player is getting hurt at the moment...
+		if (hurtTime > playerHurtTime - 10) { // if the player has just gotten hurt...
 			col = Color.get(-1, 555, 555, 555); // make the sprite white.
 		}
 		
@@ -801,7 +767,7 @@ public class Player extends Mob {
 		//if (Game.currentLevel == 3) return 0; // I don't want the player to have an automatic halo on the surface.
 		
 		float light = potioneffects.containsKey("Light") ? 2.5f : 1; // multiplier for the light potion effect.
-		float r = 3/*.25f*/ * light; // the radius of the light.
+		float r = 3 * light; // the radius of the light.
 
 		if (Game.currentLevel == 5) r = 5 * light; // more light than usual on dungeon level.
 
@@ -821,22 +787,17 @@ public class Player extends Mob {
 		int lostscore = score / 3; // finds score penalty
 		score -= lostscore; // subtracts score penalty
 		game.setMultiplier(1);
-		//Game.ism = 1; // still not totally sure what this is...
 		
 		//make death chest
 		Chest dc = new Chest(true);
 		dc.x = this.x;
 		dc.y = this.y;
-		//PowerGloveItem pg = new PowerGloveItem();
 		dc.inventory = this.inventory;
 		if (activeItem != null) {
 			dc.inventory.add(activeItem);
 		}
 		dc.inventory.removeItem(new PowerGloveItem());
-		/*for (int i = 0; i < inventory.invSize(); i++)
-			if (((Item) inventory.get(i)).matches(pg))
-				dc.inventory.remove(i);
-		*/
+		
 		Game.levels[Game.currentLevel].add(dc);
 
 		Sound.playerDeath.play();
@@ -852,7 +813,7 @@ public class Player extends Mob {
 	/** What happens when the player is hurt */
 	protected void doHurt(int damage, int attackDir) {
 		if (ModeMenu.creative) return; // can't get hurt in creative
-		if (hurtTime > 0 || invulnerableTime > 0) return; // currently in hurt cooldown
+		if (hurtTime > 0) return; // currently in hurt cooldown
 
 		Sound.playerHurt.play();
 		if (armor <= 0) { // no armor
@@ -873,13 +834,12 @@ public class Player extends Mob {
 		if (attackDir == 2) xKnockback = -6;
 		if (attackDir == 3) xKnockback = +6;
 		// set hurt and invulnerable times
-		hurtTime = 10;
-		invulnerableTime = 30;
+		hurtTime = playerHurtTime;
 	}
 	
 	/** What happens when the player wins */
 	public void gameWon() {
-		level.player.invulnerableTime = 60 * 5; // sets the invulnerable time to 300
+		hurtTime = 60 * 5; // sets the invulnerable time to 300
 		game.won(); // win the game
 	}
 }

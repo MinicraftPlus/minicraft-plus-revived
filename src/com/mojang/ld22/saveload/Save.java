@@ -227,10 +227,6 @@ public class Save {
 							data += (item).getName();
 							if(item instanceof ResourceItem) data += ";" + dChest.inventory.count(item);
 							data += ":";
-							/*	data += (item).getName() + ";" + dChest.inventory.count(item) + ":";
-							} else {
-								data += (item).getName() + ":";
-							}*/
 						}
 					}
 					
@@ -249,4 +245,3 @@ public class Save {
 		writeToFile(location + filename + extention, data);
 	}
 }
-	
