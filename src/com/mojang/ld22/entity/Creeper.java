@@ -449,10 +449,10 @@ public class Creeper extends Mob {
 			}
 		}
 		if (level.player != null) {
-			level.player.score += (50 * lvl) * Game.multiplyer;
+			level.player.score += (50 * lvl) * Game.multiplier;
 		}
 
-		Game.multiplyer++;
-		Game.multiplyertime = Game.mtm -= 5;
+		Game.multiplier++;
+		Game.multipliertime = Game.mtm -= 5;
 	}
 }

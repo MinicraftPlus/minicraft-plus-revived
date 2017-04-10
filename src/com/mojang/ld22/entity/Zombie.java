@@ -248,11 +248,11 @@ public class Zombie extends Mob {
 		}
 		
 		if (level.player != null) { // if player is on zombie level
-			level.player.score += (50 * lvl) * Game.multiplyer; // add score for zombie death
+			level.player.score += (50 * lvl) * Game.multiplier; // add score for zombie death
 		}
 		
 		// TODO implement Game.setMultiplier (maybe make it addMultiplier() and resetMultiplier()).
-		Game.multiplyer++; // add to multiplier
-		Game.multiplyertime = Game.mtm -= 5;
+		Game.multiplier++; // add to multiplier
+		Game.multipliertime = Game.mtm -= 5;
 	}
 }

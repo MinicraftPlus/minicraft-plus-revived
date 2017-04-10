@@ -114,9 +114,9 @@ public class Game extends Canvas implements Runnable {
 	
 	/// SCORE MODE
 	
-	public static int multiplyer = 1; // Score multiplier
+	public static int multiplier = 1; // Score multiplier
 	public static int mtm = 300; // time given to increase multiplier before it goes back to 1.
-	public static int multiplyertime = mtm; // Time left on the current multiplier.
+	public static int multipliertime = mtm; // Time left on the current multiplier.
 	
 	public int scoreTime; // time remaining for score mode game.
 	public int newscoreTime; // time you start with in score mode.
@@ -392,11 +392,11 @@ public class Game extends Canvas implements Runnable {
 			}
 			if (!paused) scoreTime--;
 			
-			if (multiplyer > 1) {
-				if (multiplyertime != 0) multiplyertime--;
-				if (multiplyertime == 0) setMultiplier(1);
+			if (multiplier > 1) {
+				if (multipliertime != 0) multipliertime--;
+				if (multipliertime == 0) setMultiplier(1);
 			}
-			if (multiplyer > 50) multiplyer = 50;
+			if (multiplier > 50) multiplier = 50;
 		}
 		
 		//This is the general action statement thing! Regulates menus, mostly.
@@ -479,8 +479,8 @@ public class Game extends Canvas implements Runnable {
 	} // end tick()
 	
 	public static void setMultiplier(int value) {
-		multiplyer = value;
-		multiplyertime = mtm;
+		multiplier = value;
+		multipliertime = mtm;
 	}
 	
 	/// this is the proper way to change the tickCount.
@@ -691,9 +691,9 @@ public class Game extends Canvas implements Runnable {
 			
 			Font.draw("Time left " + (hours > 0 ? hours+"h ":"") + minutes + "m " + seconds + "s", screen, 84, screen.h - 190, timeCol);
 			
-			if(multiplyer > 1) {
-				int multColor = multiplyer < 50 ? Color.get(-1, 540, 540, 540) : Color.get(-1, 500, 500, 500);
-				Font.draw("X" + multiplyer, screen, 260, screen.h - 190, multColor);
+			if(multiplier > 1) {
+				int multColor = multiplier < 50 ? Color.get(-1, 540, 540, 540) : Color.get(-1, 500, 500, 500);
+				Font.draw("X" + multiplier, screen, 260, screen.h - 190, multColor);
 			}
 		}
 

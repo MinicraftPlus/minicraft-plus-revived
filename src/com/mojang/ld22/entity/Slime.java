@@ -71,11 +71,11 @@ public class Slime extends Mob {
 		}
 		
 		if (level.player != null) {
-			level.player.score += (25 * lvl) * Game.multiplyer; // add score for slime death
+			level.player.score += (25 * lvl) * Game.multiplier; // add score for slime death
 		}
 
-		Game.multiplyer++; // increment game multiplier
-		Game.multiplyertime = Game.mtm -= 5;
+		Game.multiplier++; // increment game multiplier
+		Game.multipliertime = Game.mtm -= 5;
 	}
 	
 	public void render(Screen screen) {
