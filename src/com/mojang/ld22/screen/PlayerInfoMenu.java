@@ -8,7 +8,7 @@ import com.mojang.ld22.gfx.Screen;
 public class PlayerInfoMenu extends Menu {
 	private int inputDelay = 60;
 	// this is an IMPORTANT bool, determines if the user should respawn or not :).
-	public static boolean shudrespawn;
+	public static boolean shouldRespawn;
 
 	public PlayerInfoMenu() {}
 

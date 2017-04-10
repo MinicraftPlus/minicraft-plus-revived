@@ -202,11 +202,11 @@ public class Game extends Canvas implements Runnable {
 	}
 	
 	/* differences from resetstartGame:
-		-has deadmenu.shudrespawn conditional
-		+matches other if shudrespawn = true:
+		-has deadmenu.shouldRespawn conditional
+		+matches other if shouldRespawn = true:
 			sets current level, player.respawn, adds player to level
 		
-		BUT: if shudrespawn == false...
+		BUT: if shouldRespawn == false...
 		-calls: levels[3] = new Level(worldSize, worldSize, 0, levels[4]);
 		-calls player.findStartPos directly, rather than player.respawn.
 			*this means that bed and previous spawn are ignored...
@@ -224,8 +224,8 @@ public class Game extends Canvas implements Runnable {
 		// adds a new player
 		player = new Player(this, input);
 		
-		// "shudrespawn" is false on hardcore, or when making a new world.
-		if (DeadMenu.shudrespawn) { // respawn, don't regenerate level.
+		// "shouldRespawn" is false on hardcore, or when making a new world.
+		if (DeadMenu.shouldRespawn) { // respawn, don't regenerate level.
 			if (debug) System.out.println("Current Level = " + currentLevel);
 			
 			level = levels[currentLevel];
@@ -238,7 +238,7 @@ public class Game extends Canvas implements Runnable {
 			
 			level = levels[currentLevel]; // Set level variable to the surface (b/c currentlevel is always 3)
 			
-			DeadMenu.shudrespawn = true; // player should respawn on death
+			DeadMenu.shouldRespawn = true; // player should respawn on death
 			player.findStartPos(level); // finds the start position for the player
 			if (debug) System.out.println("spawned player in new surface level, resetGame");
 		}
@@ -331,7 +331,7 @@ public class Game extends Canvas implements Runnable {
 		if (WorldSelectMenu.loadworld)// {
 			new Load(this, WorldSelectMenu.worldname);
 		
-		DeadMenu.shudrespawn = true;
+		DeadMenu.shouldRespawn = true;
 		
 		if(WorldGenMenu.theme == WorldGenMenu.hell) {
 			player.inventory.add(new ResourceItem(Resource.lavapotion));
