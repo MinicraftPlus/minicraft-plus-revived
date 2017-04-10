@@ -7,12 +7,13 @@ import com.mojang.ld22.gfx.Font;
 import com.mojang.ld22.gfx.Screen;
 import java.util.List;
 
-/** Most all menus have a scroll feature... it should be in this class. */
+/** TODO Most all menus have a scroll feature... it should be in this class.
+		Frame should also be here..? */
 
 public class Menu {
 	protected Game game;
 	protected InputHandler input;
-
+	
 	public void init(Game game, InputHandler input) {
 		this.input = input;
 		this.game = game;
