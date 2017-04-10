@@ -2,6 +2,8 @@
 -continue commeting code
 -(see note about canWool in Entity.java)
 -display current player score in score mode
+-"shudrespawn" to "shouldRespawn"
+-"multiplyer" to "multiplier"
 
 Note to self: for more little bugs/ideas/concerns, search code for "TODO"
 -----------------------------------------------------------------------------------
@@ -26,11 +28,6 @@ wierd unreprodoucable glitch: game screen went all gray for a second after press
 -----------------------------------------------------------------------------------
 
 	****IDEAS(that should probably be implemented)****
-****
-
-Fix up the write system, here and there: Menu writeCentered() should write the given text in the center x of the menu window; Screen writeCentered() should write a string centered in the screen's x. Font should not do anything with centering, instead, maybe it should have a drawShadowed() method? It should have a default text color, too, maybe...
-How about, just overload them all... whatever's provided, is used. 
-
 ****
 
 Make a Chest class, with sub-classes DungeonChest and DeathChest.
@@ -75,3 +72,7 @@ I don't know...
 
 *?*?*?*
 
+Fix up the write system, here and there: Menu writeCentered() should write the given text in the center x of the menu window; Screen writeCentered() should write a string centered in the screen's x. Font should not do anything with centering, instead, maybe it should have a drawShadowed() method? It should have a default text color, too, maybe...
+How about, just overload them all... whatever's provided, is used. Though, since they're all ints, that may not work too well...
+
+*?*?*?*

@@ -1,7 +1,19 @@
-Minicraft+ version 1.9
+Minicraft+ version 1.9.1
 
 -
 
+
+Minicraft+ version 1.9
+
+=Everything reimplemented
+=stuff works
++Game window is resizable
++more entries in debug display
++added debug features
++key preferences... well, kinda. You can't really change them...
++airwizard suit status and key prefs saved with game file
++modifier keys supported (shift, alt, ctrl)
++added obsidian brick and door to creative inventory
 
 
 ----- Noteable additions in v1.8 -----
@@ -9,6 +21,7 @@ Minicraft+ version 1.9
 * Airwizard's health appears above his head
 * Added colored clothes to change the player's outfit. They are craftable in the loom, or dropped rarely by zombies.
 * You can set the timer for score mode: 20m (default), 30m, 40m, or 1h
+* you can unlock new score mode times with high enough scores: 10 min and 2 hours.
 * "Airwizard II" boss shows up on the surface after you unlock all the locked chests
 * Once you defeat the Air Wizard, you can wear his costume by going into the settings menu. This suit allows the player to walk on air tiles.
 

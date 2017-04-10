@@ -1,4 +1,7 @@
  -------- Simple Ideas --------
+----
+
+Add world copy option, like rename and delete.
 
 ----
 
@@ -62,6 +65,8 @@ Make a way to resize the font... In specific instances only, though, I'm thinkin
 
 Support Color.get(String) where the string is four characters, made up of t,w,b; t=transparent, w=white, and b=black. That might look better. Of course, what WOULD look better is Color.red, Color.white, etc.
 	Maybe I could even devise Color.lighten and/or Color.darken methods, that would work for making the daylight cycle color sets.
+
+Better idea: simplify it another way; just make a simple method in Color.java to make it so that if the last 3 colors are the same, you just type it once; so instead of Color.get(-1, 555, 555, 555), it's just Color.get(-1, 555).
 
 ????
 
