@@ -173,6 +173,7 @@ public class Inventory {
 	
 	/** Returns the how many of an item you have in the inventory */
 	public int count(Item item) {
+		if (item == null) return 0;
 		if (item instanceof ResourceItem) { // if the item is a resource...
 			ResourceItem ri = findResource(((ResourceItem) item).resource); // find the ResourceItem in your inv
 			if (ri != null) return ri.count; // if the ResourceItem was found, return the stored amount.
