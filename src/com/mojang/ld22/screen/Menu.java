@@ -21,13 +21,9 @@ public class Menu {
 	public void tick() {}
 
 	public void render(Screen screen) {}
-
-	public static int centertext(String name) {
-		return (Game.WIDTH - name.length() * 8) / 2;
-	}
-
+	
 	public void writeCentered(String text, Screen screen, int y, int color) {
-		Font.draw(text, screen, centertext(text), y, color);
+		Font.draw(text, screen, screen.centertext(text), y, color);
 	}
 
 	public void renderItemList(Screen screen, int xo, int yo, int x1, int y1,

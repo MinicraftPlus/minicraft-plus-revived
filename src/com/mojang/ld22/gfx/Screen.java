@@ -1,5 +1,7 @@
 package com.mojang.ld22.gfx;
 
+import com.mojang.ld22.gfx.Font;
+
 public class Screen {
 	
 	/// x and y offset of screen:
@@ -30,9 +32,8 @@ public class Screen {
 	}
 	
 	public int centertext(String text) {
-		return (w - text.length() * 8) / 2;
+		return (w - Font.textWidth(text)) / 2;
 	}
-	
 	
 	/** Renders an object from the sprite sheet based on screen coordinates, tile (SpriteSheet location), colors, and bits (for mirroring) */
 	public void render(int xp, int yp, int tile, int colors, int bits) {

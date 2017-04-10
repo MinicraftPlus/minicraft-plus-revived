@@ -100,4 +100,12 @@ public class Font {
 			draw(title, screen, x0 * 8 + 8, y0 * 8, Color.get(-1, 222, 222, 222));
 		}
 	}
+	
+	public static int textWidth(String text) {
+		return text.length() * 8;
+	}
+	
+	public static void drawCentered(String msg, Screen screen, int y, int color) {
+		draw(msg, screen, screen.centertext(msg), y, color);
+	}
 }
