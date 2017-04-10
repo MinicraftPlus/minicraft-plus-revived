@@ -820,7 +820,8 @@ public class Player extends Mob {
 		super.die(); // calls the die() method in Mob.java
 		int lostscore = score / 3; // finds score penalty
 		score -= lostscore; // subtracts score penalty
-		Game.ism = 1; // still not totally sure what this is...
+		game.setMultiplier(1);
+		//Game.ism = 1; // still not totally sure what this is...
 		
 		//make death chest
 		Chest dc = new Chest(true);

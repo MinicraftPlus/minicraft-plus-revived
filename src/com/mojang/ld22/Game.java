@@ -99,13 +99,12 @@ public class Game extends Canvas implements Runnable {
 	private int playerDeadTime; // the time after you die before the dead menu shows up.
 	private int pendingLevelChange; // used to determine if the player should change levels or not.
 	private int wonTimer; // the paused time when you win before the win menu shows up.
-	public boolean hasWon; // If the player wins this is set to true
+	public boolean hasWon; // If the player wins this is set to true.
 	
 	/// AUTOSAVE AND NOTIFICATIONS
 	
 	public static boolean autosave; //if autosave feature is enabled.
 	public static int astime; //stands for Auto-Save Time (interval)
-	//public static String savedtext = ""; // TODO use this for special overlays, maybe.
 	public static List<String> notifications = new ArrayList<String>();
 	
 	public int asTick; // The time interval between autosaves.
@@ -116,10 +115,11 @@ public class Game extends Canvas implements Runnable {
 	/// SCORE MODE
 	
 	public static int multiplyer = 1; // Score multiplier
-	public static int mtm = 300, ism = 1; // more time stuff for score mode.
+	public static int mtm = 300; // time given to increase multiplier before it goes back to 1.
 	public static int multiplyertime = mtm; // Time left on the current multiplier.
 	
-	public int scoreTime, newscoreTime; //more for Score mode.
+	public int scoreTime; // time remaining for score mode game.
+	public int newscoreTime; // time you start with in score mode.
 	
 	/// MISCELLANEOUS
 	
@@ -128,8 +128,8 @@ public class Game extends Canvas implements Runnable {
 	//public static boolean infoplank = false, infosbrick = false; // "can only place on planks / stone brick"
 	
 	public int fra, tik; //these store the number of frames and ticks in the previous second; used for fps, at least.
-	int count; //something with colors..?
-	boolean reverse; //related to count
+	//int count; //something with colors..?
+	//boolean reverse; //related to count
 	
 	/// *** CONSTRUSTOR *** ///
 	public Game() {
@@ -148,8 +148,8 @@ public class Game extends Canvas implements Runnable {
 		
 		newscoreTime = 72000;
 		scoreTime = newscoreTime;
-		count = 0;
-		reverse = false;
+		//count = 0;
+		//reverse = false;
 		
 		autosave = false;
 		asTick = 0;
@@ -294,7 +294,6 @@ public class Game extends Canvas implements Runnable {
 
 		if (ModeMenu.score) {
 			scoreTime = newscoreTime;
-			ism = 1;
 		}
 		
 		Player.score = 0;
@@ -402,32 +401,19 @@ public class Game extends Canvas implements Runnable {
 		if (ModeMenu.score) {
 			if (!paused) scoreTime--;
 			
-			/*if (scoreTime < 1 && !player.removed) { // GAME OVER
-				player.remove();
+			if (scoreTime < 1 && !player.removed) { // GAME OVER
 				setMenu(new WonMenu(player));
-			}*/
-			if (scoreTime < 1 && !player.removed) {
-				setMenu(new WonMenu(player));
-				if(Game.debug) System.out.println("final player score: "+player.score);
-				//Extra score from drops.
-				player.score += (Inventory.scored(Resource.cloth) * (random.nextInt(2) + 1) * ism);
-				player.score += (Inventory.scored(Resource.slime) * (random.nextInt(2) + 1) * ism);
-				player.score += (Inventory.scored(Resource.bone) * (random.nextInt(2) + 1) * ism);
-				player.score += (Inventory.scored(Resource.gunp) * (random.nextInt(2) + 1) * ism);
-				player.score += (Inventory.scored(Resource.bookant) * (random.nextInt(2) + 1) * (random.nextInt(2) + 1) * ism);
+				//if(Game.debug) System.out.println("final player score: "+player.score);
 				player.remove();
 			}
 			
 			if (multiplyer > 1) {
 				if (multiplyertime != 0) multiplyertime--;
-				if (multiplyertime == 0) {
-					multiplyer = 1;
-					multiplyertime = mtm;
-				}
+				if (multiplyertime == 0) setMultiplier(1);
 			}
 			if (multiplyer > 50) multiplyer = 50;
 		}
-		
+		/*
 		//what's this for?
 		if (!reverse) {
 			count++;
@@ -436,7 +422,7 @@ public class Game extends Canvas implements Runnable {
 			count--;
 			if (count == 0) reverse = false;
 		}
-		
+		*/
 		//This is the general action statement thing! Regulates menus, mostly.
 		if (!hasFocus()) {
 			input.releaseAll();
@@ -497,19 +483,29 @@ public class Game extends Canvas implements Runnable {
 					}
 					if (input.getKey("creative").clicked) ModeMenu.updateModeBools(2);
 					if (input.getKey("survival").clicked) ModeMenu.updateModeBools(1);
+					if (ModeMenu.score && input.getKey("shift-t").clicked) scoreTime = normSpeed * 5; // 5 seconds
 					
-					if (input.getKey("shift-alt-equals").clicked && gamespeed >= 1) gamespeed++;
-					else if (input.getKey("shift-alt-equals").clicked && gamespeed < 1) gamespeed *= 2;
-					if (input.getKey("shift-alt-minus").clicked && gamespeed > 1) gamespeed--;
-					else if (input.getKey("shift-alt-minus").clicked && gamespeed <= 1) gamespeed /= 2;
+					if (input.getKey("equals").clicked) Player.moveSpeed += 0.5D;
+					if (input.getKey("minus").clicked && Player.moveSpeed > 0.5D) Player.moveSpeed -= 0.5D;
 					
-					if (input.getKey("shift-equals").clicked) Player.moveSpeed+=0.5D;
-					if (input.getKey("shift-minus").clicked && Player.moveSpeed > 0.5D) Player.moveSpeed-=0.5D;
+					if (input.getKey("shift-equals").clicked) {
+						if(gamespeed >= 1) gamespeed++;
+						else gamespeed *= 2;
+					}
+					if (input.getKey("shift-minus").clicked) {
+						if(gamespeed > 1) gamespeed--;
+						else gamespeed /= 2;
+					}
 				} // end debug only cond.
 			} // end "menu-null" conditional
 		} // end hasfocus conditional
 		
 	} // end tick()
+	
+	public static void setMultiplier(int value) {
+		multiplyer = value;
+		multiplyertime = mtm;
+	}
 	
 	/// this is the proper way to change the tickCount.
 	public static void setTime(int ticks) {
