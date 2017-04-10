@@ -16,7 +16,7 @@ import java.util.List;
 public class CraftInvMenu extends Menu {
 	private Player player;
 	private int selected = 0;
-
+	
 	private List<Recipe> recipes;
 
 	public CraftInvMenu(List<Recipe> recipes, Player player) {
@@ -70,7 +70,7 @@ public class CraftInvMenu extends Menu {
 		Font.rendercraftFrame(screen, "Cost", 15, 4, 22, 11);
 		Font.rendercraftFrame(screen, "Crafting", 0, 1, 14, 11);
 		renderItemList(screen, 0, 1, 14, 11, recipes, selected);
-
+		
 		if (recipes.size() > 0) {
 			Recipe recipe = recipes.get(selected);
 			int hasResultItems = player.inventory.count(recipe.resultTemplate);

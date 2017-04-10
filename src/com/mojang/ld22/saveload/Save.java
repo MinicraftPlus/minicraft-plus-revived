@@ -171,11 +171,11 @@ public class Save {
 			}
 		}
 		
-		for(int i = 0; i < inventory.items.size(); i++) {
-			if(inventory.items.get(i) instanceof ResourceItem) {
-				data.add(((Item)inventory.items.get(i)).getName() + ";" + ((ResourceItem)inventory.items.get(i)).count);
+		for(int i = 0; i < inventory.invSize(); i++) {
+			if(inventory.get(i) instanceof ResourceItem) {
+				data.add(((Item)inventory.get(i)).getName() + ";" + ((ResourceItem)inventory.get(i)).count);
 			} else {
-				data.add(((Item)inventory.items.get(i)).getName());
+				data.add(((Item)inventory.get(i)).getName());
 			}
 		}
 		
@@ -201,11 +201,12 @@ public class Save {
 					String data = "";
 					Chest c1 = (Chest)e;
 					
-					for(int ii = 0; ii < c1.inventory.items.size(); ii++) {
-						if(c1.inventory.items.get(ii) instanceof ResourceItem) {
-							data += ((Item)c1.inventory.items.get(ii)).getName() + ";" + c1.inventory.count((Item)c1.inventory.items.get(ii)) + ":";
+					for(int ii = 0; ii < c1.inventory.invSize(); ii++) {
+						Item item = (Item)c1.inventory.get(ii);
+						if(item instanceof ResourceItem) {
+							data += item.getName() + ";" + c1.inventory.count(item) + ":";
 						} else {
-							data += ((Item)c1.inventory.items.get(ii)).getName() + ":";
+							data += item.getName() + ":";
 						}
 					}
 					
@@ -220,13 +221,16 @@ public class Save {
 					String data = "";
 					DungeonChest dChest = (DungeonChest)e;
 					
-					for(int ii = 0; ii < dChest.inventory.items.size(); ii++) {
-						if(!((Item)dChest.inventory.items.get(ii)).getName().equals("") || !((Item)dChest.inventory.items.get(ii)).getName().equals(" ")) {
-							if(dChest.inventory.items.get(ii) instanceof ResourceItem) {
-								data += ((Item)dChest.inventory.items.get(ii)).getName() + ";" + dChest.inventory.count((Item)dChest.inventory.items.get(ii)) + ":";
+					for(int ii = 0; ii < dChest.inventory.invSize(); ii++) {
+						Item item = (Item)dChest.inventory.get(ii);
+						if(!item.getName().equals("") || !item.getName().equals(" ")) {
+							data += (item).getName();
+							if(item instanceof ResourceItem) data += ";" + dChest.inventory.count(item);
+							data += ":";
+							/*	data += (item).getName() + ";" + dChest.inventory.count(item) + ":";
 							} else {
-								data += ((Item)dChest.inventory.items.get(ii)).getName() + ":";
-							}
+								data += (item).getName() + ":";
+							}*/
 						}
 					}
 					

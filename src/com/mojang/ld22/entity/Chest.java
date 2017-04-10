@@ -6,9 +6,9 @@ import com.mojang.ld22.screen.ContainerMenu;
 import com.mojang.ld22.screen.OptionsMenu;
 
 public class Chest extends Furniture {
-	public Inventory inventory = new Inventory(); // Inventory of the chest
-	public boolean isdeathchest = false; // whether this is a death chest (from when the player dies)
-	public int time = 0; // time passed (used for death chest despawn)
+	public Inventory inventory; // Inventory of the chest
+	public boolean isdeathchest; // whether this is a death chest (from when the player dies)
+	public int time; // time passed (used for death chest despawn)
 	public String name; // perhaps for deathchest name?
 	// no idea what these are for-- death chests are new!
 	int redtick = 0;
@@ -16,6 +16,10 @@ public class Chest extends Furniture {
 
 	public Chest() {
 		super("Chest"); //Name of the chest..?
+		
+		inventory = new Inventory(this);
+		isdeathchest = false;
+		time = 0;
 		
 		// chest colors
 		if (canLight()) {
@@ -39,7 +43,7 @@ public class Chest extends Furniture {
 		super.tick();
 		if (isdeathchest) {
 			name = "Death Chest:" + time / 60 + "S";
-			if (inventory.items.size() < 1) {
+			if (inventory.invSize() < 1) {
 				remove();
 			}
 

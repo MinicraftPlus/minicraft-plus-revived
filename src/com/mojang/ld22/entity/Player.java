@@ -87,7 +87,7 @@ public class Player extends Mob {
 	public Player(Game game, InputHandler input) {
 		this.game = game;
 		this.input = input;
-		inventory = new Inventory();
+		inventory = new Inventory(this);
 		ac = acs;
 		
 		// these come from Mob.java
@@ -826,16 +826,16 @@ public class Player extends Mob {
 		Chest dc = new Chest(true);
 		dc.x = this.x;
 		dc.y = this.y;
-		PowerGloveItem pg = new PowerGloveItem();
+		//PowerGloveItem pg = new PowerGloveItem();
 		dc.inventory = this.inventory;
 		if (activeItem != null) {
 			dc.inventory.add(activeItem);
 		}
-
-		for (int i = 0; i < inventory.items.size(); i++)
-			if (((Item) inventory.items.get(i)).matches(pg))
-				dc.inventory.items.remove((Item) inventory.items.get(i));
-
+		dc.inventory.removeItem(new PowerGloveItem());
+		/*for (int i = 0; i < inventory.invSize(); i++)
+			if (((Item) inventory.get(i)).matches(pg))
+				dc.inventory.remove(i);
+		*/
 		Game.levels[Game.currentLevel].add(dc);
 
 		Sound.playerDeath.play();

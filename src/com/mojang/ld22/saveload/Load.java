@@ -247,7 +247,7 @@ public class Load {
 	
 	public void loadInventory(String filename, Inventory inventory) {
 		loadFromFile(location + filename + extention);
-		inventory.items.clear();
+		inventory.clearInv();
 		inventory.playerinventory = true; // this is only called for the player inventory so I can do this
 		
 		for(int i = 0; i < data.size(); i++) {
@@ -332,17 +332,17 @@ public class Load {
 						String itemData = (String)info.get(idx);
 						Item item = ListItems.getItem(itemData);
 						if (item instanceof ResourceItem) {
-							List curData = Arrays.asList((itemData + ";0").split(";"));
+							List curData = Arrays.asList((itemData + ";1").split(";")); // this appends ";1" to the end, meaning one item, to everything; but if it was already there, then it becomes the 3rd element in the list, which is ignored.
 							Item newItem = ListItems.getItem((String)curData.get(0));
 							
-							for(int ii = 0; ii < Integer.parseInt((String)curData.get(1)); ii++) {
+							/*for(int ii = 0; ii < Integer.parseInt((String)curData.get(1)); ii++) {
 								if(newItem instanceof ResourceItem) {
 									ResourceItem resItem = new ResourceItem(((ResourceItem)newItem).resource);
 									addToChest(chest, resItem);
 								} else if(!item.getName().equals("")) {
 									addToChest(chest, item);
 								}
-							}
+							}*/
 						} else if(!item.getName().equals("")) {
 							addToChest(chest, item);
 						}
@@ -350,25 +350,25 @@ public class Load {
 						if(idx == info.size() - 2) {
 							if (chest instanceof Chest && itemData.contains("tl;")) {
 								((Chest)chest).time = Integer.parseInt(itemData.replace("tl;", ""));
-							} if (chest instanceof DungeonChest && (itemData.contains("true") || itemData.contains("false"))) {
-								((DungeonChest)chest).islocked = Boolean.parseBoolean(itemData);
+							} else if (chest instanceof DungeonChest) {// && ( || itemData.contains("false"))) {
+								((DungeonChest)chest).islocked = itemData.contains("true") ? true : false; //Boolean.parseBoolean(itemData);
 							}
 						}
 					}
-					
+					/*
 					if (chest instanceof DungeonChest) {
 						DungeonChest dChest = (DungeonChest)chest;
 						ArrayList<String> contents = new ArrayList<String>();
-						for(int ii = 0; ii < dChest.inventory.items.size(); ii++) {
-							if(!((Item)dChest.inventory.items.get(ii)).getName().equals(" ") && !((Item)dChest.inventory.items.get(ii)).getName().equals("") && !((Item)dChest.inventory.items.get(ii)).getName().equals("	")) {
-								contents.add(((Item)dChest.inventory.items.get(ii)).getName());
+						for(int ii = 0; ii < dChest.inventory.invSize(); ii++) {
+							if(!((Item)dChest.inventory.get(ii)).getName().equals(" ") && !((Item)dChest.inventory.get(ii)).getName().equals("") && !((Item)dChest.inventory.get(ii)).getName().equals("	")) {
+								contents.add(((Item)dChest.inventory.get(ii)).getName());
 							} else {
-								dChest.inventory.items.remove(ii);
+								dChest.inventory.remove(ii);
 							}
 						}
 						contents.add("/x=" + dChest.x / 16 + "/y=" + dChest.y / 16);
 					}
-					
+					*/
 					newEntity.level = Game.levels[Integer.parseInt((String)info.get(info.size() - 1))];
 					currentlevel = Integer.parseInt((String)info.get(info.size() - 1));
 					Game.levels[currentlevel].add((chest instanceof Chest ? (Chest)chest : (DungeonChest)chest));
@@ -395,17 +395,17 @@ public class Load {
 			Chest chest = (Chest)box;
 			if(toAdd instanceof ResourceItem) {
 				ResourceItem item = (ResourceItem)toAdd;
-				chest.inventory.items.add(item);
+				chest.inventory.add(item);
 			} else
-				chest.inventory.items.add(toAdd);
+				chest.inventory.add(toAdd);
 		}
 		else if (box instanceof DungeonChest) {
 			DungeonChest dChest = (DungeonChest)box;
 			if(toAdd instanceof ResourceItem) {
 				ResourceItem item = (ResourceItem)toAdd;
-				dChest.inventory.items.add(item);
+				dChest.inventory.add(item);
 			} else
-				dChest.inventory.items.add(toAdd);
+				dChest.inventory.add(toAdd);
 		}
 	}
 	

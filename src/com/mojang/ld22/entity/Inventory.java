@@ -8,22 +8,33 @@ import com.mojang.ld22.item.ToolType;
 import com.mojang.ld22.item.resource.Resource;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Random;
 
 public class Inventory {
-	public List<Item> items = new ArrayList<Item>(); // the list of items that is in the inventory.
-	public static List<Item> itemss = new ArrayList<Item>(); // a static list, of the last inventory that was added to with add(Item).
+	private Random random = new Random();
+	private List<Item> items = new ArrayList<Item>(); // the list of items that is in the inventory.
+	//public static List<Item> itemss = new ArrayList<Item>(); // a static list, of the last inventory that was added to with add(Item).
 	public boolean playerinventory = false; // if this is a player inventory.
 	
-	public Inventory() {}
+	//public Inventory() {}
 		
-	public Inventory(Player player) {
-		this.playerinventory = true;
+	public Inventory(Entity e) {
+		if(e instanceof Player)
+			this.playerinventory = true;
 	}
+	
+	public List<Item> getItems() {return items;}
+	public void clearInv() {items.clear();}
+	public int invSize() {return items.size();}
+	
+	public Item get(int idx) {return items.get(idx);}
+	public Item remove(int idx) {return items.remove(idx);}
+	//public boolean remove(Object item) {return items.remove(item);}
 	
 	/** Adds an item to the inventory */
 	public void add(Item item) {
 		add(items.size(), item);  // adds the item to the end of the inventory list
-		itemss = items; // sets static inv. to this one.
+		//itemss = items; // sets static inv. to this one.
 	}
 	
 	/** Adds an item to a specific spot in the inventory */
@@ -56,7 +67,7 @@ public class Inventory {
 		return null; // else it will return null
 	}
 	
-	/** this is findResourceStatic, not multiple. It's like the one above. */
+	/*
 	private static ResourceItem findResources(Resource resource) {
 		for (int i = 0; i < itemss.size(); i++) {
 			if (itemss.get(i) instanceof ResourceItem) {
@@ -65,12 +76,12 @@ public class Inventory {
 			}
 		}
 		return null;
-	}
+	}*/
 	
 	/** like findResource, but for other items. */
 	private Item findItem(Item item) {
-		for(int i = 0; i < this.items.size(); i++) {
-			Item has = (Item)this.items.get(i);
+		for(int i = 0; i < items.size(); i++) {
+			Item has = (Item)items.get(i);
 			if(has.getName().equals(item.getName())) { // compares item name for match.
 				return has;
 			}
@@ -140,17 +151,25 @@ public class Inventory {
 		return true;
 	}
 	
+	//Resource[] toScore = {Resource.cloth, Resource.slime, Resource.bone, Resource.gunp, Resource.bookant};
 	/** that gets the score for items...? Really, all it's doing is counting the given resource... */
-	public static int scored(Resource r) {
+	/*public int getScore(Resource r) {
+		//int score = 0;
+		//for(Resource r: toScore) {
+			ResourceItem ri = findResource(r);
+			if (ri != null) return ri.count * (random.nextInt(2) + 1);
+		//}
+		/*
 		int lscore = 0;
-		ResourceItem ri = findResources(r);
+		
 		if (ri == null) {
 			lscore = 0;
 		} else if (ri != null) {
 			lscore = ri.count;
 		}
-		return lscore;
-	}
+		return lscore;*/
+		//return score;
+	//}
 	
 	/** Returns the how many of an item you have in the inventory */
 	public int count(Item item) {
@@ -166,5 +185,8 @@ public class Inventory {
 		}
 		
 		return 0; // reaches here if a ResourceItem is requested that isn't in the inventory.
+	}
+	public int count(Resource r) {
+		return count(findResource(r));
 	}
 }
