@@ -384,20 +384,25 @@ public class TitleMenu extends Menu {
 		writeCentered(((String)splashes.get(rand)), screen, 60, cols);
 		
 		if(GameApplet.isApplet) {
-			if(GameApplet.username.length() < 27) {
-				Font.draw("Welcome, " + GameApplet.username + "!", screen, this.centertext("Welcome, " + GameApplet.username + "!"), screen.h - 190, Color.get(0, 330, 330, 330));
+			String greeting = "Welcome!", name = GameApplet.username;
+			if(name.length() < 36) greeting = name+"!";
+			if(name.length() < 27) greeting = "Welcome, " + greeting;
+			
+			writeCentered(greeting, screen, 10, Color.get(0, 330, 330, 330));
+			/*if(GameApplet.username.length() < 27) {
+				writeCentered("Welcome, " + GameApplet.username + "!", screen, screen.h - 190, Color.get(0, 330, 330, 330));
 			} else {
-				Font.draw("Welcome,", screen, this.centertext("Welcome!"), screen.h - 190, Color.get(0, 330, 330, 330));
-				Font.draw(GameApplet.username + "!", screen, this.centertext(GameApplet.username + "!"), screen.h - 180, Color.get(0, 330, 330, 330));
+				
+				writeCentered(GameApplet.username + "!", screen, this.centertext(GameApplet.username + "!"), screen.h - 180, Color.get(0, 330, 330, 330));
 			}
 			
 			writeCentered("Version " + Game.VERSION, screen, screen.h - 10, Color.get(0, 111, 111, 111));
-		}
+		*/}/*
 		else {
-			Font.draw("Version " + Game.VERSION, screen, 1, screen.h - 190, Color.get(0, 111, 111, 111));
-		}
+			Font.draw("Version " + Game.VERSION, screen, 1, 1, Color.get(0, 111, 111, 111));
+		}*/
 		
-		writeCentered("(Arrow keys to move)", screen, screen.h - (GameApplet.isApplet?35:25), Color.get(0, 111, 111, 111));
-		writeCentered("(Enter to accept, Escape to return)", screen, screen.h - (GameApplet.isApplet?25:15), Color.get(0, 111, 111, 111));
+		writeCentered("(Arrow keys to move)", screen, screen.h - 25, Color.get(0, 111, 111, 111));
+		writeCentered("(Enter to accept, Escape to return)", screen, screen.h - 15, Color.get(0, 111, 111, 111));
 	}
 }
