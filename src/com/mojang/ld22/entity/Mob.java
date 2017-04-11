@@ -73,7 +73,7 @@ public class Mob extends Entity {
 			move2(0, 1);
 			yKnockback--;
 		}
-		if (hurtTime > 0) return true; // If we have been hurt recently and haven't yet cooled down, don't continue with the movement (so only knockback will be performed)
+		if (hurtTime > 0 && this instanceof Player == false) return true; // If we have been hurt recently and haven't yet cooled down, don't continue with the movement (so only knockback will be performed)
 		
 		if (xa != 0 || ya != 0) { // Only if horizontal or vertical movement is actually happening
 			walkDist++; // Increment our walking/movement counter
