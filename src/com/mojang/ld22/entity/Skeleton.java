@@ -11,7 +11,7 @@ import com.mojang.ld22.screen.OptionsMenu;
 
 public class Skeleton extends Mob {
 	int xa, ya, xe, ye;
-	private int lvl;
+	//private int lvl;
 	private int randomWalkTime;
 	public int arrowtime;
 	public int artime;
@@ -24,7 +24,7 @@ public class Skeleton extends Mob {
 		arrowtime = 70 / (lvl + 1);
 		artime = arrowtime;
 		
-
+		this.lvl = lvl;
 		col0 = Color.get(-1, 111, 40, 444);
 		col1 = Color.get(-1, 222, 50, 555);
 		col2 = Color.get(-1, 111, 40, 444);
@@ -250,6 +250,7 @@ public class Skeleton extends Mob {
 	}
 
 	protected void touchedBy(Entity entity) {
+		super.touchedBy(entity);
 		if (OptionsMenu.diff == OptionsMenu.easy) {
 			if (entity instanceof Player) {
 				//entity.hurt(this, lvl, dir);

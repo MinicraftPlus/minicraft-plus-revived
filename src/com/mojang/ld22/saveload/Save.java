@@ -159,6 +159,10 @@ public class Save {
 		
 		data.add("[" + player.r + ";" + player.g + ";" + player.b + "]");
 		data.add(String.valueOf(Player.skinon));
+		if(player.curArmor != null) {
+			data.add(String.valueOf(player.armorDamageBuffer));
+			data.add(String.valueOf(player.curArmor.name));
+		}
 		writeToFile(location + filename + extention, data);
 	}
 	
@@ -195,6 +199,7 @@ public class Save {
 				if(e instanceof Mob) {
 					Mob c = (Mob)e;
 					extradata = ":" + c.health + ":" + c.maxHealth + ":" + c.lvl;
+					//System.out.println("additional mob data for "+c.getClass().getName()+": " + extradata);
 				}
 				
 				if(e instanceof Chest) {

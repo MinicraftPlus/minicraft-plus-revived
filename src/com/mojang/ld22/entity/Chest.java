@@ -96,7 +96,7 @@ public class Chest extends Furniture {
 		super("Death Chest");
 		isdeathchest = true;
 		if (OptionsMenu.diff == 1) {
-			time = '\u8ca0';
+			time = '\u8ca0'; // TODO fix this number; play the game and find out how much time it displays.
 		} else if (OptionsMenu.diff == 2) {
 			time = 18000;
 		} else if (OptionsMenu.diff == 3) {

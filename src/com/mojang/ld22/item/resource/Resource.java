@@ -56,11 +56,11 @@ public class Resource {
 	public static Resource steak = new FoodResource("Steak", 20 + 4 * 32, Color.get(-1, 100, 333, 211), 3, 5);
 	public static Resource goldapple = new FoodResource("G.Apple", 9 + 4 * 32, Color.get(-1, 110, 440, 550), 10, 5);
 	
-	public static Resource larmor = new ArmorResource("L.Armor", 3 + 12 * 32, Color.get(-1, 100, 211, 322), 3, 9);
-	public static Resource sarmor = new ArmorResource("S.Armor", 3 + 12 * 32, Color.get(-1, 10, 20, 30), 4, 9);
-	public static Resource iarmor = new ArmorResource("I.Armor", 3 + 12 * 32, Color.get(-1, 100, 322, 544), 5, 9);
-	public static Resource garmor = new ArmorResource("G.Armor", 3 + 12 * 32, Color.get(-1, 110, 330, 553), 7, 9);
-	public static Resource gemarmor = new ArmorResource("Gem Armor", 3 + 12 * 32, Color.get(-1, 101, 404, 545), 10, 9);
+	public static Resource larmor = new ArmorResource("L.Armor", 3 + 12 * 32, Color.get(-1, 100, 211, 322), 3, 1, 9);
+	public static Resource sarmor = new ArmorResource("S.Armor", 3 + 12 * 32, Color.get(-1, 10, 20, 30), 4, 2, 9);
+	public static Resource iarmor = new ArmorResource("I.Armor", 3 + 12 * 32, Color.get(-1, 100, 322, 544), 5, 3, 9);
+	public static Resource garmor = new ArmorResource("G.Armor", 3 + 12 * 32, Color.get(-1, 110, 330, 553), 7, 4, 9);
+	public static Resource gemarmor = new ArmorResource("Gem Armor", 3 + 12 * 32, Color.get(-1, 101, 404, 545), 10, 5, 9);
 	public static Resource redclothes = new ClothesResource("Red Clothes", 390, Color.get(-1, Color.rgb(50, 0, 0), Color.rgb(200, 0, 0), Color.rgb(250, 0, 0)), 200, 0, 0);
 	public static Resource blueclothes = new ClothesResource("Blue Clothes", 390, Color.get(-1, Color.rgb(0, 0, 50), Color.rgb(0, 0, 200), Color.rgb(0, 0, 250)), 0, 0, 200);
 	public static Resource greenclothes = new ClothesResource("Green Clothes", 390, Color.get(-1, Color.rgb(0, 50, 0), Color.rgb(0, 200, 0), Color.rgb(0, 250, 0)), 0, 200, 0);

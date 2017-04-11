@@ -14,7 +14,7 @@ public class Snake extends Mob {
 	int ya;
 	int xe = xa;
 	int ye = ya;
-	private int lvl;
+	//private int lvl;
 	private int randomWalkTime = 0;
 
 	public Snake(int lvl) {
@@ -217,6 +217,7 @@ public class Snake extends Mob {
 	}
 
 	protected void touchedBy(Entity entity) {
+		super.touchedBy(entity);
 		if (OptionsMenu.diff == OptionsMenu.easy) {
 			if (entity instanceof Player) {
 				if (lvl > 1) {

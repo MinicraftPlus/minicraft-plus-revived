@@ -15,6 +15,7 @@ import com.mojang.ld22.item.ResourceItem;
 import com.mojang.ld22.item.ToolItem;
 import com.mojang.ld22.item.ToolType;
 import com.mojang.ld22.item.resource.Resource;
+import com.mojang.ld22.item.resource.ArmorResource;
 import com.mojang.ld22.item.resource.PotionResource;
 import com.mojang.ld22.level.Level;
 import com.mojang.ld22.level.tile.Tile;
@@ -42,21 +43,23 @@ public class Player extends Mob {
 	public static boolean hasSetHome = false, skinon;
 	//These 2 ints are ints saved from the first spawn - this way the spawn pos is always saved.
 	public static int spawnx = 0, spawny = 0; // these are stored as tile coordinates, not entity coordinates.
+	public static int maxStamina = 10, maxHunger = 10, maxArmor = 100; // the maximum stats that the player can have.
 	
 	public Inventory inventory;
 	public Item attackItem, activeItem;
 	public boolean energy;
 	public int attackTime, attackDir;
-	public int maxStamina, armor, maxHunger; // the maximum stats that the player can have
 	public int homeSetX, homeSetY;
 	public boolean bedSpawn;
-
+	
 	private int onStairDelay; // the delay before changing levels.
 	public int stepCount;
 	int tickCounter;
 	int timesTick;
-
-	public int hunger, stamina;
+	
+	public int hunger, stamina, armor; // the current stats
+	public int armorDamageBuffer;
+	public ArmorResource curArmor; // the color of the armor to be displayed.
 	public int staminaRecharge;  // the recharge rate of the player's stamina
 	public int staminaRechargeDelay; // the recharge delay when the player uses up their stamina.
 	public int hungStamCnt;
@@ -64,7 +67,7 @@ public class Player extends Mob {
 	int hungerStarveDelay;
 	boolean alreadyLostHunger;
 	boolean repeatHungerCyc;
-
+	
 	public boolean showinfo;
 	public int px, py;
 	
@@ -73,7 +76,7 @@ public class Player extends Mob {
 	int cooldowninfo;
 	int regentick;
 	
-	int acs = 25; // default arrow count
+	int acs = 25; // default ("start") arrow count
 	public int ac; // arrow count
 	public int r = 50, g = 50, b;
 	
@@ -91,8 +94,8 @@ public class Player extends Mob {
 		tickCounter = 0;
 		
 		energy = false;
-		maxStamina = 10;
-		maxHunger = 10;
+		//maxStamina = 10;
+		//maxHunger = 10;
 		
 		repeatHungerCyc = false;
 		
@@ -110,6 +113,8 @@ public class Player extends Mob {
 		b = 0;
 		
 		armor = 0;
+		curArmor = null;
+		armorDamageBuffer = 0;
 		stamina = maxStamina;
 		hunger = maxHunger;
 		
@@ -148,8 +153,6 @@ public class Player extends Mob {
 			cooldowninfo = 10;
 			showpotioneffects = !showpotioneffects;
 		}
-		
-		//if (invulnerableTime > 0) invulnerableTime--; // if invulnerableTime is above 0, then decrease it by 1.
 		
 		Tile onTile = level.getTile(x >> 4, y >> 4); // gets the current tile the player is on.
 		if (onTile == Tile.stairsDown || onTile == Tile.stairsUp || onTile == Tile.lightstairsDown || onTile == Tile.lightstairsUp) {
@@ -477,20 +480,18 @@ public class Player extends Mob {
 		int fcatch = random.nextInt(90);
 		
 		if (fcatch <= 8) {
-			if(Game.debug) System.out.println("Caught a Fish!");
 			level.add(new ItemEntity(new ResourceItem(Resource.rawfish), x + random.nextInt(11) - 5, y + random.nextInt(11) - 5));
 		}
 		
 		if (fcatch == 25 || fcatch == 43 || fcatch == 32 || fcatch == 15 || fcatch == 42) {
-			if(Game.debug) System.out.println("Caught some slime?");
 			level.add(new ItemEntity(new ResourceItem(Resource.slime), x + random.nextInt(11) - 5, y + random.nextInt(11) - 5));
 		}
 
 		if (fcatch == 56) {
-			if(Game.debug) System.out.println("Rare Armor!");
 			level.add(new ItemEntity(new ResourceItem(Resource.larmor), x + random.nextInt(11) - 5, y + random.nextInt(11) - 5));
 		} else {
-			if(Game.debug) System.out.println("FAIL!");
+			if(Game.debug) System.out.println("Nothing caught...");
+			if(random.nextInt(200) == 42) System.out.println("CHUCKNORRIS got away...");
 		}
 	}
 	
@@ -813,21 +814,53 @@ public class Player extends Mob {
 	/** What happens when the player is hurt */
 	protected void doHurt(int damage, int attackDir) {
 		if (ModeMenu.creative) return; // can't get hurt in creative
-		if (hurtTime > 0) return; // currently in hurt cooldown
-
+		//if (hurtTime > 0) return; // currently in hurt cooldown
+		int healthDam = 0, armorDam = 0;
+		//System.out.println("damaging player: " + damage + "...");
 		Sound.playerHurt.play();
-		if (armor <= 0) { // no armor
-			level.add(new TextParticle("" + damage, x, y, Color.get(-1, 504, 504, 504))); // adds a text particle telling how much damage was done.
+		if (curArmor == null) { // no armor
 			health -= damage; // subtract that amount
-		}
-		if (armor > 0) { // has armor
-			level.add(new TextParticle("" + damage, x, y, Color.get(-1, 333, 333, 333))); // adds a text particle telling how much damage was done.
-			if (damage > armor) { // will still hurt the player's hearts
+			//System.out.println("no armor; took " + damage + " damage");
+		} else { // has armor
+			//System.out.println("wearing armor.");
+			armorDamageBuffer += damage;
+			armorDam += damage;
+			//System.out.println("preliminary buffer: " + armorDamageBuffer);
+			
+			//int level = curArmor.level == 1 ? 2 : curArmor.level;
+			while (armorDamageBuffer >= curArmor.level+1) {
+				armorDamageBuffer -= curArmor.level+1;
+				healthDam++;
+			}
+			//if(healthDam > 0) System.out.println("armor buffer overflow causes " + health + " health damage.");
+			//System.out.println("armor took ");
+			/*if (damage > armor) { // will still hurt the player's hearts
 				int dmgleft = damage - armor; // this much is subtracted from health
 				health -= dmgleft;
 				armor = 0; // no armor left
 			} else armor -= damage; // the armor took all the damage
+			*/
 		}
+		
+		// adds a text particle telling how much damage was done to the player, and the armor.
+		if(armorDam > 0) {
+			//System.out.println("armor damage taken: " + armorDam);
+			level.add(new TextParticle("" + damage, x, y, Color.get(-1, 333, 333, 333)));
+			armor -= armorDam;
+			if(armor <= 0) {
+				//System.out.println("armor worn out: " + armor);
+				healthDam -= armor; // adds armor damage overflow to health damage (minus b/c armor would be negative)
+				armor = 0;
+				armorDamageBuffer = 0; // ensures that new armor doesn't inherit partial breaking from this armor.
+				curArmor = null; // removes armor
+			}
+		}
+		if(healthDam > 0) {
+			//System.out.println("total health damage taken: " + healthDam);
+			level.add(new TextParticle("" + damage, x, y, Color.get(-1, 504, 504, 504)));
+			health -= healthDam;
+		}
+		
 		// apply the appropriate knockback
 		if (attackDir == 0) yKnockback = +6;
 		if (attackDir == 1) yKnockback = -6;
@@ -836,6 +869,7 @@ public class Player extends Mob {
 		// set hurt and invulnerable times
 		hurtTime = playerHurtTime;
 	}
+	
 	
 	/** What happens when the player wins */
 	public void gameWon() {

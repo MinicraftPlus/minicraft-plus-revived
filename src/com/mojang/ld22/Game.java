@@ -58,7 +58,7 @@ public class Game extends Canvas implements Runnable {
 	/// MANAGERIAL VARS AND RUNNING
 	
 	public static final String NAME = "Minicraft Plus"; // This is the name on the application window
-	public static final String VERSION = "1.9.1";
+	public static final String VERSION = "1.9.1-pre2";
 	public static final int HEIGHT = 192;
 	public static final int WIDTH = 288;
 	private static float SCALE = 3;
@@ -630,6 +630,12 @@ public class Game extends Canvas implements Runnable {
 				}
 			}
 			
+			if(player.armor > 0) {
+				info.add("armor: " + player.armor);
+				info.add("dam buffer: " + player.armorDamageBuffer);
+				//info.add("armor lvl: " + player.curArmor.level);
+			}
+			
 			for(int i = 0; i < info.size(); i++) {
 				Font.draw(info.get(i), screen, 1, 2 + i*10, col0);
 			}
@@ -732,7 +738,8 @@ public class Game extends Canvas implements Runnable {
 				screen.render(i * 8 + 208, screen.h - 16, 2 + 12 * 32, color, 0);
 				
 				// renders armor
-				color = (i < player.armor) ? Color.get(-1, 333, 444, 555) : Color.get(-1, -1, -1, -1);
+				int armor = player.armor*10/player.maxArmor;
+				color = (i <= armor && player.curArmor != null) ? player.curArmor.color/*Color.get(-1, 333, 444, 555)*/ : Color.get(-1, -1, -1, -1);
 				screen.render(i * 8 + 208, screen.h - 8, 3 + 12 * 32, color, 0);
 				
 				if (player.staminaRechargeDelay > 0) {

@@ -17,7 +17,7 @@ public class Creeper extends Mob {
 	private int BLAST_DAMAGE = 10;
 
 	private int xa, ya;
-	private int lvl;
+	//private int lvl;
 	private int randomWalkTime = 0;
 	private int fuseTime = 0;
 	private boolean fuseLit = false;

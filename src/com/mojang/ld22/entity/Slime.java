@@ -11,7 +11,7 @@ import com.mojang.ld22.screen.OptionsMenu;
 public class Slime extends Mob {
 	private int xa, ya; // x and y acceleration
 	private int jumpTime = 0; // jumpTimer, also acts as a rest timer before the next jump
-	private int lvl; // how tough the slime is
+	//private int lvl; // how tough the slime is
 
 	public Slime(int lvl) {
 		this.col0 = Color.get(-1, 20, 40, 10);
@@ -199,6 +199,7 @@ public class Slime extends Mob {
 	}
 	
 	protected void touchedBy(Entity entity) {
+		super.touchedBy(entity);
 		int damage = OptionsMenu.diff == OptionsMenu.hard ? 2 : 1;
 		if (entity instanceof Player) { // if we touch the player
 			entity.hurt(this, lvl*damage, dir); // attack

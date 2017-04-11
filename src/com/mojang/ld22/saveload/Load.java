@@ -33,6 +33,7 @@ import com.mojang.ld22.entity.Zombie;
 import com.mojang.ld22.item.Item;
 import com.mojang.ld22.item.ListItems;
 import com.mojang.ld22.item.ResourceItem;
+import com.mojang.ld22.item.resource.ArmorResource;
 import com.mojang.ld22.item.resource.PotionResource;
 import com.mojang.ld22.level.tile.Tile;
 import com.mojang.ld22.screen.LoadingMenu;
@@ -197,6 +198,12 @@ public class Load {
 		Player.spawny = Integer.parseInt((String)data.get(3));
 		player.health = Integer.parseInt((String)data.get(4));
 		player.armor = Integer.parseInt((String)data.get(5));
+		if(!oldSave && data.size() >= 14) {
+			player.armorDamageBuffer = Integer.parseInt((String)data.get(13));
+			player.curArmor = (ArmorResource)(((ResourceItem)ListItems.getItem((String)data.get(14))).resource);
+			//System.out.println("loaded armor on player; class=" + player.curArmor.getClass().getName());
+		}
+		else if(!oldSave) player.armor = 0;
 		Player.score = Integer.parseInt((String)data.get(6));
 		if(!oldSave) player.ac = Integer.parseInt((String)data.get(7));
 		Game.currentLevel = Integer.parseInt((String)data.get(oldSave?7:8));
@@ -306,6 +313,7 @@ public class Load {
 					mob.health = Integer.parseInt((String)info.get(2));
 					mob.maxHealth = Integer.parseInt((String)info.get(3));
 					mob.lvl = Integer.parseInt((String)info.get(4));
+					//System.out.println("made mob, lvl " + mob.lvl);
 					mob.level = Game.levels[Integer.parseInt((String)info.get(5))];
 					currentlevel = Integer.parseInt((String)info.get(5));
 					Game.levels[currentlevel].add(mob);
@@ -353,13 +361,15 @@ public class Load {
 	}
 	
 	private void addToChest(Furniture box, Item toAdd) {
+		if (toAdd == null || box == null) return;
 		if(box instanceof Chest) {
 			Chest chest = (Chest)box;
 			if(toAdd instanceof ResourceItem) {
 				ResourceItem item = (ResourceItem)toAdd;
 				chest.inventory.add(item);
-			} else
+			} else {
 				chest.inventory.add(toAdd);
+			}
 		}
 		else if (box instanceof DungeonChest) {
 			DungeonChest dChest = (DungeonChest)box;
