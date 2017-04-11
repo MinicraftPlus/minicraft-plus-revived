@@ -2,6 +2,7 @@ Minicraft+ version 1.9.1
 
 =Armor now functions as a damage buffer rather than extra hearts; you take damage after only a certain number of damage points accumulate.
 +Armor lasts longer.
+=Rate of hunger bar healing health depends on hunger; still happens when less than full health.
 
 
 Minicraft+ version 1.9

@@ -63,22 +63,22 @@ public class Player extends Mob {
 	public int staminaRecharge;  // the recharge rate of the player's stamina
 	public int staminaRechargeDelay; // the recharge delay when the player uses up their stamina.
 	public int hungStamCnt;
-	int hungerChargeDelay;
-	int hungerStarveDelay;
+	int hungerChargeDelay; // the delay between each time the hunger bar increases your health
+	int hungerStarveDelay; // the delay between each time the hunger bar decreases your health
 	boolean alreadyLostHunger;
 	boolean repeatHungerCyc;
 	
 	public boolean showinfo;
 	public int px, py;
 	
-	public HashMap<String, Integer> potioneffects;
-	public boolean showpotioneffects;
-	int cooldowninfo;
-	int regentick;
+	public HashMap<String, Integer> potioneffects; // the potion effects currently applied to the player
+	public boolean showpotioneffects; // whether to display the current potion effects on screen
+	int cooldowninfo; // prevents you from toggling the info pane on and off super fast.
+	int regentick; // counts time between each time the regen potion effect heals you.
 	
 	int acs = 25; // default ("start") arrow count
 	public int ac; // arrow count
-	public int r = 50, g = 50, b;
+	public int r = 50, g = 50, b; // player shirt color.
 	
 	// Note: the player's health & max health are inherited from Mob.java
 	
@@ -209,14 +209,20 @@ public class Player extends Mob {
 			}
 		}
 
-		if (hungerChargeDelay == 0) {
+		/*if (hungerChargeDelay == 0) {
 			hungerChargeDelay = 100;
+		}*/
+		
+		/// system that heals you depending on your hunger
+		if (health < maxHealth && hunger > maxHunger/2) {
+			//if (hungerChargeDelay > 0) hungerChargeDelay--;
+			hungerChargeDelay++;
+			if (hungerChargeDelay > 50*Math.pow(maxHunger-hunger+1, 2)) {
+				health++;
+				hungerChargeDelay = 0;
+			}
 		}
-
-		if (hunger == 10 && health < 10) {
-			if (hungerChargeDelay > 0) hungerChargeDelay--;
-			if (hungerChargeDelay == 0) health++;
-		}
+		else hungerChargeDelay = 0;
 
 		if (hungerStarveDelay == 0) {
 			hungerStarveDelay = 120;
@@ -227,7 +233,7 @@ public class Player extends Mob {
 				stepCount = 0;
 			}
 		}
-
+		// on easy mode, hunger doesn't deplete?
 		if (OptionsMenu.diff == OptionsMenu.hard) {
 			if (stepCount >= 5000) {
 				hunger--;
