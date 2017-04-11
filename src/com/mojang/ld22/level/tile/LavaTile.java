@@ -272,7 +272,7 @@ public class LavaTile extends Tile {
 		}
 
 		if (level.dirtColor == 222) {
-			if (level.cl != -4) {
+			if (level.curLvl != -4) {
 				wRandom.setSeed(
 						(tickCount + (x / 2 - y) * 4311) / 10 * 54687121l + x * 3271612l + y * 3412987161l);
 				int col = col4;
@@ -327,7 +327,7 @@ public class LavaTile extends Tile {
 							(r ? 16 : 15) + (d ? 2 : 1) * 32,
 							(sd || sr) ? transitionColor2 : transitionColor1,
 							0);
-			} else if (level.cl == -4) {
+			} else if (level.curLvl == -4) {
 				wRandom.setSeed(
 						(tickCount + (x / 2 - y) * 4311) / 10 * 54687121l + x * 3271612l + y * 3412987161l);
 				int col = col5;
