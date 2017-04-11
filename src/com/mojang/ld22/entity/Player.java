@@ -820,41 +820,27 @@ public class Player extends Mob {
 	/** What happens when the player is hurt */
 	protected void doHurt(int damage, int attackDir) {
 		if (ModeMenu.creative) return; // can't get hurt in creative
-		//if (hurtTime > 0) return; // currently in hurt cooldown
+		if (hurtTime > 0) return; // currently in hurt cooldown
+		
 		int healthDam = 0, armorDam = 0;
-		//System.out.println("damaging player: " + damage + "...");
 		Sound.playerHurt.play();
 		if (curArmor == null) { // no armor
 			health -= damage; // subtract that amount
-			//System.out.println("no armor; took " + damage + " damage");
 		} else { // has armor
-			//System.out.println("wearing armor.");
 			armorDamageBuffer += damage;
 			armorDam += damage;
-			//System.out.println("preliminary buffer: " + armorDamageBuffer);
 			
-			//int level = curArmor.level == 1 ? 2 : curArmor.level;
 			while (armorDamageBuffer >= curArmor.level+1) {
 				armorDamageBuffer -= curArmor.level+1;
 				healthDam++;
 			}
-			//if(healthDam > 0) System.out.println("armor buffer overflow causes " + health + " health damage.");
-			//System.out.println("armor took ");
-			/*if (damage > armor) { // will still hurt the player's hearts
-				int dmgleft = damage - armor; // this much is subtracted from health
-				health -= dmgleft;
-				armor = 0; // no armor left
-			} else armor -= damage; // the armor took all the damage
-			*/
 		}
 		
 		// adds a text particle telling how much damage was done to the player, and the armor.
 		if(armorDam > 0) {
-			//System.out.println("armor damage taken: " + armorDam);
 			level.add(new TextParticle("" + damage, x, y, Color.get(-1, 333, 333, 333)));
 			armor -= armorDam;
 			if(armor <= 0) {
-				//System.out.println("armor worn out: " + armor);
 				healthDam -= armor; // adds armor damage overflow to health damage (minus b/c armor would be negative)
 				armor = 0;
 				armorDamageBuffer = 0; // ensures that new armor doesn't inherit partial breaking from this armor.
@@ -862,7 +848,6 @@ public class Player extends Mob {
 			}
 		}
 		if(healthDam > 0) {
-			//System.out.println("total health damage taken: " + healthDam);
 			level.add(new TextParticle("" + damage, x, y, Color.get(-1, 504, 504, 504)));
 			health -= healthDam;
 		}
