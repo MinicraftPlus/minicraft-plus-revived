@@ -12,8 +12,7 @@ public class Arrow extends Entity {
 	private final int speed = 2;
 	private int time;
 	private int damage;
-	private Mob owner;
-	private Player player;
+	public Mob owner;
 	private int color;
 	private int speeddmg;
 	private boolean edmg = false;
