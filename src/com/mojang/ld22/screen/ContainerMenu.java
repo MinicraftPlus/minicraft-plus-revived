@@ -1,5 +1,6 @@
 package com.mojang.ld22.screen;
 
+import com.mojang.ld22.entity.Chest;
 import com.mojang.ld22.entity.Inventory;
 import com.mojang.ld22.entity.Player;
 import com.mojang.ld22.gfx.Font;
@@ -15,10 +16,17 @@ public class ContainerMenu extends Menu {
 	private int window = 0; // currently selected window (player's inventory, or chest's inventory)
 	
 	/** The container menu class is used for chests */
-	public ContainerMenu(Player player, String title, Inventory container) {
+	/*public ContainerMenu(Player player, String title, Inventory container) {
 		this.player = player;
 		this.title = title;
 		this.container = container;
+	}*/
+	
+	public ContainerMenu(Player player, Chest chest) {
+		this.player = player;
+		//this.title = title;
+		container = chest.inventory;
+		title = chest.name;
 	}
 
 	public void tick() {
@@ -63,7 +71,7 @@ public class ContainerMenu extends Menu {
 			if (selected >= len-1) selected = len-2;// = i.items.size() - 1; // This fixes the selected item to the latest one.
 		}
 	}
-
+	
 	public void render(Screen screen) {
 		if (window == 1) screen.setOffset(6 * 8, 0); // Offsets the windows for when the player's inventory is selected
 		Font.renderFrame(screen, title, 1, 1, 18, 11); // Renders the chest's window
