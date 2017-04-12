@@ -264,6 +264,7 @@ public class Game extends Canvas implements Runnable {
 		Player.moveSpeed = 1;
 		Bed.hasBedSet = false; //no bed
 		Game.gamespeed = 1;
+		notifications.clear();
 		
 		if (!OptionsMenu.hasSetDiff) OptionsMenu.diff = 2;
 		
@@ -457,6 +458,9 @@ public class Game extends Canvas implements Runnable {
 							player.inventory.add((com.mojang.ld22.item.Item) ListItems.items.get(i));
 						}
 					}
+					
+					if(input.getKey("ctrl-h").clicked) player.health--;
+					
 					if (input.getKey("creative").clicked) ModeMenu.updateModeBools(2);
 					if (input.getKey("survival").clicked) ModeMenu.updateModeBools(1);
 					if (ModeMenu.score && input.getKey("shift-t").clicked) scoreTime = normSpeed * 5; // 5 seconds
