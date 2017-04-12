@@ -85,7 +85,7 @@ public class Player extends Mob {
 	public Player(Game game, InputHandler input) {
 		this.game = game;
 		this.input = input;
-		inventory = new Inventory(this);
+		inventory = new Inventory();
 		ac = acs;
 		
 		// these come from Mob.java
@@ -796,7 +796,7 @@ public class Player extends Mob {
 		game.setMultiplier(1);
 		
 		//make death chest
-		Chest dc = new Chest(true);
+		Chest dc = new DeathChest();
 		dc.x = this.x;
 		dc.y = this.y;
 		dc.inventory = this.inventory;
