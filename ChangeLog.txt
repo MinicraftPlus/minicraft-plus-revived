@@ -4,7 +4,7 @@ Minicraft+ version 1.9.1
 +Armor lasts longer.
 =Rate of hunger bar healing health depends on hunger; still happens when less than full health.
 -removed player's restriction on movement while being hurt
-
++ Added version number to save file
 
 
 Minicraft+ version 1.9

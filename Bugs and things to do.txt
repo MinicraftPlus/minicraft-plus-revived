@@ -57,7 +57,7 @@ I have a system in place to save custom key controls, but lack the menu to edit 
 
 *?*?*?* Questionable Improvements (But still seem important)*?*?*?*
 
-remove OptionsMenu from title screen? All the features, besides sound, perhaps, seem like they should be world-specific... well.... actually, they should be *user* specific... but "users" aren't a thing at the moment, so I just assume that different worlds are different users. That probably needs to change... for now, though, I'll just leave it be.
+Move OptionsMenu loads to a "profile" save, one that applies to all worlds, and that is loaded on startup. Whether the airwizard suit is worn will probably be part of these options, both because it makes sense, and becuase it simplifies things.
 
 *?*?*?*
 
