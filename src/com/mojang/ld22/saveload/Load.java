@@ -412,7 +412,7 @@ public class Load {
 		for(int i = 0; i < data.size(); i++) {
 			Entity newEntity = getEntity(((String)data.get(i)).substring(0, ((String)data.get(i)).indexOf("[")), player);
 			List info = Arrays.asList(((String)data.get(i)).substring(((String)data.get(i)).indexOf("[") + 1, ((String)data.get(i)).indexOf("]")).split(":"));
-			if(newEntity != null) {
+			if(newEntity != null) { // the method never returns null, but...
 				newEntity.x = Integer.parseInt((String)info.get(0));
 				newEntity.y = Integer.parseInt((String)info.get(1));
 				int currentlevel;
@@ -429,32 +429,40 @@ public class Load {
 					Chest chest = (Chest)newEntity;
 					boolean isDeathChest = chest instanceof DeathChest;
 					boolean isDungeonChest = chest instanceof DungeonChest;
+					List<String> chestInfo = info.subList(2, info.size()-1);
 					
-					for(int idx = 2; idx < info.size()-(isDeathChest||isDungeonChest?1:0); idx++) {
-						String itemData = (String)info.get(idx);
+					int endIdx = chestInfo.size()-(isDeathChest||isDungeonChest?1:0);
+					for(int idx = 0; idx < endIdx; idx++) {
+						String itemData = (String)chestInfo.get(idx);
+						if(worldVer.compareTo(new Version("1.9.1")) < 0) // if this world is before 1.9.1
+							if(itemData.equals("")) continue; // this skips any null items
+						//if(Game.debug) System.out.println("fetching chest item "+(idx+1)+" of "+endIdx+": \"" + itemData + "\"");
 						Item item = ListItems.getItem(itemData);
 						if (item instanceof ResourceItem) {
-							List curData = Arrays.asList((itemData + ";1").split(";")); // this appends ";1" to the end, meaning one item, to everything; but if it was already there, then it becomes the 3rd element in the list, which is ignored.
-							Item newItem = ListItems.getItem((String)curData.get(0));
-						} else if(!item.getName().equals("")) {
+							List<String> curData = Arrays.asList((itemData + ";1").split(";")); // this appends ";1" to the end, meaning one item, to everything; but if it was already there, then it becomes the 3rd element in the list, which is ignored.
+							ResourceItem ri = (ResourceItem)ListItems.getItem(curData.get(0));
+							ri.count = Integer.parseInt(curData.get(1));
+							chest.inventory.add(ri);
+						} else {//if(!item.getName().equals("")) {
 							//addToChest(chest, item);
-							if(item instanceof ResourceItem) {
+							/*if(item instanceof ResourceItem) {
 								ResourceItem ri = (ResourceItem)item;
 								chest.inventory.add(ri);
-							} else chest.inventory.add(item);
+							} else*/ chest.inventory.add(item);
 						}
+						//else System.out.println("skipped NULL chest item: \"" + itemData + "\"");
 					}
-					//if(idx == info.size() - 2) {
+					//if(idx == chestInfo.size() - 2) {
 					if (isDeathChest) {
-						((DeathChest)chest).time = Integer.parseInt(((String)info.get(info.size()-1)).replace("tl;", ""));
+						((DeathChest)chest).time = Integer.parseInt((chestInfo.get(chestInfo.size()-1)).replace("tl;", ""));//"tl;" is only for old save support
 					} else if (isDungeonChest) {
-						((DungeonChest)chest).isLocked = Boolean.parseBoolean((String)info.get(info.size()-1));
+						((DungeonChest)chest).isLocked = Boolean.parseBoolean(chestInfo.get(chestInfo.size()-1));
 					}
 					//}
 					
 					newEntity.level = Game.levels[Integer.parseInt((String)info.get(info.size() - 1))];
 					currentlevel = Integer.parseInt((String)info.get(info.size() - 1));
-					Game.levels[currentlevel].add(chest);//(chest instanceof Chest ? (Chest)chest : (DungeonChest)chest));
+					Game.levels[currentlevel].add(chest instanceof DeathChest ? (DeathChest)chest : chest instanceof DungeonChest ? (DungeonChest)chest : chest);
 				}
 				else if(newEntity instanceof Spawner) {
 					Spawner egg = (Spawner)newEntity;
@@ -523,7 +531,8 @@ public class Load {
 			case "Player": return (Entity)(player);
 			case "Knight": return (Entity)(new Knight(0));
 			case "Snake": return (Entity)(new Snake(0));
-			default : return new Entity();
+			default : if(Game.debug) System.out.println("LOAD: UNKNOWN ENTITY");
+				return new Entity();
 		}
 	}
 }
