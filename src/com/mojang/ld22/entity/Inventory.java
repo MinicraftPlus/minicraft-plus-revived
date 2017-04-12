@@ -13,12 +13,13 @@ import java.util.Random;
 public class Inventory {
 	private Random random = new Random();
 	private List<Item> items = new ArrayList<Item>(); // the list of items that is in the inventory.
-	public boolean playerinventory = false; // if this is a player inventory.
+	//public boolean playerinventory = false; // if this is a player inventory.
 	
-	public Inventory(Entity e) {
+	/*public Inventory(Entity e) {
 		if(e instanceof Player)
 			this.playerinventory = true;
-	}
+	}*/
+	public Inventory() {}
 	
 	public List<Item> getItems() {return items;}
 	public void clearInv() {items.clear();}
