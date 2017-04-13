@@ -37,7 +37,6 @@ Things I will probably add later, rather than sooner.
 
 * Auto-update system -- though, I might move this up, if this actually becomes something many people use.
 * Add back Experience bar, from version 1.4
-* Make the game window resizeable; full-screen _is_ a possibility; I changed the scale variable, and that worked! so now, I just need to black out the sides that aren't square... yeah, I know it isn't pretty, but it's _technically_ fullscreen...
 * Add some nice music! Maybe pixely...
 
 #### Far, far away...
@@ -53,6 +52,7 @@ If their implementation becomes more likely, they will be moved to a different s
 * Chickens
 * Minecarts
 * Milk & bad status effects
+* World editors
 
 
 ##### Random Note: LevelGen.java has it's own main method; it's used for debug purposes, to make images of the randomly generated maps that the class makes.

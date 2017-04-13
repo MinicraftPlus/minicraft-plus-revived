@@ -9,6 +9,8 @@ public class Resource {
 	
 	//public static ArrayList<Resource> resList = new ArrayList<Resource>();
 	
+	//format: public static Resource resource = new Resource("Name", x-sprite position + y-sprite position * 32, Color.get(-1,###,###,###));
+	
 	public static Resource wood = new Resource("Wood", 1 + 4 * 32, Color.get(-1, 200, 531, 430));
 	public static Resource stone = new Resource("Stone", 2 + 4 * 32, Color.get(-1, 111, 333, 555));
 	public static Resource flower = new PlantableResource("Flower", 0 + 4 * 32, Color.get(-1, 10, 444, 330), Tile.flower, Tile.grass, Tile.lightgrass);
@@ -54,11 +56,11 @@ public class Resource {
 	public static Resource steak = new FoodResource("Steak", 20 + 4 * 32, Color.get(-1, 100, 333, 211), 3, 5);
 	public static Resource goldapple = new FoodResource("G.Apple", 9 + 4 * 32, Color.get(-1, 110, 440, 550), 10, 5);
 	
-	public static Resource larmor = new ArmorResource("L.Armor", 3 + 12 * 32, Color.get(-1, 100, 211, 322), 3, 9);
-	public static Resource sarmor = new ArmorResource("S.Armor", 3 + 12 * 32, Color.get(-1, 10, 20, 30), 4, 9);
-	public static Resource iarmor = new ArmorResource("I.Armor", 3 + 12 * 32, Color.get(-1, 100, 322, 544), 5, 9);
-	public static Resource garmor = new ArmorResource("G.Armor", 3 + 12 * 32, Color.get(-1, 110, 330, 553), 7, 9);
-	public static Resource gemarmor = new ArmorResource("Gem Armor", 3 + 12 * 32, Color.get(-1, 101, 404, 545), 10, 9);
+	public static Resource larmor = new ArmorResource("L.Armor", 3 + 12 * 32, Color.get(-1, 100, 211, 322), 3, 1, 9);
+	public static Resource sarmor = new ArmorResource("S.Armor", 3 + 12 * 32, Color.get(-1, 10, 20, 30), 4, 2, 9);
+	public static Resource iarmor = new ArmorResource("I.Armor", 3 + 12 * 32, Color.get(-1, 100, 322, 544), 5, 3, 9);
+	public static Resource garmor = new ArmorResource("G.Armor", 3 + 12 * 32, Color.get(-1, 110, 330, 553), 7, 4, 9);
+	public static Resource gemarmor = new ArmorResource("Gem Armor", 3 + 12 * 32, Color.get(-1, 101, 404, 545), 10, 5, 9);
 	public static Resource redclothes = new ClothesResource("Red Clothes", 390, Color.get(-1, Color.rgb(50, 0, 0), Color.rgb(200, 0, 0), Color.rgb(250, 0, 0)), 200, 0, 0);
 	public static Resource blueclothes = new ClothesResource("Blue Clothes", 390, Color.get(-1, Color.rgb(0, 0, 50), Color.rgb(0, 0, 200), Color.rgb(0, 0, 250)), 0, 0, 200);
 	public static Resource greenclothes = new ClothesResource("Green Clothes", 390, Color.get(-1, Color.rgb(0, 50, 0), Color.rgb(0, 200, 0), Color.rgb(0, 250, 0)), 0, 200, 0);
@@ -105,9 +107,9 @@ public class Resource {
 	public static Resource scale = new Resource("Scale", 22 + 4 * 32, Color.get(-1, 10, 30, 20));
 	public static Resource shard = new Resource("Shard", 23 + 4 * 32, Color.get(-1, 222, 333, 444));
 
-	public final String name;
-	public final int sprite;
-	public final int color;
+	public final String name; // the name of the resource
+	public final int sprite; // the sprite location of the resource
+	public final int color; // the color of the resource
 
 	public Resource(String name, int sprite, int color) {
 		if (name.length() > 20)
@@ -116,7 +118,8 @@ public class Resource {
 		this.sprite = sprite;
 		this.color = color;
 	}
-
+	
+	/** Determines what happens when the resource is used on a certain tile; used in subclasses. */
 	public boolean interactOn(Tile tile, Level level, int xt, int yt, Player player, int attackDir) {
 		return false;
 	}

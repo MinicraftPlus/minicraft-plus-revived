@@ -7,7 +7,6 @@ import java.awt.event.MouseListener;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 public class InputHandler implements MouseListener, KeyListener {
 	//note: there needs to be an options menu for changing the key controls.
@@ -175,7 +174,6 @@ public class InputHandler implements MouseListener, KeyListener {
 		Key key; // make a new key to return at the end
 		keytext = keytext.toUpperCase(); // prevent errors due to improper "casing"
 		
-		String fullKeytext = keytext;
 		
 		if(getFromMap) { // if false, we assume that keytext is a physical key.
 			synchronized ("lock") {
@@ -184,6 +182,8 @@ public class InputHandler implements MouseListener, KeyListener {
 					keytext = keymap.get(keytext); // converts action name to physical key name
 			}
 		}
+		
+		String fullKeytext = keytext;
 		
 		if (keytext.contains("|")) {
 			/// multiple key possibilities exist for this action; so, combine the results of each one!
@@ -239,6 +239,8 @@ public class InputHandler implements MouseListener, KeyListener {
 			key.clicked = modMatch && mainKey.clicked;
 		}
 		else if(!modMatch) key = new Key();
+		
+		//if(key.down) System.out.println("processed key: " + keytext + " is down");
 		
 		return key; // return the Key object.
 	}

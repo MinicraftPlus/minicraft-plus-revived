@@ -1,14 +1,17 @@
 package com.mojang.ld22.saveload;
 
 import com.mojang.ld22.Game;
+import com.mojang.ld22.entity.AirWizard;
 import com.mojang.ld22.entity.Chest;
+import com.mojang.ld22.entity.DeathChest;
 import com.mojang.ld22.entity.DungeonChest;
 import com.mojang.ld22.entity.Entity;
 import com.mojang.ld22.entity.Inventory;
+import com.mojang.ld22.entity.ItemEntity;
 import com.mojang.ld22.entity.Mob;
 import com.mojang.ld22.entity.Player;
 import com.mojang.ld22.entity.Spawner;
-import com.mojang.ld22.gfx.Color;
+import com.mojang.ld22.entity.particle.Particle;
 import com.mojang.ld22.item.Item;
 import com.mojang.ld22.item.ResourceItem;
 import com.mojang.ld22.screen.LoadingMenu;
@@ -90,9 +93,9 @@ public class Save {
 	}
 	
 	public void writeGame(String filename, Game game) {
+		data.add(String.valueOf(Game.VERSION));
 		data.add(String.valueOf(Game.tickCount));
 		data.add(String.valueOf(Game.astime));
-		data.add(String.valueOf(Game.gamespeed));
 		data.add(String.valueOf(Game.autosave));
 		data.add(String.valueOf(OptionsMenu.isSoundAct));
 		writeToFile(location + filename + extention, data);
@@ -159,23 +162,27 @@ public class Save {
 		
 		data.add("[" + player.r + ";" + player.g + ";" + player.b + "]");
 		data.add(String.valueOf(Player.skinon));
+		if(player.curArmor != null) {
+			data.add(String.valueOf(player.armorDamageBuffer));
+			data.add(String.valueOf(player.curArmor.name));
+		}
 		writeToFile(location + filename + extention, data);
 	}
 	
 	public void writeInventory(String filename, Inventory inventory) {
 		if(player.activeItem != null) {
 			if(player.activeItem instanceof ResourceItem) {
-				data.add(player.activeItem.getName() + ";" + inventory.count(player.activeItem));
+				data.add(player.activeItem.getName() + ";" + ((ResourceItem)player.activeItem).count);
 			} else {
 				data.add(player.activeItem.getName());
 			}
 		}
 		
-		for(int i = 0; i < inventory.items.size(); i++) {
-			if(inventory.items.get(i) instanceof ResourceItem) {
-				data.add(((Item)inventory.items.get(i)).getName() + ";" + inventory.count((Item)inventory.items.get(i)));
+		for(int i = 0; i < inventory.invSize(); i++) {
+			if(inventory.get(i) instanceof ResourceItem) {
+				data.add(((Item)inventory.get(i)).getName() + ";" + ((ResourceItem)inventory.get(i)).count);
 			} else {
-				data.add(((Item)inventory.items.get(i)).getName());
+				data.add(((Item)inventory.get(i)).getName());
 			}
 		}
 		
@@ -188,49 +195,29 @@ public class Save {
 				Entity e = (Entity)Game.levels[l].entities.get(i);
 				String name = e.getClass().getName().replace("com.mojang.ld22.entity.", "");
 				String extradata = "";
-				if(e.col1 == Color.get(-1, 0, 4, 46)) {
-					name = e.getClass().getCanonicalName().replace("com.mojang.ld22.entity.", "") + "II";
-				}
+				
+				if(e instanceof ItemEntity || e instanceof Particle) continue; // don't even write ItemEntities or particle effects.
+				
+				if(e instanceof AirWizard && ((AirWizard)e).secondform)
+					name += "II";
 				
 				if(e instanceof Mob) {
-					Mob c = (Mob)e;
-					extradata = ":" + c.health + ":" + c.maxHealth + ":" + c.lvl;
+					Mob m = (Mob)e;
+					extradata = ":" + m.health + ":" + m.maxHealth + ":" + m.lvl;
 				}
 				
 				if(e instanceof Chest) {
-					String data = "";
-					Chest c1 = (Chest)e;
+					Chest chest = (Chest)e;
 					
-					for(int ii = 0; ii < c1.inventory.items.size(); ii++) {
-						if(c1.inventory.items.get(ii) instanceof ResourceItem) {
-							data += ((Item)c1.inventory.items.get(ii)).getName() + ";" + c1.inventory.count((Item)c1.inventory.items.get(ii)) + ":";
-						} else {
-							data += ((Item)c1.inventory.items.get(ii)).getName() + ":";
-						}
+					for(int ii = 0; ii < chest.inventory.invSize(); ii++) {
+						Item item = (Item)chest.inventory.get(ii);
+						extradata += ":" + item.getName();
+						if(item instanceof ResourceItem)
+							extradata += ";" + chest.inventory.count(item);
 					}
 					
-					extradata += ":" + data;
-					if(c1.isdeathchest) {
-						name = "DeathChest";
-						extradata += ":" + "tl;" + c1.time;
-					}
-				}
-				
-				if(e instanceof DungeonChest) {
-					String data = "";
-					DungeonChest dChest = (DungeonChest)e;
-					
-					for(int ii = 0; ii < dChest.inventory.items.size(); ii++) {
-						if(!((Item)dChest.inventory.items.get(ii)).getName().equals("") || !((Item)dChest.inventory.items.get(ii)).getName().equals(" ")) {
-							if(dChest.inventory.items.get(ii) instanceof ResourceItem) {
-								data += ((Item)dChest.inventory.items.get(ii)).getName() + ";" + dChest.inventory.count((Item)dChest.inventory.items.get(ii)) + ":";
-							} else {
-								data += ((Item)dChest.inventory.items.get(ii)).getName() + ":";
-							}
-						}
-					}
-					
-					extradata += ":" + data + ":" + dChest.islocked;
+					if(chest instanceof DeathChest) extradata += ":" + ((DeathChest)chest).time;
+					if(chest instanceof DungeonChest) extradata += ":" + ((DungeonChest)chest).isLocked;
 				}
 				
 				if(e instanceof Spawner) {
@@ -245,4 +232,3 @@ public class Save {
 		writeToFile(location + filename + extention, data);
 	}
 }
-	

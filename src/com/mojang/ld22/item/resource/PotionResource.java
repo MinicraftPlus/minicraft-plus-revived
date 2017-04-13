@@ -38,8 +38,8 @@ public class PotionResource extends Resource {
 		if(player.potioneffects.containsKey(type) != addEffect) { // if hasEffect, and is disabling, or doesn't have effect, and is enabling...
 			switch(type) {
 				// these are the only effects that actually do anything not accounted for in other parts of the code:
-				case "Speed": player.moveSpeed += (int)( addEffect ? 1 : (player.moveSpeed > 1 ? -1 : 0) ); break;
-				case "Time": Game.gamespeed *= (addEffect ? 0.5f : 2);
+				case "Speed": player.moveSpeed += (double)( addEffect ? 1 : (player.moveSpeed > 1 ? -1 : 0) ); break;
+				case "Time": Game.gamespeed *= (addEffect ? 0.5f : 2);// player.moveSpeed += (addEffect ? 1 : -1);
 			}
 		}
 		

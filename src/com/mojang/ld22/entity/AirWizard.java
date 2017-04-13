@@ -26,7 +26,7 @@ public class AirWizard extends Mob {
 	
 	public AirWizard(boolean secondform) {
 		folder = new File(location);
-		
+		lvl = secondform?2:1;
 		x = random.nextInt(64 * 16); // x position is anywhere between (0 to 1023) [Tile position (0 to 64)]
 		y = random.nextInt(64 * 16); // y position is anywhere between (0 to 1023) [Tile position (0 to 64)]
 		

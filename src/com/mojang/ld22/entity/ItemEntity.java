@@ -2,37 +2,33 @@ package com.mojang.ld22.entity;
 
 import com.mojang.ld22.gfx.Color;
 import com.mojang.ld22.gfx.Screen;
-import com.mojang.ld22.item.Item;
+import com.mojang.ld22.item.ResourceItem;
 import com.mojang.ld22.sound.Sound;
 
 public class ItemEntity extends Entity {
 	private int lifeTime; // the life time of this entity in the level
-	protected int walkDist = 0;
-	protected int dir = 0;
-	//public int hurtTime = 0;
-	protected int xKnockback, yKnockback;
-	public double xa, ya, za; // the x, y, and z acceleration
-	public double xx, yy, zz; // the x, y, and z coordinates
-	public Item item; // the item that this entity is based off of.
+	public double xa, ya, za; // the x, y, and z accelerations.
+	public double xx, yy, zz; // the x, y, and z coordinates; in double precision.
+	public ResourceItem item; // the item that this entity is based off of.
 	private int time = 0; // time it has lasted in the level
-
-	public ItemEntity(Item item, int x, int y) {
+	
+	public ItemEntity(ResourceItem item, int x, int y) {
 		this.item = item;
 		xx = this.x = x;
 		yy = this.y = y;
 		xr = 3; // x radius (size)
 		yr = 3; // y radius (size)
-
+		
 		zz = 2;
 		// random direction for each acceleration
 		xa = random.nextGaussian() * 0.3;
 		ya = random.nextGaussian() * 0.2;
 		za = random.nextFloat() * 0.7 + 1;
-
+		
 		lifeTime = 60 * 10 + random.nextInt(70); // sets the lifetime of the item. min = 600 ticks, max = 669 ticks.
 		// the idea was to have it last 10-11 seconds, I think.
 	}
-
+	
 	public void tick() {
 		time++;
 		if (time >= lifeTime) { // if the time is larger or equal to lifeTime then...
@@ -43,7 +39,7 @@ public class ItemEntity extends Entity {
 		xx += xa;
 		yy += ya;
 		zz += za;
-		if (zz < 0) { // if z pos is smaller than 0 (which is probably marks hitting the ground)
+		if (zz < 0) { // if z pos is smaller than 0 (which probably marks hitting the ground)
 			zz = 0; // set it to zero
 			// multiply the accelerations by an amount:
 			za *= -0.5;
@@ -70,8 +66,6 @@ public class ItemEntity extends Entity {
 		// Basically, this accounts for any error in the whole double-to-int position conversion thing:
 		xx += gotx - expectedx;
 		yy += goty - expectedy;
-
-		//if (hurtTime > 0) hurtTime--; // what's hurtTime even for?
 	}
 
 	public boolean isBlockableBy(Mob mob) {

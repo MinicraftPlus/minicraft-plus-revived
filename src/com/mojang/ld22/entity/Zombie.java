@@ -11,7 +11,7 @@ import com.mojang.ld22.screen.OptionsMenu;
 // TODO compress the enemy mobs into an Enemy class... further, similar compression can happen in many places...
 public class Zombie extends Mob {
 	int xa, ya;
-	private int lvl; // how tough the zombie is
+	//private int lvl; // how tough the zombie is
 	private int randomWalkTime = 0; //time till next walk
 
 	public Zombie(int lvl) {
@@ -26,26 +26,7 @@ public class Zombie extends Mob {
 		x = random.nextInt(64 * 16);
 		y = random.nextInt(64 * 16);
 		if (ModeMenu.creative) health = maxHealth = 1;
-		else health = maxHealth = lvl * lvl * 5*Math.pow(2, OptionsMenu.diff-1); // 5, 10, 20
-		/*
-		if (OptionsMenu.diff == OptionsMenu.easy) {
-			
-			
-		}
-
-		if (OptionsMenu.diff == OptionsMenu.norm) {
-			x = random.nextInt(64 * 16);
-			y = random.nextInt(64 * 16);
-			if (ModeMenu.creative) health = maxHealth = 1;
-			else health = maxHealth = lvl * lvl * 10;
-		}
-
-		if (OptionsMenu.diff == OptionsMenu.hard) {
-			x = random.nextInt(64 * 16);
-			y = random.nextInt(64 * 16);
-			if (ModeMenu.creative) health = maxHealth = 1;
-			else health = maxHealth = lvl * lvl * 20;
-		}*/
+		else health = maxHealth = lvl * lvl * 5*((Double)(Math.pow(2, OptionsMenu.diff-1))).intValue(); // 5, 10, 20
 	}
 
 	public void tick() {
@@ -195,13 +176,14 @@ public class Zombie extends Mob {
 	}
 
 	protected void touchedBy(Entity entity) { // if the entity touches the player
+		super.touchedBy(entity);
 		// hurts the player, damage is based on lvl.
-		if (OptionsMenu.diff == OptionsMenu.easy) {
-			if (entity instanceof Player) {
+		if(entity instanceof Player) {
+			if (OptionsMenu.diff != OptionsMenu.hard)
 				entity.hurt(this, lvl, dir);
-			}
+			else entity.hurt(this, lvl * 2, dir);
 		}
-		if (OptionsMenu.diff == OptionsMenu.norm) {
+		/*if (OptionsMenu.diff == OptionsMenu.norm) {
 			if (entity instanceof Player) {
 				entity.hurt(this, lvl, dir);
 			}
@@ -210,7 +192,7 @@ public class Zombie extends Mob {
 			if (entity instanceof Player) {
 				entity.hurt(this, lvl * 2, dir);
 			}
-		}
+		}*/
 	}
 
 	public boolean canWool() {
@@ -243,11 +225,7 @@ public class Zombie extends Mob {
 		if (OptionsMenu.diff == OptionsMenu.hard) {
 			int count = random.nextInt(1) + 1;
 			for (int i = 0; i < count; i++) {
-				level.add(
-						new ItemEntity(
-								new ResourceItem(Resource.cloth),
-								x + random.nextInt(11) - 5,
-								y + random.nextInt(11) - 5));
+				level.add(new ItemEntity(new ResourceItem(Resource.cloth), x + random.nextInt(11) - 5, y + random.nextInt(11) - 5));
 			}
 		}
 		
@@ -267,10 +245,11 @@ public class Zombie extends Mob {
 		}
 		
 		if (level.player != null) { // if player is on zombie level
-			level.player.score += (50 * lvl) * Game.multiplyer; // add score for zombie death
+			level.player.score += (50 * lvl) * Game.multiplier; // add score for zombie death
 		}
-
-		Game.multiplyer++; // add to multiplier
-		Game.multiplyertime = Game.mtm -= 5; // ?
+		
+		// TODO implement Game.setMultiplier (maybe make it addMultiplier() and resetMultiplier()).
+		Game.multiplier++; // add to multiplier
+		Game.multipliertime = Game.mtm -= 5;
 	}
 }

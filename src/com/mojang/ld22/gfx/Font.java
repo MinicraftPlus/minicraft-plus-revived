@@ -54,7 +54,8 @@ public class Font {
 
 		draw(title, screen, x0 * 8 + 8, y0 * 8, Color.get(5, 5, 5, 550));
 	}
-
+	
+	/// renders crafting menu frame.
 	public static void rendercraftFrame(Screen screen, String title, int x0, int y0, int x1, int y1) {
 		for (int y = y0; y <= y1; y++) {
 			for (int x = x0; x <= x1; x++) {
@@ -77,7 +78,7 @@ public class Font {
 		draw(title, screen, x0 * 8 + 8, y0 * 8, Color.get(300, 300, 300, 555));
 	}
 	
-	///Oh, pooh, David never explained this...
+	/// self-explanitory; renders book frame.
 	public static void renderFrameBook(Screen screen, String title, int x0, int y0, int x1, int y1) {
 		for (int y = y0; y <= y1; y++) {
 			for (int x = x0; x <= x1; x++) {
@@ -98,5 +99,13 @@ public class Font {
 
 			draw(title, screen, x0 * 8 + 8, y0 * 8, Color.get(-1, 222, 222, 222));
 		}
+	}
+	
+	public static int textWidth(String text) {
+		return text.length() * 8;
+	}
+	
+	public static void drawCentered(String msg, Screen screen, int y, int color) {
+		draw(msg, screen, screen.centertext(msg), y, color);
 	}
 }

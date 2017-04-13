@@ -1,11 +1,14 @@
 	---Quick TODO's---
 -continue commeting code
 -(see note about canWool in Entity.java)
+-display current player score in score mode
 
 Note to self: for more little bugs/ideas/concerns, search code for "TODO"
 -----------------------------------------------------------------------------------
 
 	####BUGS####
+####
+Mobs hits prevent you from moving, and Skeleton arrows go through trees (only Player arrows should go through trees, in debug mode).
 ####
 Sound effects don't always play when they should; mostly it seems when other sounds should be on at the same time.
 ####
@@ -27,6 +30,14 @@ wierd unreprodoucable glitch: game screen went all gray for a second after press
 	****IDEAS(that should probably be implemented)****
 ****
 
+Make respawn without bed += 20 blocks x/y of last spawn.
+
+****
+
+Make a Chest class, with sub-classes DungeonChest and DeathChest.
+
+****
+
 There's a lot to do in the Tile classes... many methods have many unnecessary parameters... and the torch effects account for all the "light" and "torch" static tiles in Tile.java. I think I'll make a HashMap out of that list, as well.
 
 ****
@@ -42,15 +53,11 @@ I have a system in place to save custom key controls, but lack the menu to edit 
 
 ****
 
-Make the loading system more forgiving, so that if I add a requirement to the save files, the old ones will still work. The idea is that when it expects 5 options and only finds 4, it just keeps those at default.
-
-****
-
 -----------------------------------------------------------------------------------
 
 *?*?*?* Questionable Improvements (But still seem important)*?*?*?*
 
-remove OptionsMenu from title screen? All the features, besides sound, perhaps, seem like they should be world-specific... well.... actually, they should be *user* specific... but "users" aren't a thing at the moment, so I just assume that different worlds are different users. That probably needs to change... for now, though, I'll just leave it be.
+Move OptionsMenu loads to a "profile" save, one that applies to all worlds, and that is loaded on startup. Whether the airwizard suit is worn will probably be part of these options, both because it makes sense, and becuase it simplifies things.
 
 *?*?*?*
 
@@ -65,3 +72,12 @@ I don't know...
 
 *?*?*?*
 
+Fix up the write system, here and there: Menu writeCentered() should write the given text in the center x of the menu window; Screen writeCentered() should write a string centered in the screen's x. Font should not do anything with centering, instead, maybe it should have a drawShadowed() method? It should have a default text color, too, maybe...
+How about, just overload them all... whatever's provided, is used. Though, since they're all ints, that may not work too well...
+
+*?*?*?*
+
+Change saving/loading system dramatically... instead of a simple array, make loadFromFile load HashMaps! I probably love them too much... but that way, future changes would be WAY easier to account for; instead of changing ALL the indexes, I could just stop worrying about a name! or change it. But... this has it's downsides. Entities wouldn't go over well; they really are better off as lists...
+Hey! maybe I can keep that one, and just make another loader for loadGame and such! That might work!
+
+*?*?*?*

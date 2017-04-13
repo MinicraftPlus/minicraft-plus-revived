@@ -7,11 +7,11 @@ import com.mojang.ld22.entity.Bed;
 import com.mojang.ld22.entity.Chest;
 import com.mojang.ld22.entity.Cow;
 import com.mojang.ld22.entity.Creeper;
+import com.mojang.ld22.entity.DeathChest;
 import com.mojang.ld22.entity.DungeonChest;
 import com.mojang.ld22.entity.Enchanter;
 import com.mojang.ld22.entity.Entity;
 import com.mojang.ld22.entity.Furnace;
-import com.mojang.ld22.entity.Furniture;
 import com.mojang.ld22.entity.GoldLantern;
 import com.mojang.ld22.entity.Inventory;
 import com.mojang.ld22.entity.IronLantern;
@@ -33,6 +33,7 @@ import com.mojang.ld22.entity.Zombie;
 import com.mojang.ld22.item.Item;
 import com.mojang.ld22.item.ListItems;
 import com.mojang.ld22.item.ResourceItem;
+import com.mojang.ld22.item.resource.ArmorResource;
 import com.mojang.ld22.item.resource.PotionResource;
 import com.mojang.ld22.level.tile.Tile;
 import com.mojang.ld22.screen.LoadingMenu;
@@ -55,15 +56,26 @@ public class Load {
 	List data;
 	List extradata;
 	public boolean hasloadedbigworldalready;
+	Version currentVer, worldVer;
+	boolean oldSave = false;
 	
 	public Load(Game game, String worldname) {
+		currentVer = new Version(Game.VERSION);
 		folder = new File(location);
 		extention = ".miniplussave";
 		data = new ArrayList();
 		extradata = new ArrayList();
 		hasloadedbigworldalready = false;
 		location += "/saves/" + worldname + "/";
-		loadGame("Game", game);
+		
+		worldVer = null;
+		File testFile = new File(location + "KeyPrefs" + extention);
+		if(!testFile.exists()) {
+			worldVer = new Version("1.8");
+			oldSave = true;
+		}
+		
+		loadGame("Game", game); // more of the version will be determined here
 		loadPrefs("KeyPrefs", game);
 		loadWorld("Level");
 		loadPlayer("Player", game.player);
@@ -78,6 +90,62 @@ public class Load {
 			}
 		}
 		
+	}
+	
+	class Version implements Comparable {
+		public Integer make, major, minor, dev;
+		
+		public Version(String version) {
+			String[] nums = version.split("\\.");
+			try {
+				if(nums.length > 0) make = Integer.parseInt(nums[0]);
+				else make = 0;
+				
+				if(nums.length > 1) major = Integer.parseInt(nums[1]);
+				else major = 0;
+				
+				String min;
+				if(nums.length > 2) min = nums[2];
+				else min = "";
+				
+				if(min.contains("-")) {
+					String[] mindev = min.split("-");
+					minor = Integer.parseInt(mindev[0]);
+					dev = Integer.parseInt(mindev[1].replace("pre", "").replace("dev", ""));
+				} else {
+					if(!min.equals("")) minor = Integer.parseInt(min);
+					else minor = 0;
+					dev = 0;
+				}
+			} catch(NumberFormatException ex) {
+				System.out.println("INVALID version number: " + version);
+			} catch(Exception ex) {
+				ex.printStackTrace();
+			}
+		}
+		
+		// the returned value of this method (-1, 0, or 1) is determined by whether this object is less than, equal to, or greater than the specified object.
+		public int compareTo(Object other) throws NullPointerException, ClassCastException {
+			if(other == null) throw new NullPointerException();
+			if(other instanceof Version == false) { // if the passed object is not a Version...
+				throw new ClassCastException("Cannot compare type Version with type " + other.getClass().getTypeName());
+			}
+			Version ov = (Version)other;
+			
+			if(make != ov.make) return make.compareTo(ov.make);
+			else if(major != ov.major) return major.compareTo(ov.major);
+			else if(minor != ov.minor) return minor.compareTo(ov.minor);
+			else if(dev != ov.dev) {
+				if(dev == 0) return 1; //0 is the last "dev" version, as it is not a dev.
+				else if(ov.dev == 0) return -1;
+				else return dev.compareTo(ov.dev);
+			}
+			else return 0; // the versions are equal.
+		}
+		
+		public String toString() {
+			return make + "." + major + "." + minor + (dev == 0 ? "" : "-dev" + dev);
+		}
 	}
 	
 	public void loadFromFile(String filename) {
@@ -137,19 +205,41 @@ public class Load {
 			}
 			
 		}
-		
 	}
 	
 	public void loadGame(String filename, Game game) {
 		loadFromFile(location + filename + extention);
-		Game.setTime(Integer.parseInt((String)data.get(0)));
-		Game.astime = Integer.parseInt((String)data.get(1));
-		Game.gamespeed = Float.parseFloat((String)data.get(2));
-		Game.autosave = Boolean.parseBoolean((String)data.get(3));
-		OptionsMenu.isSoundAct = Boolean.parseBoolean((String)data.get(4));
+		boolean hasVersion = ((String)data.get(0)).contains(".");
+		if(hasVersion) {
+			worldVer = new Version((String)data.get(0)); // gets the world version
+			Game.setTime(Integer.parseInt((String)data.get(1)));
+			Game.astime = Integer.parseInt((String)data.get(2));
+			Game.autosave = Boolean.parseBoolean((String)data.get(3));
+			OptionsMenu.isSoundAct = Boolean.parseBoolean((String)data.get(4));
+		}
+		else {
+			if(data.size() == 5) {
+				worldVer = new Version("1.9");
+				Game.setTime(Integer.parseInt((String)data.get(0)));
+				Game.astime = Integer.parseInt((String)data.get(1));
+				Game.autosave = Boolean.parseBoolean((String)data.get(3));
+				OptionsMenu.isSoundAct = Boolean.parseBoolean((String)data.get(4));
+			} else { // version == 1.8?
+				if(!oldSave) {
+					System.out.println("UNEXPECTED WORLD VERSION");
+					worldVer = new Version("1.8.1");
+				}
+				// for backwards compatibility
+				Game.astime = Integer.parseInt((String)this.data.get(1));
+				game.player.ac = Integer.parseInt((String)this.data.get(3));
+				Game.tickCount = Integer.parseInt((String)this.data.get(0));
+				Game.autosave = false;
+			}
+		}
 	}
 	
 	public void loadPrefs(String filename, Game game) {
+		if(oldSave) return;
 		loadFromFile(location + filename + extention);
 		Iterator keys = data.iterator();
 		while(keys.hasNext()) {
@@ -182,13 +272,28 @@ public class Load {
 		Player.spawny = Integer.parseInt((String)data.get(3));
 		player.health = Integer.parseInt((String)data.get(4));
 		player.armor = Integer.parseInt((String)data.get(5));
-		Player.score = Integer.parseInt((String)data.get(6));
-		player.ac = Integer.parseInt((String)data.get(7));
 		
-		Game.currentLevel = Integer.parseInt((String)data.get(8));
+		String modedata;
+		if(!oldSave) {
+			if(data.size() >= 14) {
+				if(worldVer == null) worldVer = new Version("1.9.1-pre1");
+				player.armorDamageBuffer = Integer.parseInt((String)data.get(13));
+				player.curArmor = (ArmorResource)(((ResourceItem)ListItems.getItem((String)data.get(14))).resource);
+			} else player.armor = 0;
+			
+			player.ac = Integer.parseInt((String)data.get(7));
+			Game.currentLevel = Integer.parseInt((String)data.get(8));
+			modedata = (String)data.get(9);
+			
+		} else {
+			// old, 1.8 save.
+			Game.currentLevel = Integer.parseInt((String)data.get(7));
+			modedata = (String)data.get(8);
+		}
+		
+		Player.score = Integer.parseInt((String)data.get(6));
 		player.game.level = Game.levels[Game.currentLevel];
 		
-		String modedata = (String)data.get(9);
 		int mode;
 		if(modedata.contains(";")) {
 			mode = Integer.parseInt(modedata.substring(0, modedata.indexOf(";")));
@@ -202,53 +307,76 @@ public class Load {
 		
 		ModeMenu.updateModeBools(mode);
 		
-		if(!((String)data.get(10)).equals("PotionEffects[]")) {
-			String potiondata = ((String)data.get(10)).replace("PotionEffects[", "").replace("]", "");
+		boolean hasEffects;
+		int potionIdx = 10;
+		if(oldSave) {
+			hasEffects = data.size() > 10 && ((String)data.get(data.size()-2)).contains("PotionEffects[");
+			potionIdx = data.size() - 2;
+		} else
+			hasEffects = !((String)data.get(10)).equals("PotionEffects[]"); // newer save
+		
+		if(hasEffects) {
+			String potiondata = ((String)data.get(potionIdx)).replace("PotionEffects[", "").replace("]", "");
 			List effects = Arrays.asList(potiondata.split(":"));
 			
 			for(int i = 0; i < effects.size(); i++) {
 				List effect = Arrays.asList(((String)effects.get(i)).split(";"));
-				PotionResource.applyPotion(player, (String)effect.get(0), Integer.parseInt((String)effect.get(1)));
+				String pName = (String)effect.get(0);
+				if(oldSave) pName = pName.replace("P.", "Potion");
+				PotionResource.applyPotion(player, pName, Integer.parseInt((String)effect.get(1)));
 			}
 		}
 		
-		String colors = ((String)data.get(11)).replace("[", "").replace("]", "");
+		String colors = ((String)data.get(oldSave?data.size()-1:11)).replace("[", "").replace("]", "");
 		List color = Arrays.asList(colors.split(";"));
 		player.r = Integer.parseInt((String)color.get(0));
 		player.g = Integer.parseInt((String)color.get(1));
 		player.b = Integer.parseInt((String)color.get(2));
 		
-		Player.skinon = Boolean.parseBoolean((String)data.get(12));
+		if(!oldSave) Player.skinon = Boolean.parseBoolean((String)data.get(12));
+		else Player.skinon = false;
 	}
 	
 	public void loadInventory(String filename, Inventory inventory) {
 		loadFromFile(location + filename + extention);
-		inventory.items.clear();
+		inventory.clearInv();
 		
 		for(int i = 0; i < data.size(); i++) {
 			String item = (String)data.get(i);
-			if(item.contains(";")) {
-				item = item.substring(0, item.lastIndexOf(";"));
-			}
 			
 			if(ListItems.getItem(item) instanceof ResourceItem) {
-				String name = (String)data.get(i) + ";0";
-				List curData = Arrays.asList(name.split(";"));
-				Item newItem = ListItems.getItem((String)curData.get(0));
+				if(oldSave && i == 0) item = item.replace(";0", ";1");
+				List curData = Arrays.asList(item.split(";"));
+				String itemName = (String)curData.get(0);
+				if(oldSave) itemName = subOldItemName(itemName);
+				
+				Item newItem = ListItems.getItem(itemName);
 				
 				for(int ii = 0; ii < Integer.parseInt((String)curData.get(1)); ii++) {
 					if(newItem instanceof ResourceItem) {
 						ResourceItem resItem = new ResourceItem(((ResourceItem)newItem).resource);
 						inventory.add(resItem);
 					} else {
-						inventory.items.add(newItem);
+						inventory.add(newItem);
 					}
 				}
 			} else {
-				inventory.items.add(ListItems.getItem((String)data.get(i)));
+				if(oldSave) item = subOldItemName(item);
+				Item toAdd = ListItems.getItem(item);
+				inventory.add(toAdd);
 			}
 		}
+	}
+	
+	private String subOldItemName(String oldName) {
+		if(oldName.contains(";")) oldName = oldName.substring(0, oldName.indexOf(";"));
+		oldName = oldName.replace("P.", "Potion");
 		
+		switch(oldName) {
+			case "Fish Rod": return "Fishing Rod";
+			
+			default: return oldName;
+		}
 	}
 	
 	public void loadEntities(String filename, Player player) {
@@ -261,7 +389,7 @@ public class Load {
 		for(int i = 0; i < data.size(); i++) {
 			Entity newEntity = getEntity(((String)data.get(i)).substring(0, ((String)data.get(i)).indexOf("[")), player);
 			List info = Arrays.asList(((String)data.get(i)).substring(((String)data.get(i)).indexOf("[") + 1, ((String)data.get(i)).indexOf("]")).split(":"));
-			if(newEntity != null) {
+			if(newEntity != null) { // the method never returns null, but...
 				newEntity.x = Integer.parseInt((String)info.get(0));
 				newEntity.y = Integer.parseInt((String)info.get(1));
 				int currentlevel;
@@ -273,53 +401,38 @@ public class Load {
 					mob.level = Game.levels[Integer.parseInt((String)info.get(5))];
 					currentlevel = Integer.parseInt((String)info.get(5));
 					Game.levels[currentlevel].add(mob);
-				} else if(newEntity instanceof Chest || newEntity instanceof DungeonChest) {
-					Furniture chest = (Furniture)newEntity;
+				} else if(newEntity instanceof Chest) {
+					Chest chest = (Chest)newEntity;
+					boolean isDeathChest = chest instanceof DeathChest;
+					boolean isDungeonChest = chest instanceof DungeonChest;
+					List<String> chestInfo = info.subList(2, info.size()-1);
 					
-					for(int idx = 2; idx < info.size(); idx++) {
-						String itemData = (String)info.get(idx);
+					int endIdx = chestInfo.size()-(isDeathChest||isDungeonChest?1:0);
+					for(int idx = 0; idx < endIdx; idx++) {
+						String itemData = (String)chestInfo.get(idx);
+						if(worldVer.compareTo(new Version("1.9.1")) < 0) // if this world is before 1.9.1
+							if(itemData.equals("")) continue; // this skips any null items
 						Item item = ListItems.getItem(itemData);
 						if (item instanceof ResourceItem) {
-							List curData = Arrays.asList((itemData + ";0").split(";"));
-							Item newItem = ListItems.getItem((String)curData.get(0));
-							
-							for(int ii = 0; ii < Integer.parseInt((String)curData.get(1)); ii++) {
-								if(newItem instanceof ResourceItem) {
-									ResourceItem resItem = new ResourceItem(((ResourceItem)newItem).resource);
-									addToChest(chest, resItem);
-								} else if(!item.getName().equals("")) {
-									addToChest(chest, item);
-								}
-							}
-						} else if(!item.getName().equals("")) {
-							addToChest(chest, item);
-						}
-						
-						if(idx == info.size() - 2) {
-							if (chest instanceof Chest && itemData.contains("tl;")) {
-								((Chest)chest).time = Integer.parseInt(itemData.replace("tl;", ""));
-							} if (chest instanceof DungeonChest && (itemData.contains("true") || itemData.contains("false"))) {
-								((DungeonChest)chest).islocked = Boolean.parseBoolean(itemData);
-							}
+							List<String> curData = Arrays.asList((itemData + ";1").split(";")); // this appends ";1" to the end, meaning one item, to everything; but if it was already there, then it becomes the 3rd element in the list, which is ignored.
+							ResourceItem ri = (ResourceItem)ListItems.getItem(curData.get(0));
+							ri.count = Integer.parseInt(curData.get(1));
+							chest.inventory.add(ri);
+						} else {
+							chest.inventory.add(item);
 						}
 					}
 					
-					if (chest instanceof DungeonChest) {
-						DungeonChest dChest = (DungeonChest)chest;
-						ArrayList<String> contents = new ArrayList<String>();
-						for(int ii = 0; ii < dChest.inventory.items.size(); ii++) {
-							if(!((Item)dChest.inventory.items.get(ii)).getName().equals(" ") && !((Item)dChest.inventory.items.get(ii)).getName().equals("") && !((Item)dChest.inventory.items.get(ii)).getName().equals("	")) {
-								contents.add(((Item)dChest.inventory.items.get(ii)).getName());
-							} else {
-								dChest.inventory.items.remove(ii);
-							}
-						}
-						contents.add("/x=" + dChest.x / 16 + "/y=" + dChest.y / 16);
+					if (isDeathChest) {
+						((DeathChest)chest).time = Integer.parseInt((chestInfo.get(chestInfo.size()-1)).replace("tl;", "")); // "tl;" is only for old save support
+					} else if (isDungeonChest) {
+						((DungeonChest)chest).isLocked = Boolean.parseBoolean(chestInfo.get(chestInfo.size()-1));
 					}
+					
 					
 					newEntity.level = Game.levels[Integer.parseInt((String)info.get(info.size() - 1))];
 					currentlevel = Integer.parseInt((String)info.get(info.size() - 1));
-					Game.levels[currentlevel].add((chest instanceof Chest ? (Chest)chest : (DungeonChest)chest));
+					Game.levels[currentlevel].add(chest instanceof DeathChest ? (DeathChest)chest : chest instanceof DungeonChest ? (DungeonChest)chest : chest);
 				}
 				else if(newEntity instanceof Spawner) {
 					Spawner egg = (Spawner)newEntity;
@@ -329,31 +442,13 @@ public class Load {
 					egg.setMob((String)info.get(2));
 					currentlevel = Integer.parseInt((String)info.get(info.size() - 1));
 					Game.levels[currentlevel].add(egg);
-				} else {
+				}
+				else {
 					newEntity.level = Game.levels[Integer.parseInt((String)info.get(2))];
 					currentlevel = Integer.parseInt((String)info.get(2));
 					Game.levels[currentlevel].add(newEntity);
 				}
 			} // end of entity not null conditional
-		}
-	}
-	
-	private void addToChest(Furniture box, Item toAdd) {
-		if(box instanceof Chest) {
-			Chest chest = (Chest)box;
-			if(toAdd instanceof ResourceItem) {
-				ResourceItem item = (ResourceItem)toAdd;
-				chest.inventory.items.add(item);
-			} else
-				chest.inventory.items.add(toAdd);
-		}
-		else if (box instanceof DungeonChest) {
-			DungeonChest dChest = (DungeonChest)box;
-			if(toAdd instanceof ResourceItem) {
-				ResourceItem item = (ResourceItem)toAdd;
-				dChest.inventory.items.add(item);
-			} else
-				dChest.inventory.items.add(toAdd);
 		}
 	}
 	
@@ -370,7 +465,7 @@ public class Load {
 			case "AirWizard": return (Entity)(new AirWizard(false));
 			case "AirWizardII": return (Entity)(new AirWizard(true));
 			case "Chest": return (Entity)(new Chest());
-			case "DeathChest": return (Entity)(new Chest(true));
+			case "DeathChest": return (Entity)(new DeathChest());
 			case "DungeonChest": return (Entity)(new DungeonChest());
 			case "Spawner": return (Entity)(new Spawner("Zombie", 1));
 			case "Anvil": return (Entity)(new Anvil());
@@ -386,7 +481,8 @@ public class Load {
 			case "Player": return (Entity)(player);
 			case "Knight": return (Entity)(new Knight(0));
 			case "Snake": return (Entity)(new Snake(0));
-			default : return new Entity();
+			default : if(Game.debug) System.out.println("LOAD: UNKNOWN ENTITY: " + string);
+				return new Entity();
 		}
 	}
 }

@@ -9,7 +9,7 @@ import com.mojang.ld22.gfx.Screen;
 public class DeadMenu extends Menu {
 	private int inputDelay = 60;
 	// this is an IMPORTANT bool, determines if the user should respawn or not. :)
-	public static boolean shudrespawn;
+	public static boolean shouldRespawn;
 
 	public DeadMenu() {}
 
@@ -18,13 +18,13 @@ public class DeadMenu extends Menu {
 			inputDelay--;
 		} else if (input.getKey("escape").clicked) {
 			game.setMenu(new TitleMenu());
-			shudrespawn = false;
+			shouldRespawn = false;
 		}
 		//This is so that if the user presses x @ respawn menu, they respawn (what a concept)
 		if (ModeMenu.hardcore == false) {
 			if (input.getKey("enter").clicked) {
 				//This makes it so the player respawns
-				shudrespawn = true;
+				shouldRespawn = true;
 				//reset game function
 				game.resetGame();
 				//sets the menu to nothing
@@ -38,7 +38,7 @@ public class DeadMenu extends Menu {
 		Font.draw("You died! Aww!", screen, 16, 32, Color.get(-1, 555, 555, 555));
 		
 		// the current time elapsed in the game.
-		int seconds = game.gameTime / 60;
+		int seconds = game.gameTime / game.normSpeed;
 		int minutes = seconds / 60;
 		int hours = minutes / 60;
 		minutes %= 60;

@@ -55,9 +55,6 @@ public class Mob extends Entity {
 		if (isWooling()) { // same as above, for wool
 			if (woolTimer++ % 2 == 0) return true;
 		}
-		/*if (isLight()) { // this seems useless.
-			if (lightTimer++ % 8000 == 0) return true;
-		}*/
 		
 		/// These 4 following conditionals check the direction of the knockback, move the Mob accordingly, and bring knockback closer to 0.
 		if (xKnockback < 0) { // If we have negative horizontal knockback (to the left)
@@ -76,7 +73,7 @@ public class Mob extends Entity {
 			move2(0, 1);
 			yKnockback--;
 		}
-		if (hurtTime > 0) return true; // If we have been hurt recently and haven't yet cooled down, don't continue with the movement (so only knockback will be performed)
+		if (hurtTime > 0 && this instanceof Player == false) return true; // If we have been hurt recently and haven't yet cooled down, don't continue with the movement (so only knockback will be performed)
 		
 		if (xa != 0 || ya != 0) { // Only if horizontal or vertical movement is actually happening
 			walkDist++; // Increment our walking/movement counter

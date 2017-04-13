@@ -1,4 +1,3 @@
-//new class, no comments.
 package com.mojang.ld22.entity;
 
 import com.mojang.ld22.gfx.Color;

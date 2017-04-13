@@ -12,8 +12,7 @@ public class Arrow extends Entity {
 	private final int speed = 2;
 	private int time;
 	private int damage;
-	private Mob owner;
-	private Player player;
+	public Mob owner;
 	private int color;
 	private int speeddmg;
 	private boolean edmg = false;
@@ -77,12 +76,7 @@ public class Arrow extends Entity {
 					}
 				}
 			}
-			/*
-			if(owner instanceof Player) {
-				level.getTile(x / 16, y / 16).interact(level, x, y, (Player)owner, ListItems.gempickaxe, ((Player)owner).attackDir);
-				level.getTile(x / 16, y / 16).interact(level, x, y, (Player)owner, ListItems.gemshovel, ((Player)owner).attackDir);
-			}
-			*/
+			
 			if (level.getTile(x / 16, y / 16).mayPass(level, x / 16, y / 16, this)
 					|| level.getTile(x / 16, y / 16).connectsToWater
 					|| level.getTile(x / 16, y / 16).id == 16) {

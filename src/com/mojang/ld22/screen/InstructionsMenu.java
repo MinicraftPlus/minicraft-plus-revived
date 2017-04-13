@@ -1,7 +1,6 @@
 package com.mojang.ld22.screen;
 
 import com.mojang.ld22.gfx.Color;
-import com.mojang.ld22.gfx.Font;
 import com.mojang.ld22.gfx.Screen;
 
 public class InstructionsMenu extends Menu {
@@ -53,16 +52,4 @@ public class InstructionsMenu extends Menu {
 	}
 	
 	private int textWidth(String text) {return text.length() * 8;}
-	/*
-	class Rectangle {
-		public int minX, int maxX, int minY, int maxY;
-		
-		public Rectangle(int minX, int maxX, int minY, int maxY) {
-			this.minX = minX;
-			this.maxX = maxX;
-			this.minY = minY;
-			this.maxY = maxY;
-		}
-	}
-	*/
 }

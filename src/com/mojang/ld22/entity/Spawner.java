@@ -1,5 +1,6 @@
 package com.mojang.ld22.entity;
 
+import com.mojang.ld22.Game;
 import com.mojang.ld22.entity.particle.FireParticle;
 import com.mojang.ld22.entity.particle.TextParticle;
 import com.mojang.ld22.gfx.Color;
@@ -58,9 +59,9 @@ public class Spawner extends Furniture {
 			newmob.x = randX * 16;
 			newmob.y = randY * 16;
 			//(newmob).hasspawned = true;
-			if (com.mojang.ld22.Game.debug) System.out.println("spawning new " + mob + " on level "+lvl+": x=" + (newmob.x/16)+" y="+(newmob.y/16) + "...");
+			if (Game.debug) System.out.println("spawning new " + mob + " on level "+lvl+": x=" + (newmob.x/16)+" y="+(newmob.y/16) + "...");
 			level.add(newmob);
-			
+			Sound.monsterHurt.play();
 			for(int i = 0; i < 6; i++) {
 				randX = rnd.nextInt(16);
 				randY = rnd.nextInt(12);

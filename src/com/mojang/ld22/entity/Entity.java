@@ -140,7 +140,10 @@ public class Entity {
 	}
 	
 	/** if this entity is touched by another entity (extended by sub-classes) */
-	protected void touchedBy(Entity entity) {}
+	protected void touchedBy(Entity entity) {
+		//if(this instanceof Player == false && this instanceof Mob && entity instanceof Player)
+			//System.out.println("player touched " + getClass().getName().replace("com.mojang.ld22.entity.","") + " of level " + ((Mob)this).lvl);
+	}
 	
 	/** returns if mobs can block this entity (aka: can't pass through them) */
 	public boolean isBlockableBy(Mob mob) {

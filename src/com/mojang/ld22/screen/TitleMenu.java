@@ -1,18 +1,11 @@
-//mostly new... fewer comments.
 package com.mojang.ld22.screen;
 
-import com.mojang.ld22.GameApplet;
 import com.mojang.ld22.Game;
+import com.mojang.ld22.GameApplet;
 import com.mojang.ld22.gfx.Color;
 import com.mojang.ld22.gfx.Font;
 import com.mojang.ld22.gfx.Screen;
-import com.mojang.ld22.screen.AboutMenu;
-import com.mojang.ld22.screen.Menu;
-import com.mojang.ld22.screen.ModeMenu;
-import com.mojang.ld22.screen.OptionsMenu;
-import com.mojang.ld22.screen.WorldSelectMenu;
 import com.mojang.ld22.sound.Sound;
-import java.awt.Desktop;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.File;
@@ -20,24 +13,17 @@ import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.net.ConnectException;
-import java.net.MalformedURLException;
-import java.net.URI;
-import java.net.URL;
-import java.net.URLConnection;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Random;
-import java.util.Scanner;
 
 public class TitleMenu extends Menu {
 	private int selected = 0;
 	protected final Random random = new Random();
 	public static List splashes = new ArrayList<String>();
 	private static final String[] options = {"New game", "Instructions", "Tutorial", "Options", "About", "Quit"/*, "Kill"*/}; // Options that are on the main menu.
-	//public static boolean sentFromMenu;
 	int randcount = 60;
 	int rand = random.nextInt(randcount);
 	int count = 0; // this and reverse are for the logo; they produce the fade-in/out effect.
@@ -66,7 +52,6 @@ public class TitleMenu extends Menu {
 	}
 	
 	public void getSplashes() {
-		String ee;
 		if(!loadedsplashes) {
 			//The fun little messages that pop up.
 			String[] splashes = {
@@ -105,15 +90,13 @@ public class TitleMenu extends Menu {
 				"Story? What's that?",
 				"Multiplayer? What's that?",
 				"Infinite terrain? What's that?",
-				"Fullscreen? What's that?",
 				"Redstone? What's that?",
-				"Bosses? What are those?",
 				//"Spiders? What are those?",
 				"Minecarts? What are those?",
 				"3D? What's that?",
 				"3.1D is the new thing!",
 				"Windows? I perfer Doors!",
-				"Mouse? I perfer Keyboard!",
+				//"Mouse? I perfer Keyboard!",
 				"Mouse not included!",
 				"No spiders included!",
 				"No Endermen included!",
@@ -151,7 +134,7 @@ public class TitleMenu extends Menu {
 				"Why?",
 				"You are null!",
 				"That guy is such a sly fox!",
-				"hola senor!",
+				"Hola senor!",
 				//"Vote for the Dead Workers Party!",
 				"Sonic Boom!",
 				"Hakuna Matata!",
@@ -168,6 +151,7 @@ public class TitleMenu extends Menu {
 				"Cool!",
 				"Radical!",
 				"Potions ftw!",
+				"Beds ftw!",
 				"Conquer the Dungeon!",
 				"Defeat the Air Wizard!",
 				"Loom + Wool = String!",
@@ -177,9 +161,9 @@ public class TitleMenu extends Menu {
 				"Farm at Day!",
 				//"Leave a comment below!",
 				"Explanation Mark!",
-				"!sdrawkcab si siht",
+				"!sdrawkcab si sihT",
 				"This is forwards!",
-				"why is this blue?",
+				"Why is this blue?",
 				//"try with --debug",
 				"MissingNo " + rand
 			};
@@ -195,31 +179,27 @@ public class TitleMenu extends Menu {
 				splashes.clear();
 
 				while(bufferedWriter.hasNextLine()) {
-					ee = bufferedWriter.nextLine();
-					if(ee.contains("]")) {
-						if(ee.substring(ee.indexOf("]")).length() > 3) {
-							ee = ee.substring(ee.indexOf("]") + 2, ee.length());
-						} else {
-							ee = "";
-						}
+					String splash = bufferedWriter.nextLine();
+					if(splash.contains("]")) {
+						if(splash.substring(splash.indexOf("]")).length() > 3) {
+							splash = splash.substring(splash.indexOf("]") + 2, splash.length());
+						} else continue;
 					}
-
-					if(!ee.equals("")) {
-						splashes.add(ee);
-					}
+					
+					if(splash.length() > 0) splashes.add(splash);
 				}
 
 				bufferedWriter.close();
-			} catch (MalformedURLException var43) {
-				var43.printStackTrace();
+			} catch (MalformedURLException urlEx) {
+				urlEx.printStackTrace();
 				splashes.clear();
 				splashes.add("");
-			} catch (ConnectException var44) {
-				var44.printStackTrace();
+			} catch (ConnectException conEx) {
+				conEx.printStackTrace();
 				splashes.clear();
 				splashes.add("Connection issue! D:");
-			} catch (IOException var45) {
-				var45.printStackTrace();
+			} catch (IOException ioEx) {
+				ioEx.printStackTrace();
 				splashes.clear();
 				splashes.add("Offline Mode :<");
 			}
@@ -229,60 +209,59 @@ public class TitleMenu extends Menu {
 
 		if(!loadedunlocks) {
 			ModeMenu.unlockedtimes.clear();
-			BufferedReader br1 = null;
+			BufferedReader unlockReader = null;
 			this.folder.mkdirs();
 
 			try {
-				br1 = new BufferedReader(new FileReader(this.location + "/unlocks.miniplussave"));
+				unlockReader = new BufferedReader(new FileReader(this.location + "/unlocks.miniplussave"));
 
-				String e1;
-				while((e1 = br1.readLine()) != null) {
-					List bufferedWriter2 = Arrays.asList(e1.split(","));
-					Iterator var5 = bufferedWriter2.iterator();
+				String line;
+				while((line = unlockReader.readLine()) != null) {
+					Iterator unlocks = Arrays.asList(line.split(",")).iterator();
 
-					while(var5.hasNext()) {
-						ee = (String)var5.next();
-						if(ee.contains("AirSkin")) {
+					while(unlocks.hasNext()) {
+						String ulText = (String)unlocks.next();
+						if(ulText.contains("AirSkin")) {
 							OptionsMenu.unlockedskin = true;
 						}
 
-						if(ee.contains("MINUTEMODE") && !ee.substring(0, ee.indexOf("M") + 1).equals("M")) {
-							ModeMenu.unlockedtimes.add(ee.substring(0, ee.indexOf("M") + 1));
+						if(ulText.contains("MINUTEMODE") && !ulText.substring(0, ulText.indexOf("M") + 1).equals("M")) {
+							ModeMenu.unlockedtimes.add(ulText.substring(0, ulText.indexOf("M") + 1));
 						}
 					
-						if(ee.contains("HOURMODE") && !ee.substring(0, ee.indexOf("H") + 1).equals("H")) {
-							ModeMenu.unlockedtimes.add(ee.substring(0, ee.indexOf("H") + 1));
+						if(ulText.contains("HOURMODE") && !ulText.substring(0, ulText.indexOf("H") + 1).equals("H")) {
+							ModeMenu.unlockedtimes.add(ulText.substring(0, ulText.indexOf("H") + 1));
 						}
 					}
 				}
-			} catch (FileNotFoundException var40) {
-				BufferedWriter bufferedWriter1 = null;
-
+			} catch (FileNotFoundException fnfEx) {
+				BufferedWriter fileWriter = null;
+				
 				try {
-					bufferedWriter1 = new BufferedWriter(new FileWriter(this.location + "/unlocks.miniplussave"));
-					bufferedWriter1.write("");
-				} catch (IOException var38) {
-					var38.printStackTrace();
+					fileWriter = new BufferedWriter(new FileWriter(this.location + "/unlocks.miniplussave"));
+					fileWriter.write("");
+				} catch (IOException ex) {
+					ex.printStackTrace();
 				} finally {
 					try {
-						if(bufferedWriter1 != null) {
-							bufferedWriter1.flush();
-							bufferedWriter1.close();
+						if(fileWriter != null) {
+							fileWriter.flush();
+							fileWriter.close();
 						}
-					} catch (IOException var37) {
-						var37.printStackTrace();
+					} catch (IOException ex) {
+						ex.printStackTrace();
 					}
 
 				}
-			} catch (IOException var41) {
-				var41.printStackTrace();
+			} catch (IOException ioEx) {
+				ioEx.printStackTrace();
 			} finally {
 				try {
-					if(br1 != null) {
-						br1.close();
+					if(unlockReader != null) {
+						unlockReader.close();
 					}
-				} catch (IOException var36) {
-					var36.printStackTrace();
+				} catch (IOException ex) {
+					ex.printStackTrace();
 				}
 
 			}
@@ -329,10 +308,7 @@ public class TitleMenu extends Menu {
 					if(com.mojang.ld22.Game.debug) System.out.println(e.getMessage());
 				}
 			}
-			if (options[selected] == "Options") {
-				//sentFromMenu = true;
-				game.setMenu(new OptionsMenu(this));
-			}
+			if (options[selected] == "Options") game.setMenu(new OptionsMenu(this));
 			if (options[selected] == "About") game.setMenu(new AboutMenu(this));
 			if (options[selected] == "Quit") System.exit(0);
 			//if (options[selected] == "Kill") {game.level.add(game.player); game.setMenu(null);}
@@ -385,20 +361,16 @@ public class TitleMenu extends Menu {
 		writeCentered(((String)splashes.get(rand)), screen, 60, cols);
 		
 		if(GameApplet.isApplet) {
-			if(GameApplet.username.length() < 27) {
-				Font.draw("Welcome, " + GameApplet.username + "!", screen, this.centertext("Welcome, " + GameApplet.username + "!"), screen.h - 190, Color.get(0, 330, 330, 330));
-			} else {
-				Font.draw("Welcome,", screen, this.centertext("Welcome!"), screen.h - 190, Color.get(0, 330, 330, 330));
-				Font.draw(GameApplet.username + "!", screen, this.centertext(GameApplet.username + "!"), screen.h - 180, Color.get(0, 330, 330, 330));
-			}
+			String greeting = "Welcome!", name = GameApplet.username;
+			if(name.length() < 36) greeting = name+"!";
+			if(name.length() < 27) greeting = "Welcome, " + greeting;
 			
-			writeCentered("Version " + Game.VERSION, screen, screen.h - 10, Color.get(0, 111, 111, 111));
-		}
-		else {
-			Font.draw("Version " + Game.VERSION, screen, 1, screen.h - 190, Color.get(0, 111, 111, 111));
+			writeCentered(greeting, screen, 10, Color.get(0, 330, 330, 330));
 		}
 		
-		writeCentered("(Arrow keys to move)", screen, screen.h - (GameApplet.isApplet?35:25), Color.get(0, 111, 111, 111));
-		writeCentered("(Enter to accept, Escape to return)", screen, screen.h - (GameApplet.isApplet?25:15), Color.get(0, 111, 111, 111));
+		Font.draw("Version " + Game.VERSION, screen, 1, 1, Color.get(0, 111, 111, 111));
+		
+		writeCentered("(Arrow keys to move)", screen, screen.h - 25, Color.get(0, 111, 111, 111));
+		writeCentered("(Enter to accept, Escape to return)", screen, screen.h - 15, Color.get(0, 111, 111, 111));
 	}
 }

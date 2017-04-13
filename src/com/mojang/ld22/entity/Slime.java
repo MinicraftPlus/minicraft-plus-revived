@@ -11,7 +11,7 @@ import com.mojang.ld22.screen.OptionsMenu;
 public class Slime extends Mob {
 	private int xa, ya; // x and y acceleration
 	private int jumpTime = 0; // jumpTimer, also acts as a rest timer before the next jump
-	private int lvl; // how tough the slime is
+	//private int lvl; // how tough the slime is
 
 	public Slime(int lvl) {
 		this.col0 = Color.get(-1, 20, 40, 10);
@@ -27,32 +27,6 @@ public class Slime extends Mob {
 		// Health based on level and difficulty:
 		if (ModeMenu.creative) health = maxHealth = 1;
 		else health = maxHealth = lvl * lvl * (OptionsMenu.diff * OptionsMenu.diff + 1);
-		/*	if (OptionsMenu.diff == OptionsMenu.easy) health = maxHealth = lvl * lvl * (OptionsMenu.diff * OptionsMenu.diff + 1);
-			if (OptionsMenu.diff == OptionsMenu.norm) health = maxHealth = lvl * lvl * 5;
-			if (OptionsMenu.diff == OptionsMenu.hard) health = maxHealth = lvl * lvl * 10;
-		}
-		/*
-		if (OptionsMenu.diff == OptionsMenu.easy) {
-			this.lvl = lvl;
-			x = random.nextInt(64 * 16);
-			y = random.nextInt(64 * 16);
-			if (ModeMenu.creative) health = maxHealth = 1;
-			else health = maxHealth = lvl * lvl * 3;
-		}
-
-		if (OptionsMenu.diff == OptionsMenu.norm) {
-			this.lvl = lvl;
-			x = random.nextInt(64 * 16);
-			y = random.nextInt(64 * 16);
-			if (ModeMenu.creative) health = maxHealth = 1;
-			else health = maxHealth = lvl * lvl * 5;
-		}
-
-		if (OptionsMenu.diff == OptionsMenu.hard) {
-			
-		
-		 // gives it a random x,y position anywhere between (0 to 1023) [Tile position (0 to 64)]	else health = maxHealth = lvl * lvl * 10;
-		}*/
 	}
 	
 	public void tick() {
@@ -95,44 +69,13 @@ public class Slime extends Mob {
 		for (int i = 0; i < count; i++) {
 			level.add(new ItemEntity(new ResourceItem(Resource.slime), x + random.nextInt(11) - 5, y + random.nextInt(11) - 5)); //creates slime items
 		}
-		/*
-		if (OptionsMenu.diff == OptionsMenu.easy) {
-			int count = random.nextInt(3) + 1; // Random amount of slime(item) to drop from 1 to 2
-			for (int i = 0; i < count; i++) {
-				level.add(
-						new ItemEntity(
-								new ResourceItem(Resource.slime),
-								x + random.nextInt(11) - 5,
-								y + random.nextInt(11) - 5));
-			}
-		}
-		if (OptionsMenu.diff == OptionsMenu.norm) {
-			int count = random.nextInt(2) + 1;
-			for (int i = 0; i < count; i++) {
-				level.add(
-						new ItemEntity(
-								new ResourceItem(Resource.slime),
-								x + random.nextInt(11) - 5,
-								y + random.nextInt(11) - 5));
-			}
-		}
-		if (OptionsMenu.diff == OptionsMenu.hard) {
-			int count = random.nextInt(1) + 1;
-			for (int i = 0; i < count; i++) {
-				level.add(
-						new ItemEntity(
-								new ResourceItem(Resource.slime),
-								x + random.nextInt(11) - 5,
-								y + random.nextInt(11) - 5));
-			}
-		}
-		*/
+		
 		if (level.player != null) {
-			level.player.score += (25 * lvl) * Game.multiplyer; // add score for slime death
+			level.player.score += (25 * lvl) * Game.multiplier; // add score for slime death
 		}
 
-		Game.multiplyer++; // increment game multiplier
-		Game.multiplyertime = Game.mtm -= 5;
+		Game.multiplier++; // increment game multiplier
+		Game.multipliertime = Game.mtm -= 5;
 	}
 	
 	public void render(Screen screen) {
@@ -256,24 +199,10 @@ public class Slime extends Mob {
 	}
 	
 	protected void touchedBy(Entity entity) {
+		super.touchedBy(entity);
 		int damage = OptionsMenu.diff == OptionsMenu.hard ? 2 : 1;
 		if (entity instanceof Player) { // if we touch the player
 			entity.hurt(this, lvl*damage, dir); // attack
 		}
-		/*if (OptionsMenu.diff == OptionsMenu.easy) {
-			if (entity instanceof Player) { // if we touch the player
-				entity.hurt(this, lvl, dir); // attack
-			}
-		}
-		if (OptionsMenu.diff == OptionsMenu.norm) {
-			if (entity instanceof Player) {
-				entity.hurt(this, lvl, dir);
-			}
-		}
-		if (OptionsMenu.diff == OptionsMenu.hard) {
-			if (entity instanceof Player) {
-				entity.hurt(this, lvl * 2, dir);
-			}
-		}*/
 	}
 }

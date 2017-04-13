@@ -17,7 +17,7 @@ public class Creeper extends Mob {
 	private int BLAST_DAMAGE = 10;
 
 	private int xa, ya;
-	private int lvl;
+	//private int lvl;
 	private int randomWalkTime = 0;
 	private int fuseTime = 0;
 	private boolean fuseLit = false;
@@ -449,10 +449,10 @@ public class Creeper extends Mob {
 			}
 		}
 		if (level.player != null) {
-			level.player.score += (50 * lvl) * Game.multiplyer;
+			level.player.score += (50 * lvl) * Game.multiplier;
 		}
 
-		Game.multiplyer++;
-		Game.multiplyertime = Game.mtm -= 5;
+		Game.multiplier++;
+		Game.multipliertime = Game.mtm -= 5;
 	}
 }

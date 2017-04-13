@@ -111,11 +111,11 @@ public class TreeTile extends Tile {
 				screen.render(x * 16 + 8, y * 16 + 8, 10 + 3 * 32, barkCol2, 0);
 			}
 		} else if (Game.time == 1) {
-
+			
 			int col = col1;
 			int barkCol1 = col11;
 			int barkCol2 = col111;
-
+			
 			boolean u = level.getTile(x, y - 1) == this;
 			boolean l = level.getTile(x - 1, y) == this;
 			boolean r = level.getTile(x + 1, y) == this;
@@ -124,7 +124,7 @@ public class TreeTile extends Tile {
 			boolean ur = level.getTile(x + 1, y - 1) == this;
 			boolean dl = level.getTile(x - 1, y + 1) == this;
 			boolean dr = level.getTile(x + 1, y + 1) == this;
-
+			
 			if (u && ul && l) {
 				screen.render(x * 16 + 0, y * 16 + 0, 10 + 1 * 32, col, 0);
 			} else {
@@ -189,10 +189,11 @@ public class TreeTile extends Tile {
 	}
 
 	public boolean mayPass(Level level, int x, int y, Entity e) {
-		/*if(e instanceof com.mojang.ld22.entity.Arrow) {
+		/// make arrow fly through trees!
+		if(Game.debug && e instanceof com.mojang.ld22.entity.Arrow && ((com.mojang.ld22.entity.Arrow)e).owner instanceof Player) {
 			hurt(level, x, y, 25);
 			return true;
-		}*/
+		}
 		return false;
 	}
 

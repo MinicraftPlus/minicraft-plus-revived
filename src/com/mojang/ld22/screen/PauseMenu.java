@@ -1,4 +1,3 @@
-//new class; no comments
 package com.mojang.ld22.screen;
 
 import com.mojang.ld22.entity.Player;

@@ -40,60 +40,55 @@ import java.util.Random;
 public class Level {
 	private Random random = new Random();
 
-	public int w, h;
-	public int sux, suy;
+	public int w, h; // width and height of the level
+	//public int sux, suy; // player start position?
+	
+	public byte[] tiles; // an array of all the tiles in the world.
+	public byte[] data; // an array of the data of the tiles in the world. // ?
+	public List<Entity>[] entitiesInTiles; // An array of lists of entities in the world, by tile
 
-	public byte[] tiles;
-	public byte[] data;
-	public List<Entity>[] entitiesInTiles;
-
+	public int curLvl = 0; // current level
 	public int grassColor = 141;
 	public int dirtColor = 322;
-	public int cl = 0;
 	public int woolColor = 444;
 	public int redwoolColor = 500;
 	public int yellowwoolColor = 550;
 	public int sandColor = 550;
-	public int depth;
-	public int monsterDensity = 8;
+	public int depth; // depth level of the level
+	public int monsterDensity = 8; // affects the number of monsters that are on the level, bigger the number the less monsters spawn.
 	public static int depthlvl;
 	public int chestcount;
 
 	public static List<String> ls = new ArrayList<String>();
 
-	public List<Entity> entities = new ArrayList<Entity>();
-	private Comparator<Entity> spriteSorter =
-			new Comparator<Entity>() {
-				public int compare(Entity e0, Entity e1) {
-					if (e1.y < e0.y) return +1;
-					if (e1.y > e0.y) return -1;
-					return 0;
-				}
-			};
-
-	public static String c(int i) {
-		return "" + i;
-	}
+	public List<Entity> entities = new ArrayList<Entity>(); // A list of all the entities in the world
+	private Comparator<Entity> spriteSorter = new Comparator<Entity>() { // creates a sorter for all the entities to be rendered.
+		public int compare(Entity e0, Entity e1) { // compares 2 entities
+			if (e1.y < e0.y) return +1; // If the y position of the first entity is less (higher up) than the second entity, then it will be moved up in sorting.
+			if (e1.y > e0.y) return -1; // If the y position of the first entity is more (lower) than the second entity, then it will be moved down in sorting.
+			return 0; // ends the method
+		}
+	};
 	
 	/// This is a solely debug method I made, to make printing repetetive stuff easier.
 		// should be changed to accept prepend and entity, or a tile (as an Object). It will get the coordinates and class name from the object, and will divide coords by 16 if passed an entity.
 	private void printLevelLoc(String prepend, int x, int y) {
-		//if(!Game.debug) return;
-		
 		String[] levelNames = {"Sky", "Surface", "Iron", "Gold", "Lava", "Dungeon"};
 		String levelName = levelNames[-1*depth+1];
 		
 		System.out.println(prepend + " on " + levelName + " level: x="+x + " y="+y);
 	}
 
-	@SuppressWarnings("unchecked")
+	@SuppressWarnings("unchecked") // @SuppressWarnings ignores the warnings (yellow underline) in this method.
+	/** Level which the world is contained in */
 	public Level(int w, int h, int level, Level parentLevel) {
 		this.depth = level;
-		cl = level;
+		curLvl = level;
 		this.w = w;
 		this.h = h;
-		byte[][] maps;
+		byte[][] maps; // multidimensional array (an array within a array), used for the map
 		int saveTile;
+		// set the dirt colors
 		if (level != 0) {
 			if (DirtTile.dirtc == 0) {
 				dirtColor = 222;
@@ -123,29 +118,26 @@ public class Level {
 		if (level == 1) {
 			dirtColor = 444;
 		}
-		if (level == 0) maps = LevelGen.createAndValidateTopMap(w, h);
-		else if (level < 0 && level > -4) {
+		if (level == 0) maps = LevelGen.createAndValidateTopMap(w, h); // If the level is 0 (surface), create a surface map for the level
+		else if (level < 0 && level > -4) { // create an undergound map
 			maps = LevelGen.createAndValidateUndergroundMap(w, h, -level);
-			monsterDensity = 4;
-		
-		} else if (level == -4) {
-			//if(Game.debug) System.out.println("making dungeon...");
+			monsterDensity = 4; // lowers the monsterDensity value, which makes more enemies spawn
+		} else if (level == -4) { // create a dungeon map
 			maps = LevelGen.createAndValidateDungeon(w, h);
-
-		} else {
+		} else { // if level is anything else, which is just sky, then...
 			maps = LevelGen.createAndValidateSkyMap(w, h); // Sky level
 			monsterDensity = 4;
 		}
 		
-		tiles = maps[0];
-		data = maps[1];
+		tiles = maps[0]; // assigns the tiles in the map
+		data = maps[1]; // assigns the data of the tiles
 		
-		if (parentLevel != null) {
-			for (int y = 0; y < h; y++)
-				for (int x = 0; x < w; x++) {
-					if (parentLevel.getTile(x, y) == Tile.stairsDown) {
-						setTile(x, y, Tile.stairsUp, 0);
-						if (level == -4) {
+		if (parentLevel != null) { // If the level above this one is not null (aka, if this isn't the sky level)
+			for (int y = 0; y < h; y++) { // loop through height
+				for (int x = 0; x < w; x++) { // loop through width
+					if (parentLevel.getTile(x, y) == Tile.stairsDown) { // If the tile in the level above the current one is a stairs down then...
+						setTile(x, y, Tile.stairsUp, 0); // set a stairs up tile in the same position on the current level
+						if (level == -4) { /// make the obsidian wall formation around the stair to the dungeon level
 							setTile(x - 1, y, Tile.o, 0);
 							setTile(x + 1, y, Tile.o, 0);
 							setTile(x + 2, y, Tile.odc, 0);
@@ -211,10 +203,12 @@ public class Level {
 							setTile(x - 2, y - 1, Tile.ow, 0);
 							setTile(x - 1, y - 2, Tile.ow, 0);
 						}
-						if (level == 0) {
-							sux = x;
-							suy = y;
-							if(Game.debug) System.out.println("X = " + sux + " " + "Y = " + suy + " "); //printLevelLoc("Player start pos", sux, suy);
+						if (level == 0) { // surface
+							// some sort of var for player position?
+							//sux = x;
+							//suy = y;
+							//if(Game.debug) System.out.println("X = " + sux + " " + "Y = " + suy + " "); //printLevelLoc("Player start pos", sux, suy);
+							/// surround the sky stairs with hard rock:
 							setTile(x - 1, y, Tile.hardRock, 0);
 							setTile(x + 1, y, Tile.hardRock, 0);
 							setTile(x, y - 1, Tile.hardRock, 0);
@@ -226,6 +220,7 @@ public class Level {
 						}
 
 						if (level != 0 && level != -4) {
+							// any other level, the up-stairs should have dirt on all sides.
 							setTile(x - 1, y, Tile.dirt, 0);
 							setTile(x + 1, y, Tile.dirt, 0);
 							setTile(x, y - 1, Tile.dirt, 0);
@@ -237,18 +232,22 @@ public class Level {
 						}
 					}
 				}
+			}
 		}
 
-		entitiesInTiles = new ArrayList[w * h]; // This is actually an array of arrayLists (of entities).
+		entitiesInTiles = new ArrayList[w * h]; // This is actually an array of arrayLists (of entities), with one arraylist per tile.
 		for (int i = 0; i < w * h; i++) {
-			entitiesInTiles[i] = new ArrayList<Entity>();
+			entitiesInTiles[i] = new ArrayList<Entity>(); // Adds a entity list in that tile.
 		}
-
+		
+		/// if the level is the dungeon, and we're not just loading the world...
 		if (level == -4 && !WorldSelectMenu.loadworld) {
-			for (int i = 0; i < (Game.debug?1:10 * (w / 128)); i++) {
+			for (int i = 0; i < 10 * (w / 128); i++) {
+				/// make DungeonChests!
 				DungeonChest d = new DungeonChest();
 				boolean addedchest = false;
-				while(!addedchest) {
+				while(!addedchest) { // keep running until we successfully add a DungeonChest
+					//pick a random tile:
 					int x2 = this.random.nextInt(16 * w) / 16;
 					int y2 = this.random.nextInt(16 * h) / 16;
 					if (this.getTile(x2, y2) == Tile.o) {
@@ -278,7 +277,6 @@ public class Level {
 						this.add(d);
 						this.chestcount++;
 						addedchest = true;
-						//if (Game.debug) printLevelLoc("Added dungeon chest", x2, y2);
 					}
 				}
 			}
@@ -286,15 +284,14 @@ public class Level {
 		if (level < 0 && !WorldSelectMenu.loadworld) {
 			for (int i = 0; i < 18 / -level * (w / 128); i++) {
 				/// for generating spawner dungeons
-				//Mob m = new Mob();
 				String m = "";
 				int r = this.random.nextInt(5);
 				if (r == 1) {
-					m = "Skeleton";//new Skeleton(-level);
+					m = "Skeleton";
 				} else if (r == 2 || r == 0) {
-					m = "Slime";//new Slime(-level);
+					m = "Slime";
 				} else {
-					m = "Zombie";//new Zombie(-level);
+					m = "Zombie";
 				}
 				
 				Spawner sp = new Spawner(m, -level);
@@ -341,14 +338,12 @@ public class Level {
 					}
 
 					this.add(sp);
-					//if (Game.debug) printLevelLoc("Added Spawner", sp.x/16, sp.y/16);
 					for(int rpt = 1; rpt <= 2; rpt++) {
 						if (random.nextInt(2) == 0) {
 							Chest c = new Chest();
 							addtoinv(c.inventory, -level);
 							c.x = sp.x - 16;
 							c.y = sp.y - 16;
-							//if(Game.debug) printLevelLoc("Added Chest", c.x/16, c.y/16);
 							this.add(c);
 						}
 					}
@@ -361,30 +356,14 @@ public class Level {
 			aw.x = w * 16 / 2;
 			aw.y = h * 16 / 2;
 			add(aw);
-			//if(Game.debug) System.out.println("Added Air Wizard I! X = " + aw.x + ", Y = " + aw.y);
 		}
 		
 		if(Game.debug) {
-			//System.out.println((WorldSelectMenu.loadworld?"Loading":"Making")+" level "+level+"...");
-			
 			// print stair locations
 			for (int x = 0; x < w; x++)
 				for (int y = 0; y < h; y++)
 					if(getTile(x, y) == Tile.stairsDown)
 						printLevelLoc("Stairs down", x, y);
-			
-			// print Dungeon chest and airwizard locations
-			/*//for (int x = 0; x < w; x++) {
-			//	for (int y = 0; y < h; y++) {
-					for (Entity e: getEntities(0, 0, w, h)) {
-						if(e instanceof DungeonChest)
-							printLevelLoc("Added Dungeon chest", e.x/16, e.y/16);
-						else if (e instanceof AirWizard)
-							printLevelLoc("Added AirWizard"+(((AirWizard)e).secondform?" II":""), e.x/16, e.y/16);
-						//else if (e instanceof Spawner)*/
-			//		}
-				//}
-			//}
 			System.out.println();
 		}
 	}
@@ -542,7 +521,7 @@ public class Level {
   		if (random.nextInt(4 / chance) == 0) {
 			inventory.add(new ResourceItem(Resource.arrow, 5));
   		}
-  		if (inventory.items.size() < 1) {
+  		if (inventory.invSize() < 1) {
 			inventory.add(new ResourceItem(Resource.potion, 1));
 			inventory.add(new ResourceItem(Resource.coal, 3));
 			inventory.add(new ResourceItem(Resource.apple, 3));
@@ -717,7 +696,7 @@ public class Level {
 					else if (rnd <= 75) mob = new Zombie(lvl);
 					else if (rnd >= 85) mob = new Skeleton(lvl);
 					else mob = new Creeper(lvl);
-
+					//System.out.println("making new mob on level " + lvl + "; lvl=" + mob.lvl);
 					if (mob.findStartPos(this)) this.add(mob);
 				}
 			}

@@ -5,7 +5,6 @@ import com.mojang.ld22.entity.Entity;
 import com.mojang.ld22.entity.Player;
 import com.mojang.ld22.gfx.Screen;
 import com.mojang.ld22.level.Level;
-import com.mojang.ld22.level.tile.Tile;
 
 public class InfiniteFallTile extends Tile {
 	public InfiniteFallTile(int id) {

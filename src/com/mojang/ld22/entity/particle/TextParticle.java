@@ -1,22 +1,18 @@
 package com.mojang.ld22.entity.particle;
 
-import com.mojang.ld22.entity.Entity;
 import com.mojang.ld22.gfx.Color;
 import com.mojang.ld22.gfx.Font;
 import com.mojang.ld22.gfx.Screen;
 
-public class TextParticle extends Entity {
+public class TextParticle extends Particle {
 	private String msg; // Message of the text particle
-	private int col; // Color of the text particle
-	private int time = 0; // time (in ticks) that the particle has been alive
 	public double xa, ya, za; // x,y,z acceleration
 	public double xx, yy, zz; // x,y,z coordinates
 
 	public TextParticle(String msg, int x, int y, int col) {
+		super(x, y, 60, col);
+		
 		this.msg = msg;
-		this.x = x;
-		this.y = y;
-		this.col = col;
 		xx = x; //assigns x pos
 		yy = y; //assigns y pos
 		zz = 2; //assigns z pos to be 2
@@ -28,11 +24,8 @@ public class TextParticle extends Entity {
 	}
 
 	public void tick() {
-		time++;
-		if (time > 60) {
-			//remove text particle after 60 ticks.
-			remove();
-		}
+		super.tick();
+		
 		//move the particle according to the acceleration
 		xx += xa;
 		yy += ya;
@@ -52,6 +45,6 @@ public class TextParticle extends Entity {
 
 	public void render(Screen screen) {
 		Font.draw(msg, screen, x - msg.length() * 4 + 1, y - (int) (zz) + 1, Color.get(-1, 0, 0, 0)); //renders the backdrop
-		Font.draw(msg, screen, x - msg.length() * 4, y - (int) (zz), col); // renders the text
+		Font.draw(msg, screen, x - msg.length() * 4, y - (int) (zz), color); // renders the text
 	}
 }
