@@ -64,7 +64,7 @@ public class Item implements ListItem {
 		return 0;
 	}
 	
-	/** Gets the name of the tool */
+	/** Gets the name of the item */
 	public String getName() {
 		return "";
 	}

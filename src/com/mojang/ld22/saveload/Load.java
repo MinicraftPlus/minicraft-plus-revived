@@ -443,7 +443,8 @@ public class Load {
 					egg.setMob((String)info.get(2));
 					currentlevel = Integer.parseInt((String)info.get(info.size() - 1));
 					Game.levels[currentlevel].add(egg);
-				} else {
+				}
+				else {
 					newEntity.level = Game.levels[Integer.parseInt((String)info.get(2))];
 					currentlevel = Integer.parseInt((String)info.get(2));
 					Game.levels[currentlevel].add(newEntity);

@@ -7,9 +7,11 @@ import com.mojang.ld22.entity.DeathChest;
 import com.mojang.ld22.entity.DungeonChest;
 import com.mojang.ld22.entity.Entity;
 import com.mojang.ld22.entity.Inventory;
+import com.mojang.ld22.entity.ItemEntity;
 import com.mojang.ld22.entity.Mob;
 import com.mojang.ld22.entity.Player;
 import com.mojang.ld22.entity.Spawner;
+import com.mojang.ld22.entity.particle.Particle;
 import com.mojang.ld22.gfx.Color;
 import com.mojang.ld22.item.Item;
 import com.mojang.ld22.item.ResourceItem;
@@ -194,7 +196,11 @@ public class Save {
 				Entity e = (Entity)Game.levels[l].entities.get(i);
 				String name = e.getClass().getName().replace("com.mojang.ld22.entity.", "");
 				String extradata = "";
-				if(e instanceof AirWizard && ((AirWizard)e).secondform) name += "II";
+				
+				if(e instanceof ItemEntity || e instanceof Particle) continue; // don't even write ItemEntities or particle effects.
+				
+				if(e instanceof AirWizard && ((AirWizard)e).secondform)
+					name += "II";
 				
 				if(e instanceof Mob) {
 					Mob m = (Mob)e;

@@ -30,34 +30,34 @@ public class ListItems {
 
 	public static List items = new ArrayList();
 	
-	public Item spawnercow = (new FurnitureItem(new Spawner("Cow", 1))).addItem();
-	public Item spawnerpig = (new FurnitureItem(new Spawner("Pig", 1))).addItem();
-	public Item spawnersheep = (new FurnitureItem(new Spawner("Sheep", 1))).addItem();
-	public Item spawnerslime = (new FurnitureItem(new Spawner("Slime", 1))).addItem();
-	public Item spawnerzombie = (new FurnitureItem(new Spawner("Zombie", 1))).addItem();
-	public Item spawnercreeper = (new FurnitureItem(new Spawner("Creeper", 1))).addItem();
-	public Item spawnerskeleton = (new FurnitureItem(new Spawner("Skeleton", 1))).addItem();
-	public Item spawnersnake = (new FurnitureItem(new Spawner("Snake", 1))).addItem();
-	public Item spawnerknight = (new FurnitureItem(new Spawner("Knight", 1))).addItem();
-	public Item spawnerairwizard = (new FurnitureItem(new Spawner("AirWizard", 1))).addItem();
-	public Item spawnerairwizardii = (new FurnitureItem(new Spawner("AirWizardII", 1))).addItem();
+	public Item spawnercow;
+	public Item spawnerpig;
+	public Item spawnersheep;
+	public Item spawnerslime;
+	public Item spawnerzombie;
+	public Item spawnercreeper;
+	public Item spawnerskeleton;
+	public Item spawnersnake;
+	public Item spawnerknight;
+	public Item spawnerairwizard;
+	public Item spawnerairwizardii;
 	
-	public Item powglove = (new PowerGloveItem()).addItem();
-	public Item workbench = (new FurnitureItem(new Workbench())).addItem();
-	public Item oven = (new FurnitureItem(new Oven())).addItem();
-	public Item furnace = (new FurnitureItem(new Furnace())).addItem();
-	public Item anvil = (new FurnitureItem(new Anvil())).addItem();
-	public Item chest = (new FurnitureItem(new Chest())).addItem();
-	public Item lantern = (new FurnitureItem(new Lantern())).addItem();
-	public Item ironlantern = (new FurnitureItem(new IronLantern())).addItem();
-	public Item goldlantern = (new FurnitureItem(new GoldLantern())).addItem();
-	public Item enchanter = (new FurnitureItem(new Enchanter())).addItem();
-	public Item loom = (new FurnitureItem(new Loom())).addItem();
-	public Item tnt = (new FurnitureItem(new Tnt())).addItem();
-	public Item bed = (new FurnitureItem(new Bed())).addItem();
-	public Item bucket = (new BucketItem()).addItem();
-	public Item wbucket = (new BucketWaterItem()).addItem();
-	public Item lbucket = (new BucketLavaItem()).addItem();
+	public Item powglove;
+	public Item workbench;
+	public Item oven;
+	public Item furnace;
+	public Item anvil;
+	public Item chest;
+	public Item lantern;
+	public Item ironlantern;
+	public Item goldlantern;
+	public Item enchanter;
+	public Item loom;
+	public Item tnt;
+	public Item bed;
+	public Item bucket;
+	public Item wbucket;
+	public Item lbucket;
 	
 	public Item arrow;
 	public Item torch;
@@ -200,6 +200,35 @@ public class ListItems {
 	public Item hastepotion;
 	
 	public ListItems() {
+		this.spawnercow = (new FurnitureItem(new Spawner("Cow", 1))).addItem();
+		this.spawnerpig = (new FurnitureItem(new Spawner("Pig", 1))).addItem();
+		this.spawnersheep = (new FurnitureItem(new Spawner("Sheep", 1))).addItem();
+		this.spawnerslime = (new FurnitureItem(new Spawner("Slime", 1))).addItem();
+		this.spawnerzombie = (new FurnitureItem(new Spawner("Zombie", 1))).addItem();
+		this.spawnercreeper = (new FurnitureItem(new Spawner("Creeper", 1))).addItem();
+		this.spawnerskeleton = (new FurnitureItem(new Spawner("Skeleton", 1))).addItem();
+		this.spawnersnake = (new FurnitureItem(new Spawner("Snake", 1))).addItem();
+		this.spawnerknight = (new FurnitureItem(new Spawner("Knight", 1))).addItem();
+		this.spawnerairwizard = (new FurnitureItem(new Spawner("AirWizard", 1))).addItem();
+		this.spawnerairwizardii = (new FurnitureItem(new Spawner("AirWizardII", 1))).addItem();
+		
+		this.powglove = (new PowerGloveItem()).addItem();
+		this.workbench = (new FurnitureItem(new Workbench())).addItem();
+		this.oven = (new FurnitureItem(new Oven())).addItem();
+		this.furnace = (new FurnitureItem(new Furnace())).addItem();
+		this.anvil = (new FurnitureItem(new Anvil())).addItem();
+		this.chest = (new FurnitureItem(new Chest())).addItem();
+		this.lantern = (new FurnitureItem(new Lantern())).addItem();
+		this.ironlantern = (new FurnitureItem(new IronLantern())).addItem();
+		this.goldlantern = (new FurnitureItem(new GoldLantern())).addItem();
+		this.enchanter = (new FurnitureItem(new Enchanter())).addItem();
+		this.loom = (new FurnitureItem(new Loom())).addItem();
+		this.tnt = (new FurnitureItem(new Tnt())).addItem();
+		this.bed = (new FurnitureItem(new Bed())).addItem();
+		this.bucket = (new BucketItem()).addItem();
+		this.wbucket = (new BucketWaterItem()).addItem();
+		this.lbucket = (new BucketLavaItem()).addItem();
+		
 		this.arrow = (new ResourceItem(Resource.arrow)).addItem();
 		this.torch = (new ResourceItem(Resource.torch)).addItem();
 		this.wood = (new ResourceItem(Resource.wood)).addItem();
