@@ -12,7 +12,6 @@ public class Furniture extends Entity {
 	protected int pushDir = -1; // the direction to push the furniture
 	public int col, col0, col1, col2, col3, sprite; // color and sprite vars.
 	public String name;
-	//public int lightTimer = 0; //?
 	protected Player shouldTake; // the player that should take the furniture
 
 	public Furniture(String name) {
@@ -77,18 +76,14 @@ public class Furniture extends Entity {
 	protected void touchedBy(Entity entity) {
 		/// ADD TO THIS METHOD TO REMOVE UNNECESSARY CLASSES? maybe combine others into a "CraftingFurniture" class?
 		if (entity instanceof Player && pushTime == 0) {
-			//if (name != "D.Chest") { // can't push death chests
-				pushDir = ((Player) entity).dir; // set pushDir to the player's dir.
-				pushTime = 10; // set pushTime to 10.
-			//}
+			pushDir = ((Player) entity).dir; // set pushDir to the player's dir.
+			pushTime = 10; // set pushTime to 10.
 		}
 	}
 	
 	/** Used in PowerGloveItem.java */
 	public void take(Player player) {
-		//if (name != "D.Chest") { //can't grab death chests
-			shouldTake = player; // assigns the player that should take this
-		//}
+		shouldTake = player; // assigns the player that should take this
 	}
 	
 	public boolean canWool() {

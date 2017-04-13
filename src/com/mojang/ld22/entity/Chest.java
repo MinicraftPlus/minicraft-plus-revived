@@ -11,7 +11,7 @@ public class Chest extends Furniture {
 	public Chest(String name) {
 		super(name); // Name of the chest
 		
-		inventory = new Inventory();
+		inventory = new Inventory(); // initialize the inventory.
 		
 		// chest colors
 		if (canLight()) {
@@ -32,7 +32,7 @@ public class Chest extends Furniture {
 	
 	/** This is what occurs when the player uses the "Menu" command near this */
 	public boolean use(Player player, int attackDir) {
-		player.game.setMenu(new ContainerMenu(player, this));//player, name, inventory));
+		player.game.setMenu(new ContainerMenu(player, this));
 		return true;
 	}
 }

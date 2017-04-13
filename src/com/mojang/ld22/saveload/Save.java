@@ -95,7 +95,6 @@ public class Save {
 		data.add(String.valueOf(Game.VERSION));
 		data.add(String.valueOf(Game.tickCount));
 		data.add(String.valueOf(Game.astime));
-		//data.add(String.valueOf(Game.gamespeed));
 		data.add(String.valueOf(Game.autosave));
 		data.add(String.valueOf(OptionsMenu.isSoundAct));
 		writeToFile(location + filename + extention, data);
@@ -195,55 +194,26 @@ public class Save {
 				Entity e = (Entity)Game.levels[l].entities.get(i);
 				String name = e.getClass().getName().replace("com.mojang.ld22.entity.", "");
 				String extradata = "";
-				if(e instanceof AirWizard && ((AirWizard)e).secondform) {//e.col1 == Color.get(-1, 0, 4, 46)) {
-					name += "II";//e.getClass().getCanonicalName().replace("com.mojang.ld22.entity.", "") + "II";
-				}
+				if(e instanceof AirWizard && ((AirWizard)e).secondform) name += "II";
 				
 				if(e instanceof Mob) {
 					Mob m = (Mob)e;
 					extradata = ":" + m.health + ":" + m.maxHealth + ":" + m.lvl;
-					//System.out.println("additional mob data for "+c.getClass().getName()+": " + extradata);
 				}
 				
 				if(e instanceof Chest) {
 					Chest chest = (Chest)e;
-					//extradata = ":";
 					
 					for(int ii = 0; ii < chest.inventory.invSize(); ii++) {
 						Item item = (Item)chest.inventory.get(ii);
 						extradata += ":" + item.getName();
 						if(item instanceof ResourceItem)
 							extradata += ";" + chest.inventory.count(item);
-						//extradata += ":";
 					}
 					
-					//extradata += ":" + data;
-					if(chest instanceof DeathChest) {
-						//name = chest.name; // already done
-						extradata += ":" + ((DeathChest)chest).time;
-					}
-					
-					if(chest instanceof DungeonChest) {
-						DungeonChest dChest = (DungeonChest)chest;
-						//extradata += ":";
-						
-						/*for(int ii = 0; ii < dChest.inventory.invSize(); ii++) {
-							Item item = (Item)dChest.inventory.get(ii);
-							if(!item.getName().equals("") || !item.getName().equals(" ")) {
-								extradata += item.getName();
-								if(item instanceof ResourceItem) extradata += ";" + dChest.inventory.count(item);
-								extradata += ":";
-							}
-						}*/
-						
-						extradata += /*":" + data + ":" +*/ ":"+dChest.isLocked;
-					}
+					if(chest instanceof DeathChest) extradata += ":" + ((DeathChest)chest).time;
+					if(chest instanceof DungeonChest) extradata += ":" + ((DungeonChest)chest).isLocked;
 				}
-				
-				/*if(e instanceof DungeonChest) {
-					String data = "";
-					
-				}*/
 				
 				if(e instanceof Spawner) {
 					Spawner egg = (Spawner)e;

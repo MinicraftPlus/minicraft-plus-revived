@@ -32,10 +32,7 @@ public class DungeonChest extends Chest {
 	}
 	
 	public boolean use(Player player, int attackDir) {
-		/*if(!isLocked) {
-			//player.game.setMenu(new ContainerMenu(player, name, inventory));
-			return super.use(player, attackDir);
-		} else*/if (isLocked) {
+		if (isLocked) {
 			boolean activeKey = player.activeItem != null && player.activeItem.getName().equals("Key");
 			boolean invKey = player.inventory.hasResources(Resource.key, 1);
 			if(activeKey || invKey) { // if the player has a key...
@@ -49,7 +46,6 @@ public class DungeonChest extends Chest {
 				}
 				
 				isLocked = false;
-				//player.game.setMenu(new ContainerMenu(player, name, inventory));
 				col = col0 = col1 = col2 = col3 = openCol; // set to the unlocked color
 				
 				level.add(new SmashParticle(x * 16 + 8, y * 16 + 8));
@@ -78,8 +74,8 @@ public class DungeonChest extends Chest {
 	
 	/** Populate the inventory of the DungeonChest, psudo-randomly. */
 	private void populateInv() {
-		//inventory = new Inventory();
-		inventory.clearInv();
+		inventory.clearInv(); // clear the inventory.
+		
 		tryAdd(5, Resource.steak, 6);
 		tryAdd(5, Resource.cookedpork, 6);
 		tryAdd(4, Resource.wood, 20);
@@ -128,18 +124,13 @@ public class DungeonChest extends Chest {
 	
 	/** what happens if the player tries to push a Dungeon Chest. */
 	protected void touchedBy(Entity entity) {
-		/*if(entity instanceof Player && pushTime == 0 && !isLocked) {
-			pushDir = ((Player)entity).dir;
-			pushTime = 10;
-		}*/
-		if(!isLocked) super.touchedBy(entity);
+		if(!isLocked) // can only be pushed if unlocked.
+			super.touchedBy(entity);
 	}
 	
 	/** what happens if the player tries to grab a Dungeon Chest. */
 	public void take(Player player) {
-		/*if(!isLocked) {
-			shouldTake = player;
-		}*/
-		if(!isLocked) super.take(player);
+		if(!isLocked) // can only be taken if unlocked.
+			super.take(player);
 	}
 }

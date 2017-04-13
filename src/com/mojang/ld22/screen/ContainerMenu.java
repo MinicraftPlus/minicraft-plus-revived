@@ -15,16 +15,8 @@ public class ContainerMenu extends Menu {
 	private int oSelected; // the old selected option (this is used to temporarily save spots moving from chest to inventory & vice-versa)
 	private int window = 0; // currently selected window (player's inventory, or chest's inventory)
 	
-	/** The container menu class is used for chests */
-	/*public ContainerMenu(Player player, String title, Inventory container) {
-		this.player = player;
-		this.title = title;
-		this.container = container;
-	}*/
-	
 	public ContainerMenu(Player player, Chest chest) {
 		this.player = player;
-		//this.title = title;
 		container = chest.inventory;
 		title = chest.name;
 	}

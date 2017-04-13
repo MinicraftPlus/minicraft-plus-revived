@@ -76,12 +76,6 @@ public class Load {
 			oldSave = true;
 		}
 		
-		/// TESTING
-		//System.out.println( currentVer + " > 1.8: " + (currentVer.compareTo(new Version("1.8")) > 0) );
-		//System.out.println( currentVer + " == 1.9.1: " + (currentVer.compareTo(new Version("1.9.1")) == 0) );
-		//System.out.println(" 1.9.1-pre1 < 1.9.1: " + ((new Version("1.9.1-pre1")).compareTo(new Version("1.9.1")) < 0) );
-		// end testing
-		
 		loadGame("Game", game); // more of the version will be determined here
 		loadPrefs("KeyPrefs", game);
 		loadWorld("Level");
@@ -229,7 +223,6 @@ public class Load {
 				worldVer = new Version("1.9");
 				Game.setTime(Integer.parseInt((String)data.get(0)));
 				Game.astime = Integer.parseInt((String)data.get(1));
-				//Game.gamespeed = Float.parseFloat((String)data.get(2));
 				Game.autosave = Boolean.parseBoolean((String)data.get(3));
 				OptionsMenu.isSoundAct = Boolean.parseBoolean((String)data.get(4));
 			} else { // version == 1.8?
@@ -239,7 +232,6 @@ public class Load {
 				}
 				// for backwards compatibility
 				Game.astime = Integer.parseInt((String)this.data.get(1));
-				//Game.gamespeed = Integer.parseInt((String)this.data.get(2));
 				game.player.ac = Integer.parseInt((String)this.data.get(3));
 				Game.tickCount = Integer.parseInt((String)this.data.get(0));
 				Game.autosave = false;
@@ -299,13 +291,10 @@ public class Load {
 			Game.currentLevel = Integer.parseInt((String)data.get(7));
 			modedata = (String)data.get(8);
 		}
-		//else if(!oldSave) player.armor = 0;
+		
 		Player.score = Integer.parseInt((String)data.get(6));
-		//if(!oldSave) player.ac = Integer.parseInt((String)data.get(7));
-		//Game.currentLevel = Integer.parseInt((String)data.get(oldSave?7:8));
 		player.game.level = Game.levels[Game.currentLevel];
 		
-		//String modedata = (String)data.get(oldSave?8:9);
 		int mode;
 		if(modedata.contains(";")) {
 			mode = Integer.parseInt(modedata.substring(0, modedata.indexOf(";")));
@@ -352,20 +341,9 @@ public class Load {
 	public void loadInventory(String filename, Inventory inventory) {
 		loadFromFile(location + filename + extention);
 		inventory.clearInv();
-		//inventory.playerinventory = true; // this is only called for the player inventory so I can do this
 		
 		for(int i = 0; i < data.size(); i++) {
 			String item = (String)data.get(i);
-			
-			/*if(oldSave) {
-				if(ListItems.getItem(item) instanceof ResourceItem) {
-					
-				} else {
-					item = subOldItemName(item);
-					Item toAdd = ListItems.getItem(item);
-					inventory.add(toAdd);
-				}
-			}*/
 			
 			if(ListItems.getItem(item) instanceof ResourceItem) {
 				if(oldSave && i == 0) item = item.replace(";0", ";1");
@@ -421,7 +399,6 @@ public class Load {
 					mob.health = Integer.parseInt((String)info.get(2));
 					mob.maxHealth = Integer.parseInt((String)info.get(3));
 					mob.lvl = Integer.parseInt((String)info.get(4));
-					//System.out.println("made mob, lvl " + mob.lvl);
 					mob.level = Game.levels[Integer.parseInt((String)info.get(5))];
 					currentlevel = Integer.parseInt((String)info.get(5));
 					Game.levels[currentlevel].add(mob);
@@ -436,29 +413,23 @@ public class Load {
 						String itemData = (String)chestInfo.get(idx);
 						if(worldVer.compareTo(new Version("1.9.1")) < 0) // if this world is before 1.9.1
 							if(itemData.equals("")) continue; // this skips any null items
-						//if(Game.debug) System.out.println("fetching chest item "+(idx+1)+" of "+endIdx+": \"" + itemData + "\"");
 						Item item = ListItems.getItem(itemData);
 						if (item instanceof ResourceItem) {
 							List<String> curData = Arrays.asList((itemData + ";1").split(";")); // this appends ";1" to the end, meaning one item, to everything; but if it was already there, then it becomes the 3rd element in the list, which is ignored.
 							ResourceItem ri = (ResourceItem)ListItems.getItem(curData.get(0));
 							ri.count = Integer.parseInt(curData.get(1));
 							chest.inventory.add(ri);
-						} else {//if(!item.getName().equals("")) {
-							//addToChest(chest, item);
-							/*if(item instanceof ResourceItem) {
-								ResourceItem ri = (ResourceItem)item;
-								chest.inventory.add(ri);
-							} else*/ chest.inventory.add(item);
+						} else {
+							chest.inventory.add(item);
 						}
-						//else System.out.println("skipped NULL chest item: \"" + itemData + "\"");
 					}
-					//if(idx == chestInfo.size() - 2) {
+					
 					if (isDeathChest) {
-						((DeathChest)chest).time = Integer.parseInt((chestInfo.get(chestInfo.size()-1)).replace("tl;", ""));//"tl;" is only for old save support
+						((DeathChest)chest).time = Integer.parseInt((chestInfo.get(chestInfo.size()-1)).replace("tl;", "")); // "tl;" is only for old save support
 					} else if (isDungeonChest) {
 						((DungeonChest)chest).isLocked = Boolean.parseBoolean(chestInfo.get(chestInfo.size()-1));
 					}
-					//}
+					
 					
 					newEntity.level = Game.levels[Integer.parseInt((String)info.get(info.size() - 1))];
 					currentlevel = Integer.parseInt((String)info.get(info.size() - 1));
@@ -480,27 +451,6 @@ public class Load {
 			} // end of entity not null conditional
 		}
 	}
-	
-	/*private void addToChest(Furniture box, Item toAdd) {
-		//if (toAdd == null || box == null) return;
-		if(box instanceof Chest) {
-			Chest chest = (Chest)box;
-			if(toAdd instanceof ResourceItem) {
-				ResourceItem item = (ResourceItem)toAdd;
-				chest.inventory.add(item);
-			} else {
-				chest.inventory.add(toAdd);
-			}
-		}
-		else if (box instanceof DungeonChest) {
-			DungeonChest dChest = (DungeonChest)box;
-			if(toAdd instanceof ResourceItem) {
-				ResourceItem item = (ResourceItem)toAdd;
-				dChest.inventory.add(item);
-			} else
-				dChest.inventory.add(toAdd);
-		}
-	}*/
 	
 	public Entity getEntity(String string, Player player) {
 		switch(string) {
@@ -531,7 +481,7 @@ public class Load {
 			case "Player": return (Entity)(player);
 			case "Knight": return (Entity)(new Knight(0));
 			case "Snake": return (Entity)(new Snake(0));
-			default : if(Game.debug) System.out.println("LOAD: UNKNOWN ENTITY");
+			default : if(Game.debug) System.out.println("LOAD: UNKNOWN ENTITY: " + string);
 				return new Entity();
 		}
 	}
