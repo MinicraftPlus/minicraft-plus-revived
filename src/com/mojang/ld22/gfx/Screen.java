@@ -36,6 +36,7 @@ public class Screen {
 	}
 	
 	/** Renders an object from the sprite sheet based on screen coordinates, tile (SpriteSheet location), colors, and bits (for mirroring) */
+	// TODO make a method that calls this 4 times, for each corner.
 	public void render(int xp, int yp, int tile, int colors, int bits) {
 		xp -= xOffset; //account for screen offset
 		yp -= yOffset;
