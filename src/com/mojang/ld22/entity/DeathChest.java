@@ -2,7 +2,6 @@ package com.mojang.ld22.entity;
 
 import com.mojang.ld22.entity.Player;
 import com.mojang.ld22.gfx.Color;
-//import com.mojang.ld22.screen.ContainerMenu;
 import com.mojang.ld22.screen.OptionsMenu;
 
 public class DeathChest extends Chest {
@@ -11,10 +10,10 @@ public class DeathChest extends Chest {
 	int redtick = 0; // this is used to determine the shade of red when the chest is about to expire.
 	boolean reverse; // what direction the red shade (redtick) is changing.
 	
-	public DeathChest(/*Player player*/) {
+	public DeathChest() {
 		super("Death Chest");
-		//inventory = player.inventory;
 		
+		/// set the expiration time based on the world difficulty.
 		if (OptionsMenu.diff == 1) {
 			time = 36000;
 		} else if (OptionsMenu.diff == 2) {
@@ -42,16 +41,16 @@ public class DeathChest extends Chest {
 	// for death chest time count, I imagine.
 	public void tick() {
 		super.tick();
+		name = "Death Chest:" + time / Game.normSpeed + "S"; // add the current
 		
-		name = "Death Chest:" + time / 60 + "S";
 		if (inventory.invSize() < 1) {
 			remove();
 		}
 
-		if (time < 3600) {
-			//name = "Death Chest:" + time / 60 + "S";
-			redtick += reverse ? -1 : 1;
+		if (time < 3600) { // if there is less than 3600 ticks left... (1 min @ 60tiks/sec)
+			redtick += reverse ? -1 : 1; // inc/dec-rement redtick, changing the red shading.
 			
+			// set the chest color based on redtick's value
 			if (redtick < 5) {
 				col0 = Color.get(-1, 100, 200, 300);
 				col1 = Color.get(-1, 100, 200, 300);
@@ -68,22 +67,22 @@ public class DeathChest extends Chest {
 				col2 = Color.get(-1, 300, 400, 500);
 				col3 = Color.get(-1, 300, 400, 500);
 			}
-
+			
+			/// these two statements keep the red color oscillating.
 			if (redtick > 13) {
 				reverse = true;
 			}
-
 			if (redtick < 0) {
 				reverse = false;
 			}
 		}
 
 		if (time > 0) {
-			time--;
+			time--; // decrement the time if it is not already zero.
 		}
 
 		if (time == 0) {
-			remove();
+			remove(); // remove the death chest when the time expires.
 		}
 	}
 	
