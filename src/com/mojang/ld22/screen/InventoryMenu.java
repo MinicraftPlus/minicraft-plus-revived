@@ -1,10 +1,8 @@
 package com.mojang.ld22.screen;
 
-import com.mojang.ld22.Game;
 import com.mojang.ld22.entity.Player;
 import com.mojang.ld22.gfx.Font;
 import com.mojang.ld22.gfx.Screen;
-import com.mojang.ld22.item.Item;
 import com.mojang.ld22.sound.Sound;
 
 public class InventoryMenu extends Menu {

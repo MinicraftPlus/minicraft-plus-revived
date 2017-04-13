@@ -1,14 +1,11 @@
 package com.mojang.ld22.screen;
 
-import com.mojang.ld22.entity.Player;
 import com.mojang.ld22.Game;
+import com.mojang.ld22.entity.Player;
 import com.mojang.ld22.gfx.Color;
 import com.mojang.ld22.gfx.Font;
 import com.mojang.ld22.gfx.Screen;
 import com.mojang.ld22.item.resource.Resource;
-import com.mojang.ld22.screen.Menu;
-import com.mojang.ld22.screen.ModeMenu;
-import com.mojang.ld22.screen.TitleMenu;
 import java.io.BufferedWriter;
 import java.io.FileWriter;
 import java.io.IOException;

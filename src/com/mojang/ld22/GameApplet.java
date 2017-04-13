@@ -1,6 +1,5 @@
 package com.mojang.ld22;
 
-import com.mojang.ld22.Game;
 import java.applet.Applet;
 import java.awt.BorderLayout;
 import java.io.BufferedReader;

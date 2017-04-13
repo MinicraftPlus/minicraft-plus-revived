@@ -1,6 +1,5 @@
 package com.mojang.ld22.gfx;
 
-import com.mojang.ld22.gfx.Font;
 
 public class Screen {
 	

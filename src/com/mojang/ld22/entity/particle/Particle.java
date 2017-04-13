@@ -1,9 +1,7 @@
 package com.mojang.ld22.entity.particle;
 
 import com.mojang.ld22.entity.Entity;
-import com.mojang.ld22.gfx.Color;
 import com.mojang.ld22.gfx.Screen;
-import com.mojang.ld22.sound.Sound;
 
 public class Particle extends Entity {
 	private int time = 0; // lifetime elapsed.

@@ -7,7 +7,6 @@ import java.awt.event.MouseListener;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 public class InputHandler implements MouseListener, KeyListener {
 	//note: there needs to be an options menu for changing the key controls.

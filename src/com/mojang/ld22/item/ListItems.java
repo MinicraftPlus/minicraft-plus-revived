@@ -1,27 +1,18 @@
 package com.mojang.ld22.item;
 
-import com.mojang.ld22.entity.AirWizard;
 import com.mojang.ld22.entity.Anvil;
 import com.mojang.ld22.entity.Bed;
 import com.mojang.ld22.entity.Chest;
-import com.mojang.ld22.entity.Creeper;
 import com.mojang.ld22.entity.Enchanter;
 import com.mojang.ld22.entity.Furnace;
 import com.mojang.ld22.entity.GoldLantern;
 import com.mojang.ld22.entity.IronLantern;
-import com.mojang.ld22.entity.Knight;
 import com.mojang.ld22.entity.Lantern;
 import com.mojang.ld22.entity.Loom;
 import com.mojang.ld22.entity.Oven;
-import com.mojang.ld22.entity.Pig;
-import com.mojang.ld22.entity.Sheep;
-import com.mojang.ld22.entity.Skeleton;
-import com.mojang.ld22.entity.Slime;
-import com.mojang.ld22.entity.Snake;
 import com.mojang.ld22.entity.Spawner;
 import com.mojang.ld22.entity.Tnt;
 import com.mojang.ld22.entity.Workbench;
-import com.mojang.ld22.entity.Zombie;
 import com.mojang.ld22.item.resource.Resource;
 import java.util.ArrayList;
 import java.util.List;

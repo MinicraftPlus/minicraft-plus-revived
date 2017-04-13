@@ -1,17 +1,11 @@
 package com.mojang.ld22.screen;
 
-import com.mojang.ld22.GameApplet;
 import com.mojang.ld22.Game;
+import com.mojang.ld22.GameApplet;
 import com.mojang.ld22.gfx.Color;
 import com.mojang.ld22.gfx.Font;
 import com.mojang.ld22.gfx.Screen;
-import com.mojang.ld22.screen.AboutMenu;
-import com.mojang.ld22.screen.Menu;
-import com.mojang.ld22.screen.ModeMenu;
-import com.mojang.ld22.screen.OptionsMenu;
-import com.mojang.ld22.screen.WorldSelectMenu;
 import com.mojang.ld22.sound.Sound;
-import java.awt.Desktop;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.File;
@@ -19,17 +13,11 @@ import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.net.ConnectException;
-import java.net.MalformedURLException;
-import java.net.URI;
-import java.net.URL;
-import java.net.URLConnection;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Random;
-import java.util.Scanner;
 
 public class TitleMenu extends Menu {
 	private int selected = 0;

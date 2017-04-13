@@ -12,7 +12,6 @@ import com.mojang.ld22.entity.DungeonChest;
 import com.mojang.ld22.entity.Enchanter;
 import com.mojang.ld22.entity.Entity;
 import com.mojang.ld22.entity.Furnace;
-import com.mojang.ld22.entity.Furniture;
 import com.mojang.ld22.entity.GoldLantern;
 import com.mojang.ld22.entity.Inventory;
 import com.mojang.ld22.entity.IronLantern;

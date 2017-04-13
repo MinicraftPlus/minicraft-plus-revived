@@ -1,6 +1,5 @@
 package com.mojang.ld22.entity.particle;
 
-import com.mojang.ld22.entity.particle.Particle;
 import com.mojang.ld22.gfx.Color;
 import com.mojang.ld22.gfx.Font;
 import com.mojang.ld22.gfx.Screen;

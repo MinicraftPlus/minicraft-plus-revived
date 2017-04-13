@@ -8,7 +8,6 @@ import com.mojang.ld22.item.ResourceItem;
 import com.mojang.ld22.item.ToolItem;
 import com.mojang.ld22.item.ToolType;
 import com.mojang.ld22.item.resource.Resource;
-import com.mojang.ld22.screen.ContainerMenu;
 import com.mojang.ld22.screen.ModeMenu;
 import java.util.Random;
 

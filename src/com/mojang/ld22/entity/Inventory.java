@@ -1,6 +1,5 @@
 package com.mojang.ld22.entity;
 
-import com.mojang.ld22.item.BucketLavaItem;
 import com.mojang.ld22.item.Item;
 import com.mojang.ld22.item.ResourceItem;
 import com.mojang.ld22.item.ToolItem;

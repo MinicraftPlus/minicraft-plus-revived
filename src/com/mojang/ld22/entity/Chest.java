@@ -2,7 +2,6 @@ package com.mojang.ld22.entity;
 
 import com.mojang.ld22.gfx.Color;
 import com.mojang.ld22.screen.ContainerMenu;
-import com.mojang.ld22.screen.OptionsMenu;
 
 public class Chest extends Furniture {
 	public Inventory inventory; // Inventory of the chest

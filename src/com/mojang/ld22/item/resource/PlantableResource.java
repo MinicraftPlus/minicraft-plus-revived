@@ -1,6 +1,5 @@
 package com.mojang.ld22.item.resource;
 
-import com.mojang.ld22.Game;
 import com.mojang.ld22.entity.Player;
 import com.mojang.ld22.level.Level;
 import com.mojang.ld22.level.tile.Tile;

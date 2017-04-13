@@ -12,7 +12,6 @@ import com.mojang.ld22.entity.Mob;
 import com.mojang.ld22.entity.Player;
 import com.mojang.ld22.entity.Spawner;
 import com.mojang.ld22.entity.particle.Particle;
-import com.mojang.ld22.gfx.Color;
 import com.mojang.ld22.item.Item;
 import com.mojang.ld22.item.ResourceItem;
 import com.mojang.ld22.screen.LoadingMenu;
