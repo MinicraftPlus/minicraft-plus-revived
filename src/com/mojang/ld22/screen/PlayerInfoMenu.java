@@ -1,4 +1,3 @@
-//respawn mod +dillyg10+
 package com.mojang.ld22.screen;
 
 import com.mojang.ld22.gfx.Color;
@@ -23,7 +22,7 @@ public class PlayerInfoMenu extends Menu {
 	public void render(Screen screen) {
 		Font.renderFrame(screen, "Player Info", 1, 1, 30, 15);
 
-		int seconds = game.gameTime / 60;
+		int seconds = game.gameTime / Game.normSpeed;
 		int minutes = seconds / 60;
 		int hours = minutes / 60;
 		int cStep = game.player.stepCount;

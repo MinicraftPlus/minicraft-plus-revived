@@ -720,10 +720,10 @@ public class Game extends Canvas implements Runnable {
 				// the key is potion type, value is remaining potion duration.
 			for(int i = 0; i < effects.length; i++) {
 				String pType = effects[i].getKey();
-				int pTime = effects[i].getValue();
+				int pTime = effects[i].getValue() / normSpeed;
 				int pcol = Color.get(PotionResource.potionColor(pType), 555, 555, 555);
 				Font.draw("("+input.getMapping("potionEffects")+" to hide!)", screen, 180, 9, Color.get(0, 555, 555, 555));
-				Font.draw(pType + " (" + (pTime / 60 / 60) + ":" + ((pTime / 60) % 60) + ")", screen, 180, 17 + i * 8, pcol);
+				Font.draw(pType + " (" + (pTime / 60) + ":" + (pTime % 60) + ")", screen, 180, 17 + i * 8, pcol);
 			}
 		}
 		
