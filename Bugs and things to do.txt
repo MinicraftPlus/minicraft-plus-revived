@@ -8,7 +8,7 @@ Note to self: for more little bugs/ideas/concerns, search code for "TODO"
 
 	####BUGS####
 ####
-Mobs hits prevent you from moving, and Skeleton arrows go through trees (only Player arrows should go through trees, in debug mode).
+new resource-items added to inv sometimes show up as 0.
 ####
 Sound effects don't always play when they should; mostly it seems when other sounds should be on at the same time.
 ####
@@ -18,12 +18,6 @@ Many item names don't fit on the black "active item" bar at the bottom.
 ####
 Spawners emit too many entities per unit time. Make it slower. Should be super quick and easy.
 ####
-Textures for my new placeable obsidian door and wall are a bit broken. I probably just need to check their Resource instances; I bet I put "Stone__" Tiles in there or something... In fact, I'm almost certain that's exactly what I did.
-####
-Death Chests do not display time remaining.
-####
-wierd unreprodoucable glitch: game screen went all gray for a second after pressing exit to main menu button, but the cancelling, and pressing "r" to save.
-#### 
 
 -----------------------------------------------------------------------------------
 
@@ -31,10 +25,6 @@ wierd unreprodoucable glitch: game screen went all gray for a second after press
 ****
 
 Make respawn without bed += 20 blocks x/y of last spawn.
-
-****
-
-Make a Chest class, with sub-classes DungeonChest and DeathChest.
 
 ****
 
