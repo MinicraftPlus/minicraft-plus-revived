@@ -37,6 +37,10 @@ public class PlantableResource extends Resource {
 		if (name == "St.BrickWall" || name == "Stone Door") {
 			player.game.notifications.add("Can only be placed on stone brick!");
 		}
+		
+		if (name == "Ob.BrickWall" || name == "Obsidian Door") {
+			player.game.notifications.add("Can only be placed on ob. brick!");
+		}
 		return false;
 	}
 }
