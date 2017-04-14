@@ -23,7 +23,7 @@ public class TorchResource extends Resource {
 
 	public boolean interactOn(Tile tile, Level level, int xt, int yt, Player player, int attackDir) {
 		if (sourceTiles.contains(tile)) {
-			if (Level.depthlvl == 0) {
+			if (level.depth == 0) {
 				if (tile == Tile.grass) {
 					level.setTile(xt, yt, Tile.torchgrass, 0);
 					return true;
@@ -109,6 +109,61 @@ public class TorchResource extends Resource {
 					return true;
 				}
 				if (tile == Tile.lightblwool) {
+					level.setTile(xt, yt, Tile.torchwoolblack, 0);
+					return true;
+				}
+			} else {
+				if(tile == Tile.grass) {
+					level.setTile(xt, yt, Tile.torchgrass, 0);
+					return true;
+				}
+
+				if(tile == Tile.dirt) {
+					level.setTile(xt, yt, Tile.torchdirt, 0);
+					return true;
+				}
+
+				if(tile == Tile.sand) {
+					level.setTile(xt, yt, Tile.torchsand, 0);
+					return true;
+				}
+
+				if(tile == Tile.plank) {
+					level.setTile(xt, yt, Tile.torchplank, 0);
+					return true;
+				}
+
+				if(tile == Tile.sbrick) {
+					level.setTile(xt, yt, Tile.torchsbrick, 0);
+					return true;
+				}
+
+				if(tile == Tile.wool) {
+					level.setTile(xt, yt, Tile.torchwool, 0);
+					return true;
+				}
+
+				if(tile == Tile.redwool) {
+					level.setTile(xt, yt, Tile.torchwoolred, 0);
+					return true;
+				}
+
+				if(tile == Tile.bluewool) {
+					level.setTile(xt, yt, Tile.torchwoolblue, 0);
+					return true;
+				}
+
+				if(tile == Tile.greenwool) {
+					level.setTile(xt, yt, Tile.torchwoolgreen, 0);
+					return true;
+				}
+
+				if(tile == Tile.yellowwool) {
+					level.setTile(xt, yt, Tile.torchwoolyellow, 0);
+					return true;
+				}
+
+				if(tile == Tile.blackwool) {
 					level.setTile(xt, yt, Tile.torchwoolblack, 0);
 					return true;
 				}
