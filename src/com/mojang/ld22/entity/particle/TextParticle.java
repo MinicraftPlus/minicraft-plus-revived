@@ -12,7 +12,7 @@ public class TextParticle extends Particle {
 	public TextParticle(String msg, int x, int y, int col) {
 		super(x, y, 60, col);
 		
-		msg = msg;
+		this.msg = msg;
 		xx = x; //assigns x pos
 		yy = y; //assigns y pos
 		zz = 2; //assigns z pos to be 2
