@@ -369,14 +369,11 @@ public class Load {
 	}
 	
 	private String subOldItemName(String oldName) {
-		if(oldName.contains(";")) oldName = oldName.substring(0, oldName.indexOf(";"));
-		oldName = oldName.replace("P.", "Potion");
-		
-		switch(oldName) {
-			case "Fish Rod": return "Fishing Rod";
-			
-			default: return oldName;
-		}
+		//if(oldName.contains(";")) oldName = oldName.substring(0, oldName.indexOf(";"));
+		//System.out.println("old name: " + oldName);
+		String newName = oldName.replace("P.", "Potion").replace("Fish Rod", "Fishing Rod").replace("bed", "Bed");
+		//System.out.println("new name: " + newName);
+		return newName;
 	}
 	
 	public void loadEntities(String filename, Player player) {
@@ -412,6 +409,7 @@ public class Load {
 						String itemData = (String)chestInfo.get(idx);
 						if(worldVer.compareTo(new Version("1.9.1")) < 0) // if this world is before 1.9.1
 							if(itemData.equals("")) continue; // this skips any null items
+						if(oldSave) itemData = subOldItemName(itemData);
 						Item item = ListItems.getItem(itemData);
 						if (item instanceof ResourceItem) {
 							List<String> curData = Arrays.asList((itemData + ";1").split(";")); // this appends ";1" to the end, meaning one item, to everything; but if it was already there, then it becomes the 3rd element in the list, which is ignored.
@@ -481,7 +479,8 @@ public class Load {
 			case "Player": return (Entity)(player);
 			case "Knight": return (Entity)(new Knight(0));
 			case "Snake": return (Entity)(new Snake(0));
-			default : if(Game.debug) System.out.println("LOAD: UNKNOWN ENTITY: " + string);
+			//case "Spark": return (Entity)(new Spark());
+			default : if(Game.debug) System.out.println("LOAD: unknown entity: " + string);
 				return new Entity();
 		}
 	}
