@@ -32,6 +32,10 @@ There's a lot to do in the Tile classes... many methods have many unnecessary pa
 
 ****
 
+Take the random inv item adder methods in Level and DungeonChest, and move them to a public static method in Inventory.java.
+
+****
+
 Make a TextPage class or something, for the About and Instructions sections of the TitleMenu; really, it's for pages that are non-interactive, just a bunch of text.
 Also, add controls listing somewhere. Probably closely related to the below idea.
 

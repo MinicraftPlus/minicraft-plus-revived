@@ -5,6 +5,10 @@ Add world copy option, like rename and delete.
 
 ----
 
+Remove the PowGlove entirely, in favor of a new control key, like "v", to "pickup" things. Perhaps, make it only work when nothing is in your hand?
+
+----
+
 change "xa" and "ya" to something else; b/c they are NOT accelerations! They're distances! Specifically, they are the distance that a given entity is about to move.
 
 ----
