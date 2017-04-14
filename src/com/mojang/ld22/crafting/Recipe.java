@@ -19,8 +19,9 @@ import java.util.List;
 public abstract class Recipe implements ListItem {
 	public List<Item> costs = new ArrayList<Item>();  // A list of costs for the recipe
 	public boolean canCraft = false; // checks if the player can craft the recipe
-	Resource resource;
 	public Item resultTemplate; // the result item of the recipe
+	Resource resource;
+	public ResourceItem ri;
 
 	public Recipe(Item resultTemplate) {
 		this.resultTemplate = resultTemplate; // assigns the result item
@@ -49,7 +50,7 @@ public abstract class Recipe implements ListItem {
 			if (item instanceof ResourceItem) {
 				// if the item is a resource, convert it to a ResourceItem.
 				ResourceItem ri = (ResourceItem) item;
-				if (!player.inventory.hasResources(ri.resource, ri.count)) {
+				if (!player.inventory.hasResources(ri.resource, ri.count) && !ModeMenu.creative) {
 					//if the player doesn't have the resources, then the recipe cannot be crafted.
 					canCraft = false;
 					return;
@@ -57,14 +58,14 @@ public abstract class Recipe implements ListItem {
 			} else if (item instanceof ToolItem) {
 				// if the item is a tool, convert it to a tool.
 				ToolItem ti = (ToolItem) item;
-				if (!player.inventory.hasTools(ti.type, ti.level)) {
+				if (!player.inventory.hasTools(ti.type, ti.level) && !ModeMenu.creative) {
 					// some recipes require tools to craft, such as the claymores.
 					canCraft = false;
 					return;
 				}
-			} else if(item instanceof BucketLavaItem) {
-				BucketLavaItem lava = (BucketLavaItem)item;
-				if(!player.inventory.hasItem(lava) && !ModeMenu.creative) {
+			} else {//if(item instanceof BucketLavaItem) {
+				//BucketLavaItem lava = (BucketLavaItem)item;
+				if(!player.inventory.hasItem(item) && !ModeMenu.creative) {
 					this.canCraft = false;
 					return;
 				}
@@ -82,8 +83,14 @@ public abstract class Recipe implements ListItem {
 		
 		// These 4 items are crafted in twos.
 		String name = resultTemplate.getName();
-		if(name == "Torch" || name == "string" || name == "Plank" || name == "St.Brick")
+		if(name == "Torch" || name == "string" || name == "Plank" || name == "St.Brick") {
 			Font.draw(resultTemplate.getName() + " x2", screen, x + 8, y, textColor);
+		}
+		
+		if(name == "arrow") {
+			ri = (ResourceItem)resultTemplate;
+			Font.draw(resultTemplate.getName() + " x" + ri.amount, screen, x + 8, y, textColor);
+		}
 	}
 	
 	public abstract void craft(Player player); // abstract method given to the sub-recipe classes.
@@ -93,16 +100,16 @@ public abstract class Recipe implements ListItem {
 		for (int i = 0; i < costs.size(); i++) { //loops through the costs
 			Item item = costs.get(i); //gets the current item in costs
 			
-			// convert and remove the item, whether it's a tool or a resource:
+			// convert and remove the item, whether it's a tool or a resource, or something else:
 			if (item instanceof ResourceItem) {
 				ResourceItem ri = (ResourceItem) item;
 				player.inventory.removeResource(ri.resource, ri.count);
 			} else if (item instanceof ToolItem) {
 				ToolItem ti = (ToolItem) item;
 				player.inventory.removeTool(ti.type, ti.level);
-			} else if(item instanceof BucketLavaItem) {
-				BucketLavaItem lava = (BucketLavaItem)item;
-				player.inventory.removeItem(lava);
+			} else {//if(item instanceof BucketLavaItem) {
+				//BucketLavaItem lava = (BucketLavaItem)item;
+				player.inventory.removeItem(item);
 			}
 		}
 	}

@@ -11,7 +11,6 @@ import com.mojang.ld22.screen.OptionsMenu;
 
 public class Sheep extends Mob {
 	int xa, ya, xe, ye;
-	private int lvl;
 	private int randomWalkTime;
 	
 	public Sheep(int lvl) {

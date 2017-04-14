@@ -57,17 +57,15 @@ public class Arrow extends Entity {
 		for (int i = 0; i < entitylist.size(); i++) {
 			Entity hit = entitylist.get(i);
 			
-			if (count < 9) {
-				if (hit != null) {
+			if (hit != null) {
+				if (count < 9) {
 					if (hit instanceof Mob && hit != owner && owner.isenemy == false) {
 						hit.hurt(owner, damage + 3, ((Mob) hit).dir);
 					}
 					if (hit instanceof Player && hit != owner && owner.isenemy == true) {
 						hit.hurt(owner, damage, ((Player) hit).dir);
 					}
-				}
-			} else if (count > 8) {
-				if (hit != null) {
+				} else {
 					if (hit instanceof Mob && hit != owner && owner.isenemy == false) {
 						hit.hurt(owner, damage + 4, ((Mob) hit).dir);
 					}
@@ -77,10 +75,9 @@ public class Arrow extends Entity {
 				}
 			}
 			
-			if (level.getTile(x / 16, y / 16).mayPass(level, x / 16, y / 16, this)
-					|| level.getTile(x / 16, y / 16).connectsToWater
-					|| level.getTile(x / 16, y / 16).id == 16) {
-			} else {
+			if (!level.getTile(x / 16, y / 16).mayPass(level, x / 16, y / 16, this)
+					&& !level.getTile(x / 16, y / 16).connectsToWater
+					&& !level.getTile(x / 16, y / 16).id == 16) {
 				this.remove();
 			}
 		}
@@ -94,8 +91,8 @@ public class Arrow extends Entity {
 		if (time >= lifeTime - 3 * 20) {
 			if (time / 6 % 2 == 0) return;
 		}
-		int xt;
-		int yt;
+		byte xt;
+		byte yt;
 		//if(com.mojang.ld22.Game.debug) System.out.println(xdir + " " + ydir + " ");
 		if (xdir == 0 && ydir == -1) {
 			xt = 15;

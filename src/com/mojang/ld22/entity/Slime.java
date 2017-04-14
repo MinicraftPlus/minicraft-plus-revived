@@ -11,8 +11,7 @@ import com.mojang.ld22.screen.OptionsMenu;
 public class Slime extends Mob {
 	private int xa, ya; // x and y acceleration
 	private int jumpTime = 0; // jumpTimer, also acts as a rest timer before the next jump
-	//private int lvl; // how tough the slime is
-
+	
 	public Slime(int lvl) {
 		this.col0 = Color.get(-1, 20, 40, 10);
 		this.col1 = Color.get(-1, 20, 30, 40);

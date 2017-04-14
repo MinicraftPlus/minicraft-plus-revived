@@ -14,7 +14,6 @@ public class Pig extends Mob {
 	int ya;
 	int xe = xa;
 	int ye = ya;
-	private int lvl;
 	private int randomWalkTime = 0;
 
 	public Pig(int lvl) {

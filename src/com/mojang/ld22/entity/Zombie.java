@@ -11,7 +11,6 @@ import com.mojang.ld22.screen.OptionsMenu;
 // TODO compress the enemy mobs into an Enemy class... further, similar compression can happen in many places...
 public class Zombie extends Mob {
 	int xa, ya;
-	//private int lvl; // how tough the zombie is
 	private int randomWalkTime = 0; //time till next walk
 
 	public Zombie(int lvl) {

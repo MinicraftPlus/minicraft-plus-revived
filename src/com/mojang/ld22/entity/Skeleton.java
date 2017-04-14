@@ -11,7 +11,6 @@ import com.mojang.ld22.screen.OptionsMenu;
 
 public class Skeleton extends Mob {
 	int xa, ya, xe, ye;
-	//private int lvl;
 	private int randomWalkTime;
 	public int arrowtime;
 	public int artime;
