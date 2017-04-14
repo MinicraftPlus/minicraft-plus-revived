@@ -18,15 +18,15 @@ public class ObsidianBrick extends Tile {
 
 	public void render(Screen screen, Level level, int x, int y) {
 
-		int col0 = Color.get(559, 559, 159, 159);
+		int col0 = Color.get(102, 102, 203, 203);
 
-		int col1 = Color.get(559, 559, 159, 159);
+		int col1 = Color.get(102, 102, 203, 203);
 
-		int col2 = Color.get(559, 559, 159, 159);
+		int col2 = Color.get(102, 102, 203, 203);
 
-		int col3 = Color.get(559, 559, 159, 159);
+		int col3 = Color.get(000, 000, 203, 102);//int col3 = Color.get(002, 002, 203, 203);
 
-		int col4 = Color.get(159, 159, 59, 59);
+		int col4 = Color.get(000, 000, 103, 103);
 
 		if (level.dirtColor == 322) {
 

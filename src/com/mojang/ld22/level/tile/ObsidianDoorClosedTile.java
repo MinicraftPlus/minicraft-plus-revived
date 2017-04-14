@@ -13,16 +13,16 @@ public class ObsidianDoorClosedTile extends Tile {
 	}
 
 	public void render(Screen screen, Level level, int x, int y) {
-		int col0 = Color.get(559, 359, 59, 459);
-
-		int col1 = Color.get(444, 333, 222, 333);
-
-		int col2 = Color.get(333, 222, 111, 222);
-
-		int col3 = Color.get(222, 111, 000, 111);
-
-		int col4 = Color.get(59, 159, 159, 259);
-
+		int col0 = Color.get(203, 102, 102, 204);
+		
+		int col1 = Color.get(203, 102, 203, 102);
+		
+		int col2 = Color.get(203, 102, 111, 102);
+		
+		int col3 = Color.get(102, 000, 111, 103);
+		
+		int col4 = Color.get(102, 102, 203, 103);
+		
 		if (level.dirtColor == 322) {
 
 			if (Game.time == 0) {

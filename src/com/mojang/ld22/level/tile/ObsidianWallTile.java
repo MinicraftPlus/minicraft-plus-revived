@@ -21,26 +21,30 @@ public class ObsidianWallTile extends Tile {
 	}
 
 	public void render(Screen screen, Level level, int x, int y) {
-		int col0 = Color.get(333, 333, 333, 333);
-		int col00 = Color.get(111, 222, 333, 333);
-		int col000 = Color.get(111, 333, 333, 333);
-
-		int col1 = Color.get(444, 444, 444, 444);
-		int col11 = Color.get(111, 333, 444, 444);
-		int col111 = Color.get(111, 444, 444, 444);
-
-		int col2 = Color.get(333, 333, 333, 333);
-		int col22 = Color.get(111, 222, 333, 333);
-		int col222 = Color.get(111, 333, 333, 333);
-
-		int col3 = Color.get(222, 222, 222, 222);
-		int col33 = Color.get(000, 111, 222, 222);
-		int col333 = Color.get(000, 222, 222, 222);
-
-		int col4 = Color.get(59, 59, 59, 59);
-		int col44 = Color.get(000, 159, 59, 59);
-		int col444 = Color.get(000, 59, 59, 59);
-
+		/*int col0 = Color.get(203, 203, 203, 203);
+		int col00 = Color.get(000, 102, 203, 203);
+		int col000 = Color.get(000, 203, 203, 203);
+		*/
+		int col0 = Color.get(103, 103, 103, 103);
+		int col00 = Color.get(000, 203, 103, 103);
+		int col000 = Color.get(000, 103, 103, 103);
+		
+		int col1 = Color.get(103, 103, 103, 103);
+		int col11 = Color.get(000, 203, 103, 103);
+		int col111 = Color.get(000, 103, 103, 103);
+		
+		int col2 = Color.get(102, 102, 102, 102);
+		int col22 = Color.get(000, 203, 102, 102);
+		int col222 = Color.get(000, 102, 102, 102);
+		
+		int col3 = Color.get(000, 000, 000, 000);
+		int col33 = Color.get(102, 102, 000, 000);
+		int col333 = Color.get(102, 000, 000, 000);
+		
+		int col4 = Color.get(103, 103, 103, 103);
+		int col44 = Color.get(000, 203, 103, 103);
+		int col444 = Color.get(000, 103, 103, 103);
+		
 		if (level.dirtColor == 322) {
 
 			if (Game.time == 0) {
@@ -272,7 +276,7 @@ public class ObsidianWallTile extends Tile {
 			ToolItem tool = (ToolItem) item;
 			if (!ModeMenu.creative) {
 				if (tool.type == ToolType.pickaxe && tool.level > 2 && AirWizard.beaten) { // This makes it so that you can only break obsidian walls with a gem pickaxe and only after you beat the air wizard
-					if (player.payStamina(4 - tool.level)) {
+					if (player.payStamina(1 - tool.level)) {
 						hurt(level, xt, yt, random.nextInt(10) + (tool.level) * 5 + 10);
 						return true;
 					}
