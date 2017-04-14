@@ -41,13 +41,14 @@ public class Level {
 	private Random random = new Random();
 
 	public int w, h; // width and height of the level
+	public Player player;
 	//public int sux, suy; // player start position?
 	
 	public byte[] tiles; // an array of all the tiles in the world.
 	public byte[] data; // an array of the data of the tiles in the world. // ?
 	public List<Entity>[] entitiesInTiles; // An array of lists of entities in the world, by tile
 
-	public int curLvl = 0; // current level
+	//public int curLvl = 0; // current level
 	public int grassColor = 141;
 	public int dirtColor = 322;
 	public int woolColor = 444;
@@ -56,12 +57,13 @@ public class Level {
 	public int sandColor = 550;
 	public int depth; // depth level of the level
 	public int monsterDensity = 8; // affects the number of monsters that are on the level, bigger the number the less monsters spawn.
-	public static int depthlvl;
+	//public static int depthlvl;
 	public int chestcount;
 
 	public static List<String> ls = new ArrayList<String>();
 
 	public List<Entity> entities = new ArrayList<Entity>(); // A list of all the entities in the world
+	private List<Entity> rowSprites = new ArrayList<Entity>();
 	private Comparator<Entity> spriteSorter = new Comparator<Entity>() { // creates a sorter for all the entities to be rendered.
 		public int compare(Entity e0, Entity e1) { // compares 2 entities
 			if (e1.y < e0.y) return +1; // If the y position of the first entity is less (higher up) than the second entity, then it will be moved up in sorting.
@@ -82,8 +84,8 @@ public class Level {
 	@SuppressWarnings("unchecked") // @SuppressWarnings ignores the warnings (yellow underline) in this method.
 	/** Level which the world is contained in */
 	public Level(int w, int h, int level, Level parentLevel) {
-		this.depth = level;
-		curLvl = level;
+		depth = level;
+		//curLvl = level;
 		this.w = w;
 		this.h = h;
 		byte[][] maps; // multidimensional array (an array within a array), used for the map
@@ -371,7 +373,7 @@ public class Level {
 	public void tick() {
 		trySpawn(1);
 
-		depthlvl = depth;
+		//depthlvl = depth;
 
 		for (int i = 0; i < w * h / 50; i++) {
 			int xt = random.nextInt(w);
@@ -542,10 +544,6 @@ public class Level {
 		}
 		screen.setOffset(0, 0);
 	}
-
-	private List<Entity> rowSprites = new ArrayList<Entity>();
-	
-	public Player player;
 	
 	public void renderSprites(Screen screen, int xScroll, int yScroll) {
 		int xo = xScroll >> 4;
@@ -578,6 +576,7 @@ public class Level {
 		for (int y = yo - r; y <= h + yo + r; y++) {
 			for (int x = xo - r; x <= w + xo + r; x++) {
 				if (x < 0 || y < 0 || x >= this.w || y >= this.h) continue;
+				
 				List<Entity> entities = entitiesInTiles[x + y * this.w];
 				for (int i = 0; i < entities.size(); i++) {
 					Entity e = entities.get(i);
@@ -643,7 +642,7 @@ public class Level {
 		
 		insertEntity(entity.x >> 4, entity.y >> 4, entity);
 	}
-
+	/*
 	public void adds(Entity entity, int xs, int ys) {
 		if (entity instanceof Player) {
 			player = (Player) entity;
@@ -654,7 +653,7 @@ public class Level {
 
 		insertEntity(entity.x >> xs, entity.y >> ys, entity);
 	}
-
+	*/
 	public void remove(Entity e) {
 		entities.remove(e);
 		int xto = e.x >> 4;
@@ -686,11 +685,11 @@ public class Level {
 			}
 
 			int lvl = random.nextInt(maxLevel - minLevel + 1) + minLevel;
-			int levels = depth;
+			//int levels = depth;
 			int rnd = random.nextInt(100);
 			int tim = Game.time;
 
-			if (levels == 0) {
+			if (depth == 0) {
 				if (tim > 2) {
 					if (rnd <= 40) mob = new Slime(lvl);
 					else if (rnd <= 75) mob = new Zombie(lvl);
@@ -701,7 +700,7 @@ public class Level {
 				}
 			}
 
-			if (levels == 0) {
+			if (depth == 0) {
 				if (tim != 3) {
 					if (rnd <= 22) mob = new Cow(lvl);
 					else if (rnd >= 68) mob = new Pig(lvl);
@@ -721,7 +720,7 @@ public class Level {
 						this.add(mob);
 					}
 				}
-			} else if (levels != 0 && levels != -4) {
+			} else if (depth != 0 && depth != -4) {
 
 				if (rnd <= 40) mob = new Slime(lvl);
 				else if (rnd <= 75) mob = new Zombie(lvl);
@@ -731,7 +730,7 @@ public class Level {
 				if (mob.findStartPos(this)) {
 					this.add(mob);
 				}
-			} else if (levels == -4) {
+			} else if (depth == -4) {
 
 				if (rnd <= 40) mob = new Snake(lvl);
 				else if (rnd <= 75) mob = new Knight(lvl);
