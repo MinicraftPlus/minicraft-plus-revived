@@ -31,9 +31,9 @@ public class Color {
 	}
 	
 	//similar to get(), it looks like, but just one value..?
-	/*public static int pixel(int a) {
+	public static int pixel(int a) {
 		return (get(a) << 24) + (get(a) << 16) + (get(a) << 8) + get(a);
-	}*/
+	}
 	
 	//looks like an error correction system.
 	public static int rgb(int red, int green, int blue) {
@@ -75,5 +75,32 @@ public class Color {
 		return r * 36 + g * 6 + b; // returns (red value * 36) + (green value * 6) + (blue value)
 		
 		// Why do we need all this math to get the colors? I don't even know. -David
+	}
+	
+	public static void main(String[] args) {
+		/// this is for color testing.
+		int r, g, b, d;
+		if(args.length == 1) {
+			d = Integer.parseInt(args[0]);
+			int a = get(d);
+			//System.out.println("resultant: " + a);
+			r = a / 36 % 6;
+			g = a / 6 % 6;
+			b = a  % 6;
+			//System.out.println("laid out: r=" + r + ", g=" + g + ", b=" + b);
+			System.out.println("rgb: " + r + g + b);
+			//System.out.println("pixel " + d + ": " + pixel(d));
+		}
+		if(args.length == 3) {
+			r = Integer.parseInt(args[0]);
+			g = Integer.parseInt(args[1]);
+			b = Integer.parseInt(args[2]);
+			d = r * 36 + g * 6 + b;
+			System.out.println("added: " + d);
+			System.out.println("resultant: " + get(d));
+			System.out.println("pixel: " + d + ": " + pixel(d));
+			//System.out.println();
+		}
+		
 	}
 }
