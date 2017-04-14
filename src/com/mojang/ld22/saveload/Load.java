@@ -348,7 +348,7 @@ public class Load {
 				if(oldSave && i == 0) item = item.replace(";0", ";1");
 				List curData = Arrays.asList(item.split(";"));
 				String itemName = (String)curData.get(0);
-				if(oldSave) itemName = subOldItemName(itemName);
+				if(oldSave) itemName = subOldName(itemName);
 				
 				Item newItem = ListItems.getItem(itemName);
 				
@@ -361,14 +361,14 @@ public class Load {
 					}
 				}
 			} else {
-				if(oldSave) item = subOldItemName(item);
+				if(oldSave) item = subOldName(item);
 				Item toAdd = ListItems.getItem(item);
 				inventory.add(toAdd);
 			}
 		}
 	}
 	
-	private String subOldItemName(String oldName) {
+	private String subOldName(String oldName) {
 		//if(oldName.contains(";")) oldName = oldName.substring(0, oldName.indexOf(";"));
 		//System.out.println("old name: " + oldName);
 		String newName = oldName.replace("P.", "Potion").replace("Fish Rod", "Fishing Rod").replace("bed", "Bed");
@@ -384,7 +384,8 @@ public class Load {
 		}
 		
 		for(int i = 0; i < data.size(); i++) {
-			Entity newEntity = getEntity(((String)data.get(i)).substring(0, ((String)data.get(i)).indexOf("[")), player);
+			String entityName = ((String)data.get(i)).substring(0, ((String)data.get(i)).indexOf("[")).replace("bed", "Bed");
+			Entity newEntity = getEntity(entityName, player);
 			List info = Arrays.asList(((String)data.get(i)).substring(((String)data.get(i)).indexOf("[") + 1, ((String)data.get(i)).indexOf("]")).split(":"));
 			if(newEntity != null) { // the method never returns null, but...
 				newEntity.x = Integer.parseInt((String)info.get(0));
@@ -409,7 +410,7 @@ public class Load {
 						String itemData = (String)chestInfo.get(idx);
 						if(worldVer.compareTo(new Version("1.9.1")) < 0) // if this world is before 1.9.1
 							if(itemData.equals("")) continue; // this skips any null items
-						if(oldSave) itemData = subOldItemName(itemData);
+						if(oldSave) itemData = subOldName(itemData);
 						Item item = ListItems.getItem(itemData);
 						if (item instanceof ResourceItem) {
 							List<String> curData = Arrays.asList((itemData + ";1").split(";")); // this appends ";1" to the end, meaning one item, to everything; but if it was already there, then it becomes the 3rd element in the list, which is ignored.

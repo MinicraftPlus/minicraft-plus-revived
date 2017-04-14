@@ -77,7 +77,7 @@ public class Arrow extends Entity {
 			
 			if (!level.getTile(x / 16, y / 16).mayPass(level, x / 16, y / 16, this)
 					&& !level.getTile(x / 16, y / 16).connectsToWater
-					&& !level.getTile(x / 16, y / 16).id == 16) {
+					&& level.getTile(x / 16, y / 16).id != 16) {
 				this.remove();
 			}
 		}
