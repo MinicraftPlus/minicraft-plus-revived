@@ -60,11 +60,12 @@ public class Player extends Mob {
 	public ArmorResource curArmor; // the color of the armor to be displayed.
 	public int staminaRecharge;  // the recharge rate of the player's stamina
 	public int staminaRechargeDelay; // the recharge delay when the player uses up their stamina.
-	public int hungStamCnt;
+	private static int maxHungerTicks = 300;
+	public int hungerStamCnt, hungerStamTicks;
 	int hungerChargeDelay; // the delay between each time the hunger bar increases your health
 	int hungerStarveDelay; // the delay between each time the hunger bar decreases your health
-	boolean alreadyLostHunger;
-	boolean repeatHungerCyc;
+	//boolean alreadyLostHunger;
+	//boolean repeatHungerCyc;
 	
 	public boolean showinfo;
 	public int px, py;
@@ -95,7 +96,7 @@ public class Player extends Mob {
 		//maxStamina = 10;
 		//maxHunger = 10;
 		
-		repeatHungerCyc = false;
+		//repeatHungerCyc = false;
 		
 		px = this.x;
 		py = this.y;
@@ -115,6 +116,9 @@ public class Player extends Mob {
 		armorDamageBuffer = 0;
 		stamina = maxStamina;
 		hunger = maxHunger;
+		
+		hungerStamCnt = 0;
+		hungerStamTicks = maxHungerTicks;
 		
 		if (ModeMenu.creative) {
 			for (int i = 0; i < ListItems.items.size(); i++) {
@@ -170,43 +174,65 @@ public class Player extends Mob {
 		}
 		
 		// TODO this whole thing below needs comments; but more importantly, it needs optimizing.
-		if (hunger < 0) hunger = 0; // error correction?
-		else {
-			// remember: staminaRechargeDelay is a penalty delay for when the player uses up all their stamina.
-			// staminaRecharge is the rate of stamina recharge, in some sort of unknown units.
-			if (stamina <= 0 && staminaRechargeDelay == 0 && staminaRecharge == 0) {
-				staminaRechargeDelay = 40; // some sort of duration.
-				hungStamCnt++;
-				//if (isSwimming()) hungStamCnt--;
-				if (OptionsMenu.diff == OptionsMenu.easy && hungStamCnt == 10) {
-					hunger--;
-					hungStamCnt = 0;
-				}
-				if (OptionsMenu.diff == OptionsMenu.norm && hungStamCnt == 7) {
-					hunger--;
-					hungStamCnt = 0;
-				}
-				if (OptionsMenu.diff == OptionsMenu.hard && hungStamCnt == 5) {
-					hunger--;
-					hungStamCnt = 0;
-				}
-			}
-
-			if (staminaRechargeDelay > 0) staminaRechargeDelay--;
-
-			if (staminaRechargeDelay == 0) {
-				staminaRecharge++; // this is used to determine the time between each bolt recharge.
-
-				if (isSwimming() && !potioneffects.containsKey("Swim")) staminaRecharge = 0; //
-				
-				int charge = potioneffects.containsKey("Time") ? 5 : 10;
-				while (staminaRecharge > charge) {
-					staminaRecharge -= charge;
-					if (stamina < maxStamina) stamina++;
-				}
+		
+		// remember: staminaRechargeDelay is a penalty delay for when the player uses up all their stamina.
+		// staminaRecharge is the rate of stamina recharge, in some sort of unknown units.
+		if (stamina <= 0 && staminaRechargeDelay == 0 && staminaRecharge == 0) {
+			staminaRechargeDelay = 40; // some sort of duration.
+		}
+		
+		if (staminaRechargeDelay > 0 && stamina < maxStamina) staminaRechargeDelay--;
+		
+		if (staminaRechargeDelay == 0) {
+			staminaRecharge++; // this is used to determine the time between each bolt recharge.
+			
+			if (isSwimming() && !potioneffects.containsKey("Swim")) staminaRecharge = 0; //
+			
+			int charge = potioneffects.containsKey("Time") ? 5 : 10;
+			while (staminaRecharge > charge) {
+				staminaRecharge -= charge;
+				if (stamina < maxStamina) stamina++;
 			}
 		}
-
+		
+		if (hunger < 0) hunger = 0; // error correction
+		
+		if(stamina < maxStamina) {
+			hungerStamTicks--;
+			if(stamina == 0) hungerStamTicks--;
+		}
+		if(hungerChargeDelay > 0) {
+			hungerStamTicks--;
+			if(hunger == maxHunger) hungerStamTicks--;
+		}
+		
+		if(hungerStamTicks <= 0) {
+			hungerStamTicks = maxHungerTicks;
+			hungerStamCnt++;
+			//if (isSwimming()) hungerStamCnt--;
+		}
+		
+		// on easy mode, hunger doesn't deplete?
+		if (OptionsMenu.diff == OptionsMenu.norm) {
+			if (stepCount >= 800) {
+				hungerStamCnt++;
+				stepCount = 0;
+			}
+		}
+		if (OptionsMenu.diff == OptionsMenu.hard) {
+			if (stepCount >= 300) {
+				hungerStamCnt++;
+				stepCount = 0;
+			}
+		}
+		
+		if (OptionsMenu.diff == OptionsMenu.easy && hungerStamCnt == 10
+			|| OptionsMenu.diff == OptionsMenu.norm && hungerStamCnt == 7
+			|| OptionsMenu.diff == OptionsMenu.hard && hungerStamCnt == 5) {
+			hunger--;
+			hungerStamCnt = 0;
+		}
+		
 		/*if (hungerChargeDelay == 0) {
 			hungerChargeDelay = 100;
 		}*/
@@ -224,19 +250,6 @@ public class Player extends Mob {
 
 		if (hungerStarveDelay == 0) {
 			hungerStarveDelay = 120;
-		}
-		if (OptionsMenu.diff == OptionsMenu.norm) {
-			if (stepCount >= 10000) {
-				hunger--;
-				stepCount = 0;
-			}
-		}
-		// on easy mode, hunger doesn't deplete?
-		if (OptionsMenu.diff == OptionsMenu.hard) {
-			if (stepCount >= 5000) {
-				hunger--;
-				stepCount = 0;
-			}
 		}
 
 		if (OptionsMenu.diff == OptionsMenu.norm) {
@@ -282,31 +295,25 @@ public class Player extends Mob {
 		
 		// this is where movement detection occurs.
 		int xa = 0, ya = 0;
-		if (input.getKey("up").down) {
-			ya--;
-			stepCount++;
+		if (input.getKey("up").down) ya--;
+		if (input.getKey("down").down) ya++;
+		if (input.getKey("left").down) xa--;
+		if (input.getKey("right").down) xa++;
+		
+		if (game.savecooldown > 0 && !game.saving) {
+			game.savecooldown--;
 		}
-		if (input.getKey("down").down) {
-			ya++;
-			stepCount++;
-		}
-		if (input.getKey("left").down) {
-			xa--;
-			stepCount++;
-		}
-		if (input.getKey("right").down) {
-			xa++;
-			stepCount++;
+		
+		//executes if not saving; and... essentially halves speed if out of stamina.
+		if ((xa != 0 || ya != 0) && staminaRechargeDelay % 2 == 0 && game.savecooldown == 0 && !game.saving) {
+			double spd = moveSpeed * (potioneffects.containsKey("Time") ? (potioneffects.containsKey("Speed") ? 1.5D : 2) : 1);
+			boolean moved = move((int) (xa * spd), (int) (ya * spd)); // THIS is where the player moves; part of Mob.java
+			if(moved) stepCount++;
 		}
 		
 		if (isSwimming() && tickTime % 60 == 0 && !potioneffects.containsKey("Swim")) { // if drowning... :P
 			if (stamina > 0) stamina--; // take away stamina
 			else hurt(this, 1, dir ^ 1); // if no stamina, take damage.
-		}
-
-		if (game.saving && game.savecooldown > 0) {
-			xa = 0;
-			ya = 0;
 		}
 		
 		if (potioneffects.containsKey("Regen")) {
@@ -317,16 +324,6 @@ public class Player extends Mob {
 					health++;
 				}
 			}
-		}
-		
-		if (game.savecooldown > 0 && !game.saving) {
-			game.savecooldown--;
-		}
-		
-		//executes if not saving; and... essentially halves speed if out of stamina.
-		if (staminaRechargeDelay % 2 == 0 && game.savecooldown == 0 && !game.saving) {
-			double spd = moveSpeed * (potioneffects.containsKey("Time") ? (potioneffects.containsKey("Speed") ? 1.5D : 2) : 1);
-			move((int) (xa * spd), (int) (ya * spd)); // THIS is where the player moves; part of Mob.java
 		}
 		
 		if (input.getKey("attack").clicked && stamina != 0) {
@@ -494,8 +491,8 @@ public class Player extends Mob {
 		if (fcatch == 56) {
 			level.add(new ItemEntity(new ResourceItem(Resource.larmor), x + random.nextInt(11) - 5, y + random.nextInt(11) - 5));
 		} else {
-			if(Game.debug) System.out.println("Nothing caught...");
-			if(random.nextInt(200) == 42) System.out.println("CHUCKNORRIS got away...");
+			//if(Game.debug) System.out.println("Nothing caught...");
+			if(random.nextInt(500) == 42) System.out.println("FISH-NORRIS got away... just kidding, FISH-NORRIS doesn't get away from you, you get away from FISH-NORRIS...");
 		}
 	}
 	
@@ -800,6 +797,11 @@ public class Player extends Mob {
 		dc.inventory = this.inventory;
 		if (activeItem != null) {
 			dc.inventory.add(activeItem);
+		}
+		if(curArmor != null) {
+			ResourceItem armorItem = new ResourceItem(curArmor);
+			armorItem.amount = armor;
+			dc.inventory.add(armorItem);
 		}
 		dc.inventory.removeItem(new PowerGloveItem());
 		

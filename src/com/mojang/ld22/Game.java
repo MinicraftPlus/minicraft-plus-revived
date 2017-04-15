@@ -637,6 +637,11 @@ public class Game extends Canvas implements Runnable {
 				//info.add("armor lvl: " + player.curArmor.level);
 			}
 			
+			info.add("steps: " + player.stepCount);
+			info.add("hungerstam:" + player.hungerStamCnt);
+			//info.add("stam-delay: " + player.staminaRechargeDelay);
+			//info.add("stam-charge: " + player.staminaRecharge);
+			
 			for(int i = 0; i < info.size(); i++) {
 				Font.draw(info.get(i), screen, 1, 2 + i*10, col0);
 			}
@@ -706,8 +711,8 @@ public class Game extends Canvas implements Runnable {
 
 		// FISHING ROD STATUS
 		if (player.activeItem instanceof ToolItem && ((ToolItem)player.activeItem).type == ToolType.rod) {
-			int dura = ((ToolItem)player.activeItem).dur * 7;
-			if (dura > 100) dura = 100;
+			int dura = ((ToolItem)player.activeItem).dur * 100 / ((ToolItem)player.activeItem).type.durability;
+			//if (dura > 100) dura = 100;
 			Font.draw(dura + "%", screen, 164, screen.h - 16, Color.get(0, 30, 30, 30));
 		}
 		
