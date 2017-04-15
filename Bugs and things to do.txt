@@ -1,4 +1,5 @@
 	---Quick TODO's---
+--CURRENT: hunger doesn't seem to be decreasing as it should... and so, armor seems overpowered. Fix this, and I hope I'm good.
 -continue commeting code
 -(see note about canWool in Entity.java)
 -display current player score in score mode
@@ -9,6 +10,8 @@ Note to self: for more little bugs/ideas/concerns, search code for "TODO"
 	####BUGS####
 ####
 new resource-items added to inv sometimes show up as 0.
+####
+Fishing Rods have 0% durability in creative mode.
 ####
 Sound effects don't always play when they should; mostly it seems when other sounds should be on at the same time.
 ####
