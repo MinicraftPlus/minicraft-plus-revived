@@ -278,26 +278,26 @@ public class ListItems {
 		this.shard = (new ResourceItem(Resource.shard)).addItem();
 		this.key = (new ResourceItem(Resource.key)).addItem();
 		this.rod = (new ToolItem(ToolType.rod, 0)).addItem();
-		this.woodshovel = (new ToolItem(ToolType.shovel, 0)).addItem();
-		this.rockshovel = (new ToolItem(ToolType.shovel, 1)).addItem();
-		this.ironshovel = (new ToolItem(ToolType.shovel, 2)).addItem();
-		this.goldshovel = (new ToolItem(ToolType.shovel, 3)).addItem();
-		this.gemshovel = (new ToolItem(ToolType.shovel, 4)).addItem();
 		this.woodhoe = (new ToolItem(ToolType.hoe, 0)).addItem();
 		this.rockhoe = (new ToolItem(ToolType.hoe, 1)).addItem();
 		this.ironhoe = (new ToolItem(ToolType.hoe, 2)).addItem();
 		this.goldhoe = (new ToolItem(ToolType.hoe, 3)).addItem();
 		this.gemhoe = (new ToolItem(ToolType.hoe, 4)).addItem();
-		this.woodpickaxe = (new ToolItem(ToolType.pickaxe, 0)).addItem();
-		this.rockpickaxe = (new ToolItem(ToolType.pickaxe, 1)).addItem();
-		this.ironpickaxe = (new ToolItem(ToolType.pickaxe, 2)).addItem();
-		this.goldpickaxe = (new ToolItem(ToolType.pickaxe, 3)).addItem();
-		this.gempickaxe = (new ToolItem(ToolType.pickaxe, 4)).addItem();
+		this.woodshovel = (new ToolItem(ToolType.shovel, 0)).addItem();
+		this.rockshovel = (new ToolItem(ToolType.shovel, 1)).addItem();
+		this.ironshovel = (new ToolItem(ToolType.shovel, 2)).addItem();
+		this.goldshovel = (new ToolItem(ToolType.shovel, 3)).addItem();
+		this.gemshovel = (new ToolItem(ToolType.shovel, 4)).addItem();
 		this.woodaxe = (new ToolItem(ToolType.axe, 0)).addItem();
 		this.rockaxe = (new ToolItem(ToolType.axe, 1)).addItem();
 		this.ironaxe = (new ToolItem(ToolType.axe, 2)).addItem();
 		this.goldaxe = (new ToolItem(ToolType.axe, 3)).addItem();
 		this.gemaxe = (new ToolItem(ToolType.axe, 4)).addItem();
+		this.woodpickaxe = (new ToolItem(ToolType.pickaxe, 0)).addItem();
+		this.rockpickaxe = (new ToolItem(ToolType.pickaxe, 1)).addItem();
+		this.ironpickaxe = (new ToolItem(ToolType.pickaxe, 2)).addItem();
+		this.goldpickaxe = (new ToolItem(ToolType.pickaxe, 3)).addItem();
+		this.gempickaxe = (new ToolItem(ToolType.pickaxe, 4)).addItem();
 		this.woodsword = (new ToolItem(ToolType.sword, 0)).addItem();
 		this.rocksword = (new ToolItem(ToolType.sword, 1)).addItem();
 		this.ironsword = (new ToolItem(ToolType.sword, 2)).addItem();
@@ -322,7 +322,7 @@ public class ListItems {
 		this.rockhatchet = (new ToolItem(ToolType.hatchet, 1)).addItem();
 		this.ironhatchet = (new ToolItem(ToolType.hatchet, 2)).addItem();
 		this.goldhatchet = (new ToolItem(ToolType.hatchet, 3)).addItem();
-		this.gemhatchet = (new ToolItem(ToolType.hatchet, 3)).addItem();
+		this.gemhatchet = (new ToolItem(ToolType.hatchet, 4)).addItem();
 		this.woodspade = (new ToolItem(ToolType.spade, 0)).addItem();
 		this.rockspade = (new ToolItem(ToolType.spade, 1)).addItem();
 		this.ironspade = (new ToolItem(ToolType.spade, 2)).addItem();
@@ -367,6 +367,7 @@ public class ListItems {
 			for(int i = 0; i < items.size(); i++) { // loop through the items
 				if(((Item)items.get(i)).getName().equals(name)) { // if names match
 					newItem = (Item)items.get(i); // set the item
+					//if(newItem instanceof ResourceItem) ((ResourceItem)newItem).count = 1;
 					return newItem; // return the item
 				}
 			}
