@@ -80,7 +80,7 @@ public class ToolItem extends Item {
 	public boolean interactOn(Tile tile, Level level, int xt, int yt, Player player, int attackDir) {
 		if (type == ToolType.rod && dur > 0) {
 			if (tile == Tile.water || tile == Tile.lightwater) {
-				if(com.mojang.ld22.Game.debug) System.out.println("Fishing...");
+				//if(com.mojang.ld22.Game.debug) System.out.println("Fishing...");
 				player.goFishing(player.x - 5, player.y - 5);
 				if(!ModeMenu.creative) dur--;
 				return true;
