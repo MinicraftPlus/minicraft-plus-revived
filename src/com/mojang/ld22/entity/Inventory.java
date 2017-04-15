@@ -20,7 +20,16 @@ public class Inventory {
 	public int invSize() {return items.size();}
 	
 	public Item get(int idx) {return items.get(idx);}
-	public Item remove(int idx) {return items.remove(idx);}
+	
+	public Item remove(int idx) {
+		Item i = get(idx);
+		/*if(i instanceof ResourceItem) {
+			ResourceItem ri = findResource(((ResourceItem)i).resource);
+			removeResource(ri.resource, count);
+		}*/
+		items.remove(i);
+		return i;
+	}
 	
 	/** Adds an item to the inventory */
 	public void add(Item item) {
@@ -43,7 +52,7 @@ public class Inventory {
 	}
 	
 	/** Finds a resource in your inventory */
-	private ResourceItem findResource(Resource resource) {
+	public ResourceItem findResource(Resource resource) {
 		/// this works becuase all resources are simply references to the static ones in Resource.java; so, multiple ResourceItems SHOULD just have different references to the same Resource object.
 		for (int i = 0; i < items.size(); i++) {
 			if (items.get(i) instanceof ResourceItem) {
@@ -51,7 +60,7 @@ public class Inventory {
 				if (has.resource == resource) return has; // returns if the loop has found a ResourceItem with a matching resource in your inventory
 			}
 		}
-		// TODO should I check the activeItem too? Seems like a good idea, but I should check the code for anything that may take advantake of the absence of this feature, before I just put it in.
+		// TO-DO should I check the activeItem too? Seems like a good idea, but I should check the code for anything that may take advantake of the absence of this feature, before I just put it in.
 		
 		return null; // else it will return null
 	}
