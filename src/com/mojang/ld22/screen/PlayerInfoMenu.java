@@ -26,7 +26,7 @@ public class PlayerInfoMenu extends Menu {
 		int minutes = seconds / 60;
 		int hours = minutes / 60;
 		int cStep = game.player.stepCount;
-		int cHung = game.player.hungStamCnt;
+		int cHung = game.player.hungerStamCnt;
 		minutes %= 60;
 		seconds %= 60;
 
