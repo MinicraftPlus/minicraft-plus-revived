@@ -9,7 +9,7 @@ Note to self: for more little bugs/ideas/concerns, search code for "TODO"
 
 	####BUGS####
 ####
-new resource-items added to inv sometimes show up as 0.
+new resource-items added to inv sometimes show up as 0. *documented*...
 ####
 Fishing Rods have 0% durability in creative mode.
 ####
