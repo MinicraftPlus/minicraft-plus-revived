@@ -367,7 +367,7 @@ public class ListItems {
 			for(int i = 0; i < items.size(); i++) { // loop through the items
 				if(((Item)items.get(i)).getName().equals(name)) { // if names match
 					newItem = (Item)items.get(i); // set the item
-					//if(newItem instanceof ResourceItem) ((ResourceItem)newItem).count = 1;
+					if(newItem instanceof ResourceItem) ((ResourceItem)newItem).count = 1;
 					return newItem; // return the item
 				}
 			}
