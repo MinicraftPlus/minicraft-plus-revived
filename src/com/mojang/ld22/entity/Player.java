@@ -6,6 +6,7 @@ import com.mojang.ld22.crafting.Crafting;
 import com.mojang.ld22.entity.particle.TextParticle;
 import com.mojang.ld22.gfx.Color;
 import com.mojang.ld22.gfx.Screen;
+import com.mojang.ld22.gfx.MobSprite;
 import com.mojang.ld22.item.FurnitureItem;
 import com.mojang.ld22.item.Item;
 import com.mojang.ld22.item.ListItems;
@@ -42,6 +43,11 @@ public class Player extends Mob {
 	//These 2 ints are ints saved from the first spawn - this way the spawn pos is always saved.
 	public static int spawnx = 0, spawny = 0; // these are stored as tile coordinates, not entity coordinates.
 	public static int maxStamina = 10, maxHunger = 10, maxArmor = 100; // the maximum stats that the player can have.
+	
+	public static MobSprite[][] sprites =  MobSprite.compileMobSpriteAnimations(0, 14);
+	public static MobSprite[][] carrySprites = MobSprite.compileMobSpriteAnimations(0, 16); // the sprites while carrying something.
+	public static MobSprite[][] suitSprites = MobSprite.compileMobSpriteAnimations(8, 14); // the "airwizard suit" sprites.
+	public static MobSprite[][] carrySuitSprites = MobSprite.compileMobSpriteAnimations(18, 22); // the "airwizard suit" sprites.
 	
 	public Inventory inventory;
 	public Item attackItem, activeItem;
@@ -82,6 +88,7 @@ public class Player extends Mob {
 	// Note: the player's health & max health are inherited from Mob.java
 	
 	public Player(Game game, InputHandler input) {
+		super(sprites);
 		this.game = game;
 		this.input = input;
 		inventory = new Inventory();
@@ -554,13 +561,21 @@ public class Player extends Mob {
 			col2 = Color.get(-1, 100, Color.rgb(r, g, b), 532);
 			col3 = Color.get(-1, 100, Color.rgb(r, g, b), 532);
 		}
-
-		int xt = 0; // X tile coordinate in the sprite-sheet
+		
+		MobSprite[][] spriteSet; // the default, walking sprites.
+		
+		if(activeItem instanceof FurnitureItem) {
+			spriteSet = skinon ? carrySuitSprites : carrySprites;
+		} else {
+			spriteSet = skinon ? suitSprites : sprites;
+		}
+		/*int xt = 0; // X tile coordinate in the sprite-sheet
 		int yt = 14; // Y tile coordinate in the sprite-sheet
 		if (skinon) {
 			// draw the airwizard suit instead.
-			xt = 18;
-			yt = 20;
+			spriteSet = suitSprites;
+			//xt = 18;
+			//yt = 20;
 		}
 		
 		// This will either be a 1 or a 0 depending on the walk distance.
@@ -568,9 +583,9 @@ public class Player extends Mob {
 		int flip1 = (walkDist >> 3) & 1;
 		int flip2 = (walkDist >> 3) & 1;
 		// similar statements to above have same explanation
-
-		if (dir == 1) { // if the direction is 1 (Up)
-			xt += 2; // then move the sprite over 2 tiles
+		*/
+		/*if (dir == 1) { // if the direction is 1 (Up)
+			xt += 2; // then move the sprite "selection" over 2 sheet tiles
 		}
 		if (dir > 1) { // if the direction is larger than 1 (left or right)...
 			flip1 = 0;
@@ -579,7 +594,7 @@ public class Player extends Mob {
 				flip1 = 1; // mirror the sprite
 			}
 			xt += 4 + ((walkDist >> 3) & 1) * 2; // animation based on walk distance
-		}
+		}*/
 		
 		/* offset locations to start drawing the sprite relative to our position */
 		int xo = x - 8; // horizontal
@@ -609,7 +624,7 @@ public class Player extends Mob {
 		}
 		
 		int col = 0; // color of the player
-		if (level.dirtColor == 322) {
+		if (level.depth >= 0) {
 			if(Game.time == 0) col = col0;
 			if(Game.time == 1) col = col1;
 			if(Game.time == 2) col = col2;
@@ -620,18 +635,25 @@ public class Player extends Mob {
 			col = Color.get(-1, 555, 555, 555); // make the sprite white.
 		}
 		
-		if (activeItem instanceof FurnitureItem) { // if holding a piece of furniture
+		/*if (activeItem instanceof FurnitureItem) { // if holding a piece of furniture
 			yt += 2; // moves the y tile up 2. (for the player holding his hands up)
-		}
+		}*/
+		
+		MobSprite curSprite = spriteSet[dir][(walkDist >> 3) & 1]; // gets the correct sprite to render.
 		
 		// render each corner of the sprite
-		screen.render(xo + 8 * flip1, yo + 0, xt + yt * 32, col, flip1);
-		screen.render(xo + 8 - 8 * flip1, yo + 0, xt + 1 + yt * 32, col, flip1);
+		//screen.render(xo + 8 * flip1, yo + 0, xt + yt * 32, col, flip1);
+		//screen.render(xo + 8 - 8 * flip1, yo + 0, xt + 1 + yt * 32, col, flip1);
 		if (!isSwimming()) { // don't render the bottom half if swimming.
-			screen.render(xo + 8 * flip2, yo + 8, xt + (yt + 1) * 32, col, flip2);
-			screen.render(xo + 8 - 8 * flip2, yo + 8, xt + 1 + (yt + 1) * 32, col, flip2);
+			curSprite.render(screen, col, xo, yo);
+			//screen.render(xo + 8 * flip2, yo + 8, xt + (yt + 1) * 32, col, flip2);
+			//screen.render(xo + 8 - 8 * flip2, yo + 8, xt + 1 + (yt + 1) * 32, col, flip2);
+		} else {
+			curSprite.renderRow(curSprite.spritePixels[0], screen, col, xo, yo);
 		}
-
+		
+		// renders slashes:
+		
 		if (attackTime > 0 && attackDir == 2) { // if attacking to the left.... (same as above)
 			screen.render(xo - 4, yo, 7 + 13 * 32, Color.get(-1, 555, 555, 555), 1);
 			screen.render(xo - 4, yo + 8, 7 + 13 * 32, Color.get(-1, 555, 555, 555), 3);

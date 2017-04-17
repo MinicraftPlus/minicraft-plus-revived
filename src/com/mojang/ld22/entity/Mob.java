@@ -3,6 +3,7 @@ package com.mojang.ld22.entity;
 
 import com.mojang.ld22.entity.particle.TextParticle;
 import com.mojang.ld22.gfx.Color;
+import com.mojang.ld22.gfx.MobSprite;
 import com.mojang.ld22.level.Level;
 import com.mojang.ld22.level.tile.Tile;
 import com.mojang.ld22.screen.ModeMenu;
@@ -10,6 +11,8 @@ import com.mojang.ld22.sound.Sound;
 
 public class Mob extends Entity {
 	private Player player;
+	
+	protected MobSprite[][] sprites; // This contains all the mob's sprites, sorted first by direction (index corrosponding to the dir variable), and then by walk animation state.
 	protected int walkDist = 0; // How far we've walked currently, incremented after each movement
 	protected int dir = 0; // The direction the mob is facing, used in attacking and rendering. 0 is down, 1 is up, 2 is left, 3 is right
 	public int hurtTime = 0; // A delay after being hurt, that temporarily prevents further damage for a short time
@@ -27,13 +30,21 @@ public class Mob extends Entity {
 	public int yy;
 	public boolean isenemy = false;
 	public int lvl;
-
+	//public int color;
+	
 	public Mob() {
 		x = y = 8; // By default, set x and y coordinates to 8
 		xr = 4; // Sets the x and y radius/size of the mob
 		yr = 3;
 		xx = x;
 		yy = y;
+	}
+	public Mob(MobSprite[][] sprites) {
+		this.sprites = sprites;
+		System.out.println("set main mob sprites; first: " + sprites[0][0]);
+		//this();
+		//color = col;
+		//sprites = MobSprite.compileMobSpriteAnimations(spriteX, spriteY); // four directions, and two states to animate walking.
 	}
 
 	public void tick() {
