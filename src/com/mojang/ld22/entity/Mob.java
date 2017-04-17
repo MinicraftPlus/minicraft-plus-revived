@@ -41,7 +41,7 @@ public class Mob extends Entity {
 	}
 	public Mob(MobSprite[][] sprites) {
 		this.sprites = sprites;
-		System.out.println("set main mob sprites; first: " + sprites[0][0]);
+		//System.out.println("set main mob sprites; first: " + sprites[0][0]);
 		//this();
 		//color = col;
 		//sprites = MobSprite.compileMobSpriteAnimations(spriteX, spriteY); // four directions, and two states to animate walking.
