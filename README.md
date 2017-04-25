@@ -14,7 +14,7 @@ Here is a small share of the more major features that this mod adds to the origi
 * Beds
 * Mob Spawners (with loot chests)
 * expanded storyline; 4th dungeon level, and Second Boss
-* Bigger screen size
+* Bigger/Resizable screen size
 
 That's all I can remember right now; you can find a more comprehensive list in [this minecraft forum post](http://www.minecraftforum.net/forums/off-topic/general-gaming/452036-v1-6-minicraft-plus). Be aware however, that it's old; it's from many years ago before the project was abandoned.
 
@@ -22,10 +22,9 @@ That's all I can remember right now; you can find a more comprehensive list in [
 
 Things I plan on implementing, _hopefully_ sooner rather than later... ;)
 
-* Finish reformatting the code in general; it still needs some more work to get it up to standards.
-  * Add commenting work done in [this repository](https://github.com/shylor/miniventure) to applicable code. This has now been done for many files; but there are still more to go...
+* Finish overhauling the code; currently, I still have to do tiles, items/resources, and screens/menus.
 
-* Modify the health system; likely by redoing armor, and perhaps the hunger too, so you still regenerate some health when you're at 9/10 hunger and such
+* Add some nice music! Maybe pixely... in fact, we're working on that now!
 
 * Make it so cloud tile can be placed in the sky level, on empty air tiles. Otherwise, they're useful for nothing...
 
@@ -37,7 +36,6 @@ Things I will probably add later, rather than sooner.
 
 * Auto-update system -- though, I might move this up, if this actually becomes something many people use.
 * Add back Experience bar, from version 1.4
-* Add some nice music! Maybe pixely...
 
 #### Far, far away...
 

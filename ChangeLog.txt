@@ -1,7 +1,7 @@
 Minicraft+ version 1.9.2
 
 * HUGE renovations to the code; might not see many changes to functionality, but entirely new bugs are bound to crop up...
-
+* renovated entities
 
 
 Minicraft+ version 1.9.1

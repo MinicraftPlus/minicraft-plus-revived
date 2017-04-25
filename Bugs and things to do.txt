@@ -1,7 +1,6 @@
 	---Quick TODO's---
 
--continue commeting code
--(see note about canWool in Entity.java)
+-continue commeting code and renovating code
 -display current player score in score mode
 
 Note to self: for more little bugs/ideas/concerns, search code for "TODO"
@@ -27,6 +26,19 @@ Many item names don't fit on the black "active item" bar at the bottom.
 	****IDEAS(that should probably be implemented)****
 ****
 
+Make a gosh darn key controls editor menu! thing! ...yeah.
+
+I have a system in place to save custom key controls, but lack the menu to edit them... I need to get that implemented.
+	How about... another menu class, SelectMenu? It will parent all the cursor selection and scrollable menus; I can use it for the new KeymapMenu, and also WorldSelectMenu and InventoryMenu, with scrolling; the other menus won't use the scroll feature, but I can just make a boolean for that, I think.
+	For those menus that don't even have a cursor, though, perhaps I could just make it a Menu..? If that doesn't work, I can always make a ChoiceMenu class, super simple, that just displays two choices with no cursor, and listens for enter and escape keypresses.
+
+****
+
+Make a TextPage class or something, for the About and Instructions sections of the TitleMenu; really, it's for pages that are non-interactive, just a bunch of text.
+Also, add controls listing somewhere. Probably closely related to the below idea.
+
+****
+
 Make respawn without bed += 20 blocks x/y of last spawn.
 
 ****
@@ -36,17 +48,6 @@ There's a lot to do in the Tile classes... many methods have many unnecessary pa
 ****
 
 Take the random inv item adder methods in Level and DungeonChest, and move them to a public static method in Inventory.java.
-
-****
-
-Make a TextPage class or something, for the About and Instructions sections of the TitleMenu; really, it's for pages that are non-interactive, just a bunch of text.
-Also, add controls listing somewhere. Probably closely related to the below idea.
-
-****
-
-I have a system in place to save custom key controls, but lack the menu to edit them... I need to get that implemented.
-	How about... another menu class, SelectMenu? It will parent all the cursor selection and scrollable menus; I can use it for the new KeymapMenu, and also WorldSelectMenu and InventoryMenu, with scrolling; the other menus won't use the scroll feature, but I can just make a boolean for that, I think.
-	For those menus that don't even have a cursor, though, perhaps I could just make it a Menu..? If that doesn't work, I can always make a ChoiceMenu class, super simple, that just displays two choices with no cursor, and listens for enter and escape keypresses.
 
 ****
 
@@ -60,6 +61,11 @@ Move OptionsMenu loads to a "profile" save, one that applies to all worlds, and 
 
 *?*?*?*
 
+Fix up the write system, here and there: Menu writeCentered() should write the given text in the center x of the menu window; Screen writeCentered() should write a string centered in the screen's x. Font should not do anything with centering, instead, maybe it should have a drawShadowed() method? It should have a default text color, too, maybe...
+How about, just overload them all... whatever's provided, is used. Though, since they're all ints, that may not work too well...
+
+*?*?*?*
+
 Make all Class instance lists similar to ListItems, but static; so, each one has a "get" method accepting a string. Maybe I could make them all extend a "ClassList" or "InstanceList" interface or something...
 
 In a similar/related vein, make each subclass of these store their own lists of their instances, and they will just be added to the main one.
@@ -68,11 +74,6 @@ So, for resources, PotionResource would have a static list of all the potion res
 Hmm... Actually, I have a better idea. How about I just instantiate everything in the list classes, but have the sub-classes record each instance? They could be recorded in a HashMap, with a string key for the name, that fetches the associated object instance.
 
 I don't know...
-
-*?*?*?*
-
-Fix up the write system, here and there: Menu writeCentered() should write the given text in the center x of the menu window; Screen writeCentered() should write a string centered in the screen's x. Font should not do anything with centering, instead, maybe it should have a drawShadowed() method? It should have a default text color, too, maybe...
-How about, just overload them all... whatever's provided, is used. Though, since they're all ints, that may not work too well...
 
 *?*?*?*
 
