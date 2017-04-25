@@ -23,15 +23,12 @@ public class TitleMenu extends Menu {
 	private int selected = 0;
 	protected final Random random = new Random();
 	private static final String[] options = {"New game", "Instructions", "Tutorial", "Options", "About", "Quit"/*, "Kill"*/}; // Options that are on the main menu.
-	//int randcount = 60;
-	int rand;// = random.nextInt(randcount);
+	int rand;
 	int count = 0; // this and reverse are for the logo; they produce the fade-in/out effect.
 	boolean reverse = false;
-	//static boolean loadedsplashes = false;
 	static boolean loadedunlocks = false;
 	String location = Game.gameDir;
 	File folder;
-	//boolean isblue;
 	
 	private static final String[] splashes = {//new ArrayList<String>();
 		"Also play InfinityTale!",
@@ -50,7 +47,6 @@ public class TitleMenu extends Menu {
 		"Notch is Awesome!",
 		"Dillyg10 is cool as Ice!",
 		"Shylor is the man!",
-		//"Guard13007 has too many twitters!",
 		"AntVenom loves cows! Honest!",
 		"You should read Antidious Venomi!",
 		"Kill Creeper, get Gunpowder!",
@@ -99,22 +95,18 @@ public class TitleMenu extends Menu {
 		"Life itself suspended by a thread",
 		"In search of Gems!",
 		"saying ay-oh, that creeper's KO'd!",
-		//"Diggy! Dig... ooh! a jaffacake!",
-		//"wenubs.com is jamming!",
 		"Gimmie a bucket!",
 		"Farming with water!",
 		"Made with 10000% Vitamin Z!",
 		"Too much DP!",
 		"Y U NO BOAT!?",
-		"PBAT is in the house!",
-		//"Who is SeaNanners?",
+		//"PBAT is in the house!",
 		"Punch the Moon!",
 		"This is String qq!",
 		"Why?",
 		"You are null!",
 		"That guy is such a sly fox!",
 		"Hola senor!",
-		//"Vote for the Dead Workers Party!",
 		"Sonic Boom!",
 		"Hakuna Matata!",
 		"One truth prevails!",
@@ -148,19 +140,9 @@ public class TitleMenu extends Menu {
 	
 	public TitleMenu() {
 		folder = new File(location);
-		//isblue = false;
-		/*// now what's the deal with the whole "add one and then replace it" thing?
-		if(splashes.size() == 0) {
-			splashes.add("You will never see this!");
-		}
-		if(splashes.size() == 1) {
-			getSplashes();
-		}*/
 		
 		rand = random.nextInt(splashes.length);
-		//if(!loadedunlocks) {
-			loadUnlocks();
-		//}
+		loadUnlocks();
 	}
 	
 	/*public void getSplashes() {
@@ -303,7 +285,7 @@ public class TitleMenu extends Menu {
 				WorldSelectMenu.loadworld = false;
 				game.setMenu(new WorldSelectMenu(this));
 				//(this method should now stop getting called by Game)
-				//BUT: this object is passed to WorldSelectMenu...
+				//BUT: this object is passed to WorldSelectMenu... to go back to?
 			}
 			if(options[selected] == "Instructions") game.setMenu(new InstructionsMenu(this));
 			if (options[selected] == "Tutorial") {
@@ -326,15 +308,12 @@ public class TitleMenu extends Menu {
 	
 	public void render(Screen screen) {
 		screen.clear(0);
-		//String splash;
 		int h = 2; // Height of squares (on the spritesheet)
 		int w = 15; // Width of squares (on the spritesheet)
-		//int xx = 55;
 		int titleColor = Color.get(0, 010, 131, 551);
 		int xo = (screen.w - w * 8) / 2; // X location of the title
 		int yo = 36; // Y location of the title
 		int cols = Color.get(0, 550, 550, 550);
-		
 		
 		for (int y = 0; y < h; y++) {
 			for (int x = 0; x < w; x++) {
@@ -354,11 +333,6 @@ public class TitleMenu extends Menu {
 		}
 		
 		boolean isblue = splashes[rand].contains("blue");
-		/*if() {
-			this.isblue = true;
-		} else {
-			this.isblue = false;
-		}*/
 		
 		if (count <= 5) cols = isblue?cols = Color.get(0, 5, 5, 5):Color.get(0, 505, 550, 550);
 		if (count <= 10 && count > 5) cols = isblue?cols = Color.get(0, 4, 4, 4):Color.get(0, 405, 440, 440);

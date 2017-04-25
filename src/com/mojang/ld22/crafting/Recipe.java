@@ -63,8 +63,7 @@ public abstract class Recipe implements ListItem {
 					canCraft = false;
 					return;
 				}
-			} else {//if(item instanceof BucketLavaItem) {
-				//BucketLavaItem lava = (BucketLavaItem)item;
+			} else {
 				if(!player.inventory.hasItem(item) && !ModeMenu.creative) {
 					this.canCraft = false;
 					return;
@@ -107,8 +106,7 @@ public abstract class Recipe implements ListItem {
 			} else if (item instanceof ToolItem) {
 				ToolItem ti = (ToolItem) item;
 				player.inventory.removeTool(ti.type, ti.level);
-			} else {//if(item instanceof BucketLavaItem) {
-				//BucketLavaItem lava = (BucketLavaItem)item;
+			} else {
 				player.inventory.removeItem(item);
 			}
 		}

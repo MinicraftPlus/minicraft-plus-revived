@@ -1,7 +1,5 @@
- // Draws a box frame based on 4 points. You can include a title as well.//respawn mod +dillyg10+
 package com.mojang.ld22.screen;
 	
-	// the current time elapsed in the game.
 import com.mojang.ld22.gfx.Color;
 import com.mojang.ld22.gfx.Font;
 import com.mojang.ld22.gfx.Screen;
@@ -10,8 +8,6 @@ public class DeadMenu extends Menu {
 	private int inputDelay = 60;
 	// this is an IMPORTANT bool, determines if the user should respawn or not. :)
 	public static boolean shouldRespawn;
-
-	public DeadMenu() {}
 
 	public void tick() {
 		if (inputDelay > 0) {
@@ -35,7 +31,7 @@ public class DeadMenu extends Menu {
 
 	public void render(Screen screen) {
 		Font.renderFrame(screen, "", 1, 3, 18, 10); // Draws a box frame based on 4 points. You can include a title as well.
-		Font.draw("You died! Aww!", screen, 16, 32, Color.get(-1, 555, 555, 555));
+		Font.draw("You died! Aww!", screen, 16, 32, Color.get(-1, 555));
 		
 		// the current time elapsed in the game.
 		int seconds = game.gameTime / game.normSpeed;

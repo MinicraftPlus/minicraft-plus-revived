@@ -23,10 +23,6 @@ public class Inventory {
 	
 	public Item remove(int idx) {
 		Item i = get(idx);
-		/*if(i instanceof ResourceItem) {
-			ResourceItem ri = findResource(((ResourceItem)i).resource);
-			removeResource(ri.resource, count);
-		}*/
 		items.remove(i);
 		return i;
 	}

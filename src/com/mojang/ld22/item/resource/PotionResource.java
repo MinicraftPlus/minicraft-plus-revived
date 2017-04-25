@@ -39,7 +39,7 @@ public class PotionResource extends Resource {
 			switch(type) {
 				// these are the only effects that actually do anything not accounted for in other parts of the code:
 				case "Speed": player.moveSpeed += (double)( addEffect ? 1 : (player.moveSpeed > 1 ? -1 : 0) ); break;
-				case "Time": Game.gamespeed *= (addEffect ? 0.5f : 2);// player.moveSpeed += (addEffect ? 1 : -1);
+				case "Time": Game.gamespeed *= (addEffect ? 0.5f : 2);
 			}
 		}
 		

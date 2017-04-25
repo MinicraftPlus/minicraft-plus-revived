@@ -44,13 +44,11 @@ public class Level {
 
 	public int w, h; // width and height of the level
 	public Player player;
-	//public int sux, suy; // player start position?
 	
 	public byte[] tiles; // an array of all the tiles in the world.
 	public byte[] data; // an array of the data of the tiles in the world. // ?
 	public List<Entity>[] entitiesInTiles; // An array of lists of entities in the world, by tile
-
-	//public int curLvl = 0; // current level
+	
 	public int grassColor = 141;
 	public int dirtColor = 322;
 	public int woolColor = 444;
@@ -59,7 +57,6 @@ public class Level {
 	public int sandColor = 550;
 	public int depth; // depth level of the level
 	public int monsterDensity = 8; // affects the number of monsters that are on the level, bigger the number the less monsters spawn.
-	//public static int depthlvl;
 	public int chestcount;
 
 	public static List<String> ls = new ArrayList<String>();
@@ -87,7 +84,6 @@ public class Level {
 	/** Level which the world is contained in */
 	public Level(int w, int h, int level, Level parentLevel) {
 		depth = level;
-		//curLvl = level;
 		this.w = w;
 		this.h = h;
 		byte[][] maps; // multidimensional array (an array within a array), used for the map
@@ -208,10 +204,6 @@ public class Level {
 							setTile(x - 1, y - 2, Tile.ow, 0);
 						}
 						if (level == 0) { // surface
-							// some sort of var for player position?
-							//sux = x;
-							//suy = y;
-							//if(Game.debug) System.out.println("X = " + sux + " " + "Y = " + suy + " "); //printLevelLoc("Player start pos", sux, suy);
 							/// surround the sky stairs with hard rock:
 							setTile(x - 1, y, Tile.hardRock, 0);
 							setTile(x + 1, y, Tile.hardRock, 0);
@@ -578,7 +570,6 @@ public class Level {
 				List<Entity> entities = entitiesInTiles[x + y * this.w];
 				for (int i = 0; i < entities.size(); i++) {
 					Entity e = entities.get(i);
-					// e.render(screen);
 					int lr = e.getLightRadius();
 					if (lr > 0) screen.renderLight(e.x - 1, e.y - 4, lr * 8);
 				}
@@ -628,12 +619,6 @@ public class Level {
 		}
 		entities.add(entity);
 		entity.setLevel(this, x, y);
-		/*entity.level = this;
-		entity.removed = false;
-		entity.x = x;
-		entity.y = y;
-		//entity.init(this);
-		*/
 		
 		if (Game.debug) {
 			String clazz = entity.getClass().getCanonicalName();
@@ -651,18 +636,6 @@ public class Level {
 		insertEntity(entity.x >> 4, entity.y >> 4, entity);
 	}
 	
-	/*
-	public void adds(Entity entity, int xs, int ys) {
-		if (entity instanceof Player) {
-			player = (Player) entity;
-		}
-		entity.removed = false;
-		entities.add(entity);
-		entity.init(this);
-
-		insertEntity(entity.x >> xs, entity.y >> ys, entity);
-	}
-	*/
 	public void remove(Entity e) {
 		entities.remove(e);
 		e.level = null;
@@ -692,22 +665,7 @@ public class Level {
 			}
 
 			int lvl = random.nextInt(maxLevel - minLevel + 1) + minLevel;
-			//int levels = depth;
 			int rnd = random.nextInt(100);
-			
-			/* Notes about mob spawning:
-				(no-mob-r has scoremode/otherwise)
-				
-				-normal enemy mobs: Mob.java method, called at night or in caves;
-					no-mob-r 13 always, square radius 60, and no-light-tile checks (plus a couple other tiles)
-				
-				-dungeon mobs: dungeonspawn method, called on dungeon level;
-					no-mob-r 22/15, square radius 60, must spawn on obsidian brick tile
-				
-				-friendly mobs: spawned on surface only, square-rad 80, grass-flower tile checks.
-					no-mob-r 27/20 at night, 22/15 at day; lower chance of cows at night.
-			*/
-			
 			int nx = random.nextInt(w) * 16 + 8, ny = random.nextInt(h) * 16 + 8;
 			
 			//System.out.println("trySpawn on level " + depth + " of lvl " + lvl + " mob w/ rand " + rnd + " at tile " + nx + "," + ny);

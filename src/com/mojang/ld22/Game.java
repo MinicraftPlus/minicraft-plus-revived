@@ -334,8 +334,6 @@ public class Game extends Canvas implements Runnable {
 		if(WorldGenMenu.theme == WorldGenMenu.hell) {
 			player.inventory.add(new ResourceItem(Resource.lavapotion));
 		}
-		
-		//System.out.println("level player: " + level.player);
 	}
 	
 	// VERY IMPORTANT METHOD!! Makes everything keep happening.
@@ -639,13 +637,10 @@ public class Game extends Canvas implements Runnable {
 			if(player.armor > 0) {
 				info.add("armor: " + player.armor);
 				info.add("dam buffer: " + player.armorDamageBuffer);
-				//info.add("armor lvl: " + player.curArmor.level);
 			}
 			
 			//info.add("steps: " + player.stepCount);
 			info.add("hungerstam:" + player.hungerStamCnt);
-			//info.add("stam-delay: " + player.staminaRechargeDelay);
-			//info.add("stam-charge: " + player.staminaRecharge);
 			
 			for(int i = 0; i < info.size(); i++) {
 				Font.draw(info.get(i), screen, 1, 2 + i*10, col0);
@@ -750,7 +745,7 @@ public class Game extends Canvas implements Runnable {
 				
 				// renders armor
 				int armor = player.armor*10/player.maxArmor;
-				color = (i <= armor && player.curArmor != null) ? player.curArmor.color/*Color.get(-1, 333, 444, 555)*/ : Color.get(-1, -1, -1, -1);
+				color = (i <= armor && player.curArmor != null) ? player.curArmor.color : Color.get(-1, -1, -1, -1);
 				screen.render(i * 8 + 208, screen.h - 8, 3 + 12 * 32, color, 0);
 				
 				if (player.staminaRechargeDelay > 0) {

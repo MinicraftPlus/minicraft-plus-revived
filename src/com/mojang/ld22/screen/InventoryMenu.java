@@ -33,10 +33,8 @@ public class InventoryMenu extends Menu {
 		if (selected >= len) selected -= len;
 		
 		if (input.getKey("attack").clicked && len > 0) { // If your inventory is not empty, and the player presses the "Attack" key...
-			player.activeItem = player.inventory.remove(selected); // The item will be removed from the inventory
-			// = item; // and that item will be placed as the player's active item
+			player.activeItem = player.inventory.remove(selected); // The item will be removed from the inventory, and placed as the player's active item.
 			game.setMenu(null); // the game will go back to the gameplay
-			//if(player.activeItem instanceof ResourceItem) System.out.println("resource still in inv: " + player.inventory.findResource(((ResourceItem)player.activeItem).resource));
 		}
 	}
 

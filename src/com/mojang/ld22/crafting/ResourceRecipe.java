@@ -17,7 +17,6 @@ public class ResourceRecipe extends Recipe {
 	
 	/** Adds the resource to your inventory. */
 	public void craft(Player player) {
-		//more(resource);
 		player.inventory.add(0, new ResourceItem(resource, ((ResourceItem)resultTemplate).count));
 	}
 }

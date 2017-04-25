@@ -23,29 +23,6 @@ public class Snake extends EnemyMob {
 	}
 	
 	public void render(Screen screen) {
-		/*int xt = 18;
-		int yt = 18;
-
-		int flip1 = (walkDist >> 3) & 1;
-		int flip2 = (walkDist >> 3) & 1;
-
-		if (dir == 1) {
-			xt += 2;
-		}
-		if (dir > 1) {
-
-			flip1 = 0;
-			flip2 = ((walkDist >> 4) & 1 / 2);
-			if (dir == 2) {
-				flip1 = 1;
-				flip2 = 1;
-			}
-			xt += 4 + ((walkDist >> 3) & 1) * 2;
-		}
-		*/
-		//int xo = x - 4;
-		//int yo = y - 11;
-
 		if (isLight()) {
 			col0 = Color.get(-1, 000, 555, 50);
 			col1 = Color.get(-1, 000, 555, 40);
@@ -76,7 +53,6 @@ public class Snake extends EnemyMob {
 	}
 
 	protected void touchedBy(Entity entity) {
-		//super.touchedBy(entity);
 		if(entity instanceof Player) {
 			int damage;
 			if (lvl == 1)
@@ -86,26 +62,6 @@ public class Snake extends EnemyMob {
 			
 			entity.hurt(this, damage, dir);
 		}
-		
-		//if (OptionsMenu.diff == OptionsMenu.easy) {
-		
-		
-	
-		//}
-		//if (OptionsMenu.diff == OptionsMenu.norm) {
-		/*
-		if (lvl > 2) {
-			entity.hurt(this, 2, dir);
-		} else {
-			entity.hurt(this, 1, dir);
-		}
-		
-		//}
-		//if (OptionsMenu.diff == OptionsMenu.hard) {
-		
-				entity.hurt(this, lvl + 1, dir);
-		*/
-		//}
 	}
 
 	public boolean canWool() {
@@ -113,37 +69,9 @@ public class Snake extends EnemyMob {
 	}
 
 	protected void die() {
-		//if (OptionsMenu.diff == OptionsMenu.easy) {
 		int num = OptionsMenu.diff == OptionsMenu.hard ? 0 : 1;
 		dropResource(num, num+1, Resource.scale);
 		
 		super.die();
-		//}
-		/*if (OptionsMenu.diff == OptionsMenu.norm) {
-			int count = random.nextInt(1) + 1;
-			for (int i = 0; i < count; i++) {
-				level.add(
-						new ItemEntity(
-								new ResourceItem(Resource.scale),
-								x + random.nextInt(11) - 5,
-								y + random.nextInt(11) - 5));
-			}
-			if (level.player != null) {
-				level.player.score += 50 * lvl;
-			}
-		}
-		if (OptionsMenu.diff == OptionsMenu.hard) {
-			int count = random.nextInt(1);
-			for (int i = 0; i < count; i++) {
-				level.add(
-						new ItemEntity(
-								new ResourceItem(Resource.scale),
-								x + random.nextInt(11) - 5,
-								y + random.nextInt(11) - 5));
-			}
-			if (level.player != null) {
-				level.player.score += 50 * lvl;
-			}
-		}*/
 	}
 }

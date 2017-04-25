@@ -22,93 +22,26 @@ public class Slime extends EnemyMob {
 	public Slime(int lvl) {
 		super(lvl, sprites, 1, true, 50, 60, 40);
 		
-		//randomWalkChance = 40;
-		
 		col0 = Color.get(-1, 20, 40, 10);
 		col1 = Color.get(-1, 20, 30, 40);
 		col2 = Color.get(-1, 20, 40, 10);
 		col3 = Color.get(-1, 10, 20, 40);
 		col4 = Color.get(-1, 10, 20, 30);
-		
-		//this.lvl = lvl;
-		 // gives it a random x,y position anywhere between (0 to 1023) [Tile position (0 to 64)]
-		//x = random.nextInt(64 * 16);
-		//y = random.nextInt(64 * 16);
-		// Health based on level and difficulty:
 	}
 	
-	//static int fail = 9500;
-	//public void tick() {tick(true);}
 	public void tick() {
 		super.tick();
-		//speed = 1;
-		//fail--;
-		//if(fail <= 0) System.exit(-1);
 		
-		/*
-			jumpTime from 0 to -10 (or less) is the slime deciding where to jump.
-			10 to 0 is it jumping.
-		*/
+		/// jumpTime from 0 to -10 (or less) is the slime deciding where to jump.
+		/// 10 to 0 is it jumping.
 		
-		if(jumpTime <= -10 && (xa != 0 || ya != 0)) //{
+		if(jumpTime <= -10 && (xa != 0 || ya != 0))
 			jumpTime = 10;
-			//xa = random.nextInt(3) - 1;
-			//ya = random.nextInt(3) - 1;
-			//super.tick();
-			
-			//if (level.player != null && !Bed.inBed) { // checks if player is on zombies level and if there is no time left on randonimity timer
-				
-				/*int xd = level.player.x - x;
-				int yd = level.player.y - y;
-				if (xd * xd + yd * yd < detectDist * detectDist) {
-					/// if player is less than 6.25 tiles away, then set move dir towards player
-					//xa = 0;
-					//ya = 0;
-					if (xd < 0) xa = -1;
-					if (xd > 0) xa = +1;
-					if (yd < 0) ya = -1;
-					if (yd > 0) ya = +1;
-				}*/
-			//}
-		//}
 		
 		jumpTime--;
 		if(jumpTime == 0) {
 			xa = ya = 0;
 		}
-		//fail = 100;
-		//((Mob)this).tick(); // ticks the Mob.java part of this class (hopefully)
-		
-		
-		//int speed = 1; // the speed of the slime/ length of jump
-		//if (!move(xa * speed, ya * speed) || random.nextInt(40) == 0) { // moves the slime... doubles as a check to see if it's still moving -OR- random chance out of 40
-			//if (jumpTime <= -10) { // if jump is equal or less than negative ten
-				//super.tick();
-				/*xa = (random.nextInt(3) - 1); // Sets direction randomly from -1 to 1
-				ya = (random.nextInt(3) - 1);
-
-				if (level.player != null) {
-					/// if there's a player less than 3.125 tiles away, then prepare to jump in that direction.
-					int xd = level.player.x - x;
-					int yd = level.player.y - y;
-					if (xd * xd + yd * yd < 50 * 50) {
-						if (xd < 0) xa = -1;
-						if (xd > 0) xa = +1;
-						if (yd < 0) ya = -1;
-						if (yd > 0) ya = +1;
-					}
-				}*/
-				
-				/*if (xa != 0 || ya != 0) jumpTime = 10; // if slime has it's direction, jump!
-			} else
-				((MobAi)this).tick(); //attempt at skipping to super-super class; methods aren't as picky anyways, so maybe it will work...
-		//}
-		
-		jumpTime--; //lower jump time by 1
-		if (jumpTime == 0) { // when the jump has ended...
-			xa = ya = 0; // reset direction to 0
-		}*/
-		dir = 0;
 	}
 	
 	public void randomizeWalkDir(boolean byChance) {
@@ -122,19 +55,7 @@ public class Slime extends EnemyMob {
 	}
 	
 	public void render(Screen screen) {
-		/* the coordinates of the Slime texture in the png file: */
-		/*int xt = 0;
-		int yt = 18;
 		
-		/* where to draw the sprite relative to the slime's position */
-		//int xo = x - 8;
-		//int yo = y - 11;
-		
-		/*if (jumpTime > 0) { // if jumping
-			//xt += 2; // change sprite
-			//yo -= 4; // draw sprite a little higher
-		}*/
-
 		col0 = Color.get(-1, 20, 40, 222);
 		col1 = Color.get(-1, 30, 252, 333);
 		col2 = Color.get(-1, 20, 40, 222);
@@ -171,7 +92,6 @@ public class Slime extends EnemyMob {
 	}
 	
 	protected void die() {
-		//int count = random.nextInt() + 1; // Random amount of slime(item) to drop
 		dropResource(1, ModeMenu.score ? 2 : 4 - OptionsMenu.diff, Resource.slime);
 		
 		super.die(); // Parent death call
@@ -180,12 +100,4 @@ public class Slime extends EnemyMob {
 	public boolean canWool() {
 		return true;
 	}
-	/*
-	protected void touchedBy(Entity entity) {
-		super.touchedBy(entity);
-		int damage = OptionsMenu.diff == OptionsMenu.hard ? 2 : 1;
-		if (entity instanceof Player) { // if we touch the player
-			entity.hurt(this, lvl*damage, dir); // attack
-		}
-	}*/
 }

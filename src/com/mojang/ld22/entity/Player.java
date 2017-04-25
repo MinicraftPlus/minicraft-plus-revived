@@ -70,18 +70,14 @@ public class Player extends Mob {
 	public int stepCount; // used to penalize hunger for movement.
 	private int hungerChargeDelay; // the delay between each time the hunger bar increases your health
 	private int hungerStarveDelay; // the delay between each time the hunger bar decreases your health
-	//boolean alreadyLostHunger;
-	//boolean repeatHungerCyc;
 	
 	public boolean showinfo;
-	//public int px, py;
 	
 	public HashMap<String, Integer> potioneffects; // the potion effects currently applied to the player
 	public boolean showpotioneffects; // whether to display the current potion effects on screen
 	int cooldowninfo; // prevents you from toggling the info pane on and off super fast.
 	int regentick; // counts time between each time the regen potion effect heals you.
 	
-	//public boolean energy;
 	int acs = 25; // default ("start") arrow count
 	public int ac; // arrow count
 	public int r = 50, g = 50, b; // player shirt color.
@@ -97,10 +93,6 @@ public class Player extends Mob {
 		inventory = new Inventory();
 		
 		ac = acs;
-		//energy = false;
-		
-		//px = this.x;
-		//py = this.y;
 		
 		potioneffects = new HashMap<String, Integer>();
 		showpotioneffects = true;
@@ -134,8 +126,6 @@ public class Player extends Mob {
 	
 	public void tick() {
 		super.tick(); // ticks Mob.java
-		
-		//System.out.println("ticking player");
 		
 		if(potioneffects.size() > 0 && !Bed.inBed) {
 			for(String potionType: potioneffects.keySet().toArray(new String[0])) {
@@ -237,7 +227,6 @@ public class Player extends Mob {
 		
 		/// system that heals you depending on your hunger
 		if (health < maxHealth && hunger > maxHunger/2) {
-			//if (hungerChargeDelay > 0) hungerChargeDelay--;
 			hungerChargeDelay++;
 			if (hungerChargeDelay > 20*Math.pow(maxHunger-hunger+2, 2)) {
 				health++;
@@ -251,32 +240,12 @@ public class Player extends Mob {
 		}
 		
 		int[] healths = {5, 3, 0};
-		//if (OptionsMenu.diff == OptionsMenu.easy) {
-			if (hunger == 0 && health > healths[OptionsMenu.diff]) {
-				if (hungerStarveDelay > 0) hungerStarveDelay--;
-				if (hungerStarveDelay == 0) {
-					hurt(this, 1, attackDir); // do 1 damage to the player
-				}
-			}
-		//}
-		/*
-		if (OptionsMenu.diff == OptionsMenu.norm) {
-			if (hunger == 0 && health > 3) {
-				if (hungerStarveDelay > 0) hungerStarveDelay--;
-				if (hungerStarveDelay == 0) {
-					hurt(this, 1, attackDir);
-				}
+		if (hunger == 0 && health > healths[OptionsMenu.diff]) {
+			if (hungerStarveDelay > 0) hungerStarveDelay--;
+			if (hungerStarveDelay == 0) {
+				hurt(this, 1, attackDir); // do 1 damage to the player
 			}
 		}
-
-		if (OptionsMenu.diff == OptionsMenu.hard) {
-			if (hunger == 0 && health > 0) {
-				if (hungerStarveDelay > 0) hungerStarveDelay--;
-				if (hungerStarveDelay == 0) {
-					hurt(this, 1, attackDir);
-				}
-			}
-		}*/
 		
 		// this is where movement detection occurs.
 		int xa = 0, ya = 0;
@@ -292,9 +261,7 @@ public class Player extends Mob {
 		//executes if not saving; and... essentially halves speed if out of stamina.
 		if ((xa != 0 || ya != 0) && (staminaRechargeDelay % 2 == 0 || isSwimming()) && game.savecooldown == 0 && !game.saving) {
 			double spd = moveSpeed * (potioneffects.containsKey("Time") ? (potioneffects.containsKey("Speed") ? 1.5D : 2) : 1);
-			//System.out.println("move speed: " + spd);
 			boolean moved = move((int) (xa * spd), (int) (ya * spd)); // THIS is where the player moves; part of Mob.java
-			//System.out.println("move successful: " + moved);
 			if(moved) stepCount++;
 		}
 		
@@ -479,7 +446,7 @@ public class Player extends Mob {
 			level.add(new ItemEntity(new ResourceItem(Resource.larmor), x + random.nextInt(11) - 5, y + random.nextInt(11) - 5));
 		} else {
 			//if(Game.debug) System.out.println("Nothing caught...");
-			if(random.nextInt(500) == 42) System.out.println("FISH-NORRIS got away... just kidding, FISH-NORRIS doesn't get away from you, you get away from FISH-NORRIS...");
+			if(random.nextInt(300) == 42) System.out.println("FISH-NORRIS got away... just kidding, FISH-NORRIS doesn't get away from you, you get away from FISH-NORRIS...");
 		}
 	}
 	
@@ -507,9 +474,8 @@ public class Player extends Mob {
 	private void hurt(int x0, int y0, int x1, int y1) {
 		List<Entity> entities = level.getEntities(x0, y0, x1, y1);
 		for (int i = 0; i < entities.size(); i++) {
-			//if(entities.get(i) instanceof Mob == false) continue;
 			Entity e = entities.get(i);
-			if (e != this) e.hurt(this, getAttackDamage(e), attackDir); // note: this actually DO the actions.
+			if (e != this) e.hurt(this, getAttackDamage(e), attackDir); // note: this really only does something for mobs.
 		}
 	}
 	
@@ -550,32 +516,6 @@ public class Player extends Mob {
 		} else {
 			spriteSet = skinon ? suitSprites : sprites;
 		}
-		/*int xt = 0; // X tile coordinate in the sprite-sheet
-		int yt = 14; // Y tile coordinate in the sprite-sheet
-		if (skinon) {
-			// draw the airwizard suit instead.
-			spriteSet = suitSprites;
-			//xt = 18;
-			//yt = 20;
-		}
-		
-		// This will either be a 1 or a 0 depending on the walk distance.
-			//(Used to make walking animation by mirroring the sprite)
-		int flip1 = (walkDist >> 3) & 1;
-		int flip2 = (walkDist >> 3) & 1;
-		// similar statements to above have same explanation
-		*/
-		/*if (dir == 1) { // if the direction is 1 (Up)
-			xt += 2; // then move the sprite "selection" over 2 sheet tiles
-		}
-		if (dir > 1) { // if the direction is larger than 1 (left or right)...
-			flip1 = 0;
-			flip2 = ((walkDist >> 4) & 1);
-			if (dir == 2) { // if the direction is 2 (left)
-				flip1 = 1; // mirror the sprite
-			}
-			xt += 4 + ((walkDist >> 3) & 1) * 2; // animation based on walk distance
-		}*/
 		
 		/* offset locations to start drawing the sprite relative to our position */
 		int xo = x - 8; // horizontal
@@ -616,19 +556,11 @@ public class Player extends Mob {
 			col = Color.get(-1, 555, 555, 555); // make the sprite white.
 		}
 		
-		/*if (activeItem instanceof FurnitureItem) { // if holding a piece of furniture
-			yt += 2; // moves the y tile up 2. (for the player holding his hands up)
-		}*/
-		
 		MobSprite curSprite = spriteSet[dir][(walkDist >> 3) & 1]; // gets the correct sprite to render.
 		
 		// render each corner of the sprite
-		//screen.render(xo + 8 * flip1, yo + 0, xt + yt * 32, col, flip1);
-		//screen.render(xo + 8 - 8 * flip1, yo + 0, xt + 1 + yt * 32, col, flip1);
 		if (!isSwimming()) { // don't render the bottom half if swimming.
 			curSprite.render(screen, col, xo, yo);
-			//screen.render(xo + 8 * flip2, yo + 8, xt + (yt + 1) * 32, col, flip2);
-			//screen.render(xo + 8 - 8 * flip2, yo + 8, xt + 1 + (yt + 1) * 32, col, flip2);
 		} else {
 			curSprite.renderRow(0, screen, col, xo, yo);
 		}

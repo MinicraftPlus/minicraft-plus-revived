@@ -20,7 +20,6 @@ public class ModeMenu extends Menu {
 	public static int mode = 1;
 	public static int loading = 0;
 	public static String[] modes = {"Survival", "Creative", "Hardcore", "Score"};
-	//private static int selectedlr = mode;
 	private int selected = 0;
 	public static int selection = 0;
 	public static String time = "";
@@ -149,8 +148,6 @@ public class ModeMenu extends Menu {
 		String modeText = "Game Mode:	" + modes[mode - 1];
 		Font.draw(modeText, screen, screen.centerText(modeText), 8 * 8 + 1, Color.get(-1, 111, 111, 111));
 		Font.draw(modeText, screen, screen.centerText(modeText) + 1, 8 * 8, Color.get(-1, 555, 555, 555));
-		
-		//drawString(modeText, screen, 8 * 8, Color.get(-1, 111, 111, 111));
 		
 		if(mode == 4) writeCentered("<T>ime: " + time, screen, 95, Color.get(0, 555, 555, 555));
 		

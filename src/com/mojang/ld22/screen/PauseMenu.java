@@ -39,7 +39,6 @@ public class PauseMenu extends Menu {
 			//this one is an EXCEPTION: no comfirm menu.
 			if (selected == 1) {
 				//I bet this is used when exiting options menu to decide whether to go to title screen, or pause menu:
-				//TitleMenu.sentFromMenu = false;
 				game.setMenu(new OptionsMenu(this));
 			}
 
@@ -66,8 +65,6 @@ public class PauseMenu extends Menu {
 
 	public void render(Screen screen) {
 		Font.renderFrame(screen, "", 4, 2, 32, 20);
-		
-		//if (game.debug) System.out.println("rendering pauseMenu... selection=" + selection);
 		
 		if (selection == -1) {
 			for (int i = 0; i < 5; i++) {

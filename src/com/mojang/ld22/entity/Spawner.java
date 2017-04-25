@@ -46,7 +46,7 @@ public class Spawner extends Furniture {
 	private void trySpawn() {
 		int xd = level.player.x - x;
 		int yd = level.player.y - y;
-		//if (Game.debug) System.out.println("spawn attempt trigged for " + mob + "; player dist: " + Math.sqrt(xd * xd + yd * yd) + "; max dist: " + r);
+		
 		if(xd * xd + yd * yd > r * r) return;
 		
 		Mob newmob = getMob(mob, lvl);
@@ -54,11 +54,11 @@ public class Spawner extends Furniture {
 		int randX = (x/16 - 1 + rnd.nextInt(2)); // the rand is really just one tile in any direction
 		int randY = (y/16 - 1 + rnd.nextInt(2));
 		Tile tile = level.getTile(randX, randY);
+		
 		//if (Game.debug) System.out.println("attempting " + mob + " spawn on tile with id: " + tile.id);
 		if(tile.mayPass(level, randX, randY, newmob) && tile.getLightRadius(level, randX, randY) == 0) {
 			newmob.x = randX << 4;
 			newmob.y = randY << 4;
-			//(newmob).hasspawned = true;
 			if (Game.debug) System.out.println("spawning new " + mob + " on level "+lvl+": x=" + (newmob.x>>4)+" y="+(newmob.y>>4) + "...");
 			level.add(newmob);
 			Sound.monsterHurt.play();
@@ -143,11 +143,10 @@ public class Spawner extends Furniture {
 			case "Creeper": return (Mob)new Creeper(lvl);
 			case "Skeleton": return (Mob)new Skeleton(lvl);
 			case "AirWizard": return (Mob)new AirWizard(lvl>1);
-			//case "AirWizardII": return (Mob)new AirWizard(true);
 			case "Knight": return (Mob)new Knight(lvl);
 			case "Snake": return (Mob)new Snake(lvl);
 			default:
-				return null; // fix: make a missing texture entity!
+				return null; // fix: make a missing texture entity! maybe...
 		}
 	}
 }

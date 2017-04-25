@@ -14,9 +14,6 @@ public class MobAi extends Mob {
 	
 	int randomWalkTime, randomWalkChance, randomWalkDuration;
 	int xa, ya;
-	//int walkTime, speed; // these determines how fast or slow the mob moves:
-	//walkTime slows the mob, by increasing the ticks between movements.
-	//speed makes the mob faster by simply moving more per tick.
 	
 	public MobAi(MobSprite[][] sprites, int maxHealth, int rwTime, int rwChance) {
 		super(sprites, maxHealth);
@@ -26,7 +23,6 @@ public class MobAi extends Mob {
 		xa = 0;
 		ya = 0;
 		walkTime = 2;
-		//speed = 1;
 	}
 	
 	public void tick() {
@@ -50,15 +46,7 @@ public class MobAi extends Mob {
 		
 		if (hurtTime > 0) {
 			col = Color.get(-1, 555);
-		}/* else if(!(this instanceof EnemyMob && ((EnemyMob)this).lvl > 1)) {
-			if(level.dirtColor == 322) {
-				if(isLight())
-					col = colors[1][Game.time];
-				else
-					col = colors[0][Game.time];
-			}
-			else col = colors[2][0];
-		}*/
+		}
 		
 		MobSprite curSprite = sprites[dir][(walkDist >> 3) % sprites[dir].length];
 		curSprite.render(screen, col, xo, yo);
@@ -74,41 +62,22 @@ public class MobAi extends Mob {
 		ya = (random.nextInt(3) - 1);
 	}
 	
-	/*public boolean canWool() {
-		return true;
-	}*/
-	
 	protected void dropResource(int mincount, int maxcount, Resource... resources) {
 		int count = random.nextInt(maxcount-mincount+1) + mincount;
 		for (int i = 0; i < count; i++)
-			for(Resource r: resources)
-				dropResource(r);
+			dropResource(resources);
+	}
+	protected void dropResource(int count, Resource... resources) {
+		for (int i = 0; i < count; i++)
+			dropResource(resources);
+	}
+	protected void dropResource(Resource[] resources) {
+		for(Resource r: resources)
+			dropResource(r);
 	}
 	protected void dropResource(Resource r) {
 		level.add(new ItemEntity(new ResourceItem(r), x + random.nextInt(11) - 5, y + random.nextInt(11) - 5));
 	}
-	
-	
-	/** Start pos is a bit different for dungeons. */
-	/*public boolean findStartPosDungeon(Level level) {
-		int x = random.nextInt(level.w);
-		int y = random.nextInt(level.h);
-		int xx = x * 16 + 8;
-		int yy = y * 16 + 8;
-
-		if (level.player != null) {
-			// don't spawn if the player is less than 3.75 blocks away
-			int xd = level.player.x - xx;
-			int yd = level.player.y - yy;
-
-			if (xd * xd + yd * yd < 60 * 60) return false;
-		}
-		
-		// Get the allowed density of mobs in the level, convert it from a tile to a real coordinate (?) higher in score mode.
-		
-
-		return false;
-	}*/
 	
 	/** Tries once to find an appropriate spawn location for friendly mobs. */
 	protected static boolean checkStartPos(Level level, int x, int y, int playerDist, int soloRadius) {

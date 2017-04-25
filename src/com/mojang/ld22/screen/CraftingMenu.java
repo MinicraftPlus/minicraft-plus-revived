@@ -96,6 +96,5 @@ public class CraftingMenu extends Menu {
 				Font.draw("" + requiredAmt + "/" + has, screen, xo + 8, yo, color); // Draw "#required/#has" text next to the icon
 			}
 		}
-		// renderItemList(screen, 12, 4, 19, 11, recipes.get(selected).costs, -1);
 	}
 }

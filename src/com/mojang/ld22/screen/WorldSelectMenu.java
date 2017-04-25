@@ -17,7 +17,7 @@ public class WorldSelectMenu extends Menu {
 	boolean createworld = false;
 	boolean delete = false;
 	boolean rename = false;
-	boolean fw = false; //="found-world"; tells if there are any pre-existing worlds.
+	boolean fw = false; // tells if there are any pre-existing worlds.
 	String name = "";
 	boolean hasworld = false;
 	String renamingworldname = "";
@@ -361,10 +361,10 @@ public class WorldSelectMenu extends Menu {
 		} //end rename
 
 		if (name.equals("")) //name cannot be blank
-		wncol = Color.get(0, 500, 500, 500);
+			wncol = Color.get(0, 500, 500, 500);
 
 		if (input.getKey("backspace").clicked && name.length() > 0) //backspace support
-		name = name.substring(0, name.length() - 1);
+			name = name.substring(0, name.length() - 1);
 
 		if (name.length() < 36 && input.lastKeyTyped.length() > 0) {
 			//ensure only valid characters are typed.

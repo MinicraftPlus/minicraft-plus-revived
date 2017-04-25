@@ -7,23 +7,23 @@ import com.mojang.ld22.sound.Sound;
 
 public class WorldGenMenu extends Menu {
 	//this the the "more world options" menu.
-
+	
 	private Menu parent;
 	public static int normal = 10;
 	public static int forest = 11;
 	public static int desert = 12;
 	public static int plain = 13;
 	public static int hell = 14;
-
+	
 	public static int island = 0;
 	public static int box = 1;
 	public static int mount = 2;
 	public static int irreg = 3;
-
+	
 	public static int sizeNorm = 128;
 	public static int sizeBig = 256;
 	public static int sizeHuge = 512;
-
+	
 	public static int type = 0;
 	public static int theme = 10;
 	public static int size = 0;

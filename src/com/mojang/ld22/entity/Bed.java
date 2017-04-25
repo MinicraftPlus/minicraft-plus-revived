@@ -29,7 +29,6 @@ public class Bed extends Furniture {
 			Player.spawnx = x >> 4;
 			Player.spawny = y >> 4;
 			player.bedSpawn = true;  // the bed is now set as the player spawn point.
-			//if(Game.debug) System.out.println("bedPos: ("+(x/16)+","+(y/16)+"); spawnPos: ("+player.spawnx+","+player.spawny+")"); // debug to print the bed loc and spawn loc
 		} else {
 			// it is too early to sleep; display how much time is remaining.
 			int sec = (Game.sleepTime - Game.tickCount) / Game.normSpeed; // gets the seconds until sleeping is allowed. // normSpeed is in tiks/sec.

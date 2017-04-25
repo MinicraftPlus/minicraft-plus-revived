@@ -17,11 +17,8 @@ public class ItemResource extends Resource {
 	public boolean interactOn(Tile tile, Level level, int xt, int yt, Player player, int attackDir) {
 		if (name == "book") {
 			player.game.setMenu(new BookMenu());
-			// Don't worry about the Crafting.workbench thing, It's what makes it work :P
-
 		} else if (name == "Antidious") {
-			player.game.setMenu(new BookMenu());
-			// Don't worry about the Crafting.workbench thing, It's what makes it work :P
+			player.game.setMenu(new BookMenu(BookMenu.antVenomPages));
 		}
 		return false;
 	}

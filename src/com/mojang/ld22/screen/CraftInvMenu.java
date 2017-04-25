@@ -97,6 +97,5 @@ public class CraftInvMenu extends Menu {
 				Font.draw("" + requiredAmt + "/" + has, screen, xo + 8, yo, color);
 			}
 		}
-		// renderItemList(screen, 12, 4, 19, 11, recipes.get(selected).costs, -1);
 	}
 }

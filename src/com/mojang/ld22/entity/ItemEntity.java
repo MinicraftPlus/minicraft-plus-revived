@@ -20,8 +20,6 @@ public class ItemEntity extends Entity {
 		this.y = y;
 		xx = x;
 		yy = y;
-		//xr = 3; // x radius (size)
-		//yr = 3; // y radius (size)
 		
 		zz = 2;
 		// random direction for each acceleration
@@ -92,7 +90,7 @@ public class ItemEntity extends Entity {
 	/** What happens when the player takes the item */
 	public void take(Player player) {
 		Sound.pickup.play();
-		//player.score++; // increase the player's score by 1
+		player.score++; // increase the player's score by 1
 		item.onTake(this); // calls the onTake() method in Item.java
 		remove(); // removes this from the world
 	}

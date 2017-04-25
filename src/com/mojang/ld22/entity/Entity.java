@@ -20,8 +20,6 @@ public abstract class Entity {
 	public int col0, col1, col2, col3, col4, col; // day/night color variations, plus current color.
 	
 	public Entity(int xr, int yr) { // add color to this later, in color update
-		//this.x = x;
-		//this.y = y;
 		this.xr = xr;
 		this.yr = yr;
 		
@@ -35,8 +33,6 @@ public abstract class Entity {
 	
 	/** Removes the entity from the level. */
 	public void remove() {
-		//if(level != null) level.remove(this);
-		//else System.out.println("cannot remove entity from null level");
 		removed = true;
 	}
 	
@@ -47,28 +43,9 @@ public abstract class Entity {
 		this.x = x;
 		this.y = y;
 	}
-	/*public boolean inLevel() {
-		boolean hasLvl = false;
-		for(Level lvl: Game.levels)
-			hasLvl = hasLvl || inLevel(lvl);
-		
-		if(!hasLvl && this.level != null)
-			System.out.println("entity is part of unknown level");
-		
-		return hasLvl;
-	}
-	public boolean inLevel(Level level) {
-		if(level == null || this.level == null) return false;
-		return this.level == level;
-	}*/
 	
 	// TODO Inplement this! it's a really good idea!
 	//public abstract void getColor();
-	
-	/** Initialization method, called when the entity is created */
-	/*public final void init(Level level) {
-		this.level = level;
-	}*/
 	
 	/** returns true if this entity is found in the rectangle specified by given two coordinates. */
 	public boolean intersects(int x0, int y0, int x1, int y1) {
@@ -138,7 +115,6 @@ public abstract class Entity {
 				}
 			}
 		}
-		//if (blocked) return false;
 		
 		// these lists are named as if the entity has already moved-- it hasn't, though.
 		List<Entity> wasInside = level.getEntities(x - xr, y - yr, x + xr, y + yr); // gets all of the entities that are inside this entity (aka: colliding) before moving.

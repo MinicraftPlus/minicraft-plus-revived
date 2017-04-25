@@ -30,12 +30,12 @@ public class Tnt extends Furniture implements ActionListener {
 
 	public Tnt() {
 		super("Tnt");
-
+		
 		col0 = Color.get(-1, 200, 300, 444);
 		col1 = Color.get(-1, 200, 300, 555);
 		col2 = Color.get(-1, 100, 200, 444);
 		col3 = Color.get(-1, 000, 100, 333);
-
+		
 		col = Color.get(-1, 200, 300, 555);
 		sprite = 7;
 		xr = 3;
@@ -44,10 +44,10 @@ public class Tnt extends Furniture implements ActionListener {
 
 	public void tick() {
 		super.tick();
-
+		
 		if (flashing) {
 			ftik++;
-
+			
 			if (ftik > 4) {
 				col0 = Color.get(-1, 200, 300, 555);
 				col1 = Color.get(-1, 200, 300, 555);
@@ -113,7 +113,6 @@ public class Tnt extends Furniture implements ActionListener {
 	}
 
 	public void actionPerformed(ActionEvent e) {
-
 		int xt = x >> 4;
 		int yt = (y - 2) >> 4;
 		if (e.getSource() == t) {

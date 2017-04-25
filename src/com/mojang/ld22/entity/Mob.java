@@ -11,7 +11,6 @@ import com.mojang.ld22.sound.Sound;
 public abstract class Mob extends Entity {
 	private Player player;
 	
-	//protected int[][] colors;
 	protected MobSprite[][] sprites; // This contains all the mob's sprites, sorted first by direction (index corrosponding to the dir variable), and then by walk animation state.
 	protected int walkDist = 0; // How far we've walked currently, incremented after each movement. This is used to change the sprite; "(walkDist >> 3) & 1" switches between a value of 0 and 1 every 8 increments of walkDist.
 	
@@ -19,27 +18,16 @@ public abstract class Mob extends Entity {
 	public int hurtTime = 0; // A delay after being hurt, that temporarily prevents further damage for a short time
 	protected int xKnockback, yKnockback; // The amount of vertical/horizontal knockback that needs to be inflicted, if it's not 0, it will be moved one pixel at a time.
 	public int health, maxHealth; // The amount of health we currently have, and the maximum.
-	//public int swimTime = 2; // How many ticks pass between each movement whil in water, used to halve movement speed
-	//public int woolTime = 2;
 	protected int walkTime;
-	//public int lightTimer = 0;
+	public int speed;
 	public int tickTime = 0; // Incremented whenever tick() is called, is effectively the age in ticks
 	// TODO take all these swimTime, woolTime, and walkTime and consolidate into a getSlowness() method, that checks and adds each possible source of slowness and returns the result.
 		// or don't.
-	public int speed;
-	
-	//public int r;
-	//public int xx, yy;
-	//public int lvl;
-	//public int color;
 	
 	public Mob(MobSprite[][] sprites/*, int[][] colors*/, int health) {
 		super(4, 3);
 		this.sprites = sprites;
 		this.health = this.maxHealth = health;
-		//this.colors = colors;
-		//xx = x;
-		//yy = y;
 		walkTime = 1;
 		speed = 1;
 	}
@@ -159,9 +147,6 @@ public abstract class Mob extends Entity {
 		if(mob instanceof Player && ModeMenu.creative && mob != this) doHurt(health, attackDir); // kill the mob instantly
 		else doHurt(damage, attackDir); // Call the method that actually performs damage, and use our provided attackDir
 	}
-	/*public void hurt(Tnt tnt, int x, int y, int dmg) {
-		doHurt(dmg, dir ^ 1);
-	}*/
 	
 	public void heal(int heal) { // Restore health on the mob
 		if (hurtTime > 0) return; // If the mob has been hurt recently and hasn't cooled down, don't continue
@@ -170,12 +155,6 @@ public abstract class Mob extends Entity {
 		health += heal; // Actually add the amount to heal to our current health
 		if (health > maxHealth) health = maxHealth; // If our health has exceeded our maximum, lower it back down to said maximum
 	}
-	
-	/*
-	public void hungerHeal(int hungerHeal) {
-		hunger += hungerHeal;
-		if (hunger > maxHunger) hunger = maxHunger;
-	}*/
 	
 	protected void doHurt(int damage, int attackDir) { // Actually hurt the mob, based on only damage and a direction
 		// this is overridden in Player.java

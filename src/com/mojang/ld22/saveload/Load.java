@@ -84,14 +84,6 @@ public class Load {
 		loadInventory("Inventory", game.player.inventory);
 		loadEntities("Entities", game.player);
 		LoadingMenu.percentage = 0;
-		/*ArrayList<String> itemDatas = new ArrayList<String>();
-		
-		for(int i = 0; i < ListItems.items.size(); i++) {
-			if(!itemDatas.contains(ListItems.items.get(i))) {
-				itemDatas.add(ListItems.items.get(i).getName());
-			}
-		}
-		*/
 	}
 	
 	class Version implements Comparable {
@@ -161,36 +153,16 @@ public class Load {
 			
 			String curLine, total = "";
 			ArrayList<String> curData;
-			//String item;
-			//Iterator lineIter;
-			while((curLine = br.readLine()) != null) {
+			while((curLine = br.readLine()) != null)
 				total += curLine;
-				//data.addAll(Arrays.asList(curLine.split(",")));
-				/*curData = Arrays.asList(curLine.split(","));
-				lineIter = curData.iterator();
-				
-				while(lineIter.hasNext()) {
-					item = (String)lineIter.next();
-					data.add(item);
-				}*/
-			}
 			data.addAll(Arrays.asList(total.split(",")));
 			
 			if(filename.contains("Level")) {
 				total = "";
 				br2 = new BufferedReader(new FileReader(filename.substring(0, filename.lastIndexOf("/") + 7) + "data" + extention));
 				
-				while((curLine = br2.readLine()) != null) {
+				while((curLine = br2.readLine()) != null)
 					total += curLine;
-					//extradata.addAll(Arrays.asList(curLine.split(",")));
-					/*curData = Arrays.asList(curLine.split(","));
-					lineIter = curData.iterator();
-					
-					while(lineIter.hasNext()) {
-						item = (String)lineIter.next();
-						extradata.add(item);
-					}*/
-				}
 				extradata.addAll(Arrays.asList(total.split(",")));
 			}
 		} catch (IOException ex) {
@@ -377,7 +349,6 @@ public class Load {
 	}
 	
 	private String subOldName(String oldName) {
-		//if(oldName.contains(";")) oldName = oldName.substring(0, oldName.indexOf(";"));
 		//System.out.println("old name: " + oldName);
 		String newName = oldName.replace("P.", "Potion").replace("Fish Rod", "Fishing Rod").replace("bed", "Bed");
 		//System.out.println("new name: " + newName);
@@ -398,7 +369,6 @@ public class Load {
 			int x = Integer.parseInt(info.get(0));
 			int y = Integer.parseInt(info.get(1));
 			
-			//boolean chgIdx = worldVer.compareTo(new Version("1.9.1")) <= 0;
 			int mobLvl = 0;
 			try {
 				if(Class.forName("EnemyMob").isAssignableFrom(Class.forName(entityName)))
@@ -408,15 +378,10 @@ public class Load {
 			Entity newEntity = getEntity(entityName, player, mobLvl);
 			
 			if(newEntity != null) { // the method never returns null, but...
-				//newEntity.x = Integer.parseInt(info.get(0));
-				//newEntity.y = Integer.parseInt(info.get(1));
 				int currentlevel;
 				if(newEntity instanceof Mob) {
 					Mob mob = (Mob)newEntity;
 					mob.health = Integer.parseInt(info.get(2));
-					//mob.maxHealth = Integer.parseInt(info.get(3));
-					//((EnemyMob)mob).lvl = Integer.parseInt(info.size()-2);
-					//mob.level = Game.levels[Integer.parseInt(info.get(5))];
 					currentlevel = Integer.parseInt(info.get(info.size()-1));
 					Game.levels[currentlevel].add(mob, x, y);
 				} else if(newEntity instanceof Chest) {
@@ -449,21 +414,17 @@ public class Load {
 					}
 					
 					
-					//newEntity.level = Game.levels[Integer.parseInt((String)info.get(info.size() - 1))];
 					currentlevel = Integer.parseInt(info.get(info.size() - 1));
 					Game.levels[currentlevel].add(chest instanceof DeathChest ? (DeathChest)chest : chest instanceof DungeonChest ? (DungeonChest)chest : chest, x, y);
 				}
 				else if(newEntity instanceof Spawner) {
 					Spawner egg = (Spawner)newEntity;
-					//egg.x = Integer.parseInt(info.get(0));
-					//egg.y = Integer.parseInt(info.get(1));
 					egg.lvl = Integer.parseInt(info.get(3));
 					egg.setMob(info.get(2));
 					currentlevel = Integer.parseInt((String)info.get(info.size() - 1));
 					Game.levels[currentlevel].add(egg, x, y);
 				}
 				else {
-					//newEntity.level = Game.levels[Integer.parseInt(info.get(2))];
 					currentlevel = Integer.parseInt(info.get(2));
 					Game.levels[currentlevel].add(newEntity, x, y);
 				}
@@ -484,7 +445,6 @@ public class Load {
 			case "Knight": return (Entity)(new Knight(moblvl));
 			case "Snake": return (Entity)(new Snake(moblvl));
 			case "AirWizard": return (Entity)(new AirWizard(moblvl>1));
-			case "AirWizardII": return (Entity)(new AirWizard(true));
 			case "Spawner": return (Entity)(new Spawner("Zombie", 1));
 			case "Workbench": return (Entity)(new Workbench());
 			case "Chest": return (Entity)(new Chest());

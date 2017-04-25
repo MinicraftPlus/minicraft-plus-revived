@@ -52,29 +52,6 @@ public class Skeleton extends EnemyMob {
 	}
 
 	public void render(Screen screen) {
-		/*int xt = 8;
-		int yt = 16;
-
-		int flip1 = (walkDist >> 3) & 1;
-		int flip2 = (walkDist >> 3) & 1;
-
-		if (dir == 1) {
-			xt += 2;
-		}
-		if (dir > 1) {
-
-			flip1 = 0;
-			flip2 = ((walkDist >> 4) & 1);
-			if (dir == 2) {
-				flip1 = 1;
-			}
-			xt += 4 + ((walkDist >> 3) & 1) * 2;
-		}
-		
-		int xo = x - 8;
-		int yo = y - 11;
-		*/
-
 		if (isLight()) {
 			col0 = col1 = col2 = col3 = col4 = Color.get(-1, 222, 50, 555);
 		} else {
@@ -98,73 +75,25 @@ public class Skeleton extends EnemyMob {
 		
 		super.render(screen);
 	}
-	/*
-	protected void touchedBy(Entity entity) {
-		super.touchedBy(entity);
-		if (OptionsMenu.diff == OptionsMenu.easy) {
-			if (entity instanceof Player) {
-				//entity.hurt(this, lvl, dir);
-			}
-		}
-		if (OptionsMenu.diff == OptionsMenu.norm) {
-			if (entity instanceof Player) {
-				//entity.hurt(this, lvl, dir);
-			}
-		}
-		if (OptionsMenu.diff == OptionsMenu.hard) {
-			if (entity instanceof Player) {
-				//entity.hurt(this, lvl * 2, dir);
-			}
-		}
-	}*/
-
+	
 	public boolean canWool() {
 		return true;
 	}
 
 	protected void die() {
-		if (OptionsMenu.diff == OptionsMenu.easy) {
-			int count = random.nextInt(3) + 1;
-			int bookcount = random.nextInt(1) + 1;
-			int rand = random.nextInt(20);
-			if (rand <= 13) {
-				dropResource(Resource.bone);
-				dropResource(Resource.arrow);
-			} else if (rand >= 14 && rand != 19)
-				for (int i = 0; i < bookcount; i++) {
-					dropResource(Resource.arrow);
-					dropResource(Resource.bookant);
-				}
-			else if (rand == 19) // rare chance of 10 arrows
-			for (int i = 0; i < 10; i++) {
-					dropResource(Resource.arrow);
-				}
-		}
-		if (OptionsMenu.diff == OptionsMenu.norm) {
-			int count = random.nextInt(2) + 1;
-			int bookcount = random.nextInt(1) + 1;
-			int rand = random.nextInt(20);
-			if (rand <= 18) {
-				dropResource(Resource.bone);
-				dropResource(Resource.arrow);
-			} else if (rand >= 19) {
-				dropResource(Resource.arrow);
-				dropResource(Resource.bookant);
-			}
-		}
-		if (OptionsMenu.diff == OptionsMenu.hard) {
-			int count = random.nextInt(1) + 1;
-			int bookcount = random.nextInt(1) + 1;
-			int rand = random.nextInt(30);
-			if (rand <= 28) {
-				dropResource(Resource.bone);
-				dropResource(Resource.arrow);
-			} else if (rand >= 29)
-				for (int i = 0; i < bookcount; i++) {
-					dropResource(Resource.arrow);
-					dropResource(Resource.bookant);
-				}
-		}
+		int[] diffrands = {20, 20, 30};
+		int[] diffvals = {13, 18, 28};
+		int diff = OptionsMenu.diff;
+		
+		int count = random.nextInt(3 - diff) + 1;
+		int bookcount = random.nextInt(1) + 1;
+		int rand = random.nextInt(diffrands[diff]);
+		if (rand <= diffvals[diff])
+			dropResource(count, Resource.bone, Resource.arrow);
+		else if (diff == 0 && rand < 19 || diff != 0)
+			dropResource(bookcount, Resource.bookant, Resource.arrow);
+		else if (diff == 0) // rare chance of 10 arrows on easy mode
+			dropResource(10, Resource.arrow);
 		
 		super.die();
 	}

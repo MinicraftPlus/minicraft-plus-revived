@@ -9,7 +9,6 @@ import java.util.List;
 
 /** TODO Most all menus have a scroll feature... it should be in this class.
 		Frame should also be here..? */
-
 public class Menu {
 	protected Game game;
 	protected InputHandler input;

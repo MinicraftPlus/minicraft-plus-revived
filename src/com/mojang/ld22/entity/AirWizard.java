@@ -15,17 +15,6 @@ import java.util.Random;
 
 public class AirWizard extends EnemyMob {
 	private static MobSprite[][] sprites = MobSprite.compileMobSpriteAnimations(8, 14);
-	/*private static int[][] colors1 = {
-		{Color.get(-1, 100, 500, 555), Color.get(-1, 100, 500, 555), Color.get(-1, 0, 200, 333), Color.get(-1, 0, 200, 333)},
-		{Color.get(-1, 100, 500, 555), Color.get(-1, 100, 500, 555), Color.get(-1, 0, 200, 333), Color.get(-1, 0, 200, 333)},
-		{Color.get(-1, 0, 200, 333)}
-	};
-	private static int[][] colors2;
-	static {
-		int colDay = Color.get(-1, 0, 4, 46), colCave = Color.get(-1, 0, 1, 32);
-		int[] dayColors = {colDay, colDay, colDay, colDay};
-		colors2 = new int[][] {dayColors, dayColors, {colCave}};
-	}*/
 	
 	public static boolean beaten = false;
 	
@@ -37,7 +26,7 @@ public class AirWizard extends EnemyMob {
 	File folder;
 	
 	public AirWizard(boolean secondform) {
-		super(secondform?2:1, sprites, secondform?5000:2000, false, 32, 10, 50);
+		super(secondform?2:1, sprites, secondform?5000:2000, false, 16*8, 10, 50);
 		
 		this.secondform = secondform;
 		if(secondform) speed = 3;
@@ -109,21 +98,8 @@ public class AirWizard extends EnemyMob {
 				int newyd = (int)(yd * Math.sqrt(16*16 * 15*15) / hypot);
 				x = level.player.x - newxd;
 				y = level.player.y - newyd;
-			}/* else {
-				xa = 0;
-				ya = 0;
-				// move toward the player
-				if (xd < 0) xa = -1;
-				if (xd > 0) xa = +1;
-				if (yd < 0) ya = -1;
-				if (yd > 0) ya = +1;
-			}*/
+			}
 		}
-		
-		/*byte shift = secondform ? 0x01 : 0x02;
-		int speed = (tickTime & shift) / shift;
-		xa *= speed;
-		ya *= speed;*/
 		
 		if (level.player != null && randomWalkTime == 0) {
 			int xd = level.player.x - x; // x dist to player
@@ -134,11 +110,6 @@ public class AirWizard extends EnemyMob {
 				}
 			}
 		}
-		
-		//int oldTimes = tickTime;
-		//if(!secondform) tickTime = tickTime & 0x02;
-		
-		//tickTime = oldTimes+1;
 	}
 	
 	protected void doHurt(int damage, int attackDir) {
@@ -150,26 +121,6 @@ public class AirWizard extends EnemyMob {
 	
 	/** Renders the air wizard on the screen */
 	public void render(Screen screen) {
-		/*int xt = 8; // x coordinate on the sprite sheet
-		int yt = 14; // y coordinate on the sprite sheet
-		
-		 // animation flip values (used to mirror the sprite).
-		int flip1 = (walkDist >> 3) & 1;
-		int flip2 = (walkDist >> 3) & 1;
-
-		if (dir == 1) {
-			xt += 2; // moves the sprite coordinate 2 tiles to the right (16 pixels over)
-		}
-		if (dir > 1) {
-
-			flip1 = 0; // flip1 becomes 0 (don't mirror)
-			flip2 = ((walkDist >> 4) & 1); // changes bottom half of sprite (mirror)
-			if (dir == 2) {
-				flip1 = 1; // flip1 becomes 1 (mirrored) if the direction is 2.
-			}
-			xt += 4 + ((walkDist >> 3) & 1) * 2; // changes bottom half of sprite (in the sprite sheet)
-		}
-		*/
 		int xo = x - 8; // the horizontal location to start drawing the sprite
 		int yo = y - 11; // the vertical location to start drawing the sprite
 		
@@ -187,13 +138,6 @@ public class AirWizard extends EnemyMob {
 			col1 = Color.get(-1, 555, 555, 555);
 			col2 = Color.get(-1, 555, 555, 555);
 		}
-		
-		/* render call format:
-		screen.render(int x position, int y-position, int sprite-location, int colors, int bits (0 = not mirrored, 1 = mirrored)) */
-		//screen.render(xo + 8 * flip1, yo + 0, xt + yt * 32, col1, flip1); // render top-right
-		//screen.render(xo + 8 - 8 * flip1, yo + 0, xt + 1 + yt * 32, col1, flip1); // top-left
-		//screen.render(xo + 8 * flip2, yo + 8, xt + (yt + 1) * 32, col2, flip2); // bottom-right
-		//screen.render(xo + 8 - 8 * flip2, yo + 8, xt + 1 + (yt + 1) * 32, col2, flip2); // bottom-left
 		
 		MobSprite curSprite = sprites[dir][(walkDist >> 3) & 1];
 		curSprite.renderRow(0, screen, col1, xo, yo);

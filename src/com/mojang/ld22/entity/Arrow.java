@@ -8,14 +8,11 @@ public class Arrow extends Entity {
 	private int lifeTime;
 	private int xdir;
 	private int ydir;
-	//private final int speed = 2;
 	private int time;
 	private int damage;
 	public Mob owner;
-	//private int col;
 	private int speed;
-	//private boolean edmg = false;
-
+	
 	public Arrow(Mob owner, int dirx, int diry, int dmg, boolean flag) {
 		super(Math.abs(dirx)+1, Math.abs(diry)+1);
 		this.owner = owner;
@@ -60,21 +57,6 @@ public class Arrow extends Entity {
 				Mob mob = (Mob) hit;
 				int extradamage = (hit instanceof Player ? 0 : 3) + (criticalHit ? 0 : 1);
 				mob.hurt(owner, damage + extradamage, mob.dir);
-				/*if (count < 9) {
-					if (hit instanceof Mob && owner.isenemy == false) {
-						hit.hurt(owner, damage + 3, ((Mob) hit).dir);
-					}
-					if (hit instanceof Player && hit != owner && owner.isenemy == true) {
-						hit.hurt(owner, damage, ((Player) hit).dir);
-					}
-				} else {
-					if (hit instanceof Mob && hit != owner && owner.isenemy == false) {
-						hit.hurt(owner, damage + 4, ((Mob) hit).dir);
-					}
-					if (hit instanceof Player && hit != owner && owner.isenemy == true) {
-						hit.hurt(owner, damage + 1, ((Player) hit).dir);
-					}
-				}*/
 			}
 			
 			if (!level.getTile(x / 16, y / 16).mayPass(level, x / 16, y / 16, this)

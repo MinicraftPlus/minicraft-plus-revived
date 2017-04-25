@@ -197,12 +197,8 @@ public class Save {
 				String name = e.getClass().getName().replace("com.mojang.ld22.entity.", "");
 				String extradata = "";
 				
-				if(e instanceof ItemEntity || e instanceof Particle/* || e instanceof Player*/) continue; // don't even write ItemEntities or particle effects; player is written seperately.
-				// jk, apparently, the player NEEDS to be written multiple times...
-				/* I don't want to do this anymore.
-				if(e instanceof AirWizard && ((AirWizard)e).secondform)
-					name += "II";
-				*/
+				if(e instanceof ItemEntity || e instanceof Particle || e instanceof Spark) continue; // don't even write ItemEntities or particle effects; Spark... will probably is saved, eventually; it presents an unfair cheat to remove the sparks by reloading the game.
+				
 				if(e instanceof Mob) {
 					Mob m = (Mob)e;
 					extradata = ":" + m.health;

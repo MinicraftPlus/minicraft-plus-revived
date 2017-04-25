@@ -5,7 +5,7 @@ import com.mojang.ld22.gfx.Color;
 import com.mojang.ld22.screen.OptionsMenu;
 
 public class DeathChest extends Chest {
-	//public String name;
+	
 	public int time; // time passed (used for death chest despawn)
 	int redtick = 0; // this is used to determine the shade of red when the chest is about to expire.
 	boolean reverse; // what direction the red shade (redtick) is changing.
