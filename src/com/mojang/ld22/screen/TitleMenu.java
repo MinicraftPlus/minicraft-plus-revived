@@ -22,155 +22,159 @@ import java.util.Random;
 public class TitleMenu extends Menu {
 	private int selected = 0;
 	protected final Random random = new Random();
-	public static List splashes = new ArrayList<String>();
 	private static final String[] options = {"New game", "Instructions", "Tutorial", "Options", "About", "Quit"/*, "Kill"*/}; // Options that are on the main menu.
-	int randcount = 60;
-	int rand = random.nextInt(randcount);
+	//int randcount = 60;
+	int rand;// = random.nextInt(randcount);
 	int count = 0; // this and reverse are for the logo; they produce the fade-in/out effect.
 	boolean reverse = false;
-	static boolean loadedsplashes = false;
+	//static boolean loadedsplashes = false;
 	static boolean loadedunlocks = false;
 	String location = Game.gameDir;
 	File folder;
-	boolean isblue;
+	//boolean isblue;
+	
+	private static final String[] splashes = {//new ArrayList<String>();
+		"Also play InfinityTale!",
+		"Also play Minicraft Delux!",
+		"Also play Alecraft!",
+		"Also play Hackcraft!",
+		//"Also play RPGcraft!(When it's done)",
+		"Also play MiniCrate!",
+		"Also play MiniCraft Mob Overload!",
+		"Only on PlayMinicraft.com!",
+		"Playminicraft.com is the bomb!",
+		"@MinicraftPlus on Twitter",
+		"MinicraftPlus on Youtube",
+		//"Join the Forums!",
+		//"The Wiki is weak! Help it!",
+		"Notch is Awesome!",
+		"Dillyg10 is cool as Ice!",
+		"Shylor is the man!",
+		//"Guard13007 has too many twitters!",
+		"AntVenom loves cows! Honest!",
+		"You should read Antidious Venomi!",
+		"Kill Creeper, get Gunpowder!",
+		"Kill Cow, get Beef!",
+		"Kill Zombie, get Cloth!",
+		"Kill Slime, get Slime!",
+		"Kill Skeleton, get Bones!",
+		"Kill Sheep, get Wool!",
+		"Kill Pig, get Porkchop!",
+		"Gold > Iron",
+		"Gem > Gold",
+		"Test == InDev!",
+		"Alpha? What's that?",
+		"Beta? What's that?",
+		//"Infdev? What's that?",
+		"Story? What's that?",
+		"Multiplayer? What's that?",
+		"Infinite terrain? What's that?",
+		"Redstone? What's that?",
+		//"Spiders? What are those?",
+		"Minecarts? What are those?",
+		"3D? What's that?",
+		"3.1D is the new thing!",
+		"Windows? I perfer Doors!",
+		//"Mouse? I perfer Keyboard!",
+		"Mouse not included!",
+		"No spiders included!",
+		"No Endermen included!",
+		"No chickens included!",
+		"Creepers included!",
+		"Skeletons included!",
+		"Knights included!",
+		"Snakes included!",
+		"Cows included!",
+		"Sheep included!",
+		"Pigs included!",
+		//"Saving Now Included!",
+		//"Loading Now Included!",
+		"Bigger Worlds!",
+		"World types!",
+		"World themes!",
+		"Sugarcane is a Idea!",
+		"Milk is an idea!",
+		"So we back in the mine,",
+		"pickaxe swinging from side to side",
+		"Life itself suspended by a thread",
+		"In search of Gems!",
+		"saying ay-oh, that creeper's KO'd!",
+		//"Diggy! Dig... ooh! a jaffacake!",
+		//"wenubs.com is jamming!",
+		"Gimmie a bucket!",
+		"Farming with water!",
+		"Made with 10000% Vitamin Z!",
+		"Too much DP!",
+		"Y U NO BOAT!?",
+		"PBAT is in the house!",
+		//"Who is SeaNanners?",
+		"Punch the Moon!",
+		"This is String qq!",
+		"Why?",
+		"You are null!",
+		"That guy is such a sly fox!",
+		"Hola senor!",
+		//"Vote for the Dead Workers Party!",
+		"Sonic Boom!",
+		"Hakuna Matata!",
+		"One truth prevails!",
+		//"1.8? Ehhhh....",
+		"011011000110111101101100!",
+		"001100010011000000110001!",
+		"011010000110110101101101?",
+		//"Buckets? YESH!",
+		"Press \"R\"!",
+		"Get the High-Score!",
+		"Awesome!",
+		"Sweet!",
+		"Cool!",
+		"Radical!",
+		"Potions ftw!",
+		"Beds ftw!",
+		"Conquer the Dungeon!",
+		"Defeat the Air Wizard!",
+		"Loom + Wool = String!",
+		"String + Wood = Rod!",
+		"Sand + Gunpowder = TNT!",
+		"Sleep at Night!",
+		"Farm at Day!",
+		//"Leave a comment below!",
+		"Explanation Mark!",
+		"!sdrawkcab si sihT",
+		"This is forwards!",
+		"Why is this blue?"
+		//"try with --debug",
+	};
 	
 	public TitleMenu() {
 		folder = new File(location);
-		isblue = false;
+		//isblue = false;
+		/*// now what's the deal with the whole "add one and then replace it" thing?
 		if(splashes.size() == 0) {
 			splashes.add("You will never see this!");
 		}
-		// now what's the deal with the whole "add one and then replace it" thing?
 		if(splashes.size() == 1) {
 			getSplashes();
-		}
-
-		rand = random.nextInt(splashes.size());
-		if(!loadedunlocks) {
-			getSplashes();
-		}
+		}*/
+		
+		rand = random.nextInt(splashes.length);
+		//if(!loadedunlocks) {
+			loadUnlocks();
+		//}
 	}
 	
-	public void getSplashes() {
+	/*public void getSplashes() {
 		if(!loadedsplashes) {
 			//The fun little messages that pop up.
 			String[] splashes = {
-				"Also play InfinityTale!",
-				"Also play Minicraft Delux!",
-				"Also play Alecraft!",
-				"Also play Hackcraft!",
-				//"Also play RPGcraft!(When it's done)",
-				"Also play MiniCrate!",
-				"Also play MiniCraft Mob Overload!",
-				"Only on PlayMinicraft.com!",
-				"Playminicraft.com is the bomb!",
-				"@MinicraftPlus on Twitter",
-				"MinicraftPlus on Youtube",
-				//"Join the Forums!",
-				//"The Wiki is weak! Help it!",
-				"Notch is Awesome!",
-				"Dillyg10 is cool as Ice!",
-				"Shylor is the man!",
-				//"Guard13007 has too many twitters!",
-				"AntVenom loves cows! Honest!",
-				"You should read Antidious Venomi!",
-				"Kill Creeper, get Gunpowder!",
-				"Kill Cow, get Beef!",
-				"Kill Zombie, get Cloth!",
-				"Kill Slime, get Slime!",
-				"Kill Skeleton, get Bones!",
-				"Kill Sheep, get Wool!",
-				"Kill Pig, get Porkchop!",
-				"Gold > Iron",
-				"Gem > Gold",
-				"Test == InDev!",
-				"Alpha? What's that?",
-				"Beta? What's that?",
-				//"Infdev? What's that?",
-				"Story? What's that?",
-				"Multiplayer? What's that?",
-				"Infinite terrain? What's that?",
-				"Redstone? What's that?",
-				//"Spiders? What are those?",
-				"Minecarts? What are those?",
-				"3D? What's that?",
-				"3.1D is the new thing!",
-				"Windows? I perfer Doors!",
-				//"Mouse? I perfer Keyboard!",
-				"Mouse not included!",
-				"No spiders included!",
-				"No Endermen included!",
-				"No chickens included!",
-				"Creepers included!",
-				"Skeletons included!",
-				"Knights included!",
-				"Snakes included!",
-				"Cows included!",
-				"Sheep included!",
-				"Pigs included!",
-				//"Saving Now Included!",
-				//"Loading Now Included!",
-				"Bigger Worlds!",
-				"World types!",
-				"World themes!",
-				"Sugarcane is a Idea!",
-				"Milk is an idea!",
-				"So we back in the mine,",
-				"pickaxe swinging from side to side",
-				"Life itself suspended by a thread",
-				"In search of Gems!",
-				"saying ay-oh, that creeper's KO'd!",
-				//"Diggy! Dig... ooh! a jaffacake!",
-				//"wenubs.com is jamming!",
-				"Gimmie a bucket!",
-				"Farming with water!",
-				"Made with 10000% Vitamin Z!",
-				"Too much DP!",
-				"Y U NO BOAT!?",
-				"PBAT is in the house!",
-				//"Who is SeaNanners?",
-				"Punch the Moon!",
-				"This is String qq!",
-				"Why?",
-				"You are null!",
-				"That guy is such a sly fox!",
-				"Hola senor!",
-				//"Vote for the Dead Workers Party!",
-				"Sonic Boom!",
-				"Hakuna Matata!",
-				"One truth prevails!",
-				//"1.8? Ehhhh....",
-				"011011000110111101101100!",
-				"001100010011000000110001!",
-				"011010000110110101101101?",
-				//"Buckets? YESH!",
-				"Press \"R\"!",
-				"Get the High-Score!",
-				"Awesome!",
-				"Sweet!",
-				"Cool!",
-				"Radical!",
-				"Potions ftw!",
-				"Beds ftw!",
-				"Conquer the Dungeon!",
-				"Defeat the Air Wizard!",
-				"Loom + Wool = String!",
-				"String + Wood = Rod!",
-				"Sand + Gunpowder = TNT!",
-				"Sleep at Night!",
-				"Farm at Day!",
-				//"Leave a comment below!",
-				"Explanation Mark!",
-				"!sdrawkcab si sihT",
-				"This is forwards!",
-				"Why is this blue?",
-				//"try with --debug",
+				
 				"MissingNo " + rand
 			};
 			this.splashes = new ArrayList<String>();
 			for(int i = 0; i < splashes.length; i++)
 				if(!this.splashes.contains(splashes[i]))
 					this.splashes.add(splashes[i]);
+			*/
 			/*try {
 				URL br = new URL("http://minicraftplus.webs.com/-splashes.txt");
 				URLConnection e = br.openConnection();
@@ -204,71 +208,74 @@ public class TitleMenu extends Menu {
 				splashes.add("Offline Mode :<");
 			}
 			*/
-			loadedsplashes = true;
+			/*loadedsplashes = true;
 		}
+	}*/
+	
+	public void loadUnlocks() {
+		if(loadedunlocks) return;
+		
+		ModeMenu.unlockedtimes.clear();
+		BufferedReader unlockReader = null;
+		this.folder.mkdirs();
 
-		if(!loadedunlocks) {
-			ModeMenu.unlockedtimes.clear();
-			BufferedReader unlockReader = null;
-			this.folder.mkdirs();
+		try {
+			unlockReader = new BufferedReader(new FileReader(this.location + "/unlocks.miniplussave"));
 
-			try {
-				unlockReader = new BufferedReader(new FileReader(this.location + "/unlocks.miniplussave"));
+			String line;
+			while((line = unlockReader.readLine()) != null) {
+				Iterator unlocks = Arrays.asList(line.split(",")).iterator();
 
-				String line;
-				while((line = unlockReader.readLine()) != null) {
-					Iterator unlocks = Arrays.asList(line.split(",")).iterator();
-
-					while(unlocks.hasNext()) {
-						String ulText = (String)unlocks.next();
-						if(ulText.contains("AirSkin")) {
-							OptionsMenu.unlockedskin = true;
-						}
-
-						if(ulText.contains("MINUTEMODE") && !ulText.substring(0, ulText.indexOf("M") + 1).equals("M")) {
-							ModeMenu.unlockedtimes.add(ulText.substring(0, ulText.indexOf("M") + 1));
-						}
-					
-						if(ulText.contains("HOURMODE") && !ulText.substring(0, ulText.indexOf("H") + 1).equals("H")) {
-							ModeMenu.unlockedtimes.add(ulText.substring(0, ulText.indexOf("H") + 1));
-						}
+				while(unlocks.hasNext()) {
+					String ulText = (String)unlocks.next();
+					if(ulText.contains("AirSkin")) {
+						OptionsMenu.unlockedskin = true;
 					}
-				}
-			} catch (FileNotFoundException fnfEx) {
-				BufferedWriter fileWriter = null;
+
+					if(ulText.contains("MINUTEMODE") && !ulText.substring(0, ulText.indexOf("M") + 1).equals("M")) {
+						ModeMenu.unlockedtimes.add(ulText.substring(0, ulText.indexOf("M") + 1));
+					}
 				
-				try {
-					fileWriter = new BufferedWriter(new FileWriter(this.location + "/unlocks.miniplussave"));
-					fileWriter.write("");
-				} catch (IOException ex) {
-					ex.printStackTrace();
-				} finally {
-					try {
-						if(fileWriter != null) {
-							fileWriter.flush();
-							fileWriter.close();
-						}
-					} catch (IOException ex) {
-						ex.printStackTrace();
+					if(ulText.contains("HOURMODE") && !ulText.substring(0, ulText.indexOf("H") + 1).equals("H")) {
+						ModeMenu.unlockedtimes.add(ulText.substring(0, ulText.indexOf("H") + 1));
 					}
-
 				}
-			} catch (IOException ioEx) {
-				ioEx.printStackTrace();
+			}
+		} catch (FileNotFoundException fnfEx) {
+			BufferedWriter fileWriter = null;
+			
+			try {
+				fileWriter = new BufferedWriter(new FileWriter(this.location + "/unlocks.miniplussave"));
+				fileWriter.write("");
+			} catch (IOException ex) {
+				ex.printStackTrace();
 			} finally {
 				try {
-					if(unlockReader != null) {
-						unlockReader.close();
+					if(fileWriter != null) {
+						fileWriter.flush();
+						fileWriter.close();
 					}
 				} catch (IOException ex) {
 					ex.printStackTrace();
 				}
 
 			}
+		} catch (IOException ioEx) {
+			ioEx.printStackTrace();
+		} finally {
+			try {
+				if(unlockReader != null) {
+					unlockReader.close();
+				}
+			} catch (IOException ex) {
+				ex.printStackTrace();
+			}
 
-			ModeMenu.times.clear();
-			loadedunlocks = true;
 		}
+
+		ModeMenu.times.clear();
+		loadedunlocks = true;
+		//}
 	}
 
 	public void tick() {
@@ -281,7 +288,7 @@ public class TitleMenu extends Menu {
 		if (selected < 0) selected += len;
 		if (selected >= len) selected -= len;
 		
-		if (input.getKey("r").clicked) rand = random.nextInt(randcount);
+		if (input.getKey("r").clicked) rand = random.nextInt(splashes.length);
 		
 		if (reverse == false) {
 			count++;
@@ -346,11 +353,12 @@ public class TitleMenu extends Menu {
 			Font.draw(msg, screen, (screen.w - msg.length() * 8) / 2, (11 + i) * 8, col);
 		}
 		
-		if(((String)splashes.get(rand)).contains("blue")) {
+		boolean isblue = splashes[rand].contains("blue");
+		/*if() {
 			this.isblue = true;
 		} else {
 			this.isblue = false;
-		}
+		}*/
 		
 		if (count <= 5) cols = isblue?cols = Color.get(0, 5, 5, 5):Color.get(0, 505, 550, 550);
 		if (count <= 10 && count > 5) cols = isblue?cols = Color.get(0, 4, 4, 4):Color.get(0, 405, 440, 440);
@@ -358,7 +366,7 @@ public class TitleMenu extends Menu {
 		if (count <= 20 && count > 15) cols = isblue?cols = Color.get(0, 2, 2, 2):Color.get(0, 205, 220, 220);
 		if (count <= 25 && count > 20) cols = isblue?cols = Color.get(0, 1, 1, 1):Color.get(0, 5, 110, 110);
 		
-		writeCentered(((String)splashes.get(rand)), screen, 60, cols);
+		writeCentered(splashes[rand], screen, 60, cols);
 		
 		if(GameApplet.isApplet) {
 			String greeting = "Welcome!", name = GameApplet.username;

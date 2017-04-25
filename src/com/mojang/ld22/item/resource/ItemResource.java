@@ -4,8 +4,8 @@ import com.mojang.ld22.crafting.Crafting;
 import com.mojang.ld22.entity.Player;
 import com.mojang.ld22.level.Level;
 import com.mojang.ld22.level.tile.Tile;
-import com.mojang.ld22.screen.BookAntVenomMenu;
-import com.mojang.ld22.screen.BookTestMenu;
+import com.mojang.ld22.screen.BookMenu;
+import com.mojang.ld22.screen.BookMenu;
 
 public class ItemResource extends Resource {
 	
@@ -16,11 +16,11 @@ public class ItemResource extends Resource {
 	//This is what makes the book bring up the Book menu.
 	public boolean interactOn(Tile tile, Level level, int xt, int yt, Player player, int attackDir) {
 		if (name == "book") {
-			player.game.setMenu(new BookTestMenu(Crafting.workbenchRecipes, player));
+			player.game.setMenu(new BookMenu());
 			// Don't worry about the Crafting.workbench thing, It's what makes it work :P
 
 		} else if (name == "Antidious") {
-			player.game.setMenu(new BookAntVenomMenu(Crafting.workbenchRecipes, player));
+			player.game.setMenu(new BookMenu());
 			// Don't worry about the Crafting.workbench thing, It's what makes it work :P
 		}
 		return false;

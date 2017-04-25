@@ -24,7 +24,7 @@ public class Menu {
 	public void render(Screen screen) {}
 	
 	public void writeCentered(String text, Screen screen, int y, int color) {
-		Font.draw(text, screen, screen.centertext(text), y, color);
+		Font.draw(text, screen, screen.centerText(text), y, color);
 	}
 
 	public void renderItemList(Screen screen, int xo, int yo, int x1, int y1,

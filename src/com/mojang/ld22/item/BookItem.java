@@ -7,7 +7,7 @@ import com.mojang.ld22.gfx.Font;
 import com.mojang.ld22.gfx.Screen;
 import com.mojang.ld22.level.Level;
 import com.mojang.ld22.level.tile.Tile;
-import com.mojang.ld22.screen.BookTestMenu;
+import com.mojang.ld22.screen.BookMenu;
 
 public class BookItem extends Item {
 	public int getColor() {
@@ -32,7 +32,7 @@ public class BookItem extends Item {
 	}
 
 	public boolean interactOn(Tile tile, Level level, int xt, int yt, Player player, int attackDir) {
-		player.game.setMenu(new BookTestMenu(Crafting.workbenchRecipes, player));
+		player.game.setMenu(new BookMenu());
 		//Don't mind the Crafting.workbench thing, It's what makes it work :)
 		return true;
 	}
