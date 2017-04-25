@@ -2,6 +2,7 @@ package com.mojang.ld22.screen;
 
 import com.mojang.ld22.Game;
 import com.mojang.ld22.gfx.Color;
+import com.mojang.ld22.gfx.Font;
 import com.mojang.ld22.gfx.Screen;
 import com.mojang.ld22.sound.Sound;
 import java.io.File;

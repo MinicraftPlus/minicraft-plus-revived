@@ -1,6 +1,7 @@
 package com.mojang.ld22.screen;
 
 import com.mojang.ld22.gfx.Color;
+import com.mojang.ld22.gfx.Font;
 import com.mojang.ld22.gfx.Screen;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;

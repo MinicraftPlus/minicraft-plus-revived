@@ -1,7 +1,5 @@
 package com.mojang.ld22.screen;
 
-//import com.mojang.ld22.crafting.Recipe;
-//import com.mojang.ld22.entity.Player;
 import com.mojang.ld22.gfx.Color;
 import com.mojang.ld22.gfx.Font;
 import com.mojang.ld22.gfx.Screen;

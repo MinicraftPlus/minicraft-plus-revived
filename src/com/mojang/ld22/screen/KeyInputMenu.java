@@ -1,6 +1,7 @@
 package com.mojang.ld22.screen;
 
 import com.mojang.ld22.InputHandler;
+import com.mojang.ld22.gfx.Font;
 
 public class KeyInputMenu {
 	

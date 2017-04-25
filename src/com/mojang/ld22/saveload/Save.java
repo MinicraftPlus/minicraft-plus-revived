@@ -12,6 +12,7 @@ import com.mojang.ld22.entity.Mob;
 import com.mojang.ld22.entity.EnemyMob;
 import com.mojang.ld22.entity.Player;
 import com.mojang.ld22.entity.Spawner;
+import com.mojang.ld22.entity.Spark;
 import com.mojang.ld22.entity.particle.Particle;
 import com.mojang.ld22.item.Item;
 import com.mojang.ld22.item.ResourceItem;
