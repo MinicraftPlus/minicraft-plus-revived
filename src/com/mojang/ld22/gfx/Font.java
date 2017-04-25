@@ -106,6 +106,6 @@ public class Font {
 	}
 	
 	public static void drawCentered(String msg, Screen screen, int y, int color) {
-		draw(msg, screen, screen.centertext(msg), y, color);
+		draw(msg, screen, screen.centerText(msg), y, color);
 	}
 }

@@ -1,6 +1,5 @@
 package com.mojang.ld22.gfx;
 
-
 public class Screen {
 	
 	/// x and y offset of screen:
@@ -8,19 +7,19 @@ public class Screen {
 	public int yOffset;
 	
 	// used for mirroring an image:
-	public static final int BIT_MIRROR_X = 0x01;
-	public static final int BIT_MIRROR_Y = 0x02;
+	public static final int BIT_MIRROR_X = 0x01; // written in hexadecimal; binary: 01
+	public static final int BIT_MIRROR_Y = 0x02; // binary: 10
 
-	public/* final*/ int w, h; // width and height of the screen
+	public final int w, h; // width and height of the screen
 	public int[] pixels; // pixels on the screen
 	
 	private SpriteSheet sheet; // the sprite sheet used in the game.
-
+	
 	public Screen(int w, int h, SpriteSheet sheet) {
 		this.sheet = sheet;
 		this.w = w;
 		this.h = h;
-
+		/// screen width and height are determined by the actual game window size, meaning the screen is only as big as the window.
 		pixels = new int[w * h]; // makes new integer array for all the pixels on the screen.
 	}
 	
@@ -30,20 +29,20 @@ public class Screen {
 			pixels[i] = color; // turns each pixel into a single color (clearing the screen!)
 	}
 	
-	public int centertext(String text) {
+	public int centerText(String text) {
 		return (w - Font.textWidth(text)) / 2;
 	}
 	
 	/** Renders an object from the sprite sheet based on screen coordinates, tile (SpriteSheet location), colors, and bits (for mirroring) */
-	// TODO make a method that calls this 4 times, for each corner.
 	public void render(int xp, int yp, int tile, int colors, int bits) {
+		// xp and yp are originally in level coordinates, but offset turns them to screen coordinates.
 		xp -= xOffset; //account for screen offset
 		yp -= yOffset;
 		// determines if the image should be mirrored...
 		boolean mirrorX = (bits & BIT_MIRROR_X) > 0; // horizontally.
 		boolean mirrorY = (bits & BIT_MIRROR_Y) > 0; // vertically.
-
-		int xTile = tile % 32; // gets x position of the tile
+		
+		int xTile = tile % 32; // gets x position of the spritesheet "tile"
 		int yTile = tile / 32; // gets y position
 		int toffs = xTile * 8 + yTile * 8 * sheet.width; // Gets the offset, the 8's represent the size of the tile. (8 by 8 pixels)
 		
@@ -53,7 +52,7 @@ public class Screen {
 			if (y + yp < 0 || y + yp >= h) continue; // If the pixel is out of bounds, then skip the rest of the loop.
 			for (int x = 0; x < 8; x++) { // Loops 8 times (because of the width of the tile)
 				if (x + xp < 0 || x + xp >= w) continue; // skip rest if out of bounds.
-
+				
 				int xs = x; // current x pixel
 				if (mirrorX) xs = 7 - x; // Reverses the pixel for a mirroring effect
 				int col = (colors >> (sheet.pixels[xs + ys * sheet.width + toffs] * 8)) & 255; // gets the color based on the passed in colors value.
@@ -64,6 +63,9 @@ public class Screen {
 	
 	/** Sets the offset of the screen */
 	public void setOffset(int xOffset, int yOffset) {
+		// this is called in few places, one of which is level.renderBackground, rigth before all the tiles are rendered. The offset is determined by the Game class (this only place renderBackground is called), by using the screen's width and the player's position in the level.
+		// in other words, the offset is a conversion factor from level coordinates to screen coordinates. It makes a certain coord in the level the upper left corner of the screen, when subtracted from the tile coord.
+		
 		this.xOffset = xOffset;
 		this.yOffset = yOffset;
 	}
@@ -127,12 +129,4 @@ public class Screen {
 			}
 		}
 	}
-	
-	/** An experimental attempt at making the screen resizable. */
-	/*public void updateScreenSize(int width, int height) {
-		w = width;
-		h = height;
-		int[] newPixels = new int[w * h];
-		pixels = newPixels;
-	}*/
 }

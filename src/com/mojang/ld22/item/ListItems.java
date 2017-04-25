@@ -19,7 +19,7 @@ import java.util.List;
 
 public class ListItems {
 
-	public static List items = new ArrayList();
+	public static List<Item> items = new ArrayList<Item>();
 	
 	public Item spawnercow;
 	public Item spawnerpig;
@@ -201,7 +201,7 @@ public class ListItems {
 		this.spawnersnake = (new FurnitureItem(new Spawner("Snake", 1))).addItem();
 		this.spawnerknight = (new FurnitureItem(new Spawner("Knight", 1))).addItem();
 		this.spawnerairwizard = (new FurnitureItem(new Spawner("AirWizard", 1))).addItem();
-		this.spawnerairwizardii = (new FurnitureItem(new Spawner("AirWizardII", 1))).addItem();
+		this.spawnerairwizardii = (new FurnitureItem(new Spawner("AirWizard", 2))).addItem();
 		
 		this.powglove = (new PowerGloveItem()).addItem();
 		this.workbench = (new FurnitureItem(new Workbench())).addItem();
@@ -365,8 +365,8 @@ public class ListItems {
 			}
 			
 			for(int i = 0; i < items.size(); i++) { // loop through the items
-				if(((Item)items.get(i)).getName().equals(name)) { // if names match
-					newItem = (Item)items.get(i); // set the item
+				if(items.get(i).getName().equals(name)) { // if names match
+					newItem = items.get(i); // set the item
 					if(newItem instanceof ResourceItem) ((ResourceItem)newItem).count = 1;
 					return newItem; // return the item
 				}
