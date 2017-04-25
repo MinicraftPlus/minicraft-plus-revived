@@ -340,19 +340,19 @@ public class TitleMenu extends Menu {
 		if (count <= 20 && count > 15) cols = isblue?cols = Color.get(0, 2, 2, 2):Color.get(0, 205, 220, 220);
 		if (count <= 25 && count > 20) cols = isblue?cols = Color.get(0, 1, 1, 1):Color.get(0, 5, 110, 110);
 		
-		writeCentered(splashes[rand], screen, 60, cols);
+		Font.drawCentered(splashes[rand], screen, 60, cols);
 		
 		if(GameApplet.isApplet) {
 			String greeting = "Welcome!", name = GameApplet.username;
 			if(name.length() < 36) greeting = name+"!";
 			if(name.length() < 27) greeting = "Welcome, " + greeting;
 			
-			writeCentered(greeting, screen, 10, Color.get(0, 330, 330, 330));
+			Font.drawCentered(greeting, screen, 10, Color.get(0, 330, 330, 330));
 		}
 		
 		Font.draw("Version " + Game.VERSION, screen, 1, 1, Color.get(0, 111, 111, 111));
 		
-		writeCentered("(Arrow keys to move)", screen, screen.h - 25, Color.get(0, 111, 111, 111));
-		writeCentered("(Enter to accept, Escape to return)", screen, screen.h - 15, Color.get(0, 111, 111, 111));
+		Font.drawCentered("(Arrow keys to move)", screen, screen.h - 25, Color.get(0, 111, 111, 111));
+		Font.drawCentered("(Enter to accept, Escape to return)", screen, screen.h - 15, Color.get(0, 111, 111, 111));
 	}
 }

@@ -226,36 +226,36 @@ public class WorldSelectMenu extends Menu {
 					}
 					
 					if (!fw) {
-						writeCentered(curOption, screen, 80, col1);
+						Font.drawCentered(curOption, screen, 80, col1);
 					} else {
-						writeCentered(curOption, screen, 80 + col * 12, col1);
+						Font.drawCentered(curOption, screen, 80 + col * 12, col1);
 					}
 				}
 			}
 			
-			writeCentered("Arrow keys to move", screen, screen.h - 170, Color.get(0, 444, 444, 444));
-			writeCentered("Enter to confirm", screen, screen.h - 60, Color.get(0, 444, 444, 444));
-			writeCentered("Esc to go back to the title screen", screen, screen.h - 40, Color.get(0, 444, 444, 444));
+			Font.drawCentered("Arrow keys to move", screen, screen.h - 170, Color.get(0, 444, 444, 444));
+			Font.drawCentered("Enter to confirm", screen, screen.h - 60, Color.get(0, 444, 444, 444));
+			Font.drawCentered("Esc to go back to the title screen", screen, screen.h - 40, Color.get(0, 444, 444, 444));
 		} else {
 			String msg;
 			if (createworld && !loadworld) {
 				msg = "Name of New World";
 				col = Color.get(-1, 555, 555, 555);
-				writeCentered(msg, screen, 20, col);
-				writeCentered(name, screen, 50, wncol);
-				writeCentered("A-Z, 0-9, up to 36 Characters", screen, 80, col);
-				writeCentered("(Space + Backspace as well)", screen, 92, col);
+				Font.drawCentered(msg, screen, 20, col);
+				Font.drawCentered(name, screen, 50, wncol);
+				Font.drawCentered("A-Z, 0-9, up to 36 Characters", screen, 80, col);
+				Font.drawCentered("(Space + Backspace as well)", screen, 92, col);
 				if (wncol == Color.get(0, 500, 500, 500)) {
 					if (!name.equals("")) {
-						writeCentered("Cannot have 2 worlds", screen, 120, wncol);
-						writeCentered(" with the same name!", screen, 132, wncol);
+						Font.drawCentered("Cannot have 2 worlds", screen, 120, wncol);
+						Font.drawCentered(" with the same name!", screen, 132, wncol);
 					} else {
-						writeCentered("Name cannot be blank!", screen, 125, wncol);
+						Font.drawCentered("Name cannot be blank!", screen, 125, wncol);
 					}
 				}
 				
-				writeCentered("Press Enter to create", screen, 162, col);
-				writeCentered("Press Esc to cancel", screen, 172, col);
+				Font.drawCentered("Press Enter to create", screen, 162, col);
+				Font.drawCentered("Press Esc to cancel", screen, 172, col);
 			} else if (!createworld && loadworld) {
 				msg = "Load World";
 				col = Color.get(-1, 555, 555, 555);
@@ -266,54 +266,54 @@ public class WorldSelectMenu extends Menu {
 				}
 				
 				if (worldnames.size() > 0) {
-					writeCentered(msg, screen, 20, col);
-					writeCentered(worldnames.get(worldselected), screen, 80, col);
-					if (worldselected > 0) writeCentered(worldnames.get(worldselected - 1), screen, 70, col2);
+					Font.drawCentered(msg, screen, 20, col);
+					Font.drawCentered(worldnames.get(worldselected), screen, 80, col);
+					if (worldselected > 0) Font.drawCentered(worldnames.get(worldselected - 1), screen, 70, col2);
 
-					if (worldselected > 1) writeCentered(worldnames.get(worldselected - 2), screen, 60, col2);
+					if (worldselected > 1) Font.drawCentered(worldnames.get(worldselected - 2), screen, 60, col2);
 
-					if (worldselected > 2) writeCentered(worldnames.get(worldselected - 3), screen, 50, col2);
+					if (worldselected > 2) Font.drawCentered(worldnames.get(worldselected - 3), screen, 50, col2);
 
 					if (worldselected < worldnames.size() - 1)
-						writeCentered(worldnames.get(worldselected + 1), screen, 90, col2);
+						Font.drawCentered(worldnames.get(worldselected + 1), screen, 90, col2);
 
 					if (worldselected < worldnames.size() - 2)
-						writeCentered(worldnames.get(worldselected + 2), screen, 100, col2);
+						Font.drawCentered(worldnames.get(worldselected + 2), screen, 100, col2);
 
 					if (worldselected < worldnames.size() - 3)
-						writeCentered(worldnames.get(worldselected + 3), screen, 110, col2);
+						Font.drawCentered(worldnames.get(worldselected + 3), screen, 110, col2);
 
 				} else {
 					game.setMenu(new TitleMenu());
 				}
 
 				if (!delete && !rename) {
-					writeCentered("Arrow keys to move", screen, screen.h - 44, Color.get(0, 444, 444, 444));
-					writeCentered("Enter to confirm", screen, screen.h - 32, Color.get(0, 444, 444, 444));
-					writeCentered("Esc to go back to the title screen", screen, screen.h - 20, Color.get(0, 444, 444, 444));
-					writeCentered("D to delete a world", screen, screen.h - 70, Color.get(0, 400, 400, 400));
-					writeCentered("R to rename world", screen, screen.h - 60, Color.get(0, 40, 40, 40));
+					Font.drawCentered("Arrow keys to move", screen, screen.h - 44, Color.get(0, 444, 444, 444));
+					Font.drawCentered("Enter to confirm", screen, screen.h - 32, Color.get(0, 444, 444, 444));
+					Font.drawCentered("Esc to go back to the title screen", screen, screen.h - 20, Color.get(0, 444, 444, 444));
+					Font.drawCentered("D to delete a world", screen, screen.h - 70, Color.get(0, 400, 400, 400));
+					Font.drawCentered("R to rename world", screen, screen.h - 60, Color.get(0, 40, 40, 40));
 				} else if (delete) {
-					writeCentered("Enter to delete", screen, screen.h - 48, Color.get(0, 444, 444, 444));
-					writeCentered("Esc to cancel", screen, screen.h - 36, Color.get(0, 444, 444, 444));
+					Font.drawCentered("Enter to delete", screen, screen.h - 48, Color.get(0, 444, 444, 444));
+					Font.drawCentered("Esc to cancel", screen, screen.h - 36, Color.get(0, 444, 444, 444));
 				} else if (rename) {
 					screen.clear(0);
-					writeCentered("Rename World", screen, 20, col);
-					writeCentered(name, screen, 50, wncol);
-					writeCentered("A-Z, 0-9, up to 36 Characters", screen, 80, col);
-					writeCentered("(Space + Backspace as well)", screen, 92, col);
+					Font.drawCentered("Rename World", screen, 20, col);
+					Font.drawCentered(name, screen, 50, wncol);
+					Font.drawCentered("A-Z, 0-9, up to 36 Characters", screen, 80, col);
+					Font.drawCentered("(Space + Backspace as well)", screen, 92, col);
 
 					if (wncol == Color.get(0, 500, 500, 500)) {
 						if (!name.equals("")) {
-							writeCentered("Cannot have 2 worlds", screen, 120, wncol);
-							writeCentered(" with the same name!", screen, 132, wncol);
+							Font.drawCentered("Cannot have 2 worlds", screen, 120, wncol);
+							Font.drawCentered(" with the same name!", screen, 132, wncol);
 						} else {
-							writeCentered("Name cannot be blank!", screen, 125, wncol);
+							Font.drawCentered("Name cannot be blank!", screen, 125, wncol);
 						}
 					}
 
-					writeCentered("Press Enter to rename", screen, 162, col);
-					writeCentered("Press Esc to cancel", screen, 172, col);
+					Font.drawCentered("Press Enter to rename", screen, 162, col);
+					Font.drawCentered("Press Esc to cancel", screen, 172, col);
 				}
 			}
 		}

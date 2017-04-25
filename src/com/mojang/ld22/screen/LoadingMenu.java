@@ -35,9 +35,9 @@ public class LoadingMenu extends Menu implements ActionListener {
 		int coll = Color.get(0, 555, 555, 555);
 		screen.clear(0);
 		
-		writeCentered("Loading...", screen, screen.h - 105, col);
+		Font.drawCentered("Loading...", screen, screen.h - 105, col);
 		//Font.draw("This should take 4 seconds or less", screen, 10, screen.h - 185, coll);
 		//Font.draw("If not then restart because it froze", screen, 0, screen.h - 175, coll);
-		writeCentered(percentage + "%", screen, screen.h - 85, col);
+		Font.drawCentered(percentage + "%", screen, screen.h - 85, col);
 	}
 }

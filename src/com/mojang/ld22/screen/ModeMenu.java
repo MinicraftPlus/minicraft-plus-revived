@@ -142,21 +142,21 @@ public class ModeMenu extends Menu {
 		int textCol = Color.get(0, 555, 555, 555);
 		screen.clear(0);
 		
-		writeCentered("World Name:", screen, screen.h - 180, Color.get(0, 444, 444, 444));
-		writeCentered(WorldSelectMenu.worldname, screen, screen.h - 170, Color.get(-1, 5, 5, 5));
+		Font.drawCentered("World Name:", screen, screen.h - 180, Color.get(0, 444, 444, 444));
+		Font.drawCentered(WorldSelectMenu.worldname, screen, screen.h - 170, Color.get(-1, 5, 5, 5));
 		
 		String modeText = "Game Mode:	" + modes[mode - 1];
 		Font.draw(modeText, screen, screen.centerText(modeText), 8 * 8 + 1, Color.get(-1, 111, 111, 111));
 		Font.draw(modeText, screen, screen.centerText(modeText) + 1, 8 * 8, Color.get(-1, 555, 555, 555));
 		
-		if(mode == 4) writeCentered("<T>ime: " + time, screen, 95, Color.get(0, 555, 555, 555));
+		if(mode == 4) Font.drawCentered("<T>ime: " + time, screen, 95, Color.get(0, 555, 555, 555));
 		
-		writeCentered("Press Enter to Start", screen, screen.h - 75, textCol);
+		Font.drawCentered("Press Enter to Start", screen, screen.h - 75, textCol);
 		
 		Font.draw("Loading...", screen, 120, screen.h - 105, (loading == 0 ? black : color));
 		
-		writeCentered("Press Left and Right", screen, screen.h - 150, textCol);
-		writeCentered("Press Esc to Return", screen, screen.h - 55, textCol);
-		writeCentered("Press Z for world options", screen, screen.h - 35, textCol);
+		Font.drawCentered("Press Left and Right", screen, screen.h - 150, textCol);
+		Font.drawCentered("Press Esc to Return", screen, screen.h - 55, textCol);
+		Font.drawCentered("Press Z for world options", screen, screen.h - 35, textCol);
 	}
 }

@@ -23,7 +23,7 @@ public class InstructionsMenu extends Menu {
 		
 		/* Font.draw Parameters: Font.draw(String text, Screen screen, int x, int y, int color) */
 		
-		writeCentered("HOW TO PLAY", screen, 1 * 8, Color.get(0, 555, 555, 555)); //draws Title text
+		Font.drawCentered("HOW TO PLAY", screen, 1 * 8, Color.get(0, 555, 555, 555)); //draws Title text
 		boolean wroteAll = writeParagraph(
 		  "Move your character with the arrow keys. Press C to attack and X to open the inventory, and to use items. Select an item in the inventory to equip it. Kill the air wizard to win the game!",
 		  screen, 0, screen.w, 24, screen.h, Color.get(0, 333, 333, 333), true);
@@ -43,7 +43,7 @@ public class InstructionsMenu extends Menu {
 				if (breakOnSentence && words[curWord-1].charAt(words[curWord-1].length()-1) == '.')
 					break;
 			}
-			writeCentered(line, screen, y, color);
+			Font.drawCentered(line, screen, y, color);
 			if (curWord < words.length || true) y += 8;
 		}
 		

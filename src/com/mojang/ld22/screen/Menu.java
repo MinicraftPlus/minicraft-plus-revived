@@ -9,7 +9,7 @@ import java.util.List;
 
 /** TODO Most all menus have a scroll feature... it should be in this class.
 		Frame should also be here..? */
-public class Menu {
+public abstract class Menu {
 	protected Game game;
 	protected InputHandler input;
 	
@@ -18,13 +18,9 @@ public class Menu {
 		this.game = game;
 	}
 
-	public void tick() {}
-
-	public void render(Screen screen) {}
+	public abstract void tick();
 	
-	public void writeCentered(String text, Screen screen, int y, int color) {
-		Font.draw(text, screen, screen.centerText(text), y, color);
-	}
+	public abstract void render(Screen screen);
 
 	public void renderItemList(Screen screen, int xo, int yo, int x1, int y1,
 	  List<? extends ListItem> listItems, int selected) {

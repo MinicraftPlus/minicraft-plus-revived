@@ -75,33 +75,33 @@ public class PauseMenu extends Menu {
 					col = Color.get(-1, 555, 555, 555);
 				}
 
-				writeCentered(msg1, screen, (8 + i) * 12 - 35, col);
-				writeCentered("Paused", screen, 35, Color.get(-1, 550, 550, 550));
-				writeCentered("Arrow Keys to Scroll", screen, 135, Color.get(-1, 333, 333, 333));
-				writeCentered("Enter: Choose", screen, 145, Color.get(-1, 333, 333, 333));
+				Font.drawCentered(msg1, screen, (8 + i) * 12 - 35, col);
+				Font.drawCentered("Paused", screen, 35, Color.get(-1, 550, 550, 550));
+				Font.drawCentered("Arrow Keys to Scroll", screen, 135, Color.get(-1, 333, 333, 333));
+				Font.drawCentered("Enter: Choose", screen, 145, Color.get(-1, 333, 333, 333));
 			}
 		} else {
 			int confirmY1 = 0, confirmY2 = 0;
 			if (selection == 2) {
-				writeCentered("Save Game?", screen, 60, Color.get(-1, 555, 555, 555));
+				Font.drawCentered("Save Game?", screen, 60, Color.get(-1, 555, 555, 555));
 				confirmY1 = 80;
 				confirmY2 = 95;
 			} else if (selection == 3) {
-				writeCentered("Load Game?", screen, 60, Color.get(-1, 555, 555, 555));
-				writeCentered("Current game will", screen, 70, Color.get(-1, 500, 500, 500));
-				writeCentered("not be saved", screen, 80, Color.get(-1, 500, 500, 500));
+				Font.drawCentered("Load Game?", screen, 60, Color.get(-1, 555, 555, 555));
+				Font.drawCentered("Current game will", screen, 70, Color.get(-1, 500, 500, 500));
+				Font.drawCentered("not be saved", screen, 80, Color.get(-1, 500, 500, 500));
 				confirmY1 = 100;
 				confirmY2 = 115;
 			} else if (selection == 4) {
-				writeCentered("Back to Main Menu?", screen, 60, Color.get(-1, 555, 555, 555));
-				writeCentered("Current game will", screen, 70, Color.get(-1, 500, 500, 500));
-				writeCentered("not be saved", screen, 80, Color.get(-1, 500, 500, 500));
+				Font.drawCentered("Back to Main Menu?", screen, 60, Color.get(-1, 555, 555, 555));
+				Font.drawCentered("Current game will", screen, 70, Color.get(-1, 500, 500, 500));
+				Font.drawCentered("not be saved", screen, 80, Color.get(-1, 500, 500, 500));
 				confirmY1 = 100;
 				confirmY2 = 115;
 			}
 
-			writeCentered("Enter: Yes", screen, confirmY1, Color.get(-1, 555, 555, 555));
-			writeCentered("Esc: No", screen, confirmY2, Color.get(-1, 555, 555, 555));
+			Font.drawCentered("Enter: Yes", screen, confirmY1, Color.get(-1, 555, 555, 555));
+			Font.drawCentered("Esc: No", screen, confirmY2, Color.get(-1, 555, 555, 555));
 		}
 	}
 }
