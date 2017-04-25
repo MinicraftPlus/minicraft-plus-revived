@@ -56,10 +56,10 @@ public class Spawner extends Furniture {
 		Tile tile = level.getTile(randX, randY);
 		//if (Game.debug) System.out.println("attempting " + mob + " spawn on tile with id: " + tile.id);
 		if(tile.mayPass(level, randX, randY, newmob) && tile.getLightRadius(level, randX, randY) == 0) {
-			newmob.x = randX * 16;
-			newmob.y = randY * 16;
+			newmob.x = randX << 4;
+			newmob.y = randY << 4;
 			//(newmob).hasspawned = true;
-			if (Game.debug) System.out.println("spawning new " + mob + " on level "+lvl+": x=" + (newmob.x/16)+" y="+(newmob.y/16) + "...");
+			if (Game.debug) System.out.println("spawning new " + mob + " on level "+lvl+": x=" + (newmob.x>>4)+" y="+(newmob.y>>4) + "...");
 			level.add(newmob);
 			Sound.monsterHurt.play();
 			for(int i = 0; i < 6; i++) {
@@ -137,17 +137,17 @@ public class Spawner extends Furniture {
 		switch(string) {
 			case "Zombie": return (Mob)new Zombie(lvl);
 			case "Slime": return (Mob)new Slime(lvl);
-			case "Cow": return (Mob)new Cow(lvl);
-			case "Sheep": return (Mob)new Sheep(lvl);
-			case "Pig": return (Mob)new Pig(lvl);
+			case "Cow": return (Mob)new Cow();
+			case "Sheep": return (Mob)new Sheep();
+			case "Pig": return (Mob)new Pig();
 			case "Creeper": return (Mob)new Creeper(lvl);
 			case "Skeleton": return (Mob)new Skeleton(lvl);
-			case "AirWizard": return (Mob)new AirWizard(false);
-			case "AirWizardII": return (Mob)new AirWizard(true);
+			case "AirWizard": return (Mob)new AirWizard(lvl>1);
+			//case "AirWizardII": return (Mob)new AirWizard(true);
 			case "Knight": return (Mob)new Knight(lvl);
 			case "Snake": return (Mob)new Snake(lvl);
 			default:
-				return new Mob(); // fix: make a missing texture entity!
+				return null; // fix: make a missing texture entity!
 		}
 	}
 }

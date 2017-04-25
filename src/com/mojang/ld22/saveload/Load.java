@@ -48,13 +48,15 @@ import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
 
+
+// I may want to consider a "LegacyLoad class in the near future, simply to reduce the clutter and really allow me to "start fresh". :)
 public class Load {
 	
 	String location = Game.gameDir;
 	File folder;
 	String extention;
-	List data;
-	List extradata;
+	ArrayList<String> data;
+	ArrayList<String> extradata;
 	public boolean hasloadedbigworldalready;
 	Version currentVer, worldVer;
 	boolean oldSave = false;
@@ -63,8 +65,8 @@ public class Load {
 		currentVer = new Version(Game.VERSION);
 		folder = new File(location);
 		extention = ".miniplussave";
-		data = new ArrayList();
-		extradata = new ArrayList();
+		data = new ArrayList<String>();
+		extradata = new ArrayList<String>();
 		hasloadedbigworldalready = false;
 		location += "/saves/" + worldname + "/";
 		
@@ -82,14 +84,14 @@ public class Load {
 		loadInventory("Inventory", game.player.inventory);
 		loadEntities("Entities", game.player);
 		LoadingMenu.percentage = 0;
-		ArrayList itemDatas = new ArrayList();
+		/*ArrayList<String> itemDatas = new ArrayList<String>();
 		
 		for(int i = 0; i < ListItems.items.size(); i++) {
 			if(!itemDatas.contains(ListItems.items.get(i))) {
-				itemDatas.add(((Item)ListItems.items.get(i)).getName());
+				itemDatas.add(ListItems.items.get(i).getName());
 			}
 		}
-		
+		*/
 	}
 	
 	class Version implements Comparable {
@@ -157,32 +159,39 @@ public class Load {
 		try {
 			br = new BufferedReader(new FileReader(filename));
 			
-			String curLine;
-			List curData;
-			String item;
-			Iterator lineIter;
+			String curLine, total = "";
+			ArrayList<String> curData;
+			//String item;
+			//Iterator lineIter;
 			while((curLine = br.readLine()) != null) {
-				curData = Arrays.asList(curLine.split(","));
+				total += curLine;
+				//data.addAll(Arrays.asList(curLine.split(",")));
+				/*curData = Arrays.asList(curLine.split(","));
 				lineIter = curData.iterator();
 				
 				while(lineIter.hasNext()) {
 					item = (String)lineIter.next();
 					data.add(item);
-				}
+				}*/
 			}
+			data.addAll(Arrays.asList(total.split(",")));
 			
 			if(filename.contains("Level")) {
+				total = "";
 				br2 = new BufferedReader(new FileReader(filename.substring(0, filename.lastIndexOf("/") + 7) + "data" + extention));
 				
 				while((curLine = br2.readLine()) != null) {
-					curData = Arrays.asList(curLine.split(","));
+					total += curLine;
+					//extradata.addAll(Arrays.asList(curLine.split(",")));
+					/*curData = Arrays.asList(curLine.split(","));
 					lineIter = curData.iterator();
 					
 					while(lineIter.hasNext()) {
 						item = (String)lineIter.next();
 						extradata.add(item);
-					}
+					}*/
 				}
+				extradata.addAll(Arrays.asList(total.split(",")));
 			}
 		} catch (IOException ex) {
 			ex.printStackTrace();
@@ -209,30 +218,30 @@ public class Load {
 	
 	public void loadGame(String filename, Game game) {
 		loadFromFile(location + filename + extention);
-		boolean hasVersion = ((String)data.get(0)).contains(".");
+		boolean hasVersion = data.get(0).contains(".");
 		if(hasVersion) {
-			worldVer = new Version((String)data.get(0)); // gets the world version
-			Game.setTime(Integer.parseInt((String)data.get(1)));
-			Game.astime = Integer.parseInt((String)data.get(2));
-			Game.autosave = Boolean.parseBoolean((String)data.get(3));
-			OptionsMenu.isSoundAct = Boolean.parseBoolean((String)data.get(4));
+			worldVer = new Version(data.get(0)); // gets the world version
+			Game.setTime(Integer.parseInt(data.get(1)));
+			Game.astime = Integer.parseInt(data.get(2));
+			Game.autosave = Boolean.parseBoolean(data.get(3));
+			OptionsMenu.isSoundAct = Boolean.parseBoolean(data.get(4));
 		}
 		else {
 			if(data.size() == 5) {
 				worldVer = new Version("1.9");
-				Game.setTime(Integer.parseInt((String)data.get(0)));
-				Game.astime = Integer.parseInt((String)data.get(1));
-				Game.autosave = Boolean.parseBoolean((String)data.get(3));
-				OptionsMenu.isSoundAct = Boolean.parseBoolean((String)data.get(4));
+				Game.setTime(Integer.parseInt(data.get(0)));
+				Game.astime = Integer.parseInt(data.get(1));
+				Game.autosave = Boolean.parseBoolean(data.get(3));
+				OptionsMenu.isSoundAct = Boolean.parseBoolean(data.get(4));
 			} else { // version == 1.8?
 				if(!oldSave) {
 					System.out.println("UNEXPECTED WORLD VERSION");
 					worldVer = new Version("1.8.1");
 				}
 				// for backwards compatibility
-				Game.astime = Integer.parseInt((String)this.data.get(1));
-				game.player.ac = Integer.parseInt((String)this.data.get(3));
-				Game.tickCount = Integer.parseInt((String)this.data.get(0));
+				Game.tickCount = Integer.parseInt(data.get(0));
+				Game.astime = Integer.parseInt(data.get(1));
+				game.player.ac = Integer.parseInt(data.get(3));
 				Game.autosave = false;
 			}
 		}
@@ -251,13 +260,13 @@ public class Load {
 	public void loadWorld(String filename) {
 		for(int l = 0; l < Game.levels.length; l++) {
 			loadFromFile(location + filename + l + extention);
-			Game.levels[l].w = Integer.parseInt((String)data.get(0));
-			Game.levels[l].h = Integer.parseInt((String)data.get(1));
-			Game.levels[l].depth = Integer.parseInt((String)data.get(2));
+			Game.levels[l].w = Integer.parseInt(data.get(0));
+			Game.levels[l].h = Integer.parseInt(data.get(1));
+			Game.levels[l].depth = Integer.parseInt(data.get(2));
 			
 			for(int x = 0; x < Game.levels[l].w - 1; x++) {
 				for(int y = 0; y < Game.levels[l].h - 1; y++) {
-					Game.levels[l].setTile(y, x, Tile.tiles[Integer.parseInt((String)data.get(x + y * Game.levels[l].w + 3))], Integer.parseInt((String)extradata.get(x + y * Game.levels[l].w)));
+					Game.levels[l].setTile(y, x, Tile.tiles[Integer.parseInt(data.get(x + y * Game.levels[l].w + 3))], Integer.parseInt(extradata.get(x + y * Game.levels[l].w)));
 				}
 			}
 		}
@@ -266,33 +275,33 @@ public class Load {
 	
 	public void loadPlayer(String filename, Player player) {
 		loadFromFile(location + filename + extention);
-		player.x = Integer.parseInt((String)data.get(0));
-		player.y = Integer.parseInt((String)data.get(1));
-		Player.spawnx = Integer.parseInt((String)data.get(2));
-		Player.spawny = Integer.parseInt((String)data.get(3));
-		player.health = Integer.parseInt((String)data.get(4));
-		player.armor = Integer.parseInt((String)data.get(5));
+		player.x = Integer.parseInt(data.get(0));
+		player.y = Integer.parseInt(data.get(1));
+		Player.spawnx = Integer.parseInt(data.get(2));
+		Player.spawny = Integer.parseInt(data.get(3));
+		player.health = Integer.parseInt(data.get(4));
+		player.armor = Integer.parseInt(data.get(5));
 		
 		String modedata;
 		if(!oldSave) {
 			if(data.size() >= 14) {
 				if(worldVer == null) worldVer = new Version("1.9.1-pre1");
-				player.armorDamageBuffer = Integer.parseInt((String)data.get(13));
-				player.curArmor = (ArmorResource)(((ResourceItem)ListItems.getItem((String)data.get(14))).resource);
+				player.armorDamageBuffer = Integer.parseInt(data.get(13));
+				player.curArmor = (ArmorResource)(((ResourceItem)ListItems.getItem(data.get(14))).resource);
 			} else player.armor = 0;
 			
-			player.ac = Integer.parseInt((String)data.get(7));
-			Game.currentLevel = Integer.parseInt((String)data.get(8));
-			modedata = (String)data.get(9);
+			player.ac = Integer.parseInt(data.get(7));
+			Game.currentLevel = Integer.parseInt(data.get(8));
+			modedata = data.get(9);
 			
 		} else {
 			// old, 1.8 save.
-			Game.currentLevel = Integer.parseInt((String)data.get(7));
-			modedata = (String)data.get(8);
+			Game.currentLevel = Integer.parseInt(data.get(7));
+			modedata = data.get(8);
 		}
 		
-		Player.score = Integer.parseInt((String)data.get(6));
-		player.game.level = Game.levels[Game.currentLevel];
+		Player.score = Integer.parseInt(data.get(6));
+		Game.levels[Game.currentLevel].add(player);
 		
 		int mode;
 		if(modedata.contains(";")) {
@@ -310,30 +319,29 @@ public class Load {
 		boolean hasEffects;
 		int potionIdx = 10;
 		if(oldSave) {
-			hasEffects = data.size() > 10 && ((String)data.get(data.size()-2)).contains("PotionEffects[");
+			hasEffects = data.size() > 10 && data.get(data.size()-2).contains("PotionEffects[");
 			potionIdx = data.size() - 2;
 		} else
-			hasEffects = !((String)data.get(10)).equals("PotionEffects[]"); // newer save
+			hasEffects = !data.get(10).equals("PotionEffects[]"); // newer save
 		
 		if(hasEffects) {
-			String potiondata = ((String)data.get(potionIdx)).replace("PotionEffects[", "").replace("]", "");
-			List effects = Arrays.asList(potiondata.split(":"));
+			String[] effects = data.get(potionIdx).replace("PotionEffects[", "").replace("]", "").split(":");
 			
-			for(int i = 0; i < effects.size(); i++) {
-				List effect = Arrays.asList(((String)effects.get(i)).split(";"));
-				String pName = (String)effect.get(0);
+			for(int i = 0; i < effects.length; i++) {
+				String[] effect = effects[i].split(";");
+				String pName = effect[0];
 				if(oldSave) pName = pName.replace("P.", "Potion");
-				PotionResource.applyPotion(player, pName, Integer.parseInt((String)effect.get(1)));
+				PotionResource.applyPotion(player, pName, Integer.parseInt(effect[1]));
 			}
 		}
 		
-		String colors = ((String)data.get(oldSave?data.size()-1:11)).replace("[", "").replace("]", "");
-		List color = Arrays.asList(colors.split(";"));
-		player.r = Integer.parseInt((String)color.get(0));
-		player.g = Integer.parseInt((String)color.get(1));
-		player.b = Integer.parseInt((String)color.get(2));
+		String colors = data.get(oldSave?data.size()-1:11).replace("[", "").replace("]", "");
+		String[] color = colors.split(";");
+		player.r = Integer.parseInt(color[0]);
+		player.g = Integer.parseInt(color[1]);
+		player.b = Integer.parseInt(color[2]);
 		
-		if(!oldSave) Player.skinon = Boolean.parseBoolean((String)data.get(12));
+		if(!oldSave) Player.skinon = Boolean.parseBoolean(data.get(12));
 		else Player.skinon = false;
 	}
 	
@@ -342,17 +350,17 @@ public class Load {
 		inventory.clearInv();
 		
 		for(int i = 0; i < data.size(); i++) {
-			String item = (String)data.get(i);
+			String item = data.get(i);
 			
 			if(ListItems.getItem(item) instanceof ResourceItem) {
 				if(oldSave && i == 0) item = item.replace(";0", ";1");
-				List curData = Arrays.asList(item.split(";"));
-				String itemName = (String)curData.get(0);
+				List<String> curData = Arrays.asList(item.split(";"));
+				String itemName = curData.get(0);
 				if(oldSave) itemName = subOldName(itemName);
 				
 				Item newItem = ListItems.getItem(itemName);
 				
-				for(int ii = 0; ii < Integer.parseInt((String)curData.get(1)); ii++) {
+				for(int ii = 0; ii < Integer.parseInt(curData.get(1)); ii++) {
 					if(newItem instanceof ResourceItem) {
 						ResourceItem resItem = new ResourceItem(((ResourceItem)newItem).resource);
 						inventory.add(resItem);
@@ -384,21 +392,33 @@ public class Load {
 		}
 		
 		for(int i = 0; i < data.size(); i++) {
-			String entityName = ((String)data.get(i)).substring(0, ((String)data.get(i)).indexOf("[")).replace("bed", "Bed");
-			Entity newEntity = getEntity(entityName, player);
-			List info = Arrays.asList(((String)data.get(i)).substring(((String)data.get(i)).indexOf("[") + 1, ((String)data.get(i)).indexOf("]")).split(":"));
+			List<String> info = Arrays.asList(data.get(i).substring(data.get(i).indexOf("[") + 1, data.get(i).indexOf("]")).split(":")); // this gets everything inside the "[...]" after the entity name.
+			
+			String entityName = data.get(i).substring(0, data.get(i).indexOf("[")).replace("bed", "Bed").replace("II", ""); // this gets the text before "[", which is the entity name.
+			int x = Integer.parseInt(info.get(0));
+			int y = Integer.parseInt(info.get(1));
+			
+			//boolean chgIdx = worldVer.compareTo(new Version("1.9.1")) <= 0;
+			int mobLvl = 0;
+			try {
+				if(Class.forName("EnemyMob").isAssignableFrom(Class.forName(entityName)))
+					mobLvl = Integer.parseInt(info.get(info.size()-2));
+			} catch(ClassNotFoundException ex) {}
+			
+			Entity newEntity = getEntity(entityName, player, mobLvl);
+			
 			if(newEntity != null) { // the method never returns null, but...
-				newEntity.x = Integer.parseInt((String)info.get(0));
-				newEntity.y = Integer.parseInt((String)info.get(1));
+				//newEntity.x = Integer.parseInt(info.get(0));
+				//newEntity.y = Integer.parseInt(info.get(1));
 				int currentlevel;
 				if(newEntity instanceof Mob) {
 					Mob mob = (Mob)newEntity;
-					mob.health = Integer.parseInt((String)info.get(2));
-					mob.maxHealth = Integer.parseInt((String)info.get(3));
-					mob.lvl = Integer.parseInt((String)info.get(4));
-					mob.level = Game.levels[Integer.parseInt((String)info.get(5))];
-					currentlevel = Integer.parseInt((String)info.get(5));
-					Game.levels[currentlevel].add(mob);
+					mob.health = Integer.parseInt(info.get(2));
+					//mob.maxHealth = Integer.parseInt(info.get(3));
+					//((EnemyMob)mob).lvl = Integer.parseInt(info.size()-2);
+					//mob.level = Game.levels[Integer.parseInt(info.get(5))];
+					currentlevel = Integer.parseInt(info.get(info.size()-1));
+					Game.levels[currentlevel].add(mob, x, y);
 				} else if(newEntity instanceof Chest) {
 					Chest chest = (Chest)newEntity;
 					boolean isDeathChest = chest instanceof DeathChest;
@@ -407,15 +427,15 @@ public class Load {
 					
 					int endIdx = chestInfo.size()-(isDeathChest||isDungeonChest?1:0);
 					for(int idx = 0; idx < endIdx; idx++) {
-						String itemData = (String)chestInfo.get(idx);
+						String itemData = chestInfo.get(idx);
 						if(worldVer.compareTo(new Version("1.9.1")) < 0) // if this world is before 1.9.1
 							if(itemData.equals("")) continue; // this skips any null items
 						if(oldSave) itemData = subOldName(itemData);
 						Item item = ListItems.getItem(itemData);
 						if (item instanceof ResourceItem) {
-							List<String> curData = Arrays.asList((itemData + ";1").split(";")); // this appends ";1" to the end, meaning one item, to everything; but if it was already there, then it becomes the 3rd element in the list, which is ignored.
-							ResourceItem ri = (ResourceItem)ListItems.getItem(curData.get(0));
-							ri.count = Integer.parseInt(curData.get(1));
+							String[] resourceData = (itemData + ";1").split(";"); // this appends ";1" to the end, meaning one item, to everything; but if it was already there, then it becomes the 3rd element in the list, which is ignored.
+							ResourceItem ri = (ResourceItem)ListItems.getItem(resourceData[0]);
+							ri.count = Integer.parseInt(resourceData[1]);
 							chest.inventory.add(ri);
 						} else {
 							chest.inventory.add(item);
@@ -423,50 +443,53 @@ public class Load {
 					}
 					
 					if (isDeathChest) {
-						((DeathChest)chest).time = Integer.parseInt((chestInfo.get(chestInfo.size()-1)).replace("tl;", "")); // "tl;" is only for old save support
+						((DeathChest)chest).time = Integer.parseInt(chestInfo.get(chestInfo.size()-1).replace("tl;", "")); // "tl;" is only for old save support
 					} else if (isDungeonChest) {
 						((DungeonChest)chest).isLocked = Boolean.parseBoolean(chestInfo.get(chestInfo.size()-1));
 					}
 					
 					
-					newEntity.level = Game.levels[Integer.parseInt((String)info.get(info.size() - 1))];
-					currentlevel = Integer.parseInt((String)info.get(info.size() - 1));
-					Game.levels[currentlevel].add(chest instanceof DeathChest ? (DeathChest)chest : chest instanceof DungeonChest ? (DungeonChest)chest : chest);
+					//newEntity.level = Game.levels[Integer.parseInt((String)info.get(info.size() - 1))];
+					currentlevel = Integer.parseInt(info.get(info.size() - 1));
+					Game.levels[currentlevel].add(chest instanceof DeathChest ? (DeathChest)chest : chest instanceof DungeonChest ? (DungeonChest)chest : chest, x, y);
 				}
 				else if(newEntity instanceof Spawner) {
 					Spawner egg = (Spawner)newEntity;
-					egg.x = Integer.parseInt((String)info.get(0));
-					egg.y = Integer.parseInt((String)info.get(1));
-					egg.lvl = Integer.parseInt((String)info.get(3));
-					egg.setMob((String)info.get(2));
+					//egg.x = Integer.parseInt(info.get(0));
+					//egg.y = Integer.parseInt(info.get(1));
+					egg.lvl = Integer.parseInt(info.get(3));
+					egg.setMob(info.get(2));
 					currentlevel = Integer.parseInt((String)info.get(info.size() - 1));
-					Game.levels[currentlevel].add(egg);
+					Game.levels[currentlevel].add(egg, x, y);
 				}
 				else {
-					newEntity.level = Game.levels[Integer.parseInt((String)info.get(2))];
-					currentlevel = Integer.parseInt((String)info.get(2));
-					Game.levels[currentlevel].add(newEntity);
+					//newEntity.level = Game.levels[Integer.parseInt(info.get(2))];
+					currentlevel = Integer.parseInt(info.get(2));
+					Game.levels[currentlevel].add(newEntity, x, y);
 				}
 			} // end of entity not null conditional
 		}
 	}
 	
-	public Entity getEntity(String string, Player player) {
+	public Entity getEntity(String string, Player player, int moblvl) {
 		switch(string) {
-			case "Zombie": return (Entity)(new Zombie(0));
-			case "Slime": return (Entity)(new Slime(0));
-			case "Cow": return (Entity)(new Cow(0));
-			case "Sheep": return (Entity)(new Sheep(0));
-			case "Pig": return (Entity)(new Pig(0));
-			case "Creeper": return (Entity)(new Creeper(0));
-			case "Skeleton": return (Entity)(new Skeleton(0));
-			case "Workbench": return (Entity)(new Workbench());
-			case "AirWizard": return (Entity)(new AirWizard(false));
+			case "Player": return (Entity)(player);
+			case "Cow": return (Entity)(new Cow());
+			case "Sheep": return (Entity)(new Sheep());
+			case "Pig": return (Entity)(new Pig());
+			case "Zombie": return (Entity)(new Zombie(moblvl));
+			case "Slime": return (Entity)(new Slime(moblvl));
+			case "Creeper": return (Entity)(new Creeper(moblvl));
+			case "Skeleton": return (Entity)(new Skeleton(moblvl));
+			case "Knight": return (Entity)(new Knight(moblvl));
+			case "Snake": return (Entity)(new Snake(moblvl));
+			case "AirWizard": return (Entity)(new AirWizard(moblvl>1));
 			case "AirWizardII": return (Entity)(new AirWizard(true));
+			case "Spawner": return (Entity)(new Spawner("Zombie", 1));
+			case "Workbench": return (Entity)(new Workbench());
 			case "Chest": return (Entity)(new Chest());
 			case "DeathChest": return (Entity)(new DeathChest());
 			case "DungeonChest": return (Entity)(new DungeonChest());
-			case "Spawner": return (Entity)(new Spawner("Zombie", 1));
 			case "Anvil": return (Entity)(new Anvil());
 			case "Enchanter": return (Entity)(new Enchanter());
 			case "Loom": return (Entity)(new Loom());
@@ -477,12 +500,9 @@ public class Load {
 			case "Lantern": return (Entity)(new Lantern());
 			case "IronLantern": return (Entity)(new IronLantern());
 			case "GoldLantern": return (Entity)(new GoldLantern());
-			case "Player": return (Entity)(player);
-			case "Knight": return (Entity)(new Knight(0));
-			case "Snake": return (Entity)(new Snake(0));
 			//case "Spark": return (Entity)(new Spark());
-			default : if(Game.debug) System.out.println("LOAD: unknown entity: " + string);
-				return new Entity();
+			default : /*if(Game.debug)*/ System.out.println("LOAD: unknown or outdated entity requested: " + string);
+				return null;
 		}
 	}
 }

@@ -15,6 +15,7 @@ public class Furniture extends Entity {
 	protected Player shouldTake; // the player that should take the furniture
 
 	public Furniture(String name) {
+		super(3, 3);
 		this.name = name;
 		xr = 3; // x radius of the furniture
 		yr = 3; // y radius of the furniture

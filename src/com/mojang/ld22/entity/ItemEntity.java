@@ -13,11 +13,15 @@ public class ItemEntity extends Entity {
 	private int time = 0; // time it has lasted in the level
 	
 	public ItemEntity(ResourceItem item, int x, int y) {
+		super(3, 3);
+		
 		this.item = item;
-		xx = this.x = x;
-		yy = this.y = y;
-		xr = 3; // x radius (size)
-		yr = 3; // y radius (size)
+		this.x = x;
+		this.y = y;
+		xx = x;
+		yy = y;
+		//xr = 3; // x radius (size)
+		//yr = 3; // y radius (size)
 		
 		zz = 2;
 		// random direction for each acceleration

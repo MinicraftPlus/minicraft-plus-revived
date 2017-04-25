@@ -149,7 +149,7 @@ public class Tnt extends Furniture implements ActionListener {
 				Sound.fuse.play();
 				flash.start();
 			}
-			entity.hurt(this, 1, dir);
+			entity.hurt(level.getTile(x >> 4, y >> 4), x, y, 1);
 		}
 	}
 }

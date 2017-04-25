@@ -1,5 +1,5 @@
 	---Quick TODO's---
---CURRENT: hunger doesn't seem to be decreasing as it should... and so, armor seems overpowered. Fix this, and I hope I'm good.
+
 -continue commeting code
 -(see note about canWool in Entity.java)
 -display current player score in score mode
@@ -8,18 +8,18 @@ Note to self: for more little bugs/ideas/concerns, search code for "TODO"
 -----------------------------------------------------------------------------------
 
 	####BUGS####
+###
+reported: green mobs on lvl 1, sometimes 2, don't do damage (in 1.9.1)
 ####
-new resource-items added to inv sometimes show up as 0. *documented*...
+Not sure, but broken/exploded obsidian brick may drop stone...it looks like stone.
 ####
-Fishing Rods have 0% durability in creative mode.
+Creeper one time, on lava level, w/ me in front of it, exploded, and left behind an odd square that had no texture, and didn't erase after an update to it...
 ####
 Sound effects don't always play when they should; mostly it seems when other sounds should be on at the same time.
 ####
 new worlds use the current/previous keyboard presets, rather than the default ones, when creating a new world after loading a previous one.
 ####
 Many item names don't fit on the black "active item" bar at the bottom.
-####
-Spawners emit too many entities per unit time. Make it slower. Should be super quick and easy.
 ####
 
 -----------------------------------------------------------------------------------
@@ -49,6 +49,8 @@ I have a system in place to save custom key controls, but lack the menu to edit 
 	For those menus that don't even have a cursor, though, perhaps I could just make it a Menu..? If that doesn't work, I can always make a ChoiceMenu class, super simple, that just displays two choices with no cursor, and listens for enter and escape keypresses.
 
 ****
+
+Level.java literally just ticks 50 or so random tiles... that's SO got to go... heck, tiles probably don't even need tick methods; well, maybe not, at least. Plants might need one... yeah, so maybe those will have tick methods.
 
 -----------------------------------------------------------------------------------
 

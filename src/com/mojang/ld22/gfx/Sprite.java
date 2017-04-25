@@ -29,7 +29,7 @@ public class Sprite {
 		/// here, x and y are level coordinates, I think.
 		
 		for(int r = 0; r < spritePixels.length; r++) { // loop down through each row
-			renderRow(spritePixels[r], screen, color, lvlx, lvly + r*8);
+			renderRow(r, screen, color, lvlx, lvly + r*8);
 		}
 		/*
 		// xp = x pixels; yp = y pixels.
@@ -47,7 +47,8 @@ public class Sprite {
 		*/
 	}
 	
-	public static void renderRow(Px[] row, Screen screen, int color, int x, int y) {
+	public void renderRow(int r, Screen screen, int color, int x, int y) {
+		Px[] row = spritePixels[r];
 		for(int c = 0; c < row.length; c++) { // loop across through each column
 			screen.render(x + c*8, y, row[c].sheetPos, color, row[c].mirror); // render the sprite pixel.
 		}

@@ -1,23 +1,26 @@
-//new class, no comments.
 package com.mojang.ld22.entity;
 
 import com.mojang.ld22.Game;
 import com.mojang.ld22.gfx.Color;
 import com.mojang.ld22.gfx.Screen;
+import com.mojang.ld22.gfx.MobSprite;
 import com.mojang.ld22.item.ResourceItem;
 import com.mojang.ld22.item.resource.Resource;
 import com.mojang.ld22.screen.ModeMenu;
 import com.mojang.ld22.screen.OptionsMenu;
 
-public class Cow extends Mob {
-	int xa;
-	int ya;
-	int xe = xa;
-	int ye = ya;
-	private int randomWalkTime = 0;
-
-	public Cow(int lvl) {
-		if (OptionsMenu.diff == OptionsMenu.easy) {
+public class Cow extends PassiveMob {
+	private static MobSprite[][] sprites = MobSprite.compileMobSpriteAnimations(16, 16);
+	
+	public Cow() {
+		super(sprites, 5);
+		
+		col0 = Color.get(-1, 000, 222, 211);
+		col1 = Color.get(-1, 000, 333, 322);
+		col2 = Color.get(-1, 000, 222, 211);
+		col3 = Color.get(-1, 000, 111, 100);
+		col4 = Color.get(-1, 000, 333, 322);
+		/*if (OptionsMenu.diff == OptionsMenu.easy) {
 			this.lvl = lvl;
 			x = random.nextInt(64 * 16);
 			y = random.nextInt(64 * 16);
@@ -39,14 +42,14 @@ public class Cow extends Mob {
 			y = random.nextInt(64 * 16);
 			health = maxHealth = lvl * lvl * 29;
 			if (ModeMenu.creative) health = maxHealth = 1;
-		}
+		}*/
 	}
-
+	
+	/*
 	public void tick() {
 		super.tick();
-
-		isenemy = true;
-
+		
+		
 		if (health < maxHealth) {
 			if (level.player != null && randomWalkTime == 0) {
 				int xd = level.player.x - x;
@@ -55,13 +58,9 @@ public class Cow extends Mob {
 					xa = 0;
 					ya = 0;
 					if (xd < 0) xa = +1;
-					xe = xa;
 					if (xd > 0) xa = -1;
-					xe = xa;
 					if (yd < 0) ya = +1;
-					xe = xa;
 					if (yd > 0) ya = -1;
-					xe = xa;
 				}
 			}
 		}
@@ -73,10 +72,10 @@ public class Cow extends Mob {
 			ya = (random.nextInt(3) - 1) * random.nextInt(2);
 		}
 		if (randomWalkTime > 0) randomWalkTime--;
-	}
+	}*/
 
 	public void render(Screen screen) {
-		int xt = 16;
+		/*int xt = 16;
 		int yt = 16;
 
 		int flip1 = (walkDist >> 3) & 1;
@@ -98,116 +97,27 @@ public class Cow extends Mob {
 
 		int xo = x - 8;
 		int yo = y - 11;
-
-		int col0 = Color.get(-1, 000, 222, 211);
-
-		int col1 = Color.get(-1, 000, 333, 322);
-
-		int col2 = Color.get(-1, 000, 222, 211);
-
-		int col3 = Color.get(-1, 000, 111, 100);
-
-		int col4 = Color.get(-1, 000, 333, 322);
-
+		*/
+		
 		if (isLight()) {
-			col0 = Color.get(-1, 000, 333, 322);
-
-			col1 = Color.get(-1, 000, 333, 322);
-
-			col2 = Color.get(-1, 000, 333, 322);
-
-			col3 = Color.get(-1, 000, 333, 322);
-
-			col4 = Color.get(-1, 000, 333, 322);
-		} else {
+			col0 = col1 = col2 = col3 = col4 = Color.get(-1, 000, 333, 322);
+		}
+		else {
 			col0 = Color.get(-1, 000, 222, 211);
-
 			col1 = Color.get(-1, 000, 333, 322);
-
 			col2 = Color.get(-1, 000, 222, 211);
-
 			col3 = Color.get(-1, 000, 111, 100);
-
 			col4 = Color.get(-1, 000, 333, 322);
 		}
-
+		
 		if (level.dirtColor == 322) {
-			if (Game.time == 0) {
-				int col = col0;
-
-				if (lvl == 2) col = Color.get(-1, 100, 522, 555);
-				if (lvl == 3) col = Color.get(-1, 111, 444, 555);
-				if (lvl == 4) col = Color.get(-1, 000, 111, 555);
-				if (hurtTime > 0) {
-					col = Color.get(-1, 555, 555, 555);
-				}
-
-				screen.render(xo + 8 * flip1, yo + 0, xt + yt * 32, col, flip1);
-				screen.render(xo + 8 - 8 * flip1, yo + 0, xt + 1 + yt * 32, col, flip1);
-				screen.render(xo + 8 * flip2, yo + 8, xt + (yt + 1) * 32, col, flip2);
-				screen.render(xo + 8 - 8 * flip2, yo + 8, xt + 1 + (yt + 1) * 32, col, flip2);
-			}
-			if (Game.time == 1) {
-				int col = col1;
-
-				if (lvl == 2) col = Color.get(-1, 100, 522, 555);
-				if (lvl == 3) col = Color.get(-1, 111, 444, 555);
-				if (lvl == 4) col = Color.get(-1, 000, 111, 555);
-				if (hurtTime > 0) {
-					col = Color.get(-1, 555, 555, 555);
-				}
-
-				screen.render(xo + 8 * flip1, yo + 0, xt + yt * 32, col, flip1);
-				screen.render(xo + 8 - 8 * flip1, yo + 0, xt + 1 + yt * 32, col, flip1);
-				screen.render(xo + 8 * flip2, yo + 8, xt + (yt + 1) * 32, col, flip2);
-				screen.render(xo + 8 - 8 * flip2, yo + 8, xt + 1 + (yt + 1) * 32, col, flip2);
-			}
-			if (Game.time == 2) {
-				int col = col2;
-
-				if (lvl == 2) col = Color.get(-1, 100, 522, 555);
-				if (lvl == 3) col = Color.get(-1, 111, 444, 555);
-				if (lvl == 4) col = Color.get(-1, 000, 111, 555);
-				if (hurtTime > 0) {
-					col = Color.get(-1, 555, 555, 555);
-				}
-
-				screen.render(xo + 8 * flip1, yo + 0, xt + yt * 32, col, flip1);
-				screen.render(xo + 8 - 8 * flip1, yo + 0, xt + 1 + yt * 32, col, flip1);
-				screen.render(xo + 8 * flip2, yo + 8, xt + (yt + 1) * 32, col, flip2);
-				screen.render(xo + 8 - 8 * flip2, yo + 8, xt + 1 + (yt + 1) * 32, col, flip2);
-			}
-			if (Game.time == 3) {
-				int col = col3;
-
-				if (lvl == 2) col = Color.get(-1, 100, 522, 555);
-				if (lvl == 3) col = Color.get(-1, 111, 444, 555);
-				if (lvl == 4) col = Color.get(-1, 000, 111, 555);
-				if (hurtTime > 0) {
-					col = Color.get(-1, 555, 555, 555);
-				}
-
-				screen.render(xo + 8 * flip1, yo + 0, xt + yt * 32, col, flip1);
-				screen.render(xo + 8 - 8 * flip1, yo + 0, xt + 1 + yt * 32, col, flip1);
-				screen.render(xo + 8 * flip2, yo + 8, xt + (yt + 1) * 32, col, flip2);
-				screen.render(xo + 8 - 8 * flip2, yo + 8, xt + 1 + (yt + 1) * 32, col, flip2);
-			}
-		}
-		if (level.dirtColor != 322) {
-			int col = col4;
-
-			if (lvl == 2) col = Color.get(-1, 100, 522, 555);
-			if (lvl == 3) col = Color.get(-1, 111, 444, 555);
-			if (lvl == 4) col = Color.get(-1, 000, 111, 555);
-			if (hurtTime > 0) {
-				col = Color.get(-1, 555, 555, 555);
-			}
-
-			screen.render(xo + 8 * flip1, yo + 0, xt + yt * 32, col, flip1);
-			screen.render(xo + 8 - 8 * flip1, yo + 0, xt + 1 + yt * 32, col, flip1);
-			screen.render(xo + 8 * flip2, yo + 8, xt + (yt + 1) * 32, col, flip2);
-			screen.render(xo + 8 - 8 * flip2, yo + 8, xt + 1 + (yt + 1) * 32, col, flip2);
-		}
+			if (Game.time == 0) col = col0;
+			if (Game.time == 1) col = col1;
+			if (Game.time == 2) col = col2;
+			if (Game.time == 3) col = col3;
+		} else col = col4;
+		
+		super.render(screen);
 	}
 
 	public boolean canWool() {
@@ -215,27 +125,15 @@ public class Cow extends Mob {
 	}
 
 	protected void die() {
+		int min = 0, max = 0;
+		if (OptionsMenu.diff == OptionsMenu.easy) {min = 1; max = 3;}
+		if (OptionsMenu.diff == OptionsMenu.norm) {min = 1; max = 2;}
+		if (OptionsMenu.diff == OptionsMenu.hard) {min = 0; max = 1;}
+		
+		dropResource(min, max, Resource.leather, Resource.rawbeef);
+		
 		super.die();
-
-		if (OptionsMenu.diff == OptionsMenu.easy) {
-			int count = random.nextInt(2) + 1;
-			for (int i = 0; i < count; i++) {
-				level.add(
-						new ItemEntity(
-								new ResourceItem(Resource.leather),
-								x + random.nextInt(11) - 5,
-								y + random.nextInt(11) - 5));
-			}
-			for (int i = 0; i < count; i++) {
-				level.add(
-						new ItemEntity(
-								new ResourceItem(Resource.rawbeef),
-								x + random.nextInt(11) - 5,
-								y + random.nextInt(11) - 5));
-			}
-			if (level.player != null) {
-				level.player.score += 10 * lvl;
-			}
+		/*
 		}
 		if (OptionsMenu.diff == OptionsMenu.norm) {
 			int count = random.nextInt(1) + 1;
@@ -276,6 +174,6 @@ public class Cow extends Mob {
 			if (level.player != null) {
 				level.player.score += 10 * lvl;
 			}
-		}
+		}*/
 	}
 }

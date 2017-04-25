@@ -10,8 +10,7 @@ public class Particle extends Entity {
 	
 	public Particle(int x, int y, int lifetime, int color) {
 		// make a particle at the given coordinates
-		this.x = x;
-		this.y = y;
+		super(x, y);
 		this.lifetime = lifetime;
 		this.color = color;
 	}

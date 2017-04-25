@@ -1,6 +1,5 @@
 package com.mojang.ld22.entity;
 
-
 import com.mojang.ld22.entity.particle.TextParticle;
 import com.mojang.ld22.gfx.Color;
 import com.mojang.ld22.gfx.MobSprite;
@@ -9,48 +8,47 @@ import com.mojang.ld22.level.tile.Tile;
 import com.mojang.ld22.screen.ModeMenu;
 import com.mojang.ld22.sound.Sound;
 
-public class Mob extends Entity {
+public abstract class Mob extends Entity {
 	private Player player;
 	
+	//protected int[][] colors;
 	protected MobSprite[][] sprites; // This contains all the mob's sprites, sorted first by direction (index corrosponding to the dir variable), and then by walk animation state.
-	protected int walkDist = 0; // How far we've walked currently, incremented after each movement
+	protected int walkDist = 0; // How far we've walked currently, incremented after each movement. This is used to change the sprite; "(walkDist >> 3) & 1" switches between a value of 0 and 1 every 8 increments of walkDist.
+	
 	protected int dir = 0; // The direction the mob is facing, used in attacking and rendering. 0 is down, 1 is up, 2 is left, 3 is right
 	public int hurtTime = 0; // A delay after being hurt, that temporarily prevents further damage for a short time
 	protected int xKnockback, yKnockback; // The amount of vertical/horizontal knockback that needs to be inflicted, if it's not 0, it will be moved one pixel at a time.
-	public int maxHealth = 10; // The maximum amount of health the mob can have
-	public int health = maxHealth; // The amount of health we currently have, set to the maximum to start
-	public int maxHunger = 10;
-	public int hunger = maxHunger;
-	public int swimTimer = 0; // How much we have moved in water currently, used to halve movement speed
-	public int woolTimer = 0;
+	public int health, maxHealth; // The amount of health we currently have, and the maximum.
+	//public int swimTime = 2; // How many ticks pass between each movement whil in water, used to halve movement speed
+	//public int woolTime = 2;
+	protected int walkTime;
 	//public int lightTimer = 0;
 	public int tickTime = 0; // Incremented whenever tick() is called, is effectively the age in ticks
-	public int r;
-	public int xx;
-	public int yy;
-	public boolean isenemy = false;
-	public int lvl;
+	// TODO take all these swimTime, woolTime, and walkTime and consolidate into a getSlowness() method, that checks and adds each possible source of slowness and returns the result.
+		// or don't.
+	public int speed;
+	
+	//public int r;
+	//public int xx, yy;
+	//public int lvl;
 	//public int color;
 	
-	public Mob() {
-		x = y = 8; // By default, set x and y coordinates to 8
-		xr = 4; // Sets the x and y radius/size of the mob
-		yr = 3;
-		xx = x;
-		yy = y;
-	}
-	public Mob(MobSprite[][] sprites) {
+	public Mob(MobSprite[][] sprites/*, int[][] colors*/, int health) {
+		super(4, 3);
 		this.sprites = sprites;
-		//System.out.println("set main mob sprites; first: " + sprites[0][0]);
-		//this();
-		//color = col;
-		//sprites = MobSprite.compileMobSpriteAnimations(spriteX, spriteY); // four directions, and two states to animate walking.
+		this.health = this.maxHealth = health;
+		//this.colors = colors;
+		//xx = x;
+		//yy = y;
+		walkTime = 1;
+		speed = 1;
 	}
-
+	
 	public void tick() {
 		tickTime++; // Increment our tick counter
+		
 		if (level.getTile(x >> 4, y >> 4) == Tile.lava) // If we are trying to swim in lava
-			hurt(this, 4, dir ^ 1); // Inflict 4 damage to ourselves, sourced from ourselves, with the direction as the opposite of ours
+			hurt(Tile.lava, x, y, 4); // Inflict 4 damage to ourselves, sourced from the lava Tile, with the direction as the opposite of ours.
 		if (health <= 0) die(); // die if no health
 		if (hurtTime > 0) hurtTime--; // If a timer preventing damage temporarily is set, decrement it's value
 	}
@@ -60,12 +58,12 @@ public class Mob extends Entity {
 	}
 
 	public boolean move(int xa, int ya) { // Move the mob, overrides from Entity
-		if (isSwimming()) { // Check if the mob is swimming, ie. in water/lava
-			if (swimTimer++ % 2 == 0) return true; // Increments swimTimer, and returns every other time
+		if(level == null) return true;
+		
+		if(tickTime % 2 == 0/* && !(this instanceof Player && ((Player)this).staminaRechargeDelay % 2 == 0)*/) {
+			if(isSwimming() || isWooling()) return true;
 		}
-		if (isWooling()) { // same as above, for wool
-			if (woolTimer++ % 2 == 0) return true;
-		}
+		if (tickTime % walkTime == 0 && walkTime > 1) return true;
 		
 		/// These 4 following conditionals check the direction of the knockback, move the Mob accordingly, and bring knockback closer to 0.
 		if (xKnockback < 0) { // If we have negative horizontal knockback (to the left)
@@ -98,12 +96,14 @@ public class Mob extends Entity {
 	}
 
 	protected boolean isWooling() { // supposed to walk at half speed on wool
-		Tile tile = level.getTile(x >> 0, y >> 0);
+		if(level == null) return false;
+		Tile tile = level.getTile(x >> 4, y >> 4);
 		return tile == Tile.wool;
 	}
 	
 	/** checks if this Mob is currently on a light tile; if so, the mob sprite is brightened. */
 	public boolean isLight() {
+		if(level == null) return false;
 		Tile tile = level.getTile(x >> 4, y >> 4);
 		return tile == Tile.lightgrass
 				|| tile == Tile.lightsand
@@ -139,6 +139,7 @@ public class Mob extends Entity {
 	}
 
 	protected boolean isSwimming() {
+		if(level == null) return false;
 		Tile tile = level.getTile(x >> 4, y >> 4); // Get the tile the mob is standing on (at x/16, y/16)
 		return tile == Tile.water || tile == Tile.lava || tile == Tile.lightwater; // Check if the tile is liquid, and return true if so
 	}
@@ -150,12 +151,17 @@ public class Mob extends Entity {
 
 	public void hurt(Tile tile, int x, int y, int damage) { // Hurt the mob, when the source of damage is a tile
 		int attackDir = dir ^ 1; // Set attackDir to our own direction, inverted. XORing it with 1 flips the rightmost bit in the variable, this effectively adds one when even, and subtracts one when odd
-		doHurt(damage, attackDir); // Call the method that actually performs damage, and provide it with our new attackDir value
+		if(!(tile == Tile.lava && this instanceof Player && ((Player)this).potioneffects.containsKey("Lava")))
+			doHurt(damage, attackDir); // Call the method that actually performs damage, and provide it with our new attackDir value
 	}
 	
 	public void hurt(Mob mob, int damage, int attackDir) { // Hurt the mob, when the source is another mob
-		doHurt(damage, attackDir); // Call the method that actually performs damage, and use our provided attackDir
+		if(mob instanceof Player && ModeMenu.creative && mob != this) doHurt(health, attackDir); // kill the mob instantly
+		else doHurt(damage, attackDir); // Call the method that actually performs damage, and use our provided attackDir
 	}
+	/*public void hurt(Tnt tnt, int x, int y, int dmg) {
+		doHurt(dmg, dir ^ 1);
+	}*/
 	
 	public void heal(int heal) { // Restore health on the mob
 		if (hurtTime > 0) return; // If the mob has been hurt recently and hasn't cooled down, don't continue
@@ -164,16 +170,16 @@ public class Mob extends Entity {
 		health += heal; // Actually add the amount to heal to our current health
 		if (health > maxHealth) health = maxHealth; // If our health has exceeded our maximum, lower it back down to said maximum
 	}
-
+	
+	/*
 	public void hungerHeal(int hungerHeal) {
-
 		hunger += hungerHeal;
 		if (hunger > maxHunger) hunger = maxHunger;
-	}
-
+	}*/
+	
 	protected void doHurt(int damage, int attackDir) { // Actually hurt the mob, based on only damage and a direction
 		// this is overridden in Player.java
-		if (hurtTime > 0) return; // If the mob has been hurt recently and hasn't cooled down, don't continue
+		if (removed || hurtTime > 0) return; // If the mob has been hurt recently and hasn't cooled down, don't continue
 		
 		if (level.player != null) { // If there is a player in the level
 			/// play the hurt sound only if the player is less than 80 entity coordinates away; or 5 tiles away.
@@ -183,7 +189,7 @@ public class Mob extends Entity {
 				Sound.monsterHurt.play();
 			}
 		}
-		level.add(new TextParticle("" + damage, x, y, Color.get(-1, 500, 500, 500))); // Make a text particle at this position in this level, bright red and displaying the damage inflicted
+		level.add(new TextParticle("" + damage, x, y, Color.get(-1, 500))); // Make a text particle at this position in this level, bright red and displaying the damage inflicted
 		health -= damage; // Actually change the health
 		// add the knockback in the correct direction
 		if (attackDir == 0) yKnockback = +6;
@@ -191,207 +197,5 @@ public class Mob extends Entity {
 		if (attackDir == 2) xKnockback = -6;
 		if (attackDir == 3) xKnockback = +6;
 		hurtTime = 10; // Set a delay before we can be hurt again
-	}
-
-	public boolean findStartPos(Level level) { // Find a place to spawn the mob
-		// Pick a random x and y coordinate, inside the level's bounds
-		int x = random.nextInt(level.w);
-		int y = random.nextInt(level.h);
-		int xx = x * 16 + 8; // Get actual pixel (entity) coordinates from this tile coord
-		int yy = y * 16 + 8;
-
-		if (level.player != null) {
-			/// don't spawn a mob less than 5 blocks away from the player
-			int xd = level.player.x - xx;
-			int yd = level.player.y - yy;
-			// prevents any mobs from spawning too close to the player.
-			if (xd * xd + yd * yd < 60 * 60) return false;
-		}
-
-		int r = level.monsterDensity * 13; // Get the allowed density of mobs in the level, convert it from a tile to a real coordinate
-		if (level.getEntities(xx - r, yy - r, xx + r, yy + r).size() > 0) return false; // Get a list of mobs in the level, within a box centered on our attempted coordinates, with dimensions of r times 2; and, if there are any close to us, return false.
-		
-		// TODO yeah... this DEFINATELY needs revision... will be part of the Tile system revision.
-		if (level.getTile(x, y).mayPass(level, x, y, this)) { // Make sure the tile we're trying to spawn on is solid to us
-			if (level.getTile(x, y) != Tile.sdo) {
-				if (level.getTile(x, y) != Tile.wdo) {
-					if (level.getTile(x, y) != Tile.wheat) {
-						if (level.getTile(x, y) != Tile.farmland) {
-							if (level.getTile(x, y) != Tile.lightsbrick) {
-								if (level.getTile(x, y) != Tile.lightplank) {
-									if (level.getTile(x, y) != Tile.lightwool) {
-										if (level.getTile(x, y) != Tile.lightrwool) {
-											if (level.getTile(x, y) != Tile.lightbwool) {
-												if (level.getTile(x, y) != Tile.lightgwool) {
-													if (level.getTile(x, y) != Tile.lightywool) {
-														if (level.getTile(x, y) != Tile.lightblwool) {
-															if (level.getTile(x, y) != Tile.lightgrass) {
-																if (level.getTile(x, y) != Tile.lightsand) {
-																	if (level.getTile(x, y) != Tile.lightdirt) {
-																		if (level.getTile(x, y) != Tile.lightflower) {
-																			if (level.getTile(x, y) != Tile.torchgrass) {
-																				if (level.getTile(x, y) != Tile.torchsand) {
-																					if (level.getTile(x, y) != Tile.torchdirt) {
-																						if (level.getTile(x, y) != Tile.torchplank) {
-																							if (level.getTile(x, y) != Tile.torchsbrick) {
-																								if (level.getTile(x, y) != Tile.torchwool) {
-																									if (level.getTile(x, y) != Tile.torchwoolred) {
-																										if (level.getTile(x, y) != Tile.torchwoolblue) {
-																											if (level.getTile(x, y)
-																													!= Tile.torchwoolgreen) {
-																												if (level.getTile(x, y)
-																														!= Tile.torchwoolyellow) {
-																													if (level.getTile(x, y)
-																															!= Tile.torchwoolblack) {
-
-																														this.x = xx; // Set our coordinates to the attempted ones
-																														this.y = yy;
-																														return true;
-																													}
-																												}
-																											}
-																										}
-																									}
-																								}
-																							}
-																						}
-																					}
-																				}
-																			}
-																		}
-																	}
-																}
-															}
-														}
-													}
-												}
-											}
-										}
-									}
-								}
-							}
-						}
-					}
-				}
-			}
-		}
-
-		return false;
-	}
-	
-	
-	/** Start pos is a bit different for dungeons. */
-	public boolean findStartPosDungeon(Level level) {
-		int x = random.nextInt(level.w);
-		int y = random.nextInt(level.h);
-		int xx = x * 16 + 8;
-		int yy = y * 16 + 8;
-
-		if (level.player != null) {
-			// don't spawn if the player is less than 3.75 blocks away
-			int xd = level.player.x - xx;
-			int yd = level.player.y - yy;
-
-			if (xd * xd + yd * yd < 60 * 60) return false;
-		}
-		
-		// Get the allowed density of mobs in the level, convert it from a tile to a real coordinate (?) higher in score mode.
-		if (!ModeMenu.score) r = level.monsterDensity * 15;
-		else r = level.monsterDensity * 22;
-		
-		if (level.getEntities(xx - r, yy - r, xx + r, yy + r).size() > 0) return false; // don't spawn on top of, or too close to, another entity.
-
-		if (level.getTile(x, y).mayPass(level, x, y, this)) {
-			if (level.getTile(x, y) == Tile.o) {
-				// can only spawn on obsidian bricks
-				this.x = xx;
-				this.y = yy;
-				return true;
-			}
-		}
-
-		return false;
-	}
-	
-	/** same as above two, but different allowed density and spawn tiles. */
-	public boolean findStartPosCow(Level level) {
-		int x = random.nextInt(level.w);
-		int y = random.nextInt(level.h);
-		int xx = x * 16 + 8;
-		int yy = y * 16 + 8;
-
-		if (level.player != null) {
-
-			int xd = level.player.x - xx;
-			int yd = level.player.y - yy;
-
-			if (xd * xd + yd * yd < 80 * 80) return false;
-		}
-
-		if (!ModeMenu.score) {
-			r = level.monsterDensity * 20;
-		} else {
-			r = level.monsterDensity * 27;
-		}
-		if (level.getEntities(xx - r, yy - r, xx + r, yy + r).size() > 0) return false;
-
-		//makes it so that cows only spawn on grass or flowers.
-		if (level.getTile(x, y).mayPass(level, x, y, this)) {
-			Tile tile = level.getTile(x, y);
-			if (tile == Tile.grass || tile == Tile.lightgrass || tile == Tile.flower || tile == Tile.lightflower) {
-				this.x = xx;
-				this.y = yy;
-				return true;
-			}
-		}
-
-		return false;
-	}
-	
-	// very similar to above; but the mob density is different.
-	public boolean findStartPosCowLight(Level level) {
-		int x = random.nextInt(level.w);
-		int y = random.nextInt(level.h);
-		int xx = x * 16 + 8;
-		int yy = y * 16 + 8;
-
-		if (level.player != null) {
-
-			int xd = level.player.x - xx;
-			int yd = level.player.y - yy;
-
-			if (xd * xd + yd * yd < 80 * 80) return false;
-		}
-
-		if (!ModeMenu.score) {
-			r = level.monsterDensity * 15;
-		} else {
-			r = level.monsterDensity * 22;
-		}
-		if (level.getEntities(xx - r, yy - r, xx + r, yy + r).size() > 0) return false;
-
-		//makes it so that cows only spawn on grass or flowers.
-		if (level.getTile(x, y).mayPass(level, x, y, this)) {
-			if (level.getTile(x, y) == Tile.grass) {
-				this.x = xx;
-				this.y = yy;
-				return true;
-			} else if (level.getTile(x, y) == Tile.flower) {
-				this.x = xx;
-				this.y = yy;
-				return true;
-			}
-			if (level.getTile(x, y) == Tile.lightgrass) {
-				this.x = xx;
-				this.y = yy;
-				return true;
-			} else if (level.getTile(x, y) == Tile.lightflower) {
-				this.x = xx;
-				this.y = yy;
-				return true;
-			}
-		}
-
-		return false;
 	}
 }

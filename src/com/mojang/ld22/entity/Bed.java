@@ -4,7 +4,7 @@ import com.mojang.ld22.Game;
 import com.mojang.ld22.gfx.Color;
 
 public class Bed extends Furniture {
-	public static boolean hasBedSet = false; // If the player (as there is only one) has set their home/bed.
+	public static boolean inBed = false; // If the player (as there is only one) is in their bed.
 	public int saveSpawnX, saveSpawnY; // the saved spawn locations... never used, though, I don't think...
 	
 	public Bed() {
@@ -14,7 +14,7 @@ public class Bed extends Furniture {
 		col2 = Color.get(-1, 100, 333, 300);
 		col3 = Color.get(-1, 000, 222, 200);
 		col = Color.get(-1, 100, 444, 400);
-
+		
 		sprite = 8;
 		// set the x and y radius of the Bed.
 		xr = 3;
@@ -24,11 +24,11 @@ public class Bed extends Furniture {
 	/** Called when the player attempts to get in bed. */
 	public boolean use(Player player, int attackDir) {
 		if (Game.tickCount >= Game.sleepTime) { // if it is late enough in the day to sleep...
-			hasBedSet = true; // the bed is now set.
-			// set the player spawn coord. to here, in tile coords, hence "/ 16"
-			Player.spawnx = x / 16;
-			Player.spawny = y / 16;
-			player.bedSpawn = true; // wait, but then... what's hasBedSet for??? The two should always go hand in hand!
+			inBed = true;
+			// set the player spawn coord. to here, in tile coords, hence " >> 4"
+			Player.spawnx = x >> 4;
+			Player.spawny = y >> 4;
+			player.bedSpawn = true;  // the bed is now set as the player spawn point.
 			//if(Game.debug) System.out.println("bedPos: ("+(x/16)+","+(y/16)+"); spawnPos: ("+player.spawnx+","+player.spawny+")"); // debug to print the bed loc and spawn loc
 		} else {
 			// it is too early to sleep; display how much time is remaining.

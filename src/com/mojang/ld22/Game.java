@@ -55,7 +55,7 @@ public class Game extends Canvas implements Runnable {
 	/// MANAGERIAL VARS AND RUNNING
 	
 	public static final String NAME = "Minicraft Plus"; // This is the name on the application window
-	public static final String VERSION = "1.9.1";
+	public static final String VERSION = "1.9.2-dev1";
 	public static final int HEIGHT = 192;
 	public static final int WIDTH = 288;
 	private static float SCALE = 3;
@@ -214,7 +214,7 @@ public class Game extends Canvas implements Runnable {
 		wonTimer = 0;
 		gameTime = 0; // shouldn't this be kept the same, if it's a gameplay timer?
 		Player.hasSetHome = false;
-		Bed.hasBedSet = false;
+		Bed.inBed = false;
 		hasWon = false;
 		currentLevel = 3;
 		
@@ -259,7 +259,7 @@ public class Game extends Canvas implements Runnable {
 		gameTime = 0;
 		Player.hasSetHome = false;
 		Player.moveSpeed = 1;
-		Bed.hasBedSet = false; //no bed
+		Bed.inBed = false; //no bed
 		Game.gamespeed = 1;
 		notifications.clear();
 		
@@ -335,12 +335,13 @@ public class Game extends Canvas implements Runnable {
 			player.inventory.add(new ResourceItem(Resource.lavapotion));
 		}
 		
+		//System.out.println("level player: " + level.player);
 	}
 	
 	// VERY IMPORTANT METHOD!! Makes everything keep happening.
 	// In the end, calls menu.tick() if there's a menu, or level.tick() if no menu.
 	public void tick() {
-		if (Bed.hasBedSet) {
+		if (Bed.inBed) {
 			// IN BED
 			level.remove(player);
 			gamespeed = 20;
@@ -361,7 +362,7 @@ public class Game extends Canvas implements Runnable {
 					}
 				}
 				// finally gets out of bed.
-				Bed.hasBedSet = false;
+				Bed.inBed = false;
 			}
 		}
 		
@@ -482,6 +483,10 @@ public class Game extends Canvas implements Runnable {
 	public static void setMultiplier(int value) {
 		multiplier = value;
 		multipliertime = mtm;
+	}
+	public static void addMultiplier(int value) {
+		multiplier += value;
+		multipliertime = mtm - 5;
 	}
 	
 	/// this is the proper way to change the tickCount.
@@ -637,7 +642,7 @@ public class Game extends Canvas implements Runnable {
 				//info.add("armor lvl: " + player.curArmor.level);
 			}
 			
-			info.add("steps: " + player.stepCount);
+			//info.add("steps: " + player.stepCount);
 			info.add("hungerstam:" + player.hungerStamCnt);
 			//info.add("stam-delay: " + player.staminaRechargeDelay);
 			//info.add("stam-charge: " + player.staminaRecharge);
@@ -657,11 +662,11 @@ public class Game extends Canvas implements Runnable {
 		
 		String msg = "";
 		if (saving) msg = "Saving... " + LoadingMenu.percentage + "%";
-		else if (Bed.hasBedSet) msg = "Sleeping...";
+		else if (Bed.inBed) msg = "Sleeping...";
 		
 		if(msg.length() > 0) {
-			Font.draw(msg, screen, screen.centertext(msg)+1, screen.h / 2 - 19, Color.get(-1, 222, 222, 222));
-			Font.draw(msg, screen, screen.centertext(msg), screen.h / 2 - 20, Color.get(-1, 555, 555, 555));
+			Font.draw(msg, screen, screen.centerText(msg)+1, screen.h / 2 - 19, Color.get(-1, 222, 222, 222));
+			Font.draw(msg, screen, screen.centerText(msg), screen.h / 2 - 20, Color.get(-1, 555, 555, 555));
 		}
 		
 		/// NOTIFICATIONS
@@ -772,7 +777,7 @@ public class Game extends Canvas implements Runnable {
 	private void renderFocusNagger() {
 		String msg = "Click to focus!"; // the message when you click off the screen.
 		paused = true; //perhaps paused is only used for this.
-		int xx = screen.centertext(msg); // the width of the box
+		int xx = screen.centerText(msg); // the width of the box
 		int yy = (HEIGHT - 8) / 2; // the height of the box
 		int w = msg.length(); // length of message in characters.
 		int h = 1;

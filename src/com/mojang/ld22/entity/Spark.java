@@ -12,14 +12,15 @@ public class Spark extends Entity {
 	private AirWizard owner; // the AirWizard that created this spark
 
 	public Spark(AirWizard owner, double xa, double ya) {
-		this.owner = owner;
-		xx = this.x = owner.x;
-		yy = this.y = owner.y;
-		xr = 0;
-		yr = 0;
+		super(0, 0);
 		
+		this.owner = owner;
+		xx = owner.x;
+		yy = owner.y;
 		this.xa = xa;
 		this.ya = ya;
+		//xr = 0;
+		//yr = 0;
 		
 		// Max time = 629 ticks. Min time = 600 ticks.
 		lifeTime = 60 * 10 + random.nextInt(30);

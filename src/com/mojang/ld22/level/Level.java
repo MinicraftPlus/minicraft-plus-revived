@@ -12,6 +12,8 @@ import com.mojang.ld22.entity.Inventory;
 import com.mojang.ld22.entity.Knight;
 import com.mojang.ld22.entity.Lantern;
 import com.mojang.ld22.entity.Mob;
+import com.mojang.ld22.entity.EnemyMob;
+import com.mojang.ld22.entity.PassiveMob;
 import com.mojang.ld22.entity.Pig;
 import com.mojang.ld22.entity.Player;
 import com.mojang.ld22.entity.Sheep;
@@ -344,9 +346,7 @@ public class Level {
 						if (random.nextInt(2) == 0) {
 							Chest c = new Chest();
 							addtoinv(c.inventory, -level);
-							c.x = sp.x - 16;
-							c.y = sp.y - 16;
-							this.add(c);
+							this.add(c, sp.x - 16, sp.y - 16);
 						}
 					}
 				}
@@ -355,9 +355,7 @@ public class Level {
 
 		if (level == 1 && !WorldSelectMenu.loadworld) {
 			AirWizard aw = new AirWizard(false);
-			aw.x = w * 16 / 2;
-			aw.y = h * 16 / 2;
-			add(aw);
+			add(aw, w * 16 / 2, h * 16 / 2);
 		}
 		
 		if(Game.debug) {
@@ -372,9 +370,7 @@ public class Level {
 
 	public void tick() {
 		trySpawn(1);
-
-		//depthlvl = depth;
-
+		
 		for (int i = 0; i < w * h / 50; i++) {
 			int xt = random.nextInt(w);
 			int yt = random.nextInt(w);
@@ -384,20 +380,22 @@ public class Level {
 			Entity e = entities.get(i);
 			int xto = e.x >> 4;
 			int yto = e.y >> 4;
-
+			
 			e.tick();
-
-			if (e.removed) {
-				entities.remove(i--);
+			
+			int xt = e.x >> 4;
+			int yt = e.y >> 4;
+			
+			/// this moves the entity's position in entitiesInTiles, since it's on a different tile now.
+			if (xto != xt || yto != yt) {
 				removeEntity(xto, yto, e);
-			} else {
-				int xt = e.x >> 4;
-				int yt = e.y >> 4;
-
-				if (xto != xt || yto != yt) {
-					removeEntity(xto, yto, e);
-					insertEntity(xt, yt, e);
-				}
+				insertEntity(xt, yt, e);
+			}
+		}
+		for(int i = 0; i < entities.size(); i++) {
+			if(entities.get(i).removed) {// remove entites tagged for removal.
+				remove(entities.get(i));
+				i--;
 			}
 		}
 	}
@@ -532,10 +530,10 @@ public class Level {
 	}
 
 	public void renderBackground(Screen screen, int xScroll, int yScroll) {
-		int xo = xScroll >> 4;
+		int xo = xScroll >> 4; // latches to the nearest tile coordinate
 		int yo = yScroll >> 4;
-		int w = (screen.w + 15) >> 4;
-		int h = (screen.h + 15) >> 4;
+		int w = (screen.w) >> 4; // there used to be a "+15" as in below method
+		int h = (screen.h) >> 4;
 		screen.setOffset(xScroll, yScroll);
 		for (int y = yo; y <= h + yo; y++) {
 			for (int x = xo; x <= w + xo; x++) {
@@ -546,7 +544,7 @@ public class Level {
 	}
 	
 	public void renderSprites(Screen screen, int xScroll, int yScroll) {
-		int xo = xScroll >> 4;
+		int xo = xScroll >> 4; // latches to the nearest tile coordinate
 		int yo = yScroll >> 4;
 		int w = (screen.w + 15) >> 4;
 		int h = (screen.h + 15) >> 4;
@@ -594,7 +592,11 @@ public class Level {
 	private void sortAndRender(Screen screen, List<Entity> list) {
 		Collections.sort(list, spriteSorter);
 		for (int i = 0; i < list.size(); i++) {
-			list.get(i).render(screen);
+			Entity e = list.get(i);
+			if(e.level == this && !e.removed)
+				e.render(screen);
+			else
+				remove(e);
 		}
 	}
 	
@@ -618,23 +620,29 @@ public class Level {
 		if (x < 0 || y < 0 || x >= w || y >= h) return;
 		data[x + y * w] = (byte) val;
 	}
-
-	public void add(Entity entity) {
+	
+	public void add(Entity e) { add(e, e.x, e.y); }
+	public void add(Entity entity, int x, int y) {
 		if (entity instanceof Player) {
 			player = (Player) entity;
 		}
-		entity.removed = false;
 		entities.add(entity);
-		entity.init(this);
+		entity.setLevel(this, x, y);
+		/*entity.level = this;
+		entity.removed = false;
+		entity.x = x;
+		entity.y = y;
+		//entity.init(this);
+		*/
 		
 		if (Game.debug) {
 			String clazz = entity.getClass().getCanonicalName();
 			clazz = clazz.substring(clazz.lastIndexOf(".")+1);
-			String[] searching = {"StairsDown", "Spawner", "Chest", "DungeonChest", "AirWizard"}; //can contain any number of class names I want to print when found.
+			String[] searching = {"StairsDown", "Spawner", "Chest", "DungeonChest", "AirWizard", "Player"}; //can contain any number of class names I want to print when found.
 			for(String search: searching) {
 				if(search.equals(clazz)) {
 					if (clazz == "AirWizard") clazz += ((AirWizard)entity).secondform ? " II" : "";
-					printLevelLoc("Adding " + clazz, entity.x/16, entity.y/16);//System.out.println("Adding Entity to level "+depth+" at x="+(entity.x/16)+" y="+(entity.y/16)+": " + clazz);
+					printLevelLoc("Adding " + clazz, entity.x>>4, entity.y>>4);
 					break;
 				}
 			}
@@ -642,6 +650,7 @@ public class Level {
 		
 		insertEntity(entity.x >> 4, entity.y >> 4, entity);
 	}
+	
 	/*
 	public void adds(Entity entity, int xs, int ys) {
 		if (entity instanceof Player) {
@@ -656,6 +665,7 @@ public class Level {
 	*/
 	public void remove(Entity e) {
 		entities.remove(e);
+		e.level = null;
 		int xto = e.x >> 4;
 		int yto = e.y >> 4;
 		removeEntity(xto, yto, e);
@@ -673,10 +683,7 @@ public class Level {
 
 	public void trySpawn(int count) {
 		for (int i = 0; i < count; i++) {
-			Mob mob;
-
-			int minLevel = 1;
-			int maxLevel = 1;
+			int minLevel = 1, maxLevel = 1;
 			if (depth < 0) {
 				maxLevel = (-depth) + 1;
 			}
@@ -687,73 +694,54 @@ public class Level {
 			int lvl = random.nextInt(maxLevel - minLevel + 1) + minLevel;
 			//int levels = depth;
 			int rnd = random.nextInt(100);
-			int tim = Game.time;
-
-			if (depth == 0) {
-				if (tim > 2) {
-					if (rnd <= 40) mob = new Slime(lvl);
-					else if (rnd <= 75) mob = new Zombie(lvl);
-					else if (rnd >= 85) mob = new Skeleton(lvl);
-					else mob = new Creeper(lvl);
-					//System.out.println("making new mob on level " + lvl + "; lvl=" + mob.lvl);
-					if (mob.findStartPos(this)) this.add(mob);
+			
+			/* Notes about mob spawning:
+				(no-mob-r has scoremode/otherwise)
+				
+				-normal enemy mobs: Mob.java method, called at night or in caves;
+					no-mob-r 13 always, square radius 60, and no-light-tile checks (plus a couple other tiles)
+				
+				-dungeon mobs: dungeonspawn method, called on dungeon level;
+					no-mob-r 22/15, square radius 60, must spawn on obsidian brick tile
+				
+				-friendly mobs: spawned on surface only, square-rad 80, grass-flower tile checks.
+					no-mob-r 27/20 at night, 22/15 at day; lower chance of cows at night.
+			*/
+			
+			int nx = random.nextInt(w) * 16 + 8, ny = random.nextInt(h) * 16 + 8;
+			
+			//System.out.println("trySpawn on level " + depth + " of lvl " + lvl + " mob w/ rand " + rnd + " at tile " + nx + "," + ny);
+			
+			// spawns the enemy mobs.
+			if ((Game.time == 3 || depth != 0) && EnemyMob.checkStartPos(this, nx, ny)) { // if night or underground, with a valid tile, spawn an enemy mob.
+				//System.out.println("adding enemy mob...");
+				if(depth != -4) { // normal mobs
+					if (rnd <= 40) add((new Slime(lvl)), nx, ny);
+					else if (rnd <= 75) add((new Zombie(lvl)), nx, ny);
+					else if (rnd >= 85) add((new Skeleton(lvl)), nx, ny);
+					else add((new Creeper(lvl)), nx, ny);
+				} else { // special dungeon mobs
+					if (rnd <= 40) add((new Snake(lvl)), nx, ny);
+					else if (rnd <= 75) add((new Knight(lvl)), nx, ny);
+					else if (rnd >= 85) add((new Snake(lvl)), nx, ny);
+					else add((new Knight(lvl)), nx, ny);
 				}
 			}
-
-			if (depth == 0) {
-				if (tim != 3) {
-					if (rnd <= 22) mob = new Cow(lvl);
-					else if (rnd >= 68) mob = new Pig(lvl);
-					else mob = new Sheep(lvl);
-
-					if (mob.findStartPosCow(this)) {
-						this.add(mob);
-					}
-				}
-
-				if (tim == 3) {
-					if (rnd <= 33) mob = new Cow(lvl);
-					else if (rnd >= 68) mob = new Pig(lvl);
-					else mob = new Sheep(lvl);
-
-					if (mob.findStartPosCowLight(this)) {
-						this.add(mob);
-					}
-				}
-			} else if (depth != 0 && depth != -4) {
-
-				if (rnd <= 40) mob = new Slime(lvl);
-				else if (rnd <= 75) mob = new Zombie(lvl);
-				else if (rnd >= 85) mob = new Skeleton(lvl);
-				else mob = new Creeper(lvl);
-
-				if (mob.findStartPos(this)) {
-					this.add(mob);
-				}
-			} else if (depth == -4) {
-
-				if (rnd <= 40) mob = new Snake(lvl);
-				else if (rnd <= 75) mob = new Knight(lvl);
-				else if (rnd >= 85) mob = new Snake(lvl);
-				else mob = new Knight(lvl);
-
-				if (mob.findStartPosDungeon(this)) {
-					this.add(mob);
-				}
+			
+			if(depth == 0 && PassiveMob.checkStartPos(this, nx, ny)) {
+				// spawns the friendly mobs.
+				//System.out.println("adding passive mob...");
+				if (rnd <= (Game.time==3?22:33)) add((new Cow()), nx, ny);
+				else if (rnd >= 68) add((new Pig()), nx, ny);
+				else add((new Sheep()), nx, ny);
 			}
 		}
 	}
 
 	public void removeAllEnemies() {
 		for (int i = 0; i < this.entities.size(); i++) {
-			final String name =
-					this.entities.get(i).getClass().getCanonicalName().replace("com.mojang.ld22.entity.", "");
-			if (name.equals("Slime")
-					|| name.equals("Zombie")
-					|| name.equals("Skeleton")
-					|| name.equals("Creeper")) {
-				this.entities.get(i).remove();
-			}
+			Entity e = entities.get(i);
+			if(e instanceof EnemyMob) e.remove();
 		}
 	}
 

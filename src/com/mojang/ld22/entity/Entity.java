@@ -1,5 +1,6 @@
 package com.mojang.ld22.entity;
 
+import com.mojang.ld22.Game;
 import com.mojang.ld22.gfx.Color;
 import com.mojang.ld22.gfx.Screen;
 import com.mojang.ld22.item.Item;
@@ -8,37 +9,66 @@ import com.mojang.ld22.level.tile.Tile;
 import java.util.List;
 import java.util.Random;
 
-public class Entity {
+public abstract class Entity {
 	/// entity coordinates are per pixel, not per tile; each tile is 16x16 entity pixels.
 	protected final Random random = new Random();
 	public int x, y; // x, y entity coordinates on the map
-	public static int xx, yy; // static...? both never used, or so it seems.
-	public int xr = 6, yr = 6; // x, y radius of entity
-	public boolean removed; // Determines if the entity should be removed from the level; checked in Level.java
+	public int xr, yr; // x, y radius of entity
+	public boolean removed; // Determines if the entity is removed from it's level; checked in Level.java
 	public Level level; // the level that the entity is on
-	//public boolean hasspawned = false; //? if the entity has spawned in the level yet?
-	public int col = Color.get(-1, 0, 111, 222); // current Color
-	// day/night color variations, I think.
-	public int col0 = Color.get(-1, 0, 111, 222);
-	public int col1 = Color.get(-1, 0, 333, 444);
-	public int col2 = Color.get(-1, 0, 111, 222);
-	public int col3 = Color.get(-1, 0, 111, 222);
-	public int col4 = Color.get(-1, 0, 111, 222);
+	// TODO might replace the below with a simple array of colors.
+	public int col0, col1, col2, col3, col4, col; // day/night color variations, plus current color.
 	
-	/** Render method, (Look in each specific entity's class) */
-	public void render(Screen screen) {}
-
-	public void tick() {}
+	public Entity(int xr, int yr) { // add color to this later, in color update
+		//this.x = x;
+		//this.y = y;
+		this.xr = xr;
+		this.yr = yr;
+		
+		level = null;
+		removed = true;
+		col0 = col1 = col2 = col3 = col4 = col = 0;
+	}
 	
-	/** Removes the entity from the world... somehow. */
+	public abstract void render(Screen screen); /// used to render the entity on screen.
+	public abstract void tick(); /// used to update the entity.
+	
+	/** Removes the entity from the level. */
 	public void remove() {
+		//if(level != null) level.remove(this);
+		//else System.out.println("cannot remove entity from null level");
 		removed = true;
 	}
 	
-	/** Initialization method, called when the entity is created */
-	public final void init(Level level) {
+	public void setLevel(Level level, int x, int y) {
 		this.level = level;
+		if(level != null)
+			removed = false;
+		this.x = x;
+		this.y = y;
 	}
+	/*public boolean inLevel() {
+		boolean hasLvl = false;
+		for(Level lvl: Game.levels)
+			hasLvl = hasLvl || inLevel(lvl);
+		
+		if(!hasLvl && this.level != null)
+			System.out.println("entity is part of unknown level");
+		
+		return hasLvl;
+	}
+	public boolean inLevel(Level level) {
+		if(level == null || this.level == null) return false;
+		return this.level == level;
+	}*/
+	
+	// TODO Inplement this! it's a really good idea!
+	//public abstract void getColor();
+	
+	/** Initialization method, called when the entity is created */
+	/*public final void init(Level level) {
+		this.level = level;
+	}*/
 	
 	/** returns true if this entity is found in the rectangle specified by given two coordinates. */
 	public boolean intersects(int x0, int y0, int x1, int y1) {
@@ -50,11 +80,6 @@ public class Entity {
 	public boolean blocks(Entity e) {
 		return false;
 	}
-	
-	/** Extended in Mob.java */
-	public void hurt(Mob mob, int dmg, int attackDir) {}
-	public void hurt(Tnt tnt, int x, int y, int dmg) {}
-	public void hurt(Tile tile, int x, int y, int dmg) {}
 		
 	/** Moves an entity horizontally and vertically. */
 	public boolean move(int xa, int ya) {
@@ -140,14 +165,11 @@ public class Entity {
 	}
 	
 	/** if this entity is touched by another entity (extended by sub-classes) */
-	protected void touchedBy(Entity entity) {
-		//if(this instanceof Player == false && this instanceof Mob && entity instanceof Player)
-			//System.out.println("player touched " + getClass().getName().replace("com.mojang.ld22.entity.","") + " of level " + ((Mob)this).lvl);
-	}
+	protected void touchedBy(Entity entity) {}
 	
 	/** returns if mobs can block this entity (aka: can't pass through them) */
 	public boolean isBlockableBy(Mob mob) {
-		return true; // yes, mobs block other entities.
+		return true; // yes, mobs generally block other entities.
 	}
 	
 	/** Used in ItenEntity.java, extended with Player.java */
@@ -176,19 +198,17 @@ public class Entity {
 	
 	/** sees if the player has used an item in a direction (extended in player.java) */
 	public boolean use(Player player, int attackDir) {
+		// this may not be necessary for all entities.
 		return false;
 	}
 	
 	public int getLightRadius() {
 		return 0;
 	}
-
-	public void hurt(Tnt tnt, int dmg, int i) {
-		// TODO Auto-generated method stub
-	}
-
-	public void hurt(int i, int dmg, int dmg2) {
-		// TODO Auto-generated method stub
-
-	}
+	
+	/** Extended in Mob.java */
+	public void hurt(Mob mob, int dmg, int attackDir) {}
+	public void hurt(Tnt tnt, int dmg, int attackDir) {}
+	public void hurt(Tile tile, int x, int y, int dmg) {}
+	
 }

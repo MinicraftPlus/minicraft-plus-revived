@@ -9,6 +9,7 @@ import com.mojang.ld22.entity.Entity;
 import com.mojang.ld22.entity.Inventory;
 import com.mojang.ld22.entity.ItemEntity;
 import com.mojang.ld22.entity.Mob;
+import com.mojang.ld22.entity.EnemyMob;
 import com.mojang.ld22.entity.Player;
 import com.mojang.ld22.entity.Spawner;
 import com.mojang.ld22.entity.particle.Particle;
@@ -196,14 +197,17 @@ public class Save {
 				String name = e.getClass().getName().replace("com.mojang.ld22.entity.", "");
 				String extradata = "";
 				
-				if(e instanceof ItemEntity || e instanceof Particle) continue; // don't even write ItemEntities or particle effects.
-				
+				if(e instanceof ItemEntity || e instanceof Particle/* || e instanceof Player*/) continue; // don't even write ItemEntities or particle effects; player is written seperately.
+				// jk, apparently, the player NEEDS to be written multiple times...
+				/* I don't want to do this anymore.
 				if(e instanceof AirWizard && ((AirWizard)e).secondform)
 					name += "II";
-				
+				*/
 				if(e instanceof Mob) {
 					Mob m = (Mob)e;
-					extradata = ":" + m.health + ":" + m.maxHealth + ":" + m.lvl;
+					extradata = ":" + m.health;
+					if(e instanceof EnemyMob)
+					 	extradata += ":" + ((EnemyMob)m).lvl;
 				}
 				
 				if(e instanceof Chest) {

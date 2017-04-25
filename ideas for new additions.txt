@@ -13,10 +13,6 @@ change "xa" and "ya" to something else; b/c they are NOT accelerations! They're 
 
 ----
 
-Make it so friendly mobs (sheep, pigs, cows) spawn during the day, but evil mobs don't.
-
-----
-
 Add feature to notifications display: if it starts with ":error:", then make the text red (but don't show the ":Error:" part). Any further than that, though, and it would be better to just pass it in.
 
 ----
@@ -29,7 +25,9 @@ change inventory system to allow moving items to and from inventories, into ches
 
 ----
 
+Give the player 20 health instead of 10; this means that 1 health will be a half of a heart.
 
+----
 
 
  ++++++++ More Complicated Ideas ++++++++
@@ -49,10 +47,6 @@ Find something to do with Npc.java, and Giant.java; currently, they were never e
 ++++
 
 Turn player.score into the experience system of 1.4; or, maybe I should just make my own experience system... it wouldn't hurt to use things like colors and such from 1.4, though.
-
-++++
-
-Fix entity removal when sleeping? I think the idea is that all mobs within a certain radius are removed when you go to sleep; but that doesn't happen, and in fact, they still track you when you're in bed... I could fix that, maybe.
 
 ++++
 

@@ -1,4 +1,3 @@
-//new class, no comments
 package com.mojang.ld22.entity;
 
 import com.mojang.ld22.gfx.Color;
@@ -9,40 +8,38 @@ public class Arrow extends Entity {
 	private int lifeTime;
 	private int xdir;
 	private int ydir;
-	private final int speed = 2;
+	//private final int speed = 2;
 	private int time;
 	private int damage;
 	public Mob owner;
-	private int color;
-	private int speeddmg;
-	private boolean edmg = false;
+	//private int col;
+	private int speed;
+	//private boolean edmg = false;
 
 	public Arrow(Mob owner, int dirx, int diry, int dmg, boolean flag) {
+		super(Math.abs(dirx)+1, Math.abs(diry)+1);
 		this.owner = owner;
 		xdir = dirx;
 		ydir = diry;
-
+		
 		damage = dmg;
-		color = Color.get(-1, 111, 222, 430);
-
-		if (damage > -1) {
-			speeddmg = 2;
-		}
-		if (damage > 3) {
-			speeddmg = 3;
-		}
-
+		col = Color.get(-1, 111, 222, 430);
+		
+		if (damage > 3) speed = 3;
+		else if (damage >= 0) speed = 2;
+		else speed = 1;
+		
 		if (flag) {
-			damage *= 2 + 1;
-			color = Color.get(-1, 111, 222, 430);
+			damage = 2*damage + 1;
+			col = Color.get(-1, 111, 222, 430);
 		}
-
+		
 		x = owner.x;
 		y = owner.y;
-
+		
 		lifeTime = 100 * (damage + 2);
 	}
-
+	
 	public void tick() {
 		time++;
 		if (time >= lifeTime) {
@@ -50,16 +47,21 @@ public class Arrow extends Entity {
 			return;
 		}
 
-		x += xdir * speeddmg;
-		y += ydir * speeddmg;
+		x += xdir * speed;
+		y += ydir * speed;
+		
+		// TODO I think I can just use the xr yr vars, and the normal system with touchedBy(entity) to detect collisions instead.
 		List<Entity> entitylist = level.getEntities(x, y, x, y);
-		int count = random.nextInt(11);
+		boolean criticalHit = random.nextInt(11) < 9;
 		for (int i = 0; i < entitylist.size(); i++) {
 			Entity hit = entitylist.get(i);
 			
-			if (hit != null) {
-				if (count < 9) {
-					if (hit instanceof Mob && hit != owner && owner.isenemy == false) {
+			if (hit != null && hit instanceof Mob && hit != owner) {
+				Mob mob = (Mob) hit;
+				int extradamage = (hit instanceof Player ? 0 : 3) + (criticalHit ? 0 : 1);
+				mob.hurt(owner, damage + extradamage, mob.dir);
+				/*if (count < 9) {
+					if (hit instanceof Mob && owner.isenemy == false) {
 						hit.hurt(owner, damage + 3, ((Mob) hit).dir);
 					}
 					if (hit instanceof Player && hit != owner && owner.isenemy == true) {
@@ -72,7 +74,7 @@ public class Arrow extends Entity {
 					if (hit instanceof Player && hit != owner && owner.isenemy == true) {
 						hit.hurt(owner, damage + 1, ((Player) hit).dir);
 					}
-				}
+				}*/
 			}
 			
 			if (!level.getTile(x / 16, y / 16).mayPass(level, x / 16, y / 16, this)
@@ -98,22 +100,22 @@ public class Arrow extends Entity {
 			xt = 15;
 			yt = 5;
 
-			screen.render(x - 4, y - 4, xt + yt * 32, color, 1);
+			screen.render(x - 4, y - 4, xt + yt * 32, col, 1);
 
 		} else if (xdir == 1 && ydir == 0) {
 			xt = 14;
 			yt = 5;
-			screen.render(x - 4, y - 4, xt + yt * 32, color, 1);
+			screen.render(x - 4, y - 4, xt + yt * 32, col, 1);
 		} else if (xdir == -1 && ydir == 0) {
 			xt = 13;
 			yt = 5;
 
-			screen.render(x - 4, y - 4, xt + yt * 32, color, 1);
+			screen.render(x - 4, y - 4, xt + yt * 32, col, 1);
 		} else if (xdir == 0 && ydir == 1) {
 			xt = 16;
 			yt = 5;
 
-			screen.render(x - 4, y - 4, xt + yt * 32, color, 1);
+			screen.render(x - 4, y - 4, xt + yt * 32, col, 1);
 		}
 	}
 }

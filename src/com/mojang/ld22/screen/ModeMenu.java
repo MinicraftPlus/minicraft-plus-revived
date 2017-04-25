@@ -147,8 +147,8 @@ public class ModeMenu extends Menu {
 		writeCentered(WorldSelectMenu.worldname, screen, screen.h - 170, Color.get(-1, 5, 5, 5));
 		
 		String modeText = "Game Mode:	" + modes[mode - 1];
-		Font.draw(modeText, screen, screen.centertext(modeText), 8 * 8 + 1, Color.get(-1, 111, 111, 111));
-		Font.draw(modeText, screen, screen.centertext(modeText) + 1, 8 * 8, Color.get(-1, 555, 555, 555));
+		Font.draw(modeText, screen, screen.centerText(modeText), 8 * 8 + 1, Color.get(-1, 111, 111, 111));
+		Font.draw(modeText, screen, screen.centerText(modeText) + 1, 8 * 8, Color.get(-1, 555, 555, 555));
 		
 		//drawString(modeText, screen, 8 * 8, Color.get(-1, 111, 111, 111));
 		

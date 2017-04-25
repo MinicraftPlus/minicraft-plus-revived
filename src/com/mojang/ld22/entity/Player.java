@@ -42,45 +42,46 @@ public class Player extends Mob {
 	public static boolean hasSetHome = false, skinon;
 	//These 2 ints are ints saved from the first spawn - this way the spawn pos is always saved.
 	public static int spawnx = 0, spawny = 0; // these are stored as tile coordinates, not entity coordinates.
-	public static int maxStamina = 10, maxHunger = 10, maxArmor = 100; // the maximum stats that the player can have.
+	public static boolean bedSpawn = false;
+	public int homeSetX, homeSetY;
+	public static int maxHealth = 10, maxStamina = 10, maxHunger = 10, maxArmor = 100; // the maximum stats that the player can have.
 	
 	public static MobSprite[][] sprites =  MobSprite.compileMobSpriteAnimations(0, 14);
 	public static MobSprite[][] carrySprites = MobSprite.compileMobSpriteAnimations(0, 16); // the sprites while carrying something.
-	public static MobSprite[][] suitSprites = MobSprite.compileMobSpriteAnimations(8, 14); // the "airwizard suit" sprites.
+	public static MobSprite[][] suitSprites = MobSprite.compileMobSpriteAnimations(18, 20); // the "airwizard suit" sprites.
 	public static MobSprite[][] carrySuitSprites = MobSprite.compileMobSpriteAnimations(18, 22); // the "airwizard suit" sprites.
 	
 	public Inventory inventory;
 	public Item attackItem, activeItem;
-	public boolean energy;
 	public int attackTime, attackDir;
-	public int homeSetX, homeSetY;
-	public boolean bedSpawn;
 	
 	private int onStairDelay; // the delay before changing levels.
-	public int stepCount;
-	int tickCounter;
-	int timesTick;
 	
 	public int hunger, stamina, armor; // the current stats
 	public int armorDamageBuffer;
 	public ArmorResource curArmor; // the color of the armor to be displayed.
-	public int staminaRecharge;  // the recharge rate of the player's stamina
-	public int staminaRechargeDelay; // the recharge delay when the player uses up their stamina.
-	private static int maxHungerTicks = 300;
-	public int hungerStamCnt, hungerStamTicks;
-	int hungerChargeDelay; // the delay between each time the hunger bar increases your health
-	int hungerStarveDelay; // the delay between each time the hunger bar decreases your health
+	
+	public int staminaRecharge; // the ticks before charging a bolt of the player's stamina
+	private static int maxStaminaRecharge = 10; // cutoff value for staminaRecharge
+	public int staminaRechargeDelay; // the recharge delay ticks when the player uses up their stamina.
+	
+	public int hungerStamCnt, stamHungerTicks; // tiers of hunger penalties before losing a burger.
+	private static int maxHungerTicks = 300; // the cutoff value for stamHungerTicks
+	public int stepCount; // used to penalize hunger for movement.
+	private int hungerChargeDelay; // the delay between each time the hunger bar increases your health
+	private int hungerStarveDelay; // the delay between each time the hunger bar decreases your health
 	//boolean alreadyLostHunger;
 	//boolean repeatHungerCyc;
 	
 	public boolean showinfo;
-	public int px, py;
+	//public int px, py;
 	
 	public HashMap<String, Integer> potioneffects; // the potion effects currently applied to the player
 	public boolean showpotioneffects; // whether to display the current potion effects on screen
 	int cooldowninfo; // prevents you from toggling the info pane on and off super fast.
 	int regentick; // counts time between each time the regen potion effect heals you.
 	
+	//public boolean energy;
 	int acs = 25; // default ("start") arrow count
 	public int ac; // arrow count
 	public int r = 50, g = 50, b; // player shirt color.
@@ -88,25 +89,18 @@ public class Player extends Mob {
 	// Note: the player's health & max health are inherited from Mob.java
 	
 	public Player(Game game, InputHandler input) {
-		super(sprites);
+		super(sprites, Player.maxHealth);
+		x = 24;
+		y = 24;
 		this.game = game;
 		this.input = input;
 		inventory = new Inventory();
+		
 		ac = acs;
+		//energy = false;
 		
-		// these come from Mob.java
-		x = 24;
-		y = 24;
-		tickCounter = 0;
-		
-		energy = false;
-		//maxStamina = 10;
-		//maxHunger = 10;
-		
-		//repeatHungerCyc = false;
-		
-		px = this.x;
-		py = this.y;
+		//px = this.x;
+		//py = this.y;
 		
 		potioneffects = new HashMap<String, Integer>();
 		showpotioneffects = true;
@@ -125,7 +119,7 @@ public class Player extends Mob {
 		hunger = maxHunger;
 		
 		hungerStamCnt = 0;
-		hungerStamTicks = maxHungerTicks;
+		stamHungerTicks = maxHungerTicks;
 		
 		if (ModeMenu.creative) {
 			for (int i = 0; i < ListItems.items.size(); i++) {
@@ -140,10 +134,10 @@ public class Player extends Mob {
 	
 	public void tick() {
 		super.tick(); // ticks Mob.java
-		isenemy = false;
-		tickCounter++;
 		
-		if(potioneffects.size() > 0 && !Bed.hasBedSet) {
+		//System.out.println("ticking player");
+		
+		if(potioneffects.size() > 0 && !Bed.inBed) {
 			for(String potionType: potioneffects.keySet().toArray(new String[0])) {
 				if(potioneffects.get(potionType) <= 1) // if time is zero (going to be set to 0 in a moment)...
 					PotionResource.applyPotion(this, potionType, false); // automatically removes this potion effect.
@@ -180,75 +174,72 @@ public class Player extends Mob {
 			if (hunger < 10) hunger = 10;
 		}
 		
-		// TODO this whole thing below needs comments; but more importantly, it needs optimizing.
-		
 		// remember: staminaRechargeDelay is a penalty delay for when the player uses up all their stamina.
 		// staminaRecharge is the rate of stamina recharge, in some sort of unknown units.
 		if (stamina <= 0 && staminaRechargeDelay == 0 && staminaRecharge == 0) {
-			staminaRechargeDelay = 40; // some sort of duration.
+			staminaRechargeDelay = 40; // delay before resuming adding to stamina.
 		}
 		
 		if (staminaRechargeDelay > 0 && stamina < maxStamina) staminaRechargeDelay--;
 		
 		if (staminaRechargeDelay == 0) {
-			staminaRecharge++; // this is used to determine the time between each bolt recharge.
+			staminaRecharge += potioneffects.containsKey("Time") ? 2 : 1; // ticks since last recharge, accounting for the time potion effect.
 			
-			if (isSwimming() && !potioneffects.containsKey("Swim")) staminaRecharge = 0; //
+			if (isSwimming() && !potioneffects.containsKey("Swim")) staminaRecharge = 0; //don't recharge stamina while swimming.
 			
-			int charge = potioneffects.containsKey("Time") ? 5 : 10;
-			while (staminaRecharge > charge) {
-				staminaRecharge -= charge;
-				if (stamina < maxStamina) stamina++;
+			// recharge a bolt for each multiple of maxStaminaRecharge.
+			while (staminaRecharge > maxStaminaRecharge) {
+				staminaRecharge -= maxStaminaRecharge;
+				if (stamina < maxStamina) stamina++; // recharge one stamina bolt per "charge".
 			}
 		}
 		
 		if (hunger < 0) hunger = 0; // error correction
 		
 		if(stamina < maxStamina) {
-			hungerStamTicks--;
-			if(stamina == 0) hungerStamTicks--;
+			stamHungerTicks--; // affect hunger if not at full stamina; this is 2 levels away from a hunger "burger".
+			if(stamina == 0) stamHungerTicks--; // double effect if no stamina at all.
 		}
-		if(hungerChargeDelay > 0) {
-			hungerStamTicks--;
-			if(hunger == maxHunger) hungerStamTicks--;
-		}
-		
-		if(hungerStamTicks <= 0) {
-			hungerStamTicks = maxHungerTicks;
-			hungerStamCnt++;
-			//if (isSwimming()) hungerStamCnt--;
+		if(hungerChargeDelay > 0) { // if the hunger is recharging health...
+			stamHungerTicks -= 2+OptionsMenu.diff; // penalize the hunger
+			if(hunger == maxHunger) stamHungerTicks -= OptionsMenu.diff; // further penalty if at full hunger
 		}
 		
-		// on easy mode, hunger doesn't deplete?
+		if(stamHungerTicks >= maxHungerTicks) {
+			stamHungerTicks -= maxHungerTicks; // reset stamHungerTicks
+			hungerStamCnt++; // enter 1 level away from burger.
+		}
+		
+		// on easy mode, hunger doesn't deplete from walking or from time.
+		
 		if (OptionsMenu.diff == OptionsMenu.norm) {
-			if (stepCount >= 800) {
+			if(game.tickCount % 5000 == 0 && hunger > 3) hungerStamCnt++; // hunger due to time.
+			
+			if (stepCount >= 800) { // hunger due to exercise.
 				hungerStamCnt++;
-				stepCount = 0;
+				stepCount = 0; // reset.
 			}
 		}
 		if (OptionsMenu.diff == OptionsMenu.hard) {
-			if (stepCount >= 300) {
+			if(game.tickCount % 3000 == 0 && hunger > 0) hungerStamCnt++; // hunger due to time.
+			
+			if (stepCount >= 400) { // hunger due to exercise.
 				hungerStamCnt++;
-				stepCount = 0;
+				stepCount = 0; // reset.
 			}
 		}
 		
-		if (OptionsMenu.diff == OptionsMenu.easy && hungerStamCnt == 10
-			|| OptionsMenu.diff == OptionsMenu.norm && hungerStamCnt == 7
-			|| OptionsMenu.diff == OptionsMenu.hard && hungerStamCnt == 5) {
-			hunger--;
-			hungerStamCnt = 0;
+		int[] stams = {10, 7, 5}; // hungerStamCnt required to lose a burger.
+		while (hungerStamCnt >= stams[OptionsMenu.diff]) {
+			hunger--; // reached burger level.
+			hungerStamCnt -= stams[OptionsMenu.diff];
 		}
-		
-		/*if (hungerChargeDelay == 0) {
-			hungerChargeDelay = 100;
-		}*/
 		
 		/// system that heals you depending on your hunger
 		if (health < maxHealth && hunger > maxHunger/2) {
 			//if (hungerChargeDelay > 0) hungerChargeDelay--;
 			hungerChargeDelay++;
-			if (hungerChargeDelay > 50*Math.pow(maxHunger-hunger+1, 2)) {
+			if (hungerChargeDelay > 20*Math.pow(maxHunger-hunger+2, 2)) {
 				health++;
 				hungerChargeDelay = 0;
 			}
@@ -258,30 +249,17 @@ public class Player extends Mob {
 		if (hungerStarveDelay == 0) {
 			hungerStarveDelay = 120;
 		}
-
-		if (OptionsMenu.diff == OptionsMenu.norm) {
-			if (game.tickCount == 6000) {
-				timesTick++;
-				if (timesTick == random.nextInt(5)) hunger--;
-			}
-		}
-
-		if (OptionsMenu.diff == OptionsMenu.hard) {
-			if (game.tickCount == 6000) {
-				timesTick++;
-				if (timesTick == random.nextInt(2)) hunger--;
-			}
-		}
-
-		if (OptionsMenu.diff == OptionsMenu.easy) {
-			if (hunger == 0 && health > 5) {
+		
+		int[] healths = {5, 3, 0};
+		//if (OptionsMenu.diff == OptionsMenu.easy) {
+			if (hunger == 0 && health > healths[OptionsMenu.diff]) {
 				if (hungerStarveDelay > 0) hungerStarveDelay--;
 				if (hungerStarveDelay == 0) {
 					hurt(this, 1, attackDir); // do 1 damage to the player
 				}
 			}
-		}
-
+		//}
+		/*
 		if (OptionsMenu.diff == OptionsMenu.norm) {
 			if (hunger == 0 && health > 3) {
 				if (hungerStarveDelay > 0) hungerStarveDelay--;
@@ -298,7 +276,7 @@ public class Player extends Mob {
 					hurt(this, 1, attackDir);
 				}
 			}
-		}
+		}*/
 		
 		// this is where movement detection occurs.
 		int xa = 0, ya = 0;
@@ -312,9 +290,11 @@ public class Player extends Mob {
 		}
 		
 		//executes if not saving; and... essentially halves speed if out of stamina.
-		if ((xa != 0 || ya != 0) && staminaRechargeDelay % 2 == 0 && game.savecooldown == 0 && !game.saving) {
+		if ((xa != 0 || ya != 0) && (staminaRechargeDelay % 2 == 0 || isSwimming()) && game.savecooldown == 0 && !game.saving) {
 			double spd = moveSpeed * (potioneffects.containsKey("Time") ? (potioneffects.containsKey("Speed") ? 1.5D : 2) : 1);
+			//System.out.println("move speed: " + spd);
 			boolean moved = move((int) (xa * spd), (int) (ya * spd)); // THIS is where the player moves; part of Mob.java
+			//System.out.println("move successful: " + moved);
 			if(moved) stepCount++;
 		}
 		
@@ -404,7 +384,7 @@ public class Player extends Mob {
 			ToolItem tool = (ToolItem) attackItem;
 			
 			if (tool.type == ToolType.bow && ac > 0) { // if the player is holding a bow, and has arrows...
-				if (!energy) stamina -= 0; // must be a leftover.
+				//if (!energy) stamina -= 0; // must be a leftover.
 				//...then shoot the arrow in the right direction.
 				int spx = 0, spy = 0;
 				switch (attackDir) {
@@ -527,6 +507,7 @@ public class Player extends Mob {
 	private void hurt(int x0, int y0, int x1, int y1) {
 		List<Entity> entities = level.getEntities(x0, y0, x1, y1);
 		for (int i = 0; i < entities.size(); i++) {
+			//if(entities.get(i) instanceof Mob == false) continue;
 			Entity e = entities.get(i);
 			if (e != this) e.hurt(this, getAttackDamage(e), attackDir); // note: this actually DO the actions.
 		}
@@ -551,11 +532,11 @@ public class Player extends Mob {
 			b2 = b < 0 ? 0 : b;
 		}
 		
-		int col0 = Color.get(-1, 100, Color.rgb(r, g, b), 531);
-		int col1 = Color.get(-1, 100, Color.rgb(r, g, b), 532);
-		int col2 = Color.get(-1, 100, Color.rgb(r2, g2, b2), 421);
-		int col3 = Color.get(-1, 0, Color.rgb(r2, g2, b2), 321);
-		int col4 = Color.get(-1, 100, Color.rgb(r, g, b), 532);
+		col0 = Color.get(-1, 100, Color.rgb(r, g, b), 531);
+		col1 = Color.get(-1, 100, Color.rgb(r, g, b), 532);
+		col2 = Color.get(-1, 100, Color.rgb(r2, g2, b2), 421);
+		col3 = Color.get(-1, 0, Color.rgb(r2, g2, b2), 321);
+		col4 = Color.get(-1, 100, Color.rgb(r, g, b), 532);
 		if(isLight()) { // lighter versions
 			col0 = Color.get(-1, 100, Color.rgb(r, g, b), 532);
 			col2 = Color.get(-1, 100, Color.rgb(r, g, b), 532);
@@ -623,7 +604,7 @@ public class Player extends Mob {
 			}
 		}
 		
-		int col = 0; // color of the player
+		col = 0; // color of the player
 		if (level.depth >= 0) {
 			if(Game.time == 0) col = col0;
 			if(Game.time == 1) col = col1;
@@ -649,7 +630,7 @@ public class Player extends Mob {
 			//screen.render(xo + 8 * flip2, yo + 8, xt + (yt + 1) * 32, col, flip2);
 			//screen.render(xo + 8 - 8 * flip2, yo + 8, xt + 1 + (yt + 1) * 32, col, flip2);
 		} else {
-			curSprite.renderRow(curSprite.spritePixels[0], screen, col, xo, yo);
+			curSprite.renderRow(0, screen, col, xo, yo);
 		}
 		
 		// renders slashes:
@@ -807,7 +788,6 @@ public class Player extends Mob {
 	
 	/** What happens when the player dies */
 	protected void die() {
-		super.die(); // calls the die() method in Mob.java
 		int lostscore = score / 3; // finds score penalty
 		score -= lostscore; // subtracts score penalty
 		game.setMultiplier(1);
@@ -830,6 +810,7 @@ public class Player extends Mob {
 		Game.levels[Game.currentLevel].add(dc);
 
 		Sound.playerDeath.play();
+		super.die(); // calls the die() method in Mob.java
 	}
 	
 	/** What happens when the player touches an entity */
