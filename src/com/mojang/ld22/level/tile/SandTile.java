@@ -18,6 +18,7 @@ public class SandTile extends Tile {
 	public SandTile(int id) {
 		super(id);
 		connectsToSand = true;
+		maySpawn = true;
 	}
 
 	public static int col0 = Color.get(443, 440, 330, 440);

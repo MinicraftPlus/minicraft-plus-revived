@@ -15,8 +15,11 @@ import com.mojang.ld22.screen.ModeMenu;
 import com.mojang.ld22.screen.OptionsMenu;
 
 public class CactusTile extends Tile {
+	//Sprite sprite;
+	
 	public CactusTile(int id) {
 		super(id);
+		//sprite = new Sprite(8, 2, 2, 2, Color.get(20, 30, 40, 440), )
 		connectsToSand = true;
 	}
 
@@ -29,6 +32,9 @@ public class CactusTile extends Tile {
 	public static int col3 = Color.get(10, 20, 30, 220);
 
 	public void render(Screen screen, Level level, int x, int y) {
+		
+		//sprite.render(screen, x * 16, y * 16);
+		
 		if (Game.time == 0) {
 			int col = col0;
 			screen.render(x * 16 + 0, y * 16 + 0, 8 + 2 * 32, col, 0);

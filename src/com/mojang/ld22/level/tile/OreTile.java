@@ -16,6 +16,7 @@ import com.mojang.ld22.item.resource.Resource;
 import com.mojang.ld22.level.Level;
 import com.mojang.ld22.screen.ModeMenu;
 
+/// this is all the spikey stuff (except "cloud cactus")
 public class OreTile extends Tile {
 	private Resource toDrop;
 	private int color;

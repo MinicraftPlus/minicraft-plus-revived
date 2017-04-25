@@ -16,6 +16,7 @@ import com.mojang.ld22.sound.Sound;
 public class DirtTile extends Tile {
 	public DirtTile(int id) {
 		super(id);
+		maySpawn = true;
 	}
 
 	public static int dirtc = 0;

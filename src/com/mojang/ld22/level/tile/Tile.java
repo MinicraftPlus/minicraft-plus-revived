@@ -21,12 +21,12 @@ public class Tile {
 	public static Tile tree = new TreeTile(4);
 	public static Tile dirt = new DirtTile(5);
 	//wool
-	public static Tile wool = new WoolTile(41);
-	public static Tile redwool = new WoolRedTile(42);
-	public static Tile bluewool = new WoolBlueTile(43);
-	public static Tile greenwool = new WoolGreenTile(45);
-	public static Tile yellowwool = new WoolYellowTile(127);
-	public static Tile blackwool = new WoolBlackTile(56);
+	public static Tile wool = new WoolTile(41, null);
+	public static Tile redwool = new WoolTile(42, WoolTile.WoolColor.RED);
+	public static Tile bluewool = new WoolTile(43, WoolTile.WoolColor.BLUE);
+	public static Tile greenwool = new WoolTile(45, WoolTile.WoolColor.GREEN);
+	public static Tile yellowwool = new WoolTile(127, WoolTile.WoolColor.YELLOW);
+	public static Tile blackwool = new WoolTile(56, WoolTile.WoolColor.BLACK);
 	public static Tile sand = new SandTile(6);
 	public static Tile cactus = new CactusTile(7);
 	public static Tile hole = new HoleTile(8);
@@ -47,7 +47,7 @@ public class Tile {
 	public static Tile sdo = new StoneDoorOpenTile(37);
 	public static Tile sdc = new StoneDoorClosedTile(38);
 	public static Tile lavabrick = new LavaBrickTile(39);
-	public static Tile sbrick = new StoneBrickTile(32, false);
+	public static Tile sbrick = new StoneBrickTile(32);
 	public static Tile o = new ObsidianBrick(120);
 	public static Tile ow = new ObsidianWallTile(121);
 	public static Tile odc = new ObsidianDoorClosedTile(122);
@@ -109,12 +109,16 @@ public class Tile {
 	public boolean connectsToSand = false;
 	public boolean connectsToLava = false;
 	public boolean connectsToWater = false;
-	public int light = 1;
+	public int light;
+	public boolean maySpawn;
 	
 	public Tile(int id) {
 		this.id = (byte) id;
 		if (tiles[id] != null) throw new RuntimeException("Duplicate tile ids!"); // You cannot have over-lapping ids
 		tiles[id] = this;
+		
+		light = 1;
+		maySpawn = false;
 	}
 	
 	public String setDataChar() {

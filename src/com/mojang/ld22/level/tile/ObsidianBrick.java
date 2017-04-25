@@ -14,6 +14,7 @@ import com.mojang.ld22.sound.Sound;
 public class ObsidianBrick extends Tile {
 	public ObsidianBrick(int id) {
 		super(id);
+		maySpawn = true;
 	}
 
 	public void render(Screen screen, Level level, int x, int y) {

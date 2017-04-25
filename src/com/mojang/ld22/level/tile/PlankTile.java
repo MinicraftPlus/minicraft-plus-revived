@@ -17,6 +17,7 @@ import com.mojang.ld22.sound.Sound;
 public class PlankTile extends Tile {
 	public PlankTile(int id) {
 		super(id);
+		maySpawn = true;
 	}
 
 	public void render(Screen screen, Level level, int x, int y) {

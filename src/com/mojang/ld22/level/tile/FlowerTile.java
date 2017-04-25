@@ -18,6 +18,7 @@ public class FlowerTile extends GrassTile {
 		super(id);
 		tiles[id] = this;
 		connectsToGrass = true;
+		maySpawn = true;
 	}
 
 	public int col0 = Color.get(20, 131, 444, 440);

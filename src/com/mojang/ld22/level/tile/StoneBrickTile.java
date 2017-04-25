@@ -15,11 +15,9 @@ import com.mojang.ld22.level.Level;
 import com.mojang.ld22.sound.Sound;
 
 public class StoneBrickTile extends Tile {
-	boolean nearspawner = false;
-	
-	public StoneBrickTile(int id, boolean nearspawner) {
+	public StoneBrickTile(int id) {
 		super(id);
-		this.nearspawner = nearspawner;
+		maySpawn = true;
 	}
 
 	public void render(Screen screen, Level level, int x, int y) {

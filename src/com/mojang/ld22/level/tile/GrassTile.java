@@ -17,6 +17,7 @@ public class GrassTile extends Tile {
 	public GrassTile(int id) {
 		super(id);
 		connectsToGrass = true;
+		maySpawn = true;
 	}
 
 	public static int col0 = Color.get(131, 131, 141, 322);

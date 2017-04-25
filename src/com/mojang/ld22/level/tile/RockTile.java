@@ -17,6 +17,7 @@ import com.mojang.ld22.item.resource.Resource;
 import com.mojang.ld22.level.Level;
 import com.mojang.ld22.screen.ModeMenu;
 
+/// this is the typical stone you see underground and on the surface, that gives coal.
 public class RockTile extends Tile {
 	public RockTile(int id) {
 		super(id);
@@ -241,15 +242,13 @@ public class RockTile extends Tile {
 	public boolean interact(Level level, int xt, int yt, Player player, Item item, int attackDir) {
 		if (item instanceof ToolItem) {
 			ToolItem tool = (ToolItem) item;
-			if (tool.type == ToolType.pickaxe) {
-				if (player.payStamina(4 - tool.level)) {
-					hurt(level, xt, yt, random.nextInt(10) + (tool.level) * 5 + 10);
-					coallvl = 0;
-					return true;
-				}
+			if (tool.type == ToolType.pickaxe && player.payStamina(4 - tool.level)) {
+				hurt(level, xt, yt, random.nextInt(10) + (tool.level) * 5 + 10);
+				coallvl = 0;
+				return true;
 			}
 		}
-		if (item instanceof ToolItem) {
+		/*if (item instanceof ToolItem) {
 			ToolItem tool = (ToolItem) item;
 			if (tool.type == ToolType.pick) {
 				if (player.payStamina(3 - tool.level)) {
@@ -258,13 +257,16 @@ public class RockTile extends Tile {
 					return true;
 				}
 			}
-		}
+		}*/
 		return false;
 	}
 
 	public void hurt(Level level, int x, int y, int dmg) {
 		int rockHealth;
-		if (ModeMenu.creative) rockHealth = 1;
+		if (ModeMenu.creative) {
+			rockHealth = 1;
+			coallvl = 0;
+		}
 		else {
 			rockHealth = 50;
 		}
