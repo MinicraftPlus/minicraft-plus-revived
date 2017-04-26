@@ -24,14 +24,15 @@ public class InstructionsMenu extends Menu {
 		
 		/* Font.draw Parameters: Font.draw(String text, Screen screen, int x, int y, int color) */
 		
-		Font.drawCentered("HOW TO PLAY", screen, 1 * 8, Color.get(0, 555, 555, 555)); //draws Title text
-		boolean wroteAll = writeParagraph(
+		Font.drawCentered("HOW TO PLAY", screen, 1 * 8, Color.get(0, 555)); //draws Title text
+		Font.drawParagraph(
 		  "Move your character with the arrow keys. Press C to attack and X to open the inventory, and to use items. Select an item in the inventory to equip it. Kill the air wizard to win the game!",
-		  screen, 0, screen.w, 24, screen.h, Color.get(0, 333, 333, 333), true);
+		  screen, 4, 3 * 8, true, 1, Color.get(0, 333));
 		
-		if (!wroteAll) System.out.println("Paragraph was truncated!");
+		//if (remaining.length() > 0) System.out.println("Paragraph was truncated!");
 	}
 	
+	/*
 	private boolean writeParagraph(String para, Screen screen, int minX, int maxX, int minY, int maxY, int color, boolean breakOnSentence) {
 		String[] words = para.split(" ");
 		int curWord = 0, y = minY;
@@ -50,7 +51,5 @@ public class InstructionsMenu extends Menu {
 		
 		if (y > maxY) return false;
 		else return true;
-	}
-	
-	private int textWidth(String text) {return text.length() * 8;}
+	}*/
 }

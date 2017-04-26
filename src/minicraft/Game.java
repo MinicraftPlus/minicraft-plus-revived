@@ -55,7 +55,7 @@ public class Game extends Canvas implements Runnable {
 	/// MANAGERIAL VARS AND RUNNING
 	
 	public static final String NAME = "Minicraft Plus"; // This is the name on the application window
-	public static final String VERSION = "1.9.2-dev1";
+	public static final String VERSION = "1.9.2-dev2";
 	public static final int HEIGHT = 192;
 	public static final int WIDTH = 288;
 	private static float SCALE = 3;
@@ -571,9 +571,9 @@ public class Game extends Canvas implements Runnable {
 			level.renderLight(lightScreen, xScroll, yScroll); // finds (and renders) all the light from objects (like the player, lanterns, and lava).
 			screen.overlay(lightScreen, xScroll, yScroll); // overlays the light screen over the main screen.
 		}
-
+		
 		renderGui(); //renders the GUI.
-
+		
 		if (!hasFocus()) renderFocusNagger(); // calls the renderFocusNagger() method, which creates the "Click to Focus" message.
 
 		for (int y = 0; y < screen.h; y++) {
@@ -659,10 +659,8 @@ public class Game extends Canvas implements Runnable {
 		if (saving) msg = "Saving... " + LoadingMenu.percentage + "%";
 		else if (Bed.inBed) msg = "Sleeping...";
 		
-		if(msg.length() > 0) {
-			Font.draw(msg, screen, screen.centerText(msg)+1, screen.h / 2 - 19, Color.get(-1, 222, 222, 222));
-			Font.draw(msg, screen, screen.centerText(msg), screen.h / 2 - 20, Color.get(-1, 555, 555, 555));
-		}
+		if(msg.length() > 0)
+			Font.drawCentered(msg, screen, screen.h / 2 - 20, Color.get(-1, 555), Color.get(-1, 222));
 		
 		/// NOTIFICATIONS
 		
@@ -772,7 +770,7 @@ public class Game extends Canvas implements Runnable {
 	private void renderFocusNagger() {
 		String msg = "Click to focus!"; // the message when you click off the screen.
 		paused = true; //perhaps paused is only used for this.
-		int xx = screen.centerText(msg); // the width of the box
+		int xx = Font.centerX(msg, 0, screen.w); // the width of the box
 		int yy = (HEIGHT - 8) / 2; // the height of the box
 		int w = msg.length(); // length of message in characters.
 		int h = 1;

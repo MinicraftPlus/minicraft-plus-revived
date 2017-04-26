@@ -22,11 +22,14 @@ public class AboutMenu extends Menu {
 	public void render(Screen screen) {
 		screen.clear(0); // clears the screen to make it black.
 		
-		Font.draw("About MinicraftPlus", screen, 8 * 8 + 4, 1 * 8, Color.get(0, 555, 555, 555));
-		Font.draw("Moded by David.b and +Dillyg10+", screen, 2 * 8 + 4, 3 * 8, Color.get(0, 333, 333, 333));
+		Font.drawCentered("About MinicraftPlus", screen, 1 * 8, Color.get(0, 555));
+		String abouttext = "Moded by David.b and +Dillyg10+, and Chris J. Our goal is to expand Minicraft to be more fun and continuous.\nMinicraft was originally made by Markus Perrson for ludum dare 22 competition.";
+		Font.drawParagraph(abouttext, screen, 4, 3 * 8, true, 1, Color.get(0, 333));
+		
+		/*Font.draw("Moded by David.b and +Dillyg10+", screen, 2 * 8 + 4, 3 * 8, Color.get(0, 333, 333, 333));
 		Font.draw("Our goal is to expand Minicraft to", screen, 1 * 8 + 4, 5 * 8, Color.get(0, 333, 333, 333));
 		Font.draw("be more fun and continuous.", screen, 5 * 8 + 4, 6 * 8, Color.get(0, 333, 333, 333));
 		Font.draw("Minicraft made by Markus Perrson", screen, 1 * 8 + 4, 8 * 8, Color.get(0, 333, 333, 333));
-		Font.draw("for ludum dare 22 competition.", screen, 2 * 8 + 4, 9 * 8, Color.get(0, 333, 333, 333));
+		Font.draw("for ludum dare 22 competition.", screen, 2 * 8 + 4, 9 * 8, Color.get(0, 333, 333, 333));*/
 	}
 }
