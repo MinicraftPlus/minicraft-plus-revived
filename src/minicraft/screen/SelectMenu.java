@@ -30,11 +30,6 @@ public abstract class SelectMenu extends Menu {
 	}
 	
 	public void tick() {
-		/*if(input.getKey("escape").clicked && parent != this) {
-			game.setMenu(parent);
-			return;
-		}*/
-		
 		int prevSel = selected;
 		
 		if(input.getKey("up").clicked) selected--;
