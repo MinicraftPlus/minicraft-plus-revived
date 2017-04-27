@@ -115,8 +115,8 @@ public class Save {
 		int i;
 		int ii;
 		for(l = 0; l < Game.levels.length; l++) {
-			data.add(String.valueOf(WorldGenMenu.sized));
-			data.add(String.valueOf(WorldGenMenu.sized));
+			data.add(String.valueOf(WorldGenMenu.getSize()));
+			data.add(String.valueOf(WorldGenMenu.getSize()));
 			data.add(String.valueOf(Game.levels[l].depth));
 			
 			for(i = 0; i < Game.levels[l].w; i++) {

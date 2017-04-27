@@ -11,6 +11,13 @@ import java.util.List;
 public abstract class Menu {
 	protected Game game;
 	protected InputHandler input;
+	//protected Menu parent;
+	
+	/*public Menu(Menu parent) {
+		this.parent = parent;
+	}
+	public Menu() {}
+	*/
 	
 	public void init(Game game, InputHandler input) {
 		this.input = input;

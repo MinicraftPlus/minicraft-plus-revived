@@ -275,10 +275,12 @@ public class Game extends Canvas implements Runnable {
 		levels = new Level[6];
 		currentLevel = 3;
 		
-		if (WorldGenMenu.sized == WorldGenMenu.sizeNorm) worldSize = 128;
-		else if (WorldGenMenu.sized == WorldGenMenu.sizeBig) worldSize = 256;
-		else if (WorldGenMenu.sized == WorldGenMenu.sizeHuge) worldSize = 512;
-
+		/*if (WorldGenMenu.getSize() == WorldGenMenu.sizeNorm) worldSize = 128;
+		else if (WorldGenMenu.getSize() == WorldGenMenu.sizeBig) worldSize = 256;
+		else if (WorldGenMenu.getSize() == WorldGenMenu.sizeHuge) worldSize = 512;
+		*/
+		worldSize = WorldGenMenu.getSize();
+		
 		if (ModeMenu.score) {
 			scoreTime = newscoreTime;
 		}
@@ -331,7 +333,7 @@ public class Game extends Canvas implements Runnable {
 		
 		DeadMenu.shouldRespawn = true;
 		
-		if(WorldGenMenu.theme == WorldGenMenu.hell) {
+		if(WorldGenMenu.get("Theme").equals("Hell")) {
 			player.inventory.add(new ResourceItem(Resource.lavapotion));
 		}
 	}
