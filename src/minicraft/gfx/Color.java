@@ -27,11 +27,12 @@ public class Color {
 	/** This returns a integer with 4 rgb color values. */
 	public static int get(int a, int b, int c, int d) {
 		//"get()"s each value, and shifts each one's bit to the left the specified number of times
-		return (get(d) << 24) + (get(c) << 16) + (get(b) << 8) + (get(a));
+		return (get(d) << 24) + (get(c) << 16) + (get(b) << 8) + (get(a)); // this seems like far too many bits for how few colors there are in minicraft...
 	}
 	public static int get(int a, int bcd) {
 		return get(a, bcd, bcd, bcd); // just a shortcut.
 	}
+	//public static int get(int abcd) {return get(abcd, abcd, abcd, abcd);}
 	
 	/*//similar to get(), it looks like, but just one value..?
 	public static int pixel(int a) {
@@ -61,7 +62,7 @@ public class Color {
 		return r * 36 + g * 6 + b; // returns (red value * 36) + (green value * 6) + (blue value)
 		
 		// Why do we need all this math to get the colors? I don't even know. -David
-		// Well, looks like this method, at least, changes the number from multiples of ten to multiples of 6; maybe base 6? -Chris J
+		// OH! This is just converting minicraft colors, which can only go 0 to 5, to regular, 8-bit rgb colors, which go from 0 to 255! or... wait, actually, maybe not..? They add up to 216, max... -Chris J
 	}
 	
 	/// this is for color testing.
