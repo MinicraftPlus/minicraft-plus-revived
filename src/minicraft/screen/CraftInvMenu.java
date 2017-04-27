@@ -101,6 +101,6 @@ public class CraftInvMenu extends Menu {
 	}
 	
 	protected void renderFrame(Screen screen, String title, int x0, int y0, int x1, int y1) {
-		Font.renderMenuFrame(screen, title, x0, y0, x1, y1, Color.get(-1, 1, 300, 400), Color.get(300, 300), Color.get(300, 300, 300, 555));
+		renderMenuFrame(screen, title, x0, y0, x1, y1, Color.get(-1, 1, 300, 400), Color.get(300, 300), Color.get(300, 300, 300, 555));
 	}
 }

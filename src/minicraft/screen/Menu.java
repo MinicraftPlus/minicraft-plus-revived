@@ -65,11 +65,11 @@ public abstract class Menu {
 			}
 		}
 
-		draw(title, screen, x0 * 8 + 8, y0 * 8, titleColor);
+		Font.draw(title, screen, x0 * 8 + 8, y0 * 8, titleColor);
 	}
 	
 	/// the default, blue menu frame.
 	protected void renderFrame(Screen screen, String title, int x0, int y0, int x1, int y1) {
-		Font.renderMenuFrame(screen, title, x0, y0, x1, y1, Color.get(-1, 1, 5, 445), Color.get(005, 005), Color.get(5, 5, 5, 550));
+		renderMenuFrame(screen, title, x0, y0, x1, y1, Color.get(-1, 1, 5, 445), Color.get(005, 005), Color.get(5, 5, 5, 550));
 	}
 }

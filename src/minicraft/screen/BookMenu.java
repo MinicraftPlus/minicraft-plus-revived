@@ -91,6 +91,6 @@ public class BookMenu extends Menu {
 	}
 	
 	protected void renderFrame(Screen screen, int x0, int y0, int x1, int y1) {
-		Font.renderMenuFrame(screen, "", x0, y0, x1, y1, Color.get(-1, 1, 554, 554), Color.get(554, 554), Color.get(-1, 222));
+		renderMenuFrame(screen, "", x0, y0, x1, y1, Color.get(-1, 1, 554, 554), Color.get(554, 554), Color.get(-1, 222));
 	}
 }
