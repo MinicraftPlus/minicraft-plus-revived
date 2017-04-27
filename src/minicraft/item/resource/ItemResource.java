@@ -18,7 +18,7 @@ public class ItemResource extends Resource {
 		if (name == "book") {
 			player.game.setMenu(new BookMenu());
 		} else if (name == "Antidious") {
-			player.game.setMenu(new BookMenu(BookMenu.antVenomPages));
+			player.game.setMenu(new BookMenu(BookMenu.antVenomBook));
 		}
 		return false;
 	}
