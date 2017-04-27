@@ -66,9 +66,9 @@ public class CraftingMenu extends Menu {
 	}
 
 	public void render(Screen screen) {
-		Font.renderFrame(screen, "Have", 17, 1, 24, 3); // renders the 'have' items window
-		Font.renderFrame(screen, "Cost", 17, 4, 24, 11); // renders the 'cost' items window
-		Font.renderFrame(screen, "Crafting", 0, 1, 16, 11); // renders the main crafting window
+		renderFrame(screen, "Have", 17, 1, 24, 3); // renders the 'have' items window
+		renderFrame(screen, "Cost", 17, 4, 24, 11); // renders the 'cost' items window
+		renderFrame(screen, "Crafting", 0, 1, 16, 11); // renders the main crafting window
 		renderItemList(screen, 0, 1, 16, 11, recipes, selected); // renders all the items in the recipe list
 
 		if (recipes.size() > 0) {

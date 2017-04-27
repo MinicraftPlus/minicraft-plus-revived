@@ -66,10 +66,10 @@ public class ContainerMenu extends Menu {
 	
 	public void render(Screen screen) {
 		if (window == 1) screen.setOffset(6 * 8, 0); // Offsets the windows for when the player's inventory is selected
-		Font.renderFrame(screen, title, 1, 1, 18, 11); // Renders the chest's window
+		renderFrame(screen, title, 1, 1, 18, 11); // Renders the chest's window
 		renderItemList(screen, 1, 1, 18, 11, container.getItems(), window == 0 ? selected : -oSelected - 1); // renders all the items from the chest's inventory
 
-		Font.renderFrame(screen, "inventory", 19, 1, 15 + 20, 11); // renders the player's inventory
+		renderFrame(screen, "inventory", 19, 1, 15 + 20, 11); // renders the player's inventory
 		renderItemList(screen, 19, 1, 15 + 20, 11, player.inventory.getItems(), window == 1 ? selected : -oSelected - 1); // renders all the items from the player's inventory
 		screen.setOffset(0, 0); // Fixes the offset back to normal
 	}

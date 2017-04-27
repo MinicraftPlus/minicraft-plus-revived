@@ -22,34 +22,9 @@ public class InstructionsMenu extends Menu {
 	public void render(Screen screen) {
 		screen.clear(0); // clears the screen to be a black color.
 		
-		/* Font.draw Parameters: Font.draw(String text, Screen screen, int x, int y, int color) */
-		
 		Font.drawCentered("HOW TO PLAY", screen, 1 * 8, Color.get(0, 555)); //draws Title text
 		Font.drawParagraph(
-		  "Move your character with the arrow keys. Press C to attack and X to open the inventory, and to use items. Select an item in the inventory to equip it. Kill the air wizard to win the game!",
+		  "Move your character with the arrow keys. Press C to attack and X to open the inventory, and to use items. Select an item in the inventory to equip it.\n\nKill the air wizard to win the game!",
 		  screen, 4, 3 * 8, true, 1, Color.get(0, 333));
-		
-		//if (remaining.length() > 0) System.out.println("Paragraph was truncated!");
 	}
-	
-	/*
-	private boolean writeParagraph(String para, Screen screen, int minX, int maxX, int minY, int maxY, int color, boolean breakOnSentence) {
-		String[] words = para.split(" ");
-		int curWord = 0, y = minY;
-		while(curWord < words.length && y <= maxY) {
-			String line = words[curWord];
-			curWord++;
-			while(curWord < words.length && textWidth(line)+textWidth(" "+words[curWord]) < maxX - minX) {
-				line += " "+words[curWord];
-				curWord++;
-				if (breakOnSentence && words[curWord-1].charAt(words[curWord-1].length()-1) == '.')
-					break;
-			}
-			Font.drawCentered(line, screen, y, color);
-			if (curWord < words.length || true) y += 8;
-		}
-		
-		if (y > maxY) return false;
-		else return true;
-	}*/
 }

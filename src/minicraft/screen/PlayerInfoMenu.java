@@ -18,7 +18,7 @@ public class PlayerInfoMenu extends Menu {
 	}
 
 	public void render(Screen screen) {
-		Font.renderFrame(screen, "Player Info", 1, 1, 30, 15);
+		renderFrame(screen, "Player Info", 1, 1, 30, 15);
 
 		int seconds = game.gameTime / game.normSpeed;
 		int minutes = seconds / 60;

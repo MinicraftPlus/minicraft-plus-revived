@@ -53,7 +53,7 @@ public class WonMenu extends Menu {
 	}
 
 	public void writeUnlocks(Screen screen, List unlocks) {
-		Font.renderFrame(screen, "", w + 2, 3, w + 13, 7 + unlocks.size());
+		renderFrame(screen, "", w + 2, 3, w + 13, 7 + unlocks.size());
 		Font.draw("Unlocked!", screen, w * 8 + 32 - 4, 32, Color.get(-1, 50, 50, 50));
 		
 		for(int i = 0; i < unlocks.size(); ++i) {
@@ -104,7 +104,7 @@ public class WonMenu extends Menu {
 		w = Math.max(w, ("Final Score:" + finalscore).length() + 2);
 		w = Math.max(w, ("Press Enter to continue...").length() + 2);
 
-		Font.renderFrame(screen, "", 1, 3, w, 20);
+		renderFrame(screen, "", 1, 3, w, 20);
 		Font.draw("Game Over! (" + ModeMenu.time + ")", screen, 16, 32, Color.get(-1, 555, 555, 555));
 		
 		ArrayList unlocks = new ArrayList();

@@ -64,7 +64,7 @@ public class PauseMenu extends Menu {
 	}
 
 	public void render(Screen screen) {
-		Font.renderFrame(screen, "", 4, 2, 32, 20);
+		renderFrame(screen, "", 4, 2, 32, 20);
 		
 		if (selection == -1) {
 			for (int i = 0; i < 5; i++) {

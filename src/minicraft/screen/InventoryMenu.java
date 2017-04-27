@@ -39,7 +39,7 @@ public class InventoryMenu extends Menu {
 	}
 
 	public void render(Screen screen) {
-		Font.renderFrame(screen, "inventory", 1, 1, 22, 11); // renders the blue box for the inventory
+		renderFrame(screen, "inventory", 1, 1, 22, 11); // renders the blue box for the inventory
 		renderItemList(screen, 1, 1, 22, 11, player.inventory.getItems(), selected); // renders the icon's and names of all the items in your inventory.
 	}
 }

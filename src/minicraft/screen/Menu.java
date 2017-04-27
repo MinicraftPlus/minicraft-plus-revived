@@ -7,8 +7,7 @@ import minicraft.gfx.Font;
 import minicraft.gfx.Screen;
 import java.util.List;
 
-/** TODO Most all menus have a scroll feature... it should be in this class.
-		Frame should also be here..? */
+/** TODO Most all menus have a scroll feature... it should be in this class.*/
 public abstract class Menu {
 	protected Game game;
 	protected InputHandler input;
@@ -47,5 +46,30 @@ public abstract class Menu {
 			Font.draw(">", screen, (xo + 0) * 8, yy * 8, Color.get(-1, 555, 555, 555));
 			Font.draw("<", screen, (xo + w) * 8, yy * 8, Color.get(-1, 555, 555, 555));
 		}
+	}
+	
+	/** This renders the blue frame you see when you open up the crafting/inventory menus.
+	 *  The width & height are based on 4 points (Staring x & y positions (0), and Ending x & y positions (1)). */
+	protected static final void renderMenuFrame(Screen screen, String title, int x0, int y0, int x1, int y1, int sideColor, int midColor, int titleColor) {
+		for (int y = y0; y <= y1; y++) { // loop through the height of the frame
+			for (int x = x0; x <= x1; x++) { // loop through the width of the frame
+				
+				boolean xend = x == x0 || x == x1;
+				boolean yend = y == y0 || y == y1;
+				int spriteoffset = (xend && yend ? 0 : (yend ? 1 : 2)); // determines which sprite to use
+				int mirrors = ( x == x1 ? 1 : 0 ) + ( y == y1 ? 2 : 0 ); // gets mirroring
+				
+				int color = xend || yend ? sideColor : midColor;//sideColor; // gets the color; slightly different in upper right corner, and middle is all blue.
+				
+				screen.render(x * 8, y * 8, spriteoffset + 13 * 32, color, mirrors);
+			}
+		}
+
+		draw(title, screen, x0 * 8 + 8, y0 * 8, titleColor);
+	}
+	
+	/// the default, blue menu frame.
+	protected void renderFrame(Screen screen, String title, int x0, int y0, int x1, int y1) {
+		Font.renderMenuFrame(screen, title, x0, y0, x1, y1, Color.get(-1, 1, 5, 445), Color.get(005, 005), Color.get(5, 5, 5, 550));
 	}
 }

@@ -66,9 +66,10 @@ public class CraftInvMenu extends Menu {
 	}
 
 	public void render(Screen screen) {
-		Font.rendercraftFrame(screen, "Have", 15, 1, 22, 3);
-		Font.rendercraftFrame(screen, "Cost", 15, 4, 22, 11);
-		Font.rendercraftFrame(screen, "Crafting", 0, 1, 14, 11);
+		renderFrame(screen, "Have", 15, 1, 22, 3);
+		renderFrame(screen, "Cost", 15, 4, 22, 11);
+		renderFrame(screen, "Crafting", 0, 1, 14, 11);
+		
 		renderItemList(screen, 0, 1, 14, 11, recipes, selected);
 		
 		if (recipes.size() > 0) {
@@ -97,5 +98,9 @@ public class CraftInvMenu extends Menu {
 				Font.draw("" + requiredAmt + "/" + has, screen, xo + 8, yo, color);
 			}
 		}
+	}
+	
+	protected void renderFrame(Screen screen, String title, int x0, int y0, int x1, int y1) {
+		Font.renderMenuFrame(screen, title, x0, y0, x1, y1, Color.get(-1, 1, 300, 400), Color.get(300, 300), Color.get(300, 300, 300, 555));
 	}
 }
