@@ -197,6 +197,8 @@ public class Load {
 			Game.astime = Integer.parseInt(data.get(2));
 			Game.autosave = Boolean.parseBoolean(data.get(3));
 			OptionsMenu.isSoundAct = Boolean.parseBoolean(data.get(4));
+			if(worldVer.compareTo(new Version("1.9.2-dev2")) >= 0)
+				AirWizard.beaten = Boolean.parseBoolean(data.get(5));
 		}
 		else {
 			if(data.size() == 5) {

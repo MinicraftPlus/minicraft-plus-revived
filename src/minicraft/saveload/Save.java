@@ -100,6 +100,7 @@ public class Save {
 		data.add(String.valueOf(Game.astime));
 		data.add(String.valueOf(Game.autosave));
 		data.add(String.valueOf(OptionsMenu.isSoundAct));
+		data.add(String.valueOf(AirWizard.beaten));
 		writeToFile(location + filename + extention, data);
 	}
 	
