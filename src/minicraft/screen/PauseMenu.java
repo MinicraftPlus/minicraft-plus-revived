@@ -5,34 +5,30 @@ import minicraft.gfx.Color;
 import minicraft.gfx.Font;
 import minicraft.gfx.Screen;
 import minicraft.saveload.Save;
+import java.util.Arrays;
+import java.util.ArrayList;
 
-public class PauseMenu extends Menu {
+public class PauseMenu extends SelectMenu {
 
-	private int selected, selection; //selection is set when you press enter.
+	private int selection; //selection is set when you press enter.
 	Player player;
 
-	private static final String[] options =
-			new String[] {"Return to Game", "Options", "Save Game", "Load Game", "Main Menu"};
+	private static final String[] options = {"Return to Game", "Options", "Save Game", "Load Game", "Main Menu"};
 
 	public PauseMenu(Player player) {
+		super(options, 8*11 - 35, 8, Color.get(-1, 555), Color.get(-1, 222));
 		this.player = player;
-		selected = 0;
-		selection = -1;
+		selection = -1; // set to main pause menu options.
 	}
 
 	public void tick() {
-
-		if (input.getKey("pause").clicked) game.setMenu((Menu) null);
-
-		//note: b/c comfirm menus have no cursor, "selected" doesn't matter after presing enter...
-		if (input.getKey("up").clicked) selected--;
-		if (input.getKey("down").clicked) selected++;
-
-		//int len = options.length;
-		if (selected < 0) selected = options.length - 1;
-
-		if (selected >= options.length) selected = 0;
-
+		if (input.getKey("pause").clicked) {
+			game.setMenu((Menu) null);
+			return;
+		}
+		
+		super.tick(); // process key input
+		
 		//choice chosen; input here is at confirm menu
 		if (input.getKey("enter").clicked) {
 
@@ -48,7 +44,7 @@ public class PauseMenu extends Menu {
 			}
 
 			if (selection == 3) { //load game option; can't return
-				WorldSelectMenu m = new WorldSelectMenu(new TitleMenu());
+				WorldSelectMenu m = new WorldSelectMenu();
 				WorldSelectMenu.loadworld = true;
 				m.createworld = false;
 				game.setMenu(m);
@@ -64,44 +60,30 @@ public class PauseMenu extends Menu {
 	}
 
 	public void render(Screen screen) {
-		renderFrame(screen, "", 4, 2, 32, 20);
+		renderFrame(screen, "", 4, 2, 32, 20); // draw the blue menu frame.
 		
-		if (selection == -1) {
-			for (int i = 0; i < 5; i++) {
-				String msg1 = options[i];
-				int col = Color.get(-1, 222, 222, 222);
-				if (i == selected) {
-					msg1 = ">" + msg1 + "<";
-					col = Color.get(-1, 555, 555, 555);
-				}
-
-				Font.drawCentered(msg1, screen, (8 + i) * 12 - 35, col);
-				Font.drawCentered("Paused", screen, 35, Color.get(-1, 550, 550, 550));
-				Font.drawCentered("Arrow Keys to Scroll", screen, 135, Color.get(-1, 333, 333, 333));
-				Font.drawCentered("Enter: Choose", screen, 145, Color.get(-1, 333, 333, 333));
-			}
+		if (selection == -1) { // still displaying main options menu.
+			super.render(screen); // render the main options menu.
+			Font.drawCentered("Paused", screen, 35, Color.get(-1, 550));
+			Font.drawCentered("Arrow Keys to Scroll", screen, 135, Color.get(-1, 333));
+			Font.drawCentered("Enter: Choose", screen, 145, Color.get(-1, 333));
 		} else {
-			int confirmY1 = 0, confirmY2 = 0;
-			if (selection == 2) {
-				Font.drawCentered("Save Game?", screen, 60, Color.get(-1, 555, 555, 555));
-				confirmY1 = 80;
-				confirmY2 = 95;
-			} else if (selection == 3) {
-				Font.drawCentered("Load Game?", screen, 60, Color.get(-1, 555, 555, 555));
-				Font.drawCentered("Current game will", screen, 70, Color.get(-1, 500, 500, 500));
-				Font.drawCentered("not be saved", screen, 80, Color.get(-1, 500, 500, 500));
-				confirmY1 = 100;
-				confirmY2 = 115;
-			} else if (selection == 4) {
-				Font.drawCentered("Back to Main Menu?", screen, 60, Color.get(-1, 555, 555, 555));
-				Font.drawCentered("Current game will", screen, 70, Color.get(-1, 500, 500, 500));
-				Font.drawCentered("not be saved", screen, 80, Color.get(-1, 500, 500, 500));
-				confirmY1 = 100;
-				confirmY2 = 115;
+			ArrayList<String> confirmDialog = new ArrayList<String>();
+			
+			if (selection == 2) // save game
+				confirmDialog.add("Save Game?");
+			else if (selection == 3) // load game
+				confirmDialog.addAll(Arrays.asList(Font.getLines("Load Game?\nCurrent game will\nnot be saved", 28*8, 18*8, 2)));
+			else if (selection == 4) // back to menu
+				confirmDialog.addAll(Arrays.asList(Font.getLines("Back to Main Menu?\nCurrent game will\nnot be saved", 28*8, 18*8, 2)));
+			
+			for(int i = 0; i < confirmDialog.size(); i++) { // draws each line from above; the first line is white, and all the following lines are red.
+				int col = i == 0 ? Color.get(-1, 555) : Color.get(-1, 500);
+				Font.drawCentered(confirmDialog.get(i), screen, 60+i*10, col); // draw it centered.
 			}
-
-			Font.drawCentered("Enter: Yes", screen, confirmY1, Color.get(-1, 555, 555, 555));
-			Font.drawCentered("Esc: No", screen, confirmY2, Color.get(-1, 555, 555, 555));
+			int ypos = 70 + confirmDialog.size()*10; // start 20 below the last element...
+			Font.drawCentered("Enter: Yes", screen, ypos, Color.get(-1, 555));
+			Font.drawCentered("Esc: No", screen, ypos+15, Color.get(-1, 555));
 		}
 	}
 }
