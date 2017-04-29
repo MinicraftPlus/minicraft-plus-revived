@@ -9,19 +9,19 @@ import java.util.Arrays;
 public class WorldGenMenu extends SelectMenu {
 	//this the the "more world options" menu.
 	
-	public static final int[] sizes = {128, 256, 512};
+	private static final int[] sizes = {128, 256, 512};
 	
-	public static final String[] options = {"Theme", "Type", "Size"};
-	public static final String[][] optionSets = {
+	private static final String[] settings = {"Theme", "Type", "Size"};
+	private static final String[][] choices = {
 		{"Normal", "Forest", "Desert", "Plain", "Hell"}, //theme
 		{"Island", "Box", "Mountain", "Irregular"}, //type
 		{"Normal (128 x 128)", "Big (256 x 256)", "Huge (512 x 512)"} //size
 	};
 	
-	public static int[] selections = new int[optionSets.length];
+	private static int[] selections = new int[choices.length];
 	
 	public WorldGenMenu() {
-		super(Arrays.copyOf(options, options.length), 8 * 8 + 4, 8 * 8, 12);
+		super(Arrays.copyOf(settings, settings.length), 8 * 8 + 4, 8 * 8, 8, Color.get(-1, 555), Color.get(-1, 111));
 	}
 	
 	public void tick() {
@@ -36,8 +36,8 @@ public class WorldGenMenu extends SelectMenu {
 		if (input.getKey("left").clicked) selections[selected]--;
 		if (input.getKey("right").clicked) selections[selected]++;
 		
-		if(selections[selected] >= optionSets[selected].length) selections[selected] = 0;
-		if(selections[selected] < 0) selections[selected] = optionSets[selected].length - 1;
+		if(selections[selected] >= choices[selected].length) selections[selected] = 0;
+		if(selections[selected] < 0) selections[selected] = choices[selected].length - 1;
 		
 		if(prevSel != selections[selected]) Sound.craft.play();
 	}
@@ -45,8 +45,8 @@ public class WorldGenMenu extends SelectMenu {
 	public void render(Screen screen) {
 		screen.clear(0);
 		
-		for(int i = 0; i < options.length; i++) {
-			choices[i] = options[i] + ": " + optionSets[i][selections[i]];
+		for(int i = 0; i < settings.length; i++) {
+			options[i] = settings[i] + ": " + choices[i][selections[i]];
 		}
 		
 		super.render(screen);
@@ -57,16 +57,17 @@ public class WorldGenMenu extends SelectMenu {
 	}
 	
 	private static int getIdx(String query) {
-		for(int i = 0; i < options.length; i++) {
-			if(options[i].equals(query))
+		for(int i = 0; i < settings.length; i++) {
+			if(settings[i].equals(query))
 				return i;
 		}
 		return -1;
 	}
+	
 	public static String get(String query) {
 		int idx = getIdx(query);
 		if(idx >= 0)
-			return optionSets[idx][selections[idx]];
+			return choices[idx][selections[idx]];
 		return "";
 	}
 	
