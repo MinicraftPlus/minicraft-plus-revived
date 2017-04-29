@@ -19,8 +19,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Random;
 
-public class TitleMenu extends Menu {
-	private int selected = 0;
+public class TitleMenu extends SelectMenu {
 	protected final Random random = new Random();
 	private static final String[] options = {"New game", "Instructions", "Tutorial", "Options", "About", "Quit"/*, "Kill"*/}; // Options that are on the main menu.
 	int rand;
@@ -139,6 +138,7 @@ public class TitleMenu extends Menu {
 	};
 	
 	public TitleMenu() {
+		super(options, 11*8, 1, Color.get(0, 555), Color.get(0, 222));
 		folder = new File(location);
 		
 		rand = random.nextInt(splashes.length);
@@ -147,17 +147,7 @@ public class TitleMenu extends Menu {
 	
 	/*public void getSplashes() {
 		if(!loadedsplashes) {
-			//The fun little messages that pop up.
-			String[] splashes = {
-				
-				"MissingNo " + rand
-			};
-			this.splashes = new ArrayList<String>();
-			for(int i = 0; i < splashes.length; i++)
-				if(!this.splashes.contains(splashes[i]))
-					this.splashes.add(splashes[i]);
-			*/
-			/*try {
+			try {
 				URL br = new URL("http://minicraftplus.webs.com/-splashes.txt");
 				URLConnection e = br.openConnection();
 				e.setReadTimeout(1000);
@@ -189,8 +179,8 @@ public class TitleMenu extends Menu {
 				splashes.clear();
 				splashes.add("Offline Mode :<");
 			}
-			*/
-			/*loadedsplashes = true;
+			
+			loadedsplashes = true;
 		}
 	}*/
 	
@@ -257,18 +247,10 @@ public class TitleMenu extends Menu {
 
 		ModeMenu.times.clear();
 		loadedunlocks = true;
-		//}
 	}
-
+	
 	public void tick() {
-		if (input.getKey("up").clicked) selected--;
-		if (input.getKey("down").clicked) selected++;
-		if (input.getKey("up").clicked) Sound.pickup.play();
-		if (input.getKey("down").clicked) Sound.pickup.play();
-		
-		int len = options.length;
-		if (selected < 0) selected += len;
-		if (selected >= len) selected -= len;
+		super.tick();
 		
 		if (input.getKey("r").clicked) rand = random.nextInt(splashes.length);
 		
@@ -321,24 +303,15 @@ public class TitleMenu extends Menu {
 			}
 		}
 		
-		/* This section is used to display this options on the screen */
-		for (int i = 0; i < options.length; i++) {
-			String msg = options[i];
-			int col = Color.get(0, 222, 222, 222); // Color of unselected text
-			if (i == selected) { //if current option is selected...
-				msg = "> " + msg + " <"; // Add the cursors to the sides of the message
-				col = Color.get(0, 555, 555, 555); //make it selected color
-			}
-			Font.draw(msg, screen, (screen.w - msg.length() * 8) / 2, (11 + i) * 8, col);
-		}
+		/* This is used to display this options on the screen */
+		super.render(screen);
 		
 		boolean isblue = splashes[rand].contains("blue");
 		
-		if (count <= 5) cols = isblue?cols = Color.get(0, 5, 5, 5):Color.get(0, 505, 550, 550);
-		if (count <= 10 && count > 5) cols = isblue?cols = Color.get(0, 4, 4, 4):Color.get(0, 405, 440, 440);
-		if (count <= 15 && count > 10) cols = isblue?cols = Color.get(0, 3, 3, 3):Color.get(0, 305, 330, 330);
-		if (count <= 20 && count > 15) cols = isblue?cols = Color.get(0, 2, 2, 2):Color.get(0, 205, 220, 220);
-		if (count <= 25 && count > 20) cols = isblue?cols = Color.get(0, 1, 1, 1):Color.get(0, 5, 110, 110);
+		/// this isn't as complicated as it looks. It just gets a color based off of count, which oscilates between 0 and 25.
+		int bcol = 5 - count / 5; // this number ends up being between 1 and 5, inclusive.
+		cols = isblue ? Color.get(0, bcol) : Color.get(0, (bcol-1)*100+5, bcol*100+bcol*10, bcol*100+bcol*10);
+		// *100 means red, *10 means green; simple.
 		
 		Font.drawCentered(splashes[rand], screen, 60, cols);
 		
