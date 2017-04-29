@@ -682,8 +682,7 @@ public class Game extends Canvas implements Runnable {
 				String note = ((String) notifications.get(i));
 				int x = screen.w / 2 - note.length() * 8 / 2,
 				  y = screen.h - 120 - notifications.size()*8 + i * 8;
-				Font.draw(note, screen, x + 1, y + 1, Color.get(-1, 111, 111, 111));
-				Font.draw(note, screen, x, y, Color.get(-1, 555, 555, 555));
+				Font.draw(note, screen, x, y, Color.get(-1, 555), Color.get(-1, 111));
 			}
 		}
 		
