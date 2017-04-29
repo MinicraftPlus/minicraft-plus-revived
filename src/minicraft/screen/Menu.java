@@ -31,7 +31,7 @@ public abstract class Menu {
 	public void renderItemList(Screen screen, int xo, int yo, int x1, int y1,
 	  List<? extends ListItem> listItems, int selected) {
 		boolean renderCursor = true;
-		if (selected < 0) {
+		if (selected < 0) { // this is set to negative purposely for the express reason of disabling the cursor.
 			selected = -selected - 1;
 			renderCursor = false;
 		}
@@ -41,7 +41,7 @@ public abstract class Menu {
 		int i1 = listItems.size();
 		if (i1 > h) i1 = h;
 		int io = selected - h / 2;
-		if (io > listItems.size() - h) io = listItems.size() - h;
+		if (io > listItems.size() - h) io = listItems.size() - h; /// this is what stops the inventory from scrolling when you reach the bottom.
 		if (io < 0) io = 0;
 		
 		for (int i = i0; i < i1; i++) {

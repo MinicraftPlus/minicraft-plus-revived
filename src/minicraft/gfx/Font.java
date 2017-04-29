@@ -28,6 +28,13 @@ public class Font {
 		draw(msg, screen, x+1, y+1, colShadow);
 		draw(msg, screen, x, y, colMain);
 	}
+	public static void drawOutlined(String msg, Screen screen, int x, int y, int col, int colBG) {
+	    draw(msg, screen, x, y-1, colBG);
+	    draw(msg, screen, x, y+1, colBG);
+	    draw(msg, screen, x-1, y, colBG);
+	    draw(msg, screen, x+1, y, colBG);
+	    draw(msg, screen, x, y, col);
+	}
 	
 	public static int textWidth(String text) {
 		return text.length() * 8;
