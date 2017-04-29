@@ -9,9 +9,7 @@ import java.io.File;
 import java.util.ArrayList;
 
 public class WorldSelectMenu extends Menu {
-
-	private Menu parent;
-
+	
 	private int selected = 0; //index of action; load or create.
 	private int worldselected = 0; //index of selected world?
 	public static boolean loadworld = false;
@@ -30,8 +28,7 @@ public class WorldSelectMenu extends Menu {
 	public int tick;
 	int wncol;
 
-	public WorldSelectMenu(Menu parent) {
-		this.parent = parent; //Always TitleMenu?
+	public WorldSelectMenu() {
 		tick = 0;
 		wncol = Color.get(0, 5, 5, 5);
 
@@ -124,7 +121,7 @@ public class WorldSelectMenu extends Menu {
 				createworld = false;
 				loadworld = false;
 				if (worldnames.size() > 0) {
-					game.setMenu(new WorldSelectMenu(parent));
+					game.setMenu(new WorldSelectMenu());
 				} else {
 					game.setMenu(new TitleMenu());
 				}
@@ -176,7 +173,7 @@ public class WorldSelectMenu extends Menu {
 				name = "";
 				world = new File(location + "/" + worldnames.get(worldselected));
 				world.renameTo(new File(location + "/" + worldname));
-				game.setMenu(new WorldSelectMenu(parent));
+				game.setMenu(new WorldSelectMenu());
 				tick = 0;
 				rename = false;
 			}

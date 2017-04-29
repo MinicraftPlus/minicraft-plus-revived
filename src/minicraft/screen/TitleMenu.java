@@ -265,9 +265,8 @@ public class TitleMenu extends SelectMenu {
 		if (input.getKey("enter").clicked) {
 			if (options[selected] == "New game") {
 				WorldSelectMenu.loadworld = false;
-				game.setMenu(new WorldSelectMenu(this));
+				game.setMenu(new WorldSelectMenu());
 				//(this method should now stop getting called by Game)
-				//BUT: this object is passed to WorldSelectMenu... to go back to?
 			}
 			if(options[selected] == "Instructions") game.setMenu(new InstructionsMenu(this));
 			if (options[selected] == "Tutorial") {
