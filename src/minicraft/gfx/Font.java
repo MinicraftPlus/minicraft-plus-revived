@@ -99,9 +99,12 @@ public class Font {
 				for(char c = text.current(); c != StringCharacterIterator.DONE && c != ' ' && c != '\n'; c = text.next()) {
 					nextWord += String.valueOf(c); // iterate through text from curPos, until the end of the text, or a space, or special char.
 				}
-				if(text.current() == ' ' && line.equals("")) curPos++; // if we ended on a space, advance past the space.
-				int tw = textWidth(line) + textWidth(nextWord);
+				if(text.current() != ' ' && curPos+nextWord.length() < para.length())
+					curPos--; // if we didn't end on a space, and this is going to loop again, then take away one from curPos (b/c we are adding a space that wasn't there before, and so without this we would skip a character).
+				if(text.current() == ' ' && line.equals(""))
+					curPos++; // if we ended on a space, advance past the space.
 			}
+			
 			lines.add(line); // add the finished line to the list
 			curY += textHeight() + lineSpacing; // move the y position down one line.
 		}
