@@ -150,4 +150,12 @@ public class Inventory {
 	public int count(Resource r) {
 		return count(findResource(r));
 	}
+	
+	public String[] getItemNames() {
+		String[] names = new String[items.size()];
+		for(int i = 0; i < items.size(); i++)
+			names[i] = items.get(i).getName();
+		
+		return names;
+	}
 }
