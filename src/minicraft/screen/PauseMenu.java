@@ -7,6 +7,7 @@ import minicraft.gfx.Screen;
 import minicraft.saveload.Save;
 import java.util.Arrays;
 import java.util.ArrayList;
+import java.util.List;
 
 public class PauseMenu extends SelectMenu {
 
@@ -16,14 +17,14 @@ public class PauseMenu extends SelectMenu {
 	private static final String[] options = {"Return to Game", "Options", "Save Game", "Load Game", "Main Menu"};
 
 	public PauseMenu(Player player) {
-		super(options, 8*11 - 35, 8, Color.get(-1, 555), Color.get(-1, 222));
+		super(Arrays.asList(options), 8*11 - 35, 8, Color.get(-1, 555), Color.get(-1, 222));
 		this.player = player;
 		selection = -1; // set to main pause menu options.
 	}
 
 	public void tick() {
 		if (input.getKey("pause").clicked) {
-			game.setMenu((Menu) null);
+			game.setMenu(null);
 			return;
 		}
 		

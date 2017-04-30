@@ -21,7 +21,7 @@ public class WorldGenMenu extends SelectMenu {
 	private static int[] selections = new int[choices.length];
 	
 	public WorldGenMenu() {
-		super(Arrays.copyOf(settings, settings.length), 8 * 8 + 4, 8 * 8, 8, Color.get(-1, 555), Color.get(-1, 111));
+		super(Arrays.asList(settings), 8 * 8 + 4, 8 * 8, 8, Color.get(-1, 555), Color.get(-1, 111));
 	}
 	
 	public void tick() {
@@ -46,7 +46,7 @@ public class WorldGenMenu extends SelectMenu {
 		screen.clear(0);
 		
 		for(int i = 0; i < settings.length; i++) {
-			options[i] = settings[i] + ": " + choices[i][selections[i]];
+			options.set(i, settings[i] + ": " + choices[i][selections[i]]);
 		}
 		
 		super.render(screen);

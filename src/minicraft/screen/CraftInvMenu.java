@@ -9,10 +9,12 @@ import minicraft.item.Item;
 import minicraft.item.ResourceItem;
 import minicraft.sound.Sound;
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 
+/// this is the "z" personal crafting menu.
 public class CraftInvMenu extends Menu {
 	private Player player;
 	private int selected = 0;
@@ -40,7 +42,7 @@ public class CraftInvMenu extends Menu {
 
 	public void tick() {
 		if (input.getKey("craft").clicked) game.setMenu(null);
-
+		
 		if (input.getKey("up").clicked) selected--;
 		if (input.getKey("down").clicked) selected++;
 		if (input.getKey("up").clicked) Sound.pickup.play();
@@ -50,7 +52,7 @@ public class CraftInvMenu extends Menu {
 		if (len == 0) selected = 0;
 		if (selected < 0) selected += len;
 		if (selected >= len) selected -= len;
-
+		
 		if (input.getKey("attack").clicked && len > 0) {
 			Recipe r = recipes.get(selected);
 			r.checkCanCraft(player);

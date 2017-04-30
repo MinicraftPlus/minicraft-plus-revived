@@ -151,10 +151,10 @@ public class Inventory {
 		return count(findResource(r));
 	}
 	
-	public String[] getItemNames() {
-		String[] names = new String[items.size()];
+	public List<String> getItemNames() {
+		List<String> names = new ArrayList<String>();
 		for(int i = 0; i < items.size(); i++)
-			names[i] = items.get(i).getName();
+			names.add(items.get(i).getName());
 		
 		return names;
 	}

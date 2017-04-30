@@ -5,6 +5,8 @@ import minicraft.gfx.Screen;
 import minicraft.gfx.Font;
 import minicraft.gfx.Color;
 import java.util.Arrays;
+import java.util.ArrayList;
+import java.util.List;
 
 public class ScrollingMenu extends SelectMenu {
 	
@@ -15,16 +17,16 @@ public class ScrollingMenu extends SelectMenu {
 	
 	protected int offset; // since not all elements are displayed at once, this determines which item is at the top.
 	
-	private ScrollingMenu(String[] options, int displayLength, int x, int y, boolean centered, int spacing, int colSel, int colNoSel) {
+	private ScrollingMenu(List<String> options, int displayLength, int x, int y, boolean centered, int spacing, int colSel, int colNoSel) {
 		super(options, x, y, centered, spacing, colSel, colNoSel);
-		dispSize = Math.min(displayLength, options.length);
+		dispSize = Math.min(displayLength, options.size());
 		
 		padding = (dispSize+1)/2; // I may or may not choose to make this editable.
 	}
-	public ScrollingMenu(String[] options, int displayLength, int x, int y, int spacing, int colSel, int colNoSel) {
+	public ScrollingMenu(List<String> options, int displayLength, int x, int y, int spacing, int colSel, int colNoSel) {
 		this(options, displayLength, x, y, false, spacing, colSel, colNoSel);
 	}
-	public ScrollingMenu(String[] options, int displayLength, int y, int spacing, int colSel, int colNoSel) {
+	public ScrollingMenu(List<String> options, int displayLength, int y, int spacing, int colSel, int colNoSel) {
 		this(options, displayLength, 0, y, true, spacing, colSel, colNoSel);
 	}
 	
@@ -38,17 +40,17 @@ public class ScrollingMenu extends SelectMenu {
 		if(dispSelected > dispSize-1) dispSelected = dispSize - 1;
 		offset = selected - dispSelected;
 		if(dispSelected < padding && offset > 0) dispSelected = padding-1; // if the cursor is above halfway, and we have space to scroll up, then move the cursor back to the middle.
-		if(dispSelected > dispSize-padding && offset+dispSize < options.length) dispSelected = dispSize-padding; // if the cursor is below halfway, and we have space to scroll down, then move the cursor back to the middle.
+		if(dispSelected > dispSize-padding && offset+dispSize < options.size()) dispSelected = dispSize-padding; // if the cursor is below halfway, and we have space to scroll down, then move the cursor back to the middle.
 		
-		// when there are no more items to scroll, offset+dispSize == options.length
+		// when there are no more items to scroll, offset+dispSize == options.size()
 	}
 	
 	public void render(Screen screen) {
-		if(offset + dispSize > options.length)
-			offset = options.length - dispSize;
+		if(offset + dispSize > options.size())
+			offset = options.size() - dispSize;
 		if(offset < 0)
 			offset = 0;
 		
-		super.renderAs(screen, Arrays.copyOfRange(options, offset, offset + dispSize), dispSelected); // renders the list with the super classes parameters, but temp. replacing the array and index.
+		super.renderAs(screen, options.subList(offset, offset + dispSize), dispSelected); // renders the list with the super classes parameters, but temp. replacing the array and index.
 	}
 }

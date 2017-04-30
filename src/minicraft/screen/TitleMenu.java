@@ -14,6 +14,7 @@ import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
@@ -138,7 +139,7 @@ public class TitleMenu extends SelectMenu {
 	};
 	
 	public TitleMenu() {
-		super(options, 11*8, 1, Color.get(0, 555), Color.get(0, 222));
+		super(Arrays.asList(options), 11*8, 1, Color.get(0, 555), Color.get(0, 222));
 		folder = new File(location);
 		
 		rand = random.nextInt(splashes.length);
