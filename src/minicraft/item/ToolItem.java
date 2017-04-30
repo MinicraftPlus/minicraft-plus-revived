@@ -1,5 +1,6 @@
 package minicraft.item;
 
+import java.util.Random;
 import minicraft.entity.Entity;
 import minicraft.entity.ItemEntity;
 import minicraft.entity.Player;
@@ -9,7 +10,6 @@ import minicraft.gfx.Screen;
 import minicraft.level.Level;
 import minicraft.level.tile.Tile;
 import minicraft.screen.ModeMenu;
-import java.util.Random;
 
 public class ToolItem extends Item {
 	private Random random = new Random();

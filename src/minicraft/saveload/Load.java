@@ -1,5 +1,13 @@
 package minicraft.saveload;
 
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileReader;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Iterator;
+import java.util.List;
 import minicraft.Game;
 import minicraft.entity.AirWizard;
 import minicraft.entity.Anvil;
@@ -39,14 +47,6 @@ import minicraft.level.tile.Tile;
 import minicraft.screen.LoadingMenu;
 import minicraft.screen.ModeMenu;
 import minicraft.screen.OptionsMenu;
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileReader;
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Iterator;
-import java.util.List;
 
 
 // I may want to consider a "LegacyLoad class in the near future, simply to reduce the clutter and really allow me to "start fresh". :)

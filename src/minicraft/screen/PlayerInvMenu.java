@@ -1,14 +1,6 @@
 package minicraft.screen;
 
 import minicraft.entity.Player;
-import minicraft.gfx.Color;
-import minicraft.gfx.Font;
-import minicraft.gfx.Screen;
-import minicraft.sound.Sound;
-import minicraft.item.ResourceItem;
-import minicraft.item.Item;
-import java.util.List;
-import java.util.Arrays;
 
 public class PlayerInvMenu extends InventoryMenu {
 	private Player player;

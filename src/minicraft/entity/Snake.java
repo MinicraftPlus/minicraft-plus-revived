@@ -4,9 +4,7 @@ import minicraft.Game;
 import minicraft.gfx.Color;
 import minicraft.gfx.MobSprite;
 import minicraft.gfx.Screen;
-import minicraft.item.ResourceItem;
 import minicraft.item.resource.Resource;
-import minicraft.screen.ModeMenu;
 import minicraft.screen.OptionsMenu;
 
 public class Snake extends EnemyMob {

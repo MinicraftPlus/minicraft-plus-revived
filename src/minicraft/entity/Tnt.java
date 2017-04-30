@@ -1,12 +1,12 @@
 //new class, no comments.
 package minicraft.entity;
 
-import minicraft.gfx.Color;
-import minicraft.level.tile.Tile;
-import minicraft.sound.Sound;
 import java.awt.event.*;
 import java.util.*;
 import javax.swing.Timer;
+import minicraft.gfx.Color;
+import minicraft.level.tile.Tile;
+import minicraft.sound.Sound;
 
 public class Tnt extends Furniture implements ActionListener {
 	private static int MAX_FUSE_TIME = 60;

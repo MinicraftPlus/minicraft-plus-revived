@@ -1,5 +1,7 @@
 package minicraft.item;
 
+import java.util.ArrayList;
+import java.util.List;
 import minicraft.entity.Anvil;
 import minicraft.entity.Bed;
 import minicraft.entity.Chest;
@@ -14,8 +16,6 @@ import minicraft.entity.Spawner;
 import minicraft.entity.Tnt;
 import minicraft.entity.Workbench;
 import minicraft.item.resource.Resource;
-import java.util.ArrayList;
-import java.util.List;
 
 public class ListItems {
 

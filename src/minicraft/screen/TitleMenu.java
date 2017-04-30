@@ -1,11 +1,5 @@
 package minicraft.screen;
 
-import minicraft.Game;
-import minicraft.GameApplet;
-import minicraft.gfx.Color;
-import minicraft.gfx.Font;
-import minicraft.gfx.Screen;
-import minicraft.sound.Sound;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.File;
@@ -13,12 +7,14 @@ import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Arrays;
 import java.util.Iterator;
-import java.util.List;
 import java.util.Random;
+import minicraft.Game;
+import minicraft.GameApplet;
+import minicraft.gfx.Color;
+import minicraft.gfx.Font;
+import minicraft.gfx.Screen;
 
 public class TitleMenu extends SelectMenu {
 	protected final Random random = new Random();

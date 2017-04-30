@@ -1,25 +1,5 @@
 package minicraft.saveload;
 
-import minicraft.Game;
-import minicraft.entity.AirWizard;
-import minicraft.entity.Chest;
-import minicraft.entity.DeathChest;
-import minicraft.entity.DungeonChest;
-import minicraft.entity.Entity;
-import minicraft.entity.Inventory;
-import minicraft.entity.ItemEntity;
-import minicraft.entity.Mob;
-import minicraft.entity.EnemyMob;
-import minicraft.entity.Player;
-import minicraft.entity.Spawner;
-import minicraft.entity.Spark;
-import minicraft.entity.particle.Particle;
-import minicraft.item.Item;
-import minicraft.item.ResourceItem;
-import minicraft.screen.LoadingMenu;
-import minicraft.screen.ModeMenu;
-import minicraft.screen.OptionsMenu;
-import minicraft.screen.WorldGenMenu;
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -27,6 +7,26 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import minicraft.Game;
+import minicraft.entity.AirWizard;
+import minicraft.entity.Chest;
+import minicraft.entity.DeathChest;
+import minicraft.entity.DungeonChest;
+import minicraft.entity.EnemyMob;
+import minicraft.entity.Entity;
+import minicraft.entity.Inventory;
+import minicraft.entity.ItemEntity;
+import minicraft.entity.Mob;
+import minicraft.entity.Player;
+import minicraft.entity.Spark;
+import minicraft.entity.Spawner;
+import minicraft.entity.particle.Particle;
+import minicraft.item.Item;
+import minicraft.item.ResourceItem;
+import minicraft.screen.LoadingMenu;
+import minicraft.screen.ModeMenu;
+import minicraft.screen.OptionsMenu;
+import minicraft.screen.WorldGenMenu;
 
 public class Save {
 

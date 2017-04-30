@@ -3,7 +3,6 @@ package minicraft.screen;
 import minicraft.entity.Chest;
 import minicraft.entity.Inventory;
 import minicraft.entity.Player;
-import minicraft.gfx.Font;
 import minicraft.gfx.Screen;
 import minicraft.sound.Sound;
 

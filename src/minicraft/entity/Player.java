@@ -1,12 +1,14 @@
 package minicraft.entity;
 
+import java.util.HashMap;
+import java.util.List;
 import minicraft.Game;
 import minicraft.InputHandler;
 import minicraft.crafting.Crafting;
 import minicraft.entity.particle.TextParticle;
 import minicraft.gfx.Color;
-import minicraft.gfx.Screen;
 import minicraft.gfx.MobSprite;
+import minicraft.gfx.Screen;
 import minicraft.item.FurnitureItem;
 import minicraft.item.Item;
 import minicraft.item.ListItems;
@@ -21,16 +23,14 @@ import minicraft.level.Level;
 import minicraft.level.tile.Tile;
 import minicraft.saveload.Save;
 import minicraft.screen.CraftInvMenu;
-import minicraft.screen.PlayerInvMenu;
 import minicraft.screen.LoadingMenu;
 import minicraft.screen.ModeMenu;
 import minicraft.screen.OptionsMenu;
 import minicraft.screen.PauseMenu;
 import minicraft.screen.PlayerInfoMenu;
+import minicraft.screen.PlayerInvMenu;
 import minicraft.screen.WorldSelectMenu;
 import minicraft.sound.Sound;
-import java.util.HashMap;
-import java.util.List;
 
 public class Player extends Mob {
 	private InputHandler input;

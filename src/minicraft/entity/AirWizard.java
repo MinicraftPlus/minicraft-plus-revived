@@ -1,17 +1,16 @@
 package minicraft.entity;
 
-import minicraft.Game;
-import minicraft.gfx.Color;
-import minicraft.gfx.Font;
-import minicraft.gfx.Screen;
-import minicraft.gfx.MobSprite;
-import minicraft.screen.OptionsMenu;
-import minicraft.sound.Sound;
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.util.Random;
+import minicraft.Game;
+import minicraft.gfx.Color;
+import minicraft.gfx.Font;
+import minicraft.gfx.MobSprite;
+import minicraft.gfx.Screen;
+import minicraft.screen.OptionsMenu;
+import minicraft.sound.Sound;
 
 public class AirWizard extends EnemyMob {
 	private static MobSprite[][] sprites = MobSprite.compileMobSpriteAnimations(8, 14);

@@ -1,8 +1,8 @@
 package minicraft.entity;
 
+import java.util.List;
 import minicraft.gfx.Color;
 import minicraft.gfx.Screen;
-import java.util.List;
 
 public class Spark extends Entity {
 	private int lifeTime; // how much time until the spark disappears

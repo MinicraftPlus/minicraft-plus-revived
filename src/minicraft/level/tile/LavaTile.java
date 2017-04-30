@@ -1,11 +1,11 @@
 package minicraft.level.tile;
 
+import java.util.Random;
 import minicraft.Game;
 import minicraft.entity.Entity;
 import minicraft.gfx.Color;
 import minicraft.gfx.Screen;
 import minicraft.level.Level;
-import java.util.Random;
 
 public class LavaTile extends Tile {
 	public LavaTile(int id) {

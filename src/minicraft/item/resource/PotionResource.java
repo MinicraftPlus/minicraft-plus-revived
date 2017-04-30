@@ -1,10 +1,10 @@
 package minicraft.item.resource;
 
+import java.util.HashMap;
 import minicraft.Game;
 import minicraft.entity.Player;
 import minicraft.level.Level;
 import minicraft.level.tile.Tile;
-import java.util.HashMap;
 
 public class PotionResource extends Resource {
 	

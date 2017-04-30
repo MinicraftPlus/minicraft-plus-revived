@@ -1,12 +1,7 @@
 package minicraft.screen;
 
-import minicraft.InputHandler;
-import minicraft.gfx.Screen;
-import minicraft.gfx.Font;
-import minicraft.gfx.Color;
-import java.util.Arrays;
-import java.util.ArrayList;
 import java.util.List;
+import minicraft.gfx.Screen;
 
 public class ScrollingMenu extends SelectMenu {
 	

@@ -1,13 +1,12 @@
 package minicraft.screen;
 
+import java.util.ArrayList;
+import java.util.Arrays;
 import minicraft.entity.Player;
 import minicraft.gfx.Color;
 import minicraft.gfx.Font;
 import minicraft.gfx.Screen;
 import minicraft.saveload.Save;
-import java.util.Arrays;
-import java.util.ArrayList;
-import java.util.List;
 
 public class PauseMenu extends SelectMenu {
 

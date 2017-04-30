@@ -1,5 +1,7 @@
 package minicraft.crafting;
 
+import java.util.ArrayList;
+import java.util.List;
 import minicraft.entity.Anvil;
 import minicraft.entity.Bed;
 import minicraft.entity.Chest;
@@ -15,8 +17,6 @@ import minicraft.entity.Workbench;
 import minicraft.item.BucketItem;
 import minicraft.item.ToolType;
 import minicraft.item.resource.Resource;
-import java.util.ArrayList;
-import java.util.List;
 
 public class Crafting {
 

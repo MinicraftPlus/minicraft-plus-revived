@@ -1,11 +1,11 @@
 package minicraft.screen;
 
+import java.util.List;
 import minicraft.Game;
 import minicraft.InputHandler;
 import minicraft.gfx.Color;
 import minicraft.gfx.Font;
 import minicraft.gfx.Screen;
-import java.util.List;
 
 public abstract class Menu {
 	protected Game game;

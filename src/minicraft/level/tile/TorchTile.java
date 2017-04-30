@@ -9,7 +9,6 @@ import minicraft.item.PowerGloveItem;
 import minicraft.item.ResourceItem;
 import minicraft.item.resource.Resource;
 import minicraft.level.Level;
-import minicraft.level.tile.Tile;
 
 public class TorchTile extends Tile {
 

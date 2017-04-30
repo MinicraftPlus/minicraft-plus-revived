@@ -1,5 +1,17 @@
 package minicraft;
 
+import java.awt.BorderLayout;
+import java.awt.Canvas;
+import java.awt.Dimension;
+import java.awt.Graphics;
+import java.awt.event.*;
+import java.awt.image.BufferStrategy;
+import java.awt.image.BufferedImage;
+import java.awt.image.DataBufferInt;
+import java.io.*;
+import java.util.*;
+import javax.imageio.ImageIO;
+import javax.swing.JFrame;
 import minicraft.entity.Bed;
 import minicraft.entity.Entity;
 import minicraft.entity.Furniture;
@@ -31,18 +43,6 @@ import minicraft.screen.TitleMenu;
 import minicraft.screen.WonMenu;
 import minicraft.screen.WorldGenMenu;
 import minicraft.screen.WorldSelectMenu;
-import java.awt.BorderLayout;
-import java.awt.Canvas;
-import java.awt.Dimension;
-import java.awt.Graphics;
-import java.awt.event.*;
-import java.awt.image.BufferStrategy;
-import java.awt.image.BufferedImage;
-import java.awt.image.DataBufferInt;
-import java.io.*;
-import java.util.*;
-import javax.imageio.ImageIO;
-import javax.swing.JFrame;
 
 public class Game extends Canvas implements Runnable {
 	

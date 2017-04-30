@@ -1,5 +1,6 @@
 package minicraft.entity;
 
+import java.util.Random;
 import minicraft.Game;
 import minicraft.entity.particle.SmashParticle;
 import minicraft.entity.particle.TextParticle;
@@ -9,7 +10,6 @@ import minicraft.item.ToolItem;
 import minicraft.item.ToolType;
 import minicraft.item.resource.Resource;
 import minicraft.screen.ModeMenu;
-import java.util.Random;
 
 public class DungeonChest extends Chest {
 

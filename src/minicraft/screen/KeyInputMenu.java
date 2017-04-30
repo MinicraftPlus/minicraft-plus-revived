@@ -1,7 +1,5 @@
 package minicraft.screen;
 
-import minicraft.InputHandler;
-import minicraft.gfx.Font;
 
 public class KeyInputMenu {
 	

@@ -1,5 +1,6 @@
 package minicraft.entity;
 
+import java.util.Random;
 import minicraft.Game;
 import minicraft.entity.particle.FireParticle;
 import minicraft.entity.particle.TextParticle;
@@ -9,7 +10,6 @@ import minicraft.item.ToolItem;
 import minicraft.item.ToolType;
 import minicraft.level.tile.Tile;
 import minicraft.sound.Sound;
-import java.util.Random;
 
 public class Spawner extends Furniture {
 	

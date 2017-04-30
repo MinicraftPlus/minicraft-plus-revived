@@ -1,12 +1,12 @@
 package minicraft.level.levelgen;
 
-import minicraft.level.tile.Tile;
-import minicraft.screen.WorldGenMenu;
 import java.awt.Image;
 import java.awt.image.BufferedImage;
 import java.util.Random;
 import javax.swing.ImageIcon;
 import javax.swing.JOptionPane;
+import minicraft.level.tile.Tile;
+import minicraft.screen.WorldGenMenu;
 
 public class LevelGen {
 	private static final Random random = new Random();

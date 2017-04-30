@@ -1,13 +1,11 @@
 package minicraft.entity;
 
-import minicraft.Game;
-import minicraft.gfx.Color;
+import java.util.List;
+import java.util.Random;
 import minicraft.gfx.Screen;
 import minicraft.item.Item;
 import minicraft.level.Level;
 import minicraft.level.tile.Tile;
-import java.util.List;
-import java.util.Random;
 
 public abstract class Entity {
 	/// entity coordinates are per pixel, not per tile; each tile is 16x16 entity pixels.

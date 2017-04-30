@@ -1,13 +1,12 @@
 package minicraft.screen;
 
+import java.io.File;
+import java.util.ArrayList;
 import minicraft.Game;
 import minicraft.gfx.Color;
 import minicraft.gfx.Font;
 import minicraft.gfx.Screen;
 import minicraft.sound.Sound;
-import java.io.File;
-import java.util.ArrayList;
-import java.util.List;
 
 public class WorldSelectMenu extends Menu {
 	

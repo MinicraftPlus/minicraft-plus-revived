@@ -1,14 +1,13 @@
 //respawn mod +dillyg10+
 package minicraft.screen;
 
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 import minicraft.gfx.Color;
 import minicraft.gfx.Font;
 import minicraft.gfx.Screen;
 import minicraft.sound.Sound;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Collections;
-import java.util.List;
 
 public class ModeMenu extends Menu {
 	private Menu parent;

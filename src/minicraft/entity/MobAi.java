@@ -1,14 +1,11 @@
 package minicraft.entity;
 
-import minicraft.Game;
 import minicraft.gfx.Color;
-import minicraft.gfx.Screen;
 import minicraft.gfx.MobSprite;
+import minicraft.gfx.Screen;
 import minicraft.item.ResourceItem;
 import minicraft.item.resource.Resource;
 import minicraft.level.Level;
-import minicraft.screen.ModeMenu;
-import minicraft.screen.OptionsMenu;
 
 public class MobAi extends Mob {
 	

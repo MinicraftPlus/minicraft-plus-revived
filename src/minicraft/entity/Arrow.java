@@ -1,8 +1,8 @@
 package minicraft.entity;
 
+import java.util.List;
 import minicraft.gfx.Color;
 import minicraft.gfx.Screen;
-import java.util.List;
 
 public class Arrow extends Entity {
 	private int lifeTime;

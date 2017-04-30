@@ -1,10 +1,10 @@
 package minicraft.item.resource;
 
+import java.util.Arrays;
+import java.util.List;
 import minicraft.entity.Player;
 import minicraft.level.Level;
 import minicraft.level.tile.Tile;
-import java.util.Arrays;
-import java.util.List;
 
 public class TorchResource extends Resource {
 	private List<Tile> sourceTiles;

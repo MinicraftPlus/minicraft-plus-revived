@@ -1,5 +1,9 @@
 package minicraft.screen;
 
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.List;
 import minicraft.crafting.Recipe;
 import minicraft.entity.Player;
 import minicraft.gfx.Color;
@@ -8,11 +12,6 @@ import minicraft.gfx.Screen;
 import minicraft.item.Item;
 import minicraft.item.ResourceItem;
 import minicraft.sound.Sound;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.List;
 
 /// this is the "z" personal crafting menu.
 public class CraftInvMenu extends Menu {

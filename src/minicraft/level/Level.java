@@ -1,5 +1,10 @@
 package minicraft.level;
 
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.List;
+import java.util.Random;
 import minicraft.Game;
 import minicraft.entity.AirWizard;
 import minicraft.entity.Anvil;
@@ -7,12 +12,11 @@ import minicraft.entity.Chest;
 import minicraft.entity.Cow;
 import minicraft.entity.Creeper;
 import minicraft.entity.DungeonChest;
+import minicraft.entity.EnemyMob;
 import minicraft.entity.Entity;
 import minicraft.entity.Inventory;
 import minicraft.entity.Knight;
 import minicraft.entity.Lantern;
-import minicraft.entity.Mob;
-import minicraft.entity.EnemyMob;
 import minicraft.entity.PassiveMob;
 import minicraft.entity.Pig;
 import minicraft.entity.Player;
@@ -33,11 +37,6 @@ import minicraft.level.levelgen.LevelGen;
 import minicraft.level.tile.DirtTile;
 import minicraft.level.tile.Tile;
 import minicraft.screen.WorldSelectMenu;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.List;
-import java.util.Random;
 
 public class Level {
 	private Random random = new Random();

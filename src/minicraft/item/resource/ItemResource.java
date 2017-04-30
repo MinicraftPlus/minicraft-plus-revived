@@ -1,10 +1,8 @@
 package minicraft.item.resource;
 
-import minicraft.crafting.Crafting;
 import minicraft.entity.Player;
 import minicraft.level.Level;
 import minicraft.level.tile.Tile;
-import minicraft.screen.BookMenu;
 import minicraft.screen.BookMenu;
 
 public class ItemResource extends Resource {

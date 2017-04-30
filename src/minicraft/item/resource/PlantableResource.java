@@ -1,10 +1,10 @@
 package minicraft.item.resource;
 
+import java.util.Arrays;
+import java.util.List;
 import minicraft.entity.Player;
 import minicraft.level.Level;
 import minicraft.level.tile.Tile;
-import java.util.Arrays;
-import java.util.List;
 
 public class PlantableResource extends Resource {
 	private List<Tile> sourceTiles; // list of tiles it can be planted on

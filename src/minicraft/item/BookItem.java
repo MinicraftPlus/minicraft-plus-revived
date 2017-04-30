@@ -1,6 +1,5 @@
 package minicraft.item;
 
-import minicraft.crafting.Crafting;
 import minicraft.entity.Player;
 import minicraft.gfx.Color;
 import minicraft.gfx.Font;

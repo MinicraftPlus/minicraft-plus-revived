@@ -1,8 +1,8 @@
 package minicraft.sound;
 
-import minicraft.screen.OptionsMenu;
 import java.applet.Applet;
 import java.applet.AudioClip;
+import minicraft.screen.OptionsMenu;
 
 public class Sound {
 	//creates sounds from theri respective files

@@ -3,7 +3,6 @@ package minicraft.entity;
 import minicraft.entity.particle.TextParticle;
 import minicraft.gfx.Color;
 import minicraft.gfx.MobSprite;
-import minicraft.level.Level;
 import minicraft.level.tile.Tile;
 import minicraft.screen.ModeMenu;
 import minicraft.sound.Sound;

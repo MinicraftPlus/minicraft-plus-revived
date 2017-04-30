@@ -1,5 +1,6 @@
 package minicraft.level.tile;
 
+import java.util.Random;
 import minicraft.entity.Entity;
 import minicraft.entity.ItemEntity;
 import minicraft.entity.Mob;
@@ -14,11 +15,9 @@ import minicraft.item.ToolItem;
 import minicraft.item.ToolType;
 import minicraft.item.resource.Resource;
 import minicraft.level.Level;
-import minicraft.level.tile.Tile;
 import minicraft.screen.ModeMenu;
 import minicraft.screen.OptionsMenu;
 import minicraft.sound.Sound;
-import java.util.Random;
 
 public class LightTile extends Tile {
 

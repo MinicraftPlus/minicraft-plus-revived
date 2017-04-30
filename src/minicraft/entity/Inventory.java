@@ -1,13 +1,13 @@
 package minicraft.entity;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Random;
 import minicraft.item.Item;
 import minicraft.item.ResourceItem;
 import minicraft.item.ToolItem;
 import minicraft.item.ToolType;
 import minicraft.item.resource.Resource;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Random;
 
 public class Inventory {
 	private Random random = new Random();

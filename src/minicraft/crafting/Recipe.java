@@ -1,5 +1,7 @@
 package minicraft.crafting;
 
+import java.util.ArrayList;
+import java.util.List;
 import minicraft.entity.Player;
 import minicraft.gfx.Color;
 import minicraft.gfx.Font;
@@ -12,8 +14,6 @@ import minicraft.item.ToolType;
 import minicraft.item.resource.Resource;
 import minicraft.screen.ListItem;
 import minicraft.screen.ModeMenu;
-import java.util.ArrayList;
-import java.util.List;
 
 /// Is abstract; can't be instantiated.
 public abstract class Recipe implements ListItem {
