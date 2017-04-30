@@ -31,6 +31,9 @@ Give the player 20 health instead of 10; this means that 1 health will be a half
 
 
  ++++++++ More Complicated Ideas ++++++++
+++++
+
+Add a system to more properly find the home/data dir on different OS's; windows doesn't regconize "."[filename] as hidden, I think, so that should be accounted for as well.
 
 ++++
 
