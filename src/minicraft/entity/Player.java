@@ -21,7 +21,7 @@ import minicraft.level.Level;
 import minicraft.level.tile.Tile;
 import minicraft.saveload.Save;
 import minicraft.screen.CraftInvMenu;
-import minicraft.screen.InventoryMenu;
+import minicraft.screen.PlayerInvMenu;
 import minicraft.screen.LoadingMenu;
 import minicraft.screen.ModeMenu;
 import minicraft.screen.OptionsMenu;
@@ -287,7 +287,7 @@ public class Player extends Mob {
 		}
 
 		if (input.getKey("menu").clicked && !use()) // !use() = no furniture in front of the player; this prevents player inventory from opening (will open furniture inventory instead)
-			game.setMenu(new InventoryMenu(this));
+			game.setMenu(new PlayerInvMenu(this));
 		if (input.getKey("pause").clicked) game.setMenu(new PauseMenu(this));
 		if (input.getKey("craft").clicked && !use())
 			game.setMenu(new CraftInvMenu(Crafting.craftRecipes, this));
