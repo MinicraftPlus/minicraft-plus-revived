@@ -7,17 +7,9 @@ import minicraft.gfx.Font;
 import minicraft.gfx.Screen;
 import java.util.List;
 
-/** TODO Most all menus have a scroll feature... it should be in this class.*/
 public abstract class Menu {
 	protected Game game;
 	protected InputHandler input;
-	//protected Menu parent;
-	
-	/*public Menu(Menu parent) {
-		this.parent = parent;
-	}
-	public Menu() {}
-	*/
 	
 	public void init(Game game, InputHandler input) {
 		this.input = input;
