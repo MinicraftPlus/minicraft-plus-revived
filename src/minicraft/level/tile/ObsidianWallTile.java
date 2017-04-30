@@ -291,8 +291,7 @@ public class ObsidianWallTile extends Tile {
 
 	public void hurt(Level level, int x, int y, int dmg) {
 		int damage = level.getData(x, y) + dmg;
-		int sbwHealth;
-		sbwHealth = 100;
+		int sbwHealth = 100;
 		level.add(new SmashParticle(x * 16 + 8, y * 16 + 8));
 		level.add(new TextParticle("" + dmg, x * 16 + 8, y * 16 + 8, Color.get(-1, 500, 500, 500)));
 		if (damage >= sbwHealth) {
