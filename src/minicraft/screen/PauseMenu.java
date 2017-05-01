@@ -13,10 +13,10 @@ public class PauseMenu extends SelectMenu {
 	private int selection; //selection is set when you press enter.
 	Player player;
 
-	private static final String[] options = {"Return to Game", "Options", "Save Game", "Load Game", "Main Menu"};
+	private static final String[] options = {"Return to Game", "Options", "Change Key Bindings", "Save Game", "Load Game", "Main Menu"};
 
 	public PauseMenu(Player player) {
-		super(Arrays.asList(options), 8*11 - 35, 8, Color.get(-1, 555), Color.get(-1, 222));
+		super(Arrays.asList(options), 8*11 - 35, 6, Color.get(-1, 555), Color.get(-1, 222));
 		this.player = player;
 		selection = -1; // set to main pause menu options.
 	}
@@ -31,31 +31,37 @@ public class PauseMenu extends SelectMenu {
 		
 		//choice chosen; input here is at confirm menu
 		if (input.getKey("enter").clicked) {
-
+			
 			//this one is an EXCEPTION: no comfirm menu.
 			if (selected == 1) {
 				//I bet this is used when exiting options menu to decide whether to go to title screen, or pause menu:
 				game.setMenu(new OptionsMenu(this));
 			}
-
-			if (selection == 2) { //save game option
+			
+			if (selected == 2) {
+				game.setMenu(new KeyInputMenu(this));
+				//selected = 0;
+				//selection = -1;
+			}
+			
+			if (selection == 3) { //save game option
 				game.setMenu((Menu) null);
 				new Save(player, WorldSelectMenu.worldname);
 			}
-
-			if (selection == 3) { //load game option; can't return
+			
+			if (selection == 4) { //load game option; can't return
 				WorldSelectMenu m = new WorldSelectMenu();
 				WorldSelectMenu.loadworld = true;
 				m.createworld = false;
 				game.setMenu(m);
 			}
-
-			if (selection == 4) //title menu
+			
+			if (selection == 5) //title menu
 				game.setMenu(new TitleMenu());
 			
-			if (selected != 1) selection = selected;
+			if (selected != 1 && selected != 2) selection = selected;
 		}
-
+		
 		if (input.getKey("escape").clicked || selection == 0) game.setMenu((Menu) null);
 	}
 
@@ -70,11 +76,11 @@ public class PauseMenu extends SelectMenu {
 		} else {
 			ArrayList<String> confirmDialog = new ArrayList<String>();
 			
-			if (selection == 2) // save game
+			if (selection == 3) // save game
 				confirmDialog.add("Save Game?");
-			else if (selection == 3) // load game
+			else if (selection == 4) // load game
 				confirmDialog.addAll(Arrays.asList(Font.getLines("Load Game?\nCurrent game will\nnot be saved", 28*8, 18*8, 2)));
-			else if (selection == 4) // back to menu
+			else if (selection == 5) // back to menu
 				confirmDialog.addAll(Arrays.asList(Font.getLines("Back to Main Menu?\nCurrent game will\nnot be saved", 28*8, 18*8, 2)));
 			
 			for(int i = 0; i < confirmDialog.size(); i++) { // draws each line from above; the first line is white, and all the following lines are red.

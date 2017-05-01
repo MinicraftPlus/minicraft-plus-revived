@@ -41,6 +41,10 @@ public class InputHandler implements MouseListener, KeyListener {
 			--If a key with no hyph is requested, it skips most of that and just gives you the Key, generating it if needed.
 		
 	*/
+	public String keyToChange = null; // this is used when listening to change key bindings.
+	private boolean overwrite = false;
+	
+	//public int ticks;
 	
 	private HashMap<String, String> keymap; // The symbolic map of actions to physical key names.
 	private HashMap<String, Key> keyboard; // The actual map of key names to Key objects.
@@ -72,6 +76,9 @@ public class InputHandler implements MouseListener, KeyListener {
 		keymap.put("SURVIVAL", "SHIFT-S|SHIFT-1");
 		keymap.put("CREATIVE", "SHIFT-C|SHIFT-2");
 		
+		
+		keymap.put("ENTER", "ENTER|INTRO");
+		keymap.put("BACKSPACE", "BACKSPACE|RETROCESO");
 		//keymap.put("SOUNDON", "M"); //toggles sound on and off... well, it should...
 		
 		keymap.put("POTIONEFFECTS", "P"); // toggle potion effect display
@@ -80,15 +87,18 @@ public class InputHandler implements MouseListener, KeyListener {
 		
 		// I'm not entirely sure if this is necessary, especially for ctrl and alt... but it doesn't hurt.
 		keyboard.put("SHIFT", new Key());
+		keyboard.put("MAYÚS", keyboard.get("SHIFT"));
 		keyboard.put("CTRL", new Key());
 		keyboard.put("ALT", new Key());
 		
 		game.addKeyListener(this); //add key listener to game
-		game.addMouseListener(this); //add mouse listener to game (though it's never used)
+		//game.addMouseListener(this); //add mouse listener to game (though it's never used)
+		//ticks = 0;
 	}
 	
 	/** Processes each key one by one, in keyboard. */
 	public void tick() {
+		//ticks++;
 		synchronized ("lock") {
 			for (Key key: keyboard.values())
 				key.tick(); //call tick() for each key.
@@ -240,7 +250,7 @@ public class InputHandler implements MouseListener, KeyListener {
 		}
 		else if(!modMatch) key = new Key();
 		
-		//if(key.down) System.out.println("processed key: " + keytext + " is down");
+		//if(key.clicked && Game.debug) System.out.println("processed key: " + keytext + " is clicked; tickNum=" + ticks);
 		
 		return key; // return the Key object.
 	}
@@ -261,7 +271,17 @@ public class InputHandler implements MouseListener, KeyListener {
 		keytext = keytext.toUpperCase();
 		
 		//if (Game.debug) System.out.println("toggling " + keytext + " key to "+pressed+".");
+		if(pressed && keyToChange != null && !(keytext.equals("CTRL")||keytext.equals("ALT")|keytext.equals("SHIFT"))) {
+			keymap.put(keyToChange, (overwrite?"":keymap.get(keyToChange)+"|")+getCurModifiers()+keytext);
+			keyToChange = null;
+		}
 		getPhysKey(keytext).toggle(pressed);
+	}
+	
+	private String getCurModifiers() {
+		return (getKey("ctrl").down?"CTRL-":"") +
+				(getKey("alt").down?"ALT-":"") +
+				(getKey("shift").down?"SHIFT-":"");
 	}
 	
 	/** Used by Save.java, to save user key preferences. */
@@ -272,6 +292,17 @@ public class InputHandler implements MouseListener, KeyListener {
 			keystore.add(keyname + ";" + keymap.get(keyname)); //add the mapping values as one string, seperated by a semicolon.
 
 		return keystore.toArray(new String[0]); //return the array of encoded key preferences.
+	}
+	
+	
+	public void changeKeyBinding(String actionKey) {
+		keyToChange = actionKey.toUpperCase();
+		overwrite = true;
+	}
+	
+	public void addKeyBinding(String actionKey) {
+		keyToChange = actionKey.toUpperCase();
+		overwrite = false;
 	}
 	
 	/// Event methods, many to satisfy interface requirements...

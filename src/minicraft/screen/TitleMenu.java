@@ -18,7 +18,7 @@ import minicraft.gfx.Screen;
 
 public class TitleMenu extends SelectMenu {
 	protected final Random random = new Random();
-	private static final String[] options = {"New game", "Instructions", "Tutorial", "Options", "About", "Quit"/*, "Kill"*/}; // Options that are on the main menu.
+private static final String[] options = {"New game", "Instructions", "Tutorial", "Options", "Change Key Bindings", "About", "Quit"/*, "Kill"*/}; // Options that are on the main menu.
 	int rand;
 	int count = 0; // this and reverse are for the logo; they produce the fade-in/out effect.
 	boolean reverse = false;
@@ -276,6 +276,7 @@ public class TitleMenu extends SelectMenu {
 				}
 			}
 			if (options[selected] == "Options") game.setMenu(new OptionsMenu(this));
+			if (options[selected] == "Change Key Bindings") game.setMenu(new KeyInputMenu(this));
 			if (options[selected] == "About") game.setMenu(new AboutMenu(this));
 			if (options[selected] == "Quit") System.exit(0);
 			//if (options[selected] == "Kill") {game.level.add(game.player); game.setMenu(null);}
