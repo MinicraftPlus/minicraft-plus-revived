@@ -15,6 +15,8 @@ Here is a small share of the more major features that this mod adds to the origi
 * Mob Spawners (with loot chests)
 * expanded storyline; 4th dungeon level, and Second Boss
 * Bigger/Resizable screen size
+* Key Binding customization, so you can change the key controls.
+
 
 That's all I can remember right now; you can find a more comprehensive list in [this minecraft forum post](http://www.minecraftforum.net/forums/off-topic/general-gaming/452036-v1-6-minicraft-plus). Be aware however, that it's old; it's from many years ago before the project was abandoned.
 
@@ -22,7 +24,7 @@ That's all I can remember right now; you can find a more comprehensive list in [
 
 Things I plan on implementing, _hopefully_ sooner rather than later... ;)
 
-* Finish overhauling the code; currently, I still have to do tiles, items/resources, and screens/menus.
+* Finish overhauling the code; currently, I still have to do tiles, and items/resources.
 
 * Add some nice music! Maybe pixely... in fact, we're working on that now!
 
@@ -36,13 +38,14 @@ Things I will probably add later, rather than sooner.
 
 * Auto-update system -- though, I might move this up, if this actually becomes something many people use.
 * Add back Experience bar, from version 1.4
+* Multiplayer mode...
 
 #### Far, far away...
 
 These are simply **ideas**, and have no guarantee of being implemented any time soon, or even at all. Could be becuase they're complicated, or could be because I just haven't bothered considering them yet. :P
 If their implementation becomes more likely, they will be moved to a different section.
 
-* Multiplayer Servers
+* Multiplayer *Servers*
   * Custom usernames
 * Custom Skins
 * Redstone

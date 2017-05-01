@@ -2,7 +2,11 @@ Minicraft+ version 1.9.2
 
 * HUGE renovations to the code; might not see many changes to functionality, but entirely new bugs are bound to crop up...
 * renovated entities
-
+* renovated menus, a bit
++ added Key Binding Menu, finally! You can now customize key controls, and save them. Accessible from the title screen, and the pause menu.
++ added spanish keyboard(/computer?) support... for the enter (and backspace) key... but that's all you need to access and change the key binding menu.
++ Key bindings, sound, and autosave options are loaded on startup, in a special file that applies to all saves; like beating the second airwizard.
++ world difficulty is saved for each world
 
 Minicraft+ version 1.9.1
 

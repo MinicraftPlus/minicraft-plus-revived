@@ -7,8 +7,6 @@ Note to self: for more little bugs/ideas/concerns, search code for "TODO"
 -----------------------------------------------------------------------------------
 
 	####BUGS####
-###
-reported: green mobs on lvl 1, sometimes 2, don't do damage (in 1.9.1)
 ####
 Not sure, but broken/exploded obsidian brick may drop stone...it looks like stone.
 ####
@@ -16,27 +14,12 @@ Creeper one time, on lava level, w/ me in front of it, exploded, and left behind
 ####
 Sound effects don't always play when they should; mostly it seems when other sounds should be on at the same time.
 ####
-new worlds use the current/previous keyboard presets, rather than the default ones, when creating a new world after loading a previous one.
-####
 Many item names don't fit on the black "active item" bar at the bottom.
 ####
 
 -----------------------------------------------------------------------------------
 
 	****IDEAS(that should probably be implemented)****
-****
-
-Make a gosh darn key controls editor menu! thing! ...yeah.
-
-I have a system in place to save custom key controls, but lack the menu to edit them... I need to get that implemented.
-	How about... another menu class, SelectMenu? It will parent all the cursor selection and scrollable menus; I can use it for the new KeymapMenu, and also WorldSelectMenu and InventoryMenu, with scrolling; the other menus won't use the scroll feature, but I can just make a boolean for that, I think.
-	For those menus that don't even have a cursor, though, perhaps I could just make it a Menu..? If that doesn't work, I can always make a ChoiceMenu class, super simple, that just displays two choices with no cursor, and listens for enter and escape keypresses.
-
-****
-
-Make a TextPage class or something, for the About and Instructions sections of the TitleMenu; really, it's for pages that are non-interactive, just a bunch of text.
-Also, add controls listing somewhere. Probably closely related to the below idea.
-
 ****
 
 Make respawn without bed += 20 blocks x/y of last spawn.
@@ -56,13 +39,6 @@ Level.java literally just ticks 50 or so random tiles... that's SO got to go... 
 -----------------------------------------------------------------------------------
 
 *?*?*?* Questionable Improvements (But still seem important)*?*?*?*
-
-Move OptionsMenu loads to a "profile" save, one that applies to all worlds, and that is loaded on startup. Whether the airwizard suit is worn will probably be part of these options, both because it makes sense, and becuase it simplifies things.
-
-*?*?*?*
-
-Fix up the write system, here and there: Menu writeCentered() should write the given text in the center x of the menu window; Screen writeCentered() should write a string centered in the screen's x. Font should not do anything with centering, instead, maybe it should have a drawShadowed() method? It should have a default text color, too, maybe...
-How about, just overload them all... whatever's provided, is used. Though, since they're all ints, that may not work too well...
 
 *?*?*?*
 
