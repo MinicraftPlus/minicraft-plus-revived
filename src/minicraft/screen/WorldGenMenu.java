@@ -21,7 +21,7 @@ public class WorldGenMenu extends SelectMenu {
 	private static int[] selections = new int[choices.length];
 	
 	public WorldGenMenu() {
-		super(Arrays.asList(settings), 8 * 8 + 4, 8 * 8, 8, Color.get(-1, 555), Color.get(-1, 111));
+		super(Arrays.asList(Arrays.copyOf(settings, settings.length)), 8 * 8 + 4, 8 * 8, 8, Color.get(-1, 555), Color.get(-1, 111));
 	}
 	
 	public void tick() {
