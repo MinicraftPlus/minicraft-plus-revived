@@ -55,7 +55,7 @@ public class Game extends Canvas implements Runnable {
 	/// MANAGERIAL VARS AND RUNNING
 	
 	public static final String NAME = "Minicraft Plus"; // This is the name on the application window
-	public static final String VERSION = "1.9.2-dev3";
+	public static final String VERSION = "1.9.2";
 	public static final int HEIGHT = 192;
 	public static final int WIDTH = 288;
 	private static float SCALE = 3;
@@ -100,7 +100,6 @@ public class Game extends Canvas implements Runnable {
 	
 	/// AUTOSAVE AND NOTIFICATIONS
 	
-	public static boolean autosave; //if autosave feature is enabled.
 	public static int astime; //stands for Auto-Save Time (interval)
 	public static List<String> notifications = new ArrayList<String>();
 	
@@ -136,7 +135,6 @@ public class Game extends Canvas implements Runnable {
 		newscoreTime = 72000;
 		scoreTime = newscoreTime;
 		
-		autosave = false;
 		asTick = 0;
 		astime = 7200;
 		saving = false;
@@ -195,6 +193,7 @@ public class Game extends Canvas implements Runnable {
 		}
 		
 		resetGame(); // "half"-starts a new game, to set up initial variables
+		new Load(this); // this loads any saved preferences.
 		setMenu(new TitleMenu()); //sets menu to the title screen.
 	}
 	
@@ -370,7 +369,7 @@ public class Game extends Canvas implements Runnable {
 		//auto-save tick; marks when to do autosave.
 		asTick++;
 		if (asTick > astime) {
-			if (autosave && player.health > 0 && !hasWon
+			if (OptionsMenu.autosave && player.health > 0 && !hasWon
 				  && levels[currentLevel].entities.contains(player)) {
 				new Save(player, WorldSelectMenu.worldname);
 			}

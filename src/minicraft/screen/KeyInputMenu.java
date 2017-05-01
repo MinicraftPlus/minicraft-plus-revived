@@ -5,6 +5,7 @@ import minicraft.InputHandler;
 import minicraft.gfx.Font;
 import minicraft.gfx.Color;
 import minicraft.gfx.Screen;
+import minicraft.saveload.Save;
 
 import java.util.Arrays;
 import java.util.List;
@@ -39,7 +40,7 @@ public class KeyInputMenu extends ScrollingMenu {
 		
 		if(input.getKey("escape").clicked) {
 			game.setMenu(parent);
-			
+			new Save(game);
 			return;
 		}
 		

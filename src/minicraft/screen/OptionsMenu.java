@@ -5,6 +5,7 @@ import minicraft.entity.Player;
 import minicraft.gfx.Color;
 import minicraft.gfx.Font;
 import minicraft.gfx.Screen;
+import minicraft.saveload.Save;
 import minicraft.sound.Sound;
 
 public class OptionsMenu extends Menu {
@@ -13,15 +14,16 @@ public class OptionsMenu extends Menu {
 	public static int hard = 3;
 	public static int diff = 2;
 	public static boolean isSoundAct = true;
+	public static boolean autosave = false;
 	public static boolean unlockedskin = false;
 	public static boolean hasSetDiff = false;
-
+	
 	private Menu parent;
-
+	
 	public OptionsMenu(Menu parent) {
 		this.parent = parent;
 	}
-
+	
 	public void tick() {
 		if (input.getKey("left").clicked) {
 			diff--;
@@ -37,6 +39,7 @@ public class OptionsMenu extends Menu {
 
 		if (input.getKey("escape").clicked) {
 			hasSetDiff = true;
+			new Save(game);
 			game.setMenu(parent);
 		}
 		
@@ -48,7 +51,7 @@ public class OptionsMenu extends Menu {
 
 		if (input.getKey("a").clicked) {
 			Sound.craft.play();
-			Game.autosave = !Game.autosave;
+			autosave = !autosave;
 		}
 		
 		if (unlockedskin && input.getKey("w").clicked) Player.skinon = !Player.skinon;
@@ -68,7 +71,7 @@ public class OptionsMenu extends Menu {
 		Font.draw("Press Left and Right", screen, 67, screen.h - 150, textColor);
 		
 		Font.draw("<A>utosave:", screen, 80, screen.h - 100, textColor);
-		Font.draw((Game.autosave?"On":"Off"), screen, 180, screen.h - 100, (Game.autosave?onColor:offColor));
+		Font.draw((autosave?"On":"Off"), screen, 180, screen.h - 100, (autosave?onColor:offColor));
 		
 		Font.draw("<S>ound:", screen, 80, screen.h - 75, textColor);
 		Font.draw((isSoundAct?"On":"Off"), screen, 180, screen.h - 75, (isSoundAct?onColor:offColor));
