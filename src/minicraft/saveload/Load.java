@@ -54,36 +54,55 @@ public class Load {
 	
 	String location = Game.gameDir;
 	File folder;
-	String extention;
+	
+	private static String extention = Save.extention;
+	
 	ArrayList<String> data;
 	ArrayList<String> extradata;
+	
 	public boolean hasloadedbigworldalready;
 	Version currentVer, worldVer;
-	boolean oldSave = false;
+	boolean oldSave = false, hasGlobalPrefs = false;
 	
-	public Load(Game game, String worldname) {
+	private Load() {
 		currentVer = new Version(Game.VERSION);
-		folder = new File(location);
-		extention = ".miniplussave";
+		worldVer = null;
+		
+		File testFile = new File(location + "/Preferences" + extention);
+		hasGlobalPrefs = testFile.exists();
+		
 		data = new ArrayList<String>();
 		extradata = new ArrayList<String>();
 		hasloadedbigworldalready = false;
+	}
+	
+	public Load(Game game, String worldname) {
+		this();
+		
 		location += "/saves/" + worldname + "/";
 		
-		worldVer = null;
 		File testFile = new File(location + "KeyPrefs" + extention);
-		if(!testFile.exists()) {
+		if(!testFile.exists() && !hasGlobalPrefs) {
 			worldVer = new Version("1.8");
 			oldSave = true;
 		}
 		
 		loadGame("Game", game); // more of the version will be determined here
-		loadPrefs("KeyPrefs", game);
+		//loadPrefs("KeyPrefs", game);
 		loadWorld("Level");
 		loadPlayer("Player", game.player);
 		loadInventory("Inventory", game.player.inventory);
 		loadEntities("Entities", game.player);
 		LoadingMenu.percentage = 0;
+	}
+	
+	public Load(Game game) {
+		this();
+		
+		location += "/";
+		
+		if(hasGlobalPrefs)
+			loadPrefs("Preferences", game);
 	}
 	
 	class Version implements Comparable {
@@ -195,17 +214,23 @@ public class Load {
 			worldVer = new Version(data.get(0)); // gets the world version
 			Game.setTime(Integer.parseInt(data.get(1)));
 			Game.astime = Integer.parseInt(data.get(2));
-			Game.autosave = Boolean.parseBoolean(data.get(3));
-			OptionsMenu.isSoundAct = Boolean.parseBoolean(data.get(4));
-			if(worldVer.compareTo(new Version("1.9.2-dev2")) >= 0)
-				AirWizard.beaten = Boolean.parseBoolean(data.get(5));
+			if(worldVer.compareTo(new Version("1.9.2")) < 0) {
+				OptionsMenu.autosave = Boolean.parseBoolean(data.get(3));
+				OptionsMenu.isSoundAct = Boolean.parseBoolean(data.get(4));
+				if(worldVer.compareTo(new Version("1.9.2-dev2")) >= 0)
+					AirWizard.beaten = Boolean.parseBoolean(data.get(5));
+			}
+			else { // this is dev4 or after
+				OptionsMenu.diff = Integer.parseInt(data.get(3));
+				AirWizard.beaten = Boolean.parseBoolean(data.get(4));
+			}
 		}
 		else {
 			if(data.size() == 5) {
 				worldVer = new Version("1.9");
 				Game.setTime(Integer.parseInt(data.get(0)));
 				Game.astime = Integer.parseInt(data.get(1));
-				Game.autosave = Boolean.parseBoolean(data.get(3));
+				OptionsMenu.autosave = Boolean.parseBoolean(data.get(3));
 				OptionsMenu.isSoundAct = Boolean.parseBoolean(data.get(4));
 			} else { // version == 1.8?
 				if(!oldSave) {
@@ -216,17 +241,22 @@ public class Load {
 				Game.tickCount = Integer.parseInt(data.get(0));
 				Game.astime = Integer.parseInt(data.get(1));
 				game.player.ac = Integer.parseInt(data.get(3));
-				Game.autosave = false;
+				OptionsMenu.autosave = false;
 			}
 		}
 	}
 	
 	public void loadPrefs(String filename, Game game) {
-		if(oldSave) return;
 		loadFromFile(location + filename + extention);
-		Iterator keys = data.iterator();
+		
+		OptionsMenu.isSoundAct = Boolean.parseBoolean(data.get(0));
+		OptionsMenu.autosave = Boolean.parseBoolean(data.get(1));
+		
+		List<String> subdata = data.subList(2, data.size());
+		
+		Iterator<String> keys = subdata.iterator();
 		while(keys.hasNext()) {
-			String[] map = String.valueOf(keys.next()).split(";");
+			String[] map = keys.next().split(";");
 			game.input.setKey(map[0], map[1]);
 		}
 	}

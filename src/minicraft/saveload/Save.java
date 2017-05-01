@@ -32,27 +32,43 @@ public class Save {
 
 	String location = Game.gameDir;
 	File folder;
-	String extention;
-	List data;
-	Player player;
 	
-	public Save(Player player, String worldname) {
-		folder = new File(location);
-		extention = ".miniplussave";
-		data = new ArrayList();
-		this.player = player;
-		location += "/saves/" + worldname + "/";
+	protected static String extention = ".miniplussave";
+	
+	List<String> data;
+	Game game;
+	
+	private Save(Game game, String dir) {
+		data = new ArrayList<String>();
+		
+		this.game = game;
+		
+		location += dir;
 		folder = new File(location);
 		folder.mkdirs();
-		writeGame("Game", player.game);
-		writePrefs("KeyPrefs");
+	}
+	
+	/// this saves world options
+	public Save(Player player, String worldname) {
+		this(player.game, "/saves/" + worldname + "/");
+		
+		writeGame("Game");
+		//writePrefs("KeyPrefs");
 		writeWorld("Level");
 		writePlayer("Player", player);
-		writeInventory("Inventory", player.inventory);
+		writeInventory("Inventory", player);
 		writeEntities("Entities");
+		
 		Game.notifications.add("World Saved!");
 		player.game.asTick = 0;
 		player.game.saving = false;
+	}
+	
+	// this saves global options
+	public Save(Game game) {
+		this(game, "/");
+		
+		writePrefs("Preferences");
 	}
 	
 	public void writeToFile(String filename, List savedata) {
@@ -82,7 +98,7 @@ public class Save {
 						LoadingMenu.percentage = 100;
 					}
 					
-					player.game.render();
+					game.render();
 					bufferedWriter.flush();
 					bufferedWriter.close();
 				}
@@ -94,34 +110,34 @@ public class Save {
 		
 	}
 	
-	public void writeGame(String filename, Game game) {
+	public void writeGame(String filename) {
 		data.add(String.valueOf(Game.VERSION));
 		data.add(String.valueOf(Game.tickCount));
 		data.add(String.valueOf(Game.astime));
-		data.add(String.valueOf(Game.autosave));
-		data.add(String.valueOf(OptionsMenu.isSoundAct));
+		data.add(String.valueOf(OptionsMenu.diff));
 		data.add(String.valueOf(AirWizard.beaten));
 		writeToFile(location + filename + extention, data);
 	}
 	
 	public void writePrefs(String filename) {
-		String[] keyPrefs = player.game.input.getKeyPrefs();
+		data.add(String.valueOf(OptionsMenu.isSoundAct));
+		data.add(String.valueOf(OptionsMenu.autosave));
+		
+		String[] keyPrefs = game.input.getKeyPrefs();
 		for(int i = 0; i < keyPrefs.length; i++)
 			data.add(String.valueOf(keyPrefs[i]));
+		
 		writeToFile(location + filename + extention, data);
 	}
 	
 	public void writeWorld(String filename) {
-		int l;
-		int i;
-		int ii;
-		for(l = 0; l < Game.levels.length; l++) {
+		for(int l = 0; l < Game.levels.length; l++) {
 			data.add(String.valueOf(WorldGenMenu.getSize()));
 			data.add(String.valueOf(WorldGenMenu.getSize()));
 			data.add(String.valueOf(Game.levels[l].depth));
 			
-			for(i = 0; i < Game.levels[l].w; i++) {
-				for(ii = 0; ii < Game.levels[l].h; ii++) {
+			for(int i = 0; i < Game.levels[l].w; i++) {
+				for(int ii = 0; ii < Game.levels[l].h; ii++) {
 					data.add(String.valueOf(Game.levels[l].getTile(i, ii).id));
 				}
 			}
@@ -129,9 +145,9 @@ public class Save {
 			writeToFile(location + filename + l + extention, data);
 		}
 		
-		for(l = 0; l < Game.levels.length; l++) {
-			for(i = 0; i < Game.levels[l].w; i++) {
-				for(ii = 0; ii < Game.levels[l].h; ii++) {
+		for(int l = 0; l < Game.levels.length; l++) {
+			for(int i = 0; i < Game.levels[l].w; i++) {
+				for(int ii = 0; ii < Game.levels[l].h; ii++) {
 					data.add(String.valueOf(Game.levels[l].getData(i, ii)));
 				}
 			}
@@ -169,10 +185,11 @@ public class Save {
 			data.add(String.valueOf(player.armorDamageBuffer));
 			data.add(String.valueOf(player.curArmor.name));
 		}
+		
 		writeToFile(location + filename + extention, data);
 	}
 	
-	public void writeInventory(String filename, Inventory inventory) {
+	public void writeInventory(String filename, Player player) {
 		if(player.activeItem != null) {
 			if(player.activeItem instanceof ResourceItem) {
 				data.add(player.activeItem.getName() + ";" + ((ResourceItem)player.activeItem).count);
@@ -180,6 +197,8 @@ public class Save {
 				data.add(player.activeItem.getName());
 			}
 		}
+		
+		Inventory inventory = player.inventory;
 		
 		for(int i = 0; i < inventory.invSize(); i++) {
 			if(inventory.get(i) instanceof ResourceItem) {
