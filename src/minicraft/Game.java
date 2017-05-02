@@ -55,7 +55,7 @@ public class Game extends Canvas implements Runnable {
 	/// MANAGERIAL VARS AND RUNNING
 	
 	public static final String NAME = "Minicraft Plus"; // This is the name on the application window
-	public static final String VERSION = "1.9.3-dev1";
+	public static final String VERSION = "1.9.3-dev2";
 	public static final int HEIGHT = 192;
 	public static final int WIDTH = 288;
 	private static float SCALE = 3;
@@ -116,6 +116,8 @@ public class Game extends Canvas implements Runnable {
 	
 	public int scoreTime; // time remaining for score mode game.
 	public int newscoreTime; // time you start with in score mode.
+	
+	public static boolean pastDay1 = true; // used to prefent mob spawn on surface on day 1.
 	
 	/// *** CONSTRUSTOR *** ///
 	public Game() {
@@ -274,10 +276,6 @@ public class Game extends Canvas implements Runnable {
 		levels = new Level[6];
 		currentLevel = 3;
 		
-		/*if (WorldGenMenu.getSize() == WorldGenMenu.sizeNorm) worldSize = 128;
-		else if (WorldGenMenu.getSize() == WorldGenMenu.sizeBig) worldSize = 256;
-		else if (WorldGenMenu.getSize() == WorldGenMenu.sizeHuge) worldSize = 512;
-		*/
 		worldSize = WorldGenMenu.getSize();
 		
 		if (ModeMenu.score) {
@@ -327,8 +325,10 @@ public class Game extends Canvas implements Runnable {
 		currentLevel = 3; //? sets next currentlevel, maybe?
 		level.add(player);
 		
-		if (WorldSelectMenu.loadworld)// {
+		if (WorldSelectMenu.loadworld)
 			new Load(this, WorldSelectMenu.worldname);
+		else
+			pastDay1 = false;
 		
 		DeadMenu.shouldRespawn = true;
 		
@@ -498,6 +498,7 @@ public class Game extends Canvas implements Runnable {
 		else { // back to morning
 			time = 0;
 			ticks = 0;
+			pastDay1 = true;
 		}
 		tickCount = ticks;
 	}

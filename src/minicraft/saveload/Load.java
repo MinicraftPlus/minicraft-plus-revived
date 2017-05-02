@@ -213,14 +213,20 @@ public class Load {
 		if(hasVersion) {
 			worldVer = new Version(data.get(0)); // gets the world version
 			Game.setTime(Integer.parseInt(data.get(1)));
-			Game.astime = Integer.parseInt(data.get(2));
+			if(worldVer.compareTo(new Version("1.9.3-dev2")) >= 0) {
+				game.gameTime = Integer.parseInt(data.get(2));
+				Game.pastDay1 = game.gameTime > 65000;
+			} else {
+				Game.astime = Integer.parseInt(data.get(2));
+				game.gameTime = 65000; // prevents time cheating.
+			}
+			
 			if(worldVer.compareTo(new Version("1.9.2")) < 0) {
 				OptionsMenu.autosave = Boolean.parseBoolean(data.get(3));
 				OptionsMenu.isSoundAct = Boolean.parseBoolean(data.get(4));
 				if(worldVer.compareTo(new Version("1.9.2-dev2")) >= 0)
 					AirWizard.beaten = Boolean.parseBoolean(data.get(5));
-			}
-			else { // this is dev4 or after
+			} else { // this is 1.9.2 official or after
 				OptionsMenu.diff = Integer.parseInt(data.get(3));
 				AirWizard.beaten = Boolean.parseBoolean(data.get(4));
 			}

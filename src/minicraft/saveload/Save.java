@@ -113,7 +113,7 @@ public class Save {
 	public void writeGame(String filename) {
 		data.add(String.valueOf(Game.VERSION));
 		data.add(String.valueOf(Game.tickCount));
-		data.add(String.valueOf(Game.astime));
+		data.add(String.valueOf(game.gameTime));
 		data.add(String.valueOf(OptionsMenu.diff));
 		data.add(String.valueOf(AirWizard.beaten));
 		writeToFile(location + filename + extention, data);
