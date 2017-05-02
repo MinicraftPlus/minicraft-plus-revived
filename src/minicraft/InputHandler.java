@@ -8,6 +8,8 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
+import java.lang.reflect.Field;
+
 public class InputHandler implements MouseListener, KeyListener {
 	//note: there needs to be an options menu for changing the key controls.
 	
@@ -44,7 +46,23 @@ public class InputHandler implements MouseListener, KeyListener {
 	public String keyToChange = null; // this is used when listening to change key bindings.
 	private boolean overwrite = false;
 	
-	//public int ticks;
+	private static HashMap<Integer, String> keyNames = new HashMap<Integer, String>();
+	static {
+		Field[] keyEventFields = KeyEvent.class.getFields();
+		ArrayList<Field> keyConstants = new ArrayList<Field>();
+		for(Field field: keyEventFields) {
+			if(field.getName().contains("VK_") && (field.getType().getName().equals(int.class.getName())))
+				keyConstants.add(field);
+		}
+		
+		for(Field keyConst: keyConstants) {
+			String name = keyConst.getName();
+			name = name.substring(3); //removes the "VK_"
+			try {
+				keyNames.put(((Integer)keyConst.get(new Integer(0))), name);
+			} catch(IllegalAccessException ex) {}
+		}
+	}
 	
 	private HashMap<String, String> keymap; // The symbolic map of actions to physical key names.
 	private HashMap<String, Key> keyboard; // The actual map of key names to Key objects.
@@ -72,13 +90,15 @@ public class InputHandler implements MouseListener, KeyListener {
 		keymap.put("PAUSE", "ESCAPE"); // pause the game.
 		keymap.put("SETHOME", "SHIFT-H"); // set your home.
 		keymap.put("HOME", "H"); // go to set home.
+		//keymap.put("SAVE", "R");
 		
-		keymap.put("SURVIVAL", "SHIFT-S|SHIFT-1");
-		keymap.put("CREATIVE", "SHIFT-C|SHIFT-2");
+		keymap.put("SURVIVAL=debug", "SHIFT-S|SHIFT-1");
+		keymap.put("CREATIVE=debug", "SHIFT-C|SHIFT-2");
 		
-		
-		keymap.put("ENTER", "ENTER|INTRO");
-		keymap.put("BACKSPACE", "BACKSPACE|RETROCESO");
+		//keymap.put("ENTER", "ENTER|C");
+		//keymap.put("ESCAPE", "ESCAPE|X");
+		// this is for compatibility with other languages. they can change it to fit their keyboards.
+		//keymap.put("BACKSPACE", "BACKSPACE");
 		//keymap.put("SOUNDON", "M"); //toggles sound on and off... well, it should...
 		
 		keymap.put("POTIONEFFECTS", "P"); // toggle potion effect display
@@ -87,7 +107,7 @@ public class InputHandler implements MouseListener, KeyListener {
 		
 		// I'm not entirely sure if this is necessary, especially for ctrl and alt... but it doesn't hurt.
 		keyboard.put("SHIFT", new Key());
-		keyboard.put("MAYÚS", keyboard.get("SHIFT"));
+		//keyboard.put("MAYÚS", keyboard.get("SHIFT"));
 		keyboard.put("CTRL", new Key());
 		keyboard.put("ALT", new Key());
 		
@@ -162,7 +182,7 @@ public class InputHandler implements MouseListener, KeyListener {
 	
 	/// this is meant for changing the default keys. Call it from the options menu, or something.
 	public void setKey(String keymapKey, String keyboardKey) {
-		if (keymapKey != null) //the keyboardKey can be null, I suppose, if you want to disable a key...
+		if (keymapKey != null && (!keymapKey.contains("=debug") || Game.debug)) //the keyboardKey can be null, I suppose, if you want to disable a key...
 			keymap.put(keymapKey, keyboardKey);
 	}
 	
@@ -184,9 +204,14 @@ public class InputHandler implements MouseListener, KeyListener {
 		Key key; // make a new key to return at the end
 		keytext = keytext.toUpperCase(); // prevent errors due to improper "casing"
 		
-		
-		if(getFromMap) { // if false, we assume that keytext is a physical key.
-			synchronized ("lock") {
+		synchronized ("lock") {
+			// this should never be run, actually, b/c the "=debug" isn't used in other places in the code.
+			if(keymap.containsKey(keytext+"=debug")) {
+				if(!Game.debug) return new Key();
+				else keytext += "=debug";
+			}
+			
+			if(getFromMap) { // if false, we assume that keytext is a physical key.
 				// if the passed-in key matches one in keymap, then replace it with it's match, a key in keyboard.
 				if (keymap.containsKey(keytext))
 					keytext = keymap.get(keytext); // converts action name to physical key name
@@ -267,12 +292,21 @@ public class InputHandler implements MouseListener, KeyListener {
 	}
 	
 	//called by KeyListener Event methods, below. Only accesses keyboard Keys.
-	private void toggle(String keytext, boolean pressed) {
+	private void toggle(int keycode, boolean pressed) {
+		String keytext = "NO_KEY";
+		
+		if(keyNames.containsKey(keycode))
+			keytext = keyNames.get(keycode);
+		else {
+			System.out.println("INPUT: Could not find keyname for keycode \"" + keycode + "\"");
+			return;
+		}
+		
 		keytext = keytext.toUpperCase();
 		
-		//if (Game.debug) System.out.println("toggling " + keytext + " key to "+pressed+".");
-		if(pressed && keyToChange != null && !(keytext.equals("CTRL")||keytext.equals("ALT")|keytext.equals("SHIFT"))) {
-			keymap.put(keyToChange, (overwrite?"":keymap.get(keyToChange)+"|")+getCurModifiers()+keytext);
+		//System.out.println("toggling " + keytext + " key to "+pressed+".");
+		if( pressed && keyToChange != null && !(keytext.equals("CTRL")||keytext.equals("ALT")||keytext.equals("SHIFT")) ) {
+			keymap.put(keyToChange, ( overwrite?"":keymap.get(keyToChange)+"|" ) + getCurModifiers()+keytext);
 			keyToChange = null;
 		}
 		getPhysKey(keytext).toggle(pressed);
@@ -289,8 +323,9 @@ public class InputHandler implements MouseListener, KeyListener {
 		ArrayList<String> keystore = new ArrayList<String>(); //make a list for keys
 		
 		for (String keyname: keymap.keySet()) //go though each mapping
-			keystore.add(keyname + ";" + keymap.get(keyname)); //add the mapping values as one string, seperated by a semicolon.
-
+			if(!keyname.contains("=debug") || Game.debug)
+				keystore.add(keyname + ";" + keymap.get(keyname)); //add the mapping values as one string, seperated by a semicolon.
+		
 		return keystore.toArray(new String[0]); //return the array of encoded key preferences.
 	}
 	
@@ -306,8 +341,8 @@ public class InputHandler implements MouseListener, KeyListener {
 	}
 	
 	/// Event methods, many to satisfy interface requirements...
-	public void keyPressed(KeyEvent ke) { toggle(ke.getKeyText(ke.getKeyCode()), true); }
-	public void keyReleased(KeyEvent ke) { toggle(ke.getKeyText(ke.getKeyCode()), false); }
+	public void keyPressed(KeyEvent ke) { toggle(ke.getKeyCode(), true); }
+	public void keyReleased(KeyEvent ke) { toggle(ke.getKeyCode(), false); }
 	public void keyTyped(KeyEvent ke) {
 		//stores the last character typed
 		lastKeyTyped = String.valueOf(ke.getKeyChar());
