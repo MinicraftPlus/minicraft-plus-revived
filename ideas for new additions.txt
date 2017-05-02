@@ -64,6 +64,10 @@ Make a way to resize the font... In specific instances only, though, I'm thinkin
 
 ????
 
+Add a feature so that a changelog will be displayed if on lower version...?
+
+????
+
 Support Color.get(String) where the string is four characters, made up of t,w,b; t=transparent, w=white, and b=black. That might look better. Of course, what WOULD look better is Color.red, Color.white, etc.
 	Maybe I could even devise Color.lighten and/or Color.darken methods, that would work for making the daylight cycle color sets.
 
