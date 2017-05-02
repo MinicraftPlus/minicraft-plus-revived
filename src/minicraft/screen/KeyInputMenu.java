@@ -16,11 +16,10 @@ public class KeyInputMenu extends ScrollingMenu {
 	private boolean listeningForBind;
 	private Menu parent;
 	
-	//private ArrayList<String[]> bindings = new ArrayList<String[3]>();
 	private String[] actionKeys;
 	
 	public KeyInputMenu(Menu parent) {
-		super(Arrays.asList(parent.input.getKeyPrefs()), Game.HEIGHT-Font.textHeight()*6, 0, Font.textHeight()*2, 1, Color.get(0, 555), Color.get(0, 333));
+		super(Arrays.asList(parent.input.getKeyPrefs()), (Game.HEIGHT-Font.textHeight()*9)/8, 0, Font.textHeight()*3, 1, Color.get(0, 555), Color.get(0, 333));
 		
 		this.parent = parent;
 		listeningForBind = false;
