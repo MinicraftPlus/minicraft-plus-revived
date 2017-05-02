@@ -8,6 +8,8 @@ Note to self: for more little bugs/ideas/concerns, search code for "TODO"
 
 	####BUGS####
 ####
+I accidently removed the whole "SmashParticle" thing it seems...
+####
 Not sure, but broken/exploded obsidian brick may drop stone...it looks like stone.
 ####
 Creeper one time, on lava level, w/ me in front of it, exploded, and left behind an odd square that had no texture, and didn't erase after an update to it...
