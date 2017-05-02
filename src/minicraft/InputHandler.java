@@ -5,14 +5,11 @@ import java.awt.event.KeyListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-
+import java.util.HashMap;
 import java.lang.reflect.Field;
 
 public class InputHandler implements MouseListener, KeyListener {
-	//note: there needs to be an options menu for changing the key controls.
-	
 	/** Note: Yay! I made HUGE revisions to this class, so I get to make the comments!
 		...and I actually know what I'm talking about. ;)
 			-Chris J
@@ -83,8 +80,8 @@ public class InputHandler implements MouseListener, KeyListener {
 		keymap.put("LEFT", "LEFT|A"); //move left action references left arrow key
 		keymap.put("RIGHT", "RIGHT|D"); //move right action references right arrow key
 		
-		keymap.put("ATTACK", "C"); //attack action references "C" key
-		keymap.put("MENU", "X"); //and so on... menu does various things.
+		keymap.put("ATTACK", "C|SPACE"); //attack action references "C" key
+		keymap.put("MENU", "X|ENTER"); //and so on... menu does various things.
 		keymap.put("CRAFT", "Z"); // open/close personal crafting window.
 		
 		keymap.put("PAUSE", "ESCAPE"); // pause the game.
@@ -107,7 +104,6 @@ public class InputHandler implements MouseListener, KeyListener {
 		
 		// I'm not entirely sure if this is necessary, especially for ctrl and alt... but it doesn't hurt.
 		keyboard.put("SHIFT", new Key());
-		//keyboard.put("MAYÚS", keyboard.get("SHIFT"));
 		keyboard.put("CTRL", new Key());
 		keyboard.put("ALT", new Key());
 		
