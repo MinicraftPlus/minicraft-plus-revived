@@ -50,7 +50,7 @@ public class Game extends Canvas implements Runnable {
 	private static Random random = new Random();
 	
 	public static boolean debug = false;
-	public static final String gameDir = System.getenv("APPDATA") + "/.playminicraft/mods/Minicraft Plus"; // The directory in which all the game files are stored; APPDATA is meant for windows...
+	public static String gameDir = "/.playminicraft/mods/Minicraft Plus"; // The directory in which all the game files are stored; APPDATA is meant for windows...
 	
 	/// MANAGERIAL VARS AND RUNNING
 	
@@ -861,8 +861,16 @@ public class Game extends Canvas implements Runnable {
 	
 	/// * The main method! * ///
 	public static void main(String[] args) {
-		boolean debug = (args != null && args.length > 0 && args[0].equals("--debug"));
+		boolean debug = false;
+		String saveDir = System.getenv("APPDATA");
+		for(int i = 0; i < args.length; i++) {
+			if(args[i].equals("--debug")) debug = true;
+			if(args[i].equals("--savedir") && i+1 < args.length)
+				saveDir = args[i+1];
+		}
 		Game.debug = debug;
+		Game.gameDir = saveDir + Game.gameDir;
+		
 		Game game = new Game();
 		game.setMinimumSize(new Dimension(1, 1));
 		game.setPreferredSize(getWindowSize());
