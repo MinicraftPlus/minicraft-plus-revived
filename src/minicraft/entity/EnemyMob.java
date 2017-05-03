@@ -13,7 +13,7 @@ public class EnemyMob extends MobAi {
 	public int detectDist;
 	
 	public EnemyMob(int lvl, MobSprite[][] sprites, int health, boolean isFactor, int detectDist, int rwTime, int rwChance) {
-		super(sprites, isFactor ? lvl * lvl * health*((Double)(Math.pow(2, OptionsMenu.diff-1))).intValue() : health, rwTime, rwChance);
+		super(sprites, isFactor ? lvl * lvl * health*((Double)(Math.pow(2, OptionsMenu.diff))).intValue() : health, rwTime, rwChance);
 		this.lvl = lvl;
 		this.detectDist = detectDist;
 	}

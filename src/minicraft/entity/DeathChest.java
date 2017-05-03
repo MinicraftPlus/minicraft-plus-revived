@@ -14,11 +14,11 @@ public class DeathChest extends Chest {
 		super("Death Chest");
 		
 		/// set the expiration time based on the world difficulty.
-		if (OptionsMenu.diff == 1) {
+		if (OptionsMenu.diff == OptionsMenu.easy) {
 			time = 36000;
-		} else if (OptionsMenu.diff == 2) {
+		} else if (OptionsMenu.diff == OptionsMenu.norm) {
 			time = 18000;
-		} else if (OptionsMenu.diff == 3) {
+		} else if (OptionsMenu.diff == OptionsMenu.hard) {
 			time = 1200;
 		}
 

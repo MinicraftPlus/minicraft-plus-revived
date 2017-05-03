@@ -52,12 +52,7 @@ public class Snake extends EnemyMob {
 
 	protected void touchedBy(Entity entity) {
 		if(entity instanceof Player) {
-			int damage;
-			if (lvl == 1)
-				damage = 1;
-			else
-				damage = lvl - 1 + OptionsMenu.diff;
-			
+			int damage = lvl + OptionsMenu.diff;
 			entity.hurt(this, damage, dir);
 		}
 	}

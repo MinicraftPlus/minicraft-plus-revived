@@ -9,14 +9,14 @@ import minicraft.saveload.Save;
 import minicraft.sound.Sound;
 
 public class OptionsMenu extends Menu {
-	public static int easy = 1;
-	public static int norm = 2;
-	public static int hard = 3;
-	public static int diff = 2;
+	public static int easy = 0;
+	public static int norm = 1;
+	public static int hard = 2;
+	public static int diff = 1;
 	public static boolean isSoundAct = true;
 	public static boolean autosave = false;
 	public static boolean unlockedskin = false;
-	public static boolean hasSetDiff = false;
+	//public static boolean hasSetDiff = false;
 	
 	private Menu parent;
 	
@@ -34,11 +34,11 @@ public class OptionsMenu extends Menu {
 			Sound.craft.play();
 		}
 
-		if (diff > 3) diff = 1;
-		if (diff < 1) diff = 3;
+		if (diff > 2) diff = 0;
+		if (diff < 0) diff = 2;
 
 		if (input.getKey("escape").clicked) {
-			hasSetDiff = true;
+			//hasSetDiff = true;
 			new Save(game);
 			game.setMenu(parent);
 		}
@@ -58,15 +58,15 @@ public class OptionsMenu extends Menu {
 	}
 
 	public void render(Screen screen) {
-		int textColor = Color.get(0, 555, 555, 555);
-		int onColor = Color.get(0, 50, 50, 50);
-		int offColor = Color.get(0, 500, 500, 500);
+		int textColor = Color.get(0, 555);
+		int onColor = Color.get(0, 50);
+		int offColor = Color.get(0, 500);
 		
 		screen.clear(0);
 		
 		Font.draw("Difficulty:", screen, 11 * 6 + 4, 8 * 8, Color.get(-1, 555, 555, 555));
 		String[] diffs = {"Easy", "Normal", "Hard"};
-		Font.draw(diffs[diff - 1], screen, 11 * 16 + 4, 8 * 8, Color.get(-1, 555, 555, 555));
+		Font.draw(diffs[diff], screen, 11 * 16 + 4, 8 * 8, Color.get(-1, 555, 555, 555));
 		
 		Font.draw("Press Left and Right", screen, 67, screen.h - 150, textColor);
 		
