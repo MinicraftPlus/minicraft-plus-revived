@@ -2,7 +2,7 @@ Minicraft+ version 1.9.3
 
 + added command line argument to change the save directory of the world files.
 * revised input system to (hopefully) work on any language keyboard/computer.
-+ added back feature where mobs stay away during the first night
++ added back feature where mobs stay away during the first night.
 
 
 Minicraft+ version 1.9.2
