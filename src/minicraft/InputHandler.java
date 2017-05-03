@@ -59,6 +59,9 @@ public class InputHandler implements MouseListener, KeyListener {
 				keyNames.put(((Integer)keyConst.get(new Integer(0))), name);
 			} catch(IllegalAccessException ex) {}
 		}
+		
+		// for compatibility becuase I'm lazy. :P
+		keyNames.put(KeyEvent.VK_BACK_SPACE, "BACKSPACE");
 	}
 	
 	private HashMap<String, String> keymap; // The symbolic map of actions to physical key names.
@@ -300,7 +303,7 @@ public class InputHandler implements MouseListener, KeyListener {
 		
 		keytext = keytext.toUpperCase();
 		
-		//System.out.println("toggling " + keytext + " key to "+pressed+".");
+		//System.out.println("toggling " + keytext + " key (keycode " + keycode + ") to "+pressed+".");
 		if( pressed && keyToChange != null && !(keytext.equals("CTRL")||keytext.equals("ALT")||keytext.equals("SHIFT")) ) {
 			keymap.put(keyToChange, ( overwrite?"":keymap.get(keyToChange)+"|" ) + getCurModifiers()+keytext);
 			keyToChange = null;
