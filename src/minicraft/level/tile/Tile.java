@@ -18,6 +18,9 @@ public class Tile {
 	public static int tickCount = 0; //A global tickCount used in the Lava & water tiles.
 	protected Random random = new Random();
 	
+	/// idea: to save tile names while saving space, I could encode the names in base 64 in the save file...^M
+    /// then, maybe, I would just replace the id numbers with id names, make them all private, and then make a get(String) method, parameter is tile name.
+	
 	public static Tile[] tiles = new Tile[256];
 	public static Tile grass = new GrassTile(0); // creates a grass tile with the Id of 0, (I don't need to explain the other simple ones)
 	public static Tile rock = new RockTile(1);
