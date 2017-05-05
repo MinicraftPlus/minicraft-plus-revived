@@ -81,11 +81,12 @@ public class Level {
 
 	@SuppressWarnings("unchecked") // @SuppressWarnings ignores the warnings (yellow underline) in this method.
 	/** Level which the world is contained in */
-	public Level(int w, int h, int level, Level parentLevel) {
+	public Level(int w, int h, int level, Level parentLevel) {this(w, h, level, parentLevel, true); }
+	public Level(int w, int h, int level, Level parentLevel, boolean makeWorld) {
 		depth = level;
 		this.w = w;
 		this.h = h;
-		byte[][] maps; // multidimensional array (an array within a array), used for the map
+		byte[][] maps = {(new byte[w*h]), (new byte[w*h])}; // multidimensional array (an array within a array), used for the map
 		int saveTile;
 		// set the dirt colors
 		if (level != 0) {
@@ -117,6 +118,7 @@ public class Level {
 		if (level == 1) {
 			dirtColor = 444;
 		}
+		if(!makeWorld) return;
 		if (level == 0) maps = LevelGen.createAndValidateTopMap(w, h); // If the level is 0 (surface), create a surface map for the level
 		else if (level < 0 && level > -4) { // create an undergound map
 			maps = LevelGen.createAndValidateUndergroundMap(w, h, -level);

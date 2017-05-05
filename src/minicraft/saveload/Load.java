@@ -242,7 +242,7 @@ public class Load {
 			Game.levels[l].w = Integer.parseInt(data.get(0));
 			Game.levels[l].h = Integer.parseInt(data.get(1));
 			Game.levels[l].depth = Integer.parseInt(data.get(2));
-			
+			//levels[l] = new Level(w, h, depth, )
 			for(int x = 0; x < Game.levels[l].w - 1; x++) {
 				for(int y = 0; y < Game.levels[l].h - 1; y++) {
 					Game.levels[l].setTile(y, x, Tile.tiles[Integer.parseInt(data.get(x + y * Game.levels[l].w + 3))], Integer.parseInt(extradata.get(x + y * Game.levels[l].w)));

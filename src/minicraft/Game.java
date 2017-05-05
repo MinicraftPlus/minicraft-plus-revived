@@ -264,7 +264,7 @@ public class Game extends Canvas implements Runnable {
 		Game.gamespeed = 1;
 		notifications.clear();
 		
-		if (!OptionsMenu.hasSetDiff) OptionsMenu.diff = 2;
+		//if (!OptionsMenu.hasSetDiff) OptionsMenu.diff = 2;
 		
 		setTime(0); // resets tickCount; game starts in the morning.
 		hasWon = false;
@@ -306,7 +306,7 @@ public class Game extends Canvas implements Runnable {
 			else LoadingMenu.percentage += 5; //just make sure they think something is happening... ;D
 			
 			levels[(i - 1 < 0 ? 5 : i - 1)] =
-					new Level(this.worldSize, this.worldSize, i - 4, (i == 5 ? (Level) null : levels[i]));
+					new Level(this.worldSize, this.worldSize, i - 4, (i == 5 ? (Level) null : levels[i]), !WorldSelectMenu.loadworld);
 		}
 		
 		
@@ -321,15 +321,18 @@ public class Game extends Canvas implements Runnable {
 		LoadingMenu.percentage = 0;
 		
 		level = levels[currentLevel]; // sets level to the current level (3; surface)
-		player.respawn(level); // finds the start level for the player
+		
 		currentLevel = 3; //? sets next currentlevel, maybe?
-		level.add(player);
 		
 		if (WorldSelectMenu.loadworld)
 			new Load(this, WorldSelectMenu.worldname);
-		else
+		else {
 			pastDay1 = false;
+			player.respawn(level); // finds the start level for the player
+		}
 		
+		level = levels[currentLevel]; // sets level to the current level (3; surface)
+		level.add(player);
 		DeadMenu.shouldRespawn = true;
 		
 		if(WorldGenMenu.get("Theme").equals("Hell")) {
