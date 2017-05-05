@@ -71,8 +71,8 @@ public class PauseMenu extends SelectMenu {
 		if (selection == -1) { // still displaying main options menu.
 			super.render(screen); // render the main options menu.
 			Font.drawCentered("Paused", screen, 35, Color.get(-1, 550));
-			Font.drawCentered("Arrow Keys to Scroll", screen, 135, Color.get(-1, 333));
-			Font.drawCentered("Enter: Choose", screen, 145, Color.get(-1, 333));
+			Font.drawCentered("Arrow Keys to Scroll", screen, 140, Color.get(-1, 333));
+			Font.drawCentered("Enter: Choose", screen, 150, Color.get(-1, 333));
 		} else {
 			ArrayList<String> confirmDialog = new ArrayList<String>();
 			
