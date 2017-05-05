@@ -113,7 +113,6 @@ public class Level {
 			}
 		}
 		
-		if(Game.debug) System.out.println((WorldSelectMenu.loadworld?"Loading":"Making")+" level "+level+"...");
 		
 		if (level == 1) {
 			dirtColor = 444;
@@ -127,7 +126,8 @@ public class Level {
 		if(level != -4 && level != 0)
 			monsterDensity = 4;
 		
-		if(!mkaeWorld) return;
+		if(makeWorld) {
+			if(Game.debug) System.out.println("Making level "+level+"...");
 		
 		if (level == 0) maps = LevelGen.createAndValidateTopMap(w, h); // If the level is 0 (surface), create a surface map for the level
 		else if (level < 0 && level > -4) { // create an undergound map
@@ -364,6 +364,7 @@ public class Level {
 					if(getTile(x, y) == Tile.stairsDown)
 						printLevelLoc("Stairs down", x, y);
 			System.out.println();
+		}
 		}
 	}
 

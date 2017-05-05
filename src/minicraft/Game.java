@@ -118,6 +118,7 @@ public class Game extends Canvas implements Runnable {
 	public int newscoreTime; // time you start with in score mode.
 	
 	public static boolean pastDay1 = true; // used to prefent mob spawn on surface on day 1.
+	private static boolean readyToRenderGameplay = false;
 	
 	/// *** CONSTRUSTOR *** ///
 	public Game() {
@@ -232,13 +233,13 @@ public class Game extends Canvas implements Runnable {
 			level.add(player); // adds the player to the current level (always surface here)
 		} else {
 			// new game, regenerate... just the surface level?
-			levels[3] = new Level(worldSize, worldSize, 0, levels[4]);
+			levels[3] = new Level(worldSize, worldSize, 0, levels[4], false);
 			
 			level = levels[currentLevel]; // Set level variable to the surface (b/c currentlevel is always 3)
 			
 			DeadMenu.shouldRespawn = true; // player should respawn on death
-			player.findStartPos(level); // finds the start position for the player
-			if (debug) System.out.println("spawned player in new surface level, resetGame");
+			//player.findStartPos(level); // finds the start position for the player
+			//if (debug) System.out.println("spawned player in new surface level, resetGame");
 		}
 	}
 	
@@ -301,43 +302,45 @@ public class Game extends Canvas implements Runnable {
 		}
 		
 		LoadingMenu.percentage = 0;
-		for (int i = 5; i >= 0; i--) {
-			if (!WorldSelectMenu.loadworld) LoadingMenu.percentage = (5-i)*20;
-			else LoadingMenu.percentage += 5; //just make sure they think something is happening... ;D
+		if(!WorldSelectMenu.loadworld) {
+			for (int i = 5; i >= 0; i--) {
+				LoadingMenu.percentage = (5-i)*20;
+				//else LoadingMenu.percentage += 5; //just make sure they think something is happening... ;D
+				
+				levels[(i - 1 < 0 ? 5 : i - 1)] =
+						new Level(this.worldSize, this.worldSize, i - 4, (i == 5 ? (Level) null : levels[i]), !WorldSelectMenu.loadworld);
+			}
 			
-			levels[(i - 1 < 0 ? 5 : i - 1)] =
-					new Level(this.worldSize, this.worldSize, i - 4, (i == 5 ? (Level) null : levels[i]), !WorldSelectMenu.loadworld);
-		}
-		
-		
-		// if resetStartGame is called when not loading a world, add an Iron lantern to level 5, at (984, 984).
-		if (!WorldSelectMenu.loadworld) {
+			// if resetStartGame is called when not loading a world, add an Iron lantern to level 5, at (984, 984).
+			
 			FurnitureItem f1 = new FurnitureItem(new IronLantern());
 			Furniture f = f1.furniture;
 			f.x = 984;
 			f.y = 984;
 			levels[5].add(f);
 		}
+		
 		LoadingMenu.percentage = 0;
 		
+		currentLevel = 3; //? sets next currentlevel, maybe?
 		level = levels[currentLevel]; // sets level to the current level (3; surface)
 		
-		currentLevel = 3; //? sets next currentlevel, maybe?
-		
-		if (WorldSelectMenu.loadworld)
+		if (WorldSelectMenu.loadworld) {
 			new Load(this, WorldSelectMenu.worldname);
-		else {
+			level = levels[currentLevel];
+		} else {
 			pastDay1 = false;
-			player.respawn(level); // finds the start level for the player
+			player.findStartPos(level); // finds the start level for the player
+			level.add(player);
 		}
 		
-		level = levels[currentLevel]; // sets level to the current level (3; surface)
-		level.add(player);
 		DeadMenu.shouldRespawn = true;
 		
 		if(WorldGenMenu.get("Theme").equals("Hell")) {
 			player.inventory.add(new ResourceItem(Resource.lavapotion));
 		}
+		
+		readyToRenderGameplay = true;
 	}
 	
 	// VERY IMPORTANT METHOD!! Makes everything keep happening.
@@ -465,8 +468,8 @@ public class Game extends Canvas implements Runnable {
 					if (input.getKey("survival").clicked) ModeMenu.updateModeBools(1);
 					if (ModeMenu.score && input.getKey("shift-t").clicked) scoreTime = normSpeed * 5; // 5 seconds
 					
-					if (input.getKey("equals").clicked) Player.moveSpeed += 0.5D;
-					if (input.getKey("minus").clicked && Player.moveSpeed > 0.5D) Player.moveSpeed -= 0.5D;
+					if (input.getKey("equals").clicked) Player.moveSpeed++;//= 0.5D;
+					if (input.getKey("minus").clicked && Player.moveSpeed > 1) Player.moveSpeed--;// -= 0.5D;
 					
 					if (input.getKey("shift-equals").clicked) {
 						if(gamespeed >= 1) gamespeed++;
@@ -548,36 +551,41 @@ public class Game extends Canvas implements Runnable {
 			requestFocus(); // requests the focus of the screen.
 			return;
 		}
+		
+		if(readyToRenderGameplay) {
+			int xScroll = player.x - screen.w / 2; // scrolls the screen in the x axis.
+			int yScroll = player.y - (screen.h - 8) / 2; // scrolls the screen in the y axis.
+			
+			//stop scrolling if the screen is at the ...
+			if (xScroll < 16) xScroll = 16; // ...left border.
+			if (yScroll < 16) yScroll = 16; // ...top border.
+			if (xScroll > level.w * 16 - screen.w - 16) xScroll = level.w * 16 - screen.w - 16; // ...right border.
+			if (yScroll > level.h * 16 - screen.h - 16) yScroll = level.h * 16 - screen.h - 16; // ...bottom border.
+			if (currentLevel > 3) { // if the current level is higher than 3 (which only the sky level is)
+				int col = Color.get(20, 20, 121, 121); // background color.
+				for (int y = 0; y < 28; y++)
+					for (int x = 0; x < 48; x++) {
+						// creates the background for the sky level:
+						screen.render(x * 8 - ((xScroll / 4) & 7), y * 8 - ((yScroll / 4) & 7), 0, col, 0);
+					}
+			}
 
-		int xScroll = player.x - screen.w / 2; // scrolls the screen in the x axis.
-		int yScroll = player.y - (screen.h - 8) / 2; // scrolls the screen in the y axis.
-		
-		//stop scrolling if the screen is at the ...
-		if (xScroll < 16) xScroll = 16; // ...left border.
-		if (yScroll < 16) yScroll = 16; // ...top border.
-		if (xScroll > level.w * 16 - screen.w - 16) xScroll = level.w * 16 - screen.w - 16; // ...right border.
-		if (yScroll > level.h * 16 - screen.h - 16) yScroll = level.h * 16 - screen.h - 16; // ...bottom border.
-		if (currentLevel > 3) { // if the current level is higher than 3 (which only the sky level is)
-			int col = Color.get(20, 20, 121, 121); // background color.
-			for (int y = 0; y < 28; y++)
-				for (int x = 0; x < 48; x++) {
-					// creates the background for the sky level:
-					screen.render(x * 8 - ((xScroll / 4) & 7), y * 8 - ((yScroll / 4) & 7), 0, col, 0);
-				}
-		}
-
-		level.renderBackground(screen, xScroll, yScroll); // renders current level background
-		level.renderSprites(screen, xScroll, yScroll); // renders level sprites on screen
-		
-		// this creates the darkness in the caves
-		//if (!ModeMenu.creative && currentLevel < 4 && (currentLevel < 3 || time > 1)) {
-		if (!ModeMenu.creative && currentLevel < 3) {
-			if (currentLevel < 3) lightScreen.clear(0); // clears the light screen to a black color
-			level.renderLight(lightScreen, xScroll, yScroll); // finds (and renders) all the light from objects (like the player, lanterns, and lava).
-			screen.overlay(lightScreen, xScroll, yScroll); // overlays the light screen over the main screen.
+			level.renderBackground(screen, xScroll, yScroll); // renders current level background
+			level.renderSprites(screen, xScroll, yScroll); // renders level sprites on screen
+			
+			// this creates the darkness in the caves
+			//if (!ModeMenu.creative && currentLevel < 4 && (currentLevel < 3 || time > 1)) {
+			if (!ModeMenu.creative && currentLevel < 3) {
+				if (currentLevel < 3) lightScreen.clear(0); // clears the light screen to a black color
+				level.renderLight(lightScreen, xScroll, yScroll); // finds (and renders) all the light from objects (like the player, lanterns, and lava).
+				screen.overlay(lightScreen, xScroll, yScroll); // overlays the light screen over the main screen.
+			}
+			
+			renderGui(); //renders the GUI.
 		}
 		
-		renderGui(); //renders the GUI.
+		if (menu != null) // renders menu, if present.
+			menu.render(screen);
 		
 		if (!hasFocus()) renderFocusNagger(); // calls the renderFocusNagger() method, which creates the "Click to Focus" message.
 
@@ -765,9 +773,6 @@ public class Game extends Canvas implements Runnable {
 		
 		if (player.activeItem != null) // shows active item sprite and name in bottom toolbar, if one exists.
 			player.activeItem.renderInventory(screen, 12 * 7, screen.h - 8);
-
-		if (menu != null) // renders menu, if present.
-			menu.render(screen);
 	}
 	
 	/** Renders the "Click to focus" box when you click off the screen. */
