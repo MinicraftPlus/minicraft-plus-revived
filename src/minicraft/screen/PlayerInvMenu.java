@@ -1,21 +1,25 @@
 package minicraft.screen;
 
 import minicraft.entity.Player;
+import minicraft.entity.Inventory;
 
 public class PlayerInvMenu extends InventoryMenu {
 	private Player player;
 	
 	public PlayerInvMenu(Player player) {
-		super(player.inventory, "inventory");
+		super(PlayerInvMenu.addActiveItem(player), "inventory");
 		this.player = player;
-		
+	}
+	
+	private static Inventory addActiveItem(Player player) {
 		if (player.activeItem != null) { // If the player has an active item, then...
 			player.inventory.add(0, player.activeItem); // that active item will go into the inventory
-			options.add(0, " "+player.activeItem.getName());
+			//options.add(0, " "+player.activeItem.getName());
 			player.activeItem = null; // the player will not have an active item anymore.
 		}
+		return player.inventory;
 	}
-
+	
 	public void tick() {
 		if (input.getKey("menu").clicked) game.setMenu(null);
 		
