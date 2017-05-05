@@ -4,6 +4,7 @@ Minicraft+ version 1.9.3
 * revised input system to (hopefully) work on any language keyboard/computer.
 + added back feature where mobs stay away during the first night.
 * Reduced world load time from 2 seconds to about half a second, for me). It used to generate new levels needlessly, but now it doesn't.
++ Loading has a progress bar. Though honestly, it doesn't need one.
 
 Minicraft+ version 1.9.2
 
