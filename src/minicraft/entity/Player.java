@@ -298,8 +298,8 @@ public class Player extends Mob {
 		
 		if (input.getKey("r").clicked && !game.saving) {
 			game.saving = true;
-			new Save(this, WorldSelectMenu.worldname);
 			LoadingMenu.percentage = 0;
+			new Save(this, WorldSelectMenu.worldname);
 		}
 		//debug feature:
 		if (Game.debug && input.getKey("shift-p").clicked) { // remove all potion effects
