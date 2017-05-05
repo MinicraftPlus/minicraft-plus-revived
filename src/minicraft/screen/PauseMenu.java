@@ -50,10 +50,8 @@ public class PauseMenu extends SelectMenu {
 			}
 			
 			if (selection == 4) { //load game option; can't return
-				WorldSelectMenu m = new WorldSelectMenu();
 				WorldSelectMenu.loadworld = true;
-				m.createworld = false;
-				game.setMenu(m);
+				game.setMenu(new WorldSelectMenu());
 			}
 			
 			if (selection == 5) //title menu
