@@ -136,9 +136,9 @@ public class Save {
 			data.add(String.valueOf(WorldGenMenu.getSize()));
 			data.add(String.valueOf(Game.levels[l].depth));
 			
-			for(int i = 0; i < Game.levels[l].w; i++) {
-				for(int ii = 0; ii < Game.levels[l].h; ii++) {
-					data.add(String.valueOf(Game.levels[l].getTile(i, ii).id));
+			for(int x = 0; x < Game.levels[l].w; x++) {
+				for(int y = 0; y < Game.levels[l].h; y++) {
+					data.add(String.valueOf(Game.levels[l].getTile(x, y).id));
 				}
 			}
 			
@@ -146,9 +146,9 @@ public class Save {
 		}
 		
 		for(int l = 0; l < Game.levels.length; l++) {
-			for(int i = 0; i < Game.levels[l].w; i++) {
-				for(int ii = 0; ii < Game.levels[l].h; ii++) {
-					data.add(String.valueOf(Game.levels[l].getData(i, ii)));
+			for(int x = 0; x < Game.levels[l].w; x++) {
+				for(int y = 0; y < Game.levels[l].h; y++) {
+					data.add(String.valueOf(Game.levels[l].getData(x, y)));
 				}
 			}
 			
