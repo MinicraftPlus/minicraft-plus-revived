@@ -219,6 +219,9 @@ public class Load {
 		}
 		
 		OptionsMenu.diff = Integer.parseInt(data.get(3));
+		if(worldVer.compareTo(new Version("1.9.3-dev3")) < 0)
+			OptionsMenu.diff--; // account for change in difficulty
+		
 		AirWizard.beaten = Boolean.parseBoolean(data.get(4));
 	}
 	
@@ -363,11 +366,18 @@ public class Load {
 			int x = Integer.parseInt(info.get(0));
 			int y = Integer.parseInt(info.get(1));
 			
-			int mobLvl = 0;
+			int mobLvl = 1;
 			try {
-				if(Class.forName("EnemyMob").isAssignableFrom(Class.forName(entityName)))
+				if(Class.forName("minicraft.entity.EnemyMob").isAssignableFrom(Class.forName("minicraft.entity."+entityName)))
 					mobLvl = Integer.parseInt(info.get(info.size()-2));
-			} catch(ClassNotFoundException ex) {}
+			} catch(ClassNotFoundException ex) {
+				ex.printStackTrace();
+			}
+			
+			if(mobLvl == 0) {
+				if(Game.debug) System.out.println("level 0 mob: " + entityName);
+				mobLvl = 1;
+			}
 			
 			Entity newEntity = getEntity(entityName, player, mobLvl);
 			
