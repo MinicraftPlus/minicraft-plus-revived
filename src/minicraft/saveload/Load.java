@@ -239,17 +239,28 @@ public class Load {
 	public void loadWorld(String filename) {
 		for(int l = 0; l < Game.levels.length; l++) {
 			loadFromFile(location + filename + l + extention);
-			Game.levels[l].w = Integer.parseInt(data.get(0));
-			Game.levels[l].h = Integer.parseInt(data.get(1));
-			Game.levels[l].depth = Integer.parseInt(data.get(2));
-			//levels[l] = new Level(w, h, depth, )
-			for(int x = 0; x < Game.levels[l].w - 1; x++) {
-				for(int y = 0; y < Game.levels[l].h - 1; y++) {
-					Game.levels[l].setTile(y, x, Tile.tiles[Integer.parseInt(data.get(x + y * Game.levels[l].w + 3))], Integer.parseInt(extradata.get(x + y * Game.levels[l].w)));
+			
+			int lvlw = Integer.parseInt(data.get(0));
+			int lvlh = Integer.parseInt(data.get(1));
+			int lvldepth = Integer.parseInt(data.get(2));
+			
+			byte[] tiles = new byte[lvlw * lvlh];
+			byte[] tdata = new byte[lvlw * lvlh];
+			
+			for(int x = 0; x < lvlw - 1; x++) {
+				for(int y = 0; y < lvlh - 1; y++) {
+					int tileArrIdx = /*worldVer.compareTo(new Version("1.9.3-dev3")) < 0 ?*/ y + x * lvlw;// : x + y * lvlw;
+					int tileidx = x + y * lvlw; // the tiles are saved with x outer loop, and y inner loop, meaning that the list reads down, then right one, rather than right, then down one.
+					tiles[tileArrIdx] = (byte) Tile.tiles[Integer.parseInt(data.get(tileidx + 3))].id;
+					tdata[tileArrIdx] = Byte.parseByte(extradata.get(tileidx));
 				}
 			}
+			
+			Game.levels[l] = new Level(lvlw, lvlh, lvldepth, )
+			
+			Game.levels[l].tiles = tiles;
+			Game.levels[l].data = tdata;
 		}
-		
 	}
 	
 	public void loadPlayer(String filename, Player player) {

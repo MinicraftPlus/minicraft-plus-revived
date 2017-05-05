@@ -86,7 +86,7 @@ public class Level {
 		depth = level;
 		this.w = w;
 		this.h = h;
-		byte[][] maps = {(new byte[w*h]), (new byte[w*h])}; // multidimensional array (an array within a array), used for the map
+		byte[][] maps; // multidimensional array (an array within a array), used for the map
 		int saveTile;
 		// set the dirt colors
 		if (level != 0) {
@@ -118,7 +118,17 @@ public class Level {
 		if (level == 1) {
 			dirtColor = 444;
 		}
-		if(!makeWorld) return;
+		
+		entitiesInTiles = new ArrayList[w * h]; // This is actually an array of arrayLists (of entities), with one arraylist per tile.
+		for (int i = 0; i < w * h; i++) {
+			entitiesInTiles[i] = new ArrayList<Entity>(); // Adds a entity list in that tile.
+		}
+		
+		if(level != -4 && level != 0)
+			monsterDensity = 4;
+		
+		if(!mkaeWorld) return;
+		
 		if (level == 0) maps = LevelGen.createAndValidateTopMap(w, h); // If the level is 0 (surface), create a surface map for the level
 		else if (level < 0 && level > -4) { // create an undergound map
 			maps = LevelGen.createAndValidateUndergroundMap(w, h, -level);
@@ -232,10 +242,6 @@ public class Level {
 			}
 		}
 
-		entitiesInTiles = new ArrayList[w * h]; // This is actually an array of arrayLists (of entities), with one arraylist per tile.
-		for (int i = 0; i < w * h; i++) {
-			entitiesInTiles[i] = new ArrayList<Entity>(); // Adds a entity list in that tile.
-		}
 		
 		/// if the level is the dungeon, and we're not just loading the world...
 		if (level == -4 && !WorldSelectMenu.loadworld) {
