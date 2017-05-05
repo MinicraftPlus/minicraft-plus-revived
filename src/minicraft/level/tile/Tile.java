@@ -4,12 +4,17 @@ import java.util.Random;
 import minicraft.entity.Entity;
 import minicraft.entity.Mob;
 import minicraft.entity.Player;
+import minicraft.gfx.Color;
 import minicraft.gfx.Screen;
 import minicraft.item.Item;
 import minicraft.item.resource.Resource;
 import minicraft.level.Level;
 
 public class Tile {
+	public enum OreType {
+        IRON, LAPIS, GOLD, GEM
+    }
+	
 	public static int tickCount = 0; //A global tickCount used in the Lava & water tiles.
 	protected Random random = new Random();
 	
@@ -96,10 +101,10 @@ public class Tile {
 	public static Tile torchwoolyellow = new TorchTile(54, lightywool);
 	public static Tile torchwoolblack = new TorchTile(55, lightblwool);
 
-	public static Tile ironOre = new OreTile(19, Resource.ironOre);
-	public static Tile lapisOre = new OreTile(24, Resource.lapisOre);
-	public static Tile goldOre = new OreTile(20, Resource.goldOre);
-	public static Tile gemOre = new OreTile(21, Resource.gem);
+	public static Tile ironOre = new OreTile(19, OreType.IRON, Color.get(-1, 100, 322, 544));
+	public static Tile lapisOre = new OreTile(24, OreType.LAPIS, Color.get(-1, 005, 115, 115));
+	public static Tile goldOre = new OreTile(20, OreType.GOLD, Color.get(-1, 110, 440, 553));
+	public static Tile gemOre = new OreTile(21, OreType.GEM, Color.get(-1, 101, 404, 545));
 	public static Tile cloudCactus = new CloudCactusTile(22); // "ore" in the sky.
 	public static Tile infiniteFall = new InfiniteFallTile(16); // Air tile in the sky.
 

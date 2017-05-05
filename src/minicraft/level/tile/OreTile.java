@@ -18,17 +18,17 @@ import minicraft.screen.ModeMenu;
 
 /// this is all the spikey stuff (except "cloud cactus")
 public class OreTile extends Tile {
-	private Resource toDrop;
-	private int color;
+	private OreType type;
+	private int color, oreColor;
 
-	public OreTile(int id, Resource toDrop) {
+	public OreTile(int id, OreType oreType, int col) {
 		super(id);
-		this.toDrop = toDrop;
-		this.color = toDrop.color & 0xffff00;
+                type = oreType;
+                oreColor = col;
 	}
 
 	public void render(Screen screen, Level level, int x, int y) {
-		color = (toDrop.color & 0xffffff00) + Color.get(level.dirtColor);
+		color = (oreColor & 0xffffff00) + Color.get(level.dirtColor);
 		screen.render(x * 16 + 0, y * 16 + 0, 17 + 1 * 32, color, 0);
 		screen.render(x * 16 + 8, y * 16 + 0, 18 + 1 * 32, color, 0);
 		screen.render(x * 16 + 0, y * 16 + 8, 17 + 2 * 32, color, 0);
@@ -62,6 +62,17 @@ public class OreTile extends Tile {
 		return false;
 	}
 
+        public ResourceItem getOre(){
+            switch(type){
+                case IRON: return new ResourceItem(Resource.ironOre);
+                case LAPIS: return new ResourceItem(Resource.lapisOre);
+                case GOLD: return new ResourceItem(Resource.goldOre);
+                case GEM: return new ResourceItem(Resource.gem);
+                default: return new ResourceItem(Resource.ironOre);
+            }
+        }
+        
+        
 	public void hurt(Level level, int x, int y, int dmg) {
 		int damage = level.getData(x, y) + 1;
 		int oreH;
@@ -80,11 +91,7 @@ public class OreTile extends Tile {
 				level.setData(x, y, damage);
 			}
 			for (int i = 0; i < count; i++) {
-				level.add(
-						new ItemEntity(
-								new ResourceItem(toDrop),
-								x * 16 + random.nextInt(10) + 3,
-								y * 16 + random.nextInt(10) + 3));
+				level.add(new ItemEntity(getOre(), x * 16 + random.nextInt(10) + 3, y * 16 + random.nextInt(10) + 3));
 			}
 		}
 	}
