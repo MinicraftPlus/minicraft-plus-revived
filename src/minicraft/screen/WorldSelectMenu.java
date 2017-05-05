@@ -12,9 +12,9 @@ public class WorldSelectMenu extends Menu {
 	
 	private static final String[] options = {"Load World", "New World"};
 	public static String worldname = "";
-	public static boolean loadWorld = false;
-	private boolean createWorld = false;
 	
+	public static boolean loadworld = false;
+	private boolean createworld = false;
 	private int selected = 0; //index of action; load or create.
 	private int worldselected = 0; //index of selected world?
 	
@@ -107,8 +107,9 @@ public class WorldSelectMenu extends Menu {
 				//load the game
 				worldname = worldnames.get(worldselected);
 				Sound.test.play();
-				game.resetstartGame();
-				game.setMenu((Menu) null);
+				game.setMenu(new LoadingMenu());
+				//game.resetstartGame();
+				//game.setMenu((Menu) null);
 			} else {
 				if(Game.debug) System.out.println("delete mode");
 				//delete the world

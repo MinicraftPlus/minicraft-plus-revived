@@ -136,8 +136,9 @@ private static final String[] options = {"New game", "Instructions", "Tutorial",
 	
 	public TitleMenu() {
 		super(Arrays.asList(options), 11*8, 1, Color.get(0, 555), Color.get(0, 222));
-		folder = new File(location);
+		Game.readyToRenderGameplay = false;
 		
+		folder = new File(location);
 		rand = random.nextInt(splashes.length);
 		loadUnlocks();
 	}

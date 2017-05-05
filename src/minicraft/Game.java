@@ -118,7 +118,7 @@ public class Game extends Canvas implements Runnable {
 	public int newscoreTime; // time you start with in score mode.
 	
 	public static boolean pastDay1 = true; // used to prefent mob spawn on surface on day 1.
-	private static boolean readyToRenderGameplay = false;
+	public static boolean readyToRenderGameplay = false;
 	
 	/// *** CONSTRUSTOR *** ///
 	public Game() {
