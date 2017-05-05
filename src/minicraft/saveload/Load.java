@@ -43,6 +43,7 @@ import minicraft.item.ListItems;
 import minicraft.item.ResourceItem;
 import minicraft.item.resource.ArmorResource;
 import minicraft.item.resource.PotionResource;
+import minicraft.level.Level;
 import minicraft.level.tile.Tile;
 import minicraft.screen.LoadingMenu;
 import minicraft.screen.ModeMenu;
@@ -237,7 +238,7 @@ public class Load {
 	}
 	
 	public void loadWorld(String filename) {
-		for(int l = 0; l < Game.levels.length; l++) {
+		for(int l = Game.levels.length-1; l>=0; l--) {
 			loadFromFile(location + filename + l + extention);
 			
 			int lvlw = Integer.parseInt(data.get(0));
@@ -256,8 +257,8 @@ public class Load {
 				}
 			}
 			
-			Game.levels[l] = new Level(lvlw, lvlh, lvldepth, )
-			
+			Level parent = l == Game.levels.length-1 ? null : Game.levels[l+1];
+			Game.levels[l] = new Level(lvlw, lvlh, lvldepth, parent, false);
 			Game.levels[l].tiles = tiles;
 			Game.levels[l].data = tdata;
 		}
@@ -272,19 +273,22 @@ public class Load {
 		player.health = Integer.parseInt(data.get(4));
 		player.armor = Integer.parseInt(data.get(5));
 		
-		String modedata;
 		if(player.armor > 0) {
 			player.armorDamageBuffer = Integer.parseInt(data.get(13));
 			player.curArmor = (ArmorResource)(((ResourceItem)ListItems.getItem(data.get(14))).resource);
 		}
 		
-		player.ac = Integer.parseInt(data.get(7));
-		Game.currentLevel = Integer.parseInt(data.get(8));
-		modedata = data.get(9);
-		
 		Player.score = Integer.parseInt(data.get(6));
-		Game.levels[Game.currentLevel].add(player);
+		player.ac = Integer.parseInt(data.get(7));
 		
+		Game.currentLevel = Integer.parseInt(data.get(8));
+		Level level = Game.levels[Game.currentLevel];
+		level.add(player);
+		Tile spawnTile = level.getTile(player.spawnx >> 4, player.spawny >> 4);
+		if(spawnTile.id != Tile.grass.id && spawnTile.mayPass(level, player.spawnx >> 4, player.spawny >> 4, player))
+			player.bedSpawn = true; //A semi-advanced little algorithm to determine if the player has a bed save; and though if you sleep on a grass tile, this won't get set, it doesn't matter b/c you'll spawn there anyway!
+		
+		String modedata = data.get(9);
 		int mode;
 		if(modedata.contains(";")) {
 			mode = Integer.parseInt(modedata.substring(0, modedata.indexOf(";")));
