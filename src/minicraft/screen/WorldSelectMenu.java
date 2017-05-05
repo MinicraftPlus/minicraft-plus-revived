@@ -10,27 +10,30 @@ import minicraft.sound.Sound;
 
 public class WorldSelectMenu extends Menu {
 	
+	private static final String[] options = {"Load World", "New World"};
+	public static String worldname = "";
+	public static boolean loadWorld = false;
+	private boolean createWorld = false;
+	
 	private int selected = 0; //index of action; load or create.
 	private int worldselected = 0; //index of selected world?
-	public static boolean loadworld = false;
-	boolean createworld = false;
-	boolean delete = false;
-	boolean rename = false;
-	boolean fw = false; // tells if there are any pre-existing worlds.
-	String name = "";
-	boolean hasworld = false;
-	String renamingworldname = "";
-	String location = Game.gameDir + "/saves/";
-	File folder;
-	ArrayList<String> worldnames;
-	public static String worldname = "";
-	private static final String[] options = new String[] {"Load World", "New World"};
-	public int tick;
-	int wncol;
-
+	
+	private boolean delete = false;
+	private boolean rename = false;
+	private String name = "";
+	private String renamingworldname = "";
+	
+	private ArrayList<String> worldnames;
+	private String location = Game.gameDir + "/saves/";
+	private File folder;
+	private boolean fw = false; // tells if there are any pre-existing worlds.
+	
+	public int tick = 0;
+	private int wncol;
+	
 	public WorldSelectMenu() {
 		tick = 0;
-		wncol = Color.get(0, 5, 5, 5);
+		wncol = Color.get(0, 5);
 
 		//find worlds:
 		worldnames = new ArrayList<String>();
