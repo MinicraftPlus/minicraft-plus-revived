@@ -3,7 +3,7 @@ Minicraft+ version 1.9.3
 + added command line argument to change the save directory of the world files.
 * revised input system to (hopefully) work on any language keyboard/computer.
 + added back feature where mobs stay away during the first night.
-
+* Reduced world load time from 2 seconds to about half a second, for me). It used to generate new levels needlessly, but now it doesn't.
 
 Minicraft+ version 1.9.2
 
