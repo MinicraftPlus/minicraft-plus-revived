@@ -78,7 +78,37 @@ public class Level {
 		
 		System.out.println(prepend + " on " + levelName + " level: x="+x + " y="+y);
 	}
-
+	
+	private void printTileLocs(Tile t) {
+		java.lang.reflect.Field[] fields = Tile.class.getFields();
+		String tileName = "";
+		for(java.lang.reflect.Field f: fields) {
+			Tile t2 = null;
+			boolean match = false;
+			try {
+				match = Tile.class.isAssignableFrom(f.getType()) && ((Tile)f.get(t2)).id == t.id;
+			} catch(IllegalAccessException ex) {
+				ex.printStackTrace();
+			}
+			if(match) {
+				tileName = f.getName();
+				break;
+			}
+		}
+		for(int x = 0; x < w; x++)
+			for(int y = 0; y < h; y++)
+				if(getTile(x, y).id == t.id)
+					printLevelLoc(tileName, x, y);
+	}
+	private void printEntityLocs(Entity e) {
+		String entityName = e.getClass().getName().replace("minicraft.entity.","");
+		for(int x = 0; x < w; x++)
+			for(int y = 0; y < h; y++)
+				for(Entity entity: getEntities(x, y, x, y))
+					if(e.getClass().isAssignableFrom(entity.getClass()))
+						printLevelLoc(entityName, x, y);
+	}
+	
 	@SuppressWarnings("unchecked") // @SuppressWarnings ignores the warnings (yellow underline) in this method.
 	/** Level which the world is contained in */
 	public Level(int w, int h, int level, Level parentLevel) {this(w, h, level, parentLevel, true); }
@@ -631,7 +661,7 @@ public class Level {
 		if (Game.debug) {
 			String clazz = entity.getClass().getCanonicalName();
 			clazz = clazz.substring(clazz.lastIndexOf(".")+1);
-			String[] searching = {"StairsDown", "Spawner", "Chest", "DungeonChest", "AirWizard", "Player"}; //can contain any number of class names I want to print when found.
+			String[] searching = {"DungeonChest", "AirWizard"}; //can contain any number of class names I want to print when found.
 			for(String search: searching) {
 				if(search.equals(clazz)) {
 					if (clazz == "AirWizard") clazz += ((AirWizard)entity).secondform ? " II" : "";
