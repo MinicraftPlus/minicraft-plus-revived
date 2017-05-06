@@ -101,16 +101,16 @@ public class Screen {
 						pixels[i] = 0;
                     } else if(Game.time != 1) { // if it's not midday...
 						/// outside the caves, not being lit simply means being darker.
-                        int r = (pixels[i] / 36) % 6;
+                        /*int r = (pixels[i] / 36) % 6;
                         int g = (pixels[i] / 6) % 6;
                         int b = pixels[i] % 6;
                         if(r > 0) r--;
                         if(g > 0) g--;
                         if(b > 0) b--;
                         pixels[i] = r * 36 + g * 6 + b;
-						
-						//int darkenFactor = Math.abs(Game.time - 1);
-						//pixels[i] = Color.tint(pixels[i], -darkenFactor*1); // darkens the color one shade.
+						*/
+						int darkenFactor = Math.abs(Game.time - 1);
+						pixels[i] = Color.tint(pixels[i], -darkenFactor*1); // darkens the color one shade.
                     }
                 }
                 i++; // moves to the next pixel.
