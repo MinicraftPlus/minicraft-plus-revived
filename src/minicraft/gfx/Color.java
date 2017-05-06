@@ -65,6 +65,16 @@ public class Color {
 		// OH! This is just converting minicraft colors, which can only go 0 to 5, to regular, 8-bit rgb colors, which go from 0 to 255! or... wait, actually, maybe not..? They add up to 216, max... -Chris J
 	}
 	
+	/** This method darkens or lightens a pixel by the specified amount. */
+	public static int tint(int color, int amount) {
+		int r = (color / 36) % 6;
+		int g = (color / 6) % 6;
+		int b = color % 6;
+		r+=amount; g+=amount; b+=amount;
+		
+		return r * 36 + g * 6 + b;
+	}
+	
 	/// this is for color testing.
 	public static void main(String[] args) {
 		int r, g, b, d;
