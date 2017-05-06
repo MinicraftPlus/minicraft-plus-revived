@@ -705,16 +705,18 @@ public class Player extends Mob {
 		
 		float light = potioneffects.containsKey("Light") ? 2.5f : 1; // multiplier for the light potion effect.
 		float r = 3 * light; // the radius of the light.
-
+		if(Game.currentLevel == 3) r = (light-1) * 3;
+		
 		if (Game.currentLevel == 5) r = 5 * light; // more light than usual on dungeon level.
-
-		if (ModeMenu.creative) r = 12 * light; // creative mode light radius is much bigger; whole screen.
+		
+		//if (ModeMenu.creative) r = 12 * light; // creative mode light radius is much bigger; whole screen.
+		
 		
 		if (activeItem != null && activeItem instanceof FurnitureItem) { // if player is holding furniture
 			int rr = ((FurnitureItem) activeItem).furniture.getLightRadius(); // gets furniture light radius
 			if (rr > r) r = rr; // brings player light up to furniture light, if less, since the furnture is not yet part of the level and so doesn't emit light even if it should.
 		}
-
+		
 		return (int) r; // return light radius
 	}
 	
