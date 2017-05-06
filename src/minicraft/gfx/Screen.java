@@ -1,5 +1,7 @@
 package minicraft.gfx;
 
+import minicraft.Game;
+
 public class Screen {
 	
 	/// x and y offset of screen:
@@ -46,6 +48,7 @@ public class Screen {
 		int yTile = tile / 32; // gets y position
 		int toffs = xTile * 8 + yTile * 8 * sheet.width; // Gets the offset, the 8's represent the size of the tile. (8 by 8 pixels)
 		
+		/// THIS LOOPS FOR EVERY LITTLE PIXEL
 		for (int y = 0; y < 8; y++) { // Loops 8 times (because of the height of the tile)
 			int ys = y; // current y pixel
 			if (mirrorY) ys = 7 - y; // Reverses the pixel for a mirroring effect
@@ -55,8 +58,9 @@ public class Screen {
 				
 				int xs = x; // current x pixel
 				if (mirrorX) xs = 7 - x; // Reverses the pixel for a mirroring effect
-				int col = (colors >> (sheet.pixels[xs + ys * sheet.width + toffs] * 8)) & 255; // gets the color based on the passed in colors value.
+				int col = (colors >> (sheet.pixels[xs + ys * sheet.width + toffs] * 8)) & 255; // gets the color of this single pixel of the sprite based on the passed in colors value; also insures that the color is less than or equal to 255.
 				if (col < 255) pixels[(x + xp) + (y + yp) * w] = col; // Inserts the colors into the image.
+				// the above only doesn't execute when the color value is 255, or white. Well, I think it should... but it doesn't work...
 			}
 		}
 	}
@@ -71,7 +75,18 @@ public class Screen {
 	}
 	
 	/* Used for the scattered dots at the edge of the light radius underground. */
-	private int[] dither = new int[] {0, 8, 2, 10, 12, 4, 14, 6, 3, 11, 1, 9, 15, 7, 13, 5};
+	/*
+		These values represent the minimum light level, on a scale from 0 to 25 (255/10), 0 being no light, 25 being full light (which will be portrayed as transparent on the overlay lightScreen pixels) that a pixel must have in order to remain lit (not black).
+		each row and column is repeated every 4 pixels in the proper direction, so the pixel lightness minimum varies. It's highly worth note that, as the rows progress and loop, there's two sets or rows (1,4 and 2,3) whose values in the same column add to 15. The exact same is true for columns (sets are also 1,4 and 2,3), execpt the sums of values in the same row and set differ for each row: 10, 18, 12, 20. Which... themselves... are another set... adding to 30... which makes sense, sort of, since each column totals 15+15=30.
+		In the end, "every other every row", will need, for example in column 1, 15 light to be lit, then 0 light to be lit, then 12 light to be lit, then 3 light to be lit. So, the pixels of lower light levels will generally be lit every other pixel, while the brighter ones appear more often. The reason for the variance in values is to provide EVERY number between 0 and 15, so that all possible light levels (below 16) are represented fittingly with their own pattern of lit and not lit.
+		16 is the minimum pixel lighness required to ensure that the pixel will always remain lit.
+	*/
+	private int[] dither = new int[] {
+		0, 8, 2, 10,
+		12, 4, 14, 6,
+		3, 11, 1, 9,
+		15, 7, 13, 5
+	};
 	
 	/** Overlays the screen with pixels */
     public void overlay(Screen screen2, int xa, int ya) {
@@ -79,18 +94,23 @@ public class Screen {
         int i = 0; // current pixel on the screen
         for (int y = 0; y < h; y++) { // loop through height of screen
             for (int x = 0; x < w; x++) { // loop through width of screen
-                if (oPixels[i] / 10 <= dither[((x + xa) & 3) + ((y + ya) & 3) * 4]) {
-                    if(minicraft.Game.currentLevel < 3) {
-                        /* if the current pixel divided by 10 is smaller than the dither thingy with a complicated formula then it will fill the pixel with a black color. Yep, Nailed it! */
-                            pixels[i] = 0;
-                    } else {
-                            int r = (pixels[i] / 36) % 6;
-                            int g = (pixels[i] / 6) % 6;
-                            int b = pixels[i] % 6;
-                            if(r > 0) r--;
-                            if(g > 0) g--;
-                            if(b > 0) b--;
-                            pixels[i] = r * 36 + g * 6 + b;
+				if (oPixels[i] / 10 <= dither[((x + xa) & 3) + ((y + ya) & 3) * 4]) {
+                    /// the above if statement is simply comparing the light level stored in oPixels with the minimum light level stored in dither. if it is determined that the oPixels[i] is less than the minimum requirements, the below is executed...
+					if(Game.currentLevel < 3) { // if in caves...
+                        /// in the caves, not being lit means being pitch black.
+						pixels[i] = 0;
+                    } else if(Game.time != 1) { // if it's not midday...
+						/// outside the caves, not being lit simply means being darker.
+                        int r = (pixels[i] / 36) % 6;
+                        int g = (pixels[i] / 6) % 6;
+                        int b = pixels[i] % 6;
+                        if(r > 0) r--;
+                        if(g > 0) g--;
+                        if(b > 0) b--;
+                        pixels[i] = r * 36 + g * 6 + b;
+						
+						//int darkenFactor = Math.abs(Game.time - 1);
+						//pixels[i] = Color.tint(pixels[i], -darkenFactor*1); // darkens the color one shade.
                     }
                 }
                 i++; // moves to the next pixel.
@@ -122,9 +142,10 @@ public class Screen {
 				int dist = xd * xd + yd; //square x delta, then add the y delta, to get total distance.
 				
 				if (dist <= r * r) {
-					// if the distance moved is less or equal to the radius...
-					int br = 255 - dist * 255 / (r * r); // area where light will be rendered.
-					if (pixels[xx + yy * w] < br) pixels[xx + yy * w] = br; // pixel cannot be smaller than br.
+					// if the distance from the center (x,y) is less or equal to the radius...
+					int br = 255 - dist * 255 / (r * r); // area where light will be rendered. // r*r is becuase dist is still x*x+y*y, of pythag theorem.
+					// br = brightness... literally. from 0 to 255.
+					if (pixels[xx + yy * w] < br) pixels[xx + yy * w] = br; // pixel cannot be smaller than br; in other words, the pixel color (brightness) cannot be less than br.
 				}
 			}
 		}
