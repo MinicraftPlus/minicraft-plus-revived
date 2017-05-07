@@ -49,11 +49,11 @@ public class Level {
 	public List<Entity>[] entitiesInTiles; // An array of lists of entities in the world, by tile
 	
 	public int grassColor = 141;
-	public int dirtColor = 322;
+	//public int dirtColor = 322;
+	public int sandColor = 550;
 	public int woolColor = 444;
 	public int redwoolColor = 500;
 	public int yellowwoolColor = 550;
-	public int sandColor = 550;
 	public int depth; // depth level of the level
 	public int monsterDensity = 8; // affects the number of monsters that are on the level, bigger the number the less monsters spawn.
 	public int chestcount;
@@ -119,7 +119,7 @@ public class Level {
 		byte[][] maps; // multidimensional array (an array within a array), used for the map
 		int saveTile;
 		// set the dirt colors
-		if (level != 0) {
+		/*if (level != 0) {
 			if (DirtTile.dirtc == 0) {
 				dirtColor = 222;
 				DirtTile.dirtc++;
@@ -146,7 +146,9 @@ public class Level {
 		
 		if (level == 1) {
 			dirtColor = 444;
-		}
+		}*/
+		
+		//dirtColor = DirtTile.dCol(depth);
 		
 		entitiesInTiles = new ArrayList[w * h]; // This is actually an array of arrayLists (of entities), with one arraylist per tile.
 		for (int i = 0; i < w * h; i++) {
