@@ -10,15 +10,27 @@ import minicraft.item.PowerGloveItem;
 public class Furniture extends Entity {
 	protected int pushTime = 0; // time for each push.
 	protected int pushDir = -1; // the direction to push the furniture
-	public int col, col0, col1, col2, col3, sprite; // color and sprite vars.
+	public int sprite;
 	public String name;
 	protected Player shouldTake; // the player that should take the furniture
-
-	public Furniture(String name) {
-		super(3, 3);
+	
+	public Furniture(String name, int color, int sprite) { this(name, color, sprite, 3, 3); }
+	public Furniture(String name, int color, int sprite, int xr, int yr) {
+		super(xr, yr);
 		this.name = name;
-		xr = 3; // x radius of the furniture
-		yr = 3; // y radius of the furniture
+		this.sprite = sprite;
+		col = color;
+		//xr = 3; // x radius of the furniture
+		//yr = 3; // y radius of the furniture
+	}
+	
+	public Furniture copy() {
+		try {
+			return getClass().newInstance();//new Furniture(name, color, sprite, xr, yr);
+		} catch(Exception ex) {
+			ex.printStackTrace();
+		}
+		return null;
 	}
 
 	public void tick() {
@@ -42,12 +54,12 @@ public class Furniture extends Entity {
 	/** Draws the furniture on the screen. */
 	public void render(Screen screen) {
 		// renders each corner, which different lighting depending on the time of day.
-		col = col4;
+		/*col = col4;
 		if (Game.time == 0) col = col0;
 		if (Game.time == 1) col = col1;
 		if (Game.time == 2) col = col2;
 		if (Game.time == 3) col = col3;
-		
+		*/
 		screen.render(x - 8, y - 8 - 4, sprite * 2 + 8 * 32, col, 0);
 		screen.render(x - 0, y - 8 - 4, sprite * 2 + 8 * 32 + 1, col, 0);
 		screen.render(x - 8, y - 0 - 4, sprite * 2 + 8 * 32 + 32, col, 0);
