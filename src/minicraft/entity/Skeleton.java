@@ -10,7 +10,7 @@ import minicraft.screen.OptionsMenu;
 public class Skeleton extends EnemyMob {
 	private static MobSprite[][] sprites = MobSprite.compileMobSpriteAnimations(8, 16);
 	private static int[] lvlcols = {
-		Color.get(-1, 222, 50, 555),
+		Color.get(-1, 111, 40, 444),
 		Color.get(-1, 100, 522, 555),
 		Color.get(-1, 111, 444, 555),
 		Color.get(-1, 000, 111, 555)

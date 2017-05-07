@@ -20,7 +20,7 @@ public class Creeper extends EnemyMob {
 		sprites[0] = standing;
 	}
 	private static int[] lvlcols = {
-		Color.get(-1, 20, 50, 30),
+		Color.get(-1, 20, 40, 30),
 		Color.get(-1, 200, 262, 232),
 		Color.get(-1, 200, 272, 222),
 		Color.get(-1, 200, 292, 282)
@@ -103,7 +103,7 @@ public class Creeper extends EnemyMob {
 			super.lvlcols[lvl-1] = Color.get(-1, 252);
 		}
 		else
-			super.lvlcols[lvl-1] = lvlcols[lvl-1];
+			super.lvlcols[lvl-1] = Creeper.lvlcols[lvl-1];
 		/*if (level.dirtColor == 322) {
 			
 			if (lvl == 2) col = Color.get(-1, 200, 262, 232);

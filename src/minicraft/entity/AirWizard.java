@@ -34,14 +34,9 @@ public class AirWizard extends EnemyMob {
 		
 		folder = new File(location);
 		
-		/*
-		if(!secondform) {
-			col0 = col1 = Color.get(-1, 100, 500, 555);
-			col2 = col3 = col4 = Color.get(-1, 0, 200, 333);
-		} else {
-			col0 = col1 = col2 = col3 = Color.get(-1, 0, 4, 46);
-			col4 = Color.get(-1, 0, 1, 32);
-		}*/
+		lvlcols[0] = secondform ? Color.get(-1, 0, 2, 46) : Color.get(-1, 100, 500, 555); // top half color
+		lvlcols[1] = secondform ? Color.get(-1, 0, 2, 46) : Color.get(-1, 100, 500, 532); // bottom half color
+		col = lvlcols[lvl-1];
 	}
 	
 	public boolean canSwim() {

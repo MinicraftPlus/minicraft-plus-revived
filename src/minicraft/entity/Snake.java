@@ -10,7 +10,7 @@ import minicraft.screen.OptionsMenu;
 public class Snake extends EnemyMob {
 	private static MobSprite[][] sprites = MobSprite.compileMobSpriteAnimations(18, 18);
 	private static int[] lvlcols = {
-		Color.get(-1, 000, 555, 50),
+		Color.get(-1, 000, 444, 30),
 		Color.get(-1, 000, 555, 220),
 		Color.get(-1, 000, 555, 5),
 		Color.get(-1, 000, 555, 400),

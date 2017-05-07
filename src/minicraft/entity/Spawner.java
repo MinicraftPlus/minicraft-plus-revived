@@ -16,7 +16,7 @@ public class Spawner extends Furniture {
 	Random rnd = new Random();
 	public String mob;
 	public int lvl;
-	int r, health, tick, dmg;
+	int r, health, tick, dmg, color;
 	
 	public Spawner(String m, int level) {
 		super(m + " Spawner", 0, 10, 7, 2);
@@ -28,6 +28,7 @@ public class Spawner extends Furniture {
 		dmg = 0;
 		
 		setMob(m);
+		col = color;
 		//sprite = 10;
 		//xr = 7;
 		//yr = 2;
@@ -132,7 +133,10 @@ public class Spawner extends Furniture {
 		col3 = model.col4;
 		col = col2;
 		*/
-		col = model.col;
+		color = model.col;
+		//if(model instanceof EnemyMob)
+			//color = Color.tint(color, -1);
+		col = color;
 	}
 	
 	public Mob getMob(String string, int lvl) {

@@ -16,7 +16,7 @@ public class Slime extends EnemyMob {
 		sprites[0] = list;
 	}
 	private static int[] lvlcols = {
-		Color.get(-1, 30, 252, 333),
+		Color.get(-1, 20, 40, 222),
 		Color.get(-1, 100, 522, 555),
 		Color.get(-1, 111, 444, 555),
 		Color.get(-1, 000, 111, 224)

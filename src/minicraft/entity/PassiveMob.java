@@ -15,6 +15,7 @@ public class PassiveMob extends MobAi {
 	public PassiveMob(MobSprite[][] sprites, int color, int healthFactor) {
 		super(sprites, 5 + healthFactor * OptionsMenu.diff, 45, 40);
 		this.color = color;
+		col = color;
 	}
 	
 	public void render(Screen screen) {
