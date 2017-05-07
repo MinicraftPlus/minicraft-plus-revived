@@ -93,7 +93,7 @@ public class WorldSelectMenu extends Menu {
 				game.setMenu(new TitleMenu());
 			}
 
-			if (input.getKey("enter").clicked && wncol == Color.get(0, 5, 5, 5)) {
+			if (input.getKey("enter").clicked && wncol == Color.get(0, 5)) {
 				//proceed to mode selection
 				worldname = name;
 				name = "";
@@ -171,7 +171,7 @@ public class WorldSelectMenu extends Menu {
 				rename = false;
 			}
 
-			if (input.getKey("enter").clicked && wncol == Color.get(0, 5, 5, 5)) {
+			if (input.getKey("enter").clicked && wncol == Color.get(0, 5)) {
 				//user hits enter with a vaild new name; name is set here:
 				worldname = name;
 				name = "";
@@ -221,10 +221,10 @@ public class WorldSelectMenu extends Menu {
 			for (col = 0; col < numOptions; col++) {
 				if (fw || col != 0) {
 					String curOption = options[col];
-					int col1 = Color.get(0, 222, 222, 222);
+					int col1 = Color.get(0, 222);
 					if (col == selected) {
 						curOption = "> " + curOption + " <";
-						col1 = Color.get(0, 555, 555, 555);
+						col1 = Color.get(0, 555);
 					}
 					
 					if (!fw) {
@@ -235,19 +235,19 @@ public class WorldSelectMenu extends Menu {
 				}
 			}
 			
-			Font.drawCentered("Arrow keys to move", screen, screen.h - 170, Color.get(0, 444, 444, 444));
-			Font.drawCentered("Enter to confirm", screen, screen.h - 60, Color.get(0, 444, 444, 444));
-			Font.drawCentered("Esc to go back to the title screen", screen, screen.h - 40, Color.get(0, 444, 444, 444));
+			Font.drawCentered("Arrow keys to move", screen, screen.h - 170, Color.get(0, 444));
+			Font.drawCentered("Enter to confirm", screen, screen.h - 60, Color.get(0, 444));
+			Font.drawCentered("Esc to go back to the title screen", screen, screen.h - 40, Color.get(0, 444));
 		} else {
 			String msg;
 			if (createworld && !loadworld) {
 				msg = "Name of New World";
-				col = Color.get(-1, 555, 555, 555);
+				col = Color.get(-1, 555);
 				Font.drawCentered(msg, screen, 20, col);
 				Font.drawCentered(name, screen, 50, wncol);
 				Font.drawCentered("A-Z, 0-9, up to 36 Characters", screen, 80, col);
 				Font.drawCentered("(Space + Backspace as well)", screen, 92, col);
-				if (wncol == Color.get(0, 500, 500, 500)) {
+				if (wncol == Color.get(0, 500)) {
 					if (!name.equals("")) {
 						Font.drawCentered("Cannot have 2 worlds", screen, 120, wncol);
 						Font.drawCentered(" with the same name!", screen, 132, wncol);
@@ -260,11 +260,11 @@ public class WorldSelectMenu extends Menu {
 				Font.drawCentered("Press Esc to cancel", screen, 172, col);
 			} else if (!createworld && loadworld) {
 				msg = "Load World";
-				col = Color.get(-1, 555, 555, 555);
-				int col2 = Color.get(-1, 222, 222, 222);
+				col = Color.get(-1, 555);
+				int col2 = Color.get(-1, 222);
 				if (delete) {
 					msg = "Delete World!";
-					col = Color.get(-1, 500, 500, 500);
+					col = Color.get(-1, 500);
 				}
 				
 				if (worldnames.size() > 0) {
@@ -290,14 +290,14 @@ public class WorldSelectMenu extends Menu {
 				}
 
 				if (!delete && !rename) {
-					Font.drawCentered("Arrow keys to move", screen, screen.h - 44, Color.get(0, 444, 444, 444));
-					Font.drawCentered("Enter to confirm", screen, screen.h - 32, Color.get(0, 444, 444, 444));
-					Font.drawCentered("Esc to go back to the title screen", screen, screen.h - 20, Color.get(0, 444, 444, 444));
-					Font.drawCentered("D to delete a world", screen, screen.h - 70, Color.get(0, 400, 400, 400));
-					Font.drawCentered("R to rename world", screen, screen.h - 60, Color.get(0, 40, 40, 40));
+					Font.drawCentered("Arrow keys to move", screen, screen.h - 44, Color.get(0, 444));
+					Font.drawCentered("Enter to confirm", screen, screen.h - 32, Color.get(0, 444));
+					Font.drawCentered("Esc to go back to the title screen", screen, screen.h - 20, Color.get(0, 444));
+					Font.drawCentered("D to delete a world", screen, screen.h - 70, Color.get(0, 400));
+					Font.drawCentered("R to rename world", screen, screen.h - 60, Color.get(0, 40));
 				} else if (delete) {
-					Font.drawCentered("Enter to delete", screen, screen.h - 48, Color.get(0, 444, 444, 444));
-					Font.drawCentered("Esc to cancel", screen, screen.h - 36, Color.get(0, 444, 444, 444));
+					Font.drawCentered("Enter to delete", screen, screen.h - 48, Color.get(0, 444));
+					Font.drawCentered("Esc to cancel", screen, screen.h - 36, Color.get(0, 444));
 				} else if (rename) {
 					screen.clear(0);
 					Font.drawCentered("Rename World", screen, 20, col);
@@ -305,7 +305,7 @@ public class WorldSelectMenu extends Menu {
 					Font.drawCentered("A-Z, 0-9, up to 36 Characters", screen, 80, col);
 					Font.drawCentered("(Space + Backspace as well)", screen, 92, col);
 
-					if (wncol == Color.get(0, 500, 500, 500)) {
+					if (wncol == Color.get(0, 500)) {
 						if (!name.equals("")) {
 							Font.drawCentered("Cannot have 2 worlds", screen, 120, wncol);
 							Font.drawCentered(" with the same name!", screen, 132, wncol);
@@ -328,14 +328,14 @@ public class WorldSelectMenu extends Menu {
 			if (worldnames.size() > 0) {
 				for (int i = 0; i < worldnames.size(); i++) {
 					if (!name.equals(worldnames.get(i).toLowerCase())) {
-						wncol = Color.get(0, 5, 5, 5);
+						wncol = Color.get(0, 5);
 					} else {
-						wncol = Color.get(0, 500, 500, 500);
+						wncol = Color.get(0, 500);
 						break;
 					}
 				}
 			} else {
-				wncol = Color.get(0, 5, 5, 5);
+				wncol = Color.get(0, 5);
 			}
 		}
 
@@ -351,19 +351,19 @@ public class WorldSelectMenu extends Menu {
 			if (namedworldnames.size() > 0) {
 				for (int i = 0; i < namedworldnames.size(); i++) {
 					if (name.toLowerCase().equals(namedworldnames.get(i).toLowerCase())) {
-						wncol = Color.get(0, 500, 500, 500);
+						wncol = Color.get(0, 500);
 						break;
 					}
 
-					wncol = Color.get(0, 5, 5, 5);
+					wncol = Color.get(0, 5);
 				}
 			} else {
-				wncol = Color.get(0, 5, 5, 5);
+				wncol = Color.get(0, 5);
 			}
 		} //end rename
 
 		if (name.equals("")) //name cannot be blank
-			wncol = Color.get(0, 500, 500, 500);
+			wncol = Color.get(0, 500);
 
 		if (input.getKey("backspace").clicked && name.length() > 0) //backspace support
 			name = name.substring(0, name.length() - 1);
