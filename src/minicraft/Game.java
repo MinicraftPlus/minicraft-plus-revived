@@ -15,7 +15,7 @@ import javax.swing.JFrame;
 import minicraft.entity.Bed;
 import minicraft.entity.Entity;
 import minicraft.entity.Furniture;
-import minicraft.entity.IronLantern;
+import minicraft.entity.Lantern;
 import minicraft.entity.Mob;
 import minicraft.entity.Player;
 import minicraft.gfx.Color;
@@ -313,7 +313,7 @@ public class Game extends Canvas implements Runnable {
 			
 			// if resetStartGame is called when not loading a world, add an Iron lantern to level 5, at (984, 984).
 			
-			FurnitureItem f1 = new FurnitureItem(new IronLantern());
+			FurnitureItem f1 = new FurnitureItem(new Lantern(Lantern.Type.IRON));
 			Furniture f = f1.furniture;
 			f.x = 984;
 			f.y = 984;
@@ -628,7 +628,7 @@ public class Game extends Canvas implements Runnable {
 		// player.xx and yy stores previous player position.
 		int txlevel = player.x / 16;
 		int tylevel = player.y / 16;
-		int col0 = Color.get(-1, 555, 555, 555);
+		int textcol = Color.get(-1, 555);
 		if (player.showinfo) { // renders show debug info on the screen.
 			ArrayList<String> info = new ArrayList<String>();
 			info.add(fra + " fps");
@@ -658,7 +658,7 @@ public class Game extends Canvas implements Runnable {
 			info.add("hungerstam:" + player.hungerStamCnt);
 			
 			for(int i = 0; i < info.size(); i++) {
-				Font.draw(info.get(i), screen, 1, 2 + i*10, col0);
+				Font.draw(info.get(i), screen, 1, 2 + i*10, textcol);
 			}
 		}
 		

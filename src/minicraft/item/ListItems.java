@@ -7,8 +7,8 @@ import minicraft.entity.Bed;
 import minicraft.entity.Chest;
 import minicraft.entity.Enchanter;
 import minicraft.entity.Furnace;
-import minicraft.entity.GoldLantern;
-import minicraft.entity.IronLantern;
+
+
 import minicraft.entity.Lantern;
 import minicraft.entity.Loom;
 import minicraft.entity.Oven;
@@ -209,9 +209,9 @@ public class ListItems {
 		this.furnace = (new FurnitureItem(new Furnace())).addItem();
 		this.anvil = (new FurnitureItem(new Anvil())).addItem();
 		this.chest = (new FurnitureItem(new Chest())).addItem();
-		this.lantern = (new FurnitureItem(new Lantern())).addItem();
-		this.ironlantern = (new FurnitureItem(new IronLantern())).addItem();
-		this.goldlantern = (new FurnitureItem(new GoldLantern())).addItem();
+		this.lantern = (new FurnitureItem(new Lantern(Lantern.Type.NORM))).addItem();
+		this.ironlantern = (new FurnitureItem(new Lantern(Lantern.Type.IRON))).addItem();
+		this.goldlantern = (new FurnitureItem(new Lantern(Lantern.Type.GOLD))).addItem();
 		this.enchanter = (new FurnitureItem(new Enchanter())).addItem();
 		this.loom = (new FurnitureItem(new Loom())).addItem();
 		this.tnt = (new FurnitureItem(new Tnt())).addItem();

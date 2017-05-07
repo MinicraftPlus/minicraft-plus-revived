@@ -20,9 +20,9 @@ import minicraft.entity.DungeonChest;
 import minicraft.entity.Enchanter;
 import minicraft.entity.Entity;
 import minicraft.entity.Furnace;
-import minicraft.entity.GoldLantern;
+
 import minicraft.entity.Inventory;
-import minicraft.entity.IronLantern;
+
 import minicraft.entity.Knight;
 import minicraft.entity.Lantern;
 import minicraft.entity.Loom;
@@ -402,9 +402,9 @@ public class LegacyLoad {
 			case "Oven": return (Entity)(new Oven());
 			case "Bed": return (Entity)(new Bed());
 			case "Tnt": return (Entity)(new Tnt());
-			case "Lantern": return (Entity)(new Lantern());
-			case "IronLantern": return (Entity)(new IronLantern());
-			case "GoldLantern": return (Entity)(new GoldLantern());
+			case "Lantern": return (Entity)(new Lantern(Lantern.Type.NORM));
+			case "IronLantern": return (Entity)(new Lantern(Lantern.Type.IRON));
+			case "GoldLantern": return (Entity)(new Lantern(Lantern.Type.GOLD));
 			//case "Spark": return (Entity)(new Spark());
 			default : /*if(Game.debug)*/ System.out.println("LEGACYLOAD: unknown or outdated entity requested: " + string);
 				return null;

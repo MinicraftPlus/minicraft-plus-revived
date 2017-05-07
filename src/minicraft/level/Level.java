@@ -438,7 +438,7 @@ public class Level {
 			inventory.add(new FurnitureItem(new Anvil()));
   		}
   		if (random.nextInt(7 / chance) == 0) {
-			inventory.add(new FurnitureItem(new Lantern()));
+			inventory.add(new FurnitureItem(new Lantern(Lantern.Type.NORM)));
   		}
   		if (random.nextInt(3 / chance) == 0) {
 			inventory.add(new ResourceItem(Resource.bread, 2));
