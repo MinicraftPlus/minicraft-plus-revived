@@ -41,12 +41,17 @@ public class MobAi extends Mob {
 		int xo = x - 8;
 		int yo = y - 11;
 		
+		int color = col;
 		if (hurtTime > 0) {
-			col = Color.get(-1, 555);
+			color = Color.get(-1, 555);
 		}
 		
 		MobSprite curSprite = sprites[dir][(walkDist >> 3) % sprites[dir].length];
-		curSprite.render(screen, col, xo, yo);
+		curSprite.render(screen, color, xo, yo);
+	}
+	
+	public boolean canWool() {
+		return true;
 	}
 	
 	public void randomizeWalkDir(boolean byChance) { // boolean specifies if this method, from where it's called, is called every tick, or after a random chance.

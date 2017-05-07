@@ -15,17 +15,24 @@ public class Slime extends EnemyMob {
 		sprites = new MobSprite[1][2];
 		sprites[0] = list;
 	}
+	private static int[] lvlcols = {
+		Color.get(-1, 30, 252, 333),
+		Color.get(-1, 100, 522, 555),
+		Color.get(-1, 111, 444, 555),
+		Color.get(-1, 000, 111, 224)
+	};
 	
 	private int jumpTime = 0; // jumpTimer, also acts as a rest timer before the next jump
 	
 	public Slime(int lvl) {
-		super(lvl, sprites, 1, true, 50, 60, 40);
-		
+		super(lvl, sprites, lvlcols, 1, true, 50, 60, 40);
+		/*
 		col0 = Color.get(-1, 20, 40, 10);
 		col1 = Color.get(-1, 20, 30, 40);
 		col2 = Color.get(-1, 20, 40, 10);
 		col3 = Color.get(-1, 10, 20, 40);
 		col4 = Color.get(-1, 10, 20, 30);
+		*/
 	}
 	
 	public void tick() {
@@ -49,12 +56,13 @@ public class Slime extends EnemyMob {
 	}
 	
 	public boolean move(int xa, int ya) {
+		boolean result = super.move(xa, ya);
 		dir = 0;
-		return super.move(xa, ya);
+		return result;
 	}
 	
 	public void render(Screen screen) {
-		
+		/*
 		col0 = Color.get(-1, 20, 40, 222);
 		col1 = Color.get(-1, 30, 252, 333);
 		col2 = Color.get(-1, 20, 40, 222);
@@ -75,7 +83,7 @@ public class Slime extends EnemyMob {
 			if (Game.time == 2) col = col2;
 			if (Game.time == 3) col = col3;
 		} else col = col4;
-		
+		*/
 		int oldy = y;
 		if(jumpTime > 0) {
 			walkDist = 8; // set to jumping sprite.
@@ -95,8 +103,8 @@ public class Slime extends EnemyMob {
 		
 		super.die(); // Parent death call
 	}
-	
+	/*
 	public boolean canWool() {
 		return true;
-	}
+	}*/
 }

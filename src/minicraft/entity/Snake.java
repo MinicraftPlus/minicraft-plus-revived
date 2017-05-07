@@ -9,17 +9,25 @@ import minicraft.screen.OptionsMenu;
 
 public class Snake extends EnemyMob {
 	private static MobSprite[][] sprites = MobSprite.compileMobSpriteAnimations(18, 18);
+	private static int[] lvlcols = {
+		Color.get(-1, 000, 555, 50),
+		Color.get(-1, 000, 555, 220),
+		Color.get(-1, 000, 555, 5),
+		Color.get(-1, 000, 555, 400),
+		Color.get(-1, 000, 555, 459)
+	};
 	
 	public Snake(int lvl) {
-		super(lvl, sprites, lvl>1?8:7, 100);
-		
+		super(lvl, sprites, lvlcols, lvl>1?8:7, 100);
+		/*
 		col0 = Color.get(-1, 0, 40, 444);
 		col1 = Color.get(-1, 0, 30, 555);
 		col2 = Color.get(-1, 0, 20, 333);
 		col3 = Color.get(-1, 0, 10, 222);
 		col4 = Color.get(-1, 0, 20, 444);
+		*/
 	}
-	
+	/*
 	public void render(Screen screen) {
 		if (isLight()) {
 			col0 = Color.get(-1, 000, 555, 50);
@@ -49,17 +57,17 @@ public class Snake extends EnemyMob {
 		
 		super.render(screen);
 	}
-
+	*/
 	protected void touchedBy(Entity entity) {
 		if(entity instanceof Player) {
 			int damage = lvl + OptionsMenu.diff;
 			entity.hurt(this, damage, dir);
 		}
 	}
-
+	/*
 	public boolean canWool() {
 		return true;
-	}
+	}*/
 
 	protected void die() {
 		int num = OptionsMenu.diff == OptionsMenu.hard ? 0 : 1;

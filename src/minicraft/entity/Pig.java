@@ -11,15 +11,16 @@ public class Pig extends PassiveMob {
 	private static MobSprite[][] sprites = MobSprite.compileMobSpriteAnimations(16, 14);
 	
 	public Pig() {
-		super(sprites);
-		
+		super(sprites, Color.get(-1, 000, 555, 522));
+		/*
 		col0 = Color.get(-1, 000, 444, 411);
 		col1 = Color.get(-1, 000, 555, 522);
 		col2 = Color.get(-1, 000, 333, 311);
 		col3 = Color.get(-1, 000, 222, 211);
 		col4 = Color.get(-1, 000, 444, 522);
+		*/
 	}
-	
+	/*
 	public void render(Screen screen) {
 		col0 = Color.get(-1, 000, 444, 411);
 		col1 = Color.get(-1, 000, 555, 522);
@@ -40,11 +41,11 @@ public class Pig extends PassiveMob {
 		
 		super.render(screen);
 	}
-
+	*//*
 	public boolean canWool() {
 		return true;
 	}
-
+	*/
 	protected void die() {
 		int min = 0, max = 0;
 		if (OptionsMenu.diff == OptionsMenu.easy) {min = 1; max = 3;}

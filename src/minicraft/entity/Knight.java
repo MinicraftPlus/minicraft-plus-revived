@@ -9,16 +9,25 @@ import minicraft.screen.OptionsMenu;
 
 public class Knight extends EnemyMob {
 	private static MobSprite[][] sprites = MobSprite.compileMobSpriteAnimations(24, 14);
+	private static int[] lvlcols = {
+		Color.get(-1, 000, 555, 10),
+		Color.get(-1, 000, 555, 220),
+		Color.get(-1, 000, 555, 5),
+		Color.get(-1, 000, 555, 400),
+		Color.get(-1, 000, 555, 459)
+	};
 	
 	public Knight(int lvl) {
-		super(lvl, sprites, 9, 100);
-		this.col0 = Color.get(-1, 0, 555, 359);
+		super(lvl, sprites, lvlcols, 9, 100);
+		/*this.col0 = Color.get(-1, 0, 555, 359);
 		this.col1 = Color.get(-1, 0, 555, 359);
 		this.col2 = Color.get(-1, 0, 333, 59);
 		this.col3 = Color.get(-1, 0, 333, 59);
 		this.col4 = Color.get(-1, 0, 333, 59);
+		*/
+		//col = lvlcols[lvl-1];
 	}
-	
+	/*
 	public void render(Screen screen) {
 		col0 = Color.get(-1, 000, 555, 10);
 		col1 = Color.get(-1, 000, 555, 10);
@@ -57,7 +66,7 @@ public class Knight extends EnemyMob {
 	
 	public boolean canWool() {
 		return true;
-	}
+	}*/
 
 	protected void die() {
 		if (OptionsMenu.diff == OptionsMenu.easy) dropResource(1, 3, Resource.shard);

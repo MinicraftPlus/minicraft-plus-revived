@@ -8,17 +8,17 @@ public class Bed extends Furniture {
 	public int saveSpawnX, saveSpawnY; // the saved spawn locations... never used, though, I don't think...
 	
 	public Bed() {
-		super("Bed");
-		col0 = Color.get(-1, 211, 444, 400);
+		super("Bed", Color.get(-1, 100, 444, 400), 8, 3, 2);
+		/*col0 = Color.get(-1, 211, 444, 400);
 		col1 = Color.get(-1, 211, 555, 500);
 		col2 = Color.get(-1, 100, 333, 300);
 		col3 = Color.get(-1, 000, 222, 200);
-		col = Color.get(-1, 100, 444, 400);
+		*///col = Color.get(-1, 100, 444, 400);
 		
-		sprite = 8;
+		//sprite = 8;
 		// set the x and y radius of the Bed.
-		xr = 3;
-		yr = 2;
+		//xr = 3;
+		//yr = 2;
 	}
 	
 	/** Called when the player attempts to get in bed. */

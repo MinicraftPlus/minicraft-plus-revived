@@ -15,7 +15,7 @@ public abstract class Entity {
 	public boolean removed; // Determines if the entity is removed from it's level; checked in Level.java
 	public Level level; // the level that the entity is on
 	// TODO might replace the below with a simple array of colors.
-	public int col0, col1, col2, col3, col4, col; // day/night color variations, plus current color.
+	public int col; // day/night color variations, plus current color.
 	
 	public Entity(int xr, int yr) { // add color to this later, in color update
 		this.xr = xr;
@@ -23,7 +23,7 @@ public abstract class Entity {
 		
 		level = null;
 		removed = true;
-		col0 = col1 = col2 = col3 = col4 = col = 0;
+		col = 0;
 	}
 	
 	public abstract void render(Screen screen); /// used to render the entity on screen.

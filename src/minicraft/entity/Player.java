@@ -491,13 +491,15 @@ public class Player extends Mob {
 	/** Draws the player on the screen */
 	public void render(Screen screen) {
 		// set / get colors.
-		int r2 = r - 50, b2 = b - 50, g2 = g - 50;
-		if(r == 50 && g == 50 && (b == 0 || b == 50)) {
+		//int r2 = r - 50, b2 = b - 50, g2 = g - 50;
+		/*if(r == 50 && g == 50 && (b == 0 || b == 50)) {
 			r2 = r < 0 ? 0 : r;
 			g2 = g < 0 ? 0 : g;
 			b2 = b < 0 ? 0 : b;
-		}
+		}*/
 		
+		col = Color.get(-1, 100, Color.rgb(r, g, b), 532);
+		/*
 		col0 = Color.get(-1, 100, Color.rgb(r, g, b), 531);
 		col1 = Color.get(-1, 100, Color.rgb(r, g, b), 532);
 		col2 = Color.get(-1, 100, Color.rgb(r2, g2, b2), 421);
@@ -508,7 +510,7 @@ public class Player extends Mob {
 			col2 = Color.get(-1, 100, Color.rgb(r, g, b), 532);
 			col3 = Color.get(-1, 100, Color.rgb(r, g, b), 532);
 		}
-		
+		*/
 		MobSprite[][] spriteSet; // the default, walking sprites.
 		
 		if(activeItem instanceof FurnitureItem) {
@@ -537,23 +539,23 @@ public class Player extends Mob {
 		}
 		
 		if (attackTime > 0 && attackDir == 1) { // if currently attacking upwards...
-			screen.render(xo + 0, yo - 4, 6 + 13 * 32, Color.get(-1, 555, 555, 555), 0); //render left half-slash
-			screen.render(xo + 8, yo - 4, 6 + 13 * 32, Color.get(-1, 555, 555, 555), 1); //render right half-slash (mirror of left).
+			screen.render(xo + 0, yo - 4, 6 + 13 * 32, Color.get(-1, 555), 0); //render left half-slash
+			screen.render(xo + 8, yo - 4, 6 + 13 * 32, Color.get(-1, 555), 1); //render right half-slash (mirror of left).
 			if (attackItem != null) { // if the player has an item
 				attackItem.renderIcon(screen, xo + 4, yo - 4); // then render the icon of the item.
 			}
 		}
 		
-		col = 0; // color of the player
+		/*col = 0; // color of the player
 		if (level.depth >= 0) {
 			if(Game.time == 0) col = col0;
 			if(Game.time == 1) col = col1;
 			if(Game.time == 2) col = col2;
 			if(Game.time == 3) col = col3;
 		} else col = col4;
-		
+		*/
 		if (hurtTime > playerHurtTime - 10) { // if the player has just gotten hurt...
-			col = Color.get(-1, 555, 555, 555); // make the sprite white.
+			col = Color.get(-1, 555); // make the sprite white.
 		}
 		
 		MobSprite curSprite = spriteSet[dir][(walkDist >> 3) & 1]; // gets the correct sprite to render.
@@ -568,22 +570,22 @@ public class Player extends Mob {
 		// renders slashes:
 		
 		if (attackTime > 0 && attackDir == 2) { // if attacking to the left.... (same as above)
-			screen.render(xo - 4, yo, 7 + 13 * 32, Color.get(-1, 555, 555, 555), 1);
-			screen.render(xo - 4, yo + 8, 7 + 13 * 32, Color.get(-1, 555, 555, 555), 3);
+			screen.render(xo - 4, yo, 7 + 13 * 32, Color.get(-1, 555), 1);
+			screen.render(xo - 4, yo + 8, 7 + 13 * 32, Color.get(-1, 555), 3);
 			if (attackItem != null) {
 				attackItem.renderIcon(screen, xo - 4, yo + 4);
 			}
 		}
 		if (attackTime > 0 && attackDir == 3) { // attacking to the right
-			screen.render(xo + 8 + 4, yo, 7 + 13 * 32, Color.get(-1, 555, 555, 555), 0);
-			screen.render(xo + 8 + 4, yo + 8, 7 + 13 * 32, Color.get(-1, 555, 555, 555), 2);
+			screen.render(xo + 8 + 4, yo, 7 + 13 * 32, Color.get(-1, 555), 0);
+			screen.render(xo + 8 + 4, yo + 8, 7 + 13 * 32, Color.get(-1, 555), 2);
 			if (attackItem != null) {
 				attackItem.renderIcon(screen, xo + 8 + 4, yo + 4);
 			}
 		}
 		if (attackTime > 0 && attackDir == 0) { // attacking downwards
-			screen.render(xo + 0, yo + 8 + 4, 6 + 13 * 32, Color.get(-1, 555, 555, 555), 2);
-			screen.render(xo + 8, yo + 8 + 4, 6 + 13 * 32, Color.get(-1, 555, 555, 555), 3);
+			screen.render(xo + 0, yo + 8 + 4, 6 + 13 * 32, Color.get(-1, 555), 2);
+			screen.render(xo + 8, yo + 8 + 4, 6 + 13 * 32, Color.get(-1, 555), 3);
 			if (attackItem != null) {
 				attackItem.renderIcon(screen, xo + 4, yo + 8 + 4);
 			}

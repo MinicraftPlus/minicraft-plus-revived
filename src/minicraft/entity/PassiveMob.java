@@ -2,16 +2,24 @@ package minicraft.entity;
 
 import minicraft.Game;
 import minicraft.gfx.MobSprite;
+import minicraft.gfx.Screen;
 import minicraft.level.Level;
 import minicraft.level.tile.Tile;
 import minicraft.screen.ModeMenu;
 import minicraft.screen.OptionsMenu;
 
 public class PassiveMob extends MobAi {
+	protected int color;
 	
-	public PassiveMob(MobSprite[][] sprites) {this(sprites, 3);}
-	public PassiveMob(MobSprite[][] sprites, int healthFactor) {
+	public PassiveMob(MobSprite[][] sprites, int color) {this(sprites, color, 3);}
+	public PassiveMob(MobSprite[][] sprites, int color, int healthFactor) {
 		super(sprites, 5 + healthFactor * OptionsMenu.diff, 45, 40);
+		this.color = color;
+	}
+	
+	public void render(Screen screen) {
+		col = color;
+		super.render(screen);
 	}
 	
 	public void randomizeWalkDir(boolean byChance) {

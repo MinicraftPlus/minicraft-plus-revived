@@ -9,21 +9,27 @@ import minicraft.screen.OptionsMenu;
 
 public class Skeleton extends EnemyMob {
 	private static MobSprite[][] sprites = MobSprite.compileMobSpriteAnimations(8, 16);
+	private static int[] lvlcols = {
+		Color.get(-1, 222, 50, 555),
+		Color.get(-1, 100, 522, 555),
+		Color.get(-1, 111, 444, 555),
+		Color.get(-1, 000, 111, 555)
+	};
 	
 	public int arrowtime;
 	public int artime;
 	
 	public Skeleton(int lvl) {
-		super(lvl, sprites, 6, true, 100, 45, 200);
+		super(lvl, sprites, lvlcols, 6, true, 100, 45, 200);
 		
 		arrowtime = 300 / (lvl + 5);
 		artime = arrowtime;
-		
+		/*
 		col0 = Color.get(-1, 111, 40, 444);
 		col1 = Color.get(-1, 222, 50, 555);
 		col2 = Color.get(-1, 111, 40, 444);
 		col3 = Color.get(-1, 0, 30, 333);
-		col4 = Color.get(-1, 111, 40, 444);
+		col4 = Color.get(-1, 111, 40, 444);*/
 	}
 
 	public void tick() {
@@ -48,7 +54,7 @@ public class Skeleton extends EnemyMob {
 			}
 		}
 	}
-
+	/*
 	public void render(Screen screen) {
 		if (isLight()) {
 			col0 = col1 = col2 = col3 = col4 = Color.get(-1, 222, 50, 555);
@@ -76,7 +82,7 @@ public class Skeleton extends EnemyMob {
 	
 	public boolean canWool() {
 		return true;
-	}
+	}*/
 
 	protected void die() {
 		int[] diffrands = {20, 20, 30};

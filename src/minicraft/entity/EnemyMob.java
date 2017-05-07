@@ -2,6 +2,7 @@ package minicraft.entity;
 
 import minicraft.Game;
 import minicraft.gfx.MobSprite;
+import minicraft.gfx.Screen;
 import minicraft.level.Level;
 import minicraft.level.tile.Tile;
 import minicraft.screen.ModeMenu;
@@ -10,15 +11,21 @@ import minicraft.screen.OptionsMenu;
 public class EnemyMob extends MobAi {
 	
 	public int lvl;
+	protected int[] lvlcols;
 	public int detectDist;
 	
-	public EnemyMob(int lvl, MobSprite[][] sprites, int health, boolean isFactor, int detectDist, int rwTime, int rwChance) {
+	public EnemyMob(int lvl, MobSprite[][] sprites, int[] lvlcols, int health, boolean isFactor, int detectDist, int rwTime, int rwChance) {
 		super(sprites, isFactor ? lvl * lvl * health*((Double)(Math.pow(2, OptionsMenu.diff))).intValue() : health, rwTime, rwChance);
 		this.lvl = lvl;
+		this.lvlcols = lvlcols;
+		col = lvlcols[lvl-1];
 		this.detectDist = detectDist;
 	}
-	public EnemyMob(int lvl, MobSprite[][] sprites, int health, int detectDist) {
-		this(lvl, sprites, health, true, detectDist, 60, 200);
+	/*public EnemyMob(int lvl, MobSprite[][] sprites, int health, boolean isFactor, int detectDist, int rwTime, int rwChance) {
+		this(lvl, sprites, health, isFactor, detectDist, rwTime, rwChance);
+	}*/
+	public EnemyMob(int lvl, MobSprite[][] sprites, int[] lvlcols, int health, int detectDist) {
+		this(lvl, sprites, lvlcols, health, true, detectDist, 60, 200);
 	}
 	
 	public void tick() {
@@ -41,6 +48,11 @@ public class EnemyMob extends MobAi {
 				randomizeWalkDir(false);
 			}
 		}
+	}
+	
+	public void render(Screen screen) {
+		col = lvlcols[lvl-1];
+		super.render(screen);
 	}
 	
 	protected void touchedBy(Entity entity) { // if the entity touches the player

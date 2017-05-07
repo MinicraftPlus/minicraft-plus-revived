@@ -12,22 +12,25 @@ import minicraft.item.resource.Resource;
 import minicraft.screen.ModeMenu;
 
 public class DungeonChest extends Chest {
-
+	private static int openCol = Color.get(-1, 2, 115, 225);
+	private static int lockCol = Color.get(-1, 222, 333, 555);
+	
 	public Random random = new Random();
 	public boolean isLocked;
-	private static int openCol = Color.get(-1, 2, 115, 225);
 	
 	public DungeonChest() {
-		super("Dungeon Chest");
+		super("Dungeon Chest", lockCol);
 		populateInv();
 		
 		isLocked = true;
-		sprite = 1;
-		col = Color.get(-1, 222, 333, 555);
+		//sprite = 1;
+		/*col = Color.get();
 		col0 = Color.get(-1, 111, 222, 444);
 		col1 = Color.get(-1, 222, 333, 555);
 		col2 = Color.get(-1, 111, 222, 444);
 		col3 = Color.get(-1, 0, 111, 333);
+		*/
+		//col = lockCol;
 	}
 	
 	public boolean use(Player player, int attackDir) {
@@ -45,7 +48,7 @@ public class DungeonChest extends Chest {
 				}
 				
 				isLocked = false;
-				col = col0 = col1 = col2 = col3 = openCol; // set to the unlocked color
+				col = openCol; // set to the unlocked color
 				
 				level.add(new SmashParticle(x * 16 + 8, y * 16 + 8));
 				level.add(new TextParticle("-1 key", x, y, Color.get(-1, 500, 500, 500)));

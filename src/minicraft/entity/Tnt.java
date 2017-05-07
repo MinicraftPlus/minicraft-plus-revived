@@ -13,7 +13,9 @@ public class Tnt extends Furniture implements ActionListener {
 	private static int BLAST_RADIUS = 30;
 	private static int BLAST_RADIUSTWO = 2000;
 	private static int BLAST_DAMAGE = 30;
-
+	
+	private static int color = Color.get(-1, 200, 300, 555);
+	
 	protected int dir = 0;
 	private int lvl;
 	private int counter = 0;
@@ -29,17 +31,18 @@ public class Tnt extends Furniture implements ActionListener {
 	Timer flash = new Timer(5, this);
 
 	public Tnt() {
-		super("Tnt");
-		
+		super("Tnt", color, 7, 3, 2);
+		/*
 		col0 = Color.get(-1, 200, 300, 444);
 		col1 = Color.get(-1, 200, 300, 555);
 		col2 = Color.get(-1, 100, 200, 444);
 		col3 = Color.get(-1, 000, 100, 333);
-		
+		*//*
 		col = Color.get(-1, 200, 300, 555);
 		sprite = 7;
 		xr = 3;
 		yr = 2;
+		*/
 	}
 
 	public void tick() {
@@ -48,25 +51,27 @@ public class Tnt extends Furniture implements ActionListener {
 		if (flashing) {
 			ftik++;
 			
-			if (ftik > 4) {
+			int colFctr = 100*(ftik/5) + 200;
+			col = Color.get(-1, colFctr, colFctr+100, 555);
+			/*if (ftik < 5) {
 				col0 = Color.get(-1, 200, 300, 555);
 				col1 = Color.get(-1, 200, 300, 555);
 				col2 = Color.get(-1, 200, 300, 555);
 				col3 = Color.get(-1, 200, 300, 555);
 			}
-			if (ftik > 8) {
+			else if (ftik < 10) {
 				col0 = Color.get(-1, 300, 400, 555);
 				col1 = Color.get(-1, 300, 400, 555);
 				col2 = Color.get(-1, 300, 400, 555);
 				col3 = Color.get(-1, 300, 400, 555);
 			}
-			if (ftik > 12) {
+			else if (ftik < 14) {
 				col0 = Color.get(-1, 400, 500, 555);
 				col1 = Color.get(-1, 400, 500, 555);
 				col2 = Color.get(-1, 400, 500, 555);
 				col3 = Color.get(-1, 400, 500, 555);
-			}
-			if (ftik > 13) {
+			}*/
+			if(ftik >= 15) {
 				if(minicraft.Game.debug) System.out.println("BLOW UP!");
 				s.start();
 				ftik = 0;

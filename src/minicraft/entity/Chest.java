@@ -6,14 +6,14 @@ import minicraft.screen.ContainerMenu;
 public class Chest extends Furniture {
 	public Inventory inventory; // Inventory of the chest
 	
-	public Chest() {this("Chest");}
-	public Chest(String name) {
-		super(name); // Name of the chest
+	public Chest() {this("Chest", Color.get(-1, 220, 331, 552));}
+	public Chest(String name, int color) {
+		super(name, color, 1); // Name of the chest
 		
 		inventory = new Inventory(); // initialize the inventory.
 		
 		// chest colors
-		if (canLight()) {
+		/*if (canLight()) {
 			col0 = Color.get(-1, 220, 331, 552);
 			col1 = Color.get(-1, 220, 331, 552);
 			col2 = Color.get(-1, 220, 331, 552);
@@ -23,10 +23,10 @@ public class Chest extends Furniture {
 			col1 = Color.get(-1, 220, 331, 552);
 			col2 = Color.get(-1, 110, 220, 441);
 			col3 = Color.get(-1, 000, 110, 330);
-		}
+		}*/
 		
-		col = Color.get(-1, 220, 331, 552);
-		sprite = 1; // Location of the sprite
+		//col = Color.get(-1, 220, 331, 552);
+		//sprite = 1; // Location of the sprite
 	}
 	
 	/** This is what occurs when the player uses the "Menu" command near this */

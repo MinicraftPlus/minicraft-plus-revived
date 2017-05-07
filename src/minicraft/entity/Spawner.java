@@ -19,7 +19,7 @@ public class Spawner extends Furniture {
 	int r, health, tick, dmg;
 	
 	public Spawner(String m, int level) {
-		super(m + " Spawner");
+		super(m + " Spawner", 0, 10, 7, 2);
 		lvl = level;
 		
 		health = 100;
@@ -28,9 +28,9 @@ public class Spawner extends Furniture {
 		dmg = 0;
 		
 		setMob(m);
-		sprite = 10;
-		xr = 7;
-		yr = 2;
+		//sprite = 10;
+		//xr = 7;
+		//yr = 2;
 	}
 	
 	public void tick() {
@@ -125,12 +125,14 @@ public class Spawner extends Furniture {
 		this.mob = newmob;
 		
 		Mob model = getMob(newmob, lvl);
-		
+		/*
 		col0 = model.col1;
 		col1 = model.col2;
 		col2 = model.col3;
 		col3 = model.col4;
 		col = col2;
+		*/
+		col = model.col;
 	}
 	
 	public Mob getMob(String string, int lvl) {
@@ -146,6 +148,7 @@ public class Spawner extends Furniture {
 			case "Knight": return (Mob)new Knight(lvl);
 			case "Snake": return (Mob)new Snake(lvl);
 			default:
+				System.out.println("Attempted to spawn invalid mob: " + string);
 				return null; // fix: make a missing texture entity! maybe...
 		}
 	}

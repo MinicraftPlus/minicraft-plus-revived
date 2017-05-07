@@ -61,7 +61,7 @@ public class Spark extends Entity {
 		
 		///shouldn't the random be stored before being used twice...? Let me try.
 		int randmirror = random.nextInt(4);
-		screen.render(x - 4, y - 4 - 2, xt + yt * 32, Color.get(-1, 555, 555, 555), randmirror); // renders the spark
-		screen.render(x - 4, y - 4 + 2, xt + yt * 32, Color.get(-1, 000, 000, 000), randmirror); // renders the shadow on the ground
+		screen.render(x - 4, y - 4 - 2, xt + yt * 32, Color.get(-1, 555), randmirror); // renders the spark
+		screen.render(x - 4, y - 4 + 2, xt + yt * 32, Color.get(-1, 000), randmirror); // renders the shadow on the ground
 	}
 }

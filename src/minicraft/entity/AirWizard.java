@@ -25,7 +25,7 @@ public class AirWizard extends EnemyMob {
 	File folder;
 	
 	public AirWizard(boolean secondform) {
-		super(secondform?2:1, sprites, secondform?5000:2000, false, 16*8, 10, 50);
+		super(secondform?2:1, sprites, (new int[2]), secondform?5000:2000, false, 16*8, 10, 50);
 		
 		this.secondform = secondform;
 		if(secondform) speed = 3;
@@ -34,17 +34,22 @@ public class AirWizard extends EnemyMob {
 		
 		folder = new File(location);
 		
+		/*
 		if(!secondform) {
 			col0 = col1 = Color.get(-1, 100, 500, 555);
 			col2 = col3 = col4 = Color.get(-1, 0, 200, 333);
 		} else {
 			col0 = col1 = col2 = col3 = Color.get(-1, 0, 4, 46);
 			col4 = Color.get(-1, 0, 1, 32);
-		}
+		}*/
 	}
 	
 	public boolean canSwim() {
 		return secondform;
+	}
+	
+	public boolean canWool() {
+		return false;
 	}
 	
 	public void tick() {
@@ -123,8 +128,8 @@ public class AirWizard extends EnemyMob {
 		int xo = x - 8; // the horizontal location to start drawing the sprite
 		int yo = y - 11; // the vertical location to start drawing the sprite
 		
-		col1 = secondform ? Color.get(-1, 0, 2, 46) : Color.get(-1, 100, 500, 555); // top half color
-		col2 = secondform ? Color.get(-1, 0, 2, 46) : Color.get(-1, 100, 500, 532); // bottom half color
+		int col1 = secondform ? Color.get(-1, 0, 2, 46) : Color.get(-1, 100, 500, 555); // top half color
+		int col2 = secondform ? Color.get(-1, 0, 2, 46) : Color.get(-1, 100, 500, 532); // bottom half color
 		
 		if (attackType == 1 && tickTime / 5 % 4 == 0 || attackType == 2 && tickTime / 3 % 2 == 0) {
 				// change colors.
@@ -134,8 +139,8 @@ public class AirWizard extends EnemyMob {
 		
 		if (hurtTime > 0) { //if the air wizards hurt time is above 0... (hurtTime value in Mob.java)
 			// turn the sprite white, momentarily.
-			col1 = Color.get(-1, 555, 555, 555);
-			col2 = Color.get(-1, 555, 555, 555);
+			col1 = Color.get(-1, 555);
+			col2 = Color.get(-1, 555);
 		}
 		
 		MobSprite curSprite = sprites[dir][(walkDist >> 3) & 1];

@@ -23,7 +23,7 @@ public abstract class Mob extends Entity {
 	// TODO take all these swimTime, woolTime, and walkTime and consolidate into a getSlowness() method, that checks and adds each possible source of slowness and returns the result.
 		// or don't.
 	
-	public Mob(MobSprite[][] sprites/*, int[][] colors*/, int health) {
+	public Mob(MobSprite[][] sprites, int health) {
 		super(4, 3);
 		this.sprites = sprites;
 		this.health = this.maxHealth = health;

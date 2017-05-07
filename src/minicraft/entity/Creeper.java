@@ -19,6 +19,12 @@ public class Creeper extends EnemyMob {
 		sprites = new MobSprite[1][2];
 		sprites[0] = standing;
 	}
+	private static int[] lvlcols = {
+		Color.get(-1, 20, 50, 30),
+		Color.get(-1, 200, 262, 232),
+		Color.get(-1, 200, 272, 222),
+		Color.get(-1, 200, 292, 282)
+	};
 	
 	private static final int MAX_FUSE_TIME = 60;
 	private static final int BLAST_RADIUS = 60;
@@ -28,13 +34,13 @@ public class Creeper extends EnemyMob {
 	private boolean fuseLit = false;
 	
 	public Creeper(int lvl) {
-		super(lvl, sprites, 10, 50);
+		super(lvl, sprites, lvlcols, 10, 50);
 		
-		this.col0 = Color.get(-1, 10, 50, 40);
+		/*this.col0 = Color.get(-1, 10, 50, 40);
 		this.col1 = Color.get(-1, 20, 50, 40);
 		this.col2 = Color.get(-1, 10, 50, 30);
 		this.col3 = Color.get(-1, 0, 50, 30);
-		this.col4 = Color.get(-1, 20, 50, 30);
+		*///col = Color.get(-1, 20, 50, 30);
 	}
 	
 	public boolean move(int xa, int ya) {
@@ -84,19 +90,21 @@ public class Creeper extends EnemyMob {
 	}
 
 	public void render(Screen screen) {
-		col0 = Color.get(-1, 10, 30, 20);
+		/*col0 = Color.get(-1, 10, 30, 20);
 		col1 = Color.get(-1, 20, 40, 30);
 		col2 = Color.get(-1, 10, 30, 20);
 		col3 = Color.get(-1, 0, 20, 10);
 		col4 = Color.get(-1, 20, 40, 30);
 		
 		if (isLight()) col0 = col1 = col2 = col3 = col4;
-		
+		*/
 		
 		if (fuseLit && fuseTime % 6 == 0) {
-			col = Color.get(-1, 252);
+			super.lvlcols[lvl-1] = Color.get(-1, 252);
 		}
-		else if (level.dirtColor == 322) {
+		else
+			super.lvlcols[lvl-1] = lvlcols[lvl-1];
+		/*if (level.dirtColor == 322) {
 			
 			if (lvl == 2) col = Color.get(-1, 200, 262, 232);
 			if (lvl == 3) col = Color.get(-1, 200, 272, 222);
@@ -108,7 +116,7 @@ public class Creeper extends EnemyMob {
 			if (Game.time == 3) col = col3;
 		}
 		else col = col4;
-		
+		*/
 		this.sprites[0] = walkDist == 0 ? standing : walking;
 		
 		super.render(screen);
@@ -124,7 +132,11 @@ public class Creeper extends EnemyMob {
 			entity.hurt(this, 1, dir);
 		}
 	}
-
+	
+	public boolean canWool() {
+		return false;
+	}
+	
 	protected void die() {
 		dropResource(1, 4-OptionsMenu.diff, Resource.gunp);
 		super.die();
