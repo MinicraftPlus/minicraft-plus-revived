@@ -1,3 +1,10 @@
+Minicraft+ version 1.9.4
+
+* Almost total revision of lighting; surface level now has lighting overlay sometimes, and the colors all around may be slightly different.
+* changed death chest expire times; easy:30min, norm:10min, hard:2min
+
+
+
 Minicraft+ version 1.9.3
 
 + added command line argument to change the save directory of the world files.
