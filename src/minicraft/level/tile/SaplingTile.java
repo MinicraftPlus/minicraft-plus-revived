@@ -22,14 +22,16 @@ public class SaplingTile extends Tile {
 	}
 
 	public void render(Screen screen, Level level, int x, int y) {
-		int col0 = Color.get(10, 30, 40, -1);
-		int col1 = Color.get(20, 40, 50, -1);
-		int col2 = Color.get(10, 30, 40, -1);
+		//int col0 = Color.get(10, 30, 40, -1);
+		int col = Color.get(20, 40, 50, -1);
+		/*int col2 = Color.get(10, 30, 40, -1);
 		int col3 = Color.get(0, 20, 30, -1);
 		int col4 = Color.get(20, 40, 50, -1);
-
+		*/
 		onType.render(screen, level, x, y);
-
+		
+		screen.render(x * 16 + 4, y * 16 + 4, 11 + 3 * 32, col, 0);
+		/*
 		if (level.dirtColor == 322) {
 
 			if (Game.time == 0) {
@@ -52,7 +54,7 @@ public class SaplingTile extends Tile {
 		if (level.dirtColor == 222) {
 			int col = col4;
 			screen.render(x * 16 + 4, y * 16 + 4, 11 + 3 * 32, col, 0);
-		}
+		}*/
 	}
 
 	public void tick(Level level, int x, int y) {

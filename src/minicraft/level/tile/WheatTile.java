@@ -23,14 +23,14 @@ public class WheatTile extends Tile {
 		int age = level.getData(x, y);
 		int icon = age / 10;
 
-		int col0 = Color.get(201, 311, 322, 40);
+		/*int col0 = Color.get(201, 311, 322, 40);
 		int col00 = Color.get(201, 311, 40 + (icon) * 100, 30 + (icon - 3) * 2 * 100);
 		int col000 = Color.get(0, 0, 40 + (icon) * 100, 30 + (icon - 3) * 2 * 100);
-
-		int col1 = Color.get(301, 411, 321, 50);
-		int col11 = Color.get(301, 411, 50 + (icon) * 100, 40 + (icon - 3) * 2 * 100);
-		int col111 = Color.get(0, 0, 50 + (icon) * 100, 40 + (icon - 3) * 2 * 100);
-
+		*/
+		int col = Color.get(301, 411, 321, 50);
+		int col1 = Color.get(301, 411, 50 + (icon) * 100, 40 + (icon - 3) * 2 * 100);
+		int col2 = Color.get(0, 0, 50 + (icon) * 100, 40 + (icon - 3) * 2 * 100);
+		/*
 		int col2 = Color.get(201, 311, 211, 40);
 		int col22 = Color.get(201, 311, 40 + (icon) * 100, 30 + (icon - 3) * 2 * 100);
 		int col222 = Color.get(0, 0, 40 + (icon) * 100, 30 + (icon - 3) * 2 * 100);
@@ -47,10 +47,10 @@ public class WheatTile extends Tile {
 
 			if (Game.time == 0) {
 				int col = col0;
-				if (icon >= 3) {
-					col = col00;
+				*/if (icon >= 3) {
+					col = col1;
 					if (age == 50) {
-						col = col000;
+						col = col2;
 					}
 					icon = 3;
 				}
@@ -59,7 +59,7 @@ public class WheatTile extends Tile {
 				screen.render(x * 16 + 8, y * 16 + 0, 4 + 3 * 32 + icon, col, 0);
 				screen.render(x * 16 + 0, y * 16 + 8, 4 + 3 * 32 + icon, col, 1);
 				screen.render(x * 16 + 8, y * 16 + 8, 4 + 3 * 32 + icon, col, 1);
-			}
+			/*}
 			if (Game.time == 1) {
 				int col = col1;
 				if (icon >= 3) {
@@ -116,7 +116,7 @@ public class WheatTile extends Tile {
 			screen.render(x * 16 + 8, y * 16 + 0, 4 + 3 * 32 + icon, col, 0);
 			screen.render(x * 16 + 0, y * 16 + 8, 4 + 3 * 32 + icon, col, 1);
 			screen.render(x * 16 + 8, y * 16 + 8, 4 + 3 * 32 + icon, col, 1);
-		}
+		}*/
 	}
 
 	public boolean IfWater(Level level, int xs, int ys) {

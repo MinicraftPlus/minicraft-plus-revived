@@ -21,23 +21,23 @@ public class SandTile extends Tile {
 		maySpawn = true;
 	}
 
-	public static int col0 = Color.get(443, 440, 330, 440);
-	public static int col00 = Color.get(440, 440, 330, 322);
+	//public static int col0 = Color.get(443, 440, 330, 440);
+	//public static int col00 = Color.get(440, 440, 330, 322);
+	
+	public static int col = Color.get(552, 550, 440, 440);
+	public static int colt = Color.get(440, 550, 440, 321);
 
-	public static int col1 = Color.get(552, 550, 440, 440);
-	public static int col11 = Color.get(440, 550, 440, 321);
-
-	public static int col2 = Color.get(334, 330, 220, 220);
+	/*public static int col2 = Color.get(334, 330, 220, 220);
 	public static int col22 = Color.get(330, 330, 220, 211);
 
 	public static int col3 = Color.get(225, 220, 110, 110);
 	public static int col33 = Color.get(220, 220, 110, 100);
-
+*/
 	public void render(Screen screen, Level level, int x, int y) {
-		if (Game.time == 0) {
+		//if (Game.time == 0) {
 
-			int col = col0;
-			int transitionColor = col00;
+			//int col = col0;
+			int transitionColor = colt;
 
 			boolean u = !level.getTile(x, y - 1).connectsToSand;
 			boolean d = !level.getTile(x, y + 1).connectsToSand;
@@ -67,8 +67,8 @@ public class SandTile extends Tile {
 
 			} else
 				screen.render(x * 16 + 8, y * 16 + 8, (r ? 13 : 12) + (d ? 2 : 1) * 32, transitionColor, 0);
-		}
-		if (Game.time == 1) {
+		//}
+		/*if (Game.time == 1) {
 
 			int col = col1;
 			int transitionColor = col11;
@@ -169,7 +169,7 @@ public class SandTile extends Tile {
 
 			} else
 				screen.render(x * 16 + 8, y * 16 + 8, (r ? 13 : 12) + (d ? 2 : 1) * 32, transitionColor, 0);
-		}
+		}*/
 	}
 
 	public void tick(Level level, int x, int y) {

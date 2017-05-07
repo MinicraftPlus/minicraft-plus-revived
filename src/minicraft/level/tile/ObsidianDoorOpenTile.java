@@ -13,10 +13,10 @@ public class ObsidianDoorOpenTile extends Tile {
 	}
 
 	public void render(Screen screen, Level level, int x, int y) {
-		int col0 = Color.get(203, 102, 102, 204);
+		//int col0 = Color.get(203, 102, 102, 204);
 		
-		int col1 = Color.get(203, 102, 102, 102);
-		
+		int col = Color.get(203, 102, 102, 102);
+		/*
 		int col2 = Color.get(203, 102, 111, 102);
 		
 		int col3 = Color.get(102, 000, 111, 102);
@@ -27,11 +27,11 @@ public class ObsidianDoorOpenTile extends Tile {
 
 			if (Game.time == 0) {
 				int col = col0;
-				screen.render(x * 16 + 0, y * 16 + 0, 0 + 24 * 32, col, 0);
+				*/screen.render(x * 16 + 0, y * 16 + 0, 0 + 24 * 32, col, 0);
 				screen.render(x * 16 + 8, y * 16 + 0, 1 + 24 * 32, col, 0);
 				screen.render(x * 16 + 0, y * 16 + 8, 0 + 25 * 32, col, 0);
 				screen.render(x * 16 + 8, y * 16 + 8, 1 + 25 * 32, col, 0);
-			}
+			/*}
 		}
 		if (Game.time == 1) {
 			int col = col1;
@@ -61,7 +61,7 @@ public class ObsidianDoorOpenTile extends Tile {
 			screen.render(x * 16 + 8, y * 16 + 0, 1 + 24 * 32, col, 0);
 			screen.render(x * 16 + 0, y * 16 + 8, 0 + 25 * 32, col, 0);
 			screen.render(x * 16 + 8, y * 16 + 8, 1 + 25 * 32, col, 0);
-		}
+		}*/
 	}
 
 	public void hurt(Level level, int x, int y, Mob source, int dmg, int attackDir) {

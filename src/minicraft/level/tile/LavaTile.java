@@ -17,14 +17,14 @@ public class LavaTile extends Tile {
 	private Random wRandom = new Random();
 
 	public void render(Screen screen, Level level, int x, int y) {
-		int col0 = Color.get(400, 400, 520, 450);
+		/*int col0 = Color.get(400, 400, 520, 450);
 		int col00 = Color.get(3, 400, 211, 322);
 		int col000 = Color.get(3, 400, 330, 440);
-
-		int col1 = Color.get(500, 500, 520, 450);
-		int col11 = Color.get(3, 500, 211, 322);
-		int col111 = Color.get(3, 500, 440, 550);
-
+		*/
+		int col = Color.get(500, 500, 520, 450);
+		int col1 = Color.get(3, 500, 211, 322);
+		int col2 = Color.get(3, 500, 440, 550);
+		/*
 		int col2 = Color.get(400, 400, 420, 450);
 		int col22 = Color.get(3, 400, 100, 211);
 		int col222 = Color.get(3, 400, 220, 330);
@@ -43,13 +43,13 @@ public class LavaTile extends Tile {
 
 		if (level.dirtColor == 322)
 			if (Game.time == 0) {
-
+			*/
 				wRandom.setSeed(
 						(tickCount + (x / 2 - y) * 4311) / 10 * 54687121l + x * 3271612l + y * 3412987161l);
-				int col = col0;
-				int transitionColor1 = col00;
-				int transitionColor2 = col000;
-
+				//int col = col0;
+				int transitionColor1 = col1;
+				int transitionColor2 = col2;
+				
 				boolean u = !level.getTile(x, y - 1).connectsToLava;
 				boolean d = !level.getTile(x, y + 1).connectsToLava;
 				boolean l = !level.getTile(x - 1, y).connectsToLava;
@@ -98,8 +98,8 @@ public class LavaTile extends Tile {
 							(r ? 16 : 15) + (d ? 2 : 1) * 32,
 							(sd || sr) ? transitionColor2 : transitionColor1,
 							0);
-			}
-		if (Game.time == 1) {
+		//	}
+		/*if (Game.time == 1) {
 
 			wRandom.setSeed(
 					(tickCount + (x / 2 - y) * 4311) / 10 * 54687121l + x * 3271612l + y * 3412987161l);
@@ -383,7 +383,7 @@ public class LavaTile extends Tile {
 							(sd || sr) ? transitionColor2 : transitionColor1,
 							0);
 			}
-		}
+		}*/
 	}
 
 	public boolean mayPass(Level level, int x, int y, Entity e) {

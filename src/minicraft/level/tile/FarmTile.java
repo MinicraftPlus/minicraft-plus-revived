@@ -16,21 +16,21 @@ public class FarmTile extends Tile {
 	}
 
 	public void render(Screen screen, Level level, int x, int y) {
-		int col0 = Color.get(201, 311, 322, 433);
-		int col1 = Color.get(301, 411, 422, 533);
-		int col2 = Color.get(201, 311, 322, 433);
+		//int col0 = Color.get(201, 311, 322, 433);
+		int col = Color.get(301, 411, 422, 533);
+		/*int col2 = Color.get(201, 311, 322, 433);
 		int col3 = Color.get(101, 211, 222, 333);
 		int col4 = Color.get(301, 411, 422, 533);
-
-		if (level.dirtColor == 322) {
+		*/
+		/*if (level.dirtColor == 322) {
 
 			if (Game.time == 0) {
 				int col = col0;
-				screen.render(x * 16 + 0, y * 16 + 0, 2 + 32, col, 1);
+				*/screen.render(x * 16 + 0, y * 16 + 0, 2 + 32, col, 1);
 				screen.render(x * 16 + 8, y * 16 + 0, 2 + 32, col, 0);
 				screen.render(x * 16 + 0, y * 16 + 8, 2 + 32, col, 0);
 				screen.render(x * 16 + 8, y * 16 + 8, 2 + 32, col, 1);
-			}
+			/*}
 			if (Game.time == 1) {
 				int col = col1;
 				screen.render(x * 16 + 0, y * 16 + 0, 2 + 32, col, 1);
@@ -59,7 +59,7 @@ public class FarmTile extends Tile {
 			screen.render(x * 16 + 8, y * 16 + 0, 2 + 32, col, 0);
 			screen.render(x * 16 + 0, y * 16 + 8, 2 + 32, col, 0);
 			screen.render(x * 16 + 8, y * 16 + 8, 2 + 32, col, 1);
-		}
+		}*/
 	}
 
 	public boolean interact(Level level, int xt, int yt, Player player, Item item, int attackDir) {

@@ -20,22 +20,22 @@ public class GrassTile extends Tile {
 		maySpawn = true;
 	}
 
-	public static int col0 = Color.get(131, 131, 141, 322);
-	public static int col00 = Color.get(131, 131, 141, 322);
+	//public static int col0 = Color.get(131, 131, 141, 322);
+	//public static int col00 = Color.get(131, 131, 141, 322);
 
-	public static int col1 = Color.get(141, 141, 252, 321);
-	public static int col11 = Color.get(141, 141, 252, 321);
-
+	public static int col = Color.get(141, 141, 252, 321);
+	public static int colt = Color.get(141, 141, 252, 321);
+	/*
 	public static int col2 = Color.get(30, 30, 141, 211);
 	public static int col22 = Color.get(20, 30, 141, 211);
 
 	public static int col3 = Color.get(20, 20, 30, 100);
 	public static int col33 = Color.get(10, 20, 30, 100);
-
+	*/
 	public void render(Screen screen, Level level, int x, int y) {
-		if (Game.time == 0) {
-			int col = col0;
-			int transitionColor = col00;
+		//if (Game.time == 0) {
+			//int col = col0;
+			int transitionColor = colt;
 
 			boolean u = !level.getTile(x, y - 1).connectsToGrass;
 			boolean d = !level.getTile(x, y + 1).connectsToGrass;
@@ -60,8 +60,8 @@ public class GrassTile extends Tile {
 				screen.render(x * 16 + 8, y * 16 + 8, 3, col, 0);
 			} else
 				screen.render(x * 16 + 8, y * 16 + 8, (r ? 13 : 12) + (d ? 2 : 1) * 32, transitionColor, 0);
-		}
-		if (Game.time == 1) {
+		//}
+		/*if (Game.time == 1) {
 
 			int col = col1;
 			int transitionColor = col11;
@@ -147,7 +147,7 @@ public class GrassTile extends Tile {
 				screen.render(x * 16 + 8, y * 16 + 8, 3, col, 0);
 			} else
 				screen.render(x * 16 + 8, y * 16 + 8, (r ? 13 : 12) + (d ? 2 : 1) * 32, transitionColor, 0);
-		}
+		}*/
 	}
 
 	public void tick(Level level, int xt, int yt) {

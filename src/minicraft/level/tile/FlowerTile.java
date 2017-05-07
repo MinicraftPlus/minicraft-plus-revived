@@ -21,24 +21,24 @@ public class FlowerTile extends GrassTile {
 		maySpawn = true;
 	}
 
-	public int col0 = Color.get(20, 131, 444, 440);
-	public int col1 = Color.get(10, 141, 555, 440);
-	public int col2 = Color.get(10, 30, 444, 330);
-	public int col3 = Color.get(0, 20, 333, 220);
+	//public int col0 = Color.get(20, 131, 444, 440);
+	public int col = Color.get(10, 141, 555, 440);
+	//public int col2 = Color.get(10, 30, 444, 330);
+	//public int col3 = Color.get(0, 20, 333, 220);
 
 	public void render(Screen screen, Level level, int x, int y) {
 		super.render(screen, level, x, y);
-
-		if (Game.time == 0) {
+		
+		//if (Game.time == 0) {
 			int data = level.getData(x, y);
 			int shape = (data / 16) % 2;
-			int flowerCol = col0;
+			int flowerCol = col;
 
 			if (shape == 0) screen.render(x * 16 + 0, y * 16 + 0, 1 + 1 * 32, flowerCol, 0);
 			if (shape == 1) screen.render(x * 16 + 8, y * 16 + 0, 1 + 1 * 32, flowerCol, 0);
 			if (shape == 1) screen.render(x * 16 + 0, y * 16 + 8, 1 + 1 * 32, flowerCol, 0);
 			if (shape == 0) screen.render(x * 16 + 8, y * 16 + 8, 1 + 1 * 32, flowerCol, 0);
-		}
+		/*}
 		if (Game.time == 1) {
 			int data = level.getData(x, y);
 			int shape = (data / 16) % 2;
@@ -68,7 +68,7 @@ public class FlowerTile extends GrassTile {
 			if (shape == 1) screen.render(x * 16 + 8, y * 16 + 0, 1 + 1 * 32, flowerCol, 0);
 			if (shape == 1) screen.render(x * 16 + 0, y * 16 + 8, 1 + 1 * 32, flowerCol, 0);
 			if (shape == 0) screen.render(x * 16 + 8, y * 16 + 8, 1 + 1 * 32, flowerCol, 0);
-		}
+		}*/
 	}
 
 	public boolean interact(Level level, int x, int y, Player player, Item item, int attackDir) {

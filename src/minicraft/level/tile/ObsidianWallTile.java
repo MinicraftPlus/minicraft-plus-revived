@@ -25,14 +25,14 @@ public class ObsidianWallTile extends Tile {
 		int col00 = Color.get(000, 102, 203, 203);
 		int col000 = Color.get(000, 203, 203, 203);
 		*/
-		int col0 = Color.get(103, 103, 103, 103);
+		/*int col0 = Color.get(103, 103, 103, 103);
 		int col00 = Color.get(000, 203, 103, 103);
 		int col000 = Color.get(000, 103, 103, 103);
-		
-		int col1 = Color.get(103, 103, 103, 103);
-		int col11 = Color.get(000, 203, 103, 103);
-		int col111 = Color.get(000, 103, 103, 103);
-		
+		*/
+		int col = Color.get(103, 103, 103, 103);
+		int col1 = Color.get(000, 203, 103, 103);
+		int col2 = Color.get(000, 103, 103, 103);
+		/*
 		int col2 = Color.get(102, 102, 102, 102);
 		int col22 = Color.get(000, 203, 102, 102);
 		int col222 = Color.get(000, 102, 102, 102);
@@ -50,8 +50,8 @@ public class ObsidianWallTile extends Tile {
 			if (Game.time == 0) {
 
 				int col = col0;
-				int transitionColor = col00;
-				int backColor = col000;
+				*/int transitionColor = col1;
+				int backColor = col2;
 
 				boolean u = level.getTile(x, y - 1) != this;
 				boolean d = level.getTile(x, y + 1) != this;
@@ -89,7 +89,7 @@ public class ObsidianWallTile extends Tile {
 				} else
 					screen.render(
 							x * 16 + 8, y * 16 + 8, (r ? 4 : 5) + (d ? 25 : 26) * 32, transitionColor, 3);
-			}
+			/*}
 			if (Game.time == 1) {
 
 				int col = col1;
@@ -258,7 +258,7 @@ public class ObsidianWallTile extends Tile {
 				else screen.render(x * 16 + 8, y * 16 + 8, 8 + 25 * 32, backColor, 3);
 			} else
 				screen.render(x * 16 + 8, y * 16 + 8, (r ? 4 : 5) + (d ? 25 : 26) * 32, transitionColor, 3);
-		}
+		}*/
 	}
 
 	public boolean mayPass(Level level, int x, int y, Entity e) {

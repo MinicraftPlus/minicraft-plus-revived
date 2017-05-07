@@ -21,11 +21,11 @@ public class StoneDoorClosedTile extends Tile {
 	}
 
 	public void render(Screen screen, Level level, int x, int y) {
-		int col0 = Color.get(333, 222, 111, 222);
+		//int col0 = Color.get(333, 222, 111, 222);
 
-		int col1 = Color.get(444, 333, 222, 333);
+		int col = Color.get(444, 333, 222, 333);
 
-		int col2 = Color.get(333, 222, 111, 222);
+		/*int col2 = Color.get(333, 222, 111, 222);
 
 		int col3 = Color.get(222, 111, 000, 111);
 
@@ -35,11 +35,11 @@ public class StoneDoorClosedTile extends Tile {
 
 			if (Game.time == 0) {
 				int col = col0;
-				screen.render(x * 16 + 0, y * 16 + 0, 2 + 24 * 32, col, 0);
+				*/screen.render(x * 16 + 0, y * 16 + 0, 2 + 24 * 32, col, 0);
 				screen.render(x * 16 + 8, y * 16 + 0, 3 + 24 * 32, col, 0);
 				screen.render(x * 16 + 0, y * 16 + 8, 2 + 25 * 32, col, 0);
 				screen.render(x * 16 + 8, y * 16 + 8, 3 + 25 * 32, col, 0);
-			}
+			/*}
 		}
 		if (Game.time == 1) {
 			int col = col1;
@@ -69,7 +69,7 @@ public class StoneDoorClosedTile extends Tile {
 			screen.render(x * 16 + 8, y * 16 + 0, 3 + 24 * 32, col, 0);
 			screen.render(x * 16 + 0, y * 16 + 8, 2 + 25 * 32, col, 0);
 			screen.render(x * 16 + 8, y * 16 + 8, 3 + 25 * 32, col, 0);
-		}
+		}*/
 	}
 
 	public boolean interact(Level level, int xt, int yt, Player player, Item item, int attackDir) {

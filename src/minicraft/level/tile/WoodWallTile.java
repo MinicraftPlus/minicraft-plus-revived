@@ -23,12 +23,12 @@ public class WoodWallTile extends Tile {
 	}
 
 	public void render(Screen screen, Level level, int x, int y) {
-		int col0 = Color.get(320, 320, 210, 210);
-		int col00 = Color.get(100, 320, 210, 430);
-
-		int col1 = Color.get(430, 430, 320, 320);
-		int col11 = Color.get(100, 430, 320, 540);
-
+		//int col0 = Color.get(320, 320, 210, 210);
+		//int col00 = Color.get(100, 320, 210, 430);
+		
+		int col = Color.get(430, 430, 320, 320);
+		int colt = Color.get(100, 430, 320, 540);
+		/*
 		int col2 = Color.get(320, 320, 210, 210);
 		int col22 = Color.get(100, 320, 210, 430);
 
@@ -42,8 +42,8 @@ public class WoodWallTile extends Tile {
 			if (Game.time == 0) {
 
 				int col = col0;
-				int transitionColor = col00;
-
+				*/int transitionColor = colt;
+				
 				boolean u = level.getTile(x, y - 1) != this;
 				boolean d = level.getTile(x, y + 1) != this;
 				boolean l = level.getTile(x - 1, y) != this;
@@ -80,7 +80,7 @@ public class WoodWallTile extends Tile {
 				} else
 					screen.render(
 							x * 16 + 8, y * 16 + 8, (r ? 4 : 5) + (d ? 22 : 23) * 32, transitionColor, 3);
-			}
+			/*}
 		if (Game.time == 1) {
 
 			int col = col1;
@@ -232,7 +232,7 @@ public class WoodWallTile extends Tile {
 				else screen.render(x * 16 + 8, y * 16 + 8, 8 + 23 * 32, transitionColor, 3);
 			} else
 				screen.render(x * 16 + 8, y * 16 + 8, (r ? 4 : 5) + (d ? 22 : 23) * 32, transitionColor, 3);
-		}
+		}*/
 	}
 
 	public boolean mayPass(Level level, int x, int y, Entity e) {

@@ -19,10 +19,30 @@ public class DirtTile extends Tile {
 		maySpawn = true;
 	}
 
-	public static int dirtc = 0;
-
+	public static int dCol(int depth) {
+		switch(depth) {
+			case 1: return 444; // no dirt in sky anyway.
+			case 0: return 321;
+			case -4: return 222; // no dirt in dungeons anyway.
+			default: return 222; // caves.
+		}
+	}
+	
+	private static int getColor(int depth) {
+		int dcol = dCol(depth);
+		return Color.get(dcol, dcol, dcol-111, dcol-111);
+	}
+	
 	public void render(Screen screen, Level level, int x, int y) {
-		int col0 =
+		int col = getColor(level.depth);//level.dirtColor;
+		//if(col == 0)
+			//col = Color.get(321, 321, 321 - 111, 321 - 111);
+		
+		screen.render(x * 16 + 0, y * 16 + 0, 0, col, 0);
+		screen.render(x * 16 + 8, y * 16 + 0, 1, col, 0);
+		screen.render(x * 16 + 0, y * 16 + 8, 2, col, 0);
+		screen.render(x * 16 + 8, y * 16 + 8, 3, col, 0);
+		/*int col0 =
 				Color.get(
 						level.dirtColor - 111, level.dirtColor, level.dirtColor - 111, level.dirtColor - 222);
 
@@ -101,7 +121,7 @@ public class DirtTile extends Tile {
 				screen.render(x * 16 + 0, y * 16 + 8, 2, col, 0);
 				screen.render(x * 16 + 8, y * 16 + 8, 3, col, 0);
 			}
-		}
+		}*/
 	}
 
 	public boolean interact(Level level, int xt, int yt, Player player, Item item, int attackDir) {

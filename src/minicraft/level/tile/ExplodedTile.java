@@ -16,7 +16,7 @@ public class ExplodedTile extends Tile {
 
 	public void render(Screen screen, Level level, int x, int y) {
 		int col = Color.get(555, 555, 555, 550);
-		int transitionColor1 = Color.get(3, 555, level.dirtColor - 111, level.dirtColor);
+		int transitionColor1 = Color.get(3, 555, DirtTile.dCol(level.depth) - 111, DirtTile.dCol(level.depth));
 		int transitionColor2 = Color.get(3, 555, level.sandColor - 110, level.sandColor);
 
 		boolean u = !level.getTile(x, y - 1).connectsToLiquid();

@@ -22,10 +22,10 @@ public class StoneBrickTile extends Tile {
 
 	public void render(Screen screen, Level level, int x, int y) {
 
-		int col0 = Color.get(222, 222, 333, 333);
+		//int col0 = Color.get(222, 222, 333, 333);
 
-		int col1 = Color.get(333, 333, 444, 444);
-
+		int col = Color.get(333, 333, 444, 444);
+		/*
 		int col2 = Color.get(222, 222, 333, 333);
 
 		int col3 = Color.get(111, 111, 222, 222);
@@ -36,11 +36,11 @@ public class StoneBrickTile extends Tile {
 
 			if (Game.time == 0) {
 				int col = col0;
-				screen.render(x * 16 + 0, y * 16 + 0, 19 + 2 * 32, col, 0);
+				*/screen.render(x * 16 + 0, y * 16 + 0, 19 + 2 * 32, col, 0);
 				screen.render(x * 16 + 8, y * 16 + 0, 19 + 2 * 32, col, 0);
 				screen.render(x * 16 + 0, y * 16 + 8, 19 + 2 * 32, col, 0);
 				screen.render(x * 16 + 8, y * 16 + 8, 19 + 2 * 32, col, 0);
-			}
+			/*}
 		}
 		if (Game.time == 1) {
 			int col = col1;
@@ -71,7 +71,7 @@ public class StoneBrickTile extends Tile {
 			screen.render(x * 16 + 8, y * 16 + 0, 19 + 2 * 32, col, 0);
 			screen.render(x * 16 + 0, y * 16 + 8, 19 + 2 * 32, col, 0);
 			screen.render(x * 16 + 8, y * 16 + 8, 19 + 2 * 32, col, 0);
-		}
+		}*/
 	}
 
 	public boolean interact(Level level, int xt, int yt, Player player, Item item, int attackDir) {

@@ -23,25 +23,25 @@ public class CactusTile extends Tile {
 		connectsToSand = true;
 	}
 
-	public static int col0 = Color.get(20, 30, 40, 440);
+	//public static int col0 = Color.get(20, 30, 40, 440);
 
-	public static int col1 = Color.get(30, 40, 50, 550);
+	public static int col = Color.get(30, 40, 50, 550);
 
-	public static int col2 = Color.get(20, 30, 40, 330);
+	//public static int col2 = Color.get(20, 30, 40, 330);
 
-	public static int col3 = Color.get(10, 20, 30, 220);
+	//public static int col3 = Color.get(10, 20, 30, 220);
 
 	public void render(Screen screen, Level level, int x, int y) {
 		
 		//sprite.render(screen, x * 16, y * 16);
 		
-		if (Game.time == 0) {
-			int col = col0;
+		//if (Game.time == 0) {
+			//int col = col0;
 			screen.render(x * 16 + 0, y * 16 + 0, 8 + 2 * 32, col, 0);
 			screen.render(x * 16 + 8, y * 16 + 0, 9 + 2 * 32, col, 0);
 			screen.render(x * 16 + 0, y * 16 + 8, 8 + 3 * 32, col, 0);
 			screen.render(x * 16 + 8, y * 16 + 8, 9 + 3 * 32, col, 0);
-		}
+		/*}
 		if (Game.time == 1) {
 			int col = col1;
 			screen.render(x * 16 + 0, y * 16 + 0, 8 + 2 * 32, col, 0);
@@ -62,7 +62,7 @@ public class CactusTile extends Tile {
 			screen.render(x * 16 + 8, y * 16 + 0, 9 + 2 * 32, col, 0);
 			screen.render(x * 16 + 0, y * 16 + 8, 8 + 3 * 32, col, 0);
 			screen.render(x * 16 + 8, y * 16 + 8, 9 + 3 * 32, col, 0);
-		}
+		}*/
 	}
 
 	public boolean mayPass(Level level, int x, int y, Entity e) {

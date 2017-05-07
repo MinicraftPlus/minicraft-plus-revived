@@ -23,12 +23,12 @@ public class OreTile extends Tile {
 
 	public OreTile(int id, OreType oreType, int col) {
 		super(id);
-                type = oreType;
-                oreColor = col;
+        type = oreType;
+        oreColor = col;
 	}
 
 	public void render(Screen screen, Level level, int x, int y) {
-		color = (oreColor & 0xffffff00) + Color.get(level.dirtColor);
+		color = (oreColor & 0xffffff00) + Color.get(DirtTile.dCol(level.depth));
 		screen.render(x * 16 + 0, y * 16 + 0, 17 + 1 * 32, color, 0);
 		screen.render(x * 16 + 8, y * 16 + 0, 18 + 1 * 32, color, 0);
 		screen.render(x * 16 + 0, y * 16 + 8, 17 + 2 * 32, color, 0);

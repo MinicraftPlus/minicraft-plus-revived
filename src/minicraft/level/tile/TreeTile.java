@@ -23,14 +23,14 @@ public class TreeTile extends Tile {
 		connectsToGrass = true;
 	}
 
-	public static int col0 = Color.get(10, 20, 151, 131);
-	public static int col00 = Color.get(10, 20, 320, 131);
-	public static int col000 = Color.get(10, 20, 320, 131);
+	//public static int col0 = Color.get(10, 20, 151, 131);
+	//public static int col00 = Color.get(10, 20, 320, 131);
+	//public static int col000 = Color.get(10, 20, 320, 131);
 
-	public static int col1 = Color.get(10, 30, 151, 141);
-	public static int col11 = Color.get(10, 30, 430, 141);
-	public static int col111 = Color.get(10, 30, 320, 141);
-
+	public static int col = Color.get(10, 30, 151, 141);
+	public static int col1 = Color.get(10, 30, 430, 141);
+	public static int col2 = Color.get(10, 30, 320, 141);
+	/*
 	public static int col2 = Color.get(10, 20, 151, 30);
 	public static int col22 = Color.get(10, 20, 320, 30);
 	public static int col222 = Color.get(10, 20, 210, 30);
@@ -38,13 +38,13 @@ public class TreeTile extends Tile {
 	public static int col3 = Color.get(0, 10, 30, 20);
 	public static int col33 = Color.get(0, 10, 100, 20);
 	public static int col333 = Color.get(0, 10, 100, 20);
-
+	*/
 	public void render(Screen screen, Level level, int x, int y) {
-		if (Game.time == 0) {
+		//if (Game.time == 0) {
 
-			int col = col0;
-			int barkCol1 = col00;
-			int barkCol2 = col000;
+			//int col = col0;
+			int barkCol1 = col1;
+			int barkCol2 = col2;
 
 			boolean u = level.getTile(x, y - 1) == this;
 			boolean l = level.getTile(x - 1, y) == this;
@@ -75,7 +75,7 @@ public class TreeTile extends Tile {
 			} else {
 				screen.render(x * 16 + 8, y * 16 + 8, 10 + 3 * 32, barkCol2, 0);
 			}
-		} else if (Game.time == 2) {
+		/*} else if (Game.time == 2) {
 
 			int col = col2;
 			int barkCol1 = col22;
@@ -180,7 +180,7 @@ public class TreeTile extends Tile {
 			} else {
 				screen.render(x * 16 + 8, y * 16 + 8, 10 + 3 * 32, barkCol2, 0);
 			}
-		}
+		}*/
 	}
 
 	public void tick(Level level, int xt, int yt) {

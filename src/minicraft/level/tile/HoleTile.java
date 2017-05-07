@@ -15,14 +15,14 @@ public class HoleTile extends Tile {
 	}
 
 	public void render(Screen screen, Level level, int x, int y) {
-		int col0 = Color.get(222, 222, 220, 220);
+		/*int col0 = Color.get(222, 222, 220, 220);
 		int col00 = Color.get(3, 222, 211, 322);
 		int col000 = Color.get(3, 222, 330, 440);
-
-		int col1 = Color.get(222, 222, 220, 220);
-		int col11 = Color.get(3, 222, 211, 321);
-		int col111 = Color.get(3, 222, 440, 550);
-
+		*/
+		int col = Color.get(222, 222, 220, 220);
+		int col1 = Color.get(3, 222, 211, DirtTile.dCol(level.depth));
+		int col2 = Color.get(3, 222, 440, 550);
+		/*
 		int col2 = Color.get(111, 111, 110, 110);
 		int col22 = Color.get(3, 111, 100, 211);
 		int col222 = Color.get(3, 111, 220, 330);
@@ -37,11 +37,11 @@ public class HoleTile extends Tile {
 
 		if (level.dirtColor == 322)
 			if (Game.time == 0) {
-
+				
 				int col = col0;
-				int transitionColor1 = col00;
-				int transitionColor2 = col000;
-
+				*/int transitionColor1 = col1;
+				int transitionColor2 = col2;
+				
 				boolean u = !level.getTile(x, y - 1).connectsToLiquid();
 				boolean d = !level.getTile(x, y + 1).connectsToLiquid();
 				boolean l = !level.getTile(x - 1, y).connectsToLiquid();
@@ -90,8 +90,8 @@ public class HoleTile extends Tile {
 							(r ? 16 : 15) + (d ? 2 : 1) * 32,
 							(sd || sr) ? transitionColor2 : transitionColor1,
 							0);
-			}
-		if (Game.time == 1) {
+			//}
+		/*if (Game.time == 1) {
 
 			int col = col1;
 			int transitionColor1 = col11;
@@ -310,7 +310,7 @@ public class HoleTile extends Tile {
 						(r ? 16 : 15) + (d ? 2 : 1) * 32,
 						(sd || sr) ? transitionColor2 : transitionColor1,
 						0);
-		}
+		}*/
 	}
 
 	public boolean mayPass(Level level, int x, int y, Entity e) {

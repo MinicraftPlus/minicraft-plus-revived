@@ -26,13 +26,13 @@ public class RockTile extends Tile {
 	int coallvl = 1;
 
 	public void render(Screen screen, Level level, int x, int y) {
-		int col0 = Color.get(444, 333, 222, 222);
-		int col00 = Color.get(111, 333, 444, 322);
+		//int col0 = Color.get(444, 333, 222, 222);
+		//int col00 = Color.get(111, 333, 444, 322);
 
-		int col1 = Color.get(444, 444, 333, 333);
-		int col11 = Color.get(111, 444, 555, 321);
+		int col = Color.get(444, 444, 333, 333);
+		int colt = Color.get(111, 444, 555, DirtTile.dCol(level.depth));
 
-		int col2 = Color.get(333, 333, 222, 222);
+		/*int col2 = Color.get(333, 333, 222, 222);
 		int col22 = Color.get(111, 333, 444, 211);
 
 		int col3 = Color.get(222, 222, 111, 111);
@@ -40,11 +40,11 @@ public class RockTile extends Tile {
 
 		int col4 = Color.get(444, 444, 333, 333);
 		int col44 = Color.get(111, 444, 555, 222);
-
-		if (level.dirtColor == 322)
-			if (Game.time == 0) {
-				int col = col0;
-				int transitionColor = col00;
+		*/
+		//if (level.dirtColor == 322)
+			//if (Game.time == 0) {
+				//int col = col0;
+				int transitionColor = colt;
 
 				boolean u = level.getTile(x, y - 1) != this;
 				boolean d = level.getTile(x, y + 1) != this;
@@ -78,8 +78,8 @@ public class RockTile extends Tile {
 					else screen.render(x * 16 + 8, y * 16 + 8, 8 + 1 * 32, transitionColor, 3);
 				} else
 					screen.render(x * 16 + 8, y * 16 + 8, (r ? 4 : 5) + (d ? 0 : 1) * 32, transitionColor, 3);
-			}
-		if (Game.time == 1) {
+			//}
+		/*if (Game.time == 1) {
 			int col = col1;
 			int transitionColor = col11;
 
@@ -228,7 +228,7 @@ public class RockTile extends Tile {
 				else screen.render(x * 16 + 8, y * 16 + 8, 8 + 1 * 32, transitionColor, 3);
 			} else
 				screen.render(x * 16 + 8, y * 16 + 8, (r ? 4 : 5) + (d ? 0 : 1) * 32, transitionColor, 3);
-		}
+		}*/
 	}
 
 	public boolean mayPass(Level level, int x, int y, Entity e) {
