@@ -68,10 +68,11 @@ public class Game extends Canvas implements Runnable {
 	
 	public static int tickCount = 0; // The number of ticks since the beginning of the game day.
 	public static int time = 0; // Facilites time of day / sunlight.
-	public static int sleepEndTime = 15000; //this value determines when the player "wakes up" in the morning.
-	public static int sleepStartTime = 44000; //this value determines when the player allowed to sleep.
 	public static int dayLength = 64800; //this value determines how long one game day is.
+	public static int sleepEndTime = dayLength/8; //this value determines when the player "wakes up" in the morning.
+	public static int sleepStartTime = dayLength/2+dayLength/8; //this value determines when the player allowed to sleep.
 	//public static int noon = 32400; //this value determines when the sky switches from getting lighter to getting darker.
+	
 	
 	private boolean running; // This is about more than simply being paused -- it keeps the game loop running.
 	public int fra, tik; //these store the number of frames and ticks in the previous second; used for fps, at least.
@@ -172,9 +173,9 @@ public class Game extends Canvas implements Runnable {
 	 * screens.
 	 */
 	private void init() {
-		int pp = 0;
+		//int pp = 0;
 		/* This loop below creates the 216 colors in minicraft. */
-		for (int r = 0; r < 6; r++) {
+		/*for (int r = 0; r < 6; r++) {
 			for (int g = 0; g < 6; g++) {
 				for (int b = 0; b < 6; b++) {
 					int rr = (r * 255 / 5);
@@ -188,7 +189,7 @@ public class Game extends Canvas implements Runnable {
 					colors[pp++] = r1 << 16 | g1 << 8 | b1;
 				}
 			}
-		}
+		}*/
 		
 		/* This sets up the screens, and loads the icons.png spritesheet. */
 		try {
@@ -197,6 +198,7 @@ public class Game extends Canvas implements Runnable {
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
+		screen.pixels = pixels;
 		
 		resetGame(); // "half"-starts a new game, to set up initial variables
 		new Load(this); // this loads any saved preferences.
@@ -480,7 +482,7 @@ public class Game extends Canvas implements Runnable {
 					}
 					if (input.getKey("shift-minus").clicked) {
 						if(gamespeed > 1) gamespeed--;
-						else if(normSpeed/gamespeed>=1) gamespeed /= 2;
+						else if(normSpeed*gamespeed>5) gamespeed /= 2;
 					}
 				} // end debug only cond.
 			} // end "menu-null" conditional
@@ -500,10 +502,10 @@ public class Game extends Canvas implements Runnable {
 	/// this is the proper way to change the tickCount.
 	public static void setTime(int ticks) {
 		if (ticks < 0) ticks = 0; // error correct
-		if (ticks < 7200) time = 0; // morning
-		else if (ticks < 36000) time = 1; // day
-		else if (ticks < 48000) time = 2; // evening
-		else if (ticks < 64800) time = 3; // night
+		if (ticks < dayLength/4) time = 0; // morning
+		else if (ticks < dayLength/2) time = 1; // day
+		else if (ticks < dayLength/4*3) time = 2; // evening
+		else if (ticks < dayLength) time = 3; // night
 		else { // back to morning
 			time = 0;
 			ticks = 0;
@@ -515,9 +517,9 @@ public class Game extends Canvas implements Runnable {
 	/// this is the proper way to change the time of day.
 	public static void changeTimeOfDay(String t) {
 		if(t.equals("morning")) setTime(0);
-		else if(t.equals("day")) setTime(7200);
-		else if(t.equals("evening")) setTime(36000);
-		else if(t.equals("night")) setTime(43200);
+		else if(t.equals("day")) setTime(dayLength/4);
+		else if(t.equals("evening")) setTime(dayLength/2);
+		else if(t.equals("night")) setTime(dayLength/4*3);
 		else System.out.println("time " + t + " does not exist.");
 	}
 	// this one works too.
@@ -527,6 +529,11 @@ public class Game extends Canvas implements Runnable {
 			changeTimeOfDay(times[t]); // it just references the other one.
 		else
 			System.out.println("time " + t + " does not exist.");
+	}
+	
+	public static String getTime() {
+		String[] times = {"Morning", "Day", "Evening", "Night"};
+		return times[time];
 	}
 	
 	/** This method changes the level that the player is currently on.
@@ -593,7 +600,7 @@ public class Game extends Canvas implements Runnable {
 			menu.render(screen);
 		
 		if (!hasFocus()) renderFocusNagger(); // calls the renderFocusNagger() method, which creates the "Click to Focus" message.
-
+		/*
 		for (int y = 0; y < screen.h; y++) {
 			for (int x = 0; x < screen.w; x++) {
 				// loops through all the pixels on the screen
@@ -602,7 +609,7 @@ public class Game extends Canvas implements Runnable {
 				pixels[x + y * WIDTH] = screen.pixels[x + y * screen.w];
 			}
 		}
-		
+		*/
 		Graphics g = bs.getDrawGraphics(); // gets the graphics in which java draws the picture
 		g.fillRect(0, 0, getWidth(), getHeight()); // draws the a rect to fill the whole window (to cover last?)
 		
