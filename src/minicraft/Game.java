@@ -55,7 +55,7 @@ public class Game extends Canvas implements Runnable {
 	/// MANAGERIAL VARS AND RUNNING
 	
 	public static final String NAME = "Minicraft Plus"; // This is the name on the application window
-	public static final String VERSION = "1.9.4-dev2";
+	public static final String VERSION = "1.9.4-dev3";
 	public static final int HEIGHT = 192;
 	public static final int WIDTH = 288;
 	private static float SCALE = 3;
@@ -68,7 +68,8 @@ public class Game extends Canvas implements Runnable {
 	
 	public static int tickCount = 0; // The number of ticks since the beginning of the game day.
 	public static int time = 0; // Facilites time of day / sunlight.
-	public static int sleepTime = 42000; //this value determines when the player allowed to sleep.
+	public static int sleepEndTime = 15000; //this value determines when the player "wakes up" in the morning.
+	public static int sleepStartTime = 44000; //this value determines when the player allowed to sleep.
 	public static int dayLength = 64800; //this value determines how long one game day is.
 	//public static int noon = 32400; //this value determines when the sky switches from getting lighter to getting darker.
 	
@@ -351,8 +352,8 @@ public class Game extends Canvas implements Runnable {
 		if (Bed.inBed) {
 			// IN BED
 			level.remove(player);
-			gamespeed = 20;
-			if (tickCount <= sleepTime) { // it has reached morning.
+			gamespeed = 30;
+			if (tickCount <= sleepStartTime && tickCount >= sleepEndTime) { // it has reached morning.
 				level.add(player);
 				gamespeed = 1;
 				
@@ -501,7 +502,7 @@ public class Game extends Canvas implements Runnable {
 		if (ticks < 0) ticks = 0; // error correct
 		if (ticks < 7200) time = 0; // morning
 		else if (ticks < 36000) time = 1; // day
-		else if (ticks < 43200) time = 2; // evening
+		else if (ticks < 48000) time = 2; // evening
 		else if (ticks < 64800) time = 3; // night
 		else { // back to morning
 			time = 0;
@@ -640,7 +641,6 @@ public class Game extends Canvas implements Runnable {
 			info.add("walk spd " + Player.moveSpeed);
 			info.add("X " + txlevel);
 			info.add("Y " + tylevel);
-			//info.add("canSleep:" + (tickCount > sleepTime));
 			if (ModeMenu.score) info.add("Score " + Player.score);
 			
 			/// Displays number of chests left, if on dungeon level.

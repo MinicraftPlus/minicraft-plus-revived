@@ -23,7 +23,7 @@ public class Bed extends Furniture {
 	
 	/** Called when the player attempts to get in bed. */
 	public boolean use(Player player, int attackDir) {
-		if (Game.tickCount >= Game.sleepTime) { // if it is late enough in the day to sleep...
+		if (Game.tickCount >= Game.sleepStartTime || Game.tickCount < Game.sleepEndTime) { // if it is late enough in the day to sleep...
 			inBed = true;
 			// set the player spawn coord. to here, in tile coords, hence " >> 4"
 			Player.spawnx = x >> 4;
@@ -31,7 +31,7 @@ public class Bed extends Furniture {
 			player.bedSpawn = true;  // the bed is now set as the player spawn point.
 		} else {
 			// it is too early to sleep; display how much time is remaining.
-			int sec = (Game.sleepTime - Game.tickCount) / Game.normSpeed; // gets the seconds until sleeping is allowed. // normSpeed is in tiks/sec.
+			int sec = (int)Math.ceil((Game.sleepStartTime - Game.tickCount)*1.0 / Game.normSpeed); // gets the seconds until sleeping is allowed. // normSpeed is in tiks/sec.
 			Game.notifications.add("Can't sleep! " + (sec / 60) + "Min " + (sec % 60) + " Sec left!"); // add the notification displaying the time remaining in minutes and seconds.
 		}
 		
