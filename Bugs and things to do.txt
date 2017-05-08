@@ -11,6 +11,8 @@ Note to self: for more little bugs/ideas/concerns, search code for "TODO"
 ####
 Creepers turn solid green on fuse timer rather than blinking.
 ####
+Water besides daytime is a solid blue; and creative mode keeps the color set to day.
+####
 I accidently removed the whole "SmashParticle" thing it seems... same with FireParticle...
 ####
 Not sure, but broken/exploded obsidian brick may drop stone...it looks like stone.
@@ -25,6 +27,10 @@ Many item names don't fit on the black "active item" bar at the bottom.
 -----------------------------------------------------------------------------------
 
 	****IDEAS(that should probably be implemented)****
+****
+
+Make buckets in creative not fill up.
+
 ****
 
 Make respawn without bed += 20 blocks x/y of last spawn.

@@ -13,6 +13,10 @@ change "xa" and "ya" to something else; b/c they are NOT accelerations! They're 
 
 ----
 
+Make daylight come as a gradual lighting change; not all at once. This *may* require changing the whole "only 216 colors" thing.
+
+----
+
 Add feature to notifications display: if it starts with ":error:", then make the text red (but don't show the ":Error:" part). Any further than that, though, and it would be better to just pass it in.
 
 ----
