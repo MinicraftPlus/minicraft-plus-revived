@@ -13,12 +13,19 @@ public class Sprite {
 	public Px[][] spritePixels;
 	/// spritePixels is arranged so that the pixels are in their correct positions relative to the top left of the full sprite. This means that their render positions are built-in to the array.
 	
+	public Sprite(int sx, int sy, int sw, int sh) {
+		spritePixels = new Px[sh][sw];
+		for(int r = 0; r < sh; r++)
+			for(int c = 0; c < sw; c++)
+				spritePixels[r][c] = new Px(sx+c, sy+r, 0);
+	}
+	
 	public Sprite(Px[][] pixels) {
 		spritePixels = pixels;
 	}
 	
 	public void render(Screen screen, int color, int lvlx, int lvly) {
-		/// here, x and y are level coordinates, I think.
+		/// here, x and y are entity coordinates, I think.
 		
 		for(int r = 0; r < spritePixels.length; r++) { // loop down through each row
 			renderRow(r, screen, color, lvlx, lvly + r*8);
