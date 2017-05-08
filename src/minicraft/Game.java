@@ -169,28 +169,9 @@ public class Game extends Canvas implements Runnable {
 	}
 	
 	/**
-	 * Initialization step, this is called when the game first starts. Sets up the colors and the
-	 * screens.
+	 * Initialization step, this is called when the game first starts. Sets up the screens.
 	 */
 	private void init() {
-		//int pp = 0;
-		/* This loop below creates the 216 colors in minicraft. */
-		/*for (int r = 0; r < 6; r++) {
-			for (int g = 0; g < 6; g++) {
-				for (int b = 0; b < 6; b++) {
-					int rr = (r * 255 / 5);
-					int gg = (g * 255 / 5);
-					int bb = (b * 255 / 5);
-					int mid = (rr * 30 + gg * 59 + bb * 11) / 100;
-					
-					int r1 = ((rr + mid * 1) / 2) * 230 / 255 + 10;
-					int g1 = ((gg + mid * 1) / 2) * 230 / 255 + 10;
-					int b1 = ((bb + mid * 1) / 2) * 230 / 255 + 10;
-					colors[pp++] = r1 << 16 | g1 << 8 | b1;
-				}
-			}
-		}*/
-		
 		/* This sets up the screens, and loads the icons.png spritesheet. */
 		try {
 			screen = new Screen(WIDTH, HEIGHT, new SpriteSheet(ImageIO.read(Game.class.getResourceAsStream("/icons.png"))));

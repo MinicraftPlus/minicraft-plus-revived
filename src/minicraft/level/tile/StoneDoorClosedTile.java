@@ -21,55 +21,12 @@ public class StoneDoorClosedTile extends Tile {
 	}
 
 	public void render(Screen screen, Level level, int x, int y) {
-		//int col0 = Color.get(333, 222, 111, 222);
-
 		int col = Color.get(444, 333, 222, 333);
-
-		/*int col2 = Color.get(333, 222, 111, 222);
-
-		int col3 = Color.get(222, 111, 000, 111);
-
-		int col4 = Color.get(444, 333, 222, 333);
-
-		if (level.dirtColor == 322) {
-
-			if (Game.time == 0) {
-				int col = col0;
-				*/screen.render(x * 16 + 0, y * 16 + 0, 2 + 24 * 32, col, 0);
-				screen.render(x * 16 + 8, y * 16 + 0, 3 + 24 * 32, col, 0);
-				screen.render(x * 16 + 0, y * 16 + 8, 2 + 25 * 32, col, 0);
-				screen.render(x * 16 + 8, y * 16 + 8, 3 + 25 * 32, col, 0);
-			/*}
-		}
-		if (Game.time == 1) {
-			int col = col1;
-			screen.render(x * 16 + 0, y * 16 + 0, 2 + 24 * 32, col, 0);
-			screen.render(x * 16 + 8, y * 16 + 0, 3 + 24 * 32, col, 0);
-			screen.render(x * 16 + 0, y * 16 + 8, 2 + 25 * 32, col, 0);
-			screen.render(x * 16 + 8, y * 16 + 8, 3 + 25 * 32, col, 0);
-		}
-		if (Game.time == 2) {
-			int col = col2;
-			screen.render(x * 16 + 0, y * 16 + 0, 2 + 24 * 32, col, 0);
-			screen.render(x * 16 + 8, y * 16 + 0, 3 + 24 * 32, col, 0);
-			screen.render(x * 16 + 0, y * 16 + 8, 2 + 25 * 32, col, 0);
-			screen.render(x * 16 + 8, y * 16 + 8, 3 + 25 * 32, col, 0);
-		}
-		if (Game.time == 3) {
-			int col = col3;
-			screen.render(x * 16 + 0, y * 16 + 0, 2 + 24 * 32, col, 0);
-			screen.render(x * 16 + 8, y * 16 + 0, 3 + 24 * 32, col, 0);
-			screen.render(x * 16 + 0, y * 16 + 8, 2 + 25 * 32, col, 0);
-			screen.render(x * 16 + 8, y * 16 + 8, 3 + 25 * 32, col, 0);
-		}
-
-		if (level.dirtColor == 222) {
-			int col = col4;
-			screen.render(x * 16 + 0, y * 16 + 0, 2 + 24 * 32, col, 0);
-			screen.render(x * 16 + 8, y * 16 + 0, 3 + 24 * 32, col, 0);
-			screen.render(x * 16 + 0, y * 16 + 8, 2 + 25 * 32, col, 0);
-			screen.render(x * 16 + 8, y * 16 + 8, 3 + 25 * 32, col, 0);
-		}*/
+		
+		screen.render(x * 16 + 0, y * 16 + 0, 2 + 24 * 32, col, 0);
+		screen.render(x * 16 + 8, y * 16 + 0, 3 + 24 * 32, col, 0);
+		screen.render(x * 16 + 0, y * 16 + 8, 2 + 25 * 32, col, 0);
+		screen.render(x * 16 + 8, y * 16 + 8, 3 + 25 * 32, col, 0);
 	}
 
 	public boolean interact(Level level, int xt, int yt, Player player, Item item, int attackDir) {

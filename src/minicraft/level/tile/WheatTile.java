@@ -22,101 +22,23 @@ public class WheatTile extends Tile {
 	public void render(Screen screen, Level level, int x, int y) {
 		int age = level.getData(x, y);
 		int icon = age / 10;
-
-		/*int col0 = Color.get(201, 311, 322, 40);
-		int col00 = Color.get(201, 311, 40 + (icon) * 100, 30 + (icon - 3) * 2 * 100);
-		int col000 = Color.get(0, 0, 40 + (icon) * 100, 30 + (icon - 3) * 2 * 100);
-		*/
+		
 		int col = Color.get(301, 411, 321, 50);
 		int col1 = Color.get(301, 411, 50 + (icon) * 100, 40 + (icon - 3) * 2 * 100);
 		int col2 = Color.get(0, 0, 50 + (icon) * 100, 40 + (icon - 3) * 2 * 100);
-		/*
-		int col2 = Color.get(201, 311, 211, 40);
-		int col22 = Color.get(201, 311, 40 + (icon) * 100, 30 + (icon - 3) * 2 * 100);
-		int col222 = Color.get(0, 0, 40 + (icon) * 100, 30 + (icon - 3) * 2 * 100);
-
-		int col3 = Color.get(101, 211, 100, 30);
-		int col33 = Color.get(101, 211, 30 + (icon) * 100, 20 + (icon - 3) * 2 * 100);
-		int col333 = Color.get(0, 0, 30 + (icon) * 100, 20 + (icon - 3) * 2 * 100);
-
-		int col4 = Color.get(301, 411, 222, 50);
-		int col44 = Color.get(301, 411, 50 + (icon) * 100, 40 + (icon - 3) * 2 * 100);
-		int col444 = Color.get(0, 0, 50 + (icon) * 100, 40 + (icon - 3) * 2 * 100);
-
-		if (level.dirtColor == 322) {
-
-			if (Game.time == 0) {
-				int col = col0;
-				*/if (icon >= 3) {
-					col = col1;
-					if (age == 50) {
-						col = col2;
-					}
-					icon = 3;
-				}
-
-				screen.render(x * 16 + 0, y * 16 + 0, 4 + 3 * 32 + icon, col, 0);
-				screen.render(x * 16 + 8, y * 16 + 0, 4 + 3 * 32 + icon, col, 0);
-				screen.render(x * 16 + 0, y * 16 + 8, 4 + 3 * 32 + icon, col, 1);
-				screen.render(x * 16 + 8, y * 16 + 8, 4 + 3 * 32 + icon, col, 1);
-			/*}
-			if (Game.time == 1) {
-				int col = col1;
-				if (icon >= 3) {
-					col = col11;
-					if (age == 50) {
-						col = col111;
-					}
-					icon = 3;
-				}
-				screen.render(x * 16 + 0, y * 16 + 0, 4 + 3 * 32 + icon, col, 0);
-				screen.render(x * 16 + 8, y * 16 + 0, 4 + 3 * 32 + icon, col, 0);
-				screen.render(x * 16 + 0, y * 16 + 8, 4 + 3 * 32 + icon, col, 1);
-				screen.render(x * 16 + 8, y * 16 + 8, 4 + 3 * 32 + icon, col, 1);
+		
+		if (icon >= 3) {
+			col = col1;
+			if (age == 50) {
+				col = col2;
 			}
-			if (Game.time == 2) {
-				int col = col2;
-				if (icon >= 3) {
-					col = col22;
-					if (age == 50) {
-						col = col222;
-					}
-					icon = 3;
-				}
-				screen.render(x * 16 + 0, y * 16 + 0, 4 + 3 * 32 + icon, col, 0);
-				screen.render(x * 16 + 8, y * 16 + 0, 4 + 3 * 32 + icon, col, 0);
-				screen.render(x * 16 + 0, y * 16 + 8, 4 + 3 * 32 + icon, col, 1);
-				screen.render(x * 16 + 8, y * 16 + 8, 4 + 3 * 32 + icon, col, 1);
-			}
-			if (Game.time == 3) {
-				int col = col3;
-				if (icon >= 3) {
-					col = col33;
-					if (age == 50) {
-						col = col333;
-					}
-					icon = 3;
-				}
-				screen.render(x * 16 + 0, y * 16 + 0, 4 + 3 * 32 + icon, col, 0);
-				screen.render(x * 16 + 8, y * 16 + 0, 4 + 3 * 32 + icon, col, 0);
-				screen.render(x * 16 + 0, y * 16 + 8, 4 + 3 * 32 + icon, col, 1);
-				screen.render(x * 16 + 8, y * 16 + 8, 4 + 3 * 32 + icon, col, 1);
-			}
+			icon = 3;
 		}
-		if (level.dirtColor == 222) {
-			int col = col4;
-			if (icon >= 3) {
-				col = col44;
-				if (age == 50) {
-					col = col444;
-				}
-				icon = 3;
-			}
-			screen.render(x * 16 + 0, y * 16 + 0, 4 + 3 * 32 + icon, col, 0);
-			screen.render(x * 16 + 8, y * 16 + 0, 4 + 3 * 32 + icon, col, 0);
-			screen.render(x * 16 + 0, y * 16 + 8, 4 + 3 * 32 + icon, col, 1);
-			screen.render(x * 16 + 8, y * 16 + 8, 4 + 3 * 32 + icon, col, 1);
-		}*/
+
+		screen.render(x * 16 + 0, y * 16 + 0, 4 + 3 * 32 + icon, col, 0);
+		screen.render(x * 16 + 8, y * 16 + 0, 4 + 3 * 32 + icon, col, 0);
+		screen.render(x * 16 + 0, y * 16 + 8, 4 + 3 * 32 + icon, col, 1);
+		screen.render(x * 16 + 8, y * 16 + 8, 4 + 3 * 32 + icon, col, 1);
 	}
 
 	public boolean IfWater(Level level, int xs, int ys) {

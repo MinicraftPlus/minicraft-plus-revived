@@ -35,93 +35,11 @@ public class DirtTile extends Tile {
 	
 	public void render(Screen screen, Level level, int x, int y) {
 		int col = getColor(level.depth);//level.dirtColor;
-		//if(col == 0)
-			//col = Color.get(321, 321, 321 - 111, 321 - 111);
 		
 		screen.render(x * 16 + 0, y * 16 + 0, 0, col, 0);
 		screen.render(x * 16 + 8, y * 16 + 0, 1, col, 0);
 		screen.render(x * 16 + 0, y * 16 + 8, 2, col, 0);
 		screen.render(x * 16 + 8, y * 16 + 8, 3, col, 0);
-		/*int col0 =
-				Color.get(
-						level.dirtColor - 111, level.dirtColor, level.dirtColor - 111, level.dirtColor - 222);
-
-		int col1 = Color.get(321, 321, 321 - 111, 321 - 111);
-
-		int col2 =
-				Color.get(
-						level.dirtColor - 111,
-						level.dirtColor - 111,
-						level.dirtColor - 222,
-						level.dirtColor - 111);
-
-		int col3 =
-				Color.get(
-						level.dirtColor, level.dirtColor - 222, level.dirtColor - 322, level.dirtColor - 111);
-
-		int col4 = Color.get(222, 222, 111, 111);
-
-		if (level.dirtColor == 322) {
-
-			if (Game.time == 0) {
-
-				int col = col0;
-				screen.render(x * 16 + 0, y * 16 + 0, 0, col, 0);
-				screen.render(x * 16 + 8, y * 16 + 0, 1, col, 0);
-				screen.render(x * 16 + 0, y * 16 + 8, 2, col, 0);
-				screen.render(x * 16 + 8, y * 16 + 8, 3, col, 0);
-			}
-			if (Game.time == 1) {
-				int col = col1;
-				screen.render(x * 16 + 0, y * 16 + 0, 0, col, 0);
-				screen.render(x * 16 + 8, y * 16 + 0, 1, col, 0);
-				screen.render(x * 16 + 0, y * 16 + 8, 2, col, 0);
-				screen.render(x * 16 + 8, y * 16 + 8, 3, col, 0);
-			}
-			if (Game.time == 2) {
-				int col = col2;
-				screen.render(x * 16 + 0, y * 16 + 0, 0, col, 0);
-				screen.render(x * 16 + 8, y * 16 + 0, 1, col, 0);
-				screen.render(x * 16 + 0, y * 16 + 8, 2, col, 0);
-				screen.render(x * 16 + 8, y * 16 + 8, 3, col, 0);
-			}
-			if (Game.time == 3) {
-				int col = col3;
-				screen.render(x * 16 + 0, y * 16 + 0, 0, col, 0);
-				screen.render(x * 16 + 8, y * 16 + 0, 1, col, 0);
-				screen.render(x * 16 + 0, y * 16 + 8, 2, col, 0);
-				screen.render(x * 16 + 8, y * 16 + 8, 3, col, 0);
-			}
-		} else if (level.dirtColor != 322) {
-			if (Game.time == 0) {
-				int col = col4;
-				screen.render(x * 16 + 0, y * 16 + 0, 0, col, 0);
-				screen.render(x * 16 + 8, y * 16 + 0, 1, col, 0);
-				screen.render(x * 16 + 0, y * 16 + 8, 2, col, 0);
-				screen.render(x * 16 + 8, y * 16 + 8, 3, col, 0);
-			}
-			if (Game.time == 1) {
-				int col = col4;
-				screen.render(x * 16 + 0, y * 16 + 0, 0, col, 0);
-				screen.render(x * 16 + 8, y * 16 + 0, 1, col, 0);
-				screen.render(x * 16 + 0, y * 16 + 8, 2, col, 0);
-				screen.render(x * 16 + 8, y * 16 + 8, 3, col, 0);
-			}
-			if (Game.time == 2) {
-				int col = col4;
-				screen.render(x * 16 + 0, y * 16 + 0, 0, col, 0);
-				screen.render(x * 16 + 8, y * 16 + 0, 1, col, 0);
-				screen.render(x * 16 + 0, y * 16 + 8, 2, col, 0);
-				screen.render(x * 16 + 8, y * 16 + 8, 3, col, 0);
-			}
-			if (Game.time == 3) {
-				int col = col4;
-				screen.render(x * 16 + 0, y * 16 + 0, 0, col, 0);
-				screen.render(x * 16 + 8, y * 16 + 0, 1, col, 0);
-				screen.render(x * 16 + 0, y * 16 + 8, 2, col, 0);
-				screen.render(x * 16 + 8, y * 16 + 8, 3, col, 0);
-			}
-		}*/
 	}
 
 	public boolean interact(Level level, int xt, int yt, Player player, Item item, int attackDir) {
