@@ -1,25 +1,44 @@
 package minicraft.level.tile;
 
 import java.util.Random;
+import java.util.EnumMap;
+import minicraft.entity.particle.TextParticle;
+import minicraft.entity.particle.SmashParticle;
 import minicraft.entity.Entity;
 import minicraft.entity.Mob;
 import minicraft.entity.Player;
 import minicraft.gfx.Color;
+import minicraft.gfx.Sprite;
 import minicraft.gfx.Screen;
 import minicraft.item.Item;
 import minicraft.item.resource.Resource;
 import minicraft.level.Level;
+import minicraft.screen.ModeMenu;
 
 public class Tile {
-	public enum OreType {
-        IRON, LAPIS, GOLD, GEM
-    }
-	
 	public static int tickCount = 0; //A global tickCount used in the Lava & water tiles.
 	protected Random random = new Random();
 	
-	/// idea: to save tile names while saving space, I could encode the names in base 64 in the save file...^M
+	public enum Property {
+		ID,
+		HEALTH,
+		DIG,
+		SWIM,
+		CONNECTWATER,
+		CONNECTLAVA,
+		CONNECTSAND,
+		CONNECTGRASS,
+		LIGHT,
+		WALK,
+		HURT,
+		SPAWN,
+		UNDER
+	}
+	
+	/// idea: to save tile names while saving space, I could encode the names in base 64 in the save file...
     /// then, maybe, I would just replace the id numbers with id names, make them all private, and then make a get(String) method, parameter is tile name.
+	
+	public EnumMap<Property, Object> data = new EnumMap<Property, Object>(Property.class); // these should mostly end up to be integers, though I'm adding some booleans.
 	
 	public static Tile[] tiles = new Tile[256];
 	public static Tile grass = new GrassTile(0); // creates a grass tile with the Id of 0, (I don't need to explain the other simple ones)
@@ -103,11 +122,11 @@ public class Tile {
 	public static Tile torchwoolgreen = new TorchTile(53, lightgwool);
 	public static Tile torchwoolyellow = new TorchTile(54, lightywool);
 	public static Tile torchwoolblack = new TorchTile(55, lightblwool);
-
-	public static Tile ironOre = new OreTile(19, OreType.IRON, Color.get(-1, 100, 322, 544));
-	public static Tile lapisOre = new OreTile(24, OreType.LAPIS, Color.get(-1, 005, 115, 115));
-	public static Tile goldOre = new OreTile(20, OreType.GOLD, Color.get(-1, 110, 440, 553));
-	public static Tile gemOre = new OreTile(21, OreType.GEM, Color.get(-1, 101, 404, 545));
+	
+	public static Tile ironOre = new OreTile(19, OreTile.OreType.IRON, Color.get(-1, 100, 322, 544));
+	public static Tile lapisOre = new OreTile(24, OreTile.OreType.LAPIS, Color.get(-1, 005, 115, 115));
+	public static Tile goldOre = new OreTile(20, OreTile.OreType.GOLD, Color.get(-1, 110, 440, 553));
+	public static Tile gemOre = new OreTile(21, OreTile.OreType.GEM, Color.get(-1, 101, 404, 545));
 	public static Tile cloudCactus = new CloudCactusTile(22); // "ore" in the sky.
 	public static Tile infiniteFall = new InfiniteFallTile(16); // Air tile in the sky.
 
@@ -120,13 +139,24 @@ public class Tile {
 	public int light;
 	public boolean maySpawn;
 	
+	protected Sprite sprite;
+	public int color;
+	
 	public Tile(int id) {
 		this.id = (byte) id;
 		if (tiles[id] != null) throw new RuntimeException("Duplicate tile ids!"); // You cannot have over-lapping ids
 		tiles[id] = this;
+		data.put(Property.ID, new Integer(id)); // will replace the final byte above.
 		
 		light = 1;
 		maySpawn = false;
+		data.put(Property.LIGHT, (Object)new Integer(1));
+		data.put(Property.SPAWN, (Object)new Boolean(false));
+	}
+	public Tile(int id, Sprite sprite, int color) {
+		this(id);
+		this.sprite = sprite;
+		this.color = color;
 	}
 	
 	public String setDataChar() {
@@ -134,13 +164,17 @@ public class Tile {
 	}
 	
 	/** Render method, used in sub-classes */
-	public void render(Screen screen, Level level, int x, int y) {}
+	public void render(Screen screen, Level level, int x, int y) {
+		if(sprite != null)
+			sprite.render(screen, color, x<<4, y<<4);
+		else System.out.println("Tile, id "+id+": no sprite to render.");
+	}
 	
 	/** Returns if the player can walk on it, overrides in sub-classes  */
 	public boolean mayPass(Level level, int x, int y, Entity e) {
 		return true;
 	}
-
+	
 	public boolean canLight() {
 		return false;
 	}
@@ -150,19 +184,36 @@ public class Tile {
 		return 0;
 	}
 	
-	public void hurt(Level level, int x, int y, Mob source, int dmg, int attackDir) {}
+	public void hurt(Level level, int x, int y, Mob source, int dmg, int attackDir) {
+		if(!data.containsKey(Property.HEALTH)) return;
+		int damage = level.getData(x, y) + dmg;
+		int health = (Integer)data.get(Property.HEALTH);
+		if (ModeMenu.creative && source instanceof Player) damage = health;
+		
+		/// make tile.smack() method? :P
+		level.add(new SmashParticle(x * 16 + 8, y * 16 + 8));
+		level.add(new TextParticle("" + dmg, x * 16 + 8, y * 16 + 8, Color.get(-1, 500)));
+		
+		if(damage >= health)
+			destroy(level, x, y);
+		else
+			level.setData(x, y, damage);
+	}
+	
+	/** this is basically the entity die() method, for tiles. */
+	public void destroy(Level level, int x, int y) {
+		Tile replace = data.containsKey(Property.UNDER) ? (Tile)data.get(Property.UNDER) : Tile.hole;
+		level.setTile(x, y, replace, 0);
+	}
 	
 	/** What happens when you run into the tile (ex: run into a cactus) */
-	public void bumpedInto(Level level, int xt, int yt, Entity entity) {
-	}
+	public void bumpedInto(Level level, int xt, int yt, Entity entity) {}
 	
 	/** Update method */
-	public void tick(Level level, int xt, int yt) {
-	}
+	public void tick(Level level, int xt, int yt) {}
 	
 	/** What happens when you are inside the tile (ex: lava) */
-	public void steppedOn(Level level, int xt, int yt, Entity entity) {
-	}
+	public void steppedOn(Level level, int xt, int yt, Entity entity) {}
 	
 	/** What happens when you hit an item on a tile (ex: Pickaxe on rock) */
 	public boolean interact(Level level, int xt, int yt, Player player, Item item, int attackDir) {
