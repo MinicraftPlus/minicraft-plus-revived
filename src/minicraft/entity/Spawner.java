@@ -135,7 +135,7 @@ public class Spawner extends Furniture {
 		*/
 		color = model.col;
 		//if(model instanceof EnemyMob)
-			//color = Color.tint(color, -1);
+			//color = Color.tint(color, -1, true);
 		col = color;
 	}
 	

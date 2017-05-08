@@ -16,6 +16,7 @@ public class Particle extends Entity {
 	}
 
 	public void tick() {
+		//System.out.println("particle tick");
 		time++;
 		if(time > lifetime) {
 			remove();
