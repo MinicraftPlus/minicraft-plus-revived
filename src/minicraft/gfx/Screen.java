@@ -97,14 +97,15 @@ public class Screen {
 		double darkenFactor = 0;
 		int transTime = Game.dayLength / 4;
 		double relTime = (Game.tickCount % transTime)*1.0 / transTime;
-		switch(Game.getTime()) {
-			case "Morning": darkenFactor = (1-relTime) * MAXDARK; break;
-			case "Day": darkenFactor = 0; break;
-			case "Evening": darkenFactor = relTime * MAXDARK; break;
-			case "Night": darkenFactor = MAXDARK; break;
+		switch((Game.Time)Game.getTime()) {
+			case Morning: darkenFactor = Game.pastDay1 ? (1-relTime) * MAXDARK : 0; break;
+			case Day: darkenFactor = 0; break;
+			case Evening: darkenFactor = relTime * MAXDARK; break;
+			case Night: darkenFactor = MAXDARK; break;
 		}
 		if(Game.currentLevel == 4) darkenFactor -= darkenFactor < 10 ? darkenFactor : 10;
 		darkenFactor *= -1;
+		darkenFactor += 20;
 		
 		//if(random.nextInt((int)(Game.normSpeed/Game.gamespeed))==0) System.out.println("rendering dark factor " + darkenFactor);
         
