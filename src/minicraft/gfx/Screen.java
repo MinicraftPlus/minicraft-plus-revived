@@ -6,6 +6,8 @@ public class Screen {
 	
 	private static java.util.Random random = new java.util.Random();
 	
+	private static final int MAXDARK = 128;
+	
 	/// x and y offset of screen:
 	public int xOffset;
 	public int yOffset;
@@ -92,9 +94,23 @@ public class Screen {
 	
 	/** Overlays the screen with pixels */
     public void overlay(Screen screen2, int xa, int ya) {
-        int[] oPixels = screen2.pixels;  // The Integer array of pixels to overlay the screen with.
-        int i = 0; // current pixel on the screen
-        for (int y = 0; y < h; y++) { // loop through height of screen
+		double darkenFactor = 0;
+		int transTime = Game.dayLength / 4;
+		double relTime = (Game.tickCount % transTime)*1.0 / transTime;
+		switch(Game.getTime()) {
+			case "Morning": darkenFactor = (1-relTime) * MAXDARK; break;
+			case "Day": darkenFactor = 0; break;
+			case "Evening": darkenFactor = relTime * MAXDARK; break;
+			case "Night": darkenFactor = MAXDARK; break;
+		}
+		if(Game.currentLevel == 4) darkenFactor -= darkenFactor < 10 ? darkenFactor : 10;
+		darkenFactor *= -1;
+		
+		//if(random.nextInt((int)(Game.normSpeed/Game.gamespeed))==0) System.out.println("rendering dark factor " + darkenFactor);
+        
+		int[] oPixels = screen2.pixels;  // The Integer array of pixels to overlay the screen with.
+		int i = 0; // current pixel on the screen
+		for (int y = 0; y < h; y++) { // loop through height of screen
             for (int x = 0; x < w; x++) { // loop through width of screen
 				if (oPixels[i] / 10 <= dither[((x + xa) & 3) + ((y + ya) & 3) * 4]) {
                     /// the above if statement is simply comparing the light level stored in oPixels with the minimum light level stored in dither. if it is determined that the oPixels[i] is less than the minimum requirements, the below is executed...
@@ -103,11 +119,7 @@ public class Screen {
 						pixels[i] = 0;
                     } else { // if it's not midday...
 						/// outside the caves, not being lit simply means being darker.
-                        
-						int shadeSize = Game.dayLength/256;
-						int darkenFactor = Math.abs((Game.tickCount - Game.dayLength/2) / shadeSize);
-						//System.out.println("rendering dark factor " + darkenFactor);
-						pixels[i] = Color.tintColor(pixels[i], -darkenFactor + (Game.currentLevel==4?10:0)); // darkens the color one shade.
+						pixels[i] = Color.tintColor(pixels[i], (int)darkenFactor); // darkens the color one shade.
                     }
                 }
                 i++; // moves to the next pixel.
