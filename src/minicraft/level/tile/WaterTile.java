@@ -23,7 +23,7 @@ public class WaterTile extends Tile {
 		int col000 = Color.get(3, 115, 330, 440);
 		*/
 		int col = Color.get(005, 105, 115, 115);
-		int col1 = Color.get(3, 105, 211, 321);
+		int col1 = Color.get(3, 105, 211, DirtTile.dCol(level.depth));
 		int col2 = Color.get(3, 105, 440, 550);
 		/*
 		int col2 = Color.get(005, 015, 115, 115);

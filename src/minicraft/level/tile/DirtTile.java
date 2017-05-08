@@ -19,7 +19,7 @@ public class DirtTile extends Tile {
 		maySpawn = true;
 	}
 
-	public static int dCol(int depth) {
+	protected static int dCol(int depth) {
 		switch(depth) {
 			case 1: return 444; // no dirt in sky anyway.
 			case 0: return 321;
