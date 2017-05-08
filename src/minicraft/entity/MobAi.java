@@ -67,18 +67,7 @@ public class MobAi extends Mob {
 	protected void dropResource(int mincount, int maxcount, Resource... resources) {
 		int count = random.nextInt(maxcount-mincount+1) + mincount;
 		for (int i = 0; i < count; i++)
-			dropResource(resources);
-	}
-	protected void dropResource(int count, Resource... resources) {
-		for (int i = 0; i < count; i++)
-			dropResource(resources);
-	}
-	protected void dropResource(Resource[] resources) {
-		for(Resource r: resources)
-			dropResource(r);
-	}
-	protected void dropResource(Resource r) {
-		level.add(new ItemEntity(new ResourceItem(r), x + random.nextInt(11) - 5, y + random.nextInt(11) - 5));
+			level.dropResource(x, y, resources);
 	}
 	
 	/** Tries once to find an appropriate spawn location for friendly mobs. */

@@ -93,11 +93,11 @@ public class Skeleton extends EnemyMob {
 		int bookcount = random.nextInt(1) + 1;
 		int rand = random.nextInt(diffrands[diff]);
 		if (rand <= diffvals[diff])
-			dropResource(count, Resource.bone, Resource.arrow);
+			level.dropResource(x, y, count, Resource.bone, Resource.arrow);
 		else if (diff == 0 && rand < 19 || diff != 0)
-			dropResource(bookcount, Resource.bookant, Resource.arrow);
+			level.dropResource(x, y, bookcount, Resource.bookant, Resource.arrow);
 		else if (diff == 0) // rare chance of 10 arrows on easy mode
-			dropResource(10, Resource.arrow);
+			level.dropResource(x, y, 10, Resource.arrow);
 		
 		super.die();
 	}

@@ -67,17 +67,17 @@ public class Zombie extends EnemyMob {
 		if (OptionsMenu.diff == OptionsMenu.hard) dropResource(1, 2, Resource.cloth);
 		
 		if(random.nextInt(60) == 2) {
-			dropResource(Resource.ironIngot);
+			level.dropResource(x, y, Resource.ironIngot);
 		}
 		
 		if(random.nextInt(40) == 19) {
 			int rand = random.nextInt(3);
 			if(rand == 0) {
-				dropResource(Resource.greenclothes);
+				level.dropResource(x, y, Resource.greenclothes);
 			} else if(rand == 1) {
-				dropResource(Resource.redclothes);
+				level.dropResource(x, y, Resource.redclothes);
 			} else if(rand == 2) {
-				dropResource(Resource.blueclothes);
+				level.dropResource(x, y, Resource.blueclothes);
 			}
 		}
 		

@@ -561,6 +561,18 @@ public class Level {
 			inventory.add(new ResourceItem(Resource.dirt, 7));
   		}
 	}
+	
+	public void dropResource(int x, int y, int count, Resource... resources) {
+		for (int i = 0; i < count; i++)
+			dropResource(x, y, resources);
+	}
+	public void dropResource(int x, int y, Resource[] resources) {
+		for(Resource r: resources)
+			dropResource(x, y, r);
+	}
+	public void dropResource(int x, int y, Resource r) {
+		add(new minicraft.entity.ItemEntity(new ResourceItem(r), x + random.nextInt(11) - 5, y + random.nextInt(11) - 5));
+	}
 
 	public void renderBackground(Screen screen, int xScroll, int yScroll) {
 		int xo = xScroll >> 4; // latches to the nearest tile coordinate
