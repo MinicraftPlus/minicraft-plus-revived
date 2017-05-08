@@ -20,7 +20,11 @@ import minicraft.screen.ModeMenu;
 public class OreTile extends Tile {
 	private OreType type;
 	private int color, oreColor;
-
+	
+	public static enum OreType {
+        IRON, LAPIS, GOLD, GEM
+    }
+	
 	public OreTile(int id, OreType oreType, int col) {
 		super(id);
         type = oreType;
