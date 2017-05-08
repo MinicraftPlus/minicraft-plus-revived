@@ -2,8 +2,8 @@ Minicraft+ version 1.9.4
 
 * Almost total revision of lighting; surface level now has lighting overlay sometimes, and the colors all around may be slightly different.
 * changed death chest expire times; easy:30min, norm:10min, hard:2min
-
-
++ Daylight now increases and decreases more smoothly; it has a lot of different shades.
+* Sped up game speed while sleeping.
 
 Minicraft+ version 1.9.3
 
