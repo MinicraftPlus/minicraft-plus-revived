@@ -110,7 +110,7 @@ public class Screen {
                         pixels[i] = r * 36 + g * 6 + b;
 						*/
 						int darkenFactor = Math.abs(Game.time - 1);
-						pixels[i] = Color.tint(pixels[i], -darkenFactor*1); // darkens the color one shade.
+						pixels[i] = Color.tint(pixels[i], -darkenFactor*1, false); // darkens the color one shade.
                     }
                 }
                 i++; // moves to the next pixel.

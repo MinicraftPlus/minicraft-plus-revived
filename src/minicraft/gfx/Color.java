@@ -66,16 +66,54 @@ public class Color {
 	}
 	
 	/** This method darkens or lightens a pixel by the specified amount. */
-	public static int tint(int color, int amount) {
-		int r = (color / 36) % 6;
-		int g = (color / 6) % 6;
-		int b = color % 6;
+	public static int tint(int color, int amount, boolean isSpriteCol) {
+		if(isSpriteCol) {
+			int[] colors = seperateEncodedSprite(color);
+			for(int i = 0; i < colors.length; i++) {
+				if(colors[i] == -1) continue;
+				colors[i] = tint(colors[i], amount);
+				colors[i] = decodeRGB(colors[i]);
+			}
+			return get(colors[0], colors[1], colors[2], colors[3]);
+		} else {
+			color = tint(color, amount);
+			return get(color);
+		}
+	}
+	private static int tint(int rgb, int amount) {
+		int r = (rgb / 36) % 6;
+		int g = (rgb / 6) % 6;
+		int b = rgb % 6;
 		r+=amount; g+=amount; b+=amount;
 		
 		if(r<0) r = 0; if(g<0) g = 0; if(b<0) b = 0;
 		if(r>255) r = 255; if(g>255) g = 255; if(b>255) b = 255;
 		
 		return r * 36 + g * 6 + b;
+	}
+	
+	/** seperates a 4-part sprite color into it's original 4 component colors (which each have an rgb value) */
+	/// reverse of Color.get(a, b, c, d).
+	private static int[] seperateEncodedSprite(int col) {
+		int ap = (col >> 24) << 24;
+		int bp = ((col - ap) >> 16) << 16;
+		int cp = ((col - ap - bp) >> 8) << 8;
+		int d = col-ap-bp-cp;
+		int a = ap >> 24, b = bp >> 16, c = cp >> 8;
+		
+		return new int[] {a, b, c, d};
+		/// the colors have been seperated. Now they must be converted from 216 scale to 0-5 scale.
+		/*for(int i = 0; i < cols.length; i++) {
+			cols[i] = unGetRGB(cols[i]);
+		}
+		return cols;*/
+	}
+	/** This turns a 216 scale rgb int into a 0-5 scale "concatenated" rgb int. */
+	public static int decodeRGB(int rgb) {
+		int r = (rgb / 36) % 6;
+		int g = (rgb / 6) % 6;
+		int b = rgb % 6;
+		return rgb(r, g, b);
 	}
 	
 	/// this is for color testing.
