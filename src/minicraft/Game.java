@@ -124,6 +124,18 @@ public class Game extends Canvas implements Runnable {
 	public static boolean pastDay1 = true; // used to prefent mob spawn on surface on day 1.
 	public static boolean readyToRenderGameplay = false;
 	
+	public static enum Time {
+		Morning (0),
+		Day (Game.dayLength/4),
+		Evening (Game.dayLength/2),
+		Night (Game.dayLength/4*3);
+		
+		public int tickTime;
+		private Time(int ticks) {
+			tickTime = ticks;
+		}
+	}
+	
 	/// *** CONSTRUSTOR *** ///
 	public Game() {
 		running = false;
@@ -253,7 +265,7 @@ public class Game extends Canvas implements Runnable {
 		
 		//if (!OptionsMenu.hasSetDiff) OptionsMenu.diff = 2;
 		
-		setTime(0); // resets tickCount; game starts in the morning.
+		changeTimeOfDay(Time.Morning); // resets tickCount; game starts in the day, so that it's nice and bright.
 		hasWon = false;
 
 		ListItems.items.clear(); //remove all the old item objects
@@ -327,6 +339,7 @@ public class Game extends Canvas implements Runnable {
 		}
 		
 		readyToRenderGameplay = true;
+		//System.out.println("game time: " + getTime());
 	}
 	
 	// VERY IMPORTANT METHOD!! Makes everything keep happening.
@@ -437,10 +450,10 @@ public class Game extends Canvas implements Runnable {
 					if (input.getKey("Shift-0").clicked)
 						resetstartGame();
 					
-					if (input.getKey("1").clicked) changeTimeOfDay("morning");
-					if (input.getKey("2").clicked) changeTimeOfDay("day");
-					if (input.getKey("3").clicked) changeTimeOfDay("evening");
-					if (input.getKey("4").clicked) changeTimeOfDay("night");
+					if (input.getKey("1").clicked) changeTimeOfDay(Time.Morning);
+					if (input.getKey("2").clicked) changeTimeOfDay(Time.Day);
+					if (input.getKey("3").clicked) changeTimeOfDay(Time.Evening);
+					if (input.getKey("4").clicked) changeTimeOfDay(Time.Night);
 					
 					if (input.getKey("shift-g").clicked) {
 						for (int i = 0; i < ListItems.items.size(); i++) {
@@ -482,10 +495,10 @@ public class Game extends Canvas implements Runnable {
 	
 	/// this is the proper way to change the tickCount.
 	public static void setTime(int ticks) {
-		if (ticks < 0) ticks = 0; // error correct
-		if (ticks < dayLength/4) time = 0; // morning
-		else if (ticks < dayLength/2) time = 1; // day
-		else if (ticks < dayLength/4*3) time = 2; // evening
+		if (ticks < Time.Morning.tickTime) ticks = 0; // error correct
+		if (ticks < Time.Day.tickTime) time = 0; // morning
+		else if (ticks < Time.Evening.tickTime) time = 1; // day
+		else if (ticks < Time.Night.tickTime) time = 2; // evening
 		else if (ticks < dayLength) time = 3; // night
 		else { // back to morning
 			time = 0;
@@ -496,24 +509,20 @@ public class Game extends Canvas implements Runnable {
 	}
 	
 	/// this is the proper way to change the time of day.
-	public static void changeTimeOfDay(String t) {
-		if(t.equals("morning")) setTime(0);
-		else if(t.equals("day")) setTime(dayLength/4);
-		else if(t.equals("evening")) setTime(dayLength/2);
-		else if(t.equals("night")) setTime(dayLength/4*3);
-		else System.out.println("time " + t + " does not exist.");
+	public static void changeTimeOfDay(Time t) {
+		setTime(t.tickTime);
 	}
 	// this one works too.
 	public static void changeTimeOfDay(int t) {
-		String[] times = {"morning", "day", "evening", "night"};
+		Time[] times = Time.values();
 		if(t > 0 && t < times.length)
 			changeTimeOfDay(times[t]); // it just references the other one.
 		else
 			System.out.println("time " + t + " does not exist.");
 	}
 	
-	public static String getTime() {
-		String[] times = {"Morning", "Day", "Evening", "Night"};
+	public static Time getTime() {
+		Time[] times = Time.values();
 		return times[time];
 	}
 	
