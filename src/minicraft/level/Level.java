@@ -36,6 +36,7 @@ import minicraft.item.resource.Resource;
 import minicraft.level.levelgen.LevelGen;
 import minicraft.level.tile.DirtTile;
 import minicraft.level.tile.Tile;
+import minicraft.screen.ModeMenu;
 import minicraft.screen.WorldSelectMenu;
 
 public class Level {
@@ -739,7 +740,9 @@ public class Level {
 	public void removeAllEnemies() {
 		for (int i = 0; i < this.entities.size(); i++) {
 			Entity e = entities.get(i);
-			if(e instanceof EnemyMob) e.remove();
+			if(e instanceof EnemyMob)
+				if(e instanceof AirWizard == false || ModeMenu.creative) // don't remove the airwizard bosses! Unless in creative, since you can spawn more.
+					e.remove();
 		}
 	}
 
