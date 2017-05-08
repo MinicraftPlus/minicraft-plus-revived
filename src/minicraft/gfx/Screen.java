@@ -4,6 +4,8 @@ import minicraft.Game;
 
 public class Screen {
 	
+	private static java.util.Random random = new java.util.Random();
+	
 	/// x and y offset of screen:
 	public int xOffset;
 	public int yOffset;
@@ -59,7 +61,7 @@ public class Screen {
 				int xs = x; // current x pixel
 				if (mirrorX) xs = 7 - x; // Reverses the pixel for a mirroring effect
 				int col = (colors >> (sheet.pixels[xs + ys * sheet.width + toffs] * 8)) & 255; // gets the color of this single pixel of the sprite based on the passed in colors value; also insures that the color is less than or equal to 255.
-				if (col < 255) pixels[(x + xp) + (y + yp) * w] = col; // Inserts the colors into the image.
+				if (col < 255) pixels[(x + xp) + (y + yp) * w] = Color.upgrade(col); // Inserts the colors into the image.
 				// the above only doesn't execute when the color value is 255, or white. Well, I think it should... but it doesn't work...
 			}
 		}
@@ -99,18 +101,13 @@ public class Screen {
 					if(Game.currentLevel < 3) { // if in caves...
                         /// in the caves, not being lit means being pitch black.
 						pixels[i] = 0;
-                    } else if(Game.time != 1) { // if it's not midday...
+                    } else { // if it's not midday...
 						/// outside the caves, not being lit simply means being darker.
-                        /*int r = (pixels[i] / 36) % 6;
-                        int g = (pixels[i] / 6) % 6;
-                        int b = pixels[i] % 6;
-                        if(r > 0) r--;
-                        if(g > 0) g--;
-                        if(b > 0) b--;
-                        pixels[i] = r * 36 + g * 6 + b;
-						*/
-						int darkenFactor = Math.abs(Game.time - 1);
-						pixels[i] = Color.tint(pixels[i], -darkenFactor*1, false); // darkens the color one shade.
+                        
+						int shadeSize = Game.dayLength/256;
+						int darkenFactor = Math.abs((Game.tickCount - Game.dayLength/2) / shadeSize);
+						//System.out.println("rendering dark factor " + darkenFactor);
+						pixels[i] = Color.tintColor(pixels[i], -darkenFactor + (Game.currentLevel==4?10:0)); // darkens the color one shade.
                     }
                 }
                 i++; // moves to the next pixel.

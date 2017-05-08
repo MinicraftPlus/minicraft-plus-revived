@@ -69,6 +69,8 @@ public class Game extends Canvas implements Runnable {
 	public static int tickCount = 0; // The number of ticks since the beginning of the game day.
 	public static int time = 0; // Facilites time of day / sunlight.
 	public static int sleepTime = 42000; //this value determines when the player allowed to sleep.
+	public static int dayLength = 64800; //this value determines how long one game day is.
+	//public static int noon = 32400; //this value determines when the sky switches from getting lighter to getting darker.
 	
 	private boolean running; // This is about more than simply being paused -- it keeps the game loop running.
 	public int fra, tik; //these store the number of frames and ticks in the previous second; used for fps, at least.
@@ -477,7 +479,7 @@ public class Game extends Canvas implements Runnable {
 					}
 					if (input.getKey("shift-minus").clicked) {
 						if(gamespeed > 1) gamespeed--;
-						else gamespeed /= 2;
+						else if(normSpeed/gamespeed>=1) gamespeed /= 2;
 					}
 				} // end debug only cond.
 			} // end "menu-null" conditional
@@ -575,7 +577,7 @@ public class Game extends Canvas implements Runnable {
 			
 			// this creates the darkness in the caves
 			//if (!ModeMenu.creative && currentLevel < 4 && (currentLevel < 3 || time > 1)) {
-			if (!ModeMenu.creative && currentLevel != 5) {
+			if (currentLevel != 5 && (!ModeMenu.creative || currentLevel >= 3)) {
 				//if (currentLevel < 3) */lightScreen.clear(0); // clears the light screen to a black color
 				//else lightScreen.clear(255);
 				lightScreen.clear(0); // this doesn't mean that the pixel will be black; it means that the pixel will be DARK, by default; lightScreen is about light vs. dark, not necessarily a color. just how the light level it has, which is compared with the minimum light values in dither to decide whether to leave the cell alone, or mark it as "dark", which will do different things depending on the game level and time of day.
@@ -594,8 +596,9 @@ public class Game extends Canvas implements Runnable {
 		for (int y = 0; y < screen.h; y++) {
 			for (int x = 0; x < screen.w; x++) {
 				// loops through all the pixels on the screen
-				int cc = screen.pixels[x + y * screen.w]; // finds a pixel on the screen.
-				if (cc < 255) pixels[x + y * WIDTH] = colors[cc]; // colors the pixel appropriately.
+				//int cc = screen.pixels[x + y * screen.w]; // finds a pixel on the screen.
+				//if (cc < 255) pixels[x + y * WIDTH] = colors[cc]; // colors the pixel appropriately.
+				pixels[x + y * WIDTH] = screen.pixels[x + y * screen.w];
 			}
 		}
 		
