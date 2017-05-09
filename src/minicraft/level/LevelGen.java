@@ -1,4 +1,4 @@
-package minicraft.level.levelgen;
+package minicraft.level;
 
 import java.awt.Image;
 import java.awt.image.BufferedImage;

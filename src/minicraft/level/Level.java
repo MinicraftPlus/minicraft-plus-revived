@@ -33,7 +33,7 @@ import minicraft.item.ResourceItem;
 import minicraft.item.ToolItem;
 import minicraft.item.ToolType;
 import minicraft.item.resource.Resource;
-import minicraft.level.levelgen.LevelGen;
+import minicraft.level.LevelGen;
 import minicraft.level.tile.DirtTile;
 import minicraft.level.tile.Tile;
 import minicraft.level.tile.TorchTile;
