@@ -20,9 +20,7 @@ import minicraft.entity.DungeonChest;
 import minicraft.entity.Enchanter;
 import minicraft.entity.Entity;
 import minicraft.entity.Furnace;
-
 import minicraft.entity.Inventory;
-
 import minicraft.entity.Knight;
 import minicraft.entity.Lantern;
 import minicraft.entity.Loom;
