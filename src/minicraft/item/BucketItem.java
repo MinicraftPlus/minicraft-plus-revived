@@ -6,6 +6,7 @@ import minicraft.gfx.Font;
 import minicraft.gfx.Screen;
 import minicraft.level.Level;
 import minicraft.level.tile.Tile;
+import minicraft.screen.ModeMenu;
 
 public class BucketItem extends Item {
 
@@ -31,16 +32,19 @@ public class BucketItem extends Item {
 	}
 
 	public boolean interactOn(Tile tile, Level level, int xt, int yt, Player player, int attackDir) {
+		Item item = this;
 		if (tile == Tile.water) {
 			level.setTile(xt, yt, Tile.hole, 0);
-			Item item = (new BucketWaterItem());
-			player.activeItem = item;
+			item = (new BucketWaterItem());
 		}
 		if (tile == Tile.lava) {
 			level.setTile(xt, yt, Tile.hole, 0);
-			Item item = (new BucketLavaItem());
-			player.activeItem = item;
+			item = (new BucketLavaItem());
 		}
+		
+		if(ModeMenu.creative) item = this;
+		player.activeItem = item;
+		
 		return true;
 	}
 }

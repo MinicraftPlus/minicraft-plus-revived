@@ -6,6 +6,7 @@ import minicraft.gfx.Font;
 import minicraft.gfx.Screen;
 import minicraft.level.Level;
 import minicraft.level.tile.Tile;
+import minicraft.screen.ModeMenu;
 
 public class BucketLavaItem extends Item {
 	public int getColor() {
@@ -32,7 +33,7 @@ public class BucketLavaItem extends Item {
 	public boolean interactOn(Tile tile, Level level, int xt, int yt, Player player, int attackDir) {
 		if (tile == Tile.hole) {
 			level.setTile(xt, yt, Tile.lava, 0);
-			Item item = (new BucketItem());
+			Item item = ModeMenu.creative ? this : (new BucketItem());
 			player.activeItem = item;
 		}
 		return true;
