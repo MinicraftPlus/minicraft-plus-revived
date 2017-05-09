@@ -90,9 +90,6 @@ public class WaterTile extends Tile {
 		if (level.getTile(xn, yn) == Tile.hole) {
 			level.setTile(xn, yn, this, 0);
 		}
-		if (level.getTile(xn, yn) == Tile.lighthole) {
-			level.setTile(xn, yn, this, 0);
-		}
 		if (level.getTile(xn, yn) == Tile.lava) {
 			level.setTile(xn, yn, sbrick, 0);
 		}

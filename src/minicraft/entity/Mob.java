@@ -4,6 +4,7 @@ import minicraft.entity.particle.TextParticle;
 import minicraft.gfx.Color;
 import minicraft.gfx.MobSprite;
 import minicraft.level.tile.Tile;
+import minicraft.level.tile.TorchTile;
 import minicraft.screen.ModeMenu;
 import minicraft.sound.Sound;
 
@@ -91,8 +92,10 @@ public abstract class Mob extends Entity {
 	/** checks if this Mob is currently on a light tile; if so, the mob sprite is brightened. */
 	public boolean isLight() {
 		if(level == null) return false;
-		Tile tile = level.getTile(x >> 4, y >> 4);
-		return tile == Tile.lightgrass
+		//Tile tile = level.getTile(x >> 4, y >> 4);
+		return level.isLight(x>>4, y>>4);
+		
+		/*return tile == Tile.lightgrass
 				|| tile == Tile.lightsand
 				|| tile == Tile.lightwater
 				|| tile == Tile.lightdirt
@@ -122,13 +125,13 @@ public abstract class Mob extends Entity {
 				|| tile == Tile.torchwoolblue
 				|| tile == Tile.torchwoolgreen
 				|| tile == Tile.torchwoolyellow
-				|| tile == Tile.torchwoolblack;
+				|| tile == Tile.torchwoolblack;*/
 	}
 
 	protected boolean isSwimming() {
 		if(level == null) return false;
 		Tile tile = level.getTile(x >> 4, y >> 4); // Get the tile the mob is standing on (at x/16, y/16)
-		return tile == Tile.water || tile == Tile.lava || tile == Tile.lightwater; // Check if the tile is liquid, and return true if so
+		return tile == Tile.water || tile == Tile.lava; // Check if the tile is liquid, and return true if so
 	}
 	
 	// this is useless, I think. Why have both "blocks" and "isBlockableBy"?

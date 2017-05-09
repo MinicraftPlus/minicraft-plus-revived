@@ -13,36 +13,36 @@ public class Resource {
 	
 	public static Resource wood = new Resource("Wood", 1 + 4 * 32, Color.get(-1, 200, 531, 430));
 	public static Resource stone = new Resource("Stone", 2 + 4 * 32, Color.get(-1, 111, 333, 555));
-	public static Resource flower = new PlantableResource("Flower", 0 + 4 * 32, Color.get(-1, 10, 444, 330), Tile.flower, Tile.grass, Tile.lightgrass);
-	public static Resource acorn = new PlantableResource("Acorn", 3 + 4 * 32, Color.get(-1, 100, 531, 320), Tile.treeSapling, Tile.grass, Tile.lightgrass);
+	public static Resource flower = new PlantableResource("Flower", 0 + 4 * 32, Color.get(-1, 10, 444, 330), Tile.flower, Tile.grass);
+	public static Resource acorn = new PlantableResource("Acorn", 3 + 4 * 32, Color.get(-1, 100, 531, 320), Tile.treeSapling, Tile.grass);
 	
-	public static Resource torch = new TorchResource("Torch", 18 + 4 * 32, Color.get(-1, 500, 520, 320), Tile.lightgrass, Tile.dirt, Tile.lightdirt, Tile.lightplank, Tile.plank, Tile.lightsbrick, Tile.sbrick, Tile.lightwool, Tile.wool, Tile.lightrwool, Tile.redwool, Tile.lightbwool, Tile.bluewool, Tile.lightgwool, Tile.greenwool, Tile.lightywool, Tile.yellowwool, Tile.lightblwool, Tile.blackwool, Tile.lightgrass, Tile.grass, Tile.lightsand, Tile.sand);
+	public static Resource torch = new TorchResource("Torch", 18 + 4 * 32, Color.get(-1, 500, 520, 320), null, Tile.dirt, Tile.plank, Tile.sbrick, Tile.wool, Tile.redwool, Tile.bluewool, Tile.greenwool, Tile.yellowwool, Tile.blackwool, Tile.grass, Tile.sand);
 	public static Resource leather = new Resource("Leather", 19 + 4 * 32, Color.get(-1, 100, 211, 322));
-	public static Resource dirt = new PlantableResource("Dirt", 2 + 4 * 32, Color.get(-1, 100, 322, 432), Tile.dirt, Tile.hole, Tile.water, Tile.lava, Tile.lightwater, Tile.lighthole);
+	public static Resource dirt = new PlantableResource("Dirt", 2 + 4 * 32, Color.get(-1, 100, 322, 432), Tile.dirt, Tile.hole, Tile.water, Tile.lava);
 	
-	public static Resource plank = new PlantableResource("Plank", 1 + 4 * 32, Color.get(-1, 200, 531, 530), Tile.plank, Tile.hole, Tile.water, Tile.lightwater, Tile.lighthole);
-	public static Resource sbrick = new PlantableResource("St.Brick", 1 + 4 * 32, Color.get(-1, 333, 444, 444), Tile.sbrick, Tile.hole, Tile.water, Tile.lighthole, Tile.lightwater, Tile.lava);
+	public static Resource plank = new PlantableResource("Plank", 1 + 4 * 32, Color.get(-1, 200, 531, 530), Tile.plank, Tile.hole, Tile.water);
+	public static Resource sbrick = new PlantableResource("St.Brick", 1 + 4 * 32, Color.get(-1, 333, 444, 444), Tile.sbrick, Tile.hole, Tile.water, Tile.lava);
 	public static Resource obrick = new PlantableResource("Ob.Brick", 1 + 4 * 32, Color.get(-1, 159, 59, 59), Tile.o, Tile.hole, Tile.water, Tile.lava);
-	public static Resource plankwall = new PlantableResource("Plank Wall", 16 + 4 * 32, Color.get(-1, 200, 531, 530), Tile.plankwall, Tile.plank, Tile.lightplank);
-	public static Resource stonewall = new PlantableResource("St.BrickWall", 16 + 4 * 32, Color.get(-1, 100, 333, 444), Tile.stonewall, Tile.sbrick, Tile.lightsbrick);
-	public static Resource obwall = new PlantableResource("Ob.BrickWall", 16 + 4 * 32, Color.get(-1, 159, 59, 59), Tile.ow, Tile.o, Tile.lighto);
-	public static Resource wdoor = new PlantableResource("Wood Door", 17 + 4 * 32, Color.get(-1, 200, 531, 530), Tile.wdc, Tile.plank, Tile.lightplank);
-	public static Resource sdoor = new PlantableResource("Stone Door", 17 + 4 * 32, Color.get(-1, 111, 333, 444), Tile.sdc, Tile.sbrick, Tile.lightsbrick);
-	public static Resource odoor = new PlantableResource("Obsidian Door", 17 + 4 * 32, Color.get(-1, 159, 59, 59), Tile.odc, Tile.o, Tile.lighto);
+	public static Resource plankwall = new PlantableResource("Plank Wall", 16 + 4 * 32, Color.get(-1, 200, 531, 530), Tile.plankwall, Tile.plank);
+	public static Resource stonewall = new PlantableResource("St.BrickWall", 16 + 4 * 32, Color.get(-1, 100, 333, 444), Tile.stonewall, Tile.sbrick);
+	public static Resource obwall = new PlantableResource("Ob.BrickWall", 16 + 4 * 32, Color.get(-1, 159, 59, 59), Tile.ow, Tile.o);
+	public static Resource wdoor = new PlantableResource("Wood Door", 17 + 4 * 32, Color.get(-1, 200, 531, 530), Tile.wdc, Tile.plank);
+	public static Resource sdoor = new PlantableResource("Stone Door", 17 + 4 * 32, Color.get(-1, 111, 333, 444), Tile.sdc, Tile.sbrick);
+	public static Resource odoor = new PlantableResource("Obsidian Door", 17 + 4 * 32, Color.get(-1, 159, 59, 59), Tile.odc, Tile.o);
 	
-	public static Resource wool = new PlantableResource("Wool", 2 + 4 * 32, Color.get(-1, 555, 555, 555), Tile.wool, Tile.hole, Tile.lighthole, Tile.lightwater, Tile.water);
-	public static Resource redwool = new PlantableResource("Red Wool", 2 + 4 * 32, Color.get(-1, 100, 300, 500), Tile.redwool, Tile.hole, Tile.water, Tile.lighthole, Tile.lightwater);
-	public static Resource bluewool = new PlantableResource("Blue Wool", 2 + 4 * 32, Color.get(-1, 005, 115, 115), Tile.bluewool, Tile.hole, Tile.water, Tile.lighthole, Tile.lightwater);
-	public static Resource greenwool = new PlantableResource("Green Wool", 2 + 4 * 32, Color.get(-1, 10, 40, 50), Tile.greenwool, Tile.hole, Tile.water, Tile.lighthole, Tile.lightwater);
-	public static Resource yellowwool = new PlantableResource("Yellow Wool", 2 + 4 * 32, Color.get(-1, 110, 440, 552), Tile.yellowwool, Tile.hole, Tile.water, Tile.lighthole, Tile.lightwater);
-	public static Resource blackwool = new PlantableResource("Black Wool", 2 + 4 * 32, Color.get(-1, 000, 111, 111), Tile.blackwool, Tile.hole, Tile.water, Tile.lighthole, Tile.lightwater);
+	public static Resource wool = new PlantableResource("Wool", 2 + 4 * 32, Color.get(-1, 555, 555, 555), Tile.wool, Tile.hole, Tile.water);
+	public static Resource redwool = new PlantableResource("Red Wool", 2 + 4 * 32, Color.get(-1, 100, 300, 500), Tile.redwool, Tile.hole, Tile.water);
+	public static Resource bluewool = new PlantableResource("Blue Wool", 2 + 4 * 32, Color.get(-1, 005, 115, 115), Tile.bluewool, Tile.hole, Tile.water);
+	public static Resource greenwool = new PlantableResource("Green Wool", 2 + 4 * 32, Color.get(-1, 10, 40, 50), Tile.greenwool, Tile.hole, Tile.water);
+	public static Resource yellowwool = new PlantableResource("Yellow Wool", 2 + 4 * 32, Color.get(-1, 110, 440, 552), Tile.yellowwool, Tile.hole, Tile.water);
+	public static Resource blackwool = new PlantableResource("Black Wool", 2 + 4 * 32, Color.get(-1, 000, 111, 111), Tile.blackwool, Tile.hole, Tile.water);
 	
-	public static Resource sand = new PlantableResource("Sand", 2 + 4 * 32, Color.get(-1, 110, 440, 550), Tile.sand, Tile.dirt, Tile.lightdirt);
+	public static Resource sand = new PlantableResource("Sand", 2 + 4 * 32, Color.get(-1, 110, 440, 550), Tile.sand, Tile.dirt);
 	
-	public static Resource cactusFlower = new PlantableResource("Cactus", 4 + 4 * 32, Color.get(-1, 10, 40, 50), Tile.cactusSapling, Tile.lightsand, Tile.sand);
+	public static Resource cactusFlower = new PlantableResource("Cactus", 4 + 4 * 32, Color.get(-1, 10, 40, 50), Tile.cactusSapling, Tile.sand);
 	public static Resource seeds = new PlantableResource("Seeds", 5 + 4 * 32, Color.get(-1, 10, 40, 50), Tile.wheat, Tile.farmland);
-	public static Resource grassseeds = new PlantableResource("Grass Seeds", 5 + 4 * 32, Color.get(-1, 10, 30, 50), Tile.grass, Tile.dirt, Tile.lightgrass);
-	public static Resource bone = new PlantableResource("Bone", 15 + 4 * 32, Color.get(-1, 222, 555, 555), Tile.tree, Tile.treeSapling, Tile.lightts);
+	public static Resource grassseeds = new PlantableResource("Grass Seeds", 5 + 4 * 32, Color.get(-1, 10, 30, 50), Tile.grass, Tile.dirt);
+	public static Resource bone = new PlantableResource("Bone", 15 + 4 * 32, Color.get(-1, 222, 555, 555), Tile.tree, Tile.treeSapling);
 	
 	public static Resource wheat = new Resource("Wheat", 6 + 4 * 32, Color.get(-1, 110, 330, 550));
 	public static Resource bread = new FoodResource("Bread", 8 + 4 * 32, Color.get(-1, 110, 330, 550), 2, 5);

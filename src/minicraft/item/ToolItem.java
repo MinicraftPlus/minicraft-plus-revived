@@ -79,7 +79,7 @@ public class ToolItem extends Item {
 	
 	public boolean interactOn(Tile tile, Level level, int xt, int yt, Player player, int attackDir) {
 		if (type == ToolType.rod && dur > 0) {
-			if (tile == Tile.water || tile == Tile.lightwater) {
+			if (tile == Tile.water) {
 				//if(minicraft.Game.debug) System.out.println("Fishing...");
 				player.goFishing(player.x - 5, player.y - 5);
 				if(!ModeMenu.creative) dur--;

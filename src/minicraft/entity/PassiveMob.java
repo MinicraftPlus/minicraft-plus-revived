@@ -49,7 +49,7 @@ public class PassiveMob extends MobAi {
 			return false;
 		
 		Tile tile = level.getTile(x >> 4, y >> 4);
-		if (tile == Tile.grass || tile == Tile.lightgrass || tile == Tile.flower || tile == Tile.lightflower) {
+		if (tile == Tile.grass || tile == Tile.flower) {
 			return true;
 		}
 

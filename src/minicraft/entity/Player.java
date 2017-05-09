@@ -148,9 +148,9 @@ public class Player extends Mob {
 		}
 		
 		Tile onTile = level.getTile(x >> 4, y >> 4); // gets the current tile the player is on.
-		if (onTile == Tile.stairsDown || onTile == Tile.stairsUp || onTile == Tile.lightstairsDown || onTile == Tile.lightstairsUp) {
+		if (onTile == Tile.stairsDown || onTile == Tile.stairsUp) {
 			if (onStairDelay == 0) { // when the delay time has passed...
-				changeLevel((onTile == Tile.stairsUp || onTile == Tile.lightstairsUp) ? 1 : -1); // decide whether to go up or down.
+				changeLevel((onTile == Tile.stairsUp) ? 1 : -1); // decide whether to go up or down.
 				onStairDelay = 10; // resets delay, since the level has now been changed.
 				return;
 			}

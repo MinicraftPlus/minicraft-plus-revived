@@ -63,9 +63,6 @@ public class GrassTile extends Tile {
 		if (level.getTile(xn, yn) == Tile.dirt) {
 			level.setTile(xn, yn, this, 0);
 		}
-		if (level.getTile(xn, yn) == Tile.lightdirt) {
-			level.setTile(xn, yn, this, 0);
-		}
 	}
 
 	public boolean interact(Level level, int xt, int yt, Player player, Item item, int attackDir) {
