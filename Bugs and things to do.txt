@@ -8,13 +8,9 @@ Note to self: for more little bugs/ideas/concerns, search code for "TODO"
 
 	####BUGS####
 ####
-Creepers turn solid green on fuse timer rather than blinking.
-####
-AirWizard II spawners revert to normal airwzard spawners when a world is loaded.
-####
 I accidently removed the whole "SmashParticle" thing it seems... same with FireParticle...
 ####
-Iron/Gold Lanterns don't work, not to mention that they still suffer from that wierd glitch when you try to take out a second out from you inv after putting one down; it basically deletes the first one.
+Item->Funiture/Entity conversions still suffer from that wierd glitch when you try to take out a second out from you inv after putting one down; it basically deletes the first one.
 ####
 Not sure, but broken/exploded obsidian brick may drop stone...it looks like stone.
 ####
