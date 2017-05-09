@@ -1,7 +1,5 @@
 package minicraft.gfx;
 
-//import java.awt.Color;
-
 public class Color {
 	
 	/* To explain this class, you have to know how Bit-Shifting works.
@@ -210,5 +208,27 @@ public class Color {
 			//System.out.println();
 		}*/
 		
+	}
+	
+	protected static String toStringSingle(int col) {
+		return java.util.Arrays.toString(decodeRGB(col));
+	}
+	
+	/// for sprite colors
+	public static String toString(int col) {
+		int[] cols = seperateEncodedSprite(col);
+		int[][] rgbs = new int[cols.length][];
+		for(int i = 0; i < cols.length; i++)
+			rgbs[i] = decodeRGB(cols[i]);
+		
+		String[] colstrs = new String[cols.length];
+		for(int i = 0; i < colstrs.length; i++) {
+			String rgb = "";
+			for(int j = 0; j < rgbs[i].length; j++)
+				rgb += rgbs[i][j];
+			colstrs[i] = ""+rgb;
+		}
+		
+		return java.util.Arrays.toString(colstrs);
 	}
 }
