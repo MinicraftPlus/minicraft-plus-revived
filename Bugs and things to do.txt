@@ -11,13 +11,11 @@ Note to self: for more little bugs/ideas/concerns, search code for "TODO"
 ####
 Creepers turn solid green on fuse timer rather than blinking.
 ####
-Water besides daytime is a solid blue; and creative mode keeps the color set to day.
-####
 I accidently removed the whole "SmashParticle" thing it seems... same with FireParticle...
 ####
 Not sure, but broken/exploded obsidian brick may drop stone...it looks like stone.
 ####
-Creeper one time, on lava level, w/ me in front of it, exploded, and left behind an odd square that had no texture, and didn't erase after an update to it...
+Creeper one time, on lava level, w/ me in front of it, exploded, and left behind an odd square that had no texture, and didn't erase after an update to it... update, btw, that was an InfiniteFallTile.
 ####
 Sound effects don't always play when they should; mostly it seems when other sounds should be on at the same time.
 ####

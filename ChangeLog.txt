@@ -5,6 +5,7 @@ Minicraft+ version 1.9.4
 + Daylight now increases and decreases more smoothly; steadily goes from dark to light in the morning, and light to dark in the evening.
 * Sped up game speed while sleeping.
 - Prevented Airwizard from being removed during daily entity clear.
+* Increased Torch light radius; also, torches now work the same way on the surface as they do in the caves.
 
 Minicraft+ version 1.9.3
 
