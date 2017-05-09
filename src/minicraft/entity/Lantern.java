@@ -6,20 +6,22 @@ public class Lantern extends Furniture {
 	private Lantern.Type type;
 	
 	public enum Type {
-		NORM (9, Color.get(-1, 000, 222, 555)),
-		IRON (12, Color.get(-1, 100, 322, 544)),
-		GOLD (15, Color.get(-1, 110, 440, 553));
+		NORM ("", 9, Color.get(-1, 000, 222, 555)),
+		IRON ("Iron", 12, Color.get(-1, 100, 322, 544)),
+		GOLD ("Gold", 15, Color.get(-1, 110, 440, 553));
 		
 		public int col, light;
+		public String title;
 		
-		private Type(int light, int col) {
+		private Type(String title, int light, int col) {
+			this.title = title;
 			this.col = col;
 			this.light = light;
 		}
 	}
 	
 	public Lantern(Lantern.Type type) {
-		super("Lantern", type.col, 5, 3, 2);
+		super(type.title+(type.title.length()>0?" ":"")+"Lantern", type.col, 5, 3, 2);
 		
 		/*col0 = Color.get(-1, 111, 222, 555);
 		col1 = Color.get(-1, 222, 333, 555);
