@@ -32,9 +32,7 @@ public class Tile {
 		WALK,
 		HURT,
 		SPAWN,
-		UNDER,
-		TORCH,
-		DROP
+		UNDER
 	}
 	
 	/// idea: to save tile names while saving space, I could encode the names in base 64 in the save file...
@@ -82,7 +80,7 @@ public class Tile {
 	public static Tile odc = new ObsidianDoorClosedTile(122);
 	public static Tile odo = new ObsidianDoorOpenTile(123);
 	public static Tile hardRock = new HardRockTile(18);
-	/*
+	
 	// light/torch versions; ALL are ONLY used to render torch effects. Don't worry, I can fix that. ;)
 	public static Tile lightgrass = new LightTile(100, grass, 0);
 	public static Tile lightsand = new LightTile(101, sand, 1);
@@ -124,7 +122,7 @@ public class Tile {
 	public static Tile torchwoolgreen = new TorchTile(53, lightgwool);
 	public static Tile torchwoolyellow = new TorchTile(54, lightywool);
 	public static Tile torchwoolblack = new TorchTile(55, lightblwool);
-	*/
+	
 	public static Tile ironOre = new OreTile(19, OreTile.OreType.IRON, Color.get(-1, 100, 322, 544));
 	public static Tile lapisOre = new OreTile(24, OreTile.OreType.LAPIS, Color.get(-1, 005, 115, 115));
 	public static Tile goldOre = new OreTile(20, OreTile.OreType.GOLD, Color.get(-1, 110, 440, 553));
@@ -144,18 +142,16 @@ public class Tile {
 	protected Sprite sprite;
 	public int color;
 	
-	public Tile(int id) { // be careful! values above 127 wrap to -128 when converting to a byte!
-		//if(id<0) System.out.println("making NEGATIVE tile id: " + id);
+	public Tile(int id) {
 		this.id = (byte) id;
-		if(tiles[id] != null) throw new RuntimeException("Duplicate tile ids!"); // You cannot have over-lapping ids
+		if (tiles[id] != null) throw new RuntimeException("Duplicate tile ids!"); // You cannot have over-lapping ids
 		tiles[id] = this;
 		data.put(Property.ID, new Integer(id)); // will replace the final byte above.
 		
 		light = 1;
 		maySpawn = false;
-		data.put(Property.LIGHT, new Integer(1));
-		data.put(Property.SPAWN, new Boolean(false));
-		//System.out.println("end id: " + id);
+		data.put(Property.LIGHT, (Object)new Integer(1));
+		data.put(Property.SPAWN, (Object)new Boolean(false));
 	}
 	public Tile(int id, Sprite sprite, int color) {
 		this(id);
@@ -170,7 +166,7 @@ public class Tile {
 	/** Render method, used in sub-classes */
 	public void render(Screen screen, Level level, int x, int y) {
 		if(sprite != null)
-			sprite.render(screen, color, x*16+8, y*16+8);
+			sprite.render(screen, color, x<<4, y<<4);
 		else System.out.println("Tile, id "+id+": no sprite to render.");
 	}
 	
