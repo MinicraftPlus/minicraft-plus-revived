@@ -77,51 +77,41 @@ public class DungeonChest extends Chest {
 	/** Populate the inventory of the DungeonChest, psudo-randomly. */
 	private void populateInv() {
 		inventory.clearInv(); // clear the inventory.
+		Inventory inv = inventory; // Yes, I'm that lazy.
+		inv.tryAdd(5, Resource.steak, 6);
+		inv.tryAdd(5, Resource.cookedpork, 6);
+		inv.tryAdd(4, Resource.wood, 20);
+		inv.tryAdd(4, Resource.wool, 12);
+		inv.tryAdd(2, Resource.coal, 4);
+		inv.tryAdd(5, Resource.gem, 7);
+		inv.tryAdd(5, Resource.gem, 8);
+		inv.tryAdd(8, Resource.gemarmor, 1);
+		inv.tryAdd(6, Resource.garmor, 1);
+		inv.tryAdd(5, Resource.iarmor, 2);
+		inv.tryAdd(3, Resource.potion, 10);
+		inv.tryAdd(4, Resource.speedpotion, 2);
+		inv.tryAdd(6, Resource.speedpotion, 5);
+		inv.tryAdd(3, Resource.lightpotion, 2);
+		inv.tryAdd(4, Resource.lightpotion, 3);
+		inv.tryAdd(7, Resource.regenpotion, 1);
+		inv.tryAdd(7, Resource.energypotion, 1);
+		inv.tryAdd(14, Resource.timepotion, 1);
+		inv.tryAdd(14, Resource.shieldpotion, 1);
+		inv.tryAdd(7, Resource.lavapotion, 1);
+		inv.tryAdd(5, Resource.hastepotion, 3);
 		
-		tryAdd(5, Resource.steak, 6);
-		tryAdd(5, Resource.cookedpork, 6);
-		tryAdd(4, Resource.wood, 20);
-		tryAdd(4, Resource.wool, 12);
-		tryAdd(2, Resource.coal, 4);
-		tryAdd(5, Resource.gem, 7);
-		tryAdd(5, Resource.gem, 8);
-		tryAdd(8, Resource.gemarmor, 1);
-		tryAdd(6, Resource.garmor, 1);
-		tryAdd(5, Resource.iarmor, 2);
-		tryAdd(3, Resource.potion, 10);
-		tryAdd(4, Resource.speedpotion, 2);
-		tryAdd(6, Resource.speedpotion, 5);
-		tryAdd(3, Resource.lightpotion, 2);
-		tryAdd(4, Resource.lightpotion, 3);
-		tryAdd(7, Resource.regenpotion, 1);
-		tryAdd(7, Resource.energypotion, 1);
-		tryAdd(14, Resource.timepotion, 1);
-		tryAdd(14, Resource.shieldpotion, 1);
-		tryAdd(7, Resource.lavapotion, 1);
-		tryAdd(5, Resource.hastepotion, 3);
-		
-		tryAdd(6, ToolType.bow, 3);
-		tryAdd(7, ToolType.bow, 4);
-		tryAdd(4, ToolType.sword, 3);
-		tryAdd(7, ToolType.sword, 4);
-		tryAdd(4, ToolType.claymore, 1);
-		tryAdd(6, ToolType.claymore, 2);
+		inv.tryAdd(6, ToolType.bow, 3);
+		inv.tryAdd(7, ToolType.bow, 4);
+		inv.tryAdd(4, ToolType.sword, 3);
+		inv.tryAdd(7, ToolType.sword, 4);
+		inv.tryAdd(4, ToolType.claymore, 1);
+		inv.tryAdd(6, ToolType.claymore, 2);
 		
 		if(inventory.invSize() < 1) { // add this if none of the above was added.
 			inventory.add(new ResourceItem(Resource.steak, 6));
 			inventory.add(new ResourceItem(Resource.timepotion, 1));
 			inventory.add(new ToolItem(ToolType.axe, 4));
 		}
-	}
-	
-	/** The functions that (possibly) add Resources and Tools to the chest, respectively. */
-	private void tryAdd(int chance, Resource item, int num) {
-		if(random.nextInt(chance) == 1)
-			inventory.add(new ResourceItem(item, num));
-	}
-	private void tryAdd(int chance, ToolType type, int lvl) {
-		if(random.nextInt(chance) == 1)
-			inventory.add(new ToolItem(type, lvl));
 	}
 	
 	/** what happens if the player tries to push a Dungeon Chest. */

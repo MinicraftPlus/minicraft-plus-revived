@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 import minicraft.item.Item;
+import minicraft.item.FurnitureItem;
 import minicraft.item.ResourceItem;
 import minicraft.item.ToolItem;
 import minicraft.item.ToolType;
@@ -157,5 +158,19 @@ public class Inventory {
 			names.add(items.get(i).getName());
 		
 		return names;
+	}
+	
+	/** These functions (possibly) add Resources and/or Tools to the inventory. */
+	public void tryAdd(int chance, Item item) {
+		if(random.nextInt(chance) == 0) add(item);
+	}
+	public void tryAdd(int chance, Resource item, int num) {
+		tryAdd(chance, new ResourceItem(item, num));
+	}
+	public void tryAdd(int chance, ToolType type, int lvl) {
+		tryAdd(chance, new ToolItem(type, lvl));
+	}
+	public void tryAdd(int chance, Furniture type) {
+		tryAdd(chance, new FurnitureItem(type));
 	}
 }

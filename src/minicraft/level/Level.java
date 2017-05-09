@@ -36,6 +36,7 @@ import minicraft.item.resource.Resource;
 import minicraft.level.levelgen.LevelGen;
 import minicraft.level.tile.DirtTile;
 import minicraft.level.tile.Tile;
+import minicraft.level.tile.TorchTile;
 import minicraft.screen.ModeMenu;
 import minicraft.screen.WorldSelectMenu;
 
@@ -374,12 +375,60 @@ public class Level {
 					}
 
 					this.add(sp);
-					for(int rpt = 1; rpt <= 2; rpt++) {
-						if (random.nextInt(2) == 0) {
-							Chest c = new Chest();
-							addtoinv(c.inventory, -level);
-							this.add(c, sp.x - 16, sp.y - 16);
-						}
+					for(int rpt = 0; rpt < 2; rpt++) {
+						if (random.nextInt(2) != 0) continue;
+						Chest c = new Chest();
+						Inventory inv = c.inventory;
+						int chance = -level;
+						inv.tryAdd(9/chance, new Tnt());
+				  		inv.tryAdd(10/chance, new Anvil());
+				  		inv.tryAdd(7/chance, new Lantern(Lantern.Type.NORM));
+				  		inv.tryAdd(3/chance, Resource.bread, 2);
+				  		inv.tryAdd(4/chance, Resource.bread, 3);
+				  		inv.tryAdd(7/chance, Resource.larmor, 1);
+				  		inv.tryAdd(50/chance, Resource.goldapple, 1);
+				  		inv.tryAdd(3/chance, Resource.lapisOre, 2);
+				  		inv.tryAdd(4/chance, Resource.glass, 2);
+				  		inv.tryAdd(4/chance, Resource.gunp, 3);
+				  		inv.tryAdd(4/chance, Resource.gunp, 3);
+				  		inv.tryAdd(4/chance, Resource.torch, 4);
+				  		inv.tryAdd(14/chance, Resource.swimpotion, 1);
+				  		inv.tryAdd(16/chance, Resource.hastepotion, 1);
+				  		inv.tryAdd(14/chance, Resource.lightpotion, 1);
+				  		inv.tryAdd(14/chance, Resource.speedpotion, 1);
+				  		inv.tryAdd(16/chance, Resource.iarmor, 1);
+				  		inv.tryAdd(5/chance, Resource.sbrick, 4);
+				  		inv.tryAdd(5/chance, Resource.sbrick, 6);
+				  		inv.tryAdd(4/chance, Resource.string, 3);
+				  		inv.tryAdd(4/chance, Resource.bone, 2);
+				  		inv.tryAdd(3/chance, Resource.bone, 1);
+				  		inv.tryAdd(6/chance, ToolType.hatchet, 2);
+				  		inv.tryAdd(6/chance, ToolType.pick, 2);
+				  		inv.tryAdd(6/chance, ToolType.spade, 2);
+				  		inv.tryAdd(7/chance, ToolType.claymore, 1);
+				  		inv.tryAdd(5/chance, Resource.torch, 3);
+				  		inv.tryAdd(6/chance, Resource.torch, 6);
+						inv.tryAdd(6/chance, Resource.torch, 6);
+				  		inv.tryAdd(7/chance, Resource.steak, 3);
+				  		inv.tryAdd(9/chance, Resource.steak, 4);
+				  		inv.tryAdd(7/chance, Resource.gem, 3);
+				  		inv.tryAdd(7/chance, Resource.gem, 5);
+				  		inv.tryAdd(7/chance, Resource.gem, 4);
+				  		inv.tryAdd(10/chance, Resource.yellowclothes, 1);
+				  		inv.tryAdd(10/chance, Resource.blackclothes, 1);
+				  		inv.tryAdd(12/chance, Resource.orangeclothes, 1);
+				  		inv.tryAdd(12/chance, Resource.cyanclothes, 1);
+				  		inv.tryAdd(12/chance, Resource.purpleclothes, 1);
+				  		inv.tryAdd(4/chance, Resource.arrow, 5);
+						if (inv.invSize() < 1) {
+							inv.add(new ResourceItem(Resource.potion, 1));
+							inv.add(new ResourceItem(Resource.coal, 3));
+							inv.add(new ResourceItem(Resource.apple, 3));
+							inv.add(new ResourceItem(Resource.dirt, 7));
+				  		}
+						
+						// chance = -level
+						this.add(c, sp.x - 16, sp.y - 16);
 					}
 				}
 			}
@@ -431,135 +480,6 @@ public class Level {
 				i--;
 			}
 		}
-	}
-	
-	public void addtoinv(Inventory inventory, int chance) {
-  		if (random.nextInt(9 / chance) == 0) {
-			inventory.add(new FurnitureItem(new Tnt()));
-  		}
-  		if (random.nextInt(10 / chance) == 0) {
-			inventory.add(new FurnitureItem(new Anvil()));
-  		}
-  		if (random.nextInt(7 / chance) == 0) {
-			inventory.add(new FurnitureItem(new Lantern(Lantern.Type.NORM)));
-  		}
-  		if (random.nextInt(3 / chance) == 0) {
-			inventory.add(new ResourceItem(Resource.bread, 2));
-  		}
-  		if (random.nextInt(4 / chance) == 0) {
-			inventory.add(new ResourceItem(Resource.bread, 3));
-  		}
-  		if (random.nextInt(7 / chance) == 0) {
-			inventory.add(new ResourceItem(Resource.larmor, 1));
-  		}
-  		if (random.nextInt(50 / chance) == 0) {
-			inventory.add(new ResourceItem(Resource.goldapple, 1));
-  		}
-  		if (random.nextInt(3 / chance) == 0) {
-			inventory.add(new ResourceItem(Resource.lapisOre, 2));
-  		}
-  		if (random.nextInt(4 / chance) == 0) {
-			inventory.add(new ResourceItem(Resource.glass, 2));
-  		}
-  		if (random.nextInt(4 / chance) == 0) {
-			inventory.add(new ResourceItem(Resource.gunp, 3));
-  		}
-  		if (random.nextInt(4 / chance) == 0) {
-			inventory.add(new ResourceItem(Resource.gunp, 3));
-  		}
-  		if (random.nextInt(4 / chance) == 0) {
-			inventory.add(new ResourceItem(Resource.torch, 4));
-  		}
-  		if (random.nextInt(14 / chance) == 0) {
-			inventory.add(new ResourceItem(Resource.swimpotion, 1));
-  		}
-  		if (random.nextInt(16 / chance) == 0) {
-			inventory.add(new ResourceItem(Resource.hastepotion, 1));
-  		}
-  		if (random.nextInt(14 / chance) == 0) {
-			inventory.add(new ResourceItem(Resource.lightpotion, 1));
-  		}
-  		if (random.nextInt(14 / chance) == 0) {
-			inventory.add(new ResourceItem(Resource.speedpotion, 1));
-  		}
-  		if (random.nextInt(16 / chance) == 0) {
-			inventory.add(new ResourceItem(Resource.iarmor, 1));
-  		}
-  		if (random.nextInt(5 / chance) == 0) {
-			inventory.add(new ResourceItem(Resource.sbrick, 4));
-  		}
-  		if (random.nextInt(5 / chance) == 0) {
-			inventory.add(new ResourceItem(Resource.sbrick, 6));
-  		}
-  		if (random.nextInt(4 / chance) == 0) {
-			inventory.add(new ResourceItem(Resource.string, 3));
-  		}
-  		if (random.nextInt(4 / chance) == 0) {
-			inventory.add(new ResourceItem(Resource.bone, 2));
-  		}
-  		if (random.nextInt(3 / chance) == 0) {
-			inventory.add(new ResourceItem(Resource.bone, 1));
-  		}
-  		if (random.nextInt(6 / chance) == 0) {
-			inventory.add(new ToolItem(ToolType.hatchet, 2));
-  		}
-  		if (random.nextInt(6 / chance) == 0) {
-			inventory.add(new ToolItem(ToolType.pick, 2));
-  		}
-  		if (random.nextInt(6 / chance) == 0) {
-			inventory.add(new ToolItem(ToolType.spade, 2));
-  		}
-  		if (random.nextInt(7 / chance) == 0) {
-			inventory.add(new ToolItem(ToolType.claymore, 1));
-  		}
-  		if (random.nextInt(5 / chance) == 0) {
-			inventory.add(new ResourceItem(Resource.torch, 3));
-  		}
-  		if (random.nextInt(6 / chance) == 0) {
-			inventory.add(new ResourceItem(Resource.torch, 6));
-  		}
-  		if (random.nextInt(7 / chance) == 0) {
-			inventory.add(new ResourceItem(Resource.steak, 3));
-  		}
-  		if (random.nextInt(9 / chance) == 0) {
-			inventory.add(new ResourceItem(Resource.steak, 4));
-  		}
-  		if (random.nextInt(6 / chance) == 0) {
-			inventory.add(new ResourceItem(Resource.torch, 6));
-  		}
-  		if (random.nextInt(7 / chance) == 0) {
-			inventory.add(new ResourceItem(Resource.gem, 3));
-  		}
-  		if (random.nextInt(7 / chance) == 0) {
-			inventory.add(new ResourceItem(Resource.gem, 5));
-  		}
-  		if (random.nextInt(7 / chance) == 0) {
-			inventory.add(new ResourceItem(Resource.gem, 4));
-  		}
-  		if (random.nextInt(10 / chance) == 0) {
-			inventory.add(new ResourceItem(Resource.yellowclothes, 1));
-  		}
-  		if (random.nextInt(10 / chance) == 0) {
-			inventory.add(new ResourceItem(Resource.blackclothes, 1));
-  		}
-  		if (random.nextInt(12 / chance) == 0) {
-			inventory.add(new ResourceItem(Resource.orangeclothes, 1));
-  		}
-  		if (random.nextInt(12 / chance) == 0) {
-			inventory.add(new ResourceItem(Resource.cyanclothes, 1));
-  		}
-  		if (random.nextInt(12 / chance) == 0) {
-			inventory.add(new ResourceItem(Resource.purpleclothes, 1));
-  		}
-  		if (random.nextInt(4 / chance) == 0) {
-			inventory.add(new ResourceItem(Resource.arrow, 5));
-  		}
-  		if (inventory.invSize() < 1) {
-			inventory.add(new ResourceItem(Resource.potion, 1));
-			inventory.add(new ResourceItem(Resource.coal, 3));
-			inventory.add(new ResourceItem(Resource.apple, 3));
-			inventory.add(new ResourceItem(Resource.dirt, 7));
-  		}
 	}
 	
 	public void dropResource(int x, int y, int count, Resource... resources) {
@@ -627,7 +547,7 @@ public class Level {
 					if (lr > 0) screen.renderLight(e.x - 1, e.y - 4, lr * 8);
 				}
 				int lr = getTile(x, y).getLightRadius(this, x, y);
-				if (lr > 0) screen.renderLight(x * 16 + 8, y * 16 + 8, lr * 8);
+				if (lr > 0) screen.renderLight( x * 16 + 8, y * 16 + 8, lr * (player.potioneffects.containsKey("Light") ? 12 : 8)); // brightens all light sources by a factor of 1.5 when the player has the Light potion effect. (8 above is normal)
 			}
 		}
 		screen.setOffset(0, 0);
@@ -646,7 +566,9 @@ public class Level {
 	
 	public Tile getTile(int x, int y) {
 		if (x < 0 || y < 0 || x >= w || y >= h) return Tile.rock;
-		return Tile.tiles[tiles[x + y * w]];
+		int id = tiles[x + y * w];
+		if(id < 0) id += 256;
+		return Tile.tiles[id];
 	}
 
 	public void setTile(int x, int y, Tile t, int dataVal) {
@@ -654,7 +576,7 @@ public class Level {
 		tiles[x + y * w] = t.id;
 		data[x + y * w] = (byte) dataVal;
 	}
-
+	
 	public int getData(int x, int y) {
 		if (x < 0 || y < 0 || x >= w || y >= h) return 0;
 		return data[x + y * w] & 0xff;
@@ -775,6 +697,24 @@ public class Level {
 			}
 		}
 		return result;
+	}
+	
+	public Tile[] getAreaTiles(int x, int y, int r) {
+		ArrayList<Tile> local = new ArrayList<Tile>();
+		for(int yo = y-r; yo <= y+r; yo++)
+			for(int xo = x-r; xo <= x+r; xo++)
+				if(xo >= 0 && xo < w && yo >= 0 && yo < h)
+					local.add(getTile(xo, yo));
+		
+		return local.toArray(new Tile[0]);
+	}
+	
+	public boolean isLight(int x, int y) {
+		for(Tile t: getAreaTiles(x, y, 3))
+			if(t instanceof TorchTile)
+				return true;
+		
+		return false;
 	}
 	
 	public boolean noStairs(int x, int y) {
