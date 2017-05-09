@@ -22,8 +22,8 @@ public class CactusTile extends Tile {
 	public CactusTile(int id) {
 		super(id, sprite, color);
 		connectsToSand = true;
-		data.put(Property.CONNECTSAND, (Object)new Boolean(true));
-		data.put(Property.HEALTH, (Object)new Integer(10));
+		data.put(Property.CONNECTSAND, new Boolean(true));
+		data.put(Property.HEALTH, new Integer(10));
 	}
 	
 	//public static int col = Color.get(30, 40, 50, 550);
@@ -60,7 +60,7 @@ public class CactusTile extends Tile {
 	public void destroy(Level level, int x, int y) {
 		int count = random.nextInt(2) + 2;
 		/// move random one into Level.java as well...
-		level.dropResource(x<<4, y<<4, count, Resource.cactusFlower);
+		level.dropResource(x*16+8, y*16+8, count, Resource.cactusFlower);
 		/*for (int i = 0; i < count; i++) {
 					new ItemEntity(
 							new ResourceItem(),
