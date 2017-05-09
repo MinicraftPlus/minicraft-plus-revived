@@ -17,7 +17,7 @@ public class EnemyMob extends MobAi {
 	public EnemyMob(int lvl, MobSprite[][] sprites, int[] lvlcols, int health, boolean isFactor, int detectDist, int rwTime, int rwChance) {
 		super(sprites, isFactor ? lvl * lvl * health*((Double)(Math.pow(2, OptionsMenu.diff))).intValue() : health, rwTime, rwChance);
 		this.lvl = lvl;
-		this.lvlcols = lvlcols;
+		this.lvlcols = java.util.Arrays.copyOf(lvlcols, lvlcols.length);
 		col = lvlcols[lvl-1];
 		this.detectDist = detectDist;
 	}
@@ -52,6 +52,7 @@ public class EnemyMob extends MobAi {
 	
 	public void render(Screen screen) {
 		col = lvlcols[lvl-1];
+		//if(this instanceof Creeper) System.out.println("rendering with color " + minicraft.gfx.Color.toString(col));
 		super.render(screen);
 	}
 	
