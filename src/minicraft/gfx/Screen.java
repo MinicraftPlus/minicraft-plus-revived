@@ -7,7 +7,7 @@ public class Screen {
 	private static java.util.Random random = new java.util.Random();
 	
 	private static final int MAXDARK = 128;
-	private static final int MAXLIGHT = 20;
+	//private static final int MAXLIGHT = 20;
 	
 	/// x and y offset of screen:
 	public int xOffset;
@@ -107,7 +107,7 @@ public class Screen {
 		if(Game.currentLevel == 4) tintFactor -= tintFactor < 10 ? tintFactor : 10;
 		tintFactor *= -1; // all previous operations were assumping this was a darkening factor.
 		tintFactor += 20;
-		if(tintFactor > MAXLIGHT) tintFactor = MAXLIGHT;
+		//if(tintFactor > MAXLIGHT) tintFactor = MAXLIGHT;
 		//if(random.nextInt((int)(Game.normSpeed/Game.gamespeed))==0) System.out.println("rendering dark factor " + tintFactor);
         
 		int[] oPixels = screen2.pixels;  // The Integer array of pixels to overlay the screen with.

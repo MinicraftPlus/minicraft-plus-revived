@@ -104,6 +104,8 @@ public class Creeper extends EnemyMob {
 		}
 		else
 			super.lvlcols[lvl-1] = Creeper.lvlcols[lvl-1];
+		
+		//if(fuseLit) System.out.println("fuseTime%6==0: " + (fuseTime % 6 == 0));
 		/*if (level.dirtColor == 322) {
 			
 			if (lvl == 2) col = Color.get(-1, 200, 262, 232);
