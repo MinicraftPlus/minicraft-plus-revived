@@ -6,6 +6,7 @@ Minicraft+ version 1.9.4
 * Sped up game speed while sleeping.
 - Prevented Airwizard from being removed during daily entity clear.
 * Increased Torch light radius; also, torches now work the same way on the surface as they do in the caves.
++ Added small tweak for creative mode: empty buckets will remain empty, so you can empty the ocean as much as you like. Full buckets remain full, as well.
 
 Minicraft+ version 1.9.3
 

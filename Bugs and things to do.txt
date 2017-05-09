@@ -1,7 +1,6 @@
 	---Quick TODO's---
 
 -continue commeting code and renovating code
--remove all the sets of 4-5 colors, in favor or a single color, preferably col1, since it's the brightest, or col4 for those sprites that are just seen underground.
 -display current player score in score mode
 
 Note to self: for more little bugs/ideas/concerns, search code for "TODO"
@@ -11,7 +10,11 @@ Note to self: for more little bugs/ideas/concerns, search code for "TODO"
 ####
 Creepers turn solid green on fuse timer rather than blinking.
 ####
+AirWizard II spawners revert to normal airwzard spawners when a world is loaded.
+####
 I accidently removed the whole "SmashParticle" thing it seems... same with FireParticle...
+####
+Iron/Gold Lanterns don't work, not to mention that they still suffer from that wierd glitch when you try to take out a second out from you inv after putting one down; it basically deletes the first one.
 ####
 Not sure, but broken/exploded obsidian brick may drop stone...it looks like stone.
 ####
