@@ -7,6 +7,7 @@ public class Screen {
 	private static java.util.Random random = new java.util.Random();
 	
 	private static final int MAXDARK = 128;
+	private static final int MAXLIGHT = 20;
 	
 	/// x and y offset of screen:
 	public int xOffset;
@@ -94,20 +95,20 @@ public class Screen {
 	
 	/** Overlays the screen with pixels */
     public void overlay(Screen screen2, int xa, int ya) {
-		double darkenFactor = 0;
+		double tintFactor = 0;
 		int transTime = Game.dayLength / 4;
 		double relTime = (Game.tickCount % transTime)*1.0 / transTime;
 		switch((Game.Time)Game.getTime()) {
-			case Morning: darkenFactor = Game.pastDay1 ? (1-relTime) * MAXDARK : 0; break;
-			case Day: darkenFactor = 0; break;
-			case Evening: darkenFactor = relTime * MAXDARK; break;
-			case Night: darkenFactor = MAXDARK; break;
+			case Morning: tintFactor = Game.pastDay1 ? (1-relTime) * MAXDARK : 0; break;
+			case Day: tintFactor = 0; break;
+			case Evening: tintFactor = relTime * MAXDARK; break;
+			case Night: tintFactor = MAXDARK; break;
 		}
-		if(Game.currentLevel == 4) darkenFactor -= darkenFactor < 10 ? darkenFactor : 10;
-		darkenFactor *= -1;
-		darkenFactor += 20;
-		
-		//if(random.nextInt((int)(Game.normSpeed/Game.gamespeed))==0) System.out.println("rendering dark factor " + darkenFactor);
+		if(Game.currentLevel == 4) tintFactor -= tintFactor < 10 ? tintFactor : 10;
+		tintFactor *= -1; // all previous operations were assumping this was a darkening factor.
+		tintFactor += 20;
+		if(tintFactor > MAXLIGHT) tintFactor = MAXLIGHT;
+		//if(random.nextInt((int)(Game.normSpeed/Game.gamespeed))==0) System.out.println("rendering dark factor " + tintFactor);
         
 		int[] oPixels = screen2.pixels;  // The Integer array of pixels to overlay the screen with.
 		int i = 0; // current pixel on the screen
@@ -118,9 +119,9 @@ public class Screen {
 					if(Game.currentLevel < 3) { // if in caves...
                         /// in the caves, not being lit means being pitch black.
 						pixels[i] = 0;
-                    } else { // if it's not midday...
+                    } else {
 						/// outside the caves, not being lit simply means being darker.
-						pixels[i] = Color.tintColor(pixels[i], (int)darkenFactor); // darkens the color one shade.
+						pixels[i] = Color.tintColor(pixels[i], (int)tintFactor); // darkens the color one shade.
                     }
                 }
                 i++; // moves to the next pixel.
