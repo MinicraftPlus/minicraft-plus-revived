@@ -600,10 +600,14 @@ public class Level {
 			clazz = clazz.substring(clazz.lastIndexOf(".")+1);
 			String[] searching = {"DungeonChest", "AirWizard"}; //can contain any number of class names I want to print when found.
 			for(String search: searching) {
-				if(search.equals(clazz)) {
-					if (clazz == "AirWizard") clazz += ((AirWizard)entity).secondform ? " II" : "";
-					printLevelLoc("Adding " + clazz, entity.x>>4, entity.y>>4);
-					break;
+				try {
+					if(Class.forName("minicraft.entity."+search).isAssignableFrom(entity.getClass())) {
+						if (clazz.equals("AirWizard")) clazz += ((AirWizard)entity).secondform ? " II" : "";
+						printLevelLoc("Adding " + clazz, entity.x>>4, entity.y>>4);
+						break;
+					}
+				} catch(ClassNotFoundException ex) {
+					ex.printStackTrace();
 				}
 			}
 		}
