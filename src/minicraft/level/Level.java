@@ -713,6 +713,12 @@ public class Level {
 		return local.toArray(new Tile[0]);
 	}
 	
+	public void setAreaTiles(int xt, int yt, int r, Tile tile, int data) {
+		for(int y = yt-r; y <= yt+r; y++)
+			for(int x = xt-r; x <= xt+r; x++)
+				setTile(x, y, tile, data);
+	}
+	
 	public boolean isLight(int x, int y) {
 		for(Tile t: getAreaTiles(x, y, 3))
 			if(t instanceof TorchTile)
