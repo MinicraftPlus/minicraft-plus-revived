@@ -7,8 +7,6 @@ import minicraft.entity.Bed;
 import minicraft.entity.Chest;
 import minicraft.entity.Enchanter;
 import minicraft.entity.Furnace;
-
-
 import minicraft.entity.Lantern;
 import minicraft.entity.Loom;
 import minicraft.entity.Oven;
@@ -277,6 +275,7 @@ public class ListItems {
 		this.scale = (new ResourceItem(Resource.scale)).addItem();
 		this.shard = (new ResourceItem(Resource.shard)).addItem();
 		this.key = (new ResourceItem(Resource.key)).addItem();
+		
 		this.rod = (new ToolItem(ToolType.rod, 0)).addItem();
 		this.woodhoe = (new ToolItem(ToolType.hoe, 0)).addItem();
 		this.rockhoe = (new ToolItem(ToolType.hoe, 1)).addItem();

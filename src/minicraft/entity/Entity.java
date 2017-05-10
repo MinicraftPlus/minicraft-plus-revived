@@ -184,5 +184,4 @@ public abstract class Entity {
 	public void hurt(Mob mob, int dmg, int attackDir) {}
 	public void hurt(Tnt tnt, int dmg, int attackDir) {}
 	public void hurt(Tile tile, int x, int y, int dmg) {}
-	
 }

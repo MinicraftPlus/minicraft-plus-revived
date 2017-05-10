@@ -14,8 +14,6 @@ public class Inventory {
 	private Random random = new Random();
 	private List<Item> items = new ArrayList<Item>(); // the list of items that is in the inventory.
 	
-	public Inventory() {}
-	
 	public List<Item> getItems() {return items;}
 	public void clearInv() {items.clear();}
 	public int invSize() {return items.size();}

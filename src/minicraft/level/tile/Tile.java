@@ -63,7 +63,7 @@ public class Tile {
 	public static Tile goldOre = new OreTile(20, OreTile.OreType.GOLD, Color.get(-1, 110, 440, 553));
 	public static Tile gemOre = new OreTile(21, OreTile.OreType.GEM, Color.get(-1, 101, 404, 545));
 	public static Tile cloudCactus = new CloudCactusTile(22); // "ore" in the sky.
-	public static Tile infiniteFall = new InfiniteFallTile(16); // Air tile in the sky.
+	public static Tile infiniteFall = new InfiniteFallTile(16); // Air tile in the sky..?
 
 	public final byte id;
 

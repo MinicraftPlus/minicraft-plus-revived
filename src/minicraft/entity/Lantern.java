@@ -37,6 +37,7 @@ public class Lantern extends Furniture {
 		yr = 2;*/
 	}
 	
+	@Override
 	public Furniture copy() {
 		return (Furniture) new Lantern(type);
 	}
