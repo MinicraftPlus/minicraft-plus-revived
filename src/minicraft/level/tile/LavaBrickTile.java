@@ -26,7 +26,7 @@ public class LavaBrickTile extends Tile {
 	public boolean interact(Level level, int xt, int yt, Player player, Item item, int attackDir) {
 		if (item instanceof ToolItem) {
 			ToolItem tool = (ToolItem) item;
-			if (tool.type == ToolType.pickaxe) {
+			if (tool.type == ToolType.Pickaxe) {
 				if (player.payStamina(4 - tool.level)) {
 					level.setTile(xt, yt, Tile.lava, 0);
 					Sound.monsterHurt.play();

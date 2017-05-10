@@ -402,10 +402,10 @@ public class Level {
 				  		inv.tryAdd(4/chance, Resource.string, 3);
 				  		inv.tryAdd(4/chance, Resource.bone, 2);
 				  		inv.tryAdd(3/chance, Resource.bone, 1);
-				  		inv.tryAdd(6/chance, ToolType.hatchet, 2);
-				  		inv.tryAdd(6/chance, ToolType.pick, 2);
-				  		inv.tryAdd(6/chance, ToolType.spade, 2);
-				  		inv.tryAdd(7/chance, ToolType.claymore, 1);
+				  		//inv.tryAdd(6/chance, ToolType.hatchet, 2);
+				  		//inv.tryAdd(6/chance, ToolType.pick, 2);
+				  		//inv.tryAdd(6/chance, ToolType.spade, 2);
+				  		inv.tryAdd(7/chance, ToolType.Claymore, 1);
 				  		inv.tryAdd(5/chance, Resource.torch, 3);
 				  		inv.tryAdd(6/chance, Resource.torch, 6);
 						inv.tryAdd(6/chance, Resource.torch, 6);

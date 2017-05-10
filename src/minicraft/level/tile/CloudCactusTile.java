@@ -39,7 +39,7 @@ public class CloudCactusTile extends Tile {
 	public boolean interact(Level level, int xt, int yt, Player player, Item item, int attackDir) {
 		if (item instanceof ToolItem) {
 			ToolItem tool = (ToolItem) item;
-			if (tool.type == ToolType.pickaxe) {
+			if (tool.type == ToolType.Pickaxe) {
 				if (player.payStamina(6 - tool.level)) {
 					hurt(level, xt, yt, 1);
 					return true;

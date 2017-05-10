@@ -100,17 +100,17 @@ public class DungeonChest extends Chest {
 		inv.tryAdd(7, Resource.lavapotion, 1);
 		inv.tryAdd(5, Resource.hastepotion, 3);
 		
-		inv.tryAdd(6, ToolType.bow, 3);
-		inv.tryAdd(7, ToolType.bow, 4);
-		inv.tryAdd(4, ToolType.sword, 3);
-		inv.tryAdd(7, ToolType.sword, 4);
-		inv.tryAdd(4, ToolType.claymore, 1);
-		inv.tryAdd(6, ToolType.claymore, 2);
+		inv.tryAdd(6, ToolType.Bow, 3);
+		inv.tryAdd(7, ToolType.Bow, 4);
+		inv.tryAdd(4, ToolType.Sword, 3);
+		inv.tryAdd(7, ToolType.Sword, 4);
+		inv.tryAdd(4, ToolType.Claymore, 1);
+		inv.tryAdd(6, ToolType.Claymore, 2);
 		
 		if(inventory.invSize() < 1) { // add this if none of the above was added.
 			inventory.add(new ResourceItem(Resource.steak, 6));
 			inventory.add(new ResourceItem(Resource.timepotion, 1));
-			inventory.add(new ToolItem(ToolType.axe, 4));
+			inventory.add(new ToolItem(ToolType.Axe, 4));
 		}
 	}
 	

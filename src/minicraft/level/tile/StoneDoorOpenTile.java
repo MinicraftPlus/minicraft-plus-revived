@@ -37,7 +37,7 @@ public class StoneDoorOpenTile extends Tile {
 		if (item instanceof ToolItem) {
 			ToolItem tool = (ToolItem) item;
 			int hd = 3;
-			if (tool.type == ToolType.pickaxe) {
+			if (tool.type == ToolType.Pickaxe) {
 				if (player.payStamina(4 - tool.level)) {
 					if (hd == 0) {
 						level.setTile(xt, yt, Tile.sbrick, 0);
@@ -54,7 +54,7 @@ public class StoneDoorOpenTile extends Tile {
 					}
 				}
 			}
-			if (tool.type == ToolType.pick) {
+			/*if (tool.type == ToolType.pick) {
 				if (player.payStamina(4 - tool.level)) {
 					level.setTile(xt, yt, Tile.sbrick, 0);
 					level.add(
@@ -65,7 +65,7 @@ public class StoneDoorOpenTile extends Tile {
 					Sound.monsterHurt.play();
 					return true;
 				}
-			}
+			}*/
 		}
 		return false;
 	}

@@ -76,7 +76,7 @@ public class RockTile extends Tile {
 	public boolean interact(Level level, int xt, int yt, Player player, Item item, int attackDir) {
 		if (item instanceof ToolItem) {
 			ToolItem tool = (ToolItem) item;
-			if (tool.type == ToolType.pickaxe && player.payStamina(4 - tool.level)) {
+			if (tool.type == ToolType.Pickaxe && player.payStamina(4 - tool.level)) {
 				hurt(level, xt, yt, random.nextInt(10) + (tool.level) * 5 + 10);
 				coallvl = 0;
 				return true;

@@ -39,7 +39,7 @@ public class FlowerTile extends GrassTile {
 	public boolean interact(Level level, int x, int y, Player player, Item item, int attackDir) {
 		if (item instanceof ToolItem) {
 			ToolItem tool = (ToolItem) item;
-			if (tool.type == ToolType.shovel) {
+			if (tool.type == ToolType.Shovel) {
 				if (player.payStamina(2 - tool.level)) {
 					level.add(
 							new ItemEntity(

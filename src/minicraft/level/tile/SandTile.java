@@ -71,7 +71,7 @@ public class SandTile extends Tile {
 	public boolean interact(Level level, int xt, int yt, Player player, Item item, int attackDir) {
 		if (item instanceof ToolItem) {
 			ToolItem tool = (ToolItem) item;
-			if (tool.type == ToolType.shovel) {
+			if (tool.type == ToolType.Shovel) {
 				if (player.payStamina(4 - tool.level)) {
 					level.setTile(xt, yt, Tile.dirt, 0);
 					level.add(
@@ -82,7 +82,7 @@ public class SandTile extends Tile {
 					return true;
 				}
 			}
-			if (tool.type == ToolType.spade) {
+			/*if (tool.type == ToolType.spade) {
 				if (player.payStamina(5 - tool.level)) {
 					level.setTile(xt, yt, Tile.dirt, 0);
 					level.add(
@@ -92,7 +92,7 @@ public class SandTile extends Tile {
 									yt * 16 + random.nextInt(10) + 3));
 					return true;
 				}
-			}
+			}*/
 		}
 		return false;
 	}

@@ -62,7 +62,7 @@ public class CloudTile extends Tile {
 	public boolean interact(Level level, int xt, int yt, Player player, Item item, int attackDir) {
 		if (item instanceof ToolItem) {
 			ToolItem tool = (ToolItem) item;
-			if (tool.type == ToolType.shovel) {
+			if (tool.type == ToolType.Shovel) {
 				if (player.payStamina(5)) {
 					// level.setTile(xt, yt, Tile.infiniteFall, 0); // would allow you to shovel cloud, I think.
 					int count = random.nextInt(2) + 1;

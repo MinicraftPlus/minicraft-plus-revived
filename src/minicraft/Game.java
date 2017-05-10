@@ -722,7 +722,7 @@ public class Game extends Canvas implements Runnable {
 		}
 
 		// FISHING ROD STATUS
-		if (player.activeItem instanceof ToolItem && ((ToolItem)player.activeItem).type == ToolType.rod) {
+		if (player.activeItem instanceof ToolItem && ((ToolItem)player.activeItem).type == ToolType.FishingRod) {
 			int dura = ((ToolItem)player.activeItem).dur * 100 / ((ToolItem)player.activeItem).type.durability;
 			//if (dura > 100) dura = 100;
 			Font.draw(dura + "%", screen, 164, screen.h - 16, Color.get(0, 30, 30, 30));

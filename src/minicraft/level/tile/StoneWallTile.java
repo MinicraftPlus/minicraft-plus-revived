@@ -84,14 +84,14 @@ public class StoneWallTile extends Tile {
 	public boolean interact(Level level, int xt, int yt, Player player, Item item, int attackDir) {
 		if (item instanceof ToolItem) {
 			ToolItem tool = (ToolItem) item;
-			if (tool.type == ToolType.pickaxe) {
+			if (tool.type == ToolType.Pickaxe) {
 				if (player.payStamina(4 - tool.level)) {
 					hurt(level, xt, yt, random.nextInt(10) + (tool.level) * 5 + 10);
 					return true;
 				}
 			}
 		}
-		if (item instanceof ToolItem) {
+		/*if (item instanceof ToolItem) {
 			ToolItem tool = (ToolItem) item;
 			if (tool.type == ToolType.pick) {
 				if (player.payStamina(4 - tool.level)) {
@@ -99,7 +99,7 @@ public class StoneWallTile extends Tile {
 					return true;
 				}
 			}
-		}
+		}*/
 		return false;
 	}
 

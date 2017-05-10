@@ -28,20 +28,20 @@ public class ObsidianBrick extends Tile {
 	public boolean interact(Level level, int xt, int yt, Player player, Item item, int attackDir) {
 		if (item instanceof ToolItem) {
 			ToolItem tool = (ToolItem) item;
-			if (tool.type == ToolType.pickaxe) {
+			if (tool.type == ToolType.Pickaxe) {
 				if (player.payStamina(4 - tool.level)) {
 					level.setTile(xt, yt, Tile.hole, 0);
 					Sound.monsterHurt.play();
 					return true;
 				}
 			}
-			if (tool.type == ToolType.pick) {
+			/*if (tool.type == ToolType.pick) {
 				if (player.payStamina(4 - tool.level)) {
 					level.setTile(xt, yt, Tile.hole, 0);
 					Sound.monsterHurt.play();
 					return true;
 				}
-			}
+			}*/
 		}
 		return false;
 	}

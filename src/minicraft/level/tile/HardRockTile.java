@@ -74,7 +74,7 @@ public class HardRockTile extends Tile {
 		if (item instanceof ToolItem) {
 			ToolItem tool = (ToolItem) item;
 			if (ModeMenu.creative) return true;
-			if (tool.type == ToolType.pickaxe && tool.level == 4) {
+			if (tool.type == ToolType.Pickaxe && tool.level == 4) {
 				if (player.payStamina(4 - tool.level)) {
 					hurt(level, xt, yt, random.nextInt(10) + (tool.level) * 5 + 10);
 					return true;

@@ -38,7 +38,7 @@ public class ToolItem extends Item {
 		Color.get(-1, 100, 444, 055),
 	};
 	
-	/** Tool Item, requires a tool type (ToolType.sword, ToolType.axe, ToolType.hoe, etc) and a level (0 = wood, 2 = iron, 4 = gem, etc) */
+	/** Tool Item, requires a tool type (ToolType.Sword, ToolType.Axe, ToolType.Hoe, etc) and a level (0 = wood, 2 = iron, 4 = gem, etc) */
 	public ToolItem(ToolType type, int level) {
 		this.type = type;
 		this.level = level;
@@ -46,9 +46,9 @@ public class ToolItem extends Item {
 	}
 	
 	public int getColor() {
-		if (type == ToolType.bow) {
+		if (type == ToolType.Bow) {
 			return BOW_COLORS[level];
-		} else if(type == ToolType.rod) {
+		} else if(type == ToolType.FishingRod) {
 			return Color.get(-1, 320, 320, 444);
 		} else {
 			return LEVEL_COLORS[level];
@@ -66,19 +66,19 @@ public class ToolItem extends Item {
 	/** Renders the icon & name of this tool for inventory/crafting purposes. */
 	public void renderInventory(Screen screen, int x, int y) {
 		screen.render(x, y, getSprite(), getColor(), 0);
-		Font.draw(getName(), screen, x + 8, y, Color.get(-1, 555, 555, 555));
+		Font.draw(getName(), screen, x + 8, y, Color.get(-1, 555));
 	}
 	
 	/** Gets the name of this tool (and it's type) */
 	public String getName() {
-		if (type == ToolType.rod) return "Fishing Rod";
-		return LEVEL_NAMES[level] + " " + type.name;
+		if (type == ToolType.FishingRod) return "Fishing Rod";
+		return LEVEL_NAMES[level] + " " + type;
 	}
 	
-	public void onTake(ItemEntity itemEntity) {}
+	//public void onTake(ItemEntity itemEntity) {}
 	
 	public boolean interactOn(Tile tile, Level level, int xt, int yt, Player player, int attackDir) {
-		if (type == ToolType.rod && dur > 0) {
+		if (type == ToolType.FishingRod && dur > 0) {
 			if (tile == Tile.water) {
 				//if(minicraft.Game.debug) System.out.println("Fishing...");
 				player.goFishing(player.x - 5, player.y - 5);
@@ -101,16 +101,16 @@ public class ToolItem extends Item {
 	
 	/** Calculates Damage */
 	public int getAttackDamageBonus(Entity e) {
-		if (type == ToolType.hatchet) {
+		/*if (type == ToolType.hatchet) {
 			return (level + 1) * 2 + random.nextInt(3);
-		}
-		if (type == ToolType.axe) {
+		}*/
+		if (type == ToolType.Axe) {
 			return (level + 1) * 2 + random.nextInt(4); // axes: (level + 1) * 2 + random number beteween 0 and 3, do slightly less damage than swords.
 		}
-		if (type == ToolType.sword) {
+		if (type == ToolType.Sword) {
 			return (level + 1) * 3 + random.nextInt(2 + level * level * 2); //swords: (level + 1) * 3 + random number between 0 and (2 + level * level * 2)
 		}
-		if (type == ToolType.claymore) {
+		if (type == ToolType.Claymore) {
 			return (level + 1) * 3 + random.nextInt(4 + level * level * 3);
 		}
 		return 1;
