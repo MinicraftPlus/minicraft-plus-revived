@@ -151,4 +151,8 @@ public class Spawner extends Furniture {
 				return null; // fix: make a missing texture entity! maybe...
 		}
 	}
+	
+	public Furniture copy() {
+		return (Furniture) new Spawner(mob, lvl);
+	}
 }
