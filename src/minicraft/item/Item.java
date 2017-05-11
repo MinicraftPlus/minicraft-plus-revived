@@ -13,14 +13,14 @@ public class Item implements ListItem {
 	/* Note: Most of the stuff in the class is expanded upon in ResourceItem/PowerGloveItem/FurnitureItem/etc */
 	
 	/** called to add this item to the item list in ListItems. */
-	public Item addItem() {
+	/*public Item addItem() {
 		if (!ListItems.items.contains(this)) { // if this Item isn't already part of the list...
 			ListItems.items.add(this); // add it.
 			//System.out.println("adding item to list: " + getName());
 		}
 		
 		return this;
-	}
+	}*/
 
 	public int getColor() {
 		return 0;
@@ -31,7 +31,7 @@ public class Item implements ListItem {
 	}
 	
 	/** What happens when you pick up the item off the ground */
-	public void onTake(ItemEntity itemEntity) {}
+	//public void onTake(ItemEntity itemEntity) {}
 	
 	/** Renders an item (sprite & name) in an inventory */
 	public void renderInventory(Screen screen, int x, int y) {}
@@ -71,6 +71,6 @@ public class Item implements ListItem {
 	
 	/** Sees if an item matches another item */
 	public boolean matches(Item item) {
-		return item.getClass() == getClass();
+		return item.getClass().equals(getClass()) && item.getName().equals(getName());
 	}
 }

@@ -285,7 +285,7 @@ public class Player extends Mob {
 			staminaRecharge = 0;
 			attack();
 		}
-
+		
 		if (input.getKey("menu").clicked && !use()) // !use() = no furniture in front of the player; this prevents player inventory from opening (will open furniture inventory instead)
 			game.setMenu(new PlayerInvMenu(this));
 		if (input.getKey("pause").clicked) game.setMenu(new PauseMenu(this));
@@ -350,7 +350,7 @@ public class Player extends Mob {
 			// the player is holding a tool, and has stamina available.
 			ToolItem tool = (ToolItem) attackItem;
 			
-			if (tool.type == ToolType.bow && ac > 0) { // if the player is holding a bow, and has arrows...
+			if (tool.type == ToolType.Bow && ac > 0) { // if the player is holding a bow, and has arrows...
 				//if (!energy) stamina -= 0; // must be a leftover.
 				//...then shoot the arrow in the right direction.
 				int spx = 0, spy = 0;
@@ -434,20 +434,10 @@ public class Player extends Mob {
 	public void goFishing(int x, int y) {
 		int fcatch = random.nextInt(90);
 		
-		if (fcatch <= 8) {
-			level.add(new ItemEntity(new ResourceItem(Resource.rawfish), x + random.nextInt(11) - 5, y + random.nextInt(11) - 5));
-		}
-		
-		if (fcatch == 25 || fcatch == 43 || fcatch == 32 || fcatch == 15 || fcatch == 42) {
-			level.add(new ItemEntity(new ResourceItem(Resource.slime), x + random.nextInt(11) - 5, y + random.nextInt(11) - 5));
-		}
-
-		if (fcatch == 56) {
-			level.add(new ItemEntity(new ResourceItem(Resource.larmor), x + random.nextInt(11) - 5, y + random.nextInt(11) - 5));
-		} else {
-			//if(Game.debug) System.out.println("Nothing caught...");
-			if(random.nextInt(300) == 42) System.out.println("FISH-NORRIS got away... just kidding, FISH-NORRIS doesn't get away from you, you get away from FISH-NORRIS...");
-		}
+		if (fcatch < 10) level.dropResource(x, y, Resource.rawfish);
+		else if (fcatch < 15) level.dropResource(x, y, Resource.slime);
+		else if (fcatch == 15) level.dropResource(x, y, Resource.larmor);
+		else if (fcatch == 42 && random.nextInt(10) == 0) System.out.println("FISHNORRIS got away... just kidding, FISHNORRIS doesn't get away from you, you get away from FISHNORRIS...");
 	}
 	
 	/** called by other use method; this serves as a buffer in case there is no entity in front of the player. */
@@ -490,27 +480,8 @@ public class Player extends Mob {
 	
 	/** Draws the player on the screen */
 	public void render(Screen screen) {
-		// set / get colors.
-		//int r2 = r - 50, b2 = b - 50, g2 = g - 50;
-		/*if(r == 50 && g == 50 && (b == 0 || b == 50)) {
-			r2 = r < 0 ? 0 : r;
-			g2 = g < 0 ? 0 : g;
-			b2 = b < 0 ? 0 : b;
-		}*/
-		
 		col = Color.get(-1, 100, Color.rgb(r, g, b), 532);
-		/*
-		col0 = Color.get(-1, 100, Color.rgb(r, g, b), 531);
-		col1 = Color.get(-1, 100, Color.rgb(r, g, b), 532);
-		col2 = Color.get(-1, 100, Color.rgb(r2, g2, b2), 421);
-		col3 = Color.get(-1, 0, Color.rgb(r2, g2, b2), 321);
-		col4 = Color.get(-1, 100, Color.rgb(r, g, b), 532);
-		if(isLight()) { // lighter versions
-			col0 = Color.get(-1, 100, Color.rgb(r, g, b), 532);
-			col2 = Color.get(-1, 100, Color.rgb(r, g, b), 532);
-			col3 = Color.get(-1, 100, Color.rgb(r, g, b), 532);
-		}
-		*/
+		
 		MobSprite[][] spriteSet; // the default, walking sprites.
 		
 		if(activeItem instanceof FurnitureItem) {
@@ -546,14 +517,6 @@ public class Player extends Mob {
 			}
 		}
 		
-		/*col = 0; // color of the player
-		if (level.depth >= 0) {
-			if(Game.time == 0) col = col0;
-			if(Game.time == 1) col = col1;
-			if(Game.time == 2) col = col2;
-			if(Game.time == 3) col = col3;
-		} else col = col4;
-		*/
 		if (hurtTime > playerHurtTime - 10) { // if the player has just gotten hurt...
 			col = Color.get(-1, 555); // make the sprite white.
 		}
@@ -603,6 +566,8 @@ public class Player extends Mob {
 	/** What happens when the player interacts with a itemEntity */
 	public void touchItem(ItemEntity itemEntity) {
 		itemEntity.take(this); // calls the take() method in ItemEntity
+		if(ModeMenu.creative) return; // we shall not bother the inventory on creative mode.
+		
 		if (itemEntity.item.getName() == "arrow") {
 			ac++; // if it's an arrow, then just add to arrow count, not inventory.
 		} else if(activeItem != null && activeItem.getName() == itemEntity.item.getName() && activeItem instanceof ResourceItem && itemEntity.item instanceof ResourceItem) {

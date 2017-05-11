@@ -81,7 +81,7 @@ public class Level {
 		System.out.println(prepend + " on " + levelName + " level: x="+x + " y="+y);
 	}
 	
-	private void printTileLocs(Tile t) {
+	public void printTileLocs(Tile t) {
 		java.lang.reflect.Field[] fields = Tile.class.getFields();
 		String tileName = "";
 		for(java.lang.reflect.Field f: fields) {
@@ -102,7 +102,7 @@ public class Level {
 				if(getTile(x, y).id == t.id)
 					printLevelLoc(tileName, x, y);
 	}
-	private void printEntityLocs(Entity e) {
+	public void printEntityLocs(Entity e) {
 		String entityName = e.getClass().getName().replace("minicraft.entity.","");
 		for(int x = 0; x < w; x++)
 			for(int y = 0; y < h; y++)
