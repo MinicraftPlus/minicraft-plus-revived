@@ -69,6 +69,8 @@ public class Load {
 		
 		File testFile = new File(location + "/Preferences" + extention);
 		hasGlobalPrefs = testFile.exists();
+		//testFile = new File(location);
+		//hasGlobalPrefs = hasGlobalPrefs || ;
 		
 		data = new ArrayList<String>();
 		extradata = new ArrayList<String>();
@@ -77,6 +79,15 @@ public class Load {
 	
 	public Load(Game game, String worldname) {
 		this();
+		
+		if(!hasGlobalPrefs) {
+			loadFromFile(location + "/saves/" + worldname + "/Game" + extension);
+			Version wVer = null;
+			if(data.get(0).contains(".")) wVer = new Version(data.get(0));
+			if(wVer == null) wVer = new Version("1.8");
+			hasGlobalPrefs = wVer.compareTo(new Version("1.9.2")) >= 0;
+		}
+		
 		if(!hasGlobalPrefs)
 			new LegacyLoad(game, worldname);
 		else {
@@ -253,7 +264,20 @@ public class Load {
 				for(int y = 0; y < lvlh - 1; y++) {
 					int tileArrIdx = /*worldVer.compareTo(new Version("1.9.3-dev3")) < 0 ?*/ y + x * lvlw;// : x + y * lvlw;
 					int tileidx = x + y * lvlw; // the tiles are saved with x outer loop, and y inner loop, meaning that the list reads down, then right one, rather than right, then down one.
-					tiles[tileArrIdx] = (byte) Tile.tiles[Integer.parseInt(data.get(tileidx + 3))].id;
+					int tileID = Integer.parseInt(data.get(tileidx + 3));
+					//System.out.println("reading tile on level "+l+"; save idx=" + (tileidx+3) + ", old id:" + tileID);
+					if(worldVer.compareTo(new Version("1.9.4-dev3")) < 0) {
+						if(Tile.oldids.containsKey(tileID))
+							tileID = Tile.oldids.get(tileID);
+						else System.out.println("tile list doesn't contain tile " + tileID);
+					}
+					//System.out.println("new id: " + tileID);
+					byte id = (byte) tileID;
+					if(id < 0)
+						tiles[tileArrIdx] = minicraft.level.tile.TorchTile.getTorchTile(Tile.tiles[id+128]).id;
+					else
+						tiles[tileArrIdx] = id;
+					if(tiles[tileArrIdx] == Tile.stairsUp.id) System.out.println("stairs up at: x="+x+" y="+y);
 					tdata[tileArrIdx] = Byte.parseByte(extradata.get(tileidx));
 				}
 			}
@@ -333,6 +357,10 @@ public class Load {
 				List<String> curData = Arrays.asList(item.split(";"));
 				String itemName = curData.get(0);
 				
+				if(worldVer.compareTo(new Version("1.9.4-dev4")) < 0) {
+					itemName = itemName.replace("Hatchet", "Axe").replace("Pick\\b", "Pickaxe").replace("Spade", "Shovel");
+				}
+				
 				Item newItem = ListItems.getItem(itemName);
 				
 				for(int ii = 0; ii < Integer.parseInt(curData.get(1)); ii++) {
@@ -344,6 +372,10 @@ public class Load {
 					}
 				}
 			} else {
+				if(worldVer.compareTo(new Version("1.9.4-dev4")) < 0) {
+					item = item.replace("Water Bucket", "Bucket " + Tile.water.id)
+							.replace("Lava Bucket", "Bucket " + Tile.lava.id);
+				}
 				Item toAdd = ListItems.getItem(item);
 				inventory.add(toAdd);
 			}
@@ -457,8 +489,8 @@ public class Load {
 			case "Bed": return (Entity)(new Bed());
 			case "Tnt": return (Entity)(new Tnt());
 			case "Lantern": return (Entity)(new Lantern(Lantern.Type.NORM));
-			case "IronLantern": return (Entity)(new Lantern(Lantern.Type.IRON));
-			case "GoldLantern": return (Entity)(new Lantern(Lantern.Type.GOLD));
+			case "Iron Lantern": return (Entity)(new Lantern(Lantern.Type.IRON));
+			case "Gold Lantern": return (Entity)(new Lantern(Lantern.Type.GOLD));
 			//case "Spark": return (Entity)(new Spark());
 			default : /*if(Game.debug)*/ System.out.println("LOAD: unknown or outdated entity requested: " + string);
 				return null;
