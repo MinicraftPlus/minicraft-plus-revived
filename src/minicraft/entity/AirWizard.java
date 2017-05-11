@@ -209,4 +209,8 @@ public class AirWizard extends EnemyMob {
 		
 		super.die(); // calls the die() method in EnemyMob.java
 	}
+	
+	public int getMaxLevel() {
+		return 2;
+	}
 }

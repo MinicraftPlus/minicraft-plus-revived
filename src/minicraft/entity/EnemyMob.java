@@ -94,4 +94,8 @@ public class EnemyMob extends MobAi {
 
 		return true;
 	}
+	
+	public int getMaxLevel() {
+		return lvlcols.length;
+	}
 }

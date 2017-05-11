@@ -75,4 +75,8 @@ public class Knight extends EnemyMob {
 		
 		super.die();
 	}
+	
+	public int getMaxLevel() {
+		return 5;
+	}
 }

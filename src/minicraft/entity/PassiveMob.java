@@ -55,4 +55,8 @@ public class PassiveMob extends MobAi {
 
 		return false;
 	}
+	
+	public int getMaxLevel() {
+		return 1;
+	}
 }

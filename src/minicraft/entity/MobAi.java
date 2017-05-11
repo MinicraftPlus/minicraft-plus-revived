@@ -7,7 +7,7 @@ import minicraft.item.ResourceItem;
 import minicraft.item.resource.Resource;
 import minicraft.level.Level;
 
-public class MobAi extends Mob {
+public abstract class MobAi extends Mob {
 	
 	int randomWalkTime, randomWalkChance, randomWalkDuration;
 	int xa, ya;
@@ -85,4 +85,6 @@ public class MobAi extends Mob {
 		
 		return level.getTile(x >> 4, y >> 4).maySpawn; // the last check.
 	}
+	
+	public abstract int getMaxLevel();
 }

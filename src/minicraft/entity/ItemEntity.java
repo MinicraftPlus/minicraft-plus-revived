@@ -91,7 +91,7 @@ public class ItemEntity extends Entity {
 	public void take(Player player) {
 		Sound.pickup.play();
 		player.score++; // increase the player's score by 1
-		item.onTake(this); // calls the onTake() method in Item.java
+		//item.onTake(this); // calls the onTake() method in Item.java
 		remove(); // removes this from the world
 	}
 }
