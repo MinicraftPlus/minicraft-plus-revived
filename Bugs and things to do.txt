@@ -1,5 +1,6 @@
 	---Quick TODO's---
 
+-UPDATE GAME VERSION. Then move on Tile overhaul. Last one!
 -continue commeting code and renovating code
 -display current player score in score mode
 
