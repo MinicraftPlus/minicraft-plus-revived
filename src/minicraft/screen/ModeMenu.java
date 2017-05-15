@@ -92,7 +92,7 @@ public class ModeMenu extends Menu {
 		}
 
 		//This is so that if the user presses enter @ respawn menu, they respawn (what a concept)
-		if (input.getKey("enter").clicked && selected == 0) { //selected is always 0..?
+		if (input.getKey("select").clicked && selected == 0) { //selected is always 0..?
 			Sound.test.play();
 			
 			if(mode == 4) {
@@ -108,7 +108,7 @@ public class ModeMenu extends Menu {
 			game.setMenu(new LoadingMenu());
 		}
 
-		if (input.getKey("escape").clicked) game.setMenu(new TitleMenu());
+		if (input.getKey("exit").clicked) game.setMenu(new TitleMenu());
 
 		if (input.getKey("z").clicked) game.setMenu(new WorldGenMenu());
 		

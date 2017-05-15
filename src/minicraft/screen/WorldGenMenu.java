@@ -25,7 +25,7 @@ public class WorldGenMenu extends SelectMenu {
 	}
 	
 	public void tick() {
-		if (input.getKey("escape").clicked) {
+		if (input.getKey("exit").clicked) {
 			game.setMenu(new ModeMenu());
 			return;
 		}

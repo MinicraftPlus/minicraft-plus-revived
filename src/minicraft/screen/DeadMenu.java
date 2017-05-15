@@ -12,13 +12,13 @@ public class DeadMenu extends Menu {
 	public void tick() {
 		if (inputDelay > 0) {
 			inputDelay--;
-		} else if (input.getKey("escape").clicked) {
+		} else if (input.getKey("exit").clicked) {
 			game.setMenu(new TitleMenu());
 			shouldRespawn = false;
 		}
 		//This is so that if the user presses x @ respawn menu, they respawn (what a concept)
 		if (ModeMenu.hardcore == false) {
-			if (input.getKey("enter").clicked) {
+			if (input.getKey("select").clicked) {
 				//This makes it so the player respawns
 				shouldRespawn = true;
 				//reset game function

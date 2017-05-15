@@ -86,14 +86,14 @@ public class WorldSelectMenu extends Menu {
 
 		if (createworld) {
 			typename(); //check for input to type worldname
-			if (input.getKey("escape").clicked) {
+			if (input.getKey("exit").clicked) {
 				//cancel to title screen
 				createworld = false;
 				loadworld = false;
 				game.setMenu(new TitleMenu());
 			}
 
-			if (input.getKey("enter").clicked && wncol == Color.get(0, 5)) {
+			if (input.getKey("select").clicked && wncol == Color.get(0, 5)) {
 				//proceed to mode selection
 				worldname = name;
 				name = "";
@@ -102,7 +102,7 @@ public class WorldSelectMenu extends Menu {
 		}
 
 		File world;
-		if (loadworld && input.getKey("enter").clicked && !rename) {
+		if (loadworld && input.getKey("select").clicked && !rename) {
 			if (!delete) {
 				//load the game
 				worldname = worldnames.get(worldselected);
@@ -132,7 +132,7 @@ public class WorldSelectMenu extends Menu {
 			}
 		}
 
-		if (input.getKey("escape").clicked && !rename && !createworld) {
+		if (input.getKey("exit").clicked && !rename && !createworld) {
 			if (!delete && !rename) {
 				//return to title screen
 				createworld = false;
@@ -171,7 +171,7 @@ public class WorldSelectMenu extends Menu {
 				rename = false;
 			}
 
-			if (input.getKey("enter").clicked && wncol == Color.get(0, 5)) {
+			if (input.getKey("select").clicked && wncol == Color.get(0, 5)) {
 				//user hits enter with a vaild new name; name is set here:
 				worldname = name;
 				name = "";
@@ -189,7 +189,7 @@ public class WorldSelectMenu extends Menu {
 
 		if (!createworld && !loadworld) {
 			//this executes at first, before you choose load or save
-			if (input.getKey("enter").clicked) {
+			if (input.getKey("select").clicked) {
 				//if(Game.debug) System.out.println(selected);
 				if (selected == 0) {
 					loadworld = true;
@@ -203,7 +203,7 @@ public class WorldSelectMenu extends Menu {
 				}
 			}
 
-			if (input.getKey("escape").clicked) {
+			if (input.getKey("exit").clicked) {
 				//exit to title screen
 				createworld = false;
 				loadworld = false;

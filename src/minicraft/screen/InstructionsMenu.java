@@ -13,7 +13,7 @@ public class InstructionsMenu extends Menu {
 	}
 
 	public void tick() {
-		if (input.getKey("escape").clicked || input.getKey("enter").clicked) {
+		if (input.getKey("exit").clicked || input.getKey("select").clicked) {
 			game.setMenu(parent);  // If the user presses escape, it will go back to the parent menu.
 		}
 	}

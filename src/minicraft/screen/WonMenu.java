@@ -47,7 +47,7 @@ public class WonMenu extends Menu {
 
 	public void tick() {
 		if(inputDelay > 0) inputDelay--;
-		if(input.getKey("enter").clicked && inputDelay <= 0) {
+		if(input.getKey("select").clicked && inputDelay <= 0) {
 			game.setMenu(new TitleMenu());
 		}
 	}

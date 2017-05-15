@@ -37,7 +37,7 @@ public class OptionsMenu extends Menu {
 		if (diff > 2) diff = 0;
 		if (diff < 0) diff = 2;
 
-		if (input.getKey("escape").clicked) {
+		if (input.getKey("exit").clicked) {
 			//hasSetDiff = true;
 			new Save(game);
 			game.setMenu(parent);

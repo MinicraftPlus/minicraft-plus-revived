@@ -30,7 +30,7 @@ public class PauseMenu extends SelectMenu {
 		super.tick(); // process key input
 		
 		//choice chosen; input here is at confirm menu
-		if (input.getKey("enter").clicked) {
+		if (input.getKey("select").clicked) {
 			
 			//this one is an EXCEPTION: no comfirm menu.
 			if (selected == 1) {
@@ -60,7 +60,7 @@ public class PauseMenu extends SelectMenu {
 			if (selected != 1 && selected != 2) selection = selected;
 		}
 		
-		if (input.getKey("escape").clicked || selection == 0) game.setMenu((Menu) null);
+		if (input.getKey("exit").clicked || selection == 0) game.setMenu((Menu) null);
 	}
 
 	public void render(Screen screen) {

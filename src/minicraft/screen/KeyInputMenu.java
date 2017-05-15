@@ -37,7 +37,7 @@ public class KeyInputMenu extends ScrollingMenu {
 			return;
 		}
 		
-		if(input.getKey("escape").clicked) {
+		if(input.getKey("exit").clicked) {
 			game.setMenu(parent);
 			new Save(game);
 			return;
@@ -45,7 +45,7 @@ public class KeyInputMenu extends ScrollingMenu {
 		
 		super.tick();
 		
-		if(input.getKey("enter").clicked) {
+		if(input.getKey("select").clicked) {
 			//System.out.println("changing input binding at " + input.ticks);
 			input.changeKeyBinding(actionKeys[selected]);
 			listeningForBind = true;
