@@ -10,6 +10,8 @@ Minicraft+ version 1.9.4
 + Additional creative mode tweak: "attacking" mob spawner with hand changes the level of mob it spawns.
 + Added missingTexture sprite.
 * Changed the name of a couple items (was abbreviated).
++ Key controls displayed on title screen will always be correct. ;)
+
 
 Minicraft+ version 1.9.3
 
@@ -18,6 +20,7 @@ Minicraft+ version 1.9.3
 + added back feature where mobs stay away during the first night.
 * Reduced world load time from 2 seconds to about half a second, for me). It used to generate new levels needlessly, but now it doesn't.
 + Loading has a progress bar. Though honestly, it doesn't need one.
+
 
 Minicraft+ version 1.9.2
 
@@ -29,6 +32,7 @@ Minicraft+ version 1.9.2
 + Key bindings, sound, and autosave options are loaded on startup, in a special file that applies to all saves; like beating the second airwizard.
 + world difficulty is saved for each world
 
+
 Minicraft+ version 1.9.1
 
 = Armor now functions as a damage buffer rather than extra hearts; you take damage after only a certain number of damage points accumulate.
@@ -38,6 +42,7 @@ Minicraft+ version 1.9.1
 + Added version number to save file
 + Hunger bar now decreases in a better way (in my opinion)
 # fixed all the bugs I could find!
+
 
 Minicraft+ version 1.9
 

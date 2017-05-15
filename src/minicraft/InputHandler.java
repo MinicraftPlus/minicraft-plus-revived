@@ -83,6 +83,9 @@ public class InputHandler implements MouseListener, KeyListener {
 		keymap.put("LEFT", "LEFT|A"); //move left action references left arrow key
 		keymap.put("RIGHT", "RIGHT|D"); //move right action references right arrow key
 		
+		keymap.put("SELECT", "ENTER|C");
+		keymap.put("EXIT", "ESCAPE|X");
+		
 		keymap.put("ATTACK", "C|SPACE"); //attack action references "C" key
 		keymap.put("MENU", "X|ENTER"); //and so on... menu does various things.
 		keymap.put("CRAFT", "Z"); // open/close personal crafting window.

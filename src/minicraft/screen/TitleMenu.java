@@ -121,6 +121,7 @@ private static final String[] options = {"New game", "Instructions", "Tutorial",
 		"Beds ftw!",
 		"Conquer the Dungeon!",
 		"Defeat the Air Wizard!",
+		//"Defeat the Air Wizard...again?",
 		"Loom + Wool = String!",
 		"String + Wood = Rod!",
 		"Sand + Gunpowder = TNT!",
@@ -260,7 +261,7 @@ private static final String[] options = {"New game", "Instructions", "Tutorial",
 			if (count == 0) reverse = false;
 		}
 		
-		if (input.getKey("enter").clicked) {
+		if (input.getKey("select").clicked) {
 			if (options[selected] == "New game") {
 				WorldSelectMenu.loadworld = false;
 				game.setMenu(new WorldSelectMenu());
@@ -323,7 +324,8 @@ private static final String[] options = {"New game", "Instructions", "Tutorial",
 		
 		Font.draw("Version " + Game.VERSION, screen, 1, 1, Color.get(0, 111));
 		
-		Font.drawCentered("(Arrow keys to move)", screen, screen.h - 25, Color.get(0, 111));
-		Font.drawCentered("(Enter to accept, Escape to return)", screen, screen.h - 15, Color.get(0, 111));
+		Font.drawCentered("("+input.getMapping("up").replace("|", "/")+", "+input.getMapping("down").replace("|", "/")+" to select)", screen, screen.h - 32, Color.get(0, 111));
+		Font.drawCentered("("+input.getMapping("select").replace("|", "/")+" to accept)", screen, screen.h - 22, Color.get(0, 111));
+		Font.drawCentered("("+input.getMapping("exit").replace("|", "/")+" to return)", screen, screen.h - 12, Color.get(0, 111));
 	}
 }
