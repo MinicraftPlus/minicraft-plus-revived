@@ -2,29 +2,32 @@ package minicraft.entity;
 
 import minicraft.Game;
 import minicraft.gfx.Screen;
+import minicraft.gfx.Sprite;
 import minicraft.item.FurnitureItem;
 import minicraft.item.PowerGloveItem;
 
 /** Many furniture classes are very similar; they might not even need to be there at all... */
 
 public class Furniture extends Entity {
+	
 	protected int pushTime = 0; // time for each push.
 	protected int pushDir = -1; // the direction to push the furniture
-	public int sprite;
+	public Sprite sprite;
 	public String name;
 	protected Player shouldTake; // the player that should take the furniture
 	
-	public Furniture(String name, int color, int sprite) { this(name, color, sprite, 3, 3); }
-	public Furniture(String name, int color, int sprite, int xr, int yr) {
+	public Furniture(String name, Sprite sprite) { this(name, sprite, 3, 3); }
+	public Furniture(String name, Sprite sprite, int xr, int yr) {
+		// all of these are 2x2 on the spritesheet; radius is for collisions only.
 		super(xr, yr);
 		this.name = name;
 		this.sprite = sprite;
-		col = color;
+		col = sprite.color;
 		//xr = 3; // x radius of the furniture
 		//yr = 3; // y radius of the furniture
 	}
 	
-	public Furniture copy() {
+	public Furniture clone() {
 		try {
 			return getClass().newInstance();//new Furniture(name, color, sprite, xr, yr);
 		} catch(Exception ex) {
@@ -53,6 +56,7 @@ public class Furniture extends Entity {
 	
 	/** Draws the furniture on the screen. */
 	public void render(Screen screen) {
+		sprite.render(screen, x-8, y-8);
 		// renders each corner, which different lighting depending on the time of day.
 		/*col = col4;
 		if (Game.time == 0) col = col0;
@@ -60,10 +64,11 @@ public class Furniture extends Entity {
 		if (Game.time == 2) col = col2;
 		if (Game.time == 3) col = col3;
 		*/
-		screen.render(x - 8, y - 8 - 4, sprite * 2 + 8 * 32, col, 0);
+		/*screen.render(x - 8, y - 8 - 4, sprite * 2 + 8 * 32, col, 0);
 		screen.render(x - 0, y - 8 - 4, sprite * 2 + 8 * 32 + 1, col, 0);
 		screen.render(x - 8, y - 0 - 4, sprite * 2 + 8 * 32 + 32, col, 0);
 		screen.render(x - 0, y - 0 - 4, sprite * 2 + 8 * 32 + 33, col, 0);
+		*/
 	}
 	
 	/** Determines if this entity can block others */

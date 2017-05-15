@@ -4,7 +4,7 @@ import minicraft.Game;
 import minicraft.gfx.Color;
 import minicraft.gfx.MobSprite;
 import minicraft.gfx.Screen;
-import minicraft.item.resource.Resource;
+import minicraft.item.Items;
 import minicraft.screen.OptionsMenu;
 
 public class Knight extends EnemyMob {
@@ -69,9 +69,9 @@ public class Knight extends EnemyMob {
 	}*/
 
 	protected void die() {
-		if (OptionsMenu.diff == OptionsMenu.easy) dropResource(1, 3, Resource.shard);
-		if (OptionsMenu.diff == OptionsMenu.norm) dropResource(0, 2, Resource.shard);
-		if (OptionsMenu.diff == OptionsMenu.hard) dropResource(0, 2, Resource.shard);
+		if (OptionsMenu.diff == OptionsMenu.easy) dropItem(1, 3, Items.get("shard"));
+		if (OptionsMenu.diff == OptionsMenu.norm) dropItem(0, 2, Items.get("shard"));
+		if (OptionsMenu.diff == OptionsMenu.hard) dropItem(0, 2, Items.get("shard"));
 		
 		super.die();
 	}

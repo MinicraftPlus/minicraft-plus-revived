@@ -52,9 +52,11 @@ public class BookMenu extends Menu {
 	public String[][] lines;
 	public int page;
 	
-	public BookMenu() {this(defaultBook);}
 	public BookMenu(String book) {
 		page = 0;
+		if(book == null)
+			book = defaultBook;
+		
 		ArrayList<String[]> pages = new ArrayList<String[]>();
 		String[] splitContents = book.split("\0");
 		for(String content: splitContents) {
@@ -70,7 +72,7 @@ public class BookMenu extends Menu {
 	
 	public void tick() {
 		if (input.getKey("menu").clicked || input.getKey("escape").clicked)
-			game.setMenu(null); // this is what closes the book
+			game.setMenu(null); // this is what closes the book; TODO if books were editable, I would probably remake the book here with the edited pages.
 		if (input.getKey("left").clicked && page > 0) page--; // this is what turns the page back
 		if (input.getKey("right").clicked && page < lines.length-1) page++; // this is what turns the page forward
 	}

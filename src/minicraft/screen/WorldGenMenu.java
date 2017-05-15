@@ -51,9 +51,9 @@ public class WorldGenMenu extends SelectMenu {
 		
 		super.render(screen);
 		
-		Font.drawCentered("World options", screen, 3 * 8, Color.get(0, 555, 555, 555));
-		Font.drawCentered("Arrow keys to scroll", screen, 16 * 8, Color.get(-1, 555, 555, 555));
-		Font.drawCentered("Press Esc to exit", screen, 18 * 8, Color.get(-1, 555, 555, 555));
+		Font.drawCentered("World options", screen, 3 * 8, Color.get(0, 555));
+		Font.drawCentered("Arrow keys to scroll", screen, 16 * 8, Color.get(-1, 555));
+		Font.drawCentered("Press Esc to exit", screen, 18 * 8, Color.get(-1, 555));
 	}
 	
 	private static int getIdx(String query) {

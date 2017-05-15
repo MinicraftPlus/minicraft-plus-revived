@@ -3,8 +3,9 @@ package minicraft.entity;
 import minicraft.gfx.Color;
 import minicraft.gfx.MobSprite;
 import minicraft.gfx.Screen;
-import minicraft.item.ResourceItem;
-import minicraft.item.resource.Resource;
+import minicraft.item.StackableItem;
+import minicraft.item.Item;
+import minicraft.item.Items;
 import minicraft.level.Level;
 
 public abstract class MobAi extends Mob {
@@ -64,10 +65,10 @@ public abstract class MobAi extends Mob {
 		ya = (random.nextInt(3) - 1);
 	}
 	
-	protected void dropResource(int mincount, int maxcount, Resource... resources) {
+	protected void dropItem(int mincount, int maxcount, Item... items) {
 		int count = random.nextInt(maxcount-mincount+1) + mincount;
 		for (int i = 0; i < count; i++)
-			level.dropResource(x, y, resources);
+			level.dropItem(x, y, items);
 	}
 	
 	/** Tries once to find an appropriate spawn location for friendly mobs. */

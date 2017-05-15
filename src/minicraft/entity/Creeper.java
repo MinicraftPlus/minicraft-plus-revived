@@ -4,7 +4,7 @@ import minicraft.Game;
 import minicraft.gfx.Color;
 import minicraft.gfx.MobSprite;
 import minicraft.gfx.Screen;
-import minicraft.item.resource.Resource;
+import minicraft.item.Items;
 import minicraft.level.tile.Tile;
 import minicraft.screen.OptionsMenu;
 import minicraft.sound.Sound;
@@ -140,7 +140,7 @@ public class Creeper extends EnemyMob {
 	}
 	
 	protected void die() {
-		dropResource(1, 4-OptionsMenu.diff, Resource.gunp);
+		dropItem(1, 4-OptionsMenu.diff, Items.get("Gunpowder"));
 		super.die();
 	}
 }

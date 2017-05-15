@@ -5,7 +5,7 @@ import java.applet.AudioClip;
 import minicraft.screen.OptionsMenu;
 
 public class Sound {
-	//creates sounds from theri respective files
+	//creates sounds from their respective files
 	public static final Sound playerHurt = new Sound("/playerhurt.wav");
 	public static final Sound playerDeath = new Sound("/death.wav");
 	public static final Sound monsterHurt = new Sound("/monsterhurt.wav");

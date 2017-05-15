@@ -4,25 +4,26 @@ import java.util.HashMap;
 import java.util.List;
 import minicraft.Game;
 import minicraft.InputHandler;
-import minicraft.crafting.Crafting;
+import minicraft.item.Recipes;
 import minicraft.entity.particle.TextParticle;
 import minicraft.gfx.Color;
 import minicraft.gfx.MobSprite;
 import minicraft.gfx.Screen;
 import minicraft.item.FurnitureItem;
 import minicraft.item.Item;
-import minicraft.item.ListItems;
+import minicraft.item.Items;
 import minicraft.item.PowerGloveItem;
-import minicraft.item.ResourceItem;
+import minicraft.item.StackableItem;
 import minicraft.item.ToolItem;
 import minicraft.item.ToolType;
-import minicraft.item.resource.ArmorResource;
-import minicraft.item.resource.PotionResource;
-import minicraft.item.resource.Resource;
+import minicraft.item.ArmorItem;
+import minicraft.item.PotionItem;
+import minicraft.item.PotionType;
+import minicraft.item.Items;
 import minicraft.level.Level;
 import minicraft.level.tile.Tile;
 import minicraft.saveload.Save;
-import minicraft.screen.CraftInvMenu;
+import minicraft.screen.CraftingMenu;
 import minicraft.screen.LoadingMenu;
 import minicraft.screen.ModeMenu;
 import minicraft.screen.OptionsMenu;
@@ -59,7 +60,7 @@ public class Player extends Mob {
 	
 	public int hunger, stamina, armor; // the current stats
 	public int armorDamageBuffer;
-	public ArmorResource curArmor; // the color of the armor to be displayed.
+	public ArmorItem curArmor; // the color of the armor to be displayed.
 	
 	public int staminaRecharge; // the ticks before charging a bolt of the player's stamina
 	private static int maxStaminaRecharge = 10; // cutoff value for staminaRecharge
@@ -73,14 +74,14 @@ public class Player extends Mob {
 	
 	public boolean showinfo;
 	
-	public HashMap<String, Integer> potioneffects; // the potion effects currently applied to the player
+	public HashMap<PotionType, Integer> potioneffects; // the potion effects currently applied to the player
 	public boolean showpotioneffects; // whether to display the current potion effects on screen
 	int cooldowninfo; // prevents you from toggling the info pane on and off super fast.
 	int regentick; // counts time between each time the regen potion effect heals you.
 	
 	int acs = 25; // default ("start") arrow count
 	public int ac; // arrow count
-	public int r = 50, g = 50, b; // player shirt color.
+	public int shirtColor = 110; // player shirt color.
 	
 	// Note: the player's health & max health are inherited from Mob.java
 	
@@ -94,15 +95,13 @@ public class Player extends Mob {
 		
 		ac = acs;
 		
-		potioneffects = new HashMap<String, Integer>();
+		potioneffects = new HashMap<PotionType, Integer>();
 		showpotioneffects = true;
 		
 		showinfo = false;
 		cooldowninfo = 0;
 		regentick = 0;
-		r = 50;
-		g = 50;
-		b = 0;
+		shirtColor = 110;
 		
 		armor = 0;
 		curArmor = null;
@@ -114,13 +113,11 @@ public class Player extends Mob {
 		stamHungerTicks = maxHungerTicks;
 		
 		if (ModeMenu.creative) {
-			for (int i = 0; i < ListItems.items.size(); i++) {
-				inventory.add((Item) ListItems.items.get(i));
-			}
+			Items.fillCreativeInv(inventory);
 		} else {
-			inventory.add(new FurnitureItem(new Enchanter()));
-			inventory.add(new FurnitureItem(new Workbench()));
-			inventory.add(new PowerGloveItem());
+			inventory.add(Items.get("Enchanter"));
+			inventory.add(Items.get("Workbench"));
+			inventory.add(Items.get("Power Glove"));
 		}
 	}
 	
@@ -128,9 +125,9 @@ public class Player extends Mob {
 		super.tick(); // ticks Mob.java
 		
 		if(potioneffects.size() > 0 && !Bed.inBed) {
-			for(String potionType: potioneffects.keySet().toArray(new String[0])) {
+			for(PotionType potionType: potioneffects.keySet().toArray(new PotionType[0])) {
 				if(potioneffects.get(potionType) <= 1) // if time is zero (going to be set to 0 in a moment)...
-					PotionResource.applyPotion(this, potionType, false); // automatically removes this potion effect.
+					PotionItem.applyPotion(this, potionType, false); // automatically removes this potion effect.
 				else potioneffects.put(potionType, potioneffects.get(potionType) - 1); // otherwise, replace it with one less.
 			}
 		}
@@ -290,7 +287,7 @@ public class Player extends Mob {
 			game.setMenu(new PlayerInvMenu(this));
 		if (input.getKey("pause").clicked) game.setMenu(new PauseMenu(this));
 		if (input.getKey("craft").clicked && !use())
-			game.setMenu(new CraftInvMenu(Crafting.craftRecipes, this));
+			game.setMenu(new CraftingMenu(Recipes.craftRecipes, this));
 		if (input.getKey("sethome").clicked) setHome();
 		if (input.getKey("home").clicked) goHome();
 		
@@ -303,8 +300,8 @@ public class Player extends Mob {
 		}
 		//debug feature:
 		if (Game.debug && input.getKey("shift-p").clicked) { // remove all potion effects
-			for(String potionType: potioneffects.keySet().toArray(new String[0])) {
-				PotionResource.applyPotion(this, potionType, false);
+			for(PotionType potionType: potioneffects.keySet().toArray(new PotionType[0])) {
+				PotionItem.applyPotion(this, potionType, false);
 			}
 		}
 		
@@ -397,7 +394,7 @@ public class Player extends Mob {
 					}
 				}
 				if (activeItem.isDepleted()) {
-					// if the activeItem has 0 resources left, then "destroy" it.
+					// if the activeItem has 0 items left, then "destroy" it.
 					activeItem = null;
 				}
 			}
@@ -434,9 +431,9 @@ public class Player extends Mob {
 	public void goFishing(int x, int y) {
 		int fcatch = random.nextInt(90);
 		
-		if (fcatch < 10) level.dropResource(x, y, Resource.rawfish);
-		else if (fcatch < 15) level.dropResource(x, y, Resource.slime);
-		else if (fcatch == 15) level.dropResource(x, y, Resource.larmor);
+		if (fcatch < 10) level.dropItem(x, y, Items.get("raw fish"));
+		else if (fcatch < 15) level.dropItem(x, y, Items.get("slime"));
+		else if (fcatch == 15) level.dropItem(x, y, Items.get("l.armor"));
 		else if (fcatch == 42 && random.nextInt(10) == 0) System.out.println("FISHNORRIS got away... just kidding, FISHNORRIS doesn't get away from you, you get away from FISHNORRIS...");
 	}
 	
@@ -472,15 +469,15 @@ public class Player extends Mob {
 	/** Gets the attack damage the player will deal. */
 	private int getAttackDamage(Entity e) {
 		int dmg = random.nextInt(3) + 1;
-		if (attackItem != null) {
-			dmg += attackItem.getAttackDamageBonus(e); // sword/axe are more effective at dealing damage.
+		if (attackItem != null && attackItem instanceof ToolItem) {
+			dmg += ((ToolItem)attackItem).getAttackDamageBonus(e); // sword/axe are more effective at dealing damage.
 		}
 		return dmg;
 	}
 	
 	/** Draws the player on the screen */
 	public void render(Screen screen) {
-		col = Color.get(-1, 100, Color.rgb(r, g, b), 532);
+		col = Color.get(-1, 100, shirtColor, 532);
 		
 		MobSprite[][] spriteSet; // the default, walking sprites.
 		
@@ -513,7 +510,7 @@ public class Player extends Mob {
 			screen.render(xo + 0, yo - 4, 6 + 13 * 32, Color.get(-1, 555), 0); //render left half-slash
 			screen.render(xo + 8, yo - 4, 6 + 13 * 32, Color.get(-1, 555), 1); //render right half-slash (mirror of left).
 			if (attackItem != null) { // if the player has an item
-				attackItem.renderIcon(screen, xo + 4, yo - 4); // then render the icon of the item.
+				attackItem.sprite.render(screen, xo + 4, yo - 4); // then render the icon of the item.
 			}
 		}
 		
@@ -536,21 +533,21 @@ public class Player extends Mob {
 			screen.render(xo - 4, yo, 7 + 13 * 32, Color.get(-1, 555), 1);
 			screen.render(xo - 4, yo + 8, 7 + 13 * 32, Color.get(-1, 555), 3);
 			if (attackItem != null) {
-				attackItem.renderIcon(screen, xo - 4, yo + 4);
+				attackItem.sprite.render(screen, xo - 4, yo + 4);
 			}
 		}
 		if (attackTime > 0 && attackDir == 3) { // attacking to the right
 			screen.render(xo + 8 + 4, yo, 7 + 13 * 32, Color.get(-1, 555), 0);
 			screen.render(xo + 8 + 4, yo + 8, 7 + 13 * 32, Color.get(-1, 555), 2);
 			if (attackItem != null) {
-				attackItem.renderIcon(screen, xo + 8 + 4, yo + 4);
+				attackItem.sprite.render(screen, xo + 8 + 4, yo + 4);
 			}
 		}
 		if (attackTime > 0 && attackDir == 0) { // attacking downwards
 			screen.render(xo + 0, yo + 8 + 4, 6 + 13 * 32, Color.get(-1, 555), 2);
 			screen.render(xo + 8, yo + 8 + 4, 6 + 13 * 32, Color.get(-1, 555), 3);
 			if (attackItem != null) {
-				attackItem.renderIcon(screen, xo + 4, yo + 8 + 4);
+				attackItem.sprite.render(screen, xo + 4, yo + 8 + 4);
 			}
 		}
 		
@@ -558,7 +555,7 @@ public class Player extends Mob {
 		if (activeItem instanceof FurnitureItem) {
 			Furniture furniture = ((FurnitureItem) activeItem).furniture;
 			furniture.x = x;
-			furniture.y = yo;
+			furniture.y = yo-4;
 			furniture.render(screen);
 		}
 	}
@@ -568,11 +565,11 @@ public class Player extends Mob {
 		itemEntity.take(this); // calls the take() method in ItemEntity
 		if(ModeMenu.creative) return; // we shall not bother the inventory on creative mode.
 		
-		if (itemEntity.item.getName() == "arrow") {
+		if (itemEntity.item.matches(Items.get("arrow"))) {
 			ac++; // if it's an arrow, then just add to arrow count, not inventory.
-		} else if(activeItem != null && activeItem.getName() == itemEntity.item.getName() && activeItem instanceof ResourceItem && itemEntity.item instanceof ResourceItem) {
+		} else if(activeItem != null && activeItem.name == itemEntity.item.name && activeItem instanceof StackableItem && itemEntity.item instanceof StackableItem) {
 			// picked up item matches the one in your hand
-			((ResourceItem)activeItem).count += ((ResourceItem)itemEntity.item).count;
+			((StackableItem)activeItem).count += ((StackableItem)itemEntity.item).count;
 		} else {
 			inventory.add(itemEntity.item); // add item to inventory
 		}
@@ -702,11 +699,11 @@ public class Player extends Mob {
 			dc.inventory.add(activeItem);
 		}
 		if(curArmor != null) {
-			ResourceItem armorItem = new ResourceItem(curArmor);
-			armorItem.amount = armor;
-			dc.inventory.add(armorItem);
+			//ArmorItem armorItem = new ArmorItem(curArmor);
+			//armorItem.amount = armor;
+			dc.inventory.add(curArmor);
 		}
-		dc.inventory.removeItem(new PowerGloveItem());
+		dc.inventory.removeItem(Items.get("Power Glove"));
 		
 		Game.levels[Game.currentLevel].add(dc);
 
@@ -742,7 +739,7 @@ public class Player extends Mob {
 		
 		// adds a text particle telling how much damage was done to the player, and the armor.
 		if(armorDam > 0) {
-			level.add(new TextParticle("" + damage, x, y, Color.get(-1, 333, 333, 333)));
+			level.add(new TextParticle("" + damage, x, y, Color.get(-1, 333)));
 			armor -= armorDam;
 			if(armor <= 0) {
 				healthDam -= armor; // adds armor damage overflow to health damage (minus b/c armor would be negative)
@@ -752,7 +749,7 @@ public class Player extends Mob {
 			}
 		}
 		if(healthDam > 0) {
-			level.add(new TextParticle("" + damage, x, y, Color.get(-1, 504, 504, 504)));
+			level.add(new TextParticle("" + damage, x, y, Color.get(-1, 504)));
 			health -= healthDam;
 		}
 		

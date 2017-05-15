@@ -47,12 +47,12 @@ public class DeadMenu extends Menu {
 			timeString = minutes + "m " + (seconds < 10 ? "0" : "") + seconds + "s"; // If under an hour has passed, then it will show minutes and seconds.
 		}
 
-		Font.draw("Time:", screen, 2 * 8, 5 * 8, Color.get(-1, 555, 555, 555));
-		Font.draw(timeString, screen, (2 + 5) * 8, 5 * 8, Color.get(-1, 550, 550, 550));
-		Font.draw("Score:", screen, 2 * 8, 6 * 8, Color.get(-1, 555, 555, 555));
-		Font.draw("" + game.player.score, screen, (2 + 6) * 8, 6 * 8, Color.get(-1, 550, 550, 550));
-		Font.draw("Escape = lose", screen, 2 * 8, 8 * 8, Color.get(-1, 333, 333, 333));
+		Font.draw("Time:", screen, 2 * 8, 5 * 8, Color.get(-1, 555));
+		Font.draw(timeString, screen, (2 + 5) * 8, 5 * 8, Color.get(-1, 550));
+		Font.draw("Score:", screen, 2 * 8, 6 * 8, Color.get(-1, 555));
+		Font.draw("" + game.player.score, screen, (2 + 6) * 8, 6 * 8, Color.get(-1, 550));
+		Font.draw("Escape = lose", screen, 2 * 8, 8 * 8, Color.get(-1, 333));
 		if (ModeMenu.hardcore == false) //respawn only if not on hardcore mode
-			Font.draw("Enter = respawn", screen, 2 * 8, 9 * 8, Color.get(-1, 333, 333, 333));
+			Font.draw("Enter = respawn", screen, 2 * 8, 9 * 8, Color.get(-1, 333));
 	}
 }

@@ -137,13 +137,13 @@ public class ModeMenu extends Menu {
 	}
 
 	public void render(Screen screen) {
-		int color = Color.get(0, 300, 300, 300);
-		int black = Color.get(0, 0, 0, 0);
-		int textCol = Color.get(0, 555, 555, 555);
+		int color = Color.get(0, 300);
+		int black = Color.get(0, 0);
+		int textCol = Color.get(0, 555);
 		screen.clear(0);
 		
-		Font.drawCentered("World Name:", screen, screen.h - 180, Color.get(0, 444, 444, 444));
-		Font.drawCentered(WorldSelectMenu.worldname, screen, screen.h - 170, Color.get(-1, 5, 5, 5));
+		Font.drawCentered("World Name:", screen, screen.h - 180, Color.get(0, 444));
+		Font.drawCentered(WorldSelectMenu.worldname, screen, screen.h - 170, Color.get(-1, 5));
 		
 		String modeText = "Game Mode:	" + modes[mode - 1];
 		Font.drawCentered(modeText, screen, 8 * 8, Color.get(-1, 555), Color.get(-1, 111));

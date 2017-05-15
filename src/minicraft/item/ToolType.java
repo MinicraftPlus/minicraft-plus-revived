@@ -7,7 +7,7 @@ public enum ToolType {
 	Pickaxe (3),
 	Axe (4),
 	Bow (5),
-	Rod (6, 15), // if there's a second number, it specifies durability.
+	FishingRod (6, 15), // if there's a second number, it specifies durability.
 	Claymore (7);
 	//Hatchet (10),
 	//Spade (11),

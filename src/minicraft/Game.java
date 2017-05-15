@@ -4,7 +4,7 @@ import java.awt.BorderLayout;
 import java.awt.Canvas;
 import java.awt.Dimension;
 import java.awt.Graphics;
-import java.awt.event.*;
+import java.awt.event.*; // TODO these .*'s are unnecessary.
 import java.awt.image.BufferStrategy;
 import java.awt.image.BufferedImage;
 import java.awt.image.DataBufferInt;
@@ -23,12 +23,13 @@ import minicraft.gfx.Font;
 import minicraft.gfx.Screen;
 import minicraft.gfx.SpriteSheet;
 import minicraft.item.FurnitureItem;
-import minicraft.item.ListItems;
-import minicraft.item.ResourceItem;
+import minicraft.item.Items;
+import minicraft.item.StackableItem;
 import minicraft.item.ToolItem;
 import minicraft.item.ToolType;
-import minicraft.item.resource.PotionResource;
-import minicraft.item.resource.Resource;
+import minicraft.item.PotionItem;
+import minicraft.item.PotionType;
+import minicraft.item.Items;
 import minicraft.level.Level;
 import minicraft.level.tile.Tile;
 import minicraft.saveload.Load;
@@ -245,7 +246,7 @@ public class Game extends Canvas implements Runnable {
 		-removes bed
 		-checks for diff, set if not already
 		-resets time of day to morning (via setTime())
-		-re-instantiates ListItems' item list
+		-re-instantiates Items' item list
 		-resets level array
 		-**goes through whole level load process
 		-resets player score
@@ -268,8 +269,8 @@ public class Game extends Canvas implements Runnable {
 		changeTimeOfDay(Time.Morning); // resets tickCount; game starts in the day, so that it's nice and bright.
 		hasWon = false;
 
-		ListItems.items.clear(); //remove all the old item objects
-		new ListItems(); //make a fresh set
+		//Items.items.clear(); //remove all the old item objects
+		//new Items(); //make a fresh set
 		player = new Player(this, input); //very important that this is AFTER the previous 2 statements.
 
 		levels = new Level[6];
@@ -310,9 +311,7 @@ public class Game extends Canvas implements Runnable {
 			}
 			
 			// if resetStartGame is called when not loading a world, add an Iron lantern to level 5, at (984, 984).
-			
-			FurnitureItem f1 = new FurnitureItem(new Lantern(Lantern.Type.IRON));
-			Furniture f = f1.furniture;
+			Furniture f = new Lantern(Lantern.Type.IRON);//Items.get("Iron Lantern").furniture;
 			f.x = 984;
 			f.y = 984;
 			levels[5].add(f);
@@ -335,7 +334,7 @@ public class Game extends Canvas implements Runnable {
 		DeadMenu.shouldRespawn = true;
 		
 		if(WorldGenMenu.get("Theme").equals("Hell")) {
-			player.inventory.add(new ResourceItem(Resource.lavapotion));
+			player.inventory.add(Items.get("lava potion"));
 		}
 		
 		readyToRenderGameplay = true;
@@ -455,11 +454,10 @@ public class Game extends Canvas implements Runnable {
 					if (input.getKey("3").clicked) changeTimeOfDay(Time.Evening);
 					if (input.getKey("4").clicked) changeTimeOfDay(Time.Night);
 					
-					if (input.getKey("shift-g").clicked) {
-						for (int i = 0; i < ListItems.items.size(); i++) {
-							player.inventory.add((minicraft.item.Item) ListItems.items.get(i));
-						}
-					}
+					// this should not be needed, since the inventory should not be altered.
+					/*if (input.getKey("shift-g").clicked) {
+						Items.fillCreativeInv(player.inventory);
+					}*/
 					
 					if(input.getKey("ctrl-h").clicked) player.health--;
 					
@@ -575,7 +573,7 @@ public class Game extends Canvas implements Runnable {
 			
 			// this creates the darkness in the caves
 			//if (!ModeMenu.creative && currentLevel < 4 && (currentLevel < 3 || time > 1)) {
-			if (currentLevel != 5 && (!ModeMenu.creative || currentLevel >= 3)) {
+			if (currentLevel != 5 && (currentLevel != 3 || tickCount < dayLength/4 || tickCount > dayLength/2) && (!ModeMenu.creative || currentLevel >= 3)) {
 				//if (currentLevel < 3) */lightScreen.clear(0); // clears the light screen to a black color
 				//else lightScreen.clear(255);
 				lightScreen.clear(0); // this doesn't mean that the pixel will be black; it means that the pixel will be DARK, by default; lightScreen is about light vs. dark, not necessarily a color. just how the light level it has, which is compared with the minimum light values in dither to decide whether to leave the cell alone, or mark it as "dark", which will do different things depending on the game level and time of day.
@@ -610,7 +608,7 @@ public class Game extends Canvas implements Runnable {
 		int xo = (getWidth() - ww) / 2 + getParent().getInsets().left;
 		int yo = (getHeight() - hh) / 2 + getParent().getInsets().top;
 		g.drawImage(image, xo, yo, ww, hh, null); //draws the image on the window
-		g.dispose(); // releases any system resources that are using this method. (so we don't have crappy framerates)
+		g.dispose(); // releases any system items that are using this method. (so we don't have crappy framerates)
 		bs.show(); // makes the picture visible. (probably)
 	}
 	
@@ -623,7 +621,7 @@ public class Game extends Canvas implements Runnable {
 			}
 		}
 		for (int x = 12; x < 29; x++) {
-			screen.render(x * 7, screen.h - 16 + 1 * 8, 32, Color.get(0, 0, 0, 0), 0);
+			screen.render(x * 7, screen.h - 16 + 1 * 8, 32, Color.get(0, 0), 0);
 		}
 		
 		// player.xx and yy stores previous player position.
@@ -666,7 +664,7 @@ public class Game extends Canvas implements Runnable {
 		if (ModeMenu.creative || player.ac >= 10000)
 			Font.draw("	x" + "^", screen, 84, screen.h - 16, Color.get(0, 333, 444, 555));
 		else
-			Font.draw("	x" + player.ac, screen, 84, screen.h - 16, Color.get(0, 555, 555, 555));
+			Font.draw("	x" + player.ac, screen, 84, screen.h - 16, Color.get(0, 555));
 		//displays arrow icon
 		screen.render(10 * 8 + 4, screen.h - 16, 13 + 5 * 32, Color.get(0, 111, 222, 430), 0);
 		
@@ -709,14 +707,14 @@ public class Game extends Canvas implements Runnable {
 			seconds %= 60;
 			
 			int timeCol;
-			if(scoreTime >= 18000) timeCol = Color.get(0, 555, 555, 555);
-			else if (scoreTime >= 3600) timeCol = Color.get(330, 555, 555, 555);
-			else timeCol = Color.get(400, 555, 555, 555);
+			if(scoreTime >= 18000) timeCol = Color.get(0, 555);
+			else if (scoreTime >= 3600) timeCol = Color.get(330, 555);
+			else timeCol = Color.get(400, 555);
 			
 			Font.draw("Time left " + (hours > 0 ? hours+"h ":"") + minutes + "m " + seconds + "s", screen, 84, screen.h - 190, timeCol);
 			
 			if(multiplier > 1) {
-				int multColor = multiplier < 50 ? Color.get(-1, 540, 540, 540) : Color.get(-1, 500, 500, 500);
+				int multColor = multiplier < 50 ? Color.get(-1, 540) : Color.get(-1, 500);
 				Font.draw("X" + multiplier, screen, 260, screen.h - 190, multColor);
 			}
 		}
@@ -725,18 +723,18 @@ public class Game extends Canvas implements Runnable {
 		if (player.activeItem instanceof ToolItem && ((ToolItem)player.activeItem).type == ToolType.FishingRod) {
 			int dura = ((ToolItem)player.activeItem).dur * 100 / ((ToolItem)player.activeItem).type.durability;
 			//if (dura > 100) dura = 100;
-			Font.draw(dura + "%", screen, 164, screen.h - 16, Color.get(0, 30, 30, 30));
+			Font.draw(dura + "%", screen, 164, screen.h - 16, Color.get(0, 30));
 		}
 		
 		/// This renders the potions overlay
 		if(player.showpotioneffects && player.potioneffects.size() > 0) {
-			Map.Entry<String, Integer>[] effects = player.potioneffects.entrySet().toArray(new Map.Entry[0]);
+			Map.Entry<PotionType, Integer>[] effects = player.potioneffects.entrySet().toArray(new Map.Entry[0]);
 				// the key is potion type, value is remaining potion duration.
 			for(int i = 0; i < effects.length; i++) {
-				String pType = effects[i].getKey();
+				PotionType pType = effects[i].getKey();
 				int pTime = effects[i].getValue() / normSpeed;
-				int pcol = Color.get(PotionResource.potionColor(pType), 555, 555, 555);
-				Font.draw("("+input.getMapping("potionEffects")+" to hide!)", screen, 180, 9, Color.get(0, 555, 555, 555));
+				int pcol = Color.get(pType.dispColor, 555);
+				Font.draw("("+input.getMapping("potionEffects")+" to hide!)", screen, 180, 9, Color.get(0, 555));
 				Font.draw(pType + " (" + (pTime / 60) + ":" + (pTime % 60) + ")", screen, 180, 17 + i * 8, pcol);
 			}
 		}
@@ -757,8 +755,8 @@ public class Game extends Canvas implements Runnable {
 				
 				// renders armor
 				int armor = player.armor*10/player.maxArmor;
-				color = (i <= armor && player.curArmor != null) ? player.curArmor.color : Color.get(-1, -1, -1, -1);
-				screen.render(i * 8 + 208, screen.h - 8, 3 + 12 * 32, color, 0);
+				color = (i <= armor && player.curArmor != null) ? player.curArmor.sprite.color : Color.get(-1, -1, -1, -1);
+				screen.render(i * 8 + 208, screen.h - 8, 3 + 12 * 32, color, 0); // TODO make armoritem do the rendering?
 				
 				if (player.staminaRechargeDelay > 0) {
 					// creates the white/gray blinking effect when you run out of stamina.
@@ -805,9 +803,9 @@ public class Game extends Canvas implements Runnable {
 		
 		//renders the focus nagger text with a flash effect...
 		if ((tickCount / 20) % 2 == 0) // ...medium yellow color
-			Font.draw(msg, screen, xx, yy, Color.get(5, 333, 333, 333));
+			Font.draw(msg, screen, xx, yy, Color.get(5, 333));
 		else // ...bright yellow color
-			Font.draw(msg, screen, xx, yy, Color.get(5, 555, 555, 555));
+			Font.draw(msg, screen, xx, yy, Color.get(5, 555));
 	}
 	
 	/** This method is called when you interact with stairs, this will give you the transition effect. While changeLevel(int) just changes the level. */

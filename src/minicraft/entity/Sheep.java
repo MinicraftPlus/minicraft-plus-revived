@@ -4,7 +4,7 @@ import minicraft.Game;
 import minicraft.gfx.Color;
 import minicraft.gfx.MobSprite;
 import minicraft.gfx.Screen;
-import minicraft.item.resource.Resource;
+import minicraft.item.Items;
 import minicraft.screen.OptionsMenu;
 
 public class Sheep extends PassiveMob {
@@ -52,7 +52,7 @@ public class Sheep extends PassiveMob {
 		if (OptionsMenu.diff == OptionsMenu.norm) {min = 1; max = 2;}
 		if (OptionsMenu.diff == OptionsMenu.hard) {min = 0; max = 2;}
 		
-		dropResource(min, max, Resource.wool);
+		dropItem(min, max, Items.get("wool"));
 		
 		super.die();
 	}

@@ -5,10 +5,10 @@ import minicraft.Game;
 import minicraft.entity.particle.SmashParticle;
 import minicraft.entity.particle.TextParticle;
 import minicraft.gfx.Color;
-import minicraft.item.ResourceItem;
+import minicraft.item.StackableItem;
 import minicraft.item.ToolItem;
 import minicraft.item.ToolType;
-import minicraft.item.resource.Resource;
+import minicraft.item.Items;
 import minicraft.screen.ModeMenu;
 
 public class DungeonChest extends Chest {
@@ -35,15 +35,15 @@ public class DungeonChest extends Chest {
 	
 	public boolean use(Player player, int attackDir) {
 		if (isLocked) {
-			boolean activeKey = player.activeItem != null && player.activeItem.getName().equals("Key");
-			boolean invKey = player.inventory.hasResources(Resource.key, 1);
+			boolean activeKey = player.activeItem != null && player.activeItem.matches(Items.get("Key"));
+			boolean invKey = player.inventory.count(Items.get("key")) > 0;
 			if(activeKey || invKey) { // if the player has a key...
 				if (!ModeMenu.creative) { // remove the key unless on creative mode.
 					if (activeKey) { // remove activeItem
-						ResourceItem key = (ResourceItem)player.activeItem;
+						StackableItem key = (StackableItem)player.activeItem;
 						key.count--;
 					} else { // remove from inv
-						player.inventory.removeResource(Resource.key, 1);
+						player.inventory.removeItem(Items.get("key"));
 					}
 				}
 				
@@ -51,12 +51,13 @@ public class DungeonChest extends Chest {
 				col = openCol; // set to the unlocked color
 				
 				level.add(new SmashParticle(x * 16 + 8, y * 16 + 8));
-				level.add(new TextParticle("-1 key", x, y, Color.get(-1, 500, 500, 500)));
+				level.add(new TextParticle("-1 key", x, y, Color.get(-1, 500)));
 				level.chestcount--;
 				if(level.chestcount == 0) { // if this was the last chest...
-					for(int i = 0; i < 5; i++) { // add 5 golden apples to the level
-						level.add(new ItemEntity(new ResourceItem(Resource.goldapple), x, y));
-					}
+					level.dropItem(x, y, 5, Items.get("Gold Apple"));
+					/*for(int i = 0; i < 5; i++) { // add 5 golden apples to the level
+						level.add(new ItemEntity(), x, y);
+					}*/
 					
 					Game.notifications.add("You hear a noise from the surface!"); // notify the player of the developments
 					// add a level 2 airwizard to the middle surface level.
@@ -77,40 +78,40 @@ public class DungeonChest extends Chest {
 	/** Populate the inventory of the DungeonChest, psudo-randomly. */
 	private void populateInv() {
 		inventory.clearInv(); // clear the inventory.
-		Inventory inv = inventory; // Yes, I'm that lazy.
-		inv.tryAdd(5, Resource.steak, 6);
-		inv.tryAdd(5, Resource.cookedpork, 6);
-		inv.tryAdd(4, Resource.wood, 20);
-		inv.tryAdd(4, Resource.wool, 12);
-		inv.tryAdd(2, Resource.coal, 4);
-		inv.tryAdd(5, Resource.gem, 7);
-		inv.tryAdd(5, Resource.gem, 8);
-		inv.tryAdd(8, Resource.gemarmor, 1);
-		inv.tryAdd(6, Resource.garmor, 1);
-		inv.tryAdd(5, Resource.iarmor, 2);
-		inv.tryAdd(3, Resource.potion, 10);
-		inv.tryAdd(4, Resource.speedpotion, 2);
-		inv.tryAdd(6, Resource.speedpotion, 5);
-		inv.tryAdd(3, Resource.lightpotion, 2);
-		inv.tryAdd(4, Resource.lightpotion, 3);
-		inv.tryAdd(7, Resource.regenpotion, 1);
-		inv.tryAdd(7, Resource.energypotion, 1);
-		inv.tryAdd(14, Resource.timepotion, 1);
-		inv.tryAdd(14, Resource.shieldpotion, 1);
-		inv.tryAdd(7, Resource.lavapotion, 1);
-		inv.tryAdd(5, Resource.hastepotion, 3);
+		Inventory inv = inventory; // Yes, I'm that lazy. ;P
+		inv.tryAdd(5, Items.get("steak"), 6);
+		inv.tryAdd(5, Items.get("cooked pork"), 6);
+		inv.tryAdd(4, Items.get("Wood"), 20);
+		inv.tryAdd(4, Items.get("Wool"), 12);
+		inv.tryAdd(2, Items.get("coal"), 4);
+		inv.tryAdd(5, Items.get("gem"), 7);
+		inv.tryAdd(5, Items.get("gem"), 8);
+		inv.tryAdd(8, Items.get("Gem Armor"));
+		inv.tryAdd(6, Items.get("g.armor"));
+		inv.tryAdd(5, Items.get("i.armor"), 2);
+		inv.tryAdd(3, Items.get("potion"), 10);
+		inv.tryAdd(4, Items.get("speed potion"), 2);
+		inv.tryAdd(6, Items.get("speed potion"), 5);
+		inv.tryAdd(3, Items.get("light potion"), 2);
+		inv.tryAdd(4, Items.get("light potion"), 3);
+		inv.tryAdd(7, Items.get("regen potion"));
+		inv.tryAdd(7, Items.get("energy potion"));
+		inv.tryAdd(14, Items.get("time potion"));
+		inv.tryAdd(14, Items.get("shield potion"));
+		inv.tryAdd(7, Items.get("lava potion"));
+		inv.tryAdd(5, Items.get("haste potion"), 3);
 		
-		inv.tryAdd(6, ToolType.Bow, 3);
-		inv.tryAdd(7, ToolType.Bow, 4);
-		inv.tryAdd(4, ToolType.Sword, 3);
-		inv.tryAdd(7, ToolType.Sword, 4);
-		inv.tryAdd(4, ToolType.Claymore, 1);
-		inv.tryAdd(6, ToolType.Claymore, 2);
+		inv.tryAdd(6, Items.get("Gold Bow"));
+		inv.tryAdd(7, Items.get("Gem Bow"));
+		inv.tryAdd(4, Items.get("Gold Sword"));
+		inv.tryAdd(7, Items.get("Gem Sword"));
+		inv.tryAdd(4, Items.get("Rock Claymore"));
+		inv.tryAdd(6, Items.get("Iron Claymore"));
 		
 		if(inventory.invSize() < 1) { // add this if none of the above was added.
-			inventory.add(new ResourceItem(Resource.steak, 6));
-			inventory.add(new ResourceItem(Resource.timepotion, 1));
-			inventory.add(new ToolItem(ToolType.Axe, 4));
+			inventory.add(Items.get("steak"), 6);
+			inventory.add(Items.get("Time Potion"));
+			inventory.add(Items.get("Gem Axe"));
 		}
 	}
 	

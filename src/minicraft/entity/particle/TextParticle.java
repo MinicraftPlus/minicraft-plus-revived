@@ -45,14 +45,14 @@ public class TextParticle extends Particle {
 
 	public void render(Screen screen) {
 		if(!msg.contains("Thanks")) {
-			Font.draw(msg, screen, x - msg.length() * 4 + 1, y - (int)zz + 1, Color.get(-1, 0, 0, 0)); //renders the shadow
+			Font.draw(msg, screen, x - msg.length() * 4 + 1, y - (int)zz + 1, Color.get(-1, 0)); //renders the shadow
 			Font.draw(msg, screen, x - msg.length() * 4, y - (int)zz, color);
 		} else { // special, for "Thanks for Playing!" message?
 			String msg1 = msg.substring(0, 19);
 			String msg2 = msg.substring(19, msg.length());
-			Font.draw(msg1, screen, x - msg.length() * 4 + 1, y - (int)zz - 7, Color.get(-1, 0, 0, 0));
+			Font.draw(msg1, screen, x - msg.length() * 4 + 1, y - (int)zz - 7, Color.get(-1, 0));
 			Font.draw(msg1, screen, x - msg.length() * 4, y - (int)zz - 8, color);
-			Font.draw(msg2, screen, x - msg.length() * 4 + 1, y - (int)zz + 1, Color.get(-1, 0, 0, 0));
+			Font.draw(msg2, screen, x - msg.length() * 4 + 1, y - (int)zz + 1, Color.get(-1, 0));
 			Font.draw(msg2, screen, x - msg.length() * 4, y - (int)zz, color);
 		}
 	}

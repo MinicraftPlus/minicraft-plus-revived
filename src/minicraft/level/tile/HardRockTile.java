@@ -10,10 +10,10 @@ import minicraft.entity.particle.TextParticle;
 import minicraft.gfx.Color;
 import minicraft.gfx.Screen;
 import minicraft.item.Item;
-import minicraft.item.ResourceItem;
+import minicraft.item.StackableItem;
 import minicraft.item.ToolItem;
 import minicraft.item.ToolType;
-import minicraft.item.resource.Resource;
+import minicraft.item.Items;
 import minicraft.level.Level;
 import minicraft.screen.ModeMenu;
 
@@ -90,7 +90,7 @@ public class HardRockTile extends Tile {
 	public void hurt(Level level, int x, int y, int dmg) {
 		int damage = level.getData(x, y) + dmg;
 		level.add(new SmashParticle(x * 16 + 8, y * 16 + 8));
-		level.add(new TextParticle("" + dmg, x * 16 + 8, y * 16 + 8, Color.get(-1, 500, 500, 500)));
+		level.add(new TextParticle("" + dmg, x * 16 + 8, y * 16 + 8, Color.get(-1, 500)));
 		int hrHealth;
 		if (ModeMenu.creative) hrHealth = 0;
 		else hrHealth = 200;
@@ -99,7 +99,7 @@ public class HardRockTile extends Tile {
 			for (int i = 0; i < count; i++) {
 				level.add(
 						new ItemEntity(
-								new ResourceItem(Resource.stone),
+								Items.get("Stone"),
 								x * 16 + random.nextInt(10) + 3,
 								y * 16 + random.nextInt(10) + 3));
 			}
@@ -107,7 +107,7 @@ public class HardRockTile extends Tile {
 			for (int i = 0; i < count; i++) {
 				level.add(
 						new ItemEntity(
-								new ResourceItem(Resource.coal),
+								Items.get("coal"),
 								x * 16 + random.nextInt(10) + 3,
 								y * 16 + random.nextInt(10) + 3));
 			}

@@ -4,7 +4,7 @@ import minicraft.Game;
 import minicraft.gfx.Color;
 import minicraft.gfx.MobSprite;
 import minicraft.gfx.Screen;
-import minicraft.item.resource.Resource;
+import minicraft.item.Items;
 import minicraft.screen.OptionsMenu;
 
 public class Zombie extends EnemyMob {
@@ -62,22 +62,22 @@ public class Zombie extends EnemyMob {
 	}*/
 
 	protected void die() {
-		if (OptionsMenu.diff == OptionsMenu.easy) dropResource(2, 4, Resource.cloth);
-		if (OptionsMenu.diff == OptionsMenu.norm) dropResource(2, 3, Resource.cloth);
-		if (OptionsMenu.diff == OptionsMenu.hard) dropResource(1, 2, Resource.cloth);
+		if (OptionsMenu.diff == OptionsMenu.easy) dropItem(2, 4, Items.get("cloth"));
+		if (OptionsMenu.diff == OptionsMenu.norm) dropItem(2, 3, Items.get("cloth"));
+		if (OptionsMenu.diff == OptionsMenu.hard) dropItem(1, 2, Items.get("cloth"));
 		
 		if(random.nextInt(60) == 2) {
-			level.dropResource(x, y, Resource.ironIngot);
+			level.dropItem(x, y, Items.get("iron"));
 		}
 		
 		if(random.nextInt(40) == 19) {
 			int rand = random.nextInt(3);
 			if(rand == 0) {
-				level.dropResource(x, y, Resource.greenclothes);
+				level.dropItem(x, y, Items.get("green clothes"));
 			} else if(rand == 1) {
-				level.dropResource(x, y, Resource.redclothes);
+				level.dropItem(x, y, Items.get("red clothes"));
 			} else if(rand == 2) {
-				level.dropResource(x, y, Resource.blueclothes);
+				level.dropItem(x, y, Items.get("blue clothes"));
 			}
 		}
 		

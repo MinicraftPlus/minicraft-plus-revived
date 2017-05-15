@@ -6,8 +6,8 @@ import minicraft.gfx.Color;
 import minicraft.gfx.Screen;
 import minicraft.item.Item;
 import minicraft.item.PowerGloveItem;
-import minicraft.item.ResourceItem;
-import minicraft.item.resource.Resource;
+import minicraft.item.StackableItem;
+import minicraft.item.Items;
 import minicraft.level.Level;
 
 public class TorchTile extends Tile {
@@ -38,11 +38,11 @@ public class TorchTile extends Tile {
 		int col = Color.get(320, 500, 520, -1);
 		
 		onType.render(screen, level, x, y);
-		screen.render(x * 16 + 4, y * 16 + 4, Resource.torch.sprite, Resource.torch.color, 0);
+		Items.get("Torch").sprite.render(screen, x * 16 + 4, y * 16 + 4);
 	}
 	
 	public int getLightRadius(Level level, int x, int y) {
-		return 6;//level.player.potioneffects.containsKey("Light")?9:6;
+		return 6;//level.player.potioneffects.containsKey("Light")?9:6; // this is accounted for elsewhere.
 	}
 	
 	public boolean canLight() {
@@ -52,7 +52,7 @@ public class TorchTile extends Tile {
 	public boolean interact(Level level, int xt, int yt, Player player, Item item, int attackDir) {
 		if(item instanceof PowerGloveItem) {
 			level.setTile(xt, yt, this.onType, 0);
-			level.add(new ItemEntity(new ResourceItem(Resource.torch), xt * 16 + this.random.nextInt(10) + 3, yt * 16 + this.random.nextInt(10) + 3));
+			level.dropItem(xt * 16, yt * 16, Items.get("Torch"));
 			return true;
 		} else {
 			return false;

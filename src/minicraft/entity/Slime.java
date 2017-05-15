@@ -4,7 +4,7 @@ import minicraft.Game;
 import minicraft.gfx.Color;
 import minicraft.gfx.MobSprite;
 import minicraft.gfx.Screen;
-import minicraft.item.resource.Resource;
+import minicraft.item.Items;
 import minicraft.screen.ModeMenu;
 import minicraft.screen.OptionsMenu;
 
@@ -99,7 +99,7 @@ public class Slime extends EnemyMob {
 	}
 	
 	protected void die() {
-		dropResource(1, ModeMenu.score ? 2 : 4 - OptionsMenu.diff, Resource.slime);
+		dropItem(1, ModeMenu.score ? 2 : 4 - OptionsMenu.diff, Items.get("slime"));
 		
 		super.die(); // Parent death call
 	}

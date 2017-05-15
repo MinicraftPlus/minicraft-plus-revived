@@ -1,5 +1,7 @@
 package minicraft.gfx;
 
+import java.awt.Rectangle;
+
 public class Sprite {
 	/**
 		This class needs to store a list of similar segments that make up a sprite, plus the color, just once for everything. There's usually four groups, but the components are:
@@ -10,19 +12,32 @@ public class Sprite {
 		The screen's render method only draws one 8x8 pixel of the spritesheet at a time, so the "sprite size" will be determined by how many repetitions of the above group there are.
 	*/
 	
+	public static final Sprite missingTexture(int w, int h) {
+		return new Sprite(30, 30, w, h, Color.get(505, 505));
+	}
+	
 	public Px[][] spritePixels;
 	public int color;
+	private Rectangle sheetLoc;
 	/// spritePixels is arranged so that the pixels are in their correct positions relative to the top left of the full sprite. This means that their render positions are built-in to the array.
 	
+	public Sprite(int pos, int color) {
+		this(pos%32, pos/32, 1, 1, color);}
+	public Sprite(int sx, int sy, int color) {
+		this(sx, sy, 1, 1, color);
+	}
 	public Sprite(int sx, int sy, int sw, int sh) {
 		this(sx, sy, sw, sh, 0, false, false);}
 	public Sprite(int sx, int sy, int sw, int sh, int color) {
 		this(sx, sy, sw, sh, color, false, false);}
 	public Sprite(int sx, int sy, int sw, int sh, boolean mirrorHori, boolean mirrorVert) {
 		this(sx, sy, sw, sh, 0, mirrorHori, mirrorVert);}
+	
 	public Sprite(int sx, int sy, int sw, int sh, int color, boolean mirrorHori, boolean mirrorVert) {
-		spritePixels = new Px[sh][sw];
 		this.color = color;
+		sheetLoc = new Rectangle(sx, sy, sw, sh);
+		
+		spritePixels = new Px[sh][sw];
 		int mirrorBits = (mirrorHori ? 1 : 0) + (mirrorVert ? 2 : 0);
 		for(int r = 0; r < sh; r++)
 			for(int c = 0; c < sw; c++)
@@ -33,6 +48,13 @@ public class Sprite {
 	public Sprite(Px[][] pixels, int color) {
 		spritePixels = pixels;
 		this.color = color;
+	}
+	
+	public int getPos() {
+		return sheetLoc.x + sheetLoc.y * 32;
+	}
+	public java.awt.Dimension getSize() {
+		return sheetLoc.getSize();
 	}
 	
 	public void render(Screen screen, int lvlx, int lvly) { render(screen, color, lvlx, lvly); }

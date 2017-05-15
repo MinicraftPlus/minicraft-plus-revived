@@ -1,38 +1,20 @@
 package minicraft.level;
 
+import java.awt.Point;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Random;
 import minicraft.Game;
-import minicraft.entity.AirWizard;
-import minicraft.entity.Anvil;
-import minicraft.entity.Chest;
-import minicraft.entity.Cow;
-import minicraft.entity.Creeper;
-import minicraft.entity.DungeonChest;
-import minicraft.entity.EnemyMob;
-import minicraft.entity.Entity;
-import minicraft.entity.Inventory;
-import minicraft.entity.Knight;
-import minicraft.entity.Lantern;
-import minicraft.entity.PassiveMob;
-import minicraft.entity.Pig;
-import minicraft.entity.Player;
-import minicraft.entity.Sheep;
-import minicraft.entity.Skeleton;
-import minicraft.entity.Slime;
-import minicraft.entity.Snake;
-import minicraft.entity.Spawner;
-import minicraft.entity.Tnt;
-import minicraft.entity.Zombie;
+import minicraft.entity.*;
 import minicraft.gfx.Screen;
 import minicraft.item.FurnitureItem;
-import minicraft.item.ResourceItem;
+import minicraft.item.StackableItem;
 import minicraft.item.ToolItem;
 import minicraft.item.ToolType;
-import minicraft.item.resource.Resource;
+import minicraft.item.Item;
+import minicraft.item.Items;
 import minicraft.level.LevelGen;
 import minicraft.level.tile.DirtTile;
 import minicraft.level.tile.Tile;
@@ -82,25 +64,10 @@ public class Level {
 	}
 	
 	public void printTileLocs(Tile t) {
-		java.lang.reflect.Field[] fields = Tile.class.getFields();
-		String tileName = "";
-		for(java.lang.reflect.Field f: fields) {
-			Tile t2 = null;
-			boolean match = false;
-			try {
-				match = Tile.class.isAssignableFrom(f.getType()) && ((Tile)f.get(t2)).id == t.id;
-			} catch(IllegalAccessException ex) {
-				ex.printStackTrace();
-			}
-			if(match) {
-				tileName = f.getName();
-				break;
-			}
-		}
 		for(int x = 0; x < w; x++)
 			for(int y = 0; y < h; y++)
 				if(getTile(x, y).id == t.id)
-					printLevelLoc(tileName, x, y);
+					printLevelLoc(t.getName(true), x, y);
 	}
 	public void printEntityLocs(Entity e) {
 		String entityName = e.getClass().getName().replace("minicraft.entity.","");
@@ -321,17 +288,17 @@ public class Level {
 		if (level < 0 && !WorldSelectMenu.loadworld) {
 			for (int i = 0; i < 18 / -level * (w / 128); i++) {
 				/// for generating spawner dungeons
-				String m = "";
+				MobAi m = null;
 				int r = this.random.nextInt(5);
 				if (r == 1) {
-					m = "Skeleton";
+					m = new Skeleton(-level);
 				} else if (r == 2 || r == 0) {
-					m = "Slime";
+					m = new Slime(-level);
 				} else {
-					m = "Zombie";
+					m = new Zombie(-level);
 				}
 				
-				Spawner sp = new Spawner(m, -level);
+				Spawner sp = new Spawner(m);
 				int x3 = this.random.nextInt(16 * w) / 16;
 				int y3 = this.random.nextInt(16 * h) / 16;
 				if (this.getTile(x3, y3) == Tile.dirt) {
@@ -381,50 +348,51 @@ public class Level {
 						Inventory inv = c.inventory;
 						int chance = -level;
 						inv.tryAdd(9/chance, new Tnt());
-				  		inv.tryAdd(10/chance, new Anvil());
+				  		inv.tryAdd(10/chance, new Crafter(Crafter.Type.Anvil));
 				  		inv.tryAdd(7/chance, new Lantern(Lantern.Type.NORM));
-				  		inv.tryAdd(3/chance, Resource.bread, 2);
-				  		inv.tryAdd(4/chance, Resource.bread, 3);
-				  		inv.tryAdd(7/chance, Resource.larmor, 1);
-				  		inv.tryAdd(50/chance, Resource.goldapple, 1);
-				  		inv.tryAdd(3/chance, Resource.lapisOre, 2);
-				  		inv.tryAdd(4/chance, Resource.glass, 2);
-				  		inv.tryAdd(4/chance, Resource.gunp, 3);
-				  		inv.tryAdd(4/chance, Resource.gunp, 3);
-				  		inv.tryAdd(4/chance, Resource.torch, 4);
-				  		inv.tryAdd(14/chance, Resource.swimpotion, 1);
-				  		inv.tryAdd(16/chance, Resource.hastepotion, 1);
-				  		inv.tryAdd(14/chance, Resource.lightpotion, 1);
-				  		inv.tryAdd(14/chance, Resource.speedpotion, 1);
-				  		inv.tryAdd(16/chance, Resource.iarmor, 1);
-				  		inv.tryAdd(5/chance, Resource.sbrick, 4);
-				  		inv.tryAdd(5/chance, Resource.sbrick, 6);
-				  		inv.tryAdd(4/chance, Resource.string, 3);
-				  		inv.tryAdd(4/chance, Resource.bone, 2);
-				  		inv.tryAdd(3/chance, Resource.bone, 1);
+				  		inv.tryAdd(3/chance, Items.get("bread"), 2);
+				  		inv.tryAdd(4/chance, Items.get("bread"), 3);
+				  		inv.tryAdd(7/chance, Items.get("l.armor"), 1);
+				  		inv.tryAdd(50/chance, Items.get("Gold Apple"), 1);
+				  		inv.tryAdd(3/chance, Items.get("Lapis"), 2);
+				  		inv.tryAdd(4/chance, Items.get("glass"), 2);
+				  		inv.tryAdd(4/chance, Items.get("Gunpowder"), 3);
+				  		inv.tryAdd(4/chance, Items.get("Gunpowder"), 3);
+				  		inv.tryAdd(4/chance, Items.get("Torch"), 4);
+				  		inv.tryAdd(14/chance, Items.get("swim potion"), 1);
+				  		inv.tryAdd(16/chance, Items.get("haste potion"), 1);
+				  		inv.tryAdd(14/chance, Items.get("light potion"), 1);
+				  		inv.tryAdd(14/chance, Items.get("speed potion"), 1);
+				  		inv.tryAdd(16/chance, Items.get("i.armor"), 1);
+				  		inv.tryAdd(5/chance, Items.get("Stone Brick"), 4);
+				  		inv.tryAdd(5/chance, Items.get("Stone Brick"), 6);
+				  		inv.tryAdd(4/chance, Items.get("string"), 3);
+				  		inv.tryAdd(4/chance, Items.get("bone"), 2);
+				  		inv.tryAdd(3/chance, Items.get("bone"), 1);
 				  		//inv.tryAdd(6/chance, ToolType.hatchet, 2);
 				  		//inv.tryAdd(6/chance, ToolType.pick, 2);
 				  		//inv.tryAdd(6/chance, ToolType.spade, 2);
 				  		inv.tryAdd(7/chance, ToolType.Claymore, 1);
-				  		inv.tryAdd(5/chance, Resource.torch, 3);
-				  		inv.tryAdd(6/chance, Resource.torch, 6);
-						inv.tryAdd(6/chance, Resource.torch, 6);
-				  		inv.tryAdd(7/chance, Resource.steak, 3);
-				  		inv.tryAdd(9/chance, Resource.steak, 4);
-				  		inv.tryAdd(7/chance, Resource.gem, 3);
-				  		inv.tryAdd(7/chance, Resource.gem, 5);
-				  		inv.tryAdd(7/chance, Resource.gem, 4);
-				  		inv.tryAdd(10/chance, Resource.yellowclothes, 1);
-				  		inv.tryAdd(10/chance, Resource.blackclothes, 1);
-				  		inv.tryAdd(12/chance, Resource.orangeclothes, 1);
-				  		inv.tryAdd(12/chance, Resource.cyanclothes, 1);
-				  		inv.tryAdd(12/chance, Resource.purpleclothes, 1);
-				  		inv.tryAdd(4/chance, Resource.arrow, 5);
+				  		inv.tryAdd(5/chance, Items.get("Torch"), 3);
+				  		inv.tryAdd(6/chance, Items.get("Torch"), 6);
+						inv.tryAdd(6/chance, Items.get("Torch"), 6);
+				  		inv.tryAdd(7/chance, Items.get("steak"), 3);
+				  		inv.tryAdd(9/chance, Items.get("steak"), 4);
+				  		inv.tryAdd(7/chance, Items.get("gem"), 3);
+				  		inv.tryAdd(7/chance, Items.get("gem"), 5);
+				  		inv.tryAdd(7/chance, Items.get("gem"), 4);
+				  		inv.tryAdd(10/chance, Items.get("yellow clothes"), 1);
+				  		inv.tryAdd(10/chance, Items.get("black clothes"), 1);
+				  		inv.tryAdd(12/chance, Items.get("orange clothes"), 1);
+				  		inv.tryAdd(12/chance, Items.get("cyan clothes"), 1);
+				  		inv.tryAdd(12/chance, Items.get("purple clothes"), 1);
+				  		inv.tryAdd(4/chance, Items.get("arrow"), 5);
+						
 						if (inv.invSize() < 1) {
-							inv.add(new ResourceItem(Resource.potion, 1));
-							inv.add(new ResourceItem(Resource.coal, 3));
-							inv.add(new ResourceItem(Resource.apple, 3));
-							inv.add(new ResourceItem(Resource.dirt, 7));
+							inv.add(Items.get("potion"), 1);
+							inv.add(Items.get("coal"), 3);
+							inv.add(Items.get("apple"), 3);
+							inv.add(Items.get("dirt"), 7);
 				  		}
 						
 						// chance = -level
@@ -482,16 +450,20 @@ public class Level {
 		}
 	}
 	
-	public void dropResource(int x, int y, int count, Resource... resources) {
+	public void dropItem(int x, int y, int count, Item... items) {
 		for (int i = 0; i < count; i++)
-			dropResource(x, y, resources);
+			dropItem(x, y, items);
 	}
-	public void dropResource(int x, int y, Resource[] resources) {
-		for(Resource r: resources)
-			dropResource(x, y, r);
+	public void dropItem(int x, int y, Item[] items) {
+		for(Item i: items)
+			dropItem(x, y, i);
 	}
-	public void dropResource(int x, int y, Resource r) {
-		add(new minicraft.entity.ItemEntity(new ResourceItem(r), x + random.nextInt(11) - 5, y + random.nextInt(11) - 5));
+	public void dropItem(int x, int y, Item i) {
+		/*if(i instanceof StackableItem == false) { // I'm going on a whim here...
+			System.out.println("you can't drop " + i.name + "s!");
+			return;
+		}*/
+		add(new minicraft.entity.ItemEntity(i, x + random.nextInt(11) - 5, y + random.nextInt(11) - 5));
 	}
 
 	public void renderBackground(Screen screen, int xScroll, int yScroll) {
@@ -717,6 +689,16 @@ public class Level {
 		for(int y = yt-r; y <= yt+r; y++)
 			for(int x = xt-r; x <= xt+r; x++)
 				setTile(x, y, tile, data);
+	}
+	
+	public List<Point> getMatchingTiles(Tile search) {
+		List<Point> matches = new ArrayList<Point>();
+		for(int y = 0; y < h; y++)
+			for(int x = 0; x < w; x++)
+				if(getTile(x, y) == search)
+					matches.add(new Point(x, y));
+		
+		return matches;
 	}
 	
 	public boolean isLight(int x, int y) {

@@ -6,10 +6,10 @@ import minicraft.entity.Player;
 import minicraft.gfx.Color;
 import minicraft.gfx.Screen;
 import minicraft.item.Item;
-import minicraft.item.ResourceItem;
+import minicraft.item.StackableItem;
 import minicraft.item.ToolItem;
 import minicraft.item.ToolType;
-import minicraft.item.resource.Resource;
+import minicraft.item.Items;
 import minicraft.level.Level;
 import minicraft.sound.Sound;
 
@@ -75,12 +75,12 @@ public class GrassTile extends Tile {
 					if (random.nextInt(5) == 0) {
 						level.add(
 								new ItemEntity(
-										new ResourceItem(Resource.seeds),
+										Items.get("seeds"),
 										xt * 16 + random.nextInt(10) + 3,
 										yt * 16 + random.nextInt(10) + 3));
 						level.add(
 								new ItemEntity(
-										new ResourceItem(Resource.seeds),
+										Items.get("seeds"),
 										xt * 16 + random.nextInt(10) + 3,
 										yt * 16 + random.nextInt(10) + 3));
 						return true;
@@ -102,7 +102,7 @@ public class GrassTile extends Tile {
 					if (random.nextInt(5) == 0) {
 						level.add(
 								new ItemEntity(
-										new ResourceItem(Resource.seeds),
+										Items.get("seeds"),
 										xt * 16 + random.nextInt(10) + 3,
 										yt * 16 + random.nextInt(10) + 3));
 						return true;

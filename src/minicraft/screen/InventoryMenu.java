@@ -26,6 +26,6 @@ public class InventoryMenu extends ScrollingMenu {
 		super.render(screen);
 		List<Item> items = inv.getItems();
 		for(int i = 0; i < dispSize; i++)
-			items.get(offset+i).renderIcon(screen, 2*8, 8*(2+i));
+			items.get(offset+i).sprite.render(screen, 2*8, 8*(2+i));
 	}
 }

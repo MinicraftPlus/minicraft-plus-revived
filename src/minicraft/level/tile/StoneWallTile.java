@@ -10,10 +10,10 @@ import minicraft.entity.particle.TextParticle;
 import minicraft.gfx.Color;
 import minicraft.gfx.Screen;
 import minicraft.item.Item;
-import minicraft.item.ResourceItem;
+import minicraft.item.StackableItem;
 import minicraft.item.ToolItem;
 import minicraft.item.ToolType;
-import minicraft.item.resource.Resource;
+import minicraft.item.Items;
 import minicraft.level.Level;
 import minicraft.screen.ModeMenu;
 
@@ -23,9 +23,9 @@ public class StoneWallTile extends Tile {
 	}
 
 	public void render(Screen screen, Level level, int x, int y) {
-		int col = Color.get(444, 444, 444, 444);
+		int col = Color.get(444, 444);
 		int col1 = Color.get(111, 333, 444, 444);
-		int col2 = Color.get(111, 444, 444, 444);
+		int col2 = Color.get(111, 444);
 		
 		int transitionColor = col1;
 		int backColor = col2;
@@ -111,13 +111,13 @@ public class StoneWallTile extends Tile {
 			sbwHealth = 100;
 		}
 		level.add(new SmashParticle(x * 16 + 8, y * 16 + 8));
-		level.add(new TextParticle("" + dmg, x * 16 + 8, y * 16 + 8, Color.get(-1, 500, 500, 500)));
+		level.add(new TextParticle("" + dmg, x * 16 + 8, y * 16 + 8, Color.get(-1, 500)));
 		if (damage >= sbwHealth) {
 			int count = random.nextInt(3) + 1;
 			for (int i = 0; i < count; i++) {
 				level.add(
 						new ItemEntity(
-								new ResourceItem(Resource.sbrick),
+								Items.get("Stone Brick"),
 								x * 16 + random.nextInt(10) + 3,
 								y * 16 + random.nextInt(10) + 3));
 			}

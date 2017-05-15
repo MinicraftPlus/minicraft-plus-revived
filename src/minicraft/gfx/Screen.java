@@ -98,6 +98,7 @@ public class Screen {
 		double tintFactor = 0;
 		int transTime = Game.dayLength / 4;
 		double relTime = (Game.tickCount % transTime)*1.0 / transTime;
+		//System.out.println("relTime: " + relTime);
 		switch((Game.Time)Game.getTime()) {
 			case Morning: tintFactor = Game.pastDay1 ? (1-relTime) * MAXDARK : 0; break;
 			case Day: tintFactor = 0; break;
@@ -107,6 +108,7 @@ public class Screen {
 		if(Game.currentLevel == 4) tintFactor -= tintFactor < 10 ? tintFactor : 10;
 		tintFactor *= -1; // all previous operations were assumping this was a darkening factor.
 		tintFactor += 20;
+		//System.out.println("tint factor: " + tintFactor);
 		//if(tintFactor > MAXLIGHT) tintFactor = MAXLIGHT;
 		//if(random.nextInt((int)(Game.normSpeed/Game.gamespeed))==0) System.out.println("rendering dark factor " + tintFactor);
         

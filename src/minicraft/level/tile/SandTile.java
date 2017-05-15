@@ -8,10 +8,10 @@ import minicraft.entity.Player;
 import minicraft.gfx.Color;
 import minicraft.gfx.Screen;
 import minicraft.item.Item;
-import minicraft.item.ResourceItem;
+import minicraft.item.StackableItem;
 import minicraft.item.ToolItem;
 import minicraft.item.ToolType;
-import minicraft.item.resource.Resource;
+import minicraft.item.Items;
 import minicraft.level.Level;
 
 public class SandTile extends Tile {
@@ -76,7 +76,7 @@ public class SandTile extends Tile {
 					level.setTile(xt, yt, Tile.dirt, 0);
 					level.add(
 							new ItemEntity(
-									new ResourceItem(Resource.sand),
+									Items.get("sand"),
 									xt * 16 + random.nextInt(10) + 3,
 									yt * 16 + random.nextInt(10) + 3));
 					return true;
@@ -87,7 +87,7 @@ public class SandTile extends Tile {
 					level.setTile(xt, yt, Tile.dirt, 0);
 					level.add(
 							new ItemEntity(
-									new ResourceItem(Resource.sand),
+									Items.get("sand"),
 									xt * 16 + random.nextInt(10) + 3,
 									yt * 16 + random.nextInt(10) + 3));
 					return true;

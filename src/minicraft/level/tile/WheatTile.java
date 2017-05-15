@@ -8,10 +8,10 @@ import minicraft.entity.Player;
 import minicraft.gfx.Color;
 import minicraft.gfx.Screen;
 import minicraft.item.Item;
-import minicraft.item.ResourceItem;
+import minicraft.item.StackableItem;
 import minicraft.item.ToolItem;
 import minicraft.item.ToolType;
-import minicraft.item.resource.Resource;
+import minicraft.item.Items;
 import minicraft.level.Level;
 
 public class WheatTile extends Tile {
@@ -111,7 +111,7 @@ public class WheatTile extends Tile {
 		for (int i = 0; i < count; i++) {
 			level.add(
 					new ItemEntity(
-							new ResourceItem(Resource.seeds),
+							Items.get("seeds"),
 							x * 16 + random.nextInt(10) + 3,
 							y * 16 + random.nextInt(10) + 3));
 		}
@@ -125,7 +125,7 @@ public class WheatTile extends Tile {
 		for (int i = 0; i < count; i++) {
 			level.add(
 					new ItemEntity(
-							new ResourceItem(Resource.wheat),
+							Items.get("wheat"),
 							x * 16 + random.nextInt(10) + 3,
 							y * 16 + random.nextInt(10) + 3));
 		}

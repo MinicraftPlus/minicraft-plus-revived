@@ -4,7 +4,7 @@ import minicraft.Game;
 import minicraft.gfx.Color;
 import minicraft.gfx.MobSprite;
 import minicraft.gfx.Screen;
-import minicraft.item.resource.Resource;
+import minicraft.item.Items;
 import minicraft.screen.OptionsMenu;
 
 public class Snake extends EnemyMob {
@@ -71,7 +71,7 @@ public class Snake extends EnemyMob {
 
 	protected void die() {
 		int num = OptionsMenu.diff == OptionsMenu.hard ? 0 : 1;
-		dropResource(num, num+1, Resource.scale);
+		dropItem(num, num+1, Items.get("scale"));
 		
 		super.die();
 	}

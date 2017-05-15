@@ -7,10 +7,10 @@ import minicraft.entity.Player;
 import minicraft.gfx.Color;
 import minicraft.gfx.Screen;
 import minicraft.item.Item;
-import minicraft.item.ResourceItem;
+import minicraft.item.StackableItem;
 import minicraft.item.ToolItem;
 import minicraft.item.ToolType;
-import minicraft.item.resource.Resource;
+import minicraft.item.Items;
 import minicraft.level.Level;
 
 public class FlowerTile extends GrassTile {
@@ -43,12 +43,12 @@ public class FlowerTile extends GrassTile {
 				if (player.payStamina(2 - tool.level)) {
 					level.add(
 							new ItemEntity(
-									new ResourceItem(Resource.flower),
+									Items.get("Flower"),
 									x * 16 + random.nextInt(10) + 3,
 									y * 16 + random.nextInt(10) + 3));
 					level.add(
 							new ItemEntity(
-									new ResourceItem(Resource.rose),
+									Items.get("rose"),
 									x * 16 + random.nextInt(10) + 3,
 									y * 16 + random.nextInt(10) + 3));
 					level.setTile(x, y, Tile.grass, 0);
@@ -64,7 +64,7 @@ public class FlowerTile extends GrassTile {
 		for (int i = 0; i < count; i++) {
 			level.add(
 					new ItemEntity(
-							new ResourceItem(Resource.flower),
+							Items.get("Flower"),
 							x * 16 + random.nextInt(10) + 3,
 							y * 16 + random.nextInt(10) + 3));
 		}
@@ -72,7 +72,7 @@ public class FlowerTile extends GrassTile {
 		for (int i = 0; i < count; i++)
 			level.add(
 					new ItemEntity(
-							new ResourceItem(Resource.rose),
+							Items.get("rose"),
 							x * 16 + random.nextInt(10) + 3,
 							y * 16 + random.nextInt(10) + 3));
 		{

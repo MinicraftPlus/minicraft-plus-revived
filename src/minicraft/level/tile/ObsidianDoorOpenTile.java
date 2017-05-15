@@ -13,7 +13,7 @@ public class ObsidianDoorOpenTile extends Tile {
 	}
 
 	public void render(Screen screen, Level level, int x, int y) {
-		int col = Color.get(203, 102, 102, 102);
+		int col = Color.get(203, 102);
 		
 		screen.render(x * 16 + 0, y * 16 + 0, 0 + 24 * 32, col, 0);
 		screen.render(x * 16 + 8, y * 16 + 0, 1 + 24 * 32, col, 0);

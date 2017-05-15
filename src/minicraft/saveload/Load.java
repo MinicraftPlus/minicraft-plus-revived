@@ -9,44 +9,18 @@ import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
 import minicraft.Game;
-import minicraft.entity.AirWizard;
-import minicraft.entity.Anvil;
-import minicraft.entity.Bed;
-import minicraft.entity.Chest;
-import minicraft.entity.Cow;
-import minicraft.entity.Creeper;
-import minicraft.entity.DeathChest;
-import minicraft.entity.DungeonChest;
-import minicraft.entity.Enchanter;
-import minicraft.entity.Entity;
-import minicraft.entity.Furnace;
-import minicraft.entity.Inventory;
-import minicraft.entity.Knight;
-import minicraft.entity.Lantern;
-import minicraft.entity.Loom;
-import minicraft.entity.Mob;
-import minicraft.entity.Oven;
-import minicraft.entity.Pig;
-import minicraft.entity.Player;
-import minicraft.entity.Sheep;
-import minicraft.entity.Skeleton;
-import minicraft.entity.Slime;
-import minicraft.entity.Snake;
-import minicraft.entity.Spawner;
-import minicraft.entity.Tnt;
-import minicraft.entity.Workbench;
-import minicraft.entity.Zombie;
+import minicraft.entity.*;
 import minicraft.item.Item;
-import minicraft.item.ListItems;
-import minicraft.item.ResourceItem;
-import minicraft.item.resource.ArmorResource;
-import minicraft.item.resource.PotionResource;
+import minicraft.item.Items;
+import minicraft.item.StackableItem;
+import minicraft.item.ArmorItem;
+import minicraft.item.PotionItem;
+import minicraft.item.PotionType;
 import minicraft.level.Level;
 import minicraft.level.tile.Tile;
 import minicraft.screen.LoadingMenu;
 import minicraft.screen.ModeMenu;
 import minicraft.screen.OptionsMenu;
-
 
 // I may want to consider a "LegacyLoad class in the near future, simply to reduce the clutter and really allow me to "start fresh". :)
 public class Load {
@@ -81,7 +55,7 @@ public class Load {
 		this();
 		
 		if(!hasGlobalPrefs) {
-			loadFromFile(location + "/saves/" + worldname + "/Game" + extension);
+			loadFromFile(location + "/saves/" + worldname + "/Game" + extention);
 			Version wVer = null;
 			if(data.get(0).contains(".")) wVer = new Version(data.get(0));
 			if(wVer == null) wVer = new Version("1.8");
@@ -251,6 +225,9 @@ public class Load {
 	
 	public void loadWorld(String filename) {
 		for(int l = Game.levels.length-1; l>=0; l--) {
+			//if(l == Game.levels.length-1) l = 4;
+			//if(l == 0) l = Game.levels.length-1;
+			
 			loadFromFile(location + filename + l + extention);
 			
 			int lvlw = Integer.parseInt(data.get(0));
@@ -277,15 +254,30 @@ public class Load {
 						tiles[tileArrIdx] = minicraft.level.tile.TorchTile.getTorchTile(Tile.tiles[id+128]).id;
 					else
 						tiles[tileArrIdx] = id;
-					if(tiles[tileArrIdx] == Tile.stairsUp.id) System.out.println("stairs up at: x="+x+" y="+y);
+					//if(tiles[tileArrIdx] == Tile.stairsUp.id) System.out.println("stairs up on level "+lvldepth+" at: x="+x+" y="+y);
 					tdata[tileArrIdx] = Byte.parseByte(extradata.get(tileidx));
 				}
 			}
 			
 			Level parent = l == Game.levels.length-1 ? null : Game.levels[l+1];
 			Game.levels[l] = new Level(lvlw, lvlh, lvldepth, parent, false);
-			Game.levels[l].tiles = tiles;
-			Game.levels[l].data = tdata;
+			
+			Level curLevel = Game.levels[l];
+			curLevel.tiles = tiles;
+			curLevel.data = tdata;
+			
+			System.out.println("level depth=" + curLevel.depth + " -- parent depth=" + (parent==null?"null":parent.depth));
+			
+			if(parent == null) continue;
+			/// comfirm that there are stairs in all the places that should have stairs.
+			for(java.awt.Point p: parent.getMatchingTiles(Tile.stairsDown)) {
+				if(curLevel.getTile(p.x, p.y) != Tile.stairsUp) {
+					System.out.println("INCONSISTENT STAIRS detected on level "+lvldepth+"; placing stairsUp at x=" +p.x+ ", y="+p.y);
+					curLevel.setTile(p.x, p.y, Tile.stairsUp, 0);
+				}
+			}
+			
+			//if(l == Game.levels.length-1) break;
 		}
 	}
 	
@@ -300,7 +292,7 @@ public class Load {
 		
 		if(player.armor > 0) {
 			player.armorDamageBuffer = Integer.parseInt(data.get(13));
-			player.curArmor = (ArmorResource)(((ResourceItem)ListItems.getItem(data.get(14))).resource);
+			player.curArmor = (ArmorItem)Items.get(data.get(14));
 		}
 		
 		Player.score = Integer.parseInt(data.get(6));
@@ -332,18 +324,32 @@ public class Load {
 			
 			for(int i = 0; i < effects.length; i++) {
 				String[] effect = effects[i].split(";");
-				String pName = effect[0];
-				PotionResource.applyPotion(player, pName, Integer.parseInt(effect[1]));
+				PotionType pName = Enum.valueOf(PotionType.class, effect[0]);
+				PotionItem.applyPotion(player, pName, Integer.parseInt(effect[1]));
 			}
 		}
 		
-		String colors = data.get(11).replace("[", "").replace("]", "");
-		String[] color = colors.split(";");
-		player.r = Integer.parseInt(color[0]);
-		player.g = Integer.parseInt(color[1]);
-		player.b = Integer.parseInt(color[2]);
+		if(worldVer.compareTo(new Version("1.9.4-dev4")) < 0) {
+			String colors = data.get(11).replace("[", "").replace("]", "");
+			String[] color = colors.split(";");
+			int[] cols = new int[color.length];
+			for(int i = 0; i < cols.length; i++)
+				cols[i] = Integer.valueOf(color[i])/50;
+			String col = ""+cols[0]+cols[1]+cols[2];
+			System.out.println("getting color as " + col);
+			player.shirtColor = Integer.parseInt(col);
+		}
+		else
+			player.shirtColor = Integer.parseInt(data.get(11));
 		
 		Player.skinon = Boolean.parseBoolean(data.get(12));
+	}
+	
+	private String subOldName(String name) {
+		name = name.replace("Hatchet", "Axe").replace("Pick", "Pickaxe").replace("Pickaxeaxe", "Pickaxe").replace("Spade", "Shovel").replace("Pow glove", "Power Glove").replace("II", "").replace("W.Bucket", "Water Bucket").replace("L.Bucket", "Lava Bucket").replace("G.Apple", "Gold Apple").replace("St.", "Stone").replace("Ob.", "Obsidian");
+		if(name.equals("Bucket"))
+			name = "Empty Bucket";
+		return name;
 	}
 	
 	public void loadInventory(String filename, Inventory inventory) {
@@ -353,30 +359,23 @@ public class Load {
 		for(int i = 0; i < data.size(); i++) {
 			String item = data.get(i);
 			
-			if(ListItems.getItem(item) instanceof ResourceItem) {
+			if(worldVer.compareTo(new Version("1.9.4-dev4")) < 0) {
+				item = subOldName(item);
+			}
+			
+			//System.out.println("loading item: " + item);
+			
+			if(item.contains(";")) {
 				List<String> curData = Arrays.asList(item.split(";"));
 				String itemName = curData.get(0);
 				
-				if(worldVer.compareTo(new Version("1.9.4-dev4")) < 0) {
-					itemName = itemName.replace("Hatchet", "Axe").replace("Pick\\b", "Pickaxe").replace("Spade", "Shovel");
-				}
-				
-				Item newItem = ListItems.getItem(itemName);
+				Item newItem = Items.get(itemName);
 				
 				for(int ii = 0; ii < Integer.parseInt(curData.get(1)); ii++) {
-					if(newItem instanceof ResourceItem) {
-						ResourceItem resItem = new ResourceItem(((ResourceItem)newItem).resource);
-						inventory.add(resItem);
-					} else {
-						inventory.add(newItem);
-					}
+					inventory.add(newItem);
 				}
 			} else {
-				if(worldVer.compareTo(new Version("1.9.4-dev4")) < 0) {
-					item = item.replace("Water Bucket", "Bucket " + Tile.water.id)
-							.replace("Lava Bucket", "Bucket " + Tile.lava.id);
-				}
-				Item toAdd = ListItems.getItem(item);
+				Item toAdd = Items.get(item);
 				inventory.add(toAdd);
 			}
 		}
@@ -427,13 +426,17 @@ public class Load {
 					int endIdx = chestInfo.size()-(isDeathChest||isDungeonChest?1:0);
 					for(int idx = 0; idx < endIdx; idx++) {
 						String itemData = chestInfo.get(idx);
-						Item item = ListItems.getItem(itemData);
-						if (item instanceof ResourceItem) {
-							String[] resourceData = (itemData + ";1").split(";"); // this appends ";1" to the end, meaning one item, to everything; but if it was already there, then it becomes the 3rd element in the list, which is ignored.
-							ResourceItem ri = (ResourceItem)ListItems.getItem(resourceData[0]);
-							ri.count = Integer.parseInt(resourceData[1]);
-							chest.inventory.add(ri);
+						if (itemData.contains(";")) {
+							String[] aitemData = (itemData + ";1").split(";"); // this appends ";1" to the end, meaning one item, to everything; but if it was already there, then it becomes the 3rd element in the list, which is ignored.
+							if(worldVer.compareTo(new Version("1.9.4-dev4")) < 0)
+								aitemData[0] = subOldName(aitemData[0]);
+							StackableItem stack = (StackableItem)Items.get(aitemData[0]);
+							stack.count = Integer.parseInt(aitemData[1]);
+							chest.inventory.add(stack);
 						} else {
+							if(worldVer.compareTo(new Version("1.9.4-dev4")) < 0)
+								itemData = subOldName(itemData);
+							Item item = Items.get(itemData);
 							chest.inventory.add(item);
 						}
 					}
@@ -449,9 +452,9 @@ public class Load {
 					Game.levels[currentlevel].add(chest instanceof DeathChest ? (DeathChest)chest : chest instanceof DungeonChest ? (DungeonChest)chest : chest, x, y);
 				}
 				else if(newEntity instanceof Spawner) {
-					Spawner egg = (Spawner)newEntity;
-					egg.lvl = Integer.parseInt(info.get(3));
-					egg.setMob(info.get(2));
+					Spawner egg = new Spawner((MobAi)getEntity(info.get(2), player, Integer.parseInt(info.get(3))));
+					//egg.initMob((MobAi)getEntity(info.get(2), player, info.get(3)));
+					//egg.lvl = Integer.parseInt(info.get(3));
 					currentlevel = Integer.parseInt((String)info.get(info.size() - 1));
 					Game.levels[currentlevel].add(egg, x, y);
 				}
@@ -476,16 +479,16 @@ public class Load {
 			case "Knight": return (Entity)(new Knight(moblvl));
 			case "Snake": return (Entity)(new Snake(moblvl));
 			case "AirWizard": return (Entity)(new AirWizard(moblvl>1));
-			case "Spawner": return (Entity)(new Spawner("Zombie", 1));
-			case "Workbench": return (Entity)(new Workbench());
+			case "Spawner": return (Entity)(new Spawner(new Zombie(1)));
+			case "Workbench": return (Entity)(new Crafter(Crafter.Type.Workbench));
 			case "Chest": return (Entity)(new Chest());
 			case "DeathChest": return (Entity)(new DeathChest());
 			case "DungeonChest": return (Entity)(new DungeonChest());
-			case "Anvil": return (Entity)(new Anvil());
-			case "Enchanter": return (Entity)(new Enchanter());
-			case "Loom": return (Entity)(new Loom());
-			case "Furnace": return (Entity)(new Furnace());
-			case "Oven": return (Entity)(new Oven());
+			case "Anvil": return (Entity)(new Crafter(Crafter.Type.Anvil));
+			case "Enchanter": return (Entity)(new Crafter(Crafter.Type.Enchanter));
+			case "Loom": return (Entity)(new Crafter(Crafter.Type.Loom));
+			case "Furnace": return (Entity)(new Crafter(Crafter.Type.Furnace));
+			case "Oven": return (Entity)(new Crafter(Crafter.Type.Oven));
 			case "Bed": return (Entity)(new Bed());
 			case "Tnt": return (Entity)(new Tnt());
 			case "Lantern": return (Entity)(new Lantern(Lantern.Type.NORM));

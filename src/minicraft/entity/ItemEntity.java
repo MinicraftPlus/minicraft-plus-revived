@@ -2,17 +2,17 @@ package minicraft.entity;
 
 import minicraft.gfx.Color;
 import minicraft.gfx.Screen;
-import minicraft.item.ResourceItem;
+import minicraft.item.Item;
 import minicraft.sound.Sound;
 
 public class ItemEntity extends Entity {
 	private int lifeTime; // the life time of this entity in the level
 	public double xa, ya, za; // the x, y, and z accelerations.
 	public double xx, yy, zz; // the x, y, and z coordinates; in double precision.
-	public ResourceItem item; // the item that this entity is based off of.
+	public Item item; // the item that this entity is based off of.
 	private int time = 0; // time it has lasted in the level
 	
-	public ItemEntity(ResourceItem item, int x, int y) {
+	public ItemEntity(Item item, int x, int y) {
 		super(3, 3);
 		
 		this.item = item;
@@ -79,8 +79,8 @@ public class ItemEntity extends Entity {
 		if (time >= lifeTime - 6 * 20) {
 			if (time / 6 % 2 == 0) return;
 		}
-		screen.render(x - 4, y - 4, item.getSprite(), Color.get(-1, 0, 0, 0), 0); // render shadow
-		screen.render(x - 4, y - 4 - (int) (zz), item.getSprite(), item.getColor(), 0); // render the item, based on the item's sprite and color
+		item.sprite.render(screen, x-4, y-4, Color.get(-1, 0));
+		item.sprite.render(screen, x-4, y-4 - (int)(zz) );
 	}
 
 	protected void touchedBy(Entity entity) {

@@ -8,8 +8,8 @@ import minicraft.entity.particle.SmashParticle;
 import minicraft.entity.particle.TextParticle;
 import minicraft.gfx.Color;
 import minicraft.gfx.Screen;
-import minicraft.item.ResourceItem;
-import minicraft.item.resource.Resource;
+import minicraft.item.StackableItem;
+import minicraft.item.Items;
 import minicraft.level.Level;
 import minicraft.screen.ModeMenu;
 import minicraft.screen.OptionsMenu;
@@ -43,14 +43,14 @@ public class CactusTile extends Tile {
 		if (ModeMenu.creative) cHealth = 1;
 		else cHealth = 10;
 		level.add(new SmashParticle(x * 16 + 8, y * 16 + 8));
-		level.add(new TextParticle("" + dmg, x * 16 + 8, y * 16 + 8, Color.get(-1, 500, 500, 500)));
+		level.add(new TextParticle("" + dmg, x * 16 + 8, y * 16 + 8, Color.get(-1, 500)));
 
 		if (damage >= cHealth) {
 			int count = random.nextInt(2) + 2;
 			for (int i = 0; i < count; i++) {
 				level.add(
 						new ItemEntity(
-								new ResourceItem(Resource.cactusFlower),
+								Items.get("Cactus"),
 								x * 16 + random.nextInt(10) + 3,
 								y * 16 + random.nextInt(10) + 3));
 			}

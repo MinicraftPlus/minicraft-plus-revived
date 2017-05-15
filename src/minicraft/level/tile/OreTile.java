@@ -9,10 +9,10 @@ import minicraft.entity.particle.TextParticle;
 import minicraft.gfx.Color;
 import minicraft.gfx.Screen;
 import minicraft.item.Item;
-import minicraft.item.ResourceItem;
+import minicraft.item.StackableItem;
 import minicraft.item.ToolItem;
 import minicraft.item.ToolType;
-import minicraft.item.resource.Resource;
+import minicraft.item.Items;
 import minicraft.level.Level;
 import minicraft.screen.ModeMenu;
 
@@ -22,7 +22,16 @@ public class OreTile extends Tile {
 	private int color, oreColor;
 	
 	public static enum OreType {
-        IRON, LAPIS, GOLD, GEM
+        IRON (Items.get("Iron Ore")),
+		LAPIS (Items.get("Lapis")),
+		GOLD (Items.get("Gold Ore")),
+		GEM (Items.get("Gem"));
+		
+		protected Item drop;
+		
+		private OreType(Item drop) {
+			this.drop = drop;
+		}
     }
 	
 	public OreTile(int id, OreType oreType, int col) {
@@ -66,16 +75,9 @@ public class OreTile extends Tile {
 		return false;
 	}
 
-        public ResourceItem getOre(){
-            switch(type){
-                case IRON: return new ResourceItem(Resource.ironOre);
-                case LAPIS: return new ResourceItem(Resource.lapisOre);
-                case GOLD: return new ResourceItem(Resource.goldOre);
-                case GEM: return new ResourceItem(Resource.gem);
-                default: return new ResourceItem(Resource.ironOre);
-            }
-        }
-        
+    public Item getOre() {
+        return type.drop;
+    }
         
 	public void hurt(Level level, int x, int y, int dmg) {
 		int damage = level.getData(x, y) + 1;
@@ -85,7 +87,7 @@ public class OreTile extends Tile {
 			oreH = random.nextInt(10) + 3;
 		}
 		level.add(new SmashParticle(x * 16 + 8, y * 16 + 8));
-		level.add(new TextParticle("" + dmg, x * 16 + 8, y * 16 + 8, Color.get(-1, 500, 500, 500)));
+		level.add(new TextParticle("" + dmg, x * 16 + 8, y * 16 + 8, Color.get(-1, 500)));
 		if (dmg > 0) {
 			int count = random.nextInt(2);
 			if (damage >= oreH) {
@@ -100,5 +102,7 @@ public class OreTile extends Tile {
 		}
 	}
 
-	public void bumpedInto(Level level, int x, int y, Entity entity) {}
+	public void bumpedInto(Level level, int x, int y, Entity entity) {
+		/// this was used at one point to hurt the player if they touched the ore; that's probably why the sprite is so spikey-looking.
+	}
 }

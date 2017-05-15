@@ -4,6 +4,7 @@ import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
 import javax.swing.Timer;
 import minicraft.gfx.Color;
+import minicraft.gfx.Sprite;
 import minicraft.level.Level;
 import minicraft.level.tile.Tile;
 import minicraft.sound.Sound;
@@ -22,7 +23,7 @@ public class Tnt extends Furniture implements ActionListener {
 	private Level levelSave;
 	
 	public Tnt() {
-		super("Tnt", color, 7, 3, 2);
+		super("Tnt", new Sprite(14, 8, 2, 2, color), 3, 2);
 		fuseLit = false;
 		ftik = 0;
 		

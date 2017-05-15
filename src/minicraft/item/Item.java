@@ -4,52 +4,47 @@ import minicraft.entity.Entity;
 import minicraft.entity.ItemEntity;
 import minicraft.entity.Player;
 import minicraft.gfx.Screen;
+import minicraft.gfx.Sprite;
+import minicraft.gfx.Font;
+import minicraft.gfx.Color;
 import minicraft.level.Level;
 import minicraft.level.tile.Tile;
 import minicraft.screen.ListItem;
 
-public class Item implements ListItem {
+public abstract class Item implements ListItem {
 	
-	/* Note: Most of the stuff in the class is expanded upon in ResourceItem/PowerGloveItem/FurnitureItem/etc */
+	/* Note: Most of the stuff in the class is expanded upon in StackableItem/PowerGloveItem/FurnitureItem/etc */
 	
-	/** called to add this item to the item list in ListItems. */
-	/*public Item addItem() {
-		if (!ListItems.items.contains(this)) { // if this Item isn't already part of the list...
-			ListItems.items.add(this); // add it.
-			//System.out.println("adding item to list: " + getName());
-		}
-		
-		return this;
-	}*/
-
-	public int getColor() {
-		return 0;
+	public String name;
+	public Sprite sprite;
+	
+	protected Item(String name) {
+		sprite = Sprite.missingTexture(1, 1);
+		this.name = name;
 	}
-
-	public int getSprite() {
-		return 0;
+	protected Item(String name, Sprite sprite) {
+		this.name = name;
+		this.sprite = sprite;
 	}
-	
-	/** What happens when you pick up the item off the ground */
-	//public void onTake(ItemEntity itemEntity) {}
 	
 	/** Renders an item (sprite & name) in an inventory */
-	public void renderInventory(Screen screen, int x, int y) {}
+	public void renderInventory(Screen screen, int x, int y) {
+		sprite.render(screen, x, y);
+		Font.draw(name, screen, x + 8, y, Color.get(-1, 555));
+	};
 	
-	/** Determines what happens when the player interacts with a entity */
+	/** Determines what happens when the player interacts with an entity */
+	// TODO I want to move this to the individual entity classes.
 	public boolean interact(Player player, Entity entity, int attackDir) {
 		return false;
 	}
 	
-	/** Renders the icon of the Item */
-	public void renderIcon(Screen screen, int x, int y) {}
-	
-	/** Determines what happens when you use a item in a tile */
+	/** Determines what happens when the player interacts with a tile */
 	public boolean interactOn(Tile tile, Level level, int xt, int yt, Player player, int attackDir) {
 		return false;
 	}
 	
-	/** Returns if the item is depleted or not */
+	/** Returning true causes this item to be removed from the player's active item slot */
 	public boolean isDepleted() {
 		return false;
 	}
@@ -59,18 +54,16 @@ public class Item implements ListItem {
 		return false;
 	}
 	
-	/** Gets the attack bonus from an item/tool (sword/axe) */
-	public int getAttackDamageBonus(Entity e) {
-		return 0;
-	}
-	
 	/** Gets the name of the item */
-	public String getName() {
-		return "";
-	}
+	/*public String getName() {
+		return "No-Name Item";
+	}*/
 	
 	/** Sees if an item matches another item */
 	public boolean matches(Item item) {
-		return item.getClass().equals(getClass()) && item.getName().equals(getName());
+		return item.getClass().equals(getClass()) && item.name.equals(name);
 	}
+	
+	/** This returns a copy of this item, in all necessary detail. */
+	public abstract Item clone();
 }

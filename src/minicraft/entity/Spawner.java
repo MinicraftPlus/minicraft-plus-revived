@@ -5,10 +5,12 @@ import minicraft.Game;
 import minicraft.entity.particle.FireParticle;
 import minicraft.entity.particle.TextParticle;
 import minicraft.gfx.Color;
+import minicraft.gfx.Sprite;
 import minicraft.item.Item;
 import minicraft.item.ToolItem;
 import minicraft.item.ToolType;
 import minicraft.level.tile.Tile;
+import minicraft.screen.ModeMenu;
 import minicraft.sound.Sound;
 
 public class Spawner extends Furniture {
@@ -21,28 +23,26 @@ public class Spawner extends Furniture {
 	public MobAi mob;
 	private int health, tick, lvl, maxMobLevel;
 	
-	private final void initMob(MobAi m, int lvl) {
+	private final void initMob(MobAi m) {
 		mob = m;
 		col = mob.col;
-		this.lvl = lvl;
+		if(m instanceof EnemyMob) {
+			lvl = ((EnemyMob)mob).lvl;
+			maxMobLevel = ((EnemyMob)mob).getMaxLevel();
+		} else {
+			lvl = 1;
+			maxMobLevel = 1;
+		}
 	}
 	
-	private Spawner(MobAi m, int lvl) {
-		super(getClassName(m.getClass()) + " Spawner", 0, 10, 7, 2);
+	public Spawner(MobAi m) {
+		super(getClassName(m.getClass()) + " Spawner", new Sprite(20, 8, 2, 2, m.col), 7, 2);
 		health = 100;
 		tick = 0;
-		initMob(m, lvl);
-	}
-	public Spawner(PassiveMob m) {
-		this(m, 1);
-		maxMobLevel = 1;
-	}
-	public Spawner(EnemyMob m) {
-		this(m, m.lvl);
-		maxMobLevel = m.getMaxLevel();
+		initMob(m);
 	}
 	
-	private String getClassName(Class c) {
+	private static String getClassName(Class c) {
 		String fullName = c.getCanonicalName();
 		return fullName.substring(fullName.lastIndexOf(".")+1);
 	}
@@ -68,11 +68,15 @@ public class Spawner extends Furniture {
 		int randY = (y/16 - 1 + rnd.nextInt(2));
 		Tile tile = level.getTile(randX, randY);
 		
-		MobAi newmob;
-		if(mob instanceof EnemyMob)
-			newmob = mob.getClass().getConstructor(int.class).newInstance(((EnemyMob)mob).lvl);
-		else
-			newmob = mob.getClass().newInstance();
+		MobAi newmob = null;
+		try {
+			if(mob instanceof EnemyMob)
+				newmob = mob.getClass().getConstructor(int.class).newInstance(((EnemyMob)mob).lvl);
+			else
+				newmob = mob.getClass().newInstance();
+		} catch(Exception ex) {
+			ex.printStackTrace();
+		}
 		
 		//if (Game.debug) System.out.println("attempting " + mob + " spawn on tile with id: " + tile.id);
 		if(tile.mayPass(level, randX, randY, newmob) && tile.getLightRadius(level, randX, randY) == 0) {
@@ -118,8 +122,13 @@ public class Spawner extends Furniture {
 		if(attacker instanceof Player && ModeMenu.creative && mob instanceof EnemyMob) {
 			lvl++;
 			if(lvl > maxMobLevel) lvl = 1;
-			EnemyMob newmob = mob.getClass().getConstructor(int.class).newInstance(lvl);
-			initMob(newmob, lvl);
+			EnemyMob newmob = null;
+			try {
+				newmob = (EnemyMob)mob.getClass().getConstructor(int.class).newInstance(lvl);
+			} catch(Exception ex) {
+				ex.printStackTrace();
+			}
+			initMob(newmob);
 		}
 	}
 	
@@ -159,7 +168,7 @@ public class Spawner extends Furniture {
 		}
 	}*/
 	
-	public Furniture copy() {
+	public Furniture clone() {
 		return (Furniture) new Spawner(mob);
 	}
 }

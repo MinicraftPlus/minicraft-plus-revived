@@ -12,7 +12,7 @@ import minicraft.entity.Player;
 import minicraft.gfx.Color;
 import minicraft.gfx.Font;
 import minicraft.gfx.Screen;
-import minicraft.item.resource.Resource;
+import minicraft.item.Items;
 
 public class WonMenu extends Menu {
 
@@ -27,12 +27,12 @@ public class WonMenu extends Menu {
 
 	public WonMenu(Player player) {
 		scores = new HashMap<String, Integer>();
-		scores.put("Cloth", player.inventory.count(Resource.cloth) * (random.nextInt(2) + 1) * 10);
-		scores.put("Slime", player.inventory.count(Resource.slime) * (random.nextInt(2) + 1) * 10);
-		scores.put("Bone", player.inventory.count(Resource.bone) * (random.nextInt(2) + 1) * 10);
-		scores.put("Gunpowder", player.inventory.count(Resource.gunp) * (random.nextInt(2) + 1) * 10);
-		scores.put("A.Book", player.inventory.count(Resource.bookant) * (random.nextInt(2) + 1) * (random.nextInt(2) + 1) * 15);
-		scores.put("Arrow", player.inventory.count(Resource.arrow) * (random.nextInt(2) + 1) * 10);
+		scores.put("Cloth", player.inventory.count(Items.get("cloth")) * (random.nextInt(2) + 1) * 10);
+		scores.put("Slime", player.inventory.count(Items.get("slime")) * (random.nextInt(2) + 1) * 10);
+		scores.put("Bone", player.inventory.count(Items.get("bone")) * (random.nextInt(2) + 1) * 10);
+		scores.put("Gunpowder", player.inventory.count(Items.get("Gunpowder")) * (random.nextInt(2) + 1) * 10);
+		scores.put("A.Book", player.inventory.count(Items.get("Antidious")) * (random.nextInt(2) + 1) * (random.nextInt(2) + 1) * 15);
+		scores.put("Arrow", player.inventory.count(Items.get("arrow")) * (random.nextInt(2) + 1) * 10);
 		
 		ml = 0; // max length
 		for(String name: scores.keySet().toArray(new String[0])) {
@@ -54,10 +54,10 @@ public class WonMenu extends Menu {
 
 	public void writeUnlocks(Screen screen, List unlocks) {
 		renderFrame(screen, "", w + 2, 3, w + 13, 7 + unlocks.size());
-		Font.draw("Unlocked!", screen, w * 8 + 32 - 4, 32, Color.get(-1, 50, 50, 50));
+		Font.draw("Unlocked!", screen, w * 8 + 32 - 4, 32, Color.get(-1, 50));
 		
 		for(int i = 0; i < unlocks.size(); ++i) {
-			Font.draw((String)unlocks.get(i), screen, w * 8 + 48 + 2, 48 + i * 12, Color.get(-1, 555, 555, 555));
+			Font.draw((String)unlocks.get(i), screen, w * 8 + 48 + 2, 48 + i * 12, Color.get(-1, 555));
 		}
 		
 		if(!doneunlocked) {
@@ -105,7 +105,7 @@ public class WonMenu extends Menu {
 		w = Math.max(w, ("Press Enter to continue...").length() + 2);
 
 		renderFrame(screen, "", 1, 3, w, 20);
-		Font.draw("Game Over! (" + ModeMenu.time + ")", screen, 16, 32, Color.get(-1, 555, 555, 555));
+		Font.draw("Game Over! (" + ModeMenu.time + ")", screen, 16, 32, Color.get(-1, 555));
 		
 		ArrayList unlocks = new ArrayList();
 		
@@ -147,20 +147,20 @@ public class WonMenu extends Menu {
 			writeUnlocks(screen, unlocks);
 		}
 		
-		Font.draw("Player Score: " + Player.score, screen, 16, 48, Color.get(-1, 555, 555, 555));
+		Font.draw("Player Score: " + Player.score, screen, 16, 48, Color.get(-1, 555));
 		Font.draw("<Bonuses>", screen, 16, 64, Color.get(-1, Color.rgb(0, 200, 0), Color.rgb(0, 200, 0), Color.rgb(0, 200, 0)));
 		int i = 0;
 		for(String bonus: scores.keySet().toArray(new String[0])) {
 			String label = bonus+"s: ";
 			while(label.length() < ml+3) label += " ";
-			Font.draw(label+"+"+scores.get(bonus), screen, 16, 80+(i++)*8, Color.get(-1, 550, 550, 550));
+			Font.draw(label+"+"+scores.get(bonus), screen, 16, 80+(i++)*8, Color.get(-1, 550));
 		}
 		
-		Font.draw("Final Score: " + finalscore, screen, 16, 136, Color.get(-1, 555, 555, 555));
+		Font.draw("Final Score: " + finalscore, screen, 16, 136, Color.get(-1, 555));
 		if(finalscore == 0) {
-			Font.draw("Fail!", screen, 136, 136, Color.get(-1, 500, 500, 500));
+			Font.draw("Fail!", screen, 136, 136, Color.get(-1, 500));
 		}
 
-		Font.draw("Press Enter to continue...", screen, 16, 152, Color.get(-1, 333, 333, 333));
+		Font.draw("Press Enter to continue...", screen, 16, 152, Color.get(-1, 333));
 	}
 }

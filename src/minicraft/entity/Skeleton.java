@@ -4,7 +4,7 @@ import minicraft.Game;
 import minicraft.gfx.Color;
 import minicraft.gfx.MobSprite;
 import minicraft.gfx.Screen;
-import minicraft.item.resource.Resource;
+import minicraft.item.Items;
 import minicraft.screen.OptionsMenu;
 
 public class Skeleton extends EnemyMob {
@@ -93,11 +93,11 @@ public class Skeleton extends EnemyMob {
 		int bookcount = random.nextInt(1) + 1;
 		int rand = random.nextInt(diffrands[diff]);
 		if (rand <= diffvals[diff])
-			level.dropResource(x, y, count, Resource.bone, Resource.arrow);
+			level.dropItem(x, y, count, Items.get("bone"), Items.get("arrow"));
 		else if (diff == 0 && rand < 19 || diff != 0)
-			level.dropResource(x, y, bookcount, Resource.bookant, Resource.arrow);
+			level.dropItem(x, y, bookcount, Items.get("Antidious"), Items.get("arrow"));
 		else if (diff == 0) // rare chance of 10 arrows on easy mode
-			level.dropResource(x, y, 10, Resource.arrow);
+			level.dropItem(x, y, 10, Items.get("arrow"));
 		
 		super.die();
 	}

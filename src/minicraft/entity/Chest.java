@@ -1,6 +1,7 @@
 package minicraft.entity;
 
 import minicraft.gfx.Color;
+import minicraft.gfx.Sprite;
 import minicraft.screen.ContainerMenu;
 
 public class Chest extends Furniture {
@@ -8,7 +9,7 @@ public class Chest extends Furniture {
 	
 	public Chest() {this("Chest", Color.get(-1, 220, 331, 552));}
 	public Chest(String name, int color) {
-		super(name, color, 1); // Name of the chest
+		super(name, new Sprite(2, 8, 2, 2, color), 3, 3); // Name of the chest
 		
 		inventory = new Inventory(); // initialize the inventory.
 		

@@ -9,40 +9,14 @@ import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
 import minicraft.Game;
-import minicraft.entity.AirWizard;
-import minicraft.entity.Anvil;
-import minicraft.entity.Bed;
-import minicraft.entity.Chest;
-import minicraft.entity.Cow;
-import minicraft.entity.Creeper;
-import minicraft.entity.DeathChest;
-import minicraft.entity.DungeonChest;
-import minicraft.entity.Enchanter;
-import minicraft.entity.Entity;
-import minicraft.entity.Furnace;
-
-import minicraft.entity.Inventory;
-
-import minicraft.entity.Knight;
-import minicraft.entity.Lantern;
-import minicraft.entity.Loom;
-import minicraft.entity.Mob;
-import minicraft.entity.Oven;
-import minicraft.entity.Pig;
-import minicraft.entity.Player;
-import minicraft.entity.Sheep;
-import minicraft.entity.Skeleton;
-import minicraft.entity.Slime;
-import minicraft.entity.Snake;
-import minicraft.entity.Spawner;
-import minicraft.entity.Tnt;
-import minicraft.entity.Workbench;
-import minicraft.entity.Zombie;
+import minicraft.entity.*;
 import minicraft.item.Item;
-import minicraft.item.ListItems;
-import minicraft.item.ResourceItem;
-import minicraft.item.resource.ArmorResource;
-import minicraft.item.resource.PotionResource;
+import minicraft.item.Items;
+import minicraft.item.StackableItem;
+import minicraft.item.ArmorItem;
+import minicraft.item.PotionItem;
+import minicraft.item.PotionType;
+import minicraft.level.Level;
 import minicraft.level.tile.Tile;
 import minicraft.screen.LoadingMenu;
 import minicraft.screen.ModeMenu;
@@ -215,7 +189,7 @@ public class LegacyLoad {
 			if(data.size() >= 14) {
 				if(worldVer == null) worldVer = new Load.Version("1.9.1-pre1");
 				player.armorDamageBuffer = Integer.parseInt(data.get(13));
-				player.curArmor = (ArmorResource)(((ResourceItem)ListItems.getItem(data.get(14))).resource);
+				player.curArmor = (ArmorItem)Items.get(data.get(14));
 			} else player.armor = 0;
 			
 			player.ac = Integer.parseInt(data.get(7));
@@ -259,15 +233,13 @@ public class LegacyLoad {
 				String[] effect = effects[i].split(";");
 				String pName = effect[0];
 				if(oldSave) pName = pName.replace("P.", "Potion");
-				PotionResource.applyPotion(player, pName, Integer.parseInt(effect[1]));
+				PotionItem.applyPotion(player, Enum.valueOf(PotionType.class, pName), Integer.parseInt(effect[1]));
 			}
 		}
 		
 		String colors = data.get(oldSave?data.size()-1:11).replace("[", "").replace("]", "");
 		String[] color = colors.split(";");
-		player.r = Integer.parseInt(color[0]);
-		player.g = Integer.parseInt(color[1]);
-		player.b = Integer.parseInt(color[2]);
+		player.shirtColor = Integer.parseInt(color[0]+color[1]+color[2]);
 		
 		if(!oldSave) Player.skinon = Boolean.parseBoolean(data.get(12));
 		else Player.skinon = false;
@@ -280,25 +252,20 @@ public class LegacyLoad {
 		for(int i = 0; i < data.size(); i++) {
 			String item = data.get(i);
 			
-			if(ListItems.getItem(item) instanceof ResourceItem) {
+			if(Items.get(item) instanceof StackableItem) {
 				if(oldSave && i == 0) item = item.replace(";0", ";1");
 				List<String> curData = Arrays.asList(item.split(";"));
 				String itemName = curData.get(0);
 				if(oldSave) itemName = subOldName(itemName);
 				
-				Item newItem = ListItems.getItem(itemName);
+				Item newItem = Items.get(itemName);
 				
 				for(int ii = 0; ii < Integer.parseInt(curData.get(1)); ii++) {
-					if(newItem instanceof ResourceItem) {
-						ResourceItem resItem = new ResourceItem(((ResourceItem)newItem).resource);
-						inventory.add(resItem);
-					} else {
-						inventory.add(newItem);
-					}
+					inventory.add(newItem);
 				}
 			} else {
 				if(oldSave) item = subOldName(item);
-				Item toAdd = ListItems.getItem(item);
+				Item toAdd = Items.get(item);
 				inventory.add(toAdd);
 			}
 		}
@@ -352,12 +319,12 @@ public class LegacyLoad {
 						if(worldVer.compareTo(new Load.Version("1.9.1")) < 0) // if this world is before 1.9.1
 							if(itemData.equals("")) continue; // this skips any null items
 						if(oldSave) itemData = subOldName(itemData);
-						Item item = ListItems.getItem(itemData);
-						if (item instanceof ResourceItem) {
-							String[] resourceData = (itemData + ";1").split(";"); // this appends ";1" to the end, meaning one item, to everything; but if it was already there, then it becomes the 3rd element in the list, which is ignored.
-							ResourceItem ri = (ResourceItem)ListItems.getItem(resourceData[0]);
-							ri.count = Integer.parseInt(resourceData[1]);
-							chest.inventory.add(ri);
+						Item item = Items.get(itemData);
+						if (item instanceof StackableItem) {
+							String[] aitemData = (itemData + ";1").split(";"); // this appends ";1" to the end, meaning one item, to everything; but if it was already there, then it becomes the 3rd element in the list, which is ignored.
+							StackableItem stack = (StackableItem)Items.get(aitemData[0]);
+							stack.count = Integer.parseInt(aitemData[1]);
+							chest.inventory.add(stack);
 						} else {
 							chest.inventory.add(item);
 						}
@@ -374,9 +341,9 @@ public class LegacyLoad {
 					Game.levels[currentlevel].add(chest instanceof DeathChest ? (DeathChest)chest : chest instanceof DungeonChest ? (DungeonChest)chest : chest, x, y);
 				}
 				else if(newEntity instanceof Spawner) {
-					Spawner egg = (Spawner)newEntity;
-					egg.lvl = Integer.parseInt(info.get(3));
-					egg.setMob(info.get(2));
+					Spawner egg = new Spawner((MobAi)getEntity(info.get(2), player, Integer.parseInt(info.get(3))));
+					//egg.lvl = Integer.parseInt(info.get(3));
+					//egg.initMob((MobAi)getEntity(info.get(2), player, info.get(3)));
 					currentlevel = Integer.parseInt((String)info.get(info.size() - 1));
 					Game.levels[currentlevel].add(egg, x, y);
 				}
@@ -401,16 +368,16 @@ public class LegacyLoad {
 			case "Knight": return (Entity)(new Knight(moblvl));
 			case "Snake": return (Entity)(new Snake(moblvl));
 			case "AirWizard": return (Entity)(new AirWizard(moblvl>1));
-			case "Spawner": return (Entity)(new Spawner("Zombie", 1));
-			case "Workbench": return (Entity)(new Workbench());
+			case "Spawner": return (Entity)(new Spawner(new Zombie(1)));
+			case "Workbench": return (Entity)(new Crafter(Crafter.Type.Workbench));
 			case "Chest": return (Entity)(new Chest());
 			case "DeathChest": return (Entity)(new DeathChest());
 			case "DungeonChest": return (Entity)(new DungeonChest());
-			case "Anvil": return (Entity)(new Anvil());
-			case "Enchanter": return (Entity)(new Enchanter());
-			case "Loom": return (Entity)(new Loom());
-			case "Furnace": return (Entity)(new Furnace());
-			case "Oven": return (Entity)(new Oven());
+			case "Anvil": return (Entity)(new Crafter(Crafter.Type.Anvil));
+			case "Enchanter": return (Entity)(new Crafter(Crafter.Type.Enchanter));
+			case "Loom": return (Entity)(new Crafter(Crafter.Type.Loom));
+			case "Furnace": return (Entity)(new Crafter(Crafter.Type.Furnace));
+			case "Oven": return (Entity)(new Crafter(Crafter.Type.Oven));
 			case "Bed": return (Entity)(new Bed());
 			case "Tnt": return (Entity)(new Tnt());
 			case "Lantern": return (Entity)(new Lantern(Lantern.Type.NORM));

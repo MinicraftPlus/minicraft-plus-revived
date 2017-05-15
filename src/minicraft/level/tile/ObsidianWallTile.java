@@ -21,9 +21,9 @@ public class ObsidianWallTile extends Tile {
 	}
 
 	public void render(Screen screen, Level level, int x, int y) {
-		int col = Color.get(103, 103, 103, 103);
+		int col = Color.get(103, 103);
 		int col1 = Color.get(000, 203, 103, 103);
-		int col2 = Color.get(000, 103, 103, 103);
+		int col2 = Color.get(000, 103);
 		
 		int transitionColor = col1;
 		int backColor = col2;
@@ -98,7 +98,7 @@ public class ObsidianWallTile extends Tile {
 		int damage = level.getData(x, y) + dmg;
 		int sbwHealth = 100;
 		level.add(new SmashParticle(x * 16 + 8, y * 16 + 8));
-		level.add(new TextParticle("" + dmg, x * 16 + 8, y * 16 + 8, Color.get(-1, 500, 500, 500)));
+		level.add(new TextParticle("" + dmg, x * 16 + 8, y * 16 + 8, Color.get(-1, 500)));
 		if (damage >= sbwHealth) {
 			int count = random.nextInt(3) + 1;
 			for (int i = 0; i < count; i++) {}

@@ -7,10 +7,10 @@ import minicraft.entity.Player;
 import minicraft.gfx.Color;
 import minicraft.gfx.Screen;
 import minicraft.item.Item;
-import minicraft.item.ResourceItem;
+import minicraft.item.StackableItem;
 import minicraft.item.ToolItem;
 import minicraft.item.ToolType;
-import minicraft.item.resource.Resource;
+import minicraft.item.Items;
 import minicraft.level.Level;
 import minicraft.sound.Sound;
 
@@ -56,7 +56,7 @@ public class WoolTile extends Tile {
 					level.setTile(xt, yt, Tile.hole, 0);
 					level.add(
 							new ItemEntity(
-									new ResourceItem(Resource.wool),
+									Items.get("Wool"),
 									xt * 16 + random.nextInt(10) + 3,
 									yt * 16 + random.nextInt(10) + 3));
 					Sound.monsterHurt.play();
@@ -68,7 +68,7 @@ public class WoolTile extends Tile {
 					level.setTile(xt, yt, Tile.hole, 0);
 					level.add(
 							new ItemEntity(
-									new ResourceItem(Resource.wool),
+									Items.get("Wool"),
 									xt * 16 + random.nextInt(10) + 3,
 									yt * 16 + random.nextInt(10) + 3));
 					Sound.monsterHurt.play();

@@ -2,13 +2,14 @@ package minicraft.entity;
 
 import minicraft.Game;
 import minicraft.gfx.Color;
+import minicraft.gfx.Sprite;
 
 public class Bed extends Furniture {
 	public static boolean inBed = false; // If the player (as there is only one) is in their bed.
 	public int saveSpawnX, saveSpawnY; // the saved spawn locations... never used, though, I don't think...
 	
 	public Bed() {
-		super("Bed", Color.get(-1, 100, 444, 400), 8, 3, 2);
+		super("Bed", new Sprite(16, 8, 2, 2, Color.get(-1, 100, 444, 400)), 3, 2);
 		/*col0 = Color.get(-1, 211, 444, 400);
 		col1 = Color.get(-1, 211, 555, 500);
 		col2 = Color.get(-1, 100, 333, 300);

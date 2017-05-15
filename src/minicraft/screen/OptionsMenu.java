@@ -64,9 +64,9 @@ public class OptionsMenu extends Menu {
 		
 		screen.clear(0);
 		
-		Font.draw("Difficulty:", screen, 11 * 6 + 4, 8 * 8, Color.get(-1, 555, 555, 555));
+		Font.draw("Difficulty:", screen, 11 * 6 + 4, 8 * 8, Color.get(-1, 555));
 		String[] diffs = {"Easy", "Normal", "Hard"};
-		Font.draw(diffs[diff], screen, 11 * 16 + 4, 8 * 8, Color.get(-1, 555, 555, 555));
+		Font.draw(diffs[diff], screen, 11 * 16 + 4, 8 * 8, Color.get(-1, 555));
 		
 		Font.draw("Press Left and Right", screen, 67, screen.h - 150, textColor);
 		

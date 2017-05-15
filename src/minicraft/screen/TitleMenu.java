@@ -293,7 +293,7 @@ private static final String[] options = {"New game", "Instructions", "Tutorial",
 		int titleColor = Color.get(0, 010, 131, 551);
 		int xo = (screen.w - w * 8) / 2; // X location of the title
 		int yo = 36; // Y location of the title
-		int cols = Color.get(0, 550, 550, 550);
+		int cols = Color.get(0, 550);
 		
 		for (int y = 0; y < h; y++) {
 			for (int x = 0; x < w; x++) {
@@ -318,12 +318,12 @@ private static final String[] options = {"New game", "Instructions", "Tutorial",
 			if(name.length() < 36) greeting = name+"!";
 			if(name.length() < 27) greeting = "Welcome, " + greeting;
 			
-			Font.drawCentered(greeting, screen, 10, Color.get(0, 330, 330, 330));
+			Font.drawCentered(greeting, screen, 10, Color.get(0, 330));
 		}
 		
-		Font.draw("Version " + Game.VERSION, screen, 1, 1, Color.get(0, 111, 111, 111));
+		Font.draw("Version " + Game.VERSION, screen, 1, 1, Color.get(0, 111));
 		
-		Font.drawCentered("(Arrow keys to move)", screen, screen.h - 25, Color.get(0, 111, 111, 111));
-		Font.drawCentered("(Enter to accept, Escape to return)", screen, screen.h - 15, Color.get(0, 111, 111, 111));
+		Font.drawCentered("(Arrow keys to move)", screen, screen.h - 25, Color.get(0, 111));
+		Font.drawCentered("(Enter to accept, Escape to return)", screen, screen.h - 15, Color.get(0, 111));
 	}
 }

@@ -22,7 +22,8 @@ import minicraft.entity.Spark;
 import minicraft.entity.Spawner;
 import minicraft.entity.particle.Particle;
 import minicraft.item.Item;
-import minicraft.item.ResourceItem;
+import minicraft.item.StackableItem;
+import minicraft.item.PotionType;
 import minicraft.screen.LoadingMenu;
 import minicraft.screen.ModeMenu;
 import minicraft.screen.OptionsMenu;
@@ -171,7 +172,7 @@ public class Save {
 		
 		String subdata = "PotionEffects[";
 		
-		for(java.util.Map.Entry<String, Integer> potion: player.potioneffects.entrySet())
+		for(java.util.Map.Entry<PotionType, Integer> potion: player.potioneffects.entrySet())
 			subdata += potion.getKey() + ";" + potion.getValue() + ":";
 		
 		if(player.potioneffects.size() > 0)
@@ -179,7 +180,7 @@ public class Save {
 		else subdata += "]";
 		data.add(subdata);
 		
-		data.add("[" + player.r + ";" + player.g + ";" + player.b + "]");
+		data.add(String.valueOf(player.shirtColor));
 		data.add(String.valueOf(Player.skinon));
 		if(player.curArmor != null) {
 			data.add(String.valueOf(player.armorDamageBuffer));
@@ -191,20 +192,20 @@ public class Save {
 	
 	public void writeInventory(String filename, Player player) {
 		if(player.activeItem != null) {
-			if(player.activeItem instanceof ResourceItem) {
-				data.add(player.activeItem.getName() + ";" + ((ResourceItem)player.activeItem).count);
+			if(player.activeItem instanceof StackableItem) {
+				data.add(player.activeItem.name + ";" + ((StackableItem)player.activeItem).count);
 			} else {
-				data.add(player.activeItem.getName());
+				data.add(player.activeItem.name);
 			}
 		}
 		
 		Inventory inventory = player.inventory;
 		
 		for(int i = 0; i < inventory.invSize(); i++) {
-			if(inventory.get(i) instanceof ResourceItem) {
-				data.add(((Item)inventory.get(i)).getName() + ";" + ((ResourceItem)inventory.get(i)).count);
+			if(inventory.get(i) instanceof StackableItem) {
+				data.add(inventory.get(i).name + ";" + ((StackableItem)inventory.get(i)).count);
 			} else {
-				data.add(((Item)inventory.get(i)).getName());
+				data.add(inventory.get(i).name);
 			}
 		}
 		
@@ -232,8 +233,8 @@ public class Save {
 					
 					for(int ii = 0; ii < chest.inventory.invSize(); ii++) {
 						Item item = (Item)chest.inventory.get(ii);
-						extradata += ":" + item.getName();
-						if(item instanceof ResourceItem)
+						extradata += ":" + item.name;
+						if(item instanceof StackableItem)
 							extradata += ";" + chest.inventory.count(item);
 					}
 					
@@ -243,7 +244,7 @@ public class Save {
 				
 				if(e instanceof Spawner) {
 					Spawner egg = (Spawner)e;
-					extradata += ":" + egg.mob + ":" + egg.lvl;
+					extradata += ":" + egg.mob.getClass().getName().replace("minicraft.entity.", "") + ":" + (egg.mob instanceof EnemyMob ? ((EnemyMob)egg.mob).lvl : 1);
 				}
 				
 				data.add(name + "[" + e.x + ":" + e.y + extradata + ":" + l + "]");

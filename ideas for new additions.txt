@@ -1,6 +1,10 @@
  -------- Simple Ideas --------
 ----
 
+Bacon. Just, Bacon.
+
+----
+
 Add world copy option, like rename and delete.
 
 ----

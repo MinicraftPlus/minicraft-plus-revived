@@ -10,35 +10,28 @@ Note to self: for more little bugs/ideas/concerns, search code for "TODO"
 ####
 I accidently removed the whole "SmashParticle" thing it seems... same with FireParticle...
 ####
-Item->Funiture/Entity conversions still suffer from that wierd glitch when you try to take out a second out from you inv after putting one down; it basically deletes the first one.
-####
-Not sure, but broken/exploded obsidian brick may drop stone...it looks like stone.
-####
-Creeper one time, on lava level, w/ me in front of it, exploded, and left behind an odd square that had no texture, and didn't erase after an update to it... update, btw, that was an InfiniteFallTile.
+The shift-g cheat totally glitches things up. Not any more than usual, but using it has always created all sorts of weird behavior with the inventory items; especially things like lanterns.
 ####
 Sound effects don't always play when they should; mostly it seems when other sounds should be on at the same time.
 ####
 Many item names don't fit on the black "active item" bar at the bottom.
 ####
-
+LegacyLoad class is becoming annoying to handle; it should be reimplemented so that it won't have to be changed at all to reflect future updates. This could be done by making it only return values, and not actually reference any current variables. This may prove overcomplicated, though.
+####
 -----------------------------------------------------------------------------------
 
 	****IDEAS(that should probably be implemented)****
 ****
 
-Make buckets in creative not fill up.
+Mention of the title screen the alternate keys you can use to get around.
+
+****
+
+Ok, so, for the sake of Loading and simplicity, everything that can should use some form of java utility, such as that things that get saved should implement Serializable; at the least, a toString() method should be made that provides all the necessary info to reconstruct that instance.
 
 ****
 
 Make respawn without bed += 20 blocks x/y of last spawn.
-
-****
-
-There's a lot to do in the Tile classes... many methods have many unnecessary parameters... and the torch effects account for all the "light" and "torch" static tiles in Tile.java. I think I'll make a HashMap out of that list, as well.
-
-****
-
-Take the random inv item adder methods in Level and DungeonChest, and move them to a public static method in Inventory.java.
 
 ****
 

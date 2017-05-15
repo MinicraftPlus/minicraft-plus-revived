@@ -142,20 +142,20 @@ public class AirWizard extends EnemyMob {
 		curSprite.renderRow(0, screen, col1, xo, yo);
 		curSprite.renderRow(1, screen, col2, xo, yo+8);
 		
-		int textcol = Color.get(-1, 40, 40, 40);
-		int textcol2 = Color.get(-1, 10, 10, 10);
+		int textcol = Color.get(-1, 40);
+		int textcol2 = Color.get(-1, 10);
 		int percent = health / (maxHealth / 100);
 		String h = percent + "%";
 		
 		if(percent < 1) h = "1%";
 		
 		if(percent < 16) {
-			textcol = Color.get(-1, 400, 400, 400);
-			textcol2 = Color.get(-1, 100, 100, 100);
+			textcol = Color.get(-1, 400);
+			textcol2 = Color.get(-1, 100);
 		}
 		else if(percent < 51) {
-			textcol = Color.get(-1, 440, 440, 440);
-			textcol2 = Color.get(-1, 110, 110, 110);
+			textcol = Color.get(-1, 440);
+			textcol2 = Color.get(-1, 110);
 		}
 		int textwidth = h.length() * 8;
 		Font.draw(h, screen, (x - textwidth/2) + 1, y - 17, textcol2);

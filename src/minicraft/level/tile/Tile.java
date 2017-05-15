@@ -1,13 +1,14 @@
 package minicraft.level.tile;
 
 import java.util.Random;
+import java.util.HashMap;
 import minicraft.entity.Entity;
 import minicraft.entity.Mob;
 import minicraft.entity.Player;
 import minicraft.gfx.Color;
 import minicraft.gfx.Screen;
 import minicraft.item.Item;
-import minicraft.item.resource.Resource;
+import minicraft.item.Items;
 import minicraft.level.Level;
 
 public class Tile {
@@ -16,6 +17,8 @@ public class Tile {
 	
 	/// idea: to save tile names while saving space, I could encode the names in base 64 in the save file...^M
     /// then, maybe, I would just replace the id numbers with id names, make them all private, and then make a get(String) method, parameter is tile name.
+	
+	public static HashMap<Integer, Integer> oldids = new HashMap<Integer, Integer>();
 	
 	public static Tile[] tiles = new Tile[256];
 	public static Tile grass = new GrassTile(0); // creates a grass tile with the Id of 0, (I don't need to explain the other simple ones)
@@ -66,7 +69,51 @@ public class Tile {
 	public static Tile infiniteFall = new InfiniteFallTile(16); // Air tile in the sky..?
 
 	public final byte id;
-
+	
+	static {
+		// light/torch versions, for compatibility with before 1.9.4-dev3. (were removed in making dev3)
+		oldids.put(100, (int)grass.id);
+		oldids.put(101, (int)sand.id);
+		oldids.put(102, (int)tree.id);
+		oldids.put(103, (int)cactus.id);
+		oldids.put(104, (int)water.id);
+		oldids.put(105, (int)dirt.id);
+		oldids.put(107, (int)flower.id);
+		oldids.put(108, (int)stairsUp.id);
+		oldids.put(109, (int)stairsDown.id);
+		oldids.put(110, (int)plank.id);
+		oldids.put(111, (int)sbrick.id);
+		oldids.put(112, (int)wdo.id);
+		oldids.put(113, (int)wdc.id);
+		oldids.put(114, (int)sdo.id);
+		oldids.put(115, (int)sdc.id);
+		oldids.put(116, (int)odo.id);
+		oldids.put(117, (int)odc.id);
+		oldids.put(119, (int)hole.id);
+		oldids.put(57, (int)wool.id);
+		oldids.put(58, (int)redwool.id);
+		oldids.put(59, (int)bluewool.id);
+		oldids.put(60, (int)greenwool.id);
+		oldids.put(61, (int)yellowwool.id);
+		oldids.put(62, (int)blackwool.id);
+		oldids.put(63, (int)o.id);
+		oldids.put(64, (int)treeSapling.id);
+		oldids.put(65, (int)cactusSapling.id);
+		
+		oldids.put(44, grass.id-128);
+		oldids.put(40, sand.id-128);
+		oldids.put(46, dirt.id-128);
+		oldids.put(47, plank.id-128);
+		oldids.put(48, sbrick.id-128);
+		oldids.put(49, o.id-128);
+		oldids.put(50, wool.id-128);
+		oldids.put(51, redwool.id-128);
+		oldids.put(52, bluewool.id-128);
+		oldids.put(53, greenwool.id-128);
+		oldids.put(54, yellowwool.id-128);
+		oldids.put(55, blackwool.id-128);
+	}
+	
 	public boolean connectsToGrass = false;
 	public boolean connectsToSand = false;
 	public boolean connectsToLava = false;
@@ -78,6 +125,8 @@ public class Tile {
 		this.id = (byte) id;
 		if (tiles[id] != null) throw new RuntimeException("Duplicate tile ids!"); // You cannot have over-lapping ids
 		tiles[id] = this;
+		
+		Tile.oldids.put(id, id); // so that you don't have to check if it's already in there later
 		
 		light = 1;
 		maySpawn = false;
@@ -127,5 +176,38 @@ public class Tile {
 	/** Sees if the tile connects to Water or Lava. */
 	public boolean connectsToLiquid() {
 		return connectsToWater || connectsToLava;
+	}
+	
+	public boolean matches(Tile other) {
+		return id == other.id;
+	}
+	
+	public final String getName() { return getName(false); }
+	public final String getName(boolean getFieldName) {
+		String tileName = "";
+		
+		if(getFieldName) {
+			java.lang.reflect.Field[] fields = getClass().getFields();
+			for(java.lang.reflect.Field f: fields) {
+				Tile t2 = null;
+				boolean match = false;
+				try {
+					match = getClass().isAssignableFrom(f.getType()) && ((Tile)f.get(t2)).id == this.id;
+				} catch(IllegalAccessException ex) {
+					ex.printStackTrace();
+				}
+				if(match) {
+					tileName = f.getName();
+					break;
+				}
+			}
+		}
+		else {
+			/// get from class name
+			tileName = getClass().getName();
+			tileName = tileName.substring(tileName.lastIndexOf(".")+1, tileName.lastIndexOf("Tile"));
+		}
+		
+		return tileName;
 	}
 }

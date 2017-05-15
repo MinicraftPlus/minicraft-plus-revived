@@ -4,7 +4,7 @@ import minicraft.Game;
 import minicraft.gfx.Color;
 import minicraft.gfx.MobSprite;
 import minicraft.gfx.Screen;
-import minicraft.item.resource.Resource;
+import minicraft.item.Items;
 import minicraft.screen.OptionsMenu;
 
 public class Cow extends PassiveMob {
@@ -53,7 +53,7 @@ public class Cow extends PassiveMob {
 		if (OptionsMenu.diff == OptionsMenu.norm) {min = 1; max = 2;}
 		if (OptionsMenu.diff == OptionsMenu.hard) {min = 0; max = 1;}
 		
-		dropResource(min, max, Resource.leather, Resource.rawbeef);
+		dropItem(min, max, Items.get("leather"), Items.get("raw beef"));
 		
 		super.die();
 	}
