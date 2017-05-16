@@ -17,12 +17,18 @@ Many item names don't fit on the black "active item" bar at the bottom.
 ####
 LegacyLoad class is becoming annoying to handle; it should be reimplemented so that it won't have to be changed at all to reflect future updates. This could be done by making it only return values, and not actually reference any current variables. This may prove overcomplicated, though.
 ####
+Dungeon Level is parented wrong, though it doesn't seem to harm anything.
+####
 -----------------------------------------------------------------------------------
 
 	****IDEAS(that should probably be implemented)****
 ****
 
 Add world backup option to world load menu; it could be complicated, since if I add a world backup option, I would have to add a world restore option, too...
+
+****
+
+Update other menus' displayed key controls to always show the current key bindings.
 
 ****
 
