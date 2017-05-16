@@ -11,8 +11,6 @@ Note to self: for more little bugs/ideas/concerns, search code for "TODO"
 ####
 I accidently removed the whole "SmashParticle" thing it seems... same with FireParticle...
 ####
-The shift-g cheat totally glitches things up. Not any more than usual, but using it has always created all sorts of weird behavior with the inventory items; especially things like lanterns.
-####
 Sound effects don't always play when they should; mostly it seems when other sounds should be on at the same time.
 ####
 Many item names don't fit on the black "active item" bar at the bottom.
@@ -24,7 +22,7 @@ LegacyLoad class is becoming annoying to handle; it should be reimplemented so t
 	****IDEAS(that should probably be implemented)****
 ****
 
-Mention of the title screen the alternate keys you can use to get around.
+Add world backup option to world load menu; it could be complicated, since if I add a world backup option, I would have to add a world restore option, too...
 
 ****
 

@@ -10,7 +10,9 @@ Minicraft+ version 1.9.4
 + Additional creative mode tweak: "attacking" mob spawner with hand changes the level of mob it spawns.
 + Added missingTexture sprite.
 * Changed the name of a couple items (was abbreviated).
-+ Key controls displayed on title screen will always be correct. ;)
++ Key controls displayed on title screen and the world select menu will always be correct. ;)
++ You can now copy world saves.
++ Added another confirm dialog before deleting worlds.
 
 
 Minicraft+ version 1.9.3
