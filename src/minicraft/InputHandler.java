@@ -83,8 +83,8 @@ public class InputHandler implements MouseListener, KeyListener {
 		keymap.put("LEFT", "LEFT|A"); //move left action references left arrow key
 		keymap.put("RIGHT", "RIGHT|D"); //move right action references right arrow key
 		
-		keymap.put("SELECT", "ENTER|C");
-		keymap.put("EXIT", "ESCAPE|X");
+		keymap.put("SELECT", "ENTER|E");
+		keymap.put("EXIT", "ESCAPE|Q");
 		
 		keymap.put("ATTACK", "C|SPACE"); //attack action references "C" key
 		keymap.put("MENU", "X|ENTER"); //and so on... menu does various things.
@@ -192,7 +192,7 @@ public class InputHandler implements MouseListener, KeyListener {
 	public String getMapping(String actionKey) {
 		actionKey = actionKey.toUpperCase();
 		if(keymap.containsKey(actionKey))
-			return keymap.get(actionKey);
+			return keymap.get(actionKey).replace("|", "/");
 		
 		return "NO_KEY";
 	}
@@ -306,6 +306,8 @@ public class InputHandler implements MouseListener, KeyListener {
 		
 		keytext = keytext.toUpperCase();
 		
+		//System.out.println("interpreted key press: " + keytext);
+		
 		//System.out.println("toggling " + keytext + " key (keycode " + keycode + ") to "+pressed+".");
 		if( pressed && keyToChange != null && !(keytext.equals("CTRL")||keytext.equals("ALT")||keytext.equals("SHIFT")) ) {
 			keymap.put(keyToChange, ( overwrite?"":keymap.get(keyToChange)+"|" ) + getCurModifiers()+keytext);
@@ -343,8 +345,8 @@ public class InputHandler implements MouseListener, KeyListener {
 	}
 	
 	/// Event methods, many to satisfy interface requirements...
-	public void keyPressed(KeyEvent ke) { toggle(ke.getKeyCode(), true); }
-	public void keyReleased(KeyEvent ke) { toggle(ke.getKeyCode(), false); }
+	public void keyPressed(KeyEvent ke) { toggle(ke.getExtendedKeyCode(), true); }
+	public void keyReleased(KeyEvent ke) { toggle(ke.getExtendedKeyCode(), false); }
 	public void keyTyped(KeyEvent ke) {
 		//stores the last character typed
 		lastKeyTyped = String.valueOf(ke.getKeyChar());
