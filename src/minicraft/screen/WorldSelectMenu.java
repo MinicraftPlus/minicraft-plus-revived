@@ -1,7 +1,15 @@
 package minicraft.screen;
 
 import java.io.File;
+import java.io.IOException;
+import java.nio.file.Path;
+import java.nio.file.Files;
+import java.nio.file.FileVisitor;
+import java.nio.file.FileVisitResult;
+import java.nio.file.attribute.BasicFileAttributes;
+import java.nio.file.StandardCopyOption;
 import java.util.ArrayList;
+import javax.swing.JFileChooser;
 import minicraft.Game;
 import minicraft.gfx.Color;
 import minicraft.gfx.Font;
@@ -14,332 +22,409 @@ public class WorldSelectMenu extends Menu {
 	public static String worldname = "";
 	
 	public static boolean loadworld = false;
-	private boolean createworld = false;
+	//private boolean createworld = false;
 	private int selected = 0; //index of action; load or create.
-	private int worldselected = 0; //index of selected world?
+	//private int selected = 0; //index of selected world?
 	
-	private boolean delete = false;
-	private boolean rename = false;
-	private String name = "";
-	private String renamingworldname = "";
+	//private String name = "";
+	private String typingname = "";
 	
 	private ArrayList<String> worldnames;
 	private String location = Game.gameDir + "/saves/";
-	private File folder;
-	private boolean fw = false; // tells if there are any pre-existing worlds.
+	//private File folder;
+	//private boolean fw = false; // tells if there are any pre-existing worlds.
 	
-	public int tick = 0;
-	private int wncol;
+	//public int tick = 0;
+	//private boolean inputDelay = true;
+	//private int wncol;
+	private boolean validName;
+	private boolean confirmed;
+	
+	private static enum Action {
+		Main ("Select Option", 444),
+		Create ("Name of New World:", 555),
+		Load ("Load World", 555),
+		Rename ("Rename World", 050),
+		Delete ("Delete World", 500),
+		Copy ("Copy World", 005);
+		//Backup ("Backup World", 550);
+		
+		public String message;
+		public int color;
+		
+		private Action(String msg, int color) {
+			message = msg;
+			this.color = color;
+		}
+	}
+	
+	private Action mode;
 	
 	public WorldSelectMenu() {
-		tick = 0;
-		wncol = Color.get(0, 5);
-
-		//find worlds:
+		validName = false;
+		confirmed = false;
+		
+		loadWorlds();
+		
+		if(worldnames.size() == 0)
+			mode = Action.Create;
+		else
+			mode = Action.Main;
+	}
+	
+	private final void loadWorlds() {
+		//find worlds (init step):
 		worldnames = new ArrayList<String>();
-		folder = new File(location);
+		File folder = new File(location);
 		folder.mkdirs();
 		File[] listOfFiles = folder.listFiles();
-
+		
 		for (int i = 0; i < listOfFiles.length; i++) {
 			if (listOfFiles[i].isDirectory()) {
 				String path = location + listOfFiles[i].getName() + "/";
 				File folder2 = new File(path);
 				folder2.mkdirs();
-				String[] Files = folder2.list();
-				if (Files.length > 0 && Files[0].endsWith(".miniplussave")) {
+				String[] files = folder2.list();
+				if (files.length > 0 && files[0].endsWith(".miniplussave")) {
 					worldnames.add(listOfFiles[i].getName());
 					if(Game.debug) System.out.println("World found: " + listOfFiles[i].getName());
 				}
 			}
 		}
-
-		if (worldnames.size() > 0) {
-			fw = true;
-		}
 	}
-
+	
 	public void tick() {
-		//loadworld, createworld, rename, and delete all start as false.
-
+		// we start on Main mode.
+		
+		//System.out.println("current tick mode: " + mode);
+		
 		//select action
-		if (input.getKey("up").clicked) selected--;
-		if (input.getKey("down").clicked) selected++;
-
-		//automatically choose
-		if (!fw) selected = 1;
-
-		byte len = 2; //only two choices
-		if (selected < 0) selected += len;
-
-		if (selected >= len) selected -= len;
-
-		if (loadworld) {
-			if (input.getKey("up").clicked) worldselected--;
-			if (input.getKey("down").clicked) worldselected++;
-
-			if (worldselected < 0) worldselected = 0;
-
-			//prevent scrolling past the last one
-			if (worldselected > worldnames.size() - 1) worldselected = worldnames.size() - 1;
-		}
-
-		if (createworld) {
-			typename(); //check for input to type worldname
-			if (input.getKey("exit").clicked) {
-				//cancel to title screen
-				createworld = false;
-				loadworld = false;
-				game.setMenu(new TitleMenu());
-			}
-
-			if (input.getKey("select").clicked && wncol == Color.get(0, 5)) {
-				//proceed to mode selection
-				worldname = name;
-				name = "";
-				game.setMenu(new ModeMenu());
-			}
-		}
-
-		File world;
-		if (loadworld && input.getKey("select").clicked && !rename) {
-			if (!delete) {
-				//load the game
-				worldname = worldnames.get(worldselected);
-				Sound.test.play();
-				game.setMenu(new LoadingMenu());
-				//game.resetstartGame();
-				//game.setMenu((Menu) null);
-			} else {
-				if(Game.debug) System.out.println("delete mode");
-				//delete the world
-				world = new File(location + "/" + worldnames.get(worldselected));
-				if(Game.debug) System.out.println(world);
-				File[] list = world.listFiles();
-				
-				for (int i = 0; i < list.length; i++) {
-					list[i].delete();
-				}
-				
-				world.delete();
-				createworld = false;
-				loadworld = false;
-				if (worldnames.size() > 0) {
-					game.setMenu(new WorldSelectMenu());
-				} else {
-					game.setMenu(new TitleMenu());
-				}
-			}
-		}
-
-		if (input.getKey("exit").clicked && !rename && !createworld) {
-			if (!delete && !rename) {
-				//return to title screen
-				createworld = false;
-				loadworld = false;
-				game.setMenu(new TitleMenu());
-			} else if (delete) {
-				//cancel delete
-				delete = false;
-			} else if (rename) {
-				//cancel rename? never will happen...
-				rename = false;
-			}
-		}
-
-		if (input.getKey("d").clicked && !rename && !createworld) { //toggle delete world mode
-			//if(Game.debug) System.out.println("toggle delete");
-			delete = !delete;
-		}
-
-		if (input.getKey("r").clicked && !rename && !createworld) {
-			//toggle rename world mode
-			if (!rename) {
-				name = worldnames.get(worldselected);
-				renamingworldname = name;
-				rename = true;
-			} else {
-				rename = false;
-			}
-		}
-
-		if (rename) {
-			tick++;
-			if (input.getKey("pause").clicked) {
-				//cancel renaming
-				tick = 0;
-				rename = false;
-			}
-
-			if (input.getKey("select").clicked && wncol == Color.get(0, 5)) {
-				//user hits enter with a vaild new name; name is set here:
-				worldname = name;
-				name = "";
-				world = new File(location + "/" + worldnames.get(worldselected));
-				world.renameTo(new File(location + "/" + worldname));
-				game.setMenu(new WorldSelectMenu());
-				tick = 0;
-				rename = false;
-			}
-
-			if (tick > 1) { //currently renaming a world
-				typename();
-			}
-		}
-
-		if (!createworld && !loadworld) {
-			//this executes at first, before you choose load or save
-			if (input.getKey("select").clicked) {
-				//if(Game.debug) System.out.println(selected);
-				if (selected == 0) {
-					loadworld = true;
-					createworld = false;
-				}
-
-				if (selected == 1) {
-					name = "";
-					createworld = true;
-					loadworld = false;
-				}
-			}
-
-			if (input.getKey("exit").clicked) {
-				//exit to title screen
-				createworld = false;
-				loadworld = false;
-				game.setMenu(new TitleMenu());
-			}
-		}
-	}
-
-	public void render(Screen screen) {
-		screen.clear(0);
-		int col;
-		if (!createworld && !loadworld) {
-			byte numOptions = 2;
+		
+		if(mode == Action.Create || confirmed && (mode == Action.Rename || mode == Action.Copy))
+			typename();
+		else {
+			if (input.getKey("up").clicked) selected--;
+			if (input.getKey("down").clicked) selected++;
 			
-			for (col = 0; col < numOptions; col++) {
-				if (fw || col != 0) {
-					String curOption = options[col];
-					int col1 = Color.get(0, 222);
-					if (col == selected) {
-						curOption = "> " + curOption + " <";
-						col1 = Color.get(0, 555);
+			int len = getCurOpts().length;
+			
+			if (selected < 0) selected += len;
+			if (selected >= len) selected -= len;
+		}
+		
+		if(mode == Action.Load) {
+			//System.out.println("checking for load type change");
+			if(input.getKey("d").clicked)
+				mode = Action.Delete;
+			if(input.getKey("r").clicked) {
+				mode = Action.Rename;
+				typingname = worldnames.get(selected);
+				//renamingworldname = name;
+				//inputDelay = true;
+			}
+			//if(input.getKey("b").clicked)
+				//mode = Action.Backup;
+			if(input.getKey("c").clicked) {
+				mode = Action.Copy;
+				typingname = worldnames.get(selected)+" copy";
+				//inputDelay = true;
+			}
+			confirmed = false;
+		}
+		
+		if (input.getKey("select").clicked) {
+			File world;
+			
+			if((mode == Action.Delete || mode == Action.Rename || mode == Action.Copy/* || mode == Action.Backup*/) && !confirmed) {
+				confirmed = true;
+				if (Game.debug) System.out.println("confirmed selection; worldname="+worldnames.get(selected));
+				return;
+			}
+			
+			switch(mode) {
+				case Main: // if there's one option, this shouldn't even run.
+					if (Game.debug) System.out.println("main selection: " + options[selected]);
+					if(options[selected].equals("Load World")) {
+						mode = Action.Load;
+						loadworld = true;;
+					} else {
+						mode = Action.Create;
+						loadworld = false;
+					}
+					confirmed = false;
+					selected = 0;
+					break;
+				
+				case Create:
+					if (validName) {
+						//proceed to mode selection
+						worldname = typingname;
+						if (Game.debug) System.out.println("create mode: " + worldname);
+						game.setMenu(new ModeMenu());
+					}
+					break;
+				
+				case Load:
+					//load the game
+					worldname = worldnames.get(selected);
+					if (Game.debug) System.out.println("load mode: " + worldname);
+					Sound.test.play();
+					game.setMenu(new LoadingMenu());
+					//game.resetstartGame();
+					//game.setMenu((Menu) null);
+					break;
+				
+				case Rename:
+					if(!validName) break;
+					//user hits enter with a vaild new name; name is set here:
+					worldname = typingname;
+					typingname = "";
+					world = new File(location + "/" + worldnames.get(selected));
+					if (Game.debug) System.out.println("renaming world " + world + " to new name: " + worldname);
+					world.renameTo(new File(location + "/" + worldname));
+					//game.setMenu(new WorldSelectMenu());
+					loadWorlds();
+					mode = Action.Load;
+					break;
+				
+				case Copy:
+					if(!validName) break;
+					//user hits enter with a vaild new name; copy is created here.
+					worldname = typingname;
+					typingname = "";
+					String oldname = worldnames.get(selected);
+					String oldpath = location + "/" + oldname;
+					world = new File(oldpath);
+					String newpath = location + "/" + worldname;
+					File newworld = new File(newpath);
+					newworld.mkdirs();
+					if (Game.debug) System.out.println("copying world " + world + " to world " + newworld);
+					try {
+						Files.walkFileTree(world.toPath(), new FileVisitor() {
+							public FileVisitResult visitFile(Object file, BasicFileAttributes attr) {
+								String path = ((Path)file).toString();
+								path = newpath+path.substring(path.indexOf(oldname)+oldname.length());
+								File newFile = new File(path);
+								newFile.mkdirs();
+								if (Game.debug) System.out.println("copying file at \"" + oldpath + "\" to path \"" + newFile + "\"...");
+								try {
+									Files.copy(((Path)file), newFile.toPath(), StandardCopyOption.REPLACE_EXISTING);
+								} catch(Exception ex) {
+									ex.printStackTrace();
+								}
+								return FileVisitResult.CONTINUE;
+							}
+							
+							public FileVisitResult preVisitDirectory(Object o, BasicFileAttributes bfa) {
+								return FileVisitResult.CONTINUE;
+							}
+							public FileVisitResult postVisitDirectory(Object o, IOException ex) {
+								return FileVisitResult.CONTINUE;
+							}
+							public FileVisitResult visitFileFailed(Object o, IOException ex) {
+								return FileVisitResult.CONTINUE;
+							}
+						});
+						//Files.copy(world.toPath(), newworld.toPath(), StandardCopyOption.REPLACE_EXISTING);
+					} catch(Exception ex) {
+						ex.printStackTrace();
 					}
 					
-					if (!fw) {
-						Font.drawCentered(curOption, screen, 80, col1);
-					} else {
-						Font.drawCentered(curOption, screen, 80 + col * 12, col1);
+					loadWorlds();
+					mode = Action.Load;
+					//game.setMenu(new WorldSelectMenu());
+					break;
+				
+				case Delete:
+					//delete the world
+					world = new File(location + "/" + worldnames.get(selected));
+					if(Game.debug) System.out.println("deleting world: " + world);
+					File[] list = world.listFiles();
+					
+					for (int i = 0; i < list.length; i++) {
+						list[i].delete();
 					}
-				}
+					
+					world.delete();
+					//createworld = false;
+					//loadworld = false;
+					if (worldnames.size() > 0) {
+						//game.setMenu(new WorldSelectMenu());
+						loadWorlds();
+						mode = Action.Load;
+					} else {
+						game.setMenu(new TitleMenu());
+					}
+					break;
+				
+				//case Backup:
+					//if (Game.debug) System.out.println("backup world mode");
+					//world = new File(location + "/" + worldnames.get(selected));
+					//JFileChooser jfc = new JFileChooser();
+					//int sel = jfc.showOpenDialog(game);
+					//break;
 			}
-			
-			Font.drawCentered("Arrow keys to move", screen, screen.h - 170, Color.get(0, 444));
-			Font.drawCentered("Enter to confirm", screen, screen.h - 60, Color.get(0, 444));
-			Font.drawCentered("Esc to go back to the title screen", screen, screen.h - 40, Color.get(0, 444));
-		} else {
-			String msg;
-			if (createworld && !loadworld) {
-				msg = "Name of New World";
-				col = Color.get(-1, 555);
-				Font.drawCentered(msg, screen, 20, col);
-				Font.drawCentered(name, screen, 50, wncol);
-				Font.drawCentered("A-Z, 0-9, up to 36 Characters", screen, 80, col);
-				Font.drawCentered("(Space + Backspace as well)", screen, 92, col);
-				if (wncol == Color.get(0, 500)) {
-					if (!name.equals("")) {
-						Font.drawCentered("Cannot have 2 worlds", screen, 120, wncol);
-						Font.drawCentered(" with the same name!", screen, 132, wncol);
-					} else {
-						Font.drawCentered("Name cannot be blank!", screen, 125, wncol);
-					}
-				}
+		}
+		
+		if(input.getKey("exit").clicked) {
+			switch(mode) {
+				case Delete: case Rename: case Copy:// case Backup:
+					mode = Action.Load;
+					break;
 				
-				Font.drawCentered("Press Enter to create", screen, 162, col);
-				Font.drawCentered("Press Esc to cancel", screen, 172, col);
-			} else if (!createworld && loadworld) {
-				msg = "Load World";
-				col = Color.get(-1, 555);
-				int col2 = Color.get(-1, 222);
-				if (delete) {
-					msg = "Delete World!";
-					col = Color.get(-1, 500);
-				}
-				
-				if (worldnames.size() > 0) {
-					Font.drawCentered(msg, screen, 20, col);
-					Font.drawCentered(worldnames.get(worldselected), screen, 80, col);
-					if (worldselected > 0) Font.drawCentered(worldnames.get(worldselected - 1), screen, 70, col2);
-
-					if (worldselected > 1) Font.drawCentered(worldnames.get(worldselected - 2), screen, 60, col2);
-
-					if (worldselected > 2) Font.drawCentered(worldnames.get(worldselected - 3), screen, 50, col2);
-
-					if (worldselected < worldnames.size() - 1)
-						Font.drawCentered(worldnames.get(worldselected + 1), screen, 90, col2);
-
-					if (worldselected < worldnames.size() - 2)
-						Font.drawCentered(worldnames.get(worldselected + 2), screen, 100, col2);
-
-					if (worldselected < worldnames.size() - 3)
-						Font.drawCentered(worldnames.get(worldselected + 3), screen, 110, col2);
-
-				} else {
+				default:
 					game.setMenu(new TitleMenu());
-				}
-
-				if (!delete && !rename) {
-					Font.drawCentered("Arrow keys to move", screen, screen.h - 44, Color.get(0, 444));
-					Font.drawCentered("Enter to confirm", screen, screen.h - 32, Color.get(0, 444));
-					Font.drawCentered("Esc to go back to the title screen", screen, screen.h - 20, Color.get(0, 444));
-					Font.drawCentered("D to delete a world", screen, screen.h - 70, Color.get(0, 400));
-					Font.drawCentered("R to rename world", screen, screen.h - 60, Color.get(0, 40));
-				} else if (delete) {
-					Font.drawCentered("Enter to delete", screen, screen.h - 48, Color.get(0, 444));
-					Font.drawCentered("Esc to cancel", screen, screen.h - 36, Color.get(0, 444));
-				} else if (rename) {
-					screen.clear(0);
-					Font.drawCentered("Rename World", screen, 20, col);
-					Font.drawCentered(name, screen, 50, wncol);
-					Font.drawCentered("A-Z, 0-9, up to 36 Characters", screen, 80, col);
-					Font.drawCentered("(Space + Backspace as well)", screen, 92, col);
-
-					if (wncol == Color.get(0, 500)) {
-						if (!name.equals("")) {
-							Font.drawCentered("Cannot have 2 worlds", screen, 120, wncol);
-							Font.drawCentered(" with the same name!", screen, 132, wncol);
-						} else {
-							Font.drawCentered("Name cannot be blank!", screen, 125, wncol);
-						}
-					}
-
-					Font.drawCentered("Press Enter to rename", screen, 162, col);
-					Font.drawCentered("Press Esc to cancel", screen, 172, col);
-				}
+					loadworld = false;
 			}
 		}
 	}
-
-	public void typename() {
-		ArrayList<String> namedworldnames = new ArrayList<String>();
-		if (createworld) {
-			//typing name of new world
-			if (worldnames.size() > 0) {
-				for (int i = 0; i < worldnames.size(); i++) {
-					if (!name.equals(worldnames.get(i).toLowerCase())) {
-						wncol = Color.get(0, 5);
-					} else {
-						wncol = Color.get(0, 500);
-						break;
-					}
+	
+	private String[] getCurOpts() {
+		switch(mode) {
+			case Main: return this.options;
+			case Create: return new String[0];
+			default: return worldnames.toArray(new String[0]);
+		}
+	}
+	
+	public void render(Screen screen) {
+		screen.clear(0);
+		String[] opts = getCurOpts();
+		
+		int mainCol = Color.get(-1, mode.color);
+		int fadeCol = Color.get(-1, 222);
+		int controlCol = Color.get(-1, 333);
+		
+		String msg = mode.message;
+		
+		if(mode == Action.Main) {
+			for (int i = 0; i < opts.length; i++) {
+				String curOption = opts[i];
+				int col = fadeCol;
+				if (i == selected) {
+					curOption = "> " + curOption + " <";
+					col = mainCol;
 				}
-			} else {
-				wncol = Color.get(0, 5);
+				
+				if (worldnames.size() == 0) {
+					Font.drawCentered(curOption, screen, 80, col);
+				} else {
+					Font.drawCentered(curOption, screen, 80 + i*12, col);
+				}
+			}
+			
+			//Font.drawCentered("Arrow keys to move", screen, screen.h - 170, controlCol);
+			Font.drawCentered(input.getMapping("select")+" to confirm", screen, screen.h - 60, controlCol);
+			Font.drawCentered(input.getMapping("exit")+" to return", screen, screen.h - 40, controlCol);
+		}
+		else if (worldnames.size() > 0 && mode != Action.Create && (!confirmed || mode != Action.Rename && mode != Action.Delete && mode != Action.Copy/* && mode != Action.Backup*/)) {
+			if(mode != Action.Load)
+				fadeCol = Color.get(-1, 555);
+			
+			//System.out.println("drawing worlds, mode="+mode + " -- selected: " + worldnames.get(selected));
+			
+			Font.drawCentered(worldnames.get(selected), screen, 80, mainCol);
+			
+			if (selected > 0) Font.drawCentered(worldnames.get(selected - 1), screen, 70, fadeCol);
+			if (selected > 1) Font.drawCentered(worldnames.get(selected - 2), screen, 60, fadeCol);
+			if (selected > 2) Font.drawCentered(worldnames.get(selected - 3), screen, 50, fadeCol);
+			
+			if (selected < worldnames.size() - 1)
+				Font.drawCentered(worldnames.get(selected + 1), screen, 90, fadeCol);
+			if (selected < worldnames.size() - 2)
+				Font.drawCentered(worldnames.get(selected + 2), screen, 100, fadeCol);
+			if (selected < worldnames.size() - 3)
+				Font.drawCentered(worldnames.get(selected + 3), screen, 110, fadeCol);
+		}
+		
+		if(mode == Action.Create || confirmed && (mode == Action.Rename || mode == Action.Copy)) {
+			Font.drawCentered("A-Z, 0-9, up to 36 Characters", screen, 80, controlCol);
+			Font.drawCentered("(Space + Backspace as well)", screen, 92, controlCol);
+			
+			if(mode != Action.Create)
+				msg += ": "+worldnames.get(selected);
+			
+			int worldnameCol = Color.get(-1, 005);
+			if (!validName) {
+				worldnameCol = Color.get(-1, 500);
+				if (!typingname.equals("")) {
+					Font.drawCentered("Cannot have 2 worlds", screen, 120, worldnameCol);
+					Font.drawCentered(" with the same name!", screen, 132, worldnameCol);
+				} else {
+					Font.drawCentered("Name cannot be blank!", screen, 125, worldnameCol);
+				}
+			}
+			Font.drawCentered(typingname, screen, 50, worldnameCol);
+		}
+		
+		if(confirmed && mode == Action.Delete) {
+			Font.drawCentered("Are you sure you want to delete", screen, screen.h/2-10, Color.get(-1, 533));
+			Font.drawCentered("\'"+worldnames.get(selected)+"\'?", screen, screen.h/2, mainCol);
+			Font.drawCentered("This cannot be undone!", screen, screen.h/2+10, Color.get(-1, 533));
+		}
+		
+		Font.drawCentered(msg, screen, 20, mainCol);
+		
+		if(mode == Action.Load) {
+			Font.drawCentered("C to copy", screen, screen.h-26-8-8-8, Color.get(-1, Action.Copy.color));
+			Font.drawCentered("R to rename", screen, screen.h-26-8-8, Color.get(-1, Action.Rename.color));
+			Font.drawCentered("D to delete", screen, screen.h-26-8, Color.get(-1, Action.Delete.color));
+			//Font.drawCentered("B to backup", screen, screen.h-26, Color.get(-1, Action.Backup.color));
+		}
+		
+		if(mode != Action.Main) {
+			Font.drawCentered("Press "+input.getMapping("select")+" to " + mode.name() + " World", screen, screen.h - 16, controlCol);
+			Font.drawCentered("Press "+input.getMapping("exit")+" to cancel", screen, screen.h - 8, controlCol);
+		}
+	}
+	
+	public void typename() {
+		//System.out.println("listening to type keypress...");
+		ArrayList<String> invalidNames = new ArrayList<String>();
+		for(String wname: worldnames) {
+			/// this will add all the names, unless we are renaming, in which case the current name is okay, and is not added.
+			if(!(wname.equals(worldname) && mode != Action.Rename && mode != Action.Copy)) {
+				//System.out.println("adding invalid name: " + wname);
+				invalidNames.add(wname);
+			}
+			//if( (mode == Action.Rename || mode == Action.Copy) && worldname.equals(worldnames.get(selected)) ) {
+				//System.out.println("current name " + worldname + " is invalid");
+				//System.out.println("current name " + this.worldname);
+				
+				
+			//}
+		}
+		
+		if (input.getKey("backspace").clicked && typingname.length() > 0) //backspace support
+			typingname = typingname.substring(0, typingname.length() - 1);
+		
+		if (typingname.length() < 36 && input.lastKeyTyped.length() > 0) {
+			//ensure only valid characters are typed.
+			java.util.regex.Pattern p = java.util.regex.Pattern.compile("[a-zA-Z0-9 ]");
+			if (p.matcher(input.lastKeyTyped).matches()) typingname += input.lastKeyTyped;
+			input.lastKeyTyped = "";
+		}
+		
+		//if (createworld) {
+		
+		if (typingname.equals("")) {//name cannot be blank
+			validName = false;
+			return;
+		}
+		
+		validName = true;
+		
+		if (invalidNames.size() > 0) {
+			for (int i = 0; i < invalidNames.size(); i++) {
+				if (typingname.toUpperCase().equals(invalidNames.get(i).toUpperCase())) {
+					validName = false;
+					return;
+				}
 			}
 		}
-
-		if (rename) {
+		
+		//}
+ 		/*else if(loadworld) {
 			//get all worldnames besides the one you're renaming
 			for (int i = 0; i < worldnames.size(); i++) {
 				if (!worldnames.get(i).equals(renamingworldname)) {
@@ -351,28 +436,16 @@ public class WorldSelectMenu extends Menu {
 			if (namedworldnames.size() > 0) {
 				for (int i = 0; i < namedworldnames.size(); i++) {
 					if (name.toLowerCase().equals(namedworldnames.get(i).toLowerCase())) {
-						wncol = Color.get(0, 500);
+						validName = false;
 						break;
 					}
 
-					wncol = Color.get(0, 5);
+					validName = true;
 				}
 			} else {
-				wncol = Color.get(0, 5);
+				validName = true;
 			}
 		} //end rename
-
-		if (name.equals("")) //name cannot be blank
-			wncol = Color.get(0, 500);
-
-		if (input.getKey("backspace").clicked && name.length() > 0) //backspace support
-			name = name.substring(0, name.length() - 1);
-
-		if (name.length() < 36 && input.lastKeyTyped.length() > 0) {
-			//ensure only valid characters are typed.
-			java.util.regex.Pattern p = java.util.regex.Pattern.compile("[a-zA-Z0-9 ]");
-			if (p.matcher(input.lastKeyTyped).matches()) name += input.lastKeyTyped;
-			input.lastKeyTyped = "";
-		}
+		*/
 	}
 }

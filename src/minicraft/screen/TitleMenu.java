@@ -324,8 +324,8 @@ private static final String[] options = {"New game", "Instructions", "Tutorial",
 		
 		Font.draw("Version " + Game.VERSION, screen, 1, 1, Color.get(0, 111));
 		
-		Font.drawCentered("("+input.getMapping("up").replace("|", "/")+", "+input.getMapping("down").replace("|", "/")+" to select)", screen, screen.h - 32, Color.get(0, 111));
-		Font.drawCentered("("+input.getMapping("select").replace("|", "/")+" to accept)", screen, screen.h - 22, Color.get(0, 111));
-		Font.drawCentered("("+input.getMapping("exit").replace("|", "/")+" to return)", screen, screen.h - 12, Color.get(0, 111));
+		Font.drawCentered("("+input.getMapping("up")+", "+input.getMapping("down")+" to select)", screen, screen.h - 32, Color.get(0, 111));
+		Font.drawCentered("("+input.getMapping("select")+" to accept)", screen, screen.h - 22, Color.get(0, 111));
+		Font.drawCentered("("+input.getMapping("exit")+" to return)", screen, screen.h - 12, Color.get(0, 111));
 	}
 }
