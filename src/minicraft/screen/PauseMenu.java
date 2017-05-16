@@ -75,14 +75,14 @@ public class PauseMenu extends SelectMenu {
 			ArrayList<String> confirmDialog = new ArrayList<String>();
 			
 			if (selection == 3) // save game
-				confirmDialog.add("Save Game?");
+				confirmDialog.addAll(Arrays.asList(Font.getLines("Save Game?\n\n\nTip: press \"R\" to save in-game", 28*8, 18*8, 2)));
 			else if (selection == 4) // load game
 				confirmDialog.addAll(Arrays.asList(Font.getLines("Load Game?\nCurrent game will\nnot be saved", 28*8, 18*8, 2)));
 			else if (selection == 5) // back to menu
 				confirmDialog.addAll(Arrays.asList(Font.getLines("Back to Main Menu?\nCurrent game will\nnot be saved", 28*8, 18*8, 2)));
 			
 			for(int i = 0; i < confirmDialog.size(); i++) { // draws each line from above; the first line is white, and all the following lines are red.
-				int col = i == 0 ? Color.get(-1, 555) : Color.get(-1, 500);
+				int col = i == 0 ? Color.get(-1, 555) : selection == 3 ? Color.get(-1, 333) : Color.get(-1, 500);
 				Font.drawCentered(confirmDialog.get(i), screen, 60+i*10, col); // draw it centered.
 			}
 			int ypos = 70 + confirmDialog.size()*10; // start 20 below the last element...
