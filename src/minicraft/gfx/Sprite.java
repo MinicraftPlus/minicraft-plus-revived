@@ -15,10 +15,16 @@ public class Sprite {
 	public static final Sprite missingTexture(int w, int h) {
 		return new Sprite(30, 30, w, h, Color.get(505, 505));
 	}
+	public static final Sprite blank(int w, int h, int col) {
+		return new Sprite(7, 2, w, h, Color.get(col, col));
+	}
+	public static final Sprite dots(int col) {
+		return ConnectorSprite.makeSprite(2, 2, col, 0, false, 0, 1, 2, 3);
+	}
 	
-	public Px[][] spritePixels;
+	protected Px[][] spritePixels;
 	public int color;
-	private Rectangle sheetLoc;
+	protected Rectangle sheetLoc;
 	/// spritePixels is arranged so that the pixels are in their correct positions relative to the top left of the full sprite. This means that their render positions are built-in to the array.
 	
 	public Sprite(int pos, int color) {
@@ -27,21 +33,22 @@ public class Sprite {
 		this(sx, sy, 1, 1, color);
 	}
 	public Sprite(int sx, int sy, int sw, int sh) {
-		this(sx, sy, sw, sh, 0, false, false);}
+		this(sx, sy, sw, sh, 0, 0);}
 	public Sprite(int sx, int sy, int sw, int sh, int color) {
-		this(sx, sy, sw, sh, color, false, false);}
-	public Sprite(int sx, int sy, int sw, int sh, boolean mirrorHori, boolean mirrorVert) {
-		this(sx, sy, sw, sh, 0, mirrorHori, mirrorVert);}
+		this(sx, sy, sw, sh, color, 0);}
+	//public Sprite(int sx, int sy, int sw, int sh, int mirror) {
+		//this(sx, sy, sw, sh, 0, mirror);}
 	
-	public Sprite(int sx, int sy, int sw, int sh, int color, boolean mirrorHori, boolean mirrorVert) {
+	public Sprite(int sx, int sy, int sw, int sh, int color, int mirror, boolean onepixel) {
+		this(sx, sy, sw, sh, color, mirror, false);}
+	public Sprite(int sx, int sy, int sw, int sh, int color, int mirror, boolean onepixel) {
 		this.color = color;
 		sheetLoc = new Rectangle(sx, sy, sw, sh);
 		
 		spritePixels = new Px[sh][sw];
-		int mirrorBits = (mirrorHori ? 1 : 0) + (mirrorVert ? 2 : 0);
 		for(int r = 0; r < sh; r++)
 			for(int c = 0; c < sw; c++)
-				spritePixels[r][c] = new Px(sx+c, sy+r, mirrorBits);
+				spritePixels[r][c] = new Px(sx+(onepixel?0:c), sy+(onepixel?0:r), mirror);
 	}
 	
 	public Sprite(Px[][] pixels) { this(pixels, 0); }
@@ -74,6 +81,12 @@ public class Sprite {
 		}
 	}
 	
+	protected void renderPixel(int c, int r, Screen screen, int x, int y) { renderPixel(c, r, screen, color, x, y); }
+	protected void renderPixel(int c, int r, Screen screen, int color, int x, int y) {
+		//System.out.println("rendering pixel ("+c+","+r+") at ("+x+","+y+")");
+		screen.render(x, y, spritePixels[r][c].sheetPos, color, spritePixels[r][c].mirror); // render the sprite pixel.
+	}
+	
 	public String toString() {
 		String out = getClass().getName().replace("minicraft.gfx.", "")+"; pixels:";
 		for(Px[] row: spritePixels)
@@ -84,7 +97,7 @@ public class Sprite {
 		return out;
 	}
 	
-	public class Px {
+	public static class Px {
 		protected int sheetPos, mirror;
 		
 		public Px(int sheetX, int sheetY, int mirroring) {
