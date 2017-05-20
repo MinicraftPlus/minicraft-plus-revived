@@ -14,7 +14,7 @@ import minicraft.screen.ModeMenu;
 public class BucketItem extends StackableItem {
 	
 	public static enum Fill {
-		Empty (null, 333),
+		Empty (Tile.hole, 333),
 		Water (Tile.water, 005),
 		Lava (Tile.lava, 400);
 		
@@ -37,7 +37,6 @@ public class BucketItem extends StackableItem {
 	}
 	
 	private static final Fill getFilling(Tile tile) {
-		if(tile == null) return Fill.Empty;
 		for(Fill fill: Fill.values())
 			if(fill.contained.id == tile.id)
 				return fill;
@@ -75,20 +74,20 @@ public class BucketItem extends StackableItem {
 	}
 	*/
 	public boolean interactOn(Tile tile, Level level, int xt, int yt, Player player, int attackDir) {
-		if(filling.contained == null) {
-			Fill fill = getFilling(tile);
-			if(fill != null && fill != Fill.Empty) {
-				level.setTile(xt, yt, Tile.hole, 0);
-				if(!ModeMenu.creative) player.activeItem = new BucketItem(fill);
-				return true;
-			}
-		}
-		else if(tile.matches(Tile.hole)) {
+		Fill fill = getFilling(tile);
+		if(fill == null) return false;
+		if(fill == Fill.Empty && filling != Fill.Empty) {
 			level.setTile(xt, yt, filling.contained, 0);
 			if(!ModeMenu.creative) player.activeItem = new BucketItem(Fill.Empty);
 			return true;
 		}
+		else if(filling == Fill.Empty) {
+			level.setTile(xt, yt, Tile.hole, 0);
+			if(!ModeMenu.creative) player.activeItem = new BucketItem(fill);
+			return true;
+		}
 		
+		return false;
 		/*
 		if (tile == Tile.water) {
 			level.setTile(xt, yt, Tile.hole, 0);
@@ -101,8 +100,6 @@ public class BucketItem extends StackableItem {
 		
 		//if(ModeMenu.creative) item = this;
 		//player.activeItem = item;
-		
-		return false;
 	}
 	
 	public boolean matches(Item other) {
