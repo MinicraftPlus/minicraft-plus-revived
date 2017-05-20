@@ -2,6 +2,7 @@ package minicraft.gfx;
 
 import minicraft.level.Level;
 import minicraft.level.tile.Tile;
+import minicraft.level.tile.Tiles;
 
 public class ConnectorSprite {
 	/**
@@ -24,19 +25,27 @@ public class ConnectorSprite {
 	public ConnectorSprite(Class<? extends Tile> owner, Sprite sparse, Sprite sides, Sprite full, boolean cornersMatter) {
 		this.owner = owner;
 		this.sparse = sparse;
-		this.sides = sides;
+		this.sides = sides==null?full:sides;
 		this.full = full;
 		this.checkCorners = cornersMatter;
+	}
+	public ConnectorSprite(Class<? extends Tile> owner, Sprite sparse, Sprite full) {
+		this(owner, sparse, sparse, full, false);
 	}
 	
 	public void render(Screen screen, Level level, int x, int y) { render(screen, level, x, y, sparse.color, sides.color, full.color); }
 	public void render(Screen screen, Level level, int x, int y, int colsparse, int colside, int colfull) {
 		//System.out.println("rendering sprite for tile " + owner);
 		
-		boolean u = connectsTo(level.getTile(x, y - 1), true);
-		boolean d = connectsTo(level.getTile(x, y + 1), true);
-		boolean l = connectsTo(level.getTile(x - 1, y), true);
-		boolean r = connectsTo(level.getTile(x + 1, y), true);
+		Tile ut = level.getTile(x, y - 1);
+		Tile dt = level.getTile(x, y + 1);
+		Tile lt = level.getTile(x - 1, y);
+		Tile rt = level.getTile(x + 1, y);
+		
+		boolean u = connectsTo(ut, true);
+		boolean d = connectsTo(dt, true);
+		boolean l = connectsTo(lt, true);
+		boolean r = connectsTo(rt, true);
 		
 		boolean ul = connectsTo(level.getTile(x - 1, y - 1), false);
 		boolean dl = connectsTo(level.getTile(x - 1, y + 1), false);
@@ -46,35 +55,39 @@ public class ConnectorSprite {
 		x = x << 4;
 		y = y << 4;
 		
+		int[] spc = Color.seperateEncodedSprite(colsparse);
+		
 		if (u && l) {
 			if (ul) full.renderPixel(0, 0, screen, x, y, colfull);
-			else sides.renderPixel(0, 0, screen, x, y, colside);
+			else if(checkCorners) sides.renderPixel(0, 0, screen, x, y, colside);
 		} else
-			sparse.renderPixel(l?1:2, u?1:2, screen, x, y, colsparse);
+			sparse.renderPixel(l?1:2, u?1:2, screen, x, y, Color.get(spc[0], spc[1], spc[2], Color.mixRGB(ut.getConnectColor(level), lt.getConnectColor(level))));
 		
 		if (u && r) {
 			if (ur) full.renderPixel(1, 0, screen, x+8, y, colfull);
-			else sides.renderPixel(1, 0, screen, x+8, y, colside);
-		} else
-			sparse.renderPixel(r?1:0, u?1:2, screen, x+8, y, colsparse);
+			else if(checkCorners) sides.renderPixel(1, 0, screen, x+8, y, colside);
+		} else// if(!checkCorners)
+			sparse.renderPixel(r?1:0, u?1:2, screen, x+8, y, Color.get(spc[0], spc[1], spc[2], Color.mixRGB(ut.getConnectColor(level), rt.getConnectColor(level))));
+		//else // useful for trees
+			
 
 		if (d && l) {
 			if (dl) full.renderPixel(0, 1, screen, x, y+8, colfull);
-			else sides.renderPixel(0, 1, screen, x, y+8, colside);
+			else if(checkCorners) sides.renderPixel(0, 1, screen, x, y+8, colside);
 		} else
-			sparse.renderPixel(l?1:2, d?1:0, screen, x, y+8, colsparse);
+			sparse.renderPixel(l?1:2, d?1:0, screen, x, y+8, Color.get(spc[0], spc[1], spc[2], Color.mixRGB(dt.getConnectColor(level), lt.getConnectColor(level))));
 		
 		if (d && r) {
 			if (dr) full.renderPixel(1, 1, screen, x+8, y+8, colfull);
-			else sides.renderPixel(1, 1, screen, x+8, y+8, colside);
+			else if(checkCorners) sides.renderPixel(1, 1, screen, x+8, y+8, colside);
 		} else
-			sparse.renderPixel(r?1:0, d?1:0, screen, x+8, y+8, colsparse);
+			sparse.renderPixel(r?1:0, d?1:0, screen, x+8, y+8, Color.get(spc[0], spc[1], spc[2], Color.mixRGB(dt.getConnectColor(level), rt.getConnectColor(level))));
 	}
 	
 	// it is expected that some tile classes will override this on class instantiation.
 	public boolean connectsTo(Tile tile, boolean isSide) {
 		//System.out.println("original connection check");
-		return tile.getClass() == owner;
+		return tile.getClass() == owner || !checkCorners && !isSide;
 	}
 	
 	public static Sprite makeSprite(int w, int h, int color, int mirror, boolean repeat, int... coords) {
