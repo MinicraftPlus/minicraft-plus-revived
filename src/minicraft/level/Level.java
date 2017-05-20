@@ -152,12 +152,12 @@ public class Level {
 						if (level == -4) { /// make the obsidian wall formation around the stair to the dungeon level
 							setTile(x - 1, y, Tile.o, 0);
 							setTile(x + 1, y, Tile.o, 0);
-							setTile(x + 2, y, Tile.odc, 0);
-							setTile(x - 2, y, Tile.odc, 0);
+							setTile(x + 2, y, Tile.od, 0);
+							setTile(x - 2, y, Tile.od, 0);
 							setTile(x, y - 1, Tile.o, 0);
 							setTile(x, y + 1, Tile.o, 0);
-							setTile(x, y + 2, Tile.odc, 0);
-							setTile(x, y - 2, Tile.odc, 0);
+							setTile(x, y + 2, Tile.od, 0);
+							setTile(x, y - 2, Tile.od, 0);
 							setTile(x - 1, y - 1, Tile.o, 0);
 							setTile(x - 1, y + 1, Tile.o, 0);
 							setTile(x + 1, y - 1, Tile.o, 0);
@@ -450,11 +450,14 @@ public class Level {
 		}
 	}
 	
+	public void dropItem(int x, int y, int mincount, int maxcount, Item... items) {
+		dropItem(x, y, mincount+random.nextInt(maxcount-mincount), items);
+	}
 	public void dropItem(int x, int y, int count, Item... items) {
 		for (int i = 0; i < count; i++)
 			dropItem(x, y, items);
 	}
-	public void dropItem(int x, int y, Item[] items) {
+	public void dropItem(int x, int y, Item... items) {
 		for(Item i: items)
 			dropItem(x, y, i);
 	}

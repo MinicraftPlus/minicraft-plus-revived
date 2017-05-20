@@ -25,13 +25,13 @@ public class TileItem extends StackableItem {
 	
 		items.add(new TileItem("Plank", new Sprite(1, 4, Color.get(-1, 200, 531, 530)), Tile.plank, Tile.hole, Tile.water));
 		items.add(new TileItem("Plank Wall", new Sprite(16, 4, Color.get(-1, 200, 531, 530)), Tile.plankwall, Tile.plank));
-		items.add(new TileItem("Wood Door", new Sprite(17, 4, Color.get(-1, 200, 531, 530)), Tile.wdc, Tile.plank));
+		items.add(new TileItem("Wood Door", new Sprite(17, 4, Color.get(-1, 200, 531, 530)), Tile.wd, Tile.plank));
 		items.add(new TileItem("Stone Brick", new Sprite(1, 4, Color.get(-1, 333, 444, 444)), Tile.sbrick, Tile.hole, Tile.water, Tile.lava));
 		items.add(new TileItem("Stone BrickWall", new Sprite(16, 4, Color.get(-1, 100, 333, 444)), Tile.stonewall, Tile.sbrick));
-		items.add(new TileItem("Stone Door", new Sprite(17, 4, Color.get(-1, 111, 333, 444)), Tile.sdc, Tile.sbrick));
+		items.add(new TileItem("Stone Door", new Sprite(17, 4, Color.get(-1, 111, 333, 444)), Tile.sd, Tile.sbrick));
 		items.add(new TileItem("Obsidian BrickWall", new Sprite(16, 4, Color.get(-1, 159, 59, 59)), Tile.ow, Tile.o));
 		items.add(new TileItem("Obsidian Brick", new Sprite(1, 4, Color.get(-1, 159, 59, 59)), Tile.o, Tile.hole, Tile.water, Tile.lava));
-		items.add(new TileItem("Obsidian Door", new Sprite(17, 4, Color.get(-1, 159, 59, 59)), Tile.odc, Tile.o));
+		items.add(new TileItem("Obsidian Door", new Sprite(17, 4, Color.get(-1, 159, 59, 59)), Tile.od, Tile.o));
 	
 		// TODO make a method in Item.java; calls clone(), but then changes color, and returns itself. Call it cloneAsColor, or changeColor, or maybe *asColor()*.
 		items.add(new TileItem("Wool", new Sprite(2, 4, Color.get(-1, 555)), Tile.wool, Tile.hole, Tile.water));
