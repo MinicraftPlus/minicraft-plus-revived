@@ -22,6 +22,7 @@ import minicraft.item.PotionType;
 import minicraft.item.Items;
 import minicraft.level.Level;
 import minicraft.level.tile.Tile;
+import minicraft.level.tile.Tiles;
 import minicraft.saveload.Save;
 import minicraft.screen.CraftingMenu;
 import minicraft.screen.LoadingMenu;
@@ -145,9 +146,9 @@ public class Player extends Mob {
 		}
 		
 		Tile onTile = level.getTile(x >> 4, y >> 4); // gets the current tile the player is on.
-		if (onTile == Tile.stairsDown || onTile == Tile.stairsUp) {
+		if (onTile == Tiles.get("Stairs Down") || onTile == Tiles.get("Stairs Up")) {
 			if (onStairDelay == 0) { // when the delay time has passed...
-				changeLevel((onTile == Tile.stairsUp) ? 1 : -1); // decide whether to go up or down.
+				changeLevel((onTile == Tiles.get("Stairs Up")) ? 1 : -1); // decide whether to go up or down.
 				onStairDelay = 10; // resets delay, since the level has now been changed.
 				return;
 			}
@@ -494,10 +495,10 @@ public class Player extends Mob {
 		if (isSwimming()) {
 			yo += 4; // y offset is moved up by 4
 			int liquidColor = 0; // color of water / lava circle
-			if (level.getTile(x / 16, y / 16) == Tile.water) {
+			if (level.getTile(x / 16, y / 16) == Tiles.get("water")) {
 				liquidColor = Color.get(-1, -1, 115, 335);
 				if (tickTime / 8 % 2 == 0) liquidColor = Color.get(-1, 335, 5, 115);
-			} else if (level.getTile(x / 16, y / 16) == Tile.lava) {
+			} else if (level.getTile(x / 16, y / 16) == Tiles.get("lava")) {
 				liquidColor = Color.get(-1, -1, 500, 300);
 				if (tickTime / 8 % 2 == 0) liquidColor = Color.get(-1, 300, 400, 500);
 			}
@@ -593,7 +594,7 @@ public class Player extends Mob {
 			// gets coordinates of a random tile (in tile coordinates)
 			int x = random.nextInt(level.w);
 			int y = random.nextInt(level.h);
-			if (level.getTile(x, y) == Tile.grass) { // player will only spawn on a grass tile.
+			if (level.getTile(x, y) == Tiles.get("grass")) { // player will only spawn on a grass tile.
 				// used to save (tile) coordinates of spawnpoint outside of this method.
 				spawnx = x;
 				spawny = y;
@@ -639,7 +640,7 @@ public class Player extends Mob {
 	
 	/** finds a location to respawn the player after death. */
 	public boolean respawn(Level level) {
-		if (!(bedSpawn || level.getTile(spawnx, spawny) == Tile.grass))
+		if (!(bedSpawn || level.getTile(spawnx, spawny) == Tiles.get("grass")))
 			findStartPos(level); // if there's no bed to spawn from, and the stored coordinates don't point to a grass tile, then find a new point.
 		
 		// move the player to the spawnpoint

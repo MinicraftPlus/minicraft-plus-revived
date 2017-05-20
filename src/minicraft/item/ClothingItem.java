@@ -4,8 +4,10 @@ import java.util.ArrayList;
 import minicraft.entity.Player;
 import minicraft.gfx.Color;
 import minicraft.gfx.Sprite;
+import minicraft.gfx.ConnectorSprite;
 import minicraft.level.Level;
 import minicraft.level.tile.Tile;
+import minicraft.level.tile.Tiles;
 
 public class ClothingItem extends StackableItem {
 	

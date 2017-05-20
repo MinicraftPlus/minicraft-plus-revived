@@ -4,8 +4,10 @@ import java.util.ArrayList;
 import minicraft.entity.Player;
 import minicraft.gfx.Color;
 import minicraft.gfx.Sprite;
+import minicraft.gfx.ConnectorSprite;
 import minicraft.level.Level;
 import minicraft.level.tile.Tile;
+import minicraft.level.tile.Tiles;
 import minicraft.level.tile.TorchTile;
 
 public class TorchItem extends TileItem {
@@ -18,7 +20,7 @@ public class TorchItem extends TileItem {
 	
 	public TorchItem() { this(1); }
 	public TorchItem(int count) {
-		super("Torch", new Sprite(18, 4, Color.get(-1, 500, 520, 320)), count, null, Tile.dirt, Tile.plank, Tile.sbrick, Tile.wool, Tile.redwool, Tile.bluewool, Tile.greenwool, Tile.yellowwool, Tile.blackwool, Tile.grass, Tile.sand);
+		super("Torch", new Sprite(18, 4, Color.get(-1, 500, 520, 320)), count, null, Tiles.get("dirt"), Tiles.get("Wood Plank"), Tiles.get("Stone Brick"), Tiles.get("wool"), Tiles.get("red Wool"), Tiles.get("blue Wool"), Tiles.get("green Wool"), Tiles.get("yellow Wool"), Tiles.get("black Wool"), Tiles.get("grass"), Tiles.get("sand"));
 	}
 	
 	public boolean interactOn(Tile tile, Level level, int xt, int yt, Player player, int attackDir) {

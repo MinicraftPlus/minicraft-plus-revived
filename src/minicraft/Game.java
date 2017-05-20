@@ -32,6 +32,7 @@ import minicraft.item.PotionType;
 import minicraft.item.Items;
 import minicraft.level.Level;
 import minicraft.level.tile.Tile;
+import minicraft.level.tile.Tiles;
 import minicraft.saveload.Load;
 import minicraft.saveload.Save;
 import minicraft.screen.DeadMenu;

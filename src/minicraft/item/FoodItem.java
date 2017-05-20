@@ -3,9 +3,11 @@ package minicraft.item;
 import java.util.ArrayList;
 import minicraft.entity.Player;
 import minicraft.gfx.Sprite;
+import minicraft.gfx.ConnectorSprite;
 import minicraft.gfx.Color;
 import minicraft.level.Level;
 import minicraft.level.tile.Tile;
+import minicraft.level.tile.Tiles;
 
 public class FoodItem extends StackableItem {
 	

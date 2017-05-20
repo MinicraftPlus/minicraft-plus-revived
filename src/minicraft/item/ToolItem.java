@@ -9,8 +9,10 @@ import minicraft.gfx.Color;
 import minicraft.gfx.Font;
 import minicraft.gfx.Screen;
 import minicraft.gfx.Sprite;
+import minicraft.gfx.ConnectorSprite;
 import minicraft.level.Level;
 import minicraft.level.tile.Tile;
+import minicraft.level.tile.Tiles;
 import minicraft.screen.ModeMenu;
 
 public class ToolItem extends Item {
@@ -103,7 +105,7 @@ public class ToolItem extends Item {
 	
 	public boolean interactOn(Tile tile, Level level, int xt, int yt, Player player, int attackDir) {
 		if (type == ToolType.FishingRod && dur > 0) {
-			if (tile == Tile.water) {
+			if (tile == Tiles.get("water")) {
 				//if(minicraft.Game.debug) System.out.println("Fishing...");
 				player.goFishing(player.x - 5, player.y - 5);
 				if(!ModeMenu.creative) dur--;

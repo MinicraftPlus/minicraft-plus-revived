@@ -6,10 +6,12 @@ import minicraft.entity.particle.FireParticle;
 import minicraft.entity.particle.TextParticle;
 import minicraft.gfx.Color;
 import minicraft.gfx.Sprite;
+import minicraft.gfx.ConnectorSprite;
 import minicraft.item.Item;
 import minicraft.item.ToolItem;
 import minicraft.item.ToolType;
 import minicraft.level.tile.Tile;
+import minicraft.level.tile.Tiles;
 import minicraft.screen.ModeMenu;
 import minicraft.sound.Sound;
 

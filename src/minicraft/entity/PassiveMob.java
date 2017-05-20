@@ -5,6 +5,7 @@ import minicraft.gfx.MobSprite;
 import minicraft.gfx.Screen;
 import minicraft.level.Level;
 import minicraft.level.tile.Tile;
+import minicraft.level.tile.Tiles;
 import minicraft.screen.ModeMenu;
 import minicraft.screen.OptionsMenu;
 
@@ -49,7 +50,7 @@ public class PassiveMob extends MobAi {
 			return false;
 		
 		Tile tile = level.getTile(x >> 4, y >> 4);
-		if (tile == Tile.grass || tile == Tile.flower) {
+		if (tile == Tiles.get("grass") || tile == Tiles.get("flower")) {
 			return true;
 		}
 

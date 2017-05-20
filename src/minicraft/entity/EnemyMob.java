@@ -5,6 +5,7 @@ import minicraft.gfx.MobSprite;
 import minicraft.gfx.Screen;
 import minicraft.level.Level;
 import minicraft.level.tile.Tile;
+import minicraft.level.tile.Tiles;
 import minicraft.screen.ModeMenu;
 import minicraft.screen.OptionsMenu;
 
@@ -86,8 +87,8 @@ public class EnemyMob extends MobAi {
 		y = y >> 4;
 		
 		if(level.depth == -4) {
-			if (level.getTile(x, y) != Tile.o) return false;
-		} else if (level.getTile(x, y) != Tile.sd && level.getTile(x, y) != Tile.wd && level.getTile(x, y) != Tile.od && level.getTile(x, y) != Tile.wheat && level.getTile(x, y) != Tile.farmland)/* && level.getTile(x, y) != Tile.lightsbrick && level.getTile(x, y) != Tile.lightplank && level.getTile(x, y) != Tile.lightwool && level.getTile(x, y) != Tile.lightrwool && level.getTile(x, y) != Tile.lightbwool && level.getTile(x, y) != Tile.lightgwool && level.getTile(x, y) != Tile.lightywool && level.getTile(x, y) != Tile.lightblwool && level.getTile(x, y) != Tile.lightgrass && level.getTile(x, y) != Tile.lightsand && level.getTile(x, y) != Tile.lightdirt && level.getTile(x, y) != Tile.lightflower && level.getTile(x, y) != Tile.torchgrass && level.getTile(x, y) != Tile.torchsand && level.getTile(x, y) != Tile.torchdirt && level.getTile(x, y) != Tile.torchplank && level.getTile(x, y) != Tile.torchsbrick && level.getTile(x, y) != Tile.torchwool && level.getTile(x, y) != Tile.torchwoolred && level.getTile(x, y) != Tile.torchwoolblue && level.getTile(x, y) != Tile.torchwoolgreen && level.getTile(x, y) != Tile.torchwoolyellow && level.getTile(x, y) != Tile.torchwoolblack
+			if (level.getTile(x, y) != Tiles.get("Obsidian")) return false;
+		} else if (level.getTile(x, y) != Tiles.get("Stone Door") && level.getTile(x, y) != Tiles.get("Wood Door") && level.getTile(x, y) != Tiles.get("Obsidian Door") && level.getTile(x, y) != Tiles.get("wheat") && level.getTile(x, y) != Tiles.get("farmland"))/* && level.getTile(x, y) != Tiles.get("lightsbrick") && level.getTile(x, y) != Tiles.get("lightplank") && level.getTile(x, y) != Tiles.get("lightwool") && level.getTile(x, y) != Tiles.get("lightrwool") && level.getTile(x, y) != Tiles.get("lightbwool") && level.getTile(x, y) != Tiles.get("lightgwool") && level.getTile(x, y) != Tiles.get("lightywool") && level.getTile(x, y) != Tiles.get("lightblwool") && level.getTile(x, y) != Tiles.get("lightgrass") && level.getTile(x, y) != Tiles.get("lightsand") && level.getTile(x, y) != Tiles.get("lightdirt") && level.getTile(x, y) != Tiles.get("lightflower") && level.getTile(x, y) != Tiles.get("torchgrass") && level.getTile(x, y) != Tiles.get("torchsand") && level.getTile(x, y) != Tiles.get("torchdirt") && level.getTile(x, y) != Tiles.get("torchplank") && level.getTile(x, y) != Tiles.get("torchsbrick") && level.getTile(x, y) != Tiles.get("Torch Wool") && level.getTile(x, y) != Tiles.get("Torch red Wool") && level.getTile(x, y) != Tiles.get("Torch blue Wool") && level.getTile(x, y) != Tiles.get("Torch green Wool") && level.getTile(x, y) != Tiles.get("Torch yellow Wool") && level.getTile(x, y) != Tiles.get("Torch black Wool")
 		)*/ {  // prevents mobs from spawning on lit tiles (unless in the dungeons)
 			return !level.isLight(x, y);
 		} else return false;

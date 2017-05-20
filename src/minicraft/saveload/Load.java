@@ -18,11 +18,11 @@ import minicraft.item.PotionItem;
 import minicraft.item.PotionType;
 import minicraft.level.Level;
 import minicraft.level.tile.Tile;
+import minicraft.level.tile.Tiles;
 import minicraft.screen.LoadingMenu;
 import minicraft.screen.ModeMenu;
 import minicraft.screen.OptionsMenu;
 
-// I may want to consider a "LegacyLoad class in the near future, simply to reduce the clutter and really allow me to "start fresh". :)
 public class Load {
 	
 	String location = Game.gameDir;
@@ -244,17 +244,17 @@ public class Load {
 					int tileID = Integer.parseInt(data.get(tileidx + 3));
 					//System.out.println("reading tile on level "+l+"; save idx=" + (tileidx+3) + ", old id:" + tileID);
 					if(worldVer.compareTo(new Version("1.9.4-dev3")) < 0) {
-						if(Tile.oldids.containsKey(tileID))
-							tileID = Tile.oldids.get(tileID);
+						if(Tiles.oldids.containsKey(tileID))
+							tileID = Tiles.get(Tiles.oldids.get(tileID)).id;
 						else System.out.println("tile list doesn't contain tile " + tileID);
 					}
 					//System.out.println("new id: " + tileID);
 					byte id = (byte) tileID;
 					if(id < 0)
-						tiles[tileArrIdx] = minicraft.level.tile.TorchTile.getTorchTile(Tile.tiles[id+128]).id;
+						tiles[tileArrIdx] = minicraft.level.tile.TorchTile.getTorchTile(Tiles.get(id+128)).id;
 					else
 						tiles[tileArrIdx] = id;
-					//if(tiles[tileArrIdx] == Tile.stairsUp.id) System.out.println("stairs up on level "+lvldepth+" at: x="+x+" y="+y);
+					//if(tiles[tileArrIdx] == Tiles.get("Stairs Up").id) System.out.println("stairs up on level "+lvldepth+" at: x="+x+" y="+y);
 					tdata[tileArrIdx] = Byte.parseByte(extradata.get(tileidx));
 				}
 			}
@@ -270,10 +270,10 @@ public class Load {
 			
 			if(parent == null) continue;
 			/// comfirm that there are stairs in all the places that should have stairs.
-			for(java.awt.Point p: parent.getMatchingTiles(Tile.stairsDown)) {
-				if(curLevel.getTile(p.x, p.y) != Tile.stairsUp) {
+			for(java.awt.Point p: parent.getMatchingTiles(Tiles.get("Stairs Down"))) {
+				if(curLevel.getTile(p.x, p.y) != Tiles.get("Stairs Up")) {
 					System.out.println("INCONSISTENT STAIRS detected on level "+lvldepth+"; placing stairsUp at x=" +p.x+ ", y="+p.y);
-					curLevel.setTile(p.x, p.y, Tile.stairsUp, 0);
+					curLevel.setTile(p.x, p.y, Tiles.get("Stairs Up"), 0);
 				}
 			}
 			
@@ -302,7 +302,7 @@ public class Load {
 		Level level = Game.levels[Game.currentLevel];
 		level.add(player);
 		Tile spawnTile = level.getTile(player.spawnx >> 4, player.spawny >> 4);
-		if(spawnTile.id != Tile.grass.id && spawnTile.mayPass(level, player.spawnx >> 4, player.spawny >> 4, player))
+		if(spawnTile.id != Tiles.get("grass").id && spawnTile.mayPass(level, player.spawnx >> 4, player.spawny >> 4, player))
 			player.bedSpawn = true; //A semi-advanced little algorithm to determine if the player has a bed save; and though if you sleep on a grass tile, this won't get set, it doesn't matter b/c you'll spawn there anyway!
 		
 		String modedata = data.get(9);

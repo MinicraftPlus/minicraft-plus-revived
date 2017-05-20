@@ -5,10 +5,12 @@ import minicraft.entity.ItemEntity;
 import minicraft.entity.Player;
 import minicraft.gfx.Screen;
 import minicraft.gfx.Sprite;
+import minicraft.gfx.ConnectorSprite;
 import minicraft.gfx.Font;
 import minicraft.gfx.Color;
 import minicraft.level.Level;
 import minicraft.level.tile.Tile;
+import minicraft.level.tile.Tiles;
 import minicraft.screen.ListItem;
 
 public abstract class Item implements ListItem {

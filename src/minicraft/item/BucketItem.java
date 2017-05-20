@@ -7,16 +7,18 @@ import minicraft.gfx.Color;
 import minicraft.gfx.Font;
 import minicraft.gfx.Screen;
 import minicraft.gfx.Sprite;
+import minicraft.gfx.ConnectorSprite;
 import minicraft.level.Level;
 import minicraft.level.tile.Tile;
+import minicraft.level.tile.Tiles;
 import minicraft.screen.ModeMenu;
 
 public class BucketItem extends StackableItem {
 	
 	public static enum Fill {
-		Empty (Tile.hole, 333),
-		Water (Tile.water, 005),
-		Lava (Tile.lava, 400);
+		Empty (Tiles.get("hole"), 333),
+		Water (Tiles.get("water"), 005),
+		Lava (Tiles.get("lava"), 400);
 		
 		public Tile contained;
 		public int innerColor; // TODO make it so that the inside color is fetched from the tile color.
@@ -82,19 +84,19 @@ public class BucketItem extends StackableItem {
 			return true;
 		}
 		else if(filling == Fill.Empty) {
-			level.setTile(xt, yt, Tile.hole, 0);
+			level.setTile(xt, yt, Tiles.get("hole"), 0);
 			if(!ModeMenu.creative) player.activeItem = new BucketItem(fill);
 			return true;
 		}
 		
 		return false;
 		/*
-		if (tile == Tile.water) {
-			level.setTile(xt, yt, Tile.hole, 0);
+		if (tile == Tiles.get("water")) {
+			level.setTile(xt, yt, Tiles.get("hole"), 0);
 			item = (new BucketItem());
 		}
-		if (tile == Tile.lava) {
-			level.setTile(xt, yt, Tile.hole, 0);
+		if (tile == Tiles.get("lava")) {
+			level.setTile(xt, yt, Tiles.get("hole"), 0);
 			item = (new BucketItem());
 		}*/
 		

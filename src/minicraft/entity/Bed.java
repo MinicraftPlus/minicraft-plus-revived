@@ -3,6 +3,7 @@ package minicraft.entity;
 import minicraft.Game;
 import minicraft.gfx.Color;
 import minicraft.gfx.Sprite;
+import minicraft.gfx.ConnectorSprite;
 
 public class Bed extends Furniture {
 	public static boolean inBed = false; // If the player (as there is only one) is in their bed.

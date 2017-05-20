@@ -3,6 +3,7 @@ package minicraft.entity;
 import java.util.List;
 import java.util.ArrayList;
 import minicraft.gfx.Sprite;
+import minicraft.gfx.ConnectorSprite;
 import minicraft.gfx.Color;
 import minicraft.item.Recipe;
 import minicraft.item.Recipes;

@@ -2,6 +2,7 @@ package minicraft.entity;
 
 import minicraft.gfx.Color;
 import minicraft.gfx.Sprite;
+import minicraft.gfx.ConnectorSprite;
 
 public class Lantern extends Furniture {
 	//private Lantern.Type type;

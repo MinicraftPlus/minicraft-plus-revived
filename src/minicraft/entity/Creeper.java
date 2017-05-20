@@ -3,10 +3,12 @@ package minicraft.entity;
 import minicraft.Game;
 import minicraft.gfx.Color;
 import minicraft.gfx.Sprite;
+import minicraft.gfx.ConnectorSprite;
 import minicraft.gfx.MobSprite;
 import minicraft.gfx.Screen;
 import minicraft.item.Items;
 import minicraft.level.tile.Tile;
+import minicraft.level.tile.Tiles;
 import minicraft.screen.OptionsMenu;
 import minicraft.sound.Sound;
 
@@ -75,11 +77,11 @@ public class Creeper extends EnemyMob {
 				
 				// change tile to an appropriate crater
 				if (lvl == 4) {
-					level.setTile(xt, yt, Tile.infiniteFall, 0);
+					level.setTile(xt, yt, Tiles.get("Infinite Fall"), 0);
 				} else if (lvl == 3) {
-					level.setTile(xt, yt, Tile.lava, 0);
+					level.setTile(xt, yt, Tiles.get("lava"), 0);
 				} else {
-					level.setTile(xt, yt, Tile.hole, 0);
+					level.setTile(xt, yt, Tiles.get("hole"), 0);
 				}
 
 				die(); // dying now kind of kills everything. the super class will take care of it.

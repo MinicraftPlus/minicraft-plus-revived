@@ -4,6 +4,7 @@ import minicraft.entity.particle.TextParticle;
 import minicraft.gfx.Color;
 import minicraft.gfx.MobSprite;
 import minicraft.level.tile.Tile;
+import minicraft.level.tile.Tiles;
 import minicraft.level.tile.TorchTile;
 import minicraft.screen.ModeMenu;
 import minicraft.sound.Sound;
@@ -35,8 +36,8 @@ public abstract class Mob extends Entity {
 	public void tick() {
 		tickTime++; // Increment our tick counter
 		
-		if (level.getTile(x >> 4, y >> 4) == Tile.lava) // If we are trying to swim in lava
-			hurt(Tile.lava, x, y, 4); // Inflict 4 damage to ourselves, sourced from the lava Tile, with the direction as the opposite of ours.
+		if (level.getTile(x >> 4, y >> 4) == Tiles.get("lava")) // If we are trying to swim in lava
+			hurt(Tiles.get("lava"), x, y, 4); // Inflict 4 damage to ourselves, sourced from the lava Tile, with the direction as the opposite of ours.
 		if (health <= 0) die(); // die if no health
 		if (hurtTime > 0) hurtTime--; // If a timer preventing damage temporarily is set, decrement it's value
 	}
@@ -86,7 +87,7 @@ public abstract class Mob extends Entity {
 	protected boolean isWooling() { // supposed to walk at half speed on wool
 		if(level == null) return false;
 		Tile tile = level.getTile(x >> 4, y >> 4);
-		return tile == Tile.wool;
+		return tile == Tiles.get("wool");
 	}
 	
 	/** checks if this Mob is currently on a light tile; if so, the mob sprite is brightened. */
@@ -95,43 +96,43 @@ public abstract class Mob extends Entity {
 		//Tile tile = level.getTile(x >> 4, y >> 4);
 		return level.isLight(x>>4, y>>4);
 		
-		/*return tile == Tile.lightgrass
-				|| tile == Tile.lightsand
-				|| tile == Tile.lightwater
-				|| tile == Tile.lightdirt
-				|| tile == Tile.lightflower
-				|| tile == Tile.lightstairsDown
-				|| tile == Tile.lightstairsUp
-				|| tile == Tile.lightplank
-				|| tile == Tile.lightsbrick
-				|| tile == Tile.lwdo
-				|| tile == Tile.lsdo
-				|| tile == Tile.lighthole
-				|| tile == Tile.lightwool
-				|| tile == Tile.lightrwool
-				|| tile == Tile.lightbwool
-				|| tile == Tile.lightgwool
-				|| tile == Tile.lightywool
-				|| tile == Tile.lightblwool
-				|| tile == Tile.lightts
-				|| tile == Tile.lightcs
-				|| tile == Tile.torchgrass
-				|| tile == Tile.torchsand
-				|| tile == Tile.torchdirt
-				|| tile == Tile.torchplank
-				|| tile == Tile.torchsbrick
-				|| tile == Tile.torchwool
-				|| tile == Tile.torchwoolred
-				|| tile == Tile.torchwoolblue
-				|| tile == Tile.torchwoolgreen
-				|| tile == Tile.torchwoolyellow
-				|| tile == Tile.torchwoolblack;*/
+		/*return tile == Tiles.get("lightgrass")
+				|| tile == Tiles.get("lightsand")
+				|| tile == Tiles.get("lightwater")
+				|| tile == Tiles.get("lightdirt")
+				|| tile == Tiles.get("lightflower")
+				|| tile == Tiles.get("lightstairsDown")
+				|| tile == Tiles.get("lightstairsUp")
+				|| tile == Tiles.get("lightplank")
+				|| tile == Tiles.get("lightsbrick")
+				|| tile == Tiles.get("lwdo")
+				|| tile == Tiles.get("lsdo")
+				|| tile == Tiles.get("lighthole")
+				|| tile == Tiles.get("lightwool")
+				|| tile == Tiles.get("lightrwool")
+				|| tile == Tiles.get("lightbwool")
+				|| tile == Tiles.get("lightgwool")
+				|| tile == Tiles.get("lightywool")
+				|| tile == Tiles.get("lightblwool")
+				|| tile == Tiles.get("lightts")
+				|| tile == Tiles.get("lightcs")
+				|| tile == Tiles.get("torchgrass")
+				|| tile == Tiles.get("torchsand")
+				|| tile == Tiles.get("torchdirt")
+				|| tile == Tiles.get("torchplank")
+				|| tile == Tiles.get("torchsbrick")
+				|| tile == Tiles.get("Torch Wool")
+				|| tile == Tiles.get("Torch red Wool")
+				|| tile == Tiles.get("Torch blue Wool")
+				|| tile == Tiles.get("Torch green Wool")
+				|| tile == Tiles.get("Torch yellow Wool")
+				|| tile == Tiles.get("Torch black Wool");*/
 	}
 
 	protected boolean isSwimming() {
 		if(level == null) return false;
 		Tile tile = level.getTile(x >> 4, y >> 4); // Get the tile the mob is standing on (at x/16, y/16)
-		return tile == Tile.water || tile == Tile.lava; // Check if the tile is liquid, and return true if so
+		return tile == Tiles.get("water") || tile == Tiles.get("lava"); // Check if the tile is liquid, and return true if so
 	}
 	
 	// this is useless, I think. Why have both "blocks" and "isBlockableBy"?
@@ -141,7 +142,7 @@ public abstract class Mob extends Entity {
 
 	public void hurt(Tile tile, int x, int y, int damage) { // Hurt the mob, when the source of damage is a tile
 		int attackDir = dir ^ 1; // Set attackDir to our own direction, inverted. XORing it with 1 flips the rightmost bit in the variable, this effectively adds one when even, and subtracts one when odd
-		if(!(tile == Tile.lava && this instanceof Player && ((Player)this).potioneffects.containsKey("Lava")))
+		if(!(tile == Tiles.get("lava") && this instanceof Player && ((Player)this).potioneffects.containsKey("Lava")))
 			doHurt(damage, attackDir); // Call the method that actually performs damage, and provide it with our new attackDir value
 	}
 	

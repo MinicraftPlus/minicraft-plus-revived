@@ -5,8 +5,10 @@ import java.awt.event.ActionEvent;
 import javax.swing.Timer;
 import minicraft.gfx.Color;
 import minicraft.gfx.Sprite;
+import minicraft.gfx.ConnectorSprite;
 import minicraft.level.Level;
 import minicraft.level.tile.Tile;
+import minicraft.level.tile.Tiles;
 import minicraft.sound.Sound;
 
 public class Tnt extends Furniture implements ActionListener {
@@ -54,7 +56,7 @@ public class Tnt extends Furniture implements ActionListener {
 				int xt = x >> 4;
 				int yt = (y - 2) >> 4;
 				
-				level.setAreaTiles(xt, yt, 1, Tile.explode, 0);
+				level.setAreaTiles(xt, yt, 1, Tiles.get("explode"), 0);
 				explodeTimer.start();
 				
 				levelSave = level;
@@ -67,7 +69,7 @@ public class Tnt extends Furniture implements ActionListener {
 		explodeTimer.stop();
 		int xt = x >> 4;
 		int yt = (y - 2) >> 4;
-		levelSave.setAreaTiles(xt, yt, 1, Tile.hole, 0);
+		levelSave.setAreaTiles(xt, yt, 1, Tiles.get("hole"), 0);
 		levelSave = null;
 	}
 	

@@ -2,10 +2,12 @@ package minicraft.item;
 
 import java.util.ArrayList;
 import minicraft.gfx.Sprite;
+import minicraft.gfx.ConnectorSprite;
 import minicraft.gfx.Color;
 import minicraft.entity.Player;
 import minicraft.level.Level;
 import minicraft.level.tile.Tile;
+import minicraft.level.tile.Tiles;
 
 public class ArmorItem extends StackableItem {
 	
