@@ -99,7 +99,7 @@ public class Color {
 	
 	/** seperates a 4-part sprite color into it's original 4 component colors (which each have an rgb value) */
 	/// reverse of Color.get(a, b, c, d).
-	private static int[] seperateEncodedSprite(int col) {
+	public static int[] seperateEncodedSprite(int col) {
 		int ap = (col >> 24) << 24;
 		int bp = ((col - ap) >> 16) << 16;
 		int cp = ((col - ap - bp) >> 8) << 8;
@@ -119,6 +119,13 @@ public class Color {
 		int g = (rgb / 6) % 6;
 		int b = rgb % 6;
 		return new int[] {r, g, b};
+	}
+	
+	public static int mixRGB(int rgb1, int rgb2) {
+		if(rgb1 == -1 || rgb2 == -1) return -1;
+		int[] col1 = decodeRGB(get(rgb1));
+		int[] col2 = decodeRGB(get(rgb2));
+		return ((col1[0] + col2[0])/2) * 100 + ((col1[1] + col2[1])/2) * 10 + ((col1[2] + col2[2])/2);
 	}
 	
 	/// this turns a 0-216 combined minicraft color into a 24-bit r,g,b color.
