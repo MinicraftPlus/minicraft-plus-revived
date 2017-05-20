@@ -1,6 +1,7 @@
 package minicraft.gfx;
 
 import java.awt.Rectangle;
+import java.util.Random;
 
 public class Sprite {
 	/**
@@ -12,14 +13,25 @@ public class Sprite {
 		The screen's render method only draws one 8x8 pixel of the spritesheet at a time, so the "sprite size" will be determined by how many repetitions of the above group there are.
 	*/
 	
+	static Random ran = new Random();
+	
 	public static final Sprite missingTexture(int w, int h) {
 		return new Sprite(30, 30, w, h, Color.get(505, 505));
 	}
 	public static final Sprite blank(int w, int h, int col) {
 		return new Sprite(7, 2, w, h, Color.get(col, col));
 	}
+	
+	public static final Sprite repeat(int sx, int sy, int w, int h, int col) {
+		return ConnectorSprite.makeSprite(w, h, col, 0, true, sx + sy * 32);
+	}
+	
 	public static final Sprite dots(int col) {
 		return ConnectorSprite.makeSprite(2, 2, col, 0, false, 0, 1, 2, 3);
+	}
+	public static final Sprite randomDots(long seed, int col) {
+		ran.setSeed(seed);
+		return ConnectorSprite.makeSprite(2, 2, col, ran.nextInt(4), false, ran.nextInt(4), ran.nextInt(4), ran.nextInt(4), ran.nextInt(4));
 	}
 	
 	protected Px[][] spritePixels;
@@ -39,7 +51,7 @@ public class Sprite {
 	//public Sprite(int sx, int sy, int sw, int sh, int mirror) {
 		//this(sx, sy, sw, sh, 0, mirror);}
 	
-	public Sprite(int sx, int sy, int sw, int sh, int color, int mirror, boolean onepixel) {
+	public Sprite(int sx, int sy, int sw, int sh, int color, int mirror) {
 		this(sx, sy, sw, sh, color, mirror, false);}
 	public Sprite(int sx, int sy, int sw, int sh, int color, int mirror, boolean onepixel) {
 		this.color = color;
