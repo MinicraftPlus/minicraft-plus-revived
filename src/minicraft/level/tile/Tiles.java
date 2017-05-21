@@ -248,12 +248,14 @@ public final class Tiles {
 	public static Tile get(int id) {
 		//System.out.println("requesting tile by id: " + id);
 		
-		String name = oldids.get(id).toUpperCase();
-		if(name != null && name.length() > 0)
-			return get(name);
+		if(tiles.get(id) != null) {
+			return tiles.get(id);
+		}
+		//if(name != null && name.length() > 0)
+		//	return get(name);
 		else {
 			System.out.println("TILES.GET: unknown tile id requested: " + id);
-			return get("grass");
+			return tiles.get(0);
 		}
 	}
 }

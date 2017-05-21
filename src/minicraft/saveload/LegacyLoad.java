@@ -162,7 +162,7 @@ public class LegacyLoad {
 				for(int y = 0; y < lvlh - 1; y++) {
 					int tileArrIdx = /*worldVer.compareTo(new Version("1.9.3-dev3")) < 0 ?*/ y + x * lvlw;// : x + y * lvlw;
 					int tileidx = x + y * lvlw; // the tiles are saved with x outer loop, and y inner loop, meaning that the list reads down, then right one, rather than right, then down one.
-					tiles[tileArrIdx] = (byte) Tiles.get(Integer.parseInt(data.get(tileidx + 3))).id;
+					tiles[tileArrIdx] = (byte) Tiles.get(Tiles.oldids.get(Integer.parseInt(data.get(tileidx + 3)))).id;
 					tdata[tileArrIdx] = Byte.parseByte(extradata.get(tileidx));
 				}
 			}

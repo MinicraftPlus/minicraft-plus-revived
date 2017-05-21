@@ -544,7 +544,9 @@ public class Level {
 
 	public void setTile(int x, int y, Tile t, int dataVal) {
 		if (x < 0 || y < 0 || x >= w || y >= h) return;
+		if (Game.debug) printLevelLoc("setting tile from " + Tiles.get(tiles[x+y*w]).name + " to " + t.name, x, y);
 		tiles[x + y * w] = t.id;
+		//System.out.println("tile set to " + Tiles.get(tiles[x + y * w]));
 		data[x + y * w] = (byte) dataVal;
 	}
 	

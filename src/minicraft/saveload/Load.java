@@ -241,22 +241,24 @@ public class Load {
 				for(int y = 0; y < lvlh - 1; y++) {
 					int tileArrIdx = /*worldVer.compareTo(new Version("1.9.3-dev3")) < 0 ?*/ y + x * lvlw;// : x + y * lvlw;
 					int tileidx = x + y * lvlw; // the tiles are saved with x outer loop, and y inner loop, meaning that the list reads down, then right one, rather than right, then down one.
-					int tileID = Integer.parseInt(data.get(tileidx + 3));
+					String tilename = data.get(tileidx + 3);
 					//System.out.println("reading tile on level "+l+"; save idx=" + (tileidx+3) + ", old id:" + tileID);
-					if(worldVer.compareTo(new Version("1.9.4-dev3")) < 0) {
-						if(Tiles.oldids.size() < tileID && Tiles.oldids.get(tileID) != null)
-							tileID = Tiles.get(Tiles.oldids.get(tileID)).id;
+					if(worldVer.compareTo(new Version("1.9.4-dev6")) < 0) {
+						int tileID = Integer.parseInt(tilename); // they were id numbers, not names, at this point
+						if(Tiles.oldids.size() > tileID && Tiles.oldids.get(tileID) != null)
+							tilename = Tiles.oldids.get(tileID);
 						else {
 							System.out.println("tile list doesn't contain tile " + tileID);
-							tileID = 0;
+							//System.out.println("length: " + Tiles.oldids.size());
+							tilename = "grass";
 						}
 					}
 					//System.out.println("new id: " + tileID);
-					byte id = (byte) tileID;
-					if(id < 0)
+					//byte id = (byte) tileID;
+					/*if(id < 0)
 						tiles[tileArrIdx] = minicraft.level.tile.TorchTile.getTorchTile(Tiles.get(id+128)).id;
 					else
-						tiles[tileArrIdx] = id;
+						*/tiles[tileArrIdx] = Tiles.get(tilename).id;
 					//if(tiles[tileArrIdx] == Tiles.get("Stairs Up").id) System.out.println("stairs up on level "+lvldepth+" at: x="+x+" y="+y);
 					tdata[tileArrIdx] = Byte.parseByte(extradata.get(tileidx));
 				}
