@@ -5,28 +5,30 @@ import minicraft.entity.Player;
 import minicraft.gfx.Color;
 import minicraft.gfx.Screen;
 import minicraft.gfx.Sprite;
+import minicraft.gfx.ConnectorSprite;
 import minicraft.item.Item;
 import minicraft.item.Items;
 import minicraft.item.ToolItem;
 import minicraft.item.ToolType;
 import minicraft.level.Level;
 
-public class FlowerTile extends GrassTile {
-	private static Sprite sprite = new Sprite(1, 1, Color.get(10, 141, 555, 440));
+public class FlowerTile extends Tile {
+	//private static Sprite grasssprite = new Sprite(1, 1, Color.get(10, 141, 555, 440));
+	private static Sprite flowersprite = new Sprite(1, 1, Color.get(10, 141, 555, 440));
 	
 	protected static void addInstances() {
 		Tiles.add(new FlowerTile("Flower"));
 	}
 	
 	private FlowerTile(String name) {
-		super(name, sprite);
+		super(name, (ConnectorSprite)null);
 		//tiles[id] = this;
 		connectsToGrass = true;
 		maySpawn = true;
 	}
 	
 	public void render(Screen screen, Level level, int x, int y) {
-		super.render(screen, level, x, y);
+		Tiles.get("grass").render(screen, level, x, y);
 		
 		int data = level.getData(x, y);
 		int shape = (data / 16) % 2;
@@ -34,8 +36,8 @@ public class FlowerTile extends GrassTile {
 		x = x << 4;
 		y = y << 4;
 		
-		sprite.render(screen, x + 8*shape, y);
-		sprite.render(screen, x + 8*(shape==0?1:0), y + 8);
+		flowersprite.render(screen, x + 8*shape, y);
+		flowersprite.render(screen, x + 8*(shape==0?1:0), y + 8);
 		/*
 		if (shape == 0) screen.render(x * 16 + 0, y * 16 + 0, 1 + 1 * 32, flowerCol, 0);
 		if (shape == 1) screen.render(x * 16 + 8, y * 16 + 0, 1 + 1 * 32, flowerCol, 0);

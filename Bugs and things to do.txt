@@ -1,7 +1,5 @@
 	---Quick TODO's---
 
--- ConnectorSprites probably aren't rendering; I bet that's the issue.
-
 -continue commeting code and renovating code
 -display current player score in score mode
 
@@ -9,6 +7,12 @@ Note to self: for more little bugs/ideas/concerns, search code for "TODO"
 -----------------------------------------------------------------------------------
 
 	####BUGS####
+#####
+Bugs due to tile overhaul:
+-lava appears when destrying trees and things; crashes the game with digging dirt I think
+
+
+#####
 ####
 I accidently removed the whole "SmashParticle" thing it seems... same with FireParticle...
 ####

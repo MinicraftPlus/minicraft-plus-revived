@@ -37,10 +37,11 @@ public final class Tiles {
 		SandTile.addInstances();
 		SaplingTile.addInstances();
 		StairsTile.addInstances();
-		//TorchTile.addInstances();
 		WallTile.addInstances();
 		WheatTile.addInstances();
 		WoolTile.addInstances();
+		
+		//TorchTile.addInstances();
 	}
 	
 	
@@ -190,8 +191,8 @@ public final class Tiles {
 		oldids.set(44, "torch grass");
 		oldids.set(40, "torch sand");
 		oldids.set(46, "torch dirt");
-		oldids.set(47, "torch plank");
-		oldids.set(48, "torch stone brick");
+		oldids.set(47, "torch wood planks");
+		oldids.set(48, "torch stone bricks");
 		oldids.set(49, "torch Obsidian");
 		oldids.set(50, "torch wool");
 		oldids.set(51, "torch red wool");
@@ -206,6 +207,8 @@ public final class Tiles {
 		/// IMPORTANT: note that having a tile object for each tile is probably inefficient, and will probably need to be replaced by a more processor-friendly system...
 		//System.out.println("getting from tile list: " + name);
 		
+		name = name.toUpperCase();
+		
 		overflowCheck++;
 		
 		if(overflowCheck > 50) {
@@ -214,8 +217,16 @@ public final class Tiles {
 		}
 		
 		Tile getting = null;
+		
+		boolean isTorch = false;
+		if(name.startsWith("TORCH ")) {
+			isTorch = true;
+			name = name.substring(6); // cuts off torch prefix.
+		}
+		
 		for(Tile t: tiles) {
-			if(t.name.compareToIgnoreCase(name) == 0) {
+			if(t == null) continue;
+			if(t.name.equals(name)) {
 				getting = t;
 				break;
 			}
@@ -223,7 +234,11 @@ public final class Tiles {
 		
 		if(getting == null) {
 			System.out.println("TILES.GET: invalid tile requested: " + name);
-			getting = get("grass");
+			getting = tiles.get(0);
+		}
+		
+		if(isTorch) {
+			getting = TorchTile.getTorchTile(getting);
 		}
 		
 		overflowCheck = 0;
@@ -233,7 +248,7 @@ public final class Tiles {
 	public static Tile get(int id) {
 		//System.out.println("requesting tile by id: " + id);
 		
-		String name = oldids.get(id);
+		String name = oldids.get(id).toUpperCase();
 		if(name != null && name.length() > 0)
 			return get(name);
 		else {

@@ -30,10 +30,6 @@ public class GrassTile extends Tile {
 		connectsToGrass = true;
 		maySpawn = true;
 	}
-	/// for FlowerTile.
-	protected GrassTile(String name, Sprite sprite) {
-		super(name, sprite);
-	}
 	
 	//public static int col = Color.get(141, 141, 252, 321);
 	//public static int colt = Color.get(141, 141, 252, 321);

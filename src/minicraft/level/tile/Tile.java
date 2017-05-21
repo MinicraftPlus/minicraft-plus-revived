@@ -48,13 +48,12 @@ public abstract class Tile {
 		csprite = null;
 	}
 	
-	// all tile constructors should be protected, too.
 	protected Tile(String name, Sprite sprite) {
-		this.name = name;
+		this.name = name.toUpperCase();
 		this.sprite = sprite;
 	}
 	protected Tile(String name, ConnectorSprite sprite) {
-		this.name = name;
+		this.name = name.toUpperCase();
 		csprite = sprite;
 	}
 	
@@ -127,33 +126,4 @@ public abstract class Tile {
 	public boolean matches(Tile other) {
 		return name == other.name;
 	}
-	
-	/*public final String getName() { return getName(false); }
-	public final String getName(boolean getFieldName) {
-		String tileName = "";
-		
-		if(getFieldName) {
-			java.lang.reflect.Field[] fields = getClass().getFields();
-			for(java.lang.reflect.Field f: fields) {
-				Tile t2 = null;
-				boolean match = false;
-				try {
-					match = getClass().isAssignableFrom(f.getType()) && ((Tile)f.get(t2)).id == this.id;
-				} catch(IllegalAccessException ex) {
-					ex.printStackTrace();
-				}
-				if(match) {
-					tileName = f.getName();
-					break;
-				}
-			}
-		}
-		else {
-			/// get from class name
-			tileName = getClass().getName();
-			tileName = tileName.substring(tileName.lastIndexOf(".")+1, tileName.lastIndexOf("Tile"));
-		}
-		
-		return tileName;
-	}*/
 }
