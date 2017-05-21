@@ -9,6 +9,8 @@ import minicraft.entity.particle.SmashParticle;
 import minicraft.entity.particle.TextParticle;
 import minicraft.gfx.Color;
 import minicraft.gfx.Screen;
+import minicraft.gfx.Sprite;
+import minicraft.gfx.ConnectorSprite;
 import minicraft.item.Item;
 import minicraft.item.StackableItem;
 import minicraft.item.ToolItem;
@@ -18,11 +20,17 @@ import minicraft.level.Level;
 import minicraft.screen.ModeMenu;
 
 public class TreeTile extends Tile {
-	public TreeTile(int id) {
-		super(id);
+	//private ConnectorSprite sprite = new ConnectorSprite();
+	
+	protected static void addInstances() {
+		Tiles.add(new TreeTile("Tree"));
+	}
+	
+	private TreeTile(String name) {
+		super(name, (ConnectorSprite)null);
 		connectsToGrass = true;
 	}
-
+	
 	public static int col = Color.get(10, 30, 151, 141);
 	public static int col1 = Color.get(10, 30, 430, 141);
 	public static int col2 = Color.get(10, 30, 320, 141);
@@ -30,7 +38,7 @@ public class TreeTile extends Tile {
 	public void render(Screen screen, Level level, int x, int y) {
 		int barkCol1 = col1;
 		int barkCol2 = col2;
-
+		
 		boolean u = level.getTile(x, y - 1) == this;
 		boolean l = level.getTile(x - 1, y) == this;
 		boolean r = level.getTile(x + 1, y) == this;
@@ -100,16 +108,9 @@ public class TreeTile extends Tile {
 	}
 
 	private void hurt(Level level, int x, int y, int dmg) {
-		{
-			int count = random.nextInt(100) == 0 ? 1 : 0;
-			for (int i = 0; i < count; i++) {
-				level.add(
-						new ItemEntity(
-								Items.get("apple"),
-								x * 16 + random.nextInt(10) + 3,
-								y * 16 + random.nextInt(10) + 3));
-			}
-		}
+		if(random.nextInt(100) == 0)
+			level.dropItem(x*16, x*16, Items.get("Apple"));
+		
 		int damage = level.getData(x, y) + dmg;
 		int treeHealth;
 		if (ModeMenu.creative) treeHealth = 1;
@@ -119,23 +120,9 @@ public class TreeTile extends Tile {
 		level.add(new SmashParticle(x * 16 + 8, y * 16 + 8));
 		level.add(new TextParticle("" + dmg, x * 16 + 8, y * 16 + 8, Color.get(-1, 500)));
 		if (damage >= treeHealth) {
-			int count = random.nextInt(2) + 1;
-			for (int i = 0; i < count; i++) {
-				level.add(
-						new ItemEntity(
-								Items.get("Wood"),
-								x * 16 + random.nextInt(10) + 3,
-								y * 16 + random.nextInt(10) + 3));
-			}
-			count = random.nextInt(random.nextInt(4) + 1);
-			for (int i = 0; i < count; i++) {
-				level.add(
-						new ItemEntity(
-								Items.get("Acorn"),
-								x * 16 + random.nextInt(10) + 3,
-								y * 16 + random.nextInt(10) + 3));
-			}
-			level.setTile(x, y, Tile.grass, 0);
+			level.dropItem(x*16, x*16, 1, 2, Items.get("Wood"));
+			level.dropItem(x*16, x*16, 1, 4, Items.get("Acorn"));
+			level.setTile(x, y, Tiles.get("grass"), 0);
 		} else {
 			level.setData(x, y, damage);
 		}

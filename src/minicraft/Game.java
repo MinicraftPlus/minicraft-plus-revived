@@ -195,6 +195,8 @@ public class Game extends Canvas implements Runnable {
 		}
 		screen.pixels = pixels;
 		
+		Tiles.initTileList();
+		
 		resetGame(); // "half"-starts a new game, to set up initial variables
 		new Load(this); // this loads any saved preferences.
 		setMenu(new TitleMenu()); //sets menu to the title screen.
@@ -476,6 +478,12 @@ public class Game extends Canvas implements Runnable {
 					if (input.getKey("shift-minus").clicked) {
 						if(gamespeed > 1) gamespeed--;
 						else if(normSpeed*gamespeed>5) gamespeed /= 2;
+					}
+					
+					if(input.getKey("shift-space").clicked) {
+						int tx = player.x >> 4;
+						int ty = player.y >> 4;
+						System.out.println("current tile: " + levels[currentLevel].getTile(tx, ty).name);
 					}
 				} // end debug only cond.
 			} // end "menu-null" conditional

@@ -6,6 +6,8 @@ import minicraft.entity.ItemEntity;
 import minicraft.entity.Player;
 import minicraft.gfx.Color;
 import minicraft.gfx.Screen;
+import minicraft.gfx.Sprite;
+import minicraft.gfx.ConnectorSprite;
 import minicraft.item.Item;
 import minicraft.item.StackableItem;
 import minicraft.item.ToolItem;
@@ -29,43 +31,48 @@ public class WoolTile extends Tile {
 		}
 	}
 	
-	public WoolColor color;
-	int col;
+	private static Sprite sprite = Sprite.repeat(17, 0, 2, 2, 0);
 	
-	public WoolTile(int id, WoolColor color) {
-		super(id);
+	protected static void addInstances() {
+		Tiles.add(new WoolTile("Wool", null));
+		for(WoolColor wc: WoolColor.values())
+			Tiles.add(new WoolTile(wc.name()+" Wool", wc));
+	}
+	
+	public WoolColor color;
+	//int col;
+	
+	private WoolTile(String name, WoolColor color) {
+		super(name, sprite);
 		this.color = color;
 		
 		if(color == null) {
-			col = Color.get(444, 333, 444, 555);
+			sprite.color = Color.get(444, 333, 444, 555);
 		}
+		else sprite.color = color.col;
 	}
-
+	/*
 	public void render(Screen screen, Level level, int x, int y) {
 		screen.render(x * 16 + 0, y * 16 + 0, 17, col, 0);
 		screen.render(x * 16 + 8, y * 16 + 0, 17, col, 0);
 		screen.render(x * 16 + 0, y * 16 + 8, 17, col, 0);
 		screen.render(x * 16 + 8, y * 16 + 8, 17, col, 0);
 	}
-
+	*/
 	public boolean interact(Level level, int xt, int yt, Player player, Item item, int attackDir) {
 		if (item instanceof ToolItem) {
 			ToolItem tool = (ToolItem) item;
 			if (tool.type == ToolType.Shovel) {
 				if (player.payStamina(3 - tool.level)) {
-					level.setTile(xt, yt, Tile.hole, 0);
-					level.add(
-							new ItemEntity(
-									Items.get("Wool"),
-									xt * 16 + random.nextInt(10) + 3,
-									yt * 16 + random.nextInt(10) + 3));
+					level.setTile(xt, yt, Tiles.get("hole"), 0);
+					level.dropItem(xt*16, yt*16, Items.get("Wool"));
 					Sound.monsterHurt.play();
 					return true;
 				}
 			}
 			/*if (tool.type == ToolType.spade) {
 				if (player.payStamina(4 - tool.level)) {
-					level.setTile(xt, yt, Tile.hole, 0);
+					level.setTile(xt, yt, Tiles.get("hole"), 0);
 					level.add(
 							new ItemEntity(
 									Items.get("Wool"),

@@ -5,37 +5,53 @@ import minicraft.Game;
 import minicraft.entity.Entity;
 import minicraft.gfx.Color;
 import minicraft.gfx.Screen;
+import minicraft.gfx.Sprite;
+import minicraft.gfx.ConnectorSprite;
 import minicraft.level.Level;
 
 public class LavaTile extends Tile {
-	public LavaTile(int id) {
-		super(id);
+	private ConnectorSprite sprite = new ConnectorSprite(LavaTile.class, new Sprite(14, 0, 3, 3, Color.get(3, 500, 211, 322), 0), Sprite.dots(Color.get(500, 500, 520, 450)))
+	{
+		public boolean connectsTo(Tile tile, boolean isSide) {
+			return !isSide || tile.connectsToLava;
+		}
+	};
+	
+	protected static void addInstances() {
+		Tiles.add(new LavaTile("Lava"));
+	}
+	
+	private LavaTile(String name) {
+		super(name, (ConnectorSprite)null);
+		super.csprite = sprite;
 		connectsToSand = true;
 		connectsToLava = true;
 	}
 
 	private Random wRandom = new Random();
-
+	
 	public void render(Screen screen, Level level, int x, int y) {
-		int col = Color.get(500, 500, 520, 450);
-		int col1 = Color.get(3, 500, 211, 322);
-		int col2 = Color.get(3, 500, 440, 550);
-		
-		wRandom.setSeed(
-				(tickCount + (x / 2 - y) * 4311) / 10 * 54687121l + x * 3271612l + y * 3412987161l);
-		int transitionColor1 = col1;
+		long seed = (tickCount + (x / 2 - y) * 4311) / 10 * 54687121l + x * 3271612l + y * 3412987161l;
+		sprite.full = Sprite.randomDots(seed, sprite.full.color);
+		sprite.render(screen, level, x, y);
+		/*int col = Color.get(500, 500, 520, 450);
+		int col1 = Color.get(3, 500, 211, 322); // probably brown.
+		int col2 = Color.get(3, 500, 440, 550); // very yellow, for sand.
+		*/
+		//wRandom.setSeed( (tickCount + (x / 2 - y) * 4311) / 10 * 54687121l + x * 3271612l + y * 3412987161l);
+		/*int transitionColor1 = col1;
 		int transitionColor2 = col2;
 		
 		boolean u = !level.getTile(x, y - 1).connectsToLava;
 		boolean d = !level.getTile(x, y + 1).connectsToLava;
 		boolean l = !level.getTile(x - 1, y).connectsToLava;
 		boolean r = !level.getTile(x + 1, y).connectsToLava;
-
+		
 		boolean su = u && level.getTile(x, y - 1).connectsToSand;
 		boolean sd = d && level.getTile(x, y + 1).connectsToSand;
 		boolean sl = l && level.getTile(x - 1, y).connectsToSand;
 		boolean sr = r && level.getTile(x + 1, y).connectsToSand;
-
+		
 		if (!u && !l) {
 			screen.render(x * 16 + 0, y * 16 + 0, wRandom.nextInt(4), col, wRandom.nextInt(4));
 		} else
@@ -74,8 +90,9 @@ public class LavaTile extends Tile {
 					(r ? 16 : 15) + (d ? 2 : 1) * 32,
 					(sd || sr) ? transitionColor2 : transitionColor1,
 					0);
+		*/
 	}
-
+	
 	public boolean mayPass(Level level, int x, int y, Entity e) {
 		return e.canSwim();
 	}
@@ -87,7 +104,7 @@ public class LavaTile extends Tile {
 		if (random.nextBoolean()) xn += random.nextInt(2) * 2 - 1;
 		else yn += random.nextInt(2) * 2 - 1;
 
-		if (level.getTile(xn, yn) == Tile.hole) {
+		if (level.getTile(xn, yn) == Tiles.get("hole")) {
 			level.setTile(xn, yn, this, 0);
 		}
 	}

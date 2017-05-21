@@ -244,9 +244,12 @@ public class Load {
 					int tileID = Integer.parseInt(data.get(tileidx + 3));
 					//System.out.println("reading tile on level "+l+"; save idx=" + (tileidx+3) + ", old id:" + tileID);
 					if(worldVer.compareTo(new Version("1.9.4-dev3")) < 0) {
-						if(Tiles.oldids.containsKey(tileID))
+						if(Tiles.oldids.size() < tileID && Tiles.oldids.get(tileID) != null)
 							tileID = Tiles.get(Tiles.oldids.get(tileID)).id;
-						else System.out.println("tile list doesn't contain tile " + tileID);
+						else {
+							System.out.println("tile list doesn't contain tile " + tileID);
+							tileID = 0;
+						}
 					}
 					//System.out.println("new id: " + tileID);
 					byte id = (byte) tileID;

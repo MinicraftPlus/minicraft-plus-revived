@@ -1,6 +1,7 @@
 	---Quick TODO's---
 
--UPDATE GAME VERSION. Then move on Tile overhaul. Last one!
+-- ConnectorSprites probably aren't rendering; I bet that's the issue.
+
 -continue commeting code and renovating code
 -display current player score in score mode
 
@@ -10,6 +11,8 @@ Note to self: for more little bugs/ideas/concerns, search code for "TODO"
 	####BUGS####
 ####
 I accidently removed the whole "SmashParticle" thing it seems... same with FireParticle...
+####
+Pressing Control for a key binding on keyinputmenu crashes the game.
 ####
 Sound effects don't always play when they should; mostly it seems when other sounds should be on at the same time.
 ####

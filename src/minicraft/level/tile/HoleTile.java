@@ -4,16 +4,29 @@ import minicraft.Game;
 import minicraft.entity.Entity;
 import minicraft.gfx.Color;
 import minicraft.gfx.Screen;
+import minicraft.gfx.Sprite;
+import minicraft.gfx.ConnectorSprite;
 import minicraft.level.Level;
 
 public class HoleTile extends Tile {
-	public HoleTile(int id) {
-		super(id);
+	private static ConnectorSprite sprite = new ConnectorSprite(HoleTile.class, new Sprite(14, 0, 3, 3, Color.get(3, 222, 211, 321), 0), Sprite.dots(Color.get(222, 222, 220, 220)))
+	{
+		public boolean connectsTo(Tile tile, boolean isSide) {
+			return !isSide || tile.connectsToLiquid();
+		}
+	};
+	
+	protected static void addInstances() {
+		Tiles.add(new HoleTile("Hole"));
+	}
+	
+	private HoleTile(String name) {
+		super(name, sprite);
 		connectsToSand = true;
 		connectsToWater = true;
 		connectsToLava = true;
 	}
-
+	/*
 	public void render(Screen screen, Level level, int x, int y) {
 		int col = Color.get(222, 222, 220, 220);
 		int col1 = Color.get(3, 222, 211, DirtTile.dCol(level.depth));
@@ -70,7 +83,7 @@ public class HoleTile extends Tile {
 					(r ? 16 : 15) + (d ? 2 : 1) * 32,
 					(sd || sr) ? transitionColor2 : transitionColor1,
 					0);
-	}
+	}*/
 
 	public boolean mayPass(Level level, int x, int y, Entity e) {
 		return e.canSwim();

@@ -187,34 +187,34 @@ public class Level {
 							setTile(x - 1, y - 4, Tiles.get("Obsidian"), 0);
 							setTile(x + 1, y + 4, Tiles.get("Obsidian"), 0);
 							setTile(x - 1, y + 4, Tiles.get("Obsidian"), 0);
-							setTile(x - 2, y - 2, Tiles.get("ow"), 0);
-							setTile(x - 3, y - 2, Tiles.get("ow"), 0);
-							setTile(x - 3, y + 2, Tiles.get("ow"), 0);
-							setTile(x - 2, y + 1, Tiles.get("ow"), 0);
-							setTile(x + 2, y - 2, Tiles.get("ow"), 0);
-							setTile(x + 4, y - 2, Tiles.get("ow"), 0);
-							setTile(x + 4, y + 2, Tiles.get("ow"), 0);
-							setTile(x - 4, y - 2, Tiles.get("ow"), 0);
-							setTile(x - 4, y + 2, Tiles.get("ow"), 0);
-							setTile(x + 1, y - 2, Tiles.get("ow"), 0);
-							setTile(x - 2, y + 2, Tiles.get("ow"), 0);
-							setTile(x + 2, y + 3, Tiles.get("ow"), 0);
-							setTile(x + 2, y + 4, Tiles.get("ow"), 0);
-							setTile(x - 2, y - 3, Tiles.get("ow"), 0);
-							setTile(x - 2, y - 4, Tiles.get("ow"), 0);
-							setTile(x + 2, y - 3, Tiles.get("ow"), 0);
-							setTile(x + 2, y - 4, Tiles.get("ow"), 0);
-							setTile(x - 2, y + 3, Tiles.get("ow"), 0);
-							setTile(x - 2, y + 4, Tiles.get("ow"), 0);
-							setTile(x + 3, y - 2, Tiles.get("ow"), 0);
-							setTile(x + 3, y + 2, Tiles.get("ow"), 0);
-							setTile(x + 2, y + 2, Tiles.get("ow"), 0);
-							setTile(x - 1, y + 2, Tiles.get("ow"), 0);
-							setTile(x + 2, y - 1, Tiles.get("ow"), 0);
-							setTile(x + 2, y + 1, Tiles.get("ow"), 0);
-							setTile(x + 1, y + 2, Tiles.get("ow"), 0);
-							setTile(x - 2, y - 1, Tiles.get("ow"), 0);
-							setTile(x - 1, y - 2, Tiles.get("ow"), 0);
+							setTile(x - 2, y - 2, Tiles.get("Obsidian Wall"), 0);
+							setTile(x - 3, y - 2, Tiles.get("Obsidian Wall"), 0);
+							setTile(x - 3, y + 2, Tiles.get("Obsidian Wall"), 0);
+							setTile(x - 2, y + 1, Tiles.get("Obsidian Wall"), 0);
+							setTile(x + 2, y - 2, Tiles.get("Obsidian Wall"), 0);
+							setTile(x + 4, y - 2, Tiles.get("Obsidian Wall"), 0);
+							setTile(x + 4, y + 2, Tiles.get("Obsidian Wall"), 0);
+							setTile(x - 4, y - 2, Tiles.get("Obsidian Wall"), 0);
+							setTile(x - 4, y + 2, Tiles.get("Obsidian Wall"), 0);
+							setTile(x + 1, y - 2, Tiles.get("Obsidian Wall"), 0);
+							setTile(x - 2, y + 2, Tiles.get("Obsidian Wall"), 0);
+							setTile(x + 2, y + 3, Tiles.get("Obsidian Wall"), 0);
+							setTile(x + 2, y + 4, Tiles.get("Obsidian Wall"), 0);
+							setTile(x - 2, y - 3, Tiles.get("Obsidian Wall"), 0);
+							setTile(x - 2, y - 4, Tiles.get("Obsidian Wall"), 0);
+							setTile(x + 2, y - 3, Tiles.get("Obsidian Wall"), 0);
+							setTile(x + 2, y - 4, Tiles.get("Obsidian Wall"), 0);
+							setTile(x - 2, y + 3, Tiles.get("Obsidian Wall"), 0);
+							setTile(x - 2, y + 4, Tiles.get("Obsidian Wall"), 0);
+							setTile(x + 3, y - 2, Tiles.get("Obsidian Wall"), 0);
+							setTile(x + 3, y + 2, Tiles.get("Obsidian Wall"), 0);
+							setTile(x + 2, y + 2, Tiles.get("Obsidian Wall"), 0);
+							setTile(x - 1, y + 2, Tiles.get("Obsidian Wall"), 0);
+							setTile(x + 2, y - 1, Tiles.get("Obsidian Wall"), 0);
+							setTile(x + 2, y + 1, Tiles.get("Obsidian Wall"), 0);
+							setTile(x + 1, y + 2, Tiles.get("Obsidian Wall"), 0);
+							setTile(x - 2, y - 1, Tiles.get("Obsidian Wall"), 0);
+							setTile(x - 1, y - 2, Tiles.get("Obsidian Wall"), 0);
 						}
 						if (level == 0) { // surface
 							/// surround the sky stairs with hard rock:
@@ -259,14 +259,14 @@ public class Level {
 						boolean xaxis = this.random.nextBoolean();
 						if (xaxis) {
 							for (int s = x2; s < w - s; s++) {
-								if (this.getTile(s, y2) == Tiles.get("ow")) {
+								if (this.getTile(s, y2) == Tiles.get("Obsidian Wall")) {
 									d.x = s * 16 - 24;
 									d.y = y2 * 16 - 24;
 								}
 							}
 						} else if (!xaxis) {
 							for (int s = y2; s < y2 - s; s++) {
-								if (this.getTile(x2, s) == Tiles.get("ow")) {
+								if (this.getTile(x2, s) == Tiles.get("Obsidian Wall")) {
 									d.x = x2 * 16 - 24;
 									d.y = s * 16 - 24;
 								}
@@ -276,7 +276,7 @@ public class Level {
 							d.x = x2 * 16 - 8;
 							d.y = y2 * 16 - 8;
 						}
-						if (this.getTile(d.x / 16, d.y / 16) == Tiles.get("ow")) {
+						if (this.getTile(d.x / 16, d.y / 16) == Tiles.get("Obsidian Wall")) {
 							this.setTile(d.x / 16, d.y / 16, Tiles.get("Obsidian"), 0);
 						}
 						this.add(d);
@@ -333,7 +333,7 @@ public class Level {
 					for (int xx = 0; xx < 5; xx++) {
 						for (int yy = 0; yy < 5; yy++) {
 							if (this.noStairs(sp.x / 16 - 2 + xx, sp.y / 16 - 2 + yy)) {
-								this.setTile(sp.x / 16 - 2 + xx, sp.y / 16 - 2 + yy, Tiles.get("Stone Brick"), 0);
+								this.setTile(sp.x / 16 - 2 + xx, sp.y / 16 - 2 + yy, Tiles.get("Stone Bricks"), 0);
 
 								if((xx < 1 || yy < 1 || xx > 3 || yy > 3) && (xx != 2 || yy != 0) && (xx != 2 || yy != 4) && (xx != 0 || yy != 2) && (xx != 4 || yy != 2)) {
 									this.setTile(sp.x / 16 - 2 + xx, sp.y / 16 - 2 + yy, Tiles.get("Stone Wall"), 0);

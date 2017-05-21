@@ -76,27 +76,30 @@ public class Sprite {
 		return sheetLoc.getSize();
 	}
 	
-	public void render(Screen screen, int lvlx, int lvly) { render(screen, color, lvlx, lvly); }
-	public void render(Screen screen, int color, int lvlx, int lvly) {
+	public void render(Screen screen, int lvlx, int lvly) { render(screen, lvlx, lvly, color); }
+	public void render(Screen screen, int lvlx, int lvly, int color) {
 		/// here, x and y are entity coordinates, I think.
 		
 		for(int row = 0; row < spritePixels.length; row++) { // loop down through each row
-			renderRow(row, screen, color, lvlx, lvly + row*8);
+			renderRow(row, screen, lvlx, lvly + row*8, color);
 		}
 	}
 	
-	public void renderRow(int r, Screen screen, int x, int y) { renderRow(r, screen, color, x, y); }
-	public void renderRow(int r, Screen screen, int color, int x, int y) {
+	public void renderRow(int r, Screen screen, int x, int y) { renderRow(r, screen, x, y, color); }
+	public void renderRow(int r, Screen screen, int x, int y, int color) {
 		Px[] row = spritePixels[r];
 		for(int c = 0; c < row.length; c++) { // loop across through each column
 			screen.render(x + c*8, y, row[c].sheetPos, color, row[c].mirror); // render the sprite pixel.
 		}
 	}
 	
-	protected void renderPixel(int c, int r, Screen screen, int x, int y) { renderPixel(c, r, screen, color, x, y); }
-	protected void renderPixel(int c, int r, Screen screen, int color, int x, int y) {
+	protected void renderPixel(int c, int r, Screen screen, int x, int y) { renderPixel(c, r, screen, x, y, color); }
+	protected void renderPixel(int c, int r, Screen screen, int x, int y, int color) {
+		renderPixel(c, r, screen, x, y, color, spritePixels[r][c].mirror);
+	}
+	protected void renderPixel(int c, int r, Screen screen, int x, int y, int col, int mirror) {
 		//System.out.println("rendering pixel ("+c+","+r+") at ("+x+","+y+")");
-		screen.render(x, y, spritePixels[r][c].sheetPos, color, spritePixels[r][c].mirror); // render the sprite pixel.
+		screen.render(x, y, spritePixels[r][c].sheetPos, col, mirror); // render the sprite pixel.
 	}
 	
 	public String toString() {

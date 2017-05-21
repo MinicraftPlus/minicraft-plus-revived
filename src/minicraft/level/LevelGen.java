@@ -146,7 +146,7 @@ public class LevelGen {
 				count[result[0][i] & 0xff]++;
 			}
 			if (count[Tiles.get("Obsidian").id & 0xff] < 100) continue;
-			if (count[Tiles.get("ow").id & 0xff] < 100) continue;
+			if (count[Tiles.get("Obsidian Wall").id & 0xff] < 100) continue;
 			
 			return result;
 
@@ -441,7 +441,7 @@ public class LevelGen {
 				val += 1 - dist * 2;
 
 				if (val < -0.35) {
-					map[i] = Tiles.get("ow").id;
+					map[i] = Tiles.get("Obsidian Wall").id;
 				} else {
 					map[i] = Tiles.get("Obsidian").id;
 				}
@@ -455,7 +455,7 @@ public class LevelGen {
 
 			for (int yy = y - 1; yy <= y + 1; yy++)
 				for (int xx = x - 1; xx <= x + 1; xx++) {
-					if (map[xx + yy * w] != Tiles.get("ow").id) continue stairsLoop;
+					if (map[xx + yy * w] != Tiles.get("Obsidian Wall").id) continue stairsLoop;
 				}
 
 			map[x + y * w] = Tiles.get("lava").id;
@@ -472,10 +472,10 @@ public class LevelGen {
 
 			for (int yy = y - 1; yy <= y + 1; yy++)
 				for (int xx = x - 1; xx <= x + 1; xx++) {
-					if (map[xx + yy * w] != Tiles.get("ow").id) continue stairsLoop;
+					if (map[xx + yy * w] != Tiles.get("Obsidian Wall").id) continue stairsLoop;
 				}
 			
-			map[x + y * w] = Tiles.get("ow").id;
+			map[x + y * w] = Tiles.get("Obsidian Wall").id;
 			
 			count++;
 			if (count == 2) break;
@@ -556,7 +556,7 @@ public class LevelGen {
 					int yy = y + random.nextInt(3) - random.nextInt(2);
 					if (xx >= r && yy >= r && xx < w - r && yy < h - r) {
 						if (map[xx + yy * w] == Tiles.get("rock").id) {
-							map[xx + yy * w] = (byte) ((Tiles.get("lapis Ore").id & 0xff));
+							map[xx + yy * w] = (byte) ((Tiles.get("Lapis").id & 0xff));
 						}
 					}
 				}
@@ -571,31 +571,31 @@ public class LevelGen {
 						int xx = 60;
 						int yy = 60;
 						if (xx >= r && yy >= r && xx < w - r && yy < h - r) {
-							map[xx + yy * w] = (byte) ((Tiles.get("ow").id & 0xff));
-							map[xx + 1 + yy * w] = (byte) ((Tiles.get("ow").id & 0xff));
-							map[xx + (yy + 1) * w] = (byte) ((Tiles.get("ow").id & 0xff));
-							map[xx + 2 + yy * w] = (byte) ((Tiles.get("ow").id & 0xff));
-							map[xx + (yy + 2) * w] = (byte) ((Tiles.get("ow").id & 0xff));
-							map[xx + 3 + yy * w] = (byte) ((Tiles.get("ow").id & 0xff));
-							map[xx + (yy + 3) * w] = (byte) ((Tiles.get("ow").id & 0xff));
-							map[xx + 4 + yy * w] = (byte) ((Tiles.get("ow").id & 0xff));
-							map[xx + (yy + 4) * w] = (byte) ((Tiles.get("ow").id & 0xff));
-							map[xx + 4 + (yy + 1) * w] = (byte) ((Tiles.get("ow").id & 0xff));
-							map[xx + 4 + (yy + 2) * w] = (byte) ((Tiles.get("ow").id & 0xff));
-							map[xx + 4 + (yy + 3) * w] = (byte) ((Tiles.get("ow").id & 0xff));
-							map[xx + 4 + (yy + 4) * w] = (byte) ((Tiles.get("ow").id & 0xff));
+							map[xx + yy * w] = (byte) ((Tiles.get("Obsidian Wall").id & 0xff));
+							map[xx + 1 + yy * w] = (byte) ((Tiles.get("Obsidian Wall").id & 0xff));
+							map[xx + (yy + 1) * w] = (byte) ((Tiles.get("Obsidian Wall").id & 0xff));
+							map[xx + 2 + yy * w] = (byte) ((Tiles.get("Obsidian Wall").id & 0xff));
+							map[xx + (yy + 2) * w] = (byte) ((Tiles.get("Obsidian Wall").id & 0xff));
+							map[xx + 3 + yy * w] = (byte) ((Tiles.get("Obsidian Wall").id & 0xff));
+							map[xx + (yy + 3) * w] = (byte) ((Tiles.get("Obsidian Wall").id & 0xff));
+							map[xx + 4 + yy * w] = (byte) ((Tiles.get("Obsidian Wall").id & 0xff));
+							map[xx + (yy + 4) * w] = (byte) ((Tiles.get("Obsidian Wall").id & 0xff));
+							map[xx + 4 + (yy + 1) * w] = (byte) ((Tiles.get("Obsidian Wall").id & 0xff));
+							map[xx + 4 + (yy + 2) * w] = (byte) ((Tiles.get("Obsidian Wall").id & 0xff));
+							map[xx + 4 + (yy + 3) * w] = (byte) ((Tiles.get("Obsidian Wall").id & 0xff));
+							map[xx + 4 + (yy + 4) * w] = (byte) ((Tiles.get("Obsidian Wall").id & 0xff));
 							map[xx + 3 + (yy + 1) * w] = (byte) ((Tiles.get("Obsidian").id & 0xff));
 							map[xx + 3 + (yy + 2) * w] = (byte) ((Tiles.get("Obsidian").id & 0xff));
 							map[xx + 3 + (yy + 3) * w] = (byte) ((Tiles.get("Obsidian").id & 0xff));
-							map[xx + 3 + (yy + 4) * w] = (byte) ((Tiles.get("ow").id & 0xff));
+							map[xx + 3 + (yy + 4) * w] = (byte) ((Tiles.get("Obsidian Wall").id & 0xff));
 							map[xx + 2 + (yy + 1) * w] = (byte) ((Tiles.get("Obsidian").id & 0xff));
 							map[xx + 2 + (yy + 2) * w] = (byte) ((Tiles.get("Stairs Down").id & 0xff));
 							map[xx + 2 + (yy + 3) * w] = (byte) ((Tiles.get("Obsidian").id & 0xff));
-							map[xx + 2 + (yy + 4) * w] = (byte) ((Tiles.get("ow").id & 0xff));
+							map[xx + 2 + (yy + 4) * w] = (byte) ((Tiles.get("Obsidian Wall").id & 0xff));
 							map[xx + 1 + (yy + 1) * w] = (byte) ((Tiles.get("Obsidian").id & 0xff));
 							map[xx + 1 + (yy + 2) * w] = (byte) ((Tiles.get("Obsidian").id & 0xff));
 							map[xx + 1 + (yy + 3) * w] = (byte) ((Tiles.get("Obsidian").id & 0xff));
-							map[xx + 1 + (yy + 4) * w] = (byte) ((Tiles.get("ow").id & 0xff));
+							map[xx + 1 + (yy + 4) * w] = (byte) ((Tiles.get("Obsidian Wall").id & 0xff));
 						}
 					}
 				}
@@ -736,9 +736,9 @@ public class LevelGen {
 					if (map[i] == Tiles.get("rock").id) pixels[i] = 0xa0a0a0;
 					if (map[i] == Tiles.get("dirt").id) pixels[i] = 0x604040;
 					if (map[i] == Tiles.get("sand").id) pixels[i] = 0xa0a040;
-					if (map[i] == Tiles.get("Stone Brick").id) pixels[i] = 0xa0a040;
+					if (map[i] == Tiles.get("Stone Bricks").id) pixels[i] = 0xa0a040;
 					if (map[i] == Tiles.get("tree").id) pixels[i] = 0x003000;
-					if (map[i] == Tiles.get("ow").id) pixels[i] = 0x0aa0a0;
+					if (map[i] == Tiles.get("Obsidian Wall").id) pixels[i] = 0x0aa0a0;
 					if (map[i] == Tiles.get("Obsidian").id) pixels[i] = 0x000000;
 					if (map[i] == Tiles.get("lava").id) pixels[i] = 0xff2020;
 					if (map[i] == Tiles.get("cloud").id) pixels[i] = 0xa0a0a0;

@@ -28,6 +28,12 @@ public class ConnectorSprite {
 		this.sides = sides==null?full:sides;
 		this.full = full;
 		this.checkCorners = cornersMatter;
+		
+		/*System.out.println("created connector sprite for: " + owner + "; colors:");
+		System.out.println(full);
+		System.out.println(sides);
+		System.out.println(sparse);
+		*/
 	}
 	public ConnectorSprite(Class<? extends Tile> owner, Sprite sparse, Sprite full) {
 		this(owner, sparse, sparse, full, false);
@@ -55,33 +61,40 @@ public class ConnectorSprite {
 		x = x << 4;
 		y = y << 4;
 		
+		//full.render(screen, x, y);
 		int[] spc = Color.seperateEncodedSprite(colsparse);
 		
+		// full.renderPixel(0, 0, screen, x, y, colfull);
+		// full.renderPixel(1, 0, screen, x+8, y, colfull);
+		// full.renderPixel(0, 1, screen, x, y+8, colfull);
+		// full.renderPixel(1, 1, screen, x+8, y+8, colfull);
+		
 		if (u && l) {
-			if (ul) full.renderPixel(0, 0, screen, x, y, colfull);
-			else if(checkCorners) sides.renderPixel(0, 0, screen, x, y, colside);
+			if (ul || !checkCorners) full.renderPixel(0, 0, screen, x, y, colfull);
+			else sides.renderPixel(0, 0, screen, x, y, colside);
 		} else
-			sparse.renderPixel(l?1:2, u?1:2, screen, x, y, Color.get(spc[0], spc[1], spc[2], Color.mixRGB(ut.getConnectColor(level), lt.getConnectColor(level))));
+			sparse.renderPixel(l?1:0, u?1:0, screen, x, y, colsparse/*);Color.get(spc[0], spc[1], spc[2], Color.mixRGB(ut.getConnectColor(level), lt.getConnectColor(level)))*/);
 		
 		if (u && r) {
-			if (ur) full.renderPixel(1, 0, screen, x+8, y, colfull);
-			else if(checkCorners) sides.renderPixel(1, 0, screen, x+8, y, colside);
+			if (ur || !checkCorners) full.renderPixel(1, 0, screen, x+8, y, colfull);
+			else sides.renderPixel(1, 0, screen, x+8, y, colside);
 		} else// if(!checkCorners)
-			sparse.renderPixel(r?1:0, u?1:2, screen, x+8, y, Color.get(spc[0], spc[1], spc[2], Color.mixRGB(ut.getConnectColor(level), rt.getConnectColor(level))));
+			sparse.renderPixel(r?1:2, u?1:0, screen, x+8, y, colsparse/*);Color.get(spc[0], spc[1], spc[2], Color.mixRGB(ut.getConnectColor(level), rt.getConnectColor(level)))*/);
 		//else // useful for trees
 			
 
 		if (d && l) {
-			if (dl) full.renderPixel(0, 1, screen, x, y+8, colfull);
-			else if(checkCorners) sides.renderPixel(0, 1, screen, x, y+8, colside);
+			if (dl || !checkCorners) full.renderPixel(0, 1, screen, x, y+8, colfull);
+			else sides.renderPixel(0, 1, screen, x, y+8, colside);
 		} else
-			sparse.renderPixel(l?1:2, d?1:0, screen, x, y+8, Color.get(spc[0], spc[1], spc[2], Color.mixRGB(dt.getConnectColor(level), lt.getConnectColor(level))));
+			sparse.renderPixel(l?1:0, d?1:2, screen, x, y+8, colsparse/*);Color.get(spc[0], spc[1], spc[2], Color.mixRGB(dt.getConnectColor(level), lt.getConnectColor(level)))*/);
 		
 		if (d && r) {
-			if (dr) full.renderPixel(1, 1, screen, x+8, y+8, colfull);
-			else if(checkCorners) sides.renderPixel(1, 1, screen, x+8, y+8, colside);
+			if (dr || !checkCorners) full.renderPixel(1, 1, screen, x+8, y+8, colfull);
+			else sides.renderPixel(1, 1, screen, x+8, y+8, colside);
 		} else
-			sparse.renderPixel(r?1:0, d?1:0, screen, x+8, y+8, Color.get(spc[0], spc[1], spc[2], Color.mixRGB(dt.getConnectColor(level), rt.getConnectColor(level))));
+			sparse.renderPixel(r?1:2, d?1:2, screen, x+8, y+8, colsparse/*);Color.get(spc[0], spc[1], spc[2], Color.mixRGB(dt.getConnectColor(level), rt.getConnectColor(level)))*/);
+		
 	}
 	
 	// it is expected that some tile classes will override this on class instantiation.

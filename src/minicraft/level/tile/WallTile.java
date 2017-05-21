@@ -1,33 +1,55 @@
 package minicraft.level.tile;
 
 import minicraft.Game;
-import minicraft.entity.AirWizard;
 import minicraft.entity.Entity;
+import minicraft.entity.ItemEntity;
 import minicraft.entity.Mob;
 import minicraft.entity.Player;
 import minicraft.entity.particle.SmashParticle;
 import minicraft.entity.particle.TextParticle;
 import minicraft.gfx.Color;
 import minicraft.gfx.Screen;
+import minicraft.gfx.Sprite;
+import minicraft.gfx.ConnectorSprite;
 import minicraft.item.Item;
+import minicraft.item.StackableItem;
 import minicraft.item.ToolItem;
 import minicraft.item.ToolType;
+import minicraft.item.Items;
 import minicraft.level.Level;
 import minicraft.screen.ModeMenu;
 
-public class ObsidianWallTile extends Tile {
-	public ObsidianWallTile(int id) {
-		super(id);
+public class WallTile extends Tile {
+	private ConnectorSprite sprite;
+	
+	protected static void addInstances() {
+		for(Material mat: Material.values())
+			Tiles.add(new WallTile(mat));
 	}
-
+	
+	protected Material type;
+	
+	private WallTile(Material type) {
+		super(type.name()+" Wall", (ConnectorSprite)null);
+		switch(type) {
+			case Wood: sprite = new ConnectorSprite(WallTile.class, new Sprite(4, 22, 3, 3, Color.get(100, 430, 320, 540), 3), new Sprite(7, 22, 2, 2, Color.get(100, 430, 320, 540), 3), new Sprite(5, 23, 2, 2, Color.get(430, 430, 320, 320), 0, true));
+			break;
+			case Stone: sprite = new ConnectorSprite(WallTile.class, new Sprite(4, 25, 3, 3, Color.get(111, 333, 444, 444), 3), new Sprite(7, 24, 2, 2, Color.get(111, 444), 3), Sprite.blank(2, 2, 444));
+			break;
+			case Obsidian: sprite = new ConnectorSprite(WallTile.class, new Sprite(4, 25, 3, 3, Color.get(000, 203, 103, 103), 3), new Sprite(7, 24, 2, 2, Color.get(000, 103), 3), Sprite.blank(2, 2, 223));
+			break;
+		}
+		csprite = sprite;
+	}
+	/*
 	public void render(Screen screen, Level level, int x, int y) {
-		int col = Color.get(103, 103);
-		int col1 = Color.get(000, 203, 103, 103);
-		int col2 = Color.get(000, 103);
+		int col = Color.get(444, 444);
+		int col1 = Color.get(111, 333, 444, 444);
+		int col2 = Color.get(111, 444);
 		
 		int transitionColor = col1;
 		int backColor = col2;
-
+		
 		boolean u = level.getTile(x, y - 1) != this;
 		boolean d = level.getTile(x, y + 1) != this;
 		boolean l = level.getTile(x - 1, y) != this;
@@ -64,7 +86,7 @@ public class ObsidianWallTile extends Tile {
 		} else
 			screen.render(
 					x * 16 + 8, y * 16 + 8, (r ? 4 : 5) + (d ? 25 : 26) * 32, transitionColor, 3);
-	}
+	}*/
 
 	public boolean mayPass(Level level, int x, int y, Entity e) {
 		return false;
@@ -72,38 +94,49 @@ public class ObsidianWallTile extends Tile {
 
 	public void hurt(Level level, int x, int y, Mob source, int dmg, int attackDir) {
 		int playDmg;
-		playDmg = 0;
+		if (ModeMenu.creative) playDmg = random.nextInt(5);
+		else {
+			playDmg = 0;
+		}
 		hurt(level, x, y, playDmg);
 	}
 
 	public boolean interact(Level level, int xt, int yt, Player player, Item item, int attackDir) {
 		if (item instanceof ToolItem) {
 			ToolItem tool = (ToolItem) item;
-			if (!ModeMenu.creative) {
-				if (tool.type == ToolType.Pickaxe && tool.level > 2 && AirWizard.beaten) { // This makes it so that you can only break obsidian walls with a gem pickaxe and only after you beat the air wizard
-					if (player.payStamina(1 - tool.level)) {
-						hurt(level, xt, yt, random.nextInt(10) + (tool.level) * 5 + 10);
-						return true;
-					}
+			if (tool.type == ToolType.Pickaxe) {
+				if (player.payStamina(4 - tool.level)) {
+					hurt(level, xt, yt, random.nextInt(10) + (tool.level) * 5 + 10);
+					return true;
 				}
-			} else {
-				hurt(level, xt, yt, random.nextInt(10) + (tool.level) * 5 + 10);
-				return true;
 			}
 		}
+		/*if (item instanceof ToolItem) {
+			ToolItem tool = (ToolItem) item;
+			if (tool.type == ToolType.pick) {
+				if (player.payStamina(4 - tool.level)) {
+					hurt(level, xt, yt, random.nextInt(6) + (tool.level) * 5 + 5);
+					return true;
+				}
+			}
+		}*/
 		return false;
 	}
 
 	public void hurt(Level level, int x, int y, int dmg) {
 		int damage = level.getData(x, y) + dmg;
-		int sbwHealth = 100;
+		int sbwHealth;
+		if (ModeMenu.creative) sbwHealth = 1;
+		else {
+			sbwHealth = 100;
+		}
 		level.add(new SmashParticle(x * 16 + 8, y * 16 + 8));
 		level.add(new TextParticle("" + dmg, x * 16 + 8, y * 16 + 8, Color.get(-1, 500)));
 		if (damage >= sbwHealth) {
-			int count = random.nextInt(3) + 1;
-			for (int i = 0; i < count; i++) {}
-			level.setTile(x, y, Tile.o, 0);
-		} else {
+			level.dropItem(x*16, y*16, 1, 3-type.ordinal(), Items.get(type.name()+" Brick"));
+			level.setTile(x, y, Tiles.get("Stone Bricks"), 0); // TODO this will be a problem...
+		}
+		else {
 			level.setData(x, y, damage);
 		}
 	}

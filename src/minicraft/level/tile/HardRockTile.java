@@ -9,6 +9,9 @@ import minicraft.entity.particle.SmashParticle;
 import minicraft.entity.particle.TextParticle;
 import minicraft.gfx.Color;
 import minicraft.gfx.Screen;
+import minicraft.gfx.Sprite;
+import minicraft.gfx.ConnectorSprite;
+import minicraft.gfx.ConnectorSprite;
 import minicraft.item.Item;
 import minicraft.item.StackableItem;
 import minicraft.item.ToolItem;
@@ -18,25 +21,21 @@ import minicraft.level.Level;
 import minicraft.screen.ModeMenu;
 
 public class HardRockTile extends Tile {
-	public HardRockTile(int id) {
-		super(id);
+	private static ConnectorSprite sprite = new ConnectorSprite(HardRockTile.class, new Sprite(4, 0, 3, 3, Color.get(001, 334, 445, 321), 3), new Sprite(7, 0, 2, 2, Color.get(001, 334, 445, 321), 3), ConnectorSprite.makeSprite(2, 2, Color.get(445, 334, 223, 223), 0, false, 0, 1, 2, 3));
+	
+	protected static void addInstances() {
+		Tiles.add(new HardRockTile("Hard Rock"));
 	}
-
+	
+	private HardRockTile(String name) {
+		super(name, sprite);
+	}
+	/*
 	public void render(Screen screen, Level level, int x, int y) {
 		int col = Color.get(445, 334, 223, 223);
 		int colt = Color.get(001, 334, 445, 321);
 		
 		int transitionColor = colt;
-		
-		boolean u = level.getTile(x, y - 1) != this;
-		boolean d = level.getTile(x, y + 1) != this;
-		boolean l = level.getTile(x - 1, y) != this;
-		boolean r = level.getTile(x + 1, y) != this;
-		
-		boolean ul = level.getTile(x - 1, y - 1) != this;
-		boolean dl = level.getTile(x - 1, y + 1) != this;
-		boolean ur = level.getTile(x + 1, y - 1) != this;
-		boolean dr = level.getTile(x + 1, y + 1) != this;
 		
 		if (!u && !l) {
 			if (!ul) screen.render(x * 16 + 0, y * 16 + 0, 0, col, 0);
@@ -61,7 +60,7 @@ public class HardRockTile extends Tile {
 		} else
 			screen.render(x * 16 + 8, y * 16 + 8, (r ? 4 : 5) + (d ? 0 : 1) * 32, transitionColor, 3);
 	}
-
+	*/
 	public boolean mayPass(Level level, int x, int y, Entity e) {
 		return false;
 	}
@@ -111,7 +110,7 @@ public class HardRockTile extends Tile {
 								x * 16 + random.nextInt(10) + 3,
 								y * 16 + random.nextInt(10) + 3));
 			}
-			level.setTile(x, y, Tile.dirt, 0);
+			level.setTile(x, y, Tiles.get("dirt"), 0);
 		} else {
 			level.setData(x, y, damage);
 		}

@@ -99,12 +99,20 @@ public class Color {
 	
 	/** seperates a 4-part sprite color into it's original 4 component colors (which each have an rgb value) */
 	/// reverse of Color.get(a, b, c, d).
-	public static int[] seperateEncodedSprite(int col) {
+	public static int[] seperateEncodedSprite(int col) { return seperateEncodedSprite(col, false); }
+	public static int[] seperateEncodedSprite(int col, boolean convertToReadable) {
 		int ap = (col >> 24) << 24;
 		int bp = ((col - ap) >> 16) << 16;
 		int cp = ((col - ap - bp) >> 8) << 8;
 		int d = col-ap-bp-cp;
 		int a = ap >> 24, b = bp >> 16, c = cp >> 8;
+		
+		if(convertToReadable) {
+			a = unGet(a);
+			b = unGet(b);
+			c = unGet(c);
+			d = unGet(d);
+		}
 		
 		return new int[] {a, b, c, d};
 		/// the colors have been seperated. Now they must be converted from 216 scale to 0-5 scale.
@@ -121,11 +129,18 @@ public class Color {
 		return new int[] {r, g, b};
 	}
 	
+	public static int unGet(int rgb216) {
+		int[] cols = decodeRGB(rgb216);
+		return cols[0]*100 + cols[1]*10 + cols[2];
+	}
+	
 	public static int mixRGB(int rgb1, int rgb2) {
 		if(rgb1 == -1 || rgb2 == -1) return -1;
-		int[] col1 = decodeRGB(get(rgb1));
-		int[] col2 = decodeRGB(get(rgb2));
-		return ((col1[0] + col2[0])/2) * 100 + ((col1[1] + col2[1])/2) * 10 + ((col1[2] + col2[2])/2);
+		int newcol = (rgb1 + rgb2) / 2;
+		return unGet(newcol);
+		//int[] col1 = decodeRGB(get(rgb1));
+		//int[] col2 = decodeRGB(get(rgb2));
+		//return ((col1[0] + col2[0])/2) * 100 + ((col1[1] + col2[1])/2) * 10 + ((col1[2] + col2[2])/2);
 	}
 	
 	/// this turns a 0-216 combined minicraft color into a 24-bit r,g,b color.
@@ -223,7 +238,8 @@ public class Color {
 	
 	/// for sprite colors
 	public static String toString(int col) {
-		int[] cols = seperateEncodedSprite(col);
+		return java.util.Arrays.toString(Color.seperateEncodedSprite(col, true));
+		/*int[] cols = seperateEncodedSprite(col);
 		int[][] rgbs = new int[cols.length][];
 		for(int i = 0; i < cols.length; i++)
 			rgbs[i] = decodeRGB(cols[i]);
@@ -237,5 +253,6 @@ public class Color {
 		}
 		
 		return java.util.Arrays.toString(colstrs);
+		*/
 	}
 }

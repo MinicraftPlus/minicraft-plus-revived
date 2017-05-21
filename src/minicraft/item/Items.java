@@ -104,7 +104,12 @@ public class Items {
 		//System.out.println("fetching name: " + name);
 		Item i = items.get(name);
 		//System.out.println("got item " + i.name);
-		return i.clone();
+		if(i != null)
+			return i.clone();
+		else {
+			System.out.println("ITEMS GET: invalid name requested: " + name);
+			return items.get("POWER GLOVE");
+		}
 		/*if(!name.equals("")) { // name is not nothing
 			if(name.contains(";")) { // if has ";" in name for whatever reason...
 				name = name.substring(0, name.indexOf(";")); // cut it off, plus anything after it.

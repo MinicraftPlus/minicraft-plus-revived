@@ -4,11 +4,17 @@ import minicraft.entity.AirWizard;
 import minicraft.entity.Entity;
 import minicraft.entity.Player;
 import minicraft.gfx.Screen;
+import minicraft.gfx.Sprite;
+import minicraft.gfx.ConnectorSprite;
 import minicraft.level.Level;
 
 public class InfiniteFallTile extends Tile {
-	public InfiniteFallTile(int id) {
-		super(id);
+	protected static void addInstances() {
+		Tiles.add(new InfiniteFallTile("Infinite Fall"));
+	}
+	
+	private InfiniteFallTile(String name) {
+		super(name, (Sprite)null);
 	}
 
 	public void render(Screen screen, Level level, int x, int y) {}

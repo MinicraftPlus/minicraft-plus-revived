@@ -9,6 +9,8 @@ import minicraft.entity.particle.SmashParticle;
 import minicraft.entity.particle.TextParticle;
 import minicraft.gfx.Color;
 import minicraft.gfx.Screen;
+import minicraft.gfx.Sprite;
+import minicraft.gfx.ConnectorSprite;
 import minicraft.item.Item;
 import minicraft.item.StackableItem;
 import minicraft.item.ToolItem;
@@ -18,17 +20,26 @@ import minicraft.level.Level;
 import minicraft.screen.ModeMenu;
 
 /// this is the typical stone you see underground and on the surface, that gives coal.
+
 public class RockTile extends Tile {
-	public RockTile(int id) {
-		super(id);
+	private static ConnectorSprite sprite = new ConnectorSprite(RockTile.class, new Sprite(4, 0, 3, 3, 0, 3), new Sprite(7, 0, 2, 2, 0, 3), Sprite.dots(Color.get(444, 444, 333, 333)));
+	
+	protected static void addInstances() {
+		Tiles.add(new RockTile("Rock"));
 	}
-
-	int coallvl = 1;
-
+	
+	private int coallvl = 1;
+	
+	private RockTile(String name) {
+		super(name, sprite);
+	}
+	
 	public void render(Screen screen, Level level, int x, int y) {
-		int col = Color.get(444, 444, 333, 333);
+		//int col = Color.get(444, 444, 333, 333);
 		int colt = Color.get(111, 444, 555, DirtTile.dCol(level.depth));
+		sprite.render(screen, level, x, y, sprite.sparse.color, colt, colt);
 		
+		/*
 		int transitionColor = colt;
 
 		boolean u = level.getTile(x, y - 1) != this;
@@ -42,8 +53,8 @@ public class RockTile extends Tile {
 		boolean dr = level.getTile(x + 1, y + 1) != this;
 
 		if (!u && !l) {
-			if (!ul) screen.render(x * 16 + 0, y * 16 + 0, 0, col, 0);
-			else screen.render(x * 16 + 0, y * 16 + 0, 7 + 0 * 32, transitionColor, 3);
+			if (!ul) screen.render(x * 16 + 0, y * 16 + 0, 0, col, 0); // 0,0
+			else screen.render(x * 16 + 0, y * 16 + 0, 7 + 0 * 32, transitionColor, 3); // 7,0
 		} else
 			screen.render(x * 16 + 0, y * 16 + 0, (l ? 6 : 5) + (u ? 2 : 1) * 32, transitionColor, 3);
 
@@ -63,6 +74,7 @@ public class RockTile extends Tile {
 			else screen.render(x * 16 + 8, y * 16 + 8, 8 + 1 * 32, transitionColor, 3);
 		} else
 			screen.render(x * 16 + 8, y * 16 + 8, (r ? 4 : 5) + (d ? 0 : 1) * 32, transitionColor, 3);
+		*/
 	}
 
 	public boolean mayPass(Level level, int x, int y, Entity e) {
@@ -139,7 +151,7 @@ public class RockTile extends Tile {
 									y * 16 + random.nextInt(10) + 3));
 				}
 			}
-			level.setTile(x, y, Tile.dirt, 0);
+			level.setTile(x, y, Tiles.get("dirt"), 0);
 		} else {
 			level.setData(x, y, damage);
 		}

@@ -5,18 +5,36 @@ import minicraft.Game;
 import minicraft.entity.Entity;
 import minicraft.gfx.Color;
 import minicraft.gfx.Screen;
+import minicraft.gfx.Sprite;
+import minicraft.gfx.ConnectorSprite;
 import minicraft.level.Level;
 
 public class WaterTile extends Tile {
-	public WaterTile(int id) {
-		super(id);
+	private ConnectorSprite sprite = new ConnectorSprite(WaterTile.class, new Sprite(14, 0, 3, 3, Color.get(3, 105, 211, 321), 0), Sprite.dots(Color.get(005, 105, 115, 115)))
+	{
+		public boolean connectsTo(Tile tile, boolean isSide) {
+			return !isSide || tile.connectsToWater;
+		}
+	};
+	
+	protected static void addInstances() {
+		Tiles.add(new WaterTile("Water"));
+	}
+	
+	private WaterTile(String name) {
+		super(name, (ConnectorSprite)null);
+		csprite = sprite;
 		connectsToSand = true;
 		connectsToWater = true;
 	}
 
-	private Random wRandom = new Random();
+	//private Random wRandom = new Random();
 
 	public void render(Screen screen, Level level, int x, int y) {
+		long seed = (tickCount + (x / 2 - y) * 4311) / 10 * 54687121l + x * 3271612l + y * 3412987161l;
+		sprite.full = Sprite.randomDots(seed, sprite.full.color);
+		sprite.render(screen, level, x, y);
+		/*
 		int col = Color.get(005, 105, 115, 115);
 		int col1 = Color.get(3, 105, 211, DirtTile.dCol(level.depth));
 		int col2 = Color.get(3, 105, 440, 550);
@@ -74,6 +92,7 @@ public class WaterTile extends Tile {
 					(r ? 16 : 15) + (d ? 2 : 1) * 32,
 					(sd || sr) ? transitionColor2 : transitionColor1,
 					0);
+		*/
 	}
 
 	public boolean mayPass(Level level, int x, int y, Entity e) {
@@ -87,11 +106,11 @@ public class WaterTile extends Tile {
 		if (random.nextBoolean()) xn += random.nextInt(2) * 2 - 1;
 		else yn += random.nextInt(2) * 2 - 1;
 
-		if (level.getTile(xn, yn) == Tile.hole) {
+		if (level.getTile(xn, yn) == Tiles.get("hole")) {
 			level.setTile(xn, yn, this, 0);
 		}
-		if (level.getTile(xn, yn) == Tile.lava) {
-			level.setTile(xn, yn, sbrick, 0);
+		if (level.getTile(xn, yn) == Tiles.get("lava")) {
+			level.setTile(xn, yn, Tiles.get("Stone Bricks"), 0);
 		}
 	}
 }

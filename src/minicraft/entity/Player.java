@@ -523,9 +523,9 @@ public class Player extends Mob {
 		
 		// render each corner of the sprite
 		if (!isSwimming()) { // don't render the bottom half if swimming.
-			curSprite.render(screen, col, xo, yo);
+			curSprite.render(screen, xo, yo, col);
 		} else {
-			curSprite.renderRow(0, screen, col, xo, yo);
+			curSprite.renderRow(0, screen, xo, yo, col);
 		}
 		
 		// renders slashes:

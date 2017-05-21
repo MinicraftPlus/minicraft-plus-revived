@@ -4,29 +4,38 @@ import minicraft.Game;
 import minicraft.entity.Mob;
 import minicraft.gfx.Color;
 import minicraft.gfx.Screen;
+import minicraft.gfx.Sprite;
+import minicraft.gfx.ConnectorSprite;
 import minicraft.level.Level;
 
 public class SaplingTile extends Tile {
+	private static Sprite sprite = new Sprite(11, 3, Color.get(20, 40, 50, -1));
+	
+	protected static void addInstances() {
+		Tiles.add(new SaplingTile("Tree Sapling", Tiles.get("Grass"), Tiles.get("Tree")));
+		Tiles.add(new SaplingTile("Cactus Sapling", Tiles.get("Sand"), Tiles.get("Cactus")));
+	}
+	
 	private Tile onType;
 	private Tile growsTo;
-
-	public SaplingTile(int id, Tile onType, Tile growsTo) {
-		super(id);
+	
+	private SaplingTile(String name, Tile onType, Tile growsTo) {
+		super(name, sprite);
 		this.onType = onType;
 		this.growsTo = growsTo;
 		connectsToSand = onType.connectsToSand;
 		connectsToGrass = onType.connectsToGrass;
 		connectsToWater = onType.connectsToWater;
 		connectsToLava = onType.connectsToLava;
-		maySpawn = onType.maySpawn;
+		maySpawn = true;
 	}
 
 	public void render(Screen screen, Level level, int x, int y) {
-		int col = Color.get(20, 40, 50, -1);
+		//int col = Color.get(20, 40, 50, -1);
 		
 		onType.render(screen, level, x, y);
 		
-		screen.render(x * 16 + 4, y * 16 + 4, 11 + 3 * 32, col, 0);
+		sprite.render(screen, x*16, y*16);
 	}
 
 	public void tick(Level level, int x, int y) {

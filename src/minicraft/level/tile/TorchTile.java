@@ -4,6 +4,8 @@ import minicraft.entity.ItemEntity;
 import minicraft.entity.Player;
 import minicraft.gfx.Color;
 import minicraft.gfx.Screen;
+import minicraft.gfx.Sprite;
+import minicraft.gfx.ConnectorSprite;
 import minicraft.item.Item;
 import minicraft.item.PowerGloveItem;
 import minicraft.item.StackableItem;
@@ -18,15 +20,15 @@ public class TorchTile extends Tile {
 		int id = onTile.id;
 		if(id < 128) id += 128;
 		else System.out.println("tried to place torch on torch tile...");
-		if(Tile.tiles[id] != null)
-			return (TorchTile)Tile.tiles[id];
+		if(Tiles.get(id) != null)
+			return (TorchTile)Tiles.get(id);
 		else {
 			return new TorchTile(onTile);
 		}
 	}
 	
 	private TorchTile(Tile onType) {
-		super(onType.id+128);
+		super("Torch "+ onType.name, (Sprite)null);
 		this.onType = onType;
 		this.connectsToSand = onType.connectsToSand;
 		this.connectsToGrass = onType.connectsToGrass;

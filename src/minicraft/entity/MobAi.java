@@ -48,7 +48,7 @@ public abstract class MobAi extends Mob {
 		}
 		
 		MobSprite curSprite = sprites[dir][(walkDist >> 3) % sprites[dir].length];
-		curSprite.render(screen, color, xo, yo);
+		curSprite.render(screen, xo, yo, color);
 	}
 	
 	public boolean canWool() {
