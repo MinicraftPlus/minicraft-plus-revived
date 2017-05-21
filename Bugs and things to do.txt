@@ -7,15 +7,8 @@ Note to self: for more little bugs/ideas/concerns, search code for "TODO"
 -----------------------------------------------------------------------------------
 
 	####BUGS####
-#####
-Bugs due to tile overhaul:
--lava appears when destrying trees and things; crashes the game with digging dirt I think
--flowers appear under sand
--STAIR down tiles appear under dirt
--lava appears under flowers that were under sand, and also trees (maybe grass too)
--tile transitions are a bit edged.
-
-#####
+####
+tile transitions are a bit edged.
 ####
 I accidently removed the whole "SmashParticle" thing it seems... same with FireParticle...
 ####

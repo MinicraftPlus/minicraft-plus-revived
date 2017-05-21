@@ -139,7 +139,7 @@ public class Save {
 			
 			for(int x = 0; x < Game.levels[l].w; x++) {
 				for(int y = 0; y < Game.levels[l].h; y++) {
-					data.add(String.valueOf(Game.levels[l].getTile(x, y).id));
+					data.add(String.valueOf(Game.levels[l].getTile(x, y).name));
 				}
 			}
 			
