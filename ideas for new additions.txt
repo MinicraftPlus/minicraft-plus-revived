@@ -5,11 +5,15 @@ Bacon. Just, Bacon.
 
 ----
 
-Add world copy option, like rename and delete.
+Add world backup option, that user can select a download location. Tehn maybe... pack to zip? Also, I'll need to make a "restore" feature, and unzip it ...
 
 ----
 
 Remove the PowGlove entirely, in favor of a new control key, like "v", to "pickup" things. Perhaps, make it only work when nothing is in your hand?
+
+----
+
+Requested: Change the lighting in caves. maybe I could experiment with having surface lighting, but just really, really low.
 
 ----
 
