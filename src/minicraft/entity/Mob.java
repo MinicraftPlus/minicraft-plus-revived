@@ -5,7 +5,6 @@ import minicraft.gfx.Color;
 import minicraft.gfx.MobSprite;
 import minicraft.level.tile.Tile;
 import minicraft.level.tile.Tiles;
-import minicraft.level.tile.TorchTile;
 import minicraft.screen.ModeMenu;
 import minicraft.sound.Sound;
 

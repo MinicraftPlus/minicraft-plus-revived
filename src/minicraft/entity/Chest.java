@@ -2,7 +2,6 @@ package minicraft.entity;
 
 import minicraft.gfx.Color;
 import minicraft.gfx.Sprite;
-import minicraft.gfx.ConnectorSprite;
 import minicraft.screen.ContainerMenu;
 
 public class Chest extends Furniture {

@@ -1,18 +1,11 @@
 package minicraft.item;
 
-import java.util.ArrayList;
-import java.util.List;
+
 import java.util.HashMap;
 import minicraft.entity.Player;
 import minicraft.gfx.Color;
 import minicraft.gfx.Font;
 import minicraft.gfx.Screen;
-import minicraft.item.BucketItem;
-import minicraft.item.Item;
-import minicraft.item.StackableItem;
-import minicraft.item.ToolItem;
-import minicraft.item.ToolType;
-import minicraft.item.Items;
 import minicraft.screen.ListItem;
 import minicraft.screen.ModeMenu;
 

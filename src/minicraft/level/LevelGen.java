@@ -5,7 +5,6 @@ import java.awt.image.BufferedImage;
 import java.util.Random;
 import javax.swing.ImageIcon;
 import javax.swing.JOptionPane;
-import minicraft.level.tile.Tile;
 import minicraft.level.tile.Tiles;
 import minicraft.screen.WorldGenMenu;
 

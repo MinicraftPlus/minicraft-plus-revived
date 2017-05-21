@@ -1,10 +1,8 @@
 package minicraft.entity;
 
-import java.util.List;
 import java.util.ArrayList;
-import minicraft.gfx.Sprite;
-import minicraft.gfx.ConnectorSprite;
 import minicraft.gfx.Color;
+import minicraft.gfx.Sprite;
 import minicraft.item.Recipe;
 import minicraft.item.Recipes;
 import minicraft.screen.CraftingMenu;

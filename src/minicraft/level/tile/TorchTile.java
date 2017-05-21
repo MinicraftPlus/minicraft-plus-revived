@@ -1,15 +1,12 @@
 package minicraft.level.tile;
 
-import minicraft.entity.ItemEntity;
 import minicraft.entity.Player;
 import minicraft.gfx.Color;
 import minicraft.gfx.Screen;
 import minicraft.gfx.Sprite;
-import minicraft.gfx.ConnectorSprite;
 import minicraft.item.Item;
-import minicraft.item.PowerGloveItem;
-import minicraft.item.StackableItem;
 import minicraft.item.Items;
+import minicraft.item.PowerGloveItem;
 import minicraft.level.Level;
 
 public class TorchTile extends Tile {

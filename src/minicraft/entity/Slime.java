@@ -1,9 +1,6 @@
 package minicraft.entity;
 
-import minicraft.Game;
 import minicraft.gfx.Color;
-import minicraft.gfx.Sprite;
-import minicraft.gfx.ConnectorSprite;
 import minicraft.gfx.MobSprite;
 import minicraft.gfx.Screen;
 import minicraft.item.Items;

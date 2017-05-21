@@ -2,14 +2,13 @@ package minicraft.screen;
 
 import java.io.File;
 import java.io.IOException;
-import java.nio.file.Path;
-import java.nio.file.Files;
-import java.nio.file.FileVisitor;
 import java.nio.file.FileVisitResult;
-import java.nio.file.attribute.BasicFileAttributes;
+import java.nio.file.FileVisitor;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.nio.file.StandardCopyOption;
+import java.nio.file.attribute.BasicFileAttributes;
 import java.util.ArrayList;
-import javax.swing.JFileChooser;
 import minicraft.Game;
 import minicraft.gfx.Color;
 import minicraft.gfx.Font;

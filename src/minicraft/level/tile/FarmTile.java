@@ -1,12 +1,9 @@
 package minicraft.level.tile;
 
-import minicraft.Game;
 import minicraft.entity.Entity;
 import minicraft.entity.Player;
 import minicraft.gfx.Color;
-import minicraft.gfx.Screen;
 import minicraft.gfx.Sprite;
-import minicraft.gfx.ConnectorSprite;
 import minicraft.item.Item;
 import minicraft.item.ToolItem;
 import minicraft.item.ToolType;

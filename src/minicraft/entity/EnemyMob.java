@@ -4,7 +4,6 @@ import minicraft.Game;
 import minicraft.gfx.MobSprite;
 import minicraft.gfx.Screen;
 import minicraft.level.Level;
-import minicraft.level.tile.Tile;
 import minicraft.level.tile.Tiles;
 import minicraft.screen.ModeMenu;
 import minicraft.screen.OptionsMenu;

@@ -1,13 +1,11 @@
 package minicraft.entity;
 
-import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import javax.swing.Timer;
 import minicraft.gfx.Color;
 import minicraft.gfx.Sprite;
-import minicraft.gfx.ConnectorSprite;
 import minicraft.level.Level;
-import minicraft.level.tile.Tile;
 import minicraft.level.tile.Tiles;
 import minicraft.sound.Sound;
 

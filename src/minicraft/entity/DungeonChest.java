@@ -5,10 +5,8 @@ import minicraft.Game;
 import minicraft.entity.particle.SmashParticle;
 import minicraft.entity.particle.TextParticle;
 import minicraft.gfx.Color;
-import minicraft.item.StackableItem;
-import minicraft.item.ToolItem;
-import minicraft.item.ToolType;
 import minicraft.item.Items;
+import minicraft.item.StackableItem;
 import minicraft.screen.ModeMenu;
 
 public class DungeonChest extends Chest {

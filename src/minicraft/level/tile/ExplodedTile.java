@@ -2,10 +2,8 @@ package minicraft.level.tile;
 
 import minicraft.entity.Entity;
 import minicraft.gfx.Color;
-import minicraft.gfx.Screen;
+import minicraft.gfx.ConnectorSprite;
 import minicraft.gfx.Sprite;
-import minicraft.gfx.ConnectorSprite;
-import minicraft.gfx.ConnectorSprite;
 import minicraft.level.Level;
 
 /// This class is for tiles WHILE THEY ARE EXPLODING

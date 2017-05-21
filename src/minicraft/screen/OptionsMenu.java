@@ -1,6 +1,5 @@
 package minicraft.screen;
 
-import minicraft.Game;
 import minicraft.entity.Player;
 import minicraft.gfx.Color;
 import minicraft.gfx.Font;

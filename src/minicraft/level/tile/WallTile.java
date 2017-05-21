@@ -1,21 +1,17 @@
 package minicraft.level.tile;
 
-import minicraft.Game;
 import minicraft.entity.Entity;
-import minicraft.entity.ItemEntity;
 import minicraft.entity.Mob;
 import minicraft.entity.Player;
 import minicraft.entity.particle.SmashParticle;
 import minicraft.entity.particle.TextParticle;
 import minicraft.gfx.Color;
-import minicraft.gfx.Screen;
-import minicraft.gfx.Sprite;
 import minicraft.gfx.ConnectorSprite;
+import minicraft.gfx.Sprite;
 import minicraft.item.Item;
-import minicraft.item.StackableItem;
+import minicraft.item.Items;
 import minicraft.item.ToolItem;
 import minicraft.item.ToolType;
-import minicraft.item.Items;
 import minicraft.level.Level;
 import minicraft.screen.ModeMenu;
 

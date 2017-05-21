@@ -1,17 +1,15 @@
 package minicraft.item;
 
 import java.util.ArrayList;
-import java.util.List;
 import java.util.Arrays;
+import java.util.List;
 import minicraft.Game;
+import minicraft.entity.Player;
+import minicraft.gfx.Color;
+import minicraft.gfx.Sprite;
+import minicraft.level.Level;
 import minicraft.level.tile.Tile;
 import minicraft.level.tile.Tiles;
-import minicraft.gfx.Sprite;
-import minicraft.gfx.ConnectorSprite;
-import minicraft.gfx.Screen;
-import minicraft.gfx.Color;
-import minicraft.entity.Player;
-import minicraft.level.Level;
 
 /// this is meant to replace PlantableItem/Item, I think.
 

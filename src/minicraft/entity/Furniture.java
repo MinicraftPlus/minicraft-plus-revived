@@ -1,9 +1,7 @@
 package minicraft.entity;
 
-import minicraft.Game;
 import minicraft.gfx.Screen;
 import minicraft.gfx.Sprite;
-import minicraft.gfx.ConnectorSprite;
 import minicraft.item.FurnitureItem;
 import minicraft.item.PowerGloveItem;
 

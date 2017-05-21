@@ -5,10 +5,7 @@ import minicraft.entity.Entity;
 import minicraft.entity.Furniture;
 import minicraft.entity.Player;
 import minicraft.gfx.Color;
-import minicraft.gfx.Font;
-import minicraft.gfx.Screen;
 import minicraft.gfx.Sprite;
-import minicraft.gfx.ConnectorSprite;
 
 public class PowerGloveItem extends Item {
 	

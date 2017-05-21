@@ -1,11 +1,9 @@
 package minicraft.level.tile;
 
-import minicraft.Game;
 import minicraft.entity.Mob;
 import minicraft.gfx.Color;
 import minicraft.gfx.Screen;
 import minicraft.gfx.Sprite;
-import minicraft.gfx.ConnectorSprite;
 import minicraft.level.Level;
 
 public class SaplingTile extends Tile {

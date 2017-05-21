@@ -3,9 +3,7 @@ package minicraft.entity;
 import minicraft.gfx.Color;
 import minicraft.gfx.MobSprite;
 import minicraft.gfx.Screen;
-import minicraft.item.StackableItem;
 import minicraft.item.Item;
-import minicraft.item.Items;
 import minicraft.level.Level;
 
 public abstract class MobAi extends Mob {

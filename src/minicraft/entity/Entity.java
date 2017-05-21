@@ -6,7 +6,6 @@ import minicraft.gfx.Screen;
 import minicraft.item.Item;
 import minicraft.level.Level;
 import minicraft.level.tile.Tile;
-import minicraft.level.tile.Tiles;
 
 public abstract class Entity {
 	/// entity coordinates are per pixel, not per tile; each tile is 16x16 entity pixels.

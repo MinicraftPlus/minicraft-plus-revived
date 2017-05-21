@@ -1,19 +1,7 @@
 package minicraft.level.tile;
 
-import java.util.Random;
-import java.util.HashMap;
 import java.util.ArrayList;
-import minicraft.entity.Entity;
-import minicraft.entity.Mob;
-import minicraft.entity.Player;
-import minicraft.gfx.Color;
-import minicraft.gfx.Screen;
-import minicraft.gfx.Sprite;
-import minicraft.gfx.ConnectorSprite;
-import minicraft.gfx.ConnectorSprite;
-import minicraft.item.Item;
-import minicraft.item.Items;
-import minicraft.level.Level;
+
 
 public final class Tiles {
 	/// idea: to save tile names while saving space, I could encode the names in base 64 in the save file...^M

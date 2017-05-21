@@ -1,14 +1,11 @@
 package minicraft.item;
 
 import java.util.ArrayList;
-import minicraft.Game;
+import minicraft.entity.Player;
 import minicraft.gfx.Color;
 import minicraft.gfx.Sprite;
-import minicraft.gfx.ConnectorSprite;
-import minicraft.entity.Player;
 import minicraft.level.Level;
 import minicraft.level.tile.Tile;
-import minicraft.level.tile.Tiles;
 
 public class PotionItem extends StackableItem {
 	

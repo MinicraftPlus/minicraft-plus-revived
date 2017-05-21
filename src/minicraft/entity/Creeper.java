@@ -1,13 +1,9 @@
 package minicraft.entity;
 
-import minicraft.Game;
 import minicraft.gfx.Color;
-import minicraft.gfx.Sprite;
-import minicraft.gfx.ConnectorSprite;
 import minicraft.gfx.MobSprite;
 import minicraft.gfx.Screen;
 import minicraft.item.Items;
-import minicraft.level.tile.Tile;
 import minicraft.level.tile.Tiles;
 import minicraft.screen.OptionsMenu;
 import minicraft.sound.Sound;

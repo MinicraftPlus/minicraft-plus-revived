@@ -1,23 +1,13 @@
 package minicraft.item;
 
 import java.util.ArrayList;
-import java.util.List;
 import java.util.Arrays;
 import java.util.HashMap;
+import minicraft.entity.Inventory;
 // import java.io.File;
 // import java.net.URL;
 // import java.net.URI;
 // import java.net.URISyntaxException;
-import minicraft.gfx.Sprite;
-import minicraft.gfx.ConnectorSprite;
-import minicraft.entity.Bed;
-import minicraft.entity.Chest;
-import minicraft.entity.Inventory;
-import minicraft.entity.Lantern;
-import minicraft.entity.Spawner;
-import minicraft.entity.Tnt;
-import minicraft.level.tile.Tile;
-import minicraft.level.tile.Tiles;
 
 public class Items {
 	

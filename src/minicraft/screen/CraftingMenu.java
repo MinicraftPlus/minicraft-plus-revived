@@ -4,13 +4,12 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
-import minicraft.item.Recipe;
 import minicraft.entity.Player;
 import minicraft.gfx.Color;
 import minicraft.gfx.Font;
 import minicraft.gfx.Screen;
 import minicraft.item.Item;
-import minicraft.item.StackableItem;
+import minicraft.item.Recipe;
 import minicraft.sound.Sound;
 
 public class CraftingMenu extends Menu {

@@ -7,7 +7,6 @@ import minicraft.entity.Lantern;
 import minicraft.entity.Tnt;
 import minicraft.item.BucketItem;
 import minicraft.item.ToolType;*/
-import minicraft.item.Items;
 
 public class Recipes {
 	

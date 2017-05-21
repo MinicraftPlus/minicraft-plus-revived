@@ -1,15 +1,11 @@
 package minicraft.screen;
 
+import java.util.Arrays;
 import minicraft.Game;
-import minicraft.InputHandler;
-import minicraft.gfx.Font;
 import minicraft.gfx.Color;
+import minicraft.gfx.Font;
 import minicraft.gfx.Screen;
 import minicraft.saveload.Save;
-
-import java.util.Arrays;
-import java.util.List;
-import java.util.ArrayList;
 
 public class KeyInputMenu extends ScrollingMenu {
 	

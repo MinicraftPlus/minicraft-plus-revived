@@ -1,13 +1,9 @@
 package minicraft.item;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import minicraft.entity.Player;
 import minicraft.gfx.Color;
-import minicraft.gfx.Font;
-import minicraft.gfx.Screen;
 import minicraft.gfx.Sprite;
-import minicraft.gfx.ConnectorSprite;
 import minicraft.level.Level;
 import minicraft.level.tile.Tile;
 import minicraft.level.tile.Tiles;

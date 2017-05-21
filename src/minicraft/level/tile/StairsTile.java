@@ -4,7 +4,6 @@ import minicraft.Game;
 import minicraft.gfx.Color;
 import minicraft.gfx.Screen;
 import minicraft.gfx.Sprite;
-import minicraft.gfx.ConnectorSprite;
 import minicraft.level.Level;
 
 public class StairsTile extends Tile {
