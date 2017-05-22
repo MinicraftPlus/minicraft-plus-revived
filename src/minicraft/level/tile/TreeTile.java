@@ -19,11 +19,7 @@ import minicraft.screen.ModeMenu;
 public class TreeTile extends Tile {
 	//private ConnectorSprite sprite = new ConnectorSprite();
 	
-	protected static void addInstances() {
-		Tiles.add(new TreeTile("Tree"));
-	}
-	
-	private TreeTile(String name) {
+	protected TreeTile(String name) {
 		super(name, (ConnectorSprite)null);
 		connectsToGrass = true;
 	}
@@ -117,9 +113,10 @@ public class TreeTile extends Tile {
 		level.add(new SmashParticle(x * 16 + 8, y * 16 + 8));
 		level.add(new TextParticle("" + dmg, x * 16 + 8, y * 16 + 8, Color.get(-1, 500)));
 		if (damage >= treeHealth) {
+			System.out.println("killed the tree");
 			level.dropItem(x*16, x*16, 1, 2, Items.get("Wood"));
 			level.dropItem(x*16, x*16, 1, 4, Items.get("Acorn"));
-			level.setTile(x, y, Tiles.get("grass"), 0);
+			level.setTile(x, y, Tiles.get("grass"));
 		} else {
 			level.setData(x, y, damage);
 		}

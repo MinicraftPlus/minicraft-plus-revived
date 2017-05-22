@@ -8,11 +8,8 @@ import minicraft.gfx.Sprite;
 import minicraft.level.Level;
 
 public class InfiniteFallTile extends Tile {
-	protected static void addInstances() {
-		Tiles.add(new InfiniteFallTile("Infinite Fall"));
-	}
 	
-	private InfiniteFallTile(String name) {
+	protected InfiniteFallTile(String name) {
 		super(name, (Sprite)null);
 	}
 

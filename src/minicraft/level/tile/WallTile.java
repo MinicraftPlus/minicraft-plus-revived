@@ -1,5 +1,6 @@
 package minicraft.level.tile;
 
+import java.util.EnumMap;
 import minicraft.entity.Entity;
 import minicraft.entity.Mob;
 import minicraft.entity.Player;
@@ -18,14 +19,15 @@ import minicraft.screen.ModeMenu;
 public class WallTile extends Tile {
 	private ConnectorSprite sprite;
 	
-	protected static void addInstances() {
-		for(Material mat: Material.values())
-			Tiles.add(new WallTile(mat));
-	}
-	
 	protected Material type;
 	
-	private WallTile(Material type) {
+	/*private static EnumMap<Material, ConnectorSprite> spriteMap = new EnumMap<Material, ConnectorSprite> {{
+		put(Material.Wood, new ConnectorSprite(WallTile.class, new Sprite(4, 22, 3, 3, Color.get(100, 430, 320, 540), 3), new Sprite(7, 22, 2, 2, Color.get(100, 430, 320, 540), 3), new Sprite(5, 23, 2, 2, Color.get(430, 430, 320, 320), 0, true)));
+		put(Material.Stone, new ConnectorSprite(WallTile.class, new Sprite(4, 25, 3, 3, Color.get(111, 333, 444, 444), 3), new Sprite(7, 24, 2, 2, Color.get(111, 444), 3), Sprite.blank(2, 2, 444)));
+		put(Material.Obsidian, new ConnectorSprite(WallTile.class, new Sprite(4, 25, 3, 3, Color.get(000, 203, 103, 103), 3), new Sprite(7, 24, 2, 2, Color.get(000, 103), 3), Sprite.blank(2, 2, 223)));
+	}};*/
+	
+	protected WallTile(Material type) {
 		super(type.name()+" Wall", (ConnectorSprite)null);
 		switch(type) {
 			case Wood: sprite = new ConnectorSprite(WallTile.class, new Sprite(4, 22, 3, 3, Color.get(100, 430, 320, 540), 3), new Sprite(7, 22, 2, 2, Color.get(100, 430, 320, 540), 3), new Sprite(5, 23, 2, 2, Color.get(430, 430, 320, 320), 0, true));
@@ -37,9 +39,12 @@ public class WallTile extends Tile {
 		}
 		csprite = sprite;
 	}
-	/*
-	public void render(Screen screen, Level level, int x, int y) {
-		int col = Color.get(444, 444);
+	
+	//public void render(Screen screen, Level level, int x, int y) {
+		//byte data = level.getData(x, y);
+		
+		
+		/*int col = Color.get(444, 444);
 		int col1 = Color.get(111, 333, 444, 444);
 		int col2 = Color.get(111, 444);
 		
@@ -82,7 +87,8 @@ public class WallTile extends Tile {
 		} else
 			screen.render(
 					x * 16 + 8, y * 16 + 8, (r ? 4 : 5) + (d ? 25 : 26) * 32, transitionColor, 3);
-	}*/
+		*/
+	//}
 
 	public boolean mayPass(Level level, int x, int y, Entity e) {
 		return false;
@@ -129,8 +135,15 @@ public class WallTile extends Tile {
 		level.add(new SmashParticle(x * 16 + 8, y * 16 + 8));
 		level.add(new TextParticle("" + dmg, x * 16 + 8, y * 16 + 8, Color.get(-1, 500)));
 		if (damage >= sbwHealth) {
-			level.dropItem(x*16, y*16, 1, 3-type.ordinal(), Items.get(type.name()+" Brick"));
-			level.setTile(x, y, Tiles.get("Stone Bricks"), 0); // TODO this will be a problem...
+			String itemName = "", tilename = "";
+			switch(type) {
+				case Wood: itemName = "Plank"; tilename = "Wood Planks"; break;
+				case Stone: itemName = "Stone Brick"; tilename = "Stone Bricks"; break;
+				case Obsidian: itemName = "Obsidian Brick"; tilename = "Obsidian"; break;
+			}
+			
+			level.dropItem(x*16, y*16, 1, 3-type.ordinal(), Items.get(itemName));
+			level.setTile(x, y, Tiles.get(tilename)); // TODO this will be a problem...
 		}
 		else {
 			level.setData(x, y, damage);
@@ -140,5 +153,9 @@ public class WallTile extends Tile {
 	public void tick(Level level, int xt, int yt) {
 		int damage = level.getData(xt, yt);
 		if (damage > 0) level.setData(xt, yt, damage - 1);
+	}
+	
+	public String getName(int data) {
+		return Material.values[data].name() + " Wall";
 	}
 }

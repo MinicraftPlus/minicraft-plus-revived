@@ -16,11 +16,7 @@ public class FlowerTile extends Tile {
 	//private static Sprite grasssprite = new Sprite(1, 1, Color.get(10, 141, 555, 440));
 	private static Sprite flowersprite = new Sprite(1, 1, Color.get(10, 141, 555, 440));
 	
-	protected static void addInstances() {
-		Tiles.add(new FlowerTile("Flower"));
-	}
-	
-	private FlowerTile(String name) {
+	protected FlowerTile(String name) {
 		super(name, (ConnectorSprite)null);
 		//tiles[id] = this;
 		connectsToGrass = true;
@@ -53,7 +49,7 @@ public class FlowerTile extends Tile {
 				if (player.payStamina(2 - tool.level)) {
 					level.dropItem(x*16, y*16, Items.get("Flower"));
 					level.dropItem(x*16, y*16, Items.get("Rose"));
-					level.setTile(x, y, Tiles.get("grass"), 0);
+					level.setTile(x, y, Tiles.get("grass"));
 					return true;
 				}
 			}
@@ -64,6 +60,6 @@ public class FlowerTile extends Tile {
 	public void hurt(Level level, int x, int y, Mob source, int dmg, int attackDir) {
 		level.dropItem(x*16, y*16, 1, 2, Items.get("Flower"));
 		level.dropItem(x*16, y*16, 0, 1, Items.get("Rose"));
-		level.setTile(x, y, Tiles.get("grass"), 0);
+		level.setTile(x, y, Tiles.get("grass"));
 	}
 }

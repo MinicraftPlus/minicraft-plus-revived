@@ -14,11 +14,7 @@ public class HoleTile extends Tile {
 		}
 	};
 	
-	protected static void addInstances() {
-		Tiles.add(new HoleTile("Hole"));
-	}
-	
-	private HoleTile(String name) {
+	protected HoleTile(String name) {
 		super(name, sprite);
 		connectsToSand = true;
 		connectsToWater = true;

@@ -10,6 +10,7 @@ import minicraft.gfx.Sprite;
 import minicraft.level.Level;
 import minicraft.level.tile.Tile;
 import minicraft.level.tile.Tiles;
+import minicraft.level.tile.WoolTile;
 
 /// this is meant to replace PlantableItem/Item, I think.
 
@@ -22,24 +23,24 @@ public class TileItem extends StackableItem {
 		items.add(new TileItem("Flower", (new Sprite(0, 4, Color.get(-1, 10, 444, 330))), "flower", "grass"));
 		items.add(new TileItem("Acorn", (new Sprite(3, 4, Color.get(-1, 100, 531, 320))), "tree Sapling", "grass"));
 		items.add(new TileItem("Dirt", (new Sprite(2, 4, Color.get(-1, 100, 322, 432))), "dirt", "hole", "water", "lava"));
-	
+		
 		items.add(new TileItem("Plank", (new Sprite(1, 4, Color.get(-1, 200, 531, 530))), "Wood Planks", "hole", "water"));
-		items.add(new TileItem("Plank Wall", (new Sprite(16, 4, Color.get(-1, 200, 531, 530))), "Plank Wall", "Wood Planks"));
+		items.add(new TileItem("Plank Wall", (new Sprite(16, 4, Color.get(-1, 200, 531, 530))), "Wood Wall", "Wood Planks"));
 		items.add(new TileItem("Wood Door", (new Sprite(17, 4, Color.get(-1, 200, 531, 530))), "Wood Door", "Wood Planks"));
 		items.add(new TileItem("Stone Brick", (new Sprite(1, 4, Color.get(-1, 333, 444, 444))), "Stone Bricks", "hole", "water", "lava"));
 		items.add(new TileItem("Stone BrickWall", (new Sprite(16, 4, Color.get(-1, 100, 333, 444))), "Stone Wall", "Stone Bricks"));
 		items.add(new TileItem("Stone Door", (new Sprite(17, 4, Color.get(-1, 111, 333, 444))), "Stone Door", "Stone Bricks"));
-		items.add(new TileItem("Obsidian BrickWall", (new Sprite(16, 4, Color.get(-1, 159, 59, 59))), "Obsidian Wall", "Obsidian"));
 		items.add(new TileItem("Obsidian Brick", (new Sprite(1, 4, Color.get(-1, 159, 59, 59))), "Obsidian", "hole", "water", "lava"));
+		items.add(new TileItem("Obsidian BrickWall", (new Sprite(16, 4, Color.get(-1, 159, 59, 59))), "Obsidian Wall", "Obsidian"));
 		items.add(new TileItem("Obsidian Door", (new Sprite(17, 4, Color.get(-1, 159, 59, 59))), "Obsidian Door", "Obsidian"));
 	
 		// TODO make a method in Item.java; calls clone(), but then changes color, and returns itself. Call it cloneAsColor, or changeColor, or maybe *asColor()*.
 		items.add(new TileItem("Wool", (new Sprite(2, 4, Color.get(-1, 555))), "wool", "hole", "water"));
-		items.add(new TileItem("Red Wool", (new Sprite(2, 4, Color.get(-1, 100, 300, 500))), "red Wool", "hole", "water"));
-		items.add(new TileItem("Blue Wool", (new Sprite(2, 4, Color.get(-1, 005, 115, 115))), "blue Wool", "hole", "water"));
-		items.add(new TileItem("Green Wool", (new Sprite(2, 4, Color.get(-1, 10, 40, 50))), "green Wool", "hole", "water"));
-		items.add(new TileItem("Yellow Wool", (new Sprite(2, 4, Color.get(-1, 110, 440, 552))), "yellow Wool", "hole", "water"));
-		items.add(new TileItem("Black Wool", (new Sprite(2, 4, Color.get(-1, 000, 111, 111))), "black Wool", "hole", "water"));
+		items.add(new TileItem("Red Wool", (new Sprite(2, 4, Color.get(-1, 100, 300, 500))), "Wool_"+WoolTile.WoolColor.RED.ordinal(), "hole", "water"));
+		items.add(new TileItem("Blue Wool", (new Sprite(2, 4, Color.get(-1, 005, 115, 115))), "Wool_"+WoolTile.WoolColor.BLUE.ordinal(), "hole", "water"));
+		items.add(new TileItem("Green Wool", (new Sprite(2, 4, Color.get(-1, 10, 40, 50))), "Wool_"+WoolTile.WoolColor.GREEN.ordinal(), "hole", "water"));
+		items.add(new TileItem("Yellow Wool", (new Sprite(2, 4, Color.get(-1, 110, 440, 552))), "Wool_"+WoolTile.WoolColor.YELLOW.ordinal(), "hole", "water"));
+		items.add(new TileItem("Black Wool", (new Sprite(2, 4, Color.get(-1, 000, 111, 111))), "Wool_"+WoolTile.WoolColor.BLACK.ordinal(), "hole", "water"));
 	
 		items.add(new TileItem("Sand", (new Sprite(2, 4, Color.get(-1, 110, 440, 550))), "sand", "dirt"));
 		items.add(new TileItem("Cactus", (new Sprite(4, 4, Color.get(-1, 10, 40, 50))), "cactus Sapling", "sand"));
@@ -67,13 +68,19 @@ public class TileItem extends StackableItem {
 	}
 	
 	public boolean interactOn(Tile tile, Level level, int xt, int yt, Player player, int attackDir) {
-		if(reqTiles.contains(tile.name)) {
-			level.setTile(xt, yt, Tiles.get(model), 0); // TODO maybe data should be part of the saved tile..?
-			return true;
+		for(String tilename: reqTiles) {
+			//Tile t = Tiles.get(tilename.contains("_")?tilename.substring(0, tilename.indexOf("_")):tilename);
+			if(Tile.checkMatch(tilename, tile, level.getData(xt, yt))) {
+				level.setTile(xt, yt, model); // TODO maybe data should be part of the saved tile..?
+				return true;
+			}
 		}
+		/*if(reqTiles.contains(tile.name)) {
+			
+		}*/
 		
 		if(model.contains("Wall") && reqTiles.size() == 1) {
-			Game.notifications.add("Can only be placed on " + reqTiles.get(0) + "!");
+			Game.notifications.add("Can only be placed on " + Tiles.getName(reqTiles.get(0)) + "!");
 		}
 		return false;
 	}

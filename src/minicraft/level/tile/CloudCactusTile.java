@@ -17,11 +17,7 @@ import minicraft.screen.OptionsMenu;
 public class CloudCactusTile extends Tile {
 	private static Sprite sprite = new Sprite(17, 1, 2, 2, Color.get(444, 111, 333, 555));
 	
-	protected static void addInstances() {
-		Tiles.add(new CloudCactusTile("Cloud Cactus"));
-	}
-	
-	private CloudCactusTile(String name) {
+	protected CloudCactusTile(String name) {
 		super(name, sprite);
 	}
 	
@@ -53,7 +49,7 @@ public class CloudCactusTile extends Tile {
 		level.add(new TextParticle("" + dmg, x * 16 + 8, y * 16 + 8, Color.get(-1, 500)));
 		if (dmg > 0) {
 			if (damage >= 10) {
-				level.setTile(x, y, Tiles.get("cloud"), 0);
+				level.setTile(x, y, Tiles.get("cloud"));
 			} else {
 				level.setData(x, y, damage);
 			}

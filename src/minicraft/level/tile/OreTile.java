@@ -39,18 +39,14 @@ public class OreTile extends Tile {
 		}
     }
 	
-	protected static void addInstances() {
-		for(OreType o: OreType.values())
-			Tiles.add(new OreTile((o == OreType.Lapis ? "Lapis" : o.name() + " Ore"), o));
-	}
-	
-	private OreTile(String name, OreType oreType) {
-		super(name, new Sprite(17, 1, 2, 2, oreType.color));
-        this.type = oreType;
+	protected OreTile(OreType o) {
+		super((o == OreTile.OreType.Lapis ? "Lapis" : o.name() + " Ore"), new Sprite(17, 1, 2, 2, o.color));
+        this.type = o;
+		this.sprite = super.sprite;
 	}
 
 	public void render(Screen screen, Level level, int x, int y) {
-		//sprite.color = (type.color & 0xffffff00) + Color.get(DirtTile.dCol(level.depth));
+		sprite.color = (type.color & 0xffffff00) + Color.get(DirtTile.dCol(level.depth));
 		sprite.render(screen, x*16, y*16);
 	}
 
@@ -96,7 +92,7 @@ public class OreTile extends Tile {
 		if (dmg > 0) {
 			int count = random.nextInt(2);
 			if (damage >= oreH) {
-				level.setTile(x, y, Tiles.get("dirt"), 0);
+				level.setTile(x, y, Tiles.get("dirt"));
 				count += 2;
 			} else {
 				level.setData(x, y, damage);

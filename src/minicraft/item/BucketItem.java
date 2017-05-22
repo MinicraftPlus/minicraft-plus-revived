@@ -75,12 +75,12 @@ public class BucketItem extends StackableItem {
 		Fill fill = getFilling(tile);
 		if(fill == null) return false;
 		if(fill == Fill.Empty && filling != Fill.Empty) {
-			level.setTile(xt, yt, filling.contained, 0);
+			level.setTile(xt, yt, filling.contained);
 			if(!ModeMenu.creative) player.activeItem = new BucketItem(Fill.Empty);
 			return true;
 		}
 		else if(filling == Fill.Empty) {
-			level.setTile(xt, yt, Tiles.get("hole"), 0);
+			level.setTile(xt, yt, Tiles.get("hole"));
 			if(!ModeMenu.creative) player.activeItem = new BucketItem(fill);
 			return true;
 		}
@@ -88,11 +88,11 @@ public class BucketItem extends StackableItem {
 		return false;
 		/*
 		if (tile == Tiles.get("water")) {
-			level.setTile(xt, yt, Tiles.get("hole"), 0);
+			level.setTile(xt, yt, Tiles.get("hole"));
 			item = (new BucketItem());
 		}
 		if (tile == Tiles.get("lava")) {
-			level.setTile(xt, yt, Tiles.get("hole"), 0);
+			level.setTile(xt, yt, Tiles.get("hole"));
 			item = (new BucketItem());
 		}*/
 		

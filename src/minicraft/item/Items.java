@@ -22,12 +22,12 @@ public class Items {
 		
 		If you want to access one of those items, you do it through this class, by calling get("item name"); casing does not matter.
 	*/
-	private static HashMap<String, Item> items = new HashMap<String, Item>();
+	private static ArrayList<Item> items = new ArrayList<Item>();
 	
 	private static void add(Item i) {
 		String name = i.name.toUpperCase();
 		//System.out.println("adding " + name);
-		items.put(name, i);
+		items.add(i);
 	}
 	private static void addAll(ArrayList<Item> items) {
 		for(Item i: items) add(i);
@@ -92,13 +92,19 @@ public class Items {
 	public static Item get(String name) {
 		name = name.toUpperCase();
 		//System.out.println("fetching name: " + name);
-		Item i = items.get(name);
-		//System.out.println("got item " + i.name);
-		if(i != null)
+		Item i = null;
+		for(Item cur: items) {
+			if(cur.name.compareToIgnoreCase(name) == 0) {
+				i = cur;
+				break;
+			}
+		}
+		if(i != null) {
+			//System.out.println("got item " + i.name);
 			return i.clone();
-		else {
+		} else {
 			System.out.println("ITEMS GET: invalid name requested: " + name);
-			return items.get("POWER GLOVE");
+			return get("POWER GLOVE");
 		}
 		/*if(!name.equals("")) { // name is not nothing
 			if(name.contains(";")) { // if has ";" in name for whatever reason...
@@ -117,16 +123,16 @@ public class Items {
 	}
 	
 	public static void fillCreativeInv(Inventory inv) {
-		for(Item item: items.values().toArray(new Item[0])) {
+		for(Item item: items) {
 			inv.add(item);
 		}
 	}
-	
+	/*
 	/// I am not horribly proud of this method... but it had to be done... for the sake of the Recipes...
 	public static Item[] get(String name, int amount) {
 		Item[] items = new Item[amount];
 		Arrays.fill(items, get(name));
 		return items;
-	}
+	}*/
 }
 	

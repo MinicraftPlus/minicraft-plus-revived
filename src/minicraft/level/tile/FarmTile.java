@@ -20,11 +20,7 @@ public class FarmTile extends Tile {
 		sprite = new Sprite(pixels, Color.get(301, 411, 422, 533));
 	}
 	
-	protected static void addInstances() {
-		Tiles.add(new FarmTile("Farmland"));
-	}
-	
-	private FarmTile(String name) {
+	protected FarmTile(String name) {
 		super(name, sprite);
 	}
 	/*
@@ -41,7 +37,7 @@ public class FarmTile extends Tile {
 			ToolItem tool = (ToolItem) item;
 			if (tool.type == ToolType.Shovel) {
 				if (player.payStamina(4 - tool.level)) {
-					level.setTile(xt, yt, Tiles.get("dirt"), 0);
+					level.setTile(xt, yt, Tiles.get("dirt"));
 					return true;
 				}
 			}
@@ -57,6 +53,6 @@ public class FarmTile extends Tile {
 	public void steppedOn(Level level, int xt, int yt, Entity entity) {
 		if (random.nextInt(60) != 0) return;
 		if (level.getData(xt, yt) < 5) return;
-		level.setTile(xt, yt, Tiles.get("dirt"), 0);
+		level.setTile(xt, yt, Tiles.get("dirt"));
 	}
 }

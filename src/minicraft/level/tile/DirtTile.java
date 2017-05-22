@@ -13,11 +13,7 @@ import minicraft.sound.Sound;
 public class DirtTile extends Tile {
 	private static Sprite sprite = Sprite.dots(getColor(0));
 	
-	protected static void addInstances() {
-		Tiles.add(new DirtTile("Dirt"));
-	}
-	
-	private DirtTile(String name) {
+	protected DirtTile(String name) {
 		super(name, sprite);
 		//super.sprite = this.sprite;
 		maySpawn = true;
@@ -54,7 +50,7 @@ public class DirtTile extends Tile {
 			ToolItem tool = (ToolItem) item;
 			if (tool.type == ToolType.Shovel) {
 				if (player.payStamina(4 - tool.level)) {
-					level.setTile(xt, yt, Tiles.get("hole"), 0);
+					level.setTile(xt, yt, Tiles.get("hole"));
 					level.dropItem(xt*16, yt*16, Items.get("dirt"));
 					Sound.monsterHurt.play();
 					return true;
@@ -62,7 +58,7 @@ public class DirtTile extends Tile {
 			}
 			/*if (tool.type == ToolType.spade) {
 				if (player.payStamina(5 - tool.level)) {
-					level.setTile(xt, yt, Tiles.get("hole"), 0);
+					level.setTile(xt, yt, Tiles.get("hole"));
 					level.add(
 							new ItemEntity(
 									Items.get("dirt"),
@@ -74,7 +70,7 @@ public class DirtTile extends Tile {
 			}*/
 			if (tool.type == ToolType.Hoe) {
 				if (player.payStamina(4 - tool.level)) {
-					level.setTile(xt, yt, Tiles.get("farmland"), 0);
+					level.setTile(xt, yt, Tiles.get("farmland"));
 					Sound.monsterHurt.play();
 					return true;
 				}

@@ -9,15 +9,10 @@ import minicraft.level.Level;
 public class SaplingTile extends Tile {
 	private static Sprite sprite = new Sprite(11, 3, Color.get(20, 40, 50, -1));
 	
-	protected static void addInstances() {
-		Tiles.add(new SaplingTile("Tree Sapling", Tiles.get("Grass"), Tiles.get("Tree")));
-		Tiles.add(new SaplingTile("Cactus Sapling", Tiles.get("Sand"), Tiles.get("Cactus")));
-	}
-	
 	private Tile onType;
 	private Tile growsTo;
 	
-	private SaplingTile(String name, Tile onType, Tile growsTo) {
+	protected SaplingTile(String name, Tile onType, Tile growsTo) {
 		super(name, sprite);
 		this.onType = onType;
 		this.growsTo = growsTo;
@@ -39,13 +34,13 @@ public class SaplingTile extends Tile {
 	public void tick(Level level, int x, int y) {
 		int age = level.getData(x, y) + 1;
 		if (age > 100) {
-			level.setTile(x, y, growsTo, 0);
+			level.setTile(x, y, growsTo);
 		} else {
 			level.setData(x, y, age);
 		}
 	}
 
 	public void hurt(Level level, int x, int y, Mob source, int dmg, int attackDir) {
-		level.setTile(x, y, onType, 0);
+		level.setTile(x, y, onType);
 	}
 }

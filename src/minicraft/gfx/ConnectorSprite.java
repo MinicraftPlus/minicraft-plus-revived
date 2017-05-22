@@ -2,6 +2,7 @@ package minicraft.gfx;
 
 import minicraft.level.Level;
 import minicraft.level.tile.Tile;
+import minicraft.level.tile.RockTile;
 
 public class ConnectorSprite {
 	/**
@@ -27,6 +28,19 @@ public class ConnectorSprite {
 		this.sides = sides==null?full:sides;
 		this.full = full;
 		this.checkCorners = cornersMatter;
+		
+		if(owner == RockTile.class) {
+			// hard-coding yay! ... =(
+			Sprite.Px[][] px = sides.spritePixels;
+			Sprite.Px[][] rpx = new Sprite.Px[px.length][px[0].length];
+			for(int r = 0; r < px.length; r++)
+				for(int c = 0; c < px[r].length; c++) {
+					rpx[c][r] = px[r][c];
+					rpx[c][r].mirror += 2;
+				}
+			
+			sides.spritePixels = rpx;
+		}
 		
 		/*System.out.println("created connector sprite for: " + owner + "; colors:");
 		System.out.println(full);
@@ -69,30 +83,30 @@ public class ConnectorSprite {
 		// full.renderPixel(1, 1, screen, x+8, y+8, colfull);
 		
 		if (u && l) {
-			if (ul || !checkCorners) full.renderPixel(0, 0, screen, x, y, colfull);
-			else sides.renderPixel(0, 0, screen, x, y, colside);
+			if (ul || !checkCorners) full.renderPixel(1, 1, screen, x, y, colfull);
+			else sides.renderPixel(1, 1, screen, x, y, colside);
 		} else
-			sparse.renderPixel(l?1:0, u?1:0, screen, x, y, colsparse/*);Color.get(spc[0], spc[1], spc[2], Color.mixRGB(ut.getConnectColor(level), lt.getConnectColor(level)))*/);
+			sparse.renderPixel(l?1:2, u?1:2, screen, x, y, colsparse/*);Color.get(spc[0], spc[1], spc[2], Color.mixRGB(ut.getConnectColor(level), lt.getConnectColor(level)))*/);
 		
 		if (u && r) {
-			if (ur || !checkCorners) full.renderPixel(1, 0, screen, x+8, y, colfull);
-			else sides.renderPixel(1, 0, screen, x+8, y, colside);
+			if (ur || !checkCorners) full.renderPixel(0, 1, screen, x+8, y, colfull);
+			else sides.renderPixel(0, 1, screen, x+8, y, colside);
 		} else// if(!checkCorners)
-			sparse.renderPixel(r?1:2, u?1:0, screen, x+8, y, colsparse/*);Color.get(spc[0], spc[1], spc[2], Color.mixRGB(ut.getConnectColor(level), rt.getConnectColor(level)))*/);
+			sparse.renderPixel(r?1:0, u?1:2, screen, x+8, y, colsparse/*);Color.get(spc[0], spc[1], spc[2], Color.mixRGB(ut.getConnectColor(level), rt.getConnectColor(level)))*/);
 		//else // useful for trees
 			
 
 		if (d && l) {
-			if (dl || !checkCorners) full.renderPixel(0, 1, screen, x, y+8, colfull);
-			else sides.renderPixel(0, 1, screen, x, y+8, colside);
+			if (dl || !checkCorners) full.renderPixel(1, 0, screen, x, y+8, colfull);
+			else sides.renderPixel(1, 0, screen, x, y+8, colside);
 		} else
-			sparse.renderPixel(l?1:0, d?1:2, screen, x, y+8, colsparse/*);Color.get(spc[0], spc[1], spc[2], Color.mixRGB(dt.getConnectColor(level), lt.getConnectColor(level)))*/);
+			sparse.renderPixel(l?1:2, d?1:0, screen, x, y+8, colsparse/*);Color.get(spc[0], spc[1], spc[2], Color.mixRGB(dt.getConnectColor(level), lt.getConnectColor(level)))*/);
 		
 		if (d && r) {
-			if (dr || !checkCorners) full.renderPixel(1, 1, screen, x+8, y+8, colfull);
-			else sides.renderPixel(1, 1, screen, x+8, y+8, colside);
+			if (dr || !checkCorners) full.renderPixel(0, 0, screen, x+8, y+8, colfull);
+			else sides.renderPixel(0, 0, screen, x+8, y+8, colside);
 		} else
-			sparse.renderPixel(r?1:2, d?1:2, screen, x+8, y+8, colsparse/*);Color.get(spc[0], spc[1], spc[2], Color.mixRGB(dt.getConnectColor(level), rt.getConnectColor(level)))*/);
+			sparse.renderPixel(r?1:0, d?1:0, screen, x+8, y+8, colsparse/*);Color.get(spc[0], spc[1], spc[2], Color.mixRGB(dt.getConnectColor(level), rt.getConnectColor(level)))*/);
 		
 	}
 	

@@ -17,13 +17,9 @@ import minicraft.level.Level;
 import minicraft.screen.ModeMenu;
 
 public class HardRockTile extends Tile {
-	private static ConnectorSprite sprite = new ConnectorSprite(HardRockTile.class, new Sprite(4, 0, 3, 3, Color.get(001, 334, 445, 321), 3), new Sprite(7, 0, 2, 2, Color.get(001, 334, 445, 321), 3), ConnectorSprite.makeSprite(2, 2, Color.get(445, 334, 223, 223), 0, false, 0, 1, 2, 3));
+	private static ConnectorSprite sprite = new ConnectorSprite(HardRockTile.class, new Sprite(4, 0, 3, 3, Color.get(001, 334, 445, 321), 0), new Sprite(7, 0, 2, 2, Color.get(001, 334, 445, 321), 0), ConnectorSprite.makeSprite(2, 2, Color.get(445, 334, 223, 223), 0, false, 0, 1, 2, 3));
 	
-	protected static void addInstances() {
-		Tiles.add(new HardRockTile("Hard Rock"));
-	}
-	
-	private HardRockTile(String name) {
+	protected HardRockTile(String name) {
 		super(name, sprite);
 	}
 	/*
@@ -106,7 +102,7 @@ public class HardRockTile extends Tile {
 								x * 16 + random.nextInt(10) + 3,
 								y * 16 + random.nextInt(10) + 3));
 			}
-			level.setTile(x, y, Tiles.get("dirt"), 0);
+			level.setTile(x, y, Tiles.get("dirt"));
 		} else {
 			level.setData(x, y, damage);
 		}

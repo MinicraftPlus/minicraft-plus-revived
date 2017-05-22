@@ -8,18 +8,14 @@ import minicraft.gfx.Sprite;
 import minicraft.level.Level;
 
 public class WaterTile extends Tile {
-	private ConnectorSprite sprite = new ConnectorSprite(WaterTile.class, new Sprite(14, 0, 3, 3, Color.get(3, 105, 211, 321), 0), Sprite.dots(Color.get(005, 105, 115, 115)))
+	private ConnectorSprite sprite = new ConnectorSprite(WaterTile.class, new Sprite(14, 0, 3, 3, Color.get(3, 105, 211, 321), 3), Sprite.dots(Color.get(005, 105, 115, 115)))
 	{
 		public boolean connectsTo(Tile tile, boolean isSide) {
 			return !isSide || tile.connectsToWater;
 		}
 	};
 	
-	protected static void addInstances() {
-		Tiles.add(new WaterTile("Water"));
-	}
-	
-	private WaterTile(String name) {
+	protected WaterTile(String name) {
 		super(name, (ConnectorSprite)null);
 		csprite = sprite;
 		connectsToSand = true;
@@ -105,10 +101,10 @@ public class WaterTile extends Tile {
 		else yn += random.nextInt(2) * 2 - 1;
 
 		if (level.getTile(xn, yn) == Tiles.get("hole")) {
-			level.setTile(xn, yn, this, 0);
+			level.setTile(xn, yn, this);
 		}
 		if (level.getTile(xn, yn) == Tiles.get("lava")) {
-			level.setTile(xn, yn, Tiles.get("Stone Bricks"), 0);
+			level.setTile(xn, yn, Tiles.get("Stone Bricks"));
 		}
 	}
 }

@@ -8,6 +8,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Base64;
 import minicraft.Game;
 import minicraft.entity.*;
 import minicraft.item.ArmorItem;
@@ -154,6 +155,11 @@ public class Load {
 			ArrayList<String> curData;
 			while((curLine = br.readLine()) != null)
 				total += curLine;
+			
+			/*if(worldVer != null && worldVer.compareTo(new Version("1.9.4-dev6")) >= 0 && filename.contains("Level") && !filename.contains("Data")) {
+				total = new String(Base64.getDecoder().decode(total));
+			}*/
+			
 			data.addAll(Arrays.asList(total.split(",")));
 			
 			if(filename.contains("Level")) {
@@ -245,7 +251,7 @@ public class Load {
 					//System.out.println("reading tile on level "+l+"; save idx=" + (tileidx+3) + ", old id:" + tileID);
 					if(worldVer.compareTo(new Version("1.9.4-dev6")) < 0) {
 						int tileID = Integer.parseInt(tilename); // they were id numbers, not names, at this point
-						if(Tiles.oldids.size() > tileID && Tiles.oldids.get(tileID) != null)
+						if(Tiles.oldids.get(tileID) != null)
 							tilename = Tiles.oldids.get(tileID);
 						else {
 							System.out.println("tile list doesn't contain tile " + tileID);
@@ -278,7 +284,7 @@ public class Load {
 			for(java.awt.Point p: parent.getMatchingTiles(Tiles.get("Stairs Down"))) {
 				if(curLevel.getTile(p.x, p.y) != Tiles.get("Stairs Up")) {
 					System.out.println("INCONSISTENT STAIRS detected on level "+lvldepth+"; placing stairsUp at x=" +p.x+ ", y="+p.y);
-					curLevel.setTile(p.x, p.y, Tiles.get("Stairs Up"), 0);
+					curLevel.setTile(p.x, p.y, Tiles.get("Stairs Up"));
 				}
 			}
 			

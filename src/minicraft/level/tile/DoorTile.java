@@ -16,15 +16,10 @@ public class DoorTile extends Tile {
 	private Sprite closedSprite = new Sprite(2, 24, 2, 2);
 	private Sprite openSprite = new Sprite(0, 24, 2, 2);
 	
-	protected static void addInstances() {
-		for(Material mat: Material.values())
-			Tiles.add(new DoorTile(mat.name() + " Door", mat));
-	}
-	
 	protected Material type;
 	
-	private DoorTile(String name, Material type) {
-		super(name, (Sprite)null);
+	protected DoorTile(Material type) {
+		super(type.name() + " Door", (Sprite)null);
 		this.type = type;
 		switch(type) {
 			case Wood:
@@ -57,7 +52,7 @@ public class DoorTile extends Tile {
 			ToolItem tool = (ToolItem) item;
 			if (tool.type == ToolType.Pickaxe) {
 				if (player.payStamina(4 - tool.level)) {
-					level.setTile(xt, yt, Tiles.get("Stone Bricks"), 0);
+					level.setTile(xt, yt, Tiles.get("Stone Bricks"));
 					level.dropItem(xt*16, yt*16, Items.get(type.name() + " Door"));
 					Sound.monsterHurt.play();
 					return true;
@@ -65,7 +60,7 @@ public class DoorTile extends Tile {
 			}
 			/*if (tool.type == ToolType.pick) {
 				if (player.payStamina(4 - tool.level)) {
-					level.setTile(xt, yt, Tiles.get("Stone Bricks"), 0);
+					level.setTile(xt, yt, Tiles.get("Stone Bricks"));
 					level.add(
 							new ItemEntity(
 									Items.get("Stone Door"),

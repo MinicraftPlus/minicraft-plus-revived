@@ -23,7 +23,7 @@ public class TorchItem extends TileItem {
 	
 	public boolean interactOn(Tile tile, Level level, int xt, int yt, Player player, int attackDir) {
 		if(reqTiles.contains(tile)) {
-			level.setTile(xt, yt, TorchTile.getTorchTile(tile), 0);
+			level.setTile(xt, yt, TorchTile.getTorchTile(tile));
 			return true;
 		}
 		return false;

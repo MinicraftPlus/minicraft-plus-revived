@@ -15,6 +15,61 @@ public final class Tiles {
 	
 	
 	public static void initTileList() {
+		
+		for(int i = 0; i < 256; i++)
+			tiles.add(null);
+		
+		//tiles.set(0, new GrassTile())
+		tiles.set(0, new GrassTile("Grass"));
+		tiles.set(1, new DirtTile("Dirt"));
+		tiles.set(2, new FlowerTile("Flower"));
+		tiles.set(3, new HoleTile("Hole"));
+		tiles.set(4, new StairsTile("Stairs Up", true));
+		tiles.set(5, new StairsTile("Stairs Down", false));
+		tiles.set(6, new WaterTile("Water"));
+		tiles.set(7, new RockTile("Rock"));
+		tiles.set(8, new TreeTile("Tree"));
+		tiles.set(9, new SaplingTile("Tree Sapling", Tiles.get("Grass"), Tiles.get("Tree")));
+		tiles.set(10, new SandTile("Sand"));
+		tiles.set(11, new CactusTile("Cactus"));
+		tiles.set(12, new SaplingTile("Cactus Sapling", Tiles.get("Sand"), Tiles.get("Cactus")));
+		tiles.set(17, new LavaTile("Lava"));
+		tiles.set(18, new LavaBrickTile("Lava Brick"));
+		tiles.set(13, new OreTile(OreTile.OreType.Iron));
+		tiles.set(14, new OreTile(OreTile.OreType.Gold));
+		tiles.set(15, new OreTile(OreTile.OreType.Lapis));
+		tiles.set(16, new OreTile(OreTile.OreType.Gem));
+		tiles.set(19, new ExplodedTile("Explode"));
+		tiles.set(20, new FarmTile("Farmland"));
+		tiles.set(21, new WheatTile("Wheat"));
+		tiles.set(22, new HardRockTile("Hard Rock"));
+		tiles.set(23, new InfiniteFallTile("Infinite Fall"));
+		tiles.set(24, new CloudTile("Cloud"));
+		tiles.set(25, new CloudCactusTile("Cloud Cactus"));
+		tiles.set(26, new DoorTile(Tile.Material.Wood));
+		tiles.set(27, new DoorTile(Tile.Material.Stone));
+		tiles.set(28, new DoorTile(Tile.Material.Obsidian));
+		tiles.set(29, new FloorTile(Tile.Material.Wood));
+		tiles.set(30, new FloorTile(Tile.Material.Stone));
+		tiles.set(31, new FloorTile(Tile.Material.Obsidian));
+		tiles.set(32, new WallTile(Tile.Material.Wood));
+		tiles.set(33, new WallTile(Tile.Material.Stone));
+		tiles.set(34, new WallTile(Tile.Material.Obsidian));
+		tiles.set(35, new WoolTile());
+		/*tiles.set(new WoolTile(WoolTile.WoolColor.RED));
+		tiles.set(new WoolTile(WoolTile.WoolColor.YELLOW));
+		tiles.set(new WoolTile(WoolTile.WoolColor.GREEN));
+		tiles.set(new WoolTile(WoolTile.WoolColor.BLUE));
+		tiles.set(new WoolTile(WoolTile.WoolColor.BLACK));
+		*///for(WoolTile.WoolColor wc: WoolTile.WoolColor.values())
+			//tiles.set(new WoolTile(wc.name()+" Wool", wc));
+		
+		for(int i = 0; i < tiles.size(); i++) {
+			if(tiles.get(i) == null) continue;
+			tiles.get(i).id = (byte)i;
+		}
+		
+		/*
 		CactusTile.addInstances();
 		CloudCactusTile.addInstances();
 		CloudTile.addInstances();
@@ -42,75 +97,21 @@ public final class Tiles {
 		WoolTile.addInstances();
 		
 		//TorchTile.addInstances();
+		*/
 	}
 	
 	
-	protected static void add(Tile tile) {
-		tiles.add(tile);
-		System.out.println("adding " + tile.name + " to tile list.");
-		tile.id = (byte)(tiles.size()-1);
+	protected static void add(int id, Tile tile) {
+		tiles.set(id, tile);
+		System.out.println("adding " + tile.name + " to tile list with id " + id);
+		tile.id = (byte) id;//(byte)(tiles.size()-1);
 	}
-	protected static void addAll(Tile[] tiles) {
+	/*protected static void addAll(Tile[] tiles) {
 		for(Tile t: tiles)
 			add(t);
-	}
+	}*/
 	
 	static {
-		/*
-		tiles.put("grass", new GrassTile()); ///_grass_0_ // creates a grass tile with the Id of 0, (I don't need to explain the other simple ones)
-		tiles.put("rock", new RockTile()); ///_rock_1_
-		tiles.put("water", new WaterTile()); ///_water_2_
-		tiles.put("flower", new FlowerTile()); ///_flower_3_
-		tiles.put("tree", new TreeTile()); ///_tree_4_
-		tiles.put("dirt", new DirtTile()); ///_dirt_5_
-		//wool
-		tiles.put("wool", new WoolTile(null)); ///_wool_41_
-		tiles.put("redwool", new WoolTile(WoolTiles.get("WoolColor").RED)); ///_redwool_42_
-		tiles.put("bluewool", new WoolTile(WoolTiles.get("WoolColor").BLUE)); ///_bluewool_43_
-		tiles.put("greenwool", new WoolTile(WoolTiles.get("WoolColor").GREEN)); ///_greenwool_45_
-		tiles.put("yellowwool", new WoolTile(WoolTiles.get("WoolColor").YELLOW)); ///_yellowwool_127_
-		tiles.put("blackwool", new WoolTile(WoolTiles.get("WoolColor").BLACK)); ///_blackwool_56_
-		
-		tiles.put("sand", new SandTile()); ///_sand_6_
-		tiles.put("cactus", new CactusTile()); ///_cactus_7_
-		tiles.put("hole", new HoleTile()); ///_hole_8_
-		
-		tiles.put("farmland", new FarmTile()); ///_farmland_11_ // farmland (tilled dirt)
-		tiles.put("wheat", new WheatTile()); ///_wheat_12_
-		tiles.put("lava", new LavaTile()); ///_lava_13_
-		tiles.put("stairsDown", new StairsTile(false)); ///_stairsDown_14_
-		tiles.put("stairsUp", new StairsTile(true)); ///_stairsUp_15_
-		tiles.put("cloud", new CloudTile()); ///_cloud_17_
-		tiles.put("explode", new ExplodedTile()); ///_explode_30_
-		tiles.put("Wood Planks", new FloorTile(Material.Wood)); ///_plank_31_
-		tiles.put("plankwall", new WallTile(Material.Wood)); ///_plankwall_33_
-		tiles.put("stonewall", new WallTile(Material.Stone)); ///_stonewall_34_
-		tiles.put("wd", new DoorTile(Material.Wood)); ///_wdo_35_
-		//tiles.put("wd", new DoorClosedTile(Material.Wood)); ///_wdc_36_
-		tiles.put("sd", new DoorTile(Material.Stone)); ///_sdo_37_
-		//tiles.put("sd", new DoorClosedTile(Material.Stone)); ///_sdc_38_
-		tiles.put("lavabrick", new LavaBrickTile()); ///_lavabrick_39_
-		tiles.put("sbrick", new FloorTile(Material.Stone)); ///_sbrick_32_
-		tiles.put("o", new FloorTile(Material.Obsidian)); ///_o_120_
-		tiles.put("Obsidian Wall", new WallTile(Material.Obsidian)); ///_ow_121_
-		tiles.put("od", new DoorTile(Material.Obsidian)); ///_odc_122_
-		//tiles.put("od", new DoorOpenTile(Material.Obsidian)); ///_odo_123_
-		tiles.put("hardRock", new HardRockTile()); ///_hardRock_18_
-		
-		tiles.put("ironOre", new OreTile(OreTiles.get("OreType").IRON)); ///_ironOre_19_
-		tiles.put("lapisOre", new OreTile(OreTiles.get("OreType").LAPIS)); ///_lapisOre_24_
-		tiles.put("goldOre", new OreTile(OreTiles.get("OreType").GOLD)); ///_goldOre_20_
-		tiles.put("gemOre", new OreTile(OreTiles.get("OreType").GEM)); ///_gemOre_21_
-		tiles.put("cloudCactus", new CloudCactusTile()); ///_cloudCactus_22_ // "ore" in the sky.
-		tiles.put("infiniteFall", new InfiniteFallTile()); ///_infiniteFall_16_ // Air tile in the sky..?
-		
-		tiles.put("treeSapling", new SaplingTile("grass", tree)); ///_treeSapling_9_
-		tiles.put("cactusSapling", new SaplingTile(sand, cactus)); ///_cactusSapling_10_
-		
-		for(String key: tiles.keySet().toArray(new String[0]))
-			tiles.get(key).name = key;
-		*/
-		
 		for(int i = 0; i < 256; i++)
 			oldids.add(null);
 		
@@ -216,6 +217,8 @@ public final class Tiles {
 			System.exit(1);
 		}
 		
+		//System.out.println("fetching tile " + name);
+		
 		Tile getting = null;
 		
 		boolean isTorch = false;
@@ -258,4 +261,27 @@ public final class Tiles {
 			return tiles.get(0);
 		}
 	}
+	
+	public static String getName(String descriptName) {
+		if(!descriptName.contains("_")) return descriptName;
+		int data = 0;
+		String[] parts = descriptName.split("_");
+		descriptName = parts[0];
+		data = Integer.parseInt(parts[1]);
+		return get(descriptName).getName(data);
+	}
+	
+	/*/// this method takes into consideration
+	public static Tile get(int id, int typeData) {
+		Tile main = get(id);
+		if(main instanceof FloorTile) {
+			return new FloorTile(Tile.Tile.Material(typeData));
+		}
+		if(main instanceof WallTile) {
+			return new WallTile(Tile.Tile.Material(typeData));
+		}
+		if(main instanceof WoolTile) {
+			return new WoolTile(WoolTile.WoolColor(typeData));
+		}
+	}*/
 }

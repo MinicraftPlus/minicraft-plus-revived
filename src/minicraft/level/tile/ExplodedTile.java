@@ -15,11 +15,7 @@ public class ExplodedTile extends Tile {
 		}
 	};
 	
-	protected static void addInstances() {
-		Tiles.add(new ExplodedTile("Explode"));
-	}
-	
-	private ExplodedTile(String name) {
+	protected ExplodedTile(String name) {
 		super(name, sprite);
 		connectsToSand = true;
 		connectsToWater = true;

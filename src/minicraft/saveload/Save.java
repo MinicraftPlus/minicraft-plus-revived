@@ -72,12 +72,24 @@ public class Save {
 		writePrefs("Preferences");
 	}
 	
-	public void writeToFile(String filename, List savedata) {
+	public void writeToFile(String filename, List<String> savedata) { writeToFile(filename, savedata, false); }
+	public void writeToFile(String filename, List<String> savedata, boolean base64Encode) {
 		BufferedWriter bufferedWriter = null;
+		
+		/*String content = "";
+		for(String data: savedata) {
+			content += data + ",";
+		}
+		if(filename.contains("Level5")) content += ",";
+		*/
+		/*if(base64Encode) {
+			byte[] bytes = content.getBytes();
+			content = Base64.getEncoder().encodeToString(bytes);
+		}*/
 		
 		try {
 			bufferedWriter = new BufferedWriter(new FileWriter(filename));
-			
+			//bufferedWriter.write(content);
 			for(int ex = 0; ex < savedata.size(); ex++) {
 				bufferedWriter.write((String)savedata.get(ex));
 				bufferedWriter.write(",");
@@ -99,7 +111,7 @@ public class Save {
 						LoadingMenu.percentage = 100;
 					}
 					
-					game.render();
+					game.render(); // AH HA!!! HERE'S AN IMPORTANT STATEMENT!!!!
 					bufferedWriter.flush();
 					bufferedWriter.close();
 				}
@@ -143,7 +155,7 @@ public class Save {
 				}
 			}
 			
-			writeToFile(location + filename + l + extention, data);
+			writeToFile(location + filename + l + extention, data, true);
 		}
 		
 		for(int l = 0; l < Game.levels.length; l++) {

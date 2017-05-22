@@ -14,11 +14,7 @@ import minicraft.level.Level;
 
 public class WheatTile extends Tile {
 	
-	protected static void addInstances() {
-		Tiles.add(new WheatTile("Wheat"));
-	}
-	
-	private WheatTile(String name) {
+	protected WheatTile(String name) {
 		super(name, (Sprite)null);
 	}
 
@@ -69,7 +65,7 @@ public class WheatTile extends Tile {
 			ToolItem tool = (ToolItem) item;
 			if (tool.type == ToolType.Shovel) {
 				if (player.payStamina(4 - tool.level)) {
-					level.setTile(xt, yt, Tiles.get("dirt"), 0);
+					level.setTile(xt, yt, Tiles.get("dirt"));
 					return true;
 				}
 			}
@@ -104,6 +100,6 @@ public class WheatTile extends Tile {
 		if (age >= 50) {
 			Player.score += random.nextInt(5) + 1;
 		}
-		level.setTile(x, y, Tiles.get("dirt"), 0);
+		level.setTile(x, y, Tiles.get("dirt"));
 	}
 }

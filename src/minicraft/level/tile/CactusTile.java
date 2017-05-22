@@ -14,11 +14,7 @@ import minicraft.screen.OptionsMenu;
 public class CactusTile extends Tile {
 	private static Sprite sprite = new Sprite(8, 2, 2, 2, Color.get(30, 40, 50, 550));
 	
-	protected static void addInstances() {
-		Tiles.add(new CactusTile("Cactus"));
-	}
-	
-	private CactusTile(String name) {
+	protected CactusTile(String name) {
 		super(name, sprite);
 		connectsToSand = true;
 	}
@@ -44,7 +40,7 @@ public class CactusTile extends Tile {
 		if (damage >= cHealth) {
 			//int count = random.nextInt(2) + 2;
 			level.dropItem(2, 4, Items.get("Cactus"));
-			level.setTile(x, y, Tiles.get("sand"), 0);
+			level.setTile(x, y, Tiles.get("sand"));
 		} else {
 			level.setData(x, y, damage);
 		}

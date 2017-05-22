@@ -16,7 +16,8 @@ public abstract class Tile {
 	protected Random random = new Random();
 	
 	protected static enum Material {
-		Wood, Stone, Obsidian
+		Wood, Stone, Obsidian;
+		public static final Material[] values = Material.values();
 	}
 	
 	public final String name;
@@ -57,9 +58,16 @@ public abstract class Tile {
 		csprite = sprite;
 	}
 	
-	// ?
+	/// ?
 	public String setDataChar() {
 		return null;
+	}
+	
+	/** This method is used by tiles to specify the default "data" they have in a level's data array.
+		Used for starting health, color/type of tile, etc. */
+	/// at least, that was the idea at first...
+	public int getDefaultData() {
+		return 0;
 	}
 	
 	/** Render method, used in sub-classes */
@@ -125,5 +133,22 @@ public abstract class Tile {
 	
 	public boolean matches(Tile other) {
 		return name == other.name;
+	}
+	
+	public static boolean checkMatch(String tname1, String tname2) {
+		return tname1.equals(tname2);
+	}
+	public static boolean checkMatch(String tname, Tile t2, int data2) {
+		return checkMatch(tname, t2.name+"_"+data2);
+	}
+	public static boolean checkMatch(Tile t, int data, String tname2) {
+		return checkMatch(t.name+"_"+data, tname2);
+	}
+	public static boolean checkMatch(Tile t1, int d1, Tile t2, int d2) {
+		return t1.name == t2.name && d1 == d2 && t1.id == t2.id;
+	}
+	
+	public String getName(int data) {
+		return name;
 	}
 }

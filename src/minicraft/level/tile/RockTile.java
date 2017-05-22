@@ -20,22 +20,18 @@ import minicraft.screen.ModeMenu;
 /// this is the typical stone you see underground and on the surface, that gives coal.
 
 public class RockTile extends Tile {
-	private static ConnectorSprite sprite = new ConnectorSprite(RockTile.class, new Sprite(4, 0, 3, 3, 0, 3), new Sprite(7, 0, 2, 2, 0, 3), Sprite.dots(Color.get(444, 444, 333, 333)));
-	
-	protected static void addInstances() {
-		Tiles.add(new RockTile("Rock"));
-	}
+	private static ConnectorSprite sprite = new ConnectorSprite(RockTile.class, new Sprite(4, 0, 3, 3, Color.get(111, 444, 555, 321), 3), new Sprite(7, 0, 2, 2, Color.get(111, 444, 555, 321), 3), Sprite.dots(Color.get(444, 444, 333, 333)));
 	
 	private int coallvl = 1;
 	
-	private RockTile(String name) {
+	protected RockTile(String name) {
 		super(name, sprite);
 	}
 	
-	public void render(Screen screen, Level level, int x, int y) {
+	//public void render(Screen screen, Level level, int x, int y) {
 		//int col = Color.get(444, 444, 333, 333);
-		int colt = Color.get(111, 444, 555, DirtTile.dCol(level.depth));
-		sprite.render(screen, level, x, y, sprite.sparse.color, colt, colt);
+		//int colt = Color.get(111, 444, 555, DirtTile.dCol(level.depth));
+		//sprite.render(screen, level, x, y, sprite.sparse.color, colt, colt);
 		
 		/*
 		int transitionColor = colt;
@@ -73,7 +69,7 @@ public class RockTile extends Tile {
 		} else
 			screen.render(x * 16 + 8, y * 16 + 8, (r ? 4 : 5) + (d ? 0 : 1) * 32, transitionColor, 3);
 		*/
-	}
+	//}
 
 	public boolean mayPass(Level level, int x, int y, Entity e) {
 		return false;
@@ -149,7 +145,7 @@ public class RockTile extends Tile {
 									y * 16 + random.nextInt(10) + 3));
 				}
 			}
-			level.setTile(x, y, Tiles.get("dirt"), 0);
+			level.setTile(x, y, Tiles.get("dirt"));
 		} else {
 			level.setData(x, y, damage);
 		}

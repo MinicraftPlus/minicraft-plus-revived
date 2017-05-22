@@ -13,11 +13,7 @@ import minicraft.sound.Sound;
 public class LavaBrickTile extends Tile {
 	private static Sprite sprite = new Sprite(19, 2, 2, 2, Color.get(300, 300, 400, 400));
 	
-	protected static void addInstances() {
-		Tiles.add(new LavaBrickTile("Lava Brick"));
-	}
-	
-	private LavaBrickTile(String name) {
+	protected LavaBrickTile(String name) {
 		super(name, sprite);
 	}
 	/*
@@ -34,7 +30,7 @@ public class LavaBrickTile extends Tile {
 			ToolItem tool = (ToolItem) item;
 			if (tool.type == ToolType.Pickaxe) {
 				if (player.payStamina(4 - tool.level)) {
-					level.setTile(xt, yt, Tiles.get("lava"), 0);
+					level.setTile(xt, yt, Tiles.get("lava"));
 					Sound.monsterHurt.play();
 					return true;
 				}

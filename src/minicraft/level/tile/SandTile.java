@@ -24,7 +24,7 @@ public class SandTile extends Tile {
 		steppedOn = new Sprite(pixels, Color.get(552, 550, 440, 440));
 	}
 	
-	private ConnectorSprite sprite = new ConnectorSprite(SandTile.class, new Sprite(11, 0, 3, 3, Color.get(440, 550, 440, 321), 0), Sprite.dots(Color.get(552, 550, 440, 440)), Sprite.dots(Color.get(552, 550, 440, 440)))
+	private ConnectorSprite sprite = new ConnectorSprite(SandTile.class, new Sprite(11, 0, 3, 3, Color.get(440, 550, 440, 321), 3), Sprite.dots(Color.get(552, 550, 440, 440)), Sprite.dots(Color.get(552, 550, 440, 440)))
 	{
 		public boolean connectsTo(Tile tile, boolean isSide) {
 			if(!isSide) return true;
@@ -32,11 +32,7 @@ public class SandTile extends Tile {
 		}
 	};
 	
-	protected static void addInstances() {
-		Tiles.add(new SandTile("Sand"));
-	}
-	
-	private SandTile(String name) {
+	protected SandTile(String name) {
 		super(name, (ConnectorSprite)null);
 		csprite = sprite;
 		connectsToSand = true;
@@ -102,14 +98,14 @@ public class SandTile extends Tile {
 			ToolItem tool = (ToolItem) item;
 			if (tool.type == ToolType.Shovel) {
 				if (player.payStamina(4 - tool.level)) {
-					level.setTile(xt, yt, Tiles.get("dirt"), 0);
+					level.setTile(xt, yt, Tiles.get("dirt"));
 					level.dropItem(xt*16, yt*16, Items.get("sand"));
 					return true;
 				}
 			}
 			/*if (tool.type == ToolType.spade) {
 				if (player.payStamina(5 - tool.level)) {
-					level.setTile(xt, yt, Tiles.get("dirt"), 0);
+					level.setTile(xt, yt, Tiles.get("dirt"));
 					level.add(
 							new ItemEntity(
 									Items.get("sand"),

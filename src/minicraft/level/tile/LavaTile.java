@@ -16,11 +16,7 @@ public class LavaTile extends Tile {
 		}
 	};
 	
-	protected static void addInstances() {
-		Tiles.add(new LavaTile("Lava"));
-	}
-	
-	private LavaTile(String name) {
+	protected LavaTile(String name) {
 		super(name, (ConnectorSprite)null);
 		super.csprite = sprite;
 		connectsToSand = true;
@@ -104,7 +100,7 @@ public class LavaTile extends Tile {
 		else yn += random.nextInt(2) * 2 - 1;
 
 		if (level.getTile(xn, yn) == Tiles.get("hole")) {
-			level.setTile(xn, yn, this, 0);
+			level.setTile(xn, yn, this);
 		}
 	}
 
