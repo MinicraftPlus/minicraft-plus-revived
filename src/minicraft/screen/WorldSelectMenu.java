@@ -247,9 +247,9 @@ public class WorldSelectMenu extends Menu {
 					world.delete();
 					//createworld = false;
 					//loadworld = false;
+					loadWorlds();
 					if (worldnames.size() > 0) {
 						//game.setMenu(new WorldSelectMenu());
-						loadWorlds();
 						mode = Action.Load;
 					} else {
 						game.setMenu(new TitleMenu());
