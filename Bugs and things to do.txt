@@ -8,12 +8,7 @@ Note to self: for more little bugs/ideas/concerns, search code for "TODO"
 
 	####BUGS####
 ####
--rock sprites are messed ups.
--air wizard won't render. ?
--cloud sprite messed up. ?
--stairs sprites messed up, in weird ways. ?
-####
-Trees don't drop anything.
+air wizard won't render.
 ####
 I accidently removed the whole "SmashParticle" thing it seems... same with FireParticle...
 ####
