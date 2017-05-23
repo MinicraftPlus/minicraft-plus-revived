@@ -96,28 +96,30 @@ public class Screen {
 	/** Overlays the screen with pixels */
     public void overlay(Screen screen2, int xa, int ya) {
 		double tintFactor = 0;
-		int transTime = Game.dayLength / 4;
-		double relTime = (Game.tickCount % transTime)*1.0 / transTime;
-		//System.out.println("relTime: " + relTime);
-		switch((Game.Time)Game.getTime()) {
-			case Morning: tintFactor = Game.pastDay1 ? (1-relTime) * MAXDARK : 0; break;
-			case Day: tintFactor = 0; break;
-			case Evening: tintFactor = relTime * MAXDARK; break;
-			case Night: tintFactor = MAXDARK; break;
+		if(Game.currentLevel > 3) {
+			int transTime = Game.dayLength / 4;
+			double relTime = (Game.tickCount % transTime)*1.0 / transTime;
+			//System.out.println("relTime: " + relTime);
+			switch((Game.Time)Game.getTime()) {
+				case Morning: tintFactor = Game.pastDay1 ? (1-relTime) * MAXDARK : 0; break;
+				case Day: tintFactor = 0; break;
+				case Evening: tintFactor = relTime * MAXDARK; break;
+				case Night: tintFactor = MAXDARK; break;
+			}
+			if(Game.currentLevel == 4) tintFactor -= tintFactor < 10 ? tintFactor : 10;
+			tintFactor *= -1; // all previous operations were assumping this was a darkening factor.
+			tintFactor += 20;
+			//System.out.println("tint factor: " + tintFactor);
+			//if(tintFactor > MAXLIGHT) tintFactor = MAXLIGHT;
+			//if(random.nextInt((int)(Game.normSpeed/Game.gamespeed))==0) System.out.println("rendering dark factor " + tintFactor);
 		}
-		if(Game.currentLevel == 4) tintFactor -= tintFactor < 10 ? tintFactor : 10;
-		tintFactor *= -1; // all previous operations were assumping this was a darkening factor.
-		tintFactor += 20;
-		//System.out.println("tint factor: " + tintFactor);
-		//if(tintFactor > MAXLIGHT) tintFactor = MAXLIGHT;
-		//if(random.nextInt((int)(Game.normSpeed/Game.gamespeed))==0) System.out.println("rendering dark factor " + tintFactor);
         
 		int[] oPixels = screen2.pixels;  // The Integer array of pixels to overlay the screen with.
 		int i = 0; // current pixel on the screen
 		for (int y = 0; y < h; y++) { // loop through height of screen
             for (int x = 0; x < w; x++) { // loop through width of screen
 				if (oPixels[i] / 10 <= dither[((x + xa) & 3) + ((y + ya) & 3) * 4]) {
-                    /// the above if statement is simply comparing the light level stored in oPixels with the minimum light level stored in dither. if it is determined that the oPixels[i] is less than the minimum requirements, the below is executed...
+                    /// the above if statement is simply comparing the light level stored in oPixels with the minimum light level stored in dither. if it is determined that the oPixels[i] is less than the minimum requirements, the pixel is considered "dark", and the below is executed...
 					if(Game.currentLevel < 3) { // if in caves...
                         /// in the caves, not being lit means being pitch black.
 						pixels[i] = 0;

@@ -577,11 +577,8 @@ public class Game extends Canvas implements Runnable {
 			level.renderSprites(screen, xScroll, yScroll); // renders level sprites on screen
 			
 			// this creates the darkness in the caves
-			//if (!ModeMenu.creative && currentLevel < 4 && (currentLevel < 3 || time > 1)) {
 			if (currentLevel != 5 && (currentLevel != 3 || tickCount < dayLength/4 || tickCount > dayLength/2) && (!ModeMenu.creative || currentLevel >= 3)) {
-				//if (currentLevel < 3) */lightScreen.clear(0); // clears the light screen to a black color
-				//else lightScreen.clear(255);
-				lightScreen.clear(0); // this doesn't mean that the pixel will be black; it means that the pixel will be DARK, by default; lightScreen is about light vs. dark, not necessarily a color. just how the light level it has, which is compared with the minimum light values in dither to decide whether to leave the cell alone, or mark it as "dark", which will do different things depending on the game level and time of day.
+				lightScreen.clear(0); // this doesn't mean that the pixel will be black; it means that the pixel will be DARK, by default; lightScreen is about light vs. dark, not necessarily a color. The light level it has is compared with the minimum light values in dither to decide whether to leave the cell alone, or mark it as "dark", which will do different things depending on the game level and time of day.
 				level.renderLight(lightScreen, xScroll, yScroll); // finds (and renders) all the light from objects (like the player, lanterns, and lava).
 				screen.overlay(lightScreen, xScroll, yScroll); // overlays the light screen over the main screen.
 			}
