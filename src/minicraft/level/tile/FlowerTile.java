@@ -47,8 +47,8 @@ public class FlowerTile extends Tile {
 			ToolItem tool = (ToolItem) item;
 			if (tool.type == ToolType.Shovel) {
 				if (player.payStamina(2 - tool.level)) {
-					level.dropItem(x*16, y*16, Items.get("Flower"));
-					level.dropItem(x*16, y*16, Items.get("Rose"));
+					level.dropItem(x*16+8, y*16+8, Items.get("Flower"));
+					level.dropItem(x*16+8, y*16+8, Items.get("Rose"));
 					level.setTile(x, y, Tiles.get("grass"));
 					return true;
 				}
@@ -58,8 +58,8 @@ public class FlowerTile extends Tile {
 	}
 
 	public void hurt(Level level, int x, int y, Mob source, int dmg, int attackDir) {
-		level.dropItem(x*16, y*16, 1, 2, Items.get("Flower"));
-		level.dropItem(x*16, y*16, 0, 1, Items.get("Rose"));
+		level.dropItem(x*16+8, y*16+8, 1, 2, Items.get("Flower"));
+		level.dropItem(x*16+8, y*16+8, 0, 1, Items.get("Rose"));
 		level.setTile(x, y, Tiles.get("grass"));
 	}
 }

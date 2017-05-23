@@ -111,39 +111,16 @@ public class RockTile extends Tile {
 			rockHealth = 50;
 		}
 		int damage = level.getData(x, y) + dmg;
-		level.add(new SmashParticle(x * 16 + 8, y * 16 + 8));
+		level.add(new SmashParticle(x * 16, y * 16));
 		level.add(new TextParticle("" + dmg, x * 16 + 8, y * 16 + 8, Color.get(-1, 500)));
 		if (damage >= rockHealth) {
 			int count = random.nextInt(1);
 			if (coallvl == 0) {
-				count = random.nextInt(4) + 1;
-				for (int i = 0; i < count; i++) {
-					level.add(
-							new ItemEntity(
-									Items.get("Stone"),
-									x * 16 + random.nextInt(10) + 3,
-									y * 16 + random.nextInt(10) + 3));
-				}
-			}
-			if (coallvl == 0) {
-				count = random.nextInt(3);
-				for (int i = 0; i < count; i++) {
-					level.add(
-							new ItemEntity(
-									Items.get("coal"),
-									x * 16 + random.nextInt(10) + 3,
-									y * 16 + random.nextInt(10) + 3));
-				}
+				level.dropItem(x*16+8, y*16+8, 1, 4, Items.get("Stone"));
 			}
 			if (coallvl == 1) {
-				count = random.nextInt(2) + 1;
-				for (int i = 0; i < count; i++) {
-					level.add(
-							new ItemEntity(
-									Items.get("Stone"),
-									x * 16 + random.nextInt(10) + 3,
-									y * 16 + random.nextInt(10) + 3));
-				}
+				level.dropItem(x*16+8, y*16+8, 1, 2, Items.get("Stone"));
+				level.dropItem(x*16+8, y*16+8, 1, 3, Items.get("coal"));
 			}
 			level.setTile(x, y, Tiles.get("dirt"));
 		} else {

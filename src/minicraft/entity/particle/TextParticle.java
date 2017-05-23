@@ -13,6 +13,7 @@ public class TextParticle extends Particle {
 	
 	public TextParticle(String msg, int x, int y, int col) {
 		super(x, y, 60, null);
+		this.xr = msg.length();
 		
 		this.color = col;
 		this.msg = msg;

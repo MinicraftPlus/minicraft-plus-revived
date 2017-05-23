@@ -48,7 +48,7 @@ public class DungeonChest extends Chest {
 				isLocked = false;
 				col = openCol; // set to the unlocked color
 				
-				level.add(new SmashParticle(x * 16 + 8, y * 16 + 8));
+				level.add(new SmashParticle(x * 16, y * 16));
 				level.add(new TextParticle("-1 key", x, y, Color.get(-1, 500)));
 				level.chestcount--;
 				if(level.chestcount == 0) { // if this was the last chest...

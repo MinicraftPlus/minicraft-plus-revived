@@ -87,7 +87,7 @@ public class OreTile extends Tile {
 		else {
 			oreH = random.nextInt(10) + 3;
 		}
-		level.add(new SmashParticle(x * 16 + 8, y * 16 + 8));
+		level.add(new SmashParticle(x * 16, y * 16));
 		level.add(new TextParticle("" + dmg, x * 16 + 8, y * 16 + 8, Color.get(-1, 500)));
 		if (dmg > 0) {
 			int count = random.nextInt(2);
@@ -97,7 +97,7 @@ public class OreTile extends Tile {
 			} else {
 				level.setData(x, y, damage);
 			}
-			level.dropItem(x*16, y*16, count, type.getOre());
+			level.dropItem(x*16+8, y*16+8, count, type.getOre());
 		}
 	}
 

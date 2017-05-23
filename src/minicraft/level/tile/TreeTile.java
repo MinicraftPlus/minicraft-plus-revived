@@ -90,19 +90,14 @@ public class TreeTile extends Tile {
 					return true;
 				}
 			}
-			/*if (tool.type == ToolType.hatchet) {
-				if (player.payStamina(3 - tool.level)) {
-					hurt(level, xt, yt, random.nextInt(7) + (tool.level) * 5 + 5);
-					return true;
-				}
-			}*/
 		}
 		return false;
 	}
 
 	private void hurt(Level level, int x, int y, int dmg) {
+		int xe = x*16+8, ye = y*16+8;
 		if(random.nextInt(100) == 0)
-			level.dropItem(x*16+8, y*16+8, Items.get("Apple"));
+			level.dropItem(xe, ye, Items.get("Apple"));
 		
 		int damage = level.getData(x, y) + dmg;
 		int treeHealth;
@@ -110,11 +105,12 @@ public class TreeTile extends Tile {
 		else {
 			treeHealth = 20;
 		}
-		level.add(new TextParticle("" + dmg, x * 16 + 8, y * 16 + 8, Color.get(-1, 500)));
-		level.add(new SmashParticle(x * 16 + 8, y * 16 + 8));
+		
+		level.add(new SmashParticle(xe, ye));
+		level.add(new TextParticle("" + dmg, xe, ye, Color.get(-1, 500)));
 		if (damage >= treeHealth) {
-			level.dropItem(x*16+8, y*16+8, 1, 2, Items.get("Wood"));
-			level.dropItem(x*16+8, y*16+8, 1, 4, Items.get("Acorn"));
+			level.dropItem(xe, ye, 1, 2, Items.get("Wood"));
+			level.dropItem(xe, ye, 1, 4, Items.get("Acorn"));
 			level.setTile(x, y, Tiles.get("grass"));
 		} else {
 			level.setData(x, y, damage);

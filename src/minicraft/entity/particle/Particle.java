@@ -1,22 +1,27 @@
 package minicraft.entity.particle;
 
+import minicraft.Game;
 import minicraft.entity.Entity;
 import minicraft.gfx.Screen;
+import minicraft.gfx.Sprite;
 
 public class Particle extends Entity {
-	private int time = 0; // lifetime elapsed.
+	private int time; // lifetime elapsed.
 	protected int lifetime;
-	protected int color;
 	
-	public Particle(int x, int y, int lifetime, int color) {
+	protected Sprite sprite;
+	
+	public Particle(int x, int y, int lifetime, Sprite sprite) {
 		// make a particle at the given coordinates
-		super(x, y);
+		super(1, 1);
+		this.x = x;
+		this.y = y;
 		this.lifetime = lifetime;
-		this.color = color;
+		this.sprite = sprite;
+		time = 0;
 	}
 
 	public void tick() {
-		//System.out.println("particle tick");
 		time++;
 		if(time > lifetime) {
 			remove();
@@ -24,6 +29,6 @@ public class Particle extends Entity {
 	}
 
 	public void render(Screen screen) {
-		screen.render(x - 8, y - 8, 425, color, 0); // render the particle.
+		sprite.render(screen, x, y);
 	}
 }

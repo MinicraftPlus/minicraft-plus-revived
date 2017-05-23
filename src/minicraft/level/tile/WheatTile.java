@@ -86,7 +86,7 @@ public class WheatTile extends Tile {
 	private void harvest(Level level, int x, int y) {
 		int age = level.getData(x, y);
 		
-		level.dropItem(x*16, y*16, 1, 2, Items.get("seeds"));
+		level.dropItem(x*16+8, y*16+8, 1, 2, Items.get("seeds"));
 		
 		int count = 0;
 		if (age >= 50) {
@@ -95,7 +95,7 @@ public class WheatTile extends Tile {
 			count = random.nextInt(2) + 1;
 		}
 		
-		level.dropItem(x*16, y*16, count, Items.get("Wheat"));
+		level.dropItem(x*16+8, y*16+8, count, Items.get("Wheat"));
 		
 		if (age >= 50) {
 			Player.score += random.nextInt(5) + 1;

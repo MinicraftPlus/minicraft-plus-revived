@@ -34,7 +34,7 @@ public class CactusTile extends Tile {
 		int cHealth;
 		if (ModeMenu.creative) cHealth = 1;
 		else cHealth = 10;
-		level.add(new SmashParticle(x * 16 + 8, y * 16 + 8));
+		level.add(new SmashParticle(x * 16, y * 16));
 		level.add(new TextParticle("" + dmg, x * 16 + 8, y * 16 + 8, Color.get(-1, 500)));
 
 		if (damage >= cHealth) {

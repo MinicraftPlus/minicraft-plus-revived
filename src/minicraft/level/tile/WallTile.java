@@ -132,7 +132,7 @@ public class WallTile extends Tile {
 		else {
 			sbwHealth = 100;
 		}
-		level.add(new SmashParticle(x * 16 + 8, y * 16 + 8));
+		level.add(new SmashParticle(x * 16, y * 16));
 		level.add(new TextParticle("" + dmg, x * 16 + 8, y * 16 + 8, Color.get(-1, 500)));
 		if (damage >= sbwHealth) {
 			String itemName = "", tilename = "";
@@ -142,7 +142,7 @@ public class WallTile extends Tile {
 				case Obsidian: itemName = "Obsidian Brick"; tilename = "Obsidian"; break;
 			}
 			
-			level.dropItem(x*16, y*16, 1, 3-type.ordinal(), Items.get(itemName));
+			level.dropItem(x*16+8, y*16+8, 1, 3-type.ordinal(), Items.get(itemName));
 			level.setTile(x, y, Tiles.get(tilename)); // TODO this will be a problem...
 		}
 		else {
