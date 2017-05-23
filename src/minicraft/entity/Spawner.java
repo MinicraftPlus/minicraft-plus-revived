@@ -87,7 +87,7 @@ public class Spawner extends Furniture {
 			for(int i = 0; i < 6; i++) {
 				randX = rnd.nextInt(16);
 				randY = rnd.nextInt(12);
-				level.add(new FireParticle(x - 4 + randX, y - 4 + randY));
+				level.add(new FireParticle(x - 8 + randX, y - 6 + randY));
 			}
 		}
 	}

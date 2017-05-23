@@ -10,7 +10,7 @@ Note to self: for more little bugs/ideas/concerns, search code for "TODO"
 ####
 air wizard won't render.
 ####
-I accidently removed the whole "SmashParticle" thing it seems... same with FireParticle...
+Smash particles appear, but... they look totally wierd...
 ####
 Pressing Control for a key binding on keyinputmenu crashes the game.
 ####
