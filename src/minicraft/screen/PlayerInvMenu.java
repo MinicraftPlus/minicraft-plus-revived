@@ -12,7 +12,7 @@ public class PlayerInvMenu extends InventoryMenu {
 	}
 	
 	private static Inventory addActiveItem(Player player) {
-		if (player.activeItem != null && !ModeMenu.creative) { // If the player has an active item, then...
+		if (player.activeItem != null) { // If the player has an active item, then...
 			player.inventory.add(0, player.activeItem); // that active item will go into the inventory
 			player.activeItem = null; // the player will not have an active item anymore.
 		}
@@ -25,7 +25,7 @@ public class PlayerInvMenu extends InventoryMenu {
 		super.tick();
 		if (input.getKey("attack").clicked && options.size() > 0) { // If your inventory is not empty, and the player presses the "Attack" key...
 			player.activeItem = player.inventory.get(selected); // The item will be placed as the player's active item.
-			if(!ModeMenu.creative) player.inventory.remove(selected); // The item will be removed from the inventory.
+			player.inventory.remove(selected); // The item will be removed from the inventory.
 			game.setMenu(null); // the game will go back to the gameplay.
 		}
 	}

@@ -74,18 +74,18 @@ public class Items {
 		} catch(Exception ex) {
 			ex.printStackTrace();
 		}*/
-		addAll(ArmorItem.getAllInstances());
-		addAll(BookItem.getAllInstances());
-		addAll(StackableItem.getAllInstances());
-		addAll(TileItem.getAllInstances());
-		addAll(ClothingItem.getAllInstances());
-		addAll(FoodItem.getAllInstances());
-		addAll(PotionItem.getAllInstances());
 		addAll(PowerGloveItem.getAllInstances());
-		addAll(BucketItem.getAllInstances());
-		addAll(ToolItem.getAllInstances());
-		addAll(TorchItem.getAllInstances());
 		addAll(FurnitureItem.getAllInstances());
+		addAll(TorchItem.getAllInstances());
+		addAll(BucketItem.getAllInstances());
+		addAll(BookItem.getAllInstances());
+		addAll(TileItem.getAllInstances());
+		addAll(ToolItem.getAllInstances());
+		addAll(FoodItem.getAllInstances());
+		addAll(StackableItem.getAllInstances());
+		addAll(ClothingItem.getAllInstances());
+		addAll(ArmorItem.getAllInstances());
+		addAll(PotionItem.getAllInstances());
 	}
 	
 	/** fetches an item from the list given it's name. I mean, I would have just used a HashMap... Hey, look! I'm using one! ^v^ */
