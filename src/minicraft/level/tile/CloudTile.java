@@ -12,7 +12,7 @@ import minicraft.item.ToolType;
 import minicraft.level.Level;
 
 public class CloudTile extends Tile {
-	private static ConnectorSprite sprite = new ConnectorSprite(CloudTile.class, new Sprite(4, 0, 3, 3, Color.get(333, 444, 555, -1), 0), new Sprite(7, 0, 2, 2, Color.get(333, 444, 555, -1), 0), ConnectorSprite.makeSprite(2, 2, Color.get(444, 444, 555, 444), 0, false, 19, 18, 20, 19))
+	private static ConnectorSprite sprite = new ConnectorSprite(CloudTile.class, new Sprite(4, 0, 3, 3, Color.get(333, 444, 555, -1), 3), new Sprite(7, 0, 2, 2, Color.get(333, 444, 555, -1), 3), ConnectorSprite.makeSprite(2, 2, Color.get(444, 444, 555, 444), 0, false, 19, 18, 20, 19))
 	{
 		public boolean connectsTo(Tile tile, boolean isSide) {
 			//System.out.println("using overridden");

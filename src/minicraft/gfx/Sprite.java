@@ -62,6 +62,15 @@ public class Sprite {
 			for(int c = 0; c < sw; c++)
 				spritePixels[r][c] = new Px(sx+(onepixel?0:c), sy+(onepixel?0:r), mirror);
 	}
+	public Sprite(int sx, int sy, int sw, int sh, int color, boolean onepixel, int[][] mirrors) {
+		this.color = color;
+		sheetLoc = new Rectangle(sx, sy, sw, sh);
+		
+		spritePixels = new Px[sh][sw];
+		for(int r = 0; r < sh; r++)
+			for(int c = 0; c < sw; c++)
+				spritePixels[r][c] = new Px(sx+(onepixel?0:c), sy+(onepixel?0:r), mirrors[r][c]);
+	}
 	
 	public Sprite(Px[][] pixels) { this(pixels, 0); }
 	public Sprite(Px[][] pixels, int color) {
@@ -74,6 +83,14 @@ public class Sprite {
 	}
 	public java.awt.Dimension getSize() {
 		return sheetLoc.getSize();
+	}
+	
+	public static int[][] fillArray(int value, int s1, int s2) {
+		int[][] values = new int[s1][s2];
+		System.out.println("filling array");
+		for(int i = 0; i < s1; i++)
+			java.util.Arrays.fill(values[i], value);
+		return values;
 	}
 	
 	public void render(Screen screen, int lvlx, int lvly) { render(screen, lvlx, lvly, color); }

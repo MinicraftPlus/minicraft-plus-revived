@@ -9,7 +9,7 @@ import minicraft.gfx.Sprite;
 import minicraft.level.Level;
 
 public class LavaTile extends Tile {
-	private ConnectorSprite sprite = new ConnectorSprite(LavaTile.class, new Sprite(14, 0, 3, 3, Color.get(3, 500, 211, 322), 0), Sprite.dots(Color.get(500, 500, 520, 450)))
+	private ConnectorSprite sprite = new ConnectorSprite(LavaTile.class, new Sprite(14, 0, 3, 3, Color.get(3, 500, 211, 322), 3), Sprite.dots(Color.get(500, 500, 520, 450)))
 	{
 		public boolean connectsTo(Tile tile, boolean isSide) {
 			return !isSide || tile.connectsToLava;

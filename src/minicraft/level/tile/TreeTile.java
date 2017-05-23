@@ -102,7 +102,7 @@ public class TreeTile extends Tile {
 
 	private void hurt(Level level, int x, int y, int dmg) {
 		if(random.nextInt(100) == 0)
-			level.dropItem(x*16, x*16, Items.get("Apple"));
+			level.dropItem(x*16, y*16, Items.get("Apple"));
 		
 		int damage = level.getData(x, y) + dmg;
 		int treeHealth;
@@ -113,9 +113,8 @@ public class TreeTile extends Tile {
 		level.add(new SmashParticle(x * 16 + 8, y * 16 + 8));
 		level.add(new TextParticle("" + dmg, x * 16 + 8, y * 16 + 8, Color.get(-1, 500)));
 		if (damage >= treeHealth) {
-			System.out.println("killed the tree");
-			level.dropItem(x*16, x*16, 1, 2, Items.get("Wood"));
-			level.dropItem(x*16, x*16, 1, 4, Items.get("Acorn"));
+			level.dropItem(x*16+8, y*16+8, 1, 2, Items.get("Wood"));
+			level.dropItem(x*16+8, y*16+8, 1, 4, Items.get("Acorn"));
 			level.setTile(x, y, Tiles.get("grass"));
 		} else {
 			level.setData(x, y, damage);

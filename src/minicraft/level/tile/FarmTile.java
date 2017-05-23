@@ -10,15 +10,15 @@ import minicraft.item.ToolType;
 import minicraft.level.Level;
 
 public class FarmTile extends Tile {
-	private static Sprite sprite;
-	static {
+	private static Sprite sprite = new Sprite(2, 1, 2, 2, Color.get(301, 411, 422, 533), true, new int[][] {{1, 0}, {0, 1}});
+	/*static {
 		Sprite.Px[][] pixels = new Sprite.Px[2][2];
 		pixels[0][0] = new Sprite.Px(2, 1, 1);
 		pixels[0][1] = new Sprite.Px(2, 1, 0);
 		pixels[1][0] = new Sprite.Px(2, 1, 0);
 		pixels[1][1] = new Sprite.Px(2, 1, 1);
-		sprite = new Sprite(pixels, Color.get(301, 411, 422, 533));
-	}
+		sprite = new Sprite(pixels, );
+	}*/
 	
 	protected FarmTile(String name) {
 		super(name, sprite);
