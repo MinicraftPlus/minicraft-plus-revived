@@ -277,7 +277,11 @@ public class Load {
 			curLevel.tiles = tiles;
 			curLevel.data = tdata;
 			
-			System.out.println("level depth=" + curLevel.depth + " -- parent depth=" + (parent==null?"null":parent.depth));
+			if(Game.debug) {
+				System.out.println("level depth=" + curLevel.depth + " -- parent depth=" + (parent==null?"null":parent.depth));
+				
+				curLevel.printTileLocs(Tiles.get("Stairs Down"));
+			}
 			
 			if(parent == null) continue;
 			/// comfirm that there are stairs in all the places that should have stairs.
