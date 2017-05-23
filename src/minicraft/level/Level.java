@@ -447,7 +447,7 @@ public class Level {
 	}
 	
 	public void dropItem(int x, int y, int mincount, int maxcount, Item... items) {
-		dropItem(x, y, mincount+random.nextInt(maxcount-mincount), items);
+		dropItem(x, y, mincount+random.nextInt(maxcount-mincount+1), items);
 	}
 	public void dropItem(int x, int y, int count, Item... items) {
 		for (int i = 0; i < count; i++)
