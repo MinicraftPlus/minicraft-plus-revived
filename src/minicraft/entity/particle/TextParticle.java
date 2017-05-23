@@ -8,10 +8,13 @@ public class TextParticle extends Particle {
 	private String msg; // Message of the text particle
 	public double xa, ya, za; // x,y,z acceleration
 	public double xx, yy, zz; // x,y,z coordinates
-
+	
+	private int color;
+	
 	public TextParticle(String msg, int x, int y, int col) {
-		super(x, y, 60, col);
+		super(x, y, 60, null);
 		
+		this.color = col;
 		this.msg = msg;
 		xx = x; //assigns x pos
 		yy = y; //assigns y pos
@@ -42,18 +45,15 @@ public class TextParticle extends Particle {
 		x = (int) xx;
 		y = (int) yy;
 	}
-
+	
 	public void render(Screen screen) {
 		if(!msg.contains("Thanks")) {
-			Font.draw(msg, screen, x - msg.length() * 4 + 1, y - (int)zz + 1, Color.get(-1, 0)); //renders the shadow
-			Font.draw(msg, screen, x - msg.length() * 4, y - (int)zz, color);
+			Font.draw(msg, screen, x - msg.length() * 4, y - (int)zz, color, Color.get(-1, 0)); //renders the shadow
 		} else { // special, for "Thanks for Playing!" message?
 			String msg1 = msg.substring(0, 19);
 			String msg2 = msg.substring(19, msg.length());
-			Font.draw(msg1, screen, x - msg.length() * 4 + 1, y - (int)zz - 7, Color.get(-1, 0));
-			Font.draw(msg1, screen, x - msg.length() * 4, y - (int)zz - 8, color);
-			Font.draw(msg2, screen, x - msg.length() * 4 + 1, y - (int)zz + 1, Color.get(-1, 0));
-			Font.draw(msg2, screen, x - msg.length() * 4, y - (int)zz, color);
+			Font.draw(msg1, screen, x - msg.length() * 4, y - (int)zz - 8, color, Color.get(-1, 0));
+			Font.draw(msg2, screen, x - msg.length() * 4, y - (int)zz, color, Color.get(-1, 0));
 		}
 	}
 }
