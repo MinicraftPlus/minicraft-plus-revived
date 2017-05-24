@@ -61,6 +61,9 @@ public class WoolTile extends Tile {
 		return e.canWool();
 	}
 	
+	public boolean matches(String woolColor, String otherTile) {
+		return matches(Enum.valueOf(WoolColor.class, woolColor.toUpperCase()).ordinal(), otherTile);
+	}
 	public boolean matches(int thisData, String otherTile) {
 		if(!otherTile.contains("_"))
 			return name.equals(otherTile);
@@ -70,5 +73,10 @@ public class WoolTile extends Tile {
 			int tdata = Integer.parseInt(parts[1]);
 			return name.equals(tname) && thisData == tdata;
 		}
+	}
+	
+	public String getName(String woolColor) {
+		//woolColor is treated as data value
+		return Enum.valueOf(WoolColor.class, woolColor.toUpperCase()) + " " + name;
 	}
 }

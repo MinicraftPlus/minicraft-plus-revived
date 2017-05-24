@@ -121,11 +121,11 @@ public abstract class Mob extends Entity {
 				|| tile == Tiles.get("torchplank")
 				|| tile == Tiles.get("torchsbrick")
 				|| tile == Tiles.get("Torch Wool")
-				|| tile == Tiles.get("Torch red Wool")
-				|| tile == Tiles.get("Torch blue Wool")
-				|| tile == Tiles.get("Torch green Wool")
-				|| tile == Tiles.get("Torch yellow Wool")
-				|| tile == Tiles.get("Torch black Wool");*/
+				|| tile == Tiles.get("Torch Wool_red")
+				|| tile == Tiles.get("Torch Wool_blue")
+				|| tile == Tiles.get("Torch Wool_green")
+				|| tile == Tiles.get("Torch Wool_yellow")
+				|| tile == Tiles.get("Torch Wool_black");*/
 	}
 
 	protected boolean isSwimming() {
