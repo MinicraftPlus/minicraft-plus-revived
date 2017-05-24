@@ -10,6 +10,7 @@ Note to self: for more little bugs/ideas/concerns, search code for "TODO"
 ####
 ---Due to overhaul---
 -air wizard won't render.
+-LOTS of glitches with crafting?
 -Fire particles appear, but... they look totally wierd...
 -Pressing Control for a key binding on keyinputmenu crashes the game.
 ####
@@ -18,6 +19,9 @@ Sound effects don't always play when they should; mostly it seems when other sou
 Many item names don't fit on the black "active item" bar at the bottom.
 ####
 LegacyLoad class is becoming annoying to handle; it should be reimplemented so that it won't have to be changed at all to reflect future updates. This could be done by making it only return values, and not actually reference any current variables. This may prove overcomplicated, though.
+
+IDEA: Let's make an "Update.java" file, maybe multiple, that handle different versions. However, instead of setting values in the rest of the game files, it adds them to a list, which will then be saved as the new file. Then, it's loaded again.
+Maybe not, though... Loading takes long enough already...
 ####
 Dungeon Level is parented wrong, though it doesn't seem to harm anything.
 ####

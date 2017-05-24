@@ -13,6 +13,7 @@ Minicraft+ version 1.9.4
 + Key controls displayed on title screen and the world select menu will always be correct. ;)
 + You can now copy world saves.
 + Added another confirm dialog before deleting worlds.
++ Creative mode inventory remains full.
 
 
 Minicraft+ version 1.9.3

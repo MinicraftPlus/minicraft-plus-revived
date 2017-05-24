@@ -37,6 +37,10 @@ Give the player 20 health instead of 10; this means that 1 health will be a half
 
 ----
 
+Design a system where cloud tiles respawn around existing cloud tiles if the total number of cloud tiles is below a certain number.
+
+----
+
 
  ++++++++ More Complicated Ideas ++++++++
 ++++
