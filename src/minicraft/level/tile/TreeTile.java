@@ -100,7 +100,7 @@ public class TreeTile extends Tile {
 		
 		int damage = level.getData(x, y) + dmg;
 		int treeHealth = 20;
-		if (ModeMenu.creative) dmg = treeHealth;
+		if (ModeMenu.creative) dmg = damage = treeHealth;
 		
 		level.add(new SmashParticle(x*16, y*16));
 		level.add(new TextParticle("" + dmg, x*16+8, y*16+8, Color.get(-1, 500)));

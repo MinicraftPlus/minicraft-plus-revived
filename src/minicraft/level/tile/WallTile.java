@@ -119,7 +119,7 @@ public class WallTile extends Tile {
 	public void hurt(Level level, int x, int y, int dmg) {
 		int damage = level.getData(x, y) + dmg;
 		int sbwHealth = 100;
-		if (ModeMenu.creative) dmg = sbwHealth;
+		if (ModeMenu.creative) dmg = damage = sbwHealth;
 		
 		level.add(new SmashParticle(x * 16, y * 16));
 		level.add(new TextParticle("" + dmg, x * 16 + 8, y * 16 + 8, Color.get(-1, 500)));

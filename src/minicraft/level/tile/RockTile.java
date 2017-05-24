@@ -94,7 +94,7 @@ public class RockTile extends Tile {
 	public void hurt(Level level, int x, int y, int dmg) {
 		int rockHealth = 50;
 		if (ModeMenu.creative) {
-			dmg = rockHealth;
+			dmg = damage = rockHealth;
 			coallvl = 1;
 		}
 		int damage = level.getData(x, y) + dmg;
