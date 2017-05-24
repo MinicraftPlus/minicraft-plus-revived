@@ -18,12 +18,12 @@ public class TorchTile extends Tile {
 		int id = onTile.id;
 		if(id < 128) id += 128;
 		else System.out.println("tried to place torch on torch tile...");
-		if(Tiles.get(id) != null)
+		
+		if(Tiles.containsTile(id))
 			return (TorchTile)Tiles.get(id);
 		else {
 			TorchTile tile = new TorchTile(onTile);
-			
-			
+			Tiles.add(id, tile);
 			return tile;
 		}
 	}

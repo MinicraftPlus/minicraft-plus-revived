@@ -181,6 +181,12 @@ public final class Tiles {
 			name = name.substring(6); // cuts off torch prefix.
 		}
 		
+		String data = "";
+		if(name.contains("_")) {
+			data = name.substring(name.indexOf("_")+1);
+			name = name.substring(0, name.indexOf("_"));
+		}
+		
 		for(Tile t: tiles) {
 			if(t == null) continue;
 			if(t.name.equals(name)) {
@@ -212,6 +218,10 @@ public final class Tiles {
 			System.out.println("TILES.GET: unknown tile id requested: " + id);
 			return tiles.get(0);
 		}
+	}
+	
+	public static boolean containsTile(int id) {
+		return tiles.get(id) != null;
 	}
 	
 	public static String getName(String descriptName) {
