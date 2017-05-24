@@ -9,6 +9,7 @@ import minicraft.gfx.Color;
 import minicraft.gfx.Font;
 import minicraft.gfx.Screen;
 import minicraft.item.Item;
+import minicraft.item.Items;
 import minicraft.item.Recipe;
 import minicraft.sound.Sound;
 
@@ -72,12 +73,13 @@ public class CraftingMenu extends Menu {
 			Font.draw("" + hasResultItems, screen, xo + 8, 2 * 8, Color.get(-1, 555)); // draws the amount in the 'have' menu
 			
 			int yo = 5 * 8; // y coordinate of the cost item
-			for (Item cost: recipe.costs.keySet().toArray(new Item[0])) {
+			for (String costname: recipe.costs.keySet().toArray(new String[0])) {
+				Item cost = Items.get(costname);
 				cost.sprite.render(screen, xo, yo); // renders the cost item in the 'cost' window
 				
 				int has = player.inventory.count(cost); // This is the amount of the item you have in your inventory
 				if (has > 99) has = 99; // display 99 max (for space)
-				int reqAmt = recipe.costs.get(cost);
+				int reqAmt = recipe.costs.get(costname);
 				int color = has < reqAmt ? Color.get(-1, 222) : Color.get(-1, 555); // color in the 'cost' window
 				Font.draw(reqAmt + "/" + has, screen, xo + 8, yo, color); // Draw "#required/#has" text next to the icon
 				yo += Font.textHeight();
