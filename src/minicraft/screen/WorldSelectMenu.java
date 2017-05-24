@@ -40,7 +40,7 @@ public class WorldSelectMenu extends Menu {
 	private boolean confirmed;
 	
 	private static enum Action {
-		Main ("Select Option", 444),
+		Main ("Select Option", 555),
 		Create ("Name of New World:", 555),
 		Load ("Load World", 555),
 		Rename ("Rename World", 050),
