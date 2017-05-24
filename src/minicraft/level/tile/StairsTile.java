@@ -35,11 +35,5 @@ public class StairsTile extends Tile {
 			col = Color.get(getDirtColor(), 000, 444, 555);
 		
 		sprite.render(screen, x*16, y*16, col);
-		/*
-		screen.render(x * 16 + 0, y * 16 + 0, xt + 2 * 32, color, 0);
-		screen.render(x * 16 + 8, y * 16 + 0, xt + 1 + 2 * 32, color, 0);
-		screen.render(x * 16 + 0, y * 16 + 8, xt + 3 * 32, color, 0);
-		screen.render(x * 16 + 8, y * 16 + 8, xt + 1 + 3 * 32, color, 0);
-		*/
 	}
 }

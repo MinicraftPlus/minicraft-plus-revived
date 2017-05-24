@@ -31,7 +31,6 @@ public class TorchTile extends Tile {
 	private TorchTile(Tile onType) {
 		super("Torch "+ onType.name, sprite);
 		this.onType = onType;
-		//csprite = onType.csprite;
 		this.connectsToSand = onType.connectsToSand;
 		this.connectsToGrass = onType.connectsToGrass;
 		this.connectsToWater = onType.connectsToWater;
@@ -39,15 +38,12 @@ public class TorchTile extends Tile {
 	}
 	
 	public void render(Screen screen, Level level, int x, int y) {
-		//int col = Color.get(320, 500, 520, -1);
-		
 		onType.render(screen, level, x, y);
-		//Items.get("Torch").sprite.render(screen, x * 16 + 4, y * 16 + 4);
 		sprite.render(screen, x*16 + 4, y*16 + 4);
 	}
 	
 	public int getLightRadius(Level level, int x, int y) {
-		return 6;//level.player.potioneffects.containsKey("Light")?9:6; // this is accounted for elsewhere.
+		return 6;
 	}
 	/*
 	public boolean canLight() {

@@ -15,7 +15,6 @@ public class DirtTile extends Tile {
 	
 	protected DirtTile(String name) {
 		super(name, sprite);
-		//super.sprite = this.sprite;
 		maySpawn = true;
 	}
 
@@ -33,18 +32,6 @@ public class DirtTile extends Tile {
 		return Color.get(dcol, dcol, dcol-111, dcol-111);
 	}
 	
-	//public void render(Screen screen, Level level, int x, int y) {
-		//int col = getColor(level.depth);//level.dirtColor;
-		//if(tickCount % 20 == 0) System.out.println("rendering dirt tile with color: " + Color.toString(col));
-		//sprite.render(screen, x*16, y*16, col);
-		/*
-		screen.render(x * 16 + 0, y * 16 + 0, 0, col, 0);
-		screen.render(x * 16 + 8, y * 16 + 0, 1, col, 0);
-		screen.render(x * 16 + 0, y * 16 + 8, 2, col, 0);
-		screen.render(x * 16 + 8, y * 16 + 8, 3, col, 0);
-		*/
-	//}
-
 	public boolean interact(Level level, int xt, int yt, Player player, Item item, int attackDir) {
 		if (item instanceof ToolItem) {
 			ToolItem tool = (ToolItem) item;
@@ -56,18 +43,6 @@ public class DirtTile extends Tile {
 					return true;
 				}
 			}
-			/*if (tool.type == ToolType.spade) {
-				if (player.payStamina(5 - tool.level)) {
-					level.setTile(xt, yt, Tiles.get("hole"));
-					level.add(
-							new ItemEntity(
-									Items.get("dirt"),
-									xt * 16 + random.nextInt(10) + 3,
-									yt * 16 + random.nextInt(10) + 3));
-					Sound.monsterHurt.play();
-					return true;
-				}
-			}*/
 			if (tool.type == ToolType.Hoe) {
 				if (player.payStamina(4 - tool.level)) {
 					level.setTile(xt, yt, Tiles.get("farmland"));

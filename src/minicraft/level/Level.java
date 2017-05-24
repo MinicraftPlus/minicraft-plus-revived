@@ -83,37 +83,6 @@ public class Level {
 		this.h = h;
 		byte[][] maps; // multidimensional array (an array within a array), used for the map
 		int saveTile;
-		// set the dirt colors
-		/*if (level != 0) {
-			if (DirtTile.dirtc == 0) {
-				dirtColor = 222;
-				DirtTile.dirtc++;
-			}
-			if (DirtTile.dirtc == 1) {
-				dirtColor = 222;
-			}
-		}
-		if (level == 0) {
-			if (DirtTile.dirtc == 0) {
-				dirtColor = 322;
-			}
-			if (DirtTile.dirtc == 0) {
-				if (level == 0) {
-					dirtColor = 322;
-				}
-				if (level != 0) {
-					dirtColor = 222;
-				}
-				DirtTile.dirtc++;
-			}
-		}
-		
-		
-		if (level == 1) {
-			dirtColor = 444;
-		}*/
-		
-		//dirtColor = DirtTile.dCol(depth);
 		
 		entitiesInTiles = new ArrayList[w * h]; // This is actually an array of arrayLists (of entities), with one arraylist per tile.
 		for (int i = 0; i < w * h; i++) {
@@ -123,8 +92,9 @@ public class Level {
 		if(level != -4 && level != 0)
 			monsterDensity = 4;
 		
-		if(makeWorld) {
-			if(Game.debug) System.out.println("Making level "+level+"...");
+		if(!makeWorld) return;
+		
+		if(Game.debug) System.out.println("Making level "+level+"...");
 		
 		if (level == 0) maps = LevelGen.createAndValidateTopMap(w, h); // If the level is 0 (surface), create a surface map for the level
 		else if (level < 0 && level > -4) { // create an undergound map
@@ -241,7 +211,7 @@ public class Level {
 
 		
 		/// if the level is the dungeon, and we're not just loading the world...
-		if (level == -4 && !WorldSelectMenu.loadworld) {
+		if (level == -4) {
 			for (int i = 0; i < 10 * (w / 128); i++) {
 				/// make DungeonChests!
 				DungeonChest d = new DungeonChest();
@@ -281,7 +251,7 @@ public class Level {
 				}
 			}
 		}
-		if (level < 0 && !WorldSelectMenu.loadworld) {
+		if (level < 0) {
 			for (int i = 0; i < 18 / -level * (w / 128); i++) {
 				/// for generating spawner dungeons
 				MobAi m = null;
@@ -365,9 +335,6 @@ public class Level {
 				  		inv.tryAdd(4/chance, Items.get("string"), 3);
 				  		inv.tryAdd(4/chance, Items.get("bone"), 2);
 				  		inv.tryAdd(3/chance, Items.get("bone"), 1);
-				  		//inv.tryAdd(6/chance, ToolType.hatchet, 2);
-				  		//inv.tryAdd(6/chance, ToolType.pick, 2);
-				  		//inv.tryAdd(6/chance, ToolType.spade, 2);
 				  		inv.tryAdd(7/chance, ToolType.Claymore, 1);
 				  		inv.tryAdd(5/chance, Items.get("Torch"), 3);
 				  		inv.tryAdd(6/chance, Items.get("Torch"), 6);
@@ -398,20 +365,12 @@ public class Level {
 			}
 		}
 
-		if (level == 1 && !WorldSelectMenu.loadworld) {
+		if (level == 1) {
 			AirWizard aw = new AirWizard(false);
 			add(aw, w * 16 / 2, h * 16 / 2);
 		}
 		
-		if(Game.debug) {
-			// print stair locations
-			for (int x = 0; x < w; x++)
-				for (int y = 0; y < h; y++)
-					if(getTile(x, y) == Tiles.get("Stairs Down"))
-						printLevelLoc("Stairs down", x, y);
-			System.out.println();
-		}
-		}
+		if (Game.debug) printTileLocs(Tiles.get("Stairs Down"));
 	}
 
 	public void tick() {
@@ -458,10 +417,6 @@ public class Level {
 			dropItem(x, y, i);
 	}
 	public void dropItem(int x, int y, Item i) {
-		/*if(i instanceof StackableItem == false) { // I'm going on a whim here...
-			System.out.println("you can't drop " + i.name + "s!");
-			return;
-		}*/
 		add(new minicraft.entity.ItemEntity(i, x + random.nextInt(11) - 5, y + random.nextInt(11) - 5));
 	}
 
@@ -558,7 +513,6 @@ public class Level {
 		if (x < 0 || y < 0 || x >= w || y >= h) return;
 		//if (Game.debug) printLevelLoc("setting tile from " + Tiles.get(tiles[x+y*w]).name + " to " + t.name, x, y);
 		tiles[x + y * w] = t.id;
-		//System.out.println("tile set to " + Tiles.get(tiles[x + y * w]));
 		data[x + y * w] = (byte) dataVal;
 	}
 	
@@ -636,7 +590,6 @@ public class Level {
 			
 			// spawns the enemy mobs; first part prevents enemy mob spawn on surface on first day, more or less.
 			if ((Game.time == 3 && Game.pastDay1 || depth != 0) && EnemyMob.checkStartPos(this, nx, ny)) { // if night or underground, with a valid tile, spawn an enemy mob.
-				//System.out.println("adding enemy mob...");
 				if(depth != -4) { // normal mobs
 					if (rnd <= 40) add((new Slime(lvl)), nx, ny);
 					else if (rnd <= 75) add((new Zombie(lvl)), nx, ny);
@@ -652,7 +605,6 @@ public class Level {
 			
 			if(depth == 0 && PassiveMob.checkStartPos(this, nx, ny)) {
 				// spawns the friendly mobs.
-				//System.out.println("adding passive mob...");
 				if (rnd <= (Game.time==3?22:33)) add((new Cow()), nx, ny);
 				else if (rnd >= 68) add((new Pig()), nx, ny);
 				else add((new Sheep()), nx, ny);

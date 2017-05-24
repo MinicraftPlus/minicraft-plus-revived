@@ -21,7 +21,6 @@ public abstract class Tile {
 	}
 	
 	public final String name;
-	//public final byte id;
 	
 	public byte id;
 	
@@ -34,13 +33,6 @@ public abstract class Tile {
 	
 	protected Sprite sprite;
 	protected ConnectorSprite csprite;
-	
-	//public Tile() {
-		//this.id = (byte) id;
-		//if (tiles[id] != null) throw new RuntimeException("Duplicate tile ids!"); // You cannot have over-lapping ids
-		//tiles[id] = this;
-		
-		//Tiles.oldids.put(id, id); // so that you don't have to check if it's already in there later
 	
 	{
 		light = 1;
@@ -138,19 +130,6 @@ public abstract class Tile {
 	public boolean matches(int thisData, String otherTile) {
 		return name.equals(otherTile.split("_")[0]);
 	}
-	/*
-	public static boolean checkMatch(String tname1, String tname2) {
-		return tname1.equals(tname2);
-	}
-	public static boolean checkMatch(String tname, Tile t2, int data2) {
-		return checkMatch(tname, t2.name+"_"+data2);
-	}
-	public static boolean checkMatch(Tile t, int data, String tname2) {
-		return checkMatch(t.name+"_"+data, tname2);
-	}
-	public static boolean checkMatch(Tile t1, int d1, Tile t2, int d2) {
-		return t1.name == t2.name && d1 == d2 && t1.id == t2.id;
-	}*/
 	
 	public String getName(int data) {
 		return name;

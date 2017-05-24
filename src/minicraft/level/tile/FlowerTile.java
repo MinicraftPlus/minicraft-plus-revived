@@ -13,12 +13,10 @@ import minicraft.item.ToolType;
 import minicraft.level.Level;
 
 public class FlowerTile extends Tile {
-	//private static Sprite grasssprite = new Sprite(1, 1, Color.get(10, 141, 555, 440));
 	private static Sprite flowersprite = new Sprite(1, 1, Color.get(10, 141, 555, 440));
 	
 	protected FlowerTile(String name) {
 		super(name, (ConnectorSprite)null);
-		//tiles[id] = this;
 		connectsToGrass = true;
 		maySpawn = true;
 	}
@@ -34,12 +32,6 @@ public class FlowerTile extends Tile {
 		
 		flowersprite.render(screen, x + 8*shape, y);
 		flowersprite.render(screen, x + 8*(shape==0?1:0), y + 8);
-		/*
-		if (shape == 0) screen.render(x * 16 + 0, y * 16 + 0, 1 + 1 * 32, flowerCol, 0);
-		if (shape == 1) screen.render(x * 16 + 8, y * 16 + 0, 1 + 1 * 32, flowerCol, 0);
-		if (shape == 0) screen.render(x * 16 + 8, y * 16 + 8, 1 + 1 * 32, flowerCol, 0);
-		if (shape == 1) screen.render(x * 16 + 0, y * 16 + 8, 1 + 1 * 32, flowerCol, 0);
-		*/
 	}
 
 	public boolean interact(Level level, int x, int y, Player player, Item item, int attackDir) {

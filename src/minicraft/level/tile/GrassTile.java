@@ -26,37 +26,6 @@ public class GrassTile extends Tile {
 		connectsToGrass = true;
 		maySpawn = true;
 	}
-	
-	//public static int col = Color.get(141, 141, 252, 321);
-	//public static int colt = Color.get(141, 141, 252, 321);
-	/*
-	public void render(Screen screen, Level level, int x, int y) {
-		int transitionColor = colt;
-		
-		boolean u = !level.getTile(x, y - 1).connectsToGrass;
-		boolean d = !level.getTile(x, y + 1).connectsToGrass;
-		boolean l = !level.getTile(x - 1, y).connectsToGrass;
-		boolean r = !level.getTile(x + 1, y).connectsToGrass;
-		
-		if (!u && !l) {
-			screen.render(x * 16 + 0, y * 16 + 0, 0, col, 0);
-		} else
-			screen.render(x * 16 + 0, y * 16 + 0, (l ? 11 : 12) + (u ? 0 : 1) * 32, transitionColor, 0);
-
-		if (!u && !r) {
-			screen.render(x * 16 + 8, y * 16 + 0, 1, col, 0);
-		} else
-			screen.render(x * 16 + 8, y * 16 + 0, (r ? 13 : 12) + (u ? 0 : 1) * 32, transitionColor, 0);
-		
-		if (!d && !l) {
-			screen.render(x * 16 + 0, y * 16 + 8, 2, col, 0);
-		} else
-			screen.render(x * 16 + 0, y * 16 + 8, (l ? 11 : 12) + (d ? 2 : 1) * 32, transitionColor, 0);
-		if (!d && !r) {
-			screen.render(x * 16 + 8, y * 16 + 8, 3, col, 0);
-		} else
-			screen.render(x * 16 + 8, y * 16 + 8, (r ? 13 : 12) + (d ? 2 : 1) * 32, transitionColor, 0);
-	}*/
 
 	public void tick(Level level, int xt, int yt) {
 		// TODO revise this method.
@@ -86,15 +55,6 @@ public class GrassTile extends Tile {
 					}
 				}
 			}
-			/*if (tool.type == ToolType.spade) {
-				if (player.payStamina(4 - tool.level)) {
-					level.setTile(xt, yt, Tiles.get("dirt"));
-					Sound.monsterHurt.play();
-					if (random.nextInt(5) == 0) {
-						return true;
-					}
-				}
-			}*/
 			if (tool.type == ToolType.Hoe) {
 				if (player.payStamina(4 - tool.level)) {
 					Sound.monsterHurt.play();

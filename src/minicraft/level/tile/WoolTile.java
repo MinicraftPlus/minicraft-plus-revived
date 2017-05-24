@@ -31,14 +31,8 @@ public class WoolTile extends Tile {
 	
 	private static Sprite sprite = Sprite.repeat(17, 0, 2, 2, 0);
 	
-	//public WoolColor color;
-	//int col;
-	
 	protected WoolTile() {
-		super(/*(color==WoolColor.NONE?"Wool":color.name() + " Wool")*/"Wool", sprite);
-		//this.color = color;
-		
-		//sprite.color = color.col;
+		super("Wool", sprite);
 	}
 	
 	

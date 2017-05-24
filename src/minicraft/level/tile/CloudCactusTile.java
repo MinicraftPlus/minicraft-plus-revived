@@ -42,18 +42,17 @@ public class CloudCactusTile extends Tile {
 		}
 		return false;
 	}
-
+	
 	public void hurt(Level level, int x, int y, int dmg) {
-		int damage = level.getData(x, y) + 1;
+		int damage = level.getData(x, y) + dmg;
+		int health = 10;
+		if(ModeMenu.creative) dmg = damage = health;
 		level.add(new SmashParticle(x * 16, y * 16));
 		level.add(new TextParticle("" + dmg, x * 16 + 8, y * 16 + 8, Color.get(-1, 500)));
-		if (dmg > 0) {
-			if (damage >= 10) {
-				level.setTile(x, y, Tiles.get("cloud"));
-			} else {
-				level.setData(x, y, damage);
-			}
-		}
+		if (damage >= health)
+			level.setTile(x, y, Tiles.get("cloud"));
+		else
+			level.setData(x, y, damage);
 	}
 
 	public void bumpedInto(Level level, int x, int y, Entity entity) {

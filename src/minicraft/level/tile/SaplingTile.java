@@ -24,8 +24,6 @@ public class SaplingTile extends Tile {
 	}
 
 	public void render(Screen screen, Level level, int x, int y) {
-		//int col = Color.get(20, 40, 50, -1);
-		
 		onType.render(screen, level, x, y);
 		
 		sprite.render(screen, x*16, y*16);

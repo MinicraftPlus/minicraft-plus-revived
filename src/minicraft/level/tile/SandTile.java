@@ -39,47 +39,13 @@ public class SandTile extends Tile {
 		maySpawn = true;
 	}
 	
-	//public static int col = Color.get(552, 550, 440, 440);
-	//public static int colt = Color.get(440, 550, 440, 321);
-	
 	public void render(Screen screen, Level level, int x, int y) {
-		/*int transitionColor = colt;
-		
-		boolean u = !level.getTile(x, y - 1).connectsToSand;
-		boolean d = !level.getTile(x, y + 1).connectsToSand;
-		boolean l = !level.getTile(x - 1, y).connectsToSand;
-		boolean r = !level.getTile(x + 1, y).connectsToSand;
-		*/
 		boolean steppedOn = level.getData(x, y) > 0;
 		
 		if(steppedOn) csprite.full = SandTile.steppedOn;
 		else csprite.full = Sprite.dots(Color.get(552, 550, 440, 440));
 		
 		csprite.render(screen, level, x, y);
-		/*
-		if (!u && !l) {
-			if (!steppedOn) screen.render(x * 16 + 0, y * 16 + 0, 0, col, 0);
-			else screen.render(x * 16 + 0, y * 16 + 0, 3 + 1 * 32, col, 0);
-		} else
-			screen.render(x * 16 + 0, y * 16 + 0, (l ? 11 : 12) + (u ? 0 : 1) * 32, transitionColor, 0);
-		
-		if (!u && !r) {
-			screen.render(x * 16 + 8, y * 16 + 0, 1, col, 0);
-		} else
-			screen.render(x * 16 + 8, y * 16 + 0, (r ? 13 : 12) + (u ? 0 : 1) * 32, transitionColor, 0);
-		
-		if (!d && !l) {
-			screen.render(x * 16 + 0, y * 16 + 8, 2, col, 0);
-		} else
-			screen.render(x * 16 + 0, y * 16 + 8, (l ? 11 : 12) + (d ? 2 : 1) * 32, transitionColor, 0);
-		
-		if (!d && !r) {
-			if (!steppedOn) screen.render(x * 16 + 8, y * 16 + 8, 3, col, 0);
-			else screen.render(x * 16 + 8, y * 16 + 8, 3 + 1 * 32, col, 0);
-		
-		} else
-			screen.render(x * 16 + 8, y * 16 + 8, (r ? 13 : 12) + (d ? 2 : 1) * 32, transitionColor, 0);
-		*/
 	}
 
 	public void tick(Level level, int x, int y) {

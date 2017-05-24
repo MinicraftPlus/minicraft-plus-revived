@@ -11,15 +11,11 @@ public final class Tiles {
 	
 	private static ArrayList<Tile> tiles = new ArrayList<Tile>();
 	
-	//public static Tile[] tiles = new Tile[256];
-	
-	
 	public static void initTileList() {
 		
 		for(int i = 0; i < 256; i++)
 			tiles.add(null);
 		
-		//tiles.set(0, new GrassTile())
 		tiles.set(0, new GrassTile("Grass"));
 		tiles.set(1, new DirtTile("Dirt"));
 		tiles.set(2, new FlowerTile("Flower"));
@@ -56,60 +52,19 @@ public final class Tiles {
 		tiles.set(33, new WallTile(Tile.Material.Stone));
 		tiles.set(34, new WallTile(Tile.Material.Obsidian));
 		tiles.set(35, new WoolTile());
-		/*tiles.set(new WoolTile(WoolTile.WoolColor.RED));
-		tiles.set(new WoolTile(WoolTile.WoolColor.YELLOW));
-		tiles.set(new WoolTile(WoolTile.WoolColor.GREEN));
-		tiles.set(new WoolTile(WoolTile.WoolColor.BLUE));
-		tiles.set(new WoolTile(WoolTile.WoolColor.BLACK));
-		*///for(WoolTile.WoolColor wc: WoolTile.WoolColor.values())
-			//tiles.set(new WoolTile(wc.name()+" Wool", wc));
 		
 		for(int i = 0; i < tiles.size(); i++) {
 			if(tiles.get(i) == null) continue;
 			tiles.get(i).id = (byte)i;
 		}
-		
-		/*
-		CactusTile.addInstances();
-		CloudCactusTile.addInstances();
-		CloudTile.addInstances();
-		DirtTile.addInstances();
-		DoorTile.addInstances();
-		ExplodedTile.addInstances();
-		FarmTile.addInstances();
-		FloorTile.addInstances();
-		FlowerTile.addInstances();
-		GrassTile.addInstances();
-		HardRockTile.addInstances();
-		HoleTile.addInstances();
-		InfiniteFallTile.addInstances();
-		WaterTile.addInstances();
-		LavaBrickTile.addInstances();
-		LavaTile.addInstances();
-		OreTile.addInstances();
-		RockTile.addInstances();
-		TreeTile.addInstances();
-		SandTile.addInstances();
-		SaplingTile.addInstances();
-		StairsTile.addInstances();
-		WallTile.addInstances();
-		WheatTile.addInstances();
-		WoolTile.addInstances();
-		
-		//TorchTile.addInstances();
-		*/
 	}
 	
 	
 	protected static void add(int id, Tile tile) {
 		tiles.set(id, tile);
 		System.out.println("adding " + tile.name + " to tile list with id " + id);
-		tile.id = (byte) id;//(byte)(tiles.size()-1);
+		tile.id = (byte) id;
 	}
-	/*protected static void addAll(Tile[] tiles) {
-		for(Tile t: tiles)
-			add(t);
-	}*/
 	
 	static {
 		for(int i = 0; i < 256; i++)
@@ -205,7 +160,6 @@ public final class Tiles {
 	
 	static int overflowCheck = 0;
 	public static Tile get(String name) {
-		/// IMPORTANT: note that having a tile object for each tile is probably inefficient, and will probably need to be replaced by a more processor-friendly system...
 		//System.out.println("getting from tile list: " + name);
 		
 		name = name.toUpperCase();
@@ -254,8 +208,6 @@ public final class Tiles {
 		if(tiles.get(id) != null) {
 			return tiles.get(id);
 		}
-		//if(name != null && name.length() > 0)
-		//	return get(name);
 		else {
 			System.out.println("TILES.GET: unknown tile id requested: " + id);
 			return tiles.get(0);
@@ -270,18 +222,4 @@ public final class Tiles {
 		data = Integer.parseInt(parts[1]);
 		return get(descriptName).getName(data);
 	}
-	
-	/*/// this method takes into consideration
-	public static Tile get(int id, int typeData) {
-		Tile main = get(id);
-		if(main instanceof FloorTile) {
-			return new FloorTile(Tile.Tile.Material(typeData));
-		}
-		if(main instanceof WallTile) {
-			return new WallTile(Tile.Tile.Material(typeData));
-		}
-		if(main instanceof WoolTile) {
-			return new WoolTile(WoolTile.WoolColor(typeData));
-		}
-	}*/
 }

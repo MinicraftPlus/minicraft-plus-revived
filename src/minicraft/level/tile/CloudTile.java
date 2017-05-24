@@ -15,7 +15,6 @@ public class CloudTile extends Tile {
 	private static ConnectorSprite sprite = new ConnectorSprite(CloudTile.class, new Sprite(4, 0, 3, 3, Color.get(333, 444, 555, -1), 3), new Sprite(7, 0, 2, 2, Color.get(333, 444, 555, -1), 3), ConnectorSprite.makeSprite(2, 2, Color.get(444, 444, 555, 444), 0, false, 19, 18, 20, 19))
 	{
 		public boolean connectsTo(Tile tile, boolean isSide) {
-			//System.out.println("using overridden");
 			return tile != Tiles.get("Infinite Fall");
 		}
 	};
@@ -32,7 +31,7 @@ public class CloudTile extends Tile {
 		if (item instanceof ToolItem) {
 			ToolItem tool = (ToolItem) item;
 			if (tool.type == ToolType.Shovel && player.payStamina(5)) {
-				// level.setTile(xt, yt, Tiles.get("Infinite Fall")); // would allow you to shovel cloud, I think.
+				level.setTile(xt, yt, Tiles.get("Infinite Fall")); // would allow you to shovel cloud, I think.
 				level.dropItem(xt*16+8, yt*16+8, 1, 3, Items.get("cloud"));
 				return true;
 			}

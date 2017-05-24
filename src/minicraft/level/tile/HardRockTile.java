@@ -22,37 +22,7 @@ public class HardRockTile extends Tile {
 	protected HardRockTile(String name) {
 		super(name, sprite);
 	}
-	/*
-	public void render(Screen screen, Level level, int x, int y) {
-		int col = Color.get(445, 334, 223, 223);
-		int colt = Color.get(001, 334, 445, 321);
-		
-		int transitionColor = colt;
-		
-		if (!u && !l) {
-			if (!ul) screen.render(x * 16 + 0, y * 16 + 0, 0, col, 0);
-			else screen.render(x * 16 + 0, y * 16 + 0, 7 + 0 * 32, transitionColor, 3);
-		} else
-			screen.render(x * 16 + 0, y * 16 + 0, (l ? 6 : 5) + (u ? 2 : 1) * 32, transitionColor, 3);
-
-		if (!u && !r) {
-			if (!ur) screen.render(x * 16 + 8, y * 16 + 0, 1, col, 0);
-			else screen.render(x * 16 + 8, y * 16 + 0, 8 + 0 * 32, transitionColor, 3);
-		} else
-			screen.render(x * 16 + 8, y * 16 + 0, (r ? 4 : 5) + (u ? 2 : 1) * 32, transitionColor, 3);
-
-		if (!d && !l) {
-			if (!dl) screen.render(x * 16 + 0, y * 16 + 8, 2, col, 0);
-			else screen.render(x * 16 + 0, y * 16 + 8, 7 + 1 * 32, transitionColor, 3);
-		} else
-			screen.render(x * 16 + 0, y * 16 + 8, (l ? 6 : 5) + (d ? 0 : 1) * 32, transitionColor, 3);
-		if (!d && !r) {
-			if (!dr) screen.render(x * 16 + 8, y * 16 + 8, 3, col, 0);
-			else screen.render(x * 16 + 8, y * 16 + 8, 8 + 1 * 32, transitionColor, 3);
-		} else
-			screen.render(x * 16 + 8, y * 16 + 8, (r ? 4 : 5) + (d ? 0 : 1) * 32, transitionColor, 3);
-	}
-	*/
+	
 	public boolean mayPass(Level level, int x, int y, Entity e) {
 		return false;
 	}
@@ -73,17 +43,16 @@ public class HardRockTile extends Tile {
 			}
 		}
 		if (ModeMenu.creative) return true;
-		else {
-			return false;
-		}
+		
+		return false;
 	}
 
 	public void hurt(Level level, int x, int y, int dmg) {
 		int damage = level.getData(x, y) + dmg;
-		level.add(new SmashParticle(x * 16, y * 16));
-		level.add(new TextParticle("" + dmg, x * 16 + 8, y * 16 + 8, Color.get(-1, 500)));
 		int hrHealth = 200;
 		if (ModeMenu.creative) dmg = damage = hrHealth;
+		level.add(new SmashParticle(x * 16, y * 16));
+		level.add(new TextParticle("" + dmg, x * 16 + 8, y * 16 + 8, Color.get(-1, 500)));
 		if (damage >= hrHealth) {
 			level.dropItem(x*16+8, y*16+8, 1, 3, Items.get("Stone"));
 			level.dropItem(x*16+8, y*16+8, 0, 1, Items.get("coal"));

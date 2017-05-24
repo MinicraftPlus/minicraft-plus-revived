@@ -37,16 +37,7 @@ public class DoorTile extends Tile {
 		}
 		sprite = closedSprite;
 	}
-	/*
-	public void render(Screen screen, Level level, int x, int y) {
-		int col = Color.get(444, 333, 222, 333);
-		
-		screen.render(x * 16 + 0, y * 16 + 0, 2 + 24 * 32, col, 0);
-		screen.render(x * 16 + 8, y * 16 + 0, 3 + 24 * 32, col, 0);
-		screen.render(x * 16 + 0, y * 16 + 8, 2 + 25 * 32, col, 0);
-		screen.render(x * 16 + 8, y * 16 + 8, 3 + 25 * 32, col, 0);
-	}
-	*/
+	
 	public boolean interact(Level level, int xt, int yt, Player player, Item item, int attackDir) {
 		if (item instanceof ToolItem) {
 			ToolItem tool = (ToolItem) item;
@@ -58,18 +49,6 @@ public class DoorTile extends Tile {
 					return true;
 				}
 			}
-			/*if (tool.type == ToolType.pick) {
-				if (player.payStamina(4 - tool.level)) {
-					level.setTile(xt, yt, Tiles.get("Stone Bricks"));
-					level.add(
-							new ItemEntity(
-									Items.get("Stone Door"),
-									xt * 16 + random.nextInt(10) + 3,
-									yt * 16 + random.nextInt(10) + 3));
-					Sound.monsterHurt.play();
-					return true;
-				}
-			}*/
 		}
 		return false;
 	}
