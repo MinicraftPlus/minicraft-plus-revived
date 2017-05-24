@@ -1,21 +1,27 @@
 Minicraft+ version 1.9.4
 
 * Almost total revision of lighting; surface level now has lighting overlay sometimes, and the colors all around may be slightly different.
-* changed death chest expire times; easy:30min, norm:10min, hard:2min
 + Daylight now increases and decreases more smoothly; steadily goes from dark to light in the morning, and light to dark in the evening.
+
+* changed death chest expire times; easy:30min, norm:10min, hard:2min
 * Sped up game speed while sleeping.
 - Prevented Airwizard from being removed during daily entity clear.
 * Increased Torch light radius; also, torches now work the same way on the surface as they do in the caves.
-+ Added small tweak for creative mode: empty buckets will remain empty, so you can empty the ocean as much as you like. Full buckets remain full, as well.
-+ Additional creative mode tweak: "attacking" mob spawner with hand changes the level of mob it spawns. Also, you can pick up spawners in creative mode.
 + Added missingTexture sprite.
 * Changed the name of a couple items (was abbreviated).
++ Wool slows down all mobs except you.
++ Added some more help messages when trying do things that you might not know you can't do yet. (destroying hardrock, obsidian stair on lava level).
+
++ Added small tweak for creative mode: empty buckets will remain empty, so you can empty the ocean as much as you like. Full buckets remain full, as well.
++ Additional creative mode tweak: "attacking" mob spawner with hand changes the level of mob it spawns. Also, you can pick up spawners in creative mode.
++ Creative mode inventory remains full.
+
 + Key controls displayed on title screen and the world select menu will always be correct. ;)
+* Revised some key binding details to hopefully prevent inability to select anything. Also, added feature to reset all key bindings to default.
+
 + You can now copy world saves.
 + Added another confirm dialog before deleting worlds.
-+ Creative mode inventory remains full.
-+ Wool slows down all mobs except you.
-* Revised some key binding details to hopefully prevent inability to select anything. Also, added feature to reset all key bindings to default.
+
 
 Minicraft+ version 1.9.3
 
