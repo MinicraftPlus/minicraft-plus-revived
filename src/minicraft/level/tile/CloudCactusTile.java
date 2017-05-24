@@ -13,6 +13,7 @@ import minicraft.item.ToolItem;
 import minicraft.item.ToolType;
 import minicraft.level.Level;
 import minicraft.screen.OptionsMenu;
+import minicraft.screen.ModeMenu;
 
 public class CloudCactusTile extends Tile {
 	private static Sprite sprite = new Sprite(17, 1, 2, 2, Color.get(444, 111, 333, 555));
