@@ -88,33 +88,20 @@ public class RockTile extends Tile {
 				return true;
 			}
 		}
-		/*if (item instanceof ToolItem) {
-			ToolItem tool = (ToolItem) item;
-			if (tool.type == ToolType.pick) {
-				if (player.payStamina(3 - tool.level)) {
-					hurt(level, xt, yt, random.nextInt(7) + (tool.level) * 5 + 10);
-					coallvl = 1;
-					return true;
-				}
-			}
-		}*/
 		return false;
 	}
 
 	public void hurt(Level level, int x, int y, int dmg) {
-		int rockHealth;
+		int rockHealth = 50;
 		if (ModeMenu.creative) {
-			rockHealth = 1;
-			coallvl = 0;
-		}
-		else {
-			rockHealth = 50;
+			dmg = rockHealth;
+			coallvl = 1;
 		}
 		int damage = level.getData(x, y) + dmg;
 		level.add(new SmashParticle(x * 16, y * 16));
 		level.add(new TextParticle("" + dmg, x * 16 + 8, y * 16 + 8, Color.get(-1, 500)));
 		if (damage >= rockHealth) {
-			int count = random.nextInt(1);
+			int count = random.nextInt(1) + 0;
 			if (coallvl == 0) {
 				level.dropItem(x*16+8, y*16+8, 1, 4, Items.get("Stone"));
 			}

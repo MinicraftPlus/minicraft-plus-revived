@@ -82,26 +82,11 @@ public class HardRockTile extends Tile {
 		int damage = level.getData(x, y) + dmg;
 		level.add(new SmashParticle(x * 16, y * 16));
 		level.add(new TextParticle("" + dmg, x * 16 + 8, y * 16 + 8, Color.get(-1, 500)));
-		int hrHealth;
-		if (ModeMenu.creative) hrHealth = 0;
-		else hrHealth = 200;
+		int hrHealth = 200;
+		if (ModeMenu.creative) dmg = hrHealth;
 		if (damage >= hrHealth) {
-			int count = random.nextInt(4) + 1;
-			for (int i = 0; i < count; i++) {
-				level.add(
-						new ItemEntity(
-								Items.get("Stone"),
-								x * 16 + random.nextInt(10) + 3,
-								y * 16 + random.nextInt(10) + 3));
-			}
-			count = random.nextInt(2);
-			for (int i = 0; i < count; i++) {
-				level.add(
-						new ItemEntity(
-								Items.get("coal"),
-								x * 16 + random.nextInt(10) + 3,
-								y * 16 + random.nextInt(10) + 3));
-			}
+			level.dropItem(x*16+8, y*16+8, 1, 3, Items.get("Stone"));
+			level.dropItem(x*16+8, y*16+8, 0, 1, Items.get("coal"));
 			level.setTile(x, y, Tiles.get("dirt"));
 		} else {
 			level.setData(x, y, damage);

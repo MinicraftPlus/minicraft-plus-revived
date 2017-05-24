@@ -8,11 +8,10 @@ Note to self: for more little bugs/ideas/concerns, search code for "TODO"
 
 	####BUGS####
 ####
-air wizard won't render.
-####
-Smash particles appear, but... they look totally wierd...
-####
-Pressing Control for a key binding on keyinputmenu crashes the game.
+---Due to overhaul---
+-air wizard won't render.
+-Fire particles appear, but... they look totally wierd...
+-Pressing Control for a key binding on keyinputmenu crashes the game.
 ####
 Sound effects don't always play when they should; mostly it seems when other sounds should be on at the same time.
 ####

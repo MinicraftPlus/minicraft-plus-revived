@@ -392,7 +392,7 @@ public class Player extends Mob {
 						done = true;
 					}
 				}
-				if (activeItem.isDepleted()) {
+				if (activeItem.isDepleted() && !ModeMenu.creative) {
 					// if the activeItem has 0 items left, then "destroy" it.
 					activeItem = null;
 				}

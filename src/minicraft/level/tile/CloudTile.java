@@ -33,7 +33,7 @@ public class CloudTile extends Tile {
 			ToolItem tool = (ToolItem) item;
 			if (tool.type == ToolType.Shovel && player.payStamina(5)) {
 				// level.setTile(xt, yt, Tiles.get("Infinite Fall")); // would allow you to shovel cloud, I think.
-				level.dropItem(xt<<4, yt<<4, 1, 3, Items.get("cloud"));
+				level.dropItem(xt*16+8, yt*16+8, 1, 3, Items.get("cloud"));
 				return true;
 			}
 		}

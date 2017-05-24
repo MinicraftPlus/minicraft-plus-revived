@@ -113,25 +113,14 @@ public class WallTile extends Tile {
 				}
 			}
 		}
-		/*if (item instanceof ToolItem) {
-			ToolItem tool = (ToolItem) item;
-			if (tool.type == ToolType.pick) {
-				if (player.payStamina(4 - tool.level)) {
-					hurt(level, xt, yt, random.nextInt(6) + (tool.level) * 5 + 5);
-					return true;
-				}
-			}
-		}*/
 		return false;
 	}
 
 	public void hurt(Level level, int x, int y, int dmg) {
 		int damage = level.getData(x, y) + dmg;
-		int sbwHealth;
-		if (ModeMenu.creative) sbwHealth = 1;
-		else {
-			sbwHealth = 100;
-		}
+		int sbwHealth = 100;
+		if (ModeMenu.creative) dmg = sbwHealth;
+		
 		level.add(new SmashParticle(x * 16, y * 16));
 		level.add(new TextParticle("" + dmg, x * 16 + 8, y * 16 + 8, Color.get(-1, 500)));
 		if (damage >= sbwHealth) {

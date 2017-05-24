@@ -31,21 +31,20 @@ public class CactusTile extends Tile {
 
 	public void hurt(Level level, int x, int y, Mob source, int dmg, int attackDir) {
 		int damage = level.getData(x, y) + dmg;
-		int cHealth;
-		if (ModeMenu.creative) cHealth = 1;
-		else cHealth = 10;
+		int cHealth = 10;
+		if (ModeMenu.creative) dmg = cHealth;
 		level.add(new SmashParticle(x * 16, y * 16));
 		level.add(new TextParticle("" + dmg, x * 16 + 8, y * 16 + 8, Color.get(-1, 500)));
-
+		
 		if (damage >= cHealth) {
 			//int count = random.nextInt(2) + 2;
-			level.dropItem(2, 4, Items.get("Cactus"));
+			level.dropItem(x*16+8, y*16+8, 2, 4, Items.get("Cactus"));
 			level.setTile(x, y, Tiles.get("sand"));
 		} else {
 			level.setData(x, y, damage);
 		}
 	}
-
+	
 	public void bumpedInto(Level level, int x, int y, Entity entity) {
 		if (OptionsMenu.diff == OptionsMenu.easy) {
 			entity.hurt(this, x, y, 1);
