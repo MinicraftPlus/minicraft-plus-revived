@@ -53,47 +53,43 @@ public class TileItem extends StackableItem {
 	}
 	
 	public final String model;
-	public final List<String> reqTiles;
+	public final List<String> validTiles;
 	
-	protected TileItem(String name, Sprite sprite, String model, String... reqTiles) {
-		this(name, sprite, 1, model, Arrays.asList(reqTiles));
+	protected TileItem(String name, Sprite sprite, String model, String... validTiles) {
+		this(name, sprite, 1, model, Arrays.asList(validTiles));
 	}
-	protected TileItem(String name, Sprite sprite, int count, String model, String... reqTiles) {
-		this(name, sprite, count, model, Arrays.asList(reqTiles));
+	protected TileItem(String name, Sprite sprite, int count, String model, String... validTiles) {
+		this(name, sprite, count, model, Arrays.asList(validTiles));
 	}
-	protected TileItem(String name, Sprite sprite, int count, String model, List<String> reqTiles) {
+	protected TileItem(String name, Sprite sprite, int count, String model, List<String> validTiles) {
 		super(name, sprite, count);
-		this.model = model;
-		this.reqTiles = reqTiles;
+		this.model = model.toUpperCase();
+		this.validTiles = new ArrayList<String>();
+		for(String tile: validTiles)
+			this.validTiles.add(tile.toUpperCase());
 	}
 	
 	public boolean interactOn(Tile tile, Level level, int xt, int yt, Player player, int attackDir) {
-		for(String tilename: reqTiles) {
+		for(String tilename: validTiles) {
 			//Tile t = Tiles.get(tilename.contains("_")?tilename.substring(0, tilename.indexOf("_")):tilename);
-			if(Tile.checkMatch(tilename, tile, level.getData(xt, yt))) {
+			if(tile.matches(level.getData(xt, yt), tilename)) {
 				level.setTile(xt, yt, model); // TODO maybe data should be part of the saved tile..?
 				return true;
 			}
 		}
-		/*if(reqTiles.contains(tile.name)) {
-			
-		}*/
+		//if (Game.debug) System.out.println(model + " cannot be placed on " + tile.name);
 		
-		if(model.contains("Wall") && reqTiles.size() == 1) {
-			Game.notifications.add("Can only be placed on " + Tiles.getName(reqTiles.get(0)) + "!");
+		if(model.contains("Wall") && validTiles.size() == 1) {
+			Game.notifications.add("Can only be placed on " + Tiles.getName(validTiles.get(0)) + "!");
 		}
 		return false;
 	}
-	/*
-	public String getName() {
-		return model.name + " Item";
-	}*/
 	
 	public boolean matches(Item other) {
 		return super.matches(other) && model.equals(((TileItem)other).model);
 	}
 	
 	public TileItem clone() {
-		return new TileItem(name, sprite, count, model, reqTiles);
+		return new TileItem(name, sprite, count, model, validTiles);
 	}
 }

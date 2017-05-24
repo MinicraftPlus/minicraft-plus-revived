@@ -11,7 +11,15 @@ public class WaterTile extends Tile {
 	private ConnectorSprite sprite = new ConnectorSprite(WaterTile.class, new Sprite(14, 0, 3, 3, Color.get(3, 105, 211, 321), 3), Sprite.dots(Color.get(005, 105, 115, 115)))
 	{
 		public boolean connectsTo(Tile tile, boolean isSide) {
-			return !isSide || tile.connectsToWater;
+			return tile.connectsToWater;
+		}
+		
+		public int getSparseColor(Tile tile, int origCol) {
+			if(!tile.connectsToWater && tile.connectsToSand) {
+				//System.out.println("water tile colored as sand with " + tile.name);
+				return Color.get(3, 105, 440, 550);
+			} else
+				return origCol;
 		}
 	};
 	
@@ -27,6 +35,7 @@ public class WaterTile extends Tile {
 	public void render(Screen screen, Level level, int x, int y) {
 		long seed = (tickCount + (x / 2 - y) * 4311) / 10 * 54687121l + x * 3271612l + y * 3412987161l;
 		sprite.full = Sprite.randomDots(seed, sprite.full.color);
+		sprite.sparse.color = Color.get(3, 105, 211, DirtTile.dCol(level.depth));
 		sprite.render(screen, level, x, y);
 		/*
 		int col = Color.get(005, 105, 115, 115);
@@ -42,12 +51,12 @@ public class WaterTile extends Tile {
 		boolean d = !level.getTile(x, y + 1).connectsToWater;
 		boolean l = !level.getTile(x - 1, y).connectsToWater;
 		boolean r = !level.getTile(x + 1, y).connectsToWater;
-
+		
 		boolean su = u && level.getTile(x, y - 1).connectsToSand;
 		boolean sd = d && level.getTile(x, y + 1).connectsToSand;
 		boolean sl = l && level.getTile(x - 1, y).connectsToSand;
 		boolean sr = r && level.getTile(x + 1, y).connectsToSand;
-
+		
 		if (!u && !l) {
 			screen.render(x * 16 + 0, y * 16 + 0, wRandom.nextInt(4), col, wRandom.nextInt(4));
 		} else

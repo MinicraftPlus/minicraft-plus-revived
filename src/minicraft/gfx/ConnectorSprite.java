@@ -25,28 +25,9 @@ public class ConnectorSprite {
 	public ConnectorSprite(Class<? extends Tile> owner, Sprite sparse, Sprite sides, Sprite full, boolean cornersMatter) {
 		this.owner = owner;
 		this.sparse = sparse;
-		this.sides = sides==null?full:sides;
+		this.sides = sides;
 		this.full = full;
 		this.checkCorners = cornersMatter;
-		/*
-		if(owner == RockTile.class) {
-			// hard-coding yay! ... =(
-			Sprite.Px[][] px = sides.spritePixels;
-			Sprite.Px[][] rpx = new Sprite.Px[px.length][px[0].length];
-			for(int r = 0; r < px.length; r++)
-				for(int c = 0; c < px[r].length; c++) {
-					rpx[c][r] = px[r][c];
-					rpx[c][r].mirror += 2;
-				}
-			
-			sides.spritePixels = rpx;
-		}
-		*/
-		/*System.out.println("created connector sprite for: " + owner + "; colors:");
-		System.out.println(full);
-		System.out.println(sides);
-		System.out.println(sparse);
-		*/
 	}
 	public ConnectorSprite(Class<? extends Tile> owner, Sprite sparse, Sprite full) {
 		this(owner, sparse, sparse, full, false);
@@ -75,12 +56,16 @@ public class ConnectorSprite {
 		y = y << 4;
 		
 		//full.render(screen, x, y);
-		//int[] spc = Color.seperateEncodedSprite(colsparse);
+		//int[] spc = Color.seperateEncodedSprite(colsparse); // TODO maybe the getConnectColor method decide the whole thing; just pass in the original color too?
 		
 		// full.renderPixel(0, 0, screen, x, y, colfull);
 		// full.renderPixel(1, 0, screen, x+8, y, colfull);
 		// full.renderPixel(0, 1, screen, x, y+8, colfull);
 		// full.renderPixel(1, 1, screen, x+8, y+8, colfull);
+		int orig = colsparse;
+		
+		colsparse = getSparseColor(ut, colsparse);
+		colsparse = getSparseColor(lt, colsparse);
 		
 		if (u && l) {
 			if (ul || !checkCorners) full.renderPixel(1, 1, screen, x, y, colfull);
@@ -88,20 +73,31 @@ public class ConnectorSprite {
 		} else
 			sparse.renderPixel(l?1:2, u?1:2, screen, x, y, colsparse/*);Color.get(spc[0], spc[1], spc[2], Color.mixRGB(ut.getConnectColor(level), lt.getConnectColor(level)))*/);
 		
+		colsparse = orig;
+		colsparse = getSparseColor(ut, colsparse);
+		colsparse = getSparseColor(rt, colsparse);
+		
 		if (u && r) {
 			if (ur || !checkCorners) full.renderPixel(0, 1, screen, x+8, y, colfull);
 			else sides.renderPixel(1, 0, screen, x+8, y, colside);
 		} else// if(!checkCorners)
 			sparse.renderPixel(r?1:0, u?1:2, screen, x+8, y, colsparse/*);Color.get(spc[0], spc[1], spc[2], Color.mixRGB(ut.getConnectColor(level), rt.getConnectColor(level)))*/);
 		//else // useful for trees
-			
-
+		
+		colsparse = orig;
+		colsparse = getSparseColor(dt, colsparse);
+		colsparse = getSparseColor(lt, colsparse);
+		
 		if (d && l) {
 			if (dl || !checkCorners) full.renderPixel(1, 0, screen, x, y+8, colfull);
 			else sides.renderPixel(0, 1, screen, x, y+8, colside);
 		} else
 			sparse.renderPixel(l?1:2, d?1:0, screen, x, y+8, colsparse/*);Color.get(spc[0], spc[1], spc[2], Color.mixRGB(dt.getConnectColor(level), lt.getConnectColor(level)))*/);
-		
+			
+		colsparse = orig;
+		colsparse = getSparseColor(dt, colsparse);
+		colsparse = getSparseColor(rt, colsparse);
+			
 		if (d && r) {
 			if (dr || !checkCorners) full.renderPixel(0, 0, screen, x+8, y+8, colfull);
 			else sides.renderPixel(1, 1, screen, x+8, y+8, colside);
@@ -114,6 +110,10 @@ public class ConnectorSprite {
 	public boolean connectsTo(Tile tile, boolean isSide) {
 		//System.out.println("original connection check");
 		return tile.getClass() == owner;
+	}
+	
+	public int getSparseColor(Tile tile, int origCol) {
+		return origCol;
 	}
 	
 	public static Sprite makeSprite(int w, int h, int color, int mirror, boolean repeat, int... coords) {

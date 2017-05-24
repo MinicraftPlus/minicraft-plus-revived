@@ -18,11 +18,11 @@ public class TorchItem extends TileItem {
 	
 	public TorchItem() { this(1); }
 	public TorchItem(int count) {
-		super("Torch", (new Sprite(18, 4, Color.get(-1, 500, 520, 320))), count, null, "dirt", "Wood Planks", "Stone Bricks", "wool", "red Wool", "blue Wool", "green Wool", "yellow Wool", "black Wool", "grass", "sand");
+		super("Torch", (new Sprite(18, 4, Color.get(-1, 500, 520, 320))), count, "", "dirt", "Wood Planks", "Stone Bricks", "wool", "red Wool", "blue Wool", "green Wool", "yellow Wool", "black Wool", "grass", "sand");
 	}
 	
 	public boolean interactOn(Tile tile, Level level, int xt, int yt, Player player, int attackDir) {
-		if(reqTiles.contains(tile)) {
+		if(validTiles.contains(tile)) {
 			level.setTile(xt, yt, TorchTile.getTorchTile(tile));
 			return true;
 		}

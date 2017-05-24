@@ -12,7 +12,14 @@ public class LavaTile extends Tile {
 	private ConnectorSprite sprite = new ConnectorSprite(LavaTile.class, new Sprite(14, 0, 3, 3, Color.get(3, 500, 211, 322), 3), Sprite.dots(Color.get(500, 500, 520, 450)))
 	{
 		public boolean connectsTo(Tile tile, boolean isSide) {
-			return !isSide || tile.connectsToLava;
+			return tile.connectsToLava;
+		}
+		
+		public int getSparseColor(Tile tile, int origCol) {
+			if(!tile.connectsToLava && tile.connectsToSand)
+				return Color.get(3, 500, 440, 550);
+			else
+				return origCol;
 		}
 	};
 	
