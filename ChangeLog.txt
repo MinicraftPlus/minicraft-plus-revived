@@ -14,7 +14,8 @@ Minicraft+ version 1.9.4
 + You can now copy world saves.
 + Added another confirm dialog before deleting worlds.
 + Creative mode inventory remains full.
-
++ Wool slows down all mobs except you.
+* Revised some key binding details to hopefully prevent inability to select anything. Also, added feature to reset all key bindings to default.
 
 Minicraft+ version 1.9.3
 

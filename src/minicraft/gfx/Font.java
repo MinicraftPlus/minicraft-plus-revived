@@ -66,6 +66,8 @@ public class Font {
 	/// this one assumes the screen width, minus a given padding.
 	public static String drawParagraph(String para, Screen screen, int padding, int y, boolean centered, int lineSpacing, int color) {return drawParagraph(para, screen, padding, y, screen.w-padding*2, screen.h - y, centered, lineSpacing, color);}
 	
+	public static String drawParagraph(String[] lines, Screen screen, int padding, int y, boolean centered, int lineSpacing, int color) {return drawParagraph(lines, screen, padding, y, screen.w-padding*2, screen.h - y, centered, lineSpacing, color);}
+	
 	/// this draws a paragraph from an array of lines (or a string, at which point it calls getLines()), with the specified properties.
 	public static String drawParagraph(String[] lines, Screen screen, int x, int y, int w, int h, boolean centered, int lineSpacing, int color) {
 		for(int i = 0; i < lines.length-1; i++) {

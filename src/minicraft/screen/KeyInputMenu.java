@@ -9,27 +9,30 @@ import minicraft.saveload.Save;
 
 public class KeyInputMenu extends ScrollingMenu {
 	
-	private boolean listeningForBind;
+	private boolean listeningForBind, confirmReset;
 	private Menu parent;
 	
 	private String[] actionKeys;
 	
 	public KeyInputMenu(Menu parent) {
-		super(Arrays.asList(parent.input.getKeyPrefs()), (Game.HEIGHT-Font.textHeight()*9)/8, 0, Font.textHeight()*3, 1, Color.get(0, 555), Color.get(0, 333));
+		super(Arrays.asList(parent.input.getKeyPrefs()), (Game.HEIGHT-Font.textHeight()*9)/8, 0, Font.textHeight()*2, 1, Color.get(0, 555), Color.get(0, 333));
 		
 		this.parent = parent;
 		listeningForBind = false;
+		confirmReset = false;
 		String[] keys = options.toArray(new String[0]);
 		actionKeys = new String[keys.length];
 		updateKeys(keys);
 	}
 	
 	public void tick() {
-		if(listeningForBind && input.keyToChange == null) {
-			// the key has just been set
-			//System.out.println("binding changed at " + input.ticks);
-			listeningForBind = false;
-			updateKeys(input.getKeyPrefs());
+		if(listeningForBind) {
+			if(input.keyToChange == null) {
+				// the key has just been set
+				//System.out.println("binding changed at " + input.ticks);
+				listeningForBind = false;
+				updateKeys(input.getKeyPrefs());
+			}
 			return;
 		}
 		
@@ -41,7 +44,7 @@ public class KeyInputMenu extends ScrollingMenu {
 		
 		super.tick();
 		
-		if(input.getKey("select").clicked) {
+		if(input.getKey("c").clicked) {
 			//System.out.println("changing input binding at " + input.ticks);
 			input.changeKeyBinding(actionKeys[selected]);
 			listeningForBind = true;
@@ -50,6 +53,14 @@ public class KeyInputMenu extends ScrollingMenu {
 			// add a binding, don't remove previous.
 			input.addKeyBinding(actionKeys[selected]);
 			listeningForBind = true;
+		}
+		else if(input.getKey("shift-d").clicked && !confirmReset) {
+			confirmReset = true;
+		}
+		else if(input.getKey("select").clicked && confirmReset) {
+			confirmReset = false;
+			input.resetKeyBindings();
+			updateKeys(input.getKeyPrefs());
 		}
 	}
 	
@@ -93,10 +104,23 @@ public class KeyInputMenu extends ScrollingMenu {
 			renderFrame(screen, "", 4, 4, screen.w/8-4, screen.h/8-4);
 			Font.drawCentered("Press the desired", screen, (screen.h-Font.textHeight()) / 2 - 4, Color.get(-1, 450));
 			Font.drawCentered("key sequence", screen, (screen.h-Font.textHeight()) / 2 + 4, Color.get(-1, 450));
+		} else if (confirmReset) {
+			renderFrame(screen, "Confirm Action", 4, 4, screen.w/8-4, screen.h/8-4);
+			Font.drawParagraph("Are you sure you want to reset all key bindings to the default keys?", screen, 8*4, screen.h/2 - 8*4, true, 4, Color.get(-1, 511));
+			Font.drawParagraph(input.getMapping("select")+" to confirm\n"+input.getMapping("exit")+" to cancel", screen, 8, screen.h/2 + 24, true, 4, Color.get(-1, 533));
 		} else {
-			Font.drawCentered("Press Enter to change key binding", screen, screen.h-Font.textHeight()*3, Color.get(0, 555));
-			Font.drawCentered("Press A to add key binding", screen, screen.h-Font.textHeight()*2, Color.get(0, 555));
-			Font.drawCentered("Esc to Return to menu", screen, screen.h-Font.textHeight()*1, Color.get(0, 555));
+			String[] lines = {
+				"Press C to change key binding",
+				"Press A to add key binding",
+				"Shift-D to reset all keys to default",
+				input.getMapping("exit")+" to Return to menu"
+			};
+			for(int i = 0; i < lines.length; i++)
+				Font.drawCentered(lines[i], screen, screen.h-Font.textHeight()*(4-i), Color.get(0, 555));
+			//Font.drawParagraph(lines, screen, 0, screen.h-Font.textHeight()*4, true, 0, Color.get(0, 555));
+			//Font.drawCentered("Press Enter to change key binding", screen, screen.h-Font.textHeight()*3, Color.get(0, 555));
+			//Font.drawCentered("Press A to add key binding", screen, screen.h-Font.textHeight()*2, Color.get(0, 555));
+			//Font.drawCentered("Esc to Return to menu", screen, screen.h-Font.textHeight()*1, Color.get(0, 555));
 		}
 	}
 }

@@ -62,6 +62,7 @@ public class InputHandler implements MouseListener, KeyListener {
 		
 		// for compatibility becuase I'm lazy. :P
 		keyNames.put(KeyEvent.VK_BACK_SPACE, "BACKSPACE");
+		keyNames.put(KeyEvent.VK_CONTROL, "CTRL");
 	}
 	
 	private HashMap<String, String> keymap; // The symbolic map of actions to physical key names.
@@ -73,11 +74,24 @@ public class InputHandler implements MouseListener, KeyListener {
 	public Mouse one = new Mouse();
 	public Mouse two = new Mouse();
 	public Mouse tri = new Mouse();
-
+	
 	public InputHandler(Game game) {
 		keymap = new HashMap<String, String>(); //stores custom key name with physical key name in keyboard.
 		keyboard = new HashMap<String, Key>(); //stores physical keyboard keys; auto-generated :D
 		
+		initKeyMap(); // this is seperate so I can make a "restore defaults" option.
+		
+		// I'm not entirely sure if this is necessary... but it doesn't hurt.
+		keyboard.put("SHIFT", new Key());
+		keyboard.put("CTRL", new Key());
+		keyboard.put("ALT", new Key());
+		
+		game.addKeyListener(this); //add key listener to game
+		//game.addMouseListener(this); //add mouse listener to game (though it's never used)
+		//ticks = 0;
+	}
+	
+	private final void initKeyMap() {
 		keymap.put("UP", "UP|W"); //up action references up arrow key
 		keymap.put("DOWN", "DOWN|S"); //move down action references down arrow key
 		keymap.put("LEFT", "LEFT|A"); //move left action references left arrow key
@@ -98,24 +112,13 @@ public class InputHandler implements MouseListener, KeyListener {
 		keymap.put("SURVIVAL=debug", "SHIFT-S|SHIFT-1");
 		keymap.put("CREATIVE=debug", "SHIFT-C|SHIFT-2");
 		
-		//keymap.put("ENTER", "ENTER|C");
-		//keymap.put("ESCAPE", "ESCAPE|X");
-		// this is for compatibility with other languages. they can change it to fit their keyboards.
-		//keymap.put("BACKSPACE", "BACKSPACE");
-		//keymap.put("SOUNDON", "M"); //toggles sound on and off... well, it should...
-		
 		keymap.put("POTIONEFFECTS", "P"); // toggle potion effect display
 		//keymap.put("FPSDISP", "F3"); // toggle fps display
 		keymap.put("INFO", "SHIFT-I"); // toggle player stats display
-		
-		// I'm not entirely sure if this is necessary, especially for ctrl and alt... but it doesn't hurt.
-		keyboard.put("SHIFT", new Key());
-		keyboard.put("CTRL", new Key());
-		keyboard.put("ALT", new Key());
-		
-		game.addKeyListener(this); //add key listener to game
-		//game.addMouseListener(this); //add mouse listener to game (though it's never used)
-		//ticks = 0;
+	}
+	
+	public void resetKeyBindings() {
+		initKeyMap();
 	}
 	
 	/** Processes each key one by one, in keyboard. */

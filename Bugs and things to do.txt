@@ -9,9 +9,7 @@ Note to self: for more little bugs/ideas/concerns, search code for "TODO"
 
 	####BUGS####
 ####
----Due to overhaul---
--Fire particles appear, but... they look totally wierd...
--Pressing Control for a key binding on keyinputmenu crashes the game.
+Fire particles appear, but... they look totally wierd...
 ####
 Sound effects don't always play when they should; mostly it seems when other sounds should be on at the same time.
 ####
@@ -34,10 +32,6 @@ Add world backup option to world load menu; it could be complicated, since if I 
 ****
 
 Update other menus' displayed key controls to always show the current key bindings.
-
-****
-
-Ok, so, for the sake of Loading and simplicity, everything that can should use some form of java utility, such as that things that get saved should implement Serializable; at the least, a toString() method should be made that provides all the necessary info to reconstruct that instance.
 
 ****
 
