@@ -6,8 +6,10 @@ import minicraft.entity.particle.TextParticle;
 import minicraft.gfx.Color;
 import minicraft.gfx.Sprite;
 import minicraft.item.Item;
+import minicraft.item.FurnitureItem;
 import minicraft.item.ToolItem;
 import minicraft.item.ToolType;
+import minicraft.item.PowerGloveItem;
 import minicraft.level.tile.Tile;
 import minicraft.screen.ModeMenu;
 import minicraft.sound.Sound;
@@ -24,7 +26,8 @@ public class Spawner extends Furniture {
 	
 	private final void initMob(MobAi m) {
 		mob = m;
-		col = mob.col;
+		sprite.color = col = mob.col;
+		
 		if(m instanceof EnemyMob) {
 			lvl = ((EnemyMob)mob).lvl;
 			maxMobLevel = ((EnemyMob)mob).getMaxLevel();
@@ -114,6 +117,14 @@ public class Spawner extends Furniture {
 			
 			return true;
 		}
+		
+		if(item instanceof PowerGloveItem && ModeMenu.creative) {
+			level.remove(this);
+			player.inventory.add(0, player.activeItem);
+			player.activeItem = new FurnitureItem(this);
+			return true;
+		}
+		
 		return false;
 	}
 	
@@ -130,42 +141,6 @@ public class Spawner extends Furniture {
 			initMob(newmob);
 		}
 	}
-	
-	/*protected void touchedBy(Entity entity) {}
-	
-	public boolean use(Player player, int attackDir) {
-		return false;
-	}*/
-	/*
-	public void setMob(String newmob) {
-		this.mob = newmob;
-		
-		MobAi model = getMob(newmob, lvl);
-		
-		//color = model.col;
-		//if(model instanceof EnemyMob)
-			//color = Color.tint(color, -1, true);
-		col = color;
-	}*/
-	/*
-	public MobAi getMob(MobAi m, int lvl) {
-		String string = getClassName(m.getClass());
-		switch(string) {
-			case "Zombie": return (MobAi)new Zombie(lvl);
-			case "Slime": return (MobAi)new Slime(lvl);
-			case "Cow": return (MobAi)new Cow();
-			case "Sheep": return (MobAi)new Sheep();
-			case "Pig": return (MobAi)new Pig();
-			case "Creeper": return (MobAi)new Creeper(lvl);
-			case "Skeleton": return (MobAi)new Skeleton(lvl);
-			case "AirWizard": return (MobAi)new AirWizard(lvl>1);
-			case "Knight": return (MobAi)new Knight(lvl);
-			case "Snake": return (MobAi)new Snake(lvl);
-			default:
-				System.out.println("Attempted to spawn invalid mob: " + string);
-				return null; // fix: make a missing texture entity! maybe...
-		}
-	}*/
 	
 	public Furniture clone() {
 		return (Furniture) new Spawner(mob);

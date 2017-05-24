@@ -13,7 +13,7 @@ public class PlayerInvMenu extends InventoryMenu {
 	
 	private static Inventory addActiveItem(Player player) {
 		if (player.activeItem != null) { // If the player has an active item, then...
-			player.inventory.add(0, player.activeItem); // that active item will go into the inventory
+			if (!ModeMenu.creative || player.inventory.count(player.activeItem) == 0) player.inventory.add(0, player.activeItem); // that active item will go into the inventory
 			player.activeItem = null; // the player will not have an active item anymore.
 		}
 		return player.inventory;

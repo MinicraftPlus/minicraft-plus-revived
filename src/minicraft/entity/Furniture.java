@@ -56,18 +56,6 @@ public class Furniture extends Entity {
 	/** Draws the furniture on the screen. */
 	public void render(Screen screen) {
 		sprite.render(screen, x-8, y-8);
-		// renders each corner, which different lighting depending on the time of day.
-		/*col = col4;
-		if (Game.time == 0) col = col0;
-		if (Game.time == 1) col = col1;
-		if (Game.time == 2) col = col2;
-		if (Game.time == 3) col = col3;
-		*/
-		/*screen.render(x - 8, y - 8 - 4, sprite * 2 + 8 * 32, col, 0);
-		screen.render(x - 0, y - 8 - 4, sprite * 2 + 8 * 32 + 1, col, 0);
-		screen.render(x - 8, y - 0 - 4, sprite * 2 + 8 * 32 + 32, col, 0);
-		screen.render(x - 0, y - 0 - 4, sprite * 2 + 8 * 32 + 33, col, 0);
-		*/
 	}
 	
 	/** Determines if this entity can block others */
