@@ -135,6 +135,10 @@ public abstract class Tile {
 		return name == other.name;
 	}
 	
+	public boolean matches(int thisData, String otherTile) {
+		return name.equals(otherTile.split("_")[0]);
+	}
+	/*
 	public static boolean checkMatch(String tname1, String tname2) {
 		return tname1.equals(tname2);
 	}
@@ -146,7 +150,7 @@ public abstract class Tile {
 	}
 	public static boolean checkMatch(Tile t1, int d1, Tile t2, int d2) {
 		return t1.name == t2.name && d1 == d2 && t1.id == t2.id;
-	}
+	}*/
 	
 	public String getName(int data) {
 		return name;

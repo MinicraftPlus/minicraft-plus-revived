@@ -59,23 +59,22 @@ public class WoolTile extends Tile {
 					return true;
 				}
 			}
-			/*if (tool.type == ToolType.spade) {
-				if (player.payStamina(4 - tool.level)) {
-					level.setTile(xt, yt, Tiles.get("hole"));
-					level.add(
-							new ItemEntity(
-									Items.get("Wool"),
-									xt * 16 + random.nextInt(10) + 3,
-									yt * 16 + random.nextInt(10) + 3));
-					Sound.monsterHurt.play();
-					return true;
-				}
-			}*/
 		}
 		return false;
 	}
 
 	public boolean mayPass(Level level, int x, int y, Entity e) {
 		return e.canWool();
+	}
+	
+	public boolean matches(int thisData, String otherTile) {
+		if(!otherTile.contains("_"))
+			return name.equals(otherTile);
+		else {
+			String[] parts = otherTile.split("_");
+			String tname = parts[0];
+			int tdata = Integer.parseInt(parts[1]);
+			return name.equals(tname) && thisData == tdata;
+		}
 	}
 }
