@@ -49,7 +49,7 @@ public abstract class Mob extends Entity {
 		if(level == null) return true;
 		
 		if(tickTime % 2 == 0/* && !(this instanceof Player && ((Player)this).staminaRechargeDelay % 2 == 0)*/) {
-			if(isSwimming() || isWooling()) return true;
+			if(isSwimming() || isWooling() && !(this instanceof Player)) return true;
 		}
 		if (tickTime % walkTime == 0 && walkTime > 1) return true;
 		

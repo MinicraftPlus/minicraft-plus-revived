@@ -2,6 +2,7 @@
 
 -continue commeting code and renovating code
 -display current player score in score mode
+-reorder tools a bit in ToolType.java b/c I'm picky. Hoes should be first, at least. ;)
 
 Note to self: for more little bugs/ideas/concerns, search code for "TODO"
 -----------------------------------------------------------------------------------

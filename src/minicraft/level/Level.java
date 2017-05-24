@@ -502,9 +502,9 @@ public class Level {
 			setTile(x, y, Tiles.get(tilewithdata));
 			return;
 		}
-		int data = Integer.parseInt(tilewithdata.substring(tilewithdata.indexOf("_")+1));
 		String name = tilewithdata.substring(0, tilewithdata.indexOf("_"));
-		setTile(x, y, Tiles.get(name));
+		int data = Tiles.get(name).getData(tilewithdata.substring(name.length()+1));
+		setTile(x, y, Tiles.get(name), data);
 	}
 	public void setTile(int x, int y, Tile t) {
 		setTile(x, y, t, t.getDefaultData());

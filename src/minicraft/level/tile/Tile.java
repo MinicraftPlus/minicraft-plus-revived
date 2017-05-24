@@ -123,6 +123,14 @@ public abstract class Tile {
 		return connectsToWater || connectsToLava;
 	}
 	
+	public int getData(String data) {
+		try {
+			return Integer.parseInt(data);
+		} catch(NumberFormatException ex) {
+			return 0;
+		}
+	}
+	
 	public boolean matches(Tile other) {
 		return name == other.name;
 	}

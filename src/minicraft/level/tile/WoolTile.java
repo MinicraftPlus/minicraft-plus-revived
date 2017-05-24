@@ -61,8 +61,12 @@ public class WoolTile extends Tile {
 		return e.canWool();
 	}
 	
+	public int getData(String data) {
+		return Enum.valueOf(WoolColor.class, data.toUpperCase()).ordinal();
+	}
+	
 	public boolean matches(String woolColor, String otherTile) {
-		return matches(Enum.valueOf(WoolColor.class, woolColor.toUpperCase()).ordinal(), otherTile);
+		return matches(getData(woolColor), otherTile);
 	}
 	public boolean matches(int thisData, String otherTile) {
 		if(!otherTile.contains("_"))
