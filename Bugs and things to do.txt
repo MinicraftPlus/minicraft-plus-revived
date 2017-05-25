@@ -8,7 +8,7 @@ Note to self: for more little bugs/ideas/concerns, search code for "TODO"
 
 	####BUGS####
 ####
-Fire particles appear, but... they look totally wierd...
+Fire particles appear, but... they look totally weird...
 ####
 Sound effects don't always play when they should; mostly it seems when other sounds should be on at the same time.
 ####
