@@ -96,7 +96,7 @@ public class Screen {
 	/** Overlays the screen with pixels */
     public void overlay(Screen screen2, int xa, int ya) {
 		double tintFactor = 0;
-		if(Game.currentLevel > 3) {
+		if(Game.currentLevel >= 3) {
 			int transTime = Game.dayLength / 4;
 			double relTime = (Game.tickCount % transTime)*1.0 / transTime;
 			//System.out.println("relTime: " + relTime);
