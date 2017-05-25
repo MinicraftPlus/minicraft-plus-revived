@@ -270,7 +270,7 @@ public class Load {
 				}
 			}
 			
-			Level parent = l == Game.levels.length-1 ? null : Game.levels[l+1];
+			Level parent = l == Game.levels.length-2 ? null : l == Game.levels.length-1 ? Game.levels[0] : Game.levels[l+1];
 			Game.levels[l] = new Level(lvlw, lvlh, lvldepth, parent, false);
 			
 			Level curLevel = Game.levels[l];
@@ -465,6 +465,7 @@ public class Load {
 					
 					currentlevel = Integer.parseInt(info.get(info.size() - 1));
 					Game.levels[currentlevel].add(chest instanceof DeathChest ? (DeathChest)chest : chest instanceof DungeonChest ? (DungeonChest)chest : chest, x, y);
+					if (chest instanceof DungeonChest) Game.levels[currentlevel].chestcount++;
 				}
 				else if(newEntity instanceof Spawner) {
 					Spawner egg = new Spawner((MobAi)getEntity(info.get(2), player, Integer.parseInt(info.get(3))));
