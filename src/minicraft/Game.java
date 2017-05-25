@@ -481,6 +481,12 @@ public class Game extends Canvas implements Runnable {
 						int ty = player.y >> 4;
 						System.out.println("current tile: " + levels[currentLevel].getTile(tx, ty).name);
 					}
+					if(input.getKey("shift-u").clicked) {
+						levels[currentLevel].setTile(player.x>>4, player.y>>4, Tiles.get("Stairs Up"));
+					}
+					if(input.getKey("shift-j").clicked) {
+						levels[currentLevel].setTile(player.x>>4, player.y>>4, Tiles.get("Stairs Down"));
+					}
 				} // end debug only cond.
 			} // end "menu-null" conditional
 		} // end hasfocus conditional
