@@ -102,7 +102,7 @@ public class WonMenu extends Menu {
 		
 		w = Math.max(w, ml + 2);
 		w = Math.max(w, ("Final Score:" + finalscore).length() + 2);
-		w = Math.max(w, ("Press Enter to continue...").length() + 2);
+		w = Math.max(w, ("Press "+input.getMapping("select")+" to continue...").length() + 2);
 
 		renderFrame(screen, "", 1, 3, w, 20);
 		Font.draw("Game Over! (" + ModeMenu.time + ")", screen, 16, 32, Color.get(-1, 555));
@@ -161,6 +161,6 @@ public class WonMenu extends Menu {
 			Font.draw("Fail!", screen, 136, 136, Color.get(-1, 500));
 		}
 
-		Font.draw("Press Enter to continue...", screen, 16, 152, Color.get(-1, 333));
+		Font.draw("Press "+input.getMapping("select")+" to continue...", screen, 16, 152, Color.get(-1, 333));
 	}
 }

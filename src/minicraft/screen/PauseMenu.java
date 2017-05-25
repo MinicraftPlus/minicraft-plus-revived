@@ -69,8 +69,8 @@ public class PauseMenu extends SelectMenu {
 		if (selection == -1) { // still displaying main options menu.
 			super.render(screen); // render the main options menu.
 			Font.drawCentered("Paused", screen, 35, Color.get(-1, 550));
-			Font.drawCentered("Arrow Keys to Scroll", screen, 140, Color.get(-1, 333));
-			Font.drawCentered("Enter: Choose", screen, 150, Color.get(-1, 333));
+			Font.drawCentered(input.getMapping("up")+" and "+input.getMapping("down")+" to Scroll", screen, 140, Color.get(-1, 333));
+			Font.drawCentered(input.getMapping("select")+": Choose", screen, 150, Color.get(-1, 333));
 		} else {
 			ArrayList<String> confirmDialog = new ArrayList<String>();
 			
@@ -86,8 +86,8 @@ public class PauseMenu extends SelectMenu {
 				Font.drawCentered(confirmDialog.get(i), screen, 60+i*10, col); // draw it centered.
 			}
 			int ypos = 70 + confirmDialog.size()*10; // start 20 below the last element...
-			Font.drawCentered("Enter: Yes", screen, ypos, Color.get(-1, 555));
-			Font.drawCentered("Esc: No", screen, ypos+15, Color.get(-1, 555));
+			Font.drawCentered(input.getMapping("select")+": Yes", screen, ypos, Color.get(-1, 555));
+			Font.drawCentered(input.getMapping("exit")+": No", screen, ypos+15, Color.get(-1, 555));
 		}
 	}
 }

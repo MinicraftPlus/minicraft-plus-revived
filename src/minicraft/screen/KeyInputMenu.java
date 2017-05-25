@@ -65,8 +65,6 @@ public class KeyInputMenu extends ScrollingMenu {
 	}
 	
 	private void updateKeys(String[] keys) {
-		//options = new ArrayList<String>(keys.length);
-		//actionKeys = new String[keys.length];
 		for(int i = 0; i < keys.length; i++) {
 			String key = keys[i];
 			
@@ -117,10 +115,6 @@ public class KeyInputMenu extends ScrollingMenu {
 			};
 			for(int i = 0; i < lines.length; i++)
 				Font.drawCentered(lines[i], screen, screen.h-Font.textHeight()*(4-i), Color.get(0, 555));
-			//Font.drawParagraph(lines, screen, 0, screen.h-Font.textHeight()*4, true, 0, Color.get(0, 555));
-			//Font.drawCentered("Press Enter to change key binding", screen, screen.h-Font.textHeight()*3, Color.get(0, 555));
-			//Font.drawCentered("Press A to add key binding", screen, screen.h-Font.textHeight()*2, Color.get(0, 555));
-			//Font.drawCentered("Esc to Return to menu", screen, screen.h-Font.textHeight()*1, Color.get(0, 555));
 		}
 	}
 }

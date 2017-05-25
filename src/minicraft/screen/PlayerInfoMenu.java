@@ -74,6 +74,6 @@ public class PlayerInfoMenu extends Menu {
 			Font.draw("" + cStep, screen, (2 + 18) * 8, 10 * 8, Color.get(-1, 550));
 		}
 		Font.draw(" ----------------------------", screen, 1 * 8, 11 * 8, Color.get(-1, 540));
-		Font.draw("Enter:Exit", screen, 2 * 8, 13 * 8, Color.get(-1, 333));
+		Font.draw(input.getMapping("select")+":Exit", screen, 2 * 8, 13 * 8, Color.get(-1, 333));
 	}
 }

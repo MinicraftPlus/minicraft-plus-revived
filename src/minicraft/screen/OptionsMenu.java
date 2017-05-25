@@ -80,6 +80,6 @@ public class OptionsMenu extends Menu {
 			Font.draw((Player.skinon?"On":"Off"), screen, 180, screen.h - 50, (Player.skinon?onColor:offColor));
 		}
 
-		Font.draw("Press Esc to return", screen, 80, screen.h - 25, textColor);
+		Font.draw("Press "+input.getMapping("exit")+" to return", screen, 80, screen.h - 25, textColor);
 	}
 }

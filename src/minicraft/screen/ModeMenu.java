@@ -150,12 +150,12 @@ public class ModeMenu extends Menu {
 		
 		if(mode == 4) Font.drawCentered("<T>ime: " + time, screen, 95, Color.get(0, 555));
 		
-		Font.drawCentered("Press Enter to Start", screen, screen.h - 75, textCol);
+		Font.drawCentered("Press "+input.getMapping("select")+" to Start", screen, screen.h - 75, textCol);
 		
 		Font.draw("Loading...", screen, 120, screen.h - 105, (loading == 0 ? black : color));
 		
 		Font.drawCentered("Press Left and Right", screen, screen.h - 150, textCol);
-		Font.drawCentered("Press Esc to Return", screen, screen.h - 55, textCol);
+		Font.drawCentered("Press "+input.getMapping("exit")+" to Return", screen, screen.h - 55, textCol);
 		Font.drawCentered("Press Z for world options", screen, screen.h - 35, textCol);
 	}
 }

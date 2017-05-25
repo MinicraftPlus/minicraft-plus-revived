@@ -312,7 +312,7 @@ public class WorldSelectMenu extends Menu {
 				}
 			}
 			
-			//Font.drawCentered("Arrow keys to move", screen, screen.h - 170, controlCol);
+			//Font.drawCentered(input.getMapping("up")+" and "+input.getMapping("down")+" to move", screen, screen.h - 170, controlCol);
 			Font.drawCentered(input.getMapping("select")+" to confirm", screen, screen.h - 60, controlCol);
 			Font.drawCentered(input.getMapping("exit")+" to return", screen, screen.h - 40, controlCol);
 		}

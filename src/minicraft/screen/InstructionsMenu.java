@@ -24,7 +24,7 @@ public class InstructionsMenu extends Menu {
 		
 		Font.drawCentered("HOW TO PLAY", screen, 1 * 8, Color.get(0, 555)); //draws Title text
 		Font.drawParagraph(
-		  "Move your character with the arrow keys. Press C to attack and X to open the inventory, and to use items. Select an item in the inventory to equip it.\n\nKill the air wizard to win the game!",
+		  "With the defualt controls...\nMove your character with arrow keys or wsad. Press C to attack and X to open the inventory, and to use items. Select an item in the inventory to equip it.\n\nKill the air wizard to win the game!",
 		  screen, 4, 3 * 8, true, 1, Color.get(0, 333));
 	}
 }
