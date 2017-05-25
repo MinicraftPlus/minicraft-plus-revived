@@ -327,7 +327,7 @@ public class Level {
 				  		inv.tryAdd(7/chance, new Lantern(Lantern.Type.NORM));
 				  		inv.tryAdd(3/chance, Items.get("bread"), 2);
 				  		inv.tryAdd(4/chance, Items.get("bread"), 3);
-				  		inv.tryAdd(7/chance, Items.get("l.armor"), 1);
+				  		inv.tryAdd(7/chance, Items.get("Leather Armor"), 1);
 				  		inv.tryAdd(50/chance, Items.get("Gold Apple"), 1);
 				  		inv.tryAdd(3/chance, Items.get("Lapis"), 2);
 				  		inv.tryAdd(4/chance, Items.get("glass"), 2);
@@ -338,7 +338,7 @@ public class Level {
 				  		inv.tryAdd(16/chance, Items.get("haste potion"), 1);
 				  		inv.tryAdd(14/chance, Items.get("light potion"), 1);
 				  		inv.tryAdd(14/chance, Items.get("speed potion"), 1);
-				  		inv.tryAdd(16/chance, Items.get("i.armor"), 1);
+				  		inv.tryAdd(16/chance, Items.get("Iron Armor"), 1);
 				  		inv.tryAdd(5/chance, Items.get("Stone Brick"), 4);
 				  		inv.tryAdd(5/chance, Items.get("Stone Brick"), 6);
 				  		inv.tryAdd(4/chance, Items.get("string"), 3);

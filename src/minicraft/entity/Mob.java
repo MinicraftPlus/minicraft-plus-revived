@@ -94,38 +94,6 @@ public abstract class Mob extends Entity {
 		if(level == null) return false;
 		//Tile tile = level.getTile(x >> 4, y >> 4);
 		return level.isLight(x>>4, y>>4);
-		
-		/*return tile == Tiles.get("lightgrass")
-				|| tile == Tiles.get("lightsand")
-				|| tile == Tiles.get("lightwater")
-				|| tile == Tiles.get("lightdirt")
-				|| tile == Tiles.get("lightflower")
-				|| tile == Tiles.get("lightstairsDown")
-				|| tile == Tiles.get("lightstairsUp")
-				|| tile == Tiles.get("lightplank")
-				|| tile == Tiles.get("lightsbrick")
-				|| tile == Tiles.get("lwdo")
-				|| tile == Tiles.get("lsdo")
-				|| tile == Tiles.get("lighthole")
-				|| tile == Tiles.get("lightwool")
-				|| tile == Tiles.get("lightrwool")
-				|| tile == Tiles.get("lightbwool")
-				|| tile == Tiles.get("lightgwool")
-				|| tile == Tiles.get("lightywool")
-				|| tile == Tiles.get("lightblwool")
-				|| tile == Tiles.get("lightts")
-				|| tile == Tiles.get("lightcs")
-				|| tile == Tiles.get("torchgrass")
-				|| tile == Tiles.get("torchsand")
-				|| tile == Tiles.get("torchdirt")
-				|| tile == Tiles.get("torchplank")
-				|| tile == Tiles.get("torchsbrick")
-				|| tile == Tiles.get("Torch Wool")
-				|| tile == Tiles.get("Torch Wool_red")
-				|| tile == Tiles.get("Torch Wool_blue")
-				|| tile == Tiles.get("Torch Wool_green")
-				|| tile == Tiles.get("Torch Wool_yellow")
-				|| tile == Tiles.get("Torch Wool_black");*/
 	}
 
 	protected boolean isSwimming() {

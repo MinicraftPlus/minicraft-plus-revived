@@ -40,7 +40,6 @@ public class Recipes {
 		loomRecipes.add(new Recipe("black wool_1", "Wool_1", "coal_1"));
 		loomRecipes.add(new Recipe("Bed_1", "Wood_5", "Wool_3"));
 		
-		loomRecipes.add(new Recipe("red clothes_1", "cloth_5", "rose_1"));
 		loomRecipes.add(new Recipe("blue clothes_1", "cloth_5", "Lapis_1"));
 		loomRecipes.add(new Recipe("green clothes_1", "cloth_5", "Cactus_1"));
 		loomRecipes.add(new Recipe("yellow clothes_1", "cloth_5", "Flower_1"));
@@ -64,13 +63,13 @@ public class Recipes {
 		workbenchRecipes.add(new Recipe("Rock Bow_1", "Wood_5", "Stone_5", "string_2"));
 		
 		workbenchRecipes.add(new Recipe("arrow_3", "Wood_2", "Stone_2"));
-		workbenchRecipes.add(new Recipe("l.armor_1", "leather_10"));
-		workbenchRecipes.add(new Recipe("s.armor_1", "scale_15"));
+		workbenchRecipes.add(new Recipe("Leather Armor_1", "leather_10"));
+		workbenchRecipes.add(new Recipe("Snake Armor_1", "scale_15"));
 		
-		loomRecipes.add(new Recipe("l.armor_1", "leather_10"));
+		loomRecipes.add(new Recipe("Leather Armor_1", "leather_10"));
 		
-		anvilRecipes.add(new Recipe("i.armor_1", "iron_10"));
-		anvilRecipes.add(new Recipe("g.armor_1", "gold_10"));
+		anvilRecipes.add(new Recipe("Iron Armor_1", "iron_10"));
+		anvilRecipes.add(new Recipe("Gold Armor_1", "gold_10"));
 		anvilRecipes.add(new Recipe("Gem Armor_1", "gem_65"));
 		anvilRecipes.add(new Recipe("Empty Bucket_1", "iron_5"));
 		anvilRecipes.add(new Recipe("Iron Lantern_1", "iron_8", "slime_5", "glass_4"));
@@ -106,7 +105,7 @@ public class Recipes {
 		ovenRecipes.add(new Recipe("cooked fish_1", "raw fish_1", "coal_1"));
 		ovenRecipes.add(new Recipe("bread_1", "wheat_4"));
 		
-		enchantRecipes.add(new Recipe("Gold Apple_1", "apple_1", "gold_10"));
+		enchantRecipes.add(new Recipe("Gold Apple_1", "apple_1", "gold_8"));
 		enchantRecipes.add(new Recipe("Grass Seeds_1", "seeds_1", "Flower_2"));
 		enchantRecipes.add(new Recipe("potion_1", "glass_1", "Lapis_3"));
 		enchantRecipes.add(new Recipe("speed potion_1", "potion_1", "Cactus_5"));
@@ -116,6 +115,7 @@ public class Recipes {
 		enchantRecipes.add(new Recipe("lava potion_1", "potion_1", "Lava Bucket_1"));
 		enchantRecipes.add(new Recipe("energy potion_1", "potion_1", "gem_25"));
 		enchantRecipes.add(new Recipe("regen potion_1", "potion_1", "Gold Apple_1"));
+		enchantRecipes.add(new Recipe("Health Potion_1", "potion_1", "GunPowder_2", "Leather Armor_1"));
 	}
 
 }

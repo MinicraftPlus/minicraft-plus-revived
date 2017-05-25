@@ -363,9 +363,14 @@ public class Load {
 	}
 	
 	private String subOldName(String name) {
-		name = name.replace("Hatchet", "Axe").replace("Pick", "Pickaxe").replace("Pickaxeaxe", "Pickaxe").replace("Spade", "Shovel").replace("Pow glove", "Power Glove").replace("II", "").replace("W.Bucket", "Water Bucket").replace("L.Bucket", "Lava Bucket").replace("G.Apple", "Gold Apple").replace("St.", "Stone").replace("Ob.", "Obsidian");
-		if(name.equals("Bucket"))
-			name = "Empty Bucket";
+		if(worldVer.compareTo(new Version("1.9.4-dev4")) < 0) {
+			name = name.replace("Hatchet", "Axe").replace("Pick", "Pickaxe").replace("Pickaxeaxe", "Pickaxe").replace("Spade", "Shovel").replace("Pow glove", "Power Glove").replace("II", "").replace("W.Bucket", "Water Bucket").replace("L.Bucket", "Lava Bucket").replace("G.Apple", "Gold Apple").replace("St.", "Stone").replace("Ob.", "Obsidian");
+			if(name.equals("Bucket"))
+				name = "Empty Bucket";
+		}
+		
+		name = name.replace("I.Armor", "Iron Armor").replace("S.Armor", "Snake Armor").replace("L.Armor", "Leather Armor").replace("G.Armor", "Gold Armor");
+		
 		return name;
 	}
 	
@@ -376,7 +381,7 @@ public class Load {
 		for(int i = 0; i < data.size(); i++) {
 			String item = data.get(i);
 			
-			if(worldVer.compareTo(new Version("1.9.4-dev4")) < 0) {
+			if(worldVer.compareTo(new Version("1.9.4")) < 0) {
 				item = subOldName(item);
 			}
 			
@@ -445,7 +450,7 @@ public class Load {
 						String itemData = chestInfo.get(idx);
 						if (itemData.contains(";")) {
 							String[] aitemData = (itemData + ";1").split(";"); // this appends ";1" to the end, meaning one item, to everything; but if it was already there, then it becomes the 3rd element in the list, which is ignored.
-							if(worldVer.compareTo(new Version("1.9.4-dev4")) < 0)
+							if(worldVer.compareTo(new Version("1.9.4")) < 0)
 								aitemData[0] = subOldName(aitemData[0]);
 							StackableItem stack = (StackableItem)Items.get(aitemData[0]);
 							stack.count = Integer.parseInt(aitemData[1]);

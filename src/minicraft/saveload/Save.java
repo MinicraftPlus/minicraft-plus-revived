@@ -8,6 +8,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import minicraft.Game;
+import minicraft.entity.Arrow;
 import minicraft.entity.AirWizard;
 import minicraft.entity.Chest;
 import minicraft.entity.DeathChest;
@@ -231,7 +232,7 @@ public class Save {
 				String name = e.getClass().getName().replace("minicraft.entity.", "");
 				String extradata = "";
 				
-				if(e instanceof ItemEntity || e instanceof Particle || e instanceof Spark) continue; // don't even write ItemEntities or particle effects; Spark... will probably is saved, eventually; it presents an unfair cheat to remove the sparks by reloading the game.
+				if(e instanceof ItemEntity || e instanceof Particle || e instanceof Spark || e instanceof Arrow) continue; // don't even write ItemEntities or particle effects; Spark... will probably is saved, eventually; it presents an unfair cheat to remove the sparks by reloading the game.
 				
 				if(e instanceof Mob) {
 					Mob m = (Mob)e;

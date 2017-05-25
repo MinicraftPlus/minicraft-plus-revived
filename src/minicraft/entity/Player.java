@@ -432,7 +432,7 @@ public class Player extends Mob {
 		
 		if (fcatch < 10) level.dropItem(x, y, Items.get("raw fish"));
 		else if (fcatch < 15) level.dropItem(x, y, Items.get("slime"));
-		else if (fcatch == 15) level.dropItem(x, y, Items.get("l.armor"));
+		else if (fcatch == 15) level.dropItem(x, y, Items.get("Leather Armor"));
 		else if (fcatch == 42 && random.nextInt(10) == 0) System.out.println("FISHNORRIS got away... just kidding, FISHNORRIS doesn't get away from you, you get away from FISHNORRIS...");
 	}
 	
