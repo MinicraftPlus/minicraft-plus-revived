@@ -20,18 +20,25 @@ import minicraft.screen.ModeMenu;
 /// this is the typical stone you see underground and on the surface, that gives coal.
 
 public class RockTile extends Tile {
-	private static ConnectorSprite sprite = new ConnectorSprite(RockTile.class, new Sprite(4, 0, 3, 3, Color.get(111, 444, 555, 321), 3), new Sprite(7, 0, 2, 2, Color.get(111, 444, 555, 321), 3), Sprite.dots(Color.get(444, 444, 333, 333)));
+	private ConnectorSprite sprite = new ConnectorSprite(RockTile.class, new Sprite(4, 0, 3, 3, Color.get(111, 444, 555, 321), 3), new Sprite(7, 0, 2, 2, Color.get(111, 444, 555, 321), 3), Sprite.dots(Color.get(444, 444, 333, 333)));
 	
 	private int coallvl = 1;
 	
 	protected RockTile(String name) {
-		super(name, sprite);
+		super(name, (ConnectorSprite)null);
+		csprite = sprite;
 	}
-
+	
+	public void render(Screen screen, Level level, int x, int y) {
+		sprite.sides.color = Color.get(111, 444, 555, DirtTile.dCol(level.depth));
+		sprite.sparse.color = Color.get(111, 444, 555, DirtTile.dCol(level.depth));
+		sprite.render(screen, level, x, y);
+	}
+	
 	public boolean mayPass(Level level, int x, int y, Entity e) {
 		return false;
 	}
-
+	
 	public void hurt(Level level, int x, int y, Mob source, int dmg, int attackDir) {
 		hurt(level, x, y, 1);
 	}

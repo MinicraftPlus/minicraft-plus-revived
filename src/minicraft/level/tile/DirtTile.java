@@ -2,6 +2,7 @@ package minicraft.level.tile;
 
 import minicraft.entity.Player;
 import minicraft.gfx.Color;
+import minicraft.gfx.Screen;
 import minicraft.gfx.Sprite;
 import minicraft.item.Item;
 import minicraft.item.Items;
@@ -30,6 +31,10 @@ public class DirtTile extends Tile {
 	private static int getColor(int depth) {
 		int dcol = dCol(depth);
 		return Color.get(dcol, dcol, dcol-111, dcol-111);
+	}
+	
+	public void render(Screen screen, Level level, int x, int y) {
+		sprite.render(screen, x*16, y*16, getColor(level.depth));
 	}
 	
 	public boolean interact(Level level, int xt, int yt, Player player, Item item, int attackDir) {

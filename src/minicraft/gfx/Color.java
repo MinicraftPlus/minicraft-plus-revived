@@ -114,7 +114,7 @@ public class Color {
 			d = unGet(d);
 		}
 		
-		return new int[] {a, b, c, d};
+		return new int[] {d, c, b, a};
 		/// the colors have been seperated. Now they must be converted from 216 scale to 0-5 scale.
 		/*for(int i = 0; i < cols.length; i++) {
 			cols[i] = unGetRGB(cols[i]);
