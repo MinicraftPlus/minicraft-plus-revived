@@ -20,18 +20,12 @@ LegacyLoad class is becoming annoying to handle; it should be reimplemented so t
 IDEA: Let's make an "Update.java" file, maybe multiple, that handle different versions. However, instead of setting values in the rest of the game files, it adds them to a list, which will then be saved as the new file. Then, it's loaded again.
 Maybe not, though... Loading takes long enough already...
 ####
-Dungeon Level is parented wrong, though it doesn't seem to harm anything.
-####
 -----------------------------------------------------------------------------------
 
 	****IDEAS(that should probably be implemented)****
 ****
 
 Add world backup option to world load menu; it could be complicated, since if I add a world backup option, I would have to add a world restore option, too...
-
-****
-
-Update other menus' displayed key controls to always show the current key bindings.
 
 ****
 
