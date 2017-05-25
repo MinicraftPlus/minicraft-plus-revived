@@ -4,6 +4,7 @@ import minicraft.entity.Entity;
 import minicraft.entity.Mob;
 import minicraft.entity.Player;
 import minicraft.gfx.Color;
+import minicraft.gfx.Screen;
 import minicraft.gfx.Sprite;
 import minicraft.item.Item;
 import minicraft.item.Items;
@@ -38,6 +39,12 @@ public class DoorTile extends Tile {
 		sprite = closedSprite;
 	}
 	
+	public void render(Screen screen, Level level, int x, int y) {
+		boolean closed = level.getData(x, y) == 0;
+		Sprite curSprite = closed?closedSprite:openSprite;
+		curSprite.render(screen, x*16, y*16);
+	}
+	
 	public boolean interact(Level level, int xt, int yt, Player player, Item item, int attackDir) {
 		if (item instanceof ToolItem) {
 			ToolItem tool = (ToolItem) item;
@@ -57,11 +64,11 @@ public class DoorTile extends Tile {
 		if(source instanceof Player) {
 			boolean closed = level.getData(x, y) == 0;
 			level.setData(x, y, closed?1:0);
-			sprite = closed?openSprite:closedSprite;
 		}
 	}
 
 	public boolean mayPass(Level level, int x, int y, Entity e) {
-		return false;
+		boolean closed = level.getData(x, y) == 0;
+		return !closed;
 	}
 }

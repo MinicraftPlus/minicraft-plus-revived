@@ -21,9 +21,9 @@ public class DirtTile extends Tile {
 
 	protected static int dCol(int depth) {
 		switch(depth) {
-			case 1: return 444; // no dirt in sky anyway.
+			case 1: return 444; // sky.
 			case 0: return 321; // surface.
-			case -4: return 222; // no dirt in dungeons anyway.
+			case -4: return 203; // dungeons.
 			default: return 222; // caves.
 		}
 	}
