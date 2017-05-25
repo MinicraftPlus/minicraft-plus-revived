@@ -12,8 +12,6 @@ import minicraft.level.tile.Tile;
 import minicraft.level.tile.Tiles;
 import minicraft.level.tile.WoolTile;
 
-/// this is meant to replace PlantableItem/Item, I think.
-
 public class TileItem extends StackableItem {
 	
 	protected static ArrayList<Item> getAllInstances() {

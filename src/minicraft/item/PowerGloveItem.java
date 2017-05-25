@@ -15,7 +15,7 @@ public class PowerGloveItem extends Item {
 		return items;
 	}
 	
-	public PowerGloveItem() {
+	private PowerGloveItem() {
 		super("Power Glove", new Sprite(7, 4, Color.get(-1, 100, 320, 430)));
 	}
 	

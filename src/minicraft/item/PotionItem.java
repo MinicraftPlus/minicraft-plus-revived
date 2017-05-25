@@ -20,25 +20,11 @@ public class PotionItem extends StackableItem {
 	
 	public PotionType type;
 	
-	public PotionItem(PotionType type) { this(type, 1); }
-	public PotionItem(PotionType type, int count) {
+	private PotionItem(PotionType type) { this(type, 1); }
+	private PotionItem(PotionType type, int count) {
 		super(type.name, new Sprite(27, 4, Color.get(-1, 333, 310, type.dispColor)), count);
 		this.type = type;
 	}
-	
-	//private static HashMap<String, PotionItem> potions = new HashMap<String, PotionItem>();
-	
-	//public String type;
-	//public int duration, color;
-	
-	/*public PotionItem(String name, int sprite, int bottleColor, int duration, int dispColor) {
-		super(name+(name.equals("Potion")?"":" Potion"), sprite, bottleColor); //color is the bottle color.
-		type = name;
-		this.duration = duration;
-		color = dispColor; // color is the outline color when shown in the "potionEffects" display.
-		
-		potions.put(name, this);
-	}*/
 	
 	// the return value is used to determine if the potion was used, which means being discarded.
 	public boolean interactOn(Tile tile, Level level, int xt, int yt, Player player, int attackDir) {

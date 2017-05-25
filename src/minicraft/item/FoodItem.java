@@ -29,8 +29,8 @@ public class FoodItem extends StackableItem {
 	private int heal; // the amount of hunger the food "satisfies" you by.
 	private int staminaCost; // the amount of stamina it costs to consume the food.
 	
-	public FoodItem(String name, Sprite sprite, int heal) { this(name, sprite, 1, heal); }
-	public FoodItem(String name, Sprite sprite, int count, int heal) {
+	private FoodItem(String name, Sprite sprite, int heal) { this(name, sprite, 1, heal); }
+	private FoodItem(String name, Sprite sprite, int count, int heal) {
 		super(name, sprite, count);
 		this.heal = heal;
 		staminaCost = 5;
@@ -38,17 +38,13 @@ public class FoodItem extends StackableItem {
 	
 	/** What happens when the player uses the item on a tile */
 	public boolean interactOn(Tile tile, Level level, int xt, int yt, Player player, int attackDir) {
-		if (player.hunger < 10) { // if the player has hunger to fill
-			if (player.payStamina(staminaCost)) { // if the stamina payment was successful...
-				player.hunger += heal; // restore the hunger
-				if (player.hunger > 10) { // make sure the hunger doesn't go above ten.
-					player.hunger = 10;
-					return true;
-				} else {
-					return true;
-				}
+		if (count > 0 && player.hunger < 10 && player.payStamina(staminaCost)) { // if the player has hunger to fill, and stamina to pay...
+			player.hunger += heal; // restore the hunger
+			count--; // as this is a StackableItem, lower the count by one, since it's being eaten.
+			if (player.hunger > 10) { // make sure the hunger doesn't go above ten.
+				player.hunger = 10;
 			}
-			return false;
+			return true;
 		}
 		return false;
 	}

@@ -23,36 +23,6 @@ public class BookItem extends Item {
 		super(title, new Sprite(14, 4, color));
 		this.book = book;
 	}
-	/*
-	public int getColor() {
-		return Color.get(-1, 200, 531, 430);
-	}
-
-	public int getSprite() {
-		return 14 + 4 * 32;
-	}
-	*//*
-	public void renderIcon(Screen screen, int x, int y) {
-		screen.render(x, y, getSprite(), getColor(), 0);
-	}
-	
-	public void renderInventory(Screen screen, int x, int y) {
-		screen.render(x, y, getSprite(), getColor(), 0);
-		Font.draw(name, screen, x + 8, y, Color.get(-1, 555));
-	}
-	
-	public String getName() {
-		return "Book";
-	}
-	*/
-	
-	/* I've decided that books shouldn't be stackable.
-	public boolean matches(Item other) {
-		if(other instanceof BookItem) {
-			return Arrays.deepEquals(pages, other.pages) && title.equals(other.title);
-		}
-		return false;
-	}*/
 	
 	public boolean interactOn(Tile tile, Level level, int xt, int yt, Player player, int attackDir) {
 		player.game.setMenu(new BookMenu(book));

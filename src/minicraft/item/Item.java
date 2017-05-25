@@ -53,11 +53,6 @@ public abstract class Item implements ListItem {
 		return false;
 	}
 	
-	/** Gets the name of the item */
-	/*public String getName() {
-		return "No-Name Item";
-	}*/
-	
 	/** Sees if an item matches another item */
 	public boolean matches(Item item) {
 		return item.getClass().equals(getClass()) && item.name.equals(name);

@@ -44,22 +44,14 @@ public class StackableItem extends Item {
 	public int count;
 	///public int maxCount; // TODO I want to implement this later.
 	
-	//public int level = 0;
-	//public int amount = 1; // The amount of items
-	
-	public StackableItem(String name, Sprite sprite) {
+	protected StackableItem(String name, Sprite sprite) {
 		super(name, sprite);
 		count = 1;
 	}
-	public StackableItem(String name, Sprite sprite, int count) {
+	protected StackableItem(String name, Sprite sprite, int count) {
 		this(name, sprite);
 		this.count = count;
 	}
-	/*
-	public StackableItem addamount(int amount) {
-		this.amount = amount;
-		return this;
-	}*/
 	
 	public boolean matches(Item other) {
 		return super.matches(other) && other instanceof StackableItem;
@@ -69,7 +61,7 @@ public class StackableItem extends Item {
 	public void renderInventory(Screen screen, int x, int y) { renderInventory(screen, x, y, true); }
 	public void renderInventory(Screen screen, int x, int y, boolean ininv) {
 		sprite.render(screen, x, y);//screen.render(x, y, item.sprite, item.color, 0); // renders the icon
-		//String name = item.name; // draws the name of the item
+		
 		if(name.length() > 11 && !ininv) { // only draw part of the name if it's too long to the black bar. (not in the inventory)
 			Font.draw(name.substring(0, 11), screen, x + 32, y, Color.get(-1, 555));
 		} else {
@@ -82,20 +74,6 @@ public class StackableItem extends Item {
 		}
 
 		Font.draw(""+cc, screen, x + 8, y, Color.get(-1, 444)); // draws the item count
-	}
-	
-	/*public String getName() {
-		return name;
-	}*/
-	
-	/** What happens when you try to use this item on a tile. */
-	public boolean interactOn(Tile tile, Level level, int xt, int yt, Player player, int attackDir) {
-		/*if (interactOn(tile, level, xt, yt, player, attackDir)) { // Calls the item's 'interactOn()' method as a check
-			if (!ModeMenu.creative)
-				count--; // interaction was successful, meaning the item was used; so remove it.
-			return true;
-		}*/
-		return false;
 	}
 	
 	/** Called to determine if this item should be removed from an inventory. */

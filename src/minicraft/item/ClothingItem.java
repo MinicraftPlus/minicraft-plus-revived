@@ -27,8 +27,8 @@ public class ClothingItem extends StackableItem {
 	
 	private int playerCol;
 	
-	public ClothingItem(String name, int color, int pcol) { this(name, 1, color, pcol); }
-	public ClothingItem(String name, int count, int color, int pcol) {
+	private ClothingItem(String name, int color, int pcol) { this(name, 1, color, pcol); }
+	private ClothingItem(String name, int count, int color, int pcol) {
 		super(name, new Sprite(6, 12, color), count);
 		playerCol = pcol;
 	}

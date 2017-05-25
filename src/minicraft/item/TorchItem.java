@@ -16,8 +16,8 @@ public class TorchItem extends TileItem {
 		return items;
 	}
 	
-	public TorchItem() { this(1); }
-	public TorchItem(int count) {
+	private TorchItem() { this(1); }
+	private TorchItem(int count) {
 		super("Torch", (new Sprite(18, 4, Color.get(-1, 500, 520, 320))), count, "", "dirt", "Wood Planks", "Stone Bricks", "Wool", "grass", "sand");
 	}
 	

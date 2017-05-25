@@ -54,10 +54,6 @@ public class FurnitureItem extends Item {
 		this.furniture = furniture; // Assigns the furniture to the item
 		placed = false;
 	}
-	/*
-	public String getName() {
-		return furniture.name;
-	}*/
 	
 	/** Determines if you can attack enemies with furniture (you can't) */
 	public boolean canAttack() {
