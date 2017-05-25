@@ -17,7 +17,7 @@ public enum PotionType {
 	Swim (3, 4800),
 	Energy (510, 8400),
 	Regen (504, 1800),
-	Health (501, 1) {
+	Health (501, 0) {
 		public boolean toggleEffect(Player player, boolean addEffect) {
 			if(addEffect) player.heal(5);
 			return true;

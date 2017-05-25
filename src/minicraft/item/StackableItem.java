@@ -8,6 +8,7 @@ import minicraft.gfx.Screen;
 import minicraft.gfx.Sprite;
 import minicraft.level.Level;
 import minicraft.level.tile.Tile;
+import minicraft.screen.ModeMenu;
 
 // some items are direct instances of this class; those instances are the true "items", like stone, wood, wheat, or coal; you can't do anything with them besides use them to make something else.
 
@@ -74,6 +75,13 @@ public class StackableItem extends Item {
 		}
 
 		Font.draw(""+cc, screen, x + 8, y, Color.get(-1, 444)); // draws the item count
+	}
+	
+	/// this is used by (most) subclasses, to standardize the count decrement behavior. This is not the normal interactOn method.
+	protected boolean interactOn(boolean subClassSuccess) {
+		if(subClassSuccess && !ModeMenu.creative)
+			count--;
+		return subClassSuccess;
 	}
 	
 	/** Called to determine if this item should be removed from an inventory. */

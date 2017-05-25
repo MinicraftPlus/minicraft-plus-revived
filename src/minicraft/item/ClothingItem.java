@@ -39,7 +39,7 @@ public class ClothingItem extends StackableItem {
 			return false;
 		} else {
 			player.shirtColor = playerCol;
-			return true;
+			return super.interactOn(true);
 		}
 	}
 	

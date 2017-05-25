@@ -34,12 +34,14 @@ public class ArmorItem extends StackableItem {
 	}
 
 	public boolean interactOn(Tile tile, Level level, int xt, int yt, Player player, int attackDir) {
+		boolean success = false;
 		if (player.curArmor == null && player.payStamina(staminaCost)) {
 			player.curArmor = this; // set the current armor being worn to this.
 			player.armor = ((Double)(armor/10.0*player.maxArmor)).intValue(); // armor is how many hits are left
-			return true;
+			success = true;
 		}
-		return false;
+		
+		return super.interactOn(success);
 	}
 	
 	public ArmorItem clone() {

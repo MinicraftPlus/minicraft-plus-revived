@@ -42,62 +42,41 @@ public class BucketItem extends StackableItem {
 		return null;
 	}
 	
-	public Fill filling;
+	private Fill filling;
 	
 	private BucketItem(Fill fill) { this(fill, 1); }
 	private BucketItem(Fill fill, int count) {
 		super(fill.name() + " Bucket", new Sprite(21, 4, Color.get(-1, 222, fill.innerColor, 555)), count);
 		this.filling = fill;
 	}
-	/*
-	public int getSprite() {
-		return 21 + 4 * 32;
-	}
 	
-	public void renderIcon(Screen screen, int x, int y) {
-		screen.render(x, y, getSprite(), getColor(), 0);
-	}
-	
-	public void renderInventory(Screen screen, int x, int y) {
-		screen.render(x, y, getSprite(), getColor(), 0);
-		Font.draw(name, screen, x + 8, y, Color.get(-1, 555));
-	}
-	
-	public String getName() {
-		if(contained == null) return "Bucket";
-		
-		String className = contained.getClass().getName();
-		className = className.substring(className.lastIndexOf("."), className.lastIndexOf("Tile"));
-		return className + " Bucket";
-	}
-	*/
 	public boolean interactOn(Tile tile, Level level, int xt, int yt, Player player, int attackDir) {
 		Fill fill = getFilling(tile);
 		if(fill == null) return false;
+		boolean success = false;
 		if(fill == Fill.Empty && filling != Fill.Empty) {
 			level.setTile(xt, yt, filling.contained);
-			if(!ModeMenu.creative) player.activeItem = new BucketItem(Fill.Empty);
+			if(!ModeMenu.creative) player.activeItem = editBucket(player, Fill.Empty);
 			return true;
 		}
 		else if(filling == Fill.Empty) {
 			level.setTile(xt, yt, Tiles.get("hole"));
-			if(!ModeMenu.creative) player.activeItem = new BucketItem(fill);
+			if(!ModeMenu.creative) player.activeItem = editBucket(player, fill);
 			return true;
 		}
 		
 		return false;
-		/*
-		if (tile == Tiles.get("water")) {
-			level.setTile(xt, yt, Tiles.get("hole"));
-			item = (new BucketItem());
-		}
-		if (tile == Tiles.get("lava")) {
-			level.setTile(xt, yt, Tiles.get("hole"));
-			item = (new BucketItem());
-		}*/
+	}
+	
+	/** This method exists due to the fact that buckets are stackable, but only one should be changed at one time. */
+	private BucketItem editBucket(Player player, Fill newFill) {
+		if (count == 0) return null; // this honestly should never happen...
+		if (count == 1) return new BucketItem(newFill);
 		
-		//if(ModeMenu.creative) item = this;
-		//player.activeItem = item;
+		// this item object is a stack of buckets.
+		count--;
+		player.inventory.add(new BucketItem(newFill));
+		return this;
 	}
 	
 	public boolean matches(Item other) {
@@ -105,7 +84,6 @@ public class BucketItem extends StackableItem {
 	}
 	
 	public BucketItem clone() {
-		//System.out.println("fill " + fill);
 		return new BucketItem(filling, count);
 	}
 }

@@ -38,15 +38,16 @@ public class FoodItem extends StackableItem {
 	
 	/** What happens when the player uses the item on a tile */
 	public boolean interactOn(Tile tile, Level level, int xt, int yt, Player player, int attackDir) {
+		boolean success = false;
 		if (count > 0 && player.hunger < 10 && player.payStamina(staminaCost)) { // if the player has hunger to fill, and stamina to pay...
 			player.hunger += heal; // restore the hunger
-			count--; // as this is a StackableItem, lower the count by one, since it's being eaten.
 			if (player.hunger > 10) { // make sure the hunger doesn't go above ten.
 				player.hunger = 10;
 			}
-			return true;
+			success = true;
 		}
-		return false;
+		
+		return super.interactOn(success);
 	}
 	
 	public FoodItem clone() {

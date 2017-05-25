@@ -28,23 +28,23 @@ public class PotionItem extends StackableItem {
 	
 	// the return value is used to determine if the potion was used, which means being discarded.
 	public boolean interactOn(Tile tile, Level level, int xt, int yt, Player player, int attackDir) {
-		return applyPotion(player, type, true);
+		return super.interactOn(applyPotion(player, type, true));
 	}
 	
-	public static boolean applyPotion(Player player, PotionType type, boolean addEffect) {
-		return applyPotion(player, type, addEffect?type.duration:0);
+	public static boolean applyPotion(Player player, PotionType type, int time) {
+		boolean result = applyPotion(player, type, time > 0);
+		if(result) player.potioneffects.put(type, time);
+		return result;
 	}
 	/// this method is seperate from the above method b/c this is called sepeately by Load.java.
-	public static boolean applyPotion(Player player, PotionType type, int time) {
+	public static boolean applyPotion(Player player, PotionType type, boolean addEffect) {
 		if(type == PotionType.None) return false; // regular potions don't do anything.
-		
-		boolean addEffect = time > 0;
 		
 		if(player.potioneffects.containsKey(type) != addEffect) { // if hasEffect, and is disabling, or doesn't have effect, and is enabling...
 			type.toggleEffect(player, addEffect);
 		}
 		
-		if(addEffect) player.potioneffects.put(type, type.duration); // add it
+		if(addEffect && type.duration > 0) player.potioneffects.put(type, type.duration); // add it
 		else player.potioneffects.remove(type);
 		
 		return true;
