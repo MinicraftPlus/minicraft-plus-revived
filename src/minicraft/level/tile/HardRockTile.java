@@ -6,6 +6,7 @@ import minicraft.entity.Mob;
 import minicraft.entity.Player;
 import minicraft.entity.particle.SmashParticle;
 import minicraft.entity.particle.TextParticle;
+import minicraft.Game;
 import minicraft.gfx.Color;
 import minicraft.gfx.ConnectorSprite;
 import minicraft.gfx.Sprite;
@@ -41,6 +42,7 @@ public class HardRockTile extends Tile {
 					return true;
 				}
 			}
+			else Game.notifications.add("Gem Pickaxe Required.");
 		}
 		if (ModeMenu.creative) return true;
 		
