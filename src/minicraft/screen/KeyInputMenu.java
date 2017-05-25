@@ -44,7 +44,7 @@ public class KeyInputMenu extends ScrollingMenu {
 		
 		super.tick();
 		
-		if(input.getKey("c").clicked) {
+		if(input.getKey("c").clicked || input.getKey("enter").clicked) {
 			//System.out.println("changing input binding at " + input.ticks);
 			input.changeKeyBinding(actionKeys[selected]);
 			listeningForBind = true;
@@ -108,7 +108,7 @@ public class KeyInputMenu extends ScrollingMenu {
 			Font.drawParagraph(input.getMapping("select")+" to confirm\n"+input.getMapping("exit")+" to cancel", screen, 8, screen.h/2 + 24, true, 4, Color.get(-1, 533));
 		} else {
 			String[] lines = {
-				"Press C to change key binding",
+				"Press C/Enter to change key binding",
 				"Press A to add key binding",
 				"Shift-D to reset all keys to default",
 				input.getMapping("exit")+" to Return to menu"
