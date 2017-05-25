@@ -230,7 +230,7 @@ public class Load {
 	}
 	
 	public void loadWorld(String filename) {
-		for(int l = Game.levels.length-1; l>=0; l--) {
+		for(int l = Game.levels.length-2; l>=0; l--) {
 			//if(l == Game.levels.length-1) l = 4;
 			//if(l == 0) l = Game.levels.length-1;
 			
@@ -292,7 +292,9 @@ public class Load {
 				}
 			}
 			
-			//if(l == Game.levels.length-1) break;
+			// fixes some parenting issues.
+			if(l == 0) l = Game.levels.length;
+			if(l == Game.levels.length-1) l = 0;
 		}
 	}
 	
