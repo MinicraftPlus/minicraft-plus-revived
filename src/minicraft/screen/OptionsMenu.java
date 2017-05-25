@@ -13,7 +13,7 @@ public class OptionsMenu extends Menu {
 	public static int hard = 2;
 	public static int diff = 1;
 	public static boolean isSoundAct = true;
-	public static boolean autosave = false;
+	public static boolean autosave = true;
 	public static boolean unlockedskin = false;
 	//public static boolean hasSetDiff = false;
 	
@@ -80,6 +80,6 @@ public class OptionsMenu extends Menu {
 			Font.draw((Player.skinon?"On":"Off"), screen, 180, screen.h - 50, (Player.skinon?onColor:offColor));
 		}
 
-		Font.draw("Press "+input.getMapping("exit")+" to return", screen, 80, screen.h - 25, textColor);
+		Font.drawCentered("Press "+input.getMapping("exit")+" to return", screen, screen.h - 25, textColor);
 	}
 }
