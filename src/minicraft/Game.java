@@ -468,12 +468,12 @@ public class Game extends Canvas implements Runnable {
 					if (input.getKey("minus").clicked && Player.moveSpeed > 1) Player.moveSpeed--;// -= 0.5D;
 					
 					if (input.getKey("shift-equals").clicked) {
-						if(gamespeed >= 1) gamespeed++;
-						else gamespeed *= 2;
+						if(gamespeed < 1) gamespeed *= 2;
+						else if(normSpeed*gamespeed < 2000) gamespeed++;
 					}
 					if (input.getKey("shift-minus").clicked) {
 						if(gamespeed > 1) gamespeed--;
-						else if(normSpeed*gamespeed>5) gamespeed /= 2;
+						else if(normSpeed*gamespeed > 5) gamespeed /= 2;
 					}
 					
 					if(input.getKey("shift-space").clicked) {
