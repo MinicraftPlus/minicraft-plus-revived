@@ -16,6 +16,7 @@ import minicraft.level.tile.Tile;
 import minicraft.level.tile.Tiles;
 import minicraft.level.tile.TorchTile;
 import minicraft.screen.ModeMenu;
+import minicraft.screen.OptionsMenu;
 import minicraft.screen.WorldSelectMenu;
 
 public class Level {
@@ -36,6 +37,7 @@ public class Level {
 	public int yellowwoolColor = 550;
 	public int depth; // depth level of the level
 	public int monsterDensity = 8; // affects the number of monsters that are on the level, bigger the number the less monsters spawn.
+	public int maxMobCount;
 	public int chestcount;
 
 	public static List<String> ls = new ArrayList<String>();
@@ -110,6 +112,10 @@ public class Level {
 		tiles = maps[0]; // assigns the tiles in the map
 		data = maps[1]; // assigns the data of the tiles
 		
+		maxMobCount = 300 + 100*OptionsMenu.diff;
+		if(depth == 0) maxMobCount = maxMobCount * 2 / 3;
+		if(depth == 1 || depth == -4) maxMobCount /= 2;
+		
 		if (parentLevel != null) { // If the level above this one is not null (aka, if this isn't the sky level)
 			for (int y = 0; y < h; y++) { // loop through height
 				for (int x = 0; x < w; x++) { // loop through width
@@ -182,6 +188,9 @@ public class Level {
 							setTile(x - 1, y - 2, Tiles.get("Obsidian Wall"));
 						}
 						if (level == 0) { // surface
+							// TODO do it with this kind of approach.
+							//setAreaTiles(x, y, 1, Tiles.get("Hard Rock"));
+							//setTile(x, y, Tiles.get("Stairs Up"));
 							/// surround the sky stairs with hard rock:
 							setTile(x - 1, y, Tiles.get("Hard Rock"));
 							setTile(x + 1, y, Tiles.get("Hard Rock"));
@@ -218,20 +227,20 @@ public class Level {
 				boolean addedchest = false;
 				while(!addedchest) { // keep running until we successfully add a DungeonChest
 					//pick a random tile:
-					int x2 = this.random.nextInt(16 * w) / 16;
-					int y2 = this.random.nextInt(16 * h) / 16;
-					if (this.getTile(x2, y2) == Tiles.get("Obsidian")) {
-						boolean xaxis = this.random.nextBoolean();
+					int x2 = random.nextInt(16 * w) / 16;
+					int y2 = random.nextInt(16 * h) / 16;
+					if (getTile(x2, y2) == Tiles.get("Obsidian")) {
+						boolean xaxis = random.nextBoolean();
 						if (xaxis) {
 							for (int s = x2; s < w - s; s++) {
-								if (this.getTile(s, y2) == Tiles.get("Obsidian Wall")) {
+								if (getTile(s, y2) == Tiles.get("Obsidian Wall")) {
 									d.x = s * 16 - 24;
 									d.y = y2 * 16 - 24;
 								}
 							}
 						} else if (!xaxis) {
 							for (int s = y2; s < y2 - s; s++) {
-								if (this.getTile(x2, s) == Tiles.get("Obsidian Wall")) {
+								if (getTile(x2, s) == Tiles.get("Obsidian Wall")) {
 									d.x = x2 * 16 - 24;
 									d.y = s * 16 - 24;
 								}
@@ -241,11 +250,11 @@ public class Level {
 							d.x = x2 * 16 - 8;
 							d.y = y2 * 16 - 8;
 						}
-						if (this.getTile(d.x / 16, d.y / 16) == Tiles.get("Obsidian Wall")) {
-							this.setTile(d.x / 16, d.y / 16, Tiles.get("Obsidian"));
+						if (getTile(d.x / 16, d.y / 16) == Tiles.get("Obsidian Wall")) {
+							setTile(d.x / 16, d.y / 16, Tiles.get("Obsidian"));
 						}
-						this.add(d);
-						this.chestcount++;
+						add(d);
+						chestcount++;
 						addedchest = true;
 					}
 				}
@@ -255,7 +264,7 @@ public class Level {
 			for (int i = 0; i < 18 / -level * (w / 128); i++) {
 				/// for generating spawner dungeons
 				MobAi m = null;
-				int r = this.random.nextInt(5);
+				int r = random.nextInt(5);
 				if (r == 1) {
 					m = new Skeleton(-level);
 				} else if (r == 2 || r == 0) {
@@ -265,21 +274,21 @@ public class Level {
 				}
 				
 				Spawner sp = new Spawner(m);
-				int x3 = this.random.nextInt(16 * w) / 16;
-				int y3 = this.random.nextInt(16 * h) / 16;
-				if (this.getTile(x3, y3) == Tiles.get("dirt")) {
-					boolean xaxis2 = this.random.nextBoolean();
+				int x3 = random.nextInt(16 * w) / 16;
+				int y3 = random.nextInt(16 * h) / 16;
+				if (getTile(x3, y3) == Tiles.get("dirt")) {
+					boolean xaxis2 = random.nextBoolean();
 					
 					if (xaxis2) {
 						for (int s2 = x3; s2 < w - s2; s2++) {
-							if (this.getTile(s2, y3) == Tiles.get("rock")) {
+							if (getTile(s2, y3) == Tiles.get("rock")) {
 							sp.x = s2 * 16 - 24;
 							sp.y = y3 * 16 - 24;
 							}
 						}
 					} else {
 						for (int s2 = y3; s2 < y3 - s2; s2++) {
-							if (this.getTile(x3, s2) == Tiles.get("rock")) {
+							if (getTile(x3, s2) == Tiles.get("rock")) {
 							sp.x = x3 * 16 - 24;
 							sp.y = s2 * 16 - 24;
 							}
@@ -291,23 +300,23 @@ public class Level {
 							sp.y = y3 * 16 - 8;
 					}
 
-					if (this.getTile(sp.x / 16, sp.y / 16) == Tiles.get("rock")) {
-						this.setTile(sp.x / 16, sp.y / 16, Tiles.get("dirt"));
+					if (getTile(sp.x / 16, sp.y / 16) == Tiles.get("rock")) {
+						setTile(sp.x / 16, sp.y / 16, Tiles.get("dirt"));
 					}
 
 					for (int xx = 0; xx < 5; xx++) {
 						for (int yy = 0; yy < 5; yy++) {
-							if (this.noStairs(sp.x / 16 - 2 + xx, sp.y / 16 - 2 + yy)) {
-								this.setTile(sp.x / 16 - 2 + xx, sp.y / 16 - 2 + yy, Tiles.get("Stone Bricks"));
+							if (noStairs(sp.x / 16 - 2 + xx, sp.y / 16 - 2 + yy)) {
+								setTile(sp.x / 16 - 2 + xx, sp.y / 16 - 2 + yy, Tiles.get("Stone Bricks"));
 
 								if((xx < 1 || yy < 1 || xx > 3 || yy > 3) && (xx != 2 || yy != 0) && (xx != 2 || yy != 4) && (xx != 0 || yy != 2) && (xx != 4 || yy != 2)) {
-									this.setTile(sp.x / 16 - 2 + xx, sp.y / 16 - 2 + yy, Tiles.get("Stone Wall"));
+									setTile(sp.x / 16 - 2 + xx, sp.y / 16 - 2 + yy, Tiles.get("Stone Wall"));
 								}
 							}
 						}
 					}
 
-					this.add(sp);
+					add(sp);
 					for(int rpt = 0; rpt < 2; rpt++) {
 						if (random.nextInt(2) != 0) continue;
 						Chest c = new Chest();
@@ -359,7 +368,7 @@ public class Level {
 				  		}
 						
 						// chance = -level
-						this.add(c, sp.x - 16, sp.y - 16);
+						add(c, sp.x - 16, sp.y - 16);
 					}
 				}
 			}
@@ -374,7 +383,7 @@ public class Level {
 	}
 
 	public void tick() {
-		trySpawn(1);
+		int count = 0;
 		
 		for (int i = 0; i < w * h / 50; i++) {
 			int xt = random.nextInt(w);
@@ -387,6 +396,8 @@ public class Level {
 			int yto = e.y >> 4;
 			
 			e.tick();
+			
+			if(e instanceof Mob) count++;
 			
 			int xt = e.x >> 4;
 			int yt = e.y >> 4;
@@ -403,6 +414,11 @@ public class Level {
 				i--;
 			}
 		}
+		
+		//if(Game.tickCount % 10 == 0) System.out.println("mob count: " + count);
+		
+		if(count < maxMobCount)
+			trySpawn(1);
 	}
 	
 	public void dropItem(int x, int y, int mincount, int maxcount, Item... items) {
@@ -613,7 +629,7 @@ public class Level {
 	}
 
 	public void removeAllEnemies() {
-		for (int i = 0; i < this.entities.size(); i++) {
+		for (int i = 0; i < entities.size(); i++) {
 			Entity e = entities.get(i);
 			if(e instanceof EnemyMob)
 				if(e instanceof AirWizard == false || ModeMenu.creative) // don't remove the airwizard bosses! Unless in creative, since you can spawn more.
