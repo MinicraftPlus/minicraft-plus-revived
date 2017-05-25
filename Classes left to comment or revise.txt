@@ -41,11 +41,3 @@ screen/TitleMenu
 screen/WonMenu (needs a LOT more than comments!)
 screen/WorldGenMenu
 screen/WorldSelectMenu
-
-*******************************************************************************
-Classes that need attention:
-
--Furniture.java: maybe combine subclasses, to remove a bunch of the bulk... or maybe, just move more of the code into this class.
-Same deal with the friendly mobs, and the evil mobs.
-
--ALL the tile/* classes. This is going to be a project. 

@@ -1,6 +1,5 @@
 	---Quick TODO's---
 
--continue commeting code and renovating code
 -display current player score in score mode
 -reorder tools a bit in ToolType.java b/c I'm picky. Hoes should be first, at least. ;)
 
@@ -15,11 +14,6 @@ Sound effects don't always play when they should; mostly it seems when other sou
 ####
 Many item names don't fit on the black "active item" bar at the bottom.
 ####
-LegacyLoad class is becoming annoying to handle; it should be reimplemented so that it won't have to be changed at all to reflect future updates. This could be done by making it only return values, and not actually reference any current variables. This may prove overcomplicated, though.
-
-IDEA: Let's make an "Update.java" file, maybe multiple, that handle different versions. However, instead of setting values in the rest of the game files, it adds them to a list, which will then be saved as the new file. Then, it's loaded again.
-Maybe not, though... Loading takes long enough already...
-####
 -----------------------------------------------------------------------------------
 
 	****IDEAS(that should probably be implemented)****
@@ -33,26 +27,31 @@ Make respawn without bed += 20 blocks x/y of last spawn.
 
 ****
 
-Level.java literally just ticks 50 or so random tiles... that's SO got to go... heck, tiles probably don't even need tick methods; well, maybe not, at least. Plants might need one... yeah, so maybe those will have tick methods.
+Go over all the "Warnings" from Xlint, and fix them.
+
+****
+
+My idea for the new tile data system:
+Have Tiles.java store an Array list of Arrays, the first one for tile id, and the inner array to represent a data type. I haven't decided what data type the inner array should be; could be int (direct to save file), String (direct to read), or Enum (direct to save and read, but many enums and *might* not work).
+To save, maybe I should separate this data from other data like health, and put it directly in the ids file. Maybe put it as id_data, both integers here for sure. And for referencing in tiles.get, same deal: "name_data". This shows just how nice enums would be. I hope they work.
+
+****
+
+Add world backup option, that user can select a download location. Then maybe... pack to zip? Also, I'll need to make a "restore" feature, and unzip it ...
+
+****
+
+change inventory system to better allow moving items to and from inventories, into chests; for example, you should be able to choose how much of an item stack you want to transfer.
+
+****
 
 -----------------------------------------------------------------------------------
 
 *?*?*?* Questionable Improvements (But still seem important)*?*?*?*
 
-*?*?*?*
+LegacyLoad class is becoming annoying to handle; it should be reimplemented so that it won't have to be changed at all to reflect future updates. This could be done by making it only return values, and not actually reference any current variables. This may prove overcomplicated, though.
 
-Make all Class instance lists similar to ListItems, but static; so, each one has a "get" method accepting a string. Maybe I could make them all extend a "ClassList" or "InstanceList" interface or something...
-
-In a similar/related vein, make each subclass of these store their own lists of their instances, and they will just be added to the main one.
-So, for resources, PotionResource would have a static list of all the potion resources, and Resource would just add those to it's collection.
-
-Hmm... Actually, I have a better idea. How about I just instantiate everything in the list classes, but have the sub-classes record each instance? They could be recorded in a HashMap, with a string key for the name, that fetches the associated object instance.
-
-I don't know...
-
-*?*?*?*
-
-Change saving/loading system dramatically... instead of a simple array, make loadFromFile load HashMaps! I probably love them too much... but that way, future changes would be WAY easier to account for; instead of changing ALL the indexes, I could just stop worrying about a name! or change it. But... this has it's downsides. Entities wouldn't go over well; they really are better off as lists...
-Hey! maybe I can keep that one, and just make another loader for loadGame and such! That might work!
+IDEA: Let's make an "Update.java" file, maybe multiple, that handle different versions. However, instead of setting values in the rest of the game files, it will be set up as a "getter" sort of thing, where it doesn't reference all the game vars in full detail; but, it fetches them in the way that needs to be, for the main Load class. Basically, I want to have Load.java run everytime, but all the things that would otherwise be copied to LegacyLoad just stay in Load.java, and Load.java will "call" certain methods of LegacyLoad, to setup something the way it used to be.
+Yeah, it's fishy, but.... there we go.
 
 *?*?*?*
