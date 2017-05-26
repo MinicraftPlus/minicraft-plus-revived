@@ -263,13 +263,9 @@ public class Game extends Canvas implements Runnable {
 		Game.gamespeed = 1;
 		notifications.clear();
 		
-		//if (!OptionsMenu.hasSetDiff) OptionsMenu.diff = 2;
-		
 		changeTimeOfDay(Time.Morning); // resets tickCount; game starts in the day, so that it's nice and bright.
 		hasWon = false;
 
-		//Items.items.clear(); //remove all the old item objects
-		//new Items(); //make a fresh set
 		player = new Player(this, input); //very important that this is AFTER the previous 2 statements.
 
 		levels = new Level[6];
@@ -622,14 +618,14 @@ public class Game extends Canvas implements Runnable {
 	
 	/** Renders the main game GUI (hearts, Stamina bolts, name of the current item, etc.) */
 	private void renderGui() {
-		//I think this part just clears the screen, or something of the like.
-		for (int y = 0; y < 2; y++) {
+		/*for (int y = 0; y < 2; y++) {
 			for (int x = 0; x < 29; x++) {
-				screen.render(x * 7, screen.h - 16 + y * 8, 384, Color.get(-1, -1, -1, -1), 0);
+				screen.render(x * 7, screen.h - 16 + y * 8, 0 + 12 * 32, Color.get(-1, -1), 0);
 			}
-		}
+		}*/
+		/// AH-HA! THIS DRAWS THE BLACK SQUARE!!
 		for (int x = 12; x < 29; x++) {
-			screen.render(x * 7, screen.h - 16 + 1 * 8, 32, Color.get(0, 0), 0);
+			screen.render(x * 7, screen.h - 8, 0 + 1 * 32, Color.get(0, 0), 0);
 		}
 		
 		// player.xx and yy stores previous player position.
@@ -719,11 +715,15 @@ public class Game extends Canvas implements Runnable {
 			else if (scoreTime >= 3600) timeCol = Color.get(330, 555);
 			else timeCol = Color.get(400, 555);
 			
-			Font.draw("Time left " + (hours > 0 ? hours+"h ":"") + minutes + "m " + seconds + "s", screen, 84, screen.h - 190, timeCol);
+			Font.draw("Time left " + (hours > 0 ? hours+"h ":"") + minutes + "m " + seconds + "s", screen, screen.w/2-9*8, 2, timeCol);
+			
+			String scoreString = "Current score: " + player.score;
+			Font.draw(scoreString, screen, screen.w - Font.textWidth(scoreString)-2, 3 + 8, Color.get(-1, 555));
 			
 			if(multiplier > 1) {
 				int multColor = multiplier < 50 ? Color.get(-1, 540) : Color.get(-1, 500);
-				Font.draw("X" + multiplier, screen, 260, screen.h - 190, multColor);
+				String mult = "X" + multiplier;
+				Font.draw(mult, screen, screen.w-Font.textWidth(mult)-2, 4 + 2*8, multColor);
 			}
 		}
 
@@ -753,18 +753,14 @@ public class Game extends Canvas implements Runnable {
 			for (int i = 0; i < 10; i++) {
 				int color;
 				
+				// renders armor
+				int armor = player.armor*10/player.maxArmor;
+				color = (i <= armor && player.curArmor != null) ? player.curArmor.sprite.color : Color.get(-1, -1);
+				screen.render(i * 8, screen.h - 24, 3 + 12 * 32, color, 0);
+				
 				// renders your current red hearts, or black hearts for damaged health.
 				color = (i < player.health) ? Color.get(-1, 200, 500, 533) : Color.get(-1, 100, 000, 000);
 				screen.render(i * 8, screen.h - 16, 0 + 12 * 32, color, 0);
-				
-				// renders hunger
-				color = (i < player.hunger) ? Color.get(-1, 100, 530, 211) : Color.get(-1, 100, 000, 000);
-				screen.render(i * 8 + 208, screen.h - 16, 2 + 12 * 32, color, 0);
-				
-				// renders armor
-				int armor = player.armor*10/player.maxArmor;
-				color = (i <= armor && player.curArmor != null) ? player.curArmor.sprite.color : Color.get(-1, -1, -1, -1);
-				screen.render(i * 8 + 208, screen.h - 8, 3 + 12 * 32, color, 0); // TODO make armoritem do the rendering?
 				
 				if (player.staminaRechargeDelay > 0) {
 					// creates the white/gray blinking effect when you run out of stamina.
@@ -776,11 +772,16 @@ public class Game extends Canvas implements Runnable {
 					color = (i < player.stamina) ? Color.get(-1, 220, 550, 553) : Color.get(-1, 110, 000, 000);
 					screen.render(i * 8, screen.h - 8, 1 + 12 * 32, color, 0);
 				}
+				
+				// renders hunger
+				color = (i < player.hunger) ? Color.get(-1, 100, 530, 211) : Color.get(-1, 100, 000, 000);
+				screen.render(i * 8 + (screen.w - 80), screen.h - 16, 2 + 12 * 32, color, 0);
 			}
 		}
 		
+		/// CURRENT ITEM
 		if (player.activeItem != null) // shows active item sprite and name in bottom toolbar, if one exists.
-			player.activeItem.renderInventory(screen, 12 * 7, screen.h - 8);
+			player.activeItem.renderInventory(screen, 12 * 7, screen.h - 8, false);
 	}
 	
 	/** Renders the "Click to focus" box when you click off the screen. */
