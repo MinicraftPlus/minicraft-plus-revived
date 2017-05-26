@@ -16,9 +16,6 @@ public class ToolItem extends Item {
 	protected static ArrayList<Item> getAllInstances() {
 		ArrayList<Item> items = new ArrayList<Item>();
 		
-		/// hmm... ToolType is going me ideas... TODO perhaps all item types should have something like this.
-		/// yeah, yeah! And then they define all the nitty-gritty stuff like making each and every version, and this class can just be a bounch of loops!
-		/// ... I hope that will work...
 		items.add(new ToolItem(ToolType.FishingRod, 0));
 		for(ToolType tooltype: ToolType.values()) {
 			if(tooltype == ToolType.FishingRod) continue;
@@ -76,20 +73,6 @@ public class ToolItem extends Item {
 		
 		return col;
 	}
-	/*
-	public int getSprite() {
-		return type.sprite + 5 * 32;
-	}
-	*/
-	/*public void renderIcon(Screen screen, int x, int y) {
-		sprite.render(screen, x, y);//screen.render(x, y, getSprite(), getColor(), 0);
-	}*/
-	
-	/** Renders the icon & name of this tool for inventory/crafting purposes. */
-	/*public void renderInventory(Screen screen, int x, int y) {
-		sprite.render(screen, x, y);
-		Font.draw(name, screen, x + 8, y, Color.get(-1, 555));
-	}*/
 	
 	/** Gets the name of this tool (and it's type) */
 	public String getName() {
@@ -97,12 +80,9 @@ public class ToolItem extends Item {
 		return LEVEL_NAMES[level] + " " + type;
 	}
 	
-	//public void onTake(ItemEntity itemEntity) {}
-	
 	public boolean interactOn(Tile tile, Level level, int xt, int yt, Player player, int attackDir) {
 		if (type == ToolType.FishingRod && dur > 0) {
 			if (tile == Tiles.get("water")) {
-				//if(minicraft.Game.debug) System.out.println("Fishing...");
 				player.goFishing(player.x - 5, player.y - 5);
 				if(!ModeMenu.creative) dur--;
 				return true;
@@ -124,15 +104,15 @@ public class ToolItem extends Item {
 	/** Gets the attack damage bonus from an item/tool (sword/axe) */
 	public int getAttackDamageBonus(Entity e) {
 		if (type == ToolType.Axe) {
-			return (level + 1) * 2 + random.nextInt(4); // axes: (level + 1) * 2 + random number beteween 0 and 3, do slightly less damage than swords.
+			return (level + 1) * 2 + random.nextInt(4); // wood axe damage: 2-5; gem axe damage: 10-13.
 		}
 		if (type == ToolType.Sword) {
-			return (level + 1) * 3 + random.nextInt(2 + level * level * 2); //swords: (level + 1) * 3 + random number between 0 and (2 + level * level * 2)
+			return (level + 1) * 3 + random.nextInt(2 + level * level * 2); // wood: 3-5 damage; gem: 15-48 damage.
 		}
 		if (type == ToolType.Claymore) {
-			return (level + 1) * 3 + random.nextInt(4 + level * level * 3);
+			return (level + 1) * 3 + random.nextInt(4 + level * level * 3); // wood: 3-6 damage; gem: 15-66 damage.
 		}
-		return 1;
+		return 1; // all other tools do very little damage to mobs.
 	}
 	
 	/** Sees if this item matches another. */
