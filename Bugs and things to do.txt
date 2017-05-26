@@ -1,6 +1,5 @@
 	---Quick TODO's---
 
--display current player score in score mode
 -reorder tools a bit in ToolType.java b/c I'm picky. Hoes should be first, at least. ;)
 
 Note to self: for more little bugs/ideas/concerns, search code for "TODO"
@@ -11,8 +10,6 @@ Note to self: for more little bugs/ideas/concerns, search code for "TODO"
 Fire particles appear, but... they look totally weird...
 ####
 Sound effects don't always play when they should; mostly it seems when other sounds should be on at the same time.
-####
-Many item names don't fit on the black "active item" bar at the bottom.
 ####
 -----------------------------------------------------------------------------------
 

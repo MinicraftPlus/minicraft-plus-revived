@@ -3,6 +3,7 @@ Minicraft+ version 1.9.4
 * Almost total revision of lighting; surface level now has lighting overlay sometimes, and the colors all around may be slightly different.
 + Daylight now increases and decreases more smoothly; steadily goes from dark to light in the morning, and light to dark in the evening.
 
++ Added Instant Health Potion! Instantly refills up to 5 hearts.
 * changed death chest expire times; easy:30min, norm:10min, hard:2min
 * Sped up game speed while sleeping.
 - Prevented Airwizard from being removed during daily entity clear.
@@ -22,7 +23,7 @@ Minicraft+ version 1.9.4
 
 + You can now copy world saves.
 + Added another confirm dialog before deleting worlds.
-
++ Player score shown on-screen in score mode.
 
 Minicraft+ version 1.9.3
 
