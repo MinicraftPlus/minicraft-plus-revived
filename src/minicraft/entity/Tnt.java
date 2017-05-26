@@ -7,7 +7,7 @@ import minicraft.gfx.Color;
 import minicraft.gfx.Sprite;
 import minicraft.level.Level;
 import minicraft.level.tile.Tiles;
-import minicraft.sound.Sound;
+import minicraft.Sound;
 
 public class Tnt extends Furniture implements ActionListener {
 	private static int FUSE_TIME = 90;

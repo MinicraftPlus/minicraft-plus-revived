@@ -1,4 +1,4 @@
-package minicraft.sound;
+package minicraft;
 
 import java.applet.Applet;
 import java.applet.AudioClip;

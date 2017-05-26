@@ -3,7 +3,7 @@ package minicraft.screen;
 import java.util.List;
 import minicraft.gfx.Font;
 import minicraft.gfx.Screen;
-import minicraft.sound.Sound;
+import minicraft.Sound;
 
 public abstract class SelectMenu extends Menu {
 	

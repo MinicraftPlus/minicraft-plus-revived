@@ -10,7 +10,7 @@ import minicraft.gfx.Font;
 import minicraft.gfx.MobSprite;
 import minicraft.gfx.Screen;
 import minicraft.screen.OptionsMenu;
-import minicraft.sound.Sound;
+import minicraft.Sound;
 
 public class AirWizard extends EnemyMob {
 	private static MobSprite[][] sprites = MobSprite.compileMobSpriteAnimations(8, 14);

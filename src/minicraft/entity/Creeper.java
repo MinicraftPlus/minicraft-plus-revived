@@ -6,7 +6,7 @@ import minicraft.gfx.Screen;
 import minicraft.item.Items;
 import minicraft.level.tile.Tiles;
 import minicraft.screen.OptionsMenu;
-import minicraft.sound.Sound;
+import minicraft.Sound;
 
 public class Creeper extends EnemyMob {
 	private static final MobSprite[][] sprites;

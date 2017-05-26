@@ -30,7 +30,7 @@ import minicraft.screen.PauseMenu;
 import minicraft.screen.PlayerInfoMenu;
 import minicraft.screen.PlayerInvMenu;
 import minicraft.screen.WorldSelectMenu;
-import minicraft.sound.Sound;
+import minicraft.Sound;
 
 public class Player extends Mob {
 	private InputHandler input;

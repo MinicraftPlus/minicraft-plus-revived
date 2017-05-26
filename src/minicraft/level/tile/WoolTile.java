@@ -10,7 +10,7 @@ import minicraft.item.Items;
 import minicraft.item.ToolItem;
 import minicraft.item.ToolType;
 import minicraft.level.Level;
-import minicraft.sound.Sound;
+import minicraft.Sound;
 
 public class WoolTile extends Tile {
 	

@@ -4,7 +4,7 @@ import minicraft.entity.Chest;
 import minicraft.entity.Inventory;
 import minicraft.entity.Player;
 import minicraft.gfx.Screen;
-import minicraft.sound.Sound;
+import minicraft.Sound;
 
 public class ContainerMenu extends Menu {
 	private Player player; // The player that is looking inside the chest

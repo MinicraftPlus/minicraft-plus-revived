@@ -7,7 +7,7 @@ import java.util.List;
 import minicraft.gfx.Color;
 import minicraft.gfx.Font;
 import minicraft.gfx.Screen;
-import minicraft.sound.Sound;
+import minicraft.Sound;
 
 public class ModeMenu extends Menu {
 	private Menu parent;

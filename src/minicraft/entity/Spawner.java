@@ -12,7 +12,7 @@ import minicraft.item.ToolType;
 import minicraft.item.PowerGloveItem;
 import minicraft.level.tile.Tile;
 import minicraft.screen.ModeMenu;
-import minicraft.sound.Sound;
+import minicraft.Sound;
 
 public class Spawner extends Furniture {
 	

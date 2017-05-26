@@ -6,7 +6,7 @@ import minicraft.gfx.MobSprite;
 import minicraft.level.tile.Tile;
 import minicraft.level.tile.Tiles;
 import minicraft.screen.ModeMenu;
-import minicraft.sound.Sound;
+import minicraft.Sound;
 
 public abstract class Mob extends Entity {
 	private Player player;

@@ -9,7 +9,7 @@ import minicraft.item.Item;
 import minicraft.item.ToolItem;
 import minicraft.item.ToolType;
 import minicraft.level.Level;
-import minicraft.sound.Sound;
+import minicraft.Sound;
 
 public class FloorTile extends Tile {
 	private Sprite sprite = new Sprite(19, 2, 2, 2, 0, 0, true);

@@ -3,7 +3,7 @@ package minicraft.entity;
 import minicraft.gfx.Color;
 import minicraft.gfx.Screen;
 import minicraft.item.Item;
-import minicraft.sound.Sound;
+import minicraft.Sound;
 
 public class ItemEntity extends Entity {
 	private int lifeTime; // the life time of this entity in the level

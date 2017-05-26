@@ -4,7 +4,7 @@ import java.util.Arrays;
 import minicraft.gfx.Color;
 import minicraft.gfx.Font;
 import minicraft.gfx.Screen;
-import minicraft.sound.Sound;
+import minicraft.Sound;
 
 public class WorldGenMenu extends SelectMenu {
 	//this the the "more world options" menu.

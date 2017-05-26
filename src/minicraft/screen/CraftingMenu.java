@@ -11,7 +11,7 @@ import minicraft.gfx.Screen;
 import minicraft.item.Item;
 import minicraft.item.Items;
 import minicraft.item.Recipe;
-import minicraft.sound.Sound;
+import minicraft.Sound;
 
 public class CraftingMenu extends Menu {
 	private Player player; // the player that opened this menu
