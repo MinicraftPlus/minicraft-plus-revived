@@ -18,11 +18,12 @@ public class Spawner extends Furniture {
 	
 	Random rnd = new Random();
 	
-	private static final int SPAWN_INTERVAL = 360;
 	private static final int ACTIVE_RADIUS = 8*16;
+	private static final int minSpawnInterval = 200, maxSpawnInterval = 500;
 	
 	public MobAi mob;
-	private int health, tick, lvl, maxMobLevel;
+	private int health, lvl, maxMobLevel;
+	private int spawnTick;
 	
 	private final void initMob(MobAi m) {
 		mob = m;
@@ -40,8 +41,8 @@ public class Spawner extends Furniture {
 	public Spawner(MobAi m) {
 		super(getClassName(m.getClass()) + " Spawner", new Sprite(20, 8, 2, 2, m.col), 7, 2);
 		health = 100;
-		tick = 0;
 		initMob(m);
+		resetSpawnInterval();
 	}
 	
 	private static String getClassName(Class c) {
@@ -52,11 +53,15 @@ public class Spawner extends Furniture {
 	public void tick() {
 		super.tick();
 		
-		tick++;
-		if(tick >= SPAWN_INTERVAL) {
-			tick = 0;
+		spawnTick--;
+		if(spawnTick <= 0) {
 			trySpawn();
+			resetSpawnInterval();
 		}
+	}
+	
+	private void resetSpawnInterval() {
+		spawnTick = rnd.nextInt(maxSpawnInterval - minSpawnInterval + 1) + minSpawnInterval;
 	}
 	
 	private void trySpawn() {
@@ -64,7 +69,6 @@ public class Spawner extends Furniture {
 		int yd = level.player.y - y;
 		
 		if(xd * xd + yd * yd > ACTIVE_RADIUS * ACTIVE_RADIUS) return;
-		
 		
 		int randX = (x/16 - 1 + rnd.nextInt(2)); // the rand is really just one tile in any direction
 		int randY = (y/16 - 1 + rnd.nextInt(2));
