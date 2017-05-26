@@ -16,12 +16,17 @@ import minicraft.sound.Sound;
 public class CraftingMenu extends Menu {
 	private Player player; // the player that opened this menu
 	private int selected = 0; // current selected item
-
+	private boolean personal;
+	
 	private List<Recipe> recipes; // List of recipes used in this menu (workbench, anvil, oven, etc)
-
+	
 	public CraftingMenu(List<Recipe> recipes, Player player) {
+		this(recipes, player, false);
+	}
+	public CraftingMenu(List<Recipe> recipes, Player player, boolean isPersonalFrame) {
 		this.recipes = new ArrayList<Recipe>(recipes); // Assigns the recipes
 		this.player = player;
+		personal = isPersonalFrame;
 		
 		for (int i = 0; i < recipes.size(); i++) {
 			this.recipes.get(i).checkCanCraft(player); // Checks if the player can craft the item(s)
@@ -38,7 +43,7 @@ public class CraftingMenu extends Menu {
 	}
 
 	public void tick() {
-		if (input.getKey("menu").clicked) game.setMenu(null); //menu exit condition
+		if (input.getKey("menu").clicked || personal && input.getKey("craft").clicked) game.setMenu(null); //menu exit condition
 		
 		if (input.getKey("up").clicked) selected--;
 		if (input.getKey("down").clicked) selected++;
@@ -85,5 +90,10 @@ public class CraftingMenu extends Menu {
 				yo += Font.textHeight();
 			}
 		}
+	}
+	
+	protected void renderFrame(Screen screen, String title, int x0, int y0, int x1, int y1) {
+		if(!personal) super.renderFrame(screen, title, x0, y0, x1, y1);
+		else renderMenuFrame(screen, title, x0, y0, x1, y1, Color.get(-1, 1, 300, 400), Color.get(300, 300), Color.get(300, 300, 300, 555));
 	}
 }

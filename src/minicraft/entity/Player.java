@@ -286,7 +286,7 @@ public class Player extends Mob {
 			game.setMenu(new PlayerInvMenu(this));
 		if (input.getKey("pause").clicked) game.setMenu(new PauseMenu(this));
 		if (input.getKey("craft").clicked && !use())
-			game.setMenu(new CraftingMenu(Recipes.craftRecipes, this));
+			game.setMenu(new CraftingMenu(Recipes.craftRecipes, this, true));
 		if (input.getKey("sethome").clicked) setHome();
 		if (input.getKey("home").clicked) goHome();
 		
