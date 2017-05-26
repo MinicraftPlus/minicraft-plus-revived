@@ -37,7 +37,7 @@ public abstract class Menu {
 		if (io < 0) io = 0;
 		
 		for (int i = i0; i < i1; i++) {
-			listItems.get(i + io).renderInventory(screen, (1 + xo) * 8, (i + 1 + yo) * 8);
+			listItems.get(i + io).renderInventory(screen, (xo+1) * 8, (yo+1 + i) * 8);
 		}
 		
 		if (renderCursor) {
@@ -67,7 +67,7 @@ public abstract class Menu {
 		Font.draw(title, screen, x0 * 8 + 8, y0 * 8, titleColor);
 	}
 	
-	/// the default, blue menu frame.
+	/// the default blue menu frame.
 	protected void renderFrame(Screen screen, String title, int x0, int y0, int x1, int y1) {
 		renderMenuFrame(screen, title, x0, y0, x1, y1, Color.get(-1, 1, 5, 445), Color.get(005, 005), Color.get(5, 5, 5, 550));
 	}

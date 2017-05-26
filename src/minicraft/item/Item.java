@@ -26,11 +26,20 @@ public abstract class Item implements ListItem {
 		this.sprite = sprite;
 	}
 	
+	/// TODO this method (and Menu.renderItemList) is actually slowly getting depricated; I just haven't gotten around to updating all the menus yet.
 	/** Renders an item (sprite & name) in an inventory */
-	public void renderInventory(Screen screen, int x, int y) {
+	public void renderInventory(Screen screen, int x, int y) { renderInventory(screen, x, y, true); }
+	public void renderInventory(Screen screen, int x, int y, boolean ininv) {
+		renderInventory(screen, x, y, ininv, name);}
+	protected void renderInventory(Screen screen, int x, int y, boolean ininv, String name) {
 		sprite.render(screen, x, y);
-		Font.draw(name, screen, x + 8, y, Color.get(-1, 555));
-	};
+		if(ininv) {
+			String shortname = name.length() > 20 ? name.substring(0, 20) : name;
+			Font.draw(shortname, screen, x + 8, y, Color.get(-1, 555));
+		}
+		else
+			Font.draw(name, screen, x + 8, y, Color.get(0, 555));
+	}
 	
 	/** Determines what happens when the player interacts with an entity */
 	// TODO I want to move this to the individual entity classes.

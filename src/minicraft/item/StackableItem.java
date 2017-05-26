@@ -59,22 +59,9 @@ public class StackableItem extends Item {
 	}
 	
 	/** Renders the icon, name, and count of the item. */
-	public void renderInventory(Screen screen, int x, int y) { renderInventory(screen, x, y, true); }
 	public void renderInventory(Screen screen, int x, int y, boolean ininv) {
-		sprite.render(screen, x, y);//screen.render(x, y, item.sprite, item.color, 0); // renders the icon
-		
-		if(name.length() > 11 && !ininv) { // only draw part of the name if it's too long to the black bar. (not in the inventory)
-			Font.draw(name.substring(0, 11), screen, x + 32, y, Color.get(-1, 555));
-		} else {
-			Font.draw(name, screen, x + 32, y, Color.get(-1, 555));
-		}
-		
-		int cc = count; // count of the item
-		if(cc > 999) { // If the item count is above 999, then just render 999 (for spacing reasons)
-			cc = 999;
-		}
-
-		Font.draw(""+cc, screen, x + 8, y, Color.get(-1, 444)); // draws the item count
+		// If the item count is above 999, then just render 999 (for spacing reasons)
+		super.renderInventory(screen, x, y, ininv, (count>999?999:count)+" "+name);
 	}
 	
 	/// this is used by (most) subclasses, to standardize the count decrement behavior. This is not the normal interactOn method.

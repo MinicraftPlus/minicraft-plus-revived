@@ -5,6 +5,7 @@ import minicraft.entity.Inventory;
 import minicraft.gfx.Color;
 import minicraft.gfx.Screen;
 import minicraft.item.Item;
+import minicraft.item.StackableItem;
 
 public class InventoryMenu extends ScrollingMenu {
 	protected Inventory inv;
@@ -17,7 +18,12 @@ public class InventoryMenu extends ScrollingMenu {
 		
 		// to make space for the item icon.
 		for(int i = 0; i < options.size(); i++) {
-			options.set(i, " "+options.get(i));
+			String extra = "";
+			if(inv.get(i) instanceof StackableItem) {
+				StackableItem stack = (StackableItem) inv.get(i);
+				extra = (stack.count > 999 ? 999 : stack.count) + " ";
+			}
+			options.set(i, " "+extra+options.get(i));
 		}
 	}
 	
