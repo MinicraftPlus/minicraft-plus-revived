@@ -217,6 +217,7 @@ public class Game extends Canvas implements Runnable {
 		Bed.inBed = false;
 		hasWon = false;
 		currentLevel = 3;
+		asTick = 0;
 		
 		// adds a new player
 		player = new Player(this, input);
@@ -592,16 +593,7 @@ public class Game extends Canvas implements Runnable {
 			menu.render(screen);
 		
 		if (!hasFocus()) renderFocusNagger(); // calls the renderFocusNagger() method, which creates the "Click to Focus" message.
-		/*
-		for (int y = 0; y < screen.h; y++) {
-			for (int x = 0; x < screen.w; x++) {
-				// loops through all the pixels on the screen
-				//int cc = screen.pixels[x + y * screen.w]; // finds a pixel on the screen.
-				//if (cc < 255) pixels[x + y * WIDTH] = colors[cc]; // colors the pixel appropriately.
-				pixels[x + y * WIDTH] = screen.pixels[x + y * screen.w];
-			}
-		}
-		*/
+		
 		Graphics g = bs.getDrawGraphics(); // gets the graphics in which java draws the picture
 		g.fillRect(0, 0, getWidth(), getHeight()); // draws the a rect to fill the whole window (to cover last?)
 		
