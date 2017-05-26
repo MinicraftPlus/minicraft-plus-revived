@@ -54,7 +54,7 @@ public class Level {
 	
 	/// This is a solely debug method I made, to make printing repetetive stuff easier.
 		// should be changed to accept prepend and entity, or a tile (as an Object). It will get the coordinates and class name from the object, and will divide coords by 16 if passed an entity.
-	private void printLevelLoc(String prepend, int x, int y) {
+	public void printLevelLoc(String prepend, int x, int y) {
 		String[] levelNames = {"Sky", "Surface", "Iron", "Gold", "Lava", "Dungeon"};
 		String levelName = levelNames[-1*depth+1];
 		

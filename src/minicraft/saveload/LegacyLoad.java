@@ -273,6 +273,7 @@ public class LegacyLoad {
 	private String subOldName(String oldName) {
 		//System.out.println("old name: " + oldName);
 		String newName = oldName.replace("P.", "Potion").replace("Fish Rod", "Fishing Rod").replace("bed", "Bed");
+		newName = Load.subOldName(newName, worldVer);
 		//System.out.println("new name: " + newName);
 		return newName;
 	}

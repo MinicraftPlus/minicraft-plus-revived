@@ -248,24 +248,16 @@ public class Load {
 					int tileArrIdx = /*worldVer.compareTo(new Version("1.9.3-dev3")) < 0 ?*/ y + x * lvlw;// : x + y * lvlw;
 					int tileidx = x + y * lvlw; // the tiles are saved with x outer loop, and y inner loop, meaning that the list reads down, then right one, rather than right, then down one.
 					String tilename = data.get(tileidx + 3);
-					//System.out.println("reading tile on level "+l+"; save idx=" + (tileidx+3) + ", old id:" + tileID);
 					if(worldVer.compareTo(new Version("1.9.4-dev6")) < 0) {
 						int tileID = Integer.parseInt(tilename); // they were id numbers, not names, at this point
 						if(Tiles.oldids.get(tileID) != null)
 							tilename = Tiles.oldids.get(tileID);
 						else {
 							System.out.println("tile list doesn't contain tile " + tileID);
-							//System.out.println("length: " + Tiles.oldids.size());
 							tilename = "grass";
 						}
 					}
-					//System.out.println("new id: " + tileID);
-					//byte id = (byte) tileID;
-					/*if(id < 0)
-						tiles[tileArrIdx] = minicraft.level.tile.TorchTile.getTorchTile(Tiles.get(id+128)).id;
-					else
-						*/tiles[tileArrIdx] = Tiles.get(tilename).id;
-					//if(tiles[tileArrIdx] == Tiles.get("Stairs Up").id) System.out.println("stairs up on level "+lvldepth+" at: x="+x+" y="+y);
+					tiles[tileArrIdx] = Tiles.get(tilename).id;
 					tdata[tileArrIdx] = Byte.parseByte(extradata.get(tileidx));
 				}
 			}
@@ -278,7 +270,7 @@ public class Load {
 			curLevel.data = tdata;
 			
 			if(Game.debug) {
-				System.out.println("level depth=" + curLevel.depth + " -- parent depth=" + (parent==null?"null":parent.depth));
+				//System.out.println("level depth=" + curLevel.depth + " -- parent depth=" + (parent==null?"null":parent.depth));
 				
 				curLevel.printTileLocs(Tiles.get("Stairs Down"));
 			}
@@ -287,8 +279,14 @@ public class Load {
 			/// comfirm that there are stairs in all the places that should have stairs.
 			for(java.awt.Point p: parent.getMatchingTiles(Tiles.get("Stairs Down"))) {
 				if(curLevel.getTile(p.x, p.y) != Tiles.get("Stairs Up")) {
-					System.out.println("INCONSISTENT STAIRS detected on level "+lvldepth+"; placing stairsUp at x=" +p.x+ ", y="+p.y);
+					curLevel.printLevelLoc("INCONSISTENT STAIRS detected; placing stairsUp", p.x, p.y);
 					curLevel.setTile(p.x, p.y, Tiles.get("Stairs Up"));
+				}
+			}
+			for(java.awt.Point p: curLevel.getMatchingTiles(Tiles.get("Stairs Up"))) {
+				if(parent.getTile(p.x, p.y) != Tiles.get("Stairs Down")) {
+					parent.printLevelLoc("INCONSISTENT STAIRS detected; placing stairsDown", p.x, p.y);
+					parent.setTile(p.x, p.y, Tiles.get("Stairs Down"));
 				}
 			}
 			
@@ -362,14 +360,16 @@ public class Load {
 		Player.skinon = Boolean.parseBoolean(data.get(12));
 	}
 	
-	private String subOldName(String name) {
+	protected static String subOldName(String name, Version worldVer) {
 		if(worldVer.compareTo(new Version("1.9.4-dev4")) < 0) {
 			name = name.replace("Hatchet", "Axe").replace("Pick", "Pickaxe").replace("Pickaxeaxe", "Pickaxe").replace("Spade", "Shovel").replace("Pow glove", "Power Glove").replace("II", "").replace("W.Bucket", "Water Bucket").replace("L.Bucket", "Lava Bucket").replace("G.Apple", "Gold Apple").replace("St.", "Stone").replace("Ob.", "Obsidian");
 			if(name.equals("Bucket"))
 				name = "Empty Bucket";
 		}
 		
-		name = name.replace("I.Armor", "Iron Armor").replace("S.Armor", "Snake Armor").replace("L.Armor", "Leather Armor").replace("G.Armor", "Gold Armor");
+		if(worldVer.compareTo(new Version("1.9.4")) < 0) {
+			name = name.replace("I.Armor", "Iron Armor").replace("S.Armor", "Snake Armor").replace("L.Armor", "Leather Armor").replace("G.Armor", "Gold Armor").replace("BrickWall", "Wall");
+		}
 		
 		return name;
 	}
@@ -382,7 +382,7 @@ public class Load {
 			String item = data.get(i);
 			
 			if(worldVer.compareTo(new Version("1.9.4")) < 0) {
-				item = subOldName(item);
+				item = subOldName(item, worldVer);
 			}
 			
 			//System.out.println("loading item: " + item);
@@ -451,13 +451,13 @@ public class Load {
 						if (itemData.contains(";")) {
 							String[] aitemData = (itemData + ";1").split(";"); // this appends ";1" to the end, meaning one item, to everything; but if it was already there, then it becomes the 3rd element in the list, which is ignored.
 							if(worldVer.compareTo(new Version("1.9.4")) < 0)
-								aitemData[0] = subOldName(aitemData[0]);
+								aitemData[0] = subOldName(aitemData[0], worldVer);
 							StackableItem stack = (StackableItem)Items.get(aitemData[0]);
 							stack.count = Integer.parseInt(aitemData[1]);
 							chest.inventory.add(stack);
 						} else {
 							if(worldVer.compareTo(new Version("1.9.4-dev4")) < 0)
-								itemData = subOldName(itemData);
+								itemData = subOldName(itemData, worldVer);
 							Item item = Items.get(itemData);
 							chest.inventory.add(item);
 						}
