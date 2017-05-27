@@ -1,9 +1,13 @@
-//respawn mod +dillyg10+
 package minicraft.screen;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
+import java.util.HashMap;
+import java.util.regex.Pattern;
+import java.util.regex.Matcher;
+import minicraft.Game;
 import minicraft.gfx.Color;
 import minicraft.gfx.Font;
 import minicraft.gfx.Screen;
@@ -12,20 +16,20 @@ import minicraft.Sound;
 public class ModeMenu extends Menu {
 	private Menu parent;
 
+	public static String[] modes = {"Survival", "Creative", "Hardcore", "Score"};
 	public static boolean survival;
 	public static boolean creative;
 	public static boolean hardcore;
 	public static boolean score;
-	public static boolean hasSetDif;
 	public static int mode = 1;
-	public static int loading = 0;
-	public static String[] modes = {"Survival", "Creative", "Hardcore", "Score"};
-	private int selected = 0;
-	public static int selection = 0;
-	public static String time = "";
-	public static String defaultTime = "20M";
-	public static List times = new ArrayList();
-	public static List unlockedtimes = new ArrayList();
+	
+	//public static boolean hasSetDif;
+	//public static int loading = 0;
+	//public static String time = "";
+	//public static String defaultTime = "20M";
+	private static int selectedTime = 0;
+	public static List<String> times = new ArrayList<String>();
+	public static List<String> unlockedtimes = new ArrayList<String>();
 	
 	public ModeMenu() {
 		if(times.size() < 1) {
@@ -33,30 +37,45 @@ public class ModeMenu extends Menu {
 			times.add("30M");
 			times.add("40M");
 			times.add("1H");
-
-			for(int mm = 0; mm < unlockedtimes.size(); ++mm) {
-				times.add((String)unlockedtimes.get(mm));
-			}
+			
+			times.addAll(unlockedtimes);
+			
+			HashMap<String, Integer> timeMap = new HashMap<String, Integer>();
+			for(String time: times)
+				timeMap.put(time, getScoreTime(time));
+			
+			Collections.sort(times, new Comparator<String>() {
+				public int compare(String t1, String t2) {
+					if (timeMap.get(t1) > timeMap.get(t2))
+						return 1;
+					else if (timeMap.get(t1) < timeMap.get(t2))
+						return -1;
+					
+					return 0;
+				}
+			});
 		}
-
-		ArrayList min = new ArrayList();
-		ArrayList hm = new ArrayList();
+		
+		/*
+		ArrayList<Integer> min = new ArrayList<Integer>();
+		ArrayList<Integer> hm = new ArrayList<Integer>();
 		
 		for(int i = 0; i < times.size(); i++) {
-			if(((String)times.get(i)).contains("M")) {
-				if(!((String)times.get(i)).contains(".")) {
-					min.add(Integer.valueOf(Integer.parseInt(((String)times.get(i)).substring(0, ((String)times.get(i)).length() - 1))));
+			if(times.get(i).contains("M")) {
+				if(!times.get(i).contains(".")) {
+					min.add(Integer.parseInt(times.get(i).substring(0, times.get(i).length() - 1)));
 				} else {
-					min.add(Integer.valueOf((int)Double.parseDouble(((String)times.get(i)).substring(0, ((String)times.get(i)).length() - 1))));
+					min.add((int)Double.parseDouble(times.get(i).substring(0, times.get(i).length() - 1)));
 				}
 
 				Collections.sort(min);
 			}
-			if(((String)times.get(i)).contains("H")) {
-				if(!((String)times.get(i)).contains(".")) {
-					hm.add(Integer.valueOf(Integer.parseInt(((String)times.get(i)).substring(0, ((String)times.get(i)).length() - 1))));
+			
+			if(times.get(i).contains("H")) {
+				if(!times.get(i).contains(".")) {
+					hm.add(Integer.parseInt(times.get(i).substring(0, times.get(i).length() - 1)));
 				} else {
-					hm.add(Integer.valueOf((int)Double.parseDouble(((String)times.get(i)).substring(0, ((String)times.get(i)).length() - 1))));
+					hm.add((int)Double.parseDouble(times.get(i).substring(0, times.get(i).length() - 1)));
 				}
 
 				Collections.sort(hm);
@@ -72,13 +91,15 @@ public class ModeMenu extends Menu {
 		for(int i = 0; i < hm.size(); i++) {
 			times.add(hm.get(i) + "H");
 		}
-		
-		for(int i = 0; i < times.size(); i++) {
-			if(((String)times.get(i)).equals(defaultTime) && time.equals("")) {
-				time = (String)times.get(i);
-				selection = i;
+		*/
+		/*for(int i = 0; i < times.size(); i++) {
+			if(times.get(i).equals(defaultTime) && time.equals("")) {
+				time = times.get(i);
+				selectedTime = i;
 			}
-		}
+		}*/
+		
+		selectedTime = 0;
 	}
 	
 	public void tick() {
@@ -90,50 +111,66 @@ public class ModeMenu extends Menu {
 			mode++;
 			Sound.craft.play();
 		}
-
-		//This is so that if the user presses enter @ respawn menu, they respawn (what a concept)
-		if (input.getKey("select").clicked && selected == 0) { //selected is always 0..?
-			Sound.test.play();
-			
-			if(mode == 4) {
-				if(((String)times.get(selection)).contains("M")) {
-					this.game.newscoreTime = Integer.parseInt(((String)times.get(selection)).replace("M", "").replace("H", "")) * 60 * 60;
-				} else if(((String)times.get(selection)).contains("H")) {
-					this.game.newscoreTime = Integer.parseInt(((String)times.get(selection)).replace("H", "").replace("M", "")) * 60 * 60 * 60;
-				}
-
-				System.out.println(Integer.parseInt(((String)times.get(selection)).replace("H", "").replace("M", "")) * 60 * 60 * 60);
-			}
-			
-			game.setMenu(new LoadingMenu());
-		}
-
-		if (input.getKey("exit").clicked) game.setMenu(new TitleMenu());
-
-		if (input.getKey("z").clicked) game.setMenu(new WorldGenMenu());
-		
-		if(input.getKey("t").clicked) {
-			selection++;
-			if(selection > times.size() - 1) {
-				selection = 0;
-			}
-
-			time = (String)times.get(selection);
-		}
-		
-		updateModeBools(mode);
 		
 		if (mode > 4) mode = 1;
 		if (mode < 1) mode = 4;
+		
+		updateModeBools(mode);
+		
+		if (score && input.getKey("t").clicked) { //selected is always 0..?
+			selectedTime++;
+			Sound.test.play();
+			if(selectedTime > times.size() - 1)
+				selectedTime = 0;
+		}
+		
+		if (input.getKey("z").clicked)
+			game.setMenu(new WorldGenMenu());
+		else if(input.getKey("select").clicked)
+			game.setMenu(new LoadingMenu());
+		else if (input.getKey("exit").clicked)
+			game.setMenu(new TitleMenu());
 	}
-
+	
 	public static void updateModeBools(int mode) {
 		ModeMenu.mode = mode;
-
+		
 		survival = mode == 1;
 		creative = mode == 2;
 		hardcore = mode == 3;
 		score = mode == 4;
+	}
+	
+	public static String getSelectedTime() {
+		if(score)
+			return times.get(selectedTime);
+		else
+			return "Infinity";
+	}
+	
+	public static int getScoreTime() { return getScoreTime(getSelectedTime()); }
+	private static int getScoreTime(String timeStr) {
+		int time = 0;
+		
+		Matcher matcher = Pattern.compile("(\\d+)(\\w+)").matcher(timeStr);
+		
+		while(matcher.find()) {
+			String unit = matcher.group(2);
+			int amount = Integer.parseInt(matcher.group(1));
+			if(unit.contains("H")) time += amount * 60 * 60;
+			else if(unit.contains("M")) time += amount * 60;
+		}
+		
+		/*if(curTime.contains("M")) {
+			time = Integer.parseInt(curTime.replace("M", "").replace("H", "")) * 60 * 60;
+		} else if(curTime.contains("H")) {
+			time = Integer.parseInt(curTime.replace("H", "").replace("M", "")) * 60 * 60 * 60;
+		}*/
+		
+		time *= Game.normSpeed;
+		System.out.println("score time: " + time);
+		
+		return time;
 	}
 
 	public void render(Screen screen) {
@@ -148,11 +185,11 @@ public class ModeMenu extends Menu {
 		String modeText = "Game Mode:	" + modes[mode - 1];
 		Font.drawCentered(modeText, screen, 8 * 8, Color.get(-1, 555), Color.get(-1, 111));
 		
-		if(mode == 4) Font.drawCentered("<T>ime: " + time, screen, 95, Color.get(0, 555));
+		if(mode == 4) Font.drawCentered("<T>ime: " + getSelectedTime(), screen, 95, Color.get(0, 555));
 		
 		Font.drawCentered("Press "+input.getMapping("select")+" to Start", screen, screen.h - 75, textCol);
 		
-		Font.draw("Loading...", screen, 120, screen.h - 105, (loading == 0 ? black : color));
+		//Font.draw("Loading...", screen, 120, screen.h - 105, (loading == 0 ? black : color));
 		
 		Font.drawCentered("Press Left and Right", screen, screen.h - 150, textCol);
 		Font.drawCentered("Press "+input.getMapping("exit")+" to Return", screen, screen.h - 55, textCol);

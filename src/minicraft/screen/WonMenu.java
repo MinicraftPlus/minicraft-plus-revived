@@ -15,17 +15,21 @@ import minicraft.gfx.Screen;
 import minicraft.item.Items;
 
 public class WonMenu extends Menu {
-
-	private int inputDelay = 20; // variable to delay the input of the player, so they won't skip the won menu the first second.
-	Random random = new Random();
-	HashMap<String, Integer> scores;
-	int w, ml = 0;
-	int finalscore = 0;
-	String location = Game.gameDir;
-	boolean doneunlocked = false;
-
-
+	private Random random = new Random();
+	
+	private int inputDelay; // variable to delay the input of the player, so they won't skip the won menu by accident.
+	private int displayTimer;
+	private HashMap<String, Integer> scores;
+	private int ml;
+	private int finalscore;
+	private String location = Game.gameDir;
+	//private boolean doneunlocked = false;
+	private ArrayList<String> unlocks;
+	
 	public WonMenu(Player player) {
+		displayTimer = Game.normSpeed; // wait 3 seconds before rendering the menu.
+		inputDelay = Game.normSpeed/2; // wait a half-second before allow user input.
+		
 		scores = new HashMap<String, Integer>();
 		scores.put("Cloth", player.inventory.count(Items.get("cloth")) * (random.nextInt(2) + 1) * 10);
 		scores.put("Slime", player.inventory.count(Items.get("slime")) * (random.nextInt(2) + 1) * 10);
@@ -43,57 +47,97 @@ public class WonMenu extends Menu {
 		for(Integer score: scores.values().toArray(new Integer[0])) {
 			finalscore += score;
 		}
+		
+		unlocks = new ArrayList<String>();
+		writeUnlocks();
 	}
 
 	public void tick() {
-		if(inputDelay > 0) inputDelay--;
-		if(input.getKey("select").clicked && inputDelay <= 0) {
+		if (displayTimer > 0) displayTimer--;
+		else if (inputDelay > 0) inputDelay--;
+		else if (input.getKey("exit").clicked) {
 			game.setMenu(new TitleMenu());
 		}
 	}
 
-	public void writeUnlocks(Screen screen, List unlocks) {
-		renderFrame(screen, "", w + 2, 3, w + 13, 7 + unlocks.size());
-		Font.draw("Unlocked!", screen, w * 8 + 32 - 4, 32, Color.get(-1, 50));
+	public void writeUnlocks() {
+		//boolean hastime = false;
+		String scoreTime = ModeMenu.getSelectedTime();
+		List<String> unlockedtimes = ModeMenu.unlockedtimes;
 		
-		for(int i = 0; i < unlocks.size(); ++i) {
-			Font.draw((String)unlocks.get(i), screen, w * 8 + 48 + 2, 48 + i * 12, Color.get(-1, 555));
+		if(scoreTime.equals("20M") && !unlockedtimes.contains("10M") && finalscore > 1000)
+			unlocks.add("10M");
+		
+		if(scoreTime.equals("1H") && !unlockedtimes.contains("2H") && finalscore > 100000)
+			unlocks.add("2H");
+		
+		/*
+		 { // if playing a 20 minute game...
+			hastime = false;
+			
+			for(int seconds = 0; seconds < ModeMenu.unlockedtimes.size(); seconds++) {
+				/// searches through the unlocked times for the 10 minute option
+				if(ModeMenu.unlockedtimes.get(seconds).contains("10M")) {
+					break;
+					hastime = true; // if found, set to true.
+				}
+			}
+			
+			if(!ModeMenu.unlockedtimes.contains("10M") && finalscore > 1000) { // if 10 min option wasn't found, and this game's score is high enough to unlock that option...
+				unlocks.add("10M"); // add the 10 min option to the list of times to be recorded as "unlocked".
+			}
 		}
 		
-		if(!doneunlocked) {
-			for(int i = 0; i < unlocks.size(); ++i) {
-				BufferedWriter unlockWriter = null;
+		if(scoreTime.contains("1H")) {
+			hastime = false;
+			
+			for(int seconds = 0; seconds < ModeMenu.unlockedtimes.size(); seconds++) {
+				if(ModeMenu.unlockedtimes.get(seconds).contains("2H")) {
+					hastime = true;
+					break;
+				}
 				
+				hastime = false;
+			}
+			
+			if(!hastime && finalscore > 100000) {
+				unlocks.add("2H");
+			}
+		}*/
+		
+		if(unlocks.size() == 0)
+			return;
+		
+		for(int i = 0; i < unlocks.size(); i++) {
+			BufferedWriter unlockWriter = null;
+			
+			try {
+				unlockWriter = new BufferedWriter(new FileWriter(location + "/unlocks.miniplussave", true));
+				if(unlocks.get(i).contains("M")) {
+					unlockWriter.write("," + unlocks.get(i).substring(0, unlocks.get(i).indexOf("M")) + "MINUTEMODE"); // this effectively writes 10MINUTEMODE.
+				} else if(unlocks.get(i).contains("H")) {
+					unlockWriter.write("," + unlocks.get(i).substring(0, unlocks.get(i).indexOf("H")) + "HOURMODE"); // this effectively writes 2HOURMODE.
+				}
+			} catch (IOException ex) {
+				ex.printStackTrace();
+			} finally {
 				try {
-					unlockWriter = new BufferedWriter(new FileWriter(location + "/unlocks.miniplussave", true));
-					if(((String)unlocks.get(i)).contains("M")) {
-						unlockWriter.write("," + ((String)unlocks.get(i)).substring(0, ((String)unlocks.get(i)).indexOf("M")) + "MINUTEMODE");
-					} else if(((String)unlocks.get(i)).contains("H")) {
-						unlockWriter.write("," + ((String)unlocks.get(i)).substring(0, ((String)unlocks.get(i)).indexOf("H")) + "HOURMODE");
+					if(unlockWriter != null) {
+						unlockWriter.flush();
+						unlockWriter.close();
 					}
 				} catch (IOException ex) {
 					ex.printStackTrace();
-				} finally {
-					try {
-						if(unlockWriter != null) {
-							unlockWriter.flush();
-							unlockWriter.close();
-						}
-					} catch (IOException ex) {
-						ex.printStackTrace();
-					}
-					
-					TitleMenu.loadedunlocks = false;
-					doneunlocked = true;
 				}
+				
+				TitleMenu.loadedunlocks = false;
 			}
 		}
-
 	}
-
+	
 	public void render(Screen screen) {
-		boolean hastime = false;
-		
+		if(displayTimer > 0) return;
+		/*
 		if(Player.score <= 9999999) {
 			w = 21;
 		} else {
@@ -102,65 +146,36 @@ public class WonMenu extends Menu {
 		
 		w = Math.max(w, ml + 2);
 		w = Math.max(w, ("Final Score:" + finalscore).length() + 2);
-		w = Math.max(w, ("Press "+input.getMapping("select")+" to continue...").length() + 2);
-
-		renderFrame(screen, "", 1, 3, w, 20);
-		Font.draw("Game Over! (" + ModeMenu.time + ")", screen, 16, 32, Color.get(-1, 555));
+		w = Math.max(w, ("Press "+input.getMapping("exit")+" to exit to menu...").length() + 2);
+		*/
+		renderFrame(screen, "", 1, 3, screen.w/8-2, screen.h/8-5);
+		Font.drawCentered("Game Over! (" + ModeMenu.getSelectedTime() + ")", screen, 4*8, Color.get(-1, 555));
 		
-		ArrayList unlocks = new ArrayList();
-		
-		if(ModeMenu.time.contains("20M")) {
-			hastime = false;
-			
-			for(int seconds = 0; seconds < ModeMenu.unlockedtimes.size(); seconds++) {
-				if(((String)ModeMenu.unlockedtimes.get(seconds)).contains("10M")) {
-					hastime = true;
-					break;
-				}
-
-				hastime = false;
-			}
-
-			if(!hastime && finalscore > 1000) {
-				unlocks.add("10M");
-			}
-		}
-
-		if(ModeMenu.time.contains("1H")) {
-			hastime = false;
-
-			for(int seconds = 0; seconds < ModeMenu.unlockedtimes.size(); seconds++) {
-				if(((String)ModeMenu.unlockedtimes.get(seconds)).contains("2H")) {
-					hastime = true;
-					break;
-				}
-
-				hastime = false;
-			}
-
-			if(!hastime && finalscore > 100000) {
-				unlocks.add("2Hr");
-			}
-		}
-
 		if(unlocks.size() > 0) {
-			writeUnlocks(screen, unlocks);
+			//renderFrame(screen, "Unlocked!", w + 2, 3, w + 13, 7 + unlocks.size());
+			//Font.drawCentered("Unlocked!", screen, w * 8/2 + 32 - 4, 32, Color.get(-1, 50));
+			Font.drawCentered("Unlocked!", screen, screen.w/2, screen.w-8, 6*8, Color.get(-1, 50));
+			
+			for(int i = 0; i < unlocks.size(); ++i) {
+				//Font.draw(unlocks.get(i), screen, w * 8 + 48 + 2, 48 + i * 12, Color.get(-1, 555));
+				Font.drawCentered(unlocks.get(i), screen, screen.w/2, screen.w-8, (8+i)*8, Color.get(-1, 50));
+			}
 		}
 		
-		Font.draw("Player Score: " + Player.score, screen, 16, 48, Color.get(-1, 555));
-		Font.draw("<Bonuses>", screen, 16, 64, Color.get(-1, Color.rgb(0, 200, 0), Color.rgb(0, 200, 0), Color.rgb(0, 200, 0)));
+		Font.draw("Player Score: " + Player.score, screen, 16, 6*8, Color.get(-1, 555));
+		Font.draw("<Bonuses>", screen, 16, 8*8, Color.get(-1, 040));
 		int i = 0;
 		for(String bonus: scores.keySet().toArray(new String[0])) {
 			String label = bonus+"s: ";
 			while(label.length() < ml+3) label += " ";
-			Font.draw(label+"+"+scores.get(bonus), screen, 16, 80+(i++)*8, Color.get(-1, 550));
+			Font.draw(label+"+"+scores.get(bonus), screen, 16, (10+(i++))*8, Color.get(-1, 550));
 		}
 		
-		Font.draw("Final Score: " + finalscore, screen, 16, 136, Color.get(-1, 555));
+		Font.draw("Final Score: " + finalscore, screen, 16, 17*8, Color.get(-1, 555));
 		if(finalscore == 0) {
-			Font.draw("Fail!", screen, 136, 136, Color.get(-1, 500));
+			Font.draw("Fail!", screen, 17*8, 17*8, Color.get(-1, 500));
 		}
 
-		Font.draw("Press "+input.getMapping("select")+" to continue...", screen, 16, 152, Color.get(-1, 333));
+		Font.draw("Press "+input.getMapping("exit")+" to exit to menu...", screen, 16, 19*8, Color.get(-1, 333));
 	}
 }
