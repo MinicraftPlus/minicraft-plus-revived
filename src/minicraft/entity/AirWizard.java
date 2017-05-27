@@ -24,6 +24,7 @@ public class AirWizard extends EnemyMob {
 	String location = Game.gameDir;
 	File folder;
 	
+	public AirWizard(int lvl) { this(lvl>1); }
 	public AirWizard(boolean secondform) {
 		super(secondform?2:1, sprites, (new int[2]), secondform?5000:2000, false, 16*8, 10, 50);
 		

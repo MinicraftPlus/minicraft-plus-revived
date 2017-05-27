@@ -76,9 +76,7 @@ public class Spawner extends Furniture {
 		
 		MobAi newmob = null;
 		try {
-			if(mob instanceof AirWizard)
-				newmob = new AirWizard(((AirWizard)mob).secondform);
-			else if(mob instanceof EnemyMob)
+			if(mob instanceof EnemyMob)
 				newmob = mob.getClass().getConstructor(int.class).newInstance(((EnemyMob)mob).lvl);
 			else
 				newmob = mob.getClass().newInstance();
