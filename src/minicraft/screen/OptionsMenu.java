@@ -15,7 +15,6 @@ public class OptionsMenu extends Menu {
 	public static boolean isSoundAct = true;
 	public static boolean autosave = true;
 	public static boolean unlockedskin = false;
-	//public static boolean hasSetDiff = false;
 	
 	private Menu parent;
 	
@@ -37,7 +36,6 @@ public class OptionsMenu extends Menu {
 		if (diff < 0) diff = 2;
 
 		if (input.getKey("exit").clicked) {
-			//hasSetDiff = true;
 			new Save(game);
 			game.setMenu(parent);
 		}

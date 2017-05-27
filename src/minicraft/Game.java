@@ -198,24 +198,10 @@ public class Game extends Canvas implements Runnable {
 		setMenu(new TitleMenu()); //sets menu to the title screen.
 	}
 	
-	/* differences from resetstartGame:
-		-has deadmenu.shouldRespawn conditional
-		+matches other if shouldRespawn = true:
-			sets current level, player.respawn, adds player to level
-		
-		BUT: if shouldRespawn == false...
-		-calls: levels[3] = new Level(worldSize, worldSize, 0, levels[4]);
-		-calls player.findStartPos directly, rather than player.respawn.
-			*this means that bed and previous spawn are ignored...
-	*/
+	/** This method is used when respawning, and by resetstartGame to reset the vars. It does not generate any new terrain. */
 	public void resetGame() {
-		// Resets all values
 		playerDeadTime = 0;
-		//wonTimer = 0;
-		//gameTime = 0; // shouldn't this be kept the same, if it's a gameplay timer?
-		Player.hasSetHome = false;
 		Bed.inBed = false;
-		//gameOver = false;
 		currentLevel = 3;
 		asTick = 0;
 		notifications.clear();
@@ -225,83 +211,36 @@ public class Game extends Canvas implements Runnable {
 		
 		// "shouldRespawn" is false on hardcore, or when making a new world.
 		if (DeadMenu.shouldRespawn) { // respawn, don't regenerate level.
-			if (debug) System.out.println("Current Level = " + currentLevel);
+			//if (debug) System.out.println("Current Level = " + currentLevel);
 			
 			level = levels[currentLevel];
 			player.respawn(level);
-			if (debug) System.out.println("respawned player in current world, resetGame");
+			//if (debug) System.out.println("respawned player in current world");
 			level.add(player); // adds the player to the current level (always surface here)
-		}/* else {
-			// new game, regenerate... just the surface level?
-			levels[3] = new Level(worldSize, worldSize, 0, levels[4], false);
-			
-			level = levels[currentLevel]; // Set level variable to the surface (b/c currentlevel is always 3)
-			
-			DeadMenu.shouldRespawn = true; // player should respawn on death
-			//player.findStartPos(level); // finds the start position for the player
-			//if (debug) System.out.println("spawned player in new surface level, resetGame");
-		}*/
+		}
 	}
 	
-	/* differences from resetGame:
-		-removes bed
-		-checks for diff, set if not already
-		-resets time of day to morning (via setTime())
-		-re-instantiates Items' item list
-		-resets level array
-		-**goes through whole level load process
-		-resets player score
-		-resets tickCount
-		-adds lantern to dungeon level
-		-sets loading menu percentage to 0
-	*/
+	/** This method is used to create a brand new world, or to load an existing one from a file. */
 	public void resetstartGame() { // this is a full reset; everything.
-		//playerDeadTime = 0;
-		//wonTimer = 0;
+		DeadMenu.shouldRespawn = false;
+		resetGame();
 		gameTime = 0;
-		Player.hasSetHome = false;
-		Player.moveSpeed = 1;
-		Bed.inBed = false; //no bed
 		Game.gamespeed = 1;
 		
 		changeTimeOfDay(Time.Morning); // resets tickCount; game starts in the day, so that it's nice and bright.
 		gameOver = false;
-
-		player = new Player(this, input); //very important that this is AFTER the previous 2 statements.
-
+		
 		levels = new Level[6];
-		currentLevel = 3;
 		
 		scoreTime = ModeMenu.getScoreTime();
 		Player.score = 0;
-		/*if (ModeMenu.score) {
-			scoreTime = ModeMenu.;
-		}*/
 		
-		
-		/// LOOOOOADING..
-		
-		/*if (WorldSelectMenu.loadworld) {
-			try {
-				BufferedReader f = new BufferedReader(new FileReader(
-				  gameDir + "/saves/" + WorldSelectMenu.worldname + "/Level3.miniplussave"));
-				this.worldSize = Integer.parseInt(f.readLine().substring(0, 3));
-			} catch (FileNotFoundException var4) {
-				var4.printStackTrace();
-			} catch (NumberFormatException var5) {
-				var5.printStackTrace();
-			} catch (IOException var6) {
-				var6.printStackTrace();
-			}
-		}*/
-		
-		LoadingMenu.percentage = 0;
+		LoadingMenu.percentage = 0; // this actually isn't necessary, I think; it's just in case.
 		
 		if(!WorldSelectMenu.loadworld) {
 			worldSize = WorldGenMenu.getSize();
 			for (int i = 5; i >= 0; i--) {
 				LoadingMenu.percentage = (5-i)*20;
-				//else LoadingMenu.percentage += 5; //just make sure they think something is happening... ;D
 				
 				levels[(i - 1 < 0 ? 5 : i - 1)] =
 						new Level(worldSize, worldSize, i - 4, (i == 5 ? (Level) null : levels[i]), !WorldSelectMenu.loadworld);
@@ -331,7 +270,6 @@ public class Game extends Canvas implements Runnable {
 		}
 		
 		readyToRenderGameplay = true;
-		//System.out.println("game time: " + getTime());
 	}
 	
 	// VERY IMPORTANT METHOD!! Makes everything keep happening.
@@ -423,18 +361,6 @@ public class Game extends Canvas implements Runnable {
 					setMenu(new LevelTransitionMenu(pendingLevelChange));
 					pendingLevelChange = 0;
 				}
-				
-				//I'm guessing that this is like DeadMenu, but you can't respawn.
-				/*if (wonTimer > 0) {
-					wonTimer--;
-					paused = true;
-					if (wonTimer == 0 && menu == null) {
-						//wonTimer = 60 * 3;
-						//gameOver = true;
-						player.remove();
-						setMenu(new WonMenu(player));
-					}
-				}*/
 				
 				//still in "no active menu" conditional:
 				level.tick();
@@ -611,11 +537,6 @@ public class Game extends Canvas implements Runnable {
 	
 	/** Renders the main game GUI (hearts, Stamina bolts, name of the current item, etc.) */
 	private void renderGui() {
-		/*for (int y = 0; y < 2; y++) {
-			for (int x = 0; x < 29; x++) {
-				screen.render(x * 7, screen.h - 16 + y * 8, 0 + 12 * 32, Color.get(-1, -1), 0);
-			}
-		}*/
 		/// AH-HA! THIS DRAWS THE BLACK SQUARE!!
 		for (int x = 12; x < 29; x++) {
 			screen.render(x * 7, screen.h - 8, 0 + 1 * 32, Color.get(0, 0), 0);
@@ -908,12 +829,4 @@ public class Game extends Canvas implements Runnable {
 	public static Dimension getWindowSize() {
 		return new Dimension(new Float(WIDTH * SCALE).intValue(), new Float(HEIGHT * SCALE).intValue());
 	}
-	
-	/** This is called when the player has won the game, obviously. */
-	/*public void endGame() {
-		//player.gameWon();
-		//wonTimer = 60 * 3; // the pause time before the win menu shows up.
-		gameOver = true; //confirms that the player has, indeed, won the game.
-		//paused = true;
-	}*/
 }

@@ -22,7 +22,6 @@ private static final String[] options = {"New game", "Instructions", "Tutorial",
 	int rand;
 	int count = 0; // this and reverse are for the logo; they produce the fade-in/out effect.
 	boolean reverse = false;
-	static boolean loadedunlocks = false;
 	String location = Game.gameDir;
 	File folder;
 	
@@ -141,7 +140,6 @@ private static final String[] options = {"New game", "Instructions", "Tutorial",
 		
 		folder = new File(location);
 		rand = random.nextInt(splashes.length);
-		loadUnlocks();
 	}
 	
 	/*public void getSplashes() {
@@ -182,71 +180,6 @@ private static final String[] options = {"New game", "Instructions", "Tutorial",
 			loadedsplashes = true;
 		}
 	}*/
-	
-	public void loadUnlocks() {
-		if(loadedunlocks) return;
-		
-		ModeMenu.unlockedtimes.clear();
-		BufferedReader unlockReader = null;
-		this.folder.mkdirs();
-
-		try {
-			unlockReader = new BufferedReader(new FileReader(this.location + "/unlocks.miniplussave"));
-
-			String line;
-			while((line = unlockReader.readLine()) != null) {
-				Iterator unlocks = Arrays.asList(line.split(",")).iterator();
-
-				while(unlocks.hasNext()) {
-					String ulText = (String)unlocks.next();
-					if(ulText.contains("AirSkin")) {
-						OptionsMenu.unlockedskin = true;
-					}
-
-					if(ulText.contains("MINUTEMODE") && !ulText.substring(0, ulText.indexOf("M") + 1).equals("M")) {
-						ModeMenu.unlockedtimes.add(ulText.substring(0, ulText.indexOf("M") + 1));
-					}
-				
-					if(ulText.contains("HOURMODE") && !ulText.substring(0, ulText.indexOf("H") + 1).equals("H")) {
-						ModeMenu.unlockedtimes.add(ulText.substring(0, ulText.indexOf("H") + 1));
-					}
-				}
-			}
-		} catch (FileNotFoundException fnfEx) {
-			BufferedWriter fileWriter = null;
-			
-			try {
-				fileWriter = new BufferedWriter(new FileWriter(this.location + "/unlocks.miniplussave"));
-				fileWriter.write("");
-			} catch (IOException ex) {
-				ex.printStackTrace();
-			} finally {
-				try {
-					if(fileWriter != null) {
-						fileWriter.flush();
-						fileWriter.close();
-					}
-				} catch (IOException ex) {
-					ex.printStackTrace();
-				}
-
-			}
-		} catch (IOException ioEx) {
-			ioEx.printStackTrace();
-		} finally {
-			try {
-				if(unlockReader != null) {
-					unlockReader.close();
-				}
-			} catch (IOException ex) {
-				ex.printStackTrace();
-			}
-
-		}
-
-		ModeMenu.times.clear();
-		loadedunlocks = true;
-	}
 	
 	public void tick() {
 		super.tick();
