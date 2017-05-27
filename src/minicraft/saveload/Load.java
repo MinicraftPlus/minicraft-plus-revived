@@ -84,6 +84,22 @@ public class Load {
 		
 		if(hasGlobalPrefs)
 			loadPrefs("Preferences", game);
+		
+		File testFile = new File(location+"unlocks"+extention);
+		if (testFile.exists()) {
+			new LegacyLoad("unlocks", "Unlocks");
+			testFile.delete();
+		}
+		testFile = new File(location+"Unlocks"+extention);
+		if(!testFile.exists()) {
+			try {
+				testFile.createNewFile();
+			} catch (IOException ex) {
+				ex.printStackTrace();
+			}
+		}
+		
+		loadUnlocks("Unlocks");
 	}
 	
 	protected static class Version implements Comparable {
@@ -189,8 +205,26 @@ public class Load {
 			} catch (IOException ex) {
 				ex.printStackTrace();
 			}
-			
 		}
+	}
+	
+	public void loadUnlocks(String filename) {
+		loadFromFile(location + filename + extention);
+		
+		ModeMenu.unlockedtimes.clear();
+		OptionsMenu.unlockedskin = false;
+		
+		for(String unlock: data) {
+			if(unlock.equals("AirSkin"))
+				OptionsMenu.unlockedskin = true;
+			
+			unlock = unlock.replace("HOURMODE", "H_ScoreTime").replace("MINUTEMODE", "M_ScoreTime");
+			
+			if(unlock.contains("_ScoreTime"))
+				ModeMenu.unlockedtimes.add(unlock.substring(0, unlock.indexOf("_")));
+		}
+		
+		ModeMenu.initTimeList();
 	}
 	
 	public void loadGame(String filename, Game game) {
@@ -323,9 +357,13 @@ public class Load {
 		String modedata = data.get(9);
 		int mode;
 		if(modedata.contains(";")) {
-			mode = Integer.parseInt(modedata.substring(0, modedata.indexOf(";")));
-			if (mode == 4)
-				player.game.scoreTime = Integer.parseInt(modedata.substring(modedata.indexOf(";") + 1));
+			String[] modeinfo = modedata.split(";");
+			mode = Integer.parseInt(modeinfo[0]);
+			if (mode == 4) {
+				player.game.scoreTime = Integer.parseInt(modeinfo[1]);
+				if(worldVer.compareTo(new Version("1.9.4")) >= 0)
+					ModeMenu.setScoreTime(modeinfo[2]);
+			}
 		}
 		else {
 			mode = Integer.parseInt(modedata);

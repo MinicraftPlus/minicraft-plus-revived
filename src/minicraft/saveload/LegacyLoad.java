@@ -36,14 +36,16 @@ public class LegacyLoad {
 	Load.Version currentVer, worldVer;
 	boolean oldSave = false;
 	
-	public LegacyLoad(Game game, String worldname) {
+	{
 		currentVer = new Load.Version(Game.VERSION);
 		worldVer = null;
 		
 		data = new ArrayList<String>();
 		extradata = new ArrayList<String>();
 		hasloadedbigworldalready = false;
-		
+	}
+	
+	public LegacyLoad(Game game, String worldname) {
 		location += "/saves/" + worldname + "/";
 		
 		File testFile = new File(location + "KeyPrefs" + extention);
@@ -59,6 +61,10 @@ public class LegacyLoad {
 		loadInventory("Inventory", game.player.inventory);
 		loadEntities("Entities", game.player);
 		LoadingMenu.percentage = 0; // reset
+	}
+	
+	protected LegacyLoad(String oldName, String newName) {
+		updateUnlocks(location+"/" + oldName + extention, location+"/" + newName + extention);
 	}
 	
 	public void loadFromFile(String filename) {
@@ -104,6 +110,34 @@ public class LegacyLoad {
 				ex.printStackTrace();
 			}
 			
+		}
+	}
+	
+	protected void updateUnlocks(String oldfilename, String newfilename) {
+		loadFromFile(oldfilename);
+		
+		for(int i = 0; i < data.size(); i++) {
+			String unlock = data.get(i);
+			if(unlock.contains("MINUTEMODE"))
+				unlock = unlock.replace("MINUTEMODE", "M_ScoreTime");
+			if(unlock.contains("HOURMODE"))
+				unlock = unlock.replace("HOURMODE", "H_ScoreTime");
+			
+			if(unlock.length() == 0) {
+				data.remove(i);
+				i--;
+			}
+		}
+		
+		try {
+			java.io.BufferedWriter writer = new java.io.BufferedWriter(new java.io.FileWriter(newfilename));
+			for(String unlock: data) {
+				writer.write(","+unlock);
+			}
+			writer.flush();
+			writer.close();
+		} catch(IOException ex) {
+			ex.printStackTrace();
 		}
 	}
 	

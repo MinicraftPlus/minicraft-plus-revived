@@ -23,21 +23,27 @@ public class ModeMenu extends Menu {
 	public static boolean score;
 	public static int mode = 1;
 	
-	//public static boolean hasSetDif;
-	//public static int loading = 0;
-	//public static String time = "";
-	//public static String defaultTime = "20M";
 	private static int selectedTime = 0;
-	public static List<String> times = new ArrayList<String>();
+	private static List<String> times = new ArrayList<String>();
 	public static List<String> unlockedtimes = new ArrayList<String>();
 	
+	static {
+		initTimeList();
+	}
+	
 	public ModeMenu() {
-		if(times.size() < 1) {
-			times.add("20M");
-			times.add("30M");
-			times.add("40M");
-			times.add("1H");
-			
+		selectedTime = 0;
+	}
+	
+	public static void initTimeList() {
+		times.clear();
+		
+		times.add("20M");
+		times.add("30M");
+		times.add("40M");
+		times.add("1H");
+		
+		if(unlockedtimes.size() > 0) {
 			times.addAll(unlockedtimes);
 			
 			HashMap<String, Integer> timeMap = new HashMap<String, Integer>();
@@ -55,51 +61,6 @@ public class ModeMenu extends Menu {
 				}
 			});
 		}
-		
-		/*
-		ArrayList<Integer> min = new ArrayList<Integer>();
-		ArrayList<Integer> hm = new ArrayList<Integer>();
-		
-		for(int i = 0; i < times.size(); i++) {
-			if(times.get(i).contains("M")) {
-				if(!times.get(i).contains(".")) {
-					min.add(Integer.parseInt(times.get(i).substring(0, times.get(i).length() - 1)));
-				} else {
-					min.add((int)Double.parseDouble(times.get(i).substring(0, times.get(i).length() - 1)));
-				}
-
-				Collections.sort(min);
-			}
-			
-			if(times.get(i).contains("H")) {
-				if(!times.get(i).contains(".")) {
-					hm.add(Integer.parseInt(times.get(i).substring(0, times.get(i).length() - 1)));
-				} else {
-					hm.add((int)Double.parseDouble(times.get(i).substring(0, times.get(i).length() - 1)));
-				}
-
-				Collections.sort(hm);
-			}
-		}
-		
-		times.clear();
-		
-		for(int i = 0; i < min.size(); i++) {
-			times.add(min.get(i) + "M");
-		}
-		
-		for(int i = 0; i < hm.size(); i++) {
-			times.add(hm.get(i) + "H");
-		}
-		*/
-		/*for(int i = 0; i < times.size(); i++) {
-			if(times.get(i).equals(defaultTime) && time.equals("")) {
-				time = times.get(i);
-				selectedTime = i;
-			}
-		}*/
-		
-		selectedTime = 0;
 	}
 	
 	public void tick() {
@@ -161,16 +122,22 @@ public class ModeMenu extends Menu {
 			else if(unit.contains("M")) time += amount * 60;
 		}
 		
-		/*if(curTime.contains("M")) {
-			time = Integer.parseInt(curTime.replace("M", "").replace("H", "")) * 60 * 60;
-		} else if(curTime.contains("H")) {
-			time = Integer.parseInt(curTime.replace("H", "").replace("M", "")) * 60 * 60 * 60;
-		}*/
-		
 		time *= Game.normSpeed;
-		System.out.println("score time: " + time);
+		if (Game.debug) System.out.println("score time: " + time);
 		
 		return time;
+	}
+	
+	public static void setScoreTime(String timeStr) {
+		if(!times.contains(timeStr)) {
+			times.add(timeStr);
+			selectedTime = times.size() - 1;
+		}
+		else {
+			for(int i = 0; i < times.size(); i++)
+				if(times.get(i).equals(timeStr))
+					selectedTime = i;
+		}
 	}
 
 	public void render(Screen screen) {
@@ -188,9 +155,6 @@ public class ModeMenu extends Menu {
 		if(mode == 4) Font.drawCentered("<T>ime: " + getSelectedTime(), screen, 95, Color.get(0, 555));
 		
 		Font.drawCentered("Press "+input.getMapping("select")+" to Start", screen, screen.h - 75, textCol);
-		
-		//Font.draw("Loading...", screen, 120, screen.h - 105, (loading == 0 ? black : color));
-		
 		Font.drawCentered("Press Left and Right", screen, screen.h - 150, textCol);
 		Font.drawCentered("Press "+input.getMapping("exit")+" to Return", screen, screen.h - 55, textCol);
 		Font.drawCentered("Press Z for world options", screen, screen.h - 35, textCol);

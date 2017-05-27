@@ -181,7 +181,7 @@ public class Save {
 		data.add(String.valueOf(Player.score));
 		data.add(String.valueOf(player.ac));
 		data.add(String.valueOf(Game.currentLevel));
-		data.add(ModeMenu.mode + (ModeMenu.score?";"+player.game.scoreTime:""));
+		data.add(ModeMenu.mode + (ModeMenu.score?";"+player.game.scoreTime+";"+ModeMenu.getSelectedTime():""));
 		
 		String subdata = "PotionEffects[";
 		

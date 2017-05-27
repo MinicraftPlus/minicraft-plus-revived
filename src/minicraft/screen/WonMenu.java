@@ -23,7 +23,6 @@ public class WonMenu extends Menu {
 	private int ml;
 	private int finalscore;
 	private String location = Game.gameDir;
-	//private boolean doneunlocked = false;
 	private ArrayList<String> unlocks;
 	
 	public WonMenu(Player player) {
@@ -61,7 +60,6 @@ public class WonMenu extends Menu {
 	}
 
 	public void writeUnlocks() {
-		//boolean hastime = false;
 		String scoreTime = ModeMenu.getSelectedTime();
 		List<String> unlockedtimes = ModeMenu.unlockedtimes;
 		
@@ -71,40 +69,6 @@ public class WonMenu extends Menu {
 		if(scoreTime.equals("1H") && !unlockedtimes.contains("2H") && finalscore > 100000)
 			unlocks.add("2H");
 		
-		/*
-		 { // if playing a 20 minute game...
-			hastime = false;
-			
-			for(int seconds = 0; seconds < ModeMenu.unlockedtimes.size(); seconds++) {
-				/// searches through the unlocked times for the 10 minute option
-				if(ModeMenu.unlockedtimes.get(seconds).contains("10M")) {
-					break;
-					hastime = true; // if found, set to true.
-				}
-			}
-			
-			if(!ModeMenu.unlockedtimes.contains("10M") && finalscore > 1000) { // if 10 min option wasn't found, and this game's score is high enough to unlock that option...
-				unlocks.add("10M"); // add the 10 min option to the list of times to be recorded as "unlocked".
-			}
-		}
-		
-		if(scoreTime.contains("1H")) {
-			hastime = false;
-			
-			for(int seconds = 0; seconds < ModeMenu.unlockedtimes.size(); seconds++) {
-				if(ModeMenu.unlockedtimes.get(seconds).contains("2H")) {
-					hastime = true;
-					break;
-				}
-				
-				hastime = false;
-			}
-			
-			if(!hastime && finalscore > 100000) {
-				unlocks.add("2H");
-			}
-		}*/
-		
 		if(unlocks.size() == 0)
 			return;
 		
@@ -112,12 +76,8 @@ public class WonMenu extends Menu {
 			BufferedWriter unlockWriter = null;
 			
 			try {
-				unlockWriter = new BufferedWriter(new FileWriter(location + "/unlocks.miniplussave", true));
-				if(unlocks.get(i).contains("M")) {
-					unlockWriter.write("," + unlocks.get(i).substring(0, unlocks.get(i).indexOf("M")) + "MINUTEMODE"); // this effectively writes 10MINUTEMODE.
-				} else if(unlocks.get(i).contains("H")) {
-					unlockWriter.write("," + unlocks.get(i).substring(0, unlocks.get(i).indexOf("H")) + "HOURMODE"); // this effectively writes 2HOURMODE.
-				}
+				unlockWriter = new BufferedWriter(new FileWriter(location + "/Unlocks.miniplussave", true));
+				unlockWriter.write("," + unlocks.get(i) + "_ScoreTime");
 			} catch (IOException ex) {
 				ex.printStackTrace();
 			} finally {
@@ -129,36 +89,21 @@ public class WonMenu extends Menu {
 				} catch (IOException ex) {
 					ex.printStackTrace();
 				}
-				
-				TitleMenu.loadedunlocks = false;
 			}
 		}
 	}
 	
 	public void render(Screen screen) {
 		if(displayTimer > 0) return;
-		/*
-		if(Player.score <= 9999999) {
-			w = 21;
-		} else {
-			w = 14 + 1 + (int)Math.floor(Math.log10((double)Player.score));
-		}
 		
-		w = Math.max(w, ml + 2);
-		w = Math.max(w, ("Final Score:" + finalscore).length() + 2);
-		w = Math.max(w, ("Press "+input.getMapping("exit")+" to exit to menu...").length() + 2);
-		*/
-		renderFrame(screen, "", 1, 3, screen.w/8-2, screen.h/8-5);
+		renderFrame(screen, "", 1, 3, screen.w/8-2, screen.h/8-4);
 		Font.drawCentered("Game Over! (" + ModeMenu.getSelectedTime() + ")", screen, 4*8, Color.get(-1, 555));
 		
 		if(unlocks.size() > 0) {
-			//renderFrame(screen, "Unlocked!", w + 2, 3, w + 13, 7 + unlocks.size());
-			//Font.drawCentered("Unlocked!", screen, w * 8/2 + 32 - 4, 32, Color.get(-1, 50));
-			Font.drawCentered("Unlocked!", screen, screen.w/2, screen.w-8, 6*8, Color.get(-1, 50));
-			
+			Font.drawCentered("Unlocked!", screen, screen.w/2, screen.w-8, 10*8, Color.get(-1, 50));
 			for(int i = 0; i < unlocks.size(); ++i) {
-				//Font.draw(unlocks.get(i), screen, w * 8 + 48 + 2, 48 + i * 12, Color.get(-1, 555));
-				Font.drawCentered(unlocks.get(i), screen, screen.w/2, screen.w-8, (8+i)*8, Color.get(-1, 50));
+				String unlock = unlocks.get(i).replace("M", "MINUTEMODE").replace("H", "HOURMODE");
+				Font.drawCentered(unlock, screen, screen.w/2, screen.w-8, (12+i)*8, Color.get(-1, 50));
 			}
 		}
 		
