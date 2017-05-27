@@ -5,6 +5,7 @@ import minicraft.Game;
 import minicraft.entity.particle.SmashParticle;
 import minicraft.entity.particle.TextParticle;
 import minicraft.gfx.Color;
+import minicraft.gfx.Screen;
 import minicraft.item.Items;
 import minicraft.item.StackableItem;
 import minicraft.screen.ModeMenu;
@@ -21,14 +22,6 @@ public class DungeonChest extends Chest {
 		populateInv();
 		
 		isLocked = true;
-		//sprite = 1;
-		/*col = Color.get();
-		col0 = Color.get(-1, 111, 222, 444);
-		col1 = Color.get(-1, 222, 333, 555);
-		col2 = Color.get(-1, 111, 222, 444);
-		col3 = Color.get(-1, 0, 111, 333);
-		*/
-		//col = lockCol;
 	}
 	
 	public boolean use(Player player, int attackDir) {
@@ -53,9 +46,6 @@ public class DungeonChest extends Chest {
 				level.chestcount--;
 				if(level.chestcount == 0) { // if this was the last chest...
 					level.dropItem(x, y, 5, Items.get("Gold Apple"));
-					/*for(int i = 0; i < 5; i++) { // add 5 golden apples to the level
-						level.add(new ItemEntity(), x, y);
-					}*/
 					
 					Game.notifications.add("You hear a noise from the surface!"); // notify the player of the developments
 					// add a level 2 airwizard to the middle surface level.
@@ -71,6 +61,11 @@ public class DungeonChest extends Chest {
 			return false; // the chest is locked, and the player has no key.
 		}
 		else return super.use(player, attackDir); // the chest was already unlocked.
+	}
+	
+	public void render(Screen screen) {
+		sprite.color = col = isLocked?lockCol:openCol;
+		super.render(screen);
 	}
 	
 	/** Populate the inventory of the DungeonChest, psudo-randomly. */
