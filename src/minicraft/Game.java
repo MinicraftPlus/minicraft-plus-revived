@@ -97,8 +97,8 @@ public class Game extends Canvas implements Runnable {
 	
 	private int playerDeadTime; // the time after you die before the dead menu shows up.
 	private int pendingLevelChange; // used to determine if the player should change levels or not.
-	private int wonTimer; // the paused time when you win before the win menu shows up.
-	public boolean hasWon; // If the player wins this is set to true.
+	//private int wonTimer; // the paused time when you win before the win menu shows up.
+	public boolean gameOver; // If the player wins this is set to true.
 	
 	/// AUTOSAVE AND NOTIFICATIONS
 	
@@ -117,7 +117,7 @@ public class Game extends Canvas implements Runnable {
 	public static int multipliertime = mtm; // Time left on the current multiplier.
 	
 	public int scoreTime; // time remaining for score mode game.
-	public int newscoreTime; // time you start with in score mode.
+	//public int newscoreTime; // time you start with in score mode.
 	
 	public static boolean pastDay1 = true; // used to prefent mob spawn on surface on day 1.
 	public static boolean readyToRenderGameplay = false;
@@ -149,16 +149,16 @@ public class Game extends Canvas implements Runnable {
 		
 		worldSize = 128;
 		
-		newscoreTime = 72000;
-		scoreTime = newscoreTime;
+		//newscoreTime = 72000;
+		//scoreTime = newscoreTime;
 		
 		asTick = 0;
 		astime = 7200;
 		saving = false;
 		notetick = 0;
 		
-		wonTimer = 0;
-		hasWon = false;
+		//wonTimer = 0;
+		gameOver = false;
 	}
 	
 	// Sets the current menu.
@@ -211,13 +211,14 @@ public class Game extends Canvas implements Runnable {
 	public void resetGame() {
 		// Resets all values
 		playerDeadTime = 0;
-		wonTimer = 0;
-		gameTime = 0; // shouldn't this be kept the same, if it's a gameplay timer?
+		//wonTimer = 0;
+		//gameTime = 0; // shouldn't this be kept the same, if it's a gameplay timer?
 		Player.hasSetHome = false;
 		Bed.inBed = false;
-		hasWon = false;
+		//gameOver = false;
 		currentLevel = 3;
 		asTick = 0;
+		notifications.clear();
 		
 		// adds a new player
 		player = new Player(this, input);
@@ -230,7 +231,7 @@ public class Game extends Canvas implements Runnable {
 			player.respawn(level);
 			if (debug) System.out.println("respawned player in current world, resetGame");
 			level.add(player); // adds the player to the current level (always surface here)
-		} else {
+		}/* else {
 			// new game, regenerate... just the surface level?
 			levels[3] = new Level(worldSize, worldSize, 0, levels[4], false);
 			
@@ -239,7 +240,7 @@ public class Game extends Canvas implements Runnable {
 			DeadMenu.shouldRespawn = true; // player should respawn on death
 			//player.findStartPos(level); // finds the start position for the player
 			//if (debug) System.out.println("spawned player in new surface level, resetGame");
-		}
+		}*/
 	}
 	
 	/* differences from resetGame:
@@ -255,34 +256,32 @@ public class Game extends Canvas implements Runnable {
 		-sets loading menu percentage to 0
 	*/
 	public void resetstartGame() { // this is a full reset; everything.
-		playerDeadTime = 0;
-		wonTimer = 0;
+		//playerDeadTime = 0;
+		//wonTimer = 0;
 		gameTime = 0;
 		Player.hasSetHome = false;
 		Player.moveSpeed = 1;
 		Bed.inBed = false; //no bed
 		Game.gamespeed = 1;
-		notifications.clear();
 		
 		changeTimeOfDay(Time.Morning); // resets tickCount; game starts in the day, so that it's nice and bright.
-		hasWon = false;
+		gameOver = false;
 
 		player = new Player(this, input); //very important that this is AFTER the previous 2 statements.
 
 		levels = new Level[6];
 		currentLevel = 3;
 		
-		worldSize = WorldGenMenu.getSize();
-		
-		if (ModeMenu.score) {
-			scoreTime = newscoreTime;
-		}
-		
+		scoreTime = ModeMenu.getScoreTime();
 		Player.score = 0;
+		/*if (ModeMenu.score) {
+			scoreTime = ModeMenu.;
+		}*/
+		
 		
 		/// LOOOOOADING..
 		
-		if (WorldSelectMenu.loadworld) {
+		/*if (WorldSelectMenu.loadworld) {
 			try {
 				BufferedReader f = new BufferedReader(new FileReader(
 				  gameDir + "/saves/" + WorldSelectMenu.worldname + "/Level3.miniplussave"));
@@ -294,16 +293,18 @@ public class Game extends Canvas implements Runnable {
 			} catch (IOException var6) {
 				var6.printStackTrace();
 			}
-		}
+		}*/
 		
 		LoadingMenu.percentage = 0;
+		
 		if(!WorldSelectMenu.loadworld) {
+			worldSize = WorldGenMenu.getSize();
 			for (int i = 5; i >= 0; i--) {
 				LoadingMenu.percentage = (5-i)*20;
 				//else LoadingMenu.percentage += 5; //just make sure they think something is happening... ;D
 				
 				levels[(i - 1 < 0 ? 5 : i - 1)] =
-						new Level(this.worldSize, this.worldSize, i - 4, (i == 5 ? (Level) null : levels[i]), !WorldSelectMenu.loadworld);
+						new Level(worldSize, worldSize, i - 4, (i == 5 ? (Level) null : levels[i]), !WorldSelectMenu.loadworld);
 			}
 			
 			// if resetStartGame is called when not loading a world, add an Iron lantern to level 5, at (984, 984).
@@ -312,16 +313,12 @@ public class Game extends Canvas implements Runnable {
 			f.y = 984;
 			levels[5].add(f);
 		}
+		else
+		 	new Load(this, WorldSelectMenu.worldname);
 		
-		LoadingMenu.percentage = 0;
-		
-		currentLevel = 3; //? sets next currentlevel, maybe?
 		level = levels[currentLevel]; // sets level to the current level (3; surface)
 		
-		if (WorldSelectMenu.loadworld) {
-			new Load(this, WorldSelectMenu.worldname);
-			level = levels[currentLevel];
-		} else {
+		if (!WorldSelectMenu.loadworld) {
 			pastDay1 = false;
 			player.findStartPos(level); // finds the start level for the player
 			level.add(player);
@@ -369,7 +366,7 @@ public class Game extends Canvas implements Runnable {
 		//auto-save tick; marks when to do autosave.
 		asTick++;
 		if (asTick > astime) {
-			if (OptionsMenu.autosave && player.health > 0 && !hasWon
+			if (OptionsMenu.autosave && player.health > 0 && !gameOver
 				  && levels[currentLevel].entities.contains(player)) {
 				new Save(player, WorldSelectMenu.worldname);
 			}
@@ -383,12 +380,13 @@ public class Game extends Canvas implements Runnable {
 		
 		/// SCORE MODE ONLY
 		
-		if (ModeMenu.score) {
-			if (scoreTime < 1 && !player.removed) { // GAME OVER
+		if (ModeMenu.score && !paused) {
+			if (scoreTime <= 0) { // GAME OVER
+				gameOver = true;
 				setMenu(new WonMenu(player));
-				player.remove();
 			}
-			if (!paused) scoreTime--;
+			
+			scoreTime--;
 			
 			if (multiplier > 1) {
 				if (multipliertime != 0) multipliertime--;
@@ -401,7 +399,7 @@ public class Game extends Canvas implements Runnable {
 		if (!hasFocus()) {
 			input.releaseAll();
 		} else {
-			if (!player.removed && !hasWon) {
+			if (!player.removed && !gameOver) {
 				gameTime++;
 			}
 			input.tick(); //INPUT TICK; no other class should call this, I think...especially the *Menu classes.
@@ -427,14 +425,16 @@ public class Game extends Canvas implements Runnable {
 				}
 				
 				//I'm guessing that this is like DeadMenu, but you can't respawn.
-				if (wonTimer > 0) {
+				/*if (wonTimer > 0) {
 					wonTimer--;
-					if (wonTimer == 0) {
-						wonTimer = 60 * 3;
-						hasWon = true;
+					paused = true;
+					if (wonTimer == 0 && menu == null) {
+						//wonTimer = 60 * 3;
+						//gameOver = true;
+						player.remove();
 						setMenu(new WonMenu(player));
 					}
-				}
+				}*/
 				
 				//still in "no active menu" conditional:
 				level.tick();
@@ -451,15 +451,16 @@ public class Game extends Canvas implements Runnable {
 					if (input.getKey("4").clicked) changeTimeOfDay(Time.Night);
 					
 					// this should not be needed, since the inventory should not be altered.
-					/*if (input.getKey("shift-g").clicked) {
+					if (input.getKey("shift-g").clicked) {
 						Items.fillCreativeInv(player.inventory);
-					}*/
+					}
 					
 					if(input.getKey("ctrl-h").clicked) player.health--;
 					
 					if (input.getKey("creative").clicked) ModeMenu.updateModeBools(2);
 					if (input.getKey("survival").clicked) ModeMenu.updateModeBools(1);
-					if (ModeMenu.score && input.getKey("shift-t").clicked) scoreTime = normSpeed * 5; // 5 seconds
+					if (input.getKey("shift-t").clicked) ModeMenu.updateModeBools(4);
+					if (ModeMenu.score && input.getKey("ctrl-t").clicked) scoreTime = normSpeed * 5; // 5 seconds
 					
 					if (input.getKey("equals").clicked) Player.moveSpeed++;//= 0.5D;
 					if (input.getKey("minus").clicked && Player.moveSpeed > 1) Player.moveSpeed--;// -= 0.5D;
@@ -909,8 +910,10 @@ public class Game extends Canvas implements Runnable {
 	}
 	
 	/** This is called when the player has won the game, obviously. */
-	public void won() {
-		wonTimer = 60 * 3; // the pause time before the win menu shows up.
-		hasWon = true; //confirms that the player has, indeed, won the game.
-	}
+	/*public void endGame() {
+		//player.gameWon();
+		//wonTimer = 60 * 3; // the pause time before the win menu shows up.
+		gameOver = true; //confirms that the player has, indeed, won the game.
+		//paused = true;
+	}*/
 }

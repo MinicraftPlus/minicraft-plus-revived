@@ -760,11 +760,4 @@ public class Player extends Mob {
 		// set hurt and invulnerable times
 		hurtTime = playerHurtTime;
 	}
-	
-	
-	/** What happens when the player wins */
-	public void gameWon() {
-		hurtTime = 60 * 5; // sets the invulnerable time to 300
-		game.won(); // win the game
-	}
 }
