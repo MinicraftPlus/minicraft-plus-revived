@@ -23,7 +23,7 @@ Minicraft+ version 1.9.4
 
 + You can now copy world saves.
 + Added another confirm dialog before deleting worlds.
-+ Player score shown on-screen in score mode.
++ Player score shown on-screen in score mode. TIP: as you probably don't know... you can unlock new time limits for score mode. unlock 10min by getting 1000 points in a 20min game, and unlock 2Hour by getting 100,000 points in a 1Hour game. (Hint: defeating the AirWizard gives you 100,000 points...)
 
 Minicraft+ version 1.9.3
 
