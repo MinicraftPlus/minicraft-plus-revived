@@ -117,16 +117,12 @@ public class LegacyLoad {
 		loadFromFile(oldfilename);
 		
 		for(int i = 0; i < data.size(); i++) {
-			String unlock = data.get(i);
-			if(unlock.contains("MINUTEMODE"))
-				unlock = unlock.replace("MINUTEMODE", "M_ScoreTime");
-			if(unlock.contains("HOURMODE"))
-				unlock = unlock.replace("HOURMODE", "H_ScoreTime");
-			
-			if(unlock.length() == 0) {
+			if(data.get(i).length() == 0) {
 				data.remove(i);
 				i--;
+				continue;
 			}
+			data.set(i, data.get(i).replace("HOURMODE", "H_ScoreTime").replace("MINUTEMODE", "M_ScoreTime"));
 		}
 		
 		try {
