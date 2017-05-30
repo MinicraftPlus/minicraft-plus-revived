@@ -29,18 +29,11 @@ import minicraft.item.ToolType;
 import minicraft.level.Level;
 import minicraft.level.tile.Tile;
 import minicraft.level.tile.Tiles;
+import minicraft.network.MinicraftServer;
+import minicraft.network.MinicraftClient;
 import minicraft.saveload.Load;
 import minicraft.saveload.Save;
-import minicraft.screen.DeadMenu;
-import minicraft.screen.LevelTransitionMenu;
-import minicraft.screen.LoadingMenu;
-import minicraft.screen.Menu;
-import minicraft.screen.ModeMenu;
-import minicraft.screen.OptionsMenu;
-import minicraft.screen.TitleMenu;
-import minicraft.screen.WonMenu;
-import minicraft.screen.WorldGenMenu;
-import minicraft.screen.WorldSelectMenu;
+import minicraft.screen.*;
 
 public class Game extends Canvas implements Runnable {
 	
@@ -53,10 +46,17 @@ public class Game extends Canvas implements Runnable {
 	/// MANAGERIAL VARS AND RUNNING
 	
 	public static final String NAME = "Minicraft Plus"; // This is the name on the application window
-	public static final String VERSION = "1.9.4";
+	public static final String VERSION = "2.0.0-dev1";
 	public static final int HEIGHT = 192;
 	public static final int WIDTH = 288;
 	private static float SCALE = 3;
+	
+	/// MULTIPLAYER
+	public static boolean ISONLINE = false;
+	public static boolean ISHOST = false;
+	// only ONE of these will ever be not null; it represents whether this runtime is acting as a client or a server.
+	public static MinicraftServer server = null;
+	public static MinicraftClient client = null;
 	
 	/// TIME AND TICKS
 	
@@ -828,5 +828,9 @@ public class Game extends Canvas implements Runnable {
 	
 	public static Dimension getWindowSize() {
 		return new Dimension(new Float(WIDTH * SCALE).intValue(), new Float(HEIGHT * SCALE).intValue());
+	}
+	
+	public void quit() {
+		running = false;
 	}
 }
