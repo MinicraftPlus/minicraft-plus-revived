@@ -1,3 +1,50 @@
+Minicraft+ version 1.9.4
+
+* Almost total revision of lighting; surface level now has lighting overlay sometimes, and the colors all around may be slightly different.
++ Daylight now increases and decreases more smoothly; steadily goes from dark to light in the morning, and light to dark in the evening.
+
++ Added Instant Health Potion! Instantly refills up to 5 hearts.
+* changed death chest expire times; easy:30min, norm:10min, hard:2min
+* Sped up game speed while sleeping.
+- Prevented Airwizard from being removed during daily entity clear.
+* Increased Torch light radius; also, torches now work the same way on the surface as they do in the caves.
++ Added missingTexture sprite.
+* Changed the name of a couple items (was abbreviated).
++ Wool slows down all mobs except you.
++ Added some more help messages when trying do things that you might not know you can't do yet. (destroying hardrock, obsidian stair on lava level).
++ Imposed a limit to the number of mobs that can spawn on a level, dependent on the level and the game difficulty.
+
++ Added small tweak for creative mode: empty buckets will remain empty, so you can empty the ocean as much as you like. Full buckets remain full, as well.
++ Additional creative mode tweak: "attacking" mob spawner with hand changes the level of mob it spawns. Also, you can pick up spawners in creative mode.
++ Creative mode inventory remains full.
+
++ Key controls displayed on (hopefully) all menus will always be correct. ;)
+* Revised some key binding details to hopefully prevent inability to select anything. Also, added feature to reset all key bindings to default.
+
++ You can now copy world saves.
++ Added another confirm dialog before deleting worlds.
++ Player score shown on-screen in score mode. TIP: as you probably don't know... you can unlock new time limits for score mode. unlock 10min by getting 1000 points in a 20min game, and unlock 2Hour by getting 100,000 points in a 1Hour game. (Hint: defeating the AirWizard gives you 100,000 points...)
+
+Minicraft+ version 1.9.3
+
++ added command line argument to change the save directory of the world files.
+* revised input system to (hopefully) work on any language keyboard/computer.
++ added back feature where mobs stay away during the first night.
+* Reduced world load time from 2 seconds to about half a second, for me). It used to generate new levels needlessly, but now it doesn't.
++ Loading has a progress bar. Though honestly, it doesn't need one.
+
+
+Minicraft+ version 1.9.2
+
+* HUGE renovations to the code; might not see many changes to functionality, but entirely new bugs are bound to crop up...
+* renovated entities
+* renovated menus, a bit
++ added Key Binding Menu, finally! You can now customize key controls, and save them. Accessible from the title screen, and the pause menu.
++ added spanish keyboard(/computer?) support... for the enter (and backspace) key... but that's all you need to access and change the key binding menu.
++ Key bindings, sound, and autosave options are loaded on startup, in a special file that applies to all saves; like beating the second airwizard.
++ world difficulty is saved for each world
+
+
 Minicraft+ version 1.9.1
 
 = Armor now functions as a damage buffer rather than extra hearts; you take damage after only a certain number of damage points accumulate.
@@ -5,6 +52,8 @@ Minicraft+ version 1.9.1
 = Rate of hunger bar healing health depends on hunger; still happens when less than full health.
 - removed player's restriction on movement while being hurt
 + Added version number to save file
++ Hunger bar now decreases in a better way (in my opinion)
+# fixed all the bugs I could find!
 
 
 Minicraft+ version 1.9

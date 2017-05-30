@@ -1,7 +1,16 @@
  -------- Simple Ideas --------
+
 ----
 
-Add world copy option, like rename and delete.
+Bacon. Just, Bacon.
+
+----
+
+Remove the PowGlove entirely, in favor of a new control key, like "v", to "pickup" things. Perhaps, make it only work when nothing is in your hand?
+
+----
+
+Requested: Change the lighting in caves. maybe I could experiment with having surface lighting, but just really, really low.
 
 ----
 
@@ -9,22 +18,13 @@ change "xa" and "ya" to something else; b/c they are NOT accelerations! They're 
 
 ----
 
-Make it so friendly mobs (sheep, pigs, cows) spawn during the day, but evil mobs don't.
-
-----
-
-Add feature to notifications display: if it starts with ":error:", then make the text red (but don't show the ":Error:" part). Any further than that, though, and it would be better to just pass it in.
-
-----
-
 Make the "sticky keys" feature off by default on survival, and on by default on creative.
 
 ----
 
-change inventory system to allow moving items to and from inventories, into chests; for example, you should be able to choose how much of an item stack you want to transfer.
+Give the player 20 health instead of 10; this means that 1 health will be a half of a heart.
 
 ----
-
 
 
 
@@ -32,11 +32,11 @@ change inventory system to allow moving items to and from inventories, into ches
 
 ++++
 
-change the getEntity methods, and similar, so that errors, or invalid object requests, can be easily found with a "missing texture" entity, rather than defaulting to a Zombie.
+Add a system to more properly find the home/data dir on different OS's; windows doesn't regconize "."[filename] as hidden, I think, so that should be accounted for as well.
 
 ++++
 
-Improve creative inventory system; perhaps just make it so you always have one of everything?
+Design a system where cloud tiles respawn around existing cloud tiles if the total number of cloud tiles is below a certain number.
 
 ++++
 
@@ -48,29 +48,24 @@ Turn player.score into the experience system of 1.4; or, maybe I should just mak
 
 ++++
 
-Fix entity removal when sleeping? I think the idea is that all mobs within a certain radius are removed when you go to sleep; but that doesn't happen, and in fact, they still track you when you're in bed... I could fix that, maybe.
-
-++++
-
-Make a way to resize the font... In specific instances only, though, I'm thinking. For example, the F3 overlay.
-
-++++
-
-
 
 
  ???????? Questionable Ideas ????????
 
 ????
 
-Support Color.get(String) where the string is four characters, made up of t,w,b; t=transparent, w=white, and b=black. That might look better. Of course, what WOULD look better is Color.red, Color.white, etc.
-	Maybe I could even devise Color.lighten and/or Color.darken methods, that would work for making the daylight cycle color sets.
+Add a feature so that a changelog will be displayed if on lower version...?
 
-Better idea: simplify it another way; just make a simple method in Color.java to make it so that if the last 3 colors are the same, you just type it once; so instead of Color.get(-1, 555, 555, 555), it's just Color.get(-1, 555).
+????
+
+Add feature to notifications display: if it starts with ":error:", then make the text red (but don't show the ":Error:" part). Any further than that, though, and it would be better to just pass it in.
+
+????
+
+Make a way to resize the font... In specific instances only, though, I'm thinking. For example, the F3 overlay.
 
 ????
 
 Make menu frames change size based on the largest (text) item in it. Not totally sure I want to do it...
 
 ????
-

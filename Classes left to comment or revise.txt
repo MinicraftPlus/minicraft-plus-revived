@@ -1,12 +1,14 @@
+*** this file may not be up to date.
+
+
 Comment from shylor's repo:
 
-level/Level
+level/Level	
 level/levelgen/LevelGen
 level/tile/* (not Tile)
 
 Comment anew:
 
-entity/Arrow
 entity/Creeper
 entity/DungeonChest
 entity/Knight
@@ -39,15 +41,3 @@ screen/TitleMenu
 screen/WonMenu (needs a LOT more than comments!)
 screen/WorldGenMenu
 screen/WorldSelectMenu
-
-*******************************************************************************
-Classes that need attention:
-
--Chest.java: reformat
-
--Furniture.java: maybe combine subclasses, to remove a bunch of the bulk... or maybe, just move more of the code into this class.
-Same deal with the friendly mobs, and the evil mobs.
-
--WonMenu.java: reformat; freshly decompiled, it seems...
-
--ALL the tile/* classes. This is going to be a project. 

@@ -1,45 +1,45 @@
 	---Quick TODO's---
--continue commeting code
--(see note about canWool in Entity.java)
--display current player score in score mode
+
+-reorder tools a bit in ToolType.java b/c I'm picky. Hoes should be first, at least. ;)
+- add to F3 menu: "heartticks" left until regen another heart.
 
 Note to self: for more little bugs/ideas/concerns, search code for "TODO"
 -----------------------------------------------------------------------------------
 
 	####BUGS####
 ####
-new resource-items added to inv sometimes show up as 0.
+Fire particles appear, but... they look totally weird...
 ####
 Sound effects don't always play when they should; mostly it seems when other sounds should be on at the same time.
 ####
-new worlds use the current/previous keyboard presets, rather than the default ones, when creating a new world after loading a previous one.
-####
-Many item names don't fit on the black "active item" bar at the bottom.
-####
-Spawners emit too many entities per unit time. Make it slower. Should be super quick and easy.
-####
-
 -----------------------------------------------------------------------------------
 
 	****IDEAS(that should probably be implemented)****
+****
+
+Add world backup option to world load menu; it could be complicated, since if I add a world backup option, I would have to add a world restore option, too...
+
 ****
 
 Make respawn without bed += 20 blocks x/y of last spawn.
 
 ****
 
-There's a lot to do in the Tile classes... many methods have many unnecessary parameters... and the torch effects account for all the "light" and "torch" static tiles in Tile.java. I think I'll make a HashMap out of that list, as well.
+Go over all the "Warnings" from Xlint, and fix them.
 
 ****
 
-Make a TextPage class or something, for the About and Instructions sections of the TitleMenu; really, it's for pages that are non-interactive, just a bunch of text.
-Also, add controls listing somewhere. Probably closely related to the below idea.
+My idea for the new tile data system:
+Have Tiles.java store an Array list of Arrays, the first one for tile id, and the inner array to represent a data type. I haven't decided what data type the inner array should be; could be int (direct to save file), String (direct to read), or Enum (direct to save and read, but many enums and *might* not work).
+To save, maybe I should separate this data from other data like health, and put it directly in the ids file. Maybe put it as id_data, both integers here for sure. And for referencing in tiles.get, same deal: "name_data". This shows just how nice enums would be. I hope they work.
 
 ****
 
-I have a system in place to save custom key controls, but lack the menu to edit them... I need to get that implemented.
-	How about... another menu class, SelectMenu? It will parent all the cursor selection and scrollable menus; I can use it for the new KeymapMenu, and also WorldSelectMenu and InventoryMenu, with scrolling; the other menus won't use the scroll feature, but I can just make a boolean for that, I think.
-	For those menus that don't even have a cursor, though, perhaps I could just make it a Menu..? If that doesn't work, I can always make a ChoiceMenu class, super simple, that just displays two choices with no cursor, and listens for enter and escape keypresses.
+Add world backup option, that user can select a download location. Then maybe... pack to zip? Also, I'll need to make a "restore" feature, and unzip it ...
+
+****
+
+change inventory system to better allow moving items to and from inventories, into chests; for example, you should be able to choose how much of an item stack you want to transfer.
 
 ****
 
@@ -47,27 +47,9 @@ I have a system in place to save custom key controls, but lack the menu to edit 
 
 *?*?*?* Questionable Improvements (But still seem important)*?*?*?*
 
-Move OptionsMenu loads to a "profile" save, one that applies to all worlds, and that is loaded on startup. Whether the airwizard suit is worn will probably be part of these options, both because it makes sense, and becuase it simplifies things.
+LegacyLoad class is becoming annoying to handle; it should be reimplemented so that it won't have to be changed at all to reflect future updates. This could be done by making it only return values, and not actually reference any current variables. This may prove overcomplicated, though.
 
-*?*?*?*
-
-Make all Class instance lists similar to ListItems, but static; so, each one has a "get" method accepting a string. Maybe I could make them all extend a "ClassList" or "InstanceList" interface or something...
-
-In a similar/related vein, make each subclass of these store their own lists of their instances, and they will just be added to the main one.
-So, for resources, PotionResource would have a static list of all the potion resources, and Resource would just add those to it's collection.
-
-Hmm... Actually, I have a better idea. How about I just instantiate everything in the list classes, but have the sub-classes record each instance? They could be recorded in a HashMap, with a string key for the name, that fetches the associated object instance.
-
-I don't know...
-
-*?*?*?*
-
-Fix up the write system, here and there: Menu writeCentered() should write the given text in the center x of the menu window; Screen writeCentered() should write a string centered in the screen's x. Font should not do anything with centering, instead, maybe it should have a drawShadowed() method? It should have a default text color, too, maybe...
-How about, just overload them all... whatever's provided, is used. Though, since they're all ints, that may not work too well...
-
-*?*?*?*
-
-Change saving/loading system dramatically... instead of a simple array, make loadFromFile load HashMaps! I probably love them too much... but that way, future changes would be WAY easier to account for; instead of changing ALL the indexes, I could just stop worrying about a name! or change it. But... this has it's downsides. Entities wouldn't go over well; they really are better off as lists...
-Hey! maybe I can keep that one, and just make another loader for loadGame and such! That might work!
+IDEA: Let's make an "Update.java" file, maybe multiple, that handle different versions. However, instead of setting values in the rest of the game files, it will be set up as a "getter" sort of thing, where it doesn't reference all the game vars in full detail; but, it fetches them in the way that needs to be, for the main Load class. Basically, I want to have Load.java run everytime, but all the things that would otherwise be copied to LegacyLoad just stay in Load.java, and Load.java will "call" certain methods of LegacyLoad, to setup something the way it used to be.
+Yeah, it's fishy, but.... there we go.
 
 *?*?*?*
