@@ -20,7 +20,7 @@ public class Screen {
 	public final int w, h; // width and height of the screen
 	public int[] pixels; // pixels on the screen
 	
-	private SpriteSheet sheet; // the sprite sheet used in the game.
+	protected SpriteSheet sheet; // the sprite sheet used in the game.
 	
 	public Screen(int w, int h, SpriteSheet sheet) {
 		this.sheet = sheet;
@@ -28,6 +28,10 @@ public class Screen {
 		this.h = h;
 		/// screen width and height are determined by the actual game window size, meaning the screen is only as big as the window.
 		pixels = new int[w * h]; // makes new integer array for all the pixels on the screen.
+	}
+	
+	public Screen(Screen model) {
+		this(model.w, model.h, model.sheet);
 	}
 	
 	/** Clears all the colors on the screen */
