@@ -545,7 +545,10 @@ public class Level {
 	public void add(Entity e) { add(e, e.x, e.y); }
 	public void add(Entity entity, int x, int y) {
 		if (entity instanceof Player) {
-			player = (Player) entity;
+			if(entity instanceof RemotePlayer)
+				((Player)entity).findStartPos(this);
+			else
+				player = (Player) entity;
 		}
 		entities.add(entity);
 		entity.setLevel(this, x, y);

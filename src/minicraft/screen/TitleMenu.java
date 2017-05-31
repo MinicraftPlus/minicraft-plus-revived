@@ -141,6 +141,15 @@ private static final String[] options = {"New game", "Join Online World", "Instr
 	public TitleMenu() {
 		super(Arrays.asList(options), 11*8, 1, Color.get(0, 555), Color.get(0, 222));
 		Game.readyToRenderGameplay = false;
+		if(Game.server != null) {
+			Game.server.endConnection();
+			Game.server = null;
+		}
+		if(Game.client != null) {
+			Game.client.endConnection();
+			Game.client = null;
+		}
+		Game.ISONLINE = false;
 		
 		folder = new File(location);
 		rand = random.nextInt(splashes.length);

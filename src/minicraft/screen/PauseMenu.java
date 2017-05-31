@@ -16,7 +16,7 @@ public class PauseMenu extends SelectMenu {
 	private static final String[] options = {"Return to Game", "Options", "Change Key Bindings", "Make World Multiplayer", "Save Game", "Load Game", "Main Menu"};
 
 	public PauseMenu(Player player) {
-		super(Arrays.asList(options), 8*11 - 35, 6, Color.get(-1, 555), Color.get(-1, 222));
+		super(Arrays.asList(options), 8*11 - 35, 4, Color.get(-1, 555), Color.get(-1, 222));
 		this.player = player;
 		selection = -1; // set to main pause menu options.
 	}
@@ -89,7 +89,7 @@ public class PauseMenu extends SelectMenu {
 			
 			for(int i = 0; i < confirmDialog.size(); i++) { // draws each line from above; the first line is white, and all the following lines are red.
 				int col = i == 0 ? Color.get(-1, 555) : selection == 4 ? Color.get(-1, 333) : Color.get(-1, 500);
-				Font.drawCentered(confirmDialog.get(i), screen, 55+i*4, col); // draw it centered.
+				Font.drawCentered(confirmDialog.get(i), screen, 55+i*10, col); // draw it centered.
 			}
 			int ypos = 70 + confirmDialog.size()*10; // start 20 below the last element...
 			Font.drawCentered(input.getMapping("select")+": Yes", screen, ypos, Color.get(-1, 555));

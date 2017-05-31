@@ -141,8 +141,6 @@ public class InputHandler implements MouseListener, KeyListener {
 		//sticky = true if presses reaches 3, and the key continues to be held down.
 		private boolean sticky;
 		
-		public Key() {} // probably would be auto-created anyway.
-		
 		/** toggles the key down or not down. */
 		public void toggle(boolean pressed) {
 			down = pressed; // set down to the passed in value; the if statement is probably unnecessary...

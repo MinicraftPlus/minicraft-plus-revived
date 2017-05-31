@@ -33,7 +33,7 @@ import minicraft.screen.WorldSelectMenu;
 import minicraft.Sound;
 
 public class Player extends Mob {
-	private InputHandler input;
+	protected InputHandler input;
 	public Game game;
 	
 	public static final int playerHurtTime = 30;

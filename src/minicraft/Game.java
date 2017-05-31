@@ -18,6 +18,7 @@ import minicraft.entity.Furniture;
 import minicraft.entity.Lantern;
 import minicraft.entity.Mob;
 import minicraft.entity.Player;
+import minicraft.entity.RemotePlayer;
 import minicraft.gfx.Color;
 import minicraft.gfx.Font;
 import minicraft.gfx.Screen;
@@ -54,8 +55,10 @@ public class Game extends Canvas implements Runnable {
 	/// MULTIPLAYER
 	public static boolean ISONLINE = false;
 	public static boolean ISHOST = false;
-	// only ONE of these will ever be not null; it represents whether this runtime is acting as a client or a server.
+	// used by server runtime only:
 	public static MinicraftServer server = null;
+	public List<RemotePlayer> remotePlayers = null;
+	// used by client runtimes only:
 	public static MinicraftClient client = null;
 	
 	/// TIME AND TICKS
@@ -167,6 +170,13 @@ public class Game extends Canvas implements Runnable {
 		if (menu != null) menu.init(this, input);
 	}
 	
+	public boolean isValidClient() {
+		return ISONLINE && !ISHOST && client != null/* && client.done*/;
+	}
+	public boolean isValidHost() {
+		return ISONLINE && ISHOST && server != null/* && server.threadList.size() > 0*/; // i'm debating that last part.
+	}
+	
 	/// called after main; main is at bottom.
 	public void start() {
 		running = true;
@@ -237,30 +247,35 @@ public class Game extends Canvas implements Runnable {
 		
 		LoadingMenu.percentage = 0; // this actually isn't necessary, I think; it's just in case.
 		
-		if(!WorldSelectMenu.loadworld) {
-			worldSize = WorldGenMenu.getSize();
-			for (int i = 5; i >= 0; i--) {
-				LoadingMenu.percentage = (5-i)*20;
-				
-				levels[(i - 1 < 0 ? 5 : i - 1)] =
-						new Level(worldSize, worldSize, i - 4, (i == 5 ? (Level) null : levels[i]), !WorldSelectMenu.loadworld);
-			}
+		if(!ISONLINE) {
 			
-			// if resetStartGame is called when not loading a world, add an Iron lantern to level 5, at (984, 984).
-			Furniture f = new Lantern(Lantern.Type.IRON);//Items.get("Iron Lantern").furniture;
-			f.x = 984;
-			f.y = 984;
-			levels[5].add(f);
-		}
-		else
-		 	new Load(this, WorldSelectMenu.worldname);
-		
-		level = levels[currentLevel]; // sets level to the current level (3; surface)
-		
-		if (!WorldSelectMenu.loadworld) {
-			pastDay1 = false;
-			player.findStartPos(level); // finds the start level for the player
-			level.add(player);
+			if(!WorldSelectMenu.loadworld) {
+				worldSize = WorldGenMenu.getSize();
+				for (int i = 5; i >= 0; i--) {
+					LoadingMenu.percentage = (5-i)*20;
+					
+					levels[(i - 1 < 0 ? 5 : i - 1)] =
+							new Level(worldSize, worldSize, i - 4, (i == 5 ? (Level) null : levels[i]), !WorldSelectMenu.loadworld);
+				}
+				
+				// if resetStartGame is called when not loading a world, add an Iron lantern to level 5, at (984, 984).
+				Furniture f = new Lantern(Lantern.Type.IRON);//Items.get("Iron Lantern").furniture;
+				f.x = 984;
+				f.y = 984;
+				levels[5].add(f);
+			}
+			else
+			 	new Load(this, WorldSelectMenu.worldname);
+			
+			level = levels[currentLevel]; // sets level to the current level (3; surface)
+			
+			if (!WorldSelectMenu.loadworld) {
+				pastDay1 = false;
+				player.findStartPos(level); // finds the start level for the player
+				level.add(player);
+			}
+		} else {
+			level = levels[currentLevel];
 		}
 		
 		DeadMenu.shouldRespawn = true;
@@ -275,6 +290,11 @@ public class Game extends Canvas implements Runnable {
 	// VERY IMPORTANT METHOD!! Makes everything keep happening.
 	// In the end, calls menu.tick() if there's a menu, or level.tick() if no menu.
 	public void tick() {
+		if(isValidClient() && client.isConnected()) {
+			client.sendInput(input);
+			return;
+		}
+		
 		if (Bed.inBed) {
 			// IN BED
 			level.remove(player);
@@ -486,34 +506,38 @@ public class Game extends Canvas implements Runnable {
 		}
 		
 		if(readyToRenderGameplay) {
-			int xScroll = player.x - screen.w / 2; // scrolls the screen in the x axis.
-			int yScroll = player.y - (screen.h - 8) / 2; // scrolls the screen in the y axis.
-			
-			//stop scrolling if the screen is at the ...
-			if (xScroll < 16) xScroll = 16; // ...left border.
-			if (yScroll < 16) yScroll = 16; // ...top border.
-			if (xScroll > level.w * 16 - screen.w - 16) xScroll = level.w * 16 - screen.w - 16; // ...right border.
-			if (yScroll > level.h * 16 - screen.h - 16) yScroll = level.h * 16 - screen.h - 16; // ...bottom border.
-			if (currentLevel > 3) { // if the current level is higher than 3 (which only the sky level is)
-				int col = Color.get(20, 20, 121, 121); // background color.
-				for (int y = 0; y < 28; y++)
-					for (int x = 0; x < 48; x++) {
-						// creates the background for the sky level:
-						screen.render(x * 8 - ((xScroll / 4) & 7), y * 8 - ((yScroll / 4) & 7), 0, col, 0);
-					}
+			if(isValidClient() && client.isConnected()) {
+				screen.render(client.getScreenPixels()); // this just overwrites all the pixels in screen.pixels
+			} else {
+				int xScroll = player.x - screen.w / 2; // scrolls the screen in the x axis.
+				int yScroll = player.y - (screen.h - 8) / 2; // scrolls the screen in the y axis.
+				
+				//stop scrolling if the screen is at the ...
+				if (xScroll < 16) xScroll = 16; // ...left border.
+				if (yScroll < 16) yScroll = 16; // ...top border.
+				if (xScroll > level.w * 16 - screen.w - 16) xScroll = level.w * 16 - screen.w - 16; // ...right border.
+				if (yScroll > level.h * 16 - screen.h - 16) yScroll = level.h * 16 - screen.h - 16; // ...bottom border.
+				if (currentLevel > 3) { // if the current level is higher than 3 (which only the sky level (and dungeon) is)
+					int col = Color.get(20, 20, 121, 121); // background color.
+					for (int y = 0; y < 28; y++)
+						for (int x = 0; x < 48; x++) {
+							// creates the background for the sky (and dungeon) level:
+							screen.render(x * 8 - ((xScroll / 4) & 7), y * 8 - ((yScroll / 4) & 7), 0, col, 0);
+						}
+				}
+				
+				level.renderBackground(screen, xScroll, yScroll); // renders current level background
+				level.renderSprites(screen, xScroll, yScroll); // renders level sprites on screen
+				
+				// this creates the darkness in the caves
+				if (currentLevel != 5 && (currentLevel != 3 || tickCount < dayLength/4 || tickCount > dayLength/2) && (!ModeMenu.creative || currentLevel >= 3)) {
+					lightScreen.clear(0); // this doesn't mean that the pixel will be black; it means that the pixel will be DARK, by default; lightScreen is about light vs. dark, not necessarily a color. The light level it has is compared with the minimum light values in dither to decide whether to leave the cell alone, or mark it as "dark", which will do different things depending on the game level and time of day.
+					level.renderLight(lightScreen, xScroll, yScroll); // finds (and renders) all the light from objects (like the player, lanterns, and lava).
+					screen.overlay(lightScreen, xScroll, yScroll); // overlays the light screen over the main screen.
+				}
+				
+				renderGui(); //renders the GUI.
 			}
-
-			level.renderBackground(screen, xScroll, yScroll); // renders current level background
-			level.renderSprites(screen, xScroll, yScroll); // renders level sprites on screen
-			
-			// this creates the darkness in the caves
-			if (currentLevel != 5 && (currentLevel != 3 || tickCount < dayLength/4 || tickCount > dayLength/2) && (!ModeMenu.creative || currentLevel >= 3)) {
-				lightScreen.clear(0); // this doesn't mean that the pixel will be black; it means that the pixel will be DARK, by default; lightScreen is about light vs. dark, not necessarily a color. The light level it has is compared with the minimum light values in dither to decide whether to leave the cell alone, or mark it as "dark", which will do different things depending on the game level and time of day.
-				level.renderLight(lightScreen, xScroll, yScroll); // finds (and renders) all the light from objects (like the player, lanterns, and lava).
-				screen.overlay(lightScreen, xScroll, yScroll); // overlays the light screen over the main screen.
-			}
-			
-			renderGui(); //renders the GUI.
 		}
 		
 		if (menu != null) // renders menu, if present.

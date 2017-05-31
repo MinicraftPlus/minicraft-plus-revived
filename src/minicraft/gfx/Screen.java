@@ -36,9 +36,10 @@ public class Screen {
 			pixels[i] = color; // turns each pixel into a single color (clearing the screen!)
 	}
 	
-	/*public int centerText(String text) {
-		return (w - Font.textWidth(text)) / 2;
-	}*/
+	public void render(int[] pixelColors) {
+		for(int i = 0; i < Math.min(pixelColors.length, pixels.length); i++)
+			pixels[i] = pixelColors[i];
+	}
 	
 	/** Renders an object from the sprite sheet based on screen coordinates, tile (SpriteSheet location), colors, and bits (for mirroring) */
 	public void render(int xp, int yp, int tile, int colors, int bits) {
