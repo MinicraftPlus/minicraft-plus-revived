@@ -237,7 +237,6 @@ public class Load {
 			game.gameTime = Integer.parseInt(data.get(2));
 			Game.pastDay1 = game.gameTime > 65000;
 		} else {
-			Game.astime = Integer.parseInt(data.get(2));
 			game.gameTime = 65000; // prevents time cheating.
 		}
 		
@@ -347,8 +346,8 @@ public class Load {
 		player.score = Integer.parseInt(data.get(6));
 		player.ac = Integer.parseInt(data.get(7));
 		
-		Game.currentLevel = Integer.parseInt(data.get(8));
-		Level level = Game.levels[Game.currentLevel];
+		player.game.currentLevel = Integer.parseInt(data.get(8));
+		Level level = Game.levels[player.game.currentLevel];
 		level.add(player);
 		Tile spawnTile = level.getTile(player.spawnx >> 4, player.spawny >> 4);
 		//if(spawnTile.id != Tiles.get("grass").id && spawnTile.mayPass(level, player.spawnx >> 4, player.spawny >> 4, player))
@@ -360,14 +359,14 @@ public class Load {
 			String[] modeinfo = modedata.split(";");
 			mode = Integer.parseInt(modeinfo[0]);
 			if (mode == 4) {
-				player.game.scoreTime = Integer.parseInt(modeinfo[1]);
+				Game.scoreTime = Integer.parseInt(modeinfo[1]);
 				if(worldVer.compareTo(new Version("1.9.4")) >= 0)
 					ModeMenu.setScoreTime(modeinfo[2]);
 			}
 		}
 		else {
 			mode = Integer.parseInt(modedata);
-			if (mode == 4) player.game.scoreTime = 300;
+			if (mode == 4) Game.scoreTime = 300;
 		}
 		
 		ModeMenu.updateModeBools(mode);

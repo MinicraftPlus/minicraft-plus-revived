@@ -129,10 +129,11 @@ public abstract class Mob extends Entity {
 		// this is overridden in Player.java
 		if (removed || hurtTime > 0) return; // If the mob has been hurt recently and hasn't cooled down, don't continue
 		
-		if (level.player != null) { // If there is a player in the level
+		Player player = getClosestPlayer();
+		if (player != null) { // If there is a player in the level
 			/// play the hurt sound only if the player is less than 80 entity coordinates away; or 5 tiles away.
-			int xd = level.player.x - x;
-			int yd = level.player.y - y;
+			int xd = player.x - x;
+			int yd = player.y - y;
 			if (xd * xd + yd * yd < 80 * 80) {
 				Sound.monsterHurt.play();
 			}

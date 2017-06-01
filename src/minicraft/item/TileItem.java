@@ -78,7 +78,7 @@ public class TileItem extends StackableItem {
 		//if (Game.debug) System.out.println(model + " cannot be placed on " + tile.name);
 		
 		if(model.contains("Wall") && validTiles.size() == 1) {
-			Game.notifications.add("Can only be placed on " + Tiles.getName(validTiles.get(0)) + "!");
+			player.game.notifications.add("Can only be placed on " + Tiles.getName(validTiles.get(0)) + "!");
 		}
 		return false;
 	}

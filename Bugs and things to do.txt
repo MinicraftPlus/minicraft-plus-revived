@@ -1,6 +1,5 @@
 	---Quick TODO's---
 
---- CURRENT: I REALLY need to find a way to know if a socket has closed on the other side...
 -reorder tools a bit in ToolType.java b/c I'm picky. Hoes should be first, at least. ;)
 - add to F3 menu: "heartticks" left until regen another heart.
 
@@ -12,6 +11,8 @@ Note to self: for more little bugs/ideas/concerns, search code for "TODO"
 Fire particles appear, but... they look totally weird...
 ####
 Sound effects don't always play when they should; mostly it seems when other sounds should be on at the same time.
+####
+I REALLY need to find a way to know if a socket has closed on the other side...
 ####
 -----------------------------------------------------------------------------------
 

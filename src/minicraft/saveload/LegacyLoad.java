@@ -143,7 +143,6 @@ public class LegacyLoad {
 		if(hasVersion) {
 			worldVer = new Load.Version(data.get(0)); // gets the world version
 			Game.setTime(Integer.parseInt(data.get(1)));
-			Game.astime = Integer.parseInt(data.get(2));
 			game.gameTime = 65000; // prevents time cheating.
 			
 			if(worldVer.compareTo(new Load.Version("1.9.2")) < 0) {
@@ -160,7 +159,6 @@ public class LegacyLoad {
 			if(data.size() == 5) {
 				worldVer = new Load.Version("1.9");
 				Game.setTime(Integer.parseInt(data.get(0)));
-				Game.astime = Integer.parseInt(data.get(1));
 				OptionsMenu.autosave = Boolean.parseBoolean(data.get(3));
 				OptionsMenu.isSoundAct = Boolean.parseBoolean(data.get(4));
 			} else { // version == 1.8?
@@ -170,7 +168,6 @@ public class LegacyLoad {
 				}
 				// for backwards compatibility
 				Game.tickCount = Integer.parseInt(data.get(0));
-				Game.astime = Integer.parseInt(data.get(1));
 				game.player.ac = Integer.parseInt(data.get(3));
 				OptionsMenu.autosave = false;
 			}
@@ -222,27 +219,27 @@ public class LegacyLoad {
 			} else player.armor = 0;
 			
 			player.ac = Integer.parseInt(data.get(7));
-			Game.currentLevel = Integer.parseInt(data.get(8));
+			player.game.currentLevel = Integer.parseInt(data.get(8));
 			modedata = data.get(9);
 			
 		} else {
 			// old, 1.8 save.
-			Game.currentLevel = Integer.parseInt(data.get(7));
+			player.game.currentLevel = Integer.parseInt(data.get(7));
 			modedata = data.get(8);
 		}
 		
 		player.score = Integer.parseInt(data.get(6));
-		Game.levels[Game.currentLevel].add(player);
+		Game.levels[player.game.currentLevel].add(player);
 		
 		int mode;
 		if(modedata.contains(";")) {
 			mode = Integer.parseInt(modedata.substring(0, modedata.indexOf(";")));
 			if (mode == 4)
-				player.game.scoreTime = Integer.parseInt(modedata.substring(modedata.indexOf(";") + 1));
+				Game.scoreTime = Integer.parseInt(modedata.substring(modedata.indexOf(";") + 1));
 		}
 		else {
 			mode = Integer.parseInt(modedata);
-			if (mode == 4) player.game.scoreTime = 300;
+			if (mode == 4) Game.scoreTime = 300;
 		}
 		
 		ModeMenu.updateModeBools(mode);

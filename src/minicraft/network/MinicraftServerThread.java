@@ -8,13 +8,14 @@ import java.io.PrintWriter;
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import minicraft.Game;
+import minicraft.ClientGame;
 import minicraft.InputHandler;
 import minicraft.entity.RemotePlayer;
 
 public class MinicraftServerThread extends Thread {
 	
 	private MinicraftServer serverInstance;
-	private Game game;
+	public ClientGame game;
 	
 	public RemotePlayer player;
 	public ArrayList<String> currentInput = new ArrayList<String>();
@@ -34,13 +35,11 @@ public class MinicraftServerThread extends Thread {
 		}
 		
 		this.serverInstance = serverInstance;
-		this.game = serverInstance.game;
-		player = new RemotePlayer(game, this);
-		game.levels[3].add(player);
+		game = new ClientGame(this);
+		player = new RemotePlayer(game);
 	}
 	
 	public void sendScreenPixels(int[] pixels) {
-		//if(socket == null) return;
 		//System.out.println("sending screen pixels to client...");
 		for(int i = 0; i < pixels.length; i++)
 			out.print(pixels[i]+(i<pixels.length-1?",":"\n"));

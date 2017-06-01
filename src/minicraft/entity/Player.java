@@ -125,6 +125,8 @@ public class Player extends Mob {
 	}
 	
 	public void tick() {
+		if(game.menu != null) return; // don't tick player when menu is open
+		
 		super.tick(); // ticks Mob.java
 		
 		if(potioneffects.size() > 0 && !Bed.inBed) {
@@ -149,19 +151,19 @@ public class Player extends Mob {
 		
 		Tile onTile = level.getTile(x >> 4, y >> 4); // gets the current tile the player is on.
 		if (onTile == Tiles.get("Stairs Down") || onTile == Tiles.get("Stairs Up")) {
-			if (onStairDelay == 0) { // when the delay time has passed...
-				changeLevel((onTile == Tiles.get("Stairs Up")) ? 1 : -1); // decide whether to go up or down.
+			if (onStairDelay <= 0) { // when the delay time has passed...
+				game.scheduleLevelChange((onTile == Tiles.get("Stairs Up")) ? 1 : -1); // decide whether to go up or down.
 				onStairDelay = 10; // resets delay, since the level has now been changed.
-				return;
+				return; // SKIPS the rest of the tick() method.
 			}
 			
-			onStairDelay = 10; //resets the delay, if on a stairs tile, but the delay is not 0.
+			onStairDelay = 10; //resets the delay, if on a stairs tile, but the delay is greater than 0. In other words, this prevents you from ever activating a level change on a stair tile, UNTIL you get off the tile for 10+ ticks.
 		} else if (onStairDelay > 0) onStairDelay--; // decrements stairDelay if it's > 0, but not on stair tile... does the player get removed from the tile beforehand, or something?
 
 		if (ModeMenu.creative) {
 			// prevent stamina/hunger decay in creative mode.
-			if (stamina <= 10) stamina = 10;
-			if (hunger < 10) hunger = 10;
+			stamina = 10;
+			hunger = 10;
 		}
 		
 		// remember: staminaRechargeDelay is a penalty delay for when the player uses up all their stamina.
@@ -256,11 +258,12 @@ public class Player extends Mob {
 			
 			// this is where movement detection occurs.
 			int xa = 0, ya = 0;
-			if (input.getKey("up").down) ya--;
-			if (input.getKey("down").down) ya++;
-			if (input.getKey("left").down) xa--;
-			if (input.getKey("right").down) xa++;
-			
+			if(game.menu == null) {
+				if (input.getKey("up").down) ya--;
+				if (input.getKey("down").down) ya++;
+				if (input.getKey("left").down) xa--;
+				if (input.getKey("right").down) xa++;
+			}
 			if (game.savecooldown > 0 && !game.saving) {
 				game.savecooldown--;
 			}
@@ -288,31 +291,32 @@ public class Player extends Mob {
 			}
 		}
 		
-		if (!Bed.inBed && input.getKey("attack").clicked && stamina != 0) {
-			if (!potioneffects.containsKey("Energy")) stamina--;
-			staminaRecharge = 0;
-			attack();
-		}
-		
-		if (input.getKey("menu").clicked && !use()) // !use() = no furniture in front of the player; this prevents player inventory from opening (will open furniture inventory instead)
-			game.setMenu(new PlayerInvMenu(this));
-		if (input.getKey("pause").clicked) game.setMenu(new PauseMenu(this));
-		if (input.getKey("craft").clicked && !use())
-			game.setMenu(new CraftingMenu(Recipes.craftRecipes, this, true));
-		if (input.getKey("sethome").clicked) setHome();
-		if (input.getKey("home").clicked && !Bed.inBed) goHome();
-		
-		if (input.getKey("info").clicked) game.setMenu(new PlayerInfoMenu());
-		
-		if (input.getKey("r").clicked && !game.saving && !game.isValidClient()) {
-			game.saving = true;
-			LoadingMenu.percentage = 0;
-			new Save(this, WorldSelectMenu.worldname);
-		}
-		//debug feature:
-		if (Game.debug && input.getKey("shift-p").clicked) { // remove all potion effects
-			for(PotionType potionType: potioneffects.keySet().toArray(new PotionType[0])) {
-				PotionItem.applyPotion(this, potionType, false);
+		if (game.menu == null) {
+			if (!Bed.inBed && input.getKey("attack").clicked && stamina != 0) {
+				if (!potioneffects.containsKey("Energy")) stamina--;
+				staminaRecharge = 0;
+				attack();
+			}
+			
+			if (input.getKey("menu").clicked && !use()) // !use() = no furniture in front of the player; this prevents player inventory from opening (will open furniture inventory instead)
+				game.setMenu(new PlayerInvMenu(this));
+			if (input.getKey("craft").clicked && !use())
+				game.setMenu(new CraftingMenu(Recipes.craftRecipes, this, true));
+			if (input.getKey("sethome").clicked) setHome();
+			if (input.getKey("home").clicked && !Bed.inBed) goHome();
+			
+			if (input.getKey("info").clicked) game.setMenu(new PlayerInfoMenu());
+			
+			if (input.getKey("r").clicked && !game.saving && !game.isValidClient()) {
+				game.saving = true;
+				LoadingMenu.percentage = 0;
+				new Save(this, WorldSelectMenu.worldname);
+			}
+			//debug feature:
+			if (Game.debug && input.getKey("shift-p").clicked) { // remove all potion effects
+				for(PotionType potionType: potioneffects.keySet().toArray(new PotionType[0])) {
+					PotionItem.applyPotion(this, potionType, false);
+				}
 			}
 		}
 		
@@ -618,39 +622,39 @@ public class Player extends Mob {
 	
 	/** Set player's home coordinates. */
 	public void setHome() {
-		if (Game.currentLevel == 3) { // if on surface
+		if (game.currentLevel == 3) { // if on surface
 			// set home coordinates
 			homeSetX = this.x;
 			homeSetY = this.y;
 			hasSetHome = true; // confirm that home coordinates are indeed set
-			Game.notifications.add("Set your home!"); // give success message
+			game.notifications.add("Set your home!"); // give success message
 		} else { // can only set home on surface
-			Game.notifications.add("Can't set home here!"); // give failure message
+			game.notifications.add("Can't set home here!"); // give failure message
 		}
 	}
 
 	public void goHome() {
-		if (Game.currentLevel == 3) { // if on surface
+		if (game.currentLevel == 3) { // if on surface
 			if (hasSetHome == true) {
 				// move player to home coordinates
 				this.x = homeSetX;
 				this.y = homeSetY;
 				if (ModeMenu.hardcore) hurt(this, 2, attackDir); // give penalty for using home if in hardcore mode.
 				stamina = 0; // teleportation uses up all your stamina.
-				Game.notifications.add("Home Sweet Home!"); // give success message
-				if (ModeMenu.hardcore) Game.notifications.add("Mode penalty: -2 health"); // give penalty message
+				game.notifications.add("Home Sweet Home!"); // give success message
+				if (ModeMenu.hardcore) game.notifications.add("Mode penalty: -2 health"); // give penalty message
 			} else {
 				//can go home, but no home set.
-				Game.notifications.add("You don't have a home!");
+				game.notifications.add("You don't have a home!");
 			}
 		} else { // can only go home from surface
-			Game.notifications.add("You can't go home from here!");
+			game.notifications.add("You can't go home from here!");
 		}
 	}
 	
 	/** finds a location to respawn the player after death. */
 	public boolean respawn(Level level) {
-		if (level.getTile(spawnx, spawny).mayPass(level, spawnx, spawny, this) == false)
+		if (!level.getTile(spawnx, spawny).maySpawn)
 			findStartPos(level); // if there's no bed to spawn from, and the stored coordinates don't point to a grass tile, then find a new point.
 		
 		// move the player to the spawnpoint
@@ -669,20 +673,15 @@ public class Player extends Mob {
 		return true; // success
 	}
 	
-	/** What to call to change the level, properly. */
-	public void changeLevel(int dir) {
-		game.scheduleLevelChange(dir); // schedules a level change.
-	}
-	
 	/** Gets the player's light radius underground */
 	public int getLightRadius() {
-		//if (Game.currentLevel == 3) return 0; // I don't want the player to have an automatic halo on the surface.
+		//if (game.currentLevel == 3) return 0; // I don't want the player to have an automatic halo on the surface.
 		
 		float light = potioneffects.containsKey("Light") ? 2.5f : 1; // multiplier for the light potion effect.
 		float r = 3 * light; // the radius of the light.
-		if(Game.currentLevel == 3) r = (light-1) * 3;
+		if (game.currentLevel == 3) r = (light-1) * 3;
 		
-		if (Game.currentLevel == 5) r = 5 * light; // more light than usual on dungeon level.
+		if (game.currentLevel == 5) r = 5 * light; // more light than usual on dungeon level.
 		
 		//if (ModeMenu.creative) r = 12 * light; // creative mode light radius is much bigger; whole screen.
 		
@@ -716,7 +715,7 @@ public class Player extends Mob {
 		}
 		dc.inventory.removeItem(Items.get("Power Glove"));
 		
-		Game.levels[Game.currentLevel].add(dc);
+		Game.levels[game.currentLevel].add(dc);
 
 		Sound.playerDeath.play();
 		super.die(); // calls the die() method in Mob.java

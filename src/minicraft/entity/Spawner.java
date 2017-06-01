@@ -65,8 +65,9 @@ public class Spawner extends Furniture {
 	}
 	
 	private void trySpawn() {
-		int xd = level.player.x - x;
-		int yd = level.player.y - y;
+		Player player = getClosestPlayer();
+		int xd = player.x - x;
+		int yd = player.y - y;
 		
 		if(xd * xd + yd * yd > ACTIVE_RADIUS * ACTIVE_RADIUS) return;
 		

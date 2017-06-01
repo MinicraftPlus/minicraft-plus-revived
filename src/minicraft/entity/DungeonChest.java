@@ -47,7 +47,7 @@ public class DungeonChest extends Chest {
 				if(level.chestcount == 0) { // if this was the last chest...
 					level.dropItem(x, y, 5, Items.get("Gold Apple"));
 					
-					Game.notifications.add("You hear a noise from the surface!"); // notify the player of the developments
+					Game.notifyAll("You hear a noise from the surface!", -100); // notify the player of the developments
 					// add a level 2 airwizard to the middle surface level.
 					AirWizard wizard = new AirWizard(true);
 					wizard.x = Game.levels[3].w / 2;

@@ -5,6 +5,7 @@ import minicraft.gfx.MobSprite;
 import minicraft.gfx.Screen;
 import minicraft.item.Item;
 import minicraft.level.Level;
+import minicraft.screen.ModeMenu;
 
 public abstract class MobAi extends Mob {
 	
@@ -69,11 +70,12 @@ public abstract class MobAi extends Mob {
 			level.dropItem(x, y, items);
 	}
 	
-	/** Tries once to find an appropriate spawn location for friendly mobs. */
+	/** Determines if the given spawn location is appropriate for friendly mobs. */
 	protected static boolean checkStartPos(Level level, int x, int y, int playerDist, int soloRadius) {
-		if (level.player != null) {
-			int xd = level.player.x - x;
-			int yd = level.player.y - y;
+		Player player = level.getClosestPlayer(x, y);
+		if (player != null) {
+			int xd = player.x - x;
+			int yd = player.y - y;
 			
 			if (xd * xd + yd * yd < playerDist * playerDist) return false;
 		}
@@ -86,4 +88,16 @@ public abstract class MobAi extends Mob {
 	}
 	
 	public abstract int getMaxLevel();
+	
+	public void die(int points) { die(points, 0); }
+	public void die(int points, int multAdd) {
+		for(Entity e: level.getEntities(Player.class)) {
+			Player p = (Player)e;
+			p.score += points * (ModeMenu.score ? p.game.multiplier : 1); // add score for zombie death
+			if(multAdd != 0 && ModeMenu.score)
+				p.game.addMultiplier(multAdd);
+		}
+		
+		super.die();
+	}
 }

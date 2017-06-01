@@ -231,7 +231,7 @@ private static final String[] options = {"New game", "Join Online World", "Instr
 			if (options[selected] == "Change Key Bindings") game.setMenu(new KeyInputMenu(this));
 			if (options[selected] == "About") game.setMenu(new AboutMenu(this));
 			if (options[selected] == "Quit") System.exit(0);//game.quit();
-			//if (options[selected] == "Kill") {game.level.add(game.player); game.setMenu(null);}
+			//if (options[selected] == "Kill") {game.levels[currentLevel].add(game.player); game.setMenu(null);}
 		}
 	}
 	

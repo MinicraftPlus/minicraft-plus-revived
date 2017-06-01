@@ -23,7 +23,7 @@ public class Level {
 	private Random random = new Random();
 
 	public int w, h; // width and height of the level
-	public Player player;
+	//public Player player;
 	
 	public byte[] tiles; // an array of all the tiles in the world.
 	public byte[] data; // an array of the data of the tiles in the world. // ?
@@ -471,7 +471,7 @@ public class Level {
 		screen.setOffset(0, 0);
 	}
 
-	public void renderLight(Screen screen, int xScroll, int yScroll) {
+	public void renderLight(Screen screen, int xScroll, int yScroll, int brightness) {
 		int xo = xScroll >> 4;
 		int yo = yScroll >> 4;
 		int w = (screen.w + 15) >> 4;
@@ -490,7 +490,7 @@ public class Level {
 					if (lr > 0) screen.renderLight(e.x - 1, e.y - 4, lr * 8);
 				}
 				int lr = getTile(x, y).getLightRadius(this, x, y);
-				if (lr > 0) screen.renderLight( x * 16 + 8, y * 16 + 8, lr * (player.potioneffects.containsKey("Light") ? 12 : 8)); // brightens all light sources by a factor of 1.5 when the player has the Light potion effect. (8 above is normal)
+				if (lr > 0) screen.renderLight(x * 16 + 8, y * 16 + 8, lr * brightness);
 			}
 		}
 		screen.setOffset(0, 0);
@@ -545,10 +545,10 @@ public class Level {
 	
 	public void add(Entity e) { add(e, e.x, e.y); }
 	public void add(Entity entity, int x, int y) {
-		if (entity instanceof Player)
+		/*if (entity instanceof Player)
 			if(entity instanceof RemotePlayer == false)
 				player = (Player) entity;
-		
+		*/
 		entities.add(entity);
 		entity.setLevel(this, x, y);
 		
@@ -669,6 +669,27 @@ public class Level {
 		}
 		
 		return matches.toArray(new Entity[0]);
+	}
+	
+	public Player getClosestPlayer(int x, int y) {
+		Entity[] players = getEntities(Player.class);
+		if(players.length == 0)
+			return null;
+		
+		Entity closest = players[0];
+		int xd = closest.x - x;
+		int yd = closest.y - y;
+		for(int i = 1; i < players.length; i++) {
+			int curxd = players[i].x - x;
+			int curyd = players[i].y - y;
+			if(xd*xd + yd*yd > curxd*curxd + curyd*curyd) {
+				closest = players[i];
+				xd = curxd;
+				yd = curyd;
+			}
+		}
+		
+		return (Player) closest;
 	}
 	
 	public Tile[] getAreaTiles(int x, int y, int r) {

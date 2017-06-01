@@ -54,9 +54,9 @@ public class Save {
 	public Save(Player player, String worldname) {
 		this(player.game, "/saves/" + worldname + "/");
 		
-		if(game.isValidClient()) {
+		if(Game.isValidClient()) {
 			// clients are not allowed to save.
-			game.saving = false;
+			Game.saving = false;
 			return;
 		}
 		
@@ -67,9 +67,9 @@ public class Save {
 		writeInventory("Inventory", player);
 		writeEntities("Entities");
 		
-		Game.notifications.add("World Saved!");
-		player.game.asTick = 0;
-		player.game.saving = false;
+		Game.notifyAll("World Saved!");
+		Game.asTick = 0;
+		Game.saving = false;
 	}
 	
 	// this saves global options
@@ -186,8 +186,8 @@ public class Save {
 		data.add(String.valueOf(player.armor));
 		data.add(String.valueOf(player.score));
 		data.add(String.valueOf(player.ac));
-		data.add(String.valueOf(Game.currentLevel));
-		data.add(ModeMenu.mode + (ModeMenu.score?";"+player.game.scoreTime+";"+ModeMenu.getSelectedTime():""));
+		data.add(String.valueOf(player.game.currentLevel));
+		data.add(ModeMenu.mode + (ModeMenu.score?";"+Game.scoreTime+";"+ModeMenu.getSelectedTime():""));
 		
 		String subdata = "PotionEffects[";
 		

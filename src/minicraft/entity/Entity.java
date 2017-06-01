@@ -2,6 +2,7 @@ package minicraft.entity;
 
 import java.util.List;
 import java.util.Random;
+import minicraft.Game;
 import minicraft.gfx.Screen;
 import minicraft.item.Item;
 import minicraft.level.Level;
@@ -58,7 +59,7 @@ public abstract class Entity {
 		
 	/** Moves an entity horizontally and vertically. */
 	public boolean move(int xa, int ya) {
-		if (!level.player.game.saving && (xa != 0 || ya != 0)) { // if not saving, and the entity is actually going to move...
+		if (!Game.saving && (xa != 0 || ya != 0)) { // if not saving, and the entity is actually going to move...
 			boolean stopped = true; // used to check if the entity has BEEN stopped, COMPLETELY; this checks for a lack of collision.
 			if (xa != 0 && move2(xa, 0)) stopped = false; // horizontal movement was successful.
 			if (ya != 0 && move2(0, ya)) stopped = false; // vertical movement was successful.
@@ -184,4 +185,14 @@ public abstract class Entity {
 	public void hurt(Mob mob, int dmg, int attackDir) {}
 	public void hurt(Tnt tnt, int dmg, int attackDir) {}
 	public void hurt(Tile tile, int x, int y, int dmg) {}
+	
+	protected Player getClosestPlayer() { return getClosestPlayer(true); }
+	protected Player getClosestPlayer(boolean returnSelf) {
+		if (this instanceof Player && returnSelf)
+			return (Player) this;
+		
+		if (level == null) return null;
+		
+		return level.getClosestPlayer(x, y);
+	}
 }

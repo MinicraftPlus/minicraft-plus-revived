@@ -10,10 +10,8 @@ public class MinicraftServer {
 	
 	public ArrayList<MinicraftServerThread> threadList = new ArrayList<MinicraftServerThread>();
 	protected ServerThread serverThread;
-	protected Game game;
 	
-	public MinicraftServer(Game game) {
-		this.game = game;
+	public MinicraftServer() {
 		serverThread = new ServerThread(MinicraftProtocol.PORT);
 		serverThread.start();
 	}
@@ -68,9 +66,6 @@ public class MinicraftServer {
 		} catch (IOException ex) {
 			ex.printStackTrace();
 		} catch (NullPointerException ex) {}
-		
-		//Game.server = null;
-		//Game.ISONLINE = false;
 	}
 	
 	public boolean isConnected() {

@@ -34,11 +34,7 @@ public class PassiveMob extends MobAi {
 	}
 	
 	protected void die() {
-		if (level.player != null) {
-			level.player.score += 15;
-		}
-		
-		super.die();
+		super.die(15);
 	}
 	
 	/** Tries once to find an appropriate spawn location for friendly mobs. */
