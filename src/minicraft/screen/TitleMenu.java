@@ -26,6 +26,7 @@ private static final String[] options = {"New game", "Join Online World", "Instr
 	File folder;
 	
 	private static final String[] splashes = {//new ArrayList<String>();
+		"Multiplayer Now Included!",
 		"Also play InfinityTale!",
 		"Also play Minicraft Delux!",
 		"Also play Alecraft!",
@@ -57,8 +58,7 @@ private static final String[] options = {"New game", "Join Online World", "Instr
 		"Alpha? What's that?",
 		"Beta? What's that?",
 		//"Infdev? What's that?",
-		"Story? What's that?",
-		//"Multiplayer? What's that?",
+		"Story? I've heard of that...",
 		"Infinite terrain? What's that?",
 		"Redstone? What's that?",
 		//"Spiders? What are those?",
@@ -71,7 +71,6 @@ private static final String[] options = {"New game", "Join Online World", "Instr
 		"No spiders included!",
 		"No Endermen included!",
 		"No chickens included!",
-		"Multiplayer included! Sort of.",
 		"Grab your friends!",
 		"Creepers included!",
 		"Skeletons included!",
@@ -155,7 +154,7 @@ private static final String[] options = {"New game", "Join Online World", "Instr
 		Game.ISONLINE = false;
 		
 		folder = new File(location);
-		rand = random.nextInt(splashes.length);
+		rand = 0;//random.nextInt(splashes.length);
 	}
 	
 	/*public void getSplashes() {
