@@ -93,6 +93,10 @@ public class Level {
 		
 		if(level != -4 && level != 0)
 			monsterDensity = 4;
+	
+		maxMobCount = 300 + 100*OptionsMenu.diff;
+		if(depth == 0) maxMobCount = maxMobCount * 2 / 3;
+		if(depth == 1 || depth == -4) maxMobCount /= 2;
 		
 		if(!makeWorld) return;
 		
@@ -111,10 +115,6 @@ public class Level {
 		
 		tiles = maps[0]; // assigns the tiles in the map
 		data = maps[1]; // assigns the data of the tiles
-		
-		maxMobCount = 300 + 100*OptionsMenu.diff;
-		if(depth == 0) maxMobCount = maxMobCount * 2 / 3;
-		if(depth == 1 || depth == -4) maxMobCount /= 2;
 		
 		if (parentLevel != null) { // If the level above this one is not null (aka, if this isn't the sky level)
 			for (int y = 0; y < h; y++) { // loop through height
@@ -420,6 +420,8 @@ public class Level {
 		
 		if(count < maxMobCount)
 			trySpawn(1);
+		//else if (Game.debug)
+			//System.out.println("too many mobs on level " + depth + "; "+count+" of "+maxMobCount+".");
 	}
 	
 	public void dropItem(int x, int y, int mincount, int maxcount, Item... items) {
