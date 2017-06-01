@@ -32,7 +32,7 @@ public class MinicraftClient extends Thread {
 	
 	public void run() {
 		// this constantly checks for screen pixel updates, and then writes them to an array.
-		System.out.println("starting client thread");
+		if (Game.debug) System.out.println("starting client thread");
 		
 		try {
 			socket = new Socket(hostName, MinicraftProtocol.PORT);
@@ -51,7 +51,7 @@ public class MinicraftClient extends Thread {
 		while(isConnected()) {
 			try {
 				if(in.ready()) {
-					if (Game.debug) System.out.println("reading input (screen pixels) from host connection...");
+					//if (Game.debug) System.out.println("reading input (screen pixels) from host connection...");
 					String str = in.readLine();
 					if(str == null || str.length() == 0) continue;
 					//System.out.println("screen pixels read from host: " + str);
@@ -79,9 +79,10 @@ public class MinicraftClient extends Thread {
 		presses += keyname + ",";
 	}
 	
-	public void sendCachedInput() {
+	public void sendCachedInput(InputHandler input) {
 		if(!done || !isConnected()) return;
 		
+		//presses += input.getCurModifiers().replace("-", ","); // modifier key presses are not tracked normally, only here. Since they don't repeatly trigger a keypress event, this does the repetition.
 		if(presses.length() > 0) {
 			if (Game.debug) System.out.println("sending key press data to server: " + presses);
 			out.println(presses);

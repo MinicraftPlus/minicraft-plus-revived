@@ -75,6 +75,8 @@ public class ClientGame extends Game {
 	
 	public void resetstartGame() { resetGame(); }
 	
+	
+	private boolean hadMenu = true;
 	// VERY IMPORTANT METHOD!! Makes everything keep happening.
 	// In the end, calls menu.tick() if there's a menu, or level.tick() if no menu.
 	public void tick() {
@@ -91,8 +93,10 @@ public class ClientGame extends Game {
 		
 		Level level = levels[currentLevel];
 		
-		if (ModeMenu.score) {
-			if (multiplier > 1) {
+		if (gameOver)
+			setMenu(new WonMenu(player));
+		else if (ModeMenu.score) {
+			if (!paused && multiplier > 1) {
 				if (multipliertime != 0) multipliertime--;
 				if (multipliertime == 0) setMultiplier(1);
 			}
@@ -110,18 +114,27 @@ public class ClientGame extends Game {
 				//System.out.println("toggling key " + key + " on remote player " + connection.getClientName() + " to " + pressed);
 				input.pressKey(key, pressed);
 			}
+			/*for(String keyname: input.getAllPressedKeys())
+				if(!connection.currentInput.contains(keyname))
+					input.pressKey(keyname, false);
+			*/
 			connection.currentInput.clear();
 		}
+		
+		if(!hadMenu && menu != null)
+			input.tick();
 		
 		if (menu != null) {
 			//a menu is active.
 			menu.tick();
+			hadMenu = true;
 			paused = true;
 		} else {
 			//no menu, currently.
+			hadMenu = false;
 			paused = false;
 			
-			//if player is alive, but no level change, nothing happens here.
+			//if player is in a level, but no level change, nothing happens here.
 			if (player.removed) {
 				//makes delay between death and death menu.
 				playerDeadTime++;

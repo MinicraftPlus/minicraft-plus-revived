@@ -300,6 +300,8 @@ public class Player extends Mob {
 			
 			if (input.getKey("menu").clicked && !use()) // !use() = no furniture in front of the player; this prevents player inventory from opening (will open furniture inventory instead)
 				game.setMenu(new PlayerInvMenu(this));
+			if (input.getKey("pause").clicked && !(this instanceof RemotePlayer))
+				game.setMenu(new PauseMenu(this));
 			if (input.getKey("craft").clicked && !use())
 				game.setMenu(new CraftingMenu(Recipes.craftRecipes, this, true));
 			if (input.getKey("sethome").clicked) setHome();
@@ -307,7 +309,7 @@ public class Player extends Mob {
 			
 			if (input.getKey("info").clicked) game.setMenu(new PlayerInfoMenu());
 			
-			if (input.getKey("r").clicked && !game.saving && !game.isValidClient()) {
+			if (input.getKey("r").clicked && !game.saving && !(this instanceof RemotePlayer) && !Game.isValidClient()) {
 				game.saving = true;
 				LoadingMenu.percentage = 0;
 				new Save(this, WorldSelectMenu.worldname);

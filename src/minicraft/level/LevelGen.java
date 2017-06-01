@@ -504,7 +504,11 @@ public class LevelGen {
 		for (int y = 0; y < h; y++) {
 			for (int x = 0; x < w; x++) {
 				int i = x + y * w;
-
+				
+				/// for the x=0 or y=0 i's, values[i] is always between -1 and 1.
+				/// so, val is between -2 and 4.
+				/// the rest are between -2 and 7.
+				
 				double val = Math.abs(noise1.values[i] - noise2.values[i]) * 3 - 2;
 
 				double mval = Math.abs(mnoise1.values[i] - mnoise2.values[i]);
@@ -521,10 +525,11 @@ public class LevelGen {
 				if (xd < 0) xd = -xd;
 				if (yd < 0) yd = -yd;
 				double dist = xd >= yd ? xd : yd;
-				dist = dist * dist * dist * dist;
-				dist = dist * dist * dist * dist;
+				//dist = dist * dist * dist * dist;
+				//dist = dist * dist * dist * dist;
+				dist = Math.pow(dist, 8);
 				val += 1 - dist * 20;
-
+				
 				if (val > -1 && wval < -1 + (depth) / 2 * 3) {
 					if (depth == 3) map[i] = Tiles.get("lava").id;
 					else if (depth == 1) map[i] = Tiles.get("dirt").id;

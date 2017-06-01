@@ -306,7 +306,7 @@ public class Game extends Canvas implements Runnable {
 			
 			// TODO I need to modify the player class so that remote players don't register pause, and the player as a client won't register in-game menus like containers and such.
 			if(menu == null)
-				client.sendCachedInput();
+				client.sendCachedInput(input);
 			
 			tickCount++;
 			
@@ -345,8 +345,7 @@ public class Game extends Canvas implements Runnable {
 		if(!paused || isValidHost())
 			asTick++;
 		if (asTick > astime) {
-			if (OptionsMenu.autosave && player.health > 0 && !gameOver
-				  && levels[currentLevel].entities.contains(player)) {
+			if (OptionsMenu.autosave && player.health > 0 && !gameOver) {
 				new Save(player, WorldSelectMenu.worldname);
 			}
 			
@@ -359,7 +358,7 @@ public class Game extends Canvas implements Runnable {
 		
 		/// SCORE MODE ONLY
 		
-		if (ModeMenu.score && (!paused || isValidHost())) {
+		if (ModeMenu.score && (!paused || isValidHost() && !gameOver)) {
 			if (scoreTime <= 0) { // GAME OVER
 				gameOver = true;
 				setMenu(new WonMenu(player));
@@ -367,21 +366,40 @@ public class Game extends Canvas implements Runnable {
 			
 			scoreTime--;
 			
-			if (multiplier > 1) {
+			if (!paused && multiplier > 1) {
 				if (multipliertime != 0) multipliertime--;
 				if (multipliertime == 0) setMultiplier(1);
 			}
 			if (multiplier > 50) multiplier = 50;
 		}
 		
-		//This is the general action statement thing! Regulates menus, mostly.
+		boolean hadMenu = menu != null;
+		if(isValidHost()) {
+			/// this is to keep the game going while online, even with an unfocused window.
+			input.tick();
+			for(MinicraftServerThread thread: server.threadList)
+				thread.game.input.tick();
+			
+			for(Level floor: levels)
+				if(floor.getEntities(Player.class).length > 0)
+					floor.tick();
+			
+			Tile.tickCount++;
+			
+			for(MinicraftServerThread thread: server.threadList)
+				thread.game.tick();
+		}
+		
+		// This is the general action statement thing! Regulates menus, mostly.
 		if (!hasFocus()) {
 			input.releaseAll();
 		} else {
 			if ((!player.removed || isValidHost()) && !gameOver) {
 				gameTime++;
 			}
-			input.tick(); //INPUT TICK; no other class should call this, I think...especially the *Menu classes.
+			
+			if(!isValidHost() || menu != null && !hadMenu)
+				input.tick(); // INPUT TICK; no other class should call this, I think...especially the *Menu classes.
 			
 			if (menu != null) {
 				//a menu is active.
@@ -407,9 +425,6 @@ public class Game extends Canvas implements Runnable {
 					level.tick();
 					Tile.tickCount++;
 				}
-				
-				if (input.getKey("pause").clicked && !(this instanceof ClientGame))
-					setMenu(new PauseMenu(player));
 				
 				//for debugging only
 				if (debug) {
@@ -459,21 +474,6 @@ public class Game extends Canvas implements Runnable {
 				} // end debug only cond.
 			} // end "menu-null" conditional
 		} // end hasfocus conditional
-		
-		if(isValidHost() && !(this instanceof ClientGame)) {
-			/// this is to keep the game going while online, but with an unfocused window.
-			
-			/// ticks all the levels with a player on them
-			for(Level floor: levels)
-				if(floor.getEntities(Player.class).length > 0)
-					floor.tick();
-			
-			Tile.tickCount++;
-			
-			for(MinicraftServerThread thread: server.threadList)
-				thread.game.tick();
-		}
-		
 	} // end tick()
 	
 	public void setMultiplier(int value) {
@@ -542,10 +542,12 @@ public class Game extends Canvas implements Runnable {
 	 	while 'changeLevel(-1)' will make you go down a level. */
 	public void changeLevel(int dir) {
 		levels[currentLevel].remove(player); // removes the player from the current level.
+		
+		currentLevel += dir;
 		if (currentLevel == -1) currentLevel = 5; // fix accidental level underflow
 		if (currentLevel == 6) currentLevel = 0; // fix accidental level overflow
-		
 		//level = levels[currentLevel]; // sets the level to the current level
+		
 		player.x = (player.x >> 4) * 16 + 8; // sets the player's x coord (to center yourself on the stairs)
 		player.y = (player.y >> 4) * 16 + 8; // sets the player's y coord (to center yourself on the stairs)
 		levels[currentLevel].add(player); // adds the player to the level.
@@ -583,15 +585,15 @@ public class Game extends Canvas implements Runnable {
 			}
 		}
 		
+		if (menu != null) // renders menu, if present.
+			menu.render(screen);
+		
 		if (readyToRenderGameplay && this instanceof ClientGame && isValidHost() && server.isConnected()) {
 			ClientGame thisGame = (ClientGame) this;
 			if(thisGame.connection.isConnected())
 				thisGame.connection.sendScreenPixels(screen.pixels);
 			return;
 		}
-		
-		if (menu != null) // renders menu, if present.
-			menu.render(screen);
 		
 		if (!hasFocus()) renderFocusNagger(); // calls the renderFocusNagger() method, which creates the "Click to Focus" message.
 		

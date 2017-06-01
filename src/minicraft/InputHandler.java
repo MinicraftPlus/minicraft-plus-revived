@@ -85,9 +85,9 @@ public class InputHandler implements MouseListener, KeyListener {
 		initKeyMap(); // this is seperate so I can make a "restore defaults" option.
 		
 		// I'm not entirely sure if this is necessary... but it doesn't hurt.
-		keyboard.put("SHIFT", new Key());
-		keyboard.put("CTRL", new Key());
-		keyboard.put("ALT", new Key());
+		keyboard.put("SHIFT", new Key(true));
+		keyboard.put("CTRL", new Key(true));
+		keyboard.put("ALT", new Key(true));
 		
 		if(listenToKeyboard)
 			game.addKeyListener(this); //add key listener to game
@@ -147,6 +147,14 @@ public class InputHandler implements MouseListener, KeyListener {
 		//sticky = true if presses reaches 3, and the key continues to be held down.
 		private boolean sticky;
 		
+		boolean stayDown;
+		private int inactiveTime;
+		
+		public Key() { this(false); }
+		public Key(boolean stayDown) {
+			this.stayDown = stayDown;
+		}
+		
 		/** toggles the key down or not down. */
 		public void toggle(boolean pressed) {
 			down = pressed; // set down to the passed in value; the if statement is probably unnecessary...
@@ -157,11 +165,16 @@ public class InputHandler implements MouseListener, KeyListener {
 		public void tick() {
 			if (absorbs < presses) { // If there are more key presses to process...
 				absorbs++; //process them!
+				if(presses - absorbs > 3) absorbs = presses - 3;
 				clicked = true; // make clicked true, since key presses are still being processed.
 			} else { // All key presses so far for this key have been processed.
 				if (!sticky) sticky = presses > 3;
 				else sticky = down;
 				clicked = sticky; // set clicked to false, since we're done processing; UNLESS the key has been held down for a bit, and hasn't yet been released.
+				
+				//if(down && !clicked)
+					//inactiveTime++;
+				
 				//reset the presses and absorbs, to ensure they don't get too high, or something:
 				presses = 0;
 				absorbs = 0;
@@ -292,14 +305,15 @@ public class InputHandler implements MouseListener, KeyListener {
 	/// this method preovides a way to press physical keys without actually generating a key event.
 	public void pressKey(String keyname, boolean pressed) {
 		Key key = getPhysKey(keyname);
-		key.down = key.clicked = pressed;
+		key.toggle(pressed);
+		//key.down = key.clicked = pressed;
 		//System.out.println("key " + keyname + " is clicked: " + getPhysKey(keyname).clicked);
 	}
 	
 	public ArrayList<String> getAllPressedKeys() {
 		ArrayList<String> keys = new ArrayList<String>();
 		for(String keyname: keyboard.keySet().toArray(new String[0]))
-			if(keyboard.get(keyname).clicked)
+			if(keyboard.get(keyname).down)
 				keys.add(keyname);
 		
 		return keys;
@@ -333,17 +347,22 @@ public class InputHandler implements MouseListener, KeyListener {
 		//System.out.println("interpreted key press: " + keytext);
 		
 		//System.out.println("toggling " + keytext + " key (keycode " + keycode + ") to "+pressed+".");
-		if( pressed && keyToChange != null && !(keytext.equals("CTRL")||keytext.equals("ALT")||keytext.equals("SHIFT")) ) {
+		if( pressed && keyToChange != null && !isMod(keytext) ) {
 			keymap.put(keyToChange, ( overwrite?"":keymap.get(keyToChange)+"|" ) + getCurModifiers()+keytext);
 			keyToChange = null;
 		}
 		getPhysKey(keytext).toggle(pressed);
 		
-		if(game.isValidClient())
+		if(game.isValidClient()/* && pressed && !isMod(keytext)*/)
 			game.client.cacheInput(keytext+"="+pressed);
 	}
 	
-	private String getCurModifiers() {
+	public static boolean isMod(String keyname) {
+		keyname = keyname.toUpperCase();
+		return keyname.equals("SHIFT") || keyname.equals("CTRL") || keyname.equals("ALT");
+	}
+	
+	public String getCurModifiers() {
 		return (getKey("ctrl").down?"CTRL-":"") +
 				(getKey("alt").down?"ALT-":"") +
 				(getKey("shift").down?"SHIFT-":"");
