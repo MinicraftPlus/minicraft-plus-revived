@@ -16,26 +16,33 @@ public class MultiplayerMenu extends Menu {
 	public MultiplayerMenu(boolean isHost, Menu parent) {
 		this.isHost = isHost;
 		Game.ISONLINE = true;
+		Game.ISHOST = isHost;
 		this.parent = parent;
 	}
 	
 	public void init(Game game, InputHandler input) {
 		super.init(game, input);
-		Game.ISHOST = isHost;
 		if(Game.client == null && Game.server == null) {
 			if(isHost) Game.server = new MinicraftServer(game);
-			else Game.client = new MinicraftClient(game);
+			else {
+				Game.client = new MinicraftClient(game);
+				Game.client.start();
+			}
 		}
 		else if(Game.server != null) Game.server.checkSockets();
 	}
 	
 	public void tick() {
+		if(!isHost)
+			System.out.println("valid client and connected: " + (game.isValidClient() && Game.client.isConnected()));
 		if(game.isValidClient() && Game.client.isConnected()) {
 			System.out.println("Begin game!");
+			game.resetstartGame();
 			game.setMenu(null);
 		} else if(input.getKey("exit").clicked) {
 			game.setMenu(parent);
 			if(!Game.ISHOST) {
+				System.out.println("quitting multiplayer mode on client side; exiting multiplayer menu");
 				// this should be reached only on client runtimes when no connection has yet been established.
 				Game.client = null;
 				Game.ISONLINE = false;

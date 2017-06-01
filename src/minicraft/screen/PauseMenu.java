@@ -2,6 +2,7 @@ package minicraft.screen;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import minicraft.Game;
 import minicraft.entity.Player;
 import minicraft.gfx.Color;
 import minicraft.gfx.Font;
@@ -45,8 +46,8 @@ public class PauseMenu extends SelectMenu {
 				//selection = -1;
 			}
 			
-			if (selected == 3) {
-				new Save(player, WorldSelectMenu.worldname);
+			if (selected == 3 && !(Game.ISONLINE && !Game.ISHOST)) {
+				//new Save(player, WorldSelectMenu.worldname);
 				game.setMenu(new MultiplayerMenu(true, this));
 			}
 			

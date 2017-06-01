@@ -37,13 +37,17 @@ public class Player extends Mob {
 	public Game game;
 	
 	public static final int playerHurtTime = 30;
-	public static double moveSpeed = 1; // the number of coordinate squares to move; each tile is 16x16.
-	public static int score; // the player's score
-	public static boolean hasSetHome = false, skinon;
+	
+	public double moveSpeed = 1; // the number of coordinate squares to move; each tile is 16x16.
+	public int score; // the player's score
+	
 	//These 2 ints are ints saved from the first spawn - this way the spawn pos is always saved.
-	public static int spawnx = 0, spawny = 0; // these are stored as tile coordinates, not entity coordinates.
-	public static boolean bedSpawn = false;
+	public int spawnx = 0, spawny = 0; // these are stored as tile coordinates, not entity coordinates.
+	//public boolean bedSpawn = false;
+	
+	public boolean hasSetHome = false, skinon;
 	public int homeSetX, homeSetY;
+	
 	public static int maxHealth = 10, maxStamina = 10, maxHunger = 10, maxArmor = 100; // the maximum stats that the player can have.
 	
 	public static MobSprite[][] sprites =  MobSprite.compileMobSpriteAnimations(0, 14);
@@ -186,39 +190,43 @@ public class Player extends Mob {
 			stamHungerTicks--; // affect hunger if not at full stamina; this is 2 levels away from a hunger "burger".
 			if(stamina == 0) stamHungerTicks--; // double effect if no stamina at all.
 		}
-		if(hungerChargeDelay > 0) { // if the hunger is recharging health...
-			stamHungerTicks -= 2+OptionsMenu.diff; // penalize the hunger
-			if(hunger == maxHunger) stamHungerTicks -= OptionsMenu.diff; // further penalty if at full hunger
-		}
 		
-		if(stamHungerTicks >= maxHungerTicks) {
-			stamHungerTicks -= maxHungerTicks; // reset stamHungerTicks
-			hungerStamCnt++; // enter 1 level away from burger.
-		}
-		
-		// on easy mode, hunger doesn't deplete from walking or from time.
-		
-		if (OptionsMenu.diff == OptionsMenu.norm) {
-			if(game.tickCount % 5000 == 0 && hunger > 3) hungerStamCnt++; // hunger due to time.
-			
-			if (stepCount >= 800) { // hunger due to exercise.
-				hungerStamCnt++;
-				stepCount = 0; // reset.
+		/// this if statement encapsulates the hunger system
+		if(!Bed.inBed) {
+			if(hungerChargeDelay > 0) { // if the hunger is recharging health...
+				stamHungerTicks -= 2+OptionsMenu.diff; // penalize the hunger
+				if(hunger == maxHunger) stamHungerTicks -= OptionsMenu.diff; // further penalty if at full hunger
 			}
-		}
-		if (OptionsMenu.diff == OptionsMenu.hard) {
-			if(game.tickCount % 3000 == 0 && hunger > 0) hungerStamCnt++; // hunger due to time.
 			
-			if (stepCount >= 400) { // hunger due to exercise.
-				hungerStamCnt++;
-				stepCount = 0; // reset.
+			if(stamHungerTicks >= maxHungerTicks) {
+				stamHungerTicks -= maxHungerTicks; // reset stamHungerTicks
+				hungerStamCnt++; // enter 1 level away from burger.
 			}
-		}
-		
-		int[] stams = {10, 7, 5}; // hungerStamCnt required to lose a burger.
-		while (hungerStamCnt >= stams[OptionsMenu.diff]) {
-			hunger--; // reached burger level.
-			hungerStamCnt -= stams[OptionsMenu.diff];
+			
+			// on easy mode, hunger doesn't deplete from walking or from time.
+			
+			if (OptionsMenu.diff == OptionsMenu.norm) {
+				if(game.tickCount % 5000 == 0 && hunger > 3) hungerStamCnt++; // hunger due to time.
+				
+				if (stepCount >= 800) { // hunger due to exercise.
+					hungerStamCnt++;
+					stepCount = 0; // reset.
+				}
+			}
+			if (OptionsMenu.diff == OptionsMenu.hard) {
+				if(game.tickCount % 3000 == 0 && hunger > 0) hungerStamCnt++; // hunger due to time.
+				
+				if (stepCount >= 400) { // hunger due to exercise.
+					hungerStamCnt++;
+					stepCount = 0; // reset.
+				}
+			}
+			
+			int[] stams = {10, 7, 5}; // hungerStamCnt required to lose a burger.
+			while (hungerStamCnt >= stams[OptionsMenu.diff]) {
+				hunger--; // reached burger level.
+				hungerStamCnt -= stams[OptionsMenu.diff];
+			}
 		}
 		
 		/// system that heals you depending on your hunger
@@ -230,40 +238,44 @@ public class Player extends Mob {
 			}
 		}
 		else hungerChargeDelay = 0;
-
-		if (hungerStarveDelay == 0) {
-			hungerStarveDelay = 120;
-		}
 		
-		int[] healths = {5, 3, 0};
-		if (hunger == 0 && health > healths[OptionsMenu.diff]) {
-			if (hungerStarveDelay > 0) hungerStarveDelay--;
+		
+		if(!Bed.inBed) {
 			if (hungerStarveDelay == 0) {
-				hurt(this, 1, attackDir); // do 1 damage to the player
+				hungerStarveDelay = 120;
 			}
-		}
+			
+			int[] healths = {5, 3, 0};
+			if (hunger == 0 && health > healths[OptionsMenu.diff]) {
+				if (hungerStarveDelay > 0) hungerStarveDelay--;
+				if (hungerStarveDelay == 0) {
+					hurt(this, 1, attackDir); // do 1 damage to the player
+				}
+			}
 		
-		// this is where movement detection occurs.
-		int xa = 0, ya = 0;
-		if (input.getKey("up").down) ya--;
-		if (input.getKey("down").down) ya++;
-		if (input.getKey("left").down) xa--;
-		if (input.getKey("right").down) xa++;
-		
-		if (game.savecooldown > 0 && !game.saving) {
-			game.savecooldown--;
-		}
-		
-		//executes if not saving; and... essentially halves speed if out of stamina.
-		if ((xa != 0 || ya != 0) && (staminaRechargeDelay % 2 == 0 || isSwimming()) && game.savecooldown == 0 && !game.saving) {
-			double spd = moveSpeed * (potioneffects.containsKey("Time") ? (potioneffects.containsKey("Speed") ? 1.5D : 2) : 1);
-			boolean moved = move((int) (xa * spd), (int) (ya * spd)); // THIS is where the player moves; part of Mob.java
-			if(moved) stepCount++;
-		}
-		
-		if (isSwimming() && tickTime % 60 == 0 && !potioneffects.containsKey("Swim")) { // if drowning... :P
-			if (stamina > 0) stamina--; // take away stamina
-			else hurt(this, 1, dir ^ 1); // if no stamina, take damage.
+			
+			// this is where movement detection occurs.
+			int xa = 0, ya = 0;
+			if (input.getKey("up").down) ya--;
+			if (input.getKey("down").down) ya++;
+			if (input.getKey("left").down) xa--;
+			if (input.getKey("right").down) xa++;
+			
+			if (game.savecooldown > 0 && !game.saving) {
+				game.savecooldown--;
+			}
+			
+			//executes if not saving; and... essentially halves speed if out of stamina.
+			if ((xa != 0 || ya != 0) && (staminaRechargeDelay % 2 == 0 || isSwimming()) && game.savecooldown == 0 && !game.saving) {
+				double spd = moveSpeed * (potioneffects.containsKey("Time") ? (potioneffects.containsKey("Speed") ? 1.5D : 2) : 1);
+				boolean moved = move((int) (xa * spd), (int) (ya * spd)); // THIS is where the player moves; part of Mob.java
+				if(moved) stepCount++;
+			}
+			
+			if (isSwimming() && tickTime % 60 == 0 && !potioneffects.containsKey("Swim")) { // if drowning... :P
+				if (stamina > 0) stamina--; // take away stamina
+				else hurt(this, 1, dir ^ 1); // if no stamina, take damage.
+			}
 		}
 		
 		if (potioneffects.containsKey("Regen")) {
@@ -276,7 +288,7 @@ public class Player extends Mob {
 			}
 		}
 		
-		if (input.getKey("attack").clicked && stamina != 0) {
+		if (!Bed.inBed && input.getKey("attack").clicked && stamina != 0) {
 			if (!potioneffects.containsKey("Energy")) stamina--;
 			staminaRecharge = 0;
 			attack();
@@ -288,11 +300,11 @@ public class Player extends Mob {
 		if (input.getKey("craft").clicked && !use())
 			game.setMenu(new CraftingMenu(Recipes.craftRecipes, this, true));
 		if (input.getKey("sethome").clicked) setHome();
-		if (input.getKey("home").clicked) goHome();
+		if (input.getKey("home").clicked && !Bed.inBed) goHome();
 		
 		if (input.getKey("info").clicked) game.setMenu(new PlayerInfoMenu());
 		
-		if (input.getKey("r").clicked && !game.saving) {
+		if (input.getKey("r").clicked && !game.saving && !game.isValidClient()) {
 			game.saving = true;
 			LoadingMenu.percentage = 0;
 			new Save(this, WorldSelectMenu.worldname);
@@ -304,7 +316,7 @@ public class Player extends Mob {
 			}
 		}
 		
-		if (attackTime > 0) attackTime--;
+		if (attackTime > 0 || !Bed.inBed) attackTime--;
 	}
 	
 	/* This actually ends up calling another use method down below. */
@@ -638,7 +650,7 @@ public class Player extends Mob {
 	
 	/** finds a location to respawn the player after death. */
 	public boolean respawn(Level level) {
-		if (!(bedSpawn || level.getTile(spawnx, spawny) == Tiles.get("grass")))
+		if (level.getTile(spawnx, spawny).mayPass(level, spawnx, spawny, this) == false)
 			findStartPos(level); // if there's no bed to spawn from, and the stored coordinates don't point to a grass tile, then find a new point.
 		
 		// move the player to the spawnpoint
@@ -719,8 +731,7 @@ public class Player extends Mob {
 	
 	/** What happens when the player is hurt */
 	protected void doHurt(int damage, int attackDir) {
-		if (ModeMenu.creative) return; // can't get hurt in creative
-		if (hurtTime > 0) return; // currently in hurt cooldown
+		if (ModeMenu.creative || hurtTime > 0 || Bed.inBed) return; // can't get hurt in creative, hurt cooldown, or while someone is in bed
 		
 		int healthDam = 0, armorDam = 0;
 		Sound.playerHurt.play();

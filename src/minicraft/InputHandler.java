@@ -75,7 +75,10 @@ public class InputHandler implements MouseListener, KeyListener {
 	public Mouse two = new Mouse();
 	public Mouse tri = new Mouse();
 	
-	public InputHandler(Game game) {
+	private Game game;
+	
+	public InputHandler(Game game) { this(game, true); }
+	public InputHandler(Game game, boolean listenToKeyboard) {
 		keymap = new HashMap<String, String>(); //stores custom key name with physical key name in keyboard.
 		keyboard = new HashMap<String, Key>(); //stores physical keyboard keys; auto-generated :D
 		
@@ -86,9 +89,11 @@ public class InputHandler implements MouseListener, KeyListener {
 		keyboard.put("CTRL", new Key());
 		keyboard.put("ALT", new Key());
 		
-		game.addKeyListener(this); //add key listener to game
+		if(listenToKeyboard)
+			game.addKeyListener(this); //add key listener to game
 		//game.addMouseListener(this); //add mouse listener to game (though it's never used)
 		//ticks = 0;
+		this.game = game;
 	}
 	
 	private final void initKeyMap() {
@@ -118,6 +123,7 @@ public class InputHandler implements MouseListener, KeyListener {
 	}
 	
 	public void resetKeyBindings() {
+		keymap.clear();
 		initKeyMap();
 	}
 	
@@ -202,7 +208,7 @@ public class InputHandler implements MouseListener, KeyListener {
 	public Key getKey(String keytext) { return getKey(keytext, true); }
 	private Key getKey(String keytext, boolean getFromMap) {
 		// if the passed-in key is blank, or null, then return null.
-		if (keytext == null || keytext.length() == 0) return null;
+		if (keytext == null || keytext.length() == 0) return new Key();
 		
 		Key key; // make a new key to return at the end
 		keytext = keytext.toUpperCase(); // prevent errors due to improper "casing"
@@ -283,9 +289,26 @@ public class InputHandler implements MouseListener, KeyListener {
 		return key; // return the Key object.
 	}
 	
+	/// this method preovides a way to press physical keys without actually generating a key event.
+	public void pressKey(String keyname, boolean pressed) {
+		Key key = getPhysKey(keyname);
+		key.down = key.clicked = pressed;
+		//System.out.println("key " + keyname + " is clicked: " + getPhysKey(keyname).clicked);
+	}
+	
+	public ArrayList<String> getAllPressedKeys() {
+		ArrayList<String> keys = new ArrayList<String>();
+		for(String keyname: keyboard.keySet().toArray(new String[0]))
+			if(keyboard.get(keyname).clicked)
+				keys.add(keyname);
+		
+		return keys;
+	}
+	
 	/// this gets a key from key text, w/o adding to the key list.
 	private Key getPhysKey(String keytext) {
 		keytext = keytext.toUpperCase();
+		
 		if (keyboard.containsKey(keytext))
 			return keyboard.get(keytext);
 		else {
@@ -315,6 +338,9 @@ public class InputHandler implements MouseListener, KeyListener {
 			keyToChange = null;
 		}
 		getPhysKey(keytext).toggle(pressed);
+		
+		if(game.isValidClient())
+			game.client.cacheInput(keytext+"="+pressed);
 	}
 	
 	private String getCurModifiers() {

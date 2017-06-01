@@ -35,17 +35,28 @@ public class MinicraftServer {
 					MinicraftServerThread mst = new MinicraftServerThread(serverSocket.accept(), MinicraftServer.this);
 					threadList.add(mst);
 					checkSockets();
+					if(threadList.contains(mst))
+						mst.start();
+					else
+						System.out.println("new connection to server was unsuccessful; not starting thread");
 				}
 			} catch (SocketException ex) { // this should occur when closing the thread.
 			} catch (IOException ex) {
 				System.err.println("Could not listen on port " + portNumber);
 			}
+			
+			synchronized ("lock") {
+				for(MinicraftServerThread clientThread: threadList)
+					clientThread.endConnection();
+				
+				threadList.clear();
+			}
 		}
 	}
 	
-	public void checkSockets() {
+	public synchronized void checkSockets() {
 		for(MinicraftServerThread thread: threadList.toArray(new MinicraftServerThread[0])) {
-			if(thread.socket != null && thread.socket.isClosed())
+			if(thread.socket == null || thread.socket.isClosed())
 				threadList.remove(thread);
 		}
 	}
@@ -58,17 +69,12 @@ public class MinicraftServer {
 			ex.printStackTrace();
 		} catch (NullPointerException ex) {}
 		
-		for(MinicraftServerThread clientThread: threadList)
-			clientThread.endConnection();
-		
-		threadList.clear();
-		
-		Game.server = null;
-		Game.ISONLINE = false;
+		//Game.server = null;
+		//Game.ISONLINE = false;
 	}
 	
 	public boolean isConnected() {
 		checkSockets();
-		return serverThread.serverSocket != null && threadList.size() > 0;
+		return serverThread.serverSocket != null && threadList.size() > 0 && serverThread.listening;
 	}
 }

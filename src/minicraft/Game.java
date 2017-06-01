@@ -84,8 +84,9 @@ public class Game extends Canvas implements Runnable {
 	private BufferedImage image; // creates an image to be displayed on the screen.
 	private int[] pixels; // the array of pixels that will be displayed on the screen.
 	private int[] colors; // All of the colors, put into an array.
-	private Screen screen; // Creates the main screen
-	private Screen lightScreen; // Creates a front screen to render the darkness in caves (Fog of war).
+	/// these are public, but should not be modified:
+	public Screen screen; // Creates the main screen
+	public Screen lightScreen; // Creates a front screen to render the darkness in caves (Fog of war).
 	
 	/// LEVEL AND PLAYER
 	
@@ -167,6 +168,7 @@ public class Game extends Canvas implements Runnable {
 	// Sets the current menu.
 	public void setMenu(Menu menu) {
 		this.menu = menu;
+		if (debug) System.out.println("setting game menu to " + menu);
 		if (menu != null) menu.init(this, input);
 	}
 	
@@ -243,7 +245,6 @@ public class Game extends Canvas implements Runnable {
 		levels = new Level[6];
 		
 		scoreTime = ModeMenu.getScoreTime();
-		Player.score = 0;
 		
 		LoadingMenu.percentage = 0; // this actually isn't necessary, I think; it's just in case.
 		
@@ -275,7 +276,7 @@ public class Game extends Canvas implements Runnable {
 				level.add(player);
 			}
 		} else {
-			level = levels[currentLevel];
+			level = null;
 		}
 		
 		DeadMenu.shouldRespawn = true;
@@ -284,6 +285,7 @@ public class Game extends Canvas implements Runnable {
 			player.inventory.add(Items.get("lava potion"));
 		}
 		
+		//System.out.println("reset started game");
 		readyToRenderGameplay = true;
 	}
 	
@@ -291,38 +293,59 @@ public class Game extends Canvas implements Runnable {
 	// In the end, calls menu.tick() if there's a menu, or level.tick() if no menu.
 	public void tick() {
 		if(isValidClient() && client.isConnected()) {
-			client.sendInput(input);
+			//System.out.println("running short tick; sending input");
+			
+			if (!hasFocus()) {
+				input.releaseAll();
+			}
+			else {
+				input.tick();
+				
+				if(menu != null) {
+					paused = true;
+					menu.tick();
+				} else paused = false;
+			}
+			
+			// TODO I need to modify the player class so that remote players don't register pause, and the player as a client won't register in-game menus like containers and such.
+			if(menu == null)
+				client.sendCachedInput();
+			
+			tickCount++;
+			
 			return;
 		}
 		
 		if (Bed.inBed) {
 			// IN BED
-			level.remove(player);
+			level.remove(Bed.player);
 			gamespeed = 30;
 			if (tickCount <= sleepStartTime && tickCount >= sleepEndTime) { // it has reached morning.
-				level.add(player);
+				level.add(Bed.player);
 				gamespeed = 1;
 				
-				// seems this removes all entities within a certain radius of the player when you get in Bed.
+				// seems this removes all entities within a certain radius of the player when you get OUT of Bed.
 				for (int i = 0; i < level.entities.size(); i++) {
 					if (((Entity) level.entities.get(i)).level == levels[currentLevel]) {
-						int xd = level.player.x - ((Entity) level.entities.get(i)).x;
-						int yd = level.player.y - ((Entity) level.entities.get(i)).y;
+						int xd = Bed.player.x - ((Entity) level.entities.get(i)).x;
+						int yd = Bed.player.y - ((Entity) level.entities.get(i)).y;
 						if (xd * xd + yd * yd < 48 // this comes down to a radius of about half a tile... huh...
 								&& level.entities.get(i) instanceof Mob
-								&& level.entities.get(i) != player) {
+								&& level.entities.get(i) != Bed.player) {
 							level.remove((Entity) level.entities.get(i));
 						}
 					}
 				}
 				// finally gets out of bed.
 				Bed.inBed = false;
+				Bed.player = null;
 			}
 		}
 		
 		
 		//auto-save tick; marks when to do autosave.
-		asTick++;
+		if(!paused || isValidHost())
+			asTick++;
 		if (asTick > astime) {
 			if (OptionsMenu.autosave && player.health > 0 && !gameOver
 				  && levels[currentLevel].entities.contains(player)) {
@@ -333,12 +356,12 @@ public class Game extends Canvas implements Runnable {
 		}
 		
 		// Increment tickCount if the game is not paused
-		if (!paused) setTime(tickCount+1);
+		if (!paused || isValidHost()) setTime(tickCount+1);
 		if (tickCount == 3600) level.removeAllEnemies();
 		
 		/// SCORE MODE ONLY
 		
-		if (ModeMenu.score && !paused) {
+		if (ModeMenu.score && (!paused || isValidHost())) {
 			if (scoreTime <= 0) { // GAME OVER
 				gameOver = true;
 				setMenu(new WonMenu(player));
@@ -382,7 +405,6 @@ public class Game extends Canvas implements Runnable {
 					pendingLevelChange = 0;
 				}
 				
-				//still in "no active menu" conditional:
 				level.tick();
 				Tile.tickCount++;
 				
@@ -408,8 +430,8 @@ public class Game extends Canvas implements Runnable {
 					if (input.getKey("shift-t").clicked) ModeMenu.updateModeBools(4);
 					if (ModeMenu.score && input.getKey("ctrl-t").clicked) scoreTime = normSpeed * 5; // 5 seconds
 					
-					if (input.getKey("equals").clicked) Player.moveSpeed++;//= 0.5D;
-					if (input.getKey("minus").clicked && Player.moveSpeed > 1) Player.moveSpeed--;// -= 0.5D;
+					if (input.getKey("equals").clicked) player.moveSpeed++;//= 0.5D;
+					if (input.getKey("minus").clicked && player.moveSpeed > 1) player.moveSpeed--;// -= 0.5D;
 					
 					if (input.getKey("shift-equals").clicked) {
 						if(gamespeed < 1) gamespeed *= 2;
@@ -434,6 +456,20 @@ public class Game extends Canvas implements Runnable {
 				} // end debug only cond.
 			} // end "menu-null" conditional
 		} // end hasfocus conditional
+		
+		if(isValidHost() && !hasFocus()) {
+			/// this is to keep the game going while online, but with an unfocused window.
+			
+			/// ticks all the levels with a player on them
+			for(Level level: levels)
+				if(level.getEntities(Player.class).length > 0)
+					level.tick();
+			
+			Tile.tickCount++;
+			if (!player.removed && !gameOver) {
+				gameTime++;
+			}
+		}
 		
 	} // end tick()
 	
@@ -488,7 +524,7 @@ public class Game extends Canvas implements Runnable {
 		currentLevel += dir; // changes the current level by the amount
 		if (currentLevel == -1) currentLevel = 5; // fix accidental level underflow
 		if (currentLevel == 6) currentLevel = 0; // fix accidental level overflow
-
+		
 		level = levels[currentLevel]; // sets the level to the current level
 		player.x = (player.x >> 4) * 16 + 8; // sets the player's x coord (to center yourself on the stairs)
 		player.y = (player.y >> 4) * 16 + 8; // sets the player's y coord (to center yourself on the stairs)
@@ -507,36 +543,23 @@ public class Game extends Canvas implements Runnable {
 		
 		if(readyToRenderGameplay) {
 			if(isValidClient() && client.isConnected()) {
-				screen.render(client.getScreenPixels()); // this just overwrites all the pixels in screen.pixels
+				if(client.pixels != null) {
+					//System.out.println("rendering new pixels from server on-screen...");
+					screen.render(client.pixels); // this just overwrites all the pixels in screen.pixels
+					client.pixels = null;
+				}
 			} else {
-				int xScroll = player.x - screen.w / 2; // scrolls the screen in the x axis.
-				int yScroll = player.y - (screen.h - 8) / 2; // scrolls the screen in the y axis.
+				renderLevel();
+				renderGui();
 				
-				//stop scrolling if the screen is at the ...
-				if (xScroll < 16) xScroll = 16; // ...left border.
-				if (yScroll < 16) yScroll = 16; // ...top border.
-				if (xScroll > level.w * 16 - screen.w - 16) xScroll = level.w * 16 - screen.w - 16; // ...right border.
-				if (yScroll > level.h * 16 - screen.h - 16) yScroll = level.h * 16 - screen.h - 16; // ...bottom border.
-				if (currentLevel > 3) { // if the current level is higher than 3 (which only the sky level (and dungeon) is)
-					int col = Color.get(20, 20, 121, 121); // background color.
-					for (int y = 0; y < 28; y++)
-						for (int x = 0; x < 48; x++) {
-							// creates the background for the sky (and dungeon) level:
-							screen.render(x * 8 - ((xScroll / 4) & 7), y * 8 - ((yScroll / 4) & 7), 0, col, 0);
-						}
+				if(isValidHost() && server.isConnected()) {
+					for(int i = 0; i < server.threadList.size(); i++) {
+						RemotePlayer player = server.threadList.get(i).player;
+						renderLevelAs(player, player.screen, player.lightScreen);
+						renderGuiAs(player, player.screen);
+						server.threadList.get(i).sendScreenPixels(player.screen.pixels);
+					}
 				}
-				
-				level.renderBackground(screen, xScroll, yScroll); // renders current level background
-				level.renderSprites(screen, xScroll, yScroll); // renders level sprites on screen
-				
-				// this creates the darkness in the caves
-				if (currentLevel != 5 && (currentLevel != 3 || tickCount < dayLength/4 || tickCount > dayLength/2) && (!ModeMenu.creative || currentLevel >= 3)) {
-					lightScreen.clear(0); // this doesn't mean that the pixel will be black; it means that the pixel will be DARK, by default; lightScreen is about light vs. dark, not necessarily a color. The light level it has is compared with the minimum light values in dither to decide whether to leave the cell alone, or mark it as "dark", which will do different things depending on the game level and time of day.
-					level.renderLight(lightScreen, xScroll, yScroll); // finds (and renders) all the light from objects (like the player, lanterns, and lava).
-					screen.overlay(lightScreen, xScroll, yScroll); // overlays the light screen over the main screen.
-				}
-				
-				renderGui(); //renders the GUI.
 			}
 		}
 		
@@ -559,26 +582,56 @@ public class Game extends Canvas implements Runnable {
 		bs.show(); // makes the picture visible. (probably)
 	}
 	
+	private void renderLevel() { renderLevelAs(player, screen, lightScreen); }
+	private void renderLevelAs(Player player, Screen screen, Screen lightScreen) {
+		Level level = player.level;
+		
+		int xScroll = player.x - screen.w / 2; // scrolls the screen in the x axis.
+		int yScroll = player.y - (screen.h - 8) / 2; // scrolls the screen in the y axis.
+		
+		//stop scrolling if the screen is at the ...
+		if (xScroll < 16) xScroll = 16; // ...left border.
+		if (yScroll < 16) yScroll = 16; // ...top border.
+		if (xScroll > level.w * 16 - screen.w - 16) xScroll = level.w * 16 - screen.w - 16; // ...right border.
+		if (yScroll > level.h * 16 - screen.h - 16) yScroll = level.h * 16 - screen.h - 16; // ...bottom border.
+		if (currentLevel > 3) { // if the current level is higher than 3 (which only the sky level (and dungeon) is)
+			int col = Color.get(20, 20, 121, 121); // background color.
+			for (int y = 0; y < 28; y++)
+				for (int x = 0; x < 48; x++) {
+					// creates the background for the sky (and dungeon) level:
+					screen.render(x * 8 - ((xScroll / 4) & 7), y * 8 - ((yScroll / 4) & 7), 0, col, 0);
+				}
+		}
+		
+		level.renderBackground(screen, xScroll, yScroll); // renders current level background
+		level.renderSprites(screen, xScroll, yScroll); // renders level sprites on screen
+		
+		// this creates the darkness in the caves
+		if (currentLevel != 5 && (currentLevel != 3 || tickCount < dayLength/4 || tickCount > dayLength/2) && (!ModeMenu.creative || currentLevel >= 3)) {
+			lightScreen.clear(0); // this doesn't mean that the pixel will be black; it means that the pixel will be DARK, by default; lightScreen is about light vs. dark, not necessarily a color. The light level it has is compared with the minimum light values in dither to decide whether to leave the cell alone, or mark it as "dark", which will do different things depending on the game level and time of day.
+			level.renderLight(lightScreen, xScroll, yScroll); // finds (and renders) all the light from objects (like the player, lanterns, and lava).
+			screen.overlay(lightScreen, xScroll, yScroll); // overlays the light screen over the main screen.
+		}
+	}
+	
 	/** Renders the main game GUI (hearts, Stamina bolts, name of the current item, etc.) */
-	private void renderGui() {
+	private void renderGui() { renderGuiAs(player, screen); }
+	private void renderGuiAs(Player player, Screen screen) {
 		/// AH-HA! THIS DRAWS THE BLACK SQUARE!!
 		for (int x = 12; x < 29; x++) {
 			screen.render(x * 7, screen.h - 8, 0 + 1 * 32, Color.get(0, 0), 0);
 		}
 		
-		// player.xx and yy stores previous player position.
-		int txlevel = player.x / 16;
-		int tylevel = player.y / 16;
 		int textcol = Color.get(-1, 555);
 		if (player.showinfo) { // renders show debug info on the screen.
 			ArrayList<String> info = new ArrayList<String>();
 			info.add(fra + " fps");
 			info.add("day tiks " + tickCount);
 			info.add((normSpeed * gamespeed) + " tik/sec");
-			info.add("walk spd " + Player.moveSpeed);
-			info.add("X " + txlevel);
-			info.add("Y " + tylevel);
-			if (ModeMenu.score) info.add("Score " + Player.score);
+			info.add("walk spd " + player.moveSpeed);
+			info.add("X " + (player.x >> 4));
+			info.add("Y " + (player.y >> 4));
+			if (ModeMenu.score) info.add("Score " + player.score);
 			
 			/// Displays number of chests left, if on dungeon level.
 			if (currentLevel == 5) {

@@ -54,6 +54,12 @@ public class Save {
 	public Save(Player player, String worldname) {
 		this(player.game, "/saves/" + worldname + "/");
 		
+		if(game.isValidClient()) {
+			// clients are not allowed to save.
+			game.saving = false;
+			return;
+		}
+		
 		writeGame("Game");
 		//writePrefs("KeyPrefs");
 		writeWorld("Level");
@@ -174,11 +180,11 @@ public class Save {
 	public void writePlayer(String filename, Player player) {
 		data.add(String.valueOf(player.x));
 		data.add(String.valueOf(player.y));
-		data.add(String.valueOf(Player.spawnx));
-		data.add(String.valueOf(Player.spawny));
+		data.add(String.valueOf(player.spawnx));
+		data.add(String.valueOf(player.spawny));
 		data.add(String.valueOf(player.health));
 		data.add(String.valueOf(player.armor));
-		data.add(String.valueOf(Player.score));
+		data.add(String.valueOf(player.score));
 		data.add(String.valueOf(player.ac));
 		data.add(String.valueOf(Game.currentLevel));
 		data.add(ModeMenu.mode + (ModeMenu.score?";"+player.game.scoreTime+";"+ModeMenu.getSelectedTime():""));
@@ -194,7 +200,7 @@ public class Save {
 		data.add(subdata);
 		
 		data.add(String.valueOf(player.shirtColor));
-		data.add(String.valueOf(Player.skinon));
+		data.add(String.valueOf(player.skinon));
 		if(player.curArmor != null) {
 			data.add(String.valueOf(player.armorDamageBuffer));
 			data.add(String.valueOf(player.curArmor.name));

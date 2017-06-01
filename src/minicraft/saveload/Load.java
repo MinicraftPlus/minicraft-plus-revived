@@ -334,8 +334,8 @@ public class Load {
 		loadFromFile(location + filename + extention);
 		player.x = Integer.parseInt(data.get(0));
 		player.y = Integer.parseInt(data.get(1));
-		Player.spawnx = Integer.parseInt(data.get(2));
-		Player.spawny = Integer.parseInt(data.get(3));
+		player.spawnx = Integer.parseInt(data.get(2));
+		player.spawny = Integer.parseInt(data.get(3));
 		player.health = Integer.parseInt(data.get(4));
 		player.armor = Integer.parseInt(data.get(5));
 		
@@ -344,15 +344,15 @@ public class Load {
 			player.curArmor = (ArmorItem)Items.get(data.get(14));
 		}
 		
-		Player.score = Integer.parseInt(data.get(6));
+		player.score = Integer.parseInt(data.get(6));
 		player.ac = Integer.parseInt(data.get(7));
 		
 		Game.currentLevel = Integer.parseInt(data.get(8));
 		Level level = Game.levels[Game.currentLevel];
 		level.add(player);
 		Tile spawnTile = level.getTile(player.spawnx >> 4, player.spawny >> 4);
-		if(spawnTile.id != Tiles.get("grass").id && spawnTile.mayPass(level, player.spawnx >> 4, player.spawny >> 4, player))
-			player.bedSpawn = true; //A semi-advanced little algorithm to determine if the player has a bed save; and though if you sleep on a grass tile, this won't get set, it doesn't matter b/c you'll spawn there anyway!
+		//if(spawnTile.id != Tiles.get("grass").id && spawnTile.mayPass(level, player.spawnx >> 4, player.spawny >> 4, player))
+			//player.bedSpawn = true; //A semi-advanced little algorithm to determine if the player has a bed save; and though if you sleep on a grass tile, this won't get set, it doesn't matter b/c you'll spawn there anyway!
 		
 		String modedata = data.get(9);
 		int mode;
@@ -395,7 +395,7 @@ public class Load {
 		else
 			player.shirtColor = Integer.parseInt(data.get(11));
 		
-		Player.skinon = Boolean.parseBoolean(data.get(12));
+		player.skinon = Boolean.parseBoolean(data.get(12));
 	}
 	
 	protected static String subOldName(String name, Version worldVer) {

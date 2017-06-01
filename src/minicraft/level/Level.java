@@ -398,6 +398,7 @@ public class Level {
 			e.tick();
 			
 			if(e instanceof Mob) count++;
+			//if(e instanceof RemotePlayer) System.out.println("ticking remote player");
 			
 			int xt = e.x >> 4;
 			int yt = e.y >> 4;
@@ -536,7 +537,7 @@ public class Level {
 		if (x < 0 || y < 0 || x >= w || y >= h) return 0;
 		return data[x + y * w] & 0xff;
 	}
-
+	
 	public void setData(int x, int y, int val) {
 		if (x < 0 || y < 0 || x >= w || y >= h) return;
 		data[x + y * w] = (byte) val;
@@ -544,19 +545,17 @@ public class Level {
 	
 	public void add(Entity e) { add(e, e.x, e.y); }
 	public void add(Entity entity, int x, int y) {
-		if (entity instanceof Player) {
-			if(entity instanceof RemotePlayer)
-				((Player)entity).findStartPos(this);
-			else
+		if (entity instanceof Player)
+			if(entity instanceof RemotePlayer == false)
 				player = (Player) entity;
-		}
+		
 		entities.add(entity);
 		entity.setLevel(this, x, y);
 		
 		if (Game.debug) {
 			String clazz = entity.getClass().getCanonicalName();
 			clazz = clazz.substring(clazz.lastIndexOf(".")+1);
-			String[] searching = {"DungeonChest", "AirWizard"}; //can contain any number of class names I want to print when found.
+			String[] searching = {"DungeonChest", "AirWizard", "RemotePlayer"}; //can contain any number of class names I want to print when found.
 			for(String search: searching) {
 				try {
 					if(Class.forName("minicraft.entity."+search).isAssignableFrom(entity.getClass())) {
@@ -576,6 +575,8 @@ public class Level {
 	public void remove(Entity e) {
 		entities.remove(e);
 		e.level = null;
+		if(e instanceof RemotePlayer)
+			System.out.println("removing remote player from level " + depth);
 		int xto = e.x >> 4;
 		int yto = e.y >> 4;
 		removeEntity(xto, yto, e);
@@ -657,6 +658,17 @@ public class Level {
 			}
 		}
 		return result;
+	}
+	
+	/// finds all entities that are an instance of the given entity.
+	public Entity[] getEntities(Class<? extends Entity> targetClass) {
+		ArrayList<Entity> matches = new ArrayList<Entity>();
+		for(Entity e: entities) {
+			if(targetClass.isAssignableFrom(e.getClass()))
+				matches.add(e);
+		}
+		
+		return matches.toArray(new Entity[0]);
 	}
 	
 	public Tile[] getAreaTiles(int x, int y, int r) {

@@ -31,12 +31,24 @@ public class EnemyMob extends MobAi {
 	public void tick() {
 		super.tick();
 		
-		if (level.player != null && !Bed.inBed && randomWalkTime <= 0) { // checks if player is on zombies level and if there is no time left on randonimity timer
-			int xd = level.player.x - x;
-			int yd = level.player.y - y;
+		Entity[] players = level.getEntities(Player.class);
+		
+		if (players.length > 0 && !Bed.inBed && randomWalkTime <= 0) { // checks if player is on zombies level and if there is no time left on randonimity timer
+			int xd = players[0].x - x;
+			int yd = players[0].y - y;
+			
+			for(int i = 1; i < players.length; i++) {
+				int curxd = players[i].x - x;
+				int curyd = players[i].y - y;
+				if(xd*xd + yd*yd > curxd*curxd + curyd*curyd) {
+					xd = curxd;
+					yd = curyd;
+				}
+			}
+			
 			if (xd * xd + yd * yd < detectDist * detectDist) {
 				/// if player is less than 6.25 tiles away, then set move dir towards player
-				int sig0 = 0; // this prevents too precise estimates, preventing mobs from bobbing up and down.
+				int sig0 = 1; // this prevents too precise estimates, preventing mobs from bobbing up and down.
 				xa = ya = 0;
 				if (xd < sig0) xa = -1;
 				if (xd > sig0) xa = +1;

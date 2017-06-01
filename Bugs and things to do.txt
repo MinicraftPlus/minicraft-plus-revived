@@ -1,5 +1,6 @@
 	---Quick TODO's---
 
+--- CURRENT: I REALLY need to find a way to know if a socket has closed on the other side...
 -reorder tools a bit in ToolType.java b/c I'm picky. Hoes should be first, at least. ;)
 - add to F3 menu: "heartticks" left until regen another heart.
 

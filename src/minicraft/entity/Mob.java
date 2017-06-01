@@ -9,7 +9,6 @@ import minicraft.screen.ModeMenu;
 import minicraft.Sound;
 
 public abstract class Mob extends Entity {
-	private Player player;
 	
 	protected MobSprite[][] sprites; // This contains all the mob's sprites, sorted first by direction (index corrosponding to the dir variable), and then by walk animation state.
 	protected int walkDist = 0; // How far we've walked currently, incremented after each movement. This is used to change the sprite; "(walkDist >> 3) & 1" switches between a value of 0 and 1 every 8 increments of walkDist.
@@ -35,7 +34,7 @@ public abstract class Mob extends Entity {
 	public void tick() {
 		tickTime++; // Increment our tick counter
 		
-		if (level.getTile(x >> 4, y >> 4) == Tiles.get("lava")) // If we are trying to swim in lava
+		if (level != null && level.getTile(x >> 4, y >> 4) == Tiles.get("lava")) // If we are trying to swim in lava
 			hurt(Tiles.get("lava"), x, y, 4); // Inflict 4 damage to ourselves, sourced from the lava Tile, with the direction as the opposite of ours.
 		if (health <= 0) die(); // die if no health
 		if (hurtTime > 0) hurtTime--; // If a timer preventing damage temporarily is set, decrement it's value

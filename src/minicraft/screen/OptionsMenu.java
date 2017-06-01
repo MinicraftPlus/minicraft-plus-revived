@@ -51,7 +51,7 @@ public class OptionsMenu extends Menu {
 			autosave = !autosave;
 		}
 		
-		if (unlockedskin && input.getKey("w").clicked) Player.skinon = !Player.skinon;
+		if (unlockedskin && input.getKey("w").clicked) game.player.skinon = !game.player.skinon;
 	}
 
 	public void render(Screen screen) {
@@ -75,7 +75,7 @@ public class OptionsMenu extends Menu {
 		
 		if (unlockedskin) {
 			Font.draw("<W>ear Suit:", screen, 80, screen.h - 50, textColor);
-			Font.draw((Player.skinon?"On":"Off"), screen, 180, screen.h - 50, (Player.skinon?onColor:offColor));
+			Font.draw((game.player.skinon?"On":"Off"), screen, 180, screen.h - 50, (game.player.skinon?onColor:offColor));
 		}
 
 		Font.drawCentered("Press "+input.getMapping("exit")+" to return", screen, screen.h - 25, textColor);

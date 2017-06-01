@@ -208,8 +208,8 @@ public class LegacyLoad {
 		loadFromFile(location + filename + extention);
 		player.x = Integer.parseInt(data.get(0));
 		player.y = Integer.parseInt(data.get(1));
-		Player.spawnx = Integer.parseInt(data.get(2));
-		Player.spawny = Integer.parseInt(data.get(3));
+		player.spawnx = Integer.parseInt(data.get(2));
+		player.spawny = Integer.parseInt(data.get(3));
 		player.health = Integer.parseInt(data.get(4));
 		player.armor = Integer.parseInt(data.get(5));
 		
@@ -231,7 +231,7 @@ public class LegacyLoad {
 			modedata = data.get(8);
 		}
 		
-		Player.score = Integer.parseInt(data.get(6));
+		player.score = Integer.parseInt(data.get(6));
 		Game.levels[Game.currentLevel].add(player);
 		
 		int mode;
@@ -270,8 +270,8 @@ public class LegacyLoad {
 		String[] color = colors.split(";");
 		player.shirtColor = Integer.parseInt(color[0]+color[1]+color[2]);
 		
-		if(!oldSave) Player.skinon = Boolean.parseBoolean(data.get(12));
-		else Player.skinon = false;
+		if(!oldSave) player.skinon = Boolean.parseBoolean(data.get(12));
+		else player.skinon = false;
 	}
 	
 	public void loadInventory(String filename, Inventory inventory) {
