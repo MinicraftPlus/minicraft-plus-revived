@@ -7,6 +7,7 @@ import java.awt.event.MouseListener;
 import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 
 public class InputHandler implements MouseListener, KeyListener {
@@ -79,7 +80,7 @@ public class InputHandler implements MouseListener, KeyListener {
 	
 	public InputHandler(Game game) { this(game, true); }
 	public InputHandler(Game game, boolean listenToKeyboard) {
-		keymap = new HashMap<String, String>(); //stores custom key name with physical key name in keyboard.
+		keymap = new LinkedHashMap<String, String>(); //stores custom key name with physical key name in keyboard.
 		keyboard = new HashMap<String, Key>(); //stores physical keyboard keys; auto-generated :D
 		
 		initKeyMap(); // this is seperate so I can make a "restore defaults" option.
@@ -102,8 +103,8 @@ public class InputHandler implements MouseListener, KeyListener {
 		keymap.put("LEFT", "LEFT|A"); //move left action references left arrow key
 		keymap.put("RIGHT", "RIGHT|D"); //move right action references right arrow key
 		
-		keymap.put("SELECT", "ENTER|E");
-		keymap.put("EXIT", "ESCAPE|Q");
+		keymap.put("SELECT", "ENTER");
+		keymap.put("EXIT", "ESCAPE");
 		
 		keymap.put("ATTACK", "C|SPACE"); //attack action references "C" key
 		keymap.put("MENU", "X|ENTER"); //and so on... menu does various things.
