@@ -202,7 +202,7 @@ public class Game extends Canvas implements Runnable {
 		else setMenu(null);
 	}
 	
-	/** This method is used when respawning, and by resetstartGame to reset the vars. It does not generate any new terrain. */
+	/** This method is used when respawning, and by initWorld to reset the vars. It does not generate any new terrain. */
 	public void resetGame() {
 		playerDeadTime = 0;
 		currentLevel = 3;
@@ -224,7 +224,7 @@ public class Game extends Canvas implements Runnable {
 	}
 	
 	/** This method is used to create a brand new world, or to load an existing one from a file. */
-	public void resetstartGame() { // this is a full reset; everything.
+	public void initWorld() { // this is a full reset; everything.
 		DeadMenu.shouldRespawn = false;
 		resetGame();
 		Bed.inBed = false;
@@ -275,7 +275,7 @@ public class Game extends Canvas implements Runnable {
 		
 		if(isValidHost()) {
 			for(MinicraftServerThread thread: server.threadList)
-				thread.game.resetstartGame();
+				thread.game.initWorld();
 		}
 		
 		//System.out.println("reset started game");
@@ -429,7 +429,7 @@ public class Game extends Canvas implements Runnable {
 				//for debugging only
 				if (debug) {
 					if (input.getKey("Shift-0").clicked)
-						resetstartGame();
+						initWorld();
 					
 					if (input.getKey("1").clicked) changeTimeOfDay(Time.Morning);
 					if (input.getKey("2").clicked) changeTimeOfDay(Time.Day);

@@ -36,7 +36,7 @@ public class MultiplayerMenu extends Menu {
 		
 		if(isConnectedClient) {
 			if (Game.debug) System.out.println("Begin game!");
-			game.resetstartGame();
+			game.initWorld();
 			game.setMenu(null);
 		} else if(input.getKey("exit").clicked) {
 			game.setMenu(parent);

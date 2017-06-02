@@ -169,7 +169,7 @@ public class WorldSelectMenu extends Menu {
 					if (Game.debug) System.out.println("load mode: " + worldname);
 					Sound.test.play();
 					game.setMenu(new LoadingMenu());
-					//game.resetstartGame();
+					//game.initWorld();
 					//game.setMenu((Menu) null);
 					break;
 				

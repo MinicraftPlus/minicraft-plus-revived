@@ -26,7 +26,7 @@ public class LoadingMenu extends Menu implements ActionListener {
 	public void actionPerformed(ActionEvent e) {
 		//something MUST call this... but what?
 			//must be in another class.
-		game.resetstartGame();
+		game.initWorld();
 		game.setMenu(null);
 		t.stop();
 	}

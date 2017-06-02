@@ -48,7 +48,7 @@ public class ClientGame extends Game {
 		init();
 	}
 	
-	/** This method is used when respawning, and by resetstartGame to reset the vars. It does not generate any new terrain. */
+	/** This method is used when respawning, and by initWorld to reset the vars. It does not generate any new terrain. */
 	public void resetGame() {
 		playerDeadTime = 0;
 		currentLevel = 3;
@@ -73,7 +73,7 @@ public class ClientGame extends Game {
 		}
 	}
 	
-	public void resetstartGame() { resetGame(); }
+	public void initWorld() { resetGame(); }
 	
 	
 	private boolean hadMenu = true;
@@ -152,7 +152,7 @@ public class ClientGame extends Game {
 			//for debugging only; for this class, I think if the host is in debug mode, then everyone is.
 			if (Game.debug) {
 				if (input.getKey("Shift-0").clicked)
-					resetstartGame();
+					initWorld();
 				
 				// this should not be needed, since the inventory should not be altered.
 				if (input.getKey("shift-g").clicked) {
