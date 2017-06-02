@@ -32,8 +32,8 @@ public class LoadingMenu extends Menu implements ActionListener {
 	}
 
 	public void render(Screen screen) {
-		int col = Color.get(0, 300);
-		int coll = Color.get(0, 555);
+		int col = Color.get(-1, 300);
+		int coll = Color.get(-1, 555);
 		screen.clear(0);
 		
 		Font.drawCentered("Loading...", screen, screen.h - 105, col);

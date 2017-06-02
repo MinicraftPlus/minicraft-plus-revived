@@ -138,7 +138,7 @@ private static final String[] options = {"New game", "Join Online World", "Instr
 	};
 	
 	public TitleMenu() {
-		super(Arrays.asList(options), 11*8, 1, Color.get(0, 555), Color.get(0, 222));
+		super(Arrays.asList(options), 11*8, 1, Color.get(-1, 555), Color.get(-1, 222));
 		Game.readyToRenderGameplay = false;
 		/// this is just in case
 		if(Game.server != null) {
@@ -240,10 +240,10 @@ private static final String[] options = {"New game", "Join Online World", "Instr
 		screen.clear(0);
 		int h = 2; // Height of squares (on the spritesheet)
 		int w = 15; // Width of squares (on the spritesheet)
-		int titleColor = Color.get(0, 010, 131, 551);
+		int titleColor = Color.get(-1, 010, 131, 551);
 		int xo = (screen.w - w * 8) / 2; // X location of the title
 		int yo = 36; // Y location of the title
-		int cols = Color.get(0, 550);
+		int cols = Color.get(-1, 550);
 		
 		for (int y = 0; y < h; y++) {
 			for (int x = 0; x < w; x++) {
@@ -260,7 +260,7 @@ private static final String[] options = {"New game", "Join Online World", "Instr
 		
 		/// this isn't as complicated as it looks. It just gets a color based off of count, which oscilates between 0 and 25.
 		int bcol = 5 - count / 5; // this number ends up being between 1 and 5, inclusive.
-		cols = isblue ? Color.get(0, bcol) : isRed ? Color.get(0, bcol*100) : isGreen ? Color.get(0, bcol*10) : Color.get(0, (bcol-1)*100+5, bcol*100+bcol*10, bcol*100+bcol*10);
+		cols = isblue ? Color.get(-1, bcol) : isRed ? Color.get(-1, bcol*100) : isGreen ? Color.get(-1, bcol*10) : Color.get(-1, (bcol-1)*100+5, bcol*100+bcol*10, bcol*100+bcol*10);
 		// *100 means red, *10 means green; simple.
 		
 		Font.drawCentered(splashes[rand], screen, 60, cols);
@@ -270,13 +270,13 @@ private static final String[] options = {"New game", "Join Online World", "Instr
 			if(name.length() < 36) greeting = name+"!";
 			if(name.length() < 27) greeting = "Welcome, " + greeting;
 			
-			Font.drawCentered(greeting, screen, 10, Color.get(0, 330));
+			Font.drawCentered(greeting, screen, 10, Color.get(-1, 330));
 		}
 		
-		Font.draw("Version " + Game.VERSION, screen, 1, 1, Color.get(0, 111));
+		Font.draw("Version " + Game.VERSION, screen, 1, 1, Color.get(-1, 111));
 		
-		Font.drawCentered("("+input.getMapping("up")+", "+input.getMapping("down")+" to select)", screen, screen.h - 32, Color.get(0, 111));
-		Font.drawCentered("("+input.getMapping("select")+" to accept)", screen, screen.h - 22, Color.get(0, 111));
-		Font.drawCentered("("+input.getMapping("exit")+" to return)", screen, screen.h - 12, Color.get(0, 111));
+		Font.drawCentered("("+input.getMapping("up")+", "+input.getMapping("down")+" to select)", screen, screen.h - 32, Color.get(-1, 111));
+		Font.drawCentered("("+input.getMapping("select")+" to accept)", screen, screen.h - 22, Color.get(-1, 111));
+		Font.drawCentered("("+input.getMapping("exit")+" to return)", screen, screen.h - 12, Color.get(-1, 111));
 	}
 }

@@ -55,9 +55,9 @@ public class OptionsMenu extends Menu {
 	}
 
 	public void render(Screen screen) {
-		int textColor = Color.get(0, 555);
-		int onColor = Color.get(0, 50);
-		int offColor = Color.get(0, 500);
+		int textColor = Color.get(-1, 555);
+		int onColor = Color.get(-1, 50);
+		int offColor = Color.get(-1, 500);
 		
 		screen.clear(0);
 		

@@ -141,18 +141,17 @@ public class ModeMenu extends Menu {
 	}
 
 	public void render(Screen screen) {
-		int color = Color.get(0, 300);
-		int black = Color.get(0, 0);
-		int textCol = Color.get(0, 555);
+		int color = Color.get(-1, 300);
+		int textCol = Color.get(-1, 555);
 		screen.clear(0);
 		
-		Font.drawCentered("World Name:", screen, screen.h - 180, Color.get(0, 444));
+		Font.drawCentered("World Name:", screen, screen.h - 180, Color.get(-1, 444));
 		Font.drawCentered(WorldSelectMenu.worldname, screen, screen.h - 170, Color.get(-1, 5));
 		
 		String modeText = "Game Mode:	" + modes[mode - 1];
 		Font.drawCentered(modeText, screen, 8 * 8, Color.get(-1, 555), Color.get(-1, 111));
 		
-		if(mode == 4) Font.drawCentered("<T>ime: " + getSelectedTime(), screen, 95, Color.get(0, 555));
+		if(mode == 4) Font.drawCentered("<T>ime: " + getSelectedTime(), screen, 95, Color.get(-1, 555));
 		
 		Font.drawCentered("Press "+input.getMapping("select")+" to Start", screen, screen.h - 75, textCol);
 		Font.drawCentered("Press Left and Right", screen, screen.h - 150, textCol);

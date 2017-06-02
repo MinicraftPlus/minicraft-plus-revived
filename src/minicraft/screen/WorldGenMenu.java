@@ -51,7 +51,7 @@ public class WorldGenMenu extends SelectMenu {
 		
 		super.render(screen);
 		
-		Font.drawCentered("World options", screen, 3 * 8, Color.get(0, 555));
+		Font.drawCentered("World options", screen, 3 * 8, Color.get(-1, 555));
 		Font.drawCentered(input.getMapping("up")+" and "+input.getMapping("down")+" to scroll", screen, 16 * 8, Color.get(-1, 555));
 		Font.drawCentered("Press "+input.getMapping("exit")+" to exit", screen, 18 * 8, Color.get(-1, 555));
 	}

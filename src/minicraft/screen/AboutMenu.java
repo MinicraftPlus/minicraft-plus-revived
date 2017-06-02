@@ -22,7 +22,7 @@ public class AboutMenu extends Menu {
 	public void render(Screen screen) {
 		screen.clear(0); // clears the screen to make it black.
 		
-		Font.drawCentered("About MinicraftPlus", screen, 1 * 8, Color.get(0, 555));
-		Font.drawParagraph("Moded by David.b and +Dillyg10+, and Chris J. Our goal is to expand Minicraft to be more fun and continuous.\nMinicraft was originally made by Markus Perrson for ludum dare 22 competition.", screen, 4, 5 * 8, true, 12, Color.get(0, 333));
+		Font.drawCentered("About MinicraftPlus", screen, 1 * 8, Color.get(-1, 555));
+		Font.drawParagraph("Moded by David.b and +Dillyg10+, and Chris J. Our goal is to expand Minicraft to be more fun and continuous.\nMinicraft was originally made by Markus Perrson for ludum dare 22 competition.", screen, 4, 5 * 8, true, 12, Color.get(-1, 333));
 	}
 }

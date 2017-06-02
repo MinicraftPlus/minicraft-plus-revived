@@ -22,9 +22,9 @@ public class InstructionsMenu extends Menu {
 	public void render(Screen screen) {
 		screen.clear(0); // clears the screen to be a black color.
 		
-		Font.drawCentered("HOW TO PLAY", screen, 1 * 8, Color.get(0, 555)); //draws Title text
+		Font.drawCentered("HOW TO PLAY", screen, 1 * 8, Color.get(-1, 555)); //draws Title text
 		Font.drawParagraph(
 		  "With the defualt controls...\n\nMove your character with arrow keys or wsad. Press C to attack and X to open the inventory, and to use items. Select an item in the inventory to equip it.\n\nKill the air wizard to win the game!",
-		  screen, 4, 4 * 8, true, 8, Color.get(0, 333));
+		  screen, 4, 4 * 8, true, 8, Color.get(-1, 333));
 	}
 }

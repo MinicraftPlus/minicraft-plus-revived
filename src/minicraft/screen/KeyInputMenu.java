@@ -15,7 +15,7 @@ public class KeyInputMenu extends ScrollingMenu {
 	private String[] actionKeys;
 	
 	public KeyInputMenu(Menu parent) {
-		super(Arrays.asList(parent.input.getKeyPrefs()), (Game.HEIGHT-Font.textHeight()*9)/8, 0, Font.textHeight()*2, 1, Color.get(0, 555), Color.get(0, 333));
+		super(Arrays.asList(parent.input.getKeyPrefs()), (Game.HEIGHT-Font.textHeight()*9)/8, 0, Font.textHeight()*2, 1, Color.get(-1, 555), Color.get(-1, 333));
 		
 		this.parent = parent;
 		listeningForBind = false;
@@ -84,7 +84,7 @@ public class KeyInputMenu extends ScrollingMenu {
 	public void render(Screen screen) {
 		screen.clear(0);
 		
-		Font.drawCentered("Controls", screen, 0, Color.get(0, 555));
+		Font.drawCentered("Controls", screen, 0, Color.get(-1, 555));
 		
 		if(Game.debug&&false) {
 			System.out.println("current status:");
@@ -114,7 +114,7 @@ public class KeyInputMenu extends ScrollingMenu {
 				input.getMapping("exit")+" to Return to menu"
 			};
 			for(int i = 0; i < lines.length; i++)
-				Font.drawCentered(lines[i], screen, screen.h-Font.textHeight()*(4-i), Color.get(0, 555));
+				Font.drawCentered(lines[i], screen, screen.h-Font.textHeight()*(4-i), Color.get(-1, 555));
 		}
 	}
 }
