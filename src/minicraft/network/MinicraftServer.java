@@ -2,7 +2,9 @@ package minicraft.network;
 
 import java.util.ArrayList;
 import java.net.ServerSocket;
+import java.net.InetAddress;
 import java.net.SocketException;
+import java.net.UnknownHostException;
 import java.io.IOException;
 import minicraft.Game;
 
@@ -71,5 +73,24 @@ public class MinicraftServer {
 	public boolean isConnected() {
 		checkSockets();
 		return serverThread.serverSocket != null && threadList.size() > 0 && serverThread.listening;
+	}
+	
+	public String getAddress() {
+		if(serverThread.serverSocket != null)
+			return serverThread.serverSocket.toString();
+		
+		return "null socket";
+		/*
+		if(serverThread.serverSocket == null) {
+			try {
+				return InetAddress.getLocalHost().getHostAddress();
+			} catch (UnknownHostException ex) {
+				return "error: exit and retry";
+			}
+			return "Can Not Determine";
+		}
+		
+		return serverThread.serverSocket.getInetAddress().getCanonicalHostName();
+		*/
 	}
 }

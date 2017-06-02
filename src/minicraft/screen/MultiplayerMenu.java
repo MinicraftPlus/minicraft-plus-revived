@@ -52,10 +52,11 @@ public class MultiplayerMenu extends Menu {
 		}
 		
 		if(!isHost && !Game.isValidClient()) {
+			
 			if(input.lastKeyTyped.length() > 0) {
 				String letter = input.lastKeyTyped;
 				input.lastKeyTyped = "";
-				java.util.regex.Pattern pattern = java.util.regex.Pattern.compile("[0-9]\\.");
+				java.util.regex.Pattern pattern = java.util.regex.Pattern.compile("[0-9\\.]");
 				if(pattern.matcher(letter).matches())
 					ipAddress += letter;
 			}
@@ -74,11 +75,13 @@ public class MultiplayerMenu extends Menu {
 		screen.clear(0);
 		if(isHost) {
 			if(game.isValidHost()) {
-				Font.drawCentered("Awaiting client connections"+getElipses(), screen, 60, Color.get(-1, 555));
-				Font.drawCentered("So far:", screen, 70, Color.get(-1, 555));
+				//Font.drawCentered("Server IP Address:", screen, 20, Color.get(-1, 555));
+				//Font.drawCentered(game.server.getAddress(), screen, 30, Color.get(-1, 151));
+				Font.drawCentered("Awaiting client connections"+getElipses(), screen, 60, Color.get(-1, 444));
+				Font.drawCentered("So far:", screen, 70, Color.get(-1, 444));
 				int i = 0;
 				for(MinicraftServerThread thread: Game.server.threadList) {
-					Font.drawCentered(thread.getClientName(), screen, 80+i*10, Color.get(-1, 345));
+					Font.drawCentered(thread.getClientName(), screen, 80+i*10, Color.get(-1, 134));
 					i++;
 				}
 			} else {
