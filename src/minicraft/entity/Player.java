@@ -175,9 +175,9 @@ public class Player extends Mob {
 		if (staminaRechargeDelay > 0 && stamina < maxStamina) staminaRechargeDelay--;
 		
 		if (staminaRechargeDelay == 0) {
-			staminaRecharge += potioneffects.containsKey("Time") ? 2 : 1; // ticks since last recharge, accounting for the time potion effect.
+			staminaRecharge += potioneffects.containsKey(PotionType.Time) ? 2 : 1; // ticks since last recharge, accounting for the time potion effect.
 			
-			if (isSwimming() && !potioneffects.containsKey("Swim")) staminaRecharge = 0; //don't recharge stamina while swimming.
+			if (isSwimming() && !potioneffects.containsKey(PotionType.Swim)) staminaRecharge = 0; //don't recharge stamina while swimming.
 			
 			// recharge a bolt for each multiple of maxStaminaRecharge.
 			while (staminaRecharge > maxStaminaRecharge) {
@@ -270,18 +270,18 @@ public class Player extends Mob {
 			
 			//executes if not saving; and... essentially halves speed if out of stamina.
 			if ((xa != 0 || ya != 0) && (staminaRechargeDelay % 2 == 0 || isSwimming()) && game.savecooldown == 0 && !game.saving) {
-				double spd = moveSpeed * (potioneffects.containsKey("Time") ? (potioneffects.containsKey("Speed") ? 1.5D : 2) : 1);
+				double spd = moveSpeed * (potioneffects.containsKey(PotionType.Time) ? (potioneffects.containsKey(PotionType.Speed) ? 1.5D : 2) : 1);
 				boolean moved = move((int) (xa * spd), (int) (ya * spd)); // THIS is where the player moves; part of Mob.java
 				if(moved) stepCount++;
 			}
 			
-			if (isSwimming() && tickTime % 60 == 0 && !potioneffects.containsKey("Swim")) { // if drowning... :P
+			if (isSwimming() && tickTime % 60 == 0 && !potioneffects.containsKey(PotionType.Swim)) { // if drowning... :P
 				if (stamina > 0) stamina--; // take away stamina
 				else hurt(this, 1, dir ^ 1); // if no stamina, take damage.
 			}
 		}
 		
-		if (potioneffects.containsKey("Regen")) {
+		if (potioneffects.containsKey(PotionType.Regen)) {
 			regentick++;
 			if (regentick > 60) {
 				regentick = 0;
@@ -293,7 +293,7 @@ public class Player extends Mob {
 		
 		if (game.menu == null) {
 			if (!Bed.inBed && input.getKey("attack").clicked && stamina != 0) {
-				if (!potioneffects.containsKey("Energy")) stamina--;
+				if (!potioneffects.containsKey(PotionType.Energy)) stamina--;
 				staminaRecharge = 0;
 				attack();
 			}
@@ -316,7 +316,7 @@ public class Player extends Mob {
 			}
 			//debug feature:
 			if (Game.debug && input.getKey("shift-p").clicked) { // remove all potion effects
-				for(PotionType potionType: potioneffects.keySet().toArray(new PotionType[0])) {
+				for(PotionType potionType: potioneffects.keySet()) {
 					PotionItem.applyPotion(this, potionType, false);
 				}
 			}
@@ -667,7 +667,7 @@ public class Player extends Mob {
 	
 	/** Pays the stamina used for an action */
 	public boolean payStamina(int cost) {
-		if (potioneffects.containsKey("Energy")) return true; // if the player has the potion effect for infinite stamina, return true (without subtracting cost).
+		if (potioneffects.containsKey(PotionType.Energy)) return true; // if the player has the potion effect for infinite stamina, return true (without subtracting cost).
 		else if (cost > stamina) return false; // if the player doesn't have enough stamina, then return false; failure.
 
 		if (cost < 0) cost = 0; // error correction
@@ -679,7 +679,7 @@ public class Player extends Mob {
 	public int getLightRadius() {
 		//if (game.currentLevel == 3) return 0; // I don't want the player to have an automatic halo on the surface.
 		
-		float light = potioneffects.containsKey("Light") ? 2.5f : 1; // multiplier for the light potion effect.
+		float light = potioneffects.containsKey(PotionType.Light) ? 2.5f : 1; // multiplier for the light potion effect.
 		float r = 3 * light; // the radius of the light.
 		if (game.currentLevel == 3) r = (light-1) * 3;
 		

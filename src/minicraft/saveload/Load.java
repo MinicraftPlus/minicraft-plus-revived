@@ -515,11 +515,16 @@ public class Load {
 					Spawner egg = new Spawner((MobAi)getEntity(info.get(2), player, Integer.parseInt(info.get(3))));
 					//egg.initMob((MobAi)getEntity(info.get(2), player, info.get(3)));
 					//egg.lvl = Integer.parseInt(info.get(3));
-					currentlevel = Integer.parseInt((String)info.get(info.size() - 1));
+					currentlevel = Integer.parseInt(info.get(info.size() - 1));
 					Game.levels[currentlevel].add(egg, x, y);
 				}
+				else if(newEntity instanceof Lantern && worldVer.compareTo(new Version("1.9.4")) >= 0 && info.size() > 3) {
+					Lantern l = new Lantern(Lantern.Type.values()[Integer.parseInt(info.get(2))]);
+					currentlevel = Integer.parseInt(info.get(3));
+					Game.levels[currentlevel].add(l, x, y);
+				}
 				else {
-					currentlevel = Integer.parseInt(info.get(2));
+					currentlevel = Integer.parseInt(info.get(info.size()-1));
 					Game.levels[currentlevel].add(newEntity, x, y);
 				}
 			} // end of entity not null conditional
@@ -552,8 +557,8 @@ public class Load {
 			case "Bed": return (Entity)(new Bed());
 			case "Tnt": return (Entity)(new Tnt());
 			case "Lantern": return (Entity)(new Lantern(Lantern.Type.NORM));
-			case "Iron Lantern": return (Entity)(new Lantern(Lantern.Type.IRON));
-			case "Gold Lantern": return (Entity)(new Lantern(Lantern.Type.GOLD));
+			//case "Iron Lantern": return (Entity)(new Lantern(Lantern.Type.IRON));
+			//case "Gold Lantern": return (Entity)(new Lantern(Lantern.Type.GOLD));
 			//case "Spark": return (Entity)(new Spark());
 			default : /*if(Game.debug)*/ System.out.println("LOAD: unknown or outdated entity requested: " + string);
 				return null;

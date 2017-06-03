@@ -12,6 +12,7 @@ import minicraft.gfx.Screen;
 import minicraft.item.Item;
 import minicraft.item.Items;
 import minicraft.item.ToolType;
+import minicraft.item.PotionType;
 import minicraft.level.tile.Tile;
 import minicraft.level.tile.Tiles;
 import minicraft.level.tile.TorchTile;
@@ -94,6 +95,10 @@ public class Level {
 		if(level != -4 && level != 0)
 			monsterDensity = 4;
 	
+		maxMobCount = 300 + 100*OptionsMenu.diff;
+		if(depth == 0) maxMobCount = maxMobCount * 2 / 3;
+		if(depth == 1 || depth == -4) maxMobCount /= 2;
+		
 		maxMobCount = 300 + 100*OptionsMenu.diff;
 		if(depth == 0) maxMobCount = maxMobCount * 2 / 3;
 		if(depth == 1 || depth == -4) maxMobCount /= 2;

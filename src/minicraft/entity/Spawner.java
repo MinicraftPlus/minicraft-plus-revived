@@ -7,6 +7,7 @@ import minicraft.gfx.Color;
 import minicraft.gfx.Sprite;
 import minicraft.item.Item;
 import minicraft.item.FurnitureItem;
+import minicraft.item.PotionType;
 import minicraft.item.ToolItem;
 import minicraft.item.ToolType;
 import minicraft.item.PowerGloveItem;
@@ -107,7 +108,7 @@ public class Spawner extends Furniture {
 			
 			int dmg;
 			Sound.monsterHurt.play();
-			if(player.potioneffects.containsKey("Haste"))
+			if(player.potioneffects.containsKey(PotionType.Haste))
 				dmg = tool.level + 1 + random.nextInt(5);
 			else
 				dmg = tool.level + 1 + random.nextInt(3);

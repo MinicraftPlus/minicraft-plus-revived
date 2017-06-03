@@ -3,6 +3,7 @@ package minicraft.entity;
 import minicraft.entity.particle.TextParticle;
 import minicraft.gfx.Color;
 import minicraft.gfx.MobSprite;
+import minicraft.item.PotionType;
 import minicraft.level.tile.Tile;
 import minicraft.level.tile.Tiles;
 import minicraft.screen.ModeMenu;
@@ -108,7 +109,7 @@ public abstract class Mob extends Entity {
 
 	public void hurt(Tile tile, int x, int y, int damage) { // Hurt the mob, when the source of damage is a tile
 		int attackDir = dir ^ 1; // Set attackDir to our own direction, inverted. XORing it with 1 flips the rightmost bit in the variable, this effectively adds one when even, and subtracts one when odd
-		if(!(tile == Tiles.get("lava") && this instanceof Player && ((Player)this).potioneffects.containsKey("Lava")))
+		if(!(tile == Tiles.get("lava") && this instanceof Player && ((Player)this).potioneffects.containsKey(PotionType.Lava)))
 			doHurt(damage, attackDir); // Call the method that actually performs damage, and provide it with our new attackDir value
 	}
 	

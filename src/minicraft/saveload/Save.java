@@ -8,20 +8,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import minicraft.Game;
-import minicraft.entity.Arrow;
-import minicraft.entity.AirWizard;
-import minicraft.entity.Chest;
-import minicraft.entity.DeathChest;
-import minicraft.entity.DungeonChest;
-import minicraft.entity.EnemyMob;
-import minicraft.entity.Entity;
-import minicraft.entity.Inventory;
-import minicraft.entity.ItemEntity;
-import minicraft.entity.Mob;
-import minicraft.entity.Player;
-import minicraft.entity.RemotePlayer;
-import minicraft.entity.Spark;
-import minicraft.entity.Spawner;
+import minicraft.entity.*;
 import minicraft.entity.particle.Particle;
 import minicraft.item.Item;
 import minicraft.item.PotionType;
@@ -265,6 +252,10 @@ public class Save {
 				if(e instanceof Spawner) {
 					Spawner egg = (Spawner)e;
 					extradata += ":" + egg.mob.getClass().getName().replace("minicraft.entity.", "") + ":" + (egg.mob instanceof EnemyMob ? ((EnemyMob)egg.mob).lvl : 1);
+				}
+				
+				if (e instanceof Lantern) {
+					extradata += ":"+((Lantern)e).type.ordinal();
 				}
 				
 				data.add(name + "[" + e.x + ":" + e.y + extradata + ":" + l + "]");
