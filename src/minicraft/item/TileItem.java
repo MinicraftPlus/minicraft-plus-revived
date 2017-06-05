@@ -71,6 +71,7 @@ public class TileItem extends StackableItem {
 		for(String tilename: validTiles) {
 			//Tile t = Tiles.get(tilename.contains("_")?tilename.substring(0, tilename.indexOf("_")):tilename);
 			if(tile.matches(level.getData(xt, yt), tilename)) {
+				count--;
 				level.setTile(xt, yt, model); // TODO maybe data should be part of the saved tile..?
 				return true;
 			}
