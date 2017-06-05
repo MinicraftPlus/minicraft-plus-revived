@@ -430,9 +430,14 @@ public class Load {
 				
 				Item newItem = Items.get(itemName);
 				
-				for(int ii = 0; ii < Integer.parseInt(curData.get(1)); ii++) {
+				int count = Integer.parseInt(curData.get(1));
+				
+				if(newItem instanceof StackableItem) {
+					((StackableItem)newItem).count = count;
 					inventory.add(newItem);
 				}
+				else
+					inventory.add(newItem, count);
 			} else {
 				Item toAdd = Items.get(item);
 				inventory.add(toAdd);

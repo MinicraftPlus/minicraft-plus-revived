@@ -51,13 +51,6 @@ public class Inventory {
 			}
 			
 			if(!added) items.add(slot, toTake);
-			/*
-			StackableItem has = findItem(toTake); // finds if the StackableItem is already in their inventory (looking for an instance of StackableItem with the same .item)
-			if (has == null) { // if the owner of this inventory doesn't have the item
-				items.add(slot, toTake); // add the item in the items list
-			} else {
-				has.count += toTake.count; // else add to the count of the item item already there.
-			}*/
 		} else {
 			items.add(slot, item); // add the item to the items list
 		}
