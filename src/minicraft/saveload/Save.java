@@ -258,6 +258,11 @@ public class Save {
 					extradata += ":"+((Lantern)e).type.ordinal();
 				}
 				
+				if (e instanceof Crafter) {
+					//extradata += ":"+((Crafter)e).type.name();
+					name = ((Crafter)e).type.name();
+				}
+				
 				data.add(name + "[" + e.x + ":" + e.y + extradata + ":" + l + "]");
 			}
 		}

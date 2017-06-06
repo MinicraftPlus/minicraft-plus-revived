@@ -498,12 +498,10 @@ public class Load {
 			Entity newEntity = getEntity(entityName, player, mobLvl);
 			
 			if(newEntity != null) { // the method never returns null, but...
-				int currentlevel;
 				if(newEntity instanceof Mob) {
 					Mob mob = (Mob)newEntity;
 					mob.health = Integer.parseInt(info.get(2));
-					currentlevel = Integer.parseInt(info.get(info.size()-1));
-					Game.levels[currentlevel].add(mob, x, y);
+					newEntity = mob;
 				} else if(newEntity instanceof Chest) {
 					Chest chest = (Chest)newEntity;
 					boolean isDeathChest = chest instanceof DeathChest;
@@ -534,27 +532,26 @@ public class Load {
 						((DungeonChest)chest).isLocked = Boolean.parseBoolean(chestInfo.get(chestInfo.size()-1));
 					}
 					
-					
-					currentlevel = Integer.parseInt(info.get(info.size() - 1));
-					Game.levels[currentlevel].add(chest instanceof DeathChest ? (DeathChest)chest : chest instanceof DungeonChest ? (DungeonChest)chest : chest, x, y);
-					if (chest instanceof DungeonChest) Game.levels[currentlevel].chestcount++;
+					if (chest instanceof DungeonChest)
+						Game.levels[Integer.parseInt(info.get(info.size()-1))].chestcount++;
+					newEntity = chest;
 				}
 				else if(newEntity instanceof Spawner) {
-					Spawner egg = new Spawner((MobAi)getEntity(info.get(2), player, Integer.parseInt(info.get(3))));
+					newEntity = new Spawner((MobAi)getEntity(info.get(2), player, Integer.parseInt(info.get(3))));
 					//egg.initMob((MobAi)getEntity(info.get(2), player, info.get(3)));
 					//egg.lvl = Integer.parseInt(info.get(3));
-					currentlevel = Integer.parseInt(info.get(info.size() - 1));
-					Game.levels[currentlevel].add(egg, x, y);
+					//newEntity = egg;
 				}
 				else if(newEntity instanceof Lantern && worldVer.compareTo(new Version("1.9.4")) >= 0 && info.size() > 3) {
-					Lantern l = new Lantern(Lantern.Type.values()[Integer.parseInt(info.get(2))]);
-					currentlevel = Integer.parseInt(info.get(3));
-					Game.levels[currentlevel].add(l, x, y);
+					newEntity = new Lantern(Lantern.Type.values()[Integer.parseInt(info.get(2))]);
 				}
-				else {
-					currentlevel = Integer.parseInt(info.get(info.size()-1));
-					Game.levels[currentlevel].add(newEntity, x, y);
-				}
+				/*else if(newEntity instanceof Crafter && worldVer.compareTo(new Version("2.0.0-dev4")) >= 0) {
+					System.out.println("");
+					newEntity = new Crafter(Enum.valueOf(Crafter.Type.class, info.get(2)));
+				}*/
+				
+				int currentlevel = Integer.parseInt(info.get(info.size()-1));
+				Game.levels[currentlevel].add(newEntity, x, y);
 			} // end of entity not null conditional
 		}
 	}
