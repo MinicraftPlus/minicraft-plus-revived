@@ -30,6 +30,7 @@ import minicraft.item.ToolType;
 import minicraft.level.Level;
 import minicraft.level.tile.Tile;
 import minicraft.level.tile.Tiles;
+import minicraft.network.MinicraftConnection;
 import minicraft.network.MinicraftServer;
 import minicraft.network.MinicraftServerThread;
 import minicraft.network.MinicraftClient;
@@ -53,14 +54,11 @@ public class Game extends Canvas implements Runnable {
 	private static float SCALE = 3;
 	
 	/// MULTIPLAYER
-	public static Game mainGame;
+	//public static Game mainGame;
 	
 	public static boolean ISONLINE = false;
 	public static boolean ISHOST = false;
-	// used by server runtime only:
-	public static MinicraftServer server = null;
-	// used by client runtimes only:
-	public static MinicraftClient client = null;
+	public static MinicraftConnection connection = null;
 	
 	/// TIME AND TICKS
 	
@@ -105,8 +103,8 @@ public class Game extends Canvas implements Runnable {
 	
 	/// AUTOSAVE AND NOTIFICATIONS
 	
-	public List<String> notifications = new ArrayList<String>();
-	public int notetick; // "note"= notifications.
+	public static List<String> notifications = new ArrayList<String>();
+	public static int notetick; // "note"= notifications.
 	
 	public static final int astime = 7200; //stands for Auto-Save Time (interval)
 	public static int asTick; // The time interval between autosaves.
@@ -156,15 +154,15 @@ public class Game extends Canvas implements Runnable {
 	// Sets the current menu.
 	public void setMenu(Menu menu) {
 		this.menu = menu;
-		//if (debug) System.out.println("setting game menu to " + menu + (this instanceof ClientGame ? " for client game screen" : ""));
+		if (debug) System.out.println("setting game menu to " + menu);
 		if (menu != null) menu.init(this, input);
 	}
 	
 	public static final boolean isValidClient() {
-		return ISONLINE && !ISHOST && client != null/* && client.done*/;
+		return ISONLINE && !ISHOST && connection != null/* && client.done*/;
 	}
 	public static final boolean isValidHost() {
-		return ISONLINE && ISHOST && server != null/* && server.threadList.size() > 0*/; // i'm debating that last part.
+		return ISONLINE && ISHOST && connection != null/* && ((MinicraftServer)connection).threadList.size() > 0*/; // i'm debating that last part.
 	}
 	
 	/// called after main; main is at bottom.
@@ -191,15 +189,11 @@ public class Game extends Canvas implements Runnable {
 		}
 		screen.pixels = pixels;
 		
-		if(!(this instanceof ClientGame))
-			Tiles.initTileList();
+		Tiles.initTileList();
 		
 		resetGame(); // "half"-starts a new game, to set up initial variables
-		if(!(this instanceof ClientGame)) {
-			new Load(this); // this loads any saved preferences.
-			setMenu(new TitleMenu()); //sets menu to the title screen.
-		}
-		else setMenu(null);
+		new Load(this); // this loads any saved preferences.
+		setMenu(new TitleMenu()); //sets menu to the title screen.
 	}
 	
 	/** This method is used when respawning, and by initWorld to reset the vars. It does not generate any new terrain. */
@@ -241,23 +235,23 @@ public class Game extends Canvas implements Runnable {
 		LoadingMenu.percentage = 0; // this actually isn't necessary, I think; it's just in case.
 		
 		if(!isValidClient()) {
-			if(!WorldSelectMenu.loadworld) {
+			if(WorldSelectMenu.loadworld)
+				new Load(this, WorldSelectMenu.worldname);
+			else {
 				worldSize = WorldGenMenu.getSize();
 				for (int i = 5; i >= 0; i--) {
 					LoadingMenu.percentage = (5-i)*20;
 					
 					levels[(i - 1 < 0 ? 5 : i - 1)] =
-							new Level(worldSize, worldSize, i - 4, (i == 5 ? (Level) null : levels[i]), !WorldSelectMenu.loadworld);
+							new Level(this, worldSize, worldSize, i - 4, (i == 5 ? (Level) null : levels[i]), !WorldSelectMenu.loadworld);
 				}
 				
-				// if resetStartGame is called when not loading a world, add an Iron lantern to level 5, at (984, 984).
+				// add an Iron lantern to level 5, at (984, 984), when making a new world
 				Furniture f = new Lantern(Lantern.Type.IRON);//Items.get("Iron Lantern").furniture;
 				f.x = 984;
 				f.y = 984;
 				levels[5].add(f);
 			}
-			else
-			 	new Load(this, WorldSelectMenu.worldname);
 			
 			if (!WorldSelectMenu.loadworld) {
 				Level level = levels[currentLevel]; // sets level to the current level (3; surface)
@@ -269,57 +263,29 @@ public class Game extends Canvas implements Runnable {
 			if(WorldGenMenu.get("Theme").equals("Hell")) {
 				player.inventory.add(Items.get("lava potion"));
 			}
+			readyToRenderGameplay = true;
+		} else {
+			Game.levels = new Level[6];
+			currentLevel = 3;
 		}
 		
 		DeadMenu.shouldRespawn = true;
-		
-		if(isValidHost()) {
-			for(MinicraftServerThread thread: server.threadList)
-				thread.game.initWorld();
-		}
-		
-		//System.out.println("reset started game");
-		readyToRenderGameplay = true;
 	}
 	
 	// VERY IMPORTANT METHOD!! Makes everything keep happening.
 	// In the end, calls menu.tick() if there's a menu, or level.tick() if no menu.
 	public void tick() {
-		if(isValidClient() && client.isConnected()) {
-			//System.out.println("running short tick; sending input");
-			
-			if (!hasFocus()) {
-				input.releaseAll();
-			}
-			else {
-				input.tick();
-				
-				if(menu != null) {
-					paused = true;
-					menu.tick();
-				} else if(input.getKey("pause").clicked) {
-					//System.out.println("opening pause menu on client runtime...");
-					setMenu(new PauseMenu(player));
-				} else
-					paused = false;
-			}
-			
-			// TODO I need to modify the player class so that remote players don't register pause, and the player as a client won't register in-game menus like containers and such.
-			if(menu == null)
-				client.sendCachedInput(input);
-			
-			tickCount++;
-			
-			return;
-		}
-		
 		Level level = levels[currentLevel];
-		if (Bed.inBed) {
+		if (Bed.inBed && !Game.isValidClient()) {
 			// IN BED
-			level.remove(Bed.player);
-			gamespeed = 30;
+			level.remove(player);
+			gamespeed = 20;
+			if(tickCount > sleepEndTime) {
+				pastDay1 = true;
+				tickCount = 0;
+			}
 			if (tickCount <= sleepStartTime && tickCount >= sleepEndTime) { // it has reached morning.
-				level.add(Bed.player);
+				level.add(player);
 				gamespeed = 1;
 				
 				// seems this removes all entities within a certain radius of the player when you get OUT of Bed.
@@ -377,17 +343,11 @@ public class Game extends Canvas implements Runnable {
 		if(isValidHost()) {
 			/// this is to keep the game going while online, even with an unfocused window.
 			input.tick();
-			for(MinicraftServerThread thread: server.threadList)
-				thread.game.input.tick();
-			
 			for(Level floor: levels)
 				if(floor.getEntities(Player.class).length > 0)
 					floor.tick();
 			
 			Tile.tickCount++;
-			
-			for(MinicraftServerThread thread: server.threadList)
-				thread.game.tick();
 		}
 		
 		// This is the general action statement thing! Regulates menus, mostly.
@@ -410,8 +370,9 @@ public class Game extends Canvas implements Runnable {
 				paused = false;
 				
 				//if player is alive, but no level change, nothing happens here.
-				if (player.removed) {
+				if (player.removed && readyToRenderGameplay) {
 					//makes delay between death and death menu.
+					if (debug) System.out.println("player is dead.");
 					playerDeadTime++;
 					if (playerDeadTime > 60) {
 						setMenu(new DeadMenu());
@@ -421,7 +382,7 @@ public class Game extends Canvas implements Runnable {
 					pendingLevelChange = 0;
 				}
 				
-				if(!isValidHost()) {
+				if(!ISONLINE) {
 					level.tick();
 					Tile.tickCount++;
 				}
@@ -474,6 +435,11 @@ public class Game extends Canvas implements Runnable {
 				} // end debug only cond.
 			} // end "menu-null" conditional
 		} // end hasfocus conditional
+		
+		if(Game.isValidHost()) {
+			/// send out all the changed, cached game parameters to the other clients.
+			
+		}
 	} // end tick()
 	
 	public void setMultiplier(int value) {
@@ -520,20 +486,13 @@ public class Game extends Canvas implements Runnable {
 	
 	/** This adds a notifcation to all player games. */
 	public static void notifyAll(String msg) {
-		mainGame.notifications.add(msg);
-		if(isValidHost())
-			for(MinicraftServerThread thread: server.threadList)
-				thread.game.notifications.add(msg);
+		notifyAll(msg, 0);
 	}
 	public static void notifyAll(String msg, int notetick) {
-		mainGame.notifications.add(msg);
-		mainGame.notetick = notetick;
-		if(isValidHost()) {
-			for(MinicraftServerThread thread: server.threadList) {
-				thread.game.notifications.add(msg);
-				thread.game.notetick = notetick;
-			}
-		}
+		Game.notifications.add(msg);
+		Game.notetick = notetick;
+		if(connection != null && connection.isConnected())
+			connection.sendNotification(msg, notetick);
 	}
 	
 	/** This method changes the level that the player is currently on.
@@ -557,43 +516,20 @@ public class Game extends Canvas implements Runnable {
 	//called in game loop, a bit after tick()
 	public void render() {
 		BufferStrategy bs = null;
-		if(!(this instanceof ClientGame)) {
-			bs = getBufferStrategy(); // creates a buffer strategy to determine how the graphics should be buffered.
-			if (bs == null) {
-				createBufferStrategy(3); // if the buffer strategy is null, then make a new one!
-				if(!(this instanceof ClientGame))
-					requestFocus(); // requests the focus of the screen.
-				return;
-			}
+		bs = getBufferStrategy(); // creates a buffer strategy to determine how the graphics should be buffered.
+		if (bs == null) {
+			createBufferStrategy(3); // if the buffer strategy is null, then make a new one!
+			requestFocus(); // requests the focus of the screen.
+			return;
 		}
 		
 		if(readyToRenderGameplay) {
-			if(isValidClient() && client.isConnected()) {
-				if(client.pixels != null) {
-					//System.out.println("rendering new pixels from server on-screen...");
-					screen.render(client.pixels); // this just overwrites all the pixels in screen.pixels
-					client.pixels = null;
-				}
-			} else {
-				renderLevel();
-				renderGui();
-				
-				if(isValidHost() && server.isConnected() && !(this instanceof ClientGame)) {
-					for(int i = 0; i < server.threadList.size(); i++)
-						server.threadList.get(i).game.render();
-				}
-			}
+			renderLevel();
+			renderGui();
 		}
 		
 		if (menu != null) // renders menu, if present.
 			menu.render(screen);
-		
-		if (readyToRenderGameplay && this instanceof ClientGame && isValidHost() && server.isConnected()) {
-			ClientGame thisGame = (ClientGame) this;
-			if(thisGame.connection.isConnected())
-				thisGame.connection.sendScreenPixels(screen.pixels);
-			return;
-		}
 		
 		if (!hasFocus()) renderFocusNagger(); // calls the renderFocusNagger() method, which creates the "Click to Focus" message.
 		
@@ -612,7 +548,7 @@ public class Game extends Canvas implements Runnable {
 	}
 	
 	private void renderLevel() {
-		Level level = player.level;
+		Level level = Game.levels[currentLevel];
 		if(level == null) return;
 		
 		int xScroll = player.x - screen.w / 2; // scrolls the screen in the x axis.
@@ -929,7 +865,6 @@ public class Game extends Canvas implements Runnable {
 		
 		frame.setVisible(true);
 		
-		mainGame = game;
 		game.start(); // Starts the game!
 	}
 	

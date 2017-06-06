@@ -1,11 +1,11 @@
 package minicraft.entity;
 
-import minicraft.ClientGame;
+import minicraft.Game;
 
 /** This is used only by the Server runtime, to represent a client player. */
 public class RemotePlayer extends Player {
 	
-	public RemotePlayer(ClientGame game) {
+	public RemotePlayer(Game game) {
 		super(game, game.input);
 	}
 }

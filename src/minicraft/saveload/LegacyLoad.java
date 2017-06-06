@@ -56,7 +56,7 @@ public class LegacyLoad {
 			testFile.delete(); // we don't care about it anymore anyway.
 		
 		loadGame("Game", game); // more of the version will be determined here
-		loadWorld("Level");
+		loadWorld("Level", game);
 		loadPlayer("Player", game.player);
 		loadInventory("Inventory", game.player.inventory);
 		loadEntities("Entities", game.player);
@@ -174,7 +174,7 @@ public class LegacyLoad {
 		}
 	}
 	
-	public void loadWorld(String filename) {
+	public void loadWorld(String filename, Game game) {
 		for(int l = Game.levels.length-1; l>=0; l--) {
 			loadFromFile(location + filename + l + extention);
 			
@@ -195,7 +195,7 @@ public class LegacyLoad {
 			}
 			
 			Level parent = l == Game.levels.length-1 ? null : Game.levels[l+1];
-			Game.levels[l] = new Level(lvlw, lvlh, lvldepth, parent, false);
+			Game.levels[l] = new Level(game, lvlw, lvlh, lvldepth, parent, false);
 			Game.levels[l].tiles = tiles;
 			Game.levels[l].data = tdata;
 		}

@@ -69,7 +69,7 @@ public class Load {
 			location += "/saves/" + worldname + "/";
 			
 			loadGame("Game", game); // more of the version will be determined here
-			loadWorld("Level");
+			loadWorld("Level", game);
 			loadPlayer("Player", game.player);
 			loadInventory("Inventory", game.player.inventory);
 			loadEntities("Entities", game.player);
@@ -262,7 +262,7 @@ public class Load {
 		}
 	}
 	
-	public void loadWorld(String filename) {
+	public void loadWorld(String filename, Game game) {
 		for(int l = Game.levels.length-2; l>=0; l--) {
 			//if(l == Game.levels.length-1) l = 4;
 			//if(l == 0) l = Game.levels.length-1;
@@ -296,7 +296,7 @@ public class Load {
 			}
 			
 			Level parent = l == Game.levels.length-2 ? null : l == Game.levels.length-1 ? Game.levels[0] : Game.levels[l+1];
-			Game.levels[l] = new Level(lvlw, lvlh, lvldepth, parent, false);
+			Game.levels[l] = new Level(game, lvlw, lvlh, lvldepth, parent, false);
 			
 			Level curLevel = Game.levels[l];
 			curLevel.tiles = tiles;
@@ -327,6 +327,29 @@ public class Load {
 			if(l == 0) l = Game.levels.length;
 			if(l == Game.levels.length-1) l = 0;
 		}
+	}
+	
+	public static void loadLevel(Level level, int[] lvlids, int[] lvldata) {
+		int lvlw = lvlids[0];
+		int lvlh = lvldata[0];
+		
+		byte[] tiles = new byte[lvlw * lvlh];
+		byte[] tdata = new byte[lvlw * lvlh];
+		
+		int percentInc = 100 / (lvlw*lvlh);
+		try {
+			for(int i = 1; i < lvlw * lvlh-1; i++) {
+				tiles[i] = (byte) lvlids[i];
+				tdata[i] = (byte) lvldata[i];
+				LoadingMenu.percentage += percentInc;
+			}
+		} catch (IndexOutOfBoundsException ex) {
+			System.err.println("suspected: level id and data arrays do not have enough info for given world size.");
+			ex.printStackTrace();
+		}
+		
+		level.tiles = tiles;
+		level.data = tdata;
 	}
 	
 	public void loadPlayer(String filename, Player player) {

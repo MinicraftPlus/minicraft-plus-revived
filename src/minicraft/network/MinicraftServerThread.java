@@ -8,97 +8,51 @@ import java.io.PrintWriter;
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import minicraft.Game;
-import minicraft.ClientGame;
 import minicraft.InputHandler;
-import minicraft.entity.RemotePlayer;
+import minicraft.level.Level;
 
-public class MinicraftServerThread extends Thread {
+public class MinicraftServerThread extends MinicraftConnection {
 	
 	private MinicraftServer serverInstance;
-	public ClientGame game;
 	
-	public RemotePlayer player;
-	public ArrayList<String> currentInput = new ArrayList<String>();
-	
-	protected Socket socket = null;
-	private PrintWriter out;
-	private BufferedReader in;
-	
-	public MinicraftServerThread(Socket socket, MinicraftServer serverInstance) {
-		super("MinicraftServerThread");
-		this.socket = socket;
-		try {
-			out = new PrintWriter(socket.getOutputStream(), true);
-			in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
-		} catch (IOException ex) {
-			ex.printStackTrace();
-		}
-		
+	public MinicraftServerThread(Game game, Socket socket, MinicraftServer serverInstance) {
+		super(game, socket);
+		System.out.println("created server thread");
 		this.serverInstance = serverInstance;
-		game = new ClientGame(this);
-		player = new RemotePlayer(game);
-	}
-	
-	public void sendScreenPixels(int[] pixels) {
-		//System.out.println("sending screen pixels to client...");
-		for(int i = 0; i < pixels.length; i++)
-			out.print(pixels[i]+(i<pixels.length-1?",":"\n"));
-		
-		checkConnection();
 	}
 	
 	public void run() {
-		// this indefinitely checks for key input sent until disconnected.
-		System.out.println("starting server thread connected to " + getClientName());
-		//System.out.println("reading key inputs sent from client...");
-		while(isConnected()) {
-			try {
-				if(in.ready()) {
-					//System.out.println("reading key input from client...");
-					String keys = in.readLine();
-					if(keys == null || keys.length() == 0) continue;
-					if(keys.endsWith(",")) keys = keys.substring(0, keys.length()-1); // remove trailing ",".
-					//System.out.println("adding " + keys + " to input list for client");
-					synchronized ("lock") {
-						currentInput.addAll(Arrays.asList(keys.split(",")));
-					}
-				}// else System.out.println("reader not ready");
-			} catch (IOException ex) {
-				System.out.println("Couldn't get input keys from client " + getClientName());
-				ex.printStackTrace();
-			}
-		}
-		
-		System.out.println("server connection with " + getClientName() + " is not connected; terminating thread");
-		endConnection();
+		System.out.println("running server thread...");
+		if(isConnected()) {
+			System.out.println("connected");
+			Level level = Game.levels[3];
+			out.println("INIT:"+game.tickCount+","+level.w+","+level.h);
+			System.out.println("sending tile params");
+			for(int i = 0; i < level.tiles.length; i++)
+				out.println("TILE:"+i+","+level.tiles[i]+","+level.data[i]);
+			
+			//System.out.println("sending level...");
+			//out.println(levelprint);
+			System.out.println("level sent.");
+			out.println("START");
+			//for(int i = 0; i < level.entities.length; i++) {
+			//	out.println("ADD:"+i+","+level.entities.get(i)/*.serialize()*/);
+			//}
+			super.run();
+		} else
+			System.out.println("server side socket is not connected to " + getClientName());
 	}
 	
 	public String getClientName() {
 		if(socket != null)
 			return socket.getInetAddress().toString() + ":" + socket.getPort();
 		
-		checkConnection();
-		
 		return "NULL SOCKET";
 	}
 	
-	protected void checkConnection() {
-		if(!isConnected()) endConnection();
-	}
-	
 	public void endConnection() {
-		System.out.println("ending connection to client " + getClientName());
-		try {
-			socket.close();
-		} catch (IOException ex) {
-			ex.printStackTrace();
-		} catch (NullPointerException ex) {}
-		
+		super.endConnection();
 		serverInstance.threadList.remove(this);
-		player.remove(); // removes player from level
-	}
-	
-	public boolean isConnected() {
-		return serverInstance.isConnected() && serverInstance.threadList.contains(this) && socket != null && socket.isConnected();
+		//clientPlayer.remove(); // removes player from level
 	}
 }

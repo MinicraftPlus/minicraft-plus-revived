@@ -353,9 +353,6 @@ public class InputHandler implements MouseListener, KeyListener {
 			keyToChange = null;
 		}
 		getPhysKey(keytext).toggle(pressed);
-		
-		if(game.isValidClient()/* && pressed && !isMod(keytext)*/)
-			game.client.cacheInput(keytext+"="+pressed);
 	}
 	
 	public static boolean isMod(String keyname) {

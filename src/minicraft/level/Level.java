@@ -24,7 +24,7 @@ public class Level {
 	private Random random = new Random();
 
 	public int w, h; // width and height of the level
-	//public Player player;
+	public Game game;
 	
 	public byte[] tiles; // an array of all the tiles in the world.
 	public byte[] data; // an array of the data of the tiles in the world. // ?
@@ -79,9 +79,10 @@ public class Level {
 	
 	@SuppressWarnings("unchecked") // @SuppressWarnings ignores the warnings (yellow underline) in this method.
 	/** Level which the world is contained in */
-	public Level(int w, int h, int level, Level parentLevel) {this(w, h, level, parentLevel, true); }
-	public Level(int w, int h, int level, Level parentLevel, boolean makeWorld) {
+	public Level(Game game, int w, int h, int level, Level parentLevel) {this(game, w, h, level, parentLevel, true); }
+	public Level(Game game, int w, int h, int level, Level parentLevel, boolean makeWorld) {
 		depth = level;
+		this.game = game;
 		this.w = w;
 		this.h = h;
 		byte[][] maps; // multidimensional array (an array within a array), used for the map
@@ -400,7 +401,8 @@ public class Level {
 			int xto = e.x >> 4;
 			int yto = e.y >> 4;
 			
-			e.tick();
+			if(e instanceof Player == false || e == game.player)
+				e.tick();
 			
 			if(e instanceof Mob) count++;
 			//if(e instanceof RemotePlayer) System.out.println("ticking remote player");
@@ -423,7 +425,7 @@ public class Level {
 		
 		//if(Game.tickCount % 10 == 0) System.out.println("mob count: " + count);
 		
-		if(count < maxMobCount)
+		if(count < maxMobCount && !Game.isValidClient())
 			trySpawn(1);
 		//else if (Game.debug)
 			//System.out.println("too many mobs on level " + depth + "; "+count+" of "+maxMobCount+".");
@@ -538,6 +540,10 @@ public class Level {
 		//if (Game.debug) printLevelLoc("setting tile from " + Tiles.get(tiles[x+y*w]).name + " to " + t.name, x, y);
 		tiles[x + y * w] = t.id;
 		data[x + y * w] = (byte) dataVal;
+		
+		if(Game.ISONLINE && Game.connection != null) {
+			Game.connection.sendTileUpdate(x, y);
+		}
 	}
 	
 	public int getData(int x, int y) {

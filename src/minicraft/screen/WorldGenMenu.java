@@ -74,4 +74,13 @@ public class WorldGenMenu extends SelectMenu {
 	public static int getSize() {
 		return sizes[selections[getIdx("Size")]];
 	}
+	
+	public static void setSize(int size) {
+		for(int i = 0; i < sizes.length; i++) {
+			if(sizes[i] == size) {
+				selections[getIdx("Size")] = i;
+				break;
+			}
+		}
+	}
 }

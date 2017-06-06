@@ -141,15 +141,10 @@ private static final String[] options = {"New game", "Join Online World", "Instr
 		super(Arrays.asList(options), 11*8, 1, Color.get(-1, 555), Color.get(-1, 222));
 		Game.readyToRenderGameplay = false;
 		/// this is just in case
-		if(Game.server != null) {
-			if (Game.debug) System.out.println("wrapping up loose server ends");
-			Game.server.endConnection();
-			Game.server = null;
-		}
-		if(Game.client != null) {
-			if (Game.debug) System.out.println("wrapping up loose client ends");
-			Game.client.endConnection();
-			Game.client = null;
+		if(Game.connection != null) {
+			if (Game.debug) System.out.println("wrapping up loose connection ends");
+			Game.connection.endConnection();
+			Game.connection = null;
 		}
 		Game.ISONLINE = false;
 		

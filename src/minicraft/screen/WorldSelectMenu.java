@@ -90,6 +90,9 @@ public class WorldSelectMenu extends Menu {
 				}
 			}
 		}
+		
+		while(selected > 1 && selected > worldnames.size()-1)
+			selected--;
 	}
 	
 	public void tick() {

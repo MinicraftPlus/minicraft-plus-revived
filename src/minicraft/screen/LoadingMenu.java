@@ -6,26 +6,26 @@ import javax.swing.Timer;
 import minicraft.gfx.Color;
 import minicraft.gfx.Font;
 import minicraft.gfx.Screen;
+import minicraft.Game;
 
 public class LoadingMenu extends Menu implements ActionListener {
 	//this is the last menu before the game/world starts/opens.
-	//but how does stuff happen..?
 	private Menu parent;
 	Timer t;
 	public static int percentage = 0;
-
+	
 	public LoadingMenu() {
 		t = new Timer(400, this);
 		percentage = 0;
 	}
-
+	
 	public void tick() {
-		t.start();
+		if(!Game.isValidClient())
+			t.start();
 	}
-
+	
+	// this method is called by the timer, when it runs out.
 	public void actionPerformed(ActionEvent e) {
-		//something MUST call this... but what?
-			//must be in another class.
 		game.initWorld();
 		game.setMenu(null);
 		t.stop();
