@@ -276,8 +276,8 @@ public class Load {
 			byte[] tiles = new byte[lvlw * lvlh];
 			byte[] tdata = new byte[lvlw * lvlh];
 			
-			for(int x = 0; x < lvlw - 1; x++) {
-				for(int y = 0; y < lvlh - 1; y++) {
+			for(int x = 0; x < lvlw; x++) {
+				for(int y = 0; y < lvlh; y++) {
 					int tileArrIdx = /*worldVer.compareTo(new Version("1.9.3-dev3")) < 0 ?*/ y + x * lvlw;// : x + y * lvlw;
 					int tileidx = x + y * lvlw; // the tiles are saved with x outer loop, and y inner loop, meaning that the list reads down, then right one, rather than right, then down one.
 					String tilename = data.get(tileidx + 3);
