@@ -555,10 +555,10 @@ public class Game extends Canvas implements Runnable {
 		int yScroll = player.y - (screen.h - 8) / 2; // scrolls the screen in the y axis.
 		
 		//stop scrolling if the screen is at the ...
-		if (xScroll < 16) xScroll = 16; // ...left border.
-		if (yScroll < 16) yScroll = 16; // ...top border.
-		if (xScroll > level.w * 16 - screen.w - 16) xScroll = level.w * 16 - screen.w - 16; // ...right border.
-		if (yScroll > level.h * 16 - screen.h - 16) yScroll = level.h * 16 - screen.h - 16; // ...bottom border.
+		if (xScroll < 0) xScroll = 0; // ...left border.
+		if (yScroll < 0) yScroll = 0; // ...top border.
+		if (xScroll > level.w * 16 - screen.w) xScroll = level.w * 16 - screen.w; // ...right border.
+		if (yScroll > level.h * 16 - screen.h) yScroll = level.h * 16 - screen.h; // ...bottom border.
 		if (currentLevel > 3) { // if the current level is higher than 3 (which only the sky level (and dungeon) is)
 			int col = Color.get(20, 20, 121, 121); // background color.
 			for (int y = 0; y < 28; y++)
