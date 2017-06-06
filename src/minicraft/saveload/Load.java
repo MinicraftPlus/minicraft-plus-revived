@@ -483,16 +483,18 @@ public class Load {
 			int y = Integer.parseInt(info.get(1));
 			
 			int mobLvl = 1;
-			try {
-				if(Class.forName("minicraft.entity.EnemyMob").isAssignableFrom(Class.forName("minicraft.entity."+entityName)))
-					mobLvl = Integer.parseInt(info.get(info.size()-2));
-			} catch(ClassNotFoundException ex) {
-				ex.printStackTrace();
-			}
-			
-			if(mobLvl == 0) {
-				if(Game.debug) System.out.println("level 0 mob: " + entityName);
-				mobLvl = 1;
+			if(!Crafter.names.contains(entityName)) {
+				try {
+					if(Class.forName("minicraft.entity.EnemyMob").isAssignableFrom(Class.forName("minicraft.entity."+entityName)))
+						mobLvl = Integer.parseInt(info.get(info.size()-2));
+				} catch(ClassNotFoundException ex) {
+					ex.printStackTrace();
+				}
+				
+				if(mobLvl == 0) {
+					if(Game.debug) System.out.println("level 0 mob: " + entityName);
+					mobLvl = 1;
+				}
 			}
 			
 			Entity newEntity = getEntity(entityName, player, mobLvl);
