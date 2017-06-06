@@ -154,7 +154,7 @@ public class Game extends Canvas implements Runnable {
 	// Sets the current menu.
 	public void setMenu(Menu menu) {
 		this.menu = menu;
-		if (debug) System.out.println("setting game menu to " + menu);
+		//if (debug) System.out.println("setting game menu to " + menu);
 		if (menu != null) menu.init(this, input);
 	}
 	
