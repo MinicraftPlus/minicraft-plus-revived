@@ -149,7 +149,7 @@ private static final String[] options = {"New game", "Join Online World", "Instr
 		Game.ISONLINE = false;
 		
 		folder = new File(location);
-		rand = 0;//random.nextInt(splashes.length);
+		rand = random.nextInt(splashes.length);
 	}
 	
 	/*public void getSplashes() {
