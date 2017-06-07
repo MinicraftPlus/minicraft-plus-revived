@@ -596,7 +596,11 @@ public class Game extends Canvas implements Runnable {
 			info.add("walk spd " + player.moveSpeed);
 			info.add("X " + (player.x >> 4));
 			info.add("Y " + (player.y >> 4));
+			info.add("Tile " + Game.levels[currentLevel].getTile(player.x>>4, player.y>>4).name);
 			if (ModeMenu.score) info.add("Score " + player.score);
+			
+			info.add("Mob Cnt " + Game.levels[currentLevel].mobCount);
+			
 			
 			/// Displays number of chests left, if on dungeon level.
 			if (currentLevel == 5) {

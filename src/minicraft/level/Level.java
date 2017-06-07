@@ -40,6 +40,7 @@ public class Level {
 	public int monsterDensity = 8; // affects the number of monsters that are on the level, bigger the number the less monsters spawn.
 	public int maxMobCount;
 	public int chestcount;
+	public int mobCount = 0;
 
 	public static List<String> ls = new ArrayList<String>();
 
@@ -424,6 +425,7 @@ public class Level {
 		}
 		
 		//if(Game.tickCount % 10 == 0) System.out.println("mob count: " + count);
+		mobCount = count;
 		
 		if(count < maxMobCount && !Game.isValidClient())
 			trySpawn(1);
