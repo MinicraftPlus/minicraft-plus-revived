@@ -111,9 +111,9 @@ public class Screen {
 				case Evening: tintFactor = relTime * MAXDARK; break;
 				case Night: tintFactor = MAXDARK; break;
 			}
-			if(currentLevel == 4) tintFactor -= tintFactor < 10 ? tintFactor : 10;
+			if(currentLevel == 4) tintFactor -= (tintFactor < 10 ? tintFactor : 10);
 			tintFactor *= -1; // all previous operations were assumping this was a darkening factor.
-			tintFactor += 20;
+			//tintFactor += 20;
 		}
         
 		int[] oPixels = screen2.pixels;  // The Integer array of pixels to overlay the screen with.
@@ -130,6 +130,9 @@ public class Screen {
 						pixels[i] = Color.tintColor(pixels[i], (int)tintFactor); // darkens the color one shade.
                     }
                 }
+				
+				// increase the tinting of all colors by 20.
+				pixels[i] = Color.tintColor(pixels[i], 20);
                 i++; // moves to the next pixel.
             }
         }
