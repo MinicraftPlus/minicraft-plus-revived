@@ -67,6 +67,7 @@ public class Spawner extends Furniture {
 	
 	private void trySpawn() {
 		Player player = getClosestPlayer();
+		if(player == null) return;
 		int xd = player.x - x;
 		int yd = player.y - y;
 		
