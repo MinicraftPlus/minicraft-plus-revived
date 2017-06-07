@@ -389,7 +389,7 @@ public class Game extends Canvas implements Runnable {
 				
 				//for debugging only
 				if (debug) {
-					if (input.getKey("Shift-0").clicked)
+					if (input.getKey("Shift-r").clicked)
 						initWorld();
 					
 					if (input.getKey("1").clicked) changeTimeOfDay(Time.Morning);
@@ -409,8 +409,12 @@ public class Game extends Canvas implements Runnable {
 					if (input.getKey("shift-t").clicked) ModeMenu.updateModeBools(4);
 					if (ModeMenu.score && input.getKey("ctrl-t").clicked) scoreTime = normSpeed * 5; // 5 seconds
 					
+					if (input.getKey("0").clicked) player.moveSpeed = 1;
 					if (input.getKey("equals").clicked) player.moveSpeed++;//= 0.5D;
 					if (input.getKey("minus").clicked && player.moveSpeed > 1) player.moveSpeed--;// -= 0.5D;
+					
+					if (input.getKey("shift-0").clicked)
+						gamespeed = 1;
 					
 					if (input.getKey("shift-equals").clicked) {
 						if(gamespeed < 1) gamespeed *= 2;
@@ -421,11 +425,6 @@ public class Game extends Canvas implements Runnable {
 						else if(normSpeed*gamespeed > 5) gamespeed /= 2;
 					}
 					
-					if(input.getKey("shift-space").clicked) {
-						int tx = player.x >> 4;
-						int ty = player.y >> 4;
-						System.out.println("current tile: " + levels[currentLevel].getTile(tx, ty).name);
-					}
 					if(input.getKey("shift-u").clicked) {
 						levels[currentLevel].setTile(player.x>>4, player.y>>4, Tiles.get("Stairs Up"));
 					}

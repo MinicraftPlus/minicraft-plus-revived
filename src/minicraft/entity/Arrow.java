@@ -61,7 +61,6 @@ public class Arrow extends Entity {
 			
 			if(owner instanceof Player && minicraft.screen.ModeMenu.creative && minicraft.Game.debug) {
 				if (x < 0 || x>>4 > level.w || y < 0 || y>>4 > level.h) {
-					System.out.println("removing arrow debug fashion");
 					this.remove();
 					return;
 				}
