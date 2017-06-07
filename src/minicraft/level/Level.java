@@ -443,7 +443,10 @@ public class Level {
 			dropItem(x, y, i);
 	}
 	public void dropItem(int x, int y, Item i) {
-		add(new minicraft.entity.ItemEntity(i, x + random.nextInt(11) - 5, y + random.nextInt(11) - 5));
+		if(Game.debug && ModeMenu.creative)
+			game.player.inventory.add(i);
+		else
+			add(new minicraft.entity.ItemEntity(i, x + random.nextInt(11) - 5, y + random.nextInt(11) - 5));
 	}
 
 	public void renderBackground(Screen screen, int xScroll, int yScroll) {

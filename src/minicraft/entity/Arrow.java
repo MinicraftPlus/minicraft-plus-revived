@@ -59,10 +59,19 @@ public class Arrow extends Entity {
 				mob.hurt(owner, damage + extradamage, mob.dir);
 			}
 			
-			if (!level.getTile(x / 16, y / 16).mayPass(level, x / 16, y / 16, this)
-					&& !level.getTile(x / 16, y / 16).connectsToWater
-					&& level.getTile(x / 16, y / 16).id != 16) {
-				this.remove();
+			if(owner instanceof Player && minicraft.screen.ModeMenu.creative && minicraft.Game.debug) {
+				if (x < 0 || x>>4 > level.w || y < 0 || y>>4 > level.h) {
+					System.out.println("removing arrow debug fashion");
+					this.remove();
+					return;
+				}
+				else level.getTile(x/16, y/16).hurt(level, x/16, y/16, 500);
+			} else {
+				if (!level.getTile(x / 16, y / 16).mayPass(level, x / 16, y / 16, this)
+						&& !level.getTile(x / 16, y / 16).connectsToWater
+						&& level.getTile(x / 16, y / 16).id != 16) {
+					this.remove();
+				}
 			}
 		}
 	}

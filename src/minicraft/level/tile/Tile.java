@@ -99,6 +99,7 @@ public abstract class Tile {
 	}
 	
 	public void hurt(Level level, int x, int y, Mob source, int dmg, int attackDir) {}
+	public void hurt(Level level, int x, int y, int dmg) {}
 	
 	/** What happens when you run into the tile (ex: run into a cactus) */
 	public void bumpedInto(Level level, int xt, int yt, Entity entity) {}

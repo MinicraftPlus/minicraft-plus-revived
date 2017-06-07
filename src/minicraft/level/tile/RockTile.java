@@ -36,6 +36,10 @@ public class RockTile extends Tile {
 	}
 	
 	public boolean mayPass(Level level, int x, int y, Entity e) {
+		/*if(e instanceof Arrow && ((Arrow)e).owner instanceof Player && ModeMenu.creative && Game.debug) {
+			hurt(level, x, y, 50);
+			return true;
+		}*/
 		return false;
 	}
 	
