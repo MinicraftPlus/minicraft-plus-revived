@@ -1,3 +1,24 @@
+Minicraft+ version 2.0.1
+
++* added more super-secret debug powers... mua ha ha...
++ added level mob count to F3 window
++ added name of current tile to F3 window
+
+
+Minicraft+ version 2.0.0
+
++++ MULTIPLAYER MODE now supported! (dun, dun-dun-dun!)
+	-*- Well... kind of. I got one way to work, but it's super laggy.
+
+*** mostly, just lots and lots of important bug fixes, such as:
+* You disappear from the level when you get in bed, as you should
+* you can now see the edges of the level
+* crafting furniture no longer disappears upon loading a pre-existing world
+* Stackable item count decreases as it should
+
+
+---------------------------------------------------------
+
 Minicraft+ version 1.9.4
 
 * Almost total revision of lighting; surface level now has lighting overlay sometimes, and the colors all around may be slightly different.
@@ -5,7 +26,7 @@ Minicraft+ version 1.9.4
 
 + Added Instant Health Potion! Instantly refills up to 5 hearts.
 * changed death chest expire times; easy:30min, norm:10min, hard:2min
-* Sped up game speed while sleeping.
+* Sped up sleeping game speed.
 - Prevented Airwizard from being removed during daily entity clear.
 * Increased Torch light radius; also, torches now work the same way on the surface as they do in the caves.
 + Added missingTexture sprite.
