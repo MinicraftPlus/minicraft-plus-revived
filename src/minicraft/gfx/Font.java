@@ -4,8 +4,6 @@ import java.text.StringCharacterIterator;
 import java.util.ArrayList;
 
 public class Font {
-	/// this is, for now, a sort of "static" class; everything is static, becuase there is only one font. However, if more fonts are ever added, this may change.
-	
 	// These are all the characters that will be translated to the screen. (The spaces are important)
 	private static String chars = "" + //
                        "ABCDEFGHIJKLMNOPQRSTUVWXYZ      " + //
@@ -20,20 +18,9 @@ public class Font {
 			int ix = chars.indexOf(msg.charAt(i)); // the current letter in the message loop
 			if (ix >= 0) {
 				// if that character's position is larger than or equal to 0, then render the character on the screen.
-				screen.render(x + i * 8, y, ix + 30 * 32, col, 0);
+				screen.render(x + i * textWidth(msg.substring(i, i+1)), y, ix + 30 * 32, col, 0);
 			}
 		}
-	} /// draws with a shadowed effect:
-	public static void draw(String msg, Screen screen, int x, int y, int colMain, int colShadow) {
-		draw(msg, screen, x+1, y+1, colShadow);
-		draw(msg, screen, x, y, colMain);
-	}
-	public static void drawOutlined(String msg, Screen screen, int x, int y, int col, int colBG) {
-	    draw(msg, screen, x, y-1, colBG);
-	    draw(msg, screen, x, y+1, colBG);
-	    draw(msg, screen, x-1, y, colBG);
-	    draw(msg, screen, x+1, y, colBG);
-	    draw(msg, screen, x, y, col);
 	}
 	
 	public static int textWidth(String text) {
@@ -45,42 +32,52 @@ public class Font {
 		return (maxX + minX) / 2 - textWidth(msg) / 2;
 	}
 	
-	/// centered
-	public static void drawCentered(String msg, Screen screen, int minX, int maxX, int y, int color) {
-		int x = centerX(msg, minX, maxX);
-		draw(msg, screen, x, y, color);
+	public static int centerY(String msg, int minY, int maxY) {
+		return (maxY + minY) / 2 - textHeight() / 2;
 	}
+	
 	public static void drawCentered(String msg, Screen screen, int y, int color) {
-		drawCentered(msg, screen, 0, screen.w, y, color);
-	}
-	/// centered, shadowed.
-	public static void drawCentered(String msg, Screen screen, int minX, int maxX, int y, int colMain, int colShadow) {
-		int x = centerX(msg, minX, maxX);
-		draw(msg, screen, x, y, colMain, colShadow);
-	}
-	public static void drawCentered(String msg, Screen screen, int y, int colMain, int colShadow) {
-		drawCentered(msg, screen, 0, screen.w, y, colMain, colShadow);
+		new FontStyle(color).setYPos(y).draw(msg, screen);
 	}
 	
-	/// draw a paragraph within a given rectangle.
+	/// these draws a paragraph from an array of lines (or a string, at which point it calls getLines()), with the specified properties.
+	
 	/// this one assumes the screen width, minus a given padding.
-	public static String drawParagraph(String para, Screen screen, int padding, int y, boolean centered, int lineSpacing, int color) {return drawParagraph(para, screen, padding, y, screen.w-padding*2, screen.h - y, centered, lineSpacing, color);}
+	public static String drawParagraph(String para, Screen screen, int paddingX, boolean centerPaddingX, int paddingY, boolean centerPaddingY, FontStyle style, int lineSpacing) {
+		
+		style.xCenterBounds(paddingX, screen.w - (centerPaddingX?paddingX:0));
+		style.yCenterBounds(paddingY, screen.h - (centerPaddingY?paddingY:0));
+		
+		return drawParagraph(para, screen, style.centerMaxX - style.centerMinX, style.centerMaxY - style.centerMinY, style, centerPaddingX, lineSpacing);
+	}
 	
-	public static String drawParagraph(String[] lines, Screen screen, int padding, int y, boolean centered, int lineSpacing, int color) {return drawParagraph(lines, screen, padding, y, screen.w-padding*2, screen.h - y, centered, lineSpacing, color);}
+	/// note: the y centering values in the FontStyle object will be used as a paragraph y centering value instead.
+	public static String drawParagraph(String para, Screen screen, int w, int h, FontStyle style, boolean centered, int lineSpacing) {
+		//int w = style.centerMaxX - style.centerMinX;
+		//int h = style.centerMaxY - style.centerMinY;
+		
+		String[] lines = getLines(para, w, h, lineSpacing);
+		
+		if (centered) style.xPosition = -1;
+		//else style.xPosition = (screen.w - w) / 2;
+		
+		return drawParagraph(lines, screen, style, lineSpacing);
+	}
 	
-	/// this draws a paragraph from an array of lines (or a string, at which point it calls getLines()), with the specified properties.
-	public static String drawParagraph(String[] lines, Screen screen, int x, int y, int w, int h, boolean centered, int lineSpacing, int color) {
+	/// all the other drawParagraph() methods end up calling this one.
+	public static String drawParagraph(String[] lines, Screen screen, FontStyle style, int lineSpacing) {
+		int minY = style.yPosition;
+		if(minY == -1)
+			minY = style.centerMinY;
 		for(int i = 0; i < lines.length-1; i++) {
-			int curY = y + i*textHeight() + i*lineSpacing;
-			if(centered) drawCentered(lines[i], screen, x, x + w, curY, color); // draw centered in the rectangle
-			else draw(lines[i], screen, x, curY, color); // draw left-justified in the rectangle
+			style.setYPos(minY + i*textHeight() + i*lineSpacing);
+			//if(centered) drawCentered(lines[i], screen, x, x + w, curY, color); // draw centered in the rectangle
+			//else draw(lines[i], screen, x, curY, color); // draw left-justified in the rectangle
+			style.draw(lines[i], screen);
 		}
 		return lines[lines.length-1]; // this is where the rest of the string that there wasn't space for is stored.
 	}
-	public static String drawParagraph(String para, Screen screen, int x, int y, int w, int h, boolean centered, int lineSpacing, int color) {
-		String[] lines = getLines(para, w, h, lineSpacing);
-		return drawParagraph(lines, screen, x, y, w, h, centered, lineSpacing, color);
-	}
+	
 	
 	public static String[] getLines(String para, int w, int h, int lineSpacing) {
 		ArrayList<String> lines = new ArrayList<String>();
