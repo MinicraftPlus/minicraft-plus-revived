@@ -4,6 +4,7 @@ import java.util.Arrays;
 import minicraft.Game;
 import minicraft.gfx.Color;
 import minicraft.gfx.Font;
+import minicraft.gfx.FontStyle;
 import minicraft.gfx.Screen;
 import minicraft.saveload.Save;
 
@@ -104,8 +105,10 @@ public class KeyInputMenu extends ScrollingMenu {
 			Font.drawCentered("key sequence", screen, (screen.h-Font.textHeight()) / 2 + 4, Color.get(-1, 450));
 		} else if (confirmReset) {
 			renderFrame(screen, "Confirm Action", 4, 4, screen.w/8-4, screen.h/8-4);
-			Font.drawParagraph("Are you sure you want to reset all key bindings to the default keys?", screen, 8*4, screen.h/2 - 8*4, true, 4, Color.get(-1, 511));
-			Font.drawParagraph(input.getMapping("select")+" to confirm\n"+input.getMapping("exit")+" to cancel", screen, 8, screen.h/2 + 24, true, 4, Color.get(-1, 533));
+			FontStyle style = new FontStyle(Color.get(-1, 511));
+			Font.drawParagraph("Are you sure you want to reset all key bindings to the default keys?", screen, 8*4, true, 8*4, false, style, 4);
+			style.setColor(Color.get(-1, 533));
+			Font.drawParagraph(input.getMapping("select")+" to confirm\n"+input.getMapping("exit")+" to cancel", screen, 8, true, 8*3, false, style, 4);
 		} else {
 			String[] lines = {
 				"Press C/Enter to change key binding",

@@ -11,6 +11,7 @@ import minicraft.Game;
 import minicraft.entity.Player;
 import minicraft.gfx.Color;
 import minicraft.gfx.Font;
+import minicraft.gfx.FontStyle;
 import minicraft.gfx.Screen;
 import minicraft.item.Items;
 
@@ -100,10 +101,11 @@ public class WonMenu extends Menu {
 		Font.drawCentered("Game Over! (" + ModeMenu.getSelectedTime() + ")", screen, 4*8, Color.get(-1, 555));
 		
 		if(unlocks.size() > 0) {
-			Font.drawCentered("Unlocked!", screen, screen.w/2, screen.w-8, 10*8, Color.get(-1, 50));
+			FontStyle style = new FontStyle(Color.get(-1, 50)).xCenterBounds(screen.w/2, screen.w-8);
+			style.setYPos(10 * 8).draw("Unlocked!", screen);
 			for(int i = 0; i < unlocks.size(); ++i) {
 				String unlock = unlocks.get(i).replace("M", "MINUTEMODE").replace("H", "HOURMODE");
-				Font.drawCentered(unlock, screen, screen.w/2, screen.w-8, (12+i)*8, Color.get(-1, 50));
+				style.setYPos((12+i)*8).draw(unlock, screen);
 			}
 		}
 		

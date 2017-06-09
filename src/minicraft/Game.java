@@ -21,6 +21,7 @@ import minicraft.entity.Player;
 import minicraft.entity.RemotePlayer;
 import minicraft.gfx.Color;
 import minicraft.gfx.Font;
+import minicraft.gfx.FontStyle;
 import minicraft.gfx.Screen;
 import minicraft.gfx.SpriteSheet;
 import minicraft.item.Items;
@@ -618,8 +619,9 @@ public class Game extends Canvas implements Runnable {
 			//info.add("steps: " + player.stepCount);
 			info.add("hungerstam:" + player.hungerStamCnt);
 			
+			FontStyle style = new FontStyle(textcol).setShadowType(Color.get(-1, 000), true).setXPos(1);
 			for(int i = 0; i < info.size(); i++) {
-				Font.draw(info.get(i), screen, 1, 2 + i*10, textcol);
+				style.setYPos(2 + i*10).draw(info.get(i), screen);
 			}
 		}
 		
@@ -636,7 +638,7 @@ public class Game extends Canvas implements Runnable {
 		else if (Bed.inBed) msg = "Sleeping...";
 		
 		if(msg.length() > 0)
-			Font.drawCentered(msg, screen, screen.h / 2 - 20, Color.get(-1, 555), Color.get(-1, 222));
+			new FontStyle(Color.get(-1, 555)).setYPos(screen.h / 2 - 20).setShadowType(Color.get(-1, 222), false).draw(msg, screen);
 		
 		/// NOTIFICATIONS
 		
@@ -652,11 +654,13 @@ public class Game extends Canvas implements Runnable {
 			}
 			
 			// draw each current notification, with shadow text effect.
+			FontStyle style = new FontStyle(Color.get(-1, 555)).setShadowType(Color.get(-1, 222), false);
 			for (int i = 0; i < notifications.size(); i++) {
 				String note = ((String) notifications.get(i));
-				int x = screen.w / 2 - note.length() * 8 / 2,
-				  y = screen.h - 120 - notifications.size()*8 + i * 8;
-				Font.draw(note, screen, x, y, Color.get(-1, 555), Color.get(-1, 111));
+				//int x = screen.w / 2 - note.length() * 8 / 2,
+				int y = screen.h - 120 - notifications.size()*8 + i * 8;
+				style.setYPos(y).draw(note, screen);
+				//Font.draw(note, screen, x, y, Color.get(-1, 555), Color.get(-1, 111));
 			}
 		}
 		

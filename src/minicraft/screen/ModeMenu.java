@@ -10,6 +10,7 @@ import java.util.regex.Matcher;
 import minicraft.Game;
 import minicraft.gfx.Color;
 import minicraft.gfx.Font;
+import minicraft.gfx.FontStyle;
 import minicraft.gfx.Screen;
 import minicraft.Sound;
 
@@ -149,7 +150,7 @@ public class ModeMenu extends Menu {
 		Font.drawCentered(WorldSelectMenu.worldname, screen, screen.h - 170, Color.get(-1, 5));
 		
 		String modeText = "Game Mode:	" + modes[mode - 1];
-		Font.drawCentered(modeText, screen, 8 * 8, Color.get(-1, 555), Color.get(-1, 111));
+		new FontStyle(Color.get(-1, 555)).setYPos(8*8).setShadowType(Color.get(-1, 111), false).draw(modeText, screen);
 		
 		if(mode == 4) Font.drawCentered("<T>ime: " + getSelectedTime(), screen, 95, Color.get(-1, 555));
 		
