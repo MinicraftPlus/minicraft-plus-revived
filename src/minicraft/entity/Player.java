@@ -83,7 +83,7 @@ public class Player extends Mob {
 	int regentick; // counts time between each time the regen potion effect heals you.
 	
 	int acs = 25; // default ("start") arrow count
-	public int ac; // arrow count
+	//public int ac; // arrow count
 	public int shirtColor = 110; // player shirt color.
 	
 	// Note: the player's health & max health are inherited from Mob.java
@@ -96,7 +96,8 @@ public class Player extends Mob {
 		this.input = input;
 		inventory = new Inventory();
 		
-		ac = acs;
+		//ac = acs;
+		inventory.add(Items.get("arrow"), acs);
 		
 		potioneffects = new HashMap<PotionType, Integer>();
 		showpotioneffects = true;
@@ -364,7 +365,7 @@ public class Player extends Mob {
 			// the player is holding a tool, and has stamina available.
 			ToolItem tool = (ToolItem) attackItem;
 			
-			if (tool.type == ToolType.Bow && ac > 0) { // if the player is holding a bow, and has arrows...
+			if (tool.type == ToolType.Bow && inventory.count(Items.get("arrow")) > 0) { // if the player is holding a bow, and has arrows...
 				//if (!energy) stamina -= 0; // must be a leftover.
 				//...then shoot the arrow in the right direction.
 				int spx = 0, spy = 0;
@@ -374,7 +375,7 @@ public class Player extends Mob {
 					case 2: spx = -1; spy = 0; break;
 					case 3: spx = 1; spy = 0; break;
 				}
-				if (ModeMenu.creative == false) ac--;
+				if (ModeMenu.creative == false) inventory.removeItem(Items.get("arrow"));
 				level.add(new Arrow(this, spx, spy, tool.level, done));
 				done = true; // we have attacked!
 			}
@@ -582,14 +583,10 @@ public class Player extends Mob {
 		itemEntity.take(this); // calls the take() method in ItemEntity
 		if(ModeMenu.creative) return; // we shall not bother the inventory on creative mode.
 		
-		if (itemEntity.item.matches(Items.get("arrow"))) {
-			ac++; // if it's an arrow, then just add to arrow count, not inventory.
-		} else if(activeItem != null && activeItem.name == itemEntity.item.name && activeItem instanceof StackableItem && itemEntity.item instanceof StackableItem) {
-			// picked up item matches the one in your hand
+		if(activeItem != null && activeItem.name == itemEntity.item.name && activeItem instanceof StackableItem && itemEntity.item instanceof StackableItem) // picked up item matches the one in your hand
 			((StackableItem)activeItem).count += ((StackableItem)itemEntity.item).count;
-		} else {
+		else
 			inventory.add(itemEntity.item); // add item to inventory
-		}
 	}
 	
 	public boolean canSwim() {

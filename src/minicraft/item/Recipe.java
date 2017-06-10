@@ -79,12 +79,8 @@ public class Recipe implements ListItem {
 		}
 		
 		// add the crafted items.
-		if (product.equals("ARROW"))
-			player.ac += amount;
-		else {
-			for(int i = 0; i < amount; i++) {
-				player.inventory.add(getProduct());
-			}
+		for(int i = 0; i < amount; i++) {
+			player.inventory.add(getProduct());
 		}
 		
 		return true;

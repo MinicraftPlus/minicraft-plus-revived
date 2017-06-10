@@ -70,8 +70,8 @@ public class Load {
 			
 			loadGame("Game", game); // more of the version will be determined here
 			loadWorld("Level", game);
-			loadPlayer("Player", game.player);
 			loadInventory("Inventory", game.player.inventory);
+			loadPlayer("Player", game.player);
 			loadEntities("Entities", game.player);
 			LoadingMenu.percentage = 0; // reset
 		}
@@ -367,7 +367,8 @@ public class Load {
 		}
 		
 		player.score = Integer.parseInt(data.get(6));
-		player.ac = Integer.parseInt(data.get(7));
+		if(worldVer.compareTo(new Version("2.0.1-dev1")) < 0)
+			player.inventory.add(Items.get("arrow"), Integer.parseInt(data.get(7)));
 		
 		player.game.currentLevel = Integer.parseInt(data.get(8));
 		Level level = Game.levels[player.game.currentLevel];

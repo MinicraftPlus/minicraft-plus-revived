@@ -173,7 +173,8 @@ public class Save {
 		data.add(String.valueOf(player.health));
 		data.add(String.valueOf(player.armor));
 		data.add(String.valueOf(player.score));
-		data.add(String.valueOf(player.ac));
+		//data.add(String.valueOf(player.ac));
+		data.add("25"); // TODO filler; remove this, but make sure not to break the Load class's LoadPlayer() method while doing so.
 		data.add(String.valueOf(player.game.currentLevel));
 		data.add(ModeMenu.mode + (ModeMenu.score?";"+Game.scoreTime+";"+ModeMenu.getSelectedTime():""));
 		

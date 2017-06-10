@@ -168,7 +168,7 @@ public class LegacyLoad {
 				}
 				// for backwards compatibility
 				Game.tickCount = Integer.parseInt(data.get(0));
-				game.player.ac = Integer.parseInt(data.get(3));
+				//game.player.ac = Integer.parseInt(data.get(3));
 				OptionsMenu.autosave = false;
 			}
 		}
@@ -218,7 +218,7 @@ public class LegacyLoad {
 				player.curArmor = (ArmorItem)Items.get(data.get(14));
 			} else player.armor = 0;
 			
-			player.ac = Integer.parseInt(data.get(7));
+			//player.ac = Integer.parseInt(data.get(7));
 			player.game.currentLevel = Integer.parseInt(data.get(8));
 			modedata = data.get(9);
 			
