@@ -3,7 +3,8 @@ Minicraft+ version 2.0.1
 +* added more super-secret debug powers... mua ha ha...
 + added level mob count to F3 window
 + added name of current tile to F3 window
-
++ Arrows now appear in your inventory
+* Fixed crafting; correct number of items are used
 
 Minicraft+ version 2.0.0
 

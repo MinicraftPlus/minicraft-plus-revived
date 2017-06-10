@@ -8,15 +8,21 @@ Note to self: for more little bugs/ideas/concerns, search code for "TODO"
 
 	####BUGS####
 ####
+Stairs clump together.
+####
+10 minute mode unlock is not written to file when it should.
+####
 Fire particles appear, but... they look totally weird...
 ####
 Sound effects don't always play when they should; mostly it seems when other sounds should be on at the same time.
 ####
-I REALLY need to find a way to know if a socket has closed on the other side...
-####
 -----------------------------------------------------------------------------------
 
 	****IDEAS(that should probably be implemented)****
+****
+
+Stop saving player arrow count, and refit the load class indexes to reflect that. I should really find a better way to represent each piece of info in loading, so the removal of one save item doesn't break everything.
+
 ****
 
 Add world backup option to world load menu; it could be complicated, since if I add a world backup option, I would have to add a world restore option, too...
