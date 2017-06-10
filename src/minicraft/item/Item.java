@@ -69,4 +69,8 @@ public abstract class Item implements ListItem {
 	
 	/** This returns a copy of this item, in all necessary detail. */
 	public abstract Item clone();
+	
+	public String toString() {
+		return name + "-Item";
+	}
 }

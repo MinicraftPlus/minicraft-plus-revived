@@ -100,7 +100,8 @@ public class Items {
 			}
 		}
 		if(i != null) {
-			//System.out.println("got item " + i.name);
+			//if(i instanceof StackableItem && ((StackableItem)i).count != 1)
+				//System.out.println("got item " + i);
 			return i.clone();
 		} else {
 			System.out.println("ITEMS GET: invalid name requested: " + name);
@@ -124,7 +125,7 @@ public class Items {
 	
 	public static void fillCreativeInv(Inventory inv) {
 		for(Item item: items) {
-			inv.add(item);
+			inv.add(item.clone());
 		}
 	}
 	/*
