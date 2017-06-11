@@ -80,7 +80,7 @@ public class MinicraftServer extends Thread {
 		
 		byte[] data = Arrays.copyOfRange(alldata, 1, alldata.length);
 		/*
-		wanted behavior for each input type:
+			wanted behavior for each input type:
 			
 			-INVALID: print message to console.
 			
@@ -203,6 +203,9 @@ public class MinicraftServer extends Thread {
 				}
 				return false;
 			
+			case ADD:
+				/// TODO check entity id to see if it is unique. if so, proceed to default. else, change the id, and send an entity update packet to the sender client to update their entity's id.
+			
 			default:
 				broadcastData(alldata, getClientPlayer(address, port));
 				return true;
@@ -237,13 +240,33 @@ public class MinicraftServer extends Thread {
 		sendData(prependType(MinicraftProtocol.InputType.INVALID, message.getBytes()), ip, port);
 	}
 	
-	public static byte[] prependType(MinicraftProtocol.InputType type, byte[] data) {
+	public static int generateUniqueEntityId() {
+		java.util.Random random = new java.util.Random();
+		int eid = 0;
+		while(!idIsUnused(eid))
+			eid = random.nextInt(Integer.MAX_VALUE);
+		
+		return eid;
+	}
+	
+	public static boolean idIsUnused(int eid) {
+		for(Level level: Game.levels) {
+			for(Entity e: level.getEntities()) {
+				if(e.eid == eid)
+					return false;
+			}
+		}
+		
+		return true;
+	}
+	
+	/*public static byte[] prependType(MinicraftProtocol.InputType type, byte[] data) {
 		byte[] fulldata = new byte[data.length+1];
 		fulldata[0] = (byte) type.ordinal();
 		for(int i = 1; i < fulldata.length; i++)
 			fulldata[i] = data[i-1];
 		return fulldata;
-	}
+	}*/
 	
 	public RemotePlayer getClientPlayer(InetAddress ip, int port) {
 		for(RemotePlayer client: clientList)
@@ -263,7 +286,7 @@ public class MinicraftServer extends Thread {
 		}
 		
 		try {
-			serverSocket.close();
+			socket.close();
 		} catch (SocketException ex) {
 		} catch (IOException ex) {
 			ex.printStackTrace();
@@ -272,6 +295,6 @@ public class MinicraftServer extends Thread {
 	}
 	
 	public boolean isConnected() {
-		return serverSocket != null && threadList.size() > 0;
+		return socket != null && !socket.isClosed() && clientList.size() > 0;
 	}
 }

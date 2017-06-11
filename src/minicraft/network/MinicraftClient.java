@@ -21,11 +21,11 @@ public class MinicraftClient extends Thread {
 	private static final int requestRepeatInterval = 100;
 	private int requestTimer = 0;
 	
-	private enum State {
+	public enum State {
 		LOGIN, TILES, ENTITIES, START, PLAY, DISCONNECTED
 	}
 	
-	private State curState = State.DISCONNECTED;
+	public State curState = State.DISCONNECTED;
 	
 	public MinicraftClient(Game game, String hostName, String playerName) {
 		try {
@@ -204,7 +204,7 @@ public class MinicraftClient extends Thread {
 				break;
 			
 			case TILE:
-				byte id = data[0], tdata = data[1], lvl = data[2];
+				byte lvl = data[0], id = data[1], tdata = data[2];
 				if(Game.levels[lvl] == null)
 					return true; // this client doesn't need to worry about that level's updates.
 				int pos = Integer.parseInt(new String(Arrays.copyOfRange(data, 3, data.length)));
@@ -258,6 +258,30 @@ public class MinicraftClient extends Thread {
 		}
 	}
 	
+	/** This method is responsible for sending an updated tile. */
+	public void sendTileUpdate(int x, int y) {
+		Level level = Game.levels[game.currentLevel];
+		byte[] data = new byte[7];
+		data[0] = (byte) game.currentLevel;
+		data[1] = level.getTile(x, y).id;
+		data[2] = level.getData(x, y);
+		int pos = x + level.h * y;
+		data[3] = pos >> (8*3);
+		data[4] = pos >> (8*2) & 0xff;
+		data[5] = pos >> 8 & 0xff;
+		data[6] = pos & 0xff;
+		
+		sendData(MinicraftProtocol.InputType.TILE, data);
+	}
+	
+	/*public void sendNotification(String note, int notetick) {
+		if(note == null || note.length() == 0) {
+			System.out.println("tried to send blank notification");
+			return;
+		}
+		sendData("NOTIFY:"+note+","+notetick);
+	}*/
+	
 	/*public static byte[] prependType(MinicraftProtocol.InputType type, byte[] data) {
 		byte[] fulldata = new byte[data.length+1];
 		fulldata[0] = (byte) type.ordinal();
@@ -269,14 +293,16 @@ public class MinicraftClient extends Thread {
 	public void endConnection() {
 		if (Game.debug) System.out.println("closing client socket and ending connection");
 		try {
-			out.println("DISCONNECT"); // send exit signal
+			sendData(MinicraftProtocol.InputType.DISCONNECT, (new byte[0] {})); // send exit signal
 			socket.close();
 		} catch (IOException ex) {
 			ex.printStackTrace();
 		} catch (NullPointerException ex) {}
+		
+		curState = State.DISCONNECTED;
 	}
 	
 	public boolean isConnected() {
-		return socket != null && !socket.isClosed() && socket.isConnected();
+		return socket != null && !socket.isClosed() && socket.isConnected() && curState != State.DISCONNECTED;
 	}
 }
