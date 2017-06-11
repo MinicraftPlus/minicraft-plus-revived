@@ -658,7 +658,11 @@ public class Level {
 					e.remove();
 		}
 	}
-
+	
+	public synchronized List<Entity> getEntities() {
+		return entities;
+	}
+	
 	public List<Entity> getEntities(int x0, int y0, int x1, int y1) {
 		List<Entity> result = new ArrayList<Entity>();
 		int xt0 = (x0 >> 4) - 1;
