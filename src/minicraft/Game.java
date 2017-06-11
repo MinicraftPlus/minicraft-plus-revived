@@ -55,11 +55,10 @@ public class Game extends Canvas implements Runnable {
 	private static float SCALE = 3;
 	
 	/// MULTIPLAYER
-	//public static Game mainGame;
-	
 	public static boolean ISONLINE = false;
-	public static boolean ISHOST = false;
-	public static MinicraftConnection connection = null;
+	public static boolean ISHOST = false; /// this being true doesn't mean this game isn't a client as well; becuase it should be.
+	public static MinicraftServer server = null;
+	public static MinicraftClient client = null;
 	
 	/// TIME AND TICKS
 	
@@ -97,6 +96,8 @@ public class Game extends Canvas implements Runnable {
 	public Player player; // The Player.
 	//public Level level; // This is the current level you are on.
 	static int worldSize = 128; // The size of the world
+	public static int lvlw = worldSize; // The width of the world
+	public static int lvlh = worldSize; // The height of the world
 	
 	protected int playerDeadTime; // the time after you die before the dead menu shows up.
 	protected int pendingLevelChange; // used to determine if the player should change levels or not.
@@ -160,10 +161,17 @@ public class Game extends Canvas implements Runnable {
 	}
 	
 	public static final boolean isValidClient() {
-		return ISONLINE && !ISHOST && connection != null/* && client.done*/;
+		return ISONLINE && client != null;
 	}
+	public static final boolean isConnectedClient() {
+		return isValidClient() && client.isConnected();
+	}
+	
 	public static final boolean isValidHost() {
-		return ISONLINE && ISHOST && connection != null/* && ((MinicraftServer)connection).threadList.size() > 0*/; // i'm debating that last part.
+		return ISONLINE && ISHOST; && server != null;
+	}
+	public static final boolean hasConnectedClients() {
+		return isValidHost() && server.clientList.size() > 0;
 	}
 	
 	/// called after main; main is at bottom.
@@ -205,7 +213,10 @@ public class Game extends Canvas implements Runnable {
 		notifications.clear();
 		
 		// adds a new player
-		player = new Player(this, input);
+		if(player instanceof RemotePlayer)
+			player = new RemotePlayer(this, (RemotePlayer)player);
+		else
+			player = new Player(this, input);
 		
 		// "shouldRespawn" is false on hardcore, or when making a new world.
 		if (DeadMenu.shouldRespawn) { // respawn, don't regenerate level.
@@ -442,6 +453,15 @@ public class Game extends Canvas implements Runnable {
 		}
 	} // end tick()
 	
+	public static Entity getEntity(int eid) {
+		for(Level level: levels)
+			for(Entity e: level.getEntities())
+				if(e.eid == eid)
+					return e;
+		
+		return null;
+	}
+	
 	public void setMultiplier(int value) {
 		multiplier = value;
 		multipliertime = mtm;
@@ -491,8 +511,8 @@ public class Game extends Canvas implements Runnable {
 	public static void notifyAll(String msg, int notetick) {
 		Game.notifications.add(msg);
 		Game.notetick = notetick;
-		if(connection != null && connection.isConnected())
-			connection.sendNotification(msg, notetick);
+		if(isValidClient())
+			Game.client.sendData(MinicraftProtocol.InputType.NOTIFY, msg+";"+notetick);
 	}
 	
 	/** This method changes the level that the player is currently on.
@@ -509,7 +529,11 @@ public class Game extends Canvas implements Runnable {
 		
 		player.x = (player.x >> 4) * 16 + 8; // sets the player's x coord (to center yourself on the stairs)
 		player.y = (player.y >> 4) * 16 + 8; // sets the player's y coord (to center yourself on the stairs)
-		levels[currentLevel].add(player); // adds the player to the level.
+		
+		if(isValidClient() && !isValidHost() && levels[currentLevel] == null)
+			client.curState = client.State.TILES;
+		else
+			levels[currentLevel].add(player); // adds the player to the level.
 	}
 	
 	/** renders the current screen */
