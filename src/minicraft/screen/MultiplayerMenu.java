@@ -12,6 +12,9 @@ public class MultiplayerMenu extends Menu {
 	
 	private boolean isHost;
 	private Menu parent;
+	
+	private static String username = "";
+	private String typing;
 	private String ipAddress = "localhost";
 	
 	public MultiplayerMenu(boolean isHost, Menu parent) {
@@ -19,22 +22,18 @@ public class MultiplayerMenu extends Menu {
 		Game.ISONLINE = true;
 		Game.ISHOST = isHost;
 		this.parent = parent;
-	}
-	
-	public void init(Game game, InputHandler input) {
-		super.init(game, input);
-		if(Game.connection == null && isHost) {
-			Game.connection = new MinicraftServer(game);
-		}
+		if(username.length() == 0)
+			typing = "Player";
 	}
 	
 	public void tick() {
-		boolean isConnectedClient = game.isValidClient() && Game.connection.isConnected();
+		//boolean isConnectedClient = game.isValidClient() && Game.connection.isConnected();
 		
-		if(isConnectedClient) {
+		if(Game.isConnectedClient() && !Game.ISHOST) {
 			if (Game.debug) System.out.println("Begin game!");
-			game.initWorld();
-			game.setMenu(null);
+			game.setMenu(new LoadingMenu());
+			//game.initWorld();
+			//game.setMenu(null);
 		} else if(input.getKey("exit").clicked) {
 			game.setMenu(parent);
 			if(!Game.ISHOST) {
@@ -50,36 +49,63 @@ public class MultiplayerMenu extends Menu {
 			}
 		}
 		
-		if(!isHost && !Game.isValidClient()) {
-			
-			if(input.lastKeyTyped.length() > 0) {
-				String letter = input.lastKeyTyped;
-				input.lastKeyTyped = "";
-				java.util.regex.Pattern pattern = java.util.regex.Pattern.compile("[0-9\\.]");
-				if(pattern.matcher(letter).matches())
-					ipAddress += letter;
-			}
+		if(input.getKey("alt-U").clicked) {
+			typing = username;
+			username = "";
+		}
+		
+		if(username.length() == 0) {
+			checkKeyTyped(java.util.regex.Pattern.compile("[0-9A-Za-z \\-\\.]"));
 			
 			if(input.getKey("select").clicked) {
-				Game.connection = new MinicraftClient(game, ipAddress);
-				game.setMenu(new LoadingMenu());
+				username = typing;
+				if(!isHost && !Game.isConnectedClient())
+					typing = ipAddress;
+				
+				if(isHost) {
+					Game.server = new MinicraftServer(game);
+					Game.server.start();
+				}
 			}
-			
-			if(input.getKey("backspace").clicked && ipAddress.length() > 0)
-				ipAddress = ipAddress.substring(0, ipAddress.length()-1);
 		}
+		else if(!Game.isValidClient()) {
+			// this game instance is a client but not the host, but they haven't connected yet.
+			checkKeyTyped(null);
+			
+			if(input.getKey("select").clicked) {
+				Game.client = new MinicraftClient(game, ipAddress, username);
+			}
+		}
+	}
+	
+	private void checkKeyTyped(java.util.regex.Pattern pattern) {
+		if(input.lastKeyTyped.length() > 0) {
+			String letter = input.lastKeyTyped;
+			input.lastKeyTyped = "";
+			//java.util.regex.Pattern pattern = java.util.regex.Pattern.compile("[0-9\\.a-zA-Z\\/]");
+			if(pattern == null || pattern.matcher(letter).matches())
+				typing += letter;
+		}
+		
+		if(input.getKey("backspace").clicked && typing.length() > 0)
+			typing = typing.substring(0, typing.length()-1);
 	}
 	
 	public void render(Screen screen) {
 		screen.clear(0);
-		if(isHost) {
+		
+		if(username.length() == 0) {
+			Font.drawCentered("Enter username to show others:", screen, screen.h/2-6, Color.get(-1, 555));
+			Font.drawCentered(typing, screen, screen.h/2+6, Color.get(-1, 444));
+		}
+		else if(isHost) {
 			if(game.isValidHost()) {
 				//Font.drawCentered("Server IP Address:", screen, 20, Color.get(-1, 555));
 				//Font.drawCentered((MinicraftServer)game.connection).getAddress(), screen, 30, Color.get(-1, 151));
 				Font.drawCentered("Awaiting client connections"+getElipses(), screen, 60, Color.get(-1, 444));
 				Font.drawCentered("So far:", screen, 70, Color.get(-1, 444));
 				int i = 0;
-				for(String name: ((MinicraftServer)Game.connection).getClientNames()) {
+				for(String name: Game.server.getClientNames()) {
 					Font.drawCentered(name, screen, 80+i*10, Color.get(-1, 134));
 					i++;
 				}
@@ -87,13 +113,15 @@ public class MultiplayerMenu extends Menu {
 				Font.drawCentered("Failed to establish server;", screen, screen.h/2-4, Color.get(-1, 522));
 				Font.drawCentered("Exit menu and retry.", screen, screen.h/2+4, Color.get(-1, 522));
 			}
+			
+			Font.drawCentered("Alt-U to change username", screen, 2, Color.get(-1, 222));
 		}
 		else {
 			if(game.isValidClient()) {
 				//System.out.println("client is valid");
-				String msg = "Connecting to game on localhost"+getElipses();
+				String msg = "Connecting to game on "+ipAddress+getElipses();
 				
-				if(Game.connection.isConnected())
+				if(Game.client.isConnected())
 					msg = "Connection Successful!";
 				else
 					msg = "No connections available.";
