@@ -175,7 +175,7 @@ public class LegacyLoad {
 	}
 	
 	public void loadWorld(String filename, Game game) {
-		for(int l = Game.levels.length-1; l>=0; l--) {
+		for(int l = 0; l < Game.levels.length; l++) {
 			loadFromFile(location + filename + l + extention);
 			
 			int lvlw = Integer.parseInt(data.get(0));
@@ -194,8 +194,8 @@ public class LegacyLoad {
 				}
 			}
 			
-			Level parent = l == Game.levels.length-1 ? null : Game.levels[l+1];
-			Game.levels[l] = new Level(game, lvlw, lvlh, lvldepth, parent, false);
+			//Level parent = l == Game.levels.length-1 ? null : Game.levels[l+1];
+			Game.levels[l] = new Level(game, lvlw, lvlh, lvldepth, null, false);
 			Game.levels[l].tiles = tiles;
 			Game.levels[l].data = tdata;
 		}

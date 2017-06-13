@@ -263,15 +263,15 @@ public class Load {
 	}
 	
 	public void loadWorld(String filename, Game game) {
-		for(int l = Game.levels.length-2; l>=0; l--) {
+		for(int l = Game.maxLevelDepth; l >= Game.minLevelDepth; l--) {
 			//if(l == Game.levels.length-1) l = 4;
 			//if(l == 0) l = Game.levels.length-1;
-			
-			loadFromFile(location + filename + l + extention);
+			int lvlidx = Game.lvlIdx(l);
+			loadFromFile(location + filename + lvlidx + extention);
 			
 			int lvlw = Integer.parseInt(data.get(0));
 			int lvlh = Integer.parseInt(data.get(1));
-			int lvldepth = Integer.parseInt(data.get(2));
+			//int lvldepth = Integer.parseInt(data.get(2));
 			
 			byte[] tiles = new byte[lvlw * lvlh];
 			byte[] tdata = new byte[lvlw * lvlh];
@@ -295,10 +295,10 @@ public class Load {
 				}
 			}
 			
-			Level parent = l == Game.levels.length-2 ? null : l == Game.levels.length-1 ? Game.levels[0] : Game.levels[l+1];
-			Game.levels[l] = new Level(game, lvlw, lvlh, lvldepth, parent, false);
+			Level parent = Game.levels[Game.lvlIdx(l+1)];
+			Game.levels[lvlidx] = new Level(game, lvlw, lvlh, l, parent, false);
 			
-			Level curLevel = Game.levels[l];
+			Level curLevel = Game.levels[lvlidx];
 			curLevel.tiles = tiles;
 			curLevel.data = tdata;
 			
@@ -324,8 +324,8 @@ public class Load {
 			}
 			
 			// fixes some parenting issues.
-			if(l == 0) l = Game.levels.length;
-			if(l == Game.levels.length-1) l = 0;
+			//if(l == 0) l = Game.levels.length;
+			//if(l == Game.levels.length-1) l = 0;
 		}
 	}
 	
