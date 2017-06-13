@@ -91,6 +91,21 @@ public class Game extends Canvas implements Runnable {
 	public static Level[] levels = new Level[6]; // This array stores the different levels.
 	public int currentLevel = 3; // This is the level the player is on. It defaults to 3, the surface.
 	
+	public static final int[] idxToDepth = {-3, -2, -1, 0, 1, 5}; /// this is to map the level depths to each level's index in Game's levels array. This must ALWAYS be the same length as the levels array, of course.
+	public static final int minLevelDepth, maxLevelDepth;
+	static {
+		int min, max;
+		min = max = idxToDepth[0];
+		for(int depth: idxToDepth) {
+			if(depth < min)
+				min = depth;
+			if(depth > max)
+				max = depth;
+		}
+		minLevelDepth = min;
+		maxLevelDepth = max;
+	}
+	
 	public InputHandler input; // input used in Game, Player, and just about all the *Menu classes.
 	public Menu menu; // the current menu you are on.
 	public Player player; // The Player.
@@ -230,6 +245,7 @@ public class Game extends Canvas implements Runnable {
 	}
 	
 	/** This method is used to create a brand new world, or to load an existing one from a file. */
+	/** For the loading screen updates to work, it it assumed that *this* is called by a thread *other* than the one rendering the current *menu*. */
 	public void initWorld() { // this is a full reset; everything.
 		DeadMenu.shouldRespawn = false;
 		resetGame();
@@ -251,18 +267,21 @@ public class Game extends Canvas implements Runnable {
 				new Load(this, WorldSelectMenu.worldname);
 			else {
 				worldSize = WorldGenMenu.getSize();
-				for (int i = 5; i >= 0; i--) {
-					LoadingMenu.percentage = (5-i)*20;
+				
+				int loadingInc = Math.ceil(100.0 / (maxLevelDepth - minLevelDepth) - 0.002); // the .002 is for floating point errors, in case they occur.
+				for (int i = maxLevelDepth; i >= minLevelDepth; i--) {
+					// i = level depth; the array starts from the top because the parent level is used as a reference, so it should be constructed first. It is expected that the highest level will have a null parent.
+					LoadingMenu.percentage += loadingInc;
 					
-					levels[(i - 1 < 0 ? 5 : i - 1)] =
-							new Level(this, worldSize, worldSize, i - 4, (i == 5 ? (Level) null : levels[i]), !WorldSelectMenu.loadworld);
+					levels[lvlIdx(i)] =
+							new Level(this, worldSize, worldSize, i, levels[lvlIdx(i+1)], !WorldSelectMenu.loadworld);
 				}
 				
 				// add an Iron lantern to level 5, at (984, 984), when making a new world
 				Furniture f = new Lantern(Lantern.Type.IRON);//Items.get("Iron Lantern").furniture;
 				f.x = 984;
 				f.y = 984;
-				levels[5].add(f);
+				levels[lvlIdx(-4)].add(f);
 			}
 			
 			if (!WorldSelectMenu.loadworld) {
@@ -462,6 +481,31 @@ public class Game extends Canvas implements Runnable {
 		return null;
 	}
 	
+	public static int generateUniqueEntityId() {
+		int eid;
+		int tries = 0; // just in case it gets out of hand.
+		do {
+			tries++;
+			if(tries == 1000)
+				System.out.println("note: trying 1000th time to find valid entity id...(will continue)");
+			
+			eid = random.nextInt(Integer.MAX_VALUE);
+		} while(idIsUnused(eid) == false);
+		
+		return eid;
+	}
+	
+	public static boolean idIsUnused(int eid) {
+		for(Level level: levels) {
+			for(Entity e: level.getEntities()) {
+				if(e.eid == eid)
+					return false;
+			}
+		}
+		
+		return true;
+	}
+	
 	public void setMultiplier(int value) {
 		multiplier = value;
 		multipliertime = mtm;
@@ -534,6 +578,16 @@ public class Game extends Canvas implements Runnable {
 			client.curState = client.State.TILES;
 		else
 			levels[currentLevel].add(player); // adds the player to the level.
+	}
+	
+	/** This is for a contained way to find the index in the levels array of a level, based on it's depth. This is also helpful because add a new level in the future could change this. */
+	public static int lvlIdx(int depth) {
+		if(depth > maxLevelDepth) return lvlIdx(minLevelDepth);
+		if(depth < minLevelDepth) return lvlIdx(maxLevelDepth);
+		
+		if(depth == -4) return 5;
+		
+		return depth + 3;
 	}
 	
 	/** renders the current screen */
