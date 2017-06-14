@@ -336,8 +336,9 @@ public class Player extends Mob {
 		if (dir == 3 && use(x + 4, y - 8 + yo, x + 12, y + 8 + yo)) return true;
 		if (dir == 2 && use(x - 12, y - 8 + yo, x - 4, y + 8 + yo)) return true;
 		
-		// otherwise, if there is no entity, check if the current tile has a use method:
-		
+		/*
+		// otherwise, if there is no entity, check if the current tile has a use method.
+			//...which, as it happens, never does...
 		// round off player coordinates to Tile coordinates.
 		int xt = x >> 4;
 		int yt = (y + yo) >> 4;
@@ -349,19 +350,26 @@ public class Player extends Mob {
 		// do the check
 		if (xt >= 0 && yt >= 0 && xt < level.w && yt < level.h) {
 			if (level.getTile(xt, yt).use(level, xt, yt, this, attackDir)) return true;
-		}
+		}*/
 		
 		return false;
 	}
 	
 	/** This method is called when we press the attack button. */
 	private void attack() {
-		walkDist += 8; // increase the walkDist (changes the sprite)
+		if(Game.isValidClient() && !Game.isValidServer()) {
+			// if this is a multiplayer game, than the server will execute the full method instead.
+			Game.client.requestInteraction(this);
+			if(attackItem instanceof ToolItem && stamina - 1 >= 0 && ((ToolItem)attackItem).type == ToolType.Bow && inventory.count(Items.get("arrow")) > 0) // we are going to use an arrow.
+				inventory.removeItem(Items.get("arrow")); // do it here so we don't need a response.
+		}
+		
+		walkDist += 8; // increase the walkDist (changes the sprite, like you moved your arm)
 		attackDir = dir; // make the attack direction equal the current direction
 		attackItem = activeItem; // make attackItem equal activeItem
 		boolean done = false; // we're not done yet (we just started!)
 		
-		if ((attackItem instanceof ToolItem) && stamina - 1 >= 0) {
+		if (attackItem instanceof ToolItem && stamina - 1 >= 0) {
 			// the player is holding a tool, and has stamina available.
 			ToolItem tool = (ToolItem) attackItem;
 			
@@ -452,7 +460,7 @@ public class Player extends Mob {
 		if (fcatch < 10) level.dropItem(x, y, Items.get("raw fish"));
 		else if (fcatch < 15) level.dropItem(x, y, Items.get("slime"));
 		else if (fcatch == 15) level.dropItem(x, y, Items.get("Leather Armor"));
-		else if (fcatch == 42 && random.nextInt(10) == 0) System.out.println("FISHNORRIS got away... just kidding, FISHNORRIS doesn't get away from you, you get away from FISHNORRIS...");
+		else if (fcatch == 42 && random.nextInt(5) == 0) System.out.println("FISHNORRIS got away... just kidding, FISHNORRIS din't get away from you, you got away from FISHNORRIS...");
 	}
 	
 	/** called by other use method; this serves as a buffer in case there is no entity in front of the player. */
@@ -460,7 +468,7 @@ public class Player extends Mob {
 		List<Entity> entities = level.getEntities(x0, y0, x1, y1); // gets the entities within the 4 points
 		for (int i = 0; i < entities.size(); i++) {
 			Entity e = entities.get(i);
-			if (e != this) if (e.use(this, attackDir)) return true; // if the entity is not the player, then call it's use method, and return the result.
+			if (e != this) if (e.use(this, attackDir)) return true; // if the entity is not the player, then call it's use method, and return the result. Only some furniture classes use this.
 		}
 		return false;
 	}
