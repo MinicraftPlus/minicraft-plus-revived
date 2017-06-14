@@ -10,9 +10,10 @@ import java.net.UnknownHostException;
 import java.io.IOException;
 import minicraft.Game;
 import minicraft.InputHandler;
+import minicraft.entity.ItemEntity;
 
 /// This class is only used by the client runtime; the server runtime doesn't touch it.
-public class MinicraftClient extends Thread {
+public class MinicraftClient extends Thread implements MinicraftConnection {
 	
 	private Game game;
 	private DatagramSocket socket = null;
@@ -150,6 +151,10 @@ public class MinicraftClient extends Thread {
 				System.err.println("Server tried to login...");
 				return false;
 			
+			case INTERACT:
+				System.err.println("Server tried to interact...");
+				return false;
+			
 			case DISCONNECT:
 				game.setMenu(new MultiplayerMenu(false, new TitleMenu()));
 				return true;
@@ -175,7 +180,8 @@ public class MinicraftClient extends Thread {
 			
 			case INIT_T:
 				/// recieve tiles.
-				Level level = new Level(game, Game.lvlw, Game.lvlh, (game.currentLevel==5?-4:game.currentLevel-3), Game.levels[game.currentLevel==4?null:game.currentLevel==5?0:game.currentLevel+1], false);
+				int lvldepth = Game.idxToDepth[game.currentLevel];
+				Level level = new Level(game, Game.lvlw, Game.lvlh, lvldepth, Game.levels[Game.lvlIdx(lvldepth+1)], false);
 				for(int i = 0; i < level.tiles.length && i < data.length/2-1; i++) {
 					level.tiles[i] = data[i*2];
 					level.data[i] = data[i*2+1];
@@ -186,9 +192,10 @@ public class MinicraftClient extends Thread {
 			
 			case INIT_E:
 				Level level = Game.levels[game.currentLevel];
-				String[] entities = new String(data).split("\\n");
+				String[] entities = new String(data).split(",");
 				for(String entityString: entities) {
-					// decode the string back into an entity
+					level.add(Load.loadEntity(entityString, false));
+					/*// decode the string back into an entity
 					String[] constructorTypes = entityString.split(";");
 					Class c = Class.forName("minicraft.entity."+constructorTypes[0]);
 					Class[] constructorParams = new Class[constructorTypes.length-1];
@@ -196,7 +203,7 @@ public class MinicraftClient extends Thread {
 						constructorParams[i] = constructorTypes[i+1].split(",")[0];
 					}
 					c.getConstructor();
-					// TODO finish this.
+					*/
 				}
 				
 				// ready to start game now.
@@ -213,16 +220,24 @@ public class MinicraftClient extends Thread {
 				return true;
 			
 			case ADD:
-				// TODO finish this. Should have level seperate.
 				byte lvl = data[0];
 				String info = new String(Arrays.copyOfRange(data, 1, data.length));
-				break;
+				Entity e = Load.loadEntity(info, false);
+				if(Game.levels[lvl] != null)
+					Game.levels[lvl].add(e);
+				else return false;
+				return true;
 			
 			case ENTITY:
 				String info = new String(data);
 				int eid = Integer.parseInt(info.substring(0, info.indexOf(";")));
-				// TODO here we update the entity.
-				break;
+				info = info.substring(info.indexOf(";")+1);
+				Entity e = Game.getEntity(eid);
+				if(e == null) {
+					System.err.println("CLIENT error with ENTITY request: specified entity could not be found.");
+					return false;
+				}
+				e.update(info);
 			
 			case REMOVE:
 				//int eid = 0;
@@ -243,10 +258,28 @@ public class MinicraftClient extends Thread {
 				Game.notifications.add(msg);
 				Game.notetick = notetime;
 				return true;
+			
+			case CHESTOUT:
+				Item item = Items.get(new String(data));
+				game.player.inventory.add(item);
+				return true;
+			
+			case PICKUP:
+				int eid = Integer.parseInt(new String(data));
+				Entity e = Game.getEntity(eid);
+				if(e == null || !e instanceof ItemEntity) {
+					System.err.println("CLIENT error with PICKUP response: specified entity does not exist or is not an ItemEntity: " + e);
+					return false;
+				}
+				e.remove();
+				game.player.inventory.add(((ItemEntity)e).item);
+				return true;
 		}
 		
 		return true; // this is reached by InputType.ENTITY and InputType.ADD, currently.
 	}
+	
+	/// the below methods are all about sending data to the server, *not* setting any game values.
 	
 	public void sendData(MinicraftProtocol.InputType inType, byte[] startdata) {
 		byte[] data = prependType(inType, startdata);
@@ -258,8 +291,30 @@ public class MinicraftClient extends Thread {
 		}
 	}
 	
+	/** This is called when the player.attack() method is called. */
+	public void requestInteraction(Player player) {
+		/// I don't think the player parameter is necessary, but it doesn't harm anything.
+		String itemString = player.activeItem != null ? player.activeItem.name : "null";
+		sendData(MinicraftProtocol.InputType.INTERACT, (player.x+";"+player.y+";"+player.dir+";"+itemString+";"+player.inventory.count(Items.get("arrow"))).getBytes());
+	}
+	
+	public void addToChest(Chest c, Item item) {
+		if(c == null || item == null) return;
+		sendData(MinicraftProtocol.InputType.CHESTIN, (chest.eid+";"+item).getBytes());
+	}
+	
+	public void removeFromChest(Chest c, int index) {
+		if(c == null) return;
+		sendData(MinicraftProtocol.InputType.CHESTOUT, (chest.eid+";"+index).getBytes());
+	}
+	
+	public void pickupItem(ItemEntity ie) {
+		if(ie == null) return;
+		sendData(MinicraftProtocol.InputType.PICKUP, String.valueOf(ie.eid).getBytes());
+	}
+	
 	/** This method is responsible for sending an updated tile. */
-	public void sendTileUpdate(int x, int y) {
+	/*public void sendTileUpdate(int x, int y) {
 		Level level = Game.levels[game.currentLevel];
 		byte[] data = new byte[7];
 		data[0] = (byte) game.currentLevel;
@@ -272,7 +327,7 @@ public class MinicraftClient extends Thread {
 		data[6] = pos & 0xff;
 		
 		sendData(MinicraftProtocol.InputType.TILE, data);
-	}
+	}*/
 	
 	/*public void sendNotification(String note, int notetick) {
 		if(note == null || note.length() == 0) {

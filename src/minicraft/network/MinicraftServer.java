@@ -11,7 +11,7 @@ import minicraft.Game;
 import minicraft.entity.Entity;
 import minicraft.entity.RemotePlayer;
 
-public class MinicraftServer extends Thread {
+public class MinicraftServer extends Thread implements MinicraftConnection {
 	
 	public ArrayList<RemotePlayer> clientList = new ArrayList<RemotePlayer>();
 	
@@ -47,19 +47,26 @@ public class MinicraftServer extends Thread {
 		endConnection();
 	}
 	
-	/*public void sendEntityUpdate(int eid, Entity e) {
-		for(RemotePlayer client: clientList) {
-			thread.sendEntityUpdate(eid, e);
-		}
+	public void sendEntityUpdate(int eid, Entity e) {
+		
 	}
 	
-	public void sendTileUpdate(int x, int y) {
-		for(RemotePlayer client: clientList) {
-			thread.sendTileUpdate(x, y);
-		}
+	public void sendTileUpdate(int depth, int x, int y) {
+		int lvlidx = Game.lvlIdx(depth);
+		Level curLevel = Game.levels[lvlidx];
+		int pos = x + curLevel.w * y;
+		byte[] posbytes = String.valueOf(pos).getBytes();
+		byte[] tiledata = new byte[posbytes.length+3];
+		tiledata[0] = lvlidx;
+		tiledata[1] = curLevel.tiles[pos];
+		tiledata[2] = curLevel.data[pos];
+		for(int i = 0; i < posbytes.length; i++)
+			tiledata[i+3] = posbytes[i];
+		
+		broadcastData(prependType(MinicraftProtocol.InputType.TILE, tiledata));
 	}
 	
-	public void sendNotification(String note, int ntime) {
+	/*public void sendNotification(String note, int ntime) {
 		for(RemotePlayer client: clientList) {
 			thread.sendNotification(note, ntime);
 		}
@@ -112,17 +119,30 @@ public class MinicraftServer extends Thread {
 			-TILE, ENTITY, ADD, REMOVE, NOTIFY: broadcast the packet to all the other clients
 		*/
 		
+		// handle reports of type INVALID
+		if(inType == MinicraftProtocol.InputType.INVALID) {
+			String msg = new String(data);
+			System.err.println(msg);
+			return false;
+		}
+		
+		/// identify the client who sent this packet:
+		RemotePlayer sender = getClientPlayer(address, port);
+		// the sender should always be null for LOGIN packets, but not for any other. maybe invalid, but that returns above.
+		if(sender == null && inType != MinicraftProtocol.InputType.LOGIN) {
+			System.err.println("SERVER error: cannot identify sender of packet; type="+inType.name());
+			sendError("You must login first.", address, port);
+			return false;
+		}
+		
+		if(MinicraftProtocol.InputType.serverOnly.contains(inType)) {
+			/// these are ALL illegal for a client to send.
+			System.err.println("SERVER warning: client " + sender + " sent illegal packet type " + inType + " to server.");
+			//sendError("You cannot set the world variables.", address, port);
+			return false;
+		}
+		
 		switch(inType) {
-			case INVALID:
-				String msg = new String(data);
-				System.err.println(msg);
-				return false;
-			
-			case INIT_W:
-				System.err.println("SERVER warning: client " + address+":"+port + " tried to request INIT_W");
-				sendError("You cannot set the world variables.", address, port);
-				return false;
-			
 			case LOGIN:
 				String info = new String(data);
 				String username = data.split(";")[0];
@@ -134,14 +154,13 @@ public class MinicraftServer extends Thread {
 				}
 				
 				/// versions match; make client player
-				int eid = generateUniqueEntityId();
-				RemotePlayer clientPlayer = new RemotePlayer(game, eid, username, address, port);
-				clientPlayer.findStartPos(Game.levels[3]); // find start pos
-				Game.levels[3].add(clientPlayer); // add to level
+				RemotePlayer clientPlayer = new RemotePlayer(game, username, address, port);
+				clientPlayer.findStartPos(Game.levels[Game.lvlIdx(0)]); // find start pos
+				Game.levels[Game.lvlIdx(0)].add(clientPlayer); // add to level
 				//making INIT_W packet
 				String sendString = "";
-				sendString += Game.levels[3].w + ",";
-				sendString += Game.levels[3].h + ",";
+				sendString += Game.levels[Game.lvlIdx(0)].w + ",";
+				sendString += Game.levels[Game.lvlIdx(0)].h + ",";
 				sendString += clientPlayer.x + ",";
 				sendString += clientPlayer.y + ",";
 				sendString += Game.tickCount + ",";
@@ -149,10 +168,10 @@ public class MinicraftServer extends Thread {
 				if(ModeMenu.score)
 					sendString += game.scoreTime+",";
 				/// send client world info
-				sendData(prependType(MinicraftProtocol.InputType.INIT_W, sendString.getBytes()), address, port);
+				sendData(prependType(MinicraftProtocol.InputType.INIT_W, sendString.getBytes()), sender);
 				clientList.add(clientPlayer); /// file client player
 				/// tell others of client joining
-				broadcastData(prependType(MinicraftProtocol.InputType.ADD, clientPlayer.toString().getBytes()), clientPlayer);
+				broadcastData(prependType(MinicraftProtocol.InputType.ADD, clientPlayer.serialize().getBytes()), clientPlayer);
 				return true;
 			
 			case INIT_T:
@@ -165,10 +184,10 @@ public class MinicraftServer extends Thread {
 						tiledata[i*2 + 1] = Game.levels[levelidx].tiles[i];
 						tiledata[i*2+1 + 1] = Game.levels[levelidx].data[i];
 					}
-					sendData(tiledata, address, port);
+					sendData(tiledata, sender);
 					return true;
 				} else {
-					System.err.println("SERVER warning: Client " + address+":"+port + " tried to request tiles from nonexistent level " + levelidx);
+					System.err.println("SERVER warning: Client " + sender + " tried to request tiles from nonexistent level " + levelidx);
 					sendError("requested level does not exist.", address, port);
 					return false;
 				}
@@ -180,34 +199,95 @@ public class MinicraftServer extends Thread {
 				if(levelidx >= 0 && levelidx < Game.levels.length) {
 					String edata = "";
 					for(Entity e: Game.levels[levelidx].getEntities()) {
-						edata += e.toString();
+						edata += e.serialize();
 						edata += "\n";
 					}
 					
-					sendData(prependType(MinicraftProtocol.InputType.INIT_E, edata.getBytes()), address, port);
+					sendData(prependType(MinicraftProtocol.InputType.INIT_E, edata.getBytes()), sender);
 					return true;
 				} else {
-					System.err.println("SERVER warning: Client " + address+":"+port + " tried to request entities from nonexistent level " + levelidx);
+					System.err.println("SERVER warning: Client " + sender + " tried to request entities from nonexistent level " + levelidx);
 					sendError("requested level does not exist.", address, port);
 					return false;
 				}
 				break;
 			
 			case DISCONNECT:
-				RemotePlayer sender = getClientPlayer(address, port);
-				if(sender != null) {
-					/// tell the other clients to remove this client from their games
-					broadcastData(prependType(MinicraftProtocol.InputType.REMOVE, (new byte[1] {sender.eid})), sender);
-					clientList.remove(sender); // remove from the server list
-					return true;
+				/// tell the other clients to remove this client from their games
+				broadcastData(prependType(MinicraftProtocol.InputType.REMOVE, (new byte[1] {sender.eid})), sender);
+				clientList.remove(sender); // remove from the server list
+				return true;
+				
+			
+			case CHESTIN: case CHESTOUT:
+				String[] info = new String(data).split(";");
+				int eid = Integer.parseInt(info[0]);
+				Entity e = Game.getEntity(eid);
+				if(e == null || !e instanceof Chest) {
+					System.err.println("SERVER error with CHESTOUT request: Specified chest entity did not exist or was not a chest.");
+					return false;
 				}
-				return false;
+				Chest chest = (Chest) e;
+				
+				if(inType == MinicraftProtocol.InputType.CHESTIN) {
+					Item item = Items.get(info[1]);
+					if(item == null) {
+						System.err.println("SERVER error with CHESTIN request: specified item could not be found from string: " + info[1]);
+						return false;
+					}
+					chest.inventory.add(item);
+				}
+				else if(inType == MinicraftProtocol.InputType.CHESTOUT) {
+					int index = Integer.parseInt(info[1]);
+					if(index >= chest.inventory.length || index < 0) {
+						System.err.println("SERVER error with CHESTOUT request: specified chest inv index is out of bounds: "+index+"; inv size:"+chest.inventory.length);
+						return false;
+					}
+					// was a valid index
+					Item removed = chest.inventory.remove(index);
+					
+					sendData(prependType(MinicraftProtocol.InputType.CHESTOUT, removed.getData().getBytes()), sender); // send back the *exact* same packet as was sent; the client will handle it accordingly, by changing their inventory.
+				}
+				
+				broadcastData(prependType(MinicraftProtocol.InputType.ENTITY, chest.eid+";inventory["+chest.inventory.getItemData()+"]"), sender);
+				return true;
 			
-			case ADD:
-				/// TODO check entity id to see if it is unique. if so, proceed to default. else, change the id, and send an entity update packet to the sender client to update their entity's id.
+			case PICKUP:
+				int eid = Integer.parseInt(new String(data));
+				Entity e = Game.getEntity(eid);
+				if(e == null || !e instanceof ItemEntity) {
+					System.err.println("SERVER error with PICKUP request: Requested entity does not exist or is not an ItemEntity.");
+					return false;
+				}
+				if(!e.removed()) {
+					e.remove();
+					sendData(alldata, sender);
+					broadcastData(prependType(MinicraftProtocol.InputType.REMOVE, String.valueOf(e.eid)), sender);
+				} else
+					return false;
+				return true;
 			
+			case INTERACT:
+				//x, y, dir, item
+				String[] info = new String(data).split(";");
+				// since this should be the most up-to-date data, just update the remote player coords with them.
+				sender.x = Integer.parseInt(info[0]);
+				sender.y = Integer.parseInt(info[1]);
+				sender.dir = Integer.parseInt(info[2]);
+				sender.activeItem = Items.get(info[3]); // this can be null; and that's fine, it means a fist. ;)
+				int arrowCount = Integer.parseInt(info[4]);
+				int curArrows = sender.inventory.count(Items.get("arrow"));
+				if(curArrows < arrowCount)
+					sender.inventory.add(Items.get("arrow"), arrowCount-curArrows);
+				if(curArrows > arrowCount)
+					sender.inventory.removeItems(Items.get("arrow"), curArrows-arrowCount);
+				sender.attack();
+				/// note: the player may have fired an arrow, but we won't tell because that player will update it theirself.
+			
+			/// I'm this should end up never being used...
 			default:
-				broadcastData(alldata, getClientPlayer(address, port));
+				System.out.println("server used default behavior for input type " + inType);
+				broadcastData(alldata, sender);
 				return true;
 		}
 		
@@ -216,17 +296,18 @@ public class MinicraftServer extends Thread {
 	
 	public void broadcastData(byte[] data) {
 		for(RemotePlayer client: clientList) {
-			sendData(data, client.ipAddress, client.port);
+			sendData(data, client);
 		}
 	}
 	
 	public void broadcastData(byte[] data, RemotePlayer sender) {
 		for(RemotePlayer client: clientList) {
-			if(client != sender)
-				sendData(data, client.ipAddress, client.port);
+			if(client != sender) // send this packet to all EXCEPT the specified one.
+				sendData(data, client);
 		}
 	}
 	
+	public void sendData(byte[] data, RemotePlayer rp) { sendData(data, rp.ipAddress, rp.port); }
 	public void sendData(byte[] data, InetAddress ip, int port) {
 		DatagramPacket packet = new DatagramPacket(data, data.length, ip, port);
 		try {
@@ -238,26 +319,6 @@ public class MinicraftServer extends Thread {
 	
 	private void sendError(String message, InetAddress ip, int port) {
 		sendData(prependType(MinicraftProtocol.InputType.INVALID, message.getBytes()), ip, port);
-	}
-	
-	public static int generateUniqueEntityId() {
-		java.util.Random random = new java.util.Random();
-		int eid = 0;
-		while(!idIsUnused(eid))
-			eid = random.nextInt(Integer.MAX_VALUE);
-		
-		return eid;
-	}
-	
-	public static boolean idIsUnused(int eid) {
-		for(Level level: Game.levels) {
-			for(Entity e: level.getEntities()) {
-				if(e.eid == eid)
-					return false;
-			}
-		}
-		
-		return true;
 	}
 	
 	/*public static byte[] prependType(MinicraftProtocol.InputType type, byte[] data) {
