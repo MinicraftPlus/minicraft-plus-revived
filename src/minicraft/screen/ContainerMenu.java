@@ -39,7 +39,7 @@ public class ContainerMenu extends Menu {
 		// get player and container inventory references...again?
 		Inventory i = window == 1 ? player.inventory : container;
 		Inventory i2 = window == 0 ? player.inventory : container;
-
+		
 		int len = i.invSize(); // Size of the main inventory
 		
 		//selection fix
@@ -58,8 +58,14 @@ public class ContainerMenu extends Menu {
 		
 		// If the "Attack" key is pressed and the inventory's size is bigger than 0...
 		if (input.getKey("attack").clicked && len > 0) {
-			i2.add(oSelected, i.remove(selected)); // It will add the item to the new inventory, and remove it from the old one.
-			if (selected >= len-1) selected = len-2;// = i.items.size() - 1; // This fixes the selected item to the latest one.
+			if(Game.isValidClient()) {
+				if(i == container)
+					Game.client.removeFromChest(container, selected);
+				else
+					Game.client.addToChest(container, i.get(selected)); // if the other menu is the chest, then we are adding to it (add==true)
+			}
+			else
+				i2.add(oSelected, i.remove(selected)); // It will add the item to the new inventory, and remove it from the old one.
 		}
 	}
 	
