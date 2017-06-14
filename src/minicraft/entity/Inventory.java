@@ -20,9 +20,17 @@ public class Inventory {
 	public Item get(int idx) {return items.get(idx);}
 	
 	public Item remove(int idx) {
-		Item i = get(idx);
-		items.remove(i);
-		return i;
+		return items.remove(idx);
+	}
+	
+	public boolean remove(Item item) {
+		for(Item i: items) {
+			if(i.matches(item)) {
+				items.remove(i);
+				return true;
+			}
+		}
+		return false;
 	}
 	
 	/** Adds an item to the inventory */
@@ -132,21 +140,21 @@ public class Inventory {
 		return ti != null;
 	}*/
 	
-	/** Removes items from your inventory */
+	/** Removes items from your inventory; looks for stacks, and removes from each until reached count. returns amount removed. */
 	public int removeFromStack(StackableItem given, int count) {
 		int removed = 0; // to keep track of amount removed.
 		for(int i = 0; i < items.size(); i++) {
 			if(!(items.get(i) instanceof StackableItem)) continue;
 			StackableItem curItem = (StackableItem) items.get(i);
-			if(!curItem.matches(given)) continue;
+			if(!curItem.name.equals(given.name)) continue; // can't do matches, becuase that includes the stack size.
 			// matches; and current item is stackable.
-			int amountRemoved = Math.min(count-removed, curItem.count);
-			curItem.count -= amountRemoved;
+			int amountRemoving = Math.min(count-removed, curItem.count); // this is the number of items that are being removed from the stack this run-through.
+			curItem.count -= amountRemoving;
 			if(curItem.count == 0) { // remove the item from the inventory if its stack is empty.
 				items.remove(curItem);
 				i--;
 			}
-			removed += amountRemoved;
+			removed += amountRemoving;
 			if(removed == count) break;
 			if(removed > count) { // just in case...
 				System.out.println("SCREW UP while removing items from stack: " + (removed-count) + " too many.");
@@ -175,7 +183,12 @@ public class Inventory {
 		return true;
 	}*/
 	
-	public void removeItem(Item i) { removeItems(i, 1); }
+	public void removeItem(Item i) {
+		if(i instanceof StackableItem)
+			removeItems(i, i.count);
+		else
+			removeItems(i, 1);
+	}
 	/** removes items from this inventory. Note, if passed a stackable item, this will only remove a max of count from the stack. */
 	public void removeItems(Item given, int count) {
 		while(count > 0) {
@@ -234,6 +247,15 @@ public class Inventory {
 			names.add(items.get(i).name);
 		
 		return names;
+	}
+	
+	public String getItemData() {
+		String itemdata = "";
+		for(Item i: items)
+			itemdata += i.getData()+":";
+		
+		itemdata = itemdata.substring(0, itemdata.length-1); //remove extra ":".
+		return itemdata;
 	}
 	
 	/** These functions (possibly) add Items and/or Tools to the inventory. */
