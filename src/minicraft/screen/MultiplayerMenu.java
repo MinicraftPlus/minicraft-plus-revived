@@ -99,7 +99,7 @@ public class MultiplayerMenu extends Menu {
 			Font.drawCentered(typing, screen, screen.h/2+6, Color.get(-1, 444));
 		}
 		else if(isHost) {
-			if(game.isValidHost()) {
+			if(game.isValidServer()) {
 				//Font.drawCentered("Server IP Address:", screen, 20, Color.get(-1, 555));
 				//Font.drawCentered((MinicraftServer)game.connection).getAddress(), screen, 30, Color.get(-1, 151));
 				Font.drawCentered("Awaiting client connections"+getElipses(), screen, 60, Color.get(-1, 444));
@@ -134,7 +134,7 @@ public class MultiplayerMenu extends Menu {
 		}
 		
 		Font.drawCentered("Press "+input.getMapping("exit")+" to return", screen, screen.h-Font.textHeight()*2, Color.get(-1, 333));
-		if(game.isValidHost())
+		if(game.isValidServer())
 			Font.drawCentered("(game will still be multiplayer)", screen, screen.h-Font.textHeight(), Color.get(-1, 333));
 	}
 	

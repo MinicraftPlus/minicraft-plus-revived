@@ -108,7 +108,7 @@ public class Game extends Canvas implements Runnable {
 	
 	public InputHandler input; // input used in Game, Player, and just about all the *Menu classes.
 	public Menu menu; // the current menu you are on.
-	public Player player; // The Player.
+	public static Player player; // The Player.
 	//public Level level; // This is the current level you are on.
 	static int worldSize = 128; // The size of the world
 	public static int lvlw = worldSize; // The width of the world
@@ -168,6 +168,26 @@ public class Game extends Canvas implements Runnable {
 		gameOver = false;
 	}
 	
+	/*
+	public static final byte[] intToBytes(int num) {
+		byte[] bytes = new byte[4];
+		bytes[0] = num >> (8*3);
+		bytes[1] = num >> (8*2) & 0xff;
+		bytes[2] = num >> 8 & 0xff;
+		bytes[3] = num & 0xff;
+	}
+	
+	public static final int bytesToInt(byte[] bytes) {
+		if(bytes.length != 4) return 0;
+		
+		int num = 0;
+		num += bytes[0] << 24;
+		num += bytes[1] << 16;
+		num += bytes[2] << 8;
+		num += bytes[3];
+	}
+	*/
+	
 	// Sets the current menu.
 	public void setMenu(Menu menu) {
 		this.menu = menu;
@@ -182,11 +202,11 @@ public class Game extends Canvas implements Runnable {
 		return isValidClient() && client.isConnected();
 	}
 	
-	public static final boolean isValidHost() {
+	public static final boolean isValidServer() {
 		return ISONLINE && ISHOST; && server != null;
 	}
 	public static final boolean hasConnectedClients() {
-		return isValidHost() && server.clientList.size() > 0;
+		return isValidServer() && server.clientList.size() > 0;
 	}
 	
 	/// called after main; main is at bottom.
@@ -230,8 +250,10 @@ public class Game extends Canvas implements Runnable {
 		// adds a new player
 		if(player instanceof RemotePlayer)
 			player = new RemotePlayer(this, (RemotePlayer)player);
-		else
+		else {
 			player = new Player(this, input);
+			player.eid = 0;
+		}
 		
 		// "shouldRespawn" is false on hardcore, or when making a new world.
 		if (DeadMenu.shouldRespawn) { // respawn, don't regenerate level.
@@ -339,7 +361,7 @@ public class Game extends Canvas implements Runnable {
 		
 		
 		//auto-save tick; marks when to do autosave.
-		if(!paused || isValidHost())
+		if(!paused || isValidServer())
 			asTick++;
 		if (asTick > astime) {
 			if (OptionsMenu.autosave && player.health > 0 && !gameOver) {
@@ -350,12 +372,12 @@ public class Game extends Canvas implements Runnable {
 		}
 		
 		// Increment tickCount if the game is not paused
-		if (!paused || isValidHost()) setTime(tickCount+1);
+		if (!paused || isValidServer()) setTime(tickCount+1);
 		if (tickCount == 3600) level.removeAllEnemies();
 		
 		/// SCORE MODE ONLY
 		
-		if (ModeMenu.score && (!paused || isValidHost() && !gameOver)) {
+		if (ModeMenu.score && (!paused || isValidServer() && !gameOver)) {
 			if (scoreTime <= 0) { // GAME OVER
 				gameOver = true;
 				setMenu(new WonMenu(player));
@@ -371,7 +393,7 @@ public class Game extends Canvas implements Runnable {
 		}
 		
 		boolean hadMenu = menu != null;
-		if(isValidHost()) {
+		if(isValidServer()) {
 			/// this is to keep the game going while online, even with an unfocused window.
 			input.tick();
 			for(Level floor: levels)
@@ -385,11 +407,11 @@ public class Game extends Canvas implements Runnable {
 		if (!hasFocus()) {
 			input.releaseAll();
 		} else {
-			if ((!player.removed || isValidHost()) && !gameOver) {
+			if ((!player.removed || isValidServer()) && !gameOver) {
 				gameTime++;
 			}
 			
-			if(!isValidHost() || menu != null && !hadMenu)
+			if(!isValidServer() || menu != null && !hadMenu)
 				input.tick(); // INPUT TICK; no other class should call this, I think...especially the *Menu classes.
 			
 			if (menu != null) {
@@ -403,7 +425,7 @@ public class Game extends Canvas implements Runnable {
 				//if player is alive, but no level change, nothing happens here.
 				if (player.removed && readyToRenderGameplay) {
 					//makes delay between death and death menu.
-					if (debug) System.out.println("player is dead.");
+					//if (debug) System.out.println("player is dead.");
 					playerDeadTime++;
 					if (playerDeadTime > 60) {
 						setMenu(new DeadMenu());
@@ -466,7 +488,7 @@ public class Game extends Canvas implements Runnable {
 			} // end "menu-null" conditional
 		} // end hasfocus conditional
 		
-		if(Game.isValidHost()) {
+		if(Game.isValidServer()) {
 			/// send out all the changed, cached game parameters to the other clients.
 			
 		}
@@ -496,6 +518,8 @@ public class Game extends Canvas implements Runnable {
 	}
 	
 	public static boolean idIsUnused(int eid) {
+		if(eid == 0) return false; // this is reserved for the main player.
+		
 		for(Level level: levels) {
 			for(Entity e: level.getEntities()) {
 				if(e.eid == eid)
@@ -574,7 +598,7 @@ public class Game extends Canvas implements Runnable {
 		player.x = (player.x >> 4) * 16 + 8; // sets the player's x coord (to center yourself on the stairs)
 		player.y = (player.y >> 4) * 16 + 8; // sets the player's y coord (to center yourself on the stairs)
 		
-		if(isValidClient() && !isValidHost() && levels[currentLevel] == null)
+		if(isValidClient() && !isValidServer() && levels[currentLevel] == null)
 			client.curState = client.State.TILES;
 		else
 			levels[currentLevel].add(player); // adds the player to the level.
