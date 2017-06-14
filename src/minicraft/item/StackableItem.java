@@ -83,4 +83,8 @@ public class StackableItem extends Item {
 	public String toString() {
 		return super.toString() + "-Stack_Size:"+count;
 	}
+	
+	public String getData() {
+		return name+"_"+count;
+	}
 }

@@ -92,6 +92,18 @@ public class Items {
 	public static Item get(String name) {
 		name = name.toUpperCase();
 		//System.out.println("fetching name: " + name);
+		int amount = 1;
+		if(name.contains("_")) {
+			try {
+				amount = Integer.parseInt(name.substring(name.indexOf("_")+1));
+			} catch(Exception ex) {
+				ex.printStackTrace();
+			}
+			name = name.substring(0, name.indexOf("_"));
+		}
+		
+		if(name.equals("NULL")) return null;
+		
 		Item i = null;
 		for(Item cur: items) {
 			if(cur.name.compareToIgnoreCase(name) == 0) {
@@ -100,8 +112,8 @@ public class Items {
 			}
 		}
 		if(i != null) {
-			//if(i instanceof StackableItem && ((StackableItem)i).count != 1)
-				//System.out.println("got item " + i);
+			if(i instanceof StackableItem)
+				((StackableItem)i).count = amount;
 			return i.clone();
 		} else {
 			System.out.println("ITEMS GET: invalid name requested: " + name);

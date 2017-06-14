@@ -73,4 +73,8 @@ public abstract class Item implements ListItem {
 	public String toString() {
 		return name + "-Item";
 	}
+	
+	public String getData() {
+		return name;
+	}
 }
