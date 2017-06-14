@@ -31,4 +31,8 @@ public class RemotePlayer extends Player {
 	public String getClientName() {
 		return ipAddress.getHostAddress();
 	}
+	
+	public String toString() {
+		return "Player "+username+" on "+ipAddress.getHostAddress()+":"+port;
+	}
 }
