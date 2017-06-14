@@ -546,8 +546,8 @@ public class Level {
 		tiles[x + y * w] = t.id;
 		data[x + y * w] = (byte) dataVal;
 		
-		if(Game.ISONLINE && Game.connection != null) {
-			Game.connection.sendTileUpdate(x, y);
+		if(Game.isValidServer()) {
+			Game.server.sendTileUpdate(depth, x, y);
 		}
 	}
 	
@@ -569,6 +569,10 @@ public class Level {
 		*/
 		entities.add(entity);
 		entity.setLevel(this, x, y);
+		
+		if(Game.isValidServer()) {
+			Game.server.sendEntityAddition(e);
+		}
 		
 		if (Game.debug) {
 			String clazz = entity.getClass().getCanonicalName();
@@ -595,6 +599,8 @@ public class Level {
 		e.level = null;
 		if(e instanceof RemotePlayer)
 			System.out.println("removing remote player from level " + depth);
+		if(Game.isValidServer())
+			Game.server.sendEntityRemoval(e);
 		int xto = e.x >> 4;
 		int yto = e.y >> 4;
 		removeEntity(xto, yto, e);
