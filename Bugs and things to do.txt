@@ -1,5 +1,8 @@
 	---Quick TODO's---
 
+--CURRENT: pretty much just make the entity update() methods from the list in "what to send over connection".txt, and then make sure that updates are *actually sent* by the server.
+And... figure out how to find which entity fields have been updated... well, maybe. I may just send them all, at least for now, just to make sure things stay up to date.
+
 -reorder tools a bit in ToolType.java b/c I'm picky. Hoes should be first, at least. ;)
 - add to F3 menu: "heartticks" left until regen another heart.
 
@@ -22,6 +25,10 @@ Sound effects don't always play when they should; mostly it seems when other sou
 ****
 
 Stop saving player arrow count, and refit the load class indexes to reflect that. I should really find a better way to represent each piece of info in loading, so the removal of one save item doesn't break everything.
+
+****
+
+Make it so player usernames must be unique.
 
 ****
 
