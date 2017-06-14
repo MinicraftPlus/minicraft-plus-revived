@@ -1,7 +1,9 @@
 package minicraft.entity;
 
+import java.lang.reflect.Field;
 import java.util.List;
 import java.util.Random;
+import java.io.Serializable;
 import minicraft.Game;
 import minicraft.gfx.Screen;
 import minicraft.item.Item;
@@ -18,6 +20,8 @@ public abstract class Entity {
 	// TODO might replace the below with a simple array of colors.
 	public int col; // day/night color variations, plus current color.
 	
+	public int eid; /// this is intended for multiplayer, but I think it could be helpful in single player, too. certainly won't harm anything, I think... as long as finding a valid id doesn't take long...
+	
 	public Entity(int xr, int yr) { // add color to this later, in color update
 		this.xr = xr;
 		this.yr = yr;
@@ -25,6 +29,8 @@ public abstract class Entity {
 		level = null;
 		removed = true;
 		col = 0;
+		
+		eid = Game.generateUniqueEntityId();
 	}
 	
 	public abstract void render(Screen screen); /// used to render the entity on screen.
@@ -32,7 +38,16 @@ public abstract class Entity {
 	
 	/** Removes the entity from the level. */
 	public void remove() {
+		if(removed)
+			System.out.println("note: remove() called on removed entity");
+		
 		removed = true;
+		
+		if(level == null)
+			System.out.println("Note: remove() called on entity with no level reference.");
+		
+		if(Game.isValidClient() && !Game.isValidServer())
+			System.out.println("WARNING: client game is removing "+getClass().replace("minicraft.entity.","")+" entity from level " + (level==null?"null":level.depth));
 	}
 	
 	public void setLevel(Level level, int x, int y) {
@@ -195,4 +210,77 @@ public abstract class Entity {
 		
 		return level.getClosestPlayer(x, y);
 	}
+	
+	public void update(String deltas) {
+		for(String field: deltas.split(";")) {
+			String fieldName = field.substring(0, field.indexOf(","));
+			String val = field.substring(field.indexOf(",")+1);
+			switch(fieldName) {
+				case "x": x = Integer.parseInt(val); break;
+				case "y": x = Integer.parseInt(val); break;
+				case "level":
+					if(val.equals("null")) break; // this means no level.
+					Level newLvl = Game.levels[Integer.parseInt(val)];
+					if(newLvl != null && level != null) {
+						if(newLvl.depth == level.depth) break;
+						if(level != null) level.remove(this);
+						if(newLvl != null) newLvl.add(this);
+					}
+					break;
+			}
+		}
+	}
+	
+	/// I think I'll make these "getUpdates()" methods be an established thing, that returns all the things that can change that you need to account for when updating entities across a server.
+	/// by extension, the update() method should always account for all the variables specified here.
+	public String getUpdates() {
+		return "x,"+x+";"
+		+"y,"+y+";"
+		+"level,"+(level==null?"null":Game.lvlIdx(level.depth));
+	}
+	
+	/*
+	public String getAlteredData() {
+		System.out.println("serializing " + getClass().getSimpleName());
+		try {
+			Class<? extends Entity> c = getClass();
+			Field[] fields = c.getFields();
+			String data = c.getCanonicalName()+";";
+			for(Field f: fields)
+				data += f.getName()+","+f.get(this)+";";
+			
+			return data;
+		} catch(Exception ex) {
+			ex.printStackTrace();
+			return "";
+		}
+	}*/
+	
+	/*
+	public String serialize() {
+		/// this will NOT include everything. And it won't worry about subclasses. It will just contain enough to reconstruct it well enough on the other side.
+		String className = getClass().getName().replace("minicraft.entity.",""); // since this will always be the case, it's implied.
+		String data = className+";"+x+";"+y; /// note that beginning delimiters are always used, and not ending ones.
+		// since this class is abstract, it can't be directly instantiated... but just in case, let's check:
+		
+		return data;
+	}
+	
+	public static Entity deserialize(String data) {
+		try {
+			String[] parts = data.split(";");
+			Class c = Class.forName(parts[0]);
+			System.out.println("deserializing " + c.getSimpleName());
+			Object e = c.newInstance();
+			for(int i = 0; i < parts.length-1; i++) {
+				String[] fieldpair = parts[i+1].split(",");
+				Field current = e.getClass().getField(fieldpair[0]);
+				current.set(e, current.getType().cast(parts[1])); // FIXME this isn't going to work...
+			}
+		} catch (Exception ex) {
+			ex.printStackTrace();
+			return null;
+		}
+		return null;
+	}*/
 }
