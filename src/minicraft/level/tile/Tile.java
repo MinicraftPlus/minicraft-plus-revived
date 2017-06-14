@@ -114,11 +114,11 @@ public abstract class Tile {
 	public boolean interact(Level level, int xt, int yt, Player player, Item item, int attackDir) {
 		return false;
 	}
-	
+	/*
 	public boolean use(Level level, int xt, int yt, Player player, int attackDir) {
 		return false;
 	}
-	
+	*/
 	/** Sees if the tile connects to Water or Lava. */
 	public boolean connectsToLiquid() {
 		return connectsToWater || connectsToLava;
