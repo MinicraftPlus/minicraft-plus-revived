@@ -224,50 +224,60 @@ public class Save {
 		for(int l = 0; l < Game.levels.length; l++) {
 			for(int i = 0; i < Game.levels[l].entities.size(); i++) {
 				Entity e = (Entity)Game.levels[l].entities.get(i);
-				String name = e.getClass().getName().replace("minicraft.entity.", "");
-				String extradata = "";
-				
-				if(e instanceof ItemEntity || e instanceof Particle || e instanceof Spark || e instanceof Arrow || e instanceof RemotePlayer) continue; // don't even write ItemEntities or particle effects; Spark... will probably is saved, eventually; it presents an unfair cheat to remove the sparks by reloading the game.
-				
-				if(e instanceof Mob) {
-					Mob m = (Mob)e;
-					extradata = ":" + m.health;
-					if(e instanceof EnemyMob)
-					 	extradata += ":" + ((EnemyMob)m).lvl;
-				}
-				
-				if(e instanceof Chest) {
-					Chest chest = (Chest)e;
-					
-					for(int ii = 0; ii < chest.inventory.invSize(); ii++) {
-						Item item = (Item)chest.inventory.get(ii);
-						extradata += ":" + item.name;
-						if(item instanceof StackableItem)
-							extradata += ";" + chest.inventory.count(item);
-					}
-					
-					if(chest instanceof DeathChest) extradata += ":" + ((DeathChest)chest).time;
-					if(chest instanceof DungeonChest) extradata += ":" + ((DungeonChest)chest).isLocked;
-				}
-				
-				if(e instanceof Spawner) {
-					Spawner egg = (Spawner)e;
-					extradata += ":" + egg.mob.getClass().getName().replace("minicraft.entity.", "") + ":" + (egg.mob instanceof EnemyMob ? ((EnemyMob)egg.mob).lvl : 1);
-				}
-				
-				if (e instanceof Lantern) {
-					extradata += ":"+((Lantern)e).type.ordinal();
-				}
-				
-				if (e instanceof Crafter) {
-					//extradata += ":"+((Crafter)e).type.name();
-					name = ((Crafter)e).type.name();
-				}
-				
-				data.add(name + "[" + e.x + ":" + e.y + extradata + ":" + l + "]");
+				data.add(writeEntity(e, true));
 			}
 		}
 		
 		writeToFile(location + filename + extention, data);
+	}
+	
+	public static String writeEntity(Entity e, boolean isLocalSave) {
+		String name = e.getClass().getName().replace("minicraft.entity.", "");
+		String extradata = "";
+		
+		if(isLocalSave && (e instanceof ItemEntity || e instanceof Particle || e instanceof Spark || e instanceof Arrow || e instanceof RemotePlayer)) continue; // don't even write ItemEntities or particle effects; Spark... will probably is saved, eventually; it presents an unfair cheat to remove the sparks by reloading the game.
+		
+		if(e instanceof Mob) {
+			Mob m = (Mob)e;
+			extradata = ":" + m.health;
+			if(e instanceof EnemyMob)
+				extradata += ":" + ((EnemyMob)m).lvl;
+		}
+		
+		if(e instanceof Chest) {
+			Chest chest = (Chest)e;
+			
+			for(int ii = 0; ii < chest.inventory.invSize(); ii++) {
+				Item item = (Item)chest.inventory.get(ii);
+				extradata += ":" + item.name;
+				if(item instanceof StackableItem)
+					extradata += ";" + chest.inventory.count(item);
+			}
+			
+			if(chest instanceof DeathChest) extradata += ":" + ((DeathChest)chest).time;
+			if(chest instanceof DungeonChest) extradata += ":" + ((DungeonChest)chest).isLocked;
+		}
+		
+		if(e instanceof Spawner) {
+			Spawner egg = (Spawner)e;
+			extradata += ":" + egg.mob.getClass().getName().replace("minicraft.entity.", "") + ":" + (egg.mob instanceof EnemyMob ? ((EnemyMob)egg.mob).lvl : 1);
+		}
+		
+		if (e instanceof Lantern) {
+			extradata += ":"+((Lantern)e).type.ordinal();
+		}
+		
+		if (e instanceof Crafter) {
+			name = ((Crafter)e).type.name();
+		}
+		
+		if (!isLocalSave) {
+			if(e instanceof RemotePlayer) {
+				RemotePlayer rp = (RemotePlayer)e;
+				extradata += ":"+rp.username+":"+(new String(rp.ipAddress.getAddress()))+":"+rp.port;
+			}
+		}
+		
+		return name + "[" + e.x + ":" + e.y + (!isLocalSave ? ":"+e.eid : "") + extradata + ":" + Game.lvlIdx(e.level.depth) + "]";
 	}
 }

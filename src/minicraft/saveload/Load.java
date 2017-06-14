@@ -477,91 +477,124 @@ public class Load {
 		}
 		
 		for(int i = 0; i < data.size(); i++) {
-			List<String> info = Arrays.asList(data.get(i).substring(data.get(i).indexOf("[") + 1, data.get(i).indexOf("]")).split(":")); // this gets everything inside the "[...]" after the entity name.
-			
-			String entityName = data.get(i).substring(0, data.get(i).indexOf("[")); // this gets the text before "[", which is the entity name.
-			int x = Integer.parseInt(info.get(0));
-			int y = Integer.parseInt(info.get(1));
-			
-			int mobLvl = 1;
-			if(!Crafter.names.contains(entityName)) {
-				try {
-					if(Class.forName("minicraft.entity.EnemyMob").isAssignableFrom(Class.forName("minicraft.entity."+entityName)))
-						mobLvl = Integer.parseInt(info.get(info.size()-2));
-				} catch(ClassNotFoundException ex) {
-					ex.printStackTrace();
-				}
-				
-				if(mobLvl == 0) {
-					if(Game.debug) System.out.println("level 0 mob: " + entityName);
-					mobLvl = 1;
-				}
-			}
-			
-			Entity newEntity = getEntity(entityName, player, mobLvl);
-			
-			if(newEntity != null) { // the method never returns null, but...
-				if(newEntity instanceof Mob) {
-					Mob mob = (Mob)newEntity;
-					mob.health = Integer.parseInt(info.get(2));
-					newEntity = mob;
-				} else if(newEntity instanceof Chest) {
-					Chest chest = (Chest)newEntity;
-					boolean isDeathChest = chest instanceof DeathChest;
-					boolean isDungeonChest = chest instanceof DungeonChest;
-					List<String> chestInfo = info.subList(2, info.size()-1);
-					
-					int endIdx = chestInfo.size()-(isDeathChest||isDungeonChest?1:0);
-					for(int idx = 0; idx < endIdx; idx++) {
-						String itemData = chestInfo.get(idx);
-						if (itemData.contains(";")) {
-							String[] aitemData = (itemData + ";1").split(";"); // this appends ";1" to the end, meaning one item, to everything; but if it was already there, then it becomes the 3rd element in the list, which is ignored.
-							if(worldVer.compareTo(new Version("1.9.4")) < 0)
-								aitemData[0] = subOldName(aitemData[0], worldVer);
-							StackableItem stack = (StackableItem)Items.get(aitemData[0]);
-							stack.count = Integer.parseInt(aitemData[1]);
-							chest.inventory.add(stack);
-						} else {
-							if(worldVer.compareTo(new Version("1.9.4-dev4")) < 0)
-								itemData = subOldName(itemData, worldVer);
-							Item item = Items.get(itemData);
-							chest.inventory.add(item);
-						}
-					}
-					
-					if (isDeathChest) {
-						((DeathChest)chest).time = Integer.parseInt(chestInfo.get(chestInfo.size()-1));
-					} else if (isDungeonChest) {
-						((DungeonChest)chest).isLocked = Boolean.parseBoolean(chestInfo.get(chestInfo.size()-1));
-					}
-					
-					if (chest instanceof DungeonChest)
-						Game.levels[Integer.parseInt(info.get(info.size()-1))].chestcount++;
-					newEntity = chest;
-				}
-				else if(newEntity instanceof Spawner) {
-					newEntity = new Spawner((MobAi)getEntity(info.get(2), player, Integer.parseInt(info.get(3))));
-					//egg.initMob((MobAi)getEntity(info.get(2), player, info.get(3)));
-					//egg.lvl = Integer.parseInt(info.get(3));
-					//newEntity = egg;
-				}
-				else if(newEntity instanceof Lantern && worldVer.compareTo(new Version("1.9.4")) >= 0 && info.size() > 3) {
-					newEntity = new Lantern(Lantern.Type.values()[Integer.parseInt(info.get(2))]);
-				}
-				/*else if(newEntity instanceof Crafter && worldVer.compareTo(new Version("2.0.0-dev4")) >= 0) {
-					System.out.println("");
-					newEntity = new Crafter(Enum.valueOf(Crafter.Type.class, info.get(2)));
-				}*/
-				
-				int currentlevel = Integer.parseInt(info.get(info.size()-1));
-				Game.levels[currentlevel].add(newEntity, x, y);
-			} // end of entity not null conditional
+			loadEntity(data.get(i), true);
 		}
 	}
 	
-	public Entity getEntity(String string, Player player, int moblvl) {
+	public static Entity loadEntity(String entityData, boolean isLocalSave) {
+		List<String> info = Arrays.asList(entityData.substring(entityData.indexOf("[") + 1, entityData.indexOf("]")).split(":")); // this gets everything inside the "[...]" after the entity name.
+		
+		String entityName = entityData.substring(0, entityData.indexOf("[")); // this gets the text before "[", which is the entity name.
+		
+		if(entityName.equals("Player"))
+			return null;
+		
+		int x = Integer.parseInt(info.get(0));
+		int y = Integer.parseInt(info.get(1));
+		
+		int eid = -1;
+		if(!isLocalSave)
+			eid = Integer.parseInt(info.remove(2));
+		
+		if(entityName.equals("RemotePlayer") && !isLocalSave) {
+			String username = info.get(2);
+			java.net.InetAddress ip = java.net.InetAddress.getByAddress(info.get(3).getBytes());
+			int port = Integer.parseInt(info.get(4));
+			RemotePlayer rp = new RemotePlayer(Game.player.game, username, ip, port);
+			rp.eid = eid;
+			return rp;
+		}
+		
+		
+		int mobLvl = 1;
+		try {
+			if(!Crafter.names.contains(entityName) && Class.forName("minicraft.entity.EnemyMob").isAssignableFrom(Class.forName("minicraft.entity."+entityName)))
+				mobLvl = Integer.parseInt(info.get(info.size()-2));
+		} catch(ClassNotFoundException ex) {
+			ex.printStackTrace();
+		}
+		
+		if(mobLvl == 0) {
+			if(Game.debug) System.out.println("level 0 mob: " + entityName);
+			mobLvl = 1;
+		}
+		
+		Entity newEntity = getEntity(entityName, mobLvl);
+		
+		if(newEntity == null)
+			return null;
+		
+		if(newEntity instanceof Mob) {
+			Mob mob = (Mob)newEntity;
+			mob.health = Integer.parseInt(info.get(2));
+			newEntity = mob;
+		} else if(newEntity instanceof Chest) {
+			Chest chest = (Chest)newEntity;
+			boolean isDeathChest = chest instanceof DeathChest;
+			boolean isDungeonChest = chest instanceof DungeonChest;
+			List<String> chestInfo = info.subList(2, info.size()-1);
+			
+			int endIdx = chestInfo.size()-(isDeathChest||isDungeonChest?1:0);
+			for(int idx = 0; idx < endIdx; idx++) {
+				String itemData = chestInfo.get(idx);
+				if (itemData.contains(";")) {
+					String[] aitemData = (itemData + ";1").split(";"); // this appends ";1" to the end, meaning one item, to everything; but if it was already there, then it becomes the 3rd element in the list, which is ignored.
+					if(worldVer.compareTo(new Version("1.9.4")) < 0)
+						aitemData[0] = subOldName(aitemData[0], worldVer);
+					StackableItem stack = (StackableItem)Items.get(aitemData[0]);
+					stack.count = Integer.parseInt(aitemData[1]);
+					chest.inventory.add(stack);
+				} else {
+					if(worldVer.compareTo(new Version("1.9.4-dev4")) < 0)
+						itemData = subOldName(itemData, worldVer);
+					Item item = Items.get(itemData);
+					chest.inventory.add(item);
+				}
+			}
+			
+			if (isDeathChest) {
+				((DeathChest)chest).time = Integer.parseInt(chestInfo.get(chestInfo.size()-1));
+			} else if (isDungeonChest) {
+				((DungeonChest)chest).isLocked = Boolean.parseBoolean(chestInfo.get(chestInfo.size()-1));
+			}
+			
+			if (chest instanceof DungeonChest)
+				Game.levels[Integer.parseInt(info.get(info.size()-1))].chestcount++;
+			newEntity = chest;
+		}
+		else if(newEntity instanceof Spawner) {
+			newEntity = new Spawner((MobAi)getEntity(info.get(2), player, Integer.parseInt(info.get(3))));
+			//egg.initMob((MobAi)getEntity(info.get(2), player, info.get(3)));
+			//egg.lvl = Integer.parseInt(info.get(3));
+			//newEntity = egg;
+		}
+		else if(newEntity instanceof Lantern && worldVer.compareTo(new Version("1.9.4")) >= 0 && info.size() > 3) {
+			newEntity = new Lantern(Lantern.Type.values()[Integer.parseInt(info.get(2))]);
+		}
+		/*else if(newEntity instanceof Crafter && worldVer.compareTo(new Version("2.0.0-dev4")) >= 0) {
+			System.out.println("");
+			newEntity = new Crafter(Enum.valueOf(Crafter.Type.class, info.get(2)));
+		}*/
+		/*else if(newEntity instanceof Spark && worldVer.compareTo(new Version("2.0.1-dev2")) >= 0) {
+			Spark sp = (Spark)newEntity;
+			sp.xa = info.get(2);
+			sp.ya = info.get(3);
+		}*/
+		
+		if(isLocalSave) {
+			int currentlevel = Integer.parseInt(info.get(info.size()-1));
+			Game.levels[currentlevel].add(newEntity, x, y);
+		}
+		else
+			newEntity.eid = eid;
+		
+		return newEntity;
+	}
+	
+	public static Entity getEntity(String string, int moblvl) {
 		switch(string) {
-			case "Player": return (Entity)(player);
+			case "Player": return (Entity)(Game.player);
+			case "RemotePlayer": return null;
 			case "Cow": return (Entity)(new Cow());
 			case "Sheep": return (Entity)(new Sheep());
 			case "Pig": return (Entity)(new Pig());
@@ -587,7 +620,7 @@ public class Load {
 			case "Lantern": return (Entity)(new Lantern(Lantern.Type.NORM));
 			//case "Iron Lantern": return (Entity)(new Lantern(Lantern.Type.IRON));
 			//case "Gold Lantern": return (Entity)(new Lantern(Lantern.Type.GOLD));
-			//case "Spark": return (Entity)(new Spark());
+			case "Spark": return (Entity)(new Spark());
 			default : /*if(Game.debug)*/ System.out.println("LOAD: unknown or outdated entity requested: " + string);
 				return null;
 		}
