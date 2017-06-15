@@ -585,7 +585,7 @@ public class Level {
 		if (Game.debug) {
 			String clazz = entity.getClass().getCanonicalName();
 			clazz = clazz.substring(clazz.lastIndexOf(".")+1);
-			String[] searching = {"DungeonChest", "AirWizard", "RemotePlayer"}; //can contain any number of class names I want to print when found.
+			String[] searching = {"DungeonChest", "AirWizard", "Player"}; //can contain any number of class names I want to print when found.
 			for(String search: searching) {
 				try {
 					if(Class.forName("minicraft.entity."+search).isAssignableFrom(entity.getClass())) {

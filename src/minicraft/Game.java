@@ -91,7 +91,7 @@ public class Game extends Canvas implements Runnable {
 	public static Level[] levels = new Level[6]; // This array stores the different levels.
 	public int currentLevel = 3; // This is the level the player is on. It defaults to 3, the surface.
 	
-	public static final int[] idxToDepth = {-3, -2, -1, 0, 1, 5}; /// this is to map the level depths to each level's index in Game's levels array. This must ALWAYS be the same length as the levels array, of course.
+	public static final int[] idxToDepth = {-3, -2, -1, 0, 1, -4}; /// this is to map the level depths to each level's index in Game's levels array. This must ALWAYS be the same length as the levels array, of course.
 	public static final int minLevelDepth, maxLevelDepth;
 	static {
 		int min, max;
@@ -108,7 +108,7 @@ public class Game extends Canvas implements Runnable {
 	
 	public InputHandler input; // input used in Game, Player, and just about all the *Menu classes.
 	public Menu menu; // the current menu you are on.
-	public static Player player; // The Player.
+	public Player player; // The Player.
 	//public Level level; // This is the current level you are on.
 	static int worldSize = 128; // The size of the world
 	public static int lvlw = worldSize; // The width of the world
@@ -304,9 +304,7 @@ public class Game extends Canvas implements Runnable {
 				f.x = 984;
 				f.y = 984;
 				levels[lvlIdx(-4)].add(f);
-			}
-			
-			if (!WorldSelectMenu.loadworld) {
+				
 				Level level = levels[currentLevel]; // sets level to the current level (3; surface)
 				pastDay1 = false;
 				player.findStartPos(level); // finds the start level for the player

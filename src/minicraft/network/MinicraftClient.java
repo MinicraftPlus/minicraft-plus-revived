@@ -176,7 +176,7 @@ public class MinicraftClient extends Thread implements MinicraftConnection {
 				int[] info = new int[infostrings.length];
 				for(int i = 0; i < info.length; i++)
 					info[i] = Integer.parseInt(infostrings[i]);
-				Game.player.eid = info[0];
+				game.player.eid = info[0];
 				Game.lvlw = info[1];
 				Game.lvlh = info[2];
 				game.player.x = info[3];
@@ -207,7 +207,7 @@ public class MinicraftClient extends Thread implements MinicraftConnection {
 				Level newLevel = Game.levels[game.currentLevel];
 				String[] entities = new String(data).split(",");
 				for(String entityString: entities) {
-					newLevel.add(Load.loadEntity(entityString, (new Load.Version(Game.VERSION)), false));
+					newLevel.add(Load.loadEntity(entityString, game, (new Load.Version(Game.VERSION)), false));
 					/*// decode the string back into an entity
 					String[] constructorTypes = entityString.split(";");
 					Class c = Class.forName("minicraft.entity."+constructorTypes[0]);
@@ -235,7 +235,7 @@ public class MinicraftClient extends Thread implements MinicraftConnection {
 			case ADD:
 				byte curLevel = data[0];
 				String entityData = new String(Arrays.copyOfRange(data, 1, data.length));
-				Entity e = Load.loadEntity(entityData, (new Load.Version(Game.VERSION)), false);
+				Entity e = Load.loadEntity(entityData, game, (new Load.Version(Game.VERSION)), false);
 				if(Game.levels[curLevel] != null)
 					Game.levels[curLevel].add(e);
 				else return false;

@@ -70,9 +70,9 @@ public class Load {
 			
 			loadGame("Game", game); // more of the version will be determined here
 			loadWorld("Level", game);
+			loadEntities("Entities", game);
 			loadInventory("Inventory", game.player.inventory);
 			loadPlayer("Player", game.player);
-			loadEntities("Entities", game.player);
 			LoadingMenu.percentage = 0; // reset
 		}
 	}
@@ -469,7 +469,7 @@ public class Load {
 		}
 	}
 	
-	public void loadEntities(String filename, Player player) {
+	public void loadEntities(String filename, Game game) {
 		loadFromFile(location + filename + extention);
 		
 		for(int i = 0; i < Game.levels.length; i++) {
@@ -477,11 +477,11 @@ public class Load {
 		}
 		
 		for(int i = 0; i < data.size(); i++) {
-			loadEntity(data.get(i), worldVer, true);
+			loadEntity(data.get(i), game, worldVer, true);
 		}
 	}
 	
-	public static Entity loadEntity(String entityData, Version worldVer, boolean isLocalSave) {
+	public static Entity loadEntity(String entityData, Game game, Version worldVer, boolean isLocalSave) {
 		List<String> info = Arrays.asList(entityData.substring(entityData.indexOf("[") + 1, entityData.indexOf("]")).split(":")); // this gets everything inside the "[...]" after the entity name.
 		
 		String entityName = entityData.substring(0, entityData.indexOf("[")); // this gets the text before "[", which is the entity name.
@@ -506,7 +506,7 @@ public class Load {
 				ex.printStackTrace();
 			}
 			int port = Integer.parseInt(info.get(4));
-			RemotePlayer rp = new RemotePlayer(Game.player.game, username, ip, port);
+			RemotePlayer rp = new RemotePlayer(game, username, ip, port);
 			rp.eid = eid;
 			return rp;
 		}
@@ -613,7 +613,7 @@ public class Load {
 	
 	public static Entity getEntity(String string, int moblvl) {
 		switch(string) {
-			case "Player": return (Entity)(Game.player);
+			case "Player": return null;
 			case "RemotePlayer": return null;
 			case "Cow": return (Entity)(new Cow());
 			case "Sheep": return (Entity)(new Sheep());
