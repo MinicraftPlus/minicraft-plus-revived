@@ -11,9 +11,13 @@ Note to self: for more little bugs/ideas/concerns, search code for "TODO"
 
 	####BUGS####
 ####
-Stairs clump together.
-####
 10 minute mode unlock is not written to file when it should.
+####
+You don't spawn next to your bed after you sleep in it, and then die.
+####
+Don't let creepers blow up stairs.
+####
+Stairs clump together.
 ####
 Fire particles appear, but... they look totally weird...
 ####
@@ -22,6 +26,20 @@ Sound effects don't always play when they should; mostly it seems when other sou
 -----------------------------------------------------------------------------------
 
 	****IDEAS(that should probably be implemented)****
+****
+
+It would be really good if I could seperate all the stuff in the Save and Load classes into their respective classes -- I'm not saying remove them altogether, just take the stuff that turns a list of strings into a specific full entity object, and the stuff that brings all the class's important variables and states into a String, and put those parts into the matching class. Then, Load and Save will be there to go through all of them, and get them in a nice list or bigger string, and then write them to a file. Or vice versa for Load, it will read the file and turn it sequentially into entities. Of course, not to mention all the other things besides entities that Load and Save deal with!
+
+So, what will be added to each class is:
+
+  -TO SAVE: a method (getData(), I think), that compiles all the data, necessary to remake the entity, into a string. Maybe have a boolean fullSave or something that determines how much is enough to remake it; some things I may deem unnecessary.
+
+  -TO LOAD: a constructor, I think, with parameters being all the stuff in the save. Oh, actually, no, better idea! It just literally takes the String! Hopefully thing won't be a problem... with Chest.java maybe, but if we make it a string and a boolean, then it should be good.
+
+****
+
+REQUEST: Make TNT do chain explosions.
+
 ****
 
 Stop saving player arrow count, and refit the load class indexes to reflect that. I should really find a better way to represent each piece of info in loading, so the removal of one save item doesn't break everything.
