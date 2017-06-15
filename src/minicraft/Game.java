@@ -290,13 +290,13 @@ public class Game extends Canvas implements Runnable {
 			else {
 				worldSize = WorldGenMenu.getSize();
 				
-				int loadingInc = (int) Math.ceil(100.0 / (maxLevelDepth - minLevelDepth) - 0.002); // the .002 is for floating point errors, in case they occur.
+				double loadingInc = 100.0 / (maxLevelDepth - minLevelDepth + 1); // the .002 is for floating point errors, in case they occur.
 				for (int i = maxLevelDepth; i >= minLevelDepth; i--) {
 					// i = level depth; the array starts from the top because the parent level is used as a reference, so it should be constructed first. It is expected that the highest level will have a null parent.
-					LoadingMenu.percentage += loadingInc;
 					
-					levels[lvlIdx(i)] =
-							new Level(this, worldSize, worldSize, i, levels[lvlIdx(i+1)], !WorldSelectMenu.loadworld);
+					levels[lvlIdx(i)] = new Level(this, worldSize, worldSize, i, levels[lvlIdx(i+1)], !WorldSelectMenu.loadworld);
+				
+					LoadingMenu.percentage += loadingInc;
 				}
 				
 				// add an Iron lantern to level 5, at (984, 984), when making a new world
