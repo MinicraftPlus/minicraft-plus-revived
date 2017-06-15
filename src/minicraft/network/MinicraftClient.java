@@ -10,7 +10,19 @@ import java.net.UnknownHostException;
 import java.io.IOException;
 import minicraft.Game;
 import minicraft.InputHandler;
+import minicraft.entity.Entity;
 import minicraft.entity.ItemEntity;
+import minicraft.entity.Player;
+import minicraft.entity.RemotePlayer;
+import minicraft.entity.Chest;
+import minicraft.item.Item;
+import minicraft.item.Items;
+import minicraft.screen.MultiplayerMenu;
+import minicraft.screen.ModeMenu;
+import minicraft.screen.TitleMenu;
+import minicraft.level.Level;
+import minicraft.saveload.Save;
+import minicraft.saveload.Load;
 
 /// This class is only used by the client runtime; the server runtime doesn't touch it.
 public class MinicraftClient extends Thread implements MinicraftConnection {
@@ -22,7 +34,7 @@ public class MinicraftClient extends Thread implements MinicraftConnection {
 	private static final int requestRepeatInterval = 100;
 	private int requestTimer = 0;
 	
-	public enum State {
+	public static enum State {
 		LOGIN, TILES, ENTITIES, START, PLAY, DISCONNECTED
 	}
 	
@@ -33,7 +45,7 @@ public class MinicraftClient extends Thread implements MinicraftConnection {
 			socket = new DatagramSocket();
 			ipAddress = InetAddress.getByName(hostName);
 			
-			game.player = new RemotePlayer(game, playerName, socket.getHostAddress(), socket.getPort());
+			game.player = new RemotePlayer(game, playerName, socket.getInetAddress(), socket.getPort());
 			
 			curState = State.LOGIN;
 			
@@ -55,7 +67,7 @@ public class MinicraftClient extends Thread implements MinicraftConnection {
 				e.printStackTrace();
 			}
 			
-			parsePacket(game, packet.getData(), packet.getAddress(), packet.getPort());
+			parsePacket(packet.getData(), packet.getAddress(), packet.getPort());
 			
 			if(curState != State.PLAY) {
 				boolean act = requestTimer <= 0;
@@ -65,19 +77,19 @@ public class MinicraftClient extends Thread implements MinicraftConnection {
 						if(!act) break; // don't send request constantly.
 						/// send login request.
 						String username = ((RemotePlayer)game.player).username;
-						sendData(MinicraftProtocol.InputType.LOGIN, username+";"+Game.VERSION);
+						sendData(MinicraftProtocol.InputType.LOGIN, (username+";"+Game.VERSION).getBytes());
 						break;
 					
 					case TILES:
 						if(!act) break;
 						// send request for level tiles.
-						sendData(MinicraftProtocol.InputType.INIT_T, (new byte[1] {(byte)game.currentLevel}));
+						sendData(MinicraftProtocol.InputType.INIT_T, (new byte[] {(byte)game.currentLevel}));
 						break;
 					
 					case ENTITIES:
 						if(!act) break;
 						// send request for level entities.
-						sendData(MinicraftProtocol.InputType.INIT_E, (new byte[1] {(byte)game.currentLevel}));
+						sendData(MinicraftProtocol.InputType.INIT_E, (new byte[] {(byte)game.currentLevel}));
 						break;
 					
 					case START:
@@ -92,7 +104,7 @@ public class MinicraftClient extends Thread implements MinicraftConnection {
 				
 				if(curState == State.LOGIN || curState == State.TILES || curState == State.ENTITIES) {
 					try {
-						thread.sleep(10);
+						Thread.sleep(10);
 					} catch(InterruptedException ex) {}
 					requestTimer -= 10;
 				}
@@ -103,9 +115,9 @@ public class MinicraftClient extends Thread implements MinicraftConnection {
 	/** This method is responsible for parsing all data recieved by the socket. */
 	public boolean parsePacket(byte[] alldata, InetAddress address, int port) {
 		//if (Game.debug) System.out.println("checking input...");
-		if(alldata == null || alldata.length() == 0) return false;
+		if(alldata == null || alldata.length == 0) return false;
 		
-		InputType inType = MinicraftProtocol.getInputType(alldata[0]);
+		MinicraftProtocol.InputType inType = MinicraftProtocol.getInputType(alldata[0]);
 		if(inType == null)
 			return false;
 		
@@ -164,14 +176,15 @@ public class MinicraftClient extends Thread implements MinicraftConnection {
 				int[] info = new int[infostrings.length];
 				for(int i = 0; i < info.length; i++)
 					info[i] = Integer.parseInt(infostrings[i]);
-				Game.lvlw = info[0];
-				Game.lvlh = info[1];
-				game.player.x = info[2];
+				Game.player.eid = info[0];
+				Game.lvlw = info[1];
+				Game.lvlh = info[2];
 				game.player.x = info[3];
-				game.tickCount = info[4];
-				ModeMenu.updateModeBools(info[5]);
-				if(ModeMenu.score)
-					game.scoreTime = info[6];
+				game.player.x = info[4];
+				game.tickCount = info[5];
+				ModeMenu.updateModeBools(info[6]);
+				if(ModeMenu.score && info.length > 7)
+					game.scoreTime = info[7];
 				
 				/// vars are set; now start requesting entities.
 				if(curState == State.LOGIN) // only go through the sequence if this is called as part of start up.
@@ -191,10 +204,10 @@ public class MinicraftClient extends Thread implements MinicraftConnection {
 				return true;
 			
 			case INIT_E:
-				Level level = Game.levels[game.currentLevel];
+				Level newLevel = Game.levels[game.currentLevel];
 				String[] entities = new String(data).split(",");
 				for(String entityString: entities) {
-					level.add(Load.loadEntity(entityString, false));
+					newLevel.add(Load.loadEntity(entityString, (new Load.Version(Game.VERSION)), false));
 					/*// decode the string back into an entity
 					String[] constructorTypes = entityString.split(";");
 					Class c = Class.forName("minicraft.entity."+constructorTypes[0]);
@@ -220,42 +233,42 @@ public class MinicraftClient extends Thread implements MinicraftConnection {
 				return true;
 			
 			case ADD:
-				byte lvl = data[0];
-				String info = new String(Arrays.copyOfRange(data, 1, data.length));
-				Entity e = Load.loadEntity(info, false);
-				if(Game.levels[lvl] != null)
-					Game.levels[lvl].add(e);
+				byte curLevel = data[0];
+				String entityData = new String(Arrays.copyOfRange(data, 1, data.length));
+				Entity e = Load.loadEntity(entityData, (new Load.Version(Game.VERSION)), false);
+				if(Game.levels[curLevel] != null)
+					Game.levels[curLevel].add(e);
 				else return false;
 				return true;
 			
 			case ENTITY:
-				String info = new String(data);
-				int eid = Integer.parseInt(info.substring(0, info.indexOf(";")));
-				info = info.substring(info.indexOf(";")+1);
-				Entity e = Game.getEntity(eid);
-				if(e == null) {
+				String updates = new String(data);
+				int entityid = Integer.parseInt(updates.substring(0, updates.indexOf(";")));
+				updates = updates.substring(updates.indexOf(";")+1);
+				Entity entity = Game.getEntity(entityid);
+				if(entity == null) {
 					System.err.println("CLIENT error with ENTITY request: specified entity could not be found.");
 					return false;
 				}
-				e.update(info);
+				entity.update(updates);
 			
 			case REMOVE:
 				//int eid = 0;
 				//for(int i = 0; i < data.length; i++)
 					//eid += data[i] << i*8;
 				int eid = (data[0]<<(8*3)) + (data[1]<<(8*2)) + (data[2]<<8) + data[3];
-				Entity e = Game.getEntity(eid);
-				if(e != null) {
-					e.remove();
+				Entity toRemove = Game.getEntity(eid);
+				if(toRemove != null) {
+					toRemove.remove();
 					return true;
 				}
 				return false;
 			
 			case NOTIFY:
-				String[] info = new String(data).split(";");
-				String msg = info[0];
-				int notetime = Integer.parseInt(info[1]);
-				Game.notifications.add(msg);
+				String[] parts = new String(data).split(";");
+				String note = parts[0];
+				int notetime = Integer.parseInt(parts[1]);
+				Game.notifications.add(note);
 				Game.notetick = notetime;
 				return true;
 			
@@ -265,14 +278,14 @@ public class MinicraftClient extends Thread implements MinicraftConnection {
 				return true;
 			
 			case PICKUP:
-				int eid = Integer.parseInt(new String(data));
-				Entity e = Game.getEntity(eid);
-				if(e == null || !e instanceof ItemEntity) {
-					System.err.println("CLIENT error with PICKUP response: specified entity does not exist or is not an ItemEntity: " + e);
+				int ieid = Integer.parseInt(new String(data));
+				Entity ie = Game.getEntity(ieid);
+				if(ie == null || !(ie instanceof ItemEntity)) {
+					System.err.println("CLIENT error with PICKUP response: specified entity does not exist or is not an ItemEntity: " + ie);
 					return false;
 				}
-				e.remove();
-				game.player.inventory.add(((ItemEntity)e).item);
+				ie.remove();
+				game.player.inventory.add(((ItemEntity)ie).item);
 				return true;
 		}
 		
@@ -298,13 +311,13 @@ public class MinicraftClient extends Thread implements MinicraftConnection {
 		sendData(MinicraftProtocol.InputType.INTERACT, (player.x+";"+player.y+";"+player.dir+";"+itemString+";"+player.inventory.count(Items.get("arrow"))).getBytes());
 	}
 	
-	public void addToChest(Chest c, Item item) {
-		if(c == null || item == null) return;
+	public void addToChest(Chest chest, Item item) {
+		if(chest == null || item == null) return;
 		sendData(MinicraftProtocol.InputType.CHESTIN, (chest.eid+";"+item).getBytes());
 	}
 	
-	public void removeFromChest(Chest c, int index) {
-		if(c == null) return;
+	public void removeFromChest(Chest chest, int index) {
+		if(chest == null) return;
 		sendData(MinicraftProtocol.InputType.CHESTOUT, (chest.eid+";"+index).getBytes());
 	}
 	
@@ -348,10 +361,8 @@ public class MinicraftClient extends Thread implements MinicraftConnection {
 	public void endConnection() {
 		if (Game.debug) System.out.println("closing client socket and ending connection");
 		try {
-			sendData(MinicraftProtocol.InputType.DISCONNECT, (new byte[0] {})); // send exit signal
+			sendData(MinicraftProtocol.InputType.DISCONNECT, (new byte[] {})); // send exit signal
 			socket.close();
-		} catch (IOException ex) {
-			ex.printStackTrace();
 		} catch (NullPointerException ex) {}
 		
 		curState = State.DISCONNECTED;

@@ -4,6 +4,8 @@ import java.net.InetAddress;
 import minicraft.Game;
 import minicraft.InputHandler;
 import minicraft.gfx.Screen;
+import minicraft.gfx.Font;
+import minicraft.gfx.Color;
 
 /** This is used only by the Server runtime, to represent a client player. */
 public class RemotePlayer extends Player {
@@ -34,5 +36,10 @@ public class RemotePlayer extends Player {
 	
 	public String toString() {
 		return "Player "+username+" on "+ipAddress.getHostAddress()+":"+port;
+	}
+	
+	/// this is simply to broaden the access permissions.
+	public void attack() {
+		super.attack();
 	}
 }

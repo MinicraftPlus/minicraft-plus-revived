@@ -185,7 +185,7 @@ public class Inventory {
 	
 	public void removeItem(Item i) {
 		if(i instanceof StackableItem)
-			removeItems(i, i.count);
+			removeItems(i, ((StackableItem)i).count);
 		else
 			removeItems(i, 1);
 	}
@@ -254,7 +254,7 @@ public class Inventory {
 		for(Item i: items)
 			itemdata += i.getData()+":";
 		
-		itemdata = itemdata.substring(0, itemdata.length-1); //remove extra ":".
+		itemdata = itemdata.substring(0, itemdata.length()-1); //remove extra ":".
 		return itemdata;
 	}
 	

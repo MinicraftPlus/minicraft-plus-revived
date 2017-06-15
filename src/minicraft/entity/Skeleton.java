@@ -29,7 +29,6 @@ public class Skeleton extends EnemyMob {
 		
 		Player player = getClosestPlayer();
 		if (player != null && randomWalkTime == 0) {
-			boolean done = false;
 			artime--;
 			
 			int xd = player.x - x;
@@ -41,7 +40,7 @@ public class Skeleton extends EnemyMob {
 					if(dir == 1) ydir = -1;
 					if(dir == 2) xdir = -1;
 					if(dir == 3) xdir = 1;
-					level.add(new Arrow(this, xdir, ydir, lvl, done));
+					level.add(new Arrow(this, xdir, ydir, lvl));
 					artime = arrowtime;
 				}
 			}

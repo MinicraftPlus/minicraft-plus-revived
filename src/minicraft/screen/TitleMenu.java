@@ -11,10 +11,12 @@ import java.util.Arrays;
 import java.util.Iterator;
 import java.util.Random;
 import minicraft.Game;
+import minicraft.InputHandler;
 import minicraft.GameApplet;
 import minicraft.gfx.Color;
 import minicraft.gfx.Font;
 import minicraft.gfx.Screen;
+import minicraft.entity.RemotePlayer;
 
 public class TitleMenu extends SelectMenu {
 	protected final Random random = new Random();
@@ -140,16 +142,29 @@ private static final String[] options = {"New game", "Join Online World", "Instr
 	public TitleMenu() {
 		super(Arrays.asList(options), 11*8, 1, Color.get(-1, 555), Color.get(-1, 222));
 		Game.readyToRenderGameplay = false;
-		/// this is just in case
-		if(Game.connection != null) {
-			if (Game.debug) System.out.println("wrapping up loose connection ends");
-			Game.connection.endConnection();
-			Game.connection = null;
+		/// this is just in case; though, i do take advantage of it in other places.
+		if(Game.server != null) {
+			if (Game.debug) System.out.println("wrapping up loose server ends");
+			Game.server.endConnection();
+			Game.server = null;
+		}
+		if(Game.client != null) {
+			if (Game.debug) System.out.println("wrapping up loose client ends");
+			Game.client.endConnection();
+			Game.client = null;
 		}
 		Game.ISONLINE = false;
 		
 		folder = new File(location);
 		rand = random.nextInt(splashes.length);
+	}
+	
+	public void init(Game game, InputHandler input) {
+		super.init(game, input);
+		if(game.player instanceof RemotePlayer) {
+			game.player = null;
+			game.resetGame();
+		}
 	}
 	
 	/*public void getSplashes() {

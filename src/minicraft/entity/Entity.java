@@ -30,7 +30,7 @@ public abstract class Entity {
 		removed = true;
 		col = 0;
 		
-		eid = Game.generateUniqueEntityId();
+		eid = -1;
 	}
 	
 	public abstract void render(Screen screen); /// used to render the entity on screen.
@@ -47,15 +47,19 @@ public abstract class Entity {
 			System.out.println("Note: remove() called on entity with no level reference.");
 		
 		if(Game.isValidClient() && !Game.isValidServer())
-			System.out.println("WARNING: client game is removing "+getClass().replace("minicraft.entity.","")+" entity from level " + (level==null?"null":level.depth));
+			System.out.println("WARNING: client game is removing "+getClass().getName().replace("minicraft.entity.","")+" entity from level " + (level==null?"null":level.depth));
 	}
 	
+	/** This should ONLY be called by the Level class. To properly add an entity to a level, use level.add(entity) */
 	public void setLevel(Level level, int x, int y) {
 		this.level = level;
 		if(level != null)
 			removed = false;
 		this.x = x;
 		this.y = y;
+		
+		if(eid < 0)
+			eid = Game.generateUniqueEntityId();
 	}
 	
 	// TODO Inplement this! it's a really good idea!
@@ -216,6 +220,7 @@ public abstract class Entity {
 			String fieldName = field.substring(0, field.indexOf(","));
 			String val = field.substring(field.indexOf(",")+1);
 			switch(fieldName) {
+				case "eid": eid = Integer.parseInt(val); break;
 				case "x": x = Integer.parseInt(val); break;
 				case "y": x = Integer.parseInt(val); break;
 				case "level":

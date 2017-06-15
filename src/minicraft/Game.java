@@ -33,8 +33,8 @@ import minicraft.level.tile.Tile;
 import minicraft.level.tile.Tiles;
 import minicraft.network.MinicraftConnection;
 import minicraft.network.MinicraftServer;
-import minicraft.network.MinicraftServerThread;
 import minicraft.network.MinicraftClient;
+import minicraft.network.MinicraftProtocol;
 import minicraft.saveload.Load;
 import minicraft.saveload.Save;
 import minicraft.screen.*;
@@ -203,7 +203,7 @@ public class Game extends Canvas implements Runnable {
 	}
 	
 	public static final boolean isValidServer() {
-		return ISONLINE && ISHOST; && server != null;
+		return ISONLINE && ISHOST && server != null;
 	}
 	public static final boolean hasConnectedClients() {
 		return isValidServer() && server.clientList.size() > 0;
@@ -290,7 +290,7 @@ public class Game extends Canvas implements Runnable {
 			else {
 				worldSize = WorldGenMenu.getSize();
 				
-				int loadingInc = Math.ceil(100.0 / (maxLevelDepth - minLevelDepth) - 0.002); // the .002 is for floating point errors, in case they occur.
+				int loadingInc = (int) Math.ceil(100.0 / (maxLevelDepth - minLevelDepth) - 0.002); // the .002 is for floating point errors, in case they occur.
 				for (int i = maxLevelDepth; i >= minLevelDepth; i--) {
 					// i = level depth; the array starts from the top because the parent level is used as a reference, so it should be constructed first. It is expected that the highest level will have a null parent.
 					LoadingMenu.percentage += loadingInc;
@@ -512,15 +512,17 @@ public class Game extends Canvas implements Runnable {
 				System.out.println("note: trying 1000th time to find valid entity id...(will continue)");
 			
 			eid = random.nextInt(Integer.MAX_VALUE);
-		} while(idIsUnused(eid) == false);
+		} while(!idIsAvaliable(eid));
 		
 		return eid;
 	}
 	
-	public static boolean idIsUnused(int eid) {
-		if(eid == 0) return false; // this is reserved for the main player.
+	public static boolean idIsAvaliable(int eid) {
+		if(eid == 0) return false; // this is reserved for the main player... kind of...
+		if(eid < 0) return false; // id's must be positive numbers.
 		
 		for(Level level: levels) {
+			if(level == null) continue;
 			for(Entity e: level.getEntities()) {
 				if(e.eid == eid)
 					return false;
@@ -580,7 +582,7 @@ public class Game extends Canvas implements Runnable {
 		Game.notifications.add(msg);
 		Game.notetick = notetick;
 		if(isValidClient())
-			Game.client.sendData(MinicraftProtocol.InputType.NOTIFY, msg+";"+notetick);
+			Game.client.sendData(MinicraftProtocol.InputType.NOTIFY, (msg+";"+notetick).getBytes());
 	}
 	
 	/** This method changes the level that the player is currently on.
@@ -599,7 +601,7 @@ public class Game extends Canvas implements Runnable {
 		player.y = (player.y >> 4) * 16 + 8; // sets the player's y coord (to center yourself on the stairs)
 		
 		if(isValidClient() && !isValidServer() && levels[currentLevel] == null)
-			client.curState = client.State.TILES;
+			Game.client.curState = MinicraftClient.State.TILES;
 		else
 			levels[currentLevel].add(player); // adds the player to the level.
 	}

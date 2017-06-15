@@ -8,7 +8,7 @@ public interface MinicraftConnection {
 	void endConnection();
 	boolean isConnected();
 	
-	static default byte[] prependType(MinicraftProtocol.InputType type, byte[] data) {
+	default byte[] prependType(MinicraftProtocol.InputType type, byte[] data) {
 		byte[] fulldata = new byte[data.length+1];
 		fulldata[0] = (byte) type.ordinal();
 		for(int i = 1; i < fulldata.length; i++)

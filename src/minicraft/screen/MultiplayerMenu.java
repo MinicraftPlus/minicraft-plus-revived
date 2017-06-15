@@ -27,8 +27,6 @@ public class MultiplayerMenu extends Menu {
 	}
 	
 	public void tick() {
-		//boolean isConnectedClient = game.isValidClient() && Game.connection.isConnected();
-		
 		if(Game.isConnectedClient() && !Game.ISHOST) {
 			if (Game.debug) System.out.println("Begin game!");
 			game.setMenu(new LoadingMenu());
@@ -36,17 +34,8 @@ public class MultiplayerMenu extends Menu {
 			//game.setMenu(null);
 		} else if(input.getKey("exit").clicked) {
 			game.setMenu(parent);
-			if(!Game.ISHOST) {
+			if(!Game.ISHOST)
 				game.setMenu(new TitleMenu());
-				/*if (Game.debug) System.out.println("quitting multiplayer mode on client side; exiting multiplayer menu");
-				// this should be reached only on client runtimes when no connection has yet been established.
-				if(Game.connection != null) {
-					Game.connection.endConnection();
-					Game.connection = null;
-				}
-				Game.ISONLINE = false;
-				*/
-			}
 		}
 		
 		if(input.getKey("alt-U").clicked) {
@@ -101,7 +90,7 @@ public class MultiplayerMenu extends Menu {
 		else if(isHost) {
 			if(game.isValidServer()) {
 				//Font.drawCentered("Server IP Address:", screen, 20, Color.get(-1, 555));
-				//Font.drawCentered((MinicraftServer)game.connection).getAddress(), screen, 30, Color.get(-1, 151));
+				//Font.drawCentered(game.server.socket..getInetAddress().getHostAddress(), screen, 30, Color.get(-1, 151));
 				Font.drawCentered("Awaiting client connections"+getElipses(), screen, 60, Color.get(-1, 444));
 				Font.drawCentered("So far:", screen, 70, Color.get(-1, 444));
 				int i = 0;

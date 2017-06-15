@@ -235,11 +235,22 @@ public class Save {
 		String name = e.getClass().getName().replace("minicraft.entity.", "");
 		String extradata = "";
 		
-		if(isLocalSave && (e instanceof ItemEntity || e instanceof Particle || e instanceof Spark || e instanceof Arrow || e instanceof RemotePlayer)) continue; // don't even write ItemEntities or particle effects; Spark... will probably is saved, eventually; it presents an unfair cheat to remove the sparks by reloading the game.
+		// don't even write ItemEntities or particle effects; Spark... will probably is saved, eventually; it presents an unfair cheat to remove the sparks by reloading the game.
+		if(e instanceof Particle || e instanceof Spark) // never write these, when writing or sending a world.
+			return "";
+		else if(isLocalSave && (e instanceof ItemEntity || e instanceof Arrow || e instanceof RemotePlayer)) // wirte these only when sending a world, not writing it.
+			return "";
 		
-		if(e instanceof Mob) {
+		if(!isLocalSave)
+			extradata += ":" + e.eid;
+		
+		if(!isLocalSave && e instanceof RemotePlayer) {
+			RemotePlayer rp = (RemotePlayer)e;
+			extradata += ":"+rp.username+":"+(new String(rp.ipAddress.getAddress()))+":"+rp.port;
+		} // the "else" part is so that remote player, which is a mob, doesn't get the health thing.
+		else if(e instanceof Mob) {
 			Mob m = (Mob)e;
-			extradata = ":" + m.health;
+			extradata += ":" + m.health;
 			if(e instanceof EnemyMob)
 				extradata += ":" + ((EnemyMob)m).lvl;
 		}
@@ -272,9 +283,11 @@ public class Save {
 		}
 		
 		if (!isLocalSave) {
-			if(e instanceof RemotePlayer) {
-				RemotePlayer rp = (RemotePlayer)e;
-				extradata += ":"+rp.username+":"+(new String(rp.ipAddress.getAddress()))+":"+rp.port;
+			if(e instanceof ItemEntity) {
+				extradata += ":" + ((ItemEntity)e).getData();
+			}
+			if(e instanceof Arrow) {
+				extradata += ":" + ((Arrow)e).getData();
 			}
 		}
 		

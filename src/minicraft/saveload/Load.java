@@ -102,7 +102,7 @@ public class Load {
 		loadUnlocks("Unlocks");
 	}
 	
-	protected static class Version implements Comparable {
+	public static class Version implements Comparable {
 		public Integer make, major, minor, dev;
 		
 		public Version(String version) {
@@ -477,11 +477,11 @@ public class Load {
 		}
 		
 		for(int i = 0; i < data.size(); i++) {
-			loadEntity(data.get(i), true);
+			loadEntity(data.get(i), worldVer, true);
 		}
 	}
 	
-	public static Entity loadEntity(String entityData, boolean isLocalSave) {
+	public static Entity loadEntity(String entityData, Version worldVer, boolean isLocalSave) {
 		List<String> info = Arrays.asList(entityData.substring(entityData.indexOf("[") + 1, entityData.indexOf("]")).split(":")); // this gets everything inside the "[...]" after the entity name.
 		
 		String entityName = entityData.substring(0, entityData.indexOf("[")); // this gets the text before "[", which is the entity name.
@@ -498,7 +498,13 @@ public class Load {
 		
 		if(entityName.equals("RemotePlayer") && !isLocalSave) {
 			String username = info.get(2);
-			java.net.InetAddress ip = java.net.InetAddress.getByAddress(info.get(3).getBytes());
+			java.net.InetAddress ip = null;
+			try {
+				ip = java.net.InetAddress.getByAddress(info.get(3).getBytes());
+			} catch(java.net.UnknownHostException ex) {
+				System.err.println("LOAD could not read ip address of remote player in file.");
+				ex.printStackTrace();
+			}
 			int port = Integer.parseInt(info.get(4));
 			RemotePlayer rp = new RemotePlayer(Game.player.game, username, ip, port);
 			rp.eid = eid;
@@ -563,7 +569,7 @@ public class Load {
 			newEntity = chest;
 		}
 		else if(newEntity instanceof Spawner) {
-			newEntity = new Spawner((MobAi)getEntity(info.get(2), player, Integer.parseInt(info.get(3))));
+			newEntity = new Spawner((MobAi)getEntity(info.get(2), Integer.parseInt(info.get(3))));
 			//egg.initMob((MobAi)getEntity(info.get(2), player, info.get(3)));
 			//egg.lvl = Integer.parseInt(info.get(3));
 			//newEntity = egg;
@@ -585,8 +591,22 @@ public class Load {
 			int currentlevel = Integer.parseInt(info.get(info.size()-1));
 			Game.levels[currentlevel].add(newEntity, x, y);
 		}
-		else
+		else {
 			newEntity.eid = eid;
+			
+			if(newEntity instanceof Arrow) {
+				int ownerID = Integer.parseInt(info.get(2));
+				int dirx = Integer.parseInt(info.get(3));
+				int diry = Integer.parseInt(info.get(4));
+				int dmg = Integer.parseInt(info.get(5));
+				newEntity = new Arrow((Mob)Game.getEntity(ownerID), x, y, dirx, diry, dmg);
+			}
+			if(newEntity instanceof ItemEntity) {
+				Item item = Items.get(info.get(2));
+				int timeleft = Integer.parseInt(info.get(3));
+				newEntity = new ItemEntity(item, x, y, timeleft);
+			}
+		}
 		
 		return newEntity;
 	}
@@ -620,7 +640,9 @@ public class Load {
 			case "Lantern": return (Entity)(new Lantern(Lantern.Type.NORM));
 			//case "Iron Lantern": return (Entity)(new Lantern(Lantern.Type.IRON));
 			//case "Gold Lantern": return (Entity)(new Lantern(Lantern.Type.GOLD));
-			case "Spark": return (Entity)(new Spark());
+			case "Arrow": return (Entity)(new Arrow(null, 0, 0, 0, 0, 0));
+			case "ItemEntity": return (Entity)(new ItemEntity(null, 0, 0));
+			//case "Spark": return (Entity)(new Spark());
 			default : /*if(Game.debug)*/ System.out.println("LOAD: unknown or outdated entity requested: " + string);
 				return null;
 		}

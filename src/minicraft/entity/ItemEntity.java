@@ -30,6 +30,14 @@ public class ItemEntity extends Entity {
 		lifeTime = 60 * 10 + random.nextInt(70); // sets the lifetime of the item. min = 600 ticks, max = 669 ticks.
 		// the idea was to have it last 10-11 seconds, I think.
 	}
+	public ItemEntity(Item item, int x, int y, int time) {
+		this(item, x, y);
+		this.time = time;
+	}
+	
+	public String getData() {
+		return item.name+":"+time;
+	}
 	
 	public void tick() {
 		time++;
@@ -60,6 +68,7 @@ public class ItemEntity extends Entity {
 		int expectedx = nx - x; // expected movement distance
 		int expectedy = ny - y;
 		
+		/// THIS is where x and y are changed.
 		move(expectedx, expectedy); // move the ItemEntity.
 		
 		// finds the difference between the inherited before and after positions

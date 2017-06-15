@@ -356,7 +356,7 @@ public class Player extends Mob {
 	}
 	
 	/** This method is called when we press the attack button. */
-	private void attack() {
+	protected void attack() {
 		if(Game.isValidClient() && !Game.isValidServer()) {
 			// if this is a multiplayer game, than the server will execute the full method instead.
 			Game.client.requestInteraction(this);
@@ -384,7 +384,7 @@ public class Player extends Mob {
 					case 3: spx = 1; spy = 0; break;
 				}
 				if (ModeMenu.creative == false) inventory.removeItem(Items.get("arrow"));
-				level.add(new Arrow(this, spx, spy, tool.level, done));
+				level.add(new Arrow(this, spx, spy, tool.level));
 				done = true; // we have attacked!
 			}
 		}
