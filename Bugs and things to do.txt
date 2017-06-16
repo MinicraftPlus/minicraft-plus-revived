@@ -1,6 +1,7 @@
 	---Quick TODO's---
 
---CURRENT: pretty much just make the entity update() methods from the list in "what to send over connection".txt, and then make sure that updates are *actually sent* by the server.
+--CURRENT: Server closes socket instantly...
+Also, I need to actually implement Entity.java's update methods to the rest of the Entity classes.
 And... figure out how to find which entity fields have been updated... well, maybe. I may just send them all, at least for now, just to make sure things stay up to date.
 
 -reorder tools a bit in ToolType.java b/c I'm picky. Hoes should be first, at least. ;)

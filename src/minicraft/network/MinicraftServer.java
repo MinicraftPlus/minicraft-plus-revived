@@ -368,6 +368,6 @@ public class MinicraftServer extends Thread implements MinicraftConnection {
 	}
 	
 	public boolean isConnected() {
-		return socket != null && !socket.isClosed() && clientList.size() > 0;
+		return socket != null && !socket.isClosed();
 	}
 }
