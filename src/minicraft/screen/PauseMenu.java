@@ -1,6 +1,7 @@
 package minicraft.screen;
 
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Arrays;
 import minicraft.Game;
 import minicraft.entity.Player;
@@ -12,19 +13,34 @@ import minicraft.saveload.Save;
 public class PauseMenu extends SelectMenu {
 
 	private int selection; //selection is set when you press enter.
-	Player player;
+	private Menu parent;
 
-	private static final String[] options = {"Return to Game", "Options", "Change Key Bindings", "Make World Multiplayer", "Save Game", "Load Game", "Main Menu"};
-
-	public PauseMenu(Player player) {
-		super(Arrays.asList(options), 8*11 - 35, 4, Color.get(-1, 555), Color.get(-1, 222));
-		this.player = player;
+	private static final List<String> alloptions = Arrays.asList(new String[] {"Return to Game", "Options", "Change Key Bindings", "Make World Multiplayer", "Save Game", "Load Game", "Main Menu"});
+	//private List<String> options = new ArrayList<String>();
+	
+	private static final List<String> getOptions() {
+		List<String> options = new ArrayList<String>();
+		options.addAll(alloptions);
+		
+		if(Game.ISONLINE) {
+			options.remove("Make World Multiplayer");
+			
+			if(!Game.isValidServer())
+				options.remove("Save Game");
+		}
+		
+		return options;
+	}
+	
+	public PauseMenu(Menu parent) {
+		super(getOptions(), 8*11 - 35, 4, Color.get(-1, 555), Color.get(-1, 222));
 		selection = -1; // set to main pause menu options.
+		this.parent = parent;
 	}
 
 	public void tick() {
 		if (input.getKey("pause").clicked) {
-			game.setMenu(null);
+			game.setMenu(parent);
 			return;
 		}
 		
@@ -32,42 +48,37 @@ public class PauseMenu extends SelectMenu {
 		
 		//choice chosen; input here is at confirm menu
 		if (input.getKey("select").clicked) {
+			String chosen = options.get(selected);
+			String confirmed = selection >= 0 ? options.get(selection) : "";
 			
-			if (selected == 0) game.setMenu(null);
-			
-			if (selected == 1) {
-				//I bet this is used when exiting options menu to decide whether to go to title screen, or pause menu:
-				game.setMenu(new OptionsMenu(this));
+			switch(chosen) {
+				case "Return to Game": game.setMenu(parent); return;
+				case "Options": game.setMenu(new OptionsMenu(this)); return;
+				case "Change Key Bindings": game.setMenu(new KeyInputMenu(this)); return;
+				case "Make World Multiplayer": game.setMenu(new MultiplayerMenu(true)); return;
+				default:
+					selection = selected; // for any other choice, this progresses a choice to a confirmation.
 			}
 			
-			if (selected == 2) {
-				game.setMenu(new KeyInputMenu(this));
-				//selected = 0;
-				//selection = -1;
+			switch(confirmed) {
+				case "Save Game":
+					game.setMenu(null);
+					new Save(game.player, WorldSelectMenu.worldname);
+				return;
+				
+				case "Load World":
+					WorldSelectMenu.loadworld = true;
+					game.setMenu(new WorldSelectMenu());
+				return;
+				
+				case "Main Menu":
+					game.setMenu(new TitleMenu());
+				return;
 			}
-			
-			if (selected == 3 && !(Game.ISONLINE && !Game.ISHOST)) {
-				//new Save(player, WorldSelectMenu.worldname);
-				game.setMenu(new MultiplayerMenu(true, this));
-			}
-			
-			if (selection == 4) { //save game option
-				game.setMenu((Menu) null);
-				new Save(player, WorldSelectMenu.worldname);
-			}
-			
-			if (selection == 5) { //load game option; can't return
-				WorldSelectMenu.loadworld = true;
-				game.setMenu(new WorldSelectMenu());
-			}
-			
-			if (selection == 6) //title menu
-				game.setMenu(new TitleMenu());
-			
-			if (selected > 3) selection = selected;
 		}
 		
-		if (input.getKey("exit").clicked) game.setMenu((Menu) null);
+		if (input.getKey("exit").clicked)
+			game.setMenu(parent);
 	}
 
 	public void render(Screen screen) {
@@ -80,16 +91,17 @@ public class PauseMenu extends SelectMenu {
 			Font.drawCentered(input.getMapping("select")+": Choose", screen, 150, Color.get(-1, 333));
 		} else {
 			ArrayList<String> confirmDialog = new ArrayList<String>();
+			String selection = options.get(this.selection);
 			
-			if (selection == 4) // save game
+			if (selection.equals("Save Game")) // save game
 				confirmDialog.addAll(Arrays.asList(Font.getLines("Save Game?\n\n\nTip: press \"R\" to save in-game", 28*8, 18*8, 2)));
-			else if (selection == 5) // load game
-				confirmDialog.addAll(Arrays.asList(Font.getLines("Load Game?\nCurrent game will\nnot be saved", 28*8, 18*8, 2)));
-			else if (selection == 6) // back to menu
-				confirmDialog.addAll(Arrays.asList(Font.getLines("Back to Main Menu?\nCurrent game will\nnot be saved", 28*8, 18*8, 2)));
+			else if (selection.equals("Load Game")) // load game
+				confirmDialog.addAll(Arrays.asList(Font.getLines("Load Game?\nUnsaved progress\nwill be lost", 28*8, 18*8, 2)));
+			else if (selection.equals("Main Menu")) // back to menu
+				confirmDialog.addAll(Arrays.asList(Font.getLines("Back to Main Menu?\nUnsaved progress\nwill be lost", 28*8, 18*8, 2)));
 			
 			for(int i = 0; i < confirmDialog.size(); i++) { // draws each line from above; the first line is white, and all the following lines are red.
-				int col = i == 0 ? Color.get(-1, 555) : selection == 4 ? Color.get(-1, 333) : Color.get(-1, 500);
+				int col = i == 0 ? Color.get(-1, 555) : selection.equals("Save Game") ? Color.get(-1, 333) : Color.get(-1, 500);
 				Font.drawCentered(confirmDialog.get(i), screen, 55+i*10, col); // draw it centered.
 			}
 			int ypos = 70 + confirmDialog.size()*10; // start 20 below the last element...
