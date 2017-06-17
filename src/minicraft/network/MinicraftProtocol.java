@@ -20,10 +20,10 @@ public class MinicraftProtocol {
 	protected static final int PORT = 4225;
 	
 	public static enum InputType {
-		INVALID, LOGIN, INIT_W, INIT_T, INIT_E, TILE, ENTITY, ADD, REMOVE, DISCONNECT, NOTIFY, INTERACT, PICKUP, CHESTIN, CHESTOUT, BED;
+		INVALID, USERNAMES, LOGIN, INIT_W, INIT_T, INIT_E, TILE, ENTITY, PLAYER, ADD, REMOVE, DISCONNECT, SAVE, NOTIFY, INTERACT, PICKUP, CHESTIN, CHESTOUT, BED;
 		
 		public static final InputType[] values = InputType.values();
-		public static final List<InputType> serverOnly = Arrays.asList(new InputType[] {INIT_W, TILE, ENTITY, ADD, REMOVE});
+		public static final List<InputType> serverOnly = Arrays.asList(new InputType[] {INIT_W, TILE, ENTITY, PLAYER, ADD, REMOVE});
 	}
 	
 	public static InputType getInputType(byte idx) {

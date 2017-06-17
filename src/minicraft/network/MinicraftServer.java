@@ -1,12 +1,20 @@
 package minicraft.network;
 
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Arrays;
 import java.net.DatagramSocket;
 import java.net.DatagramPacket;
 import java.net.InetAddress;
+import java.net.NetworkInterface;
 import java.net.SocketException;
 import java.io.IOException;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FilenameFilter;
+import java.io.BufferedReader;
+import java.io.FileReader;
+import java.nio.file.StandardOpenOption;
 import minicraft.Game;
 import minicraft.entity.Entity;
 import minicraft.entity.ItemEntity;
@@ -16,6 +24,7 @@ import minicraft.saveload.Save;
 import minicraft.saveload.Load;
 import minicraft.level.Level;
 import minicraft.screen.ModeMenu;
+import minicraft.screen.WorldSelectMenu;
 import minicraft.item.Item;
 import minicraft.item.Items;
 
@@ -26,9 +35,16 @@ public class MinicraftServer extends Thread implements MinicraftConnection {
 	private Game game;
 	private DatagramSocket socket = null;
 	
+	private String worldPath;
+	
 	public MinicraftServer(Game game) {
 		super("MinicraftServer");
 		this.game = game;
+		game.ISHOST = true; // just in case.
+		//game.player.remove(); // the server has no player...
+		
+		worldPath = Game.gameDir + "/saves/" + WorldSelectMenu.worldname;
+		
 		try {
 			System.out.println("opening server socket...");
 			socket = new DatagramSocket(MinicraftProtocol.PORT);
@@ -98,11 +114,87 @@ public class MinicraftServer extends Thread implements MinicraftConnection {
 		return names;
 	}
 	
+	public File[] getRemotePlayerFiles() {
+		File saveFolder = new File(worldPath);
+		
+		File[] clientSaves = saveFolder.listFiles(new FilenameFilter() {
+			public boolean accept(File file, String name) {
+				return name.startsWith("RemotePlayer");
+			}
+		});
+		
+		return clientSaves;
+	}
+	public File getRemotePlayerFile(NetworkInterface computer) {
+		File[] clientFiles = getRemotePlayerFiles();
+		String playerdata = "";
+		for(File file: clientFiles) {
+			String mac = "";
+			try {
+				BufferedReader br = new BufferedReader(new FileReader(file));
+				try {
+					mac = br.readLine();
+				} catch(IOException ex) {
+					System.err.println("failed to read line from file.");
+					ex.printStackTrace();
+				}
+			} catch(FileNotFoundException ex) {
+				System.err.println("couldn't find remote player file: " + file);
+				ex.printStackTrace();
+			}
+			
+			try {
+				if(Arrays.equals(mac.getBytes(), computer.getHardwareAddress())) {
+					/// this player has been here before.
+					if (Game.debug) System.out.println("remote player file found; returning file " + file.getName());
+					return file;
+				}
+			} catch(SocketException ex) {
+				System.err.println("problem fetching mac address.");
+				ex.printStackTrace();
+			}
+		}
+		
+		return null;
+	}
+	public String getRemotePlayerFileData(NetworkInterface computer) {
+		File rpFile = getRemotePlayerFile(computer);
+		
+		String playerdata = "";
+		if(rpFile != null) {
+			try {
+				BufferedReader br = new BufferedReader(new FileReader(rpFile));
+				try {
+					String mac = br.readLine(); // this is the mac address.
+					String line = "";
+					while((line = br.readLine()) != null)
+						playerdata += line + "\n"; // should get the right data.
+					playerdata = playerdata.substring(0, playerdata.length()-1);
+				} catch(IOException ex) {
+					System.err.println("failed to read line from file.");
+					ex.printStackTrace();
+				}
+			} catch(FileNotFoundException ex) {
+				System.err.println("couldn't find remote player file: " + rpFile);
+				ex.printStackTrace();
+			}
+		}
+		
+		return playerdata;
+	}
+	
 	public boolean parsePacket(byte[] alldata, InetAddress address, int port) {
 		
 		MinicraftProtocol.InputType inType = MinicraftProtocol.getInputType(alldata[0]);
 		
 		byte[] data = Arrays.copyOfRange(alldata, 1, alldata.length);
+		NetworkInterface computer = null;
+		try {
+			computer = NetworkInterface.getByInetAddress(address);
+		} catch(SocketException ex) {
+			System.err.println("couldn't get network interface from address.");
+			ex.printStackTrace();
+		}
 		/*
 			wanted behavior for each input type:
 			
@@ -146,7 +238,7 @@ public class MinicraftServer extends Thread implements MinicraftConnection {
 		/// identify the client who sent this packet:
 		RemotePlayer sender = getClientPlayer(address, port);
 		// the sender should always be null for LOGIN packets, but not for any other. maybe invalid, but that returns above.
-		if(sender == null && inType != MinicraftProtocol.InputType.LOGIN) {
+		if(sender == null && inType != MinicraftProtocol.InputType.LOGIN && inType != MinicraftProtocol.InputType.USERNAMES) {
 			System.err.println("SERVER error: cannot identify sender of packet; type="+inType.name());
 			sendError("You must login first.", address, port);
 			return false;
@@ -160,6 +252,14 @@ public class MinicraftServer extends Thread implements MinicraftConnection {
 		}
 		
 		switch(inType) {
+			case USERNAMES:
+				String names = "";
+				for(RemotePlayer rp: clientList)
+					names += rp.username + "\n";
+				
+				sendData(prependType(MinicraftProtocol.InputType.USERNAMES, names.getBytes()), address, port);
+				return true;
+			
 			case LOGIN:
 				String info = new String(data);
 				String username = info.split(";")[0];
@@ -173,12 +273,47 @@ public class MinicraftServer extends Thread implements MinicraftConnection {
 				/// versions match; make client player
 				RemotePlayer clientPlayer = new RemotePlayer(game, username, address, port);
 				clientPlayer.findStartPos(Game.levels[Game.lvlIdx(0)]); // find start pos
-				Game.levels[Game.lvlIdx(0)].add(clientPlayer); // add to level (id is generated here)
+				
+				/// now, we need to check if this player has played in this world before. If they have, then all previoeus settings and items and such will be restored.
+				String playerdata = ""; // this stores the data fetched from the files.
+				
+				if(clientPlayer.ipAddress.isLoopbackAddress() && !(game.player instanceof RemotePlayer)) {
+					/// this is the first person on localhost. I believe that a second person will be saved as a loopback address, but a third will simply overwrite the second.
+					if (Game.debug) System.out.println("host player found");
+					List<String> datalist = new ArrayList<String>();
+					Save.writePlayer(game.player, datalist);
+					for(String str: datalist)
+						playerdata += str + ",";
+					playerdata = playerdata.substring(0, playerdata.length()-1) + "\n";
+					Save.writeInventory(game.player, datalist);
+					for(String str: datalist)
+						playerdata += str + ",";
+					playerdata = playerdata.substring(0, playerdata.length()-1);
+					
+					game.player = clientPlayer; // all the important data has been saved.
+				}
+				else {
+					playerdata = getRemotePlayerFileData(computer);
+				}
+				
+				if(playerdata.length() > 0) {
+					/// if a save file was found, then send the data to the client so they can resume where they left off.
+					sendData(prependType(MinicraftProtocol.InputType.PLAYER, playerdata.getBytes()), sender);
+					// and now, initialize the RemotePlayer instance with the data.
+					(new Load()).loadPlayer(clientPlayer, Arrays.asList(playerdata.split("\\n")[0]));
+					// we really don't need to load the inventory.
+				}
+				
+				// now, we send the INIT_W packet and notify the others clients.
+				
+				int playerlvl = Game.lvlIdx(clientPlayer.level != null ? clientPlayer.level.depth : 0);
+				if(!Game.levels[playerlvl].getEntities().contains(clientPlayer)) // this will be true if their file was already found, since they are added in Load.loadPlayer().
+					Game.levels[playerlvl].add(clientPlayer); // add to level (**id is generated here**)
 				//making INIT_W packet
 				int[] toSend = {
 					clientPlayer.eid,
-					Game.levels[Game.lvlIdx(0)].w,
-					Game.levels[Game.lvlIdx(0)].h,
+					Game.levels[playerlvl].w,
+					Game.levels[playerlvl].h,
 					clientPlayer.x,
 					clientPlayer.y,
 					Game.tickCount,
@@ -193,6 +328,7 @@ public class MinicraftServer extends Thread implements MinicraftConnection {
 				clientList.add(clientPlayer); /// file client player
 				/// tell others of client joining
 				broadcastData(prependType(MinicraftProtocol.InputType.ADD, Save.writeEntity(clientPlayer, false).getBytes()), clientPlayer);
+				
 				return true;
 			
 			case INIT_T:
@@ -236,7 +372,55 @@ public class MinicraftServer extends Thread implements MinicraftConnection {
 				broadcastData(prependType(MinicraftProtocol.InputType.REMOVE, String.valueOf(sender.eid).getBytes()), sender);
 				clientList.remove(sender); // remove from the server list
 				return true;
+			
+			case SAVE:
+				String filedata = new String(data);
+				/// save this client's data to a file.
+				String filename = ""; // this will hold the path to the file that will be saved to.
+				/// first, determine if this is the main player. if not, determine if a file already exists for this client. if not, find an available file name. for simplicity, we will just count the number of remote player files saved.
 				
+				if(sender == game.player) {
+					String[] parts = filedata.split("\\n");
+					List<String> datastrs = new ArrayList<String>();
+					
+					Save save = new Save(sender);
+					for(String str: parts[0].split(","))
+						datastrs.add(str);
+					save.writeToFile(save.location+"Player"+Save.extention, datastrs);
+					datastrs.clear();
+					for(String str: parts[1].split(","))
+						datastrs.add(str);
+					save.writeToFile(save.location+"Inventory"+Save.extention, datastrs);
+					
+					return true;
+				}
+				
+				File rpFile = getRemotePlayerFile(computer);
+				if(rpFile.exists())
+					filename = rpFile.getName();
+				else {
+					File[] clientSaves = getRemotePlayerFiles();
+					// check if this remote player already has a file.
+					int numFiles = clientSaves.length;
+					filename = "RemotePlayer"+numFiles+Save.extention;
+				}
+				
+				try {
+					filedata = (new String(computer.getHardwareAddress())) + "\n" + filedata;
+				} catch(SocketException ex) {
+					System.err.println("couldn't get mac address.");
+					ex.printStackTrace();
+				}
+				
+				String filepath = worldPath+"/"+filename;
+				try {
+					java.nio.file.Files.write((new File(filepath)).toPath(), Arrays.asList(filedata.split("\\n")), StandardOpenOption.CREATE, StandardOpenOption.WRITE, StandardOpenOption.TRUNCATE_EXISTING);
+				} catch(IOException ex) {
+					System.err.println("problem writing remote player to file " + filepath);
+					ex.printStackTrace();
+				}
+				// the above will hopefully write the data to file.
+				return true;
 			
 			case CHESTIN: case CHESTOUT:
 				String[] contents = new String(data).split(";");
@@ -268,7 +452,7 @@ public class MinicraftServer extends Thread implements MinicraftConnection {
 					sendData(prependType(MinicraftProtocol.InputType.CHESTOUT, removed.getData().getBytes()), sender); // send back the *exact* same packet as was sent; the client will handle it accordingly, by changing their inventory.
 				}
 				
-				broadcastData(prependType(MinicraftProtocol.InputType.ENTITY, (chest.eid+";inventory["+chest.inventory.getItemData()+"]").getBytes()), sender);
+				broadcastData(prependType(MinicraftProtocol.InputType.ENTITY, (chest.eid+";inventory:"+chest.inventory.getItemData()).getBytes()), sender);
 				return true;
 			
 			case PICKUP:

@@ -57,6 +57,7 @@ public class Game extends Canvas implements Runnable {
 	/// MULTIPLAYER
 	public static boolean ISONLINE = false;
 	public static boolean ISHOST = false; /// this being true doesn't mean this game isn't a client as well; becuase it should be.
+	public boolean autoclient = false; // used in the init method; jumps to multiplayer menu as client
 	public static MinicraftServer server = null;
 	public static MinicraftClient client = null;
 	
@@ -237,7 +238,11 @@ public class Game extends Canvas implements Runnable {
 		
 		resetGame(); // "half"-starts a new game, to set up initial variables
 		new Load(this); // this loads any saved preferences.
-		setMenu(new TitleMenu()); //sets menu to the title screen.
+		
+		if(autoclient)
+			setMenu(new MultiplayerMenu(this, "localhost"));
+		else
+			setMenu(new TitleMenu()); //sets menu to the title screen.
 	}
 	
 	/** This method is used when respawning, and by initWorld to reset the vars. It does not generate any new terrain. */
@@ -738,7 +743,7 @@ public class Game extends Canvas implements Runnable {
 		screen.render(10 * 8 + 4, screen.h - 16, 13 + 5 * 32, Color.get(0, 111, 222, 430), 0);
 		
 		String msg = "";
-		if (saving) msg = "Saving... " + LoadingMenu.percentage + "%";
+		if (saving) msg = "Saving... " + Math.round(LoadingMenu.percentage) + "%";
 		else if (Bed.inBed) msg = "Sleeping...";
 		
 		if(msg.length() > 0)
@@ -947,11 +952,15 @@ public class Game extends Canvas implements Runnable {
 	/// * The main method! * ///
 	public static void main(String[] args) {
 		boolean debug = false;
+		boolean autoclient = false;
 		String saveDir = System.getenv("APPDATA");
 		for(int i = 0; i < args.length; i++) {
-			if(args[i].equals("--debug")) debug = true;
+			if(args[i].equals("--debug"))
+				debug = true;
 			if(args[i].equals("--savedir") && i+1 < args.length)
 				saveDir = args[i+1];
+			if(args[i].equals("--localclient"))
+				autoclient = true;
 		}
 		Game.debug = debug;
 		Game.gameDir = saveDir + Game.gameDir;
@@ -975,6 +984,8 @@ public class Game extends Canvas implements Runnable {
 		});
 		
 		frame.setVisible(true);
+		
+		game.autoclient = autoclient; // this will make the game automatically jump to the MultiplayerMenu, and attempt to connect to localhost.
 		
 		game.start(); // Starts the game!
 	}
