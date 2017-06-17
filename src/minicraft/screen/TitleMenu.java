@@ -225,7 +225,7 @@ private static final String[] options = {"New game", "Join Online World", "Instr
 				game.setMenu(new WorldSelectMenu());
 				//(this method should now stop getting called by Game)
 			}
-			if(options[selected].contains("Join Online")) game.setMenu(new MultiplayerMenu(false, this)); /// TODO should be false; just testing
+			if(options[selected].contains("Join Online")) game.setMenu(new MultiplayerMenu(false));
 			if(options[selected] == "Instructions") game.setMenu(new InstructionsMenu(this));
 			if (options[selected] == "Tutorial") {
 				try {
