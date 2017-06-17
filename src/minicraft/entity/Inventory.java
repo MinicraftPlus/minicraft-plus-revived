@@ -252,9 +252,9 @@ public class Inventory {
 	public String getItemData() {
 		String itemdata = "";
 		for(Item i: items)
-			itemdata += i.getData()+":";
+			itemdata += i.getData()+",";
 		
-		itemdata = itemdata.substring(0, itemdata.length()-1); //remove extra ":".
+		itemdata = itemdata.substring(0, itemdata.length()-1); //remove extra ",".
 		return itemdata;
 	}
 	
