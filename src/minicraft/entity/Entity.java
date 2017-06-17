@@ -38,13 +38,13 @@ public abstract class Entity {
 	
 	/** Removes the entity from the level. */
 	public void remove() {
-		if(removed)
-			System.out.println("note: remove() called on removed entity");
+		if(removed && !(this instanceof ItemEntity)) // apparently this happens fairly often with item entities.
+			System.out.println("Note: remove() called on removed entity: " + getClass());
 		
 		removed = true;
 		
 		if(level == null)
-			System.out.println("Note: remove() called on entity with no level reference.");
+			System.out.println("Note: remove() called on entity with no level reference: " + getClass());
 		
 		if(Game.isValidClient() && !Game.isValidServer())
 			System.out.println("WARNING: client game is removing "+getClass().getName().replace("minicraft.entity.","")+" entity from level " + (level==null?"null":level.depth));
