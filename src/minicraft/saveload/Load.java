@@ -39,7 +39,7 @@ public class Load {
 	Version currentVer, worldVer;
 	boolean oldSave = false, hasGlobalPrefs = false;
 	
-	private Load() {
+	{
 		currentVer = new Version(Game.VERSION);
 		worldVer = null;
 		
@@ -54,8 +54,6 @@ public class Load {
 	}
 	
 	public Load(Game game, String worldname) {
-		this();
-		
 		if(!hasGlobalPrefs) {
 			loadFromFile(location + "/saves/" + worldname + "/Game" + extention);
 			Version wVer = null;
@@ -89,8 +87,6 @@ public class Load {
 	}
 	
 	public Load(Game game) {
-		this();
-		
 		location += "/";
 		
 		if(hasGlobalPrefs)
@@ -111,6 +107,10 @@ public class Load {
 		}
 		
 		loadUnlocks("Unlocks");
+	}
+	
+	public Load() {
+		worldVer = currentVer;
 	}
 	
 	public static class Version implements Comparable {
@@ -367,6 +367,9 @@ public class Load {
 	
 	public void loadPlayer(String filename, Player player) {
 		loadFromFile(location + filename + extention);
+		loadPlayer(player, data);
+	}
+	public void loadPlayer(Player player, List<String> data) {
 		player.x = Integer.parseInt(data.get(0));
 		player.y = Integer.parseInt(data.get(1));
 		player.spawnx = Integer.parseInt(data.get(2));
@@ -385,6 +388,7 @@ public class Load {
 		
 		player.game.currentLevel = Integer.parseInt(data.get(8));
 		Level level = Game.levels[player.game.currentLevel];
+		player.game.player.remove(); // removes the user player from the level, in case they would be added twice.
 		level.add(player);
 		Tile spawnTile = level.getTile(player.spawnx >> 4, player.spawny >> 4);
 		//if(spawnTile.id != Tiles.get("grass").id && spawnTile.mayPass(level, player.spawnx >> 4, player.spawny >> 4, player))
@@ -450,6 +454,9 @@ public class Load {
 	
 	public void loadInventory(String filename, Inventory inventory) {
 		loadFromFile(location + filename + extention);
+		loadInventory(inventory, data);
+	}
+	public void loadInventory(Inventory inventory, List<String> data) {
 		inventory.clearInv();
 		
 		for(int i = 0; i < data.size(); i++) {
@@ -490,12 +497,12 @@ public class Load {
 		}
 		
 		for(int i = 0; i < data.size(); i++) {
-			loadEntity(data.get(i), game, worldVer, true);
+			loadEntity(data.get(i), game, true);
 			//LoadingMenu.percentage += percentInc;
 		}
 	}
 	
-	public static Entity loadEntity(String entityData, Game game, Version worldVer, boolean isLocalSave) {
+	public Entity loadEntity(String entityData, Game game, boolean isLocalSave) {
 		List<String> info = Arrays.asList(entityData.substring(entityData.indexOf("[") + 1, entityData.indexOf("]")).split(":")); // this gets everything inside the "[...]" after the entity name.
 		
 		String entityName = entityData.substring(0, entityData.indexOf("[")); // this gets the text before "[", which is the entity name.

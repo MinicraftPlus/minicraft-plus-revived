@@ -17,13 +17,14 @@ import minicraft.screen.LoadingMenu;
 import minicraft.screen.ModeMenu;
 import minicraft.screen.OptionsMenu;
 import minicraft.screen.WorldGenMenu;
+import minicraft.screen.WorldSelectMenu;
 
 public class Save {
 
-	String location = Game.gameDir;
+	public String location = Game.gameDir;
 	File folder;
 	
-	protected static String extention = ".miniplussave";
+	public static String extention = ".miniplussave";
 	
 	List<String> data;
 	Game game;
@@ -47,12 +48,17 @@ public class Save {
 			Game.saving = false;
 			return;
 		}
+		else if(Game.isValidServer()) {
+			Game.server.broadcastData(Game.server.prependType(minicraft.network.MinicraftProtocol.InputType.SAVE, new byte[0])); // tell all the other clients to send their data over to be saved.
+		}
 		
 		writeGame("Game");
 		//writePrefs("KeyPrefs");
 		writeWorld("Level");
-		writePlayer("Player", player);
-		writeInventory("Inventory", player);
+		if(!Game.isValidServer()) { // this must be waited for on a server.
+			writePlayer("Player", player);
+			writeInventory("Inventory", player);
+		}
 		writeEntities("Entities");
 		
 		Game.notifyAll("World Saved!");
@@ -65,6 +71,11 @@ public class Save {
 		this(game, "/");
 		
 		writePrefs("Preferences");
+	}
+	
+	public Save(Player player) {
+		// this is simply for access to writeToFile.
+		this(player.game, "/saves/"+WorldSelectMenu.worldname + "/");
 	}
 	
 	public void writeToFile(String filename, List<String> savedata) { writeToFile(filename, savedata, false); }
@@ -166,6 +177,12 @@ public class Save {
 	}
 	
 	public void writePlayer(String filename, Player player) {
+		writePlayer(player, data);
+		writeToFile(location + filename + extention, data);
+	}
+	
+	public static void writePlayer(Player player, List<String> data) {
+		data.clear();
 		data.add(String.valueOf(player.x));
 		data.add(String.valueOf(player.y));
 		data.add(String.valueOf(player.spawnx));
@@ -194,11 +211,14 @@ public class Save {
 			data.add(String.valueOf(player.armorDamageBuffer));
 			data.add(String.valueOf(player.curArmor.name));
 		}
-		
-		writeToFile(location + filename + extention, data);
 	}
 	
 	public void writeInventory(String filename, Player player) {
+		writeInventory(player, data);
+		writeToFile(location + filename + extention, data);
+	}
+	public static void writeInventory(Player player, List<String> data) {
+		data.clear();
 		if(player.activeItem != null) {
 			if(player.activeItem instanceof StackableItem) {
 				data.add(player.activeItem.name + ";" + ((StackableItem)player.activeItem).count);
@@ -216,8 +236,6 @@ public class Save {
 				data.add(inventory.get(i).name);
 			}
 		}
-		
-		writeToFile(location + filename + extention, data);
 	}
 	
 	public void writeEntities(String filename) {
