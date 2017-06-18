@@ -51,10 +51,10 @@ public class MultiplayerMenu extends Menu {
 			
 			if(Game.debug)
 				arguments.add("--debug");
-			if(!Game.gameDir.startsWith(System.getenv("APPDATA"))) {
-				arguments.add("--savedir");
-				arguments.add(Game.gameDir.substring(0, Game.gameDir.lastIndexOf(".playminicraft")));
-			}
+			
+			// this will just always be added.
+			arguments.add("--savedir");
+			arguments.add(Game.gameDir.substring(0, Game.gameDir.lastIndexOf(".playminicraft")));
 			
 			arguments.add("--localclient");
 			

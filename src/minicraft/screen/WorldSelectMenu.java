@@ -13,6 +13,7 @@ import minicraft.Game;
 import minicraft.gfx.Color;
 import minicraft.gfx.Font;
 import minicraft.gfx.Screen;
+import minicraft.saveload.Load;
 import minicraft.Sound;
 
 public class WorldSelectMenu extends Menu {
@@ -60,6 +61,7 @@ public class WorldSelectMenu extends Menu {
 	private Action mode;
 	
 	public WorldSelectMenu() {
+		
 		validName = false;
 		confirmed = false;
 		
@@ -90,6 +92,12 @@ public class WorldSelectMenu extends Menu {
 				}
 			}
 		}
+		
+		/*if(location == Game.loadDir && !Game.loadDir.equals(Game.gameDir)) {
+			location = Game.gameDir;
+			loadWorlds();
+			location = Game.loadDir;
+		}*/
 		
 		while(selected > 1 && selected > worldnames.size()-1)
 			selected--;

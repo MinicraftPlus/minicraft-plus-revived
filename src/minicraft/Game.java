@@ -44,7 +44,17 @@ public class Game extends Canvas implements Runnable {
 	private static Random random = new Random();
 	
 	public static boolean debug = false;
-	public static String gameDir = "/.playminicraft/mods/Minicraft Plus"; // The directory in which all the game files are stored; APPDATA is meant for windows...
+	public static String localGameDir = "/.playminicraft/mods/Minicraft Plus";
+	public static String systemGameDir;
+	static {
+		String os = System.getProperty("os.name");
+		if(os.equalsIgnoreCase("Windows"))
+			systemGameDir = System.getenv("APPDATA");
+		else
+			systemGameDir = System.getProperty("user.home");
+	}
+	public static String gameDir = ""; // The directory in which all the game files are stored
+	//public static String loadDir = "";
 	
 	/// MANAGERIAL VARS AND RUNNING
 	
@@ -954,13 +964,7 @@ public class Game extends Canvas implements Runnable {
 		boolean debug = false;
 		boolean autoclient = false;
 		
-		String saveDir = "";
-		String os = System.getProperty("os.name");
-		if(os.equalsIgnoreCase("Windows"))
-			saveDir = System.getenv("APPDATA");
-		else
-			saveDir = System.getProperty("user.home");
-		
+		String saveDir = Game.systemGameDir;
 		for(int i = 0; i < args.length; i++) {
 			if(args[i].equals("--debug"))
 				debug = true;
@@ -971,8 +975,18 @@ public class Game extends Canvas implements Runnable {
 		}
 		Game.debug = debug;
 		if(Game.debug) System.out.println("determined save folder: " + saveDir);
-		Game.gameDir = saveDir + Game.gameDir;
+		Game.gameDir = saveDir + Game.localGameDir;
 		
+		/*loadDir = gameDir + "/saves/";
+		File testFile = new File(loadDir);
+		if(!testFile.exists()) {
+			// load from the previous folder instead.
+			String newlocation = System.getenv("APPDATA")+"/"+Game.localGameDir + "/saves/";
+			if((new File(newlocation)).exists())
+				loadDir = newlocation;
+		}
+		if(Game.debug) System.out.println("load dir: " + loadDir);
+		*/
 		Game game = new Game();
 		game.setMinimumSize(new Dimension(1, 1));
 		game.setPreferredSize(getWindowSize());
