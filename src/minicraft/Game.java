@@ -953,7 +953,14 @@ public class Game extends Canvas implements Runnable {
 	public static void main(String[] args) {
 		boolean debug = false;
 		boolean autoclient = false;
-		String saveDir = System.getenv("APPDATA");
+		
+		String saveDir = "";
+		String os = System.getProperty("os.name");
+		if(os.equalsIgnoreCase("Windows"))
+			saveDir = System.getenv("APPDATA");
+		else
+			saveDir = System.getProperty("user.home");
+		
 		for(int i = 0; i < args.length; i++) {
 			if(args[i].equals("--debug"))
 				debug = true;
@@ -963,6 +970,7 @@ public class Game extends Canvas implements Runnable {
 				autoclient = true;
 		}
 		Game.debug = debug;
+		if(Game.debug) System.out.println("determined save folder: " + saveDir);
 		Game.gameDir = saveDir + Game.gameDir;
 		
 		Game game = new Game();
