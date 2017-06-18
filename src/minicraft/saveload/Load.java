@@ -45,8 +45,6 @@ public class Load {
 		
 		File testFile = new File(location + "/Preferences" + extention);
 		hasGlobalPrefs = testFile.exists();
-		//testFile = new File(location);
-		//hasGlobalPrefs = hasGlobalPrefs || ;
 		
 		data = new ArrayList<String>();
 		extradata = new ArrayList<String>();
@@ -54,15 +52,14 @@ public class Load {
 	}
 	
 	public Load(Game game, String worldname) {
-		if(!hasGlobalPrefs) {
-			loadFromFile(location + "/saves/" + worldname + "/Game" + extention);
-			Version wVer = null;
-			if(data.get(0).contains(".")) wVer = new Version(data.get(0));
-			if(wVer == null) wVer = new Version("1.8");
-			hasGlobalPrefs = wVer.compareTo(new Version("1.9.2")) >= 0;
-		}
+		loadFromFile(location + "/saves/" + worldname + "/Game" + extention);
+		if(data.get(0).contains(".")) worldVer = new Version(data.get(0));
+		if(worldVer == null) worldVer = new Version("1.8");
 		
 		if(!hasGlobalPrefs)
+			hasGlobalPrefs = worldVer.compareTo(new Version("1.9.2")) >= 0;
+		
+		if(worldVer.compareTo(new Version("1.9.2")) < 0)
 			new LegacyLoad(game, worldname);
 		else {
 			location += "/saves/" + worldname + "/";

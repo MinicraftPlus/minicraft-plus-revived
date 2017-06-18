@@ -16,10 +16,10 @@ public class EnemyMob extends MobAi {
 	public int detectDist;
 	
 	public EnemyMob(int lvl, MobSprite[][] sprites, int[] lvlcols, int health, boolean isFactor, int detectDist, int rwTime, int rwChance) {
-		super(sprites, isFactor ? lvl * lvl * health*((Double)(Math.pow(2, OptionsMenu.diff))).intValue() : health, rwTime, rwChance);
-		this.lvl = lvl;
+		super(sprites, isFactor ? (lvl==0?1:lvl * lvl) * health*((Double)(Math.pow(2, OptionsMenu.diff))).intValue() : health, rwTime, rwChance);
+		this.lvl = lvl == 0 ? 1 : lvl;
 		this.lvlcols = java.util.Arrays.copyOf(lvlcols, lvlcols.length);
-		col = lvlcols[lvl-1];
+		col = lvlcols[this.lvl-1];
 		this.detectDist = detectDist;
 	}
 	
