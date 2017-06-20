@@ -20,9 +20,13 @@ Don't let creepers blow up stairs.
 ####
 Stairs clump together.
 ####
+REQUEST: stone drops too much coal.
+####
 Fire particles appear, but... they look totally weird...
 ####
 Sound effects don't always play when they should; mostly it seems when other sounds should be on at the same time.
+####
+REQUEST: remove POW glove, and other starting items
 ####
 -----------------------------------------------------------------------------------
 
