@@ -12,27 +12,25 @@ import minicraft.gfx.Screen;
 import minicraft.gfx.Font;
 import minicraft.gfx.FontStyle;
 import minicraft.gfx.Color;
-import minicraft.network.*;
+import minicraft.network.MinicraftClient;
 
 public class MultiplayerMenu extends Menu {
 	
-	//private boolean isHost;
-	public List<String> takenNames = new ArrayList<String>();
+	private List<String> takenNames = new ArrayList<String>();
 	
-	public String loadingMessage = "nothing";
-	public String errorMessage = "";
+	private String loadingMessage = "nothing";
+	private String errorMessage = "";
 	
-	public String typing = "";
+	private String typing = "";
 	private boolean inputIsValid = false;
 	
-	public static enum State {
-		WAITING, ENTERIP, ENTERNAME, LOADING, CONNECTED, ERROR
+	private static enum State {
+		WAITING, ENTERIP, ENTERNAME, LOADING, ERROR
 	}
 	
-	public State curState;
+	private State curState;
 	
 	public MultiplayerMenu() {
-		//this.isHost = isHost;
 		Game.ISONLINE = true;
 		Game.ISHOST = false;
 		
@@ -43,25 +41,18 @@ public class MultiplayerMenu extends Menu {
 	public MultiplayerMenu(Game game, String ipAddress) {
 		this();
 		curState = State.WAITING;
-		Game.client = new MinicraftClient(game, ipAddress);
+		Game.client = new MinicraftClient(game, this, ipAddress);
 	}
 	
 	public void tick() {
 		
 		switch(curState) {
-			case CONNECTED:
-				if (Game.debug) System.out.println("Begin game!");
-				Game.levels[game.currentLevel].add(game.player);
-				Game.readyToRenderGameplay = true;
-				game.setMenu(null);
-			return;
-			
 			case ENTERIP:
 				checkKeyTyped(null);
 				if(input.getKey("select").clicked) {
-					Game.client = new MinicraftClient(game, typing); // typing = ipAddress
-					typing = "";
 					curState = State.WAITING;
+					Game.client = new MinicraftClient(game, this, typing); // typing = ipAddress
+					typing = "";
 					return;
 				}
 			break;
@@ -78,37 +69,27 @@ public class MultiplayerMenu extends Menu {
 							inputIsValid = false;
 				
 				if(input.getKey("select").clicked && inputIsValid) {
+					curState = State.WAITING;
 					Game.client.login(typing); // typing = username
 					typing = "";
-					curState = State.WAITING;
 					return;
 				}
+			break;
+			
+			case WAITING:
+				/// this is just in case something gets set too early or something and the error state is overridden.
+				if(errorMessage.length() > 0)
+					curState = State.ERROR;
 			break;
 		}
 		
 		if(input.getKey("exit").clicked && !Game.ISHOST) {
 			game.setMenu(new TitleMenu());
 		}
-		/*
-		if(input.getKey("alt-U").clicked) {
-			typing = username;
-			username = "";
-		}
-		
-		if(curState == State.ENTERNAME) {
-			
-		}
-		else if(!Game.isValidClient()) {
-			// this game instance is a client but not the host, but they haven't connected yet.
-			checkKeyTyped(null);
-			
-			if(input.getKey("select").clicked) {
-				Game.client = new MinicraftClient(game, ipAddress);
-			}
-		}*/
 	}
 	
 	private void checkKeyTyped(java.util.regex.Pattern pattern) {
+		if(pattern == null) pattern = java.util.regex.Pattern.compile("[a-zA-Z0-9 \\-/_\\.:%\\?&,=]");
 		if(input.lastKeyTyped.length() > 0) {
 			String letter = input.lastKeyTyped;
 			input.lastKeyTyped = "";
@@ -117,8 +98,26 @@ public class MultiplayerMenu extends Menu {
 				typing += letter;
 		}
 		
-		if(input.getKey("backspace").clicked && typing.length() > 0)
+		if(input.getKey("backspace").clicked && typing.length() > 0) {
+			// backspace counts as a letter itself, but it's not part of the regex
 			typing = typing.substring(0, typing.length()-1);
+		}
+	}
+	
+	public void setTakenNames(List<String> names) {
+		takenNames = names;
+		typing = System.getProperty("user.name"); // a little trick for a nice default username. ;)
+		curState = State.ENTERNAME;
+	}
+	
+	public void setLoadingMessage(String msg) {
+		curState = State.LOADING;
+		loadingMessage = msg;
+	}
+	
+	public void setError(String msg) {
+		this.curState = State.ERROR;
+		errorMessage = msg;
 	}
 	
 	public void render(Screen screen) {
@@ -146,10 +145,6 @@ public class MultiplayerMenu extends Menu {
 				Font.drawCentered("Communicating with server"+getElipses(), screen, screen.h/2, Color.get(-1, 555));
 				break;
 			
-			case CONNECTED:
-				Font.drawCentered("Connection Successful!", screen, screen.h/2, Color.get(-1, 555));
-				break;
-			
 			case LOADING:
 				Font.drawCentered("Loading "+loadingMessage+" from server"+getElipses(), screen, screen.h/2, Color.get(-1, 555));
 				//Font.drawCentered(transferPercent+"%", screen, screen.h/2+6, Color.get(-1, 555));
@@ -161,7 +156,7 @@ public class MultiplayerMenu extends Menu {
 				FontStyle style = new FontStyle(Color.get(-1, 511));
 				Font.drawParagraph(errorMessage, screen, 0, true, screen.h/2+6, false, style, 1);
 				//Font.drawCentered(errorMessage, screen, screen.h/2+6, Color.get(-1, 511));
-				return;
+				break;
 		}
 		
 		/*

@@ -40,6 +40,10 @@ public class Font {
 		new FontStyle(color).setYPos(y).draw(msg, screen);
 	}
 	
+	public static void drawCentered(String msg, Screen screen, int x, int y, int color) {
+		new FontStyle(color).xCenterBounds(x-(screen.w-x), screen.w).setYPos(y).draw(msg, screen);
+	}
+	
 	/// these draws a paragraph from an array of lines (or a string, at which point it calls getLines()), with the specified properties.
 	
 	/// this one assumes the screen width, minus a given padding.
@@ -57,7 +61,7 @@ public class Font {
 		//int h = style.centerMaxY - style.centerMinY;
 		
 		String[] lines = getLines(para, w, h, lineSpacing);
-		System.out.println("lines: " + java.util.Arrays.toString(lines));
+		//System.out.println("lines: " + java.util.Arrays.toString(lines));
 		
 		if (centered) style.xPosition = -1;
 		//else style.xPosition = (screen.w - w) / 2;

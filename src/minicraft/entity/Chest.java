@@ -12,27 +12,27 @@ public class Chest extends Furniture {
 		super(name, new Sprite(2, 8, 2, 2, color), 3, 3); // Name of the chest
 		
 		inventory = new Inventory(); // initialize the inventory.
-		
-		// chest colors
-		/*if (canLight()) {
-			col0 = Color.get(-1, 220, 331, 552);
-			col1 = Color.get(-1, 220, 331, 552);
-			col2 = Color.get(-1, 220, 331, 552);
-			col3 = Color.get(-1, 220, 331, 552);
-		} else {
-			col0 = Color.get(-1, 110, 220, 441);
-			col1 = Color.get(-1, 220, 331, 552);
-			col2 = Color.get(-1, 110, 220, 441);
-			col3 = Color.get(-1, 000, 110, 330);
-		}*/
-		
-		//col = Color.get(-1, 220, 331, 552);
-		//sprite = 1; // Location of the sprite
 	}
 	
 	/** This is what occurs when the player uses the "Menu" command near this */
 	public boolean use(Player player, int attackDir) {
 		player.game.setMenu(new ContainerMenu(player, this));
 		return true;
+	}
+	
+	public String getUpdates() {
+		String updates = super.getUpdates()+";";
+		updates += "inventory,"+inventory.getItemData();
+		return updates;
+	}
+	
+	protected boolean updateField(String fieldName, String val) {
+		if(super.updateField(fieldName, val)) return true;
+		switch(fieldName) {
+			case "inventory":
+				inventory.updateInv(val);
+				return true;
+		}
+		return false;
 	}
 }

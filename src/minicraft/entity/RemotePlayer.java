@@ -16,28 +16,24 @@ public class RemotePlayer extends Player {
 	public String username;
 	
 	public RemotePlayer(Game game, String username, InetAddress ip, int port) { this(game, false, username, ip, port); }
-	public RemotePlayer(Game game, boolean useInput, String username, InetAddress ip, int port) {
-		super(game, new InputHandler(game, useInput));
+	public RemotePlayer(Game game, boolean isMainPlayer, String username, InetAddress ip, int port) {
+		super(game, (isMainPlayer?game.input:new InputHandler(game, false)));
 		this.ipAddress = ip;
 		this.port = port;
 		this.username = username;
 	}
-	public RemotePlayer(Game game, boolean useInput, RemotePlayer model) {
-		this(game, useInput, model.username, model.ipAddress, model.port);
+	public RemotePlayer(Game game, boolean isMainPlayer, RemotePlayer model) {
+		this(game, isMainPlayer, model.username, model.ipAddress, model.port);
 		eid = model.eid;
 	}
 	
 	public void render(Screen screen) {
 		super.render(screen);
-		Font.drawCentered(username, screen, y - 10, Color.get(-1, 444)); // draw the username of the player above their head
-	}
-	
-	public String getClientName() {
-		return ipAddress.getHostAddress();
+		Font.drawCentered(username, screen, x - screen.xOffset, y - 10 - screen.yOffset, Color.get(-1, 444)); // draw the username of the player above their head
 	}
 	
 	public String toString() {
-		return "Player "+username+" on "+ipAddress.getHostAddress()+":"+port;
+		return "RemotePlayer "+username+" on "+ipAddress.getHostAddress()+":"+port;
 	}
 	
 	/// this is simply to broaden the access permissions.

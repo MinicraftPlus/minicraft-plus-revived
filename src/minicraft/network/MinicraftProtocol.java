@@ -21,7 +21,7 @@ public class MinicraftProtocol {
 	protected static final int packetSize = 2048;
 	
 	public static enum InputType {
-		INVALID, USERNAMES, LOGIN, INIT_W, INIT_T, INIT_E, TILE, ENTITY, PLAYER, ADD, REMOVE, DISCONNECT, SAVE, NOTIFY, INTERACT, PICKUP, CHESTIN, CHESTOUT, BED;
+		INVALID, USERNAMES, LOGIN, INIT_W, INIT_T, INIT_E, TILE, ENTITY, PLAYER, MOVE, ADD, REMOVE, DISCONNECT, SAVE, NOTIFY, INTERACT, PICKUP, CHESTIN, CHESTOUT, BED;
 		
 		public static final InputType[] values = InputType.values();
 		public static final List<InputType> serverOnly = Arrays.asList(new InputType[] {INIT_W, TILE, ENTITY, PLAYER, ADD, REMOVE});

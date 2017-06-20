@@ -30,40 +30,49 @@ import minicraft.saveload.Load;
 public class MinicraftClient extends Thread implements MinicraftConnection {
 	
 	private Game game;
+	private MultiplayerMenu menu;
+	
 	private DatagramSocket socket = null;
 	private InetAddress ipAddress = null; // this is the ipAddress of the server that we are connecting to.
 	
-	//private static final int requestRepeatInterval = 100;
-	//private int requestTimer = 0;
-	
-	public static enum State {
+	private static enum State {
 		USERNAMES, IDLING, LOGIN, TILES, ENTITIES, PLAY, DISCONNECTED
 	}
+	private State curState = State.DISCONNECTED;
 	
 	private boolean sent = false;
-	//private boolean setPlayer = false;
 	
-	public State curState = State.DISCONNECTED;
-	
-	public MinicraftClient(Game game, String hostName) {
+	public MinicraftClient(Game game, MultiplayerMenu menu, String hostName) {
 		super("MinicraftClient");
 		this.game = game;
+		this.menu = menu;
 		Game.ISONLINE = true;
 		Game.ISHOST = false;
 		try {
 			
 			socket = new DatagramSocket();
 			ipAddress = InetAddress.getByName(hostName);
-			
+			boolean canReach = ipAddress.isReachable(5000);
+			if(!canReach) {
+				// address was deemed unreachable
+				System.out.println("couldn't reach");
+				menu.setError("address is unreachable.");
+				return;
+			}
+			System.out.println("address could be reached.");
 			curState = State.USERNAMES;
 			
 			start();
 			
-		} catch (UnknownHostException e) {
+		} catch (UnknownHostException ex) {
 			System.err.println("Don't know about host " + hostName);
-			e.printStackTrace();
-		} catch (SocketException e) {
-			e.printStackTrace();
+			ex.printStackTrace();
+			menu.setError("host not found");
+		} catch (SocketException ex) {
+			ex.printStackTrace();
+		} catch (IOException ex) {
+			System.err.println("error while determining if address was reachable.");
+			ex.printStackTrace();
 		}
 	}
 	
@@ -73,6 +82,7 @@ public class MinicraftClient extends Thread implements MinicraftConnection {
 			game.player = new RemotePlayer(game, true, username, InetAddress.getLocalHost(), MinicraftProtocol.PORT);
 		} catch(UnknownHostException ex) {
 			System.err.println("CLIENT could not get localhost address.");
+			menu.setError("unable to get localhost address");
 			ex.printStackTrace();
 		}
 		sent = false;
@@ -81,36 +91,19 @@ public class MinicraftClient extends Thread implements MinicraftConnection {
 	
 	public void run() {
 		if (Game.debug) System.out.println("client started.");
-		/*try {
-			socket.setSoTimeout(2500);
-		} catch(SocketException ex) {
-			System.err.println("error setting client socket timeout");
-			ex.printStackTrace();
-		}*/
+		
 		while(curState != State.DISCONNECTED) {
 			if(curState != State.PLAY && curState != State.IDLING && !sent) {
-				//boolean act = requestTimer <= 0;
-				//if(act) requestTimer = requestRepeatInterval;
-				//else if (Game.debug && requestTimer % 20 == 0) System.out.println("CLIENT: waiting for response...");
-				/*try {
-					socket.setSoTimeout(1000);//5000);
-				} catch(SocketException ex) {
-					System.err.println("error setting socket timeout");
-					ex.printStackTrace();
-				}*/
-				
 				if(Game.debug) System.out.println("CLIENT: running action switch");
 				
 				switch(curState) {
 					case USERNAMES:
-						//if(!act) break;
 						if (Game.debug) System.out.println("CLIENT: requesting usernames");
 						sendData(MinicraftProtocol.InputType.USERNAMES, new byte[0]);
 						sent = true;
 						break;
 					
 					case LOGIN:
-						//if(!act) break; // don't send request constantly.
 						/// send login request.
 						if (Game.debug) System.out.println("CLIENT: requesting login");
 						String username = ((RemotePlayer)game.player).username;
@@ -119,7 +112,6 @@ public class MinicraftClient extends Thread implements MinicraftConnection {
 						break;
 					
 					case TILES:
-						//if(!act) break;
 						// send request for level tiles.
 						if (Game.debug) System.out.println("CLIENT: requesting tiles");
 						sendData(MinicraftProtocol.InputType.INIT_T, (new byte[] {(byte)game.currentLevel}));
@@ -127,42 +119,15 @@ public class MinicraftClient extends Thread implements MinicraftConnection {
 						break;
 					
 					case ENTITIES:
-						//if(!act) break;
 						// send request for level entities.
 						if (Game.debug) System.out.println("CLIENT: requesting entities");
 						sendData(MinicraftProtocol.InputType.INIT_E, (new byte[] {(byte)game.currentLevel}));
 						sent = true;
 						break;
-					
-					/*case START:
-						/// this means that the data has been recieved, but the game hasn't started yet.
-						// i don't seem to really need this much right now... but it seems like a good idea.
-						//game.setMenu(null);
-						curState = State.PLAY;
-						if (Game.debug) System.out.println("CLIENT: starting game");
-						break;
-					*/
 				}
-				
-				/*if(curState == State.USERNAMES || curState == State.LOGIN || curState == State.TILES || curState == State.ENTITIES) {
-					try {
-						Thread.sleep(10);
-					} catch(InterruptedException ex) {}
-					requestTimer -= 10;
-				}*/
-				
-				//curState = State.IDLING;
-				
-			}/* else if(curState == State.) {
-				try {
-					socket.setSoTimeout(0);
-				} catch(SocketException ex) {
-					System.err.println("error setting socket timeout");
-					ex.printStackTrace();
-				}
-			}*/
+			}
 			
-			int targetTimeout = 0;
+			int targetTimeout = 10000;
 			if(curState == State.IDLING) targetTimeout = 500;
 			try {
 				socket.setSoTimeout(targetTimeout);
@@ -178,10 +143,20 @@ public class MinicraftClient extends Thread implements MinicraftConnection {
 				socket.receive(packet);
 				parsePacket(packet.getData(), packet.getAddress(), packet.getPort());
 			} catch(SocketTimeoutException ex) {
+				if(targetTimeout > 1000/*curState != State.IDLING*/) {
+					/*System.out.println("CLIENT timed out in state " + curState + "; targetTimeout="+targetTimeout);
+					try {
+						System.out.println("time out wait time: " + socket.getSoTimeout());
+					} catch(SocketException ex) {
+						System.err.println("CLIENT error getting socket timeout");
+						ex.printStackTrace();
+					}*/
+					menu.setError("connection timed out.");
+					curState = State.DISCONNECTED;
+				}
 			} catch (IOException ex) {
 				ex.printStackTrace();
 			}
-			
 		}
 		
 		if (Game.debug) System.out.println("client is not connected. ending run loop.");
@@ -231,15 +206,7 @@ public class MinicraftClient extends Thread implements MinicraftConnection {
 			case INVALID:
 				String msg = new String(data).trim();
 				System.err.println("CLIENT recieved error: " + msg);
-				if(game.menu instanceof MultiplayerMenu) {
-					MultiplayerMenu mm = (MultiplayerMenu) game.menu;
-					mm.errorMessage = msg;
-					mm.curState = MultiplayerMenu.State.ERROR;
-				}
-				else {
-					game.notifications.add("Server Error:");
-					game.notifications.add(msg);
-				}
+				menu.setError(msg);
 				curState = State.IDLING;
 				
 				return false;
@@ -248,12 +215,7 @@ public class MinicraftClient extends Thread implements MinicraftConnection {
 				if (Game.debug) System.out.println("CLIENT: recieved usernames");
 				String names = new String(data).trim();
 				String[] namelist = names.split("\n");
-				if(game.menu instanceof MultiplayerMenu) {
-					MultiplayerMenu mm = (MultiplayerMenu) game.menu;
-					mm.takenNames = Arrays.asList(namelist);
-					mm.typing = System.getProperty("user.name"); // a little trick for a nice default username. ;)
-					mm.curState = MultiplayerMenu.State.ENTERNAME;
-				}
+				menu.setTakenNames(Arrays.asList(namelist));
 				curState = State.IDLING;
 				return true;
 			
@@ -272,13 +234,7 @@ public class MinicraftClient extends Thread implements MinicraftConnection {
 			
 			case INIT_W:
 				if (Game.debug) System.out.println("CLIENT: recieved INIT_W packet");
-				MultiplayerMenu mm = null;
-				if(game.menu instanceof MultiplayerMenu) {
-					mm = (MultiplayerMenu) game.menu;
-					mm.loadingMessage = "World";
-					mm.curState = MultiplayerMenu.State.LOADING;
-					if (Game.debug) System.out.println("CLIENT: progressed menu state to loading");
-				}
+				menu.setLoadingMessage("World");
 				
 				String[] infostrings = new String(data).trim().split(",");
 				int[] info = new int[infostrings.length];
@@ -301,8 +257,7 @@ public class MinicraftClient extends Thread implements MinicraftConnection {
 				sent = false;
 				if(curState == State.LOGIN) {// only go through the sequence if this is called as part of start up.
 					curState = State.TILES;
-					if(mm != null)
-						mm.loadingMessage = "Tiles";
+					menu.setLoadingMessage("Tiles");
 				}
 				return true;
 			
@@ -328,9 +283,7 @@ public class MinicraftClient extends Thread implements MinicraftConnection {
 				if(idx+i == level.tiles.length) {
 					curState = State.ENTITIES;
 					sent = false;
-					if(game.menu instanceof MultiplayerMenu) {
-						((MultiplayerMenu)game.menu).loadingMessage = "Entities";
-					}
+					menu.setLoadingMessage("Entities");
 					if (Game.debug) System.out.println("CLIENT: progressed state to entities");
 				} else if(Game.debug) {
 					if(idx+i > level.tiles.length) System.out.println("CLIENT: recieved too many tiles");
@@ -343,6 +296,7 @@ public class MinicraftClient extends Thread implements MinicraftConnection {
 				Level newLevel = Game.levels[game.currentLevel];
 				String[] entities = new String(data).trim().split(",");
 				for(String entityString: entities) {
+					if(entityString.length() == 0) continue;
 					if(entityString.equals("END")) {
 						/// the end of the entity list has been reached.
 						sent = false;
@@ -355,9 +309,10 @@ public class MinicraftClient extends Thread implements MinicraftConnection {
 				if(!sent) {
 					// ready to start game now.
 					curState = State.PLAY;
-					if(game.menu instanceof MultiplayerMenu)
-						((MultiplayerMenu)game.menu).curState = MultiplayerMenu.State.CONNECTED;
-					if (Game.debug) System.out.println("CLIENT: progressed state to start");
+					if (Game.debug) System.out.println("CLIENT: Begin game!");
+					Game.levels[game.currentLevel].add(game.player);
+					Game.readyToRenderGameplay = true;
+					game.setMenu(null);
 				}
 				else if(Game.debug)
 					System.out.println("CLIENT: waiting for more entities...");
@@ -379,10 +334,18 @@ public class MinicraftClient extends Thread implements MinicraftConnection {
 				byte curLevel = data[0];
 				String entityData = new String(Arrays.copyOfRange(data, 1, data.length)).trim();
 				if (Game.debug) System.out.println("CLIENT: recieved entity addition: " + entityData);
+				if(entityData.length() == 0) {
+					System.err.println("CLIENT: recieved entity is blank... level:"+curLevel);
+					return false;
+				}
+				if(curLevel < 0 || curLevel > Game.levels.length) {
+					System.err.println("CLIENT: recieved entity addition specifies an invalid level: " + curLevel);
+					return false;
+				}
 				Entity e = (new Load()).loadEntity(entityData, game, false);
 				if(Game.levels[curLevel] != null)
 					Game.levels[curLevel].add(e);
-				else return false;
+				//else return false; // ignoring still counts as a success, so this is commented out.
 				return true;
 			
 			case REMOVE:
@@ -421,7 +384,7 @@ public class MinicraftClient extends Thread implements MinicraftConnection {
 				}*/
 				// use the contained data to load up the player object vars.
 				String pdata = new String(data).trim();
-				if(Game.debug) System.out.println("CLIENT: player data recieved: " + pdata);
+				//if(Game.debug) System.out.println("CLIENT: player data recieved: " + pdata);
 				String[] playerparts = pdata.split("\\n");
 				List<String> playerinfo = Arrays.asList(playerparts[0].split(","));
 				List<String> playerinv = Arrays.asList(playerparts[1].split(","));
@@ -493,12 +456,17 @@ public class MinicraftClient extends Thread implements MinicraftConnection {
 		byte[] data = prependType(inType, startdata);
 		DatagramPacket packet = new DatagramPacket(data, data.length, ipAddress, MinicraftProtocol.PORT);
 		try {
-			if (Game.debug) System.out.println("CLIENT: sending "+inType+" packet...");
+			if (Game.debug && inType != MinicraftProtocol.InputType.MOVE) System.out.println("CLIENT: sending "+inType+" packet...");
 			socket.send(packet);
 		} catch(IOException ex) {
 			System.err.println("CLIENT: error sending "+inType+" packet:");
 			ex.printStackTrace();
 		}
+	}
+	
+	public void move(Player player) {
+		String movedata = player.x+";"+player.y+";"+player.dir;
+		sendData(MinicraftProtocol.InputType.MOVE, movedata.getBytes());
 	}
 	
 	/** This is called when the player.attack() method is called. */
@@ -523,45 +491,19 @@ public class MinicraftClient extends Thread implements MinicraftConnection {
 		sendData(MinicraftProtocol.InputType.PICKUP, String.valueOf(ie.eid).getBytes());
 	}
 	
-	/** This method is responsible for sending an updated tile. */
-	/*public void sendTileUpdate(int x, int y) {
-		Level level = Game.levels[game.currentLevel];
-		byte[] data = new byte[7];
-		data[0] = (byte) game.currentLevel;
-		data[1] = level.getTile(x, y).id;
-		data[2] = level.getData(x, y);
-		int pos = x + level.h * y;
-		data[3] = pos >> (8*3);
-		data[4] = pos >> (8*2) & 0xff;
-		data[5] = pos >> 8 & 0xff;
-		data[6] = pos & 0xff;
-		
-		sendData(MinicraftProtocol.InputType.TILE, data);
-	}*/
-	
-	/*public void sendNotification(String note, int notetick) {
-		if(note == null || note.length() == 0) {
-			System.out.println("tried to send blank notification");
-			return;
-		}
-		sendData("NOTIFY:"+note+","+notetick);
-	}*/
-	
-	/*public static byte[] prependType(MinicraftProtocol.InputType type, byte[] data) {
-		byte[] fulldata = new byte[data.length+1];
-		fulldata[0] = (byte) type.ordinal();
-		for(int i = 1; i < fulldata.length; i++)
-			fulldata[i] = data[i-1];
-		return fulldata;
-	}*/
+	public void requestLevel(int lvlidx) {
+		curState = State.TILES;
+		game.currentLevel = lvlidx;
+	}
 	
 	public void endConnection() {
-		if (Game.debug) System.out.println("closing client socket and ending connection");
-		try {
-			sendData(MinicraftProtocol.InputType.DISCONNECT, (new byte[0])); // send exit signal
-			socket.close();
-		} catch (NullPointerException ex) {}
-		
+		if(curState != State.DISCONNECTED) {
+			if (Game.debug) System.out.println("closing client socket and ending connection");
+			try {
+				sendData(MinicraftProtocol.InputType.DISCONNECT, (new byte[0])); // send exit signal
+				socket.close();
+			} catch (NullPointerException ex) {}
+		}
 		curState = State.DISCONNECTED;
 	}
 	

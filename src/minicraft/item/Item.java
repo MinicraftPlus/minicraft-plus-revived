@@ -74,6 +74,7 @@ public abstract class Item implements ListItem {
 		return name + "-Item";
 	}
 	
+	/** Gets the necessary data to send over a connection. This data should always be directly input-able into Items.get() to create a valid item with the given properties. */
 	public String getData() {
 		return name;
 	}

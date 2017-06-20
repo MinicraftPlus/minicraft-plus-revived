@@ -274,7 +274,11 @@ public class Player extends Mob {
 			if ((xa != 0 || ya != 0) && (staminaRechargeDelay % 2 == 0 || isSwimming()) && game.savecooldown == 0 && !game.saving) {
 				double spd = moveSpeed * (potioneffects.containsKey(PotionType.Time) ? (potioneffects.containsKey(PotionType.Speed) ? 1.5D : 2) : 1);
 				boolean moved = move((int) (xa * spd), (int) (ya * spd)); // THIS is where the player moves; part of Mob.java
-				if(moved) stepCount++;
+				if(moved) {
+					stepCount++;
+					if(Game.isValidClient() && this == game.player)
+						Game.client.move(this);
+				}
 			}
 			
 			if (isSwimming() && tickTime % 60 == 0 && !potioneffects.containsKey(PotionType.Swim)) { // if drowning... :P
@@ -302,7 +306,7 @@ public class Player extends Mob {
 			
 			if (input.getKey("menu").clicked && !use()) // !use() = no furniture in front of the player; this prevents player inventory from opening (will open furniture inventory instead)
 				game.setMenu(new PlayerInvMenu(this));
-			if (input.getKey("pause").clicked && !(this instanceof RemotePlayer))
+			if (input.getKey("pause").clicked)
 				game.setMenu(new PauseMenu(null));
 			if (input.getKey("craft").clicked && !use())
 				game.setMenu(new CraftingMenu(Recipes.craftRecipes, this, true));

@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.Random;
 import minicraft.item.FurnitureItem;
 import minicraft.item.Item;
+import minicraft.item.Items;
 import minicraft.item.StackableItem;
 import minicraft.item.ToolItem;
 import minicraft.item.ToolType;
@@ -252,10 +253,16 @@ public class Inventory {
 	public String getItemData() {
 		String itemdata = "";
 		for(Item i: items)
-			itemdata += i.getData()+",";
+			itemdata += i.getData()+":";
 		
 		itemdata = itemdata.substring(0, itemdata.length()-1); //remove extra ",".
 		return itemdata;
+	}
+	
+	public void updateInv(String items) {
+		clearInv();
+		for(String item: items.split(":"))
+			add(Items.get(item));
 	}
 	
 	/** These functions (possibly) add Items and/or Tools to the inventory. */

@@ -410,7 +410,7 @@ public class WorldSelectMenu extends Menu {
 		
 		if (typingname.length() < 36 && input.lastKeyTyped.length() > 0) {
 			//ensure only valid characters are typed.
-			java.util.regex.Pattern p = java.util.regex.Pattern.compile("[a-zA-Z0-9 ]");
+			java.util.regex.Pattern p = java.util.regex.Pattern.compile("[a-zA-Z0-9 ]"); // this does not include backspace, so it will not be "typed".
 			if (p.matcher(input.lastKeyTyped).matches()) typingname += input.lastKeyTyped;
 			input.lastKeyTyped = "";
 		}

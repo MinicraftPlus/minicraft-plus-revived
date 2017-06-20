@@ -18,6 +18,7 @@ import java.nio.file.StandardOpenOption;
 import minicraft.Game;
 import minicraft.entity.Entity;
 import minicraft.entity.ItemEntity;
+import minicraft.entity.Player;
 import minicraft.entity.RemotePlayer;
 import minicraft.entity.Chest;
 import minicraft.saveload.Save;
@@ -82,9 +83,26 @@ public class MinicraftServer extends Thread implements MinicraftConnection {
 		return clientList;
 	}
 	
-	public void sendEntityUpdate(Entity e) {
+	private RemotePlayer getIfPlayer(Entity e) {
 		//if (Game.debug) System.out.println("SERVER: sending entity update for: " + e.getClass());
-		broadcastData(prependType(MinicraftProtocol.InputType.ENTITY, (e.eid+";"+e.getUpdates()).getBytes()));
+		if(e instanceof RemotePlayer) {
+			RemotePlayer given = (RemotePlayer) e;
+			RemotePlayer filed = getClientPlayer(given.ipAddress, given.port);
+			if(filed == null) {
+				System.err.println("SERVER encountered a RemotePlayer not in the client list: " + given);
+				return null;
+			}
+			return filed;
+		}
+		else
+			return null;
+	}
+	
+	public void sendEntityUpdate(Entity e) {sendEntityUpdate(e, getIfPlayer(e));}
+	/// this is like the above, but it won't do any autodetection, so so can choose who not to send it to.
+	public void sendEntityUpdate(Entity e, RemotePlayer sender) {
+		byte[] data = prependType(MinicraftProtocol.InputType.ENTITY, (e.eid+";"+e.getUpdates()).getBytes());
+		broadcastData(data, sender);
 	}
 	
 	public void sendTileUpdate(int depth, int x, int y) {
@@ -102,7 +120,8 @@ public class MinicraftServer extends Thread implements MinicraftConnection {
 		broadcastData(prependType(MinicraftProtocol.InputType.TILE, tiledata));
 	}
 	
-	public void sendEntityAddition(Entity e) {
+	public void sendEntityAddition(Entity e) { sendEntityAddition(e, getIfPlayer(e)); }
+	public void sendEntityAddition(Entity e, RemotePlayer sender) {
 		String entity = Save.writeEntity(e, false);
 		byte[] fulledata = new byte[entity.getBytes().length+1];
 		fulledata[0] = (byte) Game.lvlIdx(e.level.depth);
@@ -110,11 +129,12 @@ public class MinicraftServer extends Thread implements MinicraftConnection {
 		for(int i = 0; i < edata.length; i++)
 			fulledata[i+1] = edata[i];
 		//if(Game.debug) System.out.println("SERVER: sending entity addition: " + entity);
-		broadcastData(prependType(MinicraftProtocol.InputType.ADD, fulledata));
+		broadcastData(prependType(MinicraftProtocol.InputType.ADD, fulledata), sender);
 	}
 	
-	public void sendEntityRemoval(Entity e) {
-		broadcastData(prependType(MinicraftProtocol.InputType.REMOVE, String.valueOf(e.eid).getBytes()));
+	public void sendEntityRemoval(Entity e) { sendEntityRemoval(e, getIfPlayer(e)); }
+	public void sendEntityRemoval(Entity e, RemotePlayer sender) {
+		broadcastData(prependType(MinicraftProtocol.InputType.REMOVE, String.valueOf(e.eid).getBytes()), sender);
 	}
 	
 	/*public void sendNotification(String note, int ntime) {
@@ -126,7 +146,7 @@ public class MinicraftServer extends Thread implements MinicraftConnection {
 	public ArrayList<String> getClientNames() {
 		ArrayList<String> names = new ArrayList<String>();
 		for(RemotePlayer client: getClientList()) {
-			names.add(client.getClientName());
+			names.add(client.username + ": " + client.ipAddress.getHostAddress() + (Game.debug?" ("+(client.x>>4)+","+(client.y>>4)+")":""));
 		}
 		
 		return names;
@@ -286,7 +306,7 @@ public class MinicraftServer extends Thread implements MinicraftConnection {
 			case LOGIN:
 				if (Game.debug) System.out.println("SERVER: recieved login request");
 				String[] info = new String(data).trim().split(";");
-				System.out.println("login data: " + Arrays.toString(info));
+				if (Game.debug) System.out.println("SERVER: login data: " + Arrays.toString(info));
 				String username = info[0];
 				Load.Version clientVersion = new Load.Version(info[1]);
 				// check version; send back invalid if they don't match.
@@ -311,7 +331,7 @@ public class MinicraftServer extends Thread implements MinicraftConnection {
 						playerdata += str + ",";
 					playerdata = playerdata.substring(0, playerdata.length()-1) + "\n";
 					Save.writeInventory(game.player, datalist);
-					if(Game.debug) System.out.println("SERVER main player inv: " + datalist);
+					//if(Game.debug) System.out.println("SERVER main player inv: " + datalist);
 					for(String str: datalist)
 						playerdata += str + ",";
 					if(datalist.size() == 0)
@@ -328,7 +348,7 @@ public class MinicraftServer extends Thread implements MinicraftConnection {
 				
 				if(playerdata.length() > 0) {
 					/// if a save file was found, then send the data to the client so they can resume where they left off.
-					if (Game.debug) System.out.println("SERVER: sending saved player data: " + playerdata);
+					//if (Game.debug) System.out.println("SERVER: sending saved player data: " + playerdata);
 					sendData(prependType(MinicraftProtocol.InputType.PLAYER, playerdata.getBytes()), address, port);
 					// and now, initialize the RemotePlayer instance with the data.
 					(new Load()).loadPlayer(clientPlayer, Arrays.asList(playerdata.split("\\n")[0].split(",")));
@@ -362,7 +382,7 @@ public class MinicraftServer extends Thread implements MinicraftConnection {
 				clientList.add(clientPlayer); /// file client player
 				/// tell others of client joining
 				if (Game.debug) System.out.println("SERVER: broadcasting player addition");
-				broadcastData(prependType(MinicraftProtocol.InputType.ADD, Save.writeEntity(clientPlayer, false).getBytes()), clientPlayer);
+				sendEntityAddition(clientPlayer);
 				
 				return true;
 			
@@ -407,6 +427,7 @@ public class MinicraftServer extends Thread implements MinicraftConnection {
 							String curEntityData = "";
 							if(entities[i] != sender) {
 								curEntityData = Save.writeEntity(entities[i], false) + ",";
+								if(Game.debug && entities[i] instanceof Player) System.out.println("SERVER: sending player in INIT_E packet: " + entities[i]);
 							}
 							if(curEntityData.getBytes().length + edata.getBytes().length + "END".getBytes().length > MinicraftProtocol.packetSize-1) {
 								// there are too many entities to send in one packet.
@@ -461,7 +482,7 @@ public class MinicraftServer extends Thread implements MinicraftConnection {
 				}
 				
 				File rpFile = getRemotePlayerFile(computer);
-				if(rpFile.exists())
+				if(rpFile != null && rpFile.exists())
 					filename = rpFile.getName();
 				else {
 					File[] clientSaves = getRemotePlayerFiles();
@@ -488,7 +509,7 @@ public class MinicraftServer extends Thread implements MinicraftConnection {
 				return true;
 			
 			case CHESTIN: case CHESTOUT:
-				//if (Game.debug) System.out.println("SERVER: recieved chest request");
+				if (Game.debug) System.out.println("SERVER: recieved chest request");
 				String[] contents = new String(data).trim().split(";");
 				int eid = Integer.parseInt(contents[0]);
 				Entity e = Game.getEntity(eid);
@@ -518,11 +539,11 @@ public class MinicraftServer extends Thread implements MinicraftConnection {
 					sendData(prependType(MinicraftProtocol.InputType.CHESTOUT, removed.getData().getBytes()), address, port); // send back the *exact* same packet as was sent; the client will handle it accordingly, by changing their inventory.
 				}
 				
-				broadcastData(prependType(MinicraftProtocol.InputType.ENTITY, (chest.eid+";inventory:"+chest.inventory.getItemData()).getBytes()), sender);
+				sendEntityUpdate(chest, sender);
 				return true;
 			
 			case PICKUP:
-				//if (Game.debug) System.out.println("SERVER: recieved itementity pickup request");
+				if (Game.debug) System.out.println("SERVER: recieved itementity pickup request");
 				Entity entity = Game.getEntity(Integer.parseInt(new String(data).trim()));
 				if(entity == null || !(entity instanceof ItemEntity)) {
 					System.err.println("SERVER error with PICKUP request: Requested entity does not exist or is not an ItemEntity.");
@@ -537,7 +558,7 @@ public class MinicraftServer extends Thread implements MinicraftConnection {
 				return true;
 			
 			case INTERACT:
-				//if (Game.debug) System.out.println("SERVER: recieved interaction request");
+				if (Game.debug) System.out.println("SERVER: recieved interaction request");
 				//x, y, dir, item
 				String[] pinfo = new String(data).trim().split(";");
 				// since this should be the most up-to-date data, just update the remote player coords with them.
@@ -554,9 +575,19 @@ public class MinicraftServer extends Thread implements MinicraftConnection {
 				sender.attack();
 				/// note: the player may have fired an arrow, but we won't tell because that player will update it theirself.
 			
-			/// I'm this should end up never being used...
+			case MOVE:
+				/// the player moved.
+				//if (Game.debug) System.out.println("SERVER: recieved move packet");
+				String[] movedata = new String(data).trim().split(";");
+				sender.x = Integer.parseInt(movedata[0]);
+				sender.y = Integer.parseInt(movedata[1]);
+				sender.dir = Integer.parseInt(movedata[2]);
+				sendEntityUpdate(sender);
+				return true;
+			
+			/// I'm thinking this should end up never being used...
 			default:
-				System.out.println("server used default behavior for input type " + inType);
+				System.out.println("SERVER used default behavior for input type " + inType);
 				broadcastData(alldata, sender);
 				return true;
 		}
@@ -569,6 +600,10 @@ public class MinicraftServer extends Thread implements MinicraftConnection {
 	}
 	
 	public void broadcastData(byte[] data, RemotePlayer sender) {
+		if(sender == null) {
+			broadcastData(data);
+			return;
+		}
 		for(RemotePlayer client: getClientList()) {
 			if(client != sender) // send this packet to all EXCEPT the specified one.
 				sendData(data, client.ipAddress, client.port);
@@ -593,14 +628,6 @@ public class MinicraftServer extends Thread implements MinicraftConnection {
 		if (Game.debug) System.out.println("SERVER: sending error to " + ip + ": \"" + message + "\"");
 		sendData(prependType(MinicraftProtocol.InputType.INVALID, message.getBytes()), ip, port);
 	}
-	
-	/*public static byte[] prependType(MinicraftProtocol.InputType type, byte[] data) {
-		byte[] fulldata = new byte[data.length+1];
-		fulldata[0] = (byte) type.ordinal();
-		for(int i = 1; i < fulldata.length; i++)
-			fulldata[i] = data[i-1];
-		return fulldata;
-	}*/
 	
 	public RemotePlayer getClientPlayer(InetAddress ip, int port) {
 		for(RemotePlayer client: getClientList())

@@ -219,21 +219,26 @@ public abstract class Entity {
 		for(String field: deltas.split(";")) {
 			String fieldName = field.substring(0, field.indexOf(","));
 			String val = field.substring(field.indexOf(",")+1);
-			switch(fieldName) {
-				case "eid": eid = Integer.parseInt(val); break;
-				case "x": x = Integer.parseInt(val); break;
-				case "y": x = Integer.parseInt(val); break;
-				case "level":
-					if(val.equals("null")) break; // this means no level.
-					Level newLvl = Game.levels[Integer.parseInt(val)];
-					if(newLvl != null && level != null) {
-						if(newLvl.depth == level.depth) break;
-						if(level != null) level.remove(this);
-						if(newLvl != null) newLvl.add(this);
-					}
-					break;
-			}
+			updateField(fieldName, val);
 		}
+	}
+	
+	protected boolean updateField(String fieldName, String val) {
+		switch(fieldName) {
+			case "eid": eid = Integer.parseInt(val); return true;
+			case "x": x = Integer.parseInt(val); return true;
+			case "y": y = Integer.parseInt(val); return true;
+			case "level":
+				if(val.equals("null")) return true; // this means no level.
+				Level newLvl = Game.levels[Integer.parseInt(val)];
+				if(newLvl != null && level != null) {
+					if(newLvl.depth == level.depth) return true;
+					if(level != null) level.remove(this);
+					if(newLvl != null) newLvl.add(this);
+				}
+				return true;
+		}
+		return false;
 	}
 	
 	/// I think I'll make these "getUpdates()" methods be an established thing, that returns all the things that can change that you need to account for when updating entities across a server.
@@ -243,49 +248,4 @@ public abstract class Entity {
 		+"y,"+y+";"
 		+"level,"+(level==null?"null":Game.lvlIdx(level.depth));
 	}
-	
-	/*
-	public String getAlteredData() {
-		System.out.println("serializing " + getClass().getSimpleName());
-		try {
-			Class<? extends Entity> c = getClass();
-			Field[] fields = c.getFields();
-			String data = c.getCanonicalName()+";";
-			for(Field f: fields)
-				data += f.getName()+","+f.get(this)+";";
-			
-			return data;
-		} catch(Exception ex) {
-			ex.printStackTrace();
-			return "";
-		}
-	}*/
-	
-	/*
-	public String serialize() {
-		/// this will NOT include everything. And it won't worry about subclasses. It will just contain enough to reconstruct it well enough on the other side.
-		String className = getClass().getName().replace("minicraft.entity.",""); // since this will always be the case, it's implied.
-		String data = className+";"+x+";"+y; /// note that beginning delimiters are always used, and not ending ones.
-		// since this class is abstract, it can't be directly instantiated... but just in case, let's check:
-		
-		return data;
-	}
-	
-	public static Entity deserialize(String data) {
-		try {
-			String[] parts = data.split(";");
-			Class c = Class.forName(parts[0]);
-			System.out.println("deserializing " + c.getSimpleName());
-			Object e = c.newInstance();
-			for(int i = 0; i < parts.length-1; i++) {
-				String[] fieldpair = parts[i+1].split(",");
-				Field current = e.getClass().getField(fieldpair[0]);
-				current.set(e, current.getType().cast(parts[1])); // FIXME this isn't going to work...
-			}
-		} catch (Exception ex) {
-			ex.printStackTrace();
-			return null;
-		}
-		return null;
-	}*/
 }

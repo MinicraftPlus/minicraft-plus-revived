@@ -266,9 +266,9 @@ public class Game extends Canvas implements Runnable {
 		notifications.clear();
 		
 		// adds a new player
-		if(player instanceof RemotePlayer)
+		if(player instanceof RemotePlayer) {
 			player = new RemotePlayer(this, true, (RemotePlayer)player);
-		else
+		} else
 			player = new Player(this, input);
 		
 		// "shouldRespawn" is false on hardcore, or when making a new world.
@@ -416,8 +416,8 @@ public class Game extends Canvas implements Runnable {
 					floor.tick();
 			
 			Tile.tickCount++;
-		} else if(isValidClient())
-			player.tick();
+		}// else if(isValidClient())
+		//	player.tick();
 		
 		// This is the general action statement thing! Regulates menus, mostly.
 		if (!hasFocus()) {
@@ -451,7 +451,7 @@ public class Game extends Canvas implements Runnable {
 					pendingLevelChange = 0;
 				}
 				
-				if(!ISONLINE) {
+				if(!isValidServer()) {
 					level.tick();
 					Tile.tickCount++;
 				}
@@ -628,7 +628,7 @@ public class Game extends Canvas implements Runnable {
 		player.y = (player.y >> 4) * 16 + 8; // sets the player's y coord (to center yourself on the stairs)
 		
 		if(isValidClient() && !isValidServer() && levels[currentLevel] == null)
-			Game.client.curState = MinicraftClient.State.TILES;
+			Game.client.requestLevel(currentLevel);
 		else
 			levels[currentLevel].add(player); // adds the player to the level.
 	}
@@ -719,6 +719,8 @@ public class Game extends Canvas implements Runnable {
 		
 		int xScroll = player.x - screen.w / 2; // scrolls the screen in the x axis.
 		int yScroll = player.y - (screen.h - 8) / 2; // scrolls the screen in the y axis.
+		
+		//if (debug && isValidClient()) System.out.println("player coords at render: "+player.x+","+player.y);
 		
 		//stop scrolling if the screen is at the ...
 		if (xScroll < 0) xScroll = 0; // ...left border.
