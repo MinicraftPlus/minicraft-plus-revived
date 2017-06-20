@@ -18,6 +18,7 @@ import minicraft.screen.LoadingMenu;
 public class MinicraftProtocol {
 	
 	protected static final int PORT = 4225;
+	protected static final int packetSize = 2048;
 	
 	public static enum InputType {
 		INVALID, USERNAMES, LOGIN, INIT_W, INIT_T, INIT_E, TILE, ENTITY, PLAYER, ADD, REMOVE, DISCONNECT, SAVE, NOTIFY, INTERACT, PICKUP, CHESTIN, CHESTOUT, BED;

@@ -105,7 +105,12 @@ public class Level {
 		if(depth == 0) maxMobCount = maxMobCount * 2 / 3;
 		if(depth == 1 || depth == -4) maxMobCount /= 2;
 		
-		if(!makeWorld) return;
+		if(!makeWorld) {
+			int arrsize = w * h;
+			tiles = new byte[arrsize];
+			data = new byte[arrsize];
+			return;
+		}
 		
 		if(Game.debug) System.out.println("Making level "+level+"...");
 		
@@ -402,10 +407,10 @@ public class Level {
 			int xto = e.x >> 4;
 			int yto = e.y >> 4;
 			
-			if(e instanceof Player == false || e == game.player)
+			if(e instanceof Player == false || !Game.isValidServer())
 				e.tick();
 			
-			if(Game.isValidServer())
+			if(Game.isValidServer() && Game.hasConnectedClients())
 				Game.server.sendEntityUpdate(e);
 			
 			if(e instanceof Mob) count++;
@@ -525,7 +530,7 @@ public class Level {
 	}
 	
 	public Tile getTile(int x, int y) {
-		if (x < 0 || y < 0 || x >= w || y >= h) return Tiles.get("rock");
+		if (x < 0 || y < 0 || x >= w || y >= h/* || (x + y * w) >= tiles.length*/) return Tiles.get("rock");
 		int id = tiles[x + y * w];
 		if(id < 0) id += 256;
 		return Tiles.get(id);
@@ -569,12 +574,13 @@ public class Level {
 		data[x + y * w] = (byte) val;
 	}
 	
-	public void add(Entity e) { add(e, e.x, e.y); }
+	public void add(Entity e) { if(e==null) return; add(e, e.x, e.y); }
 	public void add(Entity entity, int x, int y) {
 		/*if (entity instanceof Player)
 			if(entity instanceof RemotePlayer == false)
 				player = (Player) entity;
 		*/
+		if(entity==null) return;
 		entities.add(entity);
 		entity.setLevel(this, x, y);
 		
@@ -590,7 +596,7 @@ public class Level {
 				try {
 					if(Class.forName("minicraft.entity."+search).isAssignableFrom(entity.getClass())) {
 						if (clazz.equals("AirWizard")) clazz += ((AirWizard)entity).secondform ? " II" : "";
-						printLevelLoc("Adding " + clazz, entity.x>>4, entity.y>>4);
+						printLevelLoc((Game.ISONLINE?"From "+(Game.isValidServer()?"Server":Game.isValidClient()?"Client":"nobody") + ": ":"")+"Adding " + clazz, entity.x>>4, entity.y>>4);
 						break;
 					}
 				} catch(ClassNotFoundException ex) {

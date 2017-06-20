@@ -15,14 +15,16 @@ public class RemotePlayer extends Player {
 	
 	public String username;
 	
-	public RemotePlayer(Game game, String username, InetAddress ip, int port) {
-		super(game, new InputHandler(game, false));
+	public RemotePlayer(Game game, String username, InetAddress ip, int port) { this(game, false, username, ip, port); }
+	public RemotePlayer(Game game, boolean useInput, String username, InetAddress ip, int port) {
+		super(game, new InputHandler(game, useInput));
 		this.ipAddress = ip;
 		this.port = port;
 		this.username = username;
 	}
-	public RemotePlayer(Game game, RemotePlayer model) {
-		this(game, model.username, model.ipAddress, model.port);
+	public RemotePlayer(Game game, boolean useInput, RemotePlayer model) {
+		this(game, useInput, model.username, model.ipAddress, model.port);
+		eid = model.eid;
 	}
 	
 	public void render(Screen screen) {

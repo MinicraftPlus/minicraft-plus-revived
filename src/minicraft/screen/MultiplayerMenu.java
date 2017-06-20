@@ -10,6 +10,7 @@ import minicraft.InputHandler;
 import minicraft.entity.RemotePlayer;
 import minicraft.gfx.Screen;
 import minicraft.gfx.Font;
+import minicraft.gfx.FontStyle;
 import minicraft.gfx.Color;
 import minicraft.network.*;
 
@@ -21,63 +22,26 @@ public class MultiplayerMenu extends Menu {
 	public String loadingMessage = "nothing";
 	public String errorMessage = "";
 	
-	private String typing = "";
+	public String typing = "";
 	private boolean inputIsValid = false;
 	
 	public static enum State {
-		WAITING, ENTERIP, ENTERNAME, LOADING, CONNECTED, ERROR, CLIENTLIST
+		WAITING, ENTERIP, ENTERNAME, LOADING, CONNECTED, ERROR
 	}
 	
 	public State curState;
 	
-	public MultiplayerMenu(boolean isHost) {
+	public MultiplayerMenu() {
 		//this.isHost = isHost;
 		Game.ISONLINE = true;
-		Game.ISHOST = isHost;
+		Game.ISHOST = false;
 		
-		if(isHost) {
-			// here is where we need to start the new client.
-			String jarFilePath = "";
-			try {
-				jarFilePath = getClass().getProtectionDomain().getCodeSource().getLocation().toURI().getPath();
-			} catch(URISyntaxException ex) {
-				System.err.println("problem with jar file URI syntax.");
-				ex.printStackTrace();
-			}
-			List<String> arguments = new ArrayList<String>();
-			arguments.add("java");
-			arguments.add("-jar");
-			arguments.add(jarFilePath);
-			
-			if(Game.debug)
-				arguments.add("--debug");
-			
-			// this will just always be added.
-			arguments.add("--savedir");
-			arguments.add(Game.gameDir.substring(0, Game.gameDir.lastIndexOf(".playminicraft")));
-			
-			arguments.add("--localclient");
-			
-			/// this *should* start a new JVM from the running jar file...
-			try {
-				new ProcessBuilder(arguments).inheritIO().start();
-			} catch(IOException ex) {
-				System.err.println("problem starting new jar file process.");
-				ex.printStackTrace();
-			}
-			
-			// now that that's done, let's turn *this* running JVM into a server:
-			Game.server = new MinicraftServer(game);
-			
-			curState = State.CLIENTLIST;
-		}
-		else
-			curState = State.ENTERIP;
+		curState = State.ENTERIP;
 	}
 	
 	// this automatically sets the ipAddress, and goes from there. it also assumes the game is a client.
 	public MultiplayerMenu(Game game, String ipAddress) {
-		this(false);
+		this();
 		curState = State.WAITING;
 		Game.client = new MinicraftClient(game, ipAddress);
 	}
@@ -85,14 +49,10 @@ public class MultiplayerMenu extends Menu {
 	public void tick() {
 		
 		switch(curState) {
-			case CLIENTLIST:
-				// here is where I should put things like select up/down, backspace to boot, esc to open pause menu, etc.
-				if(input.getKey("pause").clicked)
-					game.setMenu(new PauseMenu(this));
-			return;
-			
 			case CONNECTED:
 				if (Game.debug) System.out.println("Begin game!");
+				Game.levels[game.currentLevel].add(game.player);
+				Game.readyToRenderGameplay = true;
 				game.setMenu(null);
 			return;
 			
@@ -165,16 +125,6 @@ public class MultiplayerMenu extends Menu {
 		screen.clear(0);
 		
 		switch(curState) {
-			case CLIENTLIST:
-				Font.drawCentered("Awaiting client connections"+getElipses(), screen, 60, Color.get(-1, 444));
-				Font.drawCentered("So far:", screen, 70, Color.get(-1, 444));
-				int i = 0;
-				for(String name: Game.server.getClientNames()) {
-					Font.drawCentered(name, screen, 80+i*10, Color.get(-1, 134));
-					i++;
-				}
-			break;
-			
 			case ENTERIP:
 				Font.drawCentered("Enter ip address to connect to:", screen, screen.h/2-6, Color.get(-1, 555));
 				Font.drawCentered(typing, screen, screen.h/2+6, Color.get(-1, 552));
@@ -206,8 +156,11 @@ public class MultiplayerMenu extends Menu {
 				break;
 			
 			case ERROR:
+				//if(Game.tickCount % 10 == 0) System.out.println("error message: " + errorMessage);
 				Font.drawCentered("Could not connect to server:", screen, screen.h/2-6, Color.get(-1, 500));
-				Font.drawCentered(errorMessage, screen, screen.h/2+6, Color.get(-1, 511));
+				FontStyle style = new FontStyle(Color.get(-1, 511));
+				Font.drawParagraph(errorMessage, screen, 0, true, screen.h/2+6, false, style, 1);
+				//Font.drawCentered(errorMessage, screen, screen.h/2+6, Color.get(-1, 511));
 				return;
 		}
 		

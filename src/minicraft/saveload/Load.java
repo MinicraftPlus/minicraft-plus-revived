@@ -88,6 +88,8 @@ public class Load {
 		
 		if(hasGlobalPrefs)
 			loadPrefs("Preferences", game);
+		else
+			new Save(game);
 		
 		File testFile = new File(location+"unlocks"+extention);
 		if (testFile.exists()) {
@@ -136,7 +138,7 @@ public class Load {
 					dev = 0;
 				}
 			} catch(NumberFormatException ex) {
-				System.out.println("INVALID version number: " + version);
+				System.out.println("INVALID version number: \"" + version + "\"");
 			} catch(Exception ex) {
 				ex.printStackTrace();
 			}
@@ -386,8 +388,9 @@ public class Load {
 		player.game.currentLevel = Integer.parseInt(data.get(8));
 		Level level = Game.levels[player.game.currentLevel];
 		player.game.player.remove(); // removes the user player from the level, in case they would be added twice.
-		level.add(player);
-		Tile spawnTile = level.getTile(player.spawnx >> 4, player.spawny >> 4);
+		if(level != null)
+			level.add(player);
+		//Tile spawnTile = level.getTile(player.spawnx >> 4, player.spawny >> 4);
 		//if(spawnTile.id != Tiles.get("grass").id && spawnTile.mayPass(level, player.spawnx >> 4, player.spawny >> 4, player))
 			//player.bedSpawn = true; //A semi-advanced little algorithm to determine if the player has a bed save; and though if you sleep on a grass tile, this won't get set, it doesn't matter b/c you'll spawn there anyway!
 		
@@ -500,7 +503,11 @@ public class Load {
 	}
 	
 	public Entity loadEntity(String entityData, Game game, boolean isLocalSave) {
-		List<String> info = Arrays.asList(entityData.substring(entityData.indexOf("[") + 1, entityData.indexOf("]")).split(":")); // this gets everything inside the "[...]" after the entity name.
+		List<String> info = new ArrayList<String>(); // this gets everything inside the "[...]" after the entity name.
+		//System.out.println("loading entity:" + entityData);
+		String[] stuff = entityData.substring(entityData.indexOf("[") + 1, entityData.indexOf("]")).split(":");
+		for(String str: stuff)
+			info.add(str);
 		
 		String entityName = entityData.substring(0, entityData.indexOf("[")); // this gets the text before "[", which is the entity name.
 		
@@ -518,15 +525,16 @@ public class Load {
 			String username = info.get(2);
 			java.net.InetAddress ip = null;
 			try {
-				ip = java.net.InetAddress.getByAddress(info.get(3).getBytes());
+				ip = java.net.InetAddress.getByName(info.get(3));
+				int port = Integer.parseInt(info.get(4));
+				RemotePlayer rp = new RemotePlayer(game, username, ip, port);
+				rp.eid = eid;
+				return rp;
 			} catch(java.net.UnknownHostException ex) {
 				System.err.println("LOAD could not read ip address of remote player in file.");
 				ex.printStackTrace();
 			}
-			int port = Integer.parseInt(info.get(4));
-			RemotePlayer rp = new RemotePlayer(game, username, ip, port);
-			rp.eid = eid;
-			return rp;
+			return null;
 		}
 		
 		

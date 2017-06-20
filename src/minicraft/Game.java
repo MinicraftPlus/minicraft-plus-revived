@@ -9,6 +9,7 @@ import java.awt.image.BufferStrategy;
 import java.awt.image.BufferedImage;
 import java.awt.image.DataBufferInt;
 import java.io.*;
+import java.net.URISyntaxException;
 import java.util.*;
 import javax.imageio.ImageIO;
 import javax.swing.JFrame;
@@ -53,7 +54,7 @@ public class Game extends Canvas implements Runnable {
 		else
 			systemGameDir = System.getProperty("user.home");
 	}
-	public static String gameDir = ""; // The directory in which all the game files are stored
+	public static String gameDir; // The directory in which all the game files are stored
 	//public static String loadDir = "";
 	
 	/// MANAGERIAL VARS AND RUNNING
@@ -217,7 +218,7 @@ public class Game extends Canvas implements Runnable {
 		return ISONLINE && ISHOST && server != null;
 	}
 	public static final boolean hasConnectedClients() {
-		return isValidServer() && server.clientList.size() > 0;
+		return isValidServer() && server.getClientList().size() > 0;
 	}
 	
 	/// called after main; main is at bottom.
@@ -247,6 +248,7 @@ public class Game extends Canvas implements Runnable {
 		Tiles.initTileList();
 		
 		resetGame(); // "half"-starts a new game, to set up initial variables
+		player.eid = 0;
 		new Load(this); // this loads any saved preferences.
 		
 		if(autoclient)
@@ -257,6 +259,7 @@ public class Game extends Canvas implements Runnable {
 	
 	/** This method is used when respawning, and by initWorld to reset the vars. It does not generate any new terrain. */
 	public void resetGame() {
+		if(Game.debug) System.out.println("resetting game...");
 		playerDeadTime = 0;
 		currentLevel = 3;
 		asTick = 0;
@@ -264,11 +267,9 @@ public class Game extends Canvas implements Runnable {
 		
 		// adds a new player
 		if(player instanceof RemotePlayer)
-			player = new RemotePlayer(this, (RemotePlayer)player);
-		else {
+			player = new RemotePlayer(this, true, (RemotePlayer)player);
+		else
 			player = new Player(this, input);
-			player.eid = 0;
-		}
 		
 		// "shouldRespawn" is false on hardcore, or when making a new world.
 		if (DeadMenu.shouldRespawn) { // respawn, don't regenerate level.
@@ -284,6 +285,7 @@ public class Game extends Canvas implements Runnable {
 	/** This method is used to create a brand new world, or to load an existing one from a file. */
 	/** For the loading screen updates to work, it it assumed that *this* is called by a thread *other* than the one rendering the current *menu*. */
 	public void initWorld() { // this is a full reset; everything.
+		if(Game.debug) System.out.println("resetting world...");
 		DeadMenu.shouldRespawn = false;
 		resetGame();
 		Bed.inBed = false;
@@ -414,7 +416,8 @@ public class Game extends Canvas implements Runnable {
 					floor.tick();
 			
 			Tile.tickCount++;
-		}
+		} else if(isValidClient())
+			player.tick();
 		
 		// This is the general action statement thing! Regulates menus, mostly.
 		if (!hasFocus()) {
@@ -436,14 +439,14 @@ public class Game extends Canvas implements Runnable {
 				paused = false;
 				
 				//if player is alive, but no level change, nothing happens here.
-				if (player.removed && readyToRenderGameplay) {
+				if (player.removed && readyToRenderGameplay && !isValidServer()) {
 					//makes delay between death and death menu.
 					//if (debug) System.out.println("player is dead.");
 					playerDeadTime++;
 					if (playerDeadTime > 60) {
 						setMenu(new DeadMenu());
 					}
-				} else if (pendingLevelChange != 0) {
+				} else if (pendingLevelChange != 0 && !isValidServer()) {
 					setMenu(new LevelTransitionMenu(pendingLevelChange));
 					pendingLevelChange = 0;
 				}
@@ -453,42 +456,55 @@ public class Game extends Canvas implements Runnable {
 					Tile.tickCount++;
 				}
 				
+				if(Game.isValidServer()) {
+					// here is where I should put things like select up/down, backspace to boot, esc to open pause menu, etc.
+					if(input.getKey("pause").clicked)
+						setMenu(new PauseMenu(null));
+				}
+				
 				//for debugging only
 				if (debug) {
-					if (input.getKey("Shift-r").clicked)
-						initWorld();
 					
-					if (input.getKey("1").clicked) changeTimeOfDay(Time.Morning);
-					if (input.getKey("2").clicked) changeTimeOfDay(Time.Day);
-					if (input.getKey("3").clicked) changeTimeOfDay(Time.Evening);
-					if (input.getKey("4").clicked) changeTimeOfDay(Time.Night);
+					if(!ISONLINE || isValidServer()) {
+						/// server-only cheats.
+						if (input.getKey("Shift-r").clicked)
+							initWorld(); // this will almost certainaly break in multiplayer, i think...
+						
+						if (input.getKey("1").clicked) changeTimeOfDay(Time.Morning);
+						if (input.getKey("2").clicked) changeTimeOfDay(Time.Day);
+						if (input.getKey("3").clicked) changeTimeOfDay(Time.Evening);
+						if (input.getKey("4").clicked) changeTimeOfDay(Time.Night);
+						
+						if (input.getKey("creative").clicked) ModeMenu.updateModeBools(2);
+						if (input.getKey("survival").clicked) ModeMenu.updateModeBools(1);
+						if (input.getKey("shift-t").clicked) ModeMenu.updateModeBools(4);
+						if (ModeMenu.score && input.getKey("ctrl-t").clicked) scoreTime = normSpeed * 5; // 5 seconds
+					}
 					
 					// this should not be needed, since the inventory should not be altered.
-					if (input.getKey("shift-g").clicked) {
+					if (input.getKey("shift-g").clicked && !isValidServer()) {
 						Items.fillCreativeInv(player.inventory);
 					}
 					
 					if(input.getKey("ctrl-h").clicked) player.health--;
 					
-					if (input.getKey("creative").clicked) ModeMenu.updateModeBools(2);
-					if (input.getKey("survival").clicked) ModeMenu.updateModeBools(1);
-					if (input.getKey("shift-t").clicked) ModeMenu.updateModeBools(4);
-					if (ModeMenu.score && input.getKey("ctrl-t").clicked) scoreTime = normSpeed * 5; // 5 seconds
-					
 					if (input.getKey("0").clicked) player.moveSpeed = 1;
 					if (input.getKey("equals").clicked) player.moveSpeed++;//= 0.5D;
 					if (input.getKey("minus").clicked && player.moveSpeed > 1) player.moveSpeed--;// -= 0.5D;
 					
-					if (input.getKey("shift-0").clicked)
-						gamespeed = 1;
-					
-					if (input.getKey("shift-equals").clicked) {
-						if(gamespeed < 1) gamespeed *= 2;
-						else if(normSpeed*gamespeed < 2000) gamespeed++;
-					}
-					if (input.getKey("shift-minus").clicked) {
-						if(gamespeed > 1) gamespeed--;
-						else if(normSpeed*gamespeed > 5) gamespeed /= 2;
+					if(!ISONLINE || isValidServer()) {
+						/// more server-only cheats.
+						if (input.getKey("shift-0").clicked)
+							gamespeed = 1;
+						
+						if (input.getKey("shift-equals").clicked) {
+							if(gamespeed < 1) gamespeed *= 2;
+							else if(normSpeed*gamespeed < 2000) gamespeed++;
+						}
+						if (input.getKey("shift-minus").clicked) {
+							if(gamespeed > 1) gamespeed--;
+							else if(normSpeed*gamespeed > 5) gamespeed /= 2;
+						}
 					}
 					
 					if(input.getKey("shift-u").clicked) {
@@ -500,18 +516,15 @@ public class Game extends Canvas implements Runnable {
 				} // end debug only cond.
 			} // end "menu-null" conditional
 		} // end hasfocus conditional
-		
-		if(Game.isValidServer()) {
-			/// send out all the changed, cached game parameters to the other clients.
-			
-		}
 	} // end tick()
 	
 	public static Entity getEntity(int eid) {
-		for(Level level: levels)
+		for(Level level: levels) {
+			if(level == null) continue;
 			for(Entity e: level.getEntities())
 				if(e.eid == eid)
 					return e;
+		}
 		
 		return null;
 	}
@@ -556,6 +569,7 @@ public class Game extends Canvas implements Runnable {
 	
 	/// this is the proper way to change the tickCount.
 	public static void setTime(int ticks) {
+		if(Game.debug && Game.isConnectedClient()) System.out.println("setting time to " + ticks);
 		if (ticks < Time.Morning.tickTime) ticks = 0; // error correct
 		if (ticks < Time.Day.tickTime) time = 0; // morning
 		else if (ticks < Time.Evening.tickTime) time = 1; // day
@@ -629,6 +643,29 @@ public class Game extends Canvas implements Runnable {
 		return depth + 3;
 	}
 	
+	private int ePos = 0;
+	private int eposTick = 0;
+	
+	/// just a little thing to make a progressive dot elipses.
+	private String getElipses() {
+		String dots = "";
+		for(int i = 0; i < 3; i++) {
+			if (ePos == i)
+				dots += ".";
+			else
+				dots += " ";
+		}
+		
+		eposTick++;
+		if(eposTick >= Game.normSpeed) {
+			eposTick = 0;
+			ePos++;
+		}
+		if(ePos >= 3) ePos = 0;
+		
+		return dots;
+	}
+	
 	/** renders the current screen */
 	//called in game loop, a bit after tick()
 	public void render() {
@@ -641,14 +678,26 @@ public class Game extends Canvas implements Runnable {
 		}
 		
 		if(readyToRenderGameplay) {
-			renderLevel();
-			renderGui();
+			if(Game.isValidServer()) {
+				screen.clear(0);
+				Font.drawCentered("Awaiting client connections"+getElipses(), screen, 10, Color.get(-1, 444));
+				Font.drawCentered("So far:", screen, 20, Color.get(-1, 444));
+				int i = 0;
+				for(String name: Game.server.getClientNames()) {
+					Font.drawCentered(name, screen, 30+i*10, Color.get(-1, 134));
+					i++;
+				}
+			}
+			else {
+				renderLevel();
+				renderGui();
+			}
 		}
 		
 		if (menu != null) // renders menu, if present.
 			menu.render(screen);
 		
-		if (!hasFocus()) renderFocusNagger(); // calls the renderFocusNagger() method, which creates the "Click to Focus" message.
+		if (!hasFocus() && !Game.isValidServer()) renderFocusNagger(); // calls the renderFocusNagger() method, which creates the "Click to Focus" message.
 		
 		Graphics g = bs.getDrawGraphics(); // gets the graphics in which java draws the picture
 		g.fillRect(0, 0, getWidth(), getHeight()); // draws the a rect to fill the whole window (to cover last?)
@@ -906,6 +955,42 @@ public class Game extends Canvas implements Runnable {
 		pendingLevelChange = dir;
 	}
 	
+	public void startMultiplayerServer() {
+		// here is where we need to start the new client.
+		String jarFilePath = "";
+		try {
+			jarFilePath = getClass().getProtectionDomain().getCodeSource().getLocation().toURI().getPath();
+		} catch(URISyntaxException ex) {
+			System.err.println("problem with jar file URI syntax.");
+			ex.printStackTrace();
+		}
+		List<String> arguments = new ArrayList<String>();
+		arguments.add("java");
+		arguments.add("-jar");
+		arguments.add(jarFilePath);
+		
+		if(debug)
+			arguments.add("--debug");
+		
+		// this will just always be added.
+		arguments.add("--savedir");
+		arguments.add(systemGameDir);
+		
+		arguments.add("--localclient");
+		
+		/// this *should* start a new JVM from the running jar file...
+		try {
+			new ProcessBuilder(arguments).inheritIO().start();
+		} catch(IOException ex) {
+			System.err.println("problem starting new jar file process.");
+			ex.printStackTrace();
+		}
+		
+		// now that that's done, let's turn *this* running JVM into a server:
+		server = new MinicraftServer(this);
+		if (debug) System.out.println("server started. valid: " + isValidServer() + "; is online: "+ISONLINE+"; is host:" + ISHOST + "; server not null: " + (server!=null));
+	}
+	
 	/**
 	 * This is the main loop that runs the game. It:
 	 *	-keeps track of the amount of time that has passed
@@ -1003,6 +1088,23 @@ public class Game extends Canvas implements Runnable {
 				float h = frame.getHeight() - frame.getInsets().top - frame.getInsets().bottom;
 				Game.SCALE = Math.min(w / Game.WIDTH, h / Game.HEIGHT);
 			}
+		});
+		
+		frame.addWindowListener(new WindowListener() {
+			public void windowActivated(WindowEvent e) {}
+			public void windowDeactivated(WindowEvent e) {}
+			public void windowIconified(WindowEvent e) {}
+			public void windowDeiconified(WindowEvent e) {}
+			public void windowOpened(WindowEvent e) {}
+			public void windowClosed(WindowEvent e) {
+				if(Game.isValidClient())
+					Game.client.endConnection();
+				if(Game.isValidServer())
+					Game.server.endConnection();
+				
+				game.quit();
+			}
+			public void windowClosing(WindowEvent e) {}
 		});
 		
 		frame.setVisible(true);

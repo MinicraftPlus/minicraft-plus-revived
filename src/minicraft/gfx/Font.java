@@ -57,6 +57,7 @@ public class Font {
 		//int h = style.centerMaxY - style.centerMinY;
 		
 		String[] lines = getLines(para, w, h, lineSpacing);
+		System.out.println("lines: " + java.util.Arrays.toString(lines));
 		
 		if (centered) style.xPosition = -1;
 		//else style.xPosition = (screen.w - w) / 2;
@@ -87,9 +88,13 @@ public class Font {
 			while(textWidth(line) + textWidth(nextWord) <= w) { // if the next word will fit...
 				line += nextWord; // append it to the line
 				curPos += nextWord.length(); // advance past the word (including space)
-				if(curPos >= para.length()) break; // skip the rest, break from the loop, if we've run out of characters to process.
+				if(curPos >= para.length()) {
+					//System.out.println("no more chars");
+					break; // skip the rest, break from the loop, if we've run out of characters to process.
+				}
 				if(para.charAt(curPos) == '\n') { // skip to next line on line break
 					curPos++;
+					//System.out.println("newline");
 					break;
 				}
 				
@@ -103,7 +108,7 @@ public class Font {
 				if(text.current() == ' ' && line.equals(""))
 					curPos++; // if we ended on a space, advance past the space.
 			}
-			
+			//System.out.println("adding line " + line);
 			lines.add(line); // add the finished line to the list
 			curY += textHeight() + lineSpacing; // move the y position down one line.
 		}

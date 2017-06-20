@@ -55,7 +55,6 @@ public class PauseMenu extends SelectMenu {
 				case "Return to Game": game.setMenu(parent); return;
 				case "Options": game.setMenu(new OptionsMenu(this)); return;
 				case "Change Key Bindings": game.setMenu(new KeyInputMenu(this)); return;
-				case "Make World Multiplayer": game.setMenu(new MultiplayerMenu(true)); return;
 				default:
 					selection = selected; // for any other choice, this progresses a choice to a confirmation.
 			}
@@ -69,6 +68,12 @@ public class PauseMenu extends SelectMenu {
 				case "Load World":
 					WorldSelectMenu.loadworld = true;
 					game.setMenu(new WorldSelectMenu());
+				return;
+				
+				case "Make World Multiplayer":
+					game.setMenu(null);
+					new Save(game.player, WorldSelectMenu.worldname);
+					game.startMultiplayerServer();
 				return;
 				
 				case "Main Menu":
@@ -97,11 +102,13 @@ public class PauseMenu extends SelectMenu {
 				confirmDialog.addAll(Arrays.asList(Font.getLines("Save Game?\n\n\nTip: press \"R\" to save in-game", 28*8, 18*8, 2)));
 			else if (selection.equals("Load Game")) // load game
 				confirmDialog.addAll(Arrays.asList(Font.getLines("Load Game?\nUnsaved progress\nwill be lost", 28*8, 18*8, 2)));
+			else if (selection.equals("Make World Multiplayer")) // load game
+				confirmDialog.addAll(Arrays.asList(Font.getLines("Start Server?\nWorld will\nbe saved", 28*8, 18*8, 2)));
 			else if (selection.equals("Main Menu")) // back to menu
 				confirmDialog.addAll(Arrays.asList(Font.getLines("Back to Main Menu?\nUnsaved progress\nwill be lost", 28*8, 18*8, 2)));
 			
 			for(int i = 0; i < confirmDialog.size(); i++) { // draws each line from above; the first line is white, and all the following lines are red.
-				int col = i == 0 ? Color.get(-1, 555) : selection.equals("Save Game") ? Color.get(-1, 333) : Color.get(-1, 500);
+				int col = i == 0 ? Color.get(-1, 555) : confirmDialog.get(i).contains("Unsaved") ? Color.get(-1, 500) : Color.get(-1, 333);
 				Font.drawCentered(confirmDialog.get(i), screen, 55+i*10, col); // draw it centered.
 			}
 			int ypos = 70 + confirmDialog.size()*10; // start 20 below the last element...

@@ -90,6 +90,7 @@ public class Player extends Mob {
 	
 	public Player(Game game, InputHandler input) {
 		super(sprites, Player.maxHealth);
+		
 		x = 24;
 		y = 24;
 		this.game = game;
