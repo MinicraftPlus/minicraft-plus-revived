@@ -322,7 +322,7 @@ public class LegacyLoad {
 		loadFromFile(location + filename + extention);
 		
 		for(int i = 0; i < Game.levels.length; i++) {
-			Game.levels[i].entities.clear();
+			Game.levels[i].getEntities().clear();
 		}
 		
 		for(int i = 0; i < data.size(); i++) {

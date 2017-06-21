@@ -118,6 +118,10 @@ public class MultiplayerMenu extends Menu {
 	public void setError(String msg) {
 		this.curState = State.ERROR;
 		errorMessage = msg;
+		if(game.menu != this && Game.isValidClient()) {
+			game.setMenu(this);
+			Game.client.endConnection();
+		}
 	}
 	
 	public void render(Screen screen) {

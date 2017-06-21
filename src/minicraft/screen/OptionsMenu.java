@@ -13,7 +13,7 @@ public class OptionsMenu extends Menu {
 	public static int hard = 2;
 	public static int diff = 1;
 	public static boolean isSoundAct = true;
-	public static boolean autosave = true;
+	public static boolean autosave = false;
 	public static boolean unlockedskin = false;
 	
 	private Menu parent;

@@ -357,14 +357,14 @@ public class Game extends Canvas implements Runnable {
 				gamespeed = 1;
 				
 				// seems this removes all entities within a certain radius of the player when you get OUT of Bed.
-				for (int i = 0; i < level.entities.size(); i++) {
-					if (((Entity) level.entities.get(i)).level == levels[currentLevel]) {
-						int xd = Bed.player.x - ((Entity) level.entities.get(i)).x;
-						int yd = Bed.player.y - ((Entity) level.entities.get(i)).y;
-						if (xd * xd + yd * yd < 48 // this comes down to a radius of about half a tile... huh...
-								&& level.entities.get(i) instanceof Mob
-								&& level.entities.get(i) != Bed.player) {
-							level.remove((Entity) level.entities.get(i));
+				for (int i = 0; i < level.getEntities().size(); i++) {
+					Entity e = level.getEntities().get(i);
+					if (e.level == levels[currentLevel]) {
+						int xd = Bed.player.x - e.x;
+						int yd = Bed.player.y - e.y;
+						if (xd * xd + yd * yd < 48 && e instanceof Mob && e != Bed.player) {
+							// this comes down to a radius of about half a tile... huh...
+							level.remove(e);
 						}
 					}
 				}

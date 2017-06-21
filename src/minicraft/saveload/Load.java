@@ -493,7 +493,7 @@ public class Load {
 		loadFromFile(location + filename + extention);
 		
 		for(int i = 0; i < Game.levels.length; i++) {
-			Game.levels[i].entities.clear();
+			Game.levels[i].getEntities().clear();
 		}
 		
 		for(int i = 0; i < data.size(); i++) {
@@ -502,7 +502,7 @@ public class Load {
 		}
 	}
 	
-	public Entity loadEntity(String entityData, Game game, boolean isLocalSave) {
+	public void loadEntity(String entityData, Game game, boolean isLocalSave) {
 		List<String> info = new ArrayList<String>(); // this gets everything inside the "[...]" after the entity name.
 		//System.out.println("loading entity:" + entityData);
 		String[] stuff = entityData.substring(entityData.indexOf("[") + 1, entityData.indexOf("]")).split(":");
@@ -511,8 +511,9 @@ public class Load {
 		
 		String entityName = entityData.substring(0, entityData.indexOf("[")); // this gets the text before "[", which is the entity name.
 		
-		if(entityName.equals("Player"))
-			return null;
+		if(entityName.equals("Player") && Game.debug && Game.isValidClient())
+			System.out.println("CLIENT note: loading regular player");
+			//return;// null;
 		
 		int x = Integer.parseInt(info.get(0));
 		int y = Integer.parseInt(info.get(1));
@@ -521,42 +522,44 @@ public class Load {
 		if(!isLocalSave)
 			eid = Integer.parseInt(info.remove(2));
 		
+		Entity newEntity = null;
+		
 		if(entityName.equals("RemotePlayer") && !isLocalSave) {
 			String username = info.get(2);
 			java.net.InetAddress ip = null;
 			try {
 				ip = java.net.InetAddress.getByName(info.get(3));
 				int port = Integer.parseInt(info.get(4));
-				RemotePlayer rp = new RemotePlayer(game, username, ip, port);
-				rp.eid = eid;
-				return rp;
+				newEntity = new RemotePlayer(game, username, ip, port);
+				//rp.eid = eid;
+				if(Game.debug) System.out.println("Prob CLIENT: Loaded remote player");
+				//return rp;
 			} catch(java.net.UnknownHostException ex) {
 				System.err.println("LOAD could not read ip address of remote player in file.");
 				ex.printStackTrace();
 			}
-			return null;
+			//return null;
+		} else {
+			int mobLvl = 1;
+			try {
+				if(!Crafter.names.contains(entityName) && Class.forName("minicraft.entity.EnemyMob").isAssignableFrom(Class.forName("minicraft.entity."+entityName)))
+					mobLvl = Integer.parseInt(info.get(info.size()-2));
+			} catch(ClassNotFoundException ex) {
+				ex.printStackTrace();
+			}
+			
+			if(mobLvl == 0) {
+				if(Game.debug) System.out.println("level 0 mob: " + entityName);
+				mobLvl = 1;
+			}
+			
+			newEntity = getEntity(entityName, mobLvl);
 		}
-		
-		
-		int mobLvl = 1;
-		try {
-			if(!Crafter.names.contains(entityName) && Class.forName("minicraft.entity.EnemyMob").isAssignableFrom(Class.forName("minicraft.entity."+entityName)))
-				mobLvl = Integer.parseInt(info.get(info.size()-2));
-		} catch(ClassNotFoundException ex) {
-			ex.printStackTrace();
-		}
-		
-		if(mobLvl == 0) {
-			if(Game.debug) System.out.println("level 0 mob: " + entityName);
-			mobLvl = 1;
-		}
-		
-		Entity newEntity = getEntity(entityName, mobLvl);
 		
 		if(newEntity == null)
-			return null;
+			return;// null;
 		
-		if(newEntity instanceof Mob) {
+		if(newEntity instanceof Mob && !(newEntity instanceof RemotePlayer)) {
 			Mob mob = (Mob)newEntity;
 			mob.health = Integer.parseInt(info.get(2));
 			newEntity = mob;
@@ -613,11 +616,10 @@ public class Load {
 			sp.ya = info.get(3);
 		}*/
 		
-		if(isLocalSave) {
-			int currentlevel = Integer.parseInt(info.get(info.size()-1));
-			Game.levels[currentlevel].add(newEntity, x, y);
-		}
-		else {
+		//if(isLocalSave) {
+		
+		//}
+		if(!isLocalSave) {
 			newEntity.eid = eid;
 			
 			if(newEntity instanceof Arrow) {
@@ -634,7 +636,12 @@ public class Load {
 			}
 		}
 		
-		return newEntity;
+		int curLevel = Integer.parseInt(info.get(info.size()-1));
+		if(Game.levels[curLevel] != null)
+			Game.levels[curLevel].add(newEntity, x, y);
+		else if(newEntity instanceof RemotePlayer && Game.isValidClient())
+			System.out.println("CLIENT: remote player not added b/c on null level");
+		//return newEntity;
 	}
 	
 	public static Entity getEntity(String string, int moblvl) {

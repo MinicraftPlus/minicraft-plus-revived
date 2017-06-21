@@ -31,7 +31,7 @@ import minicraft.item.Items;
 
 public class MinicraftServer extends Thread implements MinicraftConnection {
 	
-	private List<RemotePlayer> clientList;
+	private List<RemotePlayer> clientList = java.util.Collections.<RemotePlayer>synchronizedList(new ArrayList<RemotePlayer>());
 	
 	private Game game;
 	private DatagramSocket socket = null;
@@ -41,9 +41,6 @@ public class MinicraftServer extends Thread implements MinicraftConnection {
 	public MinicraftServer(Game game) {
 		super("MinicraftServer");
 		this.game = game;
-		
-		clientList = new ArrayList<RemotePlayer>();
-		clientList = java.util.Collections.<RemotePlayer>synchronizedList(clientList);
 		
 		game.ISONLINE = true;
 		game.ISHOST = true; // just in case.
@@ -323,7 +320,7 @@ public class MinicraftServer extends Thread implements MinicraftConnection {
 				String playerdata = ""; // this stores the data fetched from the files.
 				
 				if(clientPlayer.ipAddress.isLoopbackAddress() && !(game.player instanceof RemotePlayer)) {
-					/// this is the first person on localhost. I believe that a second person will be saved as a loopback address, but a third will simply overwrite the second.
+					/// this is the first person on localhost. I believe that a second person will be saved as a loopback address (later: jk the first one actually will), but a third will simply overwrite the second.
 					if (Game.debug) System.out.println("SERVER: host player found");
 					List<String> datalist = new ArrayList<String>();
 					Save.writePlayer(game.player, datalist);
@@ -339,6 +336,7 @@ public class MinicraftServer extends Thread implements MinicraftConnection {
 					else
 						playerdata = playerdata.substring(0, playerdata.length()-1);
 					
+					game.player.remove();
 					game.player = clientPlayer; // all the important data has been saved.
 					//(new Load()).loadPlayer("Player", game.player);
 				}
@@ -359,7 +357,7 @@ public class MinicraftServer extends Thread implements MinicraftConnection {
 				
 				int playerlvl = Game.lvlIdx(clientPlayer.level != null ? clientPlayer.level.depth : 0);
 				if(!Game.levels[playerlvl].getEntities().contains(clientPlayer)) // this will be true if their file was already found, since they are added in Load.loadPlayer().
-					Game.levels[playerlvl].add(clientPlayer); // add to level (**id is generated here**)
+					Game.levels[playerlvl].add(clientPlayer); // add to level (**id is generated here**) and also, maybe, broadcasted to other players?
 				//making INIT_W packet
 				int[] toSend = {
 					clientPlayer.eid,
@@ -379,11 +377,10 @@ public class MinicraftServer extends Thread implements MinicraftConnection {
 				/// send client world info
 				if (Game.debug) System.out.println("SERVER: sending INIT_W packet");
 				sendData(prependType(MinicraftProtocol.InputType.INIT_W, sendString.getBytes()), address, port);
-				clientList.add(clientPlayer); /// file client player
+				getClientList().add(clientPlayer); /// file client player
 				/// tell others of client joining
-				if (Game.debug) System.out.println("SERVER: broadcasting player addition");
-				sendEntityAddition(clientPlayer);
-				
+				//if (Game.debug) System.out.println("SERVER: broadcasting player addition");
+				//sendEntityAddition(clientPlayer, clientPlayer);
 				return true;
 			
 			case INIT_T:
@@ -419,7 +416,9 @@ public class MinicraftServer extends Thread implements MinicraftConnection {
 				// send back the entities in the level specified.
 				int lvlidx = (int) data[0];
 				if(lvlidx >= 0 && lvlidx < Game.levels.length) {
+					//System.out.println("SERVER requesting access to entities...");
 					Entity[] entities = Game.levels[lvlidx].getEntities().toArray(new Entity[0]);
+					//System.out.println("access granted.");
 					int i = 0;
 					while(i < entities.length) {
 						String edata = "";
@@ -491,12 +490,18 @@ public class MinicraftServer extends Thread implements MinicraftConnection {
 					filename = "RemotePlayer"+numFiles+Save.extention;
 				}
 				
+				byte[] macaddress = null;
 				try {
-					filedata = (new String(computer.getHardwareAddress())) + "\n" + filedata;
+					macaddress = computer.getHardwareAddress();
 				} catch(SocketException ex) {
 					System.err.println("couldn't get mac address.");
 					ex.printStackTrace();
 				}
+				if(macaddress == null) {
+					System.err.println("SERVER: error saving player file; couldn't get client MAC address.");
+					return false;
+				}
+				filedata = (new String(macaddress)) + "\n" + filedata;
 				
 				String filepath = worldPath+"/"+filename;
 				try {

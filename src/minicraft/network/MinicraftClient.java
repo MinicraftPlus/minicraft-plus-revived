@@ -128,7 +128,7 @@ public class MinicraftClient extends Thread implements MinicraftConnection {
 			}
 			
 			int targetTimeout = 10000;
-			if(curState == State.IDLING) targetTimeout = 500;
+			if(curState == State.IDLING || curState == State.PLAY) targetTimeout = 500;
 			try {
 				socket.setSoTimeout(targetTimeout);
 			} catch(SocketException ex) {
@@ -151,6 +151,7 @@ public class MinicraftClient extends Thread implements MinicraftConnection {
 						System.err.println("CLIENT error getting socket timeout");
 						ex.printStackTrace();
 					}*/
+					if (Game.debug) System.out.println("CLIENT: socket timed out in state " + curState);
 					menu.setError("connection timed out.");
 					curState = State.DISCONNECTED;
 				}
@@ -302,8 +303,8 @@ public class MinicraftClient extends Thread implements MinicraftConnection {
 						sent = false;
 						break;
 					}
-					if (Game.debug) System.out.println("CLIENT: loaded entity: " + entityString);
-					newLevel.add((new Load()).loadEntity(entityString, game, false));
+					if (Game.debug) System.out.println("CLIENT: loading entity: " + entityString);
+					(new Load()).loadEntity(entityString, game, false);
 				}
 				
 				if(!sent) {
@@ -331,20 +332,20 @@ public class MinicraftClient extends Thread implements MinicraftConnection {
 			
 			case ADD:
 				if(curState != State.PLAY) return true; // ignoring for now
-				byte curLevel = data[0];
-				String entityData = new String(Arrays.copyOfRange(data, 1, data.length)).trim();
+				//byte curLevel = data[0];
+				String entityData = new String(data).trim();
 				if (Game.debug) System.out.println("CLIENT: recieved entity addition: " + entityData);
 				if(entityData.length() == 0) {
-					System.err.println("CLIENT: recieved entity is blank... level:"+curLevel);
+					System.err.println("CLIENT: recieved entity is blank...");
 					return false;
 				}
-				if(curLevel < 0 || curLevel > Game.levels.length) {
+				/*if(curLevel < 0 || curLevel > Game.levels.length) {
 					System.err.println("CLIENT: recieved entity addition specifies an invalid level: " + curLevel);
 					return false;
-				}
-				Entity e = (new Load()).loadEntity(entityData, game, false);
-				if(Game.levels[curLevel] != null)
-					Game.levels[curLevel].add(e);
+				}*/
+				(new Load()).loadEntity(entityData, game, false);
+				//if(Game.levels[curLevel] != null)
+					//Game.levels[curLevel].add(e);
 				//else return false; // ignoring still counts as a success, so this is commented out.
 				return true;
 			

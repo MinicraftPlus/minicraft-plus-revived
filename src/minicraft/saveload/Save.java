@@ -240,8 +240,8 @@ public class Save {
 	
 	public void writeEntities(String filename) {
 		for(int l = 0; l < Game.levels.length; l++) {
-			for(int i = 0; i < Game.levels[l].entities.size(); i++) {
-				Entity e = (Entity)Game.levels[l].entities.get(i);
+			for(int i = 0; i < Game.levels[l].getEntities().size(); i++) {
+				Entity e = (Entity)Game.levels[l].getEntities().get(i);
 				data.add(writeEntity(e, true));
 			}
 		}
@@ -308,7 +308,7 @@ public class Save {
 				extradata += ":" + ((Arrow)e).getData();
 			}
 		}
-		else // is a local save
+		//else // is a local save
 			extradata += ":" + Game.lvlIdx(e.level.depth);
 		
 		return name + "[" + e.x + ":" + e.y + extradata + "]";

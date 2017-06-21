@@ -72,7 +72,7 @@ public class PauseMenu extends SelectMenu {
 				
 				case "Make World Multiplayer":
 					game.setMenu(null);
-					new Save(game.player, WorldSelectMenu.worldname);
+					//new Save(game.player, WorldSelectMenu.worldname);
 					game.startMultiplayerServer();
 				return;
 				
@@ -97,18 +97,23 @@ public class PauseMenu extends SelectMenu {
 		} else {
 			ArrayList<String> confirmDialog = new ArrayList<String>();
 			String selection = options.get(this.selection);
+			int msgColor = Color.get(-1, 500);
 			
-			if (selection.equals("Save Game")) // save game
+			if (selection.equals("Save Game")) {// save game
+				msgColor = Color.get(-1, 333);
 				confirmDialog.addAll(Arrays.asList(Font.getLines("Save Game?\n\n\nTip: press \"R\" to save in-game", 28*8, 18*8, 2)));
-			else if (selection.equals("Load Game")) // load game
+			} else if (selection.equals("Load Game")) {// load game
+				msgColor = Color.get(-1, 500);
 				confirmDialog.addAll(Arrays.asList(Font.getLines("Load Game?\nUnsaved progress\nwill be lost", 28*8, 18*8, 2)));
-			else if (selection.equals("Make World Multiplayer")) // load game
-				confirmDialog.addAll(Arrays.asList(Font.getLines("Start Server?\nWorld will\nbe saved", 28*8, 18*8, 2)));
-			else if (selection.equals("Main Menu")) // back to menu
+			} else if (selection.equals("Make World Multiplayer")) { // make world multiplayer
+				msgColor = Color.get(-1, 440);
+				confirmDialog.addAll(Arrays.asList(Font.getLines("Start Server?\n\nBe sure to\nsave first!", 28*8, 18*8, 2)));
+			} else if (selection.equals("Main Menu")) {// back to menu
+				msgColor = Color.get(-1, 500);
 				confirmDialog.addAll(Arrays.asList(Font.getLines("Back to Main Menu?\nUnsaved progress\nwill be lost", 28*8, 18*8, 2)));
-			
-			for(int i = 0; i < confirmDialog.size(); i++) { // draws each line from above; the first line is white, and all the following lines are red.
-				int col = i == 0 ? Color.get(-1, 555) : confirmDialog.get(i).contains("Unsaved") ? Color.get(-1, 500) : Color.get(-1, 333);
+			}
+			for(int i = 0; i < confirmDialog.size(); i++) { // draws each line from above; the first line is white, and all the following lines are color msgColor.
+				int col = i == 0 ? Color.get(-1, 555) : msgColor;
 				Font.drawCentered(confirmDialog.get(i), screen, 55+i*10, col); // draw it centered.
 			}
 			int ypos = 70 + confirmDialog.size()*10; // start 20 below the last element...

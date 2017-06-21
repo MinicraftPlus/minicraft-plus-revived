@@ -29,7 +29,7 @@ public class RemotePlayer extends Player {
 	
 	public void render(Screen screen) {
 		super.render(screen);
-		Font.drawCentered(username, screen, x - screen.xOffset, y - 10 - screen.yOffset, Color.get(-1, 444)); // draw the username of the player above their head
+		Font.draw(username, screen, x - Font.textWidth(username)/2, y - 20, Color.get(-1, 444)); // draw the username of the player above their head
 	}
 	
 	public String toString() {

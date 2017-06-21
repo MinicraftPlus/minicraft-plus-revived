@@ -44,7 +44,7 @@ public class Level {
 
 	public static List<String> ls = new ArrayList<String>();
 
-	public List<Entity> entities = new ArrayList<Entity>(); // A list of all the entities in the world
+	private List<Entity> entities = java.util.Collections.<Entity>synchronizedList(new ArrayList<Entity>()); // A list of all the entities in the world
 	private List<Entity> rowSprites = new ArrayList<Entity>();
 	private Comparator<Entity> spriteSorter = new Comparator<Entity>() { // creates a sorter for all the entities to be rendered.
 		public int compare(Entity e0, Entity e1) { // compares 2 entities
@@ -402,8 +402,8 @@ public class Level {
 			int yt = random.nextInt(w);
 			getTile(xt, yt).tick(this, xt, yt);
 		}
-		for (int i = 0; i < entities.size(); i++) {
-			Entity e = entities.get(i);
+		for (int i = 0; i < getEntities().size(); i++) {
+			Entity e = getEntities().get(i);
 			int xto = e.x >> 4;
 			int yto = e.y >> 4;
 			
@@ -425,9 +425,10 @@ public class Level {
 				insertEntity(xt, yt, e);
 			}
 		}
-		for(int i = 0; i < entities.size(); i++) {
-			if(entities.get(i).removed) {// remove entites tagged for removal.
-				remove(entities.get(i));
+		for(int i = 0; i < getEntities().size(); i++) {
+			Entity e = getEntities().get(i);
+			if(e.removed) {// remove entites tagged for removal.
+				remove(e);
 				i--;
 			}
 		}
@@ -581,7 +582,7 @@ public class Level {
 				player = (Player) entity;
 		*/
 		if(entity==null) return;
-		entities.add(entity);
+		getEntities().add(entity);
 		entity.setLevel(this, x, y);
 		
 		if(Game.isValidServer()) {
@@ -609,7 +610,7 @@ public class Level {
 	}
 	
 	public void remove(Entity e) {
-		entities.remove(e);
+		getEntities().remove(e);
 		e.level = null;
 		if(e instanceof RemotePlayer)
 			System.out.println("removing remote player from level " + depth);
@@ -671,8 +672,8 @@ public class Level {
 	}
 
 	public void removeAllEnemies() {
-		for (int i = 0; i < entities.size(); i++) {
-			Entity e = entities.get(i);
+		for (int i = 0; i < getEntities().size(); i++) {
+			Entity e = getEntities().get(i);
 			if(e instanceof EnemyMob)
 				if(e instanceof AirWizard == false || ModeMenu.creative) // don't remove the airwizard bosses! Unless in creative, since you can spawn more.
 					e.remove();
@@ -705,7 +706,7 @@ public class Level {
 	/// finds all entities that are an instance of the given entity.
 	public Entity[] getEntities(Class<? extends Entity> targetClass) {
 		ArrayList<Entity> matches = new ArrayList<Entity>();
-		for(Entity e: entities) {
+		for(Entity e: getEntities()) {
 			if(targetClass.isAssignableFrom(e.getClass()))
 				matches.add(e);
 		}
