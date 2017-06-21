@@ -1,7 +1,6 @@
 	---Quick TODO's---
 
 I need to actually implement Entity.java's update methods to the rest of the Entity classes.
-And... figure out how to find which entity fields have been updated... well, maybe. I may just send them all, at least for now, just to make sure things stay up to date.
 
 -reorder tools a bit in ToolType.java b/c I'm picky. Hoes should be first, at least. ;)
 - add to F3 menu: "heartticks" left until regen another heart.
