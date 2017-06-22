@@ -451,7 +451,7 @@ public class Game extends Canvas implements Runnable {
 					pendingLevelChange = 0;
 				}
 				
-				if(!isValidServer()) {
+				if(!isValidServer() && level != null) {
 					level.tick();
 					Tile.tickCount++;
 				}
@@ -479,21 +479,7 @@ public class Game extends Canvas implements Runnable {
 						if (input.getKey("survival").clicked) ModeMenu.updateModeBools(1);
 						if (input.getKey("shift-t").clicked) ModeMenu.updateModeBools(4);
 						if (ModeMenu.score && input.getKey("ctrl-t").clicked) scoreTime = normSpeed * 5; // 5 seconds
-					}
-					
-					// this should not be needed, since the inventory should not be altered.
-					if (input.getKey("shift-g").clicked && !isValidServer()) {
-						Items.fillCreativeInv(player.inventory);
-					}
-					
-					if(input.getKey("ctrl-h").clicked) player.health--;
-					
-					if (input.getKey("0").clicked) player.moveSpeed = 1;
-					if (input.getKey("equals").clicked) player.moveSpeed++;//= 0.5D;
-					if (input.getKey("minus").clicked && player.moveSpeed > 1) player.moveSpeed--;// -= 0.5D;
-					
-					if(!ISONLINE || isValidServer()) {
-						/// more server-only cheats.
+						
 						if (input.getKey("shift-0").clicked)
 							gamespeed = 1;
 						
@@ -507,11 +493,31 @@ public class Game extends Canvas implements Runnable {
 						}
 					}
 					
-					if(input.getKey("shift-u").clicked) {
-						levels[currentLevel].setTile(player.x>>4, player.y>>4, Tiles.get("Stairs Up"));
-					}
-					if(input.getKey("shift-j").clicked) {
-						levels[currentLevel].setTile(player.x>>4, player.y>>4, Tiles.get("Stairs Down"));
+					
+					if(!ISONLINE || isValidClient()) {
+						/// client-only cheats, since they are player-specific.
+						
+						if (input.getKey("shift-g").clicked) // this should not be needed, since the inventory should not be altered.
+							Items.fillCreativeInv(player.inventory);
+						
+						if(input.getKey("ctrl-h").clicked) player.health--;
+						
+						if (input.getKey("0").clicked) player.moveSpeed = 1;
+						if (input.getKey("equals").clicked) player.moveSpeed++;//= 0.5D;
+						if (input.getKey("minus").clicked && player.moveSpeed > 1) player.moveSpeed--;// -= 0.5D;
+						
+						if(input.getKey("shift-u").clicked) {
+							levels[currentLevel].setTile(player.x>>4, player.y>>4, Tiles.get("Stairs Up"));
+						}
+						if(input.getKey("shift-j").clicked) {
+							levels[currentLevel].setTile(player.x>>4, player.y>>4, Tiles.get("Stairs Down"));
+						}
+						
+						if(input.getKey("ctrl-p").clicked) {
+							/// list all the remote players in the level and their coordinates.
+							//System.out.println("searching for players on current level...");
+							levels[currentLevel].printEntityLocs(Player.class);
+						}
 					}
 				} // end debug only cond.
 			} // end "menu-null" conditional
@@ -569,7 +575,7 @@ public class Game extends Canvas implements Runnable {
 	
 	/// this is the proper way to change the tickCount.
 	public static void setTime(int ticks) {
-		if(Game.debug && Game.isConnectedClient()) System.out.println("setting time to " + ticks);
+		//if(Game.debug && Game.isConnectedClient()) System.out.println("setting time to " + ticks);
 		if (ticks < Time.Morning.tickTime) ticks = 0; // error correct
 		if (ticks < Time.Day.tickTime) time = 0; // morning
 		else if (ticks < Time.Evening.tickTime) time = 1; // day
@@ -897,8 +903,7 @@ public class Game extends Canvas implements Runnable {
 				
 				if (player.staminaRechargeDelay > 0) {
 					// creates the white/gray blinking effect when you run out of stamina.
-					color = (player.staminaRechargeDelay / 4 % 2 == 0) ?
-					  Color.get(-1, 555, 000, 000) : Color.get(-1, 110, 000, 000);
+					color = (player.staminaRechargeDelay / 4 % 2 == 0) ? Color.get(-1, 555, 000, 000) : Color.get(-1, 110, 000, 000);
 					screen.render(i * 8, screen.h - 8, 1 + 12 * 32, color, 0);
 				} else {
 					// renders your current stamina, and uncharged gray stamina.
@@ -1048,6 +1053,17 @@ public class Game extends Canvas implements Runnable {
 	
 	/// * The main method! * ///
 	public static void main(String[] args) {
+		
+		Thread.currentThread().setUncaughtExceptionHandler(new Thread.UncaughtExceptionHandler() {
+			public void uncaughtException(Thread t, Throwable e) {
+				String exceptionTrace = "Exception in thread " + t + ":\n";
+				exceptionTrace += Game.getExceptionTrace(e);
+				System.err.println(exceptionTrace);
+				javax.swing.JOptionPane.showInternalMessageDialog(null, exceptionTrace, "Fatal Error", javax.swing.JOptionPane.ERROR_MESSAGE);
+			}
+		});
+		
+		
 		boolean debug = false;
 		boolean autoclient = false;
 		
@@ -1122,5 +1138,27 @@ public class Game extends Canvas implements Runnable {
 	
 	public void quit() {
 		running = false;
+	}
+	
+	/**
+	 * Provides a String representation of the provided Throwable's stack trace
+	 * that is extracted via PrintStream.
+	 *
+	 * @param throwable Throwable/Exception from which stack trace is to be
+	 *	extracted.
+	 * @return String with provided Throwable's stack trace.
+	 */
+	public static String getExceptionTrace(final Throwable throwable) {
+		final java.io.ByteArrayOutputStream bytestream = new java.io.ByteArrayOutputStream();
+		final java.io.PrintStream printStream = new java.io.PrintStream(bytestream);
+		throwable.printStackTrace(printStream);
+		String exceptionStr = "";
+		try {
+			exceptionStr = bytestream.toString("UTF-8");
+		}
+		catch(Exception ex) {
+			exceptionStr = "Unavailable";
+		}
+		return exceptionStr;
 	}
 }
