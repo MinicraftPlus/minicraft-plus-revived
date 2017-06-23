@@ -357,8 +357,8 @@ public class Game extends Canvas implements Runnable {
 				gamespeed = 1;
 				
 				// seems this removes all entities within a certain radius of the player when you get OUT of Bed.
-				for (int i = 0; i < level.getEntities().size(); i++) {
-					Entity e = level.getEntities().get(i);
+				for (int i = 0; i < level.getEntityList().size(); i++) {
+					Entity e = level.getEntityList().get(i);
 					if (e.level == levels[currentLevel]) {
 						int xd = Bed.player.x - e.x;
 						int yd = Bed.player.y - e.y;
@@ -412,7 +412,7 @@ public class Game extends Canvas implements Runnable {
 			/// this is to keep the game going while online, even with an unfocused window.
 			input.tick();
 			for(Level floor: levels)
-				if(floor.getEntities(Player.class).length > 0)
+				if(floor.getEntitiesOfClass(Player.class).length > 0)
 					floor.tick();
 			
 			Tile.tickCount++;
@@ -527,7 +527,7 @@ public class Game extends Canvas implements Runnable {
 	public static Entity getEntity(int eid) {
 		for(Level level: levels) {
 			if(level == null) continue;
-			for(Entity e: level.getEntities())
+			for(Entity e: level.getEntityList())
 				if(e.eid == eid)
 					return e;
 		}
@@ -555,7 +555,7 @@ public class Game extends Canvas implements Runnable {
 		
 		for(Level level: levels) {
 			if(level == null) continue;
-			for(Entity e: level.getEntities()) {
+			for(Entity e: level.getEntityList()) {
 				if(e.eid == eid)
 					return false;
 			}

@@ -69,7 +69,7 @@ public class Load {
 			/*int nument = 0;
 			for(Level level: Game.levels)
 				if(level)
-					nument += level.getEntities().size();
+					nument += level.getEntityList().size();
 			percentInc += nument;*/
 			percentInc = 100.0 / percentInc;
 			
@@ -493,7 +493,7 @@ public class Load {
 		loadFromFile(location + filename + extention);
 		
 		for(int i = 0; i < Game.levels.length; i++) {
-			Game.levels[i].getEntities().clear();
+			Game.levels[i].getEntityList().clear();
 		}
 		
 		for(int i = 0; i < data.size(); i++) {
@@ -503,6 +503,9 @@ public class Load {
 	}
 	
 	public void loadEntity(String entityData, Game game, boolean isLocalSave) {
+		entityData = entityData.trim();
+		if(entityData.length() == 0) return;
+		
 		List<String> info = new ArrayList<String>(); // this gets everything inside the "[...]" after the entity name.
 		//System.out.println("loading entity:" + entityData);
 		String[] stuff = entityData.substring(entityData.indexOf("[") + 1, entityData.indexOf("]")).split(":");
@@ -524,7 +527,11 @@ public class Load {
 		
 		Entity newEntity = null;
 		
-		if(entityName.equals("RemotePlayer") && !isLocalSave) {
+		if(entityName.equals("RemotePlayer")) {
+			if(isLocalSave) {
+				System.err.println("remote player found in local save file.");
+				return; // don't load them; in fact, they shouldn't be here.
+			}
 			String username = info.get(2);
 			java.net.InetAddress ip = null;
 			try {
@@ -637,9 +644,11 @@ public class Load {
 		}
 		
 		int curLevel = Integer.parseInt(info.get(info.size()-1));
-		if(Game.levels[curLevel] != null)
+		if(Game.levels[curLevel] != null) {
 			Game.levels[curLevel].add(newEntity, x, y);
-		else if(newEntity instanceof RemotePlayer && Game.isValidClient())
+			if(Game.debug && newEntity instanceof RemotePlayer)
+				System.out.println("Prob CLIENT: loaded remote player: " + newEntity + "; added to level " + curLevel + " at " + (newEntity.x>>4)+","+(newEntity.y>>4));
+		} else if(newEntity instanceof RemotePlayer && Game.isValidClient())
 			System.out.println("CLIENT: remote player not added b/c on null level");
 		//return newEntity;
 	}
