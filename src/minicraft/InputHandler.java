@@ -225,7 +225,7 @@ public class InputHandler implements MouseListener, KeyListener {
 		if (keytext == null || keytext.length() == 0) return new Key();
 		
 		Key key; // make a new key to return at the end
-		keytext = keytext.toUpperCase(); // prevent errors due to improper "casing"
+		keytext = keytext.toUpperCase(java.util.Locale.ENGLISH); // prevent errors due to improper "casing"
 		
 		synchronized ("lock") {
 			// this should never be run, actually, b/c the "=debug" isn't used in other places in the code.

@@ -13,7 +13,7 @@ public class Font {
 	
 	/** Draws the message to the x & y coordinates on the screen. */
 	public static void draw(String msg, Screen screen, int x, int y, int col) {
-		msg = msg.toUpperCase(); //makes all letters uppercase.
+		msg = msg.toUpperCase(java.util.Locale.ENGLISH); //makes all letters uppercase.
 		for (int i = 0; i < msg.length(); i++) { // Loops through all the characters that you typed
 			int ix = chars.indexOf(msg.charAt(i)); // the current letter in the message loop
 			if (ix >= 0) {
