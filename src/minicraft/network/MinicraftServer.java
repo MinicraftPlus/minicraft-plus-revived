@@ -14,7 +14,9 @@ import java.io.FileNotFoundException;
 import java.io.FilenameFilter;
 import java.io.BufferedReader;
 import java.io.FileReader;
+import java.nio.file.Files;
 import java.nio.file.StandardOpenOption;
+import java.nio.charset.StandardCharsets;
 import minicraft.Game;
 import minicraft.entity.Entity;
 import minicraft.entity.ItemEntity;
@@ -120,6 +122,7 @@ public class MinicraftServer extends Thread implements MinicraftConnection {
 	public void sendEntityAddition(Entity e) { sendEntityAddition(e, getIfPlayer(e)); }
 	public void sendEntityAddition(Entity e, RemotePlayer sender) {
 		String entity = Save.writeEntity(e, false);
+		if(entity.length() == 0) return; // this entity is not worth sending across.
 		byte[] fulledata = new byte[entity.getBytes().length+1];
 		fulledata[0] = (byte) Game.lvlIdx(e.level.depth);
 		byte[] edata = entity.getBytes();
@@ -196,9 +199,20 @@ public class MinicraftServer extends Thread implements MinicraftConnection {
 		File rpFile = getRemotePlayerFile(computer);
 		
 		String playerdata = "";
-		if(rpFile != null) {
+		if(rpFile != null && rpFile.exists()) {
 			try {
-				BufferedReader br = new BufferedReader(new FileReader(rpFile));
+				List<String> lines = Files.readAllLines(rpFile.toPath(), StandardCharsets.UTF_8);
+				playerdata = lines.get(1) + "\n" + lines.get(2);
+				if(lines.size() > 3) {
+					System.err.println("remote player file has more lines than expected; has " + lines.size() + ", expected 3");
+				}
+			} catch(IOException ex) {
+				System.err.println("failed to read remote player file: " + rpFile);
+				ex.printStackTrace();
+				return "";
+			}
+			/*try {
+				//BufferedReader br = new BufferedReader(new FileReader(rpFile));
 				try {
 					String mac = br.readLine(); // this is the mac address.
 					String line = "";
@@ -212,7 +226,7 @@ public class MinicraftServer extends Thread implements MinicraftConnection {
 			} catch(FileNotFoundException ex) {
 				System.err.println("couldn't find remote player file: " + rpFile);
 				ex.printStackTrace();
-			}
+			}*/
 		}
 		
 		return playerdata;
@@ -224,6 +238,11 @@ public class MinicraftServer extends Thread implements MinicraftConnection {
 		//if (Game.debug) System.out.println("SERVER: recieved packet");
 		
 		MinicraftProtocol.InputType inType = MinicraftProtocol.getInputType(alldata[0]);
+		
+		if(inType == null) {
+			System.err.println("SERVER: invalid packet recieved; input type is not valid.");
+			return false;
+		}
 		
 		byte[] data = Arrays.copyOfRange(alldata, 1, alldata.length);
 		NetworkInterface computer = null;
@@ -314,7 +333,6 @@ public class MinicraftServer extends Thread implements MinicraftConnection {
 				
 				/// versions match; make client player
 				RemotePlayer clientPlayer = new RemotePlayer(game, username, address, port);
-				clientPlayer.findStartPos(Game.levels[Game.lvlIdx(0)]); // find start pos
 				
 				/// now, we need to check if this player has played in this world before. If they have, then all previoeus settings and items and such will be restored.
 				String playerdata = ""; // this stores the data fetched from the files.
@@ -325,12 +343,14 @@ public class MinicraftServer extends Thread implements MinicraftConnection {
 					List<String> datalist = new ArrayList<String>();
 					Save.writePlayer(game.player, datalist);
 					for(String str: datalist)
-						playerdata += str + ",";
+						if(str.length() > 0)
+							playerdata += str + ",";
 					playerdata = playerdata.substring(0, playerdata.length()-1) + "\n";
 					Save.writeInventory(game.player, datalist);
 					//if(Game.debug) System.out.println("SERVER main player inv: " + datalist);
 					for(String str: datalist)
-						playerdata += str + ",";
+						if(str.length() > 0)
+							playerdata += str + ",";
 					if(datalist.size() == 0)
 						playerdata += "null";
 					else
@@ -351,12 +371,13 @@ public class MinicraftServer extends Thread implements MinicraftConnection {
 					// and now, initialize the RemotePlayer instance with the data.
 					(new Load()).loadPlayer(clientPlayer, Arrays.asList(playerdata.split("\\n")[0].split(",")));
 					// we really don't need to load the inventory.
-				}
+				} else
+					clientPlayer.findStartPos(Game.levels[Game.lvlIdx(0)]); // find a new start pos
 				
 				// now, we send the INIT_W packet and notify the others clients.
 				
 				int playerlvl = Game.lvlIdx(clientPlayer.level != null ? clientPlayer.level.depth : 0);
-				if(!Game.levels[playerlvl].getEntities().contains(clientPlayer)) // this will be true if their file was already found, since they are added in Load.loadPlayer().
+				if(!Game.levels[playerlvl].getEntityList().contains(clientPlayer)) // this will be true if their file was already found, since they are added in Load.loadPlayer().
 					Game.levels[playerlvl].add(clientPlayer); // add to level (**id is generated here**) and also, maybe, broadcasted to other players?
 				//making INIT_W packet
 				int[] toSend = {
@@ -417,7 +438,7 @@ public class MinicraftServer extends Thread implements MinicraftConnection {
 				int lvlidx = (int) data[0];
 				if(lvlidx >= 0 && lvlidx < Game.levels.length) {
 					//System.out.println("SERVER requesting access to entities...");
-					Entity[] entities = Game.levels[lvlidx].getEntities().toArray(new Entity[0]);
+					Entity[] entities = Game.levels[lvlidx].getEntityList().toArray(new Entity[0]);
 					//System.out.println("access granted.");
 					int i = 0;
 					while(i < entities.length) {
@@ -428,12 +449,13 @@ public class MinicraftServer extends Thread implements MinicraftConnection {
 								curEntityData = Save.writeEntity(entities[i], false) + ",";
 								if(Game.debug && entities[i] instanceof Player) System.out.println("SERVER: sending player in INIT_E packet: " + entities[i]);
 							}
-							if(curEntityData.getBytes().length + edata.getBytes().length + "END".getBytes().length > MinicraftProtocol.packetSize-1) {
+							if(curEntityData.getBytes().length + edata.getBytes().length + "END".getBytes().length > MinicraftProtocol.packetSize-1 && curEntityData.length() > 1) {
 								// there are too many entities to send in one packet.
 								break;
 							}
 							// there is enough space.
-							edata += curEntityData;
+							if(curEntityData.length() > 1) // 1 b/c of the "," added; this prevents entities that aren't saved from causing ",," to appear.
+								edata += curEntityData;
 						}
 						if(i >= entities.length)
 							edata += "END"; // tell the client there are no more entities to send.
@@ -454,6 +476,7 @@ public class MinicraftServer extends Thread implements MinicraftConnection {
 				/// tell the other clients to remove this client from their games
 				broadcastData(prependType(MinicraftProtocol.InputType.REMOVE, String.valueOf(sender.eid).getBytes()), sender);
 				getClientList().remove(sender); // remove from the server list
+				sender.remove(); // removes the remote player from the level.
 				return true;
 			
 			case SAVE:
@@ -504,10 +527,12 @@ public class MinicraftServer extends Thread implements MinicraftConnection {
 				filedata = (new String(macaddress)) + "\n" + filedata;
 				
 				String filepath = worldPath+"/"+filename;
+				java.nio.file.Path theFile = (new File(filepath)).toPath();
 				try {
-					java.nio.file.Files.write((new File(filepath)).toPath(), Arrays.asList(filedata.split("\\n")), StandardOpenOption.CREATE, StandardOpenOption.WRITE, StandardOpenOption.TRUNCATE_EXISTING);
+					Files.write(theFile, Arrays.asList(filedata.split("\\n")), StandardCharsets.UTF_8, StandardOpenOption.CREATE, StandardOpenOption.WRITE, StandardOpenOption.TRUNCATE_EXISTING);
+					Files.setAttribute(theFile, "isRegularFile", (new Boolean(true)), (java.nio.file.LinkOption[])null);
 				} catch(IOException ex) {
-					System.err.println("problem writing remote player to file " + filepath);
+					System.err.println("problem writing remote player to file: " + filepath);
 					ex.printStackTrace();
 				}
 				// the above will hopefully write the data to file.
@@ -567,6 +592,7 @@ public class MinicraftServer extends Thread implements MinicraftConnection {
 				//x, y, dir, item
 				String[] pinfo = new String(data).trim().split(";");
 				// since this should be the most up-to-date data, just update the remote player coords with them.
+				int ox = sender.x>>4, oy = sender.y>>4;
 				sender.x = Integer.parseInt(pinfo[0]);
 				sender.y = Integer.parseInt(pinfo[1]);
 				sender.dir = Integer.parseInt(pinfo[2]);
@@ -649,7 +675,7 @@ public class MinicraftServer extends Thread implements MinicraftConnection {
 				broadcastData(prependType(MinicraftProtocol.InputType.DISCONNECT, (new byte[0])));
 			}
 			
-			clientList.clear();
+			getClientList().clear();
 		}
 		
 		try {

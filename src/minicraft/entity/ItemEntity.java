@@ -3,6 +3,7 @@ package minicraft.entity;
 import minicraft.gfx.Color;
 import minicraft.gfx.Screen;
 import minicraft.item.Item;
+import minicraft.Game;
 import minicraft.Sound;
 
 public class ItemEntity extends Entity {
@@ -93,7 +94,12 @@ public class ItemEntity extends Entity {
 	}
 
 	protected void touchedBy(Entity entity) {
-		if (time > 30) entity.touchItem(this); // conditional prevents this from being collected immediately.
+		if (time > 30) { // conditional prevents this from being collected immediately.
+			if(Game.isValidClient() && entity instanceof Player && entity == ((Player)entity).game.player) // only register if the main player picks it up, on a client.
+				Game.client.pickupItem(this);
+			else if(!(Game.isValidServer() && entity instanceof Player)) // don't register if a player touches it on a server; the player will register that.
+				entity.touchItem(this);
+		}
 	}
 	
 	/** What happens when the player takes the item */
