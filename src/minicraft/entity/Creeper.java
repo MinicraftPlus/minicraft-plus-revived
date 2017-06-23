@@ -124,4 +124,29 @@ public class Creeper extends EnemyMob {
 		dropItem(1, 4-OptionsMenu.diff, Items.get("Gunpowder"));
 		super.die();
 	}
+	
+	public String getUpdates() {
+		String updates = super.getUpdates() + ";";
+		updates += "fuseTime,"+fuseTime+
+		";fuseLit,"+fuseLit;
+		
+		return updates;
+	}
+	
+	protected boolean updateField(String field, String val) {
+		if(super.updateField(field, val)) return true;
+		switch(field) {
+			case "fuseTime":
+				fuseTime = Integer.parseInt(val);
+				return true;
+			
+			case "fuseLit":
+			 	boolean wasLit = fuseLit;
+				fuseLit = Boolean.parseBoolean(val);
+				if(fuseLit && !wasLit)
+					Sound.fuse.play();
+		}
+		
+		return false;
+	}
 }

@@ -21,21 +21,6 @@ public class DeathChest extends Chest {
 		} else if (OptionsMenu.diff == OptionsMenu.hard) {
 			time = 1200;
 		}
-		/*
-		if (canLight()) {
-			col0 = Color.get(-1, 220, 331, 552);
-			col1 = Color.get(-1, 220, 331, 552);
-			col2 = Color.get(-1, 220, 331, 552);
-			col3 = Color.get(-1, 220, 331, 552);
-		} else {
-			col0 = Color.get(-1, 110, 220, 441);
-			col1 = Color.get(-1, 220, 331, 552);
-			col2 = Color.get(-1, 110, 220, 441);
-			col3 = Color.get(-1, 0, 110, 330);
-		}
-		*/
-		//col = Color.get(-1, 220, 331, 552);
-		//sprite = 1;
 	}
 	
 	// for death chest time count, I imagine.
@@ -52,13 +37,7 @@ public class DeathChest extends Chest {
 			
 			// set the chest color based on redtick's value
 			int expcol = 100 * (redtick / 5 + 1);
-			//if (redtick < 5) {
-				col = Color.get(-1, expcol, expcol+100, expcol+200);
-			//} else if (redtick < 10) {
-				//col = Color.get(-1, 200, 300, 400);
-			//} else {
-				//col = Color.get(-1, 300, 400, 500);
-			//}
+			col = Color.get(-1, expcol, expcol+100, expcol+200);
 			
 			/// these two statements keep the red color oscillating.
 			if (redtick > 13) {
@@ -79,4 +58,22 @@ public class DeathChest extends Chest {
 	}
 	
 	public void take(Player player) {} // can't grab a death chest.
+	
+	public String getUpdates() {
+		String updates = super.getUpdates() + ";";
+		updates += "time,"+time;
+		
+		return updates;
+	}
+	
+	protected boolean updateField(String field, String val) {
+		if(super.updateField(field, val)) return true;
+		switch(field) {
+			case "time":
+				time = Integer.parseInt(val);
+				return true;
+		}
+		
+		return false;
+	}
 }

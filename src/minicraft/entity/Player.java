@@ -782,4 +782,22 @@ public class Player extends Mob {
 		// set hurt and invulnerable times
 		hurtTime = playerHurtTime;
 	}
+	
+	public String getUpdates() {
+		String updates = super.getUpdates() + ";";
+		updates += "skinon,"+skinon+
+		";shirtColor,"+shirtColor;
+		
+		return updates;
+	}
+	
+	protected boolean updateField(String field, String val) {
+		if(super.updateField(field, val)) return true;
+		switch(field) {
+			case "skinon": skinon = Boolean.parseBoolean(val); return true;
+			case "shirtColor": shirtColor = Integer.parseInt(val); return true;
+		}
+		
+		return false;
+	}
 }

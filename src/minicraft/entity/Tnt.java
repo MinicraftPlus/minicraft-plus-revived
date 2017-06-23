@@ -6,6 +6,7 @@ import java.awt.event.ActionListener;
 import javax.swing.Timer;
 import minicraft.gfx.Color;
 import minicraft.gfx.Sprite;
+import minicraft.gfx.Screen;
 import minicraft.level.Level;
 import minicraft.level.tile.Tiles;
 import minicraft.Sound;
@@ -37,9 +38,6 @@ public class Tnt extends Furniture implements ActionListener {
 		if (fuseLit) {
 			ftik++;
 			
-			int colFctr = 100*((ftik%15)/5) + 200;
-			col = Color.get(-1, colFctr, colFctr+100, 555);
-			
 			if(ftik >= FUSE_TIME) {
 				// blow up
 				List<Entity> entitiesInRange = level.getEntitiesInRect(x - BLAST_RADIUS, x + BLAST_RADIUS, y - BLAST_RADIUS, y + BLAST_RADIUS);
@@ -66,6 +64,14 @@ public class Tnt extends Furniture implements ActionListener {
 		}
 	}
 	
+	public void render(Screen screen) {
+		if(fuseLit) {
+			int colFctr = 100*((ftik%15)/5) + 200;
+			col = Color.get(-1, colFctr, colFctr+100, 555);
+		}
+		super.render(screen);
+	}
+	
 	public void actionPerformed(ActionEvent e) {
 		explodeTimer.stop();
 		int xt = x >> 4;
@@ -79,5 +85,23 @@ public class Tnt extends Furniture implements ActionListener {
 			fuseLit = true;
 			Sound.fuse.play();
 		}
+	}
+	
+	public String getUpdates() {
+		String updates = super.getUpdates() + ";";
+		updates += "fuseLit,"+fuseLit+
+		";ftik,"+ftik;
+		
+		return updates;
+	}
+	
+	protected boolean updateField(String field, String val) {
+		if(super.updateField(field, val)) return true;
+		switch(field) {
+			case "fuseLit": fuseLit = Boolean.parseBoolean(val); return true;
+			case "ftik": ftik = Integer.parseInt(val); return true;
+		}
+		
+		return false;
 	}
 }

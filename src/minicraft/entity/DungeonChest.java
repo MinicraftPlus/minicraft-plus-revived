@@ -119,4 +119,22 @@ public class DungeonChest extends Chest {
 		if(!isLocked) // can only be taken if unlocked.
 			super.take(player);
 	}
+	
+	public String getUpdates() {
+		String updates = super.getUpdates() + ";";
+		updates += "isLocked,"+isLocked;
+		
+		return updates;
+	}
+	
+	protected boolean updateField(String field, String val) {
+		if(super.updateField(field, val)) return true;
+		switch(field) {
+			case "isLocked":
+				isLocked = Boolean.parseBoolean(val);
+				return true;
+		}
+		
+		return false;
+	}
 }
