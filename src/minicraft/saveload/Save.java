@@ -240,9 +240,11 @@ public class Save {
 	
 	public void writeEntities(String filename) {
 		for(int l = 0; l < Game.levels.length; l++) {
-			for(int i = 0; i < Game.levels[l].getEntities().size(); i++) {
-				Entity e = (Entity)Game.levels[l].getEntities().get(i);
-				data.add(writeEntity(e, true));
+			for(int i = 0; i < Game.levels[l].getEntityList().size(); i++) {
+				Entity e = (Entity)Game.levels[l].getEntityList().get(i);
+				String saved = writeEntity(e, true);
+				if(saved.length() > 0)
+					data.add(saved);
 			}
 		}
 		
@@ -256,7 +258,7 @@ public class Save {
 		// don't even write ItemEntities or particle effects; Spark... will probably is saved, eventually; it presents an unfair cheat to remove the sparks by reloading the game.
 		if(e instanceof Particle || e instanceof Spark) // never write these, when writing or sending a world.
 			return "";
-		else if(isLocalSave && (e instanceof ItemEntity || e instanceof Arrow || e instanceof RemotePlayer)) // wirte these only when sending a world, not writing it.
+		else if(isLocalSave && (e instanceof ItemEntity || e instanceof Arrow || e instanceof RemotePlayer)) // wirte these only when sending a world, not writing it. (RemotePlayers are saved seperately, when their info is recieved.)
 			return "";
 		
 		if(!isLocalSave)
