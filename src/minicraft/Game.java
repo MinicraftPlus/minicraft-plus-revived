@@ -357,8 +357,7 @@ public class Game extends Canvas implements Runnable {
 				gamespeed = 1;
 				
 				// seems this removes all entities within a certain radius of the player when you get OUT of Bed.
-				for (int i = 0; i < level.getEntityList().size(); i++) {
-					Entity e = level.getEntityList().get(i);
+				for (Entity e: level.getEntityArray()) {
 					if (e.level == levels[currentLevel]) {
 						int xd = Bed.player.x - e.x;
 						int yd = Bed.player.y - e.y;
@@ -456,6 +455,9 @@ public class Game extends Canvas implements Runnable {
 					Tile.tickCount++;
 				}
 				
+				if(isValidClient())
+					player.tick();
+				
 				if(Game.isValidServer()) {
 					// here is where I should put things like select up/down, backspace to boot, esc to open pause menu, etc.
 					if(input.getKey("pause").clicked)
@@ -527,7 +529,7 @@ public class Game extends Canvas implements Runnable {
 	public static Entity getEntity(int eid) {
 		for(Level level: levels) {
 			if(level == null) continue;
-			for(Entity e: level.getEntityList())
+			for(Entity e: level.getEntityArray())
 				if(e.eid == eid)
 					return e;
 		}
@@ -555,7 +557,7 @@ public class Game extends Canvas implements Runnable {
 		
 		for(Level level: levels) {
 			if(level == null) continue;
-			for(Entity e: level.getEntityList()) {
+			for(Entity e: level.getEntityArray()) {
 				if(e.eid == eid)
 					return false;
 			}
@@ -649,27 +651,32 @@ public class Game extends Canvas implements Runnable {
 		return depth + 3;
 	}
 	
-	private int ePos = 0;
-	private int eposTick = 0;
+	//private int ePos = 0;
+	//private int eposTick = 0;
+	private char[] dots = "   ".toCharArray();
 	
 	/// just a little thing to make a progressive dot elipses.
 	private String getElipses() {
-		String dots = "";
-		for(int i = 0; i < 3; i++) {
-			if (ePos == i)
-				dots += ".";
-			else
-				dots += " ";
-		}
+		//String dots = "";
+		int time = tickCount % normSpeed; // sets the "dot clock" to normSpeed.
+		int interval = normSpeed / 2; // specifies the time taken for each fill up and empty of the dots.
+		int epos = (time % interval) / (interval/dots.length); // transforms time into a number specifying which part of the dots array it is in, by index.
+		char set = time < interval ? '.' : ' '; // get the character to set in this cycle.
 		
-		eposTick++;
+		dots[epos] = set;
+		/*
+		for(int i = 0; i < 3; i++) {
+			if (epos == 1) dots += chars[0];
+		}
+		*/
+		/*eposTick++;
 		if(eposTick >= Game.normSpeed) {
 			eposTick = 0;
-			ePos++;
-		}
-		if(ePos >= 3) ePos = 0;
+			//ePos++;
+		}*/
+		//if(ePos >= 3) ePos = 0;
 		
-		return dots;
+		return new String(dots);
 	}
 	
 	/** renders the current screen */
