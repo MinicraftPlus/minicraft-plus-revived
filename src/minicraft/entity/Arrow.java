@@ -59,7 +59,7 @@ public class Arrow extends Entity {
 		y += ydir * speed;
 		
 		// TODO I think I can just use the xr yr vars, and the normal system with touchedBy(entity) to detect collisions instead.
-		List<Entity> entitylist = level.getEntities(x, y, x, y);
+		List<Entity> entitylist = level.getEntitiesInRect(x, y, x, y);
 		boolean criticalHit = random.nextInt(11) < 9;
 		for (int i = 0; i < entitylist.size(); i++) {
 			Entity hit = entitylist.get(i);

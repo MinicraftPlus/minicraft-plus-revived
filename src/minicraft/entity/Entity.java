@@ -46,8 +46,8 @@ public abstract class Entity {
 		if(level == null)
 			System.out.println("Note: remove() called on entity with no level reference: " + getClass());
 		
-		if(Game.isValidClient() && !Game.isValidServer() && !(this instanceof minicraft.entity.particle.Particle))
-			System.out.println("WARNING: client game is removing "+getClass().getName().replace("minicraft.entity.","")+" entity from level " + (level==null?"null":level.depth));
+		//if(Game.isValidClient() && !Game.isValidServer() && !(this instanceof minicraft.entity.particle.Particle))
+			//System.out.println("WARNING: client game is removing "+getClass().getName().replace("minicraft.entity.","")+" entity from level " + (level==null?"null":level.depth));
 	}
 	
 	/** This should ONLY be called by the Level class. To properly add an entity to a level, use level.add(entity) */
@@ -135,8 +135,8 @@ public abstract class Entity {
 		}
 		
 		// these lists are named as if the entity has already moved-- it hasn't, though.
-		List<Entity> wasInside = level.getEntities(x - xr, y - yr, x + xr, y + yr); // gets all of the entities that are inside this entity (aka: colliding) before moving.
-		List<Entity> isInside = level.getEntities(x + xa - xr, y + ya - yr, x + xa + xr, y + ya + yr); // gets the entities that this entity will touch once moved.
+		List<Entity> wasInside = level.getEntitiesInRect(x - xr, y - yr, x + xr, y + yr); // gets all of the entities that are inside this entity (aka: colliding) before moving.
+		List<Entity> isInside = level.getEntitiesInRect(x + xa - xr, y + ya - yr, x + xa + xr, y + ya + yr); // gets the entities that this entity will touch once moved.
 		for (int i = 0; i < isInside.size(); i++) {
 			/// cycles through entites about to be touched, and calls touchedBy(this) for each of them.
 			Entity e = isInside.get(i);

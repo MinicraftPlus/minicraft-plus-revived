@@ -470,7 +470,7 @@ public class Player extends Mob {
 	
 	/** called by other use method; this serves as a buffer in case there is no entity in front of the player. */
 	private boolean use(int x0, int y0, int x1, int y1) {
-		List<Entity> entities = level.getEntities(x0, y0, x1, y1); // gets the entities within the 4 points
+		List<Entity> entities = level.getEntitiesInRect(x0, y0, x1, y1); // gets the entities within the 4 points
 		for (int i = 0; i < entities.size(); i++) {
 			Entity e = entities.get(i);
 			if (e != this) if (e.use(this, attackDir)) return true; // if the entity is not the player, then call it's use method, and return the result. Only some furniture classes use this.
@@ -480,7 +480,7 @@ public class Player extends Mob {
 	
 	/** same, but for interaction. */
 	private boolean interact(int x0, int y0, int x1, int y1) {
-		List<Entity> entities = level.getEntities(x0, y0, x1, y1);
+		List<Entity> entities = level.getEntitiesInRect(x0, y0, x1, y1);
 		for (int i = 0; i < entities.size(); i++) {
 			Entity e = entities.get(i);
 			if ( e != this && e.interact(this, activeItem, attackDir) ) return true;
@@ -490,7 +490,7 @@ public class Player extends Mob {
 	
 	/** same, but for attacking. */
 	private void hurt(int x0, int y0, int x1, int y1) {
-		List<Entity> entities = level.getEntities(x0, y0, x1, y1);
+		List<Entity> entities = level.getEntitiesInRect(x0, y0, x1, y1);
 		for (int i = 0; i < entities.size(); i++) {
 			Entity e = entities.get(i);
 			if (e != this) e.hurt(this, getAttackDamage(e), attackDir); // note: this really only does something for mobs.

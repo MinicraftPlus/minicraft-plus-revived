@@ -82,7 +82,7 @@ public abstract class MobAi extends Mob {
 		
 		int r = level.monsterDensity * soloRadius; // get no-mob radius
 		
-		if (level.getEntities(x - r, y - r, x + r, y + r).size() > 0) return false;
+		if (level.getEntitiesInRect(x - r, y - r, x + r, y + r).size() > 0) return false;
 		
 		return level.getTile(x >> 4, y >> 4).maySpawn; // the last check.
 	}
@@ -91,7 +91,7 @@ public abstract class MobAi extends Mob {
 	
 	public void die(int points) { die(points, 0); }
 	public void die(int points, int multAdd) {
-		for(Entity e: level.getEntities(Player.class)) {
+		for(Entity e: level.getEntitiesOfClass(Player.class)) {
 			Player p = (Player)e;
 			p.score += points * (ModeMenu.score ? p.game.multiplier : 1); // add score for zombie death
 			if(multAdd != 0 && ModeMenu.score)

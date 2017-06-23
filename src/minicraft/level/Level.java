@@ -28,7 +28,7 @@ public class Level {
 	
 	public byte[] tiles; // an array of all the tiles in the world.
 	public byte[] data; // an array of the data of the tiles in the world. // ?
-	public List<Entity>[] entitiesInTiles; // An array of lists of entities in the world, by tile
+	private List<Entity>[] entitiesInTiles; // An array of lists of entities in the world, by tile
 	
 	public int grassColor = 141;
 	//public int dirtColor = 322;
@@ -42,7 +42,7 @@ public class Level {
 	public int chestcount;
 	public int mobCount = 0;
 
-	public static List<String> ls = new ArrayList<String>();
+	private static List<String> ls = new ArrayList<String>();
 
 	private List<Entity> entities = java.util.Collections.<Entity>synchronizedList(new ArrayList<Entity>()); // A list of all the entities in the world
 	private List<Entity> rowSprites = new ArrayList<Entity>();
@@ -69,13 +69,19 @@ public class Level {
 				if(getTile(x, y).id == t.id)
 					printLevelLoc(t.name, x, y);
 	}
-	public void printEntityLocs(Entity e) {
-		String entityName = e.getClass().getName().replace("minicraft.entity.","");
-		for(int x = 0; x < w; x++)
-			for(int y = 0; y < h; y++)
-				for(Entity entity: getEntities(x, y, x, y))
-					if(e.getClass().isAssignableFrom(entity.getClass()))
-						printLevelLoc(entityName, x, y);
+	public void printEntityLocs(Entity e) { printEntityLocs(e.getClass()); }
+	public void printEntityLocs(Class<? extends Entity> c) {
+		int numfound = 0;
+		for(Entity entity: getEntityList()) {
+			if(c.isAssignableFrom(entity.getClass())) {
+				String className = entity.getClass().getName();
+				String entityName = className.substring(className.lastIndexOf(".")+1);
+				printLevelLoc(entityName, entity.x>>4, entity.y>>4);
+				numfound++;
+			}
+		}
+		
+		System.out.println("found " + numfound + " entities in level of depth " + depth);
 	}
 	
 	@SuppressWarnings("unchecked") // @SuppressWarnings ignores the warnings (yellow underline) in this method.
@@ -402,10 +408,10 @@ public class Level {
 			int yt = random.nextInt(w);
 			getTile(xt, yt).tick(this, xt, yt);
 		}
-		for (int i = 0; i < getEntities().size(); i++) {
-			Entity e = getEntities().get(i);
-			int xto = e.x >> 4;
-			int yto = e.y >> 4;
+		for (int i = 0; i < getEntityList().size(); i++) {
+			Entity e = getEntityList().get(i);
+			//int xto = e.x >> 4;
+			//int yto = e.y >> 4;
 			
 			if(e instanceof Player == false || !Game.isValidServer())
 				e.tick();
@@ -416,17 +422,22 @@ public class Level {
 			if(e instanceof Mob) count++;
 			//if(e instanceof RemotePlayer) System.out.println("ticking remote player");
 			
-			int xt = e.x >> 4;
-			int yt = e.y >> 4;
+			//int xt = e.x >> 4;
+			//int yt = e.y >> 4;
 			
-			/// this moves the entity's position in entitiesInTiles, since it's on a different tile now.
-			if (xto != xt || yto != yt) {
+			/// this moves the entity's position in entitiesInTiles, if it's on a different tile now.
+			/*if (xto != xt || yto != yt) {
 				removeEntity(xto, yto, e);
 				insertEntity(xt, yt, e);
 			}
+			
+			if(!entitiesInTiles[xt + yt * w].contains(e)) {
+				/// we need to find the entity and put it where it should be
+				
+			}*/
 		}
-		for(int i = 0; i < getEntities().size(); i++) {
-			Entity e = getEntities().get(i);
+		for(int i = 0; i < getEntityList().size(); i++) {
+			Entity e = getEntityList().get(i);
 			if(e.removed) {// remove entites tagged for removal.
 				remove(e);
 				i--;
@@ -441,6 +452,16 @@ public class Level {
 		//else if (Game.debug)
 			//System.out.println("too many mobs on level " + depth + "; "+count+" of "+maxMobCount+".");
 	}
+	
+	/*public void moveEntity(Entity e, int oxt, int oyt) {
+		if(getEntityList().contains(e)) {
+			if (oxt != e.x>>4 || oyt != e.y>>4) {
+				boolean wasInPlace = removeEntity(oxt, oyt, e);
+				insertEntity(e.x>>4, e.y>>4, e);
+				
+			}
+		}
+	}*/
 	
 	public void dropItem(int x, int y, int mincount, int maxcount, Item... items) {
 		dropItem(x, y, mincount+random.nextInt(maxcount-mincount+1), items);
@@ -479,18 +500,19 @@ public class Level {
 		int yo = yScroll >> 4;
 		int w = (screen.w + 15) >> 4;
 		int h = (screen.h + 15) >> 4;
-
+		
 		screen.setOffset(xScroll, yScroll);
-		for (int y = yo; y <= h + yo; y++) {
+		sortAndRender(screen, getEntitiesInTiles(xo, yo, xo + w, yo + h));
+		/*for (int y = yo; y <= h + yo; y++) {
 			for (int x = xo; x <= w + xo; x++) {
 				if (x < 0 || y < 0 || x >= this.w || y >= this.h) continue;
-				rowSprites.addAll(entitiesInTiles[x + y * this.w]);
+				rowSprites.addAll(getEntitiesInTile(x, y));
 			}
 			if (rowSprites.size() > 0) {
 				sortAndRender(screen, rowSprites);
 			}
 			rowSprites.clear();
-		}
+		}*/
 		screen.setOffset(0, 0);
 	}
 
@@ -502,16 +524,23 @@ public class Level {
 
 		screen.setOffset(xScroll, yScroll);
 		int r = 4;
+		
+		List<Entity> entities = getEntitiesInTiles(xo - r, yo - r, w + xo + r, h + yo + r);
+		for(Entity e: entities) {
+			int lr = e.getLightRadius();
+			if (lr > 0) screen.renderLight(e.x - 1, e.y - 4, lr * 8);
+		}
+		
 		for (int y = yo - r; y <= h + yo + r; y++) {
 			for (int x = xo - r; x <= w + xo + r; x++) {
 				if (x < 0 || y < 0 || x >= this.w || y >= this.h) continue;
 				
-				List<Entity> entities = entitiesInTiles[x + y * this.w];
+				/*List<Entity> entities = entitiesInTiles[x + y * this.w];
 				for (int i = 0; i < entities.size(); i++) {
 					Entity e = entities.get(i);
 					int lr = e.getLightRadius();
 					if (lr > 0) screen.renderLight(e.x - 1, e.y - 4, lr * 8);
-				}
+				}*/
 				int lr = getTile(x, y).getLightRadius(this, x, y);
 				if (lr > 0) screen.renderLight(x * 16 + 8, y * 16 + 8, lr * brightness);
 			}
@@ -582,7 +611,7 @@ public class Level {
 				player = (Player) entity;
 		*/
 		if(entity==null) return;
-		getEntities().add(entity);
+		getEntityList().add(entity);
 		entity.setLevel(this, x, y);
 		
 		if(Game.isValidServer()) {
@@ -606,31 +635,31 @@ public class Level {
 			}
 		}
 		
-		insertEntity(entity.x >> 4, entity.y >> 4, entity);
+		//insertEntity(entity.x >> 4, entity.y >> 4, entity);
 	}
 	
 	public void remove(Entity e) {
-		getEntities().remove(e);
+		getEntityList().remove(e);
 		e.level = null;
 		if(e instanceof RemotePlayer)
 			System.out.println("removing remote player from level " + depth);
 		if(Game.isValidServer())
 			Game.server.sendEntityRemoval(e);
-		int xto = e.x >> 4;
-		int yto = e.y >> 4;
-		removeEntity(xto, yto, e);
+		//int xto = e.x >> 4;
+		//int yto = e.y >> 4;
+		//removeEntity(xto, yto, e);
 	}
-
+	/*
 	public void insertEntity(int x, int y, Entity e) {
 		if (x < 0 || y < 0 || x >= w || y >= h) return;
 		entitiesInTiles[x + y * w].add(e);
 	}
-
-	private void removeEntity(int x, int y, Entity e) {
-		if (x < 0 || y < 0 || x >= w || y >= h) return;
-		entitiesInTiles[x + y * w].remove(e);
+	
+	private boolean removeEntity(int x, int y, Entity e) {
+		if (x < 0 || y < 0 || x >= w || y >= h) return false;
+		return entitiesInTiles[x + y * w].remove(e);
 	}
-
+	*/
 	public void trySpawn(int count) {
 		for (int i = 0; i < count; i++) {
 			int minLevel = 1, maxLevel = 1;
@@ -672,25 +701,46 @@ public class Level {
 	}
 
 	public void removeAllEnemies() {
-		for (int i = 0; i < getEntities().size(); i++) {
-			Entity e = getEntities().get(i);
+		for (int i = 0; i < getEntityList().size(); i++) {
+			Entity e = getEntityList().get(i);
 			if(e instanceof EnemyMob)
 				if(e instanceof AirWizard == false || ModeMenu.creative) // don't remove the airwizard bosses! Unless in creative, since you can spawn more.
 					e.remove();
 		}
 	}
 	
-	public synchronized List<Entity> getEntities() {
+	public synchronized List<Entity> getEntityList() {
 		return entities;
 	}
 	
-	public List<Entity> getEntities(int x0, int y0, int x1, int y1) {
+	/*private List<Entity> getEntitiesInTile(int xt, int yt) {
+		return getEntitiesInTiles(xt, yt, xt, yt);
+	}*/
+	private List<Entity> getEntitiesInTiles(int xt0, int yt0, int xt1, int yt1) {
+		List<Entity> contained = new ArrayList<Entity>();
+		for(int i = 0; i < getEntityList().size(); i++) {
+			Entity e = getEntityList().get(i);
+			int xt = e.x >> 4;
+			int yt = e.y >> 4;
+			if(xt >= xt0 && xt <= xt1 && yt >= yt0 && yt <= yt1)
+				contained.add(e);
+		}
+		
+		return contained;
+	}
+	
+	public List<Entity> getEntitiesInRect(int x0, int y0, int x1, int y1) {
 		List<Entity> result = new ArrayList<Entity>();
 		int xt0 = (x0 >> 4) - 1;
 		int yt0 = (y0 >> 4) - 1;
 		int xt1 = (x1 >> 4) + 1;
 		int yt1 = (y1 >> 4) + 1;
-		for (int y = yt0; y <= yt1; y++) {
+		for(int i = 0; i < getEntityList().size(); i++) {
+			Entity e = getEntityList().get(i);
+			if (e.intersects(x0, y0, x1, y1))
+				result.add(e);
+		}
+		/*for (int y = yt0; y <= yt1; y++) {
 			for (int x = xt0; x <= xt1; x++) {
 				if (x < 0 || y < 0 || x >= w || y >= h) continue;
 				List<Entity> entities = entitiesInTiles[x + y * w];
@@ -699,14 +749,14 @@ public class Level {
 					if (e.intersects(x0, y0, x1, y1)) result.add(e);
 				}
 			}
-		}
+		}*/
 		return result;
 	}
 	
 	/// finds all entities that are an instance of the given entity.
-	public Entity[] getEntities(Class<? extends Entity> targetClass) {
+	public Entity[] getEntitiesOfClass(Class<? extends Entity> targetClass) {
 		ArrayList<Entity> matches = new ArrayList<Entity>();
-		for(Entity e: getEntities()) {
+		for(Entity e: getEntityList()) {
 			if(targetClass.isAssignableFrom(e.getClass()))
 				matches.add(e);
 		}
@@ -715,7 +765,7 @@ public class Level {
 	}
 	
 	public Player getClosestPlayer(int x, int y) {
-		Entity[] players = getEntities(Player.class);
+		Entity[] players = getEntitiesOfClass(Player.class);
 		if(players.length == 0)
 			return null;
 		

@@ -42,7 +42,7 @@ public class Tnt extends Furniture implements ActionListener {
 			
 			if(ftik >= FUSE_TIME) {
 				// blow up
-				List<Entity> entitiesInRange = level.getEntities(x - BLAST_RADIUS, x + BLAST_RADIUS, y - BLAST_RADIUS, y + BLAST_RADIUS);
+				List<Entity> entitiesInRange = level.getEntitiesInRect(x - BLAST_RADIUS, x + BLAST_RADIUS, y - BLAST_RADIUS, y + BLAST_RADIUS);
 				
 				for(Entity e: entitiesInRange) {
 					float dist = (float) Math.hypot(e.x - x, e.y - y);

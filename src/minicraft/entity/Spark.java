@@ -35,7 +35,7 @@ public class Spark extends Entity {
 		yy += ya;
 		x = (int) xx;
 		y = (int) yy;
-		List<Entity> toHit = level.getEntities(x, y, x, y); // gets the entities in the current position to hit.
+		List<Entity> toHit = level.getEntitiesInRect(x, y, x, y); // gets the entities in the current position to hit.
 		for (int i = 0; i < toHit.size(); i++) {
 			Entity e = toHit.get(i);
 			if (e instanceof Mob && !(e instanceof AirWizard)) {
