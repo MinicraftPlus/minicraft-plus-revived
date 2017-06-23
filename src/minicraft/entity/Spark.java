@@ -10,7 +10,7 @@ public class Spark extends Entity {
 	public double xx, yy; // the x and y positions
 	private int time; // the amount of time that has passed
 	private AirWizard owner; // the AirWizard that created this spark
-
+	
 	public Spark(AirWizard owner, double xa, double ya) {
 		super(0, 0);
 		
@@ -23,7 +23,7 @@ public class Spark extends Entity {
 		// Max time = 629 ticks. Min time = 600 ticks.
 		lifeTime = 60 * 10 + random.nextInt(30);
 	}
-
+	
 	public void tick() {
 		time++;
 		if (time >= lifeTime) {
@@ -63,5 +63,9 @@ public class Spark extends Entity {
 		int randmirror = random.nextInt(4);
 		screen.render(x - 4, y - 4 - 2, xt + yt * 32, Color.get(-1, 555), randmirror); // renders the spark
 		screen.render(x - 4, y - 4 + 2, xt + yt * 32, Color.get(-1, 000), randmirror); // renders the shadow on the ground
+	}
+	
+	public String getData() {
+		return owner.eid+"";
 	}
 }

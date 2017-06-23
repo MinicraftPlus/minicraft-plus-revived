@@ -546,6 +546,16 @@ public class Load {
 				ex.printStackTrace();
 			}
 			//return null;
+		}
+		else if(entityName.equals("Spark") && !isLocalSave) {
+			int awID = Integer.parseInt(info.get(2));
+			Entity sparkOwner = Game.getEntity(awID);
+			if(sparkOwner != null && sparkOwner instanceof AirWizard)
+				newEntity = new Spark((AirWizard)sparkOwner, x, y);
+			else {
+				System.err.println("failed to load spark; owner id doesn't point to a correct entity");
+				return;
+			}
 		} else {
 			int mobLvl = 1;
 			try {
