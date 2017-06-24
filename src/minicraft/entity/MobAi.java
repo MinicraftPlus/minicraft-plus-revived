@@ -6,6 +6,7 @@ import minicraft.gfx.Screen;
 import minicraft.item.Item;
 import minicraft.level.Level;
 import minicraft.screen.ModeMenu;
+import minicraft.Game;
 
 public abstract class MobAi extends Mob {
 	
@@ -48,6 +49,11 @@ public abstract class MobAi extends Mob {
 		
 		MobSprite curSprite = sprites[dir][(walkDist >> 3) % sprites[dir].length];
 		curSprite.render(screen, xo, yo, color);
+	}
+	
+	public boolean move(int xa, int ya) {
+		if(Game.isValidClient()) return true;
+		return super.move(xa, ya);
 	}
 	
 	public boolean canWool() {

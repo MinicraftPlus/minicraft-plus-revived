@@ -362,11 +362,13 @@ public class Player extends Mob {
 	
 	/** This method is called when we press the attack button. */
 	protected void attack() {
-		if(Game.isValidClient() && !Game.isValidServer()) {
+		if(Game.isValidClient()) {
 			// if this is a multiplayer game, than the server will execute the full method instead.
 			Game.client.requestInteraction(this);
 			if(attackItem instanceof ToolItem && stamina - 1 >= 0 && ((ToolItem)attackItem).type == ToolType.Bow && inventory.count(Items.get("arrow")) > 0) // we are going to use an arrow.
 				inventory.removeItem(Items.get("arrow")); // do it here so we don't need a response.
+			
+			return;
 		}
 		
 		walkDist += 8; // increase the walkDist (changes the sprite, like you moved your arm)
