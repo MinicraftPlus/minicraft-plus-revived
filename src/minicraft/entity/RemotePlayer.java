@@ -1,19 +1,25 @@
 package minicraft.entity;
 
 import java.net.InetAddress;
+import java.util.HashMap;
 import minicraft.Game;
 import minicraft.InputHandler;
 import minicraft.gfx.Screen;
 import minicraft.gfx.Font;
 import minicraft.gfx.Color;
 
-/** This is used only by the Server runtime, to represent a client player. */
+/** This is used for players in multiplayer mode. */
 public class RemotePlayer extends Player {
 	
 	public InetAddress ipAddress;
 	public int port;
 	
 	public String username;
+	
+	/// this one here is solely for the server, as an easy way to keep track of the whether entity additions or removals have been confirmed by this client. The key is the eid, and the value is the timestamp.
+	public HashMap<Integer, Long> unconfirmedAdditions = new HashMap<Integer, Long>();
+	public HashMap<Integer, Long> unconfirmedRemovals = new HashMap<Integer, Long>();
+	//public HashMap<String, Long> unconfirmedTiles = new HashMap<String, Long>();
 	
 	public RemotePlayer(Game game, String username, InetAddress ip, int port) { this(game, false, username, ip, port); }
 	public RemotePlayer(Game game, boolean isMainPlayer, String username, InetAddress ip, int port) {

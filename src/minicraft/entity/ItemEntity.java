@@ -13,6 +13,10 @@ public class ItemEntity extends Entity {
 	public Item item; // the item that this entity is based off of.
 	private int time = 0; // time it has lasted in the level
 	
+	// solely for multiplayer use.
+	private boolean pickedUp = false;
+	private long pickupTimestamp;
+	
 	public ItemEntity(Item item, int x, int y) {
 		super(3, 3);
 		
@@ -95,9 +99,17 @@ public class ItemEntity extends Entity {
 
 	protected void touchedBy(Entity entity) {
 		if (time > 30) { // conditional prevents this from being collected immediately.
-			if(Game.isValidClient() && entity instanceof Player && entity == ((Player)entity).game.player) // only register if the main player picks it up, on a client.
-				Game.client.pickupItem(this);
-			else if(!(Game.isValidServer() && entity instanceof Player)) // don't register if a player touches it on a server; the player will register that.
+			if(Game.isValidClient() && entity instanceof Player && entity == ((Player)entity).game.player) {// only register if the main player picks it up, on a client.
+				if(!pickedUp) {
+					Game.client.pickupItem(this);
+					pickedUp = true;
+					pickupTimestamp = System.nanoTime();
+				} else if ((System.nanoTime() - pickupTimestamp) / 1E8 > 15L) { // should be converted to tenths of a second.
+					/// the item has already been picked up; but since more than 1.5 seconds has past, the item will be remarked as not picked up.
+					if (Game.debug) System.out.println(Game.onlinePrefix()+"reenabling pickup for item entity " + this);
+					pickedUp = false;
+				}
+			} else if(!(Game.isValidServer() && entity instanceof Player)) // don't register if a player touches it on a server; the player will register that.
 				entity.touchItem(this);
 		}
 	}

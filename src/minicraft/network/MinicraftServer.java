@@ -2,12 +2,14 @@ package minicraft.network;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.HashMap;
 import java.util.Arrays;
 import java.net.DatagramSocket;
 import java.net.DatagramPacket;
 import java.net.InetAddress;
 import java.net.NetworkInterface;
 import java.net.SocketException;
+import java.net.SocketTimeoutException;
 import java.io.IOException;
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -34,6 +36,11 @@ import minicraft.item.Items;
 public class MinicraftServer extends Thread implements MinicraftConnection {
 	
 	private List<RemotePlayer> clientList = java.util.Collections.<RemotePlayer>synchronizedList(new ArrayList<RemotePlayer>());
+	/// these two are to make sure all clients recieve all entity additions and removals. They keep track of what entities the client has confirmed that they have added, or removed, by eid.
+	//private HashMap<RemotePlayer, ArrayList<Integer>> unconfirmedAdditions = new HashMap<RemotePlayer, ArrayList<Integer>>();
+	//private HashMap<RemotePlayer, ArrayList<Integer>> unconfirmedRemovals = new HashMap<RemotePlayer, ArrayList<Integer>>();
+	//private long entityCheckTime
+	//private long lastTileInteractTime
 	
 	private Game game;
 	private DatagramSocket socket = null;
@@ -60,22 +67,65 @@ public class MinicraftServer extends Thread implements MinicraftConnection {
 		}
 	}
 	
+	private long timeSinceCheck = 0;
 	public void run() {
 		if(Game.debug) System.out.println("server started.");
+		try {
+			socket.setSoTimeout(1500);
+		} catch (SocketException ex) {
+			System.err.println("SERVER couldn't set socket timeout:");
+			ex.printStackTrace();
+		}
 		while(isConnected()) {
 			byte[] data = new byte[MinicraftProtocol.packetSize];
 			DatagramPacket packet = new DatagramPacket(data, data.length);
+			boolean recieved = false;
+			long startTime = System.nanoTime();
 			try {
 				socket.receive(packet);
-			} catch (IOException e) {
-				e.printStackTrace();
+				recieved = true;
+				timeSinceCheck += System.nanoTime() - startTime;
+				if(timeSinceCheck / 1E8 > 15L)
+					checkDeltaRecipts();
+			} catch (SocketTimeoutException ex) {
+				checkDeltaRecipts(); // checks the players for what entity additions and removals they haven't confirmed yet.
+			} catch (IOException ex) {
+				ex.printStackTrace();
 			}
-			parsePacket(packet.getData(), packet.getAddress(), packet.getPort());
+			
+			if(recieved)
+				parsePacket(packet.getData(), packet.getAddress(), packet.getPort());
 		}
 		
 		System.out.println("closing server socket");
 		
 		endConnection();
+	}
+	
+	private void checkDeltaRecipts() {
+		timeSinceCheck = 0;
+		for(RemotePlayer client: getClientList().toArray(new RemotePlayer[0])) {
+			for(Integer eid: client.unconfirmedAdditions.keySet().toArray(new Integer[0])) {
+				if((System.nanoTime() - client.unconfirmedAdditions.get(eid)) / 1E9 > 2L) {
+					Entity e = Game.getEntity(eid);
+					if(e == null) // this could happen if an entity was removed before a client ever realized it was there. In that case, we may as well not tell them.
+						client.unconfirmedAdditions.remove(eid);
+					else
+						sendEntityAddition(e, client, true);
+				}
+			}
+			
+			for(Integer eid: client.unconfirmedRemovals.keySet().toArray(new Integer[0])) {
+				if((System.nanoTime() - client.unconfirmedRemovals.get(eid)) / 1E9 > 2L)
+					sendEntityRemoval(eid, client, true);
+			}
+			
+			/*for(Byte[] tiledata: client.unconfirmedTiles.keySet().toArray(new Byte[0][])) {
+				if((System.nanoTime() - client.unconfirmedTiles.get(tiledata)) / 1E9 > 2L) {
+					
+				}
+			}*/
+		}
 	}
 	
 	public synchronized List<RemotePlayer> getClientList() {
@@ -101,6 +151,7 @@ public class MinicraftServer extends Thread implements MinicraftConnection {
 	/// this is like the above, but it won't do any autodetection, so so can choose who not to send it to.
 	public void sendEntityUpdate(Entity e, RemotePlayer sender) {
 		byte[] data = prependType(MinicraftProtocol.InputType.ENTITY, (e.eid+";"+e.getUpdates()).getBytes());
+		//System.out.println("server sending entity update");
 		broadcastData(data, sender);
 	}
 	
@@ -120,7 +171,8 @@ public class MinicraftServer extends Thread implements MinicraftConnection {
 	}
 	
 	public void sendEntityAddition(Entity e) { sendEntityAddition(e, getIfPlayer(e)); }
-	public void sendEntityAddition(Entity e, RemotePlayer sender) {
+	public void sendEntityAddition(Entity e, RemotePlayer sender) { sendEntityAddition(e, sender, false); }
+	public void sendEntityAddition(Entity e, RemotePlayer sender, boolean giveToSender) {
 		String entity = Save.writeEntity(e, false);
 		if(entity.length() == 0) return; // this entity is not worth sending across.
 		byte[] fulledata = new byte[entity.getBytes().length+1];
@@ -128,13 +180,32 @@ public class MinicraftServer extends Thread implements MinicraftConnection {
 		byte[] edata = entity.getBytes();
 		for(int i = 0; i < edata.length; i++)
 			fulledata[i+1] = edata[i];
-		//if(Game.debug) System.out.println("SERVER: sending entity addition: " + entity);
-		broadcastData(prependType(MinicraftProtocol.InputType.ADD, fulledata), sender);
+		if(Game.debug) System.out.println("SERVER: sending entity addition: " + entity);
+		if(!giveToSender) {
+			broadcastData(prependType(MinicraftProtocol.InputType.ADD, fulledata), sender);
+			for(RemotePlayer client: getClientList().toArray(new RemotePlayer[0]))
+				if(client != sender)
+					client.unconfirmedAdditions.put(e.eid, System.nanoTime());
+		} else if(sender != null) {
+			sendData(prependType(MinicraftProtocol.InputType.ADD, fulledata), sender.ipAddress, sender.port);
+			sender.unconfirmedAdditions.put(e.eid, System.nanoTime());
+		}
+		//for(RemotePlayer client: unconfirmedAdditions.keySet().toArray(new RemotePlayer[0])) {
 	}
 	
 	public void sendEntityRemoval(Entity e) { sendEntityRemoval(e, getIfPlayer(e)); }
-	public void sendEntityRemoval(Entity e, RemotePlayer sender) {
-		broadcastData(prependType(MinicraftProtocol.InputType.REMOVE, String.valueOf(e.eid).getBytes()), sender);
+	public void sendEntityRemoval(Entity e, RemotePlayer sender) { sendEntityRemoval(e.eid, sender, false); }
+	public void sendEntityRemoval(int eid, RemotePlayer sender, boolean giveToSender) {
+		if(!giveToSender) {
+			broadcastData(prependType(MinicraftProtocol.InputType.REMOVE, String.valueOf(eid).getBytes()), sender);
+			for(RemotePlayer client: getClientList().toArray(new RemotePlayer[0]))
+				if(client != sender)
+					client.unconfirmedRemovals.put(eid, System.nanoTime());
+		} else if(sender != null) {
+			sendData(prependType(MinicraftProtocol.InputType.REMOVE, String.valueOf(eid).getBytes()), sender.ipAddress, sender.port);
+			sender.unconfirmedRemovals.put(eid, System.nanoTime());
+		}
+		//for(RemotePlayer client: unconfirmedRemovals.keySet().toArray(new RemotePlayer[0])) {
 	}
 	
 	/*public void sendNotification(String note, int ntime) {
@@ -367,7 +438,6 @@ public class MinicraftServer extends Thread implements MinicraftConnection {
 					else
 						playerdata = playerdata.substring(0, playerdata.length()-1);
 					
-					game.player.remove();
 					game.player = clientPlayer; // all the important data has been saved.
 					//(new Load()).loadPlayer("Player", game.player);
 				}
@@ -410,13 +480,15 @@ public class MinicraftServer extends Thread implements MinicraftConnection {
 				if (Game.debug) System.out.println("SERVER: sending INIT_W packet");
 				sendData(prependType(MinicraftProtocol.InputType.INIT_W, sendString.getBytes()), address, port);
 				getClientList().add(clientPlayer); /// file client player
+				//unconfirmedAdditions.put(clientPlayer, new ArrayList<Integer>());
+				//unconfirmedRemovals.put(clientPlayer, new ArrayList<Integer>());
 				/// tell others of client joining
 				//if (Game.debug) System.out.println("SERVER: broadcasting player addition");
 				//sendEntityAddition(clientPlayer, clientPlayer);
 				return true;
 			
 			case INIT_T:
-				if (Game.debug) System.out.println("SERVER: recieved tiles request");
+				//if (Game.debug) System.out.println("SERVER: recieved tiles request");
 				// send back the tiles in the level specified.
 				int levelidx = (int) data[0];
 				if(levelidx >= 0 && levelidx < Game.levels.length) {
@@ -432,8 +504,8 @@ public class MinicraftServer extends Thread implements MinicraftConnection {
 						int endidx = i+1+pkSize;
 						byte[] curData = Arrays.copyOfRange(tiledata, i, (endidx>=tiledata.length?tiledata.length-1:endidx));
 						curData[0] = (byte) MinicraftProtocol.InputType.INIT_T.ordinal();
-						curData[1] = (byte) (i/(pkSize/2)/2); // this value tells the client what index to start filling on.
-						if(Game.debug) System.out.println("SERVER: sending tiles from " + i + " to " + (i+curData.length-2) + " to client; passed value: " + curData[1]);
+						curData[1] = (byte) (i/pkSize); // this value tells the client what index to start filling on.
+						if(Game.debug) System.out.println("SERVER: sending tiles from " + (i/2) + " to " + ((i+curData.length-2)/2) + " to client; passed value: " + curData[1]);
 						sendData(curData, address, port);
 					}
 					return true;
@@ -488,6 +560,16 @@ public class MinicraftServer extends Thread implements MinicraftConnection {
 				broadcastData(prependType(MinicraftProtocol.InputType.REMOVE, String.valueOf(sender.eid).getBytes()), sender);
 				getClientList().remove(sender); // remove from the server list
 				sender.remove(); // removes the remote player from the level.
+				return true;
+			
+			case ADD:
+				// addition confirmed; data should be id.
+				sender.unconfirmedAdditions.remove(Integer.parseInt(new String(data).trim()));
+				return true;
+			
+			case REMOVE:
+				// removal confirmed; data should be id.
+				sender.unconfirmedRemovals.remove(Integer.parseInt(new String(data).trim()));
 				return true;
 			
 			case SAVE:
@@ -592,18 +674,19 @@ public class MinicraftServer extends Thread implements MinicraftConnection {
 				return true;
 			
 			case PICKUP:
-				if (Game.debug) System.out.println("SERVER: recieved itementity pickup request");
-				Entity entity = Game.getEntity(Integer.parseInt(new String(data).trim()));
-				if(entity == null || !(entity instanceof ItemEntity)) {
-					System.err.println("SERVER error with PICKUP request: Requested entity does not exist or is not an ItemEntity.");
+				//if (Game.debug) System.out.println("SERVER: recieved itementity pickup request");
+				int ieid = Integer.parseInt(new String(data).trim());
+				Entity entity = Game.getEntity(ieid);
+				if(entity == null || !(entity instanceof ItemEntity) || entity.removed) {
+					System.err.println("SERVER could not find item entity in PICKUP request: " + ieid + ". Telling client to remove...");
+					sendEntityRemoval(ieid, sender, true); // will happen when another guy gets to it first, so the this client shouldn't have it on the level anymore. It could also happen if the client didn't recieve the packet telling them to pick it up... in which case it will be lost, but oh well.
 					return false;
 				}
-				if(!entity.removed) {
-					entity.remove();
-					sendData(alldata, address, port);
-					broadcastData(prependType(MinicraftProtocol.InputType.REMOVE, String.valueOf(entity.eid).getBytes()), sender);
-				} else
-					return false;
+				
+				entity.remove();
+				if(Game.debug) System.out.println("SERVER: item entity pickup approved: " + entity);
+				sendData(alldata, address, port);
+				broadcastData(prependType(MinicraftProtocol.InputType.REMOVE, String.valueOf(entity.eid).getBytes()), sender);
 				return true;
 			
 			case INTERACT:
@@ -622,8 +705,7 @@ public class MinicraftServer extends Thread implements MinicraftConnection {
 					sender.inventory.add(Items.get("arrow"), arrowCount-curArrows);
 				if(curArrows > arrowCount)
 					sender.inventory.removeItems(Items.get("arrow"), curArrows-arrowCount);
-				sender.attack();
-				/// note: the player may have fired an arrow, but we won't tell because that player will update it theirself.
+				sender.attack(); /// NOTE the player may fire an arrow, but we won't tell because that player will update it theirself.
 			
 			case MOVE:
 				/// the player moved.
@@ -668,7 +750,7 @@ public class MinicraftServer extends Thread implements MinicraftConnection {
 		//if(sends > 50) System.exit(0);
 		DatagramPacket packet = new DatagramPacket(data, data.length, ip, port);
 		String intype = MinicraftProtocol.getInputType(data[0]).name();
-		if (Game.debug && !intype.equalsIgnoreCase("entity")) System.out.println("SERVER: sending "+intype+" data to: " + ip);
+		if (Game.debug && !intype.equalsIgnoreCase("entity") && !intype.equalsIgnoreCase("add")) System.out.println("SERVER: sending "+intype+" data to: " + ip);
 		try {
 			socket.send(packet);
 		} catch(IOException ex) {

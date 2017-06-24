@@ -362,6 +362,8 @@ public class Player extends Mob {
 	
 	/** This method is called when we press the attack button. */
 	protected void attack() {
+		walkDist += 8; // increase the walkDist (changes the sprite, like you moved your arm)
+		
 		if(Game.isValidClient()) {
 			// if this is a multiplayer game, than the server will execute the full method instead.
 			Game.client.requestInteraction(this);
@@ -371,7 +373,6 @@ public class Player extends Mob {
 			return;
 		}
 		
-		walkDist += 8; // increase the walkDist (changes the sprite, like you moved your arm)
 		attackDir = dir; // make the attack direction equal the current direction
 		attackItem = activeItem; // make attackItem equal activeItem
 		boolean done = false; // we're not done yet (we just started!)
@@ -424,8 +425,10 @@ public class Player extends Mob {
 				} else { // item can't interact with tile
 					if (level.getTile(xt, yt).interact(level, xt, yt, this, activeItem, attackDir)) { // returns true if the target tile successfully interacts with the item.
 						done = true;
-					}
+					} else if(Game.isValidServer()) // only do this if no interaction was actually made; b/c a tile update packet will generally happen then anyway.
+						Game.server.sendTileUpdate(level.depth, xt, yt); /// FIXME this part is as a semi-temporary fix for those odd tiles that don't update when they should; instead of having to make another system like the entity additions and removals (and it wouldn't quite work as well for this anyway), this will just update whatever tile the player interacts with.
 				}
+				
 				if (activeItem.isDepleted() && !ModeMenu.creative) {
 					// if the activeItem has 0 items left, then "destroy" it.
 					activeItem = null;
