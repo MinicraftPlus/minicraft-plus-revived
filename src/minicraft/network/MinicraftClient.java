@@ -275,6 +275,10 @@ public class MinicraftClient extends Thread implements MinicraftConnection {
 				//endConnection(); // this is called in the run loop.
 				return true;
 			
+			case MODE:
+				ModeMenu.updateModeBools((int)data[0]);
+				return true;
+			
 			case INIT_W:
 				if (Game.debug) System.out.println("CLIENT: recieved INIT_W packet");
 				menu.setLoadingMessage("World");

@@ -214,6 +214,10 @@ public class MinicraftServer extends Thread implements MinicraftConnection {
 		}
 	}*/
 	
+	public void updateMode(int mode) {
+		broadcastData(prependType(MinicraftProtocol.InputType.MODE, (new byte[] {(byte)mode})));
+	}
+	
 	public ArrayList<String> getClientNames() {
 		ArrayList<String> names = new ArrayList<String>();
 		for(RemotePlayer client: getClientList()) {

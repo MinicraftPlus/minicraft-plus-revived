@@ -97,6 +97,9 @@ public class ModeMenu extends Menu {
 	public static void updateModeBools(int mode) {
 		ModeMenu.mode = mode;
 		
+		if(Game.isValidServer())
+			Game.server.updateMode(mode);
+		
 		survival = mode == 1;
 		creative = mode == 2;
 		hardcore = mode == 3;
