@@ -509,9 +509,9 @@ public class Load {
 		}
 	}
 	
-	public void loadEntity(String entityData, Game game, boolean isLocalSave) {
+	public Entity loadEntity(String entityData, Game game, boolean isLocalSave) {
 		entityData = entityData.trim();
-		if(entityData.length() == 0) return;
+		if(entityData.length() == 0) return null;
 		
 		List<String> info = new ArrayList<String>(); // this gets everything inside the "[...]" after the entity name.
 		//System.out.println("loading entity:" + entityData);
@@ -529,15 +529,21 @@ public class Load {
 		int y = Integer.parseInt(info.get(1));
 		
 		int eid = -1;
-		if(!isLocalSave)
+		if(!isLocalSave) {
 			eid = Integer.parseInt(info.remove(2));
+			Entity existing = Game.getEntity(eid);
+			if(existing != null) {
+				System.out.println(Game.onlinePrefix()+"already loaded entity with eid " + eid + "; returning that one");
+				return existing;
+			}
+		}
 		
 		Entity newEntity = null;
 		
 		if(entityName.equals("RemotePlayer")) {
 			if(isLocalSave) {
 				System.err.println("remote player found in local save file.");
-				return; // don't load them; in fact, they shouldn't be here.
+				return null; // don't load them; in fact, they shouldn't be here.
 			}
 			String username = info.get(2);
 			java.net.InetAddress ip = null;
@@ -561,9 +567,10 @@ public class Load {
 				newEntity = new Spark((AirWizard)sparkOwner, x, y);
 			else {
 				System.err.println("failed to load spark; owner id doesn't point to a correct entity");
-				return;
+				return null;
 			}
-		} else {
+		}
+		else {
 			int mobLvl = 1;
 			try {
 				if(!Crafter.names.contains(entityName) && Class.forName("minicraft.entity.EnemyMob").isAssignableFrom(Class.forName("minicraft.entity."+entityName)))
@@ -581,7 +588,7 @@ public class Load {
 		}
 		
 		if(newEntity == null)
-			return;// null;
+			return null;
 		
 		if(newEntity instanceof Mob && !(newEntity instanceof RemotePlayer)) {
 			Mob mob = (Mob)newEntity;
@@ -640,12 +647,7 @@ public class Load {
 			sp.ya = info.get(3);
 		}*/
 		
-		//if(isLocalSave) {
-		
-		//}
 		if(!isLocalSave) {
-			newEntity.eid = eid;
-			
 			if(newEntity instanceof Arrow) {
 				int ownerID = Integer.parseInt(info.get(2));
 				int dirx = Integer.parseInt(info.get(3));
@@ -660,6 +662,10 @@ public class Load {
 			}
 		}
 		
+		newEntity.eid = eid; // this will be -1 unless set earlier, so a new one will be generated when adding it to the level.
+		if(newEntity instanceof ItemEntity && eid == -1)
+			System.out.println("Warning: item entity was loaded with no eid");
+		
 		int curLevel = Integer.parseInt(info.get(info.size()-1));
 		if(Game.levels[curLevel] != null) {
 			Game.levels[curLevel].add(newEntity, x, y);
@@ -667,7 +673,8 @@ public class Load {
 				System.out.println("Prob CLIENT: loaded remote player: " + newEntity + "; added to level " + curLevel + " at " + (newEntity.x>>4)+","+(newEntity.y>>4));
 		} else if(newEntity instanceof RemotePlayer && Game.isValidClient())
 			System.out.println("CLIENT: remote player not added b/c on null level");
-		//return newEntity;
+		
+		return newEntity;
 	}
 	
 	public static Entity getEntity(String string, int moblvl) {
