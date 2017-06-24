@@ -58,11 +58,12 @@ public class Level {
 	
 	/// This is a solely debug method I made, to make printing repetetive stuff easier.
 		// should be changed to accept prepend and entity, or a tile (as an Object). It will get the coordinates and class name from the object, and will divide coords by 16 if passed an entity.
-	public void printLevelLoc(String prepend, int x, int y) {
+	public void printLevelLoc(String prefix, int x, int y) { printLevelLoc(prefix, x, y, ""); }
+	public void printLevelLoc(String prefix, int x, int y, String suffix) {
 		String[] levelNames = {"Sky", "Surface", "Iron", "Gold", "Lava", "Dungeon"};
 		String levelName = levelNames[-1*depth+1];
 		
-		System.out.println(prepend + " on " + levelName + " level: x="+x + " y="+y);
+		System.out.println(prefix + " on " + levelName + " level: x="+x + " y="+y + suffix);
 	}
 	
 	public void printTileLocs(Tile t) {
@@ -409,8 +410,37 @@ public class Level {
 		}*/
 		int count = 0;
 		
+		/*if(Game.debug && entitiesToAdd.size() > 0) {
+			System.out.println(Game.onlinePrefix()+this+": entity wait list size:" + entitiesToAdd.size());
+		}
+		else if(Game.isValidServer()) {
+			System.out.println("ticking Server level "+this+"; entity wait list is empty.");
+		}*/
 		while(entitiesToAdd.size() > 0) {
-			entities.add(entitiesToAdd.get(0));
+			Entity entity = entitiesToAdd.get(0);
+			if (Game.debug) {
+				String clazz = entity.getClass().getCanonicalName();
+				clazz = clazz.substring(clazz.lastIndexOf(".")+1);
+				String[] searching = {"DungeonChest", "AirWizard", "Player", "ItemEntity"}; //can contain any number of class names I want to print when found.
+				for(String search: searching) {
+					try {
+						if(Class.forName("minicraft.entity."+search).isAssignableFrom(entity.getClass())) {
+							if (clazz.equals("AirWizard")) clazz += ((AirWizard)entity).secondform ? " II" : "";
+							printLevelLoc(Game.onlinePrefix()+"Adding " + clazz, entity.x>>4, entity.y>>4, " ("+entity.eid+")");
+							break;
+						}
+					} catch(ClassNotFoundException ex) {
+						ex.printStackTrace();
+					}
+				}
+			}
+			entities.add(entity);
+			//if(Game.debug && Game.ISONLINE && !(entity instanceof Particle)) System.out.println(Game.onlinePrefix()+this+": added entity to level: " + entity);
+			/*if(Game.debug && Game.isValidServer()) {
+				Entity found = Game.getEntity(entity.eid);
+				if(found == null || !found.equals(entity))
+					System.out.println(Game.onlinePrefix()+"entity added to level is not accessible from Game: " + entity);
+			}*/
 			entitiesToAdd.remove(0);
 		}
 		
@@ -422,15 +452,18 @@ public class Level {
 			}
 		}
 		
-		for (Entity e: this.entities.toArray(new Entity[0])) {
+		for (Entity e: getEntityArray()) {
 			//int xto = e.x >> 4;
 			//int yto = e.y >> 4;
 			
-			if(!Game.ISONLINE || (Game.isValidServer() && e instanceof Player == false) || (Game.isValidClient() && (e instanceof Particle || e instanceof ItemEntity)))
-				e.tick();
+			if(e.removed) continue;
 			
-			if(Game.isValidServer() && Game.hasConnectedClients() && !(e instanceof Player))
-				Game.server.sendEntityUpdate(e);
+			if(!Game.ISONLINE || (Game.isValidServer() && !(e instanceof Player || e instanceof Particle || e instanceof ItemEntity)) || (Game.isValidClient() && !(e instanceof Player/*e instanceof Particle || e instanceof ItemEntity*/))) {
+				
+				e.tick();
+				if(Game.isValidServer() && Game.hasConnectedClients())
+					Game.server.sendEntityUpdate(e);
+			}
 			
 			if(e instanceof Mob) count++;
 			//if(e instanceof RemotePlayer) System.out.println("ticking remote player");
@@ -458,7 +491,7 @@ public class Level {
 				remove(e);
 				if(e.level == this) e.level = null;
 				entities.remove(i);
-				if(Game.debug && Game.isValidClient() && e instanceof Mob) System.out.println("CLIENT: removing mob from level entity list: " + e);
+				if(Game.debug && Game.isValidClient() && !(e instanceof Particle || e instanceof ItemEntity)) System.out.println("CLIENT: removing mob from level entity list: " + e);
 				i--;
 			}
 		}
@@ -619,29 +652,13 @@ public class Level {
 			if(entity instanceof RemotePlayer == false)
 				player = (Player) entity;
 		*/
-		if(entity==null) return;
-		entitiesToAdd.add(entity);
+		if(entity == null) return;
 		entity.setLevel(this, x, y);
+		//if(Game.debug && !(entity instanceof Particle)) System.out.println(Game.onlinePrefix()+this+": adding entity to addition wait list: " + entity);
+		entitiesToAdd.add(entity);
 		
 		if(Game.isValidServer()) {
 			Game.server.sendEntityAddition(entity);
-		}
-		
-		if (Game.debug) {
-			String clazz = entity.getClass().getCanonicalName();
-			clazz = clazz.substring(clazz.lastIndexOf(".")+1);
-			String[] searching = {"DungeonChest", "AirWizard", "Player"}; //can contain any number of class names I want to print when found.
-			for(String search: searching) {
-				try {
-					if(Class.forName("minicraft.entity."+search).isAssignableFrom(entity.getClass())) {
-						if (clazz.equals("AirWizard")) clazz += ((AirWizard)entity).secondform ? " II" : "";
-						printLevelLoc((Game.ISONLINE?"From "+(Game.isValidServer()?"Server":Game.isValidClient()?"Client":"nobody") + ": ":"")+"Adding " + clazz, entity.x>>4, entity.y>>4);
-						break;
-					}
-				} catch(ClassNotFoundException ex) {
-					ex.printStackTrace();
-				}
-			}
 		}
 		
 		//insertEntity(entity.x >> 4, entity.y >> 4, entity);
