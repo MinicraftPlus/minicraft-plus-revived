@@ -410,9 +410,19 @@ public class Game extends Canvas implements Runnable {
 		if(isValidServer()) {
 			/// this is to keep the game going while online, even with an unfocused window.
 			input.tick();
-			for(Level floor: levels)
-				if(floor.getEntitiesOfClass(Player.class).length > 0)
+			boolean ticked = false;
+			for(Level floor: levels) {
+				if(floor == null) continue;
+				if(floor.getEntitiesOfClass(Player.class).length > 0) {
+					//if(Game.debug) System.out.println("Server is ticking level " + floor.depth);
 					floor.tick();
+					ticked = true;
+				}
+			}
+			
+			if(!ticked) {
+				System.out.println("SERVER did not tick any levels, becuase no players were found.");
+			}
 			
 			Tile.tickCount++;
 		}// else if(isValidClient())
@@ -421,7 +431,8 @@ public class Game extends Canvas implements Runnable {
 		// This is the general action statement thing! Regulates menus, mostly.
 		if (!hasFocus()) {
 			input.releaseAll();
-		} else {
+		}
+		if(hasFocus() || ISONLINE) {
 			if ((!player.removed || isValidServer()) && !gameOver) {
 				gameTime++;
 			}
@@ -450,13 +461,13 @@ public class Game extends Canvas implements Runnable {
 					pendingLevelChange = 0;
 				}
 				
+				if(isValidClient())
+					player.tick();
+				
 				if(!isValidServer() && level != null) {
 					level.tick();
 					Tile.tickCount++;
 				}
-				
-				if(isValidClient())
-					player.tick();
 				
 				if(Game.isValidServer()) {
 					// here is where I should put things like select up/down, backspace to boot, esc to open pause menu, etc.
@@ -534,6 +545,8 @@ public class Game extends Canvas implements Runnable {
 					return e;
 		}
 		
+		//if(Game.debug) System.out.println(onlinePrefix()+"couldn't find entity with id " + eid);
+		
 		return null;
 	}
 	
@@ -545,7 +558,7 @@ public class Game extends Canvas implements Runnable {
 			if(tries == 1000)
 				System.out.println("note: trying 1000th time to find valid entity id...(will continue)");
 			
-			eid = random.nextInt(Integer.MAX_VALUE);
+			eid = random.nextInt();
 		} while(!idIsAvaliable(eid));
 		
 		return eid;
@@ -564,6 +577,20 @@ public class Game extends Canvas implements Runnable {
 		}
 		
 		return true;
+	}
+	
+	public static String onlinePrefix() {
+		if(!Game.ISONLINE) return "";
+		String prefix = "From ";
+		if(Game.isValidServer())
+			prefix += "Server";
+		else if(Game.isValidClient())
+			prefix += "Client";
+		else
+			prefix += "nobody";
+		
+		prefix += ": ";
+		return prefix;
 	}
 	
 	public void setMultiplier(int value) {
@@ -710,7 +737,7 @@ public class Game extends Canvas implements Runnable {
 		if (menu != null) // renders menu, if present.
 			menu.render(screen);
 		
-		if (!hasFocus() && !Game.isValidServer()) renderFocusNagger(); // calls the renderFocusNagger() method, which creates the "Click to Focus" message.
+		if (!hasFocus() && !Game.ISONLINE) renderFocusNagger(); // calls the renderFocusNagger() method, which creates the "Click to Focus" message.
 		
 		Graphics g = bs.getDrawGraphics(); // gets the graphics in which java draws the picture
 		g.fillRect(0, 0, getWidth(), getHeight()); // draws the a rect to fill the whole window (to cover last?)
