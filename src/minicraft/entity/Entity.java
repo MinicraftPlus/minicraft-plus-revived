@@ -248,4 +248,8 @@ public abstract class Entity {
 		+"y,"+y+";"
 		+"level,"+(level==null?"null":Game.lvlIdx(level.depth));
 	}
+	
+	public String toString() {
+		return super.toString() + "(eid="+eid+")";
+	}
 }
