@@ -735,8 +735,9 @@ public class Level {
 	}
 	
 	public void clearEntities() {
-		for(Entity e: getEntityArray())
-			remove(e);
+		entities.clear();
+		//for(Entity e: getEntityArray())
+			//remove(e);
 	}
 	
 	public synchronized Entity[] getEntityArray() {
