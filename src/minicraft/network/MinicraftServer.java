@@ -161,17 +161,22 @@ public class MinicraftServer extends Thread implements MinicraftConnection {
 			}
 		});
 		
+		if(clientSaves == null)
+			clientSaves = new File[0];
+		
 		return clientSaves;
 	}
+	
 	public File getRemotePlayerFile(NetworkInterface computer) {
 		File[] clientFiles = getRemotePlayerFiles();
-		String playerdata = "";
+		
 		for(File file: clientFiles) {
-			String mac = "";
+			byte[] mac;
+			String macString = "";
 			try {
 				BufferedReader br = new BufferedReader(new FileReader(file));
 				try {
-					mac = br.readLine();
+					macString = br.readLine().trim();
 				} catch(IOException ex) {
 					System.err.println("failed to read line from file.");
 					ex.printStackTrace();
@@ -181,8 +186,13 @@ public class MinicraftServer extends Thread implements MinicraftConnection {
 				ex.printStackTrace();
 			}
 			
+			mac = new byte[macString.length()/2];
+			for(int i = 0; i < mac.length; i++) {
+				mac[i] = Byte.parseByte(macString.substring(i*2, i*2+2), 16);
+			}
+			
 			try {
-				if(Arrays.equals(mac.getBytes(), computer.getHardwareAddress())) {
+				if(Arrays.equals(mac, computer.getHardwareAddress())) {
 					/// this player has been here before.
 					if (Game.debug) System.out.println("remote player file found; returning file " + file.getName());
 					return file;
@@ -195,17 +205,18 @@ public class MinicraftServer extends Thread implements MinicraftConnection {
 		
 		return null;
 	}
+	
 	public String getRemotePlayerFileData(NetworkInterface computer) {
 		File rpFile = getRemotePlayerFile(computer);
 		
 		String playerdata = "";
 		if(rpFile != null && rpFile.exists()) {
 			try {
-				List<String> lines = Files.readAllLines(rpFile.toPath(), StandardCharsets.UTF_8);
-				playerdata = lines.get(1) + "\n" + lines.get(2);
-				if(lines.size() > 3) {
+				String content = Load.loadFromFile(rpFile.getPath(), false); //Files.readAllLines(rpFile.toPath(), StandardCharsets.UTF_8);
+				playerdata = content.substring(content.indexOf("\n")+1);
+				/*if(lines.size() > 3) {
 					System.err.println("remote player file has more lines than expected; has " + lines.size() + ", expected 3");
-				}
+				}*/
 			} catch(IOException ex) {
 				System.err.println("failed to read remote player file: " + rpFile);
 				ex.printStackTrace();
@@ -377,7 +388,7 @@ public class MinicraftServer extends Thread implements MinicraftConnection {
 				// now, we send the INIT_W packet and notify the others clients.
 				
 				int playerlvl = Game.lvlIdx(clientPlayer.level != null ? clientPlayer.level.depth : 0);
-				if(!Game.levels[playerlvl].getEntityList().contains(clientPlayer)) // this will be true if their file was already found, since they are added in Load.loadPlayer().
+				if(!Arrays.asList(Game.levels[playerlvl].getEntityArray()).contains(clientPlayer)) // this will be true if their file was already found, since they are added in Load.loadPlayer().
 					Game.levels[playerlvl].add(clientPlayer); // add to level (**id is generated here**) and also, maybe, broadcasted to other players?
 				//making INIT_W packet
 				int[] toSend = {
@@ -438,7 +449,7 @@ public class MinicraftServer extends Thread implements MinicraftConnection {
 				int lvlidx = (int) data[0];
 				if(lvlidx >= 0 && lvlidx < Game.levels.length) {
 					//System.out.println("SERVER requesting access to entities...");
-					Entity[] entities = Game.levels[lvlidx].getEntityList().toArray(new Entity[0]);
+					Entity[] entities = Game.levels[lvlidx].getEntityArray();
 					//System.out.println("access granted.");
 					int i = 0;
 					while(i < entities.length) {
@@ -504,33 +515,41 @@ public class MinicraftServer extends Thread implements MinicraftConnection {
 				}
 				
 				File rpFile = getRemotePlayerFile(computer);
-				if(rpFile != null && rpFile.exists())
+				if(rpFile != null && rpFile.exists()) // check if this remote player already has a file.
 					filename = rpFile.getName();
 				else {
 					File[] clientSaves = getRemotePlayerFiles();
-					// check if this remote player already has a file.
 					int numFiles = clientSaves.length;
 					filename = "RemotePlayer"+numFiles+Save.extention;
 				}
 				
-				byte[] macaddress = null;
+				byte[] macAddress = null;
 				try {
-					macaddress = computer.getHardwareAddress();
+					macAddress = computer.getHardwareAddress();
 				} catch(SocketException ex) {
 					System.err.println("couldn't get mac address.");
 					ex.printStackTrace();
 				}
-				if(macaddress == null) {
+				if(macAddress == null) {
 					System.err.println("SERVER: error saving player file; couldn't get client MAC address.");
 					return false;
 				}
-				filedata = (new String(macaddress)) + "\n" + filedata;
+				
+				String macString = "";
+				for(byte b: macAddress) {
+					String hexInt = Integer.toHexString((int)b);
+					if (Game.debug) System.out.println("mac byte as hex int: " + hexInt);
+					macString += hexInt.substring(hexInt.length()-2);
+				}
+				if(Game.debug) System.out.println("mac as hex: " + macString);
+				filedata = macString + "\n" + filedata;
 				
 				String filepath = worldPath+"/"+filename;
-				java.nio.file.Path theFile = (new File(filepath)).toPath();
+				//java.nio.file.Path theFile = (new File(filepath)).toPath();
 				try {
-					Files.write(theFile, Arrays.asList(filedata.split("\\n")), StandardCharsets.UTF_8, StandardOpenOption.CREATE, StandardOpenOption.WRITE, StandardOpenOption.TRUNCATE_EXISTING);
-					Files.setAttribute(theFile, "isRegularFile", (new Boolean(true)), (java.nio.file.LinkOption[])null);
+					Save.writeToFile(filepath, filedata.split("\\n"), false);
+					//Files.write(theFile, Arrays.asList(filedata.split("\\n")), StandardCharsets.UTF_8, StandardOpenOption.CREATE, StandardOpenOption.WRITE, StandardOpenOption.TRUNCATE_EXISTING);
+					//Files.setAttribute(theFile, "isRegularFile", (new Boolean(true)), (java.nio.file.LinkOption[])null);
 				} catch(IOException ex) {
 					System.err.println("problem writing remote player to file: " + filepath);
 					ex.printStackTrace();
@@ -625,7 +644,8 @@ public class MinicraftServer extends Thread implements MinicraftConnection {
 	}
 	
 	public void broadcastData(byte[] data) {
-		for(RemotePlayer client: getClientList()) {
+		for(int i = 0; i < getClientList().size(); i++) {
+			RemotePlayer client = getClientList().get(i);
 			sendData(data, client.ipAddress, client.port);
 		}
 	}
@@ -635,7 +655,8 @@ public class MinicraftServer extends Thread implements MinicraftConnection {
 			broadcastData(data);
 			return;
 		}
-		for(RemotePlayer client: getClientList()) {
+		for(int i = 0; i < getClientList().size(); i++) {
+			RemotePlayer client = getClientList().get(i);
 			if(client != sender) // send this packet to all EXCEPT the specified one.
 				sendData(data, client.ipAddress, client.port);
 		}
