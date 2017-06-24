@@ -8,6 +8,7 @@ import java.util.List;
 import java.util.Random;
 import minicraft.Game;
 import minicraft.entity.*;
+import minicraft.entity.particle.Particle;
 import minicraft.gfx.Screen;
 import minicraft.item.Item;
 import minicraft.item.Items;
@@ -45,7 +46,8 @@ public class Level {
 	private static List<String> ls = new ArrayList<String>();
 
 	private List<Entity> entities = java.util.Collections.<Entity>synchronizedList(new ArrayList<Entity>()); // A list of all the entities in the world
-	private List<Entity> rowSprites = new ArrayList<Entity>();
+	private List<Entity> entitiesToAdd = new ArrayList<Entity>(); /// entites that will be added to the level on next tick are stored here. This is for the sake of multithreading optimization. (hopefully)
+	//private List<Entity> rowSprites = new ArrayList<Entity>();
 	private Comparator<Entity> spriteSorter = new Comparator<Entity>() { // creates a sorter for all the entities to be rendered.
 		public int compare(Entity e0, Entity e1) { // compares 2 entities
 			if (e1.y < e0.y) return +1; // If the y position of the first entity is less (higher up) than the second entity, then it will be moved up in sorting.
@@ -72,7 +74,7 @@ public class Level {
 	public void printEntityLocs(Entity e) { printEntityLocs(e.getClass()); }
 	public void printEntityLocs(Class<? extends Entity> c) {
 		int numfound = 0;
-		for(Entity entity: getEntityList()) {
+		for(Entity entity: getEntityArray()) {
 			if(c.isAssignableFrom(entity.getClass())) {
 				String className = entity.getClass().getName();
 				String entityName = className.substring(className.lastIndexOf(".")+1);
@@ -401,22 +403,33 @@ public class Level {
 	}
 
 	public void tick() {
+		/*if(Game.isValidClient()) {
+			if(Game.debug) System.out.println("WARNING! client tried to tick level!");
+			return;
+		}*/
 		int count = 0;
 		
-		for (int i = 0; i < w * h / 50; i++) {
-			int xt = random.nextInt(w);
-			int yt = random.nextInt(w);
-			getTile(xt, yt).tick(this, xt, yt);
+		while(entitiesToAdd.size() > 0) {
+			entities.add(entitiesToAdd.get(0));
+			entitiesToAdd.remove(0);
 		}
-		for (int i = 0; i < getEntityList().size(); i++) {
-			Entity e = getEntityList().get(i);
+		
+		if(!Game.isValidClient()) {
+			for (int i = 0; i < w * h / 50; i++) {
+				int xt = random.nextInt(w);
+				int yt = random.nextInt(w);
+				getTile(xt, yt).tick(this, xt, yt);
+			}
+		}
+		
+		for (Entity e: this.entities.toArray(new Entity[0])) {
 			//int xto = e.x >> 4;
 			//int yto = e.y >> 4;
 			
-			if(e instanceof Player == false || !Game.isValidServer())
+			if(!Game.ISONLINE || (Game.isValidServer() && e instanceof Player == false) || (Game.isValidClient() && (e instanceof Particle || e instanceof ItemEntity)))
 				e.tick();
 			
-			if(Game.isValidServer() && Game.hasConnectedClients())
+			if(Game.isValidServer() && Game.hasConnectedClients() && !(e instanceof Player))
 				Game.server.sendEntityUpdate(e);
 			
 			if(e instanceof Mob) count++;
@@ -436,10 +449,16 @@ public class Level {
 				
 			}*/
 		}
-		for(int i = 0; i < getEntityList().size(); i++) {
-			Entity e = getEntityList().get(i);
-			if(e.removed) {// remove entites tagged for removal.
+		
+		//if(Game.isValidClient()) return; // stop here.
+		
+		for(int i = 0; i < entities.size(); i++) {
+			Entity e = entities.get(i);
+			if(e.removed || e.level != this) {// remove entites tagged for removal.
 				remove(e);
+				if(e.level == this) e.level = null;
+				entities.remove(i);
+				if(Game.debug && Game.isValidClient() && e instanceof Mob) System.out.println("CLIENT: removing mob from level entity list: " + e);
 				i--;
 			}
 		}
@@ -453,16 +472,6 @@ public class Level {
 			//System.out.println("too many mobs on level " + depth + "; "+count+" of "+maxMobCount+".");
 	}
 	
-	/*public void moveEntity(Entity e, int oxt, int oyt) {
-		if(getEntityList().contains(e)) {
-			if (oxt != e.x>>4 || oyt != e.y>>4) {
-				boolean wasInPlace = removeEntity(oxt, oyt, e);
-				insertEntity(e.x>>4, e.y>>4, e);
-				
-			}
-		}
-	}*/
-	
 	public void dropItem(int x, int y, int mincount, int maxcount, Item... items) {
 		dropItem(x, y, mincount+random.nextInt(maxcount-mincount+1), items);
 	}
@@ -475,10 +484,10 @@ public class Level {
 			dropItem(x, y, i);
 	}
 	public void dropItem(int x, int y, Item i) {
-		if(Game.debug && ModeMenu.creative)
+		/*if(Game.debug && ModeMenu.creative)
 			game.player.inventory.add(i);
 		else
-			add(new minicraft.entity.ItemEntity(i, x + random.nextInt(11) - 5, y + random.nextInt(11) - 5));
+			*/add(new minicraft.entity.ItemEntity(i, x + random.nextInt(11) - 5, y + random.nextInt(11) - 5));
 	}
 
 	public void renderBackground(Screen screen, int xScroll, int yScroll) {
@@ -611,7 +620,7 @@ public class Level {
 				player = (Player) entity;
 		*/
 		if(entity==null) return;
-		getEntityList().add(entity);
+		entitiesToAdd.add(entity);
 		entity.setLevel(this, x, y);
 		
 		if(Game.isValidServer()) {
@@ -639,8 +648,8 @@ public class Level {
 	}
 	
 	public void remove(Entity e) {
-		getEntityList().remove(e);
-		e.level = null;
+		//e.remove();
+		e.removed = true;
 		if(e instanceof RemotePlayer)
 			System.out.println("removing remote player from level " + depth);
 		if(Game.isValidServer())
@@ -701,16 +710,22 @@ public class Level {
 	}
 
 	public void removeAllEnemies() {
-		for (int i = 0; i < getEntityList().size(); i++) {
-			Entity e = getEntityList().get(i);
+		for (Entity e: getEntityArray()) {
 			if(e instanceof EnemyMob)
 				if(e instanceof AirWizard == false || ModeMenu.creative) // don't remove the airwizard bosses! Unless in creative, since you can spawn more.
 					e.remove();
 		}
 	}
 	
-	public synchronized List<Entity> getEntityList() {
-		return entities;
+	public void clearEntities() {
+		for(Entity e: getEntityArray())
+			remove(e);
+	}
+	
+	public synchronized Entity[] getEntityArray() {
+		//List<Entity> newList = new ArrayList<Entity>().addAll(entities);
+		//return newList;
+		return entities.toArray(new Entity[0]);
 	}
 	
 	/*private List<Entity> getEntitiesInTile(int xt, int yt) {
@@ -718,8 +733,7 @@ public class Level {
 	}*/
 	private List<Entity> getEntitiesInTiles(int xt0, int yt0, int xt1, int yt1) {
 		List<Entity> contained = new ArrayList<Entity>();
-		for(int i = 0; i < getEntityList().size(); i++) {
-			Entity e = getEntityList().get(i);
+		for(Entity e: getEntityArray()) {
 			int xt = e.x >> 4;
 			int yt = e.y >> 4;
 			if(xt >= xt0 && xt <= xt1 && yt >= yt0 && yt <= yt1)
@@ -735,8 +749,7 @@ public class Level {
 		int yt0 = (y0 >> 4) - 1;
 		int xt1 = (x1 >> 4) + 1;
 		int yt1 = (y1 >> 4) + 1;
-		for(int i = 0; i < getEntityList().size(); i++) {
-			Entity e = getEntityList().get(i);
+		for(Entity e: getEntityArray()) {
 			if (e.intersects(x0, y0, x1, y1))
 				result.add(e);
 		}
@@ -756,7 +769,7 @@ public class Level {
 	/// finds all entities that are an instance of the given entity.
 	public Entity[] getEntitiesOfClass(Class<? extends Entity> targetClass) {
 		ArrayList<Entity> matches = new ArrayList<Entity>();
-		for(Entity e: getEntityList()) {
+		for(Entity e: getEntityArray()) {
 			if(targetClass.isAssignableFrom(e.getClass()))
 				matches.add(e);
 		}
