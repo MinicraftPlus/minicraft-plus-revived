@@ -69,7 +69,7 @@ public class Load {
 			/*int nument = 0;
 			for(Level level: Game.levels)
 				if(level)
-					nument += level.getEntityList().size();
+					nument += level.getEntityArray().length;
 			percentInc += nument;*/
 			percentInc = 100.0 / percentInc;
 			
@@ -171,51 +171,58 @@ public class Load {
 	public void loadFromFile(String filename) {
 		data.clear();
 		extradata.clear();
-		BufferedReader br = null;
-		BufferedReader br2 = null;
 		
+		String total;
 		try {
-			br = new BufferedReader(new FileReader(filename));
+			total = loadFromFile(filename, true);
+			data.addAll(Arrays.asList(total.split(",")));
+		} catch (IOException ex) {
+			ex.printStackTrace();
+		}
+		
+		if(filename.contains("Level")) {
+			try {
+				total = Load.loadFromFile(filename.substring(0, filename.lastIndexOf("/") + 7) + "data" + extention, true);
+				extradata.addAll(Arrays.asList(total.split(",")));
+			} catch (IOException ex) {
+				ex.printStackTrace();
+			}
+		}
+		
+		LoadingMenu.percentage += percentInc;
+		/*if(LoadingMenu.percentage > 100) {
+			LoadingMenu.percentage = 100;
+		}*/
+	}
+	
+	public static String loadFromFile(String filename, boolean isWorldSave) throws IOException {
+		String total = "";
+		
+		try (BufferedReader br = new BufferedReader(new FileReader(filename))) {
 			
-			String curLine, total = "";
-			ArrayList<String> curData;
+			String curLine;
+			//ArrayList<String> curData;
 			while((curLine = br.readLine()) != null)
-				total += curLine;
+				total += curLine + (isWorldSave?"":"\n");
 			
 			/*if(worldVer != null && worldVer.compareTo(new Version("1.9.4-dev6")) >= 0 && filename.contains("Level") && !filename.contains("Data")) {
 				total = new String(Base64.getDecoder().decode(total));
 			}*/
 			
-			data.addAll(Arrays.asList(total.split(",")));
-			
-			if(filename.contains("Level")) {
-				total = "";
-				br2 = new BufferedReader(new FileReader(filename.substring(0, filename.lastIndexOf("/") + 7) + "data" + extention));
-				
-				while((curLine = br2.readLine()) != null)
-					total += curLine;
-				extradata.addAll(Arrays.asList(total.split(",")));
-			}
 		} catch (IOException ex) {
-			ex.printStackTrace();
-		} finally {
+			/*if(br != null) {
+				br.close();
+			}*/
+			throw ex;
+		}/* finally {
 			try {
-				LoadingMenu.percentage += percentInc;
-				/*if(LoadingMenu.percentage > 100) {
-					LoadingMenu.percentage = 100;
-				}*/
 				
-				if(br != null) {
-					br.close();
-				}
-				
-				if(br2 != null) {
-					br2.close();
-				}
 			} catch (IOException ex) {
 				ex.printStackTrace();
 			}
-		}
+		}*/
+		
+		return total;
 	}
 	
 	public void loadUnlocks(String filename) {
@@ -493,7 +500,7 @@ public class Load {
 		loadFromFile(location + filename + extention);
 		
 		for(int i = 0; i < Game.levels.length; i++) {
-			Game.levels[i].getEntityList().clear();
+			Game.levels[i].clearEntities();
 		}
 		
 		for(int i = 0; i < data.size(); i++) {

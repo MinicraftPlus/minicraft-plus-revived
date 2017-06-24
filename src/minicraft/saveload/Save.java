@@ -78,9 +78,25 @@ public class Save {
 		this(player.game, "/saves/"+WorldSelectMenu.worldname + "/");
 	}
 	
-	public void writeToFile(String filename, List<String> savedata) { writeToFile(filename, savedata, false); }
-	public void writeToFile(String filename, List<String> savedata, boolean base64Encode) {
-		BufferedWriter bufferedWriter = null;
+	public void writeToFile(String filename, List<String> savedata) {
+		try {
+			writeToFile(filename, savedata.toArray(new String[0]), true);
+		} catch(IOException ex) {
+			ex.printStackTrace();
+		}
+		
+		data.clear();
+		
+		LoadingMenu.percentage += 7;
+		if(LoadingMenu.percentage > 100) {
+			LoadingMenu.percentage = 100;
+		}
+		
+		game.render(); // AH HA!!! HERE'S AN IMPORTANT STATEMENT!!!!
+	}
+	
+	public static void writeToFile(String filename, String[] savedata, boolean isWorldSave) throws IOException {
+		//BufferedWriter bufferedWriter = null;
 		
 		/*String content = "";
 		for(String data: savedata) {
@@ -93,40 +109,32 @@ public class Save {
 			content = Base64.getEncoder().encodeToString(bytes);
 		}*/
 		
-		try {
-			bufferedWriter = new BufferedWriter(new FileWriter(filename));
+		try (BufferedWriter bufferedWriter = new BufferedWriter(new FileWriter(filename))) {
 			//bufferedWriter.write(content);
-			for(int ex = 0; ex < savedata.size(); ex++) {
-				bufferedWriter.write((String)savedata.get(ex));
-				bufferedWriter.write(",");
-				if(filename.contains("Level5") && ex == savedata.size() - 1) {
+			for(int i = 0; i < savedata.length; i++) {
+				bufferedWriter.write(savedata[i]);
+				if(isWorldSave) {
 					bufferedWriter.write(",");
-				}
+					if(filename.contains("Level5") && i == savedata.length - 1) {
+						bufferedWriter.write(",");
+					}
+				} else
+					bufferedWriter.write("\n");
 			}
-			
-			data.clear();
-		} catch (FileNotFoundException var15) {
-			var15.printStackTrace();
-		} catch (IOException var16) {
-			var16.printStackTrace();
-		} finally {
+		} catch (IOException ex) {
+			throw ex;
+		}/* finally {
 			try {
 				if(bufferedWriter != null) {
-					LoadingMenu.percentage += 7;
-					if(LoadingMenu.percentage > 100) {
-						LoadingMenu.percentage = 100;
-					}
 					
-					game.render(); // AH HA!!! HERE'S AN IMPORTANT STATEMENT!!!!
+					
 					bufferedWriter.flush();
 					bufferedWriter.close();
 				}
-			} catch (IOException var14) {
-				var14.printStackTrace();
+			} catch (IOException ex) {
+				ex.printStackTrace();
 			}
-			
-		}
-		
+		}*/
 	}
 	
 	public void writeGame(String filename) {
@@ -161,7 +169,7 @@ public class Save {
 				}
 			}
 			
-			writeToFile(location + filename + l + extention, data, true);
+			writeToFile(location + filename + l + extention, data);
 		}
 		
 		for(int l = 0; l < Game.levels.length; l++) {
@@ -240,8 +248,7 @@ public class Save {
 	
 	public void writeEntities(String filename) {
 		for(int l = 0; l < Game.levels.length; l++) {
-			for(int i = 0; i < Game.levels[l].getEntityList().size(); i++) {
-				Entity e = (Entity)Game.levels[l].getEntityList().get(i);
+			for(Entity e: Game.levels[l].getEntityArray()) {
 				String saved = writeEntity(e, true);
 				if(saved.length() > 0)
 					data.add(saved);
