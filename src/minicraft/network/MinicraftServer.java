@@ -180,7 +180,7 @@ public class MinicraftServer extends Thread implements MinicraftConnection {
 		byte[] edata = entity.getBytes();
 		for(int i = 0; i < edata.length; i++)
 			fulledata[i+1] = edata[i];
-		if(Game.debug) System.out.println("SERVER: sending entity addition: " + entity);
+		if(Game.debug && !(e instanceof Particle)) System.out.println("SERVER: sending entity addition: " + entity);
 		if(!giveToSender) {
 			broadcastData(prependType(MinicraftProtocol.InputType.ADD, fulledata), sender);
 			for(RemotePlayer client: getClientList().toArray(new RemotePlayer[0]))
@@ -389,6 +389,8 @@ public class MinicraftServer extends Thread implements MinicraftConnection {
 				behavior: send REMOVE packet to the other clients, data being the id of the remote player matching the address from which the DISCONNECT packet was recieved.
 			
 			-TILE, ENTITY, ADD, REMOVE, NOTIFY: broadcast the packet to all the other clients
+			
+			recieving ENTITY is a request to have that entity sent in an ADD packet.
 		*/
 		
 		// handle reports of type INVALID
@@ -594,6 +596,19 @@ public class MinicraftServer extends Thread implements MinicraftConnection {
 			case REMOVE:
 				// removal confirmed; data should be id.
 				sender.unconfirmedRemovals.remove(Integer.parseInt(new String(data).trim()));
+				return true;
+			
+			case ENTITY:
+				// client wants the specified entity sent in an ADD packet, becuase it couldn't find that entity upon recieving an ENTITY packet from the server.
+				Entity entityToSend = Game.getEntity(Integer.parseInt((new String(data)).trim()));
+				if(entityToSend == null) {
+					/// well THIS would be a problem, I think. Though... Actually, not really. It just means that an entity was removed between the time of sending an update for it, and the client then asking for it to be added. But since it would be useless to add it at this point, we'll just ignore the request.
+					return true;
+				}
+				if(sender.unconfirmedAdditions.containsKey(entityToSend.eid))
+					return false; /// becuase the client will be recieving a lot of the updates, it will ask for the entity a lot. So only send the data manually once, and then ignore all future requests as long as the first still stands.
+				else
+					sendEntityAddition(entityToSend, sender, true);
 				return true;
 			
 			case SAVE:

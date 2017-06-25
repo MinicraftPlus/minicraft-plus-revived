@@ -24,7 +24,7 @@ public class MinicraftProtocol {
 		INVALID, USERNAMES, LOGIN, MODE, INIT_W, INIT_T, INIT_E, TILE, ENTITY, PLAYER, MOVE, ADD, REMOVE, DISCONNECT, SAVE, NOTIFY, INTERACT, PICKUP, CHESTIN, CHESTOUT, BED, HURT;
 		
 		public static final InputType[] values = InputType.values();
-		public static final List<InputType> serverOnly = Arrays.asList(new InputType[] {INIT_W, TILE, ENTITY, PLAYER, HURT, MODE});
+		public static final List<InputType> serverOnly = Arrays.asList(new InputType[] {INIT_W, TILE, PLAYER, HURT, MODE});
 	}
 	
 	public static InputType getInputType(byte idx) {

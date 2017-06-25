@@ -419,7 +419,8 @@ public class MinicraftClient extends Thread implements MinicraftConnection {
 				updates = updates.substring(updates.indexOf(";")+1);
 				Entity entity = Game.getEntity(entityid);
 				if(entity == null) {
-					System.err.println("CLIENT error with ENTITY request: specified entity could not be found.");
+					System.out.println("CLIENT could not find entity specified to be updated ("+entityid+"); requesting entity from server...");
+					sendData(MinicraftProtocol.InputType.ENTITY, String.valueOf(entityid).getBytes());
 					return false;
 				}
 				entity.update(updates);
