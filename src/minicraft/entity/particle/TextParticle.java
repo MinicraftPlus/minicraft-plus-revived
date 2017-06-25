@@ -6,8 +6,8 @@ import minicraft.gfx.Screen;
 
 public class TextParticle extends Particle {
 	private String msg; // Message of the text particle
-	public double xa, ya, za; // x,y,z acceleration
-	public double xx, yy, zz; // x,y,z coordinates
+	private double xa, ya, za; // x,y,z acceleration
+	private double xx, yy, zz; // x,y,z coordinates
 	
 	private FontStyle style;
 	
