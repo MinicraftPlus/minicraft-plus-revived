@@ -9,7 +9,7 @@ import java.util.ArrayList;
 import java.util.List;
 import minicraft.Game;
 import minicraft.entity.*;
-import minicraft.entity.particle.Particle;
+import minicraft.entity.particle.*;
 import minicraft.item.Item;
 import minicraft.item.PotionType;
 import minicraft.item.StackableItem;
@@ -263,9 +263,7 @@ public class Save {
 		String extradata = "";
 		
 		// don't even write ItemEntities or particle effects; Spark... will probably is saved, eventually; it presents an unfair cheat to remove the sparks by reloading the game.
-		if(e instanceof Particle) // never write these, when writing or sending a world.
-			return "";
-		else if(isLocalSave && (e instanceof ItemEntity || e instanceof Arrow || e instanceof RemotePlayer || e instanceof Spark)) // wirte these only when sending a world, not writing it. (RemotePlayers are saved seperately, when their info is recieved.)
+		else if(isLocalSave && (e instanceof ItemEntity || e instanceof Arrow || e instanceof RemotePlayer || e instanceof Spark || e instanceof Particle)) // wirte these only when sending a world, not writing it. (RemotePlayers are saved seperately, when their info is recieved.)
 			return "";
 		
 		if(!isLocalSave)
@@ -313,6 +311,7 @@ public class Save {
 			if(e instanceof ItemEntity) extradata += ":" + ((ItemEntity)e).getData();
 			if(e instanceof Arrow) extradata += ":" + ((Arrow)e).getData();
 			if(e instanceof Spark) extradata += ":" + ((Spark)e).getData();
+			if(e instanceof TextParticle) extradata += ":" + ((TextParticle)e).getData();
 		}
 		//else // is a local save
 			extradata += ":" + Game.lvlIdx(e.level.depth);

@@ -57,4 +57,8 @@ public class TextParticle extends Particle {
 			Font.draw(msg2, screen, x - msg.length() * 4, y - (int)zz, color, Color.get(-1, 0));
 		}*/
 	}
+	
+	public String getData() {
+		return msg+":"+col;
+	}
 }

@@ -660,6 +660,10 @@ public class Load {
 				int timeleft = Integer.parseInt(info.get(3));
 				newEntity = new ItemEntity(item, x, y, timeleft);
 			}
+			if(newEntity instanceof TextParticle) {
+				int textcol = Integer.parseInt(info.get(3));
+				newEntity = new TextParticle(info.get(2), x, y, textcol);
+			}
 		}
 		
 		newEntity.eid = eid; // this will be -1 unless set earlier, so a new one will be generated when adding it to the level.
@@ -709,6 +713,9 @@ public class Load {
 			case "Arrow": return (Entity)(new Arrow(null, 0, 0, 0, 0, 0));
 			case "ItemEntity": return (Entity)(new ItemEntity(null, 0, 0));
 			//case "Spark": return (Entity)(new Spark());
+			case "FireParticle": return (Entity)(new FireParticle(0, 0));
+			case "SmashParticle": return (Entity)(new SmashParticle(0, 0));
+			case "TextParticle": return (Entity)(new TextParticle("", 0, 0, 0));
 			default : /*if(Game.debug)*/ System.out.println("LOAD: unknown or outdated entity requested: " + string);
 				return null;
 		}
