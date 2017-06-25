@@ -33,6 +33,15 @@ public class RemotePlayer extends Player {
 		eid = model.eid;
 	}
 	
+	public void tick() {
+		if(this == game.player)
+			super.tick();
+		else {
+			// a minimal thing for render update purposes.
+			if (attackTime > 0) attackTime--;
+		}
+	}
+	
 	public void render(Screen screen) {
 		super.render(screen);
 		Font.draw(username, screen, x - Font.textWidth(username)/2, y - 20, Color.get(-1, 444)); // draw the username of the player above their head

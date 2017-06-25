@@ -328,7 +328,7 @@ public class Player extends Mob {
 			}
 		}
 		
-		if (attackTime > 0 || !Bed.inBed) attackTime--;
+		if (attackTime > 0) attackTime--;
 	}
 	
 	/* This actually ends up calling another use method down below. */
@@ -366,6 +366,9 @@ public class Player extends Mob {
 		
 		if(Game.isValidClient()) {
 			// if this is a multiplayer game, than the server will execute the full method instead.
+			if(activeItem != null)
+				attackTime = 10;
+			
 			Game.client.requestInteraction(this);
 			if(activeItem instanceof ToolItem && stamina - 1 >= 0 && ((ToolItem)activeItem).type == ToolType.Bow && inventory.count(Items.get("arrow")) > 0) // we are going to use an arrow.
 				inventory.removeItem(Items.get("arrow")); // do it here so we don't need a response.

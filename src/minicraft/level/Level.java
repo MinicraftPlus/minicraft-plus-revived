@@ -455,10 +455,11 @@ public class Level {
 		for (Entity e: getEntityArray()) {
 			if(e.removed) continue;
 			
-			if(!Game.ISONLINE || (Game.isValidServer() && !(e instanceof Player || e instanceof Particle || e instanceof ItemEntity)) || (Game.isValidClient() && !(e instanceof Player/*e instanceof Particle || e instanceof ItemEntity*/))) {
+			if(!Game.ISONLINE || (Game.isValidServer() && !(e instanceof Particle || e instanceof ItemEntity)) || (Game.isValidClient() && !(e instanceof Player/*e instanceof Particle || e instanceof ItemEntity*/))) {
 				
 				e.tick();
-				if(Game.isValidServer() && Game.hasConnectedClients())
+				
+				if(Game.hasConnectedClients())
 					Game.server.sendEntityUpdate(e);
 			}
 			
