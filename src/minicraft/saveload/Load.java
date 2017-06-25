@@ -667,7 +667,7 @@ public class Load {
 			if(newEntity instanceof TextParticle) {
 				int textcol = Integer.parseInt(info.get(3));
 				newEntity = new TextParticle(info.get(2), x, y, textcol);
-				if (Game.debug) System.out.println("loaded text particle; color: "+Color.toString(textcol)+", text: " + info.get(2));
+				//if (Game.debug) System.out.println("loaded text particle; color: "+Color.toString(textcol)+", text: " + info.get(2));
 			}
 		}
 		
