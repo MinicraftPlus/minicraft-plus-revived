@@ -185,11 +185,12 @@ public class MinicraftServer extends Thread implements MinicraftConnection {
 		if(!giveToSender) {
 			broadcastData(prependType(MinicraftProtocol.InputType.ADD, fulledata), sender);
 			for(RemotePlayer client: getClientList().toArray(new RemotePlayer[0]))
-				if(client != sender)
+				if(client != sender && !(e instanceof Particle)) // particles are not worth resending; the action they were for will already be over.
 					client.unconfirmedAdditions.put(e.eid, System.nanoTime());
 		} else if(sender != null) {
 			sendData(prependType(MinicraftProtocol.InputType.ADD, fulledata), sender.ipAddress, sender.port);
-			sender.unconfirmedAdditions.put(e.eid, System.nanoTime());
+			if(!(e instanceof Particle))
+				sender.unconfirmedAdditions.put(e.eid, System.nanoTime());
 		}
 		//for(RemotePlayer client: unconfirmedAdditions.keySet().toArray(new RemotePlayer[0])) {
 	}

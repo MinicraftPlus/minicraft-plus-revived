@@ -453,9 +453,6 @@ public class Level {
 		}
 		
 		for (Entity e: getEntityArray()) {
-			//int xto = e.x >> 4;
-			//int yto = e.y >> 4;
-			
 			if(e.removed) continue;
 			
 			if(!Game.ISONLINE || (Game.isValidServer() && !(e instanceof Player || e instanceof Particle || e instanceof ItemEntity)) || (Game.isValidClient() && !(e instanceof Player/*e instanceof Particle || e instanceof ItemEntity*/))) {
@@ -465,25 +462,11 @@ public class Level {
 					Game.server.sendEntityUpdate(e);
 			}
 			
+			if(Game.isValidServer() && e instanceof Particle)
+				e.remove(); // the server really doesn't need to care about particles, besides spawning them.
+			
 			if(e instanceof Mob) count++;
-			//if(e instanceof RemotePlayer) System.out.println("ticking remote player");
-			
-			//int xt = e.x >> 4;
-			//int yt = e.y >> 4;
-			
-			/// this moves the entity's position in entitiesInTiles, if it's on a different tile now.
-			/*if (xto != xt || yto != yt) {
-				removeEntity(xto, yto, e);
-				insertEntity(xt, yt, e);
-			}
-			
-			if(!entitiesInTiles[xt + yt * w].contains(e)) {
-				/// we need to find the entity and put it where it should be
-				
-			}*/
 		}
-		
-		//if(Game.isValidClient()) return; // stop here.
 		
 		for(int i = 0; i < entities.size(); i++) {
 			Entity e = entities.get(i);
@@ -496,7 +479,6 @@ public class Level {
 			}
 		}
 		
-		//if(Game.tickCount % 10 == 0) System.out.println("mob count: " + count);
 		mobCount = count;
 		
 		if(count < maxMobCount && !Game.isValidClient())
@@ -648,20 +630,15 @@ public class Level {
 	
 	public void add(Entity e) { if(e==null) return; add(e, e.x, e.y); }
 	public void add(Entity entity, int x, int y) {
-		/*if (entity instanceof Player)
-			if(entity instanceof RemotePlayer == false)
-				player = (Player) entity;
-		*/
 		if(entity == null) return;
 		entity.setLevel(this, x, y);
-		//if(Game.debug && !(entity instanceof Particle)) System.out.println(Game.onlinePrefix()+this+": adding entity to addition wait list: " + entity);
-		entitiesToAdd.add(entity);
+		
+		if(!Game.isValidServer() || !(entity instanceof Particle)) // they are not even worth putting here. All they need to do is get sent to the the other clients.
+			entitiesToAdd.add(entity);
 		
 		if(Game.isValidServer()) {
 			Game.server.sendEntityAddition(entity);
 		}
-		
-		//insertEntity(entity.x >> 4, entity.y >> 4, entity);
 	}
 	
 	public void remove(Entity e) {
@@ -669,7 +646,7 @@ public class Level {
 		e.removed = true;
 		if(e instanceof RemotePlayer)
 			System.out.println("removing remote player from level " + depth);
-		if(Game.isValidServer())
+		if(Game.isValidServer() && !(e instanceof Particle))
 			Game.server.sendEntityRemoval(e);
 		//int xto = e.x >> 4;
 		//int yto = e.y >> 4;
