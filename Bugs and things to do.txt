@@ -29,7 +29,10 @@ MULTIPLAYER-Related:
  # item entity pickup does not seem synced very well
  # have not tested stairs.
  # picking furniture up doesn't work very well.
- # Player animations don't render.
+ # Player animations (like attack slash) don't render.
+ # Beds are untested.
+ # potion effects probably won't appear for the clients, but I'm pretty sure they'll still exist.
+ # Text Particles don't render properly. 
 #####
 -----------------------------------------------------------------------------------
 
