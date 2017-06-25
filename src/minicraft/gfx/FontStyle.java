@@ -131,4 +131,6 @@ public class FontStyle {
 		shadowType = type;
 		return this;
 	}
+	
+	public int getColor() {return mainColor;}
 }
