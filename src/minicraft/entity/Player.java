@@ -56,7 +56,7 @@ public class Player extends Mob {
 	public static MobSprite[][] carrySuitSprites = MobSprite.compileMobSpriteAnimations(18, 22); // the "airwizard suit" sprites.
 	
 	public Inventory inventory;
-	public Item attackItem, activeItem;
+	public Item activeItem;//, attackItem;
 	public int attackTime, attackDir;
 	
 	private int onStairDelay; // the delay before changing levels.
@@ -367,19 +367,19 @@ public class Player extends Mob {
 		if(Game.isValidClient()) {
 			// if this is a multiplayer game, than the server will execute the full method instead.
 			Game.client.requestInteraction(this);
-			if(attackItem instanceof ToolItem && stamina - 1 >= 0 && ((ToolItem)attackItem).type == ToolType.Bow && inventory.count(Items.get("arrow")) > 0) // we are going to use an arrow.
+			if(activeItem instanceof ToolItem && stamina - 1 >= 0 && ((ToolItem)activeItem).type == ToolType.Bow && inventory.count(Items.get("arrow")) > 0) // we are going to use an arrow.
 				inventory.removeItem(Items.get("arrow")); // do it here so we don't need a response.
 			
 			return;
 		}
 		
 		attackDir = dir; // make the attack direction equal the current direction
-		attackItem = activeItem; // make attackItem equal activeItem
+		//attackItem = activeItem; // make attackItem equal activeItem
 		boolean done = false; // we're not done yet (we just started!)
 		
-		if (attackItem instanceof ToolItem && stamina - 1 >= 0) {
+		if (activeItem instanceof ToolItem && stamina - 1 >= 0) {
 			// the player is holding a tool, and has stamina available.
-			ToolItem tool = (ToolItem) attackItem;
+			ToolItem tool = (ToolItem) activeItem;
 			
 			if (tool.type == ToolType.Bow && inventory.count(Items.get("arrow")) > 0) { // if the player is holding a bow, and has arrows...
 				//if (!energy) stamina -= 0; // must be a leftover.
@@ -505,8 +505,8 @@ public class Player extends Mob {
 	/** Gets the attack damage the player will deal. */
 	private int getAttackDamage(Entity e) {
 		int dmg = random.nextInt(3) + 1;
-		if (attackItem != null && attackItem instanceof ToolItem) {
-			dmg += ((ToolItem)attackItem).getAttackDamageBonus(e); // sword/axe are more effective at dealing damage.
+		if (activeItem != null && activeItem instanceof ToolItem) {
+			dmg += ((ToolItem)activeItem).getAttackDamageBonus(e); // sword/axe are more effective at dealing damage.
 		}
 		return dmg;
 	}
@@ -545,8 +545,8 @@ public class Player extends Mob {
 		if (attackTime > 0 && attackDir == 1) { // if currently attacking upwards...
 			screen.render(xo + 0, yo - 4, 6 + 13 * 32, Color.get(-1, 555), 0); //render left half-slash
 			screen.render(xo + 8, yo - 4, 6 + 13 * 32, Color.get(-1, 555), 1); //render right half-slash (mirror of left).
-			if (attackItem != null) { // if the player has an item
-				attackItem.sprite.render(screen, xo + 4, yo - 4); // then render the icon of the item.
+			if (activeItem != null) { // if the player has an item
+				activeItem.sprite.render(screen, xo + 4, yo - 4); // then render the icon of the item.
 			}
 		}
 		
@@ -568,22 +568,22 @@ public class Player extends Mob {
 		if (attackTime > 0 && attackDir == 2) { // if attacking to the left.... (same as above)
 			screen.render(xo - 4, yo, 7 + 13 * 32, Color.get(-1, 555), 1);
 			screen.render(xo - 4, yo + 8, 7 + 13 * 32, Color.get(-1, 555), 3);
-			if (attackItem != null) {
-				attackItem.sprite.render(screen, xo - 4, yo + 4);
+			if (activeItem != null) {
+				activeItem.sprite.render(screen, xo - 4, yo + 4);
 			}
 		}
 		if (attackTime > 0 && attackDir == 3) { // attacking to the right
 			screen.render(xo + 8 + 4, yo, 7 + 13 * 32, Color.get(-1, 555), 0);
 			screen.render(xo + 8 + 4, yo + 8, 7 + 13 * 32, Color.get(-1, 555), 2);
-			if (attackItem != null) {
-				attackItem.sprite.render(screen, xo + 8 + 4, yo + 4);
+			if (activeItem != null) {
+				activeItem.sprite.render(screen, xo + 8 + 4, yo + 4);
 			}
 		}
 		if (attackTime > 0 && attackDir == 0) { // attacking downwards
 			screen.render(xo + 0, yo + 8 + 4, 6 + 13 * 32, Color.get(-1, 555), 2);
 			screen.render(xo + 8, yo + 8 + 4, 6 + 13 * 32, Color.get(-1, 555), 3);
-			if (attackItem != null) {
-				attackItem.sprite.render(screen, xo + 4, yo + 8 + 4);
+			if (activeItem != null) {
+				activeItem.sprite.render(screen, xo + 4, yo + 8 + 4);
 			}
 		}
 		
@@ -745,8 +745,15 @@ public class Player extends Mob {
 		}
 	}
 	
+	public void hurt(int damage, int attackDir) { doHurt(damage, attackDir); }
 	/** What happens when the player is hurt */
 	protected void doHurt(int damage, int attackDir) {
+		if(Game.isValidServer()) {
+			// let the clients deal with it.
+			Game.server.sendPlayerHurt(this, damage, attackDir);
+			return;
+		}
+		
 		if (ModeMenu.creative || hurtTime > 0 || Bed.inBed) return; // can't get hurt in creative, hurt cooldown, or while someone is in bed
 		
 		int healthDam = 0, armorDam = 0;
@@ -784,14 +791,18 @@ public class Player extends Mob {
 		if (attackDir == 1) yKnockback = -6;
 		if (attackDir == 2) xKnockback = -6;
 		if (attackDir == 3) xKnockback = +6;
-		// set hurt and invulnerable times
+		// set invulnerability time
 		hurtTime = playerHurtTime;
 	}
 	
 	public String getUpdates() {
 		String updates = super.getUpdates() + ";";
 		updates += "skinon,"+skinon+
-		";shirtColor,"+shirtColor;
+		";shirtColor,"+shirtColor+
+		";activeItem,"+(activeItem==null?"null":activeItem.name)+
+		";armor,"+armor+
+		";attackTime,"+attackTime+
+		";attackDir,"+attackDir;
 		
 		return updates;
 	}
@@ -801,6 +812,10 @@ public class Player extends Mob {
 		switch(field) {
 			case "skinon": skinon = Boolean.parseBoolean(val); return true;
 			case "shirtColor": shirtColor = Integer.parseInt(val); return true;
+			case "activeItem": activeItem = Items.get(val); return true;
+			case "armor": armor = Integer.parseInt(val); return true;
+			case "attackTime": attackTime = Integer.parseInt(val); return true;
+			case "attackDir": attackDir = Integer.parseInt(val); return true;
 		}
 		
 		return false;
