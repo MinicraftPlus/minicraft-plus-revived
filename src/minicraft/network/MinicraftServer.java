@@ -25,6 +25,7 @@ import minicraft.entity.ItemEntity;
 import minicraft.entity.Player;
 import minicraft.entity.RemotePlayer;
 import minicraft.entity.Chest;
+import minicraft.entity.particle.Particle;
 import minicraft.saveload.Save;
 import minicraft.saveload.Load;
 import minicraft.level.Level;
