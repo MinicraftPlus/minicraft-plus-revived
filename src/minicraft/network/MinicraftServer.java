@@ -174,7 +174,7 @@ public class MinicraftServer extends Thread implements MinicraftConnection {
 	public void sendEntityAddition(Entity e, RemotePlayer sender) { sendEntityAddition(e, sender, false); }
 	public void sendEntityAddition(Entity e, RemotePlayer sender, boolean giveToSender) {
 		String entity = Save.writeEntity(e, false);
-		if(entity.length() == 0) return; // this entity is not worth sending across.
+		if(entity.length() == 0) return; // this entity is not worth sending across; at this point though, this is not the case with anything.
 		byte[] fulledata = new byte[entity.getBytes().length+1];
 		fulledata[0] = (byte) Game.lvlIdx(e.level.depth);
 		byte[] edata = entity.getBytes();
@@ -213,6 +213,27 @@ public class MinicraftServer extends Thread implements MinicraftConnection {
 			thread.sendNotification(note, ntime);
 		}
 	}*/
+	
+	public void sendPlayerHurt(Player player, int damage, int attackDir) {
+		if(!(player instanceof RemotePlayer)) {
+			System.out.println("SERVER: encountered regular player, cannot determine ip. can't send hurt packet.");
+			return;
+		}
+		RemotePlayer rp = (RemotePlayer)player;
+		if(!getClientList().contains(rp)) {
+			System.out.println("SERVER encountered remote player not in client list: " + rp + "; not sending hurt packet.");
+			return;
+		}
+		
+		if(damage >= 128) {
+			System.out.println("SERVER: damage too high to send across: " + damage + ". lowering to 127.");
+			damage = 127;
+		}
+		
+		byte[] data = {(byte)damage, (byte)attackDir};
+		//if (Game.debug) System.out.println("SERVER: sending hurt ");
+		sendData(prependType(MinicraftProtocol.InputType.HURT, data), rp.ipAddress, rp.port);
+	}
 	
 	public void updateMode(int mode) {
 		broadcastData(prependType(MinicraftProtocol.InputType.MODE, (new byte[] {(byte)mode})));
@@ -718,6 +739,7 @@ public class MinicraftServer extends Thread implements MinicraftConnection {
 				sender.x = Integer.parseInt(movedata[0]);
 				sender.y = Integer.parseInt(movedata[1]);
 				sender.dir = Integer.parseInt(movedata[2]);
+				sender.walkDist += 8; // hopefully will make walking animations work.
 				sendEntityUpdate(sender);
 				return true;
 			

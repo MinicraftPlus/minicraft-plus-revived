@@ -493,9 +493,15 @@ public class MinicraftClient extends Thread implements MinicraftConnection {
 				}
 				game.player.touchItem((ItemEntity)ie);
 				return true;
+			
+			case HURT:
+				// the player got attacked.
+				int damage = data[0];
+				int attackDir = data[1];
+				game.player.hurt(damage, attackDir);
 		}
 		
-		return true; // this is reached by InputType.ENTITY and InputType.ADD, currently.
+		return true; // this isn't reached by anything, but whatever.
 	}
 	
 	/// the below methods are all about sending data to the server, *not* setting any game values.
