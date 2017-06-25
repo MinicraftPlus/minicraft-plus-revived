@@ -32,7 +32,8 @@ MULTIPLAYER-Related:
  # Player animations (like attack slash) don't render.
  # Beds are untested.
  # potion effects probably won't appear for the clients, but I'm pretty sure they'll still exist.
- # Text Particles don't render properly. 
+ # Item count probably won't go down when you use things. In fact, there needs to be more feedback from the INTERACT packets, to the client.
+ # chests don't work.
 #####
 -----------------------------------------------------------------------------------
 
