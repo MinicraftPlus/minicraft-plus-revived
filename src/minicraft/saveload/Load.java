@@ -10,7 +10,9 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Base64;
 import minicraft.Game;
+import minicraft.gfx.Color;
 import minicraft.entity.*;
+import minicraft.entity.particle.*;
 import minicraft.item.ArmorItem;
 import minicraft.item.Item;
 import minicraft.item.Items;
@@ -572,19 +574,21 @@ public class Load {
 		}
 		else {
 			int mobLvl = 1;
+			Class c = null;
 			try {
-				if(!Crafter.names.contains(entityName) && Class.forName("minicraft.entity.EnemyMob").isAssignableFrom(Class.forName("minicraft.entity."+entityName)))
-					mobLvl = Integer.parseInt(info.get(info.size()-2));
+				c = Class.forName("minicraft.entity."+entityName);
 			} catch(ClassNotFoundException ex) {
 				ex.printStackTrace();
 			}
+			if(c != null && EnemyMob.class.isAssignableFrom(c))
+				mobLvl = Integer.parseInt(info.get(info.size()-2));
 			
 			if(mobLvl == 0) {
 				if(Game.debug) System.out.println("level 0 mob: " + entityName);
 				mobLvl = 1;
 			}
 			
-			newEntity = getEntity(entityName, mobLvl);
+			newEntity = getEntity(entityName.substring(entityName.lastIndexOf(".")+1), mobLvl);
 		}
 		
 		if(newEntity == null)
@@ -663,6 +667,7 @@ public class Load {
 			if(newEntity instanceof TextParticle) {
 				int textcol = Integer.parseInt(info.get(3));
 				newEntity = new TextParticle(info.get(2), x, y, textcol);
+				if (Game.debug) System.out.println("loaded text particle; color: "+Color.toString(textcol)+", text: " + info.get(2));
 			}
 		}
 		

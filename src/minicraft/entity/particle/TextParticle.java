@@ -59,6 +59,6 @@ public class TextParticle extends Particle {
 	}
 	
 	public String getData() {
-		return msg+":"+col;
+		return msg+":"+style.getColor();
 	}
 }

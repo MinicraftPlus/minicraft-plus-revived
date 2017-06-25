@@ -260,10 +260,14 @@ public class Save {
 	
 	public static String writeEntity(Entity e, boolean isLocalSave) {
 		String name = e.getClass().getName().replace("minicraft.entity.", "");
+		//name = name.substring(name.lastIndexOf(".")+1);
 		String extradata = "";
 		
 		// don't even write ItemEntities or particle effects; Spark... will probably is saved, eventually; it presents an unfair cheat to remove the sparks by reloading the game.
-		else if(isLocalSave && (e instanceof ItemEntity || e instanceof Arrow || e instanceof RemotePlayer || e instanceof Spark || e instanceof Particle)) // wirte these only when sending a world, not writing it. (RemotePlayers are saved seperately, when their info is recieved.)
+		
+		//if(e instanceof Particle) return ""; // TODO I don't want to, but there are complications.
+		
+		if(isLocalSave && (e instanceof ItemEntity || e instanceof Arrow || e instanceof RemotePlayer || e instanceof Spark || e instanceof Particle)) // wirte these only when sending a world, not writing it. (RemotePlayers are saved seperately, when their info is recieved.)
 			return "";
 		
 		if(!isLocalSave)
