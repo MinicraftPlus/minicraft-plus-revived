@@ -208,11 +208,10 @@ public class MinicraftServer extends Thread implements MinicraftConnection {
 		//for(RemotePlayer client: unconfirmedRemovals.keySet().toArray(new RemotePlayer[0])) {
 	}
 	
-	/*public void sendNotification(String note, int ntime) {
-		for(RemotePlayer client: getClientList()) {
-			thread.sendNotification(note, ntime);
-		}
-	}*/
+	public void sendNotification(String note, int notetime) {
+		String data = notetime + ";" + note;
+		broadcastData(prependType(MinicraftProtocol.InputType.NOTIFY, data.getBytes()));
+	}
 	
 	public void sendPlayerHurt(Player player, int damage, int attackDir) {
 		if(!(player instanceof RemotePlayer)) {
@@ -743,7 +742,7 @@ public class MinicraftServer extends Thread implements MinicraftConnection {
 				sendEntityUpdate(sender);
 				return true;
 			
-			/// I'm thinking this should end up never being used...
+			/// I'm thinking this should end up never being used... oh, well maybe for notifications.
 			default:
 				System.out.println("SERVER used default behavior for input type " + inType);
 				broadcastData(alldata, sender);

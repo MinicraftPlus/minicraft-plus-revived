@@ -468,9 +468,9 @@ public class MinicraftClient extends Thread implements MinicraftConnection {
 			case NOTIFY:
 				if (Game.debug) System.out.println("CLIENT: recieved notification");
 				if(curState != State.PLAY) return true; // ignoring for now
-				String[] parts = new String(data).trim().split(";");
-				String note = parts[0];
-				int notetime = Integer.parseInt(parts[1]);
+				String notedata = new String(data).trim();
+				int notetime = Integer.parseInt(notedata.substring(0, notedata.indexOf(";")));
+				String note = notedata.substring(notedata.indexOf(";")+1);
 				Game.notifications.add(note);
 				Game.notetick = notetime;
 				return true;
@@ -499,9 +499,10 @@ public class MinicraftClient extends Thread implements MinicraftConnection {
 				int damage = data[0];
 				int attackDir = data[1];
 				game.player.hurt(damage, attackDir);
+				return true;
 		}
 		
-		return true; // this isn't reached by anything, but whatever.
+		return false; // this isn't reached by anything, unless it's some packet type we aren't looking for. So in that case, return false.
 	}
 	
 	/// the below methods are all about sending data to the server, *not* setting any game values.
@@ -546,6 +547,11 @@ public class MinicraftClient extends Thread implements MinicraftConnection {
 		if(ie == null) return;
 		if(Game.debug) System.out.println("CLIENT: requesting pickup of item: " + ie);
 		sendData(MinicraftProtocol.InputType.PICKUP, String.valueOf(ie.eid).getBytes());
+	}
+	
+	public void sendNotification(String note, int notetime) {
+		String data = notetime + ";" + note;
+		sendData(MinicraftProtocol.InputType.NOTIFY, data.getBytes());
 	}
 	
 	public void requestLevel(int lvlidx) {

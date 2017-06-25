@@ -4,7 +4,7 @@ import java.awt.BorderLayout;
 import java.awt.Canvas;
 import java.awt.Dimension;
 import java.awt.Graphics;
-import java.awt.event.*; // TODO these .*'s are unnecessary.
+import java.awt.event.*;
 import java.awt.image.BufferStrategy;
 import java.awt.image.BufferedImage;
 import java.awt.image.DataBufferInt;
@@ -643,8 +643,10 @@ public class Game extends Canvas implements Runnable {
 	public static void notifyAll(String msg, int notetick) {
 		Game.notifications.add(msg);
 		Game.notetick = notetick;
-		if(isValidClient())
-			Game.client.sendData(MinicraftProtocol.InputType.NOTIFY, (msg+";"+notetick).getBytes());
+		if(isValidServer())
+			Game.server.sendNotification(msg, notetick);
+		else if(isValidClient())
+			Game.client.sendNotification(msg, notetick);
 	}
 	
 	/** This method changes the level that the player is currently on.
@@ -1090,7 +1092,7 @@ public class Game extends Canvas implements Runnable {
 		
 		Thread.currentThread().setUncaughtExceptionHandler(new Thread.UncaughtExceptionHandler() {
 			public void uncaughtException(Thread t, Throwable e) {
-				String exceptionTrace = "Exception in thread " + t + ":\n";
+				String exceptionTrace = "Exception in thread " + t + ":P\n";
 				exceptionTrace += Game.getExceptionTrace(e);
 				System.err.println(exceptionTrace);
 				javax.swing.JOptionPane.showInternalMessageDialog(null, exceptionTrace, "Fatal Error", javax.swing.JOptionPane.ERROR_MESSAGE);
