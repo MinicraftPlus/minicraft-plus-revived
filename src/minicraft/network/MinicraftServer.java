@@ -602,9 +602,11 @@ public class MinicraftServer extends Thread implements MinicraftConnection {
 			
 			case ENTITY:
 				// client wants the specified entity sent in an ADD packet, becuase it couldn't find that entity upon recieving an ENTITY packet from the server.
-				Entity entityToSend = Game.getEntity(Integer.parseInt((new String(data)).trim()));
+				int enid = Integer.parseInt((new String(data)).trim());
+				Entity entityToSend = Game.getEntity(enid);
 				if(entityToSend == null) {
 					/// well THIS would be a problem, I think. Though... Actually, not really. It just means that an entity was removed between the time of sending an update for it, and the client then asking for it to be added. But since it would be useless to add it at this point, we'll just ignore the request.
+					if (Game.debug) System.out.println("SERVER: ignoring request to add unknown entity (probably already removed): " + enid);
 					return true;
 				}
 				if(sender.unconfirmedAdditions.containsKey(entityToSend.eid))

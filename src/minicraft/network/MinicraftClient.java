@@ -1,5 +1,6 @@
 package minicraft.network;
 
+import java.util.HashMap;
 import java.util.List;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -42,6 +43,8 @@ public class MinicraftClient extends Thread implements MinicraftConnection {
 	
 	private boolean sent = false;
 	private long sentTime;
+	
+	private HashMap<Integer, Long> entityAdditionRequests = new HashMap<Integer, Long>();
 	
 	public MinicraftClient(Game game, MultiplayerMenu menu, String hostName) {
 		super("MinicraftClient");
@@ -391,8 +394,10 @@ public class MinicraftClient extends Thread implements MinicraftConnection {
 				}
 				
 				Entity addedEntity = (new Load()).loadEntity(entityData, game, false);
-				if(addedEntity != null)
+				if(addedEntity != null) {
 					sendData(MinicraftProtocol.InputType.ADD, String.valueOf(addedEntity.eid).getBytes());
+					entityAdditionRequests.remove(addedEntity.eid);
+				}
 				
 				return true;
 			
@@ -419,8 +424,14 @@ public class MinicraftClient extends Thread implements MinicraftConnection {
 				updates = updates.substring(updates.indexOf(";")+1);
 				Entity entity = Game.getEntity(entityid);
 				if(entity == null) {
+					if(entityAdditionRequests.containsKey(entityid) && (System.nanoTime() - entityAdditionRequests.get(entityid)) / 1E8 < 20L) {
+						// it has been less than 2 seconds since this entity was last requested, so don't request it again at this time.
+						return false;
+					}
+					// at this point: the entity has not been requested, or it has been more than 2 seconds since the last request.
 					System.out.println("CLIENT could not find entity specified to be updated ("+entityid+"); requesting entity from server...");
 					sendData(MinicraftProtocol.InputType.ENTITY, String.valueOf(entityid).getBytes());
+					entityAdditionRequests.put(entityid, System.nanoTime());
 					return false;
 				}
 				entity.update(updates);
