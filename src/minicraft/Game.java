@@ -49,10 +49,13 @@ public class Game extends Canvas implements Runnable {
 	public static String systemGameDir;
 	static {
 		String os = System.getProperty("os.name");
-		if(os.equalsIgnoreCase("Windows"))
+		//System.out.println("os name: \"" +os + "\"");
+		if(os.toUpperCase().contains("WINDOWS"))
 			systemGameDir = System.getenv("APPDATA");
 		else
 			systemGameDir = System.getProperty("user.home");
+		
+		//System.out.println("system game dir: " + systemGameDir);
 	}
 	public static String gameDir; // The directory in which all the game files are stored
 	//public static String loadDir = "";
