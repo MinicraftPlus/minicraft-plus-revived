@@ -1,8 +1,11 @@
 	---Quick TODO's---
 
+-- check that I made sure to include player's activeItem in save when making the world multiplayer
+-- wouldn't hurt to keep the init_t packet type... then the server wouldn't have to send 400 packets.
 -reorder tools a bit in ToolType.java b/c I'm picky. Hoes should be first, at least. ;)
 - add to F3 menu: "heartticks" left until regen another heart.
-- Move Mobs into Mob package.
+- Move Mobs into Mob package, and furniture into furniture package.
+- Get rid of MinicraftProtocol; all its stuff can go into MinicraftConnection.
 
 Note to self: for more little bugs/ideas/concerns, search code for "TODO"
 -----------------------------------------------------------------------------------
@@ -24,16 +27,17 @@ Fire particles appear, but... they look totally weird...
 Sound effects don't always play when they should; mostly it seems when other sounds should be on at the same time.
 ####
 REQUEST: remove POW glove, and other starting items
+####
+
 #####
 MULTIPLAYER-Related:
- # item entity pickup does not seem synced very well
+ # Tile and entity updates sometimes don't get reached, resulting in the wrong tile displayed, or a frozen entity. Happens rather often...
  # have not tested stairs.
- # picking furniture up doesn't work very well.
- # Player animations (like attack slash) don't render.
+ # picking furniture up doesn't work very well, at least previously.
  # Beds are untested.
- # potion effects probably won't appear for the clients, but I'm pretty sure they'll still exist.
- # Item count probably won't go down when you use things. In fact, there needs to be more feedback from the INTERACT packets, to the client.
- # chests don't work.
+ # Player animations don't work.
+ # potion effects probably won't appear for the clients, but I'm pretty sure they'll still exist. Basically, they are not synced to the client. Though, it would be nice if I could find a way to not even bother telling the server for things like potions, that don't even interact with the world.
+ # chests don't work, probably.
 #####
 -----------------------------------------------------------------------------------
 
