@@ -421,7 +421,7 @@ public class Level {
 			if (Game.debug) {
 				String clazz = entity.getClass().getCanonicalName();
 				clazz = clazz.substring(clazz.lastIndexOf(".")+1);
-				String[] searching = {"DungeonChest", "AirWizard", "Player", "ItemEntity"}; //can contain any number of class names I want to print when found.
+				String[] searching = {"DungeonChest", "AirWizard", "Player"}; //can contain any number of class names I want to print when found.
 				for(String search: searching) {
 					try {
 						if(Class.forName("minicraft.entity."+search).isAssignableFrom(entity.getClass())) {
@@ -444,6 +444,9 @@ public class Level {
 			entitiesToAdd.remove(0);
 		}
 		
+		if(Game.isValidServer() && getEntitiesOfClass(Player.class).length == 0)
+			return; // don't tick if no players.
+		
 		if(!Game.isValidClient()) {
 			for (int i = 0; i < w * h / 50; i++) {
 				int xt = random.nextInt(w);
@@ -453,14 +456,21 @@ public class Level {
 		}
 		
 		for (Entity e: getEntityArray()) {
+			if(e == null) continue;
+			
+			if(Game.hasConnectedClients() && e instanceof Player && !(e instanceof RemotePlayer)) {
+				if(Game.debug) System.out.println("SERVER is removing regular player "+e+" from level "+this);
+				e.remove();
+			}
+			
 			if(e.removed) continue;
 			
-			if(!Game.ISONLINE || (Game.isValidServer() && !(e instanceof Particle || e instanceof ItemEntity)) || (Game.isValidClient() && !(e instanceof Player/*e instanceof Particle || e instanceof ItemEntity*/))) {
+			if(!Game.ISONLINE || (Game.isValidServer() && !(e instanceof Particle || e instanceof ItemEntity)) || (Game.isValidClient() && !(e instanceof Player /*e instanceof Particle || e instanceof ItemEntity*/))) {
 				
 				e.tick();
 				
 				if(Game.hasConnectedClients())
-					Game.server.sendEntityUpdate(e);
+					Game.server.broadcastEntityUpdate(e);
 			}
 			
 			if(Game.isValidServer() && e instanceof Particle)
@@ -471,11 +481,17 @@ public class Level {
 		
 		for(int i = 0; i < entities.size(); i++) {
 			Entity e = entities.get(i);
-			if(e.removed || e.level != this) {// remove entites tagged for removal.
-				remove(e);
-				if(e.level == this) e.level = null;
+			if(e == null || e.removed || e.level != this) {// remove entites tagged for removal.
+				if(e != null) {
+					remove(e);
+					if(e.level == this) e.level = null;
+				}
 				entities.remove(i);
-				if(Game.debug && Game.isValidClient() && !(e instanceof Particle || e instanceof ItemEntity)) System.out.println("CLIENT: removing mob from level entity list: " + e);
+				if(e != null) {
+					if(Game.debug && Game.isValidClient()/* && !(e instanceof Particle || e instanceof ItemEntity)*/) System.out.println("CLIENT: removed mob from level entity list: " + e);
+					else if(Game.debug && e instanceof Player) System.out.println("removing player "+e+" from level " + this);
+				}
+				else if (Game.debug) System.out.println("removed null entity from level.");
 				i--;
 			}
 		}
@@ -615,7 +631,7 @@ public class Level {
 		}
 		
 		if(Game.isValidServer()) {
-			Game.server.sendTileUpdate(depth, x, y);
+			Game.server.broadcastTileUpdate(this, x, y);
 		}
 	}
 	
@@ -638,7 +654,7 @@ public class Level {
 			entitiesToAdd.add(entity);
 		
 		if(Game.isValidServer()) {
-			Game.server.sendEntityAddition(entity);
+			Game.server.broadcastEntityAddition(entity);
 		}
 	}
 	
@@ -648,7 +664,7 @@ public class Level {
 		if(e instanceof RemotePlayer)
 			System.out.println("removing remote player from level " + depth);
 		if(Game.isValidServer() && !(e instanceof Particle))
-			Game.server.sendEntityRemoval(e);
+			Game.server.broadcastEntityRemoval(e);
 		//int xto = e.x >> 4;
 		//int yto = e.y >> 4;
 		//removeEntity(xto, yto, e);
@@ -727,7 +743,7 @@ public class Level {
 	/*private List<Entity> getEntitiesInTile(int xt, int yt) {
 		return getEntitiesInTiles(xt, yt, xt, yt);
 	}*/
-	private List<Entity> getEntitiesInTiles(int xt0, int yt0, int xt1, int yt1) {
+	public List<Entity> getEntitiesInTiles(int xt0, int yt0, int xt1, int yt1) {
 		List<Entity> contained = new ArrayList<Entity>();
 		for(Entity e: getEntityArray()) {
 			int xt = e.x >> 4;
@@ -794,10 +810,11 @@ public class Level {
 		return (Player) closest;
 	}
 	
-	public Tile[] getAreaTiles(int x, int y, int r) {
+	public Tile[] getAreaTiles(int x, int y, int r) { return getAreaTiles(x, y, r, r); }
+	public Tile[] getAreaTiles(int x, int y, int rx, int ry) {
 		ArrayList<Tile> local = new ArrayList<Tile>();
-		for(int yo = y-r; yo <= y+r; yo++)
-			for(int xo = x-r; xo <= x+r; xo++)
+		for(int yo = y-ry; yo <= y+ry; yo++)
+			for(int xo = x-rx; xo <= x+rx; xo++)
 				if(xo >= 0 && xo < w && yo >= 0 && yo < h)
 					local.add(getTile(xo, yo));
 		

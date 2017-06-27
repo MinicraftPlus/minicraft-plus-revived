@@ -18,7 +18,7 @@ public class MultiplayerMenu extends Menu {
 	
 	private List<String> takenNames = new ArrayList<String>();
 	
-	private String loadingMessage = "nothing";
+	private String loadingMessage = "doing nothing";
 	private String errorMessage = "";
 	
 	private String typing = "";

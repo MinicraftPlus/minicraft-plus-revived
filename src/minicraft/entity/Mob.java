@@ -46,12 +46,13 @@ public abstract class Mob extends Entity {
 	}
 
 	public boolean move(int xa, int ya) { // Move the mob, overrides from Entity
-		if(level == null) return true;
+		if(level == null) return false; // stopped b/c there's no level to move in!
 		
-		if(tickTime % 2 == 0/* && !(this instanceof Player && ((Player)this).staminaRechargeDelay % 2 == 0)*/) {
-			if(isSwimming() || isWooling() && !(this instanceof Player)) return true;
-		}
-		if (tickTime % walkTime == 0 && walkTime > 1) return true;
+		// these should return true b/c the mob is still technically moving; these are just to make it move *slower*.
+		if (!(this instanceof Player) && tickTime % 2 == 0 && isSwimming() || isWooling())
+			return true;
+		if (tickTime % walkTime == 0 && walkTime > 1)
+			return true;
 		
 		/// These 4 following conditionals check the direction of the knockback, move the Mob accordingly, and bring knockback closer to 0.
 		if (xKnockback < 0) { // If we have negative horizontal knockback (to the left)
@@ -70,7 +71,7 @@ public abstract class Mob extends Entity {
 			move2(0, 1);
 			yKnockback--;
 		}
-		if (hurtTime > 0 && this instanceof Player == false) return true; // If we have been hurt recently and haven't yet cooled down, don't continue with the movement (so only knockback will be performed)
+		if (hurtTime > 0 && this instanceof Player == false) return true; // If a mob has been hurt recently and hasn't yet cooled down, don't continue with the movement (so only knockback will be performed)
 		
 		if (xa != 0 || ya != 0) { // Only if horizontal or vertical movement is actually happening
 			walkDist++; // Increment our walking/movement counter

@@ -396,9 +396,11 @@ public class Load {
 		
 		player.game.currentLevel = Integer.parseInt(data.get(8));
 		Level level = Game.levels[player.game.currentLevel];
-		player.game.player.remove(); // removes the user player from the level, in case they would be added twice.
+		if(player.game.player != null)
+			player.game.player.remove(); // removes the user player from the level, in case they would be added twice.
 		if(level != null)
 			level.add(player);
+		else if(Game.debug) System.out.println(Game.onlinePrefix()+"game level to add player " + player + " to is null.");
 		//Tile spawnTile = level.getTile(player.spawnx >> 4, player.spawny >> 4);
 		//if(spawnTile.id != Tiles.get("grass").id && spawnTile.mayPass(level, player.spawnx >> 4, player.spawny >> 4, player))
 			//player.bedSpawn = true; //A semi-advanced little algorithm to determine if the player has a bed save; and though if you sleep on a grass tile, this won't get set, it doesn't matter b/c you'll spawn there anyway!
@@ -533,6 +535,15 @@ public class Load {
 		int eid = -1;
 		if(!isLocalSave) {
 			eid = Integer.parseInt(info.remove(2));
+			
+			if(Game.isValidClient() && game.player instanceof RemotePlayer && !((RemotePlayer)game.player).shouldTrack(x >> 4, y >> 4)) {
+				// the entity is too far away to bother adding to the level.
+				if(Game.debug) System.out.println("CLIENT: entity is too far away to bother loading: " + eid);
+				Entity dummy = new Cow();
+				dummy.eid = eid;
+				return dummy; /// we need a dummy b/c it's the only way to pass along to entity id.
+			}
+			
 			Entity existing = Game.getEntity(eid);
 			if(existing != null) {
 				System.out.println(Game.onlinePrefix()+"already loaded entity with eid " + eid + "; returning that one");

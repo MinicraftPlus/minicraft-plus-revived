@@ -161,8 +161,7 @@ private static final String[] options = {"New game", "Join Online World", "Instr
 	
 	public void init(Game game, InputHandler input) {
 		super.init(game, input);
-		if(game.player instanceof RemotePlayer) {
-			game.player = null;
+		if(game.player == null) {
 			game.resetGame();
 		}
 	}

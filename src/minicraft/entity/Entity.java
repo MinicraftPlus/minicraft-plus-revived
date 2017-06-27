@@ -76,10 +76,10 @@ public abstract class Entity {
 		return false;
 	}
 		
-	/** Moves an entity horizontally and vertically. */
+	/** Moves an entity horizontally and vertically. Returns whether entity was unimpeded in it's movement.  */
 	public boolean move(int xa, int ya) {
 		if (!Game.saving && (xa != 0 || ya != 0)) { // if not saving, and the entity is actually going to move...
-			boolean stopped = true; // used to check if the entity has BEEN stopped, COMPLETELY; this checks for a lack of collision.
+			boolean stopped = true; // used to check if the entity has BEEN stopped, COMPLETELY; below checks for a lack of collision.
 			if (xa != 0 && move2(xa, 0)) stopped = false; // horizontal movement was successful.
 			if (ya != 0 && move2(0, ya)) stopped = false; // vertical movement was successful.
 			if (!stopped) {
@@ -101,7 +101,7 @@ public abstract class Entity {
 			}
 			return !stopped;
 		}
-		return true; // reaches this if no movement was requested / game was saving.
+		return true; // reaches this if no movement was requested / game was saving. return true, becuase it should still do the moving phase thing, just paused, not obstructed.
 	}
 	
 	/** Second part to the move method (moves in one direction at a time) */

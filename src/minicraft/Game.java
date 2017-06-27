@@ -218,7 +218,7 @@ public class Game extends Canvas implements Runnable {
 		return ISONLINE && ISHOST && server != null;
 	}
 	public static final boolean hasConnectedClients() {
-		return isValidServer() && server.getClientList().size() > 0;
+		return isValidServer() && server.hasClients();
 	}
 	
 	/// called after main; main is at bottom.
@@ -266,6 +266,10 @@ public class Game extends Canvas implements Runnable {
 		notifications.clear();
 		
 		// adds a new player
+		if(isValidServer()) {
+			player = null;
+			return;
+		}
 		if(player instanceof RemotePlayer) {
 			player = new RemotePlayer(this, true, (RemotePlayer)player);
 		} else
@@ -286,6 +290,12 @@ public class Game extends Canvas implements Runnable {
 	/** For the loading screen updates to work, it it assumed that *this* is called by a thread *other* than the one rendering the current *menu*. */
 	public void initWorld() { // this is a full reset; everything.
 		if(Game.debug) System.out.println("resetting world...");
+		
+		if(Game.isValidServer()) {
+			System.err.println("Cannot initialize world while acting as a server runtime; not running initWorld().");
+			return;
+		}
+		
 		DeadMenu.shouldRespawn = false;
 		resetGame();
 		Bed.inBed = false;
@@ -346,14 +356,14 @@ public class Game extends Canvas implements Runnable {
 		Level level = levels[currentLevel];
 		if (Bed.inBed && !Game.isValidClient()) {
 			// IN BED
-			level.remove(player);
+			level.remove(Bed.player);
 			gamespeed = 20;
 			if(tickCount > sleepEndTime) {
 				pastDay1 = true;
 				tickCount = 0;
 			}
 			if (tickCount <= sleepStartTime && tickCount >= sleepEndTime) { // it has reached morning.
-				level.add(player);
+				level.add(Bed.player);
 				gamespeed = 1;
 				
 				// seems this removes all entities within a certain radius of the player when you get OUT of Bed.
@@ -379,7 +389,10 @@ public class Game extends Canvas implements Runnable {
 			asTick++;
 		if (asTick > astime) {
 			if (OptionsMenu.autosave && player.health > 0 && !gameOver) {
-				new Save(player, WorldSelectMenu.worldname);
+				if(!Game.ISONLINE)
+					new Save(player, WorldSelectMenu.worldname);
+				else if(Game.isValidServer())
+					Game.server.saveWorld();
 			}
 			
 			asTick = 0;
@@ -410,19 +423,19 @@ public class Game extends Canvas implements Runnable {
 		if(isValidServer()) {
 			/// this is to keep the game going while online, even with an unfocused window.
 			input.tick();
-			boolean ticked = false;
+			//boolean ticked = false;
 			for(Level floor: levels) {
 				if(floor == null) continue;
-				if(floor.getEntitiesOfClass(Player.class).length > 0) {
+				//if(floor.getEntitiesOfClass(Player.class).length > 0) {
 					//if(Game.debug) System.out.println("Server is ticking level " + floor.depth);
 					floor.tick();
-					ticked = true;
-				}
+				//	ticked = true;
+				//}
 			}
 			
-			if(!ticked) {
+			/*if(!ticked) {
 				System.out.println("SERVER did not tick any levels, becuase no players were found.");
-			}
+			}*/
 			
 			Tile.tickCount++;
 		}// else if(isValidClient())
@@ -433,7 +446,7 @@ public class Game extends Canvas implements Runnable {
 			input.releaseAll();
 		}
 		if(hasFocus() || ISONLINE) {
-			if ((!player.removed || isValidServer()) && !gameOver) {
+			if ((isValidServer() || !player.removed) && !gameOver) {
 				gameTime++;
 			}
 			
@@ -448,28 +461,29 @@ public class Game extends Canvas implements Runnable {
 				//no menu, currently.
 				paused = false;
 				
-				//if player is alive, but no level change, nothing happens here.
-				if (player.removed && readyToRenderGameplay && !isValidServer()) {
-					//makes delay between death and death menu.
-					//if (debug) System.out.println("player is dead.");
-					playerDeadTime++;
-					if (playerDeadTime > 60) {
-						setMenu(new DeadMenu());
+				if(!Game.isValidServer()) {
+					//if player is alive, but no level change, nothing happens here.
+					if (player.removed && readyToRenderGameplay) {
+						//makes delay between death and death menu.
+						//if (debug) System.out.println("player is dead.");
+						playerDeadTime++;
+						if (playerDeadTime > 60) {
+							setMenu(new DeadMenu());
+						}
+					} else if (pendingLevelChange != 0) {
+						setMenu(new LevelTransitionMenu(pendingLevelChange));
+						pendingLevelChange = 0;
 					}
-				} else if (pendingLevelChange != 0 && !isValidServer()) {
-					setMenu(new LevelTransitionMenu(pendingLevelChange));
-					pendingLevelChange = 0;
+					
+					if(!isValidServer() && level != null) {
+						level.tick();
+						Tile.tickCount++;
+					}
+					
+					if(isValidClient())
+						player.tick();
 				}
-				
-				if(isValidClient())
-					player.tick();
-				
-				if(!isValidServer() && level != null) {
-					level.tick();
-					Tile.tickCount++;
-				}
-				
-				if(Game.isValidServer()) {
+				else if(Game.isValidServer()) {
 					// here is where I should put things like select up/down, backspace to boot, esc to open pause menu, etc.
 					if(input.getKey("pause").clicked)
 						setMenu(new PauseMenu(null));
@@ -644,7 +658,7 @@ public class Game extends Canvas implements Runnable {
 		Game.notifications.add(msg);
 		Game.notetick = notetick;
 		if(isValidServer())
-			Game.server.sendNotification(msg, notetick);
+			Game.server.broadcastNotification(msg, notetick);
 		else if(isValidClient())
 			Game.client.sendNotification(msg, notetick);
 	}
@@ -654,6 +668,10 @@ public class Game extends Canvas implements Runnable {
 	 * For example, 'changeLevel(1)' will make you go up a level,
 	 	while 'changeLevel(-1)' will make you go down a level. */
 	public void changeLevel(int dir) {
+		if(Game.isValidServer()) {
+			System.out.println("server tried to change level.");
+			return;
+		}
 		levels[currentLevel].remove(player); // removes the player from the current level.
 		
 		currentLevel += dir;
@@ -664,7 +682,7 @@ public class Game extends Canvas implements Runnable {
 		player.x = (player.x >> 4) * 16 + 8; // sets the player's x coord (to center yourself on the stairs)
 		player.y = (player.y >> 4) * 16 + 8; // sets the player's y coord (to center yourself on the stairs)
 		
-		if(isValidClient() && !isValidServer() && levels[currentLevel] == null)
+		if(isValidClient() && levels[currentLevel] == null)
 			Game.client.requestLevel(currentLevel);
 		else
 			levels[currentLevel].add(player); // adds the player to the level.
@@ -995,7 +1013,8 @@ public class Game extends Canvas implements Runnable {
 	public void scheduleLevelChange(int dir) {
 		// same as changeLevel(). Call scheduleLevelChange(1) if you want to go up 1 level,
 		// or call with -1 to go down by 1.
-		pendingLevelChange = dir;
+		if(!Game.isValidServer())
+			pendingLevelChange = dir;
 	}
 	
 	public void startMultiplayerServer() {

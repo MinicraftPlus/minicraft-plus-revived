@@ -429,7 +429,7 @@ public class Player extends Mob {
 					if (level.getTile(xt, yt).interact(level, xt, yt, this, activeItem, attackDir)) { // returns true if the target tile successfully interacts with the item.
 						done = true;
 					} else if(Game.isValidServer()) // only do this if no interaction was actually made; b/c a tile update packet will generally happen then anyway.
-						Game.server.sendTileUpdate(level.depth, xt, yt); /// FIXME this part is as a semi-temporary fix for those odd tiles that don't update when they should; instead of having to make another system like the entity additions and removals (and it wouldn't quite work as well for this anyway), this will just update whatever tile the player interacts with.
+						Game.server.broadcastTileUpdate(level, xt, yt); /// FIXME this part is as a semi-temporary fix for those odd tiles that don't update when they should; instead of having to make another system like the entity additions and removals (and it wouldn't quite work as well for this anyway), this will just update whatever tile the player interacts with (and fails, since a successful interaction changes the tile and therefore updates it anyway).
 				}
 				
 				if (activeItem.isDepleted() && !ModeMenu.creative) {
@@ -802,7 +802,7 @@ public class Player extends Mob {
 		String updates = super.getUpdates() + ";";
 		updates += "skinon,"+skinon+
 		";shirtColor,"+shirtColor+
-		";activeItem,"+(activeItem==null?"null":activeItem.name)+
+		//";activeItem,"+(activeItem==null?"null":activeItem.name)+
 		";armor,"+armor+
 		";attackTime,"+attackTime+
 		";attackDir,"+attackDir;
@@ -815,7 +815,7 @@ public class Player extends Mob {
 		switch(field) {
 			case "skinon": skinon = Boolean.parseBoolean(val); return true;
 			case "shirtColor": shirtColor = Integer.parseInt(val); return true;
-			case "activeItem": activeItem = Items.get(val); return true;
+			//case "activeItem": activeItem = Items.get(val); return true;
 			case "armor": armor = Integer.parseInt(val); return true;
 			case "attackTime": attackTime = Integer.parseInt(val); return true;
 			case "attackDir": attackDir = Integer.parseInt(val); return true;

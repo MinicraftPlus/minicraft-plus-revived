@@ -29,35 +29,34 @@ public class Save {
 	List<String> data;
 	Game game;
 	
-	private Save(Game game, String dir) {
+	private Save(Game game, File worldFolder) {
 		data = new ArrayList<String>();
 		
 		this.game = game;
 		
-		location += dir;
-		folder = new File(location);
+		//location += dir;
+		folder = worldFolder;
+		location = worldFolder.getPath();
 		folder.mkdirs();
 	}
 	
 	/// this saves world options
-	public Save(Player player, String worldname) {
-		this(player.game, "/saves/" + worldname + "/");
+	public Save(Player player, String worldname) { this(player.game, worldname); }
+	public Save(Game game, String worldname) {
+		this(game, new File(Game.gameDir+"/saves/" + worldname + "/"));
 		
 		if(Game.isValidClient()) {
 			// clients are not allowed to save.
 			Game.saving = false;
 			return;
 		}
-		else if(Game.isValidServer()) {
-			Game.server.broadcastData(Game.server.prependType(minicraft.network.MinicraftProtocol.InputType.SAVE, new byte[0])); // tell all the other clients to send their data over to be saved.
-		}
 		
 		writeGame("Game");
 		//writePrefs("KeyPrefs");
 		writeWorld("Level");
 		if(!Game.isValidServer()) { // this must be waited for on a server.
-			writePlayer("Player", player);
-			writeInventory("Inventory", player);
+			writePlayer("Player", game.player);
+			writeInventory("Inventory", game.player);
 		}
 		writeEntities("Entities");
 		
@@ -68,14 +67,14 @@ public class Save {
 	
 	// this saves global options
 	public Save(Game game) {
-		this(game, "/");
+		this(game, new File(Game.gameDir+"/"));
 		
 		writePrefs("Preferences");
 	}
 	
 	public Save(Player player) {
 		// this is simply for access to writeToFile.
-		this(player.game, "/saves/"+WorldSelectMenu.worldname + "/");
+		this(player.game, new File(Game.gameDir+"/saves/"+WorldSelectMenu.worldname + "/"));
 	}
 	
 	public void writeToFile(String filename, List<String> savedata) {

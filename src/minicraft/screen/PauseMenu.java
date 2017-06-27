@@ -62,7 +62,10 @@ public class PauseMenu extends SelectMenu {
 			switch(confirmed) {
 				case "Save Game":
 					game.setMenu(null);
-					new Save(game.player, WorldSelectMenu.worldname);
+					if(!Game.isValidServer())
+						new Save(game.player, WorldSelectMenu.worldname);
+					else
+						Game.server.saveWorld();
 				return;
 				
 				case "Load World":
