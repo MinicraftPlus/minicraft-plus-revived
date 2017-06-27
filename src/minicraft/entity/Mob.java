@@ -44,7 +44,7 @@ public abstract class Mob extends Entity {
 	protected void die() { // Kill the mob, called when health drops to 0
 		remove(); // Remove the mob, with the method inherited from Entity
 	}
-
+	
 	public boolean move(int xa, int ya) { // Move the mob, overrides from Entity
 		if(level == null) return false; // stopped b/c there's no level to move in!
 		

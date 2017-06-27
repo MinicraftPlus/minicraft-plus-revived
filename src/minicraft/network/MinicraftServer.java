@@ -139,7 +139,7 @@ public class MinicraftServer extends Thread implements MinicraftConnection {
 		int xt = e.x >> 4, yt = e.y >> 4;
 		return getPlayersInRange(e.level, xt, yt, useTrackRange); // NOTE if "e" is a RemotePlayer, the list returned *will* contain "e".
 	}
-	private List<RemotePlayer> getPlayersInRange(Level level, int xt, int yt, boolean useTrackRange) {
+	public List<RemotePlayer> getPlayersInRange(Level level, int xt, int yt, boolean useTrackRange) {
 		List<RemotePlayer> players = new ArrayList<RemotePlayer>();
 		//if(e == null || e.level == null) return players;
 		/// screen is 18 tiles hori, 14 tiles vert. So, rect is 20x16 tiles.
