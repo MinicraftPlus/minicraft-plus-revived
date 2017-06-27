@@ -191,37 +191,38 @@ public class MinicraftClient extends Thread implements MinicraftConnection {
 				sentTime += waitTime; // converts to milliseconds.
 				parsePacket(packet.getData(), packet.getAddress(), packet.getPort());
 			} catch(SocketTimeoutException ex) {
-				if(!State.idleStates.contains(prevState) && sentTime >= targetTimeout*1E6) {
-					/*System.out.println("CLIENT timed out in state " + curState + "; targetTimeout="+targetTimeout);
-					try {
-						System.out.println("time out wait time: " + socket.getSoTimeout());
-					} catch(SocketException ex) {
-						System.err.println("CLIENT error getting socket timeout");
-						ex.printStackTrace();
-					}*/
-					if(tries < MAX_TRIES) {
-						sent = false;
-						if(Game.debug)
-							System.out.println("CLIENT: did not recieve expected packet in time allotted. Retrying "+curState+" step, attempt "+tries+" of "+MAX_TRIES);
-					}
-					else {
-						System.out.println("CLIENT: timed out waiting in state " + curState);
-						menu.setError("connection timed out.");
-						curState = State.DISCONNECTED;
-					}
-				}// else if(prevState == curState == State.LOADING) {
-					// a packet was lost, and the state should "restart".
-					//sent = false;
-					// i don't need to clear entities, becuase the game won't add entities with duplicate ids.
-					/*if(curState == State.TILES)
-						Game.levels[game.currentLevel] = null;
-					if(curState == State.ENTITIES)
-						Game.levels[game.currentLevel].clearEntities();
-					*/
-				//}
 			} catch (IOException ex) {
 				ex.printStackTrace();
 			}
+			
+			if(!State.idleStates.contains(prevState) && sentTime >= targetTimeout*1E6) {
+				/*System.out.println("CLIENT timed out in state " + curState + "; targetTimeout="+targetTimeout);
+				try {
+					System.out.println("time out wait time: " + socket.getSoTimeout());
+				} catch(SocketException ex) {
+					System.err.println("CLIENT error getting socket timeout");
+					ex.printStackTrace();
+				}*/
+				if(tries < MAX_TRIES) {
+					sent = false;
+					if(Game.debug)
+						System.out.println("CLIENT: did not recieve expected packet in time allotted. Retrying "+curState+" step, attempt "+tries+" of "+MAX_TRIES);
+				}
+				else {
+					System.out.println("CLIENT: timed out waiting in state " + curState);
+					menu.setError("connection timed out.");
+					curState = State.DISCONNECTED;
+				}
+			}// else if(prevState == curState == State.LOADING) {
+				// a packet was lost, and the state should "restart".
+				//sent = false;
+				// i don't need to clear entities, becuase the game won't add entities with duplicate ids.
+				/*if(curState == State.TILES)
+					Game.levels[game.currentLevel] = null;
+				if(curState == State.ENTITIES)
+					Game.levels[game.currentLevel].clearEntities();
+				*/
+			//}
 			
 			packet = null;
 		}
@@ -288,10 +289,6 @@ public class MinicraftClient extends Thread implements MinicraftConnection {
 			
 			case LOGIN:
 				System.err.println("Server tried to login...");
-				return false;
-			
-			case INTERACT:
-				System.err.println("Server tried to interact...");
 				return false;
 			
 			case DISCONNECT:
@@ -539,6 +536,13 @@ public class MinicraftClient extends Thread implements MinicraftConnection {
 				game.player.inventory.add(item);
 				return true;
 			
+			case INTERACT:
+				// the server went through with the interaction, and has sent back the new activeItem.
+				Item holdItem = Items.get((new String(data)).trim());
+				if(Game.debug) System.out.println("CLIENT: recieved interaction success; setting player item to " + holdItem);
+				game.player.activeItem = holdItem;
+				return true;
+			
 			case PICKUP:
 				if(curState != State.PLAY) return false; // shouldn't happen.
 				int ieid = Integer.parseInt(new String(data).trim());
@@ -586,7 +590,7 @@ public class MinicraftClient extends Thread implements MinicraftConnection {
 	/** This is called when the player.attack() method is called. */
 	public void requestInteraction(Player player) {
 		/// I don't think the player parameter is necessary, but it doesn't harm anything.
-		String itemString = player.activeItem != null ? player.activeItem.name : "null";
+		String itemString = player.activeItem != null ? player.activeItem.getData() : "null";
 		sendData(MinicraftProtocol.InputType.INTERACT, (itemString+";"+player.inventory.count(Items.get("arrow"))).getBytes());
 	}
 	

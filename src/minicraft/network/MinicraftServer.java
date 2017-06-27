@@ -55,7 +55,7 @@ public class MinicraftServer extends Thread implements MinicraftConnection {
 		
 		game.ISONLINE = true;
 		game.ISHOST = true; // just in case.
-		//game.player.remove(); // the server has no player...
+		game.player.remove(); // the server has no player...
 		
 		worldPath = Game.gameDir + "/saves/" + WorldSelectMenu.worldname;
 		
@@ -876,6 +876,11 @@ public class MinicraftServer extends Thread implements MinicraftConnection {
 				if(curArrows > arrowCount)
 					sender.inventory.removeItems(Items.get("arrow"), curArrows-arrowCount);
 				sender.attack(); /// NOTE the player may fire an arrow, but we won't tell because that player will update it theirself.
+				
+				if(!ModeMenu.creative) {
+					// now, send back the state of the activeItem. In creative though, this won't change, so it's unnecessary.
+					sendData(prependType(MinicraftProtocol.InputType.INTERACT, (sender.activeItem==null?"null":sender.activeItem.getData()).getBytes()), sender.ipAddress, sender.port);
+				}
 				return true;
 			
 			case MOVE:
