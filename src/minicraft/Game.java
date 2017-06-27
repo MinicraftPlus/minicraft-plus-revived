@@ -35,7 +35,6 @@ import minicraft.level.tile.Tiles;
 import minicraft.network.MinicraftConnection;
 import minicraft.network.MinicraftServer;
 import minicraft.network.MinicraftClient;
-import minicraft.network.MinicraftProtocol;
 import minicraft.saveload.Load;
 import minicraft.saveload.Save;
 import minicraft.screen.*;

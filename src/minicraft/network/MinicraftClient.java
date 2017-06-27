@@ -61,7 +61,7 @@ public class MinicraftClient extends Thread implements MinicraftConnection {
 			socket = new DatagramSocket();
 			ipAddress = InetAddress.getByName(hostName);
 			try {
-				socket.connect(ipAddress, MinicraftProtocol.PORT);
+				socket.connect(ipAddress, PORT);
 			} catch (Exception ex) {
 				System.err.println("CLIENT: error connecting to host:");
 				menu.setError(ex.getMessage());
@@ -102,7 +102,7 @@ public class MinicraftClient extends Thread implements MinicraftConnection {
 	public void login(String username) {
 		if (Game.debug) System.out.println("CLIENT: logging in to server...");
 		try {
-			game.player = new RemotePlayer(game, true, username, InetAddress.getLocalHost(), MinicraftProtocol.PORT);
+			game.player = new RemotePlayer(game, true, username, InetAddress.getLocalHost(), PORT);
 		} catch(UnknownHostException ex) {
 			System.err.println("CLIENT could not get localhost address.");
 			menu.setError("unable to get localhost address");
@@ -122,7 +122,7 @@ public class MinicraftClient extends Thread implements MinicraftConnection {
 				switch(curState) {
 					case USERNAMES:
 						if (Game.debug) System.out.println("CLIENT: requesting usernames");
-						sendData(MinicraftProtocol.InputType.USERNAMES, new byte[0]);
+						sendData(InputType.USERNAMES, new byte[0]);
 						matched = true;
 						break;
 					
@@ -130,14 +130,14 @@ public class MinicraftClient extends Thread implements MinicraftConnection {
 						/// send login request.
 						if (Game.debug) System.out.println("CLIENT: requesting login");
 						String username = ((RemotePlayer)game.player).username;
-						sendData(MinicraftProtocol.InputType.LOGIN, (username+";"+Game.VERSION).getBytes());
+						sendData(InputType.LOGIN, (username+";"+Game.VERSION).getBytes());
 						matched = true;
 						break;
 					
 					case LOADING:
 						// send request to load all tiles and entites around the player, then start.
 						if(Game.debug) System.out.println("CLIENT: requesting initial load");
-						sendData(MinicraftProtocol.InputType.LOAD, new byte[0]);
+						sendData(InputType.LOAD, new byte[0]);
 						matched = true;
 						break;
 					
@@ -145,14 +145,14 @@ public class MinicraftClient extends Thread implements MinicraftConnection {
 					case TILES:
 						// send request for level tiles.
 						if (Game.debug) System.out.println("CLIENT: requesting tiles");
-						sendData(MinicraftProtocol.InputType.INIT_T, (new byte[] {(byte)game.currentLevel}));
+						sendData(InputType.INIT_T, (new byte[] {(byte)game.currentLevel}));
 						matched = true;
 						break;
 					
 					case ENTITIES:
 						// send request for level entities.
 						if (Game.debug) System.out.println("CLIENT: requesting entities");
-						sendData(MinicraftProtocol.InputType.INIT_E, (new byte[] {(byte)game.currentLevel}));
+						sendData(InputType.INIT_E, (new byte[] {(byte)game.currentLevel}));
 						matched = true;
 						break;
 					*/
@@ -179,7 +179,7 @@ public class MinicraftClient extends Thread implements MinicraftConnection {
 				ex.printStackTrace();
 			}
 			
-			byte[] data = new byte[MinicraftProtocol.packetSize];
+			byte[] data = new byte[packetSize];
 			DatagramPacket packet = new DatagramPacket(data, data.length);
 			
 			long startTime = System.nanoTime();
@@ -234,7 +234,7 @@ public class MinicraftClient extends Thread implements MinicraftConnection {
 	public boolean parsePacket(byte[] alldata, InetAddress address, int port) {
 		if(alldata == null || alldata.length == 0) return false;
 		
-		MinicraftProtocol.InputType inType = MinicraftProtocol.getInputType(alldata[0]);
+		InputType inType = MinicraftConnection.getInputType(alldata[0]);
 		if(inType == null)
 			return false;
 		
@@ -359,7 +359,7 @@ public class MinicraftClient extends Thread implements MinicraftConnection {
 				}
 				//level.tiles = new byte[data.length/2];
 				//level.data = new byte[data.length/2];
-				int idx = ((int)data[0]) * ((MinicraftProtocol.packetSize-2)/2);
+				int idx = ((int)data[0]) * ((packetSize-2)/2);
 				if(Game.debug) System.out.println("CLIENT: loading tiles starting from " + idx);
 				int i;
 				for(i = 0; i < data.length/2-2 && idx+i < level.tiles.length; i++) {
@@ -432,7 +432,7 @@ public class MinicraftClient extends Thread implements MinicraftConnection {
 				
 				Entity addedEntity = (new Load()).loadEntity(entityData, game, false);
 				if(addedEntity != null) {
-					sendData(MinicraftProtocol.InputType.ADD, String.valueOf(addedEntity.eid).getBytes());
+					sendData(InputType.ADD, String.valueOf(addedEntity.eid).getBytes());
 					entityAdditionRequests.remove(addedEntity.eid);
 				}
 				
@@ -467,7 +467,7 @@ public class MinicraftClient extends Thread implements MinicraftConnection {
 					}
 					// at this point: the entity has not been requested, or it has been more than 2 seconds since the last request.
 					/*System.out.println("CLIENT could not find entity specified to be updated ("+entityid+"); requesting entity from server...");
-					sendData(MinicraftProtocol.InputType.ENTITY, String.valueOf(entityid).getBytes());
+					sendData(InputType.ENTITY, String.valueOf(entityid).getBytes());
 					entityAdditionRequests.put(entityid, System.nanoTime());
 					*/
 					return false;
@@ -516,7 +516,7 @@ public class MinicraftClient extends Thread implements MinicraftConnection {
 				else
 					playerdata = playerdata.substring(0, playerdata.length()-1);
 				if (Game.debug) System.out.println("CLIENT: sending save data");
-				sendData(MinicraftProtocol.InputType.SAVE, playerdata.getBytes());
+				sendData(InputType.SAVE, playerdata.getBytes());
 				return true;
 			
 			case NOTIFY:
@@ -568,12 +568,12 @@ public class MinicraftClient extends Thread implements MinicraftConnection {
 	
 	/// the below methods are all about sending data to the server, *not* setting any game values.
 	
-	public void sendData(MinicraftProtocol.InputType inType, byte[] startdata) {
-		if (Game.debug && inType != MinicraftProtocol.InputType.MOVE) System.out.println("CLIENT: sending "+inType+" packet...");
+	public void sendData(InputType inType, byte[] startdata) {
+		if (Game.debug && inType != InputType.MOVE) System.out.println("CLIENT: sending "+inType+" packet...");
 		sendData(prependType(inType, startdata));
 	}
 	public void sendData(byte[] data) {
-		DatagramPacket packet = new DatagramPacket(data, data.length, ipAddress, MinicraftProtocol.PORT);
+		DatagramPacket packet = new DatagramPacket(data, data.length, ipAddress, PORT);
 		try {
 			socket.send(packet);
 		} catch(IOException ex) {
@@ -584,35 +584,35 @@ public class MinicraftClient extends Thread implements MinicraftConnection {
 	
 	public void move(Player player) {
 		String movedata = player.x+";"+player.y+";"+player.dir;
-		sendData(MinicraftProtocol.InputType.MOVE, movedata.getBytes());
+		sendData(InputType.MOVE, movedata.getBytes());
 	}
 	
 	/** This is called when the player.attack() method is called. */
 	public void requestInteraction(Player player) {
 		/// I don't think the player parameter is necessary, but it doesn't harm anything.
 		String itemString = player.activeItem != null ? player.activeItem.getData() : "null";
-		sendData(MinicraftProtocol.InputType.INTERACT, (itemString+";"+player.inventory.count(Items.get("arrow"))).getBytes());
+		sendData(InputType.INTERACT, (itemString+";"+player.inventory.count(Items.get("arrow"))).getBytes());
 	}
 	
 	public void addToChest(Chest chest, Item item) {
 		if(chest == null || item == null) return;
-		sendData(MinicraftProtocol.InputType.CHESTIN, (chest.eid+";"+item).getBytes());
+		sendData(InputType.CHESTIN, (chest.eid+";"+item).getBytes());
 	}
 	
 	public void removeFromChest(Chest chest, int index) {
 		if(chest == null) return;
-		sendData(MinicraftProtocol.InputType.CHESTOUT, (chest.eid+";"+index).getBytes());
+		sendData(InputType.CHESTOUT, (chest.eid+";"+index).getBytes());
 	}
 	
 	public void pickupItem(ItemEntity ie) {
 		if(ie == null) return;
 		if(Game.debug) System.out.println("CLIENT: requesting pickup of item: " + ie);
-		sendData(MinicraftProtocol.InputType.PICKUP, String.valueOf(ie.eid).getBytes());
+		sendData(InputType.PICKUP, String.valueOf(ie.eid).getBytes());
 	}
 	
 	public void sendNotification(String note, int notetime) {
 		String data = notetime + ";" + note;
-		sendData(MinicraftProtocol.InputType.NOTIFY, data.getBytes());
+		sendData(InputType.NOTIFY, data.getBytes());
 	}
 	
 	public void requestLevel(int lvlidx) {
@@ -624,7 +624,7 @@ public class MinicraftClient extends Thread implements MinicraftConnection {
 		if(!socket.isClosed()) {
 			if (Game.debug) System.out.println("closing client socket and ending connection");
 			if(curState != State.DISCONNECTED)
-				sendData(MinicraftProtocol.InputType.DISCONNECT, (new byte[0])); // send exit signal
+				sendData(InputType.DISCONNECT, (new byte[0])); // send exit signal
 			try {
 				socket.disconnect();
 				socket.close();
