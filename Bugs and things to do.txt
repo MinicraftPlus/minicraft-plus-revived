@@ -1,11 +1,9 @@
 	---Quick TODO's---
 
 -- check that I made sure to include player's activeItem in save when making the world multiplayer
--- wouldn't hurt to keep the init_t packet type... then the server wouldn't have to send 400 packets.
 -reorder tools a bit in ToolType.java b/c I'm picky. Hoes should be first, at least. ;)
 - add to F3 menu: "heartticks" left until regen another heart.
 - Move Mobs into Mob package, and furniture into furniture package.
-- Get rid of MinicraftProtocol; all its stuff can go into MinicraftConnection.
 
 Note to self: for more little bugs/ideas/concerns, search code for "TODO"
 -----------------------------------------------------------------------------------
