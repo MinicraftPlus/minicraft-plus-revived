@@ -469,8 +469,10 @@ public class Level {
 				
 				e.tick();
 				
-				if(Game.hasConnectedClients())
+				if(Game.hasConnectedClients()) {
 					Game.server.broadcastEntityUpdate(e);
+					e.flushUpdates(); // it is important that this only be called once, here.
+				}
 			}
 			
 			if(Game.isValidServer() && e instanceof Particle)

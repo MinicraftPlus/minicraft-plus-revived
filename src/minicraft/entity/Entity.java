@@ -3,7 +3,6 @@ package minicraft.entity;
 import java.lang.reflect.Field;
 import java.util.List;
 import java.util.Random;
-import java.io.Serializable;
 import minicraft.Game;
 import minicraft.gfx.Screen;
 import minicraft.item.Item;
@@ -21,6 +20,8 @@ public abstract class Entity {
 	public int col; // day/night color variations, plus current color.
 	
 	public int eid; /// this is intended for multiplayer, but I think it could be helpful in single player, too. certainly won't harm anything, I think... as long as finding a valid id doesn't take long...
+	private String prevUpdates = ""; /// holds the updates returned from the last time getUpdates() was called.
+	private boolean accessedUpdates = false;
 	
 	public Entity(int xr, int yr) { // add color to this later, in color update
 		this.xr = xr;
@@ -215,7 +216,7 @@ public abstract class Entity {
 		return level.getClosestPlayer(x, y);
 	}
 	
-	public void update(String deltas) {
+	public final void update(String deltas) {
 		for(String field: deltas.split(";")) {
 			String fieldName = field.substring(0, field.indexOf(","));
 			String val = field.substring(field.indexOf(",")+1);
@@ -243,10 +244,48 @@ public abstract class Entity {
 	
 	/// I think I'll make these "getUpdates()" methods be an established thing, that returns all the things that can change that you need to account for when updating entities across a server.
 	/// by extension, the update() method should always account for all the variables specified here.
-	public String getUpdates() {
+	protected String getUpdateString() {
 		return "x,"+x+";"
 		+"y,"+y+";"
 		+"level,"+(level==null?"null":Game.lvlIdx(level.depth));
+	}
+	
+	public final String getUpdates() {
+		// if the updates have already been fetched and written, but not flushed, then just return those.
+		if(accessedUpdates) return prevUpdates;
+		else accessedUpdates = true; // after this they count as accessed.
+		
+		/// first, get the current string of values, which includes any subclasses.
+		String updates = getUpdateString();
+		
+		if(prevUpdates.length() == 0) {
+			// if there were no values saved last call, our job is easy. But this is only the case the first time this is run.
+			prevUpdates = updates; // set the update field for next time
+			return updates; // and we're done!
+		}
+		
+		/// if we did have updates last time, then save them as an array, before overriting the update field for next time.
+		String[] curUpdates = updates.split(";");
+		String[] prevUpdates = this.prevUpdates.split(";");
+		this.prevUpdates = updates;
+		
+		/// now, we have the current values, and the previous values, as arrays of key-value pairs sep. by commas. Now, the goal is to seperate which are actually *updates*, meaning they are different from last time.
+		
+		String deltas = "";
+		for(int i = 0; i < curUpdates.length; i++) { // b/c the string always contains the same number of pairs (and the same keys, in the same order), the indexes of cur and prev updates will be the same.
+			/// loop though each of the updates this call. If it is differnt from the last one, then add it to the list.
+			if(curUpdates[i].equals(prevUpdates[i]) == false)
+				deltas += curUpdates[i] + ";";
+		}
+		
+		if(deltas.length() > 0) deltas = deltas.substring(0, deltas.length()-1); // cuts off extra ";"
+		
+		return deltas;
+	}
+	
+	/// this marks the entity as having a new state to fetch.
+	public void flushUpdates() {
+		accessedUpdates = false;
 	}
 	
 	public String toString() {

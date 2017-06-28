@@ -184,6 +184,10 @@ public class MinicraftServer extends Thread implements MinicraftConnection {
 	}
 	/// this is like the above, but it won't do any autodetection, so so can choose who not to send it to.
 	public void sendEntityUpdate(Entity e, RemotePlayer client) {
+		if(e.getUpdates().length() == 0) {
+			//if(Game.debug) System.out.println("SERVER: skipping entity update b/c no new fields: " + e);
+			return;
+		}
 		byte[] edata = prependType(InputType.ENTITY, (e.eid+";"+e.getUpdates()).getBytes());
 		
 		if (Game.debug && e instanceof Player) System.out.println("SERVER sending player update to " + client + ": " + e);
@@ -435,7 +439,7 @@ public class MinicraftServer extends Thread implements MinicraftConnection {
 		if(alldata == null || alldata.length == 0) return false;
 		
 		InputType inType = MinicraftConnection.getInputType(alldata[0]);
-		if (Game.debug && inType != InputType.MOVE) System.out.println("SERVER: recieved "+inType+" packet");
+		//if (Game.debug && inType != InputType.MOVE) System.out.println("SERVER: recieved "+inType+" packet");
 		
 		if(inType == null) {
 			System.err.println("SERVER: invalid packet recieved; input type is not valid.");
@@ -634,7 +638,7 @@ public class MinicraftServer extends Thread implements MinicraftConnection {
 			*/
 			
 			case TILES:
-				//if (Game.debug) System.out.println("SERVER: recieved tiles request");
+				if (Game.debug) System.out.println("SERVER: recieved tiles request");
 				// send back the tiles in the level specified.
 				int levelidx = (int) data[0];
 				if(levelidx >= 0 && levelidx < Game.levels.length) {
@@ -932,7 +936,7 @@ public class MinicraftServer extends Thread implements MinicraftConnection {
 		//if(sends > 50) System.exit(0);
 		DatagramPacket packet = new DatagramPacket(data, data.length, ip, port);
 		String intype = MinicraftConnection.getInputType(data[0]).name();
-		if (Game.debug/* && !intype.equals("ENTITY") && !intype.equals("TILE")*/) System.out.println("SERVER: sending "+intype+" data to: " + ip);
+		if (Game.debug && !intype.equals("ENTITY")/* && !intype.equals("TILE")*/) System.out.println("SERVER: sending "+intype+" data to: " + ip);
 		try {
 			socket.send(packet);
 		} catch(IOException ex) {
