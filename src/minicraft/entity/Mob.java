@@ -154,19 +154,20 @@ public abstract class Mob extends Entity {
 		String updates = super.getUpdateString() + ";";
 		updates += "dir,"+dir+
 		";health,"+health+
-		";hurtTime,"+hurtTime+
-		";walkDist,"+walkDist;
+		";hurtTime,"+hurtTime;
+		//";walkDist,"+walkDist;
 		
 		return updates;
 	}
 	
 	protected boolean updateField(String field, String val) {
+		if(field.equals("x") || field.equals("y")) walkDist++;
 		if(super.updateField(field, val)) return true;
 		switch(field) {
 			case "dir": dir = Integer.parseInt(val); return true;
 			case "health": health = Integer.parseInt(val); return true;
 			case "hurtTime": hurtTime = Integer.parseInt(val); return true;
-			case "walkDist": walkDist = Integer.parseInt(val); return true;
+			//case "walkDist": walkDist = Integer.parseInt(val); return true;
 		}
 		
 		return false;
