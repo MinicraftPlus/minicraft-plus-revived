@@ -74,8 +74,8 @@ public class Slime extends EnemyMob {
 		super.die(); // Parent death call
 	}
 	
-	public String getUpdates() {
-		String updates = super.getUpdates() + ";";
+	protected String getUpdateString() {
+		String updates = super.getUpdateString() + ";";
 		updates += "jumpTime,"+jumpTime;
 		
 		return updates;

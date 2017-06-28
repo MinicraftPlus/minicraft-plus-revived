@@ -798,8 +798,8 @@ public class Player extends Mob {
 		hurtTime = playerHurtTime;
 	}
 	
-	public String getUpdates() {
-		String updates = super.getUpdates() + ";";
+	protected String getUpdateString() {
+		String updates = super.getUpdateString() + ";";
 		updates += "skinon,"+skinon+
 		";shirtColor,"+shirtColor+
 		//";activeItem,"+(activeItem==null?"null":activeItem.name)+

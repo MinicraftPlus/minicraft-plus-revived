@@ -120,8 +120,8 @@ public class DungeonChest extends Chest {
 			super.take(player);
 	}
 	
-	public String getUpdates() {
-		String updates = super.getUpdates() + ";";
+	protected String getUpdateString() {
+		String updates = super.getUpdateString() + ";";
 		updates += "isLocked,"+isLocked;
 		
 		return updates;

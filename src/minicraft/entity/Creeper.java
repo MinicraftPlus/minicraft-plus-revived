@@ -125,8 +125,8 @@ public class Creeper extends EnemyMob {
 		super.die();
 	}
 	
-	public String getUpdates() {
-		String updates = super.getUpdates() + ";";
+	protected String getUpdateString() {
+		String updates = super.getUpdateString() + ";";
 		updates += "fuseTime,"+fuseTime+
 		";fuseLit,"+fuseLit;
 		

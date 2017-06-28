@@ -20,8 +20,8 @@ public class Chest extends Furniture {
 		return true;
 	}
 	
-	public String getUpdates() {
-		String updates = super.getUpdates()+";";
+	protected String getUpdateString() {
+		String updates = super.getUpdateString()+";";
 		updates += "inventory,"+inventory.getItemData();
 		return updates;
 	}

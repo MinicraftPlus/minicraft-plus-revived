@@ -157,8 +157,8 @@ public class Spawner extends Furniture {
 		return (Furniture) new Spawner(mob);
 	}
 	
-	public String getUpdates() {
-		String updates = super.getUpdates() + ";";
+	protected String getUpdateString() {
+		String updates = super.getUpdateString() + ";";
 		updates += "health,"+health+
 		";lvl,"+lvl;
 		

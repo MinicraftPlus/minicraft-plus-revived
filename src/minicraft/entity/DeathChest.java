@@ -59,8 +59,8 @@ public class DeathChest extends Chest {
 	
 	public void take(Player player) {} // can't grab a death chest.
 	
-	public String getUpdates() {
-		String updates = super.getUpdates() + ";";
+	protected String getUpdateString() {
+		String updates = super.getUpdateString() + ";";
 		updates += "time,"+time;
 		
 		return updates;

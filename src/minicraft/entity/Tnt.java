@@ -87,8 +87,8 @@ public class Tnt extends Furniture implements ActionListener {
 		}
 	}
 	
-	public String getUpdates() {
-		String updates = super.getUpdates() + ";";
+	protected String getUpdateString() {
+		String updates = super.getUpdateString() + ";";
 		updates += "fuseLit,"+fuseLit+
 		";ftik,"+ftik;
 		

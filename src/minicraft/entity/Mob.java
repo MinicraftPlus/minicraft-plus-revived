@@ -150,8 +150,8 @@ public abstract class Mob extends Entity {
 		hurtTime = 10; // Set a delay before we can be hurt again
 	}
 	
-	public String getUpdates() {
-		String updates = super.getUpdates() + ";";
+	protected String getUpdateString() {
+		String updates = super.getUpdateString() + ";";
 		updates += "dir,"+dir+
 		";health,"+health+
 		";hurtTime,"+hurtTime+
