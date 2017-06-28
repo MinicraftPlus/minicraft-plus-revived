@@ -16,6 +16,7 @@ public class RemotePlayer extends Player {
 	/// these are used by the server to determine the distance limit for an entity/tile to be updated/added for a given player.
 	private static final int xSyncRadius = 10;
 	private static final int ySyncRadius = 8;
+	private static final int entityTrackingBuffer = 5;
 	
 	public InetAddress ipAddress;
 	public int port;
@@ -95,7 +96,7 @@ public class RemotePlayer extends Player {
 		return shouldSync(xt, yt, 0);
 	}
 	public boolean shouldTrack(int xt, int yt) {
-		return shouldSync(xt, yt, 1); /// this means that there is one tile past the syncRadii in all directions, which marks the distance at which entities are added or removed.
+		return shouldSync(xt, yt, entityTrackingBuffer); /// this means that there is one tile past the syncRadii in all directions, which marks the distance at which entities are added or removed.
 	}
 	private boolean shouldSync(int xt, int yt, int offset) { // IDEA make this isWithin(). Decided not to b/c different x and y radii.
 		int px = x >> 4, py = y >> 4;
@@ -122,8 +123,8 @@ public class RemotePlayer extends Player {
 		boolean isServer = Game.isValidServer();
 		boolean isClient = Game.isValidClient();
 		
-		int xr = xSyncRadius + 1;
-		int yr = ySyncRadius + 1;
+		int xr = xSyncRadius + entityTrackingBuffer;
+		int yr = ySyncRadius + entityTrackingBuffer;
 		
 		int xt0, yt0, xt1, yt1;
 		if(isServer) {
@@ -156,8 +157,8 @@ public class RemotePlayer extends Player {
 				/// server loops through new tiles, and compares with old tiles below (server: x,y is new coord)
 				/// client loops through old tiles, and compares with new tiles below (client: x,y is old coord)
 				if(xt0 < 0 || yt0 < 0 || x > xt0+xr || x < xt0-xr || y > yt0+yr || y < yt0-yr) {
-					if(isServer)
-						Game.server.sendTileUpdate(x, y, this); // update the new tile
+					//if(isServer)
+						//Game.server.sendTileUpdate(x, y, this); // update the new tile
 					
 					/// SERVER NOTE: don't worry about removing entities that go to unloaded tiles; the client will do that. Now, as for mobs that wander out of or into a player's loaded tiles without the player moving, the MobAi class deals with that.
 					

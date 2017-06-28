@@ -10,7 +10,7 @@ public interface MinicraftConnection {
 	int packetSize = 2048;
 	
 	enum InputType {
-		INVALID, USERNAMES, LOGIN, MODE, INIT, LOAD, START, TILE, ENTITY, PLAYER, MOVE, ADD, REMOVE, DISCONNECT, SAVE, NOTIFY, INTERACT, PICKUP, CHESTIN, CHESTOUT, BED, HURT;
+		INVALID, USERNAMES, LOGIN, MODE, INIT, TILES, ENTITIES, TILE, ENTITY, PLAYER, MOVE, ADD, REMOVE, DISCONNECT, SAVE, NOTIFY, INTERACT, PICKUP, CHESTIN, CHESTOUT, BED, HURT;
 		
 		public static final InputType[] values = InputType.values();
 		public static final List<InputType> serverOnly = Arrays.asList(new InputType[] {INIT, TILE, PLAYER, HURT, MODE});

@@ -204,19 +204,19 @@ public class MinicraftServer extends Thread implements MinicraftConnection {
 		*/
 		int tileid = curLevel.tiles[pos];
 		int tiledata = curLevel.data[pos];
-		return (pos+";"+tileid+";"+tiledata).getBytes();
+		return (lvlidx+";"+pos+";"+tileid+";"+tiledata).getBytes();
 	}
 	public void broadcastTileUpdate(Level level, int x, int y) {
-		broadcastData(prependType(InputType.TILE, getTileBytes(level.depth, x, y)), getPlayersInRange(level, x, y, true));
+		broadcastData(prependType(InputType.TILE, getTileBytes(level.depth, x, y)));
 	}
-	public void sendTileUpdate(int x, int y, RemotePlayer client) {
+	/*public void sendTileUpdate(int x, int y, RemotePlayer client) {
 		if(client == null || client.level == null) {
 			System.err.println("SERVER: can't update tile for null player, or player without level: " + client);
 			return;
 		}
 		
 		sendData(prependType(InputType.TILE, getTileBytes(client.level.depth, x, y)), client.ipAddress, client.port);
-	}
+	}*/
 	
 	private byte[] getEntityBytes(Entity e) {
 		String entity = Save.writeEntity(e, false);
@@ -434,9 +434,8 @@ public class MinicraftServer extends Thread implements MinicraftConnection {
 	public boolean parsePacket(byte[] alldata, InetAddress address, int port) {
 		if(alldata == null || alldata.length == 0) return false;
 		
-		//if (Game.debug) System.out.println("SERVER: recieved packet");
-		
 		InputType inType = MinicraftConnection.getInputType(alldata[0]);
+		if (Game.debug && inType != InputType.MOVE) System.out.println("SERVER: recieved "+inType+" packet");
 		
 		if(inType == null) {
 			System.err.println("SERVER: invalid packet recieved; input type is not valid.");
@@ -623,7 +622,7 @@ public class MinicraftServer extends Thread implements MinicraftConnection {
 				//sendEntityAddition(clientPlayer, clientPlayer);
 				return true;
 			
-			case LOAD:
+			/*case LOAD:
 				/// the client is asking for all the tiles and entities around it, right before it begins.
 				sender.updateSyncArea(-1, -1); // updates the new tiles and adds any entities there.
 				try {
@@ -632,15 +631,15 @@ public class MinicraftServer extends Thread implements MinicraftConnection {
 				sendData(prependType(InputType.START, new byte[0]), sender.ipAddress, sender.port);
 				
 				return true;
+			*/
 			
-			/*
-			case INIT_T:
+			case TILES:
 				//if (Game.debug) System.out.println("SERVER: recieved tiles request");
 				// send back the tiles in the level specified.
 				int levelidx = (int) data[0];
 				if(levelidx >= 0 && levelidx < Game.levels.length) {
 					byte[] tiledata = new byte[Game.levels[levelidx].tiles.length*2 + 2];
-					//tiledata[0] = (byte) InputType.INIT_T.ordinal();
+					//tiledata[0] = (byte) InputType.TILES.ordinal();
 					//tiledata[1] = 0; // the index to start on.
 					for(int i = 0; i < tiledata.length/2 - 3; i++) {
 						tiledata[i*2 + 2] = Game.levels[levelidx].tiles[i];
@@ -650,7 +649,7 @@ public class MinicraftServer extends Thread implements MinicraftConnection {
 					for(int i = 0; i < tiledata.length; i += pkSize) {
 						int endidx = i+1+pkSize;
 						byte[] curData = Arrays.copyOfRange(tiledata, i, (endidx>=tiledata.length?tiledata.length-1:endidx));
-						curData[0] = (byte) InputType.INIT_T.ordinal();
+						curData[0] = (byte) InputType.TILES.ordinal();
 						curData[1] = (byte) (i/pkSize); // this value tells the client what index to start filling on.
 						if(Game.debug) System.out.println("SERVER: sending tiles from " + (i/2) + " to " + ((i+curData.length-2)/2) + " to client; passed value: " + curData[1]);
 						sendData(curData, address, port);
@@ -662,7 +661,7 @@ public class MinicraftServer extends Thread implements MinicraftConnection {
 					return false;
 				}
 			
-			case INIT_E:
+			case ENTITIES:
 				if (Game.debug) System.out.println("SERVER: recieved entities request");
 				// send back the entities in the level specified.
 				int lvlidx = (int) data[0];
@@ -674,10 +673,13 @@ public class MinicraftServer extends Thread implements MinicraftConnection {
 					while(i < entities.length) {
 						String edata = "";
 						for(i = i; i < entities.length; i++) {
+							Entity curEntity = entities[i];
+							if(!sender.shouldTrack(curEntity.x>>4, curEntity.y>>4))
+								continue; // this is outside of the player's entity tracking range; doesn't need to know about it yet.
 							String curEntityData = "";
-							if(entities[i] != sender) {
-								curEntityData = Save.writeEntity(entities[i], false) + ",";
-								if(Game.debug && entities[i] instanceof Player) System.out.println("SERVER: sending player in INIT_E packet: " + entities[i]);
+							if(curEntity != sender) {
+								curEntityData = Save.writeEntity(curEntity, false) + ",";
+								if(Game.debug && curEntity instanceof Player) System.out.println("SERVER: sending player in ENTITIES packet: " + curEntity);
 							}
 							if(curEntityData.getBytes().length + edata.getBytes().length + "END".getBytes().length > packetSize-1 && curEntityData.length() > 1) {
 								// there are too many entities to send in one packet.
@@ -691,7 +693,7 @@ public class MinicraftServer extends Thread implements MinicraftConnection {
 							edata += "END"; // tell the client there are no more entities to send.
 						else
 							edata = edata.substring(0, edata.length()-1); // cut off trailing comma
-						sendData(prependType(InputType.INIT_E, edata.getBytes()), address, port);
+						sendData(prependType(InputType.ENTITIES, edata.getBytes()), address, port);
 					}
 					
 					return true;
@@ -700,7 +702,7 @@ public class MinicraftServer extends Thread implements MinicraftConnection {
 					sendError("requested level does not exist.", address, port);
 					return false;
 				}
-			*/
+			
 			case DISCONNECT:
 				if (Game.debug) System.out.println("SERVER: recieved disconnect request");
 				/// tell the other clients to remove this client from their games
@@ -930,7 +932,7 @@ public class MinicraftServer extends Thread implements MinicraftConnection {
 		//if(sends > 50) System.exit(0);
 		DatagramPacket packet = new DatagramPacket(data, data.length, ip, port);
 		String intype = MinicraftConnection.getInputType(data[0]).name();
-		if (Game.debug && !intype.equals("ENTITY") && !intype.equals("TILE")) System.out.println("SERVER: sending "+intype+" data to: " + ip);
+		if (Game.debug/* && !intype.equals("ENTITY") && !intype.equals("TILE")*/) System.out.println("SERVER: sending "+intype+" data to: " + ip);
 		try {
 			socket.send(packet);
 		} catch(IOException ex) {
