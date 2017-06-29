@@ -1030,7 +1030,12 @@ public class Game extends Canvas implements Runnable {
 		// here is where we need to start the new client.
 		String jarFilePath = "";
 		try {
-			jarFilePath = getClass().getProtectionDomain().getCodeSource().getLocation().toURI().toString();
+			java.net.URI uri = getClass().getProtectionDomain().getCodeSource().getLocation().toURI();
+			//if (Game.debug) System.out.println("jar path: " + uri.getPath());
+			//if (Game.debug) System.out.println("jar string: " + uri.toString());
+			jarFilePath = uri.getPath();
+			if(os.contains("windows") && jarFilePath.startsWith("/"))
+				jarFilePath = jarFilePath.substring(1);
 		} catch(URISyntaxException ex) {
 			System.err.println("problem with jar file URI syntax.");
 			ex.printStackTrace();
@@ -1170,6 +1175,10 @@ public class Game extends Canvas implements Runnable {
 			}
 			
 			deleteAllFiles(testFileOld);
+			
+			testFile = new File(systemGameDir + ".playminicraft");
+			if(os.contains("windows") && testFile.exists())
+				deleteAllFiles(testFile);
 		}
 		
 		Game game = new Game();
