@@ -191,10 +191,11 @@ public class MinicraftClient extends Thread implements MinicraftConnection {
 				sentTime += waitTime; // converts to milliseconds.
 				parsePacket(packet.getData(), packet.getAddress(), packet.getPort());
 			} catch(SocketTimeoutException ex) {
-				if(!State.idleStates.contains(prevState))
-					sentTime = 5000;
+				//System.out.println("time out in prev state" + prevState);
+				long waitTime = System.nanoTime() - startTime;
+				sentTime += waitTime; // converts to milliseconds.
 			} catch (SocketException ex) {
-				if(ex.getMessage().equalsIgnoreCase("Socket closed"))
+				if(ex.getMessage().toLowerCase().contains("socket closed"))
 					curState = State.DISCONNECTED;
 				else
 					ex.printStackTrace();
@@ -213,7 +214,7 @@ public class MinicraftClient extends Thread implements MinicraftConnection {
 				if(tries < MAX_TRIES) {
 					sent = false;
 					if(Game.debug)
-						System.out.println("CLIENT: did not recieve expected packet in time allotted. Retrying "+curState+" step, attempt "+tries+" of "+MAX_TRIES);
+						System.out.println("CLIENT: did not recieve expected packet in time allotted. Retrying "+curState+" step, attempt "+(tries+1)+" of "+MAX_TRIES);
 				}
 				else {
 					System.out.println("CLIENT: timed out waiting in state " + curState);
