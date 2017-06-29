@@ -36,7 +36,7 @@ public class Save {
 		
 		//location += dir;
 		folder = worldFolder;
-		location = worldFolder.getPath();
+		location = worldFolder.getPath() + "/";
 		folder.mkdirs();
 	}
 	

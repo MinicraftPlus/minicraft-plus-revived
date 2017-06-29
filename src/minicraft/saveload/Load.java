@@ -101,6 +101,14 @@ public class Load {
 			//testFileOld.delete()
 			new LegacyLoad(testFile);
 		}
+		else if(!testFile.exists()) {
+			try {
+				testFile.createNewFile();
+			} catch(IOException ex) {
+				System.err.println("could not create Unlocks."+extention+":");
+				ex.printStackTrace();
+			}
+		}
 		//if(testFileOld.exists())
 		//testFile = new File(location+"Unlocks"+extention);
 		/*if(!testFile.exists()) {
