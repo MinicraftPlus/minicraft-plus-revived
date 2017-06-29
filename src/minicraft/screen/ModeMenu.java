@@ -127,7 +127,7 @@ public class ModeMenu extends Menu {
 		}
 		
 		time *= Game.normSpeed;
-		if (Game.debug) System.out.println("score time: " + time);
+		//if (Game.debug) System.out.println("score time: " + time);
 		
 		return time;
 	}
