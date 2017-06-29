@@ -93,19 +93,23 @@ public class Load {
 		else
 			new Save(game);
 		
-		File testFile = new File(location+"unlocks"+extention);
-		if (testFile.exists()) {
-			new LegacyLoad("unlocks", "Unlocks");
-			testFile.delete();
+		File testFileOld = new File(location+"unlocks"+extention);
+		File testFile = new File(location+"Unlocks"+extention);
+		if (testFileOld.exists() && !testFile.exists()) {
+			testFileOld.renameTo(testFile);
+			//testFileOld = new File(location+"unlocks"+extention);
+			//testFileOld.delete()
+			new LegacyLoad(testFile);
 		}
-		testFile = new File(location+"Unlocks"+extention);
-		if(!testFile.exists()) {
+		//if(testFileOld.exists())
+		//testFile = new File(location+"Unlocks"+extention);
+		/*if(!testFile.exists()) {
 			try {
 				testFile.createNewFile();
 			} catch (IOException ex) {
 				ex.printStackTrace();
 			}
-		}
+		}*/
 		
 		loadUnlocks("Unlocks");
 	}

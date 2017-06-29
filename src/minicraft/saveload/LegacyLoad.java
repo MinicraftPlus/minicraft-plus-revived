@@ -67,8 +67,8 @@ public class LegacyLoad {
 		LoadingMenu.percentage = 0; // reset
 	}
 	
-	protected LegacyLoad(String oldName, String newName) {
-		updateUnlocks(location+"/" + oldName + extention, location+"/" + newName + extention);
+	protected LegacyLoad(File unlocksFile) {
+		updateUnlocks(unlocksFile);
 	}
 	
 	public void loadFromFile(String filename) {
@@ -117,8 +117,9 @@ public class LegacyLoad {
 		}
 	}
 	
-	protected void updateUnlocks(String oldfilename, String newfilename) {
-		loadFromFile(oldfilename);
+	protected void updateUnlocks(File file) {
+		String path = file.getPath();
+		loadFromFile(path);
 		
 		for(int i = 0; i < data.size(); i++) {
 			if(data.get(i).length() == 0) {
@@ -129,8 +130,10 @@ public class LegacyLoad {
 			data.set(i, data.get(i).replace("HOURMODE", "H_ScoreTime").replace("MINUTEMODE", "M_ScoreTime"));
 		}
 		
+		file.delete();
+		
 		try {
-			java.io.BufferedWriter writer = new java.io.BufferedWriter(new java.io.FileWriter(newfilename));
+			java.io.BufferedWriter writer = new java.io.BufferedWriter(new java.io.FileWriter(path));
 			for(String unlock: data) {
 				writer.write(","+unlock);
 			}

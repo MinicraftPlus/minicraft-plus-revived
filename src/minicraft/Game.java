@@ -44,15 +44,22 @@ public class Game extends Canvas implements Runnable {
 	private static Random random = new Random();
 	
 	public static boolean debug = false;
-	public static String localGameDir = "/.playminicraft/mods/Minicraft Plus";
-	public static String systemGameDir;
+	
+	public static final String os;
+	public static final String localGameDir;
+	public static final String systemGameDir;
 	static {
-		String os = System.getProperty("os.name");
+		os = System.getProperty("os.name").toLowerCase();
 		//System.out.println("os name: \"" +os + "\"");
-		if(os.toUpperCase().contains("WINDOWS"))
+		if(os.contains("windows")) // windows
 			systemGameDir = System.getenv("APPDATA");
 		else
 			systemGameDir = System.getProperty("user.home");
+		
+		if(os.contains("mac") || os.contains("nix") || os.contains("nux") || os.contains("aix")) // mac or linux
+			localGameDir = "/.playminicraft/mods/Minicraft_Plus";
+		else
+			localGameDir = "/playminicraft/mods/Minicraft_Plus"; // windows, probably.
 		
 		//System.out.println("system game dir: " + systemGameDir);
 	}
@@ -1023,7 +1030,7 @@ public class Game extends Canvas implements Runnable {
 		// here is where we need to start the new client.
 		String jarFilePath = "";
 		try {
-			jarFilePath = getClass().getProtectionDomain().getCodeSource().getLocation().toURI().getPath();
+			jarFilePath = getClass().getProtectionDomain().getCodeSource().getLocation().toURI().toString();
 		} catch(URISyntaxException ex) {
 			System.err.println("problem with jar file URI syntax.");
 			ex.printStackTrace();
@@ -1052,7 +1059,7 @@ public class Game extends Canvas implements Runnable {
 		
 		// now that that's done, let's turn *this* running JVM into a server:
 		server = new MinicraftServer(this);
-		if (debug) System.out.println("server started. valid: " + isValidServer() + "; is online: "+ISONLINE+"; is host:" + ISHOST + "; server not null: " + (server!=null));
+		//if (debug) System.out.println("server started. valid: " + isValidServer() + "; is online: "+ISONLINE+"; is host:" + ISHOST + "; server not null: " + (server!=null));
 	}
 	
 	/**
@@ -1134,19 +1141,37 @@ public class Game extends Canvas implements Runnable {
 				autoclient = true;
 		}
 		Game.debug = debug;
-		if(Game.debug) System.out.println("determined save folder: " + saveDir);
 		Game.gameDir = saveDir + Game.localGameDir;
+		if(Game.debug) System.out.println("determined gameDir: " + Game.gameDir);
 		
-		/*loadDir = gameDir + "/saves/";
-		File testFile = new File(loadDir);
-		if(!testFile.exists()) {
-			// load from the previous folder instead.
-			String newlocation = System.getenv("APPDATA")+"/"+Game.localGameDir + "/saves/";
-			if((new File(newlocation)).exists())
-				loadDir = newlocation;
+		String prevLocalGameDir = "/.playminicraft/mods/Minicraft Plus";
+		File testFile = new File(systemGameDir + localGameDir);
+		File testFileOld = new File(systemGameDir + prevLocalGameDir);
+		if(!testFile.exists() && testFileOld.exists()) {
+			// rename the old folders to the new scheme
+			testFile.mkdirs();
+			if(os.contains("windows")) {
+				try {
+					java.nio.file.Files.setAttribute(testFile.toPath(), "dos:hidden", true);
+				} catch (java.io.IOException ex) {
+					System.err.println("couldn't make game folder hidden on windows:");
+					ex.printStackTrace();
+				}
+			}
+			
+			File[] files = getAllFiles(testFileOld).toArray(new File[0]);
+			for(File file: files) {
+				//testFile
+				File newFile = new File(file.getPath().replace(testFileOld.getPath(), testFile.getPath()));
+				//System.out.println("new file: " + newFile.getPath());
+				if(file.isDirectory()) newFile.mkdirs(); // these should be unnecessary.
+				else file.renameTo(newFile);
+				//File main = new File(testFileOld.getPath()+"/Preferences.miniplussave");
+			}
+			
+			deleteAllFiles(testFileOld);
 		}
-		if(Game.debug) System.out.println("load dir: " + loadDir);
-		*/
+		
 		Game game = new Game();
 		game.setMinimumSize(new Dimension(1, 1));
 		game.setPreferredSize(getWindowSize());
@@ -1171,7 +1196,9 @@ public class Game extends Canvas implements Runnable {
 			public void windowIconified(WindowEvent e) {}
 			public void windowDeiconified(WindowEvent e) {}
 			public void windowOpened(WindowEvent e) {}
-			public void windowClosed(WindowEvent e) {
+			public void windowClosed(WindowEvent e) {System.out.println("window closed");}
+			public void windowClosing(WindowEvent e) {
+				System.out.println("window closing");
 				if(Game.isValidClient())
 					Game.client.endConnection();
 				if(Game.isValidServer())
@@ -1179,7 +1206,6 @@ public class Game extends Canvas implements Runnable {
 				
 				game.quit();
 			}
-			public void windowClosing(WindowEvent e) {}
 		});
 		
 		frame.setVisible(true);
@@ -1194,7 +1220,29 @@ public class Game extends Canvas implements Runnable {
 	}
 	
 	public void quit() {
+		if(Game.isValidClient()) Game.client.endConnection();
+		if(Game.isValidServer()) Game.server.endConnection();
 		running = false;
+	}
+	
+	private static List<File> getAllFiles(File top) {
+		List<File> files = new ArrayList<File>();
+		if(!top.isDirectory()) {
+			files.add(top);
+			return files;
+		} else
+			files.add(top);
+		for(File subfile: top.listFiles())
+			files.addAll(getAllFiles(subfile));
+		
+		return files;
+	}
+	
+	private static void deleteAllFiles(File top) {
+		if(top.isDirectory())
+			for(File subfile: top.listFiles())
+				deleteAllFiles(subfile);
+		top.delete();
 	}
 	
 	/**

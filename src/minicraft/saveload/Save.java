@@ -68,7 +68,7 @@ public class Save {
 	// this saves global options
 	public Save(Game game) {
 		this(game, new File(Game.gameDir+"/"));
-		
+		if(Game.debug) System.out.println("writing preferences...");
 		writePrefs("Preferences");
 	}
 	
