@@ -46,7 +46,7 @@ public class MinicraftClient extends Thread implements MinicraftConnection {
 	private boolean sent = false;
 	private long sentTime;
 	private int tries = 0;
-	private static final int MAX_TRIES = 5;
+	private static final int MAX_TRIES = 3;
 	
 	private HashMap<Integer, Long> entityAdditionRequests = new HashMap<Integer, Long>();
 	
@@ -191,6 +191,8 @@ public class MinicraftClient extends Thread implements MinicraftConnection {
 				sentTime += waitTime; // converts to milliseconds.
 				parsePacket(packet.getData(), packet.getAddress(), packet.getPort());
 			} catch(SocketTimeoutException ex) {
+				if(!State.idleStates.contains(prevState))
+					sentTime = 5000;
 			} catch (SocketException ex) {
 				if(ex.getMessage().equalsIgnoreCase("Socket closed"))
 					curState = State.DISCONNECTED;
@@ -587,7 +589,11 @@ public class MinicraftClient extends Thread implements MinicraftConnection {
 			socket.send(packet);
 		} catch(IOException ex) {
 			//System.err.println("CLIENT: error sending "+inType+" packet:");
-			ex.printStackTrace();
+			if(ex.getMessage().toLowerCase().contains("invalid argument")) {
+				socket.close();
+				menu.setError("Address is invalid.");
+			} else
+				ex.printStackTrace();
 		}
 	}
 	
