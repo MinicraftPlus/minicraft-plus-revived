@@ -834,8 +834,8 @@ public class Game extends Canvas implements Runnable {
 			info.add("day tiks " + tickCount);
 			info.add((normSpeed * gamespeed) + " tik/sec");
 			info.add("walk spd " + player.moveSpeed);
-			info.add("X " + (player.x >> 4));
-			info.add("Y " + (player.y >> 4));
+			info.add("X " + (player.x / 16) + "-" + (player.x % 16));
+			info.add("Y " + (player.y / 16) + "-" + (player.y % 16));
 			info.add("Tile " + Game.levels[currentLevel].getTile(player.x>>4, player.y>>4).name);
 			if (ModeMenu.score) info.add("Score " + player.score);
 			
