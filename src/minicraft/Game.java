@@ -683,17 +683,19 @@ public class Game extends Canvas implements Runnable {
 		}
 		levels[currentLevel].remove(player); // removes the player from the current level.
 		
-		currentLevel += dir;
-		if (currentLevel == -1) currentLevel = 5; // fix accidental level underflow
-		if (currentLevel == 6) currentLevel = 0; // fix accidental level overflow
+		int nextLevel = currentLevel + dir;
+		if (nextLevel == -1) nextLevel = 5; // fix accidental level underflow
+		if (nextLevel == 6) nextLevel = 0; // fix accidental level overflow
 		//level = levels[currentLevel]; // sets the level to the current level
+		currentLevel = nextLevel;
 		
 		player.x = (player.x >> 4) * 16 + 8; // sets the player's x coord (to center yourself on the stairs)
 		player.y = (player.y >> 4) * 16 + 8; // sets the player's y coord (to center yourself on the stairs)
 		
-		if(isValidClient() && levels[currentLevel] == null)
+		if(isValidClient() && levels[currentLevel] == null) {
+			readyToRenderGameplay = false;
 			Game.client.requestLevel(currentLevel);
-		else
+		} else
 			levels[currentLevel].add(player); // adds the player to the level.
 	}
 	

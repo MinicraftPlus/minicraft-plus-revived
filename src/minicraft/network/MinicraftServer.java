@@ -674,7 +674,7 @@ public class MinicraftServer extends Thread implements MinicraftConnection {
 					Entity[] entities = Game.levels[lvlidx].getEntityArray();
 					//System.out.println("access granted.");
 					int i = 0;
-					while(i < entities.length) {
+					while(i <= entities.length) {
 						String edata = "";
 						for(i = i; i < entities.length; i++) {
 							Entity curEntity = entities[i];
@@ -697,15 +697,20 @@ public class MinicraftServer extends Thread implements MinicraftConnection {
 							edata += "END"; // tell the client there are no more entities to send.
 						else
 							edata = edata.substring(0, edata.length()-1); // cut off trailing comma
+						
 						sendData(prependType(InputType.ENTITIES, edata.getBytes()), address, port);
+						
+						if(i == entities.length)
+							break; // this won't break in this case otherwise.
 					}
 					
-					return true;
 				} else {
 					System.err.println("SERVER warning: Client " + sender + " tried to request entities from nonexistent level " + lvlidx);
 					sendError("requested level does not exist.", address, port);
 					return false;
 				}
+				
+				return true;
 			
 			case DISCONNECT:
 				if (Game.debug) System.out.println("SERVER: recieved disconnect request");

@@ -633,6 +633,7 @@ public class MinicraftClient extends Thread implements MinicraftConnection {
 	
 	public void requestLevel(int lvlidx) {
 		curState = State.TILES;
+		game.setMenu(menu);
 		game.currentLevel = lvlidx; // just in case.
 	}
 	
