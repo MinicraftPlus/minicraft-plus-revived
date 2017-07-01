@@ -460,10 +460,10 @@ public class Player extends Mob {
 			int xt = x >> 4;
 			int yt = (y + yo) >> 4;
 			int r = 12;
-			if (attackDir == 0) yt = (y + r + yo) >> 4;
-			if (attackDir == 1) yt = (y - r + yo) >> 4;
-			if (attackDir == 2) xt = (x - r) >> 4;
-			if (attackDir == 3) xt = (x + r) >> 4;
+			if (attackDir == 0) yt = (y + r + yo) >> 4; // down
+			if (attackDir == 1) yt = (y - r + yo) >> 4; // up
+			if (attackDir == 2) xt = (x - r) >> 4; // left
+			if (attackDir == 3) xt = (x + r) >> 4; // right
 
 			if (xt >= 0 && yt >= 0 && xt < level.w && yt < level.h) {
 				Tile t = level.getTile(xt, yt);
