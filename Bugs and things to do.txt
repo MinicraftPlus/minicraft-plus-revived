@@ -1,5 +1,6 @@
 	---Quick TODO's---
 
+-- add DIE packet; it contains the death chest. The server... maybe doesn't send back anything, yet, in case the user wants to exit. If the user chooses to respawn, then the client sends a RESPAWN packet, and *then* the server sends the new start position. In fact, maybe the RESPAWN packet can be used in the beginning of the game as well when logging in.
 -- check that I made sure to include player's activeItem in save when making the world multiplayer
 -reorder tools a bit in ToolType.java b/c I'm picky. Hoes should be first, at least. ;)
 - add to F3 menu: "heartticks" left until regen another heart.
