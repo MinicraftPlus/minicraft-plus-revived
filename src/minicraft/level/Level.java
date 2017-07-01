@@ -423,23 +423,26 @@ public class Level {
 			if(Game.isValidServer())
 				Game.server.broadcastEntityAddition(entity);
 			
-			if (Game.debug) {
-				String clazz = entity.getClass().getCanonicalName();
-				clazz = clazz.substring(clazz.lastIndexOf(".")+1);
-				String[] searching = {"DungeonChest", "AirWizard", "Player"}; //can contain any number of class names I want to print when found.
-				for(String search: searching) {
-					try {
-						if(Class.forName("minicraft.entity."+search).isAssignableFrom(entity.getClass())) {
-							if (clazz.equals("AirWizard")) clazz += ((AirWizard)entity).secondform ? " II" : "";
-							printLevelLoc(Game.onlinePrefix()+"Adding " + clazz, entity.x>>4, entity.y>>4, " ("+entity.eid+")");
-							break;
+			if (!Game.isValidServer() || !(entity instanceof Particle)) {
+				if (Game.debug) {
+					String clazz = entity.getClass().getCanonicalName();
+					clazz = clazz.substring(clazz.lastIndexOf(".")+1);
+					String[] searching = {"DungeonChest", "AirWizard", "Player"}; //can contain any number of class names I want to print when found.
+					for(String search: searching) {
+						try {
+							if(Class.forName("minicraft.entity."+search).isAssignableFrom(entity.getClass())) {
+								if (clazz.equals("AirWizard")) clazz += ((AirWizard)entity).secondform ? " II" : "";
+								printLevelLoc(Game.onlinePrefix()+"Adding " + clazz, entity.x>>4, entity.y>>4, " ("+entity.eid+")");
+								break;
+							}
+						} catch(ClassNotFoundException ex) {
+							ex.printStackTrace();
 						}
-					} catch(ClassNotFoundException ex) {
-						ex.printStackTrace();
 					}
 				}
+				
+				entities.add(entity);
 			}
-			entities.add(entity);
 			//if(Game.debug && Game.ISONLINE && !(entity instanceof Particle)) System.out.println(Game.onlinePrefix()+this+": added entity to level: " + entity);
 			/*if(Game.debug && Game.isValidServer()) {
 				Entity found = Game.getEntity(entity.eid);
@@ -674,7 +677,7 @@ public class Level {
 		if(entity == null) return;
 		entity.setLevel(this, x, y);
 		
-		if(!entitiesToAdd.contains(entity) && (!Game.isValidServer() || !(entity instanceof Particle))) // they are not even worth putting here. All they need to do is get sent to the the other clients.
+		if(!entitiesToAdd.contains(entity)) // they are not even worth putting here. All they need to do is get sent to the the other clients.
 			entitiesToAdd.add(entity);
 	}
 	

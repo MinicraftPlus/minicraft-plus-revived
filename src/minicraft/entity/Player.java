@@ -362,12 +362,16 @@ public class Player extends Mob {
 	
 	/** This method is called when we press the attack button. */
 	protected void attack() {
+		// walkDist is not synced, so this can happen for both the client and server.
 		walkDist += 8; // increase the walkDist (changes the sprite, like you moved your arm)
 		
 		if(Game.isValidClient()) {
 			// if this is a multiplayer game, than the server will execute the full method instead.
+			attackDir = dir;
 			if(activeItem != null)
 				attackTime = 10;
+			else
+				attackTime = 5;
 			
 			Game.client.requestInteraction(this);
 			if(activeItem instanceof ToolItem && stamina - 1 >= 0 && ((ToolItem)activeItem).type == ToolType.Bow && inventory.count(Items.get("arrow")) > 0) // we are going to use an arrow.
@@ -428,8 +432,8 @@ public class Player extends Mob {
 				} else { // item can't interact with tile
 					if (level.getTile(xt, yt).interact(level, xt, yt, this, activeItem, attackDir)) { // returns true if the target tile successfully interacts with the item.
 						done = true;
-					} else if(Game.isValidServer()) // only do this if no interaction was actually made; b/c a tile update packet will generally happen then anyway.
-						Game.server.broadcastTileUpdate(level, xt, yt); /// FIXME this part is as a semi-temporary fix for those odd tiles that don't update when they should; instead of having to make another system like the entity additions and removals (and it wouldn't quite work as well for this anyway), this will just update whatever tile the player interacts with (and fails, since a successful interaction changes the tile and therefore updates it anyway).
+					}// else if(Game.isValidServer()) // only do this if no interaction was actually made; b/c a tile update packet will generally happen then anyway.
+						//Game.server.broadcastTileUpdate(level, xt, yt); /// FIXME this part is as a semi-temporary fix for those odd tiles that don't update when they should; instead of having to make another system like the entity additions and removals (and it wouldn't quite work as well for this anyway), this will just update whatever tile the player interacts with (and fails, since a successful interaction changes the tile and therefore updates it anyway).
 				}
 				
 				if (activeItem.isDepleted() && !ModeMenu.creative) {
@@ -462,7 +466,9 @@ public class Player extends Mob {
 			if (attackDir == 3) xt = (x + r) >> 4;
 
 			if (xt >= 0 && yt >= 0 && xt < level.w && yt < level.h) {
-				level.getTile(xt, yt).hurt(level, xt, yt, this, random.nextInt(3) + 1, attackDir);
+				Tile t = level.getTile(xt, yt);
+				//if (Game.debug) System.out.println("attacking tile " + xt+","+yt + ": "+t.name);
+				t.hurt(level, xt, yt, this, random.nextInt(3) + 1, attackDir);
 			}
 		}
 	}
