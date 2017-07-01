@@ -47,6 +47,7 @@ public class Level {
 
 	private List<Entity> entities = java.util.Collections.<Entity>synchronizedList(new ArrayList<Entity>()); // A list of all the entities in the world
 	private List<Entity> entitiesToAdd = new ArrayList<Entity>(); /// entites that will be added to the level on next tick are stored here. This is for the sake of multithreading optimization. (hopefully)
+	private List<Entity> entitiesToRemove = new ArrayList<Entity>(); /// entites that will be removed from the level on next tick are stored here. This is for the sake of multithreading optimization. (hopefully)
 	//private List<Entity> rowSprites = new ArrayList<Entity>();
 	private Comparator<Entity> spriteSorter = new Comparator<Entity>() { // creates a sorter for all the entities to be rendered.
 		public int compare(Entity e0, Entity e1) { // compares 2 entities
@@ -418,6 +419,10 @@ public class Level {
 		}*/
 		while(entitiesToAdd.size() > 0) {
 			Entity entity = entitiesToAdd.get(0);
+			
+			if(Game.isValidServer())
+				Game.server.broadcastEntityAddition(entity);
+			
 			if (Game.debug) {
 				String clazz = entity.getClass().getCanonicalName();
 				clazz = clazz.substring(clazz.lastIndexOf(".")+1);
@@ -481,21 +486,38 @@ public class Level {
 			if(e instanceof Mob) count++;
 		}
 		
-		for(int i = 0; i < entities.size(); i++) {
+		for(Entity e: getEntityArray())
+			if(e == null || e.removed || e.level != this)
+				remove(e);
+		
+		/*for(int i = 0; i < entities.size(); i++) {
 			Entity e = entities.get(i);
 			if(e == null || e.removed || e.level != this) {// remove entites tagged for removal.
 				if(e != null) {
 					remove(e);
 					if(e.level == this) e.level = null;
 				}
-				entities.remove(i);
+				//entities.remove(i);
 				if(e != null) {
-					if(Game.debug && Game.isValidClient()/* && !(e instanceof Particle || e instanceof ItemEntity)*/) System.out.println("CLIENT: removed mob from level entity list: " + e);
+					if(Game.debug && Game.isValidClient()) System.out.println("CLIENT: removed mob from level entity list: " + e);
 					else if(Game.debug && e instanceof Player) System.out.println("removing player "+e+" from level " + this);
 				}
-				else if (Game.debug) System.out.println("removed null entity from level.");
-				i--;
+				//else if (Game.debug) System.out.println("removed null entity from level.");
+				//i--;
 			}
+		}*/
+		
+		while(entitiesToRemove.size() > 0) {
+			Entity entity = entitiesToRemove.get(0);
+			//if (Game.debug) System.out.println("removing entity " + entity + " from level " + depth + ".");
+			
+			if(Game.isValidServer() && !(entity instanceof Particle))
+				Game.server.broadcastEntityRemoval(entity);
+			entities.remove(entity);
+			entitiesToRemove.remove(0);
+			
+			if(entity instanceof RemotePlayer)
+				System.out.println("removed remote player from level " + depth);
 		}
 		
 		mobCount = count;
@@ -652,21 +674,16 @@ public class Level {
 		if(entity == null) return;
 		entity.setLevel(this, x, y);
 		
-		if(!Game.isValidServer() || !(entity instanceof Particle)) // they are not even worth putting here. All they need to do is get sent to the the other clients.
+		if(!entitiesToAdd.contains(entity) && (!Game.isValidServer() || !(entity instanceof Particle))) // they are not even worth putting here. All they need to do is get sent to the the other clients.
 			entitiesToAdd.add(entity);
-		
-		if(Game.isValidServer()) {
-			Game.server.broadcastEntityAddition(entity);
-		}
 	}
 	
 	public void remove(Entity e) {
 		//e.remove();
 		e.removed = true;
-		if(e instanceof RemotePlayer)
-			System.out.println("removing remote player from level " + depth);
-		if(Game.isValidServer() && !(e instanceof Particle))
-			Game.server.broadcastEntityRemoval(e);
+		if(!entitiesToRemove.contains(e))
+			entitiesToRemove.add(e);
+		
 		//int xto = e.x >> 4;
 		//int yto = e.y >> 4;
 		//removeEntity(xto, yto, e);
