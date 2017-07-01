@@ -77,14 +77,16 @@ public class Creeper extends EnemyMob {
 				int yt = (y - 2) >> 4;
 				
 				// change tile to an appropriate crater
-				if (lvl == 4) {
-					level.setTile(xt, yt, Tiles.get("Infinite Fall"));
-				} else if (lvl == 3) {
-					level.setTile(xt, yt, Tiles.get("lava"));
-				} else {
-					level.setTile(xt, yt, Tiles.get("hole"));
+				if(!level.getTile(xt, yt).name.toLowerCase().contains("stairs")) {
+					if (lvl == 4) {
+						level.setTile(xt, yt, Tiles.get("Infinite Fall"));
+					} else if (lvl == 3) {
+						level.setTile(xt, yt, Tiles.get("lava"));
+					} else {
+						level.setTile(xt, yt, Tiles.get("hole"));
+					}
 				}
-
+				
 				die(); // dying now kind of kills everything. the super class will take care of it.
 			} else {
 				fuseTime = 0;
