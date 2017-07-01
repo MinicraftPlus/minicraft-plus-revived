@@ -741,6 +741,7 @@ public class Player extends Mob {
 		}
 		dc.inventory.removeItem(Items.get("Power Glove"));
 		
+		// TODO this will be part of DIE packet.
 		Game.levels[game.currentLevel].add(dc);
 
 		Sound.playerDeath.play();
