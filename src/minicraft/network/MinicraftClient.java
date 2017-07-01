@@ -544,7 +544,7 @@ public class MinicraftClient extends Thread implements MinicraftConnection {
 				if(curState != State.PLAY) return false; // shouldn't happen.
 				if (Game.debug) System.out.println("CLIENT: recieved chestout");
 				Item item = Items.get(new String(data).trim());
-				game.player.inventory.add(item);
+				game.player.inventory.add(item, 0);
 				return true;
 			
 			case INTERACT:
@@ -612,7 +612,7 @@ public class MinicraftClient extends Thread implements MinicraftConnection {
 	
 	public void addToChest(Chest chest, Item item) {
 		if(chest == null || item == null) return;
-		sendData(InputType.CHESTIN, (chest.eid+";"+item).getBytes());
+		sendData(InputType.CHESTIN, (chest.eid+";"+item.getData()).getBytes());
 	}
 	
 	public void removeFromChest(Chest chest, int index) {

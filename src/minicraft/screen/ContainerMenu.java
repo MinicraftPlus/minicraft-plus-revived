@@ -43,9 +43,15 @@ public class ContainerMenu extends Menu {
 		
 		int len = i.invSize(); // Size of the main inventory
 		
+		if(len == 0) {
+			selected = 0;
+			return; // nothing else is to be done.
+		}
+		
 		//selection fix
 		if (selected < 0) selected = 0;
 		if (selected >= len) selected = len - 1;
+		
 		//selection movement
 		if (input.getKey("up").clicked) selected--;
 		if (input.getKey("down").clicked) selected++;
@@ -53,17 +59,18 @@ public class ContainerMenu extends Menu {
 		if (input.getKey("up").clicked) Sound.pickup.play();
 		if (input.getKey("down").clicked) Sound.pickup.play();
 		//selection wrap around
-		if (len == 0) selected = 0;
 		if (selected < 0) selected += len;
 		if (selected >= len) selected -= len;
 		
 		// If the "Attack" key is pressed and the inventory's size is bigger than 0...
-		if (input.getKey("attack").clicked && len > 0) {
+		if (input.getKey("attack").clicked) {
 			if(Game.isValidClient()) {
 				if(i == chest.inventory)
 					Game.client.removeFromChest(chest, selected);
-				else
-					Game.client.addToChest(chest, i.get(selected)); // if the other menu is the chest, then we are adding to it (add==true)
+				else {
+					Game.client.addToChest(chest, i.get(selected)); // if the other menu is the chest, then we are adding to the chest.
+					player.inventory.remove(selected); // the request should never be denied, so remove item immedieately as usual.
+				}
 			}
 			else
 				i2.add(oSelected, i.remove(selected)); // It will add the item to the new inventory, and remove it from the old one.
