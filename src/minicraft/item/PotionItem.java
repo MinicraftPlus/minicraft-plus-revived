@@ -2,6 +2,8 @@ package minicraft.item;
 
 import java.util.ArrayList;
 import minicraft.entity.Player;
+import minicraft.entity.RemotePlayer;
+import minicraft.Game;
 import minicraft.gfx.Color;
 import minicraft.gfx.Sprite;
 import minicraft.level.Level;
@@ -33,14 +35,14 @@ public class PotionItem extends StackableItem {
 	
 	public static boolean applyPotion(Player player, PotionType type, int time) {
 		boolean result = applyPotion(player, type, time > 0);
-		if(result) player.potioneffects.put(type, time);
+		if(result) player.addPotionEffect(type, time);
 		return result;
 	}
 	/// this method is seperate from the above method b/c this is called sepeately by Load.java.
 	public static boolean applyPotion(Player player, PotionType type, boolean addEffect) {
 		if(type == PotionType.None) return false; // regular potions don't do anything.
 		
-		if(player.potioneffects.containsKey(type) != addEffect) { // if hasEffect, and is disabling, or doesn't have effect, and is enabling...
+		if(player.getPotionEffects().containsKey(type) != addEffect) { // if hasEffect, and is disabling, or doesn't have effect, and is enabling...
 			type.toggleEffect(player, addEffect);
 		}
 		

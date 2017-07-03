@@ -48,4 +48,6 @@ public enum PotionType {
 	public boolean toggleEffect(Player player, boolean addEffect) {
 		return true;
 	}
+	
+	public static final PotionType[] values = PotionType.values();
 }

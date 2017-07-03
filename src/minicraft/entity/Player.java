@@ -126,6 +126,14 @@ public class Player extends Mob {
 		}
 	}
 	
+	public void addPotionEffect(PotionType type, int duration) {
+		potioneffects.put(type, duration);
+	}
+	public void addPotionEffect(PotionType type) {
+		addPotionEffect(type, type.duration);
+	}
+	public HashMap<PotionType, Integer> getPotionEffects() { return potioneffects; }
+	
 	public void tick() {
 		if(game.menu != null) return; // don't tick player when menu is open
 		
@@ -816,6 +824,15 @@ public class Player extends Mob {
 		";armor,"+armor+
 		";attackTime,"+attackTime+
 		";attackDir,"+attackDir;
+		/*";potioneffects,";
+		if(potioneffects.size() == 0)
+			updates += "null";
+		else {
+			for(PotionType p: potioneffects.keySet().toArray(new PotionType[0]))
+				updates += p.ordinal() + "_" + potioneffects.get(p) + ":";
+			
+			updates = updates.substring(0, updates.length()-1);
+		}*/
 		
 		return updates;
 	}
@@ -829,6 +846,13 @@ public class Player extends Mob {
 			case "armor": armor = Integer.parseInt(val); return true;
 			case "attackTime": attackTime = Integer.parseInt(val); return true;
 			case "attackDir": attackDir = Integer.parseInt(val); return true;
+			case "potioneffects":
+				potioneffects.clear();
+				for(String potion: val.split(":")) {
+					String[] parts = potion.split("_");
+					potioneffects.put(PotionType.values[Integer.parseInt(parts[0])], Integer.parseInt(parts[1]));
+				}
+				return true;
 		}
 		
 		return false;
