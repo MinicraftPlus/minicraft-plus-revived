@@ -368,21 +368,21 @@ public class Game extends Canvas implements Runnable {
 		Level level = levels[currentLevel];
 		if (Bed.inBed && !Game.isValidClient()) {
 			// IN BED
-			level.remove(Bed.player);
+			//Bed.player.remove();
 			gamespeed = 20;
 			if(tickCount > sleepEndTime) {
 				pastDay1 = true;
 				tickCount = 0;
 			}
 			if (tickCount <= sleepStartTime && tickCount >= sleepEndTime) { // it has reached morning.
-				level.add(Bed.player);
+				Player playerInBed = Bed.restorePlayer();
 				gamespeed = 1;
 				
 				// seems this removes all entities within a certain radius of the player when you get OUT of Bed.
 				for (Entity e: level.getEntityArray()) {
 					if (e.getLevel() == levels[currentLevel]) {
-						int xd = Bed.player.x - e.x;
-						int yd = Bed.player.y - e.y;
+						int xd = playerInBed.x - e.x;
+						int yd = playerInBed.y - e.y;
 						if (xd * xd + yd * yd < 48 && e instanceof Mob && !(e instanceof Player)) {
 							// this comes down to a radius of about half a tile... huh...
 							level.remove(e);
@@ -390,11 +390,17 @@ public class Game extends Canvas implements Runnable {
 					}
 				}
 				// finally gets out of bed.
-				Bed.inBed = false;
-				Bed.player = null;
+				//Bed.inBed = false;
+				//Bed.player = null;
 			}
 		}
 		
+		/*if(!Bed.inBed && player.getLevel() == null)
+			System.out.println("player has no level (not in bed)");
+		else if(player.getLevel() != null)
+			System.out.println("player is on level " + player.getLevel() + "; depth" + player.getLevel().depth);
+		*/
+		//System.out.println("ticking player");
 		
 		//auto-save tick; marks when to do autosave.
 		if(!paused || isValidServer())
