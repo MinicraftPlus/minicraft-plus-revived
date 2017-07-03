@@ -425,7 +425,7 @@ public class Player extends Mob {
 			if (attackDir == 1) yt = (y - r + yo) >> 4;
 			if (attackDir == 2) xt = (x - r) >> 4;
 			if (attackDir == 3) xt = (x + r) >> 4;
-
+			
 			if (xt >= 0 && yt >= 0 && xt < level.w && yt < level.h) { // if the target coordinates are a valid tile...
 				if (activeItem.interactOn(level.getTile(xt, yt), level, xt, yt, this, attackDir)) { // returns true if your held item successfully interacts with the target tile.
 					done = true;
@@ -467,7 +467,7 @@ public class Player extends Mob {
 
 			if (xt >= 0 && yt >= 0 && xt < level.w && yt < level.h) {
 				Tile t = level.getTile(xt, yt);
-				//if (Game.debug) System.out.println("attacking tile " + xt+","+yt + ": "+t.name);
+				if (Game.debug) System.out.println("attacking tile " + xt+","+yt + ": "+t.name);
 				t.hurt(level, xt, yt, this, random.nextInt(3) + 1, attackDir);
 			}
 		}
@@ -727,7 +727,7 @@ public class Player extends Mob {
 		game.setMultiplier(1);
 		
 		//make death chest
-		Chest dc = new DeathChest();
+		DeathChest dc = new DeathChest();
 		dc.x = this.x;
 		dc.y = this.y;
 		dc.inventory = this.inventory;
@@ -741,10 +741,13 @@ public class Player extends Mob {
 		}
 		dc.inventory.removeItem(Items.get("Power Glove"));
 		
-		// TODO this will be part of DIE packet.
-		Game.levels[game.currentLevel].add(dc);
-
 		Sound.playerDeath.play();
+		
+		if(!Game.ISONLINE)
+			Game.levels[game.currentLevel].add(dc);
+		else if(Game.isValidClient())
+			Game.client.sendPlayerDeath(this, dc);
+		
 		super.die(); // calls the die() method in Mob.java
 	}
 	

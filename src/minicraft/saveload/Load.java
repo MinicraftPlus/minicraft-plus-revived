@@ -520,12 +520,16 @@ public class Load {
 		}
 		
 		for(int i = 0; i < data.size(); i++) {
-			loadEntity(data.get(i), game, true);
+			loadEntity(data.get(i), game, worldVer, true);
 			//LoadingMenu.percentage += percentInc;
 		}
 	}
 	
-	public Entity loadEntity(String entityData, Game game, boolean isLocalSave) {
+	public static Entity loadEntity(String entityData, Game game, boolean isLocalSave) {
+		if(isLocalSave) System.out.println("warning: assuming version of save file is current while loading entity: " + entityData);
+		return Load.loadEntity(entityData, game, (new Version(Game.VERSION)), isLocalSave);
+	}
+	public static Entity loadEntity(String entityData, Game game, Version worldVer, boolean isLocalSave) {
 		entityData = entityData.trim();
 		if(entityData.length() == 0) return null;
 		
@@ -649,10 +653,9 @@ public class Load {
 				((DeathChest)chest).time = Integer.parseInt(chestInfo.get(chestInfo.size()-1));
 			} else if (isDungeonChest) {
 				((DungeonChest)chest).isLocked = Boolean.parseBoolean(chestInfo.get(chestInfo.size()-1));
+				Game.levels[Integer.parseInt(info.get(info.size()-1))].chestcount++;
 			}
 			
-			if (chest instanceof DungeonChest)
-				Game.levels[Integer.parseInt(info.get(info.size()-1))].chestcount++;
 			newEntity = chest;
 		}
 		else if(newEntity instanceof Spawner) {
@@ -702,7 +705,7 @@ public class Load {
 		if(Game.levels[curLevel] != null) {
 			Game.levels[curLevel].add(newEntity, x, y);
 			if(Game.debug && newEntity instanceof RemotePlayer)
-				System.out.println("Prob CLIENT: loaded remote player: " + newEntity + "; added to level " + curLevel + " at " + (newEntity.x>>4)+","+(newEntity.y>>4));
+				System.out.println(Game.onlinePrefix()+"loaded remote player: " + newEntity + "; added to level " + curLevel + " at " + (newEntity.x>>4)+","+(newEntity.y>>4));
 		} else if(newEntity instanceof RemotePlayer && Game.isValidClient())
 			System.out.println("CLIENT: remote player not added b/c on null level");
 		

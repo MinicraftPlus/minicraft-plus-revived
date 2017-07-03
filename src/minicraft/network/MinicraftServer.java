@@ -135,13 +135,13 @@ public class MinicraftServer extends Thread implements MinicraftConnection {
 	}
 	
 	public List<RemotePlayer> getPlayersInRange(Entity e, boolean useTrackRange) {
-		if(e == null || e.level == null) return new ArrayList<RemotePlayer>();
+		if(e == null || e.getLevel() == null) return new ArrayList<RemotePlayer>();
 		int xt = e.x >> 4, yt = e.y >> 4;
-		return getPlayersInRange(e.level, xt, yt, useTrackRange); // NOTE if "e" is a RemotePlayer, the list returned *will* contain "e".
+		return getPlayersInRange(e.getLevel(), xt, yt, useTrackRange); // NOTE if "e" is a RemotePlayer, the list returned *will* contain "e".
 	}
 	public List<RemotePlayer> getPlayersInRange(Level level, int xt, int yt, boolean useTrackRange) {
 		List<RemotePlayer> players = new ArrayList<RemotePlayer>();
-		//if(e == null || e.level == null) return players;
+		//if(e == null || e.getLevel() == null) return players;
 		/// screen is 18 tiles hori, 14 tiles vert. So, rect is 20x16 tiles.
 		//List<Entity> entities = level.getEntitiesInTiles(xt - RemotePlayer.xSyncRadius, yt - RemotePlayer.ySyncRadius, xt + RemotePlayer.xSyncRadius, yt + RemotePlayer.ySyncRadius);
 		for(Entity e: level.getEntityArray()) {
@@ -214,12 +214,12 @@ public class MinicraftServer extends Thread implements MinicraftConnection {
 		broadcastData(prependType(InputType.TILE, getTileBytes(level.depth, x, y)));
 	}
 	/*public void sendTileUpdate(int x, int y, RemotePlayer client) {
-		if(client == null || client.level == null) {
+		if(client == null || client.getLevel() == null) {
 			System.err.println("SERVER: can't update tile for null player, or player without level: " + client);
 			return;
 		}
 		
-		sendData(prependType(InputType.TILE, getTileBytes(client.level.depth, x, y)), client.ipAddress, client.port);
+		sendData(prependType(InputType.TILE, getTileBytes(client.getLevel().depth, x, y)), client.ipAddress, client.port);
 	}*/
 	
 	private byte[] getEntityBytes(Entity e) {
@@ -229,7 +229,7 @@ public class MinicraftServer extends Thread implements MinicraftConnection {
 			return new byte[0]; // this entity is not worth sending across; at this point though, this is not the case with anything.
 		}
 		byte[] fulledata = new byte[entity.getBytes().length+1];
-		fulledata[0] = (byte) Game.lvlIdx(e.level.depth);
+		fulledata[0] = (byte) Game.lvlIdx(e.getLevel().depth);
 		byte[] edata = entity.getBytes();
 		for(int i = 0; i < edata.length; i++)
 			fulledata[i+1] = edata[i];
@@ -435,6 +435,27 @@ public class MinicraftServer extends Thread implements MinicraftConnection {
 		return playerdata;
 	}
 	
+	private String getPlayerData(Player player) {
+		List<String> datalist = new ArrayList<String>();
+		String playerdata = "";
+		Save.writePlayer(player, datalist);
+		for(String str: datalist)
+			if(str.length() > 0)
+				playerdata += str + ",";
+		playerdata = playerdata.substring(0, playerdata.length()-1) + "\n";
+		Save.writeInventory(player, datalist);
+		//if(Game.debug) System.out.println("SERVER main player inv: " + datalist);
+		for(String str: datalist)
+			if(str.length() > 0)
+				playerdata += str + ",";
+		if(datalist.size() == 0)
+			playerdata += "null";
+		else
+			playerdata = playerdata.substring(0, playerdata.length()-1);
+		
+		return playerdata;
+	}
+	
 	public boolean parsePacket(byte[] alldata, InetAddress address, int port) {
 		if(alldata == null || alldata.length == 0) return false;
 		
@@ -547,21 +568,7 @@ public class MinicraftServer extends Thread implements MinicraftConnection {
 					
 					if(game.player != null) {
 						// save the player, and then remove it.
-						List<String> datalist = new ArrayList<String>();
-						Save.writePlayer(game.player, datalist);
-						for(String str: datalist)
-							if(str.length() > 0)
-								playerdata += str + ",";
-						playerdata = playerdata.substring(0, playerdata.length()-1) + "\n";
-						Save.writeInventory(game.player, datalist);
-						//if(Game.debug) System.out.println("SERVER main player inv: " + datalist);
-						for(String str: datalist)
-							if(str.length() > 0)
-								playerdata += str + ",";
-						if(datalist.size() == 0)
-							playerdata += "null";
-						else
-							playerdata = playerdata.substring(0, playerdata.length()-1);
+						playerdata = getPlayerData(game.player);
 						
 						//if (Game.debug) System.out.println("SERVER: setting main player as remote from login.");
 						game.player.remove(); // all the important data has been saved.
@@ -595,7 +602,7 @@ public class MinicraftServer extends Thread implements MinicraftConnection {
 				
 				// now, we send the INIT_W packet and notify the others clients.
 				
-				int playerlvl = Game.lvlIdx(clientPlayer.level != null ? clientPlayer.level.depth : 0);
+				int playerlvl = Game.lvlIdx(clientPlayer.getLevel() != null ? clientPlayer.getLevel().depth : 0);
 				if(!Arrays.asList(Game.levels[playerlvl].getEntityArray()).contains(clientPlayer) && clientPlayer != hostPlayer) // this will be true if their file was already found, since they are added in Load.loadPlayer().
 					Game.levels[playerlvl].add(clientPlayer); // add to level (**id is generated here**) and also, maybe, broadcasted to other players?
 				//making INIT_W packet
@@ -710,6 +717,24 @@ public class MinicraftServer extends Thread implements MinicraftConnection {
 					return false;
 				}
 				
+				return true;
+			
+			case DIE:
+				if (Game.debug) System.out.println("recieved player death");
+				String chestData = new String(data).trim();
+				Entity dc = Load.loadEntity(chestData, game, false);
+				broadcastEntityRemoval(sender);
+				return true;
+			
+			case RESPAWN:
+				//int spawnx = sender.x;
+				//int spawny = sender.y;
+				sender = new RemotePlayer(game, true, sender);
+				//sender.x = spawnx;
+				//sender.y = spawny;
+				sender.respawn(Game.levels[Game.lvlIdx(0)]); // get the spawn loc. of the client
+				sendData(prependType(InputType.PLAYER, getPlayerData(sender).getBytes()), sender.ipAddress, sender.port); // send spawn loc.
+				broadcastEntityAddition(sender);
 				return true;
 			
 			case DISCONNECT:
@@ -858,7 +883,7 @@ public class MinicraftServer extends Thread implements MinicraftConnection {
 				//if (Game.debug) System.out.println("SERVER: recieved itementity pickup request");
 				int ieid = Integer.parseInt(new String(data).trim());
 				Entity entity = Game.getEntity(ieid);
-				if(entity == null || !(entity instanceof ItemEntity) || entity.removed) {
+				if(entity == null || !(entity instanceof ItemEntity) || entity.isRemoved()) {
 					System.err.println("SERVER could not find item entity in PICKUP request: " + ieid + ". Telling client to remove...");
 					sendEntityRemoval(ieid, sender); // will happen when another guy gets to it first, so the this client shouldn't have it on the level anymore. It could also happen if the client didn't recieve the packet telling them to pick it up... in which case it will be lost, but oh well.
 					return false;

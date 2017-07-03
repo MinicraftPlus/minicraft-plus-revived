@@ -1,5 +1,6 @@
 package minicraft.screen;
 	
+import minicraft.Game;
 import minicraft.gfx.Color;
 import minicraft.gfx.Font;
 import minicraft.gfx.Screen;
@@ -23,8 +24,10 @@ public class DeadMenu extends Menu {
 				shouldRespawn = true;
 				//reset game function
 				game.resetGame();
-				//sets the menu to nothing
-				game.setMenu(null);
+				if(!Game.isValidClient()) {
+					//sets the menu to nothing
+					game.setMenu(null);
+				}
 			}
 		}
 	}

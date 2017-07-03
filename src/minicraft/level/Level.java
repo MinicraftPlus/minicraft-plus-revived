@@ -471,7 +471,7 @@ public class Level {
 				e.remove();
 			}
 			
-			if(e.removed) continue;
+			if(e.isRemoved()) continue;
 			
 			if(!Game.ISONLINE || (Game.isValidServer() && !(e instanceof Particle || e instanceof ItemEntity)) || (Game.isValidClient() && !(e instanceof Player /*e instanceof Particle || e instanceof ItemEntity*/))) {
 				
@@ -490,15 +490,14 @@ public class Level {
 		}
 		
 		for(Entity e: getEntityArray())
-			if(e == null || e.removed || e.level != this)
+			if(e == null || e.isRemoved() || e.getLevel() != this)
 				remove(e);
 		
 		/*for(int i = 0; i < entities.size(); i++) {
 			Entity e = entities.get(i);
-			if(e == null || e.removed || e.level != this) {// remove entites tagged for removal.
+			if(e == null || e.isRemoved() || e.getLevel() != this) {// remove entites tagged for removal.
 				if(e != null) {
 					remove(e);
-					if(e.level == this) e.level = null;
 				}
 				//entities.remove(i);
 				if(e != null) {
@@ -620,7 +619,7 @@ public class Level {
 		Collections.sort(list, spriteSorter);
 		for (int i = 0; i < list.size(); i++) {
 			Entity e = list.get(i);
-			if(e.level == this && !e.removed)
+			if(e.getLevel() == this && !e.isRemoved())
 				e.render(screen);
 			else
 				remove(e);
@@ -683,7 +682,10 @@ public class Level {
 	
 	public void remove(Entity e) {
 		//e.remove();
-		e.removed = true;
+		//e.isRemoved() = true;
+		if(e.getLevel() == this)
+			e.remove(this);
+		
 		if(!entitiesToRemove.contains(e))
 			entitiesToRemove.add(e);
 		

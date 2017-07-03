@@ -317,7 +317,14 @@ public class Save {
 			if(e instanceof TextParticle) extradata += ":" + ((TextParticle)e).getData();
 		}
 		//else // is a local save
-			extradata += ":" + Game.lvlIdx(e.level.depth);
+		
+		int depth = 0;
+		if(e.getLevel() == null)
+			System.out.println("WARNING: saving entity with no level reference: " + e + "; setting level to surface");
+		else
+			depth = e.getLevel().depth;
+		
+		extradata += ":" + Game.lvlIdx(depth);
 		
 		return name + "[" + e.x + ":" + e.y + extradata + "]";
 	}

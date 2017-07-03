@@ -7,6 +7,7 @@ import minicraft.item.PotionType;
 import minicraft.level.tile.Tile;
 import minicraft.level.tile.Tiles;
 import minicraft.screen.ModeMenu;
+import minicraft.Game;
 import minicraft.Sound;
 
 public abstract class Mob extends Entity {
@@ -34,6 +35,8 @@ public abstract class Mob extends Entity {
 	
 	public void tick() {
 		tickTime++; // Increment our tick counter
+		
+		if(isRemoved()) return;
 		
 		if (level != null && level.getTile(x >> 4, y >> 4) == Tiles.get("lava")) // If we are trying to swim in lava
 			hurt(Tiles.get("lava"), x, y, 4); // Inflict 4 damage to ourselves, sourced from the lava Tile, with the direction as the opposite of ours.
@@ -129,7 +132,7 @@ public abstract class Mob extends Entity {
 	
 	protected void doHurt(int damage, int attackDir) { // Actually hurt the mob, based on only damage and a direction
 		// this is overridden in Player.java
-		if (removed || hurtTime > 0) return; // If the mob has been hurt recently and hasn't cooled down, don't continue
+		if (isRemoved() || hurtTime > 0) return; // If the mob has been hurt recently and hasn't cooled down, don't continue
 		
 		Player player = getClosestPlayer();
 		if (player != null) { // If there is a player in the level

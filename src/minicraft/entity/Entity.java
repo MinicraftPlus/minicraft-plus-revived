@@ -14,8 +14,8 @@ public abstract class Entity {
 	protected final Random random = new Random();
 	public int x, y; // x, y entity coordinates on the map
 	public int xr, yr; // x, y radius of entity
-	public boolean removed; // Determines if the entity is removed from it's level; checked in Level.java
-	public Level level; // the level that the entity is on
+	private boolean removed; // Determines if the entity is removed from it's level; checked in Level.java
+	protected Level level; // the level that the entity is on
 	// TODO might replace the below with a simple array of colors.
 	public int col; // day/night color variations, plus current color.
 	
@@ -37,6 +37,9 @@ public abstract class Entity {
 	public abstract void render(Screen screen); /// used to render the entity on screen.
 	public abstract void tick(); /// used to update the entity.
 	
+	public boolean isRemoved() { return removed; }
+	public Level getLevel() { return level; }
+	
 	/** Removes the entity from the level. */
 	public void remove() {
 		if(removed && !(this instanceof ItemEntity)) // apparently this happens fairly often with item entities.
@@ -46,16 +49,28 @@ public abstract class Entity {
 		
 		if(level == null)
 			System.out.println("Note: remove() called on entity with no level reference: " + getClass());
-		
+		else
+			level.remove(this);
 		//if(Game.isValidClient() && !Game.isValidServer() && !(this instanceof minicraft.entity.particle.Particle))
 			//System.out.println("WARNING: client game is removing "+getClass().getName().replace("minicraft.entity.","")+" entity from level " + (level==null?"null":level.depth));
+	}
+	public void remove(Level level) {
+		if(level != this.level && Game.debug)
+			System.out.println("tried to remove entity "+this+" from level it is not in: " + level + "; in level " + this.level);
+		else {
+			removed = true;
+			level = null;
+		}
 	}
 	
 	/** This should ONLY be called by the Level class. To properly add an entity to a level, use level.add(entity) */
 	public void setLevel(Level level, int x, int y) {
+		if(level == null) {
+			System.out.println("tried to set level of entity " + this + " to a null level; should use remove(level)");
+			return;
+		}
 		this.level = level;
-		if(level != null)
-			removed = false;
+		removed = false;
 		this.x = x;
 		this.y = y;
 		

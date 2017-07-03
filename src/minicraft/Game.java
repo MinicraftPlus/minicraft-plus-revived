@@ -287,11 +287,14 @@ public class Game extends Canvas implements Runnable {
 		// "shouldRespawn" is false on hardcore, or when making a new world.
 		if (DeadMenu.shouldRespawn) { // respawn, don't regenerate level.
 			//if (debug) System.out.println("Current Level = " + currentLevel);
-			
-			Level level = levels[currentLevel];
-			player.respawn(level);
-			//if (debug) System.out.println("respawned player in current world");
-			level.add(player); // adds the player to the current level (always surface here)
+			if(!Game.isValidClient()) {
+				Level level = levels[currentLevel];
+				player.respawn(level);
+				//if (debug) System.out.println("respawned player in current world");
+				level.add(player); // adds the player to the current level (always surface here)
+			} else {
+				Game.client.requestRespawn();
+			}
 		}
 	}
 	
@@ -377,7 +380,7 @@ public class Game extends Canvas implements Runnable {
 				
 				// seems this removes all entities within a certain radius of the player when you get OUT of Bed.
 				for (Entity e: level.getEntityArray()) {
-					if (e.level == levels[currentLevel]) {
+					if (e.getLevel() == levels[currentLevel]) {
 						int xd = Bed.player.x - e.x;
 						int yd = Bed.player.y - e.y;
 						if (xd * xd + yd * yd < 48 && e instanceof Mob && e != Bed.player) {
@@ -428,6 +431,10 @@ public class Game extends Canvas implements Runnable {
 			if (multiplier > 50) multiplier = 50;
 		}
 		
+		// when the player dies, the client just stops ticking...
+		//if(Game.debug && Game.isValidClient())
+			//System.out.println("client going through game tick");
+		
 		boolean hadMenu = menu != null;
 		if(isValidServer()) {
 			/// this is to keep the game going while online, even with an unfocused window.
@@ -455,7 +462,7 @@ public class Game extends Canvas implements Runnable {
 			input.releaseAll();
 		}
 		if(hasFocus() || ISONLINE) {
-			if ((isValidServer() || !player.removed) && !gameOver) {
+			if ((isValidServer() || !player.isRemoved()) && !gameOver) {
 				gameTime++;
 			}
 			
@@ -464,6 +471,8 @@ public class Game extends Canvas implements Runnable {
 			
 			if (menu != null) {
 				//a menu is active.
+				//if(Game.isValidClient() && readyToRenderGameplay && Game.debug)
+					//System.out.println("Client has menu: " + menu);
 				menu.tick();
 				paused = true;
 			} else {
@@ -472,7 +481,7 @@ public class Game extends Canvas implements Runnable {
 				
 				if(!Game.isValidServer()) {
 					//if player is alive, but no level change, nothing happens here.
-					if (player.removed && readyToRenderGameplay) {
+					if (player.isRemoved() && readyToRenderGameplay) {
 						//makes delay between death and death menu.
 						//if (debug) System.out.println("player is dead.");
 						playerDeadTime++;
@@ -483,8 +492,11 @@ public class Game extends Canvas implements Runnable {
 						setMenu(new LevelTransitionMenu(pendingLevelChange));
 						pendingLevelChange = 0;
 					}
+					/*else if (Game.isValidClient() && Game.debug) {
+						System.out.println("player is on level " + player.getLevel() + "; removed="+player.isRemoved());
+					}*/
 					
-					if(!isValidServer() && level != null) {
+					if(level != null) {
 						level.tick();
 						Tile.tickCount++;
 					}

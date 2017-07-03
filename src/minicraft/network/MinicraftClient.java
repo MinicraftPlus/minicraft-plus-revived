@@ -18,11 +18,13 @@ import minicraft.entity.ItemEntity;
 import minicraft.entity.Player;
 import minicraft.entity.RemotePlayer;
 import minicraft.entity.Chest;
+import minicraft.entity.DeathChest;
 import minicraft.item.Item;
 import minicraft.item.Items;
 import minicraft.screen.MultiplayerMenu;
 import minicraft.screen.ModeMenu;
 import minicraft.screen.TitleMenu;
+import minicraft.screen.DeadMenu;
 import minicraft.level.Level;
 import minicraft.saveload.Save;
 import minicraft.saveload.Load;
@@ -393,7 +395,6 @@ public class MinicraftClient extends Thread implements MinicraftConnection {
 				if (Game.debug) System.out.println("CLIENT: recieved entities");
 				Level newLevel = Game.levels[game.currentLevel];
 				String[] entities = new String(data).trim().split(",");
-				Load loader = new Load();
 				for(String entityString: entities) {
 					if(entityString.length() == 0) continue;
 					if(entityString.equals("END")) {
@@ -402,7 +403,7 @@ public class MinicraftClient extends Thread implements MinicraftConnection {
 						break;
 					}
 					if (Game.debug) System.out.println("CLIENT: loading entity: " + entityString);
-					loader.loadEntity(entityString, game, false);
+					Load.loadEntity(entityString, game, false);
 				}
 				
 				if(!sent) {
@@ -441,7 +442,7 @@ public class MinicraftClient extends Thread implements MinicraftConnection {
 					return false;
 				}
 				
-				Entity addedEntity = (new Load()).loadEntity(entityData, game, false);
+				Entity addedEntity = Load.loadEntity(entityData, game, false);
 				if(addedEntity != null) {
 					sendData(InputType.ADD, String.valueOf(addedEntity.eid).getBytes());
 					entityAdditionRequests.remove(addedEntity.eid);
@@ -508,6 +509,9 @@ public class MinicraftClient extends Thread implements MinicraftConnection {
 					load.loadInventory(game.player.inventory, playerinv);
 				load.loadPlayer(game.player, playerinfo);
 				//setPlayer = true;
+				if(game.menu instanceof DeadMenu) {
+					game.setMenu(null);
+				}
 				return true;
 			
 			case SAVE:
@@ -581,7 +585,7 @@ public class MinicraftClient extends Thread implements MinicraftConnection {
 	/// the below methods are all about sending data to the server, *not* setting any game values.
 	
 	public void sendData(InputType inType, byte[] startdata) {
-		if (Game.debug && inType != InputType.MOVE) System.out.println("CLIENT: sending "+inType+" packet...");
+		if (Game.debug && inType != InputType.MOVE && inType != InputType.ADD) System.out.println("CLIENT: sending "+inType+" packet...");
 		sendData(prependType(inType, startdata));
 	}
 	public void sendData(byte[] data) {
@@ -608,6 +612,22 @@ public class MinicraftClient extends Thread implements MinicraftConnection {
 		/// I don't think the player parameter is necessary, but it doesn't harm anything.
 		String itemString = player.activeItem != null ? player.activeItem.getData() : "null";
 		sendData(InputType.INTERACT, (itemString+";"+player.inventory.count(Items.get("arrow"))).getBytes());
+	}
+	
+	public void sendPlayerDeath(Player player, DeathChest dc) {
+		if(player != game.player && game.player != null) return; // this is client is not responsible for that player.
+		Level level = Game.levels[game.currentLevel];
+		level.add(dc);
+		dc.eid = -1;
+		String chestData = Save.writeEntity(dc, false);
+		level.remove(dc);
+		sendData(InputType.DIE, chestData.getBytes());
+	}
+	
+	public void requestRespawn() {
+		sendData(InputType.RESPAWN, new byte[0]);
+		//menu.setLoadingMessage("spawnpoint")
+		//game.setMenu(menu);
 	}
 	
 	public void addToChest(Chest chest, Item item) {
