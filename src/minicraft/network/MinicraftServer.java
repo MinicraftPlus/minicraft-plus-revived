@@ -33,6 +33,7 @@ import minicraft.screen.ModeMenu;
 import minicraft.screen.WorldSelectMenu;
 import minicraft.item.Item;
 import minicraft.item.Items;
+import minicraft.item.PowerGloveItem;
 
 public class MinicraftServer extends Thread implements MinicraftConnection {
 	
@@ -335,13 +336,22 @@ public class MinicraftServer extends Thread implements MinicraftConnection {
 		broadcastData(prependType(InputType.MODE, (new byte[] {(byte)mode})));
 	}
 	
-	public ArrayList<String> getClientNames() {
-		ArrayList<String> names = new ArrayList<String>();
-		for(RemotePlayer client: getClients()) {
-			names.add(client.username + ": " + client.ipAddress.getHostAddress() + (Game.debug?" ("+(client.x>>4)+","+(client.y>>4)+")":""));
+	public void updatePlayerActiveItem(RemotePlayer rp, Item heldItem) {
+		RemotePlayer client = getClientPlayer(rp.ipAddress, rp.port);
+		if(client == null) {
+			System.err.println("SERVER: couldn't find remote player " + rp + " in client list. Not updating acitve item to " + heldItem);
+			return;
 		}
 		
-		return names;
+		if(client.activeItem == null && heldItem == null || client.activeItem.matches(heldItem)) {
+			System.out.println("SERVER: player active item is already the one specified: " + heldItem + "; not updating.");
+			return;
+		}
+		
+		if(client.activeItem != null)
+			sendData(prependType(InputType.CHESTOUT, client.activeItem.getData().getBytes()), client.ipAddress, client.port);
+		client.activeItem = heldItem;
+		sendData(prependType(InputType.INTERACT, (client.activeItem==null?"null":client.activeItem.getData()).getBytes()), client.ipAddress, client.port);
 	}
 	
 	public File[] getRemotePlayerFiles() {
@@ -911,10 +921,17 @@ public class MinicraftServer extends Thread implements MinicraftConnection {
 					sender.inventory.add(Items.get("arrow"), arrowCount-curArrows);
 				if(curArrows > arrowCount)
 					sender.inventory.removeItems(Items.get("arrow"), curArrows-arrowCount);
+				//boolean wasGlove = sender.activeItem instanceof PowerGloveItem;
 				sender.attack(); /// NOTE the player may fire an arrow, but we won't tell because that player will update it theirself.
 				
-				if(!ModeMenu.creative) {
+				//boolean pickedUpFurniture = wasGlove && !(sender.activeItem instanceof PowerGloveItem);
+				
+				if(!ModeMenu.creative) { // the second part allows the player to pick up furniture in creative mode.
 					// now, send back the state of the activeItem. In creative though, this won't change, so it's unnecessary.
+					//if(pickedUpFurniture)
+						//sendData(prependType(InputType.CHESTOUT, Items.get("Power Glove").getData().getBytes()), sender.ipAddress, sender.port);
+					
+					if(Game.debug) System.out.println("SERVER: new activeItem for player " + sender + " after interaction: " + sender.activeItem);
 					sendData(prependType(InputType.INTERACT, (sender.activeItem==null?"null":sender.activeItem.getData()).getBytes()), sender.ipAddress, sender.port);
 				}
 				return true;
@@ -977,6 +994,15 @@ public class MinicraftServer extends Thread implements MinicraftConnection {
 	private void sendError(String message, InetAddress ip, int port) {
 		if (Game.debug) System.out.println("SERVER: sending error to " + ip + ": \"" + message + "\"");
 		sendData(prependType(InputType.INVALID, message.getBytes()), ip, port);
+	}
+	
+	public ArrayList<String> getClientNames() {
+		ArrayList<String> names = new ArrayList<String>();
+		for(RemotePlayer client: getClients()) {
+			names.add(client.username + ": " + client.ipAddress.getHostAddress() + (Game.debug?" ("+(client.x>>4)+","+(client.y>>4)+")":""));
+		}
+		
+		return names;
 	}
 	
 	public RemotePlayer getClientPlayer(InetAddress ip, int port) {

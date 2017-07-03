@@ -1,5 +1,6 @@
 package minicraft.entity;
 
+import minicraft.Game;
 import minicraft.gfx.Screen;
 import minicraft.gfx.Sprite;
 import minicraft.item.FurnitureItem;
@@ -39,8 +40,16 @@ public class Furniture extends Entity {
 		if (shouldTake != null) { // if the player that should take this exists...
 			if (shouldTake.activeItem instanceof PowerGloveItem) { // ...and the player's holding a power glove...
 				remove(); // remove this from the world
-				shouldTake.inventory.add(0, shouldTake.activeItem); // put the power glove into the player's inventory
-				shouldTake.activeItem = new FurnitureItem(this); // make this the player's current item.
+				if(!Game.ISONLINE) {
+					shouldTake.inventory.add(0, shouldTake.activeItem); // put the power glove into the player's inventory
+					shouldTake.activeItem = new FurnitureItem(this); // make this the player's current item.
+				}
+				else if(Game.isValidServer() && shouldTake instanceof RemotePlayer)
+					Game.server.updatePlayerActiveItem((RemotePlayer)shouldTake, (new FurnitureItem(this)));
+				else
+					System.out.println("WARNING: undefined behavior; online game was not server and ticked furniture: "+this+"; and/or player in online game found that isn't a RemotePlayer: " + shouldTake);
+				
+				if (Game.debug) System.out.println("set active item of player " + shouldTake + " to " + shouldTake.activeItem + "; picked up furniture: " + this);
 			}
 			shouldTake = null; // the player is now dereferenced.
 		}
