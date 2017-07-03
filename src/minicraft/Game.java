@@ -383,7 +383,7 @@ public class Game extends Canvas implements Runnable {
 					if (e.getLevel() == levels[currentLevel]) {
 						int xd = Bed.player.x - e.x;
 						int yd = Bed.player.y - e.y;
-						if (xd * xd + yd * yd < 48 && e instanceof Mob && e != Bed.player) {
+						if (xd * xd + yd * yd < 48 && e instanceof Mob && !(e instanceof Player)) {
 							// this comes down to a radius of about half a tile... huh...
 							level.remove(e);
 						}
@@ -481,7 +481,7 @@ public class Game extends Canvas implements Runnable {
 				
 				if(!Game.isValidServer()) {
 					//if player is alive, but no level change, nothing happens here.
-					if (player.isRemoved() && readyToRenderGameplay) {
+					if (player.isRemoved() && readyToRenderGameplay && !Bed.inBed) {
 						//makes delay between death and death menu.
 						//if (debug) System.out.println("player is dead.");
 						playerDeadTime++;
