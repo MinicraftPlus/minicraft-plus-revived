@@ -369,14 +369,24 @@ public class Game extends Canvas implements Runnable {
 		if (Bed.inBed && !Game.isValidClient()) {
 			// IN BED
 			//Bed.player.remove();
-			gamespeed = 20;
+			if(gamespeed != 20) {
+				gamespeed = 20;
+				if(Game.isValidServer()) {
+					if (Game.debug) System.out.println("SERVER: setting time for bed");
+					server.updateGameVars();
+				}
+			}
 			if(tickCount > sleepEndTime) {
 				pastDay1 = true;
 				tickCount = 0;
+				if(Game.isValidServer())
+					server.updateGameVars();
 			}
 			if (tickCount <= sleepStartTime && tickCount >= sleepEndTime) { // it has reached morning.
 				Player playerInBed = Bed.restorePlayer();
 				gamespeed = 1;
+				if(Game.isValidServer())
+					server.updateGameVars();
 				
 				// seems this removes all entities within a certain radius of the player when you get OUT of Bed.
 				for (Entity e: level.getEntityArray()) {
@@ -389,18 +399,8 @@ public class Game extends Canvas implements Runnable {
 						}
 					}
 				}
-				// finally gets out of bed.
-				//Bed.inBed = false;
-				//Bed.player = null;
 			}
 		}
-		
-		/*if(!Bed.inBed && player.getLevel() == null)
-			System.out.println("player has no level (not in bed)");
-		else if(player.getLevel() != null)
-			System.out.println("player is on level " + player.getLevel() + "; depth" + player.getLevel().depth);
-		*/
-		//System.out.println("ticking player");
 		
 		//auto-save tick; marks when to do autosave.
 		if(!paused || isValidServer())
@@ -521,7 +521,7 @@ public class Game extends Canvas implements Runnable {
 					
 					if(!ISONLINE || isValidServer()) {
 						/// server-only cheats.
-						if (input.getKey("Shift-r").clicked)
+						if (input.getKey("Shift-r").clicked && !isValidServer())
 							initWorld(); // this will almost certainaly break in multiplayer, i think...
 						
 						if (input.getKey("1").clicked) changeTimeOfDay(Time.Morning);
@@ -532,8 +532,11 @@ public class Game extends Canvas implements Runnable {
 						if (input.getKey("creative").clicked) ModeMenu.updateModeBools(2);
 						if (input.getKey("survival").clicked) ModeMenu.updateModeBools(1);
 						if (input.getKey("shift-t").clicked) ModeMenu.updateModeBools(4);
-						if (ModeMenu.score && input.getKey("ctrl-t").clicked) scoreTime = normSpeed * 5; // 5 seconds
+						if (ModeMenu.score && input.getKey("ctrl-t").clicked){ scoreTime = normSpeed * 5; // 5 seconds
+							if(Game.isValidServer()) server.updateGameVars();
+						}
 						
+						float prevSpeed = gamespeed;
 						if (input.getKey("shift-0").clicked)
 							gamespeed = 1;
 						
@@ -545,6 +548,8 @@ public class Game extends Canvas implements Runnable {
 							if(gamespeed > 1) gamespeed--;
 							else if(normSpeed*gamespeed > 5) gamespeed /= 2;
 						}
+						if(gamespeed != prevSpeed && isValidServer())
+							server.updateGameVars();
 					}
 					
 					
@@ -662,6 +667,8 @@ public class Game extends Canvas implements Runnable {
 	/// this is the proper way to change the time of day.
 	public static void changeTimeOfDay(Time t) {
 		setTime(t.tickTime);
+		if(isValidServer())
+			server.updateGameVars();
 	}
 	// this one works too.
 	public static void changeTimeOfDay(int t) {

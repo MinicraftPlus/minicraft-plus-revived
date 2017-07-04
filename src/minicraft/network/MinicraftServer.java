@@ -25,6 +25,7 @@ import minicraft.entity.ItemEntity;
 import minicraft.entity.Player;
 import minicraft.entity.RemotePlayer;
 import minicraft.entity.Chest;
+import minicraft.entity.Bed;
 import minicraft.entity.particle.Particle;
 import minicraft.saveload.Save;
 import minicraft.saveload.Load;
@@ -238,9 +239,11 @@ public class MinicraftServer extends Thread implements MinicraftConnection {
 		return fulledata;
 	}
 	
-	public void broadcastEntityAddition(Entity e) {
+	public void broadcastEntityAddition(Entity e) { broadcastEntityAddition(e, false); }
+	public void broadcastEntityAddition(Entity e, boolean addSelf) {
 		List<RemotePlayer> players = getPlayersInRange(e, true);
-		players.remove(getIfPlayer(e)); // if "e" is a player, this removes it from the list.
+		if(!addSelf)
+			players.remove(getIfPlayer(e)); // if "e" is a player, this removes it from the list.
 		for(RemotePlayer client: players)
 			sendEntityAddition(e, client);
 	}
@@ -272,7 +275,8 @@ public class MinicraftServer extends Thread implements MinicraftConnection {
 		//for(RemotePlayer client: unconfirmedAdditions.keySet().toArray(new RemotePlayer[0])) {
 	}
 	
-	public void broadcastEntityRemoval(Entity e) {
+	public void broadcastEntityRemoval(Entity e) { broadcastEntityRemoval(e, false); }
+	public void broadcastEntityRemoval(Entity e, boolean removeSelf) {
 		List<RemotePlayer> players = getPlayersInRange(e, true);
 		players.remove(getIfPlayer(e)); // if "e" is a player, this removes it from the list.
 		for(RemotePlayer client: players)
@@ -310,6 +314,10 @@ public class MinicraftServer extends Thread implements MinicraftConnection {
 		String data = notetime + ";" + note;
 		broadcastData(prependType(InputType.NOTIFY, data.getBytes()));
 	}
+	public void sendNotification(String note, int notetime, RemotePlayer client) {
+		String data = notetime + ";" + note;
+		sendData(prependType(InputType.NOTIFY, data.getBytes()), client.ipAddress, client.port);
+	}
 	
 	public void sendPlayerHurt(Player player, int damage, int attackDir) {
 		if(!(player instanceof RemotePlayer)) {
@@ -332,8 +340,23 @@ public class MinicraftServer extends Thread implements MinicraftConnection {
 		sendData(prependType(InputType.HURT, data), rp.ipAddress, rp.port);
 	}
 	
-	public void updateMode(int mode) {
-		broadcastData(prependType(InputType.MODE, (new byte[] {(byte)mode})));
+	public void updateGameVars() {
+		//List<String> vars = new ArrayList<String>();
+		String[] varArray = {
+			ModeMenu.mode+"",
+			Game.tickCount+"",
+			Game.gamespeed+"",
+			Game.pastDay1+"",
+			Game.scoreTime+""
+		};
+		
+		String vars = "";
+		for(String var: varArray)
+			vars += var+";";
+		
+		vars = vars.substring(0, vars.length()-1);
+		
+		broadcastData(prependType(InputType.GAME, vars.getBytes()));
 	}
 	
 	public void updatePlayerActiveItem(RemotePlayer rp, Item heldItem) {
@@ -934,6 +957,15 @@ public class MinicraftServer extends Thread implements MinicraftConnection {
 					if(Game.debug) System.out.println("SERVER: new activeItem for player " + sender + " after interaction: " + sender.activeItem);
 					sendData(prependType(InputType.INTERACT, (sender.activeItem==null?"null":sender.activeItem.getData()).getBytes()), sender.ipAddress, sender.port);
 				}
+				return true;
+			
+			case BED:
+				Entity bed = Game.getEntity(Integer.parseInt((new String(data)).trim()));
+				if(!(bed instanceof Bed)) {
+					System.out.println("SERVER: entity is not a bed: " + bed);
+					return false;
+				}
+				bed.use(sender, 0);
 				return true;
 			
 			case MOVE:

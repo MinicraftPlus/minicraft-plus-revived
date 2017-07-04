@@ -60,6 +60,7 @@ public abstract class Entity {
 		else {
 			removed = true;
 			level = null;
+			if (Game.debug) System.out.println(Game.onlinePrefix()+"set level reference of entity " + this + " to null.");
 		}
 	}
 	

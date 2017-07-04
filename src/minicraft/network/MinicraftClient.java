@@ -18,6 +18,7 @@ import minicraft.entity.ItemEntity;
 import minicraft.entity.Player;
 import minicraft.entity.RemotePlayer;
 import minicraft.entity.Chest;
+import minicraft.entity.Bed;
 import minicraft.entity.DeathChest;
 import minicraft.item.Item;
 import minicraft.item.Items;
@@ -308,8 +309,13 @@ public class MinicraftClient extends Thread implements MinicraftConnection {
 				//endConnection(); // this is called in the run loop.
 				return true;
 			
-			case MODE:
-				ModeMenu.updateModeBools((int)data[0]);
+			case GAME:
+				String[] vars = (new String(data)).trim().split(";");
+				ModeMenu.updateModeBools(Integer.parseInt(vars[0]));
+				Game.tickCount = Integer.parseInt(vars[1]);
+				Game.gamespeed = Float.parseFloat(vars[2]);
+				Game.pastDay1 = Boolean.parseBoolean(vars[3]);
+				Game.scoreTime = Integer.parseInt(vars[4]);
 				return true;
 			
 			case INIT:
@@ -446,6 +452,14 @@ public class MinicraftClient extends Thread implements MinicraftConnection {
 				if(addedEntity != null) {
 					sendData(InputType.ADD, String.valueOf(addedEntity.eid).getBytes());
 					entityAdditionRequests.remove(addedEntity.eid);
+					
+					if(addedEntity.eid == game.player.eid/* && game.player.getLevel() == null*/) {
+						if (Game.debug) System.out.println("CLIENT: added main game player back to level based on add packet");
+						Game.levels[game.currentLevel].add(game.player);
+						Bed.inBed = false;
+					}
+					else if(Game.debug && addedEntity instanceof RemotePlayer)
+						System.out.println("CLIENT: added remote player from packet: " + addedEntity + "; game player has eid " + game.player.eid + "; this player has eid " + addedEntity.eid + "; are equal: " + (game.player.eid == addedEntity.eid));
 				}
 				
 				return true;
@@ -649,6 +663,11 @@ public class MinicraftClient extends Thread implements MinicraftConnection {
 	public void sendNotification(String note, int notetime) {
 		String data = notetime + ";" + note;
 		sendData(InputType.NOTIFY, data.getBytes());
+	}
+	
+	public void sendBedRequest(Player player, Bed bed) {
+		String data = bed.eid+"";
+		sendData(InputType.BED, data.getBytes());
 	}
 	
 	public void requestLevel(int lvlidx) {

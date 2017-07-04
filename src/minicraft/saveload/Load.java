@@ -561,6 +561,12 @@ public class Load {
 			}
 			
 			Entity existing = Game.getEntity(eid);
+			if(existing == null && Game.isValidClient() && game.player.eid == eid) {
+				existing = game.player;
+				//int playerLevel = Integer.parseInt(info.get(info.size()-1));
+				//if(Game.levels[playerLevel] != null)
+					//Game.levels[playerLevel].add(existing, x, y);
+			}
 			if(existing != null) {
 				System.out.println(Game.onlinePrefix()+"already loaded entity with eid " + eid + "; returning that one");
 				return existing;

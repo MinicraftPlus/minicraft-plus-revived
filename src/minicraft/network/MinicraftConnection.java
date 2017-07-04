@@ -10,10 +10,10 @@ public interface MinicraftConnection {
 	int packetSize = 2048;
 	
 	enum InputType {
-		INVALID, USERNAMES, LOGIN, MODE, INIT, TILES, ENTITIES, TILE, ENTITY, PLAYER, MOVE, ADD, REMOVE, DISCONNECT, SAVE, NOTIFY, INTERACT, PICKUP, CHESTIN, CHESTOUT, BED, HURT, DIE, RESPAWN;
+		INVALID, USERNAMES, LOGIN, GAME, INIT, TILES, ENTITIES, TILE, ENTITY, PLAYER, MOVE, ADD, REMOVE, DISCONNECT, SAVE, NOTIFY, INTERACT, PICKUP, CHESTIN, CHESTOUT, BED, HURT, DIE, RESPAWN;
 		
 		public static final InputType[] values = InputType.values();
-		public static final List<InputType> serverOnly = Arrays.asList(new InputType[] {INIT, TILE, PLAYER, HURT, MODE});
+		public static final List<InputType> serverOnly = Arrays.asList(new InputType[] {INIT, TILE, PLAYER, HURT, GAME});
 	}
 	
 	static InputType getInputType(byte idx) {

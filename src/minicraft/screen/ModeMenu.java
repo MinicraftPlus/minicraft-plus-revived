@@ -95,8 +95,7 @@ public class ModeMenu extends Menu {
 	}
 	
 	public static void updateModeBools(int mode) {
-		if(ModeMenu.mode != mode && Game.isValidServer())
-			Game.server.updateMode(mode);
+		boolean sendUpdate = ModeMenu.mode != mode && Game.isValidServer();
 		
 		ModeMenu.mode = mode;
 		
@@ -104,6 +103,8 @@ public class ModeMenu extends Menu {
 		creative = mode == 2;
 		hardcore = mode == 3;
 		score = mode == 4;
+		
+		if(sendUpdate) Game.server.updateGameVars();
 	}
 	
 	public static String getSelectedTime() {

@@ -16,28 +16,44 @@ public class Bed extends Furniture {
 	
 	/** Called when the player attempts to get in bed. */
 	public boolean use(Player player, int attackDir) {
-		if (Game.tickCount >= Game.sleepStartTime || Game.tickCount < Game.sleepEndTime) { // if it is late enough in the day to sleep...
-			// set the player spawn coord. to here, in tile coords, hence " >> 4"
-			player.spawnx = x >> 4;
-			player.spawny = y >> 4;
+		if (Game.tickCount >= Game.sleepStartTime || Game.tickCount < Game.sleepEndTime && Game.pastDay1) { // if it is late enough in the day to sleep...
+			// set the player spawn coord. to their current position, in tile coords (hence " >> 4")
+			player.spawnx = player.x >> 4;
+			player.spawny = player.y >> 4;
 			//player.bedSpawn = true; // the bed is now set as the player spawn point.
 			Bed.player = player;
 			Bed.playerLevel = player.getLevel();
-			player.remove();
-			inBed = true;
+			Bed.inBed = true;
+			if (Game.debug) System.out.println(Game.onlinePrefix()+"player got in bed: " + player);
+			if(Game.isValidClient() && player == player.game.player) {
+				Game.client.sendBedRequest(player, this);
+			}
+			else {
+				player.remove();
+				if(Game.isValidServer() && player instanceof RemotePlayer)
+					Game.server.sendEntityRemoval(player.eid, (RemotePlayer)player);
+			}
 		} else {
 			// it is too early to sleep; display how much time is remaining.
 			int sec = (int)Math.ceil((Game.sleepStartTime - Game.tickCount)*1.0 / Game.normSpeed); // gets the seconds until sleeping is allowed. // normSpeed is in tiks/sec.
-			player.game.notifications.add("Can't sleep! " + (sec / 60) + "Min " + (sec % 60) + " Sec left!"); // add the notification displaying the time remaining in minutes and seconds.
+			String note = "Can't sleep! " + (sec / 60) + "Min " + (sec % 60) + " Sec left!";
+			if(!Game.isValidServer())
+				player.game.notifications.add(note); // add the notification displaying the time remaining in minutes and seconds.
+			else if(player instanceof RemotePlayer)
+				Game.server.sendNotification(note, 0, (RemotePlayer)player);
+			else
+				System.out.println("WARNING: regular player found trying to get into bed on server; not a RemotePlayer: " + player);
 		}
 		
 		return true;
 	}
 	
 	public static Player restorePlayer() {
-		if(Bed.playerLevel != null)
+		if(Bed.playerLevel != null) {
 			Bed.playerLevel.add(Bed.player);
-		else
+			if(Game.isValidServer() && player instanceof RemotePlayer)
+				Game.server.sendEntityAddition(player, (RemotePlayer)player);
+		} else
 			System.out.println("player was previously on null level before bed... can't restore player: " + Bed.player);
 		Bed.playerLevel = null;
 		Player p = player;
