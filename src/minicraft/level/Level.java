@@ -479,7 +479,6 @@ public class Level {
 				
 				if(Game.hasConnectedClients()) {
 					Game.server.broadcastEntityUpdate(e);
-					e.flushUpdates(); // it is important that this only be called once, here.
 				}
 			}
 			

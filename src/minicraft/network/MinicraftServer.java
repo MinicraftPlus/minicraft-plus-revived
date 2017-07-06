@@ -210,8 +210,12 @@ public class MinicraftServer extends Thread implements MinicraftConnection {
 		}
 		byte[] edata = prependType(InputType.ENTITY, (e.eid+";"+e.getUpdates()).getBytes());
 		
+		if(Game.debug && e instanceof Chest) System.out.println("SERVER: sending chest update: " + e.getUpdates());
+		
 		if (Game.debug && e instanceof Player) System.out.println("SERVER sending player update to " + client + ": " + e);
 		sendData(edata, client.ipAddress, client.port);
+		
+		e.flushUpdates(); // it is important that this method is only called once: right here.
 	}
 	
 	private byte[] getTileBytes(int depth, int x, int y) {
@@ -898,7 +902,7 @@ public class MinicraftServer extends Thread implements MinicraftConnection {
 				return true;
 			
 			case CHESTIN: case CHESTOUT:
-				if (Game.debug) System.out.println("SERVER: recieved chest request");
+				if (Game.debug) System.out.println("SERVER: recieved chest request: " + inType);
 				String[] contents = new String(data).trim().split(";");
 				int eid = Integer.parseInt(contents[0]);
 				Entity e = Game.getEntity(eid);
@@ -922,9 +926,10 @@ public class MinicraftServer extends Thread implements MinicraftConnection {
 						System.err.println("SERVER error with CHESTOUT request: specified chest inv index is out of bounds: "+index+"; inv size:"+chest.inventory.invSize());
 						return false;
 					}
-					// was a valid index
+					// if here, the index is valid
 					Item removed = chest.inventory.remove(index);
 					
+					if(Game.debug) System.out.println("SERVER sending chestout with item data: \"" + removed.getData() + "\"");
 					sendData(prependType(InputType.CHESTOUT, removed.getData().getBytes()), address, port); // send back the *exact* same packet as was sent; the client will handle it accordingly, by changing their inventory.
 				}
 				
