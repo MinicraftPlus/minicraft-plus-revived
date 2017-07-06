@@ -34,6 +34,7 @@ import minicraft.screen.ModeMenu;
 import minicraft.screen.WorldSelectMenu;
 import minicraft.item.Item;
 import minicraft.item.Items;
+import minicraft.item.PotionType;
 import minicraft.item.PowerGloveItem;
 
 public class MinicraftServer extends Thread implements MinicraftConnection {
@@ -170,6 +171,22 @@ public class MinicraftServer extends Thread implements MinicraftConnection {
 		}
 		else
 			return null;
+	}
+	
+	private RemotePlayer validatePlayer(Player player) {
+		if(!(player instanceof RemotePlayer)) {
+			System.out.println("SERVER: encountered regular player: "+player+"; cannot perform action involving player...");
+			Thread.dumpStack();
+			return null;
+		}
+		RemotePlayer rp = (RemotePlayer)player;
+		if(!Arrays.asList(getClients()).contains(rp)) {
+			System.out.println("SERVER encountered remote player not in client list: " + rp + "; cannot perform action involving player...");
+			Thread.dumpStack();
+			return null;
+		}
+		
+		return rp;
 	}
 	
 	public void broadcastEntityUpdate(Entity e) { broadcastEntityUpdate(e, false); }
@@ -320,15 +337,8 @@ public class MinicraftServer extends Thread implements MinicraftConnection {
 	}
 	
 	public void sendPlayerHurt(Player player, int damage, int attackDir) {
-		if(!(player instanceof RemotePlayer)) {
-			System.out.println("SERVER: encountered regular player, cannot determine ip. can't send hurt packet.");
-			return;
-		}
-		RemotePlayer rp = (RemotePlayer)player;
-		if(!Arrays.asList(getClients()).contains(rp)) {
-			System.out.println("SERVER encountered remote player not in client list: " + rp + "; not sending hurt packet.");
-			return;
-		}
+		RemotePlayer rp = validatePlayer(player);
+		if(rp == null) return;
 		
 		if(damage >= 128) {
 			System.out.println("SERVER: damage too high to send across: " + damage + ". lowering to 127.");
@@ -338,6 +348,17 @@ public class MinicraftServer extends Thread implements MinicraftConnection {
 		byte[] data = {(byte)damage, (byte)attackDir};
 		//if (Game.debug) System.out.println("SERVER: sending hurt ");
 		sendData(prependType(InputType.HURT, data), rp.ipAddress, rp.port);
+	}
+	
+	public void sendPotionEffect(Player player, PotionType type, boolean addEffect) {
+		RemotePlayer rp = validatePlayer(player);
+		if(rp == null) return;
+		
+		byte[] data = new byte[2];
+		data[0] = (byte) (addEffect ? 1 : 0);
+		data[1] = (byte) type.ordinal();
+		
+		sendData(prependType(InputType.POTION, data), rp.ipAddress, rp.port);
 	}
 	
 	public void updateGameVars() {
@@ -359,12 +380,9 @@ public class MinicraftServer extends Thread implements MinicraftConnection {
 		broadcastData(prependType(InputType.GAME, vars.getBytes()));
 	}
 	
-	public void updatePlayerActiveItem(RemotePlayer rp, Item heldItem) {
-		RemotePlayer client = getClientPlayer(rp.ipAddress, rp.port);
-		if(client == null) {
-			System.err.println("SERVER: couldn't find remote player " + rp + " in client list. Not updating acitve item to " + heldItem);
-			return;
-		}
+	public void updatePlayerActiveItem(Player player, Item heldItem) {
+		RemotePlayer client = validatePlayer(player);
+		if(client == null) return;
 		
 		if(client.activeItem == null && heldItem == null || client.activeItem.matches(heldItem)) {
 			System.out.println("SERVER: player active item is already the one specified: " + heldItem + "; not updating.");

@@ -26,6 +26,7 @@ public enum PotionType {
 	
 	Time (222, 1800) {
 		public boolean toggleEffect(Player player, boolean addEffect) {
+			if(Game.ISONLINE) return false; // time potions are broken in multiplayer.
 			Game.gamespeed *= (addEffect ? 0.5f : 2);
 			return true;
 		}

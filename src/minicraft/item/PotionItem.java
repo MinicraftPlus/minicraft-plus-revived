@@ -43,7 +43,13 @@ public class PotionItem extends StackableItem {
 		if(type == PotionType.None) return false; // regular potions don't do anything.
 		
 		if(player.getPotionEffects().containsKey(type) != addEffect) { // if hasEffect, and is disabling, or doesn't have effect, and is enabling...
-			type.toggleEffect(player, addEffect);
+			if(!Game.isValidServer())
+				type.toggleEffect(player, addEffect);
+			else {
+				// transmit the effect
+				Game.server.sendPotionEffect(player, type, addEffect);
+				return true;
+			}
 		}
 		
 		if(addEffect && type.duration > 0) player.potioneffects.put(type, type.duration); // add it

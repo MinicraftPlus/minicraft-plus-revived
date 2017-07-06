@@ -22,6 +22,8 @@ import minicraft.entity.Bed;
 import minicraft.entity.DeathChest;
 import minicraft.item.Item;
 import minicraft.item.Items;
+import minicraft.item.PotionItem;
+import minicraft.item.PotionType;
 import minicraft.screen.MultiplayerMenu;
 import minicraft.screen.ModeMenu;
 import minicraft.screen.TitleMenu;
@@ -584,6 +586,14 @@ public class MinicraftClient extends Thread implements MinicraftConnection {
 				game.player.touchItem((ItemEntity)ie);
 				return true;
 			
+			case POTION:
+				//String[] potionData = (new String(data)).trim().split(";");
+				boolean addEffect = data[0] != 0;
+				int typeIdx = (int) data[1];//Integer.parseInt(potionData[0]);
+				//int duration = Integer.parseInt(potionData[1]);
+				PotionItem.applyPotion(game.player, PotionType.values[typeIdx], addEffect);
+				return true;
+			
 			case HURT:
 				// the player got attacked.
 				if(Game.debug) System.out.println("CLIENT: recieved hurt packet");
@@ -593,6 +603,7 @@ public class MinicraftClient extends Thread implements MinicraftConnection {
 				return true;
 		}
 		
+		//System.out.println("CLIENT: recieved unexpected packet type " + inType + "; ignoring packet.");
 		return false; // this isn't reached by anything, unless it's some packet type we aren't looking for. So in that case, return false.
 	}
 	
