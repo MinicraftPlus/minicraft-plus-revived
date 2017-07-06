@@ -26,8 +26,10 @@ REQUEST: remove POW glove, and other starting items
 
 #####
 MULTIPLAYER-Related:
- # Beds are untested.
- # potion effects probably won't appear for the clients, but I'm pretty sure they'll still exist. Basically, they are not synced to the client. Though, it would be nice if I could find a way to not even bother telling the server for things like potions, that don't even interact with the world.
+ # Client players don't "collide" with other entities.
+ # If you get in a corner, and hit a tree or something in a certain direction, it attacks the wrong tile.
+ 
+ It would be nice if I could find a way to not even bother telling the server for things like potions, that don't even interact with the world.
 #####
 -----------------------------------------------------------------------------------
 
