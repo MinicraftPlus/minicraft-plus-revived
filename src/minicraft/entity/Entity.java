@@ -60,7 +60,7 @@ public abstract class Entity {
 		else {
 			removed = true;
 			level = null;
-			if (Game.debug) System.out.println(Game.onlinePrefix()+"set level reference of entity " + this + " to null.");
+			//if (Game.debug && !(this instanceof Particle)) System.out.println(Game.onlinePrefix()+"set level reference of entity " + this + " to null.");
 		}
 	}
 	
@@ -222,6 +222,15 @@ public abstract class Entity {
 	public void hurt(Tnt tnt, int dmg, int attackDir) {}
 	public void hurt(Tile tile, int x, int y, int dmg) {}
 	
+	public boolean isWithin(int tileRadius, Entity other) {
+		if(level == null || other.getLevel() == null) return false;
+		if(level.depth != other.getLevel().depth) return false; // obviously, if they are on different levels, they can't be next to each other.
+		
+		double distance = Math.abs(Math.hypot(x - other.x, y - other.y)); // calculate the distance between the two entities, in entity coordinates.
+		
+		return Math.round(distance) >> 4 <= tileRadius; // compare the distance (converted to tile units) with the specified radius.
+	}
+	
 	protected Player getClosestPlayer() { return getClosestPlayer(true); }
 	protected Player getClosestPlayer(boolean returnSelf) {
 		if (this instanceof Player && returnSelf)
@@ -305,6 +314,8 @@ public abstract class Entity {
 	}
 	
 	public String toString() {
-		return super.toString() + "(eid="+eid+")";
+		String superName = super.toString();
+		superName = superName.substring(superName.lastIndexOf(".")+1);
+		return superName + "(eid="+eid+")";
 	}
 }
