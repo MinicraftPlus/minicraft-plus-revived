@@ -587,10 +587,8 @@ public class MinicraftClient extends Thread implements MinicraftConnection {
 				return true;
 			
 			case POTION:
-				//String[] potionData = (new String(data)).trim().split(";");
 				boolean addEffect = data[0] != 0;
 				int typeIdx = (int) data[1];//Integer.parseInt(potionData[0]);
-				//int duration = Integer.parseInt(potionData[1]);
 				PotionItem.applyPotion(game.player, PotionType.values[typeIdx], addEffect);
 				return true;
 			
@@ -653,6 +651,16 @@ public class MinicraftClient extends Thread implements MinicraftConnection {
 		sendData(InputType.RESPAWN, new byte[0]);
 		//menu.setLoadingMessage("spawnpoint")
 		//game.setMenu(menu);
+	}
+	
+	public void sendPotionEffect(Player player, PotionType type, boolean addEffect) {
+		if(player != game.player) return;
+		
+		byte[] data = new byte[2];
+		data[0] = (byte) (addEffect ? 1 : 0);
+		data[1] = (byte) type.ordinal();
+		
+		sendData(InputType.POTION, data);
 	}
 	
 	public void addToChest(Chest chest, Item item) {

@@ -34,6 +34,7 @@ import minicraft.screen.ModeMenu;
 import minicraft.screen.WorldSelectMenu;
 import minicraft.item.Item;
 import minicraft.item.Items;
+import minicraft.item.PotionItem;
 import minicraft.item.PotionType;
 import minicraft.item.PowerGloveItem;
 
@@ -986,7 +987,13 @@ public class MinicraftServer extends Thread implements MinicraftConnection {
 				bed.use(sender, 0);
 				return true;
 			
-			case MOVE:
+			case POTION:
+				boolean addEffect = data[0] != 0;
+				int typeIdx = (int) data[1];//Integer.parseInt(potionData[0]);
+				PotionItem.applyPotion(sender, PotionType.values[typeIdx], addEffect);
+				return true;
+			
+				case MOVE:
 				/// the player moved.
 				//if (Game.debug) System.out.println("SERVER: recieved move packet");
 				

@@ -332,6 +332,8 @@ public class Player extends Mob {
 			if (Game.debug && input.getKey("shift-p").clicked) { // remove all potion effects
 				for(PotionType potionType: potioneffects.keySet()) {
 					PotionItem.applyPotion(this, potionType, false);
+					if(Game.isValidClient())
+						Game.client.sendPotionEffect(this, potionType, false);
 				}
 			}
 		}
