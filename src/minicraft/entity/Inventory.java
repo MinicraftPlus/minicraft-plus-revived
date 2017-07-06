@@ -3,6 +3,7 @@ package minicraft.entity;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
+import minicraft.Game;
 import minicraft.item.FurnitureItem;
 import minicraft.item.Item;
 import minicraft.item.Items;
@@ -263,7 +264,12 @@ public class Inventory {
 	
 	public void updateInv(String items) {
 		clearInv();
-		for(String item: items.split(":"))
+		
+		if (Game.debug) System.out.println(Game.onlinePrefix()+"updating inventory " + this + " with itemstring: " + items);
+		
+		if(items.length() == 0) return; // there are no items to add.
+		
+		for(String item: items.split(":")) // this still generates a 1-item array when "items" is blank... [""].
 			add(Items.get(item));
 	}
 	

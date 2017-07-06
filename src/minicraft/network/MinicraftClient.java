@@ -562,9 +562,11 @@ public class MinicraftClient extends Thread implements MinicraftConnection {
 			
 			case CHESTOUT:
 				if(curState != State.PLAY) return false; // shouldn't happen.
-				if (Game.debug) System.out.println("CLIENT: recieved chestout");
-				Item item = Items.get(new String(data).trim());
-				game.player.inventory.add(item, 0);
+				String itemName = (new String(data)).trim();
+				if (Game.debug) System.out.println("CLIENT: recieved chestout with item: " + itemName);
+				Item item = Items.get(itemName);
+				game.player.inventory.add(0, item);
+				//if (Game.debug) System.out.println("CLIENT successfully took " + item + " from chest and added to inv.");
 				return true;
 			
 			case INTERACT:
