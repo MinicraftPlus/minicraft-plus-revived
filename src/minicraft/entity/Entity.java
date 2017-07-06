@@ -20,7 +20,8 @@ public abstract class Entity {
 	public int col; // day/night color variations, plus current color.
 	
 	public int eid; /// this is intended for multiplayer, but I think it could be helpful in single player, too. certainly won't harm anything, I think... as long as finding a valid id doesn't take long...
-	private String prevUpdates = ""; /// holds the updates returned from the last time getUpdates() was called.
+	private String prevUpdates = ""; /// holds the last value returned from getUpdateString(), for comparison with the next call.
+	private String curDeltas = ""; /// holds the updates returned from the last time getUpdates() was called.
 	private boolean accessedUpdates = false;
 	
 	public Entity(int xr, int yr) { // add color to this later, in color update
@@ -275,9 +276,19 @@ public abstract class Entity {
 		+"level,"+(level==null?"null":Game.lvlIdx(level.depth));
 	}
 	
+	public final String getUpdates(boolean fetchAll) {
+		if(accessedUpdates) {
+			if(fetchAll) return prevUpdates;
+			else return curDeltas;
+		}
+		else {
+			if(fetchAll) return getUpdateString();
+			else return getUpdates();
+		}
+	}
 	public final String getUpdates() {
 		// if the updates have already been fetched and written, but not flushed, then just return those.
-		if(accessedUpdates) return prevUpdates;
+		if(accessedUpdates) return curDeltas;
 		else accessedUpdates = true; // after this they count as accessed.
 		
 		/// first, get the current string of values, which includes any subclasses.
@@ -285,7 +296,7 @@ public abstract class Entity {
 		
 		if(prevUpdates.length() == 0) {
 			// if there were no values saved last call, our job is easy. But this is only the case the first time this is run.
-			prevUpdates = updates; // set the update field for next time
+			prevUpdates = curDeltas = updates; // set the update field for next time
 			return updates; // and we're done!
 		}
 		
@@ -299,12 +310,15 @@ public abstract class Entity {
 		String deltas = "";
 		for(int i = 0; i < curUpdates.length; i++) { // b/c the string always contains the same number of pairs (and the same keys, in the same order), the indexes of cur and prev updates will be the same.
 			/// loop though each of the updates this call. If it is differnt from the last one, then add it to the list.
-			if(curUpdates[i].equals(prevUpdates[i]) == false)
+			if(curUpdates[i].equals(prevUpdates[i]) == false) {
 				deltas += curUpdates[i] + ";";
+				//if(Game.debug) System.out.println("found delta; old:\""+prevUpdates[i]+"\" -- new:\""+curUpdates[i]+"\"");
+			}
 		}
 		
 		if(deltas.length() > 0) deltas = deltas.substring(0, deltas.length()-1); // cuts off extra ";"
 		
+		curDeltas = deltas;
 		return deltas;
 	}
 	

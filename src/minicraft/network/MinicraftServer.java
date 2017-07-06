@@ -204,16 +204,15 @@ public class MinicraftServer extends Thread implements MinicraftConnection {
 	}
 	/// this is like the above, but it won't do any autodetection, so so can choose who not to send it to.
 	public void sendEntityUpdate(Entity e, RemotePlayer client) {
-		if(e.getUpdates().length() == 0) {
-			//if(Game.debug) System.out.println("SERVER: skipping entity update b/c no new fields: " + e);
-			return;
-		}
-		byte[] edata = prependType(InputType.ENTITY, (e.eid+";"+e.getUpdates()).getBytes());
-		
-		if(Game.debug && e instanceof Chest) System.out.println("SERVER: sending chest update: " + e.getUpdates());
-		
-		if (Game.debug && e instanceof Player) System.out.println("SERVER sending player update to " + client + ": " + e);
-		sendData(edata, client.ipAddress, client.port);
+		if(e.getUpdates().length() > 0) {
+			byte[] edata = prependType(InputType.ENTITY, (e.eid+";"+e.getUpdates()).getBytes());
+			
+			if(Game.debug && e instanceof Chest) System.out.println("SERVER: sending chest update: " + e.getUpdates());
+			
+			if (Game.debug && e instanceof Player) System.out.println("SERVER sending player update to " + client + ": " + e);
+			sendData(edata, client.ipAddress, client.port);
+		}// else
+		//	if(Game.debug) System.out.println("SERVER: skipping entity update b/c no new fields: " + e);
 		
 		e.flushUpdates(); // it is important that this method is only called once: right here.
 	}
