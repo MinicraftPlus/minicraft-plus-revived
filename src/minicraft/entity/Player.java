@@ -185,7 +185,7 @@ public class Player extends Mob {
 		if (staminaRechargeDelay > 0 && stamina < maxStamina) staminaRechargeDelay--;
 		
 		if (staminaRechargeDelay == 0) {
-			staminaRecharge += potioneffects.containsKey(PotionType.Time) ? 2 : 1; // ticks since last recharge, accounting for the time potion effect.
+			staminaRecharge++; // ticks since last recharge, accounting for the time potion effect.
 			
 			if (isSwimming() && !potioneffects.containsKey(PotionType.Swim)) staminaRecharge = 0; //don't recharge stamina while swimming.
 			
@@ -280,7 +280,7 @@ public class Player extends Mob {
 			
 			//executes if not saving; and... essentially halves speed if out of stamina.
 			if ((xa != 0 || ya != 0) && (staminaRechargeDelay % 2 == 0 || isSwimming()) && game.savecooldown == 0 && !game.saving) {
-				double spd = moveSpeed * (potioneffects.containsKey(PotionType.Time) ? (potioneffects.containsKey(PotionType.Speed) ? 1.5D : 2) : 1);
+				double spd = moveSpeed * (potioneffects.containsKey(PotionType.Speed) ? 1.5D : 1);
 				boolean moved = move((int) (xa * spd), (int) (ya * spd)); // THIS is where the player moves; part of Mob.java
 				if(moved) {
 					stepCount++;
@@ -475,7 +475,7 @@ public class Player extends Mob {
 
 			if (xt >= 0 && yt >= 0 && xt < level.w && yt < level.h) {
 				Tile t = level.getTile(xt, yt);
-				if (Game.debug) System.out.println("attacking tile " + xt+","+yt + ": "+t.name);
+				if (Game.debug && Game.ISONLINE) System.out.println("attacking tile " + xt+","+yt + ": "+t.name);
 				t.hurt(level, xt, yt, this, random.nextInt(3) + 1, attackDir);
 			}
 		}

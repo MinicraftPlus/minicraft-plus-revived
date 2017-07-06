@@ -27,6 +27,8 @@ public class Skeleton extends EnemyMob {
 	public void tick() {
 		super.tick();
 		
+		if(skipTick()) return;
+		
 		Player player = getClosestPlayer();
 		if (player != null && randomWalkTime == 0) {
 			artime--;

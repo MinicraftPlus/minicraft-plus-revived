@@ -5,6 +5,7 @@ import minicraft.gfx.Color;
 import minicraft.gfx.MobSprite;
 import minicraft.gfx.Screen;
 import minicraft.item.Item;
+import minicraft.item.PotionType;
 import minicraft.level.Level;
 import minicraft.screen.ModeMenu;
 import minicraft.Game;
@@ -13,6 +14,8 @@ public abstract class MobAi extends Mob {
 	
 	int randomWalkTime, randomWalkChance, randomWalkDuration;
 	int xa, ya;
+	
+	private boolean slowtick = false;
 	
 	public MobAi(MobSprite[][] sprites, int maxHealth, int rwTime, int rwChance) {
 		super(sprites, maxHealth);
@@ -24,8 +27,26 @@ public abstract class MobAi extends Mob {
 		walkTime = 2;
 	}
 	
+	protected boolean skipTick() {
+		return slowtick && (tickTime+1) % 4 == 0;
+	}
+	
 	public void tick() {
 		super.tick();
+		
+		if(getLevel() != null) {
+			boolean foundPlayer = false;
+			for(Entity e: level.getEntitiesOfClass(Player.class)) {
+				if(e.isWithin(8, this) && ((Player)e).potioneffects.containsKey(PotionType.Time)) {
+					foundPlayer = true;
+					break;
+				}
+			}
+			
+			slowtick = foundPlayer;
+		}
+		
+		if(skipTick()) return;
 		
 		if(!move(xa * speed, ya * speed)) {
 			xa = 0;
