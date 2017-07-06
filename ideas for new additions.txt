@@ -14,6 +14,10 @@ Requested: Change the lighting in caves. maybe I could experiment with having su
 
 ----
 
+Make a invisibility potion. This will allow you to go through walls, but lava will still hurt you. If you get stuck in a wall, you will begin to take suffocation damage as in Minecraft.
+
+----
+
 change "xa" and "ya" to something else; b/c they are NOT accelerations! They're distances! Specifically, they are the distance that a given entity is about to move.
 
 ----

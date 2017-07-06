@@ -56,4 +56,4 @@ If their implementation becomes more likely, they will be moved to a different s
 * Chickens
 * Minecarts
 * World editors
-
+* Boats, b/c they require infinite terrain and vast oceans. ;)
