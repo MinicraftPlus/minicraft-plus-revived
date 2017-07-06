@@ -52,10 +52,12 @@ public abstract class Mob extends Entity {
 		if(level == null) return false; // stopped b/c there's no level to move in!
 		
 		// these should return true b/c the mob is still technically moving; these are just to make it move *slower*.
-		if (!(this instanceof Player) && tickTime % 2 == 0 && isSwimming() || isWooling())
+		if (!(this instanceof Player) && tickTime % 2 == 0 && (isSwimming() || isWooling()))
 			return true;
 		if (tickTime % walkTime == 0 && walkTime > 1)
 			return true;
+		
+		//if (Game.debug && this instanceof MobAi && isWithin(9, getClosestPlayer())) System.out.println("ticking mob " + this + "; tickTime = " + tickTime);
 		
 		/// These 4 following conditionals check the direction of the knockback, move the Mob accordingly, and bring knockback closer to 0.
 		if (xKnockback < 0) { // If we have negative horizontal knockback (to the left)
