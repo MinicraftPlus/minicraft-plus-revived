@@ -24,7 +24,7 @@ REQUEST: remove POW glove, and other starting items
 
 #####
 MULTIPLAYER-Related:
- # Client players don't "collide" with other entities.
+ # Everything goes haywire with a slow connection. Better move to TCP.
  # If you get in a corner, and hit a tree or something in a certain direction, it attacks the wrong tile.
  
  It would be nice if I could find a way to not even bother telling the server for things like potions, that don't even interact with the world.
