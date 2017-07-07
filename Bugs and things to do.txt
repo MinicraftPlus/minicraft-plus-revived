@@ -9,7 +9,7 @@ Note to self: for more little bugs/ideas/concerns, search code for "TODO"
 
 	####BUGS####
 ####
-10 minute mode unlock is not written to file when it should.
+10 minute mode unlock is not written to file when it should be.
 ####
 You don't spawn next to your bed after you sleep in it, and then die.
 ####
