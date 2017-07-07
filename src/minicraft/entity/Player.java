@@ -771,13 +771,13 @@ public class Player extends Mob {
 	public void hurt(int damage, int attackDir) { doHurt(damage, attackDir); }
 	/** What happens when the player is hurt */
 	protected void doHurt(int damage, int attackDir) {
+		if (ModeMenu.creative || hurtTime > 0 || Bed.inBed) return; // can't get hurt in creative, hurt cooldown, or while someone is in bed
+		
 		if(Game.isValidServer()) {
 			// let the clients deal with it.
 			Game.server.sendPlayerHurt(this, damage, attackDir);
 			return;
 		}
-		
-		if (ModeMenu.creative || hurtTime > 0 || Bed.inBed) return; // can't get hurt in creative, hurt cooldown, or while someone is in bed
 		
 		int healthDam = 0, armorDam = 0;
 		Sound.playerHurt.play();
