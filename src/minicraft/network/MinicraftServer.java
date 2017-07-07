@@ -24,6 +24,7 @@ import minicraft.entity.Entity;
 import minicraft.entity.ItemEntity;
 import minicraft.entity.Player;
 import minicraft.entity.RemotePlayer;
+import minicraft.entity.Furniture;
 import minicraft.entity.Chest;
 import minicraft.entity.Bed;
 import minicraft.entity.particle.Particle;
@@ -206,8 +207,6 @@ public class MinicraftServer extends Thread implements MinicraftConnection {
 	public void sendEntityUpdate(Entity e, RemotePlayer client) {
 		if(e.getUpdates().length() > 0) {
 			byte[] edata = prependType(InputType.ENTITY, (e.eid+";"+e.getUpdates()).getBytes());
-			
-			if(Game.debug && e instanceof Chest) System.out.println("SERVER: sending chest update: " + e.getUpdates());
 			
 			if (Game.debug && e instanceof Player) System.out.println("SERVER sending player update to " + client + ": " + e);
 			sendData(edata, client.ipAddress, client.port);
@@ -935,6 +934,20 @@ public class MinicraftServer extends Thread implements MinicraftConnection {
 				sendEntityUpdate(chest, sender);
 				return true;
 			
+			case PUSH:
+				int furnitureID = Integer.parseInt((new String(data)).trim());
+				Entity furniture = Game.getEntity(furnitureID);
+				if(furniture == null) {
+					System.err.println("SERVER: couldn't find the specified piece of furniture to push: " + furnitureID);
+					return false;
+				} else if(!(furniture instanceof Furniture)) {
+					System.err.println("SERVER: specified entity is not an instance of the furniture class: " + furniture + "; cannot push.");
+					return false;
+				}
+				
+				((Furniture)furniture).tryPush(sender);
+				return true;
+			
 			case PICKUP:
 				//if (Game.debug) System.out.println("SERVER: recieved itementity pickup request");
 				int ieid = Integer.parseInt(new String(data).trim());
@@ -1002,18 +1015,22 @@ public class MinicraftServer extends Thread implements MinicraftConnection {
 				//if (Game.debug) System.out.println("SERVER: recieved move packet");
 				
 				String[] movedata = new String(data).trim().split(";");
-				int oldx = sender.x>>4, oldy = sender.y>>4;
-				sender.x = Integer.parseInt(movedata[0]);
-				sender.y = Integer.parseInt(movedata[1]);
 				sender.dir = Integer.parseInt(movedata[2]);
+				
+				int oldx = sender.x>>4, oldy = sender.y>>4;
+				int newx = Integer.parseInt(movedata[0]);
+				int newy = Integer.parseInt(movedata[1]);
+				
+				boolean moved = sender.move(newx - sender.x, newy - sender.y);
+				if(moved) sender.updateSyncArea(oldx, oldy);
+				
+				broadcastEntityUpdate(sender, !moved); // this will make it so that if the player is prevented from moving, the server will update the client, forcing it back to the last place the server recorded the player at.
 				sender.walkDist++; // hopefully will make walking animations work. Actually, they should be sent with Mob's update... no, it doesn't update, it just feeds back.
 				
 				//int xt = sender.x >> 4, yt = sender.y >> 4;
 				//int w = RemotePlayer.xSyncRadius * 2, h = RemotePlayer.ySyncRadius * 2; // tile dimensions of the space centered around the player, up to right outside the screen range.
 				
-				sender.updateSyncArea(oldx, oldy);
-				
-				broadcastEntityUpdate(sender);
+				//broadcastEntityUpdate(sender, true);
 				return true;
 			
 			/// I'm thinking this should end up never being used... oh, well maybe for notifications.

@@ -17,6 +17,7 @@ import minicraft.entity.Entity;
 import minicraft.entity.ItemEntity;
 import minicraft.entity.Player;
 import minicraft.entity.RemotePlayer;
+import minicraft.entity.Furniture;
 import minicraft.entity.Chest;
 import minicraft.entity.Bed;
 import minicraft.entity.DeathChest;
@@ -673,6 +674,10 @@ public class MinicraftClient extends Thread implements MinicraftConnection {
 	public void removeFromChest(Chest chest, int index) {
 		if(chest == null) return;
 		sendData(InputType.CHESTOUT, (chest.eid+";"+index).getBytes());
+	}
+	
+	public void pushFurniture(Furniture f, int pushDir) {
+		sendData(InputType.PUSH, (f.eid+"").getBytes());
 	}
 	
 	public void pickupItem(ItemEntity ie) {

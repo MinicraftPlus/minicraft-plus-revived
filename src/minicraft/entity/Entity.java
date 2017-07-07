@@ -119,7 +119,7 @@ public abstract class Entity {
 			}
 			return !stopped;
 		}
-		return true; // reaches this if no movement was requested / game was saving. return true, becuase it should still do the moving phase thing, just paused, not obstructed.
+		return true; // reaches this if no movement was requested / game was saving. return true, becuase MobAis should still do the moving phase thing, just paused, not obstructed.
 	}
 	
 	/** Second part to the move method (moves in one direction at a time) */
@@ -154,6 +154,12 @@ public abstract class Entity {
 		
 		// these lists are named as if the entity has already moved-- it hasn't, though.
 		List<Entity> wasInside = level.getEntitiesInRect(x - xr, y - yr, x + xr, y + yr); // gets all of the entities that are inside this entity (aka: colliding) before moving.
+		
+		int xr = this.xr, yr = this.yr;
+		if(Game.isValidClient() && this instanceof Player) {
+			xr++;
+			yr++;
+		}
 		List<Entity> isInside = level.getEntitiesInRect(x + xa - xr, y + ya - yr, x + xa + xr, y + ya + yr); // gets the entities that this entity will touch once moved.
 		for (int i = 0; i < isInside.size(); i++) {
 			/// cycles through entites about to be touched, and calls touchedBy(this) for each of them.
@@ -161,18 +167,37 @@ public abstract class Entity {
 			if (e == this) continue; // touching yourself doesn't count.
 			
 			e.touchedBy(this); // call the method. ("touch" the entity)
+			
+			//if(Game.debug && e != this && (e instanceof Player || this instanceof Player)) System.out.println("entity " + this.toClassString() + " is moving inside furniture " + e.toClassString());
 		}
-		isInside.removeAll(wasInside); // remove all the entites that this one is already touching before move.
+		
+		/*if(Game.debug) {
+			for(Entity e: wasInside) {
+				if(e != this && (e instanceof Player || this instanceof Player))
+					System.out.println(Game.onlinePrefix()+"entity " + this.toClassString() + " is moving from inside " + e.toClassString());
+			}
+		}*/
+		
+		isInside.removeAll(wasInside); // remove all the entites that this one is already touching before moving.
 		for (int i = 0; i < isInside.size(); i++) {
 			Entity e = isInside.get(i);
+			
+			//if(Game.debug && e != this && (e instanceof Player || this instanceof Player)) System.out.println(Game.onlinePrefix()+"entity " + this.toClassString() + " is moving to be inside " + e.toClassString());
+			
 			if (e == this) continue;
-
-			if (e.blocks(this)) return false; // if the entity can block this entity, then this can't move.
+			
+			if (e.blocks(this)) {
+				//if (Game.debug && (e instanceof Player || this instanceof Player)) System.out.println(Game.onlinePrefix()+"entity " + this.toClassString() + " was blocked by entity " + e.toClassString());
+				return false; // if the entity can block this entity, then this can't move.
+			}
 		}
 		
 		// finally, the entity moves!
 		x += xa;
 		y += ya;
+		
+		//if (Game.debug && !(this instanceof MobAi)) System.out.println(Game.onlinePrefix()+"entity " + this.toClassString() + " allowed to move by ("+xa+","+ya+"), to: ("+x+","+y+")");
+		
 		return true; // the move was successful.
 	}
 	
@@ -331,5 +356,10 @@ public abstract class Entity {
 		String superName = super.toString();
 		superName = superName.substring(superName.lastIndexOf(".")+1);
 		return superName + "(eid="+eid+")";
+	}
+	
+	public String toClassString() {
+		String clazz = getClass().getName();
+		return clazz.substring(clazz.lastIndexOf(".")+1);
 	}
 }

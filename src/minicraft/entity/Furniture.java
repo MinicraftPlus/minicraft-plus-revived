@@ -10,7 +10,7 @@ import minicraft.item.PowerGloveItem;
 
 public class Furniture extends Entity {
 	
-	protected int pushTime = 0; // time for each push.
+	protected int pushTime = 0, multiPushTime = 0; // time for each push; multi is for multiplayer, to make it so not so many updates are sent.
 	protected int pushDir = -1; // the direction to push the furniture
 	public Sprite sprite;
 	public String name;
@@ -60,6 +60,7 @@ public class Furniture extends Entity {
 		if (pushDir == 3) move(+1, 0);
 		pushDir = -1; // makes pushDir -1 so it won't repeat itself.
 		if (pushTime > 0) pushTime--; // update pushTime by subtracting 1.
+		else multiPushTime = 0;
 	}
 	
 	/** Draws the furniture on the screen. */
@@ -74,10 +75,17 @@ public class Furniture extends Entity {
 	
 	/** What happens when this is touched by another entity */
 	protected void touchedBy(Entity entity) {
-		/// ADD TO THIS METHOD TO REMOVE UNNECESSARY CLASSES? maybe combine others into a "CraftingFurniture" class?
-		if (entity instanceof Player && pushTime == 0) {
-			pushDir = ((Player) entity).dir; // set pushDir to the player's dir.
-			pushTime = 10; // set pushTime to 10.
+		if (entity instanceof Player)
+			tryPush((Player) entity);
+	}
+	
+	public void tryPush(Player player) {
+		if (pushTime == 0) {
+			pushDir = player.dir; // set pushDir to the player's dir.
+			pushTime = multiPushTime = 10; // set pushTime to 10.
+			
+			if(Game.isValidClient())
+				Game.client.pushFurniture(this, pushDir);
 		}
 	}
 	
@@ -88,5 +96,24 @@ public class Furniture extends Entity {
 	
 	public boolean canWool() {
 		return true;
+	}
+	
+	protected String getUpdateString() {
+		return super.getUpdateString()+
+		//";pushDir,"+pushDir+
+		";pushTime,"+multiPushTime;
+	}
+	
+	protected boolean updateField(String field, String val) {
+		//if(field.equals("x") || field.equals("y")) System.out.println(Game.onlinePrefix()+"updating furniture coordinate "+field+" to "+val+": " + this);
+		
+		if(super.updateField(field, val)) return true;
+		
+		switch(field) {
+			//case "pushDir": pushDir = Integer.parseInt(val); return true;
+			case "pushTime": pushTime = Integer.parseInt(val); return true;
+		}
+		
+		return false;
 	}
 }
