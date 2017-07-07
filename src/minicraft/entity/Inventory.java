@@ -193,7 +193,7 @@ public class Inventory {
 	}
 	/** removes items from this inventory. Note, if passed a stackable item, this will only remove a max of count from the stack. */
 	public void removeItems(Item given, int count) {
-		while(count > 0) {
+		//while(count > 0) {
 			if(given instanceof StackableItem)
 				count -= removeFromStack((StackableItem)given, count);
 			else {
@@ -206,7 +206,11 @@ public class Inventory {
 					}
 				}
 			}
-		}
+		//}
+		
+		if(count > 0)
+			System.out.println("WARNING: could not remove " + count + " "+given+(count>1?"s":"")+" from inventory");
+		
 		/*
 		if(given instanceof StackableItem)
 			return removeFromStack(given, count);
