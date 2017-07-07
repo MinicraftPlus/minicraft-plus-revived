@@ -108,7 +108,7 @@ public class MinicraftClient extends Thread implements MinicraftConnection {
 	public void login(String username) {
 		if (Game.debug) System.out.println("CLIENT: logging in to server...");
 		try {
-			game.player = new RemotePlayer(game, true, username, InetAddress.getLocalHost(), PORT);
+			game.player = new RemotePlayer(game.player, game, true, username, InetAddress.getLocalHost(), PORT);
 		} catch(UnknownHostException ex) {
 			System.err.println("CLIENT could not get localhost address.");
 			menu.setError("unable to get localhost address");

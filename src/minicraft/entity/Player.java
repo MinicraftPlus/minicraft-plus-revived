@@ -88,7 +88,7 @@ public class Player extends Mob {
 	
 	// Note: the player's health & max health are inherited from Mob.java
 	
-	public Player(Game game, InputHandler input) {
+	public Player(Player previousInstance, Game game, InputHandler input) {
 		super(sprites, Player.maxHealth);
 		
 		x = 24;
@@ -123,6 +123,11 @@ public class Player extends Mob {
 			inventory.add(Items.get("Enchanter"));
 			inventory.add(Items.get("Workbench"));
 			inventory.add(Items.get("Power Glove"));
+		}
+		
+		if(previousInstance != null) {
+			spawnx = previousInstance.spawnx;
+			spawny = previousInstance.spawny;
 		}
 	}
 	

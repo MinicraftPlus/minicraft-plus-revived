@@ -611,7 +611,7 @@ public class MinicraftServer extends Thread implements MinicraftConnection {
 				}
 				
 				/// versions match; make client player
-				RemotePlayer clientPlayer = new RemotePlayer(game, username, address, port);
+				RemotePlayer clientPlayer = new RemotePlayer(null, game, username, address, port);
 				
 				/// now, we need to check if this player has played in this world before. If they have, then all previoeus settings and items and such will be restored.
 				String playerdata = ""; // this stores the data fetched from the files.
@@ -781,11 +781,7 @@ public class MinicraftServer extends Thread implements MinicraftConnection {
 				return true;
 			
 			case RESPAWN:
-				//int spawnx = sender.x;
-				//int spawny = sender.y;
 				sender = new RemotePlayer(game, true, sender);
-				//sender.x = spawnx;
-				//sender.y = spawny;
 				sender.respawn(Game.levels[Game.lvlIdx(0)]); // get the spawn loc. of the client
 				sendData(prependType(InputType.PLAYER, getPlayerData(sender).getBytes()), sender.ipAddress, sender.port); // send spawn loc.
 				broadcastEntityAddition(sender);

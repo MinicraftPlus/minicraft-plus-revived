@@ -282,7 +282,7 @@ public class Game extends Canvas implements Runnable {
 		if(player instanceof RemotePlayer) {
 			player = new RemotePlayer(this, true, (RemotePlayer)player);
 		} else
-			player = new Player(this, input);
+			player = new Player(player, this, input);
 		
 		// "shouldRespawn" is false on hardcore, or when making a new world.
 		if (DeadMenu.shouldRespawn) { // respawn, don't regenerate level.
