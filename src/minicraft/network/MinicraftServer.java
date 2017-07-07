@@ -276,7 +276,7 @@ public class MinicraftServer extends Thread implements MinicraftConnection {
 		byte[] ebytes = getEntityBytes(e);
 		if(ebytes == null || ebytes.length == 0) return;
 		
-		if(Game.debug && !(e instanceof Particle)) System.out.println("SERVER: sending entity addition: " + e);
+		//if(Game.debug && !(e instanceof Particle)) System.out.println("SERVER: sending entity addition: " + e);
 		
 		byte[] allbytes = prependType(InputType.ADD, ebytes);
 		sendData(allbytes, client.ipAddress, client.port);
@@ -1010,7 +1010,7 @@ public class MinicraftServer extends Thread implements MinicraftConnection {
 				PotionItem.applyPotion(sender, PotionType.values[typeIdx], addEffect);
 				return true;
 			
-				case MOVE:
+			case MOVE:
 				/// the player moved.
 				//if (Game.debug) System.out.println("SERVER: recieved move packet");
 				
@@ -1024,16 +1024,14 @@ public class MinicraftServer extends Thread implements MinicraftConnection {
 				boolean moved = sender.move(newx - sender.x, newy - sender.y);
 				if(moved) sender.updateSyncArea(oldx, oldy);
 				
-				broadcastEntityUpdate(sender, !moved); // this will make it so that if the player is prevented from moving, the server will update the client, forcing it back to the last place the server recorded the player at.
+				broadcastEntityUpdate(sender, !moved); // this will make it so that if the player is prevented from moving, the server will update the client, forcing it back to the last place the server recorded the player at. TODO this breaks down with a slow connection...
 				sender.walkDist++; // hopefully will make walking animations work. Actually, they should be sent with Mob's update... no, it doesn't update, it just feeds back.
 				
-				//int xt = sender.x >> 4, yt = sender.y >> 4;
-				//int w = RemotePlayer.xSyncRadius * 2, h = RemotePlayer.ySyncRadius * 2; // tile dimensions of the space centered around the player, up to right outside the screen range.
+				//if (Game.debug) System.out.println("SERVER: "+(moved?"moved player to":"stopped player at")+" ("+sender.x+","+sender.y+"): " + sender);
 				
-				//broadcastEntityUpdate(sender, true);
 				return true;
 			
-			/// I'm thinking this should end up never being used... oh, well maybe for notifications.
+			/// I'm thinking this should end up never being used... oh, well maybe for notifications, actually.
 			default:
 				System.out.println("SERVER used default behavior for input type " + inType);
 				broadcastData(alldata, sender);
@@ -1061,7 +1059,7 @@ public class MinicraftServer extends Thread implements MinicraftConnection {
 		//if(sends > 50) System.exit(0);
 		DatagramPacket packet = new DatagramPacket(data, data.length, ip, port);
 		String intype = MinicraftConnection.getInputType(data[0]).name();
-		if (Game.debug && !intype.equals("ENTITY")/* && !intype.equals("TILE")*/) System.out.println("SERVER: sending "+intype+" data to: " + ip);
+		if (Game.debug && !intype.equals("ENTITY") && !intype.equals("ADD") && !intype.equals("REMOVE")) System.out.println("SERVER: sending "+intype+" data to: " + ip);
 		try {
 			socket.send(packet);
 		} catch(IOException ex) {

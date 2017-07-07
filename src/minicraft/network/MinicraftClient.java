@@ -629,6 +629,7 @@ public class MinicraftClient extends Thread implements MinicraftConnection {
 	}
 	
 	public void move(Player player) {
+		//if(Game.debug) System.out.println("CLIENT: sending player movement to ("+player.x+","+player.y+"): " + player);
 		String movedata = player.x+";"+player.y+";"+player.dir;
 		sendData(InputType.MOVE, movedata.getBytes());
 	}
