@@ -442,6 +442,7 @@ public class Level {
 				}
 				
 				entities.add(entity);
+				entitiesToRemove.remove(entity); // just in case it's there.
 			}
 			//if(Game.debug && Game.ISONLINE && !(entity instanceof Particle)) System.out.println(Game.onlinePrefix()+this+": added entity to level: " + entity);
 			/*if(Game.debug && Game.isValidServer()) {

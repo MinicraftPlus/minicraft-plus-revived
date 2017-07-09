@@ -208,7 +208,7 @@ public class MinicraftServer extends Thread implements MinicraftConnection {
 		if(e.getUpdates().length() > 0) {
 			byte[] edata = prependType(InputType.ENTITY, (e.eid+";"+e.getUpdates()).getBytes());
 			
-			if (Game.debug && e instanceof Player) System.out.println("SERVER sending player update to " + client + ": " + e);
+			if (Game.debug && e instanceof Player) System.out.println("SERVER sending player update to " + client + ": " + e + "; data = " + e.getUpdates());
 			sendData(edata, client.ipAddress, client.port);
 		}// else
 		//	if(Game.debug) System.out.println("SERVER: skipping entity update b/c no new fields: " + e);
@@ -1012,6 +1012,11 @@ public class MinicraftServer extends Thread implements MinicraftConnection {
 				
 				String[] movedata = new String(data).trim().split(";");
 				sender.dir = Integer.parseInt(movedata[2]);
+				int plvlidx = Integer.parseInt(movedata[3]);
+				if(plvlidx >= 0 && plvlidx < Game.levels.length && Game.levels[plvlidx] != sender.getLevel()) {
+					sender.remove();
+					Game.levels[plvlidx].add(sender);
+				}
 				
 				int oldx = sender.x>>4, oldy = sender.y>>4;
 				int newx = Integer.parseInt(movedata[0]);
