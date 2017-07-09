@@ -2,16 +2,17 @@
 
 -reorder tools a bit in ToolType.java b/c I'm picky. Hoes should be first, at least. ;)
 - add to F3 menu: "heartticks" left until regen another heart.
-- Move Mobs into Mob package, and furniture into furniture package.
 
 Note to self: for more little bugs/ideas/concerns, search code for "TODO"
 -----------------------------------------------------------------------------------
 
 	####BUGS####
 ####
-10 minute mode unlock is not written to file when it should.
+Wood plank and stone brick floors don't drop when they are destroyed.
 ####
-You don't spawn next to your bed after you sleep in it, and then die.
+Doors always make the tile underneath stone brick instead of planks or something.
+####
+10 minute mode unlock is not written to file when it should be.
 ####
 Stairs clump together.
 ####
@@ -26,7 +27,7 @@ REQUEST: remove POW glove, and other starting items
 
 #####
 MULTIPLAYER-Related:
- # Client players don't "collide" with other entities.
+ # Everything goes haywire with a slow connection. Better move to TCP.
  # If you get in a corner, and hit a tree or something in a certain direction, it attacks the wrong tile.
  
  It would be nice if I could find a way to not even bother telling the server for things like potions, that don't even interact with the world.
@@ -34,6 +35,50 @@ MULTIPLAYER-Related:
 -----------------------------------------------------------------------------------
 
 	****IDEAS(that should probably be implemented)****
+****
+
+The Font.drawParagraph() methods' centering system (and/or I suppose the FontStyle centering system) should revolve around three things, for each axis: whether or not to center at all, and if so, the **OFFSET FROM THE ABSOLUTE CENTER**, and the x and y padding. That second one is the one not taken care of in the main drawParagraph method, and I think it would make things a hell of a lot easier.
+
+****
+
+- Make TNT explosions ignite nearby TNT. Just make all TNT on exploding tiles get lit. Or, maybe easier, ignite when hurt by TNT *or* a player.
+
+****
+
+Make dirt always give one dirt; it occasionally gives two.
+
+****
+
+Add more colors? Or try and turn sprites into 32x32 (currently are 16x16) for better graphics? Also, change game aspect ratio from 4:3 to 16:9. This probably means searching for hard-coding refs to the screen size, and changing them. Also make smaller font size, for chat and debug.
+
+****
+
+localization? (Be sure to credit whoever makes any given localization.)
+
+****
+
+PROJECT: encapsulate many classes, as much as possible. This means making preferably zero public fields, and so making more getters and setters... I haven't done that very well...
+
+****
+
+Make the mob package and furniture package - I'm not sure why there were so many errors... There aren't any package-private variables...
+
+****
+
+Maybe add a PING packet; does nothing, just responds. This can be sent to test the connection... Maybe periodically, the server can ping each of the clients, perhaps every 15 seconds. If a response is not received in 5 seconds, it resends. After 10 seconds, it removes the player from the client list. And maybe sends disconnect packet just in case.
+
+****
+
+the server stalls or something when the username is too long; client probably throws error, out of bounds exception.
+
+****
+
+lengthen timout times... Some computers take a fairly long while.... Perhaps I should check the connection speed for a few seconds, and then set timeous based on that? :/
+
+****
+
+Dedicated multiplayer servers! ...this will require a system that starts a server with command line parameters, and goes straight into it. Perhaps read system.in for input..? The idea is for it to be runnable on a GUI-less system.
+
 ****
 
 It would be really good if I could seperate all the stuff in the Save and Load classes into their respective classes -- I'm not saying remove them altogether, just take the stuff that turns a list of strings into a specific full entity object, and the stuff that brings all the class's important variables and states into a String, and put those parts into the matching class. Then, Load and Save will be there to go through all of them, and get them in a nice list or bigger string, and then write them to a file. Or vice versa for Load, it will read the file and turn it sequentially into entities. Of course, not to mention all the other things besides entities that Load and Save deal with!
@@ -46,15 +91,7 @@ So, what will be added to each class is:
 
 ****
 
-REQUEST: Make TNT do chain explosions.
-
-****
-
 Stop saving player arrow count, and refit the load class indexes to reflect that. I should really find a better way to represent each piece of info in loading, so the removal of one save item doesn't break everything.
-
-****
-
-Make it so player usernames must be unique.
 
 ****
 

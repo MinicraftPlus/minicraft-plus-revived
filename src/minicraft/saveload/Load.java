@@ -585,7 +585,7 @@ public class Load {
 			try {
 				ip = java.net.InetAddress.getByName(info.get(3));
 				int port = Integer.parseInt(info.get(4));
-				newEntity = new RemotePlayer(game, username, ip, port);
+				newEntity = new RemotePlayer(null, game, username, ip, port);
 				//rp.eid = eid;
 				if(Game.debug) System.out.println("Prob CLIENT: Loaded remote player");
 				//return rp;

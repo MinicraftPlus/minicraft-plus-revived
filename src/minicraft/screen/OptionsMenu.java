@@ -25,21 +25,24 @@ public class OptionsMenu extends Menu {
 	
 	public void tick() {
 		if(!Game.isValidClient()) {
-			if (input.getKey("left").clicked) {
-				diff--;
-				Sound.craft.play();
-			}
-			if (input.getKey("right").clicked) {
-				diff++;
-				Sound.craft.play();
-			}
-
+			
+			int prevdiff = diff;
+			if (input.getKey("left").clicked) diff--;
+			if (input.getKey("right").clicked) diff++;
+			
+			if (diff != prevdiff) Sound.craft.play();
+			
 			if (diff > 2) diff = 0;
 			if (diff < 0) diff = 2;
 		}
 		
 		if (input.getKey("exit").clicked) {
 			new Save(game);
+			
+			for(int i = 0; i < Game.levels.length; i++)
+				if(Game.levels[i] != null)
+					Game.levels[i].updateMobCap();
+			
 			game.setMenu(parent);
 		}
 		

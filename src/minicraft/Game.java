@@ -69,7 +69,7 @@ public class Game extends Canvas implements Runnable {
 	/// MANAGERIAL VARS AND RUNNING
 	
 	public static final String NAME = "Minicraft Plus"; // This is the name on the application window
-	public static final String VERSION = "2.0.1";
+	public static final String VERSION = "2.0.2-dev1";
 	public static final int HEIGHT = 192;
 	public static final int WIDTH = 288;
 	private static float SCALE = 3;
@@ -282,7 +282,7 @@ public class Game extends Canvas implements Runnable {
 		if(player instanceof RemotePlayer) {
 			player = new RemotePlayer(this, true, (RemotePlayer)player);
 		} else
-			player = new Player(this, input);
+			player = new Player(player, this, input);
 		
 		// "shouldRespawn" is false on hardcore, or when making a new world.
 		if (DeadMenu.shouldRespawn) { // respawn, don't regenerate level.
@@ -864,11 +864,12 @@ public class Game extends Canvas implements Runnable {
 			info.add("Tile " + Game.levels[currentLevel].getTile(player.x>>4, player.y>>4).name);
 			if (ModeMenu.score) info.add("Score " + player.score);
 			
-			info.add("Mob Cnt " + Game.levels[currentLevel].mobCount);
+			if(!Game.isValidClient())
+				info.add("Mob Cnt " + Game.levels[currentLevel].mobCount + "/" + Game.levels[currentLevel].maxMobCount);
 			
 			
 			/// Displays number of chests left, if on dungeon level.
-			if (currentLevel == 5) {
+			if (currentLevel == 5 && !Game.isValidClient()) {
 				if (levels[currentLevel].chestcount > 0) {
 					info.add("Chests: " + levels[currentLevel].chestcount);
 				} else {
@@ -882,7 +883,8 @@ public class Game extends Canvas implements Runnable {
 			}
 			
 			//info.add("steps: " + player.stepCount);
-			info.add("hungerstam:" + player.hungerStamCnt);
+			info.add("micro-hunger:" + player.hungerStamCnt);
+			//info.add("health regen:" + player.hungerStamCnt);
 			
 			FontStyle style = new FontStyle(textcol).setShadowType(Color.get(-1, 000), true).setXPos(1);
 			for(int i = 0; i < info.size(); i++) {

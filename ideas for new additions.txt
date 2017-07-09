@@ -2,6 +2,10 @@
 
 ----
 
+Make it so cloud tile can be placed in the sky level, on empty air tiles. Otherwise, they're useful for nothing...
+
+----
+
 Bacon. Just, Bacon.
 
 ----
@@ -36,7 +40,23 @@ Give the player 20 health instead of 10; this means that 1 health will be a half
 
 ++++
 
-Add a system to more properly find the home/data dir on different OS's; windows doesn't regconize "."[filename] as hidden, I think, so that should be accounted for as well.
+Make beds colorable. This will probably consist of making an item attribute to make the item colorable.
+
+++++
+
+Related to the above... I guess maybe make a system of item attributes? Entity attributes? Even tile attributes?
+
+++++
+
+Add more decorations that have no actual function...? Like furniture: chairs, tables, etc.
+
+++++
+
+make friendly mobs able to be fed and bred.
+
+++++
+
+Add a system to more properly find the home/data dir on different OS's; windows doesn't regconize "."[filename] as hidden, I think, so that should be accounted for as well.	
 
 ++++
 

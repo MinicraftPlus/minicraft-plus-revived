@@ -28,15 +28,15 @@ public class RemotePlayer extends Player {
 	public HashMap<Integer, Long> unconfirmedRemovals = new HashMap<Integer, Long>();
 	//public HashMap<String, Long> unconfirmedTiles = new HashMap<String, Long>();
 	
-	public RemotePlayer(Game game, String username, InetAddress ip, int port) { this(game, false, username, ip, port); }
-	public RemotePlayer(Game game, boolean isMainPlayer, String username, InetAddress ip, int port) {
-		super(game, (isMainPlayer?game.input:new InputHandler(game, false)));
+	public RemotePlayer(Player previous, Game game, String username, InetAddress ip, int port) { this(previous, game, false, username, ip, port); }
+	public RemotePlayer(Player previous, Game game, boolean isMainPlayer, String username, InetAddress ip, int port) {
+		super(previous, game, (isMainPlayer?game.input:new InputHandler(game, false)));
 		this.ipAddress = ip;
 		this.port = port;
 		this.username = username;
 	}
 	public RemotePlayer(Game game, boolean isMainPlayer, RemotePlayer model) {
-		this(game, isMainPlayer, model.username, model.ipAddress, model.port);
+		this(model, game, isMainPlayer, model.username, model.ipAddress, model.port);
 		eid = model.eid;
 	}
 	

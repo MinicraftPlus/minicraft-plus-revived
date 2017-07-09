@@ -37,7 +37,7 @@ public class KeyInputMenu extends ScrollingMenu {
 			return;
 		}
 		
-		if(input.getKey("exit").clicked) {
+		if(input.getKey("exit").clicked && !confirmReset) {
 			game.setMenu(parent);
 			new Save(game);
 			return;
@@ -45,7 +45,17 @@ public class KeyInputMenu extends ScrollingMenu {
 		
 		super.tick();
 		
-		if(input.getKey("c").clicked || input.getKey("enter").clicked) {
+		if(confirmReset) {
+			if(input.getKey("exit").clicked) {
+				confirmReset = false;
+			}
+			else if(input.getKey("select").clicked) {
+				confirmReset = false;
+				input.resetKeyBindings();
+				updateKeys(input.getKeyPrefs());
+			}
+		}
+		else if(input.getKey("c").clicked || input.getKey("enter").clicked) {
 			//System.out.println("changing input binding at " + input.ticks);
 			input.changeKeyBinding(actionKeys[selected]);
 			listeningForBind = true;
@@ -57,11 +67,6 @@ public class KeyInputMenu extends ScrollingMenu {
 		}
 		else if(input.getKey("shift-d").clicked && !confirmReset) {
 			confirmReset = true;
-		}
-		else if(input.getKey("select").clicked && confirmReset) {
-			confirmReset = false;
-			input.resetKeyBindings();
-			updateKeys(input.getKeyPrefs());
 		}
 	}
 	
@@ -106,9 +111,9 @@ public class KeyInputMenu extends ScrollingMenu {
 		} else if (confirmReset) {
 			renderFrame(screen, "Confirm Action", 4, 4, screen.w/8-4, screen.h/8-4);
 			FontStyle style = new FontStyle(Color.get(-1, 511));
-			Font.drawParagraph("Are you sure you want to reset all key bindings to the default keys?", screen, 8*4, true, 8*4, false, style, 4);
+			Font.drawParagraph("Are you sure you want to reset all key bindings to the default keys?", screen, 8*4, true, 8*4, true, style, 4);
 			style.setColor(Color.get(-1, 533));
-			Font.drawParagraph(input.getMapping("select")+" to confirm\n"+input.getMapping("exit")+" to cancel", screen, 8, true, 8*3, false, style, 4);
+			Font.drawParagraph(input.getMapping("select")+" to confirm\n"+input.getMapping("exit")+" to cancel", screen, 8, true, (screen.h-Font.textHeight()) / 2 + 8*3, false, style, 4);
 		} else {
 			String[] lines = {
 				"Press C/Enter to change key binding",

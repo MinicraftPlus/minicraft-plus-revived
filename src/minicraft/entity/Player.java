@@ -56,7 +56,7 @@ public class Player extends Mob {
 	public static MobSprite[][] carrySuitSprites = MobSprite.compileMobSpriteAnimations(18, 22); // the "airwizard suit" sprites.
 	
 	public Inventory inventory;
-	public Item activeItem;//, attackItem;
+	public Item activeItem;
 	public int attackTime, attackDir;
 	
 	private int onStairDelay; // the delay before changing levels.
@@ -70,8 +70,9 @@ public class Player extends Mob {
 	public int staminaRechargeDelay; // the recharge delay ticks when the player uses up their stamina.
 	
 	public int hungerStamCnt, stamHungerTicks; // tiers of hunger penalties before losing a burger.
-	private static int maxHungerTicks = 300; // the cutoff value for stamHungerTicks
-	public int stepCount; // used to penalize hunger for movement.
+	private static final int[] maxHungerStams = {10, 7, 5}; // hungerStamCnt required to lose a burger.
+	private static final int maxHungerTicks = 300; // the cutoff value for stamHungerTicks
+	private int stepCount; // used to penalize hunger for movement.
 	private int hungerChargeDelay; // the delay between each time the hunger bar increases your health
 	private int hungerStarveDelay; // the delay between each time the hunger bar decreases your health
 	
@@ -88,7 +89,7 @@ public class Player extends Mob {
 	
 	// Note: the player's health & max health are inherited from Mob.java
 	
-	public Player(Game game, InputHandler input) {
+	public Player(Player previousInstance, Game game, InputHandler input) {
 		super(sprites, Player.maxHealth);
 		
 		x = 24;
@@ -123,6 +124,11 @@ public class Player extends Mob {
 			inventory.add(Items.get("Enchanter"));
 			inventory.add(Items.get("Workbench"));
 			inventory.add(Items.get("Power Glove"));
+		}
+		
+		if(previousInstance != null) {
+			spawnx = previousInstance.spawnx;
+			spawny = previousInstance.spawny;
 		}
 	}
 	
@@ -212,32 +218,31 @@ public class Player extends Mob {
 			
 			if(stamHungerTicks >= maxHungerTicks) {
 				stamHungerTicks -= maxHungerTicks; // reset stamHungerTicks
-				hungerStamCnt++; // enter 1 level away from burger.
+				hungerStamCnt--; // enter 1 level away from burger.
 			}
 			
 			// on easy mode, hunger doesn't deplete from walking or from time.
 			
 			if (OptionsMenu.diff == OptionsMenu.norm) {
-				if(game.tickCount % 5000 == 0 && hunger > 3) hungerStamCnt++; // hunger due to time.
+				if(game.tickCount % 5000 == 0 && hunger > 3) hungerStamCnt--; // hunger due to time.
 				
 				if (stepCount >= 800) { // hunger due to exercise.
-					hungerStamCnt++;
+					hungerStamCnt--;
 					stepCount = 0; // reset.
 				}
 			}
 			if (OptionsMenu.diff == OptionsMenu.hard) {
-				if(game.tickCount % 3000 == 0 && hunger > 0) hungerStamCnt++; // hunger due to time.
+				if(game.tickCount % 3000 == 0 && hunger > 0) hungerStamCnt--; // hunger due to time.
 				
 				if (stepCount >= 400) { // hunger due to exercise.
-					hungerStamCnt++;
+					hungerStamCnt--;
 					stepCount = 0; // reset.
 				}
 			}
 			
-			int[] stams = {10, 7, 5}; // hungerStamCnt required to lose a burger.
-			while (hungerStamCnt >= stams[OptionsMenu.diff]) {
+			while (hungerStamCnt <= 0) {
 				hunger--; // reached burger level.
-				hungerStamCnt -= stams[OptionsMenu.diff];
+				hungerStamCnt += maxHungerStams[OptionsMenu.diff];
 			}
 		}
 		
@@ -771,13 +776,13 @@ public class Player extends Mob {
 	public void hurt(int damage, int attackDir) { doHurt(damage, attackDir); }
 	/** What happens when the player is hurt */
 	protected void doHurt(int damage, int attackDir) {
+		if (ModeMenu.creative || hurtTime > 0 || Bed.inBed) return; // can't get hurt in creative, hurt cooldown, or while someone is in bed
+		
 		if(Game.isValidServer()) {
 			// let the clients deal with it.
 			Game.server.sendPlayerHurt(this, damage, attackDir);
 			return;
 		}
-		
-		if (ModeMenu.creative || hurtTime > 0 || Bed.inBed) return; // can't get hurt in creative, hurt cooldown, or while someone is in bed
 		
 		int healthDam = 0, armorDam = 0;
 		Sound.playerHurt.play();

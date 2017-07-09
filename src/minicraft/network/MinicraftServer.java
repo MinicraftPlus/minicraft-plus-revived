@@ -24,6 +24,7 @@ import minicraft.entity.Entity;
 import minicraft.entity.ItemEntity;
 import minicraft.entity.Player;
 import minicraft.entity.RemotePlayer;
+import minicraft.entity.Furniture;
 import minicraft.entity.Chest;
 import minicraft.entity.Bed;
 import minicraft.entity.particle.Particle;
@@ -207,9 +208,7 @@ public class MinicraftServer extends Thread implements MinicraftConnection {
 		if(e.getUpdates().length() > 0) {
 			byte[] edata = prependType(InputType.ENTITY, (e.eid+";"+e.getUpdates()).getBytes());
 			
-			if(Game.debug && e instanceof Chest) System.out.println("SERVER: sending chest update: " + e.getUpdates());
-			
-			if (Game.debug && e instanceof Player) System.out.println("SERVER sending player update to " + client + ": " + e);
+			if (Game.debug && e instanceof Player) System.out.println("SERVER sending player update to " + client + ": " + e + "; data = " + e.getUpdates());
 			sendData(edata, client.ipAddress, client.port);
 		}// else
 		//	if(Game.debug) System.out.println("SERVER: skipping entity update b/c no new fields: " + e);
@@ -277,7 +276,7 @@ public class MinicraftServer extends Thread implements MinicraftConnection {
 		byte[] ebytes = getEntityBytes(e);
 		if(ebytes == null || ebytes.length == 0) return;
 		
-		if(Game.debug && !(e instanceof Particle)) System.out.println("SERVER: sending entity addition: " + e);
+		//if(Game.debug && !(e instanceof Particle)) System.out.println("SERVER: sending entity addition: " + e);
 		
 		byte[] allbytes = prependType(InputType.ADD, ebytes);
 		sendData(allbytes, client.ipAddress, client.port);
@@ -612,7 +611,7 @@ public class MinicraftServer extends Thread implements MinicraftConnection {
 				}
 				
 				/// versions match; make client player
-				RemotePlayer clientPlayer = new RemotePlayer(game, username, address, port);
+				RemotePlayer clientPlayer = new RemotePlayer(null, game, username, address, port);
 				
 				/// now, we need to check if this player has played in this world before. If they have, then all previoeus settings and items and such will be restored.
 				String playerdata = ""; // this stores the data fetched from the files.
@@ -782,11 +781,7 @@ public class MinicraftServer extends Thread implements MinicraftConnection {
 				return true;
 			
 			case RESPAWN:
-				//int spawnx = sender.x;
-				//int spawny = sender.y;
 				sender = new RemotePlayer(game, true, sender);
-				//sender.x = spawnx;
-				//sender.y = spawny;
 				sender.respawn(Game.levels[Game.lvlIdx(0)]); // get the spawn loc. of the client
 				sendData(prependType(InputType.PLAYER, getPlayerData(sender).getBytes()), sender.ipAddress, sender.port); // send spawn loc.
 				broadcastEntityAddition(sender);
@@ -935,6 +930,20 @@ public class MinicraftServer extends Thread implements MinicraftConnection {
 				sendEntityUpdate(chest, sender);
 				return true;
 			
+			case PUSH:
+				int furnitureID = Integer.parseInt((new String(data)).trim());
+				Entity furniture = Game.getEntity(furnitureID);
+				if(furniture == null) {
+					System.err.println("SERVER: couldn't find the specified piece of furniture to push: " + furnitureID);
+					return false;
+				} else if(!(furniture instanceof Furniture)) {
+					System.err.println("SERVER: specified entity is not an instance of the furniture class: " + furniture + "; cannot push.");
+					return false;
+				}
+				
+				((Furniture)furniture).tryPush(sender);
+				return true;
+			
 			case PICKUP:
 				//if (Game.debug) System.out.println("SERVER: recieved itementity pickup request");
 				int ieid = Integer.parseInt(new String(data).trim());
@@ -997,26 +1006,33 @@ public class MinicraftServer extends Thread implements MinicraftConnection {
 				PotionItem.applyPotion(sender, PotionType.values[typeIdx], addEffect);
 				return true;
 			
-				case MOVE:
+			case MOVE:
 				/// the player moved.
 				//if (Game.debug) System.out.println("SERVER: recieved move packet");
 				
 				String[] movedata = new String(data).trim().split(";");
-				int oldx = sender.x>>4, oldy = sender.y>>4;
-				sender.x = Integer.parseInt(movedata[0]);
-				sender.y = Integer.parseInt(movedata[1]);
 				sender.dir = Integer.parseInt(movedata[2]);
+				int plvlidx = Integer.parseInt(movedata[3]);
+				if(plvlidx >= 0 && plvlidx < Game.levels.length && Game.levels[plvlidx] != sender.getLevel()) {
+					sender.remove();
+					Game.levels[plvlidx].add(sender);
+				}
+				
+				int oldx = sender.x>>4, oldy = sender.y>>4;
+				int newx = Integer.parseInt(movedata[0]);
+				int newy = Integer.parseInt(movedata[1]);
+				
+				boolean moved = sender.move(newx - sender.x, newy - sender.y);
+				if(moved) sender.updateSyncArea(oldx, oldy);
+				
+				broadcastEntityUpdate(sender, !moved); // this will make it so that if the player is prevented from moving, the server will update the client, forcing it back to the last place the server recorded the player at. TODO this breaks down with a slow connection...
 				sender.walkDist++; // hopefully will make walking animations work. Actually, they should be sent with Mob's update... no, it doesn't update, it just feeds back.
 				
-				//int xt = sender.x >> 4, yt = sender.y >> 4;
-				//int w = RemotePlayer.xSyncRadius * 2, h = RemotePlayer.ySyncRadius * 2; // tile dimensions of the space centered around the player, up to right outside the screen range.
+				//if (Game.debug) System.out.println("SERVER: "+(moved?"moved player to":"stopped player at")+" ("+sender.x+","+sender.y+"): " + sender);
 				
-				sender.updateSyncArea(oldx, oldy);
-				
-				broadcastEntityUpdate(sender);
 				return true;
 			
-			/// I'm thinking this should end up never being used... oh, well maybe for notifications.
+			/// I'm thinking this should end up never being used... oh, well maybe for notifications, actually.
 			default:
 				System.out.println("SERVER used default behavior for input type " + inType);
 				broadcastData(alldata, sender);
@@ -1044,7 +1060,7 @@ public class MinicraftServer extends Thread implements MinicraftConnection {
 		//if(sends > 50) System.exit(0);
 		DatagramPacket packet = new DatagramPacket(data, data.length, ip, port);
 		String intype = MinicraftConnection.getInputType(data[0]).name();
-		if (Game.debug && !intype.equals("ENTITY")/* && !intype.equals("TILE")*/) System.out.println("SERVER: sending "+intype+" data to: " + ip);
+		if (Game.debug && !intype.equals("ENTITY") && !intype.equals("ADD") && !intype.equals("REMOVE")) System.out.println("SERVER: sending "+intype+" data to: " + ip);
 		try {
 			socket.send(packet);
 		} catch(IOException ex) {
