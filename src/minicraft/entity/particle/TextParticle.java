@@ -1,21 +1,21 @@
 package minicraft.entity.particle;
 
 import minicraft.gfx.Color;
-import minicraft.gfx.Font;
+import minicraft.gfx.FontStyle;
 import minicraft.gfx.Screen;
 
 public class TextParticle extends Particle {
 	private String msg; // Message of the text particle
-	public double xa, ya, za; // x,y,z acceleration
-	public double xx, yy, zz; // x,y,z coordinates
+	private double xa, ya, za; // x,y,z acceleration
+	private double xx, yy, zz; // x,y,z coordinates
 	
-	private int color;
+	private FontStyle style;
 	
 	public TextParticle(String msg, int x, int y, int col) {
 		super(x, y, 60, null);
 		this.xr = msg.length();
 		
-		this.color = col;
+		style = new FontStyle(col).setShadowType(Color.get(-1, 000), false);
 		this.msg = msg;
 		xx = x; //assigns x pos
 		yy = y; //assigns y pos
@@ -48,13 +48,17 @@ public class TextParticle extends Particle {
 	}
 	
 	public void render(Screen screen) {
-		if(!msg.contains("Thanks")) {
-			Font.draw(msg, screen, x - msg.length() * 4, y - (int)zz, color, Color.get(-1, 0)); //renders the shadow
-		} else { // special, for "Thanks for Playing!" message?
+		//if(!msg.contains("Thanks")) {
+		style.setXPos(x - msg.length() * 4).setYPos(y - (int)zz).draw(msg, screen);
+		/*} else { // special, for "Thanks for Playing!" message? Second message is right below...
 			String msg1 = msg.substring(0, 19);
 			String msg2 = msg.substring(19, msg.length());
 			Font.draw(msg1, screen, x - msg.length() * 4, y - (int)zz - 8, color, Color.get(-1, 0));
 			Font.draw(msg2, screen, x - msg.length() * 4, y - (int)zz, color, Color.get(-1, 0));
-		}
+		}*/
+	}
+	
+	public String getData() {
+		return msg+":"+style.getColor();
 	}
 }

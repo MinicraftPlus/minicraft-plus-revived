@@ -4,8 +4,6 @@ import minicraft.gfx.Color;
 import minicraft.gfx.Sprite;
 
 public class Lantern extends Furniture {
-	//private Lantern.Type type;
-	
 	public enum Type {
 		NORM ("Lantern", 9, Color.get(-1, 000, 222, 555)),
 		IRON ("Iron Lantern", 12, Color.get(-1, 100, 322, 544)),
@@ -26,19 +24,6 @@ public class Lantern extends Furniture {
 	public Lantern(Lantern.Type type) {
 		super(type.title, new Sprite(10, 8, 2, 2, type.col), 3, 2);
 		this.type = type;
-		//this.light = light;
-		/*col0 = Color.get(-1, 111, 222, 555);
-		col1 = Color.get(-1, 222, 333, 555);
-		col2 = Color.get(-1, 111, 222, 555);
-		col3 = Color.get(-1, 000, 111, 555);
-		*/
-		//col = Color.get(-1, 000, 222, 555);
-		//this.type = type;
-		/*col = type.color;
-		
-		sprite = 5;
-		xr = 3;
-		yr = 2;*/
 	}
 	
 	@Override

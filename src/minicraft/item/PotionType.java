@@ -24,13 +24,7 @@ public enum PotionType {
 		}
 	},
 	
-	Time (222, 1800) {
-		public boolean toggleEffect(Player player, boolean addEffect) {
-			Game.gamespeed *= (addEffect ? 0.5f : 2);
-			return true;
-		}
-	},
-	
+	Time (222, 1800),
 	Lava (400, 7200),
 	Shield (115, 5400),
 	Haste (303, 4800);
@@ -48,4 +42,6 @@ public enum PotionType {
 	public boolean toggleEffect(Player player, boolean addEffect) {
 		return true;
 	}
+	
+	public static final PotionType[] values = PotionType.values();
 }

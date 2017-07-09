@@ -3,6 +3,7 @@ package minicraft.entity;
 import minicraft.gfx.Color;
 import minicraft.gfx.Screen;
 import minicraft.item.Item;
+import minicraft.Game;
 import minicraft.Sound;
 
 public class ItemEntity extends Entity {
@@ -11,6 +12,10 @@ public class ItemEntity extends Entity {
 	public double xx, yy, zz; // the x, y, and z coordinates; in double precision.
 	public Item item; // the item that this entity is based off of.
 	private int time = 0; // time it has lasted in the level
+	
+	// solely for multiplayer use.
+	private boolean pickedUp = false;
+	private long pickupTimestamp;
 	
 	public ItemEntity(Item item, int x, int y) {
 		super(3, 3);
@@ -29,6 +34,14 @@ public class ItemEntity extends Entity {
 		
 		lifeTime = 60 * 10 + random.nextInt(70); // sets the lifetime of the item. min = 600 ticks, max = 669 ticks.
 		// the idea was to have it last 10-11 seconds, I think.
+	}
+	public ItemEntity(Item item, int x, int y, int time) {
+		this(item, x, y);
+		this.time = time;
+	}
+	
+	public String getData() {
+		return item.name+":"+time;
 	}
 	
 	public void tick() {
@@ -60,6 +73,7 @@ public class ItemEntity extends Entity {
 		int expectedx = nx - x; // expected movement distance
 		int expectedy = ny - y;
 		
+		/// THIS is where x and y are changed.
 		move(expectedx, expectedy); // move the ItemEntity.
 		
 		// finds the difference between the inherited before and after positions
@@ -84,7 +98,20 @@ public class ItemEntity extends Entity {
 	}
 
 	protected void touchedBy(Entity entity) {
-		if (time > 30) entity.touchItem(this); // conditional prevents this from being collected immediately.
+		if (time > 30) { // conditional prevents this from being collected immediately.
+			if(Game.isValidClient() && entity instanceof Player && entity == ((Player)entity).game.player) {// only register if the main player picks it up, on a client.
+				if(!pickedUp) {
+					Game.client.pickupItem(this);
+					pickedUp = true;
+					pickupTimestamp = System.nanoTime();
+				} else if ((System.nanoTime() - pickupTimestamp) / 1E8 > 15L) { // should be converted to tenths of a second.
+					/// the item has already been picked up; but since more than 1.5 seconds has past, the item will be remarked as not picked up.
+					if (Game.debug) System.out.println(Game.onlinePrefix()+"reenabling pickup for item entity " + this);
+					pickedUp = false;
+				}
+			} else if(!(Game.isValidServer() && entity instanceof Player)) // don't register if a player touches it on a server; the player will register that.
+				entity.touchItem(this);
+		}
 	}
 	
 	/** What happens when the player takes the item */

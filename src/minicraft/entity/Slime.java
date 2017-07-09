@@ -25,13 +25,6 @@ public class Slime extends EnemyMob {
 	
 	public Slime(int lvl) {
 		super(lvl, sprites, lvlcols, 1, true, 50, 60, 40);
-		/*
-		col0 = Color.get(-1, 20, 40, 10);
-		col1 = Color.get(-1, 20, 30, 40);
-		col2 = Color.get(-1, 20, 40, 10);
-		col3 = Color.get(-1, 10, 20, 40);
-		col4 = Color.get(-1, 10, 20, 30);
-		*/
 	}
 	
 	public void tick() {
@@ -61,28 +54,6 @@ public class Slime extends EnemyMob {
 	}
 	
 	public void render(Screen screen) {
-		/*
-		col0 = Color.get(-1, 20, 40, 222);
-		col1 = Color.get(-1, 30, 252, 333);
-		col2 = Color.get(-1, 20, 40, 222);
-		col3 = Color.get(-1, 10, 20, 111);
-		col4 = Color.get(-1, 20, 40, 222);
-
-		if (isLight()) {
-			col0 = col1 = col2 = col3 = col4 = Color.get(-1, 30, 252, 333);
-		}
-		
-		if (lvl == 2) col = Color.get(-1, 100, 522, 555);
-		else if (lvl == 3) col = Color.get(-1, 111, 444, 555);
-		else if (lvl == 4) col = Color.get(-1, 000, 111, 224);
-		
-		else if (level.dirtColor == 322) {
-			if (Game.time == 0) col = col0;
-			if (Game.time == 1) col = col1;
-			if (Game.time == 2) col = col2;
-			if (Game.time == 3) col = col3;
-		} else col = col4;
-		*/
 		int oldy = y;
 		if(jumpTime > 0) {
 			walkDist = 8; // set to jumping sprite.
@@ -102,8 +73,22 @@ public class Slime extends EnemyMob {
 		
 		super.die(); // Parent death call
 	}
-	/*
-	public boolean canWool() {
-		return true;
-	}*/
+	
+	protected String getUpdateString() {
+		String updates = super.getUpdateString() + ";";
+		updates += "jumpTime,"+jumpTime;
+		
+		return updates;
+	}
+	
+	protected boolean updateField(String field, String val) {
+		if(super.updateField(field, val)) return true;
+		switch(field) {
+			case "jumpTime":
+				jumpTime = Integer.parseInt(val);
+				return true;
+		}
+		
+		return false;
+	}
 }

@@ -13,6 +13,7 @@ import minicraft.Game;
 import minicraft.gfx.Color;
 import minicraft.gfx.Font;
 import minicraft.gfx.Screen;
+import minicraft.saveload.Load;
 import minicraft.Sound;
 
 public class WorldSelectMenu extends Menu {
@@ -60,6 +61,7 @@ public class WorldSelectMenu extends Menu {
 	private Action mode;
 	
 	public WorldSelectMenu() {
+		
 		validName = false;
 		confirmed = false;
 		
@@ -90,6 +92,15 @@ public class WorldSelectMenu extends Menu {
 				}
 			}
 		}
+		
+		/*if(location == Game.loadDir && !Game.loadDir.equals(Game.gameDir)) {
+			location = Game.gameDir;
+			loadWorlds();
+			location = Game.loadDir;
+		}*/
+		
+		while(selected > 1 && selected > worldnames.size()-1)
+			selected--;
 	}
 	
 	public void tick() {
@@ -169,7 +180,7 @@ public class WorldSelectMenu extends Menu {
 					if (Game.debug) System.out.println("load mode: " + worldname);
 					Sound.test.play();
 					game.setMenu(new LoadingMenu());
-					//game.resetstartGame();
+					//game.initWorld();
 					//game.setMenu((Menu) null);
 					break;
 				
@@ -399,7 +410,7 @@ public class WorldSelectMenu extends Menu {
 		
 		if (typingname.length() < 36 && input.lastKeyTyped.length() > 0) {
 			//ensure only valid characters are typed.
-			java.util.regex.Pattern p = java.util.regex.Pattern.compile("[a-zA-Z0-9 ]");
+			java.util.regex.Pattern p = java.util.regex.Pattern.compile("[a-zA-Z0-9 ]"); // this does not include backspace, so it will not be "typed".
 			if (p.matcher(input.lastKeyTyped).matches()) typingname += input.lastKeyTyped;
 			input.lastKeyTyped = "";
 		}

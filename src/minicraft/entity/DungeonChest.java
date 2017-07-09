@@ -47,12 +47,12 @@ public class DungeonChest extends Chest {
 				if(level.chestcount == 0) { // if this was the last chest...
 					level.dropItem(x, y, 5, Items.get("Gold Apple"));
 					
-					Game.notifications.add("You hear a noise from the surface!"); // notify the player of the developments
+					Game.notifyAll("You hear a noise from the surface!", -100); // notify the player of the developments
 					// add a level 2 airwizard to the middle surface level.
 					AirWizard wizard = new AirWizard(true);
-					wizard.x = Game.levels[3].w / 2;
-					wizard.y = Game.levels[3].h / 2;
-					Game.levels[3].add(wizard);
+					wizard.x = Game.levels[Game.lvlIdx(0)].w / 2;
+					wizard.y = Game.levels[Game.lvlIdx(0)].h / 2;
+					Game.levels[Game.lvlIdx(0)].add(wizard);
 				}
 				
 				return super.use(player, attackDir); // the player unlocked the chest.
@@ -118,5 +118,23 @@ public class DungeonChest extends Chest {
 	public void take(Player player) {
 		if(!isLocked) // can only be taken if unlocked.
 			super.take(player);
+	}
+	
+	protected String getUpdateString() {
+		String updates = super.getUpdateString() + ";";
+		updates += "isLocked,"+isLocked;
+		
+		return updates;
+	}
+	
+	protected boolean updateField(String field, String val) {
+		if(super.updateField(field, val)) return true;
+		switch(field) {
+			case "isLocked":
+				isLocked = Boolean.parseBoolean(val);
+				return true;
+		}
+		
+		return false;
 	}
 }
