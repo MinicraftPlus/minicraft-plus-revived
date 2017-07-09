@@ -1,3 +1,8 @@
+Minicraft+ version 2.0.2
+
+
+
+
 Minicraft+ version 2.0.1
 
 +* added more super-secret debug powers... mua ha ha...
