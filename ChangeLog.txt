@@ -1,17 +1,17 @@
 Minicraft+ version 2.0.1
 
 +* added more super-secret debug powers... mua ha ha...
-+ added level mobcount to F3 window
-+ added name of current tile to F3 window
++ added to F3 window: level mobcount + max mobcount, and name of current tile
 + Arrows now appear in your inventory
 * Fixed crafting; correct number of items are used
 * Fixed Save folder for non-windows users. You may notice a strange folder called "null" in the same folder as the minicraft jar. Move the ".playminicraft" folder inside to your home directory, and it should recognize it again. It may be hidden due to the "."
 * This version should be compatible with 1.8 save files.
 
-* Renovated Multiplayer! It should now be much less laggy.
+* Renovated Multiplayer! It should now be much less laggy. Still not quite tolerable, but... better.
 + Added multiplayer feature: when hosting a server, a new window opens up for you to play as any other player, though your settings will be saved so that your should be able to continue as normal if you load the world as single player again. The server window lets you view the players connected, and change world difficulty and such.
-+ Added multiplayer feature: the inventory and such data for people connected to the server is saved in a seperate file along with the computer's MAC address, so if they connect with that computer again, their inventory and stats will be restored.
++ Added multiplayer feature: the inventory and such data for people connected to the server is saved in a seperate file along with the computer's MAC address, so if they connect with that computer again, their inventory and stats should be restored.
 
+* Ensured that most all the normal world features work in multiplayer. However, I have not been able to do much testing with Client Player saves, so that might not work very well. Everything else should work, though; but the connection lag between computers may cause some wierd effects. Fixing this lag is my next goal.
 
 
 Minicraft+ version 2.0.0
