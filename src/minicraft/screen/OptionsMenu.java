@@ -40,7 +40,8 @@ public class OptionsMenu extends Menu {
 			new Save(game);
 			
 			for(int i = 0; i < Game.levels.length; i++)
-				Game.levels[i].updateMobCap();
+				if(Game.levels[i] != null)
+					Game.levels[i].updateMobCap();
 			
 			game.setMenu(parent);
 		}
