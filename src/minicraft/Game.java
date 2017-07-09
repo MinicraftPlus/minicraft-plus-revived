@@ -864,11 +864,12 @@ public class Game extends Canvas implements Runnable {
 			info.add("Tile " + Game.levels[currentLevel].getTile(player.x>>4, player.y>>4).name);
 			if (ModeMenu.score) info.add("Score " + player.score);
 			
-			info.add("Mob Cnt " + Game.levels[currentLevel].mobCount + "/" + Game.levels[currentLevel].maxMobCount);
+			if(!Game.isValidClient())
+				info.add("Mob Cnt " + Game.levels[currentLevel].mobCount + "/" + Game.levels[currentLevel].maxMobCount);
 			
 			
 			/// Displays number of chests left, if on dungeon level.
-			if (currentLevel == 5) {
+			if (currentLevel == 5 && !Game.isValidClient()) {
 				if (levels[currentLevel].chestcount > 0) {
 					info.add("Chests: " + levels[currentLevel].chestcount);
 				} else {
@@ -882,7 +883,8 @@ public class Game extends Canvas implements Runnable {
 			}
 			
 			//info.add("steps: " + player.stepCount);
-			info.add("hungerstam:" + player.hungerStamCnt);
+			info.add("micro-hunger:" + player.hungerStamCnt);
+			//info.add("health regen:" + player.hungerStamCnt);
 			
 			FontStyle style = new FontStyle(textcol).setShadowType(Color.get(-1, 000), true).setXPos(1);
 			for(int i = 0; i < info.size(); i++) {
