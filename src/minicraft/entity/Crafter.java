@@ -21,16 +21,13 @@ public class Crafter extends Furniture {
 		protected Sprite sprite;
 		protected int xr, yr;
 		
-		
 		private Type(Sprite sprite, int xr, int yr, ArrayList<Recipe> list) {
 			this.sprite = sprite;
 			this.xr = xr;
 			this.yr = yr;
 			recipes = list;
-			Crafter.names.add(this.name());
 		}
 	}
-	public static ArrayList<String> names = new ArrayList<String>();
 	
 	public Crafter.Type type;
 	

@@ -72,15 +72,15 @@ public class TileItem extends StackableItem {
 			//Tile t = Tiles.get(tilename.contains("_")?tilename.substring(0, tilename.indexOf("_")):tilename);
 			if(tile.matches(level.getData(xt, yt), tilename)) {
 				level.setTile(xt, yt, model); // TODO maybe data should be part of the saved tile..?
-				return super.interactOn(true);
+				return true;
 			}
 		}
 		//if (Game.debug) System.out.println(model + " cannot be placed on " + tile.name);
 		
 		if(model.contains("Wall") && validTiles.size() == 1) {
-			player.game.notifications.add("Can only be placed on " + Tiles.getName(validTiles.get(0)) + "!");
+			Game.notifications.add("Can only be placed on " + Tiles.getName(validTiles.get(0)) + "!");
 		}
-		return super.interactOn(false);
+		return false;
 	}
 	
 	public boolean matches(Item other) {

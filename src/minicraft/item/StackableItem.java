@@ -79,12 +79,4 @@ public class StackableItem extends Item {
 	public StackableItem clone() {
 		return new StackableItem(name, sprite, count);
 	}
-	
-	public String toString() {
-		return super.toString() + "-Stack_Size:"+count;
-	}
-	
-	public String getData() {
-		return name+"_"+count;
-	}
 }

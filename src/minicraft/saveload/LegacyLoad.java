@@ -36,8 +36,6 @@ public class LegacyLoad {
 	Load.Version currentVer, worldVer;
 	boolean oldSave = false;
 	
-	Game game = null;
-	
 	{
 		currentVer = new Load.Version(Game.VERSION);
 		worldVer = null;
@@ -57,18 +55,16 @@ public class LegacyLoad {
 		} else
 			testFile.delete(); // we don't care about it anymore anyway.
 		
-		this.game = game; // this is used in loadInventory().
-		
 		loadGame("Game", game); // more of the version will be determined here
-		loadWorld("Level", game);
+		loadWorld("Level");
 		loadPlayer("Player", game.player);
 		loadInventory("Inventory", game.player.inventory);
 		loadEntities("Entities", game.player);
 		LoadingMenu.percentage = 0; // reset
 	}
 	
-	protected LegacyLoad(File unlocksFile) {
-		updateUnlocks(unlocksFile);
+	protected LegacyLoad(String oldName, String newName) {
+		updateUnlocks(location+"/" + oldName + extention, location+"/" + newName + extention);
 	}
 	
 	public void loadFromFile(String filename) {
@@ -117,9 +113,8 @@ public class LegacyLoad {
 		}
 	}
 	
-	protected void updateUnlocks(File file) {
-		String path = file.getPath();
-		loadFromFile(path);
+	protected void updateUnlocks(String oldfilename, String newfilename) {
+		loadFromFile(oldfilename);
 		
 		for(int i = 0; i < data.size(); i++) {
 			if(data.get(i).length() == 0) {
@@ -130,10 +125,8 @@ public class LegacyLoad {
 			data.set(i, data.get(i).replace("HOURMODE", "H_ScoreTime").replace("MINUTEMODE", "M_ScoreTime"));
 		}
 		
-		file.delete();
-		
 		try {
-			java.io.BufferedWriter writer = new java.io.BufferedWriter(new java.io.FileWriter(path));
+			java.io.BufferedWriter writer = new java.io.BufferedWriter(new java.io.FileWriter(newfilename));
 			for(String unlock: data) {
 				writer.write(","+unlock);
 			}
@@ -144,14 +137,13 @@ public class LegacyLoad {
 		}
 	}
 	
-	private int playerac = 0; // this is a temp storage var for use to restore player arrow count.
-	
 	public void loadGame(String filename, Game game) {
 		loadFromFile(location + filename + extention);
 		boolean hasVersion = data.get(0).contains(".");
 		if(hasVersion) {
 			worldVer = new Load.Version(data.get(0)); // gets the world version
 			Game.setTime(Integer.parseInt(data.get(1)));
+			Game.astime = Integer.parseInt(data.get(2));
 			game.gameTime = 65000; // prevents time cheating.
 			
 			if(worldVer.compareTo(new Load.Version("1.9.2")) < 0) {
@@ -168,6 +160,7 @@ public class LegacyLoad {
 			if(data.size() == 5) {
 				worldVer = new Load.Version("1.9");
 				Game.setTime(Integer.parseInt(data.get(0)));
+				Game.astime = Integer.parseInt(data.get(1));
 				OptionsMenu.autosave = Boolean.parseBoolean(data.get(3));
 				OptionsMenu.isSoundAct = Boolean.parseBoolean(data.get(4));
 			} else { // version == 1.8?
@@ -177,14 +170,15 @@ public class LegacyLoad {
 				}
 				// for backwards compatibility
 				Game.tickCount = Integer.parseInt(data.get(0));
-				playerac = Integer.parseInt(data.get(3));
+				Game.astime = Integer.parseInt(data.get(1));
+				game.player.ac = Integer.parseInt(data.get(3));
 				OptionsMenu.autosave = false;
 			}
 		}
 	}
 	
-	public void loadWorld(String filename, Game game) {
-		for(int l = 0; l < Game.levels.length; l++) {
+	public void loadWorld(String filename) {
+		for(int l = Game.levels.length-1; l>=0; l--) {
 			loadFromFile(location + filename + l + extention);
 			
 			int lvlw = Integer.parseInt(data.get(0));
@@ -203,8 +197,8 @@ public class LegacyLoad {
 				}
 			}
 			
-			//Level parent = l == Game.levels.length-1 ? null : Game.levels[l+1];
-			Game.levels[l] = new Level(game, lvlw, lvlh, lvldepth, null, false);
+			Level parent = l == Game.levels.length-1 ? null : Game.levels[l+1];
+			Game.levels[l] = new Level(lvlw, lvlh, lvldepth, parent, false);
 			Game.levels[l].tiles = tiles;
 			Game.levels[l].data = tdata;
 		}
@@ -214,8 +208,8 @@ public class LegacyLoad {
 		loadFromFile(location + filename + extention);
 		player.x = Integer.parseInt(data.get(0));
 		player.y = Integer.parseInt(data.get(1));
-		player.spawnx = Integer.parseInt(data.get(2));
-		player.spawny = Integer.parseInt(data.get(3));
+		Player.spawnx = Integer.parseInt(data.get(2));
+		Player.spawny = Integer.parseInt(data.get(3));
 		player.health = Integer.parseInt(data.get(4));
 		player.armor = Integer.parseInt(data.get(5));
 		
@@ -227,28 +221,28 @@ public class LegacyLoad {
 				player.curArmor = (ArmorItem)Items.get(data.get(14));
 			} else player.armor = 0;
 			
-			//player.ac = Integer.parseInt(data.get(7));
-			player.game.currentLevel = Integer.parseInt(data.get(8));
+			player.ac = Integer.parseInt(data.get(7));
+			Game.currentLevel = Integer.parseInt(data.get(8));
 			modedata = data.get(9);
 			
 		} else {
 			// old, 1.8 save.
-			player.game.currentLevel = Integer.parseInt(data.get(7));
+			Game.currentLevel = Integer.parseInt(data.get(7));
 			modedata = data.get(8);
 		}
 		
-		player.score = Integer.parseInt(data.get(6));
-		Game.levels[player.game.currentLevel].add(player);
+		Player.score = Integer.parseInt(data.get(6));
+		Game.levels[Game.currentLevel].add(player);
 		
 		int mode;
 		if(modedata.contains(";")) {
 			mode = Integer.parseInt(modedata.substring(0, modedata.indexOf(";")));
 			if (mode == 4)
-				Game.scoreTime = Integer.parseInt(modedata.substring(modedata.indexOf(";") + 1));
+				player.game.scoreTime = Integer.parseInt(modedata.substring(modedata.indexOf(";") + 1));
 		}
 		else {
 			mode = Integer.parseInt(modedata);
-			if (mode == 4) Game.scoreTime = 300;
+			if (mode == 4) player.game.scoreTime = 300;
 		}
 		
 		ModeMenu.updateModeBools(mode);
@@ -276,8 +270,8 @@ public class LegacyLoad {
 		String[] color = colors.split(";");
 		player.shirtColor = Integer.parseInt(color[0]+color[1]+color[2]);
 		
-		if(!oldSave) player.skinon = Boolean.parseBoolean(data.get(12));
-		else player.skinon = false;
+		if(!oldSave) Player.skinon = Boolean.parseBoolean(data.get(12));
+		else Player.skinon = false;
 	}
 	
 	public void loadInventory(String filename, Inventory inventory) {
@@ -286,30 +280,23 @@ public class LegacyLoad {
 		
 		for(int i = 0; i < data.size(); i++) {
 			String item = data.get(i);
-			if(i == 0 && oldSave && item.contains(";")) item = item.replace(";0", ";1");
-			loadItemToInventory(item, inventory);
-		}
-		
-		if(playerac > 0 && inventory == game.player.inventory) {
-			inventory.add(Items.get("arrow"), playerac);
-			playerac = 0;
-		}
-	}
-	
-	public void loadItemToInventory(String item, Inventory inventory) {
-		if(item.contains(";")) {
-			String[] curData = item.split(";");
-			String itemName = curData[0];
-			if(oldSave) itemName = subOldName(itemName);
 			
-			//System.out.println("item to fetch: " + itemName + "; count=" + curData[1]);
-			Item newItem = Items.get(itemName);
-			int count = Integer.parseInt(curData[1]);
-			inventory.add(newItem, count);
-		} else {
-			if(oldSave) item = subOldName(item);
-			Item toAdd = Items.get(item);
-			inventory.add(toAdd);
+			if(Items.get(item) instanceof StackableItem) {
+				if(oldSave && i == 0) item = item.replace(";0", ";1");
+				List<String> curData = Arrays.asList(item.split(";"));
+				String itemName = curData.get(0);
+				if(oldSave) itemName = subOldName(itemName);
+				
+				Item newItem = Items.get(itemName);
+				
+				for(int ii = 0; ii < Integer.parseInt(curData.get(1)); ii++) {
+					inventory.add(newItem);
+				}
+			} else {
+				if(oldSave) item = subOldName(item);
+				Item toAdd = Items.get(item);
+				inventory.add(toAdd);
+			}
 		}
 	}
 	
@@ -325,7 +312,7 @@ public class LegacyLoad {
 		loadFromFile(location + filename + extention);
 		
 		for(int i = 0; i < Game.levels.length; i++) {
-			Game.levels[i].clearEntities();
+			Game.levels[i].entities.clear();
 		}
 		
 		for(int i = 0; i < data.size(); i++) {
@@ -361,8 +348,7 @@ public class LegacyLoad {
 						String itemData = chestInfo.get(idx);
 						if(worldVer.compareTo(new Load.Version("1.9.1")) < 0) // if this world is before 1.9.1
 							if(itemData.equals("")) continue; // this skips any null items
-						loadItemToInventory(itemData, chest.inventory);
-						/*if(oldSave) itemData = subOldName(itemData);
+						if(oldSave) itemData = subOldName(itemData);
 						Item item = Items.get(itemData);
 						if (item instanceof StackableItem) {
 							String[] aitemData = (itemData + ";1").split(";"); // this appends ";1" to the end, meaning one item, to everything; but if it was already there, then it becomes the 3rd element in the list, which is ignored.
@@ -371,7 +357,7 @@ public class LegacyLoad {
 							chest.inventory.add(stack);
 						} else {
 							chest.inventory.add(item);
-						}*/
+						}
 					}
 					
 					if (isDeathChest) {
@@ -379,6 +365,7 @@ public class LegacyLoad {
 					} else if (isDungeonChest) {
 						((DungeonChest)chest).isLocked = Boolean.parseBoolean(chestInfo.get(chestInfo.size()-1));
 					}
+					
 					
 					currentlevel = Integer.parseInt(info.get(info.size() - 1));
 					Game.levels[currentlevel].add(chest instanceof DeathChest ? (DeathChest)chest : chest instanceof DungeonChest ? (DungeonChest)chest : chest, x, y);

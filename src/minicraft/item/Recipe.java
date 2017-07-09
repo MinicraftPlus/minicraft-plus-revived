@@ -74,13 +74,18 @@ public class Recipe implements ListItem {
 		if(!ModeMenu.creative) {
 			// remove the cost items from the inventory.
 			for (String cost: costs.keySet().toArray(new String[0])) {
-				player.inventory.removeItems(Items.get(cost), costs.get(cost));
+				player.inventory.removeItem(Items.get(cost));
 			}
 		}
 		
 		// add the crafted items.
-		for(int i = 0; i < amount; i++)
-			player.inventory.add(getProduct());
+		if (product.equals("ARROW"))
+			player.ac += amount;
+		else {
+			for(int i = 0; i < amount; i++) {
+				player.inventory.add(getProduct());
+			}
+		}
 		
 		return true;
 	}

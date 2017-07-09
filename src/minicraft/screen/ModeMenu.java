@@ -10,7 +10,6 @@ import java.util.regex.Matcher;
 import minicraft.Game;
 import minicraft.gfx.Color;
 import minicraft.gfx.Font;
-import minicraft.gfx.FontStyle;
 import minicraft.gfx.Screen;
 import minicraft.Sound;
 
@@ -95,16 +94,12 @@ public class ModeMenu extends Menu {
 	}
 	
 	public static void updateModeBools(int mode) {
-		boolean sendUpdate = ModeMenu.mode != mode && Game.isValidServer();
-		
 		ModeMenu.mode = mode;
 		
 		survival = mode == 1;
 		creative = mode == 2;
 		hardcore = mode == 3;
 		score = mode == 4;
-		
-		if(sendUpdate) Game.server.updateGameVars();
 	}
 	
 	public static String getSelectedTime() {
@@ -128,7 +123,7 @@ public class ModeMenu extends Menu {
 		}
 		
 		time *= Game.normSpeed;
-		//if (Game.debug) System.out.println("score time: " + time);
+		if (Game.debug) System.out.println("score time: " + time);
 		
 		return time;
 	}
@@ -146,17 +141,18 @@ public class ModeMenu extends Menu {
 	}
 
 	public void render(Screen screen) {
-		int color = Color.get(-1, 300);
-		int textCol = Color.get(-1, 555);
+		int color = Color.get(0, 300);
+		int black = Color.get(0, 0);
+		int textCol = Color.get(0, 555);
 		screen.clear(0);
 		
-		Font.drawCentered("World Name:", screen, screen.h - 180, Color.get(-1, 444));
+		Font.drawCentered("World Name:", screen, screen.h - 180, Color.get(0, 444));
 		Font.drawCentered(WorldSelectMenu.worldname, screen, screen.h - 170, Color.get(-1, 5));
 		
 		String modeText = "Game Mode:	" + modes[mode - 1];
-		new FontStyle(Color.get(-1, 555)).setYPos(8*8).setShadowType(Color.get(-1, 111), false).draw(modeText, screen);
+		Font.drawCentered(modeText, screen, 8 * 8, Color.get(-1, 555), Color.get(-1, 111));
 		
-		if(mode == 4) Font.drawCentered("<T>ime: " + getSelectedTime(), screen, 95, Color.get(-1, 555));
+		if(mode == 4) Font.drawCentered("<T>ime: " + getSelectedTime(), screen, 95, Color.get(0, 555));
 		
 		Font.drawCentered("Press "+input.getMapping("select")+" to Start", screen, screen.h - 75, textCol);
 		Font.drawCentered("Press Left and Right", screen, screen.h - 150, textCol);

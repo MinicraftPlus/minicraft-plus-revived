@@ -20,7 +20,7 @@ public class Screen {
 	public final int w, h; // width and height of the screen
 	public int[] pixels; // pixels on the screen
 	
-	protected SpriteSheet sheet; // the sprite sheet used in the game.
+	private SpriteSheet sheet; // the sprite sheet used in the game.
 	
 	public Screen(int w, int h, SpriteSheet sheet) {
 		this.sheet = sheet;
@@ -30,22 +30,17 @@ public class Screen {
 		pixels = new int[w * h]; // makes new integer array for all the pixels on the screen.
 	}
 	
-	public Screen(Screen model) {
-		this(model.w, model.h, model.sheet);
-	}
-	
 	/** Clears all the colors on the screen */
 	public void clear(int color) {
 		for (int i = 0; i < pixels.length; i++)
 			pixels[i] = color; // turns each pixel into a single color (clearing the screen!)
 	}
 	
-	public void render(int[] pixelColors) {
-		for(int i = 0; i < Math.min(pixelColors.length, pixels.length); i++)
-			pixels[i] = pixelColors[i];
-	}
+	/*public int centerText(String text) {
+		return (w - Font.textWidth(text)) / 2;
+	}*/
 	
-	/** Renders an object from the sprite sheet based on screen coordinates, tile (SpriteSheet location), colors, and bits (for mirroring). I believe that xp and yp refer to the desired position of the upper-left-most pixel. */
+	/** Renders an object from the sprite sheet based on screen coordinates, tile (SpriteSheet location), colors, and bits (for mirroring) */
 	public void render(int xp, int yp, int tile, int colors, int bits) {
 		// xp and yp are originally in level coordinates, but offset turns them to screen coordinates.
 		xp -= xOffset; //account for screen offset
@@ -99,21 +94,24 @@ public class Screen {
 	};
 	
 	/** Overlays the screen with pixels */
-    public void overlay(Screen screen2, int currentLevel, int xa, int ya) {
+    public void overlay(Screen screen2, int xa, int ya) {
 		double tintFactor = 0;
-		if(currentLevel >= 3) {
+		if(Game.currentLevel >= 3) {
 			int transTime = Game.dayLength / 4;
 			double relTime = (Game.tickCount % transTime)*1.0 / transTime;
-			
-			switch(Game.getTime()) {
+			//System.out.println("relTime: " + relTime);
+			switch((Game.Time)Game.getTime()) {
 				case Morning: tintFactor = Game.pastDay1 ? (1-relTime) * MAXDARK : 0; break;
 				case Day: tintFactor = 0; break;
 				case Evening: tintFactor = relTime * MAXDARK; break;
 				case Night: tintFactor = MAXDARK; break;
 			}
-			if(currentLevel == 4) tintFactor -= (tintFactor < 10 ? tintFactor : 10);
+			if(Game.currentLevel == 4) tintFactor -= tintFactor < 10 ? tintFactor : 10;
 			tintFactor *= -1; // all previous operations were assumping this was a darkening factor.
-			//tintFactor += 20;
+			tintFactor += 20;
+			//System.out.println("tint factor: " + tintFactor);
+			//if(tintFactor > MAXLIGHT) tintFactor = MAXLIGHT;
+			//if(random.nextInt((int)(Game.normSpeed/Game.gamespeed))==0) System.out.println("rendering dark factor " + tintFactor);
 		}
         
 		int[] oPixels = screen2.pixels;  // The Integer array of pixels to overlay the screen with.
@@ -122,7 +120,7 @@ public class Screen {
             for (int x = 0; x < w; x++) { // loop through width of screen
 				if (oPixels[i] / 10 <= dither[((x + xa) & 3) + ((y + ya) & 3) * 4]) {
                     /// the above if statement is simply comparing the light level stored in oPixels with the minimum light level stored in dither. if it is determined that the oPixels[i] is less than the minimum requirements, the pixel is considered "dark", and the below is executed...
-					if(currentLevel < 3) { // if in caves...
+					if(Game.currentLevel < 3) { // if in caves...
                         /// in the caves, not being lit means being pitch black.
 						pixels[i] = 0;
                     } else {
@@ -130,9 +128,6 @@ public class Screen {
 						pixels[i] = Color.tintColor(pixels[i], (int)tintFactor); // darkens the color one shade.
                     }
                 }
-				
-				// increase the tinting of all colors by 20.
-				pixels[i] = Color.tintColor(pixels[i], 20);
                 i++; // moves to the next pixel.
             }
         }

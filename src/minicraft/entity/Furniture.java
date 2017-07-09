@@ -1,6 +1,5 @@
 package minicraft.entity;
 
-import minicraft.Game;
 import minicraft.gfx.Screen;
 import minicraft.gfx.Sprite;
 import minicraft.item.FurnitureItem;
@@ -10,7 +9,7 @@ import minicraft.item.PowerGloveItem;
 
 public class Furniture extends Entity {
 	
-	protected int pushTime = 0, multiPushTime = 0; // time for each push; multi is for multiplayer, to make it so not so many updates are sent.
+	protected int pushTime = 0; // time for each push.
 	protected int pushDir = -1; // the direction to push the furniture
 	public Sprite sprite;
 	public String name;
@@ -40,16 +39,8 @@ public class Furniture extends Entity {
 		if (shouldTake != null) { // if the player that should take this exists...
 			if (shouldTake.activeItem instanceof PowerGloveItem) { // ...and the player's holding a power glove...
 				remove(); // remove this from the world
-				if(!Game.ISONLINE) {
-					shouldTake.inventory.add(0, shouldTake.activeItem); // put the power glove into the player's inventory
-					shouldTake.activeItem = new FurnitureItem(this); // make this the player's current item.
-				}
-				else if(Game.isValidServer() && shouldTake instanceof RemotePlayer)
-					Game.server.updatePlayerActiveItem((RemotePlayer)shouldTake, (new FurnitureItem(this)));
-				else
-					System.out.println("WARNING: undefined behavior; online game was not server and ticked furniture: "+this+"; and/or player in online game found that isn't a RemotePlayer: " + shouldTake);
-				
-				if (Game.debug) System.out.println("set active item of player " + shouldTake + " to " + shouldTake.activeItem + "; picked up furniture: " + this);
+				shouldTake.inventory.add(0, shouldTake.activeItem); // put the power glove into the player's inventory
+				shouldTake.activeItem = new FurnitureItem(this); // make this the player's current item.
 			}
 			shouldTake = null; // the player is now dereferenced.
 		}
@@ -60,7 +51,6 @@ public class Furniture extends Entity {
 		if (pushDir == 3) move(+1, 0);
 		pushDir = -1; // makes pushDir -1 so it won't repeat itself.
 		if (pushTime > 0) pushTime--; // update pushTime by subtracting 1.
-		else multiPushTime = 0;
 	}
 	
 	/** Draws the furniture on the screen. */
@@ -75,17 +65,10 @@ public class Furniture extends Entity {
 	
 	/** What happens when this is touched by another entity */
 	protected void touchedBy(Entity entity) {
-		if (entity instanceof Player)
-			tryPush((Player) entity);
-	}
-	
-	public void tryPush(Player player) {
-		if (pushTime == 0) {
-			pushDir = player.dir; // set pushDir to the player's dir.
-			pushTime = multiPushTime = 10; // set pushTime to 10.
-			
-			if(Game.isValidClient())
-				Game.client.pushFurniture(this, pushDir);
+		/// ADD TO THIS METHOD TO REMOVE UNNECESSARY CLASSES? maybe combine others into a "CraftingFurniture" class?
+		if (entity instanceof Player && pushTime == 0) {
+			pushDir = ((Player) entity).dir; // set pushDir to the player's dir.
+			pushTime = 10; // set pushTime to 10.
 		}
 	}
 	
@@ -96,24 +79,5 @@ public class Furniture extends Entity {
 	
 	public boolean canWool() {
 		return true;
-	}
-	
-	protected String getUpdateString() {
-		return super.getUpdateString()+
-		//";pushDir,"+pushDir+
-		";pushTime,"+multiPushTime;
-	}
-	
-	protected boolean updateField(String field, String val) {
-		//if(field.equals("x") || field.equals("y")) System.out.println(Game.onlinePrefix()+"updating furniture coordinate "+field+" to "+val+": " + this);
-		
-		if(super.updateField(field, val)) return true;
-		
-		switch(field) {
-			//case "pushDir": pushDir = Integer.parseInt(val); return true;
-			case "pushTime": pushTime = Integer.parseInt(val); return true;
-		}
-		
-		return false;
 	}
 }

@@ -11,7 +11,6 @@ import minicraft.Game;
 import minicraft.entity.Player;
 import minicraft.gfx.Color;
 import minicraft.gfx.Font;
-import minicraft.gfx.FontStyle;
 import minicraft.gfx.Screen;
 import minicraft.item.Items;
 
@@ -43,7 +42,7 @@ public class WonMenu extends Menu {
 			ml = Math.max(name.length(), ml);
 		}
 		
-		finalscore = player.score;
+		finalscore = Player.score;
 		for(Integer score: scores.values().toArray(new Integer[0])) {
 			finalscore += score;
 		}
@@ -101,15 +100,14 @@ public class WonMenu extends Menu {
 		Font.drawCentered("Game Over! (" + ModeMenu.getSelectedTime() + ")", screen, 4*8, Color.get(-1, 555));
 		
 		if(unlocks.size() > 0) {
-			FontStyle style = new FontStyle(Color.get(-1, 50)).xCenterBounds(screen.w/2, screen.w-8);
-			style.setYPos(10 * 8).draw("Unlocked!", screen);
+			Font.drawCentered("Unlocked!", screen, screen.w/2, screen.w-8, 10*8, Color.get(-1, 50));
 			for(int i = 0; i < unlocks.size(); ++i) {
 				String unlock = unlocks.get(i).replace("M", "MINUTEMODE").replace("H", "HOURMODE");
-				style.setYPos((12+i)*8).draw(unlock, screen);
+				Font.drawCentered(unlock, screen, screen.w/2, screen.w-8, (12+i)*8, Color.get(-1, 50));
 			}
 		}
 		
-		Font.draw("Player Score: " + game.player.score, screen, 16, 6*8, Color.get(-1, 555));
+		Font.draw("Player Score: " + Player.score, screen, 16, 6*8, Color.get(-1, 555));
 		Font.draw("<Bonuses>", screen, 16, 8*8, Color.get(-1, 040));
 		int i = 0;
 		for(String bonus: scores.keySet().toArray(new String[0])) {

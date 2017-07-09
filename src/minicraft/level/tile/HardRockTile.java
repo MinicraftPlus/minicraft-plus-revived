@@ -42,7 +42,7 @@ public class HardRockTile extends Tile {
 					return true;
 				}
 			}
-			else player.game.notifications.add("Gem Pickaxe Required.");
+			else Game.notifications.add("Gem Pickaxe Required.");
 		}
 		if (ModeMenu.creative) return true;
 		
