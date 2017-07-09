@@ -88,6 +88,12 @@ public class Level {
 		System.out.println("found " + numfound + " entities in level of depth " + depth);
 	}
 	
+	public void updateMobCap() {
+		maxMobCount = 200 + 200*OptionsMenu.diff;
+		if(depth == 0) maxMobCount = maxMobCount * 2 / 3;
+		if(depth == 1 || depth == -4) maxMobCount /= 2;
+	}
+	
 	@SuppressWarnings("unchecked") // @SuppressWarnings ignores the warnings (yellow underline) in this method.
 	/** Level which the world is contained in */
 	public Level(Game game, int w, int h, int level, Level parentLevel) {this(game, w, h, level, parentLevel, true); }
@@ -107,13 +113,7 @@ public class Level {
 		if(level != -4 && level != 0)
 			monsterDensity = 4;
 	
-		maxMobCount = 300 + 100*OptionsMenu.diff;
-		if(depth == 0) maxMobCount = maxMobCount * 2 / 3;
-		if(depth == 1 || depth == -4) maxMobCount /= 2;
-		
-		maxMobCount = 300 + 100*OptionsMenu.diff;
-		if(depth == 0) maxMobCount = maxMobCount * 2 / 3;
-		if(depth == 1 || depth == -4) maxMobCount /= 2;
+		updateMobCap();
 		
 		if(!makeWorld) {
 			int arrsize = w * h;
@@ -524,7 +524,7 @@ public class Level {
 		
 		mobCount = count;
 		
-		if(count < maxMobCount && !Game.isValidClient())
+		if(count < maxMobCount && !Game.isValidClient() && Game.tickCount % 5 == 0)
 			trySpawn(1);
 		//else if (Game.debug)
 			//System.out.println("too many mobs on level " + depth + "; "+count+" of "+maxMobCount+".");
@@ -705,7 +705,10 @@ public class Level {
 	}
 	*/
 	public void trySpawn(int count) {
+		if(random.nextInt(4) == 0) return; // hopefully will make mobs spawn a lot slower.
 		for (int i = 0; i < count; i++) {
+			if(random.nextInt(2) == 0) continue; // hopefully will make mobs spawn a lot slower.
+			
 			int minLevel = 1, maxLevel = 1;
 			if (depth < 0) {
 				maxLevel = (-depth) + 1;
