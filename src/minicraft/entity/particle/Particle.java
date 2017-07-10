@@ -1,6 +1,5 @@
 package minicraft.entity.particle;
 
-import minicraft.Game;
 import minicraft.entity.Entity;
 import minicraft.gfx.Screen;
 import minicraft.gfx.Sprite;

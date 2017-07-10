@@ -1,5 +1,6 @@
 package minicraft.level.tile;
 
+import minicraft.Sound;
 import minicraft.entity.Entity;
 import minicraft.entity.Mob;
 import minicraft.entity.Player;
@@ -11,7 +12,6 @@ import minicraft.item.Items;
 import minicraft.item.ToolItem;
 import minicraft.item.ToolType;
 import minicraft.level.Level;
-import minicraft.Sound;
 
 public class DoorTile extends Tile {
 	private Sprite closedSprite = new Sprite(2, 24, 2, 2);

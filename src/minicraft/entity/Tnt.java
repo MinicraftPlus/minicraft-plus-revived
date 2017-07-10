@@ -1,15 +1,15 @@
 package minicraft.entity;
 
-import java.util.List;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.util.List;
 import javax.swing.Timer;
+import minicraft.Sound;
 import minicraft.gfx.Color;
-import minicraft.gfx.Sprite;
 import minicraft.gfx.Screen;
+import minicraft.gfx.Sprite;
 import minicraft.level.Level;
 import minicraft.level.tile.Tiles;
-import minicraft.Sound;
 
 public class Tnt extends Furniture implements ActionListener {
 	private static int FUSE_TIME = 90;

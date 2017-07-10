@@ -1,6 +1,7 @@
 package minicraft.entity;
 
 import java.util.List;
+import minicraft.Game;
 import minicraft.gfx.Color;
 import minicraft.gfx.MobSprite;
 import minicraft.gfx.Screen;
@@ -8,7 +9,6 @@ import minicraft.item.Item;
 import minicraft.item.PotionType;
 import minicraft.level.Level;
 import minicraft.screen.ModeMenu;
-import minicraft.Game;
 
 public abstract class MobAi extends Mob {
 	

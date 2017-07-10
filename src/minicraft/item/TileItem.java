@@ -3,14 +3,12 @@ package minicraft.item;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import minicraft.Game;
 import minicraft.entity.Player;
 import minicraft.gfx.Color;
 import minicraft.gfx.Sprite;
 import minicraft.level.Level;
 import minicraft.level.tile.Tile;
 import minicraft.level.tile.Tiles;
-import minicraft.level.tile.WoolTile;
 
 public class TileItem extends StackableItem {
 	

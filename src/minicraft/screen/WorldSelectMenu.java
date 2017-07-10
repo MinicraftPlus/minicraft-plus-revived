@@ -10,11 +10,11 @@ import java.nio.file.StandardCopyOption;
 import java.nio.file.attribute.BasicFileAttributes;
 import java.util.ArrayList;
 import minicraft.Game;
+import minicraft.Sound;
 import minicraft.gfx.Color;
 import minicraft.gfx.Font;
 import minicraft.gfx.Screen;
 import minicraft.saveload.Load;
-import minicraft.Sound;
 
 public class WorldSelectMenu extends Menu {
 	

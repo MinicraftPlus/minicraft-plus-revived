@@ -1,17 +1,12 @@
 package minicraft.screen;
 
-import java.io.File;
-import java.io.IOException;
-import java.net.URISyntaxException;
-import java.util.List;
 import java.util.ArrayList;
+import java.util.List;
 import minicraft.Game;
-import minicraft.InputHandler;
-import minicraft.entity.RemotePlayer;
-import minicraft.gfx.Screen;
+import minicraft.gfx.Color;
 import minicraft.gfx.Font;
 import minicraft.gfx.FontStyle;
-import minicraft.gfx.Color;
+import minicraft.gfx.Screen;
 import minicraft.network.MinicraftClient;
 
 public class MultiplayerMenu extends Menu {

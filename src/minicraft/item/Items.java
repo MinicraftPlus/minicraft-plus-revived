@@ -1,8 +1,6 @@
 package minicraft.item;
 
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
 import minicraft.Game;
 import minicraft.entity.Inventory;
 

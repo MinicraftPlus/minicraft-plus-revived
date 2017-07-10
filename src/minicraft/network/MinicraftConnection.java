@@ -1,8 +1,8 @@
 package minicraft.network;
 
-import java.util.List;
-import java.util.Arrays;
 import java.net.InetAddress;
+import java.util.Arrays;
+import java.util.List;
 
 public interface MinicraftConnection {
 	

@@ -1,6 +1,5 @@
 package minicraft.level.tile;
 
-import minicraft.Game;
 import minicraft.gfx.Color;
 import minicraft.gfx.Screen;
 import minicraft.gfx.Sprite;

@@ -1,6 +1,5 @@
 package minicraft.level.tile;
 
-import minicraft.Game;
 import minicraft.entity.AirWizard;
 import minicraft.entity.Entity;
 import minicraft.entity.Mob;

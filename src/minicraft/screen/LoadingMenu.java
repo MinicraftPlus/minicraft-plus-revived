@@ -3,10 +3,10 @@ package minicraft.screen;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import javax.swing.Timer;
+import minicraft.Game;
 import minicraft.gfx.Color;
 import minicraft.gfx.Font;
 import minicraft.gfx.Screen;
-import minicraft.Game;
 
 public class LoadingMenu extends Menu implements ActionListener {
 	//this is the last menu before the game/world starts/opens.

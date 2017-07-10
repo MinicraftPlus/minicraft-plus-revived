@@ -4,6 +4,7 @@ import java.util.HashMap;
 import java.util.List;
 import minicraft.Game;
 import minicraft.InputHandler;
+import minicraft.Sound;
 import minicraft.entity.particle.TextParticle;
 import minicraft.gfx.Color;
 import minicraft.gfx.MobSprite;
@@ -30,7 +31,6 @@ import minicraft.screen.PauseMenu;
 import minicraft.screen.PlayerInfoMenu;
 import minicraft.screen.PlayerInvMenu;
 import minicraft.screen.WorldSelectMenu;
-import minicraft.Sound;
 
 public class Player extends Mob {
 	protected InputHandler input;

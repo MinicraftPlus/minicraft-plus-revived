@@ -1,6 +1,5 @@
 package minicraft.entity;
 
-import minicraft.Game;
 import minicraft.gfx.MobSprite;
 import minicraft.gfx.Screen;
 import minicraft.level.Level;

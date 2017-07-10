@@ -1,5 +1,6 @@
 package minicraft.level.tile;
 
+import minicraft.Sound;
 import minicraft.entity.Player;
 import minicraft.gfx.Color;
 import minicraft.gfx.ConnectorSprite;
@@ -9,7 +10,6 @@ import minicraft.item.Items;
 import minicraft.item.ToolItem;
 import minicraft.item.ToolType;
 import minicraft.level.Level;
-import minicraft.Sound;
 
 public class GrassTile extends Tile {
 	private static ConnectorSprite sprite = new ConnectorSprite(GrassTile.class, new Sprite(11, 0, 3, 3, Color.get(141, 141, 252, 321), 3), Sprite.dots(Color.get(141, 141, 252, 321)))

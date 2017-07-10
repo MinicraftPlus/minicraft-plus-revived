@@ -1,13 +1,9 @@
 package minicraft.item;
 
 import java.util.ArrayList;
-import minicraft.entity.Player;
 import minicraft.gfx.Color;
-import minicraft.gfx.Font;
 import minicraft.gfx.Screen;
 import minicraft.gfx.Sprite;
-import minicraft.level.Level;
-import minicraft.level.tile.Tile;
 import minicraft.screen.ModeMenu;
 
 // some items are direct instances of this class; those instances are the true "items", like stone, wood, wheat, or coal; you can't do anything with them besides use them to make something else.

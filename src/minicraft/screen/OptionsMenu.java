@@ -1,12 +1,11 @@
 package minicraft.screen;
 
 import minicraft.Game;
-import minicraft.entity.Player;
+import minicraft.Sound;
 import minicraft.gfx.Color;
 import minicraft.gfx.Font;
 import minicraft.gfx.Screen;
 import minicraft.saveload.Save;
-import minicraft.Sound;
 
 public class OptionsMenu extends Menu {
 	public static int easy = 0;

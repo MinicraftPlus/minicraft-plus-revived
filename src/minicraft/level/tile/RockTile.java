@@ -1,7 +1,6 @@
 package minicraft.level.tile;
 
 import minicraft.entity.Entity;
-import minicraft.entity.ItemEntity;
 import minicraft.entity.Mob;
 import minicraft.entity.Player;
 import minicraft.entity.particle.SmashParticle;

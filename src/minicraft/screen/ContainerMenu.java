@@ -1,11 +1,11 @@
 package minicraft.screen;
 
+import minicraft.Game;
+import minicraft.Sound;
 import minicraft.entity.Chest;
 import minicraft.entity.Inventory;
 import minicraft.entity.Player;
 import minicraft.gfx.Screen;
-import minicraft.Sound;
-import minicraft.Game;
 
 public class ContainerMenu extends Menu {
 	private Player player; // The player that is looking inside the chest

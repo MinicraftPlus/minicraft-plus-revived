@@ -1,37 +1,35 @@
 package minicraft.network;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.net.DatagramSocket;
+import java.io.IOException;
 import java.net.DatagramPacket;
+import java.net.DatagramSocket;
 import java.net.InetAddress;
 import java.net.SocketException;
 import java.net.SocketTimeoutException;
 import java.net.UnknownHostException;
-import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.List;
 import minicraft.Game;
-import minicraft.InputHandler;
+import minicraft.entity.Bed;
+import minicraft.entity.Chest;
+import minicraft.entity.DeathChest;
 import minicraft.entity.Entity;
+import minicraft.entity.Furniture;
 import minicraft.entity.ItemEntity;
 import minicraft.entity.Player;
 import minicraft.entity.RemotePlayer;
-import minicraft.entity.Furniture;
-import minicraft.entity.Chest;
-import minicraft.entity.Bed;
-import minicraft.entity.DeathChest;
 import minicraft.item.Item;
 import minicraft.item.Items;
 import minicraft.item.PotionItem;
 import minicraft.item.PotionType;
-import minicraft.screen.MultiplayerMenu;
-import minicraft.screen.ModeMenu;
-import minicraft.screen.TitleMenu;
-import minicraft.screen.DeadMenu;
 import minicraft.level.Level;
-import minicraft.saveload.Save;
 import minicraft.saveload.Load;
+import minicraft.saveload.Save;
+import minicraft.screen.DeadMenu;
+import minicraft.screen.ModeMenu;
+import minicraft.screen.MultiplayerMenu;
 
 /// This class is only used by the client runtime; the server runtime doesn't touch it.
 public class MinicraftClient extends Thread implements MinicraftConnection {

@@ -13,13 +13,11 @@ import minicraft.gfx.Screen;
 import minicraft.item.Item;
 import minicraft.item.Items;
 import minicraft.item.ToolType;
-import minicraft.item.PotionType;
 import minicraft.level.tile.Tile;
 import minicraft.level.tile.Tiles;
 import minicraft.level.tile.TorchTile;
 import minicraft.screen.ModeMenu;
 import minicraft.screen.OptionsMenu;
-import minicraft.screen.WorldSelectMenu;
 
 public class Level {
 	private Random random = new Random();

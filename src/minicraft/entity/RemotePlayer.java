@@ -5,10 +5,10 @@ import java.util.HashMap;
 import java.util.List;
 import minicraft.Game;
 import minicraft.InputHandler;
-import minicraft.gfx.Screen;
+import minicraft.gfx.Color;
 import minicraft.gfx.Font;
 import minicraft.gfx.FontStyle;
-import minicraft.gfx.Color;
+import minicraft.gfx.Screen;
 
 /** This is used for players in multiplayer mode. */
 public class RemotePlayer extends Player {

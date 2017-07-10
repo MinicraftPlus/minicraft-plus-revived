@@ -1,19 +1,19 @@
 package minicraft.entity;
 
 import java.util.Random;
+import minicraft.Sound;
 import minicraft.entity.particle.FireParticle;
 import minicraft.entity.particle.TextParticle;
 import minicraft.gfx.Color;
 import minicraft.gfx.Sprite;
-import minicraft.item.Item;
 import minicraft.item.FurnitureItem;
+import minicraft.item.Item;
 import minicraft.item.PotionType;
+import minicraft.item.PowerGloveItem;
 import minicraft.item.ToolItem;
 import minicraft.item.ToolType;
-import minicraft.item.PowerGloveItem;
 import minicraft.level.tile.Tile;
 import minicraft.screen.ModeMenu;
-import minicraft.Sound;
 
 public class Spawner extends Furniture {
 	
