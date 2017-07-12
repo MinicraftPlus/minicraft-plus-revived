@@ -1,7 +1,6 @@
 package minicraft.entity;
 
 import java.net.InetAddress;
-import java.util.HashMap;
 import java.util.List;
 import minicraft.Game;
 import minicraft.InputHandler;

@@ -1,36 +1,23 @@
 package minicraft.network;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.net.Socket;
-import java.net.SocketException;
-import java.net.NetworkInterface;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
-import java.io.FilenameFilter;
 import java.io.IOException;
+import java.net.NetworkInterface;
+import java.net.Socket;
+import java.net.SocketException;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 import minicraft.Game;
-import minicraft.InputHandler;
-import minicraft.entity.Bed;
-import minicraft.entity.Chest;
 import minicraft.entity.Entity;
-import minicraft.entity.Furniture;
-import minicraft.entity.ItemEntity;
 import minicraft.entity.Player;
 import minicraft.entity.RemotePlayer;
-import minicraft.entity.particle.Particle;
 import minicraft.item.Item;
-import minicraft.item.Items;
-import minicraft.item.PotionItem;
-import minicraft.item.PotionType;
-import minicraft.level.Level;
 import minicraft.saveload.Load;
 import minicraft.saveload.Save;
-import minicraft.screen.ModeMenu;
-import minicraft.screen.WorldSelectMenu;
 
 public class MinicraftServerThread extends MinicraftConnection {
 	

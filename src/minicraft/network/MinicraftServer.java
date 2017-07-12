@@ -1,18 +1,10 @@
 package minicraft.network;
 
-import java.io.BufferedReader;
 import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileReader;
 import java.io.FilenameFilter;
-import java.io.InputStreamReader;
 import java.io.IOException;
-import java.io.PrintWriter;
 import java.net.ServerSocket;
-import java.net.InetAddress;
-import java.net.NetworkInterface;
 import java.net.SocketException;
-import java.net.SocketTimeoutException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -24,7 +16,6 @@ import minicraft.entity.Furniture;
 import minicraft.entity.ItemEntity;
 import minicraft.entity.Player;
 import minicraft.entity.RemotePlayer;
-import minicraft.entity.particle.Particle;
 import minicraft.item.Item;
 import minicraft.item.Items;
 import minicraft.item.PotionItem;

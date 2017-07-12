@@ -1,6 +1,5 @@
 package minicraft.entity;
 
-import java.util.List;
 import minicraft.Game;
 import minicraft.gfx.Color;
 import minicraft.gfx.MobSprite;
