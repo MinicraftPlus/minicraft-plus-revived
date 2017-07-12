@@ -3,6 +3,7 @@ package minicraft.item;
 import java.util.ArrayList;
 import minicraft.Game;
 import minicraft.entity.Player;
+import minicraft.entity.RemotePlayer;
 import minicraft.gfx.Color;
 import minicraft.gfx.Sprite;
 import minicraft.level.Level;
@@ -44,8 +45,8 @@ public class PotionItem extends StackableItem {
 		if(player.getPotionEffects().containsKey(type) != addEffect) { // if hasEffect, and is disabling, or doesn't have effect, and is enabling...
 			type.toggleEffect(player, addEffect);
 			
-			if (Game.isValidServer()) // transmit the effect
-				Game.server.sendPotionEffect(player, type, addEffect);
+			if (Game.isValidServer() && player instanceof RemotePlayer) // transmit the effect
+				Game.server.getMatchingThread((RemotePlayer)player).sendPotionEffect(type, addEffect);
 		}
 		
 		if(addEffect && type.duration > 0) player.potioneffects.put(type, type.duration); // add it

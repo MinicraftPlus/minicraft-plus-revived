@@ -18,26 +18,30 @@ public class RemotePlayer extends Player {
 	private static final int ySyncRadius = 8;
 	private static final int entityTrackingBuffer = 5;
 	
-	public InetAddress ipAddress;
-	public int port;
+	private String username = "";
+	private InetAddress ipAddress;
+	private int port;
 	
-	public String username;
-	
-	/// this one here is solely for the server, as an easy way to keep track of the whether entity additions or removals have been confirmed by this client. The key is the eid, and the value is the timestamp.
-	public HashMap<Integer, Long> unconfirmedAdditions = new HashMap<Integer, Long>();
-	public HashMap<Integer, Long> unconfirmedRemovals = new HashMap<Integer, Long>();
-	//public HashMap<String, Long> unconfirmedTiles = new HashMap<String, Long>();
-	
-	public RemotePlayer(Player previous, Game game, String username, InetAddress ip, int port) { this(previous, game, false, username, ip, port); }
-	public RemotePlayer(Player previous, Game game, boolean isMainPlayer, String username, InetAddress ip, int port) {
+	public RemotePlayer(Player previous, Game game, InetAddress ip, int port) { this(previous, game, false, ip, port); }
+	public RemotePlayer(Player previous, Game game, boolean isMainPlayer, InetAddress ip, int port) {
 		super(previous, game, (isMainPlayer?game.input:new InputHandler(game, false)));
 		this.ipAddress = ip;
 		this.port = port;
-		this.username = username;
 	}
 	public RemotePlayer(Game game, boolean isMainPlayer, RemotePlayer model) {
-		this(model, game, isMainPlayer, model.username, model.ipAddress, model.port);
+		this(model, game, isMainPlayer, model.ipAddress, model.port);
 		eid = model.eid;
+		setUsername(username);
+	}
+	
+	public void setUsername(String username) {
+		this.username = username;
+	}
+	public String getUsername() { return username; }
+	public InetAddress getIpAddress() { return ipAddress; }
+	
+	public String getData() {
+		return username + ":" + ipAddress.getCanonicalHostName() + ":" + port;
 	}
 	
 	public void tick() {
@@ -59,28 +63,9 @@ public class RemotePlayer extends Player {
 		
 		boolean moved = super.move(xa, ya);
 		
-		if(!(oldxt == x>>4 && oldyt == y>>4)) {
+		if(!(oldxt == x>>4 && oldyt == y>>4) && Game.isValidClient() && this == game.player) {
 			// if moved (and is client), then check any tiles no longer loaded, and remove any entities on them.
-			if(Game.isValidClient() && this == game.player)
-				updateSyncArea(oldxt, oldyt);
-			
-			if(Game.isValidServer()) {
-				List<RemotePlayer> prevPlayers = Game.server.getPlayersInRange(level, oldxt, oldyt, true);
-				List<RemotePlayer> activePlayers = Game.server.getPlayersInRange(this, true);
-				for(int i = 0; i < Math.min(prevPlayers.size(), activePlayers.size()); i++) {
-					if(activePlayers.contains(prevPlayers.get(i))) {
-						activePlayers.remove(i);
-						prevPlayers.remove(i);
-						i--;
-					}
-				}
-				// the lists should now only contain players that now out of range, and players that are just now in range.
-				for(RemotePlayer rp: prevPlayers)
-					Game.server.sendEntityRemoval(this.eid, rp);
-				for(RemotePlayer rp: activePlayers)
-					Game.server.sendEntityAddition(this, rp);
-				
-			}
+			updateSyncArea(oldxt, oldyt);
 		}
 		
 		return moved;
@@ -154,18 +139,16 @@ public class RemotePlayer extends Player {
 		
 		for(int y = ymin; y <= ymax; y++) {
 			for(int x = xmin; x <= xmax; x++) {
-				/// server loops through new tiles, and compares with old tiles below (server: x,y is new coord)
-				/// client loops through old tiles, and compares with new tiles below (client: x,y is old coord)
+				/// server loops through current tiles, and filters out old tiles, so only new tiles are left.
+				/// client loops through old tiles, and filters out current tiles, so only old tiles are left.
 				if(xt0 < 0 || yt0 < 0 || x > xt0+xr || x < xt0-xr || y > yt0+yr || y < yt0-yr) {
-					//if(isServer)
-						//Game.server.sendTileUpdate(x, y, this); // update the new tile
 					
-					/// SERVER NOTE: don't worry about removing entities that go to unloaded tiles; the client will do that. Now, as for mobs that wander out of or into a player's loaded tiles without the player moving, the MobAi class deals with that.
+					/// SERVER NOTE: don't worry about removing entities that go to unloaded tiles; the client will do that. Now, as for mobs (or players) that wander out of or into a player's loaded tiles without the player moving, the Mob class deals with that.
 					
 					for(Entity e: loadableEntites) {
 						if(e != this && e.x >> 4 == x && e.y >> 4 == y) {
 							if(isServer) /// send any entities on that new tile to be added.
-								Game.server.sendEntityAddition(e, this);
+								Game.server.getMatchingThread(this).sendEntityAddition(e);
 							if(isClient) /// remove each entity on that tile.
 								e.remove();
 						}

@@ -4,13 +4,23 @@ import java.awt.BorderLayout;
 import java.awt.Canvas;
 import java.awt.Dimension;
 import java.awt.Graphics;
-import java.awt.event.*;
+import java.awt.event.WindowEvent;
+import java.awt.event.WindowListener;
+import java.awt.event.ComponentAdapter;
+import java.awt.event.ComponentEvent;
 import java.awt.image.BufferStrategy;
 import java.awt.image.BufferedImage;
 import java.awt.image.DataBufferInt;
-import java.io.*;
+import java.io.File;
+import java.io.IOException;
 import java.net.URISyntaxException;
-import java.util.*;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.Random;
 import javax.imageio.ImageIO;
 import javax.swing.JFrame;
 import minicraft.entity.Bed;
@@ -20,11 +30,7 @@ import minicraft.entity.Lantern;
 import minicraft.entity.Mob;
 import minicraft.entity.Player;
 import minicraft.entity.RemotePlayer;
-import minicraft.gfx.Color;
-import minicraft.gfx.Font;
-import minicraft.gfx.FontStyle;
-import minicraft.gfx.Screen;
-import minicraft.gfx.SpriteSheet;
+import minicraft.gfx.*;
 import minicraft.item.Items;
 import minicraft.item.PotionType;
 import minicraft.item.ToolItem;
@@ -32,10 +38,8 @@ import minicraft.item.ToolType;
 import minicraft.level.Level;
 import minicraft.level.tile.Tile;
 import minicraft.level.tile.Tiles;
-import minicraft.network.MinicraftClient;
-import minicraft.network.MinicraftServer;
-import minicraft.saveload.Load;
-import minicraft.saveload.Save;
+import minicraft.network.*;
+import minicraft.saveload.*;
 import minicraft.screen.*;
 
 public class Game extends Canvas implements Runnable {
@@ -778,8 +782,12 @@ public class Game extends Canvas implements Runnable {
 				Font.drawCentered("Awaiting client connections"+getElipses(), screen, 10, Color.get(-1, 444));
 				Font.drawCentered("So far:", screen, 20, Color.get(-1, 444));
 				int i = 0;
-				for(String name: Game.server.getClientNames()) {
-					Font.drawCentered(name, screen, 30+i*10, Color.get(-1, 134));
+				for(MinicraftServerThread serverThread: Game.server.getThreads()) {
+					RemotePlayer clientPlayer = serverThread.getClient();
+					if(clientPlayer.getUsername().length() == 0) continue; // they aren't done logging in yet.
+					
+					String playerString = clientPlayer.getUsername() + ": " + clientPlayer.getIpAddress().getHostAddress() + (Game.debug?" ("+(clientPlayer.x>>4)+","+(clientPlayer.y>>4)+")":"");
+					Font.drawCentered(playerString, screen, 30+i*10, Color.get(-1, 134));
 					i++;
 				}
 			}

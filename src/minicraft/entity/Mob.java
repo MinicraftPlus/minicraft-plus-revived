@@ -1,5 +1,7 @@
 package minicraft.entity;
 
+import java.util.List;
+import minicraft.Game;
 import minicraft.Sound;
 import minicraft.entity.particle.TextParticle;
 import minicraft.gfx.Color;
@@ -50,6 +52,10 @@ public abstract class Mob extends Entity {
 	public boolean move(int xa, int ya) { // Move the mob, overrides from Entity
 		if(level == null) return false; // stopped b/c there's no level to move in!
 		
+		boolean checkPlayers = Game.isValidServer() && (xa != 0 || ya != 0);
+		List<RemotePlayer> prevPlayers = null;
+		if(checkPlayers) prevPlayers = Game.server.getPlayersInRange(this, true);
+		
 		// these should return true b/c the mob is still technically moving; these are just to make it move *slower*.
 		if (!(this instanceof Player) && tickTime % 2 == 0 && (isSwimming() || isWooling()))
 			return true;
@@ -75,17 +81,44 @@ public abstract class Mob extends Entity {
 			move2(0, 1);
 			yKnockback--;
 		}
-		if (hurtTime > 0 && this instanceof Player == false) return true; // If a mob has been hurt recently and hasn't yet cooled down, don't continue with the movement (so only knockback will be performed)
 		
-		if (xa != 0 || ya != 0) { // Only if horizontal or vertical movement is actually happening
-			walkDist++; // Increment our walking/movement counter
-			if (xa < 0) dir = 2; // Set the mob's direction based on movement: left
-			if (xa > 0) dir = 3; // right
-			if (ya < 0) dir = 1; // up
-			if (ya > 0) dir = 0; // down
+		boolean moved = true;
+		
+		if (hurtTime == 0 || this instanceof Player) { // If a mob has been hurt recently and hasn't yet cooled down, don't continue with the movement (so only knockback will be performed)
+		
+			if (xa != 0 || ya != 0) { // Only if horizontal or vertical movement is actually happening
+				walkDist++; // Increment our walking/movement counter
+				if (xa < 0) dir = 2; // Set the mob's direction based on movement: left
+				if (xa > 0) dir = 3; // right
+				if (ya < 0) dir = 1; // up
+				if (ya > 0) dir = 0; // down
+			}
+			
+			moved = super.move(xa, ya); // Call the move method from Entity
 		}
 		
-		return super.move(xa, ya); // Call the move method from Entity
+		if(checkPlayers) {
+			List<RemotePlayer> activePlayers = Game.server.getPlayersInRange(this, true);
+			for(int i = 0; i < prevPlayers.size(); i++) {
+				if(activePlayers.contains(prevPlayers.get(i))) {
+					activePlayers.remove(prevPlayers.remove(i));
+					i--;
+				}
+			}
+			for(int i = 0; i < activePlayers.size(); i++) {
+				if(prevPlayers.contains(activePlayers.get(i))) {
+					prevPlayers.remove(activePlayers.remove(i));
+					i--;
+				}
+			}
+			// the lists should now only contain players that are now out of range, and players that are just now in range.
+			for(RemotePlayer rp: prevPlayers)
+				Game.server.getMatchingThread(rp).sendEntityRemoval(this.eid);
+			for(RemotePlayer rp: activePlayers)
+				Game.server.getMatchingThread(rp).sendEntityAddition(this);
+		}
+		
+		return moved;
 	}
 
 	protected boolean isWooling() { // supposed to walk at half speed on wool

@@ -352,9 +352,9 @@ public abstract class Entity {
 	}
 	
 	public String toString() {
-		String superName = super.toString();
-		superName = superName.substring(superName.lastIndexOf(".")+1);
-		return superName + "(eid="+eid+")";
+		//String superName = super.toString();
+		//superName = superName.substring(superName.lastIndexOf(".")+1);
+		return toClassString() + "(eid="+eid+")";
 	}
 	
 	public String toClassString() {

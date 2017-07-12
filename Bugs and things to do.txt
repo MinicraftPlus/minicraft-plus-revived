@@ -1,5 +1,7 @@
 	---Quick TODO's---
 
+--CURRENT: The server recognizes that the client exists, and it creates a server thread for it, but... no data appears to successfully get sent through the socket, and appear on the other side...
+
 -reorder tools a bit in ToolType.java b/c I'm picky. Hoes should be first, at least. ;)
 - add to F3 menu: "heartticks" left until regen another heart.
 
@@ -7,6 +9,8 @@ Note to self: for more little bugs/ideas/concerns, search code for "TODO"
 -----------------------------------------------------------------------------------
 
 	####BUGS####
+####
+If two clients are typing their usernames at the same time, then when one client connects, the other client will be able to type the same username since their username list hasn't been updated. To fix this, have the clients check entity addition packets, and add the username if it turns out to be a player. Also check when the server recieves the login request, and reject it if the username matches an existing one.
 ####
 Wood plank and stone brick floors don't drop when they are destroyed.
 ####

@@ -31,7 +31,7 @@ public class Bed extends Furniture {
 			else {
 				player.remove();
 				if(Game.isValidServer() && player instanceof RemotePlayer)
-					Game.server.sendEntityRemoval(player.eid, (RemotePlayer)player);
+					Game.server.getMatchingThread((RemotePlayer)player).sendEntityRemoval(player.eid);
 			}
 		} else {
 			// it is too early to sleep; display how much time is remaining.
@@ -40,7 +40,7 @@ public class Bed extends Furniture {
 			if(!Game.isValidServer())
 				player.game.notifications.add(note); // add the notification displaying the time remaining in minutes and seconds.
 			else if(player instanceof RemotePlayer)
-				Game.server.sendNotification(note, 0, (RemotePlayer)player);
+				Game.server.getMatchingThread((RemotePlayer)player).sendNotification(note, 0);
 			else
 				System.out.println("WARNING: regular player found trying to get into bed on server; not a RemotePlayer: " + player);
 		}
@@ -52,7 +52,7 @@ public class Bed extends Furniture {
 		if(Bed.playerLevel != null) {
 			Bed.playerLevel.add(Bed.player);
 			if(Game.isValidServer() && player instanceof RemotePlayer)
-				Game.server.sendEntityAddition(player, (RemotePlayer)player);
+				Game.server.getMatchingThread((RemotePlayer)player).sendEntityAddition(player);
 		} else
 			System.out.println("player was previously on null level before bed... can't restore player: " + Bed.player);
 		Bed.playerLevel = null;

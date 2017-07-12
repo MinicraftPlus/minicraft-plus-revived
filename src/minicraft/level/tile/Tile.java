@@ -1,6 +1,7 @@
 package minicraft.level.tile;
 
 import java.util.Random;
+import minicraft.Game;
 import minicraft.entity.Entity;
 import minicraft.entity.Mob;
 import minicraft.entity.Player;
@@ -142,5 +143,16 @@ public abstract class Tile {
 	
 	public String getName(int data) {
 		return name;
+	}
+	
+	public static String getData(int depth, int x, int y) {
+		byte lvlidx = (byte) Game.lvlIdx(depth);
+		Level curLevel = Game.levels[lvlidx];
+		int pos = x + curLevel.w * y;
+		
+		int tileid = curLevel.tiles[pos];
+		int tiledata = curLevel.data[pos];
+		
+		return lvlidx+";"+pos+";"+tileid+";"+tiledata;
 	}
 }

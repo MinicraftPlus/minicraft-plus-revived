@@ -1,5 +1,6 @@
 package minicraft.entity;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import minicraft.Game;
@@ -337,8 +338,8 @@ public class Player extends Mob {
 			if (Game.debug && input.getKey("shift-p").clicked) { // remove all potion effects
 				for(PotionType potionType: potioneffects.keySet()) {
 					PotionItem.applyPotion(this, potionType, false);
-					if(Game.isValidClient())
-						Game.client.sendPotionEffect(this, potionType, false);
+					if(Game.isValidClient() && this == game.player)
+						Game.client.sendPotionEffect(potionType, false);
 				}
 			}
 		}
@@ -778,9 +779,9 @@ public class Player extends Mob {
 	protected void doHurt(int damage, int attackDir) {
 		if (ModeMenu.creative || hurtTime > 0 || Bed.inBed) return; // can't get hurt in creative, hurt cooldown, or while someone is in bed
 		
-		if(Game.isValidServer()) {
+		if(Game.isValidServer() && this instanceof RemotePlayer) {
 			// let the clients deal with it.
-			Game.server.sendPlayerHurt(this, damage, attackDir);
+			Game.server.getMatchingThread((RemotePlayer)this).sendPlayerHurt(damage, attackDir);
 			return;
 		}
 		
@@ -863,5 +864,27 @@ public class Player extends Mob {
 		}
 		
 		return false;
+	}
+	
+	public String getData() {
+		List<String> datalist = new ArrayList<String>();
+		String playerdata = "";
+		
+		Save.writePlayer(this, datalist);
+		for(String str: datalist)
+			if(str.length() > 0)
+				playerdata += str + ",";
+		playerdata = playerdata.substring(0, playerdata.length()-1) + "\n";
+		
+		Save.writeInventory(this, datalist);
+		for(String str: datalist)
+			if(str.length() > 0)
+				playerdata += str + ",";
+		if(datalist.size() == 0)
+			playerdata += "null";
+		else
+			playerdata = playerdata.substring(0, playerdata.length()-1);
+		
+		return playerdata;
 	}
 }

@@ -1,9 +1,8 @@
 package minicraft.network;
 
 import java.io.IOException;
-import java.net.DatagramPacket;
-import java.net.DatagramSocket;
 import java.net.InetAddress;
+import java.net.Socket;
 import java.net.SocketException;
 import java.net.SocketTimeoutException;
 import java.net.UnknownHostException;
@@ -32,101 +31,153 @@ import minicraft.screen.ModeMenu;
 import minicraft.screen.MultiplayerMenu;
 
 /// This class is only used by the client runtime; the server runtime doesn't touch it.
-public class MinicraftClient extends Thread implements MinicraftConnection {
+public class MinicraftClient extends MinicraftConnection {
 	
 	private Game game;
 	private MultiplayerMenu menu;
 	
-	private DatagramSocket socket = null;
-	private InetAddress ipAddress = null; // this is the ipAddress of the server that we are connecting to.
-	
 	private static enum State {
-		USERNAMES, IDLING, LOGIN, TILES, ENTITIES, PLAY, DISCONNECTED;
-		
-		private static final List<State> idleStates = Arrays.asList(new State[] {IDLING, PLAY, DISCONNECTED});
+		PING, USERNAMES, LOGIN, LOADING, PLAY, DISCONNECTED
 	}
 	private State curState = State.DISCONNECTED;
 	
-	private boolean sent = false;
-	private long sentTime;
-	private int tries = 0;
-	private static final int MAX_TRIES = 3;
+	private boolean pingSuccessful = false;
 	
-	private HashMap<Integer, Long> entityAdditionRequests = new HashMap<Integer, Long>();
+	//private boolean sent = false;
+	//private long sentTime;
+	//private int tries = 0;
+	//private static final int MAX_TRIES = 3;
+	
+	private static final int MAX_WAIT_TIME = 10000;
+	private static final int RETRY_INTERVAL = 2000;
+	private static final int SLEEP_TIME = 10;
+	
+	private int waitTime;
+	
+	private static final Socket openSocket(String hostName) {
+		InetAddress hostAddress = null;
+		Socket socket = null;
+		
+		try {
+			hostAddress = InetAddress.getByName(hostName);
+		} catch (UnknownHostException ex) {
+			System.err.println("Don't know about host " + hostName);
+			ex.printStackTrace();
+			return null;
+		}
+		
+		try {
+			socket = new Socket(hostAddress, PORT);
+		} catch (IOException ex) {
+			System.err.println("Problem connecting socket to server:");
+			ex.printStackTrace();
+			return null;
+		}
+		
+		return socket;
+	}
 	
 	public MinicraftClient(Game game, MultiplayerMenu menu, String hostName) {
-		super("MinicraftClient");
+		super("MinicraftClient", openSocket(hostName));
 		this.game = game;
 		this.menu = menu;
 		Game.ISONLINE = true;
 		Game.ISHOST = false;
-		try {
-			
-			socket = new DatagramSocket();
-			ipAddress = InetAddress.getByName(hostName);
-			try {
-				socket.connect(ipAddress, PORT);
-			} catch (Exception ex) {
-				System.err.println("CLIENT: error connecting to host:");
-				menu.setError(ex.getMessage());
-				ex.printStackTrace();
-				return;
-			}
-			/*boolean canReach = ipAddress.isReachable(5000);
-			if(!canReach) {
-				// address was deemed unreachable
-				System.out.println("couldn't reach");
-				menu.setError("address is unreachable.");
-				return;
-			}
-			System.out.println("address could be reached.");
-			*/
-			curState = State.USERNAMES;
-			
+		
+		if(super.isConnected()) {
 			start();
+		}
+	}
+	
+	public void run() {
+		if (Game.debug) System.out.println("starting client.");
+		
+		changeState(State.PING);
+		
+		while(waitTime <= MAX_WAIT_TIME && !pingSuccessful) {
+			//if (Game.debug) System.out.println("client: checking input...");
+			if(checkInput()) continue;
 			
-		} catch (UnknownHostException ex) {
-			System.err.println("Don't know about host " + hostName);
-			ex.printStackTrace();
-			menu.setError("host not found");
-		} catch (SocketException ex) {
-			ex.printStackTrace();
-		}/* catch (IOException ex) {
-			System.err.println("error while determining if address was reachable.");
-			ex.printStackTrace();
-		}*/
+			try {
+				Thread.sleep(SLEEP_TIME);
+			} catch (InterruptedException ex) {}
+			
+			waitTime += SLEEP_TIME;
+			
+			if ((waitTime-SLEEP_TIME) % RETRY_INTERVAL > waitTime % RETRY_INTERVAL)	// resend the message
+				sendData(InputType.PING, "");
+		}
+		
+		if(waitTime > MAX_WAIT_TIME) {
+			// the connection timed out.
+			if (Game.debug) System.err.println("server didn't respond to client pings; client timed out.");
+			menu.setError("Connection timed out.");
+			return;
+		}
+		
+		if (Game.debug) System.out.println("client recieved ping from server; starting client routine...");
+		changeState(State.USERNAMES);
+		
+		super.run();
 	}
 	
 	private void changeState(State newState) {
 		curState = newState;
-		tries = 0;
-		sent = false;
+		
+		switch(newState) {
+			case PING:
+				pingSuccessful = false;
+				waitTime = RETRY_INTERVAL / 2; // just so the first one doesn't take so long to send, but it's also not sent immediately.
+				break;
+			
+			case USERNAMES:
+				if (Game.debug) System.out.println("CLIENT: requesting usernames");
+				sendData(InputType.USERNAMES, "");
+				break;
+			
+			case LOGIN: sendData(InputType.LOGIN, ((RemotePlayer)game.player).getUsername()+";"+Game.VERSION); break;
+			
+			case LOADING:
+				game.setMenu(menu);
+				menu.setLoadingMessage("tiles");
+				sendData(InputType.LOAD, String.valueOf(game.currentLevel));
+				break;
+			
+			case PLAY:
+				if (Game.debug) System.out.println("CLIENT: Begin game!");
+				Game.levels[game.currentLevel].add(game.player);
+				Game.readyToRenderGameplay = true;
+				game.setMenu(null);
+				break;
+			
+			case DISCONNECTED: endConnection(); break;
+		}
 	}
 	
 	public void login(String username) {
 		if (Game.debug) System.out.println("CLIENT: logging in to server...");
 		try {
-			game.player = new RemotePlayer(game.player, game, true, username, InetAddress.getLocalHost(), PORT);
+			game.player = new RemotePlayer(game.player, game, true, InetAddress.getLocalHost(), PORT);
+			((RemotePlayer)game.player).setUsername(username);
 		} catch(UnknownHostException ex) {
-			System.err.println("CLIENT could not get localhost address.");
-			menu.setError("unable to get localhost address");
+			System.err.println("CLIENT could not get localhost address:");
 			ex.printStackTrace();
+			menu.setError("unable to get localhost address");
 		}
 		changeState(State.LOGIN);
 	}
 	
+	/*
 	public void run() {
 		if (Game.debug) System.out.println("client started.");
 		
 		while(curState != State.DISCONNECTED) {
-			if(curState != State.PLAY && curState != State.IDLING && !sent) {
+			/*if(curState != State.PLAY && curState != State.IDLING && !sent) {
 				if(Game.debug) System.out.println("CLIENT: running action switch");
 				
 				boolean matched = false;
 				switch(curState) {
 					case USERNAMES:
-						if (Game.debug) System.out.println("CLIENT: requesting usernames");
-						sendData(InputType.USERNAMES, new byte[0]);
 						matched = true;
 						break;
 					
@@ -134,7 +185,7 @@ public class MinicraftClient extends Thread implements MinicraftConnection {
 						/// send login request.
 						if (Game.debug) System.out.println("CLIENT: requesting login");
 						String username = ((RemotePlayer)game.player).username;
-						sendData(InputType.LOGIN, (username+";"+Game.VERSION).getBytes());
+						
 						matched = true;
 						break;
 					
@@ -144,7 +195,7 @@ public class MinicraftClient extends Thread implements MinicraftConnection {
 						sendData(InputType.LOAD, new byte[0]);
 						matched = true;
 						break;
-					*/
+					*//*
 					
 					case TILES:
 						// send request for level tiles.
@@ -166,7 +217,7 @@ public class MinicraftClient extends Thread implements MinicraftConnection {
 					sentTime = 0;
 					tries++;
 				}
-			}
+			}*//*
 			
 			int targetTimeout = 5000;
 			if(State.idleStates.contains(curState))
@@ -193,7 +244,7 @@ public class MinicraftClient extends Thread implements MinicraftConnection {
 				socket.receive(packet);
 				long waitTime = System.nanoTime() - startTime;
 				sentTime += waitTime; // converts to milliseconds.
-				parsePacket(packet.getData(), packet.getAddress(), packet.getPort());
+				parsePacket(packet.getData());
 			} catch(SocketTimeoutException ex) {
 				//System.out.println("time out in prev state" + prevState);
 				long waitTime = System.nanoTime() - startTime;
@@ -214,7 +265,7 @@ public class MinicraftClient extends Thread implements MinicraftConnection {
 				} catch(SocketException ex) {
 					System.err.println("CLIENT error getting socket timeout");
 					ex.printStackTrace();
-				}*/
+				}*//*
 				if(tries < MAX_TRIES) {
 					sent = false;
 					if(Game.debug)
@@ -233,70 +284,35 @@ public class MinicraftClient extends Thread implements MinicraftConnection {
 					Game.levels[game.currentLevel] = null;
 				if(curState == State.ENTITIES)
 					Game.levels[game.currentLevel].clearEntities();
-				*/
+				*//*
 			//}
 			
 			packet = null;
 		}
 		
 		if (Game.debug) System.out.println("client is not connected. ending run loop.");
-	}
+	}*/
 	
 	/** This method is responsible for parsing all data recieved by the socket. */
-	public boolean parsePacket(byte[] alldata, InetAddress address, int port) {
-		if(alldata == null || alldata.length == 0) return false;
-		
-		InputType inType = MinicraftConnection.getInputType(alldata[0]);
-		if(inType == null)
-			return false;
-		
-		//if (Game.debug) System.out.println("CLIENT: recieved "+inType+" packet.");
-		byte[] data = Arrays.copyOfRange(alldata, 1, alldata.length);
-		
-		// at this point, it has been determined that the data is of a valid type, and that type is stored in inType
-		
-		/*
-			wanted behavior for each input type:
-			
-			-INVALID: print message to console. possibly don't connect to server.
-			
-			-LOGIN
-				+ sent when: the client wants to join the game. Passes username and game version.
-				+ when recieved: ignore. perhaps print to console that the server tried logging in.
-			
-			-INIT_W
-				expected data: world size, start pos, time of day, game mode, and any info relevant to that game mode (time left for score mode).
-				behavior: set the appropriate vars, and then start requesting INIT_T, passing 3 for the level number.
-			
-			-INIT_T: same old... set tiles for level, and then request INIT_E.
-			
-			-INIT_E: mostly same... decode entities for level, and then begin the game.
-			
-			-DISCONNECT
-				+ sent when: this client is leaving the game. no data necessary.
-				+ when recieved: this client is being told that it's been kicked from the server, probably because the host left the game. Behavior is... not much. Go to title screen? Display message.
-			
-			-TILE, ENTITY, ADD, REMOVE, NOTIFY
-				+ sent when: updates have occurred; the player has done something.
-					for the host computer, it will send these much more often, because it is doing all the mob ai ticks and updates.
-				+ when recieved: updates the specified entities accordingly.
-		*/
+	public synchronized boolean parsePacket(InputType inType, String alldata) {
+		String[] data = alldata.split(";");
 		
 		switch(inType) {
 			case INVALID:
-				String msg = new String(data).trim();
-				System.err.println("CLIENT recieved error: " + msg);
-				menu.setError(msg);
-				curState = State.IDLING;
-				
+				System.err.println("CLIENT recieved error: " + alldata);
+				menu.setError(alldata);
+				changeState(State.DISCONNECTED);
 				return false;
+			
+			case PING:
+				pingSuccessful = true;
+				return true;
 			
 			case USERNAMES:
 				if (Game.debug) System.out.println("CLIENT: recieved usernames");
-				String names = new String(data).trim();
-				String[] namelist = names.split("\n");
+				String[] namelist = alldata.split("\n");
 				menu.setTakenNames(Arrays.asList(namelist));
-				curState = State.IDLING;
+				//curState = State.IDLING;
 				return true;
 			
 			case LOGIN:
@@ -305,25 +321,26 @@ public class MinicraftClient extends Thread implements MinicraftConnection {
 			
 			case DISCONNECT:
 				if (Game.debug) System.out.println("CLIENT: recieved disconnect");
-				curState = State.DISCONNECTED;
 				menu.setError("Server Disconnected."); // this sets the menu back to the multiplayer menu, and tells the user what happened.
-				//endConnection(); // this is called in the run loop.
+				changeState(State.DISCONNECTED);
 				return true;
 			
 			case GAME:
-				String[] vars = (new String(data)).trim().split(";");
-				ModeMenu.updateModeBools(Integer.parseInt(vars[0]));
-				Game.tickCount = Integer.parseInt(vars[1]);
-				Game.gamespeed = Float.parseFloat(vars[2]);
-				Game.pastDay1 = Boolean.parseBoolean(vars[3]);
-				Game.scoreTime = Integer.parseInt(vars[4]);
+				ModeMenu.updateModeBools(Integer.parseInt(data[0]));
+				Game.setTime(Integer.parseInt(data[1]));
+				Game.gamespeed = Float.parseFloat(data[2]);
+				Game.pastDay1 = Boolean.parseBoolean(data[3]);
+				Game.scoreTime = Integer.parseInt(data[4]);
 				return true;
 			
 			case INIT:
 				if (Game.debug) System.out.println("CLIENT: recieved INIT packet");
+				if(curState != State.LOGIN) System.out.println("WARNING: client recieved init packet in state " + curState);
+				
+				curState = State.LOADING; // I don't want to go through the changeState sequence.
 				menu.setLoadingMessage("World");
 				
-				String[] infostrings = new String(data).trim().split(",");
+				String[] infostrings = alldata.split(",");
 				int[] info = new int[infostrings.length];
 				for(int i = 0; i < info.length; i++)
 					info[i] = Integer.parseInt(infostrings[i]);
@@ -333,147 +350,119 @@ public class MinicraftClient extends Thread implements MinicraftConnection {
 				game.currentLevel = info[3];
 				game.player.x = info[4];
 				game.player.y = info[5];
-				Game.setTime(info[6]);
-				Game.pastDay1 = info[7]==0?false:true;
-				ModeMenu.updateModeBools(info[8]);
-				if(ModeMenu.score && info.length > 9)
-					game.scoreTime = info[9];
 				
-				/*// initialize the levels
-				for(int i = 0; i < Game.levels.length; i++) {
-					int lvldepth = Game.idxToDepth[i];
-					Game.levels[i] = new Level(game, Game.lvlw, Game.lvlh, lvldepth, Game.levels[Game.lvlIdx(lvldepth+1)], false);
-				}*/
-				
-				/// vars are set; now start requesting entities.
-				
-				sent = false;
-				if(curState == State.LOGIN) {// only go through the sequence if this is called as part of start up.
-					curState = State.TILES;
-					menu.setLoadingMessage("Tiles");
-				}
+				//if(curState == State.LOGIN) {// only go through the sequence if this is called as part of start up.
+					//curState = State.TILES;
+				menu.setLoadingMessage("Tiles");
+				//}
 				return true;
-			
-			/*case START:
-				if (Game.debug) System.out.println("CLIENT: Recieved START packet. Begin game!");
-				//sendData(alldata); // send confirmation to server.
-				changeState(State.PLAY);
-				Game.levels[game.currentLevel].add(game.player);
-				Game.readyToRenderGameplay = true;
-				game.setMenu(null);
-				return true;
-			*/
 			
 			case TILES:
-				if (Game.debug) System.out.println("CLIENT: recieved tiles");
-				if(curState != State.TILES) // ignore
+				if(curState != State.LOADING) { // ignore
+					if (Game.debug) System.out.println("ignoring level tile data becuase client state is not LOADING: " + curState);
 					return false;
+				}
+				if (Game.debug) System.out.println("CLIENT: recieved tiles");
 				/// recieve tiles.
 				Level level = Game.levels[game.currentLevel];
 				if(level == null) {
 					int lvldepth = Game.idxToDepth[game.currentLevel];
 					Game.levels[game.currentLevel] = level = new Level(game, Game.lvlw, Game.lvlh, lvldepth, Game.levels[Game.lvlIdx(lvldepth+1)], false);
 				}
-				//level.tiles = new byte[data.length/2];
-				//level.data = new byte[data.length/2];
-				int idx = ((int)data[0]) * ((packetSize-2)/2);
-				if(Game.debug) System.out.println("CLIENT: loading tiles starting from " + idx);
-				int i;
-				for(i = 0; i < data.length/2-2 && idx+i < level.tiles.length; i++) {
-					level.tiles[idx + i] = data[i*2 +1];
-					level.data[idx + i] = data[i*2+1 +1];
+				
+				byte[] tiledata = new byte[alldata.length()];
+				for(int i = 0; i < alldata.length(); i++)
+					tiledata[i] = (byte) ((int)alldata.charAt(i));
+				
+				if(tiledata.length / 2 > level.tiles.length) {
+					System.err.println("CLIENT ERROR: recieved level tile data is too long for world size; level.tiles.length="+level.tiles.length+", tiles in data: " + (tiledata.length / 2) + ". Will truncate tile loading.");
+				}
+				
+				for(int i = 0; i < tiledata.length/2 && i < level.tiles.length; i++) {
+					level.tiles[i] = tiledata[i*2];
+					level.data[i] = tiledata[i*2+1];
 				}
 				//Game.levels[game.currentLevel] = level;
 				
-				if(idx+i == level.tiles.length) {
-					curState = State.ENTITIES;
-					sent = false;
+				//if(idx+i == level.tiles.length) {
+					//curState = State.ENTITIES;
+					//sent = false;
 					menu.setLoadingMessage("Entities");
-					if (Game.debug) System.out.println("CLIENT: progressed state to entities");
-				} else if(Game.debug) {
+					//if (Game.debug) System.out.println("CLIENT: progressed state to entities");
+				/*} else if(Game.debug) {
 					if(idx+i > level.tiles.length) System.out.println("CLIENT: recieved too many tiles");
 					System.out.println("CLIENT: waiting for more tiles... ended: " + (i-1+idx) + " of " + (level.tiles.length-1));
-				}
+				}*/
 				return true;
 			
 			case ENTITIES:
-				if(curState != State.ENTITIES) // ignore
+				if(curState != State.LOADING) {// ignore
+					System.out.println("ignoring level entity data becuase client state is not LOADING: " + curState);
 					return false;
+				}
 				if (Game.debug) System.out.println("CLIENT: recieved entities");
 				Level newLevel = Game.levels[game.currentLevel];
-				String[] entities = new String(data).trim().split(",");
+				String[] entities = alldata.split(",");
 				for(String entityString: entities) {
 					if(entityString.length() == 0) continue;
-					if(entityString.equals("END")) {
+					/*if(entityString.equals("END")) {
 						/// the end of the entity list has been reached.
 						sent = false;
 						break;
-					}
+					}*/
 					if (Game.debug) System.out.println("CLIENT: loading entity: " + entityString);
 					Load.loadEntity(entityString, game, false);
 				}
 				
-				if(!sent) {
+				//if(!sent) {
 					// ready to start game now.
-					curState = State.PLAY;
-					if (Game.debug) System.out.println("CLIENT: Begin game!");
-					Game.levels[game.currentLevel].add(game.player);
-					Game.readyToRenderGameplay = true;
-					game.setMenu(null);
-				}
-				else if(Game.debug)
-					System.out.println("CLIENT: waiting for more entities...");
+					changeState(State.PLAY); // this will be set before the client recieves any cached entities, so that should work out.
+				//}
+				//else if(Game.debug)
+					//System.out.println("CLIENT: waiting for more entities...");
 				return true;
 			
 			case TILE:
-				//if(curState != State.PLAY) return true; // ignoring for now
-				//if (Game.debug) System.out.println("CLIENT: recieved tile update: " + (new String(data)));
-				//byte id = data[0], tdata = data[1];
-				//int pos = Integer.parseInt(new String(Arrays.copyOfRange(data, 2, data.length)).trim());
-				String[] tiledata = (new String(data)).trim().split(";");
-				//Level level = Game.levels[game.currentLevel];
-				Level theLevel = Game.levels[Integer.parseInt(tiledata[0])];
+				Level theLevel = Game.levels[Integer.parseInt(data[0])];
 				if(theLevel == null)
 					return false; // ignore, this is for an unvisited level.
-				int pos = Integer.parseInt(tiledata[1]);
-				theLevel.tiles[pos] = Byte.parseByte(tiledata[2]);
-				theLevel.data[pos] = Byte.parseByte(tiledata[3]);
+				int pos = Integer.parseInt(data[1]);
+				theLevel.tiles[pos] = Byte.parseByte(data[2]);
+				theLevel.data[pos] = Byte.parseByte(data[3]);
 				return true;
 			
 			case ADD:
-				//if(curState != State.PLAY) return true; // ignoring for now
-				String entityData = new String(data).trim();
+				if(curState == State.LOADING)
+					System.out.println("CLIENT: recieved entity addition while loading level");
+				
 				//if (Game.debug) System.out.println("CLIENT: recieved entity addition: " + entityData);
-				if(entityData.length() == 0) {
-					System.err.println("CLIENT: recieved entity is blank...");
+				
+				if(alldata.length() == 0) {
+					System.err.println("CLIENT WARNING: recieved entity addition is blank...");
 					return false;
 				}
 				
-				Entity addedEntity = Load.loadEntity(entityData, game, false);
+				Entity addedEntity = Load.loadEntity(alldata, game, false);
 				if(addedEntity != null) {
-					sendData(InputType.ADD, String.valueOf(addedEntity.eid).getBytes());
-					entityAdditionRequests.remove(addedEntity.eid);
-					
 					if(addedEntity.eid == game.player.eid/* && game.player.getLevel() == null*/) {
 						if (Game.debug) System.out.println("CLIENT: added main game player back to level based on add packet");
 						Game.levels[game.currentLevel].add(game.player);
 						Bed.inBed = false;
 					}
-					else if(Game.debug && addedEntity instanceof RemotePlayer)
-						System.out.println("CLIENT: added remote player from packet: " + addedEntity + "; game player has eid " + game.player.eid + "; this player has eid " + addedEntity.eid + "; are equal: " + (game.player.eid == addedEntity.eid));
+					//else if(Game.debug && addedEntity instanceof RemotePlayer)
+						//System.out.println("CLIENT: added remote player from packet: " + addedEntity + "; game player has eid " + game.player.eid + "; this player has eid " + addedEntity.eid + "; are equal: " + (game.player.eid == addedEntity.eid));
 				}
 				
 				return true;
 			
 			case REMOVE:
-				//int eid = 0;
-				//for(int i = 0; i < data.length; i++)
-					//eid += data[i] << i*8;
-				//if(curState != State.PLAY) return true; // ignoring for now
-				int eid = Integer.parseInt((new String(data)).trim());//(data[0]<<(8*3)) + (data[1]<<(8*2)) + (data[2]<<8) + data[3];
+				if(curState == State.LOADING)
+					System.out.println("CLIENT: recieved entity removal while loading level");
+				
+				int eid = Integer.parseInt(alldata);
 				//if (Game.debug) System.out.println("CLIENT: recieved entity removal: " + eid);
+				
 				Entity toRemove = Game.getEntity(eid);
-				sendData(alldata); // lets the server know that the packet was recieved.
 				if(toRemove != null) {
 					toRemove.remove();
 					return true;
@@ -481,26 +470,20 @@ public class MinicraftClient extends Thread implements MinicraftConnection {
 				return false;
 			
 			case ENTITY:
-				if(curState != State.PLAY) return true; // ignoring for now... super important things that won't just be updated next frame shouldn't *be* updated, anyway.
-				String updates = new String(data).trim();
-				int entityid = Integer.parseInt(updates.substring(0, updates.indexOf(";")));
+				// these shouldn't occur while loading, becuase the server caches them. But just in case, let's make sure.
+				if(curState == State.LOADING)
+					System.out.println("CLIENT recieved entity update while loading level");
+				
+				int entityid = Integer.parseInt(alldata.substring(0, alldata.indexOf(";")));
 				//if (Game.debug) System.out.println("CLIENT: recieved entity update for: " + entityid);
-				updates = updates.substring(updates.indexOf(";")+1);
+				String updates = alldata.substring(alldata.indexOf(";")+1);
 				Entity entity = Game.getEntity(entityid);
 				if(entity == null) {
-					if(entityAdditionRequests.containsKey(entityid) && (System.nanoTime() - entityAdditionRequests.get(entityid)) / 1E8 < 20L) {
-						// it has been less than 2 seconds since this entity was last requested, so don't request it again at this time.
-						return false;
-					}
-					// at this point: the entity has not been requested, or it has been more than 2 seconds since the last request.
-					/*System.out.println("CLIENT could not find entity specified to be updated ("+entityid+"); requesting entity from server...");
-					sendData(InputType.ENTITY, String.valueOf(entityid).getBytes());
-					entityAdditionRequests.put(entityid, System.nanoTime());
-					*/
+					System.err.println("CLIENT: couldn't find entity specified to update: " + entityid + "; could not apply updates: " + updates);
 					return false;
 				}
 				else if(!((RemotePlayer)game.player).shouldSync(entity.x >> 4, entity.y >> 4)) {
-					// the entity is out of sync range.
+					// the entity is out of sync range; but not necessarily out of the tracking range, so it's *not* removed from the level here.
 					return false;
 				}
 				entity.update(updates);
@@ -513,9 +496,8 @@ public class MinicraftClient extends Thread implements MinicraftConnection {
 					return false;
 				}*/
 				// use the contained data to load up the player object vars.
-				String pdata = new String(data).trim();
-				if(Game.debug) System.out.println("CLIENT: player data recieved: " + pdata);
-				String[] playerparts = pdata.split("\\n");
+				if(Game.debug) System.out.println("CLIENT: player data recieved: " + alldata);
+				String[] playerparts = alldata.split("\\n");
 				List<String> playerinfo = Arrays.asList(playerparts[0].split(","));
 				List<String> playerinv = Arrays.asList(playerparts[1].split(","));
 				Load load = new Load();
@@ -546,38 +528,36 @@ public class MinicraftClient extends Thread implements MinicraftConnection {
 				else
 					playerdata = playerdata.substring(0, playerdata.length()-1);
 				if (Game.debug) System.out.println("CLIENT: sending save data");
-				sendData(InputType.SAVE, playerdata.getBytes());
+				sendData(InputType.SAVE, playerdata);
 				return true;
 			
 			case NOTIFY:
 				if (Game.debug) System.out.println("CLIENT: recieved notification");
 				if(curState != State.PLAY) return true; // ignoring for now
-				String notedata = new String(data).trim();
-				int notetime = Integer.parseInt(notedata.substring(0, notedata.indexOf(";")));
-				String note = notedata.substring(notedata.indexOf(";")+1);
+				int notetime = Integer.parseInt(alldata.substring(0, alldata.indexOf(";")));
+				String note = alldata.substring(alldata.indexOf(";")+1);
 				Game.notifications.add(note);
 				Game.notetick = notetime;
 				return true;
 			
 			case CHESTOUT:
 				if(curState != State.PLAY) return false; // shouldn't happen.
-				String itemName = (new String(data)).trim();
-				if (Game.debug) System.out.println("CLIENT: recieved chestout with item: " + itemName);
-				Item item = Items.get(itemName);
+				Item item = Items.get(alldata);
+				if (Game.debug) System.out.println("CLIENT: recieved chestout with item: " + item);
 				game.player.inventory.add(0, item);
 				//if (Game.debug) System.out.println("CLIENT successfully took " + item + " from chest and added to inv.");
 				return true;
 			
 			case INTERACT:
 				// the server went through with the interaction, and has sent back the new activeItem.
-				Item holdItem = Items.get((new String(data)).trim());
+				Item holdItem = Items.get(alldata);
 				if(Game.debug) System.out.println("CLIENT: recieved interaction success; setting player item to " + holdItem);
 				game.player.activeItem = holdItem;
 				return true;
 			
 			case PICKUP:
 				if(curState != State.PLAY) return false; // shouldn't happen.
-				int ieid = Integer.parseInt(new String(data).trim());
+				int ieid = Integer.parseInt(alldata);
 				if (Game.debug) System.out.println("CLIENT: recieved pickup approval for: " + ieid);
 				Entity ie = Game.getEntity(ieid);
 				if(ie == null || !(ie instanceof ItemEntity)) {
@@ -588,16 +568,16 @@ public class MinicraftClient extends Thread implements MinicraftConnection {
 				return true;
 			
 			case POTION:
-				boolean addEffect = data[0] != 0;
-				int typeIdx = (int) data[1];//Integer.parseInt(potionData[0]);
+				boolean addEffect = Boolean.parseBoolean(data[0]);
+				int typeIdx = Integer.parseInt(data[1]);
 				PotionItem.applyPotion(game.player, PotionType.values[typeIdx], addEffect);
 				return true;
 			
 			case HURT:
 				// the player got attacked.
 				if(Game.debug) System.out.println("CLIENT: recieved hurt packet");
-				int damage = data[0];
-				int attackDir = data[1];
+				int damage = Integer.parseInt(data[0]);
+				int attackDir = Integer.parseInt(data[1]);
 				game.player.hurt(damage, attackDir);
 				return true;
 		}
@@ -608,7 +588,7 @@ public class MinicraftClient extends Thread implements MinicraftConnection {
 	
 	/// the below methods are all about sending data to the server, *not* setting any game values.
 	
-	public void sendData(InputType inType, byte[] startdata) {
+	/*public void sendData(InputType inType, byte[] startdata) {
 		if (Game.debug && inType != InputType.MOVE && inType != InputType.ADD) System.out.println("CLIENT: sending "+inType+" packet...");
 		sendData(prependType(inType, startdata));
 	}
@@ -624,19 +604,19 @@ public class MinicraftClient extends Thread implements MinicraftConnection {
 			} else
 				ex.printStackTrace();
 		}
-	}
+	}*/
 	
 	public void move(Player player) {
 		//if(Game.debug) System.out.println("CLIENT: sending player movement to ("+player.x+","+player.y+"): " + player);
 		String movedata = player.x+";"+player.y+";"+player.dir+";"+Game.lvlIdx(player.getLevel().depth);
-		sendData(InputType.MOVE, movedata.getBytes());
+		sendData(InputType.MOVE, movedata);
 	}
 	
 	/** This is called when the player.attack() method is called. */
 	public void requestInteraction(Player player) {
 		/// I don't think the player parameter is necessary, but it doesn't harm anything.
 		String itemString = player.activeItem != null ? player.activeItem.getData() : "null";
-		sendData(InputType.INTERACT, (itemString+";"+player.inventory.count(Items.get("arrow"))).getBytes());
+		sendData(InputType.INTERACT, itemString+";"+player.inventory.count(Items.get("arrow")));
 	}
 	
 	public void sendPlayerDeath(Player player, DeathChest dc) {
@@ -646,77 +626,59 @@ public class MinicraftClient extends Thread implements MinicraftConnection {
 		dc.eid = -1;
 		String chestData = Save.writeEntity(dc, false);
 		level.remove(dc);
-		sendData(InputType.DIE, chestData.getBytes());
+		sendData(InputType.DIE, chestData);
 	}
 	
 	public void requestRespawn() {
-		sendData(InputType.RESPAWN, new byte[0]);
+		sendData(InputType.RESPAWN, "");
 		//menu.setLoadingMessage("spawnpoint")
 		//game.setMenu(menu);
 	}
 	
-	public void sendPotionEffect(Player player, PotionType type, boolean addEffect) {
-		if(player != game.player) return;
-		
-		byte[] data = new byte[2];
-		data[0] = (byte) (addEffect ? 1 : 0);
-		data[1] = (byte) type.ordinal();
-		
-		sendData(InputType.POTION, data);
-	}
-	
 	public void addToChest(Chest chest, Item item) {
 		if(chest == null || item == null) return;
-		sendData(InputType.CHESTIN, (chest.eid+";"+item.getData()).getBytes());
+		sendData(InputType.CHESTIN, chest.eid+";"+item.getData());
 	}
 	
 	public void removeFromChest(Chest chest, int index) {
 		if(chest == null) return;
-		sendData(InputType.CHESTOUT, (chest.eid+";"+index).getBytes());
+		sendData(InputType.CHESTOUT, chest.eid+";"+index);
 	}
 	
 	public void pushFurniture(Furniture f, int pushDir) {
-		sendData(InputType.PUSH, (f.eid+"").getBytes());
+		sendData(InputType.PUSH, String.valueOf(f.eid));
 	}
 	
 	public void pickupItem(ItemEntity ie) {
 		if(ie == null) return;
 		if(Game.debug) System.out.println("CLIENT: requesting pickup of item: " + ie);
-		sendData(InputType.PICKUP, String.valueOf(ie.eid).getBytes());
-	}
-	
-	public void sendNotification(String note, int notetime) {
-		String data = notetime + ";" + note;
-		sendData(InputType.NOTIFY, data.getBytes());
+		sendData(InputType.PICKUP, String.valueOf(ie.eid));
 	}
 	
 	public void sendBedRequest(Player player, Bed bed) {
-		String data = bed.eid+"";
-		sendData(InputType.BED, data.getBytes());
+		sendData(InputType.BED, String.valueOf(bed.eid));
 	}
 	
 	public void requestLevel(int lvlidx) {
-		curState = State.TILES;
-		game.setMenu(menu);
 		game.currentLevel = lvlidx; // just in case.
+		changeState(State.LOADING);
 	}
 	
 	public void endConnection() {
-		if(!socket.isClosed()) {
-			if (Game.debug) System.out.println("closing client socket and ending connection");
-			if(curState != State.DISCONNECTED)
-				sendData(InputType.DISCONNECT, (new byte[0])); // send exit signal
-			try {
-				socket.disconnect();
-				socket.close();
-			} catch (NullPointerException ex) {
-			}
-		}
+		super.endConnection();
+		
 		curState = State.DISCONNECTED;
-		System.out.println("CLIENT: connection ended.");
+		
+		if(game.menu == null)
+			menu.setError("Connection to server has ended.");
+		//System.out.println("CLIENT: connection ended.");
 	}
 	
 	public boolean isConnected() {
-		return socket != null && !socket.isClosed() && socket.isConnected() && curState != State.DISCONNECTED;
+		return super.isConnected() && curState != State.DISCONNECTED;
+	}
+	
+	public String toString() {
+		return "CLIENT";
 	}
 }

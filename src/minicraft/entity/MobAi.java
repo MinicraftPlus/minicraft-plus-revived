@@ -75,28 +75,7 @@ public abstract class MobAi extends Mob {
 	
 	public boolean move(int xa, int ya) {
 		if(Game.isValidClient()) return false; // client mobAi's should not move at all.
-		if(Game.isValidServer()) {
-			if(xa == 0 && ya == 0) return super.move(xa, ya);
-			List<RemotePlayer> prevPlayers = Game.server.getPlayersInRange(this, true);
-			boolean moved = super.move(xa, ya);
-			List<RemotePlayer> activePlayers = Game.server.getPlayersInRange(this, true);
-			for(int i = 0; i < Math.min(prevPlayers.size(), activePlayers.size()); i++) {
-				if(activePlayers.contains(prevPlayers.get(i))) {
-					activePlayers.remove(i);
-					prevPlayers.remove(i);
-					i--;
-				}
-			}
-			// the lists should now only contain players that now out of range, and players that are just now in range.
-			for(RemotePlayer rp: prevPlayers)
-				Game.server.sendEntityRemoval(this.eid, rp);
-			for(RemotePlayer rp: activePlayers)
-				Game.server.sendEntityAddition(this, rp);
-			
-			return moved;
-		}
 		
-		// single player game
 		return super.move(xa, ya);
 	}
 	

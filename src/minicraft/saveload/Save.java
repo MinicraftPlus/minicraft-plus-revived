@@ -273,7 +273,7 @@ public class Save {
 		
 		if(!isLocalSave && e instanceof RemotePlayer) {
 			RemotePlayer rp = (RemotePlayer)e;
-			extradata += ":"+rp.username+":"+rp.ipAddress.getCanonicalHostName()+":"+rp.port;
+			extradata += ":" + rp.getData();
 		} // the "else" part is so that remote player, which is a mob, doesn't get the health thing.
 		else if(e instanceof Mob) {
 			Mob m = (Mob)e;
