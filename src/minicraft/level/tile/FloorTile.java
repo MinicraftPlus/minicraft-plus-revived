@@ -18,6 +18,7 @@ public class FloorTile extends Tile {
 	
 	protected FloorTile(Material type) {
 		super((type == Material.Wood ? "Wood Planks" : type == Material.Obsidian ? "Obsidian" : type.name()+" Bricks"), (Sprite)null);
+		this.type = type;
 		maySpawn = true;
 		switch(type) {
 			case Wood: sprite.color = Color.get(210, 210, 430, 320);
