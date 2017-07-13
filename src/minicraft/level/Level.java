@@ -87,7 +87,7 @@ public class Level {
 	}
 	
 	public void updateMobCap() {
-		maxMobCount = 200 + 200*OptionsMenu.diff;
+		maxMobCount = 100 + 150*OptionsMenu.diff;
 		if(depth == 0) maxMobCount = maxMobCount * 2 / 3;
 		if(depth == 1 || depth == -4) maxMobCount /= 2;
 	}
@@ -507,6 +507,14 @@ public class Level {
 			}
 		}*/
 		
+		while(count > maxMobCount) {
+			Entity removeThis = entities.get(random.nextInt(entities.size()));
+			if(removeThis instanceof MobAi) {
+				remove(removeThis);
+				count--;
+			}
+		}
+		
 		while(entitiesToRemove.size() > 0) {
 			Entity entity = entitiesToRemove.get(0);
 			//if (Game.debug) System.out.println("removing entity " + entity + " from level " + depth + ".");
@@ -522,10 +530,8 @@ public class Level {
 		
 		mobCount = count;
 		
-		if(count < maxMobCount && !Game.isValidClient() && Game.tickCount % 5 == 0)
+		if(count < maxMobCount && !Game.isValidClient() && Game.tickCount % 2 == 0)
 			trySpawn(1);
-		//else if (Game.debug)
-			//System.out.println("too many mobs on level " + depth + "; "+count+" of "+maxMobCount+".");
 	}
 	
 	public void dropItem(int x, int y, int mincount, int maxcount, Item... items) {
@@ -703,9 +709,8 @@ public class Level {
 	}
 	*/
 	public void trySpawn(int count) {
-		if(random.nextInt(4) == 0) return; // hopefully will make mobs spawn a lot slower.
 		for (int i = 0; i < count; i++) {
-			if(random.nextInt(2) == 0) continue; // hopefully will make mobs spawn a lot slower.
+			if(random.nextInt(mobCount) == 0) continue; // hopefully will make mobs spawn a lot slower.
 			
 			int minLevel = 1, maxLevel = 1;
 			if (depth < 0) {
