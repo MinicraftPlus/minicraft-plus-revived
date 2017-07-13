@@ -606,10 +606,12 @@ public class Load {
 		else {
 			int mobLvl = 1;
 			Class c = null;
-			try {
-				c = Class.forName("minicraft.entity."+entityName);
-			} catch(ClassNotFoundException ex) {
-				ex.printStackTrace();
+			if(!Crafter.names.contains(entityName)) {
+				try {
+					c = Class.forName("minicraft.entity."+entityName);
+				} catch(ClassNotFoundException ex) {
+					ex.printStackTrace();
+				}
 			}
 			if(c != null && EnemyMob.class.isAssignableFrom(c))
 				mobLvl = Integer.parseInt(info.get(info.size()-2));
