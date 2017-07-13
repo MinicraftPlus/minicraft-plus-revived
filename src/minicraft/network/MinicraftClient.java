@@ -34,7 +34,7 @@ public class MinicraftClient extends MinicraftConnection {
 	private MultiplayerMenu menu;
 	
 	private static enum State {
-		PING, USERNAMES, LOGIN, LOADING, PLAY, DISCONNECTED
+		USERNAMES, LOGIN, LOADING, PLAY, DISCONNECTED
 	}
 	private State curState = State.DISCONNECTED;
 	
@@ -45,11 +45,11 @@ public class MinicraftClient extends MinicraftConnection {
 	//private int tries = 0;
 	//private static final int MAX_TRIES = 3;
 	
-	private static final int MAX_WAIT_TIME = 10000;
-	private static final int RETRY_INTERVAL = 2000;
-	private static final int SLEEP_TIME = 10;
+	//private static final int MAX_WAIT_TIME = 8000;
+	//private static final int RETRY_INTERVAL = 11000;
+	//private static final int SLEEP_TIME = 10;
 	
-	private int waitTime;
+	//private int waitTime;
 	
 	private static final Socket openSocket(String hostName) {
 		InetAddress hostAddress = null;
@@ -82,11 +82,12 @@ public class MinicraftClient extends MinicraftConnection {
 		Game.ISHOST = false;
 		
 		if(super.isConnected()) {
+			changeState(State.USERNAMES);
 			start();
 		}
 	}
 	
-	public void run() {
+	/*public void run() {
 		if (Game.debug) System.out.println("starting client.");
 		
 		changeState(State.PING);
@@ -116,17 +117,19 @@ public class MinicraftClient extends MinicraftConnection {
 		changeState(State.USERNAMES);
 		
 		super.run();
-	}
+	}*/
 	
 	private void changeState(State newState) {
 		curState = newState;
 		
 		switch(newState) {
-			case PING:
+			/*case PING:
 				pingSuccessful = false;
-				waitTime = RETRY_INTERVAL / 2; // just so the first one doesn't take so long to send, but it's also not sent immediately.
+				//waitTime = RETRY_INTERVAL / 2; // just so the first one doesn't take so long to send, but it's also not sent immediately.
+				waitTime = 0;
+				sendData(InputType.PING, "");
 				break;
-			
+			*/
 			case USERNAMES:
 				if (Game.debug) System.out.println("CLIENT: requesting usernames");
 				sendData(InputType.USERNAMES, "");
@@ -136,7 +139,7 @@ public class MinicraftClient extends MinicraftConnection {
 			
 			case LOADING:
 				game.setMenu(menu);
-				menu.setLoadingMessage("tiles");
+				menu.setLoadingMessage("Tiles");
 				sendData(InputType.LOAD, String.valueOf(game.currentLevel));
 				break;
 			
@@ -302,7 +305,8 @@ public class MinicraftClient extends MinicraftConnection {
 				return false;
 			
 			case PING:
-				pingSuccessful = true;
+				//pingSuccessful = true;
+				System.out.println("client recieved ping");
 				return true;
 			
 			case USERNAMES:
@@ -331,10 +335,14 @@ public class MinicraftClient extends MinicraftConnection {
 				return true;
 			
 			case INIT:
-				if (Game.debug) System.out.println("CLIENT: recieved INIT packet");
-				if(curState != State.LOGIN) System.out.println("WARNING: client recieved init packet in state " + curState);
+				//if (Game.debug) System.out.println("CLIENT: recieved INIT packet");
+				if(curState != State.LOGIN) {
+					//System.out.println("WARNING: client recieved init packet in state " + curState + "; ignoring packet.");
+					return false;
+				}
 				
-				curState = State.LOADING; // I don't want to go through the changeState sequence.
+				changeState(State.LOADING);
+				//curState = State.LOADING; // I don't want to do the change state sequence quite yet.
 				menu.setLoadingMessage("World");
 				
 				String[] infostrings = alldata.split(",");
@@ -347,11 +355,6 @@ public class MinicraftClient extends MinicraftConnection {
 				game.currentLevel = info[3];
 				game.player.x = info[4];
 				game.player.y = info[5];
-				
-				//if(curState == State.LOGIN) {// only go through the sequence if this is called as part of start up.
-					//curState = State.TILES;
-				menu.setLoadingMessage("Tiles");
-				//}
 				return true;
 			
 			case TILES:
@@ -369,7 +372,7 @@ public class MinicraftClient extends MinicraftConnection {
 				
 				byte[] tiledata = new byte[alldata.length()];
 				for(int i = 0; i < alldata.length(); i++)
-					tiledata[i] = (byte) ((int)alldata.charAt(i));
+					tiledata[i] = (byte)(((int)alldata.charAt(i)) - 1);
 				
 				if(tiledata.length / 2 > level.tiles.length) {
 					System.err.println("CLIENT ERROR: recieved level tile data is too long for world size; level.tiles.length="+level.tiles.length+", tiles in data: " + (tiledata.length / 2) + ". Will truncate tile loading.");
@@ -493,7 +496,7 @@ public class MinicraftClient extends MinicraftConnection {
 					return false;
 				}*/
 				// use the contained data to load up the player object vars.
-				if(Game.debug) System.out.println("CLIENT: player data recieved: " + alldata);
+				//if(Game.debug) System.out.println("CLIENT: player data recieved: " + alldata);
 				String[] playerparts = alldata.split("\\n");
 				List<String> playerinfo = Arrays.asList(playerparts[0].split(","));
 				List<String> playerinv = Arrays.asList(playerparts[1].split(","));

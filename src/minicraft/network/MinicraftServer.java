@@ -401,10 +401,10 @@ public class MinicraftServer extends Thread implements MinicraftProtocol {
 					if(Game.debug) System.out.println("SERVER: sending tiles from " + (i/2) + " to " + ((i+curData.length-2)/2) + " to client; passed value: " + curData[1]);
 					sendData(curData, address, port);
 				}*/
-				String tiledataString = "";
+				StringBuilder tiledataString = new StringBuilder();
 				for(byte b: tiledata)
-					tiledataString += (char) ((int)b);
-				serverThread.sendData(InputType.TILES, tiledataString);
+					tiledataString.append((char) ((int)b+1));
+				serverThread.sendData(InputType.TILES, tiledataString.toString());
 				serverThread.sendCachedPackets();
 				
 				/// send back the entities in the level specified.
@@ -413,7 +413,7 @@ public class MinicraftServer extends Thread implements MinicraftProtocol {
 				serverThread.cachePacketTypes(InputType.entityUpdates);
 				//int i = 0;
 				//while(i <= entities.length) {
-					String edata = "";
+					StringBuilder edata = new StringBuilder();
 					for(int i = 0; i < entities.length; i++) {
 						Entity curEntity = entities[i];
 						if(!clientPlayer.shouldTrack(curEntity.x>>4, curEntity.y>>4))
@@ -429,14 +429,14 @@ public class MinicraftServer extends Thread implements MinicraftProtocol {
 						}*/
 						// there is enough space.
 						if(curEntityData.length() > 1) // 1 b/c of the "," added; this prevents entities that aren't saved from causing ",," to appear.
-							edata += curEntityData;
+							edata.append(curEntityData);
 					}
 					//if(i >= entities.length)
 						//edata += "END"; // tell the client there are no more entities to send.
 					//else
-						edata = edata.substring(0, edata.length()-1); // cut off trailing comma
+						String edataToSend = edata.substring(0, edata.length()-1); // cut off trailing comma
 					
-					serverThread.sendData(InputType.ENTITIES, edata);
+					serverThread.sendData(InputType.ENTITIES, edataToSend);
 					serverThread.sendCachedPackets();
 					//if(i == entities.length)
 						//break; // this won't break in this case otherwise.

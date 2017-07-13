@@ -24,10 +24,13 @@ public class MinicraftServerThread extends MinicraftConnection {
 	private MinicraftServer serverInstance;
 	private RemotePlayer client;
 	
+	protected boolean isPlaying = false;
+	
 	private Game game;
 	
 	private NetworkInterface computer = null;
 	
+	private List<InputType> packetTypesToKeep = new ArrayList<InputType>();
 	private List<InputType> packetTypesToCache = new ArrayList<InputType>();
 	private List<String> cachedPackets = new ArrayList<String>();
 	
@@ -48,12 +51,16 @@ public class MinicraftServerThread extends MinicraftConnection {
 		
 		//System.out.println("created server thread: " + this);
 		
+		packetTypesToKeep.addAll(InputType.tileUpdates);
+		packetTypesToKeep.addAll(InputType.entityUpdates);
+		
 		start();
 	}
 	
 	public RemotePlayer getClient() { return client; }
 	
 	protected synchronized boolean parsePacket(InputType inType, String data) {
+		//if(inType == InputType.LOAD) isPlaying = true;
 		return serverInstance.parsePacket(this, inType, data);
 	}
 	
@@ -64,6 +71,7 @@ public class MinicraftServerThread extends MinicraftConnection {
 	
 	protected void cachePacketTypes(List<InputType> packetTypes) {
 		packetTypesToCache.addAll(packetTypes);
+		packetTypesToKeep.removeAll(packetTypes);
 	}
 	
 	protected void sendCachedPackets() {
@@ -81,6 +89,8 @@ public class MinicraftServerThread extends MinicraftConnection {
 	protected synchronized void sendData(InputType inType, String data) {
 		if(packetTypesToCache.contains(inType))
 			cachedPackets.add(inType.ordinal()+":"+data);
+		else if(packetTypesToKeep.contains(inType))
+			return;
 		else
 			super.sendData(inType, data);
 	}

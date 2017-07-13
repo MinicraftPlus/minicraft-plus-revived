@@ -19,7 +19,8 @@ public interface MinicraftProtocol {
 	
 	static InputType getInputType(char idxChar) {
 		InputType inType = null;
-		int idx = ((int) idxChar) - 1; // the "-1" is because 1 is added originally so it does not make a null character, which is used to seperate requests.
+		int idx = idxChar;
+		idx--; // the "-1" is because 1 is added originally so it does not make a null character, which is used to seperate requests.
 		
 		if(idx < InputType.values.length && idx >= 0)
 			inType = InputType.values[idx];

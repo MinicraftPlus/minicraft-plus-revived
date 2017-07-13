@@ -1,7 +1,5 @@
 	---Quick TODO's---
 
---CURRENT: The server recognizes that the client exists, and it creates a server thread for it, but... no data appears to successfully get sent through the socket, and appear on the other side...
-
 -reorder tools a bit in ToolType.java b/c I'm picky. Hoes should be first, at least. ;)
 - add to F3 menu: "heartticks" left until regen another heart.
 
