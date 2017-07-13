@@ -87,6 +87,14 @@ public class Tnt extends Furniture implements ActionListener {
 		}
 	}
 	
+	public void hurt(Tnt tnt, int dmg, int attackDir) {
+		if (!fuseLit) {
+			fuseLit = true;
+			Sound.fuse.play();
+			ftik = FUSE_TIME * 2 / 3;
+		}
+	}
+	
 	protected String getUpdateString() {
 		String updates = super.getUpdateString() + ";";
 		updates += "fuseLit,"+fuseLit+
