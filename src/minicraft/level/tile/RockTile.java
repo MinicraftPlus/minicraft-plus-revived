@@ -14,6 +14,7 @@ import minicraft.item.Items;
 import minicraft.item.ToolItem;
 import minicraft.item.ToolType;
 import minicraft.level.Level;
+import minicraft.screen.OptionsMenu;
 import minicraft.screen.ModeMenu;
 
 /// this is the typical stone you see underground and on the surface, that gives coal.
@@ -74,7 +75,12 @@ public class RockTile extends Tile {
 			}
 			if (coallvl == 1) {
 				level.dropItem(x*16+8, y*16+8, 1, 2, Items.get("Stone"));
-				level.dropItem(x*16+8, y*16+8, 1, 3, Items.get("coal"));
+				int mincoal = 0, maxcoal = 1;
+				if(OptionsMenu.diff != OptionsMenu.hard) {
+					mincoal++;
+					maxcoal++;
+				}
+				level.dropItem(x*16+8, y*16+8, mincoal, maxcoal, Items.get("coal"));
 			}
 			level.setTile(x, y, Tiles.get("dirt"));
 		} else {
