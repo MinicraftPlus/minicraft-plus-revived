@@ -50,7 +50,7 @@ public class DoorTile extends Tile {
 			ToolItem tool = (ToolItem) item;
 			if (tool.type == ToolType.Pickaxe) {
 				if (player.payStamina(4 - tool.level)) {
-					level.setTile(xt, yt, Tiles.get("Stone Bricks"));
+					level.setTile(xt, yt, Tiles.get(id+3)); // will get the corresponding floor tile.
 					level.dropItem(xt*16, yt*16, Items.get(type.name() + " Door"));
 					Sound.monsterHurt.play();
 					return true;
