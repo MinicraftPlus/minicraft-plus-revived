@@ -10,15 +10,9 @@ Note to self: for more little bugs/ideas/concerns, search code for "TODO"
 ####
 If two clients are typing their usernames at the same time, then when one client connects, the other client will be able to type the same username since their username list hasn't been updated. To fix this, have the clients check entity addition packets, and add the username if it turns out to be a player. Also check when the server recieves the login request, and reject it if the username matches an existing one.
 ####
-Wood plank and stone brick floors don't drop when they are destroyed.
-####
-Doors always make the tile underneath stone brick instead of planks or something.
-####
 10 minute mode unlock is not written to file when it should be.
 ####
 Stairs clump together.
-####
-REQUEST: stone drops too much coal.
 ####
 Fire particles appear, but... they look totally weird...
 ####
@@ -40,14 +34,6 @@ MULTIPLAYER-Related:
 ****
 
 The Font.drawParagraph() methods' centering system (and/or I suppose the FontStyle centering system) should revolve around three things, for each axis: whether or not to center at all, and if so, the **OFFSET FROM THE ABSOLUTE CENTER**, and the x and y padding. That second one is the one not taken care of in the main drawParagraph method, and I think it would make things a hell of a lot easier.
-
-****
-
-- Make TNT explosions ignite nearby TNT. Just make all TNT on exploding tiles get lit. Or, maybe easier, ignite when hurt by TNT *or* a player.
-
-****
-
-Make dirt always give one dirt; it occasionally gives two.
 
 ****
 
