@@ -434,7 +434,7 @@ public class MinicraftServer extends Thread implements MinicraftProtocol {
 					//if(i >= entities.length)
 						//edata += "END"; // tell the client there are no more entities to send.
 					//else
-						String edataToSend = edata.substring(0, edata.length()-1); // cut off trailing comma
+						String edataToSend = edata.substring(0, Math.min(0, edata.length()-1)); // cut off trailing comma
 					
 					serverThread.sendData(InputType.ENTITIES, edataToSend);
 					serverThread.sendCachedPackets();
@@ -458,9 +458,9 @@ public class MinicraftServer extends Thread implements MinicraftProtocol {
 				serverThread.endConnection();
 				return true;
 			
-			/*case ENTITY:
+			case ENTITY:
 				// client wants the specified entity sent in an ADD packet, becuase it couldn't find that entity upon recieving an ENTITY packet from the server.
-				int enid = Integer.parseInt(data);
+				int enid = Integer.parseInt(alldata);
 				Entity entityToSend = Game.getEntity(enid);
 				if(entityToSend == null) {
 					/// well THIS would be a problem, I think. Though... Actually, not really. It just means that an entity was removed between the time of sending an update for it, and the client then asking for it to be added. But since it would be useless to add it at this point, we'll just ignore the request.
@@ -468,14 +468,13 @@ public class MinicraftServer extends Thread implements MinicraftProtocol {
 					return false;
 				}
 				
-				if(!client.shouldSync(entityToSend.x >> 4, entityToSend.y >> 4)) {
+				if(!clientPlayer.shouldSync(entityToSend.x >> 4, entityToSend.y >> 4)) {
 					// the requested entity is not even in range
 					return false;
 				}
 				
-				sendEntityAddition(entityToSend, client);
+				serverThread.sendEntityAddition(entityToSend);
 				return true;
-			*/
 			
 			case SAVE:
 				if (Game.debug) System.out.println("SERVER: recieved player save");

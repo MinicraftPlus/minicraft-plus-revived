@@ -479,7 +479,8 @@ public class MinicraftClient extends MinicraftConnection {
 				String updates = alldata.substring(alldata.indexOf(";")+1);
 				Entity entity = Game.getEntity(entityid);
 				if(entity == null) {
-					System.err.println("CLIENT: couldn't find entity specified to update: " + entityid + "; could not apply updates: " + updates);
+					//System.err.println("CLIENT: couldn't find entity specified to update: " + entityid + "; could not apply updates: " + updates);
+					sendData(InputType.ENTITY, String.valueOf(entityid));
 					return false;
 				}
 				else if(!((RemotePlayer)game.player).shouldSync(entity.x >> 4, entity.y >> 4)) {
