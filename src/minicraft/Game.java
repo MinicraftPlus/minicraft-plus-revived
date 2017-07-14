@@ -418,7 +418,7 @@ public class Game extends Canvas implements Runnable {
 		
 		// Increment tickCount if the game is not paused
 		if (!paused || isValidServer()) setTime(tickCount+1);
-		if (tickCount == 3600) level.removeAllEnemies();
+		//if (tickCount == 3600) level.removeAllEnemies(); // because of lifetime, I don't need this.
 		
 		/// SCORE MODE ONLY
 		

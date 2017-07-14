@@ -14,7 +14,7 @@ public class PassiveMob extends MobAi {
 	
 	public PassiveMob(MobSprite[][] sprites, int color) {this(sprites, color, 3);}
 	public PassiveMob(MobSprite[][] sprites, int color, int healthFactor) {
-		super(sprites, 5 + healthFactor * OptionsMenu.diff, 45, 40);
+		super(sprites, 5 + healthFactor * OptionsMenu.diff, 5*60*Game.normSpeed, 45, 40);
 		this.color = color;
 		col = color;
 	}

@@ -13,11 +13,14 @@ public abstract class MobAi extends Mob {
 	
 	int randomWalkTime, randomWalkChance, randomWalkDuration;
 	int xa, ya;
+	int lifetime;
+	int age = 0;
 	
 	private boolean slowtick = false;
 	
-	public MobAi(MobSprite[][] sprites, int maxHealth, int rwTime, int rwChance) {
+	public MobAi(MobSprite[][] sprites, int maxHealth, int lifetime, int rwTime, int rwChance) {
 		super(sprites, maxHealth);
+		this.lifetime = lifetime;
 		randomWalkTime = 0;
 		randomWalkDuration = rwTime;
 		randomWalkChance = rwChance;
@@ -32,6 +35,12 @@ public abstract class MobAi extends Mob {
 	
 	public void tick() {
 		super.tick();
+		
+		age++;
+		if(age > lifetime) {
+			remove();
+			return;
+		}
 		
 		if(getLevel() != null) {
 			boolean foundPlayer = false;
