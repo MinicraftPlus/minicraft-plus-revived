@@ -21,7 +21,9 @@ import minicraft.screen.OptionsMenu;
 
 public class Level {
 	private Random random = new Random();
-
+	
+	private static final int MOB_SPAWN_FACTOR = 500; // the chance of a mob actually trying to spawn when trySpawn is called equals: mobCount / maxMobCount * MOB_SPAWN_FACTOR. so, it basically equals the chance, 1/number, of a mob spawning when the mob cap is reached. I hope that makes sense...
+	
 	public int w, h; // width and height of the level
 	public Game game;
 	
@@ -530,8 +532,10 @@ public class Level {
 		
 		mobCount = count;
 		
-		if(count < maxMobCount && !Game.isValidClient() && Game.tickCount % 2 == 0)
-			trySpawn(1);
+		int spawnAttempts = 2;
+		if(depth == 0) spawnAttempts = 18;
+		if(count < maxMobCount && !Game.isValidClient() && Game.tickCount % 5 == 0)
+			trySpawn(spawnAttempts);
 	}
 	
 	public void dropItem(int x, int y, int mincount, int maxcount, Item... items) {
@@ -709,8 +713,9 @@ public class Level {
 	}
 	*/
 	public void trySpawn(int count) {
-		for (int i = 0; i < count; i++) {
-			if(random.nextInt(mobCount) == 0) continue; // hopefully will make mobs spawn a lot slower.
+		boolean spawned = false;
+		for (int i = 0; i < count && !spawned; i++) {
+			if(random.nextInt((int) Math.ceil(mobCount * MOB_SPAWN_FACTOR / maxMobCount)) == 0) continue; // hopefully will make mobs spawn a lot slower.
 			
 			int minLevel = 1, maxLevel = 1;
 			if (depth < 0) {
@@ -739,6 +744,8 @@ public class Level {
 					else if (rnd >= 85) add((new Snake(lvl)), nx, ny);
 					else add((new Knight(lvl)), nx, ny);
 				}
+				
+				spawned = true;
 			}
 			
 			if(depth == 0 && PassiveMob.checkStartPos(this, nx, ny)) {
@@ -746,6 +753,8 @@ public class Level {
 				if (rnd <= (Game.time==3?22:33)) add((new Cow()), nx, ny);
 				else if (rnd >= 68) add((new Pig()), nx, ny);
 				else add((new Sheep()), nx, ny);
+				
+				spawned = true;
 			}
 		}
 	}
