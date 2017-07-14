@@ -7,6 +7,8 @@ Minicraft+ version 2.0.2
 * made lots of edits to mob spawn rate, and mob count management
 + Made it so all mobs (not players obviously) despawn after a certain amount of time (will later be fixed so mobs close to the player don't despawn.
 
+
+
 Minicraft+ version 2.0.1
 
 +* added more super-secret debug powers... mua ha ha...
