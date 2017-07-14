@@ -1,8 +1,11 @@
 Minicraft+ version 2.0.2
 
 * Switched the multiplayer protocol from UDP to TCP.
-
-
+* fixed problems with doors, floors, and walls (item drops, etc.)
++ made tnt light other tnt
+* edited coal drop amount
+* made lots of edits to mob spawn rate, and mob count management
++ Made it so all mobs (not players obviously) despawn after a certain amount of time (will later be fixed so mobs close to the player don't despawn.
 
 Minicraft+ version 2.0.1
 
