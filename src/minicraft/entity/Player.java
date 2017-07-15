@@ -119,8 +119,6 @@ public class Player extends Mob {
 		if (ModeMenu.creative) {
 			Items.fillCreativeInv(inventory);
 		} else {
-			inventory.add(Items.get("Enchanter"));
-			inventory.add(Items.get("Workbench"));
 			inventory.add(Items.get("Power Glove"));
 		}
 		
