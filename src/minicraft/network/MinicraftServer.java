@@ -561,7 +561,7 @@ public class MinicraftServer extends Thread implements MinicraftProtocol {
 				}
 				
 				entity.remove();
-				if(Game.debug) System.out.println("SERVER: item entity pickup approved: " + entity);
+				//if(Game.debug) System.out.println("SERVER: item entity pickup approved: " + entity);
 				serverThread.sendData(inType, alldata);
 				broadcastData(InputType.REMOVE, String.valueOf(entity.eid), serverThread);
 				return true;
@@ -570,7 +570,7 @@ public class MinicraftServer extends Thread implements MinicraftProtocol {
 				if (Game.debug) System.out.println("SERVER: recieved interaction request");
 				//x, y, dir, item
 				// since this should be the most up-to-date data, just update the remote player coords with them.
-				int ox = clientPlayer.x>>4, oy = clientPlayer.y>>4;
+				//int ox = clientPlayer.x>>4, oy = clientPlayer.y>>4;
 				//clientPlayer.x = Integer.parseInt(data[0]);
 				//clientPlayer.y = Integer.parseInt(data[1]);
 				//clientPlayer.dir = Integer.parseInt(data[0]);
@@ -611,10 +611,14 @@ public class MinicraftServer extends Thread implements MinicraftProtocol {
 				PotionItem.applyPotion(clientPlayer, PotionType.values[typeIdx], addEffect);
 				return true;
 			
+			case PLAYER:
+				clientPlayer.update(alldata);
+				return true;
+			
 			case MOVE:
 				/// the player moved.
 				//if (Game.debug) System.out.println("SERVER: recieved move packet");
-				
+				//int olddir = clientPlayer.dir;
 				clientPlayer.dir = Integer.parseInt(data[2]);
 				int plvlidx = Integer.parseInt(data[3]);
 				if(plvlidx >= 0 && plvlidx < Game.levels.length && Game.levels[plvlidx] != clientPlayer.getLevel()) {

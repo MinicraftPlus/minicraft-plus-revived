@@ -6,6 +6,7 @@ import java.net.Socket;
 import java.net.UnknownHostException;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
 import minicraft.Game;
 import minicraft.entity.Bed;
@@ -38,7 +39,9 @@ public class MinicraftClient extends MinicraftConnection {
 	}
 	private State curState = State.DISCONNECTED;
 	
-	private boolean pingSuccessful = false;
+	private boolean pingSuccessful = false; // this is more or less useless. -_-
+	
+	private HashMap<Integer, Long> entityRequests = new HashMap<Integer, Long>();
 	
 	//private boolean sent = false;
 	//private long sentTime;
@@ -449,6 +452,9 @@ public class MinicraftClient extends MinicraftConnection {
 						Game.levels[game.currentLevel].add(game.player);
 						Bed.inBed = false;
 					}
+					
+					if(entityRequests.containsKey(addedEntity.eid))
+						entityRequests.remove(addedEntity.eid);
 					//else if(Game.debug && addedEntity instanceof RemotePlayer)
 						//System.out.println("CLIENT: added remote player from packet: " + addedEntity + "; game player has eid " + game.player.eid + "; this player has eid " + addedEntity.eid + "; are equal: " + (game.player.eid == addedEntity.eid));
 				}
@@ -480,7 +486,10 @@ public class MinicraftClient extends MinicraftConnection {
 				Entity entity = Game.getEntity(entityid);
 				if(entity == null) {
 					//System.err.println("CLIENT: couldn't find entity specified to update: " + entityid + "; could not apply updates: " + updates);
-					sendData(InputType.ENTITY, String.valueOf(entityid));
+					if(!entityRequests.containsKey(entityid) || (System.nanoTime() - entityRequests.get(entityid))/1E8 > 15L) { // this will make it so that there has to be at least 1.5 seconds between each time a certain entity is requested.
+						sendData(InputType.ENTITY, String.valueOf(entityid));
+						entityRequests.put(entityid, System.nanoTime());
+					}
 					return false;
 				}
 				else if(!((RemotePlayer)game.player).shouldSync(entity.x >> 4, entity.y >> 4)) {
@@ -559,7 +568,7 @@ public class MinicraftClient extends MinicraftConnection {
 			case PICKUP:
 				if(curState != State.PLAY) return false; // shouldn't happen.
 				int ieid = Integer.parseInt(alldata);
-				if (Game.debug) System.out.println("CLIENT: recieved pickup approval for: " + ieid);
+				//if (Game.debug) System.out.println("CLIENT: recieved pickup approval for: " + ieid);
 				Entity ie = Game.getEntity(ieid);
 				if(ie == null || !(ie instanceof ItemEntity)) {
 					System.err.println("CLIENT error with PICKUP response: specified entity does not exist or is not an ItemEntity: " + ieid);
@@ -620,6 +629,13 @@ public class MinicraftClient extends MinicraftConnection {
 		sendData(InputType.INTERACT, itemString+";"+player.inventory.count(Items.get("arrow")));
 	}
 	
+	public void sendPlayerUpdate(Player player) {
+		if(player.getUpdates().length() > 0) {
+			sendData(InputType.PLAYER, player.getUpdates());
+			player.flushUpdates();
+		}
+	}
+	
 	public void sendPlayerDeath(Player player, DeathChest dc) {
 		if(player != game.player && game.player != null) return; // this is client is not responsible for that player.
 		Level level = Game.levels[game.currentLevel];
@@ -652,7 +668,6 @@ public class MinicraftClient extends MinicraftConnection {
 	
 	public void pickupItem(ItemEntity ie) {
 		if(ie == null) return;
-		if(Game.debug) System.out.println("CLIENT: requesting pickup of item: " + ie);
 		sendData(InputType.PICKUP, String.valueOf(ie.eid));
 	}
 	

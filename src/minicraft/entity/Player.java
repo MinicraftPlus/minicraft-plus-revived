@@ -77,8 +77,6 @@ public class Player extends Mob {
 	private int hungerChargeDelay; // the delay between each time the hunger bar increases your health
 	private int hungerStarveDelay; // the delay between each time the hunger bar decreases your health
 	
-	public boolean showinfo;
-	
 	public HashMap<PotionType, Integer> potioneffects; // the potion effects currently applied to the player
 	public boolean showpotioneffects; // whether to display the current potion effects on screen
 	int cooldowninfo; // prevents you from toggling the info pane on and off super fast.
@@ -105,7 +103,6 @@ public class Player extends Mob {
 		potioneffects = new HashMap<PotionType, Integer>();
 		showpotioneffects = true;
 		
-		showinfo = false;
 		cooldowninfo = 0;
 		regentick = 0;
 		shirtColor = 110;
@@ -155,11 +152,6 @@ public class Player extends Mob {
 		}
 		
 		if(cooldowninfo > 0) cooldowninfo--;
-		
-		if(input.getKey("F3").clicked && cooldowninfo == 0) { // shows debug info in upper-left
-			cooldowninfo = 10;
-			showinfo = !showinfo;
-		}
 		
 		if(input.getKey("potionEffects").clicked && cooldowninfo == 0) {
 			cooldowninfo = 10;
@@ -287,12 +279,11 @@ public class Player extends Mob {
 			//executes if not saving; and... essentially halves speed if out of stamina.
 			if ((xa != 0 || ya != 0) && (staminaRechargeDelay % 2 == 0 || isSwimming()) && game.savecooldown == 0 && !game.saving) {
 				double spd = moveSpeed * (potioneffects.containsKey(PotionType.Speed) ? 1.5D : 1);
+				int oldDir = dir;
 				boolean moved = move((int) (xa * spd), (int) (ya * spd)); // THIS is where the player moves; part of Mob.java
-				if(moved) {
-					stepCount++;
-					if(Game.isValidClient() && this == game.player)
-						Game.client.move(this);
-				}
+				if (moved) stepCount++;
+				if ((moved || oldDir != dir) && Game.isValidClient() && this == game.player)
+					Game.client.move(this);
 			}
 			
 			if (isSwimming() && tickTime % 60 == 0 && !potioneffects.containsKey(PotionType.Swim)) { // if drowning... :P
@@ -345,6 +336,8 @@ public class Player extends Mob {
 		}
 		
 		if (attackTime > 0) attackTime--;
+		
+		if(Game.isValidClient() && this == game.player) Game.client.sendPlayerUpdate(this);
 	}
 	
 	/* This actually ends up calling another use method down below. */
@@ -483,7 +476,7 @@ public class Player extends Mob {
 
 			if (xt >= 0 && yt >= 0 && xt < level.w && yt < level.h) {
 				Tile t = level.getTile(xt, yt);
-				if (Game.debug && Game.ISONLINE) System.out.println("attacking tile " + xt+","+yt + ": "+t.name);
+				if (Game.debug) System.out.println(Game.onlinePrefix()+"attacking tile " + xt+","+yt + ": "+t.name + " (facing " + dir+"/"+attackDir+" - " + Direction.values[dir]+"/"+Direction.values[attackDir] + ")");
 				t.hurt(level, xt, yt, this, random.nextInt(3) + 1, attackDir);
 			}
 		}
