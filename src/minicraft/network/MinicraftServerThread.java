@@ -97,7 +97,7 @@ public class MinicraftServerThread extends MinicraftConnection {
 	
 	public void sendEntityUpdate(Entity e, String updateString) {
 		if(updateString.length() > 0) {
-			if (Game.debug && e instanceof Player) System.out.println("SERVER sending player update to " + client + ": " + e + "; data = " + updateString);
+			//if (Game.debug && e instanceof Player) System.out.println("SERVER sending player update to " + client + ": " + e + "; data = " + updateString);
 			sendData(InputType.ENTITY, e.eid+";"+updateString);
 		}// else
 		//	if(Game.debug) System.out.println("SERVER: skipping entity update b/c no new fields: " + e);

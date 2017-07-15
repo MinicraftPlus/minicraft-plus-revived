@@ -476,7 +476,7 @@ public class Player extends Mob {
 
 			if (xt >= 0 && yt >= 0 && xt < level.w && yt < level.h) {
 				Tile t = level.getTile(xt, yt);
-				if (Game.debug) System.out.println(Game.onlinePrefix()+"attacking tile " + xt+","+yt + ": "+t.name + " (facing " + dir+"/"+attackDir+" - " + Direction.values[dir]+"/"+Direction.values[attackDir] + ")");
+				//if (Game.debug) System.out.println(Game.onlinePrefix()+"attacking tile " + xt+","+yt + ": "+t.name + " (facing " + dir+"/"+attackDir+" - " + Direction.values[dir]+"/"+Direction.values[attackDir] + ")");
 				t.hurt(level, xt, yt, this, random.nextInt(3) + 1, attackDir);
 			}
 		}
