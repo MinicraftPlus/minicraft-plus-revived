@@ -47,4 +47,8 @@ public class Crafter extends Furniture {
 	public Furniture clone() {
 		return new Crafter(type);
 	}
+	
+	public String toString() {
+		return super.toString().replace("Crafter", type.name());
+	}
 }
