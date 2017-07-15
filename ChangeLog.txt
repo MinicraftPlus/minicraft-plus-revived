@@ -6,6 +6,10 @@ Minicraft+ version 2.0.2
 * edited coal drop amount
 * made lots of edits to mob spawn rate, and mob count management
 + Made it so all mobs (not players obviously) despawn after a certain amount of time (will later be fixed so mobs close to the player don't despawn.
++ Made enchanter craftable.
+- removed enchanter and workbench from starting inventory.
+- removed the power glove. It's still used, but you can only use it by pressing the "pickup" key; you can't get it in your inventory.
++ Added "unknown" item to make it obvious when something has gone wrong.
 
 
 
