@@ -8,8 +8,6 @@ Note to self: for more little bugs/ideas/concerns, search code for "TODO"
 
 	####BUGS####
 ####
-"Frozen Mobs" tend to appear on servers a lot, probably due to just not getting removed when they should. I should add something that checks if a mob is getting updated; if not, it removes it after a time.
-####
 10 minute mode unlock is not written to file when it should be.
 ####
 Stairs clump together.
@@ -23,8 +21,8 @@ REQUEST: remove POW glove, and other starting items
 
 #####
 MULTIPLAYER-Related:
- # Everything goes haywire with a slow connection. Better move to TCP.
- # If you get in a corner, and hit a tree or something in a certain direction, it attacks the wrong tile.
+ # Everything goes haywire with a slow connection. I've yet to test with TCP.
+ # "Frozen Mobs" tend to appear a lot, probably due to just not getting removed when they should. I should add something that checks if a mob is getting updated; if not, it removes it after a time.
  
  It would be nice if I could find a way to not even bother telling the server for things like potions, that don't even interact with the world.
 #####
