@@ -156,6 +156,7 @@ public class Game extends Canvas implements Runnable {
 	public int multipliertime = mtm; // Time left on the current multiplier.
 	
 	public static int scoreTime; // time remaining for score mode game.
+	public boolean showinfo;
 	
 	public static boolean pastDay1 = true; // used to prefent mob spawn on surface on day 1.
 	public static boolean readyToRenderGameplay = false;
@@ -186,6 +187,7 @@ public class Game extends Canvas implements Runnable {
 		asTick = 0;
 		notetick = 0;
 		
+		showinfo = false;
 		gameOver = false;
 	}
 	
@@ -516,6 +518,10 @@ public class Game extends Canvas implements Runnable {
 						setMenu(new PauseMenu(null));
 				}
 				
+				if(menu == null && input.getKey("F3").clicked) { // shows debug info in upper-left
+					showinfo = !showinfo;
+				}
+				
 				//for debugging only
 				if (debug) {
 					
@@ -787,6 +793,8 @@ public class Game extends Canvas implements Runnable {
 					Font.drawCentered(playerString, screen, 30+i*10, Color.get(-1, 134));
 					i++;
 				}
+				
+				renderDebugInfo();
 			}
 			else {
 				renderLevel();
@@ -855,46 +863,7 @@ public class Game extends Canvas implements Runnable {
 			screen.render(x * 7, screen.h - 8, 0 + 1 * 32, Color.get(0, 0), 0);
 		}
 		
-		int textcol = Color.get(-1, 555);
-		if (player.showinfo) { // renders show debug info on the screen.
-			ArrayList<String> info = new ArrayList<String>();
-			info.add("VERSION " + VERSION);
-			info.add(fra + " fps");
-			info.add("day tiks " + tickCount);
-			info.add((normSpeed * gamespeed) + " tik/sec");
-			info.add("walk spd " + player.moveSpeed);
-			info.add("X " + (player.x / 16) + "-" + (player.x % 16));
-			info.add("Y " + (player.y / 16) + "-" + (player.y % 16));
-			info.add("Tile " + Game.levels[currentLevel].getTile(player.x>>4, player.y>>4).name);
-			if (ModeMenu.score) info.add("Score " + player.score);
-			
-			if(!Game.isValidClient())
-				info.add("Mob Cnt " + Game.levels[currentLevel].mobCount + "/" + Game.levels[currentLevel].maxMobCount);
-			
-			
-			/// Displays number of chests left, if on dungeon level.
-			if (currentLevel == 5 && !Game.isValidClient()) {
-				if (levels[currentLevel].chestcount > 0) {
-					info.add("Chests: " + levels[currentLevel].chestcount);
-				} else {
-					info.add("Chests: Complete!");
-				}
-			}
-			
-			if(player.armor > 0) {
-				info.add("armor: " + player.armor);
-				info.add("dam buffer: " + player.armorDamageBuffer);
-			}
-			
-			//info.add("steps: " + player.stepCount);
-			info.add("micro-hunger:" + player.hungerStamCnt);
-			//info.add("health regen:" + player.hungerStamCnt);
-			
-			FontStyle style = new FontStyle(textcol).setShadowType(Color.get(-1, 000), true).setXPos(1);
-			for(int i = 0; i < info.size(); i++) {
-				style.setYPos(2 + i*10).draw(info.get(i), screen);
-			}
-		}
+		renderDebugInfo();
 		
 		// This is the arrow counter. ^ = infinite symbol.
 		int ac = player.inventory.count(Items.get("arrow"));
@@ -1016,6 +985,53 @@ public class Game extends Canvas implements Runnable {
 		/// CURRENT ITEM
 		if (player.activeItem != null) // shows active item sprite and name in bottom toolbar, if one exists.
 			player.activeItem.renderInventory(screen, 12 * 7, screen.h - 8, false);
+	}
+	
+	private void renderDebugInfo() {
+		int textcol = Color.get(-1, 555);
+		if (showinfo) { // renders show debug info on the screen.
+			ArrayList<String> info = new ArrayList<String>();
+			info.add("VERSION " + VERSION);
+			info.add(fra + " fps");
+			info.add("day tiks " + tickCount);
+			info.add((normSpeed * gamespeed) + " tik/sec");
+			if(!Game.isValidServer()) {
+				info.add("walk spd " + player.moveSpeed);
+				info.add("X " + (player.x / 16) + "-" + (player.x % 16));
+				info.add("Y " + (player.y / 16) + "-" + (player.y % 16));
+				info.add("Tile " + Game.levels[currentLevel].getTile(player.x>>4, player.y>>4).name);
+				if (ModeMenu.score) info.add("Score " + player.score);
+			}
+			if(!Game.isValidClient())
+				info.add("Mob Cnt " + Game.levels[currentLevel].mobCount + "/" + Game.levels[currentLevel].maxMobCount);
+			else
+				info.add("Mob Load Cnt " + Game.levels[currentLevel].mobCount);
+			
+			
+			/// Displays number of chests left, if on dungeon level.
+			if (Game.isValidServer() || currentLevel == 5 && !Game.isValidClient()) {
+				if (levels[5].chestcount > 0)
+					info.add("Chests: " + levels[5].chestcount);
+				else
+					info.add("Chests: Complete!");
+			}
+			
+			if(!Game.isValidServer()) {
+				if(player.armor > 0) {
+					info.add("armor: " + player.armor);
+					info.add("dam buffer: " + player.armorDamageBuffer);
+				}
+				
+				//info.add("steps: " + player.stepCount);
+				info.add("micro-hunger:" + player.hungerStamCnt);
+				//info.add("health regen:" + player.hungerStamCnt);
+			}
+			
+			FontStyle style = new FontStyle(textcol).setShadowType(Color.get(-1, 000), true).setXPos(1);
+			for(int i = 0; i < info.size(); i++) {
+				style.setYPos(2 + i*10).draw(info.get(i), screen);
+			}
+		}
 	}
 	
 	/** Renders the "Click to focus" box when you click off the screen. */
