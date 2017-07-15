@@ -484,6 +484,8 @@ public class Level {
 				if(Game.hasConnectedClients()) {
 					Game.server.broadcastEntityUpdate(e);
 				}
+				//else if(Game.isValidClient() && (System.nanoTime() - e.lastUpdate) / 1E9 > 5L)
+					//e.remove(); // used to try and reduce the number of forzen entities hanging around... I think a slow connection will ruin this, though...
 			}
 			
 			if(Game.isValidServer() && e instanceof Particle)

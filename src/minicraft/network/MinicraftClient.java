@@ -496,6 +496,11 @@ public class MinicraftClient extends MinicraftConnection {
 					// the entity is out of sync range; but not necessarily out of the tracking range, so it's *not* removed from the level here.
 					return false;
 				}
+				else if(!((RemotePlayer)game.player).shouldTrack(entity.x >> 4, entity.y >> 4)) {
+					// the entity is out of tracking range, and so may as well be removed from the level.
+					entity.remove();
+					return false;
+				}
 				entity.update(updates);
 				return true;
 			

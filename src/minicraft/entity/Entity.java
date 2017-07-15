@@ -22,6 +22,7 @@ public abstract class Entity {
 	private String prevUpdates = ""; /// holds the last value returned from getUpdateString(), for comparison with the next call.
 	private String curDeltas = ""; /// holds the updates returned from the last time getUpdates() was called.
 	private boolean accessedUpdates = false;
+	public long lastUpdate;
 	
 	public Entity(int xr, int yr) { // add color to this later, in color update
 		this.xr = xr;
@@ -32,6 +33,7 @@ public abstract class Entity {
 		col = 0;
 		
 		eid = -1;
+		lastUpdate = System.nanoTime();
 	}
 	
 	public abstract void render(Screen screen); /// used to render the entity on screen.
@@ -249,7 +251,7 @@ public abstract class Entity {
 	
 	public boolean isWithin(int tileRadius, Entity other) {
 		if(level == null || other.getLevel() == null) return false;
-		if(level.depth != other.getLevel().depth) return false; // obviously, if they are on different levels, they can't be next to each other.
+		if(level.depth != other.getLevel().depth) return false; // obviously, if they are on different levels, they can't be next to each other.}
 		
 		double distance = Math.abs(Math.hypot(x - other.x, y - other.y)); // calculate the distance between the two entities, in entity coordinates.
 		
@@ -271,6 +273,10 @@ public abstract class Entity {
 			String fieldName = field.substring(0, field.indexOf(","));
 			String val = field.substring(field.indexOf(",")+1);
 			updateField(fieldName, val);
+		}
+		
+		if(Game.isValidClient() && this instanceof MobAi) {
+			lastUpdate = System.nanoTime();
 		}
 	}
 	
