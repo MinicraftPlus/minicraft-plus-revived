@@ -461,8 +461,8 @@ public class Player extends Mob {
 			// attacks the enemy in the appropriate direction.
 			if (dir == 0) hurt(x - 8, y + 4 + yo, x + 8, y + range + yo);
 			if (dir == 1) hurt(x - 8, y - range + yo, x + 8, y - 4 + yo);
-			if (dir == 3) hurt(x + 4, y - 8 + yo, x + range, y + 8 + yo);
 			if (dir == 2) hurt(x - range, y - 8 + yo, x - 4, y + 8 + yo);
+			if (dir == 3) hurt(x + 4, y - 8 + yo, x + range, y + 8 + yo);
 			
 			// attempts to hurt the tile in the appropriate direction.
 			
