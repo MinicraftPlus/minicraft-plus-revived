@@ -310,10 +310,12 @@ public class Player extends Mob {
 					Item prevItem = activeItem;
 					activeItem = new PowerGloveItem();
 					attack();
-					if(!(activeItem instanceof PowerGloveItem) && prevItem != null)
-						inventory.add(0, prevItem);
-					else
-						activeItem = prevItem;
+					if(!(activeItem instanceof PowerGloveItem)) {
+						if(prevItem != null && !ModeMenu.creative)
+							inventory.add(0, prevItem);
+						// if something other than a power glove is being held, but the previous item is null, then nothing happens; nothing added to inventory, and current item remains as the new one.
+					} else
+						activeItem = prevItem; // the held item didn't change, so remove the power glove and make it what it was before.
 				}
 				else
 					attack();

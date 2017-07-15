@@ -15,7 +15,11 @@ public class Inventory {
 	private Random random = new Random();
 	private List<Item> items = new ArrayList<Item>(); // the list of items that is in the inventory.
 	
-	public List<Item> getItems() {return items;}
+	public List<Item> getItems() {
+		List<Item> newItems = new ArrayList<Item>();
+		newItems.addAll(items);
+		return newItems;
+	}
 	public void clearInv() {items.clear();}
 	public int invSize() {return items.size();}
 	
@@ -47,6 +51,7 @@ public class Inventory {
 	
 	/** Adds an item to a specific spot in the inventory */
 	public void add(int slot, Item item) {
+		//if (Game.debug) System.out.println("adding item to an inventory: " + item);
 		if (item instanceof StackableItem) { // if the item is a item...
 			StackableItem toTake = (StackableItem) item; // ...convert it into a StackableItem object.
 			

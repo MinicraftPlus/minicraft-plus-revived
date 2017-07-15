@@ -5,6 +5,7 @@ import minicraft.gfx.Screen;
 import minicraft.gfx.Sprite;
 import minicraft.item.FurnitureItem;
 import minicraft.item.PowerGloveItem;
+import minicraft.screen.ModeMenu;
 
 /** Many furniture classes are very similar; they might not even need to be there at all... */
 
@@ -38,19 +39,18 @@ public class Furniture extends Entity {
 
 	public void tick() {
 		if (shouldTake != null) { // if the player that should take this exists...
-			if (shouldTake.activeItem instanceof PowerGloveItem) { // ...and the player's holding a power glove...
-				remove(); // remove this from the world
-				if(!Game.ISONLINE) {
-					shouldTake.inventory.add(0, shouldTake.activeItem); // put the power glove into the player's inventory
-					shouldTake.activeItem = new FurnitureItem(this); // make this the player's current item.
-				}
-				else if(Game.isValidServer() && shouldTake instanceof RemotePlayer)
-					Game.server.getMatchingThread((RemotePlayer)shouldTake).updatePlayerActiveItem(new FurnitureItem(this));
-				else
-					System.out.println("WARNING: undefined behavior; online game was not server and ticked furniture: "+this+"; and/or player in online game found that isn't a RemotePlayer: " + shouldTake);
-				
-				if (Game.debug) System.out.println("set active item of player " + shouldTake + " to " + shouldTake.activeItem + "; picked up furniture: " + this);
+			remove(); // remove this from the world
+			if(!Game.ISONLINE) {
+				if (!ModeMenu.creative && shouldTake.activeItem != null && !(shouldTake.activeItem instanceof PowerGloveItem)) shouldTake.inventory.add(0, shouldTake.activeItem); // put whatever item the player is holding into their inventory (should never be a power glove, since it is put in a taken out again all in the same frame).
+				shouldTake.activeItem = new FurnitureItem(this); // make this the player's current item.
 			}
+			else if(Game.isValidServer() && shouldTake instanceof RemotePlayer)
+				Game.server.getMatchingThread((RemotePlayer)shouldTake).updatePlayerActiveItem(new FurnitureItem(this));
+			else
+				System.out.println("WARNING: undefined behavior; online game was not server and ticked furniture: "+this+"; and/or player in online game found that isn't a RemotePlayer: " + shouldTake);
+			
+			//if (Game.debug) System.out.println("set active item of player " + shouldTake + " to " + shouldTake.activeItem + "; picked up furniture: " + this);
+			
 			shouldTake = null; // the player is now dereferenced.
 		}
 		// moves the furniture in the correct direction.
