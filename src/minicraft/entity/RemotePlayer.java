@@ -13,9 +13,9 @@ import minicraft.gfx.Screen;
 public class RemotePlayer extends Player {
 	
 	/// these are used by the server to determine the distance limit for an entity/tile to be updated/added for a given player.
-	private static final int xSyncRadius = 10;
-	private static final int ySyncRadius = 8;
-	private static final int entityTrackingBuffer = 5;
+	private static final int xSyncRadius = 12;
+	private static final int ySyncRadius = 10;
+	private static final int entityTrackingBuffer = 0;
 	
 	private String username = "";
 	private InetAddress ipAddress;
