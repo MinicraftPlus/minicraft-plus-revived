@@ -336,7 +336,7 @@ public abstract class Entity {
 			/// loop though each of the updates this call. If it is differnt from the last one, then add it to the list.
 			if(curUpdates[i].equals(prevUpdates[i]) == false) {
 				deltas += curUpdates[i] + ";";
-				//if(Game.debug) System.out.println("found delta; old:\""+prevUpdates[i]+"\" -- new:\""+curUpdates[i]+"\"");
+				//if(Game.debug) System.out.println("found delta for "+this+"; old:\""+prevUpdates[i]+"\" -- new:\""+curUpdates[i]+"\"");
 			}
 		}
 		
