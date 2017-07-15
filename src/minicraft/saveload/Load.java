@@ -486,6 +486,8 @@ public class Load {
 				item = subOldName(item, worldVer);
 			}
 			
+			if (item.contains("Power Glove")) continue; // just pretend it doesn't exist. Because it doesn't. :P
+			
 			//System.out.println("loading item: " + item);
 			
 			if(item.contains(";")) {
@@ -640,16 +642,17 @@ public class Load {
 			int endIdx = chestInfo.size()-(isDeathChest||isDungeonChest?1:0);
 			for(int idx = 0; idx < endIdx; idx++) {
 				String itemData = chestInfo.get(idx);
+				if(worldVer.compareTo(new Version("1.9.4-dev4")) < 0)
+					itemData = subOldName(itemData, worldVer);
+				
+				if(itemData.contains("Power Glove")) continue; // ignore it.
+				
 				if (itemData.contains(";")) {
-					String[] aitemData = (itemData + ";1").split(";"); // this appends ";1" to the end, meaning one item, to everything; but if it was already there, then it becomes the 3rd element in the list, which is ignored.
-					if(worldVer.compareTo(new Version("1.9.4")) < 0)
-						aitemData[0] = subOldName(aitemData[0], worldVer);
+					String[] aitemData = itemData.split(";");
 					StackableItem stack = (StackableItem)Items.get(aitemData[0]);
 					stack.count = Integer.parseInt(aitemData[1]);
 					chest.inventory.add(stack);
 				} else {
-					if(worldVer.compareTo(new Version("1.9.4-dev4")) < 0)
-						itemData = subOldName(itemData, worldVer);
 					Item item = Items.get(itemData);
 					chest.inventory.add(item);
 				}

@@ -109,6 +109,7 @@ public class InputHandler implements MouseListener, KeyListener {
 		keymap.put("ATTACK", "C|SPACE"); //attack action references "C" key
 		keymap.put("MENU", "X|ENTER"); //and so on... menu does various things.
 		keymap.put("CRAFT", "Z"); // open/close personal crafting window.
+		keymap.put("PICKUP", "V"); // pickup torches / furniture; this replaces the power glove.
 		
 		keymap.put("PAUSE", "ESCAPE"); // pause the game.
 		keymap.put("SETHOME", "SHIFT-H"); // set your home.

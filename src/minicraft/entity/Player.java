@@ -16,6 +16,7 @@ import minicraft.item.Item;
 import minicraft.item.Items;
 import minicraft.item.PotionItem;
 import minicraft.item.PotionType;
+import minicraft.item.PowerGloveItem;
 import minicraft.item.Recipes;
 import minicraft.item.StackableItem;
 import minicraft.item.ToolItem;
@@ -57,7 +58,7 @@ public class Player extends Mob {
 	public static MobSprite[][] carrySuitSprites = MobSprite.compileMobSpriteAnimations(18, 22); // the "airwizard suit" sprites.
 	
 	public Inventory inventory;
-	public Item activeItem;
+	public Item activeItem, attackItem; // attackItem is useful again b/c of the power glove.
 	public int attackTime, attackDir;
 	
 	private int onStairDelay; // the delay before changing levels.
@@ -118,9 +119,9 @@ public class Player extends Mob {
 		
 		if (ModeMenu.creative) {
 			Items.fillCreativeInv(inventory);
-		} else {
+		}/* else {
 			inventory.add(Items.get("Power Glove"));
-		}
+		}*/
 		
 		if(previousInstance != null) {
 			spawnx = previousInstance.spawnx;
@@ -301,10 +302,21 @@ public class Player extends Mob {
 		}
 		
 		if (game.menu == null) {
-			if (!Bed.inBed && input.getKey("attack").clicked && stamina != 0) {
+			if (!Bed.inBed && (input.getKey("attack").clicked || input.getKey("pickup").clicked) && stamina != 0) {
 				if (!potioneffects.containsKey(PotionType.Energy)) stamina--;
 				staminaRecharge = 0;
-				attack();
+				
+				if (input.getKey("pickup").clicked) {
+					Item prevItem = activeItem;
+					activeItem = new PowerGloveItem();
+					attack();
+					if(!(activeItem instanceof PowerGloveItem) && prevItem != null)
+						inventory.add(0, prevItem);
+					else
+						activeItem = prevItem;
+				}
+				else
+					attack();
 			}
 			
 			if (input.getKey("menu").clicked && !use()) // !use() = no furniture in front of the player; this prevents player inventory from opening (will open furniture inventory instead)
@@ -333,7 +345,10 @@ public class Player extends Mob {
 			}
 		}
 		
-		if (attackTime > 0) attackTime--;
+		if (attackTime > 0) {
+			attackTime--;
+			if(attackTime == 0) attackItem = null; // null the attackItem once we are done attacking.
+		}
 		
 		if(Game.isValidClient() && this == game.player) Game.client.sendPlayerUpdate(this);
 	}
@@ -380,6 +395,8 @@ public class Player extends Mob {
 			else
 				attackTime = 5;
 			
+			attackItem = activeItem;
+			
 			Game.client.requestInteraction(this);
 			if(activeItem instanceof ToolItem && stamina - 1 >= 0 && ((ToolItem)activeItem).type == ToolType.Bow && inventory.count(Items.get("arrow")) > 0) // we are going to use an arrow.
 				inventory.removeItem(Items.get("arrow")); // do it here so we don't need a response.
@@ -388,7 +405,7 @@ public class Player extends Mob {
 		}
 		
 		attackDir = dir; // make the attack direction equal the current direction
-		//attackItem = activeItem; // make attackItem equal activeItem
+		attackItem = activeItem; // make attackItem equal activeItem
 		boolean done = false; // we're not done yet (we just started!)
 		
 		if (activeItem instanceof ToolItem && stamina - 1 >= 0) {
@@ -561,8 +578,8 @@ public class Player extends Mob {
 		if (attackTime > 0 && attackDir == 1) { // if currently attacking upwards...
 			screen.render(xo + 0, yo - 4, 6 + 13 * 32, Color.get(-1, 555), 0); //render left half-slash
 			screen.render(xo + 8, yo - 4, 6 + 13 * 32, Color.get(-1, 555), 1); //render right half-slash (mirror of left).
-			if (activeItem != null) { // if the player has an item
-				activeItem.sprite.render(screen, xo + 4, yo - 4); // then render the icon of the item.
+			if (attackItem != null) { // if the player had an item when they last attacked...
+				attackItem.sprite.render(screen, xo + 4, yo - 4); // then render the icon of the item.
 			}
 		}
 		
@@ -584,22 +601,22 @@ public class Player extends Mob {
 		if (attackTime > 0 && attackDir == 2) { // if attacking to the left.... (same as above)
 			screen.render(xo - 4, yo, 7 + 13 * 32, Color.get(-1, 555), 1);
 			screen.render(xo - 4, yo + 8, 7 + 13 * 32, Color.get(-1, 555), 3);
-			if (activeItem != null) {
-				activeItem.sprite.render(screen, xo - 4, yo + 4);
+			if (attackItem != null) {
+				attackItem.sprite.render(screen, xo - 4, yo + 4);
 			}
 		}
 		if (attackTime > 0 && attackDir == 3) { // attacking to the right
 			screen.render(xo + 8 + 4, yo, 7 + 13 * 32, Color.get(-1, 555), 0);
 			screen.render(xo + 8 + 4, yo + 8, 7 + 13 * 32, Color.get(-1, 555), 2);
-			if (activeItem != null) {
-				activeItem.sprite.render(screen, xo + 8 + 4, yo + 4);
+			if (attackItem != null) {
+				attackItem.sprite.render(screen, xo + 8 + 4, yo + 4);
 			}
 		}
 		if (attackTime > 0 && attackDir == 0) { // attacking downwards
 			screen.render(xo + 0, yo + 8 + 4, 6 + 13 * 32, Color.get(-1, 555), 2);
 			screen.render(xo + 8, yo + 8 + 4, 6 + 13 * 32, Color.get(-1, 555), 3);
-			if (activeItem != null) {
-				activeItem.sprite.render(screen, xo + 4, yo + 8 + 4);
+			if (attackItem != null) {
+				attackItem.sprite.render(screen, xo + 4, yo + 8 + 4);
 			}
 		}
 		
@@ -822,7 +839,8 @@ public class Player extends Mob {
 		//";activeItem,"+(activeItem==null?"null":activeItem.name)+
 		";armor,"+armor+
 		";attackTime,"+attackTime+
-		";attackDir,"+attackDir;
+		";attackDir,"+attackDir+
+		";attackItem,"+(attackItem==null?"null":attackItem.name);
 		/*";potioneffects,";
 		if(potioneffects.size() == 0)
 			updates += "null";
@@ -845,6 +863,7 @@ public class Player extends Mob {
 			case "armor": armor = Integer.parseInt(val); return true;
 			case "attackTime": attackTime = Integer.parseInt(val); return true;
 			case "attackDir": attackDir = Integer.parseInt(val); return true;
+			case "attackItem": attackItem = Items.get(val); return true;
 			case "potioneffects":
 				potioneffects.clear();
 				for(String potion: val.split(":")) {

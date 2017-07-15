@@ -28,7 +28,8 @@ public class Items {
 	}
 	
 	static {
-		addAll(PowerGloveItem.getAllInstances());
+		//add(new UnknownItem());
+		//add(new PowerGloveItem());
 		addAll(FurnitureItem.getAllInstances());
 		addAll(TorchItem.getAllInstances());
 		addAll(BucketItem.getAllInstances());
@@ -42,7 +43,7 @@ public class Items {
 		addAll(PotionItem.getAllInstances());
 	}
 	
-	/** fetches an item from the list given it's name. I mean, I would have just used a HashMap... Hey, look! I'm using one! ^v^ */
+	/** fetches an item from the list given its name. */
 	public static Item get(String name) {
 		name = name.toUpperCase();
 		//System.out.println("fetching name: \"" + name + "\"");
@@ -72,7 +73,7 @@ public class Items {
 		} else {
 			System.out.println(Game.onlinePrefix()+"ITEMS GET: invalid name requested: \"" + name + "\"");
 			//Thread.dumpStack();
-			return get("POWER GLOVE");
+			return new UnknownItem();
 		}
 		/*if(!name.equals("")) { // name is not nothing
 			if(name.contains(";")) { // if has ";" in name for whatever reason...
