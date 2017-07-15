@@ -567,7 +567,7 @@ public class MinicraftServer extends Thread implements MinicraftProtocol {
 				return true;
 			
 			case INTERACT:
-				if (Game.debug) System.out.println("SERVER: recieved interaction request");
+				//if (Game.debug) System.out.println("SERVER: recieved interaction request");
 				//x, y, dir, item
 				// since this should be the most up-to-date data, just update the remote player coords with them.
 				//int ox = clientPlayer.x>>4, oy = clientPlayer.y>>4;
@@ -619,7 +619,6 @@ public class MinicraftServer extends Thread implements MinicraftProtocol {
 				/// the player moved.
 				//if (Game.debug) System.out.println("SERVER: recieved move packet");
 				//int olddir = clientPlayer.dir;
-				clientPlayer.dir = Integer.parseInt(data[2]);
 				int plvlidx = Integer.parseInt(data[3]);
 				if(plvlidx >= 0 && plvlidx < Game.levels.length && Game.levels[plvlidx] != clientPlayer.getLevel()) {
 					clientPlayer.remove();
@@ -631,6 +630,9 @@ public class MinicraftServer extends Thread implements MinicraftProtocol {
 				int newy = Integer.parseInt(data[1]);
 				
 				boolean moved = clientPlayer.move(newx - clientPlayer.x, newy - clientPlayer.y); // this moves the player, and updates other clients.
+				
+				clientPlayer.dir = Integer.parseInt(data[2]); // do this AFTERWARD, so that the move method doesn't mess something up.
+				
 				if(moved) clientPlayer.updateSyncArea(oldx, oldy); // this updates the current client.
 				
 				broadcastEntityUpdate(clientPlayer, !moved); // this will make it so that if the player is prevented from moving, the server will update the client, forcing it back to the last place the server recorded the player at. TODO this breaks down with a slow connection...
