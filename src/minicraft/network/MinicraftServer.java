@@ -247,6 +247,14 @@ public class MinicraftServer extends Thread implements MinicraftProtocol {
 		return clientSaves;
 	}
 	
+	protected String getUsernames() {
+		String names = "";
+		for(MinicraftServerThread thread: getThreads())
+			names += thread.getClient().getUsername() + "\n";
+		
+		return names;
+	}
+	
 	public synchronized boolean parsePacket(MinicraftServerThread serverThread, InputType inType, String alldata) {
 		String[] data = alldata.split(";");
 		
@@ -278,11 +286,7 @@ public class MinicraftServer extends Thread implements MinicraftProtocol {
 			
 			case USERNAMES:
 				if (Game.debug) System.out.println("SERVER: recieved usernames request");
-				String names = "";
-				for(MinicraftServerThread thread: getThreads())
-					names += thread.getClient().getUsername() + "\n";
-				
-				serverThread.sendData(InputType.USERNAMES, names);
+				serverThread.sendData(InputType.USERNAMES, getUsernames());
 				return true;
 			
 			case LOGIN:
@@ -296,9 +300,16 @@ public class MinicraftServer extends Thread implements MinicraftProtocol {
 					return false;
 				}
 				
-				// TODO check username
+				for(MinicraftServerThread thread: getThreads()) {
+					if(thread == serverThread) continue;
+					if(thread.getClient().getUsername().equalsIgnoreCase(username)) {
+						// username is taken; could happen if a client requests usernames, then another client joins before the first one. just take user back to the name selection.
+						serverThread.sendData(InputType.USERNAMES, getUsernames());
+						return false;
+					}
+				}
 				
-				/// versions match; make client player
+				/// versions match, and username is unique; make client player
 				clientPlayer.setUsername(username);
 				//RemotePlayer clientPlayer = new RemotePlayer(null, game, address, port);
 				

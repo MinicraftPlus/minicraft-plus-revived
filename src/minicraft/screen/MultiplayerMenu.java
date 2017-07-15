@@ -66,7 +66,7 @@ public class MultiplayerMenu extends Menu {
 				if(input.getKey("select").clicked && inputIsValid) {
 					curState = State.WAITING;
 					Game.client.login(typing); // typing = username
-					typing = "";
+					//typing = "";
 					return;
 				}
 			break;
