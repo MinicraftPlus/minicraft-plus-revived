@@ -15,6 +15,7 @@ public class Recipes {
 	static {
 		craftRecipes.add(new Recipe("Workbench_1", "Wood_10"));
 		craftRecipes.add(new Recipe("Torch_2", "Wood_1", "coal_1"));
+		craftRecipes.add(new Recipe("Grass Seeds_1", "seeds_1", "Flower_2"));
 		craftRecipes.add(new Recipe("plank_2", "Wood_1"));
 		craftRecipes.add(new Recipe("Plank Wall_1", "plank_3"));
 		craftRecipes.add(new Recipe("Wood Door_1", "plank_5"));
@@ -26,13 +27,14 @@ public class Recipes {
 		workbenchRecipes.add(new Recipe("Stone Wall_1", "Stone Brick_3"));
 		workbenchRecipes.add(new Recipe("Oven_1", "Stone_15"));
 		workbenchRecipes.add(new Recipe("Furnace_1", "Stone_20"));
+		workbenchRecipes.add(new Recipe("Enchanter_1", "Wood_5", "String_2", "Lapis_10"));
 		workbenchRecipes.add(new Recipe("Chest_1", "Wood_20"));
 		workbenchRecipes.add(new Recipe("Anvil_1", "iron_5"));
-		workbenchRecipes.add(new Recipe("Tnt_1", "Gunpowder_10", "sand_8"));
+		workbenchRecipes.add(new Recipe("Tnt_1", "Gunpowder_10", "Sand_8"));
 		workbenchRecipes.add(new Recipe("Loom_1", "Wood_10", "Wool_5"));
-		workbenchRecipes.add(new Recipe("Fishing Rod_1", "Wood_5", "string_3"));
+		workbenchRecipes.add(new Recipe("Fishing Rod_1", "Wood_5", "String_3"));
 		
-		loomRecipes.add(new Recipe("string_2", "Wool_1"));
+		loomRecipes.add(new Recipe("String_2", "Wool_1"));
 		loomRecipes.add(new Recipe("red wool_1", "Wool_1", "rose_1"));
 		loomRecipes.add(new Recipe("blue wool_1", "Wool_1", "Lapis_1"));
 		loomRecipes.add(new Recipe("green wool_1", "Wool_1", "Cactus_1"));
@@ -106,7 +108,6 @@ public class Recipes {
 		ovenRecipes.add(new Recipe("bread_1", "wheat_4"));
 		
 		enchantRecipes.add(new Recipe("Gold Apple_1", "apple_1", "gold_8"));
-		enchantRecipes.add(new Recipe("Grass Seeds_1", "seeds_1", "Flower_2"));
 		enchantRecipes.add(new Recipe("potion_1", "glass_1", "Lapis_3"));
 		enchantRecipes.add(new Recipe("speed potion_1", "potion_1", "Cactus_5"));
 		enchantRecipes.add(new Recipe("light potion_1", "potion_1", "slime_5"));
