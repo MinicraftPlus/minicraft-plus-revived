@@ -420,29 +420,31 @@ public class Level {
 		while(entitiesToAdd.size() > 0) {
 			Entity entity = entitiesToAdd.get(0);
 			
-			if(Game.isValidServer())
-				Game.server.broadcastEntityAddition(entity);
+			if(!entities.contains(entity)) {
 			
-			if (!Game.isValidServer() || !(entity instanceof Particle)) {
-				if (Game.debug) {
-					String clazz = entity.getClass().getCanonicalName();
-					clazz = clazz.substring(clazz.lastIndexOf(".")+1);
-					String[] searching = {"DungeonChest", "AirWizard", "Player"}; //can contain any number of class names I want to print when found.
-					for(String search: searching) {
-						try {
-							if(Class.forName("minicraft.entity."+search).isAssignableFrom(entity.getClass())) {
-								if (clazz.equals("AirWizard")) clazz += ((AirWizard)entity).secondform ? " II" : "";
-								printLevelLoc(Game.onlinePrefix()+"Adding " + clazz, entity.x>>4, entity.y>>4, " ("+entity.eid+")");
-								break;
+				if(Game.isValidServer())
+					Game.server.broadcastEntityAddition(entity);
+				
+				if (!Game.isValidServer() || !(entity instanceof Particle)) {
+					if (Game.debug) {
+						String clazz = entity.getClass().getCanonicalName();
+						clazz = clazz.substring(clazz.lastIndexOf(".")+1);
+						String[] searching = {"DungeonChest", "AirWizard", "Player"}; //can contain any number of class names I want to print when found.
+						for(String search: searching) {
+							try {
+								if(Class.forName("minicraft.entity."+search).isAssignableFrom(entity.getClass())) {
+									if (clazz.equals("AirWizard")) clazz += ((AirWizard)entity).secondform ? " II" : "";
+									printLevelLoc(Game.onlinePrefix()+"Adding " + clazz, entity.x>>4, entity.y>>4, " ("+entity.eid+")");
+									break;
+								}
+							} catch(ClassNotFoundException ex) {
+								ex.printStackTrace();
 							}
-						} catch(ClassNotFoundException ex) {
-							ex.printStackTrace();
 						}
 					}
+					
+					entities.add(entity);
 				}
-				
-				entities.add(entity);
-				entitiesToRemove.remove(entity); // just in case it's there.
 			}
 			//if(Game.debug && Game.ISONLINE && !(entity instanceof Particle)) System.out.println(Game.onlinePrefix()+this+": added entity to level: " + entity);
 			/*if(Game.debug && Game.isValidServer()) {
@@ -450,6 +452,7 @@ public class Level {
 				if(found == null || !found.equals(entity))
 					System.out.println(Game.onlinePrefix()+"entity added to level is not accessible from Game: " + entity);
 			}*/
+			entitiesToRemove.remove(entity); // just in case it's there.
 			entitiesToAdd.remove(0);
 		}
 		
