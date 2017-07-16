@@ -61,7 +61,7 @@ public abstract class Mob extends Entity {
 		if(checkPlayers) prevPlayers = Game.server.getPlayersInRange(this, true);
 		
 		// these should return true b/c the mob is still technically moving; these are just to make it move *slower*.
-		if (!(this instanceof Player) && tickTime % 2 == 0 && (isSwimming() || isWooling()))
+		if (tickTime % 2 == 0 && (isSwimming() || (!(this instanceof Player) && isWooling())))
 			return true;
 		if (tickTime % walkTime == 0 && walkTime > 1)
 			return true;
