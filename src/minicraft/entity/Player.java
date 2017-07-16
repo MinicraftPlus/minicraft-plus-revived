@@ -99,7 +99,8 @@ public class Player extends Mob {
 		inventory = new Inventory();
 		
 		//ac = acs;
-		inventory.add(Items.get("arrow"), acs);
+		if(previousInstance == null)
+			inventory.add(Items.get("arrow"), acs);
 		
 		potioneffects = new HashMap<PotionType, Integer>();
 		showpotioneffects = true;
@@ -114,7 +115,7 @@ public class Player extends Mob {
 		stamina = maxStamina;
 		hunger = maxHunger;
 		
-		hungerStamCnt = 0;
+		hungerStamCnt = maxHungerStams[OptionsMenu.diff];
 		stamHungerTicks = maxHungerTicks;
 		
 		if (ModeMenu.creative) {
@@ -765,7 +766,7 @@ public class Player extends Mob {
 			//armorItem.amount = armor;
 			dc.inventory.add(curArmor);
 		}
-		dc.inventory.removeItem(Items.get("Power Glove"));
+		//dc.inventory.removeItem(Items.get("Power Glove"));
 		
 		Sound.playerDeath.play();
 		
