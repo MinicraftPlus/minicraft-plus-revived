@@ -42,15 +42,15 @@ public final class Tiles {
 		tiles.set(23, new InfiniteFallTile("Infinite Fall"));
 		tiles.set(24, new CloudTile("Cloud"));
 		tiles.set(25, new CloudCactusTile("Cloud Cactus"));
-		tiles.set(26, new DoorTile(Tile.Material.Wood));
-		tiles.set(27, new DoorTile(Tile.Material.Stone));
-		tiles.set(28, new DoorTile(Tile.Material.Obsidian));
 		tiles.set(29, new FloorTile(Tile.Material.Wood));
 		tiles.set(30, new FloorTile(Tile.Material.Stone));
 		tiles.set(31, new FloorTile(Tile.Material.Obsidian));
 		tiles.set(32, new WallTile(Tile.Material.Wood));
 		tiles.set(33, new WallTile(Tile.Material.Stone));
 		tiles.set(34, new WallTile(Tile.Material.Obsidian));
+		tiles.set(26, new DoorTile(Tile.Material.Wood));
+		tiles.set(27, new DoorTile(Tile.Material.Stone));
+		tiles.set(28, new DoorTile(Tile.Material.Obsidian));
 		tiles.set(35, new WoolTile());
 		
 		for(int i = 0; i < tiles.size(); i++) {

@@ -22,9 +22,9 @@ public class Recipes {
 		
 		workbenchRecipes.add(new Recipe("Torch_2", "Wood_1", "coal_1"));
 		workbenchRecipes.add(new Recipe("Lantern_1", "Wood_8", "slime_4", "glass_3"));
-		workbenchRecipes.add(new Recipe("Stone Door_1", "Stone Brick_5"));
 		workbenchRecipes.add(new Recipe("Stone Brick_2", "Stone_2"));
 		workbenchRecipes.add(new Recipe("Stone Wall_1", "Stone Brick_3"));
+		workbenchRecipes.add(new Recipe("Stone Door_1", "Stone Brick_5"));
 		workbenchRecipes.add(new Recipe("Oven_1", "Stone_15"));
 		workbenchRecipes.add(new Recipe("Furnace_1", "Stone_20"));
 		workbenchRecipes.add(new Recipe("Enchanter_1", "Wood_5", "String_2", "Lapis_10"));
