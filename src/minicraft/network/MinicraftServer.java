@@ -445,7 +445,7 @@ public class MinicraftServer extends Thread implements MinicraftProtocol {
 					//if(i >= entities.length)
 						//edata += "END"; // tell the client there are no more entities to send.
 					//else
-						String edataToSend = edata.substring(0, Math.min(0, edata.length()-1)); // cut off trailing comma
+						String edataToSend = edata.substring(0, Math.max(0, edata.length()-1)); // cut off trailing comma
 					
 					serverThread.sendData(InputType.ENTITIES, edataToSend);
 					serverThread.sendCachedPackets();
