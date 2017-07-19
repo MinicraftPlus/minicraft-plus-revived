@@ -419,29 +419,18 @@ public class Level {
 		}*/
 		while(entitiesToAdd.size() > 0) {
 			Entity entity = entitiesToAdd.get(0);
+			boolean inLevel = entities.contains(entity);
 			
-			if(!entities.contains(entity)) {
-			
+			if(!inLevel) {
+				//if(Game.getEntity(entity.eid) != null) { // if this returned true, then it means that this entity is already in a level somewhere.
+					//entity.remove();
+				//}
+				
 				if(Game.isValidServer())
 					Game.server.broadcastEntityAddition(entity);
 				
 				if (!Game.isValidServer() || !(entity instanceof Particle)) {
-					if (Game.debug) {
-						String clazz = entity.getClass().getCanonicalName();
-						clazz = clazz.substring(clazz.lastIndexOf(".")+1);
-						String[] searching = {"DungeonChest", "AirWizard", "Player"}; //can contain any number of class names I want to print when found.
-						for(String search: searching) {
-							try {
-								if(Class.forName("minicraft.entity."+search).isAssignableFrom(entity.getClass())) {
-									if (clazz.equals("AirWizard")) clazz += ((AirWizard)entity).secondform ? " II" : "";
-									printLevelLoc(Game.onlinePrefix()+"Adding " + clazz, entity.x>>4, entity.y>>4, " ("+entity.eid+")");
-									break;
-								}
-							} catch(ClassNotFoundException ex) {
-								ex.printStackTrace();
-							}
-						}
-					}
+					if (Game.debug) printEntityStatus("Adding ", entity, "DungeonChest", "AirWizard", "Player");
 					
 					entities.add(entity);
 				}
@@ -452,8 +441,9 @@ public class Level {
 				if(found == null || !found.equals(entity))
 					System.out.println(Game.onlinePrefix()+"entity added to level is not accessible from Game: " + entity);
 			}*/
-			entitiesToRemove.remove(entity); // just in case it's there.
-			entitiesToAdd.remove(0);
+			//entitiesToRemove.remove(entity); // just in case it's there.
+			
+			entitiesToAdd.remove(entity);
 		}
 		
 		if(Game.isValidServer() && getEntitiesOfClass(Player.class).length == 0)
@@ -528,8 +518,11 @@ public class Level {
 			
 			if(Game.isValidServer() && !(entity instanceof Particle))
 				Game.server.broadcastEntityRemoval(entity);
+			
+			if(Game.debug) printEntityStatus("Removing ", entity, "Player");
+			
 			entities.remove(entity);
-			entitiesToRemove.remove(0);
+			entitiesToRemove.remove(entity);
 			
 			if(entity instanceof RemotePlayer)
 				System.out.println("removed remote player from level " + depth);
@@ -541,6 +534,23 @@ public class Level {
 		if(depth == 0) spawnAttempts = 18;
 		if(count < maxMobCount && !Game.isValidClient() && Game.tickCount % 5 == 0)
 			trySpawn(spawnAttempts);
+	}
+	
+	private void printEntityStatus(String entityMessage, Entity entity, String... searching) {
+		// "searching" can contain any number of class names I want to print when found.
+		String clazz = entity.getClass().getCanonicalName();
+		clazz = clazz.substring(clazz.lastIndexOf(".")+1);
+		for(String search: searching) {
+			try {
+				if(Class.forName("minicraft.entity."+search).isAssignableFrom(entity.getClass())) {
+					if (clazz.equals("AirWizard")) clazz += ((AirWizard)entity).secondform ? " II" : "";
+					printLevelLoc(Game.onlinePrefix()+entityMessage + clazz, entity.x>>4, entity.y>>4, " ("+entity.eid+")");
+					break;
+				}
+			} catch(ClassNotFoundException ex) {
+				ex.printStackTrace();
+			}
+		}
 	}
 	
 	public void dropItem(int x, int y, int mincount, int maxcount, Item... items) {
@@ -691,6 +701,8 @@ public class Level {
 		
 		if(!entitiesToAdd.contains(entity)) // they are not even worth putting here. All they need to do is get sent to the the other clients.
 			entitiesToAdd.add(entity);
+		//if(entitiesToRemove.contains(entity))
+		entitiesToRemove.remove(entity); // to make sure the most recent request is satisfied.
 	}
 	
 	public void remove(Entity e) {
@@ -701,6 +713,7 @@ public class Level {
 		
 		if(!entitiesToRemove.contains(e))
 			entitiesToRemove.add(e);
+		entitiesToAdd.remove(e);
 		
 		//int xto = e.x >> 4;
 		//int yto = e.y >> 4;
