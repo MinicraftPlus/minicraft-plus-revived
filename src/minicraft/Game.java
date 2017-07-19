@@ -311,8 +311,8 @@ public class Game extends Canvas implements Runnable {
 		}
 		
 		DeadMenu.shouldRespawn = false;
-		player = null;
 		resetGame();
+		player = new Player(null, this, input);
 		Bed.inBed = false;
 		gameTime = 0;
 		Game.gamespeed = 1;
