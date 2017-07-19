@@ -48,6 +48,10 @@ Make the mob package and furniture package - I'm not sure why there were so many
 
 ****
 
+Add a note that describes how new score mode times can be unlocked. Probably should add them in the tutorial...
+
+****
+
 Make the TileItem instances get their name from the tile they will make. This is so that the tile class can drop that item when it is destroyed, and it doesn't have to know the name of the item; it just has to do Items.get(name).
 
 ****
