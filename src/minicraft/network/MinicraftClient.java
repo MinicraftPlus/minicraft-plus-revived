@@ -534,7 +534,7 @@ public class MinicraftClient extends MinicraftConnection {
 				Load load = new Load();
 				if (Game.debug) System.out.println("CLIENT: setting player vars from packet...");
 				if(ModeMenu.creative)
-					Items.fillCreativeInv(player.inventory);
+					Items.fillCreativeInv(game.player.inventory);
 				else if(!(playerinv.size() == 1 && playerinv.get(0).equals("null")))
 					load.loadInventory(game.player.inventory, playerinv);
 				load.loadPlayer(game.player, playerinfo);
