@@ -30,6 +30,8 @@ public class MinicraftServerThread extends MinicraftConnection {
 	
 	private NetworkInterface computer = null;
 	
+	//private List<Integer> trackedEntities = new ArrayList<Integer>();
+	
 	private List<InputType> packetTypesToKeep = new ArrayList<InputType>();
 	private List<InputType> packetTypesToCache = new ArrayList<InputType>();
 	private List<String> cachedPackets = new ArrayList<String>();
@@ -107,11 +109,19 @@ public class MinicraftServerThread extends MinicraftConnection {
 		String edata = Save.writeEntity(e, false);
 		if(edata == null || edata.length() == 0)
 			System.out.println("entity not worth adding to client level: " + e + "; not sending to " + client);
-		else
+		else {
+			/*if(trackedEntities.contains(e.eid)) { // this isn't going to work, b/c the client removes entities without telling the server, and i don't want the client to have to tell the server either, b/c that's sending more packets.
+				//if(Game.debug) System.out.println(this+" blocking addition of entity ");
+				return;
+			}
+			else trackedEntities.add(e.eid);*/
+			//if(Game.debug) System.out.println(this+" sending entity addition to client: " + e);
 			sendData(InputType.ADD, edata);
+		}
 	}
 	
 	public void sendEntityRemoval(int eid) {
+		//trackedEntities.remove(eid);
 		sendData(InputType.REMOVE, String.valueOf(eid));
 	}
 	
@@ -142,7 +152,6 @@ public class MinicraftServerThread extends MinicraftConnection {
 		File[] clientFiles = serverInstance.getRemotePlayerFiles();
 		
 		for(File file: clientFiles) {
-			byte[] mac;
 			String macString = "";
 			try {
 				BufferedReader br = new BufferedReader(new FileReader(file));
@@ -157,13 +166,8 @@ public class MinicraftServerThread extends MinicraftConnection {
 				ex.printStackTrace();
 			}
 			
-			mac = new byte[macString.length()/2];
-			for(int i = 0; i < mac.length; i++) {
-				mac[i] = Byte.parseByte(macString.substring(i*2, i*2+2), 16);
-			}
-			
 			try {
-				if(Arrays.equals(mac, computer.getHardwareAddress())) {
+				if(macString.equals(getMacString(computer.getHardwareAddress()))) {
 					/// this player has been here before.
 					if (Game.debug) System.out.println("remote player file found; returning file " + file.getName());
 					return file;
@@ -195,6 +199,18 @@ public class MinicraftServerThread extends MinicraftConnection {
 		return playerdata;
 	}
 	
+	private static String getMacString(byte[] macAddress) {
+		StringBuilder macString = new StringBuilder();
+		for(byte b: macAddress) {
+			//String hexInt = Integer.toHexString((int)b);
+			//if (Game.debug) System.out.println("mac byte as hex int: " + hexInt);
+			//macString.append(hexInt.substring(hexInt.length()-2));
+			macString.append(String.format("%02x", b));
+		}
+		if(Game.debug) System.out.println("mac as hex: " + macString);
+		return macString.toString();
+	}
+	
 	protected void writeClientSave(String playerdata) {
 		String filename = ""; // this will hold the path to the file that will be saved to.
 		
@@ -219,14 +235,7 @@ public class MinicraftServerThread extends MinicraftConnection {
 			return;
 		}
 		
-		String macString = "";
-		for(byte b: macAddress) {
-			String hexInt = Integer.toHexString((int)b);
-			if (Game.debug) System.out.println("mac byte as hex int: " + hexInt);
-			macString += hexInt.substring(hexInt.length()-2);
-		}
-		if(Game.debug) System.out.println("mac as hex: " + macString);
-		String filedata = macString + "\n" + playerdata;
+		String filedata = getMacString(macAddress) + "\n" + playerdata;
 		
 		String filepath = serverInstance.getWorldPath()+"/"+filename;
 		//java.nio.file.Path theFile = (new File(filepath)).toPath();
