@@ -152,8 +152,6 @@ public class MinicraftClient extends MinicraftConnection {
 				Game.readyToRenderGameplay = true;
 				game.setMenu(null);
 				break;
-			
-			case DISCONNECTED: endConnection(); break;
 		}
 	}
 	
@@ -296,6 +294,22 @@ public class MinicraftClient extends MinicraftConnection {
 		if (Game.debug) System.out.println("client is not connected. ending run loop.");
 	}*/
 	
+	private static String getPlayerData(Player player) {
+		StringBuilder playerdata = new StringBuilder();
+		List<String> sdata = new ArrayList<String>();
+		Save.writePlayer(player, sdata);
+		if(sdata.size() > 0) // should always be the case
+			playerdata.append(String.join(",", sdata.toArray(new String[0])));
+		playerdata.append("\n");
+		Save.writeInventory(player, sdata);
+		if(sdata.size() == 0)
+			playerdata.append("null");
+		else
+			playerdata.append(String.join(",", sdata.toArray(new String[0])));
+		
+		return playerdata.toString();
+	}
+	
 	/** This method is responsible for parsing all data recieved by the socket. */
 	public synchronized boolean parsePacket(InputType inType, String alldata) {
 		String[] data = alldata.split(";");
@@ -304,7 +318,7 @@ public class MinicraftClient extends MinicraftConnection {
 			case INVALID:
 				System.err.println("CLIENT recieved error: " + alldata);
 				menu.setError(alldata);
-				changeState(State.DISCONNECTED);
+				endConnection();
 				return false;
 			
 			case PING:
@@ -326,7 +340,7 @@ public class MinicraftClient extends MinicraftConnection {
 			case DISCONNECT:
 				if (Game.debug) System.out.println("CLIENT: recieved disconnect");
 				menu.setError("Server Disconnected."); // this sets the menu back to the multiplayer menu, and tells the user what happened.
-				changeState(State.DISCONNECTED);
+				endConnection();
 				return true;
 			
 			case GAME:
@@ -438,7 +452,7 @@ public class MinicraftClient extends MinicraftConnection {
 				if(curState == State.LOADING)
 					System.out.println("CLIENT: recieved entity addition while loading level");
 				
-				//if (Game.debug) System.out.println("CLIENT: recieved entity addition: " + entityData);
+				//if (Game.debug) System.out.println("CLIENT: recieved entity addition: " + alldata);
 				
 				if(alldata.length() == 0) {
 					System.err.println("CLIENT WARNING: recieved entity addition is blank...");
@@ -486,10 +500,12 @@ public class MinicraftClient extends MinicraftConnection {
 				Entity entity = Game.getEntity(entityid);
 				if(entity == null) {
 					//System.err.println("CLIENT: couldn't find entity specified to update: " + entityid + "; could not apply updates: " + updates);
-					if(!entityRequests.containsKey(entityid) || (System.nanoTime() - entityRequests.get(entityid))/1E8 > 15L) { // this will make it so that there has to be at least 1.5 seconds between each time a certain entity is requested.
+					if(entityRequests.containsKey(entityid) && (System.nanoTime() - entityRequests.get(entityid))/1E8 > 15L) { // this will make it so that there has to be at least 1.5 seconds between each time a certain entity is requested. Also, it won't request the entity the first time around; it has to wait a bit after the first attempt before it will actually request it.
 						sendData(InputType.ENTITY, String.valueOf(entityid));
 						entityRequests.put(entityid, System.nanoTime());
 					}
+					else if(!entityRequests.containsKey(entityid))
+						entityRequests.put(entityid, (long)(System.nanoTime() - 7L*1E8)); // should "advance" the time so that it only takes 0.8 seconds after the first attempt to issue the actual request.
 					return false;
 				}
 				else if(!((RemotePlayer)game.player).shouldSync(entity.x >> 4, entity.y >> 4)) {
@@ -529,21 +545,8 @@ public class MinicraftClient extends MinicraftConnection {
 			case SAVE:
 				if (Game.debug) System.out.println("CLIENT: recieved save request");
 				// send back the player data.
-				String playerdata = "";
-				List<String> sdata = new ArrayList<String>();
-				Save.writePlayer(game.player, sdata);
-				for(String str: sdata)
-					playerdata += str + ",";
-				playerdata = playerdata.substring(0, playerdata.length()-1) + "\n";
-				Save.writeInventory(game.player, sdata);
-				for(String str: sdata)
-					playerdata += str + ",";
-				if(sdata.size() == 0)
-					playerdata += "null";
-				else
-					playerdata = playerdata.substring(0, playerdata.length()-1);
 				if (Game.debug) System.out.println("CLIENT: sending save data");
-				sendData(InputType.SAVE, playerdata);
+				sendData(InputType.SAVE, getPlayerData(game.player));
 				return true;
 			
 			case NOTIFY:
@@ -566,7 +569,7 @@ public class MinicraftClient extends MinicraftConnection {
 			case INTERACT:
 				// the server went through with the interaction, and has sent back the new activeItem.
 				Item holdItem = Items.get(alldata);
-				if(Game.debug) System.out.println("CLIENT: recieved interaction success; setting player item to " + holdItem);
+				//if(Game.debug) System.out.println("CLIENT: recieved interaction success; setting player item to " + holdItem);
 				game.player.activeItem = holdItem;
 				return true;
 			
@@ -686,6 +689,9 @@ public class MinicraftClient extends MinicraftConnection {
 	}
 	
 	public void endConnection() {
+		if(isConnected() && curState == State.PLAY)
+			sendData(InputType.SAVE, getPlayerData(game.player)); // try to make sure that the player's info is saved before they leave.
+		
 		super.endConnection();
 		
 		curState = State.DISCONNECTED;
