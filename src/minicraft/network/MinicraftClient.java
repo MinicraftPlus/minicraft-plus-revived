@@ -349,6 +349,10 @@ public class MinicraftClient extends MinicraftConnection {
 				Game.gamespeed = Float.parseFloat(data[2]);
 				Game.pastDay1 = Boolean.parseBoolean(data[3]);
 				Game.scoreTime = Integer.parseInt(data[4]);
+				
+				if(ModeMenu.creative)
+					Items.fillCreativeInv(game.player.inventory, false);
+				
 				return true;
 			
 			case INIT:
@@ -533,9 +537,10 @@ public class MinicraftClient extends MinicraftConnection {
 				List<String> playerinv = Arrays.asList(playerparts[1].split(","));
 				Load load = new Load();
 				if (Game.debug) System.out.println("CLIENT: setting player vars from packet...");
-				if(ModeMenu.creative)
-					Items.fillCreativeInv(game.player.inventory);
-				else if(!(playerinv.size() == 1 && playerinv.get(0).equals("null")))
+				//if(ModeMenu.creative) {
+					//if(Game.debug) System.out.println("CLIENT: in creative mode, filling creative inv...");
+					
+				if(!(playerinv.size() == 1 && playerinv.get(0).equals("null")))
 					load.loadInventory(game.player.inventory, playerinv);
 				load.loadPlayer(game.player, playerinfo);
 				//setPlayer = true;
