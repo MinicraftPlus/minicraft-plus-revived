@@ -50,7 +50,7 @@ public class Bed extends Furniture {
 	
 	public static Player restorePlayer() {
 		if(Bed.playerLevel != null) {
-			Bed.playerLevel.add(Bed.player);
+			Bed.playerLevel.add(Bed.player); // this adds the player to all the other clients' levels
 			if(Game.isValidServer() && player instanceof RemotePlayer)
 				Game.server.getMatchingThread((RemotePlayer)player).sendEntityAddition(player);
 		} else

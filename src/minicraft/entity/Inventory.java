@@ -274,7 +274,7 @@ public class Inventory {
 	public void updateInv(String items) {
 		clearInv();
 		
-		if (Game.debug) System.out.println(Game.onlinePrefix()+"updating inventory " + this + " with itemstring: " + items);
+		//if (Game.debug) System.out.println(Game.onlinePrefix()+"updating inventory " + this + " with itemstring: " + items);
 		
 		if(items.length() == 0) return; // there are no items to add.
 		
