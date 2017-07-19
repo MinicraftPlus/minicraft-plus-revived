@@ -48,7 +48,10 @@ public class RemotePlayer extends Player {
 			super.tick();
 		else {
 			// a minimal thing for render update purposes.
-			if (attackTime > 0) attackTime--;
+			if (attackTime > 0) {
+				attackTime--;
+				if(attackTime == 0) attackItem = null; // null the attackItem once we are done attacking.
+			}
 		}
 	}
 	
