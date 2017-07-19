@@ -516,7 +516,7 @@ public class Level {
 			Entity entity = entitiesToRemove.get(0);
 			//if (Game.debug) System.out.println("removing entity " + entity + " from level " + depth + ".");
 			
-			if(Game.isValidServer() && !(entity instanceof Particle))
+			if(Game.isValidServer() && !(entity instanceof Particle || entity instanceof RemotePlayer))
 				Game.server.broadcastEntityRemoval(entity);
 			
 			if(Game.debug) printEntityStatus("Removing ", entity, "Player");
@@ -524,8 +524,11 @@ public class Level {
 			entities.remove(entity);
 			entitiesToRemove.remove(entity);
 			
-			if(entity instanceof RemotePlayer)
-				System.out.println("removed remote player from level " + depth);
+			if(entity instanceof RemotePlayer) {
+				System.out.println(Game.onlinePrefix()+"removed remote player from level " + depth);
+				//if(Game.isValidServer())
+					//Game.server.onThreadDisconnect(Game.server.getAssociatedThread((RemotePlayer)entity));
+			}
 		}
 		
 		mobCount = count;
