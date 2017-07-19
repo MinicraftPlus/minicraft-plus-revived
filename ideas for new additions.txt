@@ -48,6 +48,10 @@ Related to the above... I guess maybe make a system of item attributes? Entity a
 
 ++++
 
+Add maps to the game. One for each level on the smallest world size, and progressively more maps should be needed otherwise. Should I make the maps lock to "chuck" sort of locations, or always make the center the current location, where possible? It could work by having a mini-map in the upper-left whenever the map is the active item, and there is no menu open.
+
+++++
+
 Add more decorations that have no actual function...? Like furniture: chairs, tables, etc.
 
 ++++
