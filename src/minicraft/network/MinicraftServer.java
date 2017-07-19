@@ -93,6 +93,7 @@ public class MinicraftServer extends Thread implements MinicraftProtocol {
 		/// screen is 18 tiles hori, 14 tiles vert. So, rect is 20x16 tiles.
 		//List<Entity> entities = level.getEntitiesInTiles(xt - RemotePlayer.xSyncRadius, yt - RemotePlayer.ySyncRadius, xt + RemotePlayer.xSyncRadius, yt + RemotePlayer.ySyncRadius);
 		for(Entity e: level.getEntitiesOfClass(RemotePlayer.class)) {
+			if(e.isRemoved()) continue;
 			RemotePlayer rp = (RemotePlayer)e;
 			if(useTrackRange && rp.shouldTrack(xt, yt) || !useTrackRange && rp.shouldSync(xt, yt))
 				players.add(rp);
@@ -104,7 +105,7 @@ public class MinicraftServer extends Thread implements MinicraftProtocol {
 	private RemotePlayer getIfPlayer(Entity e) {
 		if(e instanceof RemotePlayer) {
 			RemotePlayer given = (RemotePlayer) e;
-			MinicraftServerThread filed = getMatchingThread(given);
+			MinicraftServerThread filed = getAssociatedThread(given);
 			if(filed == null) {
 				System.err.println("SERVER encountered a RemotePlayer not matched in the thread list: " + given);
 				return null;
@@ -115,7 +116,7 @@ public class MinicraftServer extends Thread implements MinicraftProtocol {
 			return null;
 	}
 	
-	public MinicraftServerThread getMatchingThread(RemotePlayer player) {
+	public MinicraftServerThread getAssociatedThread(RemotePlayer player) {
 		MinicraftServerThread thread = null;
 		
 		for(MinicraftServerThread curThread: getThreads()) {
@@ -138,7 +139,7 @@ public class MinicraftServer extends Thread implements MinicraftProtocol {
 		
 		/// NOTE I could do this the other way around, by looping though the thread list, and adding those whose player is found in the given list, which might be slightly more optimal... but I think it's better that this tells you when a player in the list doesn't have a matching thread.
 		for(RemotePlayer client: players) {
-			MinicraftServerThread thread = getMatchingThread(client);
+			MinicraftServerThread thread = getAssociatedThread(client);
 			if(thread != null)
 				threads.add(thread);
 			else
@@ -697,7 +698,8 @@ public class MinicraftServer extends Thread implements MinicraftProtocol {
 	
 	protected void onThreadDisconnect(MinicraftServerThread thread) {
 		threadList.remove(thread);
-		broadcastData(InputType.REMOVE, String.valueOf(thread.getClient().eid));
+		//broadcastEntityRemoval(thread.getClient());
+		//broadcastData(InputType.REMOVE, String.valueOf(thread.getClient().eid), thread);
 		if(thread.getClient() == hostPlayer)
 			hostPlayer = null;
 	}
