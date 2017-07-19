@@ -10,6 +10,9 @@ Minicraft+ version 2.0.2
 - removed enchanter and workbench from starting inventory.
 - removed the power glove. It's still used, but you can only use it by pressing the "pickup" key; you can't get it in your inventory.
 + Added "unknown" item to make it obvious when something has gone wrong.
+* Fixed multiplayer attack rendering across clients.
+* Fixed creative inventory for clients in multiplayer.
+* Fixed multiplayer client saving.
 
 
 

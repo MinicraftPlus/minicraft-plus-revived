@@ -16,16 +16,15 @@ Fire particles appear, but... they look totally weird...
 ####
 Sound effects don't always play when they should; mostly it seems when other sounds should be on at the same time.
 ####
-REQUEST: remove POW glove, and other starting items
-####
 
 #####
 MULTIPLAYER-Related:
- # Everything goes haywire with a slow connection. I've yet to test with TCP.
- # "Frozen Mobs" tend to appear a lot, probably due to just not getting removed when they should. I should add something that checks if a mob is getting updated; if not, it removes it after a time.
+ - reported: connection gets stuck at the "loading entities" screen
  
  It would be nice if I could find a way to not even bother telling the server for things like potions, that don't even interact with the world.
 #####
+Make it so servers are remembered and saved.
+####
 -----------------------------------------------------------------------------------
 
 	****IDEAS(that should probably be implemented)****
@@ -48,6 +47,10 @@ PROJECT: encapsulate many classes, as much as possible. This means making prefer
 ****
 
 Make the mob package and furniture package - I'm not sure why there were so many errors... There aren't any package-private variables...
+
+****
+
+Make the TileItem instances get their name from the tile they will make. This is so that the tile class can drop that item when it is destroyed, and it doesn't have to know the name of the item; it just has to do Items.get(name).
 
 ****
 
