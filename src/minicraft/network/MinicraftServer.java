@@ -92,12 +92,10 @@ public class MinicraftServer extends Thread implements MinicraftProtocol {
 		//if(e == null || e.getLevel() == null) return players;
 		/// screen is 18 tiles hori, 14 tiles vert. So, rect is 20x16 tiles.
 		//List<Entity> entities = level.getEntitiesInTiles(xt - RemotePlayer.xSyncRadius, yt - RemotePlayer.ySyncRadius, xt + RemotePlayer.xSyncRadius, yt + RemotePlayer.ySyncRadius);
-		for(Entity e: level.getEntityArray()) {
-			if(e instanceof RemotePlayer) {
-				RemotePlayer rp = (RemotePlayer)e;
-				if(useTrackRange && rp.shouldTrack(xt, yt) || !useTrackRange && rp.shouldSync(xt, yt))
-					players.add(rp);
-			}
+		for(Entity e: level.getEntitiesOfClass(RemotePlayer.class)) {
+			RemotePlayer rp = (RemotePlayer)e;
+			if(useTrackRange && rp.shouldTrack(xt, yt) || !useTrackRange && rp.shouldSync(xt, yt))
+				players.add(rp);
 		}
 		
 		return players;
@@ -483,7 +481,7 @@ public class MinicraftServer extends Thread implements MinicraftProtocol {
 					// the requested entity is not even in range
 					return false;
 				}
-				
+				if(Game.debug) System.out.println("SERVER: sending entity addition via " + serverThread + " b/c client requested it: " + entityToSend);
 				serverThread.sendEntityAddition(entityToSend);
 				return true;
 			
@@ -602,7 +600,7 @@ public class MinicraftServer extends Thread implements MinicraftProtocol {
 					//if(pickedUpFurniture)
 						//sendData(InputType.CHESTOUT, Items.get("Power Glove").getData());
 					
-					if(Game.debug) System.out.println("SERVER: new activeItem for player " + clientPlayer + " after interaction: " + clientPlayer.activeItem);
+					//if(Game.debug) System.out.println("SERVER: new activeItem for player " + clientPlayer + " after interaction: " + clientPlayer.activeItem);
 					serverThread.sendData(InputType.INTERACT, ( clientPlayer.activeItem == null ? "null" : clientPlayer.activeItem.getData() ));
 				}
 				return true;
