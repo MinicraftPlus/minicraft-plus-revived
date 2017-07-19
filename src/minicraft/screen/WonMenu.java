@@ -92,6 +92,9 @@ public class WonMenu extends Menu {
 				}
 			}
 		}
+		
+		ModeMenu.unlockedtimes.addAll(unlocks);
+		ModeMenu.initTimeList();
 	}
 	
 	public void render(Screen screen) {
