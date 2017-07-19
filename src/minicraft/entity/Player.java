@@ -792,7 +792,7 @@ public class Player extends Mob {
 		
 		if(Game.isValidServer() && this instanceof RemotePlayer) {
 			// let the clients deal with it.
-			Game.server.getMatchingThread((RemotePlayer)this).sendPlayerHurt(damage, attackDir);
+			Game.server.getAssociatedThread((RemotePlayer)this).sendPlayerHurt(damage, attackDir);
 			return;
 		}
 		

@@ -150,7 +150,7 @@ public class RemotePlayer extends Player {
 					for(Entity e: loadableEntites) {
 						if(e != this && e.x >> 4 == x && e.y >> 4 == y) {
 							if(isServer) /// send any entities on that new tile to be added.
-								Game.server.getMatchingThread(this).sendEntityAddition(e);
+								Game.server.getAssociatedThread(this).sendEntityAddition(e);
 							if(isClient) /// remove each entity on that tile.
 								e.remove();
 						}

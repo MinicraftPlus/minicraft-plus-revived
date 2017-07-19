@@ -45,7 +45,7 @@ public class Furniture extends Entity {
 				shouldTake.activeItem = new FurnitureItem(this); // make this the player's current item.
 			}
 			else if(Game.isValidServer() && shouldTake instanceof RemotePlayer)
-				Game.server.getMatchingThread((RemotePlayer)shouldTake).updatePlayerActiveItem(new FurnitureItem(this));
+				Game.server.getAssociatedThread((RemotePlayer)shouldTake).updatePlayerActiveItem(new FurnitureItem(this));
 			else
 				System.out.println("WARNING: undefined behavior; online game was not server and ticked furniture: "+this+"; and/or player in online game found that isn't a RemotePlayer: " + shouldTake);
 			

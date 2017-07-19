@@ -117,9 +117,9 @@ public abstract class Mob extends Entity {
 			}
 			// the lists should now only contain players that are now out of range, and players that are just now in range.
 			for(RemotePlayer rp: prevPlayers)
-				Game.server.getMatchingThread(rp).sendEntityRemoval(this.eid);
+				Game.server.getAssociatedThread(rp).sendEntityRemoval(this.eid);
 			for(RemotePlayer rp: activePlayers)
-				Game.server.getMatchingThread(rp).sendEntityAddition(this);
+				Game.server.getAssociatedThread(rp).sendEntityAddition(this);
 		}
 		
 		return moved;
