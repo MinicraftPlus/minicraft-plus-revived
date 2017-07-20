@@ -82,6 +82,18 @@ public class MinicraftServer extends Thread implements MinicraftProtocol {
 		return threadList.toArray(new MinicraftServerThread[0]);
 	}
 	
+	public String[] getClientInfo() {
+		List<String> playerStrings = new ArrayList<String>();
+		for(MinicraftServerThread serverThread: getThreads()) {
+			RemotePlayer clientPlayer = serverThread.getClient();
+			if(clientPlayer.getUsername().length() == 0) continue; // they aren't done logging in yet.
+			
+			playerStrings.add(clientPlayer.getUsername() + ": " + clientPlayer.getIpAddress().getHostAddress() + (Game.debug?" ("+(clientPlayer.x>>4)+","+(clientPlayer.y>>4)+")":""));
+		}
+		
+		return playerStrings.toArray(new String[0]);
+	}
+	
 	public static List<RemotePlayer> getPlayersInRange(Entity e, boolean useTrackRange) {
 		if(e == null || e.getLevel() == null) return new ArrayList<RemotePlayer>();
 		int xt = e.x >> 4, yt = e.y >> 4;

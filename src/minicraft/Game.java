@@ -18,6 +18,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Random;
+import java.util.Scanner;
 import javax.imageio.ImageIO;
 import javax.swing.JFrame;
 import minicraft.entity.Bed;
@@ -44,6 +45,7 @@ public class Game extends Canvas implements Runnable {
 	private static Random random = new Random();
 	
 	public static boolean debug = false;
+	public static boolean HAS_GUI = true;
 	
 	public static final String os;
 	public static final String localGameDir;
@@ -264,6 +266,8 @@ public class Game extends Canvas implements Runnable {
 		
 		if(autoclient)
 			setMenu(new MultiplayerMenu(this, "localhost"));
+		else if(!HAS_GUI)
+			setMenu(new WorldSelectMenu());
 		else
 			setMenu(new TitleMenu()); //sets menu to the title screen.
 	}
@@ -327,6 +331,8 @@ public class Game extends Canvas implements Runnable {
 		LoadingMenu.percentage = 0; // this actually isn't necessary, I think; it's just in case.
 		
 		if(!isValidClient()) {
+			if(Game.debug) System.out.println("initializing world non-client...");
+			
 			if(WorldSelectMenu.loadworld)
 				new Load(this, WorldSelectMenu.worldname);
 			else {
@@ -335,11 +341,13 @@ public class Game extends Canvas implements Runnable {
 				double loadingInc = 100.0 / (maxLevelDepth - minLevelDepth + 1); // the .002 is for floating point errors, in case they occur.
 				for (int i = maxLevelDepth; i >= minLevelDepth; i--) {
 					// i = level depth; the array starts from the top because the parent level is used as a reference, so it should be constructed first. It is expected that the highest level will have a null parent.
-					
+					if(Game.debug) System.out.println("loading level " + i + "...");
 					levels[lvlIdx(i)] = new Level(this, worldSize, worldSize, i, levels[lvlIdx(i+1)], !WorldSelectMenu.loadworld);
-				
+					
 					LoadingMenu.percentage += loadingInc;
 				}
+				
+				if(Game.debug) System.out.println("level loading complete.");
 				
 				// add an Iron lantern to level 5, at (984, 984), when making a new world
 				Furniture f = new Lantern(Lantern.Type.IRON);//Items.get("Iron Lantern").furniture;
@@ -363,6 +371,8 @@ public class Game extends Canvas implements Runnable {
 		}
 		
 		DeadMenu.shouldRespawn = true;
+		
+		if(Game.debug) System.out.println("world initialized.");
 	}
 	
 	// VERY IMPORTANT METHOD!! Makes everything keep happening.
@@ -466,11 +476,13 @@ public class Game extends Canvas implements Runnable {
 		}// else if(isValidClient())
 		//	player.tick();
 		
+		//if(Game.debug) System.out.println("ticking game; menu: " + menu);
+		
 		// This is the general action statement thing! Regulates menus, mostly.
-		if (!hasFocus()) {
+		if (!hasFocus() && HAS_GUI) {
 			input.releaseAll();
 		}
-		if(hasFocus() || ISONLINE) {
+		if(hasFocus() || ISONLINE || !HAS_GUI) {
 			if ((isValidServer() || !player.isRemoved()) && !gameOver) {
 				gameTime++;
 			}
@@ -489,6 +501,7 @@ public class Game extends Canvas implements Runnable {
 				paused = false;
 				
 				if(!Game.isValidServer()) {
+					//if (Game.debug) System.out.println("ticking game with no menu, and no server...");
 					//if player is alive, but no level change, nothing happens here.
 					if (player.isRemoved() && readyToRenderGameplay && !Bed.inBed) {
 						//makes delay between death and death menu.
@@ -512,6 +525,8 @@ public class Game extends Canvas implements Runnable {
 					
 					if(isValidClient())
 						player.tick();
+					
+					if(!HAS_GUI) startMultiplayerServer();
 				}
 				else if(Game.isValidServer()) {
 					// here is where I should put things like select up/down, backspace to boot, esc to open pause menu, etc.
@@ -524,7 +539,7 @@ public class Game extends Canvas implements Runnable {
 				}
 				
 				//for debugging only
-				if (debug) {
+				if (debug && HAS_GUI) {
 					
 					if(!ISONLINE || isValidServer()) {
 						/// server-only cheats.
@@ -772,6 +787,8 @@ public class Game extends Canvas implements Runnable {
 	/** renders the current screen */
 	//called in game loop, a bit after tick()
 	public void render() {
+		if(!HAS_GUI) return; // no point in this if there's no gui... :P
+		
 		BufferStrategy bs = null;
 		bs = getBufferStrategy(); // creates a buffer strategy to determine how the graphics should be buffered.
 		if (bs == null) {
@@ -786,11 +803,7 @@ public class Game extends Canvas implements Runnable {
 				Font.drawCentered("Awaiting client connections"+getElipses(), screen, 10, Color.get(-1, 444));
 				Font.drawCentered("So far:", screen, 20, Color.get(-1, 444));
 				int i = 0;
-				for(MinicraftServerThread serverThread: Game.server.getThreads()) {
-					RemotePlayer clientPlayer = serverThread.getClient();
-					if(clientPlayer.getUsername().length() == 0) continue; // they aren't done logging in yet.
-					
-					String playerString = clientPlayer.getUsername() + ": " + clientPlayer.getIpAddress().getHostAddress() + (Game.debug?" ("+(clientPlayer.x>>4)+","+(clientPlayer.y>>4)+")":"");
+				for(String playerString: Game.server.getClientInfo()) {
 					Font.drawCentered(playerString, screen, 30+i*10, Color.get(-1, 134));
 					i++;
 				}
@@ -1077,41 +1090,44 @@ public class Game extends Canvas implements Runnable {
 	}
 	
 	public void startMultiplayerServer() {
-		// here is where we need to start the new client.
-		String jarFilePath = "";
-		try {
-			java.net.URI uri = getClass().getProtectionDomain().getCodeSource().getLocation().toURI();
-			//if (Game.debug) System.out.println("jar path: " + uri.getPath());
-			//if (Game.debug) System.out.println("jar string: " + uri.toString());
-			jarFilePath = uri.getPath();
-			if(os.contains("windows") && jarFilePath.startsWith("/"))
-				jarFilePath = jarFilePath.substring(1);
-		} catch(URISyntaxException ex) {
-			System.err.println("problem with jar file URI syntax.");
-			ex.printStackTrace();
+		if(Game.debug) System.out.println("starting multiplayer server...");
+		
+		if(HAS_GUI) {
+			// here is where we need to start the new client.
+			String jarFilePath = "";
+			try {
+				java.net.URI uri = getClass().getProtectionDomain().getCodeSource().getLocation().toURI();
+				//if (Game.debug) System.out.println("jar path: " + uri.getPath());
+				//if (Game.debug) System.out.println("jar string: " + uri.toString());
+				jarFilePath = uri.getPath();
+				if(os.contains("windows") && jarFilePath.startsWith("/"))
+					jarFilePath = jarFilePath.substring(1);
+			} catch(URISyntaxException ex) {
+				System.err.println("problem with jar file URI syntax.");
+				ex.printStackTrace();
+			}
+			List<String> arguments = new ArrayList<String>();
+			arguments.add("java");
+			arguments.add("-jar");
+			arguments.add(jarFilePath);
+			
+			if(debug)
+				arguments.add("--debug");
+			
+			// this will just always be added.
+			arguments.add("--savedir");
+			arguments.add(systemGameDir);
+			
+			arguments.add("--localclient");
+			
+			/// this *should* start a new JVM from the running jar file...
+			try {
+				new ProcessBuilder(arguments).inheritIO().start();
+			} catch(IOException ex) {
+				System.err.println("problem starting new jar file process:");
+				ex.printStackTrace();
+			}
 		}
-		List<String> arguments = new ArrayList<String>();
-		arguments.add("java");
-		arguments.add("-jar");
-		arguments.add(jarFilePath);
-		
-		if(debug)
-			arguments.add("--debug");
-		
-		// this will just always be added.
-		arguments.add("--savedir");
-		arguments.add(systemGameDir);
-		
-		arguments.add("--localclient");
-		
-		/// this *should* start a new JVM from the running jar file...
-		try {
-			new ProcessBuilder(arguments).inheritIO().start();
-		} catch(IOException ex) {
-			System.err.println("problem starting new jar file process.");
-			ex.printStackTrace();
-		}
-		
 		// now that that's done, let's turn *this* running JVM into a server:
 		server = new MinicraftServer(this);
 		//if (debug) System.out.println("server started. valid: " + isValidServer() + "; is online: "+ISONLINE+"; is host:" + ISHOST + "; server not null: " + (server!=null));
@@ -1134,6 +1150,8 @@ public class Game extends Canvas implements Runnable {
 		init();
 		
 		//main game loop? calls tick() and render().
+		if(!HAS_GUI)
+			(new ConsoleReader()).start();
 		while (running) {
 			long now = System.nanoTime();
 			double nsPerTick = 1E9D / normSpeed; // nanosecs per sec divided by ticks per sec = nanosecs per tick
@@ -1142,6 +1160,7 @@ public class Game extends Canvas implements Runnable {
 			lastTime = now;
 			boolean shouldRender = true;
 			while (unprocessed >= 1) { // If there is unprocessed time, then tick.
+				//if(debug) System.out.println("ticking...");
 				ticks++;
 				tick(); // calls the tick method (in which it calls the other tick methods throughout the code.
 				unprocessed--;
@@ -1173,29 +1192,40 @@ public class Game extends Canvas implements Runnable {
 	/// * The main method! * ///
 	public static void main(String[] args) {
 		
-		Thread.currentThread().setUncaughtExceptionHandler(new Thread.UncaughtExceptionHandler() {
+		/*Thread.currentThread().setUncaughtExceptionHandler(new Thread.UncaughtExceptionHandler() {
 			public void uncaughtException(Thread t, Throwable e) {
 				String exceptionTrace = "Exception in thread " + t + ":P\n";
 				exceptionTrace += Game.getExceptionTrace(e);
 				System.err.println(exceptionTrace);
 				javax.swing.JOptionPane.showInternalMessageDialog(null, exceptionTrace, "Fatal Error", javax.swing.JOptionPane.ERROR_MESSAGE);
 			}
-		});
+		});*/
 		
 		
 		boolean debug = false;
 		boolean autoclient = false;
+		boolean autoserver = false;
 		
 		String saveDir = Game.systemGameDir;
 		for(int i = 0; i < args.length; i++) {
 			if(args[i].equals("--debug"))
 				debug = true;
-			if(args[i].equals("--savedir") && i+1 < args.length)
-				saveDir = args[i+1];
+			if(args[i].equals("--savedir") && i+1 < args.length) {
+				i++;
+				saveDir = args[i];
+			}
 			if(args[i].equals("--localclient"))
 				autoclient = true;
+			if(args[i].equals("--server")) {
+				autoserver = true;
+				if(i+1 < args.length) {
+					i++;
+					WorldSelectMenu.worldname = args[i];
+				}
+			}
 		}
 		Game.debug = debug;
+		HAS_GUI = !autoserver;
 		Game.gameDir = saveDir + Game.localGameDir;
 		if(Game.debug) System.out.println("determined gameDir: " + Game.gameDir);
 		
@@ -1232,46 +1262,110 @@ public class Game extends Canvas implements Runnable {
 		}
 		
 		Game game = new Game();
-		game.setMinimumSize(new Dimension(1, 1));
-		game.setPreferredSize(getWindowSize());
-		JFrame frame = new JFrame(Game.NAME);
-		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		frame.setLayout(new BorderLayout()); // sets the layout of the window
-		frame.add(game, BorderLayout.CENTER); // Adds the game (which is a canvas) to the center of the screen.
-		frame.pack(); //squishes everything into the preferredSize.
-		frame.setLocationRelativeTo(null); // the window will pop up in the middle of the screen when launched.
 		
-		frame.addComponentListener(new ComponentAdapter() {
-			public void componentResized(ComponentEvent e) {
-				float w = frame.getWidth() - frame.getInsets().left - frame.getInsets().right;
-				float h = frame.getHeight() - frame.getInsets().top - frame.getInsets().bottom;
-				Game.SCALE = Math.min(w / Game.WIDTH, h / Game.HEIGHT);
-			}
-		});
-		
-		frame.addWindowListener(new WindowListener() {
-			public void windowActivated(WindowEvent e) {}
-			public void windowDeactivated(WindowEvent e) {}
-			public void windowIconified(WindowEvent e) {}
-			public void windowDeiconified(WindowEvent e) {}
-			public void windowOpened(WindowEvent e) {}
-			public void windowClosed(WindowEvent e) {System.out.println("window closed");}
-			public void windowClosing(WindowEvent e) {
-				System.out.println("window closing");
-				if(Game.isValidClient())
-					Game.client.endConnection();
-				if(Game.isValidServer())
-					Game.server.endConnection();
-				
-				game.quit();
-			}
-		});
-		
-		frame.setVisible(true);
+		if(HAS_GUI) {
+			game.setMinimumSize(new Dimension(1, 1));
+			game.setPreferredSize(getWindowSize());
+			JFrame frame = new JFrame(Game.NAME);
+			frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+			frame.setLayout(new BorderLayout()); // sets the layout of the window
+			frame.add(game, BorderLayout.CENTER); // Adds the game (which is a canvas) to the center of the screen.
+			frame.pack(); //squishes everything into the preferredSize.
+			frame.setLocationRelativeTo(null); // the window will pop up in the middle of the screen when launched.
+			
+			frame.addComponentListener(new ComponentAdapter() {
+				public void componentResized(ComponentEvent e) {
+					float w = frame.getWidth() - frame.getInsets().left - frame.getInsets().right;
+					float h = frame.getHeight() - frame.getInsets().top - frame.getInsets().bottom;
+					Game.SCALE = Math.min(w / Game.WIDTH, h / Game.HEIGHT);
+				}
+			});
+			
+			frame.addWindowListener(new WindowListener() {
+				public void windowActivated(WindowEvent e) {}
+				public void windowDeactivated(WindowEvent e) {}
+				public void windowIconified(WindowEvent e) {}
+				public void windowDeiconified(WindowEvent e) {}
+				public void windowOpened(WindowEvent e) {}
+				public void windowClosed(WindowEvent e) {System.out.println("window closed");}
+				public void windowClosing(WindowEvent e) {
+					System.out.println("window closing");
+					if(Game.isValidClient())
+						Game.client.endConnection();
+					if(Game.isValidServer())
+						Game.server.endConnection();
+					
+					game.quit();
+				}
+			});
+			
+			frame.setVisible(true);
+		}
 		
 		game.autoclient = autoclient; // this will make the game automatically jump to the MultiplayerMenu, and attempt to connect to localhost.
 		
 		game.start(); // Starts the game!
+	}
+	
+	private static final String[] helpText = {
+		"available commands:",
+		"help - display this help page.",
+		"status - display fps, and number of players connected.",
+		"quit - close the server."
+	};
+	
+	class ConsoleReader extends Thread {
+		private boolean shouldRun;
+		
+		public ConsoleReader() {
+			super("ConsoleReader");
+			shouldRun = true;
+		}
+		
+		public void run() {
+			Scanner stdin = new Scanner(System.in);
+			System.out.println("type \"help\" for a list of commands...");
+			while(shouldRun/* && stdin.hasNext()*/) {
+				processCommand(stdin.next());
+			}
+		}
+		
+		private void processCommand(String command) {
+			command = command.toLowerCase();
+			boolean success = true;
+			switch(command) {
+				case "help":
+					for(String line: helpText)
+						System.out.println(line);
+					break;
+				
+				case "quit":
+					if(Game.isValidServer())
+						Game.server.endConnection();
+					else
+						System.out.println("Game is not a valid server.");
+					shouldRun = false;
+					break;
+				
+				case "status":
+					System.out.println("fps: " + Game.this.fra);
+					if(Game.isValidServer()) {
+						System.out.println("players connected: " + Game.server.getThreads().length);
+						for(String info: Game.server.getClientInfo())
+							System.out.println(info);
+					} else
+						System.out.println("no server active; game is not a valid server.");
+					break;
+				
+				default:
+					System.out.println("unknown command: " + command);
+					success = false;
+					processCommand("help");
+			}
+			
+			if(success)
+				System.out.println("command finished. enter another command...");
+		}
 	}
 	
 	public static Dimension getWindowSize() {
@@ -1281,7 +1375,7 @@ public class Game extends Canvas implements Runnable {
 	public void quit() {
 		if(Game.isValidClient()) Game.client.endConnection();
 		if(Game.isValidServer()) Game.server.endConnection();
-		running = false;
+		stop();
 	}
 	
 	private static List<File> getAllFiles(File top) {

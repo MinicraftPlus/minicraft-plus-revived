@@ -15,8 +15,15 @@ public class LoadingMenu extends Menu implements ActionListener {
 	public static double percentage = 0;
 	
 	public LoadingMenu() {
-		t = new Timer(400, this);
+		if(Game.HAS_GUI)
+			t = new Timer(400, this);
 		percentage = 0;
+	}
+	
+	public void init(Game game, minicraft.InputHandler init) {
+		super.init(game, init);
+		if(!Game.HAS_GUI)
+			initWorld();
 	}
 	
 	public void tick() {
@@ -26,12 +33,19 @@ public class LoadingMenu extends Menu implements ActionListener {
 	
 	// this method is called by the timer, when it runs out.
 	public void actionPerformed(ActionEvent e) {
+		t.stop();
+		initWorld();
+	}
+	
+	private void initWorld() {
+		if(Game.debug) System.out.println("starting game initWorld...");
+		
 		game.initWorld();
 		try {
 			Thread.sleep((WorldSelectMenu.loadworld?100:300));
 		} catch(InterruptedException ex) {}
+		if(Game.debug) System.out.println("setting game menu to null from loading...");
 		game.setMenu(null);
-		t.stop();
 	}
 
 	public void render(Screen screen) {

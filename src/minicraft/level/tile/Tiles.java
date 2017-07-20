@@ -1,7 +1,7 @@
 package minicraft.level.tile;
 
 import java.util.ArrayList;
-
+import minicraft.Game;
 
 public final class Tiles {
 	/// idea: to save tile names while saving space, I could encode the names in base 64 in the save file...^M
@@ -12,6 +12,7 @@ public final class Tiles {
 	private static ArrayList<Tile> tiles = new ArrayList<Tile>();
 	
 	public static void initTileList() {
+		if(Game.debug) System.out.println("initializing tile list...");
 		
 		for(int i = 0; i < 256; i++)
 			tiles.add(null);

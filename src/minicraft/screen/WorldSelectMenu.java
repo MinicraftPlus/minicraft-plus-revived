@@ -67,10 +67,28 @@ public class WorldSelectMenu extends Menu {
 		
 		loadWorlds();
 		
-		if(worldnames.size() == 0)
+		if(worldnames.size() == 0) {
 			mode = Action.Create;
-		else
+			if(!Game.HAS_GUI) {
+				System.err.println("there are no worlds to load!");
+				System.exit(1);
+			}
+		} else {
 			mode = Action.Main;
+			if(!Game.HAS_GUI)
+				worldname = worldnames.get(0);
+		}
+		
+		if(!Game.HAS_GUI)
+			loadworld = true; // you cannot really make a world without a GUI to start.
+	}
+	
+	public void init(Game game, minicraft.InputHandler input) {
+		super.init(game, input);
+		if(!Game.HAS_GUI) {
+			if (Game.debug) System.out.println("gone through world select menu...");
+			game.setMenu(new LoadingMenu()); // the choice has already been made, begin world load.
+		}
 	}
 	
 	private final void loadWorlds() {

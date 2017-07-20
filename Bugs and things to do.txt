@@ -68,10 +68,6 @@ lengthen timout times... Some computers take a fairly long while.... Perhaps I s
 
 ****
 
-Dedicated multiplayer servers! ...this will require a system that starts a server with command line parameters, and goes straight into it. Perhaps read system.in for input..? The idea is for it to be runnable on a GUI-less system.
-
-****
-
 It would be really good if I could seperate all the stuff in the Save and Load classes into their respective classes -- I'm not saying remove them altogether, just take the stuff that turns a list of strings into a specific full entity object, and the stuff that brings all the class's important variables and states into a String, and put those parts into the matching class. Then, Load and Save will be there to go through all of them, and get them in a nice list or bigger string, and then write them to a file. Or vice versa for Load, it will read the file and turn it sequentially into entities. Of course, not to mention all the other things besides entities that Load and Save deal with!
 
 So, what will be added to each class is:
