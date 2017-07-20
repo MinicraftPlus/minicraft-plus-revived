@@ -736,7 +736,7 @@ public class Level {
 	public void trySpawn(int count) {
 		boolean spawned = false;
 		for (int i = 0; i < count && !spawned; i++) {
-			if(random.nextInt((int) Math.ceil(mobCount * MOB_SPAWN_FACTOR / maxMobCount)) == 0) continue; // hopefully will make mobs spawn a lot slower.
+			if(random.nextInt(Math.max((int) Math.ceil(mobCount * MOB_SPAWN_FACTOR / maxMobCount), 1)) == 0) continue; // hopefully will make mobs spawn a lot slower.
 			
 			int minLevel = 1, maxLevel = 1;
 			if (depth < 0) {
