@@ -73,7 +73,7 @@ public class Items {
 		} else {
 			System.out.println(Game.onlinePrefix()+"ITEMS GET: invalid name requested: \"" + name + "\"");
 			//Thread.dumpStack();
-			return new UnknownItem();
+			return new UnknownItem(name);
 		}
 		/*if(!name.equals("")) { // name is not nothing
 			if(name.contains(";")) { // if has ";" in name for whatever reason...
