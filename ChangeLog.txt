@@ -2,18 +2,21 @@ Minicraft+ version 2.0.2
 
 * Switched the multiplayer protocol from UDP to TCP.
 * fixed problems with doors, floors, and walls (item drops, etc.)
-+ made tnt light other tnt
++ made TNT light other TNT
 * edited coal drop amount
 * made lots of edits to mob spawn rate, and mob count management
 + Made it so all mobs (not players obviously) despawn after a certain amount of time (will later be fixed so mobs close to the player don't despawn.
 + Made enchanter craftable.
 - removed enchanter and workbench from starting inventory.
-- removed the power glove. It's still used, but you can only use it by pressing the "pickup" key; you can't get it in your inventory.
-+ Added "unknown" item to make it obvious when something has gone wrong.
-* Fixed multiplayer attack rendering across clients.
+- removed the power glove. It's still used, but you can only use it by pressing the "pickup" key ("v" by default); you can't get it in your inventory.
++ Added "unknown" item to make it obvious when something has gone wrong; it has the requested name, but the sprite is a pink square.
+* Fixed multiplayer attack rendering across clients; now shows attack, including the item a client is attacking with.
 * Fixed creative inventory for clients in multiplayer.
 * Fixed multiplayer client saving.
+- removed all the "frozen mobs" which kept appearing in multiplayer
 * Fixed unlocked score mode times not appearing until you restarted the game; you shouldn't have to restart it now.
++ Added F3 menu for the server instance of the game in multiplayer.
+* Patched possible duplicate usernames glitch
 
 
 Minicraft+ version 2.0.1
