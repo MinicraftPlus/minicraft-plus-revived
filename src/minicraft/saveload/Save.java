@@ -44,7 +44,7 @@ public class Save {
 	/// this saves world options
 	public Save(Player player, String worldname) { this(player.game, worldname); }
 	public Save(Game game, String worldname) {
-		this(game, new File(Game.gameDir+"/saves/" + worldname + "/"));
+		this(game, new File(Game.gameDir+"/saves/" + worldname.toLowerCase() + "/"));
 		
 		if(Game.isValidClient()) {
 			// clients are not allowed to save.
@@ -68,7 +68,7 @@ public class Save {
 	
 	/// this saves server config options
 	public Save(Game game, String worldname, MinicraftServer server) {
-		this(game, new File(Game.gameDir+"/saves/" + worldname + "/"));
+		this(game, new File(Game.gameDir+"/saves/" + worldname.toLowerCase() + "/"));
 		
 		if (Game.debug) System.out.println("writing server config...");
 		writeServerConfig("ServerConfig", server);

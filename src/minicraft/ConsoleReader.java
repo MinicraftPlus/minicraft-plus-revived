@@ -156,11 +156,16 @@ class ConsoleReader extends Thread {
 	
 	public void run() {
 		Scanner stdin = new Scanner(System.in).useDelimiter(System.lineSeparator());
+		try {
+			Thread.sleep(500); // this is to let it get past the debug statements at world load, and any others, maybe, if not in debug mode.
+		} catch(InterruptedException ex) {}
 		System.out.println("type \"help\" for a list of commands...");
+		
 		while(shouldRun/* && stdin.hasNext()*/) {
 			String command = stdin.next();
 			List<String> parsed = new ArrayList<String>();
 			parsed.addAll(Arrays.asList(command.split(" ")));
+			//if (Game.debug) System.out.println("parsed command: " + parsed.toString());
 			Command cmd = getCommandByName(parsed.remove(0)); // will print its own error message if not found.
 			if(cmd == null)
 				Command.HELP.run(new String[0], game);
@@ -169,12 +174,14 @@ class ConsoleReader extends Thread {
 			
 			if(cmd == Command.QUIT) shouldRun = false;
 		}
+		
+		game.quit();
 	}
 	
 	private static Command getCommandByName(String name) {
 		Command cmd = null;
 		try {
-			Enum.valueOf(Command.class, name.toUpperCase(Locale.ENGLISH));
+			cmd = Enum.valueOf(Command.class, name.toUpperCase(Locale.ENGLISH));
 		} catch(IllegalArgumentException ex) {
 			System.out.println("unknown command: \"" + name + "\"");
 		}

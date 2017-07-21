@@ -53,7 +53,7 @@ public class Load {
 	}
 	
 	public Load(Game game, String worldname) {
-		loadFromFile(location + "/saves/" + worldname + "/Game" + extention);
+		loadFromFile(location + "/saves/" + worldname.toLowerCase() + "/Game" + extention);
 		if(data.get(0).contains(".")) worldVer = new Version(data.get(0));
 		if(worldVer == null) worldVer = new Version("1.8");
 		
@@ -85,7 +85,7 @@ public class Load {
 	}
 	
 	public Load(Game game, String worldname, MinicraftServer server) {
-		File testFile = new File(location + "/saves/" + worldname + "/ServerConfig" + extention);
+		File testFile = new File(location + "/saves/" + worldname.toLowerCase() + "/ServerConfig" + extention);
 		if(testFile.exists())
 			loadServerConfig("ServerConfig", server);
 	}
