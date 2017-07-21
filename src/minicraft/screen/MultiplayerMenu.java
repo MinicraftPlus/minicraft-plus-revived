@@ -20,7 +20,7 @@ public class MultiplayerMenu extends Menu {
 	private String loadingMessage = "doing nothing";
 	private String errorMessage = "";
 	
-	private String typing = "";
+	private String typing = savedIP;
 	private boolean inputIsValid = false;
 	
 	private static enum State {
@@ -34,7 +34,6 @@ public class MultiplayerMenu extends Menu {
 		Game.ISHOST = false;
 		
 		curState = State.ENTERIP;
-		typing = savedIP;
 	}
 	
 	// this automatically sets the ipAddress, and goes from there. it also assumes the game is a client.
@@ -48,7 +47,7 @@ public class MultiplayerMenu extends Menu {
 		
 		switch(curState) {
 			case ENTERIP:
-				checkKeyTyped(Pattern.compile("[^,;]"));
+				checkKeyTyped(Pattern.compile("[a-zA-Z0-9 \\-/_\\.:%\\?&=]"));
 				if(input.getKey("select").clicked) {
 					curState = State.WAITING;
 					Game.client = new MinicraftClient(game, this, typing); // typing = ipAddress
@@ -90,18 +89,16 @@ public class MultiplayerMenu extends Menu {
 		}
 	}
 	
-	private void checkKeyTyped(java.util.regex.Pattern pattern) {
-		if(pattern == null) pattern = java.util.regex.Pattern.compile("[a-zA-Z0-9 \\-/_\\.:%\\?&,=]");
+	private void checkKeyTyped(Pattern pattern) {
 		if(input.lastKeyTyped.length() > 0) {
 			String letter = input.lastKeyTyped;
 			input.lastKeyTyped = "";
-			//java.util.regex.Pattern pattern = java.util.regex.Pattern.compile("[0-9\\.a-zA-Z\\/]");
 			if(pattern == null || pattern.matcher(letter).matches())
 				typing += letter;
 		}
 		
 		if(input.getKey("backspace").clicked && typing.length() > 0) {
-			// backspace counts as a letter itself, but it's not part of the regex
+			// backspace counts as a letter itself, but we don't have to worry about it if it's part of the regex.
 			typing = typing.substring(0, typing.length()-1);
 		}
 	}
