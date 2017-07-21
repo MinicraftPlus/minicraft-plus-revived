@@ -37,7 +37,7 @@ class ConsoleReader extends Thread {
 	
 	private static enum Command {
 		HELP
-		("--all | [cmd]", "describes the function of each command. Specify a command name read more about how to use it.", "no arguments: prints a list of all available commands, with a short description of each.", "cmd: a command name. will print the short description of that command, along with usage details such as what parameters/arguments it uses, and what function each argument has, and what the defualt behavior is if a given argument is ommitted.", "--all: prints the long description of all the commands.", "Usage symbol meanings:", "\t| = OR; specifies two possible choices for a given argument.", "\t[] = Optional; the arguments within may be specified, but they are not required.", "\t<> = Required; you must include the arguments within for the command to work.", "Note that the usage symbols may be nested, so a <> inside a [] is only required if you do whatever else is inside the [].") {
+		("--all | [cmd]", "describes the function of each command. Specify a command name to read more about how to use it.", "no arguments: prints a list of all available commands, with a short description of each.", "cmd: a command name. will print the short description of that command, along with usage details such as what parameters/arguments it uses, and what function each argument has, and what the defualt behavior is if a given argument is ommitted.", "--all: prints the long description of all the commands.", "Usage symbol meanings:", "\t| = OR; specifies two possible choices for a given argument.", "\t[] = Optional; the arguments within may be specified, but they are not required.", "\t<> = Required; you must include the arguments within for the command to work.", "Note that the usage symbols may be nested, so a <> inside a [] is only required if you do whatever else is inside the [].") {
 			public void run(String[] args, Game game) {
 				if(args.length == 0) {
 					System.out.println("available commands:");
@@ -54,7 +54,7 @@ class ConsoleReader extends Thread {
 		},
 		
 		STATUS
-		(null, "Displays some server stats.", "displays server fps, and number of players connected.") {
+		(null, "display some server stats.", "displays server fps, and number of players connected.") {
 			public void run(String[] args, Game game) {
 				System.out.println("fps: " + game.fra);
 				if(Game.isValidServer()) {
