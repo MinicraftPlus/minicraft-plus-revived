@@ -17,6 +17,7 @@ gavefile=0
 lvlgentest=0
 gentest=""
 colortest=0
+passtojar=""
 
 function append {
 	rm *.tmp &>/dev/null 
@@ -71,6 +72,11 @@ do
 				runjar=0
 				gavefile=1
 			;;
+		--) #this means that the remaining options are for the jar file to process.
+				shift
+				passtojar=$@ #store remaining options
+				break
+			;;
 #		--*) echo "ignoring unknown option $1"
 #			;;
 		*) break #stop processing options; arg list should now have dir and/or files.
@@ -111,8 +117,15 @@ if [ $help -eq 1 ]; then
 	echo -e "\t\t\t The script will ignore passed in files."
 	echo -e "\t\t\t This option implies \"--jar 0\""
 	echo -e "\t--testcol ...  Run Color.java's main class; all proceding parameters will be passed to Color.java"
+	eacho -e "\t--            tell the script that the remaining arguments are not for it to process; it passes them to the jar file."
 	echo -e "\t--help         print this help page and exit."
 	exit 0
+fi
+
+if [ -n "$passtojar" ]; then
+	while [ -n "$1" ]; do
+		shift
+	done
 fi
 
 # here, $1 may be a dir, a file, or nothing.
@@ -206,9 +219,9 @@ elif [ $colortest -eq 1 ]; then
 elif [ $runjar -eq 1 ]; then	
 	echo running jar file...
 	if [ $debugbuild -eq 1 ]; then
-		java -jar $FILENAME --debug
+		java -jar $FILENAME --debug $passtojar
 	else
-		java -jar $FILENAME
+		java -jar $FILENAME $passtojar
 	fi
 else
 	echo skipping jar test run.
