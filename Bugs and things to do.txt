@@ -8,8 +8,6 @@ Note to self: for more little bugs/ideas/concerns, search code for "TODO"
 
 	####BUGS####
 ####
-The game kills you and then restarts, when you load the world initially. You don't seem to lose any items, though.
-####
 Stairs clump together.
 ####
 Fire particles appear, but... they look totally weird...

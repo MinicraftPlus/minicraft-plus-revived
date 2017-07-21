@@ -27,14 +27,21 @@ public class LoadingMenu extends Menu implements ActionListener {
 	}
 	
 	public void tick() {
-		if(!Game.isValidClient())
+		if(!Game.isValidClient() && t != null)
 			t.start();
 	}
 	
 	// this method is called by the timer, when it runs out.
 	public void actionPerformed(ActionEvent e) {
-		t.stop();
-		initWorld();
+		if(t != null) {
+			Timer save = t;
+			//t.stop();
+			t = null; // prevents the timer from being activated again in this LoadingMenu instance.
+			save.stop();
+			initWorld();
+		} else if(Game.debug) {
+			System.out.println("WARNING: loading menu timer was set off more than once.");
+		}
 	}
 	
 	private void initWorld() {
