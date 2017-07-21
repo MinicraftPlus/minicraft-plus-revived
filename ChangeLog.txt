@@ -1,6 +1,7 @@
 Minicraft+ version 2.0.3
 
 + Added support for dedicated servers! With a CLI OS, meaning an OS without a GUI. This allows for more compatibility, not to mention more resources being able to be devoted to the game.
++ Added various server options, and a command help system, for dedicated servers.
 + Added feature to save the last ip address you entered when trying to join a multiplayer server
 + Added more error messages when connecting
 

@@ -8,6 +8,8 @@ Note to self: for more little bugs/ideas/concerns, search code for "TODO"
 
 	####BUGS####
 ####
+The game kills you and then restarts, when you load the world initially. You don't seem to lose any items, though.
+####
 Stairs clump together.
 ####
 Fire particles appear, but... they look totally weird...
@@ -51,6 +53,10 @@ Add a note that describes how new score mode times can be unlocked. Probably sho
 ****
 
 Make the TileItem instances get their name from the tile they will make. This is so that the tile class can drop that item when it is destroyed, and it doesn't have to know the name of the item; it just has to do Items.get(name).
+
+****
+
+add ability to mark players as ops ("operators") so they can do stuff to the game... but... what exactly can they do, then, anyway? Maybe the game isn't ready for this yet...
 
 ****
 
