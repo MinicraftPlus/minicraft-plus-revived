@@ -21,8 +21,6 @@ MULTIPLAYER-Related:
  
  It would be nice if I could find a way to not even bother telling the server for things like potions, that don't even interact with the world.
 #####
-Make it so servers are remembered and saved.
-####
 -----------------------------------------------------------------------------------
 
 	****IDEAS(that should probably be implemented)****
