@@ -9,6 +9,7 @@ import minicraft.gfx.Font;
 import minicraft.gfx.FontStyle;
 import minicraft.gfx.Screen;
 import minicraft.network.MinicraftClient;
+import minicraft.saveload.Save;
 
 public class MultiplayerMenu extends Menu {
 	
