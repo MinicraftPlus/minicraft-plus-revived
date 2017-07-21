@@ -354,8 +354,8 @@ public class MinicraftServer extends Thread implements MinicraftProtocol {
 					} else {
 						/// load the data from file instead.
 						try {
-							playerdata = Load.loadFromFile(worldPath+"/Player"+Save.extention, true) + "\n";
-							playerdata += Load.loadFromFile(worldPath+"/Inventory"+Save.extention, true);
+							playerdata = Load.loadFromFile(worldPath+"/Player"+Save.extension, true) + "\n";
+							playerdata += Load.loadFromFile(worldPath+"/Inventory"+Save.extension, true);
 						} catch(IOException ex) {
 							System.err.println("SERVER had error while trying to load host player data from file:");
 							ex.printStackTrace();
@@ -524,11 +524,11 @@ public class MinicraftServer extends Thread implements MinicraftProtocol {
 					Save save = new Save(clientPlayer);
 					for(String str: parts[0].split(","))
 						datastrs.add(str);
-					save.writeToFile(save.location+"Player"+Save.extention, datastrs);
+					save.writeToFile(save.location+"Player"+Save.extension, datastrs);
 					datastrs.clear();
 					for(String str: parts[1].split(","))
 						datastrs.add(str);
-					save.writeToFile(save.location+"Inventory"+Save.extention, datastrs);
+					save.writeToFile(save.location+"Inventory"+Save.extension, datastrs);
 					
 					return true;
 				}

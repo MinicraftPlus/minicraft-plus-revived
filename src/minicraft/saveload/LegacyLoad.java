@@ -26,7 +26,7 @@ public class LegacyLoad {
 	String location = Game.gameDir;
 	File folder;
 	
-	private static String extention = Save.extention;
+	private static String extension = Save.extension;
 	
 	ArrayList<String> data;
 	ArrayList<String> extradata;
@@ -49,7 +49,7 @@ public class LegacyLoad {
 	public LegacyLoad(Game game, String worldname) {
 		location += "/saves/" + worldname + "/";
 		
-		File testFile = new File(location + "KeyPrefs" + extention);
+		File testFile = new File(location + "KeyPrefs" + extension);
 		if(!testFile.exists()) {
 			worldVer = new Load.Version("1.8");
 			oldSave = true;
@@ -87,7 +87,7 @@ public class LegacyLoad {
 			
 			if(filename.contains("Level")) {
 				total = "";
-				br2 = new BufferedReader(new FileReader(filename.substring(0, filename.lastIndexOf("/") + 7) + "data" + extention));
+				br2 = new BufferedReader(new FileReader(filename.substring(0, filename.lastIndexOf("/") + 7) + "data" + extension));
 				
 				while((curLine = br2.readLine()) != null)
 					total += curLine;
@@ -146,7 +146,7 @@ public class LegacyLoad {
 	private int playerac = 0; // this is a temp storage var for use to restore player arrow count.
 	
 	public void loadGame(String filename, Game game) {
-		loadFromFile(location + filename + extention);
+		loadFromFile(location + filename + extension);
 		boolean hasVersion = data.get(0).contains(".");
 		if(hasVersion) {
 			worldVer = new Load.Version(data.get(0)); // gets the world version
@@ -184,7 +184,7 @@ public class LegacyLoad {
 	
 	public void loadWorld(String filename, Game game) {
 		for(int l = 0; l < Game.levels.length; l++) {
-			loadFromFile(location + filename + l + extention);
+			loadFromFile(location + filename + l + extension);
 			
 			int lvlw = Integer.parseInt(data.get(0));
 			int lvlh = Integer.parseInt(data.get(1));
@@ -210,7 +210,7 @@ public class LegacyLoad {
 	}
 	
 	public void loadPlayer(String filename, Player player) {
-		loadFromFile(location + filename + extention);
+		loadFromFile(location + filename + extension);
 		player.x = Integer.parseInt(data.get(0));
 		player.y = Integer.parseInt(data.get(1));
 		player.spawnx = Integer.parseInt(data.get(2));
@@ -280,7 +280,7 @@ public class LegacyLoad {
 	}
 	
 	public void loadInventory(String filename, Inventory inventory) {
-		loadFromFile(location + filename + extention);
+		loadFromFile(location + filename + extension);
 		inventory.clearInv();
 		
 		for(int i = 0; i < data.size(); i++) {
@@ -321,7 +321,7 @@ public class LegacyLoad {
 	}
 	
 	public void loadEntities(String filename, Player player) {
-		loadFromFile(location + filename + extention);
+		loadFromFile(location + filename + extension);
 		
 		for(int i = 0; i < Game.levels.length; i++) {
 			Game.levels[i].clearEntities();

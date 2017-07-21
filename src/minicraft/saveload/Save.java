@@ -25,7 +25,7 @@ public class Save {
 	public String location = Game.gameDir;
 	File folder;
 	
-	public static String extention = ".miniplussave";
+	public static String extension = ".miniplussave";
 	
 	List<String> data;
 	Game game;
@@ -151,7 +151,7 @@ public class Save {
 		data.add(String.valueOf(game.gameTime));
 		data.add(String.valueOf(OptionsMenu.diff));
 		data.add(String.valueOf(AirWizard.beaten));
-		writeToFile(location + filename + extention, data);
+		writeToFile(location + filename + extension, data);
 	}
 	
 	public void writePrefs(String filename) {
@@ -166,14 +166,14 @@ public class Save {
 		
 		data.add(String.join(":", keyPairs.toArray(new String[0])));
 		
-		writeToFile(location + filename + extention, data);
+		writeToFile(location + filename + extension, data);
 	}
 	
 	private void writeServerConfig(String filename, MinicraftServer server) {
 		data.add(String.valueOf(server.getPlayerCap()));
 		//data.add(String.join(":", server.getOpNames().toArray(new String[0])));
 		
-		writeToFile(location + filename + extention, data);
+		writeToFile(location + filename + extension, data);
 	}
 	
 	public void writeWorld(String filename) {
@@ -188,7 +188,7 @@ public class Save {
 				}
 			}
 			
-			writeToFile(location + filename + l + extention, data);
+			writeToFile(location + filename + l + extension, data);
 		}
 		
 		for(int l = 0; l < Game.levels.length; l++) {
@@ -198,14 +198,14 @@ public class Save {
 				}
 			}
 			
-			writeToFile(location + filename + l + "data" + extention, data);
+			writeToFile(location + filename + l + "data" + extension, data);
 		}
 		
 	}
 	
 	public void writePlayer(String filename, Player player) {
 		writePlayer(player, data);
-		writeToFile(location + filename + extention, data);
+		writeToFile(location + filename + extension, data);
 	}
 	
 	public static void writePlayer(Player player, List<String> data) {
@@ -242,7 +242,7 @@ public class Save {
 	
 	public void writeInventory(String filename, Player player) {
 		writeInventory(player, data);
-		writeToFile(location + filename + extention, data);
+		writeToFile(location + filename + extension, data);
 	}
 	public static void writeInventory(Player player, List<String> data) {
 		data.clear();
@@ -274,7 +274,7 @@ public class Save {
 			}
 		}
 		
-		writeToFile(location + filename + extention, data);
+		writeToFile(location + filename + extension, data);
 	}
 	
 	public static String writeEntity(Entity e, boolean isLocalSave) {

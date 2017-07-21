@@ -220,7 +220,7 @@ public class MinicraftServerThread extends MinicraftConnection {
 		else {
 			File[] clientSaves = serverInstance.getRemotePlayerFiles();
 			int numFiles = clientSaves.length;
-			filename = "RemotePlayer"+numFiles+Save.extention;
+			filename = "RemotePlayer"+numFiles+Save.extension;
 		}
 		
 		byte[] macAddress = null;

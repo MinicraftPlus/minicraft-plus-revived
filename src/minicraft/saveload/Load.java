@@ -30,7 +30,7 @@ public class Load {
 	String location = Game.gameDir;
 	File folder;
 	
-	private static String extention = Save.extention;
+	private static String extension = Save.extension;
 	private double percentInc;
 	
 	ArrayList<String> data;
@@ -44,7 +44,7 @@ public class Load {
 		currentVer = new Version(Game.VERSION);
 		worldVer = null;
 		
-		File testFile = new File(location + "/Preferences" + extention);
+		File testFile = new File(location + "/Preferences" + extension);
 		hasGlobalPrefs = testFile.exists();
 		
 		data = new ArrayList<String>();
@@ -53,7 +53,7 @@ public class Load {
 	}
 	
 	public Load(Game game, String worldname) {
-		loadFromFile(location + "/saves/" + worldname.toLowerCase() + "/Game" + extention);
+		loadFromFile(location + "/saves/" + worldname.toLowerCase() + "/Game" + extension);
 		if(data.get(0).contains(".")) worldVer = new Version(data.get(0));
 		if(worldVer == null) worldVer = new Version("1.8");
 		
@@ -85,7 +85,7 @@ public class Load {
 	}
 	
 	public Load(Game game, String worldname, MinicraftServer server) {
-		File testFile = new File(location + "/saves/" + worldname.toLowerCase() + "/ServerConfig" + extention);
+		File testFile = new File(location + "/saves/" + worldname.toLowerCase() + "/ServerConfig" + extension);
 		if(testFile.exists())
 			loadServerConfig("ServerConfig", server);
 	}
@@ -98,11 +98,11 @@ public class Load {
 		else
 			new Save(game);
 		
-		File testFileOld = new File(location+"unlocks"+extention);
-		File testFile = new File(location+"Unlocks"+extention);
+		File testFileOld = new File(location+"unlocks"+extension);
+		File testFile = new File(location+"Unlocks"+extension);
 		if (testFileOld.exists() && !testFile.exists()) {
 			testFileOld.renameTo(testFile);
-			//testFileOld = new File(location+"unlocks"+extention);
+			//testFileOld = new File(location+"unlocks"+extension);
 			//testFileOld.delete()
 			new LegacyLoad(testFile);
 		}
@@ -110,12 +110,12 @@ public class Load {
 			try {
 				testFile.createNewFile();
 			} catch(IOException ex) {
-				System.err.println("could not create Unlocks."+extention+":");
+				System.err.println("could not create Unlocks."+extension+":");
 				ex.printStackTrace();
 			}
 		}
 		//if(testFileOld.exists())
-		//testFile = new File(location+"Unlocks"+extention);
+		//testFile = new File(location+"Unlocks"+extension);
 		/*if(!testFile.exists()) {
 			try {
 				testFile.createNewFile();
@@ -201,7 +201,7 @@ public class Load {
 		
 		if(filename.contains("Level")) {
 			try {
-				total = Load.loadFromFile(filename.substring(0, filename.lastIndexOf("/") + 7) + "data" + extention, true);
+				total = Load.loadFromFile(filename.substring(0, filename.lastIndexOf("/") + 7) + "data" + extension, true);
 				extradata.addAll(Arrays.asList(total.split(",")));
 			} catch (IOException ex) {
 				ex.printStackTrace();
@@ -245,7 +245,7 @@ public class Load {
 	}
 	
 	public void loadUnlocks(String filename) {
-		loadFromFile(location + filename + extention);
+		loadFromFile(location + filename + extension);
 		
 		ModeMenu.unlockedtimes.clear();
 		OptionsMenu.unlockedskin = false;
@@ -264,7 +264,7 @@ public class Load {
 	}
 	
 	public void loadGame(String filename, Game game) {
-		loadFromFile(location + filename + extention);
+		loadFromFile(location + filename + extension);
 		
 		worldVer = new Version(data.get(0)); // gets the world version
 		Game.setTime(Integer.parseInt(data.get(1)));
@@ -284,7 +284,7 @@ public class Load {
 	}
 	
 	public void loadPrefs(String filename, Game game) {
-		loadFromFile(location + filename + extention);
+		loadFromFile(location + filename + extension);
 		
 		Version prefVer = new Version("2.0.2"); // the default, b/c this doesn't really matter much being specific past this if it's not set below.
 		
@@ -312,7 +312,7 @@ public class Load {
 	}
 	
 	private void loadServerConfig(String filename, MinicraftServer server) {
-		loadFromFile(location + filename + extention);
+		loadFromFile(location + filename + extension);
 		
 		server.setPlayerCap(Integer.parseInt(data.get(0)));
 	}
@@ -322,7 +322,7 @@ public class Load {
 			//if(l == Game.levels.length-1) l = 4;
 			//if(l == 0) l = Game.levels.length-1;
 			int lvlidx = Game.lvlIdx(l);
-			loadFromFile(location + filename + lvlidx + extention);
+			loadFromFile(location + filename + lvlidx + extension);
 			
 			int lvlw = Integer.parseInt(data.get(0));
 			int lvlh = Integer.parseInt(data.get(1));
@@ -410,7 +410,7 @@ public class Load {
 	}
 	
 	public void loadPlayer(String filename, Player player) {
-		loadFromFile(location + filename + extention);
+		loadFromFile(location + filename + extension);
 		loadPlayer(player, data);
 	}
 	public void loadPlayer(Player player, List<String> data) {
@@ -500,7 +500,7 @@ public class Load {
 	}
 	
 	public void loadInventory(String filename, Inventory inventory) {
-		loadFromFile(location + filename + extention);
+		loadFromFile(location + filename + extension);
 		loadInventory(inventory, data);
 	}
 	public void loadInventory(Inventory inventory, List<String> data) {
@@ -539,7 +539,7 @@ public class Load {
 	}
 	
 	public void loadEntities(String filename, Game game) {
-		loadFromFile(location + filename + extention);
+		loadFromFile(location + filename + extension);
 		
 		for(int i = 0; i < Game.levels.length; i++) {
 			Game.levels[i].clearEntities();
