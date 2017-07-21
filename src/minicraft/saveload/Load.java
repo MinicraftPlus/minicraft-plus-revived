@@ -21,6 +21,7 @@ import minicraft.level.Level;
 import minicraft.level.tile.Tiles;
 import minicraft.screen.LoadingMenu;
 import minicraft.screen.ModeMenu;
+import minicraft.screen.MultiplayerMenu;
 import minicraft.screen.OptionsMenu;
 
 public class Load {
@@ -278,10 +279,23 @@ public class Load {
 	public void loadPrefs(String filename, Game game) {
 		loadFromFile(location + filename + extention);
 		
+		Version prefVer = new Version("2.0.2"); // the default, b/c this doesn't really matter much being specific past this if it's not set below.
+		
+		if(!data.get(2).contains(";")) // signifies that this file was last written to by a version after 2.0.2.
+			prefVer = new Version(data.remove(0));
+		
 		OptionsMenu.isSoundAct = Boolean.parseBoolean(data.get(0));
 		OptionsMenu.autosave = Boolean.parseBoolean(data.get(1));
 		
-		List<String> subdata = data.subList(2, data.size());
+		List<String> subdata;
+		
+		if(prefVer.compareTo(new Version("2.0.3-dev1")) < 0) {
+			subdata = data.subList(2, data.size());
+		} else {
+			MultiplayerMenu.savedIP = data.get(2);
+			String keyData = data.get(3);
+			subdata = Arrays.asList(keyData.split(":"));
+		}
 		
 		Iterator<String> keys = subdata.iterator();
 		while(keys.hasNext()) {

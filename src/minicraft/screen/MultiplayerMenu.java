@@ -2,6 +2,7 @@ package minicraft.screen;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.regex.Pattern;
 import minicraft.Game;
 import minicraft.gfx.Color;
 import minicraft.gfx.Font;
@@ -12,6 +13,8 @@ import minicraft.network.MinicraftClient;
 public class MultiplayerMenu extends Menu {
 	
 	private List<String> takenNames = new ArrayList<String>();
+	
+	public static String savedIP = "";
 	
 	private String loadingMessage = "doing nothing";
 	private String errorMessage = "";
@@ -30,6 +33,7 @@ public class MultiplayerMenu extends Menu {
 		Game.ISHOST = false;
 		
 		curState = State.ENTERIP;
+		typing = savedIP;
 	}
 	
 	// this automatically sets the ipAddress, and goes from there. it also assumes the game is a client.
@@ -43,17 +47,19 @@ public class MultiplayerMenu extends Menu {
 		
 		switch(curState) {
 			case ENTERIP:
-				checkKeyTyped(null);
+				checkKeyTyped(Pattern.compile("[^,;]"));
 				if(input.getKey("select").clicked) {
 					curState = State.WAITING;
 					Game.client = new MinicraftClient(game, this, typing); // typing = ipAddress
+					savedIP = typing;
+					new Save(game); // write the saved ip to file
 					typing = "";
 					return;
 				}
 			break;
 				
 			case ENTERNAME:
-				checkKeyTyped(java.util.regex.Pattern.compile("[0-9A-Za-z \\-\\.]"));
+				checkKeyTyped(Pattern.compile("[0-9A-Za-z \\-\\.]"));
 				
 				inputIsValid = true;
 				if(typing.length() == 0)

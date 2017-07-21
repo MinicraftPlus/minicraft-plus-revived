@@ -14,6 +14,7 @@ import minicraft.item.PotionType;
 import minicraft.item.StackableItem;
 import minicraft.screen.LoadingMenu;
 import minicraft.screen.ModeMenu;
+import minicraft.screen.MultiplayerMenu;
 import minicraft.screen.OptionsMenu;
 import minicraft.screen.WorldGenMenu;
 import minicraft.screen.WorldSelectMenu;
@@ -145,12 +146,16 @@ public class Save {
 	}
 	
 	public void writePrefs(String filename) {
+		data.add(Game.VERSION);
 		data.add(String.valueOf(OptionsMenu.isSoundAct));
 		data.add(String.valueOf(OptionsMenu.autosave));
+		data.add(MultiplayerMenu.savedIP);
 		
-		String[] keyPrefs = game.input.getKeyPrefs();
-		for(int i = 0; i < keyPrefs.length; i++)
-			data.add(String.valueOf(keyPrefs[i]));
+		List<String> keyPairs = new ArrayList<String>();
+		for(String keyPref: game.input.getKeyPrefs())
+			keyPairs.add(keyPref);
+		
+		data.add(String.join(":", keyPairs.toArray(new String[0])));
 		
 		writeToFile(location + filename + extention, data);
 	}
