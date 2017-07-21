@@ -36,6 +36,8 @@ public class MinicraftServer extends Thread implements MinicraftProtocol {
 	private RemotePlayer hostPlayer = null;
 	private String worldPath;
 	
+	private int playerCap = 0;
+	
 	public MinicraftServer(Game game) {
 		super("MinicraftServer");
 		this.game = game;
@@ -61,8 +63,14 @@ public class MinicraftServer extends Thread implements MinicraftProtocol {
 		
 		try {
 			while (socket != null) {
-				MinicraftServerThread mst = new MinicraftServerThread(game, socket.accept(), this);
-				threadList.add(mst);
+				if(playerCap < 0 || threadList.size() < playerCap) {
+					MinicraftServerThread mst = new MinicraftServerThread(game, socket.accept(), this);
+					threadList.add(mst);
+				}/* else {
+					try {
+						Thread.sleep(10); // this is simply so we don't go through the while loop at insane speeds for no reason.
+					} catch(InterruptedException ex) {}
+				}*/
 			}
 		} catch (SocketException ex) { // this should occur when closing the thread.
 			//ex.printStackTrace();
@@ -77,6 +85,11 @@ public class MinicraftServer extends Thread implements MinicraftProtocol {
 	}
 	
 	public String getWorldPath() { return worldPath; }
+	
+	public int getPlayerCap() { return playerCap; }
+	public void setPlayerCap(int val) {
+		playerCap = Math.max(val, -1); // no need to set it to anything below -1.
+	}
 	
 	public synchronized MinicraftServerThread[] getThreads() {
 		return threadList.toArray(new MinicraftServerThread[0]);

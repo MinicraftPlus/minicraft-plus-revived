@@ -18,7 +18,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Random;
-import java.util.Scanner;
 import javax.imageio.ImageIO;
 import javax.swing.JFrame;
 import minicraft.entity.Bed;
@@ -1130,7 +1129,9 @@ public class Game extends Canvas implements Runnable {
 		}
 		// now that that's done, let's turn *this* running JVM into a server:
 		server = new MinicraftServer(this);
-		//if (debug) System.out.println("server started. valid: " + isValidServer() + "; is online: "+ISONLINE+"; is host:" + ISHOST + "; server not null: " + (server!=null));
+		
+		/// load up any saved config options for the server.
+		new Load(this, WorldSelectMenu.worldname, server);
 	}
 	
 	/**
@@ -1151,7 +1152,7 @@ public class Game extends Canvas implements Runnable {
 		
 		//main game loop? calls tick() and render().
 		if(!HAS_GUI)
-			(new ConsoleReader()).start();
+			(new ConsoleReader(this)).start();
 		while (running) {
 			long now = System.nanoTime();
 			double nsPerTick = 1E9D / normSpeed; // nanosecs per sec divided by ticks per sec = nanosecs per tick
@@ -1305,67 +1306,6 @@ public class Game extends Canvas implements Runnable {
 		game.autoclient = autoclient; // this will make the game automatically jump to the MultiplayerMenu, and attempt to connect to localhost.
 		
 		game.start(); // Starts the game!
-	}
-	
-	private static final String[] helpText = {
-		"available commands:",
-		"help - display this help page.",
-		"status - display fps, and number of players connected.",
-		"quit - close the server."
-	};
-	
-	class ConsoleReader extends Thread {
-		private boolean shouldRun;
-		
-		public ConsoleReader() {
-			super("ConsoleReader");
-			shouldRun = true;
-		}
-		
-		public void run() {
-			Scanner stdin = new Scanner(System.in);
-			System.out.println("type \"help\" for a list of commands...");
-			while(shouldRun/* && stdin.hasNext()*/) {
-				processCommand(stdin.next());
-			}
-		}
-		
-		private void processCommand(String command) {
-			command = command.toLowerCase();
-			boolean success = true;
-			switch(command) {
-				case "help":
-					for(String line: helpText)
-						System.out.println(line);
-					break;
-				
-				case "quit":
-					if(Game.isValidServer())
-						Game.server.endConnection();
-					else
-						System.out.println("Game is not a valid server.");
-					shouldRun = false;
-					break;
-				
-				case "status":
-					System.out.println("fps: " + Game.this.fra);
-					if(Game.isValidServer()) {
-						System.out.println("players connected: " + Game.server.getThreads().length);
-						for(String info: Game.server.getClientInfo())
-							System.out.println(info);
-					} else
-						System.out.println("no server active; game is not a valid server.");
-					break;
-				
-				default:
-					System.out.println("unknown command: " + command);
-					success = false;
-					processCommand("help");
-			}
-			
-			if(success)
-				System.out.println("command finished. enter another command...");
-		}
 	}
 	
 	public static Dimension getWindowSize() {

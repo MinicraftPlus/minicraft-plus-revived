@@ -12,6 +12,7 @@ import minicraft.entity.particle.*;
 import minicraft.item.Item;
 import minicraft.item.PotionType;
 import minicraft.item.StackableItem;
+import minicraft.network.MinicraftServer;
 import minicraft.screen.LoadingMenu;
 import minicraft.screen.ModeMenu;
 import minicraft.screen.MultiplayerMenu;
@@ -63,6 +64,14 @@ public class Save {
 		Game.notifyAll("World Saved!");
 		Game.asTick = 0;
 		Game.saving = false;
+	}
+	
+	/// this saves server config options
+	public Save(Game game, String worldname, MinicraftServer server) {
+		this(game, new File(Game.gameDir+"/saves/" + worldname + "/"));
+		
+		if (Game.debug) System.out.println("writing server config...");
+		writeServerConfig("ServerConfig", server);
 	}
 	
 	// this saves global options
@@ -156,6 +165,13 @@ public class Save {
 			keyPairs.add(keyPref);
 		
 		data.add(String.join(":", keyPairs.toArray(new String[0])));
+		
+		writeToFile(location + filename + extention, data);
+	}
+	
+	private void writeServerConfig(String filename, MinicraftServer server) {
+		data.add(String.valueOf(server.getPlayerCap()));
+		//data.add(String.join(":", server.getOpNames().toArray(new String[0])));
 		
 		writeToFile(location + filename + extention, data);
 	}

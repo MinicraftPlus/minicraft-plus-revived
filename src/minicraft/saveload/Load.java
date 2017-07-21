@@ -19,6 +19,7 @@ import minicraft.item.PotionType;
 import minicraft.item.StackableItem;
 import minicraft.level.Level;
 import minicraft.level.tile.Tiles;
+import minicraft.network.MinicraftServer;
 import minicraft.screen.LoadingMenu;
 import minicraft.screen.ModeMenu;
 import minicraft.screen.MultiplayerMenu;
@@ -81,6 +82,12 @@ public class Load {
 			loadPlayer("Player", game.player);
 			//LoadingMenu.percentage = 0; // reset
 		}
+	}
+	
+	public Load(Game game, String worldname, MinicraftServer server) {
+		File testFile = new File(location + "/saves/" + worldname + "/ServerConfig" + extention);
+		if(testFile.exists())
+			loadServerConfig("ServerConfig", server);
 	}
 	
 	public Load(Game game) {
@@ -302,6 +309,12 @@ public class Load {
 			String[] map = keys.next().split(";");
 			game.input.setKey(map[0], map[1]);
 		}
+	}
+	
+	private void loadServerConfig(String filename, MinicraftServer server) {
+		loadFromFile(location + filename + extention);
+		
+		server.setPlayerCap(Integer.parseInt(data.get(0)));
 	}
 	
 	public void loadWorld(String filename, Game game) {
