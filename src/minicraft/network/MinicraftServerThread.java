@@ -42,6 +42,12 @@ public class MinicraftServerThread extends MinicraftConnection {
 		this.serverInstance = serverInstance;
 		this.game = game;
 		
+		if(serverInstance.isFull()) {
+			sendError("server at max capacity.");
+			super.endConnection();
+			return;
+		}
+		
 		client = new RemotePlayer(null, game, false, socket.getInetAddress(), socket.getPort());
 		
 		try {

@@ -63,10 +63,11 @@ public class MinicraftServer extends Thread implements MinicraftProtocol {
 		
 		try {
 			while (socket != null) {
-				if(playerCap < 0 || threadList.size() < playerCap) {
+				//if(playerCap < 0 || threadList.size() < playerCap) {
 					MinicraftServerThread mst = new MinicraftServerThread(game, socket.accept(), this);
-					threadList.add(mst);
-				}/* else {
+					if(mst.isConnected())
+						threadList.add(mst);
+				/*} else {
 					try {
 						Thread.sleep(10); // this is simply so we don't go through the while loop at insane speeds for no reason.
 					} catch(InterruptedException ex) {}
@@ -89,6 +90,10 @@ public class MinicraftServer extends Thread implements MinicraftProtocol {
 	public int getPlayerCap() { return playerCap; }
 	public void setPlayerCap(int val) {
 		playerCap = Math.max(val, -1); // no need to set it to anything below -1.
+	}
+	
+	public boolean isFull() {
+		return threadList.size() >= playerCap;
 	}
 	
 	public synchronized MinicraftServerThread[] getThreads() {
