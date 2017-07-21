@@ -1188,6 +1188,9 @@ public class Game extends Canvas implements Runnable {
 				ticks = 0; //resets ticks; ie, frames and ticks only are per second
 			}
 		}
+		
+		if (Game.debug) System.out.println("main game loop ended; terminating application...");
+		System.exit(0);
 	}
 	
 	/// * The main method! * ///
