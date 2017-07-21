@@ -71,7 +71,7 @@ public class MinicraftClient extends MinicraftConnection {
 			socket = new Socket(hostAddress, PORT);
 		} catch (IOException ex) {
 			System.err.println("Problem connecting socket to server:");
-			menu.setError("failed to connect to server: " + ex.getMessage());
+			menu.setError(ex.getMessage().replace(" (Connection refused)", ""));
 			ex.printStackTrace();
 			return null;
 		}
