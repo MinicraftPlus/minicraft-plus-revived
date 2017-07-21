@@ -165,7 +165,7 @@ public abstract class MinicraftConnection extends Thread implements MinicraftPro
 	}
 	
 	public void endConnection() {
-		if(!socket.isClosed()) {
+		if(socket != null && !socket.isClosed()) {
 			if (Game.debug) System.out.println("closing socket and ending connection for: " + this);
 			
 			sendData(InputType.DISCONNECT, "");

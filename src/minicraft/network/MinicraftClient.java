@@ -54,7 +54,7 @@ public class MinicraftClient extends MinicraftConnection {
 	
 	//private int waitTime;
 	
-	private static final Socket openSocket(String hostName) {
+	private static final Socket openSocket(String hostName, MultiplayerMenu menu) {
 		InetAddress hostAddress = null;
 		Socket socket = null;
 		
@@ -62,6 +62,7 @@ public class MinicraftClient extends MinicraftConnection {
 			hostAddress = InetAddress.getByName(hostName);
 		} catch (UnknownHostException ex) {
 			System.err.println("Don't know about host " + hostName);
+			menu.setError("host not found");
 			ex.printStackTrace();
 			return null;
 		}
@@ -70,6 +71,7 @@ public class MinicraftClient extends MinicraftConnection {
 			socket = new Socket(hostAddress, PORT);
 		} catch (IOException ex) {
 			System.err.println("Problem connecting socket to server:");
+			menu.setError("failed to connect to server: " + e.getMessage());
 			ex.printStackTrace();
 			return null;
 		}
@@ -78,7 +80,7 @@ public class MinicraftClient extends MinicraftConnection {
 	}
 	
 	public MinicraftClient(Game game, MultiplayerMenu menu, String hostName) {
-		super("MinicraftClient", openSocket(hostName));
+		super("MinicraftClient", openSocket(hostName, menu));
 		this.game = game;
 		this.menu = menu;
 		Game.ISONLINE = true;
