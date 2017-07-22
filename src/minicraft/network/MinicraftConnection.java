@@ -68,6 +68,8 @@ public abstract class MinicraftConnection extends Thread implements MinicraftPro
 				//if(inType == InputType.INIT) initCount++;
 				//if(initCount > 20) System.exit(1);
 				
+				//if(Game.debug && (inType == InputType.MOVE || inType == InputType.INTERACT)) System.out.println(this+" recieved "+inType+" packet");
+				
 				if(inType == null)
 					System.err.println("SERVER: invalid packet recieved; input type is not valid.");
 				else
@@ -138,10 +140,12 @@ public abstract class MinicraftConnection extends Thread implements MinicraftPro
 	
 	protected synchronized void sendData(InputType inType, String data) {
 		char inTypeChar = (char) (inType.ordinal()+1);
-		//if (Game.debug) System.out.println(this + ": printing " + inType + " data");//: " + stringToInts(data, 30)); //data.substring(0, Math.min(data.length(), 20)));
-		if(data.contains("\0")) System.err.println("WARNING from "+this+": data to send contains a null character. Sending anyway...");
-		out.print(inTypeChar + data + '\0');
-		out.flush();
+		//if (Game.debug && (inType == InputType.MOVE || inType == InputType.INTERACT)) System.out.println(this + ": printing " + inType + " data");//: " + stringToInts(data, 30)); //data.substring(0, Math.min(data.length(), 20)));
+		if(data.contains("\0")) System.err.println("WARNING from "+this+": data to send contains a null character. Not sending data.");
+		else {
+			out.print(inTypeChar + data + '\0');
+			out.flush();
+		}
 	}
 	
 	public static String stringToInts(String str) { return stringToInts(str, str.length()); }
