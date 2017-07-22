@@ -11,6 +11,8 @@ import java.net.SocketException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Timer;
+import java.util.TimerTask;
 import minicraft.Game;
 import minicraft.entity.Entity;
 import minicraft.entity.Player;
@@ -20,6 +22,8 @@ import minicraft.saveload.Load;
 import minicraft.saveload.Save;
 
 public class MinicraftServerThread extends MinicraftConnection {
+	
+	private static final int PING_INTERVAL = 10; // measured in seconds
 	
 	private MinicraftServer serverInstance;
 	private RemotePlayer client;
@@ -31,6 +35,7 @@ public class MinicraftServerThread extends MinicraftConnection {
 	private NetworkInterface computer = null;
 	
 	//private List<Integer> trackedEntities = new ArrayList<Integer>();
+	private Timer pingWaitTimer;
 	
 	private List<InputType> packetTypesToKeep = new ArrayList<InputType>();
 	private List<InputType> packetTypesToCache = new ArrayList<InputType>();
@@ -65,13 +70,41 @@ public class MinicraftServerThread extends MinicraftConnection {
 		packetTypesToKeep.addAll(InputType.tileUpdates);
 		packetTypesToKeep.addAll(InputType.entityUpdates);
 		
+		pingWaitTimer = new Timer("ClientPing");
+		pingWaitTimer.schedule((new ClientPing()), 1000, PING_INTERVAL*1000);
+		
 		start();
+	}
+	
+	class ClientPing extends TimerTask {
+		public boolean recievedPing;
+		
+		public ClientPing() {
+			recievedPing = true;
+		}
+		
+		public void run() {
+			if(!recievedPing) {
+				// disconnect from the client; they are taking too long to respond and probably don't exist anyway.
+				MinicraftServerThread.this.endConnection();
+			} else {
+				recievedPing = false;
+				MinicraftServerThread.this.sendData(InputType.PING, "");
+			}
+		}
 	}
 	
 	public RemotePlayer getClient() { return client; }
 	
 	protected synchronized boolean parsePacket(InputType inType, String data) {
 		//if(inType == InputType.LOAD) isPlaying = true;
+		
+		if(inType == InputType.PING) {
+			//if (Game.debug) System.out.println(this+" recieved ping");
+			pingWaitTimer.recievedPing = true;
+			return true;
+		}
+		
 		return serverInstance.parsePacket(this, inType, data);
 	}
 	
@@ -262,6 +295,7 @@ public class MinicraftServerThread extends MinicraftConnection {
 	}
 	
 	public void endConnection() {
+		pingWaitTimer.cancel();
 		super.endConnection();
 		
 		client.remove();

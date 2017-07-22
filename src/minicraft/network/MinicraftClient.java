@@ -324,8 +324,7 @@ public class MinicraftClient extends MinicraftConnection {
 				return false;
 			
 			case PING:
-				//pingSuccessful = true;
-				System.out.println("client recieved ping");
+				sendData(InputType.PING, "");
 				return true;
 			
 			case USERNAMES:

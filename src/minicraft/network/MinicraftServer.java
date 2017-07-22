@@ -308,11 +308,6 @@ public class MinicraftServer extends Thread implements MinicraftProtocol {
 		}
 		
 		switch(inType) {
-			case PING:
-				if (Game.debug) System.out.println(serverThread + " recieved ping");
-				serverThread.sendData(InputType.PING, "");
-				return true;
-			
 			case USERNAMES:
 				if (Game.debug) System.out.println("SERVER: recieved usernames request");
 				serverThread.sendData(InputType.USERNAMES, getUsernames());
@@ -657,7 +652,7 @@ public class MinicraftServer extends Thread implements MinicraftProtocol {
 			
 			case MOVE:
 				/// the player moved.
-				//if (Game.debug) System.out.println("SERVER: recieved move packet");
+				//if (Game.debug) System.out.println(serverThread+": recieved move packet");
 				//int olddir = clientPlayer.dir;
 				int plvlidx = Integer.parseInt(data[3]);
 				if(plvlidx >= 0 && plvlidx < Game.levels.length && Game.levels[plvlidx] != clientPlayer.getLevel()) {
