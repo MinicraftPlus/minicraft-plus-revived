@@ -4,6 +4,8 @@ Minicraft+ version 2.0.3
 + Added various server options, and a command help system, for dedicated servers.
 + Added feature to save the last ip address you entered when trying to join a multiplayer server
 + Added more error messages when connecting
+* Fixed item entity spawn positions and going through other tiles
++ Added the ability to drop an item to the ground with Q and shift-Q (shift-q drops the whole stack)
 
 
 
