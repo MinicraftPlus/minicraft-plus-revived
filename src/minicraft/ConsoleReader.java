@@ -117,6 +117,73 @@ class ConsoleReader extends Thread {
 				Game.server.saveWorld();
 				System.out.println("World Saved.");
 			}
+		},
+		
+		GAMEMODE
+		("<mode>", "change the server gamemode.", "mode: one of the following: c(reative), su(rvivial), t(imed) / score, h(ardcore)") {
+			public void run(String[] args, Game game) {
+				if(args.length != 1) {
+					System.out.println("incorrent number of arguments. Please specify the game mode in one word:");
+					printHelp(this, game);
+					return;
+				}
+				
+				switch(args[0].toLowerCase()) {
+					case "s": case "survival":
+						ModeMenu.updateModeBools("Survival");
+						break;
+					
+					case "c": case "creative":
+						ModeMenu.updateModeBools("Creative");
+						break;
+					
+					case "h": case "hardcore":
+						ModeMenu.updateModeBools("Hardcore");
+						break;
+					
+					case "t": case "timed": case "score":
+						ModeMenu.updateModeBools("Score");
+						break;
+					
+					default:
+						System.out.println(args[0] + " is not a valid game mode.");
+						printHelp(this, game);
+						break;
+				}
+			}
+		},
+		
+		TIME
+		("[timeString]", "sets or prints the time of day." , "no arguments: prints the current time of day, in ticks.", "timeString: sets the time of day to the given value; it can be a number, in which case it is a tick count from 0 to 64000 or so, or one of the following strings: Morning, Day, Evening, Night. the time of day will be set to the beginning of the given time period.") {
+			public void run(String[] args, Game game) {
+				if(args.length == 0) {
+					System.out.println("time of day is: " + game.tickCount + " ("+game.getTime()+")");
+					return;
+				}
+				
+				int targetTicks = -1;
+				
+				if(args[0].length() > 0) {
+					try {
+						String firstLetter = String.valueOf(args[0].charAt(0)).toUpperCase();
+						String remainder = args[0].substring(1).toLowerCase();
+						Game.Time time = Enum.valueOf(Game.Time.class, firstLetter+remainder);
+						targetTicks = time.tickCount;
+					} catch(IllegalArgumentException ex) {
+						try {
+							targetTicks = Integer.parseInt(args[0]);
+						} catch(NumberFormatException ex) {
+						}
+					}
+				}
+				
+				if(targetTicks >= 0)
+					game.setTime(targetTicks);
+				else {
+					System.out.println("time specified is in an invalid format.");
+					Command.printHelp(this, game);
+				}
+			}
 		};
 		
 		private String generalHelp, detailedHelp;
@@ -139,6 +206,10 @@ class ConsoleReader extends Thread {
 		
 		public String getGeneralHelp() { return generalHelp; }
 		public String getDetailedHelp() { return detailedHelp; }
+		
+		public static void printHelp(Command cmd, Game game) {
+			Command.HELP.run(new String[] {cmd.name()}, game);
+		}
 		
 		public static final Command[] values = Command.values();
 	}
