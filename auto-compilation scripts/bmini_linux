@@ -18,6 +18,7 @@ lvlgentest=0
 gentest=""
 colortest=0
 passtojar=""
+sendtoserver=0
 
 function append {
 	rm *.tmp &>/dev/null 
@@ -71,6 +72,9 @@ do
 				compjar=0
 				runjar=0
 				gavefile=1
+			;;
+		--ss)
+				sendtoserver=1
 			;;
 		--) #this means that the remaining options are for the jar file to process.
 				shift
@@ -207,6 +211,12 @@ else
 	echo skipping jar compilation.
 fi
 echo
+
+if [ $sendtoserver -eq 1 ]; then
+	echo sending jar file to remote server...
+	mscp $FILENAME
+	echo sent.
+fi
 
 if [ $lvlgentest -eq 1 ]; then
 	cd build
