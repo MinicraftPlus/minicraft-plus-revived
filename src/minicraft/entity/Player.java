@@ -139,7 +139,39 @@ public class Player extends Mob {
 	public HashMap<PotionType, Integer> getPotionEffects() { return potioneffects; }
 	
 	public void tick() {
-		if(game.menu != null) return; // don't tick player when menu is open
+		if(!Bed.inBed && input.getKey("drop-one").clicked || input.getKey("drop-stack").clicked) {
+			Item itemToDrop = null;
+			if(game.menu instanceof PlayerInvMenu)
+				itemToDrop = ((PlayerInvMenu)game.menu).getSelectedItem();
+			else if(game.menu == null)
+				itemToDrop = activeItem;
+			
+			if(itemToDrop != null) {
+				Item toEntity = null;
+				if(itemToDrop instanceof StackableItem && !input.getKey("drop-stack").clicked && ((StackableItem)itemToDrop).count > 1) {
+					// just drop one from the stack
+					toEntity = itemToDrop.clone();
+					((StackableItem)toEntity).count = 1;
+					((StackableItem)itemToDrop).count--;
+					if(game.menu instanceof PlayerInvMenu)
+						((PlayerInvMenu)game.menu).updateSelectedItem();
+				} else {
+					// drop the whole item.
+					toEntity = itemToDrop;
+					if(!ModeMenu.creative) {
+						if(game.menu instanceof PlayerInvMenu)
+							((PlayerInvMenu)game.menu).removeSelectedItem();
+						else if(game.menu == null)
+							activeItem = null;
+					}
+				}
+				
+				if(toEntity != null && level != null)
+					level.dropItem(x, y, toEntity);
+			}
+		}
+		
+		if(game.menu != null && !Game.ISONLINE) return; // don't tick player when menu is open
 		
 		super.tick(); // ticks Mob.java
 		

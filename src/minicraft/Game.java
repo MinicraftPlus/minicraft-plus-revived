@@ -493,6 +493,7 @@ public class Game extends Canvas implements Runnable {
 				//a menu is active.
 				//if(Game.isValidClient() && readyToRenderGameplay && Game.debug)
 					//System.out.println("Client has menu: " + menu);
+				player.tick();
 				menu.tick();
 				paused = true;
 			} else {

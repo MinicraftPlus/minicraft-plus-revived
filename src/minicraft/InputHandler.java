@@ -110,6 +110,8 @@ public class InputHandler implements MouseListener, KeyListener {
 		keymap.put("MENU", "X|ENTER"); //and so on... menu does various things.
 		keymap.put("CRAFT", "Z"); // open/close personal crafting window.
 		keymap.put("PICKUP", "V"); // pickup torches / furniture; this replaces the power glove.
+		keymap.put("DROP-ONE", "Q"); // drops the item in your hand, or selected in your inventory, by ones; it won't drop an entire stack
+		keymap.put("DROP-STACK", "SHIFT-Q"); // drops the item in your hand, or selected in your inventory, entirely; even if it's a stack.
 		
 		keymap.put("PAUSE", "ESCAPE"); // pause the game.
 		keymap.put("SETHOME", "SHIFT-H"); // set your home.

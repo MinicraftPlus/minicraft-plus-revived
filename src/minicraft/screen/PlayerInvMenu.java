@@ -2,6 +2,7 @@ package minicraft.screen;
 
 import minicraft.entity.Inventory;
 import minicraft.entity.Player;
+import minicraft.item.Item;
 
 public class PlayerInvMenu extends InventoryMenu {
 	private Player player;
@@ -28,5 +29,9 @@ public class PlayerInvMenu extends InventoryMenu {
 			player.inventory.remove(selected); // The item will be removed from the inventory.
 			game.setMenu(null); // the game will go back to the gameplay.
 		}
+	}
+	
+	public Item getSelectedItem() {
+		return player.inventory.get(selected);
 	}
 }
