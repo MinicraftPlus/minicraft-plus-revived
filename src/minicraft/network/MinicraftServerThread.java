@@ -57,6 +57,9 @@ public class MinicraftServerThread extends MinicraftConnection {
 			ex.printStackTrace();
 		}
 		
+		if(computer == null)
+			System.err.println("WARNING: network interface for " + this + "'s socket connection is null.");
+		
 		//System.out.println("created server thread: " + this);
 		
 		packetTypesToKeep.addAll(InputType.tileUpdates);
@@ -173,7 +176,7 @@ public class MinicraftServerThread extends MinicraftConnection {
 			}
 			
 			try {
-				if(macString.equals(getMacString(computer.getHardwareAddress()))) {
+				if(computer != null && macString.equals(getMacString(computer.getHardwareAddress()))) {
 					/// this player has been here before.
 					if (Game.debug) System.out.println("remote player file found; returning file " + file.getName());
 					return file;
@@ -232,6 +235,8 @@ public class MinicraftServerThread extends MinicraftConnection {
 		byte[] macAddress = null;
 		try {
 			macAddress = computer.getHardwareAddress();
+		} catch(NullPointerException ex) {
+			System.err.println("network interface for "+this+" is null; couldn't get mac address.");
 		} catch(SocketException ex) {
 			System.err.println("couldn't get mac address.");
 			ex.printStackTrace();
