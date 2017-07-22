@@ -57,13 +57,9 @@ class ConsoleReader extends Thread {
 		(null, "display some server stats.", "displays server fps, and number of players connected.") {
 			public void run(String[] args, Game game) {
 				System.out.println("fps: " + game.fra);
-				if(Game.isValidServer()) {
-					System.out.println("players connected: " + Game.server.getThreads().length);
-					for(String info: Game.server.getClientInfo())
-						System.out.println("\t"+info);
-				} else {
-					System.out.println("server is not running; no players connected.");
-				}
+				System.out.println("players connected: " + Game.server.getThreads().length);
+				for(String info: Game.server.getClientInfo())
+					System.out.println("\t"+info);
 			}
 		},
 		
@@ -71,10 +67,6 @@ class ConsoleReader extends Thread {
 		("[option_name [value]]", "change various server settings.", "no arguments: displays all config options and their current values", "option_name: displays the current value of that option", "option_name value:, will set the option to the specified value, provided it is a valid value for that option.") {
 			
 			public void run(String[] args, Game game) {
-				if(!Game.isValidServer()) {
-					System.out.println("no server running. cannot fetch config options.");
-					return;
-				}
 				if(args.length == 0) {
 					for(Config c: Config.values)
 						System.out.println("\t"+c.name() + " = " + c.getValue());
@@ -103,11 +95,8 @@ class ConsoleReader extends Thread {
 		QUIT
 		(null, "close the server.") {
 			public void run(String[] args, Game game) {
-				if(Game.isValidServer()) {
-					System.out.println("shutting down server...");
-					Game.server.endConnection();
-				} else
-					System.out.println("no server running.");
+				System.out.println("shutting down server...");
+				Game.server.endConnection();
 			}
 		},
 		
@@ -119,6 +108,14 @@ class ConsoleReader extends Thread {
 					Thread.sleep(500); // give the computer some time to, uh, recuperate? idk, I think it's a good idea.
 				} catch(InterruptedException ex) {}
 				game.startMultiplayerServer(); // start the server back up.
+			}
+		},
+		
+		SAVE
+		(null, "Save the world to file.") {
+			public void run(String[] args, Game game) {
+				Game.server.saveWorld();
+				System.out.println("World Saved.");
 			}
 		};
 		
@@ -166,11 +163,14 @@ class ConsoleReader extends Thread {
 			List<String> parsed = new ArrayList<String>();
 			parsed.addAll(Arrays.asList(command.split(" ")));
 			//if (Game.debug) System.out.println("parsed command: " + parsed.toString());
+			
 			Command cmd = getCommandByName(parsed.remove(0)); // will print its own error message if not found.
 			if(cmd == null)
 				Command.HELP.run(new String[0], game);
-			else
+			else if(Game.isValidServer() || cmd == Command.HELP)
 				cmd.run(parsed.toArray(new String[parsed.size()]), game);
+			else
+				System.out.println("no server running.");
 			
 			if(cmd == Command.QUIT) shouldRun = false;
 		}
