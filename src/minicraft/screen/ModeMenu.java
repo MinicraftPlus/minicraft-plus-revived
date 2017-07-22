@@ -17,7 +17,7 @@ import minicraft.gfx.Screen;
 public class ModeMenu extends Menu {
 	private Menu parent;
 
-	public static String[] modes = {"Survival", "Creative", "Hardcore", "Score"};
+	public static final String[] modes = {"Survival", "Creative", "Hardcore", "Score"};
 	public static boolean survival;
 	public static boolean creative;
 	public static boolean hardcore;
@@ -94,6 +94,12 @@ public class ModeMenu extends Menu {
 			game.setMenu(new TitleMenu());
 	}
 	
+	public static void updateModeBools(String mode) {
+		for(int i = 0; i < modes.length; i++) {
+			if(modes[i].equalsIgnoreCase(mode))
+				updateModeBools(i+1);
+		}
+	}
 	public static void updateModeBools(int mode) {
 		boolean sendUpdate = ModeMenu.mode != mode && Game.isValidServer();
 		
