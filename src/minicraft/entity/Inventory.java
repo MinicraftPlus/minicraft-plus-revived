@@ -190,6 +190,7 @@ public class Inventory {
 		return true;
 	}*/
 	
+	/** Removes the item from the inventory entirely, whether it's a stack, or a lone item. */
 	public void removeItem(Item i) {
 		if(i instanceof StackableItem)
 			removeItems(i, ((StackableItem)i).count);
