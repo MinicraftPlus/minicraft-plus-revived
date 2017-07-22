@@ -89,7 +89,7 @@ public class Game extends Canvas implements Runnable {
 	public boolean paused = true; // If the game is paused.
 	
 	public static int tickCount = 0; // The number of ticks since the beginning of the game day.
-	public static int time = 0; // Facilites time of day / sunlight.
+	private static int time = 0; // Facilites time of day / sunlight.
 	public static final int dayLength = 64800; //this value determines how long one game day is.
 	public static final int sleepEndTime = dayLength/8; //this value determines when the player "wakes up" in the morning.
 	public static final int sleepStartTime = dayLength/2+dayLength/8; //this value determines when the player allowed to sleep.

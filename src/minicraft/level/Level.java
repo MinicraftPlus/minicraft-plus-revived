@@ -753,7 +753,7 @@ public class Level {
 			//System.out.println("trySpawn on level " + depth + " of lvl " + lvl + " mob w/ rand " + rnd + " at tile " + nx + "," + ny);
 			
 			// spawns the enemy mobs; first part prevents enemy mob spawn on surface on first day, more or less.
-			if ((Game.time == 3 && Game.pastDay1 || depth != 0) && EnemyMob.checkStartPos(this, nx, ny)) { // if night or underground, with a valid tile, spawn an enemy mob.
+			if ((Game.getTime() == Game.Time.Night && Game.pastDay1 || depth != 0) && EnemyMob.checkStartPos(this, nx, ny)) { // if night or underground, with a valid tile, spawn an enemy mob.
 				if(depth != -4) { // normal mobs
 					if (rnd <= 40) add((new Slime(lvl)), nx, ny);
 					else if (rnd <= 75) add((new Zombie(lvl)), nx, ny);
@@ -771,7 +771,7 @@ public class Level {
 			
 			if(depth == 0 && PassiveMob.checkStartPos(this, nx, ny)) {
 				// spawns the friendly mobs.
-				if (rnd <= (Game.time==3?22:33)) add((new Cow()), nx, ny);
+				if (rnd <= (Game.getTime()==Game.Time.Night?22:33)) add((new Cow()), nx, ny);
 				else if (rnd >= 68) add((new Pig()), nx, ny);
 				else add((new Sheep()), nx, ny);
 				

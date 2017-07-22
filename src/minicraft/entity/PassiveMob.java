@@ -40,7 +40,7 @@ public class PassiveMob extends MobAi {
 	/** Tries once to find an appropriate spawn location for friendly mobs. */
 	public static boolean checkStartPos(Level level, int x, int y) {
 		
-		int r = (ModeMenu.score ? 22 : 15) + (Game.time == 3 ? 0 : 5); // get no-mob radius by
+		int r = (ModeMenu.score ? 22 : 15) + (Game.getTime() == Game.Time.Night ? 0 : 5); // get no-mob radius by
 		
 		if(!MobAi.checkStartPos(level, x, y, 80, r))
 			return false;
