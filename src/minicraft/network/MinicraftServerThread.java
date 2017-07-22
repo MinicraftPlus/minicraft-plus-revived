@@ -53,14 +53,14 @@ public class MinicraftServerThread extends MinicraftConnection {
 		try {
 			computer = NetworkInterface.getByInetAddress(socket.getInetAddress());
 		} catch(SocketException ex) {
-			System.err.println("SERVER THREAD ERROR: couldn't get network interface from socket address.");
+			System.err.println("SERVER THREAD ERROR: couldn't get network interface from socket address. ("+this+")");
 			ex.printStackTrace();
 		}
 		
 		if(computer == null)
 			System.err.println("WARNING: network interface for " + this + "'s socket connection is null.");
 		
-		//System.out.println("created server thread: " + this);
+		//if (Game.debug) System.out.println("network interface for " + this +": " + computer);
 		
 		packetTypesToKeep.addAll(InputType.tileUpdates);
 		packetTypesToKeep.addAll(InputType.entityUpdates);
@@ -236,7 +236,7 @@ public class MinicraftServerThread extends MinicraftConnection {
 		try {
 			macAddress = computer.getHardwareAddress();
 		} catch(NullPointerException ex) {
-			System.err.println("network interface for "+this+" is null; couldn't get mac address.");
+			System.err.println("network interface for "+this+" is null: "+computer+"; couldn't get mac address.");
 		} catch(SocketException ex) {
 			System.err.println("couldn't get mac address.");
 			ex.printStackTrace();

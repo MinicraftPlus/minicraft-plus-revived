@@ -517,7 +517,7 @@ public class MinicraftServer extends Thread implements MinicraftProtocol {
 				return true;
 			
 			case SAVE:
-				if (Game.debug) System.out.println("SERVER: recieved player save");
+				if (Game.debug) System.out.println("SERVER: recieved player save from " + serverThread.getClient());
 				/// save this client's data to a file.
 				/// first, determine if this is the main player. if not, determine if a file already exists for this client. if not, find an available file name. for simplicity, we will just count the number of remote player files saved.
 				
