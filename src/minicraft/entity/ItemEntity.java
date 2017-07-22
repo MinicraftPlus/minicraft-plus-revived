@@ -18,7 +18,7 @@ public class ItemEntity extends Entity {
 	private long pickupTimestamp;
 	
 	public ItemEntity(Item item, int x, int y) {
-		super(3, 3);
+		super(2, 2);
 		
 		this.item = item;
 		this.x = x;
