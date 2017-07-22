@@ -346,7 +346,7 @@ public class MinicraftServer extends Thread implements MinicraftProtocol {
 					
 					if(game.player != null) {
 						// save the player, and then remove it.
-						playerdata = game.player.getData();
+						playerdata = game.player.getPlayerData();
 						
 						//if (Game.debug) System.out.println("SERVER: setting main player as remote from login.");
 						game.player.remove(); // all the important data has been saved.
@@ -370,15 +370,15 @@ public class MinicraftServer extends Thread implements MinicraftProtocol {
 				
 				if(playerdata.length() > 0) {
 					/// if a save file was found, then send the data to the client so they can resume where they left off.
-					//if (Game.debug) System.out.println("SERVER: sending saved player data: " + playerdata);
-					serverThread.sendData(InputType.PLAYER, playerdata);
 					// and now, initialize the RemotePlayer instance with the data.
 					(new Load()).loadPlayer(clientPlayer, Arrays.asList(playerdata.split("\\n")[0].split(",")));
 					// we really don't need to load the inventory.
 				} else {
 					clientPlayer.findStartPos(Game.levels[Game.lvlIdx(0)]); // find a new start pos
-					clientPlayer.inventory.add(Items.get("arrow"), 25); // add the starting arrows to inv, since this is a new player.
+					// this is a new player.
+					playerdata = clientPlayer.getPlayerData();
 				}
+				serverThread.sendData(InputType.PLAYER, playerdata);
 				
 				// now, we send the INIT_W packet and notify the others clients.
 				
@@ -392,7 +392,7 @@ public class MinicraftServer extends Thread implements MinicraftProtocol {
 					clientPlayer.eid,
 					Game.levels[playerlvl].w,
 					Game.levels[playerlvl].h,
-					playerlvl,
+					playerlvl, // these bottom three are actually unnecessary because of the previous PLAYER packet.
 					clientPlayer.x,
 					clientPlayer.y
 				};
