@@ -879,7 +879,7 @@ public class Player extends Mob {
 		return false;
 	}
 	
-	public String getData() {
+	public String getPlayerData() {
 		List<String> datalist = new ArrayList<String>();
 		String playerdata = "";
 		
