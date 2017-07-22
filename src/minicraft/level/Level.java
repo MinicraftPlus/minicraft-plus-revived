@@ -570,8 +570,14 @@ public class Level {
 	public void dropItem(int x, int y, Item i) {
 		/*if(Game.debug && ModeMenu.creative)
 			game.player.inventory.add(i);
-		else
-			*/add(new minicraft.entity.ItemEntity(i, x + random.nextInt(11) - 5, y + random.nextInt(11) - 5));
+		else {*/
+			int ranx, rany;
+			do {
+				ranx = x + random.nextInt(11) - 5;
+				rany = y + random.nextInt(11) - 5;
+			} while(ranx >> 4 != x >> 4 || rany >> 4 != y >> 4);
+			add(new ItemEntity(i, ranx, rany));
+		//}
 	}
 
 	public void renderBackground(Screen screen, int xScroll, int yScroll) {

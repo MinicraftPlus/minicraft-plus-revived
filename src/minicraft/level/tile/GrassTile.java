@@ -50,7 +50,7 @@ public class GrassTile extends Tile {
 					level.setTile(xt, yt, Tiles.get("dirt"));
 					Sound.monsterHurt.play();
 					if (random.nextInt(5) == 0) {
-						level.dropItem(xt*16, yt*16, 2, Items.get("seeds"));
+						level.dropItem(xt*16+8, yt*16+8, 2, Items.get("seeds"));
 						return true;
 					}
 				}
@@ -59,7 +59,7 @@ public class GrassTile extends Tile {
 				if (player.payStamina(4 - tool.level)) {
 					Sound.monsterHurt.play();
 					if (random.nextInt(5) == 0) {
-						level.dropItem(xt*16, yt*16, Items.get("seeds"));
+						level.dropItem(xt*16+8, yt*16+8, Items.get("seeds"));
 						return true;
 					}
 					level.setTile(xt, yt, Tiles.get("farmland"));
