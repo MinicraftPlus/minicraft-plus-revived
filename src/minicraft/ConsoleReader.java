@@ -178,9 +178,10 @@ class ConsoleReader extends Thread {
 					}
 				}
 				
-				if(targetTicks >= 0)
+				if(targetTicks >= 0) {
 					game.setTime(targetTicks);
-				else {
+					Game.server.updateGameVars();
+				} else {
 					System.out.println("time specified is in an invalid format.");
 					Command.printHelp(this, game);
 				}
