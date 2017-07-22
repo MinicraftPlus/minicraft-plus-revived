@@ -36,6 +36,7 @@ public class MinicraftServerThread extends MinicraftConnection {
 	
 	//private List<Integer> trackedEntities = new ArrayList<Integer>();
 	private Timer pingWaitTimer;
+	private boolean recievedPing = true;
 	
 	private List<InputType> packetTypesToKeep = new ArrayList<InputType>();
 	private List<InputType> packetTypesToCache = new ArrayList<InputType>();
@@ -77,20 +78,10 @@ public class MinicraftServerThread extends MinicraftConnection {
 	}
 	
 	class ClientPing extends TimerTask {
-		public boolean recievedPing;
-		
-		public ClientPing() {
-			recievedPing = true;
-		}
+		public ClientPing() {}
 		
 		public void run() {
-			if(!recievedPing) {
-				// disconnect from the client; they are taking too long to respond and probably don't exist anyway.
-				MinicraftServerThread.this.endConnection();
-			} else {
-				recievedPing = false;
-				MinicraftServerThread.this.sendData(InputType.PING, "");
-			}
+			MinicraftServerThread.this.ping();
 		}
 	}
 	
@@ -101,11 +92,21 @@ public class MinicraftServerThread extends MinicraftConnection {
 		
 		if(inType == InputType.PING) {
 			//if (Game.debug) System.out.println(this+" recieved ping");
-			pingWaitTimer.recievedPing = true;
+			recievedPing = true;
 			return true;
 		}
 		
 		return serverInstance.parsePacket(this, inType, data);
+	}
+	
+	private void ping() {
+		if(!recievedPing) {
+			// disconnect from the client; they are taking too long to respond and probably don't exist anyway.
+			endConnection();
+		} else {
+			recievedPing = false;
+			sendData(InputType.PING, "");
+		}
 	}
 	
 	protected void sendError(String message) {

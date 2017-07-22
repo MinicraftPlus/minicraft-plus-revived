@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.Scanner;
 import java.util.Locale;
 import minicraft.saveload.Save;
+import minicraft.screen.ModeMenu;
 import minicraft.screen.WorldSelectMenu;
 
 class ConsoleReader extends Thread {
@@ -168,11 +169,11 @@ class ConsoleReader extends Thread {
 						String firstLetter = String.valueOf(args[0].charAt(0)).toUpperCase();
 						String remainder = args[0].substring(1).toLowerCase();
 						Game.Time time = Enum.valueOf(Game.Time.class, firstLetter+remainder);
-						targetTicks = time.tickCount;
-					} catch(IllegalArgumentException ex) {
+						targetTicks = time.tickTime;
+					} catch(IllegalArgumentException iaex) {
 						try {
 							targetTicks = Integer.parseInt(args[0]);
-						} catch(NumberFormatException ex) {
+						} catch(NumberFormatException nfex) {
 						}
 					}
 				}
