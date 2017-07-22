@@ -375,8 +375,10 @@ public class MinicraftServer extends Thread implements MinicraftProtocol {
 					// and now, initialize the RemotePlayer instance with the data.
 					(new Load()).loadPlayer(clientPlayer, Arrays.asList(playerdata.split("\\n")[0].split(",")));
 					// we really don't need to load the inventory.
-				} else
+				} else {
 					clientPlayer.findStartPos(Game.levels[Game.lvlIdx(0)]); // find a new start pos
+					clientPlayer.inventory.add(Items.get("arrow"), 25); // add the starting arrows to inv, since this is a new player.
+				}
 				
 				// now, we send the INIT_W packet and notify the others clients.
 				
