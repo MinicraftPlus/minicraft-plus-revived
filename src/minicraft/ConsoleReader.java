@@ -93,7 +93,7 @@ class ConsoleReader extends Thread {
 			}
 		},
 		
-		QUIT
+		STOP
 		(null, "close the server.") {
 			public void run(String[] args, Game game) {
 				System.out.println("shutting down server...");
@@ -104,7 +104,7 @@ class ConsoleReader extends Thread {
 		RESTART
 		(null, "restart the server.", "closes the server, then starts it back up again.") {
 			public void run(String[] args, Game game) {
-				Command.QUIT.run(null, game); // shuts down the server.
+				Command.STOP.run(null, game); // shuts down the server.
 				try {
 					Thread.sleep(500); // give the computer some time to, uh, recuperate? idk, I think it's a good idea.
 				} catch(InterruptedException ex) {}
@@ -245,7 +245,7 @@ class ConsoleReader extends Thread {
 			else
 				System.out.println("no server running.");
 			
-			if(cmd == Command.QUIT) shouldRun = false;
+			if(cmd == Command.STOP) shouldRun = false;
 		}
 		
 		game.quit();
