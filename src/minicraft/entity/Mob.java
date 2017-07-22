@@ -60,11 +60,13 @@ public abstract class Mob extends Entity {
 		List<RemotePlayer> prevPlayers = null;
 		if(checkPlayers) prevPlayers = Game.server.getPlayersInRange(this, true);
 		
-		// these should return true b/c the mob is still technically moving; these are just to make it move *slower*.
-		if (tickTime % 2 == 0 && (isSwimming() || (!(this instanceof Player) && isWooling())))
-			return true;
-		if (tickTime % walkTime == 0 && walkTime > 1)
-			return true;
+		if(!(Game.isValidServer() && this instanceof RemotePlayer)) { // this will be the case when the client has sent a move packet to the server. In this case, we DO want to always move.
+			// these should return true b/c the mob is still technically moving; these are just to make it move *slower*.
+			if (tickTime % 2 == 0 && (isSwimming() || (!(this instanceof Player) && isWooling())))
+				return true;
+			if (tickTime % walkTime == 0 && walkTime > 1)
+				return true;
+		}
 		
 		//if (Game.debug && this instanceof MobAi && isWithin(9, getClosestPlayer())) System.out.println("ticking mob " + this + "; tickTime = " + tickTime);
 		
