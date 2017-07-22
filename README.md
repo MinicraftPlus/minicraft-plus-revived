@@ -8,7 +8,7 @@ Here is a small share of the more major features that this mod adds to the origi
 * More Game modes -- Creative, Hardcore, and Score mode in addition to Survival
 * Save / Load System for worlds and settings, and respawn after death
 * World creation and management options, such as name, size, and terrain type of world, and rename, delete, and copy world
-* Multiplayer! Although, it isn't entirely functional at this point...
+* Multiplayer mode, complete with dedicated server support, with or without a GUI.
 * Many more mobs
 * Many more tiles
 * More weapons / tools, such as claymores and torches
