@@ -6,6 +6,8 @@ import minicraft.entity.Chest;
 import minicraft.entity.Inventory;
 import minicraft.entity.Player;
 import minicraft.gfx.Screen;
+import minicraft.item.Item;
+import minicraft.item.StackableItem;
 
 public class ContainerMenu extends Menu {
 	private Player player; // The player that is looking inside the chest
@@ -63,17 +65,34 @@ public class ContainerMenu extends Menu {
 		if (selected >= len) selected -= len;
 		
 		// If the "Attack" key is pressed and the inventory's size is bigger than 0...
-		if (input.getKey("attack").clicked) {
-			if(Game.isValidClient()) {
-				if(i == chest.inventory)
-					Game.client.removeFromChest(chest, selected);
-				else {
-					Game.client.addToChest(chest, i.get(selected)); // if the other menu is the chest, then we are adding to the chest.
-					player.inventory.remove(selected); // the request should never be denied, so remove item immedieately as usual.
-				}
+		if (input.getKey("attack").clicked || input.getKey("drop-one").clicked) {
+			Item toSend = i.get(selected);
+			
+			boolean transferAll = input.getKey("attack").clicked || !(toSend instanceof StackableItem) || ((StackableItem)toSend).count == 1;
+			
+			if(!transferAll) {
+				StackableItem item = (StackableItem) toSend;
+				if(!ModeMenu.creative)
+					item.count--;
+				toSend = item.clone();
+				((StackableItem)toSend).count = 1;
 			}
-			else
-				i2.add(oSelected, i.remove(selected)); // It will add the item to the new inventory, and remove it from the old one.
+			
+			if(Game.isValidClient()) {
+				if(i == chest.inventory) // the player is moving an item from chest to inventory.
+					Game.client.removeFromChest(chest, selected, input.getKey("attack").clicked);
+				else {
+					// the player wants to transfer an item to the chest from their inventory.
+					Game.client.addToChest(chest, toSend); // if the other menu is the chest, then we are adding to the chest.
+					if(transferAll && !ModeMenu.creative)
+						player.inventory.remove(selected); // the request should never be denied, so remove item immedieately as usual.
+				}
+			} else {
+				if(transferAll && !(i == player.inventory && ModeMenu.creative))
+					i.removeItem(toSend); // It will add the item to the new inventory, and remove it from the old one.
+				if(i2 != player.inventory)
+					i2.add(oSelected, toSend.clone());
+			}
 		}
 	}
 	

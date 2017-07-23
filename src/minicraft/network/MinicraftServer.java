@@ -20,6 +20,7 @@ import minicraft.item.Item;
 import minicraft.item.Items;
 import minicraft.item.PotionItem;
 import minicraft.item.PotionType;
+import minicraft.item.StackableItem;
 import minicraft.level.Level;
 import minicraft.level.tile.Tile;
 import minicraft.saveload.Load;
@@ -564,10 +565,17 @@ public class MinicraftServer extends Thread implements MinicraftProtocol {
 						return false;
 					}
 					// if here, the index is valid
-					Item removed = chest.inventory.remove(index);
+					boolean wholeStack = Boolean.parseBoolean(data[2]);
+					Item toRemove = chest.inventory.get(index);
+					Item itemToSend = toRemove;
+					if(!wholeStack && toRemove instanceof StackableItem && ((StackableItem)toRemove).count > 1) {
+						itemToSend = toRemove.clone();
+						((StackableItem)itemToSend).count = 1;
+						((StackableItem)toRemove).count--;
+					}
 					
-					if(Game.debug) System.out.println("SERVER sending chestout with item data: \"" + removed.getData() + "\"");
-					serverThread.sendData(InputType.CHESTOUT, removed.getData()); // send back the *exact* same packet as was sent; the client will handle it accordingly, by changing their inventory.
+					if(Game.debug) System.out.println("SERVER sending chestout with item data: \"" + itemToSend.getData() + "\"");
+					serverThread.sendData(InputType.CHESTOUT, itemToSend.getData()); // send back the item that the player should put in their inventory.
 				}
 				
 				serverThread.sendEntityUpdate(chest, chest.getUpdates());
