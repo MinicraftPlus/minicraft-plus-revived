@@ -6,6 +6,8 @@ Minicraft+ version 2.0.3
 + Added more error messages when connecting
 * Fixed item entity spawn positions and going through other tiles
 + Added the ability to drop an item to the ground with Q and shift-Q (shift-q drops the whole stack)
++ made it so you can transfer single items to and from chests, with the drop key.
+* Fixed bugs with creative inventory, so it always has all items.
 
 
 
