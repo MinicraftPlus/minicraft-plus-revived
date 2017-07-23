@@ -127,7 +127,7 @@ private static final String[] options = {"New game", "Join Online World", "Instr
 		"!sdrawkcab si sihT",
 		"This is forwards!",
 		"Why is this blue?",
-		"Green is a funny color!",
+		"Green is a nice color!",
 		"Red is my favorite color!"
 		//"try with --debug",
 	};
