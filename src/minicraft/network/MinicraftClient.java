@@ -570,7 +570,8 @@ public class MinicraftClient extends MinicraftConnection {
 				if(curState != State.PLAY) return false; // shouldn't happen.
 				Item item = Items.get(alldata);
 				if (Game.debug) System.out.println("CLIENT: recieved chestout with item: " + item);
-				game.player.inventory.add(0, item);
+				if(!ModeMenu.creative)
+					game.player.inventory.add(0, item);
 				//if (Game.debug) System.out.println("CLIENT successfully took " + item + " from chest and added to inv.");
 				return true;
 			
@@ -673,9 +674,9 @@ public class MinicraftClient extends MinicraftConnection {
 		sendData(InputType.CHESTIN, chest.eid+";"+item.getData());
 	}
 	
-	public void removeFromChest(Chest chest, int index) {
+	public void removeFromChest(Chest chest, int index, boolean wholeStack) {
 		if(chest == null) return;
-		sendData(InputType.CHESTOUT, chest.eid+";"+index);
+		sendData(InputType.CHESTOUT, chest.eid+";"+index+";"+wholeStack);
 	}
 	
 	public void pushFurniture(Furniture f, int pushDir) {

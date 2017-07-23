@@ -551,7 +551,8 @@ public class Game extends Canvas implements Runnable {
 						if (input.getKey("3").clicked) changeTimeOfDay(Time.Evening);
 						if (input.getKey("4").clicked) changeTimeOfDay(Time.Night);
 						
-						if (input.getKey("creative").clicked) ModeMenu.updateModeBools(2);
+						if (input.getKey("creative").clicked) {ModeMenu.updateModeBools(2);
+							Items.fillCreativeInv(player.inventory, false);}
 						if (input.getKey("survival").clicked) ModeMenu.updateModeBools(1);
 						if (input.getKey("shift-t").clicked) ModeMenu.updateModeBools(4);
 						if (ModeMenu.score && input.getKey("ctrl-t").clicked){ scoreTime = normSpeed * 5; // 5 seconds

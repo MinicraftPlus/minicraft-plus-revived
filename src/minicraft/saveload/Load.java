@@ -80,6 +80,9 @@ public class Load {
 			loadEntities("Entities", game);
 			loadInventory("Inventory", game.player.inventory);
 			loadPlayer("Player", game.player);
+			if(ModeMenu.creative) {
+				Items.fillCreativeInv(game.player.inventory, false);
+			}
 			//LoadingMenu.percentage = 0; // reset
 		}
 	}
