@@ -199,6 +199,40 @@ class ConsoleReader extends Thread {
 					Command.printHelp(this, game);
 				}
 			}
+		},
+		
+		MSG
+		("[username] <message>", "make a message appear on other players' screens.", "w/o username: sends to all players,", "with username: sends to that player only.") {
+			public void run(String[] args, Game game) {
+				if(args.length == 0) {
+					System.out.println("please specify a message to send.");
+					return;
+				}
+				List<String> usernames = new ArrayList<String>();
+				if(args.length > 1) {
+					for(int i = 0; i < args.length-1; i++)
+						usernames.add(args[i]);
+				} else {
+					Game.server.broadcastNotification(50, args[0]);
+					return;
+				}
+				
+				String message = args[args.length-1];
+				for(String username: usernames) {
+					MinicraftServerThread match = null;
+					for(MinicraftServerThread thread: Game.server.getThreads()) {
+						if(thread.getClient().getUsername().equalsIgnoreCase(username)) {
+							match = thread;
+							break;
+						}
+					}
+					
+					if(match != null)
+						match.sendData(InputType.NOTIFY, 50+";"+message);
+					else
+						System.out.println("couldn't match username \"" + username + "\"");
+				}
+			}
 		};
 		
 		private String generalHelp, detailedHelp;
