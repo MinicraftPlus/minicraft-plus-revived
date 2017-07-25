@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.Scanner;
 import java.util.Locale;
 import minicraft.entity.Player;
+import minicraft.network.MinicraftServerThread;
 import minicraft.saveload.Save;
 import minicraft.screen.OptionsMenu;
 import minicraft.screen.ModeMenu;
@@ -213,7 +214,7 @@ class ConsoleReader extends Thread {
 					for(int i = 0; i < args.length-1; i++)
 						usernames.add(args[i]);
 				} else {
-					Game.server.broadcastNotification(50, args[0]);
+					Game.server.broadcastNotification(args[0], 50);
 					return;
 				}
 				
@@ -228,7 +229,7 @@ class ConsoleReader extends Thread {
 					}
 					
 					if(match != null)
-						match.sendData(InputType.NOTIFY, 50+";"+message);
+						match.sendNotification(message, 50);
 					else
 						System.out.println("couldn't match username \"" + username + "\"");
 				}

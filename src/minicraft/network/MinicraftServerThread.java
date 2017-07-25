@@ -178,6 +178,10 @@ public class MinicraftServerThread extends MinicraftConnection {
 		sendData(InputType.REMOVE, String.valueOf(eid));
 	}
 	
+	public void sendNotification(String note, int notetime) {
+		sendData(InputType.NOTIFY, notetime+";"+note);
+	}
+	
 	public void sendPlayerHurt(int damage, int attackDir) {
 		sendData(InputType.HURT, damage+";"+attackDir);
 	}
