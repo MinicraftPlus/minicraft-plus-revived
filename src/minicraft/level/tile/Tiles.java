@@ -215,6 +215,9 @@ public final class Tiles {
 		if(tiles.get(id) != null) {
 			return tiles.get(id);
 		}
+		else if(id >= 128) {
+			return TorchTile.getTorchTile(get(id-128));
+		}
 		else {
 			System.out.println("TILES.GET: unknown tile id requested: " + id);
 			return tiles.get(0);
