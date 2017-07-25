@@ -5,7 +5,9 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Scanner;
 import java.util.Locale;
+import minicraft.entity.Player;
 import minicraft.saveload.Save;
+import minicraft.screen.OptionsMenu;
 import minicraft.screen.ModeMenu;
 import minicraft.screen.WorldSelectMenu;
 
@@ -27,6 +29,17 @@ class ConsoleReader extends Thread {
 					System.out.println("\""+val+"\" is not a valid number.");
 				}
 				return false;
+			}
+		},
+		
+		AUTOSAVE {
+			public String getValue() {
+				return String.valueOf(OptionsMenu.autosave);
+			}
+			
+			public boolean setValue(String val) {
+				OptionsMenu.autosave = Boolean.parseBoolean(val);
+				return true;
 			}
 		};
 		
