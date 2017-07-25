@@ -169,8 +169,11 @@ public class Player extends Mob {
 					}
 				}
 				
-				if(toEntity != null && level != null)
+				if(toEntity != null && level != null) {
 					level.dropItem(x, y, toEntity);
+					if(Game.isValidClient())
+						Game.client.dropItem(x, y, toEntity);
+				}
 			}
 		}
 		
@@ -508,8 +511,13 @@ public class Player extends Mob {
 				} else { // item can't interact with tile
 					if (level.getTile(xt, yt).interact(level, xt, yt, this, activeItem, attackDir)) { // returns true if the target tile successfully interacts with the item.
 						done = true;
-					}// else if(Game.isValidServer()) // only do this if no interaction was actually made; b/c a tile update packet will generally happen then anyway.
-						//Game.server.broadcastTileUpdate(level, xt, yt); /// FIXME this part is as a semi-temporary fix for those odd tiles that don't update when they should; instead of having to make another system like the entity additions and removals (and it wouldn't quite work as well for this anyway), this will just update whatever tile the player interacts with (and fails, since a successful interaction changes the tile and therefore updates it anyway).
+					}
+				}
+				
+				if(Game.isValidServer() && this instanceof RemotePlayer) {// only do this if no interaction was actually made; b/c a tile update packet will generally happen then anyway.
+					minicraft.network.MinicraftServerThread thread = Game.server.getAssociatedThread((RemotePlayer)this);
+					if(thread != null)
+						thread.sendTileUpdate(level, xt, yt); /// FIXME this part is as a semi-temporary fix for those odd tiles that don't update when they should; instead of having to make another system like the entity additions and removals (and it wouldn't quite work as well for this anyway), this will just update whatever tile the player interacts with (and fails, since a successful interaction changes the tile and therefore updates it anyway).
 				}
 				
 				if (activeItem.isDepleted() && !ModeMenu.creative) {

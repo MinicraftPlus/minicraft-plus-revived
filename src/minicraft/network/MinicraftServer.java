@@ -496,6 +496,13 @@ public class MinicraftServer extends Thread implements MinicraftProtocol {
 				serverThread.endConnection();
 				return true;
 			
+			case DROP:
+				int dropx = Integer.parseInt(data[0]);
+				int dropy = Integer.parseInt(data[1]);
+				Item dropItem = Items.get(data[2]);
+				serverThread.getClient().getLevel().dropItem(dropx, dropy, dropItem);
+				return true;
+			
 			case ENTITY:
 				// client wants the specified entity sent in an ADD packet, becuase it couldn't find that entity upon recieving an ENTITY packet from the server.
 				int enid = Integer.parseInt(alldata);
