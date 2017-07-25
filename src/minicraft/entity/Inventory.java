@@ -7,6 +7,7 @@ import minicraft.Game;
 import minicraft.item.FurnitureItem;
 import minicraft.item.Item;
 import minicraft.item.Items;
+import minicraft.item.PowerGloveItem;
 import minicraft.item.StackableItem;
 import minicraft.item.ToolItem;
 import minicraft.item.ToolType;
