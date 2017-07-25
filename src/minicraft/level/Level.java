@@ -478,6 +478,9 @@ public class Level {
 					//e.remove(); // used to try and reduce the number of forzen entities hanging around... I think a slow connection will ruin this, though...
 			}
 			
+			if(Game.isValidServer() && e instanceof RemotePlayer && Game.server.getAssociatedThread((RemotePlayer)e) == null)
+				e.remove();
+			
 			if(Game.isValidServer() && e instanceof Particle)
 				e.remove(); // the server really doesn't need to care about particles, besides spawning them.
 			
