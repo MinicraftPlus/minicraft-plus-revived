@@ -19,6 +19,8 @@ import minicraft.entity.Player;
 import minicraft.entity.RemotePlayer;
 import minicraft.item.Item;
 import minicraft.item.PowerGloveItem;
+import minicraft.level.Level;
+import minicraft.level.tile.Tile;
 import minicraft.saveload.Load;
 import minicraft.saveload.Save;
 
@@ -142,6 +144,10 @@ public class MinicraftServerThread extends MinicraftConnection {
 			return;
 		else
 			super.sendData(inType, data);
+	}
+	
+	public void sendTileUpdate(Level level, int x, int y) {
+		sendData(InputType.TILE, Tile.getData(level.depth, x, y));
 	}
 	
 	public void sendEntityUpdate(Entity e, String updateString) {
