@@ -18,6 +18,7 @@ import minicraft.entity.Entity;
 import minicraft.entity.Player;
 import minicraft.entity.RemotePlayer;
 import minicraft.item.Item;
+import minicraft.item.PowerGloveItem;
 import minicraft.saveload.Load;
 import minicraft.saveload.Save;
 
@@ -100,6 +101,8 @@ public class MinicraftServerThread extends MinicraftConnection {
 	}
 	
 	private void ping() {
+		if (Game.debug) System.out.println(this+" is doing ping sequence. recieved ping: " + recievedPing);
+		
 		if(!recievedPing) {
 			// disconnect from the client; they are taking too long to respond and probably don't exist anyway.
 			endConnection();
@@ -178,7 +181,7 @@ public class MinicraftServerThread extends MinicraftConnection {
 			return;
 		}
 		
-		if(client.activeItem != null)
+		if(client.activeItem != null && !(client.activeItem instanceof PowerGloveItem))
 			sendData(InputType.CHESTOUT, client.activeItem.getData());
 		client.activeItem = heldItem;
 		

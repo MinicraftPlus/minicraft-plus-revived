@@ -94,6 +94,7 @@ public class Items {
 	public static void fillCreativeInv(Inventory inv) { fillCreativeInv(inv, true); }
 	public static void fillCreativeInv(Inventory inv, boolean addAll) {
 		for(Item item: items) {
+			if(item instanceof PowerGloveItem) continue;
 			if(addAll || inv.count(item) == 0)
 				inv.add(item.clone());
 		}
