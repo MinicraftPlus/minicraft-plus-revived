@@ -101,10 +101,11 @@ public class MinicraftServerThread extends MinicraftConnection {
 	}
 	
 	private void ping() {
-		if (Game.debug) System.out.println(this+" is doing ping sequence. recieved ping: " + recievedPing);
+		//if (Game.debug) System.out.println(this+" is doing ping sequence. recieved ping: " + recievedPing);
 		
 		if(!recievedPing) {
 			// disconnect from the client; they are taking too long to respond and probably don't exist anyway.
+			sendError("connection timed out; ping too slow");
 			endConnection();
 		} else {
 			recievedPing = false;
