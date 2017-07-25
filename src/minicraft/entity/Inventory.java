@@ -52,6 +52,12 @@ public class Inventory {
 	/** Adds an item to a specific spot in the inventory */
 	public void add(int slot, Item item) {
 		//if (Game.debug) System.out.println("adding item to an inventory: " + item);
+		if(item instanceof PowerGloveItem) {
+			System.out.println("WARNING: tried to add power glove to inventory. stack trace:");
+			Thread.dumpStack();
+			return; // do NOT add to inventory
+		}
+		
 		if (item instanceof StackableItem) { // if the item is a item...
 			StackableItem toTake = (StackableItem) item; // ...convert it into a StackableItem object.
 			

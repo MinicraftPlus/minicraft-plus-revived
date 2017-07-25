@@ -29,7 +29,7 @@ public class Items {
 	
 	static {
 		//add(new UnknownItem());
-		//add(new PowerGloveItem());
+		add(new PowerGloveItem());
 		addAll(FurnitureItem.getAllInstances());
 		addAll(TorchItem.getAllInstances());
 		addAll(BucketItem.getAllInstances());

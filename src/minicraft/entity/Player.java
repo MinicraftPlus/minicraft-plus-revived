@@ -121,7 +121,7 @@ public class Player extends Mob {
 		if (ModeMenu.creative) {
 			Items.fillCreativeInv(inventory);
 		}/* else {
-			inventory.add(Items.get("Power Glove"));
+			inventory.add(new PowerGloveItem()));
 		}*/
 		
 		if(previousInstance != null) {
@@ -800,7 +800,7 @@ public class Player extends Mob {
 			//armorItem.amount = armor;
 			dc.inventory.add(curArmor);
 		}
-		//dc.inventory.removeItem(Items.get("Power Glove"));
+		//dc.inventory.removeItem(new PowerGloveItem());
 		
 		Sound.playerDeath.play();
 		
