@@ -14,6 +14,8 @@ Fire particles appear, but... they look totally weird...
 ####
 Sound effects don't always play when they should; mostly it seems when other sounds should be on at the same time.
 ####
+Some tool damage and relative damage / stamina stuff is just rather skewed in general. Needs fixing.
+####
 
 #####
 MULTIPLAYER-Related:
@@ -24,6 +26,22 @@ MULTIPLAYER-Related:
 -----------------------------------------------------------------------------------
 
 	****IDEAS(that should probably be implemented)****
+****
+
+make the text when typing a world name become uppercase according to English locale.
+
+****
+
+Make spawners break with one hit in creative. ...with any tool?
+
+****
+
+allow creative mode player to walk in sky without clouds.
+
+****
+
+Fix menu inheritance stuff. How about I keep Menu.renderItemList() (because it's a great idea) but with some modifications: put it in the InventoryMenu class. Also make that class more flexible, so that it can nicely parent ContainerMenu. How about... it just holds the renderItemList() method? Yeah, and the current inventory list. The thing with ContainerMenu is that the two inv lists are *not* the same; on is active, one is not. So, it just needs to add a reference to the inactive list, and its current index!
+
 ****
 
 The Font.drawParagraph() methods' centering system (and/or I suppose the FontStyle centering system) should revolve around three things, for each axis: whether or not to center at all, and if so, the **OFFSET FROM THE ABSOLUTE CENTER**, and the x and y padding. That second one is the one not taken care of in the main drawParagraph method, and I think it would make things a hell of a lot easier.
@@ -58,10 +76,6 @@ add ability to mark players as ops ("operators") so they can do stuff to the gam
 
 ****
 
-Maybe add a PING packet; does nothing, just responds. This can be sent to test the connection... Maybe periodically, the server can ping each of the clients, perhaps every 15 seconds. If a response is not received in 5 seconds, it resends. After 10 seconds, it removes the player from the client list. And maybe sends disconnect packet just in case.
-
-****
-
 the server stalls or something when the username is too long; client probably throws error, out of bounds exception.
 
 ****
@@ -84,10 +98,6 @@ Stop saving player arrow count, and refit the load class indexes to reflect that
 
 ****
 
-Add world backup option to world load menu; it could be complicated, since if I add a world backup option, I would have to add a world restore option, too...
-
-****
-
 Make respawn without bed += 20 blocks x/y of last spawn.
 
 ****
@@ -102,11 +112,7 @@ To save, maybe I should separate this data from other data like health, and put 
 
 ****
 
-Add world backup option, that user can select a download location. Then maybe... pack to zip? Also, I'll need to make a "restore" feature, and unzip it ...
-
-****
-
-change inventory system to better allow moving items to and from inventories, into chests; for example, you should be able to choose how much of an item stack you want to transfer.
+Add world backup option, that user can select a download location. Then maybe... pack to zip? Also, I'll need to make a "restore" feature, and unzip it, so this could get complicated...
 
 ****
 
