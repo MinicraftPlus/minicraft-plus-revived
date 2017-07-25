@@ -572,7 +572,8 @@ public class MinicraftServer extends Thread implements MinicraftProtocol {
 						itemToSend = toRemove.clone();
 						((StackableItem)itemToSend).count = 1;
 						((StackableItem)toRemove).count--;
-					}
+					} else
+						chest.inventory.remove(index);
 					
 					if(Game.debug) System.out.println("SERVER sending chestout with item data: \"" + itemToSend.getData() + "\"");
 					serverThread.sendData(InputType.CHESTOUT, itemToSend.getData()); // send back the item that the player should put in their inventory.
@@ -634,7 +635,7 @@ public class MinicraftServer extends Thread implements MinicraftProtocol {
 				if(!ModeMenu.creative) { // the second part allows the player to pick up furniture in creative mode.
 					// now, send back the state of the activeItem. In creative though, this won't change, so it's unnecessary.
 					//if(pickedUpFurniture)
-						//sendData(InputType.CHESTOUT, Items.get("Power Glove").getData());
+						//sendData(InputType.CHESTOUT, (new PowerGloveItem()).getData());
 					
 					//if(Game.debug) System.out.println("SERVER: new activeItem for player " + clientPlayer + " after interaction: " + clientPlayer.activeItem);
 					serverThread.sendData(InputType.INTERACT, ( clientPlayer.activeItem == null ? "null" : clientPlayer.activeItem.getData() ));
