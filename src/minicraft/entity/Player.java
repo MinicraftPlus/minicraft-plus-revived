@@ -59,6 +59,7 @@ public class Player extends Mob {
 	
 	public Inventory inventory;
 	public Item activeItem, attackItem; // attackItem is useful again b/c of the power glove.
+	private Item prevItem; // holds the item held before using the POW glove.
 	public int attackTime, attackDir;
 	
 	private int onStairDelay; // the delay before changing levels.
@@ -337,23 +338,24 @@ public class Player extends Mob {
 		}
 		
 		if (game.menu == null) {
-			if (!Bed.inBed && (input.getKey("attack").clicked || input.getKey("pickup").clicked) && stamina != 0) {
+			if (!Bed.inBed && (activeItem == null || !activeItem.used_pending) && (input.getKey("attack").clicked || input.getKey("pickup").clicked) && stamina != 0) {
 				if (!potioneffects.containsKey(PotionType.Energy)) stamina--;
 				staminaRecharge = 0;
 				
 				if (input.getKey("pickup").clicked) {
-					Item prevItem = activeItem;
-					activeItem = new PowerGloveItem();
-					attack();
 					if(!(activeItem instanceof PowerGloveItem)) {
-						if(prevItem != null && !ModeMenu.creative)
-							inventory.add(0, prevItem);
-						// if something other than a power glove is being held, but the previous item is null, then nothing happens; nothing added to inventory, and current item remains as the new one.
-					} else
-						activeItem = prevItem; // the held item didn't change, so remove the power glove and make it what it was before.
+						prevItem = activeItem;
+						activeItem = new PowerGloveItem();
+					}
+					attack();
+					if(!Game.ISONLINE)
+						resolveHeldItem();
 				}
 				else
 					attack();
+				
+				if(activeItem != null && !(activeItem instanceof ToolItem))
+					activeItem.used_pending = true;
 			}
 			
 			if (input.getKey("menu").clicked && !use()) // !use() = no furniture in front of the player; this prevents player inventory from opening (will open furniture inventory instead)
@@ -388,6 +390,19 @@ public class Player extends Mob {
 		}
 		
 		if(Game.isValidClient() && this == game.player) Game.client.sendPlayerUpdate(this);
+	}
+	
+	public void resolveHeldItem() {
+		//if(Game.debug) System.out.println("prev item: " + prevItem + "; curItem: " + activeItem);
+		if(!(activeItem instanceof PowerGloveItem)) {
+			if(prevItem != null && !ModeMenu.creative)
+				inventory.add(0, prevItem);
+			// if something other than a power glove is being held, but the previous item is null, then nothing happens; nothing added to inventory, and current item remains as the new one.
+		} else
+			activeItem = prevItem; // the held item didn't change, so remove the power glove and make it what it was before.
+		
+		if(activeItem instanceof PowerGloveItem)
+			activeItem = null;
 	}
 	
 	/* This actually ends up calling another use method down below. */

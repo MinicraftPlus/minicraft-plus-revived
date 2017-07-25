@@ -632,14 +632,14 @@ public class MinicraftServer extends Thread implements MinicraftProtocol {
 				
 				//boolean pickedUpFurniture = wasGlove && !(clientPlayer.activeItem instanceof PowerGloveItem);
 				
-				if(!ModeMenu.creative) { // the second part allows the player to pick up furniture in creative mode.
+				//if(!ModeMenu.creative) { // the second part allows the player to pick up furniture in creative mode.
 					// now, send back the state of the activeItem. In creative though, this won't change, so it's unnecessary.
 					//if(pickedUpFurniture)
 						//sendData(InputType.CHESTOUT, (new PowerGloveItem()).getData());
 					
 					//if(Game.debug) System.out.println("SERVER: new activeItem for player " + clientPlayer + " after interaction: " + clientPlayer.activeItem);
 					serverThread.sendData(InputType.INTERACT, ( clientPlayer.activeItem == null ? "null" : clientPlayer.activeItem.getData() ));
-				}
+				//}
 				return true;
 			
 			case BED:

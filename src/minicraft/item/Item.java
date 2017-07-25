@@ -17,6 +17,8 @@ public abstract class Item implements ListItem {
 	public String name;
 	public Sprite sprite;
 	
+	public boolean used_pending = false; // this is for multiplayer, when an item has been used, and is pending server response as to the outcome, this is set to true so it cannot be used again unless the server responds that the item wasn't used. Which should basically replace the item anyway, soo... yeah. this never gets set back.
+	
 	protected Item(String name) {
 		sprite = Sprite.missingTexture(1, 1);
 		this.name = name;

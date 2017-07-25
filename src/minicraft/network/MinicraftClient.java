@@ -580,6 +580,7 @@ public class MinicraftClient extends MinicraftConnection {
 				Item holdItem = Items.get(alldata);
 				//if(Game.debug) System.out.println("CLIENT: recieved interaction success; setting player item to " + holdItem);
 				game.player.activeItem = holdItem;
+				game.player.resolveHeldItem();
 				return true;
 			
 			case PICKUP:
