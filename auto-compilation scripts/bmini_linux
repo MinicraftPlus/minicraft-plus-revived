@@ -76,6 +76,12 @@ do
 		--ss)
 				sendtoserver=1
 			;;
+		--oss)
+				sendtoserver=1
+				compjar=0
+				compjava=0
+				runjar=0
+			;;
 		--) #this means that the remaining options are for the jar file to process.
 				shift
 				passtojar=$@ #store remaining options
@@ -214,7 +220,10 @@ echo
 
 if [ $sendtoserver -eq 1 ]; then
 	echo sending jar file to remote server...
-	mscp $FILENAME
+	GENERIC="minicraft_plus_test.jar"
+	mv $FILENAME $GENERIC
+	mscp $GENERIC
+	mv $GENERIC $FILENAME
 	echo sent.
 fi
 
