@@ -88,7 +88,8 @@ public class Load {
 	}
 	
 	public Load(Game game, String worldname, MinicraftServer server) {
-		File testFile = new File(location + "/saves/" + worldname.toLowerCase() + "/ServerConfig" + extension);
+		location += "/saves/"+worldname.toLowerCase()+"/";
+		File testFile = new File(location + "ServerConfig" + extension);
 		if(testFile.exists())
 			loadServerConfig("ServerConfig", server);
 	}
