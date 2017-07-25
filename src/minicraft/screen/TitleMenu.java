@@ -10,6 +10,7 @@ import minicraft.entity.RemotePlayer;
 import minicraft.gfx.Color;
 import minicraft.gfx.Font;
 import minicraft.gfx.Screen;
+import minicraft.level.Level;
 
 public class TitleMenu extends SelectMenu {
 	protected final Random random = new Random();
@@ -150,11 +151,14 @@ private static final String[] options = {"New game", "Join Online World", "Instr
 		
 		folder = new File(location);
 		rand = random.nextInt(splashes.length);
+		
+		Game.levels = new Level[Game.levels.length];
 	}
 	
 	public void init(Game game, InputHandler input) {
 		super.init(game, input);
 		if(game.player == null || game.player instanceof RemotePlayer) {
+			//if(game.player != null) game.player.remove();
 			game.player = null;
 			game.resetGame();
 		}
