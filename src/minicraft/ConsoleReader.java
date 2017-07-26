@@ -62,7 +62,7 @@ class ConsoleReader extends Thread {
 					return;
 				}
 				
-				Command query = ConsoleReader.getCommandByName(args[1]); // prints its own error message if the command wasn't found.
+				Command query = ConsoleReader.getCommandByName(args[0]); // prints its own error message if the command wasn't found.
 				if(query != null)
 					System.out.println(query.getDetailedHelp());
 			}
@@ -249,7 +249,7 @@ class ConsoleReader extends Thread {
 			
 			detailedHelp = name + usage + sep + general;
 			if(specific != null && specific.length > 0)
-				detailedHelp += System.lineSeparator()+String.join(System.lineSeparator()+"\t", specific);
+				detailedHelp += System.lineSeparator()+"\t"+String.join(System.lineSeparator()+"\t", specific);
 		}
 		
 		public abstract void run(String[] args, Game game);
