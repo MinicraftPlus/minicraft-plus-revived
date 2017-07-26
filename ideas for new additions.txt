@@ -6,6 +6,10 @@ Make it so cloud tile can be placed in the sky level, on empty air tiles. Otherw
 
 ----
 
+limit the number of airwizards at one time to 3.
+
+----
+
 Bacon. Just, Bacon.
 
 ----

@@ -28,6 +28,10 @@ MULTIPLAYER-Related:
 	****IDEAS(that should probably be implemented)****
 ****
 
+add a TP command
+
+****
+
 make the text when typing a world name become uppercase according to English locale.
 
 ****
@@ -37,6 +41,10 @@ Make spawners break with one hit in creative. ...with any tool?
 ****
 
 allow creative mode player to walk in sky without clouds.
+
+****
+
+Allow clients to add a port number to the end of the ip with ":". for example: 12.34.145.1:1122
 
 ****
 
