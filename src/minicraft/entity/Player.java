@@ -170,9 +170,9 @@ public class Player extends Mob {
 				}
 				
 				if(toEntity != null && level != null) {
-					level.dropItem(x, y, toEntity);
+					ItemEntity ie = level.dropItem(x, y, toEntity);
 					if(Game.isValidClient())
-						Game.client.dropItem(x, y, toEntity);
+						Game.client.dropItem(ie);
 				}
 			}
 		}

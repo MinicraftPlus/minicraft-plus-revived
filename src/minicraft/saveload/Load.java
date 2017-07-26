@@ -727,8 +727,13 @@ public class Load {
 			}
 			if(newEntity instanceof ItemEntity) {
 				Item item = Items.get(info.get(2));
-				int timeleft = Integer.parseInt(info.get(3));
-				newEntity = new ItemEntity(item, x, y, timeleft);
+				double zz = Double.parseDouble(info.get(3));
+				int lifetime = Integer.parseInt(info.get(4));
+				int timeleft = Integer.parseInt(info.get(5));
+				double xa = Double.parseDouble(info.get(6));
+				double ya = Double.parseDouble(info.get(7));
+				double za = Double.parseDouble(info.get(8));
+				newEntity = new ItemEntity(item, x, y, zz, lifetime, timeleft, xa, ya, za);
 			}
 			if(newEntity instanceof TextParticle) {
 				int textcol = Integer.parseInt(info.get(3));

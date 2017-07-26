@@ -35,13 +35,18 @@ public class ItemEntity extends Entity {
 		lifeTime = 60 * 10 + random.nextInt(70); // sets the lifetime of the item. min = 600 ticks, max = 669 ticks.
 		// the idea was to have it last 10-11 seconds, I think.
 	}
-	public ItemEntity(Item item, int x, int y, int time) {
+	public ItemEntity(Item item, int x, int y, double zz, int lifetime, int time, double xa, double ya, double za) {
 		this(item, x, y);
+		this.lifeTime = lifetime;
 		this.time = time;
+		this.zz = zz;
+		this.xa = xa;
+		this.ya = ya;
+		this.za = za;
 	}
 	
 	public String getData() {
-		return item.name+":"+time;
+		return String.join(":", (new String[] {item.name, zz+"", lifeTime+"", time+"", xa+"", ya+"", za+""}));
 	}
 	
 	public void tick() {

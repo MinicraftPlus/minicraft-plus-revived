@@ -497,10 +497,7 @@ public class MinicraftServer extends Thread implements MinicraftProtocol {
 				return true;
 			
 			case DROP:
-				int dropx = Integer.parseInt(data[0]);
-				int dropy = Integer.parseInt(data[1]);
-				Item dropItem = Items.get(data[2]);
-				serverThread.getClient().getLevel().dropItem(dropx, dropy, dropItem);
+				Load.loadEntity(alldata, game, false);
 				return true;
 			
 			case ENTITY:

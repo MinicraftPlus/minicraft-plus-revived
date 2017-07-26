@@ -647,8 +647,8 @@ public class MinicraftClient extends MinicraftConnection {
 		sendData(InputType.INTERACT, itemString+";"+player.inventory.count(Items.get("arrow")));
 	}
 	
-	public void dropItem(int x, int y, Item item) {
-		sendData(InputType.DROP, x+";"+y+";"+item.getData());
+	public void dropItem(ItemEntity ie) {
+		sendData(InputType.DROP, Save.writeEntity(ie, false));
 	}
 	
 	public void sendPlayerUpdate(Player player) {

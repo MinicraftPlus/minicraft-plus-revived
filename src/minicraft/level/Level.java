@@ -570,7 +570,7 @@ public class Level {
 		for(Item i: items)
 			dropItem(x, y, i);
 	}
-	public void dropItem(int x, int y, Item i) {
+	public ItemEntity dropItem(int x, int y, Item i) {
 		/*if(Game.debug && ModeMenu.creative)
 			game.player.inventory.add(i);
 		else {*/
@@ -579,7 +579,9 @@ public class Level {
 				ranx = x + random.nextInt(11) - 5;
 				rany = y + random.nextInt(11) - 5;
 			} while(ranx >> 4 != x >> 4 || rany >> 4 != y >> 4);
-			add(new ItemEntity(i, ranx, rany));
+			ItemEntity ie = new ItemEntity(i, ranx, rany);
+			add(ie);
+			return ie;
 		//}
 	}
 
