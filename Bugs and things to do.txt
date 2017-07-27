@@ -8,13 +8,13 @@ Note to self: for more little bugs/ideas/concerns, search code for "TODO"
 
 	####BUGS####
 ####
+Player animation for getting hurt doesn't sync between clients.
+####
 Stairs clump together.
 ####
 Fire particles appear, but... they look totally weird...
 ####
 Sound effects don't always play when they should; mostly it seems when other sounds should be on at the same time.
-####
-Some tool damage and relative damage / stamina stuff is just rather skewed in general. Needs fixing.
 ####
 
 #####
