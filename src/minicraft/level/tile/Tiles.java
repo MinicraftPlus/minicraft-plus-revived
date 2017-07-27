@@ -211,6 +211,7 @@ public final class Tiles {
 	
 	public static Tile get(int id) {
 		//System.out.println("requesting tile by id: " + id);
+		if(id < 0) id += 256;
 		
 		if(tiles.get(id) != null) {
 			return tiles.get(id);

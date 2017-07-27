@@ -289,6 +289,8 @@ public class Game extends Canvas implements Runnable {
 		} else
 			player = new Player(player, this, input);
 		
+		if (levels[currentLevel] == null) return;
+		
 		// "shouldRespawn" is false on hardcore, or when making a new world.
 		if (DeadMenu.shouldRespawn) { // respawn, don't regenerate level.
 			//if (debug) System.out.println("Current Level = " + currentLevel);
@@ -599,6 +601,11 @@ public class Game extends Canvas implements Runnable {
 							/// list all the remote players in the level and their coordinates.
 							//System.out.println("searching for players on current level...");
 							levels[currentLevel].printEntityLocs(Player.class);
+						}
+						
+						if(Game.isValidClient() && input.getKey("alt-t").clicked) {
+							// update the tile with the server's value for it.
+							Game.client.requestTile(player.getLevel(), player.x >> 4, player.y >> 4);
 						}
 					}
 				} // end debug only cond.
