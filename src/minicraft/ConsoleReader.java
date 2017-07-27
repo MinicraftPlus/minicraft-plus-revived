@@ -234,6 +234,13 @@ class ConsoleReader extends Thread {
 						System.out.println("couldn't match username \"" + username + "\"");
 				}
 			}
+		},
+		
+		TP
+		("<playername> <x y [level] | playername>", "teleports a player to a given location in the world.", "the first player name is the player that will be teleported. the second argument can be either another player, or a set of world coordinates.", "if the second argument is a player name, then the first player will be teleported to the second player, possibly traversing different levels.", "if world coordinates are specified, an x and y coordinate are required. A level depth may optionally be specified to go to a different level; if not specified, the current level is assumed.") { /// future usage: "<x> <y> | "
+			public void run(String[] args, Game game) {
+				
+			}
 		};
 		
 		private String generalHelp, detailedHelp;
@@ -283,6 +290,33 @@ class ConsoleReader extends Thread {
 			String command = stdin.next();
 			List<String> parsed = new ArrayList<String>();
 			parsed.addAll(Arrays.asList(command.split(" ")));
+			int lastIdx = -1;
+			for(int i = 0; i < parsed.size(); i++) {
+				if(parsed.get(i).contains("\"")) {
+					if(lastIdx >= 0) {
+						// closing a quoted String
+						String ending = parsed.get(i);
+						while(i > lastIdx) {
+							parsed.set(lastIdx, parsed.get(lastIdx) + " " + parsed.remove(lastIdx+1));
+							i--;
+						}
+						parsed.set(i, parsed.get(i).substring(0, parsed.get(i).indexOf("\"")));
+						if(ending.indexOf("\"") < parsed.get(i).length()-1) // there are more characters in this word; be sure to save them.
+							parsed.add(i+1, ending.substring(ending.indexOf("\"")+1));
+						
+						lastIdx = -1; // reset the "last quote" variable.
+					} else {
+						// start the quoted String
+						lastIdx = i;
+						if(parsed.get(i).indexOf("\"") > 0) { // the quote is not the first character; be sure to seperate it
+							parsed.add(i, parsed.get(i).substring(0, parsed.get(i).indexOf("\"")));
+							i++;
+						}
+						parsed.set(i, parsed.get(i).replaceFirst("\"", ""));
+						i--; // so that this string can be parsed again, in case there is another quote.
+					}
+				}
+			}
 			//if (Game.debug) System.out.println("parsed command: " + parsed.toString());
 			
 			Command cmd = getCommandByName(parsed.remove(0)); // will print its own error message if not found.
