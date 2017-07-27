@@ -597,7 +597,7 @@ public class Player extends Mob {
 	
 	/** Gets the attack damage the player will deal. */
 	private int getAttackDamage(Entity e) {
-		int dmg = random.nextInt(3) + 1;
+		int dmg = random.nextInt(2) + 1;
 		if (activeItem != null && activeItem instanceof ToolItem) {
 			dmg += ((ToolItem)activeItem).getAttackDamageBonus(e); // sword/axe are more effective at dealing damage.
 		}
