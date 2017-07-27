@@ -259,7 +259,7 @@ public class MinicraftServer extends Thread implements MinicraftProtocol {
 		updateGameVars(new MinicraftServerThread[] {sendTo});
 	}
 	public void updateGameVars(MinicraftServerThread[] sendTo) {
-		if (Game.debug) System.out.println("SERVER: updating game vars...");
+		//if (Game.debug) System.out.println("SERVER: updating game vars...");
 		if(sendTo.length == 0) return;
 		
 		String[] varArray = {
