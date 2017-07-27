@@ -26,6 +26,11 @@ import minicraft.saveload.Save;
 
 public class MinicraftServerThread extends MinicraftConnection {
 	
+	class MyTask extends TimerTask {
+		public MyTask() {}
+		public void run() {}
+	}
+	
 	private static final int PING_INTERVAL = 10; // measured in seconds
 	
 	private MinicraftServer serverInstance;
@@ -38,7 +43,7 @@ public class MinicraftServerThread extends MinicraftConnection {
 	private NetworkInterface computer = null;
 	
 	//private List<Integer> trackedEntities = new ArrayList<Integer>();
-	private Timer pingWaitTimer;
+	private List<Timer> gameTimers;
 	private boolean recievedPing = true;
 	
 	private List<InputType> packetTypesToKeep = new ArrayList<InputType>();
@@ -74,18 +79,15 @@ public class MinicraftServerThread extends MinicraftConnection {
 		packetTypesToKeep.addAll(InputType.tileUpdates);
 		packetTypesToKeep.addAll(InputType.entityUpdates);
 		
-		pingWaitTimer = new Timer("ClientPing");
-		pingWaitTimer.schedule((new ClientPing()), 1000, PING_INTERVAL*1000);
+		gameTimers = new ArrayList<Timer>();
+		
+		Timer t = new Timer("ClientPing");
+		t.schedule((new MyTask() {
+			public void run() { MinicraftServerThread.this.ping(); }
+		}), 1000, PING_INTERVAL*1000);
+		gameTimers.add(t);
 		
 		start();
-	}
-	
-	class ClientPing extends TimerTask {
-		public ClientPing() {}
-		
-		public void run() {
-			MinicraftServerThread.this.ping();
-		}
 	}
 	
 	public RemotePlayer getClient() { return client; }
@@ -147,7 +149,10 @@ public class MinicraftServerThread extends MinicraftConnection {
 	}
 	
 	public void sendTileUpdate(Level level, int x, int y) {
-		sendData(InputType.TILE, Tile.getData(level.depth, x, y));
+		sendTileUpdate(level.depth, x, y);
+	}
+	public void sendTileUpdate(int depth, int x, int y) {
+		sendData(InputType.TILE, Tile.getData(depth, x, y));
 	}
 	
 	public void sendEntityUpdate(Entity e, String updateString) {
@@ -310,7 +315,8 @@ public class MinicraftServerThread extends MinicraftConnection {
 	}
 	
 	public void endConnection() {
-		pingWaitTimer.cancel();
+		for(Timer t: gameTimers)
+			t.cancel();
 		super.endConnection();
 		
 		client.remove();

@@ -8,6 +8,8 @@ import java.net.SocketException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Timer;
+import java.util.TimerTask;
 import minicraft.Game;
 import minicraft.entity.Bed;
 import minicraft.entity.Chest;
@@ -29,6 +31,13 @@ import minicraft.screen.ModeMenu;
 import minicraft.screen.WorldSelectMenu;
 
 public class MinicraftServer extends Thread implements MinicraftProtocol {
+	
+	class MyTask extends TimerTask {
+		public MyTask() {}
+		public void run() {}
+	}
+	
+	private static final int UPDATE_INTERVAL = 30; // measured in seconds
 	
 	private ArrayList<MinicraftServerThread> threadList = new ArrayList<MinicraftServerThread>();
 	private ServerSocket socket;
@@ -62,6 +71,11 @@ public class MinicraftServer extends Thread implements MinicraftProtocol {
 	public void run() {
 		if(Game.debug) System.out.println("server started.");
 		
+		Timer gameUpdateTimer = new Timer("GameUpdateTimer");
+		gameUpdateTimer.schedule((new MyTask() {
+			public void run() { updateGameVars(); }
+		}), 5000, UPDATE_INTERVAL*1000);
+		
 		try {
 			while (socket != null) {
 				//if(playerCap < 0 || threadList.size() < playerCap) {
@@ -81,6 +95,7 @@ public class MinicraftServer extends Thread implements MinicraftProtocol {
 			ex.printStackTrace();
 		}
 		
+		gameUpdateTimer.cancel();
 		System.out.println("closing server socket");
 		
 		endConnection();
@@ -244,6 +259,9 @@ public class MinicraftServer extends Thread implements MinicraftProtocol {
 		updateGameVars(new MinicraftServerThread[] {sendTo});
 	}
 	public void updateGameVars(MinicraftServerThread[] sendTo) {
+		if (Game.debug) System.out.println("SERVER: updating game vars...");
+		if(sendTo.length == 0) return;
+		
 		String[] varArray = {
 			ModeMenu.mode+"",
 			Game.tickCount+"",
@@ -498,6 +516,13 @@ public class MinicraftServer extends Thread implements MinicraftProtocol {
 			
 			case DROP:
 				Load.loadEntity(alldata, game, false);
+				return true;
+			
+			case TILE:
+				int lvlDepth = Integer.parseInt(data[0]);
+				int xt = Integer.parseInt(data[1]);
+				int yt = Integer.parseInt(data[2]);
+				serverThread.sendTileUpdate(lvlDepth, xt, yt);
 				return true;
 			
 			case ENTITY:

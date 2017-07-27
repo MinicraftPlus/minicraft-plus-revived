@@ -22,6 +22,7 @@ import minicraft.item.Items;
 import minicraft.item.PotionItem;
 import minicraft.item.PotionType;
 import minicraft.level.Level;
+import minicraft.level.tile.Tiles;
 import minicraft.saveload.Load;
 import minicraft.saveload.Save;
 import minicraft.screen.DeadMenu;
@@ -451,6 +452,7 @@ public class MinicraftClient extends MinicraftConnection {
 				int pos = Integer.parseInt(data[1]);
 				theLevel.tiles[pos] = Byte.parseByte(data[2]);
 				theLevel.data[pos] = Byte.parseByte(data[3]);
+				if (Game.debug) System.out.println("CLIENT: updated tile on lvl " + theLevel.depth + " to " + Tiles.get(theLevel.tiles[pos]).name);
 				return true;
 			
 			case ADD:
@@ -603,7 +605,7 @@ public class MinicraftClient extends MinicraftConnection {
 			
 			case HURT:
 				// the player got attacked.
-				if(Game.debug) System.out.println("CLIENT: recieved hurt packet");
+				//if(Game.debug) System.out.println("CLIENT: recieved hurt packet");
 				int damage = Integer.parseInt(data[0]);
 				int attackDir = Integer.parseInt(data[1]);
 				game.player.hurt(damage, attackDir);
@@ -645,6 +647,11 @@ public class MinicraftClient extends MinicraftConnection {
 		/// I don't think the player parameter is necessary, but it doesn't harm anything.
 		String itemString = player.activeItem != null ? player.activeItem.getData() : "null";
 		sendData(InputType.INTERACT, itemString+";"+player.inventory.count(Items.get("arrow")));
+	}
+	
+	public void requestTile(Level level, int xt, int yt) {
+		if (level == null) return;
+		sendData(InputType.TILE, level.depth+";"+xt+";"+yt);
 	}
 	
 	public void dropItem(ItemEntity ie) {
