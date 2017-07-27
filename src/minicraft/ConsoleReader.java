@@ -287,7 +287,7 @@ class ConsoleReader extends Thread {
 		System.out.println("type \"help\" for a list of commands...");
 		
 		while(shouldRun/* && stdin.hasNext()*/) {
-			String command = stdin.next();
+			String command = stdin.next().trim();
 			List<String> parsed = new ArrayList<String>();
 			parsed.addAll(Arrays.asList(command.split(" ")));
 			int lastIdx = -1;
@@ -301,7 +301,7 @@ class ConsoleReader extends Thread {
 							i--;
 						}
 						parsed.set(i, parsed.get(i).substring(0, parsed.get(i).indexOf("\"")));
-						if(ending.indexOf("\"") < parsed.get(i).length()-1) // there are more characters in this word; be sure to save them.
+						if(ending.indexOf("\"") < ending.length()-1) // there are more characters in this word; be sure to save them.
 							parsed.add(i+1, ending.substring(ending.indexOf("\"")+1));
 						
 						lastIdx = -1; // reset the "last quote" variable.
