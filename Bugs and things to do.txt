@@ -28,10 +28,6 @@ MULTIPLAYER-Related:
 	****IDEAS(that should probably be implemented)****
 ****
 
-add a TP command
-
-****
-
 make the text when typing a world name become uppercase according to English locale.
 
 ****

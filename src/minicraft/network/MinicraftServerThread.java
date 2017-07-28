@@ -204,6 +204,10 @@ public class MinicraftServerThread extends MinicraftConnection {
 		sendData(InputType.INTERACT, ( client.activeItem == null ? "null" : client.activeItem.getData() ));
 	}
 	
+	public void setClientPos(int lvlDepth, int x, int y) {
+		sendData(InputType.MOVE, lvlDepth+";"+x+";"+y);
+	}
+	
 	protected void respawnPlayer() {
 		client = new RemotePlayer(game, true, client);
 		client.respawn(Game.levels[Game.lvlIdx(0)]); // get the spawn loc. of the client

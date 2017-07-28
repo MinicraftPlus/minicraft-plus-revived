@@ -445,6 +445,16 @@ public class MinicraftClient extends MinicraftConnection {
 					//System.out.println("CLIENT: waiting for more entities...");
 				return true;
 			
+			case MOVE:
+				game.player.x = Integer.parseInt(data[1]);
+				game.player.y = Integer.parseInt(data[2]);
+				int newLvlDepth = Integer.parseInt(data[0]);
+				if(game.player.getLevel() == null || newLvlDepth != game.player.getLevel().depth) {
+					// switch to the other level.
+					game.changeLevel(Game.lvlIdx(newLvlDepth) - game.currentLevel);
+				}
+				return true;
+			
 			case TILE:
 				Level theLevel = Game.levels[Integer.parseInt(data[0])];
 				if(theLevel == null)

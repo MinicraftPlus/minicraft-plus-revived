@@ -739,8 +739,8 @@ public class Game extends Canvas implements Runnable {
 		levels[currentLevel].remove(player); // removes the player from the current level.
 		
 		int nextLevel = currentLevel + dir;
-		if (nextLevel == -1) nextLevel = 5; // fix accidental level underflow
-		if (nextLevel == 6) nextLevel = 0; // fix accidental level overflow
+		if (nextLevel <= -1) nextLevel = levels.length-1; // fix accidental level underflow
+		if (nextLevel >= levels.length) nextLevel = 0; // fix accidental level overflow
 		//level = levels[currentLevel]; // sets the level to the current level
 		currentLevel = nextLevel;
 		
@@ -1021,17 +1021,19 @@ public class Game extends Canvas implements Runnable {
 				info.add("walk spd " + player.moveSpeed);
 				info.add("X " + (player.x / 16) + "-" + (player.x % 16));
 				info.add("Y " + (player.y / 16) + "-" + (player.y % 16));
-				info.add("Tile " + Game.levels[currentLevel].getTile(player.x>>4, player.y>>4).name);
+				if(Game.levels[currentLevel] != null)
+					info.add("Tile " + Game.levels[currentLevel].getTile(player.x>>4, player.y>>4).name);
 				if (ModeMenu.score) info.add("Score " + player.score);
 			}
-			if(!Game.isValidClient())
-				info.add("Mob Cnt " + Game.levels[currentLevel].mobCount + "/" + Game.levels[currentLevel].maxMobCount);
-			else
-				info.add("Mob Load Cnt " + Game.levels[currentLevel].mobCount);
-			
+			if(Game.levels[currentLevel] != null) {
+				if(!Game.isValidClient())
+					info.add("Mob Cnt " + Game.levels[currentLevel].mobCount + "/" + Game.levels[currentLevel].maxMobCount);
+				else
+					info.add("Mob Load Cnt " + Game.levels[currentLevel].mobCount);
+			}
 			
 			/// Displays number of chests left, if on dungeon level.
-			if (Game.isValidServer() || currentLevel == 5 && !Game.isValidClient()) {
+			if (Game.levels[currentLevel] != null && (Game.isValidServer() || currentLevel == 5 && !Game.isValidClient())) {
 				if (levels[5].chestcount > 0)
 					info.add("Chests: " + levels[5].chestcount);
 				else

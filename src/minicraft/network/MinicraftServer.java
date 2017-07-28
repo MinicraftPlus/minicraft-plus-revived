@@ -175,8 +175,8 @@ public class MinicraftServer extends Thread implements MinicraftProtocol {
 		return match;
 	}
 	
-	public List<MinicraftServerThread> getAssociatedThreads(List<String> usernames) { return getAssociatedThreads(usernames, false); }
-	public List<MinicraftServerThread> getAssociatedThreads(List<String> usernames, boolean printError) {
+	public List<MinicraftServerThread> getAssociatedThreads(String[] usernames) { return getAssociatedThreads(usernames, false); }
+	public List<MinicraftServerThread> getAssociatedThreads(String[] usernames, boolean printError) {
 		List<MinicraftServerThread> threads = new ArrayList<MinicraftServerThread>();
 		for(String username: usernames) {
 			MinicraftServerThread match = getAssociatedThread(username);

@@ -6,7 +6,9 @@ import java.util.List;
 import java.util.Scanner;
 import java.util.Locale;
 import minicraft.entity.Player;
+import minicraft.entity.RemotePlayer;
 import minicraft.network.MinicraftServerThread;
+import minicraft.level.Level;
 import minicraft.saveload.Save;
 import minicraft.screen.OptionsMenu;
 import minicraft.screen.ModeMenu;
@@ -219,7 +221,7 @@ class ConsoleReader extends Thread {
 				}
 				
 				String message = args[args.length-1];
-				for(MinicraftServerThread clientThread: Game.server.getAssociatedThreads(usernames, true))
+				for(MinicraftServerThread clientThread: Game.server.getAssociatedThreads(usernames.toArray(new String[usernames.size()]), true))
 					clientThread.sendNotification(message, 50);
 			}
 		},
@@ -227,11 +229,78 @@ class ConsoleReader extends Thread {
 		TP
 		("<playername> <x y [level] | playername>", "teleports a player to a given location in the world.", "the first player name is the player that will be teleported. the second argument can be either another player, or a set of world coordinates.", "if the second argument is a player name, then the first player will be teleported to the second player, possibly traversing different levels.", "if world coordinates are specified, an x and y coordinate are required. A level depth may optionally be specified to go to a different level; if not specified, the current level is assumed.") { /// future usage: "<x> <y> | "
 			public void run(String[] args, Game game) {
+				if(args.length == 0) {
+					System.out.println("you must specify a username, and coordinates or another username to teleport to.");
+					printHelp(this, game);
+					return;
+				}
+				MinicraftServerThread clientThread = Game.server.getAssociatedThread(args[0]);
+				if(clientThread == null) {
+					System.out.println("could not find player with username \"" + args[0] + "\"");
+					return;
+				}
 				
+				int xt = -1;
+				int yt = -1;
+				Level level = clientThread.getClient().getLevel();
+				
+				if(args.length > 2) {
+					try {
+						xt = Integer.parseInt(args[1]);
+						yt = Integer.parseInt(args[2]);
+						if(args.length == 4) {
+							try {
+								level = Game.levels[Game.lvlIdx(Integer.parseInt(args[3]))];
+							} catch(IndexOutOfBoundsException ex) {
+								System.out.println("invalid level index: " + args[3]);
+								return;
+							}
+						}
+					} catch(NumberFormatException ex) {
+						System.out.println("invalid command syntax; specify a player or world coordinates for tp destination.");
+						printHelp(this, game);
+						return;
+					}
+				} else {
+					// user specified the username of another player to tp to.
+					MinicraftServerThread destClientThread = Game.server.getAssociatedThread(args[1]);
+					if(destClientThread == null) {
+						System.out.println("could not find player with username \"" + args[0] + "\" for tp destination.");
+						return;
+					}
+					
+					RemotePlayer rp = destClientThread.getClient();
+					if(rp == null) {
+						System.out.println("client no longer exists...");
+						return;
+					}
+					xt = rp.x >> 4;
+					yt = rp.y >> 4;
+					level = rp.getLevel();
+				}
+				
+				if(xt >= 0 && yt >= 0 && level != null && xt < level.w && yt < level.h) {
+					// perform teleport
+					RemotePlayer playerToMove = clientThread.getClient();
+					if(playerToMove == null) {
+						System.out.println("can't perform teleport; client no longer exists...");
+						return;
+					}
+					if(!level.getTile(xt, yt).mayPass(level, xt, yt, playerToMove)) {
+						System.out.println("specified tile is solid and cannot be moved though.");
+						return;
+					}
+					clientThread.setClientPos(level.depth, xt << 4, yt << 4);
+					
+					System.out.println("teleported player " + playerToMove.getUsername() + " to tile coordinates " + xt+","+yt+", on level " + level.depth);
+				} else {
+					System.out.println("could not perform teleport; coordinates are not valid.");
+					return;
+				}
 			}
 		};
 		
-		private String generalHelp, detailedHelp;
+		private String generalHelp, detailedHelp, usage;
 		
 		private Command(String usage, String general, String... specific) {
 			String name = this.name().toLowerCase();
@@ -239,6 +308,7 @@ class ConsoleReader extends Thread {
 			
 			generalHelp = name + sep + general;
 			
+			this.usage = usage == null ? name : name + " " + usage;
 			if(usage != null) usage = sep+"Usage: "+name+" "+usage;
 			else usage = "";
 			
@@ -249,11 +319,13 @@ class ConsoleReader extends Thread {
 		
 		public abstract void run(String[] args, Game game);
 		
+		public String getUsage() { return usage; }
 		public String getGeneralHelp() { return generalHelp; }
 		public String getDetailedHelp() { return detailedHelp; }
 		
 		public static void printHelp(Command cmd, Game game) {
-			Command.HELP.run(new String[] {cmd.name()}, game);
+			System.out.println("Usage: " + cmd.getUsage());
+			System.out.println("type \"help " + cmd + "\" for more info.");
 		}
 		
 		public static final Command[] values = Command.values();
