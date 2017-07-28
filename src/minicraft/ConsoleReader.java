@@ -293,39 +293,20 @@ class ConsoleReader extends Thread {
 			int lastIdx = -1;
 			for(int i = 0; i < parsed.size(); i++) {
 				if(parsed.get(i).contains("\"")) {
-					if(lastIdx >= 0) {
-						// closing a quoted String
-						String ending = parsed.get(i);
-						while(i > lastIdx) {
+					if(lastIdx >= 0) { // closing a quoted String
+						while(i > lastIdx) { // join the words together
 							parsed.set(lastIdx, parsed.get(lastIdx) + " " + parsed.remove(lastIdx+1));
 							i--;
 						}
-						parsed.set(i, parsed.get(i).substring(0, parsed.get(i).indexOf("\"")));
-						if(ending.indexOf("\"") < ending.length()-1) // there are more characters in this word; be sure to save them.
-							parsed.add(i+1, ending.substring(ending.indexOf("\"")+1));
-						
 						lastIdx = -1; // reset the "last quote" variable.
-					} else {
-						// start the quoted String
-						lastIdx = i;
-						String curWord = parsed.get(i);
-						/// deal with any text before the quote
-						if(curWord.indexOf("\"") > 0) { // the quote is not the first character; be sure to seperate it
-							parsed.add(i, curWord.substring(0, curWord.indexOf("\"")));
-							i++;
-							lastIdx++; // makes it so the previous word is not considered part of the quote
-						}
-						curWord = parsed.get(i);
-						/// deal with any text after the quote
-						if(curWord.indexOf("\"") < curWord.length()-1)
-							parsed.set(i, curWord.substring(curWord.indexOf("\"")+1));
-						else
-							parsed.remove(i); // there is no text, so remove the element.
-						i--; // so that this string can be parsed again, in case there is another quote.
-					}
+					} else // start the quoted String
+						lastIdx = i; // set the "last quote" variable.
+					
+					parsed.set(i, parsed.get(i).replaceFirst("\"", "")); // remove the parsed quote character from the string.
+					i--; // so that this string can be parsed again, in case there is another quote.
 				}
 			}
-			if (Game.debug) System.out.println("parsed command: " + parsed.toString());
+			//if (Game.debug) System.out.println("parsed command: " + parsed.toString());
 			
 			Command cmd = getCommandByName(parsed.remove(0)); // will print its own error message if not found.
 			if(cmd == null)
