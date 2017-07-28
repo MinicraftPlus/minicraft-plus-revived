@@ -219,20 +219,8 @@ class ConsoleReader extends Thread {
 				}
 				
 				String message = args[args.length-1];
-				for(String username: usernames) {
-					MinicraftServerThread match = null;
-					for(MinicraftServerThread thread: Game.server.getThreads()) {
-						if(thread.getClient().getUsername().equalsIgnoreCase(username)) {
-							match = thread;
-							break;
-						}
-					}
-					
-					if(match != null)
-						match.sendNotification(message, 50);
-					else
-						System.out.println("couldn't match username \"" + username + "\"");
-				}
+				for(MinicraftServerThread clientThread: Game.server.getAssociatedThreads(usernames, true))
+					clientThread.sendNotification(message, 50);
 			}
 		},
 		

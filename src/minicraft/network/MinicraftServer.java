@@ -162,6 +162,33 @@ public class MinicraftServer extends Thread implements MinicraftProtocol {
 			return null;
 	}
 	
+	public MinicraftServerThread getAssociatedThread(String username) {
+		MinicraftServerThread match = null;
+		
+		for(MinicraftServerThread thread: getThreads()) {
+			if(thread.getClient().getUsername().equalsIgnoreCase(username)) {
+				match = thread;
+				break;
+			}
+		}
+		
+		return match;
+	}
+	
+	public List<MinicraftServerThread> getAssociatedThreads(List<String> usernames) { return getAssociatedThreads(usernames, false); }
+	public List<MinicraftServerThread> getAssociatedThreads(List<String> usernames, boolean printError) {
+		List<MinicraftServerThread> threads = new ArrayList<MinicraftServerThread>();
+		for(String username: usernames) {
+			MinicraftServerThread match = getAssociatedThread(username);
+			if(match != null)
+				threads.add(match);
+			else if(printError)
+				System.err.println("couldn't match username \"" + username + "\"");
+		}
+		
+		return threads;
+	}
+	
 	public MinicraftServerThread getAssociatedThread(RemotePlayer player) {
 		MinicraftServerThread thread = null;
 		
