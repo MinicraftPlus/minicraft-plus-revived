@@ -308,16 +308,24 @@ class ConsoleReader extends Thread {
 					} else {
 						// start the quoted String
 						lastIdx = i;
-						if(parsed.get(i).indexOf("\"") > 0) { // the quote is not the first character; be sure to seperate it
-							parsed.add(i, parsed.get(i).substring(0, parsed.get(i).indexOf("\"")));
+						String curWord = parsed.get(i);
+						/// deal with any text before the quote
+						if(curWord.indexOf("\"") > 0) { // the quote is not the first character; be sure to seperate it
+							parsed.add(i, curWord.substring(0, curWord.indexOf("\"")));
 							i++;
+							lastIdx++; // makes it so the previous word is not considered part of the quote
 						}
-						parsed.set(i, parsed.get(i).replaceFirst("\"", ""));
+						curWord = parsed.get(i);
+						/// deal with any text after the quote
+						if(curWord.indexOf("\"") < curWord.length()-1)
+							parsed.set(i, curWord.substring(curWord.indexOf("\"")+1));
+						else
+							parsed.remove(i); // there is no text, so remove the element.
 						i--; // so that this string can be parsed again, in case there is another quote.
 					}
 				}
 			}
-			//if (Game.debug) System.out.println("parsed command: " + parsed.toString());
+			if (Game.debug) System.out.println("parsed command: " + parsed.toString());
 			
 			Command cmd = getCommandByName(parsed.remove(0)); // will print its own error message if not found.
 			if(cmd == null)
