@@ -281,6 +281,11 @@ public class MinicraftServer extends Thread implements MinicraftProtocol {
 		broadcastData(InputType.NOTIFY, data);
 	}
 	
+	public void broadcastPlayerHurt(int eid, int damage, int attackDir) {
+		for(MinicraftServerThread thread: getThreads())
+			thread.sendPlayerHurt(eid, damage, attackDir);
+	}
+	
 	public void updateGameVars() { updateGameVars(getThreads()); }
 	public void updateGameVars(MinicraftServerThread sendTo) {
 		updateGameVars(new MinicraftServerThread[] {sendTo});

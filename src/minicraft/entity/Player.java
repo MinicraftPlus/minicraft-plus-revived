@@ -849,38 +849,8 @@ public class Player extends Mob {
 		
 		if(Game.isValidServer() && this instanceof RemotePlayer) {
 			// let the clients deal with it.
-			Game.server.getAssociatedThread((RemotePlayer)this).sendPlayerHurt(damage, attackDir);
+			Game.server.broadcastPlayerHurt(eid, damage, attackDir);
 			return;
-		}
-		
-		int healthDam = 0, armorDam = 0;
-		Sound.playerHurt.play();
-		if (curArmor == null) { // no armor
-			health -= damage; // subtract that amount
-		} else { // has armor
-			armorDamageBuffer += damage;
-			armorDam += damage;
-			
-			while (armorDamageBuffer >= curArmor.level+1) {
-				armorDamageBuffer -= curArmor.level+1;
-				healthDam++;
-			}
-		}
-		
-		// adds a text particle telling how much damage was done to the player, and the armor.
-		if(armorDam > 0) {
-			level.add(new TextParticle("" + damage, x, y, Color.get(-1, 333)));
-			armor -= armorDam;
-			if(armor <= 0) {
-				healthDam -= armor; // adds armor damage overflow to health damage (minus b/c armor would be negative)
-				armor = 0;
-				armorDamageBuffer = 0; // ensures that new armor doesn't inherit partial breaking from this armor.
-				curArmor = null; // removes armor
-			}
-		}
-		if(healthDam > 0) {
-			level.add(new TextParticle("" + damage, x, y, Color.get(-1, 504)));
-			health -= healthDam;
 		}
 		
 		// apply the appropriate knockback
@@ -890,6 +860,40 @@ public class Player extends Mob {
 		if (attackDir == 3) xKnockback = +6;
 		// set invulnerability time
 		hurtTime = playerHurtTime;
+		
+		boolean fullPlayer = !(Game.isValidClient() && this != game.player);
+		
+		int healthDam = 0, armorDam = 0;
+		if(fullPlayer) {
+			Sound.playerHurt.play();
+			if (curArmor == null) { // no armor
+				health -= damage; // subtract that amount
+			} else { // has armor
+				armorDamageBuffer += damage;
+				armorDam += damage;
+				
+				while (armorDamageBuffer >= curArmor.level+1) {
+					armorDamageBuffer -= curArmor.level+1;
+					healthDam++;
+				}
+			}
+		}
+		
+		// adds a text particle telling how much damage was done to the player, and the armor.
+		if(armorDam > 0) {
+			level.add(new TextParticle("" + damage, x, y, Color.get(-1, 333)));
+			if(fullPlayer) armor -= armorDam;
+			if(armor <= 0) {
+				healthDam -= armor; // adds armor damage overflow to health damage (minus b/c armor would be negative)
+				armor = 0;
+				armorDamageBuffer = 0; // ensures that new armor doesn't inherit partial breaking from this armor.
+				curArmor = null; // removes armor
+			}
+		}
+		if(healthDam > 0) {
+			level.add(new TextParticle("" + damage, x, y, Color.get(-1, 504)));
+			if(fullPlayer) health -= healthDam;
+		}
 	}
 	
 	protected String getUpdateString() {

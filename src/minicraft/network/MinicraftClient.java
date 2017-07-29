@@ -616,9 +616,12 @@ public class MinicraftClient extends MinicraftConnection {
 			case HURT:
 				// the player got attacked.
 				//if(Game.debug) System.out.println("CLIENT: recieved hurt packet");
-				int damage = Integer.parseInt(data[0]);
-				int attackDir = Integer.parseInt(data[1]);
-				game.player.hurt(damage, attackDir);
+				int hurteid = Integer.parseInt(data[0]);
+				int damage = Integer.parseInt(data[1]);
+				int attackDir = Integer.parseInt(data[2]);
+				Entity p = Game.getEntity(hurteid);
+				if (p instanceof Player)
+					((Player)p).hurt(damage, attackDir);
 				return true;
 		}
 		

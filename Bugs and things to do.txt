@@ -8,8 +8,6 @@ Note to self: for more little bugs/ideas/concerns, search code for "TODO"
 
 	####BUGS####
 ####
-Player animation for getting hurt doesn't sync between clients.
-####
 Stairs clump together.
 ####
 Fire particles appear, but... they look totally weird...

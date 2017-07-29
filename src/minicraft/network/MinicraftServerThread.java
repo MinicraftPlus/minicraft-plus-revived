@@ -189,8 +189,8 @@ public class MinicraftServerThread extends MinicraftConnection {
 		sendData(InputType.NOTIFY, notetime+";"+note);
 	}
 	
-	public void sendPlayerHurt(int damage, int attackDir) {
-		sendData(InputType.HURT, damage+";"+attackDir);
+	public void sendPlayerHurt(int eid, int damage, int attackDir) {
+		sendData(InputType.HURT, eid+";"+damage+";"+attackDir);
 	}
 	
 	public void updatePlayerActiveItem(Item heldItem) {
