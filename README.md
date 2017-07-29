@@ -8,6 +8,7 @@ Here is a small share of the more major features that this mod adds to the origi
 * More Game modes -- Creative, Hardcore, and Score mode in addition to Survival
 * Save / Load System for worlds and settings, and respawn after death
 * World creation and management options, such as name, size, and terrain type of world, and rename, delete, and copy world
+* Multiplayer mode, complete with dedicated server support, with or without a GUI.
 * Many more mobs
 * Many more tiles
 * More weapons / tools, such as claymores and torches
@@ -30,7 +31,7 @@ Things I plan on implementing, _hopefully_ sooner rather than later... ;)
 
 * Add some nice music! Maybe pixely... we're working on that now, sort-of.
 
-* Make it so cloud tile can be placed in the sky level, on empty air tiles. Otherwise, they're useful for nothing...
+* Auto-update system, along with a version chooser.
 
 * ...Find lots more in the other text files above.
 
@@ -38,21 +39,20 @@ Things I plan on implementing, _hopefully_ sooner rather than later... ;)
 
 Things I will probably add later, rather than sooner.
 
-* Auto-update system -- though, I might move this up, if this actually becomes something many people use.
 * Add back Experience bar, from version 1.4
+* Milk & bad status effects
+* Accounts
 
 #### Far, far away...
 
 These are simply **ideas**, and have no guarantee of being implemented any time soon, or even at all. Could be becuase they're complicated, or could be because I just haven't bothered considering them yet. :P
 If their implementation becomes more likely, they will be moved to a different section.
 
-* Multiplayer *Servers*
-  * Custom usernames
-  * Custom Skins
+* Custom Skins
+* Enchantments
 * Redstone
 * Fire
 * Chickens
 * Minecarts
-* Milk & bad status effects
 * World editors
-
+* Boats, b/c they require infinite terrain and vast oceans. ;)

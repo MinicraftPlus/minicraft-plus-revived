@@ -9,13 +9,7 @@ import minicraft.gfx.Sprite;
 
 public class PowerGloveItem extends Item {
 	
-	protected static ArrayList<Item> getAllInstances() {
-		ArrayList<Item> items = new ArrayList<Item>();
-		items.add(new PowerGloveItem());
-		return items;
-	}
-	
-	private PowerGloveItem() {
+	public PowerGloveItem() {
 		super("Power Glove", new Sprite(7, 4, Color.get(-1, 100, 320, 430)));
 	}
 	

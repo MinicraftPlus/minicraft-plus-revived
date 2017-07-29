@@ -1,7 +1,7 @@
 package minicraft.level.tile;
 
 import java.util.ArrayList;
-
+import minicraft.Game;
 
 public final class Tiles {
 	/// idea: to save tile names while saving space, I could encode the names in base 64 in the save file...^M
@@ -12,6 +12,7 @@ public final class Tiles {
 	private static ArrayList<Tile> tiles = new ArrayList<Tile>();
 	
 	public static void initTileList() {
+		if(Game.debug) System.out.println("initializing tile list...");
 		
 		for(int i = 0; i < 256; i++)
 			tiles.add(null);
@@ -42,15 +43,15 @@ public final class Tiles {
 		tiles.set(23, new InfiniteFallTile("Infinite Fall"));
 		tiles.set(24, new CloudTile("Cloud"));
 		tiles.set(25, new CloudCactusTile("Cloud Cactus"));
-		tiles.set(26, new DoorTile(Tile.Material.Wood));
-		tiles.set(27, new DoorTile(Tile.Material.Stone));
-		tiles.set(28, new DoorTile(Tile.Material.Obsidian));
 		tiles.set(29, new FloorTile(Tile.Material.Wood));
 		tiles.set(30, new FloorTile(Tile.Material.Stone));
 		tiles.set(31, new FloorTile(Tile.Material.Obsidian));
 		tiles.set(32, new WallTile(Tile.Material.Wood));
 		tiles.set(33, new WallTile(Tile.Material.Stone));
 		tiles.set(34, new WallTile(Tile.Material.Obsidian));
+		tiles.set(26, new DoorTile(Tile.Material.Wood));
+		tiles.set(27, new DoorTile(Tile.Material.Stone));
+		tiles.set(28, new DoorTile(Tile.Material.Obsidian));
 		tiles.set(35, new WoolTile());
 		
 		for(int i = 0; i < tiles.size(); i++) {
@@ -210,9 +211,13 @@ public final class Tiles {
 	
 	public static Tile get(int id) {
 		//System.out.println("requesting tile by id: " + id);
+		if(id < 0) id += 256;
 		
 		if(tiles.get(id) != null) {
 			return tiles.get(id);
+		}
+		else if(id >= 128) {
+			return TorchTile.getTorchTile(get(id-128));
 		}
 		else {
 			System.out.println("TILES.GET: unknown tile id requested: " + id);

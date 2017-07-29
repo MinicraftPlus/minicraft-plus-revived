@@ -1,5 +1,6 @@
 package minicraft.level.tile;
 
+import minicraft.Sound;
 import minicraft.entity.Entity;
 import minicraft.entity.Player;
 import minicraft.gfx.Color;
@@ -10,7 +11,6 @@ import minicraft.item.Items;
 import minicraft.item.ToolItem;
 import minicraft.item.ToolType;
 import minicraft.level.Level;
-import minicraft.Sound;
 
 public class WoolTile extends Tile {
 	
@@ -48,7 +48,7 @@ public class WoolTile extends Tile {
 			if (tool.type == ToolType.Shovel) {
 				if (player.payStamina(3 - tool.level)) {
 					level.setTile(xt, yt, Tiles.get("hole"));
-					level.dropItem(xt*16, yt*16, Items.get("Wool"));
+					level.dropItem(xt*16+8, yt*16+8, Items.get("Wool"));
 					Sound.monsterHurt.play();
 					return true;
 				}

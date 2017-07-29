@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
+import minicraft.Sound;
 import minicraft.entity.Player;
 import minicraft.gfx.Color;
 import minicraft.gfx.Font;
@@ -11,7 +12,6 @@ import minicraft.gfx.Screen;
 import minicraft.item.Item;
 import minicraft.item.Items;
 import minicraft.item.Recipe;
-import minicraft.Sound;
 
 public class CraftingMenu extends Menu {
 	private Player player; // the player that opened this menu

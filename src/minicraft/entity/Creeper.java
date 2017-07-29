@@ -1,12 +1,12 @@
 package minicraft.entity;
 
+import minicraft.Sound;
 import minicraft.gfx.Color;
 import minicraft.gfx.MobSprite;
 import minicraft.gfx.Screen;
 import minicraft.item.Items;
 import minicraft.level.tile.Tiles;
 import minicraft.screen.OptionsMenu;
-import minicraft.Sound;
 
 public class Creeper extends EnemyMob {
 	private static final MobSprite[][] sprites;
@@ -34,12 +34,6 @@ public class Creeper extends EnemyMob {
 	
 	public Creeper(int lvl) {
 		super(lvl, sprites, lvlcols, 10, 50);
-		
-		/*this.col0 = Color.get(-1, 10, 50, 40);
-		this.col1 = Color.get(-1, 20, 50, 40);
-		this.col2 = Color.get(-1, 10, 50, 30);
-		this.col3 = Color.get(-1, 0, 50, 30);
-		*///col = Color.get(-1, 20, 50, 30);
 	}
 	
 	public boolean move(int xa, int ya) {
@@ -58,13 +52,24 @@ public class Creeper extends EnemyMob {
 		} else if (fuseLit) { // fuseLit is set to true when fuseTime is set to max, so this happens after fuseTime hits zero, while fuse is lit.
 			// blow up
 			xa = ya = 0;
-			int pdx = Math.abs(level.player.x - x);
-			int pdy = Math.abs(level.player.y - y);
-			if (pdx < BLAST_RADIUS && pdy < BLAST_RADIUS) {
-				float pd = (float) Math.sqrt(pdx * pdx + pdy * pdy);
-				int dmg = (int) (BLAST_DAMAGE * (1 - (pd / BLAST_RADIUS))) + OptionsMenu.diff;
-				level.player.hurt(this, dmg, 0);
-				level.player.payStamina(dmg * (OptionsMenu.diff == OptionsMenu.easy?1:2));
+			
+			boolean hurtOne = false; // tells if any players were hurt
+			
+			for(Entity entity: level.getEntitiesOfClass(Player.class)) {
+				Player player = (Player) entity;
+				int pdx = Math.abs(player.x - x);
+				int pdy = Math.abs(player.y - y);
+				if(pdx < BLAST_RADIUS && pdy < BLAST_RADIUS) {
+					float pd = (float) Math.sqrt(pdx * pdx + pdy * pdy);
+					int dmg = (int) (BLAST_DAMAGE * (1 - (pd / BLAST_RADIUS))) + OptionsMenu.diff;
+					player.hurt(this, dmg, 0);
+					player.payStamina(dmg * (OptionsMenu.diff == OptionsMenu.easy?1:2));
+					hurtOne = true;
+				}
+			}
+			
+			if (hurtOne) {
+				
 				Sound.explode.play();
 				
 				// figure out which tile the mob died on
@@ -72,14 +77,16 @@ public class Creeper extends EnemyMob {
 				int yt = (y - 2) >> 4;
 				
 				// change tile to an appropriate crater
-				if (lvl == 4) {
-					level.setTile(xt, yt, Tiles.get("Infinite Fall"));
-				} else if (lvl == 3) {
-					level.setTile(xt, yt, Tiles.get("lava"));
-				} else {
-					level.setTile(xt, yt, Tiles.get("hole"));
+				if(!level.getTile(xt, yt).name.toLowerCase().contains("stairs")) {
+					if (lvl == 4) {
+						level.setTile(xt, yt, Tiles.get("Infinite Fall"));
+					} else if (lvl == 3) {
+						level.setTile(xt, yt, Tiles.get("lava"));
+					} else {
+						level.setTile(xt, yt, Tiles.get("hole"));
+					}
 				}
-
+				
 				die(); // dying now kind of kills everything. the super class will take care of it.
 			} else {
 				fuseTime = 0;
@@ -89,35 +96,12 @@ public class Creeper extends EnemyMob {
 	}
 
 	public void render(Screen screen) {
-		/*col0 = Color.get(-1, 10, 30, 20);
-		col1 = Color.get(-1, 20, 40, 30);
-		col2 = Color.get(-1, 10, 30, 20);
-		col3 = Color.get(-1, 0, 20, 10);
-		col4 = Color.get(-1, 20, 40, 30);
-		
-		if (isLight()) col0 = col1 = col2 = col3 = col4;
-		*/
-		
 		if (fuseLit && fuseTime % 6 == 0) {
 			super.lvlcols[lvl-1] = Color.get(-1, 252);
 		}
 		else
 			super.lvlcols[lvl-1] = Creeper.lvlcols[lvl-1];
 		
-		//if(fuseLit) System.out.println("fuseTime%6==0: " + (fuseTime % 6 == 0));
-		/*if (level.dirtColor == 322) {
-			
-			if (lvl == 2) col = Color.get(-1, 200, 262, 232);
-			if (lvl == 3) col = Color.get(-1, 200, 272, 222);
-			if (lvl == 4) col = Color.get(-1, 200, 292, 282);
-			
-			if (Game.time == 0) col = col0;
-			if (Game.time == 1) col = col1;
-			if (Game.time == 2) col = col2;
-			if (Game.time == 3) col = col3;
-		}
-		else col = col4;
-		*/
 		this.sprites[0] = walkDist == 0 ? standing : walking;
 		
 		super.render(screen);
@@ -141,5 +125,30 @@ public class Creeper extends EnemyMob {
 	protected void die() {
 		dropItem(1, 4-OptionsMenu.diff, Items.get("Gunpowder"));
 		super.die();
+	}
+	
+	protected String getUpdateString() {
+		String updates = super.getUpdateString() + ";";
+		updates += "fuseTime,"+fuseTime+
+		";fuseLit,"+fuseLit;
+		
+		return updates;
+	}
+	
+	protected boolean updateField(String field, String val) {
+		if(super.updateField(field, val)) return true;
+		switch(field) {
+			case "fuseTime":
+				fuseTime = Integer.parseInt(val);
+				return true;
+			
+			case "fuseLit":
+			 	boolean wasLit = fuseLit;
+				fuseLit = Boolean.parseBoolean(val);
+				if(fuseLit && !wasLit)
+					Sound.fuse.play();
+		}
+		
+		return false;
 	}
 }

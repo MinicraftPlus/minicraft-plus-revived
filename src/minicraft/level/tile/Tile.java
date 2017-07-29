@@ -1,6 +1,7 @@
 package minicraft.level.tile;
 
 import java.util.Random;
+import minicraft.Game;
 import minicraft.entity.Entity;
 import minicraft.entity.Mob;
 import minicraft.entity.Player;
@@ -99,6 +100,7 @@ public abstract class Tile {
 	}
 	
 	public void hurt(Level level, int x, int y, Mob source, int dmg, int attackDir) {}
+	public void hurt(Level level, int x, int y, int dmg) {}
 	
 	/** What happens when you run into the tile (ex: run into a cactus) */
 	public void bumpedInto(Level level, int xt, int yt, Entity entity) {}
@@ -113,11 +115,11 @@ public abstract class Tile {
 	public boolean interact(Level level, int xt, int yt, Player player, Item item, int attackDir) {
 		return false;
 	}
-	
+	/*
 	public boolean use(Level level, int xt, int yt, Player player, int attackDir) {
 		return false;
 	}
-	
+	*/
 	/** Sees if the tile connects to Water or Lava. */
 	public boolean connectsToLiquid() {
 		return connectsToWater || connectsToLava;
@@ -141,5 +143,22 @@ public abstract class Tile {
 	
 	public String getName(int data) {
 		return name;
+	}
+	
+	public static String getData(int depth, int x, int y) {
+		try {
+			byte lvlidx = (byte) Game.lvlIdx(depth);
+			Level curLevel = Game.levels[lvlidx];
+			int pos = x + curLevel.w * y;
+			
+			int tileid = curLevel.tiles[pos];
+			int tiledata = curLevel.data[pos];
+			
+			return lvlidx+";"+pos+";"+tileid+";"+tiledata;
+		} catch(NullPointerException ex) {
+		} catch(IndexOutOfBoundsException ex) {
+		}
+		
+		return "";
 	}
 }

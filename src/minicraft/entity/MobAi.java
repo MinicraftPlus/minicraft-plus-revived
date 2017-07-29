@@ -1,18 +1,26 @@
 package minicraft.entity;
 
+import minicraft.Game;
 import minicraft.gfx.Color;
 import minicraft.gfx.MobSprite;
 import minicraft.gfx.Screen;
 import minicraft.item.Item;
+import minicraft.item.PotionType;
 import minicraft.level.Level;
+import minicraft.screen.ModeMenu;
 
 public abstract class MobAi extends Mob {
 	
 	int randomWalkTime, randomWalkChance, randomWalkDuration;
 	int xa, ya;
+	int lifetime;
+	int age = 0;
 	
-	public MobAi(MobSprite[][] sprites, int maxHealth, int rwTime, int rwChance) {
+	private boolean slowtick = false;
+	
+	public MobAi(MobSprite[][] sprites, int maxHealth, int lifetime, int rwTime, int rwChance) {
 		super(sprites, maxHealth);
+		this.lifetime = lifetime;
 		randomWalkTime = 0;
 		randomWalkDuration = rwTime;
 		randomWalkChance = rwChance;
@@ -21,8 +29,32 @@ public abstract class MobAi extends Mob {
 		walkTime = 2;
 	}
 	
+	protected boolean skipTick() {
+		return slowtick && (tickTime+1) % 4 == 0;
+	}
+	
 	public void tick() {
 		super.tick();
+		
+		age++;
+		if(age > lifetime) {
+			remove();
+			return;
+		}
+		
+		if(getLevel() != null) {
+			boolean foundPlayer = false;
+			for(Entity e: level.getEntitiesOfClass(Player.class)) {
+				if(e.isWithin(8, this) && ((Player)e).potioneffects.containsKey(PotionType.Time)) {
+					foundPlayer = true;
+					break;
+				}
+			}
+			
+			slowtick = foundPlayer;
+		}
+		
+		if(skipTick()) return;
 		
 		if(!move(xa * speed, ya * speed)) {
 			xa = 0;
@@ -49,6 +81,12 @@ public abstract class MobAi extends Mob {
 		curSprite.render(screen, xo, yo, color);
 	}
 	
+	public boolean move(int xa, int ya) {
+		if(Game.isValidClient()) return false; // client mobAi's should not move at all.
+		
+		return super.move(xa, ya);
+	}
+	
 	public boolean canWool() {
 		return true;
 	}
@@ -69,21 +107,34 @@ public abstract class MobAi extends Mob {
 			level.dropItem(x, y, items);
 	}
 	
-	/** Tries once to find an appropriate spawn location for friendly mobs. */
+	/** Determines if the given spawn location is appropriate for friendly mobs. */
 	protected static boolean checkStartPos(Level level, int x, int y, int playerDist, int soloRadius) {
-		if (level.player != null) {
-			int xd = level.player.x - x;
-			int yd = level.player.y - y;
+		Player player = level.getClosestPlayer(x, y);
+		if (player != null) {
+			int xd = player.x - x;
+			int yd = player.y - y;
 			
 			if (xd * xd + yd * yd < playerDist * playerDist) return false;
 		}
 		
 		int r = level.monsterDensity * soloRadius; // get no-mob radius
 		
-		if (level.getEntities(x - r, y - r, x + r, y + r).size() > 0) return false;
+		if (level.getEntitiesInRect(x - r, y - r, x + r, y + r).size() > 0) return false;
 		
 		return level.getTile(x >> 4, y >> 4).maySpawn; // the last check.
 	}
 	
 	public abstract int getMaxLevel();
+	
+	public void die(int points) { die(points, 0); }
+	public void die(int points, int multAdd) {
+		for(Entity e: level.getEntitiesOfClass(Player.class)) {
+			Player p = (Player)e;
+			p.score += points * (ModeMenu.score ? p.game.multiplier : 1); // add score for zombie death
+			if(multAdd != 0 && ModeMenu.score)
+				p.game.addMultiplier(multAdd);
+		}
+		
+		super.die();
+	}
 }

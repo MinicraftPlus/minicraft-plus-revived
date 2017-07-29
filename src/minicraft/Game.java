@@ -4,12 +4,20 @@ import java.awt.BorderLayout;
 import java.awt.Canvas;
 import java.awt.Dimension;
 import java.awt.Graphics;
-import java.awt.event.*; // TODO these .*'s are unnecessary.
+import java.awt.event.ComponentAdapter;
+import java.awt.event.ComponentEvent;
+import java.awt.event.WindowEvent;
+import java.awt.event.WindowListener;
 import java.awt.image.BufferStrategy;
 import java.awt.image.BufferedImage;
 import java.awt.image.DataBufferInt;
-import java.io.*;
-import java.util.*;
+import java.io.File;
+import java.io.IOException;
+import java.net.URISyntaxException;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+import java.util.Random;
 import javax.imageio.ImageIO;
 import javax.swing.JFrame;
 import minicraft.entity.Bed;
@@ -18,10 +26,8 @@ import minicraft.entity.Furniture;
 import minicraft.entity.Lantern;
 import minicraft.entity.Mob;
 import minicraft.entity.Player;
-import minicraft.gfx.Color;
-import minicraft.gfx.Font;
-import minicraft.gfx.Screen;
-import minicraft.gfx.SpriteSheet;
+import minicraft.entity.RemotePlayer;
+import minicraft.gfx.*;
 import minicraft.item.Items;
 import minicraft.item.PotionType;
 import minicraft.item.ToolItem;
@@ -29,95 +35,129 @@ import minicraft.item.ToolType;
 import minicraft.level.Level;
 import minicraft.level.tile.Tile;
 import minicraft.level.tile.Tiles;
-import minicraft.saveload.Load;
-import minicraft.saveload.Save;
-import minicraft.screen.DeadMenu;
-import minicraft.screen.LevelTransitionMenu;
-import minicraft.screen.LoadingMenu;
-import minicraft.screen.Menu;
-import minicraft.screen.ModeMenu;
-import minicraft.screen.OptionsMenu;
-import minicraft.screen.TitleMenu;
-import minicraft.screen.WonMenu;
-import minicraft.screen.WorldGenMenu;
-import minicraft.screen.WorldSelectMenu;
+import minicraft.network.*;
+import minicraft.saveload.*;
+import minicraft.screen.*;
 
 public class Game extends Canvas implements Runnable {
 	
-	private static final long serialVersionUID = 1L;
 	private static Random random = new Random();
 	
 	public static boolean debug = false;
-	public static String gameDir = "/.playminicraft/mods/Minicraft Plus"; // The directory in which all the game files are stored; APPDATA is meant for windows...
+	public static boolean HAS_GUI = true;
 	
 	/// MANAGERIAL VARS AND RUNNING
 	
 	public static final String NAME = "Minicraft Plus"; // This is the name on the application window
-	public static final String VERSION = "1.9.4";
+	public static final String VERSION = "2.0.3-dev4";
 	public static final int HEIGHT = 192;
 	public static final int WIDTH = 288;
 	private static float SCALE = 3;
+	
+	public static final String os;
+	public static final String localGameDir;
+	public static final String systemGameDir;
+	static {
+		os = System.getProperty("os.name").toLowerCase();
+		//System.out.println("os name: \"" +os + "\"");
+		if(os.contains("windows")) // windows
+			systemGameDir = System.getenv("APPDATA");
+		else
+			systemGameDir = System.getProperty("user.home");
+		
+		if(os.contains("mac") || os.contains("nix") || os.contains("nux") || os.contains("aix")) // mac or linux
+			localGameDir = "/.playminicraft/mods/Minicraft_Plus";
+		else
+			localGameDir = "/playminicraft/mods/Minicraft_Plus"; // windows, probably.
+		
+		//System.out.println("system game dir: " + systemGameDir);
+	}
+	public static String gameDir; // The directory in which all the game files are stored
+	//public static String loadDir = "";
+	
+	/// MULTIPLAYER
+	public static boolean ISONLINE = false;
+	public static boolean ISHOST = false; /// this being true doesn't mean this game isn't a client as well; becuase it should be.
+	public boolean autoclient = false; // used in the init method; jumps to multiplayer menu as client
+	public static MinicraftServer server = null;
+	public static MinicraftClient client = null;
 	
 	/// TIME AND TICKS
 	
 	public static final int normSpeed = 60; // measured in ticks / second.
 	public static float gamespeed = 1; // measured in MULTIPLES OF NORMSPEED.
-	public static boolean paused = false; // If the game is paused.
+	public boolean paused = true; // If the game is paused.
 	
 	public static int tickCount = 0; // The number of ticks since the beginning of the game day.
-	public static int time = 0; // Facilites time of day / sunlight.
-	public static int dayLength = 64800; //this value determines how long one game day is.
-	public static int sleepEndTime = dayLength/8; //this value determines when the player "wakes up" in the morning.
-	public static int sleepStartTime = dayLength/2+dayLength/8; //this value determines when the player allowed to sleep.
+	private static int time = 0; // Facilites time of day / sunlight.
+	public static final int dayLength = 64800; //this value determines how long one game day is.
+	public static final int sleepEndTime = dayLength/8; //this value determines when the player "wakes up" in the morning.
+	public static final int sleepStartTime = dayLength/2+dayLength/8; //this value determines when the player allowed to sleep.
 	//public static int noon = 32400; //this value determines when the sky switches from getting lighter to getting darker.
 	
-	
-	private boolean running; // This is about more than simply being paused -- it keeps the game loop running.
+	private static boolean running = false; // This is about more than simply being paused -- it keeps the game loop running.
 	public int fra, tik; //these store the number of frames and ticks in the previous second; used for fps, at least.
-	public int gameTime; // This stores the total time (number of ticks) you've been playing your game.
+	public static int gameTime = 0; // This stores the total time (number of ticks) you've been playing your game.
 	
 	/// RENDERING
 	
 	private BufferedImage image; // creates an image to be displayed on the screen.
-	private int[] pixels; // the array of pixels that will be displayed on the screen.
+	protected int[] pixels; // the array of pixels that will be displayed on the screen.
 	private int[] colors; // All of the colors, put into an array.
-	private Screen screen; // Creates the main screen
-	private Screen lightScreen; // Creates a front screen to render the darkness in caves (Fog of war).
+	/// these are public, but should not be modified:
+	public Screen screen; // Creates the main screen
+	public Screen lightScreen; // Creates a front screen to render the darkness in caves (Fog of war).
 	
 	/// LEVEL AND PLAYER
 	
 	public static Level[] levels = new Level[6]; // This array stores the different levels.
-	public static int currentLevel = 3; // This is the level the player is on. It defaults to 3, the surface.
+	public int currentLevel = 3; // This is the level the player is on. It defaults to 3, the surface.
+	
+	public static final int[] idxToDepth = {-3, -2, -1, 0, 1, -4}; /// this is to map the level depths to each level's index in Game's levels array. This must ALWAYS be the same length as the levels array, of course.
+	public static final int minLevelDepth, maxLevelDepth;
+	static {
+		int min, max;
+		min = max = idxToDepth[0];
+		for(int depth: idxToDepth) {
+			if(depth < min)
+				min = depth;
+			if(depth > max)
+				max = depth;
+		}
+		minLevelDepth = min;
+		maxLevelDepth = max;
+	}
 	
 	public InputHandler input; // input used in Game, Player, and just about all the *Menu classes.
 	public Menu menu; // the current menu you are on.
 	public Player player; // The Player.
-	public Level level; // This is the current level you are on.
-	int worldSize; // The size of the world
+	//public Level level; // This is the current level you are on.
+	static int worldSize = 128; // The size of the world
+	public static int lvlw = worldSize; // The width of the world
+	public static int lvlh = worldSize; // The height of the world
 	
-	private int playerDeadTime; // the time after you die before the dead menu shows up.
-	private int pendingLevelChange; // used to determine if the player should change levels or not.
-	//private int wonTimer; // the paused time when you win before the win menu shows up.
+	protected int playerDeadTime; // the time after you die before the dead menu shows up.
+	protected int pendingLevelChange; // used to determine if the player should change levels or not.
 	public boolean gameOver; // If the player wins this is set to true.
 	
 	/// AUTOSAVE AND NOTIFICATIONS
 	
-	public static int astime; //stands for Auto-Save Time (interval)
 	public static List<String> notifications = new ArrayList<String>();
+	public static int notetick; // "note"= notifications.
 	
-	public int asTick; // The time interval between autosaves.
-	public boolean saving; // If the game is performing a save.
-	public int savecooldown; // Prevents saving many times too fast, I think.
-	public int notetick; // "note"= notifications.
+	public static final int astime = 7200; //stands for Auto-Save Time (interval)
+	public static int asTick; // The time interval between autosaves.
+	public static boolean saving = false; // If the game is performing a save.
+	public static int savecooldown; // Prevents saving many times too fast, I think.
 	
 	/// SCORE MODE
 	
-	public static int multiplier = 1; // Score multiplier
-	public static int mtm = 300; // time given to increase multiplier before it goes back to 1.
-	public static int multipliertime = mtm; // Time left on the current multiplier.
+	public int multiplier = 1; // Score multiplier
+	public static final int mtm = 300; // time given to increase multiplier before it goes back to 1.
+	public int multipliertime = mtm; // Time left on the current multiplier.
 	
-	public int scoreTime; // time remaining for score mode game.
-	//public int newscoreTime; // time you start with in score mode.
+	public static int scoreTime; // time remaining for score mode game.
+	public boolean showinfo;
 	
 	public static boolean pastDay1 = true; // used to prefent mob spawn on surface on day 1.
 	public static boolean readyToRenderGameplay = false;
@@ -136,9 +176,7 @@ public class Game extends Canvas implements Runnable {
 	
 	/// *** CONSTRUSTOR *** ///
 	public Game() {
-		running = false;
 		input = new InputHandler(this);
-		gameTime = 0;
 		
 		fra = 0; // the frames processed in the previous second
 		tik = 0; // the ticks processed in the previous second
@@ -147,24 +185,52 @@ public class Game extends Canvas implements Runnable {
 		image = new BufferedImage(WIDTH, HEIGHT, BufferedImage.TYPE_INT_RGB);
 		pixels = ((DataBufferInt) image.getRaster().getDataBuffer()).getData();
 		
-		worldSize = 128;
-		
-		//newscoreTime = 72000;
-		//scoreTime = newscoreTime;
-		
 		asTick = 0;
-		astime = 7200;
-		saving = false;
 		notetick = 0;
 		
-		//wonTimer = 0;
+		showinfo = false;
 		gameOver = false;
 	}
+	
+	/*
+	public static final byte[] intToBytes(int num) {
+		byte[] bytes = new byte[4];
+		bytes[0] = num >> (8*3);
+		bytes[1] = num >> (8*2) & 0xff;
+		bytes[2] = num >> 8 & 0xff;
+		bytes[3] = num & 0xff;
+	}
+	
+	public static final int bytesToInt(byte[] bytes) {
+		if(bytes.length != 4) return 0;
+		
+		int num = 0;
+		num += bytes[0] << 24;
+		num += bytes[1] << 16;
+		num += bytes[2] << 8;
+		num += bytes[3];
+	}
+	*/
 	
 	// Sets the current menu.
 	public void setMenu(Menu menu) {
 		this.menu = menu;
+		//if (debug) System.out.println("setting game menu to " + menu);
 		if (menu != null) menu.init(this, input);
+	}
+	
+	public static final boolean isValidClient() {
+		return ISONLINE && client != null;
+	}
+	public static final boolean isConnectedClient() {
+		return isValidClient() && client.isConnected();
+	}
+	
+	public static final boolean isValidServer() {
+		return ISONLINE && ISHOST && server != null;
+	}
+	public static final boolean hasConnectedClients() {
+		return isValidServer() && server.hasClients();
 	}
 	
 	/// called after main; main is at bottom.
@@ -181,7 +247,7 @@ public class Game extends Canvas implements Runnable {
 	/**
 	 * Initialization step, this is called when the game first starts. Sets up the screens.
 	 */
-	private void init() {
+	protected void init() {
 		/* This sets up the screens, and loads the icons.png spritesheet. */
 		try {
 			screen = new Screen(WIDTH, HEIGHT, new SpriteSheet(ImageIO.read(Game.class.getResourceAsStream("/icons.png"))));
@@ -194,36 +260,65 @@ public class Game extends Canvas implements Runnable {
 		Tiles.initTileList();
 		
 		resetGame(); // "half"-starts a new game, to set up initial variables
+		player.eid = 0;
 		new Load(this); // this loads any saved preferences.
-		setMenu(new TitleMenu()); //sets menu to the title screen.
+		
+		if(autoclient)
+			setMenu(new MultiplayerMenu(this, "localhost"));
+		else if(!HAS_GUI)
+			setMenu(new WorldSelectMenu());
+		else
+			setMenu(new TitleMenu()); //sets menu to the title screen.
 	}
 	
-	/** This method is used when respawning, and by resetstartGame to reset the vars. It does not generate any new terrain. */
+	/** This method is used when respawning, and by initWorld to reset the vars. It does not generate any new terrain. */
 	public void resetGame() {
+		if(Game.debug) System.out.println("resetting game...");
 		playerDeadTime = 0;
-		Bed.inBed = false;
 		currentLevel = 3;
 		asTick = 0;
 		notifications.clear();
 		
 		// adds a new player
-		player = new Player(this, input);
+		if(isValidServer()) {
+			player = null;
+			return;
+		}
+		if(player instanceof RemotePlayer) {
+			player = new RemotePlayer(this, true, (RemotePlayer)player);
+		} else
+			player = new Player(player, this, input);
+		
+		if (levels[currentLevel] == null) return;
 		
 		// "shouldRespawn" is false on hardcore, or when making a new world.
 		if (DeadMenu.shouldRespawn) { // respawn, don't regenerate level.
 			//if (debug) System.out.println("Current Level = " + currentLevel);
-			
-			level = levels[currentLevel];
-			player.respawn(level);
-			//if (debug) System.out.println("respawned player in current world");
-			level.add(player); // adds the player to the current level (always surface here)
+			if(!Game.isValidClient()) {
+				Level level = levels[currentLevel];
+				player.respawn(level);
+				//if (debug) System.out.println("respawned player in current world");
+				level.add(player); // adds the player to the current level (always surface here)
+			} else {
+				Game.client.requestRespawn();
+			}
 		}
 	}
 	
 	/** This method is used to create a brand new world, or to load an existing one from a file. */
-	public void resetstartGame() { // this is a full reset; everything.
+	/** For the loading screen updates to work, it it assumed that *this* is called by a thread *other* than the one rendering the current *menu*. */
+	public void initWorld() { // this is a full reset; everything.
+		if(Game.debug) System.out.println("resetting world...");
+		
+		if(Game.isValidServer()) {
+			System.err.println("Cannot initialize world while acting as a server runtime; not running initWorld().");
+			return;
+		}
+		
 		DeadMenu.shouldRespawn = false;
 		resetGame();
+		player = new Player(null, this, input);
+		Bed.inBed = false;
 		gameTime = 0;
 		Game.gamespeed = 1;
 		
@@ -233,92 +328,115 @@ public class Game extends Canvas implements Runnable {
 		levels = new Level[6];
 		
 		scoreTime = ModeMenu.getScoreTime();
-		Player.score = 0;
 		
 		LoadingMenu.percentage = 0; // this actually isn't necessary, I think; it's just in case.
 		
-		if(!WorldSelectMenu.loadworld) {
-			worldSize = WorldGenMenu.getSize();
-			for (int i = 5; i >= 0; i--) {
-				LoadingMenu.percentage = (5-i)*20;
+		if(!isValidClient()) {
+			if(Game.debug) System.out.println("initializing world non-client...");
+			
+			if(WorldSelectMenu.loadworld)
+				new Load(this, WorldSelectMenu.worldname);
+			else {
+				worldSize = WorldGenMenu.getSize();
 				
-				levels[(i - 1 < 0 ? 5 : i - 1)] =
-						new Level(worldSize, worldSize, i - 4, (i == 5 ? (Level) null : levels[i]), !WorldSelectMenu.loadworld);
+				double loadingInc = 100.0 / (maxLevelDepth - minLevelDepth + 1); // the .002 is for floating point errors, in case they occur.
+				for (int i = maxLevelDepth; i >= minLevelDepth; i--) {
+					// i = level depth; the array starts from the top because the parent level is used as a reference, so it should be constructed first. It is expected that the highest level will have a null parent.
+					if(Game.debug) System.out.println("loading level " + i + "...");
+					levels[lvlIdx(i)] = new Level(this, worldSize, worldSize, i, levels[lvlIdx(i+1)], !WorldSelectMenu.loadworld);
+					
+					LoadingMenu.percentage += loadingInc;
+				}
+				
+				if(Game.debug) System.out.println("level loading complete.");
+				
+				// add an Iron lantern to level 5, at (984, 984), when making a new world
+				Furniture f = new Lantern(Lantern.Type.IRON);//Items.get("Iron Lantern").furniture;
+				f.x = 984;
+				f.y = 984;
+				levels[lvlIdx(-4)].add(f);
+				
+				Level level = levels[currentLevel]; // sets level to the current level (3; surface)
+				pastDay1 = false;
+				player.findStartPos(level); // finds the start level for the player
+				level.add(player);
 			}
 			
-			// if resetStartGame is called when not loading a world, add an Iron lantern to level 5, at (984, 984).
-			Furniture f = new Lantern(Lantern.Type.IRON);//Items.get("Iron Lantern").furniture;
-			f.x = 984;
-			f.y = 984;
-			levels[5].add(f);
-		}
-		else
-		 	new Load(this, WorldSelectMenu.worldname);
-		
-		level = levels[currentLevel]; // sets level to the current level (3; surface)
-		
-		if (!WorldSelectMenu.loadworld) {
-			pastDay1 = false;
-			player.findStartPos(level); // finds the start level for the player
-			level.add(player);
+			if(WorldGenMenu.get("Theme").equals("Hell")) {
+				player.inventory.add(Items.get("lava potion"));
+			}
+			readyToRenderGameplay = true;
+		} else {
+			Game.levels = new Level[6];
+			currentLevel = 3;
 		}
 		
 		DeadMenu.shouldRespawn = true;
 		
-		if(WorldGenMenu.get("Theme").equals("Hell")) {
-			player.inventory.add(Items.get("lava potion"));
-		}
-		
-		readyToRenderGameplay = true;
+		if(Game.debug) System.out.println("world initialized.");
 	}
 	
 	// VERY IMPORTANT METHOD!! Makes everything keep happening.
 	// In the end, calls menu.tick() if there's a menu, or level.tick() if no menu.
 	public void tick() {
-		if (Bed.inBed) {
+		Level level = levels[currentLevel];
+		if (Bed.inBed && !Game.isValidClient()) {
 			// IN BED
-			level.remove(player);
-			gamespeed = 30;
+			//Bed.player.remove();
+			if(gamespeed != 20) {
+				gamespeed = 20;
+				if(Game.isValidServer()) {
+					if (Game.debug) System.out.println("SERVER: setting time for bed");
+					server.updateGameVars();
+				}
+			}
+			if(tickCount > sleepEndTime) {
+				pastDay1 = true;
+				tickCount = 0;
+				if(Game.isValidServer())
+					server.updateGameVars();
+			}
 			if (tickCount <= sleepStartTime && tickCount >= sleepEndTime) { // it has reached morning.
-				level.add(player);
+				Player playerInBed = Bed.restorePlayer();
 				gamespeed = 1;
+				if(Game.isValidServer())
+					server.updateGameVars();
 				
-				// seems this removes all entities within a certain radius of the player when you get in Bed.
-				for (int i = 0; i < level.entities.size(); i++) {
-					if (((Entity) level.entities.get(i)).level == levels[currentLevel]) {
-						int xd = level.player.x - ((Entity) level.entities.get(i)).x;
-						int yd = level.player.y - ((Entity) level.entities.get(i)).y;
-						if (xd * xd + yd * yd < 48 // this comes down to a radius of about half a tile... huh...
-								&& level.entities.get(i) instanceof Mob
-								&& level.entities.get(i) != player) {
-							level.remove((Entity) level.entities.get(i));
+				// seems this removes all entities within a certain radius of the player when you get OUT of Bed.
+				for (Entity e: level.getEntityArray()) {
+					if (e.getLevel() == levels[currentLevel]) {
+						int xd = playerInBed.x - e.x;
+						int yd = playerInBed.y - e.y;
+						if (xd * xd + yd * yd < 48 && e instanceof Mob && !(e instanceof Player)) {
+							// this comes down to a radius of about half a tile... huh...
+							level.remove(e);
 						}
 					}
 				}
-				// finally gets out of bed.
-				Bed.inBed = false;
 			}
 		}
 		
-		
 		//auto-save tick; marks when to do autosave.
-		asTick++;
+		if(!paused || isValidServer())
+			asTick++;
 		if (asTick > astime) {
-			if (OptionsMenu.autosave && player.health > 0 && !gameOver
-				  && levels[currentLevel].entities.contains(player)) {
-				new Save(player, WorldSelectMenu.worldname);
+			if (OptionsMenu.autosave && player.health > 0 && !gameOver) {
+				if(!Game.ISONLINE)
+					new Save(player, WorldSelectMenu.worldname);
+				else if(Game.isValidServer())
+					Game.server.saveWorld();
 			}
 			
 			asTick = 0;
 		}
 		
 		// Increment tickCount if the game is not paused
-		if (!paused) setTime(tickCount+1);
-		if (tickCount == 3600) level.removeAllEnemies();
+		if (!paused || isValidServer()) setTime(tickCount+1);
+		//if (tickCount == 3600) level.removeAllEnemies(); // because of lifetime, I don't need this.
 		
 		/// SCORE MODE ONLY
 		
-		if (ModeMenu.score && !paused) {
+		if (ModeMenu.score && (!paused || isValidServer() && !gameOver)) {
 			if (scoreTime <= 0) { // GAME OVER
 				gameOver = true;
 				setMenu(new WonMenu(player));
@@ -326,108 +444,243 @@ public class Game extends Canvas implements Runnable {
 			
 			scoreTime--;
 			
-			if (multiplier > 1) {
+			if (!paused && multiplier > 1) {
 				if (multipliertime != 0) multipliertime--;
 				if (multipliertime == 0) setMultiplier(1);
 			}
 			if (multiplier > 50) multiplier = 50;
 		}
 		
-		//This is the general action statement thing! Regulates menus, mostly.
-		if (!hasFocus()) {
+		// when the player dies, the client just stops ticking...
+		//if(Game.debug && Game.isValidClient())
+			//System.out.println("client going through game tick");
+		
+		boolean hadMenu = menu != null;
+		if(isValidServer()) {
+			/// this is to keep the game going while online, even with an unfocused window.
+			input.tick();
+			//boolean ticked = false;
+			for(Level floor: levels) {
+				if(floor == null) continue;
+				//if(floor.getEntitiesOfClass(Player.class).length > 0) {
+					//if(Game.debug) System.out.println("Server is ticking level " + floor.depth);
+					floor.tick();
+				//	ticked = true;
+				//}
+			}
+			
+			/*if(!ticked) {
+				System.out.println("SERVER did not tick any levels, becuase no players were found.");
+			}*/
+			
+			Tile.tickCount++;
+		}// else if(isValidClient())
+		//	player.tick();
+		
+		//if(Game.debug) System.out.println("ticking game; menu: " + menu);
+		
+		// This is the general action statement thing! Regulates menus, mostly.
+		if (!hasFocus() && HAS_GUI) {
 			input.releaseAll();
-		} else {
-			if (!player.removed && !gameOver) {
+		}
+		if(hasFocus() || ISONLINE || !HAS_GUI) {
+			if ((isValidServer() || !player.isRemoved()) && !gameOver) {
 				gameTime++;
 			}
-			input.tick(); //INPUT TICK; no other class should call this, I think...especially the *Menu classes.
+			
+			if(!isValidServer() || menu != null && !hadMenu)
+				input.tick(); // INPUT TICK; no other class should call this, I think...especially the *Menu classes.
 			
 			if (menu != null) {
 				//a menu is active.
+				//if(Game.isValidClient() && readyToRenderGameplay && Game.debug)
+					//System.out.println("Client has menu: " + menu);
+				player.tick();
 				menu.tick();
 				paused = true;
 			} else {
 				//no menu, currently.
 				paused = false;
 				
-				//if player is alive, but no level change, nothing happens here.
-				if (player.removed) {
-					//makes delay between death and death menu.
-					playerDeadTime++;
-					if (playerDeadTime > 60) {
-						setMenu(new DeadMenu());
+				if(!Game.isValidServer()) {
+					//if (Game.debug) System.out.println("ticking game with no menu, and no server...");
+					//if player is alive, but no level change, nothing happens here.
+					if (player.isRemoved() && readyToRenderGameplay && !Bed.inBed) {
+						//makes delay between death and death menu.
+						//if (debug) System.out.println("player is dead.");
+						playerDeadTime++;
+						if (playerDeadTime > 60) {
+							setMenu(new DeadMenu());
+						}
+					} else if (pendingLevelChange != 0) {
+						setMenu(new LevelTransitionMenu(pendingLevelChange));
+						pendingLevelChange = 0;
 					}
-				} else if (pendingLevelChange != 0) {
-					setMenu(new LevelTransitionMenu(pendingLevelChange));
-					pendingLevelChange = 0;
+					/*else if (Game.isValidClient() && Game.debug) {
+						System.out.println("player is on level " + player.getLevel() + "; removed="+player.isRemoved());
+					}*/
+					
+					if(level != null) {
+						level.tick();
+						Tile.tickCount++;
+					}
+					
+					if(isValidClient())
+						player.tick();
+					
+					if(!HAS_GUI) startMultiplayerServer();
+				}
+				else if(Game.isValidServer()) {
+					// here is where I should put things like select up/down, backspace to boot, esc to open pause menu, etc.
+					if(input.getKey("pause").clicked)
+						setMenu(new PauseMenu(null));
 				}
 				
-				//still in "no active menu" conditional:
-				level.tick();
-				Tile.tickCount++;
+				if(menu == null && input.getKey("F3").clicked) { // shows debug info in upper-left
+					showinfo = !showinfo;
+				}
 				
 				//for debugging only
-				if (debug) {
-					if (input.getKey("Shift-0").clicked)
-						resetstartGame();
+				if (debug && HAS_GUI) {
 					
-					if (input.getKey("1").clicked) changeTimeOfDay(Time.Morning);
-					if (input.getKey("2").clicked) changeTimeOfDay(Time.Day);
-					if (input.getKey("3").clicked) changeTimeOfDay(Time.Evening);
-					if (input.getKey("4").clicked) changeTimeOfDay(Time.Night);
-					
-					// this should not be needed, since the inventory should not be altered.
-					if (input.getKey("shift-g").clicked) {
-						Items.fillCreativeInv(player.inventory);
+					if(!ISONLINE || isValidServer()) {
+						/// server-only cheats.
+						if (input.getKey("Shift-r").clicked && !isValidServer())
+							initWorld(); // this will almost certainaly break in multiplayer, i think...
+						
+						if (input.getKey("1").clicked) changeTimeOfDay(Time.Morning);
+						if (input.getKey("2").clicked) changeTimeOfDay(Time.Day);
+						if (input.getKey("3").clicked) changeTimeOfDay(Time.Evening);
+						if (input.getKey("4").clicked) changeTimeOfDay(Time.Night);
+						
+						if (input.getKey("creative").clicked) {ModeMenu.updateModeBools(2);
+							Items.fillCreativeInv(player.inventory, false);}
+						if (input.getKey("survival").clicked) ModeMenu.updateModeBools(1);
+						if (input.getKey("shift-t").clicked) ModeMenu.updateModeBools(4);
+						if (ModeMenu.score && input.getKey("ctrl-t").clicked){ scoreTime = normSpeed * 5; // 5 seconds
+							if(Game.isValidServer()) server.updateGameVars();
+						}
+						
+						float prevSpeed = gamespeed;
+						if (input.getKey("shift-0").clicked)
+							gamespeed = 1;
+						
+						if (input.getKey("shift-equals").clicked) {
+							if(gamespeed < 1) gamespeed *= 2;
+							else if(normSpeed*gamespeed < 2000) gamespeed++;
+						}
+						if (input.getKey("shift-minus").clicked) {
+							if(gamespeed > 1) gamespeed--;
+							else if(normSpeed*gamespeed > 5) gamespeed /= 2;
+						}
+						if(gamespeed != prevSpeed && isValidServer())
+							server.updateGameVars();
 					}
 					
-					if(input.getKey("ctrl-h").clicked) player.health--;
 					
-					if (input.getKey("creative").clicked) ModeMenu.updateModeBools(2);
-					if (input.getKey("survival").clicked) ModeMenu.updateModeBools(1);
-					if (input.getKey("shift-t").clicked) ModeMenu.updateModeBools(4);
-					if (ModeMenu.score && input.getKey("ctrl-t").clicked) scoreTime = normSpeed * 5; // 5 seconds
-					
-					if (input.getKey("equals").clicked) Player.moveSpeed++;//= 0.5D;
-					if (input.getKey("minus").clicked && Player.moveSpeed > 1) Player.moveSpeed--;// -= 0.5D;
-					
-					if (input.getKey("shift-equals").clicked) {
-						if(gamespeed < 1) gamespeed *= 2;
-						else if(normSpeed*gamespeed < 2000) gamespeed++;
-					}
-					if (input.getKey("shift-minus").clicked) {
-						if(gamespeed > 1) gamespeed--;
-						else if(normSpeed*gamespeed > 5) gamespeed /= 2;
-					}
-					
-					if(input.getKey("shift-space").clicked) {
-						int tx = player.x >> 4;
-						int ty = player.y >> 4;
-						System.out.println("current tile: " + levels[currentLevel].getTile(tx, ty).name);
-					}
-					if(input.getKey("shift-u").clicked) {
-						levels[currentLevel].setTile(player.x>>4, player.y>>4, Tiles.get("Stairs Up"));
-					}
-					if(input.getKey("shift-j").clicked) {
-						levels[currentLevel].setTile(player.x>>4, player.y>>4, Tiles.get("Stairs Down"));
+					if(!ISONLINE || isValidClient()) {
+						/// client-only cheats, since they are player-specific.
+						
+						if (input.getKey("shift-g").clicked) // this should not be needed, since the inventory should not be altered.
+							Items.fillCreativeInv(player.inventory);
+						
+						if(input.getKey("ctrl-h").clicked) player.health--;
+						
+						if (input.getKey("0").clicked) player.moveSpeed = 1;
+						if (input.getKey("equals").clicked) player.moveSpeed++;//= 0.5D;
+						if (input.getKey("minus").clicked && player.moveSpeed > 1) player.moveSpeed--;// -= 0.5D;
+						
+						if(input.getKey("shift-u").clicked) {
+							levels[currentLevel].setTile(player.x>>4, player.y>>4, Tiles.get("Stairs Up"));
+						}
+						if(input.getKey("shift-j").clicked) {
+							levels[currentLevel].setTile(player.x>>4, player.y>>4, Tiles.get("Stairs Down"));
+						}
+						
+						if(input.getKey("ctrl-p").clicked) {
+							/// list all the remote players in the level and their coordinates.
+							//System.out.println("searching for players on current level...");
+							levels[currentLevel].printEntityLocs(Player.class);
+						}
+						
+						if(Game.isValidClient() && input.getKey("alt-t").clicked) {
+							// update the tile with the server's value for it.
+							Game.client.requestTile(player.getLevel(), player.x >> 4, player.y >> 4);
+						}
 					}
 				} // end debug only cond.
 			} // end "menu-null" conditional
 		} // end hasfocus conditional
-		
 	} // end tick()
 	
-	public static void setMultiplier(int value) {
+	public static Entity getEntity(int eid) {
+		for(Level level: levels) {
+			if(level == null) continue;
+			for(Entity e: level.getEntityArray())
+				if(e.eid == eid)
+					return e;
+		}
+		
+		//if(Game.debug) System.out.println(onlinePrefix()+"couldn't find entity with id " + eid);
+		
+		return null;
+	}
+	
+	public static int generateUniqueEntityId() {
+		int eid;
+		int tries = 0; // just in case it gets out of hand.
+		do {
+			tries++;
+			if(tries == 1000)
+				System.out.println("note: trying 1000th time to find valid entity id...(will continue)");
+			
+			eid = random.nextInt();
+		} while(!idIsAvaliable(eid));
+		
+		return eid;
+	}
+	
+	public static boolean idIsAvaliable(int eid) {
+		if(eid == 0) return false; // this is reserved for the main player... kind of...
+		if(eid < 0) return false; // id's must be positive numbers.
+		
+		for(Level level: levels) {
+			if(level == null) continue;
+			for(Entity e: level.getEntityArray()) {
+				if(e.eid == eid)
+					return false;
+			}
+		}
+		
+		return true;
+	}
+	
+	public static String onlinePrefix() {
+		if(!Game.ISONLINE) return "";
+		String prefix = "From ";
+		if(Game.isValidServer())
+			prefix += "Server";
+		else if(Game.isValidClient())
+			prefix += "Client";
+		else
+			prefix += "nobody";
+		
+		prefix += ": ";
+		return prefix;
+	}
+	
+	public void setMultiplier(int value) {
 		multiplier = value;
 		multipliertime = mtm;
 	}
-	public static void addMultiplier(int value) {
+	public void addMultiplier(int value) {
 		multiplier += value;
 		multipliertime = mtm - 5;
 	}
 	
 	/// this is the proper way to change the tickCount.
 	public static void setTime(int ticks) {
+		//if(Game.debug && Game.isConnectedClient()) System.out.println("setting time to " + ticks);
 		if (ticks < Time.Morning.tickTime) ticks = 0; // error correct
 		if (ticks < Time.Day.tickTime) time = 0; // morning
 		else if (ticks < Time.Evening.tickTime) time = 1; // day
@@ -444,6 +697,8 @@ public class Game extends Canvas implements Runnable {
 	/// this is the proper way to change the time of day.
 	public static void changeTimeOfDay(Time t) {
 		setTime(t.tickTime);
+		if(isValidServer())
+			server.updateGameVars();
 	}
 	// this one works too.
 	public static void changeTimeOfDay(int t) {
@@ -459,26 +714,91 @@ public class Game extends Canvas implements Runnable {
 		return times[time];
 	}
 	
+	/** This adds a notifcation to all player games. */
+	public static void notifyAll(String msg) {
+		notifyAll(msg, 0);
+	}
+	public static void notifyAll(String msg, int notetick) {
+		Game.notifications.add(msg);
+		Game.notetick = notetick;
+		if(isValidServer())
+			Game.server.broadcastNotification(msg, notetick);
+		else if(isValidClient())
+			Game.client.sendNotification(msg, notetick);
+	}
+	
 	/** This method changes the level that the player is currently on.
 	 * It takes 1 integer variable, which is used to tell the game which direction to go.
 	 * For example, 'changeLevel(1)' will make you go up a level,
 	 	while 'changeLevel(-1)' will make you go down a level. */
 	public void changeLevel(int dir) {
-		level.remove(player); // removes the player from the current level.
-		currentLevel += dir; // changes the current level by the amount
-		if (currentLevel == -1) currentLevel = 5; // fix accidental level underflow
-		if (currentLevel == 6) currentLevel = 0; // fix accidental level overflow
-
-		level = levels[currentLevel]; // sets the level to the current level
+		if(Game.isValidServer()) {
+			System.out.println("server tried to change level.");
+			return;
+		}
+		levels[currentLevel].remove(player); // removes the player from the current level.
+		
+		int nextLevel = currentLevel + dir;
+		if (nextLevel <= -1) nextLevel = levels.length-1; // fix accidental level underflow
+		if (nextLevel >= levels.length) nextLevel = 0; // fix accidental level overflow
+		//level = levels[currentLevel]; // sets the level to the current level
+		currentLevel = nextLevel;
+		
 		player.x = (player.x >> 4) * 16 + 8; // sets the player's x coord (to center yourself on the stairs)
 		player.y = (player.y >> 4) * 16 + 8; // sets the player's y coord (to center yourself on the stairs)
-		level.add(player); // adds the player to the level.
+		
+		if(isValidClient() && levels[currentLevel] == null) {
+			readyToRenderGameplay = false;
+			Game.client.requestLevel(currentLevel);
+		} else
+			levels[currentLevel].add(player); // adds the player to the level.
+	}
+	
+	/** This is for a contained way to find the index in the levels array of a level, based on it's depth. This is also helpful because add a new level in the future could change this. */
+	public static int lvlIdx(int depth) {
+		if(depth > maxLevelDepth) return lvlIdx(minLevelDepth);
+		if(depth < minLevelDepth) return lvlIdx(maxLevelDepth);
+		
+		if(depth == -4) return 5;
+		
+		return depth + 3;
+	}
+	
+	//private int ePos = 0;
+	//private int eposTick = 0;
+	private char[] dots = "   ".toCharArray();
+	
+	/// just a little thing to make a progressive dot elipses.
+	private String getElipses() {
+		//String dots = "";
+		int time = tickCount % normSpeed; // sets the "dot clock" to normSpeed.
+		int interval = normSpeed / 2; // specifies the time taken for each fill up and empty of the dots.
+		int epos = (time % interval) / (interval/dots.length); // transforms time into a number specifying which part of the dots array it is in, by index.
+		char set = time < interval ? '.' : ' '; // get the character to set in this cycle.
+		
+		dots[epos] = set;
+		/*
+		for(int i = 0; i < 3; i++) {
+			if (epos == 1) dots += chars[0];
+		}
+		*/
+		/*eposTick++;
+		if(eposTick >= Game.normSpeed) {
+			eposTick = 0;
+			//ePos++;
+		}*/
+		//if(ePos >= 3) ePos = 0;
+		
+		return new String(dots);
 	}
 	
 	/** renders the current screen */
 	//called in game loop, a bit after tick()
 	public void render() {
-		BufferStrategy bs = getBufferStrategy(); // creates a buffer strategy to determine how the graphics should be buffered.
+		if(!HAS_GUI) return; // no point in this if there's no gui... :P
+		
+		BufferStrategy bs = null;
+		bs = getBufferStrategy(); // creates a buffer strategy to determine how the graphics should be buffered.
 		if (bs == null) {
 			createBufferStrategy(3); // if the buffer strategy is null, then make a new one!
 			requestFocus(); // requests the focus of the screen.
@@ -486,40 +806,28 @@ public class Game extends Canvas implements Runnable {
 		}
 		
 		if(readyToRenderGameplay) {
-			int xScroll = player.x - screen.w / 2; // scrolls the screen in the x axis.
-			int yScroll = player.y - (screen.h - 8) / 2; // scrolls the screen in the y axis.
-			
-			//stop scrolling if the screen is at the ...
-			if (xScroll < 16) xScroll = 16; // ...left border.
-			if (yScroll < 16) yScroll = 16; // ...top border.
-			if (xScroll > level.w * 16 - screen.w - 16) xScroll = level.w * 16 - screen.w - 16; // ...right border.
-			if (yScroll > level.h * 16 - screen.h - 16) yScroll = level.h * 16 - screen.h - 16; // ...bottom border.
-			if (currentLevel > 3) { // if the current level is higher than 3 (which only the sky level is)
-				int col = Color.get(20, 20, 121, 121); // background color.
-				for (int y = 0; y < 28; y++)
-					for (int x = 0; x < 48; x++) {
-						// creates the background for the sky level:
-						screen.render(x * 8 - ((xScroll / 4) & 7), y * 8 - ((yScroll / 4) & 7), 0, col, 0);
-					}
+			if(Game.isValidServer()) {
+				screen.clear(0);
+				Font.drawCentered("Awaiting client connections"+getElipses(), screen, 10, Color.get(-1, 444));
+				Font.drawCentered("So far:", screen, 20, Color.get(-1, 444));
+				int i = 0;
+				for(String playerString: Game.server.getClientInfo()) {
+					Font.drawCentered(playerString, screen, 30+i*10, Color.get(-1, 134));
+					i++;
+				}
+				
+				renderDebugInfo();
 			}
-
-			level.renderBackground(screen, xScroll, yScroll); // renders current level background
-			level.renderSprites(screen, xScroll, yScroll); // renders level sprites on screen
-			
-			// this creates the darkness in the caves
-			if (currentLevel != 5 && (currentLevel != 3 || tickCount < dayLength/4 || tickCount > dayLength/2) && (!ModeMenu.creative || currentLevel >= 3)) {
-				lightScreen.clear(0); // this doesn't mean that the pixel will be black; it means that the pixel will be DARK, by default; lightScreen is about light vs. dark, not necessarily a color. The light level it has is compared with the minimum light values in dither to decide whether to leave the cell alone, or mark it as "dark", which will do different things depending on the game level and time of day.
-				level.renderLight(lightScreen, xScroll, yScroll); // finds (and renders) all the light from objects (like the player, lanterns, and lava).
-				screen.overlay(lightScreen, xScroll, yScroll); // overlays the light screen over the main screen.
+			else {
+				renderLevel();
+				renderGui();
 			}
-			
-			renderGui(); //renders the GUI.
 		}
 		
 		if (menu != null) // renders menu, if present.
 			menu.render(screen);
 		
-		if (!hasFocus()) renderFocusNagger(); // calls the renderFocusNagger() method, which creates the "Click to Focus" message.
+		if (!hasFocus() && !Game.ISONLINE) renderFocusNagger(); // calls the renderFocusNagger() method, which creates the "Click to Focus" message.
 		
 		Graphics g = bs.getDrawGraphics(); // gets the graphics in which java draws the picture
 		g.fillRect(0, 0, getWidth(), getHeight()); // draws the a rect to fill the whole window (to cover last?)
@@ -535,6 +843,41 @@ public class Game extends Canvas implements Runnable {
 		bs.show(); // makes the picture visible. (probably)
 	}
 	
+	private void renderLevel() {
+		Level level = Game.levels[currentLevel];
+		if(level == null) return;
+		
+		int xScroll = player.x - screen.w / 2; // scrolls the screen in the x axis.
+		int yScroll = player.y - (screen.h - 8) / 2; // scrolls the screen in the y axis.
+		
+		//if (debug && isValidClient()) System.out.println("player coords at render: "+player.x+","+player.y);
+		
+		//stop scrolling if the screen is at the ...
+		if (xScroll < 0) xScroll = 0; // ...left border.
+		if (yScroll < 0) yScroll = 0; // ...top border.
+		if (xScroll > level.w * 16 - screen.w) xScroll = level.w * 16 - screen.w; // ...right border.
+		if (yScroll > level.h * 16 - screen.h) yScroll = level.h * 16 - screen.h; // ...bottom border.
+		if (currentLevel > 3) { // if the current level is higher than 3 (which only the sky level (and dungeon) is)
+			int col = Color.get(20, 20, 121, 121); // background color.
+			for (int y = 0; y < 28; y++)
+				for (int x = 0; x < 48; x++) {
+					// creates the background for the sky (and dungeon) level:
+					screen.render(x * 8 - ((xScroll / 4) & 7), y * 8 - ((yScroll / 4) & 7), 0, col, 0);
+				}
+		}
+		
+		level.renderBackground(screen, xScroll, yScroll); // renders current level background
+		level.renderSprites(screen, xScroll, yScroll); // renders level sprites on screen
+		
+		// this creates the darkness in the caves
+		if (currentLevel != 5 && (currentLevel != 3 || tickCount < dayLength/4 || tickCount > dayLength/2) && (!ModeMenu.creative || currentLevel >= 3)) {
+			lightScreen.clear(0); // this doesn't mean that the pixel will be black; it means that the pixel will be DARK, by default; lightScreen is about light vs. dark, not necessarily a color. The light level it has is compared with the minimum light values in dither to decide whether to leave the cell alone, or mark it as "dark", which will do different things depending on the game level and time of day.
+			int brightnessMultiplier = player.potioneffects.containsKey(PotionType.Light) ? 12 : 8; // brightens all light sources by a factor of 1.5 when the player has the Light potion effect. (8 above is normal)
+			level.renderLight(lightScreen, xScroll, yScroll, brightnessMultiplier); // finds (and renders) all the light from objects (like the player, lanterns, and lava).
+			screen.overlay(lightScreen, currentLevel, xScroll, yScroll); // overlays the light screen over the main screen.
+		}
+	}
+	
 	/** Renders the main game GUI (hearts, Stamina bolts, name of the current item, etc.) */
 	private void renderGui() {
 		/// AH-HA! THIS DRAWS THE BLACK SQUARE!!
@@ -542,56 +885,23 @@ public class Game extends Canvas implements Runnable {
 			screen.render(x * 7, screen.h - 8, 0 + 1 * 32, Color.get(0, 0), 0);
 		}
 		
-		// player.xx and yy stores previous player position.
-		int txlevel = player.x / 16;
-		int tylevel = player.y / 16;
-		int textcol = Color.get(-1, 555);
-		if (player.showinfo) { // renders show debug info on the screen.
-			ArrayList<String> info = new ArrayList<String>();
-			info.add(fra + " fps");
-			info.add("day tiks " + tickCount);
-			info.add((normSpeed * gamespeed) + " tik/sec");
-			info.add("walk spd " + Player.moveSpeed);
-			info.add("X " + txlevel);
-			info.add("Y " + tylevel);
-			if (ModeMenu.score) info.add("Score " + Player.score);
-			
-			/// Displays number of chests left, if on dungeon level.
-			if (currentLevel == 5) {
-				if (levels[currentLevel].chestcount > 0) {
-					info.add("Chests: " + levels[currentLevel].chestcount);
-				} else {
-					info.add("Chests: Complete!");
-				}
-			}
-			
-			if(player.armor > 0) {
-				info.add("armor: " + player.armor);
-				info.add("dam buffer: " + player.armorDamageBuffer);
-			}
-			
-			//info.add("steps: " + player.stepCount);
-			info.add("hungerstam:" + player.hungerStamCnt);
-			
-			for(int i = 0; i < info.size(); i++) {
-				Font.draw(info.get(i), screen, 1, 2 + i*10, textcol);
-			}
-		}
+		renderDebugInfo();
 		
 		// This is the arrow counter. ^ = infinite symbol.
-		if (ModeMenu.creative || player.ac >= 10000)
+		int ac = player.inventory.count(Items.get("arrow"));
+		if (ModeMenu.creative || ac >= 10000)
 			Font.draw("	x" + "^", screen, 84, screen.h - 16, Color.get(0, 333, 444, 555));
 		else
-			Font.draw("	x" + player.ac, screen, 84, screen.h - 16, Color.get(0, 555));
+			Font.draw("	x" + ac, screen, 84, screen.h - 16, Color.get(0, 555));
 		//displays arrow icon
 		screen.render(10 * 8 + 4, screen.h - 16, 13 + 5 * 32, Color.get(0, 111, 222, 430), 0);
 		
 		String msg = "";
-		if (saving) msg = "Saving... " + LoadingMenu.percentage + "%";
+		if (saving) msg = "Saving... " + Math.round(LoadingMenu.percentage) + "%";
 		else if (Bed.inBed) msg = "Sleeping...";
 		
 		if(msg.length() > 0)
-			Font.drawCentered(msg, screen, screen.h / 2 - 20, Color.get(-1, 555), Color.get(-1, 222));
+			new FontStyle(Color.get(-1, 555)).setYPos(screen.h / 2 - 20).setShadowType(Color.get(-1, 222), false).draw(msg, screen);
 		
 		/// NOTIFICATIONS
 		
@@ -607,11 +917,13 @@ public class Game extends Canvas implements Runnable {
 			}
 			
 			// draw each current notification, with shadow text effect.
+			FontStyle style = new FontStyle(Color.get(-1, 555)).setShadowType(Color.get(-1, 222), false);
 			for (int i = 0; i < notifications.size(); i++) {
 				String note = ((String) notifications.get(i));
-				int x = screen.w / 2 - note.length() * 8 / 2,
-				  y = screen.h - 120 - notifications.size()*8 + i * 8;
-				Font.draw(note, screen, x, y, Color.get(-1, 555), Color.get(-1, 111));
+				//int x = screen.w / 2 - note.length() * 8 / 2,
+				int y = screen.h - 120 - notifications.size()*8 + i * 8;
+				style.setYPos(y).draw(note, screen);
+				//Font.draw(note, screen, x, y, Color.get(-1, 555), Color.get(-1, 111));
 			}
 		}
 		
@@ -678,8 +990,7 @@ public class Game extends Canvas implements Runnable {
 				
 				if (player.staminaRechargeDelay > 0) {
 					// creates the white/gray blinking effect when you run out of stamina.
-					color = (player.staminaRechargeDelay / 4 % 2 == 0) ?
-					  Color.get(-1, 555, 000, 000) : Color.get(-1, 110, 000, 000);
+					color = (player.staminaRechargeDelay / 4 % 2 == 0) ? Color.get(-1, 555, 000, 000) : Color.get(-1, 110, 000, 000);
 					screen.render(i * 8, screen.h - 8, 1 + 12 * 32, color, 0);
 				} else {
 					// renders your current stamina, and uncharged gray stamina.
@@ -696,6 +1007,55 @@ public class Game extends Canvas implements Runnable {
 		/// CURRENT ITEM
 		if (player.activeItem != null) // shows active item sprite and name in bottom toolbar, if one exists.
 			player.activeItem.renderInventory(screen, 12 * 7, screen.h - 8, false);
+	}
+	
+	private void renderDebugInfo() {
+		int textcol = Color.get(-1, 555);
+		if (showinfo) { // renders show debug info on the screen.
+			ArrayList<String> info = new ArrayList<String>();
+			info.add("VERSION " + VERSION);
+			info.add(fra + " fps");
+			info.add("day tiks " + tickCount);
+			info.add((normSpeed * gamespeed) + " tik/sec");
+			if(!Game.isValidServer()) {
+				info.add("walk spd " + player.moveSpeed);
+				info.add("X " + (player.x / 16) + "-" + (player.x % 16));
+				info.add("Y " + (player.y / 16) + "-" + (player.y % 16));
+				if(Game.levels[currentLevel] != null)
+					info.add("Tile " + Game.levels[currentLevel].getTile(player.x>>4, player.y>>4).name);
+				if (ModeMenu.score) info.add("Score " + player.score);
+			}
+			if(Game.levels[currentLevel] != null) {
+				if(!Game.isValidClient())
+					info.add("Mob Cnt " + Game.levels[currentLevel].mobCount + "/" + Game.levels[currentLevel].maxMobCount);
+				else
+					info.add("Mob Load Cnt " + Game.levels[currentLevel].mobCount);
+			}
+			
+			/// Displays number of chests left, if on dungeon level.
+			if (Game.levels[currentLevel] != null && (Game.isValidServer() || currentLevel == 5 && !Game.isValidClient())) {
+				if (levels[5].chestcount > 0)
+					info.add("Chests: " + levels[5].chestcount);
+				else
+					info.add("Chests: Complete!");
+			}
+			
+			if(!Game.isValidServer()) {
+				if(player.armor > 0) {
+					info.add("armor: " + player.armor);
+					info.add("dam buffer: " + player.armorDamageBuffer);
+				}
+				
+				//info.add("steps: " + player.stepCount);
+				info.add("micro-hunger:" + player.hungerStamCnt);
+				//info.add("health regen:" + player.hungerStamCnt);
+			}
+			
+			FontStyle style = new FontStyle(textcol).setShadowType(Color.get(-1, 000), true).setXPos(1);
+			for(int i = 0; i < info.size(); i++) {
+				style.setYPos(2 + i*10).draw(info.get(i), screen);
+			}
+		}
 	}
 	
 	/** Renders the "Click to focus" box when you click off the screen. */
@@ -735,7 +1095,54 @@ public class Game extends Canvas implements Runnable {
 	public void scheduleLevelChange(int dir) {
 		// same as changeLevel(). Call scheduleLevelChange(1) if you want to go up 1 level,
 		// or call with -1 to go down by 1.
-		pendingLevelChange = dir;
+		if(!Game.isValidServer())
+			pendingLevelChange = dir;
+	}
+	
+	public void startMultiplayerServer() {
+		if(Game.debug) System.out.println("starting multiplayer server...");
+		
+		if(HAS_GUI) {
+			// here is where we need to start the new client.
+			String jarFilePath = "";
+			try {
+				java.net.URI uri = getClass().getProtectionDomain().getCodeSource().getLocation().toURI();
+				//if (Game.debug) System.out.println("jar path: " + uri.getPath());
+				//if (Game.debug) System.out.println("jar string: " + uri.toString());
+				jarFilePath = uri.getPath();
+				if(os.contains("windows") && jarFilePath.startsWith("/"))
+					jarFilePath = jarFilePath.substring(1);
+			} catch(URISyntaxException ex) {
+				System.err.println("problem with jar file URI syntax.");
+				ex.printStackTrace();
+			}
+			List<String> arguments = new ArrayList<String>();
+			arguments.add("java");
+			arguments.add("-jar");
+			arguments.add(jarFilePath);
+			
+			if(debug)
+				arguments.add("--debug");
+			
+			// this will just always be added.
+			arguments.add("--savedir");
+			arguments.add(systemGameDir);
+			
+			arguments.add("--localclient");
+			
+			/// this *should* start a new JVM from the running jar file...
+			try {
+				new ProcessBuilder(arguments).inheritIO().start();
+			} catch(IOException ex) {
+				System.err.println("problem starting new jar file process:");
+				ex.printStackTrace();
+			}
+		}
+		// now that that's done, let's turn *this* running JVM into a server:
+		server = new MinicraftServer(this);
+		
+		/// load up any saved config options for the server.
+		new Load(this, WorldSelectMenu.worldname, server);
 	}
 	
 	/**
@@ -755,6 +1162,8 @@ public class Game extends Canvas implements Runnable {
 		init();
 		
 		//main game loop? calls tick() and render().
+		if(!HAS_GUI)
+			(new ConsoleReader(this)).start();
 		while (running) {
 			long now = System.nanoTime();
 			double nsPerTick = 1E9D / normSpeed; // nanosecs per sec divided by ticks per sec = nanosecs per tick
@@ -763,6 +1172,7 @@ public class Game extends Canvas implements Runnable {
 			lastTime = now;
 			boolean shouldRender = true;
 			while (unprocessed >= 1) { // If there is unprocessed time, then tick.
+				//if(debug) System.out.println("ticking...");
 				ticks++;
 				tick(); // calls the tick method (in which it calls the other tick methods throughout the code.
 				unprocessed--;
@@ -789,44 +1199,178 @@ public class Game extends Canvas implements Runnable {
 				ticks = 0; //resets ticks; ie, frames and ticks only are per second
 			}
 		}
+		
+		if (Game.debug) System.out.println("main game loop ended; terminating application...");
+		System.exit(0);
 	}
 	
 	/// * The main method! * ///
 	public static void main(String[] args) {
+		
+		/*Thread.currentThread().setUncaughtExceptionHandler(new Thread.UncaughtExceptionHandler() {
+			public void uncaughtException(Thread t, Throwable e) {
+				String exceptionTrace = "Exception in thread " + t + ":P\n";
+				exceptionTrace += Game.getExceptionTrace(e);
+				System.err.println(exceptionTrace);
+				javax.swing.JOptionPane.showInternalMessageDialog(null, exceptionTrace, "Fatal Error", javax.swing.JOptionPane.ERROR_MESSAGE);
+			}
+		});*/
+		
+		
 		boolean debug = false;
-		String saveDir = System.getenv("APPDATA");
+		boolean autoclient = false;
+		boolean autoserver = false;
+		
+		String saveDir = Game.systemGameDir;
 		for(int i = 0; i < args.length; i++) {
-			if(args[i].equals("--debug")) debug = true;
-			if(args[i].equals("--savedir") && i+1 < args.length)
-				saveDir = args[i+1];
+			if(args[i].equals("--debug"))
+				debug = true;
+			if(args[i].equals("--savedir") && i+1 < args.length) {
+				i++;
+				saveDir = args[i];
+			}
+			if(args[i].equals("--localclient"))
+				autoclient = true;
+			if(args[i].equals("--server")) {
+				autoserver = true;
+				if(i+1 < args.length) {
+					i++;
+					WorldSelectMenu.worldname = args[i];
+				}
+			}
 		}
 		Game.debug = debug;
-		Game.gameDir = saveDir + Game.gameDir;
+		HAS_GUI = !autoserver;
+		Game.gameDir = saveDir + Game.localGameDir;
+		if(Game.debug) System.out.println("determined gameDir: " + Game.gameDir);
+		
+		String prevLocalGameDir = "/.playminicraft/mods/Minicraft Plus";
+		File testFile = new File(systemGameDir + localGameDir);
+		File testFileOld = new File(systemGameDir + prevLocalGameDir);
+		if(!testFile.exists() && testFileOld.exists()) {
+			// rename the old folders to the new scheme
+			testFile.mkdirs();
+			if(os.contains("windows")) {
+				try {
+					java.nio.file.Files.setAttribute(testFile.toPath(), "dos:hidden", true);
+				} catch (java.io.IOException ex) {
+					System.err.println("couldn't make game folder hidden on windows:");
+					ex.printStackTrace();
+				}
+			}
+			
+			File[] files = getAllFiles(testFileOld).toArray(new File[0]);
+			for(File file: files) {
+				//testFile
+				File newFile = new File(file.getPath().replace(testFileOld.getPath(), testFile.getPath()));
+				//System.out.println("new file: " + newFile.getPath());
+				if(file.isDirectory()) newFile.mkdirs(); // these should be unnecessary.
+				else file.renameTo(newFile);
+				//File main = new File(testFileOld.getPath()+"/Preferences.miniplussave");
+			}
+			
+			deleteAllFiles(testFileOld);
+			
+			testFile = new File(systemGameDir + ".playminicraft");
+			if(os.contains("windows") && testFile.exists())
+				deleteAllFiles(testFile);
+		}
 		
 		Game game = new Game();
-		game.setMinimumSize(new Dimension(1, 1));
-		game.setPreferredSize(getWindowSize());
-		JFrame frame = new JFrame(Game.NAME);
-		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		frame.setLayout(new BorderLayout()); // sets the layout of the window
-		frame.add(game, BorderLayout.CENTER); // Adds the game (which is a canvas) to the center of the screen.
-		frame.pack(); //squishes everything into the preferredSize.
-		frame.setLocationRelativeTo(null); // the window will pop up in the middle of the screen when launched.
 		
-		frame.addComponentListener(new ComponentAdapter() {
-			public void componentResized(ComponentEvent e) {
-				float w = frame.getWidth() - frame.getInsets().left - frame.getInsets().right;
-				float h = frame.getHeight() - frame.getInsets().top - frame.getInsets().bottom;
-				Game.SCALE = Math.min(w / Game.WIDTH, h / Game.HEIGHT);
-			}
-		});
+		if(HAS_GUI) {
+			game.setMinimumSize(new Dimension(1, 1));
+			game.setPreferredSize(getWindowSize());
+			JFrame frame = new JFrame(Game.NAME);
+			frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+			frame.setLayout(new BorderLayout()); // sets the layout of the window
+			frame.add(game, BorderLayout.CENTER); // Adds the game (which is a canvas) to the center of the screen.
+			frame.pack(); //squishes everything into the preferredSize.
+			frame.setLocationRelativeTo(null); // the window will pop up in the middle of the screen when launched.
+			
+			frame.addComponentListener(new ComponentAdapter() {
+				public void componentResized(ComponentEvent e) {
+					float w = frame.getWidth() - frame.getInsets().left - frame.getInsets().right;
+					float h = frame.getHeight() - frame.getInsets().top - frame.getInsets().bottom;
+					Game.SCALE = Math.min(w / Game.WIDTH, h / Game.HEIGHT);
+				}
+			});
+			
+			frame.addWindowListener(new WindowListener() {
+				public void windowActivated(WindowEvent e) {}
+				public void windowDeactivated(WindowEvent e) {}
+				public void windowIconified(WindowEvent e) {}
+				public void windowDeiconified(WindowEvent e) {}
+				public void windowOpened(WindowEvent e) {}
+				public void windowClosed(WindowEvent e) {System.out.println("window closed");}
+				public void windowClosing(WindowEvent e) {
+					System.out.println("window closing");
+					if(Game.isValidClient())
+						Game.client.endConnection();
+					if(Game.isValidServer())
+						Game.server.endConnection();
+					
+					game.quit();
+				}
+			});
+			
+			frame.setVisible(true);
+		}
 		
-		frame.setVisible(true);
+		game.autoclient = autoclient; // this will make the game automatically jump to the MultiplayerMenu, and attempt to connect to localhost.
 		
 		game.start(); // Starts the game!
 	}
 	
 	public static Dimension getWindowSize() {
 		return new Dimension(new Float(WIDTH * SCALE).intValue(), new Float(HEIGHT * SCALE).intValue());
+	}
+	
+	public void quit() {
+		if(Game.isValidClient()) Game.client.endConnection();
+		if(Game.isValidServer()) Game.server.endConnection();
+		stop();
+	}
+	
+	private static List<File> getAllFiles(File top) {
+		List<File> files = new ArrayList<File>();
+		if(!top.isDirectory()) {
+			files.add(top);
+			return files;
+		} else
+			files.add(top);
+		for(File subfile: top.listFiles())
+			files.addAll(getAllFiles(subfile));
+		
+		return files;
+	}
+	
+	private static void deleteAllFiles(File top) {
+		if(top.isDirectory())
+			for(File subfile: top.listFiles())
+				deleteAllFiles(subfile);
+		top.delete();
+	}
+	
+	/**
+	 * Provides a String representation of the provided Throwable's stack trace
+	 * that is extracted via PrintStream.
+	 *
+	 * @param throwable Throwable/Exception from which stack trace is to be
+	 *	extracted.
+	 * @return String with provided Throwable's stack trace.
+	 */
+	public static String getExceptionTrace(final Throwable throwable) {
+		final java.io.ByteArrayOutputStream bytestream = new java.io.ByteArrayOutputStream();
+		final java.io.PrintStream printStream = new java.io.PrintStream(bytestream);
+		throwable.printStackTrace(printStream);
+		String exceptionStr = "";
+		try {
+			exceptionStr = bytestream.toString("UTF-8");
+		}
+		catch(Exception ex) {
+			exceptionStr = "Unavailable";
+		}
+		return exceptionStr;
 	}
 }

@@ -1,24 +1,20 @@
 package minicraft.screen;
 
-import java.io.BufferedReader;
-import java.io.BufferedWriter;
 import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileReader;
-import java.io.FileWriter;
-import java.io.IOException;
 import java.util.Arrays;
-import java.util.Iterator;
 import java.util.Random;
 import minicraft.Game;
 import minicraft.GameApplet;
+import minicraft.InputHandler;
+import minicraft.entity.RemotePlayer;
 import minicraft.gfx.Color;
 import minicraft.gfx.Font;
 import minicraft.gfx.Screen;
+import minicraft.level.Level;
 
 public class TitleMenu extends SelectMenu {
 	protected final Random random = new Random();
-private static final String[] options = {"New game", "Instructions", "Tutorial", "Options", "Change Key Bindings", "About", "Quit"/*, "Kill"*/}; // Options that are on the main menu.
+private static final String[] options = {"New game", "Join Online World", "Instructions", "Tutorial", "Options", "Change Key Bindings", "About", "Quit"/*, "Kill"*/}; // Options that are on the main menu.
 	int rand;
 	int count = 0; // this and reverse are for the logo; they produce the fade-in/out effect.
 	boolean reverse = false;
@@ -26,6 +22,7 @@ private static final String[] options = {"New game", "Instructions", "Tutorial",
 	File folder;
 	
 	private static final String[] splashes = {//new ArrayList<String>();
+		"Multiplayer Now Included!",
 		"Also play InfinityTale!",
 		"Also play Minicraft Delux!",
 		"Also play Alecraft!",
@@ -57,8 +54,7 @@ private static final String[] options = {"New game", "Instructions", "Tutorial",
 		"Alpha? What's that?",
 		"Beta? What's that?",
 		//"Infdev? What's that?",
-		"Story? What's that?",
-		"Multiplayer? What's that?",
+		"Story? I've heard of that...",
 		"Infinite terrain? What's that?",
 		"Redstone? What's that?",
 		//"Spiders? What are those?",
@@ -71,6 +67,7 @@ private static final String[] options = {"New game", "Instructions", "Tutorial",
 		"No spiders included!",
 		"No Endermen included!",
 		"No chickens included!",
+		"Grab your friends!",
 		"Creepers included!",
 		"Skeletons included!",
 		"Knights included!",
@@ -118,9 +115,9 @@ private static final String[] options = {"New game", "Instructions", "Tutorial",
 		"Radical!",
 		"Potions ftw!",
 		"Beds ftw!",
-		"Conquer the Dungeon!",
 		"Defeat the Air Wizard!",
-		//"Defeat the Air Wizard...again?",
+		"Conquer the Dungeon!",
+		"One down, one to go...",
 		"Loom + Wool = String!",
 		"String + Wood = Rod!",
 		"Sand + Gunpowder = TNT!",
@@ -130,16 +127,41 @@ private static final String[] options = {"New game", "Instructions", "Tutorial",
 		"Explanation Mark!",
 		"!sdrawkcab si sihT",
 		"This is forwards!",
-		"Why is this blue?"
+		"Why is this blue?",
+		"Green is a nice color!",
+		"Red is my favorite color!"
 		//"try with --debug",
 	};
 	
 	public TitleMenu() {
-		super(Arrays.asList(options), 11*8, 1, Color.get(0, 555), Color.get(0, 222));
+		super(Arrays.asList(options), 11*8, 1, Color.get(-1, 555), Color.get(-1, 222));
 		Game.readyToRenderGameplay = false;
+		/// this is just in case; though, i do take advantage of it in other places.
+		if(Game.server != null) {
+			if (Game.debug) System.out.println("wrapping up loose server ends");
+			Game.server.endConnection();
+			Game.server = null;
+		}
+		if(Game.client != null) {
+			if (Game.debug) System.out.println("wrapping up loose client ends");
+			Game.client.endConnection();
+			Game.client = null;
+		}
+		Game.ISONLINE = false;
 		
 		folder = new File(location);
 		rand = random.nextInt(splashes.length);
+		
+		Game.levels = new Level[Game.levels.length];
+	}
+	
+	public void init(Game game, InputHandler input) {
+		super.init(game, input);
+		if(game.player == null || game.player instanceof RemotePlayer) {
+			//if(game.player != null) game.player.remove();
+			game.player = null;
+			game.resetGame();
+		}
 	}
 	
 	/*public void getSplashes() {
@@ -200,6 +222,7 @@ private static final String[] options = {"New game", "Instructions", "Tutorial",
 				game.setMenu(new WorldSelectMenu());
 				//(this method should now stop getting called by Game)
 			}
+			if(options[selected].contains("Join Online")) game.setMenu(new MultiplayerMenu());
 			if(options[selected] == "Instructions") game.setMenu(new InstructionsMenu(this));
 			if (options[selected] == "Tutorial") {
 				try {
@@ -213,8 +236,8 @@ private static final String[] options = {"New game", "Instructions", "Tutorial",
 			if (options[selected] == "Options") game.setMenu(new OptionsMenu(this));
 			if (options[selected] == "Change Key Bindings") game.setMenu(new KeyInputMenu(this));
 			if (options[selected] == "About") game.setMenu(new AboutMenu(this));
-			if (options[selected] == "Quit") System.exit(0);
-			//if (options[selected] == "Kill") {game.level.add(game.player); game.setMenu(null);}
+			if (options[selected] == "Quit") System.exit(0);//game.quit();
+			//if (options[selected] == "Kill") {game.levels[currentLevel].add(game.player); game.setMenu(null);}
 		}
 	}
 	
@@ -224,10 +247,10 @@ private static final String[] options = {"New game", "Instructions", "Tutorial",
 		screen.clear(0);
 		int h = 2; // Height of squares (on the spritesheet)
 		int w = 15; // Width of squares (on the spritesheet)
-		int titleColor = Color.get(0, 010, 131, 551);
+		int titleColor = Color.get(-1, 010, 131, 551);
 		int xo = (screen.w - w * 8) / 2; // X location of the title
 		int yo = 36; // Y location of the title
-		int cols = Color.get(0, 550);
+		int cols = Color.get(-1, 550);
 		
 		for (int y = 0; y < h; y++) {
 			for (int x = 0; x < w; x++) {
@@ -239,10 +262,12 @@ private static final String[] options = {"New game", "Instructions", "Tutorial",
 		super.render(screen);
 		
 		boolean isblue = splashes[rand].contains("blue");
+		boolean isGreen = splashes[rand].contains("Green");
+		boolean isRed = splashes[rand].contains("Red");
 		
 		/// this isn't as complicated as it looks. It just gets a color based off of count, which oscilates between 0 and 25.
 		int bcol = 5 - count / 5; // this number ends up being between 1 and 5, inclusive.
-		cols = isblue ? Color.get(0, bcol) : Color.get(0, (bcol-1)*100+5, bcol*100+bcol*10, bcol*100+bcol*10);
+		cols = isblue ? Color.get(-1, bcol) : isRed ? Color.get(-1, bcol*100) : isGreen ? Color.get(-1, bcol*10) : Color.get(-1, (bcol-1)*100+5, bcol*100+bcol*10, bcol*100+bcol*10);
 		// *100 means red, *10 means green; simple.
 		
 		Font.drawCentered(splashes[rand], screen, 60, cols);
@@ -252,13 +277,13 @@ private static final String[] options = {"New game", "Instructions", "Tutorial",
 			if(name.length() < 36) greeting = name+"!";
 			if(name.length() < 27) greeting = "Welcome, " + greeting;
 			
-			Font.drawCentered(greeting, screen, 10, Color.get(0, 330));
+			Font.drawCentered(greeting, screen, 10, Color.get(-1, 330));
 		}
 		
-		Font.draw("Version " + Game.VERSION, screen, 1, 1, Color.get(0, 111));
+		Font.draw("Version " + Game.VERSION, screen, 1, 1, Color.get(-1, 111));
 		
-		Font.drawCentered("("+input.getMapping("up")+", "+input.getMapping("down")+" to select)", screen, screen.h - 32, Color.get(0, 111));
-		Font.drawCentered("("+input.getMapping("select")+" to accept)", screen, screen.h - 22, Color.get(0, 111));
-		Font.drawCentered("("+input.getMapping("exit")+" to return)", screen, screen.h - 12, Color.get(0, 111));
+		Font.drawCentered("("+input.getMapping("up")+", "+input.getMapping("down")+" to select)", screen, screen.h - 32, Color.get(-1, 111));
+		Font.drawCentered("("+input.getMapping("select")+" to accept)", screen, screen.h - 22, Color.get(-1, 111));
+		Font.drawCentered("("+input.getMapping("exit")+" to return)", screen, screen.h - 12, Color.get(-1, 111));
 	}
 }

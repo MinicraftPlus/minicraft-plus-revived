@@ -1,3 +1,70 @@
+Minicraft+ version 2.0.3
+
++ Added support for dedicated servers! With a CLI OS, meaning an OS without a GUI. This allows for more compatibility, not to mention more resources being able to be devoted to the game.
++ Added various server options, and a command help system, for dedicated servers.
++ Added feature to save the last ip address you entered when trying to join a multiplayer server
++ Added more error messages when connecting
+* Fixed item entity spawn positions and going through other tiles
++ Added the ability to drop an item to the ground with Q and shift-Q (shift-q drops the whole stack)
++ made it so you can transfer single items to and from chests, with the drop key.
+* Fixed bugs with creative inventory, so it always has all items.
+
+
+
+Minicraft+ version 2.0.2
+
+* Switched the multiplayer protocol from UDP to TCP.
+* fixed problems with doors, floors, and walls (item drops, etc.)
++ made TNT light other TNT
+* edited coal drop amount
+* made lots of edits to mob spawn rate, and mob count management
++ Made it so all mobs (not players obviously) despawn after a certain amount of time (will later be fixed so mobs close to the player don't despawn.
++ Made enchanter craftable.
+- removed enchanter and workbench from starting inventory.
+- removed the power glove. It's still used, but you can only use it by pressing the "pickup" key ("v" by default); you can't get it in your inventory.
++ Added "unknown" item to make it obvious when something has gone wrong; it has the requested name, but the sprite is a pink square.
+* Fixed multiplayer attack rendering across clients; now shows attack, including the item a client is attacking with.
+* Fixed creative inventory for clients in multiplayer.
+* Fixed multiplayer client saving.
+- removed all the "frozen mobs" which kept appearing in multiplayer
+* Fixed unlocked score mode times not appearing until you restarted the game; you shouldn't have to restart it now.
++ Added F3 menu for the server instance of the game in multiplayer.
+* Patched possible duplicate usernames glitch
+
+
+Minicraft+ version 2.0.1
+
++* added more super-secret debug powers... mua ha ha...
++ added to F3 window: level mobcount + max mobcount, and name of current tile
++ Arrows now appear in your inventory
+* Fixed crafting; correct number of items are used
+* Creepers shouldn't be able to blow up stairs anymore
+* Bed spawning should now work; once you sleep in a bed, you will always spawn from the place that you were standing right before you got in bed, unless that spot later becomes rock, or something else a player can't walk through. The bed does not have to remain where it is; you can destroy it, and you will continue to spawn in the spot described above.
+* Fixed Save folder for non-windows users. You may notice a strange folder called "null" in the same folder as the minicraft jar. Move the ".playminicraft" folder inside to your home directory, and it should recognize it again. It may be hidden due to the "."
+* This version should be compatible with 1.8 save files.
+* Edited the mob spawning algorithm, so mobs should not spawn at such a crazy speed as before
+
+* Renovated Multiplayer! It should now be much less laggy. Still not quite tolerable, but... better.
++ Added multiplayer feature: when hosting a server, a new window opens up for you to play as any other player, though your settings will be saved so that your should be able to continue as normal if you load the world as single player again. The server window lets you view the players connected, and change world difficulty and such.
++ Added multiplayer feature: the inventory and such data for people connected to the server is saved in a seperate file along with the computer's MAC address, so if they connect with that computer again, their inventory and stats should be restored.
+
+* Ensured that most all the normal world features work in multiplayer. However, I have not been able to do much testing with Client Player saves, so that might not work very well. Everything else should work, though; but the connection lag between computers may cause some wierd effects. Fixing this lag is my next goal.
+
+
+Minicraft+ version 2.0.0
+
++++ MULTIPLAYER MODE now supported! (dun, dun-dun-dun!)
+	-*- Well... kind of. I got one way to work, but it's super laggy.
+
+*** mostly, just lots and lots of important bug fixes, such as:
+* You disappear from the level when you get in bed, as you should
+* you can now see the edges of the level
+* crafting furniture no longer disappears upon loading a pre-existing world
+* Stackable item count decreases as it should
+
+
+---------------------------------------------------------
+
 Minicraft+ version 1.9.4
 
 * Almost total revision of lighting; surface level now has lighting overlay sometimes, and the colors all around may be slightly different.
@@ -5,7 +72,7 @@ Minicraft+ version 1.9.4
 
 + Added Instant Health Potion! Instantly refills up to 5 hearts.
 * changed death chest expire times; easy:30min, norm:10min, hard:2min
-* Sped up game speed while sleeping.
+* Sped up sleeping game speed.
 - Prevented Airwizard from being removed during daily entity clear.
 * Increased Torch light radius; also, torches now work the same way on the surface as they do in the caves.
 + Added missingTexture sprite.

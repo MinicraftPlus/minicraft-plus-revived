@@ -10,10 +10,11 @@ import java.nio.file.StandardCopyOption;
 import java.nio.file.attribute.BasicFileAttributes;
 import java.util.ArrayList;
 import minicraft.Game;
+import minicraft.Sound;
 import minicraft.gfx.Color;
 import minicraft.gfx.Font;
 import minicraft.gfx.Screen;
-import minicraft.Sound;
+import minicraft.saveload.Load;
 
 public class WorldSelectMenu extends Menu {
 	
@@ -60,15 +61,34 @@ public class WorldSelectMenu extends Menu {
 	private Action mode;
 	
 	public WorldSelectMenu() {
+		
 		validName = false;
 		confirmed = false;
 		
 		loadWorlds();
 		
-		if(worldnames.size() == 0)
+		if(worldnames.size() == 0) {
 			mode = Action.Create;
-		else
+			if(!Game.HAS_GUI) {
+				System.err.println("there are no worlds to load!");
+				System.exit(1);
+			}
+		} else {
 			mode = Action.Main;
+			if(!Game.HAS_GUI)
+				worldname = worldnames.get(0);
+		}
+		
+		if(!Game.HAS_GUI)
+			loadworld = true; // you cannot really make a world without a GUI to start.
+	}
+	
+	public void init(Game game, minicraft.InputHandler input) {
+		super.init(game, input);
+		if(!Game.HAS_GUI) {
+			if (Game.debug) System.out.println("gone through world select menu...");
+			game.setMenu(new LoadingMenu()); // the choice has already been made, begin world load.
+		}
 	}
 	
 	private final void loadWorlds() {
@@ -90,6 +110,15 @@ public class WorldSelectMenu extends Menu {
 				}
 			}
 		}
+		
+		/*if(location == Game.loadDir && !Game.loadDir.equals(Game.gameDir)) {
+			location = Game.gameDir;
+			loadWorlds();
+			location = Game.loadDir;
+		}*/
+		
+		while(selected > 1 && selected > worldnames.size()-1)
+			selected--;
 	}
 	
 	public void tick() {
@@ -169,7 +198,7 @@ public class WorldSelectMenu extends Menu {
 					if (Game.debug) System.out.println("load mode: " + worldname);
 					Sound.test.play();
 					game.setMenu(new LoadingMenu());
-					//game.resetstartGame();
+					//game.initWorld();
 					//game.setMenu((Menu) null);
 					break;
 				
@@ -399,7 +428,7 @@ public class WorldSelectMenu extends Menu {
 		
 		if (typingname.length() < 36 && input.lastKeyTyped.length() > 0) {
 			//ensure only valid characters are typed.
-			java.util.regex.Pattern p = java.util.regex.Pattern.compile("[a-zA-Z0-9 ]");
+			java.util.regex.Pattern p = java.util.regex.Pattern.compile("[a-zA-Z0-9 ]"); // this does not include backspace, so it will not be "typed".
 			if (p.matcher(input.lastKeyTyped).matches()) typingname += input.lastKeyTyped;
 			input.lastKeyTyped = "";
 		}

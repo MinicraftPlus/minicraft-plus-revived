@@ -5,17 +5,22 @@ import minicraft.gfx.Color;
 import minicraft.gfx.Screen;
 
 public class Arrow extends Entity {
-	private int lifeTime;
+	//private int lifeTime;
 	private int xdir;
 	private int ydir;
-	private int time;
+	//private int time;
 	private int damage;
 	public Mob owner;
 	private int speed;
 	
-	public Arrow(Mob owner, int dirx, int diry, int dmg, boolean flag) {
+	public Arrow(Mob owner, int dirx, int diry, int dmg) {
+		this(owner, owner.x, owner.y, dirx, diry, dmg);
+	}
+	public Arrow(Mob owner, int x, int y, int dirx, int diry, int dmg) {
 		super(Math.abs(dirx)+1, Math.abs(diry)+1);
 		this.owner = owner;
+		this.x = x;
+		this.y = y;
 		xdir = dirx;
 		ydir = diry;
 		
@@ -26,21 +31,27 @@ public class Arrow extends Entity {
 		else if (damage >= 0) speed = 2;
 		else speed = 1;
 		
+		/* // maybe this was a "critical arrow" system or something?
 		if (flag) {
 			damage = 2*damage + 1;
 			col = Color.get(-1, 111, 222, 430);
-		}
+		}*/
 		
-		x = owner.x;
-		y = owner.y;
-		
-		lifeTime = 100 * (damage + 2);
+		//lifeTime = 100 * (damage + 2);
+	}
+	
+	public String getData() {
+		return owner.eid+":"+xdir+":"+ydir+":"+damage;
 	}
 	
 	public void tick() {
-		time++;
+		/*time++;
 		if (time >= lifeTime) {
 			remove();
+			return;
+		}*/
+		if (x < 0 || x>>4 > level.w || y < 0 || y>>4 > level.h) {
+			remove(); // remove when out of bounds
 			return;
 		}
 
@@ -48,7 +59,7 @@ public class Arrow extends Entity {
 		y += ydir * speed;
 		
 		// TODO I think I can just use the xr yr vars, and the normal system with touchedBy(entity) to detect collisions instead.
-		List<Entity> entitylist = level.getEntities(x, y, x, y);
+		List<Entity> entitylist = level.getEntitiesInRect(x, y, x, y);
 		boolean criticalHit = random.nextInt(11) < 9;
 		for (int i = 0; i < entitylist.size(); i++) {
 			Entity hit = entitylist.get(i);
@@ -59,11 +70,16 @@ public class Arrow extends Entity {
 				mob.hurt(owner, damage + extradamage, mob.dir);
 			}
 			
-			if (!level.getTile(x / 16, y / 16).mayPass(level, x / 16, y / 16, this)
-					&& !level.getTile(x / 16, y / 16).connectsToWater
-					&& level.getTile(x / 16, y / 16).id != 16) {
-				this.remove();
-			}
+			/*if(owner instanceof Player && minicraft.screen.ModeMenu.creative && minicraft.Game.debug) {
+				/// debug fun!
+				level.getTile(x/16, y/16).hurt(level, x/16, y/16, 500); // KO all tiles
+			} else { /// normal behavior
+			*/	if (!level.getTile(x / 16, y / 16).mayPass(level, x / 16, y / 16, this)
+						&& !level.getTile(x / 16, y / 16).connectsToWater
+						&& level.getTile(x / 16, y / 16).id != 16) {
+					this.remove();
+				}
+			//}
 		}
 	}
 
@@ -72,32 +88,19 @@ public class Arrow extends Entity {
 	}
 
 	public void render(Screen screen) {
+		/* // probably makes a blinking effect.
 		if (time >= lifeTime - 3 * 20) {
 			if (time / 6 % 2 == 0) return;
-		}
-		byte xt;
-		byte yt;
-		//if(minicraft.Game.debug) System.out.println(xdir + " " + ydir + " ");
-		if (xdir == 0 && ydir == -1) {
-			xt = 15;
-			yt = 5;
-
-			screen.render(x - 4, y - 4, xt + yt * 32, col, 1);
-
-		} else if (xdir == 1 && ydir == 0) {
-			xt = 14;
-			yt = 5;
-			screen.render(x - 4, y - 4, xt + yt * 32, col, 1);
-		} else if (xdir == -1 && ydir == 0) {
-			xt = 13;
-			yt = 5;
-
-			screen.render(x - 4, y - 4, xt + yt * 32, col, 1);
-		} else if (xdir == 0 && ydir == 1) {
-			xt = 16;
-			yt = 5;
-
-			screen.render(x - 4, y - 4, xt + yt * 32, col, 1);
-		}
+		}*/
+		
+		byte xt = 0;
+		byte yt = 5;
+		
+		if (xdir == 0 && ydir == -1) xt = 15;
+		else if (xdir == 1 && ydir == 0) xt = 14;
+		else if (xdir == -1 && ydir == 0) xt = 13;
+		else if (xdir == 0 && ydir == 1) xt = 16;
+		
+		screen.render(x - 4, y - 4, xt + yt * 32, col, 1);
 	}
 }

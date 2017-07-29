@@ -2,6 +2,7 @@ package minicraft.entity;
 
 import java.util.List;
 import java.util.Random;
+import minicraft.Game;
 import minicraft.gfx.Screen;
 import minicraft.item.Item;
 import minicraft.level.Level;
@@ -12,10 +13,16 @@ public abstract class Entity {
 	protected final Random random = new Random();
 	public int x, y; // x, y entity coordinates on the map
 	public int xr, yr; // x, y radius of entity
-	public boolean removed; // Determines if the entity is removed from it's level; checked in Level.java
-	public Level level; // the level that the entity is on
+	private boolean removed; // Determines if the entity is removed from it's level; checked in Level.java
+	protected Level level; // the level that the entity is on
 	// TODO might replace the below with a simple array of colors.
 	public int col; // day/night color variations, plus current color.
+	
+	public int eid; /// this is intended for multiplayer, but I think it could be helpful in single player, too. certainly won't harm anything, I think... as long as finding a valid id doesn't take long...
+	private String prevUpdates = ""; /// holds the last value returned from getUpdateString(), for comparison with the next call.
+	private String curDeltas = ""; /// holds the updates returned from the last time getUpdates() was called.
+	private boolean accessedUpdates = false;
+	public long lastUpdate;
 	
 	public Entity(int xr, int yr) { // add color to this later, in color update
 		this.xr = xr;
@@ -24,22 +31,54 @@ public abstract class Entity {
 		level = null;
 		removed = true;
 		col = 0;
+		
+		eid = -1;
+		lastUpdate = System.nanoTime();
 	}
 	
 	public abstract void render(Screen screen); /// used to render the entity on screen.
 	public abstract void tick(); /// used to update the entity.
 	
+	public boolean isRemoved() { return removed; }
+	public Level getLevel() { return level; }
+	
 	/** Removes the entity from the level. */
 	public void remove() {
+		if(removed && !(this instanceof ItemEntity)) // apparently this happens fairly often with item entities.
+			System.out.println("Note: remove() called on removed entity: " + getClass());
+		
 		removed = true;
+		
+		if(level == null)
+			System.out.println("Note: remove() called on entity with no level reference: " + getClass());
+		else
+			level.remove(this);
+		//if(Game.isValidClient() && !Game.isValidServer() && !(this instanceof minicraft.entity.particle.Particle))
+			//System.out.println("WARNING: client game is removing "+getClass().getName().replace("minicraft.entity.","")+" entity from level " + (level==null?"null":level.depth));
+	}
+	public void remove(Level level) {
+		if(level != this.level && Game.debug)
+			System.out.println("tried to remove entity "+this+" from level it is not in: " + level + "; in level " + this.level);
+		else {
+			removed = true;
+			level = null;
+			//if (Game.debug && !(this instanceof Particle)) System.out.println(Game.onlinePrefix()+"set level reference of entity " + this + " to null.");
+		}
 	}
 	
+	/** This should ONLY be called by the Level class. To properly add an entity to a level, use level.add(entity) */
 	public void setLevel(Level level, int x, int y) {
+		if(level == null) {
+			System.out.println("tried to set level of entity " + this + " to a null level; should use remove(level)");
+			return;
+		}
 		this.level = level;
-		if(level != null)
-			removed = false;
+		removed = false;
 		this.x = x;
 		this.y = y;
+		
+		if(eid < 0)
+			eid = Game.generateUniqueEntityId();
 	}
 	
 	// TODO Inplement this! it's a really good idea!
@@ -56,10 +95,10 @@ public abstract class Entity {
 		return false;
 	}
 		
-	/** Moves an entity horizontally and vertically. */
+	/** Moves an entity horizontally and vertically. Returns whether entity was unimpeded in it's movement.  */
 	public boolean move(int xa, int ya) {
-		if (!level.player.game.saving && (xa != 0 || ya != 0)) { // if not saving, and the entity is actually going to move...
-			boolean stopped = true; // used to check if the entity has BEEN stopped, COMPLETELY; this checks for a lack of collision.
+		if (!Game.saving && (xa != 0 || ya != 0)) { // if not saving, and the entity is actually going to move...
+			boolean stopped = true; // used to check if the entity has BEEN stopped, COMPLETELY; below checks for a lack of collision.
 			if (xa != 0 && move2(xa, 0)) stopped = false; // horizontal movement was successful.
 			if (ya != 0 && move2(0, ya)) stopped = false; // vertical movement was successful.
 			if (!stopped) {
@@ -81,7 +120,7 @@ public abstract class Entity {
 			}
 			return !stopped;
 		}
-		return true; // reaches this if no movement was requested / game was saving.
+		return true; // reaches this if no movement was requested / game was saving. return true, becuase MobAis should still do the moving phase thing, just paused, not obstructed.
 	}
 	
 	/** Second part to the move method (moves in one direction at a time) */
@@ -115,26 +154,51 @@ public abstract class Entity {
 		}
 		
 		// these lists are named as if the entity has already moved-- it hasn't, though.
-		List<Entity> wasInside = level.getEntities(x - xr, y - yr, x + xr, y + yr); // gets all of the entities that are inside this entity (aka: colliding) before moving.
-		List<Entity> isInside = level.getEntities(x + xa - xr, y + ya - yr, x + xa + xr, y + ya + yr); // gets the entities that this entity will touch once moved.
+		List<Entity> wasInside = level.getEntitiesInRect(x - xr, y - yr, x + xr, y + yr); // gets all of the entities that are inside this entity (aka: colliding) before moving.
+		
+		int xr = this.xr, yr = this.yr;
+		if(Game.isValidClient() && this instanceof Player) {
+			xr++;
+			yr++;
+		}
+		List<Entity> isInside = level.getEntitiesInRect(x + xa - xr, y + ya - yr, x + xa + xr, y + ya + yr); // gets the entities that this entity will touch once moved.
 		for (int i = 0; i < isInside.size(); i++) {
 			/// cycles through entites about to be touched, and calls touchedBy(this) for each of them.
 			Entity e = isInside.get(i);
 			if (e == this) continue; // touching yourself doesn't count.
 			
 			e.touchedBy(this); // call the method. ("touch" the entity)
+			
+			//if(Game.debug && e != this && (e instanceof Player || this instanceof Player)) System.out.println("entity " + this.toClassString() + " is moving inside furniture " + e.toClassString());
 		}
-		isInside.removeAll(wasInside); // remove all the entites that this one is already touching before move.
+		
+		/*if(Game.debug) {
+			for(Entity e: wasInside) {
+				if(e != this && (e instanceof Player || this instanceof Player))
+					System.out.println(Game.onlinePrefix()+"entity " + this.toClassString() + " is moving from inside " + e.toClassString());
+			}
+		}*/
+		
+		isInside.removeAll(wasInside); // remove all the entites that this one is already touching before moving.
 		for (int i = 0; i < isInside.size(); i++) {
 			Entity e = isInside.get(i);
+			
+			//if(Game.debug && e != this && (e instanceof Player || this instanceof Player)) System.out.println(Game.onlinePrefix()+"entity " + this.toClassString() + " is moving to be inside " + e.toClassString());
+			
 			if (e == this) continue;
-
-			if (e.blocks(this)) return false; // if the entity can block this entity, then this can't move.
+			
+			if (e.blocks(this)) {
+				//if (Game.debug && (e instanceof Player || this instanceof Player)) System.out.println(Game.onlinePrefix()+"entity " + this.toClassString() + " was blocked by entity " + e.toClassString());
+				return false; // if the entity can block this entity, then this can't move.
+			}
 		}
 		
 		// finally, the entity moves!
 		x += xa;
 		y += ya;
+		
+		//if (Game.debug && !(this instanceof MobAi)) System.out.println(Game.onlinePrefix()+"entity " + this.toClassString() + " allowed to move by ("+xa+","+ya+"), to: ("+x+","+y+")");
+		
 		return true; // the move was successful.
 	}
 	
@@ -184,4 +248,123 @@ public abstract class Entity {
 	public void hurt(Mob mob, int dmg, int attackDir) {}
 	public void hurt(Tnt tnt, int dmg, int attackDir) {}
 	public void hurt(Tile tile, int x, int y, int dmg) {}
+	
+	public boolean isWithin(int tileRadius, Entity other) {
+		if(level == null || other.getLevel() == null) return false;
+		if(level.depth != other.getLevel().depth) return false; // obviously, if they are on different levels, they can't be next to each other.}
+		
+		double distance = Math.abs(Math.hypot(x - other.x, y - other.y)); // calculate the distance between the two entities, in entity coordinates.
+		
+		return Math.round(distance) >> 4 <= tileRadius; // compare the distance (converted to tile units) with the specified radius.
+	}
+	
+	protected Player getClosestPlayer() { return getClosestPlayer(true); }
+	protected Player getClosestPlayer(boolean returnSelf) {
+		if (this instanceof Player && returnSelf)
+			return (Player) this;
+		
+		if (level == null) return null;
+		
+		return level.getClosestPlayer(x, y);
+	}
+	
+	public final void update(String deltas) {
+		for(String field: deltas.split(";")) {
+			String fieldName = field.substring(0, field.indexOf(","));
+			String val = field.substring(field.indexOf(",")+1);
+			updateField(fieldName, val);
+		}
+		
+		if(Game.isValidClient() && this instanceof MobAi) {
+			lastUpdate = System.nanoTime();
+		}
+	}
+	
+	protected boolean updateField(String fieldName, String val) {
+		switch(fieldName) {
+			case "eid": eid = Integer.parseInt(val); return true;
+			case "x": x = Integer.parseInt(val); return true;
+			case "y": y = Integer.parseInt(val); return true;
+			case "level":
+				if(val.equals("null")) return true; // this means no level.
+				Level newLvl = Game.levels[Integer.parseInt(val)];
+				if(newLvl != null && level != null) {
+					if(newLvl.depth == level.depth) return true;
+					if(level != null) level.remove(this);
+					if(newLvl != null) newLvl.add(this);
+				}
+				return true;
+		}
+		return false;
+	}
+	
+	/// I think I'll make these "getUpdates()" methods be an established thing, that returns all the things that can change that you need to account for when updating entities across a server.
+	/// by extension, the update() method should always account for all the variables specified here.
+	protected String getUpdateString() {
+		return "x,"+x+";"
+		+"y,"+y+";"
+		+"level,"+(level==null?"null":Game.lvlIdx(level.depth));
+	}
+	
+	public final String getUpdates(boolean fetchAll) {
+		if(accessedUpdates) {
+			if(fetchAll) return prevUpdates;
+			else return curDeltas;
+		}
+		else {
+			if(fetchAll) return getUpdateString();
+			else return getUpdates();
+		}
+	}
+	public final String getUpdates() {
+		// if the updates have already been fetched and written, but not flushed, then just return those.
+		if(accessedUpdates) return curDeltas;
+		else accessedUpdates = true; // after this they count as accessed.
+		
+		/// first, get the current string of values, which includes any subclasses.
+		String updates = getUpdateString();
+		
+		if(prevUpdates.length() == 0) {
+			// if there were no values saved last call, our job is easy. But this is only the case the first time this is run.
+			prevUpdates = curDeltas = updates; // set the update field for next time
+			return updates; // and we're done!
+		}
+		
+		/// if we did have updates last time, then save them as an array, before overriting the update field for next time.
+		String[] curUpdates = updates.split(";");
+		String[] prevUpdates = this.prevUpdates.split(";");
+		this.prevUpdates = updates;
+		
+		/// now, we have the current values, and the previous values, as arrays of key-value pairs sep. by commas. Now, the goal is to seperate which are actually *updates*, meaning they are different from last time.
+		
+		String deltas = "";
+		for(int i = 0; i < curUpdates.length; i++) { // b/c the string always contains the same number of pairs (and the same keys, in the same order), the indexes of cur and prev updates will be the same.
+			/// loop though each of the updates this call. If it is differnt from the last one, then add it to the list.
+			if(curUpdates[i].equals(prevUpdates[i]) == false) {
+				deltas += curUpdates[i] + ";";
+				//if(Game.debug) System.out.println("found delta for "+this+"; old:\""+prevUpdates[i]+"\" -- new:\""+curUpdates[i]+"\"");
+			}
+		}
+		
+		if(deltas.length() > 0) deltas = deltas.substring(0, deltas.length()-1); // cuts off extra ";"
+		
+		curDeltas = deltas;
+		return deltas;
+	}
+	
+	/// this marks the entity as having a new state to fetch.
+	public void flushUpdates() {
+		accessedUpdates = false;
+	}
+	
+	public String toString() {
+		//String superName = super.toString();
+		//superName = superName.substring(superName.lastIndexOf(".")+1);
+		return toClassString() + "(eid="+eid+")";
+	}
+	
+	public String toClassString() {
+		String clazz = getClass().getName();
+		return clazz.substring(clazz.lastIndexOf(".")+1);
+	}
 }

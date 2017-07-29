@@ -1,5 +1,6 @@
 package minicraft.level.tile;
 
+import minicraft.Sound;
 import minicraft.entity.Player;
 import minicraft.gfx.Color;
 import minicraft.gfx.ConnectorSprite;
@@ -9,7 +10,6 @@ import minicraft.item.Items;
 import minicraft.item.ToolItem;
 import minicraft.item.ToolType;
 import minicraft.level.Level;
-import minicraft.Sound;
 
 public class GrassTile extends Tile {
 	private static ConnectorSprite sprite = new ConnectorSprite(GrassTile.class, new Sprite(11, 0, 3, 3, Color.get(141, 141, 252, 321), 3), Sprite.dots(Color.get(141, 141, 252, 321)))
@@ -50,7 +50,7 @@ public class GrassTile extends Tile {
 					level.setTile(xt, yt, Tiles.get("dirt"));
 					Sound.monsterHurt.play();
 					if (random.nextInt(5) == 0) {
-						level.dropItem(xt*16, yt*16, 2, Items.get("seeds"));
+						level.dropItem(xt*16+8, yt*16+8, 2, Items.get("seeds"));
 						return true;
 					}
 				}
@@ -59,7 +59,7 @@ public class GrassTile extends Tile {
 				if (player.payStamina(4 - tool.level)) {
 					Sound.monsterHurt.play();
 					if (random.nextInt(5) == 0) {
-						level.dropItem(xt*16, yt*16, Items.get("seeds"));
+						level.dropItem(xt*16+8, yt*16+8, Items.get("seeds"));
 						return true;
 					}
 					level.setTile(xt, yt, Tiles.get("farmland"));

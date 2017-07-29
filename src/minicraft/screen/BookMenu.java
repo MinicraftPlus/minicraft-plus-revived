@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import minicraft.gfx.Color;
 import minicraft.gfx.Font;
+import minicraft.gfx.FontStyle;
 import minicraft.gfx.Screen;
 
 public class BookMenu extends Menu {
@@ -47,7 +48,8 @@ public class BookMenu extends Menu {
 	public static final String defaultBook = " \n \0"+"There is nothing of use.";
 	
 	private static int spacing = 3;
-	private static java.awt.Rectangle textArea = new java.awt.Rectangle(15, 8*5, 8*32, 8*16);
+	//private static java.awt.Rectangle textArea = new java.awt.Rectangle(15, 8*5, 8*32, 8*16);
+	private static int minX = 15, maxX = 15+8*32, minY = 8*5, maxY = 8*5+8*16;
 	
 	public String[][] lines;
 	public int page;
@@ -62,7 +64,7 @@ public class BookMenu extends Menu {
 		for(String content: splitContents) {
 			String[] remainder = {content};
 			while(remainder[remainder.length-1].length() > 0) {
-				remainder = Font.getLines(remainder[remainder.length-1], textArea.width, textArea.height, spacing);
+				remainder = Font.getLines(remainder[remainder.length-1], maxX-minX, maxY-minY, spacing);
 				pages.add(Arrays.copyOf(remainder, remainder.length-1)); // removes the last element of remainder, which is the leftover.
 			}
 		}
@@ -89,7 +91,10 @@ public class BookMenu extends Menu {
 		String pagenum = page==0?"Title": page+"";
 		Font.drawCentered(pagenum, screen, /*11*11 + (page==0 ? 4 : 21-3*digits(page)), */2 * 8, Color.get(-1, 0));
 		
-		Font.drawParagraph(lines[page], screen, textArea.x, textArea.y, textArea.width, textArea.height, page == 0, spacing, Color.get(-1, 0));
+		FontStyle style = new FontStyle(Color.get(-1, 000)).xCenterBounds(minX, maxX).yCenterBounds(minY, maxY);
+		if(page != 0)
+			style.setXPos(minX);
+		Font.drawParagraph(lines[page], screen, style, spacing);
 	}
 	
 	protected void renderFrame(Screen screen, int x0, int y0, int x1, int y1) {

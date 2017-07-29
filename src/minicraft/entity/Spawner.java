@@ -1,18 +1,19 @@
 package minicraft.entity;
 
 import java.util.Random;
+import minicraft.Sound;
 import minicraft.entity.particle.FireParticle;
 import minicraft.entity.particle.TextParticle;
 import minicraft.gfx.Color;
 import minicraft.gfx.Sprite;
-import minicraft.item.Item;
 import minicraft.item.FurnitureItem;
+import minicraft.item.Item;
+import minicraft.item.PotionType;
+import minicraft.item.PowerGloveItem;
 import minicraft.item.ToolItem;
 import minicraft.item.ToolType;
-import minicraft.item.PowerGloveItem;
 import minicraft.level.tile.Tile;
 import minicraft.screen.ModeMenu;
-import minicraft.Sound;
 
 public class Spawner extends Furniture {
 	
@@ -65,14 +66,15 @@ public class Spawner extends Furniture {
 	}
 	
 	private void trySpawn() {
-		int xd = level.player.x - x;
-		int yd = level.player.y - y;
+		if(level == null) return;
+		if(level.mobCount >= level.maxMobCount) return; // can't spawn more entities
+		
+		Player player = getClosestPlayer();
+		if(player == null) return;
+		int xd = player.x - x;
+		int yd = player.y - y;
 		
 		if(xd * xd + yd * yd > ACTIVE_RADIUS * ACTIVE_RADIUS) return;
-		
-		int randX = (x/16 - 1 + rnd.nextInt(2)); // the rand is really just one tile in any direction
-		int randY = (y/16 - 1 + rnd.nextInt(2));
-		Tile tile = level.getTile(randX, randY);
 		
 		MobAi newmob = null;
 		try {
@@ -84,18 +86,23 @@ public class Spawner extends Furniture {
 			ex.printStackTrace();
 		}
 		
+		int randX, randY;
+		Tile tile;
+		do {
+			randX = (x>>4 - 1 + rnd.nextInt(2)); // the rand is really just one tile in any direction
+			randY = (y>>4 - 1 + rnd.nextInt(2));
+			tile = level.getTile(randX, randY);
+		} while(!tile.mayPass(level, randX, randY, newmob) || mob instanceof EnemyMob && tile.getLightRadius(level, randX, randY) > 0);
 		//if (Game.debug) System.out.println("attempting " + mob + " spawn on tile with id: " + tile.id);
-		if(tile.mayPass(level, randX, randY, newmob) && tile.getLightRadius(level, randX, randY) == 0) {
-			newmob.x = randX << 4;
-			newmob.y = randY << 4;
-			//if (Game.debug) System.out.println("spawning new " + mob + " on level "+lvl+": x=" + (newmob.x>>4)+" y="+(newmob.y>>4) + "...");
-			level.add(newmob);
-			Sound.monsterHurt.play();
-			for(int i = 0; i < 6; i++) {
-				randX = rnd.nextInt(16);
-				randY = rnd.nextInt(12);
-				level.add(new FireParticle(x - 8 + randX, y - 6 + randY));
-			}
+		newmob.x = randX << 4;
+		newmob.y = randY << 4;
+		//if (Game.debug) System.out.println("spawning new " + mob + " on level "+lvl+": x=" + (newmob.x>>4)+" y="+(newmob.y>>4) + "...");
+		level.add(newmob);
+		Sound.monsterHurt.play();
+		for(int i = 0; i < 6; i++) {
+			randX = rnd.nextInt(16);
+			randY = rnd.nextInt(12);
+			level.add(new FireParticle(x - 8 + randX, y - 6 + randY));
 		}
 	}
 
@@ -106,7 +113,7 @@ public class Spawner extends Furniture {
 			
 			int dmg;
 			Sound.monsterHurt.play();
-			if(player.potioneffects.containsKey("Haste"))
+			if(player.potioneffects.containsKey(PotionType.Haste))
 				dmg = tool.level + 1 + random.nextInt(5);
 			else
 				dmg = tool.level + 1 + random.nextInt(3);
@@ -116,7 +123,7 @@ public class Spawner extends Furniture {
 			if(health <= 0) {
 				level.remove(this);
 				Sound.playerDeath.play();
-				Player.score += 500;
+				player.score += 500;
 			}
 			
 			return true;
@@ -148,5 +155,23 @@ public class Spawner extends Furniture {
 	
 	public Furniture clone() {
 		return (Furniture) new Spawner(mob);
+	}
+	
+	protected String getUpdateString() {
+		String updates = super.getUpdateString() + ";";
+		updates += "health,"+health+
+		";lvl,"+lvl;
+		
+		return updates;
+	}
+	
+	protected boolean updateField(String field, String val) {
+		if(super.updateField(field, val)) return true;
+		switch(field) {
+			case "health": health = Integer.parseInt(val); return true;
+			case "lvl": lvl = Integer.parseInt(val); return true;
+		}
+		
+		return false;
 	}
 }

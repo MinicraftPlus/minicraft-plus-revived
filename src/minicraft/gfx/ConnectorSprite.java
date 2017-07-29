@@ -2,7 +2,6 @@ package minicraft.gfx;
 
 import minicraft.level.Level;
 import minicraft.level.tile.Tile;
-import minicraft.level.tile.RockTile;
 
 public class ConnectorSprite {
 	/**

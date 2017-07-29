@@ -1,15 +1,15 @@
 package minicraft.level.tile;
 
+import minicraft.Sound;
 import minicraft.entity.Entity;
 import minicraft.entity.Player;
 import minicraft.gfx.Color;
-import minicraft.gfx.Screen;
 import minicraft.gfx.Sprite;
 import minicraft.item.Item;
+import minicraft.item.Items;
 import minicraft.item.ToolItem;
 import minicraft.item.ToolType;
 import minicraft.level.Level;
-import minicraft.Sound;
 
 public class FloorTile extends Tile {
 	private Sprite sprite = new Sprite(19, 2, 2, 2, 0, 0, true);
@@ -18,6 +18,7 @@ public class FloorTile extends Tile {
 	
 	protected FloorTile(Material type) {
 		super((type == Material.Wood ? "Wood Planks" : type == Material.Obsidian ? "Obsidian" : type.name()+" Bricks"), (Sprite)null);
+		this.type = type;
 		maySpawn = true;
 		switch(type) {
 			case Wood: sprite.color = Color.get(210, 210, 430, 320);
@@ -36,6 +37,12 @@ public class FloorTile extends Tile {
 			if (tool.type == ToolType.Pickaxe) {
 				if (player.payStamina(4 - tool.level)) {
 					level.setTile(xt, yt, Tiles.get("hole"));
+					Item drop = null;
+					switch(type) {
+						case Wood: drop = Items.get("Plank"); break;
+						default: drop = Items.get(type.name()+" Brick"); break;
+					}
+					level.dropItem(xt*16+8, yt*16+8, drop);
 					Sound.monsterHurt.play();
 					return true;
 				}

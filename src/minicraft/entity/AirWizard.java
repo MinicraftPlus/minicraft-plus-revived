@@ -5,12 +5,12 @@ import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import minicraft.Game;
+import minicraft.Sound;
 import minicraft.gfx.Color;
 import minicraft.gfx.Font;
 import minicraft.gfx.MobSprite;
 import minicraft.gfx.Screen;
 import minicraft.screen.OptionsMenu;
-import minicraft.Sound;
 
 public class AirWizard extends EnemyMob {
 	private static MobSprite[][] sprites = MobSprite.compileMobSpriteAnimations(8, 14);
@@ -78,9 +78,11 @@ public class AirWizard extends EnemyMob {
 			return; // skips the rest of the code (attackTime was > 0; ie we're attacking.)
 		}
 		
-		if (level.player != null && randomWalkTime == 0) { // if there is a player around, and the walking is not random
-			int xd = level.player.x - x; // the horizontal distance between the player and the air wizard.
-			int yd = level.player.y - y; // the vertical distance between the player and the air wizard.
+		Player player = getClosestPlayer();
+		
+		if (player != null && randomWalkTime == 0) { // if there is a player around, and the walking is not random
+			int xd = player.x - x; // the horizontal distance between the player and the air wizard.
+			int yd = player.y - y; // the vertical distance between the player and the air wizard.
 			if (xd * xd + yd * yd < 16*16 * 2*2) {
 				/// Move away from the player if less than 2 blocks away
 				
@@ -96,14 +98,14 @@ public class AirWizard extends EnemyMob {
 				double hypot = Math.sqrt(xd*xd + yd*yd);
 				int newxd = (int)(xd * Math.sqrt(16*16 * 15*15) / hypot);
 				int newyd = (int)(yd * Math.sqrt(16*16 * 15*15) / hypot);
-				x = level.player.x - newxd;
-				y = level.player.y - newyd;
+				x = player.x - newxd;
+				y = player.y - newyd;
 			}
 		}
 		
-		if (level.player != null && randomWalkTime == 0) {
-			int xd = level.player.x - x; // x dist to player
-			int yd = level.player.y - y; // y dist to player
+		if (player != null && randomWalkTime == 0) {
+			int xd = player.x - x; // x dist to player
+			int yd = player.y - y; // y dist to player
 			if (random.nextInt(4) == 0 && xd * xd + yd * yd < 50 * 50 && attackDelay == 0 && attackTime == 0) { // if a random number, 0-3, equals 0, and the player is less than 50 blocks away...
 				if (attackDelay == 0 && attackTime == 0) { // ...and attackDelay and attackTime equal 0...
 					attackDelay = 60 * 2; // ...then set attackDelay to 120 (2 seconds at default 60 ticks/sec)
@@ -173,21 +175,21 @@ public class AirWizard extends EnemyMob {
 	
 	/** What happens when the air wizard dies */
 	protected void die() {
-		if (level.player != null) { // if the player is still here
-			level.player.score += (secondform ? 500000 : 100000); // give the player 100K or 500K points.
+		Entity[] players = level.getEntitiesOfClass(Player.class);
+		if (players.length > 0) { // if the player is still here
+			for(Entity p: players)
+				((Player)p).score += (secondform ? 500000 : 100000); // give the player 100K or 500K points.
 		}
 		
 		Sound.bossdeath.play(); // play boss-death sound.
 		
 		if(!secondform) {
-			Game.notifications.add("Air Wizard: Defeated!");
-			if (!beaten) Game.notifications.add("The Dungeon is now open!");
-			level.player.game.notetick = -500;
+			Game.notifyAll("Air Wizard: Defeated!");
+			if (!beaten) Game.notifyAll("The Dungeon is now open!", -400);
 			beaten = true;
 		} else {
-			Game.notifications.add("Air Wizard II: Defeated!");
-			if (!OptionsMenu.unlockedskin) Game.notifications.add("A costume lies on the ground...");
-			level.player.game.notetick = -200;
+			Game.notifyAll("Air Wizard II: Defeated!");
+			if (!OptionsMenu.unlockedskin) Game.notifyAll("A costume lies on the ground...", -200);
 			OptionsMenu.unlockedskin = true;
 			BufferedWriter bufferedWriter = null;
 			

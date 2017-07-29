@@ -22,23 +22,19 @@ public class Skeleton extends EnemyMob {
 		
 		arrowtime = 300 / (lvl + 5);
 		artime = arrowtime;
-		/*
-		col0 = Color.get(-1, 111, 40, 444);
-		col1 = Color.get(-1, 222, 50, 555);
-		col2 = Color.get(-1, 111, 40, 444);
-		col3 = Color.get(-1, 0, 30, 333);
-		col4 = Color.get(-1, 111, 40, 444);*/
 	}
 
 	public void tick() {
 		super.tick();
 		
-		if (level.player != null && randomWalkTime == 0) {
-			boolean done = false;
+		if(skipTick()) return;
+		
+		Player player = getClosestPlayer();
+		if (player != null && randomWalkTime == 0) {
 			artime--;
 			
-			int xd = level.player.x - x;
-			int yd = level.player.y - y;
+			int xd = player.x - x;
+			int yd = player.y - y;
 			if (xd * xd + yd * yd < 100 * 100) {
 				if (artime < 1) {
 					int xdir = 0, ydir = 0;
@@ -46,42 +42,13 @@ public class Skeleton extends EnemyMob {
 					if(dir == 1) ydir = -1;
 					if(dir == 2) xdir = -1;
 					if(dir == 3) xdir = 1;
-					level.add(new Arrow(this, xdir, ydir, lvl, done));
+					level.add(new Arrow(this, xdir, ydir, lvl));
 					artime = arrowtime;
 				}
 			}
 		}
 	}
-	/*
-	public void render(Screen screen) {
-		if (isLight()) {
-			col0 = col1 = col2 = col3 = col4 = Color.get(-1, 222, 50, 555);
-		} else {
-			col0 = Color.get(-1, 111, 40, 444);
-			col1 = Color.get(-1, 222, 50, 555);
-			col2 = Color.get(-1, 111, 40, 444);
-			col3 = Color.get(-1, 000, 30, 333);
-			col4 = Color.get(-1, 111, 40, 444);
-		}
-		
-		if (lvl == 2) col = Color.get(-1, 100, 522, 555);
-		else if (lvl == 3) col = Color.get(-1, 111, 444, 555);
-		else if (lvl == 4) col = Color.get(-1, 000, 111, 555);
-		
-		else if (level.dirtColor == 322) {
-			if (Game.time == 0) col = col0;
-			if (Game.time == 1) col = col1;
-			if (Game.time == 2) col = col2;
-			if (Game.time == 3) col = col3;
-		} else col = col4;
-		
-		super.render(screen);
-	}
 	
-	public boolean canWool() {
-		return true;
-	}*/
-
 	protected void die() {
 		int[] diffrands = {20, 20, 30};
 		int[] diffvals = {13, 18, 28};

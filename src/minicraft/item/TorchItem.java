@@ -24,9 +24,9 @@ public class TorchItem extends TileItem {
 	public boolean interactOn(Tile tile, Level level, int xt, int yt, Player player, int attackDir) {
 		if(validTiles.contains(tile.name)) {
 			level.setTile(xt, yt, TorchTile.getTorchTile(tile));
-			return true;
+			return super.interactOn(true);
 		}
-		return false;
+		return super.interactOn(false);
 	}
 	
 	public boolean matches(Item other) {

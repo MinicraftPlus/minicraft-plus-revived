@@ -1,10 +1,10 @@
 package minicraft.screen;
 
 import java.util.Arrays;
+import minicraft.Sound;
 import minicraft.gfx.Color;
 import minicraft.gfx.Font;
 import minicraft.gfx.Screen;
-import minicraft.Sound;
 
 public class WorldGenMenu extends SelectMenu {
 	//this the the "more world options" menu.
@@ -51,7 +51,7 @@ public class WorldGenMenu extends SelectMenu {
 		
 		super.render(screen);
 		
-		Font.drawCentered("World options", screen, 3 * 8, Color.get(0, 555));
+		Font.drawCentered("World options", screen, 3 * 8, Color.get(-1, 555));
 		Font.drawCentered(input.getMapping("up")+" and "+input.getMapping("down")+" to scroll", screen, 16 * 8, Color.get(-1, 555));
 		Font.drawCentered("Press "+input.getMapping("exit")+" to exit", screen, 18 * 8, Color.get(-1, 555));
 	}
@@ -73,5 +73,14 @@ public class WorldGenMenu extends SelectMenu {
 	
 	public static int getSize() {
 		return sizes[selections[getIdx("Size")]];
+	}
+	
+	public static void setSize(int size) {
+		for(int i = 0; i < sizes.length; i++) {
+			if(sizes[i] == size) {
+				selections[getIdx("Size")] = i;
+				break;
+			}
+		}
 	}
 }

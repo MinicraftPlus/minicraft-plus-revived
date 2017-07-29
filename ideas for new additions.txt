@@ -2,15 +2,23 @@
 
 ----
 
+Make it so cloud tile can be placed in the sky level, on empty air tiles. Otherwise, they're useful for nothing...
+
+----
+
+limit the number of airwizards at one time to 3.
+
+----
+
 Bacon. Just, Bacon.
 
 ----
 
-Remove the PowGlove entirely, in favor of a new control key, like "v", to "pickup" things. Perhaps, make it only work when nothing is in your hand?
+Requested: Change the lighting in caves. maybe I could experiment with having surface lighting, but just really, really low.
 
 ----
 
-Requested: Change the lighting in caves. maybe I could experiment with having surface lighting, but just really, really low.
+Make a invisibility potion. This will allow you to go through walls, but lava will still hurt you. If you get stuck in a wall, you will begin to take suffocation damage as in Minecraft.
 
 ----
 
@@ -32,7 +40,55 @@ Give the player 20 health instead of 10; this means that 1 health will be a half
 
 ++++
 
-Add a system to more properly find the home/data dir on different OS's; windows doesn't regconize "."[filename] as hidden, I think, so that should be accounted for as well.
+Add some Easter eggs into the game, like Christmas graphics or something.
+
+++++
+
+Jukeboxes / noteblocks. Maybe use DeterminationIsAlive music for this..? Speaking of music, minicraft flash on playminicraft.com/online has the perfect game music... I want it so bad...
+
+++++
+
+Request Message: Add a map in the game craftable with bones and leather and add some bone meal it is used to make trees grow faster and add some new arrows (note: I'll need sprites.)
+
+++++
+
+Add lasers! And glass! But, like, triangle glass, so the laser can bounce off things. And, if you concentrate 3+ lasers, it will do damage... What about coloring? I think a prism glass block should be added to difract it into 3 colors (prob rgb), one going in each of the three other directions.
+
+++++
+
+Make lapis do more. Maybe lapis tools, that make everything drop more items?
+
+++++
+
+add minecarts. And rails. Will probably start out powered by normal player movement.
+
+++++
+
+add fireballs...
+
+++++
+
+add controller support
+
+++++
+
+Make beds colorable. This will probably consist of making an item attribute to make the item colorable.
+
+++++
+
+Related to the above... I guess maybe make a system of item attributes? Entity attributes? Even tile attributes?
+
+++++
+
+Add maps to the game. One for each level on the smallest world size, and progressively more maps should be needed otherwise. Should I make the maps lock to "chuck" sort of locations, or always make the center the current location, where possible? It could work by having a mini-map in the upper-left whenever the map is the active item, and there is no menu open.
+
+++++
+
+Add more decorations that have no actual function...? Like furniture: chairs, tables, etc.
+
+++++
+
+make friendly mobs able to be fed and bred.
 
 ++++
 

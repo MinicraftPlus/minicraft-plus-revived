@@ -76,14 +76,14 @@ public class WheatTile extends Tile {
 	public void steppedOn(Level level, int xt, int yt, Entity entity) {
 		if (random.nextInt(60) != 0) return;
 		if (level.getData(xt, yt) < 2) return;
-		harvest(level, xt, yt);
+		harvest(level, xt, yt, entity);
 	}
 	
 	public void hurt(Level level, int x, int y, Mob source, int dmg, int attackDir) {
-		harvest(level, x, y);
+		harvest(level, x, y, source);
 	}
 	
-	private void harvest(Level level, int x, int y) {
+	private void harvest(Level level, int x, int y, Entity entity) {
 		int age = level.getData(x, y);
 		
 		level.dropItem(x*16+8, y*16+8, 1, 2, Items.get("seeds"));
@@ -97,8 +97,8 @@ public class WheatTile extends Tile {
 		
 		level.dropItem(x*16+8, y*16+8, count, Items.get("Wheat"));
 		
-		if (age >= 50) {
-			Player.score += random.nextInt(5) + 1;
+		if (age >= 50 && entity instanceof Player) {
+			((Player)entity).score += random.nextInt(5) + 1;
 		}
 		level.setTile(x, y, Tiles.get("dirt"));
 	}

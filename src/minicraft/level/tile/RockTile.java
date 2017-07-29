@@ -1,7 +1,6 @@
 package minicraft.level.tile;
 
 import minicraft.entity.Entity;
-import minicraft.entity.ItemEntity;
 import minicraft.entity.Mob;
 import minicraft.entity.Player;
 import minicraft.entity.particle.SmashParticle;
@@ -15,6 +14,7 @@ import minicraft.item.Items;
 import minicraft.item.ToolItem;
 import minicraft.item.ToolType;
 import minicraft.level.Level;
+import minicraft.screen.OptionsMenu;
 import minicraft.screen.ModeMenu;
 
 /// this is the typical stone you see underground and on the surface, that gives coal.
@@ -22,7 +22,7 @@ import minicraft.screen.ModeMenu;
 public class RockTile extends Tile {
 	private ConnectorSprite sprite = new ConnectorSprite(RockTile.class, new Sprite(4, 0, 3, 3, Color.get(111, 444, 555, 321), 3), new Sprite(7, 0, 2, 2, Color.get(111, 444, 555, 321), 3), Sprite.dots(Color.get(444, 444, 333, 333)));
 	
-	private int coallvl = 1;
+	private int coallvl = 0;
 	
 	protected RockTile(String name) {
 		super(name, (ConnectorSprite)null);
@@ -36,6 +36,10 @@ public class RockTile extends Tile {
 	}
 	
 	public boolean mayPass(Level level, int x, int y, Entity e) {
+		/*if(e instanceof Arrow && ((Arrow)e).owner instanceof Player && ModeMenu.creative && Game.debug) {
+			hurt(level, x, y, 50);
+			return true;
+		}*/
 		return false;
 	}
 	
@@ -47,8 +51,8 @@ public class RockTile extends Tile {
 		if (item instanceof ToolItem) {
 			ToolItem tool = (ToolItem) item;
 			if (tool.type == ToolType.Pickaxe && player.payStamina(4 - tool.level)) {
+				coallvl = 1;
 				hurt(level, xt, yt, random.nextInt(10) + (tool.level) * 5 + 10);
-				coallvl = 0;
 				return true;
 			}
 		}
@@ -71,7 +75,12 @@ public class RockTile extends Tile {
 			}
 			if (coallvl == 1) {
 				level.dropItem(x*16+8, y*16+8, 1, 2, Items.get("Stone"));
-				level.dropItem(x*16+8, y*16+8, 1, 3, Items.get("coal"));
+				int mincoal = 0, maxcoal = 1;
+				if(OptionsMenu.diff != OptionsMenu.hard) {
+					mincoal++;
+					maxcoal++;
+				}
+				level.dropItem(x*16+8, y*16+8, mincoal, maxcoal, Items.get("coal"));
 			}
 			level.setTile(x, y, Tiles.get("dirt"));
 		} else {

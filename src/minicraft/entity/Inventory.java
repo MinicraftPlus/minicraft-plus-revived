@@ -3,8 +3,11 @@ package minicraft.entity;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
+import minicraft.Game;
 import minicraft.item.FurnitureItem;
 import minicraft.item.Item;
+import minicraft.item.Items;
+import minicraft.item.PowerGloveItem;
 import minicraft.item.StackableItem;
 import minicraft.item.ToolItem;
 import minicraft.item.ToolType;
@@ -13,16 +16,28 @@ public class Inventory {
 	private Random random = new Random();
 	private List<Item> items = new ArrayList<Item>(); // the list of items that is in the inventory.
 	
-	public List<Item> getItems() {return items;}
+	public List<Item> getItems() {
+		List<Item> newItems = new ArrayList<Item>();
+		newItems.addAll(items);
+		return newItems;
+	}
 	public void clearInv() {items.clear();}
 	public int invSize() {return items.size();}
 	
 	public Item get(int idx) {return items.get(idx);}
 	
 	public Item remove(int idx) {
-		Item i = get(idx);
-		items.remove(i);
-		return i;
+		return items.remove(idx);
+	}
+	
+	public boolean remove(Item item) {
+		for(Item i: items) {
+			if(i.matches(item)) {
+				items.remove(i);
+				return true;
+			}
+		}
+		return false;
 	}
 	
 	/** Adds an item to the inventory */
@@ -37,6 +52,13 @@ public class Inventory {
 	
 	/** Adds an item to a specific spot in the inventory */
 	public void add(int slot, Item item) {
+		//if (Game.debug) System.out.println("adding item to an inventory: " + item);
+		if(item instanceof PowerGloveItem) {
+			System.out.println("WARNING: tried to add power glove to inventory. stack trace:");
+			Thread.dumpStack();
+			return; // do NOT add to inventory
+		}
+		
 		if (item instanceof StackableItem) { // if the item is a item...
 			StackableItem toTake = (StackableItem) item; // ...convert it into a StackableItem object.
 			
@@ -51,13 +73,6 @@ public class Inventory {
 			}
 			
 			if(!added) items.add(slot, toTake);
-			/*
-			StackableItem has = findItem(toTake); // finds if the StackableItem is already in their inventory (looking for an instance of StackableItem with the same .item)
-			if (has == null) { // if the owner of this inventory doesn't have the item
-				items.add(slot, toTake); // add the item in the items list
-			} else {
-				has.count += toTake.count; // else add to the count of the item item already there.
-			}*/
 		} else {
 			items.add(slot, item); // add the item to the items list
 		}
@@ -139,21 +154,21 @@ public class Inventory {
 		return ti != null;
 	}*/
 	
-	/** Removes items from your inventory */
+	/** Removes items from your inventory; looks for stacks, and removes from each until reached count. returns amount removed. */
 	public int removeFromStack(StackableItem given, int count) {
 		int removed = 0; // to keep track of amount removed.
 		for(int i = 0; i < items.size(); i++) {
 			if(!(items.get(i) instanceof StackableItem)) continue;
 			StackableItem curItem = (StackableItem) items.get(i);
-			if(!curItem.matches(given)) continue;
+			if(!curItem.name.equals(given.name)) continue; // can't do matches, becuase that includes the stack size.
 			// matches; and current item is stackable.
-			int amountRemoved = Math.min(count-removed, curItem.count);
-			curItem.count -= amountRemoved;
+			int amountRemoving = Math.min(count-removed, curItem.count); // this is the number of items that are being removed from the stack this run-through.
+			curItem.count -= amountRemoving;
 			if(curItem.count == 0) { // remove the item from the inventory if its stack is empty.
 				items.remove(curItem);
 				i--;
 			}
-			removed += amountRemoved;
+			removed += amountRemoving;
 			if(removed == count) break;
 			if(removed > count) { // just in case...
 				System.out.println("SCREW UP while removing items from stack: " + (removed-count) + " too many.");
@@ -182,10 +197,16 @@ public class Inventory {
 		return true;
 	}*/
 	
-	public void removeItem(Item i) { removeItems(i, 1); }
+	/** Removes the item from the inventory entirely, whether it's a stack, or a lone item. */
+	public void removeItem(Item i) {
+		if(i instanceof StackableItem)
+			removeItems(i, ((StackableItem)i).count);
+		else
+			removeItems(i, 1);
+	}
 	/** removes items from this inventory. Note, if passed a stackable item, this will only remove a max of count from the stack. */
 	public void removeItems(Item given, int count) {
-		while(count > 0) {
+		//while(count > 0) {
 			if(given instanceof StackableItem)
 				count -= removeFromStack((StackableItem)given, count);
 			else {
@@ -198,7 +219,11 @@ public class Inventory {
 					}
 				}
 			}
-		}
+		//}
+		
+		if(count > 0)
+			System.out.println("WARNING: could not remove " + count + " "+given+(count>1?"s":"")+" from inventory");
+		
 		/*
 		if(given instanceof StackableItem)
 			return removeFromStack(given, count);
@@ -241,6 +266,28 @@ public class Inventory {
 			names.add(items.get(i).name);
 		
 		return names;
+	}
+	
+	public String getItemData() {
+		String itemdata = "";
+		for(Item i: items)
+			itemdata += i.getData()+":";
+		
+		if(itemdata.length() > 0)
+			itemdata = itemdata.substring(0, itemdata.length()-1); //remove extra ",".
+		
+		return itemdata;
+	}
+	
+	public void updateInv(String items) {
+		clearInv();
+		
+		//if (Game.debug) System.out.println(Game.onlinePrefix()+"updating inventory " + this + " with itemstring: " + items);
+		
+		if(items.length() == 0) return; // there are no items to add.
+		
+		for(String item: items.split(":")) // this still generates a 1-item array when "items" is blank... [""].
+			add(Items.get(item));
 	}
 	
 	/** These functions (possibly) add Items and/or Tools to the inventory. */

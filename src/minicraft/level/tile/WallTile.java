@@ -1,6 +1,5 @@
 package minicraft.level.tile;
 
-import minicraft.Game;
 import minicraft.entity.AirWizard;
 import minicraft.entity.Entity;
 import minicraft.entity.Mob;
@@ -59,7 +58,7 @@ public class WallTile extends Tile {
 						return true;
 					}
 				} else if(level.depth == -3)
-					Game.notifications.add("Only True heroes may enter."); // display a cryptic
+					player.game.notifications.add("Only True heroes may enter."); // display a cryptic
 			}
 		}
 		return false;

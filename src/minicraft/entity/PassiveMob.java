@@ -14,7 +14,7 @@ public class PassiveMob extends MobAi {
 	
 	public PassiveMob(MobSprite[][] sprites, int color) {this(sprites, color, 3);}
 	public PassiveMob(MobSprite[][] sprites, int color, int healthFactor) {
-		super(sprites, 5 + healthFactor * OptionsMenu.diff, 45, 40);
+		super(sprites, 5 + healthFactor * OptionsMenu.diff, 5*60*Game.normSpeed, 45, 40);
 		this.color = color;
 		col = color;
 	}
@@ -34,17 +34,13 @@ public class PassiveMob extends MobAi {
 	}
 	
 	protected void die() {
-		if (level.player != null) {
-			level.player.score += 15;
-		}
-		
-		super.die();
+		super.die(15);
 	}
 	
 	/** Tries once to find an appropriate spawn location for friendly mobs. */
 	public static boolean checkStartPos(Level level, int x, int y) {
 		
-		int r = (ModeMenu.score ? 22 : 15) + (Game.time == 3 ? 0 : 5); // get no-mob radius by
+		int r = (ModeMenu.score ? 22 : 15) + (Game.getTime() == Game.Time.Night ? 0 : 5); // get no-mob radius by
 		
 		if(!MobAi.checkStartPos(level, x, y, 80, r))
 			return false;

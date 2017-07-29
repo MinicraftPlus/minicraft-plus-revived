@@ -3,14 +3,12 @@ package minicraft.item;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import minicraft.Game;
 import minicraft.entity.Player;
 import minicraft.gfx.Color;
 import minicraft.gfx.Sprite;
 import minicraft.level.Level;
 import minicraft.level.tile.Tile;
 import minicraft.level.tile.Tiles;
-import minicraft.level.tile.WoolTile;
 
 public class TileItem extends StackableItem {
 	
@@ -72,15 +70,15 @@ public class TileItem extends StackableItem {
 			//Tile t = Tiles.get(tilename.contains("_")?tilename.substring(0, tilename.indexOf("_")):tilename);
 			if(tile.matches(level.getData(xt, yt), tilename)) {
 				level.setTile(xt, yt, model); // TODO maybe data should be part of the saved tile..?
-				return true;
+				return super.interactOn(true);
 			}
 		}
 		//if (Game.debug) System.out.println(model + " cannot be placed on " + tile.name);
 		
 		if(model.contains("Wall") && validTiles.size() == 1) {
-			Game.notifications.add("Can only be placed on " + Tiles.getName(validTiles.get(0)) + "!");
+			player.game.notifications.add("Can only be placed on " + Tiles.getName(validTiles.get(0)) + "!");
 		}
-		return false;
+		return super.interactOn(false);
 	}
 	
 	public boolean matches(Item other) {

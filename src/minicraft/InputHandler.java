@@ -7,6 +7,7 @@ import java.awt.event.MouseListener;
 import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 
 public class InputHandler implements MouseListener, KeyListener {
@@ -75,20 +76,25 @@ public class InputHandler implements MouseListener, KeyListener {
 	public Mouse two = new Mouse();
 	public Mouse tri = new Mouse();
 	
-	public InputHandler(Game game) {
-		keymap = new HashMap<String, String>(); //stores custom key name with physical key name in keyboard.
+	private Game game;
+	
+	public InputHandler(Game game) { this(game, true); }
+	public InputHandler(Game game, boolean listenToKeyboard) {
+		keymap = new LinkedHashMap<String, String>(); //stores custom key name with physical key name in keyboard.
 		keyboard = new HashMap<String, Key>(); //stores physical keyboard keys; auto-generated :D
 		
 		initKeyMap(); // this is seperate so I can make a "restore defaults" option.
 		
 		// I'm not entirely sure if this is necessary... but it doesn't hurt.
-		keyboard.put("SHIFT", new Key());
-		keyboard.put("CTRL", new Key());
-		keyboard.put("ALT", new Key());
+		keyboard.put("SHIFT", new Key(true));
+		keyboard.put("CTRL", new Key(true));
+		keyboard.put("ALT", new Key(true));
 		
-		game.addKeyListener(this); //add key listener to game
+		if(listenToKeyboard)
+			game.addKeyListener(this); //add key listener to game
 		//game.addMouseListener(this); //add mouse listener to game (though it's never used)
 		//ticks = 0;
+		this.game = game;
 	}
 	
 	private final void initKeyMap() {
@@ -97,12 +103,15 @@ public class InputHandler implements MouseListener, KeyListener {
 		keymap.put("LEFT", "LEFT|A"); //move left action references left arrow key
 		keymap.put("RIGHT", "RIGHT|D"); //move right action references right arrow key
 		
-		keymap.put("SELECT", "ENTER|E");
-		keymap.put("EXIT", "ESCAPE|Q");
+		keymap.put("SELECT", "ENTER");
+		keymap.put("EXIT", "ESCAPE");
 		
 		keymap.put("ATTACK", "C|SPACE"); //attack action references "C" key
 		keymap.put("MENU", "X|ENTER"); //and so on... menu does various things.
 		keymap.put("CRAFT", "Z"); // open/close personal crafting window.
+		keymap.put("PICKUP", "V"); // pickup torches / furniture; this replaces the power glove.
+		keymap.put("DROP-ONE", "Q"); // drops the item in your hand, or selected in your inventory, by ones; it won't drop an entire stack
+		keymap.put("DROP-STACK", "SHIFT-Q"); // drops the item in your hand, or selected in your inventory, entirely; even if it's a stack.
 		
 		keymap.put("PAUSE", "ESCAPE"); // pause the game.
 		keymap.put("SETHOME", "SHIFT-H"); // set your home.
@@ -118,6 +127,7 @@ public class InputHandler implements MouseListener, KeyListener {
 	}
 	
 	public void resetKeyBindings() {
+		keymap.clear();
 		initKeyMap();
 	}
 	
@@ -141,7 +151,13 @@ public class InputHandler implements MouseListener, KeyListener {
 		//sticky = true if presses reaches 3, and the key continues to be held down.
 		private boolean sticky;
 		
-		public Key() {} // probably would be auto-created anyway.
+		boolean stayDown;
+		private int inactiveTime;
+		
+		public Key() { this(false); }
+		public Key(boolean stayDown) {
+			this.stayDown = stayDown;
+		}
 		
 		/** toggles the key down or not down. */
 		public void toggle(boolean pressed) {
@@ -153,11 +169,16 @@ public class InputHandler implements MouseListener, KeyListener {
 		public void tick() {
 			if (absorbs < presses) { // If there are more key presses to process...
 				absorbs++; //process them!
+				if(presses - absorbs > 3) absorbs = presses - 3;
 				clicked = true; // make clicked true, since key presses are still being processed.
 			} else { // All key presses so far for this key have been processed.
 				if (!sticky) sticky = presses > 3;
 				else sticky = down;
 				clicked = sticky; // set clicked to false, since we're done processing; UNLESS the key has been held down for a bit, and hasn't yet been released.
+				
+				//if(down && !clicked)
+					//inactiveTime++;
+				
 				//reset the presses and absorbs, to ensure they don't get too high, or something:
 				presses = 0;
 				absorbs = 0;
@@ -204,10 +225,10 @@ public class InputHandler implements MouseListener, KeyListener {
 	public Key getKey(String keytext) { return getKey(keytext, true); }
 	private Key getKey(String keytext, boolean getFromMap) {
 		// if the passed-in key is blank, or null, then return null.
-		if (keytext == null || keytext.length() == 0) return null;
+		if (keytext == null || keytext.length() == 0) return new Key();
 		
 		Key key; // make a new key to return at the end
-		keytext = keytext.toUpperCase(); // prevent errors due to improper "casing"
+		keytext = keytext.toUpperCase(java.util.Locale.ENGLISH); // prevent errors due to improper "casing"
 		
 		synchronized ("lock") {
 			// this should never be run, actually, b/c the "=debug" isn't used in other places in the code.
@@ -285,9 +306,27 @@ public class InputHandler implements MouseListener, KeyListener {
 		return key; // return the Key object.
 	}
 	
+	/// this method preovides a way to press physical keys without actually generating a key event.
+	public void pressKey(String keyname, boolean pressed) {
+		Key key = getPhysKey(keyname);
+		key.toggle(pressed);
+		//key.down = key.clicked = pressed;
+		//System.out.println("key " + keyname + " is clicked: " + getPhysKey(keyname).clicked);
+	}
+	
+	public ArrayList<String> getAllPressedKeys() {
+		ArrayList<String> keys = new ArrayList<String>();
+		for(String keyname: keyboard.keySet().toArray(new String[0]))
+			if(keyboard.get(keyname).down)
+				keys.add(keyname);
+		
+		return keys;
+	}
+	
 	/// this gets a key from key text, w/o adding to the key list.
 	private Key getPhysKey(String keytext) {
 		keytext = keytext.toUpperCase();
+		
 		if (keyboard.containsKey(keytext))
 			return keyboard.get(keytext);
 		else {
@@ -312,14 +351,19 @@ public class InputHandler implements MouseListener, KeyListener {
 		//System.out.println("interpreted key press: " + keytext);
 		
 		//System.out.println("toggling " + keytext + " key (keycode " + keycode + ") to "+pressed+".");
-		if( pressed && keyToChange != null && !(keytext.equals("CTRL")||keytext.equals("ALT")||keytext.equals("SHIFT")) ) {
+		if( pressed && keyToChange != null && !isMod(keytext) ) {
 			keymap.put(keyToChange, ( overwrite?"":keymap.get(keyToChange)+"|" ) + getCurModifiers()+keytext);
 			keyToChange = null;
 		}
 		getPhysKey(keytext).toggle(pressed);
 	}
 	
-	private String getCurModifiers() {
+	public static boolean isMod(String keyname) {
+		keyname = keyname.toUpperCase();
+		return keyname.equals("SHIFT") || keyname.equals("CTRL") || keyname.equals("ALT");
+	}
+	
+	public String getCurModifiers() {
 		return (getKey("ctrl").down?"CTRL-":"") +
 				(getKey("alt").down?"ALT-":"") +
 				(getKey("shift").down?"SHIFT-":"");

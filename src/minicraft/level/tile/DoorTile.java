@@ -1,5 +1,6 @@
 package minicraft.level.tile;
 
+import minicraft.Sound;
 import minicraft.entity.Entity;
 import minicraft.entity.Mob;
 import minicraft.entity.Player;
@@ -11,7 +12,6 @@ import minicraft.item.Items;
 import minicraft.item.ToolItem;
 import minicraft.item.ToolType;
 import minicraft.level.Level;
-import minicraft.Sound;
 
 public class DoorTile extends Tile {
 	private Sprite closedSprite = new Sprite(2, 24, 2, 2);
@@ -50,8 +50,8 @@ public class DoorTile extends Tile {
 			ToolItem tool = (ToolItem) item;
 			if (tool.type == ToolType.Pickaxe) {
 				if (player.payStamina(4 - tool.level)) {
-					level.setTile(xt, yt, Tiles.get("Stone Bricks"));
-					level.dropItem(xt*16, yt*16, Items.get(type.name() + " Door"));
+					level.setTile(xt, yt, Tiles.get(id+3)); // will get the corresponding floor tile.
+					level.dropItem(xt*16+8, yt*16+8, Items.get(type.name() + " Door"));
 					Sound.monsterHurt.play();
 					return true;
 				}

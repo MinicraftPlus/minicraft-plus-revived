@@ -1,0 +1,248 @@
+#~/bin/sh
+
+#optional args:
+# arg 1 = base dir path
+# arg 2+ = java file names in $1/src/minicraft.
+
+set -e
+
+help=0
+lint=0
+compjava=1
+compjar=1
+runjar=1
+debugbuild=1
+printonly=0
+gavefile=0
+lvlgentest=0
+gentest=""
+colortest=0
+passtojar=""
+sendtoserver=0
+
+function append {
+	rm *.tmp &>/dev/null 
+	if [ ! $printonly -eq 0 -o ! $? -eq 0 ]; then
+		echo
+	fi
+	#exit $?
+}
+trap append EXIT
+#the above makes "append" execute whenever the script exits.
+
+#idiomatic parameter and option handling in sh
+while test $# -gt 0
+do
+	case "$1" in
+		--help) help=1
+			;;
+		--lint) lint=1
+			;;
+		--printfiles) printonly=1
+			;;
+		--jar) shift
+				compjar=$1
+			;;
+		--javac) shift
+				compjava=$1
+			;;
+		--debug) shift
+				debugbuild=$1
+			;;
+		--run-only)
+				compjava=0
+				compjar=0
+			;;
+		-ro)
+				compjava=0
+				compjar=0
+			;;
+		--run) shift
+				runjar=$1
+			;;
+		--test-gen)
+				lvlgentest=1
+				compjar=0
+				gavefile=1
+				shift
+				gentest=$1
+			;;
+		--testcol)
+				colortest=1
+				compjar=0
+				runjar=0
+				gavefile=1
+			;;
+		--ss)
+				sendtoserver=1
+			;;
+		--oss)
+				sendtoserver=1
+				compjar=0
+				compjava=0
+				runjar=0
+			;;
+		--) #this means that the remaining options are for the jar file to process.
+				shift
+				passtojar=$@ #store remaining options
+				break
+			;;
+#		--*) echo "ignoring unknown option $1"
+#			;;
+		*) break #stop processing options; arg list should now have dir and/or files.
+			;;
+	esac
+	shift
+done
+
+if [ $help -eq 1 ]; then
+	echo Usage: bmini [options...] [DIR] [FILES...]
+	echo
+	echo This is a shortcut that:
+	echo \ automatically compiles java code into a seperate directory,
+	echo \ compacts the result into a jar file,
+	echo \ and then runs the resulting jar.
+	echo
+	echo Parameters:
+	echo " DIR: the directory to work in; defaults to the current directory."
+	echo "   DIR must have the two subfolders DIR/src and DIR/build;"
+	echo "   put the java files in DIR/src, and any resources for the jar in DIR/build."
+	echo
+	echo " FILES: a list of .java files to compile and include in the jar update." 
+	echo "   Default is all .java files in DIR/src."
+	echo "   Specify this if you only want to recompile a couple files."
+	echo
+	echo "Options:"
+	echo -e "    all listed boolean options default to 1."
+	echo -e "    all options may be overridden by specifying it again, unless otherwise noted."
+	echo -e "\t--lint         run javac with \"-Xlint\" option"
+	echo -e "\t--printfiles   print the relative file paths of the .java files found, then exit"
+	echo -e "\t--jar <1|0>    whether jar file is created/updated"
+	echo -e "\t--javac <1|0>  whether .java files are compiled"
+	echo -e "\t--run <1|0>    whether to run jar file at the end"
+	echo -e "\t--debug <1|0>  whether to pass \"--debug\" to the jar file when running it"
+	echo -e "\t--run-only     same as \"--javac 0 --jar 0\""
+	echo -e "\t--test-gen     run the LevelGen class main method instead, to generate terrain maps."
+	echo -e "\t   <l,v,l,...>\t Give lvl numbers from 1 to -4, separated by commas, ie. \"-2,-3\""
+	echo -e "\t\t\t The script will ignore passed in files."
+	echo -e "\t\t\t This option implies \"--jar 0\""
+	echo -e "\t--testcol ...  Run Color.java's main class; all proceding parameters will be passed to Color.java"
+	eacho -e "\t--            tell the script that the remaining arguments are not for it to process; it passes them to the jar file."
+	echo -e "\t--help         print this help page and exit."
+	exit 0
+fi
+
+if [ -n "$passtojar" ]; then
+	while [ -n "$1" ]; do
+		shift
+	done
+fi
+
+# here, $1 may be a dir, a file, or nothing.
+if [ ! -d "$1" ]; then
+	DIR=src
+else
+	DIR=$1/src
+	shift
+fi
+
+if [ ! -d $DIR ]; then
+	echo could not find folder "$DIR"
+	exit 1
+fi
+
+cd $DIR
+VERSION=$(grep -hr "VERSION =" . | sed 's/.*"\(.*\)";\n\?\r\?/\1/')
+#echo version is \"$VERSION\"
+FILENAME=minicraft_plus_$(echo $VERSION)_test.jar
+#echo filename is \"$FILENAME\"
+
+if [ -z $gentest ]; then
+	# here, $1 may be a file, or nothing.
+	if [ -z $1 ]; then
+		# no files are given.
+		FILES=$(find -name *.java)
+	else
+		# file(s) are specified.
+		gavefile=1
+		for FILE in $@; do
+			FILES="$FILES minicraft/${FILE}.java"
+		done
+		FILES=$(echo $FILES)
+		if [ $printonly -eq 0 ]; then
+			echo files given: "$FILES"; echo
+		fi
+	fi
+elif [ $lvlgentest -eq 1 ]; then
+	FILES=minicraft/level/levelgen/LevelGen.java
+else
+	FILES=minicraft/gfx/Color.java
+fi
+
+if [ $printonly -eq 1 ]; then
+	for FILE in $FILES; do
+		LIST=$LIST\ $(echo $FILE | sed s%\.%$(pwd)%)
+	done
+	echo -n $LIST
+	exit 0
+fi
+
+if [ $compjava -eq 1 ]; then
+	if [ $lint -eq 1 ]; then
+		echo compiling files with Xlint...
+		javac -Xlint -d ../build/ $FILES
+	else
+		echo compiling files...
+		javac -d ../build/ $FILES
+	fi
+else
+	echo skipping javac compilation.
+fi
+echo
+
+cd ..
+
+if [ $compjar -eq 1 ]; then
+	if [ $gavefile -eq 1 ] && [ -e $FILENAME ]; then
+		echo updating jar file:
+		jar ufv $FILENAME -C build/ $(echo $FILES | sed s/.java/.class/g)
+	else
+		echo compiling jar file:
+		if [ ! -f build/manifest.txt ]; then
+			echo -e "Main-Class: minicraft.Game\n" > build/manifest.txt
+		fi
+		jar cfvm $FILENAME build/manifest.txt -C build/ .
+	fi
+else
+	echo skipping jar compilation.
+fi
+echo
+
+if [ $sendtoserver -eq 1 ]; then
+	echo sending jar file to remote server...
+	GENERIC="minicraft_plus_test.jar"
+	mv $FILENAME $GENERIC
+	mscp $GENERIC
+	mv $GENERIC $FILENAME
+	echo sent.
+fi
+
+if [ $lvlgentest -eq 1 ]; then
+	cd build
+	echo running LevelGen main...
+	java $(sed s#\.java## $FILES) $(sed s#,#\ #g $gentest)
+elif [ $colortest -eq 1 ]; then
+	cd build
+	echo running Color main...
+	java $(sed s#\.java## $FILES) $@
+elif [ $runjar -eq 1 ]; then	
+	echo running jar file...
+	if [ $debugbuild -eq 1 ]; then
+		java -jar $FILENAME --debug $passtojar
+	else
+		java -jar $FILENAME $passtojar
+	fi
+else
+	echo skipping jar test run.
+fi
+exit 0
