@@ -1,4 +1,4 @@
-# minicraft-plus-revived
+# Minicraft Plus
 Minicraft+ is a modded version of minicraft that adds many more features to the original version. To learn more about minicraft, or play it yourself, take a look at [www.playminicraft.com](https://www.playminicraft.com).
 
 The code was a bit of a mess at first, due to inexperience and several years of abandonment, but after a number of months, I'm finally more or less happy with it. I have personally done a couple of things for the mod recently; for the first few months, I was just renovating code, not really adding that much; but after that was done, the main visible feature I've added is a multiplayer mode! It works pretty well; though there's still some to do. And the code still isn't perfect, but hopefully it'll get there eventually. This project isn't getting abandoned by me anytime soon. :)
