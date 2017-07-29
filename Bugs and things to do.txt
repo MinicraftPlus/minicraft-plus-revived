@@ -19,7 +19,6 @@ Sound effects don't always play when they should; mostly it seems when other sou
 
 #####
 MULTIPLAYER-Related:
- - strange behavior observed when dying; the health bar still regens, and move worked for a second...
  - reported: connection gets stuck at the "loading entities" screen
  
  It would be nice if I could find a way to not even bother telling the server for things like potions, that don't even interact with the world.
