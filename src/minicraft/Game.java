@@ -46,6 +46,14 @@ public class Game extends Canvas implements Runnable {
 	public static boolean debug = false;
 	public static boolean HAS_GUI = true;
 	
+	/// MANAGERIAL VARS AND RUNNING
+	
+	public static final String NAME = "Minicraft Plus"; // This is the name on the application window
+	public static final String VERSION = "2.0.3-dev4";
+	public static final int HEIGHT = 192;
+	public static final int WIDTH = 288;
+	private static float SCALE = 3;
+	
 	public static final String os;
 	public static final String localGameDir;
 	public static final String systemGameDir;
@@ -66,14 +74,6 @@ public class Game extends Canvas implements Runnable {
 	}
 	public static String gameDir; // The directory in which all the game files are stored
 	//public static String loadDir = "";
-	
-	/// MANAGERIAL VARS AND RUNNING
-	
-	public static final String NAME = "Minicraft Plus"; // This is the name on the application window
-	public static final String VERSION = "2.0.3-dev4";
-	public static final int HEIGHT = 192;
-	public static final int WIDTH = 288;
-	private static float SCALE = 3;
 	
 	/// MULTIPLAYER
 	public static boolean ISONLINE = false;
