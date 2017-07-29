@@ -462,7 +462,7 @@ public class MinicraftClient extends MinicraftConnection {
 				int pos = Integer.parseInt(data[1]);
 				theLevel.tiles[pos] = Byte.parseByte(data[2]);
 				theLevel.data[pos] = Byte.parseByte(data[3]);
-				if (Game.debug) System.out.println("CLIENT: updated tile on lvl " + theLevel.depth + " to " + Tiles.get(theLevel.tiles[pos]).name);
+				//if (Game.debug) System.out.println("CLIENT: updated tile on lvl " + theLevel.depth + " to " + Tiles.get(theLevel.tiles[pos]).name);
 				return true;
 			
 			case ADD:

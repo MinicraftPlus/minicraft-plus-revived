@@ -549,7 +549,9 @@ public class MinicraftServer extends Thread implements MinicraftProtocol {
 				int lvlDepth = Integer.parseInt(data[0]);
 				int xt = Integer.parseInt(data[1]);
 				int yt = Integer.parseInt(data[2]);
-				serverThread.sendTileUpdate(lvlDepth, xt, yt);
+				for(int lvly = yt-1; lvly <= yt+1; lvly++)
+					for(int lvlx = xt-1; lvlx <= xt+1; lvlx++)
+						serverThread.sendTileUpdate(lvlDepth, lvlx, lvly);
 				return true;
 			
 			case ENTITY:

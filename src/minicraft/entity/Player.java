@@ -140,7 +140,7 @@ public class Player extends Mob {
 	public HashMap<PotionType, Integer> getPotionEffects() { return potioneffects; }
 	
 	public void tick() {
-		if(level == null) return;
+		if(level == null || isRemoved()) return;
 		
 		if(!Bed.inBed && input.getKey("drop-one").clicked || input.getKey("drop-stack").clicked) {
 			Item itemToDrop = null;

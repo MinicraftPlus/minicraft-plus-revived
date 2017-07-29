@@ -152,7 +152,9 @@ public class MinicraftServerThread extends MinicraftConnection {
 		sendTileUpdate(level.depth, x, y);
 	}
 	public void sendTileUpdate(int depth, int x, int y) {
-		sendData(InputType.TILE, Tile.getData(depth, x, y));
+		String data = Tile.getData(depth, x, y);
+		if(data != null && data.length() > 0)
+			sendData(InputType.TILE, data);
 	}
 	
 	public void sendEntityUpdate(Entity e, String updateString) {
@@ -211,7 +213,7 @@ public class MinicraftServerThread extends MinicraftConnection {
 	protected void respawnPlayer() {
 		client = new RemotePlayer(game, true, client);
 		client.respawn(Game.levels[Game.lvlIdx(0)]); // get the spawn loc. of the client
-		sendData(InputType.PLAYER, client.getData()); // send spawn loc.
+		sendData(InputType.PLAYER, client.getPlayerData()); // send spawn loc.
 	}
 	
 	protected File getRemotePlayerFile() {
