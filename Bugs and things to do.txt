@@ -26,6 +26,10 @@ MULTIPLAYER-Related:
 	****IDEAS(that should probably be implemented)****
 ****
 
+Add a feature where the player is knocked back when mobs attack them, but not by water or lava. So... well, actually, anything that's self-inflicted, and nothing else. So, hunger, water, and lava, don't knock back, but everthing else should.
+
+****
+
 make the text when typing a world name become uppercase according to English locale.
 
 ****
