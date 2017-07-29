@@ -227,7 +227,7 @@ class ConsoleReader extends Thread {
 		},
 		
 		TP
-		("<playername> <x y [level] | playername>", "teleports a player to a given location in the world.", "the first player name is the player that will be teleported. the second argument can be either another player, or a set of world coordinates.", "if the second argument is a player name, then the first player will be teleported to the second player, possibly traversing different levels.", "if world coordinates are specified, an x and y coordinate are required. A level depth may optionally be specified to go to a different level; if not specified, the current level is assumed.") { /// future usage: "<x> <y> | "
+		("<playername> <x y [level] | playername>", "teleports a player to a given location in the world.", "the first player name is the player that will be teleported. the second argument can be either another player, or a set of world coordinates.", "if the second argument is a player name, then the first player will be teleported to the second player, possibly traversing different levels.", "if world coordinates are specified, an x and y coordinate are required. A level depth may optionally be specified to go to a different level; if not specified, the current level is assumed.", "the symbol \"~\" may be used in place of an x or y coordinate, or a level, to mean the current player position on that axis. additionally, an offset may be specified by writing it like so: \"~-3 ~\". this means 3 tiles to the left of the current player position.") { /// future usage: "<x> <y> | "
 			public void run(String[] args, Game game) {
 				if(args.length == 0) {
 					System.out.println("you must specify a username, and coordinates or another username to teleport to.");
@@ -246,11 +246,16 @@ class ConsoleReader extends Thread {
 				
 				if(args.length > 2) {
 					try {
-						xt = Integer.parseInt(args[1]);
-						yt = Integer.parseInt(args[2]);
+						xt = getCoordinate(args[1], clientThread.getClient().x >> 4);
+						yt = getCoordinate(args[2], clientThread.getClient().y >> 4);
+						
 						if(args.length == 4) {
 							try {
-								level = Game.levels[Game.lvlIdx(Integer.parseInt(args[3]))];
+								int lvl = getCoordinate(args[3], (level != null ? level.depth : 0));
+								level = Game.levels[Game.lvlIdx(lvl)];
+							} catch (NumberFormatException ex) {
+								System.out.println("specified level index is not a number: " + args[3]);
+								return;
 							} catch(IndexOutOfBoundsException ex) {
 								System.out.println("invalid level index: " + args[3]);
 								return;
@@ -328,6 +333,14 @@ class ConsoleReader extends Thread {
 			System.out.println("type \"help " + cmd + "\" for more info.");
 		}
 		
+		private static int getCoordinate(String coord, int baseline) throws NumberFormatException {
+			if(coord.contains("~")) {
+				if(coord.equals("~")) return baseline;
+				else return Integer.parseInt(coord.replace("~", "")) + baseline;
+			} else
+				return Integer.parseInt(coord);
+		}
+		
 		public static final Command[] values = Command.values();
 	}
 	
@@ -347,6 +360,7 @@ class ConsoleReader extends Thread {
 		System.out.println("type \"help\" for a list of commands...");
 		
 		while(shouldRun/* && stdin.hasNext()*/) {
+			System.out.print("Enter a command: ");
 			String command = stdin.next().trim();
 			List<String> parsed = new ArrayList<String>();
 			parsed.addAll(Arrays.asList(command.split(" ")));
