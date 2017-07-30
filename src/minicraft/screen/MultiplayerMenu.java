@@ -13,9 +13,11 @@ import minicraft.saveload.Save;
 
 public class MultiplayerMenu extends Menu {
 	
-	private List<String> takenNames = new ArrayList<String>();
+	//private List<String> takenNames = new ArrayList<String>();
 	
 	public static String savedIP = "";
+	public static String lastUUID = "";
+	public static String lastUsername = "";
 	
 	private String loadingMessage = "doing nothing";
 	private String errorMessage = "";
@@ -23,8 +25,11 @@ public class MultiplayerMenu extends Menu {
 	private String typing = savedIP;
 	private boolean inputIsValid = false;
 	
+	private boolean online = false;
+	private boolean typingUsername = true;
+	
 	private static enum State {
-		WAITING, ENTERIP, ENTERNAME, LOADING, ERROR
+		WAITING, LOGIN, ENTERIP, LOADING, ERROR
 	}
 	
 	private State curState;
@@ -33,46 +38,84 @@ public class MultiplayerMenu extends Menu {
 		Game.ISONLINE = true;
 		Game.ISHOST = false;
 		
-		curState = State.ENTERIP;
+		if(savedUUID == null) savedUUID = "";
+		if(savedUsername == null) savedUsername = "";
+		
+		curState = State.LOGIN;
+		
+		// TODO HTTP REQUEST - determine if there is internet connectivity.
+		
+		// online = ?;
+		
+		if(savedUUID.length() > 0) {
+			// there is a previous login that can be used; check that it's valid
+			
+			/// TODO HTTP REQUEST - ATTEMPT TO SEND UUID TO SERVER AND UPDATE USERNAME
+			
+		}
+		
+		// at this point, the username has been updated, or couldn't be fetched. Or, there was no login.
+		if(savedUsername.length() == 0 || savedUUID.length() == 0) {
+			if(!online) {
+				// couldn't validate username, and can't enter offline mode b/c there is no username
+				setError("no login data saved, and no internet connection; cannot enter offline mode.");
+				return;
+			}
+			
+			// the user may login
+		} else {
+			// the user has sufficient credentials; skip login phase
+			curState = State.ENTERIP;
+		}
+		
+		if(curState == State.LOGIN)
+			typing = savedUsername;
 	}
 	
-	// this automatically sets the ipAddress, and goes from there. it also assumes the game is a client.
+	// this automatically sets the ipAddress.
 	public MultiplayerMenu(Game game, String ipAddress) {
 		this();
-		curState = State.WAITING;
-		Game.client = new MinicraftClient(game, this, ipAddress);
+		if(curState == State.ENTERIP) {
+			Game.client = new MinicraftClient(game, this, ipAddress);
+			curState = State.WAITING;
+		} else
+			savedIP = ipAddress;
 	}
 	
 	public void tick() {
 		
 		switch(curState) {
-			case ENTERIP:
-				checkKeyTyped(Pattern.compile("[a-zA-Z0-9 \\-/_\\.:%\\?&=]"));
-				if(input.getKey("select").clicked) {
-					curState = State.WAITING;
-					Game.client = new MinicraftClient(game, this, typing); // typing = ipAddress
-					savedIP = typing;
-					new Save(game); // write the saved ip to file
-					typing = "";
-					return;
-				}
-			break;
-				
-			case ENTERNAME:
+			case LOGIN:
 				checkKeyTyped(Pattern.compile("[0-9A-Za-z \\-\\.]"));
 				
 				inputIsValid = true;
 				if(typing.length() == 0)
 					inputIsValid = false;
 				else
-					for(String name: takenNames)
-						if(name.equalsIgnoreCase(typing))
-							inputIsValid = false;
 				
 				if(input.getKey("select").clicked && inputIsValid) {
+					if(typingUsername) {
+						typingUsername = false;
+						savedUsername = typing;
+						new Save(game);
+						typing = "";
+					} else {
+						curState = State.WAITING;
+						Game.client.login(savedUsername, typing); // typing = password
+						typing = "";
+					}
+					return;
+				}
+			break;
+			
+			case ENTERIP:
+				checkKeyTyped(Pattern.compile("[a-zA-Z0-9 \\-/_\\.:%\\?&=]"));
+				if(input.getKey("select").clicked) {
 					curState = State.WAITING;
-					Game.client.login(typing); // typing = username
-					//typing = "";
+					savedIP = typing;
+					Game.client = new MinicraftClient(game, this, typing); // typing = ipAddress
+					new Save(game); // write the saved ip to file
+					typing = "";
 					return;
 				}
 			break;
@@ -103,11 +146,11 @@ public class MultiplayerMenu extends Menu {
 		}
 	}
 	
-	public void setTakenNames(List<String> names) {
+	/*public void setTakenNames(List<String> names) {
 		takenNames = names;
 		typing = System.getProperty("user.name"); // a little trick for a nice default username. ;)
 		curState = State.ENTERNAME;
-	}
+	}*/
 	
 	public void setLoadingMessage(String msg) {
 		curState = State.LOADING;
@@ -130,15 +173,22 @@ public class MultiplayerMenu extends Menu {
 				Font.drawCentered(typing, screen, screen.h/2+6, Color.get(-1, 552));
 				break;
 			
-			case ENTERNAME:
-				Font.drawCentered("Enter username to show others:", screen, screen.h/2-6, Color.get(-1, 555));
+			case LOGIN:
+				String msg = "Enter username:";
+				if(!typingUsername)
+					msg = "Enter password:";
+				Font.drawCentered(msg, screen, screen.h/2-6, Color.get(-1, 555));
+				
+				msg = typing;
+				if(!typingUsername)
+					msg = msg.replaceAll(".", "*");
 				Font.drawCentered(typing, screen, screen.h/2+6, (inputIsValid?Color.get(-1, 444):Color.get(-1, 500)));
 				if(!inputIsValid) {
-					String msg = "Username is taken";
-					if(typing.length() == 0)
-						msg = "Username cannot be blank";
+					//String msg = "Username is taken";
+					//if(typing.length() == 0)
+						//msg = ;
 					
-					Font.drawCentered(msg, screen, screen.h/2+20, Color.get(-1, 500));
+					Font.drawCentered("field is blank", screen, screen.h/2+20, Color.get(-1, 500));
 				}
 				break;
 			

@@ -304,6 +304,10 @@ public class Load {
 			subdata = data.subList(2, data.size());
 		} else {
 			MultiplayerMenu.savedIP = data.get(2);
+			if(prefVer.compareTo(new Version("2.0.3-dev3")) > 0) {
+				MultiplayerMenu.savedUUID = data.remove(3);
+				MultiplayerMenu.savedUsername = data.remove(3);
+			}
 			String keyData = data.get(3);
 			subdata = Arrays.asList(keyData.split(":"));
 		}

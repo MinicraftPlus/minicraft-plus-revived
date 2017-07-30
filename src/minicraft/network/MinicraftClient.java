@@ -158,17 +158,42 @@ public class MinicraftClient extends MinicraftConnection {
 		}
 	}
 	
-	public void login(String username) {
+	public void login(String username, String password) {
 		if (Game.debug) System.out.println("CLIENT: logging in to server...");
+		
+		/// TODO HTTP REQUEST - send username and password to server via HTTPS, expecting a UUID in return.
 		try {
-			game.player = new RemotePlayer(game.player, game, true, InetAddress.getLocalHost(), PORT);
-			((RemotePlayer)game.player).setUsername(username);
-		} catch(UnknownHostException ex) {
-			System.err.println("CLIENT could not get localhost address:");
-			ex.printStackTrace();
-			menu.setError("unable to get localhost address");
+			URL url = new URL("https://www.playminicraft.com/login");
+			URLConnection connection = url.openConnection();
+			connection.setReadTimeout(1000);
+			//Scanner responseReader = new Scanner(url.openStream());
+			
+			//StringBuilder data = "";
+			//while(responseReader.hasNext()) {
+				//data.append(responseReader.next());
+			//}
+			MultiplayerMenu.savedUUID = (new BufferedReader(new InputStreamReader(url.openStream()))).readLine();
+			
+			try {
+				game.player = new RemotePlayer(game.player, game, true, InetAddress.getLocalHost(), PORT);
+				((RemotePlayer)game.player).setUsername(username);
+			} catch(UnknownHostException ex) {
+				System.err.println("CLIENT could not get localhost address:");
+				ex.printStackTrace();
+				menu.setError("unable to get localhost address");
+			}
+			changeState(State.LOGIN);
+			
+		} catch (MalformedURLException urlEx) {
+			urlEx.printStackTrace();
+			// ...
+		} catch (ConnectException conEx) {
+			conEx.printStackTrace();
+			// connection issue
+		} catch (IOException ioEx) {
+			ioEx.printStackTrace();
+			// offline
 		}
-		changeState(State.LOGIN);
 	}
 	
 	/*

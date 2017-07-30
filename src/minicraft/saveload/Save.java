@@ -159,6 +159,8 @@ public class Save {
 		data.add(String.valueOf(OptionsMenu.isSoundAct));
 		data.add(String.valueOf(OptionsMenu.autosave));
 		data.add(MultiplayerMenu.savedIP);
+		data.add(MultiplayerMenu.savedUUID);
+		data.add(MultiplayerMenu.savedUsername);
 		
 		List<String> keyPairs = new ArrayList<String>();
 		for(String keyPref: game.input.getKeyPrefs())
