@@ -175,10 +175,10 @@ public class AirWizard extends EnemyMob {
 	
 	/** What happens when the air wizard dies */
 	protected void die() {
-		Entity[] players = level.getEntitiesOfClass(Player.class);
+		Player[] players = level.getPlayers();
 		if (players.length > 0) { // if the player is still here
-			for(Entity p: players)
-				((Player)p).score += (secondform ? 500000 : 100000); // give the player 100K or 500K points.
+			for(Player p: players)
+				p.score += (secondform ? 500000 : 100000); // give the player 100K or 500K points.
 		}
 		
 		Sound.bossdeath.play(); // play boss-death sound.

@@ -55,8 +55,7 @@ public class Creeper extends EnemyMob {
 			
 			boolean hurtOne = false; // tells if any players were hurt
 			
-			for(Entity entity: level.getEntitiesOfClass(Player.class)) {
-				Player player = (Player) entity;
+			for(Player player: level.getPlayers()) {
 				int pdx = Math.abs(player.x - x);
 				int pdy = Math.abs(player.y - y);
 				if(pdx < BLAST_RADIUS && pdy < BLAST_RADIUS) {
