@@ -75,6 +75,8 @@ public class Game extends Canvas implements Runnable {
 	public static String gameDir; // The directory in which all the game files are stored
 	//public static String loadDir = "";
 	
+	public static int MAX_FPS = 40;
+	
 	/// MULTIPLAYER
 	public static boolean ISONLINE = false;
 	public static boolean ISHOST = false; /// this being true doesn't mean this game isn't a client as well; becuase it should be.
@@ -462,7 +464,7 @@ public class Game extends Canvas implements Runnable {
 			//boolean ticked = false;
 			for(Level floor: levels) {
 				if(floor == null) continue;
-				//if(floor.getEntitiesOfClass(Player.class).length > 0) {
+				//if(floor.getPlayers().length > 0) {
 					//if(Game.debug) System.out.println("Server is ticking level " + floor.depth);
 					floor.tick();
 				//	ticked = true;
@@ -1153,6 +1155,7 @@ public class Game extends Canvas implements Runnable {
 	 */
 	public void run() {
 		long lastTime = System.nanoTime();
+		long lastRender = System.nanoTime();
 		double unprocessed = 0;
 		int frames = 0;
 		int ticks = 0;
@@ -1185,8 +1188,9 @@ public class Game extends Canvas implements Runnable {
 				e.printStackTrace();
 			}
 			
-			if (shouldRender) {
+			if (shouldRender && (now - lastRender) / 1.0E9 > 1.0 / MAX_FPS) {
 				frames++;
+				lastRender = System.nanoTime();
 				render();
 			}
 			
