@@ -685,11 +685,11 @@ public class MinicraftServer extends Thread implements MinicraftProtocol {
 				//clientPlayer.dir = Integer.parseInt(data[0]);
 				clientPlayer.activeItem = Items.get(data[0]); // this can be null; and that's fine, it means a fist. ;)
 				int arrowCount = Integer.parseInt(data[1]);
-				int curArrows = clientPlayer.inventory.count(Items.get("arrow"));
+				int curArrows = clientPlayer.inventory.count(Items.arrowItem);
 				if(curArrows < arrowCount)
-					clientPlayer.inventory.add(Items.get("arrow"), arrowCount-curArrows);
+					clientPlayer.inventory.add(Items.arrowItem, arrowCount-curArrows);
 				if(curArrows > arrowCount)
-					clientPlayer.inventory.removeItems(Items.get("arrow"), curArrows-arrowCount);
+					clientPlayer.inventory.removeItems(Items.arrowItem, curArrows-arrowCount);
 				//boolean wasGlove = clientPlayer.activeItem instanceof PowerGloveItem;
 				clientPlayer.attack(); /// NOTE the player may fire an arrow, but we won't sync the arrow count because that player will update it theirself.
 				

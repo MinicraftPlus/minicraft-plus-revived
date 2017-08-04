@@ -101,7 +101,7 @@ public class Player extends Mob {
 		
 		//ac = acs;
 		if(previousInstance == null)
-			inventory.add(Items.get("arrow"), acs);
+			inventory.add(Items.arrowItem, acs);
 		
 		potioneffects = new HashMap<PotionType, Integer>();
 		showpotioneffects = true;
@@ -453,8 +453,8 @@ public class Player extends Mob {
 			attackItem = activeItem;
 			
 			Game.client.requestInteraction(this);
-			if(activeItem instanceof ToolItem && stamina - 1 >= 0 && ((ToolItem)activeItem).type == ToolType.Bow && inventory.count(Items.get("arrow")) > 0) // we are going to use an arrow.
-				inventory.removeItem(Items.get("arrow")); // do it here so we don't need a response.
+			if(activeItem instanceof ToolItem && stamina - 1 >= 0 && ((ToolItem)activeItem).type == ToolType.Bow && inventory.count(Items.arrowItem) > 0) // we are going to use an arrow.
+				inventory.removeItem(Items.arrowItem); // do it here so we don't need a response.
 			
 			return;
 		}
@@ -467,7 +467,7 @@ public class Player extends Mob {
 			// the player is holding a tool, and has stamina available.
 			ToolItem tool = (ToolItem) activeItem;
 			
-			if (tool.type == ToolType.Bow && inventory.count(Items.get("arrow")) > 0) { // if the player is holding a bow, and has arrows...
+			if (tool.type == ToolType.Bow && inventory.count(Items.arrowItem) > 0) { // if the player is holding a bow, and has arrows...
 				//if (!energy) stamina -= 0; // must be a leftover.
 				//...then shoot the arrow in the right direction.
 				int spx = 0, spy = 0;
@@ -477,7 +477,7 @@ public class Player extends Mob {
 					case 2: spx = -1; spy = 0; break;
 					case 3: spx = 1; spy = 0; break;
 				}
-				if (ModeMenu.creative == false) inventory.removeItem(Items.get("arrow"));
+				if (ModeMenu.creative == false) inventory.removeItem(Items.arrowItem);
 				level.add(new Arrow(this, spx, spy, tool.level));
 				done = true; // we have attacked!
 			}
