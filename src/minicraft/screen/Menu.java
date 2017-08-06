@@ -13,86 +13,56 @@ import minicraft.Sound;
 /*** The Menu class is now basically the SelectMenu class... but better. ;)  On another note, perhaps... I *could* make this class not abstract, but I don't really want random menus being generated on the fly, so I'll stick with a class per menu type. **/
 public abstract class Menu extends Display {
 	
-	private int selected;
+	protected int selected;
 	private int highlightColor, offColor;
-	private List<String> options;
 	
-	//private String[] oldOptions;
-	
-	protected Menu() {}
-	protected Menu(List<String> options, Rectangle frame, int colOn, int colOff) {
-		super().setFrameBounds(frame);
-		this.options = options;
-		super.setText(options);
-		super.setStyle(new FontStyle(Color.get(-1, 333)).setShadowType(Color.get(-1, 555), "0"));
+	protected Menu(String[] options, Rectangle frame, int colOn, int colOff) {
+		this(options, (new Rectangle[] {frame}), colOn, colOff);
+	}
+	protected Menu(String[] options, Rectangle[] frames, int colOn, int colOff) {
+		super()
+		.setFrameBounds(frames)
+		.setStyle(new FontStyle(Color.get(-1, 333)));
+		
 		selected = 0;
 		highlightColor = colOn;
 		offColor = colOff;
 	}
 	
+	/** handles selection changes. There is no exit function, becuase not all menus have one, for example the TitleMenu. */
 	public void tick() {
-		int size = getNumLines();
 		int prevSel = selected;
 		
 		if(input.getKey("up").clicked) selected--;
 		if(input.getKey("down").clicked) selected++;
 		
-		if(selected >= size) selected = 0;
-		if(selected < 0) selected = size - 1;
+		if(selected >= text.length) selected = 0;
+		if(selected < 0) selected = text.length - 1;
 		
-		if(prevSel != selected)
-			onSelectionChange(prevSel, selected);
+		if(prevSel != selected) {
+			Sound.craft.play(); // play a sound
+			text[prevSel] = text[prevSel].replace("\\A> (.*) <\\z"); // remove the angle brackets
+			onSelectionChange(selected); // do any other behavior (including adding new angle brackets)
+		}
 	}
 	
-	public void render(Screen screen) {
-		// the super should render the options as well.
-		
-		/*
-		// FIXME THIS isn't going to work! I can't make a random line of text a different color with the current setup... but maybe... I can just draw them all, but then overwrite the selected one? Yeah.... that could work...
-		String[] newOptions = options.toArray(new String[options.size()]);
-		if(newOptions.length > 0) {
-			try {
-				newOptions.set(selected, "> "+newOptions.get(selected)+" <");
-			} catch(IndexOutOfBoundsException ex) {
-				selected = Math.max(0, Math.min(selected, options.size()-1));
-			}
-		}
-		
-		if(!Arrays.deepEquals(newOptions, oldOptions)) {
-			oldOptions = newOptions;
-			super.setText(newOptions);
-		}*/
-		
-		
-		//String oldSel = options.get(selected);
-		//options.set(selected, "> "+options.get(selected)+" <");
-		
-		super.render(screen);
-		
-		//options.set(selected, oldSel);
-		
-		// now, render the selected option differently... the issue is likely going to be the positioning... maybe... oh! I've got it! How about I render everything as white, including the selected one being edited (will have the effect of popping out that one), and then I replace the selected one with an empty string, and render it again as dark! It may not be all *that* efficient... but it might work for now...
-		
-		/// ...of course, if I find an easy way to get the screen position of the selected option, then I'm ditching the above. It's cool, but inefficient, I feel.
-		/// hmmm... what about the opposite, replacing the others with empty strings...? idk...
-		// idk if I can just add a method to Display, b/c the positioning is back in the Font class...
-		
-		//String prevoptions
+	public void renderLine(Screen screen, FontStyle style, int lineIndex) {
+		style.setColor(isHighlighted(lineIndex) ? highlightColor : offColor);
+		super.renderLine(screen, style, lineIndex);
+	}
+	
+	/** Is used to determine whether the current line should be highlighted. */
+	protected boolean isHighlighted(int idx) {
+		return idx == selected;
 	}
 	
 	/** This was made with expansion in mind, mostly. It's sort of like an API / event method. It gets called whenever the selected option changes. I can see it being helpful for scrolling menus. */
-	protected void onSelectionChange(int oldSelection, int newSelection) {
-		Sound.craft.play();
-		try {
-			String prev = options.get(oldSelection);
-			options.set(oldSelection, prev.substring(3, prev.length()-2));
-		} catch(IndexOutOfBoundsException ex) {}
-		options.set(selected, "~> "+options.get(selected)+" <");
-		setText(options);
+	protected void onSelectionChange(int newSelection) {
+		text[newSelection] = "> "+text[newSelection]+" <"; // adds the new angle brackets. This is done here to allow the text string and selection index to be modified by subclasses, before the brackets are put in.
 	}
 	
-	//protected abstract void updateOptions();
 	
+	// TODO this needs to go. It looks so efficient... but I want to make it so it's never used.
 	public void renderItemList(Screen screen, int xo, int yo, int x1, int y1,
 	  List<? extends ListItem> listItems, int selected) {
 		boolean renderCursor = true;

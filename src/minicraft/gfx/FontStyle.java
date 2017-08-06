@@ -58,6 +58,9 @@ public class FontStyle {
 	protected int centerMinX, centerMaxX, centerMinY, centerMaxY;
 	protected int xPosition = -1, yPosition = -1;
 	
+	private String[] configuredPara;
+	private int paraMinY;
+	
 	public FontStyle(int mainColor) {
 		this.mainColor = mainColor;
 		shadowColor = Color.get(-1, -1);
@@ -69,6 +72,10 @@ public class FontStyle {
 		
 		/// by default, the styling is set so as to center the text in the middle of the screen, with no shadow.
 	}
+	
+	
+	// TODO make a constructor that takes another FontStyle and just copies all the protected fields.
+	
 	
 	/// actually draws the text.
 	public void draw(String msg, Screen screen) {
@@ -88,15 +95,39 @@ public class FontStyle {
 			if(sides[i] == '1')
 				Font.draw(msg, screen, xPos + shadowPosMap[i], yPos + shadowPosMap[i+8], shadowColor);
 	    
-		// a little feature to control what color you paint with.
+		/*// a little feature to control what color you paint with.
 		int mainCol = mainColor;
 		if(msg.startsWith("~")) {
 			msg = msg.substring(1);
 			mainCol = shadowColor;
-		}
+		}*/
 		
 		/// the main drawing of the text:
-		Font.draw(msg, screen, xPos, yPos, mainCol);
+		Font.draw(msg, screen, xPos, yPos, mainColor);
+	}
+	
+	public void drawParagraphLine(String[] para, int line, int spacing, Screen screen) {
+		if(para == null || line < 0 || line >= para.length) {
+			System.err.println("FontStyle.java: paragraph "+para+" is null or index "+line+" is invalid, can't draw line.");
+			return;
+		}
+		
+		if(configuredPara == null || !Arrays.equals(para, configuredPara))
+			configureForParagraph(para);
+		
+		setYPos(paraMinY + line*Font.textHeight() + line*spacing);
+		draw(para[i], screen);
+	}
+	
+	public void configureForParagraph(String[] para) {
+		configuredPara = para; // save the passed in paragraph for later comparison
+		
+		if(yPosition == -1) { // yPosition is auto-centered
+			int centerYDouble = centerMinY + centerMaxY;
+			int height = para.length * (Font.textHeight() + spacing);
+			paraMinY = (centerYDouble - height) / 2; // by doubles to maybe avoid possible rounding errors.
+		} else
+			paraMinY = yPosition; // save the y position.
 	}
 	
 	/** All the font modifier methods are below. They all return the current FontStyle instance for chaining. */

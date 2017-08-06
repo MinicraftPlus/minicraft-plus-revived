@@ -71,19 +71,9 @@ public class Font {
 	
 	/// all the other drawParagraph() methods end up calling this one.
 	public static String drawParagraph(String[] lines, Screen screen, FontStyle style, int lineSpacing) {
-		int minY = style.yPosition;
-		if(minY == -1) {
-			int centerY = (style.centerMinY + style.centerMaxY) / 2;
-			//int h = style.centerMaxY - style.centerMinY;
-			int halfheight = (lines.length * (textHeight() + lineSpacing)) / 2;
-			minY = centerY - halfheight;
-		}
-		for(int i = 0; i < lines.length-1; i++) {
-			style.setYPos(minY + i*textHeight() + i*lineSpacing);
-			//if(centered) drawCentered(lines[i], screen, x, x + w, curY, color); // draw centered in the rectangle
-			//else draw(lines[i], screen, x, curY, color); // draw left-justified in the rectangle
-			style.draw(lines[i], screen);
-		}
+		for(int i = 0; i < lines.length-1; i++)
+			style.drawParagraphLine(lines, i, lineSpacing, screen);
+		
 		return lines[lines.length-1]; // this is where the rest of the string that there wasn't space for is stored.
 	}
 	

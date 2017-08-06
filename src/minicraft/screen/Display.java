@@ -16,7 +16,7 @@ public abstract class Display {
 	protected Game game;
 	protected InputHandler input;
 	
-	private String[] text = null;
+	protected String[] text = null;
 	private int spacing = Font.textHeight();
 	private FontStyle style = null;
 	
@@ -25,21 +25,26 @@ public abstract class Display {
 		this.game = game;
 	}
 	
-	private Rectangle frame = null;
+	private Rectangle[] frames = null;
 	private String title = "";
 	
 	private int titleColor, sideColor, midColor;
 	
 	protected Display() {
-		setFrameColors(Color.get(-1, 1, 5, 445), Color.get(005, 005), Color.get(5, 5, 5, 550));
+		setFrameColors(Color.get(-1, 1, 5, 445), Color.get(005, 005), Color.get(5, 5, 5, 550)); // this will probably be the case very frequently, so it's the defualt.
 	}
 	
 	protected Display setFrameBounds(Rectangle rect) { return setFrameBounds(rect, true); }
-	protected Display setFrameBounds(Rectangle rect, boolean convertSize) {
+	protected Display setFrameBounds(Rectangle[] rects) { return setFrameBounds(rects, true); }
+	protected Display setFrameBounds(Rectangle rect, boolean convertSize) { return setFrameBounds((new Rectangle[] {rect}), true); }
+	protected Display setFrameBounds(Rectangle[] rects, boolean convertSize) {
 		if(!convertSize)
-			frame = rect;
-		else if(rect != null) /// the rect "coordinates" are in "sprite pixels"; that means that they actually [SpriteSheet.boxWidth] times bigger in actual screen coordinates. so, we'll transform them:
-			frame = new Rectangle(rect.getLeft()*SpriteSheet.boxWidth, rect.getTop()*SpriteSheet.boxWidth, rect.getWidth()*SpriteSheet.boxWidth, rect.getHeight()*SpriteSheet.boxWidth);
+			frames = rects;
+		else if(rects != null) { /// the rect "coordinates" are in "sprite pixels"; that means that they actually [SpriteSheet.boxWidth] times bigger in actual screen coordinates. so, we'll transform them:
+			frames = new Rectangle[rects.length];
+			for(int i = 0; i < rects.length; i++)
+				frames[i] = new Rectangle(rects[i].getLeft()*SpriteSheet.boxWidth, rects[i].getTop()*SpriteSheet.boxWidth, rects[i].getWidth()*SpriteSheet.boxWidth, rects[i].getHeight()*SpriteSheet.boxWidth);
+		}
 		
 		return this;
 	}
@@ -59,15 +64,13 @@ public abstract class Display {
 	}
 	
 	/** sets the lines of text to display. The complexity is all to prevent the object that set the value from maintaining a reference to the new text array, which would happen if it was set directly. Though... maybe I want that to be possible...? Nah, it would be nice for convenience, but it ruins encapsulation... *sigh*... */
-	protected Display setText(String[] text) { return setText(Arrays.asList(text)); }
+	/*protected Display setText(String[] text) { return setText(Arrays.asList(text)); }
 	protected Display setText(List<String> text) {
 		this.text = text.toArray(new String[text.size()]);
 		return this;
-	}
+	}*/
 	protected Display setTextStyle(FontStyle style) { this.style = style; return this; }
 	protected Display setLineSpacing(int spacing) { this.spacing = spacing; return this; }
-	
-	protected int getNumLines() { return text.length; }
 	
 	/** The behavior method. At this level, nothing is known of the behavior of the display, so it is abstract. */
 	public abstract void tick();
@@ -80,8 +83,13 @@ public abstract class Display {
 		
 		if(text != null) {
 			if(style == null) style = new FontStyle(Color.get(-1, 555));
-			Font.drawParagraph(text, screen, style, spacing);
+			for(int i = 0; i < text.length; i++)
+				renderLine(screen, style, i);
 		}
+	}
+	
+	public void renderLine(Screen screen, FontStyle style, int lineIndex) {
+		style.drawParagraphLine(text, lineIndex, screen);
 	}
 	
 	/** This renders the blue frame you see when you open up the crafting/inventory menus.
