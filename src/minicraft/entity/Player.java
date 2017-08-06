@@ -26,7 +26,7 @@ import minicraft.level.tile.Tile;
 import minicraft.level.tile.Tiles;
 import minicraft.saveload.Save;
 import minicraft.screen.CraftingMenu;
-import minicraft.screen.LoadingMenu;
+import minicraft.screen.LoadingDisplay;
 import minicraft.screen.ModeMenu;
 import minicraft.screen.OptionsMenu;
 import minicraft.screen.PauseMenu;
@@ -374,7 +374,7 @@ public class Player extends Mob {
 			
 			if (input.getKey("r").clicked && !game.saving && !(this instanceof RemotePlayer) && !Game.isValidClient()) {
 				game.saving = true;
-				LoadingMenu.percentage = 0;
+				LoadingDisplay.setPercentage(0);
 				new Save(this, WorldSelectMenu.worldname);
 			}
 			//debug feature:

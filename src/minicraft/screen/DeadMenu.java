@@ -3,13 +3,19 @@ package minicraft.screen;
 import minicraft.Game;
 import minicraft.gfx.Color;
 import minicraft.gfx.Font;
+import minicraft.gfx.Rectangle;
 import minicraft.gfx.Screen;
 
-public class DeadMenu extends Menu {
+public class DeadMenu extends Display {
 	private int inputDelay = 60;
 	// this is an IMPORTANT bool, determines if the user should respawn or not. :)
 	public static boolean shouldRespawn;
-
+	
+	public DeadMenu() {
+		super();
+		setFrameBounds(new Rectangle(1, 3, 18, 10, Rectangle.CORNERS));
+	}
+	
 	public void tick() {
 		if (inputDelay > 0) {
 			inputDelay--;
@@ -33,7 +39,8 @@ public class DeadMenu extends Menu {
 	}
 
 	public void render(Screen screen) {
-		renderFrame(screen, "", 1, 3, 18, 10); // Draws a box frame based on 4 points. You can include a title as well.
+		renderFrame(screen);
+		//renderFrame(screen, "", 1, 3, 18, 10); // Draws a box frame based on 4 points. You can include a title as well.
 		Font.draw("You died! Aww!", screen, 16, 32, Color.get(-1, 555));
 		
 		// the current time elapsed in the game.

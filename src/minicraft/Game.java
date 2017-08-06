@@ -43,6 +43,7 @@ public class Game extends Canvas implements Runnable {
 	
 	private static Random random = new Random();
 	
+	public static Game main = null; // holds a reference to the main game instance initialized in the main method.
 	public static boolean debug = false;
 	public static boolean HAS_GUI = true;
 	
@@ -76,6 +77,8 @@ public class Game extends Canvas implements Runnable {
 	//public static String loadDir = "";
 	
 	public static int MAX_FPS = 40;
+	public static final int MIN_FPS_CONFIG = 1;
+	public static final int MAX_FPS_CONFIG = 200;
 	
 	/// MULTIPLAYER
 	public static boolean ISONLINE = false;
@@ -131,7 +134,7 @@ public class Game extends Canvas implements Runnable {
 	}
 	
 	public InputHandler input; // input used in Game, Player, and just about all the *Menu classes.
-	public Menu menu; // the current menu you are on.
+	public Display menu; // the current menu you are on.
 	public Player player; // The Player.
 	//public Level level; // This is the current level you are on.
 	static int worldSize = 128; // The size of the world
@@ -215,8 +218,8 @@ public class Game extends Canvas implements Runnable {
 	*/
 	
 	// Sets the current menu.
-	public void setMenu(Menu menu) {
-		this.menu = menu;
+	public void setMenu(Display display) {
+		this.menu = display;
 		//if (debug) System.out.println("setting game menu to " + menu);
 		if (menu != null) menu.init(this, input);
 	}
@@ -252,8 +255,8 @@ public class Game extends Canvas implements Runnable {
 	protected void init() {
 		/* This sets up the screens, and loads the icons.png spritesheet. */
 		try {
-			screen = new Screen(WIDTH, HEIGHT, new SpriteSheet(ImageIO.read(Game.class.getResourceAsStream("/icons.png"))));
-			lightScreen = new Screen(WIDTH, HEIGHT, new SpriteSheet(ImageIO.read(Game.class.getResourceAsStream("/icons.png"))));
+			screen = new Screen(new SpriteSheet(ImageIO.read(Game.class.getResourceAsStream("/icons.png"))));
+			lightScreen = new Screen(new SpriteSheet(ImageIO.read(Game.class.getResourceAsStream("/icons.png"))));
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
@@ -331,7 +334,7 @@ public class Game extends Canvas implements Runnable {
 		
 		scoreTime = ModeMenu.getScoreTime();
 		
-		LoadingMenu.percentage = 0; // this actually isn't necessary, I think; it's just in case.
+		LoadingDisplay.setPercentage(0); // this actually isn't necessary, I think; it's just in case.
 		
 		if(!isValidClient()) {
 			if(Game.debug) System.out.println("initializing world non-client...");
@@ -347,7 +350,7 @@ public class Game extends Canvas implements Runnable {
 					if(Game.debug) System.out.println("loading level " + i + "...");
 					levels[lvlIdx(i)] = new Level(this, worldSize, worldSize, i, levels[lvlIdx(i+1)], !WorldSelectMenu.loadworld);
 					
-					LoadingMenu.percentage += loadingInc;
+					LoadingDisplay.progress(loadingInc);
 				}
 				
 				if(Game.debug) System.out.println("level loading complete.");
@@ -441,7 +444,7 @@ public class Game extends Canvas implements Runnable {
 		if (ModeMenu.score && (!paused || isValidServer() && !gameOver)) {
 			if (scoreTime <= 0) { // GAME OVER
 				gameOver = true;
-				setMenu(new WonMenu(player));
+				setMenu(new PlayerScoreDisplay(player));
 			}
 			
 			scoreTime--;
@@ -515,7 +518,7 @@ public class Game extends Canvas implements Runnable {
 							setMenu(new DeadMenu());
 						}
 					} else if (pendingLevelChange != 0) {
-						setMenu(new LevelTransitionMenu(pendingLevelChange));
+						setMenu(new LevelTransitionDisplay(pendingLevelChange));
 						pendingLevelChange = 0;
 					}
 					/*else if (Game.isValidClient() && Game.debug) {
@@ -899,7 +902,7 @@ public class Game extends Canvas implements Runnable {
 		screen.render(10 * 8 + 4, screen.h - 16, 13 + 5 * 32, Color.get(0, 111, 222, 430), 0);
 		
 		String msg = "";
-		if (saving) msg = "Saving... " + Math.round(LoadingMenu.percentage) + "%";
+		if (saving) msg = "Saving... " + Math.round(LoadingDisplay.getPercentage()) + "%";
 		else if (Bed.inBed) msg = "Sleeping...";
 		
 		if(msg.length() > 0)
@@ -1323,6 +1326,7 @@ public class Game extends Canvas implements Runnable {
 		
 		game.autoclient = autoclient; // this will make the game automatically jump to the MultiplayerMenu, and attempt to connect to localhost.
 		
+		Game.main = game; // sets the main game instance reference.
 		game.start(); // Starts the game!
 	}
 	

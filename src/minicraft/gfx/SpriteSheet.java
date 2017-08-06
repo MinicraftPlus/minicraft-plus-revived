@@ -3,6 +3,9 @@ package minicraft.gfx;
 import java.awt.image.BufferedImage;
 
 public class SpriteSheet {
+	
+	public static final int boxWidth = 8;
+	
 	public int width, height; // width and height of the sprite sheet
 	public int[] pixels; // integer array of the image's pixels
 	

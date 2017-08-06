@@ -89,7 +89,7 @@ public class ModeMenu extends Menu {
 		if (input.getKey("z").clicked)
 			game.setMenu(new WorldGenMenu());
 		else if(input.getKey("select").clicked)
-			game.setMenu(new LoadingMenu());
+			game.setMenu(new LoadingDisplay());
 		else if (input.getKey("exit").clicked)
 			game.setMenu(new TitleMenu());
 	}

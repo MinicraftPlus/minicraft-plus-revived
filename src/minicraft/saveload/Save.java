@@ -13,7 +13,7 @@ import minicraft.item.Item;
 import minicraft.item.PotionType;
 import minicraft.item.StackableItem;
 import minicraft.network.MinicraftServer;
-import minicraft.screen.LoadingMenu;
+import minicraft.screen.LoadingDisplay;
 import minicraft.screen.ModeMenu;
 import minicraft.screen.MultiplayerMenu;
 import minicraft.screen.OptionsMenu;
@@ -95,9 +95,9 @@ public class Save {
 		
 		data.clear();
 		
-		LoadingMenu.percentage += 7;
-		if(LoadingMenu.percentage > 100) {
-			LoadingMenu.percentage = 100;
+		LoadingDisplay.progress(7);
+		if(LoadingDisplay.getPercentage() > 100) {
+			LoadingDisplay.setPercentage(100);
 		}
 		
 		game.render(); // AH HA!!! HERE'S AN IMPORTANT STATEMENT!!!!

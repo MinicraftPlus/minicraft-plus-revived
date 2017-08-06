@@ -36,7 +36,7 @@ public class Sprite {
 	
 	protected Px[][] spritePixels;
 	public int color;
-	protected Rectangle sheetLoc;
+	protected java.awt.Rectangle sheetLoc;
 	/// spritePixels is arranged so that the pixels are in their correct positions relative to the top left of the full sprite. This means that their render positions are built-in to the array.
 	
 	public Sprite(int pos, int color) {

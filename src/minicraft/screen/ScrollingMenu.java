@@ -12,6 +12,8 @@ public class ScrollingMenu extends SelectMenu {
 	
 	protected int offset; // since not all elements are displayed at once, this determines which item is at the top.
 	
+	private boolean wrap;
+	
 	private ScrollingMenu(List<String> options, int displayLength, int x, int y, boolean centered, int spacing, int colSel, int colNoSel) {
 		super(options, x, y, centered, spacing, colSel, colNoSel);
 		dispSize = Math.min(displayLength, options.size());

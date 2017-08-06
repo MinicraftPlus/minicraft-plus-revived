@@ -11,7 +11,7 @@ import minicraft.gfx.Screen;
 import minicraft.network.MinicraftClient;
 import minicraft.saveload.Save;
 
-public class MultiplayerMenu extends Menu {
+public class MultiplayerMenu extends Display {
 	
 	private List<String> takenNames = new ArrayList<String>();
 	
@@ -30,6 +30,7 @@ public class MultiplayerMenu extends Menu {
 	private State curState;
 	
 	public MultiplayerMenu() {
+		super();
 		Game.ISONLINE = true;
 		Game.ISHOST = false;
 		

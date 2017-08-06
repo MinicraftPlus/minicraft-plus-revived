@@ -20,7 +20,7 @@ import minicraft.item.StackableItem;
 import minicraft.level.Level;
 import minicraft.level.tile.Tiles;
 import minicraft.network.MinicraftServer;
-import minicraft.screen.LoadingMenu;
+import minicraft.screen.LoadingDisplay;
 import minicraft.screen.ModeMenu;
 import minicraft.screen.MultiplayerMenu;
 import minicraft.screen.OptionsMenu;
@@ -74,7 +74,7 @@ public class Load {
 			percentInc += nument;*/
 			percentInc = 100.0 / percentInc;
 			
-			LoadingMenu.percentage = 0;
+			LoadingDisplay.setPercentage(0);
 			loadGame("Game", game); // more of the version will be determined here
 			loadWorld("Level", game);
 			loadEntities("Entities", game);
@@ -83,7 +83,7 @@ public class Load {
 			if(ModeMenu.creative) {
 				Items.fillCreativeInv(game.player.inventory, false);
 			}
-			//LoadingMenu.percentage = 0; // reset
+			//LoadingDisplay.setPercentage(0); // reset
 		}
 	}
 	
@@ -212,9 +212,9 @@ public class Load {
 			}
 		}
 		
-		LoadingMenu.percentage += percentInc;
-		/*if(LoadingMenu.percentage > 100) {
-			LoadingMenu.percentage = 100;
+		LoadingDisplay.progress(percentInc);
+		/*if(LoadingDisplay.getPercentage() > 100) {
+			LoadingDisplay.setPercentage(100);
 		}*/
 	}
 	
@@ -367,7 +367,7 @@ public class Load {
 				curLevel.printTileLocs(Tiles.get("Stairs Down"));
 			}
 			
-			//LoadingMenu.percentage += percentInc;
+			//LoadingDisplay.progress(percentInc);
 			
 			if(parent == null) continue;
 			/// comfirm that there are stairs in all the places that should have stairs.
@@ -402,7 +402,7 @@ public class Load {
 			for(int i = 1; i < lvlw * lvlh-1; i++) {
 				tiles[i] = (byte) lvlids[i];
 				tdata[i] = (byte) lvldata[i];
-				//LoadingMenu.percentage += percentInc;
+				//LoadingDisplay.progress(percentInc);
 			}
 		} catch (IndexOutOfBoundsException ex) {
 			System.err.println("suspected: level id and data arrays do not have enough info for given world size.");
@@ -551,7 +551,7 @@ public class Load {
 		
 		for(int i = 0; i < data.size(); i++) {
 			loadEntity(data.get(i), game, worldVer, true);
-			//LoadingMenu.percentage += percentInc;
+			//LoadingDisplay.progress(percentInc);
 		}
 	}
 	

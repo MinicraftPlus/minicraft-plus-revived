@@ -5,20 +5,93 @@ import minicraft.Game;
 import minicraft.InputHandler;
 import minicraft.gfx.Color;
 import minicraft.gfx.Font;
+import minicraft.gfx.FontStyle;
+import minicraft.gfx.Rectangle;
 import minicraft.gfx.Screen;
+import minicraft.Sound;
 
-public abstract class Menu {
-	protected Game game;
-	protected InputHandler input;
+/*** The Menu class is now basically the SelectMenu class... but better. ;)  On another note, perhaps... I *could* make this class not abstract, but I don't really want random menus being generated on the fly, so I'll stick with a class per menu type. **/
+public abstract class Menu extends Display {
 	
-	public void init(Game game, InputHandler input) {
-		this.input = input;
-		this.game = game;
+	private int selected;
+	private int highlightColor, offColor;
+	private List<String> options;
+	
+	//private String[] oldOptions;
+	
+	protected Menu() {}
+	protected Menu(List<String> options, Rectangle frame, int colOn, int colOff) {
+		super().setFrameBounds(frame);
+		this.options = options;
+		super.setText(options);
+		super.setStyle(new FontStyle(Color.get(-1, 333)).setShadowType(Color.get(-1, 555), "0"));
+		selected = 0;
+		highlightColor = colOn;
+		offColor = colOff;
 	}
-
-	public abstract void tick();
 	
-	public abstract void render(Screen screen);
+	public void tick() {
+		int size = getNumLines();
+		int prevSel = selected;
+		
+		if(input.getKey("up").clicked) selected--;
+		if(input.getKey("down").clicked) selected++;
+		
+		if(selected >= size) selected = 0;
+		if(selected < 0) selected = size - 1;
+		
+		if(prevSel != selected)
+			onSelectionChange(prevSel, selected);
+	}
+	
+	public void render(Screen screen) {
+		// the super should render the options as well.
+		
+		/*
+		// FIXME THIS isn't going to work! I can't make a random line of text a different color with the current setup... but maybe... I can just draw them all, but then overwrite the selected one? Yeah.... that could work...
+		String[] newOptions = options.toArray(new String[options.size()]);
+		if(newOptions.length > 0) {
+			try {
+				newOptions.set(selected, "> "+newOptions.get(selected)+" <");
+			} catch(IndexOutOfBoundsException ex) {
+				selected = Math.max(0, Math.min(selected, options.size()-1));
+			}
+		}
+		
+		if(!Arrays.deepEquals(newOptions, oldOptions)) {
+			oldOptions = newOptions;
+			super.setText(newOptions);
+		}*/
+		
+		
+		//String oldSel = options.get(selected);
+		//options.set(selected, "> "+options.get(selected)+" <");
+		
+		super.render(screen);
+		
+		//options.set(selected, oldSel);
+		
+		// now, render the selected option differently... the issue is likely going to be the positioning... maybe... oh! I've got it! How about I render everything as white, including the selected one being edited (will have the effect of popping out that one), and then I replace the selected one with an empty string, and render it again as dark! It may not be all *that* efficient... but it might work for now...
+		
+		/// ...of course, if I find an easy way to get the screen position of the selected option, then I'm ditching the above. It's cool, but inefficient, I feel.
+		/// hmmm... what about the opposite, replacing the others with empty strings...? idk...
+		// idk if I can just add a method to Display, b/c the positioning is back in the Font class...
+		
+		//String prevoptions
+	}
+	
+	/** This was made with expansion in mind, mostly. It's sort of like an API / event method. It gets called whenever the selected option changes. I can see it being helpful for scrolling menus. */
+	protected void onSelectionChange(int oldSelection, int newSelection) {
+		Sound.craft.play();
+		try {
+			String prev = options.get(oldSelection);
+			options.set(oldSelection, prev.substring(3, prev.length()-2));
+		} catch(IndexOutOfBoundsException ex) {}
+		options.set(selected, "~> "+options.get(selected)+" <");
+		setText(options);
+	}
+	
+	//protected abstract void updateOptions();
 	
 	public void renderItemList(Screen screen, int xo, int yo, int x1, int y1,
 	  List<? extends ListItem> listItems, int selected) {
@@ -45,30 +118,5 @@ public abstract class Menu {
 			Font.draw(">", screen, (xo + 0) * 8, yy * 8, Color.get(-1, 555));
 			Font.draw("<", screen, (xo + w) * 8, yy * 8, Color.get(-1, 555));
 		}
-	}
-	
-	/** This renders the blue frame you see when you open up the crafting/inventory menus.
-	 *  The width & height are based on 4 points (Staring x & y positions (0), and Ending x & y positions (1)). */
-	protected static final void renderMenuFrame(Screen screen, String title, int x0, int y0, int x1, int y1, int sideColor, int midColor, int titleColor) {
-		for (int y = y0; y <= y1; y++) { // loop through the height of the frame
-			for (int x = x0; x <= x1; x++) { // loop through the width of the frame
-				
-				boolean xend = x == x0 || x == x1;
-				boolean yend = y == y0 || y == y1;
-				int spriteoffset = (xend && yend ? 0 : (yend ? 1 : 2)); // determines which sprite to use
-				int mirrors = ( x == x1 ? 1 : 0 ) + ( y == y1 ? 2 : 0 ); // gets mirroring
-				
-				int color = xend || yend ? sideColor : midColor;//sideColor; // gets the color; slightly different in upper right corner, and middle is all blue.
-				
-				screen.render(x * 8, y * 8, spriteoffset + 13 * 32, color, mirrors);
-			}
-		}
-
-		Font.draw(title, screen, x0 * 8 + 8, y0 * 8, titleColor);
-	}
-	
-	/// the default blue menu frame.
-	protected void renderFrame(Screen screen, String title, int x0, int y0, int x1, int y1) {
-		renderMenuFrame(screen, title, x0, y0, x1, y1, Color.get(-1, 1, 5, 445), Color.get(005, 005), Color.get(5, 5, 5, 550));
 	}
 }

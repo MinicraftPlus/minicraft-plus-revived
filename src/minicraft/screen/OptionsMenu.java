@@ -7,6 +7,7 @@ import minicraft.gfx.Font;
 import minicraft.gfx.Screen;
 import minicraft.saveload.Save;
 
+// TODO this class is going to extend the same class as WorldGenMenu, the one where the options aren't things you select, but things you configure. Each option has a number of possibilities, rather than just being an option. This new class will probably extend ScrollingMenu, just so that it can scroll if need be.
 public class OptionsMenu extends Menu {
 	public static int easy = 0;
 	public static int norm = 1;
@@ -19,17 +20,22 @@ public class OptionsMenu extends Menu {
 	private Menu parent;
 	
 	public OptionsMenu(Menu parent) {
+		super((new String[0]), null);
 		this.parent = parent;
 	}
 	
 	public void tick() {
+		
+		
+		boolean hasDelta = false;
+		
 		if(!Game.isValidClient()) {
 			
 			int prevdiff = diff;
 			if (input.getKey("left").clicked) diff--;
 			if (input.getKey("right").clicked) diff++;
 			
-			if (diff != prevdiff) Sound.craft.play();
+			if (diff != prevdiff) hasDelta = true;
 			
 			if (diff > 2) diff = 0;
 			if (diff < 0) diff = 2;
@@ -47,16 +53,25 @@ public class OptionsMenu extends Menu {
 		
 		//toggles sound
 		if (input.getKey("s").clicked) {
-			Sound.craft.play();
 			isSoundAct = !isSoundAct;
+			hasDelta = true;
 		}
 		
 		if (input.getKey("o").clicked && !Game.isValidClient()) {
-			Sound.craft.play();
 			autosave = !autosave;
+			hasDelta = true;
 		}
 		
-		if (!Game.isValidServer() && unlockedskin && input.getKey("w").clicked) game.player.skinon = !game.player.skinon;
+		if (!Game.isValidServer() && unlockedskin && input.getKey("w").clicked) {
+			game.player.skinon = !game.player.skinon;
+			hasDelta = true;
+		}
+		
+		if(hasDelta) {
+			Sound.craft.play();
+			// update the options list
+			
+		}
 	}
 
 	public void render(Screen screen) {

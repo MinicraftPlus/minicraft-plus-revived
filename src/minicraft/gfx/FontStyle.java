@@ -64,8 +64,10 @@ public class FontStyle {
 		shadowType = "";
 		centerMinX = 0;
 		centerMinY = 0;
-		centerMaxX = -1;
-		centerMaxY = -1;
+		centerMaxX = Screen.w;
+		centerMaxY = Screen.h;
+		
+		/// by default, the styling is set so as to center the text in the middle of the screen, with no shadow.
 	}
 	
 	/// actually draws the text.
@@ -86,26 +88,37 @@ public class FontStyle {
 			if(sides[i] == '1')
 				Font.draw(msg, screen, xPos + shadowPosMap[i], yPos + shadowPosMap[i+8], shadowColor);
 	    
+		// a little feature to control what color you paint with.
+		int mainCol = mainColor;
+		if(msg.startsWith("~")) {
+			msg = msg.substring(1);
+			mainCol = shadowColor;
+		}
+		
 		/// the main drawing of the text:
-		Font.draw(msg, screen, xPos, yPos, mainColor);
+		Font.draw(msg, screen, xPos, yPos, mainCol);
 	}
 	
 	/** All the font modifier methods are below. They all return the current FontStyle instance for chaining. */
 	
+	/** Sets the color of the text itself. */
 	public FontStyle setColor(int col) {
 		mainColor = col;
 		return this;
 	}
 	
+	/** (assuming pos is >= 0) sets the absolute left x position of the text. This causes the text to be left-justified. */
 	public FontStyle setXPos(int pos) {
 		xPosition = pos;
 		return this;
 	}
+	/** (assuming pos is >= 0) sets the absolute top y position of the text. This removes vertical centering. */
 	public FontStyle setYPos(int pos) {
 		yPosition = pos;
 		return this;
 	}
 	
+	/** sets the two anchors to center the text between horizontally. This enables horizontal centering. */
 	public FontStyle xCenterBounds(int min, int max) {
 		centerMinX = min;
 		centerMaxX = max;
@@ -113,6 +126,7 @@ public class FontStyle {
 		return this;
 	}
 	
+	/** same as above, but vertically. */
 	public FontStyle yCenterBounds(int min, int max) {
 		centerMinY = min;
 		centerMaxY = max;
@@ -120,17 +134,20 @@ public class FontStyle {
 		return this;
 	}
 	
+	/** This enables text shadowing, and sets the shadow color and type. It is a convenience method that offers a preset for text outlines, and a single shadow in a standard direction. */
 	public FontStyle setShadowType(int color, boolean full) {
 		String type = full ? "10101010" : "00010000";
 		setShadowType(color, type);
 		return this;
 	}
 	
+	/** This is what acutally sets the values described above. It also allows custom shadows. */
 	public FontStyle setShadowType(int color, String type) {
 		shadowColor = color;
 		shadowType = type;
 		return this;
 	}
 	
+	/** getter for main color variable. */
 	public int getColor() {return mainColor;}
 }

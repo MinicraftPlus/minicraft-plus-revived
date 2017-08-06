@@ -87,7 +87,7 @@ public class WorldSelectMenu extends Menu {
 		super.init(game, input);
 		if(!Game.HAS_GUI) {
 			if (Game.debug) System.out.println("gone through world select menu...");
-			game.setMenu(new LoadingMenu()); // the choice has already been made, begin world load.
+			game.setMenu(new LoadingDisplay()); // the choice has already been made, begin world load.
 		}
 	}
 	
@@ -197,7 +197,7 @@ public class WorldSelectMenu extends Menu {
 					worldname = worldnames.get(selected);
 					if (Game.debug) System.out.println("load mode: " + worldname);
 					Sound.test.play();
-					game.setMenu(new LoadingMenu());
+					game.setMenu(new LoadingDisplay());
 					//game.initWorld();
 					//game.setMenu((Menu) null);
 					break;

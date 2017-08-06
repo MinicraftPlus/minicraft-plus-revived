@@ -9,7 +9,7 @@ import minicraft.gfx.Screen;
 import minicraft.item.Item;
 import minicraft.item.StackableItem;
 
-public class ContainerMenu extends Menu {
+public class ContainerMenu extends Display {
 	private Player player; // The player that is looking inside the chest
 	private Chest chest;
 	//private Inventory container; // The inventory of the chest
@@ -90,7 +90,7 @@ public class ContainerMenu extends Menu {
 			} else {
 				if(transferAll && !(i == player.inventory && ModeMenu.creative))
 					i.removeItem(toSend); // It will add the item to the new inventory, and remove it from the old one.
-				if(i2 != player.inventory)
+				if(!(ModeMenu.creative && i2 == player.inventory))
 					i2.add(oSelected, toSend.clone());
 			}
 		}

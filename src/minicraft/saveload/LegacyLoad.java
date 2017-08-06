@@ -16,7 +16,7 @@ import minicraft.item.PotionItem;
 import minicraft.item.PotionType;
 import minicraft.level.Level;
 import minicraft.level.tile.Tiles;
-import minicraft.screen.LoadingMenu;
+import minicraft.screen.LoadingDisplay;
 import minicraft.screen.ModeMenu;
 import minicraft.screen.OptionsMenu;
 
@@ -63,7 +63,7 @@ public class LegacyLoad {
 		loadPlayer("Player", game.player);
 		loadInventory("Inventory", game.player.inventory);
 		loadEntities("Entities", game.player);
-		LoadingMenu.percentage = 0; // reset
+		LoadingDisplay.setPercentage(0); // reset
 	}
 	
 	protected LegacyLoad(File unlocksFile) {
@@ -97,9 +97,9 @@ public class LegacyLoad {
 			ex.printStackTrace();
 		} finally {
 			try {
-				LoadingMenu.percentage += 13;
-				if(LoadingMenu.percentage > 100) {
-					LoadingMenu.percentage = 100;
+				LoadingDisplay.progress(13);
+				if(LoadingDisplay.getPercentage() > 100) {
+					LoadingDisplay.setPercentage(100);
 				}
 				
 				if(br != null) {

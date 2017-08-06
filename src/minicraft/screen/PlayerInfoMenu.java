@@ -4,8 +4,15 @@ import java.util.ArrayList;
 import minicraft.gfx.Color;
 import minicraft.gfx.Font;
 import minicraft.gfx.Screen;
+import minicraft.gfx.Rectangle;
 
-public class PlayerInfoMenu extends Menu {
+public class PlayerInfoMenu extends Display {
+	
+	public PlayerInfoMenu() {
+		super();
+		setFrameBounds(new Rectangle(1, 1, 30, 15, Rectangle.CORNERS));
+		setTitle("Player Info");
+	}
 	
 	public void tick() {
 		if (input.getKey("select").clicked || input.getKey("Exit").clicked) {
@@ -14,7 +21,7 @@ public class PlayerInfoMenu extends Menu {
 	}
 	
 	public void render(Screen screen) {
-		renderFrame(screen, "Player Info", 1, 1, 30, 15);
+		//renderFrame(screen, "Player Info", 1, 1, 30, 15);
 		
 		int seconds = game.gameTime / game.normSpeed;
 		int minutes = seconds / 60;

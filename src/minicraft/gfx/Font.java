@@ -88,10 +88,11 @@ public class Font {
 	}
 	
 	
+	public static String[] getLines(String para, int w, int lineSpacing) { return getLines(para, w, 0, lineSpacing); }
 	public static String[] getLines(String para, int w, int h, int lineSpacing) {
 		ArrayList<String> lines = new ArrayList<String>();
 		int curPos = 0, curY = 0;
-		while(curPos < para.length() && curY < h) { // continue until we run out of characters, or lines.
+		while(curPos < para.length() && (h <= 0 || curY < h)) { // continue until we run out of characters, or lines.
 			String line = "", nextWord = "";
 			while(textWidth(line) + textWidth(nextWord) <= w) { // if the next word will fit...
 				line += nextWord; // append it to the line
@@ -125,7 +126,8 @@ public class Font {
 		if(curPos < para.length())
 			leftover = para.substring(curPos); // get any text from the string that didn't fit in the given rectangle.
 		
-		lines.add(leftover);
+		if(h > 0 || leftover.length() > 0)
+			lines.add(leftover);
 		
 		return lines.toArray(new String[0]);
 	}
