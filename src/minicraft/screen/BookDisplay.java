@@ -57,12 +57,13 @@ public class BookDisplay extends Display {
 	public int page;
 	
 	public BookDisplay(String book) {
-		super()
-		.setFrames(new Frame[] {
-			(new Frame("", (new Rectangle(14, 0, 21, 3, Rectangle.CORNERS))).setColors(Color.get(-1, 222), Color.get(554, 554), Color.get(-1, 1, 554, 554))), // renders the tiny, page number display frame.
-			(new Frame("", (new Rectangle(1, 4, 34, 20, Rectangle.CORNERS))).setColors(Color.get(-1, 222), Color.get(554, 554), Color.get(-1, 1, 554, 554))) // renders the big text content display frame.
-		})
-		.setStyle(new FontStyle(Color.get(-1, 000)));
+		super();
+		setFrames(new Frame[] {
+			(new Frame("", new Rectangle(14, 0, 21, 3, Rectangle.CORNERS))), // renders the tiny, page number display frame.
+			(new Frame("", new Rectangle(1, 4, 34, 20, Rectangle.CORNERS))) // renders the big text content display frame.
+		});
+		setFrameColors(Color.get(-1, 222), Color.get(554, 554), Color.get(-1, 1, 554, 554));
+		setTextStyle(new FontStyle(Color.get(-1, 000)));
 		
 		page = 0;
 		if(book == null)
@@ -78,7 +79,7 @@ public class BookDisplay extends Display {
 			}
 		}
 		
-		lines = pages.toArray(new String[pages.length][]);
+		lines = pages.toArray(new String[pages.size()][]);
 	}
 	
 	public void tick() {

@@ -20,7 +20,8 @@ public abstract class Menu extends Display {
 		this(options, (new Rectangle[] {frame}), colOn, colOff);
 	}*/
 	protected Menu(String[] options, int colOn, int colOff) {
-		super().setStyle(new FontStyle(Color.get(-1, 333)));
+		super();
+		setTextStyle(new FontStyle(Color.get(-1, 333)));
 		
 		selected = 0;
 		highlightColor = colOn;
@@ -39,7 +40,7 @@ public abstract class Menu extends Display {
 		
 		if(prevSel != selected) {
 			Sound.craft.play(); // play a sound
-			text[prevSel] = text[prevSel].replace("\\A> (.*) <\\z"); // remove the angle brackets
+			text[prevSel] = text[prevSel].replace("\\A> (.*) <\\z", "\\1"); // remove the angle brackets
 			onSelectionChange(prevSel, selected); // do any other behavior (including adding new angle brackets)
 		}
 	}

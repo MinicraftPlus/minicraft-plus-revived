@@ -28,8 +28,9 @@ public class PlayerScoreDisplay extends Display {
 	private ArrayList<String> unlocks;
 	
 	public PlayerScoreDisplay(Player player) {
-		setFrameBounds(new Rectangle(1, 3, Screen.w-2, Screen.h-4));
-		setTitle("Game Over!" + (ModeMenu.score ? " (" + ModeMenu.getSelectedTime() + ")" : ""));
+		super();
+		String title = "Game Over!" + (ModeMenu.score ? " (" + ModeMenu.getSelectedTime() + ")" : "");
+		setFrames(new Frame(title, new Rectangle(1, 3, Screen.w-2, Screen.h-4)));
 		
 		displayTimer = Game.normSpeed; // wait 3 seconds before rendering the menu.
 		inputDelay = Game.normSpeed/2; // wait a half-second after rendering before allowing user input.

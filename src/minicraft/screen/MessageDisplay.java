@@ -17,7 +17,7 @@ public class MessageDisplay extends Display {
 	public MessageDisplay(String msg, int maxWidth) { // max width is in screen coordinates
 		super();
 		
-		setStyle(style);
+		setTextStyle(style);
 		setLineSpacing(Font.textHeight()/2);
 		
 		inputDelay = 10;
@@ -33,7 +33,7 @@ public class MessageDisplay extends Display {
 		int frameHeight = message.length * Font.textHeight() + (message.length - 1) * Font.textHeight()/2;
 		frameHeight += Font.textHeight() * 2;
 		
-		setFrameBounds(new Rectangle(Screen.w/2, Screen.h/2, frameWidth, frameHeight, Rectangle.CENTER));
+		setFrames(new Frame("", new Rectangle(Screen.w/2, Screen.h/2, frameWidth, frameHeight, Rectangle.CENTER)));
 	}
 	
 	public void tick() {

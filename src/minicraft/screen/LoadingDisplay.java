@@ -20,13 +20,13 @@ public class LoadingDisplay extends Display implements ActionListener {
 		if(Game.HAS_GUI) {
 			t = new Timer(400, this);
 			
-			setStyle(new FontStyle(Color.get(-1, 300)));
+			setTextStyle(new FontStyle(Color.get(-1, 300)));
 		}
 		
 		percentage = 0;
 	}
 	
-	public static int getPercentage() { return percentage; }
+	public static double getPercentage() { return percentage; }
 	
 	public void init(Game game, minicraft.InputHandler init) {
 		super.init(game, init);
@@ -41,7 +41,7 @@ public class LoadingDisplay extends Display implements ActionListener {
 	
 	public static void setPercentage(double percent) {
 		if(Math.round(percent) != Math.round(percentage) && Game.main.menu instanceof LoadingDisplay)
-			Game.main.menu.setText(new String[] {"Loading...", (Math.round(percent)+"%")}); // this updates the percent display, but only when it actually changes.
+			Game.main.menu.text = (new String[] {"Loading...", (Math.round(percent)+"%")}); // this updates the percent display, but only when it actually changes.
 		
 		percentage = percent;
 	}

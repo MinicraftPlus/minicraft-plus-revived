@@ -6,14 +6,14 @@ import minicraft.gfx.Color;
 import minicraft.gfx.Sprite;
 import minicraft.level.Level;
 import minicraft.level.tile.Tile;
-import minicraft.screen.BookMenu;
+import minicraft.screen.BookDisplay;
 
 public class BookItem extends Item {
 	
 	protected static ArrayList<Item> getAllInstances() {
 		ArrayList<Item> items = new ArrayList<Item>();
-		items.add(new BookItem("Book", Color.get(-1, 200, 531, 430), BookMenu.defaultBook));
-		items.add(new BookItem("Antidious", Color.get(-1, 100, 300, 500), BookMenu.antVenomBook));
+		items.add(new BookItem("Book", Color.get(-1, 200, 531, 430), BookDisplay.defaultBook));
+		items.add(new BookItem("Antidious", Color.get(-1, 100, 300, 500), BookDisplay.antVenomBook));
 		return items;
 	}
 	
@@ -25,7 +25,7 @@ public class BookItem extends Item {
 	}
 	
 	public boolean interactOn(Tile tile, Level level, int xt, int yt, Player player, int attackDir) {
-		player.game.setMenu(new BookMenu(book));
+		player.game.setMenu(new BookDisplay(book));
 		return true;
 	}
 	

@@ -9,7 +9,7 @@ import minicraft.gfx.Font;
 import minicraft.gfx.Screen;
 import minicraft.saveload.Save;
 
-public class PauseMenu extends SelectMenu {
+public class PauseMenu extends Menu {
 
 	private int selection; //selection is set when you press enter.
 	private Menu parent;

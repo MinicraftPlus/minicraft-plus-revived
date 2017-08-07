@@ -3,6 +3,7 @@ package minicraft.screen;
 import minicraft.entity.Inventory;
 import minicraft.entity.Player;
 import minicraft.item.Item;
+import minicraft.gfx.Rectangle;
 
 public class PlayerInvMenu extends InventoryMenu {
 	private Player player;

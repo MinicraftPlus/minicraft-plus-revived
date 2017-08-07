@@ -2,10 +2,7 @@ package minicraft.screen;
 
 import java.util.Arrays;
 import minicraft.Game;
-import minicraft.gfx.Color;
-import minicraft.gfx.Font;
-import minicraft.gfx.FontStyle;
-import minicraft.gfx.Screen;
+import minicraft.gfx.*;
 import minicraft.saveload.Save;
 
 public class KeyInputMenu extends ScrollingMenu {
@@ -20,14 +17,14 @@ public class KeyInputMenu extends ScrollingMenu {
 	private static Frame inputFrame = new Frame("", new Rectangle(4, 4, Screen.w/SpriteSheet.boxWidth-4, Screen.h/SpriteSheet.boxWidth-4));
 	
 	public KeyInputMenu(Menu parent) {
-		super(parent.input.getKeyPrefs(), (Screen.h-Font.textHeight()*9)/8)
-		.setSpacing(1)
-		.setStyle(style);
+		super(parent.input.getKeyPrefs(), (Screen.h-Font.textHeight()*9)/8);
+		setLineSpacing(1);
+		setTextStyle(style);
 		
 		this.parent = parent;
 		listeningForBind = false;
 		confirmReset = false;
-		String[] keys = options.toArray(new String[0]);
+		String[] keys = text;
 		actionKeys = new String[keys.length];
 		updateKeys(keys);
 	}

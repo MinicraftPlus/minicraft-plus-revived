@@ -31,7 +31,7 @@ public class Screen {
 	}
 	
 	public Screen(Screen model) {
-		this(model.w, model.h, model.sheet);
+		this(model.sheet);
 	}
 	
 	/** Clears all the colors on the screen */

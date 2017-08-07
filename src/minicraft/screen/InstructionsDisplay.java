@@ -13,7 +13,8 @@ public class InstructionsDisplay extends Display {
 	private static FontStyle style = new FontStyle(Color.get(-1, 333)).setYPos(4 * SpriteSheet.boxWidth);
 	
 	public InstructionsDisplay(Menu parent) {
-		super().setStyle(style);
+		super();
+		setTextStyle(style);
 		text = info;
 		
 		this.parent = parent; // The parent Menu that it will go back to.

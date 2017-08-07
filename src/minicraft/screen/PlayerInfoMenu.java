@@ -10,8 +10,7 @@ public class PlayerInfoMenu extends Display {
 	
 	public PlayerInfoMenu() {
 		super();
-		setFrameBounds(new Rectangle(1, 1, 30, 15, Rectangle.CORNERS));
-		setTitle("Player Info");
+		setFrames(new Frame("Player Info", new Rectangle(1, 1, 30, 15, Rectangle.CORNERS)));
 	}
 	
 	public void tick() {

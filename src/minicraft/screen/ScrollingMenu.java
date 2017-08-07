@@ -1,7 +1,9 @@
 package minicraft.screen;
 
 import java.util.List;
+import java.util.Arrays;
 import minicraft.gfx.Screen;
+import minicraft.gfx.Color;
 
 /// TODO add a feature for the list to loop back to the beginning by having the top options appear as if on bottom, like World load selection.
 public class ScrollingMenu extends Menu {

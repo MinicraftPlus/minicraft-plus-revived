@@ -12,7 +12,7 @@ import minicraft.gfx.Font;
 import minicraft.gfx.Screen;
 import minicraft.level.Level;
 
-public class TitleMenu extends SelectMenu {
+public class TitleMenu extends Menu {
 	protected final Random random = new Random();
 private static final String[] options = {"New game", "Join Online World", "Instructions", "Tutorial", "Options", "Change Key Bindings", "About", "Quit"/*, "Kill"*/}; // Options that are on the main menu.
 	int rand;
@@ -223,7 +223,7 @@ private static final String[] options = {"New game", "Join Online World", "Instr
 				//(this method should now stop getting called by Game)
 			}
 			if(options[selected].contains("Join Online")) game.setMenu(new MultiplayerMenu());
-			if(options[selected] == "Instructions") game.setMenu(new InstructionsMenu(this));
+			if(options[selected] == "Instructions") game.setMenu(new InstructionsDisplay(this));
 			if (options[selected] == "Tutorial") {
 				try {
 					//This is for the tutorial Video

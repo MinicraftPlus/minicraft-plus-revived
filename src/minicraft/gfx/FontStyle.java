@@ -1,5 +1,7 @@
 package minicraft.gfx;
 
+import java.util.Arrays;
+
 public class FontStyle {
 	/*
 		draw needs some parameters...
@@ -114,13 +116,13 @@ public class FontStyle {
 		}
 		
 		if(configuredPara == null || !Arrays.equals(para, configuredPara))
-			configureForParagraph(para);
+			configureForParagraph(para, spacing);
 		
 		setYPos(paraMinY + line*Font.textHeight() + line*spacing);
-		draw(para[i], screen);
+		draw(para[line], screen);
 	}
 	
-	public void configureForParagraph(String[] para) {
+	public void configureForParagraph(String[] para, int spacing) {
 		configuredPara = para; // save the passed in paragraph for later comparison
 		
 		if(yPosition == -1) { // yPosition is auto-centered

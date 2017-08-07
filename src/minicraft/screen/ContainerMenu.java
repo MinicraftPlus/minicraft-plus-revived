@@ -46,7 +46,7 @@ public class ContainerMenu extends InventoryMenu {
 		if (input.getKey("right").clicked) //if the right key is pressed, the window will be the player's inventory
 			window = 1;
 		
-		if(prevWin != window) {
+		/*if(prevWin != window) {
 			// window changed
 			int tmp = selected; // temp integer will be the currently selected
 			selected = oSelected; // selected will become the oSelected
@@ -55,10 +55,10 @@ public class ContainerMenu extends InventoryMenu {
 			String[] temp = text;
 			text = oText;
 			oText = temp;
-		}
+		}*/
 		
 		if(window == 0) super.tick();
-		else otherMenu.tick();
+		else playerMenu.tick();
 		
 		// get player and container inventory references...again?
 		Inventory i = window == 1 ? player.inventory : chest.inventory;
@@ -113,8 +113,8 @@ public class ContainerMenu extends InventoryMenu {
 				if(transferAll && !(i == player.inventory && ModeMenu.creative)) // don't remove the item from the inv, if in creative mode and the inv is the player
 					removeSelectedItem();
 				if(!(i2 == player.inventory && ModeMenu.creative)) { // don't add the item to the other inv, if on creative mode and the other inv is the player
-					i2.add(oSelected, toSend.clone());
-					otherMenu.text = InventoryMenu.getItemList(i2);
+					i2.add(playerMenu.selected, toSend.clone());
+					playerMenu.text = InventoryMenu.getItemList(i2);
 				}
 			}
 		}
@@ -130,14 +130,14 @@ public class ContainerMenu extends InventoryMenu {
 		//renderItemList(screen, 19, 1, 15 + 20, 11, player.inventory.getItems(), window == 1 ? selected : -oSelected - 1); // renders all the items from the player's inventory
 		
 		// now render the other text.
-		otherMenu.render(screen);
+		playerMenu.render(screen);
 		
 		screen.setOffset(0, 0); // Fixes the offset back to normal
 	}
 	
 	public void onInvUpdate(Inventory inv) {
 		super.onInvUpdate(inv);
-		if(inv == otherMenu.inv)
-			otherMenu.text = getItemList(inv);
+		if(inv == playerMenu.inv)
+			playerMenu.text = getItemList(inv);
 	}
 }

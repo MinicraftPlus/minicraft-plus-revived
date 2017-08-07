@@ -77,7 +77,7 @@ public abstract class Display {
 	}
 	
 	public void renderLine(Screen screen, FontStyle style, int lineIndex) {
-		style.drawParagraphLine(text, lineIndex, screen);
+		style.drawParagraphLine(text, lineIndex, spacing, screen);
 	}
 	
 	/** This renders the blue frame you see when you open up the crafting/inventory menus.
