@@ -160,7 +160,7 @@ public class AirWizard extends EnemyMob {
 			textcol = Color.get(-1, 440);
 			textcol2 = Color.get(-1, 110);
 		}
-		int textwidth = h.length() * 8;
+		int textwidth = Font.textWidth(h);
 		Font.draw(h, screen, (x - textwidth/2) + 1, y - 17, textcol2);
 		Font.draw(h, screen, (x - textwidth/2), y - 18, textcol);
 	}

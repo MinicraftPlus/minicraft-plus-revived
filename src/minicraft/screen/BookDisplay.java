@@ -5,12 +5,13 @@ import java.util.Arrays;
 import minicraft.gfx.Color;
 import minicraft.gfx.Font;
 import minicraft.gfx.FontStyle;
+import minicraft.gfx.Rectangle;
 import minicraft.gfx.Screen;
 
-public class BookMenu extends Menu {
+public class BookDisplay extends Display {
 	
 	// null characters "\0" denote page breaks.
-	public static String antVenomBook = "Antidious Venomi\n"+
+	public static final String antVenomBook = "Antidious Venomi\n"+
 	"\n"+
 	"\n"+
 	"A short story by David.B\n"+
@@ -45,16 +46,24 @@ public class BookMenu extends Menu {
 +"\n"+
 "The end";
 	
-	public static final String defaultBook = " \n \0"+"There is nothing of use.";
+	public static final String defaultBook = " \n \0"+"There is nothing of use here."+"\0 \0"+"Still nothing... :P";
 	
 	private static int spacing = 3;
 	//private static java.awt.Rectangle textArea = new java.awt.Rectangle(15, 8*5, 8*32, 8*16);
 	private static int minX = 15, maxX = 15+8*32, minY = 8*5, maxY = 8*5+8*16;
+	private static FontStyle style = new FontStyle(Color.get(-1, 000)).xCenterBounds(minX, maxX).yCenterBounds(minY, maxY);
 	
 	public String[][] lines;
 	public int page;
 	
-	public BookMenu(String book) {
+	public BookDisplay(String book) {
+		super()
+		.setFrames(new Frame[] {
+			(new Frame("", (new Rectangle(14, 0, 21, 3, Rectangle.CORNERS))).setColors(Color.get(-1, 222), Color.get(554, 554), Color.get(-1, 1, 554, 554))), // renders the tiny, page number display frame.
+			(new Frame("", (new Rectangle(1, 4, 34, 20, Rectangle.CORNERS))).setColors(Color.get(-1, 222), Color.get(554, 554), Color.get(-1, 1, 554, 554))) // renders the big text content display frame.
+		})
+		.setStyle(new FontStyle(Color.get(-1, 000)));
+		
 		page = 0;
 		if(book == null)
 			book = defaultBook;
@@ -69,7 +78,7 @@ public class BookMenu extends Menu {
 			}
 		}
 		
-		lines = pages.toArray(new String[0][]);
+		lines = pages.toArray(new String[pages.length][]);
 	}
 	
 	public void tick() {
@@ -80,9 +89,7 @@ public class BookMenu extends Menu {
 	}
 	
 	public void render(Screen screen) {
-		// These draw out the screen.
-		renderFrame(screen, 14, 0, 21, 3); // renders the tiny, page number display frame.
-		renderFrame(screen, 1, 4, 34, 20); // renders the big text content display frame.
+		renderFrames(screen);
 		
 		// This draws the text "Page" at the top of the screen
 		Font.draw("Page", screen, 8 * 15 + 8, 1 * 8 - 2, Color.get(-1, 0));
@@ -91,13 +98,13 @@ public class BookMenu extends Menu {
 		String pagenum = page==0?"Title": page+"";
 		Font.drawCentered(pagenum, screen, /*11*11 + (page==0 ? 4 : 21-3*digits(page)), */2 * 8, Color.get(-1, 0));
 		
-		FontStyle style = new FontStyle(Color.get(-1, 000)).xCenterBounds(minX, maxX).yCenterBounds(minY, maxY);
-		if(page != 0)
-			style.setXPos(minX);
-		Font.drawParagraph(lines[page], screen, style, spacing);
+		if(page != 0) style.setXPos(minX); // center text on the title page
+		else style.setXPos(-1); // don't center after title page
+		
+		Font.drawParagraph(lines[page], screen, style, spacing); // draw the current page
 	}
 	
-	protected void renderFrame(Screen screen, int x0, int y0, int x1, int y1) {
-		renderMenuFrame(screen, "", x0, y0, x1, y1, Color.get(-1, 1, 554, 554), Color.get(554, 554), Color.get(-1, 222));
-	}
+	/*protected void renderFrame(Screen screen, int x0, int y0, int x1, int y1) {
+		renderMenuFrame(screen, "", x0, y0, x1, y1, Color.get(-1, 1, 554, 554), Color.get(554, 554),
+	}*/
 }

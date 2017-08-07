@@ -16,13 +16,11 @@ public abstract class Menu extends Display {
 	protected int selected;
 	private int highlightColor, offColor;
 	
-	protected Menu(String[] options, Rectangle frame, int colOn, int colOff) {
+	/*protected Menu(String[] options, Rectangle frame, int colOn, int colOff) {
 		this(options, (new Rectangle[] {frame}), colOn, colOff);
-	}
-	protected Menu(String[] options, Rectangle[] frames, int colOn, int colOff) {
-		super()
-		.setFrameBounds(frames)
-		.setStyle(new FontStyle(Color.get(-1, 333)));
+	}*/
+	protected Menu(String[] options, int colOn, int colOff) {
+		super().setStyle(new FontStyle(Color.get(-1, 333)));
 		
 		selected = 0;
 		highlightColor = colOn;
@@ -42,7 +40,7 @@ public abstract class Menu extends Display {
 		if(prevSel != selected) {
 			Sound.craft.play(); // play a sound
 			text[prevSel] = text[prevSel].replace("\\A> (.*) <\\z"); // remove the angle brackets
-			onSelectionChange(selected); // do any other behavior (including adding new angle brackets)
+			onSelectionChange(prevSel, selected); // do any other behavior (including adding new angle brackets)
 		}
 	}
 	
@@ -57,13 +55,13 @@ public abstract class Menu extends Display {
 	}
 	
 	/** This was made with expansion in mind, mostly. It's sort of like an API / event method. It gets called whenever the selected option changes. I can see it being helpful for scrolling menus. */
-	protected void onSelectionChange(int newSelection) {
+	protected void onSelectionChange(int prevSelection, int newSelection) {
 		text[newSelection] = "> "+text[newSelection]+" <"; // adds the new angle brackets. This is done here to allow the text string and selection index to be modified by subclasses, before the brackets are put in.
 	}
 	
 	
 	// TODO this needs to go. It looks so efficient... but I want to make it so it's never used.
-	public void renderItemList(Screen screen, int xo, int yo, int x1, int y1,
+	/*public void renderItemList(Screen screen, int xo, int yo, int x1, int y1,
 	  List<? extends ListItem> listItems, int selected) {
 		boolean renderCursor = true;
 		if (selected < 0) { // this is set to negative purposely for the express reason of disabling the cursor.
@@ -88,5 +86,5 @@ public abstract class Menu extends Display {
 			Font.draw(">", screen, (xo + 0) * 8, yy * 8, Color.get(-1, 555));
 			Font.draw("<", screen, (xo + w) * 8, yy * 8, Color.get(-1, 555));
 		}
-	}
+	}*/
 }

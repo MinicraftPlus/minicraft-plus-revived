@@ -12,11 +12,16 @@ public class AboutDisplay extends Display {
 	
 	/** The about menu is a read menu about what the game was made for. Only contains text and a black background */
 	public AboutDisplay(Menu parent) {
-		super();
+		super()
+		.setTitle("About Minicraft Plus")
+		.setTextStyle(
+			new FontStyle(Color.get(-1, 333))
+			.setYPos(5*Font.textHeight())
+		);
+		
+		text = info;
+		
 		this.parent = parent;
-		setTitle("About Minicraft Plus");
-		setText(info);
-		setTextStyle(new FontStyle(Color.get(-1, 333)).setYPos(5*Font.textHeight()));
 	}
 
 	public void tick() {

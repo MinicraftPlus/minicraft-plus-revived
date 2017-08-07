@@ -6,10 +6,9 @@ import minicraft.entity.Player;
 import minicraft.gfx.Color;
 import minicraft.gfx.Font;
 import minicraft.gfx.Screen;
-import minicraft.screen.ListItem;
 import minicraft.screen.ModeMenu;
 
-public class Recipe implements ListItem {
+public class Recipe {
 	public HashMap<String, Integer> costs = new HashMap<String, Integer>();  // A list of costs for the recipe
 	private String product; // the result item of the recipe
 	public int amount;
@@ -59,13 +58,13 @@ public class Recipe implements ListItem {
 	}
 	
 	/** Renders the icon & text of an item to the screen. */
-	public void renderInventory(Screen screen, int x, int y) {
+	/*public void renderInventory(Screen screen, int x, int y) {
 		getProduct().sprite.render(screen, x, y); //renders the item sprite.
 		int textColor = canCraft ? Color.get(-1, 555) : Color.get(-1, 222); // gets the text color, based on whether the player can craft the item.
 		
 		String amountIndicator = amount > 1 ? " x"+amount : "";
 		Font.draw(product + amountIndicator, screen, x + 8, y, textColor); // draws the text to the screen
-	}
+	}*/
 	
 	// (WAS) abstract method given to the sub-recipe classes.
 	public boolean craft(Player player) {

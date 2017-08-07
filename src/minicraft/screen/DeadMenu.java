@@ -13,7 +13,7 @@ public class DeadMenu extends Display {
 	
 	public DeadMenu() {
 		super();
-		setFrameBounds(new Rectangle(1, 3, 18, 10, Rectangle.CORNERS));
+		setFrames(new Frame("", new Rectangle(1, 3, 18, 10, Rectangle.CORNERS)));
 	}
 	
 	public void tick() {
@@ -39,7 +39,7 @@ public class DeadMenu extends Display {
 	}
 
 	public void render(Screen screen) {
-		renderFrame(screen);
+		renderFrames(screen);
 		//renderFrame(screen, "", 1, 3, 18, 10); // Draws a box frame based on 4 points. You can include a title as well.
 		Font.draw("You died! Aww!", screen, 16, 32, Color.get(-1, 555));
 		

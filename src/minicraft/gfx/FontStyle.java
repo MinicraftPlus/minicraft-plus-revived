@@ -61,6 +61,7 @@ public class FontStyle {
 	private String[] configuredPara;
 	private int paraMinY;
 	
+	public FontStyle() { this(Color.get(-1, 555)); }
 	public FontStyle(int mainColor) {
 		this.mainColor = mainColor;
 		shadowColor = Color.get(-1, -1);
@@ -179,6 +180,9 @@ public class FontStyle {
 		return this;
 	}
 	
-	/** getter for main color variable. */
+	/** getters. */
+	
 	public int getColor() {return mainColor;}
+	public int getXPos() { return xPosition < 0 ? centerMinX : xPosition; }
+	public int getYPos() { return yPosition < 0 ? centerMinY : yPosition; }
 }

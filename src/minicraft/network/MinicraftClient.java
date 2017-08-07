@@ -582,8 +582,11 @@ public class MinicraftClient extends MinicraftConnection {
 				if(curState != State.PLAY) return false; // shouldn't happen.
 				Item item = Items.get(alldata);
 				if (Game.debug) System.out.println("CLIENT: recieved chestout with item: " + item);
-				if(!ModeMenu.creative)
+				if(!ModeMenu.creative) {
 					game.player.inventory.add(0, item);
+					if(game.menu instanceof minicraft.screen.InventoryMenu)
+						((minicraft.screen.InventoryMenu)game.menu).onInvUpdate(game.player.inventory);
+				}
 				//if (Game.debug) System.out.println("CLIENT successfully took " + item + " from chest and added to inv.");
 				return true;
 			

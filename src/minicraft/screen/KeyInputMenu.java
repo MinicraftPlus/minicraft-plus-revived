@@ -15,8 +15,14 @@ public class KeyInputMenu extends ScrollingMenu {
 	
 	private String[] actionKeys;
 	
+	private static final FontStyle style = new FontStyle().setYPos(Font.textHeight()*2).setXPos(0);
+	
+	private static Frame inputFrame = new Frame("", new Rectangle(4, 4, Screen.w/SpriteSheet.boxWidth-4, Screen.h/SpriteSheet.boxWidth-4));
+	
 	public KeyInputMenu(Menu parent) {
-		super(Arrays.asList(parent.input.getKeyPrefs()), (Game.HEIGHT-Font.textHeight()*9)/8, 0, Font.textHeight()*2, 1, Color.get(-1, 555), Color.get(-1, 333));
+		super(parent.input.getKeyPrefs(), (Screen.h-Font.textHeight()*9)/8)
+		.setSpacing(1)
+		.setStyle(style);
 		
 		this.parent = parent;
 		listeningForBind = false;
@@ -77,13 +83,13 @@ public class KeyInputMenu extends ScrollingMenu {
 			String action = key.substring(0, key.indexOf(";"));
 			String mapping = key.substring(key.indexOf(";")+1);
 			
-			String buffer = "";
-			for(int spaces = 0; spaces < Game.WIDTH/8 - action.length() - mapping.length(); spaces++) {
-				buffer += " ";
+			StringBuilder buffer = new StringBuilder();
+			for(int spaces = 0; spaces < Screen.w/Font.textWidth(" ") - action.length() - mapping.length(); spaces++) {
+				buffer.append(" ");
 			}
 			
 			actionKeys[i] = action;
-			options.set(i, action+buffer+mapping);
+			text[i] = action + buffer.toString() + mapping;
 		}
 	}
 	
@@ -92,7 +98,7 @@ public class KeyInputMenu extends ScrollingMenu {
 		
 		Font.drawCentered("Controls", screen, 0, Color.get(-1, 555));
 		
-		if(Game.debug&&false) {
+		/*if(Game.debug&&false) {
 			System.out.println("current status:");
 			System.out.println("selected: " + selected + " of " + options.size());
 			System.out.println("disp sel: " + dispSelected + " of " + dispSize);
@@ -100,16 +106,18 @@ public class KeyInputMenu extends ScrollingMenu {
 			System.out.println("CONTENTS:");
 			for(String str: options)
 				System.out.println(str);
-		}
+		}*/
 		
 		super.render(screen);
 		
 		if(listeningForBind) {
-			renderFrame(screen, "", 4, 4, screen.w/8-4, screen.h/8-4);
+			inputFrame.setTitle("");
+			inputFrame.render(screen);
 			Font.drawCentered("Press the desired", screen, (screen.h-Font.textHeight()) / 2 - 4, Color.get(-1, 450));
 			Font.drawCentered("key sequence", screen, (screen.h-Font.textHeight()) / 2 + 4, Color.get(-1, 450));
 		} else if (confirmReset) {
-			renderFrame(screen, "Confirm Action", 4, 4, screen.w/8-4, screen.h/8-4);
+			inputFrame.setTitle("Confirm Action");
+			inputFrame.render(screen);
 			FontStyle style = new FontStyle(Color.get(-1, 511));
 			Font.drawParagraph("Are you sure you want to reset all key bindings to the default keys?", screen, 8*4, true, 8*4, true, style, 4);
 			style.setColor(Color.get(-1, 533));

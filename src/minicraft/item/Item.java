@@ -8,9 +8,8 @@ import minicraft.gfx.Screen;
 import minicraft.gfx.Sprite;
 import minicraft.level.Level;
 import minicraft.level.tile.Tile;
-import minicraft.screen.ListItem;
 
-public abstract class Item implements ListItem {
+public abstract class Item {
 	
 	/* Note: Most of the stuff in the class is expanded upon in StackableItem/PowerGloveItem/FurnitureItem/etc */
 	

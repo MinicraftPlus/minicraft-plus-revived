@@ -10,14 +10,14 @@ import minicraft.item.StackableItem;
 
 public class InventoryMenu extends ScrollingMenu {
 	protected Inventory inv;
-	protected String title;
+	//protected String title;
 	
-	private static final List<String> getItemList(Inventory inv) {
+	protected static final String[] getItemList(Inventory inv) {
 		List<Item> items = inv.getItems();
-		List<String> itemNames = new ArrayList<String>();
+		String[] itemNames = new String[items.size()];
 		// to make space for the item icon.
 		for(int i = 0; i < items.size(); i++) {
-			itemNames.add(getItemDisplayName(items.get(i)));
+			itemNames[i] = getItemDisplayName(items.get(i));
 		}
 		
 		return itemNames;
@@ -25,28 +25,43 @@ public class InventoryMenu extends ScrollingMenu {
 	
 	public InventoryMenu(Inventory inv, String title) {
 		super(getItemList(inv), 9, 2*8, 2*8, 0, Color.get(-1, 555), Color.get(-1, 555));
+		setFrames(new Frame(title, new Rectangle(1, 1, 22, 11, Rectangle.CORNERS)));
+		setStyle(new FontStyle(Color.get(-1, 555)).setXPos(2*8));
+		
 		this.inv = inv;
-		this.title = title;
 	}
 	
-	public void render(Screen screen) {
-		renderFrame(screen, title, 1, 1, 22, 11); // renders the blue box for the inventory
+	/*public void render(Screen screen) {
 		super.render(screen);
 		List<Item> items = inv.getItems();
 		for(int i = 0; i < dispSize; i++)
-			items.get(offset+i).sprite.render(screen, 2*8, 8*(2+i));
+			items.get(offset+i).sprite.render(screen,, 8*(2+i));
+	}*/
+	
+	public void renderLine(Screen screen, FontStyle style, int lineIndex) {
+		super.renderLine(screen, style, lineIndex);
+		inv.get(offset+lineIndex).sprite.render(screen, style.getXPos(), 8*(2+i));
+	}
+	
+	protected boolean isHighlighted() {
+		return true;
 	}
 	
 	public void removeSelectedItem() {
 		inv.remove(selected);
 		if(selected >= inv.invSize())
 			selected = Math.max(0, inv.invSize()-1); // can't select -1...
-		options = getItemList(inv);
+		text = getItemList(inv);
 	}
 	
 	/// updates the name of the item, in case it's changed due to stack size, or similar.
 	public void updateSelectedItem() {
-		options.set(selected, getItemDisplayName(inv.get(selected)));
+		text[selected] = "> "+getItemDisplayName(inv.get(selected))+" <";
+	}
+	
+	public void onInvUpdate(Inventory inv) {
+		if(inv == this.inv)
+			text = getItemList(inv);
 	}
 	
 	private static final String getItemDisplayName(Item i) {
