@@ -127,37 +127,37 @@ public class MultiplayerMenu extends Display {
 		
 		switch(curState) {
 			case ENTERIP:
-				Font.drawCentered("Enter ip address to connect to:", screen, screen.h/2-6, Color.get(-1, 555));
-				Font.drawCentered(typing, screen, screen.h/2+6, Color.get(-1, 552));
+				Font.drawCentered("Enter ip address to connect to:", screen, Screen.h/2-6, Color.get(-1, 555));
+				Font.drawCentered(typing, screen, Screen.h/2+6, Color.get(-1, 552));
 				break;
 			
 			case ENTERNAME:
-				Font.drawCentered("Enter username to show others:", screen, screen.h/2-6, Color.get(-1, 555));
-				Font.drawCentered(typing, screen, screen.h/2+6, (inputIsValid?Color.get(-1, 444):Color.get(-1, 500)));
+				Font.drawCentered("Enter username to show others:", screen, Screen.h/2-6, Color.get(-1, 555));
+				Font.drawCentered(typing, screen, Screen.h/2+6, (inputIsValid?Color.get(-1, 444):Color.get(-1, 500)));
 				if(!inputIsValid) {
 					String msg = "Username is taken";
 					if(typing.length() == 0)
 						msg = "Username cannot be blank";
 					
-					Font.drawCentered(msg, screen, screen.h/2+20, Color.get(-1, 500));
+					Font.drawCentered(msg, screen, Screen.h/2+20, Color.get(-1, 500));
 				}
 				break;
 			
 			case WAITING:
-				Font.drawCentered("Communicating with server"+getElipses(), screen, screen.h/2, Color.get(-1, 555));
+				Font.drawCentered("Communicating with server"+getElipses(), screen, Screen.h/2, Color.get(-1, 555));
 				break;
 			
 			case LOADING:
-				Font.drawCentered("Loading "+loadingMessage+" from server"+getElipses(), screen, screen.h/2, Color.get(-1, 555));
-				//Font.drawCentered(transferPercent+"%", screen, screen.h/2+6, Color.get(-1, 555));
+				Font.drawCentered("Loading "+loadingMessage+" from server"+getElipses(), screen, Screen.h/2, Color.get(-1, 555));
+				//Font.drawCentered(transferPercent+"%", screen, Screen.h/2+6, Color.get(-1, 555));
 				break;
 			
 			case ERROR:
 				//if(Game.tickCount % 10 == 0) System.out.println("error message: " + errorMessage);
-				Font.drawCentered("Could not connect to server:", screen, screen.h/2-6, Color.get(-1, 500));
+				Font.drawCentered("Could not connect to server:", screen, Screen.h/2-6, Color.get(-1, 500));
 				FontStyle style = new FontStyle(Color.get(-1, 511));
-				Font.drawParagraph(errorMessage, screen, 0, true, screen.h/2+6, false, style, 1);
-				//Font.drawCentered(errorMessage, screen, screen.h/2+6, Color.get(-1, 511));
+				Font.drawParagraph(errorMessage, screen, 0, true, Screen.h/2+6, false, style, 1);
+				//Font.drawCentered(errorMessage, screen, Screen.h/2+6, Color.get(-1, 511));
 				break;
 		}
 		
@@ -168,8 +168,8 @@ public class MultiplayerMenu extends Display {
 				//Font.drawCentered(game.server.socket..getInetAddress().getHostAddress(), screen, 30, Color.get(-1, 151));
 				
 			} else {
-				Font.drawCentered("Failed to establish server;", screen, screen.h/2-4, Color.get(-1, 522));
-				Font.drawCentered("Exit menu and retry.", screen, screen.h/2+4, Color.get(-1, 522));
+				Font.drawCentered("Failed to establish server;", screen, Screen.h/2-4, Color.get(-1, 522));
+				Font.drawCentered("Exit menu and retry.", screen, Screen.h/2+4, Color.get(-1, 522));
 			}
 			
 			Font.drawCentered("Alt-U to change username", screen, 2, Color.get(-1, 222));
@@ -183,18 +183,18 @@ public class MultiplayerMenu extends Display {
 					msg = "Connection Successful!";
 				else
 					msg = "No connections available.";
-				Font.drawCentered(msg, screen, screen.h/2, Color.get(-1, 555));
+				Font.drawCentered(msg, screen, Screen.h/2, Color.get(-1, 555));
 			} else {
 				
-				//Font.drawCentered("Invalid Client. Exit and retry.", screen, screen.h/2, Color.get(-1, 522));
+				//Font.drawCentered("Invalid Client. Exit and retry.", screen, Screen.h/2, Color.get(-1, 522));
 			}
 		}
 		*/
 		if(curState == State.ENTERIP || curState == State.ENTERNAME || curState == State.ERROR) {
-			Font.drawCentered("Press "+input.getMapping("exit")+" to return", screen, screen.h-Font.textHeight()*2, Color.get(-1, 333));
+			Font.drawCentered("Press "+input.getMapping("exit")+" to return", screen, Screen.h-Font.textHeight()*2, Color.get(-1, 333));
 		}
 		//if(game.isValidServer())
-			//Font.drawCentered("(game will still be multiplayer)", screen, screen.h-Font.textHeight(), Color.get(-1, 333));
+			//Font.drawCentered("(game will still be multiplayer)", screen, Screen.h-Font.textHeight(), Color.get(-1, 333));
 	}
 	
 	private int ePos = 0;

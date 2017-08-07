@@ -113,15 +113,15 @@ public class KeyInputMenu extends ScrollingMenu {
 		if(listeningForBind) {
 			inputFrame.setTitle("");
 			inputFrame.render(screen);
-			Font.drawCentered("Press the desired", screen, (screen.h-Font.textHeight()) / 2 - 4, Color.get(-1, 450));
-			Font.drawCentered("key sequence", screen, (screen.h-Font.textHeight()) / 2 + 4, Color.get(-1, 450));
+			Font.drawCentered("Press the desired", screen, (Screen.h-Font.textHeight()) / 2 - 4, Color.get(-1, 450));
+			Font.drawCentered("key sequence", screen, (Screen.h-Font.textHeight()) / 2 + 4, Color.get(-1, 450));
 		} else if (confirmReset) {
 			inputFrame.setTitle("Confirm Action");
 			inputFrame.render(screen);
 			FontStyle style = new FontStyle(Color.get(-1, 511));
 			Font.drawParagraph("Are you sure you want to reset all key bindings to the default keys?", screen, 8*4, true, 8*4, true, style, 4);
 			style.setColor(Color.get(-1, 533));
-			Font.drawParagraph(input.getMapping("select")+" to confirm\n"+input.getMapping("exit")+" to cancel", screen, 8, true, (screen.h-Font.textHeight()) / 2 + 8*3, false, style, 4);
+			Font.drawParagraph(input.getMapping("select")+" to confirm\n"+input.getMapping("exit")+" to cancel", screen, 8, true, (Screen.h-Font.textHeight()) / 2 + 8*3, false, style, 4);
 		} else {
 			String[] lines = {
 				"Press C/Enter to change key binding",
@@ -130,7 +130,7 @@ public class KeyInputMenu extends ScrollingMenu {
 				input.getMapping("exit")+" to Return to menu"
 			};
 			for(int i = 0; i < lines.length; i++)
-				Font.drawCentered(lines[i], screen, screen.h-Font.textHeight()*(4-i), Color.get(-1, 555));
+				Font.drawCentered(lines[i], screen, Screen.h-Font.textHeight()*(4-i), Color.get(-1, 555));
 		}
 	}
 }

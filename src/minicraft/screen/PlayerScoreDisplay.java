@@ -110,7 +110,7 @@ public class PlayerScoreDisplay extends Display {
 		//Font.drawCentered("Game Over!", screen, 4*8, Color.get(-1, 555));
 		
 		if(unlocks.size() > 0) {
-			FontStyle style = new FontStyle(Color.get(-1, 50)).xCenterBounds(screen.w/2, screen.w-8);
+			FontStyle style = new FontStyle(Color.get(-1, 50)).xCenterBounds(Screen.w/2, Screen.w-8);
 			style.setYPos(10 * 8).draw("Unlocked!", screen);
 			for(int i = 0; i < unlocks.size(); ++i) {
 				String unlock = unlocks.get(i).replace("M", "MINUTEMODE").replace("H", "HOURMODE");

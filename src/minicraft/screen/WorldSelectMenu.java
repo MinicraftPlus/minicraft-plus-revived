@@ -341,9 +341,9 @@ public class WorldSelectMenu extends Menu {
 				}
 			}
 			
-			//Font.drawCentered(input.getMapping("up")+" and "+input.getMapping("down")+" to move", screen, screen.h - 170, controlCol);
-			Font.drawCentered(input.getMapping("select")+" to confirm", screen, screen.h - 60, controlCol);
-			Font.drawCentered(input.getMapping("exit")+" to return", screen, screen.h - 40, controlCol);
+			//Font.drawCentered(input.getMapping("up")+" and "+input.getMapping("down")+" to move", screen, Screen.h - 170, controlCol);
+			Font.drawCentered(input.getMapping("select")+" to confirm", screen, Screen.h - 60, controlCol);
+			Font.drawCentered(input.getMapping("exit")+" to return", screen, Screen.h - 40, controlCol);
 		}
 		else if (worldnames.size() > 0 && mode != Action.Create && (!confirmed || mode != Action.Rename && mode != Action.Delete && mode != Action.Copy/* && mode != Action.Backup*/)) {
 			if(mode != Action.Load)
@@ -386,23 +386,23 @@ public class WorldSelectMenu extends Menu {
 		}
 		
 		if(confirmed && mode == Action.Delete) {
-			Font.drawCentered("Are you sure you want to delete", screen, screen.h/2-10, Color.get(-1, 533));
-			Font.drawCentered("\'"+worldnames.get(selected)+"\'?", screen, screen.h/2, mainCol);
-			Font.drawCentered("This cannot be undone!", screen, screen.h/2+10, Color.get(-1, 533));
+			Font.drawCentered("Are you sure you want to delete", screen, Screen.h/2-10, Color.get(-1, 533));
+			Font.drawCentered("\'"+worldnames.get(selected)+"\'?", screen, Screen.h/2, mainCol);
+			Font.drawCentered("This cannot be undone!", screen, Screen.h/2+10, Color.get(-1, 533));
 		}
 		
 		Font.drawCentered(msg, screen, 20, mainCol);
 		
 		if(mode == Action.Load) {
-			Font.drawCentered("C to copy", screen, screen.h-26-8-8-8, Color.get(-1, Action.Copy.color));
-			Font.drawCentered("R to rename", screen, screen.h-26-8-8, Color.get(-1, Action.Rename.color));
-			Font.drawCentered("D to delete", screen, screen.h-26-8, Color.get(-1, Action.Delete.color));
-			//Font.drawCentered("B to backup", screen, screen.h-26, Color.get(-1, Action.Backup.color));
+			Font.drawCentered("C to copy", screen, Screen.h-26-8-8-8, Color.get(-1, Action.Copy.color));
+			Font.drawCentered("R to rename", screen, Screen.h-26-8-8, Color.get(-1, Action.Rename.color));
+			Font.drawCentered("D to delete", screen, Screen.h-26-8, Color.get(-1, Action.Delete.color));
+			//Font.drawCentered("B to backup", screen, Screen.h-26, Color.get(-1, Action.Backup.color));
 		}
 		
 		if(mode != Action.Main) {
-			Font.drawCentered("Press "+input.getMapping("select")+" to " + mode.name() + " World", screen, screen.h - 16, controlCol);
-			Font.drawCentered("Press "+input.getMapping("exit")+" to cancel", screen, screen.h - 8, controlCol);
+			Font.drawCentered("Press "+input.getMapping("select")+" to " + mode.name() + " World", screen, Screen.h - 16, controlCol);
+			Font.drawCentered("Press "+input.getMapping("exit")+" to cancel", screen, Screen.h - 8, controlCol);
 		}
 	}
 	

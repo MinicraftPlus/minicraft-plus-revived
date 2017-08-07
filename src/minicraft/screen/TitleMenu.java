@@ -248,7 +248,7 @@ private static final String[] options = {"New game", "Join Online World", "Instr
 		int h = 2; // Height of squares (on the spritesheet)
 		int w = 15; // Width of squares (on the spritesheet)
 		int titleColor = Color.get(-1, 010, 131, 551);
-		int xo = (screen.w - w * 8) / 2; // X location of the title
+		int xo = (Screen.w - w * 8) / 2; // X location of the title
 		int yo = 36; // Y location of the title
 		int cols = Color.get(-1, 550);
 		
@@ -282,8 +282,8 @@ private static final String[] options = {"New game", "Join Online World", "Instr
 		
 		Font.draw("Version " + Game.VERSION, screen, 1, 1, Color.get(-1, 111));
 		
-		Font.drawCentered("("+input.getMapping("up")+", "+input.getMapping("down")+" to select)", screen, screen.h - 32, Color.get(-1, 111));
-		Font.drawCentered("("+input.getMapping("select")+" to accept)", screen, screen.h - 22, Color.get(-1, 111));
-		Font.drawCentered("("+input.getMapping("exit")+" to return)", screen, screen.h - 12, Color.get(-1, 111));
+		Font.drawCentered("("+input.getMapping("up")+", "+input.getMapping("down")+" to select)", screen, Screen.h - 32, Color.get(-1, 111));
+		Font.drawCentered("("+input.getMapping("select")+" to accept)", screen, Screen.h - 22, Color.get(-1, 111));
+		Font.drawCentered("("+input.getMapping("exit")+" to return)", screen, Screen.h - 12, Color.get(-1, 111));
 	}
 }

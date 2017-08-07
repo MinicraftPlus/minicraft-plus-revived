@@ -86,20 +86,20 @@ public class OptionsMenu extends Menu {
 		Font.draw(diffs[diff], screen, 11 * 16 + 4, 8 * 8, Color.get(-1, 555));
 		
 		if(!Game.isValidClient()) {
-			Font.draw("Press Left and Right", screen, 67, screen.h - 150, textColor);
+			Font.draw("Press Left and Right", screen, 67, Screen.h - 150, textColor);
 		}
 		
-		Font.draw((Game.isValidClient()?"Autosave":"Aut<o>save:"), screen, 80, screen.h - 100, textColor);
-		Font.draw((autosave?"On":"Off"), screen, 180, screen.h - 100, (autosave?onColor:offColor));
+		Font.draw((Game.isValidClient()?"Autosave":"Aut<o>save:"), screen, 80, Screen.h - 100, textColor);
+		Font.draw((autosave?"On":"Off"), screen, 180, Screen.h - 100, (autosave?onColor:offColor));
 		
-		Font.draw("<S>ound:", screen, 80, screen.h - 75, textColor);
-		Font.draw((isSoundAct?"On":"Off"), screen, 180, screen.h - 75, (isSoundAct?onColor:offColor));
+		Font.draw("<S>ound:", screen, 80, Screen.h - 75, textColor);
+		Font.draw((isSoundAct?"On":"Off"), screen, 180, Screen.h - 75, (isSoundAct?onColor:offColor));
 		
 		if (unlockedskin && !Game.isValidServer()) {
-			Font.draw("<W>ear Suit:", screen, 80, screen.h - 50, textColor);
-			Font.draw((game.player.skinon?"On":"Off"), screen, 180, screen.h - 50, (game.player.skinon?onColor:offColor));
+			Font.draw("<W>ear Suit:", screen, 80, Screen.h - 50, textColor);
+			Font.draw((game.player.skinon?"On":"Off"), screen, 180, Screen.h - 50, (game.player.skinon?onColor:offColor));
 		}
 
-		Font.drawCentered("Press "+input.getMapping("exit")+" to return", screen, screen.h - 25, textColor);
+		Font.drawCentered("Press "+input.getMapping("exit")+" to return", screen, Screen.h - 25, textColor);
 	}
 }

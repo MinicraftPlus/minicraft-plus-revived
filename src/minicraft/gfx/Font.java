@@ -41,7 +41,7 @@ public class Font {
 	}
 	
 	public static void drawCentered(String msg, Screen screen, int x, int y, int color) {
-		new FontStyle(color).xCenterBounds(x-(screen.w-x), screen.w).setYPos(y).draw(msg, screen);
+		new FontStyle(color).xCenterBounds(x-(Screen.w-x), Screen.w).setYPos(y).draw(msg, screen);
 	}
 	
 	/// these draws a paragraph from an array of lines (or a string, at which point it calls getLines()), with the specified properties.
@@ -49,8 +49,8 @@ public class Font {
 	/// this one assumes the screen width, minus a given padding.
 	public static String drawParagraph(String para, Screen screen, int paddingX, boolean centerPaddingX, int paddingY, boolean centerPaddingY, FontStyle style, int lineSpacing) {
 		
-		style.xCenterBounds(paddingX, screen.w - (centerPaddingX?paddingX:0));
-		style.yCenterBounds(paddingY, screen.h - (centerPaddingY?paddingY:0));
+		style.xCenterBounds(paddingX, Screen.w - (centerPaddingX?paddingX:0));
+		style.yCenterBounds(paddingY, Screen.h - (centerPaddingY?paddingY:0));
 		
 		return drawParagraph(para, screen, style.centerMaxX - style.centerMinX, style.centerMaxY - style.centerMinY, style, centerPaddingX, lineSpacing);
 	}
@@ -64,7 +64,7 @@ public class Font {
 		//System.out.println("lines: " + java.util.Arrays.toString(lines));
 		
 		if (centered) style.xPosition = -1;
-		//else style.xPosition = (screen.w - w) / 2;
+		//else style.xPosition = (Screen.w - w) / 2;
 		
 		return drawParagraph(lines, screen, style, lineSpacing);
 	}

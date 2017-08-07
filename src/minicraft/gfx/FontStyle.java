@@ -84,8 +84,8 @@ public class FontStyle {
 		
 		/// for centering
 		int cxMin = centerMinX, cyMin = centerMinY;
-		int cxMax = centerMaxX == -1 ? screen.w : centerMaxX;
-		int cyMax = centerMaxY == -1 ? screen.h : centerMaxY;
+		int cxMax = centerMaxX == -1 ? Screen.w : centerMaxX;
+		int cyMax = centerMaxY == -1 ? Screen.h : centerMaxY;
 		
 		int xPos = xPosition == -1 ? Font.centerX(msg, cxMin, cxMax) : xPosition;
 		int yPos = yPosition == -1 ? Font.centerY(msg, cyMin, cyMax) : yPosition;
