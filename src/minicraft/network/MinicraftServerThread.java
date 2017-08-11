@@ -5,17 +5,14 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
-import java.net.NetworkInterface;
 import java.net.Socket;
 import java.net.SocketException;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.Timer;
 import java.util.TimerTask;
 import minicraft.Game;
 import minicraft.entity.Entity;
-import minicraft.entity.Player;
 import minicraft.entity.RemotePlayer;
 import minicraft.item.Item;
 import minicraft.item.PowerGloveItem;
@@ -40,7 +37,7 @@ public class MinicraftServerThread extends MinicraftConnection {
 	
 	private Game game;
 	
-	private NetworkInterface computer = null;
+	//private NetworkInterface computer = null;
 	
 	//private List<Integer> trackedEntities = new ArrayList<Integer>();
 	private List<Timer> gameTimers;
@@ -64,7 +61,9 @@ public class MinicraftServerThread extends MinicraftConnection {
 		
 		client = new RemotePlayer(null, game, false, socket.getInetAddress(), socket.getPort());
 		
-		try {
+		// username is set later
+		
+		/*try {
 			computer = NetworkInterface.getByInetAddress(socket.getInetAddress());
 		} catch(SocketException ex) {
 			System.err.println("SERVER THREAD ERROR: couldn't get network interface from socket address. ("+this+")");
@@ -73,7 +72,7 @@ public class MinicraftServerThread extends MinicraftConnection {
 		
 		if(computer == null)
 			System.err.println("WARNING: network interface for " + this + "'s socket connection is null.");
-		
+		*/
 		//if (Game.debug) System.out.println("network interface for " + this +": " + computer);
 		
 		packetTypesToKeep.addAll(InputType.tileUpdates);
@@ -220,11 +219,11 @@ public class MinicraftServerThread extends MinicraftConnection {
 		File[] clientFiles = serverInstance.getRemotePlayerFiles();
 		
 		for(File file: clientFiles) {
-			String macString = "";
+			String username = "";
 			try {
 				BufferedReader br = new BufferedReader(new FileReader(file));
 				try {
-					macString = br.readLine().trim();
+					username = br.readLine().trim();
 				} catch(IOException ex) {
 					System.err.println("failed to read line from file.");
 					ex.printStackTrace();
@@ -234,15 +233,10 @@ public class MinicraftServerThread extends MinicraftConnection {
 				ex.printStackTrace();
 			}
 			
-			try {
-				if(computer != null && macString.equals(getMacString(computer.getHardwareAddress()))) {
-					/// this player has been here before.
-					if (Game.debug) System.out.println("remote player file found; returning file " + file.getName());
-					return file;
-				}
-			} catch(SocketException ex) {
-				System.err.println("problem fetching mac address.");
-				ex.printStackTrace();
+			if(username.equals(client.getUsername())) {
+				/// this player has been here before.
+				if (Game.debug) System.out.println("remote player file found; returning file " + file.getName());
+				return file;
 			}
 		}
 		
@@ -267,7 +261,7 @@ public class MinicraftServerThread extends MinicraftConnection {
 		return playerdata;
 	}
 	
-	private static String getMacString(byte[] macAddress) {
+	/*private static String getMacString(byte[] macAddress) {
 		StringBuilder macString = new StringBuilder();
 		for(byte b: macAddress) {
 			//String hexInt = Integer.toHexString((int)b);
@@ -277,7 +271,7 @@ public class MinicraftServerThread extends MinicraftConnection {
 		}
 		if(Game.debug) System.out.println("mac as hex: " + macString);
 		return macString.toString();
-	}
+	}*/
 	
 	protected void writeClientSave(String playerdata) {
 		String filename = ""; // this will hold the path to the file that will be saved to.
@@ -291,7 +285,7 @@ public class MinicraftServerThread extends MinicraftConnection {
 			filename = "RemotePlayer"+numFiles+Save.extension;
 		}
 		
-		byte[] macAddress = null;
+		/*byte[] macAddress = null;
 		try {
 			macAddress = computer.getHardwareAddress();
 		} catch(NullPointerException ex) {
@@ -303,9 +297,9 @@ public class MinicraftServerThread extends MinicraftConnection {
 		if(macAddress == null) {
 			System.err.println("SERVER: error saving player file; couldn't get client MAC address.");
 			return;
-		}
+		}*/
 		
-		String filedata = getMacString(macAddress) + "\n" + playerdata;
+		String filedata = client.getUsername() + "\n" + playerdata;
 		
 		String filepath = serverInstance.getWorldPath()+"/"+filename;
 		//java.nio.file.Path theFile = (new File(filepath)).toPath();

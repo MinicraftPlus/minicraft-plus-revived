@@ -359,11 +359,11 @@ public class MinicraftServer extends Thread implements MinicraftProtocol {
 		}
 		
 		switch(inType) {
-			case USERNAMES:
+			/*case USERNAMES:
 				if (Game.debug) System.out.println("SERVER: recieved usernames request");
 				serverThread.sendData(InputType.USERNAMES, getUsernames());
 				return true;
-			
+			*/
 			case LOGIN:
 				if (Game.debug) System.out.println("SERVER: recieved login request");
 				if (Game.debug) System.out.println("SERVER: login data: " + Arrays.toString(data));
@@ -373,15 +373,6 @@ public class MinicraftServer extends Thread implements MinicraftProtocol {
 				if(clientVersion.compareTo(new Load.Version(Game.VERSION)) != 0) {
 					serverThread.sendError("wrong game version; need " + Game.VERSION);
 					return false;
-				}
-				
-				for(MinicraftServerThread thread: getThreads()) {
-					if(thread == serverThread) continue;
-					if(thread.getClient().getUsername().equalsIgnoreCase(username)) {
-						// username is taken; could happen if a client requests usernames, then another client joins before the first one. just take user back to the name selection.
-						serverThread.sendData(InputType.USERNAMES, getUsernames());
-						return false;
-					}
 				}
 				
 				/// versions match, and username is unique; make client player
@@ -453,13 +444,6 @@ public class MinicraftServer extends Thread implements MinicraftProtocol {
 				/// send client world info
 				if (Game.debug) System.out.println("SERVER: sending INIT packet");
 				serverThread.sendData(InputType.INIT, sendString);
-				//clientList.add(clientPlayer); /// file client player
-				//broadcastEntityAddition(clientPlayer); // this is done above.
-				//unconfirmedAdditions.put(clientPlayer, new ArrayList<Integer>());
-				//unconfirmedRemovals.put(clientPlayer, new ArrayList<Integer>());
-				/// tell others of client joining
-				//if (Game.debug) System.out.println("SERVER: broadcasting player addition");
-				//sendEntityAddition(clientPlayer, clientPlayer);
 				return true;
 			
 			case LOAD:
@@ -480,15 +464,7 @@ public class MinicraftServer extends Thread implements MinicraftProtocol {
 					tiledata[i*2+1] = Game.levels[levelidx].data[i];
 				}
 				serverThread.cachePacketTypes(InputType.tileUpdates);
-				/*int pkSize = packetSize - 2;
-				for(int i = 0; i < tiledata.length; i += pkSize) {
-					int endidx = i+1+pkSize;
-					byte[] curData = Arrays.copyOfRange(tiledata, i, (endidx>=tiledata.length?tiledata.length-1:endidx));
-					curData[0] = (byte) InputType.TILES.ordinal();
-					curData[1] = (byte) (i/pkSize); // this value tells the client what index to start filling on.
-					if(Game.debug) System.out.println("SERVER: sending tiles from " + (i/2) + " to " + ((i+curData.length-2)/2) + " to client; passed value: " + curData[1]);
-					sendData(curData, address, port);
-				}*/
+				
 				StringBuilder tiledataString = new StringBuilder();
 				for(byte b: tiledata)
 					tiledataString.append((char) ((int)b+1));
@@ -499,36 +475,27 @@ public class MinicraftServer extends Thread implements MinicraftProtocol {
 				
 				Entity[] entities = Game.levels[levelidx].getEntityArray();
 				serverThread.cachePacketTypes(InputType.entityUpdates);
-				//int i = 0;
-				//while(i <= entities.length) {
-					StringBuilder edata = new StringBuilder();
-					for(int i = 0; i < entities.length; i++) {
-						Entity curEntity = entities[i];
-						if(!clientPlayer.shouldTrack(curEntity.x>>4, curEntity.y>>4))
-							continue; // this is outside of the player's entity tracking range; doesn't need to know about it yet.
-						String curEntityData = "";
-						if(curEntity != clientPlayer) {
-							curEntityData = Save.writeEntity(curEntity, false) + ",";
-							if(Game.debug && curEntity instanceof Player) System.out.println("SERVER: sending player in ENTITIES packet: " + curEntity);
-						}
-						/*if(curEntityData.getBytes().length + edata.getBytes().length + "END".getBytes().length > packetSize-1 && curEntityData.length() > 1) {
-							// there are too many entities to send in one packet.
-							break;
-						}*/
-						// there is enough space.
-						if(curEntityData.length() > 1) // 1 b/c of the "," added; this prevents entities that aren't saved from causing ",," to appear.
-							edata.append(curEntityData);
+				
+				StringBuilder edata = new StringBuilder();
+				for(int i = 0; i < entities.length; i++) {
+					Entity curEntity = entities[i];
+					if(!clientPlayer.shouldTrack(curEntity.x>>4, curEntity.y>>4))
+						continue; // this is outside of the player's entity tracking range; doesn't need to know about it yet.
+					String curEntityData = "";
+					if(curEntity != clientPlayer) {
+						curEntityData = Save.writeEntity(curEntity, false) + ",";
+						if(Game.debug && curEntity instanceof Player) System.out.println("SERVER: sending player in ENTITIES packet: " + curEntity);
 					}
-					//if(i >= entities.length)
-						//edata += "END"; // tell the client there are no more entities to send.
-					//else
-						String edataToSend = edata.substring(0, Math.max(0, edata.length()-1)); // cut off trailing comma
-					
-					serverThread.sendData(InputType.ENTITIES, edataToSend);
-					serverThread.sendCachedPackets();
-					//if(i == entities.length)
-						//break; // this won't break in this case otherwise.
-				//}
+					// there is enough space.
+					if(curEntityData.length() > 1) // 1 b/c of the "," added; this prevents entities that aren't saved from causing ",," to appear.
+						edata.append(curEntityData);
+				}
+				
+				String edataToSend = edata.substring(0, Math.max(0, edata.length()-1)); // cut off trailing comma
+				
+				serverThread.sendData(InputType.ENTITIES, edataToSend);
+				serverThread.sendCachedPackets();
+				
 				return true;
 			
 			case DIE:
@@ -588,12 +555,10 @@ public class MinicraftServer extends Thread implements MinicraftProtocol {
 					List<String> datastrs = new ArrayList<String>();
 					
 					Save save = new Save(clientPlayer);
-					for(String str: parts[0].split(","))
-						datastrs.add(str);
+					datastrs.addAll(Arrays.asList(parts[0].split(",")));
 					save.writeToFile(save.location+"Player"+Save.extension, datastrs);
 					datastrs.clear();
-					for(String str: parts[1].split(","))
-						datastrs.add(str);
+					datastrs.addAll(Arrays.asList(parts[1].split(",")));
 					save.writeToFile(save.location+"Inventory"+Save.extension, datastrs);
 					
 					return true;
@@ -772,28 +737,6 @@ public class MinicraftServer extends Thread implements MinicraftProtocol {
 		for(MinicraftServerThread thread: threads)
 			thread.sendData(inType, data);
 	}
-	
-	//static int sends = 0;
-	/*public void sendData(byte[] data, InetAddress ip, int port) {
-		//sends++;
-		//if(sends > 50) System.exit(0);
-		DatagramPacket packet = new DatagramPacket(data, data.length, ip, port);
-		String intype = MinicraftConnection.getInputType(data[0]).name();
-		if (Game.debug && !intype.equals("ENTITY") && !intype.equals("ADD") && !intype.equals("REMOVE")) System.out.println("SERVER: sending "+intype+" data to: " + ip);
-		try {
-			socket.send(packet);
-		} catch(IOException ex) {
-			ex.printStackTrace();
-		}
-	}*/
-	
-	/*public RemotePlayer getClientPlayer(InetAddress ip, int port) {
-		for(RemotePlayer client: getClients())
-			if(client.ipAddress.equals(ip) && client.port == port)
-				return client;
-		
-		return null;
-	}*/
 	
 	protected void onThreadDisconnect(MinicraftServerThread thread) {
 		threadList.remove(thread);
