@@ -6,15 +6,15 @@ import minicraft.screen.OptionsMenu;
 
 public class Sound {
 	//creates sounds from their respective files
-	public static final Sound playerHurt = new Sound("/playerhurt.wav");
-	public static final Sound playerDeath = new Sound("/death.wav");
-	public static final Sound monsterHurt = new Sound("/monsterhurt.wav");
-	public static final Sound test = new Sound("/test.wav");
-	public static final Sound pickup = new Sound("/pickup.wav");
-	public static final Sound bossdeath = new Sound("/bossdeath.wav");
-	public static final Sound craft = new Sound("/craft.wav");
-	public static final Sound fuse = new Sound("/fuse.wav");
-	public static final Sound explode = new Sound("/explode.wav");
+	public static final Sound playerHurt = new Sound("/resources/playerhurt.wav");
+	public static final Sound playerDeath = new Sound("/resources/death.wav");
+	public static final Sound monsterHurt = new Sound("/resources/monsterhurt.wav");
+	public static final Sound test = new Sound("/resources/test.wav");
+	public static final Sound pickup = new Sound("/resources/pickup.wav");
+	public static final Sound bossdeath = new Sound("/resources/bossdeath.wav");
+	public static final Sound craft = new Sound("/resources/craft.wav");
+	public static final Sound fuse = new Sound("/resources/fuse.wav");
+	public static final Sound explode = new Sound("/resources/explode.wav");
 
 	private AudioClip clip; // Creates a audio clip to be played
 

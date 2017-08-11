@@ -45,6 +45,7 @@ public class Game extends Canvas implements Runnable {
 	
 	public static boolean debug = false;
 	public static boolean HAS_GUI = true;
+	public static Game main = null;
 	
 	/// MANAGERIAL VARS AND RUNNING
 	
@@ -197,7 +198,7 @@ public class Game extends Canvas implements Runnable {
 		byte[] bytes = new byte[4];
 		bytes[0] = num >> (8*3);
 		bytes[1] = num >> (8*2) & 0xff;
-		bytes[2] = num >> 8 & 0xff;
+		bytes[2] = num >> cdm8 & 0xff;
 		bytes[3] = num & 0xff;
 	}
 	
@@ -250,8 +251,10 @@ public class Game extends Canvas implements Runnable {
 	protected void init() {
 		/* This sets up the screens, and loads the icons.png spritesheet. */
 		try {
-			screen = new Screen(WIDTH, HEIGHT, new SpriteSheet(ImageIO.read(Game.class.getResourceAsStream("/icons.png"))));
-			lightScreen = new Screen(WIDTH, HEIGHT, new SpriteSheet(ImageIO.read(Game.class.getResourceAsStream("/icons.png"))));
+			screen = new Screen(WIDTH, HEIGHT, new SpriteSheet(ImageIO.read(Game.class.getResourceAsStream
+					("/resources/icons.png"))));
+			lightScreen = new Screen(WIDTH, HEIGHT, new SpriteSheet(ImageIO.read(Game.class.getResourceAsStream
+					("/resources/icons.png"))));
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
@@ -1318,6 +1321,8 @@ public class Game extends Canvas implements Runnable {
 		}
 		
 		game.autoclient = autoclient; // this will make the game automatically jump to the MultiplayerMenu, and attempt to connect to localhost.
+		
+		Game.main = game;
 		
 		game.start(); // Starts the game!
 	}
