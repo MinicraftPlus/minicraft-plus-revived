@@ -41,7 +41,7 @@ public class MinicraftServerThread extends MinicraftConnection {
 	
 	//private List<Integer> trackedEntities = new ArrayList<Integer>();
 	private List<Timer> gameTimers;
-	private boolean recievedPing = true;
+	private boolean receivedPing = true;
 	
 	private List<InputType> packetTypesToKeep = new ArrayList<InputType>();
 	private List<InputType> packetTypesToCache = new ArrayList<InputType>();
@@ -83,8 +83,8 @@ public class MinicraftServerThread extends MinicraftConnection {
 		//if(inType == InputType.LOAD) isPlaying = true;
 		
 		if(inType == InputType.PING) {
-			//if (Game.debug) System.out.println(this+" recieved ping");
-			recievedPing = true;
+			//if (Game.debug) System.out.println(this+" received ping");
+			receivedPing = true;
 			return true;
 		}
 		
@@ -92,14 +92,14 @@ public class MinicraftServerThread extends MinicraftConnection {
 	}
 	
 	private void ping() {
-		//if (Game.debug) System.out.println(this+" is doing ping sequence. recieved ping: " + recievedPing);
+		//if (Game.debug) System.out.println(this+" is doing ping sequence. received ping: " + receivedPing);
 		
-		if(!recievedPing) {
+		if(!receivedPing) {
 			// disconnect from the client; they are taking too long to respond and probably don't exist anyway.
 			sendError("connection timed out; ping too slow");
 			endConnection();
 		} else {
-			recievedPing = false;
+			receivedPing = false;
 			sendData(InputType.PING, "");
 		}
 	}

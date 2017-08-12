@@ -63,15 +63,15 @@ public abstract class MinicraftConnection extends Thread implements MinicraftPro
 				//if (Game.debug) System.out.println(this + " completed data packet: " + currentData);
 				
 				InputType inType = MinicraftProtocol.getInputType(currentData.charAt(0));
-				//if (Game.debug) System.out.println(this + " recieved "+inType+" packet");//: " + stringToInts(currentData.toString(), 30));
+				//if (Game.debug) System.out.println(this + " received "+inType+" packet");//: " + stringToInts(currentData.toString(), 30));
 				
 				//if(inType == InputType.INIT) initCount++;
 				//if(initCount > 20) System.exit(1);
 				
-				//if(Game.debug && (inType == InputType.MOVE || inType == InputType.INTERACT)) System.out.println(this+" recieved "+inType+" packet");
+				//if(Game.debug && (inType == InputType.MOVE || inType == InputType.INTERACT)) System.out.println(this+" received "+inType+" packet");
 				
 				if(inType == null)
-					System.err.println("SERVER: invalid packet recieved; input type is not valid.");
+					System.err.println("SERVER: invalid packet received; input type is not valid.");
 				else
 					parsePacket(inType, currentData.substring(1));
 				
@@ -112,10 +112,10 @@ public abstract class MinicraftConnection extends Thread implements MinicraftPro
 				//if (Game.debug) System.out.println(this + " completed data packet; parsing...");
 				
 				InputType inType = MinicraftProtocol.getInputType(currentData.charAt(0));
-				//if (Game.debug && inType != InputType.MOVE) System.out.println("SERVER: recieved "+inType+" packet");
+				//if (Game.debug && inType != InputType.MOVE) System.out.println("SERVER: received "+inType+" packet");
 				
 				if(inType == null)
-					System.err.println("SERVER: invalid packet recieved; input type is not valid.");
+					System.err.println("SERVER: invalid packet received; input type is not valid.");
 				else
 					parsePacket(inType, currentData.substring(1));
 				

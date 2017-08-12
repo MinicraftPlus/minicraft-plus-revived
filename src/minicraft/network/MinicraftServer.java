@@ -352,13 +352,13 @@ public class MinicraftServer extends Thread implements MinicraftProtocol {
 		
 		RemotePlayer clientPlayer = serverThread.getClient();
 		if(clientPlayer == null) {
-			System.err.println("CRITICAL SERVER ERROR: server thread client is null: " + serverThread + "; cannot parse the recieved "+inType+" packet: " + alldata);
+			System.err.println("CRITICAL SERVER ERROR: server thread client is null: " + serverThread + "; cannot parse the received "+inType+" packet: " + alldata);
 			return false;
 		}
 		
 		// handle reports of type INVALID
 		if(inType == InputType.INVALID) {
-			if (Game.debug) System.out.println(serverThread + " recieved an error:");
+			if (Game.debug) System.out.println(serverThread + " received an error:");
 			System.err.println(alldata);
 			return false;
 		}
@@ -371,13 +371,8 @@ public class MinicraftServer extends Thread implements MinicraftProtocol {
 		}
 		
 		switch(inType) {
-			/*case USERNAMES:
-				if (Game.debug) System.out.println("SERVER: recieved usernames request");
-				serverThread.sendData(InputType.USERNAMES, getUsernames());
-				return true;
-			*/
 			case LOGIN:
-				if (Game.debug) System.out.println("SERVER: recieved login request");
+				if (Game.debug) System.out.println("SERVER: received login request");
 				if (Game.debug) System.out.println("SERVER: login data: " + Arrays.toString(data));
 				String username = data[0];
 				Load.Version clientVersion = new Load.Version(data[1]);
@@ -459,7 +454,7 @@ public class MinicraftServer extends Thread implements MinicraftProtocol {
 				return true;
 			
 			case LOAD:
-				if (Game.debug) System.out.println("SERVER: recieved level data request");
+				if (Game.debug) System.out.println("SERVER: received level data request");
 				// send back the tiles in the level specified.
 				int levelidx = Integer.parseInt(alldata);
 				if(levelidx < 0 || levelidx >= Game.levels.length) {
@@ -511,7 +506,7 @@ public class MinicraftServer extends Thread implements MinicraftProtocol {
 				return true;
 			
 			case DIE:
-				if (Game.debug) System.out.println("recieved player death");
+				if (Game.debug) System.out.println("received player death");
 				Entity dc = Load.loadEntity(alldata, game, false);
 				broadcastEntityRemoval(clientPlayer);
 				return true;
@@ -557,7 +552,7 @@ public class MinicraftServer extends Thread implements MinicraftProtocol {
 				return true;
 			
 			case SAVE:
-				if (Game.debug) System.out.println("SERVER: recieved player save from " + serverThread.getClient());
+				if (Game.debug) System.out.println("SERVER: received player save from " + serverThread.getClient());
 				/// save this client's data to a file.
 				/// first, determine if this is the main player. if not, determine if a file already exists for this client. if not, find an available file name. for simplicity, we will just count the number of remote player files saved.
 				
@@ -581,7 +576,7 @@ public class MinicraftServer extends Thread implements MinicraftProtocol {
 				return true;
 			
 			case CHESTIN: case CHESTOUT:
-				//if (Game.debug) System.out.println("SERVER: recieved chest request: " + inType);
+				//if (Game.debug) System.out.println("SERVER: received chest request: " + inType);
 				int eid = Integer.parseInt(data[0]);
 				Entity e = Game.getEntity(eid);
 				if(e == null || !(e instanceof Chest)) {
@@ -637,7 +632,7 @@ public class MinicraftServer extends Thread implements MinicraftProtocol {
 				return true;
 			
 			case PICKUP:
-				//if (Game.debug) System.out.println("SERVER: recieved itementity pickup request");
+				//if (Game.debug) System.out.println("SERVER: received itementity pickup request");
 				int ieid = Integer.parseInt(alldata);
 				Entity entity = Game.getEntity(ieid);
 				if(entity == null || !(entity instanceof ItemEntity) || entity.isRemoved()) {
@@ -653,7 +648,7 @@ public class MinicraftServer extends Thread implements MinicraftProtocol {
 				return true;
 			
 			case INTERACT:
-				//if (Game.debug) System.out.println("SERVER: recieved interaction request");
+				//if (Game.debug) System.out.println("SERVER: received interaction request");
 				//x, y, dir, item
 				// since this should be the most up-to-date data, just update the remote player coords with them.
 				//int ox = clientPlayer.x>>4, oy = clientPlayer.y>>4;
@@ -703,7 +698,7 @@ public class MinicraftServer extends Thread implements MinicraftProtocol {
 			
 			case MOVE:
 				/// the player moved.
-				//if (Game.debug) System.out.println(serverThread+": recieved move packet");
+				//if (Game.debug) System.out.println(serverThread+": received move packet");
 				//int olddir = clientPlayer.dir;
 				int plvlidx = Integer.parseInt(data[3]);
 				if(plvlidx >= 0 && plvlidx < Game.levels.length && Game.levels[plvlidx] != clientPlayer.getLevel()) {

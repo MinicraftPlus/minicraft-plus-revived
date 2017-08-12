@@ -288,7 +288,7 @@ public class Save {
 		
 		//if(e instanceof Particle) return ""; // TODO I don't want to, but there are complications.
 		
-		if(isLocalSave && (e instanceof ItemEntity || e instanceof Arrow || e instanceof RemotePlayer || e instanceof Spark || e instanceof Particle)) // wirte these only when sending a world, not writing it. (RemotePlayers are saved seperately, when their info is recieved.)
+		if(isLocalSave && (e instanceof ItemEntity || e instanceof Arrow || e instanceof RemotePlayer || e instanceof Spark || e instanceof Particle)) // wirte these only when sending a world, not writing it. (RemotePlayers are saved seperately, when their info is received.)
 			return "";
 		
 		if(!isLocalSave)
