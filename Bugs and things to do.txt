@@ -8,9 +8,7 @@ Note to self: for more little bugs/ideas/concerns, search code for "TODO"
 
 	####BUGS####
 ####
-Found mob spawner setup, but there's no mob spawner
-####
-pow glove doesn't work well with other items in hand; it tends to stop working and prevent you from using it again or putting down furniture, until you reload the world.
+Found mob spawner setup, but there's no mob spawner...
 ####
 Stairs clump together.
 ####

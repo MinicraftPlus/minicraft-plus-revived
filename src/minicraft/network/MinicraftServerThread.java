@@ -181,11 +181,11 @@ public class MinicraftServerThread extends MinicraftConnection {
 	}
 	
 	public void updatePlayerActiveItem(Item heldItem) {
-		if(client.activeItem == null && heldItem == null || client.activeItem != null && client.activeItem.matches
+		/*if(client.activeItem == null && heldItem == null || client.activeItem != null && client.activeItem.matches
 				(heldItem)) {
 			System.out.println("SERVER THREAD: player active item is already the one specified: " + heldItem + "; not updating.");
 			return;
-		}
+		}*/
 		
 		if(client.activeItem != null && !(client.activeItem instanceof PowerGloveItem))
 			sendData(InputType.CHESTOUT, client.activeItem.getData());

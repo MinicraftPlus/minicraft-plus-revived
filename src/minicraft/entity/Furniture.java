@@ -15,7 +15,6 @@ public class Furniture extends Entity {
 	protected int pushDir = -1; // the direction to push the furniture
 	public Sprite sprite;
 	public String name;
-	protected Player shouldTake; // the player that should take the furniture
 	
 	public Furniture(String name, Sprite sprite) { this(name, sprite, 3, 3); }
 	public Furniture(String name, Sprite sprite, int xr, int yr) {
@@ -24,8 +23,6 @@ public class Furniture extends Entity {
 		this.name = name;
 		this.sprite = sprite;
 		col = sprite.color;
-		//xr = 3; // x radius of the furniture
-		//yr = 3; // y radius of the furniture
 	}
 	
 	public Furniture clone() {
@@ -38,21 +35,6 @@ public class Furniture extends Entity {
 	}
 
 	public void tick() {
-		if (shouldTake != null) { // if the player that should take this exists...
-			remove(); // remove this from the world
-			if(!Game.ISONLINE) {
-				if (!ModeMenu.creative && shouldTake.activeItem != null && !(shouldTake.activeItem instanceof PowerGloveItem)) shouldTake.inventory.add(0, shouldTake.activeItem); // put whatever item the player is holding into their inventory (should never be a power glove, since it is put in a taken out again all in the same frame).
-				shouldTake.activeItem = new FurnitureItem(this); // make this the player's current item.
-			}
-			else if(Game.isValidServer() && shouldTake instanceof RemotePlayer)
-				Game.server.getAssociatedThread((RemotePlayer)shouldTake).updatePlayerActiveItem(new FurnitureItem(this));
-			else
-				System.out.println("WARNING: undefined behavior; online game was not server and ticked furniture: "+this+"; and/or player in online game found that isn't a RemotePlayer: " + shouldTake);
-			
-			//if (Game.debug) System.out.println("set active item of player " + shouldTake + " to " + shouldTake.activeItem + "; picked up furniture: " + this);
-			
-			shouldTake = null; // the player is now dereferenced.
-		}
 		// moves the furniture in the correct direction.
 		if (pushDir == 0) move(0, +1);
 		if (pushDir == 1) move(0, -1);
@@ -91,7 +73,18 @@ public class Furniture extends Entity {
 	
 	/** Used in PowerGloveItem.java */
 	public void take(Player player) {
-		shouldTake = player; // assigns the player that should take this
+		remove(); // remove this from the world
+		if(!Game.ISONLINE) {
+			if (!ModeMenu.creative && player.activeItem != null && !(player.activeItem instanceof PowerGloveItem))
+				player.inventory.add(0, player.activeItem); // put whatever item the player is holding into their inventory (should never be a power glove, since it is put in a taken out again all in the same frame).
+			player.activeItem = new FurnitureItem(this); // make this the player's current item.
+		}
+		else if(Game.isValidServer() && player instanceof RemotePlayer)
+			Game.server.getAssociatedThread((RemotePlayer)player).updatePlayerActiveItem(new FurnitureItem(this));
+		else
+			System.out.println("WARNING: undefined behavior; online game was not server and ticked furniture: "+this+"; and/or player in online game found that isn't a RemotePlayer: " + player);
+		
+		//if (Game.debug) System.out.println("set active item of player " + player + " to " + player.activeItem + "; picked up furniture: " + this);
 	}
 	
 	public boolean canWool() {
