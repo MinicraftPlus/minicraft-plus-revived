@@ -63,18 +63,6 @@ public class MinicraftServerThread extends MinicraftConnection {
 		
 		// username is set later
 		
-		/*try {
-			computer = NetworkInterface.getByInetAddress(socket.getInetAddress());
-		} catch(SocketException ex) {
-			System.err.println("SERVER THREAD ERROR: couldn't get network interface from socket address. ("+this+")");
-			ex.printStackTrace();
-		}
-		
-		if(computer == null)
-			System.err.println("WARNING: network interface for " + this + "'s socket connection is null.");
-		*/
-		//if (Game.debug) System.out.println("network interface for " + this +": " + computer);
-		
 		packetTypesToKeep.addAll(InputType.tileUpdates);
 		packetTypesToKeep.addAll(InputType.entityUpdates);
 		
@@ -193,7 +181,8 @@ public class MinicraftServerThread extends MinicraftConnection {
 	}
 	
 	public void updatePlayerActiveItem(Item heldItem) {
-		if(client.activeItem == null && heldItem == null || client.activeItem.matches(heldItem)) {
+		if(client.activeItem == null && heldItem == null || client.activeItem != null && client.activeItem.matches
+				(heldItem)) {
 			System.out.println("SERVER THREAD: player active item is already the one specified: " + heldItem + "; not updating.");
 			return;
 		}
@@ -210,7 +199,8 @@ public class MinicraftServerThread extends MinicraftConnection {
 	}
 	
 	protected void respawnPlayer() {
-		client = new RemotePlayer(game, true, client);
+		client.remove(); // hopefully removes it from any level it might still be on
+		client = new RemotePlayer(game, false, client);
 		client.respawn(Game.levels[Game.lvlIdx(0)]); // get the spawn loc. of the client
 		sendData(InputType.PLAYER, client.getPlayerData()); // send spawn loc.
 	}
@@ -261,18 +251,6 @@ public class MinicraftServerThread extends MinicraftConnection {
 		return playerdata;
 	}
 	
-	/*private static String getMacString(byte[] macAddress) {
-		StringBuilder macString = new StringBuilder();
-		for(byte b: macAddress) {
-			//String hexInt = Integer.toHexString((int)b);
-			//if (Game.debug) System.out.println("mac byte as hex int: " + hexInt);
-			//macString.append(hexInt.substring(hexInt.length()-2));
-			macString.append(String.format("%02x", b));
-		}
-		if(Game.debug) System.out.println("mac as hex: " + macString);
-		return macString.toString();
-	}*/
-	
 	protected void writeClientSave(String playerdata) {
 		String filename = ""; // this will hold the path to the file that will be saved to.
 		
@@ -285,28 +263,11 @@ public class MinicraftServerThread extends MinicraftConnection {
 			filename = "RemotePlayer"+numFiles+Save.extension;
 		}
 		
-		/*byte[] macAddress = null;
-		try {
-			macAddress = computer.getHardwareAddress();
-		} catch(NullPointerException ex) {
-			System.err.println("network interface for "+this+" is null: "+computer+"; couldn't get mac address.");
-		} catch(SocketException ex) {
-			System.err.println("couldn't get mac address.");
-			ex.printStackTrace();
-		}
-		if(macAddress == null) {
-			System.err.println("SERVER: error saving player file; couldn't get client MAC address.");
-			return;
-		}*/
-		
 		String filedata = client.getUsername() + "\n" + playerdata;
 		
 		String filepath = serverInstance.getWorldPath()+"/"+filename;
-		//java.nio.file.Path theFile = (new File(filepath)).toPath();
 		try {
 			Save.writeToFile(filepath, filedata.split("\\n"), false);
-			//Files.write(theFile, Arrays.asList(filedata.split("\\n")), StandardCharsets.UTF_8, StandardOpenOption.CREATE, StandardOpenOption.WRITE, StandardOpenOption.TRUNCATE_EXISTING);
-			//Files.setAttribute(theFile, "isRegularFile", (new Boolean(true)), (java.nio.file.LinkOption[])null);
 		} catch(IOException ex) {
 			System.err.println("problem writing remote player to file: " + filepath);
 			ex.printStackTrace();

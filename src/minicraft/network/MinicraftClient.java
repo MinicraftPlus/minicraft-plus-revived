@@ -7,10 +7,6 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 
-import com.mashape.unirest.http.HttpResponse;
-import com.mashape.unirest.http.JsonNode;
-import com.mashape.unirest.http.Unirest;
-import com.mashape.unirest.http.exceptions.UnirestException;
 import minicraft.Game;
 import minicraft.entity.Bed;
 import minicraft.entity.Chest;
@@ -30,7 +26,6 @@ import minicraft.saveload.Save;
 import minicraft.screen.DeadMenu;
 import minicraft.screen.ModeMenu;
 import minicraft.screen.MultiplayerMenu;
-import org.json.JSONObject;
 
 /// This class is only used by the client runtime; the server runtime doesn't touch it.
 public class MinicraftClient extends MinicraftConnection {
@@ -47,7 +42,7 @@ public class MinicraftClient extends MinicraftConnection {
 	
 	private HashMap<Integer, Long> entityRequests = new HashMap<Integer, Long>();
 	
-	private static final Socket openSocket(String hostName, MultiplayerMenu menu) {
+	private static Socket openSocket(String hostName, MultiplayerMenu menu) {
 		InetAddress hostAddress = null;
 		Socket socket = null;
 		
@@ -106,7 +101,7 @@ public class MinicraftClient extends MinicraftConnection {
 		}
 	}
 	
-	public void login(String username) {
+	private void login(String username) {
 		if (Game.debug) System.out.println("CLIENT: logging in to server...");
 		
 		try {
@@ -382,7 +377,7 @@ public class MinicraftClient extends MinicraftConnection {
 			case CHESTOUT:
 				if(curState != State.PLAY) return false; // shouldn't happen.
 				Item item = Items.get(alldata);
-				if (Game.debug) System.out.println("CLIENT: received chestout with item: " + item);
+				//if (Game.debug) System.out.println("CLIENT: received chestout with item: " + item);
 				if(!ModeMenu.creative)
 					game.player.inventory.add(0, item);
 				//if (Game.debug) System.out.println("CLIENT successfully took " + item + " from chest and added to inv.");

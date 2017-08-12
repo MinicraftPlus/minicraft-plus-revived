@@ -52,8 +52,8 @@ public class MinicraftServer extends Thread implements MinicraftProtocol {
 		super("MinicraftServer");
 		this.game = game;
 		
-		game.ISONLINE = true;
-		game.ISHOST = true; // just in case.
+		Game.ISONLINE = true;
+		Game.ISHOST = true; // just in case.
 		game.player.remove(); // the server has no player...
 		
 		worldPath = Game.gameDir + "/saves/" + WorldSelectMenu.worldname;
@@ -120,7 +120,11 @@ public class MinicraftServer extends Thread implements MinicraftProtocol {
 		List<String> playerStrings = new ArrayList<String>();
 		for(MinicraftServerThread serverThread: getThreads()) {
 			RemotePlayer clientPlayer = serverThread.getClient();
-			if(clientPlayer.getUsername().length() == 0) continue; // they aren't done logging in yet.
+			/*if(clientPlayer.getUsername().length() == 0) {
+				if(Game.debug) System.out.println("SERVER: client player " + clientPlayer + " has no username; not " +
+						"adding to status listing.");
+				continue; // they aren't done logging in yet.
+			}*/
 			
 			playerStrings.add(clientPlayer.getUsername() + ": " + clientPlayer.getIpAddress().getHostAddress() + (Game.debug?" ("+(clientPlayer.x>>4)+","+(clientPlayer.y>>4)+")":""));
 		}
@@ -224,6 +228,10 @@ public class MinicraftServer extends Thread implements MinicraftProtocol {
 	
 	public void broadcastEntityUpdate(Entity e) { broadcastEntityUpdate(e, false); }
 	public void broadcastEntityUpdate(Entity e, boolean updateSelf) {
+		if(e.isRemoved()) {
+			if(Game.debug) System.out.println("SERVER tried to broadcast addition of removed entity: " + e);
+			return;
+		}
 		List<RemotePlayer> players = getPlayersInRange(e, false);
 		//if(Game.debug && e instanceof Player) System.out.println("SERVER found " + players.size() + " players in range of " + e + ", inc self.");
 		if(!updateSelf) {
@@ -252,6 +260,10 @@ public class MinicraftServer extends Thread implements MinicraftProtocol {
 	
 	public void broadcastEntityAddition(Entity e) { broadcastEntityAddition(e, false); }
 	public void broadcastEntityAddition(Entity e, boolean addSelf) {
+		if(e.isRemoved()) {
+			if(Game.debug) System.out.println("SERVER tried to broadcast addition of removed entity: " + e);
+			return;
+		}
 		List<RemotePlayer> players = getPlayersInRange(e, true);
 		if(!addSelf)
 			players.remove(getIfPlayer(e)); // if "e" is a player, this removes it from the list.
@@ -569,7 +581,7 @@ public class MinicraftServer extends Thread implements MinicraftProtocol {
 				return true;
 			
 			case CHESTIN: case CHESTOUT:
-				if (Game.debug) System.out.println("SERVER: recieved chest request: " + inType);
+				//if (Game.debug) System.out.println("SERVER: recieved chest request: " + inType);
 				int eid = Integer.parseInt(data[0]);
 				Entity e = Game.getEntity(eid);
 				if(e == null || !(e instanceof Chest)) {
@@ -603,7 +615,7 @@ public class MinicraftServer extends Thread implements MinicraftProtocol {
 					} else
 						chest.inventory.remove(index);
 					
-					if(Game.debug) System.out.println("SERVER sending chestout with item data: \"" + itemToSend.getData() + "\"");
+					//if(Game.debug) System.out.println("SERVER sending chestout with item data: \"" + itemToSend.getData() + "\"");
 					serverThread.sendData(InputType.CHESTOUT, itemToSend.getData()); // send back the item that the player should put in their inventory.
 				}
 				
