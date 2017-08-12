@@ -156,17 +156,17 @@ public class ModeMenu extends Menu {
 		int textCol = Color.get(-1, 555);
 		screen.clear(0);
 		
-		Font.drawCentered("World Name:", screen, screen.h - 180, Color.get(-1, 444));
-		Font.drawCentered(WorldSelectMenu.worldname, screen, screen.h - 170, Color.get(-1, 5));
+		Font.drawCentered("World Name:", screen, Screen.h - 180, Color.get(-1, 444));
+		Font.drawCentered(WorldSelectMenu.worldname, screen, Screen.h - 170, Color.get(-1, 5));
 		
 		String modeText = "Game Mode:	" + modes[mode - 1];
 		new FontStyle(Color.get(-1, 555)).setYPos(8*8).setShadowType(Color.get(-1, 111), false).draw(modeText, screen);
 		
 		if(mode == 4) Font.drawCentered("<T>ime: " + getSelectedTime(), screen, 95, Color.get(-1, 555));
 		
-		Font.drawCentered("Press "+input.getMapping("select")+" to Start", screen, screen.h - 75, textCol);
-		Font.drawCentered("Press Left and Right", screen, screen.h - 150, textCol);
-		Font.drawCentered("Press "+input.getMapping("exit")+" to Return", screen, screen.h - 55, textCol);
-		Font.drawCentered("Press Z for world options", screen, screen.h - 35, textCol);
+		Font.drawCentered("Press "+input.getMapping("select")+" to Start", screen, Screen.h - 75, textCol);
+		Font.drawCentered("Press Left and Right", screen, Screen.h - 150, textCol);
+		Font.drawCentered("Press "+input.getMapping("exit")+" to Return", screen, Screen.h - 55, textCol);
+		Font.drawCentered("Press Z for world options", screen, Screen.h - 35, textCol);
 	}
 }

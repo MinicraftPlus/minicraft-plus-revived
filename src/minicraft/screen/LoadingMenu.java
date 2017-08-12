@@ -63,9 +63,9 @@ public class LoadingMenu extends Menu implements ActionListener {
 		screen.clear(0);
 		
 		int percent = (int) Math.round(percentage);
-		Font.drawCentered("Loading...", screen, screen.h - 105, col);
-		//Font.draw("This should take 4 seconds or less", screen, 10, screen.h - 185, coll);
-		//Font.draw("If not then restart because it froze", screen, 0, screen.h - 175, coll);
-		Font.drawCentered(percent + "%", screen, screen.h - 85, col);
+		Font.drawCentered("Loading...", screen, Screen.h - 105, col);
+		//Font.draw("This should take 4 seconds or less", screen, 10, Screen.h - 185, coll);
+		//Font.draw("If not then restart because it froze", screen, 0, Screen.h - 175, coll);
+		Font.drawCentered(percent + "%", screen, Screen.h - 85, col);
 	}
 }

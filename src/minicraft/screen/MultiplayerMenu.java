@@ -278,15 +278,15 @@ public class MultiplayerMenu extends Menu {
 				Font.drawCentered("logged in as: " + MultiplayerMenu.savedUsername, screen, 6, Color.get(-1, 252));
 				
 				if(!online)
-					Font.drawCentered("offline mode: local servers only", screen, screen.h/2 - Font.textHeight()*6,
+					Font.drawCentered("offline mode: local servers only", screen, Screen.h/2 - Font.textHeight()*6,
 							Color.get(-1, 335));
 				
-				Font.drawCentered("Enter ip address to connect to:", screen, screen.h/2-Font.textHeight()-2, Color
+				Font.drawCentered("Enter ip address to connect to:", screen, Screen.h/2-Font.textHeight()-2, Color
 						.get
 						(-1, 555));
-				Font.drawCentered(typing, screen, screen.h/2, Color.get(-1, 552));
+				Font.drawCentered(typing, screen, Screen.h/2, Color.get(-1, 552));
 				
-				Font.drawCentered("Press Shift-Escape to logout", screen, screen.h-Font.textHeight()*7, Color.get
+				Font.drawCentered("Press Shift-Escape to logout", screen, Screen.h-Font.textHeight()*7, Color.get
 						(-1, 444));
 				break;
 			
@@ -294,14 +294,14 @@ public class MultiplayerMenu extends Menu {
 				String msg = "Enter email:";
 				if(!typingEmail)
 					msg = "Enter password:";
-				Font.drawCentered(msg, screen, screen.h/2-6, Color.get(-1, 555));
+				Font.drawCentered(msg, screen, Screen.h/2-6, Color.get(-1, 555));
 				
 				msg = typing;
 				if(!typingEmail)
 					msg = msg.replaceAll(".", ".");
-				Font.drawCentered(msg, screen, screen.h/2+6, (inputIsValid?Color.get(-1, 444):Color.get(-1, 500)));
+				Font.drawCentered(msg, screen, Screen.h/2+6, (inputIsValid?Color.get(-1, 444):Color.get(-1, 500)));
 				if(!inputIsValid) {
-					Font.drawCentered("field is blank", screen, screen.h/2+20, Color.get(-1, 500));
+					Font.drawCentered("field is blank", screen, Screen.h/2+20, Color.get(-1, 500));
 				}
 				
 				Font.drawCentered("get an account at:", screen, Font.textHeight()/2-1, Color.get(-1, 345));
@@ -311,25 +311,25 @@ public class MultiplayerMenu extends Menu {
 				break;
 			
 			case WAITING:
-				Font.drawCentered(waitingMessage+getElipses(), screen, screen.h/2, Color.get(-1, 555));
+				Font.drawCentered(waitingMessage+getElipses(), screen, Screen.h/2, Color.get(-1, 555));
 				break;
 			
 			case LOADING:
-				Font.drawCentered("Loading "+loadingMessage+" from server"+getElipses(), screen, screen.h/2, Color.get(-1, 555));
-				//Font.drawCentered(transferPercent+"%", screen, screen.h/2+6, Color.get(-1, 555));
+				Font.drawCentered("Loading "+loadingMessage+" from server"+getElipses(), screen, Screen.h/2, Color.get(-1, 555));
+				//Font.drawCentered(transferPercent+"%", screen, Screen.h/2+6, Color.get(-1, 555));
 				break;
 			
 			case ERROR:
 				//if(Game.tickCount % 10 == 0) System.out.println("error message: " + errorMessage);
-				Font.drawCentered("Could not connect to server:", screen, screen.h/2-6, Color.get(-1, 500));
+				Font.drawCentered("Could not connect to server:", screen, Screen.h/2-6, Color.get(-1, 500));
 				FontStyle style = new FontStyle(Color.get(-1, 511));
-				Font.drawParagraph(errorMessage, screen, 0, true, screen.h/2+6, false, style, 1);
-				//Font.drawCentered(errorMessage, screen, screen.h/2+6, Color.get(-1, 511));
+				Font.drawParagraph(errorMessage, screen, 0, true, Screen.h/2+6, false, style, 1);
+				//Font.drawCentered(errorMessage, screen, Screen.h/2+6, Color.get(-1, 511));
 				break;
 		}
 		
 		if(curState == State.ENTERIP || curState == State.ERROR) {
-			Font.drawCentered("Press "+input.getMapping("exit")+" to return", screen, screen.h-Font.textHeight()*2, Color.get(-1, 333));
+			Font.drawCentered("Press "+input.getMapping("exit")+" to return", screen, Screen.h-Font.textHeight()*2, Color.get(-1, 333));
 		}
 	}
 	

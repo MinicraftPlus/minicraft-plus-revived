@@ -17,21 +17,20 @@ public class Screen {
 	public static final int BIT_MIRROR_X = 0x01; // written in hexadecimal; binary: 01
 	public static final int BIT_MIRROR_Y = 0x02; // binary: 10
 
-	public final int w, h; // width and height of the screen
+	public static final int w = Game.WIDTH; // width of the screen
+	public static final int h = Game.HEIGHT; // height of the screen
 	public int[] pixels; // pixels on the screen
 	
 	protected SpriteSheet sheet; // the sprite sheet used in the game.
 	
-	public Screen(int w, int h, SpriteSheet sheet) {
+	public Screen(SpriteSheet sheet) {
 		this.sheet = sheet;
-		this.w = w;
-		this.h = h;
 		/// screen width and height are determined by the actual game window size, meaning the screen is only as big as the window.
-		pixels = new int[w * h]; // makes new integer array for all the pixels on the screen.
+		pixels = new int[Screen.w * Screen.h]; // makes new integer array for all the pixels on the screen.
 	}
 	
 	public Screen(Screen model) {
-		this(model.w, model.h, model.sheet);
+		this(model.sheet);
 	}
 	
 	/** Clears all the colors on the screen */

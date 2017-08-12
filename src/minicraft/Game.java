@@ -253,9 +253,9 @@ public class Game extends Canvas implements Runnable {
 	protected void init() {
 		/* This sets up the screens, and loads the icons.png spritesheet. */
 		try {
-			screen = new Screen(WIDTH, HEIGHT, new SpriteSheet(ImageIO.read(Game.class.getResourceAsStream
+			screen = new Screen(new SpriteSheet(ImageIO.read(Game.class.getResourceAsStream
 					("/resources/icons.png"))));
-			lightScreen = new Screen(WIDTH, HEIGHT, new SpriteSheet(ImageIO.read(Game.class.getResourceAsStream
+			lightScreen = new Screen(new SpriteSheet(ImageIO.read(Game.class.getResourceAsStream
 					("/resources/icons.png"))));
 		} catch (IOException e) {
 			e.printStackTrace();
@@ -852,16 +852,16 @@ public class Game extends Canvas implements Runnable {
 		Level level = Game.levels[currentLevel];
 		if(level == null) return;
 		
-		int xScroll = player.x - screen.w / 2; // scrolls the screen in the x axis.
-		int yScroll = player.y - (screen.h - 8) / 2; // scrolls the screen in the y axis.
+		int xScroll = player.x - Screen.w / 2; // scrolls the screen in the x axis.
+		int yScroll = player.y - (Screen.h - 8) / 2; // scrolls the screen in the y axis.
 		
 		//if (debug && isValidClient()) System.out.println("player coords at render: "+player.x+","+player.y);
 		
 		//stop scrolling if the screen is at the ...
 		if (xScroll < 0) xScroll = 0; // ...left border.
 		if (yScroll < 0) yScroll = 0; // ...top border.
-		if (xScroll > level.w * 16 - screen.w) xScroll = level.w * 16 - screen.w; // ...right border.
-		if (yScroll > level.h * 16 - screen.h) yScroll = level.h * 16 - screen.h; // ...bottom border.
+		if (xScroll > level.w * 16 - Screen.w) xScroll = level.w * 16 - Screen.w; // ...right border.
+		if (yScroll > level.h * 16 - Screen.h) yScroll = level.h * 16 - Screen.h; // ...bottom border.
 		if (currentLevel > 3) { // if the current level is higher than 3 (which only the sky level (and dungeon) is)
 			int col = Color.get(20, 20, 121, 121); // background color.
 			for (int y = 0; y < 28; y++)
@@ -887,7 +887,7 @@ public class Game extends Canvas implements Runnable {
 	private void renderGui() {
 		/// AH-HA! THIS DRAWS THE BLACK SQUARE!!
 		for (int x = 12; x < 29; x++) {
-			screen.render(x * 7, screen.h - 8, 0 + 1 * 32, Color.get(0, 0), 0);
+			screen.render(x * 7, Screen.h - 8, 0 + 1 * 32, Color.get(0, 0), 0);
 		}
 		
 		renderDebugInfo();
@@ -895,18 +895,18 @@ public class Game extends Canvas implements Runnable {
 		// This is the arrow counter. ^ = infinite symbol.
 		int ac = player.inventory.count(Items.arrowItem);
 		if (ModeMenu.creative || ac >= 10000)
-			Font.draw("	x" + "^", screen, 84, screen.h - 16, Color.get(0, 333, 444, 555));
+			Font.draw("	x" + "^", screen, 84, Screen.h - 16, Color.get(0, 333, 444, 555));
 		else
-			Font.draw("	x" + ac, screen, 84, screen.h - 16, Color.get(0, 555));
+			Font.draw("	x" + ac, screen, 84, Screen.h - 16, Color.get(0, 555));
 		//displays arrow icon
-		screen.render(10 * 8 + 4, screen.h - 16, 13 + 5 * 32, Color.get(0, 111, 222, 430), 0);
+		screen.render(10 * 8 + 4, Screen.h - 16, 13 + 5 * 32, Color.get(0, 111, 222, 430), 0);
 		
 		String msg = "";
 		if (saving) msg = "Saving... " + Math.round(LoadingMenu.percentage) + "%";
 		else if (Bed.inBed) msg = "Sleeping...";
 		
 		if(msg.length() > 0)
-			new FontStyle(Color.get(-1, 555)).setYPos(screen.h / 2 - 20).setShadowType(Color.get(-1, 222), false).draw(msg, screen);
+			new FontStyle(Color.get(-1, 555)).setYPos(Screen.h / 2 - 20).setShadowType(Color.get(-1, 222), false).draw(msg, screen);
 		
 		/// NOTIFICATIONS
 		
@@ -925,8 +925,8 @@ public class Game extends Canvas implements Runnable {
 			FontStyle style = new FontStyle(Color.get(-1, 555)).setShadowType(Color.get(-1, 222), false);
 			for (int i = 0; i < notifications.size(); i++) {
 				String note = ((String) notifications.get(i));
-				//int x = screen.w / 2 - note.length() * 8 / 2,
-				int y = screen.h - 120 - notifications.size()*8 + i * 8;
+				//int x = Screen.w / 2 - note.length() * 8 / 2,
+				int y = Screen.h - 120 - notifications.size()*8 + i * 8;
 				style.setYPos(y).draw(note, screen);
 				//Font.draw(note, screen, x, y, Color.get(-1, 555), Color.get(-1, 111));
 			}
@@ -946,15 +946,15 @@ public class Game extends Canvas implements Runnable {
 			else if (scoreTime >= 3600) timeCol = Color.get(330, 555);
 			else timeCol = Color.get(400, 555);
 			
-			Font.draw("Time left " + (hours > 0 ? hours+"h ":"") + minutes + "m " + seconds + "s", screen, screen.w/2-9*8, 2, timeCol);
+			Font.draw("Time left " + (hours > 0 ? hours+"h ":"") + minutes + "m " + seconds + "s", screen, Screen.w/2-9*8, 2, timeCol);
 			
 			String scoreString = "Current score: " + player.score;
-			Font.draw(scoreString, screen, screen.w - Font.textWidth(scoreString)-2, 3 + 8, Color.get(-1, 555));
+			Font.draw(scoreString, screen, Screen.w - Font.textWidth(scoreString)-2, 3 + 8, Color.get(-1, 555));
 			
 			if(multiplier > 1) {
 				int multColor = multiplier < 50 ? Color.get(-1, 540) : Color.get(-1, 500);
 				String mult = "X" + multiplier;
-				Font.draw(mult, screen, screen.w-Font.textWidth(mult)-2, 4 + 2*8, multColor);
+				Font.draw(mult, screen, Screen.w-Font.textWidth(mult)-2, 4 + 2*8, multColor);
 			}
 		}
 
@@ -962,7 +962,7 @@ public class Game extends Canvas implements Runnable {
 		if (player.activeItem instanceof ToolItem && ((ToolItem)player.activeItem).type == ToolType.FishingRod) {
 			int dura = ((ToolItem)player.activeItem).dur * 100 / ((ToolItem)player.activeItem).type.durability;
 			//if (dura > 100) dura = 100;
-			Font.draw(dura + "%", screen, 164, screen.h - 16, Color.get(0, 30));
+			Font.draw(dura + "%", screen, 164, Screen.h - 16, Color.get(0, 30));
 		}
 		
 		/// This renders the potions overlay
@@ -987,31 +987,31 @@ public class Game extends Canvas implements Runnable {
 				// renders armor
 				int armor = player.armor*10/player.maxArmor;
 				color = (i <= armor && player.curArmor != null) ? player.curArmor.sprite.color : Color.get(-1, -1);
-				screen.render(i * 8, screen.h - 24, 3 + 12 * 32, color, 0);
+				screen.render(i * 8, Screen.h - 24, 3 + 12 * 32, color, 0);
 				
 				// renders your current red hearts, or black hearts for damaged health.
 				color = (i < player.health) ? Color.get(-1, 200, 500, 533) : Color.get(-1, 100, 000, 000);
-				screen.render(i * 8, screen.h - 16, 0 + 12 * 32, color, 0);
+				screen.render(i * 8, Screen.h - 16, 0 + 12 * 32, color, 0);
 				
 				if (player.staminaRechargeDelay > 0) {
 					// creates the white/gray blinking effect when you run out of stamina.
 					color = (player.staminaRechargeDelay / 4 % 2 == 0) ? Color.get(-1, 555, 000, 000) : Color.get(-1, 110, 000, 000);
-					screen.render(i * 8, screen.h - 8, 1 + 12 * 32, color, 0);
+					screen.render(i * 8, Screen.h - 8, 1 + 12 * 32, color, 0);
 				} else {
 					// renders your current stamina, and uncharged gray stamina.
 					color = (i < player.stamina) ? Color.get(-1, 220, 550, 553) : Color.get(-1, 110, 000, 000);
-					screen.render(i * 8, screen.h - 8, 1 + 12 * 32, color, 0);
+					screen.render(i * 8, Screen.h - 8, 1 + 12 * 32, color, 0);
 				}
 				
 				// renders hunger
 				color = (i < player.hunger) ? Color.get(-1, 100, 530, 211) : Color.get(-1, 100, 000, 000);
-				screen.render(i * 8 + (screen.w - 80), screen.h - 16, 2 + 12 * 32, color, 0);
+				screen.render(i * 8 + (Screen.w - 80), Screen.h - 16, 2 + 12 * 32, color, 0);
 			}
 		}
 		
 		/// CURRENT ITEM
 		if (player.activeItem != null) // shows active item sprite and name in bottom toolbar, if one exists.
-			player.activeItem.renderInventory(screen, 12 * 7, screen.h - 8, false);
+			player.activeItem.renderInventory(screen, 12 * 7, Screen.h - 8, false);
 	}
 	
 	private void renderDebugInfo() {
@@ -1067,7 +1067,7 @@ public class Game extends Canvas implements Runnable {
 	private void renderFocusNagger() {
 		String msg = "Click to focus!"; // the message when you click off the screen.
 		paused = true; //perhaps paused is only used for this.
-		int xx = Font.centerX(msg, 0, screen.w); // the width of the box
+		int xx = Font.centerX(msg, 0, Screen.w); // the width of the box
 		int yy = (HEIGHT - 8) / 2; // the height of the box
 		int w = msg.length(); // length of message in characters.
 		int h = 1;
