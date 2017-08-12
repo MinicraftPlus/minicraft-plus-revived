@@ -199,10 +199,15 @@ public class Inventory {
 	
 	/** Removes the item from the inventory entirely, whether it's a stack, or a lone item. */
 	public void removeItem(Item i) {
+		Item save = i.clone();
+		//if (Game.debug) System.out.println("original item: " + i);
 		if(i instanceof StackableItem)
-			removeItems(i, ((StackableItem)i).count);
+			removeItems(i.clone(), ((StackableItem)i).count);
 		else
-			removeItems(i, 1);
+			removeItems(i.clone(), 1);
+		/// the clone is so that the item reference is not damaged, since in this case, it never really needs to be altered.
+		//if (Game.debug) System.out.println("end item: " + i + "; save = " + save);
+		i = save;
 	}
 	/** removes items from this inventory. Note, if passed a stackable item, this will only remove a max of count from the stack. */
 	public void removeItems(Item given, int count) {

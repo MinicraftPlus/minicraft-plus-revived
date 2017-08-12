@@ -68,6 +68,8 @@ public class ContainerMenu extends Menu {
 		if (input.getKey("attack").clicked || input.getKey("drop-one").clicked) {
 			Item toSend = i.get(selected);
 			
+			//if (Game.debug) System.out.println("selected item: " + toSend);
+			
 			boolean transferAll = input.getKey("attack").clicked || !(toSend instanceof StackableItem) || ((StackableItem)toSend).count == 1;
 			
 			if(!transferAll) {
@@ -88,10 +90,14 @@ public class ContainerMenu extends Menu {
 						player.inventory.remove(selected); // the request should never be denied, so remove item immedieately as usual.
 				}
 			} else {
+				//if (Game.debug) System.out.println("afterward item to move: " + toSend);
+				Item save = toSend.clone();
 				if(transferAll && !(i == player.inventory && ModeMenu.creative))
-					i.removeItem(toSend); // It will add the item to the new inventory, and remove it from the old one.
-				if(i2 != player.inventory)
-					i2.add(oSelected, toSend.clone());
+					i.removeItem(toSend.clone()); // It will add the item to the new inventory, and remove it from the old one.
+				if(!(ModeMenu.creative && i2 == player.inventory))
+					i2.add(oSelected, save);
+				
+				//if (Game.debug) System.out.println("item: "+save+"; item cloned: " + save.clone());
 			}
 		}
 	}

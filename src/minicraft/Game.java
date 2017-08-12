@@ -891,7 +891,7 @@ public class Game extends Canvas implements Runnable {
 		renderDebugInfo();
 		
 		// This is the arrow counter. ^ = infinite symbol.
-		int ac = player.inventory.count(Items.get("arrow"));
+		int ac = player.inventory.count(Items.arrowItem);
 		if (ModeMenu.creative || ac >= 10000)
 			Font.draw("	x" + "^", screen, 84, screen.h - 16, Color.get(0, 333, 444, 555));
 		else

@@ -437,7 +437,7 @@ public class MinicraftClient extends MinicraftConnection {
 	public void requestInteraction(Player player) {
 		/// I don't think the player parameter is necessary, but it doesn't harm anything.
 		String itemString = player.activeItem != null ? player.activeItem.getData() : "null";
-		sendData(InputType.INTERACT, itemString+";"+player.inventory.count(Items.get("arrow")));
+		sendData(InputType.INTERACT, itemString+";"+player.inventory.count(Items.arrowItem));
 	}
 	
 	public void requestTile(Level level, int xt, int yt) {

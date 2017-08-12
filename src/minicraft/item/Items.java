@@ -91,6 +91,8 @@ public class Items {
 		*/
 	}
 	
+	public static Item arrowItem = get("arrow");
+	
 	public static void fillCreativeInv(Inventory inv) { fillCreativeInv(inv, true); }
 	public static void fillCreativeInv(Inventory inv, boolean addAll) {
 		for(Item item: items) {
