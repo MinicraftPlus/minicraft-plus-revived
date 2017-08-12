@@ -44,8 +44,8 @@ public abstract class MobAi extends Mob {
 		
 		if(getLevel() != null) {
 			boolean foundPlayer = false;
-			for(Entity e: level.getEntitiesOfClass(Player.class)) {
-				if(e.isWithin(8, this) && ((Player)e).potioneffects.containsKey(PotionType.Time)) {
+			for(Player p: level.getPlayers()) {
+				if(p.isWithin(8, this) && p.potioneffects.containsKey(PotionType.Time)) {
 					foundPlayer = true;
 					break;
 				}
@@ -128,8 +128,7 @@ public abstract class MobAi extends Mob {
 	
 	public void die(int points) { die(points, 0); }
 	public void die(int points, int multAdd) {
-		for(Entity e: level.getEntitiesOfClass(Player.class)) {
-			Player p = (Player)e;
+		for(Player p: level.getPlayers()) {
 			p.score += points * (ModeMenu.score ? p.game.multiplier : 1); // add score for zombie death
 			if(multAdd != 0 && ModeMenu.score)
 				p.game.addMultiplier(multAdd);

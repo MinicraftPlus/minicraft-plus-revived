@@ -46,6 +46,7 @@ public class Level {
 	private static List<String> ls = new ArrayList<String>();
 
 	private List<Entity> entities = java.util.Collections.<Entity>synchronizedList(new ArrayList<Entity>()); // A list of all the entities in the world
+	private List<Player> players = java.util.Collections.<Player>synchronizedList(new ArrayList<Player>()); // A list of all the players in the world
 	private List<Entity> entitiesToAdd = new ArrayList<Entity>(); /// entites that will be added to the level on next tick are stored here. This is for the sake of multithreading optimization. (hopefully)
 	private List<Entity> entitiesToRemove = new ArrayList<Entity>(); /// entites that will be removed from the level on next tick are stored here. This is for the sake of multithreading optimization. (hopefully)
 	//private List<Entity> rowSprites = new ArrayList<Entity>();
@@ -433,6 +434,8 @@ public class Level {
 					if (Game.debug) printEntityStatus("Adding ", entity, "DungeonChest", "AirWizard", "Player");
 					
 					entities.add(entity);
+					if(entity instanceof Player)
+						players.add((Player)entity);
 				}
 			}
 			//if(Game.debug && Game.ISONLINE && !(entity instanceof Particle)) System.out.println(Game.onlinePrefix()+this+": added entity to level: " + entity);
@@ -446,7 +449,7 @@ public class Level {
 			entitiesToAdd.remove(entity);
 		}
 		
-		if(Game.isValidServer() && getEntitiesOfClass(Player.class).length == 0)
+		if(Game.isValidServer() && getPlayers().length == 0)
 			return; // don't tick if no players.
 		
 		if(!Game.isValidClient()) {
@@ -525,6 +528,8 @@ public class Level {
 			if(Game.debug) printEntityStatus("Removing ", entity, "Player");
 			
 			entities.remove(entity);
+			if(entity instanceof Player)
+				players.remove(entity);
 			entitiesToRemove.remove(entity);
 			
 			if(entity instanceof RemotePlayer) {
@@ -860,12 +865,16 @@ public class Level {
 		return matches.toArray(new Entity[0]);
 	}
 	
+	public Player[] getPlayers() {
+		return players.toArray(new Player[players.size()]);
+	}
+	
 	public Player getClosestPlayer(int x, int y) {
-		Entity[] players = getEntitiesOfClass(Player.class);
+		Player[] players = getPlayers();
 		if(players.length == 0)
 			return null;
 		
-		Entity closest = players[0];
+		Player closest = players[0];
 		int xd = closest.x - x;
 		int yd = closest.y - y;
 		for(int i = 1; i < players.length; i++) {
@@ -878,7 +887,7 @@ public class Level {
 			}
 		}
 		
-		return (Player) closest;
+		return closest;
 	}
 	
 	public Tile[] getAreaTiles(int x, int y, int r) { return getAreaTiles(x, y, r, r); }
