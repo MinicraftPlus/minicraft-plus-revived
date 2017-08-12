@@ -76,7 +76,7 @@ public class Game extends Canvas implements Runnable {
 	public static String gameDir; // The directory in which all the game files are stored
 	//public static String loadDir = "";
 	
-	public static int MAX_FPS = 40;
+	public static int MAX_FPS = 50;
 	
 	/// MULTIPLAYER
 	public static boolean ISONLINE = false;
