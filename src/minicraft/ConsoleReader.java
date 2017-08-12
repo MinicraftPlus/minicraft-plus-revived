@@ -362,6 +362,7 @@ class ConsoleReader extends Thread {
 		while(shouldRun/* && stdin.hasNext()*/) {
 			System.out.print("Enter a command: ");
 			String command = stdin.next().trim();
+			if(command.length() == 0) continue;
 			List<String> parsed = new ArrayList<String>();
 			parsed.addAll(Arrays.asList(command.split(" ")));
 			int lastIdx = -1;
