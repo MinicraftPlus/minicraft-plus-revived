@@ -472,9 +472,16 @@ public class MinicraftServer extends Thread implements MinicraftProtocol {
 				}
 				serverThread.cachePacketTypes(InputType.tileUpdates);
 				
+				//System.out.println("TILE DATA ARRAY AS SENT BY SERVER BEFORE CHAR CONVERSION (length="+tiledata.length+"):");
+				//System.out.println(Arrays.toString(tiledata));
+				
 				StringBuilder tiledataString = new StringBuilder();
-				for(byte b: tiledata)
-					tiledataString.append((char) ((int)b+1));
+				for(byte b: tiledata) {
+					int tbit = (int) b;
+					if(tbit < 0) tbit += 256;
+					tbit++;
+					tiledataString.append((char) tbit);
+				}
 				serverThread.sendData(InputType.TILES, tiledataString.toString());
 				serverThread.sendCachedPackets();
 				

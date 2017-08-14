@@ -194,7 +194,7 @@ public class MinicraftClient extends MinicraftConnection {
 			
 			case TILES:
 				if(curState != State.LOADING) { // ignore
-					if (Game.debug) System.out.println("ignoring level tile data becuase client state is not LOADING: " + curState);
+					if (Game.debug) System.out.println("ignoring level tile data because client state is not LOADING: " + curState);
 					return false;
 				}
 				if (Game.debug) System.out.println("CLIENT: received tiles");
@@ -206,8 +206,14 @@ public class MinicraftClient extends MinicraftConnection {
 				}
 				
 				byte[] tiledata = new byte[alldata.length()];
-				for(int i = 0; i < alldata.length(); i++)
-					tiledata[i] = (byte)(((int)alldata.charAt(i)) - 1);
+				for(int i = 0; i < alldata.length(); i++) {
+					int tbit = (int) alldata.charAt(i);
+					tbit--;
+					if(tbit >= 128) tbit -= 256;
+					tiledata[i] = (byte) tbit;
+				}
+				//System.out.println("TILE DATA ARRAY AS RECEIVED BY CLIENT, DECODED BACK TO NUMBERS (length="+tiledata.length+"):");
+				//System.out.println(Arrays.toString(tiledata));
 				
 				if(tiledata.length / 2 > level.tiles.length) {
 					System.err.println("CLIENT ERROR: received level tile data is too long for world size; level.tiles.length="+level.tiles.length+", tiles in data: " + (tiledata.length / 2) + ". Will truncate tile loading.");

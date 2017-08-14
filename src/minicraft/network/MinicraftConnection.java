@@ -23,7 +23,7 @@ public abstract class MinicraftConnection extends Thread implements MinicraftPro
 			in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
 			out = new PrintWriter(socket.getOutputStream(), true);
 		} catch (IOException ex) {
-			System.err.println("failed to initalize i/o streams for socket:");
+			System.err.println("failed to initialize i/o streams for socket:");
 			ex.printStackTrace();
 		} catch (NullPointerException ex) {
 			System.err.println("CONNECTION ERROR: null socket, cannot initialize i/o streams...");
@@ -84,57 +84,6 @@ public abstract class MinicraftConnection extends Thread implements MinicraftPro
 		
 		endConnection();
 	}
-	
-	//private String currentData = "";
-	
-	/*protected final boolean checkInput() {
-		int read = -1;
-		try {
-			//if(in.ready()) {
-				read = in.read();
-				//if (Game.debug) System.out.println(this + " read character from stream: " + ((char)read));
-			//}
-		} catch (IOException ex) {
-			System.err.println(this + " had a problem reading its input stream (will continue trying): " + ex.getMessage());
-			ex.printStackTrace();
-		}
-		
-		if(read == -1) return false;
-		
-		while(read != -1) {
-			
-			if(read > 0) { // if it is valid character that is not the null character, then add it to the string.
-				currentData += (char)read;
-				//if (Game.debug) System.out.println(this + " successfully read character from input stream: " + ((char)read) );
-			}
-			else if(currentData.length() > 0) { // read MUST equal 0 at this point, aka a null character; the if statement makes it ignore sequential null characters.
-				
-				//if (Game.debug) System.out.println(this + " completed data packet; parsing...");
-				
-				InputType inType = MinicraftProtocol.getInputType(currentData.charAt(0));
-				//if (Game.debug && inType != InputType.MOVE) System.out.println("SERVER: received "+inType+" packet");
-				
-				if(inType == null)
-					System.err.println("SERVER: invalid packet received; input type is not valid.");
-				else
-					parsePacket(inType, currentData.substring(1));
-				
-				currentData = "";
-			}
-			
-			try {
-				//if(in.ready())
-					read = in.read();
-				//else
-					//read = -1;
-			} catch (IOException ex) {
-				System.err.println(this + " had a problem reading its input stream (will continue trying): " + ex.getMessage());
-				ex.printStackTrace();
-			}
-		}
-		
-		return true;
-	}*/
 	
 	protected abstract boolean parsePacket(InputType inType, String data);
 	
