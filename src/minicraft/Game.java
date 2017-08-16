@@ -748,7 +748,7 @@ public class Game extends Canvas implements Runnable {
 		player.x = (player.x >> 4) * 16 + 8; // sets the player's x coord (to center yourself on the stairs)
 		player.y = (player.y >> 4) * 16 + 8; // sets the player's y coord (to center yourself on the stairs)
 		
-		if(isValidClient() && levels[currentLevel] == null) {
+		if(isValidClient()/* && levels[currentLevel] == null*/) {
 			readyToRenderGameplay = false;
 			Game.client.requestLevel(currentLevel);
 		} else
