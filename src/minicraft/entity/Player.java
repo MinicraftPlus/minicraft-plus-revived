@@ -299,7 +299,7 @@ public class Player extends Mob {
 					hurt(this, 1, -1); // do 1 damage to the player
 				}
 			}
-		
+			
 			
 			// this is where movement detection occurs.
 			int xa = 0, ya = 0;
