@@ -296,7 +296,7 @@ public class Player extends Mob {
 			if (hunger == 0 && health > healths[OptionsMenu.diff]) {
 				if (hungerStarveDelay > 0) hungerStarveDelay--;
 				if (hungerStarveDelay == 0) {
-					hurt(this, 1, attackDir); // do 1 damage to the player
+					hurt(this, 1, -1); // do 1 damage to the player
 				}
 			}
 		
@@ -325,7 +325,7 @@ public class Player extends Mob {
 			
 			if (isSwimming() && tickTime % 60 == 0 && !potioneffects.containsKey(PotionType.Swim)) { // if drowning... :P
 				if (stamina > 0) stamina--; // take away stamina
-				else hurt(this, 1, dir ^ 1); // if no stamina, take damage.
+				else hurt(this, 1, -1); // if no stamina, take damage.
 			}
 		}
 		
@@ -752,7 +752,7 @@ public class Player extends Mob {
 				// move player to home coordinates
 				this.x = homeSetX;
 				this.y = homeSetY;
-				if (ModeMenu.hardcore) hurt(this, 2, attackDir); // give penalty for using home if in hardcore mode.
+				if (ModeMenu.hardcore) hurt(this, 2, -1); // give penalty for using home if in hardcore mode.
 				stamina = 0; // teleportation uses up all your stamina.
 				Game.notifications.add("Home Sweet Home!"); // give success message
 				if (ModeMenu.hardcore) Game.notifications.add("Mode penalty: -2 health"); // give penalty message
@@ -856,13 +856,13 @@ public class Player extends Mob {
 			return;
 		}
 		
-		// apply the appropriate knockback
+		/*// apply the appropriate knockback
 		if (attackDir == 0) yKnockback = +6;
 		if (attackDir == 1) yKnockback = -6;
 		if (attackDir == 2) xKnockback = -6;
 		if (attackDir == 3) xKnockback = +6;
 		// set invulnerability time
-		hurtTime = playerHurtTime;
+		*/
 		
 		boolean fullPlayer = !(Game.isValidClient() && this != game.player);
 		
@@ -870,7 +870,7 @@ public class Player extends Mob {
 		if(fullPlayer) {
 			Sound.playerHurt.play();
 			if (curArmor == null) { // no armor
-				health -= damage; // subtract that amount
+				healthDam = damage; // subtract that amount
 			} else { // has armor
 				armorDamageBuffer += damage;
 				armorDam += damage;
@@ -893,10 +893,13 @@ public class Player extends Mob {
 				curArmor = null; // removes armor
 			}
 		}
-		if(healthDam > 0) {
+		
+		if(healthDam > 0 || !fullPlayer) {
 			level.add(new TextParticle("" + damage, x, y, Color.get(-1, 504)));
-			if(fullPlayer) health -= healthDam;
+			if(fullPlayer) super.doHurt(healthDam, attackDir); // sets knockback, and takes away health.
 		}
+		
+		hurtTime = playerHurtTime;
 	}
 	
 	protected String getUpdateString() {

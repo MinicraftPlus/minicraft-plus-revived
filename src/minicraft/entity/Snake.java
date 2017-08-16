@@ -59,7 +59,7 @@ public class Snake extends EnemyMob {
 	protected void touchedBy(Entity entity) {
 		if(entity instanceof Player) {
 			int damage = lvl + OptionsMenu.diff;
-			entity.hurt(this, damage, dir);
+			entity.hurt(this, damage, Mob.getAttackDir(this, entity));
 		}
 	}
 	/*

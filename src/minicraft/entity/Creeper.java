@@ -61,7 +61,7 @@ public class Creeper extends EnemyMob {
 				if(pdx < BLAST_RADIUS && pdy < BLAST_RADIUS) {
 					float pd = (float) Math.sqrt(pdx * pdx + pdy * pdy);
 					int dmg = (int) (BLAST_DAMAGE * (1 - (pd / BLAST_RADIUS))) + OptionsMenu.diff;
-					player.hurt(this, dmg, 0);
+					player.hurt(this, dmg, Mob.getAttackDir(this, player));
 					player.payStamina(dmg * (OptionsMenu.diff == OptionsMenu.easy?1:2));
 					hurtOne = true;
 				}
@@ -113,7 +113,7 @@ public class Creeper extends EnemyMob {
 				fuseTime = MAX_FUSE_TIME;
 				fuseLit = true;
 			}
-			entity.hurt(this, 1, dir);
+			entity.hurt(this, 1, Mob.getAttackDir(this, entity));
 		}
 	}
 	

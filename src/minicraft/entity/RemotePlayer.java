@@ -52,7 +52,7 @@ public class RemotePlayer extends Player {
 				attackTime--;
 				if(attackTime == 0) attackItem = null; // null the attackItem once we are done attacking.
 			}
-			if (hurtTime > 0) hurtTime--;
+			if (hurtTime > 0) hurtTime--; // to update the attack animation.
 		}
 	}
 	
