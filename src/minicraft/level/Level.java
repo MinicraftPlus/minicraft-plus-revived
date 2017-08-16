@@ -125,7 +125,7 @@ public class Level {
 		
 		if(Game.debug) System.out.println("Making level "+level+"...");
 		
-		if (level == 0) maps = LevelGen.createAndValidateTopMap(w, h); // If the level is 0 (surface), create a surface map for the level
+		/*if (level == 0) maps = LevelGen.createAndValidateTopMap(w, h); // If the level is 0 (surface), create a surface map for the level
 		else if (level < 0 && level > -4) { // create an undergound map
 			maps = LevelGen.createAndValidateUndergroundMap(w, h, -level);
 			monsterDensity = 4; // lowers the monsterDensity value, which makes more enemies spawn
@@ -134,7 +134,8 @@ public class Level {
 		} else { // if level is anything else, which is just sky, then...
 			maps = LevelGen.createAndValidateSkyMap(w, h); // Sky level
 			monsterDensity = 4;
-		}
+		}*/
+		maps = LevelGen.createAndValidateMap(w, h, level);
 		
 		tiles = maps[0]; // assigns the tiles in the map
 		data = maps[1]; // assigns the data of the tiles
@@ -406,27 +407,13 @@ public class Level {
 	}
 
 	public void tick() {
-		/*if(Game.isValidClient()) {
-			if(Game.debug) System.out.println("WARNING! client tried to tick level!");
-			return;
-		}*/
 		int count = 0;
 		
-		/*if(Game.debug && entitiesToAdd.size() > 0) {
-			System.out.println(Game.onlinePrefix()+this+": entity wait list size:" + entitiesToAdd.size());
-		}
-		else if(Game.isValidServer()) {
-			System.out.println("ticking Server level "+this+"; entity wait list is empty.");
-		}*/
 		while(entitiesToAdd.size() > 0) {
 			Entity entity = entitiesToAdd.get(0);
 			boolean inLevel = entities.contains(entity);
 			
 			if(!inLevel) {
-				//if(Game.getEntity(entity.eid) != null) { // if this returned true, then it means that this entity is already in a level somewhere.
-					//entity.remove();
-				//}
-				
 				if(Game.isValidServer())
 					Game.server.broadcastEntityAddition(entity);
 				
@@ -438,77 +425,55 @@ public class Level {
 						players.add((Player)entity);
 				}
 			}
-			//if(Game.debug && Game.ISONLINE && !(entity instanceof Particle)) System.out.println(Game.onlinePrefix()+this+": added entity to level: " + entity);
-			/*if(Game.debug && Game.isValidServer()) {
-				Entity found = Game.getEntity(entity.eid);
-				if(found == null || !found.equals(entity))
-					System.out.println(Game.onlinePrefix()+"entity added to level is not accessible from Game: " + entity);
-			}*/
-			//entitiesToRemove.remove(entity); // just in case it's there.
-			
 			entitiesToAdd.remove(entity);
 		}
 		
-		if(Game.isValidServer() && getPlayers().length == 0)
-			return; // don't tick if no players.
-		
-		if(!Game.isValidClient()) {
-			for (int i = 0; i < w * h / 50; i++) {
-				int xt = random.nextInt(w);
-				int yt = random.nextInt(w);
-				getTile(xt, yt).tick(this, xt, yt);
-			}
-		}
-		
-		for (Entity e: getEntityArray()) {
-			if(e == null) continue;
+		if(!Game.isValidServer() || getPlayers().length > 0) {
+			// this prevents any entity (or tile) tick action from happening on a server level with no players.
 			
-			if(Game.hasConnectedClients() && e instanceof Player && !(e instanceof RemotePlayer)) {
-				if(Game.debug) System.out.println("SERVER is removing regular player "+e+" from level "+this);
-				e.remove();
-			}
-			
-			if(e.isRemoved()) continue;
-			
-			if(!Game.ISONLINE || (Game.isValidServer() && !(e instanceof Particle || e instanceof ItemEntity)) || (Game.isValidClient() && !(e instanceof Player /*e instanceof Particle || e instanceof ItemEntity*/))) {
-				
-				e.tick();
-				
-				if(Game.hasConnectedClients()) {
-					Game.server.broadcastEntityUpdate(e);
+			if (!Game.isValidClient()) {
+				for (int i = 0; i < w * h / 50; i++) {
+					int xt = random.nextInt(w);
+					int yt = random.nextInt(w);
+					getTile(xt, yt).tick(this, xt, yt);
 				}
-				//else if(Game.isValidClient() && (System.nanoTime() - e.lastUpdate) / 1E9 > 5L)
-					//e.remove(); // used to try and reduce the number of forzen entities hanging around... I think a slow connection will ruin this, though...
 			}
 			
-			if(Game.isValidServer() && e instanceof RemotePlayer && Game.server.getAssociatedThread((RemotePlayer)e) == null)
-				e.remove();
+			// entity loop
+			for (Entity e : getEntityArray()) {
+				if (e == null) continue;
+				
+				if (Game.hasConnectedClients() && e instanceof Player && !(e instanceof RemotePlayer)) {
+					if (Game.debug)
+						System.out.println("SERVER is removing regular player " + e + " from level " + this);
+					e.remove();
+				}
+				if (Game.isValidServer() && e instanceof Particle) {
+					// there is no need to track this.
+					if (Game.debug)
+						System.out.println("SERVER warning: found particle in entity list: " + e + ". Removing from level " + this);
+					e.remove();
+				}
+				
+				if (e.isRemoved()) continue;
+				
+				{ // this is grouped because it is the behavior for the main tick, and follow-up. 
+					e.tick(); /// the main entity tick call.
+					
+					if (Game.hasConnectedClients())
+						Game.server.broadcastEntityUpdate(e);
+				}
+				
+				if (Game.isValidServer() && e instanceof RemotePlayer && Game.server.getAssociatedThread((RemotePlayer) e) == null)
+					e.remove();
+				else if (e instanceof Mob) count++;
+			}
 			
-			if(Game.isValidServer() && e instanceof Particle)
-				e.remove(); // the server really doesn't need to care about particles, besides spawning them.
 			
-			if(e instanceof Mob) count++;
-		}
-		
-		for(Entity e: getEntityArray())
-			if(e == null || e.isRemoved() || e.getLevel() != this)
-				remove(e);
-		
-		/*for(int i = 0; i < entities.size(); i++) {
-			Entity e = entities.get(i);
-			if(e == null || e.isRemoved() || e.getLevel() != this) {// remove entites tagged for removal.
-				if(e != null) {
+			for (Entity e : getEntityArray())
+				if (e == null || e.isRemoved() || e.getLevel() != this)
 					remove(e);
-				}
-				//entities.remove(i);
-				if(e != null) {
-					if(Game.debug && Game.isValidClient()) System.out.println("CLIENT: removed mob from level entity list: " + e);
-					else if(Game.debug && e instanceof Player) System.out.println("removing player "+e+" from level " + this);
-				}
-				//else if (Game.debug) System.out.println("removed null entity from level.");
-				//i--;
-			}
-		}*/
+		}
 		
 		while(count > maxMobCount) {
 			Entity removeThis = entities.get(random.nextInt(entities.size()));
@@ -520,9 +485,8 @@ public class Level {
 		
 		while(entitiesToRemove.size() > 0) {
 			Entity entity = entitiesToRemove.get(0);
-			//if (Game.debug) System.out.println("removing entity " + entity + " from level " + depth + ".");
 			
-			if(Game.isValidServer() && !(entity instanceof Particle || entity instanceof RemotePlayer))
+			if(Game.isValidServer() && !(entity instanceof Particle))
 				Game.server.broadcastEntityRemoval(entity);
 			
 			if(Game.debug) printEntityStatus("Removing ", entity, "Player");
@@ -531,15 +495,12 @@ public class Level {
 			if(entity instanceof Player)
 				players.remove(entity);
 			entitiesToRemove.remove(entity);
-			
-			if(entity instanceof RemotePlayer) {
-				System.out.println(Game.onlinePrefix()+"removed remote player from level " + depth);
-				//if(Game.isValidServer())
-					//Game.server.onThreadDisconnect(Game.server.getAssociatedThread((RemotePlayer)entity));
-			}
 		}
 		
 		mobCount = count;
+		
+		if(Game.isValidServer() && players.size() == 0)
+			return; // don't try to spawn any mobs when there's no player on the level, on a server.
 		
 		int spawnAttempts = 2;
 		if(depth == 0) spawnAttempts = 18;

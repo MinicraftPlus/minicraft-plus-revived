@@ -467,11 +467,7 @@ public class Game extends Canvas implements Runnable {
 			//boolean ticked = false;
 			for(Level floor: levels) {
 				if(floor == null) continue;
-				//if(floor.getPlayers().length > 0) {
-					//if(Game.debug) System.out.println("Server is ticking level " + floor.depth);
-					floor.tick();
-				//	ticked = true;
-				//}
+				floor.tick();
 			}
 			
 			/*if(!ticked) {
