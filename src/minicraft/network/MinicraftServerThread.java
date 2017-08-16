@@ -156,15 +156,8 @@ public class MinicraftServerThread extends MinicraftConnection {
 		String edata = Save.writeEntity(e, false);
 		if(edata == null || edata.length() == 0)
 			System.out.println("entity not worth adding to client level: " + e + "; not sending to " + client);
-		else {
-			/*if(trackedEntities.contains(e.eid)) { // this isn't going to work, b/c the client removes entities without telling the server, and i don't want the client to have to tell the server either, b/c that's sending more packets.
-				//if(Game.debug) System.out.println(this+" blocking addition of entity ");
-				return;
-			}
-			else trackedEntities.add(e.eid);*/
-			//if(Game.debug) System.out.println(this+" sending entity addition to client: " + e);
+		else
 			sendData(InputType.ADD, edata);
-		}
 	}
 	
 	public void sendEntityRemoval(int eid) {
