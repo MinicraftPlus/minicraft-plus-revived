@@ -45,25 +45,31 @@ public abstract class Mob extends Entity {
 		if (health <= 0) die(); // die if no health
 		if (hurtTime > 0) hurtTime--; // If a timer preventing damage temporarily is set, decrement it's value
 		
+		
+		boolean moved = false;
 		/// These 4 following conditionals check the direction of the knockback, move the Mob accordingly, and bring knockback closer to 0.
 		if (xKnockback < 0) { // If we have negative horizontal knockback (to the left)
-			move2(-1, 0); // Move to the left 1 pixel
+			moved = moved || move2(-1, 0); // Move to the left 1 pixel
 			xKnockback++; // And increase the knockback by 1 so it is gradually closer to 0, and this will stop being called
 		}
 		if (xKnockback > 0) { // knocked to the right
-			move2(1, 0);
+			moved = moved || move2(1, 0);
 			xKnockback--;
 		}
 		if (yKnockback < 0) { // knocked upwards
-			move2(0, -1);
+			moved = moved || move2(0, -1);
 			yKnockback++;
 		}
 		if (yKnockback > 0) { // knocked downwards
-			move2(0, 1);
+			moved = moved || move2(0, 1);
 			yKnockback--;
 		}
+		
+		if(moved && Game.isValidClient() && this == Game.main.player) {
+			Game.client.move((Player)this);
+		}
 	}
-
+	
 	protected void die() { // Kill the mob, called when health drops to 0
 		remove(); // Remove the mob, with the method inherited from Entity
 	}
