@@ -1,6 +1,8 @@
 package minicraft.entity;
 
 import java.util.Random;
+
+import minicraft.Game;
 import minicraft.Sound;
 import minicraft.entity.particle.FireParticle;
 import minicraft.entity.particle.TextParticle;
@@ -83,20 +85,23 @@ public class Spawner extends Furniture {
 			else
 				newmob = mob.getClass().newInstance();
 		} catch(Exception ex) {
+			System.err.println("Spawner ERROR: could not spawn mob; error initializing mob instance:");
 			ex.printStackTrace();
+			return;
 		}
 		
 		int randX, randY;
 		Tile tile;
 		do {
-			randX = (x>>4 - 1 + rnd.nextInt(2)); // the rand is really just one tile in any direction
-			randY = (y>>4 - 1 + rnd.nextInt(2));
+			randX = (x>>4) + rnd.nextInt(2) - 1; // the rand is really just one tile in any direction
+			randY = (y>>4) + rnd.nextInt(2) - 1;
 			tile = level.getTile(randX, randY);
 		} while(!tile.mayPass(level, randX, randY, newmob) || mob instanceof EnemyMob && tile.getLightRadius(level, randX, randY) > 0);
-		//if (Game.debug) System.out.println("attempting " + mob + " spawn on tile with id: " + tile.id);
+		
 		newmob.x = randX << 4;
 		newmob.y = randY << 4;
-		//if (Game.debug) System.out.println("spawning new " + mob + " on level "+lvl+": x=" + (newmob.x>>4)+" y="+(newmob.y>>4) + "...");
+		//if (Game.debug) level.printLevelLoc("spawning new " + mob, (newmob.x>>4), (newmob.y>>4), "...");
+		
 		level.add(newmob);
 		Sound.monsterHurt.play();
 		for(int i = 0; i < 6; i++) {
