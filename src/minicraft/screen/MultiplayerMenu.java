@@ -63,6 +63,8 @@ public class MultiplayerMenu extends Menu {
 				else
 					System.out.println("warning: minicraft site ping returned status code " + httpResponse.getStatus());
 				
+				//if(Game.main.menu != MultiplayerMenu.this) return; // don't continue if the player moved to a different menu. 
+				
 				if(savedUUID.length() > 0) {
 					// there is a previous login that can be used; check that it's valid
 					setWaitMessage("attempting log in");
@@ -91,7 +93,7 @@ public class MultiplayerMenu extends Menu {
 			public void cancelled() {
 				if(savedUsername.length() == 0 || savedUUID.length() == 0) {
 					// couldn't validate username, and can't enter offline mode b/c there is no username
-					setError("no internet connection, but no login data saved; cannot enter offline mode.");
+					setError("no internet connection, but no login data saved; cannot enter offline mode.", false);
 					//setError("could not access "+url);
 					return;
 				}
@@ -183,7 +185,7 @@ public class MultiplayerMenu extends Menu {
 						if(Game.debug) System.out.println("received json from login attempt: " + json.toString());
 						switch(json.getString("status")) {
 							case "error":
-								setError(json.getString("message"));
+								setError(json.getString("message"), false); // in case the user abandoned the menu, don't drag them back.
 								break;
 							
 							case "success":
@@ -205,7 +207,7 @@ public class MultiplayerMenu extends Menu {
 					
 					@Override
 					public void cancelled() {
-						setError("login failed.");
+						setError("login failed.", false);
 					}
 				});
 	}
@@ -227,7 +229,7 @@ public class MultiplayerMenu extends Menu {
 			//if(Game.debug) System.out.println("received json from username request: " + json.toString());
 			switch(json.getString("status")) {
 				case "error":
-					setError("problem with saved login data; please exit and login again.");
+					setError("problem with saved login data; please exit and login again.", false);
 					savedUUID = "";
 					break;
 				
@@ -263,10 +265,11 @@ public class MultiplayerMenu extends Menu {
 		loadingMessage = msg;
 	}
 	
-	public void setError(String msg) {
+	public void setError(String msg) { setError(msg, true); }
+	public void setError(String msg, boolean overrideMenu) {
 		this.curState = State.ERROR;
 		errorMessage = msg;
-		if(Game.main.menu != this && Game.isValidClient())
+		if(overrideMenu && Game.main.menu != this && Game.isValidClient())
 			Game.main.setMenu(this);
 	}
 	
