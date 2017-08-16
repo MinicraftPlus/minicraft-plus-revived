@@ -491,7 +491,9 @@ public class Level {
 			
 			if(Game.debug) printEntityStatus("Removing ", entity, "Player");
 			
+			entity.remove(this); // this will safely fail if the entity's level doesn't match this one.
 			entities.remove(entity);
+			
 			if(entity instanceof Player)
 				players.remove(entity);
 			entitiesToRemove.remove(entity);
@@ -688,8 +690,6 @@ public class Level {
 	public void remove(Entity e) {
 		//e.remove();
 		//e.isRemoved() = true;
-		if(e.getLevel() == this)
-			e.remove(this);
 		
 		if(!entitiesToRemove.contains(e))
 			entitiesToRemove.add(e);

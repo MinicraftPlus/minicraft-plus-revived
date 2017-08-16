@@ -8,6 +8,7 @@ import minicraft.gfx.Color;
 import minicraft.gfx.Font;
 import minicraft.gfx.FontStyle;
 import minicraft.gfx.Screen;
+import minicraft.level.Level;
 
 /** This is used for players in multiplayer mode. */
 public class RemotePlayer extends Player {
@@ -80,13 +81,16 @@ public class RemotePlayer extends Player {
 	}
 	
 	/// this determines if something at a given coordinate should be synced to this client, or if it is too far away to matter.
-	public boolean shouldSync(int xt, int yt) {
-		return shouldSync(xt, yt, 0);
+	public boolean shouldSync(int xt, int yt, Level level) {
+		return shouldSync(level, xt, yt, 0);
 	}
-	public boolean shouldTrack(int xt, int yt) {
-		return shouldSync(xt, yt, entityTrackingBuffer); /// this means that there is one tile past the syncRadii in all directions, which marks the distance at which entities are added or removed.
+	public boolean shouldTrack(int xt, int yt, Level level) {
+		return shouldSync(level, xt, yt, entityTrackingBuffer); /// this means that there is one tile past the syncRadii in all directions, which marks the distance at which entities are added or removed.
 	}
-	private boolean shouldSync(int xt, int yt, int offset) { // IDEA make this isWithin(). Decided not to b/c different x and y radii.
+	private boolean shouldSync(Level level, int xt, int yt, int offset) { // IDEA make this isWithin(). Decided not to b/c different x and y radii.
+		if(level == null || level != getLevel())
+			return false;
+		
 		int px = x >> 4, py = y >> 4;
 		int xdist = Math.abs(xt - px);
 		int ydist = Math.abs(yt - py);

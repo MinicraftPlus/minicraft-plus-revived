@@ -145,7 +145,7 @@ public class MinicraftServer extends Thread implements MinicraftProtocol {
 		for(Entity e: level.getEntitiesOfClass(RemotePlayer.class)) {
 			if(e.isRemoved()) continue;
 			RemotePlayer rp = (RemotePlayer)e;
-			if(useTrackRange && rp.shouldTrack(xt, yt) || !useTrackRange && rp.shouldSync(xt, yt))
+			if(useTrackRange && rp.shouldTrack(xt, yt, level) || !useTrackRange && rp.shouldSync(xt, yt, level))
 				players.add(rp);
 		}
 		
@@ -314,11 +314,7 @@ public class MinicraftServer extends Thread implements MinicraftProtocol {
 			Game.scoreTime+""
 		};
 		
-		String vars = "";
-		for(String var: varArray)
-			vars += var+";";
-		
-		vars = vars.substring(0, vars.length()-1);
+		String vars = String.join(";", varArray);
 		
 		for(MinicraftServerThread thread: sendTo)
 			thread.sendData(InputType.GAME, vars);
@@ -490,10 +486,11 @@ public class MinicraftServer extends Thread implements MinicraftProtocol {
 				Entity[] entities = Game.levels[levelidx].getEntityArray();
 				serverThread.cachePacketTypes(InputType.entityUpdates);
 				
+				//if (Game.debug) System.out.println("client player level on load request: " + clientPlayer.getLevel());
 				StringBuilder edata = new StringBuilder();
 				for(int i = 0; i < entities.length; i++) {
 					Entity curEntity = entities[i];
-					if(!clientPlayer.shouldTrack(curEntity.x>>4, curEntity.y>>4))
+					if(!clientPlayer.shouldTrack(curEntity.x>>4, curEntity.y>>4, curEntity.getLevel()))
 						continue; // this is outside of the player's entity tracking range; doesn't need to know about it yet.
 					String curEntityData = "";
 					if(curEntity != clientPlayer) {
@@ -550,7 +547,7 @@ public class MinicraftServer extends Thread implements MinicraftProtocol {
 					return false;
 				}
 				
-				if(!clientPlayer.shouldSync(entityToSend.x >> 4, entityToSend.y >> 4)) {
+				if(!clientPlayer.shouldSync(entityToSend.x >> 4, entityToSend.y >> 4, entityToSend.getLevel())) {
 					// the requested entity is not even in range
 					return false;
 				}

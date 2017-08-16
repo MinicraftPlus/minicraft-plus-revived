@@ -233,8 +233,11 @@ public class MinicraftClient extends MinicraftConnection {
 					System.out.println("ignoring level entity data becuase client state is not LOADING: " + curState);
 					return false;
 				}
+				
 				if (Game.debug) System.out.println("CLIENT: received entities");
-				Level newLevel = Game.levels[game.currentLevel];
+				Level curLevel = Game.levels[game.currentLevel];
+				game.player.setLevel(curLevel, game.player.x, game.player.y); // so the shouldTrack() calls check correctly.
+				
 				String[] entities = alldata.split(",");
 				for(String entityString: entities) {
 					if(entityString.length() == 0) continue;
@@ -327,11 +330,11 @@ public class MinicraftClient extends MinicraftConnection {
 						entityRequests.put(entityid, (long)(System.nanoTime() - 7L*1E8)); // should "advance" the time so that it only takes 0.8 seconds after the first attempt to issue the actual request.
 					return false;
 				}
-				else if(!((RemotePlayer)game.player).shouldSync(entity.x >> 4, entity.y >> 4)) {
+				else if(!((RemotePlayer)game.player).shouldSync(entity.x >> 4, entity.y >> 4, entity.getLevel())) {
 					// the entity is out of sync range; but not necessarily out of the tracking range, so it's *not* removed from the level here.
 					return false;
 				}
-				else if(!((RemotePlayer)game.player).shouldTrack(entity.x >> 4, entity.y >> 4)) {
+				else if(!((RemotePlayer)game.player).shouldTrack(entity.x >> 4, entity.y >> 4, entity.getLevel())) {
 					// the entity is out of tracking range, and so may as well be removed from the level.
 					entity.remove();
 					return false;

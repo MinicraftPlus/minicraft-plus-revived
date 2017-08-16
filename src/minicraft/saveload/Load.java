@@ -570,8 +570,7 @@ public class Load {
 		List<String> info = new ArrayList<String>(); // this gets everything inside the "[...]" after the entity name.
 		//System.out.println("loading entity:" + entityData);
 		String[] stuff = entityData.substring(entityData.indexOf("[") + 1, entityData.indexOf("]")).split(":");
-		for(String str: stuff)
-			info.add(str);
+		info.addAll(Arrays.asList(stuff));
 		
 		String entityName = entityData.substring(0, entityData.indexOf("[")); // this gets the text before "[", which is the entity name.
 		
@@ -586,7 +585,10 @@ public class Load {
 		if(!isLocalSave) {
 			eid = Integer.parseInt(info.remove(2));
 			
-			if(Game.isValidClient() && game.player instanceof RemotePlayer && !((RemotePlayer)game.player).shouldTrack(x >> 4, y >> 4)) {
+			int entityLevel = Integer.parseInt(info.get(info.size()-1));
+			if(Game.isValidClient() && game.player instanceof RemotePlayer && 
+					!((RemotePlayer)game.player).shouldTrack(x >> 4, y >> 4, Game.levels[entityLevel])
+					) {
 				// the entity is too far away to bother adding to the level.
 				if(Game.debug) System.out.println("CLIENT: entity is too far away to bother loading: " + eid);
 				Entity dummy = new Cow();
@@ -702,15 +704,11 @@ public class Load {
 			
 			newEntity = chest;
 		}
-		else if(newEntity instanceof Spawner) {
+		else if(newEntity instanceof Spawner)
 			newEntity = new Spawner((MobAi)getEntity(info.get(2), Integer.parseInt(info.get(3))));
-			//egg.initMob((MobAi)getEntity(info.get(2), player, info.get(3)));
-			//egg.lvl = Integer.parseInt(info.get(3));
-			//newEntity = egg;
-		}
-		else if(newEntity instanceof Lantern && worldVer.compareTo(new Version("1.9.4")) >= 0 && info.size() > 3) {
+		else if(newEntity instanceof Lantern && worldVer.compareTo(new Version("1.9.4")) >= 0 && info.size() > 3)
 			newEntity = new Lantern(Lantern.Type.values()[Integer.parseInt(info.get(2))]);
-		}
+		
 		/*else if(newEntity instanceof Crafter && worldVer.compareTo(new Version("2.0.0-dev4")) >= 0) {
 			System.out.println("");
 			newEntity = new Crafter(Enum.valueOf(Crafter.Type.class, info.get(2)));
