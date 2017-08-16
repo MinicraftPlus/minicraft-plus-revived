@@ -457,12 +457,12 @@ public class Level {
 				
 				if (e.isRemoved()) continue;
 				
-				{ // this is grouped because it is the behavior for the main tick, and follow-up. 
+				if(e != Game.main.player) // it is ticked seperately.
 					e.tick(); /// the main entity tick call.
-					
-					if (Game.hasConnectedClients())
-						Game.server.broadcastEntityUpdate(e);
-				}
+				
+				if (Game.hasConnectedClients()) // this means it's a server
+					Game.server.broadcastEntityUpdate(e);
+				
 				
 				if (Game.isValidServer() && e instanceof RemotePlayer && Game.server.getAssociatedThread((RemotePlayer) e) == null)
 					e.remove();
