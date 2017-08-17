@@ -273,10 +273,20 @@ public class MinicraftServer extends Thread implements MinicraftProtocol {
 	
 	//public void sendEntityAddition(Entity e, RemotePlayer sender) { sendEntityAddition(e, sender, false); }
 	
-	public void broadcastEntityRemoval(Entity e) { broadcastEntityRemoval(e, false); }
+	public void broadcastEntityRemoval(Entity e) { broadcastEntityRemoval(e, true); }
 	public void broadcastEntityRemoval(Entity e, boolean removeSelf) {
 		List<RemotePlayer> players = getPlayersInRange(e, true);
-		players.remove(getIfPlayer(e)); // if "e" is a player, this removes it from the list.
+		if (Game.debug && e instanceof Player) {
+			System.out.println("SERVER: sending removal of player " + e + " to " + players.size() + " players (may remove equal player): ");
+			for(RemotePlayer rp: players)
+				System.out.println(rp);
+		}
+		
+		if(removeSelf)
+			players.remove(getIfPlayer(e)); // if "e" is a player, this removes it from the list.
+		
+		if (Game.debug && e instanceof Player) System.out.println("...now sending player removal to " + players.size() + " players.");
+		
 		for(MinicraftServerThread thread: getAssociatedThreads(players))
 			thread.sendEntityRemoval(e.eid);
 	}
@@ -458,6 +468,11 @@ public class MinicraftServer extends Thread implements MinicraftProtocol {
 					serverThread.sendError("requested level ("+levelidx+") does not exist.");
 					return false;
 				}
+				
+				// move the associated player to the level they requested -- they shouldn't be requesting it if they aren't going to transfer to it.
+				clientPlayer.remove();
+				Game.levels[levelidx].add(clientPlayer);
+				// if it's the same level, it will cancel out.
 				
 				byte[] tiledata = new byte[Game.levels[levelidx].tiles.length*2];
 				//tiledata[0] = (byte) InputType.TILES.ordinal();

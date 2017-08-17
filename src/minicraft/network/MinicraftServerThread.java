@@ -279,6 +279,6 @@ public class MinicraftServerThread extends MinicraftConnection {
 	}
 	
 	public String toString() {
-		return "ServerThread for " + client.getIpAddress().getCanonicalHostName();
+		return "ServerThread for " + client.getUsername()/*client.getIpAddress().getCanonicalHostName()*/;
 	}
 }

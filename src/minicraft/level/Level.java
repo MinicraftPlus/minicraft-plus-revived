@@ -65,7 +65,7 @@ public class Level {
 		String[] levelNames = {"Sky", "Surface", "Iron", "Gold", "Lava", "Dungeon"};
 		String levelName = levelNames[-1*depth+1];
 		
-		System.out.println(prefix + " on " + levelName + " level: x="+x + " y="+y + suffix);
+		System.out.println(prefix + " on " + levelName + " level ("+x+","+y+")" + suffix);
 	}
 	
 	public void printTileLocs(Tile t) {
@@ -486,7 +486,7 @@ public class Level {
 		while(entitiesToRemove.size() > 0) {
 			Entity entity = entitiesToRemove.get(0);
 			
-			if(Game.isValidServer() && !(entity instanceof Particle))
+			if(Game.isValidServer() && !(entity instanceof Particle) && entity.getLevel() == this)
 				Game.server.broadcastEntityRemoval(entity);
 			
 			if(Game.debug) printEntityStatus("Removing ", entity, "Player");
@@ -510,7 +510,7 @@ public class Level {
 			trySpawn(spawnAttempts);
 	}
 	
-	private void printEntityStatus(String entityMessage, Entity entity, String... searching) {
+	public void printEntityStatus(String entityMessage, Entity entity, String... searching) {
 		// "searching" can contain any number of class names I want to print when found.
 		String clazz = entity.getClass().getCanonicalName();
 		clazz = clazz.substring(clazz.lastIndexOf(".")+1);
@@ -518,7 +518,7 @@ public class Level {
 			try {
 				if(Class.forName("minicraft.entity."+search).isAssignableFrom(entity.getClass())) {
 					if (clazz.equals("AirWizard")) clazz += ((AirWizard)entity).secondform ? " II" : "";
-					printLevelLoc(Game.onlinePrefix()+entityMessage + clazz, entity.x>>4, entity.y>>4, " ("+entity.eid+")");
+					printLevelLoc(Game.onlinePrefix()+entityMessage + clazz, entity.x>>4, entity.y>>4, ": " + entity);
 					break;
 				}
 			} catch(ClassNotFoundException ex) {
@@ -575,16 +575,7 @@ public class Level {
 		
 		screen.setOffset(xScroll, yScroll);
 		sortAndRender(screen, getEntitiesInTiles(xo, yo, xo + w, yo + h));
-		/*for (int y = yo; y <= h + yo; y++) {
-			for (int x = xo; x <= w + xo; x++) {
-				if (x < 0 || y < 0 || x >= this.w || y >= this.h) continue;
-				rowSprites.addAll(getEntitiesInTile(x, y));
-			}
-			if (rowSprites.size() > 0) {
-				sortAndRender(screen, rowSprites);
-			}
-			rowSprites.clear();
-		}*/
+		
 		screen.setOffset(0, 0);
 	}
 
@@ -689,28 +680,13 @@ public class Level {
 	
 	public void remove(Entity e) {
 		//e.remove();
-		//e.isRemoved() = true;
 		
 		if(!entitiesToRemove.contains(e))
 			entitiesToRemove.add(e);
 		entitiesToAdd.remove(e);
-		
-		//int xto = e.x >> 4;
-		//int yto = e.y >> 4;
-		//removeEntity(xto, yto, e);
-	}
-	/*
-	public void insertEntity(int x, int y, Entity e) {
-		if (x < 0 || y < 0 || x >= w || y >= h) return;
-		entitiesInTiles[x + y * w].add(e);
 	}
 	
-	private boolean removeEntity(int x, int y, Entity e) {
-		if (x < 0 || y < 0 || x >= w || y >= h) return false;
-		return entitiesInTiles[x + y * w].remove(e);
-	}
-	*/
-	public void trySpawn(int count) {
+	private void trySpawn(int count) {
 		boolean spawned = false;
 		for (int i = 0; i < count && !spawned; i++) {
 			if(random.nextInt(Math.max((int) Math.ceil(mobCount * MOB_SPAWN_FACTOR / maxMobCount), 1)) == 0) continue; // hopefully will make mobs spawn a lot slower.
@@ -760,15 +736,17 @@ public class Level {
 	public void removeAllEnemies() {
 		for (Entity e: getEntityArray()) {
 			if(e instanceof EnemyMob)
-				if(e instanceof AirWizard == false || ModeMenu.creative) // don't remove the airwizard bosses! Unless in creative, since you can spawn more.
+				if(!(e instanceof AirWizard) || ModeMenu.creative) // don't remove the airwizard bosses! Unless in creative, since you can spawn more.
 					e.remove();
 		}
 	}
 	
 	public void clearEntities() {
-		entities.clear();
-		//for(Entity e: getEntityArray())
-			//remove(e);
+		if(!Game.ISONLINE)
+			entities.clear();
+		else
+			for(Entity e: getEntityArray())
+				e.remove();
 	}
 	
 	public synchronized Entity[] getEntityArray() {
@@ -886,11 +864,11 @@ public class Level {
 		return false;
 	}
 	
-	public boolean noStairs(int x, int y) {
+	private boolean noStairs(int x, int y) {
 		return getTile(x, y) != Tiles.get("Stairs Down");
 	}
 	
 	public String toString() {
-		return super.toString()+"(depth="+depth+")";
+		return "Level(depth="+depth+")";
 	}
 }

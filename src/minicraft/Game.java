@@ -736,7 +736,11 @@ public class Game extends Canvas implements Runnable {
 			System.out.println("server tried to change level.");
 			return;
 		}
-		levels[currentLevel].remove(player); // removes the player from the current level.
+		
+		if(Game.isValidClient())
+			levels[currentLevel].clearEntities(); // clear all the entities from the last level, so that no artifacts remain. They're loaded dynamically, anyway.
+		else
+			levels[currentLevel].remove(player); // removes the player from the current level.
 		
 		int nextLevel = currentLevel + dir;
 		if (nextLevel <= -1) nextLevel = levels.length-1; // fix accidental level underflow

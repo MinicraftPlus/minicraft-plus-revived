@@ -44,7 +44,7 @@ public abstract class Entity {
 	/** Removes the entity from the level. */
 	public void remove() {
 		if(removed && !(this instanceof ItemEntity)) // apparently this happens fairly often with item entities.
-			System.out.println("Note: remove() called on removed entity: " + getClass());
+			System.out.println("Note: remove() called on removed entity: " + this);
 		
 		removed = true;
 		
@@ -70,7 +70,10 @@ public abstract class Entity {
 		if(level == null) {
 			System.out.println("tried to set level of entity " + this + " to a null level; should use remove(level)");
 			return;
+		} else if(level != this.level && Game.isValidServer()) {
+			Game.server.broadcastEntityRemoval(this);
 		}
+		
 		this.level = level;
 		removed = false;
 		this.x = x;

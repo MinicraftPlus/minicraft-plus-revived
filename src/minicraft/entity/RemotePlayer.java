@@ -98,7 +98,7 @@ public class RemotePlayer extends Player {
 	}
 	
 	public String toString() {
-		return super.toString()+"{"+username+" on "+ipAddress.getHostAddress()+":"+port+"}";
+		return super.toString()+"{"+username+"}";
 	}
 	
 	public void updateSyncArea(int oldxt, int oldyt) {
