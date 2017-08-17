@@ -104,7 +104,7 @@ public class ItemEntity extends Entity {
 
 	protected void touchedBy(Entity entity) {
 		if (time > 30) { // conditional prevents this from being collected immediately.
-			if(Game.isValidClient() && entity instanceof Player && entity == ((Player)entity).game.player) {// only register if the main player picks it up, on a client.
+			if(Game.isConnectedClient() && entity instanceof Player && entity == ((Player)entity).game.player) {// only register if the main player picks it up, on a client.
 				if(!pickedUp) {
 					Game.client.pickupItem(this);
 					pickedUp = true;
@@ -114,7 +114,7 @@ public class ItemEntity extends Entity {
 					//if (Game.debug) System.out.println(Game.onlinePrefix()+"reenabling pickup for item entity " + this);
 					pickedUp = false;
 				}
-			} else if(!(Game.isValidServer() && entity instanceof Player)) // don't register if a player touches it on a server; the player will register that.
+			} else if(!(Game.ISONLINE && entity instanceof Player)) // don't register if a player touches it on a server; the player will register that.
 				entity.touchItem(this);
 		}
 	}

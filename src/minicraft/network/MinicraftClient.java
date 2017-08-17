@@ -520,16 +520,13 @@ public class MinicraftClient extends MinicraftConnection {
 		
 		curState = State.DISCONNECTED;
 		
-		if(game.menu == null)
+		if(Game.ISONLINE)
 			menu.setError("Connection to server has ended.");
-		//System.out.println("CLIENT: connection ended.");
 	}
 	
 	public boolean isConnected() {
 		return super.isConnected() && curState != State.DISCONNECTED;
 	}
 	
-	public String toString() {
-		return "CLIENT";
-	}
+	public String toString() { return "CLIENT"; }
 }

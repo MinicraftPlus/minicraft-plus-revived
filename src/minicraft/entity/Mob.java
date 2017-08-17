@@ -65,7 +65,7 @@ public abstract class Mob extends Entity {
 			yKnockback--;
 		}
 		
-		if(moved && Game.isValidClient() && this == Game.main.player) {
+		if(moved && Game.isConnectedClient() && this == Game.main.player) {
 			Game.client.move((Player)this);
 		}
 	}

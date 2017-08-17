@@ -67,7 +67,7 @@ public class RemotePlayer extends Player {
 		
 		boolean moved = super.move(xa, ya);
 		
-		if(!(oldxt == x>>4 && oldyt == y>>4) && Game.isValidClient() && this == game.player) {
+		if(!(oldxt == x>>4 && oldyt == y>>4) && Game.isConnectedClient() && this == game.player) {
 			// if moved (and is client), then check any tiles no longer loaded, and remove any entities on them.
 			updateSyncArea(oldxt, oldyt);
 		}
@@ -113,7 +113,7 @@ public class RemotePlayer extends Player {
 			return;
 		
 		boolean isServer = Game.isValidServer();
-		boolean isClient = Game.isValidClient();
+		boolean isClient = Game.isConnectedClient();
 		
 		int xr = xSyncRadius + entityTrackingBuffer;
 		int yr = ySyncRadius + entityTrackingBuffer;
@@ -131,7 +131,7 @@ public class RemotePlayer extends Player {
 			xt1 = oldxt;
 			yt1 = oldyt;
 		} else {
-			System.err.println("ERROR: RemotePlayer sync method called when game is not client or server.");
+			System.err.println("ERROR: RemotePlayer sync method called when game is not client or server. Could be a disconnected client.");
 			return;
 		}
 		

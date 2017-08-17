@@ -34,7 +34,7 @@ public class BucketItem extends StackableItem {
 		return items;
 	}
 	
-	private static final Fill getFilling(Tile tile) {
+	private static Fill getFilling(Tile tile) {
 		for(Fill fill: Fill.values())
 			if(fill.contained.id == tile.id)
 				return fill;

@@ -24,7 +24,7 @@ public class DeadMenu extends Display {
 			shouldRespawn = false;
 		}
 		//This is so that if the user presses x @ respawn menu, they respawn (what a concept)
-		if (ModeMenu.hardcore == false) {
+		if (!ModeMenu.hardcore) {
 			if (input.getKey("select").clicked) {
 				//This makes it so the player respawns
 				shouldRespawn = true;

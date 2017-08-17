@@ -19,7 +19,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Random;
 import javax.imageio.ImageIO;
-import javax.swing.JFrame;
+import javax.swing.*;
+
 import minicraft.entity.Bed;
 import minicraft.entity.Entity;
 import minicraft.entity.Furniture;
@@ -83,7 +84,7 @@ public class Game extends Canvas implements Runnable {
 	/// MULTIPLAYER
 	public static boolean ISONLINE = false;
 	public static boolean ISHOST = false; /// this being true doesn't mean this game isn't a client as well; becuase it should be.
-	public boolean autoclient = false; // used in the init method; jumps to multiplayer menu as client
+	private boolean autoclient = false; // used in the init method; jumps to multiplayer menu as client
 	public static MinicraftServer server = null;
 	public static MinicraftClient client = null;
 	
@@ -108,7 +109,7 @@ public class Game extends Canvas implements Runnable {
 	
 	private BufferedImage image; // creates an image to be displayed on the screen.
 	protected int[] pixels; // the array of pixels that will be displayed on the screen.
-	private int[] colors; // All of the colors, put into an array.
+	//private int[] colors; // All of the colors, put into an array.
 	/// these are public, but should not be modified:
 	public Screen screen; // Creates the main screen
 	public Screen lightScreen; // Creates a front screen to render the darkness in caves (Fog of war).
@@ -137,7 +138,7 @@ public class Game extends Canvas implements Runnable {
 	public Display menu; // the current menu you are on.
 	public Player player; // The Player.
 	//public Level level; // This is the current level you are on.
-	static int worldSize = 128; // The size of the world
+	private static int worldSize = 128; // The size of the world
 	public static int lvlw = worldSize; // The width of the world
 	public static int lvlh = worldSize; // The height of the world
 	
@@ -150,7 +151,7 @@ public class Game extends Canvas implements Runnable {
 	public static List<String> notifications = new ArrayList<String>();
 	public static int notetick; // "note"= notifications.
 	
-	public static final int astime = 7200; //stands for Auto-Save Time (interval)
+	private static final int astime = 7200; //stands for Auto-Save Time (interval)
 	public static int asTick; // The time interval between autosaves.
 	public static boolean saving = false; // If the game is performing a save.
 	public static int savecooldown; // Prevents saving many times too fast, I think.
@@ -158,23 +159,24 @@ public class Game extends Canvas implements Runnable {
 	/// SCORE MODE
 	
 	public int multiplier = 1; // Score multiplier
-	public static final int mtm = 300; // time given to increase multiplier before it goes back to 1.
-	public int multipliertime = mtm; // Time left on the current multiplier.
+	private static final int mtm = 300; // time given to increase multiplier before it goes back to 1.
+	private int multipliertime = mtm; // Time left on the current multiplier.
 	
 	public static int scoreTime; // time remaining for score mode game.
-	public boolean showinfo;
+	private boolean showinfo;
 	
 	public static boolean pastDay1 = true; // used to prefent mob spawn on surface on day 1.
 	public static boolean readyToRenderGameplay = false;
 	
-	public static enum Time {
+	public enum Time {
 		Morning (0),
 		Day (Game.dayLength/4),
 		Evening (Game.dayLength/2),
 		Night (Game.dayLength/4*3);
 		
 		public int tickTime;
-		private Time(int ticks) {
+		
+		Time(int ticks) {
 			tickTime = ticks;
 		}
 	}
@@ -186,7 +188,7 @@ public class Game extends Canvas implements Runnable {
 		fra = 0; // the frames processed in the previous second
 		tik = 0; // the ticks processed in the previous second
 		
-		colors = new int[256];
+		//colors = new int[256];
 		image = new BufferedImage(WIDTH, HEIGHT, BufferedImage.TYPE_INT_RGB);
 		pixels = ((DataBufferInt) image.getRaster().getDataBuffer()).getData();
 		
@@ -197,26 +199,6 @@ public class Game extends Canvas implements Runnable {
 		gameOver = false;
 	}
 	
-	/*
-	public static final byte[] intToBytes(int num) {
-		byte[] bytes = new byte[4];
-		bytes[0] = num >> (8*3);
-		bytes[1] = num >> (8*2) & 0xff;
-		bytes[2] = num >> cdm8 & 0xff;
-		bytes[3] = num & 0xff;
-	}
-	
-	public static final int bytesToInt(byte[] bytes) {
-		if(bytes.length != 4) return 0;
-		
-		int num = 0;
-		num += bytes[0] << 24;
-		num += bytes[1] << 16;
-		num += bytes[2] << 8;
-		num += bytes[3];
-	}
-	*/
-	
 	// Sets the current menu.
 	public void setMenu(Display display) {
 		this.menu = display;
@@ -224,17 +206,17 @@ public class Game extends Canvas implements Runnable {
 		if (menu != null) menu.init(this, input);
 	}
 	
-	public static final boolean isValidClient() {
+	public static boolean isValidClient() {
 		return ISONLINE && client != null;
 	}
-	public static final boolean isConnectedClient() {
+	public static boolean isConnectedClient() {
 		return isValidClient() && client.isConnected();
 	}
 	
-	public static final boolean isValidServer() {
+	public static boolean isValidServer() {
 		return ISONLINE && ISHOST && server != null;
 	}
-	public static final boolean hasConnectedClients() {
+	public static boolean hasConnectedClients() {
 		return isValidServer() && server.hasClients();
 	}
 	
@@ -458,29 +440,17 @@ public class Game extends Canvas implements Runnable {
 			if (multiplier > 50) multiplier = 50;
 		}
 		
-		// when the player dies, the client just stops ticking...
-		//if(Game.debug && Game.isValidClient())
-			//System.out.println("client going through game tick");
-		
 		boolean hadMenu = menu != null;
 		if(isValidServer()) {
 			/// this is to keep the game going while online, even with an unfocused window.
 			input.tick();
-			//boolean ticked = false;
 			for(Level floor: levels) {
 				if(floor == null) continue;
 				floor.tick();
 			}
 			
-			/*if(!ticked) {
-				System.out.println("SERVER did not tick any levels, becuase no players were found.");
-			}*/
-			
 			Tile.tickCount++;
-		}// else if(isValidClient())
-		//	player.tick();
-		
-		//if(Game.debug) System.out.println("ticking game; menu: " + menu);
+		}
 		
 		// This is the general action statement thing! Regulates menus, mostly.
 		if (!hasFocus() && HAS_GUI) {
@@ -496,9 +466,7 @@ public class Game extends Canvas implements Runnable {
 			
 			if (menu != null) {
 				//a menu is active.
-				//if(Game.isValidClient() && readyToRenderGameplay && Game.debug)
-					//System.out.println("Client has menu: " + menu);
-				player.tick(); // it is CRUTIAL that the player is ticked HERE, before the menu is ticked. I'm not quite sure why... the menus break otherwise, though.
+				player.tick(); // it is CRUCIAL that the player is ticked HERE, before the menu is ticked. I'm not quite sure why... the menus break otherwise, though.
 				menu.tick();
 				paused = true;
 			} else {
@@ -506,11 +474,9 @@ public class Game extends Canvas implements Runnable {
 				paused = false;
 				
 				if(!Game.isValidServer()) {
-					//if (Game.debug) System.out.println("ticking game with no menu, and no server...");
 					//if player is alive, but no level change, nothing happens here.
 					if (player.isRemoved() && readyToRenderGameplay && !Bed.inBed) {
 						//makes delay between death and death menu.
-						//if (debug) System.out.println("player is dead.");
 						playerDeadTime++;
 						if (playerDeadTime > 60) {
 							setMenu(new DeadMenu());
@@ -519,9 +485,6 @@ public class Game extends Canvas implements Runnable {
 						setMenu(new LevelTransitionDisplay(pendingLevelChange));
 						pendingLevelChange = 0;
 					}
-					/*else if (Game.isValidClient() && Game.debug) {
-						System.out.println("player is on level " + player.getLevel() + "; removed="+player.isRemoved());
-					}*/
 					
 					player.tick(); // ticks the player when there's no menu.
 					
@@ -605,7 +568,7 @@ public class Game extends Canvas implements Runnable {
 							levels[currentLevel].printEntityLocs(Player.class);
 						}
 						
-						if(Game.isValidClient() && input.getKey("alt-t").clicked) {
+						if(Game.isConnectedClient() && input.getKey("alt-t").clicked) {
 							// update the tile with the server's value for it.
 							Game.client.requestTile(player.getLevel(), player.x >> 4, player.y >> 4);
 						}
@@ -682,7 +645,6 @@ public class Game extends Canvas implements Runnable {
 	
 	/// this is the proper way to change the tickCount.
 	public static void setTime(int ticks) {
-		//if(Game.debug && Game.isConnectedClient()) System.out.println("setting time to " + ticks);
 		if (ticks < Time.Morning.tickTime) ticks = 0; // error correct
 		if (ticks < Time.Day.tickTime) time = 0; // morning
 		else if (ticks < Time.Evening.tickTime) time = 1; // day
@@ -725,7 +687,7 @@ public class Game extends Canvas implements Runnable {
 		Game.notetick = notetick;
 		if(isValidServer())
 			Game.server.broadcastNotification(msg, notetick);
-		else if(isValidClient())
+		else if(isConnectedClient())
 			Game.client.sendNotification(msg, notetick);
 	}
 	
@@ -739,7 +701,7 @@ public class Game extends Canvas implements Runnable {
 			return;
 		}
 		
-		if(Game.isValidClient())
+		if(Game.isConnectedClient())
 			levels[currentLevel].clearEntities(); // clear all the entities from the last level, so that no artifacts remain. They're loaded dynamically, anyway.
 		else
 			levels[currentLevel].remove(player); // removes the player from the current level.
@@ -753,7 +715,7 @@ public class Game extends Canvas implements Runnable {
 		player.x = (player.x >> 4) * 16 + 8; // sets the player's x coord (to center yourself on the stairs)
 		player.y = (player.y >> 4) * 16 + 8; // sets the player's y coord (to center yourself on the stairs)
 		
-		if(isValidClient()/* && levels[currentLevel] == null*/) {
+		if(isConnectedClient()/* && levels[currentLevel] == null*/) {
 			readyToRenderGameplay = false;
 			Game.client.requestLevel(currentLevel);
 		} else
@@ -844,8 +806,6 @@ public class Game extends Canvas implements Runnable {
 		
 		int xScroll = player.x - Screen.w / 2; // scrolls the screen in the x axis.
 		int yScroll = player.y - (Screen.h - 8) / 2; // scrolls the screen in the y axis.
-		
-		//if (debug && isValidClient()) System.out.println("player coords at render: "+player.x+","+player.y);
 		
 		//stop scrolling if the screen is at the ...
 		if (xScroll < 0) xScroll = 0; // ...left border.
@@ -975,7 +935,7 @@ public class Game extends Canvas implements Runnable {
 				int color;
 				
 				// renders armor
-				int armor = player.armor*10/player.maxArmor;
+				int armor = player.armor*10 / Player.maxArmor;
 				color = (i <= armor && player.curArmor != null) ? player.curArmor.sprite.color : Color.get(-1, -1);
 				screen.render(i * 8, Screen.h - 24, 3 + 12 * 32, color, 0);
 				
@@ -1279,7 +1239,7 @@ public class Game extends Canvas implements Runnable {
 			game.setMinimumSize(new Dimension(1, 1));
 			game.setPreferredSize(getWindowSize());
 			JFrame frame = new JFrame(Game.NAME);
-			frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+			frame.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
 			frame.setLayout(new BorderLayout()); // sets the layout of the window
 			frame.add(game, BorderLayout.CENTER); // Adds the game (which is a canvas) to the center of the screen.
 			frame.pack(); //squishes everything into the preferredSize.
@@ -1302,7 +1262,7 @@ public class Game extends Canvas implements Runnable {
 				public void windowClosed(WindowEvent e) {System.out.println("window closed");}
 				public void windowClosing(WindowEvent e) {
 					System.out.println("window closing");
-					if(Game.isValidClient())
+					if(Game.isConnectedClient())
 						Game.client.endConnection();
 					if(Game.isValidServer())
 						Game.server.endConnection();
@@ -1326,13 +1286,17 @@ public class Game extends Canvas implements Runnable {
 	}
 	
 	public void quit() {
-		if(Game.isValidClient()) Game.client.endConnection();
+		if(Game.isConnectedClient()) Game.client.endConnection();
 		if(Game.isValidServer()) Game.server.endConnection();
 		stop();
 	}
 	
 	private static List<File> getAllFiles(File top) {
 		List<File> files = new ArrayList<File>();
+		if(top == null) {
+			System.err.println("GAME: cannot search files of null folder.");
+			return files;
+		}
 		if(!top.isDirectory()) {
 			files.add(top);
 			return files;
@@ -1345,6 +1309,7 @@ public class Game extends Canvas implements Runnable {
 	}
 	
 	private static void deleteAllFiles(File top) {
+		if(top == null) return;
 		if(top.isDirectory())
 			for(File subfile: top.listFiles())
 				deleteAllFiles(subfile);

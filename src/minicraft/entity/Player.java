@@ -145,7 +145,7 @@ public class Player extends Mob {
 			Item itemToDrop = null;
 			if(game.menu instanceof PlayerInvMenu)
 				itemToDrop = ((PlayerInvMenu)game.menu).getSelectedItem();
-			else if(game.menu == null)
+			else if(!game.paused)
 				itemToDrop = activeItem;
 			
 			if(itemToDrop != null) {
@@ -170,7 +170,7 @@ public class Player extends Mob {
 				
 				if(level != null) {
 					ItemEntity ie = level.dropItem(x, y, toEntity);
-					if(Game.isValidClient())
+					if(Game.isConnectedClient())
 						Game.client.dropItem(ie);
 				}
 			}
@@ -319,7 +319,7 @@ public class Player extends Mob {
 				int oldDir = dir;
 				boolean moved = move((int) (xa * spd), (int) (ya * spd)); // THIS is where the player moves; part of Mob.java
 				if (moved) stepCount++;
-				if ((moved || oldDir != dir) && Game.isValidClient() && this == game.player)
+				if ((moved || oldDir != dir) && Game.isConnectedClient() && this == game.player)
 					Game.client.move(this);
 			}
 			
@@ -373,8 +373,8 @@ public class Player extends Mob {
 			
 			if (input.getKey("info").clicked) game.setMenu(new PlayerInfoMenu());
 			
-			if (input.getKey("r").clicked && !game.saving && !(this instanceof RemotePlayer) && !Game.isValidClient()) {
-				game.saving = true;
+			if (input.getKey("r").clicked && !Game.saving && !(this instanceof RemotePlayer) && !Game.isValidClient()) {
+				Game.saving = true;
 				LoadingDisplay.setPercentage(0);
 				new Save(this, WorldSelectMenu.worldname);
 			}
@@ -382,7 +382,7 @@ public class Player extends Mob {
 			if (Game.debug && input.getKey("shift-p").clicked) { // remove all potion effects
 				for(PotionType potionType: potioneffects.keySet()) {
 					PotionItem.applyPotion(this, potionType, false);
-					if(Game.isValidClient() && this == game.player)
+					if(Game.isConnectedClient() && this == game.player)
 						Game.client.sendPotionEffect(potionType, false);
 				}
 			}
@@ -393,7 +393,7 @@ public class Player extends Mob {
 			if(attackTime == 0) attackItem = null; // null the attackItem once we are done attacking.
 		}
 		
-		if(Game.isValidClient() && this == game.player) Game.client.sendPlayerUpdate(this);
+		if(Game.isConnectedClient() && this == game.player) Game.client.sendPlayerUpdate(this);
 	}
 	
 	public void resolveHeldItem() {
@@ -445,7 +445,7 @@ public class Player extends Mob {
 		// walkDist is not synced, so this can happen for both the client and server.
 		walkDist += 8; // increase the walkDist (changes the sprite, like you moved your arm)
 		
-		if(Game.isValidClient()) {
+		if(Game.isConnectedClient()) {
 			// if this is a multiplayer game, than the server will execute the full method instead.
 			attackDir = dir;
 			if(activeItem != null)
@@ -460,7 +460,8 @@ public class Player extends Mob {
 				inventory.removeItem(Items.arrowItem); // do it here so we don't need a response.
 			
 			return;
-		}
+		} else if(Game.isValidClient())
+			return;
 		
 		attackDir = dir; // make the attack direction equal the current direction
 		attackItem = activeItem; // make attackItem equal activeItem
@@ -832,7 +833,7 @@ public class Player extends Mob {
 		
 		if(!Game.ISONLINE)
 			Game.levels[game.currentLevel].add(dc);
-		else if(Game.isValidClient())
+		else if(Game.isConnectedClient())
 			Game.client.sendPlayerDeath(this, dc);
 		
 		super.die(); // calls the die() method in Mob.java

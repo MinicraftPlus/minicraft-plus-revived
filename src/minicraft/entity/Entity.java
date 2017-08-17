@@ -52,8 +52,6 @@ public abstract class Entity {
 			System.out.println("Note: remove() called on entity with no level reference: " + getClass());
 		else
 			level.remove(this);
-		//if(Game.isValidClient() && !Game.isValidServer() && !(this instanceof minicraft.entity.particle.Particle))
-			//System.out.println("WARNING: client game is removing "+getClass().getName().replace("minicraft.entity.","")+" entity from level " + (level==null?"null":level.depth));
 	}
 	public void remove(Level level) {
 		if(level != this.level && Game.debug)

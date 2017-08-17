@@ -66,7 +66,7 @@ public class Furniture extends Entity {
 			pushDir = player.dir; // set pushDir to the player's dir.
 			pushTime = multiPushTime = 10; // set pushTime to 10.
 			
-			if(Game.isValidClient())
+			if(Game.isConnectedClient())
 				Game.client.pushFurniture(this, pushDir);
 		}
 	}
