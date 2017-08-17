@@ -20,7 +20,7 @@ public class OptionsMenu extends Menu {
 	private Menu parent;
 	
 	public OptionsMenu(Menu parent) {
-		super(null, 0, 0);
+		super(null, 0, 0); // FIXME incomplete implementation
 		//super((new String[0]), null);
 		this.parent = parent;
 	}

@@ -61,7 +61,7 @@ public class WorldSelectMenu extends Menu {
 	private Action mode;
 	
 	public WorldSelectMenu() {
-		super(null, 0, 0);
+		super(null, 0, 0); // FIXME incomplete implementation
 		
 		validName = false;
 		confirmed = false;

@@ -33,7 +33,7 @@ public class ModeMenu extends Menu {
 	}
 	
 	public ModeMenu() {
-		super(null, 0, 0);
+		super(null, 0, 0); // FIXME incomplete implementation
 		selectedTime = 0;
 	}
 	

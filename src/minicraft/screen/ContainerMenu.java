@@ -26,7 +26,7 @@ public class ContainerMenu extends InventoryMenu {
 		super(chest.inventory, chest.name);
 		setFrames(new Frame(chest.name, new Rectangle(1, 1, 18, 11, Rectangle.CORNERS)));
 		
-		playerMenu = new InventoryMenu(player.inventory, "Inventory");
+		playerMenu = new InventoryMenu(player.inventory, "Inventory"); // FIXME incomplete implementation
 		//.setFrames(new Frame("Inventory", new Rectangle(19, 1, 15+20, 11, Rectangle.CORNERS)));
 		
 		this.player = player;

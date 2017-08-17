@@ -26,7 +26,7 @@ public class InventoryMenu extends ScrollingMenu {
 	}
 	
 	public InventoryMenu(Inventory inv, String title) {
-		super(null, 0);
+		super(null, 0); // FIXME incomplete implementation
 		//super(getItemList(inv), 9, 2*8, 2*8, 0, Color.get(-1, 555), Color.get(-1, 555));
 		setFrames(new Frame(title, new Rectangle(1, 1, 22, 11, Rectangle.CORNERS)));
 		setTextStyle(new FontStyle(Color.get(-1, 555)).setXPos(2*8));

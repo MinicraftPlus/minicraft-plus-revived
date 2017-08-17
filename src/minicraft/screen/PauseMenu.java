@@ -14,10 +14,10 @@ public class PauseMenu extends Menu {
 	private int selection; //selection is set when you press enter.
 	private Menu parent;
 
-	private static final List<String> alloptions = Arrays.asList(new String[] {"Return to Game", "Options", "Change Key Bindings", "Make World Multiplayer", "Save Game", "Load Game", "Main Menu"});
+	private static final List<String> alloptions = Arrays.asList("Return to Game", "Options", "Change Key Bindings", "Make World Multiplayer", "Save Game", "Load Game", "Main Menu");
 	//private List<String> options = new ArrayList<String>();
 	
-	private static final List<String> getOptions() {
+	private static List<String> getOptions() {
 		List<String> options = new ArrayList<String>();
 		options.addAll(alloptions);
 		
@@ -32,7 +32,7 @@ public class PauseMenu extends Menu {
 	}
 	
 	public PauseMenu(Menu parent) {
-		super(null, 0, 0);
+		super(null, 0, 0); // FIXME incomplete implementation
 		//super(getOptions(), 8*11 - 35, 4, Color.get(-1, 555), Color.get(-1, 222));
 		selection = -1; // set to main pause menu options.
 		this.parent = parent;
@@ -90,7 +90,7 @@ public class PauseMenu extends Menu {
 	}
 
 	public void render(Screen screen) {
-		//renderFrame(screen, "", 4, 2, 32, 20); // draw the blue menu frame.
+		//renderFrame(screen, "", 4, 2, 32, 20); // draw the blue menu frame. // FIXME incomplete implementation
 		
 		if (selection == -1) { // still displaying main options menu.
 			super.render(screen); // render the main options menu.

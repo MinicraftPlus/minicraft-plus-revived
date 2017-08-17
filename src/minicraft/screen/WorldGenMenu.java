@@ -21,7 +21,7 @@ public class WorldGenMenu extends Menu {
 	private static int[] selections = new int[choices.length];
 	
 	public WorldGenMenu() {
-		super(null, 0, 0);
+		super(null, 0, 0); // FIXME incomplete implementation
 		//super(Arrays.copyOf(settings, settings.length), 8 * 8 + 4, 8 * 8, 8, Color.get(-1, 555), Color.get(-1, 111));
 	}
 	
