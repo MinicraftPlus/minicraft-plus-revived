@@ -889,4 +889,8 @@ public class Level {
 	public boolean noStairs(int x, int y) {
 		return getTile(x, y) != Tiles.get("Stairs Down");
 	}
+	
+	public String toString() {
+		return super.toString()+"(depth="+depth+")";
+	}
 }
