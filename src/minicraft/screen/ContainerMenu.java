@@ -26,8 +26,8 @@ public class ContainerMenu extends InventoryMenu {
 		super(chest.inventory, chest.name);
 		setFrames(new Frame(chest.name, new Rectangle(1, 1, 18, 11, Rectangle.CORNERS)));
 		
-		playerMenu = new InventoryMenu(player.inventory, "Inventory")
-		.setFrames(new Frame("Inventory", new Rectangle(19, 1, 15+20, 11, Rectangle.CORNERS)));
+		playerMenu = new InventoryMenu(player.inventory, "Inventory");
+		//.setFrames(new Frame("Inventory", new Rectangle(19, 1, 15+20, 11, Rectangle.CORNERS)));
 		
 		this.player = player;
 		this.chest = chest;
@@ -88,6 +88,8 @@ public class ContainerMenu extends InventoryMenu {
 		// If the "Attack" key is pressed and the inventory's size is bigger than 0...
 		if (input.getKey("attack").clicked || input.getKey("drop-one").clicked) {
 			Item toSend = i.get(selected);
+			
+			//if (Game.debug) System.out.println("selected item: " + toSend);
 			
 			boolean transferAll = input.getKey("attack").clicked || !(toSend instanceof StackableItem) || ((StackableItem)toSend).count == 1;
 			

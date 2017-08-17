@@ -33,6 +33,7 @@ public class ModeMenu extends Menu {
 	}
 	
 	public ModeMenu() {
+		super(null, 0, 0);
 		selectedTime = 0;
 	}
 	

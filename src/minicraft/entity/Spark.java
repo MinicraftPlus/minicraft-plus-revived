@@ -40,7 +40,7 @@ public class Spark extends Entity {
 			Entity e = toHit.get(i);
 			if (e instanceof Mob && !(e instanceof AirWizard)) {
 				 // if the entity is a mob, but not a Air Wizard, then hurt the mob with 1 damage.
-				e.hurt(owner, 1, ((Mob) e).dir ^ 1);
+				e.hurt(owner, 1, Mob.getAttackDir(this, e));
 			}
 		}
 	}

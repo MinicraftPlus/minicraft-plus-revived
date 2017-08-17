@@ -6,7 +6,7 @@ import minicraft.gfx.Color;
 import minicraft.gfx.Font;
 import minicraft.gfx.Screen;
 
-public class WorldGenMenu extends Display {
+public class WorldGenMenu extends Menu {
 	//this the the "more world options" menu.
 	
 	private static final int[] sizes = {128, 256, 512};
@@ -21,6 +21,7 @@ public class WorldGenMenu extends Display {
 	private static int[] selections = new int[choices.length];
 	
 	public WorldGenMenu() {
+		super(null, 0, 0);
 		//super(Arrays.copyOf(settings, settings.length), 8 * 8 + 4, 8 * 8, 8, Color.get(-1, 555), Color.get(-1, 111));
 	}
 	
@@ -46,7 +47,7 @@ public class WorldGenMenu extends Display {
 		screen.clear(0);
 		
 		for(int i = 0; i < settings.length; i++) {
-			options.set(i, settings[i] + ": " + choices[i][selections[i]]);
+			text[i] = settings[i] + ": " + choices[i][selections[i]];
 		}
 		
 		super.render(screen);

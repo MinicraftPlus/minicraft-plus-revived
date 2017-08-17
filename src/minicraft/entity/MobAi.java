@@ -1,6 +1,8 @@
 package minicraft.entity;
 
 import minicraft.Game;
+import minicraft.Sound;
+import minicraft.entity.particle.TextParticle;
 import minicraft.gfx.Color;
 import minicraft.gfx.MobSprite;
 import minicraft.gfx.Screen;
@@ -85,6 +87,23 @@ public abstract class MobAi extends Mob {
 		if(Game.isValidClient()) return false; // client mobAi's should not move at all.
 		
 		return super.move(xa, ya);
+	}
+	
+	public void doHurt(int damage, int attackDir) {
+		if (isRemoved() || hurtTime > 0) return; // If the mob has been hurt recently and hasn't cooled down, don't continue
+		
+		Player player = getClosestPlayer();
+		if (player != null) { // If there is a player in the level
+			/// play the hurt sound only if the player is less than 80 entity coordinates away; or 5 tiles away.
+			int xd = player.x - x;
+			int yd = player.y - y;
+			if (xd * xd + yd * yd < 80 * 80) {
+				Sound.monsterHurt.play();
+			}
+		}
+		level.add(new TextParticle("" + damage, x, y, Color.get(-1, 500))); // Make a text particle at this position in this level, bright red and displaying the damage inflicted
+		
+		super.doHurt(damage, attackDir);
 	}
 	
 	public boolean canWool() {

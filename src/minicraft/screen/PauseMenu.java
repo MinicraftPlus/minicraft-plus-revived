@@ -32,7 +32,8 @@ public class PauseMenu extends Menu {
 	}
 	
 	public PauseMenu(Menu parent) {
-		super(getOptions(), 8*11 - 35, 4, Color.get(-1, 555), Color.get(-1, 222));
+		super(null, 0, 0);
+		//super(getOptions(), 8*11 - 35, 4, Color.get(-1, 555), Color.get(-1, 222));
 		selection = -1; // set to main pause menu options.
 		this.parent = parent;
 	}
@@ -47,8 +48,8 @@ public class PauseMenu extends Menu {
 		
 		//choice chosen; input here is at confirm menu
 		if (input.getKey("select").clicked) {
-			String chosen = options.get(selected);
-			String confirmed = selection >= 0 ? options.get(selection) : "";
+			String chosen = text[selected];
+			String confirmed = selection >= 0 ? text[selection] : "";
 			
 			switch(chosen) {
 				case "Return to Game": game.setMenu(parent); return;
@@ -89,7 +90,7 @@ public class PauseMenu extends Menu {
 	}
 
 	public void render(Screen screen) {
-		renderFrame(screen, "", 4, 2, 32, 20); // draw the blue menu frame.
+		//renderFrame(screen, "", 4, 2, 32, 20); // draw the blue menu frame.
 		
 		if (selection == -1) { // still displaying main options menu.
 			super.render(screen); // render the main options menu.
@@ -98,7 +99,7 @@ public class PauseMenu extends Menu {
 			Font.drawCentered(input.getMapping("select")+": Choose", screen, 150, Color.get(-1, 333));
 		} else {
 			ArrayList<String> confirmDialog = new ArrayList<String>();
-			String selection = options.get(this.selection);
+			String selection = text[this.selection];
 			int msgColor = Color.get(-1, 500);
 			
 			if (selection.equals("Save Game")) {// save game

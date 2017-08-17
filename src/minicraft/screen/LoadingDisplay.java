@@ -54,12 +54,14 @@ public class LoadingDisplay extends Display implements ActionListener {
 	public void actionPerformed(ActionEvent e) {
 		if(t != null) {
 			Timer save = t;
-			//t.stop();
+			t.stop();
 			t = null; // prevents the timer from being activated again in this LoadingDisplay instance.
 			save.stop();
 			initWorld();
 		} else if(Game.debug) {
 			System.out.println("WARNING: loading menu timer was set off more than once.");
+			if(e.getSource() instanceof Timer)
+				((Timer)e.getSource()).stop();
 		}
 	}
 	

@@ -159,6 +159,8 @@ public class Save {
 		data.add(String.valueOf(OptionsMenu.isSoundAct));
 		data.add(String.valueOf(OptionsMenu.autosave));
 		data.add(MultiplayerMenu.savedIP);
+		data.add(MultiplayerMenu.savedUUID);
+		data.add(MultiplayerMenu.savedUsername);
 		
 		List<String> keyPairs = new ArrayList<String>();
 		for(String keyPref: game.input.getKeyPrefs())
@@ -286,7 +288,7 @@ public class Save {
 		
 		//if(e instanceof Particle) return ""; // TODO I don't want to, but there are complications.
 		
-		if(isLocalSave && (e instanceof ItemEntity || e instanceof Arrow || e instanceof RemotePlayer || e instanceof Spark || e instanceof Particle)) // wirte these only when sending a world, not writing it. (RemotePlayers are saved seperately, when their info is recieved.)
+		if(isLocalSave && (e instanceof ItemEntity || e instanceof Arrow || e instanceof RemotePlayer || e instanceof Spark || e instanceof Particle)) // wirte these only when sending a world, not writing it. (RemotePlayers are saved seperately, when their info is received.)
 			return "";
 		
 		if(!isLocalSave)

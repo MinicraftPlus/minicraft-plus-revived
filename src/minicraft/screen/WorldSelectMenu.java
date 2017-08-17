@@ -61,6 +61,7 @@ public class WorldSelectMenu extends Menu {
 	private Action mode;
 	
 	public WorldSelectMenu() {
+		super(null, 0, 0);
 		
 		validName = false;
 		confirmed = false;

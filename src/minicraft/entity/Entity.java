@@ -15,8 +15,7 @@ public abstract class Entity {
 	public int xr, yr; // x, y radius of entity
 	private boolean removed; // Determines if the entity is removed from it's level; checked in Level.java
 	protected Level level; // the level that the entity is on
-	// TODO might replace the below with a simple array of colors.
-	public int col; // day/night color variations, plus current color.
+	public int col; // current color.
 	
 	public int eid; /// this is intended for multiplayer, but I think it could be helpful in single player, too. certainly won't harm anything, I think... as long as finding a valid id doesn't take long...
 	private String prevUpdates = ""; /// holds the last value returned from getUpdateString(), for comparison with the next call.
@@ -39,13 +38,13 @@ public abstract class Entity {
 	public abstract void render(Screen screen); /// used to render the entity on screen.
 	public abstract void tick(); /// used to update the entity.
 	
-	public boolean isRemoved() { return removed; }
+	public boolean isRemoved() { return removed/* || level == null*/; }
 	public Level getLevel() { return level; }
 	
 	/** Removes the entity from the level. */
 	public void remove() {
 		if(removed && !(this instanceof ItemEntity)) // apparently this happens fairly often with item entities.
-			System.out.println("Note: remove() called on removed entity: " + getClass());
+			System.out.println("Note: remove() called on removed entity: " + this);
 		
 		removed = true;
 		
@@ -60,8 +59,8 @@ public abstract class Entity {
 		if(level != this.level && Game.debug)
 			System.out.println("tried to remove entity "+this+" from level it is not in: " + level + "; in level " + this.level);
 		else {
-			removed = true;
-			level = null;
+			removed = true; // should already be set.
+			this.level = null;
 			//if (Game.debug && !(this instanceof Particle)) System.out.println(Game.onlinePrefix()+"set level reference of entity " + this + " to null.");
 		}
 	}
@@ -71,7 +70,10 @@ public abstract class Entity {
 		if(level == null) {
 			System.out.println("tried to set level of entity " + this + " to a null level; should use remove(level)");
 			return;
+		} else if(level != this.level && Game.isValidServer()) {
+			Game.server.broadcastEntityRemoval(this);
 		}
+		
 		this.level = level;
 		removed = false;
 		this.x = x;

@@ -8,6 +8,12 @@ Minicraft+ version 2.0.3
 + Added the ability to drop an item to the ground with Q and shift-Q (shift-q drops the whole stack)
 + made it so you can transfer single items to and from chests, with the drop key.
 * Fixed bugs with creative inventory, so it always has all items.
+* Fixed issues with the pickup control in single player and multiplayer
++ Created an account system! you must now register on the playminicraft site to use multiplayer. Comes with offline mode.
+* Fixed multiplayer client saving with the account system.
++ added an fps limiter
+* Made various optimizations to the code
++ Added back and fixed knockbacks, after removing them since they didn't work how I wanted.
 
 
 

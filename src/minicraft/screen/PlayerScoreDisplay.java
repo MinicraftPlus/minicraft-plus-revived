@@ -134,7 +134,6 @@ public class PlayerScoreDisplay extends Display {
 		}
 
 		Font.draw("Press "+input.getMapping("exit")+" to exit to menu...", screen, 16, 19*8, Color.get(-1, 333));
-		
 		rendered = true;
 	}
 }

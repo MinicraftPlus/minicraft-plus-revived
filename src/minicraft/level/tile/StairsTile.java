@@ -14,7 +14,7 @@ public class StairsTile extends Tile {
 	protected StairsTile(String name, boolean leadsUp) {
 		super(name, leadsUp?up:down);
 		this.leadsUp = leadsUp;
-		
+		maySpawn = false;
 	}
 	
 	private int getDirtColor(int depth) {

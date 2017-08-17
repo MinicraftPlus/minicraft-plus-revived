@@ -36,7 +36,7 @@ public class CraftingMenu extends ScrollingMenu {
 	}
 	public CraftingMenu(List<Recipe> recipes, Player player, boolean isPersonalFrame) {
 		super(getRecipeList(recipes), 9, Color.get(-1, 555), Color.get(-1, 222));
-		setTextStyle(new FontStyle(Color.get(-1, 555)).setYPos(2*SpriteSheet.boxWidth)).setXPos(2*SpriteSheet.boxWidth);
+		setTextStyle(new FontStyle(Color.get(-1, 555)).setYPos(2*SpriteSheet.boxWidth).setXPos(2*SpriteSheet.boxWidth));
 		Frame[] frames = new Frame[] {
 			(new Frame("Have", new Rectangle(17, 1, 24, 3, Rectangle.CORNERS))), // renders the 'have' items window
 			(new Frame("Cost", new Rectangle(17, 4, 24, 11, Rectangle.CORNERS))), // renders the 'cost' items window

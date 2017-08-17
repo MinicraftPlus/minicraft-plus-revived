@@ -114,7 +114,7 @@ public class AirWizard extends EnemyMob {
 		}
 	}
 	
-	protected void doHurt(int damage, int attackDir) {
+	public void doHurt(int damage, int attackDir) {
 		super.doHurt(damage, attackDir);
 		if (attackDelay == 0 && attackTime == 0) {
 			attackDelay = 60 * 2;
@@ -169,7 +169,7 @@ public class AirWizard extends EnemyMob {
 	protected void touchedBy(Entity entity) {
 		if (entity instanceof Player) {
 			// if the entity is the Player, then deal them 1 or 2 damage points.
-			entity.hurt(this, (secondform ? 2 : 1), dir);
+			entity.hurt(this, (secondform ? 2 : 1), Mob.getAttackDir(this, entity));
 		}
 	}
 	

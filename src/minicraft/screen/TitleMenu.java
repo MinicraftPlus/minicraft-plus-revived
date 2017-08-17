@@ -134,7 +134,8 @@ private static final String[] options = {"New game", "Join Online World", "Instr
 	};
 	
 	public TitleMenu() {
-		super(Arrays.asList(options), 11*8, 1, Color.get(-1, 555), Color.get(-1, 222));
+		super(null, 0, 0);
+		//super(options, 11*8, 1, Color.get(-1, 555), Color.get(-1, 222));
 		Game.readyToRenderGameplay = false;
 		/// this is just in case; though, i do take advantage of it in other places.
 		if(Game.server != null) {

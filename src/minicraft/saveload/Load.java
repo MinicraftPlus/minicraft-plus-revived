@@ -274,10 +274,10 @@ public class Load {
 		Game.setTime(Integer.parseInt(data.get(1)));
 		
 		if(worldVer.compareTo(new Version("1.9.3-dev2")) >= 0) {
-			game.gameTime = Integer.parseInt(data.get(2));
-			Game.pastDay1 = game.gameTime > 65000;
+			Game.gameTime = Integer.parseInt(data.get(2));
+			Game.pastDay1 = Game.gameTime > 65000;
 		} else {
-			game.gameTime = 65000; // prevents time cheating.
+			Game.gameTime = 65000; // prevents time cheating.
 		}
 		
 		OptionsMenu.diff = Integer.parseInt(data.get(3));
@@ -304,6 +304,10 @@ public class Load {
 			subdata = data.subList(2, data.size());
 		} else {
 			MultiplayerMenu.savedIP = data.get(2);
+			if(prefVer.compareTo(new Version("2.0.3-dev3")) > 0) {
+				MultiplayerMenu.savedUUID = data.remove(3);
+				MultiplayerMenu.savedUsername = data.remove(3);
+			}
 			String keyData = data.get(3);
 			subdata = Arrays.asList(keyData.split(":"));
 		}
@@ -566,8 +570,7 @@ public class Load {
 		List<String> info = new ArrayList<String>(); // this gets everything inside the "[...]" after the entity name.
 		//System.out.println("loading entity:" + entityData);
 		String[] stuff = entityData.substring(entityData.indexOf("[") + 1, entityData.indexOf("]")).split(":");
-		for(String str: stuff)
-			info.add(str);
+		info.addAll(Arrays.asList(stuff));
 		
 		String entityName = entityData.substring(0, entityData.indexOf("[")); // this gets the text before "[", which is the entity name.
 		
@@ -582,7 +585,32 @@ public class Load {
 		if(!isLocalSave) {
 			eid = Integer.parseInt(info.remove(2));
 			
-			if(Game.isValidClient() && game.player instanceof RemotePlayer && !((RemotePlayer)game.player).shouldTrack(x >> 4, y >> 4)) {
+			/// If I find an entity that is loaded locally, but on another level in the entity data provided, then I ditch the current entity and make a new one from the info provided.
+			Entity existing = Game.getEntity(eid);
+			int entityLevel = Integer.parseInt(info.get(info.size()-1));
+			
+			if(existing != null) {
+				// the entity loaded is now out of date; remove it.
+				if(/*existing instanceof Player && */Game.debug)
+					System.out.println(Game.onlinePrefix()+"received entity data matches a loaded entity: " + existing + "; removing from level " + existing.getLevel());
+				
+				existing.remove();
+			}
+			
+			/*if(existing == null && Game.isValidClient() && game.player.eid == eid) {
+				existing = game.player;
+				//int playerLevel = Integer.parseInt(info.get(info.size()-1));
+				//if(Game.levels[playerLevel] != null)
+				//Game.levels[playerLevel].add(existing, x, y);
+			}
+			if(existing != null) {
+				System.out.println(Game.onlinePrefix()+"already loaded entity with eid " + eid + "; returning that one");
+				return existing;
+			}*/
+			
+			if(Game.isValidClient() && game.player instanceof RemotePlayer && 
+				!((RemotePlayer)game.player).shouldTrack(x >> 4, y >> 4, Game.levels[entityLevel])
+				) {
 				// the entity is too far away to bother adding to the level.
 				if(Game.debug) System.out.println("CLIENT: entity is too far away to bother loading: " + eid);
 				Entity dummy = new Cow();
@@ -590,16 +618,9 @@ public class Load {
 				return dummy; /// we need a dummy b/c it's the only way to pass along to entity id.
 			}
 			
-			Entity existing = Game.getEntity(eid);
-			if(existing == null && Game.isValidClient() && game.player.eid == eid) {
-				existing = game.player;
-				//int playerLevel = Integer.parseInt(info.get(info.size()-1));
-				//if(Game.levels[playerLevel] != null)
-					//Game.levels[playerLevel].add(existing, x, y);
-			}
-			if(existing != null) {
-				System.out.println(Game.onlinePrefix()+"already loaded entity with eid " + eid + "; returning that one");
-				return existing;
+			if(Game.isValidClient() && existing != null && existing.eid == game.player.eid) {
+				System.out.println("CLIENT WARNING: asked to reload main player from server; ignoring.");
+				return game.player; // don't load the main player
 			}
 		}
 		
@@ -681,8 +702,13 @@ public class Load {
 				if (itemData.contains(";")) {
 					String[] aitemData = itemData.split(";");
 					StackableItem stack = (StackableItem)Items.get(aitemData[0]);
-					stack.count = Integer.parseInt(aitemData[1]);
-					chest.inventory.add(stack);
+					if (stack != null) {
+						stack.count = Integer.parseInt(aitemData[1]);
+						chest.inventory.add(stack);
+					} else {
+						System.err.println("LOAD ERROR: encountered invalid item name, expected to be stackable: " + aitemData[0] + "; stack trace:");
+						Thread.dumpStack();
+					}
 				} else {
 					Item item = Items.get(itemData);
 					chest.inventory.add(item);
@@ -698,15 +724,11 @@ public class Load {
 			
 			newEntity = chest;
 		}
-		else if(newEntity instanceof Spawner) {
+		else if(newEntity instanceof Spawner)
 			newEntity = new Spawner((MobAi)getEntity(info.get(2), Integer.parseInt(info.get(3))));
-			//egg.initMob((MobAi)getEntity(info.get(2), player, info.get(3)));
-			//egg.lvl = Integer.parseInt(info.get(3));
-			//newEntity = egg;
-		}
-		else if(newEntity instanceof Lantern && worldVer.compareTo(new Version("1.9.4")) >= 0 && info.size() > 3) {
+		else if(newEntity instanceof Lantern && worldVer.compareTo(new Version("1.9.4")) >= 0 && info.size() > 3)
 			newEntity = new Lantern(Lantern.Type.values()[Integer.parseInt(info.get(2))]);
-		}
+		
 		/*else if(newEntity instanceof Crafter && worldVer.compareTo(new Version("2.0.0-dev4")) >= 0) {
 			System.out.println("");
 			newEntity = new Crafter(Enum.valueOf(Crafter.Type.class, info.get(2)));
@@ -750,14 +772,14 @@ public class Load {
 		if(Game.levels[curLevel] != null) {
 			Game.levels[curLevel].add(newEntity, x, y);
 			if(Game.debug && newEntity instanceof RemotePlayer)
-				System.out.println(Game.onlinePrefix()+"loaded remote player: " + newEntity + "; added to level " + curLevel + " at " + (newEntity.x>>4)+","+(newEntity.y>>4));
+				Game.levels[curLevel].printEntityStatus("Loaded ", newEntity, "RemotePlayer");
 		} else if(newEntity instanceof RemotePlayer && Game.isValidClient())
 			System.out.println("CLIENT: remote player not added b/c on null level");
 		
 		return newEntity;
 	}
 	
-	public static Entity getEntity(String string, int moblvl) {
+	private static Entity getEntity(String string, int moblvl) {
 		switch(string) {
 			case "Player": return null;
 			case "RemotePlayer": return null;
@@ -792,7 +814,7 @@ public class Load {
 			case "FireParticle": return (Entity)(new FireParticle(0, 0));
 			case "SmashParticle": return (Entity)(new SmashParticle(0, 0));
 			case "TextParticle": return (Entity)(new TextParticle("", 0, 0, 0));
-			default : /*if(Game.debug)*/ System.out.println("LOAD: unknown or outdated entity requested: " + string);
+			default : /*if(Game.debug)*/ System.err.println("LOAD ERROR: unknown or outdated entity requested: " + string);
 				return null;
 		}
 	}

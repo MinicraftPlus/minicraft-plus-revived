@@ -67,7 +67,7 @@ public class Arrow extends Entity {
 			if (hit != null && hit instanceof Mob && hit != owner) {
 				Mob mob = (Mob) hit;
 				int extradamage = (hit instanceof Player ? 0 : 3) + (criticalHit ? 0 : 1);
-				mob.hurt(owner, damage + extradamage, mob.dir);
+				mob.hurt(owner, damage + extradamage, (xdir<0?2:(xdir>0?3:(ydir<0?1:0)))); // that should correctly convert to mob directions.
 			}
 			
 			/*if(owner instanceof Player && minicraft.screen.ModeMenu.creative && minicraft.Game.debug) {

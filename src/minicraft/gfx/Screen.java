@@ -27,7 +27,7 @@ public class Screen {
 	public Screen(SpriteSheet sheet) {
 		this.sheet = sheet;
 		/// screen width and height are determined by the actual game window size, meaning the screen is only as big as the window.
-		pixels = new int[w * h]; // makes new integer array for all the pixels on the screen.
+		pixels = new int[Screen.w * Screen.h]; // makes new integer array for all the pixels on the screen.
 	}
 	
 	public Screen(Screen model) {

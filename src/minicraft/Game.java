@@ -76,7 +76,7 @@ public class Game extends Canvas implements Runnable {
 	public static String gameDir; // The directory in which all the game files are stored
 	//public static String loadDir = "";
 	
-	public static int MAX_FPS = 40;
+	public static int MAX_FPS = 50;
 	public static final int MIN_FPS_CONFIG = 1;
 	public static final int MAX_FPS_CONFIG = 200;
 	
@@ -202,7 +202,7 @@ public class Game extends Canvas implements Runnable {
 		byte[] bytes = new byte[4];
 		bytes[0] = num >> (8*3);
 		bytes[1] = num >> (8*2) & 0xff;
-		bytes[2] = num >> 8 & 0xff;
+		bytes[2] = num >> cdm8 & 0xff;
 		bytes[3] = num & 0xff;
 	}
 	
@@ -255,8 +255,10 @@ public class Game extends Canvas implements Runnable {
 	protected void init() {
 		/* This sets up the screens, and loads the icons.png spritesheet. */
 		try {
-			screen = new Screen(new SpriteSheet(ImageIO.read(Game.class.getResourceAsStream("/icons.png"))));
-			lightScreen = new Screen(new SpriteSheet(ImageIO.read(Game.class.getResourceAsStream("/icons.png"))));
+			screen = new Screen(new SpriteSheet(ImageIO.read(Game.class.getResourceAsStream
+					("/resources/icons.png"))));
+			lightScreen = new Screen(new SpriteSheet(ImageIO.read(Game.class.getResourceAsStream
+					("/resources/icons.png"))));
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
@@ -467,11 +469,7 @@ public class Game extends Canvas implements Runnable {
 			//boolean ticked = false;
 			for(Level floor: levels) {
 				if(floor == null) continue;
-				//if(floor.getPlayers().length > 0) {
-					//if(Game.debug) System.out.println("Server is ticking level " + floor.depth);
-					floor.tick();
-				//	ticked = true;
-				//}
+				floor.tick();
 			}
 			
 			/*if(!ticked) {
@@ -500,7 +498,7 @@ public class Game extends Canvas implements Runnable {
 				//a menu is active.
 				//if(Game.isValidClient() && readyToRenderGameplay && Game.debug)
 					//System.out.println("Client has menu: " + menu);
-				player.tick();
+				player.tick(); // it is CRUTIAL that the player is ticked HERE, before the menu is ticked. I'm not quite sure why... the menus break otherwise, though.
 				menu.tick();
 				paused = true;
 			} else {
@@ -525,13 +523,12 @@ public class Game extends Canvas implements Runnable {
 						System.out.println("player is on level " + player.getLevel() + "; removed="+player.isRemoved());
 					}*/
 					
+					player.tick(); // ticks the player when there's no menu.
+					
 					if(level != null) {
 						level.tick();
 						Tile.tickCount++;
 					}
-					
-					if(isValidClient())
-						player.tick();
 					
 					if(!HAS_GUI) startMultiplayerServer();
 				}
@@ -741,7 +738,11 @@ public class Game extends Canvas implements Runnable {
 			System.out.println("server tried to change level.");
 			return;
 		}
-		levels[currentLevel].remove(player); // removes the player from the current level.
+		
+		if(Game.isValidClient())
+			levels[currentLevel].clearEntities(); // clear all the entities from the last level, so that no artifacts remain. They're loaded dynamically, anyway.
+		else
+			levels[currentLevel].remove(player); // removes the player from the current level.
 		
 		int nextLevel = currentLevel + dir;
 		if (nextLevel <= -1) nextLevel = levels.length-1; // fix accidental level underflow
@@ -752,7 +753,7 @@ public class Game extends Canvas implements Runnable {
 		player.x = (player.x >> 4) * 16 + 8; // sets the player's x coord (to center yourself on the stairs)
 		player.y = (player.y >> 4) * 16 + 8; // sets the player's y coord (to center yourself on the stairs)
 		
-		if(isValidClient() && levels[currentLevel] == null) {
+		if(isValidClient()/* && levels[currentLevel] == null*/) {
 			readyToRenderGameplay = false;
 			Game.client.requestLevel(currentLevel);
 		} else
@@ -782,17 +783,6 @@ public class Game extends Canvas implements Runnable {
 		char set = time < interval ? '.' : ' '; // get the character to set in this cycle.
 		
 		dots[epos] = set;
-		/*
-		for(int i = 0; i < 3; i++) {
-			if (epos == 1) dots += chars[0];
-		}
-		*/
-		/*eposTick++;
-		if(eposTick >= Game.normSpeed) {
-			eposTick = 0;
-			//ePos++;
-		}*/
-		//if(ePos >= 3) ePos = 0;
 		
 		return new String(dots);
 	}
@@ -893,7 +883,7 @@ public class Game extends Canvas implements Runnable {
 		renderDebugInfo();
 		
 		// This is the arrow counter. ^ = infinite symbol.
-		int ac = player.inventory.count(Items.get("arrow"));
+		int ac = player.inventory.count(Items.arrowItem);
 		if (ModeMenu.creative || ac >= 10000)
 			Font.draw("	x" + "^", screen, 84, Screen.h - 16, Color.get(0, 333, 444, 555));
 		else
@@ -1327,6 +1317,7 @@ public class Game extends Canvas implements Runnable {
 		game.autoclient = autoclient; // this will make the game automatically jump to the MultiplayerMenu, and attempt to connect to localhost.
 		
 		Game.main = game; // sets the main game instance reference.
+		
 		game.start(); // Starts the game!
 	}
 	
