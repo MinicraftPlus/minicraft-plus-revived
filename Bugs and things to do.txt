@@ -18,7 +18,6 @@ Sound effects don't always play when they should; mostly it seems when other sou
 MULTIPLAYER-Related:
  - sometimes frozen particles appear (not fixed; need to analyze particle treatment for clients) (only seen once)
  - Players aren't kicked out if they are on a menu when the server goes down..? (only tested/seen once)
- - Cannot access pause menu.
  
  It would be nice if I could find a way to not even bother telling the server for things like potions, that don't even interact with the world.
 #####

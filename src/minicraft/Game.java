@@ -492,13 +492,11 @@ public class Game extends Canvas implements Runnable {
 			if(!isValidServer() || menu != null && !hadMenu)
 				input.tick(); // INPUT TICK; no other class should call this, I think...especially the *Menu classes.
 			
-			if(!isValidServer())
-				player.tick(); /// the ONE place where the main player is ticked. 
-			
 			if (menu != null) {
 				//a menu is active.
 				//if(Game.isValidClient() && readyToRenderGameplay && Game.debug)
 					//System.out.println("Client has menu: " + menu);
+				player.tick(); // it is CRUTIAL that the player is ticked HERE, before the menu is ticked. I'm not quite sure why... the menus break otherwise, though.
 				menu.tick();
 				paused = true;
 			} else {
@@ -522,6 +520,8 @@ public class Game extends Canvas implements Runnable {
 					/*else if (Game.isValidClient() && Game.debug) {
 						System.out.println("player is on level " + player.getLevel() + "; removed="+player.isRemoved());
 					}*/
+					
+					player.tick(); // ticks the player when there's no menu.
 					
 					if(level != null) {
 						level.tick();
@@ -781,17 +781,6 @@ public class Game extends Canvas implements Runnable {
 		char set = time < interval ? '.' : ' '; // get the character to set in this cycle.
 		
 		dots[epos] = set;
-		/*
-		for(int i = 0; i < 3; i++) {
-			if (epos == 1) dots += chars[0];
-		}
-		*/
-		/*eposTick++;
-		if(eposTick >= Game.normSpeed) {
-			eposTick = 0;
-			//ePos++;
-		}*/
-		//if(ePos >= 3) ePos = 0;
 		
 		return new String(dots);
 	}
