@@ -492,11 +492,13 @@ public class Game extends Canvas implements Runnable {
 			if(!isValidServer() || menu != null && !hadMenu)
 				input.tick(); // INPUT TICK; no other class should call this, I think...especially the *Menu classes.
 			
+			if(!isValidServer())
+				player.tick(); /// the ONE place where the main player is ticked. 
+			
 			if (menu != null) {
 				//a menu is active.
 				//if(Game.isValidClient() && readyToRenderGameplay && Game.debug)
 					//System.out.println("Client has menu: " + menu);
-				player.tick();
 				menu.tick();
 				paused = true;
 			} else {
@@ -525,9 +527,6 @@ public class Game extends Canvas implements Runnable {
 						level.tick();
 						Tile.tickCount++;
 					}
-					
-					if(isValidClient())
-						player.tick();
 					
 					if(!HAS_GUI) startMultiplayerServer();
 				}
