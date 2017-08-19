@@ -1,7 +1,6 @@
 package minicraft.screen;
 
 import minicraft.Game;
-import minicraft.Sound;
 import minicraft.entity.Chest;
 import minicraft.entity.Inventory;
 import minicraft.entity.Player;
@@ -116,7 +115,7 @@ public class ContainerMenu extends InventoryMenu {
 					removeSelectedItem();
 				if(!(i2 == player.inventory && ModeMenu.creative)) { // don't add the item to the other inv, if on creative mode and the other inv is the player
 					i2.add(playerMenu.selected, toSend.clone());
-					playerMenu.text = InventoryMenu.getItemList(i2);
+					playerMenu.options = InventoryMenu.getItemList(i2);
 				}
 			}
 		}
@@ -140,6 +139,6 @@ public class ContainerMenu extends InventoryMenu {
 	public void onInvUpdate(Inventory inv) {
 		super.onInvUpdate(inv);
 		if(inv == playerMenu.inv)
-			playerMenu.text = getItemList(inv);
+			playerMenu.options = getItemList(inv);
 	}
 }
