@@ -7,42 +7,30 @@ import minicraft.gfx.Font;
 import minicraft.gfx.FontStyle;
 import minicraft.gfx.SpriteSheet;
 
-public class MessageDisplay extends Display {
+public abstract class MessageDisplay extends Display {
 	
 	private String[] message;
-	private int inputDelay;
 	
-	private static FontStyle style = new FontStyle(Color.get(-1, 444));
+	protected FontStyle style = new FontStyle(Color.get(-1, 444));
+	private int spacing = Font.textHeight()/2;
 	
-	public MessageDisplay(String msg, int maxWidth) { // max width is in screen coordinates
-		super();
-		
-		setTextStyle(style);
-		setLineSpacing(Font.textHeight()/2);
-		
-		inputDelay = 10;
-		
-		if(maxWidth > Font.textHeight() * 2)
-			maxWidth -= Font.textHeight() * 2;
-		
-		message = Font.getLines(msg, maxWidth, Font.textHeight()/2);
-		
-		int frameWidth = message.length > 1 ? maxWidth : Font.textWidth(message[0]);
-		frameWidth += Font.textHeight() * 2;
-		
-		int frameHeight = message.length * Font.textHeight() + (message.length - 1) * Font.textHeight()/2;
-		frameHeight += Font.textHeight() * 2;
-		
-		setFrames(new Frame("", new Rectangle(Screen.w/2, Screen.h/2, frameWidth, frameHeight, Rectangle.CENTER)));
+	private Menu parent;
+	
+	protected MessageDisplay(Menu parent) {
+		this.parent = parent;
 	}
 	
+	protected void setMessage(String[] message) { this.message = message; }
+	protected void setSpacing(int spacing) { this.spacing = spacing; }
+	
 	public void tick() {
-		if(inputDelay > 0) {
-			inputDelay--;
-			return;
-		}
-		
 		if(input.getKey("select").clicked || input.getKey("exit").clicked)
-			game.setMenu(null);
+			game.setMenu(parent);
+	}
+	
+	public void render(Screen screen) {
+		super.render(screen); // draws the frame, if any
+		
+		Font.drawParagraph(message, screen, style, spacing);
 	}
 }

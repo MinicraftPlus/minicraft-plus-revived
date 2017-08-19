@@ -9,18 +9,18 @@ import minicraft.gfx.Font;
 import minicraft.gfx.FontStyle;
 import minicraft.gfx.Screen;
 
-public class LoadingDisplay extends Display implements ActionListener {
+public class LoadingDisplay extends MessageDisplay implements ActionListener {
 	//this is the last menu before the game/world starts/opens.
 	Timer t;
 	private static double percentage = 0;
 	
 	public LoadingDisplay() {
-		super();
+		super(null);
 		
 		if(Game.HAS_GUI) {
 			t = new Timer(400, this);
 			
-			setTextStyle(new FontStyle(Color.get(-1, 300)));
+			style.setColor(Color.get(-1, 300));
 		}
 		
 		percentage = 0;
@@ -41,7 +41,7 @@ public class LoadingDisplay extends Display implements ActionListener {
 	
 	public static void setPercentage(double percent) {
 		if(Math.round(percent) != Math.round(percentage) && Game.main.menu instanceof LoadingDisplay)
-			Game.main.menu.text = (new String[] {"Loading...", (Math.round(percent)+"%")}); // this updates the percent display, but only when it actually changes.
+			((LoadingDisplay)Game.main.menu).setMessage(new String[] {"Loading...", (Math.round(percent)+"%")}); // this updates the percent display, but only when it actually changes.
 		
 		percentage = percent;
 	}

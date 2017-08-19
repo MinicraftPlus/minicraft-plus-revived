@@ -11,14 +11,11 @@ import minicraft.gfx.FontStyle;
 import minicraft.gfx.Rectangle;
 import minicraft.gfx.Screen;
 import minicraft.gfx.SpriteSheet;
+import minicraft.screen.entry.ListEntry;
 
 public abstract class Display {
 	protected Game game;
 	protected InputHandler input;
-	
-	protected String[] text = null;
-	private int spacing = Font.textHeight();
-	private FontStyle style = null;
 	
 	public void init(Game game, InputHandler input) {
 		this.input = input;
@@ -43,22 +40,6 @@ public abstract class Display {
 		
 		return this;
 	}
-	/*protected Display setTitle(String title) { return setTitle(title, frames!=null); }
-	protected Display setTitle(String title, boolean keepTitleColor) {
-		this.title = title;
-		if(!keepTitleColor)
-			titleColor = Color.get(-1, 555); // this is a little convience thing, so that if I have no frame, the title color defaults to white.
-		return this;
-	}*/
-	
-	/** sets the lines of text to display. The complexity is all to prevent the object that set the value from maintaining a reference to the new text array, which would happen if it was set directly. Though... maybe I want that to be possible...? Nah, it would be nice for convenience, but it ruins encapsulation... *sigh*... */
-	/*protected Display setText(String[] text) { return setText(Arrays.asList(text)); }
-	protected Display setText(List<String> text) {
-		this.text = text.toArray(new String[text.size()]);
-		return this;
-	}*/
-	protected Display setTextStyle(FontStyle style) { this.style = style; return this; }
-	protected Display setLineSpacing(int spacing) { this.spacing = spacing; return this; }
 	
 	/** The behavior method. At this level, nothing is known of the behavior of the display, so it is abstract. */
 	public abstract void tick();
@@ -69,15 +50,11 @@ public abstract class Display {
 		//if(title != null && frame == null) // draw the title centered at the top of the screen, if there's no frame.
 			//Font.drawCentered(title, screen, SpriteSheet.boxWidth, titleColor);
 		
-		if(text != null) {
+		/*if(text != null) {
 			if(style == null) style = new FontStyle(Color.get(-1, 555));
 			for(int i = 0; i < text.length; i++)
 				renderLine(screen, style, i);
-		}
-	}
-	
-	public void renderLine(Screen screen, FontStyle style, int lineIndex) {
-		style.drawParagraphLine(text, lineIndex, spacing, screen);
+		}*/
 	}
 	
 	/** This renders the blue frame you see when you open up the crafting/inventory menus.

@@ -1,27 +1,34 @@
 package minicraft.screen;
 
-import java.util.List;
-import minicraft.Game;
-import minicraft.InputHandler;
 import minicraft.gfx.Color;
 import minicraft.gfx.Font;
 import minicraft.gfx.FontStyle;
-import minicraft.gfx.Rectangle;
 import minicraft.gfx.Screen;
 import minicraft.Sound;
+import minicraft.screen.entry.ListEntry;
 
 /*** The Menu class is now basically the SelectMenu class... but better. ;)  On another note, perhaps... I *could* make this class not abstract, but I don't really want random menus being generated on the fly, so I'll stick with a class per menu type. **/
 public abstract class Menu extends Display {
 	
+	protected ListEntry[] options;
 	protected int selected;
+	
 	private int highlightColor, offColor;
+	
+	private int spacing;
+	private FontStyle style;
 	
 	/*protected Menu(String[] options, Rectangle frame, int colOn, int colOff) {
 		this(options, (new Rectangle[] {frame}), colOn, colOff);
 	}*/
-	protected Menu(String[] options, int colOn, int colOff) {
+	protected Menu(ListEntry[] options) {
+		this(options, Color.get(-1, 555), Color.get(-1, 222));
+	}
+	protected Menu(ListEntry[] options, int colOn, int colOff) {
 		super();
-		setTextStyle(new FontStyle(Color.get(-1, 333)));
+		this.options = options;
+		style = new FontStyle();
+		//setTextStyle(new FontStyle(Color.get(-1, 333)));
 		
 		selected = 0;
 		highlightColor = colOn;
@@ -35,20 +42,30 @@ public abstract class Menu extends Display {
 		if(input.getKey("up").clicked) selected--;
 		if(input.getKey("down").clicked) selected++;
 		
-		if(selected >= text.length) selected = 0;
-		if(selected < 0) selected = text.length - 1;
+		if(selected >= options.length) selected = 0;
+		if(selected < 0) selected = options.length - 1;
 		
 		if(prevSel != selected) {
 			Sound.craft.play(); // play a sound
-			text[prevSel] = text[prevSel].replace("\\A> (.*) <\\z", "\\1"); // remove the angle brackets
-			onSelectionChange(prevSel, selected); // do any other behavior (including adding new angle brackets)
+			//options[prevSel] = options[prevSel].replace("\\A> (.*) <\\z", "\\1"); // remove the angle brackets
+			//onSelectionChange(prevSel, selected); // do any other behavior (including adding new angle brackets)
+		}
+		
+		options[selected].tick(input);
+	}
+	
+	public void render(Screen screen) {
+		//style.drawParagraphLine(options, lineIndex, spacing, screen);
+		int ySave = style.getYPos();
+		for(int i = 0; i < options.length; i++) {
+			style.setColor(isHighlighted(i) ? highlightColor : offColor);
+			style.setupParagraphLine((new String[options.length]), i, spacing);
+			options[i].render(screen, style);
 		}
 	}
 	
-	public void renderLine(Screen screen, FontStyle style, int lineIndex) {
-		style.setColor(isHighlighted(lineIndex) ? highlightColor : offColor);
-		super.renderLine(screen, style, lineIndex);
-	}
+	protected void setTextStyle(FontStyle style) { this.style = style; }
+	protected void setLineSpacing(int spacing) { this.spacing = spacing; }
 	
 	/** Is used to determine whether the current line should be highlighted. */
 	protected boolean isHighlighted(int idx) {
@@ -56,9 +73,9 @@ public abstract class Menu extends Display {
 	}
 	
 	/** This was made with expansion in mind, mostly. It's sort of like an API / event method. It gets called whenever the selected option changes. I can see it being helpful for scrolling menus. */
-	protected void onSelectionChange(int prevSelection, int newSelection) {
-		text[newSelection] = "> "+text[newSelection]+" <"; // adds the new angle brackets. This is done here to allow the text string and selection index to be modified by subclasses, before the brackets are put in.
-	}
+	/*protected void onSelectionChange(int prevSelection, int newSelection) {
+		options[newSelection] = "> "+options[newSelection]+" <"; // adds the new angle brackets. This is done here to allow the options string and selection index to be modified by subclasses, before the brackets are put in.
+	}*/
 	
 	
 	// TODO this needs to go. It looks so efficient... but I want to make it so it's never used.
