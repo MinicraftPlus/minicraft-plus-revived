@@ -3,7 +3,6 @@ package minicraft.screen;
 import minicraft.entity.Inventory;
 import minicraft.entity.Player;
 import minicraft.item.Item;
-import minicraft.gfx.Rectangle;
 
 public class PlayerInvMenu extends InventoryMenu {
 	private Player player;
@@ -25,7 +24,7 @@ public class PlayerInvMenu extends InventoryMenu {
 		if (input.getKey("menu").clicked) game.setMenu(null);
 		
 		super.tick();
-		if (input.getKey("attack").clicked && text.length > 0) { // If your inventory is not empty, and the player presses the "Attack" key...
+		if (input.getKey("attack").clicked && options.length > 0) { // If your inventory is not empty, and the player presses the "Attack" key...
 			player.activeItem = player.inventory.get(selected); // The item will be placed as the player's active item.
 			player.inventory.remove(selected); // The item will be removed from the inventory.
 			game.setMenu(null); // the game will go back to the gameplay.

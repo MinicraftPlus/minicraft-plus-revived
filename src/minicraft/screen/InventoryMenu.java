@@ -1,6 +1,5 @@
 package minicraft.screen;
 
-import java.util.ArrayList;
 import java.util.List;
 import minicraft.entity.Inventory;
 import minicraft.gfx.Color;
@@ -54,17 +53,17 @@ public class InventoryMenu extends ScrollingMenu {
 		inv.remove(selected);
 		if(selected >= inv.invSize())
 			selected = Math.max(0, inv.invSize()-1); // can't select -1...
-		text = getItemList(inv);
+		options = getItemList(inv);
 	}
 	
 	/// updates the name of the item, in case it's changed due to stack size, or similar.
 	public void updateSelectedItem() {
-		text[selected] = "> "+getItemDisplayName(inv.get(selected))+" <";
+		options[selected] = "> "+getItemDisplayName(inv.get(selected))+" <";
 	}
 	
 	public void onInvUpdate(Inventory inv) {
 		if(inv == this.inv)
-			text = getItemList(inv);
+			options = getItemList(inv);
 	}
 	
 	private static final String getItemDisplayName(Item i) {

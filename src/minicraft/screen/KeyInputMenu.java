@@ -1,7 +1,5 @@
 package minicraft.screen;
 
-import java.util.Arrays;
-import minicraft.Game;
 import minicraft.gfx.*;
 import minicraft.saveload.Save;
 
@@ -24,7 +22,7 @@ public class KeyInputMenu extends ScrollingMenu {
 		this.parent = parent;
 		listeningForBind = false;
 		confirmReset = false;
-		String[] keys = text;
+		String[] keys = options;
 		actionKeys = new String[keys.length];
 		updateKeys(keys);
 	}
@@ -86,7 +84,7 @@ public class KeyInputMenu extends ScrollingMenu {
 			}
 			
 			actionKeys[i] = action;
-			text[i] = action + buffer.toString() + mapping;
+			options[i] = action + buffer.toString() + mapping;
 		}
 	}
 	
