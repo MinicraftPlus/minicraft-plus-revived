@@ -15,8 +15,6 @@ import minicraft.gfx.FontStyle;
 import minicraft.gfx.Screen;
 
 public class ModeMenu extends Menu {
-	private Menu parent;
-
 	public static final String[] modes = {"Survival", "Creative", "Hardcore", "Score"};
 	public static boolean survival;
 	public static boolean creative;
@@ -52,15 +50,13 @@ public class ModeMenu extends Menu {
 			for(String time: times)
 				timeMap.put(time, getScoreTime(time));
 			
-			Collections.sort(times, new Comparator<String>() {
-				public int compare(String t1, String t2) {
-					if (timeMap.get(t1) > timeMap.get(t2))
-						return 1;
-					else if (timeMap.get(t1) < timeMap.get(t2))
-						return -1;
-					
-					return 0;
-				}
+			times.sort((t1, t2) -> {
+				if (timeMap.get(t1) > timeMap.get(t2))
+					return 1;
+				else if (timeMap.get(t1) < timeMap.get(t2))
+					return -1;
+				
+				return 0;
 			});
 		}
 	}
@@ -135,7 +131,6 @@ public class ModeMenu extends Menu {
 		}
 		
 		time *= Game.normSpeed;
-		//if (Game.debug) System.out.println("score time: " + time);
 		
 		return time;
 	}
