@@ -83,4 +83,10 @@ public class StackableItem extends Item {
 	public String getData() {
 		return name+"_"+count;
 	}
+	
+	@Override
+	public String getDisplayName() {
+		String extra = (count > 999 ? 999 : count) + " ";
+		return " " + extra + name;
+	}
 }

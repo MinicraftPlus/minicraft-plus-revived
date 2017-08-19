@@ -79,4 +79,9 @@ public abstract class Item {
 	public String getData() {
 		return name;
 	}
+	
+	// returns the String that should be used to display this item in a menu or list. 
+	public String getDisplayName() {
+		return " " + name;
+	}
 }
