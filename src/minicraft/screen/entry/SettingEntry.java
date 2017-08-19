@@ -1,23 +1,24 @@
 package minicraft.screen.entry;
 
-public class SettingEntry extends ArrayEntry<String> {
+public class SettingEntry<T> extends ArrayEntry<T> {
 	
-	private String[] choices;
+	private T[] choices;
 	
-	public SettingEntry(String label, String... choices) {
+	@SafeVarargs // idk what this does, actually...
+	public SettingEntry(String label, T... choices) {
 		super(label, choices.length);
 		this.choices = choices;
 	}
 	
 	@Override
-	public String getValue() {
+	public T getValue() {
 		return choices[getIndex()];
 	}
 	
 	@Override
-	public void setValue(String value) {
+	public void setValue(T value) {
 		for(int i = 0; i < choices.length; i++) {
-			if(value.equalsIgnoreCase(choices[i])) {
+			if(value.equals(choices[i])) {
 				setIndex(i);
 				return;
 			}
