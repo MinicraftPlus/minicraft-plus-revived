@@ -109,19 +109,6 @@ public class FontStyle {
 		Font.draw(msg, screen, xPos, yPos, mainColor);
 	}
 	
-	public void drawParagraphLine(String[] para, int line, int spacing, Screen screen) {
-		if(para == null || line < 0 || line >= para.length) {
-			System.err.println("FontStyle.java: paragraph "+para+" is null or index "+line+" is invalid, can't draw line.");
-			return;
-		}
-		
-		if(configuredPara == null || !Arrays.equals(para, configuredPara))
-			configureForParagraph(para, spacing);
-		
-		setYPos(paraMinY + line*Font.textHeight() + line*spacing);
-		draw(para[line], screen);
-	}
-	
 	public void configureForParagraph(String[] para, int spacing) {
 		configuredPara = para; // save the passed in paragraph for later comparison
 		
@@ -131,6 +118,26 @@ public class FontStyle {
 			paraMinY = (centerYDouble - height) / 2; // by doubles to maybe avoid possible rounding errors.
 		} else
 			paraMinY = yPosition; // save the y position.
+	}
+	
+	public void setupParagraphLine(String[] para, int line, int spacing) {
+		if(para == null || line < 0 || line >= para.length) {
+			System.err.print("FontStyle.java: ");
+			if(para == null) System.err.print("paragraph is null");
+			else System.err.print("index "+line+" is invalid");
+			System.err.println("; can't draw line.");
+			return;
+		}
+		
+		if(configuredPara == null || !Arrays.equals(para, configuredPara))
+			configureForParagraph(para, spacing);
+		
+		setYPos(paraMinY + line*Font.textHeight() + line*spacing);
+	}
+	
+	public void drawParagraphLine(String[] para, int line, int spacing, Screen screen) {
+		setupParagraphLine(para, line, spacing);
+		draw(para[line], screen);
 	}
 	
 	/** All the font modifier methods are below. They all return the current FontStyle instance for chaining. */
