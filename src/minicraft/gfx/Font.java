@@ -26,7 +26,19 @@ public class Font {
 	public static int textWidth(String text) {
 		return text.length() * 8;
 	}
-	public static int textHeight() {return 8;}
+	public static int textWidth(String[] para) {
+		// this returns the maximum length of all the lines.
+		if(para == null || para.length == 0) return 0;
+		
+		int max = textWidth(para[0]);
+		
+		for(int i = 1; i < para.length; i++)
+			max = Math.max(max, textWidth(para[i]));
+		
+		return max;
+	}
+	
+	public static int textHeight() {return SpriteSheet.boxWidth;}
 	
 	public static int centerX(String msg, int minX, int maxX) {
 		return (maxX + minX) / 2 - textWidth(msg) / 2;
