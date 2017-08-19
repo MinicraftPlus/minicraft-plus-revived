@@ -14,7 +14,7 @@ public abstract class ArrayEntry<T> extends ListEntry {
 	private int idx;
 	private int numChoices;
 	
-	private ArrayEntry() {} // to disable having a constructor with no paramaters
+	private ArrayEntry() {} // to disable having a constructor with no parameters
 	
 	protected ArrayEntry(String label, int numChoices) {
 		this(label, numChoices, 0);
