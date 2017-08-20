@@ -1,22 +1,55 @@
 package minicraft.screen;
 
+import minicraft.entity.AirWizard;
 import minicraft.gfx.FontStyle;
 import minicraft.gfx.Screen;
+import minicraft.screen.entry.BooleanEntry;
 import minicraft.screen.entry.ListEntry;
 import minicraft.screen.entry.SettingEntry;
+
+import java.util.HashMap;
 
 // This is a listing class, containing things like AboutDisplay, InstructionsDisplay, etc.
 public class Displays {
 	
-	public static final ScrollingMenu worldGen = new ScrollingMenu(new ListEntry[]{
-			(new SettingEntry<String>("Theme", "Normal", "Forest", "Desert", "Plain", "Hell")),
-			(new SettingEntry<String>("Type", "Island", "Box", "Mountain", "Irregular")),
-			(new SettingEntry<Integer>("Size", 128, 256, 512) {
-				public void render(Screen screen, FontStyle style) {
-					style.draw(getLabel() + ": " + getValue() + "x" + getValue(), screen);
-				}
-			})
-	});	
+	// <b>OPTIONS MENU</b>
+	
+	private static HashMap<String, ListEntry> configOptions = new HashMap<String, ListEntry>();
+	
+	static {
+		configOptions.put("diff", new SettingEntry<String>("Difficulty", "Easy", "Normal", "Hard"));
+		configOptions.put("isSoundAct", new BooleanEntry("Sound", true));
+		configOptions.put("autosave", new BooleanEntry("Autosave", true));
+		configOptions.put("unlockedskin", new BooleanEntry("Wear Suit", false) {
+			public void setValue(Boolean value) {
+				// check to make sure that the user has defeated an air wizard first.
+				if(AirWizard.beaten)
+					super.setValue(value);
+				else
+					super.setValue(false);
+			}
+		});
+	}
+	
+	public static final ScrollingMenu options = new ScrollingMenu(configOptions.values().toArray(new ListEntry[configOptions.size()]));
+	
+	
+	
+	// <b>WORLD GEN MENU</b>
+	
+	private static HashMap<String, ListEntry> worldGenOptions = new HashMap<String, ListEntry>();
+	
+	static {
+		worldGenOptions.put("Theme", new SettingEntry<String>("Theme", "Normal", "Forest", "Desert", "Plain", "Hell"));
+		worldGenOptions.put("Type", new SettingEntry<String>("Type", "Island", "Box", "Mountain", "Irregular"));
+		worldGenOptions.put("Size", new SettingEntry<Integer>("Size", 128, 256, 512) {
+			public void render(Screen screen, FontStyle style) {
+				style.draw(getLabel() + ": " + getValue() + "x" + getValue(), screen);
+			}
+		});
+	}
+	
+	public static final ScrollingMenu worldGen = new ScrollingMenu(worldGenOptions.values().toArray(new ListEntry[worldGenOptions.size()]));	
 	
 	
 	
