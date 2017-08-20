@@ -1,19 +1,36 @@
 package minicraft.screen;
 
+import minicraft.gfx.FontStyle;
+import minicraft.gfx.Screen;
+import minicraft.screen.entry.ListEntry;
+import minicraft.screen.entry.SettingEntry;
+
 // This is a listing class, containing things like AboutDisplay, InstructionsDisplay, etc.
 public class Displays {
+	
+	public static final ScrollingMenu worldGen = new ScrollingMenu(new ListEntry[]{
+			(new SettingEntry<String>("Theme", "Normal", "Forest", "Desert", "Plain", "Hell")),
+			(new SettingEntry<String>("Type", "Island", "Box", "Mountain", "Irregular")),
+			(new SettingEntry<Integer>("Size", 128, 256, 512) {
+				public void render(Screen screen, FontStyle style) {
+					style.draw(getLabel() + ": " + getValue() + "x" + getValue(), screen);
+				}
+			})
+	});	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
 	
 	public static final BookDisplay about = new BookDisplay("\n\nAbout Minicraft Plus\0Moded by David.b and +Dillyg10+ until 1.8, then taken over by Chris J. Our goal is to expand Minicraft to be more fun and continuous.\nMinicraft was originally made by Markus Perrson for ludum dare 22 competition.");
 	
 	public static final BookDisplay instructions = new BookDisplay("HOW TO PLAY\0With the defualt controls...\n\nMove your character with arrow keys or wsad. Press C to attack and X to open the inventory, and to use items. Select an item in the inventory to equip it.\n\nKill the air wizard to win the game!");
-	
-	
-	
-	
-	
-	
-	
-	
 	
 	public static final BookDisplay antVenomBook = new BookDisplay(
 		"Antidious Venomi\n"+
