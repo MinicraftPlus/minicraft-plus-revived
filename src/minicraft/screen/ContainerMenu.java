@@ -12,11 +12,6 @@ import minicraft.item.StackableItem;
 public class ContainerMenu extends InventoryMenu {
 	private Player player; // The player that is looking inside the chest
 	private Chest chest;
-	//private Inventory container; // The inventory of the chest
-	//private int selected = 0; // The selected item
-	//private String title; // The title of the chest
-	//private String[] oText;
-	//private int oSelected; // the old selected option (this is used to temporarily save spots moving from chest to inventory & vice-versa)
 	private int window = 0; // currently selected window (player's inventory, or chest's inventory)
 	
 	private InventoryMenu playerMenu;
@@ -25,8 +20,8 @@ public class ContainerMenu extends InventoryMenu {
 		super(chest.inventory, chest.name);
 		setFrames(new Frame(chest.name, new Rectangle(1, 1, 18, 11, Rectangle.CORNERS)));
 		
-		playerMenu = new InventoryMenu(player.inventory, "Inventory"); // FIXME incomplete implementation
-		//.setFrames(new Frame("Inventory", new Rectangle(19, 1, 15+20, 11, Rectangle.CORNERS)));
+		playerMenu = new InventoryMenu(player.inventory, "Inventory");
+		playerMenu.setFrames(new Frame("Inventory", new Rectangle(19, 1, 15+20, 11, Rectangle.CORNERS)));
 		
 		this.player = player;
 		this.chest = chest;

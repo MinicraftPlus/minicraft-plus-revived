@@ -2,33 +2,32 @@ package minicraft.screen;
 
 import java.util.List;
 import minicraft.entity.Inventory;
-import minicraft.gfx.Color;
-import minicraft.gfx.Screen;
-import minicraft.gfx.FontStyle;
-import minicraft.gfx.Rectangle;
+import minicraft.entity.ItemEntity;
+import minicraft.gfx.*;
 import minicraft.item.Item;
 import minicraft.item.StackableItem;
+import minicraft.screen.entry.ItemEntry;
 
 public class InventoryMenu extends ScrollingMenu {
 	protected Inventory inv;
 	//protected String title;
 	
-	protected static final String[] getItemList(Inventory inv) {
+	protected static ItemEntry[] getItemList(Inventory inv) {
 		List<Item> items = inv.getItems();
-		String[] itemNames = new String[items.size()];
+		ItemEntry[] itemNames = new ItemEntry[items.size()];
 		// to make space for the item icon.
 		for(int i = 0; i < items.size(); i++) {
-			itemNames[i] = getItemDisplayName(items.get(i));
+			itemNames[i] = new ItemEntry(items.get(i));
 		}
 		
 		return itemNames;
 	}
 	
 	public InventoryMenu(Inventory inv, String title) {
-		super(null, 0); // FIXME incomplete implementation
+		super(getItemList(inv), 9);
 		//super(getItemList(inv), 9, 2*8, 2*8, 0, Color.get(-1, 555), Color.get(-1, 555));
 		setFrames(new Frame(title, new Rectangle(1, 1, 22, 11, Rectangle.CORNERS)));
-		setTextStyle(new FontStyle(Color.get(-1, 555)).setXPos(2*8));
+		setTextStyle(new FontStyle(Color.get(-1, 555)).setXPos(2* SpriteSheet.boxWidth));
 		
 		this.inv = inv;
 	}
@@ -40,10 +39,10 @@ public class InventoryMenu extends ScrollingMenu {
 			items.get(offset+i).sprite.render(screen,, 8*(2+i));
 	}*/
 	
-	public void renderLine(Screen screen, FontStyle style, int lineIndex) {
+	/*public void renderLine(Screen screen, FontStyle style, int lineIndex) {
 		super.renderLine(screen, style, lineIndex);
 		inv.get(offset+lineIndex).sprite.render(screen, style.getXPos(), 8*(2+lineIndex));
-	}
+	}*/
 	
 	protected boolean isHighlighted() {
 		return true;
@@ -58,7 +57,7 @@ public class InventoryMenu extends ScrollingMenu {
 	
 	/// updates the name of the item, in case it's changed due to stack size, or similar.
 	public void updateSelectedItem() {
-		options[selected] = "> "+getItemDisplayName(inv.get(selected))+" <";
+		options[selected] = new ItemEntry(inv.get(selected));
 	}
 	
 	public void onInvUpdate(Inventory inv) {
@@ -66,7 +65,7 @@ public class InventoryMenu extends ScrollingMenu {
 			options = getItemList(inv);
 	}
 	
-	private static final String getItemDisplayName(Item i) {
+	/*private static String getItemDisplayName(Item i) {
 		String extra = "";
 		if(i instanceof StackableItem) {
 			StackableItem stack = (StackableItem) i;
@@ -74,5 +73,5 @@ public class InventoryMenu extends ScrollingMenu {
 		}
 		
 		return " " + extra + i.name;
-	}
+	}*/
 }

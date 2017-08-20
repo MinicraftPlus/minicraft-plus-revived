@@ -13,7 +13,8 @@ public abstract class Menu extends Display {
 	protected ListEntry[] options;
 	protected int selected;
 	
-	private int highlightColor, offColor;
+	private int highlightColor = Color.get(-1, 555);
+	private int offColor = Color.get(-1, 333);
 	
 	private int spacing;
 	private FontStyle style;
@@ -22,18 +23,21 @@ public abstract class Menu extends Display {
 		this(options, (new Rectangle[] {frame}), colOn, colOff);
 	}*/
 	protected Menu(ListEntry[] options) {
-		this(options, Color.get(-1, 555), Color.get(-1, 222));
-	}
-	protected Menu(ListEntry[] options, int colOn, int colOff) {
 		super();
 		this.options = options;
 		style = new FontStyle();
 		//setTextStyle(new FontStyle(Color.get(-1, 333)));
 		
 		selected = 0;
-		highlightColor = colOn;
-		offColor = colOff;
+		
+		setup();
 	}
+	
+	/**
+	 * This method exists so that one-line declarations of a static instance, or something,
+	 * can still have a place to set things like the font style.
+	 */
+	protected void setup() {}
 	
 	/** handles selection changes. There is no exit function, becuase not all menus have one, for example the TitleMenu. */
 	public void tick() {
@@ -67,15 +71,17 @@ public abstract class Menu extends Display {
 	protected void setTextStyle(FontStyle style) { this.style = style; }
 	protected void setLineSpacing(int spacing) { this.spacing = spacing; }
 	
+	protected int getLineSpacing() { return spacing; }
+	
 	/** Is used to determine whether the current line should be highlighted. */
 	protected boolean isHighlighted(int idx) {
 		return idx == selected;
 	}
 	
 	/** This was made with expansion in mind, mostly. It's sort of like an API / event method. It gets called whenever the selected option changes. I can see it being helpful for scrolling menus. */
-	/*protected void onSelectionChange(int prevSelection, int newSelection) {
-		options[newSelection] = "> "+options[newSelection]+" <"; // adds the new angle brackets. This is done here to allow the options string and selection index to be modified by subclasses, before the brackets are put in.
-	}*/
+	protected void onSelectionChange(int prevSelection, int newSelection) {
+		//options[newSelection] = "> "+options[newSelection]+" <"; // adds the new angle brackets. This is done here to allow the options string and selection index to be modified by subclasses, before the brackets are put in.
+	}
 	
 	
 	// TODO this needs to go. It looks so efficient... but I want to make it so it's never used.

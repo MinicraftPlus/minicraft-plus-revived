@@ -1,14 +1,17 @@
 package minicraft.screen;
 
-import java.util.List;
 import java.util.Arrays;
+
+import minicraft.gfx.Font;
 import minicraft.gfx.Screen;
 import minicraft.gfx.Color;
+import minicraft.gfx.SpriteSheet;
+import minicraft.screen.entry.ListEntry;
 
 /// TODO add a feature for the list to loop back to the beginning by having the top options appear as if on bottom, like World load selection.
 public class ScrollingMenu extends Menu {
 	
-	protected String[] dispOptions;
+	protected ListEntry[] dispOptions;
 	protected int dispSelected;
 	protected int dispSize;
 	
@@ -18,24 +21,18 @@ public class ScrollingMenu extends Menu {
 	
 	private boolean wrap; // whether or not to wrap around the options from top and bottom.
 	
-	protected ScrollingMenu(String[] options, int displayLength) {
-		this(options, displayLength, Color.get(-1, 555), Color.get(-1, 333));
+	protected ScrollingMenu(ListEntry[] options) {
+		super(options);
+		dispSize = Math.min(options.length, Screen.h / (Font.textHeight() + getLineSpacing()) - 1);
+		
+		padding = (dispSize+1)/2;
 	}
-	protected ScrollingMenu(String[] options, int displayLength, int colSel, int colNoSel) {
-		super(options, colSel, colNoSel);
-		dispSize = Math.min(displayLength, options.length);
+	protected ScrollingMenu(ListEntry[] options, int displayLength) {
+		super(options);
+		dispSize = Math.max(0, Math.min(displayLength, options.length));
 		
 		padding = (dispSize+1)/2; // I may or may not choose to make this editable. Currently, though, this has the effect of making the menu scroll upon trying to go past the middle of the displayed list, as long as there's room to scroll.
 	}
-	
-	/*public void tick() {
-		super.tick(); // ticks parent, which possibly changes index in the entire array and calls onSelectionChange.
-		
-		
-		
-		
-		// when there are no more items to scroll, offset+dispSize == options.size()
-	}*/
 	
 	protected void onSelectionChange(int prevSel, int newSel) {
 		// remake the displayed array, but only if the new one is different
@@ -44,28 +41,39 @@ public class ScrollingMenu extends Menu {
 		dispSelected += newSel - prevSel; // changes index in the displayed "array" (portion)
 		if(dispSelected < 0) dispSelected = 0; // error correct
 		if(dispSelected > dispSize-1) dispSelected = dispSize - 1;
-		offset = selected - dispSelected;
-		if(dispSelected < padding && offset > 0) dispSelected = padding-1; // if the cursor is above halfway, and we have space to scroll up, then move the cursor back to the middle.
-		if(dispSelected > dispSize-padding && offset+dispSize < text.length) dispSelected = dispSize-padding; // if the cursor is below halfway, and we have space to scroll down, then move the cursor back to the middle.
 		
-		super.onSelectionChange(prevSel, newSel); // place the brackets
-	}
-	
-	public void render(Screen screen) {
-		if(offset + dispSize > text.length)
-			offset = text.length - dispSize;
+		offset = selected - dispSelected;
+		
+		if(dispSelected < padding && offset > 0) dispSelected = padding-1; // if the cursor is above halfway, and we have space to scroll up, then move the cursor back to the middle.
+		if(dispSelected > dispSize-padding && offset+dispSize < options.length) dispSelected = dispSize-padding; // if the cursor is below halfway, and we have space to scroll down, then move the cursor back to the middle.
+		
+		if(offset + dispSize > options.length)
+			offset = options.length - dispSize;
 		if(offset < 0)
 			offset = 0;
 		
+		if(prevDispSel != dispSelected) {
+			dispOptions = Arrays.copyOfRange(options, offset, offset + dispSize - 1);
+		}
+		
+		//super.onSelectionChange(prevSel, newSel); // place the brackets
+	}
+	
+	public void render(Screen screen) {
+		/*if(offset + dispSize > options.length)
+			offset = options.length - dispSize;
+		if(offset < 0)
+			offset = 0;
+		*/
 		//super.renderAs(screen, options.subList(offset, offset + dispSize), dispSelected); // renders the list with the super classes parameters, but temp. replacing the array and index.
-		String[] allOptions = text;
-		text = Arrays.copyOfRange(text, offset, offset + dispSize);
+		ListEntry[] allOptions = options;
+		options = dispOptions;
 		int selSave = selected;
 		selected = dispSelected;
 		
 		super.render(screen);
 		
 		selected = selSave;
-		text = allOptions;
+		options = allOptions;
 	}
 }
