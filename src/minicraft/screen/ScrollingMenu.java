@@ -19,24 +19,28 @@ public class ScrollingMenu extends Menu {
 	
 	protected int offset; // since not all elements are displayed at once, this determines which item is at the top.
 	
-	private boolean wrap; // whether or not to wrap around the options from top and bottom.
+	private boolean wrapDisplay = false; // different; whether or not to wrap around the options from top and bottom, as in, make it appear that there's always more items in the list.
+	
 	
 	protected ScrollingMenu(ListEntry[] options) {
 		super(options);
 		dispSize = Math.min(options.length, Screen.h / (Font.textHeight() + getLineSpacing()) - 1);
-		
-		padding = (dispSize+1)/2;
 	}
 	protected ScrollingMenu(ListEntry[] options, int displayLength) {
+		this(options, displayLength, false);
+	}
+	protected ScrollingMenu(ListEntry[] options, int displayLength, boolean wrapDisplay) {
 		super(options);
+		this.wrapDisplay = wrapDisplay;
 		dispSize = Math.max(0, Math.min(displayLength, options.length));
-		
+	}
+	{ // General constructor
 		padding = (dispSize+1)/2; // I may or may not choose to make this editable. Currently, though, this has the effect of making the menu scroll upon trying to go past the middle of the displayed list, as long as there's room to scroll.
 	}
 	
 	protected void onSelectionChange(int prevSel, int newSel) {
 		// remake the displayed array, but only if the new one is different
-		int prevDispSel = dispSelected;
+		int prevOffset = offset;
 		
 		dispSelected += newSel - prevSel; // changes index in the displayed "array" (portion)
 		if(dispSelected < 0) dispSelected = 0; // error correct
@@ -44,16 +48,26 @@ public class ScrollingMenu extends Menu {
 		
 		offset = selected - dispSelected;
 		
-		if(dispSelected < padding && offset > 0) dispSelected = padding-1; // if the cursor is above halfway, and we have space to scroll up, then move the cursor back to the middle.
-		if(dispSelected > dispSize-padding && offset+dispSize < options.length) dispSelected = dispSize-padding; // if the cursor is below halfway, and we have space to scroll down, then move the cursor back to the middle.
+		if(dispSelected < padding && (wrapDisplay || offset > 0)) dispSelected = padding-1; // if the cursor is above halfway, and we have space to scroll up, then move the cursor back to the middle.
+		if(dispSelected > dispSize-padding && (wrapDisplay || offset+dispSize < options.length)) dispSelected = dispSize-padding; // if the cursor is below halfway, and we have space to scroll down, then move the cursor back to the middle.
 		
-		if(offset + dispSize > options.length)
-			offset = options.length - dispSize;
-		if(offset < 0)
-			offset = 0;
+		if(!wrapDisplay) {
+			if (offset + dispSize > options.length)
+				offset = options.length - dispSize;
+			if (offset < 0)
+				offset = 0;
+		} else
+			offset %= options.length; // always keeps it in the array's range of values.
 		
-		if(prevDispSel != dispSelected) {
-			dispOptions = Arrays.copyOfRange(options, offset, offset + dispSize - 1);
+		if(prevOffset != offset) { // the displayed list will be different.
+			if(!wrapDisplay || offset + dispSize < options.length - 1)
+				dispOptions = Arrays.copyOfRange(options, offset, offset + dispSize - 1);
+			else {
+				// concatenate multiple array parts.
+				dispOptions = new ListEntry[dispSize];
+				for(int i = 0; i < dispOptions.length; i++)
+					dispOptions[i] = options[(offset + i) % options.length];
+			}
 		}
 		
 		//super.onSelectionChange(prevSel, newSel); // place the brackets

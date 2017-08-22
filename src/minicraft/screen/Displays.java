@@ -3,23 +3,69 @@ package minicraft.screen;
 import minicraft.entity.AirWizard;
 import minicraft.gfx.FontStyle;
 import minicraft.gfx.Screen;
-import minicraft.screen.entry.BooleanEntry;
-import minicraft.screen.entry.ListEntry;
-import minicraft.screen.entry.SettingEntry;
+import minicraft.screen.entry.*;
 
-import java.util.HashMap;
+import java.util.LinkedHashMap;
+import java.util.regex.Pattern;
+
+// TODO maybe make a feature that allows me to hide certain entries. Proved very difficult, though...
 
 // This is a listing class, containing things like AboutDisplay, InstructionsDisplay, etc.
 public class Displays {
 	
-	// <b>OPTIONS MENU</b>
+	// <b>WORLD GEN MENU</b>
 	
-	private static HashMap<String, ListEntry> configOptions = new HashMap<String, ListEntry>();
+	private static LinkedHashMap<String, ConfigEntry> worldGenOptions = new LinkedHashMap<String, ConfigEntry>();
 	
 	static {
-		configOptions.put("diff", new SettingEntry<String>("Difficulty", "Easy", "Normal", "Hard"));
-		configOptions.put("isSoundAct", new BooleanEntry("Sound", true));
-		configOptions.put("autosave", new BooleanEntry("Autosave", true));
+		worldGenOptions.put("worldname", new TextInputEntry("Enter World Name", Pattern.compile("[a-zA-Z0-9 ]"), 36));
+		worldGenOptions.put("mode", new SettingEntry<String>("Game Mode", "Survival", "Creative", "Hardcore", "Score"));
+		worldGenOptions.put("scoreTime", new SettingEntry<Integer>("Time (Score Mode)", 10, 20, 40, 60, 120) {
+			public void setup() {
+				//showAllValues();
+				hideValue(10);
+				hideValue(120);
+				setIndex(1); // skip the 10 min option.
+			}
+		});
+		
+		worldGenOptions.put("theme", new SettingEntry<String>("World Theme", "Normal", "Forest", "Desert", "Plain", "Hell"));
+		worldGenOptions.put("type", new SettingEntry<String>("Terrain Type", "Island", "Box", "Mountain", "Irregular"));
+		worldGenOptions.put("size", new SettingEntry<Integer>("World Size", 128, 256, 512) {
+			public void render(Screen screen, FontStyle style) {
+				style.draw(getLabel() + ": " + getValue() + "x" + getValue(), screen);
+			}
+		});
+	}
+	
+	public static final ConfigMenu worldGen = new ConfigMenu(worldGenOptions);
+	
+	
+	
+	
+	// <b>OPTIONS MENU</b>
+	
+	private static LinkedHashMap<String, ConfigEntry> configOptions = new LinkedHashMap<String, ConfigEntry>();
+	
+	static {
+		configOptions.put("diff", new SettingEntry<String>("Difficulty", "Easy", "Normal", "Hard") {
+			public void setValue(String value) {
+				super.setValue(value);
+				OptionsMenu.diff = getIndex();
+			}
+		});
+		configOptions.put("isSoundAct", new BooleanEntry("Sound", true) {
+			public void setValue(Boolean value) {
+				super.setValue(value);
+				OptionsMenu.isSoundAct = value;
+			}
+		});
+		configOptions.put("autosave", new BooleanEntry("Autosave", true) {
+			public void setValue(Boolean value) {
+				super.setValue(value);
+				OptionsMenu.autosave = value;
+			}
+		});
 		configOptions.put("unlockedskin", new BooleanEntry("Wear Suit", false) {
 			public void setValue(Boolean value) {
 				// check to make sure that the user has defeated an air wizard first.
@@ -27,45 +73,24 @@ public class Displays {
 					super.setValue(value);
 				else
 					super.setValue(false);
+				
+				OptionsMenu.unlockedskin = getValue();
 			}
 		});
 	}
 	
-	public static final ScrollingMenu options = new ScrollingMenu(configOptions.values().toArray(new ListEntry[configOptions.size()]));
-	
-	
-	
-	// <b>WORLD GEN MENU</b>
-	
-	private static HashMap<String, ListEntry> worldGenOptions = new HashMap<String, ListEntry>();
-	
-	static {
-		worldGenOptions.put("Theme", new SettingEntry<String>("Theme", "Normal", "Forest", "Desert", "Plain", "Hell"));
-		worldGenOptions.put("Type", new SettingEntry<String>("Type", "Island", "Box", "Mountain", "Irregular"));
-		worldGenOptions.put("Size", new SettingEntry<Integer>("Size", 128, 256, 512) {
-			public void render(Screen screen, FontStyle style) {
-				style.draw(getLabel() + ": " + getValue() + "x" + getValue(), screen);
-			}
-		});
-	}
-	
-	public static final ScrollingMenu worldGen = new ScrollingMenu(worldGenOptions.values().toArray(new ListEntry[worldGenOptions.size()]));	
-	
-	
-	
-	
-	
-	
-	
-	
-	
+	public static final ConfigMenu options = new ConfigMenu(configOptions) {
+		public void setup() {
+			//hideEntry("unlockedskin");
+		}
+	};
 	
 	
 	public static final BookDisplay about = new BookDisplay("\n\nAbout Minicraft Plus\0Moded by David.b and +Dillyg10+ until 1.8, then taken over by Chris J. Our goal is to expand Minicraft to be more fun and continuous.\nMinicraft was originally made by Markus Perrson for ludum dare 22 competition.");
 	
 	public static final BookDisplay instructions = new BookDisplay("HOW TO PLAY\0With the defualt controls...\n\nMove your character with arrow keys or wsad. Press C to attack and X to open the inventory, and to use items. Select an item in the inventory to equip it.\n\nKill the air wizard to win the game!");
 	
-	public static final BookDisplay antVenomBook = new BookDisplay(
+	public static final String antVenomBook = 
 		"Antidious Venomi\n"+
 		"\n"+
 		"\n"+
@@ -100,6 +125,6 @@ public class Displays {
 		+"\n"
 		+"\n"+
 		"The end"
-	);
+	;
 	
 }

@@ -11,7 +11,7 @@ public class BooleanEntry extends ArrayEntry<Boolean> {
 		this(label, false);
 	}
 	public BooleanEntry(String label, boolean defaultValue) {
-		super(label, 2, (defaultValue == false ? 0 : 1));
+		super(label, 2, (defaultValue == false ? 0 : 1), true);
 	}
 	
 	@Override

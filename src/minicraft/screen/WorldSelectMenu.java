@@ -10,37 +10,30 @@ import java.nio.file.StandardCopyOption;
 import java.nio.file.attribute.BasicFileAttributes;
 import java.util.ArrayList;
 import minicraft.Game;
+import minicraft.InputHandler;
 import minicraft.Sound;
 import minicraft.gfx.Color;
 import minicraft.gfx.Font;
 import minicraft.gfx.Screen;
-import minicraft.saveload.Load;
+import minicraft.screen.entry.StringEntry;
 
-public class WorldSelectMenu extends Menu {
+public class WorldSelectMenu extends ScrollingMenu {
 	
-	private static final String[] options = {"Load World", "New World"};
+	private static final StringEntry[] list = StringEntry.useStringArray("Load World", "New World");
 	public static String worldname = "";
 	
 	public static boolean loadworld = false;
-	//private boolean createworld = false;
+	
 	private int selected = 0; //index of action; load or create.
-	//private int selected = 0; //index of selected world?
-	
-	//private String name = "";
-	private String typingname = "";
-	
-	private ArrayList<String> worldnames;
 	private String location = Game.gameDir + "/saves/";
-	//private File folder;
-	//private boolean fw = false; // tells if there are any pre-existing worlds.
 	
-	//public int tick = 0;
-	//private boolean inputDelay = true;
-	//private int wncol;
+	private ArrayList<StringEntry> worldnames;
+	
+	private String typingname = "";
 	private boolean validName;
 	private boolean confirmed;
 	
-	private static enum Action {
+	private enum Action {
 		Main ("Select Option", 555),
 		Create ("Name of New World:", 555),
 		Load ("Load World", 555),
@@ -52,7 +45,7 @@ public class WorldSelectMenu extends Menu {
 		public String message;
 		public int color;
 		
-		private Action(String msg, int color) {
+		Action(String msg, int color) {
 			message = msg;
 			this.color = color;
 		}
@@ -61,7 +54,7 @@ public class WorldSelectMenu extends Menu {
 	private Action mode;
 	
 	public WorldSelectMenu() {
-		super(null, 0, 0); // FIXME incomplete implementation
+		super(list);
 		
 		validName = false;
 		confirmed = false;
@@ -70,6 +63,8 @@ public class WorldSelectMenu extends Menu {
 		
 		if(worldnames.size() == 0) {
 			mode = Action.Create;
+			options = worldnames.toArray(new StringEntry[worldnames.size()]);
+			selected = 0;
 			if(!Game.HAS_GUI) {
 				System.err.println("there are no worlds to load!");
 				System.exit(1);
@@ -77,27 +72,32 @@ public class WorldSelectMenu extends Menu {
 		} else {
 			mode = Action.Main;
 			if(!Game.HAS_GUI)
-				worldname = worldnames.get(0);
+				worldname = worldnames.get(0).getText();
 		}
 		
 		if(!Game.HAS_GUI)
 			loadworld = true; // you cannot really make a world without a GUI to start.
 	}
 	
-	public void init(Game game, minicraft.InputHandler input) {
-		super.init(game, input);
+	public void init(Game game, InputHandler input, Display parent) {
+		super.init(game, input, parent);
 		if(!Game.HAS_GUI) {
 			if (Game.debug) System.out.println("gone through world select menu...");
 			game.setMenu(new LoadingDisplay()); // the choice has already been made, begin world load.
 		}
 	}
 	
-	private final void loadWorlds() {
+	private void loadWorlds() {
 		//find worlds (init step):
-		worldnames = new ArrayList<String>();
+		worldnames = new ArrayList<StringEntry>();
 		File folder = new File(location);
 		folder.mkdirs();
 		File[] listOfFiles = folder.listFiles();
+		
+		if(listOfFiles == null) {
+			System.err.println("ERROR: Game location file folder is null, somehow...");
+			return;
+		}
 		
 		for (int i = 0; i < listOfFiles.length; i++) {
 			if (listOfFiles[i].isDirectory()) {
@@ -105,8 +105,8 @@ public class WorldSelectMenu extends Menu {
 				File folder2 = new File(path);
 				folder2.mkdirs();
 				String[] files = folder2.list();
-				if (files.length > 0 && files[0].endsWith(".miniplussave")) {
-					worldnames.add(listOfFiles[i].getName());
+				if (files != null && files.length > 0 && files[0].endsWith(".miniplussave")) {
+					worldnames.add(new StringEntry(listOfFiles[i].getName()));
 					if(Game.debug) System.out.println("World found: " + listOfFiles[i].getName());
 				}
 			}
@@ -128,6 +128,7 @@ public class WorldSelectMenu extends Menu {
 		//System.out.println("current tick mode: " + mode);
 		
 		//select action
+		super.tick();
 		
 		if(mode == Action.Create || confirmed && (mode == Action.Rename || mode == Action.Copy))
 			typename();
@@ -147,7 +148,7 @@ public class WorldSelectMenu extends Menu {
 				mode = Action.Delete;
 			if(input.getKey("r").clicked) {
 				mode = Action.Rename;
-				typingname = worldnames.get(selected);
+				typingname = worldnames.get(selected).getText();
 				//renamingworldname = name;
 				//inputDelay = true;
 			}
@@ -173,7 +174,7 @@ public class WorldSelectMenu extends Menu {
 			switch(mode) {
 				case Main: // if there's one option, this shouldn't even run.
 					if (Game.debug) System.out.println("main selection: " + options[selected]);
-					if(options[selected].equals("Load World")) {
+					if(list[selected].getText().equals("Load World")) {
 						mode = Action.Load;
 						loadworld = true;;
 					} else {
@@ -195,7 +196,7 @@ public class WorldSelectMenu extends Menu {
 				
 				case Load:
 					//load the game
-					worldname = worldnames.get(selected);
+					worldname = worldnames.get(selected).getText();
 					if (Game.debug) System.out.println("load mode: " + worldname);
 					Sound.test.play();
 					game.setMenu(new LoadingDisplay());
@@ -221,7 +222,7 @@ public class WorldSelectMenu extends Menu {
 					//user hits enter with a vaild new name; copy is created here.
 					worldname = typingname;
 					typingname = "";
-					String oldname = worldnames.get(selected);
+					String oldname = worldnames.get(selected).getText();
 					String oldpath = location + "/" + oldname;
 					world = new File(oldpath);
 					String newpath = location + "/" + worldname;
@@ -269,9 +270,10 @@ public class WorldSelectMenu extends Menu {
 					world = new File(location + "/" + worldnames.get(selected));
 					if(Game.debug) System.out.println("deleting world: " + world);
 					File[] list = world.listFiles();
-					
-					for (int i = 0; i < list.length; i++) {
-						list[i].delete();
+					if(list != null) {
+						for (int i = 0; i < list.length; i++) {
+							list[i].delete();
+						}
 					}
 					
 					world.delete();
@@ -308,27 +310,27 @@ public class WorldSelectMenu extends Menu {
 		}
 	}
 	
-	private String[] getCurOpts() {
+	private StringEntry[] getCurOpts() {
 		switch(mode) {
-			case Main: return this.options;
-			case Create: return new String[0];
-			default: return worldnames.toArray(new String[0]);
+			case Main: return list;//(StringEntry[])this.options;
+			case Create: return new StringEntry[0];
+			default: return worldnames.toArray(new StringEntry[0]);
 		}
 	}
 	
 	public void render(Screen screen) {
 		screen.clear(0);
-		String[] opts = getCurOpts();
+		StringEntry[] opts = getCurOpts();
 		
-		int mainCol = Color.get(-1, mode.color);
-		int fadeCol = Color.get(-1, 222);
+		setHighlightColor(Color.get(-1, mode.color));
+		setOffColor(Color.get(-1, 222));
 		int controlCol = Color.get(-1, 333);
 		
 		String msg = mode.message;
 		
 		if(mode == Action.Main) {
-			for (int i = 0; i < opts.length; i++) {
-				String curOption = opts[i];
+			/*for (int i = 0; i < opts.length; i++) {
+				String curOption = opts[i].getText();
 				int col = fadeCol;
 				if (i == selected) {
 					curOption = "> " + curOption + " <";
@@ -340,7 +342,9 @@ public class WorldSelectMenu extends Menu {
 				} else {
 					Font.drawCentered(curOption, screen, 80 + i*12, col);
 				}
-			}
+			}*/
+			
+			super.render(screen);
 			
 			//Font.drawCentered(input.getMapping("up")+" and "+input.getMapping("down")+" to move", screen, Screen.h - 170, controlCol);
 			Font.drawCentered(input.getMapping("select")+" to confirm", screen, Screen.h - 60, controlCol);
@@ -348,11 +352,11 @@ public class WorldSelectMenu extends Menu {
 		}
 		else if (worldnames.size() > 0 && mode != Action.Create && (!confirmed || mode != Action.Rename && mode != Action.Delete && mode != Action.Copy/* && mode != Action.Backup*/)) {
 			if(mode != Action.Load)
-				fadeCol = Color.get(-1, 555);
+				setOffColor(Color.get(-1, 555));
 			
 			//System.out.println("drawing worlds, mode="+mode + " -- selected: " + worldnames.get(selected));
 			
-			Font.drawCentered(worldnames.get(selected), screen, 80, mainCol);
+			/*Font.drawCentered(worldnames.get(selected), screen, 80, mainCol);
 			
 			if (selected > 0) Font.drawCentered(worldnames.get(selected - 1), screen, 70, fadeCol);
 			if (selected > 1) Font.drawCentered(worldnames.get(selected - 2), screen, 60, fadeCol);
@@ -363,7 +367,8 @@ public class WorldSelectMenu extends Menu {
 			if (selected < worldnames.size() - 2)
 				Font.drawCentered(worldnames.get(selected + 2), screen, 100, fadeCol);
 			if (selected < worldnames.size() - 3)
-				Font.drawCentered(worldnames.get(selected + 3), screen, 110, fadeCol);
+				Font.drawCentered(worldnames.get(selected + 3), screen, 110, fadeCol);*/
+			super.render(screen);
 		}
 		
 		if(mode == Action.Create || confirmed && (mode == Action.Rename || mode == Action.Copy)) {
@@ -388,11 +393,11 @@ public class WorldSelectMenu extends Menu {
 		
 		if(confirmed && mode == Action.Delete) {
 			Font.drawCentered("Are you sure you want to delete", screen, Screen.h/2-10, Color.get(-1, 533));
-			Font.drawCentered("\'"+worldnames.get(selected)+"\'?", screen, Screen.h/2, mainCol);
+			Font.drawCentered("\'"+worldnames.get(selected).getText()+"\'?", screen, Screen.h/2, Color.get(-1, 555));
 			Font.drawCentered("This cannot be undone!", screen, Screen.h/2+10, Color.get(-1, 533));
 		}
 		
-		Font.drawCentered(msg, screen, 20, mainCol);
+		Font.drawCentered(msg, screen, 20, mode.color);
 		
 		if(mode == Action.Load) {
 			Font.drawCentered("C to copy", screen, Screen.h-26-8-8-8, Color.get(-1, Action.Copy.color));
@@ -407,21 +412,15 @@ public class WorldSelectMenu extends Menu {
 		}
 	}
 	
-	public void typename() {
+	private void typename() {
 		//System.out.println("listening to type keypress...");
 		ArrayList<String> invalidNames = new ArrayList<String>();
-		for(String wname: worldnames) {
+		for(StringEntry wname: worldnames) {
 			/// this will add all the names, unless we are renaming, in which case the current name is okay, and is not added.
-			if(!(wname.equals(worldname) && mode != Action.Rename && mode != Action.Copy)) {
+			if(!(wname.getText().equals(worldname) && mode != Action.Rename && mode != Action.Copy)) {
 				//System.out.println("adding invalid name: " + wname);
-				invalidNames.add(wname);
+				invalidNames.add(wname.getText());
 			}
-			//if( (mode == Action.Rename || mode == Action.Copy) && worldname.equals(worldnames.get(selected)) ) {
-				//System.out.println("current name " + worldname + " is invalid");
-				//System.out.println("current name " + this.worldname);
-				
-				
-			//}
 		}
 		
 		if (input.getKey("backspace").clicked && typingname.length() > 0) //backspace support
@@ -445,36 +444,11 @@ public class WorldSelectMenu extends Menu {
 		
 		if (invalidNames.size() > 0) {
 			for (int i = 0; i < invalidNames.size(); i++) {
-				if (typingname.toUpperCase().equals(invalidNames.get(i).toUpperCase())) {
+				if (typingname.equalsIgnoreCase(invalidNames.get(i))) {
 					validName = false;
 					return;
 				}
 			}
 		}
-		
-		//}
- 		/*else if(loadworld) {
-			//get all worldnames besides the one you're renaming
-			for (int i = 0; i < worldnames.size(); i++) {
-				if (!worldnames.get(i).equals(renamingworldname)) {
-					namedworldnames.add(worldnames.get(i).toLowerCase());
-				}
-			}
-
-			//check if worldname already exists
-			if (namedworldnames.size() > 0) {
-				for (int i = 0; i < namedworldnames.size(); i++) {
-					if (name.toLowerCase().equals(namedworldnames.get(i).toLowerCase())) {
-						validName = false;
-						break;
-					}
-
-					validName = true;
-				}
-			} else {
-				validName = true;
-			}
-		} //end rename
-		*/
 	}
 }

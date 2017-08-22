@@ -1,23 +1,15 @@
 package minicraft.screen;
 
-import java.awt.Point;
-import java.util.Arrays;
-import java.util.List;
 import minicraft.Game;
 import minicraft.InputHandler;
-import minicraft.gfx.Color;
-import minicraft.gfx.Font;
-import minicraft.gfx.FontStyle;
-import minicraft.gfx.Rectangle;
 import minicraft.gfx.Screen;
-import minicraft.gfx.SpriteSheet;
-import minicraft.screen.entry.ListEntry;
 
 public abstract class Display {
 	protected Game game;
 	protected InputHandler input;
+	protected Display parent;
 	
-	public void init(Game game, InputHandler input) {
+	public void init(Game game, InputHandler input, Display parent) {
 		this.input = input;
 		this.game = game;
 	}

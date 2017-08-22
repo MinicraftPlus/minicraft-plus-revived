@@ -4,38 +4,38 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import minicraft.Game;
-import minicraft.gfx.Color;
-import minicraft.gfx.Font;
-import minicraft.gfx.Screen;
+import minicraft.gfx.*;
 import minicraft.saveload.Save;
+import minicraft.screen.entry.StringEntry;
 
 public class PauseMenu extends Menu {
 
 	private int selection; //selection is set when you press enter.
 	private Menu parent;
 
-	private static final List<String> alloptions = Arrays.asList("Return to Game", "Options", "Change Key Bindings", "Make World Multiplayer", "Save Game", "Load Game", "Main Menu");
-	//private List<String> options = new ArrayList<String>();
+	private static final List<StringEntry> alloptions = Arrays.asList(StringEntry.useStringArray("Return to Game", "Options", "Change Key Bindings", "Make World Multiplayer", "Save Game", "Load Game", "Main Menu"));
 	
-	private static List<String> getOptions() {
-		List<String> options = new ArrayList<String>();
+	private static StringEntry[] getOptions() {
+		List<StringEntry> options = new ArrayList<StringEntry>();
 		options.addAll(alloptions);
 		
 		if(Game.ISONLINE) {
-			options.remove("Make World Multiplayer");
+			options.remove(3);
 			
 			if(!Game.isValidServer())
-				options.remove("Save Game");
+				options.remove(3); // is 4, but would be 3 after removing other one
 		}
 		
-		return options;
+		return options.toArray(new StringEntry[options.size()]);
 	}
 	
-	public PauseMenu(Menu parent) {
-		super(null, 0, 0); // FIXME incomplete implementation
-		//super(getOptions(), 8*11 - 35, 4, Color.get(-1, 555), Color.get(-1, 222));
+	public PauseMenu() {
+		super(getOptions());
+		setFrames(new Frame("", new Rectangle(4, 2, 32, 20, Rectangle.CORNERS)));
+		setLineSpacing(4);
+		setTextStyle(new FontStyle(Color.get(-1, 222)).setYPos(SpriteSheet.boxWidth*11 - 35));
+		//renderFrame(screen, "", 4, 2, 32, 20); // draw the blue menu frame.
 		selection = -1; // set to main pause menu options.
-		this.parent = parent;
 	}
 
 	public void tick() {
@@ -48,13 +48,13 @@ public class PauseMenu extends Menu {
 		
 		//choice chosen; input here is at confirm menu
 		if (input.getKey("select").clicked) {
-			String chosen = text[selected];
-			String confirmed = selection >= 0 ? text[selection] : "";
+			String chosen = ((StringEntry[])options)[selected].getText();
+			String confirmed = selection >= 0 ? ((StringEntry[])options)[selection].getText() : "";
 			
 			switch(chosen) {
 				case "Return to Game": game.setMenu(parent); return;
-				case "Options": game.setMenu(new OptionsMenu(this)); return;
-				case "Change Key Bindings": game.setMenu(new KeyInputMenu(this)); return;
+				case "Options": game.setMenu(Displays.options); return;
+				case "Change Key Bindings": game.setMenu(new KeyInputMenu(Game.main.input.getKeyPrefs())); return;
 				default:
 					selection = selected; // for any other choice, this progresses a choice to a confirmation.
 			}
@@ -90,16 +90,15 @@ public class PauseMenu extends Menu {
 	}
 
 	public void render(Screen screen) {
-		//renderFrame(screen, "", 4, 2, 32, 20); // draw the blue menu frame. // FIXME incomplete implementation
-		
 		if (selection == -1) { // still displaying main options menu.
 			super.render(screen); // render the main options menu.
 			Font.drawCentered("Paused", screen, 35, Color.get(-1, 550));
 			Font.drawCentered(input.getMapping("up")+" and "+input.getMapping("down")+" to Scroll", screen, 140, Color.get(-1, 333));
 			Font.drawCentered(input.getMapping("select")+": Choose", screen, 150, Color.get(-1, 333));
 		} else {
+			renderFrames(screen);
 			ArrayList<String> confirmDialog = new ArrayList<String>();
-			String selection = text[this.selection];
+			String selection = ((StringEntry[])options)[this.selection].getText();
 			int msgColor = Color.get(-1, 500);
 			
 			if (selection.equals("Save Game")) {// save game

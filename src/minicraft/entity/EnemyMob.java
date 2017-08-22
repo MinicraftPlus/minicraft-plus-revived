@@ -6,8 +6,10 @@ import minicraft.gfx.Screen;
 import minicraft.level.Level;
 import minicraft.level.tile.Tile;
 import minicraft.level.tile.Tiles;
+import minicraft.screen.Displays;
 import minicraft.screen.ModeMenu;
 import minicraft.screen.OptionsMenu;
+import minicraft.screen.entry.SettingEntry;
 
 public class EnemyMob extends MobAi {
 	
@@ -59,7 +61,7 @@ public class EnemyMob extends MobAi {
 		super.touchedBy(entity);
 		// hurts the player, damage is based on lvl.
 		if(entity instanceof Player) {
-			entity.hurt(this, lvl * (OptionsMenu.diff == OptionsMenu.hard ? 2 : 1), Mob.getAttackDir(this, entity));
+			entity.hurt(this, lvl * (Displays.options.getEntry("diff").getValue().equals("hard") ? 2 : 1), Mob.getAttackDir(this, entity));
 		}
 	}
 	

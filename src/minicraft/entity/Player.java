@@ -25,14 +25,8 @@ import minicraft.level.Level;
 import minicraft.level.tile.Tile;
 import minicraft.level.tile.Tiles;
 import minicraft.saveload.Save;
-import minicraft.screen.CraftingMenu;
-import minicraft.screen.LoadingDisplay;
-import minicraft.screen.ModeMenu;
-import minicraft.screen.OptionsMenu;
-import minicraft.screen.PauseMenu;
-import minicraft.screen.PlayerInfoMenu;
-import minicraft.screen.PlayerInvMenu;
-import minicraft.screen.WorldSelectMenu;
+import minicraft.screen.*;
+import minicraft.screen.entry.SettingEntry;
 
 public class Player extends Mob {
 	protected InputHandler input;
@@ -253,7 +247,7 @@ public class Player extends Mob {
 			
 			// on easy mode, hunger doesn't deplete from walking or from time.
 			
-			if (OptionsMenu.diff == OptionsMenu.norm) {
+			if (Displays.options.getEntry("diff").getValue().equals("norm")) {
 				if(Game.tickCount % 5000 == 0 && hunger > 3) hungerStamCnt--; // hunger due to time.
 				
 				if (stepCount >= 800) { // hunger due to exercise.
@@ -261,7 +255,7 @@ public class Player extends Mob {
 					stepCount = 0; // reset.
 				}
 			}
-			if (OptionsMenu.diff == OptionsMenu.hard) {
+			if (Displays.options.getEntry("diff").getValue().equals("hard")) {
 				if(Game.tickCount % 3000 == 0 && hunger > 0) hungerStamCnt--; // hunger due to time.
 				
 				if (stepCount >= 400) { // hunger due to exercise.
@@ -365,7 +359,7 @@ public class Player extends Mob {
 			if (input.getKey("menu").clicked && !use()) // !use() = no furniture in front of the player; this prevents player inventory from opening (will open furniture inventory instead)
 				game.setMenu(new PlayerInvMenu(this));
 			if (input.getKey("pause").clicked)
-				game.setMenu(new PauseMenu(null));
+				game.setMenu(new PauseMenu());
 			if (input.getKey("craft").clicked && !use())
 				game.setMenu(new CraftingMenu(Recipes.craftRecipes, this, true));
 			if (input.getKey("sethome").clicked) setHome();

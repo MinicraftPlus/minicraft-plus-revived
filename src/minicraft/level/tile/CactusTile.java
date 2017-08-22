@@ -8,6 +8,7 @@ import minicraft.gfx.Color;
 import minicraft.gfx.Sprite;
 import minicraft.item.Items;
 import minicraft.level.Level;
+import minicraft.screen.Displays;
 import minicraft.screen.ModeMenu;
 import minicraft.screen.OptionsMenu;
 
@@ -46,13 +47,13 @@ public class CactusTile extends Tile {
 	}
 	
 	public void bumpedInto(Level level, int x, int y, Entity entity) {
-		if (OptionsMenu.diff == OptionsMenu.easy) {
+		if (Displays.options.getEntry("diff").getValue().equals("easy")) {
 			entity.hurt(this, x, y, 1);
 		}
-		if (OptionsMenu.diff == OptionsMenu.norm) {
+		if (Displays.options.getEntry("diff").getValue().equals("norm")) {
 			entity.hurt(this, x, y, 1);
 		}
-		if (OptionsMenu.diff == OptionsMenu.hard) {
+		if (Displays.options.getEntry("diff").getValue().equals("hard")) {
 			entity.hurt(this, x, y, 2);
 		}
 	}

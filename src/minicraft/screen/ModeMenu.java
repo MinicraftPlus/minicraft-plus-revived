@@ -14,6 +14,7 @@ import minicraft.gfx.Font;
 import minicraft.gfx.FontStyle;
 import minicraft.gfx.Screen;
 
+// TODO rename this to WorldGenMenu.
 public class ModeMenu extends Menu {
 	public static final String[] modes = {"Survival", "Creative", "Hardcore", "Score"};
 	public static boolean survival;
@@ -31,7 +32,7 @@ public class ModeMenu extends Menu {
 	}
 	
 	public ModeMenu() {
-		super(null, 0, 0); // FIXME incomplete implementation
+		super(null); // FIXME incomplete implementation
 		selectedTime = 0;
 	}
 	
@@ -84,7 +85,7 @@ public class ModeMenu extends Menu {
 		}
 		
 		if (input.getKey("z").clicked)
-			game.setMenu(new WorldGenMenu());
+			game.setMenu(Displays.worldGen);
 		else if(input.getKey("select").clicked)
 			game.setMenu(new LoadingDisplay());
 		else if (input.getKey("exit").clicked)

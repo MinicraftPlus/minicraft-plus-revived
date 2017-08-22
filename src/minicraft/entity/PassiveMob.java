@@ -6,8 +6,10 @@ import minicraft.gfx.Screen;
 import minicraft.level.Level;
 import minicraft.level.tile.Tile;
 import minicraft.level.tile.Tiles;
+import minicraft.screen.Displays;
 import minicraft.screen.ModeMenu;
 import minicraft.screen.OptionsMenu;
+import minicraft.screen.entry.SettingEntry;
 
 public class PassiveMob extends MobAi {
 	protected int color;

@@ -19,6 +19,8 @@ public abstract class Menu extends Display {
 	private int spacing;
 	private FontStyle style;
 	
+	protected boolean wrap = true;
+	
 	/*protected Menu(String[] options, Rectangle frame, int colOn, int colOff) {
 		this(options, (new Rectangle[] {frame}), colOn, colOff);
 	}*/
@@ -46,8 +48,8 @@ public abstract class Menu extends Display {
 		if(input.getKey("up").clicked) selected--;
 		if(input.getKey("down").clicked) selected++;
 		
-		if(selected >= options.length) selected = 0;
-		if(selected < 0) selected = options.length - 1;
+		if(selected >= options.length) selected = wrap ? 0 : options.length-1;
+		if(selected < 0) selected = wrap ? options.length - 1 : 0;
 		
 		if(prevSel != selected) {
 			Sound.craft.play(); // play a sound
@@ -72,6 +74,9 @@ public abstract class Menu extends Display {
 	protected void setLineSpacing(int spacing) { this.spacing = spacing; }
 	
 	protected int getLineSpacing() { return spacing; }
+	
+	protected void setHighlightColor(int col) { highlightColor = col; }
+	protected void setOffColor(int col) { offColor = col; }
 	
 	/** Is used to determine whether the current line should be highlighted. */
 	protected boolean isHighlighted(int idx) {

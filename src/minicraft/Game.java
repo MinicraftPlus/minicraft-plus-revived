@@ -201,9 +201,10 @@ public class Game extends Canvas implements Runnable {
 	
 	// Sets the current menu.
 	public void setMenu(Display display) {
+		Display parent = this.menu;
 		this.menu = display;
 		//if (debug) System.out.println("setting game menu to " + menu);
-		if (menu != null) menu.init(this, input);
+		if (display != null) menu.init(this, input, parent);
 	}
 	
 	public static boolean isValidClient() {
@@ -326,7 +327,7 @@ public class Game extends Canvas implements Runnable {
 			if(WorldSelectMenu.loadworld)
 				new Load(this, WorldSelectMenu.worldname);
 			else {
-				worldSize = WorldGenMenu.getSize();
+				worldSize = (Integer)Displays.worldGen.getEntry("size").getValue();
 				
 				double loadingInc = 100.0 / (maxLevelDepth - minLevelDepth + 1); // the .002 is for floating point errors, in case they occur.
 				for (int i = maxLevelDepth; i >= minLevelDepth; i--) {
@@ -351,7 +352,7 @@ public class Game extends Canvas implements Runnable {
 				level.add(player);
 			}
 			
-			if(WorldGenMenu.get("Theme").equals("Hell")) {
+			if(Displays.worldGen.getEntry("Theme").getValue().equals("Hell")) {
 				player.inventory.add(Items.get("lava potion"));
 			}
 			readyToRenderGameplay = true;
@@ -498,7 +499,7 @@ public class Game extends Canvas implements Runnable {
 				else if(Game.isValidServer()) {
 					// here is where I should put things like select up/down, backspace to boot, esc to open pause menu, etc.
 					if(input.getKey("pause").clicked)
-						setMenu(new PauseMenu(null));
+						setMenu(new PauseMenu());
 				}
 				
 				if(menu == null && input.getKey("F3").clicked) { // shows debug info in upper-left

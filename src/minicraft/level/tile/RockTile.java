@@ -14,6 +14,7 @@ import minicraft.item.Items;
 import minicraft.item.ToolItem;
 import minicraft.item.ToolType;
 import minicraft.level.Level;
+import minicraft.screen.Displays;
 import minicraft.screen.OptionsMenu;
 import minicraft.screen.ModeMenu;
 
@@ -76,7 +77,7 @@ public class RockTile extends Tile {
 			if (coallvl == 1) {
 				level.dropItem(x*16+8, y*16+8, 1, 2, Items.get("Stone"));
 				int mincoal = 0, maxcoal = 1;
-				if(OptionsMenu.diff != OptionsMenu.hard) {
+				if(!Displays.options.getEntry("diff").getValue().equals("hard")) {
 					mincoal++;
 					maxcoal++;
 				}

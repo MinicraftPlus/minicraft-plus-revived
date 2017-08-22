@@ -13,12 +13,7 @@ import minicraft.item.Item;
 import minicraft.item.PotionType;
 import minicraft.item.StackableItem;
 import minicraft.network.MinicraftServer;
-import minicraft.screen.LoadingDisplay;
-import minicraft.screen.ModeMenu;
-import minicraft.screen.MultiplayerMenu;
-import minicraft.screen.OptionsMenu;
-import minicraft.screen.WorldGenMenu;
-import minicraft.screen.WorldSelectMenu;
+import minicraft.screen.*;
 
 public class Save {
 
@@ -180,8 +175,9 @@ public class Save {
 	
 	public void writeWorld(String filename) {
 		for(int l = 0; l < Game.levels.length; l++) {
-			data.add(String.valueOf(WorldGenMenu.getSize()));
-			data.add(String.valueOf(WorldGenMenu.getSize()));
+			String worldSize = String.valueOf(Displays.worldGen.getEntry("size").getValue());
+			data.add(worldSize);
+			data.add(worldSize);
 			data.add(String.valueOf(Game.levels[l].depth));
 			
 			for(int x = 0; x < Game.levels[l].w; x++) {

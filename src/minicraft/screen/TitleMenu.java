@@ -1,7 +1,5 @@
 package minicraft.screen;
 
-import java.io.File;
-import java.util.Arrays;
 import java.util.Random;
 import minicraft.Game;
 import minicraft.GameApplet;
@@ -9,25 +7,82 @@ import minicraft.InputHandler;
 import minicraft.entity.RemotePlayer;
 import minicraft.gfx.Color;
 import minicraft.gfx.Font;
+import minicraft.gfx.FontStyle;
 import minicraft.gfx.Screen;
 import minicraft.level.Level;
+import minicraft.screen.entry.StringEntry;
 
 public class TitleMenu extends Menu {
 	protected final Random random = new Random();
-private static final String[] options = {"New game", "Join Online World", "Instructions", "Tutorial", "Options", "Change Key Bindings", "About", "Quit"/*, "Kill"*/}; // Options that are on the main menu.
-	int rand;
-	int count = 0; // this and reverse are for the logo; they produce the fade-in/out effect.
-	boolean reverse = false;
-	String location = Game.gameDir;
-	File folder;
+	
+	private static final StringEntry[] optionList = new StringEntry[] {
+			new StringEntry("New game") {
+				public void onSelect() {
+					WorldSelectMenu.loadworld = false;
+					Game.main.setMenu(new WorldSelectMenu());
+					//(this method should now stop getting called by Game)
+				}
+			},
+			new StringEntry("Join Online World") {
+				public void onSelect() {
+					Game.main.setMenu(new MultiplayerMenu());
+				}
+			},
+			new StringEntry("Instructions") {
+				public void onSelect() {
+					Game.main.setMenu(Displays.instructions);
+				}
+			},
+			new StringEntry("Tutorial") {
+				public void onSelect() {
+					try {
+						//This is for the tutorial Video
+						String url = "http://minicraftplus.webs.com/Tutorial.htm";
+						java.awt.Desktop.getDesktop().browse(java.net.URI.create(url));
+					} catch (java.io.IOException e) {
+						if(minicraft.Game.debug) System.out.println(e.getMessage());
+					}
+				}
+			},
+			new StringEntry("Options") {
+				public void onSelect() {
+					Game.main.setMenu(Displays.options);
+				}
+			},
+			new StringEntry("Change Key Bindings") {
+				public void onSelect() {
+					Game.main.setMenu(new KeyInputMenu(Game.main.input.getKeyPrefs()));
+				}
+			},
+			new StringEntry("About") {
+				public void onSelect() {
+					Game.main.setMenu(Displays.about);
+				}
+			},
+			new StringEntry("Quit") {
+				public void onSelect() {
+					System.exit(0);//game.quit();
+				}
+			}/*,
+			new StringEntry("Kill") {
+				public void onSelect() {
+					game.levels[currentLevel].add(game.player);
+					game.setMenu(null);
+				}
+			}*/
+	}; // Options that are on the main menu.
+	//private static final StringEntry[] optionList = StringEntry.useStringArray("New game", "Join Online World", "Instructions", "Tutorial", "Options", "Change Key Bindings", "About", "Quit"/*, "Kill"*/); // Options that are on the main menu.
+	
+	private int rand;
+	private int count = 0; // this and reverse are for the logo; they produce the fade-in/out effect.
+	private boolean reverse = false;
 	
 	private static final String[] splashes = {//new ArrayList<String>();
 		"Multiplayer Now Included!",
 		"Also play InfinityTale!",
-		"Also play Minicraft Delux!",
+		"Also play Minicraft Deluxe!",
 		"Also play Alecraft!",
 		"Also play Hackcraft!",
-		//"Also play RPGcraft!(When it's done)",
 		"Also play MiniCrate!",
 		"Also play MiniCraft Mob Overload!",
 		"Only on PlayMinicraft.com!",
@@ -134,8 +189,9 @@ private static final String[] options = {"New game", "Join Online World", "Instr
 	};
 	
 	public TitleMenu() {
-		super(null, 0, 0);
-		//super(options, 11*8, 1, Color.get(-1, 555), Color.get(-1, 222));
+		super(optionList);
+		setTextStyle(new FontStyle());
+		//super(options, 11*8, 1, , );
 		Game.readyToRenderGameplay = false;
 		/// this is just in case; though, i do take advantage of it in other places.
 		if(Game.server != null) {
@@ -150,14 +206,13 @@ private static final String[] options = {"New game", "Join Online World", "Instr
 		}
 		Game.ISONLINE = false;
 		
-		folder = new File(location);
 		rand = random.nextInt(splashes.length);
 		
 		Game.levels = new Level[Game.levels.length];
 	}
 	
-	public void init(Game game, InputHandler input) {
-		super.init(game, input);
+	public void init(Game game, InputHandler input, Display parent) {
+		super.init(game, input, parent);
 		if(game.player == null || game.player instanceof RemotePlayer) {
 			//if(game.player != null) game.player.remove();
 			game.player = null;
@@ -209,36 +264,16 @@ private static final String[] options = {"New game", "Join Online World", "Instr
 		
 		if (input.getKey("r").clicked) rand = random.nextInt(splashes.length);
 		
-		if (reverse == false) {
+		if (!reverse) {
 			count++;
 			if (count == 25) reverse = true;
-		} else if (reverse == true) {
+		} else {
 			count--;
 			if (count == 0) reverse = false;
 		}
 		
 		if (input.getKey("select").clicked) {
-			if (options[selected] == "New game") {
-				WorldSelectMenu.loadworld = false;
-				game.setMenu(new WorldSelectMenu());
-				//(this method should now stop getting called by Game)
-			}
-			if(options[selected].contains("Join Online")) game.setMenu(new MultiplayerMenu());
-			if(options[selected] == "Instructions") game.setMenu(new InstructionsDisplay(this));
-			if (options[selected] == "Tutorial") {
-				try {
-					//This is for the tutorial Video
-					String url = "http://minicraftplus.webs.com/Tutorial.htm";
-					java.awt.Desktop.getDesktop().browse(java.net.URI.create(url));
-				} catch (java.io.IOException e) {
-					if(minicraft.Game.debug) System.out.println(e.getMessage());
-				}
-			}
-			if (options[selected] == "Options") game.setMenu(new OptionsMenu(this));
-			if (options[selected] == "Change Key Bindings") game.setMenu(new KeyInputMenu(this));
-			if (options[selected] == "About") game.setMenu(new AboutDisplay(this));
-			if (options[selected] == "Quit") System.exit(0);//game.quit();
-			//if (options[selected] == "Kill") {game.levels[currentLevel].add(game.player); game.setMenu(null);}
+			
 		}
 	}
 	

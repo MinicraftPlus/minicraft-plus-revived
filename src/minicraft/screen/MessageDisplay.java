@@ -14,11 +14,9 @@ public abstract class MessageDisplay extends Display {
 	protected FontStyle style = new FontStyle(Color.get(-1, 444));
 	private int spacing = Font.textHeight()/2;
 	
-	private Menu parent;
-	
-	protected MessageDisplay(Menu parent) {
+	/*protected MessageDisplay(Menu parent) {
 		this.parent = parent;
-	}
+	}*/
 	
 	protected void setMessage(String[] message) { this.message = message; }
 	protected void setSpacing(int spacing) { this.spacing = spacing; }

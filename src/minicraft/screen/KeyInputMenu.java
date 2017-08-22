@@ -1,12 +1,13 @@
 package minicraft.screen;
 
+import minicraft.InputHandler;
 import minicraft.gfx.*;
 import minicraft.saveload.Save;
+import minicraft.screen.entry.StringEntry;
 
 public class KeyInputMenu extends ScrollingMenu {
 	
 	private boolean listeningForBind, confirmReset;
-	private Menu parent;
 	
 	private String[] actionKeys;
 	
@@ -14,17 +15,16 @@ public class KeyInputMenu extends ScrollingMenu {
 	
 	private static Frame inputFrame = new Frame("", new Rectangle(4, 4, Screen.w/SpriteSheet.boxWidth-4, Screen.h/SpriteSheet.boxWidth-4));
 	
-	public KeyInputMenu(Menu parent) {
-		super(parent.input.getKeyPrefs(), (Screen.h-Font.textHeight()*9)/8);
+	public KeyInputMenu(String[] prefs) {
+		super(StringEntry.useStringArray(prefs), (Screen.h-Font.textHeight()*9)/8);
 		setLineSpacing(1);
 		setTextStyle(style);
 		
-		this.parent = parent;
+		//this.parent = parent;
 		listeningForBind = false;
-		confirmReset = false;
-		String[] keys = options;
-		actionKeys = new String[keys.length];
-		updateKeys(keys);
+		confirmReset = false;;
+		actionKeys = new String[prefs.length];
+		updateKeys(prefs);
 	}
 	
 	public void tick() {
@@ -84,7 +84,7 @@ public class KeyInputMenu extends ScrollingMenu {
 			}
 			
 			actionKeys[i] = action;
-			options[i] = action + buffer.toString() + mapping;
+			options[i] = new StringEntry(action + buffer.toString() + mapping);
 		}
 	}
 	

@@ -17,6 +17,7 @@ import minicraft.level.tile.Tile;
 import minicraft.level.tile.Tiles;
 import minicraft.level.tile.TorchTile;
 import minicraft.screen.ModeMenu;
+import minicraft.screen.Displays;
 import minicraft.screen.OptionsMenu;
 
 public class Level {
@@ -90,7 +91,7 @@ public class Level {
 	}
 	
 	public void updateMobCap() {
-		maxMobCount = 100 + 150*OptionsMenu.diff;
+		maxMobCount = 100 + 150* OptionsMenu.diff;
 		if(depth == 0) maxMobCount = maxMobCount * 2 / 3;
 		if(depth == 1 || depth == -4) maxMobCount /= 2;
 	}

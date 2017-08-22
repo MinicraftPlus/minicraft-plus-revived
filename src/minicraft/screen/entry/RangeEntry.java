@@ -11,7 +11,7 @@ public class RangeEntry extends ArrayEntry<Integer> {
 		this(label, minVal, maxVal, startVal, 1);
 	}
 	public RangeEntry(String label, int minVal, int maxVal, int startVal, int inc) {
-		super(label, maxVal-minVal - ((maxVal-minVal)%inc), startVal);
+		super(label, maxVal-minVal - ((maxVal-minVal)%inc), startVal, false);
 		this.minVal = minVal;
 		this.increment = inc;
 	}

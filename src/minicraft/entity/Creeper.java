@@ -6,7 +6,9 @@ import minicraft.gfx.MobSprite;
 import minicraft.gfx.Screen;
 import minicraft.item.Items;
 import minicraft.level.tile.Tiles;
+import minicraft.screen.Displays;
 import minicraft.screen.OptionsMenu;
+import minicraft.screen.entry.SettingEntry;
 
 public class Creeper extends EnemyMob {
 	private static final MobSprite[][] sprites;
@@ -62,7 +64,7 @@ public class Creeper extends EnemyMob {
 					float pd = (float) Math.sqrt(pdx * pdx + pdy * pdy);
 					int dmg = (int) (BLAST_DAMAGE * (1 - (pd / BLAST_RADIUS))) + OptionsMenu.diff;
 					player.hurt(this, dmg, Mob.getAttackDir(this, player));
-					player.payStamina(dmg * (OptionsMenu.diff == OptionsMenu.easy?1:2));
+					player.payStamina(dmg * (Displays.options.getEntry("diff").getValue().equals("easy")?1:2));
 					hurtOne = true;
 				}
 			}

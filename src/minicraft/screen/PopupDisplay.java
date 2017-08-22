@@ -10,8 +10,6 @@ public class PopupDisplay extends MessageDisplay {
 		this(msg, Screen.w);
 	}
 	public PopupDisplay(String msg, int maxWidth) { // max width is in screen coordinates
-		super(null);
-		
 		style.setColor(Color.get(-1, 444));
 		
 		if(maxWidth > Font.textHeight() * 2)

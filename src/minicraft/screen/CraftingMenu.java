@@ -10,6 +10,7 @@ import minicraft.gfx.*;
 import minicraft.item.Item;
 import minicraft.item.Items;
 import minicraft.item.Recipe;
+import minicraft.screen.entry.StringEntry;
 
 public class CraftingMenu extends ScrollingMenu {
 	private Player player; // the player that opened this menu
@@ -20,7 +21,7 @@ public class CraftingMenu extends ScrollingMenu {
 	
 	private int invResultItemCount; // this stores how many of the item selected are in the player's inventory already. It changes whenever the currently selected item changes.
 	
-	private static final String[] getRecipeList(List<Recipe> recipes) {
+	private static String[] getRecipeList(List<Recipe> recipes) {
 		String[] recipeNames = new String[recipes.size()];
 		for(int i = 0; i < recipes.size(); i++) {
 			Recipe r = recipes.get(i);
@@ -35,7 +36,7 @@ public class CraftingMenu extends ScrollingMenu {
 		this(recipes, player, false);
 	}
 	public CraftingMenu(List<Recipe> recipes, Player player, boolean isPersonalFrame) {
-		super(getRecipeList(recipes), 9, Color.get(-1, 555), Color.get(-1, 222));
+		super(StringEntry.useStringArray(getRecipeList(recipes)));//, 9, Color.get(-1, 555), Color.get(-1, 222));
 		setTextStyle(new FontStyle(Color.get(-1, 555)).setYPos(2*SpriteSheet.boxWidth).setXPos(2*SpriteSheet.boxWidth));
 		Frame[] frames = new Frame[] {
 			(new Frame("Have", new Rectangle(17, 1, 24, 3, Rectangle.CORNERS))), // renders the 'have' items window

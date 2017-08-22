@@ -20,10 +20,14 @@ import minicraft.item.StackableItem;
 import minicraft.level.Level;
 import minicraft.level.tile.Tiles;
 import minicraft.network.MinicraftServer;
+import minicraft.screen.Displays;
 import minicraft.screen.LoadingDisplay;
 import minicraft.screen.ModeMenu;
 import minicraft.screen.MultiplayerMenu;
 import minicraft.screen.OptionsMenu;
+import minicraft.screen.entry.BooleanEntry;
+import minicraft.screen.entry.ConfigEntry;
+import minicraft.screen.entry.SettingEntry;
 
 public class Load {
 	
@@ -251,12 +255,17 @@ public class Load {
 	public void loadUnlocks(String filename) {
 		loadFromFile(location + filename + extension);
 		
-		ModeMenu.unlockedtimes.clear();
-		OptionsMenu.unlockedskin = false;
+		//ModeMenu.unlockedtimes.clear();
+		SettingEntry<Integer> scoreTimes = (SettingEntry<Integer>) Displays.worldGen.getEntry("scoreTime");
+		
+		
+		BooleanEntry skinUnlocked = (BooleanEntry) Displays.options.getEntry("unlockedskin"); 
+		skinUnlocked.setValue(Boolean.FALSE);
+		//OptionsMenu.unlockedskin = false;
 		
 		for(String unlock: data) {
 			if(unlock.equals("AirSkin"))
-				OptionsMenu.unlockedskin = true;
+				skinUnlocked.setValue(Boolean.TRUE);
 			
 			unlock = unlock.replace("HOURMODE", "H_ScoreTime").replace("MINUTEMODE", "M_ScoreTime");
 			

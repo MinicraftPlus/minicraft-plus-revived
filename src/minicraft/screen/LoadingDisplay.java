@@ -4,9 +4,8 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import javax.swing.Timer;
 import minicraft.Game;
+import minicraft.InputHandler;
 import minicraft.gfx.Color;
-import minicraft.gfx.Font;
-import minicraft.gfx.FontStyle;
 import minicraft.gfx.Screen;
 
 public class LoadingDisplay extends MessageDisplay implements ActionListener {
@@ -15,8 +14,6 @@ public class LoadingDisplay extends MessageDisplay implements ActionListener {
 	private static double percentage = 0;
 	
 	public LoadingDisplay() {
-		super(null);
-		
 		if(Game.HAS_GUI) {
 			t = new Timer(400, this);
 			
@@ -28,8 +25,8 @@ public class LoadingDisplay extends MessageDisplay implements ActionListener {
 	
 	public static double getPercentage() { return percentage; }
 	
-	public void init(Game game, minicraft.InputHandler init) {
-		super.init(game, init);
+	public void init(Game game, InputHandler init, Display parent) {
+		super.init(game, init, parent);
 		if(!Game.HAS_GUI)
 			initWorld();
 	}

@@ -3,6 +3,7 @@ package minicraft.entity;
 import minicraft.gfx.Color;
 import minicraft.gfx.MobSprite;
 import minicraft.item.Items;
+import minicraft.screen.Displays;
 import minicraft.screen.OptionsMenu;
 
 public class Zombie extends EnemyMob {
@@ -60,9 +61,9 @@ public class Zombie extends EnemyMob {
 	}*/
 
 	protected void die() {
-		if (OptionsMenu.diff == OptionsMenu.easy) dropItem(2, 4, Items.get("cloth"));
-		if (OptionsMenu.diff == OptionsMenu.norm) dropItem(2, 3, Items.get("cloth"));
-		if (OptionsMenu.diff == OptionsMenu.hard) dropItem(1, 2, Items.get("cloth"));
+		if (Displays.options.getEntry("diff").getValue().equals("easy")) dropItem(2, 4, Items.get("cloth"));
+		if (Displays.options.getEntry("diff").getValue().equals("norm")) dropItem(2, 3, Items.get("cloth"));
+		if (Displays.options.getEntry("diff").getValue().equals("hard")) dropItem(1, 2, Items.get("cloth"));
 		
 		if(random.nextInt(60) == 2) {
 			level.dropItem(x, y, Items.get("iron"));
