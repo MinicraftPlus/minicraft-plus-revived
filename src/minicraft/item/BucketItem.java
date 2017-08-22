@@ -11,7 +11,7 @@ import minicraft.screen.ModeMenu;
 
 public class BucketItem extends StackableItem {
 	
-	public static enum Fill {
+	public enum Fill {
 		Empty (Tiles.get("hole"), 333),
 		Water (Tiles.get("water"), 005),
 		Lava (Tiles.get("lava"), 400);
@@ -19,7 +19,7 @@ public class BucketItem extends StackableItem {
 		public Tile contained;
 		public int innerColor; // TODO make it so that the inside color is fetched from the tile color.
 		
-		private Fill(Tile contained, int innerCol) {
+		Fill(Tile contained, int innerCol) {
 			this.contained = contained;
 			innerColor = innerCol;
 		}

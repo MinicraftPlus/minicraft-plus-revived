@@ -12,7 +12,7 @@ public class Lantern extends Furniture {
 		protected int col, light;
 		protected String title;
 			
-		private Type(String title, int light, int col) {
+		Type(String title, int light, int col) {
 			this.title = title;
 			this.col = col;
 			this.light = light;
@@ -29,7 +29,7 @@ public class Lantern extends Furniture {
 	@Override
 	public Furniture clone() {
 		//System.out.println("type: " + type);
-		return (Furniture) new Lantern(type);
+		return new Lantern(type);
 	}
 	
 	/** Gets the size of the radius for light underground (Bigger number, larger light) */

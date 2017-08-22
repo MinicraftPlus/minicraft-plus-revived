@@ -34,7 +34,7 @@ public class Spawner extends Furniture {
 		
 		if(m instanceof EnemyMob) {
 			lvl = ((EnemyMob)mob).lvl;
-			maxMobLevel = ((EnemyMob)mob).getMaxLevel();
+			maxMobLevel = mob.getMaxLevel();
 		} else {
 			lvl = 1;
 			maxMobLevel = 1;
@@ -167,7 +167,7 @@ public class Spawner extends Furniture {
 	}
 	
 	public Furniture clone() {
-		return (Furniture) new Spawner(mob);
+		return new Spawner(mob);
 	}
 	
 	protected String getUpdateString() {

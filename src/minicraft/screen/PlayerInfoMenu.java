@@ -1,6 +1,8 @@
 package minicraft.screen;
 
 import java.util.ArrayList;
+
+import minicraft.Game;
 import minicraft.gfx.Color;
 import minicraft.gfx.Font;
 import minicraft.gfx.Screen;
@@ -16,7 +18,7 @@ public class PlayerInfoMenu extends Menu {
 	public void render(Screen screen) {
 		renderFrame(screen, "Player Info", 1, 1, 30, 15);
 		
-		int seconds = game.gameTime / game.normSpeed;
+		int seconds = Game.gameTime / Game.normSpeed;
 		int minutes = seconds / 60;
 		int hours = minutes / 60;
 		minutes %= 60;

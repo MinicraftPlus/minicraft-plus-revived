@@ -18,7 +18,7 @@ class ConsoleReader extends Thread {
 	
 	private Game game;
 	
-	private static enum Config {
+	private enum Config {
 		PLAYERCAP {
 			public String getValue() {
 				return String.valueOf(Game.server.getPlayerCap());
@@ -52,7 +52,7 @@ class ConsoleReader extends Thread {
 		public static final Config[] values = Config.values();
 	}
 	
-	private static enum Command {
+	private enum Command {
 		HELP
 		("--all | [cmd]", "describes the function of each command. Specify a command name to read more about how to use it.", "no arguments: prints a list of all available commands, with a short description of each.", "cmd: a command name. will print the short description of that command, along with usage details such as what parameters/arguments it uses, and what function each argument has, and what the defualt behavior is if a given argument is ommitted.", "--all: prints the long description of all the commands.", "Usage symbol meanings:", "\t| = OR; specifies two possible choices for a given argument.", "\t[] = Optional; the arguments within may be specified, but they are not required.", "\t<> = Required; you must include the arguments within for the command to work.", "Note that the usage symbols may be nested, so a <> inside a [] is only required if you do whatever else is inside the [].") {
 			public void run(String[] args, Game game) {
@@ -174,7 +174,7 @@ class ConsoleReader extends Thread {
 		("[timeString]", "sets or prints the time of day." , "no arguments: prints the current time of day, in ticks.", "timeString: sets the time of day to the given value; it can be a number, in which case it is a tick count from 0 to 64000 or so, or one of the following strings: Morning, Day, Evening, Night. the time of day will be set to the beginning of the given time period.") {
 			public void run(String[] args, Game game) {
 				if(args.length == 0) {
-					System.out.println("time of day is: " + game.tickCount + " ("+game.getTime()+")");
+					System.out.println("time of day is: " + Game.tickCount + " ("+ Game.getTime()+")");
 					return;
 				}
 				
@@ -195,7 +195,7 @@ class ConsoleReader extends Thread {
 				}
 				
 				if(targetTicks >= 0) {
-					game.setTime(targetTicks);
+					Game.setTime(targetTicks);
 					Game.server.updateGameVars();
 				} else {
 					System.out.println("time specified is in an invalid format.");
@@ -307,7 +307,7 @@ class ConsoleReader extends Thread {
 		
 		private String generalHelp, detailedHelp, usage;
 		
-		private Command(String usage, String general, String... specific) {
+		Command(String usage, String general, String... specific) {
 			String name = this.name().toLowerCase();
 			String sep = " - ";
 			

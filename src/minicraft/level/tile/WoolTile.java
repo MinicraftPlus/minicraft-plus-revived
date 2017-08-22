@@ -23,7 +23,7 @@ public class WoolTile extends Tile {
 		BLACK (Color.get(111, 111, 000, 111));
 		
 		public int col;
-		private WoolColor(int color) {
+		WoolColor(int color) {
 			col = color;
 		}
 		public static final WoolColor[] values = values();

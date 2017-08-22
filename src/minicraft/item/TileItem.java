@@ -3,6 +3,8 @@ package minicraft.item;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+
+import minicraft.Game;
 import minicraft.entity.Player;
 import minicraft.gfx.Color;
 import minicraft.gfx.Sprite;
@@ -76,7 +78,7 @@ public class TileItem extends StackableItem {
 		//if (Game.debug) System.out.println(model + " cannot be placed on " + tile.name);
 		
 		if(model.contains("Wall") && validTiles.size() == 1) {
-			player.game.notifications.add("Can only be placed on " + Tiles.getName(validTiles.get(0)) + "!");
+			Game.notifications.add("Can only be placed on " + Tiles.getName(validTiles.get(0)) + "!");
 		}
 		return super.interactOn(false);
 	}

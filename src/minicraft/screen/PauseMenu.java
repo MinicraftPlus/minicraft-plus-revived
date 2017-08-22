@@ -14,7 +14,7 @@ public class PauseMenu extends SelectMenu {
 	private int selection; //selection is set when you press enter.
 	private Menu parent;
 
-	private static final List<String> alloptions = Arrays.asList(new String[] {"Return to Game", "Options", "Change Key Bindings", "Make World Multiplayer", "Save Game", "Load Game", "Main Menu"});
+	private static final List<String> alloptions = Arrays.asList("Return to Game", "Options", "Change Key Bindings", "Make World Multiplayer", "Save Game", "Load Game", "Main Menu");
 	//private List<String> options = new ArrayList<String>();
 	
 	private static final List<String> getOptions() {

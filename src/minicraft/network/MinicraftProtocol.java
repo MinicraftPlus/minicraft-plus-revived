@@ -12,9 +12,9 @@ public interface MinicraftProtocol {
 		INVALID, PING, USERNAMES, LOGIN, GAME, INIT, LOAD, TILES, ENTITIES, TILE, ENTITY, PLAYER, MOVE, ADD, REMOVE, DISCONNECT, SAVE, NOTIFY, INTERACT, PUSH, PICKUP, CHESTIN, CHESTOUT, BED, POTION, HURT, DIE, RESPAWN, DROP;
 		
 		public static final InputType[] values = InputType.values();
-		public static final List<InputType> serverOnly = Arrays.asList(new InputType[] {INIT, TILES, ENTITIES, ADD, REMOVE, HURT, GAME});
-		public static final List<InputType> entityUpdates = Arrays.asList(new InputType[] {ENTITY, ADD, REMOVE});
-		public static final List<InputType> tileUpdates = Arrays.asList(new InputType[] {TILE});
+		public static final List<InputType> serverOnly = Arrays.asList(INIT, TILES, ENTITIES, ADD, REMOVE, HURT, GAME);
+		public static final List<InputType> entityUpdates = Arrays.asList(ENTITY, ADD, REMOVE);
+		public static final List<InputType> tileUpdates = Arrays.asList(TILE);
 	}
 	
 	static InputType getInputType(char idxChar) {

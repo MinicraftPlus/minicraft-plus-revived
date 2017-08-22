@@ -16,7 +16,7 @@ public abstract class Tile {
 	public static int tickCount = 0; //A global tickCount used in the Lava & water tiles.
 	protected Random random = new Random();
 	
-	protected static enum Material {
+	protected enum Material {
 		Wood, Stone, Obsidian;
 		public static final Material[] values = Material.values();
 	}

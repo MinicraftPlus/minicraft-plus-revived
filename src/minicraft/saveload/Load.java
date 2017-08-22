@@ -274,10 +274,10 @@ public class Load {
 		Game.setTime(Integer.parseInt(data.get(1)));
 		
 		if(worldVer.compareTo(new Version("1.9.3-dev2")) >= 0) {
-			game.gameTime = Integer.parseInt(data.get(2));
-			Game.pastDay1 = game.gameTime > 65000;
+			Game.gameTime = Integer.parseInt(data.get(2));
+			Game.pastDay1 = Game.gameTime > 65000;
 		} else {
-			game.gameTime = 65000; // prevents time cheating.
+			Game.gameTime = 65000; // prevents time cheating.
 		}
 		
 		OptionsMenu.diff = Integer.parseInt(data.get(3));
@@ -783,37 +783,37 @@ public class Load {
 		switch(string) {
 			case "Player": return null;
 			case "RemotePlayer": return null;
-			case "Cow": return (Entity)(new Cow());
-			case "Sheep": return (Entity)(new Sheep());
-			case "Pig": return (Entity)(new Pig());
-			case "Zombie": return (Entity)(new Zombie(moblvl));
-			case "Slime": return (Entity)(new Slime(moblvl));
-			case "Creeper": return (Entity)(new Creeper(moblvl));
-			case "Skeleton": return (Entity)(new Skeleton(moblvl));
-			case "Knight": return (Entity)(new Knight(moblvl));
-			case "Snake": return (Entity)(new Snake(moblvl));
-			case "AirWizard": return (Entity)(new AirWizard(moblvl>1));
-			case "Spawner": return (Entity)(new Spawner(new Zombie(1)));
-			case "Workbench": return (Entity)(new Crafter(Crafter.Type.Workbench));
-			case "Chest": return (Entity)(new Chest());
-			case "DeathChest": return (Entity)(new DeathChest());
-			case "DungeonChest": return (Entity)(new DungeonChest());
-			case "Anvil": return (Entity)(new Crafter(Crafter.Type.Anvil));
-			case "Enchanter": return (Entity)(new Crafter(Crafter.Type.Enchanter));
-			case "Loom": return (Entity)(new Crafter(Crafter.Type.Loom));
-			case "Furnace": return (Entity)(new Crafter(Crafter.Type.Furnace));
-			case "Oven": return (Entity)(new Crafter(Crafter.Type.Oven));
-			case "Bed": return (Entity)(new Bed());
-			case "Tnt": return (Entity)(new Tnt());
-			case "Lantern": return (Entity)(new Lantern(Lantern.Type.NORM));
+			case "Cow": return new Cow();
+			case "Sheep": return new Sheep();
+			case "Pig": return new Pig();
+			case "Zombie": return new Zombie(moblvl);
+			case "Slime": return new Slime(moblvl);
+			case "Creeper": return new Creeper(moblvl);
+			case "Skeleton": return new Skeleton(moblvl);
+			case "Knight": return new Knight(moblvl);
+			case "Snake": return new Snake(moblvl);
+			case "AirWizard": return new AirWizard(moblvl>1);
+			case "Spawner": return new Spawner(new Zombie(1));
+			case "Workbench": return new Crafter(Crafter.Type.Workbench);
+			case "Chest": return new Chest();
+			case "DeathChest": return new DeathChest();
+			case "DungeonChest": return new DungeonChest();
+			case "Anvil": return new Crafter(Crafter.Type.Anvil);
+			case "Enchanter": return new Crafter(Crafter.Type.Enchanter);
+			case "Loom": return new Crafter(Crafter.Type.Loom);
+			case "Furnace": return new Crafter(Crafter.Type.Furnace);
+			case "Oven": return new Crafter(Crafter.Type.Oven);
+			case "Bed": return new Bed();
+			case "Tnt": return new Tnt();
+			case "Lantern": return new Lantern(Lantern.Type.NORM);
 			//case "Iron Lantern": return (Entity)(new Lantern(Lantern.Type.IRON));
 			//case "Gold Lantern": return (Entity)(new Lantern(Lantern.Type.GOLD));
-			case "Arrow": return (Entity)(new Arrow(null, 0, 0, 0, 0, 0));
-			case "ItemEntity": return (Entity)(new ItemEntity(null, 0, 0));
+			case "Arrow": return new Arrow(null, 0, 0, 0, 0, 0);
+			case "ItemEntity": return new ItemEntity(null, 0, 0);
 			//case "Spark": return (Entity)(new Spark());
-			case "FireParticle": return (Entity)(new FireParticle(0, 0));
-			case "SmashParticle": return (Entity)(new SmashParticle(0, 0));
-			case "TextParticle": return (Entity)(new TextParticle("", 0, 0, 0));
+			case "FireParticle": return new FireParticle(0, 0);
+			case "SmashParticle": return new SmashParticle(0, 0);
+			case "TextParticle": return new TextParticle("", 0, 0, 0);
 			default : /*if(Game.debug)*/ System.err.println("LOAD ERROR: unknown or outdated entity requested: " + string);
 				return null;
 		}

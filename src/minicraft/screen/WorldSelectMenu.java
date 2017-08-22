@@ -40,7 +40,7 @@ public class WorldSelectMenu extends Menu {
 	private boolean validName;
 	private boolean confirmed;
 	
-	private static enum Action {
+	private enum Action {
 		Main ("Select Option", 555),
 		Create ("Name of New World:", 555),
 		Load ("Load World", 555),
@@ -52,7 +52,7 @@ public class WorldSelectMenu extends Menu {
 		public String message;
 		public int color;
 		
-		private Action(String msg, int color) {
+		Action(String msg, int color) {
 			message = msg;
 			this.color = color;
 		}
@@ -174,7 +174,7 @@ public class WorldSelectMenu extends Menu {
 					if (Game.debug) System.out.println("main selection: " + options[selected]);
 					if(options[selected].equals("Load World")) {
 						mode = Action.Load;
-						loadworld = true;;
+						loadworld = true;
 					} else {
 						mode = Action.Create;
 						loadworld = false;
@@ -230,7 +230,7 @@ public class WorldSelectMenu extends Menu {
 					try {
 						Files.walkFileTree(world.toPath(), new FileVisitor() {
 							public FileVisitResult visitFile(Object file, BasicFileAttributes attr) {
-								String path = ((Path)file).toString();
+								String path = file.toString();
 								path = newpath+path.substring(path.indexOf(oldname)+oldname.length());
 								File newFile = new File(path);
 								newFile.mkdirs();
@@ -309,7 +309,7 @@ public class WorldSelectMenu extends Menu {
 	
 	private String[] getCurOpts() {
 		switch(mode) {
-			case Main: return this.options;
+			case Main: return options;
 			case Create: return new String[0];
 			default: return worldnames.toArray(new String[0]);
 		}

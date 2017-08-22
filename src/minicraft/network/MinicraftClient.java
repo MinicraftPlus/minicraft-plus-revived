@@ -33,7 +33,7 @@ public class MinicraftClient extends MinicraftConnection {
 	private Game game;
 	private MultiplayerMenu menu;
 	
-	private static enum State {
+	private enum State {
 		LOGIN, LOADING, PLAY, DISCONNECTED
 	}
 	private State curState = State.DISCONNECTED;

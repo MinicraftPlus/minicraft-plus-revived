@@ -46,11 +46,8 @@ public class PassiveMob extends MobAi {
 			return false;
 		
 		Tile tile = level.getTile(x >> 4, y >> 4);
-		if (tile == Tiles.get("grass") || tile == Tiles.get("flower")) {
-			return true;
-		}
-
-		return false;
+		return tile == Tiles.get("grass") || tile == Tiles.get("flower");
+		
 	}
 	
 	public int getMaxLevel() {

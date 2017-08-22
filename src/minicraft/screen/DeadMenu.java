@@ -37,7 +37,7 @@ public class DeadMenu extends Menu {
 		Font.draw("You died! Aww!", screen, 16, 32, Color.get(-1, 555));
 		
 		// the current time elapsed in the game.
-		int seconds = game.gameTime / game.normSpeed;
+		int seconds = Game.gameTime / Game.normSpeed;
 		int minutes = seconds / 60;
 		int hours = minutes / 60;
 		minutes %= 60;

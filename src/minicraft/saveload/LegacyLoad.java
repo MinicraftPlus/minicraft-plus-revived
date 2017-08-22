@@ -151,7 +151,7 @@ public class LegacyLoad {
 		if(hasVersion) {
 			worldVer = new Load.Version(data.get(0)); // gets the world version
 			Game.setTime(Integer.parseInt(data.get(1)));
-			game.gameTime = 65000; // prevents time cheating.
+			Game.gameTime = 65000; // prevents time cheating.
 			
 			if(worldVer.compareTo(new Load.Version("1.9.2")) < 0) {
 				OptionsMenu.autosave = Boolean.parseBoolean(data.get(3));
@@ -197,7 +197,7 @@ public class LegacyLoad {
 				for(int y = 0; y < lvlh - 1; y++) {
 					int tileArrIdx = /*worldVer.compareTo(new Version("1.9.3-dev3")) < 0 ?*/ y + x * lvlw;// : x + y * lvlw;
 					int tileidx = x + y * lvlw; // the tiles are saved with x outer loop, and y inner loop, meaning that the list reads down, then right one, rather than right, then down one.
-					tiles[tileArrIdx] = (byte) Tiles.get(Tiles.oldids.get(Integer.parseInt(data.get(tileidx + 3)))).id;
+					tiles[tileArrIdx] = Tiles.get(Tiles.oldids.get(Integer.parseInt(data.get(tileidx + 3)))).id;
 					tdata[tileArrIdx] = Byte.parseByte(extradata.get(tileidx));
 				}
 			}
@@ -386,7 +386,7 @@ public class LegacyLoad {
 					Spawner egg = new Spawner((MobAi)getEntity(info.get(2), player, Integer.parseInt(info.get(3))));
 					//egg.lvl = Integer.parseInt(info.get(3));
 					//egg.initMob((MobAi)getEntity(info.get(2), player, info.get(3)));
-					currentlevel = Integer.parseInt((String)info.get(info.size() - 1));
+					currentlevel = Integer.parseInt(info.get(info.size() - 1));
 					Game.levels[currentlevel].add(egg, x, y);
 				}
 				else {
@@ -399,32 +399,32 @@ public class LegacyLoad {
 	
 	public Entity getEntity(String string, Player player, int moblvl) {
 		switch(string) {
-			case "Player": return (Entity)(player);
-			case "Cow": return (Entity)(new Cow());
-			case "Sheep": return (Entity)(new Sheep());
-			case "Pig": return (Entity)(new Pig());
-			case "Zombie": return (Entity)(new Zombie(moblvl));
-			case "Slime": return (Entity)(new Slime(moblvl));
-			case "Creeper": return (Entity)(new Creeper(moblvl));
-			case "Skeleton": return (Entity)(new Skeleton(moblvl));
-			case "Knight": return (Entity)(new Knight(moblvl));
-			case "Snake": return (Entity)(new Snake(moblvl));
-			case "AirWizard": return (Entity)(new AirWizard(moblvl>1));
-			case "Spawner": return (Entity)(new Spawner(new Zombie(1)));
-			case "Workbench": return (Entity)(new Crafter(Crafter.Type.Workbench));
-			case "Chest": return (Entity)(new Chest());
-			case "DeathChest": return (Entity)(new DeathChest());
-			case "DungeonChest": return (Entity)(new DungeonChest());
-			case "Anvil": return (Entity)(new Crafter(Crafter.Type.Anvil));
-			case "Enchanter": return (Entity)(new Crafter(Crafter.Type.Enchanter));
-			case "Loom": return (Entity)(new Crafter(Crafter.Type.Loom));
-			case "Furnace": return (Entity)(new Crafter(Crafter.Type.Furnace));
-			case "Oven": return (Entity)(new Crafter(Crafter.Type.Oven));
-			case "Bed": return (Entity)(new Bed());
-			case "Tnt": return (Entity)(new Tnt());
-			case "Lantern": return (Entity)(new Lantern(Lantern.Type.NORM));
-			case "IronLantern": return (Entity)(new Lantern(Lantern.Type.IRON));
-			case "GoldLantern": return (Entity)(new Lantern(Lantern.Type.GOLD));
+			case "Player": return player;
+			case "Cow": return new Cow();
+			case "Sheep": return new Sheep();
+			case "Pig": return new Pig();
+			case "Zombie": return new Zombie(moblvl);
+			case "Slime": return new Slime(moblvl);
+			case "Creeper": return new Creeper(moblvl);
+			case "Skeleton": return new Skeleton(moblvl);
+			case "Knight": return new Knight(moblvl);
+			case "Snake": return new Snake(moblvl);
+			case "AirWizard": return new AirWizard(moblvl>1);
+			case "Spawner": return new Spawner(new Zombie(1));
+			case "Workbench": return new Crafter(Crafter.Type.Workbench);
+			case "Chest": return new Chest();
+			case "DeathChest": return new DeathChest();
+			case "DungeonChest": return new DungeonChest();
+			case "Anvil": return new Crafter(Crafter.Type.Anvil);
+			case "Enchanter": return new Crafter(Crafter.Type.Enchanter);
+			case "Loom": return new Crafter(Crafter.Type.Loom);
+			case "Furnace": return new Crafter(Crafter.Type.Furnace);
+			case "Oven": return new Crafter(Crafter.Type.Oven);
+			case "Bed": return new Bed();
+			case "Tnt": return new Tnt();
+			case "Lantern": return new Lantern(Lantern.Type.NORM);
+			case "IronLantern": return new Lantern(Lantern.Type.IRON);
+			case "GoldLantern": return new Lantern(Lantern.Type.GOLD);
 			//case "Spark": return (Entity)(new Spark());
 			default : /*if(Game.debug)*/ System.out.println("LEGACYLOAD: unknown or outdated entity requested: " + string);
 				return null;

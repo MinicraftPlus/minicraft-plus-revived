@@ -37,7 +37,7 @@ public class ArmorItem extends StackableItem {
 		boolean success = false;
 		if (player.curArmor == null && player.payStamina(staminaCost)) {
 			player.curArmor = this; // set the current armor being worn to this.
-			player.armor = ((Double)(armor/10.0*player.maxArmor)).intValue(); // armor is how many hits are left
+			player.armor = ((Double)(armor/10.0 * Player.maxArmor)).intValue(); // armor is how many hits are left
 			success = true;
 		}
 		

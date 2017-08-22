@@ -165,14 +165,14 @@ public class Game extends Canvas implements Runnable {
 	public static boolean pastDay1 = true; // used to prefent mob spawn on surface on day 1.
 	public static boolean readyToRenderGameplay = false;
 	
-	public static enum Time {
+	public enum Time {
 		Morning (0),
 		Day (Game.dayLength/4),
 		Evening (Game.dayLength/2),
 		Night (Game.dayLength/4*3);
 		
 		public int tickTime;
-		private Time(int ticks) {
+		Time(int ticks) {
 			tickTime = ticks;
 		}
 	}
@@ -912,7 +912,7 @@ public class Game extends Canvas implements Runnable {
 			// draw each current notification, with shadow text effect.
 			FontStyle style = new FontStyle(Color.get(-1, 555)).setShadowType(Color.get(-1, 222), false);
 			for (int i = 0; i < notifications.size(); i++) {
-				String note = ((String) notifications.get(i));
+				String note = notifications.get(i);
 				//int x = Screen.w / 2 - note.length() * 8 / 2,
 				int y = Screen.h - 120 - notifications.size()*8 + i * 8;
 				style.setYPos(y).draw(note, screen);
@@ -973,7 +973,7 @@ public class Game extends Canvas implements Runnable {
 				int color;
 				
 				// renders armor
-				int armor = player.armor*10/player.maxArmor;
+				int armor = player.armor*10 / Player.maxArmor;
 				color = (i <= armor && player.curArmor != null) ? player.curArmor.sprite.color : Color.get(-1, -1);
 				screen.render(i * 8, Screen.h - 24, 3 + 12 * 32, color, 0);
 				

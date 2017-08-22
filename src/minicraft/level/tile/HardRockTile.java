@@ -1,5 +1,6 @@
 package minicraft.level.tile;
 
+import minicraft.Game;
 import minicraft.entity.Entity;
 import minicraft.entity.Mob;
 import minicraft.entity.Player;
@@ -40,11 +41,10 @@ public class HardRockTile extends Tile {
 					return true;
 				}
 			}
-			else player.game.notifications.add("Gem Pickaxe Required.");
+			else Game.notifications.add("Gem Pickaxe Required.");
 		}
-		if (ModeMenu.creative) return true;
+		return ModeMenu.creative;
 		
-		return false;
 	}
 
 	public void hurt(Level level, int x, int y, int dmg) {

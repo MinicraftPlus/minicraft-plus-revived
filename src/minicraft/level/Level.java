@@ -45,8 +45,8 @@ public class Level {
 
 	private static List<String> ls = new ArrayList<String>();
 
-	private List<Entity> entities = java.util.Collections.<Entity>synchronizedList(new ArrayList<Entity>()); // A list of all the entities in the world
-	private List<Player> players = java.util.Collections.<Player>synchronizedList(new ArrayList<Player>()); // A list of all the players in the world
+	private List<Entity> entities = java.util.Collections.synchronizedList(new ArrayList<Entity>()); // A list of all the entities in the world
+	private List<Player> players = java.util.Collections.synchronizedList(new ArrayList<Player>()); // A list of all the players in the world
 	private List<Entity> entitiesToAdd = new ArrayList<Entity>(); /// entites that will be added to the level on next tick are stored here. This is for the sake of multithreading optimization. (hopefully)
 	private List<Entity> entitiesToRemove = new ArrayList<Entity>(); /// entites that will be removed from the level on next tick are stored here. This is for the sake of multithreading optimization. (hopefully)
 	//private List<Entity> rowSprites = new ArrayList<Entity>();

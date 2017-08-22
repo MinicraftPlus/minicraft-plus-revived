@@ -148,7 +148,7 @@ public class Save {
 	public void writeGame(String filename) {
 		data.add(String.valueOf(Game.VERSION));
 		data.add(String.valueOf(Game.tickCount));
-		data.add(String.valueOf(game.gameTime));
+		data.add(String.valueOf(Game.gameTime));
 		data.add(String.valueOf(OptionsMenu.diff));
 		data.add(String.valueOf(AirWizard.beaten));
 		writeToFile(location + filename + extension, data);
@@ -309,7 +309,7 @@ public class Save {
 			Chest chest = (Chest)e;
 			
 			for(int ii = 0; ii < chest.inventory.invSize(); ii++) {
-				Item item = (Item)chest.inventory.get(ii);
+				Item item = chest.inventory.get(ii);
 				extradata += ":" + item.name;
 				if(item instanceof StackableItem)
 					extradata += ";" + chest.inventory.count(item);

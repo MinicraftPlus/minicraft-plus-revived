@@ -101,7 +101,7 @@ public class Creeper extends EnemyMob {
 		else
 			super.lvlcols[lvl-1] = Creeper.lvlcols[lvl-1];
 		
-		this.sprites[0] = walkDist == 0 ? standing : walking;
+		sprites[0] = walkDist == 0 ? standing : walking;
 		
 		super.render(screen);
 	}

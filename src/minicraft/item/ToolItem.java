@@ -128,9 +128,7 @@ public class ToolItem extends Item {
 	public boolean matches(Item item) {
 		if (item instanceof ToolItem) {
 			ToolItem other = (ToolItem) item;
-			if (other.type != type) return false;
-			if (other.level != level) return false;
-			return true;
+			return other.type == type && other.level == level;
 		}
 		return false;
 	}

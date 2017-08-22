@@ -20,7 +20,7 @@ public class OreTile extends Tile {
 	private Sprite sprite;
 	private OreType type;
 	
-	public static enum OreType {
+	public enum OreType {
         Iron (Items.get("Iron Ore"), Color.get(-1, 100, 322, 544)),
 		Lapis (Items.get("Lapis"), Color.get(-1, 005, 115, 115)),
 		Gold (Items.get("Gold Ore"), Color.get(-1, 110, 440, 553)),
@@ -29,7 +29,7 @@ public class OreTile extends Tile {
 		private Item drop;
 		public final int color;
 		
-		private OreType(Item drop, int color) {
+		OreType(Item drop, int color) {
 			this.drop = drop;
 			this.color = color;
 		}
