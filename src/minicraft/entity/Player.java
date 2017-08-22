@@ -584,7 +584,7 @@ public class Player extends Mob {
 		List<Entity> entities = level.getEntitiesInRect(x0, y0, x1, y1);
 		for (int i = 0; i < entities.size(); i++) {
 			Entity e = entities.get(i);
-			if ( e != this && e.interact(this, activeItem, attackDir) ) return true;
+			if ( e != this && e.interact(this, activeItem, attackDir) ) return true; // this is the ONLY place that the Entity.interact method is actually called.
 		}
 		return false;
 	}
