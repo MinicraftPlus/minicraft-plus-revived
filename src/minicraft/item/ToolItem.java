@@ -5,7 +5,6 @@ import java.util.Random;
 import minicraft.entity.Entity;
 import minicraft.entity.Mob;
 import minicraft.entity.Player;
-import minicraft.entity.Spawner;
 import minicraft.gfx.Color;
 import minicraft.gfx.Sprite;
 import minicraft.level.Level;
@@ -65,7 +64,7 @@ public class ToolItem extends Item {
 	}
 	
 	private static int getColor(ToolType type, int level) {
-		int col = 0;
+		int col;
 		if (type == ToolType.Bow)
 			col = BOW_COLORS[level];
 		else if(type == ToolType.FishingRod)

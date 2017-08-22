@@ -51,15 +51,13 @@ public class ModeMenu extends Menu {
 			for(String time: times)
 				timeMap.put(time, getScoreTime(time));
 			
-			Collections.sort(times, new Comparator<String>() {
-				public int compare(String t1, String t2) {
-					if (timeMap.get(t1) > timeMap.get(t2))
-						return 1;
-					else if (timeMap.get(t1) < timeMap.get(t2))
-						return -1;
-					
-					return 0;
-				}
+			times.sort((t1, t2) -> {
+				if (timeMap.get(t1) > timeMap.get(t2))
+					return 1;
+				else if (timeMap.get(t1) < timeMap.get(t2))
+					return -1;
+				
+				return 0;
 			});
 		}
 	}

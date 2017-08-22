@@ -12,7 +12,7 @@ public class InventoryMenu extends ScrollingMenu {
 	protected Inventory inv;
 	protected String title;
 	
-	private static final List<String> getItemList(Inventory inv) {
+	private static List<String> getItemList(Inventory inv) {
 		List<Item> items = inv.getItems();
 		List<String> itemNames = new ArrayList<String>();
 		// to make space for the item icon.
@@ -49,7 +49,7 @@ public class InventoryMenu extends ScrollingMenu {
 		options.set(selected, getItemDisplayName(inv.get(selected)));
 	}
 	
-	private static final String getItemDisplayName(Item i) {
+	private static String getItemDisplayName(Item i) {
 		String extra = "";
 		if(i instanceof StackableItem) {
 			StackableItem stack = (StackableItem) i;

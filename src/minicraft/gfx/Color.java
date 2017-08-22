@@ -67,8 +67,7 @@ public class Color {
 		if (green < 50 && green != 0) green = 50;
 		if (blue < 50 && blue != 0) blue = 50;
 		
-		int rgb = red / 50 * 100 + green / 50 * 10 + blue / 50;
-		return rgb;
+		return red / 50 * 100 + green / 50 * 10 + blue / 50;
 	}
 	
 	/** This method darkens or lightens a color (0 to 216 value) by the specified amount. */

@@ -40,8 +40,7 @@ public class Screen {
 	}
 	
 	public void render(int[] pixelColors) {
-		for(int i = 0; i < Math.min(pixelColors.length, pixels.length); i++)
-			pixels[i] = pixelColors[i];
+		System.arraycopy(pixelColors, 0, pixels, 0, Math.min(pixelColors.length, pixels.length));
 	}
 	
 	/** Renders an object from the sprite sheet based on screen coordinates, tile (SpriteSheet location), colors, and bits (for mirroring). I believe that xp and yp refer to the desired position of the upper-left-most pixel. */

@@ -116,8 +116,8 @@ public class WonMenu extends Menu {
 		Font.draw("<Bonuses>", screen, 16, 8*8, Color.get(-1, 040));
 		int i = 0;
 		for(String bonus: scores.keySet().toArray(new String[0])) {
-			String label = bonus+"s: ";
-			while(label.length() < ml+3) label += " ";
+			StringBuilder label = new StringBuilder(bonus + "s: ");
+			while(label.length() < ml+3) label.append(" ");
 			Font.draw(label+"+"+scores.get(bonus), screen, 16, (10+(i++))*8, Color.get(-1, 550));
 		}
 		

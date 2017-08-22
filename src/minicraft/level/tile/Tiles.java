@@ -182,9 +182,9 @@ public final class Tiles {
 			name = name.substring(6); // cuts off torch prefix.
 		}
 		
-		String data = "";
+		//String data = "";
 		if(name.contains("_")) {
-			data = name.substring(name.indexOf("_")+1);
+			//data = name.substring(name.indexOf("_")+1);
 			name = name.substring(0, name.indexOf("_"));
 		}
 		
@@ -231,7 +231,7 @@ public final class Tiles {
 	
 	public static String getName(String descriptName) {
 		if(!descriptName.contains("_")) return descriptName;
-		int data = 0;
+		int data;
 		String[] parts = descriptName.split("_");
 		descriptName = parts[0];
 		data = Integer.parseInt(parts[1]);

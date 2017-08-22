@@ -43,8 +43,8 @@ public class MinicraftClient extends MinicraftConnection {
 	private HashMap<Integer, Long> entityRequests = new HashMap<Integer, Long>();
 	
 	private static Socket openSocket(String hostName, MultiplayerMenu menu) {
-		InetAddress hostAddress = null;
-		Socket socket = null;
+		InetAddress hostAddress;
+		Socket socket;
 		
 		try {
 			hostAddress = InetAddress.getByName(hostName);
@@ -394,9 +394,9 @@ public class MinicraftClient extends MinicraftConnection {
 			
 			case INTERACT:
 				// the server went through with the interaction, and has sent back the new activeItem.
-				Item holdItem = Items.get(alldata);
+				//Item holdItem = Items.get(alldata);
 				//if(Game.debug) System.out.println("CLIENT: received interaction success; setting player item to " + holdItem);
-				game.player.activeItem = holdItem;
+				game.player.activeItem = Items.get(alldata);
 				game.player.resolveHeldItem();
 				return true;
 			

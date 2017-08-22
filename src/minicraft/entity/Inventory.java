@@ -3,7 +3,7 @@ package minicraft.entity;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
-import minicraft.Game;
+
 import minicraft.item.FurnitureItem;
 import minicraft.item.Item;
 import minicraft.item.Items;
@@ -207,7 +207,7 @@ public class Inventory {
 			removeItems(i.clone(), 1);
 		/// the clone is so that the item reference is not damaged, since in this case, it never really needs to be altered.
 		//if (Game.debug) System.out.println("end item: " + i + "; save = " + save);
-		i = save;
+		//i = save;
 	}
 	/** removes items from this inventory. Note, if passed a stackable item, this will only remove a max of count from the stack. */
 	public void removeItems(Item given, int count) {
@@ -274,14 +274,14 @@ public class Inventory {
 	}
 	
 	public String getItemData() {
-		String itemdata = "";
+		StringBuilder itemdata = new StringBuilder();
 		for(Item i: items)
-			itemdata += i.getData()+":";
+			itemdata.append(i.getData()).append(":");
 		
 		if(itemdata.length() > 0)
-			itemdata = itemdata.substring(0, itemdata.length()-1); //remove extra ",".
+			itemdata = new StringBuilder(itemdata.substring(0, itemdata.length() - 1)); //remove extra ",".
 		
-		return itemdata;
+		return itemdata.toString();
 	}
 	
 	public void updateInv(String items) {

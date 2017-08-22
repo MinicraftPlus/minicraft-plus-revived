@@ -24,7 +24,7 @@ public class PlayerInfoMenu extends Menu {
 		minutes %= 60;
 		seconds %= 60;
 		
-		String timeString = "";
+		String timeString;
 		if (hours > 0) {
 			timeString = hours + "h" + (minutes < 10 ? "0" : "") + minutes + "m";
 		} else {
@@ -43,12 +43,12 @@ public class PlayerInfoMenu extends Menu {
 			String[] split = stats.get(i).split(":");
 			Font.draw(split[0]+":", screen, 2*8, (4+i)*8, Color.get(-1, 555));
 			if(split.length==1) continue;
-			String data = split[1];
+			StringBuilder data = new StringBuilder(split[1]);
 			if(split.length > 2) {
 				for(int idx = 2; idx < split.length; idx++)
-					data += ":"+split[idx];
+					data.append(":").append(split[idx]);
 			}
-			Font.draw(data, screen, 2*8 + Font.textWidth(split[0]+":"), (4+i)*8, Color.get(-1, 550));
+			Font.draw(data.toString(), screen, 2*8 + Font.textWidth(split[0]+":"), (4+i)*8, Color.get(-1, 550));
 		}
 		
 		int y = 4 + stats.size();

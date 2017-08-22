@@ -170,7 +170,7 @@ public class Load {
 		// the returned value of this method (-1, 0, or 1) is determined by whether this object is less than, equal to, or greater than the specified object.
 		public int compareTo(Object other) throws NullPointerException, ClassCastException {
 			if(other == null) throw new NullPointerException();
-			if(other instanceof Version == false) { // if the passed object is not a Version...
+			if(!(other instanceof Version)) { // if the passed object is not a Version...
 				throw new ClassCastException("Cannot compare type Version with type " + other.getClass().getTypeName());
 			}
 			Version ov = (Version)other;
@@ -219,25 +219,25 @@ public class Load {
 	}
 	
 	public static String loadFromFile(String filename, boolean isWorldSave) throws IOException {
-		String total = "";
+		StringBuilder total = new StringBuilder();
 		
 		try (BufferedReader br = new BufferedReader(new FileReader(filename))) {
 			
 			String curLine;
 			//ArrayList<String> curData;
 			while((curLine = br.readLine()) != null)
-				total += curLine + (isWorldSave?"":"\n");
+				total.append(curLine).append(isWorldSave ? "" : "\n");
 			
 			/*if(worldVer != null && worldVer.compareTo(new Version("1.9.4-dev6")) >= 0 && filename.contains("Level") && !filename.contains("Data")) {
 				total = new String(Base64.getDecoder().decode(total));
 			}*/
 			
-		} catch (IOException ex) {
-			/*if(br != null) {
+		}/* catch (IOException ex) {
+			*//*if(br != null) {
 				br.close();
-			}*/
+			}*//*
 			throw ex;
-		}/* finally {
+		}*//* finally {
 			try {
 				
 			} catch (IOException ex) {
@@ -245,7 +245,7 @@ public class Load {
 			}
 		}*/
 		
-		return total;
+		return total.toString();
 	}
 	
 	public void loadUnlocks(String filename) {
@@ -632,7 +632,7 @@ public class Load {
 				return null; // don't load them; in fact, they shouldn't be here.
 			}
 			String username = info.get(2);
-			java.net.InetAddress ip = null;
+			java.net.InetAddress ip;
 			try {
 				ip = java.net.InetAddress.getByName(info.get(3));
 				int port = Integer.parseInt(info.get(4));

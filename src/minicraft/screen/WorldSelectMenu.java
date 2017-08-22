@@ -14,7 +14,6 @@ import minicraft.Sound;
 import minicraft.gfx.Color;
 import minicraft.gfx.Font;
 import minicraft.gfx.Screen;
-import minicraft.saveload.Load;
 
 public class WorldSelectMenu extends Menu {
 	
@@ -91,7 +90,7 @@ public class WorldSelectMenu extends Menu {
 		}
 	}
 	
-	private final void loadWorlds() {
+	private void loadWorlds() {
 		//find worlds (init step):
 		worldnames = new ArrayList<String>();
 		File folder = new File(location);

@@ -33,12 +33,11 @@ public class CraftingMenu extends Menu {
 		}
 		
 		/* This sorts the recipes so that the ones you can craft will appear on top */
-		Collections.sort(this.recipes, new Comparator<Recipe>() {
-				public int compare(Recipe r1, Recipe r2) {
-					if (r1.canCraft && !r2.canCraft) return -1; // if the first item can be crafted while the second can't, the first one will go above in the list
-					if (!r1.canCraft && r2.canCraft) return 1; // if the second item can be crafted while the first can't, the second will go over that one.
-					return 0; // else don't change position
-				}
+		this.recipes.sort((r1, r2) -> {
+			if (r1.canCraft && !r2.canCraft)
+				return -1; // if the first item can be crafted while the second can't, the first one will go above in the list
+			if (!r1.canCraft && r2.canCraft) return 1; // if the second item can be crafted while the first can't, the second will go over that one.
+			return 0; // else don't change position
 		});
 	}
 
@@ -80,6 +79,7 @@ public class CraftingMenu extends Menu {
 			int yo = 5 * 8; // y coordinate of the cost item
 			for (String costname: recipe.costs.keySet().toArray(new String[0])) {
 				Item cost = Items.get(costname);
+				if(cost == null) continue;
 				cost.sprite.render(screen, xo, yo); // renders the cost item in the 'cost' window
 				
 				int has = player.inventory.count(cost); // This is the amount of the item you have in your inventory

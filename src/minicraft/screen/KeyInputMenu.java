@@ -77,9 +77,9 @@ public class KeyInputMenu extends ScrollingMenu {
 			String action = key.substring(0, key.indexOf(";"));
 			String mapping = key.substring(key.indexOf(";")+1);
 			
-			String buffer = "";
+			StringBuilder buffer = new StringBuilder();
 			for(int spaces = 0; spaces < Game.WIDTH/8 - action.length() - mapping.length(); spaces++) {
-				buffer += " ";
+				buffer.append(" ");
 			}
 			
 			actionKeys[i] = action;
@@ -92,7 +92,7 @@ public class KeyInputMenu extends ScrollingMenu {
 		
 		Font.drawCentered("Controls", screen, 0, Color.get(-1, 555));
 		
-		if(Game.debug&&false) {
+		/*if(Game.debug) {
 			System.out.println("current status:");
 			System.out.println("selected: " + selected + " of " + options.size());
 			System.out.println("disp sel: " + dispSelected + " of " + dispSize);
@@ -100,7 +100,7 @@ public class KeyInputMenu extends ScrollingMenu {
 			System.out.println("CONTENTS:");
 			for(String str: options)
 				System.out.println(str);
-		}
+		}*/
 		
 		super.render(screen);
 		

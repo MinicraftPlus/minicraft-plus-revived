@@ -339,7 +339,7 @@ public abstract class Entity {
 		StringBuilder deltas = new StringBuilder();
 		for(int i = 0; i < curUpdates.length; i++) { // b/c the string always contains the same number of pairs (and the same keys, in the same order), the indexes of cur and prev updates will be the same.
 			/// loop though each of the updates this call. If it is differnt from the last one, then add it to the list.
-			if(curUpdates[i].equals(prevUpdates[i]) == false) {
+			if(!curUpdates[i].equals(prevUpdates[i])) {
 				deltas.append(curUpdates[i]).append(";");
 				//if(Game.debug) System.out.println("found delta for "+this+"; old:\""+prevUpdates[i]+"\" -- new:\""+curUpdates[i]+"\"");
 			}

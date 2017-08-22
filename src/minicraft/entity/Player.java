@@ -697,7 +697,7 @@ public class Player extends Mob {
 		itemEntity.take(this); // calls the take() method in ItemEntity
 		if(ModeMenu.creative) return; // we shall not bother the inventory on creative mode.
 		
-		if(activeItem != null && activeItem.name == itemEntity.item.name && activeItem instanceof StackableItem && itemEntity.item instanceof StackableItem) // picked up item matches the one in your hand
+		if(activeItem != null && activeItem.name.equals(itemEntity.item.name) && activeItem instanceof StackableItem && itemEntity.item instanceof StackableItem) // picked up item matches the one in your hand
 			((StackableItem)activeItem).count += ((StackableItem)itemEntity.item).count;
 		else
 			inventory.add(itemEntity.item); // add item to inventory
@@ -748,7 +748,7 @@ public class Player extends Mob {
 
 	public void goHome() {
 		if (game.currentLevel == 3) { // if on surface
-			if (hasSetHome == true) {
+			if (hasSetHome) {
 				// move player to home coordinates
 				this.x = homeSetX;
 				this.y = homeSetY;
@@ -880,17 +880,17 @@ public class Player extends Mob {
 					healthDam++;
 				}
 			}
-		}
-		
-		// adds a text particle telling how much damage was done to the player, and the armor.
-		if(armorDam > 0) {
-			level.add(new TextParticle("" + damage, x, y, Color.get(-1, 333)));
-			if(fullPlayer) armor -= armorDam;
-			if(armor <= 0) {
-				healthDam -= armor; // adds armor damage overflow to health damage (minus b/c armor would be negative)
-				armor = 0;
-				armorDamageBuffer = 0; // ensures that new armor doesn't inherit partial breaking from this armor.
-				curArmor = null; // removes armor
+			
+			// adds a text particle telling how much damage was done to the player, and the armor.
+			if(armorDam > 0) {
+				level.add(new TextParticle("" + damage, x, y, Color.get(-1, 333)));
+				armor -= armorDam;
+				if(armor <= 0) {
+					healthDam -= armor; // adds armor damage overflow to health damage (minus b/c armor would be negative)
+					armor = 0;
+					armorDamageBuffer = 0; // ensures that new armor doesn't inherit partial breaking from this armor.
+					curArmor = null; // removes armor
+				}
 			}
 		}
 		
@@ -948,23 +948,23 @@ public class Player extends Mob {
 	
 	public String getPlayerData() {
 		List<String> datalist = new ArrayList<String>();
-		String playerdata = "";
+		StringBuilder playerdata = new StringBuilder();
 		
 		Save.writePlayer(this, datalist);
 		for(String str: datalist)
 			if(str.length() > 0)
-				playerdata += str + ",";
-		playerdata = playerdata.substring(0, playerdata.length()-1) + "\n";
+				playerdata.append(str).append(",");
+		playerdata = new StringBuilder(playerdata.substring(0, playerdata.length() - 1) + "\n");
 		
 		Save.writeInventory(this, datalist);
 		for(String str: datalist)
 			if(str.length() > 0)
-				playerdata += str + ",";
+				playerdata.append(str).append(",");
 		if(datalist.size() == 0)
-			playerdata += "null";
+			playerdata.append("null");
 		else
-			playerdata = playerdata.substring(0, playerdata.length()-1);
+			playerdata = new StringBuilder(playerdata.substring(0, playerdata.length() - 1));
 		
-		return playerdata;
+		return playerdata.toString();
 	}
 }

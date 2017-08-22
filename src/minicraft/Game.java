@@ -19,7 +19,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Random;
 import javax.imageio.ImageIO;
-import javax.swing.JFrame;
+import javax.swing.*;
+
 import minicraft.entity.Bed;
 import minicraft.entity.Entity;
 import minicraft.entity.Furniture;
@@ -222,17 +223,17 @@ public class Game extends Canvas implements Runnable {
 		if (menu != null) menu.init(this, input);
 	}
 	
-	public static final boolean isValidClient() {
+	public static boolean isValidClient() {
 		return ISONLINE && client != null;
 	}
-	public static final boolean isConnectedClient() {
+	public static boolean isConnectedClient() {
 		return isValidClient() && client.isConnected();
 	}
 	
-	public static final boolean isValidServer() {
+	public static boolean isValidServer() {
 		return ISONLINE && ISHOST && server != null;
 	}
-	public static final boolean hasConnectedClients() {
+	public static boolean hasConnectedClients() {
 		return isValidServer() && server.hasClients();
 	}
 	
@@ -790,8 +791,7 @@ public class Game extends Canvas implements Runnable {
 	public void render() {
 		if(!HAS_GUI) return; // no point in this if there's no gui... :P
 		
-		BufferStrategy bs = null;
-		bs = getBufferStrategy(); // creates a buffer strategy to determine how the graphics should be buffered.
+		BufferStrategy bs = getBufferStrategy(); // creates a buffer strategy to determine how the graphics should be buffered.
 		if (bs == null) {
 			createBufferStrategy(3); // if the buffer strategy is null, then make a new one!
 			requestFocus(); // requests the focus of the screen.
@@ -1277,7 +1277,7 @@ public class Game extends Canvas implements Runnable {
 			game.setMinimumSize(new Dimension(1, 1));
 			game.setPreferredSize(getWindowSize());
 			JFrame frame = new JFrame(Game.NAME);
-			frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+			frame.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
 			frame.setLayout(new BorderLayout()); // sets the layout of the window
 			frame.add(game, BorderLayout.CENTER); // Adds the game (which is a canvas) to the center of the screen.
 			frame.pack(); //squishes everything into the preferredSize.
@@ -1336,16 +1336,23 @@ public class Game extends Canvas implements Runnable {
 			return files;
 		} else
 			files.add(top);
-		for(File subfile: top.listFiles())
-			files.addAll(getAllFiles(subfile));
+		
+		File[] subfiles = top.listFiles();
+		if(subfiles != null)
+			for(File subfile: subfiles)
+				files.addAll(getAllFiles(subfile));
 		
 		return files;
 	}
 	
 	private static void deleteAllFiles(File top) {
-		if(top.isDirectory())
-			for(File subfile: top.listFiles())
-				deleteAllFiles(subfile);
+		if(top.isDirectory()) {
+			File[] subfiles = top.listFiles();
+			if(subfiles != null)
+				for (File subfile : subfiles)
+					deleteAllFiles(subfile);
+		}
+		//noinspection ResultOfMethodCallIgnored
 		top.delete();
 	}
 	
@@ -1361,7 +1368,7 @@ public class Game extends Canvas implements Runnable {
 		final java.io.ByteArrayOutputStream bytestream = new java.io.ByteArrayOutputStream();
 		final java.io.PrintStream printStream = new java.io.PrintStream(bytestream);
 		throwable.printStackTrace(printStream);
-		String exceptionStr = "";
+		String exceptionStr;
 		try {
 			exceptionStr = bytestream.toString("UTF-8");
 		}

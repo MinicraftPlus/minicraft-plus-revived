@@ -30,12 +30,11 @@ public class Sound {
 	public void play() {
 		if (!OptionsMenu.isSoundAct) return;
 		try {
-			new Thread() { //creates a naew thread (string of events)
-				public void run() {
-					//if (OptionsMenu.isSoundAct)
-					clip.play(); // plays the sound clip when called
-				}
-			}.start(); //runs the thread
+			//creates a naew thread (string of events)
+			new Thread(() -> {
+				//if (OptionsMenu.isSoundAct)
+				clip.play(); // plays the sound clip when called
+			}).start(); //runs the thread
 		} catch (Throwable e) {
 			e.printStackTrace();
 		}

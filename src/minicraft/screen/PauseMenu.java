@@ -17,7 +17,7 @@ public class PauseMenu extends SelectMenu {
 	private static final List<String> alloptions = Arrays.asList("Return to Game", "Options", "Change Key Bindings", "Make World Multiplayer", "Save Game", "Load Game", "Main Menu");
 	//private List<String> options = new ArrayList<String>();
 	
-	private static final List<String> getOptions() {
+	private static List<String> getOptions() {
 		List<String> options = new ArrayList<String>();
 		options.addAll(alloptions);
 		
@@ -101,18 +101,23 @@ public class PauseMenu extends SelectMenu {
 			String selection = options.get(this.selection);
 			int msgColor = Color.get(-1, 500);
 			
-			if (selection.equals("Save Game")) {// save game
-				msgColor = Color.get(-1, 333);
-				confirmDialog.addAll(Arrays.asList(Font.getLines("Save Game?\n\n\nTip: press \"R\" to save in-game", 28*8, 18*8, 2)));
-			} else if (selection.equals("Load Game")) {// load game
-				msgColor = Color.get(-1, 500);
-				confirmDialog.addAll(Arrays.asList(Font.getLines("Load Game?\nUnsaved progress\nwill be lost", 28*8, 18*8, 2)));
-			} else if (selection.equals("Make World Multiplayer")) { // make world multiplayer
-				msgColor = Color.get(-1, 440);
-				confirmDialog.addAll(Arrays.asList(Font.getLines("Start Server?\n\nBe sure to\nsave first!", 28*8, 18*8, 2)));
-			} else if (selection.equals("Main Menu")) {// back to menu
-				msgColor = Color.get(-1, 500);
-				confirmDialog.addAll(Arrays.asList(Font.getLines("Back to Main Menu?\nUnsaved progress\nwill be lost", 28*8, 18*8, 2)));
+			switch (selection) {
+				case "Save Game": // save game
+					msgColor = Color.get(-1, 333);
+					confirmDialog.addAll(Arrays.asList(Font.getLines("Save Game?\n\n\nTip: press \"R\" to save in-game", 28 * 8, 18 * 8, 2)));
+					break;
+				case "Load Game": // load game
+					msgColor = Color.get(-1, 500);
+					confirmDialog.addAll(Arrays.asList(Font.getLines("Load Game?\nUnsaved progress\nwill be lost", 28 * 8, 18 * 8, 2)));
+					break;
+				case "Make World Multiplayer":  // make world multiplayer
+					msgColor = Color.get(-1, 440);
+					confirmDialog.addAll(Arrays.asList(Font.getLines("Start Server?\n\nBe sure to\nsave first!", 28 * 8, 18 * 8, 2)));
+					break;
+				case "Main Menu": // back to menu
+					msgColor = Color.get(-1, 500);
+					confirmDialog.addAll(Arrays.asList(Font.getLines("Back to Main Menu?\nUnsaved progress\nwill be lost", 28 * 8, 18 * 8, 2)));
+					break;
 			}
 			for(int i = 0; i < confirmDialog.size(); i++) { // draws each line from above; the first line is white, and all the following lines are color msgColor.
 				int col = i == 0 ? Color.get(-1, 555) : msgColor;

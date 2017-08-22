@@ -58,7 +58,7 @@ public abstract class MinicraftConnection extends Thread implements MinicraftPro
 			if(read > 0) { // if it is valid character that is not the null character, then add it to the string.
 				currentData.append( (char)read );
 			}
-			else if(read == 0 && currentData.length() > 0) { // read MUST equal 0 at this point, aka a null character; the if statement makes it ignore sequential null characters.
+			else if(currentData.length() > 0) { // read MUST equal 0 at this point, aka a null character; the if statement makes it ignore sequential null characters.
 				
 				//if (Game.debug) System.out.println(this + " completed data packet: " + currentData);
 				

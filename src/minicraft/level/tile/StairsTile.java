@@ -27,7 +27,7 @@ public class StairsTile extends Tile {
 	}
 	
 	public void render(Screen screen, Level level, int x, int y) {
-		int col = 0;
+		int col;
 		if (level.depth < 0)
 			col = Color.get(getDirtColor(level.depth), 000, 333, 444);
 		else

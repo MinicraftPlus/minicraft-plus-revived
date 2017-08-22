@@ -2,7 +2,6 @@ package minicraft.entity;
 
 import java.util.Random;
 
-import minicraft.Game;
 import minicraft.Sound;
 import minicraft.entity.particle.FireParticle;
 import minicraft.entity.particle.TextParticle;
@@ -28,7 +27,7 @@ public class Spawner extends Furniture {
 	private int health, lvl, maxMobLevel;
 	private int spawnTick;
 	
-	private final void initMob(MobAi m) {
+	private void initMob(MobAi m) {
 		mob = m;
 		sprite.color = col = mob.col;
 		
@@ -78,9 +77,10 @@ public class Spawner extends Furniture {
 		
 		if(xd * xd + yd * yd > ACTIVE_RADIUS * ACTIVE_RADIUS) return;
 		
-		MobAi newmob = null;
+		MobAi newmob;
 		try {
 			if(mob instanceof EnemyMob)
+				//noinspection JavaReflectionMemberAccess
 				newmob = mob.getClass().getConstructor(int.class).newInstance(((EnemyMob)mob).lvl);
 			else
 				newmob = mob.getClass().newInstance();
@@ -152,6 +152,7 @@ public class Spawner extends Furniture {
 		return false;
 	}
 	
+	@SuppressWarnings("JavaReflectionMemberAccess")
 	public void hurt(Mob attacker, int dmg, int attackDir) {
 		if(attacker instanceof Player && ModeMenu.creative && mob instanceof EnemyMob) {
 			lvl++;

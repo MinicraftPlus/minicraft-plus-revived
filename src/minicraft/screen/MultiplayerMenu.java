@@ -8,7 +8,6 @@ import com.mashape.unirest.http.JsonNode;
 import com.mashape.unirest.http.Unirest;
 import com.mashape.unirest.http.async.Callback;
 import com.mashape.unirest.http.exceptions.UnirestException;
-import com.sun.org.apache.xpath.internal.operations.Mult;
 import minicraft.Game;
 import minicraft.gfx.Color;
 import minicraft.gfx.Font;
@@ -301,6 +300,7 @@ public class MultiplayerMenu extends Menu {
 				
 				msg = typing;
 				if(!typingEmail)
+					//noinspection ReplaceAllDot
 					msg = msg.replaceAll(".", ".");
 				Font.drawCentered(msg, screen, Screen.h/2+6, (inputIsValid?Color.get(-1, 444):Color.get(-1, 500)));
 				if(!inputIsValid) {

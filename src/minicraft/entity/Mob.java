@@ -2,7 +2,6 @@ package minicraft.entity;
 
 import java.util.List;
 import minicraft.Game;
-import minicraft.Sound;
 import minicraft.entity.particle.TextParticle;
 import minicraft.gfx.Color;
 import minicraft.gfx.MobSprite;
@@ -49,7 +48,7 @@ public abstract class Mob extends Entity {
 		boolean moved = false;
 		/// These 4 following conditionals check the direction of the knockback, move the Mob accordingly, and bring knockback closer to 0.
 		if (xKnockback < 0) { // If we have negative horizontal knockback (to the left)
-			moved = moved || move2(-1, 0); // Move to the left 1 pixel
+			moved = move2(-1, 0); // Move to the left 1 pixel
 			xKnockback++; // And increase the knockback by 1 so it is gradually closer to 0, and this will stop being called
 		}
 		if (xKnockback > 0) { // knocked to the right

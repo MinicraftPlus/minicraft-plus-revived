@@ -208,23 +208,23 @@ private static final String[] options = {"New game", "Join Online World", "Instr
 		
 		if (input.getKey("r").clicked) rand = random.nextInt(splashes.length);
 		
-		if (reverse == false) {
+		if (!reverse) {
 			count++;
 			if (count == 25) reverse = true;
-		} else if (reverse == true) {
+		} else {
 			count--;
 			if (count == 0) reverse = false;
 		}
 		
 		if (input.getKey("select").clicked) {
-			if (options[selected] == "New game") {
+			if (options[selected].equals("New game")) {
 				WorldSelectMenu.loadworld = false;
 				game.setMenu(new WorldSelectMenu());
 				//(this method should now stop getting called by Game)
 			}
 			if(options[selected].contains("Join Online")) game.setMenu(new MultiplayerMenu());
-			if(options[selected] == "Instructions") game.setMenu(new InstructionsMenu(this));
-			if (options[selected] == "Tutorial") {
+			if(options[selected].equals("Instructions")) game.setMenu(new InstructionsMenu(this));
+			if (options[selected].equals("Tutorial")) {
 				try {
 					//This is for the tutorial Video
 					String url = "http://minicraftplus.webs.com/Tutorial.htm";
@@ -233,11 +233,11 @@ private static final String[] options = {"New game", "Join Online World", "Instr
 					if(minicraft.Game.debug) System.out.println(e.getMessage());
 				}
 			}
-			if (options[selected] == "Options") game.setMenu(new OptionsMenu(this));
-			if (options[selected] == "Change Key Bindings") game.setMenu(new KeyInputMenu(this));
-			if (options[selected] == "About") game.setMenu(new AboutMenu(this));
-			if (options[selected] == "Quit") System.exit(0);//game.quit();
-			//if (options[selected] == "Kill") {game.levels[currentLevel].add(game.player); game.setMenu(null);}
+			if (options[selected].equals("Options")) game.setMenu(new OptionsMenu(this));
+			if (options[selected].equals("Change Key Bindings")) game.setMenu(new KeyInputMenu(this));
+			if (options[selected].equals("About")) game.setMenu(new AboutMenu(this));
+			if (options[selected].equals("Quit")) System.exit(0);//game.quit();
+			//if (options[selected].equals("Kill")) {game.levels[currentLevel].add(game.player); game.setMenu(null);}
 		}
 	}
 	

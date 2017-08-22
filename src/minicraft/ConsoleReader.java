@@ -5,7 +5,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Scanner;
 import java.util.Locale;
-import minicraft.entity.Player;
+
 import minicraft.entity.RemotePlayer;
 import minicraft.network.MinicraftServerThread;
 import minicraft.level.Level;
@@ -213,8 +213,7 @@ class ConsoleReader extends Thread {
 				}
 				List<String> usernames = new ArrayList<String>();
 				if(args.length > 1) {
-					for(int i = 0; i < args.length-1; i++)
-						usernames.add(args[i]);
+					usernames.addAll(Arrays.asList(args).subList(0, args.length - 1));
 				} else {
 					Game.server.broadcastNotification(args[0], 50);
 					return;
@@ -300,7 +299,6 @@ class ConsoleReader extends Thread {
 					System.out.println("teleported player " + playerToMove.getUsername() + " to tile coordinates " + xt+","+yt+", on level " + level.depth);
 				} else {
 					System.out.println("could not perform teleport; coordinates are not valid.");
-					return;
 				}
 			}
 		};

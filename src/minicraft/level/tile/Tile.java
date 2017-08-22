@@ -74,7 +74,7 @@ public abstract class Tile {
 	//public abstract void updateSprite();
 	
 	public int getConnectColor(Level level) {
-		int scolor = 0;
+		int scolor;
 		if(sprite != null)
 			scolor = sprite.color;
 		else if(csprite != null)
@@ -134,7 +134,7 @@ public abstract class Tile {
 	}
 	
 	public boolean matches(Tile other) {
-		return name == other.name;
+		return name.equals(other.name);
 	}
 	
 	public boolean matches(int thisData, String otherTile) {
@@ -155,8 +155,7 @@ public abstract class Tile {
 			int tiledata = curLevel.data[pos];
 			
 			return lvlidx+";"+pos+";"+tileid+";"+tiledata;
-		} catch(NullPointerException ex) {
-		} catch(IndexOutOfBoundsException ex) {
+		} catch(NullPointerException | IndexOutOfBoundsException ex) {
 		}
 		
 		return "";

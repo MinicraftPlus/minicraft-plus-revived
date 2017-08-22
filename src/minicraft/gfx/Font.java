@@ -92,9 +92,10 @@ public class Font {
 		ArrayList<String> lines = new ArrayList<String>();
 		int curPos = 0, curY = 0;
 		while(curPos < para.length() && curY < h) { // continue until we run out of characters, or lines.
-			String line = "", nextWord = "";
-			while(textWidth(line) + textWidth(nextWord) <= w) { // if the next word will fit...
-				line += nextWord; // append it to the line
+			StringBuilder line = new StringBuilder();
+			StringBuilder nextWord = new StringBuilder();
+			while(textWidth(line.toString()) + textWidth(nextWord.toString()) <= w) { // if the next word will fit...
+				line.append(nextWord); // append it to the line
 				curPos += nextWord.length(); // advance past the word (including space)
 				if(curPos >= para.length()) {
 					//System.out.println("no more chars");
@@ -106,18 +107,18 @@ public class Font {
 					break;
 				}
 				
-				nextWord = line.equals("")?"":" "; // space this word from the previous word, if there is one.
+				nextWord = new StringBuilder(line.length() == 0 ? "" : " "); // space this word from the previous word, if there is one.
 				StringCharacterIterator text = new StringCharacterIterator(para, curPos);
 				for(char c = text.current(); c != StringCharacterIterator.DONE && c != ' ' && c != '\n'; c = text.next()) {
-					nextWord += String.valueOf(c); // iterate through text from curPos, until the end of the text, or a space, or special char.
+					nextWord.append(String.valueOf(c)); // iterate through text from curPos, until the end of the text, or a space, or special char.
 				}
 				if(text.current() != ' ' && curPos+nextWord.length() < para.length())
 					curPos--; // if we didn't end on a space, and this is going to loop again, then take away one from curPos (b/c we are adding a space that wasn't there before, and so without this we would skip a character).
-				if(text.current() == ' ' && line.equals(""))
+				if(text.current() == ' ' && line.length() == 0)
 					curPos++; // if we ended on a space, advance past the space.
 			}
 			//System.out.println("adding line " + line);
-			lines.add(line); // add the finished line to the list
+			lines.add(line.toString()); // add the finished line to the list
 			curY += textHeight() + lineSpacing; // move the y position down one line.
 		}
 		

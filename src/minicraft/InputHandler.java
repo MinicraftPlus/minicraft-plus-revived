@@ -97,7 +97,7 @@ public class InputHandler implements MouseListener, KeyListener {
 		this.game = game;
 	}
 	
-	private final void initKeyMap() {
+	private void initKeyMap() {
 		keymap.put("UP", "UP|W"); //up action references up arrow key
 		keymap.put("DOWN", "DOWN|S"); //move down action references down arrow key
 		keymap.put("LEFT", "LEFT|A"); //move left action references left arrow key

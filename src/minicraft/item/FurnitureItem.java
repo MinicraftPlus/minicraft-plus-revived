@@ -43,7 +43,7 @@ public class FurnitureItem extends Item {
 	public Furniture furniture; // the furniture of this item
 	public boolean placed; // value if the furniture has been placed or not.
 	
-	private static final int getSpritePos(int fpos) {
+	private static int getSpritePos(int fpos) {
 		int x = fpos%32;
 		int y = fpos/32;
 		return (x/2) + (y+2)*32;

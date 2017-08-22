@@ -79,19 +79,19 @@ public class LegacyLoad {
 		try {
 			br = new BufferedReader(new FileReader(filename));
 			
-			String curLine, total = "";
+			String curLine;StringBuilder total = new StringBuilder();
 			ArrayList<String> curData;
 			while((curLine = br.readLine()) != null)
-				total += curLine;
-			data.addAll(Arrays.asList(total.split(",")));
+				total.append(curLine);
+			data.addAll(Arrays.asList(total.toString().split(",")));
 			
 			if(filename.contains("Level")) {
-				total = "";
+				total = new StringBuilder();
 				br2 = new BufferedReader(new FileReader(filename.substring(0, filename.lastIndexOf("/") + 7) + "data" + extension));
 				
 				while((curLine = br2.readLine()) != null)
-					total += curLine;
-				extradata.addAll(Arrays.asList(total.split(",")));
+					total.append(curLine);
+				extradata.addAll(Arrays.asList(total.toString().split(",")));
 			}
 		} catch (IOException ex) {
 			ex.printStackTrace();

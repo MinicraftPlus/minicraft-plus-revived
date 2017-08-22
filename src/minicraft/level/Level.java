@@ -29,7 +29,7 @@ public class Level {
 	
 	public byte[] tiles; // an array of all the tiles in the world.
 	public byte[] data; // an array of the data of the tiles in the world. // ?
-	private List<Entity>[] entitiesInTiles; // An array of lists of entities in the world, by tile
+	//private List<Entity>[] entitiesInTiles; // An array of lists of entities in the world, by tile
 	
 	public int grassColor = 141;
 	//public int dirtColor = 322;
@@ -49,13 +49,12 @@ public class Level {
 	private List<Player> players = java.util.Collections.synchronizedList(new ArrayList<Player>()); // A list of all the players in the world
 	private List<Entity> entitiesToAdd = new ArrayList<Entity>(); /// entites that will be added to the level on next tick are stored here. This is for the sake of multithreading optimization. (hopefully)
 	private List<Entity> entitiesToRemove = new ArrayList<Entity>(); /// entites that will be removed from the level on next tick are stored here. This is for the sake of multithreading optimization. (hopefully)
+	// creates a sorter for all the entities to be rendered.
 	//private List<Entity> rowSprites = new ArrayList<Entity>();
-	private Comparator<Entity> spriteSorter = new Comparator<Entity>() { // creates a sorter for all the entities to be rendered.
-		public int compare(Entity e0, Entity e1) { // compares 2 entities
-			if (e1.y < e0.y) return +1; // If the y position of the first entity is less (higher up) than the second entity, then it will be moved up in sorting.
-			if (e1.y > e0.y) return -1; // If the y position of the first entity is more (lower) than the second entity, then it will be moved down in sorting.
-			return 0; // ends the method
-		}
+	private Comparator<Entity> spriteSorter = (e0, e1) -> { // compares 2 entities
+		if (e1.y < e0.y) return +1; // If the y position of the first entity is less (higher up) than the second entity, then it will be moved up in sorting.
+		if (e1.y > e0.y) return -1; // If the y position of the first entity is more (lower) than the second entity, then it will be moved down in sorting.
+		return 0; // ends the method
 	};
 	
 	/// This is a solely debug method I made, to make printing repetetive stuff easier.
@@ -106,10 +105,10 @@ public class Level {
 		byte[][] maps; // multidimensional array (an array within a array), used for the map
 		int saveTile;
 		
-		entitiesInTiles = new ArrayList[w * h]; // This is actually an array of arrayLists (of entities), with one arraylist per tile.
+		/*entitiesInTiles = new ArrayList[w * h]; // This is actually an array of arrayLists (of entities), with one arraylist per tile.
 		for (int i = 0; i < w * h; i++) {
 			entitiesInTiles[i] = new ArrayList<Entity>(); // Adds a entity list in that tile.
-		}
+		}*/
 		
 		if(level != -4 && level != 0)
 			monsterDensity = 4;
@@ -136,6 +135,10 @@ public class Level {
 			monsterDensity = 4;
 		}*/
 		maps = LevelGen.createAndValidateMap(w, h, level);
+		if(maps == null) {
+			System.err.println("Level Gen ERROR: returned maps array is null");
+			return;
+		}
 		
 		tiles = maps[0]; // assigns the tiles in the map
 		data = maps[1]; // assigns the data of the tiles
@@ -262,7 +265,7 @@ public class Level {
 									d.y = y2 * 16 - 24;
 								}
 							}
-						} else if (!xaxis) {
+						} else { // y axis
 							for (int s = y2; s < y2 - s; s++) {
 								if (getTile(x2, s) == Tiles.get("Obsidian Wall")) {
 									d.x = x2 * 16 - 24;
@@ -287,7 +290,7 @@ public class Level {
 		if (level < 0) {
 			for (int i = 0; i < 18 / -level * (w / 128); i++) {
 				/// for generating spawner dungeons
-				MobAi m = null;
+				MobAi m;
 				int r = random.nextInt(5);
 				if (r == 1) {
 					m = new Skeleton(-level);
@@ -612,7 +615,7 @@ public class Level {
 	}
 	
 	private void sortAndRender(Screen screen, List<Entity> list) {
-		Collections.sort(list, spriteSorter);
+		list.sort(spriteSorter);
 		for (int i = 0; i < list.size(); i++) {
 			Entity e = list.get(i);
 			if(e.getLevel() == this && !e.isRemoved())

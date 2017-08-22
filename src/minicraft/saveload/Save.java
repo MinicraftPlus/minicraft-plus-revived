@@ -5,6 +5,7 @@ import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import minicraft.Game;
 import minicraft.entity.*;
@@ -129,9 +130,9 @@ public class Save {
 				} else
 					bufferedWriter.write("\n");
 			}
-		} catch (IOException ex) {
+		}/* catch (IOException ex) {
 			throw ex;
-		}/* finally {
+		}*//* finally {
 			try {
 				if(bufferedWriter != null) {
 					
@@ -163,8 +164,7 @@ public class Save {
 		data.add(MultiplayerMenu.savedUsername);
 		
 		List<String> keyPairs = new ArrayList<String>();
-		for(String keyPref: game.input.getKeyPrefs())
-			keyPairs.add(keyPref);
+		Collections.addAll(keyPairs, game.input.getKeyPrefs());
 		
 		data.add(String.join(":", keyPairs.toArray(new String[0])));
 		
@@ -224,15 +224,15 @@ public class Save {
 		data.add(String.valueOf(player.game.currentLevel));
 		data.add(ModeMenu.mode + (ModeMenu.score?";"+Game.scoreTime+";"+ModeMenu.getSelectedTime():""));
 		
-		String subdata = "PotionEffects[";
+		StringBuilder subdata = new StringBuilder("PotionEffects[");
 		
 		for(java.util.Map.Entry<PotionType, Integer> potion: player.potioneffects.entrySet())
-			subdata += potion.getKey() + ";" + potion.getValue() + ":";
+			subdata.append(potion.getKey()).append(";").append(potion.getValue()).append(":");
 		
 		if(player.potioneffects.size() > 0)
-			subdata = subdata.substring(0, subdata.length()-(1))+"]"; // cuts off extra ":" and appends "]"
-		else subdata += "]";
-		data.add(subdata);
+			subdata = new StringBuilder(subdata.substring(0, subdata.length() - (1)) + "]"); // cuts off extra ":" and appends "]"
+		else subdata.append("]");
+		data.add(subdata.toString());
 		
 		data.add(String.valueOf(player.shirtColor));
 		data.add(String.valueOf(player.skinon));
@@ -282,7 +282,7 @@ public class Save {
 	public static String writeEntity(Entity e, boolean isLocalSave) {
 		String name = e.getClass().getName().replace("minicraft.entity.", "");
 		//name = name.substring(name.lastIndexOf(".")+1);
-		String extradata = "";
+		StringBuilder extradata = new StringBuilder();
 		
 		// don't even write ItemEntities or particle effects; Spark... will probably is saved, eventually; it presents an unfair cheat to remove the sparks by reloading the game.
 		
@@ -292,17 +292,17 @@ public class Save {
 			return "";
 		
 		if(!isLocalSave)
-			extradata += ":" + e.eid;
+			extradata.append(":").append(e.eid);
 		
 		if(!isLocalSave && e instanceof RemotePlayer) {
 			RemotePlayer rp = (RemotePlayer)e;
-			extradata += ":" + rp.getData();
+			extradata.append(":").append(rp.getData());
 		} // the "else" part is so that remote player, which is a mob, doesn't get the health thing.
 		else if(e instanceof Mob) {
 			Mob m = (Mob)e;
-			extradata += ":" + m.health;
+			extradata.append(":").append(m.health);
 			if(e instanceof EnemyMob)
-				extradata += ":" + ((EnemyMob)m).lvl;
+				extradata.append(":").append(((EnemyMob) m).lvl);
 		}
 		
 		if(e instanceof Chest) {
@@ -310,22 +310,22 @@ public class Save {
 			
 			for(int ii = 0; ii < chest.inventory.invSize(); ii++) {
 				Item item = chest.inventory.get(ii);
-				extradata += ":" + item.name;
+				extradata.append(":").append(item.name);
 				if(item instanceof StackableItem)
-					extradata += ";" + chest.inventory.count(item);
+					extradata.append(";").append(chest.inventory.count(item));
 			}
 			
-			if(chest instanceof DeathChest) extradata += ":" + ((DeathChest)chest).time;
-			if(chest instanceof DungeonChest) extradata += ":" + ((DungeonChest)chest).isLocked;
+			if(chest instanceof DeathChest) extradata.append(":").append(((DeathChest) chest).time);
+			if(chest instanceof DungeonChest) extradata.append(":").append(((DungeonChest) chest).isLocked);
 		}
 		
 		if(e instanceof Spawner) {
 			Spawner egg = (Spawner)e;
-			extradata += ":" + egg.mob.getClass().getName().replace("minicraft.entity.", "") + ":" + (egg.mob instanceof EnemyMob ? ((EnemyMob)egg.mob).lvl : 1);
+			extradata.append(":").append(egg.mob.getClass().getName().replace("minicraft.entity.", "")).append(":").append(egg.mob instanceof EnemyMob ? ((EnemyMob) egg.mob).lvl : 1);
 		}
 		
 		if (e instanceof Lantern) {
-			extradata += ":"+((Lantern)e).type.ordinal();
+			extradata.append(":").append(((Lantern) e).type.ordinal());
 		}
 		
 		if (e instanceof Crafter) {
@@ -333,10 +333,10 @@ public class Save {
 		}
 		
 		if (!isLocalSave) {
-			if(e instanceof ItemEntity) extradata += ":" + ((ItemEntity)e).getData();
-			if(e instanceof Arrow) extradata += ":" + ((Arrow)e).getData();
-			if(e instanceof Spark) extradata += ":" + ((Spark)e).getData();
-			if(e instanceof TextParticle) extradata += ":" + ((TextParticle)e).getData();
+			if(e instanceof ItemEntity) extradata.append(":").append(((ItemEntity) e).getData());
+			if(e instanceof Arrow) extradata.append(":").append(((Arrow) e).getData());
+			if(e instanceof Spark) extradata.append(":").append(((Spark) e).getData());
+			if(e instanceof TextParticle) extradata.append(":").append(((TextParticle) e).getData());
 		}
 		//else // is a local save
 		
@@ -346,7 +346,7 @@ public class Save {
 		else
 			depth = e.getLevel().depth;
 		
-		extradata += ":" + Game.lvlIdx(depth);
+		extradata.append(":").append(Game.lvlIdx(depth));
 		
 		return name + "[" + e.x + ":" + e.y + extradata + "]";
 	}

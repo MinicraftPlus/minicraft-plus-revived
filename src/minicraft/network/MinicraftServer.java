@@ -333,11 +333,7 @@ public class MinicraftServer extends Thread implements MinicraftProtocol {
 	protected File[] getRemotePlayerFiles() {
 		File saveFolder = new File(worldPath);
 		
-		File[] clientSaves = saveFolder.listFiles(new FilenameFilter() {
-			public boolean accept(File file, String name) {
-				return name.startsWith("RemotePlayer");
-			}
-		});
+		File[] clientSaves = saveFolder.listFiles((file, name) -> name.startsWith("RemotePlayer"));
 		
 		if(clientSaves == null)
 			clientSaves = new File[0];
@@ -346,11 +342,11 @@ public class MinicraftServer extends Thread implements MinicraftProtocol {
 	}
 	
 	protected String getUsernames() {
-		String names = "";
+		StringBuilder names = new StringBuilder();
 		for(MinicraftServerThread thread: getThreads())
-			names += thread.getClient().getUsername() + "\n";
+			names.append(thread.getClient().getUsername()).append("\n");
 		
-		return names;
+		return names.toString();
 	}
 	
 	public synchronized boolean parsePacket(MinicraftServerThread serverThread, InputType inType, String alldata) {
@@ -451,12 +447,12 @@ public class MinicraftServer extends Thread implements MinicraftProtocol {
 					clientPlayer.x,
 					clientPlayer.y
 				};
-				String sendString = "";
+				StringBuilder sendString = new StringBuilder();
 				for(int val: toSend)
-					sendString += val+",";
+					sendString.append(val).append(",");
 				/// send client world info
 				if (Game.debug) System.out.println("SERVER: sending INIT packet");
-				serverThread.sendData(InputType.INIT, sendString);
+				serverThread.sendData(InputType.INIT, sendString.toString());
 				return true;
 			
 			case LOAD:
@@ -612,7 +608,7 @@ public class MinicraftServer extends Thread implements MinicraftProtocol {
 					}
 					chest.inventory.add(item);
 				}
-				else if(inType == InputType.CHESTOUT) {
+				else { /// inType == InputType.CHESTOUT
 					int index = Integer.parseInt(data[1]);
 					if(index >= chest.inventory.invSize() || index < 0) {
 						System.err.println("SERVER error with CHESTOUT request: specified chest inv index is out of bounds: "+index+"; inv size:"+chest.inventory.invSize());
