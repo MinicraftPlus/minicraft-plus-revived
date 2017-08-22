@@ -83,9 +83,6 @@ public abstract class Entity {
 			eid = Game.generateUniqueEntityId();
 	}
 	
-	// TODO Inplement this! it's a really good idea!
-	//public abstract void getColor();
-	
 	/** returns true if this entity is found in the rectangle specified by given two coordinates. */
 	public boolean intersects(int x0, int y0, int x1, int y1) {
 		// x0,y0 = upper-left corner of rect; x1,y1 = bottom-right corner of rect
@@ -212,7 +209,7 @@ public abstract class Entity {
 		return true; // yes, mobs generally block other entities.
 	}
 	
-	/** Used in ItenEntity.java, extended with Player.java */
+	/** Used in ItemEntity.java, extended with Player.java */
 	public void touchItem(ItemEntity itemEntity) {}
 	
 	/** Determines if the entity can swim (extended in sub-classes) */
@@ -292,8 +289,8 @@ public abstract class Entity {
 				Level newLvl = Game.levels[Integer.parseInt(val)];
 				if(newLvl != null && level != null) {
 					if(newLvl.depth == level.depth) return true;
-					if(level != null) level.remove(this);
-					if(newLvl != null) newLvl.add(this);
+					level.remove(this);
+					newLvl.add(this);
 				}
 				return true;
 		}
@@ -339,19 +336,20 @@ public abstract class Entity {
 		
 		/// now, we have the current values, and the previous values, as arrays of key-value pairs sep. by commas. Now, the goal is to seperate which are actually *updates*, meaning they are different from last time.
 		
-		String deltas = "";
+		StringBuilder deltas = new StringBuilder();
 		for(int i = 0; i < curUpdates.length; i++) { // b/c the string always contains the same number of pairs (and the same keys, in the same order), the indexes of cur and prev updates will be the same.
 			/// loop though each of the updates this call. If it is differnt from the last one, then add it to the list.
 			if(curUpdates[i].equals(prevUpdates[i]) == false) {
-				deltas += curUpdates[i] + ";";
+				deltas.append(curUpdates[i]).append(";");
 				//if(Game.debug) System.out.println("found delta for "+this+"; old:\""+prevUpdates[i]+"\" -- new:\""+curUpdates[i]+"\"");
 			}
 		}
 		
-		if(deltas.length() > 0) deltas = deltas.substring(0, deltas.length()-1); // cuts off extra ";"
+		curDeltas = deltas.toString();
 		
-		curDeltas = deltas;
-		return deltas;
+		if(curDeltas.length() > 0) curDeltas = curDeltas.substring(0, curDeltas.length()-1); // cuts off extra ";"
+		
+		return curDeltas;
 	}
 	
 	/// this marks the entity as having a new state to fetch.

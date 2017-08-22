@@ -3,7 +3,9 @@ package minicraft.item;
 import java.util.ArrayList;
 import java.util.Random;
 import minicraft.entity.Entity;
+import minicraft.entity.Mob;
 import minicraft.entity.Player;
+import minicraft.entity.Spawner;
 import minicraft.gfx.Color;
 import minicraft.gfx.Sprite;
 import minicraft.level.Level;
@@ -103,16 +105,23 @@ public class ToolItem extends Item {
 	
 	/** Gets the attack damage bonus from an item/tool (sword/axe) */
 	public int getAttackDamageBonus(Entity e) {
-		if (type == ToolType.Axe) {
-			return (level + 1) * 2 + random.nextInt(4); // wood axe damage: 2-5; gem axe damage: 10-13.
+		
+		if(e instanceof Mob) {
+			if (type == ToolType.Axe) {
+				return (level + 1) * 2 + random.nextInt(4); // wood axe damage: 2-5; gem axe damage: 10-13.
+			}
+			if (type == ToolType.Sword) {
+				return (level + 1) * 3 + random.nextInt(2 + level * level); // wood: 3-5 damage; gem: 15-32 damage.
+			}
+			if (type == ToolType.Claymore) {
+				return (level + 1) * 3 + random.nextInt(4 + level * level * 3); // wood: 3-6 damage; gem: 15-66 damage.
+			}
+			return 1; // all other tools do very little damage to mobs.
 		}
-		if (type == ToolType.Sword) {
-			return (level + 1) * 3 + random.nextInt(2 + level * level); // wood: 3-5 damage; gem: 15-32 damage.
-		}
-		if (type == ToolType.Claymore) {
-			return (level + 1) * 3 + random.nextInt(4 + level * level * 3); // wood: 3-6 damage; gem: 15-66 damage.
-		}
-		return 1; // all other tools do very little damage to mobs.
+		
+		//if(e instanceof Spawner)
+		
+		return 0;
 	}
 	
 	/** Sees if this item matches another. */

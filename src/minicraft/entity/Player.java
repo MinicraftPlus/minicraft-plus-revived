@@ -480,7 +480,7 @@ public class Player extends Mob {
 					case 2: spx = -1; spy = 0; break;
 					case 3: spx = 1; spy = 0; break;
 				}
-				if (ModeMenu.creative == false) inventory.removeItem(Items.arrowItem);
+				if (!ModeMenu.creative) inventory.removeItem(Items.arrowItem);
 				level.add(new Arrow(this, spx, spy, tool.level));
 				done = true; // we have attacked!
 			}
