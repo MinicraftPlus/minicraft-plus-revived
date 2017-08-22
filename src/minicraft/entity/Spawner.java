@@ -114,14 +114,22 @@ public class Spawner extends Furniture {
 	public boolean interact(Player player, Item item, int attackDir) {
 		if(item instanceof ToolItem) {
 			ToolItem tool = (ToolItem)item;
-			if(tool.type != ToolType.Pickaxe) return false;
+			//if(tool.type != ToolType.Pickaxe && !ModeMenu.creative) return false;
+			
+			Sound.monsterHurt.play();
 			
 			int dmg;
-			Sound.monsterHurt.play();
-			if(player.potioneffects.containsKey(PotionType.Haste))
-				dmg = tool.level + 1 + random.nextInt(5);
-			else
-				dmg = tool.level + 1 + random.nextInt(3);
+			if(ModeMenu.creative)
+				dmg = health;
+			else {
+				dmg = tool.level + random.nextInt(2);
+				
+				if(tool.type == ToolType.Pickaxe)
+					dmg += random.nextInt(5)+2;
+				
+				if (player.potioneffects.containsKey(PotionType.Haste))
+					dmg *= 2;
+			}
 			
 			health -= dmg;
 			level.add(new TextParticle("" + dmg, x, y, Color.get(-1, 200, 300, 400)));
