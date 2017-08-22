@@ -5,6 +5,8 @@ import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Random;
+import java.util.function.ToIntFunction;
+
 import minicraft.Game;
 import minicraft.entity.*;
 import minicraft.entity.particle.Particle;
@@ -30,12 +32,6 @@ public class Level {
 	public byte[] data; // an array of the data of the tiles in the world. // ?
 	//private List<Entity>[] entitiesInTiles; // An array of lists of entities in the world, by tile
 	
-	public int grassColor = 141;
-	//public int dirtColor = 322;
-	public int sandColor = 550;
-	public int woolColor = 444;
-	public int redwoolColor = 500;
-	public int yellowwoolColor = 550;
 	public int depth; // depth level of the level
 	public int monsterDensity = 8; // affects the number of monsters that are on the level, bigger the number the less monsters spawn.
 	public int maxMobCount;
@@ -50,11 +46,12 @@ public class Level {
 	private List<Entity> entitiesToRemove = new ArrayList<>(); /// entites that will be removed from the level on next tick are stored here. This is for the sake of multithreading optimization. (hopefully)
 	// creates a sorter for all the entities to be rendered.
 	//private List<Entity> rowSprites = new ArrayList<Entity>();
-	private Comparator<Entity> spriteSorter = (e0, e1) -> { // compares 2 entities
-		if (e1.y < e0.y) return +1; // If the y position of the first entity is less (higher up) than the second entity, then it will be moved up in sorting.
-		if (e1.y > e0.y) return -1; // If the y position of the first entity is more (lower) than the second entity, then it will be moved down in sorting.
-		return 0; // ends the method
-	};
+	private static Comparator<Entity> spriteSorter = Comparator.comparingInt(new ToIntFunction<Entity>() {
+		@Override
+		public int applyAsInt(Entity e) {
+			return e.y;
+		}
+	});
 	
 	/// This is a solely debug method I made, to make printing repetetive stuff easier.
 		// should be changed to accept prepend and entity, or a tile (as an Object). It will get the coordinates and class name from the object, and will divide coords by 16 if passed an entity.
