@@ -26,7 +26,7 @@ public class BucketItem extends StackableItem {
 	}
 	
 	protected static ArrayList<Item> getAllInstances() {
-		ArrayList<Item> items = new ArrayList<Item>();
+		ArrayList<Item> items = new ArrayList<>();
 		
 		for(Fill fill: Fill.values())
 			items.add(new BucketItem(fill));

@@ -10,7 +10,7 @@ import minicraft.screen.ModeMenu;
 public class FurnitureItem extends Item {
 	
 	protected static ArrayList<Item> getAllInstances() {
-		ArrayList<Item> items = new ArrayList<Item>();
+		ArrayList<Item> items = new ArrayList<>();
 		
 		/// there should be a spawner for each level of mob, or at least make the level able to be changed.
 		items.add(new FurnitureItem(new Spawner(new Cow())));

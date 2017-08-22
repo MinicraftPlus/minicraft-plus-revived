@@ -89,7 +89,7 @@ public class Font {
 	
 	
 	public static String[] getLines(String para, int w, int h, int lineSpacing) {
-		ArrayList<String> lines = new ArrayList<String>();
+		ArrayList<String> lines = new ArrayList<>();
 		int curPos = 0, curY = 0;
 		while(curPos < para.length() && curY < h) { // continue until we run out of characters, or lines.
 			StringBuilder line = new StringBuilder();

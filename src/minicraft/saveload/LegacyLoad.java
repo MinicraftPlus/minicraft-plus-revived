@@ -41,8 +41,8 @@ public class LegacyLoad {
 		currentVer = new Load.Version(Game.VERSION);
 		worldVer = null;
 		
-		data = new ArrayList<String>();
-		extradata = new ArrayList<String>();
+		data = new ArrayList<>();
+		extradata = new ArrayList<>();
 		hasloadedbigworldalready = false;
 	}
 	
@@ -338,7 +338,7 @@ public class LegacyLoad {
 			try {
 				if(Class.forName("EnemyMob").isAssignableFrom(Class.forName(entityName)))
 					mobLvl = Integer.parseInt(info.get(info.size()-2));
-			} catch(ClassNotFoundException ex) {}
+			} catch(ClassNotFoundException ignored) {}
 			
 			Entity newEntity = getEntity(entityName, player, mobLvl);
 			

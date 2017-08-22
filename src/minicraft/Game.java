@@ -146,7 +146,7 @@ public class Game extends Canvas implements Runnable {
 	
 	/// AUTOSAVE AND NOTIFICATIONS
 	
-	public static List<String> notifications = new ArrayList<String>();
+	public static List<String> notifications = new ArrayList<>();
 	public static int notetick; // "note"= notifications.
 	
 	public static final int astime = 7200; //stands for Auto-Save Time (interval)
@@ -1005,7 +1005,7 @@ public class Game extends Canvas implements Runnable {
 	private void renderDebugInfo() {
 		int textcol = Color.get(-1, 555);
 		if (showinfo) { // renders show debug info on the screen.
-			ArrayList<String> info = new ArrayList<String>();
+			ArrayList<String> info = new ArrayList<>();
 			info.add("VERSION " + VERSION);
 			info.add(fra + " fps");
 			info.add("day tiks " + tickCount);
@@ -1109,7 +1109,7 @@ public class Game extends Canvas implements Runnable {
 				System.err.println("problem with jar file URI syntax.");
 				ex.printStackTrace();
 			}
-			List<String> arguments = new ArrayList<String>();
+			List<String> arguments = new ArrayList<>();
 			arguments.add("java");
 			arguments.add("-jar");
 			arguments.add(jarFilePath);
@@ -1330,7 +1330,7 @@ public class Game extends Canvas implements Runnable {
 	}
 	
 	private static List<File> getAllFiles(File top) {
-		List<File> files = new ArrayList<File>();
+		List<File> files = new ArrayList<>();
 		if(!top.isDirectory()) {
 			files.add(top);
 			return files;

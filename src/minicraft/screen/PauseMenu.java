@@ -18,7 +18,7 @@ public class PauseMenu extends SelectMenu {
 	//private List<String> options = new ArrayList<String>();
 	
 	private static List<String> getOptions() {
-		List<String> options = new ArrayList<String>();
+		List<String> options = new ArrayList<>();
 		options.addAll(alloptions);
 		
 		if(Game.ISONLINE) {
@@ -97,7 +97,7 @@ public class PauseMenu extends SelectMenu {
 			Font.drawCentered(input.getMapping("up")+" and "+input.getMapping("down")+" to Scroll", screen, 140, Color.get(-1, 333));
 			Font.drawCentered(input.getMapping("select")+": Choose", screen, 150, Color.get(-1, 333));
 		} else {
-			ArrayList<String> confirmDialog = new ArrayList<String>();
+			ArrayList<String> confirmDialog = new ArrayList<>();
 			String selection = options.get(this.selection);
 			int msgColor = Color.get(-1, 500);
 			

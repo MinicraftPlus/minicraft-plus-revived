@@ -14,7 +14,7 @@ public class InventoryMenu extends ScrollingMenu {
 	
 	private static List<String> getItemList(Inventory inv) {
 		List<Item> items = inv.getItems();
-		List<String> itemNames = new ArrayList<String>();
+		List<String> itemNames = new ArrayList<>();
 		// to make space for the item icon.
 		for(int i = 0; i < items.size(); i++) {
 			itemNames.add(getItemDisplayName(items.get(i)));

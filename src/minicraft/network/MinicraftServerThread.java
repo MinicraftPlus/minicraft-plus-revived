@@ -42,9 +42,9 @@ public class MinicraftServerThread extends MinicraftConnection {
 	private List<Timer> gameTimers;
 	private boolean receivedPing = true;
 	
-	private List<InputType> packetTypesToKeep = new ArrayList<InputType>();
-	private List<InputType> packetTypesToCache = new ArrayList<InputType>();
-	private List<String> cachedPackets = new ArrayList<String>();
+	private List<InputType> packetTypesToKeep = new ArrayList<>();
+	private List<InputType> packetTypesToCache = new ArrayList<>();
+	private List<String> cachedPackets = new ArrayList<>();
 	
 	public MinicraftServerThread(Game game, Socket socket, MinicraftServer serverInstance) {
 		super("MinicraftServerThread", socket);
@@ -65,7 +65,7 @@ public class MinicraftServerThread extends MinicraftConnection {
 		packetTypesToKeep.addAll(InputType.tileUpdates);
 		packetTypesToKeep.addAll(InputType.entityUpdates);
 		
-		gameTimers = new ArrayList<Timer>();
+		gameTimers = new ArrayList<>();
 		
 		Timer t = new Timer("ClientPing");
 		t.schedule((new MyTask() {

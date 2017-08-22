@@ -15,7 +15,7 @@ import minicraft.screen.ModeMenu;
 public class ToolItem extends Item {
 	
 	protected static ArrayList<Item> getAllInstances() {
-		ArrayList<Item> items = new ArrayList<Item>();
+		ArrayList<Item> items = new ArrayList<>();
 		
 		items.add(new ToolItem(ToolType.FishingRod, 0));
 		for(ToolType tooltype: ToolType.values()) {

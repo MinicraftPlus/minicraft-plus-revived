@@ -10,7 +10,7 @@ import minicraft.level.tile.Tile;
 public class ArmorItem extends StackableItem {
 	
 	protected static ArrayList<Item> getAllInstances() {
-		ArrayList<Item> items = new ArrayList<Item>();
+		ArrayList<Item> items = new ArrayList<>();
 		
 		items.add(new ArmorItem("Leather Armor", new Sprite(3, 12, Color.get(-1, 100, 211, 322)), 3, 1));
 		items.add(new ArmorItem("Snake Armor", new Sprite(3, 12, Color.get(-1, 10, 20, 30)), 4, 2));

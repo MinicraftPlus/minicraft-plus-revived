@@ -34,7 +34,7 @@ public class PlayerInfoMenu extends Menu {
 		Font.draw("General Stats:", screen, 8 * 8, 3 * 8, Color.get(-1, 324, 200, 150));
 		Font.draw(" ----------------------------", screen, 1 * 8, 4 * 8, Color.get(-1, 540));
 		
-		ArrayList<String> stats = new ArrayList<String>();
+		ArrayList<String> stats = new ArrayList<>();
 		
 		stats.add("Time Played: " + timeString);
 		stats.add("Current Score: " + game.player.score);

@@ -32,7 +32,7 @@ public class Save {
 	Game game;
 	
 	private Save(Game game, File worldFolder) {
-		data = new ArrayList<String>();
+		data = new ArrayList<>();
 		
 		this.game = game;
 		
@@ -163,7 +163,7 @@ public class Save {
 		data.add(MultiplayerMenu.savedUUID);
 		data.add(MultiplayerMenu.savedUsername);
 		
-		List<String> keyPairs = new ArrayList<String>();
+		List<String> keyPairs = new ArrayList<>();
 		Collections.addAll(keyPairs, game.input.getKeyPrefs());
 		
 		data.add(String.join(":", keyPairs.toArray(new String[0])));

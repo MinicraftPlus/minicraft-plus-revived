@@ -92,7 +92,7 @@ public class WorldSelectMenu extends Menu {
 	
 	private void loadWorlds() {
 		//find worlds (init step):
-		worldnames = new ArrayList<String>();
+		worldnames = new ArrayList<>();
 		File folder = new File(location);
 		folder.mkdirs();
 		File[] listOfFiles = folder.listFiles();
@@ -407,7 +407,7 @@ public class WorldSelectMenu extends Menu {
 	
 	public void typename() {
 		//System.out.println("listening to type keypress...");
-		ArrayList<String> invalidNames = new ArrayList<String>();
+		ArrayList<String> invalidNames = new ArrayList<>();
 		for(String wname: worldnames) {
 			/// this will add all the names, unless we are renaming, in which case the current name is okay, and is not added.
 			if(!(wname.equals(worldname) && mode != Action.Rename && mode != Action.Copy)) {

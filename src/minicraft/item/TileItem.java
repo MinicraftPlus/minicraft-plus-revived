@@ -15,7 +15,7 @@ import minicraft.level.tile.Tiles;
 public class TileItem extends StackableItem {
 	
 	protected static ArrayList<Item> getAllInstances() {
-		ArrayList<Item> items = new ArrayList<Item>();
+		ArrayList<Item> items = new ArrayList<>();
 		
 		/// TileItem sprites are all on line 4, and have 1x1 sprites.
 		items.add(new TileItem("Flower", (new Sprite(0, 4, Color.get(-1, 10, 444, 330))), "flower", "grass"));
@@ -62,7 +62,7 @@ public class TileItem extends StackableItem {
 	protected TileItem(String name, Sprite sprite, int count, String model, List<String> validTiles) {
 		super(name, sprite, count);
 		this.model = model.toUpperCase();
-		this.validTiles = new ArrayList<String>();
+		this.validTiles = new ArrayList<>();
 		for(String tile: validTiles)
 			this.validTiles.add(tile.toUpperCase());
 	}

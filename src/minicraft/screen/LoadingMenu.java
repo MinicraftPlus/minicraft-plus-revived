@@ -52,7 +52,7 @@ public class LoadingMenu extends Menu implements ActionListener {
 		game.initWorld();
 		try {
 			Thread.sleep((WorldSelectMenu.loadworld?100:300));
-		} catch(InterruptedException ex) {}
+		} catch(InterruptedException ignored) {}
 		if(Game.debug) System.out.println("setting game menu to null from loading...");
 		game.setMenu(null);
 	}

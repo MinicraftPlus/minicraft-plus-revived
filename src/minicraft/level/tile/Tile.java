@@ -155,7 +155,7 @@ public abstract class Tile {
 			int tiledata = curLevel.data[pos];
 			
 			return lvlidx+";"+pos+";"+tileid+";"+tiledata;
-		} catch(NullPointerException | IndexOutOfBoundsException ex) {
+		} catch(NullPointerException | IndexOutOfBoundsException ignored) {
 		}
 		
 		return "";

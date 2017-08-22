@@ -123,7 +123,7 @@ class ConsoleReader extends Thread {
 				Command.STOP.run(null, game); // shuts down the server.
 				try {
 					Thread.sleep(500); // give the computer some time to, uh, recuperate? idk, I think it's a good idea.
-				} catch(InterruptedException ex) {}
+				} catch(InterruptedException ignored) {}
 				game.startMultiplayerServer(); // start the server back up.
 			}
 		},
@@ -189,7 +189,7 @@ class ConsoleReader extends Thread {
 					} catch(IllegalArgumentException iaex) {
 						try {
 							targetTicks = Integer.parseInt(args[0]);
-						} catch(NumberFormatException nfex) {
+						} catch(NumberFormatException ignored) {
 						}
 					}
 				}
@@ -211,7 +211,7 @@ class ConsoleReader extends Thread {
 					System.out.println("please specify a message to send.");
 					return;
 				}
-				List<String> usernames = new ArrayList<String>();
+				List<String> usernames = new ArrayList<>();
 				if(args.length > 1) {
 					usernames.addAll(Arrays.asList(args).subList(0, args.length - 1));
 				} else {
@@ -354,14 +354,14 @@ class ConsoleReader extends Thread {
 		Scanner stdin = new Scanner(System.in).useDelimiter(System.lineSeparator());
 		try {
 			Thread.sleep(500); // this is to let it get past the debug statements at world load, and any others, maybe, if not in debug mode.
-		} catch(InterruptedException ex) {}
+		} catch(InterruptedException ignored) {}
 		System.out.println("type \"help\" for a list of commands...");
 		
 		while(shouldRun/* && stdin.hasNext()*/) {
 			System.out.print("Enter a command: ");
 			String command = stdin.next().trim();
 			if(command.length() == 0) continue;
-			List<String> parsed = new ArrayList<String>();
+			List<String> parsed = new ArrayList<>();
 			parsed.addAll(Arrays.asList(command.split(" ")));
 			int lastIdx = -1;
 			for(int i = 0; i < parsed.size(); i++) {

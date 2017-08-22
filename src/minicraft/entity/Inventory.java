@@ -14,10 +14,10 @@ import minicraft.item.ToolType;
 
 public class Inventory {
 	private Random random = new Random();
-	private List<Item> items = new ArrayList<Item>(); // the list of items that is in the inventory.
+	private List<Item> items = new ArrayList<>(); // the list of items that is in the inventory.
 	
 	public List<Item> getItems() {
-		List<Item> newItems = new ArrayList<Item>();
+		List<Item> newItems = new ArrayList<>();
 		newItems.addAll(items);
 		return newItems;
 	}
@@ -266,7 +266,7 @@ public class Inventory {
 	}
 	
 	public List<String> getItemNames() {
-		List<String> names = new ArrayList<String>();
+		List<String> names = new ArrayList<>();
 		for(int i = 0; i < items.size(); i++)
 			names.add(items.get(i).name);
 		

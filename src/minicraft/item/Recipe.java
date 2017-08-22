@@ -10,7 +10,7 @@ import minicraft.screen.ListItem;
 import minicraft.screen.ModeMenu;
 
 public class Recipe implements ListItem {
-	public HashMap<String, Integer> costs = new HashMap<String, Integer>();  // A list of costs for the recipe
+	public HashMap<String, Integer> costs = new HashMap<>();  // A list of costs for the recipe
 	private String product; // the result item of the recipe
 	public int amount;
 	public boolean canCraft; // checks if the player can craft the recipe

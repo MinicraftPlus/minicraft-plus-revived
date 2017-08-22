@@ -1,8 +1,6 @@
 package minicraft.screen;
 
 import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
 import java.util.List;
 import minicraft.Sound;
 import minicraft.entity.Player;
@@ -24,7 +22,7 @@ public class CraftingMenu extends Menu {
 		this(recipes, player, false);
 	}
 	public CraftingMenu(List<Recipe> recipes, Player player, boolean isPersonalFrame) {
-		this.recipes = new ArrayList<Recipe>(recipes); // Assigns the recipes
+		this.recipes = new ArrayList<>(recipes); // Assigns the recipes
 		this.player = player;
 		personal = isPersonalFrame;
 		

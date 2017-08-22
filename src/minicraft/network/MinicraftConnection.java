@@ -125,7 +125,7 @@ public abstract class MinicraftConnection extends Thread implements MinicraftPro
 			
 			try {
 				socket.close();
-			} catch (IOException ex) {
+			} catch (IOException ignored) {
 			}
 		}
 	}

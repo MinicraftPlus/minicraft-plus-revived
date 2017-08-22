@@ -10,7 +10,7 @@ import minicraft.level.tile.Tile;
 public class ClothingItem extends StackableItem {
 	
 	protected static ArrayList<Item> getAllInstances() {
-		ArrayList<Item> items = new ArrayList<Item>();
+		ArrayList<Item> items = new ArrayList<>();
 		
 		items.add(new ClothingItem("Red Clothes", Color.get(-1, 100, 400, 500), 400));
 		items.add(new ClothingItem("Blue Clothes", Color.get(-1, 001, 004, 005), 004));

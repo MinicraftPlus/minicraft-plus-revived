@@ -104,7 +104,7 @@ public class Player extends Mob {
 		if(previousInstance == null)
 			inventory.add(Items.arrowItem, acs);
 		
-		potioneffects = new HashMap<PotionType, Integer>();
+		potioneffects = new HashMap<>();
 		showpotioneffects = true;
 		
 		cooldowninfo = 0;
@@ -947,7 +947,7 @@ public class Player extends Mob {
 	}
 	
 	public String getPlayerData() {
-		List<String> datalist = new ArrayList<String>();
+		List<String> datalist = new ArrayList<>();
 		StringBuilder playerdata = new StringBuilder();
 		
 		Save.writePlayer(this, datalist);

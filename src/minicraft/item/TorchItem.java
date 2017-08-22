@@ -11,7 +11,7 @@ import minicraft.level.tile.TorchTile;
 public class TorchItem extends TileItem {
 	
 	public static ArrayList<Item> getAllInstances() {
-		ArrayList<Item> items = new ArrayList<Item>();
+		ArrayList<Item> items = new ArrayList<>();
 		items.add(new TorchItem());
 		return items;
 	}

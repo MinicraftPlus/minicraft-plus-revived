@@ -40,7 +40,7 @@ public class MinicraftClient extends MinicraftConnection {
 	
 	private boolean pingSuccessful = false; // this is more or less useless. -_-
 	
-	private HashMap<Integer, Long> entityRequests = new HashMap<Integer, Long>();
+	private HashMap<Integer, Long> entityRequests = new HashMap<>();
 	
 	private static Socket openSocket(String hostName, MultiplayerMenu menu) {
 		InetAddress hostAddress;
@@ -118,7 +118,7 @@ public class MinicraftClient extends MinicraftConnection {
 	
 	private static String getPlayerData(Player player) {
 		StringBuilder playerdata = new StringBuilder();
-		List<String> sdata = new ArrayList<String>();
+		List<String> sdata = new ArrayList<>();
 		Save.writePlayer(player, sdata);
 		if(sdata.size() > 0) // should always be the case
 			playerdata.append(String.join(",", sdata.toArray(new String[0])));

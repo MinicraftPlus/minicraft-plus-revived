@@ -2,7 +2,6 @@ package minicraft.level;
 
 import java.awt.Point;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Random;
@@ -43,12 +42,12 @@ public class Level {
 	public int chestcount;
 	public int mobCount = 0;
 
-	private static List<String> ls = new ArrayList<String>();
+	private static List<String> ls = new ArrayList<>();
 
 	private List<Entity> entities = java.util.Collections.synchronizedList(new ArrayList<Entity>()); // A list of all the entities in the world
 	private List<Player> players = java.util.Collections.synchronizedList(new ArrayList<Player>()); // A list of all the players in the world
-	private List<Entity> entitiesToAdd = new ArrayList<Entity>(); /// entites that will be added to the level on next tick are stored here. This is for the sake of multithreading optimization. (hopefully)
-	private List<Entity> entitiesToRemove = new ArrayList<Entity>(); /// entites that will be removed from the level on next tick are stored here. This is for the sake of multithreading optimization. (hopefully)
+	private List<Entity> entitiesToAdd = new ArrayList<>(); /// entites that will be added to the level on next tick are stored here. This is for the sake of multithreading optimization. (hopefully)
+	private List<Entity> entitiesToRemove = new ArrayList<>(); /// entites that will be removed from the level on next tick are stored here. This is for the sake of multithreading optimization. (hopefully)
 	// creates a sorter for all the entities to be rendered.
 	//private List<Entity> rowSprites = new ArrayList<Entity>();
 	private Comparator<Entity> spriteSorter = (e0, e1) -> { // compares 2 entities
@@ -762,7 +761,7 @@ public class Level {
 		return getEntitiesInTiles(xt, yt, xt, yt);
 	}*/
 	public List<Entity> getEntitiesInTiles(int xt0, int yt0, int xt1, int yt1) {
-		List<Entity> contained = new ArrayList<Entity>();
+		List<Entity> contained = new ArrayList<>();
 		for(Entity e: getEntityArray()) {
 			int xt = e.x >> 4;
 			int yt = e.y >> 4;
@@ -774,7 +773,7 @@ public class Level {
 	}
 	
 	public List<Entity> getEntitiesInRect(int x0, int y0, int x1, int y1) {
-		List<Entity> result = new ArrayList<Entity>();
+		List<Entity> result = new ArrayList<>();
 		int xt0 = (x0 >> 4) - 1;
 		int yt0 = (y0 >> 4) - 1;
 		int xt1 = (x1 >> 4) + 1;
@@ -798,7 +797,7 @@ public class Level {
 	
 	/// finds all entities that are an instance of the given entity.
 	public Entity[] getEntitiesOfClass(Class<? extends Entity> targetClass) {
-		ArrayList<Entity> matches = new ArrayList<Entity>();
+		ArrayList<Entity> matches = new ArrayList<>();
 		for(Entity e: getEntityArray()) {
 			if(targetClass.isAssignableFrom(e.getClass()))
 				matches.add(e);
@@ -834,7 +833,7 @@ public class Level {
 	
 	public Tile[] getAreaTiles(int x, int y, int r) { return getAreaTiles(x, y, r, r); }
 	public Tile[] getAreaTiles(int x, int y, int rx, int ry) {
-		ArrayList<Tile> local = new ArrayList<Tile>();
+		ArrayList<Tile> local = new ArrayList<>();
 		for(int yo = y-ry; yo <= y+ry; yo++)
 			for(int xo = x-rx; xo <= x+rx; xo++)
 				if(xo >= 0 && xo < w && yo >= 0 && yo < h)
@@ -850,7 +849,7 @@ public class Level {
 	}
 	
 	public List<Point> getMatchingTiles(Tile search) {
-		List<Point> matches = new ArrayList<Point>();
+		List<Point> matches = new ArrayList<>();
 		for(int y = 0; y < h; y++)
 			for(int x = 0; x < w; x++)
 				if(getTile(x, y) == search)

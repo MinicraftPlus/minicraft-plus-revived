@@ -30,7 +30,7 @@ public class Crafter extends Furniture {
 			Crafter.names.add(this.name());
 		}
 	}
-	public static ArrayList<String> names = new ArrayList<String>();
+	public static ArrayList<String> names = new ArrayList<>();
 	
 	public Crafter.Type type;
 	

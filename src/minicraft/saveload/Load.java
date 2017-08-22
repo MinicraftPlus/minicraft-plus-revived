@@ -47,8 +47,8 @@ public class Load {
 		File testFile = new File(location + "/Preferences" + extension);
 		hasGlobalPrefs = testFile.exists();
 		
-		data = new ArrayList<String>();
-		extradata = new ArrayList<String>();
+		data = new ArrayList<>();
+		extradata = new ArrayList<>();
 		hasloadedbigworldalready = false;
 	}
 	
@@ -312,9 +312,8 @@ public class Load {
 			subdata = Arrays.asList(keyData.split(":"));
 		}
 		
-		Iterator<String> keys = subdata.iterator();
-		while(keys.hasNext()) {
-			String[] map = keys.next().split(";");
+		for (String keymap : subdata) {
+			String[] map = keymap.split(";");
 			game.input.setKey(map[0], map[1]);
 		}
 	}
@@ -567,7 +566,7 @@ public class Load {
 		entityData = entityData.trim();
 		if(entityData.length() == 0) return null;
 		
-		List<String> info = new ArrayList<String>(); // this gets everything inside the "[...]" after the entity name.
+		List<String> info = new ArrayList<>(); // this gets everything inside the "[...]" after the entity name.
 		//System.out.println("loading entity:" + entityData);
 		String[] stuff = entityData.substring(entityData.indexOf("[") + 1, entityData.indexOf("]")).split(":");
 		info.addAll(Arrays.asList(stuff));

@@ -30,7 +30,7 @@ public class WonMenu extends Menu {
 		displayTimer = Game.normSpeed; // wait 3 seconds before rendering the menu.
 		inputDelay = Game.normSpeed/2; // wait a half-second before allow user input.
 		
-		scores = new HashMap<String, Integer>();
+		scores = new HashMap<>();
 		scores.put("Cloth", player.inventory.count(Items.get("cloth")) * (random.nextInt(2) + 1) * 10);
 		scores.put("Slime", player.inventory.count(Items.get("slime")) * (random.nextInt(2) + 1) * 10);
 		scores.put("Bone", player.inventory.count(Items.get("bone")) * (random.nextInt(2) + 1) * 10);
@@ -48,7 +48,7 @@ public class WonMenu extends Menu {
 			finalscore += score;
 		}
 		
-		unlocks = new ArrayList<String>();
+		unlocks = new ArrayList<>();
 		writeUnlocks();
 	}
 

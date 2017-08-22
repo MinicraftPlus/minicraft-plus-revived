@@ -1,8 +1,6 @@
 package minicraft.screen;
 
 import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.regex.Matcher;
@@ -25,8 +23,8 @@ public class ModeMenu extends Menu {
 	public static int mode = 1;
 	
 	private static int selectedTime = 0;
-	private static List<String> times = new ArrayList<String>();
-	public static List<String> unlockedtimes = new ArrayList<String>();
+	private static List<String> times = new ArrayList<>();
+	public static List<String> unlockedtimes = new ArrayList<>();
 	
 	static {
 		initTimeList();
@@ -47,7 +45,7 @@ public class ModeMenu extends Menu {
 		if(unlockedtimes.size() > 0) {
 			times.addAll(unlockedtimes);
 			
-			HashMap<String, Integer> timeMap = new HashMap<String, Integer>();
+			HashMap<String, Integer> timeMap = new HashMap<>();
 			for(String time: times)
 				timeMap.put(time, getScoreTime(time));
 			
