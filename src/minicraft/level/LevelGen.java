@@ -3,16 +3,21 @@ package minicraft.level;
 import java.awt.Image;
 import java.awt.image.BufferedImage;
 import java.util.Random;
+
 import javax.swing.ImageIcon;
 import javax.swing.JOptionPane;
+
+import minicraft.Game;
 import minicraft.level.tile.Tiles;
 import minicraft.screen.WorldGenMenu;
 
 public class LevelGen {
-	private static final Random random = new Random();
+	private static long worldSeed = 0;
+	private static final Random random = new Random(worldSeed);
 	public double[] values;
 	private int w, h;
 	private static int d = 0;
+	
 
 	public LevelGen(int w, int h, int featureSize) {
 		this.w = w;
@@ -86,6 +91,7 @@ public class LevelGen {
 	}
 	
 	public static byte[][] createAndValidateTopMap(int w, int h) {
+		random.setSeed(worldSeed);
 		int attempt = 0;
 		do {
 			byte[][] result = createTopMap(w, h);
@@ -111,6 +117,7 @@ public class LevelGen {
 	}
 
 	public static byte[][] createAndValidateUndergroundMap(int w, int h, int depth) {
+		random.setSeed(worldSeed);
 		int attempt = 0;
 		do {
 			byte[][] result = createUndergroundMap(w, h, depth);
@@ -135,6 +142,7 @@ public class LevelGen {
 	}
 
 	public static byte[][] createAndValidateDungeon(int w, int h) {
+		random.setSeed(worldSeed);
 		int attempt = 0;
 		do {
 			byte[][] result = createDungeon(w, h);
@@ -153,6 +161,7 @@ public class LevelGen {
 	}
 
 	public static byte[][] createAndValidateSkyMap(int w, int h) {
+		random.setSeed(worldSeed);
 		int attempt = 0;
 		do {
 			byte[][] result = createSkyMap(w, h);
@@ -695,6 +704,16 @@ public class LevelGen {
 	}
 
 	public static void main(String[] args) {
+		LevelGen.worldSeed = 0x100;
+		
+		// Fixes to get this method to work
+		
+		// AirWizard needs this in constructor
+		Game.gameDir = "";
+		
+		Tiles.initTileList();
+		// End of fixes
+		
 		int idx = -1;
 		
 		int[] maplvls = new int[args.length];
@@ -753,6 +772,10 @@ public class LevelGen {
 			}
 			img.setRGB(0, 0, w, h, pixels, 0, w);
 			JOptionPane.showMessageDialog(null, null, "Another Map", JOptionPane.YES_NO_OPTION, new ImageIcon(img.getScaledInstance(w * 2, h * 2, Image.SCALE_AREA_AVERAGING)));
+			if (LevelGen.worldSeed == 0x100)
+				LevelGen.worldSeed = 0xAAFF20;
+			else
+				LevelGen.worldSeed = 0x100;
 		}
 	}
 }
