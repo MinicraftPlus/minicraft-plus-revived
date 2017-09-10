@@ -77,7 +77,7 @@ public class ModeMenu extends Menu {
 		
 		if (score && input.getKey("t").clicked) { //selected is always 0..?
 			selectedTime++;
-			Sound.test.play();
+			Sound.confirm.play();
 			if(selectedTime > times.size() - 1)
 				selectedTime = 0;
 		}

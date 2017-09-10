@@ -195,7 +195,7 @@ public class WorldSelectMenu extends Menu {
 					//load the game
 					worldname = worldnames.get(selected);
 					if (Game.debug) System.out.println("load mode: " + worldname);
-					Sound.test.play();
+					Sound.confirm.play();
 					game.setMenu(new LoadingMenu());
 					//game.initWorld();
 					//game.setMenu((Menu) null);

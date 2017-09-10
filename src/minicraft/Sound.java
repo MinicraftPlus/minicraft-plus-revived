@@ -9,7 +9,7 @@ public class Sound {
 	public static final Sound playerHurt = new Sound("/resources/playerhurt.wav");
 	public static final Sound playerDeath = new Sound("/resources/death.wav");
 	public static final Sound monsterHurt = new Sound("/resources/monsterhurt.wav");
-	public static final Sound test = new Sound("/resources/test.wav");
+	public static final Sound confirm = new Sound("/resources/test.wav");
 	public static final Sound pickup = new Sound("/resources/pickup.wav");
 	public static final Sound bossdeath = new Sound("/resources/bossdeath.wav");
 	public static final Sound craft = new Sound("/resources/craft.wav");
