@@ -133,7 +133,7 @@ public class Game extends Canvas implements Runnable {
 	}
 	
 	public InputHandler input; // input used in Game, Player, and just about all the *Menu classes.
-	public Menu menu; // the current menu you are on.
+	public Menu menu, newMenu; // the current menu you are on.
 	public Player player; // The Player.
 	//public Level level; // This is the current level you are on.
 	static int worldSize = 128; // The size of the world
@@ -218,7 +218,7 @@ public class Game extends Canvas implements Runnable {
 	
 	// Sets the current menu.
 	public void setMenu(Menu menu) {
-		this.menu = menu;
+		this.newMenu = menu;
 		//if (debug) System.out.println("setting game menu to " + menu);
 		if (menu != null) menu.init(this, input);
 	}
@@ -385,6 +385,9 @@ public class Game extends Canvas implements Runnable {
 	// VERY IMPORTANT METHOD!! Makes everything keep happening.
 	// In the end, calls menu.tick() if there's a menu, or level.tick() if no menu.
 	public void tick() {
+		if(newMenu != menu)
+			menu = newMenu;
+		
 		Level level = levels[currentLevel];
 		if (Bed.inBed && !Game.isValidClient()) {
 			// IN BED
