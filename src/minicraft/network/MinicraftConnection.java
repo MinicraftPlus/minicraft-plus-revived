@@ -8,6 +8,7 @@ import java.net.Socket;
 import java.util.Arrays;
 import minicraft.Game;
 import minicraft.item.PotionType;
+import org.jetbrains.annotations.NotNull;
 
 public abstract class MinicraftConnection extends Thread implements MinicraftProtocol {
 	
@@ -89,7 +90,7 @@ public abstract class MinicraftConnection extends Thread implements MinicraftPro
 	
 	protected synchronized void sendData(InputType inType, String data) {
 		char inTypeChar = (char) (inType.ordinal()+1);
-		//if (Game.debug && (inType == InputType.MOVE || inType == InputType.INTERACT)) System.out.println(this + ": printing " + inType + " data");//: " + stringToInts(data, 30)); //data.substring(0, Math.min(data.length(), 20)));
+		//if (Game.debug && inType == InputType.TILES) System.out.println(this + ": printing " + inType + " data:");
 		if(data.contains("\0")) System.err.println("WARNING from "+this+": data to send contains a null character. Not sending data.");
 		else {
 			out.print(inTypeChar + data + '\0');
@@ -97,7 +98,9 @@ public abstract class MinicraftConnection extends Thread implements MinicraftPro
 		}
 	}
 	
+	@NotNull
 	public static String stringToInts(String str) { return stringToInts(str, str.length()); }
+	@NotNull
 	public static String stringToInts(String str, int maxLength) {
 		int[] chars = new int[Math.min(str.length(), maxLength)];
 		
