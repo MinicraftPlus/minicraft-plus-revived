@@ -31,7 +31,7 @@ public class RemotePlayer extends Player {
 	public RemotePlayer(Game game, boolean isMainPlayer, RemotePlayer model) {
 		this(model, game, isMainPlayer, model.ipAddress, model.port);
 		eid = model.eid;
-		setUsername(username);
+		setUsername(model.getUsername());
 	}
 	
 	public void setUsername(String username) {
