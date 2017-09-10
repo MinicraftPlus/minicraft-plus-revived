@@ -205,13 +205,18 @@ public class MinicraftClient extends MinicraftConnection {
 					Game.levels[game.currentLevel] = level = new Level(game, Game.lvlw, Game.lvlh, lvldepth, Game.levels[Game.lvlIdx(lvldepth+1)], false);
 				}
 				
-				byte[] tiledata = new byte[alldata.length()];
+				/*byte[] tiledata = new byte[alldata.length()];
 				for(int i = 0; i < alldata.length(); i++) {
 					int tbit = (int) alldata.charAt(i);
 					tbit--;
 					if(tbit >= 128) tbit -= 256;
 					tiledata[i] = (byte) tbit;
-				}
+				}*/
+				String[] tilestrs = alldata.split(",");
+				byte[] tiledata = new byte[tilestrs.length];
+				for(int i = 0; i < tiledata.length; i++)
+					tiledata[i] = Byte.parseByte(tilestrs[i]);
+				
 				//System.out.println("TILE DATA ARRAY AS RECEIVED BY CLIENT, DECODED BACK TO NUMBERS (length="+tiledata.length+"):");
 				//System.out.println(Arrays.toString(tiledata));
 				

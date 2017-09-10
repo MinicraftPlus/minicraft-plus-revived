@@ -482,13 +482,18 @@ public class MinicraftServer extends Thread implements MinicraftProtocol {
 				//System.out.println(Arrays.toString(tiledata));
 				
 				StringBuilder tiledataString = new StringBuilder();
-				for(byte b: tiledata) {
+				/*for(byte b: tiledata) {
 					int tbit = (int) b;
-					if(tbit < 0) tbit += 256;
+					if(Game.debug) System.out.print(tbit+",");
 					tbit++;
+					if(tbit < 0) tbit += 256;
+					if(tbit < 0) System.out.println("\nTBIT < 0: " + tbit);
 					tiledataString.append((char) tbit);
+				}*/
+				for(byte b: tiledata) {
+					tiledataString.append(b).append(",");
 				}
-				serverThread.sendData(InputType.TILES, tiledataString.toString());
+				serverThread.sendData(InputType.TILES, tiledataString.substring(0, tiledataString.length()-1));
 				serverThread.sendCachedPackets();
 				
 				/// send back the entities in the level specified.
