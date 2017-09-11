@@ -540,7 +540,13 @@ public class MinicraftServer extends Thread implements MinicraftProtocol {
 				return true;
 			
 			case DROP:
-				Load.loadEntity(alldata, game, false);
+				//if(Game.debug) System.out.println("SERVER: received item drop: " + alldata);
+				Item dropped = Items.get(alldata);
+				Level playerLevel = clientPlayer.getLevel();
+				if(playerLevel != null)
+					playerLevel.dropItem(clientPlayer.x, clientPlayer.y, dropped);
+				//Entity dropped = Load.loadEntity(alldata, game, false);
+				//broadcastEntityAddition(dropped, true);
 				return true;
 			
 			case TILE:

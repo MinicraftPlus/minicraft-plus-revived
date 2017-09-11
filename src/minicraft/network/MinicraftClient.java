@@ -459,8 +459,8 @@ public class MinicraftClient extends MinicraftConnection {
 		sendData(InputType.TILE, level.depth+";"+xt+";"+yt);
 	}
 	
-	public void dropItem(ItemEntity ie) {
-		sendData(InputType.DROP, Save.writeEntity(ie, false));
+	public void dropItem(Item drop) {
+		sendData(InputType.DROP, drop.getData()/*Save.writeEntity(drop, false)*/);
 	}
 	
 	public void sendPlayerUpdate(Player player) {

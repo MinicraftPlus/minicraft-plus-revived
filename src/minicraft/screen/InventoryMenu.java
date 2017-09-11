@@ -7,6 +7,8 @@ import minicraft.gfx.Color;
 import minicraft.gfx.Screen;
 import minicraft.item.Item;
 import minicraft.item.StackableItem;
+import org.jetbrains.annotations.Contract;
+import org.jetbrains.annotations.NotNull;
 
 public class InventoryMenu extends ScrollingMenu {
 	protected Inventory inv;
@@ -31,9 +33,11 @@ public class InventoryMenu extends ScrollingMenu {
 	
 	public void render(Screen screen) {
 		renderFrame(screen, title, 1, 1, 22, 11); // renders the blue box for the inventory
-		super.render(screen);
 		List<Item> items = inv.getItems();
-		for(int i = 0; i < dispSize; i++)
+		if(options.size() != items.size())
+			options = getItemList(inv);
+		super.render(screen);
+		for(int i = 0; i < dispSize && i < items.size()-offset; i++)
 			items.get(offset+i).sprite.render(screen, 2*8, 8*(2+i));
 	}
 	
@@ -49,6 +53,8 @@ public class InventoryMenu extends ScrollingMenu {
 		options.set(selected, getItemDisplayName(inv.get(selected)));
 	}
 	
+	@NotNull
+	@Contract(pure = true)
 	private static String getItemDisplayName(Item i) {
 		String extra = "";
 		if(i instanceof StackableItem) {
