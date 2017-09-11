@@ -44,7 +44,7 @@ public class ScrollingMenu extends SelectMenu {
 		if(options.size() == 0) return;
 		
 		if(offset + dispSize > options.size())
-			offset = options.size() - dispSize;
+			offset = Math.max(0, options.size() - dispSize);
 		if(offset < 0)
 			offset = 0;
 		
