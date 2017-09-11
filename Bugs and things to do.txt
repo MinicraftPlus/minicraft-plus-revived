@@ -9,14 +9,11 @@ Note to self: for more little bugs/ideas/concerns, search code for "TODO"
 
 	####BUGS####
 ####
-Fire particles appear, but... they look totally weird...
-####
 Sound effects don't always play when they should; mostly it seems when other sounds should be on at the same time.
 ####
 
 #####
 MULTIPLAYER-Related:
- - sometimes frozen particles appear (not fixed; need to analyze particle treatment for clients) (only seen once)
  - Players aren't kicked out if they are on a menu when the server goes down..? (only tested/seen once)
  
  It would be nice if I could find a way to not even bother telling the server for things like potions, that don't even interact with the world.
