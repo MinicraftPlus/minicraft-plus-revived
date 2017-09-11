@@ -1043,7 +1043,8 @@ public class Game extends Canvas implements Runnable {
 				}
 				
 				//info.add("steps: " + player.stepCount);
-				info.add("micro-hunger:" + player.hungerStamCnt);
+				if(debug)
+					info.add("micro-hunger:" + player.hungerStamCnt);
 				//info.add("health regen:" + player.hungerStamCnt);
 			}
 			
