@@ -20,10 +20,10 @@ public class Skeleton extends EnemyMob {
 	public Skeleton(int lvl) {
 		super(lvl, sprites, lvlcols, 6, true, 100, 45, 200);
 		
-		arrowtime = 300 / (lvl + 5);
+		arrowtime = 500 / (lvl + 5);
 		artime = arrowtime;
 	}
-
+	
 	public void tick() {
 		super.tick();
 		
