@@ -113,7 +113,7 @@ public class WonMenu extends Menu {
 		}
 		
 		Font.draw("Player Score: " + game.player.score, screen, 16, 6*8, Color.get(-1, 555));
-		Font.draw("<Bonuses>", screen, 16, 8*8, Color.get(-1, 040));
+		Font.draw("<Bonuses>", screen, 16, 8*8, Color.get(-1, 41));
 		int i = 0;
 		for(String bonus: scores.keySet().toArray(new String[0])) {
 			StringBuilder label = new StringBuilder(bonus + "s: ");

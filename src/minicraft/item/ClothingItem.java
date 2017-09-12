@@ -14,12 +14,12 @@ public class ClothingItem extends StackableItem {
 		
 		items.add(new ClothingItem("Red Clothes", Color.get(-1, 100, 400, 500), 400));
 		items.add(new ClothingItem("Blue Clothes", Color.get(-1, 001, 004, 005), 004));
-		items.add(new ClothingItem("Green Clothes", Color.get(-1, 010, 040, 050), 040));
+		items.add(new ClothingItem("Green Clothes", Color.get(-1, 10, 40, 50), 40));
 		items.add(new ClothingItem("Yellow Clothes", Color.get(-1, 110, 440, 550), 440));
 		items.add(new ClothingItem("Black Clothes", Color.get(-1, 000, 111, 222), 111));
 		items.add(new ClothingItem("Orange Clothes", Color.get(-1, 210, 430, 540), 320));
 		items.add(new ClothingItem("Purple Clothes", Color.get(-1, 102, 203, 405), 203));
-		items.add(new ClothingItem("Cyan Clothes", Color.get(-1, 012, 023, 045), 023));
+		items.add(new ClothingItem("Cyan Clothes", Color.get(-1, 12, 23, 45), 23));
 		items.add(new ClothingItem("Reg Clothes", Color.get(-1, 111, 444, 555), 110));
 		
 		return items;

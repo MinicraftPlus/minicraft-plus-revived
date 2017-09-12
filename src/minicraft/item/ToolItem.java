@@ -42,7 +42,7 @@ public class ToolItem extends Item {
 		Color.get(-1, 100, 321, 111), // rock/stone
 		Color.get(-1, 100, 321, 555), // iron
 		Color.get(-1, 100, 321, 550), // gold
-		Color.get(-1, 100, 321, 055), // gem
+		Color.get(-1, 100, 321, 55), // gem
 	};
 	
 	public static final int[] BOW_COLORS = { // Colors of the bows, specifically.
@@ -50,7 +50,7 @@ public class ToolItem extends Item {
 		Color.get(-1, 100, 444, 111),
 		Color.get(-1, 100, 444, 555),
 		Color.get(-1, 100, 444, 550),
-		Color.get(-1, 100, 444, 055),
+		Color.get(-1, 100, 444, 55),
 	};
 	
 	/** Tool Item, requires a tool type (ToolType.Sword, ToolType.Axe, ToolType.Hoe, etc) and a level (0 = wood, 2 = iron, 4 = gem, etc) */

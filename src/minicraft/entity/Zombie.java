@@ -9,9 +9,9 @@ public class Zombie extends EnemyMob {
 	private static MobSprite[][] sprites = MobSprite.compileMobSpriteAnimations(0, 14);
 	private static int[] lvlcols = {
 		Color.get(-1, 10, 152, 40),
-		Color.get(-1, 100, 522, 050),
-		Color.get(-1, 111, 444, 050),
-		Color.get(-1, 000, 111, 020)
+		Color.get(-1, 100, 522, 40),
+		Color.get(-1, 111, 444, 40),
+		Color.get(-1, 000, 111, 20)
 	};
 	
 	public Zombie(int lvl) {

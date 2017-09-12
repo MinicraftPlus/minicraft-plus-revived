@@ -43,7 +43,7 @@ public class WorldSelectMenu extends Menu {
 		Main ("Select Option", 555),
 		Create ("Name of New World:", 555),
 		Load ("Load World", 555),
-		Rename ("Rename World", 050),
+		Rename ("Rename World", 40),
 		Delete ("Delete World", 500),
 		Copy ("Copy World", 005);
 		//Backup ("Backup World", 550);
