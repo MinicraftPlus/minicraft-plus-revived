@@ -56,18 +56,18 @@ public class Game extends Canvas implements Runnable {
 	public static final int WIDTH = 288;
 	private static float SCALE = 3;
 	
-	public static final String os;
+	public static final String OS;
 	public static final String localGameDir;
 	public static final String systemGameDir;
 	static {
-		os = System.getProperty("os.name").toLowerCase();
+		OS = System.getProperty("os.name").toLowerCase();
 		//System.out.println("os name: \"" +os + "\"");
-		if(os.contains("windows")) // windows
+		if(OS.contains("windows")) // windows
 			systemGameDir = System.getenv("APPDATA");
 		else
 			systemGameDir = System.getProperty("user.home");
 		
-		if(os.contains("mac") || os.contains("nix") || os.contains("nux") || os.contains("aix")) // mac or linux
+		if(OS.contains("mac") || OS.contains("nix") || OS.contains("nux") || OS.contains("aix")) // mac or linux
 			localGameDir = "/.playminicraft/mods/Minicraft_Plus";
 		else
 			localGameDir = "/playminicraft/mods/Minicraft_Plus"; // windows, probably.
@@ -107,7 +107,7 @@ public class Game extends Canvas implements Runnable {
 	
 	private BufferedImage image; // creates an image to be displayed on the screen.
 	protected int[] pixels; // the array of pixels that will be displayed on the screen.
-	private int[] colors; // All of the colors, put into an array.
+	//private int[] colors; // All of the colors, put into an array.
 	/// these are public, but should not be modified:
 	public Screen screen; // Creates the main screen
 	public Screen lightScreen; // Creates a front screen to render the darkness in caves (Fog of war).
@@ -178,14 +178,14 @@ public class Game extends Canvas implements Runnable {
 		}
 	}
 	
-	/// *** CONSTRUSTOR *** ///
+	/// *** CONSTRUCTOR *** ///
 	public Game() {
 		input = new InputHandler(this);
 		
 		fra = 0; // the frames processed in the previous second
 		tik = 0; // the ticks processed in the previous second
 		
-		colors = new int[256];
+		//colors = new int[256];
 		image = new BufferedImage(WIDTH, HEIGHT, BufferedImage.TYPE_INT_RGB);
 		pixels = ((DataBufferInt) image.getRaster().getDataBuffer()).getData();
 		
@@ -195,26 +195,6 @@ public class Game extends Canvas implements Runnable {
 		showinfo = false;
 		gameOver = false;
 	}
-	
-	/*
-	public static final byte[] intToBytes(int num) {
-		byte[] bytes = new byte[4];
-		bytes[0] = num >> (8*3);
-		bytes[1] = num >> (8*2) & 0xff;
-		bytes[2] = num >> cdm8 & 0xff;
-		bytes[3] = num & 0xff;
-	}
-	
-	public static final int bytesToInt(byte[] bytes) {
-		if(bytes.length != 4) return 0;
-		
-		int num = 0;
-		num += bytes[0] << 24;
-		num += bytes[1] << 16;
-		num += bytes[2] << 8;
-		num += bytes[3];
-	}
-	*/
 	
 	// Sets the current menu.
 	public void setMenu(Menu menu) {
@@ -1107,7 +1087,7 @@ public class Game extends Canvas implements Runnable {
 				//if (Game.debug) System.out.println("jar path: " + uri.getPath());
 				//if (Game.debug) System.out.println("jar string: " + uri.toString());
 				jarFilePath = uri.getPath();
-				if(os.contains("windows") && jarFilePath.startsWith("/"))
+				if(OS.contains("windows") && jarFilePath.startsWith("/"))
 					jarFilePath = jarFilePath.substring(1);
 			} catch(URISyntaxException ex) {
 				System.err.println("problem with jar file URI syntax.");
@@ -1249,7 +1229,7 @@ public class Game extends Canvas implements Runnable {
 		if(!testFile.exists() && testFileOld.exists()) {
 			// rename the old folders to the new scheme
 			testFile.mkdirs();
-			if(os.contains("windows")) {
+			if(OS.contains("windows")) {
 				try {
 					java.nio.file.Files.setAttribute(testFile.toPath(), "dos:hidden", true);
 				} catch (java.io.IOException ex) {
@@ -1271,7 +1251,7 @@ public class Game extends Canvas implements Runnable {
 			deleteAllFiles(testFileOld);
 			
 			testFile = new File(systemGameDir + ".playminicraft");
-			if(os.contains("windows") && testFile.exists())
+			if(OS.contains("windows") && testFile.exists())
 				deleteAllFiles(testFile);
 		}
 		

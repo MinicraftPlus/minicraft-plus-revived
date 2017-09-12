@@ -28,7 +28,6 @@ public class Lantern extends Furniture {
 	
 	@Override
 	public Furniture clone() {
-		//System.out.println("type: " + type);
 		return new Lantern(type);
 	}
 	

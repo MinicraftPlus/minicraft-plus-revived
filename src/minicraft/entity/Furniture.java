@@ -98,8 +98,6 @@ public class Furniture extends Entity {
 	}
 	
 	protected boolean updateField(String field, String val) {
-		//if(field.equals("x") || field.equals("y")) System.out.println(Game.onlinePrefix()+"updating furniture coordinate "+field+" to "+val+": " + this);
-		
 		if(super.updateField(field, val)) return true;
 		
 		switch(field) {

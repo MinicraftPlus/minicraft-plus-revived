@@ -61,6 +61,4 @@ public class Bed extends Furniture {
 		Bed.inBed = false;
 		return p;
 	}
-	
-	//public static Player getPlayer() { return player; }
 }

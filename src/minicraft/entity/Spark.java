@@ -6,8 +6,8 @@ import minicraft.gfx.Screen;
 
 public class Spark extends Entity {
 	private int lifeTime; // how much time until the spark disappears
-	public double xa, ya; // the x and y acceleration
-	public double xx, yy; // the x and y positions
+	private double xa, ya; // the x and y acceleration
+	private double xx, yy; // the x and y positions
 	private int time; // the amount of time that has passed
 	private AirWizard owner; // the AirWizard that created this spark
 	
