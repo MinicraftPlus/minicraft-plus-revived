@@ -301,6 +301,13 @@ class ConsoleReader extends Thread {
 					System.out.println("could not perform teleport; coordinates are not valid.");
 				}
 			}
+		},
+		
+		PING ("", "Pings all the clients, and prints a message when each responds.") {
+			@Override
+			public void run(String[] args, Game game) {
+				Game.server.pingClients();
+			}
 		};
 		
 		private String generalHelp, detailedHelp, usage;

@@ -42,6 +42,8 @@ public class MinicraftServerThread extends MinicraftConnection {
 	private List<Timer> gameTimers;
 	private boolean receivedPing = true;
 	
+	private long manualPingTimestamp;
+	
 	private List<InputType> packetTypesToKeep = new ArrayList<>();
 	private List<InputType> packetTypesToCache = new ArrayList<>();
 	private List<String> cachedPackets = new ArrayList<>();
@@ -84,6 +86,12 @@ public class MinicraftServerThread extends MinicraftConnection {
 		if(inType == InputType.PING) {
 			//if (Game.debug) System.out.println(this+" received ping");
 			receivedPing = true;
+			if(data.equals(manualPing)) {
+				long nsPingDelay = System.nanoTime() - manualPingTimestamp;
+				double pingDelay = Math.round(nsPingDelay*1.0 / 1E6)*1.0 / 1E3;
+				System.out.println("received ping from " + client.getUsername() + "; delay = " + pingDelay + " seconds.");
+			}
+			
 			return true;
 		}
 		
@@ -99,8 +107,13 @@ public class MinicraftServerThread extends MinicraftConnection {
 			endConnection();
 		} else {
 			receivedPing = false;
-			sendData(InputType.PING, "");
+			sendData(InputType.PING, autoPing);
 		}
+	}
+	
+	protected void doPing() {
+		sendData(InputType.PING, manualPing);
+		manualPingTimestamp = System.nanoTime();
 	}
 	
 	protected void sendError(String message) {

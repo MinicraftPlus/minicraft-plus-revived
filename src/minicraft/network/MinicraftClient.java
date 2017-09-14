@@ -144,7 +144,7 @@ public class MinicraftClient extends MinicraftConnection {
 				return false;
 			
 			case PING:
-				sendData(InputType.PING, "");
+				sendData(InputType.PING, alldata);
 				return true;
 			
 			case LOGIN:

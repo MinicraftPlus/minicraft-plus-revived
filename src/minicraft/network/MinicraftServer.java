@@ -329,6 +329,12 @@ public class MinicraftServer extends Thread implements MinicraftProtocol {
 			thread.sendData(InputType.GAME, vars);
 	}
 	
+	public void pingClients() {
+		System.out.println("pinging clients ("+threadList.size()+" connected)...");
+		for(MinicraftServerThread thread: getThreads())
+			thread.doPing();
+	}
+	
 	protected File[] getRemotePlayerFiles() {
 		File saveFolder = new File(worldPath);
 		
@@ -372,6 +378,10 @@ public class MinicraftServer extends Thread implements MinicraftProtocol {
 		}
 		
 		switch(inType) {
+			case PING:
+				System.out.println("Received ping from " + serverThread);
+				return true;
+			
 			case LOGIN:
 				if (Game.debug) System.out.println("SERVER: received login request");
 				if (Game.debug) System.out.println("SERVER: login data: " + Arrays.toString(data));
