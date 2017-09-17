@@ -352,6 +352,10 @@ public class Load {
 							tilename = "grass";
 						}
 					}
+					if(l == Game.minLevelDepth+1 && tilename.equalsIgnoreCase("LAPIS") && worldVer.compareTo(new Version("2.0.3-dev6")) < 0) {
+						if(Math.random() < 0.8) // don't replace *all* the lapis
+							tilename = "Gem Ore";
+					}
 					tiles[tileArrIdx] = Tiles.get(tilename).id;
 					tdata[tileArrIdx] = Byte.parseByte(extradata.get(tileidx));
 				}

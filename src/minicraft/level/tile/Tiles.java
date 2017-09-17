@@ -34,8 +34,8 @@ public final class Tiles {
 		tiles.set(18, new LavaBrickTile("Lava Brick"));
 		tiles.set(13, new OreTile(OreTile.OreType.Iron));
 		tiles.set(14, new OreTile(OreTile.OreType.Gold));
-		tiles.set(15, new OreTile(OreTile.OreType.Lapis));
-		tiles.set(16, new OreTile(OreTile.OreType.Gem));
+		tiles.set(15, new OreTile(OreTile.OreType.Gem));
+		tiles.set(16, new OreTile(OreTile.OreType.Lapis));
 		tiles.set(19, new ExplodedTile("Explode"));
 		tiles.set(20, new FarmTile("Farmland"));
 		tiles.set(21, new WheatTile("Wheat"));
