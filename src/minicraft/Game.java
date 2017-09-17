@@ -577,7 +577,7 @@ public class Game extends Canvas implements Runnable {
 						if(input.getKey("shift-u").clicked) {
 							levels[currentLevel].setTile(player.x>>4, player.y>>4, Tiles.get("Stairs Up"));
 						}
-						if(input.getKey("shift-j").clicked) {
+						if(input.getKey("shift-d").clicked) {
 							levels[currentLevel].setTile(player.x>>4, player.y>>4, Tiles.get("Stairs Down"));
 						}
 						
