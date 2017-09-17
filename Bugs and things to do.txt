@@ -11,10 +11,15 @@ Note to self: for more little bugs/ideas/concerns, search code for "TODO"
 ####
 Sound effects don't always play when they should; mostly it seems when other sounds should be on at the same time.
 ####
+Level Generation has gotten a bit broken, with the center of the iron and lava levels being mostly water/lava, and the lava level having only lapis... no gems...
+####
+it is possible to duplicate items through repeated dropping and picking up.
+####
 
 #####
 MULTIPLAYER-Related:
  - Players aren't kicked out if they are on a menu when the server goes down..? (only tested/seen once)
+ - Sand footsteps don't go away
  
  It would be nice if I could find a way to not even bother telling the server for things like potions, that don't even interact with the world.
 #####
