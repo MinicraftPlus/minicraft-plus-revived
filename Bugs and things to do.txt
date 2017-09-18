@@ -17,7 +17,6 @@ it is possible to duplicate items through repeated dropping and picking up.
 #####
 MULTIPLAYER-Related:
  - Players aren't kicked out if they are on a menu when the server goes down..? (only tested/seen once)
- - Sand footsteps don't go away
  
  It would be nice if I could find a way to not even bother telling the server for things like potions, that don't even interact with the world.
 #####
