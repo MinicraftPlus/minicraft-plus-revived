@@ -435,6 +435,8 @@ public class Level {
 					int xt = random.nextInt(w);
 					int yt = random.nextInt(w);
 					getTile(xt, yt).tick(this, xt, yt);
+					if(Game.isValidServer())
+						Game.server.broadcastTileUpdate(this, xt, yt);
 				}
 			}
 			
