@@ -19,7 +19,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Random;
 import javax.imageio.ImageIO;
-import javax.swing.JFrame;
+import javax.swing.*;
+
 import minicraft.entity.Bed;
 import minicraft.entity.Entity;
 import minicraft.entity.Furniture;
@@ -45,27 +46,28 @@ public class Game extends Canvas implements Runnable {
 	
 	public static boolean debug = false;
 	public static boolean HAS_GUI = true;
+	public static Game main = null;
 	
 	/// MANAGERIAL VARS AND RUNNING
 	
 	public static final String NAME = "Minicraft Plus"; // This is the name on the application window
-	public static final String VERSION = "2.0.3-dev4";
+	public static final String VERSION = "2.0.3";
 	public static final int HEIGHT = 192;
 	public static final int WIDTH = 288;
 	private static float SCALE = 3;
 	
-	public static final String os;
+	public static final String OS;
 	public static final String localGameDir;
 	public static final String systemGameDir;
 	static {
-		os = System.getProperty("os.name").toLowerCase();
+		OS = System.getProperty("os.name").toLowerCase();
 		//System.out.println("os name: \"" +os + "\"");
-		if(os.contains("windows")) // windows
+		if(OS.contains("windows")) // windows
 			systemGameDir = System.getenv("APPDATA");
 		else
 			systemGameDir = System.getProperty("user.home");
 		
-		if(os.contains("mac") || os.contains("nix") || os.contains("nux") || os.contains("aix")) // mac or linux
+		if(OS.contains("mac") || OS.contains("nix") || OS.contains("nux") || OS.contains("aix")) // mac or linux
 			localGameDir = "/.playminicraft/mods/Minicraft_Plus";
 		else
 			localGameDir = "/playminicraft/mods/Minicraft_Plus"; // windows, probably.
@@ -74,6 +76,8 @@ public class Game extends Canvas implements Runnable {
 	}
 	public static String gameDir; // The directory in which all the game files are stored
 	//public static String loadDir = "";
+	
+	public static int MAX_FPS = 50;
 	
 	/// MULTIPLAYER
 	public static boolean ISONLINE = false;
@@ -103,7 +107,7 @@ public class Game extends Canvas implements Runnable {
 	
 	private BufferedImage image; // creates an image to be displayed on the screen.
 	protected int[] pixels; // the array of pixels that will be displayed on the screen.
-	private int[] colors; // All of the colors, put into an array.
+	//private int[] colors; // All of the colors, put into an array.
 	/// these are public, but should not be modified:
 	public Screen screen; // Creates the main screen
 	public Screen lightScreen; // Creates a front screen to render the darkness in caves (Fog of war).
@@ -129,7 +133,7 @@ public class Game extends Canvas implements Runnable {
 	}
 	
 	public InputHandler input; // input used in Game, Player, and just about all the *Menu classes.
-	public Menu menu; // the current menu you are on.
+	public Menu menu, newMenu; // the current menu you are on.
 	public Player player; // The Player.
 	//public Level level; // This is the current level you are on.
 	static int worldSize = 128; // The size of the world
@@ -142,7 +146,7 @@ public class Game extends Canvas implements Runnable {
 	
 	/// AUTOSAVE AND NOTIFICATIONS
 	
-	public static List<String> notifications = new ArrayList<String>();
+	public static List<String> notifications = new ArrayList<>();
 	public static int notetick; // "note"= notifications.
 	
 	public static final int astime = 7200; //stands for Auto-Save Time (interval)
@@ -162,26 +166,26 @@ public class Game extends Canvas implements Runnable {
 	public static boolean pastDay1 = true; // used to prefent mob spawn on surface on day 1.
 	public static boolean readyToRenderGameplay = false;
 	
-	public static enum Time {
+	public enum Time {
 		Morning (0),
 		Day (Game.dayLength/4),
 		Evening (Game.dayLength/2),
 		Night (Game.dayLength/4*3);
 		
 		public int tickTime;
-		private Time(int ticks) {
+		Time(int ticks) {
 			tickTime = ticks;
 		}
 	}
 	
-	/// *** CONSTRUSTOR *** ///
+	/// *** CONSTRUCTOR *** ///
 	public Game() {
 		input = new InputHandler(this);
 		
 		fra = 0; // the frames processed in the previous second
 		tik = 0; // the ticks processed in the previous second
 		
-		colors = new int[256];
+		//colors = new int[256];
 		image = new BufferedImage(WIDTH, HEIGHT, BufferedImage.TYPE_INT_RGB);
 		pixels = ((DataBufferInt) image.getRaster().getDataBuffer()).getData();
 		
@@ -192,44 +196,24 @@ public class Game extends Canvas implements Runnable {
 		gameOver = false;
 	}
 	
-	/*
-	public static final byte[] intToBytes(int num) {
-		byte[] bytes = new byte[4];
-		bytes[0] = num >> (8*3);
-		bytes[1] = num >> (8*2) & 0xff;
-		bytes[2] = num >> 8 & 0xff;
-		bytes[3] = num & 0xff;
-	}
-	
-	public static final int bytesToInt(byte[] bytes) {
-		if(bytes.length != 4) return 0;
-		
-		int num = 0;
-		num += bytes[0] << 24;
-		num += bytes[1] << 16;
-		num += bytes[2] << 8;
-		num += bytes[3];
-	}
-	*/
-	
 	// Sets the current menu.
 	public void setMenu(Menu menu) {
-		this.menu = menu;
+		this.newMenu = menu;
 		//if (debug) System.out.println("setting game menu to " + menu);
 		if (menu != null) menu.init(this, input);
 	}
 	
-	public static final boolean isValidClient() {
+	public static boolean isValidClient() {
 		return ISONLINE && client != null;
 	}
-	public static final boolean isConnectedClient() {
+	public static boolean isConnectedClient() {
 		return isValidClient() && client.isConnected();
 	}
 	
-	public static final boolean isValidServer() {
+	public static boolean isValidServer() {
 		return ISONLINE && ISHOST && server != null;
 	}
-	public static final boolean hasConnectedClients() {
+	public static boolean hasConnectedClients() {
 		return isValidServer() && server.hasClients();
 	}
 	
@@ -250,8 +234,10 @@ public class Game extends Canvas implements Runnable {
 	protected void init() {
 		/* This sets up the screens, and loads the icons.png spritesheet. */
 		try {
-			screen = new Screen(WIDTH, HEIGHT, new SpriteSheet(ImageIO.read(Game.class.getResourceAsStream("/icons.png"))));
-			lightScreen = new Screen(WIDTH, HEIGHT, new SpriteSheet(ImageIO.read(Game.class.getResourceAsStream("/icons.png"))));
+			screen = new Screen(new SpriteSheet(ImageIO.read(Game.class.getResourceAsStream
+					("/resources/icons.png"))));
+			lightScreen = new Screen(new SpriteSheet(ImageIO.read(Game.class.getResourceAsStream
+					("/resources/icons.png"))));
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
@@ -379,6 +365,9 @@ public class Game extends Canvas implements Runnable {
 	// VERY IMPORTANT METHOD!! Makes everything keep happening.
 	// In the end, calls menu.tick() if there's a menu, or level.tick() if no menu.
 	public void tick() {
+		if(newMenu != menu)
+			menu = newMenu;
+		
 		Level level = levels[currentLevel];
 		if (Bed.inBed && !Game.isValidClient()) {
 			// IN BED
@@ -462,11 +451,7 @@ public class Game extends Canvas implements Runnable {
 			//boolean ticked = false;
 			for(Level floor: levels) {
 				if(floor == null) continue;
-				//if(floor.getEntitiesOfClass(Player.class).length > 0) {
-					//if(Game.debug) System.out.println("Server is ticking level " + floor.depth);
-					floor.tick();
-				//	ticked = true;
-				//}
+				floor.tick();
 			}
 			
 			/*if(!ticked) {
@@ -495,7 +480,7 @@ public class Game extends Canvas implements Runnable {
 				//a menu is active.
 				//if(Game.isValidClient() && readyToRenderGameplay && Game.debug)
 					//System.out.println("Client has menu: " + menu);
-				player.tick();
+				player.tick(); // it is CRUTIAL that the player is ticked HERE, before the menu is ticked. I'm not quite sure why... the menus break otherwise, though.
 				menu.tick();
 				paused = true;
 			} else {
@@ -520,13 +505,12 @@ public class Game extends Canvas implements Runnable {
 						System.out.println("player is on level " + player.getLevel() + "; removed="+player.isRemoved());
 					}*/
 					
+					player.tick(); // ticks the player when there's no menu.
+					
 					if(level != null) {
 						level.tick();
 						Tile.tickCount++;
 					}
-					
-					if(isValidClient())
-						player.tick();
 					
 					if(!HAS_GUI) startMultiplayerServer();
 				}
@@ -593,7 +577,7 @@ public class Game extends Canvas implements Runnable {
 						if(input.getKey("shift-u").clicked) {
 							levels[currentLevel].setTile(player.x>>4, player.y>>4, Tiles.get("Stairs Up"));
 						}
-						if(input.getKey("shift-j").clicked) {
+						if(input.getKey("shift-d").clicked) {
 							levels[currentLevel].setTile(player.x>>4, player.y>>4, Tiles.get("Stairs Down"));
 						}
 						
@@ -736,7 +720,11 @@ public class Game extends Canvas implements Runnable {
 			System.out.println("server tried to change level.");
 			return;
 		}
-		levels[currentLevel].remove(player); // removes the player from the current level.
+		
+		if(Game.isValidClient())
+			levels[currentLevel].clearEntities(); // clear all the entities from the last level, so that no artifacts remain. They're loaded dynamically, anyway.
+		else
+			levels[currentLevel].remove(player); // removes the player from the current level.
 		
 		int nextLevel = currentLevel + dir;
 		if (nextLevel <= -1) nextLevel = levels.length-1; // fix accidental level underflow
@@ -747,7 +735,7 @@ public class Game extends Canvas implements Runnable {
 		player.x = (player.x >> 4) * 16 + 8; // sets the player's x coord (to center yourself on the stairs)
 		player.y = (player.y >> 4) * 16 + 8; // sets the player's y coord (to center yourself on the stairs)
 		
-		if(isValidClient() && levels[currentLevel] == null) {
+		if(isValidClient()/* && levels[currentLevel] == null*/) {
 			readyToRenderGameplay = false;
 			Game.client.requestLevel(currentLevel);
 		} else
@@ -777,17 +765,6 @@ public class Game extends Canvas implements Runnable {
 		char set = time < interval ? '.' : ' '; // get the character to set in this cycle.
 		
 		dots[epos] = set;
-		/*
-		for(int i = 0; i < 3; i++) {
-			if (epos == 1) dots += chars[0];
-		}
-		*/
-		/*eposTick++;
-		if(eposTick >= Game.normSpeed) {
-			eposTick = 0;
-			//ePos++;
-		}*/
-		//if(ePos >= 3) ePos = 0;
 		
 		return new String(dots);
 	}
@@ -797,8 +774,7 @@ public class Game extends Canvas implements Runnable {
 	public void render() {
 		if(!HAS_GUI) return; // no point in this if there's no gui... :P
 		
-		BufferStrategy bs = null;
-		bs = getBufferStrategy(); // creates a buffer strategy to determine how the graphics should be buffered.
+		BufferStrategy bs = getBufferStrategy(); // creates a buffer strategy to determine how the graphics should be buffered.
 		if (bs == null) {
 			createBufferStrategy(3); // if the buffer strategy is null, then make a new one!
 			requestFocus(); // requests the focus of the screen.
@@ -847,16 +823,16 @@ public class Game extends Canvas implements Runnable {
 		Level level = Game.levels[currentLevel];
 		if(level == null) return;
 		
-		int xScroll = player.x - screen.w / 2; // scrolls the screen in the x axis.
-		int yScroll = player.y - (screen.h - 8) / 2; // scrolls the screen in the y axis.
+		int xScroll = player.x - Screen.w / 2; // scrolls the screen in the x axis.
+		int yScroll = player.y - (Screen.h - 8) / 2; // scrolls the screen in the y axis.
 		
 		//if (debug && isValidClient()) System.out.println("player coords at render: "+player.x+","+player.y);
 		
 		//stop scrolling if the screen is at the ...
 		if (xScroll < 0) xScroll = 0; // ...left border.
 		if (yScroll < 0) yScroll = 0; // ...top border.
-		if (xScroll > level.w * 16 - screen.w) xScroll = level.w * 16 - screen.w; // ...right border.
-		if (yScroll > level.h * 16 - screen.h) yScroll = level.h * 16 - screen.h; // ...bottom border.
+		if (xScroll > level.w * 16 - Screen.w) xScroll = level.w * 16 - Screen.w; // ...right border.
+		if (yScroll > level.h * 16 - Screen.h) yScroll = level.h * 16 - Screen.h; // ...bottom border.
 		if (currentLevel > 3) { // if the current level is higher than 3 (which only the sky level (and dungeon) is)
 			int col = Color.get(20, 20, 121, 121); // background color.
 			for (int y = 0; y < 28; y++)
@@ -882,26 +858,26 @@ public class Game extends Canvas implements Runnable {
 	private void renderGui() {
 		/// AH-HA! THIS DRAWS THE BLACK SQUARE!!
 		for (int x = 12; x < 29; x++) {
-			screen.render(x * 7, screen.h - 8, 0 + 1 * 32, Color.get(0, 0), 0);
+			screen.render(x * 7, Screen.h - 8, 0 + 1 * 32, Color.get(0, 0), 0);
 		}
 		
 		renderDebugInfo();
 		
 		// This is the arrow counter. ^ = infinite symbol.
-		int ac = player.inventory.count(Items.get("arrow"));
+		int ac = player.inventory.count(Items.arrowItem);
 		if (ModeMenu.creative || ac >= 10000)
-			Font.draw("	x" + "^", screen, 84, screen.h - 16, Color.get(0, 333, 444, 555));
+			Font.draw("	x" + "^", screen, 84, Screen.h - 16, Color.get(0, 333, 444, 555));
 		else
-			Font.draw("	x" + ac, screen, 84, screen.h - 16, Color.get(0, 555));
+			Font.draw("	x" + ac, screen, 84, Screen.h - 16, Color.get(0, 555));
 		//displays arrow icon
-		screen.render(10 * 8 + 4, screen.h - 16, 13 + 5 * 32, Color.get(0, 111, 222, 430), 0);
+		screen.render(10 * 8 + 4, Screen.h - 16, 13 + 5 * 32, Color.get(0, 111, 222, 430), 0);
 		
 		String msg = "";
 		if (saving) msg = "Saving... " + Math.round(LoadingMenu.percentage) + "%";
 		else if (Bed.inBed) msg = "Sleeping...";
 		
 		if(msg.length() > 0)
-			new FontStyle(Color.get(-1, 555)).setYPos(screen.h / 2 - 20).setShadowType(Color.get(-1, 222), false).draw(msg, screen);
+			new FontStyle(Color.get(-1, 555)).setYPos(Screen.h / 2 - 20).setShadowType(Color.get(-1, 222), false).draw(msg, screen);
 		
 		/// NOTIFICATIONS
 		
@@ -919,9 +895,9 @@ public class Game extends Canvas implements Runnable {
 			// draw each current notification, with shadow text effect.
 			FontStyle style = new FontStyle(Color.get(-1, 555)).setShadowType(Color.get(-1, 222), false);
 			for (int i = 0; i < notifications.size(); i++) {
-				String note = ((String) notifications.get(i));
-				//int x = screen.w / 2 - note.length() * 8 / 2,
-				int y = screen.h - 120 - notifications.size()*8 + i * 8;
+				String note = notifications.get(i);
+				//int x = Screen.w / 2 - note.length() * 8 / 2,
+				int y = Screen.h - 120 - notifications.size()*8 + i * 8;
 				style.setYPos(y).draw(note, screen);
 				//Font.draw(note, screen, x, y, Color.get(-1, 555), Color.get(-1, 111));
 			}
@@ -941,15 +917,15 @@ public class Game extends Canvas implements Runnable {
 			else if (scoreTime >= 3600) timeCol = Color.get(330, 555);
 			else timeCol = Color.get(400, 555);
 			
-			Font.draw("Time left " + (hours > 0 ? hours+"h ":"") + minutes + "m " + seconds + "s", screen, screen.w/2-9*8, 2, timeCol);
+			Font.draw("Time left " + (hours > 0 ? hours+"h ":"") + minutes + "m " + seconds + "s", screen, Screen.w/2-9*8, 2, timeCol);
 			
 			String scoreString = "Current score: " + player.score;
-			Font.draw(scoreString, screen, screen.w - Font.textWidth(scoreString)-2, 3 + 8, Color.get(-1, 555));
+			Font.draw(scoreString, screen, Screen.w - Font.textWidth(scoreString)-2, 3 + 8, Color.get(-1, 555));
 			
 			if(multiplier > 1) {
 				int multColor = multiplier < 50 ? Color.get(-1, 540) : Color.get(-1, 500);
 				String mult = "X" + multiplier;
-				Font.draw(mult, screen, screen.w-Font.textWidth(mult)-2, 4 + 2*8, multColor);
+				Font.draw(mult, screen, Screen.w-Font.textWidth(mult)-2, 4 + 2*8, multColor);
 			}
 		}
 
@@ -957,7 +933,7 @@ public class Game extends Canvas implements Runnable {
 		if (player.activeItem instanceof ToolItem && ((ToolItem)player.activeItem).type == ToolType.FishingRod) {
 			int dura = ((ToolItem)player.activeItem).dur * 100 / ((ToolItem)player.activeItem).type.durability;
 			//if (dura > 100) dura = 100;
-			Font.draw(dura + "%", screen, 164, screen.h - 16, Color.get(0, 30));
+			Font.draw(dura + "%", screen, 164, Screen.h - 16, Color.get(0, 30));
 		}
 		
 		/// This renders the potions overlay
@@ -980,39 +956,39 @@ public class Game extends Canvas implements Runnable {
 				int color;
 				
 				// renders armor
-				int armor = player.armor*10/player.maxArmor;
+				int armor = player.armor*10 / Player.maxArmor;
 				color = (i <= armor && player.curArmor != null) ? player.curArmor.sprite.color : Color.get(-1, -1);
-				screen.render(i * 8, screen.h - 24, 3 + 12 * 32, color, 0);
+				screen.render(i * 8, Screen.h - 24, 3 + 12 * 32, color, 0);
 				
 				// renders your current red hearts, or black hearts for damaged health.
 				color = (i < player.health) ? Color.get(-1, 200, 500, 533) : Color.get(-1, 100, 000, 000);
-				screen.render(i * 8, screen.h - 16, 0 + 12 * 32, color, 0);
+				screen.render(i * 8, Screen.h - 16, 0 + 12 * 32, color, 0);
 				
 				if (player.staminaRechargeDelay > 0) {
 					// creates the white/gray blinking effect when you run out of stamina.
 					color = (player.staminaRechargeDelay / 4 % 2 == 0) ? Color.get(-1, 555, 000, 000) : Color.get(-1, 110, 000, 000);
-					screen.render(i * 8, screen.h - 8, 1 + 12 * 32, color, 0);
+					screen.render(i * 8, Screen.h - 8, 1 + 12 * 32, color, 0);
 				} else {
 					// renders your current stamina, and uncharged gray stamina.
 					color = (i < player.stamina) ? Color.get(-1, 220, 550, 553) : Color.get(-1, 110, 000, 000);
-					screen.render(i * 8, screen.h - 8, 1 + 12 * 32, color, 0);
+					screen.render(i * 8, Screen.h - 8, 1 + 12 * 32, color, 0);
 				}
 				
 				// renders hunger
 				color = (i < player.hunger) ? Color.get(-1, 100, 530, 211) : Color.get(-1, 100, 000, 000);
-				screen.render(i * 8 + (screen.w - 80), screen.h - 16, 2 + 12 * 32, color, 0);
+				screen.render(i * 8 + (Screen.w - 80), Screen.h - 16, 2 + 12 * 32, color, 0);
 			}
 		}
 		
 		/// CURRENT ITEM
 		if (player.activeItem != null) // shows active item sprite and name in bottom toolbar, if one exists.
-			player.activeItem.renderInventory(screen, 12 * 7, screen.h - 8, false);
+			player.activeItem.renderInventory(screen, 12 * 7, Screen.h - 8, false);
 	}
 	
 	private void renderDebugInfo() {
 		int textcol = Color.get(-1, 555);
 		if (showinfo) { // renders show debug info on the screen.
-			ArrayList<String> info = new ArrayList<String>();
+			ArrayList<String> info = new ArrayList<>();
 			info.add("VERSION " + VERSION);
 			info.add(fra + " fps");
 			info.add("day tiks " + tickCount);
@@ -1047,7 +1023,8 @@ public class Game extends Canvas implements Runnable {
 				}
 				
 				//info.add("steps: " + player.stepCount);
-				info.add("micro-hunger:" + player.hungerStamCnt);
+				if(debug)
+					info.add("micro-hunger:" + player.hungerStamCnt);
 				//info.add("health regen:" + player.hungerStamCnt);
 			}
 			
@@ -1062,7 +1039,7 @@ public class Game extends Canvas implements Runnable {
 	private void renderFocusNagger() {
 		String msg = "Click to focus!"; // the message when you click off the screen.
 		paused = true; //perhaps paused is only used for this.
-		int xx = Font.centerX(msg, 0, screen.w); // the width of the box
+		int xx = Font.centerX(msg, 0, Screen.w); // the width of the box
 		int yy = (HEIGHT - 8) / 2; // the height of the box
 		int w = msg.length(); // length of message in characters.
 		int h = 1;
@@ -1110,13 +1087,13 @@ public class Game extends Canvas implements Runnable {
 				//if (Game.debug) System.out.println("jar path: " + uri.getPath());
 				//if (Game.debug) System.out.println("jar string: " + uri.toString());
 				jarFilePath = uri.getPath();
-				if(os.contains("windows") && jarFilePath.startsWith("/"))
+				if(OS.contains("windows") && jarFilePath.startsWith("/"))
 					jarFilePath = jarFilePath.substring(1);
 			} catch(URISyntaxException ex) {
 				System.err.println("problem with jar file URI syntax.");
 				ex.printStackTrace();
 			}
-			List<String> arguments = new ArrayList<String>();
+			List<String> arguments = new ArrayList<>();
 			arguments.add("java");
 			arguments.add("-jar");
 			arguments.add(jarFilePath);
@@ -1153,6 +1130,7 @@ public class Game extends Canvas implements Runnable {
 	 */
 	public void run() {
 		long lastTime = System.nanoTime();
+		long lastRender = System.nanoTime();
 		double unprocessed = 0;
 		int frames = 0;
 		int ticks = 0;
@@ -1185,8 +1163,9 @@ public class Game extends Canvas implements Runnable {
 				e.printStackTrace();
 			}
 			
-			if (shouldRender) {
+			if (shouldRender && (now - lastRender) / 1.0E9 > 1.0 / MAX_FPS) {
 				frames++;
+				lastRender = System.nanoTime();
 				render();
 			}
 			
@@ -1250,7 +1229,7 @@ public class Game extends Canvas implements Runnable {
 		if(!testFile.exists() && testFileOld.exists()) {
 			// rename the old folders to the new scheme
 			testFile.mkdirs();
-			if(os.contains("windows")) {
+			if(OS.contains("windows")) {
 				try {
 					java.nio.file.Files.setAttribute(testFile.toPath(), "dos:hidden", true);
 				} catch (java.io.IOException ex) {
@@ -1272,7 +1251,7 @@ public class Game extends Canvas implements Runnable {
 			deleteAllFiles(testFileOld);
 			
 			testFile = new File(systemGameDir + ".playminicraft");
-			if(os.contains("windows") && testFile.exists())
+			if(OS.contains("windows") && testFile.exists())
 				deleteAllFiles(testFile);
 		}
 		
@@ -1282,7 +1261,7 @@ public class Game extends Canvas implements Runnable {
 			game.setMinimumSize(new Dimension(1, 1));
 			game.setPreferredSize(getWindowSize());
 			JFrame frame = new JFrame(Game.NAME);
-			frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+			frame.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
 			frame.setLayout(new BorderLayout()); // sets the layout of the window
 			frame.add(game, BorderLayout.CENTER); // Adds the game (which is a canvas) to the center of the screen.
 			frame.pack(); //squishes everything into the preferredSize.
@@ -1319,6 +1298,8 @@ public class Game extends Canvas implements Runnable {
 		
 		game.autoclient = autoclient; // this will make the game automatically jump to the MultiplayerMenu, and attempt to connect to localhost.
 		
+		Game.main = game;
+		
 		game.start(); // Starts the game!
 	}
 	
@@ -1333,22 +1314,29 @@ public class Game extends Canvas implements Runnable {
 	}
 	
 	private static List<File> getAllFiles(File top) {
-		List<File> files = new ArrayList<File>();
+		List<File> files = new ArrayList<>();
 		if(!top.isDirectory()) {
 			files.add(top);
 			return files;
 		} else
 			files.add(top);
-		for(File subfile: top.listFiles())
-			files.addAll(getAllFiles(subfile));
+		
+		File[] subfiles = top.listFiles();
+		if(subfiles != null)
+			for(File subfile: subfiles)
+				files.addAll(getAllFiles(subfile));
 		
 		return files;
 	}
 	
 	private static void deleteAllFiles(File top) {
-		if(top.isDirectory())
-			for(File subfile: top.listFiles())
-				deleteAllFiles(subfile);
+		if(top.isDirectory()) {
+			File[] subfiles = top.listFiles();
+			if(subfiles != null)
+				for (File subfile : subfiles)
+					deleteAllFiles(subfile);
+		}
+		//noinspection ResultOfMethodCallIgnored
 		top.delete();
 	}
 	
@@ -1364,7 +1352,7 @@ public class Game extends Canvas implements Runnable {
 		final java.io.ByteArrayOutputStream bytestream = new java.io.ByteArrayOutputStream();
 		final java.io.PrintStream printStream = new java.io.PrintStream(bytestream);
 		throwable.printStackTrace(printStream);
-		String exceptionStr = "";
+		String exceptionStr;
 		try {
 			exceptionStr = bytestream.toString("UTF-8");
 		}

@@ -2,19 +2,23 @@ package minicraft.screen;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import minicraft.Game;
 import minicraft.entity.Inventory;
 import minicraft.gfx.Color;
 import minicraft.gfx.Screen;
 import minicraft.item.Item;
 import minicraft.item.StackableItem;
+import org.jetbrains.annotations.Contract;
+import org.jetbrains.annotations.NotNull;
 
 public class InventoryMenu extends ScrollingMenu {
 	protected Inventory inv;
 	protected String title;
 	
-	private static final List<String> getItemList(Inventory inv) {
+	private static List<String> getItemList(Inventory inv) {
 		List<Item> items = inv.getItems();
-		List<String> itemNames = new ArrayList<String>();
+		List<String> itemNames = new ArrayList<>();
 		// to make space for the item icon.
 		for(int i = 0; i < items.size(); i++) {
 			itemNames.add(getItemDisplayName(items.get(i)));
@@ -31,16 +35,23 @@ public class InventoryMenu extends ScrollingMenu {
 	
 	public void render(Screen screen) {
 		renderFrame(screen, title, 1, 1, 22, 11); // renders the blue box for the inventory
-		super.render(screen);
 		List<Item> items = inv.getItems();
-		for(int i = 0; i < dispSize; i++)
+		if(options.size() != items.size())
+			options = getItemList(inv);
+		super.render(screen);
+		for(int i = 0; i < dispSize && i < items.size()-offset; i++)
 			items.get(offset+i).sprite.render(screen, 2*8, 8*(2+i));
 	}
 	
 	public void removeSelectedItem() {
-		inv.remove(selected);
-		if(selected >= inv.invSize())
-			selected = Math.max(0, inv.invSize()-1); // can't select -1...
+		if(inv.invSize() > 0)
+			inv.remove(selected);
+		if(selected >= inv.invSize()) {
+			int newselected = Math.max(0, inv.invSize() - 1); // can't select -1...
+			dispSelected += newselected - selected;
+			selected = newselected;
+			//if(Game.debug) System.out.println("new selection: " + selected);
+		}
 		options = getItemList(inv);
 	}
 	
@@ -49,7 +60,9 @@ public class InventoryMenu extends ScrollingMenu {
 		options.set(selected, getItemDisplayName(inv.get(selected)));
 	}
 	
-	private static final String getItemDisplayName(Item i) {
+	@NotNull
+	@Contract(pure = true)
+	private static String getItemDisplayName(Item i) {
 		String extra = "";
 		if(i instanceof StackableItem) {
 			StackableItem stack = (StackableItem) i;

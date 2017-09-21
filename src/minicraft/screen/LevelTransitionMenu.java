@@ -22,7 +22,7 @@ public class LevelTransitionMenu extends Menu {
 				int dd = (y + x % 2 * 2 + x / 3) - time; // Used as part of the positioning.
 				if (dd < 0 && dd > -30) {
 					if (dir > 0) screen.render(x * 8, y * 8, 0, 0, 0); // If the direction is upwards then render the squares going up
-					else screen.render(x * 8, screen.h - y * 8 - 8, 0, 0, 0);  // If the direction is negative, then the squares will go down.
+					else screen.render(x * 8, Screen.h - y * 8 - 8, 0, 0, 0);  // If the direction is negative, then the squares will go down.
 				}
 			}
 		}

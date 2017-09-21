@@ -8,6 +8,7 @@ import java.net.Socket;
 import java.util.Arrays;
 import minicraft.Game;
 import minicraft.item.PotionType;
+import org.jetbrains.annotations.NotNull;
 
 public abstract class MinicraftConnection extends Thread implements MinicraftProtocol {
 	
@@ -23,7 +24,7 @@ public abstract class MinicraftConnection extends Thread implements MinicraftPro
 			in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
 			out = new PrintWriter(socket.getOutputStream(), true);
 		} catch (IOException ex) {
-			System.err.println("failed to initalize i/o streams for socket:");
+			System.err.println("failed to initialize i/o streams for socket:");
 			ex.printStackTrace();
 		} catch (NullPointerException ex) {
 			System.err.println("CONNECTION ERROR: null socket, cannot initialize i/o streams...");
@@ -58,20 +59,20 @@ public abstract class MinicraftConnection extends Thread implements MinicraftPro
 			if(read > 0) { // if it is valid character that is not the null character, then add it to the string.
 				currentData.append( (char)read );
 			}
-			else if(read == 0 && currentData.length() > 0) { // read MUST equal 0 at this point, aka a null character; the if statement makes it ignore sequential null characters.
+			else if(currentData.length() > 0) { // read MUST equal 0 at this point, aka a null character; the if statement makes it ignore sequential null characters.
 				
 				//if (Game.debug) System.out.println(this + " completed data packet: " + currentData);
 				
 				InputType inType = MinicraftProtocol.getInputType(currentData.charAt(0));
-				//if (Game.debug) System.out.println(this + " recieved "+inType+" packet");//: " + stringToInts(currentData.toString(), 30));
+				//if (Game.debug) System.out.println(this + " received "+inType+" packet");//: " + stringToInts(currentData.toString(), 30));
 				
 				//if(inType == InputType.INIT) initCount++;
 				//if(initCount > 20) System.exit(1);
 				
-				//if(Game.debug && (inType == InputType.MOVE || inType == InputType.INTERACT)) System.out.println(this+" recieved "+inType+" packet");
+				//if(Game.debug && (inType == InputType.MOVE || inType == InputType.INTERACT)) System.out.println(this+" received "+inType+" packet");
 				
 				if(inType == null)
-					System.err.println("SERVER: invalid packet recieved; input type is not valid.");
+					System.err.println("SERVER: invalid packet received; input type is not valid.");
 				else
 					parsePacket(inType, currentData.substring(1));
 				
@@ -85,62 +86,11 @@ public abstract class MinicraftConnection extends Thread implements MinicraftPro
 		endConnection();
 	}
 	
-	//private String currentData = "";
-	
-	/*protected final boolean checkInput() {
-		int read = -1;
-		try {
-			//if(in.ready()) {
-				read = in.read();
-				//if (Game.debug) System.out.println(this + " read character from stream: " + ((char)read));
-			//}
-		} catch (IOException ex) {
-			System.err.println(this + " had a problem reading its input stream (will continue trying): " + ex.getMessage());
-			ex.printStackTrace();
-		}
-		
-		if(read == -1) return false;
-		
-		while(read != -1) {
-			
-			if(read > 0) { // if it is valid character that is not the null character, then add it to the string.
-				currentData += (char)read;
-				//if (Game.debug) System.out.println(this + " successfully read character from input stream: " + ((char)read) );
-			}
-			else if(currentData.length() > 0) { // read MUST equal 0 at this point, aka a null character; the if statement makes it ignore sequential null characters.
-				
-				//if (Game.debug) System.out.println(this + " completed data packet; parsing...");
-				
-				InputType inType = MinicraftProtocol.getInputType(currentData.charAt(0));
-				//if (Game.debug && inType != InputType.MOVE) System.out.println("SERVER: recieved "+inType+" packet");
-				
-				if(inType == null)
-					System.err.println("SERVER: invalid packet recieved; input type is not valid.");
-				else
-					parsePacket(inType, currentData.substring(1));
-				
-				currentData = "";
-			}
-			
-			try {
-				//if(in.ready())
-					read = in.read();
-				//else
-					//read = -1;
-			} catch (IOException ex) {
-				System.err.println(this + " had a problem reading its input stream (will continue trying): " + ex.getMessage());
-				ex.printStackTrace();
-			}
-		}
-		
-		return true;
-	}*/
-	
 	protected abstract boolean parsePacket(InputType inType, String data);
 	
 	protected synchronized void sendData(InputType inType, String data) {
 		char inTypeChar = (char) (inType.ordinal()+1);
-		//if (Game.debug && (inType == InputType.MOVE || inType == InputType.INTERACT)) System.out.println(this + ": printing " + inType + " data");//: " + stringToInts(data, 30)); //data.substring(0, Math.min(data.length(), 20)));
+		//if (Game.debug && inType == InputType.TILES) System.out.println(this + ": printing " + inType + " data:");
 		if(data.contains("\0")) System.err.println("WARNING from "+this+": data to send contains a null character. Not sending data.");
 		else {
 			out.print(inTypeChar + data + '\0');
@@ -148,7 +98,9 @@ public abstract class MinicraftConnection extends Thread implements MinicraftPro
 		}
 	}
 	
+	@NotNull
 	public static String stringToInts(String str) { return stringToInts(str, str.length()); }
+	@NotNull
 	public static String stringToInts(String str, int maxLength) {
 		int[] chars = new int[Math.min(str.length(), maxLength)];
 		
@@ -176,7 +128,7 @@ public abstract class MinicraftConnection extends Thread implements MinicraftPro
 			
 			try {
 				socket.close();
-			} catch (IOException ex) {
+			} catch (IOException ignored) {
 			}
 		}
 	}

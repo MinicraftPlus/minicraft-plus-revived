@@ -77,9 +77,9 @@ public class KeyInputMenu extends ScrollingMenu {
 			String action = key.substring(0, key.indexOf(";"));
 			String mapping = key.substring(key.indexOf(";")+1);
 			
-			String buffer = "";
+			StringBuilder buffer = new StringBuilder();
 			for(int spaces = 0; spaces < Game.WIDTH/8 - action.length() - mapping.length(); spaces++) {
-				buffer += " ";
+				buffer.append(" ");
 			}
 			
 			actionKeys[i] = action;
@@ -92,7 +92,7 @@ public class KeyInputMenu extends ScrollingMenu {
 		
 		Font.drawCentered("Controls", screen, 0, Color.get(-1, 555));
 		
-		if(Game.debug&&false) {
+		/*if(Game.debug) {
 			System.out.println("current status:");
 			System.out.println("selected: " + selected + " of " + options.size());
 			System.out.println("disp sel: " + dispSelected + " of " + dispSize);
@@ -100,20 +100,20 @@ public class KeyInputMenu extends ScrollingMenu {
 			System.out.println("CONTENTS:");
 			for(String str: options)
 				System.out.println(str);
-		}
+		}*/
 		
 		super.render(screen);
 		
 		if(listeningForBind) {
-			renderFrame(screen, "", 4, 4, screen.w/8-4, screen.h/8-4);
-			Font.drawCentered("Press the desired", screen, (screen.h-Font.textHeight()) / 2 - 4, Color.get(-1, 450));
-			Font.drawCentered("key sequence", screen, (screen.h-Font.textHeight()) / 2 + 4, Color.get(-1, 450));
+			renderFrame(screen, "", 4, 4, Screen.w/8-4, Screen.h/8-4);
+			Font.drawCentered("Press the desired", screen, (Screen.h-Font.textHeight()) / 2 - 4, Color.get(-1, 450));
+			Font.drawCentered("key sequence", screen, (Screen.h-Font.textHeight()) / 2 + 4, Color.get(-1, 450));
 		} else if (confirmReset) {
-			renderFrame(screen, "Confirm Action", 4, 4, screen.w/8-4, screen.h/8-4);
+			renderFrame(screen, "Confirm Action", 4, 4, Screen.w/8-4, Screen.h/8-4);
 			FontStyle style = new FontStyle(Color.get(-1, 511));
 			Font.drawParagraph("Are you sure you want to reset all key bindings to the default keys?", screen, 8*4, true, 8*4, true, style, 4);
 			style.setColor(Color.get(-1, 533));
-			Font.drawParagraph(input.getMapping("select")+" to confirm\n"+input.getMapping("exit")+" to cancel", screen, 8, true, (screen.h-Font.textHeight()) / 2 + 8*3, false, style, 4);
+			Font.drawParagraph(input.getMapping("select")+" to confirm\n"+input.getMapping("exit")+" to cancel", screen, 8, true, (Screen.h-Font.textHeight()) / 2 + 8*3, false, style, 4);
 		} else {
 			String[] lines = {
 				"Press C/Enter to change key binding",
@@ -122,7 +122,7 @@ public class KeyInputMenu extends ScrollingMenu {
 				input.getMapping("exit")+" to Return to menu"
 			};
 			for(int i = 0; i < lines.length; i++)
-				Font.drawCentered(lines[i], screen, screen.h-Font.textHeight()*(4-i), Color.get(-1, 555));
+				Font.drawCentered(lines[i], screen, Screen.h-Font.textHeight()*(4-i), Color.get(-1, 555));
 		}
 	}
 }

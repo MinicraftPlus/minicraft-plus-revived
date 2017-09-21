@@ -59,7 +59,7 @@ public class BookMenu extends Menu {
 		if(book == null)
 			book = defaultBook;
 		
-		ArrayList<String[]> pages = new ArrayList<String[]>();
+		ArrayList<String[]> pages = new ArrayList<>();
 		String[] splitContents = book.split("\0");
 		for(String content: splitContents) {
 			String[] remainder = {content};

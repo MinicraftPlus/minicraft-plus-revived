@@ -44,10 +44,10 @@ public class InputHandler implements MouseListener, KeyListener {
 	public String keyToChange = null; // this is used when listening to change key bindings.
 	private boolean overwrite = false;
 	
-	private static HashMap<Integer, String> keyNames = new HashMap<Integer, String>();
+	private static HashMap<Integer, String> keyNames = new HashMap<>();
 	static {
 		Field[] keyEventFields = KeyEvent.class.getFields();
-		ArrayList<Field> keyConstants = new ArrayList<Field>();
+		ArrayList<Field> keyConstants = new ArrayList<>();
 		for(Field field: keyEventFields) {
 			if(field.getName().contains("VK_") && (field.getType().getName().equals(int.class.getName())))
 				keyConstants.add(field);
@@ -57,8 +57,8 @@ public class InputHandler implements MouseListener, KeyListener {
 			String name = keyConst.getName();
 			name = name.substring(3); //removes the "VK_"
 			try {
-				keyNames.put(((Integer)keyConst.get(new Integer(0))), name);
-			} catch(IllegalAccessException ex) {}
+				keyNames.put(((Integer)keyConst.get(0)), name);
+			} catch(IllegalAccessException ignored) {}
 		}
 		
 		// for compatibility becuase I'm lazy. :P
@@ -71,7 +71,7 @@ public class InputHandler implements MouseListener, KeyListener {
 	public String lastKeyTyped = ""; // Used for things like typing world names.
 	
 	// mouse stuff that's never used
-	public List<Mouse> mouse = new ArrayList<Mouse>();
+	public List<Mouse> mouse = new ArrayList<>();
 	public Mouse one = new Mouse();
 	public Mouse two = new Mouse();
 	public Mouse tri = new Mouse();
@@ -80,8 +80,8 @@ public class InputHandler implements MouseListener, KeyListener {
 	
 	public InputHandler(Game game) { this(game, true); }
 	public InputHandler(Game game, boolean listenToKeyboard) {
-		keymap = new LinkedHashMap<String, String>(); //stores custom key name with physical key name in keyboard.
-		keyboard = new HashMap<String, Key>(); //stores physical keyboard keys; auto-generated :D
+		keymap = new LinkedHashMap<>(); //stores custom key name with physical key name in keyboard.
+		keyboard = new HashMap<>(); //stores physical keyboard keys; auto-generated :D
 		
 		initKeyMap(); // this is seperate so I can make a "restore defaults" option.
 		
@@ -97,7 +97,7 @@ public class InputHandler implements MouseListener, KeyListener {
 		this.game = game;
 	}
 	
-	private final void initKeyMap() {
+	private void initKeyMap() {
 		keymap.put("UP", "UP|W"); //up action references up arrow key
 		keymap.put("DOWN", "DOWN|S"); //move down action references down arrow key
 		keymap.put("LEFT", "LEFT|A"); //move left action references left arrow key
@@ -315,7 +315,7 @@ public class InputHandler implements MouseListener, KeyListener {
 	}
 	
 	public ArrayList<String> getAllPressedKeys() {
-		ArrayList<String> keys = new ArrayList<String>();
+		ArrayList<String> keys = new ArrayList<>();
 		for(String keyname: keyboard.keySet().toArray(new String[0]))
 			if(keyboard.get(keyname).down)
 				keys.add(keyname);
@@ -371,7 +371,7 @@ public class InputHandler implements MouseListener, KeyListener {
 	
 	/** Used by Save.java, to save user key preferences. */
 	public String[] getKeyPrefs() {
-		ArrayList<String> keystore = new ArrayList<String>(); //make a list for keys
+		ArrayList<String> keystore = new ArrayList<>(); //make a list for keys
 		
 		for (String keyname: keymap.keySet()) //go though each mapping
 			if(!keyname.contains("=debug") || Game.debug)

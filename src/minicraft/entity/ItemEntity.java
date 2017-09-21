@@ -104,14 +104,14 @@ public class ItemEntity extends Entity {
 
 	protected void touchedBy(Entity entity) {
 		if (time > 30) { // conditional prevents this from being collected immediately.
-			if(Game.isValidClient() && entity instanceof Player && entity == ((Player)entity).game.player) {// only register if the main player picks it up, on a client.
+			if(Game.isValidClient() && entity instanceof Player && entity == ((Player)entity).game.player) { // only register if the main player picks it up, on a client.
 				if(!pickedUp) {
 					Game.client.pickupItem(this);
 					pickedUp = true;
 					pickupTimestamp = System.nanoTime();
 				} else if ((System.nanoTime() - pickupTimestamp) / 1E8 > 15L) { // should be converted to tenths of a second.
-					/// the item has already been picked up; but since more than 1.5 seconds has past, the item will be remarked as not picked up.
-					//if (Game.debug) System.out.println(Game.onlinePrefix()+"reenabling pickup for item entity " + this);
+					/// the item has already been picked up;
+					// but since more than 1.5 seconds has past, the item will be remarked as not picked up.
 					pickedUp = false;
 				}
 			} else if(!(Game.isValidServer() && entity instanceof Player)) // don't register if a player touches it on a server; the player will register that.
@@ -123,7 +123,6 @@ public class ItemEntity extends Entity {
 	public void take(Player player) {
 		Sound.pickup.play();
 		player.score++; // increase the player's score by 1
-		//item.onTake(this); // calls the onTake() method in Item.java
 		remove(); // removes this from the world
 	}
 }

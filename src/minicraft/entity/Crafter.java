@@ -9,7 +9,7 @@ import minicraft.screen.CraftingMenu;
 
 public class Crafter extends Furniture {
 	
-	public static enum Type {
+	public enum Type {
 		Workbench (new Sprite(8, 8, 2, 2, Color.get(-1, 100, 321, 431)), 3, 2, Recipes.workbenchRecipes),
 		Oven (new Sprite(4, 8, 2, 2, Color.get(-1, 000, 332, 442)), 3, 2, Recipes.ovenRecipes),
 		Furnace (new Sprite(6, 8, 2, 2, Color.get(-1, 000, 222, 333)), 3, 2, Recipes.furnaceRecipes),
@@ -22,7 +22,7 @@ public class Crafter extends Furniture {
 		protected int xr, yr;
 		
 		
-		private Type(Sprite sprite, int xr, int yr, ArrayList<Recipe> list) {
+		Type(Sprite sprite, int xr, int yr, ArrayList<Recipe> list) {
 			this.sprite = sprite;
 			this.xr = xr;
 			this.yr = yr;
@@ -30,7 +30,7 @@ public class Crafter extends Furniture {
 			Crafter.names.add(this.name());
 		}
 	}
-	public static ArrayList<String> names = new ArrayList<String>();
+	public static ArrayList<String> names = new ArrayList<>();
 	
 	public Crafter.Type type;
 	

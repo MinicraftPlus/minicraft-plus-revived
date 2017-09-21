@@ -41,7 +41,7 @@ public class Font {
 	}
 	
 	public static void drawCentered(String msg, Screen screen, int x, int y, int color) {
-		new FontStyle(color).xCenterBounds(x-(screen.w-x), screen.w).setYPos(y).draw(msg, screen);
+		new FontStyle(color).xCenterBounds(x-(Screen.w-x), Screen.w).setYPos(y).draw(msg, screen);
 	}
 	
 	/// these draws a paragraph from an array of lines (or a string, at which point it calls getLines()), with the specified properties.
@@ -49,8 +49,8 @@ public class Font {
 	/// this one assumes the screen width, minus a given padding.
 	public static String drawParagraph(String para, Screen screen, int paddingX, boolean centerPaddingX, int paddingY, boolean centerPaddingY, FontStyle style, int lineSpacing) {
 		
-		style.xCenterBounds(paddingX, screen.w - (centerPaddingX?paddingX:0));
-		style.yCenterBounds(paddingY, screen.h - (centerPaddingY?paddingY:0));
+		style.xCenterBounds(paddingX, Screen.w - (centerPaddingX?paddingX:0));
+		style.yCenterBounds(paddingY, Screen.h - (centerPaddingY?paddingY:0));
 		
 		return drawParagraph(para, screen, style.centerMaxX - style.centerMinX, style.centerMaxY - style.centerMinY, style, centerPaddingX, lineSpacing);
 	}
@@ -64,7 +64,7 @@ public class Font {
 		//System.out.println("lines: " + java.util.Arrays.toString(lines));
 		
 		if (centered) style.xPosition = -1;
-		//else style.xPosition = (screen.w - w) / 2;
+		//else style.xPosition = (Screen.w - w) / 2;
 		
 		return drawParagraph(lines, screen, style, lineSpacing);
 	}
@@ -89,12 +89,13 @@ public class Font {
 	
 	
 	public static String[] getLines(String para, int w, int h, int lineSpacing) {
-		ArrayList<String> lines = new ArrayList<String>();
+		ArrayList<String> lines = new ArrayList<>();
 		int curPos = 0, curY = 0;
 		while(curPos < para.length() && curY < h) { // continue until we run out of characters, or lines.
-			String line = "", nextWord = "";
-			while(textWidth(line) + textWidth(nextWord) <= w) { // if the next word will fit...
-				line += nextWord; // append it to the line
+			StringBuilder line = new StringBuilder();
+			StringBuilder nextWord = new StringBuilder();
+			while(textWidth(line.toString()) + textWidth(nextWord.toString()) <= w) { // if the next word will fit...
+				line.append(nextWord); // append it to the line
 				curPos += nextWord.length(); // advance past the word (including space)
 				if(curPos >= para.length()) {
 					//System.out.println("no more chars");
@@ -106,18 +107,18 @@ public class Font {
 					break;
 				}
 				
-				nextWord = line.equals("")?"":" "; // space this word from the previous word, if there is one.
+				nextWord = new StringBuilder(line.length() == 0 ? "" : " "); // space this word from the previous word, if there is one.
 				StringCharacterIterator text = new StringCharacterIterator(para, curPos);
 				for(char c = text.current(); c != StringCharacterIterator.DONE && c != ' ' && c != '\n'; c = text.next()) {
-					nextWord += String.valueOf(c); // iterate through text from curPos, until the end of the text, or a space, or special char.
+					nextWord.append(String.valueOf(c)); // iterate through text from curPos, until the end of the text, or a space, or special char.
 				}
 				if(text.current() != ' ' && curPos+nextWord.length() < para.length())
 					curPos--; // if we didn't end on a space, and this is going to loop again, then take away one from curPos (b/c we are adding a space that wasn't there before, and so without this we would skip a character).
-				if(text.current() == ' ' && line.equals(""))
+				if(text.current() == ' ' && line.length() == 0)
 					curPos++; // if we ended on a space, advance past the space.
 			}
 			//System.out.println("adding line " + line);
-			lines.add(line); // add the finished line to the list
+			lines.add(line.toString()); // add the finished line to the list
 			curY += textHeight() + lineSpacing; // move the y position down one line.
 		}
 		

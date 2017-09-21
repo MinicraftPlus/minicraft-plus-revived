@@ -4,13 +4,13 @@ import java.util.ArrayList;
 
 public class Recipes {
 	
-	public static final ArrayList<Recipe> anvilRecipes = new ArrayList<Recipe>();
-	public static final ArrayList<Recipe> ovenRecipes = new ArrayList<Recipe>();
-	public static final ArrayList<Recipe> furnaceRecipes = new ArrayList<Recipe>();
-	public static final ArrayList<Recipe> workbenchRecipes = new ArrayList<Recipe>();
-	public static final ArrayList<Recipe> enchantRecipes = new ArrayList<Recipe>();
-	public static final ArrayList<Recipe> craftRecipes = new ArrayList<Recipe>();
-	public static final ArrayList<Recipe> loomRecipes = new ArrayList<Recipe>();
+	public static final ArrayList<Recipe> anvilRecipes = new ArrayList<>();
+	public static final ArrayList<Recipe> ovenRecipes = new ArrayList<>();
+	public static final ArrayList<Recipe> furnaceRecipes = new ArrayList<>();
+	public static final ArrayList<Recipe> workbenchRecipes = new ArrayList<>();
+	public static final ArrayList<Recipe> enchantRecipes = new ArrayList<>();
+	public static final ArrayList<Recipe> craftRecipes = new ArrayList<>();
+	public static final ArrayList<Recipe> loomRecipes = new ArrayList<>();
 	
 	static {
 		craftRecipes.add(new Recipe("Workbench_1", "Wood_10"));

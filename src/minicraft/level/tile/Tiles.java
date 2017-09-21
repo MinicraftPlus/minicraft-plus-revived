@@ -7,9 +7,9 @@ public final class Tiles {
 	/// idea: to save tile names while saving space, I could encode the names in base 64 in the save file...^M
     /// then, maybe, I would just replace the id numbers with id names, make them all private, and then make a get(String) method, parameter is tile name.
 	
-	public static ArrayList<String> oldids = new ArrayList<String>();
+	public static ArrayList<String> oldids = new ArrayList<>();
 	
-	private static ArrayList<Tile> tiles = new ArrayList<Tile>();
+	private static ArrayList<Tile> tiles = new ArrayList<>();
 	
 	public static void initTileList() {
 		if(Game.debug) System.out.println("initializing tile list...");
@@ -34,8 +34,8 @@ public final class Tiles {
 		tiles.set(18, new LavaBrickTile("Lava Brick"));
 		tiles.set(13, new OreTile(OreTile.OreType.Iron));
 		tiles.set(14, new OreTile(OreTile.OreType.Gold));
-		tiles.set(15, new OreTile(OreTile.OreType.Lapis));
-		tiles.set(16, new OreTile(OreTile.OreType.Gem));
+		tiles.set(15, new OreTile(OreTile.OreType.Gem));
+		tiles.set(16, new OreTile(OreTile.OreType.Lapis));
 		tiles.set(19, new ExplodedTile("Explode"));
 		tiles.set(20, new FarmTile("Farmland"));
 		tiles.set(21, new WheatTile("Wheat"));
@@ -182,9 +182,9 @@ public final class Tiles {
 			name = name.substring(6); // cuts off torch prefix.
 		}
 		
-		String data = "";
+		//String data = "";
 		if(name.contains("_")) {
-			data = name.substring(name.indexOf("_")+1);
+			//data = name.substring(name.indexOf("_")+1);
 			name = name.substring(0, name.indexOf("_"));
 		}
 		
@@ -231,7 +231,7 @@ public final class Tiles {
 	
 	public static String getName(String descriptName) {
 		if(!descriptName.contains("_")) return descriptName;
-		int data = 0;
+		int data;
 		String[] parts = descriptName.split("_");
 		descriptName = parts[0];
 		data = Integer.parseInt(parts[1]);

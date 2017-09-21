@@ -41,11 +41,13 @@ public class ScrollingMenu extends SelectMenu {
 	}
 	
 	public void render(Screen screen) {
+		if(options.size() == 0) return;
+		
 		if(offset + dispSize > options.size())
-			offset = options.size() - dispSize;
+			offset = Math.max(0, options.size() - dispSize);
 		if(offset < 0)
 			offset = 0;
 		
-		super.renderAs(screen, options.subList(offset, offset + dispSize), dispSelected); // renders the list with the super classes parameters, but temp. replacing the array and index.
+		super.renderAs(screen, options.subList(offset, Math.min(options.size(), offset + dispSize)), dispSelected); // renders the list with the super classes parameters, but temp. replacing the array and index.
 	}
 }

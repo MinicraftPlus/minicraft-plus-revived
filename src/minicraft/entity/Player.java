@@ -38,7 +38,7 @@ public class Player extends Mob {
 	protected InputHandler input;
 	public Game game;
 	
-	public static final int playerHurtTime = 30;
+	private static final int playerHurtTime = 30;
 	
 	public double moveSpeed = 1; // the number of coordinate squares to move; each tile is 16x16.
 	public int score; // the player's score
@@ -47,10 +47,12 @@ public class Player extends Mob {
 	public int spawnx = 0, spawny = 0; // these are stored as tile coordinates, not entity coordinates.
 	//public boolean bedSpawn = false;
 	
-	public boolean hasSetHome = false, skinon;
-	public int homeSetX, homeSetY;
+	private boolean hasSetHome = false;
+	public boolean skinon;
+	private int homeSetX, homeSetY;
 	
-	public static int maxHealth = 10, maxStamina = 10, maxHunger = 10, maxArmor = 100; // the maximum stats that the player can have.
+	public static final int maxHealth = 10, maxStamina = 10, maxHunger = 10, maxArmor = 100; // the maximum stats that
+	// the player can have.
 	
 	public static MobSprite[][] sprites =  MobSprite.compileMobSpriteAnimations(0, 14);
 	public static MobSprite[][] carrySprites = MobSprite.compileMobSpriteAnimations(0, 16); // the sprites while carrying something.
@@ -81,11 +83,10 @@ public class Player extends Mob {
 	
 	public HashMap<PotionType, Integer> potioneffects; // the potion effects currently applied to the player
 	public boolean showpotioneffects; // whether to display the current potion effects on screen
-	int cooldowninfo; // prevents you from toggling the info pane on and off super fast.
-	int regentick; // counts time between each time the regen potion effect heals you.
+	private int cooldowninfo; // prevents you from toggling the info pane on and off super fast.
+	private int regentick; // counts time between each time the regen potion effect heals you.
 	
-	int acs = 25; // default ("start") arrow count
-	//public int ac; // arrow count
+	private int acs = 25; // default ("start") arrow count
 	public int shirtColor = 110; // player shirt color.
 	
 	// Note: the player's health & max health are inherited from Mob.java
@@ -101,9 +102,9 @@ public class Player extends Mob {
 		
 		//ac = acs;
 		if(previousInstance == null)
-			inventory.add(Items.get("arrow"), acs);
+			inventory.add(Items.arrowItem, acs);
 		
-		potioneffects = new HashMap<PotionType, Integer>();
+		potioneffects = new HashMap<>();
 		showpotioneffects = true;
 		
 		cooldowninfo = 0;
@@ -121,9 +122,7 @@ public class Player extends Mob {
 		
 		if (ModeMenu.creative) {
 			Items.fillCreativeInv(inventory);
-		}/* else {
-			inventory.add(new PowerGloveItem()));
-		}*/
+		}
 		
 		if(previousInstance != null) {
 			spawnx = previousInstance.spawnx;
@@ -150,7 +149,7 @@ public class Player extends Mob {
 				itemToDrop = activeItem;
 			
 			if(itemToDrop != null) {
-				Item toEntity = null;
+				Item toEntity;
 				if(itemToDrop instanceof StackableItem && !input.getKey("drop-stack").clicked && ((StackableItem)itemToDrop).count > 1) {
 					// just drop one from the stack
 					toEntity = itemToDrop.clone();
@@ -169,10 +168,11 @@ public class Player extends Mob {
 					}
 				}
 				
-				if(toEntity != null && level != null) {
-					ItemEntity ie = level.dropItem(x, y, toEntity);
+				if(level != null) {
 					if(Game.isValidClient())
-						Game.client.dropItem(ie);
+						Game.client.dropItem(toEntity);
+					else
+						level.dropItem(x, y, toEntity);
 				}
 			}
 		}
@@ -255,7 +255,7 @@ public class Player extends Mob {
 			// on easy mode, hunger doesn't deplete from walking or from time.
 			
 			if (OptionsMenu.diff == OptionsMenu.norm) {
-				if(game.tickCount % 5000 == 0 && hunger > 3) hungerStamCnt--; // hunger due to time.
+				if(Game.tickCount % 5000 == 0 && hunger > 3) hungerStamCnt--; // hunger due to time.
 				
 				if (stepCount >= 800) { // hunger due to exercise.
 					hungerStamCnt--;
@@ -263,7 +263,7 @@ public class Player extends Mob {
 				}
 			}
 			if (OptionsMenu.diff == OptionsMenu.hard) {
-				if(game.tickCount % 3000 == 0 && hunger > 0) hungerStamCnt--; // hunger due to time.
+				if(Game.tickCount % 3000 == 0 && hunger > 0) hungerStamCnt--; // hunger due to time.
 				
 				if (stepCount >= 400) { // hunger due to exercise.
 					hungerStamCnt--;
@@ -297,10 +297,10 @@ public class Player extends Mob {
 			if (hunger == 0 && health > healths[OptionsMenu.diff]) {
 				if (hungerStarveDelay > 0) hungerStarveDelay--;
 				if (hungerStarveDelay == 0) {
-					hurt(this, 1, attackDir); // do 1 damage to the player
+					hurt(this, 1, -1); // do 1 damage to the player
 				}
 			}
-		
+			
 			
 			// this is where movement detection occurs.
 			int xa = 0, ya = 0;
@@ -310,12 +310,12 @@ public class Player extends Mob {
 				if (input.getKey("left").down) xa--;
 				if (input.getKey("right").down) xa++;
 			}
-			if (game.savecooldown > 0 && !game.saving) {
-				game.savecooldown--;
+			if (Game.savecooldown > 0 && !Game.saving) {
+				Game.savecooldown--;
 			}
 			
 			//executes if not saving; and... essentially halves speed if out of stamina.
-			if ((xa != 0 || ya != 0) && (staminaRechargeDelay % 2 == 0 || isSwimming()) && game.savecooldown == 0 && !game.saving) {
+			if ((xa != 0 || ya != 0) && (staminaRechargeDelay % 2 == 0 || isSwimming()) && Game.savecooldown == 0 && !Game.saving) {
 				double spd = moveSpeed * (potioneffects.containsKey(PotionType.Speed) ? 1.5D : 1);
 				int oldDir = dir;
 				boolean moved = move((int) (xa * spd), (int) (ya * spd)); // THIS is where the player moves; part of Mob.java
@@ -326,7 +326,7 @@ public class Player extends Mob {
 			
 			if (isSwimming() && tickTime % 60 == 0 && !potioneffects.containsKey(PotionType.Swim)) { // if drowning... :P
 				if (stamina > 0) stamina--; // take away stamina
-				else hurt(this, 1, dir ^ 1); // if no stamina, take damage.
+				else hurt(this, 1, -1); // if no stamina, take damage.
 			}
 		}
 		
@@ -341,23 +341,25 @@ public class Player extends Mob {
 		}
 		
 		if (game.menu == null) {
-			if (!Bed.inBed && (activeItem == null || !activeItem.used_pending) && (input.getKey("attack").clicked || input.getKey("pickup").clicked) && stamina != 0) {
+			if (!Bed.inBed && (activeItem == null || !activeItem.used_pending) && (input.getKey("attack").clicked || input.getKey("pickup").clicked) && stamina != 0) { // this only allows attacks or pickups when such action is possible.
 				if (!potioneffects.containsKey(PotionType.Energy)) stamina--;
 				staminaRecharge = 0;
 				
+				//if(Game.debug) System.out.println("attack or pickup start");
+				
 				if (input.getKey("pickup").clicked) {
-					if(!(activeItem instanceof PowerGloveItem)) {
-						prevItem = activeItem;
-						activeItem = new PowerGloveItem();
+					if(!(activeItem instanceof PowerGloveItem)) { // if you are not already holding a power glove (aka in the middle of a separate interaction)...
+						prevItem = activeItem; // then save the current item...
+						activeItem = new PowerGloveItem(); // and replace it with a power glove.
 					}
-					attack();
+					attack(); // attack (with the power glove)
 					if(!Game.ISONLINE)
 						resolveHeldItem();
 				}
 				else
 					attack();
 				
-				if(activeItem != null && !(activeItem instanceof ToolItem))
+				if(Game.ISONLINE && activeItem != null && !(activeItem instanceof ToolItem))
 					activeItem.used_pending = true;
 			}
 			
@@ -372,8 +374,8 @@ public class Player extends Mob {
 			
 			if (input.getKey("info").clicked) game.setMenu(new PlayerInfoMenu());
 			
-			if (input.getKey("r").clicked && !game.saving && !(this instanceof RemotePlayer) && !Game.isValidClient()) {
-				game.saving = true;
+			if (input.getKey("r").clicked && !Game.saving && !(this instanceof RemotePlayer) && !Game.isValidClient()) {
+				Game.saving = true;
 				LoadingMenu.percentage = 0;
 				new Save(this, WorldSelectMenu.worldname);
 			}
@@ -397,14 +399,16 @@ public class Player extends Mob {
 	
 	public void resolveHeldItem() {
 		//if(Game.debug) System.out.println("prev item: " + prevItem + "; curItem: " + activeItem);
-		if(!(activeItem instanceof PowerGloveItem)) {
-			if(prevItem != null && !ModeMenu.creative)
-				inventory.add(0, prevItem);
+		if(!(activeItem instanceof PowerGloveItem)) { // if you are now holding something other than a power glove...
+			if(prevItem != null && !ModeMenu.creative) // and you had a previous item that we should care about...
+				inventory.add(0, prevItem); // then add that previous item to your inventory so it isn't lost.
 			// if something other than a power glove is being held, but the previous item is null, then nothing happens; nothing added to inventory, and current item remains as the new one.
 		} else
-			activeItem = prevItem; // the held item didn't change, so remove the power glove and make it what it was before.
+			activeItem = prevItem; // otherwise, if you're holding a power glove, then the held item didn't change, so we can remove the power glove and make it what it was before.
 		
-		if(activeItem instanceof PowerGloveItem)
+		prevItem = null; // this is no longer of use.
+		
+		if(activeItem instanceof PowerGloveItem) // if, for some odd reason, you are still holding a power glove at this point, then null it because it's useless and shouldn't remain in hand.
 			activeItem = null;
 	}
 	
@@ -453,8 +457,8 @@ public class Player extends Mob {
 			attackItem = activeItem;
 			
 			Game.client.requestInteraction(this);
-			if(activeItem instanceof ToolItem && stamina - 1 >= 0 && ((ToolItem)activeItem).type == ToolType.Bow && inventory.count(Items.get("arrow")) > 0) // we are going to use an arrow.
-				inventory.removeItem(Items.get("arrow")); // do it here so we don't need a response.
+			if(activeItem instanceof ToolItem && stamina - 1 >= 0 && ((ToolItem)activeItem).type == ToolType.Bow && inventory.count(Items.arrowItem) > 0) // we are going to use an arrow.
+				inventory.removeItem(Items.arrowItem); // do it here so we don't need a response.
 			
 			return;
 		}
@@ -467,7 +471,7 @@ public class Player extends Mob {
 			// the player is holding a tool, and has stamina available.
 			ToolItem tool = (ToolItem) activeItem;
 			
-			if (tool.type == ToolType.Bow && inventory.count(Items.get("arrow")) > 0) { // if the player is holding a bow, and has arrows...
+			if (tool.type == ToolType.Bow && inventory.count(Items.arrowItem) > 0) { // if the player is holding a bow, and has arrows...
 				//if (!energy) stamina -= 0; // must be a leftover.
 				//...then shoot the arrow in the right direction.
 				int spx = 0, spy = 0;
@@ -477,7 +481,7 @@ public class Player extends Mob {
 					case 2: spx = -1; spy = 0; break;
 					case 3: spx = 1; spy = 0; break;
 				}
-				if (ModeMenu.creative == false) inventory.removeItem(Items.get("arrow"));
+				if (!ModeMenu.creative) inventory.removeItem(Items.arrowItem);
 				level.add(new Arrow(this, spx, spy, tool.level));
 				done = true; // we have attacked!
 			}
@@ -581,7 +585,7 @@ public class Player extends Mob {
 		List<Entity> entities = level.getEntitiesInRect(x0, y0, x1, y1);
 		for (int i = 0; i < entities.size(); i++) {
 			Entity e = entities.get(i);
-			if ( e != this && e.interact(this, activeItem, attackDir) ) return true;
+			if ( e != this && e.interact(this, activeItem, attackDir) ) return true; // this is the ONLY place that the Entity.interact method is actually called.
 		}
 		return false;
 	}
@@ -694,7 +698,7 @@ public class Player extends Mob {
 		itemEntity.take(this); // calls the take() method in ItemEntity
 		if(ModeMenu.creative) return; // we shall not bother the inventory on creative mode.
 		
-		if(activeItem != null && activeItem.name == itemEntity.item.name && activeItem instanceof StackableItem && itemEntity.item instanceof StackableItem) // picked up item matches the one in your hand
+		if(activeItem != null && activeItem.name.equals(itemEntity.item.name) && activeItem instanceof StackableItem && itemEntity.item instanceof StackableItem) // picked up item matches the one in your hand
 			((StackableItem)activeItem).count += ((StackableItem)itemEntity.item).count;
 		else
 			inventory.add(itemEntity.item); // add item to inventory
@@ -737,28 +741,28 @@ public class Player extends Mob {
 			homeSetX = this.x;
 			homeSetY = this.y;
 			hasSetHome = true; // confirm that home coordinates are indeed set
-			game.notifications.add("Set your home!"); // give success message
+			Game.notifications.add("Set your home!"); // give success message
 		} else { // can only set home on surface
-			game.notifications.add("Can't set home here!"); // give failure message
+			Game.notifications.add("Can't set home here!"); // give failure message
 		}
 	}
 
 	public void goHome() {
 		if (game.currentLevel == 3) { // if on surface
-			if (hasSetHome == true) {
+			if (hasSetHome) {
 				// move player to home coordinates
 				this.x = homeSetX;
 				this.y = homeSetY;
-				if (ModeMenu.hardcore) hurt(this, 2, attackDir); // give penalty for using home if in hardcore mode.
+				if (ModeMenu.hardcore) hurt(this, 2, -1); // give penalty for using home if in hardcore mode.
 				stamina = 0; // teleportation uses up all your stamina.
-				game.notifications.add("Home Sweet Home!"); // give success message
-				if (ModeMenu.hardcore) game.notifications.add("Mode penalty: -2 health"); // give penalty message
+				Game.notifications.add("Home Sweet Home!"); // give success message
+				if (ModeMenu.hardcore) Game.notifications.add("Mode penalty: -2 health"); // give penalty message
 			} else {
 				//can go home, but no home set.
-				game.notifications.add("You don't have a home!");
+				Game.notifications.add("You don't have a home!");
 			}
 		} else { // can only go home from surface
-			game.notifications.add("You can't go home from here!");
+			Game.notifications.add("You can't go home from here!");
 		}
 	}
 	
@@ -853,13 +857,13 @@ public class Player extends Mob {
 			return;
 		}
 		
-		// apply the appropriate knockback
+		/*// apply the appropriate knockback
 		if (attackDir == 0) yKnockback = +6;
 		if (attackDir == 1) yKnockback = -6;
 		if (attackDir == 2) xKnockback = -6;
 		if (attackDir == 3) xKnockback = +6;
 		// set invulnerability time
-		hurtTime = playerHurtTime;
+		*/
 		
 		boolean fullPlayer = !(Game.isValidClient() && this != game.player);
 		
@@ -867,7 +871,7 @@ public class Player extends Mob {
 		if(fullPlayer) {
 			Sound.playerHurt.play();
 			if (curArmor == null) { // no armor
-				health -= damage; // subtract that amount
+				healthDam = damage; // subtract that amount
 			} else { // has armor
 				armorDamageBuffer += damage;
 				armorDam += damage;
@@ -877,23 +881,26 @@ public class Player extends Mob {
 					healthDam++;
 				}
 			}
-		}
-		
-		// adds a text particle telling how much damage was done to the player, and the armor.
-		if(armorDam > 0) {
-			level.add(new TextParticle("" + damage, x, y, Color.get(-1, 333)));
-			if(fullPlayer) armor -= armorDam;
-			if(armor <= 0) {
-				healthDam -= armor; // adds armor damage overflow to health damage (minus b/c armor would be negative)
-				armor = 0;
-				armorDamageBuffer = 0; // ensures that new armor doesn't inherit partial breaking from this armor.
-				curArmor = null; // removes armor
+			
+			// adds a text particle telling how much damage was done to the player, and the armor.
+			if(armorDam > 0) {
+				level.add(new TextParticle("" + damage, x, y, Color.get(-1, 333)));
+				armor -= armorDam;
+				if(armor <= 0) {
+					healthDam -= armor; // adds armor damage overflow to health damage (minus b/c armor would be negative)
+					armor = 0;
+					armorDamageBuffer = 0; // ensures that new armor doesn't inherit partial breaking from this armor.
+					curArmor = null; // removes armor
+				}
 			}
 		}
-		if(healthDam > 0) {
+		
+		if(healthDam > 0 || !fullPlayer) {
 			level.add(new TextParticle("" + damage, x, y, Color.get(-1, 504)));
-			if(fullPlayer) health -= healthDam;
+			if(fullPlayer) super.doHurt(healthDam, attackDir); // sets knockback, and takes away health.
 		}
+		
+		hurtTime = playerHurtTime;
 	}
 	
 	protected String getUpdateString() {
@@ -941,24 +948,24 @@ public class Player extends Mob {
 	}
 	
 	public String getPlayerData() {
-		List<String> datalist = new ArrayList<String>();
-		String playerdata = "";
+		List<String> datalist = new ArrayList<>();
+		StringBuilder playerdata = new StringBuilder();
 		
 		Save.writePlayer(this, datalist);
 		for(String str: datalist)
 			if(str.length() > 0)
-				playerdata += str + ",";
-		playerdata = playerdata.substring(0, playerdata.length()-1) + "\n";
+				playerdata.append(str).append(",");
+		playerdata = new StringBuilder(playerdata.substring(0, playerdata.length() - 1) + "\n");
 		
 		Save.writeInventory(this, datalist);
 		for(String str: datalist)
 			if(str.length() > 0)
-				playerdata += str + ",";
+				playerdata.append(str).append(",");
 		if(datalist.size() == 0)
-			playerdata += "null";
+			playerdata.append("null");
 		else
-			playerdata = playerdata.substring(0, playerdata.length()-1);
+			playerdata = new StringBuilder(playerdata.substring(0, playerdata.length() - 1));
 		
-		return playerdata;
+		return playerdata.toString();
 	}
 }

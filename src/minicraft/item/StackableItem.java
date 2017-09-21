@@ -11,7 +11,7 @@ import minicraft.screen.ModeMenu;
 public class StackableItem extends Item {
 	
 	protected static ArrayList<Item> getAllInstances() {
-		ArrayList<Item> items = new ArrayList<Item>();
+		ArrayList<Item> items = new ArrayList<>();
 	
 		items.add(new StackableItem("Wood", new Sprite(1, 4, Color.get(-1, 200, 531, 430))));
 		items.add(new StackableItem("Stone", new Sprite(2, 4, Color.get(-1, 111, 333, 555))));

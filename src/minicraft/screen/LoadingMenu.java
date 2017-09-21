@@ -35,12 +35,14 @@ public class LoadingMenu extends Menu implements ActionListener {
 	public void actionPerformed(ActionEvent e) {
 		if(t != null) {
 			Timer save = t;
-			//t.stop();
+			t.stop();
 			t = null; // prevents the timer from being activated again in this LoadingMenu instance.
 			save.stop();
 			initWorld();
 		} else if(Game.debug) {
 			System.out.println("WARNING: loading menu timer was set off more than once.");
+			if(e.getSource() instanceof Timer)
+				((Timer)e.getSource()).stop();
 		}
 	}
 	
@@ -50,7 +52,7 @@ public class LoadingMenu extends Menu implements ActionListener {
 		game.initWorld();
 		try {
 			Thread.sleep((WorldSelectMenu.loadworld?100:300));
-		} catch(InterruptedException ex) {}
+		} catch(InterruptedException ignored) {}
 		if(Game.debug) System.out.println("setting game menu to null from loading...");
 		game.setMenu(null);
 	}
@@ -61,9 +63,9 @@ public class LoadingMenu extends Menu implements ActionListener {
 		screen.clear(0);
 		
 		int percent = (int) Math.round(percentage);
-		Font.drawCentered("Loading...", screen, screen.h - 105, col);
-		//Font.draw("This should take 4 seconds or less", screen, 10, screen.h - 185, coll);
-		//Font.draw("If not then restart because it froze", screen, 0, screen.h - 175, coll);
-		Font.drawCentered(percent + "%", screen, screen.h - 85, col);
+		Font.drawCentered("Loading...", screen, Screen.h - 105, col);
+		//Font.draw("This should take 4 seconds or less", screen, 10, Screen.h - 185, coll);
+		//Font.draw("If not then restart because it froze", screen, 0, Screen.h - 175, coll);
+		Font.drawCentered(percent + "%", screen, Screen.h - 85, col);
 	}
 }

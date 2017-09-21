@@ -67,8 +67,7 @@ public class Color {
 		if (green < 50 && green != 0) green = 50;
 		if (blue < 50 && blue != 0) blue = 50;
 		
-		int rgb = red / 50 * 100 + green / 50 * 10 + blue / 50;
-		return rgb;
+		return red / 50 * 100 + green / 50 * 10 + blue / 50;
 	}
 	
 	/** This method darkens or lightens a color (0 to 216 value) by the specified amount. */
@@ -145,9 +144,24 @@ public class Color {
 	
 	/// this turns a 0-216 combined minicraft color into a 24-bit r,g,b color.
 	protected static int upgrade(int col) {
-		int[] rgbs = decodeRGB(col);
-		int newcol = rgbs[0]*100 + rgbs[1]*10 + rgbs[2];
-		return getColor(newcol);
+		// int r = ((col / 36) % 6) * 255 / 5;
+		// int g = ((col / 6) % 6) * 255 / 5;
+		// int b = (col % 6) * 255 / 5;
+		int r = ((col / 36) % 6) * 51;
+		int g = ((col / 6) % 6) * 51;
+		int b = (col % 6) * 51;
+		
+		int mid = (r * 30 + g * 59 + b * 11) / 100;
+		
+		int r1 = ((r + mid) / 2) * 230 / 255 + 10;
+		int g1 = ((g + mid) / 2) * 230 / 255 + 10;
+		int b1 = ((b + mid) / 2) * 230 / 255 + 10;
+		// int r1 = (r + mid) * 115 / 255 + 10;
+		// int b1 = (g + mid) * 115 / 255 + 10;
+		// int g1 = (b + mid) * 115 / 255 + 10;
+		return r1 << 16 | g1 << 8 | b1; // wow, this would work... it's like:
+		
+		//return getColor(newcol);
 	}
 	
 	/// this takes a 24 bit color, and turns it into an 8-bit color minicraft sprites use.

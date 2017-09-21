@@ -32,6 +32,8 @@ public class PlayerInvMenu extends InventoryMenu {
 	}
 	
 	public Item getSelectedItem() {
+		if(player.inventory.invSize() == 0)
+			return null;
 		return player.inventory.get(selected);
 	}
 }

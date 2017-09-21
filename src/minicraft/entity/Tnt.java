@@ -45,7 +45,7 @@ public class Tnt extends Furniture implements ActionListener {
 				for(Entity e: entitiesInRange) {
 					float dist = (float) Math.hypot(e.x - x, e.y - y);
 					int dmg = (int) (BLAST_DAMAGE * (1 - (dist / BLAST_RADIUS))) + 1;
-					e.hurt(this, dmg, 0);
+					e.hurt(this, dmg, Mob.getAttackDir(this, e));
 					if(e instanceof Player)
 						((Player)e).payStamina(dmg * 2);
 				}

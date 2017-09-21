@@ -30,7 +30,7 @@ public class WonMenu extends Menu {
 		displayTimer = Game.normSpeed; // wait 3 seconds before rendering the menu.
 		inputDelay = Game.normSpeed/2; // wait a half-second before allow user input.
 		
-		scores = new HashMap<String, Integer>();
+		scores = new HashMap<>();
 		scores.put("Cloth", player.inventory.count(Items.get("cloth")) * (random.nextInt(2) + 1) * 10);
 		scores.put("Slime", player.inventory.count(Items.get("slime")) * (random.nextInt(2) + 1) * 10);
 		scores.put("Bone", player.inventory.count(Items.get("bone")) * (random.nextInt(2) + 1) * 10);
@@ -48,7 +48,7 @@ public class WonMenu extends Menu {
 			finalscore += score;
 		}
 		
-		unlocks = new ArrayList<String>();
+		unlocks = new ArrayList<>();
 		writeUnlocks();
 	}
 
@@ -100,11 +100,11 @@ public class WonMenu extends Menu {
 	public void render(Screen screen) {
 		if(displayTimer > 0) return;
 		
-		renderFrame(screen, "", 1, 3, screen.w/8-2, screen.h/8-4);
+		renderFrame(screen, "", 1, 3, Screen.w/8-2, Screen.h/8-4);
 		Font.drawCentered("Game Over! (" + ModeMenu.getSelectedTime() + ")", screen, 4*8, Color.get(-1, 555));
 		
 		if(unlocks.size() > 0) {
-			FontStyle style = new FontStyle(Color.get(-1, 50)).xCenterBounds(screen.w/2, screen.w-8);
+			FontStyle style = new FontStyle(Color.get(-1, 50)).xCenterBounds(Screen.w/2, Screen.w-8);
 			style.setYPos(10 * 8).draw("Unlocked!", screen);
 			for(int i = 0; i < unlocks.size(); ++i) {
 				String unlock = unlocks.get(i).replace("M", "MINUTEMODE").replace("H", "HOURMODE");
@@ -113,11 +113,11 @@ public class WonMenu extends Menu {
 		}
 		
 		Font.draw("Player Score: " + game.player.score, screen, 16, 6*8, Color.get(-1, 555));
-		Font.draw("<Bonuses>", screen, 16, 8*8, Color.get(-1, 040));
+		Font.draw("<Bonuses>", screen, 16, 8*8, Color.get(-1, 41));
 		int i = 0;
 		for(String bonus: scores.keySet().toArray(new String[0])) {
-			String label = bonus+"s: ";
-			while(label.length() < ml+3) label += " ";
+			StringBuilder label = new StringBuilder(bonus + "s: ");
+			while(label.length() < ml+3) label.append(" ");
 			Font.draw(label+"+"+scores.get(bonus), screen, 16, (10+(i++))*8, Color.get(-1, 550));
 		}
 		

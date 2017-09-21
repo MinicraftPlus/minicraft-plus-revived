@@ -37,7 +37,7 @@ public class FloorTile extends Tile {
 			if (tool.type == ToolType.Pickaxe) {
 				if (player.payStamina(4 - tool.level)) {
 					level.setTile(xt, yt, Tiles.get("hole"));
-					Item drop = null;
+					Item drop;
 					switch(type) {
 						case Wood: drop = Items.get("Plank"); break;
 						default: drop = Items.get(type.name()+" Brick"); break;

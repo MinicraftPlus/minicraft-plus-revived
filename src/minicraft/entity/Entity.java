@@ -15,8 +15,7 @@ public abstract class Entity {
 	public int xr, yr; // x, y radius of entity
 	private boolean removed; // Determines if the entity is removed from it's level; checked in Level.java
 	protected Level level; // the level that the entity is on
-	// TODO might replace the below with a simple array of colors.
-	public int col; // day/night color variations, plus current color.
+	public int col; // current color.
 	
 	public int eid; /// this is intended for multiplayer, but I think it could be helpful in single player, too. certainly won't harm anything, I think... as long as finding a valid id doesn't take long...
 	private String prevUpdates = ""; /// holds the last value returned from getUpdateString(), for comparison with the next call.
@@ -39,13 +38,13 @@ public abstract class Entity {
 	public abstract void render(Screen screen); /// used to render the entity on screen.
 	public abstract void tick(); /// used to update the entity.
 	
-	public boolean isRemoved() { return removed; }
+	public boolean isRemoved() { return removed/* || level == null*/; }
 	public Level getLevel() { return level; }
 	
 	/** Removes the entity from the level. */
 	public void remove() {
 		if(removed && !(this instanceof ItemEntity)) // apparently this happens fairly often with item entities.
-			System.out.println("Note: remove() called on removed entity: " + getClass());
+			System.out.println("Note: remove() called on removed entity: " + this);
 		
 		removed = true;
 		
@@ -60,8 +59,8 @@ public abstract class Entity {
 		if(level != this.level && Game.debug)
 			System.out.println("tried to remove entity "+this+" from level it is not in: " + level + "; in level " + this.level);
 		else {
-			removed = true;
-			level = null;
+			removed = true; // should already be set.
+			this.level = null;
 			//if (Game.debug && !(this instanceof Particle)) System.out.println(Game.onlinePrefix()+"set level reference of entity " + this + " to null.");
 		}
 	}
@@ -71,7 +70,10 @@ public abstract class Entity {
 		if(level == null) {
 			System.out.println("tried to set level of entity " + this + " to a null level; should use remove(level)");
 			return;
+		} else if(level != this.level && Game.isValidServer()) {
+			Game.server.broadcastEntityRemoval(this);
 		}
+		
 		this.level = level;
 		removed = false;
 		this.x = x;
@@ -80,9 +82,6 @@ public abstract class Entity {
 		if(eid < 0)
 			eid = Game.generateUniqueEntityId();
 	}
-	
-	// TODO Inplement this! it's a really good idea!
-	//public abstract void getColor();
 	
 	/** returns true if this entity is found in the rectangle specified by given two coordinates. */
 	public boolean intersects(int x0, int y0, int x1, int y1) {
@@ -210,7 +209,7 @@ public abstract class Entity {
 		return true; // yes, mobs generally block other entities.
 	}
 	
-	/** Used in ItenEntity.java, extended with Player.java */
+	/** Used in ItemEntity.java, extended with Player.java */
 	public void touchItem(ItemEntity itemEntity) {}
 	
 	/** Determines if the entity can swim (extended in sub-classes) */
@@ -290,8 +289,8 @@ public abstract class Entity {
 				Level newLvl = Game.levels[Integer.parseInt(val)];
 				if(newLvl != null && level != null) {
 					if(newLvl.depth == level.depth) return true;
-					if(level != null) level.remove(this);
-					if(newLvl != null) newLvl.add(this);
+					level.remove(this);
+					newLvl.add(this);
 				}
 				return true;
 		}
@@ -337,19 +336,20 @@ public abstract class Entity {
 		
 		/// now, we have the current values, and the previous values, as arrays of key-value pairs sep. by commas. Now, the goal is to seperate which are actually *updates*, meaning they are different from last time.
 		
-		String deltas = "";
+		StringBuilder deltas = new StringBuilder();
 		for(int i = 0; i < curUpdates.length; i++) { // b/c the string always contains the same number of pairs (and the same keys, in the same order), the indexes of cur and prev updates will be the same.
 			/// loop though each of the updates this call. If it is differnt from the last one, then add it to the list.
-			if(curUpdates[i].equals(prevUpdates[i]) == false) {
-				deltas += curUpdates[i] + ";";
+			if(!curUpdates[i].equals(prevUpdates[i])) {
+				deltas.append(curUpdates[i]).append(";");
 				//if(Game.debug) System.out.println("found delta for "+this+"; old:\""+prevUpdates[i]+"\" -- new:\""+curUpdates[i]+"\"");
 			}
 		}
 		
-		if(deltas.length() > 0) deltas = deltas.substring(0, deltas.length()-1); // cuts off extra ";"
+		curDeltas = deltas.toString();
 		
-		curDeltas = deltas;
-		return deltas;
+		if(curDeltas.length() > 0) curDeltas = curDeltas.substring(0, curDeltas.length()-1); // cuts off extra ";"
+		
+		return curDeltas;
 	}
 	
 	/// this marks the entity as having a new state to fetch.

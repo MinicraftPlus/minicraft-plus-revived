@@ -14,7 +14,6 @@ import minicraft.Sound;
 import minicraft.gfx.Color;
 import minicraft.gfx.Font;
 import minicraft.gfx.Screen;
-import minicraft.saveload.Load;
 
 public class WorldSelectMenu extends Menu {
 	
@@ -40,11 +39,11 @@ public class WorldSelectMenu extends Menu {
 	private boolean validName;
 	private boolean confirmed;
 	
-	private static enum Action {
+	private enum Action {
 		Main ("Select Option", 555),
 		Create ("Name of New World:", 555),
 		Load ("Load World", 555),
-		Rename ("Rename World", 050),
+		Rename ("Rename World", 40),
 		Delete ("Delete World", 500),
 		Copy ("Copy World", 005);
 		//Backup ("Backup World", 550);
@@ -52,7 +51,7 @@ public class WorldSelectMenu extends Menu {
 		public String message;
 		public int color;
 		
-		private Action(String msg, int color) {
+		Action(String msg, int color) {
 			message = msg;
 			this.color = color;
 		}
@@ -91,9 +90,9 @@ public class WorldSelectMenu extends Menu {
 		}
 	}
 	
-	private final void loadWorlds() {
+	private void loadWorlds() {
 		//find worlds (init step):
-		worldnames = new ArrayList<String>();
+		worldnames = new ArrayList<>();
 		File folder = new File(location);
 		folder.mkdirs();
 		File[] listOfFiles = folder.listFiles();
@@ -174,7 +173,7 @@ public class WorldSelectMenu extends Menu {
 					if (Game.debug) System.out.println("main selection: " + options[selected]);
 					if(options[selected].equals("Load World")) {
 						mode = Action.Load;
-						loadworld = true;;
+						loadworld = true;
 					} else {
 						mode = Action.Create;
 						loadworld = false;
@@ -196,7 +195,7 @@ public class WorldSelectMenu extends Menu {
 					//load the game
 					worldname = worldnames.get(selected);
 					if (Game.debug) System.out.println("load mode: " + worldname);
-					Sound.test.play();
+					Sound.confirm.play();
 					game.setMenu(new LoadingMenu());
 					//game.initWorld();
 					//game.setMenu((Menu) null);
@@ -230,7 +229,7 @@ public class WorldSelectMenu extends Menu {
 					try {
 						Files.walkFileTree(world.toPath(), new FileVisitor() {
 							public FileVisitResult visitFile(Object file, BasicFileAttributes attr) {
-								String path = ((Path)file).toString();
+								String path = file.toString();
 								path = newpath+path.substring(path.indexOf(oldname)+oldname.length());
 								File newFile = new File(path);
 								newFile.mkdirs();
@@ -309,7 +308,7 @@ public class WorldSelectMenu extends Menu {
 	
 	private String[] getCurOpts() {
 		switch(mode) {
-			case Main: return this.options;
+			case Main: return options;
 			case Create: return new String[0];
 			default: return worldnames.toArray(new String[0]);
 		}
@@ -341,9 +340,9 @@ public class WorldSelectMenu extends Menu {
 				}
 			}
 			
-			//Font.drawCentered(input.getMapping("up")+" and "+input.getMapping("down")+" to move", screen, screen.h - 170, controlCol);
-			Font.drawCentered(input.getMapping("select")+" to confirm", screen, screen.h - 60, controlCol);
-			Font.drawCentered(input.getMapping("exit")+" to return", screen, screen.h - 40, controlCol);
+			//Font.drawCentered(input.getMapping("up")+" and "+input.getMapping("down")+" to move", screen, Screen.h - 170, controlCol);
+			Font.drawCentered(input.getMapping("select")+" to confirm", screen, Screen.h - 60, controlCol);
+			Font.drawCentered(input.getMapping("exit")+" to return", screen, Screen.h - 40, controlCol);
 		}
 		else if (worldnames.size() > 0 && mode != Action.Create && (!confirmed || mode != Action.Rename && mode != Action.Delete && mode != Action.Copy/* && mode != Action.Backup*/)) {
 			if(mode != Action.Load)
@@ -386,29 +385,29 @@ public class WorldSelectMenu extends Menu {
 		}
 		
 		if(confirmed && mode == Action.Delete) {
-			Font.drawCentered("Are you sure you want to delete", screen, screen.h/2-10, Color.get(-1, 533));
-			Font.drawCentered("\'"+worldnames.get(selected)+"\'?", screen, screen.h/2, mainCol);
-			Font.drawCentered("This cannot be undone!", screen, screen.h/2+10, Color.get(-1, 533));
+			Font.drawCentered("Are you sure you want to delete", screen, Screen.h/2-10, Color.get(-1, 533));
+			Font.drawCentered("\'"+worldnames.get(selected)+"\'?", screen, Screen.h/2, mainCol);
+			Font.drawCentered("This cannot be undone!", screen, Screen.h/2+10, Color.get(-1, 533));
 		}
 		
 		Font.drawCentered(msg, screen, 20, mainCol);
 		
 		if(mode == Action.Load) {
-			Font.drawCentered("C to copy", screen, screen.h-26-8-8-8, Color.get(-1, Action.Copy.color));
-			Font.drawCentered("R to rename", screen, screen.h-26-8-8, Color.get(-1, Action.Rename.color));
-			Font.drawCentered("D to delete", screen, screen.h-26-8, Color.get(-1, Action.Delete.color));
-			//Font.drawCentered("B to backup", screen, screen.h-26, Color.get(-1, Action.Backup.color));
+			Font.drawCentered("C to copy", screen, Screen.h-26-8-8-8, Color.get(-1, Action.Copy.color));
+			Font.drawCentered("R to rename", screen, Screen.h-26-8-8, Color.get(-1, Action.Rename.color));
+			Font.drawCentered("D to delete", screen, Screen.h-26-8, Color.get(-1, Action.Delete.color));
+			//Font.drawCentered("B to backup", screen, Screen.h-26, Color.get(-1, Action.Backup.color));
 		}
 		
 		if(mode != Action.Main) {
-			Font.drawCentered("Press "+input.getMapping("select")+" to " + mode.name() + " World", screen, screen.h - 16, controlCol);
-			Font.drawCentered("Press "+input.getMapping("exit")+" to cancel", screen, screen.h - 8, controlCol);
+			Font.drawCentered("Press "+input.getMapping("select")+" to " + mode.name() + " World", screen, Screen.h - 16, controlCol);
+			Font.drawCentered("Press "+input.getMapping("exit")+" to cancel", screen, Screen.h - 8, controlCol);
 		}
 	}
 	
 	public void typename() {
 		//System.out.println("listening to type keypress...");
-		ArrayList<String> invalidNames = new ArrayList<String>();
+		ArrayList<String> invalidNames = new ArrayList<>();
 		for(String wname: worldnames) {
 			/// this will add all the names, unless we are renaming, in which case the current name is okay, and is not added.
 			if(!(wname.equals(worldname) && mode != Action.Rename && mode != Action.Copy)) {

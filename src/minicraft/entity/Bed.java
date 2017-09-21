@@ -38,7 +38,7 @@ public class Bed extends Furniture {
 			int sec = (int)Math.ceil((Game.sleepStartTime - Game.tickCount)*1.0 / Game.normSpeed); // gets the seconds until sleeping is allowed. // normSpeed is in tiks/sec.
 			String note = "Can't sleep! " + (sec / 60) + "Min " + (sec % 60) + " Sec left!";
 			if(!Game.isValidServer())
-				player.game.notifications.add(note); // add the notification displaying the time remaining in minutes and seconds.
+				Game.notifications.add(note); // add the notification displaying the time remaining in minutes and seconds.
 			else if(player instanceof RemotePlayer)
 				Game.server.getAssociatedThread((RemotePlayer)player).sendNotification(note, 0);
 			else
@@ -61,6 +61,4 @@ public class Bed extends Furniture {
 		Bed.inBed = false;
 		return p;
 	}
-	
-	//public static Player getPlayer() { return player; }
 }

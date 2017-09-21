@@ -47,8 +47,8 @@ public class Load {
 		File testFile = new File(location + "/Preferences" + extension);
 		hasGlobalPrefs = testFile.exists();
 		
-		data = new ArrayList<String>();
-		extradata = new ArrayList<String>();
+		data = new ArrayList<>();
+		extradata = new ArrayList<>();
 		hasloadedbigworldalready = false;
 	}
 	
@@ -170,7 +170,7 @@ public class Load {
 		// the returned value of this method (-1, 0, or 1) is determined by whether this object is less than, equal to, or greater than the specified object.
 		public int compareTo(Object other) throws NullPointerException, ClassCastException {
 			if(other == null) throw new NullPointerException();
-			if(other instanceof Version == false) { // if the passed object is not a Version...
+			if(!(other instanceof Version)) { // if the passed object is not a Version...
 				throw new ClassCastException("Cannot compare type Version with type " + other.getClass().getTypeName());
 			}
 			Version ov = (Version)other;
@@ -219,25 +219,25 @@ public class Load {
 	}
 	
 	public static String loadFromFile(String filename, boolean isWorldSave) throws IOException {
-		String total = "";
+		StringBuilder total = new StringBuilder();
 		
 		try (BufferedReader br = new BufferedReader(new FileReader(filename))) {
 			
 			String curLine;
 			//ArrayList<String> curData;
 			while((curLine = br.readLine()) != null)
-				total += curLine + (isWorldSave?"":"\n");
+				total.append(curLine).append(isWorldSave ? "" : "\n");
 			
 			/*if(worldVer != null && worldVer.compareTo(new Version("1.9.4-dev6")) >= 0 && filename.contains("Level") && !filename.contains("Data")) {
 				total = new String(Base64.getDecoder().decode(total));
 			}*/
 			
-		} catch (IOException ex) {
-			/*if(br != null) {
+		}/* catch (IOException ex) {
+			*//*if(br != null) {
 				br.close();
-			}*/
+			}*//*
 			throw ex;
-		}/* finally {
+		}*//* finally {
 			try {
 				
 			} catch (IOException ex) {
@@ -245,7 +245,7 @@ public class Load {
 			}
 		}*/
 		
-		return total;
+		return total.toString();
 	}
 	
 	public void loadUnlocks(String filename) {
@@ -274,10 +274,10 @@ public class Load {
 		Game.setTime(Integer.parseInt(data.get(1)));
 		
 		if(worldVer.compareTo(new Version("1.9.3-dev2")) >= 0) {
-			game.gameTime = Integer.parseInt(data.get(2));
-			Game.pastDay1 = game.gameTime > 65000;
+			Game.gameTime = Integer.parseInt(data.get(2));
+			Game.pastDay1 = Game.gameTime > 65000;
 		} else {
-			game.gameTime = 65000; // prevents time cheating.
+			Game.gameTime = 65000; // prevents time cheating.
 		}
 		
 		OptionsMenu.diff = Integer.parseInt(data.get(3));
@@ -304,13 +304,16 @@ public class Load {
 			subdata = data.subList(2, data.size());
 		} else {
 			MultiplayerMenu.savedIP = data.get(2);
+			if(prefVer.compareTo(new Version("2.0.3-dev3")) > 0) {
+				MultiplayerMenu.savedUUID = data.remove(3);
+				MultiplayerMenu.savedUsername = data.remove(3);
+			}
 			String keyData = data.get(3);
 			subdata = Arrays.asList(keyData.split(":"));
 		}
 		
-		Iterator<String> keys = subdata.iterator();
-		while(keys.hasNext()) {
-			String[] map = keys.next().split(";");
+		for (String keymap : subdata) {
+			String[] map = keymap.split(";");
 			game.input.setKey(map[0], map[1]);
 		}
 	}
@@ -348,6 +351,10 @@ public class Load {
 							System.out.println("tile list doesn't contain tile " + tileID);
 							tilename = "grass";
 						}
+					}
+					if(l == Game.minLevelDepth+1 && tilename.equalsIgnoreCase("LAPIS") && worldVer.compareTo(new Version("2.0.3-dev6")) < 0) {
+						if(Math.random() < 0.8) // don't replace *all* the lapis
+							tilename = "Gem Ore";
 					}
 					tiles[tileArrIdx] = Tiles.get(tilename).id;
 					tdata[tileArrIdx] = Byte.parseByte(extradata.get(tileidx));
@@ -563,11 +570,10 @@ public class Load {
 		entityData = entityData.trim();
 		if(entityData.length() == 0) return null;
 		
-		List<String> info = new ArrayList<String>(); // this gets everything inside the "[...]" after the entity name.
+		List<String> info = new ArrayList<>(); // this gets everything inside the "[...]" after the entity name.
 		//System.out.println("loading entity:" + entityData);
 		String[] stuff = entityData.substring(entityData.indexOf("[") + 1, entityData.indexOf("]")).split(":");
-		for(String str: stuff)
-			info.add(str);
+		info.addAll(Arrays.asList(stuff));
 		
 		String entityName = entityData.substring(0, entityData.indexOf("[")); // this gets the text before "[", which is the entity name.
 		
@@ -582,7 +588,32 @@ public class Load {
 		if(!isLocalSave) {
 			eid = Integer.parseInt(info.remove(2));
 			
-			if(Game.isValidClient() && game.player instanceof RemotePlayer && !((RemotePlayer)game.player).shouldTrack(x >> 4, y >> 4)) {
+			/// If I find an entity that is loaded locally, but on another level in the entity data provided, then I ditch the current entity and make a new one from the info provided.
+			Entity existing = Game.getEntity(eid);
+			int entityLevel = Integer.parseInt(info.get(info.size()-1));
+			
+			if(existing != null) {
+				// the entity loaded is now out of date; remove it.
+				if(/*existing instanceof Player && */Game.debug)
+					System.out.println(Game.onlinePrefix()+"received entity data matches a loaded entity: " + existing + "; removing from level " + existing.getLevel());
+				
+				existing.remove();
+			}
+			
+			/*if(existing == null && Game.isValidClient() && game.player.eid == eid) {
+				existing = game.player;
+				//int playerLevel = Integer.parseInt(info.get(info.size()-1));
+				//if(Game.levels[playerLevel] != null)
+				//Game.levels[playerLevel].add(existing, x, y);
+			}
+			if(existing != null) {
+				System.out.println(Game.onlinePrefix()+"already loaded entity with eid " + eid + "; returning that one");
+				return existing;
+			}*/
+			
+			if(Game.isValidClient() && game.player instanceof RemotePlayer && 
+				!((RemotePlayer)game.player).shouldTrack(x >> 4, y >> 4, Game.levels[entityLevel])
+				) {
 				// the entity is too far away to bother adding to the level.
 				if(Game.debug) System.out.println("CLIENT: entity is too far away to bother loading: " + eid);
 				Entity dummy = new Cow();
@@ -590,16 +621,9 @@ public class Load {
 				return dummy; /// we need a dummy b/c it's the only way to pass along to entity id.
 			}
 			
-			Entity existing = Game.getEntity(eid);
-			if(existing == null && Game.isValidClient() && game.player.eid == eid) {
-				existing = game.player;
-				//int playerLevel = Integer.parseInt(info.get(info.size()-1));
-				//if(Game.levels[playerLevel] != null)
-					//Game.levels[playerLevel].add(existing, x, y);
-			}
-			if(existing != null) {
-				System.out.println(Game.onlinePrefix()+"already loaded entity with eid " + eid + "; returning that one");
-				return existing;
+			if(Game.isValidClient() && existing != null && existing.eid == game.player.eid) {
+				System.out.println("CLIENT WARNING: asked to reload main player from server; ignoring.");
+				return game.player; // don't load the main player
 			}
 		}
 		
@@ -611,7 +635,7 @@ public class Load {
 				return null; // don't load them; in fact, they shouldn't be here.
 			}
 			String username = info.get(2);
-			java.net.InetAddress ip = null;
+			java.net.InetAddress ip;
 			try {
 				ip = java.net.InetAddress.getByName(info.get(3));
 				int port = Integer.parseInt(info.get(4));
@@ -681,8 +705,13 @@ public class Load {
 				if (itemData.contains(";")) {
 					String[] aitemData = itemData.split(";");
 					StackableItem stack = (StackableItem)Items.get(aitemData[0]);
-					stack.count = Integer.parseInt(aitemData[1]);
-					chest.inventory.add(stack);
+					if (stack != null) {
+						stack.count = Integer.parseInt(aitemData[1]);
+						chest.inventory.add(stack);
+					} else {
+						System.err.println("LOAD ERROR: encountered invalid item name, expected to be stackable: " + aitemData[0] + "; stack trace:");
+						Thread.dumpStack();
+					}
 				} else {
 					Item item = Items.get(itemData);
 					chest.inventory.add(item);
@@ -698,15 +727,11 @@ public class Load {
 			
 			newEntity = chest;
 		}
-		else if(newEntity instanceof Spawner) {
+		else if(newEntity instanceof Spawner)
 			newEntity = new Spawner((MobAi)getEntity(info.get(2), Integer.parseInt(info.get(3))));
-			//egg.initMob((MobAi)getEntity(info.get(2), player, info.get(3)));
-			//egg.lvl = Integer.parseInt(info.get(3));
-			//newEntity = egg;
-		}
-		else if(newEntity instanceof Lantern && worldVer.compareTo(new Version("1.9.4")) >= 0 && info.size() > 3) {
+		else if(newEntity instanceof Lantern && worldVer.compareTo(new Version("1.9.4")) >= 0 && info.size() > 3)
 			newEntity = new Lantern(Lantern.Type.values()[Integer.parseInt(info.get(2))]);
-		}
+		
 		/*else if(newEntity instanceof Crafter && worldVer.compareTo(new Version("2.0.0-dev4")) >= 0) {
 			System.out.println("");
 			newEntity = new Crafter(Enum.valueOf(Crafter.Type.class, info.get(2)));
@@ -750,49 +775,49 @@ public class Load {
 		if(Game.levels[curLevel] != null) {
 			Game.levels[curLevel].add(newEntity, x, y);
 			if(Game.debug && newEntity instanceof RemotePlayer)
-				System.out.println(Game.onlinePrefix()+"loaded remote player: " + newEntity + "; added to level " + curLevel + " at " + (newEntity.x>>4)+","+(newEntity.y>>4));
+				Game.levels[curLevel].printEntityStatus("Loaded ", newEntity, "RemotePlayer");
 		} else if(newEntity instanceof RemotePlayer && Game.isValidClient())
 			System.out.println("CLIENT: remote player not added b/c on null level");
 		
 		return newEntity;
 	}
 	
-	public static Entity getEntity(String string, int moblvl) {
+	private static Entity getEntity(String string, int moblvl) {
 		switch(string) {
 			case "Player": return null;
 			case "RemotePlayer": return null;
-			case "Cow": return (Entity)(new Cow());
-			case "Sheep": return (Entity)(new Sheep());
-			case "Pig": return (Entity)(new Pig());
-			case "Zombie": return (Entity)(new Zombie(moblvl));
-			case "Slime": return (Entity)(new Slime(moblvl));
-			case "Creeper": return (Entity)(new Creeper(moblvl));
-			case "Skeleton": return (Entity)(new Skeleton(moblvl));
-			case "Knight": return (Entity)(new Knight(moblvl));
-			case "Snake": return (Entity)(new Snake(moblvl));
-			case "AirWizard": return (Entity)(new AirWizard(moblvl>1));
-			case "Spawner": return (Entity)(new Spawner(new Zombie(1)));
-			case "Workbench": return (Entity)(new Crafter(Crafter.Type.Workbench));
-			case "Chest": return (Entity)(new Chest());
-			case "DeathChest": return (Entity)(new DeathChest());
-			case "DungeonChest": return (Entity)(new DungeonChest());
-			case "Anvil": return (Entity)(new Crafter(Crafter.Type.Anvil));
-			case "Enchanter": return (Entity)(new Crafter(Crafter.Type.Enchanter));
-			case "Loom": return (Entity)(new Crafter(Crafter.Type.Loom));
-			case "Furnace": return (Entity)(new Crafter(Crafter.Type.Furnace));
-			case "Oven": return (Entity)(new Crafter(Crafter.Type.Oven));
-			case "Bed": return (Entity)(new Bed());
-			case "Tnt": return (Entity)(new Tnt());
-			case "Lantern": return (Entity)(new Lantern(Lantern.Type.NORM));
+			case "Cow": return new Cow();
+			case "Sheep": return new Sheep();
+			case "Pig": return new Pig();
+			case "Zombie": return new Zombie(moblvl);
+			case "Slime": return new Slime(moblvl);
+			case "Creeper": return new Creeper(moblvl);
+			case "Skeleton": return new Skeleton(moblvl);
+			case "Knight": return new Knight(moblvl);
+			case "Snake": return new Snake(moblvl);
+			case "AirWizard": return new AirWizard(moblvl>1);
+			case "Spawner": return new Spawner(new Zombie(1));
+			case "Workbench": return new Crafter(Crafter.Type.Workbench);
+			case "Chest": return new Chest();
+			case "DeathChest": return new DeathChest();
+			case "DungeonChest": return new DungeonChest();
+			case "Anvil": return new Crafter(Crafter.Type.Anvil);
+			case "Enchanter": return new Crafter(Crafter.Type.Enchanter);
+			case "Loom": return new Crafter(Crafter.Type.Loom);
+			case "Furnace": return new Crafter(Crafter.Type.Furnace);
+			case "Oven": return new Crafter(Crafter.Type.Oven);
+			case "Bed": return new Bed();
+			case "Tnt": return new Tnt();
+			case "Lantern": return new Lantern(Lantern.Type.NORM);
 			//case "Iron Lantern": return (Entity)(new Lantern(Lantern.Type.IRON));
 			//case "Gold Lantern": return (Entity)(new Lantern(Lantern.Type.GOLD));
-			case "Arrow": return (Entity)(new Arrow(null, 0, 0, 0, 0, 0));
-			case "ItemEntity": return (Entity)(new ItemEntity(null, 0, 0));
+			case "Arrow": return new Arrow(null, 0, 0, 0, 0, 0);
+			case "ItemEntity": return new ItemEntity(null, 0, 0);
 			//case "Spark": return (Entity)(new Spark());
-			case "FireParticle": return (Entity)(new FireParticle(0, 0));
-			case "SmashParticle": return (Entity)(new SmashParticle(0, 0));
-			case "TextParticle": return (Entity)(new TextParticle("", 0, 0, 0));
-			default : /*if(Game.debug)*/ System.out.println("LOAD: unknown or outdated entity requested: " + string);
+			case "FireParticle": return new FireParticle(0, 0);
+			case "SmashParticle": return new SmashParticle(0, 0);
+			case "TextParticle": return new TextParticle("", 0, 0, 0);
+			default : /*if(Game.debug)*/ System.err.println("LOAD ERROR: unknown or outdated entity requested: " + string);
 				return null;
 		}
 	}

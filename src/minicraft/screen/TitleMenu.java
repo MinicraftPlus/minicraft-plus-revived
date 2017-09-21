@@ -6,6 +6,7 @@ import java.util.Random;
 import minicraft.Game;
 import minicraft.GameApplet;
 import minicraft.InputHandler;
+import minicraft.Sound;
 import minicraft.entity.RemotePlayer;
 import minicraft.gfx.Color;
 import minicraft.gfx.Font;
@@ -51,10 +52,10 @@ private static final String[] options = {"New game", "Join Online World", "Instr
 		"Gold > Iron",
 		"Gem > Gold",
 		"Test == InDev!",
-		"Alpha? What's that?",
-		"Beta? What's that?",
+		//"Alpha? What's that?",
+		//"Beta? What's that?",
 		//"Infdev? What's that?",
-		"Story? I've heard of that...",
+		"Story? Hmm...",
 		"Infinite terrain? What's that?",
 		"Redstone? What's that?",
 		//"Spiders? What are those?",
@@ -208,23 +209,25 @@ private static final String[] options = {"New game", "Join Online World", "Instr
 		
 		if (input.getKey("r").clicked) rand = random.nextInt(splashes.length);
 		
-		if (reverse == false) {
+		if (!reverse) {
 			count++;
 			if (count == 25) reverse = true;
-		} else if (reverse == true) {
+		} else {
 			count--;
 			if (count == 0) reverse = false;
 		}
 		
 		if (input.getKey("select").clicked) {
-			if (options[selected] == "New game") {
+			Sound.confirm.play();
+			
+			if (options[selected].equals("New game")) {
 				WorldSelectMenu.loadworld = false;
 				game.setMenu(new WorldSelectMenu());
 				//(this method should now stop getting called by Game)
 			}
 			if(options[selected].contains("Join Online")) game.setMenu(new MultiplayerMenu());
-			if(options[selected] == "Instructions") game.setMenu(new InstructionsMenu(this));
-			if (options[selected] == "Tutorial") {
+			if(options[selected].equals("Instructions")) game.setMenu(new InstructionsMenu(this));
+			if (options[selected].equals("Tutorial")) {
 				try {
 					//This is for the tutorial Video
 					String url = "http://minicraftplus.webs.com/Tutorial.htm";
@@ -233,11 +236,11 @@ private static final String[] options = {"New game", "Join Online World", "Instr
 					if(minicraft.Game.debug) System.out.println(e.getMessage());
 				}
 			}
-			if (options[selected] == "Options") game.setMenu(new OptionsMenu(this));
-			if (options[selected] == "Change Key Bindings") game.setMenu(new KeyInputMenu(this));
-			if (options[selected] == "About") game.setMenu(new AboutMenu(this));
-			if (options[selected] == "Quit") System.exit(0);//game.quit();
-			//if (options[selected] == "Kill") {game.levels[currentLevel].add(game.player); game.setMenu(null);}
+			if (options[selected].equals("Options")) game.setMenu(new OptionsMenu(this));
+			if (options[selected].equals("Change Key Bindings")) game.setMenu(new KeyInputMenu(this));
+			if (options[selected].equals("About")) game.setMenu(new AboutMenu(this));
+			if (options[selected].equals("Quit")) System.exit(0);//game.quit();
+			//if (options[selected].equals("Kill")) {game.levels[currentLevel].add(game.player); game.setMenu(null);}
 		}
 	}
 	
@@ -247,8 +250,8 @@ private static final String[] options = {"New game", "Join Online World", "Instr
 		screen.clear(0);
 		int h = 2; // Height of squares (on the spritesheet)
 		int w = 15; // Width of squares (on the spritesheet)
-		int titleColor = Color.get(-1, 010, 131, 551);
-		int xo = (screen.w - w * 8) / 2; // X location of the title
+		int titleColor = Color.get(-1, 10, 131, 551);
+		int xo = (Screen.w - w * 8) / 2; // X location of the title
 		int yo = 36; // Y location of the title
 		int cols = Color.get(-1, 550);
 		
@@ -282,8 +285,8 @@ private static final String[] options = {"New game", "Join Online World", "Instr
 		
 		Font.draw("Version " + Game.VERSION, screen, 1, 1, Color.get(-1, 111));
 		
-		Font.drawCentered("("+input.getMapping("up")+", "+input.getMapping("down")+" to select)", screen, screen.h - 32, Color.get(-1, 111));
-		Font.drawCentered("("+input.getMapping("select")+" to accept)", screen, screen.h - 22, Color.get(-1, 111));
-		Font.drawCentered("("+input.getMapping("exit")+" to return)", screen, screen.h - 12, Color.get(-1, 111));
+		Font.drawCentered("("+input.getMapping("up")+", "+input.getMapping("down")+" to select)", screen, Screen.h - 32, Color.get(-1, 111));
+		Font.drawCentered("("+input.getMapping("select")+" to accept)", screen, Screen.h - 22, Color.get(-1, 111));
+		Font.drawCentered("("+input.getMapping("exit")+" to return)", screen, Screen.h - 12, Color.get(-1, 111));
 	}
 }

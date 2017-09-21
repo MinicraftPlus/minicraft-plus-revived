@@ -10,7 +10,7 @@ import minicraft.level.tile.Tile;
 public class FoodItem extends StackableItem {
 	
 	protected static ArrayList<Item> getAllInstances() {
-		ArrayList<Item> items = new ArrayList<Item>();
+		ArrayList<Item> items = new ArrayList<>();
 		
 		items.add(new FoodItem("Bread", new Sprite(8, 4, Color.get(-1, 110, 330, 550)), 2));
 		items.add(new FoodItem("Apple", new Sprite(9, 4, Color.get(-1, 100, 300, 500)), 1));

@@ -1,8 +1,6 @@
 package minicraft.screen;
 
 import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.regex.Matcher;
@@ -25,8 +23,8 @@ public class ModeMenu extends Menu {
 	public static int mode = 1;
 	
 	private static int selectedTime = 0;
-	private static List<String> times = new ArrayList<String>();
-	public static List<String> unlockedtimes = new ArrayList<String>();
+	private static List<String> times = new ArrayList<>();
+	public static List<String> unlockedtimes = new ArrayList<>();
 	
 	static {
 		initTimeList();
@@ -47,19 +45,17 @@ public class ModeMenu extends Menu {
 		if(unlockedtimes.size() > 0) {
 			times.addAll(unlockedtimes);
 			
-			HashMap<String, Integer> timeMap = new HashMap<String, Integer>();
+			HashMap<String, Integer> timeMap = new HashMap<>();
 			for(String time: times)
 				timeMap.put(time, getScoreTime(time));
 			
-			Collections.sort(times, new Comparator<String>() {
-				public int compare(String t1, String t2) {
-					if (timeMap.get(t1) > timeMap.get(t2))
-						return 1;
-					else if (timeMap.get(t1) < timeMap.get(t2))
-						return -1;
-					
-					return 0;
-				}
+			times.sort((t1, t2) -> {
+				if (timeMap.get(t1) > timeMap.get(t2))
+					return 1;
+				else if (timeMap.get(t1) < timeMap.get(t2))
+					return -1;
+				
+				return 0;
 			});
 		}
 	}
@@ -81,7 +77,7 @@ public class ModeMenu extends Menu {
 		
 		if (score && input.getKey("t").clicked) { //selected is always 0..?
 			selectedTime++;
-			Sound.test.play();
+			Sound.confirm.play();
 			if(selectedTime > times.size() - 1)
 				selectedTime = 0;
 		}
@@ -156,17 +152,17 @@ public class ModeMenu extends Menu {
 		int textCol = Color.get(-1, 555);
 		screen.clear(0);
 		
-		Font.drawCentered("World Name:", screen, screen.h - 180, Color.get(-1, 444));
-		Font.drawCentered(WorldSelectMenu.worldname, screen, screen.h - 170, Color.get(-1, 5));
+		Font.drawCentered("World Name:", screen, Screen.h - 180, Color.get(-1, 444));
+		Font.drawCentered(WorldSelectMenu.worldname, screen, Screen.h - 170, Color.get(-1, 5));
 		
 		String modeText = "Game Mode:	" + modes[mode - 1];
 		new FontStyle(Color.get(-1, 555)).setYPos(8*8).setShadowType(Color.get(-1, 111), false).draw(modeText, screen);
 		
 		if(mode == 4) Font.drawCentered("<T>ime: " + getSelectedTime(), screen, 95, Color.get(-1, 555));
 		
-		Font.drawCentered("Press "+input.getMapping("select")+" to Start", screen, screen.h - 75, textCol);
-		Font.drawCentered("Press Left and Right", screen, screen.h - 150, textCol);
-		Font.drawCentered("Press "+input.getMapping("exit")+" to Return", screen, screen.h - 55, textCol);
-		Font.drawCentered("Press Z for world options", screen, screen.h - 35, textCol);
+		Font.drawCentered("Press "+input.getMapping("select")+" to Start", screen, Screen.h - 75, textCol);
+		Font.drawCentered("Press Left and Right", screen, Screen.h - 150, textCol);
+		Font.drawCentered("Press "+input.getMapping("exit")+" to Return", screen, Screen.h - 55, textCol);
+		Font.drawCentered("Press Z for world options", screen, Screen.h - 35, textCol);
 	}
 }
