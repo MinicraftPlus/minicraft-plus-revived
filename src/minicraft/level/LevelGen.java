@@ -3,18 +3,20 @@ package minicraft.level;
 import java.awt.Image;
 import java.awt.image.BufferedImage;
 import java.util.Random;
+
 import javax.swing.ImageIcon;
 import javax.swing.JOptionPane;
 
+import minicraft.Game;
 import minicraft.level.tile.Tiles;
 import minicraft.screen.WorldGenMenu;
 
 public class LevelGen {
-	private static final Random random = new Random();
+	private static long worldSeed = 0;
+	private static final Random random = new Random(worldSeed);
 	public double[] values; //An array of doubles, used to help making noise for the map
 	private int w, h; // width and height of the map
 	private static int d = 0;
-	//private int tries = 0;
 	private static final int stairRadius = 15;
 	
 	/** This creates noise to create random values for level generation */
@@ -125,7 +127,9 @@ public class LevelGen {
 		return null;
 	}
 	
-	private static byte[][] createAndValidateTopMap(int w, int h) {
+	public static byte[][] createAndValidateTopMap(int w, int h) {
+		random.setSeed(worldSeed);
+		int attempt = 0;
 		do {
 			byte[][] result = createTopMap(w, h);
 			
@@ -146,7 +150,8 @@ public class LevelGen {
 		} while (true);
 	}
 	
-	private static byte[][] createAndValidateUndergroundMap(int w, int h, int depth) {
+  public static byte[][] createAndValidateUndergroundMap(int w, int h, int depth) {
+		random.setSeed(worldSeed);
 		int attempt = 0;
 		do {
 			byte[][] result = createUndergroundMap(w, h, depth);
@@ -168,7 +173,8 @@ public class LevelGen {
 		} while (true);
 	}
 	
-	private static byte[][] createAndValidateDungeon(int w, int h) {
+  public static byte[][] createAndValidateDungeon(int w, int h) {
+		random.setSeed(worldSeed);
 		int attempt = 0;
 		do {
 			byte[][] result = createDungeon(w, h);
@@ -185,8 +191,9 @@ public class LevelGen {
 			
 		} while (true);
 	}
-	
-	private static byte[][] createAndValidateSkyMap(int w, int h) {
+
+	public static byte[][] createAndValidateSkyMap(int w, int h) {
+		random.setSeed(worldSeed);
 		int attempt = 0;
 		do {
 			byte[][] result = createSkyMap(w, h);
@@ -752,6 +759,16 @@ public class LevelGen {
 	}
 	
 	public static void main(String[] args) {
+		LevelGen.worldSeed = 0x100;
+		
+		// Fixes to get this method to work
+		
+		// AirWizard needs this in constructor
+		Game.gameDir = "";
+		
+		Tiles.initTileList();
+		// End of fixes
+		
 		int idx = -1;
 		
 		int[] maplvls = new int[args.length];
@@ -811,6 +828,10 @@ public class LevelGen {
 			}
 			img.setRGB(0, 0, w, h, pixels, 0, w);
 			JOptionPane.showMessageDialog(null, null, "Another Map", JOptionPane.PLAIN_MESSAGE, new ImageIcon(img.getScaledInstance(w * 2, h * 2, Image.SCALE_AREA_AVERAGING)));
+			if (LevelGen.worldSeed == 0x100)
+				LevelGen.worldSeed = 0xAAFF20;
+			else
+				LevelGen.worldSeed = 0x100;
 		}
 	}
 }
