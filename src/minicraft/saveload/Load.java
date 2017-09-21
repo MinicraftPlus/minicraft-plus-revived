@@ -51,8 +51,8 @@ public class Load {
 		File testFile = new File(location + "/Preferences" + extension);
 		hasGlobalPrefs = testFile.exists();
 		
-		data = new ArrayList<String>();
-		extradata = new ArrayList<String>();
+		data = new ArrayList<>();
+		extradata = new ArrayList<>();
 		hasloadedbigworldalready = false;
 	}
 	
@@ -174,7 +174,7 @@ public class Load {
 		// the returned value of this method (-1, 0, or 1) is determined by whether this object is less than, equal to, or greater than the specified object.
 		public int compareTo(Object other) throws NullPointerException, ClassCastException {
 			if(other == null) throw new NullPointerException();
-			if(other instanceof Version == false) { // if the passed object is not a Version...
+			if(!(other instanceof Version)) { // if the passed object is not a Version...
 				throw new ClassCastException("Cannot compare type Version with type " + other.getClass().getTypeName());
 			}
 			Version ov = (Version)other;
@@ -223,25 +223,25 @@ public class Load {
 	}
 	
 	public static String loadFromFile(String filename, boolean isWorldSave) throws IOException {
-		String total = "";
+		StringBuilder total = new StringBuilder();
 		
 		try (BufferedReader br = new BufferedReader(new FileReader(filename))) {
 			
 			String curLine;
 			//ArrayList<String> curData;
 			while((curLine = br.readLine()) != null)
-				total += curLine + (isWorldSave?"":"\n");
+				total.append(curLine).append(isWorldSave ? "" : "\n");
 			
 			/*if(worldVer != null && worldVer.compareTo(new Version("1.9.4-dev6")) >= 0 && filename.contains("Level") && !filename.contains("Data")) {
 				total = new String(Base64.getDecoder().decode(total));
 			}*/
 			
-		} catch (IOException ex) {
-			/*if(br != null) {
+		}/* catch (IOException ex) {
+			*//*if(br != null) {
 				br.close();
-			}*/
+			}*//*
 			throw ex;
-		}/* finally {
+		}*//* finally {
 			try {
 				
 			} catch (IOException ex) {
@@ -249,7 +249,7 @@ public class Load {
 			}
 		}*/
 		
-		return total;
+		return total.toString();
 	}
 	
 	public void loadUnlocks(String filename) {
@@ -321,9 +321,8 @@ public class Load {
 			subdata = Arrays.asList(keyData.split(":"));
 		}
 		
-		Iterator<String> keys = subdata.iterator();
-		while(keys.hasNext()) {
-			String[] map = keys.next().split(";");
+		for (String keymap : subdata) {
+			String[] map = keymap.split(";");
 			game.input.setKey(map[0], map[1]);
 		}
 	}
@@ -361,6 +360,10 @@ public class Load {
 							System.out.println("tile list doesn't contain tile " + tileID);
 							tilename = "grass";
 						}
+					}
+					if(l == Game.minLevelDepth+1 && tilename.equalsIgnoreCase("LAPIS") && worldVer.compareTo(new Version("2.0.3-dev6")) < 0) {
+						if(Math.random() < 0.8) // don't replace *all* the lapis
+							tilename = "Gem Ore";
 					}
 					tiles[tileArrIdx] = Tiles.get(tilename).id;
 					tdata[tileArrIdx] = Byte.parseByte(extradata.get(tileidx));
@@ -576,7 +579,7 @@ public class Load {
 		entityData = entityData.trim();
 		if(entityData.length() == 0) return null;
 		
-		List<String> info = new ArrayList<String>(); // this gets everything inside the "[...]" after the entity name.
+		List<String> info = new ArrayList<>(); // this gets everything inside the "[...]" after the entity name.
 		//System.out.println("loading entity:" + entityData);
 		String[] stuff = entityData.substring(entityData.indexOf("[") + 1, entityData.indexOf("]")).split(":");
 		info.addAll(Arrays.asList(stuff));
@@ -641,7 +644,7 @@ public class Load {
 				return null; // don't load them; in fact, they shouldn't be here.
 			}
 			String username = info.get(2);
-			java.net.InetAddress ip = null;
+			java.net.InetAddress ip;
 			try {
 				ip = java.net.InetAddress.getByName(info.get(3));
 				int port = Integer.parseInt(info.get(4));
@@ -792,37 +795,37 @@ public class Load {
 		switch(string) {
 			case "Player": return null;
 			case "RemotePlayer": return null;
-			case "Cow": return (Entity)(new Cow());
-			case "Sheep": return (Entity)(new Sheep());
-			case "Pig": return (Entity)(new Pig());
-			case "Zombie": return (Entity)(new Zombie(moblvl));
-			case "Slime": return (Entity)(new Slime(moblvl));
-			case "Creeper": return (Entity)(new Creeper(moblvl));
-			case "Skeleton": return (Entity)(new Skeleton(moblvl));
-			case "Knight": return (Entity)(new Knight(moblvl));
-			case "Snake": return (Entity)(new Snake(moblvl));
-			case "AirWizard": return (Entity)(new AirWizard(moblvl>1));
-			case "Spawner": return (Entity)(new Spawner(new Zombie(1)));
-			case "Workbench": return (Entity)(new Crafter(Crafter.Type.Workbench));
-			case "Chest": return (Entity)(new Chest());
-			case "DeathChest": return (Entity)(new DeathChest());
-			case "DungeonChest": return (Entity)(new DungeonChest());
-			case "Anvil": return (Entity)(new Crafter(Crafter.Type.Anvil));
-			case "Enchanter": return (Entity)(new Crafter(Crafter.Type.Enchanter));
-			case "Loom": return (Entity)(new Crafter(Crafter.Type.Loom));
-			case "Furnace": return (Entity)(new Crafter(Crafter.Type.Furnace));
-			case "Oven": return (Entity)(new Crafter(Crafter.Type.Oven));
-			case "Bed": return (Entity)(new Bed());
-			case "Tnt": return (Entity)(new Tnt());
-			case "Lantern": return (Entity)(new Lantern(Lantern.Type.NORM));
+			case "Cow": return new Cow();
+			case "Sheep": return new Sheep();
+			case "Pig": return new Pig();
+			case "Zombie": return new Zombie(moblvl);
+			case "Slime": return new Slime(moblvl);
+			case "Creeper": return new Creeper(moblvl);
+			case "Skeleton": return new Skeleton(moblvl);
+			case "Knight": return new Knight(moblvl);
+			case "Snake": return new Snake(moblvl);
+			case "AirWizard": return new AirWizard(moblvl>1);
+			case "Spawner": return new Spawner(new Zombie(1));
+			case "Workbench": return new Crafter(Crafter.Type.Workbench);
+			case "Chest": return new Chest();
+			case "DeathChest": return new DeathChest();
+			case "DungeonChest": return new DungeonChest();
+			case "Anvil": return new Crafter(Crafter.Type.Anvil);
+			case "Enchanter": return new Crafter(Crafter.Type.Enchanter);
+			case "Loom": return new Crafter(Crafter.Type.Loom);
+			case "Furnace": return new Crafter(Crafter.Type.Furnace);
+			case "Oven": return new Crafter(Crafter.Type.Oven);
+			case "Bed": return new Bed();
+			case "Tnt": return new Tnt();
+			case "Lantern": return new Lantern(Lantern.Type.NORM);
 			//case "Iron Lantern": return (Entity)(new Lantern(Lantern.Type.IRON));
 			//case "Gold Lantern": return (Entity)(new Lantern(Lantern.Type.GOLD));
-			case "Arrow": return (Entity)(new Arrow(null, 0, 0, 0, 0, 0));
-			case "ItemEntity": return (Entity)(new ItemEntity(null, 0, 0));
+			case "Arrow": return new Arrow(null, 0, 0, 0, 0, 0);
+			case "ItemEntity": return new ItemEntity(null, 0, 0);
 			//case "Spark": return (Entity)(new Spark());
-			case "FireParticle": return (Entity)(new FireParticle(0, 0));
-			case "SmashParticle": return (Entity)(new SmashParticle(0, 0));
-			case "TextParticle": return (Entity)(new TextParticle("", 0, 0, 0));
+			case "FireParticle": return new FireParticle(0, 0);
+			case "SmashParticle": return new SmashParticle(0, 0);
+			case "TextParticle": return new TextParticle("", 0, 0, 0);
 			default : /*if(Game.debug)*/ System.err.println("LOAD ERROR: unknown or outdated entity requested: " + string);
 				return null;
 		}

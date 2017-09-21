@@ -3,18 +3,20 @@ package minicraft.level;
 import java.awt.Image;
 import java.awt.image.BufferedImage;
 import java.util.Random;
+
 import javax.swing.ImageIcon;
 import javax.swing.JOptionPane;
 
+import minicraft.Game;
 import minicraft.level.tile.Tiles;
 import minicraft.screen.Displays;
 
 public class LevelGen {
-	private static final Random random = new Random();
+	private static long worldSeed = 0;
+	private static final Random random = new Random(worldSeed);
 	public double[] values; //An array of doubles, used to help making noise for the map
 	private int w, h; // width and height of the map
 	private static int d = 0;
-	//private int tries = 0;
 	private static final int stairRadius = 15;
 	
 	/** This creates noise to create random values for level generation */
@@ -125,7 +127,9 @@ public class LevelGen {
 		return null;
 	}
 	
-	private static byte[][] createAndValidateTopMap(int w, int h) {
+	public static byte[][] createAndValidateTopMap(int w, int h) {
+		random.setSeed(worldSeed);
+		int attempt = 0;
 		do {
 			byte[][] result = createTopMap(w, h);
 			
@@ -146,7 +150,8 @@ public class LevelGen {
 		} while (true);
 	}
 	
-	private static byte[][] createAndValidateUndergroundMap(int w, int h, int depth) {
+  public static byte[][] createAndValidateUndergroundMap(int w, int h, int depth) {
+		random.setSeed(worldSeed);
 		int attempt = 0;
 		do {
 			byte[][] result = createUndergroundMap(w, h, depth);
@@ -168,7 +173,8 @@ public class LevelGen {
 		} while (true);
 	}
 	
-	private static byte[][] createAndValidateDungeon(int w, int h) {
+  public static byte[][] createAndValidateDungeon(int w, int h) {
+		random.setSeed(worldSeed);
 		int attempt = 0;
 		do {
 			byte[][] result = createDungeon(w, h);
@@ -185,8 +191,9 @@ public class LevelGen {
 			
 		} while (true);
 	}
-	
-	private static byte[][] createAndValidateSkyMap(int w, int h) {
+
+	public static byte[][] createAndValidateSkyMap(int w, int h) {
+		random.setSeed(worldSeed);
 		int attempt = 0;
 		do {
 			byte[][] result = createSkyMap(w, h);
@@ -234,63 +241,65 @@ public class LevelGen {
 				dist = dist * dist * dist * dist;
 				val += 1 - dist * 20;
 				
-				if (Displays.worldGen.getEntry("Type").getValue().equals("Island")) {
-					
-					if (val < -0.5) {
-						if (Displays.worldGen.getEntry("Theme").getValue().equals("Hell"))
-							map[i] = Tiles.get("lava").id;
-						else
-							map[i] = Tiles.get("water").id;
-					} else if (val > 0.5 && mval < -1.5) {
-						map[i] = Tiles.get("rock").id;
-					} else {
-						map[i] = Tiles.get("grass").id;
-					}
-					
-				} else if (Displays.worldGen.getEntry("Type").getValue().equals("Box")) {
-					
-					if (val < -1.5) {
-						if (Displays.worldGen.getEntry("Theme").getValue().equals("Hell")) {
-							map[i] = Tiles.get("lava").id;
+				switch ((String)Displays.worldGen.getEntry("Type").getValue()) {
+					case "Island":
+						
+						if (val < -0.5) {
+							if (Displays.worldGen.getEntry("Theme").getValue().equals("Hell"))
+								map[i] = Tiles.get("lava").id;
+							else
+								map[i] = Tiles.get("water").id;
+						} else if (val > 0.5 && mval < -1.5) {
+							map[i] = Tiles.get("rock").id;
+						} else {
+							map[i] = Tiles.get("grass").id;
 						}
-						if (!Displays.worldGen.getEntry("Theme").getValue().equals("Hell")) {
-							map[i] = Tiles.get("water").id;
+						
+						break;
+					case "Box":
+						
+						if (val < -1.5) {
+							if (Displays.worldGen.getEntry("Theme").getValue().equals("Hell")) {
+								map[i] = Tiles.get("lava").id;
+							} else {
+								map[i] = Tiles.get("water").id;
+							}
+						} else if (val > 0.5 && mval < -1.5) {
+							map[i] = Tiles.get("rock").id;
+						} else {
+							map[i] = Tiles.get("grass").id;
 						}
-					} else if (val > 0.5 && mval < -1.5) {
-						map[i] = Tiles.get("rock").id;
-					} else {
-						map[i] = Tiles.get("grass").id;
-					}
+						
+						break;
+					case "Mountain":
+						
+						if (val < -0.4) {
+							map[i] = Tiles.get("grass").id;
+						} else if (val > 0.5 && mval < -1.5) {
+							if (Displays.worldGen.getEntry("Theme").getValue().equals("Hell")) {
+								map[i] = Tiles.get("lava").id;
+							} else {
+								map[i] = Tiles.get("water").id;
+							}
+						} else {
+							map[i] = Tiles.get("rock").id;
+						}
+						break;
 					
-				} else if (Displays.worldGen.getEntry("Type").getValue().equals("Mountain")) {
-					
-					if (val < -0.4) {
-						map[i] = Tiles.get("grass").id;
-					} else if (val > 0.5 && mval < -1.5) {
-						if (!Displays.worldGen.getEntry("Theme").getValue().equals("Hell")) {
-							map[i] = Tiles.get("water").id;
+					case "Irregular":
+						if (val < -0.5 && mval < -0.5) {
+							if (Displays.worldGen.getEntry("Theme").getValue().equals("Hell")) {
+								map[i] = Tiles.get("lava").id;
+							}
+							if (!Displays.worldGen.getEntry("Theme").getValue().equals("Hell")) {
+								map[i] = Tiles.get("water").id;
+							}
+						} else if (val > 0.5 && mval < -1.5) {
+							map[i] = Tiles.get("rock").id;
+						} else {
+							map[i] = Tiles.get("grass").id;
 						}
-						if (Displays.worldGen.getEntry("Theme").getValue().equals("Hell")) {
-							map[i] = Tiles.get("lava").id;
-						}
-					} else {
-						map[i] = Tiles.get("rock").id;
-					}
-				}
-				if (Displays.worldGen.getEntry("Type").getValue().equals("Irregular")) {
-					
-					if (val < -0.5 && mval < -0.5) {
-						if (Displays.worldGen.getEntry("Theme").getValue().equals("Hell")) {
-							map[i] = Tiles.get("lava").id;
-						}
-						if (!Displays.worldGen.getEntry("Theme").getValue().equals("Hell")) {
-							map[i] = Tiles.get("water").id;
-						}
-					} else if (val > 0.5 && mval < -1.5) {
-						map[i] = Tiles.get("rock").id;
-					} else {
-						map[i] = Tiles.get("grass").id;
-					}
+						break;
 				}
 			}
 		}
@@ -562,7 +571,7 @@ public class LevelGen {
 				nval = Math.abs(nval - nnoise3.values[i]) * 3 - 2;
 				
 				double wval = Math.abs(wnoise1.values[i] - wnoise2.values[i]);
-				wval = Math.abs(wval - wnoise3.values[i]) * 3 - 2;
+				wval = Math.abs(nval - wnoise3.values[i]) * 3 - 2;
 				
 				double xd = x / (w - 1.0) * 2 - 1;
 				double yd = y / (h - 1.0) * 2 - 1;
@@ -613,11 +622,11 @@ public class LevelGen {
 		
 		if (depth > 2) {
 			int r = 1;
+			int xx = 60;
+			int yy = 60;
 			for (int i = 0; i < w * h / 380; i++) {
 				for (int j = 0; j < 10; j++) {
-					int xx = 60;
-					int yy = 60;
-					if (xx >= r && yy >= r && xx < w - r && yy < h - r) {
+					if (xx < w - r && yy < h - r) {
 						/// The "& 0xff" is a common way to convert a byte to an unsigned int, which basically prevents negative values... except... this doesn't do anything if you flip it back to a byte again...
 						map[xx + yy * w] = (byte) ((Tiles.get("Obsidian Wall").id & 0xff));
 						map[xx + 1 + yy * w] = (byte) ((Tiles.get("Obsidian Wall").id & 0xff));
@@ -748,6 +757,16 @@ public class LevelGen {
 	}
 	
 	public static void main(String[] args) {
+		LevelGen.worldSeed = 0x100;
+		
+		// Fixes to get this method to work
+		
+		// AirWizard needs this in constructor
+		Game.gameDir = "";
+		
+		Tiles.initTileList();
+		// End of fixes
+		
 		int idx = -1;
 		
 		int[] maplvls = new int[args.length];
@@ -769,9 +788,10 @@ public class LevelGen {
 			maplvls[0] = 0;
 		}
 		
+		//noinspection InfiniteLoopStatement
 		while (true) {
 			int w = 256;
-			int h = w;
+			int h = 256;
 			
 			int lvl = maplvls[idx++ % maplvls.length];
 			if (lvl > 1 || lvl < -4) continue;
@@ -806,6 +826,10 @@ public class LevelGen {
 			}
 			img.setRGB(0, 0, w, h, pixels, 0, w);
 			JOptionPane.showMessageDialog(null, null, "Another Map", JOptionPane.PLAIN_MESSAGE, new ImageIcon(img.getScaledInstance(w * 2, h * 2, Image.SCALE_AREA_AVERAGING)));
+			if (LevelGen.worldSeed == 0x100)
+				LevelGen.worldSeed = 0xAAFF20;
+			else
+				LevelGen.worldSeed = 0x100;
 		}
 	}
 }

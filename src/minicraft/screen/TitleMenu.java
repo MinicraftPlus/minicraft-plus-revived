@@ -4,6 +4,7 @@ import java.util.Random;
 import minicraft.Game;
 import minicraft.GameApplet;
 import minicraft.InputHandler;
+import minicraft.Sound;
 import minicraft.entity.RemotePlayer;
 import minicraft.gfx.Color;
 import minicraft.gfx.Font;
@@ -106,10 +107,10 @@ public class TitleMenu extends Menu {
 		"Gold > Iron",
 		"Gem > Gold",
 		"Test == InDev!",
-		"Alpha? What's that?",
-		"Beta? What's that?",
+		//"Alpha? What's that?",
+		//"Beta? What's that?",
 		//"Infdev? What's that?",
-		"Story? I've heard of that...",
+		"Story? Hmm...",
 		"Infinite terrain? What's that?",
 		"Redstone? What's that?",
 		//"Spiders? What are those?",
@@ -273,7 +274,29 @@ public class TitleMenu extends Menu {
 		}
 		
 		if (input.getKey("select").clicked) {
+			/*Sound.confirm.play();
 			
+			if (options[selected].equals("New game")) {
+				WorldSelectMenu.loadworld = false;
+				game.setMenu(new WorldSelectMenu());
+				//(this method should now stop getting called by Game)
+			}
+			if(options[selected].contains("Join Online")) game.setMenu(new MultiplayerMenu());
+			if(options[selected].equals("Instructions")) game.setMenu(new InstructionsMenu(this));
+			if (options[selected].equals("Tutorial")) {
+				try {
+					//This is for the tutorial Video
+					String url = "http://minicraftplus.webs.com/Tutorial.htm";
+					java.awt.Desktop.getDesktop().browse(java.net.URI.create(url));
+				} catch (java.io.IOException e) {
+					if(minicraft.Game.debug) System.out.println(e.getMessage());
+				}
+			}
+			if (options[selected].equals("Options")) game.setMenu(new OptionsMenu(this));
+			if (options[selected].equals("Change Key Bindings")) game.setMenu(new KeyInputMenu(this));
+			if (options[selected].equals("About")) game.setMenu(new AboutMenu(this));
+			if (options[selected].equals("Quit")) System.exit(0);//game.quit();
+			//if (options[selected].equals("Kill")) {game.levels[currentLevel].add(game.player); game.setMenu(null);}*/
 		}
 	}
 	
@@ -283,7 +306,7 @@ public class TitleMenu extends Menu {
 		screen.clear(0);
 		int h = 2; // Height of squares (on the spritesheet)
 		int w = 15; // Width of squares (on the spritesheet)
-		int titleColor = Color.get(-1, 010, 131, 551);
+		int titleColor = Color.get(-1, 10, 131, 551);
 		int xo = (Screen.w - w * 8) / 2; // X location of the title
 		int yo = 36; // Y location of the title
 		int cols = Color.get(-1, 550);

@@ -27,7 +27,7 @@ public class PassiveMob extends MobAi {
 	}
 	
 	public void randomizeWalkDir(boolean byChance) {
-		if(xa == 0 && ya == 0 && random.nextInt(5) == 0 || byChance || !byChance && random.nextInt(randomWalkChance) == 0) {
+		if(xa == 0 && ya == 0 && random.nextInt(5) == 0 || byChance || random.nextInt(randomWalkChance) == 0) {
 			randomWalkTime = randomWalkDuration;
 			// multiple at end ups the chance of not moving by 50%.
 			xa = (random.nextInt(3) - 1) * random.nextInt(2);
@@ -48,11 +48,8 @@ public class PassiveMob extends MobAi {
 			return false;
 		
 		Tile tile = level.getTile(x >> 4, y >> 4);
-		if (tile == Tiles.get("grass") || tile == Tiles.get("flower")) {
-			return true;
-		}
-
-		return false;
+		return tile == Tiles.get("grass") || tile == Tiles.get("flower");
+		
 	}
 	
 	public int getMaxLevel() {

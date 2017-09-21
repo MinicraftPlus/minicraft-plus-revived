@@ -1,6 +1,8 @@
 package minicraft.screen;
 
 import java.util.ArrayList;
+
+import minicraft.Game;
 import minicraft.gfx.Color;
 import minicraft.gfx.Font;
 import minicraft.gfx.Screen;
@@ -22,13 +24,13 @@ public class PlayerInfoMenu extends Display {
 	public void render(Screen screen) {
 		//renderFrame(screen, "Player Info", 1, 1, 30, 15);
 		
-		int seconds = game.gameTime / game.normSpeed;
+		int seconds = Game.gameTime / Game.normSpeed;
 		int minutes = seconds / 60;
 		int hours = minutes / 60;
 		minutes %= 60;
 		seconds %= 60;
 		
-		String timeString = "";
+		String timeString;
 		if (hours > 0) {
 			timeString = hours + "h" + (minutes < 10 ? "0" : "") + minutes + "m";
 		} else {
@@ -38,7 +40,7 @@ public class PlayerInfoMenu extends Display {
 		Font.draw("General Stats:", screen, 8 * 8, 3 * 8, Color.get(-1, 324, 200, 150));
 		Font.draw(" ----------------------------", screen, 1 * 8, 4 * 8, Color.get(-1, 540));
 		
-		ArrayList<String> stats = new ArrayList<String>();
+		ArrayList<String> stats = new ArrayList<>();
 		
 		stats.add("Time Played: " + timeString);
 		stats.add("Current Score: " + game.player.score);
@@ -47,12 +49,12 @@ public class PlayerInfoMenu extends Display {
 			String[] split = stats.get(i).split(":");
 			Font.draw(split[0]+":", screen, 2*8, (4+i)*8, Color.get(-1, 555));
 			if(split.length==1) continue;
-			String data = split[1];
+			StringBuilder data = new StringBuilder(split[1]);
 			if(split.length > 2) {
 				for(int idx = 2; idx < split.length; idx++)
-					data += ":"+split[idx];
+					data.append(":").append(split[idx]);
 			}
-			Font.draw(data, screen, 2*8 + Font.textWidth(split[0]+":"), (4+i)*8, Color.get(-1, 550));
+			Font.draw(data.toString(), screen, 2*8 + Font.textWidth(split[0]+":"), (4+i)*8, Color.get(-1, 550));
 		}
 		
 		int y = 4 + stats.size();

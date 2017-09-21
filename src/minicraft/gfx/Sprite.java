@@ -15,21 +15,21 @@ public class Sprite {
 	
 	static Random ran = new Random();
 	
-	public static final Sprite missingTexture(int w, int h) {
+	public static Sprite missingTexture(int w, int h) {
 		return new Sprite(30, 30, w, h, Color.get(505, 505));
 	}
-	public static final Sprite blank(int w, int h, int col) {
+	public static Sprite blank(int w, int h, int col) {
 		return new Sprite(7, 2, w, h, Color.get(col, col));
 	}
 	
-	public static final Sprite repeat(int sx, int sy, int w, int h, int col) {
+	public static Sprite repeat(int sx, int sy, int w, int h, int col) {
 		return ConnectorSprite.makeSprite(w, h, col, 0, true, sx + sy * 32);
 	}
 	
-	public static final Sprite dots(int col) {
+	public static Sprite dots(int col) {
 		return ConnectorSprite.makeSprite(2, 2, col, 0, false, 0, 1, 2, 3);
 	}
-	public static final Sprite randomDots(long seed, int col) {
+	public static Sprite randomDots(long seed, int col) {
 		ran.setSeed(seed);
 		return ConnectorSprite.makeSprite(2, 2, col, ran.nextInt(4), false, ran.nextInt(4), ran.nextInt(4), ran.nextInt(4), ran.nextInt(4));
 	}
@@ -120,13 +120,13 @@ public class Sprite {
 	}
 	
 	public String toString() {
-		String out = getClass().getName().replace("minicraft.gfx.", "")+"; pixels:";
+		StringBuilder out = new StringBuilder(getClass().getName().replace("minicraft.gfx.", "") + "; pixels:");
 		for(Px[] row: spritePixels)
 			for(Px pixel: row)
-				out += "\n"+pixel.toString();
-		out += "\n";
+				out.append("\n").append(pixel.toString());
+		out.append("\n");
 		
-		return out;
+		return out.toString();
 	}
 	
 	public static class Px {

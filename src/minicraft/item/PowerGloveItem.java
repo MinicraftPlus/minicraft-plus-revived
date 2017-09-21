@@ -1,6 +1,5 @@
 package minicraft.item;
 
-import java.util.ArrayList;
 import minicraft.entity.Entity;
 import minicraft.entity.Furniture;
 import minicraft.entity.Player;

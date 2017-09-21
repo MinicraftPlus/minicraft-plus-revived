@@ -93,7 +93,7 @@ public class KeyInputMenu extends ScrollingMenu {
 		
 		Font.drawCentered("Controls", screen, 0, Color.get(-1, 555));
 		
-		/*if(Game.debug&&false) {
+		/*if(Game.debug) {
 			System.out.println("current status:");
 			System.out.println("selected: " + selected + " of " + options.size());
 			System.out.println("disp sel: " + dispSelected + " of " + dispSize);

@@ -89,5 +89,6 @@ public class ScrollingMenu extends Menu {
 		
 		selected = selSave;
 		options = allOptions;
+		//super.renderAs(screen, options.subList(offset, Math.min(options.size(), offset + dispSize)), dispSelected); // renders the list with the super classes parameters, but temp. replacing the array and index.
 	}
 }

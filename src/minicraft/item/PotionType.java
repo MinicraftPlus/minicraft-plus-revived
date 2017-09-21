@@ -31,7 +31,7 @@ public enum PotionType {
 	public int dispColor, duration;
 	public String name;
 	
-	private PotionType(int col, int dur) {
+	PotionType(int col, int dur) {
 		dispColor = col;
 		duration = dur;
 		if(this.toString().equals("None")) name = "Potion";

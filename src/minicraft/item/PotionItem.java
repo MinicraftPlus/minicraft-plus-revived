@@ -12,7 +12,7 @@ import minicraft.level.tile.Tile;
 public class PotionItem extends StackableItem {
 	
 	protected static ArrayList<Item> getAllInstances() {
-		ArrayList<Item> items = new ArrayList<Item>();
+		ArrayList<Item> items = new ArrayList<>();
 		
 		for(PotionType type: PotionType.values())
 			items.add(new PotionItem(type));

@@ -2,7 +2,6 @@ package minicraft.entity;
 
 import java.util.Random;
 
-import minicraft.Game;
 import minicraft.Sound;
 import minicraft.entity.particle.FireParticle;
 import minicraft.entity.particle.TextParticle;
@@ -28,13 +27,13 @@ public class Spawner extends Furniture {
 	private int health, lvl, maxMobLevel;
 	private int spawnTick;
 	
-	private final void initMob(MobAi m) {
+	private void initMob(MobAi m) {
 		mob = m;
 		sprite.color = col = mob.col;
 		
 		if(m instanceof EnemyMob) {
 			lvl = ((EnemyMob)mob).lvl;
-			maxMobLevel = ((EnemyMob)mob).getMaxLevel();
+			maxMobLevel = mob.getMaxLevel();
 		} else {
 			lvl = 1;
 			maxMobLevel = 1;
@@ -78,9 +77,10 @@ public class Spawner extends Furniture {
 		
 		if(xd * xd + yd * yd > ACTIVE_RADIUS * ACTIVE_RADIUS) return;
 		
-		MobAi newmob = null;
+		MobAi newmob;
 		try {
 			if(mob instanceof EnemyMob)
+				//noinspection JavaReflectionMemberAccess
 				newmob = mob.getClass().getConstructor(int.class).newInstance(((EnemyMob)mob).lvl);
 			else
 				newmob = mob.getClass().newInstance();
@@ -114,14 +114,22 @@ public class Spawner extends Furniture {
 	public boolean interact(Player player, Item item, int attackDir) {
 		if(item instanceof ToolItem) {
 			ToolItem tool = (ToolItem)item;
-			if(tool.type != ToolType.Pickaxe) return false;
+			//if(tool.type != ToolType.Pickaxe && !ModeMenu.creative) return false;
+			
+			Sound.monsterHurt.play();
 			
 			int dmg;
-			Sound.monsterHurt.play();
-			if(player.potioneffects.containsKey(PotionType.Haste))
-				dmg = tool.level + 1 + random.nextInt(5);
-			else
-				dmg = tool.level + 1 + random.nextInt(3);
+			if(ModeMenu.creative)
+				dmg = health;
+			else {
+				dmg = tool.level + random.nextInt(2);
+				
+				if(tool.type == ToolType.Pickaxe)
+					dmg += random.nextInt(5)+2;
+				
+				if (player.potioneffects.containsKey(PotionType.Haste))
+					dmg *= 2;
+			}
 			
 			health -= dmg;
 			level.add(new TextParticle("" + dmg, x, y, Color.get(-1, 200, 300, 400)));
@@ -144,6 +152,7 @@ public class Spawner extends Furniture {
 		return false;
 	}
 	
+	@SuppressWarnings("JavaReflectionMemberAccess")
 	public void hurt(Mob attacker, int dmg, int attackDir) {
 		if(attacker instanceof Player && ModeMenu.creative && mob instanceof EnemyMob) {
 			lvl++;
@@ -159,7 +168,7 @@ public class Spawner extends Furniture {
 	}
 	
 	public Furniture clone() {
-		return (Furniture) new Spawner(mob);
+		return new Spawner(mob);
 	}
 	
 	protected String getUpdateString() {

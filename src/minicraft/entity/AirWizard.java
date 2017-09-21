@@ -1,9 +1,5 @@
 package minicraft.entity;
 
-import java.io.BufferedWriter;
-import java.io.File;
-import java.io.FileWriter;
-import java.io.IOException;
 import minicraft.Game;
 import minicraft.Sound;
 import minicraft.gfx.Color;
@@ -11,6 +7,11 @@ import minicraft.gfx.Font;
 import minicraft.gfx.MobSprite;
 import minicraft.gfx.Screen;
 import minicraft.screen.OptionsMenu;
+
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
 
 public class AirWizard extends EnemyMob {
 	private static MobSprite[][] sprites = MobSprite.compileMobSpriteAnimations(8, 14);
@@ -106,10 +107,8 @@ public class AirWizard extends EnemyMob {
 		if (player != null && randomWalkTime == 0) {
 			int xd = player.x - x; // x dist to player
 			int yd = player.y - y; // y dist to player
-			if (random.nextInt(4) == 0 && xd * xd + yd * yd < 50 * 50 && attackDelay == 0 && attackTime == 0) { // if a random number, 0-3, equals 0, and the player is less than 50 blocks away...
-				if (attackDelay == 0 && attackTime == 0) { // ...and attackDelay and attackTime equal 0...
-					attackDelay = 60 * 2; // ...then set attackDelay to 120 (2 seconds at default 60 ticks/sec)
-				}
+			if (random.nextInt(4) == 0 && xd * xd + yd * yd < 50 * 50 && attackDelay == 0 && attackTime == 0) { // if a random number, 0-3, equals 0, and the player is less than 50 blocks away, and attackDelay and attackTime equal 0...
+				attackDelay = 60 * 2; // ...then set attackDelay to 120 (2 seconds at default 60 ticks/sec)
 			}
 		}
 	}

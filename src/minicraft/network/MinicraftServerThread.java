@@ -6,7 +6,6 @@ import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
 import java.net.Socket;
-import java.net.SocketException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Timer;
@@ -43,9 +42,11 @@ public class MinicraftServerThread extends MinicraftConnection {
 	private List<Timer> gameTimers;
 	private boolean receivedPing = true;
 	
-	private List<InputType> packetTypesToKeep = new ArrayList<InputType>();
-	private List<InputType> packetTypesToCache = new ArrayList<InputType>();
-	private List<String> cachedPackets = new ArrayList<String>();
+	private long manualPingTimestamp;
+	
+	private List<InputType> packetTypesToKeep = new ArrayList<>();
+	private List<InputType> packetTypesToCache = new ArrayList<>();
+	private List<String> cachedPackets = new ArrayList<>();
 	
 	public MinicraftServerThread(Game game, Socket socket, MinicraftServer serverInstance) {
 		super("MinicraftServerThread", socket);
@@ -66,7 +67,7 @@ public class MinicraftServerThread extends MinicraftConnection {
 		packetTypesToKeep.addAll(InputType.tileUpdates);
 		packetTypesToKeep.addAll(InputType.entityUpdates);
 		
-		gameTimers = new ArrayList<Timer>();
+		gameTimers = new ArrayList<>();
 		
 		Timer t = new Timer("ClientPing");
 		t.schedule((new MyTask() {
@@ -85,6 +86,12 @@ public class MinicraftServerThread extends MinicraftConnection {
 		if(inType == InputType.PING) {
 			//if (Game.debug) System.out.println(this+" received ping");
 			receivedPing = true;
+			if(data.equals(manualPing)) {
+				long nsPingDelay = System.nanoTime() - manualPingTimestamp;
+				double pingDelay = Math.round(nsPingDelay*1.0 / 1E6)*1.0 / 1E3;
+				System.out.println("received ping from " + client.getUsername() + "; delay = " + pingDelay + " seconds.");
+			}
+			
 			return true;
 		}
 		
@@ -100,8 +107,13 @@ public class MinicraftServerThread extends MinicraftConnection {
 			endConnection();
 		} else {
 			receivedPing = false;
-			sendData(InputType.PING, "");
+			sendData(InputType.PING, autoPing);
 		}
+	}
+	
+	protected void doPing() {
+		sendData(InputType.PING, manualPing);
+		manualPingTimestamp = System.nanoTime();
 	}
 	
 	protected void sendError(String message) {
@@ -129,9 +141,7 @@ public class MinicraftServerThread extends MinicraftConnection {
 	protected synchronized void sendData(InputType inType, String data) {
 		if(packetTypesToCache.contains(inType))
 			cachedPackets.add(inType.ordinal()+":"+data);
-		else if(packetTypesToKeep.contains(inType))
-			return;
-		else
+		else if(!packetTypesToKeep.contains(inType))
 			super.sendData(inType, data);
 	}
 	
@@ -140,7 +150,7 @@ public class MinicraftServerThread extends MinicraftConnection {
 	}
 	public void sendTileUpdate(int depth, int x, int y) {
 		String data = Tile.getData(depth, x, y);
-		if(data != null && data.length() > 0)
+		if(data.length() > 0)
 			sendData(InputType.TILE, data);
 	}
 	
@@ -154,7 +164,7 @@ public class MinicraftServerThread extends MinicraftConnection {
 	
 	public void sendEntityAddition(Entity e) {
 		String edata = Save.writeEntity(e, false);
-		if(edata == null || edata.length() == 0)
+		if(edata.length() == 0)
 			System.out.println("entity not worth adding to client level: " + e + "; not sending to " + client);
 		else
 			sendData(InputType.ADD, edata);
@@ -245,7 +255,7 @@ public class MinicraftServerThread extends MinicraftConnection {
 	}
 	
 	protected void writeClientSave(String playerdata) {
-		String filename = ""; // this will hold the path to the file that will be saved to.
+		String filename; // this will hold the path to the file that will be saved to.
 		
 		File rpFile = getRemotePlayerFile();
 		if(rpFile != null && rpFile.exists()) // check if this remote player already has a file.

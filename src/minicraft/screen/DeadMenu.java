@@ -44,13 +44,13 @@ public class DeadMenu extends Display {
 		Font.draw("You died! Aww!", screen, 16, 32, Color.get(-1, 555));
 		
 		// the current time elapsed in the game.
-		int seconds = game.gameTime / game.normSpeed;
+		int seconds = Game.gameTime / Game.normSpeed;
 		int minutes = seconds / 60;
 		int hours = minutes / 60;
 		minutes %= 60;
 		seconds %= 60;
 
-		String timeString = ""; //Full text of time.
+		String timeString; //Full text of time.
 		if (hours > 0) {
 			timeString = hours + "h" + (minutes < 10 ? "0" : "") + minutes + "m"; // If over an hour has passed, then it will show hours and minutes.
 		} else {

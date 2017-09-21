@@ -1,7 +1,6 @@
 package minicraft.network;
 
 import java.io.File;
-import java.io.FilenameFilter;
 import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.SocketException;
@@ -39,7 +38,7 @@ public class MinicraftServer extends Thread implements MinicraftProtocol {
 	
 	private static final int UPDATE_INTERVAL = 30; // measured in seconds
 	
-	private ArrayList<MinicraftServerThread> threadList = new ArrayList<MinicraftServerThread>();
+	private ArrayList<MinicraftServerThread> threadList = new ArrayList<>();
 	private ServerSocket socket;
 	
 	private Game game;
@@ -117,7 +116,7 @@ public class MinicraftServer extends Thread implements MinicraftProtocol {
 	}
 	
 	public String[] getClientInfo() {
-		List<String> playerStrings = new ArrayList<String>();
+		List<String> playerStrings = new ArrayList<>();
 		for(MinicraftServerThread serverThread: getThreads()) {
 			RemotePlayer clientPlayer = serverThread.getClient();
 			/*if(clientPlayer.getUsername().length() == 0) {
@@ -133,12 +132,12 @@ public class MinicraftServer extends Thread implements MinicraftProtocol {
 	}
 	
 	public static List<RemotePlayer> getPlayersInRange(Entity e, boolean useTrackRange) {
-		if(e == null || e.getLevel() == null) return new ArrayList<RemotePlayer>();
+		if(e == null || e.getLevel() == null) return new ArrayList<>();
 		int xt = e.x >> 4, yt = e.y >> 4;
 		return getPlayersInRange(e.getLevel(), xt, yt, useTrackRange); // NOTE if "e" is a RemotePlayer, the list returned *will* contain "e".
 	}
 	public static List<RemotePlayer> getPlayersInRange(Level level, int xt, int yt, boolean useTrackRange) {
-		List<RemotePlayer> players = new ArrayList<RemotePlayer>();
+		List<RemotePlayer> players = new ArrayList<>();
 		//if(e == null || e.getLevel() == null) return players;
 		/// screen is 18 tiles hori, 14 tiles vert. So, rect is 20x16 tiles.
 		//List<Entity> entities = level.getEntitiesInTiles(xt - RemotePlayer.xSyncRadius, yt - RemotePlayer.ySyncRadius, xt + RemotePlayer.xSyncRadius, yt + RemotePlayer.ySyncRadius);
@@ -181,7 +180,7 @@ public class MinicraftServer extends Thread implements MinicraftProtocol {
 	
 	public List<MinicraftServerThread> getAssociatedThreads(String[] usernames) { return getAssociatedThreads(usernames, false); }
 	public List<MinicraftServerThread> getAssociatedThreads(String[] usernames, boolean printError) {
-		List<MinicraftServerThread> threads = new ArrayList<MinicraftServerThread>();
+		List<MinicraftServerThread> threads = new ArrayList<>();
 		for(String username: usernames) {
 			MinicraftServerThread match = getAssociatedThread(username);
 			if(match != null)
@@ -212,7 +211,7 @@ public class MinicraftServer extends Thread implements MinicraftProtocol {
 	}
 	
 	private List<MinicraftServerThread> getAssociatedThreads(List<RemotePlayer> players) {
-		List<MinicraftServerThread> threads = new ArrayList<MinicraftServerThread>();
+		List<MinicraftServerThread> threads = new ArrayList<>();
 		
 		/// NOTE I could do this the other way around, by looping though the thread list, and adding those whose player is found in the given list, which might be slightly more optimal... but I think it's better that this tells you when a player in the list doesn't have a matching thread.
 		for(RemotePlayer client: players) {
@@ -330,14 +329,16 @@ public class MinicraftServer extends Thread implements MinicraftProtocol {
 			thread.sendData(InputType.GAME, vars);
 	}
 	
+	public void pingClients() {
+		System.out.println("pinging clients ("+threadList.size()+" connected)...");
+		for(MinicraftServerThread thread: getThreads())
+			thread.doPing();
+	}
+	
 	protected File[] getRemotePlayerFiles() {
 		File saveFolder = new File(worldPath);
 		
-		File[] clientSaves = saveFolder.listFiles(new FilenameFilter() {
-			public boolean accept(File file, String name) {
-				return name.startsWith("RemotePlayer");
-			}
-		});
+		File[] clientSaves = saveFolder.listFiles((file, name) -> name.startsWith("RemotePlayer"));
 		
 		if(clientSaves == null)
 			clientSaves = new File[0];
@@ -346,11 +347,11 @@ public class MinicraftServer extends Thread implements MinicraftProtocol {
 	}
 	
 	protected String getUsernames() {
-		String names = "";
+		StringBuilder names = new StringBuilder();
 		for(MinicraftServerThread thread: getThreads())
-			names += thread.getClient().getUsername() + "\n";
+			names.append(thread.getClient().getUsername()).append("\n");
 		
-		return names;
+		return names.toString();
 	}
 	
 	public synchronized boolean parsePacket(MinicraftServerThread serverThread, InputType inType, String alldata) {
@@ -377,6 +378,10 @@ public class MinicraftServer extends Thread implements MinicraftProtocol {
 		}
 		
 		switch(inType) {
+			case PING:
+				System.out.println("Received ping from " + serverThread);
+				return true;
+			
 			case LOGIN:
 				if (Game.debug) System.out.println("SERVER: received login request");
 				if (Game.debug) System.out.println("SERVER: login data: " + Arrays.toString(data));
@@ -451,12 +456,12 @@ public class MinicraftServer extends Thread implements MinicraftProtocol {
 					clientPlayer.x,
 					clientPlayer.y
 				};
-				String sendString = "";
+				StringBuilder sendString = new StringBuilder();
 				for(int val: toSend)
-					sendString += val+",";
+					sendString.append(val).append(",");
 				/// send client world info
 				if (Game.debug) System.out.println("SERVER: sending INIT packet");
-				serverThread.sendData(InputType.INIT, sendString);
+				serverThread.sendData(InputType.INIT, sendString.toString());
 				return true;
 			
 			case LOAD:
@@ -487,13 +492,18 @@ public class MinicraftServer extends Thread implements MinicraftProtocol {
 				//System.out.println(Arrays.toString(tiledata));
 				
 				StringBuilder tiledataString = new StringBuilder();
-				for(byte b: tiledata) {
+				/*for(byte b: tiledata) {
 					int tbit = (int) b;
-					if(tbit < 0) tbit += 256;
+					if(Game.debug) System.out.print(tbit+",");
 					tbit++;
+					if(tbit < 0) tbit += 256;
+					if(tbit < 0) System.out.println("\nTBIT < 0: " + tbit);
 					tiledataString.append((char) tbit);
+				}*/
+				for(byte b: tiledata) {
+					tiledataString.append(b).append(",");
 				}
-				serverThread.sendData(InputType.TILES, tiledataString.toString());
+				serverThread.sendData(InputType.TILES, tiledataString.substring(0, tiledataString.length()-1));
 				serverThread.sendCachedPackets();
 				
 				/// send back the entities in the level specified.
@@ -540,7 +550,13 @@ public class MinicraftServer extends Thread implements MinicraftProtocol {
 				return true;
 			
 			case DROP:
-				Load.loadEntity(alldata, game, false);
+				//if(Game.debug) System.out.println("SERVER: received item drop: " + alldata);
+				Item dropped = Items.get(alldata);
+				Level playerLevel = clientPlayer.getLevel();
+				if(playerLevel != null)
+					playerLevel.dropItem(clientPlayer.x, clientPlayer.y, dropped);
+				//Entity dropped = Load.loadEntity(alldata, game, false);
+				//broadcastEntityAddition(dropped, true);
 				return true;
 			
 			case TILE:
@@ -578,7 +594,7 @@ public class MinicraftServer extends Thread implements MinicraftProtocol {
 				if(clientPlayer == hostPlayer) {
 					if (Game.debug) System.out.println("SERVER: identified SAVE packet client as host");
 					String[] parts = alldata.split("\\n");
-					List<String> datastrs = new ArrayList<String>();
+					List<String> datastrs = new ArrayList<>();
 					
 					Save save = new Save(clientPlayer);
 					datastrs.addAll(Arrays.asList(parts[0].split(",")));
@@ -612,7 +628,7 @@ public class MinicraftServer extends Thread implements MinicraftProtocol {
 					}
 					chest.inventory.add(item);
 				}
-				else if(inType == InputType.CHESTOUT) {
+				else { /// inType == InputType.CHESTOUT
 					int index = Integer.parseInt(data[1]);
 					if(index >= chest.inventory.invSize() || index < 0) {
 						System.err.println("SERVER error with CHESTOUT request: specified chest inv index is out of bounds: "+index+"; inv size:"+chest.inventory.invSize());
@@ -781,7 +797,7 @@ public class MinicraftServer extends Thread implements MinicraftProtocol {
 		
 		try {
 			socket.close();
-		} catch (IOException ex) {}
+		} catch (IOException ignored) {}
 		
 		threadList.clear();
 	}

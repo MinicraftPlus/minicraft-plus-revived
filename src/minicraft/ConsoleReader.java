@@ -5,7 +5,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Scanner;
 import java.util.Locale;
-import minicraft.entity.Player;
+
 import minicraft.entity.RemotePlayer;
 import minicraft.network.MinicraftServerThread;
 import minicraft.level.Level;
@@ -18,7 +18,7 @@ class ConsoleReader extends Thread {
 	
 	private Game game;
 	
-	private static enum Config {
+	private enum Config {
 		PLAYERCAP {
 			public String getValue() {
 				return String.valueOf(Game.server.getPlayerCap());
@@ -52,7 +52,7 @@ class ConsoleReader extends Thread {
 		public static final Config[] values = Config.values();
 	}
 	
-	private static enum Command {
+	private enum Command {
 		HELP
 		("--all | [cmd]", "describes the function of each command. Specify a command name to read more about how to use it.", "no arguments: prints a list of all available commands, with a short description of each.", "cmd: a command name. will print the short description of that command, along with usage details such as what parameters/arguments it uses, and what function each argument has, and what the defualt behavior is if a given argument is ommitted.", "--all: prints the long description of all the commands.", "Usage symbol meanings:", "\t| = OR; specifies two possible choices for a given argument.", "\t[] = Optional; the arguments within may be specified, but they are not required.", "\t<> = Required; you must include the arguments within for the command to work.", "Note that the usage symbols may be nested, so a <> inside a [] is only required if you do whatever else is inside the [].") {
 			public void run(String[] args, Game game) {
@@ -123,7 +123,7 @@ class ConsoleReader extends Thread {
 				Command.STOP.run(null, game); // shuts down the server.
 				try {
 					Thread.sleep(500); // give the computer some time to, uh, recuperate? idk, I think it's a good idea.
-				} catch(InterruptedException ex) {}
+				} catch(InterruptedException ignored) {}
 				game.startMultiplayerServer(); // start the server back up.
 			}
 		},
@@ -140,7 +140,7 @@ class ConsoleReader extends Thread {
 		("<mode>", "change the server gamemode.", "mode: one of the following: c(reative), su(rvivial), t(imed) / score, h(ardcore)") {
 			public void run(String[] args, Game game) {
 				if(args.length != 1) {
-					System.out.println("incorrent number of arguments. Please specify the game mode in one word:");
+					System.out.println("incorrect number of arguments. Please specify the game mode in one word:");
 					printHelp(this, game);
 					return;
 				}
@@ -174,7 +174,7 @@ class ConsoleReader extends Thread {
 		("[timeString]", "sets or prints the time of day." , "no arguments: prints the current time of day, in ticks.", "timeString: sets the time of day to the given value; it can be a number, in which case it is a tick count from 0 to 64000 or so, or one of the following strings: Morning, Day, Evening, Night. the time of day will be set to the beginning of the given time period.") {
 			public void run(String[] args, Game game) {
 				if(args.length == 0) {
-					System.out.println("time of day is: " + game.tickCount + " ("+game.getTime()+")");
+					System.out.println("time of day is: " + Game.tickCount + " ("+ Game.getTime()+")");
 					return;
 				}
 				
@@ -189,13 +189,13 @@ class ConsoleReader extends Thread {
 					} catch(IllegalArgumentException iaex) {
 						try {
 							targetTicks = Integer.parseInt(args[0]);
-						} catch(NumberFormatException nfex) {
+						} catch(NumberFormatException ignored) {
 						}
 					}
 				}
 				
 				if(targetTicks >= 0) {
-					game.setTime(targetTicks);
+					Game.setTime(targetTicks);
 					Game.server.updateGameVars();
 				} else {
 					System.out.println("time specified is in an invalid format.");
@@ -211,10 +211,9 @@ class ConsoleReader extends Thread {
 					System.out.println("please specify a message to send.");
 					return;
 				}
-				List<String> usernames = new ArrayList<String>();
+				List<String> usernames = new ArrayList<>();
 				if(args.length > 1) {
-					for(int i = 0; i < args.length-1; i++)
-						usernames.add(args[i]);
+					usernames.addAll(Arrays.asList(args).subList(0, args.length - 1));
 				} else {
 					Game.server.broadcastNotification(args[0], 50);
 					return;
@@ -300,14 +299,20 @@ class ConsoleReader extends Thread {
 					System.out.println("teleported player " + playerToMove.getUsername() + " to tile coordinates " + xt+","+yt+", on level " + level.depth);
 				} else {
 					System.out.println("could not perform teleport; coordinates are not valid.");
-					return;
 				}
+			}
+		},
+		
+		PING ("", "Pings all the clients, and prints a message when each responds.") {
+			@Override
+			public void run(String[] args, Game game) {
+				Game.server.pingClients();
 			}
 		};
 		
 		private String generalHelp, detailedHelp, usage;
 		
-		private Command(String usage, String general, String... specific) {
+		Command(String usage, String general, String... specific) {
 			String name = this.name().toLowerCase();
 			String sep = " - ";
 			
@@ -356,14 +361,14 @@ class ConsoleReader extends Thread {
 		Scanner stdin = new Scanner(System.in).useDelimiter(System.lineSeparator());
 		try {
 			Thread.sleep(500); // this is to let it get past the debug statements at world load, and any others, maybe, if not in debug mode.
-		} catch(InterruptedException ex) {}
+		} catch(InterruptedException ignored) {}
 		System.out.println("type \"help\" for a list of commands...");
 		
 		while(shouldRun/* && stdin.hasNext()*/) {
 			System.out.print("Enter a command: ");
 			String command = stdin.next().trim();
 			if(command.length() == 0) continue;
-			List<String> parsed = new ArrayList<String>();
+			List<String> parsed = new ArrayList<>();
 			parsed.addAll(Arrays.asList(command.split(" ")));
 			int lastIdx = -1;
 			for(int i = 0; i < parsed.size(); i++) {

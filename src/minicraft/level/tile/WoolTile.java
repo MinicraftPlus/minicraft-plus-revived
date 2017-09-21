@@ -19,11 +19,11 @@ public class WoolTile extends Tile {
 		RED (Color.get(400, 500, 400, 500)),
 		YELLOW (Color.get(550, 661, 440, 550)),
 		GREEN (Color.get(30, 40, 40, 50)),
-		BLUE (Color.get(015, 115, 015, 115)),
+		BLUE (Color.get(15, 115, 15, 115)),
 		BLACK (Color.get(111, 111, 000, 111));
 		
 		public int col;
-		private WoolColor(int color) {
+		WoolColor(int color) {
 			col = color;
 		}
 		public static final WoolColor[] values = values();

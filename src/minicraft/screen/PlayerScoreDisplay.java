@@ -35,7 +35,7 @@ public class PlayerScoreDisplay extends Display {
 		displayTimer = Game.normSpeed; // wait 3 seconds before rendering the menu.
 		inputDelay = Game.normSpeed/2; // wait a half-second after rendering before allowing user input.
 		
-		scores = new HashMap<String, Integer>();
+		scores = new HashMap<>();
 		scores.put("Cloth", player.inventory.count(Items.get("cloth")) * (random.nextInt(2) + 1) * 10);
 		scores.put("Slime", player.inventory.count(Items.get("slime")) * (random.nextInt(2) + 1) * 10);
 		scores.put("Bone", player.inventory.count(Items.get("bone")) * (random.nextInt(2) + 1) * 10);
@@ -53,7 +53,7 @@ public class PlayerScoreDisplay extends Display {
 			finalscore += score;
 		}
 		
-		unlocks = new ArrayList<String>();
+		unlocks = new ArrayList<>();
 		writeUnlocks();
 	}
 
@@ -120,11 +120,11 @@ public class PlayerScoreDisplay extends Display {
 		}
 		
 		Font.draw("Player Score: " + game.player.score, screen, 16, 6*8, Color.get(-1, 555));
-		Font.draw("<Bonuses>", screen, 16, 8*8, Color.get(-1, 040));
+		Font.draw("<Bonuses>", screen, 16, 8*8, Color.get(-1, 41));
 		int i = 0;
 		for(String bonus: scores.keySet().toArray(new String[0])) {
-			String label = bonus+"s: ";
-			while(label.length() < ml+3) label += " ";
+			StringBuilder label = new StringBuilder(bonus + "s: ");
+			while(label.length() < ml+3) label.append(" ");
 			Font.draw(label+"+"+scores.get(bonus), screen, 16, (10+(i++))*8, Color.get(-1, 550));
 		}
 		

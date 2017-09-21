@@ -11,14 +11,14 @@ import minicraft.level.tile.TorchTile;
 public class TorchItem extends TileItem {
 	
 	public static ArrayList<Item> getAllInstances() {
-		ArrayList<Item> items = new ArrayList<Item>();
+		ArrayList<Item> items = new ArrayList<>();
 		items.add(new TorchItem());
 		return items;
 	}
 	
 	private TorchItem() { this(1); }
 	private TorchItem(int count) {
-		super("Torch", (new Sprite(18, 4, Color.get(-1, 500, 520, 320))), count, "", "dirt", "Wood Planks", "Stone Bricks", "Wool", "grass", "sand");
+		super("Torch", (new Sprite(18, 4, Color.get(-1, 500, 520, 320))), count, "", "dirt", "Wood Planks", "Stone Bricks", "Obsidian", "Wool", "grass", "sand");
 	}
 	
 	public boolean interactOn(Tile tile, Level level, int xt, int yt, Player player, int attackDir) {

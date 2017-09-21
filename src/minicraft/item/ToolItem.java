@@ -3,6 +3,7 @@ package minicraft.item;
 import java.util.ArrayList;
 import java.util.Random;
 import minicraft.entity.Entity;
+import minicraft.entity.Mob;
 import minicraft.entity.Player;
 import minicraft.gfx.Color;
 import minicraft.gfx.Sprite;
@@ -14,7 +15,7 @@ import minicraft.screen.ModeMenu;
 public class ToolItem extends Item {
 	
 	protected static ArrayList<Item> getAllInstances() {
-		ArrayList<Item> items = new ArrayList<Item>();
+		ArrayList<Item> items = new ArrayList<>();
 		
 		items.add(new ToolItem(ToolType.FishingRod, 0));
 		for(ToolType tooltype: ToolType.values()) {
@@ -41,7 +42,7 @@ public class ToolItem extends Item {
 		Color.get(-1, 100, 321, 111), // rock/stone
 		Color.get(-1, 100, 321, 555), // iron
 		Color.get(-1, 100, 321, 550), // gold
-		Color.get(-1, 100, 321, 055), // gem
+		Color.get(-1, 100, 321, 55), // gem
 	};
 	
 	public static final int[] BOW_COLORS = { // Colors of the bows, specifically.
@@ -49,7 +50,7 @@ public class ToolItem extends Item {
 		Color.get(-1, 100, 444, 111),
 		Color.get(-1, 100, 444, 555),
 		Color.get(-1, 100, 444, 550),
-		Color.get(-1, 100, 444, 055),
+		Color.get(-1, 100, 444, 55),
 	};
 	
 	/** Tool Item, requires a tool type (ToolType.Sword, ToolType.Axe, ToolType.Hoe, etc) and a level (0 = wood, 2 = iron, 4 = gem, etc) */
@@ -63,7 +64,7 @@ public class ToolItem extends Item {
 	}
 	
 	private static int getColor(ToolType type, int level) {
-		int col = 0;
+		int col;
 		if (type == ToolType.Bow)
 			col = BOW_COLORS[level];
 		else if(type == ToolType.FishingRod)
@@ -103,25 +104,30 @@ public class ToolItem extends Item {
 	
 	/** Gets the attack damage bonus from an item/tool (sword/axe) */
 	public int getAttackDamageBonus(Entity e) {
-		if (type == ToolType.Axe) {
-			return (level + 1) * 2 + random.nextInt(4); // wood axe damage: 2-5; gem axe damage: 10-13.
+		
+		if(e instanceof Mob) {
+			if (type == ToolType.Axe) {
+				return (level + 1) * 2 + random.nextInt(4); // wood axe damage: 2-5; gem axe damage: 10-13.
+			}
+			if (type == ToolType.Sword) {
+				return (level + 1) * 3 + random.nextInt(2 + level * level); // wood: 3-5 damage; gem: 15-32 damage.
+			}
+			if (type == ToolType.Claymore) {
+				return (level + 1) * 3 + random.nextInt(4 + level * level * 3); // wood: 3-6 damage; gem: 15-66 damage.
+			}
+			return 1; // all other tools do very little damage to mobs.
 		}
-		if (type == ToolType.Sword) {
-			return (level + 1) * 3 + random.nextInt(2 + level * level); // wood: 3-5 damage; gem: 15-32 damage.
-		}
-		if (type == ToolType.Claymore) {
-			return (level + 1) * 3 + random.nextInt(4 + level * level * 3); // wood: 3-6 damage; gem: 15-66 damage.
-		}
-		return 1; // all other tools do very little damage to mobs.
+		
+		//if(e instanceof Spawner)
+		
+		return 0;
 	}
 	
 	/** Sees if this item matches another. */
 	public boolean matches(Item item) {
 		if (item instanceof ToolItem) {
 			ToolItem other = (ToolItem) item;
-			if (other.type != type) return false;
-			if (other.level != level) return false;
-			return true;
+			return other.type == type && other.level == level;
 		}
 		return false;
 	}

@@ -17,11 +17,11 @@ public enum ToolType {
 	public int sprite; // sprite location on the spritesheet
 	public int durability;
 	
-	private ToolType(int sprite, int dur) {
+	ToolType(int sprite, int dur) {
 		this.sprite = sprite;
 		durability = dur;
 	}
-	private ToolType(int sprite) {
+	ToolType(int sprite) {
 		this(sprite, -1); // durability defualts to -1 if not specified (means infinite durability)
 	}
 }

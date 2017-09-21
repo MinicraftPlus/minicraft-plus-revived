@@ -16,7 +16,7 @@ public class Items {
 		
 		If you want to access one of those items, you do it through this class, by calling get("item name"); casing does not matter.
 	*/
-	private static ArrayList<Item> items = new ArrayList<Item>();
+	private static ArrayList<Item> items = new ArrayList<>();
 	
 	private static void add(Item i) {
 		String name = i.name.toUpperCase();

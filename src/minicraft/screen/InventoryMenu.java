@@ -1,12 +1,16 @@
 package minicraft.screen;
 
 import java.util.List;
+
+import minicraft.Game;
 import minicraft.entity.Inventory;
 import minicraft.entity.ItemEntity;
 import minicraft.gfx.*;
 import minicraft.item.Item;
 import minicraft.item.StackableItem;
 import minicraft.screen.entry.ItemEntry;
+import org.jetbrains.annotations.Contract;
+import org.jetbrains.annotations.NotNull;
 
 public class InventoryMenu extends ScrollingMenu {
 	protected Inventory inv;
@@ -49,9 +53,14 @@ public class InventoryMenu extends ScrollingMenu {
 	}
 	
 	public void removeSelectedItem() {
-		inv.remove(selected);
-		if(selected >= inv.invSize())
-			selected = Math.max(0, inv.invSize()-1); // can't select -1...
+		if(inv.invSize() > 0)
+			inv.remove(selected);
+		if(selected >= inv.invSize()) {
+			int newselected = Math.max(0, inv.invSize() - 1); // can't select -1...
+			dispSelected += newselected - selected;
+			selected = newselected;
+			//if(Game.debug) System.out.println("new selection: " + selected);
+		}
 		options = getItemList(inv);
 	}
 	
@@ -65,7 +74,10 @@ public class InventoryMenu extends ScrollingMenu {
 			options = getItemList(inv);
 	}
 	
-	/*private static String getItemDisplayName(Item i) {
+	/*
+	@NotNull
+	@Contract(pure = true)
+	private static String getItemDisplayName(Item i) {
 		String extra = "";
 		if(i instanceof StackableItem) {
 			StackableItem stack = (StackableItem) i;

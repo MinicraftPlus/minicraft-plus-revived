@@ -2,10 +2,11 @@ package minicraft.level;
 
 import java.awt.Point;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Random;
+import java.util.function.ToIntFunction;
+
 import minicraft.Game;
 import minicraft.entity.*;
 import minicraft.entity.particle.Particle;
@@ -30,34 +31,28 @@ public class Level {
 	
 	public byte[] tiles; // an array of all the tiles in the world.
 	public byte[] data; // an array of the data of the tiles in the world. // ?
-	private List<Entity>[] entitiesInTiles; // An array of lists of entities in the world, by tile
+	//private List<Entity>[] entitiesInTiles; // An array of lists of entities in the world, by tile
 	
-	public int grassColor = 141;
-	//public int dirtColor = 322;
-	public int sandColor = 550;
-	public int woolColor = 444;
-	public int redwoolColor = 500;
-	public int yellowwoolColor = 550;
 	public int depth; // depth level of the level
 	public int monsterDensity = 8; // affects the number of monsters that are on the level, bigger the number the less monsters spawn.
 	public int maxMobCount;
 	public int chestcount;
 	public int mobCount = 0;
 
-	private static List<String> ls = new ArrayList<String>();
+	private static List<String> ls = new ArrayList<>();
 
-	private List<Entity> entities = java.util.Collections.<Entity>synchronizedList(new ArrayList<Entity>()); // A list of all the entities in the world
-	private List<Player> players = java.util.Collections.<Player>synchronizedList(new ArrayList<Player>()); // A list of all the players in the world
-	private List<Entity> entitiesToAdd = new ArrayList<Entity>(); /// entites that will be added to the level on next tick are stored here. This is for the sake of multithreading optimization. (hopefully)
-	private List<Entity> entitiesToRemove = new ArrayList<Entity>(); /// entites that will be removed from the level on next tick are stored here. This is for the sake of multithreading optimization. (hopefully)
+	private List<Entity> entities = java.util.Collections.synchronizedList(new ArrayList<Entity>()); // A list of all the entities in the world
+	private List<Player> players = java.util.Collections.synchronizedList(new ArrayList<Player>()); // A list of all the players in the world
+	private List<Entity> entitiesToAdd = new ArrayList<>(); /// entites that will be added to the level on next tick are stored here. This is for the sake of multithreading optimization. (hopefully)
+	private List<Entity> entitiesToRemove = new ArrayList<>(); /// entites that will be removed from the level on next tick are stored here. This is for the sake of multithreading optimization. (hopefully)
+	// creates a sorter for all the entities to be rendered.
 	//private List<Entity> rowSprites = new ArrayList<Entity>();
-	private Comparator<Entity> spriteSorter = new Comparator<Entity>() { // creates a sorter for all the entities to be rendered.
-		public int compare(Entity e0, Entity e1) { // compares 2 entities
-			if (e1.y < e0.y) return +1; // If the y position of the first entity is less (higher up) than the second entity, then it will be moved up in sorting.
-			if (e1.y > e0.y) return -1; // If the y position of the first entity is more (lower) than the second entity, then it will be moved down in sorting.
-			return 0; // ends the method
+	private static Comparator<Entity> spriteSorter = Comparator.comparingInt(new ToIntFunction<Entity>() {
+		@Override
+		public int applyAsInt(Entity e) {
+			return e.y;
 		}
-	};
+	});
 	
 	/// This is a solely debug method I made, to make printing repetetive stuff easier.
 		// should be changed to accept prepend and entity, or a tile (as an Object). It will get the coordinates and class name from the object, and will divide coords by 16 if passed an entity.
@@ -107,10 +102,10 @@ public class Level {
 		byte[][] maps; // multidimensional array (an array within a array), used for the map
 		int saveTile;
 		
-		entitiesInTiles = new ArrayList[w * h]; // This is actually an array of arrayLists (of entities), with one arraylist per tile.
+		/*entitiesInTiles = new ArrayList[w * h]; // This is actually an array of arrayLists (of entities), with one arraylist per tile.
 		for (int i = 0; i < w * h; i++) {
 			entitiesInTiles[i] = new ArrayList<Entity>(); // Adds a entity list in that tile.
-		}
+		}*/
 		
 		if(level != -4 && level != 0)
 			monsterDensity = 4;
@@ -137,6 +132,10 @@ public class Level {
 			monsterDensity = 4;
 		}*/
 		maps = LevelGen.createAndValidateMap(w, h, level);
+		if(maps == null) {
+			System.err.println("Level Gen ERROR: returned maps array is null");
+			return;
+		}
 		
 		tiles = maps[0]; // assigns the tiles in the map
 		data = maps[1]; // assigns the data of the tiles
@@ -263,7 +262,7 @@ public class Level {
 									d.y = y2 * 16 - 24;
 								}
 							}
-						} else if (!xaxis) {
+						} else { // y axis
 							for (int s = y2; s < y2 - s; s++) {
 								if (getTile(x2, s) == Tiles.get("Obsidian Wall")) {
 									d.x = x2 * 16 - 24;
@@ -288,7 +287,7 @@ public class Level {
 		if (level < 0) {
 			for (int i = 0; i < 18 / -level * (w / 128); i++) {
 				/// for generating spawner dungeons
-				MobAi m = null;
+				MobAi m;
 				int r = random.nextInt(5);
 				if (r == 1) {
 					m = new Skeleton(-level);
@@ -437,6 +436,8 @@ public class Level {
 					int xt = random.nextInt(w);
 					int yt = random.nextInt(w);
 					getTile(xt, yt).tick(this, xt, yt);
+					if(Game.isValidServer())
+						Game.server.broadcastTileUpdate(this, xt, yt);
 				}
 			}
 			
@@ -613,7 +614,7 @@ public class Level {
 	}
 	
 	private void sortAndRender(Screen screen, List<Entity> list) {
-		Collections.sort(list, spriteSorter);
+		list.sort(spriteSorter);
 		for (int i = 0; i < list.size(); i++) {
 			Entity e = list.get(i);
 			if(e.getLevel() == this && !e.isRemoved())
@@ -760,7 +761,7 @@ public class Level {
 		return getEntitiesInTiles(xt, yt, xt, yt);
 	}*/
 	public List<Entity> getEntitiesInTiles(int xt0, int yt0, int xt1, int yt1) {
-		List<Entity> contained = new ArrayList<Entity>();
+		List<Entity> contained = new ArrayList<>();
 		for(Entity e: getEntityArray()) {
 			int xt = e.x >> 4;
 			int yt = e.y >> 4;
@@ -772,7 +773,7 @@ public class Level {
 	}
 	
 	public List<Entity> getEntitiesInRect(int x0, int y0, int x1, int y1) {
-		List<Entity> result = new ArrayList<Entity>();
+		List<Entity> result = new ArrayList<>();
 		int xt0 = (x0 >> 4) - 1;
 		int yt0 = (y0 >> 4) - 1;
 		int xt1 = (x1 >> 4) + 1;
@@ -796,7 +797,7 @@ public class Level {
 	
 	/// finds all entities that are an instance of the given entity.
 	public Entity[] getEntitiesOfClass(Class<? extends Entity> targetClass) {
-		ArrayList<Entity> matches = new ArrayList<Entity>();
+		ArrayList<Entity> matches = new ArrayList<>();
 		for(Entity e: getEntityArray()) {
 			if(targetClass.isAssignableFrom(e.getClass()))
 				matches.add(e);
@@ -832,7 +833,7 @@ public class Level {
 	
 	public Tile[] getAreaTiles(int x, int y, int r) { return getAreaTiles(x, y, r, r); }
 	public Tile[] getAreaTiles(int x, int y, int rx, int ry) {
-		ArrayList<Tile> local = new ArrayList<Tile>();
+		ArrayList<Tile> local = new ArrayList<>();
 		for(int yo = y-ry; yo <= y+ry; yo++)
 			for(int xo = x-rx; xo <= x+rx; xo++)
 				if(xo >= 0 && xo < w && yo >= 0 && yo < h)
@@ -848,7 +849,7 @@ public class Level {
 	}
 	
 	public List<Point> getMatchingTiles(Tile search) {
-		List<Point> matches = new ArrayList<Point>();
+		List<Point> matches = new ArrayList<>();
 		for(int y = 0; y < h; y++)
 			for(int x = 0; x < w; x++)
 				if(getTile(x, y) == search)

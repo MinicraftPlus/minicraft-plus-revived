@@ -3,7 +3,7 @@ package minicraft.entity;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
-import minicraft.Game;
+
 import minicraft.item.FurnitureItem;
 import minicraft.item.Item;
 import minicraft.item.Items;
@@ -11,13 +11,14 @@ import minicraft.item.PowerGloveItem;
 import minicraft.item.StackableItem;
 import minicraft.item.ToolItem;
 import minicraft.item.ToolType;
+import org.jetbrains.annotations.Contract;
 
 public class Inventory {
 	private Random random = new Random();
-	private List<Item> items = new ArrayList<Item>(); // the list of items that is in the inventory.
+	private List<Item> items = new ArrayList<>(); // the list of items that is in the inventory.
 	
 	public List<Item> getItems() {
-		List<Item> newItems = new ArrayList<Item>();
+		List<Item> newItems = new ArrayList<>();
 		newItems.addAll(items);
 		return newItems;
 	}
@@ -78,82 +79,6 @@ public class Inventory {
 		}
 	}
 	
-	/*
-	/// Finds a item in your inventory.
-	private StackableItem findStack(StackableItem item) {
-		/// this works becuase all items are simply references to the static ones in Items.get("java"); so, multiple StackableItems SHOULD just have different references to the same Item object.
-		for (int i = 0; i < items.size(); i++) {
-			if (items.get(i) instanceof StackableItem) {
-				StackableItem has = (StackableItem) items.get(i);
-				if (has.matches(item)) return has; // returns if the loop has found a StackableItem with a matching item in your inventory
-			}
-		}
-		// TO-DO should I check the activeItem too? Seems like a good idea, but I should check the code for anything that may take advantake of the absence of this feature, before I just put it in.
-		
-		return null; // else it will return null
-	}
-	
-	/// like findItem, but for other items.
-	public Item findItem(Item item) {
-		if(item instanceof StackableItem)
-			return findStack((StackableItem)item);
-		if(item instanceof ToolItem) {
-			ToolItem ti = (ToolItem)item;
-			return findTool(ti.type, ti.level, false);
-		}
-		
-		for(int i = 0; i < items.size(); i++) {
-			if(items.get(i).matches(item)) { // compares items for match.
-				return items.get(i);
-			}
-		}
-		
-		return null;
-	}
-	
-	/// Same as above for tools.
-	private ToolItem findTool(ToolType type, int level, boolean matchHigher) { // may match if higher quality.
-		for (int i = 0; i < items.size(); i++) {
-			if (items.get(i) instanceof ToolItem) {
-				ToolItem has = (ToolItem) items.get(i);
-				if (has.type == type && (has.level == level || has.level > level && matchHigher)) return has; // compares ToolType and level for match.
-			}
-		}
-		return null;
-	}*/
-	
-	/*
-	/// Returns true if the player has the item, and has equal or more than the amount given.
-	public boolean hasItems(Item i, int count) {
-		int itemsFound = 0;
-		Item found = findItem(i);
-		
-		while(itemsFound < count && found != null) {
-			if(found instanceof StackableItem)
-		}
-		
-		return itemsFound < count;
-		
-		if(i instanceof StackableItem) {
-			StackableItem i = findItem(i); // finds the matching StackableItem in your inv, if it exists.
-		}
-		if (i == null) return false; // if the player doesn't have the StackableItem, then return false.
-		return i.count >= count; // otherwise, return whether the inventory has the given amount of the item.
-	}
-	
-	/// true if this inv contains the given tool.
-	public boolean hasTools(ToolType t, int level) {
-		ToolItem ti = findTool(t, level, false);
-		if (ti == null) return false;
-		return true; // tool was found.
-	}
-	
-	/// true if this inv contains the given item.
-	public boolean hasItem(Item i) {
-		Item ti = this.findItem(i);
-		return ti != null;
-	}*/
-	
 	/** Removes items from your inventory; looks for stacks, and removes from each until reached count. returns amount removed. */
 	public int removeFromStack(StackableItem given, int count) {
 		int removed = 0; // to keep track of amount removed.
@@ -179,23 +104,7 @@ public class Inventory {
 		
 		if(removed < count) System.out.println("Inventory: could not remove all items; " + (count-removed) + " left.");
 		return removed;
-		/*
-		StackableItem stack = findStack(given); // finds the matching StackableItem in your inv, if it exists.
-		if (stack == null) return false; // can't remove if you don't have that item
-		if (stack.count < count) return false; // can't remove if you don't have the given amount of that item
-		stack.count -= count; // remove the given amount
-		if (stack.count <= 0) items.remove(stack); // remove the StackableItem from the inv if there are no more of that Item.
-		return true; // removal successful, at this point.
-		*/
 	}
-	
-	/**  *//*
-	public boolean removeTool(ToolType t, int level) {
-		ToolItem ti = findTool(t, level, false); // find the exact tool.
-		if (ti == null) return false;
-		items.remove(ti);
-		return true;
-	}*/
 	
 	/** Removes the item from the inventory entirely, whether it's a stack, or a lone item. */
 	public void removeItem(Item i) {
@@ -205,46 +114,25 @@ public class Inventory {
 			removeItems(i.clone(), ((StackableItem)i).count);
 		else
 			removeItems(i.clone(), 1);
-		/// the clone is so that the item reference is not damaged, since in this case, it never really needs to be altered.
-		//if (Game.debug) System.out.println("end item: " + i + "; save = " + save);
-		i = save;
 	}
+	
 	/** removes items from this inventory. Note, if passed a stackable item, this will only remove a max of count from the stack. */
 	public void removeItems(Item given, int count) {
-		//while(count > 0) {
-			if(given instanceof StackableItem)
-				count -= removeFromStack((StackableItem)given, count);
-			else {
-				for(int i = 0; i < items.size(); i++) {
-					Item curItem = items.get(i);
-					if(curItem.matches(given)) {
-						items.remove(curItem);
-						count--;
-						if(count == 0) break;
-					}
+		if(given instanceof StackableItem)
+			count -= removeFromStack((StackableItem)given, count);
+		else {
+			for(int i = 0; i < items.size(); i++) {
+				Item curItem = items.get(i);
+				if(curItem.matches(given)) {
+					items.remove(curItem);
+					count--;
+					if(count == 0) break;
 				}
 			}
-		//}
+		}
 		
 		if(count > 0)
 			System.out.println("WARNING: could not remove " + count + " "+given+(count>1?"s":"")+" from inventory");
-		
-		/*
-		if(given instanceof StackableItem)
-			return removeFromStack(given, count);
-		
-		Item i = findItem(given);
-		if(i == null) return false;
-		while(count > 0 && i != null) {
-			items.remove(i);
-			count--;
-			i = findItem(given);
-		}
-		Item item = findItem(i);
-		if(item == null) return false;
-		else items.remove(item); // remove the item.
-		
-		return true;*/
 	}
 	
 	/** Returns the how many of an item you have in the inventory. */
@@ -266,7 +154,7 @@ public class Inventory {
 	}
 	
 	public List<String> getItemNames() {
-		List<String> names = new ArrayList<String>();
+		List<String> names = new ArrayList<>();
 		for(int i = 0; i < items.size(); i++)
 			names.add(items.get(i).name);
 		
@@ -274,20 +162,18 @@ public class Inventory {
 	}
 	
 	public String getItemData() {
-		String itemdata = "";
+		StringBuilder itemdata = new StringBuilder();
 		for(Item i: items)
-			itemdata += i.getData()+":";
+			itemdata.append(i.getData()).append(":");
 		
 		if(itemdata.length() > 0)
-			itemdata = itemdata.substring(0, itemdata.length()-1); //remove extra ",".
+			itemdata = new StringBuilder(itemdata.substring(0, itemdata.length() - 1)); //remove extra ",".
 		
-		return itemdata;
+		return itemdata.toString();
 	}
 	
 	public void updateInv(String items) {
 		clearInv();
-		
-		//if (Game.debug) System.out.println(Game.onlinePrefix()+"updating inventory " + this + " with itemstring: " + items);
 		
 		if(items.length() == 0) return; // there are no items to add.
 		

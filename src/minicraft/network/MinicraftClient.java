@@ -33,18 +33,18 @@ public class MinicraftClient extends MinicraftConnection {
 	private Game game;
 	private MultiplayerMenu menu;
 	
-	private static enum State {
+	private enum State {
 		LOGIN, LOADING, PLAY, DISCONNECTED
 	}
 	private State curState = State.DISCONNECTED;
 	
 	private boolean pingSuccessful = false; // this is more or less useless. -_-
 	
-	private HashMap<Integer, Long> entityRequests = new HashMap<Integer, Long>();
+	private HashMap<Integer, Long> entityRequests = new HashMap<>();
 	
 	private static Socket openSocket(String hostName, MultiplayerMenu menu) {
-		InetAddress hostAddress = null;
-		Socket socket = null;
+		InetAddress hostAddress;
+		Socket socket;
 		
 		try {
 			hostAddress = InetAddress.getByName(hostName);
@@ -118,7 +118,7 @@ public class MinicraftClient extends MinicraftConnection {
 	
 	private static String getPlayerData(Player player) {
 		StringBuilder playerdata = new StringBuilder();
-		List<String> sdata = new ArrayList<String>();
+		List<String> sdata = new ArrayList<>();
 		Save.writePlayer(player, sdata);
 		if(sdata.size() > 0) // should always be the case
 			playerdata.append(String.join(",", sdata.toArray(new String[0])));
@@ -144,7 +144,7 @@ public class MinicraftClient extends MinicraftConnection {
 				return false;
 			
 			case PING:
-				sendData(InputType.PING, "");
+				sendData(InputType.PING, alldata);
 				return true;
 			
 			case LOGIN:
@@ -205,13 +205,18 @@ public class MinicraftClient extends MinicraftConnection {
 					Game.levels[game.currentLevel] = level = new Level(game, Game.lvlw, Game.lvlh, lvldepth, Game.levels[Game.lvlIdx(lvldepth+1)], false);
 				}
 				
-				byte[] tiledata = new byte[alldata.length()];
+				/*byte[] tiledata = new byte[alldata.length()];
 				for(int i = 0; i < alldata.length(); i++) {
 					int tbit = (int) alldata.charAt(i);
 					tbit--;
 					if(tbit >= 128) tbit -= 256;
 					tiledata[i] = (byte) tbit;
-				}
+				}*/
+				String[] tilestrs = alldata.split(",");
+				byte[] tiledata = new byte[tilestrs.length];
+				for(int i = 0; i < tiledata.length; i++)
+					tiledata[i] = Byte.parseByte(tilestrs[i]);
+				
 				//System.out.println("TILE DATA ARRAY AS RECEIVED BY CLIENT, DECODED BACK TO NUMBERS (length="+tiledata.length+"):");
 				//System.out.println(Arrays.toString(tiledata));
 				
@@ -397,9 +402,9 @@ public class MinicraftClient extends MinicraftConnection {
 			
 			case INTERACT:
 				// the server went through with the interaction, and has sent back the new activeItem.
-				Item holdItem = Items.get(alldata);
+				//Item holdItem = Items.get(alldata);
 				//if(Game.debug) System.out.println("CLIENT: received interaction success; setting player item to " + holdItem);
-				game.player.activeItem = holdItem;
+				game.player.activeItem = Items.get(alldata);
 				game.player.resolveHeldItem();
 				return true;
 			
@@ -457,8 +462,8 @@ public class MinicraftClient extends MinicraftConnection {
 		sendData(InputType.TILE, level.depth+";"+xt+";"+yt);
 	}
 	
-	public void dropItem(ItemEntity ie) {
-		sendData(InputType.DROP, Save.writeEntity(ie, false));
+	public void dropItem(Item drop) {
+		sendData(InputType.DROP, drop.getData()/*Save.writeEntity(drop, false)*/);
 	}
 	
 	public void sendPlayerUpdate(Player player) {

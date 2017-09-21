@@ -5,10 +5,8 @@ import minicraft.gfx.Color;
 import minicraft.gfx.Screen;
 
 public class Arrow extends Entity {
-	//private int lifeTime;
 	private int xdir;
 	private int ydir;
-	//private int time;
 	private int damage;
 	public Mob owner;
 	private int speed;
@@ -36,8 +34,6 @@ public class Arrow extends Entity {
 			damage = 2*damage + 1;
 			col = Color.get(-1, 111, 222, 430);
 		}*/
-		
-		//lifeTime = 100 * (damage + 2);
 	}
 	
 	public String getData() {
@@ -45,11 +41,6 @@ public class Arrow extends Entity {
 	}
 	
 	public void tick() {
-		/*time++;
-		if (time >= lifeTime) {
-			remove();
-			return;
-		}*/
 		if (x < 0 || x>>4 > level.w || y < 0 || y>>4 > level.h) {
 			remove(); // remove when out of bounds
 			return;

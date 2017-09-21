@@ -2,7 +2,6 @@ package minicraft.entity;
 
 import java.util.List;
 import minicraft.Game;
-import minicraft.Sound;
 import minicraft.entity.particle.TextParticle;
 import minicraft.gfx.Color;
 import minicraft.gfx.MobSprite;
@@ -14,7 +13,7 @@ import minicraft.screen.ModeMenu;
 
 public abstract class Mob extends Entity {
 	
-	protected MobSprite[][] sprites; // This contains all the mob's sprites, sorted first by direction (index corrosponding to the dir variable), and then by walk animation state.
+	protected MobSprite[][] sprites; // This contains all the mob's sprites, sorted first by direction (index corresponding to the dir variable), and then by walk animation state.
 	public int walkDist = 0; // How far we've walked currently, incremented after each movement. This is used to change the sprite; "(walkDist >> 3) & 1" switches between a value of 0 and 1 every 8 increments of walkDist.
 	
 	public int dir = 0; // The direction the mob is facing, used in attacking and rendering. 0 is down, 1 is up, 2 is left, 3 is right
@@ -24,8 +23,6 @@ public abstract class Mob extends Entity {
 	protected int walkTime;
 	public int speed;
 	public int tickTime = 0; // Incremented whenever tick() is called, is effectively the age in ticks
-	// TODO take all these swimTime, woolTime, and walkTime and consolidate into a getSlowness() method, that checks and adds each possible source of slowness and returns the result.
-		// or don't.
 	
 	public Mob(MobSprite[][] sprites, int health) {
 		super(4, 3);
@@ -49,7 +46,7 @@ public abstract class Mob extends Entity {
 		boolean moved = false;
 		/// These 4 following conditionals check the direction of the knockback, move the Mob accordingly, and bring knockback closer to 0.
 		if (xKnockback < 0) { // If we have negative horizontal knockback (to the left)
-			moved = moved || move2(-1, 0); // Move to the left 1 pixel
+			moved = move2(-1, 0); // Move to the left 1 pixel
 			xKnockback++; // And increase the knockback by 1 so it is gradually closer to 0, and this will stop being called
 		}
 		if (xKnockback > 0) { // knocked to the right
@@ -201,7 +198,6 @@ public abstract class Mob extends Entity {
 		  left = 2
 		  right = 3
 		 */
-		
 		
 		int xd = hurt.x - attacker.x;
 		int yd = hurt.y - attacker.y;

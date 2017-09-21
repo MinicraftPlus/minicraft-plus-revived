@@ -15,12 +15,12 @@ public abstract class MobAi extends Mob {
 	
 	int randomWalkTime, randomWalkChance, randomWalkDuration;
 	int xa, ya;
-	int lifetime;
-	int age = 0;
+	private int lifetime;
+	private int age = 0;
 	
 	private boolean slowtick = false;
 	
-	public MobAi(MobSprite[][] sprites, int maxHealth, int lifetime, int rwTime, int rwChance) {
+	protected MobAi(MobSprite[][] sprites, int maxHealth, int lifetime, int rwTime, int rwChance) {
 		super(sprites, maxHealth);
 		this.lifetime = lifetime;
 		randomWalkTime = 0;
@@ -84,6 +84,7 @@ public abstract class MobAi extends Mob {
 	}
 	
 	public boolean move(int xa, int ya) {
+		//noinspection SimplifiableIfStatement
 		if(Game.isValidClient()) return false; // client mobAi's should not move at all.
 		
 		return super.move(xa, ya);
@@ -138,6 +139,7 @@ public abstract class MobAi extends Mob {
 		
 		int r = level.monsterDensity * soloRadius; // get no-mob radius
 		
+		//noinspection SimplifiableIfStatement
 		if (level.getEntitiesInRect(x - r, y - r, x + r, y + r).size() > 0) return false;
 		
 		return level.getTile(x >> 4, y >> 4).maySpawn; // the last check.

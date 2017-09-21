@@ -23,8 +23,7 @@ public class CloudCactusTile extends Tile {
 	}
 	
 	public boolean mayPass(Level level, int x, int y, Entity e) {
-		if (e instanceof AirWizard) return true;
-		return false;
+		return e instanceof AirWizard;
 	}
 
 	public void hurt(Level level, int x, int y, Mob source, int dmg, int attackDir) {

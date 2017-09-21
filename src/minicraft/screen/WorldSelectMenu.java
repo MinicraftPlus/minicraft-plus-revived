@@ -37,7 +37,7 @@ public class WorldSelectMenu extends ScrollingMenu {
 		Main ("Select Option", 555),
 		Create ("Name of New World:", 555),
 		Load ("Load World", 555),
-		Rename ("Rename World", 050),
+		Rename ("Rename World", 40),
 		Delete ("Delete World", 500),
 		Copy ("Copy World", 005);
 		//Backup ("Backup World", 550);
@@ -176,7 +176,7 @@ public class WorldSelectMenu extends ScrollingMenu {
 					if (Game.debug) System.out.println("main selection: " + options[selected]);
 					if(list[selected].getText().equals("Load World")) {
 						mode = Action.Load;
-						loadworld = true;;
+						loadworld = true;
 					} else {
 						mode = Action.Create;
 						loadworld = false;
@@ -198,7 +198,7 @@ public class WorldSelectMenu extends ScrollingMenu {
 					//load the game
 					worldname = worldnames.get(selected).getText();
 					if (Game.debug) System.out.println("load mode: " + worldname);
-					Sound.test.play();
+					Sound.confirm.play();
 					game.setMenu(new LoadingDisplay());
 					//game.initWorld();
 					//game.setMenu((Menu) null);
@@ -232,7 +232,7 @@ public class WorldSelectMenu extends ScrollingMenu {
 					try {
 						Files.walkFileTree(world.toPath(), new FileVisitor() {
 							public FileVisitResult visitFile(Object file, BasicFileAttributes attr) {
-								String path = ((Path)file).toString();
+								String path = file.toString();
 								path = newpath+path.substring(path.indexOf(oldname)+oldname.length());
 								File newFile = new File(path);
 								newFile.mkdirs();

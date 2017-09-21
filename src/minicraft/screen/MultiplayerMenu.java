@@ -20,7 +20,8 @@ import org.json.JSONObject;
 
 public class MultiplayerMenu extends Display {
 	
-	private static String apiDomain = "https://shy.playminicraft.com/api";
+	private static String domain = "https://playminicraft.com";
+	private static String apiDomain = domain+"/api";
 	
 	public static String savedIP = "";
 	public static String savedUUID = "";
@@ -53,10 +54,10 @@ public class MultiplayerMenu extends Display {
 		if(savedUsername == null) savedUsername = "";
 		
 		// HTTP REQUEST - determine if there is internet connectivity.
-		String url = "https://shy.playminicraft.com"; // test request
+		//String url = "https://www.playminicraft.com"; // test request
 		setWaitMessage("testing connection");
 		
-		Unirest.get(url).asBinaryAsync(new Callback<InputStream>() {
+		Unirest.get(domain).asBinaryAsync(new Callback<InputStream>() {
 			@Override
 			public void completed(HttpResponse<InputStream> httpResponse) {
 				if(httpResponse.getStatus() == 200)
@@ -72,6 +73,9 @@ public class MultiplayerMenu extends Display {
 					//if (Game.debug) System.out.println("fetching username for uuid");
 					fetchName(savedUUID);
 				}
+				
+				if(curState == State.ERROR)
+					return;
 				
 				// at this point, the game is online, and either the player could log in automatically, or has to enter their
 				// email and password.
@@ -235,10 +239,13 @@ public class MultiplayerMenu extends Display {
 					break;
 				
 				case "success":
+					if(Game.debug) System.out.println("successfully received username from playminicraft server");
 					savedUsername = json.getString("name");
 					break;
 			}
-		}
+		} else// if(Game.debug)
+			setError("Internal server error: Couldn't fetch username from uuid");
+		//System.out.println("response to username fetch was null");
 	}
 	
 	private static final Pattern control = Pattern.compile("\\p{Print}"); // should match only printable characters.
@@ -302,6 +309,7 @@ public class MultiplayerMenu extends Display {
 				
 				msg = typing;
 				if(!typingEmail)
+					//noinspection ReplaceAllDot
 					msg = msg.replaceAll(".", ".");
 				Font.drawCentered(msg, screen, Screen.h/2+6, (inputIsValid?Color.get(-1, 444):Color.get(-1, 500)));
 				if(!inputIsValid) {
@@ -309,7 +317,7 @@ public class MultiplayerMenu extends Display {
 				}
 				
 				Font.drawCentered("get an account at:", screen, Font.textHeight()/2-1, Color.get(-1, 345));
-				Font.drawCentered("shy.playminicraft.com/register", screen, Font.textHeight()*3/2, Color.get
+				Font.drawCentered(domain.substring(domain.indexOf("://")+3)+"/register", screen, Font.textHeight()*3/2, Color.get
 						(-1, 345));
 				
 				break;

@@ -14,7 +14,7 @@ Minicraft+ version 2.0.3
 + added an fps limiter
 * Made various optimizations to the code
 + Added back and fixed knockbacks, after removing them since they didn't work how I wanted.
-
++ Allowed torches to be placed on obsidian bricks
 
 
 Minicraft+ version 2.0.2
