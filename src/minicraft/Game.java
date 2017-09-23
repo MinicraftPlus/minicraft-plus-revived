@@ -1,5 +1,8 @@
 package minicraft;
 
+import javax.imageio.ImageIO;
+import javax.swing.JFrame;
+import javax.swing.WindowConstants;
 import java.awt.BorderLayout;
 import java.awt.Canvas;
 import java.awt.Dimension;
@@ -18,8 +21,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Random;
-import javax.imageio.ImageIO;
-import javax.swing.*;
 
 import minicraft.entity.Bed;
 import minicraft.entity.Entity;
@@ -28,7 +29,11 @@ import minicraft.entity.Lantern;
 import minicraft.entity.Mob;
 import minicraft.entity.Player;
 import minicraft.entity.RemotePlayer;
-import minicraft.gfx.*;
+import minicraft.gfx.Color;
+import minicraft.gfx.Font;
+import minicraft.gfx.FontStyle;
+import minicraft.gfx.Screen;
+import minicraft.gfx.SpriteSheet;
 import minicraft.item.Items;
 import minicraft.item.PotionType;
 import minicraft.item.ToolItem;
@@ -36,10 +41,13 @@ import minicraft.item.ToolType;
 import minicraft.level.Level;
 import minicraft.level.tile.Tile;
 import minicraft.level.tile.Tiles;
-import minicraft.network.*;
-import minicraft.saveload.*;
+import minicraft.network.MinicraftClient;
+import minicraft.network.MinicraftServer;
+import minicraft.saveload.Load;
+import minicraft.saveload.Save;
 import minicraft.screen.*;
 import minicraft.screen2.Menu;
+import minicraft.screen2.MenuData;
 
 public class Game {
 	
@@ -137,7 +145,7 @@ public class Game {
 	}
 	
 	public static InputHandler input; // input used in Game, Player, and just about all the *Menu classes.
-	public static Menu menu = null, newMenu = null; // the current menu you are on.
+	private static Menu menu = null, newMenu = null; // the current menu you are on.
 	public static Player player; // The Player.
 	//public Level level; // This is the current level you are on.
 	private static int worldSize = 128; // The size of the world
@@ -185,12 +193,18 @@ public class Game {
 	
 	
 	// Sets the current menu.
+	public static void setMenu(MenuData menuData) {
+		setMenu(menuData.getMenu());
+	}
 	public static void setMenu(Menu display) {
-		Menu parent = menu;
+		//Menu parent = menu;
+		//newMenu = display;
 		newMenu = display;
 		//if (debug) System.out.println("setting game menu to " + menu);
 		//if (display != null) newMenu.init(input, parent);
 	}
+	
+	public static Menu getMenu() { return newMenu; }
 	
 	public static boolean isValidClient() {
 		return ISONLINE && client != null;
