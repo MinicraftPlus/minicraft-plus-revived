@@ -41,16 +41,13 @@ public class MinicraftServer extends Thread implements MinicraftProtocol {
 	private ArrayList<MinicraftServerThread> threadList = new ArrayList<>();
 	private ServerSocket socket;
 	
-	private Game game;
 	private RemotePlayer hostPlayer = null;
 	private String worldPath;
 	
 	private int playerCap = 5;
 	
-	public MinicraftServer(Game game) {
+	public MinicraftServer() {
 		super("MinicraftServer");
-		this.game = game;
-		
 		Game.ISONLINE = true;
 		Game.ISHOST = true; // just in case.
 		Game.player.remove(); // the server has no player...
@@ -78,7 +75,7 @@ public class MinicraftServer extends Thread implements MinicraftProtocol {
 		try {
 			while (socket != null) {
 				//if(playerCap < 0 || threadList.size() < playerCap) {
-					MinicraftServerThread mst = new MinicraftServerThread(game, socket.accept(), this);
+					MinicraftServerThread mst = new MinicraftServerThread(socket.accept(), this);
 					if(mst.isConnected())
 						threadList.add(mst);
 				/*} else {
@@ -294,7 +291,7 @@ public class MinicraftServer extends Thread implements MinicraftProtocol {
 	
 	public void saveWorld() {
 		broadcastData(InputType.SAVE, ""); // tell all the other clients to send their data over to be saved.
-		new Save(game, WorldSelectMenu.worldname);
+		new Save(WorldSelectMenu.worldname);
 	}
 	
 	public void broadcastNotification(String note, int notetime) {
@@ -395,7 +392,7 @@ public class MinicraftServer extends Thread implements MinicraftProtocol {
 				
 				/// versions match, and username is unique; make client player
 				clientPlayer.setUsername(username);
-				//RemotePlayer clientPlayer = new RemotePlayer(null, game, address, port);
+				//RemotePlayer clientPlayer = new RemotePlayer(null, address, port);
 				
 				/// now, we need to check if this player has played in this world before. If they have, then all previoeus settings and items and such will be restored.
 				String playerdata = ""; // this stores the data fetched from the files.
@@ -536,7 +533,7 @@ public class MinicraftServer extends Thread implements MinicraftProtocol {
 			
 			case DIE:
 				if (Game.debug) System.out.println("received player death");
-				Entity dc = Load.loadEntity(alldata, game, false);
+				Entity dc = Load.loadEntity(alldata, false);
 				broadcastEntityRemoval(clientPlayer);
 				return true;
 			
@@ -555,7 +552,7 @@ public class MinicraftServer extends Thread implements MinicraftProtocol {
 				Level playerLevel = clientPlayer.getLevel();
 				if(playerLevel != null)
 					playerLevel.dropItem(clientPlayer.x, clientPlayer.y, dropped);
-				//Entity dropped = Load.loadEntity(alldata, game, false);
+				//Entity dropped = Load.loadEntity(alldata, false);
 				//broadcastEntityAddition(dropped, true);
 				return true;
 			

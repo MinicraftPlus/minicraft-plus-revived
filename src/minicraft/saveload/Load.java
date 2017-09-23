@@ -56,7 +56,7 @@ public class Load {
 		hasloadedbigworldalready = false;
 	}
 	
-	public Load(Game game, String worldname) {
+	public Load(String worldname) {
 		loadFromFile(location + "/saves/" + worldname.toLowerCase() + "/Game" + extension);
 		if(data.get(0).contains(".")) worldVer = new Version(data.get(0));
 		if(worldVer == null) worldVer = new Version("1.8");
@@ -65,7 +65,7 @@ public class Load {
 			hasGlobalPrefs = worldVer.compareTo(new Version("1.9.2")) >= 0;
 		
 		if(worldVer.compareTo(new Version("1.9.2")) < 0)
-			new LegacyLoad(game, worldname);
+			new LegacyLoad(worldname);
 		else {
 			location += "/saves/" + worldname + "/";
 			
@@ -79,9 +79,9 @@ public class Load {
 			percentInc = 100.0 / percentInc;
 			
 			LoadingDisplay.setPercentage(0);
-			loadGame("Game", game); // more of the version will be determined here
-			loadWorld("Level", game);
-			loadEntities("Entities", game);
+			loadGame("Game"); // more of the version will be determined here
+			loadWorld("Level");
+			loadEntities("Entities");
 			loadInventory("Inventory", Game.player.inventory);
 			loadPlayer("Player", Game.player);
 			if(ModeMenu.creative) {
@@ -91,18 +91,18 @@ public class Load {
 		}
 	}
 	
-	public Load(Game game, String worldname, MinicraftServer server) {
+	public Load(String worldname, MinicraftServer server) {
 		location += "/saves/"+worldname.toLowerCase()+"/";
 		File testFile = new File(location + "ServerConfig" + extension);
 		if(testFile.exists())
 			loadServerConfig("ServerConfig", server);
 	}
 	
-	public Load(Game game) {
+	public Load() {
 		location += "/";
 		
 		if(hasGlobalPrefs)
-			loadPrefs("Preferences", game);
+			loadPrefs("Preferences");
 		else
 			new Save(game);
 		
@@ -276,7 +276,7 @@ public class Load {
 		ModeMenu.initTimeList();
 	}
 	
-	public void loadGame(String filename, Game game) {
+	public void loadGame(String filename) {
 		loadFromFile(location + filename + extension);
 		
 		worldVer = new Version(data.get(0)); // gets the world version
@@ -296,7 +296,7 @@ public class Load {
 		AirWizard.beaten = Boolean.parseBoolean(data.get(4));
 	}
 	
-	public void loadPrefs(String filename, Game game) {
+	public void loadPrefs(String filename) {
 		loadFromFile(location + filename + extension);
 		
 		Version prefVer = new Version("2.0.2"); // the default, b/c this doesn't really matter much being specific past this if it's not set below.
@@ -333,7 +333,7 @@ public class Load {
 		server.setPlayerCap(Integer.parseInt(data.get(0)));
 	}
 	
-	public void loadWorld(String filename, Game game) {
+	public void loadWorld(String filename) {
 		for(int l = Game.maxLevelDepth; l >= Game.minLevelDepth; l--) {
 			//if(l == Game.levels.length-1) l = 4;
 			//if(l == 0) l = Game.levels.length-1;
@@ -371,7 +371,7 @@ public class Load {
 			}
 			
 			Level parent = Game.levels[Game.lvlIdx(l+1)];
-			Game.levels[lvlidx] = new Level(game, lvlw, lvlh, l, parent, false);
+			Game.levels[lvlidx] = new Level(lvlw, lvlh, l, parent, false);
 			
 			Level curLevel = Game.levels[lvlidx];
 			curLevel.tiles = tiles;
@@ -558,7 +558,7 @@ public class Load {
 		}
 	}
 	
-	public void loadEntities(String filename, Game game) {
+	public void loadEntities(String filename) {
 		loadFromFile(location + filename + extension);
 		
 		for(int i = 0; i < Game.levels.length; i++) {
@@ -566,16 +566,16 @@ public class Load {
 		}
 		
 		for(int i = 0; i < data.size(); i++) {
-			loadEntity(data.get(i), game, worldVer, true);
+			loadEntity(data.get(i), worldVer, true);
 			//LoadingDisplay.progress(percentInc);
 		}
 	}
 	
-	public static Entity loadEntity(String entityData, Game game, boolean isLocalSave) {
+	public static Entity loadEntity(String entityData, boolean isLocalSave) {
 		if(isLocalSave) System.out.println("warning: assuming version of save file is current while loading entity: " + entityData);
-		return Load.loadEntity(entityData, game, (new Version(Game.VERSION)), isLocalSave);
+		return Load.loadEntity(entityData, (new Version(Game.VERSION)), isLocalSave);
 	}
-	public static Entity loadEntity(String entityData, Game game, Version worldVer, boolean isLocalSave) {
+	public static Entity loadEntity(String entityData, Version worldVer, boolean isLocalSave) {
 		entityData = entityData.trim();
 		if(entityData.length() == 0) return null;
 		
@@ -648,7 +648,7 @@ public class Load {
 			try {
 				ip = java.net.InetAddress.getByName(info.get(3));
 				int port = Integer.parseInt(info.get(4));
-				newEntity = new RemotePlayer(null, game, ip, port);
+				newEntity = new RemotePlayer(null, ip, port);
 				((RemotePlayer)newEntity).setUsername(username);
 				//rp.eid = eid;
 				if(Game.debug) System.out.println("Prob CLIENT: Loaded remote player");

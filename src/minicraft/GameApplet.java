@@ -13,7 +13,6 @@ import java.net.URLConnection;
 public class GameApplet extends Applet {
 
 	private static final long serialVersionUID = 1L;
-	private Game game = new Game();
 	URL location;
 	public static boolean isApplet = false;
 	public static String username = "Guest";
@@ -31,7 +30,7 @@ public class GameApplet extends Applet {
 		isApplet = true;
 		this.setLayout(new BorderLayout());
 		this.setSize(288 * 3 + 20, 192 * 3 + 20);
-		this.add(this.game, "Center");
+		this.add(Game.getCanvas(), "Center");
 
 		try {
 			URLConnection yc = this.location.openConnection();
@@ -62,10 +61,10 @@ public class GameApplet extends Applet {
 	}
 
 	public void start() {
-		this.Game.start();
+		Game.start();
 	}
 
 	public void stop() {
-		this.Game.stop();
+		Game.stop();
 	}
 }

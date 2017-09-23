@@ -79,8 +79,8 @@ public class WorldSelectMenu extends ScrollingMenu {
 			loadworld = true; // you cannot really make a world without a GUI to start.
 	}
 	
-	public void init(Game game, InputHandler input, Display parent) {
-		super.init(game, input, parent);
+	public void init(InputHandler input, Display parent) {
+		super.init(input, parent);
 		if(!Game.HAS_GUI) {
 			if (Game.debug) System.out.println("gone through world select menu...");
 			Game.setMenu(new LoadingDisplay()); // the choice has already been made, begin world load.

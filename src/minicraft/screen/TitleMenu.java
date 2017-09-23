@@ -212,8 +212,8 @@ public class TitleMenu extends Menu {
 		Game.levels = new Level[Game.levels.length];
 	}
 	
-	public void init(Game game, InputHandler input, Display parent) {
-		super.init(game, input, parent);
+	public void init(InputHandler input, Display parent) {
+		super.init(input, parent);
 		if(Game.player == null || Game.player instanceof RemotePlayer) {
 			//if(Game.player != null) Game.player.remove();
 			Game.player = null;

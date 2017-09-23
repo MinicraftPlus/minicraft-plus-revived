@@ -18,7 +18,6 @@ import minicraft.level.tile.Tile;
 import minicraft.level.tile.Tiles;
 import minicraft.level.tile.TorchTile;
 import minicraft.screen.ModeMenu;
-import minicraft.screen.Displays;
 import minicraft.screen.OptionsMenu;
 
 public class Level {
@@ -27,7 +26,6 @@ public class Level {
 	private static final int MOB_SPAWN_FACTOR = 500; // the chance of a mob actually trying to spawn when trySpawn is called equals: mobCount / maxMobCount * MOB_SPAWN_FACTOR. so, it basically equals the chance, 1/number, of a mob spawning when the mob cap is reached. I hope that makes sense...
 	
 	public int w, h; // width and height of the level
-	public Game game;
 	
 	public byte[] tiles; // an array of all the tiles in the world.
 	public byte[] data; // an array of the data of the tiles in the world. // ?
@@ -93,10 +91,9 @@ public class Level {
 	
 	@SuppressWarnings("unchecked") // @SuppressWarnings ignores the warnings (yellow underline) in this method.
 	/** Level which the world is contained in */
-	public Level(Game game, int w, int h, int level, Level parentLevel) {this(game, w, h, level, parentLevel, true); }
-	public Level(Game game, int w, int h, int level, Level parentLevel, boolean makeWorld) {
+	public Level(int w, int h, int level, Level parentLevel) {this(w, h, level, parentLevel, true); }
+	public Level(int w, int h, int level, Level parentLevel, boolean makeWorld) {
 		depth = level;
-		this.game = game;
 		this.w = w;
 		this.h = h;
 		byte[][] maps; // multidimensional array (an array within a array), used for the map

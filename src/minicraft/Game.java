@@ -144,9 +144,9 @@ public class Game {
 	public static int lvlw = worldSize; // The width of the world
 	public static int lvlh = worldSize; // The height of the world
 	
-	protected static int playerDeadTime; // the time after you die before the dead menu shows up.
-	protected static int pendingLevelChange; // used to determine if the player should change levels or not.
-	public static boolean gameOver; // If the player wins this is set to true.
+	private static int playerDeadTime; // the time after you die before the dead menu shows up.
+	private static int pendingLevelChange; // used to determine if the player should change levels or not.
+	private static boolean gameOver; // If the player wins this is set to true.
 	
 	/// AUTOSAVE AND NOTIFICATIONS
 	
@@ -160,7 +160,7 @@ public class Game {
 	
 	/// SCORE MODE
 	
-	public static int multiplier = 1; // Score multiplier
+	private static int multiplier = 1; // Score multiplier
 	private static final int mtm = 300; // time given to increase multiplier before it goes back to 1.
 	private static int multipliertime = mtm; // Time left on the current multiplier.
 	
@@ -189,7 +189,7 @@ public class Game {
 		Menu parent = menu;
 		newMenu = display;
 		//if (debug) System.out.println("setting game menu to " + menu);
-		//if (display != null) newMenu.init(this, input, parent);
+		//if (display != null) newMenu.init(input, parent);
 	}
 	
 	public static boolean isValidClient() {
@@ -236,7 +236,7 @@ public class Game {
 		
 		resetGame(); // "half"-starts a new game, to set up initial variables
 		player.eid = 0;
-		new Load(false); // this loads any saved preferences.
+		new Load(); // this loads any saved preferences.
 		
 		if(autoclient)
 			setMenu(new MultiplayerMenu( "localhost"));
@@ -260,9 +260,9 @@ public class Game {
 			return;
 		}
 		if(player instanceof RemotePlayer) {
-			player = new RemotePlayer(this, true, (RemotePlayer)player);
+			player = new RemotePlayer(true, (RemotePlayer)player);
 		} else
-			player = new Player(player, this, input);
+			player = new Player(player, input);
 		
 		if (levels[currentLevel] == null) return;
 		
@@ -292,7 +292,7 @@ public class Game {
 		
 		DeadMenu.shouldRespawn = false;
 		resetGame();
-		player = new Player(null, this, input);
+		player = new Player(null, input);
 		Bed.inBed = false;
 		gameTime = 0;
 		Game.gamespeed = 1;
@@ -310,7 +310,7 @@ public class Game {
 			if(Game.debug) System.out.println("initializing world non-client...");
 			
 			if(WorldSelectMenu.loadworld)
-				new Load(this, WorldSelectMenu.worldname);
+				new Load(WorldSelectMenu.worldname);
 			else {
 				worldSize = (Integer)Displays.worldGen.getEntry("size").getValue();
 				
@@ -318,7 +318,7 @@ public class Game {
 				for (int i = maxLevelDepth; i >= minLevelDepth; i--) {
 					// i = level depth; the array starts from the top because the parent level is used as a reference, so it should be constructed first. It is expected that the highest level will have a null parent.
 					if(Game.debug) System.out.println("loading level " + i + "...");
-					levels[lvlIdx(i)] = new Level(this, worldSize, worldSize, i, levels[lvlIdx(i+1)], !WorldSelectMenu.loadworld);
+					levels[lvlIdx(i)] = new Level(worldSize, worldSize, i, levels[lvlIdx(i+1)], !WorldSelectMenu.loadworld);
 					
 					LoadingDisplay.progress(loadingInc);
 				}
@@ -442,10 +442,10 @@ public class Game {
 		}
 		
 		// This is the general action statement thing! Regulates menus, mostly.
-		if (!hasFocus() && HAS_GUI) {
+		if (!canvas.hasFocus() && HAS_GUI) {
 			input.releaseAll();
 		}
-		if(hasFocus() || ISONLINE || !HAS_GUI) {
+		if(canvas.hasFocus() || ISONLINE || !HAS_GUI) {
 			if ((isValidServer() || !player.isRemoved()) && !gameOver) {
 				gameTime++;
 			}
@@ -456,7 +456,7 @@ public class Game {
 			if (menu != null) {
 				//a menu is active.
 				player.tick(); // it is CRUCIAL that the player is ticked HERE, before the menu is ticked. I'm not quite sure why... the menus break otherwise, though.
-				menu.tick();
+				menu.tick(input);
 				paused = true;
 			} else {
 				//no menu, currently.
@@ -623,11 +623,11 @@ public class Game {
 		return prefix;
 	}
 	
-	public void setMultiplier(int value) {
+	public static void setMultiplier(int value) {
 		multiplier = value;
 		multipliertime = mtm;
 	}
-	public void addMultiplier(int value) {
+	public static void addMultiplier(int value) {
 		multiplier += value;
 		multipliertime = mtm - 5;
 	}
@@ -1050,7 +1050,7 @@ public class Game {
 			// here is where we need to start the new client.
 			String jarFilePath = "";
 			try {
-				java.net.URI uri = getClass().getProtectionDomain().getCodeSource().getLocation().toURI();
+				java.net.URI uri = Game.class.getProtectionDomain().getCodeSource().getLocation().toURI();
 				//if (Game.debug) System.out.println("jar path: " + uri.getPath());
 				//if (Game.debug) System.out.println("jar string: " + uri.toString());
 				jarFilePath = uri.getPath();
@@ -1265,7 +1265,7 @@ public class Game {
 		
 		Game.autoclient = autoclient; // this will make the game automatically jump to the MultiplayerMenu, and attempt to connect to localhost.
 		
-		input = new InputHandler(this);
+		input = new InputHandler();
 		
 		fra = 0; // the frames processed in the previous second
 		tik = 0; // the ticks processed in the previous second
@@ -1280,8 +1280,12 @@ public class Game {
 		showinfo = false;
 		gameOver = false;
 		
-		//Game.start(); // Starts the game!
+		start();
+		
+		init(); // Starts the game!
 	}
+	
+	public static Canvas getCanvas() { return canvas; }
 	
 	public static Dimension getWindowSize() {
 		return new Dimension(new Float(WIDTH * SCALE).intValue(), new Float(HEIGHT * SCALE).intValue());
@@ -1290,7 +1294,7 @@ public class Game {
 	public static void quit() {
 		if(Game.isConnectedClient()) Game.client.endConnection();
 		if(Game.isValidServer()) Game.server.endConnection();
-		stop();
+		running = false;
 	}
 	
 	private static List<File> getAllFiles(File top) {
@@ -1345,5 +1349,13 @@ public class Game {
 			exceptionStr = "Unavailable";
 		}
 		return exceptionStr;
+	}
+	
+	public static void start() {
+		running = true;
+	}
+	
+	public static void stop() {
+		running = false;
 	}
 }

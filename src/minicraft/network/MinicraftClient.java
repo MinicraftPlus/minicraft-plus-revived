@@ -30,7 +30,6 @@ import minicraft.screen.MultiplayerMenu;
 /// This class is only used by the client runtime; the server runtime doesn't touch it.
 public class MinicraftClient extends MinicraftConnection {
 	
-	private Game game;
 	private MultiplayerMenu menu;
 	
 	private enum State {
@@ -67,9 +66,8 @@ public class MinicraftClient extends MinicraftConnection {
 		return socket;
 	}
 	
-	public MinicraftClient(Game game, String username, MultiplayerMenu menu, String hostName) {
+	public MinicraftClient(String username, MultiplayerMenu menu, String hostName) {
 		super("MinicraftClient", openSocket(hostName, menu));
-		this.game = game;
 		this.menu = menu;
 		Game.ISONLINE = true;
 		Game.ISHOST = false;
@@ -105,7 +103,7 @@ public class MinicraftClient extends MinicraftConnection {
 		if (Game.debug) System.out.println("CLIENT: logging in to server...");
 		
 		try {
-			Game.player = new RemotePlayer(Game.player, game, true, InetAddress.getLocalHost(), PORT);
+			Game.player = new RemotePlayer(Game.player, true, InetAddress.getLocalHost(), PORT);
 			((RemotePlayer)Game.player).setUsername(username);
 		} catch(UnknownHostException ex) {
 			System.err.println("CLIENT could not get localhost address:");
@@ -202,7 +200,7 @@ public class MinicraftClient extends MinicraftConnection {
 				Level level = Game.levels[Game.currentLevel];
 				if(level == null) {
 					int lvldepth = Game.idxToDepth[Game.currentLevel];
-					Game.levels[Game.currentLevel] = level = new Level(game, Game.lvlw, Game.lvlh, lvldepth, Game.levels[Game.lvlIdx(lvldepth+1)], false);
+					Game.levels[Game.currentLevel] = level = new Level(Game.lvlw, Game.lvlh, lvldepth, Game.levels[Game.lvlIdx(lvldepth+1)], false);
 				}
 				
 				/*byte[] tiledata = new byte[alldata.length()];
@@ -248,7 +246,7 @@ public class MinicraftClient extends MinicraftConnection {
 					if(entityString.length() == 0) continue;
 					
 					if (Game.debug) System.out.println("CLIENT: loading entity: " + entityString);
-					Load.loadEntity(entityString, game, false);
+					Load.loadEntity(entityString, false);
 				}
 				
 				// ready to start game now.
@@ -286,7 +284,7 @@ public class MinicraftClient extends MinicraftConnection {
 					return false;
 				}
 				
-				Entity addedEntity = Load.loadEntity(alldata, game, false);
+				Entity addedEntity = Load.loadEntity(alldata, false);
 				if(addedEntity != null) {
 					if(addedEntity.eid == Game.player.eid/* && Game.player.getLevel() == null*/) {
 						if (Game.debug) System.out.println("CLIENT: added main game player back to level based on add packet");

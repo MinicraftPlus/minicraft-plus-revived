@@ -112,13 +112,12 @@ public class MultiplayerMenu extends Display {
 	}
 	
 	// this automatically sets the ipAddress.
-	public MultiplayerMenu(Game game, String ipAddress) {
+	public MultiplayerMenu(String ipAddress) {
 		this();
 		//if(Game.debug) System.out.println("ip mm constructor");
-		this.game = game;
 		if(curState == State.ENTERIP) { // login was automatic
 			setWaitMessage("connecting to server");
-			Game.client = new MinicraftClient(game, savedUsername,this, ipAddress);
+			Game.client = new MinicraftClient(savedUsername,this, ipAddress);
 		} else
 			savedIP = ipAddress; // must login manually, so the ip address is saved for now.
 	}
@@ -150,7 +149,7 @@ public class MultiplayerMenu extends Display {
 				if(input.getKey("select").clicked) {
 					setWaitMessage("connecting to server");
 					savedIP = typing;
-					Game.client = new MinicraftClient(game, savedUsername,this, typing); // typing = ipAddress
+					Game.client = new MinicraftClient(savedUsername,this, typing); // typing = ipAddress
 					new Save(game); // write the saved ip to file
 					typing = "";
 					return;

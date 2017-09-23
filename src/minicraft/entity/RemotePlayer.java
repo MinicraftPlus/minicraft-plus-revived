@@ -22,14 +22,14 @@ public class RemotePlayer extends Player {
 	private InetAddress ipAddress;
 	private int port;
 	
-	public RemotePlayer(Player previous, Game game, InetAddress ip, int port) { this(previous, game, false, ip, port); }
-	public RemotePlayer(Player previous, Game game, boolean isMainPlayer, InetAddress ip, int port) {
-		super(previous, game, (isMainPlayer?Game.input:new InputHandler(game, false)));
+	public RemotePlayer(Player previous, InetAddress ip, int port) { this(previous, false, ip, port); }
+	public RemotePlayer(Player previous, boolean isMainPlayer, InetAddress ip, int port) {
+		super(previous, (isMainPlayer?Game.input:new InputHandler(false)));
 		this.ipAddress = ip;
 		this.port = port;
 	}
-	public RemotePlayer(Game game, boolean isMainPlayer, RemotePlayer model) {
-		this(model, game, isMainPlayer, model.ipAddress, model.port);
+	public RemotePlayer(boolean isMainPlayer, RemotePlayer model) {
+		this(model, isMainPlayer, model.ipAddress, model.port);
 		eid = model.eid;
 		setUsername(model.getUsername());
 	}

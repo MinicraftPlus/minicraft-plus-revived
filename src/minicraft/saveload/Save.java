@@ -26,10 +26,8 @@ public class Save {
 	List<String> data;
 	Game game;
 	
-	private Save(Game game, File worldFolder) {
+	private Save(File worldFolder) {
 		data = new ArrayList<>();
-		
-		this.game = game;
 		
 		//location += dir;
 		folder = worldFolder;
@@ -38,9 +36,9 @@ public class Save {
 	}
 	
 	/// this saves world options
-	public Save(Player player, String worldname) { this(player.game, worldname); }
-	public Save(Game game, String worldname) {
-		this(game, new File(Game.gameDir+"/saves/" + worldname.toLowerCase() + "/"));
+	public Save(Player player, String worldname) { this(player.worldname); }
+	public Save(String worldname) {
+		this(new File(Game.gameDir+"/saves/" + worldname.toLowerCase() + "/"));
 		
 		if(Game.isValidClient()) {
 			// clients are not allowed to save.
@@ -63,23 +61,23 @@ public class Save {
 	}
 	
 	/// this saves server config options
-	public Save(Game game, String worldname, MinicraftServer server) {
-		this(game, new File(Game.gameDir+"/saves/" + worldname.toLowerCase() + "/"));
+	public Save(String worldname, MinicraftServer server) {
+		this(new File(Game.gameDir+"/saves/" + worldname.toLowerCase() + "/"));
 		
 		if (Game.debug) System.out.println("writing server config...");
 		writeServerConfig("ServerConfig", server);
 	}
 	
 	// this saves global options
-	public Save(Game game) {
-		this(game, new File(Game.gameDir+"/"));
+	public Save() {
+		this(new File(Game.gameDir+"/"));
 		if(Game.debug) System.out.println("writing preferences...");
 		writePrefs("Preferences");
 	}
 	
 	public Save(Player player) {
 		// this is simply for access to writeToFile.
-		this(player.game, new File(Game.gameDir+"/saves/"+WorldSelectMenu.worldname + "/"));
+		this(player.new File(Game.gameDir+"/saves/"+WorldSelectMenu.worldname + "/"));
 	}
 	
 	public void writeToFile(String filename, List<String> savedata) {

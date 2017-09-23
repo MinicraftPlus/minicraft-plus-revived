@@ -46,7 +46,7 @@ public class LegacyLoad {
 		hasloadedbigworldalready = false;
 	}
 	
-	public LegacyLoad(Game game, String worldname) {
+	public LegacyLoad(String worldname) {
 		location += "/saves/" + worldname + "/";
 		
 		File testFile = new File(location + "KeyPrefs" + extension);
@@ -56,10 +56,10 @@ public class LegacyLoad {
 		} else
 			testFile.delete(); // we don't care about it anymore anyway.
 		
-		this.game = game; // this is used in loadInventory().
+		// this is used in loadInventory().
 		
-		loadGame("Game", game); // more of the version will be determined here
-		loadWorld("Level", game);
+		loadGame("Game"); // more of the version will be determined here
+		loadWorld("Level");
 		loadPlayer("Player", Game.player);
 		loadInventory("Inventory", Game.player.inventory);
 		loadEntities("Entities", Game.player);
@@ -145,7 +145,7 @@ public class LegacyLoad {
 	
 	private int playerac = 0; // this is a temp storage var for use to restore player arrow count.
 	
-	public void loadGame(String filename, Game game) {
+	public void loadGame(String filename) {
 		loadFromFile(location + filename + extension);
 		boolean hasVersion = data.get(0).contains(".");
 		if(hasVersion) {
@@ -182,7 +182,7 @@ public class LegacyLoad {
 		}
 	}
 	
-	public void loadWorld(String filename, Game game) {
+	public void loadWorld(String filename) {
 		for(int l = 0; l < Game.levels.length; l++) {
 			loadFromFile(location + filename + l + extension);
 			
@@ -203,7 +203,7 @@ public class LegacyLoad {
 			}
 			
 			//Level parent = l == Game.levels.length-1 ? null : Game.levels[l+1];
-			Game.levels[l] = new Level(game, lvlw, lvlh, lvldepth, null, false);
+			Game.levels[l] = new Level(lvlw, lvlh, lvldepth, null, false);
 			Game.levels[l].tiles = tiles;
 			Game.levels[l].data = tdata;
 		}

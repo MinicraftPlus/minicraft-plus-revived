@@ -5,14 +5,12 @@ import minicraft.InputHandler;
 import minicraft.gfx.Screen;
 
 public abstract class Display {
-	protected Game game;
 	protected InputHandler input;
 	protected Display parent;
 	
-	public void init(Game game, InputHandler input, Display parent) {
+	public void init(InputHandler input, Display parent) {
 		this.input = input;
-		this.game = game;
-	}
+		}
 	
 	private Frame[] frames = null;
 	

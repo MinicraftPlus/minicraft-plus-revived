@@ -76,10 +76,9 @@ public class InputHandler implements MouseListener, KeyListener {
 	public Mouse two = new Mouse();
 	public Mouse tri = new Mouse();
 	
-	private Game game;
 	
-	public InputHandler(Game game) { this(game, true); }
-	public InputHandler(Game game, boolean listenToKeyboard) {
+	public InputHandler() { this(true); }
+	public InputHandler(boolean listenToKeyboard) {
 		keymap = new LinkedHashMap<>(); //stores custom key name with physical key name in keyboard.
 		keyboard = new HashMap<>(); //stores physical keyboard keys; auto-generated :D
 		
@@ -91,11 +90,10 @@ public class InputHandler implements MouseListener, KeyListener {
 		keyboard.put("ALT", new Key(true));
 		
 		if(listenToKeyboard)
-			Game.addKeyListener(this); //add key listener to game
+			Game.getCanvas().addKeyListener(this); //add key listener to game
 		//Game.addMouseListener(this); //add mouse listener to game (though it's never used)
 		//ticks = 0;
-		this.game = game;
-	}
+		}
 	
 	private void initKeyMap() {
 		keymap.put("UP", "UP|W"); //up action references up arrow key

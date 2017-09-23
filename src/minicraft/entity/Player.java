@@ -30,7 +30,6 @@ import minicraft.screen.entry.SettingEntry;
 
 public class Player extends Mob {
 	protected InputHandler input;
-	public Game game;
 	
 	private static final int playerHurtTime = 30;
 	
@@ -85,12 +84,11 @@ public class Player extends Mob {
 	
 	// Note: the player's health & max health are inherited from Mob.java
 	
-	public Player(Player previousInstance, Game game, InputHandler input) {
+	public Player(Player previousInstance, InputHandler input) {
 		super(sprites, Player.maxHealth);
 		
 		x = 24;
 		y = 24;
-		this.game = game;
 		this.input = input;
 		inventory = new Inventory();
 		

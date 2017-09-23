@@ -25,8 +25,8 @@ public class LoadingDisplay extends MessageDisplay implements ActionListener {
 	
 	public static double getPercentage() { return percentage; }
 	
-	public void init(Game game, InputHandler init, Display parent) {
-		super.init(game, init, parent);
+	public void init(InputHandler init, Display parent) {
+		super.init(init, parent);
 		if(!Game.HAS_GUI)
 			initWorld();
 	}
