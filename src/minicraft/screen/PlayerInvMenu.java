@@ -21,13 +21,13 @@ public class PlayerInvMenu extends InventoryMenu {
 	}
 	
 	public void tick() {
-		if (input.getKey("menu").clicked) game.setMenu(null);
+		if (input.getKey("menu").clicked) Game.setMenu(null);
 		
 		super.tick();
 		if (input.getKey("attack").clicked && options.length > 0) { // If your inventory is not empty, and the player presses the "Attack" key...
 			player.activeItem = player.inventory.get(selected); // The item will be placed as the player's active item.
 			player.inventory.remove(selected); // The item will be removed from the inventory.
-			game.setMenu(null); // the game will go back to the gameplay.
+			Game.setMenu(null); // the game will go back to the gameplay.
 		}
 	}
 	

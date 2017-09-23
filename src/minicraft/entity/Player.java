@@ -137,9 +137,9 @@ public class Player extends Mob {
 		
 		if(!Bed.inBed && input.getKey("drop-one").clicked || input.getKey("drop-stack").clicked) {
 			Item itemToDrop = null;
-			if(game.menu instanceof PlayerInvMenu)
-				itemToDrop = ((PlayerInvMenu)game.menu).getSelectedItem();
-			else if(!game.paused)
+			if(Game.menu instanceof PlayerInvMenu)
+				itemToDrop = ((PlayerInvMenu)Game.menu).getSelectedItem();
+			else if(!Game.paused)
 				itemToDrop = activeItem;
 			
 			if(itemToDrop != null) {
@@ -149,15 +149,15 @@ public class Player extends Mob {
 					toEntity = itemToDrop.clone();
 					((StackableItem)toEntity).count = 1;
 					((StackableItem)itemToDrop).count--;
-					if(game.menu instanceof PlayerInvMenu)
-						((PlayerInvMenu)game.menu).updateSelectedItem();
+					if(Game.menu instanceof PlayerInvMenu)
+						((PlayerInvMenu)Game.menu).updateSelectedItem();
 				} else {
 					// drop the whole item.
 					toEntity = itemToDrop;
 					if(!ModeMenu.creative) {
-						if(game.menu instanceof PlayerInvMenu)
-							((PlayerInvMenu)game.menu).removeSelectedItem();
-						else if(game.menu == null)
+						if(Game.menu instanceof PlayerInvMenu)
+							((PlayerInvMenu)Game.menu).removeSelectedItem();
+						else if(Game.menu == null)
 							activeItem = null;
 					}
 				}
@@ -171,7 +171,7 @@ public class Player extends Mob {
 			}
 		}
 		
-		if(game.menu != null && !Game.ISONLINE) return; // don't tick player when menu is open
+		if(Game.menu != null && !Game.ISONLINE) return; // don't tick player when menu is open
 		
 		super.tick(); // ticks Mob.java
 		
@@ -193,7 +193,7 @@ public class Player extends Mob {
 		Tile onTile = level.getTile(x >> 4, y >> 4); // gets the current tile the player is on.
 		if (onTile == Tiles.get("Stairs Down") || onTile == Tiles.get("Stairs Up")) {
 			if (onStairDelay <= 0) { // when the delay time has passed...
-				game.scheduleLevelChange((onTile == Tiles.get("Stairs Up")) ? 1 : -1); // decide whether to go up or down.
+				Game.scheduleLevelChange((onTile == Tiles.get("Stairs Up")) ? 1 : -1); // decide whether to go up or down.
 				onStairDelay = 10; // resets delay, since the level has now been changed.
 				return; // SKIPS the rest of the tick() method.
 			}
@@ -298,7 +298,7 @@ public class Player extends Mob {
 			
 			// this is where movement detection occurs.
 			int xa = 0, ya = 0;
-			if(game.menu == null) {
+			if(Game.menu == null) {
 				if (input.getKey("up").down) ya--;
 				if (input.getKey("down").down) ya++;
 				if (input.getKey("left").down) xa--;
@@ -314,7 +314,7 @@ public class Player extends Mob {
 				int oldDir = dir;
 				boolean moved = move((int) (xa * spd), (int) (ya * spd)); // THIS is where the player moves; part of Mob.java
 				if (moved) stepCount++;
-				if ((moved || oldDir != dir) && Game.isConnectedClient() && this == game.player)
+				if ((moved || oldDir != dir) && Game.isConnectedClient() && this == Game.player)
 					Game.client.move(this);
 			}
 			
@@ -334,7 +334,7 @@ public class Player extends Mob {
 			}
 		}
 		
-		if (game.menu == null) {
+		if (Game.menu == null) {
 			if (!Bed.inBed && (activeItem == null || !activeItem.used_pending) && (input.getKey("attack").clicked || input.getKey("pickup").clicked) && stamina != 0) { // this only allows attacks or pickups when such action is possible.
 				if (!potioneffects.containsKey(PotionType.Energy)) stamina--;
 				staminaRecharge = 0;
@@ -358,15 +358,15 @@ public class Player extends Mob {
 			}
 			
 			if (input.getKey("menu").clicked && !use()) // !use() = no furniture in front of the player; this prevents player inventory from opening (will open furniture inventory instead)
-				game.setMenu(new PlayerInvMenu(this));
+				Game.setMenu(new PlayerInvMenu(this));
 			if (input.getKey("pause").clicked)
-				game.setMenu(new PauseMenu());
+				Game.setMenu(new PauseMenu());
 			if (input.getKey("craft").clicked && !use())
-				game.setMenu(new CraftingMenu(Recipes.craftRecipes, this, true));
+				Game.setMenu(new CraftingMenu(Recipes.craftRecipes, this, true));
 			if (input.getKey("sethome").clicked) setHome();
 			if (input.getKey("home").clicked && !Bed.inBed) goHome();
 			
-			if (input.getKey("info").clicked) game.setMenu(new PlayerInfoMenu());
+			if (input.getKey("info").clicked) Game.setMenu(new PlayerInfoMenu());
 			
 			if (input.getKey("r").clicked && !Game.saving && !(this instanceof RemotePlayer) && !Game.isValidClient()) {
 				Game.saving = true;
@@ -377,7 +377,7 @@ public class Player extends Mob {
 			if (Game.debug && input.getKey("shift-p").clicked) { // remove all potion effects
 				for(PotionType potionType: potioneffects.keySet()) {
 					PotionItem.applyPotion(this, potionType, false);
-					if(Game.isConnectedClient() && this == game.player)
+					if(Game.isConnectedClient() && this == Game.player)
 						Game.client.sendPotionEffect(potionType, false);
 				}
 			}
@@ -388,7 +388,7 @@ public class Player extends Mob {
 			if(attackTime == 0) attackItem = null; // null the attackItem once we are done attacking.
 		}
 		
-		if(Game.isConnectedClient() && this == game.player) Game.client.sendPlayerUpdate(this);
+		if(Game.isConnectedClient() && this == Game.player) Game.client.sendPlayerUpdate(this);
 	}
 	
 	public void resolveHeldItem() {
@@ -731,7 +731,7 @@ public class Player extends Mob {
 	
 	/** Set player's home coordinates. */
 	public void setHome() {
-		if (game.currentLevel == 3) { // if on surface
+		if (Game.currentLevel == 3) { // if on surface
 			// set home coordinates
 			homeSetX = this.x;
 			homeSetY = this.y;
@@ -743,7 +743,7 @@ public class Player extends Mob {
 	}
 
 	public void goHome() {
-		if (game.currentLevel == 3) { // if on surface
+		if (Game.currentLevel == 3) { // if on surface
 			if (hasSetHome) {
 				// move player to home coordinates
 				this.x = homeSetX;
@@ -784,13 +784,13 @@ public class Player extends Mob {
 	
 	/** Gets the player's light radius underground */
 	public int getLightRadius() {
-		//if (game.currentLevel == 3) return 0; // I don't want the player to have an automatic halo on the surface.
+		//if (Game.currentLevel == 3) return 0; // I don't want the player to have an automatic halo on the surface.
 		
 		float light = potioneffects.containsKey(PotionType.Light) ? 2.5f : 1; // multiplier for the light potion effect.
 		float r = 3 * light; // the radius of the light.
-		if (game.currentLevel == 3) r = (light-1) * 3;
+		if (Game.currentLevel == 3) r = (light-1) * 3;
 		
-		if (game.currentLevel == 5) r = 5 * light; // more light than usual on dungeon level.
+		if (Game.currentLevel == 5) r = 5 * light; // more light than usual on dungeon level.
 		
 		//if (ModeMenu.creative) r = 12 * light; // creative mode light radius is much bigger; whole screen.
 		
@@ -807,7 +807,7 @@ public class Player extends Mob {
 	protected void die() {
 		int lostscore = score / 3; // finds score penalty
 		score -= lostscore; // subtracts score penalty
-		game.setMultiplier(1);
+		Game.setMultiplier(1);
 		
 		//make death chest
 		DeathChest dc = new DeathChest();
@@ -827,7 +827,7 @@ public class Player extends Mob {
 		Sound.playerDeath.play();
 		
 		if(!Game.ISONLINE)
-			Game.levels[game.currentLevel].add(dc);
+			Game.levels[Game.currentLevel].add(dc);
 		else if(Game.isConnectedClient())
 			Game.client.sendPlayerDeath(this, dc);
 		
@@ -860,7 +860,7 @@ public class Player extends Mob {
 		// set invulnerability time
 		*/
 		
-		boolean fullPlayer = !(Game.isValidClient() && this != game.player);
+		boolean fullPlayer = !(Game.isValidClient() && this != Game.player);
 		
 		int healthDam = 0, armorDam = 0;
 		if(fullPlayer) {

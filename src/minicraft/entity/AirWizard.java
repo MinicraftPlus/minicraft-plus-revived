@@ -180,7 +180,7 @@ public class AirWizard extends EnemyMob {
 				p.score += (secondform ? 500000 : 100000); // give the player 100K or 500K points.
 		}
 		
-		Sound.bossdeath.play(); // play boss-death sound.
+		Sound.bossDeath.play(); // play boss-death sound.
 		
 		if(!secondform) {
 			Game.notifyAll("Air Wizard: Defeated!");

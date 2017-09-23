@@ -17,7 +17,7 @@ public class PlayerInfoMenu extends Display {
 	
 	public void tick() {
 		if (input.getKey("select").clicked || input.getKey("Exit").clicked) {
-			game.setMenu(null);
+			Game.setMenu(null);
 		}
 	}
 	
@@ -43,7 +43,7 @@ public class PlayerInfoMenu extends Display {
 		ArrayList<String> stats = new ArrayList<>();
 		
 		stats.add("Time Played: " + timeString);
-		stats.add("Current Score: " + game.player.score);
+		stats.add("Current Score: " + Game.player.score);
 		
 		for(int i = 0; i < stats.size(); i++) {
 			String[] split = stats.get(i).split(":");

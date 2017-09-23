@@ -62,13 +62,13 @@ public class TitleMenu extends Menu {
 			},
 			new StringEntry("Quit") {
 				public void onSelect() {
-					System.exit(0);//game.quit();
+					System.exit(0);//Game.quit();
 				}
 			}/*,
 			new StringEntry("Kill") {
 				public void onSelect() {
-					game.levels[currentLevel].add(game.player);
-					game.setMenu(null);
+					Game.levels[currentLevel].add(Game.player);
+					Game.setMenu(null);
 				}
 			}*/
 	}; // Options that are on the main menu.
@@ -214,10 +214,10 @@ public class TitleMenu extends Menu {
 	
 	public void init(Game game, InputHandler input, Display parent) {
 		super.init(game, input, parent);
-		if(game.player == null || game.player instanceof RemotePlayer) {
-			//if(game.player != null) game.player.remove();
-			game.player = null;
-			game.resetGame();
+		if(Game.player == null || Game.player instanceof RemotePlayer) {
+			//if(Game.player != null) Game.player.remove();
+			Game.player = null;
+			Game.resetGame();
 		}
 	}
 	
@@ -278,11 +278,11 @@ public class TitleMenu extends Menu {
 			
 			if (options[selected].equals("New game")) {
 				WorldSelectMenu.loadworld = false;
-				game.setMenu(new WorldSelectMenu());
+				Game.setMenu(new WorldSelectMenu());
 				//(this method should now stop getting called by Game)
 			}
-			if(options[selected].contains("Join Online")) game.setMenu(new MultiplayerMenu());
-			if(options[selected].equals("Instructions")) game.setMenu(new InstructionsMenu(this));
+			if(options[selected].contains("Join Online")) Game.setMenu(new MultiplayerMenu());
+			if(options[selected].equals("Instructions")) Game.setMenu(new InstructionsMenu(this));
 			if (options[selected].equals("Tutorial")) {
 				try {
 					//This is for the tutorial Video
@@ -292,11 +292,11 @@ public class TitleMenu extends Menu {
 					if(minicraft.Game.debug) System.out.println(e.getMessage());
 				}
 			}
-			if (options[selected].equals("Options")) game.setMenu(new OptionsMenu(this));
-			if (options[selected].equals("Change Key Bindings")) game.setMenu(new KeyInputMenu(this));
-			if (options[selected].equals("About")) game.setMenu(new AboutMenu(this));
-			if (options[selected].equals("Quit")) System.exit(0);//game.quit();
-			//if (options[selected].equals("Kill")) {game.levels[currentLevel].add(game.player); game.setMenu(null);}*/
+			if (options[selected].equals("Options")) Game.setMenu(new OptionsMenu(this));
+			if (options[selected].equals("Change Key Bindings")) Game.setMenu(new KeyInputMenu(this));
+			if (options[selected].equals("About")) Game.setMenu(new AboutMenu(this));
+			if (options[selected].equals("Quit")) System.exit(0);//Game.quit();
+			//if (options[selected].equals("Kill")) {Game.levels[currentLevel].add(Game.player); Game.setMenu(null);}*/
 		}
 	}
 	

@@ -29,7 +29,7 @@ public class ContainerMenu extends InventoryMenu {
 
 	public void tick() {
 		if (input.getKey("menu").clicked) {
-			game.setMenu(null); // If the player selects the "menu" key, then it will exit the chest
+			Game.setMenu(null); // If the player selects the "menu" key, then it will exit the chest
 			return;
 		}
 		

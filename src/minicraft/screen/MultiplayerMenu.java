@@ -172,7 +172,7 @@ public class MultiplayerMenu extends Display {
 		}
 		
 		if(input.getKey("exit").clicked && !Game.ISHOST) {
-			game.setMenu(new TitleMenu());
+			Game.setMenu(new TitleMenu());
 		}
 	}
 	

@@ -62,10 +62,10 @@ public class GameApplet extends Applet {
 	}
 
 	public void start() {
-		this.game.start();
+		this.Game.start();
 	}
 
 	public void stop() {
-		this.game.stop();
+		this.Game.stop();
 	}
 }

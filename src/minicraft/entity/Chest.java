@@ -16,7 +16,7 @@ public class Chest extends Furniture {
 	
 	/** This is what occurs when the player uses the "Menu" command near this */
 	public boolean use(Player player, int attackDir) {
-		player.game.setMenu(new ContainerMenu(player, this));
+		player.Game.setMenu(new ContainerMenu(player, this));
 		return true;
 	}
 	

@@ -61,7 +61,7 @@ public class PlayerScoreDisplay extends Display {
 		if (displayTimer > 0) displayTimer--;
 		else if (inputDelay > 0) inputDelay--;
 		else if (input.getKey("exit").clicked) {
-			game.setMenu(new TitleMenu());
+			Game.setMenu(new TitleMenu());
 		}
 	}
 
@@ -119,7 +119,7 @@ public class PlayerScoreDisplay extends Display {
 			}
 		}
 		
-		Font.draw("Player Score: " + game.player.score, screen, 16, 6*8, Color.get(-1, 555));
+		Font.draw("Player Score: " + Game.player.score, screen, 16, 6*8, Color.get(-1, 555));
 		Font.draw("<Bonuses>", screen, 16, 8*8, Color.get(-1, 41));
 		int i = 0;
 		for(String bonus: scores.keySet().toArray(new String[0])) {

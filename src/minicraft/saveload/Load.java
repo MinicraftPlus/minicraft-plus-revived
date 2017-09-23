@@ -82,10 +82,10 @@ public class Load {
 			loadGame("Game", game); // more of the version will be determined here
 			loadWorld("Level", game);
 			loadEntities("Entities", game);
-			loadInventory("Inventory", game.player.inventory);
-			loadPlayer("Player", game.player);
+			loadInventory("Inventory", Game.player.inventory);
+			loadPlayer("Player", Game.player);
 			if(ModeMenu.creative) {
-				Items.fillCreativeInv(game.player.inventory, false);
+				Items.fillCreativeInv(Game.player.inventory, false);
 			}
 			//LoadingDisplay.setPercentage(0); // reset
 		}
@@ -323,7 +323,7 @@ public class Load {
 		
 		for (String keymap : subdata) {
 			String[] map = keymap.split(";");
-			game.input.setKey(map[0], map[1]);
+			Game.input.setKey(map[0], map[1]);
 		}
 	}
 	
@@ -450,10 +450,10 @@ public class Load {
 		if(worldVer.compareTo(new Version("2.0.1-dev1")) < 0)
 			player.inventory.add(Items.get("arrow"), Integer.parseInt(data.get(7)));
 		
-		player.game.currentLevel = Integer.parseInt(data.get(8));
-		Level level = Game.levels[player.game.currentLevel];
-		if(player.game.player != null)
-			player.game.player.remove(); // removes the user player from the level, in case they would be added twice.
+		player.Game.currentLevel = Integer.parseInt(data.get(8));
+		Level level = Game.levels[player.Game.currentLevel];
+		if(player.Game.player != null)
+			player.Game.player.remove(); // removes the user player from the level, in case they would be added twice.
 		if(level != null)
 			level.add(player);
 		else if(Game.debug) System.out.println(Game.onlinePrefix()+"game level to add player " + player + " to is null.");
@@ -609,8 +609,8 @@ public class Load {
 				existing.remove();
 			}
 			
-			/*if(existing == null && Game.isValidClient() && game.player.eid == eid) {
-				existing = game.player;
+			/*if(existing == null && Game.isValidClient() && Game.player.eid == eid) {
+				existing = Game.player;
 				//int playerLevel = Integer.parseInt(info.get(info.size()-1));
 				//if(Game.levels[playerLevel] != null)
 				//Game.levels[playerLevel].add(existing, x, y);
@@ -620,8 +620,8 @@ public class Load {
 				return existing;
 			}*/
 			
-			if(Game.isValidClient() && game.player instanceof RemotePlayer && 
-				!((RemotePlayer)game.player).shouldTrack(x >> 4, y >> 4, Game.levels[entityLevel])
+			if(Game.isValidClient() && Game.player instanceof RemotePlayer && 
+				!((RemotePlayer)Game.player).shouldTrack(x >> 4, y >> 4, Game.levels[entityLevel])
 				) {
 				// the entity is too far away to bother adding to the level.
 				if(Game.debug) System.out.println("CLIENT: entity is too far away to bother loading: " + eid);
@@ -630,9 +630,9 @@ public class Load {
 				return dummy; /// we need a dummy b/c it's the only way to pass along to entity id.
 			}
 			
-			if(Game.isValidClient() && existing != null && existing.eid == game.player.eid) {
+			if(Game.isValidClient() && existing != null && existing.eid == Game.player.eid) {
 				System.out.println("CLIENT WARNING: asked to reload main player from server; ignoring.");
-				return game.player; // don't load the main player
+				return Game.player; // don't load the main player
 			}
 		}
 		

@@ -73,7 +73,7 @@ class ConsoleReader extends Thread {
 		STATUS
 		(null, "display some server stats.", "displays server fps, and number of players connected.") {
 			public void run(String[] args, Game game) {
-				System.out.println("fps: " + game.fra);
+				System.out.println("fps: " + Game.fra);
 				System.out.println("players connected: " + Game.server.getThreads().length);
 				for(String info: Game.server.getClientInfo())
 					System.out.println("\t"+info);
@@ -124,7 +124,7 @@ class ConsoleReader extends Thread {
 				try {
 					Thread.sleep(500); // give the computer some time to, uh, recuperate? idk, I think it's a good idea.
 				} catch(InterruptedException ignored) {}
-				game.startMultiplayerServer(); // start the server back up.
+				Game.startMultiplayerServer(); // start the server back up.
 			}
 		},
 		
@@ -399,7 +399,7 @@ class ConsoleReader extends Thread {
 			if(cmd == Command.STOP) shouldRun = false;
 		}
 		
-		game.quit();
+		Game.quit();
 	}
 	
 	private static Command getCommandByName(String name) {

@@ -39,8 +39,9 @@ import minicraft.level.tile.Tiles;
 import minicraft.network.*;
 import minicraft.saveload.*;
 import minicraft.screen.*;
+import minicraft.screen2.Menu;
 
-public class Game extends Canvas implements Runnable {
+public class Game {
 	
 	private static Random random = new Random();
 	
@@ -84,7 +85,7 @@ public class Game extends Canvas implements Runnable {
 	/// MULTIPLAYER
 	public static boolean ISONLINE = false;
 	public static boolean ISHOST = false; /// this being true doesn't mean this game isn't a client as well; becuase it should be.
-	private boolean autoclient = false; // used in the init method; jumps to multiplayer menu as client
+	private static boolean autoclient = false; // used in the init method; jumps to multiplayer menu as client
 	public static MinicraftServer server = null;
 	public static MinicraftClient client = null;
 	
@@ -92,7 +93,7 @@ public class Game extends Canvas implements Runnable {
 	
 	public static final int normSpeed = 60; // measured in ticks / second.
 	public static float gamespeed = 1; // measured in MULTIPLES OF NORMSPEED.
-	public boolean paused = true; // If the game is paused.
+	public static boolean paused = true; // If the game is paused.
 	
 	public static int tickCount = 0; // The number of ticks since the beginning of the game day.
 	private static int time = 0; // Facilites time of day / sunlight.
@@ -102,22 +103,23 @@ public class Game extends Canvas implements Runnable {
 	//public static int noon = 32400; //this value determines when the sky switches from getting lighter to getting darker.
 	
 	private static boolean running = false; // This is about more than simply being paused -- it keeps the game loop running.
-	public int fra, tik; //these store the number of frames and ticks in the previous second; used for fps, at least.
-	public static int gameTime = 0; // This stores the total time (number of ticks) you've been playing your game.
+	public static int fra, tik; //these store the number of frames and ticks in the previous second; used for fps, at least.
+	public static int gameTime = 0; // This stores the total time (number of ticks) you've been playing your Game.
 	
 	/// RENDERING
 	
-	private BufferedImage image; // creates an image to be displayed on the screen.
-	protected int[] pixels; // the array of pixels that will be displayed on the screen.
+	private static Canvas canvas = new Canvas();
+	private static BufferedImage image; // creates an image to be displayed on the screen.
+	protected static int[] pixels; // the array of pixels that will be displayed on the screen.
 	//private int[] colors; // All of the colors, put into an array.
 	/// these are public, but should not be modified:
-	public Screen screen; // Creates the main screen
-	public Screen lightScreen; // Creates a front screen to render the darkness in caves (Fog of war).
+	public static Screen screen; // Creates the main screen
+	public static Screen lightScreen; // Creates a front screen to render the darkness in caves (Fog of war).
 	
 	/// LEVEL AND PLAYER
 	
 	public static Level[] levels = new Level[6]; // This array stores the different levels.
-	public int currentLevel = 3; // This is the level the player is on. It defaults to 3, the surface.
+	public static int currentLevel = 3; // This is the level the player is on. It defaults to 3, the surface.
 	
 	public static final int[] idxToDepth = {-3, -2, -1, 0, 1, -4}; /// this is to map the level depths to each level's index in Game's levels array. This must ALWAYS be the same length as the levels array, of course.
 	public static final int minLevelDepth, maxLevelDepth;
@@ -134,17 +136,17 @@ public class Game extends Canvas implements Runnable {
 		maxLevelDepth = max;
 	}
 	
-	public InputHandler input; // input used in Game, Player, and just about all the *Menu classes.
-	public Display menu, newMenu; // the current menu you are on.
-	public Player player; // The Player.
+	public static InputHandler input; // input used in Game, Player, and just about all the *Menu classes.
+	public static Menu menu = null, newMenu = null; // the current menu you are on.
+	public static Player player; // The Player.
 	//public Level level; // This is the current level you are on.
 	private static int worldSize = 128; // The size of the world
 	public static int lvlw = worldSize; // The width of the world
 	public static int lvlh = worldSize; // The height of the world
 	
-	protected int playerDeadTime; // the time after you die before the dead menu shows up.
-	protected int pendingLevelChange; // used to determine if the player should change levels or not.
-	public boolean gameOver; // If the player wins this is set to true.
+	protected static int playerDeadTime; // the time after you die before the dead menu shows up.
+	protected static int pendingLevelChange; // used to determine if the player should change levels or not.
+	public static boolean gameOver; // If the player wins this is set to true.
 	
 	/// AUTOSAVE AND NOTIFICATIONS
 	
@@ -158,12 +160,12 @@ public class Game extends Canvas implements Runnable {
 	
 	/// SCORE MODE
 	
-	public int multiplier = 1; // Score multiplier
+	public static int multiplier = 1; // Score multiplier
 	private static final int mtm = 300; // time given to increase multiplier before it goes back to 1.
-	private int multipliertime = mtm; // Time left on the current multiplier.
+	private static int multipliertime = mtm; // Time left on the current multiplier.
 	
-	public static int scoreTime; // time remaining for score mode game.
-	private boolean showinfo;
+	public static int scoreTime; // time remaining for score mode Game.
+	private static boolean showinfo;
 	
 	public static boolean pastDay1 = true; // used to prefent mob spawn on surface on day 1.
 	public static boolean readyToRenderGameplay = false;
@@ -181,30 +183,13 @@ public class Game extends Canvas implements Runnable {
 		}
 	}
 	
-	/// *** CONSTRUCTOR *** ///
-	public Game() {
-		input = new InputHandler(this);
-		
-		fra = 0; // the frames processed in the previous second
-		tik = 0; // the ticks processed in the previous second
-		
-		//colors = new int[256];
-		image = new BufferedImage(WIDTH, HEIGHT, BufferedImage.TYPE_INT_RGB);
-		pixels = ((DataBufferInt) image.getRaster().getDataBuffer()).getData();
-		
-		asTick = 0;
-		notetick = 0;
-		
-		showinfo = false;
-		gameOver = false;
-	}
 	
 	// Sets the current menu.
-	public void setMenu(Display display) {
-		Display parent = this.menu;
-		this.newMenu = display;
+	public static void setMenu(Menu display) {
+		Menu parent = menu;
+		newMenu = display;
 		//if (debug) System.out.println("setting game menu to " + menu);
-		if (display != null) newMenu.init(this, input, parent);
+		//if (display != null) newMenu.init(this, input, parent);
 	}
 	
 	public static boolean isValidClient() {
@@ -222,20 +207,20 @@ public class Game extends Canvas implements Runnable {
 	}
 	
 	/// called after main; main is at bottom.
-	public void start() {
+	/*public static void start() {
 		running = true;
 		new Thread(this).start(); //calls run()
-	}
+	}*/
 	
 	// This is only called by GameApplet...
-	public void stop() {
+	/*public static void stop() {
 		running = false;
-	}
+	}*/
 	
 	/**
 	 * Initialization step, this is called when the game first starts. Sets up the screens.
 	 */
-	protected void init() {
+	protected static void init() {
 		/* This sets up the screens, and loads the icons.png spritesheet. */
 		try {
 			screen = new Screen(new SpriteSheet(ImageIO.read(Game.class.getResourceAsStream
@@ -251,10 +236,10 @@ public class Game extends Canvas implements Runnable {
 		
 		resetGame(); // "half"-starts a new game, to set up initial variables
 		player.eid = 0;
-		new Load(this); // this loads any saved preferences.
+		new Load(false); // this loads any saved preferences.
 		
 		if(autoclient)
-			setMenu(new MultiplayerMenu(this, "localhost"));
+			setMenu(new MultiplayerMenu( "localhost"));
 		else if(!HAS_GUI)
 			setMenu(new WorldSelectMenu());
 		else
@@ -262,8 +247,8 @@ public class Game extends Canvas implements Runnable {
 	}
 	
 	/** This method is used when respawning, and by initWorld to reset the vars. It does not generate any new terrain. */
-	public void resetGame() {
-		if(Game.debug) System.out.println("resetting game...");
+	public static void resetGame() {
+		if(Game.debug) System.out.println("resetting Game...");
 		playerDeadTime = 0;
 		currentLevel = 3;
 		asTick = 0;
@@ -297,7 +282,7 @@ public class Game extends Canvas implements Runnable {
 	
 	/** This method is used to create a brand new world, or to load an existing one from a file. */
 	/** For the loading screen updates to work, it it assumed that *this* is called by a thread *other* than the one rendering the current *menu*. */
-	public void initWorld() { // this is a full reset; everything.
+	public static void initWorld() { // this is a full reset; everything.
 		if(Game.debug) System.out.println("resetting world...");
 		
 		if(Game.isValidServer()) {
@@ -368,7 +353,7 @@ public class Game extends Canvas implements Runnable {
 	
 	// VERY IMPORTANT METHOD!! Makes everything keep happening.
 	// In the end, calls menu.tick() if there's a menu, or level.tick() if no menu.
-	public void tick() {
+	public static void tick() {
 		if(newMenu != menu)
 			menu = newMenu;
 		
@@ -738,10 +723,10 @@ public class Game extends Canvas implements Runnable {
 	
 	//private int ePos = 0;
 	//private int eposTick = 0;
-	private char[] dots = "   ".toCharArray();
+	private static char[] dots = "   ".toCharArray();
 	
 	/// just a little thing to make a progressive dot elipses.
-	private String getElipses() {
+	private static String getElipses() {
 		//String dots = "";
 		int time = tickCount % normSpeed; // sets the "dot clock" to normSpeed.
 		int interval = normSpeed / 2; // specifies the time taken for each fill up and empty of the dots.
@@ -755,13 +740,13 @@ public class Game extends Canvas implements Runnable {
 	
 	/** renders the current screen */
 	//called in game loop, a bit after tick()
-	public void render() {
+	public static void render() {
 		if(!HAS_GUI) return; // no point in this if there's no gui... :P
 		
-		BufferStrategy bs = getBufferStrategy(); // creates a buffer strategy to determine how the graphics should be buffered.
+		BufferStrategy bs = canvas.getBufferStrategy(); // creates a buffer strategy to determine how the graphics should be buffered.
 		if (bs == null) {
-			createBufferStrategy(3); // if the buffer strategy is null, then make a new one!
-			requestFocus(); // requests the focus of the screen.
+			canvas.createBufferStrategy(3); // if the buffer strategy is null, then make a new one!
+			canvas.requestFocus(); // requests the focus of the screen.
 			return;
 		}
 		
@@ -787,23 +772,23 @@ public class Game extends Canvas implements Runnable {
 		if (menu != null) // renders menu, if present.
 			menu.render(screen);
 		
-		if (!hasFocus() && !Game.ISONLINE) renderFocusNagger(); // calls the renderFocusNagger() method, which creates the "Click to Focus" message.
+		if (!canvas.hasFocus() && !Game.ISONLINE) renderFocusNagger(); // calls the renderFocusNagger() method, which creates the "Click to Focus" message.
 		
 		Graphics g = bs.getDrawGraphics(); // gets the graphics in which java draws the picture
-		g.fillRect(0, 0, getWidth(), getHeight()); // draws the a rect to fill the whole window (to cover last?)
+		g.fillRect(0, 0, canvas.getWidth(), canvas.getHeight()); // draws the a rect to fill the whole window (to cover last?)
 		
 		// scales the pixels.
 		int ww = getWindowSize().width;
 		int hh = getWindowSize().height;
 		// gets the image offset.
-		int xo = (getWidth() - ww) / 2 + getParent().getInsets().left;
-		int yo = (getHeight() - hh) / 2 + getParent().getInsets().top;
+		int xo = (canvas.getWidth() - ww) / 2 + canvas.getParent().getInsets().left;
+		int yo = (canvas.getHeight() - hh) / 2 + canvas.getParent().getInsets().top;
 		g.drawImage(image, xo, yo, ww, hh, null); //draws the image on the window
 		g.dispose(); // releases any system items that are using this method. (so we don't have crappy framerates)
 		bs.show(); // makes the picture visible. (probably)
 	}
 	
-	private void renderLevel() {
+	private static void renderLevel() {
 		Level level = Game.levels[currentLevel];
 		if(level == null) return;
 		
@@ -837,7 +822,7 @@ public class Game extends Canvas implements Runnable {
 	}
 	
 	/** Renders the main game GUI (hearts, Stamina bolts, name of the current item, etc.) */
-	private void renderGui() {
+	private static void renderGui() {
 		/// AH-HA! THIS DRAWS THE BLACK SQUARE!!
 		for (int x = 12; x < 29; x++) {
 			screen.render(x * 7, Screen.h - 8, 0 + 1 * 32, Color.get(0, 0), 0);
@@ -967,7 +952,7 @@ public class Game extends Canvas implements Runnable {
 			player.activeItem.renderInventory(screen, 12 * 7, Screen.h - 8, false);
 	}
 	
-	private void renderDebugInfo() {
+	private static void renderDebugInfo() {
 		int textcol = Color.get(-1, 555);
 		if (showinfo) { // renders show debug info on the screen.
 			ArrayList<String> info = new ArrayList<>();
@@ -1018,7 +1003,7 @@ public class Game extends Canvas implements Runnable {
 	}
 	
 	/** Renders the "Click to focus" box when you click off the screen. */
-	private void renderFocusNagger() {
+	private static void renderFocusNagger() {
 		String msg = "Click to focus!"; // the message when you click off the screen.
 		paused = true; //perhaps paused is only used for this.
 		int xx = Font.centerX(msg, 0, Screen.w); // the width of the box
@@ -1051,14 +1036,14 @@ public class Game extends Canvas implements Runnable {
 	}
 	
 	/** This method is called when you interact with stairs, this will give you the transition effect. While changeLevel(int) just changes the level. */
-	public void scheduleLevelChange(int dir) {
+	public static void scheduleLevelChange(int dir) {
 		// same as changeLevel(). Call scheduleLevelChange(1) if you want to go up 1 level,
 		// or call with -1 to go down by 1.
 		if(!Game.isValidServer())
 			pendingLevelChange = dir;
 	}
 	
-	public void startMultiplayerServer() {
+	public static void startMultiplayerServer() {
 		if(Game.debug) System.out.println("starting multiplayer server...");
 		
 		if(HAS_GUI) {
@@ -1098,19 +1083,19 @@ public class Game extends Canvas implements Runnable {
 			}
 		}
 		// now that that's done, let's turn *this* running JVM into a server:
-		server = new MinicraftServer(this);
+		server = new MinicraftServer();
 		
 		/// load up any saved config options for the server.
-		new Load(this, WorldSelectMenu.worldname, server);
+		new Load(WorldSelectMenu.worldname, server);
 	}
 	
 	/**
-	 * This is the main loop that runs the game. It:
+	 * This is the main loop that runs the Game. It:
 	 *	-keeps track of the amount of time that has passed
 	 *	-fires the ticks needed to run the game
 	 *	-fires the command to render out the screen.
 	 */
-	public void run() {
+	public static void run() {
 		long lastTime = System.nanoTime();
 		long lastRender = System.nanoTime();
 		double unprocessed = 0;
@@ -1123,7 +1108,7 @@ public class Game extends Canvas implements Runnable {
 		
 		//main game loop? calls tick() and render().
 		if(!HAS_GUI)
-			(new ConsoleReader(this)).start();
+			(new ConsoleReader()).start();
 		while (running) {
 			long now = System.nanoTime();
 			double nsPerTick = 1E9D / normSpeed; // nanosecs per sec divided by ticks per sec = nanosecs per tick
@@ -1240,12 +1225,12 @@ public class Game extends Canvas implements Runnable {
 		Game game = new Game();
 		
 		if(HAS_GUI) {
-			game.setMinimumSize(new Dimension(1, 1));
-			game.setPreferredSize(getWindowSize());
+			canvas.setMinimumSize(new Dimension(1, 1));
+			canvas.setPreferredSize(getWindowSize());
 			JFrame frame = new JFrame(Game.NAME);
 			frame.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
 			frame.setLayout(new BorderLayout()); // sets the layout of the window
-			frame.add(game, BorderLayout.CENTER); // Adds the game (which is a canvas) to the center of the screen.
+			frame.add(canvas, BorderLayout.CENTER); // Adds the game (which is a canvas) to the center of the screen.
 			frame.pack(); //squishes everything into the preferredSize.
 			frame.setLocationRelativeTo(null); // the window will pop up in the middle of the screen when launched.
 			
@@ -1271,25 +1256,38 @@ public class Game extends Canvas implements Runnable {
 					if(Game.isValidServer())
 						Game.server.endConnection();
 					
-					game.quit();
+					Game.quit();
 				}
 			});
 			
 			frame.setVisible(true);
 		}
 		
-		game.autoclient = autoclient; // this will make the game automatically jump to the MultiplayerMenu, and attempt to connect to localhost.
+		Game.autoclient = autoclient; // this will make the game automatically jump to the MultiplayerMenu, and attempt to connect to localhost.
 		
-		Game.main = game; // sets the main game instance reference.
+		input = new InputHandler(this);
 		
-		game.start(); // Starts the game!
+		fra = 0; // the frames processed in the previous second
+		tik = 0; // the ticks processed in the previous second
+		
+		//colors = new int[256];
+		image = new BufferedImage(WIDTH, HEIGHT, BufferedImage.TYPE_INT_RGB);
+		pixels = ((DataBufferInt) image.getRaster().getDataBuffer()).getData();
+		
+		asTick = 0;
+		notetick = 0;
+		
+		showinfo = false;
+		gameOver = false;
+		
+		//Game.start(); // Starts the game!
 	}
 	
 	public static Dimension getWindowSize() {
 		return new Dimension(new Float(WIDTH * SCALE).intValue(), new Float(HEIGHT * SCALE).intValue());
 	}
 	
-	public void quit() {
+	public static void quit() {
 		if(Game.isConnectedClient()) Game.client.endConnection();
 		if(Game.isValidServer()) Game.server.endConnection();
 		stop();

@@ -53,7 +53,7 @@ public class MinicraftServer extends Thread implements MinicraftProtocol {
 		
 		Game.ISONLINE = true;
 		Game.ISHOST = true; // just in case.
-		game.player.remove(); // the server has no player...
+		Game.player.remove(); // the server has no player...
 		
 		worldPath = Game.gameDir + "/saves/" + WorldSelectMenu.worldname;
 		
@@ -404,13 +404,13 @@ public class MinicraftServer extends Thread implements MinicraftProtocol {
 					/// this is the first person on localhost. I believe that a second person will be saved as a loopback address (later: jk the first one actually will), but a third will simply overwrite the second.
 					if (Game.debug) System.out.println("SERVER: host player found");
 					
-					if(game.player != null) {
+					if(Game.player != null) {
 						// save the player, and then remove it.
-						playerdata = game.player.getPlayerData();
+						playerdata = Game.player.getPlayerData();
 						
 						//if (Game.debug) System.out.println("SERVER: setting main player as remote from login.");
-						game.player.remove(); // all the important data has been saved.
-						game.player = null;
+						Game.player.remove(); // all the important data has been saved.
+						Game.player = null;
 					} else {
 						/// load the data from file instead.
 						try {

@@ -65,12 +65,12 @@ public class LoadingDisplay extends MessageDisplay implements ActionListener {
 	private void initWorld() {
 		if(Game.debug) System.out.println("starting game initWorld...");
 		
-		game.initWorld();
+		Game.initWorld();
 		try {
 			Thread.sleep((WorldSelectMenu.loadworld?100:300));
 		} catch(InterruptedException ignored) {}
 		if(Game.debug) System.out.println("setting game menu to null from loading...");
-		game.setMenu(null);
+		Game.setMenu(null);
 	}
 
 	public void render(Screen screen) {

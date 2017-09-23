@@ -83,7 +83,7 @@ public class WorldSelectMenu extends ScrollingMenu {
 		super.init(game, input, parent);
 		if(!Game.HAS_GUI) {
 			if (Game.debug) System.out.println("gone through world select menu...");
-			game.setMenu(new LoadingDisplay()); // the choice has already been made, begin world load.
+			Game.setMenu(new LoadingDisplay()); // the choice has already been made, begin world load.
 		}
 	}
 	
@@ -190,7 +190,7 @@ public class WorldSelectMenu extends ScrollingMenu {
 						//proceed to mode selection
 						worldname = typingname;
 						if (Game.debug) System.out.println("create mode: " + worldname);
-						game.setMenu(new ModeMenu());
+						Game.setMenu(new ModeMenu());
 					}
 					break;
 				
@@ -199,9 +199,9 @@ public class WorldSelectMenu extends ScrollingMenu {
 					worldname = worldnames.get(selected).getText();
 					if (Game.debug) System.out.println("load mode: " + worldname);
 					Sound.confirm.play();
-					game.setMenu(new LoadingDisplay());
-					//game.initWorld();
-					//game.setMenu((Menu) null);
+					Game.setMenu(new LoadingDisplay());
+					//Game.initWorld();
+					//Game.setMenu((Menu) null);
 					break;
 				
 				case Rename:
@@ -212,7 +212,7 @@ public class WorldSelectMenu extends ScrollingMenu {
 					world = new File(location + "/" + worldnames.get(selected));
 					if (Game.debug) System.out.println("renaming world " + world + " to new name: " + worldname);
 					world.renameTo(new File(location + "/" + worldname));
-					//game.setMenu(new WorldSelectMenu());
+					//Game.setMenu(new WorldSelectMenu());
 					loadWorlds();
 					mode = Action.Load;
 					break;
@@ -262,7 +262,7 @@ public class WorldSelectMenu extends ScrollingMenu {
 					
 					loadWorlds();
 					mode = Action.Load;
-					//game.setMenu(new WorldSelectMenu());
+					//Game.setMenu(new WorldSelectMenu());
 					break;
 				
 				case Delete:
@@ -281,10 +281,10 @@ public class WorldSelectMenu extends ScrollingMenu {
 					//loadworld = false;
 					loadWorlds();
 					if (worldnames.size() > 0) {
-						//game.setMenu(new WorldSelectMenu());
+						//Game.setMenu(new WorldSelectMenu());
 						mode = Action.Load;
 					} else {
-						game.setMenu(new TitleMenu());
+						Game.setMenu(new TitleMenu());
 					}
 					break;
 				
@@ -304,7 +304,7 @@ public class WorldSelectMenu extends ScrollingMenu {
 					break;
 				
 				default:
-					game.setMenu(new TitleMenu());
+					Game.setMenu(new TitleMenu());
 					loadworld = false;
 			}
 		}

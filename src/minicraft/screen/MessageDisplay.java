@@ -23,7 +23,7 @@ public abstract class MessageDisplay extends Display {
 	
 	public void tick() {
 		if(input.getKey("select").clicked || input.getKey("exit").clicked)
-			game.setMenu(parent);
+			Game.setMenu(parent);
 	}
 	
 	public void render(Screen screen) {

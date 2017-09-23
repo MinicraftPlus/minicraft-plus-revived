@@ -22,7 +22,7 @@ public class Screen {
 	
 	public int[] pixels; // pixels on the screen
 	
-	protected SpriteSheet sheet; // the sprite sheet used in the game.
+	protected SpriteSheet sheet; // the sprite sheet used in the Game.
 	
 	public Screen(SpriteSheet sheet) {
 		this.sheet = sheet;

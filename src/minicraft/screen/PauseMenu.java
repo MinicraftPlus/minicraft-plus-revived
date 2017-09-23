@@ -40,7 +40,7 @@ public class PauseMenu extends Menu {
 
 	public void tick() {
 		if (input.getKey("pause").clicked) {
-			game.setMenu(parent);
+			Game.setMenu(parent);
 			return;
 		}
 		
@@ -52,41 +52,41 @@ public class PauseMenu extends Menu {
 			String confirmed = selection >= 0 ? ((StringEntry[])options)[selection].getText() : "";
 			
 			switch(chosen) {
-				case "Return to Game": game.setMenu(parent); return;
-				case "Options": game.setMenu(Displays.options); return;
-				case "Change Key Bindings": game.setMenu(new KeyInputMenu(Game.main.input.getKeyPrefs())); return;
+				case "Return to Game": Game.setMenu(parent); return;
+				case "Options": Game.setMenu(Displays.options); return;
+				case "Change Key Bindings": Game.setMenu(new KeyInputMenu(Game.main.input.getKeyPrefs())); return;
 				default:
 					selection = selected; // for any other choice, this progresses a choice to a confirmation.
 			}
 			
 			switch(confirmed) {
 				case "Save Game":
-					game.setMenu(null);
+					Game.setMenu(null);
 					if(!Game.isValidServer())
-						new Save(game.player, WorldSelectMenu.worldname);
+						new Save(Game.player, WorldSelectMenu.worldname);
 					else
 						Game.server.saveWorld();
 				return;
 				
 				case "Load World":
 					WorldSelectMenu.loadworld = true;
-					game.setMenu(new WorldSelectMenu());
+					Game.setMenu(new WorldSelectMenu());
 				return;
 				
 				case "Make World Multiplayer":
-					game.setMenu(null);
-					//new Save(game.player, WorldSelectMenu.worldname);
-					game.startMultiplayerServer();
+					Game.setMenu(null);
+					//new Save(Game.player, WorldSelectMenu.worldname);
+					Game.startMultiplayerServer();
 				return;
 				
 				case "Main Menu":
-					game.setMenu(new TitleMenu());
+					Game.setMenu(new TitleMenu());
 				return;
 			}
 		}
 		
 		if (input.getKey("exit").clicked)
-			game.setMenu(parent);
+			Game.setMenu(parent);
 	}
 
 	public void render(Screen screen) {

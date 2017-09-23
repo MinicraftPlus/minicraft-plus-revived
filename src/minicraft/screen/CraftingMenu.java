@@ -67,7 +67,7 @@ public class CraftingMenu extends ScrollingMenu {
 
 	public void tick() {
 		if (input.getKey("menu").clicked || personal && input.getKey("craft").clicked) {
-			game.setMenu(null); //menu exit condition
+			Game.setMenu(null); //menu exit condition
 			return;
 		}
 		

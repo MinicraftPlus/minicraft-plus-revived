@@ -91,8 +91,8 @@ public class InputHandler implements MouseListener, KeyListener {
 		keyboard.put("ALT", new Key(true));
 		
 		if(listenToKeyboard)
-			game.addKeyListener(this); //add key listener to game
-		//game.addMouseListener(this); //add mouse listener to game (though it's never used)
+			Game.addKeyListener(this); //add key listener to game
+		//Game.addMouseListener(this); //add mouse listener to game (though it's never used)
 		//ticks = 0;
 		this.game = game;
 	}
@@ -113,7 +113,7 @@ public class InputHandler implements MouseListener, KeyListener {
 		keymap.put("DROP-ONE", "Q"); // drops the item in your hand, or selected in your inventory, by ones; it won't drop an entire stack
 		keymap.put("DROP-STACK", "SHIFT-Q"); // drops the item in your hand, or selected in your inventory, entirely; even if it's a stack.
 		
-		keymap.put("PAUSE", "ESCAPE"); // pause the game.
+		keymap.put("PAUSE", "ESCAPE"); // pause the Game.
 		keymap.put("SETHOME", "SHIFT-H"); // set your home.
 		keymap.put("HOME", "H"); // go to set home.
 		//keymap.put("SAVE", "R");

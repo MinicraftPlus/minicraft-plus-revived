@@ -39,7 +39,7 @@ public class KeyInputMenu extends ScrollingMenu {
 		}
 		
 		if(input.getKey("exit").clicked && !confirmReset) {
-			game.setMenu(parent);
+			Game.setMenu(parent);
 			new Save(game);
 			return;
 		}

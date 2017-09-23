@@ -52,8 +52,8 @@ public class Save {
 		//writePrefs("KeyPrefs");
 		writeWorld("Level");
 		if(!Game.isValidServer()) { // this must be waited for on a server.
-			writePlayer("Player", game.player);
-			writeInventory("Inventory", game.player);
+			writePlayer("Player", Game.player);
+			writeInventory("Inventory", Game.player);
 		}
 		writeEntities("Entities");
 		
@@ -96,7 +96,7 @@ public class Save {
 			LoadingDisplay.setPercentage(100);
 		}
 		
-		game.render(); // AH HA!!! HERE'S AN IMPORTANT STATEMENT!!!!
+		Game.render(); // AH HA!!! HERE'S AN IMPORTANT STATEMENT!!!!
 	}
 	
 	public static void writeToFile(String filename, String[] savedata, boolean isWorldSave) throws IOException {
@@ -159,7 +159,7 @@ public class Save {
 		data.add(MultiplayerMenu.savedUsername);
 		
 		List<String> keyPairs = new ArrayList<>();
-		Collections.addAll(keyPairs, game.input.getKeyPrefs());
+		Collections.addAll(keyPairs, Game.input.getKeyPrefs());
 		
 		data.add(String.join(":", keyPairs.toArray(new String[0])));
 		
@@ -217,7 +217,7 @@ public class Save {
 		data.add(String.valueOf(player.score));
 		//data.add(String.valueOf(player.ac));
 		data.add("25"); // TODO filler; remove this, but make sure not to break the Load class's LoadPlayer() method while doing so.
-		data.add(String.valueOf(player.game.currentLevel));
+		data.add(String.valueOf(player.Game.currentLevel));
 		data.add(ModeMenu.mode + (ModeMenu.score?";"+Game.scoreTime+";"+ModeMenu.getSelectedTime():""));
 		
 		StringBuilder subdata = new StringBuilder("PotionEffects[");
@@ -280,7 +280,7 @@ public class Save {
 		//name = name.substring(name.lastIndexOf(".")+1);
 		StringBuilder extradata = new StringBuilder();
 		
-		// don't even write ItemEntities or particle effects; Spark... will probably is saved, eventually; it presents an unfair cheat to remove the sparks by reloading the game.
+		// don't even write ItemEntities or particle effects; Spark... will probably is saved, eventually; it presents an unfair cheat to remove the sparks by reloading the Game.
 		
 		//if(e instanceof Particle) return ""; // TODO I don't want to, but there are complications.
 		

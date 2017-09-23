@@ -24,7 +24,7 @@ public class RemotePlayer extends Player {
 	
 	public RemotePlayer(Player previous, Game game, InetAddress ip, int port) { this(previous, game, false, ip, port); }
 	public RemotePlayer(Player previous, Game game, boolean isMainPlayer, InetAddress ip, int port) {
-		super(previous, game, (isMainPlayer?game.input:new InputHandler(game, false)));
+		super(previous, game, (isMainPlayer?Game.input:new InputHandler(game, false)));
 		this.ipAddress = ip;
 		this.port = port;
 	}
@@ -45,7 +45,7 @@ public class RemotePlayer extends Player {
 	}
 	
 	public void tick() {
-		if(!Game.isValidServer() && this == game.player)
+		if(!Game.isValidServer() && this == Game.player)
 			super.tick();
 		else {
 			// a minimal thing for render update purposes.
@@ -67,7 +67,7 @@ public class RemotePlayer extends Player {
 		
 		boolean moved = super.move(xa, ya);
 		
-		if(!(oldxt == x>>4 && oldyt == y>>4) && Game.isConnectedClient() && this == game.player) {
+		if(!(oldxt == x>>4 && oldyt == y>>4) && Game.isConnectedClient() && this == Game.player) {
 			// if moved (and is client), then check any tiles no longer loaded, and remove any entities on them.
 			updateSyncArea(oldxt, oldyt);
 		}

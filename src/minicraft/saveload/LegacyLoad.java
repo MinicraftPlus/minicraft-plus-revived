@@ -60,9 +60,9 @@ public class LegacyLoad {
 		
 		loadGame("Game", game); // more of the version will be determined here
 		loadWorld("Level", game);
-		loadPlayer("Player", game.player);
-		loadInventory("Inventory", game.player.inventory);
-		loadEntities("Entities", game.player);
+		loadPlayer("Player", Game.player);
+		loadInventory("Inventory", Game.player.inventory);
+		loadEntities("Entities", Game.player);
 		LoadingDisplay.setPercentage(0); // reset
 	}
 	
@@ -227,17 +227,17 @@ public class LegacyLoad {
 			} else player.armor = 0;
 			
 			//player.ac = Integer.parseInt(data.get(7));
-			player.game.currentLevel = Integer.parseInt(data.get(8));
+			player.Game.currentLevel = Integer.parseInt(data.get(8));
 			modedata = data.get(9);
 			
 		} else {
 			// old, 1.8 save.
-			player.game.currentLevel = Integer.parseInt(data.get(7));
+			player.Game.currentLevel = Integer.parseInt(data.get(7));
 			modedata = data.get(8);
 		}
 		
 		player.score = Integer.parseInt(data.get(6));
-		Game.levels[player.game.currentLevel].add(player);
+		Game.levels[player.Game.currentLevel].add(player);
 		
 		int mode;
 		if(modedata.contains(";")) {
@@ -289,7 +289,7 @@ public class LegacyLoad {
 			loadItemToInventory(item, inventory);
 		}
 		
-		if(playerac > 0 && inventory == game.player.inventory) {
+		if(playerac > 0 && inventory == Game.player.inventory) {
 			inventory.add(Items.get("arrow"), playerac);
 			playerac = 0;
 		}

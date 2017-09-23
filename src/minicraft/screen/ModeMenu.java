@@ -83,11 +83,11 @@ public class ModeMenu extends Menu {
 		}
 		
 		if (input.getKey("z").clicked)
-			game.setMenu(Displays.worldGen);
+			Game.setMenu(Displays.worldGen);
 		else if(input.getKey("select").clicked)
-			game.setMenu(new LoadingDisplay());
+			Game.setMenu(new LoadingDisplay());
 		else if (input.getKey("exit").clicked)
-			game.setMenu(new TitleMenu());
+			Game.setMenu(new TitleMenu());
 	}
 	
 	public static void updateModeBools(String mode) {

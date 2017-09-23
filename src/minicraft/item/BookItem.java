@@ -26,7 +26,7 @@ public class BookItem extends Item {
 	}
 	
 	public boolean interactOn(Tile tile, Level level, int xt, int yt, Player player, int attackDir) {
-		player.game.setMenu(new BookDisplay(book));
+		player.Game.setMenu(new BookDisplay(book));
 		return true;
 	}
 	

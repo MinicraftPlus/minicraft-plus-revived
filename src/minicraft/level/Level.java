@@ -542,7 +542,7 @@ public class Level {
 	}
 	public ItemEntity dropItem(int x, int y, Item i) {
 		/*if(Game.debug && ModeMenu.creative)
-			game.player.inventory.add(i);
+			Game.player.inventory.add(i);
 		else {*/
 			int ranx, rany;
 			do {
