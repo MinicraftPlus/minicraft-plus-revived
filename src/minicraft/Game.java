@@ -1246,6 +1246,14 @@ public class Game {
 			frame.setLayout(new BorderLayout()); // sets the layout of the window
 			frame.add(canvas, BorderLayout.CENTER); // Adds the game (which is a canvas) to the center of the screen.
 			frame.pack(); //squishes everything into the preferredSize.
+			
+			try {
+				BufferedImage logo = ImageIO.read(new File("resources/logo.png"));
+				frame.setIconImage(logo);
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+			
 			frame.setLocationRelativeTo(null); // the window will pop up in the middle of the screen when launched.
 			
 			frame.addComponentListener(new ComponentAdapter() {
