@@ -2,16 +2,13 @@ package minicraft;
 
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
-import java.awt.event.MouseEvent;
-import java.awt.event.MouseListener;
 import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
-import java.util.List;
 
-public class InputHandler implements MouseListener, KeyListener {
-	/** Note: Yay! I made HUGE revisions to this class, so I get to make the comments!
+public class InputHandler implements /*MouseListener, */KeyListener {
+	/* Note: Yay! I made HUGE revisions to this class, so I get to make the comments!
 		...and I actually know what I'm talking about. ;)
 			-Chris J
 	*/
@@ -68,14 +65,14 @@ public class InputHandler implements MouseListener, KeyListener {
 	
 	private HashMap<String, String> keymap; // The symbolic map of actions to physical key names.
 	private HashMap<String, Key> keyboard; // The actual map of key names to Key objects.
-	public String lastKeyTyped = ""; // Used for things like typing world names.
+	private String lastKeyTyped = ""; // Used for things like typing world names.
 	
 	// mouse stuff that's never used
-	public List<Mouse> mouse = new ArrayList<>();
+	/*public List<Mouse> mouse = new ArrayList<>();
 	public Mouse one = new Mouse();
 	public Mouse two = new Mouse();
 	public Mouse tri = new Mouse();
-	
+	*/
 	
 	public InputHandler() { this(true); }
 	public InputHandler(boolean listenToKeyboard) {
@@ -356,12 +353,12 @@ public class InputHandler implements MouseListener, KeyListener {
 		getPhysKey(keytext).toggle(pressed);
 	}
 	
-	public static boolean isMod(String keyname) {
+	private static boolean isMod(String keyname) {
 		keyname = keyname.toUpperCase();
 		return keyname.equals("SHIFT") || keyname.equals("CTRL") || keyname.equals("ALT");
 	}
 	
-	public String getCurModifiers() {
+	private String getCurModifiers() {
 		return (getKey("ctrl").down?"CTRL-":"") +
 				(getKey("alt").down?"ALT-":"") +
 				(getKey("shift").down?"SHIFT-":"");
@@ -397,6 +394,7 @@ public class InputHandler implements MouseListener, KeyListener {
 		lastKeyTyped = String.valueOf(ke.getKeyChar());
 	}
 	
+	/*
 	//Mouse class! That...never really ever gets used... and so shall not be commented...
 	public class Mouse {
 		public int pressesd, absorbsd; //d=down?
@@ -410,7 +408,7 @@ public class InputHandler implements MouseListener, KeyListener {
 			if (clickd != down) down = clickd;
 			if (clickd) pressesd++;
 		}
-
+		
 		public void tick() {
 			if (absorbsd < pressesd) {
 				absorbsd++;
@@ -419,9 +417,28 @@ public class InputHandler implements MouseListener, KeyListener {
 				click = false;
 			}
 		}
+	}*/
+	
+	private static final String control = "\\p{Print}"; // should match only printable characters.
+	public String addKeyTyped(String typing, String pattern) {
+		if(lastKeyTyped.length() > 0) {
+			String letter = lastKeyTyped;
+			lastKeyTyped = "";
+			if( letter.matches(control) && (pattern == null || letter.matches(pattern)) )
+				typing += letter;
+		}
+		
+		if(getKey("backspace").clicked) {
+			// backspace counts as a letter itself, but we don't have to worry about it if it's part of the regex.
+			typing = typing.substring(0, typing.length()-1);
+		}
+		
+		return typing;
 	}
 	
-	//called by MouseListener methods.
+	
+	
+	/*//called by MouseListener methods.
 	private void click(MouseEvent e, boolean clickd) {
 		if (e.getButton() == MouseEvent.BUTTON1) one.toggle(clickd);
 		if (e.getButton() == MouseEvent.BUTTON2) two.toggle(clickd);
@@ -433,5 +450,5 @@ public class InputHandler implements MouseListener, KeyListener {
 	public void mouseExited(MouseEvent e) {}
 	
 	public void mousePressed(MouseEvent e) { click(e, true); }
-	public void mouseReleased(MouseEvent e) { click(e, false); }
+	public void mouseReleased(MouseEvent e) { click(e, false); }*/
 }
