@@ -24,9 +24,19 @@ public class Color {
 			and white is the fourth color.
 	*/
 	
-	/**
+	/*
 		To provide a method to the madness, all methods ending in "Color" are copies of the methods of the same name without the "Color" part, execpt they convert the given value to 24bit Java RGB rather than the normal, minicraft 8-bit total RGB (that really only goes up to 216).
 	*/
+	
+	public static final int WHITE = Color.get(555);
+	public static final int GRAY = Color.get(222);
+	public static final int BLACK = Color.get(0);
+	public static final int RED = Color.get(500);
+	public static final int GREEN = Color.get(50);
+	public static final int BLUE = Color.get(5);
+	public static final int YELLOW = Color.get(550);
+	public static final int MAGENTA = Color.get(55);
+	public static final int CYAN = Color.get(55);
 	
 	/** This returns a integer with 4 rgb color values. */
 	public static int get(int a, int b, int c, int d) {
