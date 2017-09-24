@@ -150,14 +150,14 @@ public class MultiplayerMenu extends Display {
 					setWaitMessage("connecting to server");
 					savedIP = typing;
 					Game.client = new MinicraftClient(savedUsername,this, typing); // typing = ipAddress
-					new Save(game); // write the saved ip to file
+					new Save(); // write the saved ip to file
 					typing = "";
 					return;
 				} else if(input.getKey("shift-escape").clicked) {
 					// logout
 					MultiplayerMenu.savedUUID = "";
 					MultiplayerMenu.savedUsername = "";
-					new Save(game); // so the next time they start up the game to log in, it won't try to log in automatically.
+					new Save(); // so the next time they start up the game to log in, it won't try to log in automatically.
 					typing = "";
 					curState = State.LOGIN;
 				}
