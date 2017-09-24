@@ -221,7 +221,7 @@ public class Save {
 		data.add(String.valueOf(player.score));
 		//data.add(String.valueOf(player.ac));
 		data.add("25"); // TODO filler; remove this, but make sure not to break the Load class's LoadPlayer() method while doing so.
-		data.add(String.valueOf(player.Game.currentLevel));
+		data.add(String.valueOf(Game.currentLevel));
 		data.add(ModeMenu.mode + (ModeMenu.score?";"+Game.scoreTime+";"+ModeMenu.getSelectedTime():""));
 		
 		StringBuilder subdata = new StringBuilder("PotionEffects[");

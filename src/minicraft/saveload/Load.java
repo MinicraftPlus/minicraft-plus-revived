@@ -464,10 +464,10 @@ public class Load {
 		if(worldVer.compareTo(new Version("2.0.1-dev1")) < 0)
 			player.inventory.add(Items.get("arrow"), Integer.parseInt(data.get(7)));
 		
-		player.Game.currentLevel = Integer.parseInt(data.get(8));
-		Level level = Game.levels[player.Game.currentLevel];
-		if(player.Game.player != null)
-			player.Game.player.remove(); // removes the user player from the level, in case they would be added twice.
+		Game.currentLevel = Integer.parseInt(data.get(8));
+		Level level = Game.levels[Game.currentLevel];
+		if(Game.player != null)
+			Game.player.remove(); // removes the user player from the level, in case they would be added twice.
 		if(level != null)
 			level.add(player);
 		else if(Game.debug) System.out.println(Game.onlinePrefix()+"game level to add player " + player + " to is null.");
