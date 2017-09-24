@@ -227,17 +227,17 @@ public class LegacyLoad {
 			} else player.armor = 0;
 			
 			//player.ac = Integer.parseInt(data.get(7));
-			player.Game.currentLevel = Integer.parseInt(data.get(8));
+			Game.currentLevel = Integer.parseInt(data.get(8));
 			modedata = data.get(9);
 			
 		} else {
 			// old, 1.8 save.
-			player.Game.currentLevel = Integer.parseInt(data.get(7));
+			Game.currentLevel = Integer.parseInt(data.get(7));
 			modedata = data.get(8);
 		}
 		
 		player.score = Integer.parseInt(data.get(6));
-		Game.levels[player.Game.currentLevel].add(player);
+		Game.levels[Game.currentLevel].add(player);
 		
 		int mode;
 		if(modedata.contains(";")) {

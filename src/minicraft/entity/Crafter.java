@@ -40,7 +40,7 @@ public class Crafter extends Furniture {
 	}
 	
 	public boolean use(Player player, int attackDir) {
-		player.Game.setMenu(new CraftingMenu(type.recipes, player));
+		Game.setMenu(new CraftingMenu(type.recipes, player));
 		return true;
 	}
 	

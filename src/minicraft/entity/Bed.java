@@ -25,7 +25,7 @@ public class Bed extends Furniture {
 			Bed.playerLevel = player.getLevel();
 			Bed.inBed = true;
 			if (Game.debug) System.out.println(Game.onlinePrefix()+"player got in bed: " + player);
-			if(Game.isConnectedClient() && player == player.Game.player) {
+			if(Game.isConnectedClient() && player == Game.player) {
 				Game.client.sendBedRequest(player, this);
 			}
 			else {
