@@ -195,6 +195,20 @@ public class Load {
 		}
 	}
 	
+	public static ArrayList<String> loadFile(String filename) throws IOException {
+		ArrayList<String> lines = new ArrayList<>();
+		
+		try (BufferedReader br = new BufferedReader(new FileReader(filename))) {
+			
+			String line;
+			while((line = br.readLine()) != null)
+				lines.add(line);
+			
+		}
+		
+		return lines;//.toArray(new String[lines.size()]);
+	}
+	
 	public void loadFromFile(String filename) {
 		data.clear();
 		extradata.clear();

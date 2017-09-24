@@ -36,7 +36,7 @@ public class Save {
 	}
 	
 	/// this saves world options
-	public Save(Player player, String worldname) { this(player.worldname); }
+	public Save(Player player, String worldname) { this(worldname); }
 	public Save(String worldname) {
 		this(new File(Game.gameDir+"/saves/" + worldname.toLowerCase() + "/"));
 		
@@ -77,7 +77,13 @@ public class Save {
 	
 	public Save(Player player) {
 		// this is simply for access to writeToFile.
-		this(player.new File(Game.gameDir+"/saves/"+WorldSelectMenu.worldname + "/"));
+		this(new File(Game.gameDir+"/saves/"+WorldSelectMenu.worldname + "/"));
+	}
+	
+	public static void writeFile(String filename, String[] lines) throws IOException {
+		try (BufferedWriter br = new BufferedWriter(new FileWriter(filename))) {
+			br.write(String.join(System.lineSeparator(), lines));
+		}
 	}
 	
 	public void writeToFile(String filename, List<String> savedata) {
