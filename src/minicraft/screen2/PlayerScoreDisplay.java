@@ -1,13 +1,11 @@
-package minicraft.screen;
+package minicraft.screen2;
 
-import java.io.BufferedWriter;
-import java.io.FileWriter;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Random;
+
 import minicraft.Game;
+import minicraft.InputHandler;
 import minicraft.entity.Player;
 import minicraft.gfx.Color;
 import minicraft.gfx.Font;
@@ -26,11 +24,12 @@ public class PlayerScoreDisplay extends Display {
 	private int finalscore;
 	private String location = Game.gameDir;
 	private ArrayList<String> unlocks;
+	private String title;
 	
 	public PlayerScoreDisplay(Player player) {
 		super();
-		String title = "Game Over!" + (ModeMenu.score ? " (" + ModeMenu.getSelectedTime() + ")" : "");
-		setFrames(new Frame(title, new Rectangle(1, 3, Screen.w-2, Screen.h-4)));
+		
+		//title = "Game Over!" + (ModeMenu.score ? " (" + ModeMenu.getSelectedTime() + ")" : "");
 		
 		displayTimer = Game.normSpeed; // wait 3 seconds before rendering the menu.
 		inputDelay = Game.normSpeed/2; // wait a half-second after rendering before allowing user input.
@@ -57,15 +56,16 @@ public class PlayerScoreDisplay extends Display {
 		writeUnlocks();
 	}
 
-	public void tick() {
+	public void tick(InputHandler input) {
 		if (displayTimer > 0) displayTimer--;
 		else if (inputDelay > 0) inputDelay--;
 		else if (input.getKey("exit").clicked) {
 			Game.setMenu(new TitleMenu());
 		}
 	}
-
-	public void writeUnlocks() {
+	
+	public void writeUnlocks() {}
+	/*public void writeUnlocks() {
 		String scoreTime = ModeMenu.getSelectedTime();
 		List<String> unlockedtimes = ModeMenu.unlockedtimes;
 		
@@ -100,14 +100,15 @@ public class PlayerScoreDisplay extends Display {
 		
 		ModeMenu.unlockedtimes.addAll(unlocks);
 		ModeMenu.initTimeList();
-	}
+	}*/
 	
 	static boolean rendered = false; /// this is a little experiment I'm doing, to see if it will work. The idea is that once it's already drawn everything, nothing's moving, so it should stay drawn. That way I won't have to redraw it every render cycle, which will hopefully save on cpu power... or something...
 	
 	public void render(Screen screen) {
 		if(displayTimer > 0 || rendered) return;
 		
-		super.render(screen); // draws the frame and title
+		new Frame(title, new Rectangle(1, 3, Screen.w-2, Screen.h-4)).render(screen);
+		//super.render(screen); // draws the frame and title
 		//Font.drawCentered("Game Over!", screen, 4*8, Color.get(-1, 555));
 		
 		if(unlocks.size() > 0) {
@@ -133,7 +134,7 @@ public class PlayerScoreDisplay extends Display {
 			Font.draw("Fail!", screen, 17*8, 17*8, Color.get(-1, 500));
 		}
 
-		Font.draw("Press "+input.getMapping("exit")+" to exit to menu...", screen, 16, 19*8, Color.get(-1, 333));
+		Font.draw("Press "+Game.input.getMapping("exit")+" to exit to menu...", screen, 16, 19*8, Color.get(-1, 333));
 		rendered = true;
 	}
 }

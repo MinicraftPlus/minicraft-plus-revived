@@ -25,8 +25,11 @@ public class ScrollingMenu extends Menu {
 	private int padding;
 	//private boolean wrap;
 	
-	protected ScrollingMenu(MenuData data, Menu parent, int dispLen, /*boolean wrap, */float padding) {
-		super(data);
+	protected ScrollingMenu(MenuData data, int dispLen, /*boolean wrap, */float padding, Frame... frames) {
+		this(data, false, dispLen, padding, frames);
+	}
+	protected ScrollingMenu(MenuData data, boolean mutable, int dispLen, /*boolean wrap, */float padding, Frame... frames) {
+		super(data, mutable, frames);
 		dispSelection = getSelection();
 		this.displayLength = dispLen;
 		
@@ -50,43 +53,54 @@ public class ScrollingMenu extends Menu {
 		
 		super.tick(input);
 		
-		if(Game.getMenu() != this)
+		if(Game.getMenuType() != this)
 			return; // don't continue if we aren't still the current menu
 		
-		if(prevSel != getSelection()) {
-			int prevOffset = prevSel - dispSelection;
-			// selection changed; update displayed entries and selection
-			dispSelection += getSelection() - prevSel;
-			
-			if(dispSelection < 0) dispSelection = 0;
-			if(dispSelection >= displayLength) dispSelection = displayLength - 1;
-			
-			// check if dispSelection is past padding point, and if so, bring it back in
-			
-			int offset = getSelection() - dispSelection;
-			
-			// for scrolling up
-			while(dispSelection < padding && offset > 0) {
-				offset--;
-				dispSelection++;
-			}
-			
-			// for scrolling down
-			while(displayLength - dispSelection < padding && offset + displayLength < getNumEntries()) {
-				offset++;
-				dispSelection--;
-			}
-			
-			// use offset to redefine entry list, if it has changed
-			if(prevOffset != offset) {
-				dispEntries = Arrays.copyOfRange(getEntries(), offset, Math.min(offset+displayLength, getNumEntries()));
-			}
+		updateSelection(prevSel);
+	}
+	
+	@Override
+	void updateEntries() {
+		int selection = getSelection();
+		super.updateEntries();
+		updateSelection(selection);
+	}
+	
+	private void updateSelection(int prevSel) {
+		if(prevSel == getSelection()) return;
+		
+		int prevOffset = prevSel - dispSelection;
+		// selection changed; update displayed entries and selection
+		dispSelection += getSelection() - prevSel;
+		
+		if(dispSelection < 0) dispSelection = 0;
+		if(dispSelection >= displayLength) dispSelection = displayLength - 1;
+		
+		// check if dispSelection is past padding point, and if so, bring it back in
+		
+		int offset = getSelection() - dispSelection;
+		
+		// for scrolling up
+		while(dispSelection < padding && offset > 0) {
+			offset--;
+			dispSelection++;
+		}
+		
+		// for scrolling down
+		while(displayLength - dispSelection < padding && offset + displayLength < getNumEntries()) {
+			offset++;
+			dispSelection--;
+		}
+		
+		// use offset to redefine entry list, if it has changed
+		if(prevOffset != offset) {
+			dispEntries = Arrays.copyOfRange(getEntries(), offset, Math.min(offset+displayLength, getNumEntries()));
 		}
 	}
 	
 	@Override
 	public void render(Screen screen) {
-		menuData.render(screen);
+		getMenuType().render(screen);
 		super.renderEntries(screen, dispSelection, dispEntries);
 	}
 }

@@ -1,6 +1,7 @@
-package minicraft.screen;
+package minicraft.screen2;
 	
 import minicraft.Game;
+import minicraft.InputHandler;
 import minicraft.gfx.Color;
 import minicraft.gfx.Font;
 import minicraft.gfx.Rectangle;
@@ -11,12 +12,13 @@ public class DeadMenu extends Display {
 	// this is an IMPORTANT bool, determines if the user should respawn or not. :)
 	public static boolean shouldRespawn;
 	
-	public DeadMenu() {
-		super();
-		setFrames(new Frame("", new Rectangle(1, 3, 18, 10, Rectangle.CORNERS)));
+	@Override
+	public Menu getMenu() {
+		return new Menu(this, new Frame("", new Rectangle(1, 3, 18, 10, Rectangle.CORNERS)));
 	}
 	
-	public void tick() {
+	@Override
+	public void tick(InputHandler input) {
 		if (inputDelay > 0) {
 			inputDelay--;
 		} else if (input.getKey("exit").clicked) {
@@ -24,7 +26,7 @@ public class DeadMenu extends Display {
 			shouldRespawn = false;
 		}
 		//This is so that if the user presses x @ respawn menu, they respawn (what a concept)
-		if (!ModeMenu.hardcore) {
+		//if (!ModeMenu.hardcore) {
 			if (input.getKey("select").clicked) {
 				//This makes it so the player respawns
 				shouldRespawn = true;
@@ -32,14 +34,14 @@ public class DeadMenu extends Display {
 				Game.resetGame();
 				if(!Game.isValidClient()) {
 					//sets the menu to nothing
-					Game.setMenu(null);
+					Game.setMenu((Menu)null);
 				}
 			}
-		}
+		//}
 	}
-
+	
+	@Override
 	public void render(Screen screen) {
-		renderFrames(screen);
 		//renderFrame(screen, "", 1, 3, 18, 10); // Draws a box frame based on 4 points. You can include a title as well.
 		Font.draw("You died! Aww!", screen, 16, 32, Color.get(-1, 555));
 		
@@ -61,8 +63,8 @@ public class DeadMenu extends Display {
 		Font.draw(timeString, screen, (2 + 5) * 8, 5 * 8, Color.get(-1, 550));
 		Font.draw("Score:", screen, 2 * 8, 6 * 8, Color.get(-1, 555));
 		Font.draw("" + Game.player.score, screen, (2 + 6) * 8, 6 * 8, Color.get(-1, 550));
-		Font.draw(input.getMapping("exit")+" = lose", screen, 2 * 8, 8 * 8, Color.get(-1, 333));
-		if (!ModeMenu.hardcore) //respawn only if not on hardcore mode
-			Font.draw(input.getMapping("select")+" = respawn", screen, 2 * 8, 9 * 8, Color.get(-1, 333));
+		Font.draw(Game.input.getMapping("exit")+" = lose", screen, 2 * 8, 8 * 8, Color.get(-1, 333));
+		/*if (!ModeMenu.hardcore) //respawn only if not on hardcore mode
+			Font.draw(Game.input.getMapping("select")+" = respawn", screen, 2 * 8, 9 * 8, Color.get(-1, 333));*/
 	}
 }

@@ -2,11 +2,15 @@ package minicraft.screen2;
 
 import java.awt.Point;
 
+import minicraft.Game;
 import minicraft.InputHandler;
 import minicraft.gfx.Screen;
 import minicraft.screen2.entry.ListEntry;
+import minicraft.screen2.entry.SelectEntry;
 
 public interface MenuData {
+	
+	// TODO If I made this an abstract class, I could create an abstract createMenu method which is protected, that returns a newly created menu. Then, it's kept in a field, while getMenu is public and returns the value of the menu field. 
 	
 	/// returns appropriate Menu subclass for this data
 	Menu getMenu();
@@ -32,4 +36,15 @@ public interface MenuData {
 	
 	/// returns a point that will tell where to render the first entry
 	Point getAnchor();
+	
+	default int autoExitDelay() {
+		return 0;
+	}
+	
+	// called when the menu is about to be replaced.
+	default void onExit() {}
+	
+	default ListEntry entryFactory(String text, MenuData menu) {
+		return new SelectEntry(text, () -> Game.setMenu(menu));
+	}
 }

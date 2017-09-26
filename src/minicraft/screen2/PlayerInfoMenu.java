@@ -1,23 +1,28 @@
-package minicraft.screen;
+package minicraft.screen2;
 
 import java.util.ArrayList;
 
 import minicraft.Game;
+import minicraft.InputHandler;
 import minicraft.gfx.Color;
 import minicraft.gfx.Font;
-import minicraft.gfx.Screen;
 import minicraft.gfx.Rectangle;
+import minicraft.gfx.Screen;
 
 public class PlayerInfoMenu extends Display {
 	
 	public PlayerInfoMenu() {
 		super();
-		setFrames(new Frame("Player Info", new Rectangle(1, 1, 30, 15, Rectangle.CORNERS)));
 	}
 	
-	public void tick() {
+	@Override
+	public Menu getMenu() {
+		return new Menu(this, new Frame("Player Info", new Rectangle(1, 1, 30, 15, Rectangle.CORNERS)));
+	}
+	
+	public void tick(InputHandler input) {
 		if (input.getKey("select").clicked || input.getKey("Exit").clicked) {
-			Game.setMenu(null);
+			Game.setMenu((Menu)null);
 		}
 	}
 	
@@ -59,6 +64,6 @@ public class PlayerInfoMenu extends Display {
 		
 		int y = 4 + stats.size();
 		Font.draw(" ----------------------------", screen, 1 * 8, y * 8, Color.get(-1, 540));
-		Font.draw(input.getMapping("select")+":Exit", screen, 2 * 8, (y+2) * 8, Color.get(-1, 333));
+		Font.draw(Game.input.getMapping("select")+":Exit", screen, 2 * 8, (y+2) * 8, Color.get(-1, 333));
 	}
 }

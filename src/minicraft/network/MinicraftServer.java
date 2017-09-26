@@ -428,7 +428,7 @@ public class MinicraftServer extends Thread implements MinicraftProtocol {
 				if(playerdata.length() > 0) {
 					/// if a save file was found, then send the data to the client so they can resume where they left off.
 					// and now, initialize the RemotePlayer instance with the data.
-					(new Load()).loadPlayer(clientPlayer, Arrays.asList(playerdata.split("\\n")[0].split(",")));
+					new Load().loadPlayer(clientPlayer, Arrays.asList(playerdata.split("\\n")[0].split(",")));
 					// we really don't need to load the inventory.
 				} else {
 					clientPlayer.findStartPos(Game.levels[Game.lvlIdx(0)]); // find a new start pos

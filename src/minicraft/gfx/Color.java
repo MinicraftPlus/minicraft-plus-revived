@@ -28,7 +28,7 @@ public class Color {
 		To provide a method to the madness, all methods ending in "Color" are copies of the methods of the same name without the "Color" part, execpt they convert the given value to 24bit Java RGB rather than the normal, minicraft 8-bit total RGB (that really only goes up to 216).
 	*/
 	
-	public static final int WHITE = Color.get(555);
+	/*public static final int WHITE = Color.get(555);
 	public static final int GRAY = Color.get(222);
 	public static final int BLACK = Color.get(0);
 	public static final int RED = Color.get(500);
@@ -38,6 +38,8 @@ public class Color {
 	public static final int MAGENTA = Color.get(55);
 	public static final int CYAN = Color.get(55);
 	
+	public static final int TRANS = Color.get(-1);
+	*/
 	/** This returns a integer with 4 rgb color values. */
 	public static int get(int a, int b, int c, int d) {
 		//converts each color to 8-bit, and shifts each one 8-bits to the left a certain number of times, to create 4 colors set one after the other.

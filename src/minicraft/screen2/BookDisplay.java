@@ -1,7 +1,10 @@
-package minicraft.screen;
+package minicraft.screen2;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+
+import minicraft.Game;
+import minicraft.InputHandler;
 import minicraft.gfx.Color;
 import minicraft.gfx.Font;
 import minicraft.gfx.FontStyle;
@@ -21,15 +24,22 @@ public class BookDisplay extends Display {
 	private String[][] lines;
 	private int page;
 	
+	@Override
+	public Menu getMenu() {
+		return new Menu(this,
+			new Frame("", new Rectangle(14, 0, 21, 3, Rectangle.CORNERS)),
+			new Frame("", new Rectangle(1, 4, 34, 20, Rectangle.CORNERS))
+		).setFrameColors(Color.get(-1, 222), Color.get(554, 554), Color.get(-1, 1, 554, 554));
+	}
+	
 	public BookDisplay(String book) {
-		super();
+		/*super();
 		setFrames(new Frame[] {
-			(new Frame("", new Rectangle(14, 0, 21, 3, Rectangle.CORNERS))), // renders the tiny, page number display frame.
-			(new Frame("", new Rectangle(1, 4, 34, 20, Rectangle.CORNERS))) // renders the big text content display frame.
+			(), // renders the tiny, page number display frame.
+			() // renders the big text content display frame.
 		});
-		setFrameColors(Color.get(-1, 222), Color.get(554, 554), Color.get(-1, 1, 554, 554));
-		//setTextStyle(new FontStyle(Color.get(-1, 000)));
-		
+		//setTextStyle(new FontStyle());
+		*/
 		page = 0;
 		if(book == null)
 			book = defaultBook;
@@ -47,15 +57,17 @@ public class BookDisplay extends Display {
 		lines = pages.toArray(new String[pages.size()][]);
 	}
 	
-	public void tick() {
+	public void tick(InputHandler input) {
 		if (input.getKey("menu").clicked || input.getKey("exit").clicked)
-			Game.setMenu(null); // this is what closes the book; TODO if books were editable, I would probably remake the book here with the edited pages.
+			Game.setMenu((Menu)null); // this is what closes the book; TODO if books were editable, I would probably remake the book here with the edited pages.
 		if (input.getKey("left").clicked && page > 0) page--; // this is what turns the page back
 		if (input.getKey("right").clicked && page < lines.length-1) page++; // this is what turns the page forward
 	}
 	
 	public void render(Screen screen) {
-		renderFrames(screen);
+		//renderFrames(screen);
+		//new Frame("", new Rectangle(14, 0, 21, 3, Rectangle.CORNERS)).setColors(Color.get(-1, 222), Color.get(554, 554), Color.get(-1, 1, 554, 554)).render(screen);
+		//new Frame("", new Rectangle(1, 4, 34, 20, Rectangle.CORNERS)).setColors(Color.get(-1, 222), Color.get(554, 554), Color.get(-1, 1, 554, 554)).render(screen);
 		
 		// This draws the text "Page" at the top of the screen
 		Font.draw("Page", screen, 8 * 15 + 8, 1 * 8 - 2, Color.get(-1, 0));

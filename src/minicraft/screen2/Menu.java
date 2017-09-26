@@ -16,31 +16,71 @@ public class Menu {
 	//private FontStyle style; // the styling of the text (color, centering, etc)
 	
 	private Menu parent; // the menu that led to this display
-	final MenuData menuData;
+	private final MenuData menuData;
 	private ListEntry[] entries; // fetched from menuData
+	private final boolean mutable;
+	
+	private Frame[] frames;
 	
 	private int selection;
 	
+	private int ticks;
+	
 	// menus should not be instantiated directly; instead, an instance of MenuData will instantiate it
-	protected Menu(MenuData data) {
+	protected Menu(MenuData data, Frame... frames) {
+		this(data, false, frames);
+	}
+	protected Menu(MenuData data, boolean entriesAreMutable, Frame... frames) {
 		this.menuData = data;
-		this.parent = Game.getMenu();
+		this.mutable = entriesAreMutable;
+		if(data instanceof TitleMenu)
+			this.parent = this;
+		else
+			this.parent = Game.getMenu();
 		entries = data.getEntries();
 		if(entries.length == 0)
 			selection = -1;
 		else
 			selection = 0;
+		
+		if(frames == null)
+			this.frames = new Frame[0];
+		else
+			this.frames = frames;
+	}
+	
+	Menu setFrameColors(int titleCol, int midCol, int sideCol) {
+		if(frames == null) return this;
+		for(Frame frame: frames)
+			frame.setColors(titleCol, midCol, sideCol);
+		
+		return this;
 	}
 	
 	public Menu getParent() { return parent; }
+	public MenuData getMenuType() { return menuData; }
+	
 	int getSelection() { return selection; }
 	ListEntry[] getEntries() { return entries; }
 	int getNumEntries() { return entries.length; }
 	
+	void setSelected(ListEntry entry) {
+		if(mutable && selectionExists())
+			entries[selection] = entry;
+	}
+	
+	private boolean selectionExists() {
+		return entries != null && selection >= 0 && getNumEntries() > selection;
+	}
+	
 	public void tick(InputHandler input) {
-		if(input.getKey(exitKey).clicked) {
-			Game.setMenu(parent);
-			return;
+		ticks++;
+		if(parent != this) {
+			boolean auto = menuData.autoExitDelay() > 0;
+			if (!auto && input.getKey(exitKey).clicked || auto && ticks > menuData.autoExitDelay()) {
+				Game.setMenu(parent);
+				return;
+			}
 		}
 		
 		if(entries.length > 0) {
@@ -58,6 +98,9 @@ public class Menu {
 		}
 		
 		menuData.tick(input); // allows handling of own inputs
+		
+		if(selectionExists())
+			entries[selection].tick(input, this);
 	}
 	
 	void updateEntries() {
@@ -79,6 +122,9 @@ public class Menu {
 	}
 	
 	void renderEntries(Screen screen, int selection, ListEntry[] entries) {
+		for(Frame frame: frames)
+			frame.render(screen);
+		
 		Point anchor = menuData.getAnchor();
 		boolean centered = menuData.centerEntries();
 		int spacing = menuData.getSpacing();

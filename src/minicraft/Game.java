@@ -205,6 +205,7 @@ public class Game {
 	}
 	
 	public static Menu getMenu() { return newMenu; }
+	public static MenuData getMenuType() { return newMenu == null ? null : newMenu.getMenuType(); }
 	
 	public static boolean isValidClient() {
 		return ISONLINE && client != null;
@@ -698,7 +699,7 @@ public class Game {
 	 * It takes 1 integer variable, which is used to tell the game which direction to go.
 	 * For example, 'changeLevel(1)' will make you go up a level,
 	 	while 'changeLevel(-1)' will make you go down a level. */
-	public void changeLevel(int dir) {
+	public static void changeLevel(int dir) {
 		if(Game.isValidServer()) {
 			System.out.println("server tried to change level.");
 			return;

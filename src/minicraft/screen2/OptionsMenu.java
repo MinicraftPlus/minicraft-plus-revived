@@ -2,9 +2,11 @@ package minicraft.screen2;
 
 import java.awt.Point;
 
+import minicraft.Game;
 import minicraft.InputHandler;
+import minicraft.gfx.Font;
 import minicraft.gfx.Screen;
-import minicraft.screen2.entry.ListEntry;
+import minicraft.screen2.entry.*;
 
 public class OptionsMenu implements MenuData {
 	
@@ -21,32 +23,31 @@ public class OptionsMenu implements MenuData {
 	@Override
 	public ListEntry[] getEntries() {
 		return new ListEntry[] {
-			
+			new ArrayEntry<String>("Difficulty", "Easy", "Normal", "Hard"),
+			new BooleanEntry("Sound", true),
+			new BooleanEntry("Autosave", true),
+			new BooleanEntry("Wear Suit", false)
 		};
 	}
 	
 	@Override
-	public void tick(InputHandler input) {
-		
-	}
+	public void tick(InputHandler input) {}
 	
 	@Override
-	public void render(Screen screen) {
-		
-	}
+	public void render(Screen screen) {}
 	
 	@Override
 	public boolean centerEntries() {
-		return false;
+		return true;
 	}
 	
 	@Override
 	public int getSpacing() {
-		return 0;
+		return 6;
 	}
 	
 	@Override
 	public Point getAnchor() {
-		return null;
+		return new Point(Game.WIDTH/2, Font.textHeight()*3);
 	}
 }

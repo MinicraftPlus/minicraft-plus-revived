@@ -6,11 +6,13 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Iterator;
 import java.util.List;
+
 import minicraft.Game;
 import minicraft.entity.*;
-import minicraft.entity.particle.*;
+import minicraft.entity.particle.FireParticle;
+import minicraft.entity.particle.SmashParticle;
+import minicraft.entity.particle.TextParticle;
 import minicraft.item.ArmorItem;
 import minicraft.item.Item;
 import minicraft.item.Items;
@@ -26,7 +28,6 @@ import minicraft.screen.ModeMenu;
 import minicraft.screen.MultiplayerMenu;
 import minicraft.screen.OptionsMenu;
 import minicraft.screen.entry.BooleanEntry;
-import minicraft.screen.entry.ConfigEntry;
 import minicraft.screen.entry.SettingEntry;
 
 public class Load {
@@ -98,13 +99,19 @@ public class Load {
 			loadServerConfig("ServerConfig", server);
 	}
 	
-	public Load() {
+	public Load() { this(false); }
+	public Load(boolean loadStuff) {
+		if(!loadStuff) {
+			worldVer = currentVer;
+			return;
+		}
+		
 		location += "/";
 		
 		if(hasGlobalPrefs)
 			loadPrefs("Preferences");
 		else
-			new Save(game);
+			new Save();
 		
 		File testFileOld = new File(location+"unlocks"+extension);
 		File testFile = new File(location+"Unlocks"+extension);
@@ -135,9 +142,9 @@ public class Load {
 		loadUnlocks("Unlocks");
 	}
 	
-	public Load() {
+	/*public Load() {	
 		worldVer = currentVer;
-	}
+	}*/
 	
 	public static class Version implements Comparable {
 		public Integer make, major, minor, dev;

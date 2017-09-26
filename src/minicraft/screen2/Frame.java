@@ -1,4 +1,4 @@
-package minicraft.screen;
+package minicraft.screen2;
 
 import minicraft.gfx.*;
 
@@ -12,10 +12,14 @@ public class Frame {
 	
 	public Frame(String title, Rectangle bounds) { this(title, bounds, true); }
 	public Frame(String title, Rectangle bounds, boolean convertSize) {
+		this(title, bounds, convertSize, Color.get(5, 5, 5, 550), Color.get(5, 5), Color.get(-1, 1, 5, 445)); // this will probably be the case very frequently, so it's the defualt, if there's a bounds.
+	}
+	
+	public Frame(String title, Rectangle bounds, boolean convertSize, int titleCol, int midCol, int sideCol) {
 		this.title = title;
 		setBounds(bounds, convertSize);
 		//titleColor = Color.get(-1, 555); // the default title color, if there's not a bounds.
-		setColors(Color.get(5, 5, 5, 550), Color.get(5, 5), Color.get(-1, 1, 5, 445)); // this will probably be the case very frequently, so it's the defualt, if there's a bounds.
+		setColors(titleCol, midCol, sideCol);
 	}
 	
 	public Frame setTitle(String title) { this.title = title; return this; }

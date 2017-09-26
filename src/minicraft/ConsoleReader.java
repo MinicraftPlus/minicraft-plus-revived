@@ -325,7 +325,7 @@ class ConsoleReader extends Thread {
 				detailedHelp += System.lineSeparator()+"\t"+String.join(System.lineSeparator()+"\t", specific);
 		}
 		
-		public abstract void run(String[] args, Game game);
+		public abstract void run(String[] args);
 		
 		public String getUsage() { return usage; }
 		public String getGeneralHelp() { return generalHelp; }

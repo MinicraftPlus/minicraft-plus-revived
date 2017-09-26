@@ -1,7 +1,9 @@
 package minicraft.network;
 
 import java.io.IOException;
-import java.net.*;
+import java.net.InetAddress;
+import java.net.Socket;
+import java.net.UnknownHostException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -23,9 +25,11 @@ import minicraft.item.PotionType;
 import minicraft.level.Level;
 import minicraft.saveload.Load;
 import minicraft.saveload.Save;
-import minicraft.screen.DeadMenu;
-import minicraft.screen.ModeMenu;
-import minicraft.screen.MultiplayerMenu;
+import minicraft.screen2.DeadMenu;
+import minicraft.screen2.InventoryMenu;
+import minicraft.screen2.ModeMenu;
+import minicraft.screen2.MultiplayerMenu;
+import minicraft.screen2.Menu;
 
 /// This class is only used by the client runtime; the server runtime doesn't touch it.
 public class MinicraftClient extends MinicraftConnection {
@@ -94,7 +98,7 @@ public class MinicraftClient extends MinicraftConnection {
 				if (Game.debug) System.out.println("CLIENT: Begin game!");
 				Game.levels[Game.currentLevel].add(Game.player);
 				Game.readyToRenderGameplay = true;
-				Game.setMenu(null);
+				Game.setMenu((Menu)null);
 				break;
 		}
 	}
@@ -365,8 +369,8 @@ public class MinicraftClient extends MinicraftConnection {
 					load.loadInventory(Game.player.inventory, playerinv);
 				load.loadPlayer(Game.player, playerinfo);
 				//setPlayer = true;
-				if(Game.menu instanceof DeadMenu) {
-					Game.setMenu(null);
+				if(Game.getMenuType() instanceof DeadMenu) {
+					Game.setMenu((Menu)null);
 				}
 				return true;
 			
@@ -392,8 +396,8 @@ public class MinicraftClient extends MinicraftConnection {
 				//if (Game.debug) System.out.println("CLIENT: received chestout with item: " + item);
 				if(!ModeMenu.creative) {
 					Game.player.inventory.add(0, item);
-					if(Game.menu instanceof minicraft.screen.InventoryMenu)
-						((minicraft.screen.InventoryMenu)Game.menu).onInvUpdate(Game.player.inventory);
+					if(Game.getMenuType() instanceof InventoryMenu)
+						((InventoryMenu)Game.getMenuType()).onInvUpdate(Game.player.inventory);
 				}
 				//if (Game.debug) System.out.println("CLIENT successfully took " + item + " from chest and added to inv.");
 				return true;

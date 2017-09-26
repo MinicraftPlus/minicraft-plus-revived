@@ -3,6 +3,7 @@ package minicraft.screen2.entry;
 import minicraft.InputHandler;
 import minicraft.Sound;
 import minicraft.gfx.Font;
+import minicraft.screen2.Menu;
 
 public class ArrayEntry<T> implements ListEntry {
 	
@@ -19,7 +20,13 @@ public class ArrayEntry<T> implements ListEntry {
 	private int maxWidth;
 	//private ArrayList<Integer> lockedOptions = new ArrayList<>();
 	
-	public ArrayEntry(String label, T[] options, boolean wrap) {
+	@SafeVarargs
+	public ArrayEntry(String label, T... options) {
+		this(label, true, options);
+	}
+	
+	@SafeVarargs
+	public ArrayEntry(String label, boolean wrap, T... options) {
 		this.label = label;
 		this.options = options;
 		this.wrap = wrap;
@@ -37,7 +44,7 @@ public class ArrayEntry<T> implements ListEntry {
 	public T getSelected() { return options[selection]; }
 	
 	@Override
-	public void tick(InputHandler input) {
+	public void tick(InputHandler input, Menu menu) {
 		int prevSel = selection;
 		
 		if(input.getKey("left").clicked) selection--;

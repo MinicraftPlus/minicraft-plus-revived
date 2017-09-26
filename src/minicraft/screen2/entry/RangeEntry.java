@@ -12,7 +12,7 @@ public class RangeEntry extends ArrayEntry<Integer> {
 	}
 	
 	public RangeEntry(String label, int min, int max, int initial) {
-		super(label, getIntegerList(min, max), false);
+		super(label, false, getIntegerList(min, max));
 		
 		setSelection(initial-min);
 	}
