@@ -10,6 +10,7 @@ import java.util.HashMap;
 import java.util.List;
 
 import minicraft.Game;
+import minicraft.Settings;
 import minicraft.entity.Bed;
 import minicraft.entity.Chest;
 import minicraft.entity.DeathChest;
@@ -26,10 +27,8 @@ import minicraft.level.Level;
 import minicraft.saveload.Load;
 import minicraft.saveload.Save;
 import minicraft.screen2.DeadMenu;
-import minicraft.screen2.InventoryMenu;
-import minicraft.screen2.ModeMenu;
-import minicraft.screen2.MultiplayerMenu;
 import minicraft.screen2.Menu;
+import minicraft.screen2.MultiplayerMenu;
 
 /// This class is only used by the client runtime; the server runtime doesn't touch it.
 public class MinicraftClient extends MinicraftConnection {
@@ -160,13 +159,13 @@ public class MinicraftClient extends MinicraftConnection {
 				return true;
 			
 			case GAME:
-				ModeMenu.updateModeBools(Integer.parseInt(data[0]));
+				Settings.set("mode", data[0]);
 				Game.setTime(Integer.parseInt(data[1]));
 				Game.gamespeed = Float.parseFloat(data[2]);
 				Game.pastDay1 = Boolean.parseBoolean(data[3]);
 				Game.scoreTime = Integer.parseInt(data[4]);
 				
-				if(ModeMenu.creative)
+				if(Game.isMode("creative"))
 					Items.fillCreativeInv(Game.player.inventory, false);
 				
 				return true;
@@ -362,7 +361,7 @@ public class MinicraftClient extends MinicraftConnection {
 				List<String> playerinv = Arrays.asList(playerparts[1].split(","));
 				Load load = new Load();
 				if (Game.debug) System.out.println("CLIENT: setting player vars from packet...");
-				//if(ModeMenu.creative) {
+				//if(Game.isMode("creative")) {
 					//if(Game.debug) System.out.println("CLIENT: in creative mode, filling creative inv...");
 					
 				if(!(playerinv.size() == 1 && playerinv.get(0).equals("null")))
@@ -394,10 +393,10 @@ public class MinicraftClient extends MinicraftConnection {
 				if(curState != State.PLAY) return false; // shouldn't happen.
 				Item item = Items.get(alldata);
 				//if (Game.debug) System.out.println("CLIENT: received chestout with item: " + item);
-				if(!ModeMenu.creative) {
+				if(!Game.isMode("creative")) {
 					Game.player.inventory.add(0, item);
-					if(Game.getMenuType() instanceof InventoryMenu)
-						((InventoryMenu)Game.getMenuType()).onInvUpdate(Game.player.inventory);
+					//if(Game.getMenuType() instanceof InventoryMenu)
+					//	((InventoryMenu)Game.getMenuType()).onInvUpdate(Game.player.inventory);
 				}
 				//if (Game.debug) System.out.println("CLIENT successfully took " + item + " from chest and added to inv.");
 				return true;

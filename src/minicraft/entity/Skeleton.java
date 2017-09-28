@@ -1,9 +1,9 @@
 package minicraft.entity;
 
+import minicraft.Settings;
 import minicraft.gfx.Color;
 import minicraft.gfx.MobSprite;
 import minicraft.item.Items;
-import minicraft.screen.OptionsMenu;
 
 public class Skeleton extends EnemyMob {
 	private static MobSprite[][] sprites = MobSprite.compileMobSpriteAnimations(8, 16);
@@ -52,7 +52,7 @@ public class Skeleton extends EnemyMob {
 	protected void die() {
 		int[] diffrands = {20, 20, 30};
 		int[] diffvals = {13, 18, 28};
-		int diff = OptionsMenu.diff;
+		int diff = Settings.getIdx("diff");
 		
 		int count = random.nextInt(3 - diff) + 1;
 		int bookcount = random.nextInt(1) + 1;

@@ -4,29 +4,26 @@ import java.awt.Point;
 
 import minicraft.Game;
 import minicraft.InputHandler;
+import minicraft.Settings;
 import minicraft.gfx.Font;
 import minicraft.gfx.Screen;
-import minicraft.screen2.entry.*;
+import minicraft.screen2.entry.ArrayEntry;
+import minicraft.screen2.entry.ListEntry;
 
 public class OptionsMenu implements MenuData {
 	
-	public static int diff = 1;
-	public static boolean isSoundAct = true;
-	public static boolean autosave = false;
-	public static boolean unlockedskin = false;
-	
 	@Override
 	public Menu getMenu() {
-		return null;
+		return new Menu(this);
 	}
 	
 	@Override
 	public ListEntry[] getEntries() {
-		return new ListEntry[] {
-			new ArrayEntry<String>("Difficulty", "Easy", "Normal", "Hard"),
-			new BooleanEntry("Sound", true),
-			new BooleanEntry("Autosave", true),
-			new BooleanEntry("Wear Suit", false)
+		return new ArrayEntry[] {
+			Settings.getEntry("diff"),
+			Settings.getEntry("sound"),
+			Settings.getEntry("autosave"),
+			Settings.getEntry("skinon")
 		};
 	}
 	

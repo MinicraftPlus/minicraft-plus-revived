@@ -22,6 +22,7 @@ public class WorldSelectMenu implements MenuData {
 	private static String worldName = "";
 	
 	public static String getWorldName() { return worldName; }
+	public static void setWorldName(String world) { worldName = world; }
 	
 	enum Action {
 		Copy("C", 5),
@@ -40,6 +41,14 @@ public class WorldSelectMenu implements MenuData {
 	}
 	
 	private Action curAction = null;
+	
+	public WorldSelectMenu() {
+		worldName = "";
+	}
+	
+	public static boolean loadWorld() {
+		return worldName.length() > 0;
+	}
 	
 	@Override
 	public Menu getMenu() {
@@ -78,7 +87,7 @@ public class WorldSelectMenu implements MenuData {
 		for(int i = 0; i < entries.length; i++) {
 			String name = worldNames.get(i);
 			entries[i] = new SelectEntry(worldNames.get(i), () -> {
-				WorldSelectMenu.worldName = name;
+				worldName = name;
 				Game.setMenu(new LoadingDisplay());
 			});
 		}

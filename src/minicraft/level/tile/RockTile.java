@@ -1,5 +1,7 @@
 package minicraft.level.tile;
 
+import minicraft.Game;
+import minicraft.Settings;
 import minicraft.entity.Entity;
 import minicraft.entity.Mob;
 import minicraft.entity.Player;
@@ -14,9 +16,6 @@ import minicraft.item.Items;
 import minicraft.item.ToolItem;
 import minicraft.item.ToolType;
 import minicraft.level.Level;
-import minicraft.screen.Displays;
-import minicraft.screen.OptionsMenu;
-import minicraft.screen.ModeMenu;
 
 /// this is the typical stone you see underground and on the surface, that gives coal.
 
@@ -37,7 +36,7 @@ public class RockTile extends Tile {
 	}
 	
 	public boolean mayPass(Level level, int x, int y, Entity e) {
-		/*if(e instanceof Arrow && ((Arrow)e).owner instanceof Player && ModeMenu.creative && Game.debug) {
+		/*if(e instanceof Arrow && ((Arrow)e).owner instanceof Player && Game.isMode("creative") && Game.debug) {
 			hurt(level, x, y, 50);
 			return true;
 		}*/
@@ -63,7 +62,7 @@ public class RockTile extends Tile {
 	public void hurt(Level level, int x, int y, int dmg) {
 		int damage = level.getData(x, y) + dmg;
 		int rockHealth = 50;
-		if (ModeMenu.creative) {
+		if (Game.isMode("creative")) {
 			dmg = damage = rockHealth;
 			coallvl = 1;
 		}
@@ -77,7 +76,7 @@ public class RockTile extends Tile {
 			if (coallvl == 1) {
 				level.dropItem(x*16+8, y*16+8, 1, 2, Items.get("Stone"));
 				int mincoal = 0, maxcoal = 1;
-				if(!Displays.options.getEntry("diff").getValue().equals("hard")) {
+				if(!Settings.get("diff").equals("hard")) {
 					mincoal++;
 					maxcoal++;
 				}

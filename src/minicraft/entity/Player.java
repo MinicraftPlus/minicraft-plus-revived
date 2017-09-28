@@ -1,8 +1,10 @@
 package minicraft.entity;
 
+import minicraft.Settings;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+
 import minicraft.Game;
 import minicraft.InputHandler;
 import minicraft.Sound;
@@ -10,23 +12,14 @@ import minicraft.entity.particle.TextParticle;
 import minicraft.gfx.Color;
 import minicraft.gfx.MobSprite;
 import minicraft.gfx.Screen;
-import minicraft.item.ArmorItem;
-import minicraft.item.FurnitureItem;
-import minicraft.item.Item;
-import minicraft.item.Items;
-import minicraft.item.PotionItem;
-import minicraft.item.PotionType;
-import minicraft.item.PowerGloveItem;
-import minicraft.item.Recipes;
-import minicraft.item.StackableItem;
-import minicraft.item.ToolItem;
-import minicraft.item.ToolType;
+import minicraft.item.*;
 import minicraft.level.Level;
 import minicraft.level.tile.Tile;
 import minicraft.level.tile.Tiles;
 import minicraft.saveload.Save;
-import minicraft.screen.*;
-import minicraft.screen.entry.SettingEntry;
+import minicraft.screen2.LoadingDisplay;
+import minicraft.screen2.PauseMenu;
+import minicraft.screen2.WorldSelectMenu;
 
 public class Player extends Mob {
 	protected InputHandler input;
@@ -109,10 +102,10 @@ public class Player extends Mob {
 		stamina = maxStamina;
 		hunger = maxHunger;
 		
-		hungerStamCnt = maxHungerStams[OptionsMenu.diff];
+		hungerStamCnt = maxHungerStams[Settings.getIdx("diff")];
 		stamHungerTicks = maxHungerTicks;
 		
-		if (ModeMenu.creative) {
+		if (Game.isMode("creative")) {
 			Items.fillCreativeInv(inventory);
 		}
 		
@@ -133,7 +126,7 @@ public class Player extends Mob {
 	public void tick() {
 		if(level == null || isRemoved()) return;
 		
-		if(!Bed.inBed && input.getKey("drop-one").clicked || input.getKey("drop-stack").clicked) {
+		/*if(!Bed.inBed && input.getKey("drop-one").clicked || input.getKey("drop-stack").clicked) {
 			Item itemToDrop = null;
 			if(Game.getMenuType() instanceof PlayerInvMenu)
 				itemToDrop = ((PlayerInvMenu)Game.getMenuType()).getSelectedItem();
@@ -152,7 +145,7 @@ public class Player extends Mob {
 				} else {
 					// drop the whole item.
 					toEntity = itemToDrop;
-					if(!ModeMenu.creative) {
+					if(!Game.isMode("creative")) {
 						if(Game.getMenuType() instanceof PlayerInvMenu)
 							((PlayerInvMenu)Game.getMenuType()).removeSelectedItem();
 						else if(Game.getMenuType() == null)
@@ -167,7 +160,7 @@ public class Player extends Mob {
 						level.dropItem(x, y, toEntity);
 				}
 			}
-		}
+		}*/
 		
 		if(Game.getMenuType() != null && !Game.ISONLINE) return; // don't tick player when menu is open
 		
@@ -199,7 +192,7 @@ public class Player extends Mob {
 			onStairDelay = 10; //resets the delay, if on a stairs tile, but the delay is greater than 0. In other words, this prevents you from ever activating a level change on a stair tile, UNTIL you get off the tile for 10+ ticks.
 		} else if (onStairDelay > 0) onStairDelay--; // decrements stairDelay if it's > 0, but not on stair tile... does the player get removed from the tile beforehand, or something?
 
-		if (ModeMenu.creative) {
+		if (Game.isMode("creative")) {
 			// prevent stamina/hunger decay in creative mode.
 			stamina = 10;
 			hunger = 10;
@@ -235,8 +228,8 @@ public class Player extends Mob {
 		/// this if statement encapsulates the hunger system
 		if(!Bed.inBed) {
 			if(hungerChargeDelay > 0) { // if the hunger is recharging health...
-				stamHungerTicks -= 2+OptionsMenu.diff; // penalize the hunger
-				if(hunger == maxHunger) stamHungerTicks -= OptionsMenu.diff; // further penalty if at full hunger
+				stamHungerTicks -= 2+Settings.getIdx("diff"); // penalize the hunger
+				if(hunger == maxHunger) stamHungerTicks -= Settings.getIdx("diff"); // further penalty if at full hunger
 			}
 			
 			if(stamHungerTicks >= maxHungerTicks) {
@@ -246,7 +239,7 @@ public class Player extends Mob {
 			
 			// on easy mode, hunger doesn't deplete from walking or from time.
 			
-			if (Displays.options.getEntry("diff").getValue().equals("norm")) {
+			if (Settings.get("diff").equals("norm")) {
 				if(Game.tickCount % 5000 == 0 && hunger > 3) hungerStamCnt--; // hunger due to time.
 				
 				if (stepCount >= 800) { // hunger due to exercise.
@@ -254,7 +247,7 @@ public class Player extends Mob {
 					stepCount = 0; // reset.
 				}
 			}
-			if (Displays.options.getEntry("diff").getValue().equals("hard")) {
+			if (Settings.get("diff").equals("hard")) {
 				if(Game.tickCount % 3000 == 0 && hunger > 0) hungerStamCnt--; // hunger due to time.
 				
 				if (stepCount >= 400) { // hunger due to exercise.
@@ -265,7 +258,7 @@ public class Player extends Mob {
 			
 			while (hungerStamCnt <= 0) {
 				hunger--; // reached burger level.
-				hungerStamCnt += maxHungerStams[OptionsMenu.diff];
+				hungerStamCnt += maxHungerStams[Settings.getIdx("diff")];
 			}
 		}
 		
@@ -286,7 +279,7 @@ public class Player extends Mob {
 			}
 			
 			int[] healths = {5, 3, 0};
-			if (hunger == 0 && health > healths[OptionsMenu.diff]) {
+			if (hunger == 0 && health > healths[Settings.getIdx("diff")]) {
 				if (hungerStarveDelay > 0) hungerStarveDelay--;
 				if (hungerStarveDelay == 0) {
 					hurt(this, 1, -1); // do 1 damage to the player
@@ -355,21 +348,21 @@ public class Player extends Mob {
 					activeItem.used_pending = true;
 			}
 			
-			if (input.getKey("menu").clicked && !use()) // !use() = no furniture in front of the player; this prevents player inventory from opening (will open furniture inventory instead)
-				Game.setMenu(new PlayerInvMenu(this));
+//			if (input.getKey("menu").clicked && !use()) // !use() = no furniture in front of the player; this prevents player inventory from opening (will open furniture inventory instead)
+//				Game.setMenu(new PlayerInvMenu(this));
 			if (input.getKey("pause").clicked)
 				Game.setMenu(new PauseMenu());
-			if (input.getKey("craft").clicked && !use())
-				Game.setMenu(new CraftingMenu(Recipes.craftRecipes, this, true));
+//			if (input.getKey("craft").clicked && !use())
+//				Game.setMenu(new CraftingMenu(Recipes.craftRecipes, this, true));
 			if (input.getKey("sethome").clicked) setHome();
 			if (input.getKey("home").clicked && !Bed.inBed) goHome();
 			
-			if (input.getKey("info").clicked) Game.setMenu(new PlayerInfoMenu());
+			//if (input.getKey("info").clicked) Game.setMenu(new PlayerInfoMenu());
 			
 			if (input.getKey("r").clicked && !Game.saving && !(this instanceof RemotePlayer) && !Game.isValidClient()) {
 				Game.saving = true;
 				LoadingDisplay.setPercentage(0);
-				new Save(this, WorldSelectMenu.worldname);
+				new Save(this, WorldSelectMenu.getWorldName());
 			}
 			//debug feature:
 			if (Game.debug && input.getKey("shift-p").clicked) { // remove all potion effects
@@ -392,7 +385,7 @@ public class Player extends Mob {
 	public void resolveHeldItem() {
 		//if(Game.debug) System.out.println("prev item: " + prevItem + "; curItem: " + activeItem);
 		if(!(activeItem instanceof PowerGloveItem)) { // if you are now holding something other than a power glove...
-			if(prevItem != null && !ModeMenu.creative) // and you had a previous item that we should care about...
+			if(prevItem != null && !Game.isMode("creative")) // and you had a previous item that we should care about...
 				inventory.add(0, prevItem); // then add that previous item to your inventory so it isn't lost.
 			// if something other than a power glove is being held, but the previous item is null, then nothing happens; nothing added to inventory, and current item remains as the new one.
 		} else
@@ -474,7 +467,7 @@ public class Player extends Mob {
 					case 2: spx = -1; spy = 0; break;
 					case 3: spx = 1; spy = 0; break;
 				}
-				if (!ModeMenu.creative) inventory.removeItem(Items.arrowItem);
+				if (!Game.isMode("creative")) inventory.removeItem(Items.arrowItem);
 				level.add(new Arrow(this, spx, spy, tool.level));
 				done = true; // we have attacked!
 			}
@@ -517,7 +510,7 @@ public class Player extends Mob {
 						thread.sendTileUpdate(level, xt, yt); /// FIXME this part is as a semi-temporary fix for those odd tiles that don't update when they should; instead of having to make another system like the entity additions and removals (and it wouldn't quite work as well for this anyway), this will just update whatever tile the player interacts with (and fails, since a successful interaction changes the tile and therefore updates it anyway).
 				}
 				
-				if (activeItem.isDepleted() && !ModeMenu.creative) {
+				if (activeItem.isDepleted() && !Game.isMode("creative")) {
 					// if the activeItem has 0 items left, then "destroy" it.
 					activeItem = null;
 				}
@@ -689,7 +682,7 @@ public class Player extends Mob {
 	/** What happens when the player interacts with a itemEntity */
 	public void touchItem(ItemEntity itemEntity) {
 		itemEntity.take(this); // calls the take() method in ItemEntity
-		if(ModeMenu.creative) return; // we shall not bother the inventory on creative mode.
+		if(Game.isMode("creative")) return; // we shall not bother the inventory on creative mode.
 		
 		if(activeItem != null && activeItem.name.equals(itemEntity.item.name) && activeItem instanceof StackableItem && itemEntity.item instanceof StackableItem) // picked up item matches the one in your hand
 			((StackableItem)activeItem).count += ((StackableItem)itemEntity.item).count;
@@ -746,10 +739,10 @@ public class Player extends Mob {
 				// move player to home coordinates
 				this.x = homeSetX;
 				this.y = homeSetY;
-				if (ModeMenu.hardcore) hurt(this, 2, -1); // give penalty for using home if in hardcore mode.
+				if (Game.isMode("hardcore")) hurt(this, 2, -1); // give penalty for using home if in hardcore mode.
 				stamina = 0; // teleportation uses up all your stamina.
 				Game.notifications.add("Home Sweet Home!"); // give success message
-				if (ModeMenu.hardcore) Game.notifications.add("Mode penalty: -2 health"); // give penalty message
+				if (Game.isMode("hardcore")) Game.notifications.add("Mode penalty: -2 health"); // give penalty message
 			} else {
 				//can go home, but no home set.
 				Game.notifications.add("You don't have a home!");
@@ -790,7 +783,7 @@ public class Player extends Mob {
 		
 		if (Game.currentLevel == 5) r = 5 * light; // more light than usual on dungeon level.
 		
-		//if (ModeMenu.creative) r = 12 * light; // creative mode light radius is much bigger; whole screen.
+		//if (Game.isMode("creative")) r = 12 * light; // creative mode light radius is much bigger; whole screen.
 		
 		
 		if (activeItem != null && activeItem instanceof FurnitureItem) { // if player is holding furniture
@@ -842,7 +835,7 @@ public class Player extends Mob {
 	public void hurt(int damage, int attackDir) { doHurt(damage, attackDir); }
 	/** What happens when the player is hurt */
 	protected void doHurt(int damage, int attackDir) {
-		if (ModeMenu.creative || hurtTime > 0 || Bed.inBed) return; // can't get hurt in creative, hurt cooldown, or while someone is in bed
+		if (Game.isMode("creative") || hurtTime > 0 || Bed.inBed) return; // can't get hurt in creative, hurt cooldown, or while someone is in bed
 		
 		if(Game.isValidServer() && this instanceof RemotePlayer) {
 			// let the clients deal with it.

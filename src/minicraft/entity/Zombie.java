@@ -1,10 +1,9 @@
 package minicraft.entity;
 
+import minicraft.Settings;
 import minicraft.gfx.Color;
 import minicraft.gfx.MobSprite;
 import minicraft.item.Items;
-import minicraft.screen.Displays;
-import minicraft.screen.OptionsMenu;
 
 public class Zombie extends EnemyMob {
 	private static MobSprite[][] sprites = MobSprite.compileMobSpriteAnimations(0, 14);
@@ -24,9 +23,9 @@ public class Zombie extends EnemyMob {
 	}
 	
 	protected void die() {
-		if (Displays.options.getEntry("diff").getValue().equals("easy")) dropItem(2, 4, Items.get("cloth"));
-		if (Displays.options.getEntry("diff").getValue().equals("norm")) dropItem(2, 3, Items.get("cloth"));
-		if (Displays.options.getEntry("diff").getValue().equals("hard")) dropItem(1, 2, Items.get("cloth"));
+		if (Settings.get("diff").equals("easy")) dropItem(2, 4, Items.get("cloth"));
+		if (Settings.get("diff").equals("norm")) dropItem(2, 3, Items.get("cloth"));
+		if (Settings.get("diff").equals("hard")) dropItem(1, 2, Items.get("cloth"));
 		
 		if(random.nextInt(60) == 2) {
 			level.dropItem(x, y, Items.get("iron"));

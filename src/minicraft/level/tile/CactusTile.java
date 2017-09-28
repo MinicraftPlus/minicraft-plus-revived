@@ -1,5 +1,7 @@
 package minicraft.level.tile;
 
+import minicraft.Settings;
+import minicraft.Game;
 import minicraft.entity.Entity;
 import minicraft.entity.Mob;
 import minicraft.entity.particle.SmashParticle;
@@ -8,9 +10,6 @@ import minicraft.gfx.Color;
 import minicraft.gfx.Sprite;
 import minicraft.item.Items;
 import minicraft.level.Level;
-import minicraft.screen.Displays;
-import minicraft.screen.ModeMenu;
-import minicraft.screen.OptionsMenu;
 
 public class CactusTile extends Tile {
 	private static Sprite sprite = new Sprite(8, 2, 2, 2, Color.get(30, 40, 50, 550));
@@ -33,7 +32,7 @@ public class CactusTile extends Tile {
 	public void hurt(Level level, int x, int y, Mob source, int dmg, int attackDir) {
 		int damage = level.getData(x, y) + dmg;
 		int cHealth = 10;
-		if (ModeMenu.creative) dmg = damage = cHealth;
+		if (Game.isMode("creative")) dmg = damage = cHealth;
 		level.add(new SmashParticle(x * 16, y * 16));
 		level.add(new TextParticle("" + dmg, x * 16 + 8, y * 16 + 8, Color.get(-1, 500)));
 		
@@ -47,13 +46,13 @@ public class CactusTile extends Tile {
 	}
 	
 	public void bumpedInto(Level level, int x, int y, Entity entity) {
-		if (Displays.options.getEntry("diff").getValue().equals("easy")) {
+		if (Settings.get("diff").equals("easy")) {
 			entity.hurt(this, x, y, 1);
 		}
-		if (Displays.options.getEntry("diff").getValue().equals("norm")) {
+		if (Settings.get("diff").equals("norm")) {
 			entity.hurt(this, x, y, 1);
 		}
-		if (Displays.options.getEntry("diff").getValue().equals("hard")) {
+		if (Settings.get("diff").equals("hard")) {
 			entity.hurt(this, x, y, 2);
 		}
 	}

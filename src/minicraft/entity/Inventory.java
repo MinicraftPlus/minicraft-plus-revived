@@ -11,7 +11,6 @@ import minicraft.item.PowerGloveItem;
 import minicraft.item.StackableItem;
 import minicraft.item.ToolItem;
 import minicraft.item.ToolType;
-import org.jetbrains.annotations.Contract;
 
 public class Inventory {
 	private Random random = new Random();

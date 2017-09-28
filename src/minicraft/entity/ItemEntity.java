@@ -104,7 +104,7 @@ public class ItemEntity extends Entity {
 
 	protected void touchedBy(Entity entity) {
 		if (time > 30) { // conditional prevents this from being collected immediately.
-			if(Game.isConnectedClient() && entity instanceof Player && entity == ((Player)entity).Game.player) {// only register if the main player picks it up, on a client.
+			if(Game.isConnectedClient() && entity instanceof Player && entity == Game.player) {// only register if the main player picks it up, on a client.
 				if(!pickedUp) {
 					Game.client.pickupItem(this);
 					pickedUp = true;

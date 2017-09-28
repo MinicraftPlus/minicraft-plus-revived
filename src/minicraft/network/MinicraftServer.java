@@ -9,7 +9,9 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Timer;
 import java.util.TimerTask;
+
 import minicraft.Game;
+import minicraft.Settings;
 import minicraft.entity.Bed;
 import minicraft.entity.Chest;
 import minicraft.entity.Entity;
@@ -26,8 +28,7 @@ import minicraft.level.Level;
 import minicraft.level.tile.Tile;
 import minicraft.saveload.Load;
 import minicraft.saveload.Save;
-import minicraft.screen.ModeMenu;
-import minicraft.screen.WorldSelectMenu;
+import minicraft.screen2.WorldSelectMenu;
 
 public class MinicraftServer extends Thread implements MinicraftProtocol {
 	
@@ -52,7 +53,7 @@ public class MinicraftServer extends Thread implements MinicraftProtocol {
 		Game.ISHOST = true; // just in case.
 		Game.player.remove(); // the server has no player...
 		
-		worldPath = Game.gameDir + "/saves/" + WorldSelectMenu.worldname;
+		worldPath = Game.gameDir + "/saves/" + WorldSelectMenu.getWorldName();
 		
 		try {
 			System.out.println("opening server socket...");
@@ -291,7 +292,7 @@ public class MinicraftServer extends Thread implements MinicraftProtocol {
 	
 	public void saveWorld() {
 		broadcastData(InputType.SAVE, ""); // tell all the other clients to send their data over to be saved.
-		new Save(WorldSelectMenu.worldname);
+		new Save(WorldSelectMenu.getWorldName());
 	}
 	
 	public void broadcastNotification(String note, int notetime) {
@@ -313,7 +314,7 @@ public class MinicraftServer extends Thread implements MinicraftProtocol {
 		if(sendTo.length == 0) return;
 		
 		String[] varArray = {
-			ModeMenu.mode+"",
+			Settings.get("mode").toString(),
 			Game.tickCount+"",
 			Game.gamespeed+"",
 			Game.pastDay1+"",
@@ -699,7 +700,7 @@ public class MinicraftServer extends Thread implements MinicraftProtocol {
 				
 				//boolean pickedUpFurniture = wasGlove && !(clientPlayer.activeItem instanceof PowerGloveItem);
 				
-				//if(!ModeMenu.creative) { // the second part allows the player to pick up furniture in creative mode.
+				//if(!Game.isMode("creative")) { // the second part allows the player to pick up furniture in creative mode.
 					// now, send back the state of the activeItem. In creative though, this won't change, so it's unnecessary.
 					//if(pickedUpFurniture)
 						//sendData(InputType.CHESTOUT, (new PowerGloveItem()).getData());

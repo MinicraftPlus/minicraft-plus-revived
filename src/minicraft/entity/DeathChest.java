@@ -1,9 +1,8 @@
 package minicraft.entity;
 
+import minicraft.Settings;
 import minicraft.Game;
 import minicraft.gfx.Color;
-import minicraft.screen.Displays;
-import minicraft.screen.OptionsMenu;
 
 public class DeathChest extends Chest {
 	
@@ -15,11 +14,11 @@ public class DeathChest extends Chest {
 		super("Death Chest", Color.get(-1, 220, 331, 552));
 		
 		/// set the expiration time based on the world difficulty.
-		if (Displays.options.getEntry("diff").getValue().equals("easy")) {
+		if (Settings.get("diff").equals("easy")) {
 			time = 18000;
-		} else if (Displays.options.getEntry("diff").getValue().equals("norm")) {
+		} else if (Settings.get("diff").equals("norm")) {
 			time = 6000;
-		} else if (Displays.options.getEntry("diff").getValue().equals("hard")) {
+		} else if (Settings.get("diff").equals("hard")) {
 			time = 1200;
 		}
 	}

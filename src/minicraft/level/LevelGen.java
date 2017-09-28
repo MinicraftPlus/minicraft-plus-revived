@@ -1,15 +1,14 @@
 package minicraft.level;
 
+import javax.swing.ImageIcon;
+import javax.swing.JOptionPane;
 import java.awt.Image;
 import java.awt.image.BufferedImage;
 import java.util.Random;
 
-import javax.swing.ImageIcon;
-import javax.swing.JOptionPane;
-
 import minicraft.Game;
+import minicraft.Settings;
 import minicraft.level.tile.Tiles;
-import minicraft.screen.Displays;
 
 public class LevelGen {
 	private static long worldSeed = 0;
@@ -241,11 +240,11 @@ public class LevelGen {
 				dist = dist * dist * dist * dist;
 				val += 1 - dist * 20;
 				
-				switch ((String)Displays.worldGen.getEntry("Type").getValue()) {
+				switch ((String) Settings.get("Type")) {
 					case "Island":
 						
 						if (val < -0.5) {
-							if (Displays.worldGen.getEntry("Theme").getValue().equals("Hell"))
+							if (Settings.get("Theme").equals("Hell"))
 								map[i] = Tiles.get("lava").id;
 							else
 								map[i] = Tiles.get("water").id;
@@ -259,7 +258,7 @@ public class LevelGen {
 					case "Box":
 						
 						if (val < -1.5) {
-							if (Displays.worldGen.getEntry("Theme").getValue().equals("Hell")) {
+							if (Settings.get("Theme").equals("Hell")) {
 								map[i] = Tiles.get("lava").id;
 							} else {
 								map[i] = Tiles.get("water").id;
@@ -276,7 +275,7 @@ public class LevelGen {
 						if (val < -0.4) {
 							map[i] = Tiles.get("grass").id;
 						} else if (val > 0.5 && mval < -1.5) {
-							if (Displays.worldGen.getEntry("Theme").getValue().equals("Hell")) {
+							if (Settings.get("Theme").equals("Hell")) {
 								map[i] = Tiles.get("lava").id;
 							} else {
 								map[i] = Tiles.get("water").id;
@@ -288,10 +287,10 @@ public class LevelGen {
 					
 					case "Irregular":
 						if (val < -0.5 && mval < -0.5) {
-							if (Displays.worldGen.getEntry("Theme").getValue().equals("Hell")) {
+							if (Settings.get("Theme").equals("Hell")) {
 								map[i] = Tiles.get("lava").id;
 							}
-							if (!Displays.worldGen.getEntry("Theme").getValue().equals("Hell")) {
+							if (!Settings.get("Theme").equals("Hell")) {
 								map[i] = Tiles.get("water").id;
 							}
 						} else if (val > 0.5 && mval < -1.5) {
@@ -304,7 +303,7 @@ public class LevelGen {
 			}
 		}
 		
-		if (Displays.worldGen.getEntry("Theme").getValue().equals("Desert")) {
+		if (Settings.get("Theme").equals("Desert")) {
 			
 			for (int i = 0; i < w * h / 200; i++) {
 				int xs = random.nextInt(w);
@@ -327,7 +326,7 @@ public class LevelGen {
 			}
 		}
 		
-		if (!Displays.worldGen.getEntry("Theme").getValue().equals("Desert")) {
+		if (!Settings.get("Theme").equals("Desert")) {
 			
 			for (int i = 0; i < w * h / 2800; i++) {
 				int xs = random.nextInt(w);
@@ -350,7 +349,7 @@ public class LevelGen {
 			}
 		}
 		
-		if (Displays.worldGen.getEntry("Theme").getValue().equals("Forest")) {
+		if (Settings.get("Theme").equals("Forest")) {
 			for (int i = 0; i < w * h / 200; i++) {
 				int x = random.nextInt(w);
 				int y = random.nextInt(h);
@@ -365,7 +364,7 @@ public class LevelGen {
 				}
 			}
 		}
-		if (!Displays.worldGen.getEntry("Theme").getValue().equals("Forest") && !Displays.worldGen.getEntry("Theme").getValue().equals("Plain")) {
+		if (!Settings.get("Theme").equals("Forest") && !Settings.get("Theme").equals("Plain")) {
 			for (int i = 0; i < w * h / 1200; i++) {
 				int x = random.nextInt(w);
 				int y = random.nextInt(h);
@@ -381,7 +380,7 @@ public class LevelGen {
 			}
 		}
 		
-		if (Displays.worldGen.getEntry("Theme").getValue().equals("Plain")) {
+		if (Settings.get("Theme").equals("Plain")) {
 			for (int i = 0; i < w * h / 2800; i++) {
 				int x = random.nextInt(w);
 				int y = random.nextInt(h);
@@ -396,7 +395,7 @@ public class LevelGen {
 				}
 			}
 		}
-		if (!Displays.worldGen.getEntry("Theme").getValue().equals("Plain")) {
+		if (!Settings.get("Theme").equals("Plain")) {
 			for (int i = 0; i < w * h / 400; i++) {
 				int x = random.nextInt(w);
 				int y = random.nextInt(h);
@@ -677,7 +676,7 @@ public class LevelGen {
 				map[x + y * w] = Tiles.get("Stairs Down").id;
 				count++;
 				if (count >= w / 32) break;
-				/*if (WorldGenMenu.getSize() == 128) {
+				/*if (Settings.getSize() == 128) {
 					if (count == 4) break;
 				} else {
 					if (count == 8) break;

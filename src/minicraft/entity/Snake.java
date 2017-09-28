@@ -1,10 +1,9 @@
 package minicraft.entity;
 
+import minicraft.Settings;
 import minicraft.gfx.Color;
 import minicraft.gfx.MobSprite;
 import minicraft.item.Items;
-import minicraft.screen.Displays;
-import minicraft.screen.OptionsMenu;
 
 public class Snake extends EnemyMob {
 	private static MobSprite[][] sprites = MobSprite.compileMobSpriteAnimations(18, 18);
@@ -22,13 +21,13 @@ public class Snake extends EnemyMob {
 	
 	protected void touchedBy(Entity entity) {
 		if(entity instanceof Player) {
-			int damage = lvl + OptionsMenu.diff;
+			int damage = lvl + Settings.getIdx("diff");
 			entity.hurt(this, damage, Mob.getAttackDir(this, entity));
 		}
 	}
 	
 	protected void die() {
-		int num = Displays.options.getEntry("diff").getValue().equals("hard") ? 0 : 1;
+		int num = Settings.get("diff").equals("hard") ? 0 : 1;
 		dropItem(num, num+1, Items.get("scale"));
 		
 		super.die();

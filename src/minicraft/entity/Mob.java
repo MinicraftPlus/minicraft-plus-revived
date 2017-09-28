@@ -9,7 +9,6 @@ import minicraft.item.PotionType;
 import minicraft.level.tile.Tile;
 import minicraft.level.tile.Tiles;
 import minicraft.network.MinicraftServer;
-import minicraft.screen.ModeMenu;
 
 public abstract class Mob extends Entity {
 	
@@ -62,7 +61,7 @@ public abstract class Mob extends Entity {
 			yKnockback--;
 		}
 		
-		if(moved && Game.isConnectedClient() && this == Game.main.player) {
+		if(moved && Game.isConnectedClient() && this == Game.player) {
 			Game.client.move((Player)this);
 		}
 	}
@@ -165,7 +164,7 @@ public abstract class Mob extends Entity {
 	}
 	
 	public void hurt(Mob mob, int damage, int attackDir) { // Hurt the mob, when the source is another mob
-		if(mob instanceof Player && ModeMenu.creative && mob != this) doHurt(health, attackDir); // kill the mob instantly
+		if(mob instanceof Player && Game.isMode("creative") && mob != this) doHurt(health, attackDir); // kill the mob instantly
 		else doHurt(damage, attackDir); // Call the method that actually performs damage, and use our provided attackDir
 	}
 	

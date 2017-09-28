@@ -26,7 +26,7 @@ public class DeadMenu extends Display {
 			shouldRespawn = false;
 		}
 		//This is so that if the user presses x @ respawn menu, they respawn (what a concept)
-		//if (!ModeMenu.hardcore) {
+		//if (!Game.isMode("hardcore")) {
 			if (input.getKey("select").clicked) {
 				//This makes it so the player respawns
 				shouldRespawn = true;
@@ -64,7 +64,7 @@ public class DeadMenu extends Display {
 		Font.draw("Score:", screen, 2 * 8, 6 * 8, Color.get(-1, 555));
 		Font.draw("" + Game.player.score, screen, (2 + 6) * 8, 6 * 8, Color.get(-1, 550));
 		Font.draw(Game.input.getMapping("exit")+" = lose", screen, 2 * 8, 8 * 8, Color.get(-1, 333));
-		/*if (!ModeMenu.hardcore) //respawn only if not on hardcore mode
+		/*if (!Game.isMode("hardcore")) //respawn only if not on hardcore mode
 			Font.draw(Game.input.getMapping("select")+" = respawn", screen, 2 * 8, 9 * 8, Color.get(-1, 333));*/
 	}
 }

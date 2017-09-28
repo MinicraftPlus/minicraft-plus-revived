@@ -1,10 +1,11 @@
 package minicraft.item;
 
 import java.util.ArrayList;
+
+import minicraft.Game;
 import minicraft.gfx.Color;
 import minicraft.gfx.Screen;
 import minicraft.gfx.Sprite;
-import minicraft.screen.ModeMenu;
 
 // some items are direct instances of this class; those instances are the true "items", like stone, wood, wheat, or coal; you can't do anything with them besides use them to make something else.
 
@@ -62,7 +63,7 @@ public class StackableItem extends Item {
 	
 	/// this is used by (most) subclasses, to standardize the count decrement behavior. This is not the normal interactOn method.
 	protected boolean interactOn(boolean subClassSuccess) {
-		if(subClassSuccess && !ModeMenu.creative)
+		if(subClassSuccess && !Game.isMode("creative"))
 			count--;
 		return subClassSuccess;
 	}

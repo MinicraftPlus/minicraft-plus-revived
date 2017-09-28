@@ -1,15 +1,12 @@
 package minicraft.entity;
 
 import minicraft.Game;
+import minicraft.Settings;
 import minicraft.gfx.MobSprite;
 import minicraft.gfx.Screen;
 import minicraft.level.Level;
 import minicraft.level.tile.Tile;
 import minicraft.level.tile.Tiles;
-import minicraft.screen.Displays;
-import minicraft.screen.ModeMenu;
-import minicraft.screen.OptionsMenu;
-import minicraft.screen.entry.SettingEntry;
 
 public class EnemyMob extends MobAi {
 	
@@ -18,7 +15,7 @@ public class EnemyMob extends MobAi {
 	public int detectDist;
 	
 	public EnemyMob(int lvl, MobSprite[][] sprites, int[] lvlcols, int health, boolean isFactor, int detectDist, int rwTime, int rwChance) {
-		super(sprites, isFactor ? (lvl==0?1:lvl * lvl) * health*((Double)(Math.pow(2, OptionsMenu.diff))).intValue() : health, 60*Game.normSpeed, rwTime, rwChance);
+		super(sprites, isFactor ? (lvl==0?1:lvl * lvl) * health*((Double)(Math.pow(2, Settings.getIdx("diff")))).intValue() : health, 60*Game.normSpeed, rwTime, rwChance);
 		this.lvl = lvl == 0 ? 1 : lvl;
 		this.lvlcols = java.util.Arrays.copyOf(lvlcols, lvlcols.length);
 		col = lvlcols[this.lvl-1];
@@ -61,7 +58,7 @@ public class EnemyMob extends MobAi {
 		super.touchedBy(entity);
 		// hurts the player, damage is based on lvl.
 		if(entity instanceof Player) {
-			entity.hurt(this, lvl * (Displays.options.getEntry("diff").getValue().equals("hard") ? 2 : 1), Mob.getAttackDir(this, entity));
+			entity.hurt(this, lvl * (Settings.get("diff").equals("hard") ? 2 : 1), Mob.getAttackDir(this, entity));
 		}
 	}
 	
@@ -70,7 +67,7 @@ public class EnemyMob extends MobAi {
 	}
 	
 	public static boolean checkStartPos(Level level, int x, int y) { // Find a place to spawn the mob
-		int r = (level.depth == -4 ? (ModeMenu.score ? 22 : 15) : 13);
+		int r = (level.depth == -4 ? (Game.isMode("score") ? 22 : 15) : 13);
 		
 		if(!MobAi.checkStartPos(level, x, y, 60, r))
 			return false;

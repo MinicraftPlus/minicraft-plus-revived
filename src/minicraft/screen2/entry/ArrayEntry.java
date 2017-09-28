@@ -36,12 +36,32 @@ public class ArrayEntry<T> implements ListEntry {
 			maxWidth = Math.max(maxWidth, Font.textWidth(option.toString()));
 	}
 	
-	void setSelection(int idx) {
+	public void setSelection(int idx) {
 		if(idx >= 0 && idx < options.length)
 			selection = idx;
 	}
 	
-	public T getSelected() { return options[selection]; }
+	public void setValue(Object value) {
+		boolean areStrings = value instanceof String && options instanceof String[];
+		for(int i = 0; i < options.length; i++) {
+			if(areStrings && ((String)value).equalsIgnoreCase((String)options[i]) || options[i].equals(value)) {
+				setSelection(i);
+				break;
+			}
+		}
+	}
+	
+	public String getLabel() { return label; }
+	
+	public int getSelection() { return selection; }
+	public T getValue() { return options[selection]; }
+	
+	public boolean hasValue(Object value) {
+		if(value instanceof String && options instanceof String[])
+			return ((String)value).equalsIgnoreCase((String)getValue());
+		else
+			return getValue().equals(value);
+	}
 	
 	@Override
 	public void tick(InputHandler input, Menu menu) {

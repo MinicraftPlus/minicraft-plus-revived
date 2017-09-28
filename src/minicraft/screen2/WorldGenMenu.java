@@ -4,15 +4,16 @@ import java.awt.Point;
 
 import minicraft.Game;
 import minicraft.InputHandler;
+import minicraft.Settings;
 import minicraft.gfx.Color;
 import minicraft.gfx.Font;
 import minicraft.gfx.Screen;
-import minicraft.screen2.entry.ArrayEntry;
 import minicraft.screen2.entry.InputEntry;
 import minicraft.screen2.entry.ListEntry;
 import minicraft.screen2.entry.SelectEntry;
 
 public class WorldGenMenu implements MenuData {
+	
 	@Override
 	public Menu getMenu() {
 		return new ScrollingMenu(this, 5, 0.8f);
@@ -22,12 +23,15 @@ public class WorldGenMenu implements MenuData {
 	public ListEntry[] getEntries() {
 		return new ListEntry[] {
 			new InputEntry("Enter World Name", "[a-zA-Z0-9 ]", 36),
-			new ArrayEntry<String>("Game Mode", "Survival", "Creative", "Hardcore", "Score"),
-			new ArrayEntry<Integer>("Time (Score Mode)", /*10, */20, 40, 60/*, 120*/),
-			new SelectEntry("Create World", () -> Game.setMenu(new LoadingDisplay())),
-			new ArrayEntry<Integer>("World Size", 128, 256, 512),
-			new ArrayEntry<String>("World Theme", "Normal", "Forest", "Desert", "Plain", "Hell"),
-			new ArrayEntry<String>("Terrain Type", "Island", "Box", "Mountain", "Irregular")
+			Settings.getEntry("mode"),
+			Settings.getEntry("scoretime"),
+			new SelectEntry("Create World", () -> {
+				// TODO set world name
+				Game.setMenu(new LoadingDisplay());
+			}),
+			Settings.getEntry("size"),
+			Settings.getEntry("theme"),
+			Settings.getEntry("type")
 		};
 	}
 	

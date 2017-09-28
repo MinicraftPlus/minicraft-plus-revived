@@ -1,10 +1,9 @@
 package minicraft.entity;
 
+import minicraft.Settings;
 import minicraft.gfx.Color;
 import minicraft.gfx.MobSprite;
 import minicraft.item.Items;
-import minicraft.screen.Displays;
-import minicraft.screen.OptionsMenu;
 
 public class Knight extends EnemyMob {
 	private static MobSprite[][] sprites = MobSprite.compileMobSpriteAnimations(24, 14);
@@ -21,7 +20,7 @@ public class Knight extends EnemyMob {
 	}
 
 	protected void die() {
-		if (Displays.options.getEntry("diff").getValue().equals("easy"))
+		if (Settings.get("diff").equals("easy"))
 			dropItem(1, 3, Items.get("shard"));
 		else
 			dropItem(0, 2, Items.get("shard"));

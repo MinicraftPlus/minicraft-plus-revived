@@ -7,7 +7,9 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+
 import minicraft.Game;
+import minicraft.Settings;
 import minicraft.entity.*;
 import minicraft.item.ArmorItem;
 import minicraft.item.Item;
@@ -16,9 +18,7 @@ import minicraft.item.PotionItem;
 import minicraft.item.PotionType;
 import minicraft.level.Level;
 import minicraft.level.tile.Tiles;
-import minicraft.screen.LoadingDisplay;
-import minicraft.screen.ModeMenu;
-import minicraft.screen.OptionsMenu;
+import minicraft.screen2.LoadingDisplay;
 
 /// this class is simply a way to seperate all the old, compatibility complications into a seperate file.
 public class LegacyLoad {
@@ -154,12 +154,12 @@ public class LegacyLoad {
 			Game.gameTime = 65000; // prevents time cheating.
 			
 			if(worldVer.compareTo(new Load.Version("1.9.2")) < 0) {
-				OptionsMenu.autosave = Boolean.parseBoolean(data.get(3));
-				OptionsMenu.isSoundAct = Boolean.parseBoolean(data.get(4));
+				Settings.set("autosave", Boolean.parseBoolean(data.get(3)));
+				Settings.set("sound", Boolean.parseBoolean(data.get(4)));
 				if(worldVer.compareTo(new Load.Version("1.9.2-dev2")) >= 0)
 					AirWizard.beaten = Boolean.parseBoolean(data.get(5));
 			} else { // this is 1.9.2 official or after
-				OptionsMenu.diff = Integer.parseInt(data.get(3));
+				Settings.setIdx("diff", Integer.parseInt(data.get(3)));
 				AirWizard.beaten = Boolean.parseBoolean(data.get(4));
 			}
 		}
@@ -167,8 +167,8 @@ public class LegacyLoad {
 			if(data.size() == 5) {
 				worldVer = new Load.Version("1.9");
 				Game.setTime(Integer.parseInt(data.get(0)));
-				OptionsMenu.autosave = Boolean.parseBoolean(data.get(3));
-				OptionsMenu.isSoundAct = Boolean.parseBoolean(data.get(4));
+				Settings.set("autosave", Boolean.parseBoolean(data.get(3)));
+				Settings.set("sound", Boolean.parseBoolean(data.get(4)));
 			} else { // version == 1.8?
 				if(!oldSave) {
 					System.out.println("UNEXPECTED WORLD VERSION");
@@ -177,7 +177,7 @@ public class LegacyLoad {
 				// for backwards compatibility
 				Game.tickCount = Integer.parseInt(data.get(0));
 				playerac = Integer.parseInt(data.get(3));
-				OptionsMenu.autosave = false;
+				Settings.set("autosave", false);
 			}
 		}
 	}
@@ -250,7 +250,7 @@ public class LegacyLoad {
 			if (mode == 4) Game.scoreTime = 300;
 		}
 		
-		ModeMenu.updateModeBools(mode);
+		Settings.setIdx("mode", mode);
 		
 		boolean hasEffects;
 		int potionIdx = 10;

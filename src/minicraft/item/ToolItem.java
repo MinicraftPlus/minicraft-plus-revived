@@ -2,6 +2,8 @@ package minicraft.item;
 
 import java.util.ArrayList;
 import java.util.Random;
+
+import minicraft.Game;
 import minicraft.entity.Entity;
 import minicraft.entity.Mob;
 import minicraft.entity.Player;
@@ -10,7 +12,6 @@ import minicraft.gfx.Sprite;
 import minicraft.level.Level;
 import minicraft.level.tile.Tile;
 import minicraft.level.tile.Tiles;
-import minicraft.screen.ModeMenu;
 
 public class ToolItem extends Item {
 	
@@ -85,7 +86,7 @@ public class ToolItem extends Item {
 		if (type == ToolType.FishingRod && dur > 0) {
 			if (tile == Tiles.get("water")) {
 				player.goFishing(player.x - 5, player.y - 5);
-				if(!ModeMenu.creative) dur--;
+				if(!Game.isMode("creative")) dur--;
 				return true;
 			}
 		}

@@ -1,12 +1,9 @@
 package minicraft.item;
 
-
 import java.util.HashMap;
+
+import minicraft.Game;
 import minicraft.entity.Player;
-import minicraft.gfx.Color;
-import minicraft.gfx.Font;
-import minicraft.gfx.Screen;
-import minicraft.screen.ModeMenu;
 
 public class Recipe {
 	public HashMap<String, Integer> costs = new HashMap<String, Integer>();  // A list of costs for the recipe
@@ -45,7 +42,7 @@ public class Recipe {
 	public void checkCanCraft(Player player) { canCraft = getCanCraft(player); }
 	/** Checks if the player can craft the recipe */
 	private boolean getCanCraft(Player player) {
-		if(ModeMenu.creative) return true;
+		if(Game.isMode("creative")) return true;
 		
 		for (String cost: costs.keySet().toArray(new String[0])) { //cycles through the costs list
 			/// this method ONLY WORKS if costs does not contain two elements such that inventory.count will count an item it contains as matching more than once.
@@ -70,7 +67,7 @@ public class Recipe {
 	public boolean craft(Player player) {
 		if(!getCanCraft(player)) return false;
 		
-		if(!ModeMenu.creative) {
+		if(!Game.isMode("creative")) {
 			// remove the cost items from the inventory.
 			for (String cost: costs.keySet().toArray(new String[0])) {
 				player.inventory.removeItems(Items.get(cost), costs.get(cost));

@@ -4,11 +4,14 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
 import minicraft.Game;
+import minicraft.Settings;
 import minicraft.entity.*;
 import minicraft.entity.particle.FireParticle;
 import minicraft.entity.particle.SmashParticle;
@@ -22,13 +25,8 @@ import minicraft.item.StackableItem;
 import minicraft.level.Level;
 import minicraft.level.tile.Tiles;
 import minicraft.network.MinicraftServer;
-import minicraft.screen.Displays;
-import minicraft.screen.LoadingDisplay;
-import minicraft.screen.ModeMenu;
-import minicraft.screen.MultiplayerMenu;
-import minicraft.screen.OptionsMenu;
-import minicraft.screen.entry.BooleanEntry;
-import minicraft.screen.entry.SettingEntry;
+import minicraft.screen2.LoadingDisplay;
+import minicraft.screen2.MultiplayerMenu;
 
 public class Load {
 	
@@ -36,7 +34,7 @@ public class Load {
 	File folder;
 	
 	private static String extension = Save.extension;
-	private double percentInc;
+	private float percentInc;
 	
 	ArrayList<String> data;
 	ArrayList<String> extradata;
@@ -77,7 +75,7 @@ public class Load {
 				if(level)
 					nument += level.getEntityArray().length;
 			percentInc += nument;*/
-			percentInc = 100.0 / percentInc;
+			percentInc = 100f / percentInc;
 			
 			LoadingDisplay.setPercentage(0);
 			loadGame("Game"); // more of the version will be determined here
@@ -85,7 +83,7 @@ public class Load {
 			loadEntities("Entities");
 			loadInventory("Inventory", Game.player.inventory);
 			loadPlayer("Player", Game.player);
-			if(ModeMenu.creative) {
+			if(Game.isMode("creative")) {
 				Items.fillCreativeInv(Game.player.inventory, false);
 			}
 			//LoadingDisplay.setPercentage(0); // reset
@@ -205,7 +203,9 @@ public class Load {
 	public static ArrayList<String> loadFile(String filename) throws IOException {
 		ArrayList<String> lines = new ArrayList<>();
 		
-		try (BufferedReader br = new BufferedReader(new FileReader(filename))) {
+		InputStream fileStream = Load.class.getResourceAsStream(filename);
+		
+		try (BufferedReader br = new BufferedReader(new InputStreamReader(fileStream))) {
 			
 			String line;
 			while((line = br.readLine()) != null)
@@ -277,24 +277,25 @@ public class Load {
 		loadFromFile(location + filename + extension);
 		
 		//ModeMenu.unlockedtimes.clear();
-		SettingEntry<Integer> scoreTimes = (SettingEntry<Integer>) Displays.worldGen.getEntry("scoreTime");
+		//SettingEntry<Integer> scoreTimes = (SettingEntry<Integer>) Displays.worldGen.getEntry("scoreTime");
+		// TODO fix this
 		
-		
-		BooleanEntry skinUnlocked = (BooleanEntry) Displays.options.getEntry("unlockedskin"); 
-		skinUnlocked.setValue(Boolean.FALSE);
-		//OptionsMenu.unlockedskin = false;
+		//BooleanEntry skinUnlocked = (BooleanEntry) Displays.options.getEntry("unlockedskin"); 
+		//skinUnlocked.setValue(Boolean.FALSE);
+		Settings.set("unlockedskin", false);
+		//Settings.set("wear suit", false;)
 		
 		for(String unlock: data) {
 			if(unlock.equals("AirSkin"))
-				skinUnlocked.setValue(Boolean.TRUE);
+				Settings.set("unlockedskin", true);
 			
 			unlock = unlock.replace("HOURMODE", "H_ScoreTime").replace("MINUTEMODE", "M_ScoreTime");
 			
-			if(unlock.contains("_ScoreTime"))
-				ModeMenu.unlockedtimes.add(unlock.substring(0, unlock.indexOf("_")));
+//			if(unlock.contains("_ScoreTime"))
+//				ModeMenu.unlockedtimes.add(unlock.substring(0, unlock.indexOf("_")));
 		}
 		
-		ModeMenu.initTimeList();
+		//ModeMenu.initTimeList();
 	}
 	
 	public void loadGame(String filename) {
@@ -310,9 +311,11 @@ public class Load {
 			Game.gameTime = 65000; // prevents time cheating.
 		}
 		
-		OptionsMenu.diff = Integer.parseInt(data.get(3));
+		int diffIdx = Integer.parseInt(data.get(3));
 		if(worldVer.compareTo(new Version("1.9.3-dev3")) < 0)
-			OptionsMenu.diff--; // account for change in difficulty
+			diffIdx--; // account for change in difficulty
+		
+		Settings.setIdx("diff", diffIdx);
 		
 		AirWizard.beaten = Boolean.parseBoolean(data.get(4));
 	}
@@ -325,8 +328,8 @@ public class Load {
 		if(!data.get(2).contains(";")) // signifies that this file was last written to by a version after 2.0.2.
 			prefVer = new Version(data.remove(0));
 		
-		OptionsMenu.isSoundAct = Boolean.parseBoolean(data.get(0));
-		OptionsMenu.autosave = Boolean.parseBoolean(data.get(1));
+		Settings.set("sound", Boolean.parseBoolean(data.get(0)));
+		Settings.set("autosave", Boolean.parseBoolean(data.get(1)));
 		
 		List<String> subdata;
 		
@@ -490,7 +493,7 @@ public class Load {
 			if (mode == 4) {
 				Game.scoreTime = Integer.parseInt(modeinfo[1]);
 				if(worldVer.compareTo(new Version("1.9.4")) >= 0)
-					ModeMenu.setScoreTime(modeinfo[2]);
+					Settings.set("scoretime", modeinfo[2]);
 			}
 		}
 		else {
@@ -498,7 +501,7 @@ public class Load {
 			if (mode == 4) Game.scoreTime = 300;
 		}
 		
-		ModeMenu.updateModeBools(mode);
+		Settings.setIdx("mode", mode);
 		
 		if(!data.get(10).equals("PotionEffects[]")) {
 			String[] effects = data.get(10).replace("PotionEffects[", "").replace("]", "").split(":");

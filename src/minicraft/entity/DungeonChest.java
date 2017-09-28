@@ -8,7 +8,6 @@ import minicraft.gfx.Color;
 import minicraft.gfx.Screen;
 import minicraft.item.Items;
 import minicraft.item.StackableItem;
-import minicraft.screen.ModeMenu;
 
 public class DungeonChest extends Chest {
 	private static int openCol = Color.get(-1, 2, 115, 225);
@@ -29,7 +28,7 @@ public class DungeonChest extends Chest {
 			boolean activeKey = player.activeItem != null && player.activeItem.matches(Items.get("Key"));
 			boolean invKey = player.inventory.count(Items.get("key")) > 0;
 			if(activeKey || invKey) { // if the player has a key...
-				if (!ModeMenu.creative) { // remove the key unless on creative mode.
+				if (!Game.isMode("creative")) { // remove the key unless on creative mode.
 					if (activeKey) { // remove activeItem
 						StackableItem key = (StackableItem)player.activeItem;
 						key.count--;

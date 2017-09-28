@@ -45,9 +45,7 @@ import minicraft.network.MinicraftClient;
 import minicraft.network.MinicraftServer;
 import minicraft.saveload.Load;
 import minicraft.saveload.Save;
-import minicraft.screen.*;
-import minicraft.screen2.Menu;
-import minicraft.screen2.MenuData;
+import minicraft.screen2.*;
 
 public class Game {
 	
@@ -194,11 +192,13 @@ public class Game {
 	
 	// Sets the current menu.
 	public static void setMenu(MenuData menuData) {
-		setMenu(menuData.getMenu());
+		setMenu(menuData == null ? null : menuData.getMenu());
 	}
 	public static void setMenu(Menu display) {
 		//Menu parent = menu;
 		//newMenu = display;
+		System.out.println("setting menu to: " + (display == null ? "null" : display.getMenuType()));
+		
 		newMenu = display;
 		//if (debug) System.out.println("setting game menu to " + menu);
 		//if (display != null) newMenu.init(input, parent);
@@ -221,11 +221,17 @@ public class Game {
 		return isValidServer() && server.hasClients();
 	}
 	
+	
+	public static boolean isMode(String mode) {
+		return ((String)Settings.get("mode")).equalsIgnoreCase(mode);
+	}
 	/// called after main; main is at bottom.
 	/*public static void start() {
 		running = true;
 		new Thread(this).start(); //calls run()
 	}*/
+	
+	private Game() {} // can't instantiate the Game class.
 	
 	// This is only called by GameApplet...
 	/*public static void stop() {
@@ -235,7 +241,7 @@ public class Game {
 	/**
 	 * Initialization step, this is called when the game first starts. Sets up the screens.
 	 */
-	protected static void init() {
+	private static void init() {
 		/* This sets up the screens, and loads the icons.png spritesheet. */
 		try {
 			screen = new Screen(new SpriteSheet(ImageIO.read(Game.class.getResourceAsStream
@@ -297,7 +303,7 @@ public class Game {
 	
 	/** This method is used to create a brand new world, or to load an existing one from a file. */
 	/** For the loading screen updates to work, it it assumed that *this* is called by a thread *other* than the one rendering the current *menu*. */
-	public static void initWorld() { // this is a full reset; everything.
+	private static void initWorld() { // this is a full reset; everything.
 		if(Game.debug) System.out.println("resetting world...");
 		
 		if(Game.isValidServer()) {
@@ -317,23 +323,23 @@ public class Game {
 		
 		levels = new Level[6];
 		
-		scoreTime = ModeMenu.getScoreTime();
+		scoreTime = (Integer) Settings.get("scoretime");
 		
 		LoadingDisplay.setPercentage(0); // this actually isn't necessary, I think; it's just in case.
 		
 		if(!isValidClient()) {
 			if(Game.debug) System.out.println("initializing world non-client...");
 			
-			if(WorldSelectMenu.loadworld)
-				new Load(WorldSelectMenu.worldname);
+			if(WorldSelectMenu.loadWorld())
+				new Load(WorldSelectMenu.getWorldName());
 			else {
-				worldSize = (Integer)Displays.worldGen.getEntry("size").getValue();
+				worldSize = (Integer) Settings.get("size");
 				
-				double loadingInc = 100.0 / (maxLevelDepth - minLevelDepth + 1); // the .002 is for floating point errors, in case they occur.
+				float loadingInc = 100f / (maxLevelDepth - minLevelDepth + 1); // the .002 is for floating point errors, in case they occur.
 				for (int i = maxLevelDepth; i >= minLevelDepth; i--) {
 					// i = level depth; the array starts from the top because the parent level is used as a reference, so it should be constructed first. It is expected that the highest level will have a null parent.
 					if(Game.debug) System.out.println("loading level " + i + "...");
-					levels[lvlIdx(i)] = new Level(worldSize, worldSize, i, levels[lvlIdx(i+1)], !WorldSelectMenu.loadworld);
+					levels[lvlIdx(i)] = new Level(worldSize, worldSize, i, levels[lvlIdx(i+1)], !WorldSelectMenu.loadWorld());
 					
 					LoadingDisplay.progress(loadingInc);
 				}
@@ -352,7 +358,7 @@ public class Game {
 				level.add(player);
 			}
 			
-			if(Displays.worldGen.getEntry("Theme").getValue().equals("Hell")) {
+			if(Settings.get("Theme").equals("Hell")) {
 				player.inventory.add(Items.get("lava potion"));
 			}
 			readyToRenderGameplay = true;
@@ -413,9 +419,9 @@ public class Game {
 		if(!paused || isValidServer())
 			asTick++;
 		if (asTick > astime) {
-			if (OptionsMenu.autosave && player.health > 0 && !gameOver) {
+			if ((boolean)Settings.get("autosave") && player.health > 0 && !gameOver) {
 				if(!Game.ISONLINE)
-					new Save(player, WorldSelectMenu.worldname);
+					new Save(player, WorldSelectMenu.getWorldName());
 				else if(Game.isValidServer())
 					Game.server.saveWorld();
 			}
@@ -429,7 +435,7 @@ public class Game {
 		
 		/// SCORE MODE ONLY
 		
-		if (ModeMenu.score && (!paused || isValidServer() && !gameOver)) {
+		if (Game.isMode("score") && (!paused || isValidServer() && !gameOver)) {
 			if (scoreTime <= 0) { // GAME OVER
 				gameOver = true;
 				setMenu(new PlayerScoreDisplay(player));
@@ -522,11 +528,11 @@ public class Game {
 						if (input.getKey("3").clicked) changeTimeOfDay(Time.Evening);
 						if (input.getKey("4").clicked) changeTimeOfDay(Time.Night);
 						
-						if (input.getKey("creative").clicked) {ModeMenu.updateModeBools(2);
+						if (input.getKey("creative").clicked) {Settings.set("mode", "creative");
 							Items.fillCreativeInv(player.inventory, false);}
-						if (input.getKey("survival").clicked) ModeMenu.updateModeBools(1);
-						if (input.getKey("shift-t").clicked) ModeMenu.updateModeBools(4);
-						if (ModeMenu.score && input.getKey("ctrl-t").clicked){ scoreTime = normSpeed * 5; // 5 seconds
+						if (input.getKey("survival").clicked) Settings.set("mode", "survival");
+						if (input.getKey("shift-t").clicked) Settings.set("mode", "score");
+						if (Game.isMode("score") && input.getKey("ctrl-t").clicked){ scoreTime = normSpeed * 5; // 5 seconds
 							if(Game.isValidServer()) server.updateGameVars();
 						}
 						
@@ -638,6 +644,7 @@ public class Game {
 		return prefix;
 	}
 	
+	public static int getMultiplier() { return multiplier; }
 	public static void setMultiplier(int value) {
 		multiplier = value;
 		multipliertime = mtm;
@@ -828,7 +835,7 @@ public class Game {
 		level.renderSprites(screen, xScroll, yScroll); // renders level sprites on screen
 		
 		// this creates the darkness in the caves
-		if (currentLevel != 5 && (currentLevel != 3 || tickCount < dayLength/4 || tickCount > dayLength/2) && (!ModeMenu.creative || currentLevel >= 3)) {
+		if (currentLevel != 5 && (currentLevel != 3 || tickCount < dayLength/4 || tickCount > dayLength/2) && (!Game.isMode("creative") || currentLevel >= 3)) {
 			lightScreen.clear(0); // this doesn't mean that the pixel will be black; it means that the pixel will be DARK, by default; lightScreen is about light vs. dark, not necessarily a color. The light level it has is compared with the minimum light values in dither to decide whether to leave the cell alone, or mark it as "dark", which will do different things depending on the game level and time of day.
 			int brightnessMultiplier = player.potioneffects.containsKey(PotionType.Light) ? 12 : 8; // brightens all light sources by a factor of 1.5 when the player has the Light potion effect. (8 above is normal)
 			level.renderLight(lightScreen, xScroll, yScroll, brightnessMultiplier); // finds (and renders) all the light from objects (like the player, lanterns, and lava).
@@ -847,7 +854,7 @@ public class Game {
 		
 		// This is the arrow counter. ^ = infinite symbol.
 		int ac = player.inventory.count(Items.arrowItem);
-		if (ModeMenu.creative || ac >= 10000)
+		if (Game.isMode("creative") || ac >= 10000)
 			Font.draw("	x" + "^", screen, 84, Screen.h - 16, Color.get(0, 333, 444, 555));
 		else
 			Font.draw("	x" + ac, screen, 84, Screen.h - 16, Color.get(0, 555));
@@ -887,7 +894,7 @@ public class Game {
 		
 		// SCORE MODE ONLY:
 		
-		if (ModeMenu.score) {
+		if (Game.isMode("score")) {
 			int seconds = (int)Math.ceil(scoreTime / (double)normSpeed);
 			int minutes = seconds / 60;
 			int hours = minutes / 60;
@@ -927,13 +934,13 @@ public class Game {
 				int pTime = effects[i].getValue() / normSpeed;
 				int pcol = Color.get(pType.dispColor, 555);
 				Font.draw("("+input.getMapping("potionEffects")+" to hide!)", screen, 180, 9, Color.get(0, 555));
-				Font.draw(pType + " (" + (pTime / 60) + ":" + (pTime % 60) + ")", screen, 180, 17 + i * 8, pcol);
+				Font.draw(pType + " (" + (pTime / 60) + ":" + (pTime % 60) + ")", screen, 180, 17 + i * Font.textHeight(), pcol);
 			}
 		}
 		
 		
 		// This is the status icons, like health hearts, stamina bolts, and hunger "burgers".
-		if (!ModeMenu.creative) {
+		if (!Game.isMode("creative")) {
 			for (int i = 0; i < 10; i++) {
 				int color;
 				
@@ -981,7 +988,7 @@ public class Game {
 				info.add("Y " + (player.y / 16) + "-" + (player.y % 16));
 				if(Game.levels[currentLevel] != null)
 					info.add("Tile " + Game.levels[currentLevel].getTile(player.x>>4, player.y>>4).name);
-				if (ModeMenu.score) info.add("Score " + player.score);
+				if (Game.isMode("score")) info.add("Score " + player.score);
 			}
 			if(Game.levels[currentLevel] != null) {
 				if(!Game.isValidClient())
@@ -1101,7 +1108,7 @@ public class Game {
 		server = new MinicraftServer();
 		
 		/// load up any saved config options for the server.
-		new Load(WorldSelectMenu.worldname, server);
+		new Load(WorldSelectMenu.getWorldName(), server);
 	}
 	
 	/**
@@ -1196,7 +1203,7 @@ public class Game {
 				autoserver = true;
 				if(i+1 < args.length) {
 					i++;
-					WorldSelectMenu.worldname = args[i];
+					WorldSelectMenu.setWorldName(args[i]);
 				}
 			}
 		}
@@ -1237,8 +1244,6 @@ public class Game {
 				deleteAllFiles(testFile);
 		}
 		
-		Game game = new Game();
-		
 		if(HAS_GUI) {
 			canvas.setMinimumSize(new Dimension(1, 1));
 			canvas.setPreferredSize(getWindowSize());
@@ -1249,7 +1254,7 @@ public class Game {
 			frame.pack(); //squishes everything into the preferredSize.
 			
 			try {
-				BufferedImage logo = ImageIO.read(new File("resources/logo.png"));
+				BufferedImage logo = ImageIO.read(Game.class.getResourceAsStream("/resources/logo.png"));
 				frame.setIconImage(logo);
 			} catch (IOException e) {
 				e.printStackTrace();
@@ -1305,7 +1310,9 @@ public class Game {
 		
 		start();
 		
-		init(); // Starts the game!
+		init();
+		
+		run(); // Starts the game!
 	}
 	
 	public static Canvas getCanvas() { return canvas; }

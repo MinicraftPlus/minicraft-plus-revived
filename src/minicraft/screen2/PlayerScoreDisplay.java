@@ -29,7 +29,7 @@ public class PlayerScoreDisplay extends Display {
 	public PlayerScoreDisplay(Player player) {
 		super();
 		
-		//title = "Game Over!" + (ModeMenu.score ? " (" + ModeMenu.getSelectedTime() + ")" : "");
+		//title = "Game Over!" + (Game.isMode("score") ? " (" + ModeMenu.getSelectedTime() + ")" : "");
 		
 		displayTimer = Game.normSpeed; // wait 3 seconds before rendering the menu.
 		inputDelay = Game.normSpeed/2; // wait a half-second after rendering before allowing user input.

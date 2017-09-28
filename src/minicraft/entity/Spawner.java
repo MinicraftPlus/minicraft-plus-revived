@@ -2,6 +2,7 @@ package minicraft.entity;
 
 import java.util.Random;
 
+import minicraft.Game;
 import minicraft.Sound;
 import minicraft.entity.particle.FireParticle;
 import minicraft.entity.particle.TextParticle;
@@ -14,7 +15,6 @@ import minicraft.item.PowerGloveItem;
 import minicraft.item.ToolItem;
 import minicraft.item.ToolType;
 import minicraft.level.tile.Tile;
-import minicraft.screen.ModeMenu;
 
 public class Spawner extends Furniture {
 	
@@ -114,12 +114,12 @@ public class Spawner extends Furniture {
 	public boolean interact(Player player, Item item, int attackDir) {
 		if(item instanceof ToolItem) {
 			ToolItem tool = (ToolItem)item;
-			//if(tool.type != ToolType.Pickaxe && !ModeMenu.creative) return false;
+			//if(tool.type != ToolType.Pickaxe && !Game.isMode("creative")) return false;
 			
 			Sound.monsterHurt.play();
 			
 			int dmg;
-			if(ModeMenu.creative)
+			if(Game.isMode("creative"))
 				dmg = health;
 			else {
 				dmg = tool.level + random.nextInt(2);
@@ -142,7 +142,7 @@ public class Spawner extends Furniture {
 			return true;
 		}
 		
-		if(item instanceof PowerGloveItem && ModeMenu.creative) {
+		if(item instanceof PowerGloveItem && Game.isMode("creative")) {
 			level.remove(this);
 			player.inventory.add(0, player.activeItem);
 			player.activeItem = new FurnitureItem(this);
@@ -154,7 +154,7 @@ public class Spawner extends Furniture {
 	
 	@SuppressWarnings("JavaReflectionMemberAccess")
 	public void hurt(Mob attacker, int dmg, int attackDir) {
-		if(attacker instanceof Player && ModeMenu.creative && mob instanceof EnemyMob) {
+		if(attacker instanceof Player && Game.isMode("creative") && mob instanceof EnemyMob) {
 			lvl++;
 			if(lvl > maxMobLevel) lvl = 1;
 			EnemyMob newmob = null;

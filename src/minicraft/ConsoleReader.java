@@ -3,16 +3,14 @@ package minicraft;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import java.util.Scanner;
 import java.util.Locale;
+import java.util.Scanner;
 
 import minicraft.entity.RemotePlayer;
-import minicraft.network.MinicraftServerThread;
 import minicraft.level.Level;
+import minicraft.network.MinicraftServerThread;
 import minicraft.saveload.Save;
-import minicraft.screen.OptionsMenu;
-import minicraft.screen.ModeMenu;
-import minicraft.screen.WorldSelectMenu;
+import minicraft.screen2.WorldSelectMenu;
 
 class ConsoleReader extends Thread {
 	
@@ -35,11 +33,11 @@ class ConsoleReader extends Thread {
 		
 		AUTOSAVE {
 			public String getValue() {
-				return String.valueOf(OptionsMenu.autosave);
+				return String.valueOf(Settings.get("autosave"));
 			}
 			
 			public boolean setValue(String val) {
-				OptionsMenu.autosave = Boolean.parseBoolean(val);
+				Settings.set("autosave", Boolean.parseBoolean(val));
 				return true;
 			}
 		};
@@ -99,7 +97,7 @@ class ConsoleReader extends Thread {
 						if(set) {
 							System.out.println(configOption.name()+" set successfully.");
 							/// HERE is where we save the modified config options.
-							new Save(WorldSelectMenu.worldname, Game.server);
+							new Save(WorldSelectMenu.getWorldName(), Game.server);
 						} else
 							System.out.println("failed to set " + configOption.name());
 					}
@@ -145,19 +143,19 @@ class ConsoleReader extends Thread {
 				
 				switch(args[0].toLowerCase()) {
 					case "s": case "survival":
-						ModeMenu.updateModeBools("Survival");
+						Settings.set("mode", "Survival");
 						break;
 					
 					case "c": case "creative":
-						ModeMenu.updateModeBools("Creative");
+						Settings.set("mode", "Creative");
 						break;
 					
 					case "h": case "hardcore":
-						ModeMenu.updateModeBools("Hardcore");
+						Settings.set("mode", "Hardcore");
 						break;
 					
 					case "t": case "timed": case "score":
-						ModeMenu.updateModeBools("Score");
+						Settings.set("mode", "Score");
 						break;
 					
 					default:

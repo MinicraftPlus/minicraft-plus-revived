@@ -1,17 +1,17 @@
 package minicraft.entity;
 
+import minicraft.Settings;
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
+
 import minicraft.Game;
 import minicraft.Sound;
 import minicraft.gfx.Color;
 import minicraft.gfx.Font;
 import minicraft.gfx.MobSprite;
 import minicraft.gfx.Screen;
-import minicraft.screen.OptionsMenu;
-
-import java.io.BufferedWriter;
-import java.io.File;
-import java.io.FileWriter;
-import java.io.IOException;
 
 public class AirWizard extends EnemyMob {
 	private static MobSprite[][] sprites = MobSprite.compileMobSpriteAnimations(8, 14);
@@ -188,8 +188,8 @@ public class AirWizard extends EnemyMob {
 			beaten = true;
 		} else {
 			Game.notifyAll("Air Wizard II: Defeated!");
-			if (!OptionsMenu.unlockedskin) Game.notifyAll("A costume lies on the ground...", -200);
-			OptionsMenu.unlockedskin = true;
+			if (!(boolean)Settings.get("wear suit")) Game.notifyAll("A costume lies on the ground...", -200);
+			Settings.set("wear suit", true);
 			BufferedWriter bufferedWriter = null;
 			
 			try {

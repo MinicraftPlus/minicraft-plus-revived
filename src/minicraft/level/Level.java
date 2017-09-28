@@ -1,5 +1,6 @@
 package minicraft.level;
 
+import minicraft.Settings;
 import java.awt.Point;
 import java.util.ArrayList;
 import java.util.Comparator;
@@ -17,8 +18,6 @@ import minicraft.item.ToolType;
 import minicraft.level.tile.Tile;
 import minicraft.level.tile.Tiles;
 import minicraft.level.tile.TorchTile;
-import minicraft.screen.ModeMenu;
-import minicraft.screen.OptionsMenu;
 
 public class Level {
 	private Random random = new Random();
@@ -84,7 +83,7 @@ public class Level {
 	}
 	
 	public void updateMobCap() {
-		maxMobCount = 100 + 150* OptionsMenu.diff;
+		maxMobCount = 100 + 150* Settings.getIdx("diff");
 		if(depth == 0) maxMobCount = maxMobCount * 2 / 3;
 		if(depth == 1 || depth == -4) maxMobCount /= 2;
 	}
@@ -456,7 +455,7 @@ public class Level {
 				
 				if (e.isRemoved()) continue;
 				
-				if(e != Game.main.player) // it is ticked seperately.
+				if(e != Game.player) // it is ticked seperately.
 					e.tick(); /// the main entity tick call.
 				
 				if (Game.hasConnectedClients()) // this means it's a server
@@ -538,7 +537,7 @@ public class Level {
 			dropItem(x, y, i);
 	}
 	public ItemEntity dropItem(int x, int y, Item i) {
-		/*if(Game.debug && ModeMenu.creative)
+		/*if(Game.debug && Game.isMode("creative"))
 			Game.player.inventory.add(i);
 		else {*/
 			int ranx, rany;
@@ -735,7 +734,7 @@ public class Level {
 	public void removeAllEnemies() {
 		for (Entity e: getEntityArray()) {
 			if(e instanceof EnemyMob)
-				if(!(e instanceof AirWizard) || ModeMenu.creative) // don't remove the airwizard bosses! Unless in creative, since you can spawn more.
+				if(!(e instanceof AirWizard) || Game.isMode("creative")) // don't remove the airwizard bosses! Unless in creative, since you can spawn more.
 					e.remove();
 		}
 	}

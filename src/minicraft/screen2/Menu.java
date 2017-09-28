@@ -64,7 +64,7 @@ public class Menu {
 	ListEntry[] getEntries() { return entries; }
 	int getNumEntries() { return entries.length; }
 	
-	void setSelected(ListEntry entry) {
+	void setSelectedEntry(ListEntry entry) {
 		if(mutable && selectionExists())
 			entries[selection] = entry;
 	}
@@ -90,6 +90,8 @@ public class Menu {
 			if (input.getKey("down").clicked) selection++;
 			
 			selection = selection % entries.length;
+			
+			while(selection < 0) selection += entries.length;
 			
 			if (prevSel != selection) {
 				Sound.select.play();

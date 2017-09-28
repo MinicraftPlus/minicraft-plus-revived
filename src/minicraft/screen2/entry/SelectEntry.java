@@ -1,6 +1,7 @@
 package minicraft.screen2.entry;
 
 import minicraft.InputHandler;
+import minicraft.Sound;
 import minicraft.gfx.Font;
 import minicraft.screen2.Menu;
 
@@ -18,8 +19,10 @@ public class SelectEntry implements ListEntry {
 	
 	@Override
 	public void tick(InputHandler input, Menu menu) {
-		if(input.getKey("select").clicked && onSelect != null)
+		if(input.getKey("select").clicked && onSelect != null) {
+			Sound.confirm.play();
 			onSelect.act();
+		}
 	}
 	
 	@Override

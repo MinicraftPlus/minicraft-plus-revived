@@ -7,14 +7,19 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+
 import minicraft.Game;
+import minicraft.Settings;
 import minicraft.entity.*;
-import minicraft.entity.particle.*;
+import minicraft.entity.particle.Particle;
+import minicraft.entity.particle.TextParticle;
 import minicraft.item.Item;
 import minicraft.item.PotionType;
 import minicraft.item.StackableItem;
 import minicraft.network.MinicraftServer;
-import minicraft.screen.*;
+import minicraft.screen2.LoadingDisplay;
+import minicraft.screen2.MultiplayerMenu;
+import minicraft.screen2.WorldSelectMenu;
 
 public class Save {
 
@@ -77,7 +82,7 @@ public class Save {
 	
 	public Save(Player player) {
 		// this is simply for access to writeToFile.
-		this(new File(Game.gameDir+"/saves/"+WorldSelectMenu.worldname + "/"));
+		this(new File(Game.gameDir+"/saves/"+ WorldSelectMenu.getWorldName() + "/"));
 	}
 	
 	public static void writeFile(String filename, String[] lines) throws IOException {
@@ -149,15 +154,15 @@ public class Save {
 		data.add(String.valueOf(Game.VERSION));
 		data.add(String.valueOf(Game.tickCount));
 		data.add(String.valueOf(Game.gameTime));
-		data.add(String.valueOf(OptionsMenu.diff));
+		data.add(String.valueOf(Settings.getIdx("diff")));
 		data.add(String.valueOf(AirWizard.beaten));
 		writeToFile(location + filename + extension, data);
 	}
 	
 	public void writePrefs(String filename) {
 		data.add(Game.VERSION);
-		data.add(String.valueOf(OptionsMenu.isSoundAct));
-		data.add(String.valueOf(OptionsMenu.autosave));
+		data.add(String.valueOf(Settings.get("sound")));
+		data.add(String.valueOf(Settings.get("autosave")));
 		data.add(MultiplayerMenu.savedIP);
 		data.add(MultiplayerMenu.savedUUID);
 		data.add(MultiplayerMenu.savedUsername);
@@ -179,7 +184,7 @@ public class Save {
 	
 	public void writeWorld(String filename) {
 		for(int l = 0; l < Game.levels.length; l++) {
-			String worldSize = String.valueOf(Displays.worldGen.getEntry("size").getValue());
+			String worldSize = String.valueOf(Settings.get("size"));
 			data.add(worldSize);
 			data.add(worldSize);
 			data.add(String.valueOf(Game.levels[l].depth));
@@ -222,7 +227,7 @@ public class Save {
 		//data.add(String.valueOf(player.ac));
 		data.add("25"); // TODO filler; remove this, but make sure not to break the Load class's LoadPlayer() method while doing so.
 		data.add(String.valueOf(Game.currentLevel));
-		data.add(ModeMenu.mode + (ModeMenu.score?";"+Game.scoreTime+";"+ModeMenu.getSelectedTime():""));
+		data.add(Settings.getIdx("mode") + (Game.isMode("score")?";"+Game.scoreTime+";"+Settings.get("scoretime"):""));
 		
 		StringBuilder subdata = new StringBuilder("PotionEffects[");
 		

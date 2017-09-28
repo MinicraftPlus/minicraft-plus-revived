@@ -1,7 +1,6 @@
 package minicraft;
 
 import javafx.scene.media.AudioClip;
-import minicraft.screen.OptionsMenu;
 
 public class Sound {
 	//creates sounds from their respective files
@@ -19,15 +18,15 @@ public class Sound {
 	private AudioClip clip; // Creates a audio clip to be played
 	
 	private Sound(String name) {
-		clip = new AudioClip(name);
+		clip = new AudioClip(Sound.class.getResource(name).toString());
 	}
 
 	public void play() {
-		if (!OptionsMenu.isSoundAct) return;
+		if (!(boolean)Settings.get("sound")) return;
 		try {
 			/*//creates a new thread (string of events)
 			new Thread(() -> {
-				//if (OptionsMenu.isSoundAct)
+				//if (Settings.get("sound"))
 				//clip.stop();
 				//clip.setFramePosition(0);
 				clip.start();
