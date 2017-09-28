@@ -26,4 +26,7 @@ public class LoadingDisplay extends Display {
 		Font.drawCentered("Loading...", screen, Game.HEIGHT/2, Color.get(-1, 500));
 		Font.drawCentered(""+percent, screen, Game.HEIGHT/2, Color.get(-1, 500));
 	}
+	
+	@Override
+	public boolean clearScreen() { return true; }
 }

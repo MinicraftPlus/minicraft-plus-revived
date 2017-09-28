@@ -118,6 +118,9 @@ public class Menu {
 	
 	
 	public void render(Screen screen) {
+		if(menuData.clearScreen())
+			screen.clear(0);
+		
 		menuData.render(screen); // draws frame, any background stuff; timing can be checked in other ways
 		
 		renderEntries(screen, selection, entries);

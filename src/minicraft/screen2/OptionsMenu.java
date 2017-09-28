@@ -34,6 +34,9 @@ public class OptionsMenu implements MenuData {
 	public void render(Screen screen) {}
 	
 	@Override
+	public boolean clearScreen() { return true; }
+	
+	@Override
 	public boolean centerEntries() {
 		return true;
 	}

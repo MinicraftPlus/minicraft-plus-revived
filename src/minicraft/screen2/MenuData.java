@@ -28,6 +28,9 @@ public interface MenuData {
 	/// renders background, including frame; all EXCEPT entries
 	void render(Screen screen);
 	
+	/// whether to clear the screen before each render.
+	default boolean clearScreen() { return false; }
+	
 	/// returns boolean about if entries should be centered
 	boolean centerEntries();
 	

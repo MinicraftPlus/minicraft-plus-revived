@@ -4,7 +4,6 @@ import java.awt.Point;
 import java.util.Random;
 
 import minicraft.Game;
-import minicraft.GameApplet;
 import minicraft.InputHandler;
 import minicraft.entity.RemotePlayer;
 import minicraft.gfx.Color;
@@ -79,7 +78,6 @@ public class TitleMenu implements MenuData {
 	
 	@Override
 	public void render(Screen screen) {
-		screen.clear(0);
 		int h = 2; // Height of squares (on the spritesheet)
 		int w = 15; // Width of squares (on the spritesheet)
 		int titleColor = Color.get(-1, 10, 131, 551);
@@ -104,13 +102,13 @@ public class TitleMenu implements MenuData {
 		
 		Font.drawCentered(splashes[rand], screen, 60, cols);
 		
-		if(GameApplet.isApplet) {
+		/*if(GameApplet.isApplet) {
 			String greeting = "Welcome!", name = GameApplet.username;
 			if(name.length() < 36) greeting = name+"!";
 			if(name.length() < 27) greeting = "Welcome, " + greeting;
 			
 			Font.drawCentered(greeting, screen, 10, Color.get(-1, 330));
-		}
+		}*/
 		
 		Font.draw("Version " + Game.VERSION, screen, 1, 1, Color.get(-1, 111));
 		
@@ -118,6 +116,9 @@ public class TitleMenu implements MenuData {
 		Font.drawCentered("("+Game.input.getMapping("select")+" to accept)", screen, Screen.h - 22, Color.get(-1, 111));
 		Font.drawCentered("("+Game.input.getMapping("exit")+" to return)", screen, Screen.h - 12, Color.get(-1, 111));
 	}
+	
+	@Override
+	public boolean clearScreen() { return true; }
 	
 	@Override
 	public boolean centerEntries() {

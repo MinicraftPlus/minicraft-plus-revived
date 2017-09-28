@@ -44,6 +44,9 @@ public class WorldGenMenu implements MenuData {
 	}
 	
 	@Override
+	public boolean clearScreen() { return true; }
+	
+	@Override
 	public boolean centerEntries() {
 		return true;
 	}

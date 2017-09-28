@@ -109,8 +109,6 @@ public class WorldSelectMenu implements MenuData {
 	
 	@Override
 	public void render(Screen screen) {
-		screen.clear(0);
-		
 		Font.drawCentered(Game.input.getMapping("select")+" to confirm", screen, Screen.h - 60, Color.get(-1, 333));
 		Font.drawCentered(Game.input.getMapping("exit")+" to return", screen, Screen.h - 40, Color.get(-1, 333));
 		
@@ -138,6 +136,9 @@ public class WorldSelectMenu implements MenuData {
 		//Font.drawCentered("B to backup", screen, Screen.h-26, Color.get(-1, Action.Backup.color));
 		*/
 	}
+	
+	@Override
+	public boolean clearScreen() { return true; }
 	
 	@Override
 	public boolean centerEntries() {

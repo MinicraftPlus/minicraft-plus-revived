@@ -66,6 +66,7 @@ public class ArrayEntry<T> implements ListEntry {
 	@Override
 	public void tick(InputHandler input, Menu menu) {
 		int prevSel = selection;
+		int selection = this.selection;
 		
 		if(input.getKey("left").clicked) selection--;
 		if(input.getKey("right").clicked) selection++;
@@ -84,6 +85,8 @@ public class ArrayEntry<T> implements ListEntry {
 			
 			// --stuff for locking mechanism, and skipping locked entries--
 		}
+		
+		this.selection = selection;
 	}
 	
 	@Override
