@@ -1,4 +1,4 @@
-package minicraft.screen2;
+package minicraft.screen;
 
 import java.awt.Point;
 
@@ -7,8 +7,8 @@ import minicraft.InputHandler;
 import minicraft.Settings;
 import minicraft.gfx.Font;
 import minicraft.gfx.Screen;
-import minicraft.screen2.entry.ArrayEntry;
-import minicraft.screen2.entry.ListEntry;
+import minicraft.screen.entry.ArrayEntry;
+import minicraft.screen.entry.ListEntry;
 
 public class OptionsMenu implements MenuData {
 	

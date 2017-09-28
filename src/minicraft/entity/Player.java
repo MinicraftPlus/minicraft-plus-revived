@@ -17,9 +17,9 @@ import minicraft.level.Level;
 import minicraft.level.tile.Tile;
 import minicraft.level.tile.Tiles;
 import minicraft.saveload.Save;
-import minicraft.screen2.LoadingDisplay;
-import minicraft.screen2.PauseMenu;
-import minicraft.screen2.WorldSelectMenu;
+import minicraft.screen.LoadingDisplay;
+import minicraft.screen.PauseMenu;
+import minicraft.screen.WorldSelectMenu;
 
 public class Player extends Mob {
 	protected InputHandler input;

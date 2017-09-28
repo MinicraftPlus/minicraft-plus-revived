@@ -26,9 +26,9 @@ import minicraft.item.PotionType;
 import minicraft.level.Level;
 import minicraft.saveload.Load;
 import minicraft.saveload.Save;
-import minicraft.screen2.DeadMenu;
-import minicraft.screen2.Menu;
-import minicraft.screen2.MultiplayerMenu;
+import minicraft.screen.DeadMenu;
+import minicraft.screen.Menu;
+import minicraft.screen.MultiplayerMenu;
 
 /// This class is only used by the client runtime; the server runtime doesn't touch it.
 public class MinicraftClient extends MinicraftConnection {

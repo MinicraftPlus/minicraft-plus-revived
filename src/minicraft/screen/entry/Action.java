@@ -1,4 +1,4 @@
-package minicraft.screen2.entry;
+package minicraft.screen.entry;
 
 @FunctionalInterface
 public interface Action {

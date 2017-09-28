@@ -45,7 +45,7 @@ import minicraft.network.MinicraftClient;
 import minicraft.network.MinicraftServer;
 import minicraft.saveload.Load;
 import minicraft.saveload.Save;
-import minicraft.screen2.*;
+import minicraft.screen.*;
 
 public class Game {
 	

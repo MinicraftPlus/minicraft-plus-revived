@@ -10,7 +10,7 @@ import minicraft.entity.RemotePlayer;
 import minicraft.level.Level;
 import minicraft.network.MinicraftServerThread;
 import minicraft.saveload.Save;
-import minicraft.screen2.WorldSelectMenu;
+import minicraft.screen.WorldSelectMenu;
 
 class ConsoleReader extends Thread {
 	

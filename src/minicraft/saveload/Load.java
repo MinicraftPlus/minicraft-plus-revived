@@ -25,8 +25,8 @@ import minicraft.item.StackableItem;
 import minicraft.level.Level;
 import minicraft.level.tile.Tiles;
 import minicraft.network.MinicraftServer;
-import minicraft.screen2.LoadingDisplay;
-import minicraft.screen2.MultiplayerMenu;
+import minicraft.screen.LoadingDisplay;
+import minicraft.screen.MultiplayerMenu;
 
 public class Load {
 	

@@ -1,4 +1,4 @@
-package minicraft.screen2;
+package minicraft.screen;
 
 import java.awt.Point;
 
@@ -6,7 +6,7 @@ import minicraft.Game;
 import minicraft.InputHandler;
 import minicraft.Sound;
 import minicraft.gfx.Screen;
-import minicraft.screen2.entry.ListEntry;
+import minicraft.screen.entry.ListEntry;
 
 public class Menu {
 	

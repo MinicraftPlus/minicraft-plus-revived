@@ -1,10 +1,10 @@
-package minicraft.screen2.entry;
+package minicraft.screen.entry;
 
 import minicraft.InputHandler;
 import minicraft.gfx.Color;
 import minicraft.gfx.Font;
 import minicraft.gfx.Screen;
-import minicraft.screen2.Menu;
+import minicraft.screen.Menu;
 
 public interface ListEntry {
 	

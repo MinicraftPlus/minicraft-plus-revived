@@ -1,7 +1,7 @@
-package minicraft.screen2.entry;
+package minicraft.screen.entry;
 
 import minicraft.InputHandler;
-import minicraft.screen2.Menu;
+import minicraft.screen.Menu;
 
 public class InputEntry implements ListEntry {
 	

@@ -1,9 +1,9 @@
-package minicraft.screen2.entry;
+package minicraft.screen.entry;
 
 import minicraft.InputHandler;
 import minicraft.Sound;
 import minicraft.gfx.Font;
-import minicraft.screen2.Menu;
+import minicraft.screen.Menu;
 
 public class ArrayEntry<T> implements ListEntry {
 	

@@ -1,4 +1,4 @@
-package minicraft.screen2;
+package minicraft.screen;
 
 import java.awt.Point;
 
@@ -8,9 +8,9 @@ import minicraft.Settings;
 import minicraft.gfx.Color;
 import minicraft.gfx.Font;
 import minicraft.gfx.Screen;
-import minicraft.screen2.entry.InputEntry;
-import minicraft.screen2.entry.ListEntry;
-import minicraft.screen2.entry.SelectEntry;
+import minicraft.screen.entry.InputEntry;
+import minicraft.screen.entry.ListEntry;
+import minicraft.screen.entry.SelectEntry;
 
 public class WorldGenMenu implements MenuData {
 	

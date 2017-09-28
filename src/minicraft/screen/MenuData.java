@@ -1,12 +1,12 @@
-package minicraft.screen2;
+package minicraft.screen;
 
 import java.awt.Point;
 
 import minicraft.Game;
 import minicraft.InputHandler;
 import minicraft.gfx.Screen;
-import minicraft.screen2.entry.ListEntry;
-import minicraft.screen2.entry.SelectEntry;
+import minicraft.screen.entry.ListEntry;
+import minicraft.screen.entry.SelectEntry;
 
 public interface MenuData {
 	

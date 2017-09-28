@@ -1,4 +1,4 @@
-package minicraft.screen2;
+package minicraft.screen;
 
 import java.util.ArrayList;
 

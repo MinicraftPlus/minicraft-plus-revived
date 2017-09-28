@@ -17,9 +17,9 @@ import minicraft.item.Item;
 import minicraft.item.PotionType;
 import minicraft.item.StackableItem;
 import minicraft.network.MinicraftServer;
-import minicraft.screen2.LoadingDisplay;
-import minicraft.screen2.MultiplayerMenu;
-import minicraft.screen2.WorldSelectMenu;
+import minicraft.screen.LoadingDisplay;
+import minicraft.screen.MultiplayerMenu;
+import minicraft.screen.WorldSelectMenu;
 
 public class Save {
 

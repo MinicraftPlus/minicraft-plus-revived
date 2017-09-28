@@ -1,4 +1,4 @@
-package minicraft.screen2;
+package minicraft.screen;
 
 import java.awt.Point;
 
@@ -9,8 +9,8 @@ import minicraft.gfx.Font;
 import minicraft.gfx.Rectangle;
 import minicraft.gfx.Screen;
 import minicraft.saveload.Save;
-import minicraft.screen2.entry.ListEntry;
-import minicraft.screen2.entry.SelectEntry;
+import minicraft.screen.entry.ListEntry;
+import minicraft.screen.entry.SelectEntry;
 
 public class PauseMenu implements MenuData {
 	

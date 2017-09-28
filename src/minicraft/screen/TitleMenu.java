@@ -1,4 +1,4 @@
-package minicraft.screen2;
+package minicraft.screen;
 
 import java.awt.Point;
 import java.util.Random;
@@ -10,8 +10,8 @@ import minicraft.gfx.Color;
 import minicraft.gfx.Font;
 import minicraft.gfx.Screen;
 import minicraft.level.Level;
-import minicraft.screen2.entry.ListEntry;
-import minicraft.screen2.entry.SelectEntry;
+import minicraft.screen.entry.ListEntry;
+import minicraft.screen.entry.SelectEntry;
 
 public class TitleMenu implements MenuData {
 	private final Random random = new Random();

@@ -18,7 +18,7 @@ import minicraft.item.PotionItem;
 import minicraft.item.PotionType;
 import minicraft.level.Level;
 import minicraft.level.tile.Tiles;
-import minicraft.screen2.LoadingDisplay;
+import minicraft.screen.LoadingDisplay;
 
 /// this class is simply a way to seperate all the old, compatibility complications into a seperate file.
 public class LegacyLoad {

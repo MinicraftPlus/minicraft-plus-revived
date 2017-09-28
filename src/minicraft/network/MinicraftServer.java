@@ -28,7 +28,7 @@ import minicraft.level.Level;
 import minicraft.level.tile.Tile;
 import minicraft.saveload.Load;
 import minicraft.saveload.Save;
-import minicraft.screen2.WorldSelectMenu;
+import minicraft.screen.WorldSelectMenu;
 
 public class MinicraftServer extends Thread implements MinicraftProtocol {
 	

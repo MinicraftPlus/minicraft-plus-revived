@@ -1,4 +1,4 @@
-package minicraft.screen2.entry;
+package minicraft.screen.entry;
 
 public class BooleanEntry extends ArrayEntry<Boolean> {
 	

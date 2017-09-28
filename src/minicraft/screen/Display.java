@@ -1,9 +1,9 @@
-package minicraft.screen2;
+package minicraft.screen;
 
 import java.awt.Point;
 
 import minicraft.InputHandler;
-import minicraft.screen2.entry.ListEntry;
+import minicraft.screen.entry.ListEntry;
 
 public abstract class Display implements MenuData {
 	

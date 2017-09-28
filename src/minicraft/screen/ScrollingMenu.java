@@ -1,11 +1,11 @@
-package minicraft.screen2;
+package minicraft.screen;
 
 import java.util.Arrays;
 
 import minicraft.Game;
 import minicraft.InputHandler;
 import minicraft.gfx.Screen;
-import minicraft.screen2.entry.ListEntry;
+import minicraft.screen.entry.ListEntry;
 
 public class ScrollingMenu extends Menu {
 	
