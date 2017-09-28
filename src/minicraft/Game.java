@@ -1118,6 +1118,8 @@ public class Game {
 	 *	-fires the command to render out the screen.
 	 */
 	public static void run() {
+		running = true;
+		
 		long lastTime = System.nanoTime();
 		long lastRender = System.nanoTime();
 		double unprocessed = 0;
@@ -1308,10 +1310,6 @@ public class Game {
 		showinfo = false;
 		gameOver = false;
 		
-		start();
-		
-		init();
-		
 		run(); // Starts the game!
 	}
 	
@@ -1379,13 +1377,5 @@ public class Game {
 			exceptionStr = "Unavailable";
 		}
 		return exceptionStr;
-	}
-	
-	public static void start() {
-		running = true;
-	}
-	
-	public static void stop() {
-		running = false;
 	}
 }
