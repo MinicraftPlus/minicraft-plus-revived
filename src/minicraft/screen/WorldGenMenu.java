@@ -40,11 +40,9 @@ public class WorldGenMenu implements MenuData {
 	
 	@Override
 	public void render(Screen screen) {
+		screen.clear(0);
 		Font.drawCentered("World Gen Options", screen, 0, Color.get(-1, 555));
 	}
-	
-	@Override
-	public boolean clearScreen() { return true; }
 	
 	@Override
 	public boolean centerEntries() {

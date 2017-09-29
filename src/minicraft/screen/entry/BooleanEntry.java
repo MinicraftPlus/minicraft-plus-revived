@@ -7,4 +7,9 @@ public class BooleanEntry extends ArrayEntry<Boolean> {
 		
 		setSelection(initial ? 0 : 1);
 	}
+	
+	@Override
+	public String toString() {
+		return getLabel() + ": " + (getValue() ? "On" : "Off");
+	}
 }

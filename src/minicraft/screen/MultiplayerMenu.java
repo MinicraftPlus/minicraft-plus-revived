@@ -264,6 +264,8 @@ public class MultiplayerMenu extends Display {
 	
 	@Override
 	public void render(Screen screen) {
+		screen.clear(0);
+		
 		switch(curState) {
 			case ENTERIP:
 				Font.drawCentered("logged in as: " + savedUsername, screen, 6, Color.get(-1, 252));
@@ -324,9 +326,6 @@ public class MultiplayerMenu extends Display {
 			Font.drawCentered("Press "+Game.input.getMapping("exit")+" to return", screen, Screen.h-Font.textHeight()*2, Color.get(-1, 333));
 		}
 	}
-	
-	@Override
-	public boolean clearScreen() { return true; }
 	
 	private int ePos = 0;
 	private int eposTick = 0;

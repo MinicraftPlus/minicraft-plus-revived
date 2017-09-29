@@ -31,23 +31,18 @@ public class OptionsMenu implements MenuData {
 	public void tick(InputHandler input) {}
 	
 	@Override
-	public void render(Screen screen) {}
-	
-	@Override
-	public boolean clearScreen() { return true; }
-	
-	@Override
-	public boolean centerEntries() {
-		return true;
+	public void render(Screen screen) {
+		screen.clear(0);
 	}
 	
 	@Override
-	public int getSpacing() {
-		return 6;
-	}
+	public boolean centerEntries() { return true; }
 	
 	@Override
-	public Point getAnchor() {
-		return new Point(Game.WIDTH/2, Font.textHeight()*3);
-	}
+	public int getSpacing() { return 6; }
+	
+	@Override
+	public Point getAnchor() { return new Point(Game.WIDTH/2, Font.textHeight()*3); }
+	
+	// TODO add feature to center menu, but align to left side; centering based on width of widest  
 }

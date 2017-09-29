@@ -4,6 +4,8 @@ import java.awt.Point;
 
 import minicraft.Game;
 import minicraft.InputHandler;
+import minicraft.gfx.Color;
+import minicraft.gfx.Font;
 import minicraft.gfx.Screen;
 import minicraft.screen.entry.ListEntry;
 import minicraft.screen.entry.SelectEntry;
@@ -28,9 +30,6 @@ public interface MenuData {
 	/// renders background, including frame; all EXCEPT entries
 	void render(Screen screen);
 	
-	/// whether to clear the screen before each render.
-	default boolean clearScreen() { return false; }
-	
 	/// returns boolean about if entries should be centered
 	boolean centerEntries();
 	
@@ -49,5 +48,29 @@ public interface MenuData {
 	
 	default ListEntry entryFactory(String text, MenuData menu) {
 		return new SelectEntry(text, () -> Game.setMenu(menu));
+	}
+	
+	default MenuData menuFactory(boolean clearScreen, ListEntry... entries) {
+		return menuFactory("Select an option", clearScreen, entries);
+	}
+	default MenuData menuFactory(String title, boolean clearScreen, ListEntry... entries) {
+		return new MenuData() {
+			public Menu getMenu() {
+				return new Menu(this);
+			}
+			public ListEntry[] getEntries() {
+				return entries;
+			}
+			public void tick(InputHandler input) {}
+			public void render(Screen screen) {
+				if(clearScreen) screen.clear(0);
+				Font.drawCentered(title, screen, 4, Color.get(-1, 555));
+			}
+			public boolean centerEntries() { return true; }
+			public int getSpacing() { return 8; }
+			public Point getAnchor() {
+				return new Point(Game.WIDTH/2, Game.HEIGHT/2);
+			}
+		};
 	}
 }

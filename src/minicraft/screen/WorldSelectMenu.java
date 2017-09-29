@@ -17,7 +17,7 @@ public class WorldSelectMenu implements MenuData {
 	
 	// NOTE this will only be responsible for the world load selection screen.
 	
-	private static final String worldsDir = Game.gameDir + "/saves";
+	private static final String worldsDir = Game.gameDir + "/saves/";
 	
 	private static String worldName = "";
 	
@@ -74,6 +74,7 @@ public class WorldSelectMenu implements MenuData {
 				String path = worldsDir + listOfFiles[i].getName() + "/";
 				File folder2 = new File(path);
 				folder2.mkdirs();
+				if(Game.debug) System.out.println("save folder: " + folder2.getName());
 				String[] files = folder2.list();
 				if (files != null && files.length > 0 && files[0].endsWith(Save.extension)) {
 					worldNames.add(listOfFiles[i].getName());
@@ -109,6 +110,8 @@ public class WorldSelectMenu implements MenuData {
 	
 	@Override
 	public void render(Screen screen) {
+		screen.clear(0);
+		
 		Font.drawCentered(Game.input.getMapping("select")+" to confirm", screen, Screen.h - 60, Color.get(-1, 333));
 		Font.drawCentered(Game.input.getMapping("exit")+" to return", screen, Screen.h - 40, Color.get(-1, 333));
 		
@@ -116,7 +119,7 @@ public class WorldSelectMenu implements MenuData {
 		int color = Color.get(-1, 555);
 		
 		if(curAction == null) {
-			int y = Game.HEIGHT - 18 - Font.textHeight() * Action.values.length;
+			int y = Game.HEIGHT - Font.textHeight() * Action.values.length;
 			
 			for (Action a : Action.values) {
 				Font.drawCentered(a.key + " to " + a, screen, y, a.color);
@@ -136,9 +139,6 @@ public class WorldSelectMenu implements MenuData {
 		//Font.drawCentered("B to backup", screen, Screen.h-26, Color.get(-1, Action.Backup.color));
 		*/
 	}
-	
-	@Override
-	public boolean clearScreen() { return true; }
 	
 	@Override
 	public boolean centerEntries() {

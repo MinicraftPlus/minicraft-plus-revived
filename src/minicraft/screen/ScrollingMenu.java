@@ -45,6 +45,8 @@ public class ScrollingMenu extends Menu {
 		// example, if dispLen = 10, and padding = 0.75, then this.padding = 0.75 * 10 / 2 = 7.5 / 2 = 3.75 -> 4
 		
 		this.padding = Math.round(padding * dispLen / 2);
+		
+		dispEntries = Arrays.copyOfRange(getEntries(), 0, Math.min(displayLength, getNumEntries()));
 	}
 	
 	@Override

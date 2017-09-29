@@ -76,9 +76,10 @@ public class ArrayEntry<T> implements ListEntry {
 			
 			//int diff = selected - prevSel;
 			
-			if(wrap)
+			if(wrap) {
 				selection = selection % options.length;
-			else {
+				while(selection < 0) selection += options.length;
+			} else {
 				selection = Math.min(selection, options.length-1);
 				selection = Math.max(0, selection);
 			}

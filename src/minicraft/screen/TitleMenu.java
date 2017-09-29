@@ -55,10 +55,16 @@ public class TitleMenu implements MenuData {
 	@Override
 	public ListEntry[] getEntries() {
 		return new ListEntry[] {
-			entryFactory("Play", new WorldSelectMenu()),
+			entryFactory("Play", menuFactory(true,
+				entryFactory("Load World", new WorldSelectMenu()),
+				entryFactory("New World", new WorldGenMenu())
+			)),
 			entryFactory("Join Online World", new MultiplayerMenu()),
 			entryFactory("Options", new OptionsMenu()),
-			entryFactory("Help", new BookDisplay(Displays.instructions)),
+			entryFactory("Help", menuFactory(true,
+				entryFactory("Instructions", new BookDisplay(Displays.instructions)),
+				entryFactory("About", new BookDisplay(Displays.about))
+			)),
 			new SelectEntry("Quit", () -> System.exit(0))
 		};
 	}
@@ -78,6 +84,8 @@ public class TitleMenu implements MenuData {
 	
 	@Override
 	public void render(Screen screen) {
+		screen.clear(0);
+		
 		int h = 2; // Height of squares (on the spritesheet)
 		int w = 15; // Width of squares (on the spritesheet)
 		int titleColor = Color.get(-1, 10, 131, 551);
@@ -116,9 +124,6 @@ public class TitleMenu implements MenuData {
 		Font.drawCentered("("+Game.input.getMapping("select")+" to accept)", screen, Screen.h - 22, Color.get(-1, 111));
 		Font.drawCentered("("+Game.input.getMapping("exit")+" to return)", screen, Screen.h - 12, Color.get(-1, 111));
 	}
-	
-	@Override
-	public boolean clearScreen() { return true; }
 	
 	@Override
 	public boolean centerEntries() {
