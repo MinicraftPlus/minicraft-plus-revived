@@ -50,7 +50,7 @@ public class BookDisplay extends Display {
 			String[] remainder = {content};
 			while(remainder[remainder.length-1].length() > 0) {
 				remainder = Font.getLines(remainder[remainder.length-1], maxX-minX, maxY-minY, spacing);
-				pages.add(Arrays.copyOf(remainder, remainder.length-1)); // removes the last element of remainder, which is the leftover.
+				pages.add(remainder);//Arrays.copyOf(remainder, remainder.length-1)); // removes the last element of remainder, which is the leftover.
 			}
 		}
 		
@@ -72,6 +72,7 @@ public class BookDisplay extends Display {
 		//new Frame("", new Rectangle(1, 4, 34, 20, Rectangle.CORNERS)).setColors(Color.DARK_GRAY, Color.get(554, 554), Color.get(-1, 1, 554, 554)).render(screen);
 		
 		// This draws the text "Page" at the top of the screen
+		//System.out.println("drawing page num text");
 		Font.draw("Page", screen, Font.textHeight() * 16, Font.textHeight() - 2, Color.BLACK);
 		
 		// This is makes the numbers appear below "Page" // ...but it doesn't work...
@@ -80,6 +81,8 @@ public class BookDisplay extends Display {
 		
 		if(page != 0) style.setXPos(minX); // center text on the title page
 		else style.setXPos(-1); // don't center after title page
+		
+		style.yCenterBounds(minY, maxY);
 		
 		Font.drawParagraph(lines[page], screen, style, spacing); // draw the current page
 	}

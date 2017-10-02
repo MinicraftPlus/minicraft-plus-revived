@@ -117,17 +117,19 @@ public class Menu {
 			selection = 0;
 	}
 	
+	protected void renderFrames(Screen screen) {
+		for(Frame frame: frames)
+			frame.render(screen);
+	}
 	
 	public void render(Screen screen) {
+		renderFrames(screen);
 		menuData.render(screen); // draws frame, any background stuff; timing can be checked in other ways
 		
 		renderEntries(screen, selection, entries);
 	}
 	
 	void renderEntries(Screen screen, int selection, ListEntry[] entries) {
-		for(Frame frame: frames)
-			frame.render(screen);
-		
 		//Point anchor = menuData.getAnchor();
 		MenuData.Centering centering = menuData.getCentering();
 		int spacing = menuData.getSpacing();

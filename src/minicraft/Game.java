@@ -201,7 +201,7 @@ public class Game {
 	public static void setMenu(Menu display) {
 		//Menu parent = menu;
 		//newMenu = display;
-		System.out.println("setting menu to: " + (display == null ? "null" : display.getMenuType()));
+		//System.out.println("setting menu to: " + (display == null ? "null" : display.getMenuType()));
 		
 		newMenu = display;
 		//if (debug) System.out.println("setting game menu to " + menu);

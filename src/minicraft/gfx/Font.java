@@ -38,7 +38,8 @@ public class Font {
 		return max;
 	}
 	
-	public static int textHeight() {return SpriteSheet.boxWidth;}
+	public static int textHeight() {//noinspection SuspiciousNameCombination
+		return SpriteSheet.boxWidth;}
 	
 	public static int centerX(String msg, int minX, int maxX) {
 		return (maxX + minX) / 2 - textWidth(msg) / 2;
@@ -59,16 +60,16 @@ public class Font {
 	/// these draws a paragraph from an array of lines (or a string, at which point it calls getLines()), with the specified properties.
 	
 	/// this one assumes the screen width, minus a given padding.
-	public static String drawParagraph(String para, Screen screen, int paddingX, boolean centerPaddingX, int paddingY, boolean centerPaddingY, FontStyle style, int lineSpacing) {
+	public static void drawParagraph(String para, Screen screen, int paddingX, boolean centerPaddingX, int paddingY, boolean centerPaddingY, FontStyle style, int lineSpacing) {
 		
 		style.xCenterBounds(paddingX, Screen.w - (centerPaddingX?paddingX:0));
 		style.yCenterBounds(paddingY, Screen.h - (centerPaddingY?paddingY:0));
 		
-		return drawParagraph(para, screen, style.centerMaxX - style.centerMinX, style.centerMaxY - style.centerMinY, style, centerPaddingX, lineSpacing);
+		drawParagraph(para, screen, style.centerMaxX - style.centerMinX, style.centerMaxY - style.centerMinY, style, centerPaddingX, lineSpacing);
 	}
 	
 	/// note: the y centering values in the FontStyle object will be used as a paragraph y centering value instead.
-	public static String drawParagraph(String para, Screen screen, int w, int h, FontStyle style, boolean centered, int lineSpacing) {
+	public static void drawParagraph(String para, Screen screen, int w, int h, FontStyle style, boolean centered, int lineSpacing) {
 		//int w = style.centerMaxX - style.centerMinX;
 		//int h = style.centerMaxY - style.centerMinY;
 		
@@ -78,15 +79,15 @@ public class Font {
 		if (centered) style.xPosition = -1;
 		//else style.xPosition = (Screen.w - w) / 2;
 		
-		return drawParagraph(lines, screen, style, lineSpacing);
+		drawParagraph(lines, screen, style, lineSpacing);
 	}
 	
 	/// all the other drawParagraph() methods end up calling this one.
-	public static String drawParagraph(String[] lines, Screen screen, FontStyle style, int lineSpacing) {
-		for(int i = 0; i < lines.length-1; i++)
+	public static void drawParagraph(String[] lines, Screen screen, FontStyle style, int lineSpacing) {
+		for(int i = 0; i < lines.length; i++)
 			style.drawParagraphLine(lines, i, lineSpacing, screen);
 		
-		return lines[lines.length-1]; // this is where the rest of the string that there wasn't space for is stored.
+		//return lines[lines.length-1]; // this is where the rest of the string that there wasn't space for is stored.
 	}
 	
 	
@@ -132,6 +133,6 @@ public class Font {
 		if(h > 0 || leftover.length() > 0)
 			lines.add(leftover);
 		
-		return lines.toArray(new String[0]);
+		return lines.toArray(new String[lines.size()]);
 	}
 }

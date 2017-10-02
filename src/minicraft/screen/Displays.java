@@ -6,7 +6,7 @@ import minicraft.saveload.Load;
 
 public class Displays {
 	
-	public static final String about = "This is the about page.";
+	public static final String about = "This is the about page.\0Hello.\nHi.";
 	public static final String instructions = "This is the instructions page.";
 	
 	public static final String antVenomBook;

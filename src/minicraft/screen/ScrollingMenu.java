@@ -102,6 +102,7 @@ public class ScrollingMenu extends Menu {
 	
 	@Override
 	public void render(Screen screen) {
+		renderFrames(screen);
 		getMenuType().render(screen);
 		super.renderEntries(screen, dispSelection, dispEntries);
 	}
