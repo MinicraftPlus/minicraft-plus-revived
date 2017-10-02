@@ -307,7 +307,7 @@ public class Game {
 	
 	/** This method is used to create a brand new world, or to load an existing one from a file. */
 	/** For the loading screen updates to work, it it assumed that *this* is called by a thread *other* than the one rendering the current *menu*. */
-	private static void initWorld() { // this is a full reset; everything.
+	public static void initWorld() { // this is a full reset; everything.
 		if(Game.debug) System.out.println("resetting world...");
 		
 		if(Game.isValidServer()) {

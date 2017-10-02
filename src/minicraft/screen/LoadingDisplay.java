@@ -9,7 +9,15 @@ public class LoadingDisplay extends Display {
 	
 	private static float percentage = 0;
 	
-	public LoadingDisplay() {}
+	public LoadingDisplay() {
+		javax.swing.Timer t;
+		t = new javax.swing.Timer(100, e -> {
+			Game.initWorld();
+			Game.setMenu((Menu)null);
+		});
+		t.setRepeats(false);
+		t.start();
+	}
 	
 	public static void setPercentage(float percent) {
 		percentage = percent;
@@ -25,7 +33,7 @@ public class LoadingDisplay extends Display {
 		screen.clear(0);
 		
 		int percent = Math.round(percentage);
-		Font.drawCentered("Loading...", screen, Game.HEIGHT/2, Color.RED);
-		Font.drawCentered(""+percent, screen, Game.HEIGHT/2, Color.RED);
+		Font.drawCentered("Loading...", screen, Game.HEIGHT/2-Font.textHeight()/2, Color.RED);
+		Font.drawCentered(percent+"%", screen, Game.HEIGHT/2+Font.textHeight()/2, Color.RED);
 	}
 }

@@ -73,7 +73,6 @@ public class WorldSelectMenu implements MenuData {
 				String path = worldsDir + listOfFiles[i].getName() + "/";
 				File folder2 = new File(path);
 				folder2.mkdirs();
-				if(Game.debug) System.out.println("save folder: " + folder2.getName());
 				String[] files = folder2.list();
 				if (files != null && files.length > 0 && files[0].endsWith(Save.extension)) {
 					worldNames.add(listOfFiles[i].getName());
