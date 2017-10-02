@@ -55,13 +55,13 @@ public class TitleMenu implements MenuData {
 	@Override
 	public ListEntry[] getEntries() {
 		return new ListEntry[] {
-			entryFactory("Play", menuFactory(true,
+			entryFactory("Play", menuFactory(
 				entryFactory("Load World", new WorldSelectMenu()),
 				entryFactory("New World", new WorldGenMenu())
 			)),
 			entryFactory("Join Online World", new MultiplayerMenu()),
 			entryFactory("Options", new OptionsMenu()),
-			entryFactory("Help", menuFactory(true,
+			entryFactory("Help", menuFactory(
 				entryFactory("Instructions", new BookDisplay(Displays.instructions)),
 				entryFactory("About", new BookDisplay(Displays.about))
 			)),
@@ -123,21 +123,16 @@ public class TitleMenu implements MenuData {
 		Font.drawCentered("("+Game.input.getMapping("up")+", "+Game.input.getMapping("down")+" to select)", screen, Screen.h - 32, Color.get(-1, 111));
 		Font.drawCentered("("+Game.input.getMapping("select")+" to accept)", screen, Screen.h - 22, Color.get(-1, 111));
 		Font.drawCentered("("+Game.input.getMapping("exit")+" to return)", screen, Screen.h - 12, Color.get(-1, 111));
+		
+		
 	}
 	
 	@Override
-	public boolean centerEntries() {
-		return true;
-	}
+	public Centering getCentering() { return Centering.make(new Point(Game.WIDTH/2, Game.HEIGHT*3/5), true); }
 	
 	@Override
 	public int getSpacing() {
 		return 2;
-	}
-	
-	@Override
-	public Point getAnchor() {
-		return new Point(Game.WIDTH/2, Game.HEIGHT/2);
 	}
 	
 	private static final String[] splashes = {//new ArrayList<String>();

@@ -21,17 +21,12 @@ public abstract class Display implements MenuData {
 	public void tick(InputHandler input) {}
 	
 	@Override
-	public boolean centerEntries() {
-		return false;
-	}
-	
-	@Override
 	public int getSpacing() {
 		return 0;
 	}
 	
 	@Override
-	public Point getAnchor() {
-		return new Point();
+	public Centering getCentering() {
+		return Centering.make(new Point());
 	}
 }

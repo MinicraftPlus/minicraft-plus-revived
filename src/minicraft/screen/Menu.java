@@ -1,5 +1,6 @@
 package minicraft.screen;
 
+import java.awt.Dimension;
 import java.awt.Point;
 
 import minicraft.Game;
@@ -127,20 +128,52 @@ public class Menu {
 		for(Frame frame: frames)
 			frame.render(screen);
 		
-		Point anchor = menuData.getAnchor();
-		boolean centered = menuData.centerEntries();
+		//Point anchor = menuData.getAnchor();
+		MenuData.Centering centering = menuData.getCentering();
 		int spacing = menuData.getSpacing();
 		
-		int y = anchor.y;
+		// TODO here, deal with centering
+		Point anchor = centering.anchor;
+		int menu = centering.menu.getVal();
+		// menu % 3 == 2 -> menu box left of anchor point
+		// menu % 3 == 1 -> menu box horizontally centered on anchor point
+		// menu % 3 == 0 -> menu box right of anchor point
+		
+		// menu / 3 == 2 -> menu box above anchor point
+		// menu / 3 == 1 -> menu box vertically centered on anchor point
+		// menu / 3 == 0 -> menu box below anchor point
+		
+		Dimension displayDim = getEntryListDisplaySize(entries, spacing);
+		int mx = anchor.x - displayDim.width/2 * (menu % 3);
+		int my = anchor.y - displayDim.height/2 * (menu / 3);
+		int ly = my;
+		//int ycentering = Math.abs(3 - (menu % 3)) % 3; // I have to flip it, or go through array backwards.
+		for(int i = 0; i < entries.length; i++) {
+			int line = centering.line.ordinal();
+			// line % 3 == 0 -> entry left-justified in menu box
+			// line % 3 == 1 -> entry centered in menu box
+			// line % 3 == 2 -> entry right-justified in menu box
+			
+			int lx = mx + (displayDim.width - entries[i].getWidth())/2 * (line % 3);
+			
+			entries[i].render(screen, lx, ly, i == selection);
+			
+			ly += entries[i].getHeight() + spacing;
+		}
+	}
+	
+	public static Dimension getEntryListDisplaySize(ListEntry[] entries, int spacing) {
+		int th = 0, tw = 0;
 		
 		for(int i = 0; i < entries.length; i++) {
-			int x = anchor.x;
-			if(centered)
-				x -= entries[i].getWidth() / 2;
-			
-			entries[i].render(screen, x, y, i == selection);
-			
-			y += entries[i].getHeight() + spacing;
+			int width = entries[i].getWidth();
+			int height = entries[i].getHeight();
+			th += height + spacing;
+			tw = Math.max(tw, width);
 		}
+		
+		th -= spacing;
+		
+		return new Dimension(tw, th);
 	}
 }

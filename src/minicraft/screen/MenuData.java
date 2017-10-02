@@ -14,6 +14,18 @@ public interface MenuData {
 	
 	// TODO If I made this an abstract class, I could create an abstract createMenu method which is protected, that returns a newly created menu. Then, it's kept in a field, while getMenu is public and returns the value of the menu field. 
 	
+	enum RelPos {
+		TOP_LEFT, TOP, TOP_RIGHT,
+		LEFT, CENTER, RIGHT,
+		BOTTOM_LEFT, BOTTOM, BOTTOM_RIGHT;
+		
+		public int getVal() {
+			return values.length - 1 - ordinal(); // reverses it, to fit with the indexes easily pointing to the upper right corner of where to draw.
+		}
+		
+		private static final RelPos[] values = RelPos.values();
+	}
+	
 	/// returns appropriate Menu subclass for this data
 	Menu getMenu();
 	
@@ -30,14 +42,11 @@ public interface MenuData {
 	/// renders background, including frame; all EXCEPT entries
 	void render(Screen screen);
 	
-	/// returns boolean about if entries should be centered
-	boolean centerEntries();
+	/// returns how entries should be centered
+	Centering getCentering();
 	
 	/// returns the spacing between each entry
 	int getSpacing();
-	
-	/// returns a point that will tell where to render the first entry
-	Point getAnchor();
 	
 	default int autoExitDelay() {
 		return 0;
@@ -50,10 +59,13 @@ public interface MenuData {
 		return new SelectEntry(text, () -> Game.setMenu(menu));
 	}
 	
-	default MenuData menuFactory(boolean clearScreen, ListEntry... entries) {
-		return menuFactory("Select an option", clearScreen, entries);
+	default MenuData menuFactory(ListEntry... entries) {
+		return menuFactory(Centering.CENTER_ALL, entries);
 	}
-	default MenuData menuFactory(String title, boolean clearScreen, ListEntry... entries) {
+	default MenuData menuFactory(Centering centering, ListEntry... entries) {
+		return menuFactory("Select an option", centering, true, entries);
+	}
+	default MenuData menuFactory(String title, Centering centering, boolean clearScreen, ListEntry... entries) {
 		return new MenuData() {
 			public Menu getMenu() {
 				return new Menu(this);
@@ -66,11 +78,37 @@ public interface MenuData {
 				if(clearScreen) screen.clear(0);
 				Font.drawCentered(title, screen, 4, Color.get(-1, 555));
 			}
-			public boolean centerEntries() { return true; }
+			
+			public Centering getCentering() { return centering; }
 			public int getSpacing() { return 8; }
-			public Point getAnchor() {
-				return new Point(Game.WIDTH/2, Game.HEIGHT/2);
-			}
 		};
+	}
+	
+	class Centering {
+		
+		public static final Centering CENTER_ALL = make(new Point(Game.WIDTH/2, Game.HEIGHT/2), RelPos.CENTER, RelPos.CENTER);
+		
+		public final Point anchor;
+		public final RelPos menu, line;
+		
+		private Centering(Point anchor, RelPos menuCentering, RelPos lineCentering) {
+			this.anchor = anchor;
+			this.menu = menuCentering;
+			this.line = lineCentering;
+		}
+		
+		public static Centering make(Point anchor, RelPos menuCentering, RelPos lineCentering) {
+			return new Centering(anchor, menuCentering, lineCentering);
+		}
+		
+		public static Centering make(Point anchor) {
+			return make(anchor, false);
+		}
+		public static Centering make(Point anchor, boolean centerAll) {
+			if(!centerAll)
+				return new Centering(anchor, RelPos.BOTTOM_RIGHT, RelPos.LEFT);
+			else
+				return new Centering(anchor, RelPos.CENTER, RelPos.CENTER);
+		}
 	}
 }

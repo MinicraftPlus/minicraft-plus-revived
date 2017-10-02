@@ -130,18 +130,11 @@ public class KeyInputMenu implements MenuData {
 	}
 	
 	@Override
-	public boolean centerEntries() {
-		return false;
-	}
+	public Centering getCentering() { return Centering.make(new Point(Game.WIDTH/2, Font.textHeight()), RelPos.BOTTOM, RelPos.CENTER); }
 	
 	@Override
 	public int getSpacing() {
 		return 1;
-	}
-	
-	@Override
-	public Point getAnchor() {
-		return new Point();
 	}
 	
 	class KeyInputEntry extends SelectEntry {

@@ -1,7 +1,5 @@
 package minicraft.screen;
 
-import java.awt.Point;
-
 import minicraft.Game;
 import minicraft.InputHandler;
 import minicraft.gfx.Color;
@@ -61,17 +59,12 @@ public class PauseMenu implements MenuData {
 	}
 	
 	@Override
-	public boolean centerEntries() {
-		return true;
-	}
+	public Centering getCentering() { return Centering.CENTER_ALL; }
 	
 	@Override
 	public int getSpacing() {
 		return 4;
 	}
 	
-	@Override
-	public Point getAnchor() {
-		return new Point(Game.WIDTH/2, Font.textHeight()*11 - 35);
-	}
+	//public Point getAnchor() { return new Point(Game.WIDTH/2, Font.textHeight()*11 - 35); }
 }

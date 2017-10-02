@@ -7,6 +7,8 @@ import java.awt.BorderLayout;
 import java.awt.Canvas;
 import java.awt.Dimension;
 import java.awt.Graphics;
+import java.awt.Point;
+import java.awt.SplashScreen;
 import java.awt.event.ComponentAdapter;
 import java.awt.event.ComponentEvent;
 import java.awt.event.WindowEvent;
@@ -62,6 +64,8 @@ public class Game {
 	public static final int HEIGHT = 192;
 	public static final int WIDTH = 288;
 	private static float SCALE = 3;
+	
+	public static final Point CENTER = new Point(WIDTH/2, HEIGHT/2);
 	
 	public static final String OS;
 	public static final String localGameDir;
@@ -802,12 +806,19 @@ public class Game {
 		// scales the pixels.
 		int ww = getWindowSize().width;
 		int hh = getWindowSize().height;
+		
 		// gets the image offset.
 		int xo = (canvas.getWidth() - ww) / 2 + canvas.getParent().getInsets().left;
 		int yo = (canvas.getHeight() - hh) / 2 + canvas.getParent().getInsets().top;
 		g.drawImage(image, xo, yo, ww, hh, null); //draws the image on the window
 		g.dispose(); // releases any system items that are using this method. (so we don't have crappy framerates)
+		
 		bs.show(); // makes the picture visible. (probably)
+		
+		// debug stuff
+		g.setColor(java.awt.Color.RED);
+		g.drawLine(0, Game.HEIGHT/2, Game.WIDTH, Game.HEIGHT/2);
+		g.drawLine(Game.WIDTH/2, 0, Game.WIDTH/2, Game.HEIGHT);
 	}
 	
 	private static void renderLevel() {
@@ -1185,6 +1196,11 @@ public class Game {
 				javax.swing.JOptionPane.showInternalMessageDialog(null, exceptionTrace, "Fatal Error", javax.swing.JOptionPane.ERROR_MESSAGE);
 			}
 		});*/
+		
+		SplashScreen splash = SplashScreen.getSplashScreen();
+		if(splash != null) {
+			// TODO maybe in the future, I can make it so that the window is not displayed until the title menu is first rendered?
+		}
 		
 		
 		boolean debug = false;

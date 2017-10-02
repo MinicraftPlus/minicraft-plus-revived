@@ -1,6 +1,5 @@
 package minicraft.screen;
 
-import java.awt.Point;
 import java.io.File;
 import java.util.ArrayList;
 
@@ -141,17 +140,10 @@ public class WorldSelectMenu implements MenuData {
 	}
 	
 	@Override
-	public boolean centerEntries() {
-		return true;
-	}
+	public Centering getCentering() { return Centering.CENTER_ALL; }
 	
 	@Override
 	public int getSpacing() {
 		return 0;
-	}
-	
-	@Override
-	public Point getAnchor() {
-		return new Point(Game.WIDTH/2, Game.HEIGHT/4);
 	}
 }
