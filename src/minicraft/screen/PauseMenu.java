@@ -52,10 +52,10 @@ public class PauseMenu implements MenuData {
 	
 	@Override
 	public void render(Screen screen) {
-		Font.drawCentered("Paused", screen, 35, Color.get(-1, 550));
+		Font.drawCentered("Paused", screen, 35, Color.YELLOW);
 		
-		Font.drawCentered(Game.input.getMapping("up")+" and "+Game.input.getMapping("down")+" to Scroll", screen, 140, Color.get(-1, 333));
-		Font.drawCentered(Game.input.getMapping("select")+": Choose", screen, 150, Color.get(-1, 333));
+		Font.drawCentered(Game.input.getMapping("up")+" and "+Game.input.getMapping("down")+" to Scroll", screen, 140, Color.GRAY);
+		Font.drawCentered(Game.input.getMapping("select")+": Choose", screen, 150, Color.GRAY);
 	}
 	
 	@Override

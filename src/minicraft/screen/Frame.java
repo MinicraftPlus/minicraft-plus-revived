@@ -18,7 +18,7 @@ public class Frame {
 	public Frame(String title, Rectangle bounds, boolean convertSize, int titleCol, int midCol, int sideCol) {
 		this.title = title;
 		setBounds(bounds, convertSize);
-		//titleColor = Color.get(-1, 555); // the default title color, if there's not a bounds.
+		//titleColor = Color.WHITE; // the default title color, if there's not a bounds.
 		setColors(titleCol, midCol, sideCol);
 	}
 	

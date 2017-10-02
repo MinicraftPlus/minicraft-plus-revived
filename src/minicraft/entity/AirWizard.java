@@ -136,8 +136,8 @@ public class AirWizard extends EnemyMob {
 		
 		if (hurtTime > 0) { //if the air wizards hurt time is above 0... (hurtTime value in Mob.java)
 			// turn the sprite white, momentarily.
-			col1 = Color.get(-1, 555);
-			col2 = Color.get(-1, 555);
+			col1 = Color.WHITE;
+			col2 = Color.WHITE;
 		}
 		
 		MobSprite curSprite = sprites[dir][(walkDist >> 3) & 1];

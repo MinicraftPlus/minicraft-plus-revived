@@ -34,7 +34,7 @@ public class CactusTile extends Tile {
 		int cHealth = 10;
 		if (Game.isMode("creative")) dmg = damage = cHealth;
 		level.add(new SmashParticle(x * 16, y * 16));
-		level.add(new TextParticle("" + dmg, x * 16 + 8, y * 16 + 8, Color.get(-1, 500)));
+		level.add(new TextParticle("" + dmg, x * 16 + 8, y * 16 + 8, Color.RED));
 		
 		if (damage >= cHealth) {
 			//int count = random.nextInt(2) + 2;

@@ -52,18 +52,18 @@ public class PlayerInfoMenu extends Display {
 		
 		for(int i = 0; i < stats.size(); i++) {
 			String[] split = stats.get(i).split(":");
-			Font.draw(split[0]+":", screen, 2*8, (4+i)*8, Color.get(-1, 555));
+			Font.draw(split[0]+":", screen, 2*8, (4+i)*8, Color.WHITE);
 			if(split.length==1) continue;
 			StringBuilder data = new StringBuilder(split[1]);
 			if(split.length > 2) {
 				for(int idx = 2; idx < split.length; idx++)
 					data.append(":").append(split[idx]);
 			}
-			Font.draw(data.toString(), screen, 2*8 + Font.textWidth(split[0]+":"), (4+i)*8, Color.get(-1, 550));
+			Font.draw(data.toString(), screen, 2*8 + Font.textWidth(split[0]+":"), (4+i)*8, Color.YELLOW);
 		}
 		
 		int y = 4 + stats.size();
 		Font.draw(" ----------------------------", screen, 1 * 8, y * 8, Color.get(-1, 540));
-		Font.draw(Game.input.getMapping("select")+":Exit", screen, 2 * 8, (y+2) * 8, Color.get(-1, 333));
+		Font.draw(Game.input.getMapping("select")+":Exit", screen, 2 * 8, (y+2) * 8, Color.GRAY);
 	}
 }

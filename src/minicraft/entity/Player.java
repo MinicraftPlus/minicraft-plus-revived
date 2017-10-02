@@ -1,12 +1,12 @@
 package minicraft.entity;
 
-import minicraft.Settings;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
 import minicraft.Game;
 import minicraft.InputHandler;
+import minicraft.Settings;
 import minicraft.Sound;
 import minicraft.entity.particle.TextParticle;
 import minicraft.gfx.Color;
@@ -626,15 +626,15 @@ public class Player extends Mob {
 		}
 		
 		if (attackTime > 0 && attackDir == 1) { // if currently attacking upwards...
-			screen.render(xo + 0, yo - 4, 6 + 13 * 32, Color.get(-1, 555), 0); //render left half-slash
-			screen.render(xo + 8, yo - 4, 6 + 13 * 32, Color.get(-1, 555), 1); //render right half-slash (mirror of left).
+			screen.render(xo + 0, yo - 4, 6 + 13 * 32, Color.WHITE, 0); //render left half-slash
+			screen.render(xo + 8, yo - 4, 6 + 13 * 32, Color.WHITE, 1); //render right half-slash (mirror of left).
 			if (attackItem != null) { // if the player had an item when they last attacked...
 				attackItem.sprite.render(screen, xo + 4, yo - 4); // then render the icon of the item.
 			}
 		}
 		
 		if (hurtTime > playerHurtTime - 10) { // if the player has just gotten hurt...
-			col = Color.get(-1, 555); // make the sprite white.
+			col = Color.WHITE; // make the sprite white.
 		}
 		
 		MobSprite curSprite = spriteSet[dir][(walkDist >> 3) & 1]; // gets the correct sprite to render.
@@ -649,22 +649,22 @@ public class Player extends Mob {
 		// renders slashes:
 		
 		if (attackTime > 0 && attackDir == 2) { // if attacking to the left.... (same as above)
-			screen.render(xo - 4, yo, 7 + 13 * 32, Color.get(-1, 555), 1);
-			screen.render(xo - 4, yo + 8, 7 + 13 * 32, Color.get(-1, 555), 3);
+			screen.render(xo - 4, yo, 7 + 13 * 32, Color.WHITE, 1);
+			screen.render(xo - 4, yo + 8, 7 + 13 * 32, Color.WHITE, 3);
 			if (attackItem != null) {
 				attackItem.sprite.render(screen, xo - 4, yo + 4);
 			}
 		}
 		if (attackTime > 0 && attackDir == 3) { // attacking to the right
-			screen.render(xo + 8 + 4, yo, 7 + 13 * 32, Color.get(-1, 555), 0);
-			screen.render(xo + 8 + 4, yo + 8, 7 + 13 * 32, Color.get(-1, 555), 2);
+			screen.render(xo + 8 + 4, yo, 7 + 13 * 32, Color.WHITE, 0);
+			screen.render(xo + 8 + 4, yo + 8, 7 + 13 * 32, Color.WHITE, 2);
 			if (attackItem != null) {
 				attackItem.sprite.render(screen, xo + 8 + 4, yo + 4);
 			}
 		}
 		if (attackTime > 0 && attackDir == 0) { // attacking downwards
-			screen.render(xo + 0, yo + 8 + 4, 6 + 13 * 32, Color.get(-1, 555), 2);
-			screen.render(xo + 8, yo + 8 + 4, 6 + 13 * 32, Color.get(-1, 555), 3);
+			screen.render(xo + 0, yo + 8 + 4, 6 + 13 * 32, Color.WHITE, 2);
+			screen.render(xo + 8, yo + 8 + 4, 6 + 13 * 32, Color.WHITE, 3);
 			if (attackItem != null) {
 				attackItem.sprite.render(screen, xo + 4, yo + 8 + 4);
 			}
@@ -870,7 +870,7 @@ public class Player extends Mob {
 			
 			// adds a text particle telling how much damage was done to the player, and the armor.
 			if(armorDam > 0) {
-				level.add(new TextParticle("" + damage, x, y, Color.get(-1, 333)));
+				level.add(new TextParticle("" + damage, x, y, Color.GRAY));
 				armor -= armorDam;
 				if(armor <= 0) {
 					healthDam -= armor; // adds armor damage overflow to health damage (minus b/c armor would be negative)

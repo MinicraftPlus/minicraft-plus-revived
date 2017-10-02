@@ -98,7 +98,7 @@ public class ItemEntity extends Entity {
 		if (time >= lifeTime - 6 * 20) {
 			if (time / 6 % 2 == 0) return;
 		}
-		item.sprite.render(screen, x-4, y-4, Color.get(-1, 0));
+		item.sprite.render(screen, x-4, y-4, Color.BLACK);
 		item.sprite.render(screen, x-4, y-4 - (int)(zz) );
 	}
 

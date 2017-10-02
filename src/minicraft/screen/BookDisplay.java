@@ -19,7 +19,7 @@ public class BookDisplay extends Display {
 	private static final int spacing = 3;
 	//private static java.awt.Rectangle textArea = new java.awt.Rectangle(15, 8*5, 8*32, 8*16);
 	private static final int minX = 15, maxX = 15+8*32, minY = 8*5, maxY = 8*5+8*16;
-	private static final FontStyle style = new FontStyle(Color.get(-1, 000)).xCenterBounds(minX, maxX).yCenterBounds(minY, maxY);
+	private static final FontStyle style = new FontStyle(Color.BLACK).xCenterBounds(minX, maxX).yCenterBounds(minY, maxY);
 	
 	private String[][] lines;
 	private int page;
@@ -29,7 +29,7 @@ public class BookDisplay extends Display {
 		return new Menu(this,
 			new Frame("", new Rectangle(14, 0, 21, 3, Rectangle.CORNERS)),
 			new Frame("", new Rectangle(1, 4, 34, 20, Rectangle.CORNERS))
-		).setFrameColors(Color.get(-1, 222), Color.get(554, 554), Color.get(-1, 1, 554, 554));
+		).setFrameColors(Color.DARK_GRAY, Color.get(554, 554), Color.get(-1, 1, 554, 554));
 	}
 	
 	public BookDisplay(String book) {
@@ -55,6 +55,8 @@ public class BookDisplay extends Display {
 		}
 		
 		lines = pages.toArray(new String[pages.size()][]);
+		
+		System.out.println("pages: " + Arrays.deepToString(lines));
 	}
 	
 	public void tick(InputHandler input) {
@@ -66,15 +68,15 @@ public class BookDisplay extends Display {
 	
 	public void render(Screen screen) {
 		//renderFrames(screen);
-		//new Frame("", new Rectangle(14, 0, 21, 3, Rectangle.CORNERS)).setColors(Color.get(-1, 222), Color.get(554, 554), Color.get(-1, 1, 554, 554)).render(screen);
-		//new Frame("", new Rectangle(1, 4, 34, 20, Rectangle.CORNERS)).setColors(Color.get(-1, 222), Color.get(554, 554), Color.get(-1, 1, 554, 554)).render(screen);
+		//new Frame("", new Rectangle(14, 0, 21, 3, Rectangle.CORNERS)).setColors(Color.DARK_GRAY, Color.get(554, 554), Color.get(-1, 1, 554, 554)).render(screen);
+		//new Frame("", new Rectangle(1, 4, 34, 20, Rectangle.CORNERS)).setColors(Color.DARK_GRAY, Color.get(554, 554), Color.get(-1, 1, 554, 554)).render(screen);
 		
 		// This draws the text "Page" at the top of the screen
-		Font.draw("Page", screen, 8 * 15 + 8, 1 * 8 - 2, Color.get(-1, 0));
+		Font.draw("Page", screen, Font.textHeight() * 16, Font.textHeight() - 2, Color.BLACK);
 		
 		// This is makes the numbers appear below "Page" // ...but it doesn't work...
 		String pagenum = page==0?"Title": page+"";
-		Font.drawCentered(pagenum, screen, /*11*11 + (page==0 ? 4 : 21-3*digits(page)), */2 * 8, Color.get(-1, 0));
+		Font.drawCentered(pagenum, screen, /*11*11 + (page==0 ? 4 : 21-3*digits(page)), */2 * 8, Color.BLACK);
 		
 		if(page != 0) style.setXPos(minX); // center text on the title page
 		else style.setXPos(-1); // don't center after title page

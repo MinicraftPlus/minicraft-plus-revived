@@ -48,7 +48,7 @@ public class CloudCactusTile extends Tile {
 		int health = 10;
 		if(Game.isMode("creative")) dmg = damage = health;
 		level.add(new SmashParticle(x * 16, y * 16));
-		level.add(new TextParticle("" + dmg, x * 16 + 8, y * 16 + 8, Color.get(-1, 500)));
+		level.add(new TextParticle("" + dmg, x * 16 + 8, y * 16 + 8, Color.RED));
 		if (damage >= health)
 			level.setTile(x, y, Tiles.get("cloud"));
 		else

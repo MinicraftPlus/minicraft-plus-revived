@@ -8,8 +8,8 @@ import minicraft.screen.Menu;
 
 public interface ListEntry {
 	
-	int COL_UNSLCT = Color.get(-1, 333);
-	int COL_SLCT = Color.get(-1, 555);
+	int COL_UNSLCT = Color.GRAY;
+	int COL_SLCT = Color.WHITE;
 	
 	void tick(InputHandler input, Menu menu);
 	

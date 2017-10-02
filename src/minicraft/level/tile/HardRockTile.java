@@ -51,7 +51,7 @@ public class HardRockTile extends Tile {
 		int hrHealth = 200;
 		if (Game.isMode("creative")) dmg = damage = hrHealth;
 		level.add(new SmashParticle(x * 16, y * 16));
-		level.add(new TextParticle("" + dmg, x * 16 + 8, y * 16 + 8, Color.get(-1, 500)));
+		level.add(new TextParticle("" + dmg, x * 16 + 8, y * 16 + 8, Color.RED));
 		if (damage >= hrHealth) {
 			level.dropItem(x*16+8, y*16+8, 1, 3, Items.get("Stone"));
 			level.dropItem(x*16+8, y*16+8, 0, 1, Items.get("coal"));

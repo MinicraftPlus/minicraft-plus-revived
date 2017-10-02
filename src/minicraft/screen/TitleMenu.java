@@ -91,7 +91,7 @@ public class TitleMenu implements MenuData {
 		int titleColor = Color.get(-1, 10, 131, 551);
 		int xo = (Screen.w - w * 8) / 2; // X location of the title
 		int yo = 36; // Y location of the title
-		int cols = Color.get(-1, 550);
+		int cols = Color.YELLOW;
 		
 		for (int y = 0; y < h; y++) {
 			for (int x = 0; x < w; x++) {

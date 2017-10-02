@@ -75,7 +75,7 @@ public abstract class MobAi extends Mob {
 		
 		int color = col;
 		if (hurtTime > 0) {
-			color = Color.get(-1, 555);
+			color = Color.WHITE;
 		}
 		
 		MobSprite curSprite = sprites[dir][(walkDist >> 3) % sprites[dir].length];
@@ -101,7 +101,7 @@ public abstract class MobAi extends Mob {
 				Sound.monsterHurt.play();
 			}
 		}
-		level.add(new TextParticle("" + damage, x, y, Color.get(-1, 500))); // Make a text particle at this position in this level, bright red and displaying the damage inflicted
+		level.add(new TextParticle("" + damage, x, y, Color.RED)); // Make a text particle at this position in this level, bright red and displaying the damage inflicted
 		
 		super.doHurt(damage, attackDir);
 	}

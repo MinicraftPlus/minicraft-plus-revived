@@ -33,7 +33,7 @@ public class TileItem extends StackableItem {
 		items.add(new TileItem("Obsidian Door", (new Sprite(17, 4, Color.get(-1, 159, 59, 59))), "Obsidian Door", "Obsidian"));
 	
 		// TODO make a method in Item.java; calls clone(), but then changes color, and returns itself. Call it cloneAsColor, or changeColor, or maybe *asColor()*.
-		items.add(new TileItem("Wool", (new Sprite(2, 4, Color.get(-1, 555))), "wool", "hole", "water"));
+		items.add(new TileItem("Wool", (new Sprite(2, 4, Color.WHITE)), "wool", "hole", "water"));
 		items.add(new TileItem("Red Wool", (new Sprite(2, 4, Color.get(-1, 100, 300, 500))), "Wool_RED", "hole", "water"));
 		items.add(new TileItem("Blue Wool", (new Sprite(2, 4, Color.get(-1, 005, 115, 115))), "Wool_BLUE", "hole", "water"));
 		items.add(new TileItem("Green Wool", (new Sprite(2, 4, Color.get(-1, 10, 40, 50))), "Wool_GREEN", "hole", "water"));

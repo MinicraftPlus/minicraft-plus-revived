@@ -43,7 +43,7 @@ public class DeadMenu extends Display {
 	@Override
 	public void render(Screen screen) {
 		//renderFrame(screen, "", 1, 3, 18, 10); // Draws a box frame based on 4 points. You can include a title as well.
-		Font.draw("You died! Aww!", screen, 16, 32, Color.get(-1, 555));
+		Font.draw("You died! Aww!", screen, 16, 32, Color.WHITE);
 		
 		// the current time elapsed in the Game.
 		int seconds = Game.gameTime / Game.normSpeed;
@@ -59,12 +59,12 @@ public class DeadMenu extends Display {
 			timeString = minutes + "m " + (seconds < 10 ? "0" : "") + seconds + "s"; // If under an hour has passed, then it will show minutes and seconds.
 		}
 
-		Font.draw("Time:", screen, 2 * 8, 5 * 8, Color.get(-1, 555));
-		Font.draw(timeString, screen, (2 + 5) * 8, 5 * 8, Color.get(-1, 550));
-		Font.draw("Score:", screen, 2 * 8, 6 * 8, Color.get(-1, 555));
-		Font.draw("" + Game.player.score, screen, (2 + 6) * 8, 6 * 8, Color.get(-1, 550));
-		Font.draw(Game.input.getMapping("exit")+" = lose", screen, 2 * 8, 8 * 8, Color.get(-1, 333));
+		Font.draw("Time:", screen, 2 * 8, 5 * 8, Color.WHITE);
+		Font.draw(timeString, screen, (2 + 5) * 8, 5 * 8, Color.YELLOW);
+		Font.draw("Score:", screen, 2 * 8, 6 * 8, Color.WHITE);
+		Font.draw("" + Game.player.score, screen, (2 + 6) * 8, 6 * 8, Color.YELLOW);
+		Font.draw(Game.input.getMapping("exit")+" = lose", screen, 2 * 8, 8 * 8, Color.GRAY);
 		/*if (!Game.isMode("hardcore")) //respawn only if not on hardcore mode
-			Font.draw(Game.input.getMapping("select")+" = respawn", screen, 2 * 8, 9 * 8, Color.get(-1, 333));*/
+			Font.draw(Game.input.getMapping("select")+" = respawn", screen, 2 * 8, 9 * 8, Color.GRAY);*/
 	}
 }

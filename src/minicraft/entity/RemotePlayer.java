@@ -77,7 +77,7 @@ public class RemotePlayer extends Player {
 	
 	public void render(Screen screen) {
 		super.render(screen);
-		new FontStyle(Color.get(-1, 444)).setShadowType(Color.get(-1, 0), true).setXPos(x - Font.textWidth(username)/2).setYPos(y - 20).draw(username, screen); // draw the username of the player above their head
+		new FontStyle(Color.get(-1, 444)).setShadowType(Color.BLACK, true).setXPos(x - Font.textWidth(username)/2).setYPos(y - 20).draw(username, screen); // draw the username of the player above their head
 	}
 	
 	/// this determines if something at a given coordinate should be synced to this client, or if it is too far away to matter.

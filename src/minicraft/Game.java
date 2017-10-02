@@ -877,7 +877,7 @@ public class Game {
 		else if (Bed.inBed) msg = "Sleeping...";
 		
 		if(msg.length() > 0)
-			new FontStyle(Color.get(-1, 555)).setYPos(Screen.h / 2 - 20).setShadowType(Color.get(-1, 222), false).draw(msg, screen);
+			new FontStyle(Color.WHITE).setYPos(Screen.h / 2 - 20).setShadowType(Color.DARK_GRAY, false).draw(msg, screen);
 		
 		/// NOTIFICATIONS
 		
@@ -893,13 +893,13 @@ public class Game {
 			}
 			
 			// draw each current notification, with shadow text effect.
-			FontStyle style = new FontStyle(Color.get(-1, 555)).setShadowType(Color.get(-1, 222), false);
+			FontStyle style = new FontStyle(Color.WHITE).setShadowType(Color.DARK_GRAY, false);
 			for (int i = 0; i < notifications.size(); i++) {
 				String note = notifications.get(i);
 				//int x = Screen.w / 2 - note.length() * 8 / 2,
 				int y = Screen.h - 120 - notifications.size()*8 + i * 8;
 				style.setYPos(y).draw(note, screen);
-				//Font.draw(note, screen, x, y, Color.get(-1, 555), Color.get(-1, 111));
+				//Font.draw(note, screen, x, y, Color.WHITE, Color.get(-1, 111));
 			}
 		}
 		
@@ -920,10 +920,10 @@ public class Game {
 			Font.draw("Time left " + (hours > 0 ? hours+"h ":"") + minutes + "m " + seconds + "s", screen, Screen.w/2-9*8, 2, timeCol);
 			
 			String scoreString = "Current score: " + player.score;
-			Font.draw(scoreString, screen, Screen.w - Font.textWidth(scoreString)-2, 3 + 8, Color.get(-1, 555));
+			Font.draw(scoreString, screen, Screen.w - Font.textWidth(scoreString)-2, 3 + 8, Color.WHITE);
 			
 			if(multiplier > 1) {
-				int multColor = multiplier < 50 ? Color.get(-1, 540) : Color.get(-1, 500);
+				int multColor = multiplier < 50 ? Color.get(-1, 540) : Color.RED;
 				String mult = "X" + multiplier;
 				Font.draw(mult, screen, Screen.w-Font.textWidth(mult)-2, 4 + 2*8, multColor);
 			}
@@ -986,7 +986,7 @@ public class Game {
 	}
 	
 	private static void renderDebugInfo() {
-		int textcol = Color.get(-1, 555);
+		int textcol = Color.WHITE;
 		if (showinfo) { // renders show debug info on the screen.
 			ArrayList<String> info = new ArrayList<>();
 			info.add("VERSION " + VERSION);
@@ -1028,7 +1028,7 @@ public class Game {
 				//info.add("health regen:" + player.hungerStamCnt);
 			}
 			
-			FontStyle style = new FontStyle(textcol).setShadowType(Color.get(-1, 000), true).setXPos(1);
+			FontStyle style = new FontStyle(textcol).setShadowType(Color.BLACK, true).setXPos(1);
 			for(int i = 0; i < info.size(); i++) {
 				style.setYPos(2 + i*10).draw(info.get(i), screen);
 			}

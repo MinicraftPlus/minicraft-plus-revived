@@ -109,10 +109,10 @@ public class PlayerScoreDisplay extends Display {
 		
 		new Frame(title, new Rectangle(1, 3, Screen.w-2, Screen.h-4)).render(screen);
 		//super.render(screen); // draws the frame and title
-		//Font.drawCentered("Game Over!", screen, 4*8, Color.get(-1, 555));
+		//Font.drawCentered("Game Over!", screen, 4*8, Color.WHITE);
 		
 		if(unlocks.size() > 0) {
-			FontStyle style = new FontStyle(Color.get(-1, 50)).xCenterBounds(Screen.w/2, Screen.w-8);
+			FontStyle style = new FontStyle(Color.GREEN).xCenterBounds(Screen.w/2, Screen.w-8);
 			style.setYPos(10 * 8).draw("Unlocked!", screen);
 			for(int i = 0; i < unlocks.size(); ++i) {
 				String unlock = unlocks.get(i).replace("M", "MINUTEMODE").replace("H", "HOURMODE");
@@ -120,21 +120,21 @@ public class PlayerScoreDisplay extends Display {
 			}
 		}
 		
-		Font.draw("Player Score: " + Game.player.score, screen, 16, 6*8, Color.get(-1, 555));
+		Font.draw("Player Score: " + Game.player.score, screen, 16, 6*8, Color.WHITE);
 		Font.draw("<Bonuses>", screen, 16, 8*8, Color.get(-1, 41));
 		int i = 0;
 		for(String bonus: scores.keySet().toArray(new String[0])) {
 			StringBuilder label = new StringBuilder(bonus + "s: ");
 			while(label.length() < ml+3) label.append(" ");
-			Font.draw(label+"+"+scores.get(bonus), screen, 16, (10+(i++))*8, Color.get(-1, 550));
+			Font.draw(label+"+"+scores.get(bonus), screen, 16, (10+(i++))*8, Color.YELLOW);
 		}
 		
-		Font.draw("Final Score: " + finalscore, screen, 16, 17*8, Color.get(-1, 555));
+		Font.draw("Final Score: " + finalscore, screen, 16, 17*8, Color.WHITE);
 		if(finalscore == 0) {
-			Font.draw("Fail!", screen, 17*8, 17*8, Color.get(-1, 500));
+			Font.draw("Fail!", screen, 17*8, 17*8, Color.RED);
 		}
 
-		Font.draw("Press "+Game.input.getMapping("exit")+" to exit to menu...", screen, 16, 19*8, Color.get(-1, 333));
+		Font.draw("Press "+Game.input.getMapping("exit")+" to exit to menu...", screen, 16, 19*8, Color.GRAY);
 		rendered = true;
 	}
 }

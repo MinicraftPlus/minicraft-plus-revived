@@ -67,7 +67,7 @@ public class RockTile extends Tile {
 			coallvl = 1;
 		}
 		level.add(new SmashParticle(x * 16, y * 16));
-		level.add(new TextParticle("" + dmg, x * 16 + 8, y * 16 + 8, Color.get(-1, 500)));
+		level.add(new TextParticle("" + dmg, x * 16 + 8, y * 16 + 8, Color.RED));
 		if (damage >= rockHealth) {
 			int count = random.nextInt(1) + 0;
 			if (coallvl == 0) {

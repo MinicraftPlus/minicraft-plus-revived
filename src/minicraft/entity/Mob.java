@@ -184,7 +184,7 @@ public abstract class Mob extends Entity {
 	public void heal(int heal) { // Restore health on the mob
 		if (hurtTime > 0) return; // If the mob has been hurt recently and hasn't cooled down, don't continue
 		
-		level.add(new TextParticle("" + heal, x, y, Color.get(-1, 50))); // Add a text particle in our level at our position, that is green and displays the amount healed
+		level.add(new TextParticle("" + heal, x, y, Color.GREEN)); // Add a text particle in our level at our position, that is green and displays the amount healed
 		health += heal; // Actually add the amount to heal to our current health
 		if (health > maxHealth) health = maxHealth; // If our health has exceeded our maximum, lower it back down to said maximum
 	}

@@ -111,11 +111,11 @@ public class WorldSelectMenu implements MenuData {
 	public void render(Screen screen) {
 		screen.clear(0);
 		
-		Font.drawCentered(Game.input.getMapping("select")+" to confirm", screen, Screen.h - 60, Color.get(-1, 333));
-		Font.drawCentered(Game.input.getMapping("exit")+" to return", screen, Screen.h - 40, Color.get(-1, 333));
+		Font.drawCentered(Game.input.getMapping("select")+" to confirm", screen, Screen.h - 60, Color.GRAY);
+		Font.drawCentered(Game.input.getMapping("exit")+" to return", screen, Screen.h - 40, Color.GRAY);
 		
 		String title = "Select World";
-		int color = Color.get(-1, 555);
+		int color = Color.WHITE;
 		
 		if(curAction == null) {
 			int y = Game.HEIGHT - Font.textHeight() * Action.values.length;

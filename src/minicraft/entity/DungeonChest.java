@@ -41,7 +41,7 @@ public class DungeonChest extends Chest {
 				col = openCol; // set to the unlocked color
 				
 				level.add(new SmashParticle(x * 16, y * 16));
-				level.add(new TextParticle("-1 key", x, y, Color.get(-1, 500)));
+				level.add(new TextParticle("-1 key", x, y, Color.RED));
 				level.chestcount--;
 				if(level.chestcount == 0) { // if this was the last chest...
 					level.dropItem(x, y, 5, Items.get("Gold Apple"));

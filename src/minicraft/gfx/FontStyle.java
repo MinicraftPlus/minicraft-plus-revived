@@ -63,7 +63,7 @@ public class FontStyle {
 	private String[] configuredPara;
 	private int paraMinY;
 	
-	public FontStyle() { this(Color.get(-1, 555)); }
+	public FontStyle() { this(Color.WHITE); }
 	public FontStyle(int mainColor) {
 		this.mainColor = mainColor;
 		shadowColor = Color.get(-1, -1);

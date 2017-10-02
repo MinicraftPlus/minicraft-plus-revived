@@ -91,7 +91,7 @@ public class KeyInputMenu implements MenuData {
 	public void render(Screen screen) {
 		screen.clear(0);
 		
-		Font.drawCentered("Controls", screen, 0, Color.get(-1, 555));
+		Font.drawCentered("Controls", screen, 0, Color.WHITE);
 		
 		/*if(Game.debug) {
 			System.out.println("current status:");
@@ -125,7 +125,7 @@ public class KeyInputMenu implements MenuData {
 				Game.input.getMapping("exit")+" to Return to menu"
 			};
 			for(int i = 0; i < lines.length; i++)
-				Font.drawCentered(lines[i], screen, Screen.h-Font.textHeight()*(4-i), Color.get(-1, 555));
+				Font.drawCentered(lines[i], screen, Screen.h-Font.textHeight()*(4-i), Color.WHITE);
 		}
 	}
 	

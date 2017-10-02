@@ -287,15 +287,15 @@ public class MultiplayerMenu extends Display {
 				String msg = "Enter email:";
 				if(!typingEmail)
 					msg = "Enter password:";
-				Font.drawCentered(msg, screen, Screen.h/2-6, Color.get(-1, 555));
+				Font.drawCentered(msg, screen, Screen.h/2-6, Color.WHITE);
 				
 				msg = typing;
 				if(!typingEmail)
 					//noinspection ReplaceAllDot
 					msg = msg.replaceAll(".", ".");
-				Font.drawCentered(msg, screen, Screen.h/2+6, (inputIsValid?Color.get(-1, 444):Color.get(-1, 500)));
+				Font.drawCentered(msg, screen, Screen.h/2+6, (inputIsValid?Color.get(-1, 444):Color.RED));
 				if(!inputIsValid) {
-					Font.drawCentered("field is blank", screen, Screen.h/2+20, Color.get(-1, 500));
+					Font.drawCentered("field is blank", screen, Screen.h/2+20, Color.RED);
 				}
 				
 				Font.drawCentered("get an account at:", screen, Font.textHeight()/2-1, Color.get(-1, 345));
@@ -305,17 +305,17 @@ public class MultiplayerMenu extends Display {
 				break;
 			
 			case WAITING:
-				Font.drawCentered(waitingMessage+getElipses(), screen, Screen.h/2, Color.get(-1, 555));
+				Font.drawCentered(waitingMessage+getElipses(), screen, Screen.h/2, Color.WHITE);
 				break;
 			
 			case LOADING:
-				Font.drawCentered("Loading "+loadingMessage+" from server"+getElipses(), screen, Screen.h/2, Color.get(-1, 555));
-				//Font.drawCentered(transferPercent+"%", screen, Screen.h/2+6, Color.get(-1, 555));
+				Font.drawCentered("Loading "+loadingMessage+" from server"+getElipses(), screen, Screen.h/2, Color.WHITE);
+				//Font.drawCentered(transferPercent+"%", screen, Screen.h/2+6, Color.WHITE);
 				break;
 			
 			case ERROR:
 				//if(Game.tickCount % 10 == 0) System.out.println("error message: " + errorMessage);
-				Font.drawCentered("Could not connect to server:", screen, Screen.h/2-6, Color.get(-1, 500));
+				Font.drawCentered("Could not connect to server:", screen, Screen.h/2-6, Color.RED);
 				FontStyle style = new FontStyle(Color.get(-1, 511));
 				Font.drawParagraph(errorMessage, screen, 0, true, Screen.h/2+6, false, style, 1);
 				//Font.drawCentered(errorMessage, screen, Screen.h/2+6, Color.get(-1, 511));
@@ -323,7 +323,7 @@ public class MultiplayerMenu extends Display {
 		}
 		
 		if(curState == State.ENTERIP || curState == State.ERROR) {
-			Font.drawCentered("Press "+Game.input.getMapping("exit")+" to return", screen, Screen.h-Font.textHeight()*2, Color.get(-1, 333));
+			Font.drawCentered("Press "+Game.input.getMapping("exit")+" to return", screen, Screen.h-Font.textHeight()*2, Color.GRAY);
 		}
 	}
 	

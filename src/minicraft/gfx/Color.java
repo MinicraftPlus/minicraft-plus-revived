@@ -28,18 +28,17 @@ public class Color {
 		To provide a method to the madness, all methods ending in "Color" are copies of the methods of the same name without the "Color" part, execpt they convert the given value to 24bit Java RGB rather than the normal, minicraft 8-bit total RGB (that really only goes up to 216).
 	*/
 	
-	/*public static final int WHITE = Color.get(555);
-	public static final int GRAY = Color.get(222);
-	public static final int BLACK = Color.get(0);
-	public static final int RED = Color.get(500);
-	public static final int GREEN = Color.get(50);
-	public static final int BLUE = Color.get(5);
-	public static final int YELLOW = Color.get(550);
-	public static final int MAGENTA = Color.get(55);
-	public static final int CYAN = Color.get(55);
+	public static final int WHITE = Color.get(-1, 555);
+	public static final int GRAY = Color.get(-1, 333);
+	public static final int DARK_GRAY = Color.get(-1, 222);
+	public static final int BLACK = Color.get(-1, 0);
+	public static final int RED = Color.get(-1, 500);
+	public static final int GREEN = Color.get(-1, 50);
+	public static final int BLUE = Color.get(-1, 5);
+	public static final int YELLOW = Color.get(-1, 550);
+	public static final int MAGENTA = Color.get(-1, 505);
+	public static final int CYAN = Color.get(-1, 55);
 	
-	public static final int TRANS = Color.get(-1);
-	*/
 	/** This returns a integer with 4 rgb color values. */
 	public static int get(int a, int b, int c, int d) {
 		//converts each color to 8-bit, and shifts each one 8-bits to the left a certain number of times, to create 4 colors set one after the other.

@@ -76,7 +76,7 @@ public interface MenuData {
 			public void tick(InputHandler input) {}
 			public void render(Screen screen) {
 				if(clearScreen) screen.clear(0);
-				Font.drawCentered(title, screen, 4, Color.get(-1, 555));
+				Font.drawCentered(title, screen, 4, Color.WHITE);
 			}
 			
 			public Centering getCentering() { return centering; }

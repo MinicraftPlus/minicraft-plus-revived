@@ -36,7 +36,7 @@ public abstract class Item {
 		sprite.render(screen, x, y);
 		if(ininv) {
 			String shortname = name.length() > 20 ? name.substring(0, 20) : name;
-			Font.draw(shortname, screen, x + 8, y, Color.get(-1, 555));
+			Font.draw(shortname, screen, x + 8, y, Color.WHITE);
 		}
 		else
 			Font.draw(name, screen, x + 8, y, Color.get(0, 555));
