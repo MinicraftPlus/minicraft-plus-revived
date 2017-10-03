@@ -815,11 +815,6 @@ public class Game {
 		g.dispose(); // releases any system items that are using this method. (so we don't have crappy framerates)
 		
 		bs.show(); // makes the picture visible. (probably)
-		
-		// debug stuff
-		g.setColor(java.awt.Color.RED);
-		g.drawLine(0, Game.HEIGHT/2, Game.WIDTH, Game.HEIGHT/2);
-		g.drawLine(Game.WIDTH/2, 0, Game.WIDTH/2, Game.HEIGHT);
 	}
 	
 	private static void renderLevel() {
@@ -1308,6 +1303,13 @@ public class Game {
 			});
 			
 			frame.setVisible(true);
+			
+			/*canvas.createBufferStrategy(3);
+			BufferStrategy bs = canvas.getBufferStrategy();
+			Graphics g = bs.getDrawGraphics();
+			g.drawString("Loading menus...", Game.WIDTH/4, Game.HEIGHT/2);
+			g.dispose();
+			bs.show();*/
 		}
 		
 		Game.autoclient = autoclient; // this will make the game automatically jump to the MultiplayerMenu, and attempt to connect to localhost.
