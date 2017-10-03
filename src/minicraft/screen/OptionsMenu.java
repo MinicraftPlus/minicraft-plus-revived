@@ -4,7 +4,6 @@ import minicraft.Game;
 import minicraft.InputHandler;
 import minicraft.Settings;
 import minicraft.gfx.Screen;
-import minicraft.screen.entry.ArrayEntry;
 import minicraft.screen.entry.ListEntry;
 
 public class OptionsMenu implements MenuData {
@@ -16,11 +15,12 @@ public class OptionsMenu implements MenuData {
 	
 	@Override
 	public ListEntry[] getEntries() {
-		return new ArrayEntry[] {
+		return new ListEntry[] {
 			Settings.getEntry("diff"),
 			Settings.getEntry("sound"),
 			Settings.getEntry("autosave"),
-			Settings.getEntry("skinon")
+			Settings.getEntry("skinon"),
+			entryFactory("Change Key Bindings", new KeyInputMenu())
 		};
 	}
 	

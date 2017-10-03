@@ -54,7 +54,7 @@ public class TitleMenu implements MenuData {
 	
 	@Override
 	public ListEntry[] getEntries() {
-		System.out.println("getting fresh entries for title menu");
+		System.out.println("getting fresh entries");
 		return new ListEntry[] {
 			entryFactory("Play", menuFactory(
 				entryFactory("Load World", new WorldSelectMenu()),

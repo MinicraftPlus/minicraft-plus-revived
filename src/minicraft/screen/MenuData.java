@@ -39,8 +39,11 @@ public interface MenuData {
 	// however, I'll save that for later.
 	//void onSelectionChange(ListEntry newSelected);
 	
-	/// renders background, including frame; all EXCEPT entries
+	/// renders background before drawing entries
 	void render(Screen screen);
+	
+	/// renders foreground, after drawing entries
+	default void renderPopup(Screen screen) {}
 	
 	/// returns how entries should be centered
 	Centering getCentering();

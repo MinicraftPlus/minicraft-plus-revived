@@ -127,6 +127,8 @@ public class Menu {
 		menuData.render(screen); // draws frame, any background stuff; timing can be checked in other ways
 		
 		renderEntries(screen, selection, entries);
+		
+		menuData.renderPopup(screen);
 	}
 	
 	void renderEntries(Screen screen, int selection, ListEntry[] entries) {

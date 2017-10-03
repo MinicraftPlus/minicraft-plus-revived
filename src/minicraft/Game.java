@@ -202,7 +202,8 @@ public class Game {
 		//Menu parent = menu;
 		//newMenu = display;
 		//System.out.println("setting menu to: " + (display == null ? "null" : display.getMenuType()));
-		
+		if(getMenuType() != null)
+			getMenuType().onExit();
 		newMenu = display;
 		//if (debug) System.out.println("setting game menu to " + menu);
 		//if (display != null) newMenu.init(input, parent);
@@ -261,7 +262,7 @@ public class Game {
 		
 		resetGame(); // "half"-starts a new game, to set up initial variables
 		player.eid = 0;
-		new Load(); // this loads any saved preferences.
+		new Load(true); // this loads any saved preferences.
 		
 		if(autoclient)
 			setMenu(new MultiplayerMenu( "localhost"));

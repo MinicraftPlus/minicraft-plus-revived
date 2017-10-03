@@ -349,6 +349,7 @@ public class InputHandler implements /*MouseListener, */KeyListener {
 		if( pressed && keyToChange != null && !isMod(keytext) ) {
 			keymap.put(keyToChange, ( overwrite?"":keymap.get(keyToChange)+"|" ) + getCurModifiers()+keytext);
 			keyToChange = null;
+			return;
 		}
 		getPhysKey(keytext).toggle(pressed);
 	}

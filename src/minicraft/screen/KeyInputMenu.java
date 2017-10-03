@@ -22,7 +22,7 @@ public class KeyInputMenu implements MenuData {
 	
 	//private static final FontStyle style = new FontStyle().setYPos(Font.textHeight()*2).setXPos(0);
 	
-	private static Frame inputFrame = new Frame("", new Rectangle(4, 4, Screen.w/SpriteSheet.boxWidth-4, Screen.h/SpriteSheet.boxWidth-4));
+	private static Frame inputFrame = new Frame("", new Rectangle(4, 4, Screen.w/SpriteSheet.boxWidth-8, Screen.h/SpriteSheet.boxWidth-8));
 	
 	private ScrollingMenu menu;
 	
@@ -58,66 +58,30 @@ public class KeyInputMenu implements MenuData {
 	
 	@Override
 	public void tick(InputHandler input) {
-		
-		//super.tick();
-		
 		if(listeningForBind) {
 			if(input.keyToChange == null) {
 				// the key has just been set
-				//System.out.println("binding changed at " + input.ticks);
 				listeningForBind = false;
+				menu.updateEntries();
 			}
-			return;
 		}
-		
-		if(input.getKey("exit").clicked && !confirmReset) {
-			new Save();
-			//return;
-		}
-		
-		//super.tick(input);
 	}
 	
-	/*private void updateKeys(String[] keys) {
-		for(int i = 0; i < keys.length; i++) {
-			String key = keys[i];
-			
-			actionKeys[i] = action;
-			
-		}
-		updateEntries();
-	}*/
+	@Override
+	public void onExit() {
+		new Save();
+	}
 	
 	public void render(Screen screen) {
 		screen.clear(0);
 		
 		Font.drawCentered("Controls", screen, 0, Color.WHITE);
 		
-		/*if(Game.debug) {
-			System.out.println("current status:");
-			System.out.println("selected: " + selected + " of " + options.size());
-			System.out.println("disp sel: " + dispSelected + " of " + dispSize);
-			System.out.println("offset: " + offset);
-			System.out.println("CONTENTS:");
-			for(String str: options)
-				System.out.println(str);
-		}*/
-		
-		//super.render(screen);
-		
-		if(listeningForBind) {
-			inputFrame.setTitle("");
-			inputFrame.render(screen);
-			Font.drawCentered("Press the desired", screen, (Screen.h-Font.textHeight()) / 2 - 4, Color.get(-1, 450));
-			Font.drawCentered("key sequence", screen, (Screen.h-Font.textHeight()) / 2 + 4, Color.get(-1, 450));
+		/*if(listeningForBind) {
+			
 		} else if (confirmReset) {
-			inputFrame.setTitle("Confirm Action");
-			inputFrame.render(screen);
-			FontStyle style = new FontStyle(Color.get(-1, 511));
-			Font.drawParagraph("Are you sure you want to reset all key bindings to the default keys?", screen, 8*4, true, 8*4, true, style, 4);
-			style.setColor(Color.get(-1, 533));
-			Font.drawParagraph(Game.input.getMapping("select")+" to confirm\n"+Game.input.getMapping("exit")+" to cancel", screen, 8, true, (Screen.h-Font.textHeight()) / 2 + 8*3, false, style, 4);
-		} else {
+			
+		} */if(!listeningForBind && !confirmReset) {
 			String[] lines = {
 				"Press C/Enter to change key binding",
 				"Press A to add key binding",
@@ -130,11 +94,30 @@ public class KeyInputMenu implements MenuData {
 	}
 	
 	@Override
+	public void renderPopup(Screen screen) {
+		if(listeningForBind) {
+			inputFrame.setTitle("");
+			inputFrame.render(screen);
+			Font.drawCentered("Press the desired", screen, (Screen.h-Font.textHeight()) / 2 - 4, Color.get(-1, 450));
+			Font.drawCentered("key sequence", screen, (Screen.h-Font.textHeight()) / 2 + 4, Color.get(-1, 450));
+		}
+		else if(confirmReset) {
+			inputFrame.setTitle("Confirm Action");
+			inputFrame.render(screen);
+			
+			FontStyle style = new FontStyle(Color.get(-1, 511));
+			Font.drawParagraph("Are you sure you want to reset all key bindings to the default keys?", screen, 8*4, true, 8*4, true, style, 4);
+			style.setColor(Color.get(-1, 533));
+			Font.drawParagraph(Game.input.getMapping("select")+" to confirm\n"+Game.input.getMapping("exit")+" to cancel", screen, 8, true, (Screen.h-Font.textHeight()) / 2 + 8*3, false, style, 4);
+		}
+	}
+	
+	@Override
 	public Centering getCentering() { return Centering.make(new Point(Game.WIDTH/2, Font.textHeight()), RelPos.BOTTOM, RelPos.CENTER); }
 	
 	@Override
 	public int getSpacing() {
-		return 1;
+		return 0;
 	}
 	
 	class KeyInputEntry extends SelectEntry {
@@ -165,6 +148,7 @@ public class KeyInputMenu implements MenuData {
 				else if(input.getKey("select").clicked) {
 					confirmReset = false;
 					input.resetKeyBindings();
+					menu.updateEntries();
 				}
 			}
 			else if(input.getKey("c").clicked || input.getKey("enter").clicked) {
@@ -180,6 +164,11 @@ public class KeyInputMenu implements MenuData {
 			else if(input.getKey("shift-d").clicked && !confirmReset) {
 				confirmReset = true;
 			}
+		}
+		
+		@Override
+		public int getWidth() {
+			return Game.WIDTH;
 		}
 		
 		@Override

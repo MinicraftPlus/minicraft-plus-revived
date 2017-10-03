@@ -170,7 +170,7 @@ public class Save {
 		List<String> keyPairs = new ArrayList<>();
 		Collections.addAll(keyPairs, Game.input.getKeyPrefs());
 		
-		data.add(String.join(":", keyPairs.toArray(new String[0])));
+		data.add(String.join(":", keyPairs.toArray(new String[keyPairs.size()])));
 		
 		writeToFile(location + filename + extension, data);
 	}

@@ -55,7 +55,7 @@ public class ScrollingMenu extends Menu {
 		
 		super.tick(input);
 		
-		if(Game.getMenuType() != this)
+		if(Game.getMenu() != this)
 			return; // don't continue if we aren't still the current menu
 		
 		updateSelection(prevSel);
@@ -66,6 +66,7 @@ public class ScrollingMenu extends Menu {
 		int selection = getSelection();
 		super.updateEntries();
 		updateSelection(selection);
+		dispEntries = Arrays.copyOfRange(getEntries(), getSelection()-dispSelection, Math.min(displayLength, getNumEntries()));
 	}
 	
 	private void updateSelection(int prevSel) {
@@ -105,5 +106,6 @@ public class ScrollingMenu extends Menu {
 		renderFrames(screen);
 		getMenuType().render(screen);
 		super.renderEntries(screen, dispSelection, dispEntries);
+		getMenuType().renderPopup(screen);
 	}
 }
