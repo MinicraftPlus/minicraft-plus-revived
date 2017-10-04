@@ -3,7 +3,6 @@ package minicraft.screen.entry;
 import minicraft.InputHandler;
 import minicraft.Sound;
 import minicraft.gfx.Font;
-import minicraft.screen.Menu;
 
 public class SelectEntry implements ListEntry {
 	
@@ -18,7 +17,7 @@ public class SelectEntry implements ListEntry {
 	void setText(String text) { this.text = text; }
 	
 	@Override
-	public void tick(InputHandler input, Menu menu) {
+	public void tick(InputHandler input) {
 		if(input.getKey("select").clicked && onSelect != null) {
 			Sound.confirm.play();
 			onSelect.act();

@@ -3,7 +3,6 @@ package minicraft.screen.entry;
 import minicraft.InputHandler;
 import minicraft.gfx.Screen;
 import minicraft.item.Item;
-import minicraft.screen.Menu;
 
 public class ItemEntry implements ListEntry {
 	
@@ -14,7 +13,7 @@ public class ItemEntry implements ListEntry {
 	}
 	
 	@Override
-	public void tick(InputHandler input, Menu menu) {}
+	public void tick(InputHandler input) {}
 	
 	@Override
 	public void render(Screen screen, int x, int y, boolean isSelected) {

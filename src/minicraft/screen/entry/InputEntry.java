@@ -1,7 +1,6 @@
 package minicraft.screen.entry;
 
 import minicraft.InputHandler;
-import minicraft.screen.Menu;
 
 public class InputEntry implements ListEntry {
 	
@@ -26,7 +25,7 @@ public class InputEntry implements ListEntry {
 	}
 	
 	@Override
-	public void tick(InputHandler input, Menu menu) {
+	public void tick(InputHandler input) {
 		userInput = input.addKeyTyped(userInput, regex);
 		
 		if(maxLength > 0 && userInput.length() > maxLength)

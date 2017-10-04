@@ -3,7 +3,6 @@ package minicraft.screen.entry;
 import minicraft.InputHandler;
 import minicraft.Sound;
 import minicraft.gfx.Font;
-import minicraft.screen.Menu;
 
 public class ArrayEntry<T> implements ListEntry {
 	
@@ -64,7 +63,7 @@ public class ArrayEntry<T> implements ListEntry {
 	}
 	
 	@Override
-	public void tick(InputHandler input, Menu menu) {
+	public void tick(InputHandler input) {
 		int prevSel = selection;
 		int selection = this.selection;
 		
