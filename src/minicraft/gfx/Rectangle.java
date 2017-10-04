@@ -47,6 +47,8 @@ public class Rectangle {
 	public int getWidth() { return w; }
 	public int getHeight() { return h; }
 	
+	public Point getCenter() { return new Point(x + w/2, y + h/2); }
+	
 	public boolean intersects(Rectangle other) {
 		return !( getLeft() > other.getRight() // left side is past the other right side
 		  || other.getLeft() > getRight() // other left side is past the right side

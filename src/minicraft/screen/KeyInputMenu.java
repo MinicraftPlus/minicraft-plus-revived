@@ -120,6 +120,7 @@ public class KeyInputMenu implements MenuData {
 		return 0;
 	}
 	
+	
 	class KeyInputEntry extends SelectEntry {
 		
 		private String action, mapping, buffer;
@@ -128,7 +129,11 @@ public class KeyInputMenu implements MenuData {
 			super("", null);
 			
 			this.action = key.substring(0, key.indexOf(";"));
-			this.mapping = key.substring(key.indexOf(";")+1);
+			setMapping(key.substring(key.indexOf(";")+1));
+		}
+		
+		private void setMapping(String mapping) {
+			this.mapping = mapping;
 			
 			StringBuilder buffer = new StringBuilder();
 			for(int spaces = 0; spaces < Screen.w/Font.textWidth(" ") - action.length() - mapping.length(); spaces++) {
@@ -139,7 +144,7 @@ public class KeyInputMenu implements MenuData {
 		}
 		
 		@Override
-		public void tick(InputHandler input, Menu menu) {
+		public void tick(InputHandler input) {
 			//if(input.getKey("select").clicked)
 			if(confirmReset) {
 				if(input.getKey("exit").clicked) {
