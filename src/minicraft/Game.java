@@ -209,6 +209,10 @@ public class Game {
 		//if (display != null) newMenu.init(input, parent);
 	}
 	
+	public static void exitMenu() {
+		// TODO set menu to parent
+	}
+	
 	public static Menu getMenu() { return newMenu; }
 	public static MenuData getMenuType() { return newMenu == null ? null : newMenu.getMenuType(); }
 	
