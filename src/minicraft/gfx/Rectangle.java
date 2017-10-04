@@ -1,5 +1,8 @@
 package minicraft.gfx;
 
+import java.awt.Dimension;
+import java.awt.Point;
+
 public class Rectangle {
 	
 	public static final int DIMS = 0;
@@ -27,6 +30,13 @@ public class Rectangle {
 			this.w = x1 - x;
 			this.h = y1 - y;
 		}
+	}
+	
+	public Rectangle(Point p, Dimension d) {
+		x = p.x;
+		y = p.y;
+		w = d.width;
+		h = d.height;
 	}
 	
 	public int getLeft() { return x; }
