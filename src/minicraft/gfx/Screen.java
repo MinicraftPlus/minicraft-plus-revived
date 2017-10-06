@@ -6,6 +6,7 @@ public class Screen {
 	
 	public static final int w = Game.WIDTH; // width of the screen
 	public static final int h = Game.HEIGHT; // height of the screen
+	public static final Point center = new Point(w/2, h/2);
 	
 	private static java.util.Random random = new java.util.Random();
 	

@@ -4,6 +4,7 @@ import minicraft.Game;
 import minicraft.InputHandler;
 import minicraft.gfx.Color;
 import minicraft.gfx.Font;
+import minicraft.gfx.Point;
 import minicraft.gfx.Screen;
 import minicraft.saveload.Save;
 import minicraft.screen.entry.KeyInputEntry;
@@ -30,14 +31,13 @@ public class KeyInputMenu extends Display {
 	}
 	
 	public KeyInputMenu() {
-		builder = new Menu.Builder(false, 0, getEntries())
-			.setSize(Screen.w, Screen.h)
+		builder = new Menu.Builder(false, 0, RelPos.CENTER, getEntries())
+			//.setSize(Screen.w, Screen.h)
 			.setTitle("Controls")
 			.setScrollPolicies(0, false)
-			.setAnchor(Game.WIDTH/2, Screen.h - Font.textHeight()*4)
-			.setCentering(RelPos.TOP, RelPos.CENTER);
+			.setPositioning(new Point(Game.WIDTH/2, Screen.h - Font.textHeight()*4), RelPos.TOP);
 		
-		Menu.Builder popupBuilder = new Menu.Builder(true, 4)
+		Menu.Builder popupBuilder = new Menu.Builder(true, 4, RelPos.CENTER)
 			.setShouldRender(false)
 			.setSelectable(false);
 		

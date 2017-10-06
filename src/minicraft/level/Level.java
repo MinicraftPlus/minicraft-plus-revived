@@ -1,7 +1,7 @@
 package minicraft.level;
 
 import minicraft.Settings;
-import java.awt.Point;
+import minicraft.gfx.Point;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;

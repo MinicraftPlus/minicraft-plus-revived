@@ -10,7 +10,7 @@ public class WorldGenMenu extends Display {
 	
 	public WorldGenMenu() {
 		// TODO add world seed option
-		super(new Menu.Builder(false, 10,
+		super(new Menu.Builder(false, 10, RelPos.LEFT,
 				new InputEntry("Enter World Name", "[a-zA-Z0-9 ]", 36),
 				Settings.getEntry("mode"),
 				Settings.getEntry("scoretime"),
@@ -22,8 +22,8 @@ public class WorldGenMenu extends Display {
 				Settings.getEntry("theme"),
 				Settings.getEntry("type")
 			)
-			.setScrollPolicies(5, 0.8f, false)
-			.setCentering(RelPos.CENTER, RelPos.LEFT)
+			.setDisplayLength(5)
+			.setScrollPolicies(0.8f, false)
 			.setTitle("World Gen Options")
 			.createMenu()
 		);

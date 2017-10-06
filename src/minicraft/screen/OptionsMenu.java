@@ -6,14 +6,13 @@ import minicraft.gfx.Screen;
 public class OptionsMenu extends Display {
 	
 	public OptionsMenu() {
-		super(new Menu.Builder(false, 6,
+		super(new Menu.Builder(false, 6, RelPos.LEFT,
 				Settings.getEntry("diff"),
 				Settings.getEntry("sound"),
 				Settings.getEntry("autosave"),
 				Settings.getEntry("skinon"),
 				entryFactory("Change Key Bindings", new KeyInputMenu())
 			)
-			.setCentering(RelPos.CENTER, RelPos.LEFT)
 			.setTitle("Options")
 			.createMenu()
 		);

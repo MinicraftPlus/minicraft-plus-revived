@@ -5,9 +5,7 @@ import javax.swing.JFrame;
 import javax.swing.WindowConstants;
 import java.awt.BorderLayout;
 import java.awt.Canvas;
-import java.awt.Dimension;
 import java.awt.Graphics;
-import java.awt.Point;
 import java.awt.SplashScreen;
 import java.awt.event.ComponentAdapter;
 import java.awt.event.ComponentEvent;
@@ -34,6 +32,7 @@ import minicraft.entity.RemotePlayer;
 import minicraft.gfx.Color;
 import minicraft.gfx.Font;
 import minicraft.gfx.FontStyle;
+import minicraft.gfx.Point;
 import minicraft.gfx.Screen;
 import minicraft.gfx.SpriteSheet;
 import minicraft.item.Items;
@@ -1260,7 +1259,7 @@ public class Game {
 		}
 		
 		if(HAS_GUI) {
-			canvas.setMinimumSize(new Dimension(1, 1));
+			canvas.setMinimumSize(new java.awt.Dimension(1, 1));
 			canvas.setPreferredSize(getWindowSize());
 			JFrame frame = new JFrame(Game.NAME);
 			frame.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
@@ -1335,8 +1334,8 @@ public class Game {
 	
 	public static Canvas getCanvas() { return canvas; }
 	
-	public static Dimension getWindowSize() {
-		return new Dimension(new Float(WIDTH * SCALE).intValue(), new Float(HEIGHT * SCALE).intValue());
+	public static java.awt.Dimension getWindowSize() {
+		return new java.awt.Dimension(new Float(WIDTH * SCALE).intValue(), new Float(HEIGHT * SCALE).intValue());
 	}
 	
 	public static void quit() {

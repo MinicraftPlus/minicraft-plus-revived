@@ -4,6 +4,7 @@ import java.util.ArrayList;
 
 import minicraft.Game;
 import minicraft.Settings;
+import minicraft.gfx.Point;
 import minicraft.gfx.SpriteSheet;
 import minicraft.screen.entry.ListEntry;
 import minicraft.screen.entry.SelectEntry;
@@ -31,8 +32,8 @@ public class DeadMenu extends Display {
 		}
 		
 		menus = new Menu[] {
-			new Menu.Builder(true, 0, entries)
-				.setAnchor(SpriteSheet.boxWidth, SpriteSheet.boxWidth*3)
+			new Menu.Builder(true, 0, RelPos.LEFT, entries)
+				.setPositioning(new Point(SpriteSheet.boxWidth, SpriteSheet.boxWidth*3), RelPos.BOTTOM_RIGHT)
 				.setTitle("You died! Aww!")
 				.setTitlePos(RelPos.TOP_LEFT)
 				.createMenu()

@@ -1,15 +1,17 @@
 package minicraft.screen;
 
-import java.awt.Dimension;
-import java.awt.Point;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+import com.sun.istack.internal.NotNull;
 import minicraft.InputHandler;
 import minicraft.Sound;
 import minicraft.gfx.Color;
+import minicraft.gfx.Dimension;
 import minicraft.gfx.Font;
+import minicraft.gfx.Insets;
+import minicraft.gfx.Point;
 import minicraft.gfx.Rectangle;
 import minicraft.gfx.Screen;
 import minicraft.gfx.SpriteSheet;
@@ -21,12 +23,13 @@ public class Menu {
 	
 	private int spacing = 0;
 	private Rectangle bounds = null;
-	private RelPos linePos = RelPos.CENTER;
-	private int lineY; // don't need to copy
+	private Rectangle entryBounds = null;
+	private RelPos entryPos = RelPos.CENTER; // the x part of this is re-applied per entry, while the y part is calculated once using the cumulative height of all entries and spacing.
+	//private int lineY; // don't need to copy
 	
 	private String title = "";
 	private int titleColor;
-	private Point titlePos = null; // standard point is anchor, with anchor.x + SpriteSheet.boxWidth
+	private Point titleLoc = null; // standard point is anchor, with anchor.x + SpriteSheet.boxWidth
 	private boolean drawVertically = false;
 	
 	private boolean hasFrame;
@@ -50,10 +53,11 @@ public class Menu {
 		entries.addAll(m.entries);
 		spacing = m.spacing;
 		bounds = m.bounds == null ? null : new Rectangle(m.bounds);
-		linePos = m.linePos;
+		entryBounds = m.entryBounds == null ? null : new Rectangle(m.entryBounds);
+		entryPos = m.entryPos;
 		title = m.title;
 		titleColor = m.titleColor;
-		titlePos = m.titlePos;
+		titleLoc = m.titleLoc;
 		drawVertically = m.drawVertically;
 		hasFrame = m.hasFrame;
 		frameFillColor = m.frameFillColor;
@@ -69,7 +73,7 @@ public class Menu {
 	}
 	
 	public void init() {
-		recalcEntryPos();
+		//recalcEntryPos();
 		
 		if(padding < 0) padding = 0;
 		if(padding > 1) padding = 1;
@@ -160,37 +164,43 @@ public class Menu {
 		if(title.length() > 0) {
 			if (drawVertically) {
 				for (int i = 0; i < title.length(); i++) {
-					Font.draw(title.substring(i, i + 1), screen, titlePos.x, titlePos.y + i * Font.textHeight(), titleColor);
+					Font.draw(title.substring(i, i + 1), screen, titleLoc.x, titleLoc.y + i * Font.textHeight(), titleColor);
 				}
 			} else
-				Font.draw(title, screen, titlePos.x, titlePos.y, titleColor);
+				Font.draw(title, screen, titleLoc.x, titleLoc.y, titleColor);
 		}
 		
 		// render the options
-		int y = lineY;
+		//int y = lineY;
+		int y = entryBounds.getTop();
 		for(int i = offset; i < Math.min(offset+displayLength, entries.size()); i++) {
 			ListEntry entry = entries.get(i);
-			// TODO this isn't working
-			int lineX = linePos.positionSubRect(new Dimension(entry.getWidth(), entry.getHeight()), new Dimension(bounds.getWidth(), entry.getHeight()), new Point(bounds.getCenter().x, y+entry.getHeight()/2)).x;
-			entry.render(screen, lineX, y, i == selection);
+			Point pos = entryPos.positionRect(new Dimension(entry.getWidth(), entry.getHeight()), new Rectangle(bounds.getLeft(), y, bounds.getWidth(), entry.getHeight(), Rectangle.CORNER_DIMS));
+			entry.render(screen, pos.x, pos.y, i == selection);
 			if(i == selection) {
 				// draw the arrows
-				Font.draw("> ", screen, lineX-Font.textWidth("> "), y, ListEntry.COL_SLCT);
-				Font.draw(" <", screen, lineX+entry.getWidth(), y, ListEntry.COL_SLCT);
+				Font.draw("> ", screen, pos.x-Font.textWidth("> "), y, ListEntry.COL_SLCT);
+				Font.draw(" <", screen, pos.x+entry.getWidth(), y, ListEntry.COL_SLCT);
 			}
 			
 			y += entry.getHeight() + spacing;
 		}
 	}
 	
-	private void recalcEntryPos() {
-		/*if(entries.length == 0) {
+	/*private void recalcEntryPos() {
+		if(entries.length == 0) {
 			lineY = 0;
 			return;
-		}*/
+		}
+		int height = 0;
+		for(ListEntry entry: entries)
+			height += entry.getHeight() + spacing;
 		
-		lineY = linePos.getRect(new Dimension(bounds.getWidth(), bounds.getHeight()), bounds.getCenter()).getTop();
-	}
+		if(height > 0)
+			height -= spacing;
+		
+		lineY = entryPos.positionRect(new Dimension(bounds.getWidth(), height), bounds).y;
+	}*/
 	
 	
 	public void updateSelectedEntry(ListEntry newEntry) {
@@ -205,7 +215,7 @@ public class Menu {
 		else if(selection < 0)
 			selection = 0;
 		
-		recalcEntryPos();
+		//recalcEntryPos();
 	}
 	
 	
@@ -234,24 +244,27 @@ public class Menu {
 	
 	public static class Builder {
 		
+		private static final Point center = new Point(Screen.w/2, Screen.h/2);
+		
 		private Menu menu;
 		
-		private RelPos menuCentering = RelPos.CENTER;
 		private boolean setSelectable = false;
 		
+		@NotNull private RelPos titlePos = RelPos.TOP;
 		private boolean fullTitleColor = false, setTitleColor = false;
-		private RelPos titleCentering = RelPos.TOP;
 		private int titleCol = 550, frameFillCol = 5, frameEdgeStroke = 1, frameEdgeFill = 445;
 		
-		private Dimension size = null;
-		private Point anchor = new Point(Screen.w/2, Screen.h/2);
+		@NotNull private Point anchor = center;
+		@NotNull private RelPos menuPos = RelPos.CENTER;
+		private Dimension menuSize = null;
 		
-		public Builder(boolean hasFrame, int entrySpacing, ListEntry... entries) { this(hasFrame, entrySpacing, Arrays.asList(entries)); }
-		public Builder(boolean hasFrame, int entrySpacing, List<ListEntry> entries) {
+		public Builder(boolean hasFrame, int entrySpacing, RelPos entryPos, ListEntry... entries) { this(hasFrame, entrySpacing, entryPos, Arrays.asList(entries)); }
+		public Builder(boolean hasFrame, int entrySpacing, RelPos entryPos, List<ListEntry> entries) {
 			menu = new Menu();
 			setEntries(entries);
 			menu.hasFrame = hasFrame;
 			menu.spacing = entrySpacing;
+			menu.entryPos = entryPos;
 		}
 		
 		public Builder setEntries(ListEntry... entries) { return setEntries(Arrays.asList(entries)); }
@@ -261,14 +274,34 @@ public class Menu {
 			return this;
 		}
 		
-		public Builder setSpacing(int spacing) { menu.spacing = spacing; return this; }
+		// needs an anchor (can default to center), position relative to anchor (default centered), and size (default entries + spacing).
 		
-		public Builder setTitle(String title) {
-			boolean setColor = setTitleColor;
-			setTitle(title, 555, false);
-			setTitleColor = setColor;
+		// if anchor is set, 
+		
+		//public Builder setSpacing(int spacing) { menu.spacing = spacing; return this; }
+		
+		public Builder setPositioning(Point anchor, RelPos menuPos) {
+			this.anchor = anchor == null ? new Point() : anchor;
+			this.menuPos = menuPos == null ? RelPos.BOTTOM_RIGHT : menuPos;
 			return this;
 		}
+		
+		public Builder setSize(int width, int height) { menuSize = new Dimension(width, height); return this; }
+		public Builder setMenuSize(Dimension d) { menuSize = d; return this; } // can be used to set the size to null
+		
+		public Builder setBounds(Rectangle rect) {
+			menuSize = rect.getSize();
+			setPositioning(rect.getCenter(), RelPos.CENTER); // because the anchor represents the center of the rectangle.
+			return this;
+		}
+		
+		public Builder setDisplayLength(int numEntries) { menu.displayLength = numEntries; return this; }
+		
+		
+		public Builder setTitlePos(RelPos rp) { titlePos = (rp == null ? RelPos.TOP : rp); return this; }
+		
+		public Builder setTitle(String title) { menu.title = title; return this; }
+		
 		public Builder setTitle(String title, int color) { return setTitle(title, color, false); }
 		public Builder setTitle(String title, int color, boolean fullColor) {
 			menu.title = title;
@@ -283,48 +316,11 @@ public class Menu {
 			return this;
 		}
 		
-		public Builder setTitlePos(RelPos centering) {
-			menu.titlePos = null;
-			titleCentering = centering;
-			return this;
-		}
-		public Builder setTitlePos(Point pos) {
-			menu.titlePos = pos;
-			return this;
-		}
+		public Builder setFrame(boolean hasFrame) { menu.hasFrame = hasFrame; return this; }
 		
-		public Builder setAnchor(int x, int y) { anchor = new Point(x, y); return this; }
-		public Builder setAnchor(Point p) { anchor = p; return this; }
-		
-		public Builder setCentering(RelPos menuPos, RelPos linePos) {
-			if(menuPos == null || linePos == null)
-				throw new NullPointerException("menu and/or line centering cannot be null");
-			
-			menu.bounds = null;
-			menuCentering = menuPos;
-			menu.linePos = linePos;
-			return this;
-		}
-		
-		public Builder setSize(int width, int height) { return setSize(new Dimension(width, height)); }
-		public Builder setSize(Dimension d) { size = d; return this; }
-		
-		public Builder setBounds(Rectangle rect) {
-			menu.bounds = rect;
-			size = new Dimension(menu.bounds.getWidth(), menu.bounds.getHeight());
-			anchor = menu.bounds.getCenter();
-			return this;
-		}
-		
-		public Builder setFrame(boolean hasFrame) {
-			menu.hasFrame = hasFrame;
-			if(!setTitleColor) titleCol = hasFrame ? 550 : 555;
-			return this;
-		}
 		public Builder setFrame(int fillCol, int edgeStroke, int edgeFill) {
-			menu.hasFrame = true;
-			
-			// these are not full colors, only the component that matters.
+			setFrame(true);
+			// these are not full colors, only the components that matter.
 			frameFillCol = fillCol;
 			frameEdgeStroke = edgeStroke;
 			frameEdgeFill = edgeFill;
@@ -332,19 +328,17 @@ public class Menu {
 			return this;
 		}
 		
-		public Builder setSelectable(boolean selectable) {
-			setSelectable = true;
-			menu.selectable = selectable;
+		public Builder setScrollPolicies(float padding, boolean wrap) {
+			menu.padding = padding;
+			menu.wrap = wrap;
 			return this;
 		}
 		
 		public Builder setShouldRender(boolean render) { menu.shouldRender = render; return this; }
 		
-		public Builder setScrollPolicies(float padding, boolean wrap) { return setScrollPolicies(0, padding, wrap); }
-		public Builder setScrollPolicies(int numDisplayedEntries, float padding, boolean wrap) {
-			menu.displayLength = numDisplayedEntries;
-			menu.padding = padding;
-			menu.wrap = wrap;
+		public Builder setSelectable(boolean selectable) {
+			setSelectable = true;
+			menu.selectable = selectable;
 			return this;
 		}
 		
@@ -372,17 +366,126 @@ public class Menu {
 				}
 			}
 			
+			// check the centering of the title, and find the dimensions of the title's display space.
+			
+			menu.drawVertically = titlePos == RelPos.LEFT || titlePos == RelPos.RIGHT;
+			
+			Dimension titleDim = menu.drawVertically ?
+				new Dimension(Font.textHeight()*2, Font.textWidth(menu.title)) :
+				new Dimension(Font.textWidth(menu.title), Font.textHeight()*2);
+			
+			// find the area used by the title and/or frame, that can't be used by the entries
+			
+			Insets border;
+			if(menu.hasFrame)
+				border = new Insets(SpriteSheet.boxWidth);
+			else {
+				border = new Insets();
+				
+				// set title insets
+				if (menu.title.length() > 0 && titlePos != RelPos.CENTER) {
+					RelPos c = titlePos;
+					if (c.xIndex == 0)
+						border.left += titleDim.width;//Font.textWidth(c == RelPos.LEFT ? " " : menu.title);
+					if (c.xIndex == 2)
+						border.right += titleDim.width;//Font.textWidth(c == RelPos.RIGHT ? " " : menu.title);
+					if (c.yIndex == 0)
+						border.top += titleDim.height;//Font.textHeight();
+					if (c.yIndex == 2)
+						border.bottom += titleDim.height;//Font.textHeight();
+				}
+			}
+			
+			
+			// I have anchor and menu's relative position to it, and may or may not have size.
+			Dimension entrySize;
+			
+			if(menuSize == null && menu.entries.size() == 0) {
+				menuSize = new Dimension(border.left + border.right, border.top + border.bottom);
+				entrySize = new Dimension();
+			} else if(menuSize == null) {
+				int width = 0;
+				for(ListEntry entry: menu.entries)
+					width = Math.max(width, entry.getWidth());
+				
+				if(menu.displayLength > 0) { // has been set; use to determine entry bounds
+					int height = (Font.textHeight() + menu.spacing) * menu.displayLength - menu.spacing;
+					
+					entrySize = new Dimension(width, height);
+				}
+				else {
+					// no set size; just keep going to the edges of the screen
+					int height = (Font.textHeight() + menu.spacing) * menu.entries.size() - menu.spacing;
+					
+					int maxHeight;
+					if(menuPos.yIndex == 0) // anchor is lowest down coordinate (highest y value)
+						maxHeight = anchor.y;
+					else if(menuPos.yIndex == 2)
+						maxHeight = Screen.h - anchor.y;
+					else // is centered; take the lowest value of the other two.
+						maxHeight = Math.max(anchor.y, Screen.h - anchor.y);
+					
+					maxHeight -= border.top + border.bottom; // reserve border space
+					
+					entrySize = new Dimension(width, Math.min(height, maxHeight));
+				}
+				
+				menuSize = border.addInsets(entrySize);
+			}
+			else // menuSize was set manually
+				entrySize = border.subtractInsets(menuSize);
+			
+			
+			// set default max display length (needs size first)
+			if(menu.displayLength <= 0 && menu.entries.size() > 0)
+				menu.displayLength = (entrySize.height + menu.spacing) / (Font.textHeight() + menu.spacing);
+				//if(menu.bounds.getBottom() <= Screen.h) // the determined height isn't too big to fit
+				//	menu.maxDispLen = menu.entries.length;
+				//else { // the total height is greater than the screen height, so go entry by entry and find out how many fit
+				
+				/*
+				int height = 0;
+				for(int i = 0; i < menu.entries.size(); i++) {
+					height += menu.entries.get(i).getHeight();
+					
+					if(height > menu.bounds.getHeight()) {
+						menu.displayLength = Math.max(1, i); // the minimum entries to display is 1.
+						break;
+					}
+					
+					if(i < menu.entries.size()-1)
+						height += menu.spacing;
+				}
+				
+				if(menu.displayLength <= 0) { // never ran out of space
+					int avgHeight = 0;
+					if(menu.entries.size() > 0)
+						avgHeight = height / menu.entries.size();
+					else
+						avgHeight = Font.textHeight();
+					
+					menu.displayLength = (menu.bounds.getHeight()+menu.spacing) / avgHeight; // all entries fit
+				}*/
+				//}
+			
 			// set default size
-			if(size == null) {
+			//boolean setSize = size != null;
+			//Dimension entrySize = size;
+			//if(size == null) {
+			/*{ // determine the entry size
 				int width = 0;
 				int height = 0;
-				for(ListEntry entry: menu.entries) {
+				for (ListEntry entry : menu.entries) {
 					width = Math.max(width, entry.getWidth());
 					height += entry.getHeight() + menu.spacing;
 				}
-				height -= menu.spacing; // extra one at the end
+				if (height > 0)
+					height -= menu.spacing; // extra one at the end
 				
-				if(menu.hasFrame) {
+				entrySize = new Dimension(width, height);
+			}
+			menuSize = border.addInsets(entrySize);*/
+				/*if(menu.hasFrame) {
 					width += SpriteSheet.boxWidth * 2;
 					height += SpriteSheet.boxWidth * 2;
 				}
@@ -393,53 +496,26 @@ public class Menu {
 						height += SpriteSheet.boxWidth;
 					if(c != RelPos.TOP && c != RelPos.BOTTOM)
 						width += SpriteSheet.boxWidth;
-				}
+				}*/
 				
-				size = new Dimension(width, height);
-			}
-			
+				//size = new Dimension(width, height);
+			//}
 			
 			// based on the menu centering, and the anchor, determine the upper-left point from which to draw the menu.
-			if(menu.bounds == null)
-				menu.bounds = menuCentering.getRect(size, anchor); // reset to a value that is actually useful to the menu
+			menu.bounds = new Rectangle(menuPos.positionRect(menuSize, anchor), menuSize); // reset to a value that is actually useful to the menu
 			
-			// set default max display length
-			if(menu.displayLength <= 0) {
-				//if(menu.bounds.getBottom() <= Screen.h) // the determined height isn't too big to fit
-				//	menu.maxDispLen = menu.entries.length;
-				//else { // the total height is greater than the screen height, so go entry by entry and find out how many fit
-					int height = 0;
-					for(int i = 0; i < menu.entries.size(); i++) {
-						height += menu.entries.get(i).getHeight();
-						
-						if(height > menu.bounds.getHeight()) {
-							menu.displayLength = Math.max(1, i); // the minimum entries to display is 1.
-							break;
-						}
-						
-						if(i < menu.entries.size()-1)
-							height += menu.spacing;
-					}
-					
-					if(menu.displayLength <= 0) { // never ran out of space
-						int avgHeight = 0;
-						if(menu.entries.size() > 0)
-							avgHeight = height / menu.entries.size();
-						else
-							avgHeight = Font.textHeight();
-						
-						menu.displayLength = (menu.bounds.getHeight()+menu.spacing) / avgHeight; // all entries fit
-					}
-				//}
-			}
+			menu.entryBounds = border.subtractInsets(menu.bounds);
 			
+			menu.titleLoc = titlePos.positionRect(titleDim, menu.bounds);
 			
 			// set the menu title color
-			if(menu.title.length() > 0 && !fullTitleColor) { // the full title color must be set
-				if(menu.hasFrame) // make it match the frame color
-					menu.titleColor = Color.get(frameFillCol, titleCol);
-				else // make it transparent
-					menu.titleColor = Color.get(-1, titleCol);
+			if(menu.title.length() > 0) {
+				if(fullTitleColor)
+					menu.titleColor = titleCol;
+				else {
+					if (!setTitleColor) titleCol = menu.hasFrame ? 550 : 555;
+					menu.titleColor = Color.get((menu.hasFrame ? frameFillCol : -1), titleCol); // make it match the frame color, or be transparent
+				}
 			}
 			
 			// set the menu frame colors
@@ -447,7 +523,6 @@ public class Menu {
 				menu.frameFillColor = Color.get(frameFillCol, frameFillCol);
 				menu.frameEdgeColor = Color.get(-1, frameEdgeStroke, frameFillCol, frameEdgeFill);
 			}
-			
 			// set the title anchor based on the centering
 			
 			// basically, use RelPos.apply, but change the dimension so that:
@@ -462,19 +537,10 @@ public class Menu {
 			 * 
 			 * - if on bottom: subtract height of title
 			 */
-			if(menu.titlePos == null) {
-				if(titleCentering == null) titleCentering = RelPos.TOP;
+			/*if(menu.titleLoc == null) {
 				
-				if(titleCentering == RelPos.LEFT || titleCentering == RelPos.RIGHT)
-					menu.drawVertically = true;
 				
-				Dimension titleDim = menu.drawVertically ?
-					new Dimension(Font.textHeight(), Font.textWidth(menu.title)) :
-					new Dimension(Font.textWidth(menu.title), Font.textHeight());
-				
-				menu.titlePos = titleCentering.positionSubRect(titleDim, size, menu.bounds.getCenter());
-			}
-			
+			}*/
 			
 			// done setting defaults/values; return the new menu 
 			
@@ -484,15 +550,15 @@ public class Menu {
 		
 		// returns a new Builder instance, that can be further modified to create another menu.
 		private Builder copy() {
-			Builder b = new Builder(menu.hasFrame, menu.spacing, menu.entries);
+			Builder b = new Builder(menu.hasFrame, menu.spacing, menu.entryPos, menu.entries);
 			
 			b.menu = new Menu(menu);
 			
 			b.anchor = anchor == null ? null : new Point(anchor);
-			b.size = size == null ? null : new Dimension(size);
-			b.menuCentering = menuCentering;
+			b.menuSize = menuSize == null ? null : new Dimension(menuSize);
+			b.menuPos = menuPos;
 			b.setSelectable = setSelectable;
-			b.titleCentering = titleCentering;
+			b.titlePos = titlePos;
 			b.fullTitleColor = fullTitleColor;
 			b.setTitleColor = setTitleColor;
 			b.titleCol = titleCol;

@@ -7,6 +7,7 @@ import minicraft.InputHandler;
 import minicraft.entity.RemotePlayer;
 import minicraft.gfx.Color;
 import minicraft.gfx.Font;
+import minicraft.gfx.Point;
 import minicraft.gfx.Screen;
 import minicraft.level.Level;
 import minicraft.screen.entry.ListEntry;
@@ -20,7 +21,7 @@ public class TitleMenu extends Display {
 	private boolean reverse = false;
 	
 	public TitleMenu() {
-		super(false, new Menu.Builder(false, 2,
+		super(false, new Menu.Builder(false, 2, RelPos.CENTER,
 				entryFactory("Play", displayFactory(
 					entryFactory("Load World", new WorldSelectMenu()),
 					entryFactory("New World", new WorldGenMenu())
@@ -33,7 +34,7 @@ public class TitleMenu extends Display {
 				)),
 				new SelectEntry("Quit", () -> System.exit(0))
 			)
-			.setAnchor(Game.WIDTH/2, Game.HEIGHT*3/5)
+			.setPositioning(new Point(Game.WIDTH/2, Game.HEIGHT*3/5), RelPos.CENTER)
 			.createMenu()
 		);
 		
@@ -64,7 +65,12 @@ public class TitleMenu extends Display {
 	}
 	
 	private static Display displayFactory(ListEntry... entries) {
-		return new Display(new Menu.Builder(false, 2, entries).createMenu());
+		return new Display(new Menu.Builder(false, 2, RelPos.CENTER, entries).createMenu()) {
+			public void render(Screen screen) {
+				screen.clear(0);
+				super.render(screen);
+			}
+		};
 	}
 	
 	@Override

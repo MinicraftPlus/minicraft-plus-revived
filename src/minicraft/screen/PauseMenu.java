@@ -45,7 +45,7 @@ public class PauseMenu extends Display {
 		//Menu.Builder msgBuilder = new Menu.Builder(8);
 		
 		menus = new Menu[] {
-			new Menu.Builder(true, 4, entries)
+			new Menu.Builder(true, 4, RelPos.CENTER, entries)
 				.setTitle("Paused", 550)
 				.createMenu()/*,
 			
