@@ -12,7 +12,7 @@ import minicraft.saveload.Save;
 import minicraft.screen.entry.ListEntry;
 import minicraft.screen.entry.SelectEntry;
 
-public class WorldSelectMenu implements MenuData {
+public class WorldSelectMenu extends Display {
 	
 	// NOTE this will only be responsible for the world load selection screen.
 	
@@ -43,19 +43,7 @@ public class WorldSelectMenu implements MenuData {
 	
 	public WorldSelectMenu() {
 		worldName = "";
-	}
-	
-	public static boolean loadWorld() {
-		return worldName.length() > 0;
-	}
-	
-	@Override
-	public Menu getMenu() {
-		return new ScrollingMenu(this, true, 5, 1);
-	}
-	
-	@Override
-	public ListEntry[] getEntries() {
+		
 		ArrayList<String> worldNames = new ArrayList<>();
 		
 		//find worlds (init step):
@@ -65,7 +53,7 @@ public class WorldSelectMenu implements MenuData {
 		
 		if(listOfFiles == null) {
 			System.err.println("ERROR: Game location file folder is null, somehow...");
-			return new ListEntry[0];
+			return;
 		}
 		
 		for (int i = 0; i < listOfFiles.length; i++) {
@@ -91,7 +79,15 @@ public class WorldSelectMenu implements MenuData {
 			});
 		}
 		
-		return entries;
+		menus = new Menu[] {
+			new Menu.Builder(0, entries)
+				.setScrollPolicies(5, 1, true)
+				.createMenu()
+		};
+	}
+	
+	public static boolean loadedWorld() {
+		return worldName.length() > 0;
 	}
 	
 	@Override
@@ -136,13 +132,5 @@ public class WorldSelectMenu implements MenuData {
 		Font.drawCentered("D to delete", screen, Screen.h-26-8, Color.get(-1, Action.Delete.color));
 		//Font.drawCentered("B to backup", screen, Screen.h-26, Color.get(-1, Action.Backup.color));
 		*/
-	}
-	
-	@Override
-	public Centering getCentering() { return Centering.CENTER_ALL; }
-	
-	@Override
-	public int getSpacing() {
-		return 0;
 	}
 }

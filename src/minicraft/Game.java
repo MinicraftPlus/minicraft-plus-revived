@@ -147,7 +147,7 @@ public class Game {
 	}
 	
 	public static InputHandler input; // input used in Game, Player, and just about all the *Menu classes.
-	private static Menu menu = null, newMenu = null; // the current menu you are on.
+	private static Display menu = null, newMenu = null; // the current menu you are on.
 	public static Player player; // The Player.
 	//public Level level; // This is the current level you are on.
 	private static int worldSize = 128; // The size of the world
@@ -195,26 +195,23 @@ public class Game {
 	
 	
 	// Sets the current menu.
-	public static void setMenu(MenuData menuData) {
-		setMenu(menuData == null ? null : menuData.getMenu());
-	}
-	public static void setMenu(Menu display) {
-		//Menu parent = menu;
-		//newMenu = display;
-		//System.out.println("setting menu to: " + (display == null ? "null" : display.getMenuType()));
-		if(getMenuType() != null)
-			getMenuType().onExit();
+	public static void setMenu(Display display) {
+		Display parent = newMenu;
 		newMenu = display;
-		//if (debug) System.out.println("setting game menu to " + menu);
-		//if (display != null) newMenu.init(input, parent);
+		
+		if(menu != null)
+			menu.onExit();
+		
+		if(newMenu != null)
+			newMenu.init(parent);
 	}
 	
 	public static void exitMenu() {
-		// TODO set menu to parent
+		if(newMenu == null) return; // no action required; cannot exit from no menu
+		setMenu(newMenu.getParent());
 	}
 	
-	public static Menu getMenu() { return newMenu; }
-	public static MenuData getMenuType() { return newMenu == null ? null : newMenu.getMenuType(); }
+	public static Display getMenu() { return newMenu; }
 	
 	public static boolean isValidClient() {
 		return ISONLINE && client != null;
@@ -339,7 +336,7 @@ public class Game {
 		if(!isValidClient()) {
 			if(Game.debug) System.out.println("initializing world non-client...");
 			
-			if(WorldSelectMenu.loadWorld())
+			if(WorldSelectMenu.loadedWorld())
 				new Load(WorldSelectMenu.getWorldName());
 			else {
 				worldSize = (Integer) Settings.get("size");
@@ -348,7 +345,7 @@ public class Game {
 				for (int i = maxLevelDepth; i >= minLevelDepth; i--) {
 					// i = level depth; the array starts from the top because the parent level is used as a reference, so it should be constructed first. It is expected that the highest level will have a null parent.
 					if(Game.debug) System.out.println("loading level " + i + "...");
-					levels[lvlIdx(i)] = new Level(worldSize, worldSize, i, levels[lvlIdx(i+1)], !WorldSelectMenu.loadWorld());
+					levels[lvlIdx(i)] = new Level(worldSize, worldSize, i, levels[lvlIdx(i+1)], !WorldSelectMenu.loadedWorld());
 					
 					LoadingDisplay.progress(loadingInc);
 				}
@@ -447,7 +444,7 @@ public class Game {
 		if (Game.isMode("score") && (!paused || isValidServer() && !gameOver)) {
 			if (scoreTime <= 0) { // GAME OVER
 				gameOver = true;
-				setMenu(new PlayerScoreDisplay(player));
+				setMenu(new EndGameDisplay(player));
 			}
 			
 			scoreTime--;

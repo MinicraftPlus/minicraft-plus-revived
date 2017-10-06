@@ -13,14 +13,31 @@ import minicraft.level.Level;
 import minicraft.screen.entry.ListEntry;
 import minicraft.screen.entry.SelectEntry;
 
-public class TitleMenu implements MenuData {
-	private final Random random = new Random();
+public class TitleMenu extends Display {
+	private static final Random random = new Random();
 	
 	private int rand;
 	private int count = 0; // this and reverse are for the logo; they produce the fade-in/out effect.
 	private boolean reverse = false;
 	
 	public TitleMenu() {
+		super(false, new Menu.Builder(2,
+				entryFactory("Play", displayFactory(
+					entryFactory("Load World", new WorldSelectMenu()),
+					entryFactory("New World", new WorldGenMenu())
+				)),
+				entryFactory("Join Online World", new MultiplayerMenu()),
+				entryFactory("Options", new OptionsMenu()),
+				entryFactory("Help", displayFactory(
+					entryFactory("Instructions", new BookDisplay(Displays.instructions)),
+					entryFactory("About", new BookDisplay(Displays.about))
+				)),
+				new SelectEntry("Quit", () -> System.exit(0))
+			)
+			.setAnchor(Game.WIDTH/2, Game.HEIGHT*3/5)
+			.createMenu()
+		);
+		
 		Game.readyToRenderGameplay = false;
 		/// this is just in case; though, i do take advantage of it in other places.
 		if(Game.server != null) {
@@ -47,27 +64,8 @@ public class TitleMenu implements MenuData {
 		}
 	}
 	
-	@Override
-	public Menu getMenu() {
-		return new Menu(this);
-	}
-	
-	@Override
-	public ListEntry[] getEntries() {
-		System.out.println("getting fresh entries");
-		return new ListEntry[] {
-			entryFactory("Play", menuFactory(
-				entryFactory("Load World", new WorldSelectMenu()),
-				entryFactory("New World", new WorldGenMenu())
-			)),
-			entryFactory("Join Online World", new MultiplayerMenu()),
-			entryFactory("Options", new OptionsMenu()),
-			entryFactory("Help", menuFactory(
-				entryFactory("Instructions", new BookDisplay(Displays.instructions)),
-				entryFactory("About", new BookDisplay(Displays.about))
-			)),
-			new SelectEntry("Quit", () -> System.exit(0))
-		};
+	private static Display displayFactory(ListEntry... entries) {
+		return new Display(new Menu.Builder(2, entries).createMenu());
 	}
 	
 	@Override
@@ -81,6 +79,8 @@ public class TitleMenu implements MenuData {
 			count--;
 			if (count == 0) reverse = false;
 		}
+		
+		super.tick(input);
 	}
 	
 	@Override
@@ -126,14 +126,7 @@ public class TitleMenu implements MenuData {
 		Font.drawCentered("("+Game.input.getMapping("exit")+" to return)", screen, Screen.h - 12, Color.get(-1, 111));
 		
 		
-	}
-	
-	@Override
-	public Centering getCentering() { return Centering.make(new Point(Game.WIDTH/2, Game.HEIGHT*3/5), true); }
-	
-	@Override
-	public int getSpacing() {
-		return 2;
+		super.render(screen);
 	}
 	
 	private static final String[] splashes = {//new ArrayList<String>();

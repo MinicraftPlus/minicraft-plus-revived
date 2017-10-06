@@ -27,7 +27,6 @@ import minicraft.level.Level;
 import minicraft.saveload.Load;
 import minicraft.saveload.Save;
 import minicraft.screen.DeadMenu;
-import minicraft.screen.Menu;
 import minicraft.screen.MultiplayerMenu;
 
 /// This class is only used by the client runtime; the server runtime doesn't touch it.
@@ -97,7 +96,7 @@ public class MinicraftClient extends MinicraftConnection {
 				if (Game.debug) System.out.println("CLIENT: Begin game!");
 				Game.levels[Game.currentLevel].add(Game.player);
 				Game.readyToRenderGameplay = true;
-				Game.setMenu((Menu)null);
+				Game.setMenu(null);
 				break;
 		}
 	}
@@ -368,8 +367,8 @@ public class MinicraftClient extends MinicraftConnection {
 					load.loadInventory(Game.player.inventory, playerinv);
 				load.loadPlayer(Game.player, playerinfo);
 				//setPlayer = true;
-				if(Game.getMenuType() instanceof DeadMenu) {
-					Game.setMenu((Menu)null);
+				if(Game.getMenu() instanceof DeadMenu) {
+					Game.setMenu(null);
 				}
 				return true;
 			
@@ -395,8 +394,8 @@ public class MinicraftClient extends MinicraftConnection {
 				//if (Game.debug) System.out.println("CLIENT: received chestout with item: " + item);
 				if(!Game.isMode("creative")) {
 					Game.player.inventory.add(0, item);
-					//if(Game.getMenuType() instanceof InventoryMenu)
-					//	((InventoryMenu)Game.getMenuType()).onInvUpdate(Game.player.inventory);
+					//if(Game.getMenu() instanceof InventoryMenu)
+					//	((InventoryMenu)Game.getMenu()).onInvUpdate(Game.player.inventory);
 				}
 				//if (Game.debug) System.out.println("CLIENT successfully took " + item + " from chest and added to inv.");
 				return true;

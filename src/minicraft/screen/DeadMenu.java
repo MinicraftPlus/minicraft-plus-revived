@@ -1,23 +1,52 @@
 package minicraft.screen;
-	
+
+import java.util.ArrayList;
+
 import minicraft.Game;
-import minicraft.InputHandler;
-import minicraft.gfx.Color;
-import minicraft.gfx.Font;
-import minicraft.gfx.Rectangle;
-import minicraft.gfx.Screen;
+import minicraft.Settings;
+import minicraft.gfx.SpriteSheet;
+import minicraft.screen.entry.ListEntry;
+import minicraft.screen.entry.SelectEntry;
+import minicraft.screen.entry.StringEntry;
 
 public class DeadMenu extends Display {
+	// TODO implement an optional input delay variable for Displays
 	private int inputDelay = 60;
 	// this is an IMPORTANT bool, determines if the user should respawn or not. :)
 	public static boolean shouldRespawn;
 	
-	@Override
-	public Menu getMenu() {
-		return new Menu(this, new Frame("", new Rectangle(1, 3, 18, 10, Rectangle.CORNERS)));
+	public DeadMenu() {
+		super(false);
+		
+		ArrayList<ListEntry> entries = new ArrayList<>();
+		entries.add(new StringEntry("Time: " + InfoDisplay.getTimeString()));
+		entries.add(new StringEntry("Score: " + Game.player.score));
+		entries.add(entryFactory("Quit", new TitleMenu()));
+		if(!Settings.get("mode").equals("hardcore")) {
+			entries.add(new SelectEntry("Respawn", () -> {
+				Game.resetGame();
+				if (!Game.isValidClient())
+					Game.setMenu(null); //sets the menu to nothing
+			}));
+		}
+		
+		menus = new Menu[] {
+			new Menu.Builder(0, entries)
+				.setAnchor(SpriteSheet.boxWidth, SpriteSheet.boxWidth*3)
+				.setFrame(true)
+				.setTitle("You died! Aww!")
+				.setTitlePos(RelPos.TOP_LEFT)
+				.createMenu()
+		};
+		
 	}
 	
-	@Override
+	/*@Override
+	public Menu getMenu() {
+		return new Menu(this, new Frame("", new Rectangle(1, 3, 18, 10, Rectangle.CORNERS)));
+	}*/
+	
+	/*@Override
 	public void tick(InputHandler input) {
 		if (inputDelay > 0) {
 			inputDelay--;
@@ -34,13 +63,13 @@ public class DeadMenu extends Display {
 				Game.resetGame();
 				if(!Game.isValidClient()) {
 					//sets the menu to nothing
-					Game.setMenu((Menu)null);
+					Game.setMenu(null);
 				}
 			}
 		//}
-	}
+	}*/
 	
-	@Override
+	/*@Override
 	public void render(Screen screen) {
 		//renderFrame(screen, "", 1, 3, 18, 10); // Draws a box frame based on 4 points. You can include a title as well.
 		Font.draw("You died! Aww!", screen, 16, 32, Color.WHITE);
@@ -64,7 +93,7 @@ public class DeadMenu extends Display {
 		Font.draw("Score:", screen, 2 * 8, 6 * 8, Color.WHITE);
 		Font.draw("" + Game.player.score, screen, (2 + 6) * 8, 6 * 8, Color.YELLOW);
 		Font.draw(Game.input.getMapping("exit")+" = lose", screen, 2 * 8, 8 * 8, Color.GRAY);
-		/*if (!Game.isMode("hardcore")) //respawn only if not on hardcore mode
-			Font.draw(Game.input.getMapping("select")+" = respawn", screen, 2 * 8, 9 * 8, Color.GRAY);*/
-	}
+		*//*if (!Game.isMode("hardcore")) //respawn only if not on hardcore mode
+			Font.draw(Game.input.getMapping("select")+" = respawn", screen, 2 * 8, 9 * 8, Color.GRAY);*//*
+	}*/
 }

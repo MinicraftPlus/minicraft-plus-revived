@@ -39,7 +39,14 @@ public class InputHandler implements /*MouseListener, */KeyListener {
 		
 	*/
 	public String keyToChange = null; // this is used when listening to change key bindings.
+	private String keyChanged = null; // this is used when listening to change key bindings.
 	private boolean overwrite = false;
+	
+	public String getChangedKey() {
+		String key = keyChanged + ";" + getMapping(keyChanged);
+		keyChanged = null;
+		return key;
+	}
 	
 	private static HashMap<Integer, String> keyNames = new HashMap<>();
 	static {
@@ -348,6 +355,7 @@ public class InputHandler implements /*MouseListener, */KeyListener {
 		//System.out.println("toggling " + keytext + " key (keycode " + keycode + ") to "+pressed+".");
 		if( pressed && keyToChange != null && !isMod(keytext) ) {
 			keymap.put(keyToChange, ( overwrite?"":keymap.get(keyToChange)+"|" ) + getCurModifiers()+keytext);
+			keyChanged = keyToChange;
 			keyToChange = null;
 			return;
 		}

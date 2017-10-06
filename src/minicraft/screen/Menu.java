@@ -33,13 +33,13 @@ public class Menu {
 	private int frameFillColor, frameEdgeColor;
 	
 	private boolean selectable = false;
-	
+	boolean shouldRender = true;
 	
 	private int displayLength = 0;
 	private float padding = 0;
 	private boolean wrap = false;
 	
-	// menu selection vars; not edited by builder
+	// menu selection vars
 	private int selection = 0;
 	private int dispSelection = 0;
 	private int offset = 0;
@@ -49,10 +49,35 @@ public class Menu {
 	
 	public void init() {
 		recalcEntryPos();
+		
 		if(padding < 0) padding = 0;
 		if(padding > 1) padding = 1;
 		this.padding = Math.round(padding * displayLength / 2);
+		
+		selection = Math.min(selection, entries.size()-1);
+		selection = Math.max(0, selection);
+		
+		if(!entries.get(selection).isSelectable()) {
+			int prevSel = selection;
+			do {
+				selection++;
+				if (selection < 0) selection = entries.size() - 1;
+				selection = selection % entries.size();
+			} while (!entries.get(selection).isSelectable() && selection != prevSel);
+		}
+		
+		dispSelection = Math.min(dispSelection, displayLength-1);
+		dispSelection = Math.max(0, dispSelection);
+		
+		offset = selection - dispSelection;
+		doScroll();
 	}
+	
+	public int getSelection() { return selection; }
+	public int getDispSelection() { return dispSelection; }
+	
+	public boolean isSelectable() { return selectable; }
+	public boolean shouldRender() { return shouldRender; }
 	
 	public void tick(InputHandler input) {
 		if(!selectable || entries.size() == 0) return;
@@ -81,6 +106,10 @@ public class Menu {
 		if(dispSelection < 0) dispSelection = 0;
 		dispSelection = dispSelection % displayLength;
 		
+		doScroll();
+	}
+	
+	private void doScroll() {
 		// check if dispSelection is past padding point, and if so, bring it back in
 		
 		// for scrolling up
@@ -100,12 +129,14 @@ public class Menu {
 		renderFrame(screen);
 		
 		// render the title
-		if(drawVertically) {
-			for(int i = 0; i < title.length(); i++) {
-				Font.draw(title.substring(i, i+1), screen, titlePos.x, titlePos.y + i*Font.textHeight(), titleColor);
-			}
-		} else
-			Font.draw(title, screen, titlePos.x, titlePos.y, titleColor);
+		if(title.length() > 0) {
+			if (drawVertically) {
+				for (int i = 0; i < title.length(); i++) {
+					Font.draw(title.substring(i, i + 1), screen, titlePos.x, titlePos.y + i * Font.textHeight(), titleColor);
+				}
+			} else
+				Font.draw(title, screen, titlePos.x, titlePos.y, titleColor);
+		}
 		
 		// render the options
 		int y = lineY;
@@ -183,6 +214,7 @@ public class Menu {
 		private RelPos titleCentering = RelPos.TOP;
 		private int titleCol = 550, frameFillCol = 5, frameEdgeStroke = 1, frameEdgeFill = 445;
 		
+		private boolean setBounds = false;
 		private Dimension size = null;
 		private Point anchor = null;
 		
@@ -200,6 +232,7 @@ public class Menu {
 			return this;
 		}
 		
+		public Builder setTitle(String title) { return setTitle(title, 555, false); }
 		public Builder setTitle(String title, int color) { return setTitle(title, color, false); }
 		public Builder setTitle(String title, int color, boolean fullColor) {
 			menu.title = title;
@@ -223,12 +256,14 @@ public class Menu {
 			return this;
 		}
 		
+		public Builder setAnchor(int x, int y) { anchor = new Point(x, y); return this; }
 		public Builder setAnchor(Point p) { anchor = p; return this; }
 		
 		public Builder setCentering(RelPos menuPos, RelPos linePos) {
 			if(menuPos == null || linePos == null)
 				throw new NullPointerException("menu and/or line centering cannot be null");
 			
+			setBounds = false;
 			menuCentering = menuPos;
 			menu.linePos = linePos;
 			return this;
@@ -236,6 +271,14 @@ public class Menu {
 		
 		public Builder setSize(int width, int height) { return setSize(new Dimension(width, height)); }
 		public Builder setSize(Dimension d) { size = d; return this; }
+		
+		public Builder setBounds(Rectangle rect) {
+			menu.bounds = rect;
+			setBounds = true;
+			size = new Dimension(menu.bounds.getWidth(), menu.bounds.getHeight());
+			anchor = menu.bounds.getCenter();
+			return this;
+		}
 		
 		public Builder setFrame(boolean hasFrame) { menu.hasFrame = hasFrame; return this; }
 		public Builder setFrame(int fillCol, int edgeStroke, int edgeFill) {
@@ -255,13 +298,22 @@ public class Menu {
 			return this;
 		}
 		
-		public Builder setScrollPolicies(int maxDispLen, float padding, boolean wrap) {
-			menu.displayLength = maxDispLen;
+		public Builder setShouldRender(boolean render) { menu.shouldRender = render; return this; }
+		
+		public Builder setScrollPolicies(float padding, boolean wrap) { return setScrollPolicies(0, padding, wrap); }
+		public Builder setScrollPolicies(int numDisplayedEntries, float padding, boolean wrap) {
+			menu.displayLength = numDisplayedEntries;
 			menu.padding = padding;
 			menu.wrap = wrap;
 			return this;
 		}
 		
+		public Builder setSelection(int sel) { menu.selection = sel; return this; }
+		public Builder setSelection(int sel, int dispSel) {
+			menu.selection = sel;
+			menu.dispSelection = dispSel;
+			return this;
+		}
 		
 		public Menu createMenu() {
 			// this way, I don't have to reference all the variables to a different var.
@@ -281,7 +333,7 @@ public class Menu {
 			}
 			
 			// set default size
-			if(size == null) {
+			if(size == null && !setBounds) {
 				int width = 0;
 				int height = 0;
 				for(ListEntry entry: menu.entries) {
@@ -308,9 +360,8 @@ public class Menu {
 			
 			
 			// based on the menu centering, and the anchor, determine the upper-left point from which to draw the menu.
-			
-			menu.bounds = menuCentering.getRect(size, anchor); // reset to a value that is actually useful to the menu
-			
+			if(!setBounds)
+				menu.bounds = menuCentering.getRect(size, anchor); // reset to a value that is actually useful to the menu
 			
 			// set default max display length
 			if(menu.displayLength <= 0) {

@@ -24,15 +24,15 @@ public class BookDisplay extends Display {
 	private String[][] lines;
 	private int page;
 	
-	@Override
-	public Menu getMenu() {
+	/*public Menu getMenu() {
 		return new Menu(this,
 			new Frame("", new Rectangle(14, 0, 21, 3, Rectangle.CORNERS)),
 			new Frame("", new Rectangle(1, 4, 34, 20, Rectangle.CORNERS))
 		).setFrameColors(Color.DARK_GRAY, Color.get(554, 554), Color.get(-1, 1, 554, 554));
-	}
+	}*/
 	
 	public BookDisplay(String book) {
+		//super(new Menu.Builder(3, StringEntry.useLines(Font.getLines())));
 		/*super();
 		setFrames(new Frame[] {
 			(), // renders the tiny, page number display frame.
@@ -44,7 +44,7 @@ public class BookDisplay extends Display {
 		if(book == null)
 			book = defaultBook;
 		
-		ArrayList<String[]> pages = new ArrayList<String[]>();
+		ArrayList<String[]> pages = new ArrayList<>();
 		String[] splitContents = book.split("\0");
 		for(String content: splitContents) {
 			String[] remainder = {content};
@@ -57,16 +57,32 @@ public class BookDisplay extends Display {
 		lines = pages.toArray(new String[pages.size()][]);
 		
 		System.out.println("pages: " + Arrays.deepToString(lines));
+		
+		Menu.Builder builder = new Menu.Builder(0)
+			.setFrame(Color.DARK_GRAY, Color.get(554, 554), Color.get(-1, 1, 554, 554));
+		
+		menus = new Menu[] {
+			builder
+				.setBounds(new Rectangle(14, 0, 21, 3, Rectangle.CORNERS))
+				.createMenu(),
+			
+			builder
+				.setBounds(new Rectangle(1, 4, 34, 20, Rectangle.CORNERS))
+				.createMenu()
+		};
 	}
 	
+	@Override
 	public void tick(InputHandler input) {
 		if (input.getKey("menu").clicked || input.getKey("exit").clicked)
-			Game.setMenu((Menu)null); // this is what closes the book; TODO if books were editable, I would probably remake the book here with the edited pages.
+			Game.setMenu(null); // this is what closes the book; TODO if books were editable, I would probably remake the book here with the edited pages.
 		if (input.getKey("left").clicked && page > 0) page--; // this is what turns the page back
 		if (input.getKey("right").clicked && page < lines.length-1) page++; // this is what turns the page forward
 	}
 	
+	@Override
 	public void render(Screen screen) {
+		super.render(screen);
 		//renderFrames(screen);
 		//new Frame("", new Rectangle(14, 0, 21, 3, Rectangle.CORNERS)).setColors(Color.DARK_GRAY, Color.get(554, 554), Color.get(-1, 1, 554, 554)).render(screen);
 		//new Frame("", new Rectangle(1, 4, 34, 20, Rectangle.CORNERS)).setColors(Color.DARK_GRAY, Color.get(554, 554), Color.get(-1, 1, 554, 554)).render(screen);

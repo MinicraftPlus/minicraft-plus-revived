@@ -9,11 +9,13 @@ public class LoadingDisplay extends Display {
 	
 	private static float percentage = 0;
 	
+	// TODO I could use the Menu class to display the percentage... but that might be overcomplicated...
 	public LoadingDisplay() {
+		super(false);
 		javax.swing.Timer t;
 		t = new javax.swing.Timer(100, e -> {
 			Game.initWorld();
-			Game.setMenu((Menu)null);
+			Game.setMenu(null);
 		});
 		t.setRepeats(false);
 		t.start();

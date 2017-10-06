@@ -63,7 +63,7 @@ public class MultiplayerMenu extends Display {
 				else
 					System.out.println("warning: minicraft site ping returned status code " + httpResponse.getStatus());
 				
-				//if(Game.getMenuType() != MultiplayerMenu.this) return; // don't continue if the player moved to a different menu. 
+				//if(Game.getMenu() != MultiplayerMenu.this) return; // don't continue if the player moved to a different menu. 
 				
 				if(savedUUID.length() > 0) {
 					// there is a previous login that can be used; check that it's valid
@@ -258,7 +258,7 @@ public class MultiplayerMenu extends Display {
 	public void setError(String msg, boolean overrideMenu) {
 		this.curState = State.ERROR;
 		errorMessage = msg;
-		if(overrideMenu && Game.getMenuType() != this && Game.isValidClient())
+		if(overrideMenu && Game.getMenu() != this && Game.isValidClient())
 			Game.setMenu(this);
 	}
 	

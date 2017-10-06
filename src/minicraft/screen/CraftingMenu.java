@@ -15,7 +15,7 @@ import minicraft.item.Recipe;
 import minicraft.screen.entry.ListEntry;
 import minicraft.screen.entry.RecipeEntry;
 
-public class CraftingMenu implements MenuData {
+public class CraftingMenu extends Display {
 	
 	private Player player;
 	private Recipe[] recipes;

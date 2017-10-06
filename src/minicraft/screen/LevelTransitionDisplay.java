@@ -10,15 +10,16 @@ public class LevelTransitionDisplay extends Display {
 	
 	private int dir; // Direction that you are changing levels. (going up or down stairs)
 	private int time = 0; // Time it spends on this menu
-
+	
 	public LevelTransitionDisplay(int dir) {
+		super(false);
 		this.dir = dir;
 	}
 	
 	public void tick(InputHandler input) {
 		time++; // Ticks up 2 times per tick
 		if (time == DURATION/2) Game.changeLevel(dir); // When time equals 30, it will change the level
-		//if (time == 60) Game.setMenu((Menu)null); // When time equals 60, it will get out of this menu
+		if (time == DURATION) Game.setMenu(null); // When time equals 60, it will get out of this menu
 	}
 	
 	public void render(Screen screen) {
@@ -31,10 +32,5 @@ public class LevelTransitionDisplay extends Display {
 				}
 			}
 		}
-	}
-	
-	@Override
-	public int autoExitDelay() {
-		return DURATION;
 	}
 }

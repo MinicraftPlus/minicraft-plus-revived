@@ -128,8 +128,8 @@ public class Player extends Mob {
 		
 		/*if(!Bed.inBed && input.getKey("drop-one").clicked || input.getKey("drop-stack").clicked) {
 			Item itemToDrop = null;
-			if(Game.getMenuType() instanceof PlayerInvMenu)
-				itemToDrop = ((PlayerInvMenu)Game.getMenuType()).getSelectedItem();
+			if(Game.getMenu() instanceof PlayerInvMenu)
+				itemToDrop = ((PlayerInvMenu)Game.getMenu()).getSelectedItem();
 			else if(!Game.paused)
 				itemToDrop = activeItem;
 			
@@ -140,15 +140,15 @@ public class Player extends Mob {
 					toEntity = itemToDrop.clone();
 					((StackableItem)toEntity).count = 1;
 					((StackableItem)itemToDrop).count--;
-					if(Game.getMenuType() instanceof PlayerInvMenu)
-						((PlayerInvMenu)Game.getMenuType()).updateSelectedItem();
+					if(Game.getMenu() instanceof PlayerInvMenu)
+						((PlayerInvMenu)Game.getMenu()).updateSelectedItem();
 				} else {
 					// drop the whole item.
 					toEntity = itemToDrop;
 					if(!Game.isMode("creative")) {
-						if(Game.getMenuType() instanceof PlayerInvMenu)
-							((PlayerInvMenu)Game.getMenuType()).removeSelectedItem();
-						else if(Game.getMenuType() == null)
+						if(Game.getMenu() instanceof PlayerInvMenu)
+							((PlayerInvMenu)Game.getMenu()).removeSelectedItem();
+						else if(Game.getMenu() == null)
 							activeItem = null;
 					}
 				}
@@ -162,7 +162,7 @@ public class Player extends Mob {
 			}
 		}*/
 		
-		if(Game.getMenuType() != null && !Game.ISONLINE) return; // don't tick player when menu is open
+		if(Game.getMenu() != null && !Game.ISONLINE) return; // don't tick player when menu is open
 		
 		super.tick(); // ticks Mob.java
 		
@@ -289,7 +289,7 @@ public class Player extends Mob {
 			
 			// this is where movement detection occurs.
 			int xa = 0, ya = 0;
-			if(Game.getMenuType() == null) {
+			if(Game.getMenu() == null) {
 				if (input.getKey("up").down) ya--;
 				if (input.getKey("down").down) ya++;
 				if (input.getKey("left").down) xa--;
@@ -325,7 +325,7 @@ public class Player extends Mob {
 			}
 		}
 		
-		if (Game.getMenuType() == null) {
+		if (Game.getMenu() == null) {
 			if (!Bed.inBed && (activeItem == null || !activeItem.used_pending) && (input.getKey("attack").clicked || input.getKey("pickup").clicked) && stamina != 0) { // this only allows attacks or pickups when such action is possible.
 				if (!potioneffects.containsKey(PotionType.Energy)) stamina--;
 				staminaRecharge = 0;
