@@ -21,11 +21,10 @@ public class InventoryMenu extends Display {
 	
 	public InventoryMenu(Inventory inv) {
 		//super(data, 9, 1, frames);
-		super(new Menu.Builder(0, getEntries(inv))
+		super(new Menu.Builder(true, 0, getEntries(inv))
 			.setAnchor(9, 9)
 			.setCentering(RelPos.BOTTOM_RIGHT, RelPos.LEFT)
 			.setScrollPolicies(9, 1, false)
-			.setFrame(true)
 			.createMenu()
 		);
 	}

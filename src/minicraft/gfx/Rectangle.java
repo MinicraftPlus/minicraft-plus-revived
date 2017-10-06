@@ -39,6 +39,13 @@ public class Rectangle {
 		h = d.height;
 	}
 	
+	public Rectangle(Rectangle model) {
+		x = model.x;
+		y = model.y;
+		w = model.w;
+		h = model.h;
+	}
+	
 	public int getLeft() { return x; }
 	public int getRight() { return x + w; }
 	public int getTop() { return y; }

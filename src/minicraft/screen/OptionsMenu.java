@@ -6,7 +6,7 @@ import minicraft.gfx.Screen;
 public class OptionsMenu extends Display {
 	
 	public OptionsMenu() {
-		super(new Menu.Builder(6,
+		super(new Menu.Builder(false, 6,
 				Settings.getEntry("diff"),
 				Settings.getEntry("sound"),
 				Settings.getEntry("autosave"),

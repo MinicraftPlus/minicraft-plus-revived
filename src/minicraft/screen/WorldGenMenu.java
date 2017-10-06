@@ -1,20 +1,16 @@
 package minicraft.screen;
 
 import minicraft.Game;
-import minicraft.InputHandler;
 import minicraft.Settings;
-import minicraft.gfx.Color;
-import minicraft.gfx.Font;
 import minicraft.gfx.Screen;
 import minicraft.screen.entry.InputEntry;
-import minicraft.screen.entry.ListEntry;
 import minicraft.screen.entry.SelectEntry;
 
 public class WorldGenMenu extends Display {
 	
 	public WorldGenMenu() {
 		// TODO add world seed option
-		super(new Menu.Builder(10,
+		super(new Menu.Builder(false, 10,
 				new InputEntry("Enter World Name", "[a-zA-Z0-9 ]", 36),
 				Settings.getEntry("mode"),
 				Settings.getEntry("scoretime"),

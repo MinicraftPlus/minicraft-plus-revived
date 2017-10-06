@@ -1,6 +1,5 @@
 package minicraft.screen;
 
-import java.awt.Point;
 import java.util.Random;
 
 import minicraft.Game;
@@ -21,7 +20,7 @@ public class TitleMenu extends Display {
 	private boolean reverse = false;
 	
 	public TitleMenu() {
-		super(false, new Menu.Builder(2,
+		super(false, new Menu.Builder(false, 2,
 				entryFactory("Play", displayFactory(
 					entryFactory("Load World", new WorldSelectMenu()),
 					entryFactory("New World", new WorldGenMenu())
@@ -65,7 +64,7 @@ public class TitleMenu extends Display {
 	}
 	
 	private static Display displayFactory(ListEntry... entries) {
-		return new Display(new Menu.Builder(2, entries).createMenu());
+		return new Display(new Menu.Builder(false, 2, entries).createMenu());
 	}
 	
 	@Override

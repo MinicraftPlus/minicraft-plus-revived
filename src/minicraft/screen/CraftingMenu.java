@@ -1,12 +1,9 @@
 package minicraft.screen;
 
-import java.awt.Point;
-
 import minicraft.InputHandler;
 import minicraft.entity.Player;
 import minicraft.gfx.Color;
 import minicraft.gfx.Font;
-import minicraft.gfx.Rectangle;
 import minicraft.gfx.Screen;
 import minicraft.gfx.SpriteSheet;
 import minicraft.item.Item;
@@ -36,21 +33,21 @@ public class CraftingMenu extends Display {
 		this.player = player;
 	}
 	
-	@Override
+	/*@Override
 	public Menu getMenu() {
 		return new ScrollingMenu(this, 9, 1, new Frame("Crafting", new Rectangle(1, 1, 22, 11, Rectangle.CORNERS)));
-	}
+	}*/
 	
-	@Override
+	//@Override
 	public ListEntry[] getEntries() {
 		return getRecipeList(recipes);
 	}
 	
 	@Override
 	public void tick(InputHandler input) {
-		if(input.getKey("select").clicked && getMenu().getSelection() >= 0) {
+		if(input.getKey("select").clicked && menus[selection].getSelection() >= 0) {
 			// check the selected recipe
-			Recipe r = recipes[getMenu().getSelection()];
+			Recipe r = recipes[menus[selection].getSelection()];
 			if(r.canCraft) {
 				r.craft(player);
 				
@@ -62,7 +59,7 @@ public class CraftingMenu extends Display {
 	
 	@Override
 	public void render(Screen screen) {
-		int index = getMenu().getSelection();
+		int index = menus[selection].getSelection();
 		if(index < 0) return;
 		Recipe recipe = recipes[index];
 		//int hasResultItems = player.inventory.count(recipe.getProduct()); // Counts the number of items to see if yo
@@ -86,7 +83,7 @@ public class CraftingMenu extends Display {
 		
 	}
 	
-	@Override
+	/*@Override
 	public Centering getCentering() {
 		return Centering.make(new Point(9, 9), RelPos.BOTTOM_RIGHT, RelPos.LEFT);
 	}
@@ -94,5 +91,5 @@ public class CraftingMenu extends Display {
 	@Override
 	public int getSpacing() {
 		return 0;
-	}
+	}*/
 }

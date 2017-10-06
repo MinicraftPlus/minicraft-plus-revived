@@ -9,7 +9,7 @@ public class InfoDisplay extends Display {
 	
 	public InfoDisplay() {
 		//noinspection SuspiciousNameCombination
-		super(new Menu.Builder(4, StringEntry.useLines(
+		super(new Menu.Builder(true, 4, StringEntry.useLines(
 			"----------------------------",
 			"Time Played: " + getTimeString(),
 			"Current Score: " + Game.player.score,
@@ -18,7 +18,6 @@ public class InfoDisplay extends Display {
 			))
 			.setTitle("General Stats")
 			.setTitlePos(RelPos.TOP_LEFT)
-			.setFrame(true)
 			.setAnchor(SpriteSheet.boxWidth, SpriteSheet.boxWidth)
 			.setCentering(RelPos.BOTTOM_RIGHT, RelPos.LEFT)
 			.createMenu()

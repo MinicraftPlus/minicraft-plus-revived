@@ -45,9 +45,8 @@ public class PauseMenu extends Display {
 		//Menu.Builder msgBuilder = new Menu.Builder(8);
 		
 		menus = new Menu[] {
-			new Menu.Builder(4, entries)
+			new Menu.Builder(true, 4, entries)
 				.setTitle("Paused", 550)
-				.setFrame(true)
 				.createMenu()/*,
 			
 			msgBuilder.setEntries(new StringEntry("Save Game?"), new StringEntry("(Hint: Press \"r\" to save in-game)", Color.DARK_GRAY))

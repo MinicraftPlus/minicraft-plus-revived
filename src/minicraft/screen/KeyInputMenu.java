@@ -30,22 +30,22 @@ public class KeyInputMenu extends Display {
 	}
 	
 	public KeyInputMenu() {
-		builder = new Menu.Builder(0, getEntries())
+		builder = new Menu.Builder(false, 0, getEntries())
 			.setSize(Screen.w, Screen.h)
 			.setTitle("Controls")
 			.setScrollPolicies(0, false)
 			.setAnchor(Game.WIDTH/2, Screen.h - Font.textHeight()*4)
 			.setCentering(RelPos.TOP, RelPos.CENTER);
 		
-		Menu.Builder popupBuilder = new Menu.Builder(4).setShouldRender(false);
+		Menu.Builder popupBuilder = new Menu.Builder(true, 4)
+			.setShouldRender(false)
+			.setSelectable(false);
 		
 		menus = new Menu[] {
 			builder.createMenu(),
 			
 			popupBuilder
 				.setEntries(StringEntry.useLines("Press the desired", "key sequence"))
-				.setFrame(true)
-				.setSelectable(false)
 				.createMenu(),
 			
 			popupBuilder

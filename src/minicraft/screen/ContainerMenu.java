@@ -1,3 +1,5 @@
 package minicraft.screen;
 
-//public class ContainerMenu extends Display {}
+public class ContainerMenu extends Display {
+	
+}

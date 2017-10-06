@@ -31,9 +31,8 @@ public class DeadMenu extends Display {
 		}
 		
 		menus = new Menu[] {
-			new Menu.Builder(0, entries)
+			new Menu.Builder(true, 0, entries)
 				.setAnchor(SpriteSheet.boxWidth, SpriteSheet.boxWidth*3)
-				.setFrame(true)
 				.setTitle("You died! Aww!")
 				.setTitlePos(RelPos.TOP_LEFT)
 				.createMenu()

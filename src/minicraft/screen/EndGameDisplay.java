@@ -9,9 +9,6 @@ import minicraft.InputHandler;
 import minicraft.Settings;
 import minicraft.entity.Player;
 import minicraft.gfx.Color;
-import minicraft.gfx.Font;
-import minicraft.gfx.FontStyle;
-import minicraft.gfx.Rectangle;
 import minicraft.gfx.Screen;
 import minicraft.item.Items;
 import minicraft.saveload.Save;
@@ -64,6 +61,11 @@ public class EndGameDisplay extends Display {
 		
 		entries.add(entryFactory("Exit to Menu", new TitleMenu()));
 		
+		menus = new Menu[] {
+			new Menu.Builder(true, 0, entries)
+				.setCentering(RelPos.LEFT, RelPos.LEFT)
+				.createMenu()
+		};
 		//title = "Game Over!" + (Game.isMode("score") ? " (" + ModeMenu.getSelectedTime() + ")" : "");
 		
 		/*

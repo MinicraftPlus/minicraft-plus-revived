@@ -9,7 +9,6 @@ import minicraft.gfx.Color;
 import minicraft.gfx.Font;
 import minicraft.gfx.Screen;
 import minicraft.saveload.Save;
-import minicraft.screen.entry.ListEntry;
 import minicraft.screen.entry.SelectEntry;
 
 public class WorldSelectMenu extends Display {
@@ -80,7 +79,7 @@ public class WorldSelectMenu extends Display {
 		}
 		
 		menus = new Menu[] {
-			new Menu.Builder(0, entries)
+			new Menu.Builder(false, 0, entries)
 				.setScrollPolicies(5, 1, true)
 				.createMenu()
 		};
