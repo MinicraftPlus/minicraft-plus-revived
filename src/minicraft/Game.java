@@ -198,7 +198,7 @@ public class Game {
 		Display parent = newMenu;
 		newMenu = display;
 		
-		if(menu != null)
+		if(menu != null && input.getKey("exit").clicked)
 			menu.onExit();
 		
 		if(newMenu != null)
@@ -207,7 +207,7 @@ public class Game {
 	
 	public static void exitMenu() {
 		if(newMenu == null) return; // no action required; cannot exit from no menu
-		setMenu(newMenu.getParent());
+		newMenu = newMenu.getParent();
 	}
 	
 	public static Display getMenu() { return newMenu; }

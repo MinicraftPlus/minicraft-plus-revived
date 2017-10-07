@@ -38,7 +38,7 @@ public class EndGameDisplay extends Display {
 	//private ArrayList<Integer> unlocks;
 	
 	public EndGameDisplay(Player player) {
-		super(false);
+		super(false, false);
 		
 		displayTimer = Game.normSpeed; // wait 3 seconds before rendering the menu.
 		inputDelay = Game.normSpeed/2; // wait a half-second after rendering before allowing user input.

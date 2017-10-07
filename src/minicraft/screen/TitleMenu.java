@@ -21,7 +21,7 @@ public class TitleMenu extends Display {
 	private boolean reverse = false;
 	
 	public TitleMenu() {
-		super(false, new Menu.Builder(false, 2, RelPos.CENTER,
+		super(true, false, new Menu.Builder(false, 2, RelPos.CENTER,
 				entryFactory("Play", displayFactory(
 					entryFactory("Load World", new WorldSelectMenu()),
 					entryFactory("New World", new WorldGenMenu())
@@ -65,12 +65,7 @@ public class TitleMenu extends Display {
 	}
 	
 	private static Display displayFactory(ListEntry... entries) {
-		return new Display(new Menu.Builder(false, 2, RelPos.CENTER, entries).createMenu()) {
-			public void render(Screen screen) {
-				screen.clear(0);
-				super.render(screen);
-			}
-		};
+		return new Display(true, new Menu.Builder(false, 2, RelPos.CENTER, entries).createMenu());
 	}
 	
 	@Override
@@ -90,7 +85,7 @@ public class TitleMenu extends Display {
 	
 	@Override
 	public void render(Screen screen) {
-		screen.clear(0);
+		super.render(screen);
 		
 		int h = 2; // Height of squares (on the spritesheet)
 		int w = 15; // Width of squares (on the spritesheet)
@@ -131,7 +126,7 @@ public class TitleMenu extends Display {
 		Font.drawCentered("("+Game.input.getMapping("exit")+" to return)", screen, Screen.h - 12, Color.get(-1, 111));
 		
 		
-		super.render(screen);
+		//super.render(screen);
 	}
 	
 	private static final String[] splashes = {//new ArrayList<String>();

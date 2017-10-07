@@ -12,7 +12,7 @@ public class LevelTransitionDisplay extends Display {
 	private int time = 0; // Time it spends on this menu
 	
 	public LevelTransitionDisplay(int dir) {
-		super(false);
+		super(false,false);
 		this.dir = dir;
 	}
 	

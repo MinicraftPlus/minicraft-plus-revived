@@ -17,7 +17,7 @@ public class DeadMenu extends Display {
 	public static boolean shouldRespawn;
 	
 	public DeadMenu() {
-		super(false);
+		super(false,false);
 		
 		ArrayList<ListEntry> entries = new ArrayList<>();
 		entries.add(new StringEntry("Time: " + InfoDisplay.getTimeString()));

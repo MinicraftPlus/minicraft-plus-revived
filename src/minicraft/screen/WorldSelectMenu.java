@@ -41,6 +41,8 @@ public class WorldSelectMenu extends Display {
 	private Action curAction = null;
 	
 	public WorldSelectMenu() {
+		super(true);
+		
 		worldName = "";
 		
 		ArrayList<String> worldNames = new ArrayList<>();
@@ -92,6 +94,8 @@ public class WorldSelectMenu extends Display {
 	
 	@Override
 	public void tick(InputHandler input) {
+		super.tick(input);
+		
 		if(curAction != null) return;
 		
 		for(Action a: Action.values) {
@@ -104,7 +108,7 @@ public class WorldSelectMenu extends Display {
 	
 	@Override
 	public void render(Screen screen) {
-		screen.clear(0);
+		super.render(screen);
 		
 		Font.drawCentered(Game.input.getMapping("select")+" to confirm", screen, Screen.h - 60, Color.GRAY);
 		Font.drawCentered(Game.input.getMapping("exit")+" to return", screen, Screen.h - 40, Color.GRAY);

@@ -63,6 +63,7 @@ public class PauseMenu extends Display {
 	*/
 	@Override
 	public void tick(InputHandler input) {
+		super.tick(input);
 		if (input.getKey("pause").clicked)
 			Game.exitMenu();
 	}
