@@ -437,7 +437,7 @@ public class InputHandler implements /*MouseListener, */KeyListener {
 				typing += letter;
 		}
 		
-		if(getKey("backspace").clicked) {
+		if(getKey("backspace").clicked && typing.length() > 0) {
 			// backspace counts as a letter itself, but we don't have to worry about it if it's part of the regex.
 			typing = typing.substring(0, typing.length()-1);
 		}

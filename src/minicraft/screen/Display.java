@@ -49,6 +49,8 @@ public class Display {
 			return;
 		}
 		
+		if(menus.length == 0) return;
+		
 		boolean changedSelection = false;
 		
 		if(menus.length > 1 && menus[selection].isSelectable()) { // if menu set is unselectable, it must have been intentional, so prevent the user from setting it back.
@@ -80,6 +82,9 @@ public class Display {
 	public void render(Screen screen) {
 		if(clearScreen)
 			screen.clear(0);
+		
+		if(menus.length == 0)
+			return;
 		
 		int idx = selection;
 		do {

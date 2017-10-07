@@ -124,9 +124,6 @@ public class TitleMenu extends Display {
 		Font.drawCentered("("+Game.input.getMapping("up")+", "+Game.input.getMapping("down")+" to select)", screen, Screen.h - 32, Color.get(-1, 111));
 		Font.drawCentered("("+Game.input.getMapping("select")+" to accept)", screen, Screen.h - 22, Color.get(-1, 111));
 		Font.drawCentered("("+Game.input.getMapping("exit")+" to return)", screen, Screen.h - 12, Color.get(-1, 111));
-		
-		
-		//super.render(screen);
 	}
 	
 	private static final String[] splashes = {//new ArrayList<String>();

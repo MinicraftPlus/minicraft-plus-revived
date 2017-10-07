@@ -1,7 +1,6 @@
 package minicraft.screen;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 
 import minicraft.Game;
 import minicraft.InputHandler;
@@ -56,7 +55,7 @@ public class BookDisplay extends Display {
 		
 		lines = pages.toArray(new String[pages.size()][]);
 		
-		System.out.println("pages: " + Arrays.deepToString(lines));
+		//if(Game.debug) System.out.println("pages: " + Arrays.deepToString(lines));
 		
 		Menu.Builder builder = new Menu.Builder(true, 0, RelPos.CENTER)
 			.setFrame(Color.DARK_GRAY, Color.get(554, 554), Color.get(-1, 1, 554, 554));

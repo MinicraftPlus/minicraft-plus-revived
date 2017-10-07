@@ -198,15 +198,13 @@ public class Game {
 		Display parent = newMenu;
 		newMenu = display;
 		
-		if(menu != null && input.getKey("exit").clicked)
-			menu.onExit();
-		
 		if(newMenu != null)
 			newMenu.init(parent);
 	}
 	
 	public static void exitMenu() {
 		if(newMenu == null) return; // no action required; cannot exit from no menu
+		newMenu.onExit();
 		newMenu = newMenu.getParent();
 	}
 	

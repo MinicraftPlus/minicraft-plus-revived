@@ -34,8 +34,8 @@ public class KeyInputMenu extends Display {
 		builder = new Menu.Builder(false, 0, RelPos.CENTER, getEntries())
 			//.setSize(Screen.w, Screen.h)
 			.setTitle("Controls")
-			.setScrollPolicies(0, false)
-			.setPositioning(new Point(Game.WIDTH/2, Screen.h - Font.textHeight()*4), RelPos.TOP);
+			.setScrollPolicies(0.2f, false)
+			.setPositioning(new Point(Game.WIDTH/2, Screen.h - Font.textHeight()*5), RelPos.TOP);
 		
 		Menu.Builder popupBuilder = new Menu.Builder(true, 4, RelPos.CENTER)
 			.setShouldRender(false)
@@ -107,6 +107,7 @@ public class KeyInputMenu extends Display {
 	
 	@Override
 	public void onExit() {
+		if(Game.debug) System.out.println("saving keys...");
 		new Save();
 	}
 	
