@@ -56,23 +56,15 @@ public class PauseMenu extends Display {
 		};
 	}
 	
-	/*@Override
-	public Menu getMenu() {
-		return new Menu(this, new Frame("", new Rectangle(4, 2, 32, 20, Rectangle.CORNERS)));
+	@Override
+	public void init(Display parent) {
+		super.init(null); // ignore; pause menus always lead back to the game
 	}
-	*/
+	
 	@Override
 	public void tick(InputHandler input) {
 		super.tick(input);
 		if (input.getKey("pause").clicked)
 			Game.exitMenu();
 	}
-	
-	/*@Override
-	public void render(Screen screen) {
-		//Font.drawCentered("Paused", screen, 35, Color.YELLOW);
-		
-		Font.drawCentered(, screen, 140, Color.GRAY);
-		Font.drawCentered(, screen, 150, Color.GRAY);
-	}*/
 }

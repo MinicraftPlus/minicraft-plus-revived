@@ -18,9 +18,13 @@ public class WorldSelectMenu extends Display {
 	private static final String worldsDir = Game.gameDir + "/saves/";
 	
 	private static String worldName = "";
+	private static boolean loadedWorld = true;
 	
 	public static String getWorldName() { return worldName; }
-	public static void setWorldName(String world) { worldName = world; }
+	public static void setWorldName(String world) {
+		worldName = world;
+		loadedWorld = false;
+	}
 	
 	enum Action {
 		Copy("C", 5),
@@ -40,11 +44,7 @@ public class WorldSelectMenu extends Display {
 	
 	private Action curAction = null;
 	
-	public WorldSelectMenu() {
-		super(true);
-		
-		worldName = "";
-		
+	public static ArrayList<String> getWorldNames() {
 		ArrayList<String> worldNames = new ArrayList<>();
 		
 		//find worlds (init step):
@@ -54,7 +54,7 @@ public class WorldSelectMenu extends Display {
 		
 		if(listOfFiles == null) {
 			System.err.println("ERROR: Game location file folder is null, somehow...");
-			return;
+			return new ArrayList<>();
 		}
 		
 		for (int i = 0; i < listOfFiles.length; i++) {
@@ -69,6 +69,17 @@ public class WorldSelectMenu extends Display {
 				}
 			}
 		}
+		
+		return worldNames;
+	}
+	
+	public WorldSelectMenu() {
+		super(true);
+		
+		worldName = "";
+		loadedWorld = true;
+		
+		ArrayList<String> worldNames = getWorldNames();
 		
 		SelectEntry[] entries = new SelectEntry[worldNames.size()];
 		
@@ -89,7 +100,7 @@ public class WorldSelectMenu extends Display {
 	}
 	
 	public static boolean loadedWorld() {
-		return worldName.length() > 0;
+		return loadedWorld;//worldName.length() > 0;
 	}
 	
 	@Override

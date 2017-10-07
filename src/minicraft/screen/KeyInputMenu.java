@@ -45,11 +45,11 @@ public class KeyInputMenu extends Display {
 			builder.createMenu(),
 			
 			popupBuilder
-				.setEntries(StringEntry.useLines("Press the desired", "key sequence"))
+				.setEntries(StringEntry.useLines(Color.YELLOW, "Press the desired", "key sequence"))
 				.createMenu(),
 			
 			popupBuilder
-				.setEntries(StringEntry.useLines("Are you sure you want to reset all key bindings to the default keys?", "enter to confirm", "escape to cancel"))
+				.setEntries(StringEntry.useLines(Color.RED, "Are you sure you want to reset all key bindings to the default keys?", "enter to confirm", "escape to cancel"))
 				.setTitle("Confirm Action")
 				.createMenu()
 		};

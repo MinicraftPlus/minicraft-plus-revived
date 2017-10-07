@@ -1,6 +1,9 @@
 package minicraft.screen.entry;
 
 import minicraft.InputHandler;
+import minicraft.gfx.Color;
+import minicraft.gfx.Font;
+import minicraft.gfx.Screen;
 
 public class InputEntry implements ListEntry {
 	
@@ -36,5 +39,13 @@ public class InputEntry implements ListEntry {
 	
 	public String toString() {
 		return prompt+": " + userInput;
+	}
+	
+	public void render(Screen screen, int x, int y, boolean isSelected) {
+		Font.draw(toString(), screen, x, y, isValid() ? isSelected ? Color.GREEN : COL_UNSLCT : Color.RED);
+	}
+	
+	public boolean isValid() {
+		return userInput.matches(regex);
 	}
 }
