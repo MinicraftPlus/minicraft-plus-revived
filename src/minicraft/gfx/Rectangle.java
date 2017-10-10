@@ -59,6 +59,11 @@ public class Rectangle {
 		);
 	}
 	
+	public void translate(int xoff, int yoff) {
+		x += xoff;
+		y += yoff;
+	}
+	
 	public String toString() {
 		return super.toString()+"[center="+getCenter()+"; size="+getSize()+"]";
 	}

@@ -76,9 +76,6 @@ public class WorldSelectMenu extends Display {
 	public WorldSelectMenu() {
 		super(true);
 		
-		worldName = "";
-		loadedWorld = true;
-		
 		ArrayList<String> worldNames = getWorldNames();
 		
 		SelectEntry[] entries = new SelectEntry[worldNames.size()];
@@ -97,6 +94,13 @@ public class WorldSelectMenu extends Display {
 				.setScrollPolicies(1, true)
 				.createMenu()
 		};
+	}
+	
+	@Override
+	public void init(Display parent) {
+		super.init(parent);
+		worldName = "";
+		loadedWorld = true;
 	}
 	
 	public static boolean loadedWorld() {

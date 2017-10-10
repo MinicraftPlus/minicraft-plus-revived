@@ -7,6 +7,7 @@ import minicraft.Game;
 import minicraft.InputHandler;
 import minicraft.gfx.Color;
 import minicraft.saveload.Save;
+import minicraft.screen.entry.BlankEntry;
 import minicraft.screen.entry.ListEntry;
 import minicraft.screen.entry.SelectEntry;
 import minicraft.screen.entry.StringEntry;
@@ -16,6 +17,7 @@ public class PauseMenu extends Display {
 	public PauseMenu() {
 		ArrayList<ListEntry> entries = new ArrayList<>();
 		entries.addAll(Arrays.asList(
+			new BlankEntry(),
 			entryFactory("Return to Game", null),
 			entryFactory("Options", new OptionsMenu()),
 			entryFactory("Change Key Bindings", new KeyInputMenu())

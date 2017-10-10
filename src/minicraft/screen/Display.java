@@ -6,7 +6,7 @@ import minicraft.Sound;
 import minicraft.gfx.Screen;
 import minicraft.screen.entry.ListEntry;
 import minicraft.screen.entry.SelectEntry;
-import org.jetbrains.annotations.NotNull;
+import com.sun.istack.internal.NotNull;
 
 public class Display {
 	
@@ -41,6 +41,7 @@ public class Display {
 	public void onExit() {}
 	
 	public Display getParent() { return parent; }
+	public Menu getCurMenu() { return menus[selection]; }
 	
 	public void tick(InputHandler input) {
 		
@@ -72,11 +73,16 @@ public class Display {
 				
 				changedSelection = prevSel != selection;
 			}
+			
+			if(changedSelection)
+				onSelectionChange(prevSel, selection);
 		}
 		
 		if(!changedSelection)
 			menus[selection].tick(input);
 	}
+	
+	protected void onSelectionChange(int oldSel, int newSel) {}
 	
 	/// sub-classes can do extra rendering here; this renders each menu that should be rendered, in the order of the array, such that the currently selected menu is rendered last, so it appears on top (if they even overlap in the first place).
 	public void render(Screen screen) {

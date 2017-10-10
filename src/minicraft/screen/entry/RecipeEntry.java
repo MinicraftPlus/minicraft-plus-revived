@@ -4,12 +4,12 @@ import minicraft.InputHandler;
 import minicraft.gfx.Screen;
 import minicraft.item.Recipe;
 
-public class RecipeEntry implements ListEntry {
+public class RecipeEntry extends ItemEntry {
 	
 	private Recipe recipe;
 	
-	
 	public RecipeEntry(Recipe r) {
+		super(r.getProduct());
 		this.recipe = r;
 	}
 	
@@ -18,12 +18,11 @@ public class RecipeEntry implements ListEntry {
 	
 	@Override
 	public void render(Screen screen, int x, int y, boolean isSelected) {
-		ListEntry.super.render(screen, x, y, recipe.canCraft);
-		recipe.getProduct().sprite.render(screen, x, y);
+		super.render(screen, x, y, recipe.canCraft);
 	}
 	
 	@Override
 	public String toString() {
-		return recipe.getProduct().name + (recipe.amount > 1 ? " x" + recipe.amount : "");
+		return super.toString() + (recipe.amount > 1 ? " x" + recipe.amount : "");
 	}
 }

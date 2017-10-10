@@ -291,8 +291,9 @@ public class Load {
 			
 			unlock = unlock.replace("HOURMODE", "H_ScoreTime").replace("MINUTEMODE", "M_ScoreTime");
 			
-//			if(unlock.contains("_ScoreTime"))
-//				ModeMenu.unlockedtimes.add(unlock.substring(0, unlock.indexOf("_")));
+			//if(unlock.contains("_ScoreTime"))
+			//	Settings.getEntry("scoretime").add(Integer.parseInt(unlock.substring(0, unlock.indexOf("_"))));
+				//ModeMenu.unlockedtimes.add(unlock.substring(0, unlock.indexOf("_")));
 		}
 		
 		//ModeMenu.initTimeList();

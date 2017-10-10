@@ -17,9 +17,13 @@ import minicraft.level.Level;
 import minicraft.level.tile.Tile;
 import minicraft.level.tile.Tiles;
 import minicraft.saveload.Save;
+import minicraft.screen.InfoDisplay;
+import minicraft.screen.InventoryMenu;
 import minicraft.screen.LoadingDisplay;
 import minicraft.screen.PauseMenu;
+import minicraft.screen.PlayerInvMenu;
 import minicraft.screen.WorldSelectMenu;
+import minicraft.screen.entry.ItemEntry;
 
 public class Player extends Mob {
 	protected InputHandler input;
@@ -126,10 +130,10 @@ public class Player extends Mob {
 	public void tick() {
 		if(level == null || isRemoved()) return;
 		
-		/*if(!Bed.inBed && input.getKey("drop-one").clicked || input.getKey("drop-stack").clicked) {
+		if(!Bed.inBed && input.getKey("drop-one").clicked || input.getKey("drop-stack").clicked) {
 			Item itemToDrop = null;
 			if(Game.getMenu() instanceof PlayerInvMenu)
-				itemToDrop = ((PlayerInvMenu)Game.getMenu()).getSelectedItem();
+				itemToDrop = ((InventoryMenu)Game.getMenu().getCurMenu()).getSelectedItem();
 			else if(!Game.paused)
 				itemToDrop = activeItem;
 			
@@ -141,13 +145,13 @@ public class Player extends Mob {
 					((StackableItem)toEntity).count = 1;
 					((StackableItem)itemToDrop).count--;
 					if(Game.getMenu() instanceof PlayerInvMenu)
-						((PlayerInvMenu)Game.getMenu()).updateSelectedItem();
+						Game.getMenu().getCurMenu().updateSelectedEntry(new ItemEntry(itemToDrop));//.updateSelectedItem();
 				} else {
 					// drop the whole item.
 					toEntity = itemToDrop;
 					if(!Game.isMode("creative")) {
 						if(Game.getMenu() instanceof PlayerInvMenu)
-							((PlayerInvMenu)Game.getMenu()).removeSelectedItem();
+							Game.getMenu().getCurMenu().removeSelectedEntry();//.removeSelectedItem();
 						else if(Game.getMenu() == null)
 							activeItem = null;
 					}
@@ -160,7 +164,7 @@ public class Player extends Mob {
 						level.dropItem(x, y, toEntity);
 				}
 			}
-		}*/
+		}
 		
 		if(Game.getMenu() != null && !Game.ISONLINE) return; // don't tick player when menu is open
 		
@@ -348,8 +352,13 @@ public class Player extends Mob {
 					activeItem.used_pending = true;
 			}
 			
-//			if (input.getKey("menu").clicked && !use()) // !use() = no furniture in front of the player; this prevents player inventory from opening (will open furniture inventory instead)
-//				Game.setMenu(new PlayerInvMenu(this));
+			if(input.getKey("menu").clicked && activeItem != null) {
+				inventory.add(0, activeItem);
+				activeItem = null;
+			}
+			
+			if (input.getKey("menu").clicked && !use()) // !use() = no furniture in front of the player; this prevents player inventory from opening (will open furniture inventory instead)
+				Game.setMenu(new PlayerInvMenu(this));
 			if (input.getKey("pause").clicked)
 				Game.setMenu(new PauseMenu());
 //			if (input.getKey("craft").clicked && !use())
@@ -357,7 +366,7 @@ public class Player extends Mob {
 			if (input.getKey("sethome").clicked) setHome();
 			if (input.getKey("home").clicked && !Bed.inBed) goHome();
 			
-			//if (input.getKey("info").clicked) Game.setMenu(new PlayerInfoMenu());
+			if (input.getKey("info").clicked) Game.setMenu(new InfoDisplay());
 			
 			if (input.getKey("r").clicked && !Game.saving && !(this instanceof RemotePlayer) && !Game.isValidClient()) {
 				Game.saving = true;

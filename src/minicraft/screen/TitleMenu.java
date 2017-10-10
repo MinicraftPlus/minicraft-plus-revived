@@ -37,7 +37,11 @@ public class TitleMenu extends Display {
 			.setPositioning(new Point(Game.WIDTH/2, Game.HEIGHT*3/5), RelPos.CENTER)
 			.createMenu()
 		);
-		
+	}
+	
+	@Override
+	public void init(Display parent) {
+		super.init(parent);
 		Game.readyToRenderGameplay = false;
 		/// this is just in case; though, i do take advantage of it in other places.
 		if(Game.server != null) {

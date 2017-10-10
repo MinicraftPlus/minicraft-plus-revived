@@ -22,7 +22,6 @@ public class WorldGenMenu extends Display {
 	private String[] takenNames = WorldSelectMenu.getWorldNames().toArray(new String[0]);
 	
 	public WorldGenMenu() {
-		// TODO add world seed option
 		super(true);
 		InputEntry nameField = new InputEntry("Enter World Name", "[a-zA-Z0-9 ]+", 36) {
 			@Override

@@ -16,7 +16,6 @@ public class Insets {
 	public Rectangle addInsets(Rectangle r) {
 		return new Rectangle(r.getLeft()-left, r.getTop()-top, r.getRight()+right, r.getBottom()+bottom, Rectangle.CORNERS);
 	}
-	
 	public Rectangle subtractInsets(Rectangle r) {
 		return new Rectangle(r.getLeft()+left, r.getTop()+top, r.getRight()-right, r.getBottom()-bottom, Rectangle.CORNERS);
 	}
@@ -24,8 +23,14 @@ public class Insets {
 	public Dimension addInsets(Dimension d) {
 		return new Dimension(d.width + left + right, d.height + top + bottom);
 	}
-	
 	public Dimension subtractInsets(Dimension d) {
 		return new Dimension(d.width - left - right, d.height - top - bottom);
+	}
+	
+	public Insets addInsets(Insets s) {
+		return new Insets(left+s.left, top+s.top, right+s.right, bottom+s.bottom);
+	}
+	public Insets subtractInsets(Insets s) {
+		return new Insets(left-s.left, top-s.top, right-s.right, bottom-s.bottom);
 	}
 }

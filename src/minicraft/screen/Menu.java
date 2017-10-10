@@ -48,7 +48,7 @@ public class Menu {
 	
 	
 	private Menu() {}
-	private Menu(Menu m) {
+	protected Menu(Menu m) {
 		entries.addAll(m.entries);
 		spacing = m.spacing;
 		bounds = m.bounds == null ? null : new Rectangle(m.bounds);
@@ -104,11 +104,32 @@ public class Menu {
 		doScroll();
 	}
 	
-	public int getSelection() { return selection; }
-	public int getDispSelection() { return dispSelection; }
+	void setSelection(int idx) {
+		this.selection = idx;
+		if(selection >= entries.size())
+			selection = entries.size() - 1;
+		else if(selection < 0)
+			selection = 0;
+	}
+	int getSelection() { return selection; }
+	int getDispSelection() { return dispSelection; }
 	
-	public boolean isSelectable() { return selectable; }
-	public boolean shouldRender() { return shouldRender; }
+	ListEntry getCurEntry() { return entries.get(selection); }
+	int getNumOptions() { return entries.size(); }
+	
+	Rectangle getBounds() {
+		return new Rectangle(bounds);
+	}
+	String getTitle() { return title; }
+	
+	boolean isSelectable() { return selectable; }
+	boolean shouldRender() { return shouldRender; }
+	
+	@SuppressWarnings("SameParameterValue")
+	void translate(int xoff, int yoff) {
+		bounds.translate(xoff, yoff);
+		entryBounds.translate(xoff, yoff);
+	}
 	
 	public void tick(InputHandler input) {
 		if(!selectable || entries.size() == 0) return;
@@ -375,23 +396,25 @@ public class Menu {
 			Insets border;
 			if(menu.hasFrame)
 				border = new Insets(SpriteSheet.boxWidth);
-			else {
+			else
 				border = new Insets();
+			
+			Insets titleB = new Insets();
 				
-				// set title insets
-				if (menu.title.length() > 0 && titlePos != RelPos.CENTER) {
-					RelPos c = titlePos;
-					if (c.xIndex == 0)
-						border.left += titleDim.width;//Font.textWidth(c == RelPos.LEFT ? " " : menu.title);
-					if (c.xIndex == 2)
-						border.right += titleDim.width;//Font.textWidth(c == RelPos.RIGHT ? " " : menu.title);
-					if (c.yIndex == 0)
-						border.top += titleDim.height;//Font.textHeight();
-					if (c.yIndex == 2)
-						border.bottom += titleDim.height;//Font.textHeight();
-				}
+			// set title insets
+			if (menu.title.length() > 0 && titlePos != RelPos.CENTER) {
+				RelPos c = titlePos;
+				if (c.xIndex == 0)
+					titleB.left += titleDim.width;//Font.textWidth(c == RelPos.LEFT ? " " : menu.title);
+				if (c.xIndex == 2)
+					titleB.right += titleDim.width;//Font.textWidth(c == RelPos.RIGHT ? " " : menu.title);
+				if (c.yIndex == 0)
+					titleB.top += titleDim.height;//Font.textHeight();
+				if (c.yIndex == 2)
+					titleB.bottom += titleDim.height;//Font.textHeight();
 			}
 			
+			border = border.addInsets(titleB);
 			
 			// I have anchor and menu's relative position to it, and may or may not have size.
 			Dimension entrySize;
@@ -439,9 +462,23 @@ public class Menu {
 			// based on the menu centering, and the anchor, determine the upper-left point from which to draw the menu.
 			menu.bounds = new Rectangle(menuPos.positionRect(menuSize, anchor), menuSize); // reset to a value that is actually useful to the menu
 			
+			/*// FIX-ME - FAILING
+			if(menu.entryPos.xIndex == 0 && menu.hasFrame) {
+				System.out.println("adding extra");
+				border.left += SpriteSheet.boxWidth;
+			}*/
+			
 			menu.entryBounds = border.subtractInsets(menu.bounds);
 			
 			menu.titleLoc = titlePos.positionRect(titleDim, menu.bounds);
+			
+			/*if(Game.debug && "inventory".equalsIgnoreCase(menu.title)) {
+				Insets titleSpace = new Insets();
+				System.out.println("menu entry bounds before: " + menu.entryBounds);
+				menu.entryBounds = border.subtractInsets(new Rectangle(menu.titleLoc, titleDim));
+				System.out.println("menu entry bounds after: " + menu.entryBounds);
+				//menu.entryBounds.translate(titleDim.width, titleDim.height);
+			}*/
 			
 			// set the menu title color
 			if(menu.title.length() > 0) {

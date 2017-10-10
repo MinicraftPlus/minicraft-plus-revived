@@ -196,6 +196,12 @@ public class Game {
 	// Sets the current menu.
 	public static void setMenu(Display display) {
 		Display parent = newMenu;
+		
+		if(newMenu != null)
+			newMenu.onExit();
+		
+		if(debug) System.out.println("setting menu from " + newMenu + " to " + display);
+		
 		newMenu = display;
 		
 		if(newMenu != null)
@@ -205,6 +211,7 @@ public class Game {
 	public static void exitMenu() {
 		if(newMenu == null) return; // no action required; cannot exit from no menu
 		newMenu.onExit();
+		if(debug) System.out.println("exiting menu from " + newMenu + " to " + newMenu.getParent());
 		newMenu = newMenu.getParent();
 	}
 	
@@ -789,10 +796,12 @@ public class Game {
 				renderDebugInfo();
 			}
 			else {
+				//if(debug) System.out.println("rendering level");
 				renderLevel();
 				renderGui();
 			}
-		}
+		}// else if(debug)
+			//System.out.println("not ready to render");
 		
 		if (menu != null) // renders menu, if present.
 			menu.render(screen);

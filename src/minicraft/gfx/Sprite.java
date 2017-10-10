@@ -93,12 +93,12 @@ public class Sprite {
 		return values;
 	}
 	
-	public void render(Screen screen, int lvlx, int lvly) { render(screen, lvlx, lvly, color); }
-	public void render(Screen screen, int lvlx, int lvly, int color) {
-		/// here, x and y are entity coordinates, I think.
+	public void render(Screen screen, int x, int y) { render(screen, x, y, color); }
+	public void render(Screen screen, int x, int y, int color) {
+		/// here, x and y are screen coordinates.
 		
 		for(int row = 0; row < spritePixels.length; row++) { // loop down through each row
-			renderRow(row, screen, lvlx, lvly + row*8, color);
+			renderRow(row, screen, x, y + row*8, color);
 		}
 	}
 	
