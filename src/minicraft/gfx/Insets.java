@@ -13,17 +13,17 @@ public class Insets {
 		this.bottom = bottom;
 	}
 	
-	public Rectangle addInsets(Rectangle r) {
+	public Rectangle addTo(Rectangle r) {
 		return new Rectangle(r.getLeft()-left, r.getTop()-top, r.getRight()+right, r.getBottom()+bottom, Rectangle.CORNERS);
 	}
-	public Rectangle subtractInsets(Rectangle r) {
+	public Rectangle subtractFrom(Rectangle r) {
 		return new Rectangle(r.getLeft()+left, r.getTop()+top, r.getRight()-right, r.getBottom()-bottom, Rectangle.CORNERS);
 	}
 	
-	public Dimension addInsets(Dimension d) {
+	public Dimension addTo(Dimension d) {
 		return new Dimension(d.width + left + right, d.height + top + bottom);
 	}
-	public Dimension subtractInsets(Dimension d) {
+	public Dimension subtractFrom(Dimension d) {
 		return new Dimension(d.width - left - right, d.height - top - bottom);
 	}
 	

@@ -161,6 +161,8 @@ public class Menu {
 		doScroll();
 	}
 	
+	private boolean pressed(InputHandler input, String key) { return input.getKey(key).clicked; }
+	
 	private void doScroll() {
 		// check if dispSelection is past padding point, and if so, bring it back in
 		
@@ -274,6 +276,7 @@ public class Menu {
 		private boolean setSelectable = false;
 		
 		@NotNull private RelPos titlePos = RelPos.TOP;
+		//@NotNull private RelPos titlePos = RelPos.LEFT;
 		private boolean fullTitleColor = false, setTitleColor = false;
 		private int titleCol = 550, frameFillCol = 5, frameEdgeStroke = 1, frameEdgeFill = 445;
 		
@@ -400,7 +403,7 @@ public class Menu {
 				border = new Insets();
 			
 			Insets titleB = new Insets();
-				
+			
 			// set title insets
 			if (menu.title.length() > 0 && titlePos != RelPos.CENTER) {
 				RelPos c = titlePos;
@@ -415,6 +418,9 @@ public class Menu {
 			}
 			
 			border = border.addInsets(titleB);
+			
+			if(!menu.hasFrame) // provide that spacing it the frame doesn't
+				border = border.addInsets(titleB);
 			
 			// I have anchor and menu's relative position to it, and may or may not have size.
 			Dimension entrySize;
@@ -449,10 +455,10 @@ public class Menu {
 					entrySize = new Dimension(width, Math.min(height, maxHeight));
 				}
 				
-				menuSize = border.addInsets(entrySize);
+				menuSize = border.addTo(entrySize);
 			}
 			else // menuSize was set manually
-				entrySize = border.subtractInsets(menuSize);
+				entrySize = border.subtractFrom(menuSize);
 			
 			
 			// set default max display length (needs size first)
@@ -468,14 +474,14 @@ public class Menu {
 				border.left += SpriteSheet.boxWidth;
 			}*/
 			
-			menu.entryBounds = border.subtractInsets(menu.bounds);
+			menu.entryBounds = border.subtractFrom(menu.bounds);
 			
 			menu.titleLoc = titlePos.positionRect(titleDim, menu.bounds);
 			
 			/*if(Game.debug && "inventory".equalsIgnoreCase(menu.title)) {
 				Insets titleSpace = new Insets();
 				System.out.println("menu entry bounds before: " + menu.entryBounds);
-				menu.entryBounds = border.subtractInsets(new Rectangle(menu.titleLoc, titleDim));
+				menu.entryBounds = border.subtractFrom(new Rectangle(menu.titleLoc, titleDim));
 				System.out.println("menu entry bounds after: " + menu.entryBounds);
 				//menu.entryBounds.translate(titleDim.width, titleDim.height);
 			}*/

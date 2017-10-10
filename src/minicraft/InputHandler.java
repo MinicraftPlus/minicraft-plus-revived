@@ -73,6 +73,7 @@ public class InputHandler implements /*MouseListener, */KeyListener {
 	private HashMap<String, String> keymap; // The symbolic map of actions to physical key names.
 	private HashMap<String, Key> keyboard; // The actual map of key names to Key objects.
 	private String lastKeyTyped = ""; // Used for things like typing world names.
+	private String keyTypedBuffer = ""; // used to store the last key typed before putting it into the main var during tick().
 	
 	// mouse stuff that's never used
 	/*public List<Mouse> mouse = new ArrayList<>();
@@ -136,6 +137,8 @@ public class InputHandler implements /*MouseListener, */KeyListener {
 	/** Processes each key one by one, in keyboard. */
 	public void tick() {
 		//ticks++;
+		lastKeyTyped = keyTypedBuffer;
+		keyTypedBuffer = "";
 		synchronized ("lock") {
 			for (Key key: keyboard.values())
 				key.tick(); //call tick() for each key.
@@ -400,7 +403,7 @@ public class InputHandler implements /*MouseListener, */KeyListener {
 	public void keyReleased(KeyEvent ke) { toggle(ke.getExtendedKeyCode(), false); }
 	public void keyTyped(KeyEvent ke) {
 		//stores the last character typed
-		lastKeyTyped = String.valueOf(ke.getKeyChar());
+		keyTypedBuffer = String.valueOf(ke.getKeyChar());
 	}
 	
 	/*
