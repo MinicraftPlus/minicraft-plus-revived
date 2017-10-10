@@ -22,10 +22,10 @@ public class InventoryMenu extends Menu {
 		return entries;
 	}
 	
-	private static RecipeEntry[] getRecipeEntries(List<Recipe> recipes) {
-		RecipeEntry[] entries = new RecipeEntry[recipes.size()];
-		for(int i = 0; i < recipes.size(); i++) {
-			entries[i] = new RecipeEntry(recipes.get(i));
+	private static RecipeEntry[] getRecipeEntries(Recipe[] recipes) {
+		RecipeEntry[] entries = new RecipeEntry[recipes.length];
+		for(int i = 0; i < recipes.length; i++) {
+			entries[i] = new RecipeEntry(recipes[i]);
 		}
 		
 		return entries;
@@ -57,7 +57,13 @@ public class InventoryMenu extends Menu {
 		);
 	}
 	
-	public InventoryMenu(List<Recipe> recipes, int fillCol, int edgeStrokeCol, int edgeFillCol) {
+	public InventoryMenu(Recipe[] recipes) {
+		super(getBuilder()
+			.setEntries(getRecipeEntries(recipes))
+			.createMenu()
+		);
+	}
+	public InventoryMenu(Recipe[] recipes, int fillCol, int edgeStrokeCol, int edgeFillCol) {
 		//super(data, 9, 1, frames);
 		super(getBuilder()
 			.setEntries(getRecipeEntries(recipes))
@@ -68,5 +74,10 @@ public class InventoryMenu extends Menu {
 	
 	public Item getSelectedItem() {
 		return ((ItemEntry)getCurEntry()).getItem();
+	}
+	
+	void refreshCanCraft() {
+		// TODO here, re-check "can craft" to set all the colors for all the items
+		
 	}
 }

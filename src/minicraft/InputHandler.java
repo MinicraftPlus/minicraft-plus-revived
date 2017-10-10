@@ -109,10 +109,10 @@ public class InputHandler implements /*MouseListener, */KeyListener {
 		keymap.put("SELECT", "ENTER");
 		keymap.put("EXIT", "ESCAPE");
 		
-		keymap.put("ATTACK", "C|SPACE"); //attack action references "C" key
-		keymap.put("MENU", "X|ENTER"); //and so on... menu does various things.
-		keymap.put("CRAFT", "Z"); // open/close personal crafting window.
-		keymap.put("PICKUP", "V"); // pickup torches / furniture; this replaces the power glove.
+		keymap.put("ATTACK", "C|SPACE|ENTER"); //attack action references "C" key
+		keymap.put("MENU", "X|E"); //and so on... menu does various things.
+		keymap.put("CRAFT", "Z|SHIFT-E"); // open/close personal crafting window.
+		keymap.put("PICKUP", "V|P"); // pickup torches / furniture; this replaces the power glove.
 		keymap.put("DROP-ONE", "Q"); // drops the item in your hand, or selected in your inventory, by ones; it won't drop an entire stack
 		keymap.put("DROP-STACK", "SHIFT-Q"); // drops the item in your hand, or selected in your inventory, entirely; even if it's a stack.
 		

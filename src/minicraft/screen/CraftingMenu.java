@@ -4,11 +4,13 @@ import minicraft.InputHandler;
 import minicraft.entity.Player;
 import minicraft.gfx.Color;
 import minicraft.gfx.Font;
+import minicraft.gfx.Point;
 import minicraft.gfx.Screen;
 import minicraft.gfx.SpriteSheet;
 import minicraft.item.Item;
 import minicraft.item.Items;
 import minicraft.item.Recipe;
+import minicraft.screen.entry.ItemListing;
 import minicraft.screen.entry.ListEntry;
 import minicraft.screen.entry.RecipeEntry;
 
@@ -16,6 +18,9 @@ public class CraftingMenu extends Display {
 	
 	private Player player;
 	private Recipe[] recipes;
+	
+	private InventoryMenu recipeMenu;
+	private Menu.Builder itemCountMenu, costsMenu;
 	
 	private static RecipeEntry[] getRecipeList(Recipe[] recipes) {
 		RecipeEntry[] entries = new RecipeEntry[recipes.length];
@@ -28,15 +33,48 @@ public class CraftingMenu extends Display {
 	}
 	
 	
-	public CraftingMenu(Recipe[] recipes, Player player) {
+	public CraftingMenu(Recipe[] recipes, String title, Player player) {
+		ItemListing itemCount = new ItemListing(Items.get("unknown"), String.valueOf(getCurItemCount()));
+		
+		recipeMenu = new InventoryMenu(recipes);
+		
+		itemCountMenu = new Menu.Builder(true, 0, RelPos.LEFT, itemCount)
+			.setTitle("Have:")
+			.setPositioning(new Point(recipeMenu.getBounds().getRight()+SpriteSheet.boxWidth, recipeMenu.getBounds().getTop()), RelPos.BOTTOM_RIGHT);
+		
+		costsMenu = new Menu.Builder(true, 0, RelPos.LEFT, getCurItemCosts())
+			.setPositioning(new Point(itemCountMenu.createMenu().getBounds().getLeft(), recipeMenu.getBounds().getBottom()), RelPos.TOP_RIGHT);
+		
+		menus = new Menu[] {recipeMenu, itemCountMenu.createMenu(), costsMenu.createMenu()};
+		
 		this.recipes = recipes;
 		this.player = player;
+		
+		refreshData();
+	}
+	
+	private void refreshData() {
+		menus[2] = costsMenu
+			.setEntries(getCurItemCosts())
+			.createMenu();
+		
+		menus[1].updateSelectedEntry(new ItemListing(Items.get("unknown"), String.valueOf(getCurItemCount())));
+		
+		recipeMenu.refreshCanCraft();
 	}
 	
 	/*@Override
 	public Menu getMenu() {
 		return new ScrollingMenu(this, 9, 1, new Frame("Crafting", new Rectangle(1, 1, 22, 11, Rectangle.CORNERS)));
 	}*/
+	
+	private int getCurItemCount() {
+		return 0;
+	}
+	
+	private ItemListing[] getCurItemCosts() {
+		return new ItemListing[0];
+	}
 	
 	//@Override
 	public ListEntry[] getEntries() {
