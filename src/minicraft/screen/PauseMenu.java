@@ -20,7 +20,6 @@ public class PauseMenu extends Display {
 			new BlankEntry(),
 			new SelectEntry("Return to Game", () -> Game.setMenu(null)),
 			new SelectEntry("Options", () -> Game.setMenu(new OptionsMenu()))
-			//new SelectEntry("Change Key Bindings", () -> Game.setMenu(new KeyInputMenu()))
 			));
 		
 		if(!Game.ISONLINE)
@@ -37,7 +36,6 @@ public class PauseMenu extends Display {
 				else
 					Game.server.saveWorld();
 			}),
-			//new SelectEntry("Load Game", () -> Game.setMenu(new WorldSelectMenu())),
 			new SelectEntry("Main Menu", () -> Game.setMenu(new TitleMenu())),
 			
 			new BlankEntry(),
@@ -58,8 +56,6 @@ public class PauseMenu extends Display {
 			
 			msgBuilder.setEntries(new StringEntry(""))*/
 		};
-		
-		if(Game.debug) System.out.println("entry length: " + entries.size());
 	}
 	
 	@Override

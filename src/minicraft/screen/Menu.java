@@ -15,6 +15,7 @@ import minicraft.gfx.Point;
 import minicraft.gfx.Rectangle;
 import minicraft.gfx.Screen;
 import minicraft.gfx.SpriteSheet;
+import minicraft.screen.entry.BlankEntry;
 import minicraft.screen.entry.ListEntry;
 
 public class Menu {
@@ -76,7 +77,7 @@ public class Menu {
 		
 		if(padding < 0) padding = 0;
 		if(padding > 1) padding = 1;
-		this.padding = Math.round(padding * displayLength / 2);
+		this.padding = (float)Math.ceil(padding * displayLength / 2);
 		
 		if(entries.size() == 0) {
 			selection = 0;
@@ -97,10 +98,10 @@ public class Menu {
 			} while (!entries.get(selection).isSelectable() && selection != prevSel);
 		}
 		
+		dispSelection = selection;
 		dispSelection = Math.min(dispSelection, displayLength-1);
 		dispSelection = Math.max(0, dispSelection);
 		
-		offset = selection - dispSelection;
 		doScroll();
 	}
 	
@@ -161,7 +162,7 @@ public class Menu {
 		doScroll();
 	}
 	
-	private boolean pressed(InputHandler input, String key) { return input.getKey(key).clicked; }
+	//private boolean pressed(InputHandler input, String key) { return input.getKey(key).clicked; }
 	
 	private void doScroll() {
 		// check if dispSelection is past padding point, and if so, bring it back in
@@ -200,12 +201,15 @@ public class Menu {
 		int y = entryBounds.getTop();
 		for(int i = offset; i < Math.min(offset+displayLength, entries.size()); i++) {
 			ListEntry entry = entries.get(i);
-			Point pos = entryPos.positionRect(new Dimension(entry.getWidth(), ListEntry.getHeight()), new Rectangle(entryBounds.getLeft(), y, entryBounds.getWidth(), ListEntry.getHeight(), Rectangle.CORNER_DIMS));
-			entry.render(screen, pos.x, pos.y, i == selection);
-			if(i == selection && entry.isSelectable()) {
-				// draw the arrows
-				Font.draw("> ", screen, pos.x-Font.textWidth("> "), y, ListEntry.COL_SLCT);
-				Font.draw(" <", screen, pos.x+entry.getWidth(), y, ListEntry.COL_SLCT);
+			
+			if(!(entry instanceof BlankEntry)) {
+				Point pos = entryPos.positionRect(new Dimension(entry.getWidth(), ListEntry.getHeight()), new Rectangle(entryBounds.getLeft(), y, entryBounds.getWidth(), ListEntry.getHeight(), Rectangle.CORNER_DIMS));
+				entry.render(screen, pos.x, pos.y, i == selection);
+				if (i == selection && entry.isSelectable()) {
+					// draw the arrows
+					Font.draw("> ", screen, pos.x - Font.textWidth("> "), y, ListEntry.COL_SLCT);
+					Font.draw(" <", screen, pos.x + entry.getWidth(), y, ListEntry.COL_SLCT);
+				}
 			}
 			
 			y += ListEntry.getHeight() + spacing;
@@ -453,8 +457,12 @@ public class Menu {
 				entrySize = new Dimension();
 			} else if(menuSize == null) {
 				int width = 0;
-				for(ListEntry entry: menu.entries)
-					width = Math.max(width, entry.getWidth());
+				for(ListEntry entry: menu.entries) {
+					int entryWidth = entry.getWidth();
+					if(menu.isSelectable() && !entry.isSelectable())
+						entryWidth = Math.max(0, entryWidth - SpriteSheet.boxWidth * 4);
+					width = Math.max(width, entryWidth);
+				}
 				
 				if(menu.displayLength > 0) { // has been set; use to determine entry bounds
 					int height = (ListEntry.getHeight() + menu.spacing) * menu.displayLength - menu.spacing;
@@ -469,8 +477,8 @@ public class Menu {
 						maxHeight = anchor.y;
 					else if(menuPos.yIndex == 2)
 						maxHeight = Screen.h - anchor.y;
-					else // is centered; take the lowest value of the other two.
-						maxHeight = Math.max(anchor.y, Screen.h - anchor.y);
+					else // is centered; take the lowest value of the other two, and double it
+						maxHeight = Math.min(anchor.y, Screen.h - anchor.y) * 2;
 					
 					maxHeight -= border.top + border.bottom; // reserve border space
 					
