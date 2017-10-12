@@ -19,8 +19,8 @@ public class PauseMenu extends Display {
 		entries.addAll(Arrays.asList(
 			new BlankEntry(),
 			entryFactory("Return to Game", null),
-			entryFactory("Options", new OptionsMenu()),
-			entryFactory("Change Key Bindings", new KeyInputMenu())
+			entryFactory("Options", new OptionsMenu())
+			//entryFactory("Change Key Bindings", new KeyInputMenu())
 			));
 		
 		if(!Game.ISONLINE)
@@ -37,8 +37,10 @@ public class PauseMenu extends Display {
 				else
 					Game.server.saveWorld();
 			}),
-			entryFactory("Load Game", new WorldSelectMenu()),
+			//entryFactory("Load Game", new WorldSelectMenu()),
 			entryFactory("Main Menu", new TitleMenu()),
+			
+			new BlankEntry(),
 			
 			new StringEntry(Game.input.getMapping("up")+" and "+Game.input.getMapping("down")+" to Scroll", Color.GRAY),
 			new StringEntry(Game.input.getMapping("select")+": Choose", Color.GRAY)

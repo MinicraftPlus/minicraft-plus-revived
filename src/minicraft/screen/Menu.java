@@ -200,7 +200,7 @@ public class Menu {
 		int y = entryBounds.getTop();
 		for(int i = offset; i < Math.min(offset+displayLength, entries.size()); i++) {
 			ListEntry entry = entries.get(i);
-			Point pos = entryPos.positionRect(new Dimension(entry.getWidth(), entry.getHeight()), new Rectangle(bounds.getLeft(), y, bounds.getWidth(), entry.getHeight(), Rectangle.CORNER_DIMS));
+			Point pos = entryPos.positionRect(new Dimension(entry.getWidth(), ListEntry.getHeight()), new Rectangle(entryBounds.getLeft(), y, entryBounds.getWidth(), ListEntry.getHeight(), Rectangle.CORNER_DIMS));
 			entry.render(screen, pos.x, pos.y, i == selection);
 			if(i == selection && entry.isSelectable()) {
 				// draw the arrows
@@ -208,7 +208,7 @@ public class Menu {
 				Font.draw(" <", screen, pos.x+entry.getWidth(), y, ListEntry.COL_SLCT);
 			}
 			
-			y += entry.getHeight() + spacing;
+			y += ListEntry.getHeight() + spacing;
 		}
 	}
 	
@@ -219,7 +219,7 @@ public class Menu {
 		}
 		int height = 0;
 		for(ListEntry entry: entries)
-			height += entry.getHeight() + spacing;
+			height += ListEntry.getHeight() + spacing;
 		
 		if(height > 0)
 			height -= spacing;
@@ -248,18 +248,27 @@ public class Menu {
 	private void renderFrame(Screen screen) {
 		if(!hasFrame) return;
 		
-		for (int y = bounds.getTop(); y <= bounds.getBottom(); y += SpriteSheet.boxWidth) { // loop through the height of the bounds
-			for (int x = bounds.getLeft(); x <= bounds.getRight(); x += SpriteSheet.boxWidth) { // loop through the width of the bounds
+		int bottom = bounds.getBottom()-SpriteSheet.boxWidth;
+		int right = bounds.getRight()-SpriteSheet.boxWidth;
+		
+		for (int y = bounds.getTop(); y <= bottom; y += SpriteSheet.boxWidth) { // loop through the height of the bounds
+			for (int x = bounds.getLeft(); x <= right; x += SpriteSheet.boxWidth) { // loop through the width of the bounds
 				
-				boolean xend = x == bounds.getLeft() || x == bounds.getRight();
-				boolean yend = y == bounds.getTop() || y == bounds.getBottom();
+				boolean xend = x == bounds.getLeft() || x == right;
+				boolean yend = y == bounds.getTop() || y == bottom;
 				int spriteoffset = (xend && yend ? 0 : (yend ? 1 : 2)); // determines which sprite to use
-				int mirrors = ( x == bounds.getRight() ? 1 : 0 ) + ( y == bounds.getBottom() ? 2 : 0 ); // gets mirroring
+				int mirrors = ( x == right ? 1 : 0 ) + ( y == bottom ? 2 : 0 ); // gets mirroring
 				
 				int color = xend || yend ? frameEdgeColor : frameFillColor;//sideColor; // gets the color; slightly different in upper right corner, and middle is all blue.
 				
 				screen.render(x, y, spriteoffset + 13*32, color, mirrors);
+				
+				if(x < right && x + SpriteSheet.boxWidth > right)
+					x = right - SpriteSheet.boxWidth;
 			}
+			
+			if(y < bottom && y + SpriteSheet.boxWidth > bottom)
+				y = bottom - SpriteSheet.boxWidth;
 		}
 	}
 	
@@ -396,31 +405,48 @@ public class Menu {
 			
 			// find the area used by the title and/or frame, that can't be used by the entries
 			
+			/* Create an Insets instance, and do the following...
+			 * - if the menu is selectable, add 2 buffer spaces on the left and right, for the selection arrows.
+			 * - if the menu has a frame, then add one buffer space to all 4 sides
+			 * - if the menu has a title AND a frame, do nothing.
+			 * - if the menu has a title and NO frame, add two spaces to whatever side the title is on
+			 * 
+			 * Remember to set the title pos one space inside the left/right bounds, so it doesn't touch the frame corner.
+			 * 
+			 * Starting with the entry size figured out, add the insets to get the total size.
+			 * Starting with the menu size set, subtract the insets to get the entry size.
+			 * 
+			 * Position the menu based on the entries, then get the menu rect by adding the insets.
+			 * -- actually, nevermind, I'll just center with the title as well.
+			 */
+			
 			Insets border;
 			if(menu.hasFrame)
-				border = new Insets(SpriteSheet.boxWidth);
-			else
+				border = new Insets(SpriteSheet.boxWidth); // add frame insets
+			else {
 				border = new Insets();
-			
-			Insets titleB = new Insets();
-			
-			// set title insets
-			if (menu.title.length() > 0 && titlePos != RelPos.CENTER) {
-				RelPos c = titlePos;
-				if (c.xIndex == 0)
-					titleB.left += titleDim.width;//Font.textWidth(c == RelPos.LEFT ? " " : menu.title);
-				if (c.xIndex == 2)
-					titleB.right += titleDim.width;//Font.textWidth(c == RelPos.RIGHT ? " " : menu.title);
-				if (c.yIndex == 0)
-					titleB.top += titleDim.height;//Font.textHeight();
-				if (c.yIndex == 2)
-					titleB.bottom += titleDim.height;//Font.textHeight();
+				
+				// add title insets
+				if (menu.title.length() > 0 && titlePos != RelPos.CENTER) {
+					RelPos c = titlePos;
+					int space = SpriteSheet.boxWidth * 2;
+					//noinspection SuspiciousNameCombination
+					if (c.yIndex == 0)
+						border.top = space;
+					else if (c.yIndex == 2)
+						border.bottom = space;
+					else if (c.xIndex == 0) // must be center left
+						border.left = space;
+					else if (c.xIndex == 2) // must be center right
+						border.right = space;
+				}
 			}
 			
-			border = border.addInsets(titleB);
-			
-			if(!menu.hasFrame) // provide that spacing it the frame doesn't
-				border = border.addInsets(titleB);
+			if(menu.isSelectable()) {
+				// add spacing for selection cursors
+				border.left += SpriteSheet.boxWidth * 2;
+				border.right += SpriteSheet.boxWidth * 2;
+			}
 			
 			// I have anchor and menu's relative position to it, and may or may not have size.
 			Dimension entrySize;
@@ -434,13 +460,27 @@ public class Menu {
 					width = Math.max(width, entry.getWidth());
 				
 				if(menu.displayLength > 0) { // has been set; use to determine entry bounds
-					int height = (Font.textHeight() + menu.spacing) * menu.displayLength - menu.spacing;
+					/*ArrayList<Integer> heights = new ArrayList<>();
+					for(int i = 0; i < menu.entries.size()-menu.displayLength; i++) {
+						int height = 0;
+						for (int j = 0; j <= menu.displayLength; j++) {
+							height += ListEntry.getHeight();
+							if(j < menu.displayLength)
+								height += menu.spacing;
+						}
+						heights.add(height);
+					}
+					
+					int maxHeight = 0;
+					for(Integer h: heights)
+						maxHeight = Math.max(h, maxHeight);
+					*/
+					int height = (ListEntry.getHeight() + menu.spacing) * menu.displayLength - menu.spacing;
 					
 					entrySize = new Dimension(width, height);
 				}
 				else {
 					// no set size; just keep going to the edges of the screen
-					int height = (Font.textHeight() + menu.spacing) * menu.entries.size() - menu.spacing;
 					
 					int maxHeight;
 					if(menuPos.yIndex == 0) // anchor is lowest down coordinate (highest y value)
@@ -451,8 +491,53 @@ public class Menu {
 						maxHeight = Math.max(anchor.y, Screen.h - anchor.y);
 					
 					maxHeight -= border.top + border.bottom; // reserve border space
+					/*
+					ArrayList<Integer> heights = new ArrayList<>();
+					ArrayList<Integer> lengths = new ArrayList<>();
+					for(int i = 0; i < menu.entries.size(); i++) {
+						int height = 0;
+						for (int j = i; j < menu.entries.size(); j++) {
+							height += menu.entries.get(j).getHeight();
+							if(j < menu.entries.size()-1) {
+								int entryHeight = menu.spacing + menu.entries.get(j+1).getHeight();
+								if(height+entryHeight > maxHeight) {
+									lengths.add(j-i+1); // add the max length found
+									break;
+								} else
+									height += entryHeight;
+							}
+						}
+						heights.add(height); // add the height 
+					}
 					
-					entrySize = new Dimension(width, Math.min(height, maxHeight));
+					int height = 0;
+					for(Integer h: heights)
+						height = Math.max(h, height);
+					
+					int length = 0;
+					for(Integer l: lengths)
+						length = Math.max(l, length);
+					
+					menu.displayLength = length;
+					*/
+					int entryHeight = menu.spacing + ListEntry.getHeight();
+					int totalHeight = entryHeight * menu.entries.size() - menu.spacing;
+					maxHeight = ((maxHeight + menu.spacing) / entryHeight) * entryHeight - menu.spacing;
+					
+					/*for(int i = 0; i < menu.entries.size(); i++) {
+						if(i > 0) height += menu.spacing;
+						height += ListEntry.getHeight();
+						
+						if(i == menu.entries.size()-1) break;
+						int entryHeight = menu.spacing + ListEntry.getHeight();
+						
+						if(height+entryHeight > maxHeight) {
+							break;
+						} else
+							height += entryHeight;
+					}*/
+					
+					entrySize = new Dimension(width, Math.min(maxHeight, totalHeight));
 				}
 				
 				menuSize = border.addTo(entrySize);
@@ -463,28 +548,25 @@ public class Menu {
 			
 			// set default max display length (needs size first)
 			if(menu.displayLength <= 0 && menu.entries.size() > 0)
-				menu.displayLength = (entrySize.height + menu.spacing) / (Font.textHeight() + menu.spacing);
+				menu.displayLength = (entrySize.height + menu.spacing) / (ListEntry.getHeight() + menu.spacing);
 				
 			// based on the menu centering, and the anchor, determine the upper-left point from which to draw the menu.
 			menu.bounds = new Rectangle(menuPos.positionRect(menuSize, anchor), menuSize); // reset to a value that is actually useful to the menu
 			
-			/*// FIX-ME - FAILING
-			if(menu.entryPos.xIndex == 0 && menu.hasFrame) {
-				System.out.println("adding extra");
-				border.left += SpriteSheet.boxWidth;
-			}*/
-			
 			menu.entryBounds = border.subtractFrom(menu.bounds);
+			
+			/*if(Game.debug) {
+				System.out.println("display length: " + menu.displayLength);
+				System.out.println("menu bounds: " + menu.bounds);
+				System.out.println("entry bounds: " + menu.entryBounds);
+			}*/
 			
 			menu.titleLoc = titlePos.positionRect(titleDim, menu.bounds);
 			
-			/*if(Game.debug && "inventory".equalsIgnoreCase(menu.title)) {
-				Insets titleSpace = new Insets();
-				System.out.println("menu entry bounds before: " + menu.entryBounds);
-				menu.entryBounds = border.subtractFrom(new Rectangle(menu.titleLoc, titleDim));
-				System.out.println("menu entry bounds after: " + menu.entryBounds);
-				//menu.entryBounds.translate(titleDim.width, titleDim.height);
-			}*/
+			if(titlePos.xIndex == 0 && titlePos.yIndex != 1)
+				menu.titleLoc.x += SpriteSheet.boxWidth;
+			//if(titlePos.xIndex == 2 && titlePos.yIndex != 1)
+			//	menu.titleLoc.x -= SpriteSheet.boxWidth;
 			
 			// set the menu title color
 			if(menu.title.length() > 0) {

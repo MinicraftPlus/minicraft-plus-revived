@@ -33,4 +33,8 @@ public class Insets {
 	public Insets subtractInsets(Insets s) {
 		return new Insets(left-s.left, top-s.top, right-s.right, bottom-s.bottom);
 	}
+	
+	public String toString() {
+		return super.toString()+"[left="+left+",top="+top+",right="+right+",bottom="+bottom+"]";
+	}
 }

@@ -1,7 +1,6 @@
 package minicraft.screen.entry;
 
 import minicraft.InputHandler;
-import minicraft.gfx.Font;
 import minicraft.gfx.Screen;
 import minicraft.gfx.SpriteSheet;
 
@@ -15,11 +14,6 @@ public class BlankEntry implements ListEntry {
 	@Override
 	public int getWidth() {
 		return SpriteSheet.boxWidth;
-	}
-	
-	@Override
-	public int getHeight() {
-		return Font.textHeight();
 	}
 	
 	@Override

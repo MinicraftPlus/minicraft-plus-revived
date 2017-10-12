@@ -21,7 +21,7 @@ public interface ListEntry {
 		return Font.textWidth(toString());
 	}
 	
-	default int getHeight() {
+	static int getHeight() {
 		return Font.textHeight();
 	}
 	
