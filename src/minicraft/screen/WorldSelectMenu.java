@@ -145,11 +145,5 @@ public class WorldSelectMenu extends Display {
 		}
 		
 		Font.drawCentered(title, screen, 0, color);
-		
-		/*Font.drawCentered("C to copy", screen, Screen.h-26-8-8-8, Color.get(-1, Action.Copy.color));
-		Font.drawCentered("R to rename", screen, Screen.h-26-8-8, Color.get(-1, Action.Rename.color));
-		Font.drawCentered("D to delete", screen, Screen.h-26-8, Color.get(-1, Action.Delete.color));
-		//Font.drawCentered("B to backup", screen, Screen.h-26, Color.get(-1, Action.Backup.color));
-		*/
 	}
 }

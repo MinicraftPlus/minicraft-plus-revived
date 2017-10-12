@@ -40,7 +40,6 @@ public class InventoryMenu extends Menu {
 	}
 	
 	public InventoryMenu(List<Item> items) {
-		//super(data, 9, 1, frames);
 		super(getBuilder()
 			.setEntries(getEntries(items))
 			.createMenu()

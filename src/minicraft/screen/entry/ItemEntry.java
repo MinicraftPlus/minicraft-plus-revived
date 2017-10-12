@@ -24,7 +24,6 @@ public class ItemEntry implements ListEntry {
 	}
 	
 	// if you add to the length of the string, and therefore the width of the entry, then it will actually move the entry RIGHT in the inventory, instead of the intended left, because it is auto-positioned to the left side.
-	// However, one space is necessary, for the icon.
 	@Override
 	public String toString() {
 		return item.getDisplayName();

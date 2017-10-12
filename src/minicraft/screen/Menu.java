@@ -415,9 +415,6 @@ public class Menu {
 			 * 
 			 * Starting with the entry size figured out, add the insets to get the total size.
 			 * Starting with the menu size set, subtract the insets to get the entry size.
-			 * 
-			 * Position the menu based on the entries, then get the menu rect by adding the insets.
-			 * -- actually, nevermind, I'll just center with the title as well.
 			 */
 			
 			Insets border;
@@ -460,21 +457,6 @@ public class Menu {
 					width = Math.max(width, entry.getWidth());
 				
 				if(menu.displayLength > 0) { // has been set; use to determine entry bounds
-					/*ArrayList<Integer> heights = new ArrayList<>();
-					for(int i = 0; i < menu.entries.size()-menu.displayLength; i++) {
-						int height = 0;
-						for (int j = 0; j <= menu.displayLength; j++) {
-							height += ListEntry.getHeight();
-							if(j < menu.displayLength)
-								height += menu.spacing;
-						}
-						heights.add(height);
-					}
-					
-					int maxHeight = 0;
-					for(Integer h: heights)
-						maxHeight = Math.max(h, maxHeight);
-					*/
 					int height = (ListEntry.getHeight() + menu.spacing) * menu.displayLength - menu.spacing;
 					
 					entrySize = new Dimension(width, height);
@@ -491,51 +473,10 @@ public class Menu {
 						maxHeight = Math.max(anchor.y, Screen.h - anchor.y);
 					
 					maxHeight -= border.top + border.bottom; // reserve border space
-					/*
-					ArrayList<Integer> heights = new ArrayList<>();
-					ArrayList<Integer> lengths = new ArrayList<>();
-					for(int i = 0; i < menu.entries.size(); i++) {
-						int height = 0;
-						for (int j = i; j < menu.entries.size(); j++) {
-							height += menu.entries.get(j).getHeight();
-							if(j < menu.entries.size()-1) {
-								int entryHeight = menu.spacing + menu.entries.get(j+1).getHeight();
-								if(height+entryHeight > maxHeight) {
-									lengths.add(j-i+1); // add the max length found
-									break;
-								} else
-									height += entryHeight;
-							}
-						}
-						heights.add(height); // add the height 
-					}
 					
-					int height = 0;
-					for(Integer h: heights)
-						height = Math.max(h, height);
-					
-					int length = 0;
-					for(Integer l: lengths)
-						length = Math.max(l, length);
-					
-					menu.displayLength = length;
-					*/
 					int entryHeight = menu.spacing + ListEntry.getHeight();
 					int totalHeight = entryHeight * menu.entries.size() - menu.spacing;
 					maxHeight = ((maxHeight + menu.spacing) / entryHeight) * entryHeight - menu.spacing;
-					
-					/*for(int i = 0; i < menu.entries.size(); i++) {
-						if(i > 0) height += menu.spacing;
-						height += ListEntry.getHeight();
-						
-						if(i == menu.entries.size()-1) break;
-						int entryHeight = menu.spacing + ListEntry.getHeight();
-						
-						if(height+entryHeight > maxHeight) {
-							break;
-						} else
-							height += entryHeight;
-					}*/
 					
 					entrySize = new Dimension(width, Math.min(maxHeight, totalHeight));
 				}
@@ -555,18 +496,12 @@ public class Menu {
 			
 			menu.entryBounds = border.subtractFrom(menu.bounds);
 			
-			/*if(Game.debug) {
-				System.out.println("display length: " + menu.displayLength);
-				System.out.println("menu bounds: " + menu.bounds);
-				System.out.println("entry bounds: " + menu.entryBounds);
-			}*/
-			
 			menu.titleLoc = titlePos.positionRect(titleDim, menu.bounds);
 			
 			if(titlePos.xIndex == 0 && titlePos.yIndex != 1)
 				menu.titleLoc.x += SpriteSheet.boxWidth;
-			//if(titlePos.xIndex == 2 && titlePos.yIndex != 1)
-			//	menu.titleLoc.x -= SpriteSheet.boxWidth;
+			if(titlePos.xIndex == 2 && titlePos.yIndex != 1)
+				menu.titleLoc.x -= SpriteSheet.boxWidth;
 			
 			// set the menu title color
 			if(menu.title.length() > 0) {
