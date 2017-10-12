@@ -23,10 +23,10 @@ public class KeyInputMenu extends Display {
 	private static KeyInputEntry[] getEntries() {
 		String[] prefs = Game.input.getKeyPrefs();
 		KeyInputEntry[] entries = new KeyInputEntry[prefs.length];
-		
+		if(Game.debug) System.out.println("making entries...");
 		for (int i = 0; i < entries.length; i++)
 			entries[i] = new KeyInputEntry(prefs[i]);
-		
+		if(Game.debug) System.out.println("made entries");
 		return entries;
 	}
 	
@@ -41,6 +41,8 @@ public class KeyInputMenu extends Display {
 			.setShouldRender(false)
 			.setSelectable(false);
 		
+		if(Game.debug) System.out.println("making menus");
+		
 		menus = new Menu[] {
 			builder.createMenu(),
 			
@@ -53,6 +55,8 @@ public class KeyInputMenu extends Display {
 				.setTitle("Confirm Action")
 				.createMenu()
 		};
+		
+		if(Game.debug) System.out.println("menus made");
 		
 		listeningForBind = false;
 		confirmReset = false;

@@ -1,6 +1,8 @@
 package minicraft.screen;
 
+import minicraft.Game;
 import minicraft.Settings;
+import minicraft.screen.entry.SelectEntry;
 
 public class OptionsMenu extends Display {
 	
@@ -10,7 +12,7 @@ public class OptionsMenu extends Display {
 				Settings.getEntry("sound"),
 				Settings.getEntry("autosave"),
 				Settings.getEntry("skinon"),
-				entryFactory("Change Key Bindings", new KeyInputMenu())
+				new SelectEntry("Change Key Bindings", () -> Game.setMenu(new KeyInputMenu()))
 			)
 			.setTitle("Options")
 			.createMenu()

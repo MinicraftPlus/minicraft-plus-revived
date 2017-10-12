@@ -22,8 +22,8 @@ public class DeadMenu extends Display {
 		ArrayList<ListEntry> entries = new ArrayList<>();
 		entries.add(new StringEntry("Time: " + InfoDisplay.getTimeString()));
 		entries.add(new StringEntry("Score: " + Game.player.score));
-		entries.add(entryFactory("Quit", new TitleMenu()));
-		if (!Settings.get("mode").equals("hardcore")) {
+		entries.add(new SelectEntry("Quit", () -> Game.setMenu(new TitleMenu())));
+		if(!Settings.get("mode").equals("hardcore")) {
 			entries.add(new SelectEntry("Respawn", () -> {
 				Game.resetGame();
 				if (!Game.isValidClient())

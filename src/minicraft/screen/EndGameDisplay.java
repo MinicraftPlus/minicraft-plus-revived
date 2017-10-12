@@ -13,6 +13,7 @@ import minicraft.gfx.Screen;
 import minicraft.item.Items;
 import minicraft.saveload.Save;
 import minicraft.screen.entry.ListEntry;
+import minicraft.screen.entry.SelectEntry;
 import minicraft.screen.entry.StringEntry;
 
 public class EndGameDisplay extends Display {
@@ -55,7 +56,7 @@ public class EndGameDisplay extends Display {
 		// add any unlocks
 		entries.addAll(Arrays.asList(getAndWriteUnlocks()));
 		
-		entries.add(entryFactory("Exit to Menu", new TitleMenu()));
+		entries.add(new SelectEntry("Exit to Menu", () -> Game.setMenu(new TitleMenu())));
 		
 		//title = "Game Over!" + (Game.isMode("score") ? " (" + ModeMenu.getSelectedTime() + ")" : "");
 		menus = new Menu[] {

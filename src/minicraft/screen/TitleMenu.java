@@ -2,6 +2,7 @@ package minicraft.screen;
 
 import java.util.Random;
 
+import com.sun.istack.internal.NotNull;
 import minicraft.Game;
 import minicraft.InputHandler;
 import minicraft.entity.RemotePlayer;
@@ -22,16 +23,16 @@ public class TitleMenu extends Display {
 	
 	public TitleMenu() {
 		super(true, false, new Menu.Builder(false, 2, RelPos.CENTER,
-				entryFactory("Play", displayFactory(
-					entryFactory("Load World", new WorldSelectMenu()),
-					entryFactory("New World", new WorldGenMenu())
-				)),
-				entryFactory("Join Online World", new MultiplayerMenu()),
-				entryFactory("Options", new OptionsMenu()),
-				entryFactory("Help", displayFactory(
-					entryFactory("Instructions", new BookDisplay(Displays.instructions)),
-					entryFactory("About", new BookDisplay(Displays.about))
-				)),
+				displayFactory("Play",
+					new SelectEntry("Load World", () -> Game.setMenu(new WorldSelectMenu())),
+					new SelectEntry("New World", () -> Game.setMenu(new WorldGenMenu()))
+				),
+				new SelectEntry("Join Online World", () -> Game.setMenu(new MultiplayerMenu())),
+				new SelectEntry("Options", () -> Game.setMenu(new OptionsMenu())),
+				displayFactory("Help",
+					new SelectEntry("Instructions", () -> Game.setMenu(new BookDisplay(Displays.instructions))),
+					new SelectEntry("About", () -> Game.setMenu(new BookDisplay(Displays.about)))
+				),
 				new SelectEntry("Quit", () -> System.exit(0))
 			)
 			.setPositioning(new Point(Game.WIDTH/2, Game.HEIGHT*3/5), RelPos.CENTER)
@@ -68,8 +69,9 @@ public class TitleMenu extends Display {
 		}
 	}
 	
-	private static Display displayFactory(ListEntry... entries) {
-		return new Display(true, new Menu.Builder(false, 2, RelPos.CENTER, entries).createMenu());
+	@NotNull
+	private static SelectEntry displayFactory(String entryText, ListEntry... entries) {
+		return new SelectEntry(entryText, () -> Game.setMenu(new Display(true, new Menu.Builder(false, 2, RelPos.CENTER, entries).createMenu())));
 	}
 	
 	@Override
