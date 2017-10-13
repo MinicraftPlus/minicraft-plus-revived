@@ -364,7 +364,7 @@ public class Game {
 				
 				Level level = levels[currentLevel]; // sets level to the current level (3; surface)
 				pastDay1 = false;
-				player.findStartPos(level); // finds the start level for the player
+				player.findStartPos(level, WorldGenMenu.getSeed()); // finds the start level for the player
 				level.add(player);
 			}
 			

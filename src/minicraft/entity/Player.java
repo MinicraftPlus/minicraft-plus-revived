@@ -17,6 +17,7 @@ import minicraft.level.Level;
 import minicraft.level.tile.Tile;
 import minicraft.level.tile.Tiles;
 import minicraft.saveload.Save;
+import minicraft.screen.CraftingMenu;
 import minicraft.screen.InfoDisplay;
 import minicraft.screen.InventoryMenu;
 import minicraft.screen.LoadingDisplay;
@@ -361,8 +362,8 @@ public class Player extends Mob {
 				Game.setMenu(new PlayerInvMenu(this));
 			if (input.getKey("pause").clicked)
 				Game.setMenu(new PauseMenu());
-//			if (input.getKey("craft").clicked && !use())
-//				Game.setMenu(new CraftingMenu(Recipes.craftRecipes, this, true));
+			if (input.getKey("craft").clicked && !use())
+				Game.setMenu(new CraftingMenu(Recipes.craftRecipes, "Crafting", this));
 			if (input.getKey("sethome").clicked) setHome();
 			if (input.getKey("home").clicked && !Bed.inBed) goHome();
 			
@@ -712,6 +713,10 @@ public class Player extends Mob {
 	}
 	
 	/** Finds a start position for the player to start in. */
+	public boolean findStartPos(Level level, long spawnSeed) {
+		random.setSeed(spawnSeed);
+		return findStartPos(level);
+	}
 	public boolean findStartPos(Level level) {
 		while (true) { // will loop until it returns
 			// gets coordinates of a random tile (in tile coordinates)
