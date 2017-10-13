@@ -93,13 +93,13 @@ public class EndGameDisplay extends Display {
 		int scoreTime = (int)Settings.get("scoretime");
 		ArrayList<Integer> unlocks = new ArrayList<>();
 		
-		if(scoreTime == 20 && !Settings.getEntry("scoretime").hasValue(10) && finalscore > 1000) {
+		if(scoreTime == 20 && !Settings.getEntry("scoretime").valueIs(10) && finalscore > 1000) {
 			unlocks.add(10);
 			// TODO implement hidden options in ArrayEntries, or allow options to be added
 			// Settings.getEntry("scoretime").addValue(10)
 		}
 		
-		if(scoreTime == 60 && !Settings.getEntry("scoretime").hasValue(120) && finalscore > 100000) {
+		if(scoreTime == 60 && !Settings.getEntry("scoretime").valueIs(120) && finalscore > 100000) {
 			unlocks.add(120);
 			// Settings.getEntry("scoretime").addValue(120)
 		}

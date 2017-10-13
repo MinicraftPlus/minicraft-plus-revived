@@ -12,7 +12,9 @@ public class Settings {
 	static {
 		options.put("diff", new ArrayEntry<>("Difficulty", "Easy", "Normal", "Hard"));
 		options.put("mode", new ArrayEntry<>("Game Mode", "Survival", "Creative", "Hardcore", "Score"));
-		options.put("scoretime", new ArrayEntry<>("Time (Score Mode)", /*10, */20, 40, 60/*, 120*/));
+		options.put("scoretime", new ArrayEntry<>("Time (Score Mode)", 10, 20, 40, 60, 120));
+		options.get("scoretime").setValueVisibility(10, false);
+		options.get("scoretime").setValueVisibility(120, false);
 		
 		options.put("sound", new BooleanEntry("Sound", true));
 		options.put("autosave", new BooleanEntry("Autosave", true));
@@ -41,7 +43,7 @@ public class Settings {
 	
 	// checks if the given option is set to the specified value
 	public static boolean hasValue(String option, Object value) {
-		return options.get(option.toLowerCase()).hasValue(value);
+		return options.get(option.toLowerCase()).valueIs(value);
 	}
 	
 	// sets the value of the given option name, to the given value, provided it is a valid value for that option.

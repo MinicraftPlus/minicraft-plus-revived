@@ -1,5 +1,7 @@
 package minicraft.screen.entry;
 
+import java.util.Arrays;
+
 import minicraft.InputHandler;
 import minicraft.Sound;
 import minicraft.gfx.Font;
@@ -12,6 +14,7 @@ public class ArrayEntry<T> extends ListEntry {
 	
 	private String label;
 	private T[] options;
+	private boolean[] optionVis;
 	
 	private int selection;
 	private boolean wrap;
@@ -35,6 +38,9 @@ public class ArrayEntry<T> extends ListEntry {
 		maxWidth = 0;
 		for(T option: options)
 			maxWidth = Math.max(maxWidth, Font.textWidth(option.toString()));
+		
+		optionVis = new boolean[options.length];
+		Arrays.fill(optionVis, true);
 	}
 	
 	public void setSelection(int idx) {
@@ -47,13 +53,7 @@ public class ArrayEntry<T> extends ListEntry {
 	}
 	
 	public void setValue(Object value) {
-		boolean areStrings = value instanceof String && options instanceof String[];
-		for(int i = 0; i < options.length; i++) {
-			if(areStrings && ((String)value).equalsIgnoreCase((String)options[i]) || options[i].equals(value)) {
-				setSelection(i);
-				break;
-			}
-		}
+		setSelection(getIndex(value)); // if it is -1, setSelection simply won't set the value.
 	}
 	
 	public String getLabel() { return label; }
@@ -61,12 +61,35 @@ public class ArrayEntry<T> extends ListEntry {
 	public int getSelection() { return selection; }
 	public T getValue() { return options[selection]; }
 	
-	public boolean hasValue(Object value) {
+	public boolean valueIs(Object value) {
 		if(value instanceof String && options instanceof String[])
 			return ((String)value).equalsIgnoreCase((String)getValue());
 		else
 			return getValue().equals(value);
 	}
+	
+	
+	private int getIndex(Object value) {
+		boolean areStrings = value instanceof String && options instanceof String[];
+		for(int i = 0; i < options.length; i++) {
+			if(areStrings && ((String)value).equalsIgnoreCase((String)options[i]) || options[i].equals(value)) {
+				return i;
+			}
+		}
+		
+		return -1;
+	}
+	
+	
+	public void setValueVisibility(Object value, boolean visible) {
+		int idx = getIndex(value);
+		if(idx >= 0) {
+			optionVis[idx] = visible;
+			if(idx == selection && !visible)
+				moveSelection(1);
+		}
+	}
+	
 	
 	@Override
 	public void tick(InputHandler input) {
@@ -78,20 +101,25 @@ public class ArrayEntry<T> extends ListEntry {
 		
 		if(prevSel != selection) {
 			Sound.select.play();
-			
-			//int diff = selected - prevSel;
+			moveSelection(selection - prevSel);
+		}
+	}
+	
+	private void moveSelection(int dir) {
+		// stuff for changing the selection, including skipping locked entries
+		int prevSel = selection;
+		int selection = this.selection;
+		do {
+			selection += dir;
 			
 			if(wrap) {
 				selection = selection % options.length;
-				while(selection < 0) selection += options.length;
+				if(selection < 0) selection = options.length - 1;
 			} else {
 				selection = Math.min(selection, options.length-1);
 				selection = Math.max(0, selection);
 			}
-			
-			// --stuff for locking mechanism, and skipping locked entries--
-			
-		}
+		} while(!optionVis[selection] && selection != prevSel);
 		
 		setSelection(selection);
 	}
