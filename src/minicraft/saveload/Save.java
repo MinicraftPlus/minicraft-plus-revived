@@ -109,19 +109,6 @@ public class Save {
 	}
 	
 	public static void writeToFile(String filename, String[] savedata, boolean isWorldSave) throws IOException {
-		//BufferedWriter bufferedWriter = null;
-		
-		/*String content = "";
-		for(String data: savedata) {
-			content += data + ",";
-		}
-		if(filename.contains("Level5")) content += ",";
-		*/
-		/*if(base64Encode) {
-			byte[] bytes = content.getBytes();
-			content = Base64.getEncoder().encodeToString(bytes);
-		}*/
-		
 		try (BufferedWriter bufferedWriter = new BufferedWriter(new FileWriter(filename))) {
 			//bufferedWriter.write(content);
 			for(int i = 0; i < savedata.length; i++) {
@@ -134,20 +121,7 @@ public class Save {
 				} else
 					bufferedWriter.write("\n");
 			}
-		}/* catch (IOException ex) {
-			throw ex;
-		}*//* finally {
-			try {
-				if(bufferedWriter != null) {
-					
-					
-					bufferedWriter.flush();
-					bufferedWriter.close();
-				}
-			} catch (IOException ex) {
-				ex.printStackTrace();
-			}
-		}*/
+		}
 	}
 	
 	public void writeGame(String filename) {
