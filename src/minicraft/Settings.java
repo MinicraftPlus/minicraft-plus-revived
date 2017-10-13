@@ -23,6 +23,11 @@ public class Settings {
 		
 		options.put("unlockedskin", new BooleanEntry("Wear Suit", false));
 		options.put("skinon", new BooleanEntry("Wear Suit", false));
+		
+		
+		options.get("mode").setChangeAction(value -> {
+			options.get("scoretime").setVisible("Score".equals(value));
+		});
 	}
 	
 	// returns the value of the specified option
