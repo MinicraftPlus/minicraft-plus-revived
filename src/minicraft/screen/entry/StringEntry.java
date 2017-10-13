@@ -6,7 +6,7 @@ import minicraft.gfx.Font;
 import minicraft.gfx.Screen;
 
 // an unselectable line.
-public class StringEntry implements ListEntry {
+public class StringEntry extends ListEntry {
 	
 	private static final int DEFAULT_COLOR = Color.WHITE;
 	
@@ -28,6 +28,7 @@ public class StringEntry implements ListEntry {
 		this(text, DEFAULT_COLOR);
 	}
 	public StringEntry(String text, int color) {
+		setSelectable(false);
 		this.text = text;
 		this.color = color;
 	}
@@ -39,9 +40,6 @@ public class StringEntry implements ListEntry {
 	public void render(Screen screen, int x, int y, boolean isSelected) {
 		Font.draw(toString(), screen, x, y, color);
 	}
-	
-	@Override
-	public boolean isSelectable() { return false; }
 	
 	@Override
 	public String toString() { return text; }

@@ -4,7 +4,7 @@ import minicraft.InputHandler;
 import minicraft.Sound;
 import minicraft.gfx.Font;
 
-public class SelectEntry implements ListEntry {
+public class SelectEntry extends ListEntry {
 	
 	private Action onSelect;
 	private String text;

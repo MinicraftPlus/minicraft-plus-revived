@@ -4,7 +4,12 @@ import minicraft.InputHandler;
 import minicraft.gfx.Screen;
 import minicraft.gfx.SpriteSheet;
 
-public class BlankEntry implements ListEntry {
+public class BlankEntry extends ListEntry {
+	
+	public BlankEntry() {
+		setSelectable(false);
+	}
+	
 	@Override
 	public void tick(InputHandler input) {}
 	
@@ -17,5 +22,5 @@ public class BlankEntry implements ListEntry {
 	}
 	
 	@Override
-	public boolean isSelectable() { return false; }
+	public String toString() { return " "; }
 }

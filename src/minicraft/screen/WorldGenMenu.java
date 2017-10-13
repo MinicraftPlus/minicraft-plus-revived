@@ -4,6 +4,9 @@ import java.util.Random;
 
 import minicraft.Game;
 import minicraft.Settings;
+import minicraft.gfx.Color;
+import minicraft.gfx.Font;
+import minicraft.gfx.Screen;
 import minicraft.screen.entry.InputEntry;
 import minicraft.screen.entry.SelectEntry;
 
@@ -45,11 +48,18 @@ public class WorldGenMenu extends Display {
 				nameField,
 				Settings.getEntry("mode"),
 				Settings.getEntry("scoretime"),
+				
 				new SelectEntry("Create World", () -> {
 					if(!nameField.isValid()) return;
 					WorldSelectMenu.setWorldName(nameField.getUserInput());
 					Game.setMenu(new LoadingDisplay());
-				}),
+				}) {
+					@Override
+					public void render(Screen screen, int x, int y, boolean isSelected) {
+						Font.draw(toString(), screen, x, y, Color.CYAN);
+					}
+				},
+				
 				Settings.getEntry("size"),
 				Settings.getEntry("theme"),
 				Settings.getEntry("type"),

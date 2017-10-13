@@ -4,7 +4,7 @@ import minicraft.InputHandler;
 import minicraft.gfx.Screen;
 import minicraft.item.Item;
 
-public class ItemEntry implements ListEntry {
+public class ItemEntry extends ListEntry {
 	
 	private Item item;
 	
@@ -19,7 +19,7 @@ public class ItemEntry implements ListEntry {
 	
 	@Override
 	public void render(Screen screen, int x, int y, boolean isSelected) {
-		ListEntry.super.render(screen, x, y, true);
+		super.render(screen, x, y, true);
 		item.sprite.render(screen, x, y);
 	}
 	

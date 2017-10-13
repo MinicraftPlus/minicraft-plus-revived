@@ -5,7 +5,7 @@ import minicraft.gfx.Color;
 import minicraft.gfx.Font;
 import minicraft.gfx.Screen;
 
-public class InputEntry implements ListEntry {
+public class InputEntry extends ListEntry {
 	
 	private String prompt;
 	private String regex;

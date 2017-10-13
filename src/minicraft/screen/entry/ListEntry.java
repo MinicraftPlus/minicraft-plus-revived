@@ -5,27 +5,34 @@ import minicraft.gfx.Color;
 import minicraft.gfx.Font;
 import minicraft.gfx.Screen;
 
-public interface ListEntry {
+public abstract class ListEntry {
 	
-	int COL_UNSLCT = Color.GRAY;
-	int COL_SLCT = Color.WHITE;
+	public static final int COL_UNSLCT = Color.GRAY;
+	public static final int COL_SLCT = Color.WHITE;
 	
-	void tick(InputHandler input);
+	private boolean selectable = true, visible = true;
+	
+	public abstract void tick(InputHandler input);
 	
 	// coordinates specify the top left corner of the entry space
-	default void render(Screen screen, int x, int y, boolean isSelected) {
-		Font.draw(toString(), screen, x, y, isSelected ? COL_SLCT : COL_UNSLCT);
+	public void render(Screen screen, int x, int y, boolean isSelected) {
+		if(visible)
+			Font.draw(toString(), screen, x, y, isSelected ? COL_SLCT : COL_UNSLCT);
 	}
 	
-	default int getWidth() {
+	public int getWidth() {
 		return Font.textWidth(toString());
 	}
 	
-	static int getHeight() {
+	public static int getHeight() {
 		return Font.textHeight();
 	}
 	
-	default boolean isSelectable() { return true; }
+	public final boolean isSelectable() { return selectable && visible; }
+	public final boolean isVisible() { return visible; }
 	
-	String toString();
+	public final void setSelectable(boolean selectable) { this.selectable = selectable; }
+	public final void setVisible(boolean visible) { this.visible = visible; }
+	
+	public abstract String toString();
 }

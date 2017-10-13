@@ -4,7 +4,7 @@ import minicraft.InputHandler;
 import minicraft.Sound;
 import minicraft.gfx.Font;
 
-public class ArrayEntry<T> implements ListEntry {
+public class ArrayEntry<T> extends ListEntry {
 	
 	/// TO-DO the locking mechanism will be implemented later, when I've verified that the rest works. They will still be selectable, but they'll just be a different color..? Idk about that, actually. Well, maybe they will just not be saved if they end on an invalid value.
 	
@@ -18,6 +18,8 @@ public class ArrayEntry<T> implements ListEntry {
 	
 	private int maxWidth;
 	//private ArrayList<Integer> lockedOptions = new ArrayList<>();
+	
+	private ChangeListener changeAction;
 	
 	@SafeVarargs
 	public ArrayEntry(String label, T... options) {
@@ -36,8 +38,12 @@ public class ArrayEntry<T> implements ListEntry {
 	}
 	
 	public void setSelection(int idx) {
-		if(idx >= 0 && idx < options.length)
+		boolean diff = idx != selection;
+		if(idx >= 0 && idx < options.length) {
 			selection = idx;
+			if(diff && changeAction != null)
+				changeAction.onChange(getValue());
+		}
 	}
 	
 	public void setValue(Object value) {
@@ -84,18 +90,29 @@ public class ArrayEntry<T> implements ListEntry {
 			}
 			
 			// --stuff for locking mechanism, and skipping locked entries--
+			
 		}
 		
-		this.selection = selection;
+		setSelection(selection);
 	}
 	
 	@Override
 	public int getWidth() {
-		return Font.textWidth(label+" ") + maxWidth;
+		return Font.textWidth(label+": ") + maxWidth;
 	}
 	
 	@Override
 	public String toString() {
 		return label + ": " + options[selection];
+	}
+	
+	public void setChangeAction(ChangeListener l) {
+		this.changeAction = l;
+		if(l != null)
+			l.onChange(getValue());
+	}
+	
+	public interface ChangeListener {
+		void onChange(Object newValue);
 	}
 }

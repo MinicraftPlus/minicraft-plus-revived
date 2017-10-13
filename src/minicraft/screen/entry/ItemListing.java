@@ -8,6 +8,7 @@ public class ItemListing extends ItemEntry {
 	
 	public ItemListing(Item i, String text) {
 		super(i);
+		setSelectable(false);
 		this.info = text;
 	}
 	
@@ -17,7 +18,4 @@ public class ItemListing extends ItemEntry {
 	public String toString() {
 		return info;
 	}
-	
-	@Override
-	public boolean isSelectable() { return false; }
 }
