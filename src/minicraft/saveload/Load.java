@@ -276,27 +276,15 @@ public class Load {
 	public void loadUnlocks(String filename) {
 		loadFromFile(location + filename + extension);
 		
-		//ModeMenu.unlockedtimes.clear();
-		//SettingEntry<Integer> scoreTimes = (SettingEntry<Integer>) Displays.worldGen.getEntry("scoreTime");
-		// TODO fix this
-		
-		//BooleanEntry skinUnlocked = (BooleanEntry) Displays.options.getEntry("unlockedskin"); 
-		//skinUnlocked.setValue(Boolean.FALSE);
-		Settings.set("unlockedskin", false);
-		//Settings.set("wear suit", false;)
-		
 		for(String unlock: data) {
 			if(unlock.equals("AirSkin"))
 				Settings.set("unlockedskin", true);
 			
-			unlock = unlock.replace("HOURMODE", "H_ScoreTime").replace("MINUTEMODE", "M_ScoreTime");
+			unlock = unlock.replace("HOURMODE", "H_ScoreTime").replace("MINUTEMODE", "M_ScoreTime").replace("M_ScoreTime", "_ScoreTime").replace("2H_ScoreTime", "120_ScoreTime");
 			
-			//if(unlock.contains("_ScoreTime"))
-			//	Settings.getEntry("scoretime").add(Integer.parseInt(unlock.substring(0, unlock.indexOf("_"))));
-				//ModeMenu.unlockedtimes.add(unlock.substring(0, unlock.indexOf("_")));
+			if(unlock.contains("_ScoreTime"))
+				Settings.getEntry("scoretime").setValueVisibility(Integer.parseInt(unlock.substring(0, unlock.indexOf("_"))), true);
 		}
-		
-		//ModeMenu.initTimeList();
 	}
 	
 	public void loadGame(String filename) {

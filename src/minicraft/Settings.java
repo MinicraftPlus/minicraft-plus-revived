@@ -27,9 +27,13 @@ public class Settings {
 		options.put("skinon", new BooleanEntry("Wear Suit", false));
 		
 		
-		options.get("mode").setChangeAction(value -> {
-			options.get("scoretime").setVisible("Score".equals(value));
-		});
+		options.get("mode").setChangeAction(value ->
+			options.get("scoretime").setVisible("Score".equals(value))
+		);
+		
+		options.get("unlockedskin").setChangeAction(value ->
+			options.get("skinon").setVisible((boolean)value)
+		);
 	}
 	
 	// returns the value of the specified option
