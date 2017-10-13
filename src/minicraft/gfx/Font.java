@@ -3,8 +3,6 @@ package minicraft.gfx;
 import java.util.ArrayList;
 import java.util.Arrays;
 
-import minicraft.Game;
-
 public class Font {
 	// These are all the characters that will be translated to the screen. (The spaces are important)
 	private static String chars = "" + //
@@ -149,10 +147,11 @@ public class Font {
 		while(para.length() > 0) {
 			int splitIndex = getLine(para, w);
 			lines.add(para.substring(0, splitIndex));
+			
 			if(splitIndex < para.length() && para.substring(splitIndex, splitIndex+1).matches(" |\n"))
 				splitIndex++;
 			para = para.substring(splitIndex);
-			if(Game.debug) System.out.println("remainder: " + para); 
+			
 			height += lineSpacing + textHeight();
 			if(height > h)
 				break;
@@ -165,14 +164,15 @@ public class Font {
 	
 	// this returns the position index at which the given string should be split so that the first part is the longest line possible.
 	private static int getLine(String text, int maxWidth) {
-		if(text.contains("\n"))
-			return text.indexOf("\n");
+		text = text.replaceAll(" ?\n ?", " \n ");
 		
 		String[] words = text.split(" ");
 		int curWidth = textWidth(words[0]);
 		
 		int i;
 		for(i = 1; i < words.length; i++) {
+			if(words[i].equals("\n")) break;
+			
 			curWidth += textWidth(" "+words[i]);
 			if(curWidth > maxWidth)
 				break;
@@ -180,7 +180,6 @@ public class Font {
 		// i now contains the number of words that fit on the line.
 		
 		String line = String.join(" ", Arrays.copyOfRange(words, 0, i));
-		if(Game.debug) System.out.println("line: " + line);
 		return line.length();
 	}
 }
