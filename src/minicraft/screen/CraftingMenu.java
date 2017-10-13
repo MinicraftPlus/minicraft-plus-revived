@@ -1,5 +1,9 @@
 package minicraft.screen;
 
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+
 import minicraft.InputHandler;
 import minicraft.entity.Player;
 import minicraft.gfx.Color;
@@ -33,22 +37,22 @@ public class CraftingMenu extends Display {
 	}
 	
 	
-	public CraftingMenu(Recipe[] recipes, String title, Player player) {
-		ItemListing itemCount = new ItemListing(Items.get("unknown"), String.valueOf(getCurItemCount()));
+	public CraftingMenu(List<Recipe> recipes, String title, Player player) {
 		
-		recipeMenu = new InventoryMenu(recipes);
+		this.player = player;
+		this.recipes = recipes.toArray(new Recipe[recipes.size()]);
+		recipeMenu = new InventoryMenu(this.recipes);
+		
+		ItemListing itemCount = new ItemListing(this.recipes[0].getProduct(), "0");
 		
 		itemCountMenu = new Menu.Builder(true, 0, RelPos.LEFT, itemCount)
 			.setTitle("Have:")
 			.setPositioning(new Point(recipeMenu.getBounds().getRight()+SpriteSheet.boxWidth, recipeMenu.getBounds().getTop()), RelPos.BOTTOM_RIGHT);
 		
-		costsMenu = new Menu.Builder(true, 0, RelPos.LEFT, getCurItemCosts())
+		costsMenu = new Menu.Builder(true, 0, RelPos.LEFT, new ListEntry[0])
 			.setPositioning(new Point(itemCountMenu.createMenu().getBounds().getLeft(), recipeMenu.getBounds().getBottom()), RelPos.TOP_RIGHT);
 		
 		menus = new Menu[] {recipeMenu, itemCountMenu.createMenu(), costsMenu.createMenu()};
-		
-		this.recipes = recipes;
-		this.player = player;
 		
 		refreshData();
 	}
@@ -58,9 +62,9 @@ public class CraftingMenu extends Display {
 			.setEntries(getCurItemCosts())
 			.createMenu();
 		
-		menus[1].updateSelectedEntry(new ItemListing(Items.get("unknown"), String.valueOf(getCurItemCount())));
+		menus[1].updateSelectedEntry(new ItemListing(recipes[menus[0].getSelection()].getProduct(), String.valueOf(getCurItemCount())));
 		
-		recipeMenu.refreshCanCraft();
+		recipeMenu.refreshCanCraft(player);
 	}
 	
 	/*@Override
@@ -69,11 +73,18 @@ public class CraftingMenu extends Display {
 	}*/
 	
 	private int getCurItemCount() {
-		return 0;
+		return player.inventory.count(recipes[menus[0].getSelection()].getProduct());
 	}
 	
 	private ItemListing[] getCurItemCosts() {
-		return new ItemListing[0];
+		ArrayList<ItemListing> costList = new ArrayList<>();
+		HashMap<String, Integer> costMap = recipes[menus[0].getSelection()].costs;
+		for(String itemName: costMap.keySet()) {
+			Item cost = Items.get(itemName);
+			costList.add(new ItemListing(cost, costMap.get(itemName)+"/"+player.inventory.count(cost)));
+		}
+		
+		return costList.toArray(new ItemListing[costList.size()]);
 	}
 	
 	//@Override

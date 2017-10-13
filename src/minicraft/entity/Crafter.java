@@ -2,10 +2,12 @@ package minicraft.entity;
 
 import java.util.ArrayList;
 
+import minicraft.Game;
 import minicraft.gfx.Color;
 import minicraft.gfx.Sprite;
 import minicraft.item.Recipe;
 import minicraft.item.Recipes;
+import minicraft.screen.CraftingMenu;
 
 public class Crafter extends Furniture {
 	
@@ -40,7 +42,7 @@ public class Crafter extends Furniture {
 	}
 	
 	public boolean use(Player player, int attackDir) {
-		//Game.setMenu(new CraftingMenu(type.recipes, player));
+		Game.setMenu(new CraftingMenu(type.recipes, type.name(), player));
 		return true;
 	}
 	

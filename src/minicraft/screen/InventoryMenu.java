@@ -2,6 +2,7 @@ package minicraft.screen;
 
 import java.util.List;
 
+import minicraft.entity.Player;
 import minicraft.gfx.Point;
 import minicraft.item.Item;
 import minicraft.item.Recipe;
@@ -56,11 +57,14 @@ public class InventoryMenu extends Menu {
 		);
 	}
 	
+	private Recipe[] recipes = null;
+	
 	public InventoryMenu(Recipe[] recipes) {
 		super(getBuilder()
 			.setEntries(getRecipeEntries(recipes))
 			.createMenu()
 		);
+		this.recipes = recipes;
 	}
 	public InventoryMenu(Recipe[] recipes, int fillCol, int edgeStrokeCol, int edgeFillCol) {
 		//super(data, 9, 1, frames);
@@ -69,14 +73,18 @@ public class InventoryMenu extends Menu {
 			.setFrame(fillCol, edgeStrokeCol, edgeFillCol)
 			.createMenu()
 		);
+		this.recipes = recipes;
 	}
 	
 	public Item getSelectedItem() {
 		return ((ItemEntry)getCurEntry()).getItem();
 	}
 	
-	void refreshCanCraft() {
-		// TODO here, re-check "can craft" to set all the colors for all the items
-		
+	void refreshCanCraft(Player player) {
+		if(recipes != null) {
+			for (Recipe r: recipes) {
+				r.checkCanCraft(player);
+			}
+		}
 	}
 }
