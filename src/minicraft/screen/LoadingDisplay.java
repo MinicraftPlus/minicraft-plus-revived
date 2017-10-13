@@ -30,6 +30,11 @@ public class LoadingDisplay extends Display {
 		t.start();
 	}
 	
+	@Override
+	public void onExit() {
+		percentage = 0;
+	}
+	
 	public static void setPercentage(float percent) {
 		percentage = percent;
 	}

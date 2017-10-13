@@ -60,11 +60,11 @@ public class BookDisplay extends Display {
 		
 		menus = new Menu[] {
 			builder
-				.setBounds(new Rectangle(14, 0, 21, 3, Rectangle.CORNERS))
+				.setBounds(new Rectangle(14*8, 0, 21*8, 3*8, Rectangle.CORNERS))
 				.createMenu(),
 			
 			builder
-				.setBounds(new Rectangle(1, 4, 34, 20, Rectangle.CORNERS))
+				.setBounds(new Rectangle(1*8, 4*8, 34*8, 20*8, Rectangle.CORNERS))
 				.createMenu()
 		};
 	}
@@ -72,7 +72,7 @@ public class BookDisplay extends Display {
 	@Override
 	public void tick(InputHandler input) {
 		if (input.getKey("menu").clicked || input.getKey("exit").clicked)
-			Game.setMenu(null); // this is what closes the book; TODO if books were editable, I would probably remake the book here with the edited pages.
+			Game.exitMenu(); // this is what closes the book; TODO if books were editable, I would probably remake the book here with the edited pages.
 		if (input.getKey("left").clicked && page > 0) page--; // this is what turns the page back
 		if (input.getKey("right").clicked && page < lines.length-1) page++; // this is what turns the page forward
 	}

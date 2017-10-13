@@ -115,6 +115,7 @@ public class Menu {
 	int getSelection() { return selection; }
 	int getDispSelection() { return dispSelection; }
 	
+	ListEntry[] getEntries() { return entries.toArray(new ListEntry[entries.size()]); }
 	ListEntry getCurEntry() { return entries.get(selection); }
 	int getNumOptions() { return entries.size(); }
 	
