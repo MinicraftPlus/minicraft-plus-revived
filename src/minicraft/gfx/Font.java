@@ -1,7 +1,9 @@
 package minicraft.gfx;
 
-import java.text.StringCharacterIterator;
 import java.util.ArrayList;
+import java.util.Arrays;
+
+import minicraft.Game;
 
 public class Font {
 	// These are all the characters that will be translated to the screen. (The spaces are important)
@@ -90,9 +92,8 @@ public class Font {
 		//return lines[lines.length-1]; // this is where the rest of the string that there wasn't space for is stored.
 	}
 	
-	
 	public static String[] getLines(String para, int w, int lineSpacing) { return getLines(para, w, 0, lineSpacing); }
-	public static String[] getLines(String para, int w, int h, int lineSpacing) {
+	/*public static String[] getLines(String para, int w, int h, int lineSpacing) {
 		ArrayList<String> lines = new ArrayList<>();
 		int curPos = 0, curY = 0;
 		while(curPos < para.length() && curY < h) { // continue until we run out of characters, or lines.
@@ -134,5 +135,52 @@ public class Font {
 			lines.add(leftover);
 		
 		return lines.toArray(new String[lines.size()]);
+	}*/
+	
+	public static String[] getLines(String para, int w, int h, int lineSpacing) {
+		//para = para.replaceAll("-", "- "); // I'll try this later when the current system works.
+		ArrayList<String> lines = new ArrayList<>();
+		
+		// So, I have a paragraph. I give it to getLine, and it returns an index. Cut the string at that index, and add it to the lines list.
+		// check if the index returned by getLine is less than para.length(), and is a space, and if so skip the space character.
+		// then I reset the para String at the index, and do it again until para is an empty string.
+		
+		int height = textHeight();
+		while(para.length() > 0) {
+			int splitIndex = getLine(para, w);
+			lines.add(para.substring(0, splitIndex));
+			if(splitIndex < para.length() && para.substring(splitIndex, splitIndex+1).matches(" |\n"))
+				splitIndex++;
+			para = para.substring(splitIndex);
+			if(Game.debug) System.out.println("remainder: " + para); 
+			height += lineSpacing + textHeight();
+			if(height > h)
+				break;
+		}
+		
+		lines.add(para); // add remainder
+		
+		return lines.toArray(new String[lines.size()]);
+	}
+	
+	// this returns the position index at which the given string should be split so that the first part is the longest line possible.
+	private static int getLine(String text, int maxWidth) {
+		if(text.contains("\n"))
+			return text.indexOf("\n");
+		
+		String[] words = text.split(" ");
+		int curWidth = textWidth(words[0]);
+		
+		int i;
+		for(i = 1; i < words.length; i++) {
+			curWidth += textWidth(" "+words[i]);
+			if(curWidth > maxWidth)
+				break;
+		}
+		// i now contains the number of words that fit on the line.
+		
+		String line = String.join(" ", Arrays.copyOfRange(words, 0, i));
+		if(Game.debug) System.out.println("line: " + line);
+		return line.length();
 	}
 }
