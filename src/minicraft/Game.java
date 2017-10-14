@@ -200,7 +200,7 @@ public class Game {
 		if(newMenu != null)
 			newMenu.onExit();
 		
-		if(debug) System.out.println("setting menu from " + newMenu + " to " + display);
+		//if(debug) System.out.println("setting menu from " + newMenu + " to " + display);
 		
 		newMenu = display;
 		
@@ -211,7 +211,7 @@ public class Game {
 	public static void exitMenu() {
 		if(newMenu == null) return; // no action required; cannot exit from no menu
 		newMenu.onExit();
-		if(debug) System.out.println("exiting menu from " + newMenu + " to " + newMenu.getParent());
+		//if(debug) System.out.println("exiting menu from " + newMenu + " to " + newMenu.getParent());
 		newMenu = newMenu.getParent();
 	}
 	

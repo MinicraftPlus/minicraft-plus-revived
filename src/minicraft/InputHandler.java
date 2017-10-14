@@ -275,7 +275,7 @@ public class InputHandler implements /*MouseListener, */KeyListener {
 				key = new Key(); //make new key
 				keyboard.put(keytext, key); //add it to keyboard
 				
-				if(Game.debug) System.out.println("Added new key: \'" + keytext + "\'"); //log to console that a new key was added to the keyboard
+				//if(Game.debug) System.out.println("Added new key: \'" + keytext + "\'"); //log to console that a new key was added to the keyboard
 			}
 		}// "key" has been set to the appropriate key Object.
 		
