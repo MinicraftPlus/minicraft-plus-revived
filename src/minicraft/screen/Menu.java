@@ -167,16 +167,20 @@ public class Menu {
 		int offset = getSelection() - dispSelection;
 		
 		// for scrolling up
-		while(dispSelection < padding && offset > 0) {
+		while(dispSelection < padding && (wrap || offset > 0)) {
 			offset--;
 			dispSelection++;
 		}
 		
 		// for scrolling down
-		while(displayLength - dispSelection <= padding && offset + displayLength < this.entries.size()) {
+		while(displayLength - dispSelection <= padding && (wrap || offset + displayLength < this.entries.size())) {
 			offset++;
 			dispSelection--;
 		}
+		
+		// only useful when wrap is true
+		if(offset < 0) offset += entries.size();
+		offset = offset % entries.size();
 		
 		this.offset = offset;
 	}
@@ -196,13 +200,14 @@ public class Menu {
 		
 		// render the options
 		int y = entryBounds.getTop();
-		for(int i = offset; i < Math.min(offset+displayLength, entries.size()); i++) {
-			ListEntry entry = entries.get(i);
+		for(int i = offset; i < (wrap?offset+displayLength:Math.min(offset+displayLength, entries.size())); i++) {
+			int idx = i % entries.size();
+			ListEntry entry = entries.get(idx);
 			
 			if(!(entry instanceof BlankEntry)) {
 				Point pos = entryPos.positionRect(new Dimension(entry.getWidth(), ListEntry.getHeight()), new Rectangle(entryBounds.getLeft(), y, entryBounds.getWidth(), ListEntry.getHeight(), Rectangle.CORNER_DIMS));
-				entry.render(screen, pos.x, pos.y, i == selection);
-				if (i == selection && entry.isSelectable()) {
+				entry.render(screen, pos.x, pos.y, idx == selection);
+				if (idx == selection && entry.isSelectable()) {
 					// draw the arrows
 					Font.draw("> ", screen, pos.x - Font.textWidth("> "), y, ListEntry.COL_SLCT);
 					Font.draw(" <", screen, pos.x + entry.getWidth(), y, ListEntry.COL_SLCT);
