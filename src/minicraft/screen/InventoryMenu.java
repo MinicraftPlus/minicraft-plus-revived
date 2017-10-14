@@ -35,6 +35,7 @@ public class InventoryMenu extends Menu {
 		return new Menu.Builder(true, 0, RelPos.LEFT)
 			.setPositioning(new Point(9, 9), RelPos.BOTTOM_RIGHT)
 			.setDisplayLength(9)
+			.setSelectable(true)
 			.setTitle("Inventory")
 			.setScrollPolicies(1, false);
 	}

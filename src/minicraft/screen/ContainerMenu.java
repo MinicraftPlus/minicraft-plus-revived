@@ -5,6 +5,7 @@ import minicraft.InputHandler;
 import minicraft.entity.Chest;
 import minicraft.entity.Inventory;
 import minicraft.entity.Player;
+import minicraft.gfx.Screen;
 
 public class ContainerMenu extends Display {
 	
@@ -20,11 +21,15 @@ public class ContainerMenu extends Display {
 		menus[1].translate(menus[0].getBounds().getWidth() + padding, 0);
 	}
 	
-	/*@Override
+	@Override
 	protected void onSelectionChange(int oldSel, int newSel) {
-		if(oldSel > newSel) { // went to player menu, shift left
-			menus[oldSel].translate(menus[0].getBounds().getWidth() + padding, 0);
-	}*/
+		if(oldSel == newSel) return; // this also serves as a protection against access to menus[0] when such may not exist.
+		int shift = 0;
+		if(newSel == 0) shift = padding - menus[0].getBounds().getLeft();
+		if(newSel == 1) shift = (Screen.w - padding) - menus[1].getBounds().getRight();
+		for(Menu m: menus)
+			m.translate(shift, 0);
+	}
 	
 	@Override
 	public void tick(InputHandler input) {
@@ -51,6 +56,7 @@ public class ContainerMenu extends Display {
 			menus[selection] = new InventoryMenu(from.getItems(), menus[selection].getTitle());
 			menus[otherIdx] = new InventoryMenu(to.getItems(), menus[otherIdx].getTitle());
 			menus[1].translate(menus[0].getBounds().getWidth() + padding, 0);
+			onSelectionChange(0, selection);
 			menus[selection].setSelection(fromSel);
 			menus[otherIdx].setSelection(toSel);
 		}

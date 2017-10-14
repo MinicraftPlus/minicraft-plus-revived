@@ -102,11 +102,12 @@ public class Menu {
 	}
 	
 	void setSelection(int idx) {
+		if(idx >= entries.size())
+			idx = entries.size() - 1;
+		
+		if(idx < 0) idx = 0;
+		
 		this.selection = idx;
-		if(selection >= entries.size())
-			selection = entries.size() - 1;
-		else if(selection < 0)
-			selection = 0;
 	}
 	int getSelection() { return selection; }
 	int getDispSelection() { return dispSelection; }
@@ -127,6 +128,7 @@ public class Menu {
 	void translate(int xoff, int yoff) {
 		bounds.translate(xoff, yoff);
 		entryBounds.translate(xoff, yoff);
+		titleLoc.translate(xoff, yoff);
 	}
 	
 	public void tick(InputHandler input) {
@@ -158,8 +160,6 @@ public class Menu {
 		
 		doScroll();
 	}
-	
-	//private boolean pressed(InputHandler input, String key) { return input.getKey(key).clicked; }
 	
 	private void doScroll() {
 		// check if dispSelection is past padding point, and if so, bring it back in
@@ -466,10 +466,10 @@ public class Menu {
 			// I have anchor and menu's relative position to it, and may or may not have size.
 			Dimension entrySize;
 			
-			if(menuSize == null && menu.entries.size() == 0) {
+			/*if(menuSize == null && menu.entries.size() == 0) {
 				menuSize = new Dimension(border.left + border.right, border.top + border.bottom);
-				entrySize = new Dimension();
-			} else if(menuSize == null) {
+				entrySize	 = new Dimension();
+			} else */if(menuSize == null) {
 				int width = titleDim.width;
 				for(ListEntry entry: menu.entries) {
 					int entryWidth = entry.getWidth();
@@ -572,5 +572,9 @@ public class Menu {
 			
 			return b;
 		}
+	}
+	
+	public String toString() {
+		return title+"-Menu["+bounds+"]";
 	}
 }

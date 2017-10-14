@@ -15,6 +15,11 @@ public class Point {
 		y = model.y;
 	}
 	
+	public void translate(int xoff, int yoff) {
+		x += xoff;
+		y += yoff;
+	}
+	
 	public String toString() {
 		return "("+x+","+y+")";
 	}
