@@ -39,7 +39,7 @@ public class Menu {
 	boolean shouldRender = true;
 	
 	private int displayLength = 0;
-	private float padding = 0;
+	private int padding = 0;
 	private boolean wrap = false;
 	
 	// menu selection vars
@@ -74,10 +74,6 @@ public class Menu {
 	
 	public void init() {
 		//recalcEntryPos();
-		
-		if(padding < 0) padding = 0;
-		if(padding > 1) padding = 1;
-		this.padding = (float)Math.ceil(padding * displayLength / 2);
 		
 		if(entries.size() == 0) {
 			selection = 0;
@@ -298,6 +294,7 @@ public class Menu {
 		private Menu menu;
 		
 		private boolean setSelectable = false;
+		private float padding = 1;
 		
 		@NotNull private RelPos titlePos = RelPos.TOP;
 		//@NotNull private RelPos titlePos = RelPos.LEFT;
@@ -373,7 +370,7 @@ public class Menu {
 		}
 		
 		public Builder setScrollPolicies(float padding, boolean wrap) {
-			menu.padding = padding;
+			this.padding = padding;
 			menu.wrap = wrap;
 			return this;
 		}
@@ -538,6 +535,10 @@ public class Menu {
 				menu.frameEdgeColor = Color.get(-1, frameEdgeStroke, frameFillCol, frameEdgeFill);
 			}
 			
+			if(padding < 0) padding = 0;
+			if(padding > 1) padding = 1;
+			menu.padding = (int)Math.floor(padding * menu.displayLength / 2);
+			
 			// done setting defaults/values; return the new menu 
 			
 			menu.init(); // any setup the menu does by itself right before being finished.
@@ -554,6 +555,7 @@ public class Menu {
 			b.menuSize = menuSize == null ? null : new Dimension(menuSize);
 			b.menuPos = menuPos;
 			b.setSelectable = setSelectable;
+			b.padding = padding;
 			b.titlePos = titlePos;
 			b.fullTitleColor = fullTitleColor;
 			b.setTitleColor = setTitleColor;
