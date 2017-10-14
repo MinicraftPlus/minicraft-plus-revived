@@ -206,8 +206,9 @@ public class Menu {
 			
 			if(!(entry instanceof BlankEntry)) {
 				Point pos = entryPos.positionRect(new Dimension(entry.getWidth(), ListEntry.getHeight()), new Rectangle(entryBounds.getLeft(), y, entryBounds.getWidth(), ListEntry.getHeight(), Rectangle.CORNER_DIMS));
-				entry.render(screen, pos.x, pos.y, idx == selection);
-				if (idx == selection && entry.isSelectable()) {
+				boolean selected = idx == selection && (!wrap || i-offset == displayLength/2);
+				entry.render(screen, pos.x, pos.y, selected);
+				if (selected && entry.isSelectable()) {
 					// draw the arrows
 					Font.draw("> ", screen, pos.x - Font.textWidth("> "), y, ListEntry.COL_SLCT);
 					Font.draw(" <", screen, pos.x + entry.getWidth(), y, ListEntry.COL_SLCT);
