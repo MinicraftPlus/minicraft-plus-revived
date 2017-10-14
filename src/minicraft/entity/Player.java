@@ -17,13 +17,7 @@ import minicraft.level.Level;
 import minicraft.level.tile.Tile;
 import minicraft.level.tile.Tiles;
 import minicraft.saveload.Save;
-import minicraft.screen.CraftingMenu;
-import minicraft.screen.InfoDisplay;
-import minicraft.screen.InventoryMenu;
-import minicraft.screen.LoadingDisplay;
-import minicraft.screen.PauseMenu;
-import minicraft.screen.PlayerInvMenu;
-import minicraft.screen.WorldSelectMenu;
+import minicraft.screen.*;
 import minicraft.screen.entry.ItemEntry;
 
 public class Player extends Mob {
@@ -363,7 +357,21 @@ public class Player extends Mob {
 			if (input.getKey("pause").clicked)
 				Game.setMenu(new PauseMenu());
 			if (input.getKey("craft").clicked && !use())
-				Game.setMenu(new CraftingMenu(Recipes.craftRecipes, "Crafting", this));
+				Game.setMenu(new CraftingMenu(Recipes.craftRecipes, "Crafting", this) {
+					@Override
+					public void init(Display parent) {
+						super.init(parent);
+						for(Menu m: menus)
+							m.setFrameColors(300, 1, 400);
+					}
+					@Override
+					public void tick(InputHandler input) {
+						if(input.getKey("craft").clicked)
+							Game.exitMenu();
+						else
+							super.tick(input);
+					}
+				});
 			if (input.getKey("sethome").clicked) setHome();
 			if (input.getKey("home").clicked && !Bed.inBed) goHome();
 			

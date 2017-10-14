@@ -4,18 +4,15 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
+import minicraft.Game;
 import minicraft.InputHandler;
 import minicraft.entity.Player;
-import minicraft.gfx.Color;
-import minicraft.gfx.Font;
 import minicraft.gfx.Point;
-import minicraft.gfx.Screen;
 import minicraft.gfx.SpriteSheet;
 import minicraft.item.Item;
 import minicraft.item.Items;
 import minicraft.item.Recipe;
 import minicraft.screen.entry.ItemListing;
-import minicraft.screen.entry.ListEntry;
 import minicraft.screen.entry.RecipeEntry;
 
 public class CraftingMenu extends Display {
@@ -38,18 +35,23 @@ public class CraftingMenu extends Display {
 	
 	
 	public CraftingMenu(List<Recipe> recipes, String title, Player player) {
+		for(Recipe recipe: recipes)
+			recipe.checkCanCraft(player);
 		
 		this.player = player;
 		this.recipes = recipes.toArray(new Recipe[recipes.size()]);
-		recipeMenu = new InventoryMenu(this.recipes);
+		recipeMenu = new InventoryMenu(this.recipes, title);
 		
 		ItemListing itemCount = new ItemListing(this.recipes[0].getProduct(), "0");
 		
 		itemCountMenu = new Menu.Builder(true, 0, RelPos.LEFT, itemCount)
 			.setTitle("Have:")
+			.setTitlePos(RelPos.TOP_LEFT)
 			.setPositioning(new Point(recipeMenu.getBounds().getRight()+SpriteSheet.boxWidth, recipeMenu.getBounds().getTop()), RelPos.BOTTOM_RIGHT);
 		
-		costsMenu = new Menu.Builder(true, 0, RelPos.LEFT, new ListEntry[0])
+		costsMenu = new Menu.Builder(true, 0, RelPos.LEFT)
+			.setTitle("Cost:")
+			.setTitlePos(RelPos.TOP_LEFT)
 			.setPositioning(new Point(itemCountMenu.createMenu().getBounds().getLeft(), recipeMenu.getBounds().getBottom()), RelPos.TOP_RIGHT);
 		
 		menus = new Menu[] {recipeMenu, itemCountMenu.createMenu(), costsMenu.createMenu()};
@@ -58,13 +60,15 @@ public class CraftingMenu extends Display {
 	}
 	
 	private void refreshData() {
+		Menu prev = menus[2];
 		menus[2] = costsMenu
 			.setEntries(getCurItemCosts())
 			.createMenu();
+		menus[2].setFrameColors(prev);
 		
 		menus[1].updateSelectedEntry(new ItemListing(recipes[menus[0].getSelection()].getProduct(), String.valueOf(getCurItemCount())));
 		
-		recipeMenu.refreshCanCraft(player);
+		//recipeMenu.refreshCanCraft(player);
 	}
 	
 	/*@Override
@@ -78,7 +82,7 @@ public class CraftingMenu extends Display {
 	
 	private ItemListing[] getCurItemCosts() {
 		ArrayList<ItemListing> costList = new ArrayList<>();
-		HashMap<String, Integer> costMap = recipes[menus[0].getSelection()].costs;
+		HashMap<String, Integer> costMap = recipes[menus[0].getSelection()].getCosts();
 		for(String itemName: costMap.keySet()) {
 			Item cost = Items.get(itemName);
 			costList.add(new ItemListing(cost, costMap.get(itemName)+"/"+player.inventory.count(cost)));
@@ -88,26 +92,37 @@ public class CraftingMenu extends Display {
 	}
 	
 	//@Override
-	public ListEntry[] getEntries() {
-		return getRecipeList(recipes);
-	}
+	//public ListEntry[] getEntries() { return getRecipeList(recipes); }
 	
 	@Override
 	public void tick(InputHandler input) {
-		if(input.getKey("select").clicked && menus[selection].getSelection() >= 0) {
+		if(input.getKey("menu").clicked) {
+			Game.exitMenu();
+			return;
+		}
+		
+		int prevSel = menus[0].getSelection();
+		super.tick(input);
+		if(prevSel != menus[0].getSelection())
+			refreshData();
+		
+		if((input.getKey("select").clicked || input.getKey("attack").clicked) && menus[selection].getSelection() >= 0) {
 			// check the selected recipe
 			Recipe r = recipes[menus[selection].getSelection()];
-			if(r.canCraft) {
+			if(r.getCanCraft()) {
 				r.craft(player);
 				
+				refreshData();
 				for(Recipe recipe: recipes)
 					recipe.checkCanCraft(player);
 			}
 		}
 	}
 	
-	@Override
+	/*@Override
 	public void render(Screen screen) {
+		super.render(screen);
+		
 		int index = menus[selection].getSelection();
 		if(index < 0) return;
 		Recipe recipe = recipes[index];
@@ -130,7 +145,7 @@ public class CraftingMenu extends Display {
 			yo += Font.textHeight();
 		}
 		
-	}
+	}*/
 	
 	/*@Override
 	public Centering getCentering() {

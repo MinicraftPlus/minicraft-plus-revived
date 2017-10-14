@@ -248,7 +248,17 @@ public class Menu {
 		//recalcEntryPos();
 	}
 	
-	
+	public void setFrameColors(int fillCol, int edgeStrokeCol, int edgeFillCol) {
+		frameFillColor = Color.get(fillCol, fillCol);
+		frameEdgeColor = Color.get(-1, edgeStrokeCol, fillCol, edgeFillCol);
+		int[] titleCols = Color.seperateEncodedSprite(titleColor, true);
+		titleColor = Color.get(fillCol, titleCols[3]<0?550:titleCols[3]);
+	}
+	public void setFrameColors(Menu model) {
+		frameFillColor = model.frameFillColor;
+		frameEdgeColor = model.frameEdgeColor;
+		titleColor = model.titleColor;
+	}
 	
 	private void renderFrame(Screen screen) {
 		if(!hasFrame) return;
@@ -457,7 +467,7 @@ public class Menu {
 				menuSize = new Dimension(border.left + border.right, border.top + border.bottom);
 				entrySize = new Dimension();
 			} else if(menuSize == null) {
-				int width = 0;
+				int width = titleDim.width;
 				for(ListEntry entry: menu.entries) {
 					int entryWidth = entry.getWidth();
 					if(menu.isSelectable() && !entry.isSelectable())

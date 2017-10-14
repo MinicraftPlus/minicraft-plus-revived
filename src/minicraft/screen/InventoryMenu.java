@@ -59,9 +59,10 @@ public class InventoryMenu extends Menu {
 	
 	private Recipe[] recipes = null;
 	
-	public InventoryMenu(Recipe[] recipes) {
+	public InventoryMenu(Recipe[] recipes, String title) {
 		super(getBuilder()
 			.setEntries(getRecipeEntries(recipes))
+			.setTitle(title)
 			.createMenu()
 		);
 		this.recipes = recipes;
@@ -70,6 +71,7 @@ public class InventoryMenu extends Menu {
 		//super(data, 9, 1, frames);
 		super(getBuilder()
 			.setEntries(getRecipeEntries(recipes))
+			.setTitle("Crafting")
 			.setFrame(fillCol, edgeStrokeCol, edgeFillCol)
 			.createMenu()
 		);

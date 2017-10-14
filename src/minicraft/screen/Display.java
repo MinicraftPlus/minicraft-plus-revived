@@ -12,7 +12,7 @@ public class Display {
 	
 	private Display parent = null;
 	
-	Menu[] menus;
+	protected Menu[] menus;
 	int selection;
 	
 	private boolean canExit, clearScreen;

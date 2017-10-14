@@ -6,10 +6,10 @@ import minicraft.Game;
 import minicraft.entity.Player;
 
 public class Recipe {
-	public HashMap<String, Integer> costs = new HashMap<String, Integer>();  // A list of costs for the recipe
+	private HashMap<String, Integer> costs = new HashMap<String, Integer>();  // A list of costs for the recipe
 	private String product; // the result item of the recipe
-	public int amount;
-	public boolean canCraft; // checks if the player can craft the recipe
+	private int amount;
+	private boolean canCraft; // checks if the player can craft the recipe
 	
 	public Recipe(String createdItem, String... reqItems) {
 		canCraft = false;
@@ -38,8 +38,14 @@ public class Recipe {
 	public Item getProduct() {
 		return Items.get(product);
 	}
+	public HashMap<String, Integer> getCosts() { return costs; }
 	
-	public void checkCanCraft(Player player) { canCraft = getCanCraft(player); }
+	public int getAmount() { return amount; }
+	public boolean getCanCraft() { return canCraft; }
+	public void checkCanCraft(Player player) {
+		canCraft = getCanCraft(player);
+		//if(Game.debug) System.out.println("player can craft " + getProduct() + ": " + canCraft);
+	}
 	/** Checks if the player can craft the recipe */
 	private boolean getCanCraft(Player player) {
 		if(Game.isMode("creative")) return true;
