@@ -1,9 +1,10 @@
 package minicraft.entity;
 
+import javax.swing.Timer;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.List;
-import javax.swing.Timer;
+
 import minicraft.Sound;
 import minicraft.gfx.Color;
 import minicraft.gfx.Screen;
@@ -40,7 +41,7 @@ public class Tnt extends Furniture implements ActionListener {
 			
 			if(ftik >= FUSE_TIME) {
 				// blow up
-				List<Entity> entitiesInRange = level.getEntitiesInRect(x - BLAST_RADIUS, x + BLAST_RADIUS, y - BLAST_RADIUS, y + BLAST_RADIUS);
+				List<Entity> entitiesInRange = level.getEntitiesInRect(x - BLAST_RADIUS, y - BLAST_RADIUS, x + BLAST_RADIUS, y + BLAST_RADIUS);
 				
 				for(Entity e: entitiesInRange) {
 					float dist = (float) Math.hypot(e.x - x, e.y - y);
