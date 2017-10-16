@@ -1,7 +1,5 @@
 package minicraft.level;
 
-import minicraft.Settings;
-import minicraft.gfx.Point;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
@@ -9,8 +7,10 @@ import java.util.Random;
 import java.util.function.ToIntFunction;
 
 import minicraft.Game;
+import minicraft.Settings;
 import minicraft.entity.*;
 import minicraft.entity.particle.Particle;
+import minicraft.gfx.Point;
 import minicraft.gfx.Screen;
 import minicraft.item.Item;
 import minicraft.item.Items;
@@ -770,24 +770,10 @@ public class Level {
 	
 	public List<Entity> getEntitiesInRect(int x0, int y0, int x1, int y1) {
 		List<Entity> result = new ArrayList<>();
-		int xt0 = (x0 >> 4) - 1;
-		int yt0 = (y0 >> 4) - 1;
-		int xt1 = (x1 >> 4) + 1;
-		int yt1 = (y1 >> 4) + 1;
 		for(Entity e: getEntityArray()) {
 			if (e.intersects(x0, y0, x1, y1))
 				result.add(e);
 		}
-		/*for (int y = yt0; y <= yt1; y++) {
-			for (int x = xt0; x <= xt1; x++) {
-				if (x < 0 || y < 0 || x >= w || y >= h) continue;
-				List<Entity> entities = entitiesInTiles[x + y * w];
-				for (int i = 0; i < entities.size(); i++) {
-					Entity e = entities.get(i);
-					if (e.intersects(x0, y0, x1, y1)) result.add(e);
-				}
-			}
-		}*/
 		return result;
 	}
 	

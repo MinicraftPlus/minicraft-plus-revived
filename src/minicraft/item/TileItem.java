@@ -78,7 +78,6 @@ public class TileItem extends StackableItem {
 		
 		if (Game.debug) System.out.println(model + " cannot be placed on " + tile.name);
 		
-		//Game.notetick = 300;
 		if(model.contains("WALL")) {
 			Game.notifications.add("Can only be placed on " + Tiles.getName(validTiles.get(0)) + "!");
 		}
@@ -87,8 +86,7 @@ public class TileItem extends StackableItem {
 		}
 		else if((model.contains("BRICK") || model.contains("PLANK"))) {
 			Game.notifications.add("Dig a hole first!");
-		}// else
-			//Game.notetick = 0;
+		}
 		
 		return super.interactOn(false);
 	}
