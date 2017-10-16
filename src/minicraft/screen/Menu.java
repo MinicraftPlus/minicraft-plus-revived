@@ -200,13 +200,22 @@ public class Menu {
 		
 		// render the options
 		int y = entryBounds.getTop();
+		boolean special = wrap && entries.size() < displayLength;
+		if(special) {
+			//int renderidx = (int)Math.ceil(displayLength/2.0);
+			int diff = displayLength - entries.size(); // we have to account for this many entry heights.
+			int extra = diff*(ListEntry.getHeight()+spacing) / 2;
+			y += extra;
+		}
 		for(int i = offset; i < (wrap?offset+displayLength:Math.min(offset+displayLength, entries.size())); i++) {
+			if(special && i-offset >= entries.size()) break;
+			
 			int idx = i % entries.size();
 			ListEntry entry = entries.get(idx);
 			
 			if(!(entry instanceof BlankEntry)) {
 				Point pos = entryPos.positionRect(new Dimension(entry.getWidth(), ListEntry.getHeight()), new Rectangle(entryBounds.getLeft(), y, entryBounds.getWidth(), ListEntry.getHeight(), Rectangle.CORNER_DIMS));
-				boolean selected = idx == selection && (!wrap || i-offset == displayLength/2);
+				boolean selected = idx == selection;// && (!wrap || i-offset == displayLength/2);
 				entry.render(screen, pos.x, pos.y, selected);
 				if (selected && entry.isSelectable()) {
 					// draw the arrows
@@ -303,7 +312,6 @@ public class Menu {
 		private float padding = 1;
 		
 		@NotNull private RelPos titlePos = RelPos.TOP;
-		//@NotNull private RelPos titlePos = RelPos.LEFT;
 		private boolean fullTitleColor = false, setTitleColor = false;
 		private int titleCol = 550, frameFillCol = 5, frameEdgeStroke = 1, frameEdgeFill = 445;
 		
@@ -462,6 +470,9 @@ public class Menu {
 				border.left += SpriteSheet.boxWidth * 2;
 				border.right += SpriteSheet.boxWidth * 2;
 			}
+			
+			if(menu.wrap && menu.displayLength > 0)
+				menu.displayLength = Math.min(menu.displayLength, menu.entries.size());
 			
 			// I have anchor and menu's relative position to it, and may or may not have size.
 			Dimension entrySize;

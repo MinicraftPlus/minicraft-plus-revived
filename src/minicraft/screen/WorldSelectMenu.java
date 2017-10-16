@@ -44,8 +44,16 @@ public class WorldSelectMenu extends Display {
 	
 	private Action curAction = null;
 	
-	public static ArrayList<String> getWorldNames() {
+	private static ArrayList<String> worldNames = null;
+	
+	public static ArrayList<String> getWorldNames() { return getWorldNames(false); }
+	private static ArrayList<String> getWorldNames(boolean recalc) {
 		ArrayList<String> worldNames = new ArrayList<>();
+		
+		if(!recalc && WorldSelectMenu.worldNames != null) {
+			worldNames.addAll(WorldSelectMenu.worldNames);
+			return worldNames;
+		}
 		
 		//find worlds (init step):
 		File folder = new File(worldsDir);
@@ -70,6 +78,13 @@ public class WorldSelectMenu extends Display {
 			}
 		}
 		
+		if(WorldSelectMenu.worldNames == null)
+			WorldSelectMenu.worldNames = new ArrayList<>();
+		else
+			WorldSelectMenu.worldNames.clear();
+		
+		WorldSelectMenu.worldNames.addAll(worldNames);
+		
 		return worldNames;
 	}
 	
@@ -83,7 +98,7 @@ public class WorldSelectMenu extends Display {
 		worldName = "";
 		loadedWorld = true;
 		
-		ArrayList<String> worldNames = getWorldNames();
+		ArrayList<String> worldNames = getWorldNames(true);
 		
 		SelectEntry[] entries = new SelectEntry[worldNames.size()];
 		
