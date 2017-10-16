@@ -230,31 +230,13 @@ public class Color {
 	
 	/// this is for color testing.
 	public static void main(String[] args) {
-		int r, g, b, d;
-		//if(args.length >= 1) {
-		for(String color: args) {
-			d = Integer.parseInt(color);
-			int a = get(d);
-			r = a / 36 % 6;
-			g = a / 6 % 6;
-			b = a % 6;
-			
-			System.out.println(color+" -> " + r + g + b); // they should be the same number on both sides; this is to find the overflow color, say if you use 159 or something.
-			
-			//System.out.println("laid out: r=" + r + ", g=" + g + ", b=" + b);
-			//System.out.println("pixel " + d + ": " + pixel(d));
-		}
-		/*if(args.length == 3) {
-			r = Integer.parseInt(args[0]);
-			g = Integer.parseInt(args[1]);
-			b = Integer.parseInt(args[2]);
-			d = r * 36 + g * 6 + b;
-			System.out.println("added: " + d);
-			System.out.println("resultant: " + get(d));
-			//System.out.println("pixel: " + d + ": " + pixel(d));
-			//System.out.println();
-		}*/
+		int r, g, b;
 		
+		r = new Integer(args[0]);
+		g = new Integer(args[1]);
+		b = new Integer(args[2]);
+		
+		System.out.println(rgb(r, g, b));
 	}
 	
 	protected static String toStringSingle(int col) {
