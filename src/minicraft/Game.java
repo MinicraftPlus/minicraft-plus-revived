@@ -890,7 +890,7 @@ public class Game {
 				notifications = notifications.subList(notifications.size() - 3, notifications.size());
 			}
 			
-			if (notetick > 600) { //display time per notification.
+			if (notetick > 120) { //display time per notification.
 				notifications.remove(0);
 				notetick = 0;
 			}
@@ -899,10 +899,8 @@ public class Game {
 			FontStyle style = new FontStyle(Color.WHITE).setShadowType(Color.DARK_GRAY, false);
 			for (int i = 0; i < notifications.size(); i++) {
 				String note = notifications.get(i);
-				//int x = Screen.w / 2 - note.length() * 8 / 2,
 				int y = Screen.h - 120 - notifications.size()*8 + i * 8;
 				style.setYPos(y).draw(note, screen);
-				//Font.draw(note, screen, x, y, Color.WHITE, Color.get(-1, 111));
 			}
 		}
 		
