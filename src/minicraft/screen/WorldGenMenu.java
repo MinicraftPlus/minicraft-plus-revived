@@ -1,5 +1,6 @@
 package minicraft.screen;
 
+import java.util.List;
 import java.util.Random;
 
 import minicraft.Game;
@@ -12,6 +13,8 @@ import minicraft.screen.entry.SelectEntry;
 
 public class WorldGenMenu extends Display {
 	
+	private static final String worldNameRegex = "[a-zA-Z0-9 ]+";
+	
 	private static InputEntry worldSeed = new InputEntry("World Seed", "[0-9]", 20);
 	
 	public static long getSeed() {
@@ -22,11 +25,8 @@ public class WorldGenMenu extends Display {
 			return Long.parseLong(seedStr);
 	}
 	
-	private String[] takenNames = WorldSelectMenu.getWorldNames().toArray(new String[0]);
-	
-	public WorldGenMenu() {
-		super(true);
-		InputEntry nameField = new InputEntry("Enter World Name", "[a-zA-Z0-9 ]+", 36) {
+	public static InputEntry makeWorldNameInput(String prompt, List<String> takenNames, String initValue) {
+		return new InputEntry(prompt, worldNameRegex, 36, initValue) {
 			@Override
 			public boolean isValid() {
 				if(!super.isValid()) return false;
@@ -38,6 +38,12 @@ public class WorldGenMenu extends Display {
 				return true;
 			}
 		};
+	}
+	
+	public WorldGenMenu() {
+		super(true);
+		
+		InputEntry nameField = makeWorldNameInput("Enter World Name", WorldSelectMenu.getWorldNames(), "");
 		worldSeed = new InputEntry("World Seed", "[0-9]+", 20) {
 			@Override
 			public boolean isValid() { return true; }

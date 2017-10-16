@@ -1,5 +1,7 @@
 package minicraft.screen;
 
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Random;
 
 import com.sun.istack.internal.NotNull;
@@ -22,11 +24,22 @@ public class TitleMenu extends Display {
 	private boolean reverse = false;
 	
 	public TitleMenu() {
-		super(true, false, new Menu.Builder(false, 2, RelPos.CENTER,
-				displayFactory("Play",
+		super(true, false);
+		
+		ArrayList<ListEntry> entries = new ArrayList<>();
+		Menu.Builder menu = new Menu.Builder(false, 2, RelPos.CENTER)
+			.setPositioning(new Point(Game.WIDTH/2, Game.HEIGHT*3/5), RelPos.CENTER);
+		
+		if(WorldSelectMenu.getWorldNames().size() > 0)
+			entries.add(displayFactory("Play",
 					new SelectEntry("Load World", () -> Game.setMenu(new WorldSelectMenu())),
 					new SelectEntry("New World", () -> Game.setMenu(new WorldGenMenu()))
-				),
+				)
+			);
+		else
+			entries.add(new SelectEntry("Play", () -> Game.setMenu(new WorldGenMenu())));
+		
+		entries.addAll(Arrays.asList(
 				new SelectEntry("Join Online World", () -> Game.setMenu(new MultiplayerMenu())),
 				new SelectEntry("Options", () -> Game.setMenu(new OptionsMenu())),
 				displayFactory("Help",
@@ -34,10 +47,11 @@ public class TitleMenu extends Display {
 					new SelectEntry("About", () -> Game.setMenu(new BookDisplay(Displays.about)))
 				),
 				new SelectEntry("Quit", () -> System.exit(0))
-			)
-			.setPositioning(new Point(Game.WIDTH/2, Game.HEIGHT*3/5), RelPos.CENTER)
-			.createMenu()
-		);
+		));
+		
+		menu.setEntries(entries);
+		
+		menus = new Menu[] {menu.createMenu()};
 	}
 	
 	@Override

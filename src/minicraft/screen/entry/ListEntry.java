@@ -17,8 +17,10 @@ public abstract class ListEntry {
 	// coordinates specify the top left corner of the entry space
 	public void render(Screen screen, int x, int y, boolean isSelected) {
 		if(visible)
-			Font.draw(toString(), screen, x, y, isSelected ? COL_SLCT : COL_UNSLCT);
+			Font.draw(toString(), screen, x, y, getColor(isSelected));
 	}
+	
+	public int getColor(boolean isSelected) { return isSelected ? COL_SLCT : COL_UNSLCT; }
 	
 	public int getWidth() {
 		return Font.textWidth(toString());

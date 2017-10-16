@@ -79,7 +79,7 @@ public class WorldSelectMenu extends Display {
 	
 	@Override
 	public void init(Display parent) {
-		super.init(parent);
+		super.init(parent instanceof TitleMenu ? parent : new TitleMenu());
 		worldName = "";
 		loadedWorld = true;
 		
@@ -90,9 +90,23 @@ public class WorldSelectMenu extends Display {
 		for(int i = 0; i < entries.length; i++) {
 			String name = worldNames.get(i);
 			entries[i] = new SelectEntry(worldNames.get(i), () -> {
-				worldName = name;
-				Game.setMenu(new LoadingDisplay());
-			});
+				if(curAction == null) {
+					worldName = name;
+					Game.setMenu(new LoadingDisplay());
+				}
+				else {
+					Game.setMenu(new WorldEditMenu(curAction, name));
+					curAction = null;
+				}
+			}) {
+				@Override
+				public int getColor(boolean isSelected) {
+					if(curAction != null && isSelected)
+						return curAction.color;
+					else
+						return super.getColor(isSelected);
+				}
+			};
 		}
 		
 		menus = new Menu[] {

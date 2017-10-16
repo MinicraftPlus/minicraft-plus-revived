@@ -38,7 +38,7 @@ public class InputEntry extends ListEntry {
 	public String getUserInput() { return userInput; }
 	
 	public String toString() {
-		return prompt+": " + userInput;
+		return prompt+(prompt.length()==0?"":": ") + userInput;
 	}
 	
 	public void render(Screen screen, int x, int y, boolean isSelected) {
