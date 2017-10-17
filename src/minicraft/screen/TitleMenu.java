@@ -13,6 +13,7 @@ import minicraft.gfx.Font;
 import minicraft.gfx.Point;
 import minicraft.gfx.Screen;
 import minicraft.level.Level;
+import minicraft.screen.entry.BlankEntry;
 import minicraft.screen.entry.ListEntry;
 import minicraft.screen.entry.SelectEntry;
 
@@ -44,6 +45,9 @@ public class TitleMenu extends Display {
 				new SelectEntry("Options", () -> Game.setMenu(new OptionsMenu())),
 				displayFactory("Help",
 					new SelectEntry("Instructions", () -> Game.setMenu(new BookDisplay(Displays.instructions))),
+					new BlankEntry(),
+					new SelectEntry("Storyline Guide (for the weak)", () -> Game.setMenu(new BookDisplay(Displays.storylineGuide))),
+					new BlankEntry(),
 					new SelectEntry("About", () -> Game.setMenu(new BookDisplay(Displays.about)))
 				),
 				new SelectEntry("Quit", () -> System.exit(0))
