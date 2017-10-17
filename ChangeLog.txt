@@ -6,7 +6,7 @@ Minicraft+ version 2.0.4
 + Added an official logo! Curtesy of contributors on our discord server.
 + Added a new sprite for the log, so it will stop getting confused with planks.
 * Added/fixed the hints that pop up when you try to place walls/floors/doors.
-
++ Added an in-game, in-depth storyline guide.
 
 
 Minicraft+ version 2.0.3
