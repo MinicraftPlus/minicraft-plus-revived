@@ -3,13 +3,32 @@ package minicraft.screen;
 import minicraft.Game;
 import minicraft.InputHandler;
 import minicraft.entity.Player;
+import minicraft.screen.entry.ItemEntry;
+import minicraft.screen.entry.ListEntry;
 
 public class PlayerInvMenu extends Display {
 	
 	private Player player;
 	
 	public PlayerInvMenu(Player player) {
-		super(new InventoryMenu(player.inventory.getItems()));
+		super();
+		
+		menus = new Menu[] {new InventoryMenu(player.inventory.getItems()) {
+			@Override
+			public void removeSelectedEntry() {
+				player.inventory.remove(selection);
+				super.removeSelectedEntry();
+			}
+			
+			@Override
+			public void updateSelectedEntry(ListEntry newEntry) {
+				if(newEntry instanceof ItemEntry) { // should ALWAYS be true
+					player.inventory.removeItems(getSelectedItem(), 1);
+				}
+				super.updateSelectedEntry(newEntry);
+			}
+		}};
+		
 		this.player = player;
 	}
 	
