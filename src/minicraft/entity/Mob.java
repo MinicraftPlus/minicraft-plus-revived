@@ -168,6 +168,10 @@ public abstract class Mob extends Entity {
 		else doHurt(damage, attackDir); // Call the method that actually performs damage, and use our provided attackDir
 	}
 	
+	public void hurt(Tnt tnt, int dmg, int attackDir) {
+		doHurt(dmg, attackDir);
+	}
+	
 	protected void doHurt(int damage, int attackDir) { // Actually hurt the mob, based on only damage and a direction
 		// this is overridden in Player.java
 		if (isRemoved() || hurtTime > 0) return; // If the mob has been hurt recently and hasn't cooled down, don't continue
