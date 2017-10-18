@@ -34,6 +34,21 @@ public class Save {
 	private Save(File worldFolder) {
 		data = new ArrayList<>();
 		
+		
+		if(worldFolder.getParent().equals("saves")) {
+			String worldName = worldFolder.getName();
+			if (!worldName.toLowerCase().equals(worldName)) {
+				if (Game.debug) System.out.println("renaming world in " + worldFolder + " to lowercase");
+				String path = worldFolder.toString();
+				path = path.substring(0, path.lastIndexOf(worldName));
+				File newFolder = new File(path + worldName.toLowerCase());
+				if (worldFolder.renameTo(newFolder))
+					worldFolder = newFolder;
+				else
+					System.err.println("failed to rename world folder " + worldFolder + " to " + newFolder);
+			}
+		}
+		
 		//location += dir;
 		folder = worldFolder;
 		location = worldFolder.getPath() + "/";
@@ -41,9 +56,8 @@ public class Save {
 	}
 	
 	/// this saves world options
-	public Save(Player player, String worldname) { this(worldname); }
 	public Save(String worldname) {
-		this(new File(Game.gameDir+"/saves/" + worldname.toLowerCase() + "/"));
+		this(new File(Game.gameDir+"/saves/" + worldname + "/"));
 		
 		if(Game.isValidClient()) {
 			// clients are not allowed to save.
@@ -67,7 +81,7 @@ public class Save {
 	
 	/// this saves server config options
 	public Save(String worldname, MinicraftServer server) {
-		this(new File(Game.gameDir+"/saves/" + worldname.toLowerCase() + "/"));
+		this(new File(Game.gameDir+"/saves/" + worldname + "/"));
 		
 		if (Game.debug) System.out.println("writing server config...");
 		writeServerConfig("ServerConfig", server);
