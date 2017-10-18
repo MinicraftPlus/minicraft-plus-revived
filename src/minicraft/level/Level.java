@@ -117,16 +117,6 @@ public class Level {
 		
 		if(Game.debug) System.out.println("Making level "+level+"...");
 		
-		/*if (level == 0) maps = LevelGen.createAndValidateTopMap(w, h); // If the level is 0 (surface), create a surface map for the level
-		else if (level < 0 && level > -4) { // create an undergound map
-			maps = LevelGen.createAndValidateUndergroundMap(w, h, -level);
-			monsterDensity = 4; // lowers the monsterDensity value, which makes more enemies spawn
-		} else if (level == -4) { // create a dungeon map
-			maps = LevelGen.createAndValidateDungeon(w, h);
-		} else { // if level is anything else, which is just sky, then...
-			maps = LevelGen.createAndValidateSkyMap(w, h); // Sky level
-			monsterDensity = 4;
-		}*/
 		maps = LevelGen.createAndValidateMap(w, h, level);
 		if(maps == null) {
 			System.err.println("Level Gen ERROR: returned maps array is null");
@@ -142,84 +132,13 @@ public class Level {
 					if (parentLevel.getTile(x, y) == Tiles.get("Stairs Down")) { // If the tile in the level above the current one is a stairs down then...
 						setTile(x, y, Tiles.get("Stairs Up")); // set a stairs up tile in the same position on the current level
 						if (level == -4) { /// make the obsidian wall formation around the stair to the dungeon level
-							setTile(x - 1, y, Tiles.get("Obsidian"));
-							setTile(x + 1, y, Tiles.get("Obsidian"));
-							setTile(x + 2, y, Tiles.get("Obsidian Door"));
-							setTile(x - 2, y, Tiles.get("Obsidian Door"));
-							setTile(x, y - 1, Tiles.get("Obsidian"));
-							setTile(x, y + 1, Tiles.get("Obsidian"));
-							setTile(x, y + 2, Tiles.get("Obsidian Door"));
-							setTile(x, y - 2, Tiles.get("Obsidian Door"));
-							setTile(x - 1, y - 1, Tiles.get("Obsidian"));
-							setTile(x - 1, y + 1, Tiles.get("Obsidian"));
-							setTile(x + 1, y - 1, Tiles.get("Obsidian"));
-							setTile(x + 1, y + 1, Tiles.get("Obsidian"));
-							setTile(x + 3, y, Tiles.get("Obsidian"));
-							setTile(x - 3, y, Tiles.get("Obsidian"));
-							setTile(x + 3, y - 1, Tiles.get("Obsidian"));
-							setTile(x - 3, y - 1, Tiles.get("Obsidian"));
-							setTile(x + 3, y + 1, Tiles.get("Obsidian"));
-							setTile(x - 3, y + 1, Tiles.get("Obsidian"));
-							setTile(x + 4, y, Tiles.get("Obsidian"));
-							setTile(x - 4, y, Tiles.get("Obsidian"));
-							setTile(x + 4, y - 1, Tiles.get("Obsidian"));
-							setTile(x - 4, y - 1, Tiles.get("Obsidian"));
-							setTile(x + 4, y + 1, Tiles.get("Obsidian"));
-							setTile(x - 4, y + 1, Tiles.get("Obsidian"));
-							setTile(x, y + 3, Tiles.get("Obsidian"));
-							setTile(x, y - 3, Tiles.get("Obsidian"));
-							setTile(x + 1, y - 3, Tiles.get("Obsidian"));
-							setTile(x - 1, y - 3, Tiles.get("Obsidian"));
-							setTile(x + 1, y + 3, Tiles.get("Obsidian"));
-							setTile(x - 1, y + 3, Tiles.get("Obsidian"));
-							setTile(x, y + 4, Tiles.get("Obsidian"));
-							setTile(x, y - 4, Tiles.get("Obsidian"));
-							setTile(x + 1, y - 4, Tiles.get("Obsidian"));
-							setTile(x - 1, y - 4, Tiles.get("Obsidian"));
-							setTile(x + 1, y + 4, Tiles.get("Obsidian"));
-							setTile(x - 1, y + 4, Tiles.get("Obsidian"));
-							setTile(x - 2, y - 2, Tiles.get("Obsidian Wall"));
-							setTile(x - 3, y - 2, Tiles.get("Obsidian Wall"));
-							setTile(x - 3, y + 2, Tiles.get("Obsidian Wall"));
-							setTile(x - 2, y + 1, Tiles.get("Obsidian Wall"));
-							setTile(x + 2, y - 2, Tiles.get("Obsidian Wall"));
-							setTile(x + 4, y - 2, Tiles.get("Obsidian Wall"));
-							setTile(x + 4, y + 2, Tiles.get("Obsidian Wall"));
-							setTile(x - 4, y - 2, Tiles.get("Obsidian Wall"));
-							setTile(x - 4, y + 2, Tiles.get("Obsidian Wall"));
-							setTile(x + 1, y - 2, Tiles.get("Obsidian Wall"));
-							setTile(x - 2, y + 2, Tiles.get("Obsidian Wall"));
-							setTile(x + 2, y + 3, Tiles.get("Obsidian Wall"));
-							setTile(x + 2, y + 4, Tiles.get("Obsidian Wall"));
-							setTile(x - 2, y - 3, Tiles.get("Obsidian Wall"));
-							setTile(x - 2, y - 4, Tiles.get("Obsidian Wall"));
-							setTile(x + 2, y - 3, Tiles.get("Obsidian Wall"));
-							setTile(x + 2, y - 4, Tiles.get("Obsidian Wall"));
-							setTile(x - 2, y + 3, Tiles.get("Obsidian Wall"));
-							setTile(x - 2, y + 4, Tiles.get("Obsidian Wall"));
-							setTile(x + 3, y - 2, Tiles.get("Obsidian Wall"));
-							setTile(x + 3, y + 2, Tiles.get("Obsidian Wall"));
-							setTile(x + 2, y + 2, Tiles.get("Obsidian Wall"));
-							setTile(x - 1, y + 2, Tiles.get("Obsidian Wall"));
-							setTile(x + 2, y - 1, Tiles.get("Obsidian Wall"));
-							setTile(x + 2, y + 1, Tiles.get("Obsidian Wall"));
-							setTile(x + 1, y + 2, Tiles.get("Obsidian Wall"));
-							setTile(x - 2, y - 1, Tiles.get("Obsidian Wall"));
-							setTile(x - 1, y - 2, Tiles.get("Obsidian Wall"));
+							//setAreaTiles(x, y, 2, Tiles.get("Obsidian"), 0);
+							Structure.dungeonGate.draw(this, x, y);
 						}
 						if (level == 0) { // surface
-							// TODO do it with this kind of approach.
-							//setAreaTiles(x, y, 1, Tiles.get("Hard Rock"));
-							//setTile(x, y, Tiles.get("Stairs Up"));
 							/// surround the sky stairs with hard rock:
-							setTile(x - 1, y, Tiles.get("Hard Rock"));
-							setTile(x + 1, y, Tiles.get("Hard Rock"));
-							setTile(x, y - 1, Tiles.get("Hard Rock"));
-							setTile(x, y + 1, Tiles.get("Hard Rock"));
-							setTile(x - 1, y - 1, Tiles.get("Hard Rock"));
-							setTile(x - 1, y + 1, Tiles.get("Hard Rock"));
-							setTile(x + 1, y - 1, Tiles.get("Hard Rock"));
-							setTile(x + 1, y + 1, Tiles.get("Hard Rock"));
+							setAreaTiles(x, y, 1, Tiles.get("Hard Rock"), 0);
+							setTile(x, y, Tiles.get("Stairs Up"));
 						}
 
 						if (level != 0 && level != -4) {
