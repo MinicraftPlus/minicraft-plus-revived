@@ -17,8 +17,14 @@ import minicraft.level.Level;
 import minicraft.level.tile.Tile;
 import minicraft.level.tile.Tiles;
 import minicraft.saveload.Save;
-import minicraft.screen.*;
-import minicraft.screen.entry.ItemEntry;
+import minicraft.screen.CraftingMenu;
+import minicraft.screen.Display;
+import minicraft.screen.InfoDisplay;
+import minicraft.screen.LoadingDisplay;
+import minicraft.screen.Menu;
+import minicraft.screen.PauseMenu;
+import minicraft.screen.PlayerInvMenu;
+import minicraft.screen.WorldSelectMenu;
 
 public class Player extends Mob {
 	protected InputHandler input;
@@ -125,42 +131,6 @@ public class Player extends Mob {
 	public void tick() {
 		if(level == null || isRemoved()) return;
 		
-		if(!Bed.inBed && input.getKey("drop-one").clicked || input.getKey("drop-stack").clicked) {
-			Item itemToDrop = null;
-			if(Game.getMenu() instanceof PlayerInvMenu)
-				itemToDrop = ((InventoryMenu)Game.getMenu().getCurMenu()).getSelectedItem();
-			else if(!Game.paused)
-				itemToDrop = activeItem;
-			
-			if(itemToDrop != null) {
-				Item toEntity;
-				if(itemToDrop instanceof StackableItem && !input.getKey("drop-stack").clicked && ((StackableItem)itemToDrop).count > 1) {
-					// just drop one from the stack
-					toEntity = itemToDrop.clone();
-					((StackableItem)toEntity).count = 1;
-					((StackableItem)itemToDrop).count--;
-					if(Game.getMenu() instanceof PlayerInvMenu)
-						Game.getMenu().getCurMenu().updateSelectedEntry(new ItemEntry(itemToDrop));//.updateSelectedItem();
-				} else {
-					// drop the whole item.
-					toEntity = itemToDrop;
-					if(!Game.isMode("creative")) {
-						if(Game.getMenu() instanceof PlayerInvMenu)
-							Game.getMenu().getCurMenu().removeSelectedEntry();//.removeSelectedItem();
-						else if(Game.getMenu() == null)
-							activeItem = null;
-					}
-				}
-				
-				if(level != null) {
-					if(Game.isValidClient())
-						Game.client.dropItem(toEntity);
-					else
-						level.dropItem(x, y, toEntity);
-				}
-			}
-		}
-		
 		if(Game.getMenu() != null && !Game.ISONLINE) return; // don't tick player when menu is open
 		
 		super.tick(); // ticks Mob.java
@@ -259,20 +229,17 @@ public class Player extends Mob {
 				hunger--; // reached burger level.
 				hungerStamCnt += maxHungerStams[Settings.getIdx("diff")];
 			}
-		}
-		
-		/// system that heals you depending on your hunger
-		if (health < maxHealth && hunger > maxHunger/2) {
-			hungerChargeDelay++;
-			if (hungerChargeDelay > 20*Math.pow(maxHunger-hunger+2, 2)) {
-				health++;
-				hungerChargeDelay = 0;
+			
+			/// system that heals you depending on your hunger
+			if (health < maxHealth && hunger > maxHunger/2) {
+				hungerChargeDelay++;
+				if (hungerChargeDelay > 20*Math.pow(maxHunger-hunger+2, 2)) {
+					health++;
+					hungerChargeDelay = 0;
+				}
 			}
-		}
-		else hungerChargeDelay = 0;
-		
-		
-		if(!Bed.inBed) {
+			else hungerChargeDelay = 0;
+			
 			if (hungerStarveDelay == 0) {
 				hungerStarveDelay = 120;
 			}
@@ -284,36 +251,9 @@ public class Player extends Mob {
 					hurt(this, 1, -1); // do 1 damage to the player
 				}
 			}
-			
-			
-			// this is where movement detection occurs.
-			int xa = 0, ya = 0;
-			if(Game.getMenu() == null) {
-				if (input.getKey("up").down) ya--;
-				if (input.getKey("down").down) ya++;
-				if (input.getKey("left").down) xa--;
-				if (input.getKey("right").down) xa++;
-			}
-			if (Game.savecooldown > 0 && !Game.saving) {
-				Game.savecooldown--;
-			}
-			
-			//executes if not saving; and... essentially halves speed if out of stamina.
-			if ((xa != 0 || ya != 0) && (staminaRechargeDelay % 2 == 0 || isSwimming()) && Game.savecooldown == 0 && !Game.saving) {
-				double spd = moveSpeed * (potioneffects.containsKey(PotionType.Speed) ? 1.5D : 1);
-				int oldDir = dir;
-				boolean moved = move((int) (xa * spd), (int) (ya * spd)); // THIS is where the player moves; part of Mob.java
-				if (moved) stepCount++;
-				if ((moved || oldDir != dir) && Game.isConnectedClient() && this == Game.player)
-					Game.client.move(this);
-			}
-			
-			if (isSwimming() && tickTime % 60 == 0 && !potioneffects.containsKey(PotionType.Swim)) { // if drowning... :P
-				if (stamina > 0) stamina--; // take away stamina
-				else hurt(this, 1, -1); // if no stamina, take damage.
-			}
 		}
 		
+		// regen health
 		if (potioneffects.containsKey(PotionType.Regen)) {
 			regentick++;
 			if (regentick > 60) {
@@ -324,8 +264,55 @@ public class Player extends Mob {
 			}
 		}
 		
-		if (Game.getMenu() == null) {
-			if (!Bed.inBed && (activeItem == null || !activeItem.used_pending) && (input.getKey("attack").clicked || input.getKey("pickup").clicked) && stamina != 0) { // this only allows attacks or pickups when such action is possible.
+		if (Game.savecooldown > 0 && !Game.saving) {
+			Game.savecooldown--;
+		}
+		
+		
+		if (Game.getMenu() == null && !Bed.inBed) {
+			// this is where movement detection occurs.
+			int xa = 0, ya = 0;
+			if (input.getKey("up").down) ya--;
+			if (input.getKey("down").down) ya++;
+			if (input.getKey("left").down) xa--;
+			if (input.getKey("right").down) xa++;
+			
+			//executes if not saving; and... essentially halves speed if out of stamina.
+			if ((xa != 0 || ya != 0) && (staminaRechargeDelay % 2 == 0 || isSwimming()) && !Game.saving) {
+				double spd = moveSpeed * (potioneffects.containsKey(PotionType.Speed) ? 1.5D : 1);
+				int oldDir = dir;
+				boolean moved = move((int) (xa * spd), (int) (ya * spd)); // THIS is where the player moves; part of Mob.java
+				if (moved) stepCount++;
+				if ((moved || oldDir != dir) && Game.isConnectedClient() && this == Game.player)
+					Game.client.move(this);
+			}
+			
+			
+			if (isSwimming() && tickTime % 60 == 0 && !potioneffects.containsKey(PotionType.Swim)) { // if drowning... :P
+				if (stamina > 0) stamina--; // take away stamina
+				else hurt(this, 1, -1); // if no stamina, take damage.
+			}
+			
+			if(activeItem != null && (input.getKey("drop-one").clicked || input.getKey("drop-stack").clicked)) {
+				Item drop = activeItem.clone();
+				
+				if(input.getKey("drop-one").clicked && drop instanceof StackableItem && ((StackableItem)drop).count > 1) {
+					// drop one from stack
+					((StackableItem)activeItem).count--;
+					((StackableItem)drop).count = 1;
+				} else {
+					activeItem = null; // remove it from the "inventory"
+				}
+				
+				//if(level != null) {
+					if(Game.isValidClient())
+						Game.client.dropItem(drop);
+					else
+						level.dropItem(x, y, drop);
+				//}
+			}
+			
+			if ((activeItem == null || !activeItem.used_pending) && (input.getKey("attack").clicked || input.getKey("pickup").clicked) && stamina != 0) { // this only allows attacks or pickups when such action is possible.
 				if (!potioneffects.containsKey(PotionType.Energy)) stamina--;
 				staminaRecharge = 0;
 				
@@ -390,11 +377,11 @@ public class Player extends Mob {
 						Game.client.sendPotionEffect(potionType, false);
 				}
 			}
-		}
-		
-		if (attackTime > 0) {
-			attackTime--;
-			if(attackTime == 0) attackItem = null; // null the attackItem once we are done attacking.
+			
+			if (attackTime > 0) {
+				attackTime--;
+				if(attackTime == 0) attackItem = null; // null the attackItem once we are done attacking.
+			}
 		}
 		
 		if(Game.isConnectedClient() && this == Game.player) Game.client.sendPlayerUpdate(this);

@@ -1,77 +1,58 @@
 package minicraft.screen;
 
-import java.util.List;
-
-import minicraft.gfx.Point;
+import minicraft.Game;
+import minicraft.InputHandler;
+import minicraft.entity.Entity;
+import minicraft.entity.Inventory;
 import minicraft.item.Item;
-import minicraft.item.Recipe;
+import minicraft.item.StackableItem;
 import minicraft.screen.entry.ItemEntry;
-import minicraft.screen.entry.RecipeEntry;
 
-// TODO Perhaps I could make it "return" an item when it gets "selected" or "chosen", since that's really all it does... then I wouldn't have to listen for key presses in the Display class, I could just check if an Item has been "chosen", and then act when it has.
-
-public class InventoryMenu extends Menu {
+public class InventoryMenu extends ItemListMenu {
 	
-	private static ItemEntry[] getEntries(List<Item> items) {
-		ItemEntry[] entries = new ItemEntry[items.size()];
-		// to make space for the item icon.
-		for(int i = 0; i < items.size(); i++) {
-			entries[i] = new ItemEntry(items.get(i));
-		}
-		
-		return entries;
+	private Inventory inv;
+	private Entity holder;
+	
+	public InventoryMenu(Entity holder, Inventory inv, String title) {
+		super(ItemEntry.useItems(inv.getItems()), title);
+		this.inv = inv;
+		this.holder = holder;
 	}
 	
-	private static RecipeEntry[] getRecipeEntries(Recipe[] recipes) {
-		RecipeEntry[] entries = new RecipeEntry[recipes.length];
-		for(int i = 0; i < recipes.length; i++) {
-			entries[i] = new RecipeEntry(recipes[i]);
-		}
-		
-		return entries;
-	}
-	
-	private static Builder getBuilder() {
-		return new Menu.Builder(true, 0, RelPos.LEFT)
-			.setPositioning(new Point(9, 9), RelPos.BOTTOM_RIGHT)
-			.setDisplayLength(9)
-			.setSelectable(true)
-			.setTitle("Inventory")
-			.setScrollPolicies(1, false);
-	}
-	
-	public InventoryMenu(List<Item> items) {
-		super(getBuilder()
-			.setEntries(getEntries(items))
-			.createMenu()
-		);
-	}
-	
-	public InventoryMenu(List<Item> items, String title) {
-		super(getBuilder()
-			.setEntries(getEntries(items))
-			.setTitle(title)
-			.createMenu()
-		);
-	}
-	
-	public InventoryMenu(Recipe[] recipes, String title) {
-		super(getBuilder()
-			.setEntries(getRecipeEntries(recipes))
-			.setTitle(title)
-			.createMenu()
-		);
-	}
-	public InventoryMenu(Recipe[] recipes, int fillCol, int edgeStrokeCol, int edgeFillCol) {
-		super(getBuilder()
-			.setEntries(getRecipeEntries(recipes))
-			.setTitle("Crafting")
-			.setFrame(fillCol, edgeStrokeCol, edgeFillCol)
-			.createMenu()
-		);
-	}
-	
-	public Item getSelectedItem() {
+	/*Item getSelectedItem() {
 		return ((ItemEntry)getCurEntry()).getItem();
+	}*/
+	
+	@Override
+	public void tick(InputHandler input) {
+		super.tick(input);
+		
+		if(getNumOptions() > 0 && (input.getKey("drop-one").clicked || input.getKey("drop-stack").clicked)) {
+			Item invItem = ((ItemEntry)getCurEntry()).getItem();
+			Item drop = invItem.clone();
+			
+			if(input.getKey("drop-one").clicked && drop instanceof StackableItem && ((StackableItem)drop).count > 1) {
+				// just drop one from the stack
+				((StackableItem)drop).count = 1;
+				((StackableItem)invItem).count--;
+			} else {
+				// drop the whole item.
+				if(!Game.isMode("creative"))
+					removeSelectedEntry();
+			}
+			
+			if(holder.getLevel() != null) {
+				if(Game.isValidClient())
+					Game.client.dropItem(drop);
+				else
+					holder.getLevel().dropItem(holder.x, holder.y, drop);
+			}
+		}
+	}
+	
+	@Override
+	public void removeSelectedEntry() {
+		inv.remove(getSelection());
+		super.removeSelectedEntry();
 	}
 }

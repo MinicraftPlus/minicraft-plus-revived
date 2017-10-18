@@ -11,12 +11,15 @@ public class ContainerMenu extends Display {
 	
 	private static final int padding = 10;
 	
-	private Inventory pInv, cInv;
+	private Player player;
+	private Chest chest;
 	
 	public ContainerMenu(Player player, Chest chest) {
-		super(new InventoryMenu(chest.inventory.getItems(), chest.name), new InventoryMenu(player.inventory.getItems()));
-		pInv = player.inventory;
-		cInv = chest.inventory;
+		super(new InventoryMenu(chest, chest.inventory, chest.name), new InventoryMenu(player, player.inventory, "Inventory"));
+		//pInv = player.inventory;
+		//cInv = chest.inventory;
+		this.player = player;
+		this.chest = chest;
 		
 		menus[1].translate(menus[0].getBounds().getWidth() + padding, 0);
 	}
@@ -45,16 +48,22 @@ public class ContainerMenu extends Display {
 		
 		if(input.getKey("attack").clicked && curMenu.getNumOptions() > 0) {
 			// switch inventories
-			Inventory from = selection == 0 ? cInv : pInv;
-			Inventory to = from == cInv ? pInv : cInv;
+			Inventory from, to;
+			if(selection == 0) {
+				from = chest.inventory;
+				to = player.inventory;
+			} else {
+				from = player.inventory;
+				to = chest.inventory;
+			}
 			
 			int toSel = menus[otherIdx].getSelection();
 			int fromSel = curMenu.getSelection();
 			
 			to.add(toSel, from.remove(fromSel));
 			
-			menus[selection] = new InventoryMenu(from.getItems(), menus[selection].getTitle());
-			menus[otherIdx] = new InventoryMenu(to.getItems(), menus[otherIdx].getTitle());
+			menus[selection] = new InventoryMenu(selection==0?chest:player, from, menus[selection].getTitle());
+			menus[otherIdx] = new InventoryMenu(selection==0?player:chest, to, menus[otherIdx].getTitle());
 			menus[1].translate(menus[0].getBounds().getWidth() + padding, 0);
 			onSelectionChange(0, selection);
 			menus[selection].setSelection(fromSel);

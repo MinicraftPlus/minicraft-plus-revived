@@ -1,11 +1,20 @@
 package minicraft.screen.entry;
 
+import java.util.List;
+
 import minicraft.InputHandler;
 import minicraft.gfx.Font;
 import minicraft.gfx.Screen;
 import minicraft.item.Recipe;
 
 public class RecipeEntry extends ItemEntry {
+	
+	public static RecipeEntry[] useRecipes(List<Recipe> recipes) {
+		RecipeEntry[] entries = new RecipeEntry[recipes.size()];
+		for(int i = 0; i < recipes.size(); i++)
+			entries[i] = new RecipeEntry(recipes.get(i));
+		return entries;
+	}
 	
 	private Recipe recipe;
 	
