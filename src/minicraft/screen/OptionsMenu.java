@@ -9,6 +9,7 @@ public class OptionsMenu extends Display {
 	public OptionsMenu() {
 		super(true, new Menu.Builder(false, 6, RelPos.LEFT,
 				Settings.getEntry("diff"),
+				Settings.getEntry("fps"),
 				Settings.getEntry("sound"),
 				Settings.getEntry("autosave"),
 				Settings.getEntry("skinon"),

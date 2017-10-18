@@ -4,12 +4,14 @@ import java.util.HashMap;
 
 import minicraft.screen.entry.ArrayEntry;
 import minicraft.screen.entry.BooleanEntry;
+import minicraft.screen.entry.RangeEntry;
 
 public class Settings {
 	
 	private static HashMap<String, ArrayEntry> options = new HashMap<>();
 	
 	static {
+		options.put("fps", new RangeEntry("Max FPS", 10, 300, 50));
 		options.put("diff", new ArrayEntry<>("Difficulty", "Easy", "Normal", "Hard"));
 		options.put("mode", new ArrayEntry<>("Game Mode", "Survival", "Creative", "Hardcore", "Score"));
 		options.put("scoretime", new ArrayEntry<>("Time (Score Mode)", 10, 20, 40, 60, 120));
@@ -34,6 +36,8 @@ public class Settings {
 		options.get("unlockedskin").setChangeAction(value ->
 			options.get("skinon").setVisible((boolean)value)
 		);
+		
+		options.get("fps").setChangeAction(value -> Game.MAX_FPS = (int)value);
 	}
 	
 	// returns the value of the specified option
@@ -46,9 +50,9 @@ public class Settings {
 	public static ArrayEntry getEntry(String option) { return options.get(option.toLowerCase()); }
 	
 	// checks if the given option is set to the specified value
-	public static boolean hasValue(String option, Object value) {
+	/*public static boolean valueMatches(String option, Object value) {
 		return options.get(option.toLowerCase()).valueIs(value);
-	}
+	}*/
 	
 	// sets the value of the given option name, to the given value, provided it is a valid value for that option.
 	public static void set(String option, Object value) {

@@ -87,9 +87,7 @@ public class Game {
 	public static String gameDir; // The directory in which all the game files are stored
 	//public static String loadDir = "";
 	
-	public static int MAX_FPS = 50;
-	public static final int MIN_FPS_CONFIG = 1;
-	public static final int MAX_FPS_CONFIG = 200;
+	public static int MAX_FPS = (int)Settings.get("fps");
 	
 	/// MULTIPLAYER
 	public static boolean ISONLINE = false;

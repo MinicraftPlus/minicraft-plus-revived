@@ -317,20 +317,23 @@ public class Load {
 		if(!data.get(2).contains(";")) // signifies that this file was last written to by a version after 2.0.2.
 			prefVer = new Version(data.remove(0));
 		
-		Settings.set("sound", Boolean.parseBoolean(data.get(0)));
-		Settings.set("autosave", Boolean.parseBoolean(data.get(1)));
+		Settings.set("sound", Boolean.parseBoolean(data.remove(0)));
+		Settings.set("autosave", Boolean.parseBoolean(data.remove(0)));
+		
+		if(prefVer.compareTo(new Version("2.0.4-dev2")) >= 0)
+			Settings.set("fps", Integer.parseInt(data.remove(0)));
 		
 		List<String> subdata;
 		
 		if(prefVer.compareTo(new Version("2.0.3-dev1")) < 0) {
-			subdata = data.subList(2, data.size());
+			subdata = data;
 		} else {
-			MultiplayerMenu.savedIP = data.get(2);
+			MultiplayerMenu.savedIP = data.remove(0);
 			if(prefVer.compareTo(new Version("2.0.3-dev3")) > 0) {
-				MultiplayerMenu.savedUUID = data.remove(3);
-				MultiplayerMenu.savedUsername = data.remove(3);
+				MultiplayerMenu.savedUUID = data.remove(0);
+				MultiplayerMenu.savedUsername = data.remove(0);
 			}
-			String keyData = data.get(3);
+			String keyData = data.get(0);
 			subdata = Arrays.asList(keyData.split(":"));
 		}
 		
