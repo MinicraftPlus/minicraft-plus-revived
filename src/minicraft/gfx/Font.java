@@ -166,7 +166,7 @@ public class Font {
 	private static int getLine(String text, int maxWidth) {
 		text = text.replaceAll(" ?\n ?", " \n ");
 		
-		String[] words = text.split(" ");
+		String[] words = text.split(" ", -1);
 		int curWidth = textWidth(words[0]);
 		
 		int i;

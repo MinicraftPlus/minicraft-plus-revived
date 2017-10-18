@@ -75,6 +75,7 @@ public class CraftingMenu extends Display {
 		menus[1] = itemCountMenu
 			.setEntries(new ItemListing(recipes[recipeMenu.getSelection()].getProduct(), String.valueOf(getCurItemCount())))
 			.createMenu();
+		menus[1].setFrameColors(prev);
 	}
 	
 	private int getCurItemCount() {

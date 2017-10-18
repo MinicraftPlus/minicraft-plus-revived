@@ -300,7 +300,7 @@ public class Player extends Mob {
 					// drop one from stack
 					((StackableItem)activeItem).count--;
 					((StackableItem)drop).count = 1;
-				} else {
+				} else if(!Game.isMode("creative")) {
 					activeItem = null; // remove it from the "inventory"
 				}
 				

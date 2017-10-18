@@ -31,6 +31,7 @@ public class KeyInputMenu extends Display {
 	}
 	
 	public KeyInputMenu() {
+		super(true);
 		builder = new Menu.Builder(false, 0, RelPos.CENTER, getEntries())
 			//.setSize(Screen.w, Screen.h)
 			.setTitle("Controls")

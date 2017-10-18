@@ -137,20 +137,12 @@ public class Level {
 						}
 						if (level == 0) { // surface
 							/// surround the sky stairs with hard rock:
-							setAreaTiles(x, y, 1, Tiles.get("Hard Rock"), 0);
-							setTile(x, y, Tiles.get("Stairs Up"));
+							setAreaTiles(x, y, 1, Tiles.get("Hard Rock"), 0); // won't overwrite the stairs
 						}
 
 						if (level != 0 && level != -4) {
 							// any other level, the up-stairs should have dirt on all sides.
-							setTile(x - 1, y, Tiles.get("dirt"));
-							setTile(x + 1, y, Tiles.get("dirt"));
-							setTile(x, y - 1, Tiles.get("dirt"));
-							setTile(x, y + 1, Tiles.get("dirt"));
-							setTile(x - 1, y - 1, Tiles.get("dirt"));
-							setTile(x - 1, y + 1, Tiles.get("dirt"));
-							setTile(x + 1, y - 1, Tiles.get("dirt"));
-							setTile(x + 1, y + 1, Tiles.get("dirt"));
+							setAreaTiles(x, y, 1, Tiles.get("dirt"), 0); // won't overwrite the stairs
 						}
 					}
 				}
@@ -739,10 +731,14 @@ public class Level {
 		return local.toArray(new Tile[0]);
 	}
 	
-	public void setAreaTiles(int xt, int yt, int r, Tile tile, int data) {
-		for(int y = yt-r; y <= yt+r; y++)
-			for(int x = xt-r; x <= xt+r; x++)
-				setTile(x, y, tile, data);
+	public void setAreaTiles(int xt, int yt, int r, Tile tile, int data) { setAreaTiles(xt, yt, r, tile, data, false); }
+	public void setAreaTiles(int xt, int yt, int r, Tile tile, int data, boolean overwriteStairs) {
+		for(int y = yt-r; y <= yt+r; y++) {
+			for (int x = xt - r; x <= xt + r; x++) {
+				if(overwriteStairs || (!getTile(xt, yt).name.toLowerCase().contains("stairs")))
+					setTile(x, y, tile, data);
+			}
+		}
 	}
 	
 	public List<Point> getMatchingTiles(Tile search) {

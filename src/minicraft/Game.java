@@ -375,14 +375,13 @@ public class Game {
 	// In the end, calls menu.tick() if there's a menu, or level.tick() if no menu.
 	public static void tick() {
 		if(newMenu != menu) {
-			if(newMenu != null) {
-				newMenu.onExit();
+			if(menu != null)
+				menu.onExit();
 				
-				//if(debug) System.out.println("setting menu from " + newMenu + " to " + display);
-				
-				if (menu == null || newMenu != menu.getParent())
-					newMenu.init(menu);
-			}
+			//if(debug) System.out.println("setting menu from " + newMenu + " to " + display);
+			
+			if (newMenu != null && (menu == null || newMenu != menu.getParent()))
+				newMenu.init(menu);
 			
 			menu = newMenu;
 		}
