@@ -43,7 +43,7 @@ public class InputHandler implements /*MouseListener, */KeyListener {
 	private boolean overwrite = false;
 	
 	public String getChangedKey() {
-		String key = keyChanged + ";" + getMapping(keyChanged);
+		String key = keyChanged + ";" + keymap.get(keyChanged);
 		keyChanged = null;
 		return key;
 	}
