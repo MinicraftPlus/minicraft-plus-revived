@@ -363,7 +363,7 @@ public class Player extends Mob {
 			if (input.getKey("r").clicked && !Game.saving && !(this instanceof RemotePlayer) && !Game.isValidClient()) {
 				Game.saving = true;
 				LoadingDisplay.setPercentage(0);
-				new Save(this, WorldSelectMenu.getWorldName());
+				new Save(WorldSelectMenu.getWorldName());
 			}
 			//debug feature:
 			if (Game.debug && input.getKey("shift-p").clicked) { // remove all potion effects

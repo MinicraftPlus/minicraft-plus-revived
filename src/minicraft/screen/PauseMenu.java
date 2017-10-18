@@ -32,7 +32,7 @@ public class PauseMenu extends Display {
 			new SelectEntry("Save Game", () -> {
 				Game.setMenu(null);
 				if(!Game.isValidServer())
-					new Save(Game.player, WorldSelectMenu.getWorldName());
+					new Save(WorldSelectMenu.getWorldName());
 				else
 					Game.server.saveWorld();
 			}),

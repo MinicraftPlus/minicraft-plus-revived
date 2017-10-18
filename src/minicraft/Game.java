@@ -429,7 +429,7 @@ public class Game {
 		if (asTick > astime) {
 			if ((boolean)Settings.get("autosave") && player.health > 0 && !gameOver) {
 				if(!Game.ISONLINE)
-					new Save(player, WorldSelectMenu.getWorldName());
+					new Save(WorldSelectMenu.getWorldName());
 				else if(Game.isValidServer())
 					Game.server.saveWorld();
 			}
