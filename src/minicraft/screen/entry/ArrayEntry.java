@@ -139,8 +139,4 @@ public class ArrayEntry<T> extends ListEntry {
 		if(l != null)
 			l.onChange(getValue());
 	}
-	
-	public interface ChangeListener {
-		void onChange(Object newValue);
-	}
 }

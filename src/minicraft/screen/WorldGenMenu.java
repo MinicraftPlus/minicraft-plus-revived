@@ -1,6 +1,9 @@
 package minicraft.screen;
 
+import java.util.Arrays;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Locale;
 import java.util.Random;
 
 import minicraft.Game;
@@ -37,6 +40,11 @@ public class WorldGenMenu extends Display {
 				
 				return true;
 			}
+			
+			@Override
+			public String getUserInput() {
+				return super.getUserInput().toLowerCase(Locale.ENGLISH);
+			}
 		};
 	}
 	
@@ -44,6 +52,26 @@ public class WorldGenMenu extends Display {
 		super(true);
 		
 		InputEntry nameField = makeWorldNameInput("Enter World Name", WorldSelectMenu.getWorldNames(), "");
+		
+		SelectEntry nameHelp = new SelectEntry("Trouble with world name?", () -> Game.setMenu(new BookDisplay("by default, w and s move the cursor up and down. This can be changed in the key binding menu. To type the letter instead of moving the cursor, hold the shift key while typing the world name."))) {
+			@Override
+			public int getColor(boolean isSelected) {
+				return Color.get(-1, 444);
+			}
+		};
+		
+		nameHelp.setVisible(false);
+		
+		HashSet<String> controls = new HashSet<>();
+		controls.addAll(Arrays.asList(Game.input.getMapping("up").split("/")));
+		controls.addAll(Arrays.asList(Game.input.getMapping("down").split("/")));
+		for(String key: controls) {
+			if(key.matches("^\\w$")) {
+				nameHelp.setVisible(true);
+				break;
+			}
+		}
+		
 		worldSeed = new InputEntry("World Seed", "[0-9]+", 20) {
 			@Override
 			public boolean isValid() { return true; }
@@ -52,6 +80,7 @@ public class WorldGenMenu extends Display {
 		menus = new Menu[] {
 			new Menu.Builder(false, 10, RelPos.LEFT,
 				nameField,
+				nameHelp,
 				Settings.getEntry("mode"),
 				Settings.getEntry("scoretime"),
 				

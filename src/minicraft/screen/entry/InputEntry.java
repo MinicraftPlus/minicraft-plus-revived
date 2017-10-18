@@ -13,6 +13,8 @@ public class InputEntry extends ListEntry {
 	
 	private String userInput;
 	
+	private ChangeListener listener;
+	
 	public InputEntry(String prompt) {
 		this(prompt, null, 0);
 	}
@@ -29,7 +31,10 @@ public class InputEntry extends ListEntry {
 	
 	@Override
 	public void tick(InputHandler input) {
+		String prev = userInput;
 		userInput = input.addKeyTyped(userInput, regex);
+		if(!prev.equals(userInput) && listener != null)
+			listener.onChange(userInput);
 		
 		if(maxLength > 0 && userInput.length() > maxLength)
 			userInput = userInput.substring(0, maxLength); // truncates extra
@@ -47,5 +52,9 @@ public class InputEntry extends ListEntry {
 	
 	public boolean isValid() {
 		return userInput.matches(regex);
+	}
+	
+	public void setChangeListener(ChangeListener l) {
+		listener = l;
 	}
 }
