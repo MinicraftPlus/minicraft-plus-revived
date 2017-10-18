@@ -54,7 +54,7 @@ public class EnemyMob extends MobAi {
 		super.render(screen);
 	}
 	
-	protected void touchedBy(Entity entity) { // if the entity touches the player
+	protected void touchedBy(Entity entity) { // if an entity (like the player) touches the enemy mob
 		super.touchedBy(entity);
 		// hurts the player, damage is based on lvl.
 		if(entity instanceof Player) {

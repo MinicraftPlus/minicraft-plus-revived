@@ -304,19 +304,15 @@ public class Player extends Mob {
 					activeItem = null; // remove it from the "inventory"
 				}
 				
-				//if(level != null) {
-					if(Game.isValidClient())
-						Game.client.dropItem(drop);
-					else
-						level.dropItem(x, y, drop);
-				//}
+				if(Game.isValidClient())
+					Game.client.dropItem(drop);
+				else
+					level.dropItem(x, y, drop);
 			}
 			
 			if ((activeItem == null || !activeItem.used_pending) && (input.getKey("attack").clicked || input.getKey("pickup").clicked) && stamina != 0) { // this only allows attacks or pickups when such action is possible.
 				if (!potioneffects.containsKey(PotionType.Energy)) stamina--;
 				staminaRecharge = 0;
-				
-				//if(Game.debug) System.out.println("attack or pickup start");
 				
 				if (input.getKey("pickup").clicked) {
 					if(!(activeItem instanceof PowerGloveItem)) { // if you are not already holding a power glove (aka in the middle of a separate interaction)...
@@ -686,7 +682,10 @@ public class Player extends Mob {
 	
 	/** What happens when the player interacts with a itemEntity */
 	public void touchItem(ItemEntity itemEntity) {
-		itemEntity.take(this); // calls the take() method in ItemEntity
+		Sound.pickup.play();
+		itemEntity.remove();
+		score++; // increase the player's score by 1
+		//itemEntity.take(this); // calls the take() method in ItemEntity
 		if(Game.isMode("creative")) return; // we shall not bother the inventory on creative mode.
 		
 		if(activeItem != null && activeItem.name.equals(itemEntity.item.name) && activeItem instanceof StackableItem && itemEntity.item instanceof StackableItem) // picked up item matches the one in your hand
