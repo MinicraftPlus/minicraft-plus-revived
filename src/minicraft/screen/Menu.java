@@ -164,23 +164,25 @@ public class Menu {
 	private void doScroll() {
 		// check if dispSelection is past padding point, and if so, bring it back in
 		
-		int offset = getSelection() - dispSelection;
+		//int offset = this.offset;//getSelection() - dispSelection;
+		dispSelection = selection - offset;
+		int offset = this.offset;
 		
 		// for scrolling up
-		while(dispSelection < padding && (wrap || offset > 0)) {
+		while((dispSelection < padding || !wrap && offset + displayLength > entries.size()) && (wrap || offset > 0)) {
 			offset--;
 			dispSelection++;
 		}
 		
 		// for scrolling down
-		while(displayLength - dispSelection <= padding && (wrap || offset + displayLength < this.entries.size())) {
+		while((displayLength - dispSelection <= padding || !wrap && offset < 0) && (wrap || offset + displayLength < entries.size())) {
 			offset++;
 			dispSelection--;
 		}
 		
 		// only useful when wrap is true
 		if(offset < 0) offset += entries.size();
-		offset = offset % entries.size();
+		if(offset > 0) offset = offset % entries.size();
 		
 		this.offset = offset;
 	}
@@ -228,35 +230,17 @@ public class Menu {
 		}
 	}
 	
-	/*private void recalcEntryPos() {
-		if(entries.length == 0) {
-			lineY = 0;
-			return;
-		}
-		int height = 0;
-		for(ListEntry entry: entries)
-			height += ListEntry.getHeight() + spacing;
-		
-		if(height > 0)
-			height -= spacing;
-		
-		lineY = entryPos.positionRect(new Dimension(bounds.getWidth(), height), bounds).y;
-	}*/
-	
-	
-	public void updateSelectedEntry(ListEntry newEntry) {
-		entries.set(selection, newEntry);
-	}
+	void updateSelectedEntry(ListEntry newEntry) { entries.set(selection, newEntry); }
 	
 	public void removeSelectedEntry() {
 		entries.remove(selection);
 		
 		if(selection >= entries.size())
 			selection = entries.size() - 1;
-		else if(selection < 0)
+		if(selection < 0)
 			selection = 0;
 		
-		//recalcEntryPos();
+		doScroll();
 	}
 	
 	public void setFrameColors(int fillCol, int edgeStrokeCol, int edgeFillCol) {
