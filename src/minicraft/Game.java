@@ -195,27 +195,18 @@ public class Game {
 	
 	// Sets the current menu.
 	public static void setMenu(Display display) {
-		Display parent = newMenu;
-		
-		if(newMenu != null)
-			newMenu.onExit();
-		
-		//if(debug) System.out.println("setting menu from " + newMenu + " to " + display);
-		
+		//Display parent = newMenu;
 		newMenu = display;
-		
-		if(newMenu != null)
-			newMenu.init(parent);
 	}
 	
 	public static void exitMenu() {
-		if(newMenu == null) return; // no action required; cannot exit from no menu
-		newMenu.onExit();
+		if(menu == null) return; // no action required; cannot exit from no menu
+		//newMenu.onExit();
 		//if(debug) System.out.println("exiting menu from " + newMenu + " to " + newMenu.getParent());
-		newMenu = newMenu.getParent();
+		newMenu = menu.getParent();
 	}
 	
-	public static Display getMenu() { return newMenu; }
+	public static Display getMenu() { return menu; }
 	
 	public static boolean isValidClient() {
 		return ISONLINE && client != null;
@@ -385,8 +376,18 @@ public class Game {
 	// VERY IMPORTANT METHOD!! Makes everything keep happening.
 	// In the end, calls menu.tick() if there's a menu, or level.tick() if no menu.
 	public static void tick() {
-		if(newMenu != menu)
+		if(newMenu != menu) {
+			if(newMenu != null) {
+				newMenu.onExit();
+				
+				//if(debug) System.out.println("setting menu from " + newMenu + " to " + display);
+				
+				if (menu == null || newMenu != menu.getParent())
+					newMenu.init(menu);
+			}
+			
 			menu = newMenu;
+		}
 		
 		Level level = levels[currentLevel];
 		if (Bed.inBed && !Game.isValidClient()) {
