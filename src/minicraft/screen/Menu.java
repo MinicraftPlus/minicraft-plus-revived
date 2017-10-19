@@ -246,7 +246,7 @@ public class Menu {
 	public void setFrameColors(int fillCol, int edgeStrokeCol, int edgeFillCol) {
 		frameFillColor = Color.get(fillCol, fillCol);
 		frameEdgeColor = Color.get(-1, edgeStrokeCol, fillCol, edgeFillCol);
-		int[] titleCols = Color.seperateEncodedSprite(titleColor, true);
+		int[] titleCols = Color.separateEncodedSprite(titleColor, true);
 		titleColor = Color.get(fillCol, titleCols[3]<0?550:titleCols[3]);
 	}
 	public void setFrameColors(Menu model) {

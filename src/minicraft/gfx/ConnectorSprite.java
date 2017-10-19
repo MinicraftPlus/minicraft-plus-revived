@@ -55,7 +55,7 @@ public class ConnectorSprite {
 		y = y << 4;
 		
 		//full.render(screen, x, y);
-		//int[] spc = Color.seperateEncodedSprite(colsparse); // TODO maybe the getConnectColor method decide the whole thing; just pass in the original color too?
+		//int[] spc = Color.separateEncodedSprite(colsparse); // TODO maybe the getConnectColor method decide the whole thing; just pass in the original color too?
 		
 		// full.renderPixel(0, 0, screen, x, y, colfull);
 		// full.renderPixel(1, 0, screen, x+8, y, colfull);

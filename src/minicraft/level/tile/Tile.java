@@ -82,7 +82,7 @@ public abstract class Tile {
 		else
 			return DirtTile.dCol(level.depth);
 		
-		return Color.seperateEncodedSprite(scolor)[3];
+		return Color.separateEncodedSprite(scolor)[3];
 	}
 	
 	/** Returns if the player can walk on it, overrides in sub-classes  */
