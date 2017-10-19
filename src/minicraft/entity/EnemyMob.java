@@ -14,12 +14,16 @@ public class EnemyMob extends MobAi {
 	protected int[] lvlcols;
 	public int detectDist;
 	
-	public EnemyMob(int lvl, MobSprite[][] sprites, int[] lvlcols, int health, boolean isFactor, int detectDist, int rwTime, int rwChance) {
-		super(sprites, isFactor ? (lvl==0?1:lvl * lvl) * health*((Double)(Math.pow(2, Settings.getIdx("diff")))).intValue() : health, 60*Game.normSpeed, rwTime, rwChance);
+	public EnemyMob(int lvl, MobSprite[][] sprites, int[] lvlcols, int health, boolean isFactor, int detectDist, int lifetime, int rwTime, int rwChance) {
+		super(sprites, isFactor ? (lvl==0?1:lvl * lvl) * health*((Double)(Math.pow(2, Settings.getIdx("diff")))).intValue() : health, lifetime, rwTime, rwChance);
 		this.lvl = lvl == 0 ? 1 : lvl;
 		this.lvlcols = java.util.Arrays.copyOf(lvlcols, lvlcols.length);
 		col = lvlcols[this.lvl-1];
 		this.detectDist = detectDist;
+	}
+	
+	public EnemyMob(int lvl, MobSprite[][] sprites, int[] lvlcols, int health, boolean isFactor, int detectDist, int rwTime, int rwChance) {
+		this(lvl, sprites, lvlcols, health, isFactor, detectDist, 60*Game.normSpeed, rwTime, rwChance);
 	}
 	
 	public EnemyMob(int lvl, MobSprite[][] sprites, int[] lvlcols, int health, int detectDist) {

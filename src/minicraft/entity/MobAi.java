@@ -37,10 +37,12 @@ public abstract class MobAi extends Mob {
 	public void tick() {
 		super.tick();
 		
-		age++;
-		if(age > lifetime) {
-			remove();
-			return;
+		if(lifetime > 0) {
+			age++;
+			if (age > lifetime) {
+				remove();
+				return;
+			}
 		}
 		
 		if(getLevel() != null) {

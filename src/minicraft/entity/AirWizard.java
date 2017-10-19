@@ -1,12 +1,12 @@
 package minicraft.entity;
 
-import minicraft.Settings;
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 
 import minicraft.Game;
+import minicraft.Settings;
 import minicraft.Sound;
 import minicraft.gfx.Color;
 import minicraft.gfx.Font;
@@ -27,7 +27,7 @@ public class AirWizard extends EnemyMob {
 	
 	public AirWizard(int lvl) { this(lvl>1); }
 	public AirWizard(boolean secondform) {
-		super(secondform?2:1, sprites, (new int[2]), secondform?5000:2000, false, 16*8, 10, 50);
+		super(secondform?2:1, sprites, (new int[2]), secondform?5000:2000, false, 16*8, -1, 10, 50);
 		
 		this.secondform = secondform;
 		if(secondform) speed = 3;
