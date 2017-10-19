@@ -1,6 +1,12 @@
 package minicraft;
 
-import javafx.scene.media.AudioClip;
+import javax.sound.sampled.AudioSystem;
+import javax.sound.sampled.Clip;
+import javax.sound.sampled.Line;
+import javax.sound.sampled.LineEvent;
+import javax.sound.sampled.LineUnavailableException;
+import javax.sound.sampled.UnsupportedAudioFileException;
+import java.io.IOException;
 
 public class Sound {
 	//creates sounds from their respective files
@@ -12,29 +18,37 @@ public class Sound {
 	public static final Sound explode = new Sound("/resources/explode.wav");
 	public static final Sound pickup = new Sound("/resources/pickup.wav");
 	public static final Sound craft = new Sound("/resources/craft.wav");
+	public static final Sound back = new Sound("/resources/craft.wav");
 	public static final Sound select = new Sound("/resources/select.wav");
 	public static final Sound confirm = new Sound("/resources/confirm.wav");
 	
-	private AudioClip clip; // Creates a audio clip to be played
+	private Clip clip; // Creates a audio clip to be played
+	
+	public static void init() {} // a way to initialize the class without actually doing anything
 	
 	private Sound(String name) {
-		clip = new AudioClip(Sound.class.getResource(name).toString());
-	}
-
-	public void play() {
-		if (!(boolean)Settings.get("sound")) return;
 		try {
-			/*//creates a new thread (string of events)
-			new Thread(() -> {
-				//if (Settings.get("sound"))
-				//clip.stop();
-				//clip.setFramePosition(0);
-				clip.start();
-				//clip.play(); // plays the sound clip when called
-			}).start(); //runs the thread*/
-			clip.play();
-		} catch (Throwable e) {
+			clip = (Clip)AudioSystem.getLine(new Line.Info(Clip.class));
+			clip.open(AudioSystem.getAudioInputStream(getClass().getResource(name)));
+			
+			clip.addLineListener(e -> {
+				if(e.getType() == LineEvent.Type.STOP) {
+					clip.flush();
+					clip.setFramePosition(0);
+				}
+			});
+			
+		} catch (LineUnavailableException | UnsupportedAudioFileException | IOException e) {
 			e.printStackTrace();
 		}
+	}
+	
+	public void play() {
+		if (!(boolean)Settings.get("sound") || clip == null) return;
+		
+		if(clip.isRunning() || clip.isActive())
+			clip.stop();
+		
+		clip.start();
 	}
 }
