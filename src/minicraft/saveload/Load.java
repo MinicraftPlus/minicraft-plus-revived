@@ -31,7 +31,6 @@ import minicraft.screen.MultiplayerMenu;
 public class Load {
 	
 	String location = Game.gameDir;
-	File folder;
 	
 	private static String extension = Save.extension;
 	private float percentInc;
@@ -41,7 +40,7 @@ public class Load {
 	
 	public boolean hasloadedbigworldalready;
 	Version currentVer, worldVer;
-	boolean oldSave = false, hasGlobalPrefs = false;
+	boolean hasGlobalPrefs = false;
 	
 	{
 		currentVer = new Version(Game.VERSION);
@@ -69,12 +68,7 @@ public class Load {
 			location += "/saves/" + worldname + "/";
 			
 			percentInc = 5 + Game.levels.length-1; // for the methods below, and world.
-			// for entities...
-			/*int nument = 0;
-			for(Level level: Game.levels)
-				if(level)
-					nument += level.getEntityArray().length;
-			percentInc += nument;*/
+			
 			percentInc = 100f / percentInc;
 			
 			LoadingDisplay.setPercentage(0);
@@ -123,26 +117,13 @@ public class Load {
 			try {
 				testFile.createNewFile();
 			} catch(IOException ex) {
-				System.err.println("could not create Unlocks."+extension+":");
+				System.err.println("could not create Unlocks"+extension+":");
 				ex.printStackTrace();
 			}
 		}
-		//if(testFileOld.exists())
-		//testFile = new File(location+"Unlocks"+extension);
-		/*if(!testFile.exists()) {
-			try {
-				testFile.createNewFile();
-			} catch (IOException ex) {
-				ex.printStackTrace();
-			}
-		}*/
 		
 		loadUnlocks("Unlocks");
 	}
-	
-	/*public Load() {	
-		worldVer = currentVer;
-	}*/
 	
 	public static class Version implements Comparable {
 		public Integer make, major, minor, dev;
