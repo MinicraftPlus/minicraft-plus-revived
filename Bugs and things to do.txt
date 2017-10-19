@@ -26,16 +26,6 @@ MULTIPLAYER-Related:
 	****IDEAS(that should probably be implemented)****
 ****
 
-EPIC idea I just came up with:
-To help with the variability of menus, and further customization, I think I should re-implement a ListItem-isque system once again. Basically, I can make classes for different types of options, and each option will deal with its own status, if any. It will probably take an InputHandler object in its tick() method, and will not have a reference to its parent menu, unless such becomes necessary.
-It will be recommended that the list item does not use the up or down keys for any controls, as those will change the selected item.
-
-For ListItems that simply cause something to happen when clicked, I'd love to get some sort of functional interface thing going, except that it will be a class that has one method that is always overridden, the onClick() method, that will do something. It will deal with calling it when the select key is pressed.
-
-ListItems also will handle their own rendering, and will be passed an x and y coordinate, or perhaps a rectangle, to draw in. Probably x,y. So, InventoryItems can render their icon, and such.
-
-****
-
 Make it so the world loading menu displays both a percentage and a message saying what it is doing, ie, "Generating surface level..."
 
 ****

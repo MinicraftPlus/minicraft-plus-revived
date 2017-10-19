@@ -8,6 +8,7 @@ Minicraft+ version 2.0.4
 * Added/fixed the hints that pop up when you try to place walls/floors/doors.
 + Added an in-game, in-depth storyline guide.
 + Added an FPS slider.
+* Made default game mode Normal instead of Easy.
 
 
 Minicraft+ version 2.0.3
