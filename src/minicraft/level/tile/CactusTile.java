@@ -46,13 +46,13 @@ public class CactusTile extends Tile {
 	}
 	
 	public void bumpedInto(Level level, int x, int y, Entity entity) {
-		if (Settings.get("diff").equals("easy")) {
+		if (Settings.get("diff").equals("Easy")) {
 			entity.hurt(this, x, y, 1);
 		}
-		if (Settings.get("diff").equals("norm")) {
+		if (Settings.get("diff").equals("Normal")) {
 			entity.hurt(this, x, y, 1);
 		}
-		if (Settings.get("diff").equals("hard")) {
+		if (Settings.get("diff").equals("Hard")) {
 			entity.hurt(this, x, y, 2);
 		}
 	}

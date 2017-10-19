@@ -12,6 +12,8 @@ Well. I've learned something. I really ought to be aware of hashes, since I've o
 ####
 investigate the disappearace of furniture -- I think I may be getting it with dungeon chests.
 ####
+PastDay1 doesn't save/work, I think.
+####
 
 #####
 MULTIPLAYER-Related:

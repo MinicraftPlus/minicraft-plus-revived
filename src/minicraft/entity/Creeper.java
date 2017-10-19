@@ -62,7 +62,7 @@ public class Creeper extends EnemyMob {
 					float pd = (float) Math.sqrt(pdx * pdx + pdy * pdy);
 					int dmg = (int) (BLAST_DAMAGE * (1 - (pd / BLAST_RADIUS))) + Settings.getIdx("diff");
 					player.hurt(this, dmg, Mob.getAttackDir(this, player));
-					player.payStamina(dmg * (Settings.get("diff").equals("easy")?1:2));
+					player.payStamina(dmg * (Settings.get("diff").equals("Easy")?1:2));
 					hurtOne = true;
 				}
 			}

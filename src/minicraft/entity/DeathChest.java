@@ -14,11 +14,11 @@ public class DeathChest extends Chest {
 		super("Death Chest", Color.get(-1, 220, 331, 552));
 		
 		/// set the expiration time based on the world difficulty.
-		if (Settings.get("diff").equals("easy")) {
+		if (Settings.get("diff").equals("Easy")) {
 			time = 18000;
-		} else if (Settings.get("diff").equals("norm")) {
+		} else if (Settings.get("diff").equals("Normal")) {
 			time = 6000;
-		} else if (Settings.get("diff").equals("hard")) {
+		} else if (Settings.get("diff").equals("Hard")) {
 			time = 1200;
 		}
 	}

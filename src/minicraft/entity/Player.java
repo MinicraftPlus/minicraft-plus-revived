@@ -208,7 +208,7 @@ public class Player extends Mob {
 			
 			// on easy mode, hunger doesn't deplete from walking or from time.
 			
-			if (Settings.get("diff").equals("norm")) {
+			if (Settings.get("diff").equals("Normal")) {
 				if(Game.tickCount % 5000 == 0 && hunger > 3) hungerStamCnt--; // hunger due to time.
 				
 				if (stepCount >= 800) { // hunger due to exercise.
@@ -216,7 +216,7 @@ public class Player extends Mob {
 					stepCount = 0; // reset.
 				}
 			}
-			if (Settings.get("diff").equals("hard")) {
+			if (Settings.get("diff").equals("Hard")) {
 				if(Game.tickCount % 3000 == 0 && hunger > 0) hungerStamCnt--; // hunger due to time.
 				
 				if (stepCount >= 400) { // hunger due to exercise.

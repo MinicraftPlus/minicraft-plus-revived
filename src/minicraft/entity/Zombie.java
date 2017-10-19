@@ -23,9 +23,9 @@ public class Zombie extends EnemyMob {
 	}
 	
 	protected void die() {
-		if (Settings.get("diff").equals("easy")) dropItem(2, 4, Items.get("cloth"));
-		if (Settings.get("diff").equals("norm")) dropItem(2, 3, Items.get("cloth"));
-		if (Settings.get("diff").equals("hard")) dropItem(1, 2, Items.get("cloth"));
+		if (Settings.get("diff").equals("Easy")) dropItem(2, 4, Items.get("cloth"));
+		if (Settings.get("diff").equals("Normal")) dropItem(2, 3, Items.get("cloth"));
+		if (Settings.get("diff").equals("Hard")) dropItem(1, 2, Items.get("cloth"));
 		
 		if(random.nextInt(60) == 2) {
 			level.dropItem(x, y, Items.get("iron"));

@@ -58,7 +58,7 @@ public class EnemyMob extends MobAi {
 		super.touchedBy(entity);
 		// hurts the player, damage is based on lvl.
 		if(entity instanceof Player) {
-			entity.hurt(this, lvl * (Settings.get("diff").equals("hard") ? 2 : 1), Mob.getAttackDir(this, entity));
+			entity.hurt(this, lvl * (Settings.get("diff").equals("Hard") ? 2 : 1), Mob.getAttackDir(this, entity));
 		}
 	}
 	

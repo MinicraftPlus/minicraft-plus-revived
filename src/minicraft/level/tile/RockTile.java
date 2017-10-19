@@ -76,7 +76,7 @@ public class RockTile extends Tile {
 			if (coallvl == 1) {
 				level.dropItem(x*16+8, y*16+8, 1, 2, Items.get("Stone"));
 				int mincoal = 0, maxcoal = 1;
-				if(!Settings.get("diff").equals("hard")) {
+				if(!Settings.get("diff").equals("Hard")) {
 					mincoal++;
 					maxcoal++;
 				}
