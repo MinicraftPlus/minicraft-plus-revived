@@ -1,97 +1,120 @@
 package minicraft.screen;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
-import minicraft.Sound;
+
+import minicraft.Game;
+import minicraft.InputHandler;
 import minicraft.entity.Player;
-import minicraft.gfx.Color;
-import minicraft.gfx.Font;
-import minicraft.gfx.Screen;
+import minicraft.gfx.Point;
+import minicraft.gfx.SpriteSheet;
 import minicraft.item.Item;
 import minicraft.item.Items;
 import minicraft.item.Recipe;
+import minicraft.screen.entry.ItemListing;
+import minicraft.screen.entry.RecipeEntry;
 
-public class CraftingMenu extends Menu {
-	private Player player; // the player that opened this menu
-	private int selected = 0; // current selected item
-	private boolean personal;
+public class CraftingMenu extends Display {
 	
-	private List<Recipe> recipes; // List of recipes used in this menu (workbench, anvil, oven, etc)
+	private Player player;
+	private Recipe[] recipes;
 	
-	public CraftingMenu(List<Recipe> recipes, Player player) {
-		this(recipes, player, false);
+	private RecipeMenu recipeMenu;
+	private Menu.Builder itemCountMenu, costsMenu;
+	
+	private static RecipeEntry[] getRecipeList(Recipe[] recipes) {
+		RecipeEntry[] entries = new RecipeEntry[recipes.length];
+		
+		for(int i = 0; i < recipes.length; i++) {
+			entries[i] = new RecipeEntry(recipes[i]);
+		}
+		
+		return entries;
 	}
-	public CraftingMenu(List<Recipe> recipes, Player player, boolean isPersonalFrame) {
-		this.recipes = new ArrayList<>(recipes); // Assigns the recipes
+	
+	
+	/*public CraftingMenu(List<Recipe> recipes, String title, Player player) {
+		this(recipes, title, player, false);
+	}
+	*/public CraftingMenu(List<Recipe> recipes, String title, Player player/*, boolean isPersonalMenu*/) {
+		for(Recipe recipe: recipes)
+			recipe.checkCanCraft(player);
+		
+		recipeMenu = new RecipeMenu(recipes, title);
+		
 		this.player = player;
-		personal = isPersonalFrame;
+		this.recipes = recipes.toArray(new Recipe[recipes.size()]);
 		
-		for (int i = 0; i < recipes.size(); i++) {
-			this.recipes.get(i).checkCanCraft(player); // Checks if the player can craft the item(s)
+		//ItemListing itemCount = new ItemListing(this.recipes[0].getProduct(), "0");
+		
+		itemCountMenu = new Menu.Builder(true, 0, RelPos.LEFT)
+			.setTitle("Have:")
+			.setTitlePos(RelPos.TOP_LEFT)
+			.setPositioning(new Point(recipeMenu.getBounds().getRight()+SpriteSheet.boxWidth, recipeMenu.getBounds().getTop()), RelPos.BOTTOM_RIGHT);
+		
+		costsMenu = new Menu.Builder(true, 0, RelPos.LEFT)
+			.setTitle("Cost:")
+			.setTitlePos(RelPos.TOP_LEFT)
+			.setPositioning(new Point(itemCountMenu.createMenu().getBounds().getLeft(), recipeMenu.getBounds().getBottom()), RelPos.TOP_RIGHT);
+		
+		menus = new Menu[] {recipeMenu, itemCountMenu.createMenu(), costsMenu.createMenu()};
+		//menus = new Menu[3];
+		//menus[0] = recipeMenu;
+		
+		refreshData();
+	}
+	
+	private void refreshData() {
+		Menu prev = menus[2];
+		menus[2] = costsMenu
+			.setEntries(getCurItemCosts())
+			.createMenu();
+		menus[2].setFrameColors(prev);
+		
+		menus[1] = itemCountMenu
+			.setEntries(new ItemListing(recipes[recipeMenu.getSelection()].getProduct(), String.valueOf(getCurItemCount())))
+			.createMenu();
+		menus[1].setFrameColors(prev);
+	}
+	
+	private int getCurItemCount() {
+		return player.inventory.count(recipes[recipeMenu.getSelection()].getProduct());
+	}
+	
+	private ItemListing[] getCurItemCosts() {
+		ArrayList<ItemListing> costList = new ArrayList<>();
+		HashMap<String, Integer> costMap = recipes[recipeMenu.getSelection()].getCosts();
+		for(String itemName: costMap.keySet()) {
+			Item cost = Items.get(itemName);
+			costList.add(new ItemListing(cost, costMap.get(itemName)+"/"+player.inventory.count(cost)));
 		}
 		
-		/* This sorts the recipes so that the ones you can craft will appear on top */
-		this.recipes.sort((r1, r2) -> {
-			if (r1.canCraft && !r2.canCraft)
-				return -1; // if the first item can be crafted while the second can't, the first one will go above in the list
-			if (!r1.canCraft && r2.canCraft) return 1; // if the second item can be crafted while the first can't, the second will go over that one.
-			return 0; // else don't change position
-		});
+		return costList.toArray(new ItemListing[costList.size()]);
 	}
-
-	public void tick() {
-		if (input.getKey("menu").clicked || personal && input.getKey("craft").clicked) game.setMenu(null); //menu exit condition
-		
-		if (input.getKey("up").clicked) selected--;
-		if (input.getKey("down").clicked) selected++;
-		if (input.getKey("up").clicked) Sound.pickup.play();
-		if (input.getKey("down").clicked) Sound.pickup.play();
-		
-		int len = recipes.size();
-		if (len == 0) selected = 0;
-		//wrap-around:
-		if (selected < 0) selected += len;
-		if (selected >= len) selected -= len;
-		
-		if (input.getKey("attack").clicked && len > 0) {
-			Recipe r = recipes.get(selected); // The current recipe selected
-			if(r.craft(player))
-				for (int i = 0; i < recipes.size(); i++)
-					recipes.get(i).checkCanCraft(player);// Refreshes the recipe list if the player can now craft a new item.
+	
+	@Override
+	public void tick(InputHandler input) {
+		if(input.getKey("menu").clicked) {
+			Game.exitMenu();
+			return;
 		}
-	}
-
-	public void render(Screen screen) {
-		renderFrame(screen, "Have", 17, 1, 24, 3); // renders the 'have' items window
-		renderFrame(screen, "Cost", 17, 4, 24, 11); // renders the 'cost' items window
-		renderFrame(screen, "Crafting", 0, 1, 16, 11); // renders the main crafting window
-		renderItemList(screen, 0, 1, 16, 11, recipes, selected); // renders all the items in the recipe list
-
-		if (recipes.size() > 0) {
-			Recipe recipe = recipes.get(selected);
-			int hasResultItems = player.inventory.count(recipe.getProduct()); // Counts the number of items to see if you can craft the recipe
-			int xo = 16 * 9; // x coordinate of the items in the 'have' and 'cost' windows
-			recipe.getProduct().sprite.render(screen, xo, 2 * 8); // Renders the sprite in the 'have' window
-			Font.draw("" + hasResultItems, screen, xo + 8, 2 * 8, Color.get(-1, 555)); // draws the amount in the 'have' menu
-			
-			int yo = 5 * 8; // y coordinate of the cost item
-			for (String costname: recipe.costs.keySet().toArray(new String[0])) {
-				Item cost = Items.get(costname);
-				if(cost == null) continue;
-				cost.sprite.render(screen, xo, yo); // renders the cost item in the 'cost' window
+		
+		int prevSel = recipeMenu.getSelection();
+		super.tick(input);
+		if(prevSel != recipeMenu.getSelection())
+			refreshData();
+		
+		if((input.getKey("select").clicked || input.getKey("attack").clicked) && recipeMenu.getSelection() >= 0) {
+			// check the selected recipe
+			Recipe r = recipes[recipeMenu.getSelection()];
+			if(r.getCanCraft()) {
+				r.craft(player);
 				
-				int has = player.inventory.count(cost); // This is the amount of the item you have in your inventory
-				if (has > 99) has = 99; // display 99 max (for space)
-				int reqAmt = recipe.costs.get(costname);
-				int color = has < reqAmt ? Color.get(-1, 222) : Color.get(-1, 555); // color in the 'cost' window
-				Font.draw(reqAmt + "/" + has, screen, xo + 8, yo, color); // Draw "#required/#has" text next to the icon
-				yo += Font.textHeight();
+				refreshData();
+				for(Recipe recipe: recipes)
+					recipe.checkCanCraft(player);
 			}
 		}
-	}
-	
-	protected void renderFrame(Screen screen, String title, int x0, int y0, int x1, int y1) {
-		if(!personal) super.renderFrame(screen, title, x0, y0, x1, y1);
-		else renderMenuFrame(screen, title, x0, y0, x1, y1, Color.get(-1, 1, 300, 400), Color.get(300, 300), Color.get(300, 300, 300, 555));
 	}
 }

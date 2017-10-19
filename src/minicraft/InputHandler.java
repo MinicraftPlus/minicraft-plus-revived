@@ -2,16 +2,13 @@ package minicraft;
 
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
-import java.awt.event.MouseEvent;
-import java.awt.event.MouseListener;
 import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
-import java.util.List;
 
-public class InputHandler implements MouseListener, KeyListener {
-	/** Note: Yay! I made HUGE revisions to this class, so I get to make the comments!
+public class InputHandler implements /*MouseListener, */KeyListener {
+	/* Note: Yay! I made HUGE revisions to this class, so I get to make the comments!
 		...and I actually know what I'm talking about. ;)
 			-Chris J
 	*/
@@ -42,7 +39,14 @@ public class InputHandler implements MouseListener, KeyListener {
 		
 	*/
 	public String keyToChange = null; // this is used when listening to change key bindings.
+	private String keyChanged = null; // this is used when listening to change key bindings.
 	private boolean overwrite = false;
+	
+	public String getChangedKey() {
+		String key = keyChanged + ";" + keymap.get(keyChanged);
+		keyChanged = null;
+		return key;
+	}
 	
 	private static HashMap<Integer, String> keyNames = new HashMap<>();
 	static {
@@ -68,18 +72,18 @@ public class InputHandler implements MouseListener, KeyListener {
 	
 	private HashMap<String, String> keymap; // The symbolic map of actions to physical key names.
 	private HashMap<String, Key> keyboard; // The actual map of key names to Key objects.
-	public String lastKeyTyped = ""; // Used for things like typing world names.
+	private String lastKeyTyped = ""; // Used for things like typing world names.
+	private String keyTypedBuffer = ""; // used to store the last key typed before putting it into the main var during tick().
 	
 	// mouse stuff that's never used
-	public List<Mouse> mouse = new ArrayList<>();
+	/*public List<Mouse> mouse = new ArrayList<>();
 	public Mouse one = new Mouse();
 	public Mouse two = new Mouse();
 	public Mouse tri = new Mouse();
+	*/
 	
-	private Game game;
-	
-	public InputHandler(Game game) { this(game, true); }
-	public InputHandler(Game game, boolean listenToKeyboard) {
+	public InputHandler() { this(true); }
+	public InputHandler(boolean listenToKeyboard) {
 		keymap = new LinkedHashMap<>(); //stores custom key name with physical key name in keyboard.
 		keyboard = new HashMap<>(); //stores physical keyboard keys; auto-generated :D
 		
@@ -91,11 +95,10 @@ public class InputHandler implements MouseListener, KeyListener {
 		keyboard.put("ALT", new Key(true));
 		
 		if(listenToKeyboard)
-			game.addKeyListener(this); //add key listener to game
-		//game.addMouseListener(this); //add mouse listener to game (though it's never used)
+			Game.getCanvas().addKeyListener(this); //add key listener to game
+		//Game.addMouseListener(this); //add mouse listener to game (though it's never used)
 		//ticks = 0;
-		this.game = game;
-	}
+		}
 	
 	private void initKeyMap() {
 		keymap.put("UP", "UP|W"); //up action references up arrow key
@@ -106,14 +109,14 @@ public class InputHandler implements MouseListener, KeyListener {
 		keymap.put("SELECT", "ENTER");
 		keymap.put("EXIT", "ESCAPE");
 		
-		keymap.put("ATTACK", "C|SPACE"); //attack action references "C" key
-		keymap.put("MENU", "X|ENTER"); //and so on... menu does various things.
-		keymap.put("CRAFT", "Z"); // open/close personal crafting window.
-		keymap.put("PICKUP", "V"); // pickup torches / furniture; this replaces the power glove.
+		keymap.put("ATTACK", "C|SPACE|ENTER"); //attack action references "C" key
+		keymap.put("MENU", "X|E"); //and so on... menu does various things.
+		keymap.put("CRAFT", "Z|SHIFT-E"); // open/close personal crafting window.
+		keymap.put("PICKUP", "V|P"); // pickup torches / furniture; this replaces the power glove.
 		keymap.put("DROP-ONE", "Q"); // drops the item in your hand, or selected in your inventory, by ones; it won't drop an entire stack
 		keymap.put("DROP-STACK", "SHIFT-Q"); // drops the item in your hand, or selected in your inventory, entirely; even if it's a stack.
 		
-		keymap.put("PAUSE", "ESCAPE"); // pause the game.
+		keymap.put("PAUSE", "ESCAPE"); // pause the Game.
 		keymap.put("SETHOME", "SHIFT-H"); // set your home.
 		keymap.put("HOME", "H"); // go to set home.
 		//keymap.put("SAVE", "R");
@@ -134,6 +137,8 @@ public class InputHandler implements MouseListener, KeyListener {
 	/** Processes each key one by one, in keyboard. */
 	public void tick() {
 		//ticks++;
+		lastKeyTyped = keyTypedBuffer;
+		keyTypedBuffer = "";
 		synchronized ("lock") {
 			for (Key key: keyboard.values())
 				key.tick(); //call tick() for each key.
@@ -270,7 +275,7 @@ public class InputHandler implements MouseListener, KeyListener {
 				key = new Key(); //make new key
 				keyboard.put(keytext, key); //add it to keyboard
 				
-				if(Game.debug) System.out.println("Added new key: \'" + keytext + "\'"); //log to console that a new key was added to the keyboard
+				//if(Game.debug) System.out.println("Added new key: \'" + keytext + "\'"); //log to console that a new key was added to the keyboard
 			}
 		}// "key" has been set to the appropriate key Object.
 		
@@ -353,17 +358,19 @@ public class InputHandler implements MouseListener, KeyListener {
 		//System.out.println("toggling " + keytext + " key (keycode " + keycode + ") to "+pressed+".");
 		if( pressed && keyToChange != null && !isMod(keytext) ) {
 			keymap.put(keyToChange, ( overwrite?"":keymap.get(keyToChange)+"|" ) + getCurModifiers()+keytext);
+			keyChanged = keyToChange;
 			keyToChange = null;
+			return;
 		}
 		getPhysKey(keytext).toggle(pressed);
 	}
 	
-	public static boolean isMod(String keyname) {
+	private static boolean isMod(String keyname) {
 		keyname = keyname.toUpperCase();
 		return keyname.equals("SHIFT") || keyname.equals("CTRL") || keyname.equals("ALT");
 	}
 	
-	public String getCurModifiers() {
+	private String getCurModifiers() {
 		return (getKey("ctrl").down?"CTRL-":"") +
 				(getKey("alt").down?"ALT-":"") +
 				(getKey("shift").down?"SHIFT-":"");
@@ -396,9 +403,10 @@ public class InputHandler implements MouseListener, KeyListener {
 	public void keyReleased(KeyEvent ke) { toggle(ke.getExtendedKeyCode(), false); }
 	public void keyTyped(KeyEvent ke) {
 		//stores the last character typed
-		lastKeyTyped = String.valueOf(ke.getKeyChar());
+		keyTypedBuffer = String.valueOf(ke.getKeyChar());
 	}
 	
+	/*
 	//Mouse class! That...never really ever gets used... and so shall not be commented...
 	public class Mouse {
 		public int pressesd, absorbsd; //d=down?
@@ -412,7 +420,7 @@ public class InputHandler implements MouseListener, KeyListener {
 			if (clickd != down) down = clickd;
 			if (clickd) pressesd++;
 		}
-
+		
 		public void tick() {
 			if (absorbsd < pressesd) {
 				absorbsd++;
@@ -421,9 +429,28 @@ public class InputHandler implements MouseListener, KeyListener {
 				click = false;
 			}
 		}
+	}*/
+	
+	private static final String control = "\\p{Print}"; // should match only printable characters.
+	public String addKeyTyped(String typing, String pattern) {
+		if(lastKeyTyped.length() > 0) {
+			String letter = lastKeyTyped;
+			lastKeyTyped = "";
+			if( letter.matches(control) && (pattern == null || letter.matches(pattern)) )
+				typing += letter;
+		}
+		
+		if(getKey("backspace").clicked && typing.length() > 0) {
+			// backspace counts as a letter itself, but we don't have to worry about it if it's part of the regex.
+			typing = typing.substring(0, typing.length()-1);
+		}
+		
+		return typing;
 	}
 	
-	//called by MouseListener methods.
+	
+	
+	/*//called by MouseListener methods.
 	private void click(MouseEvent e, boolean clickd) {
 		if (e.getButton() == MouseEvent.BUTTON1) one.toggle(clickd);
 		if (e.getButton() == MouseEvent.BUTTON2) two.toggle(clickd);
@@ -435,5 +462,5 @@ public class InputHandler implements MouseListener, KeyListener {
 	public void mouseExited(MouseEvent e) {}
 	
 	public void mousePressed(MouseEvent e) { click(e, true); }
-	public void mouseReleased(MouseEvent e) { click(e, false); }
+	public void mouseReleased(MouseEvent e) { click(e, false); }*/
 }

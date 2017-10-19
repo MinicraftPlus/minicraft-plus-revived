@@ -5,7 +5,6 @@ import minicraft.gfx.Screen;
 import minicraft.gfx.Sprite;
 import minicraft.item.FurnitureItem;
 import minicraft.item.PowerGloveItem;
-import minicraft.screen.ModeMenu;
 
 /** Many furniture classes are very similar; they might not even need to be there at all... */
 
@@ -66,7 +65,7 @@ public class Furniture extends Entity {
 			pushDir = player.dir; // set pushDir to the player's dir.
 			pushTime = multiPushTime = 10; // set pushTime to 10.
 			
-			if(Game.isValidClient())
+			if(Game.isConnectedClient())
 				Game.client.pushFurniture(this, pushDir);
 		}
 	}
@@ -75,7 +74,7 @@ public class Furniture extends Entity {
 	public void take(Player player) {
 		remove(); // remove this from the world
 		if(!Game.ISONLINE) {
-			if (!ModeMenu.creative && player.activeItem != null && !(player.activeItem instanceof PowerGloveItem))
+			if (!Game.isMode("creative") && player.activeItem != null && !(player.activeItem instanceof PowerGloveItem))
 				player.inventory.add(0, player.activeItem); // put whatever item the player is holding into their inventory (should never be a power glove, since it is put in a taken out again all in the same frame).
 			player.activeItem = new FurnitureItem(this); // make this the player's current item.
 		}

@@ -1,11 +1,12 @@
 package minicraft.item;
 
 import java.util.ArrayList;
+
+import minicraft.Game;
 import minicraft.entity.*;
 import minicraft.gfx.Sprite;
 import minicraft.level.Level;
 import minicraft.level.tile.Tile;
-import minicraft.screen.ModeMenu;
 
 public class FurnitureItem extends Item {
 	
@@ -67,7 +68,7 @@ public class FurnitureItem extends Item {
 			furniture.x = xt * 16 + 8;
 			furniture.y = yt * 16 + 8;
 			level.add(furniture); // adds the furniture to the world
-			if(ModeMenu.creative)
+			if(Game.isMode("creative"))
 				furniture = furniture.clone();
 			else
 				placed = true; // the value becomes true, which removes it from the player's active item

@@ -2,6 +2,7 @@ package minicraft.entity;
 
 import java.util.Random;
 
+import minicraft.Game;
 import minicraft.Sound;
 import minicraft.entity.particle.FireParticle;
 import minicraft.entity.particle.TextParticle;
@@ -14,7 +15,6 @@ import minicraft.item.PowerGloveItem;
 import minicraft.item.ToolItem;
 import minicraft.item.ToolType;
 import minicraft.level.tile.Tile;
-import minicraft.screen.ModeMenu;
 
 public class Spawner extends Furniture {
 	
@@ -22,6 +22,7 @@ public class Spawner extends Furniture {
 	
 	private static final int ACTIVE_RADIUS = 8*16;
 	private static final int minSpawnInterval = 200, maxSpawnInterval = 500;
+	private static final int minMobSpawnChance = 10; // 1 in minMobSpawnChance chance of calling trySpawn every interval.
 	
 	public MobAi mob;
 	private int health, lvl, maxMobLevel;
@@ -57,7 +58,9 @@ public class Spawner extends Furniture {
 		
 		spawnTick--;
 		if(spawnTick <= 0) {
-			trySpawn();
+			double chance = minMobSpawnChance * Math.pow(level.mobCount, 2) / Math.pow(level.maxMobCount, 2); // this forms a quadratic function that determines the mob spawn chance.
+			if(random.nextInt((int)chance) == 0)
+				trySpawn();
 			resetSpawnInterval();
 		}
 	}
@@ -114,12 +117,12 @@ public class Spawner extends Furniture {
 	public boolean interact(Player player, Item item, int attackDir) {
 		if(item instanceof ToolItem) {
 			ToolItem tool = (ToolItem)item;
-			//if(tool.type != ToolType.Pickaxe && !ModeMenu.creative) return false;
+			//if(tool.type != ToolType.Pickaxe && !Game.isMode("creative")) return false;
 			
 			Sound.monsterHurt.play();
 			
 			int dmg;
-			if(ModeMenu.creative)
+			if(Game.isMode("creative"))
 				dmg = health;
 			else {
 				dmg = tool.level + random.nextInt(2);
@@ -142,7 +145,7 @@ public class Spawner extends Furniture {
 			return true;
 		}
 		
-		if(item instanceof PowerGloveItem && ModeMenu.creative) {
+		if(item instanceof PowerGloveItem && Game.isMode("creative")) {
 			level.remove(this);
 			player.inventory.add(0, player.activeItem);
 			player.activeItem = new FurnitureItem(this);
@@ -154,7 +157,7 @@ public class Spawner extends Furniture {
 	
 	@SuppressWarnings("JavaReflectionMemberAccess")
 	public void hurt(Mob attacker, int dmg, int attackDir) {
-		if(attacker instanceof Player && ModeMenu.creative && mob instanceof EnemyMob) {
+		if(attacker instanceof Player && Game.isMode("creative") && mob instanceof EnemyMob) {
 			lvl++;
 			if(lvl > maxMobLevel) lvl = 1;
 			EnemyMob newmob = null;

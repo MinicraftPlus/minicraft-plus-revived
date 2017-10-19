@@ -1,17 +1,17 @@
 package minicraft.entity;
 
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
+
 import minicraft.Game;
+import minicraft.Settings;
 import minicraft.Sound;
 import minicraft.gfx.Color;
 import minicraft.gfx.Font;
 import minicraft.gfx.MobSprite;
 import minicraft.gfx.Screen;
-import minicraft.screen.OptionsMenu;
-
-import java.io.BufferedWriter;
-import java.io.File;
-import java.io.FileWriter;
-import java.io.IOException;
 
 public class AirWizard extends EnemyMob {
 	private static MobSprite[][] sprites = MobSprite.compileMobSpriteAnimations(8, 14);
@@ -27,7 +27,7 @@ public class AirWizard extends EnemyMob {
 	
 	public AirWizard(int lvl) { this(lvl>1); }
 	public AirWizard(boolean secondform) {
-		super(secondform?2:1, sprites, (new int[2]), secondform?5000:2000, false, 16*8, 10, 50);
+		super(secondform?2:1, sprites, (new int[2]), secondform?5000:2000, false, 16*8, -1, 10, 50);
 		
 		this.secondform = secondform;
 		if(secondform) speed = 3;
@@ -136,8 +136,8 @@ public class AirWizard extends EnemyMob {
 		
 		if (hurtTime > 0) { //if the air wizards hurt time is above 0... (hurtTime value in Mob.java)
 			// turn the sprite white, momentarily.
-			col1 = Color.get(-1, 555);
-			col2 = Color.get(-1, 555);
+			col1 = Color.WHITE;
+			col2 = Color.WHITE;
 		}
 		
 		MobSprite curSprite = sprites[dir][(walkDist >> 3) & 1];
@@ -159,7 +159,7 @@ public class AirWizard extends EnemyMob {
 			textcol = Color.get(-1, 440);
 			textcol2 = Color.get(-1, 110);
 		}
-		int textwidth = h.length() * 8;
+		int textwidth = Font.textWidth(h);
 		Font.draw(h, screen, (x - textwidth/2) + 1, y - 17, textcol2);
 		Font.draw(h, screen, (x - textwidth/2), y - 18, textcol);
 	}
@@ -180,7 +180,7 @@ public class AirWizard extends EnemyMob {
 				p.score += (secondform ? 500000 : 100000); // give the player 100K or 500K points.
 		}
 		
-		Sound.bossdeath.play(); // play boss-death sound.
+		Sound.bossDeath.play(); // play boss-death sound.
 		
 		if(!secondform) {
 			Game.notifyAll("Air Wizard: Defeated!");
@@ -188,8 +188,8 @@ public class AirWizard extends EnemyMob {
 			beaten = true;
 		} else {
 			Game.notifyAll("Air Wizard II: Defeated!");
-			if (!OptionsMenu.unlockedskin) Game.notifyAll("A costume lies on the ground...", -200);
-			OptionsMenu.unlockedskin = true;
+			if (!(boolean)Settings.get("wear suit")) Game.notifyAll("A costume lies on the ground...", -200);
+			Settings.set("wear suit", true);
 			BufferedWriter bufferedWriter = null;
 			
 			try {

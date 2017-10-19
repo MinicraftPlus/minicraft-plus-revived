@@ -1,13 +1,13 @@
 package minicraft.level;
 
+import javax.swing.ImageIcon;
+import javax.swing.JOptionPane;
 import java.awt.Image;
 import java.awt.image.BufferedImage;
 import java.util.Random;
 
-import javax.swing.ImageIcon;
-import javax.swing.JOptionPane;
-
 import minicraft.Game;
+import minicraft.Settings;
 import minicraft.level.tile.Tiles;
 import minicraft.screen.WorldGenMenu;
 
@@ -112,6 +112,8 @@ public class LevelGen {
 	}
 	
 	protected static byte[][] createAndValidateMap(int w, int h, int level) {
+		worldSeed = WorldGenMenu.getSeed();
+		
 		if (level == 1)
 			return createAndValidateSkyMap(w, h);
 		if (level == 0)
@@ -142,7 +144,7 @@ public class LevelGen {
 			if (count[Tiles.get("sand").id & 0xff] < 100) continue;
 			if (count[Tiles.get("grass").id & 0xff] < 100) continue;
 			if (count[Tiles.get("tree").id & 0xff] < 100) continue;
-			if (count[Tiles.get("Stairs Down").id & 0xff] < WorldGenMenu.getSize() / 21)
+			if (count[Tiles.get("Stairs Down").id & 0xff] < w / 21)
 				continue; // size 128 = 6 stairs min
 			
 			return result;
@@ -165,7 +167,7 @@ public class LevelGen {
 			if (count[Tiles.get("dirt").id & 0xff] < 100) continue;
 			if (count[(Tiles.get("iron Ore").id & 0xff) + depth - 1] < 20) continue;
 			
-			if (depth < 3 && count[Tiles.get("Stairs Down").id & 0xff] < WorldGenMenu.getSize() / 32)
+			if (depth < 3 && count[Tiles.get("Stairs Down").id & 0xff] < w / 32)
 				continue; // size 128 = 4 stairs min
 			
 			return result;
@@ -204,7 +206,7 @@ public class LevelGen {
 				count[result[0][i] & 0xff]++;
 			}
 			if (count[Tiles.get("cloud").id & 0xff] < 2000) continue;
-			if (count[Tiles.get("Stairs Down").id & 0xff] < WorldGenMenu.getSize() / 64)
+			if (count[Tiles.get("Stairs Down").id & 0xff] < w / 64)
 				continue; // size 128 = 2 stairs min
 			
 			return result;
@@ -241,11 +243,11 @@ public class LevelGen {
 				dist = dist * dist * dist * dist;
 				val += 1 - dist * 20;
 				
-				switch (WorldGenMenu.get("Type")) {
+				switch ((String) Settings.get("Type")) {
 					case "Island":
 						
 						if (val < -0.5) {
-							if (WorldGenMenu.get("Theme").equals("Hell"))
+							if (Settings.get("Theme").equals("Hell"))
 								map[i] = Tiles.get("lava").id;
 							else
 								map[i] = Tiles.get("water").id;
@@ -259,10 +261,9 @@ public class LevelGen {
 					case "Box":
 						
 						if (val < -1.5) {
-							if (WorldGenMenu.get("Theme").equals("Hell")) {
+							if (Settings.get("Theme").equals("Hell")) {
 								map[i] = Tiles.get("lava").id;
-							}
-							if (!WorldGenMenu.get("Theme").equals("Hell")) {
+							} else {
 								map[i] = Tiles.get("water").id;
 							}
 						} else if (val > 0.5 && mval < -1.5) {
@@ -277,36 +278,35 @@ public class LevelGen {
 						if (val < -0.4) {
 							map[i] = Tiles.get("grass").id;
 						} else if (val > 0.5 && mval < -1.5) {
-							if (!WorldGenMenu.get("Theme").equals("Hell")) {
-								map[i] = Tiles.get("water").id;
-							}
-							if (WorldGenMenu.get("Theme").equals("Hell")) {
+							if (Settings.get("Theme").equals("Hell")) {
 								map[i] = Tiles.get("lava").id;
+							} else {
+								map[i] = Tiles.get("water").id;
 							}
 						} else {
 							map[i] = Tiles.get("rock").id;
 						}
 						break;
-				}
-				if (WorldGenMenu.get("Type").equals("Irregular")) {
 					
-					if (val < -0.5 && mval < -0.5) {
-						if (WorldGenMenu.get("Theme").equals("Hell")) {
-							map[i] = Tiles.get("lava").id;
+					case "Irregular":
+						if (val < -0.5 && mval < -0.5) {
+							if (Settings.get("Theme").equals("Hell")) {
+								map[i] = Tiles.get("lava").id;
+							}
+							if (!Settings.get("Theme").equals("Hell")) {
+								map[i] = Tiles.get("water").id;
+							}
+						} else if (val > 0.5 && mval < -1.5) {
+							map[i] = Tiles.get("rock").id;
+						} else {
+							map[i] = Tiles.get("grass").id;
 						}
-						if (!WorldGenMenu.get("Theme").equals("Hell")) {
-							map[i] = Tiles.get("water").id;
-						}
-					} else if (val > 0.5 && mval < -1.5) {
-						map[i] = Tiles.get("rock").id;
-					} else {
-						map[i] = Tiles.get("grass").id;
-					}
+						break;
 				}
 			}
 		}
 		
-		if (WorldGenMenu.get("Theme").equals("Desert")) {
+		if (Settings.get("Theme").equals("Desert")) {
 			
 			for (int i = 0; i < w * h / 200; i++) {
 				int xs = random.nextInt(w);
@@ -329,7 +329,7 @@ public class LevelGen {
 			}
 		}
 		
-		if (!WorldGenMenu.get("Theme").equals("Desert")) {
+		if (!Settings.get("Theme").equals("Desert")) {
 			
 			for (int i = 0; i < w * h / 2800; i++) {
 				int xs = random.nextInt(w);
@@ -352,7 +352,7 @@ public class LevelGen {
 			}
 		}
 		
-		if (WorldGenMenu.get("Theme").equals("Forest")) {
+		if (Settings.get("Theme").equals("Forest")) {
 			for (int i = 0; i < w * h / 200; i++) {
 				int x = random.nextInt(w);
 				int y = random.nextInt(h);
@@ -367,7 +367,7 @@ public class LevelGen {
 				}
 			}
 		}
-		if (!WorldGenMenu.get("Theme").equals("Forest") && !WorldGenMenu.get("Theme").equals("Plain")) {
+		if (!Settings.get("Theme").equals("Forest") && !Settings.get("Theme").equals("Plain")) {
 			for (int i = 0; i < w * h / 1200; i++) {
 				int x = random.nextInt(w);
 				int y = random.nextInt(h);
@@ -383,7 +383,7 @@ public class LevelGen {
 			}
 		}
 		
-		if (WorldGenMenu.get("Theme").equals("Plain")) {
+		if (Settings.get("Theme").equals("Plain")) {
 			for (int i = 0; i < w * h / 2800; i++) {
 				int x = random.nextInt(w);
 				int y = random.nextInt(h);
@@ -398,7 +398,7 @@ public class LevelGen {
 				}
 			}
 		}
-		if (!WorldGenMenu.get("Theme").equals("Plain")) {
+		if (!Settings.get("Theme").equals("Plain")) {
 			for (int i = 0; i < w * h / 400; i++) {
 				int x = random.nextInt(w);
 				int y = random.nextInt(h);
@@ -465,7 +465,7 @@ public class LevelGen {
 			map[x + y * w] = Tiles.get("Stairs Down").id;
 			
 			count++;
-			if (count >= WorldGenMenu.getSize() / 21) break;
+			if (count >= w / 21) break;
 		}
 		
 		return new byte[][]{map, data};
@@ -678,8 +678,8 @@ public class LevelGen {
 				
 				map[x + y * w] = Tiles.get("Stairs Down").id;
 				count++;
-				if (count >= WorldGenMenu.getSize() / 32) break;
-				/*if (WorldGenMenu.getSize() == 128) {
+				if (count >= w / 32) break;
+				/*if (Settings.getSize() == 128) {
 					if (count == 4) break;
 				} else {
 					if (count == 8) break;
@@ -752,7 +752,7 @@ public class LevelGen {
 			
 			map[x + y * w] = Tiles.get("Stairs Down").id;
 			count++;
-			if (count >= WorldGenMenu.getSize() / 64) break;
+			if (count >= w / 64) break;
 		}
 		
 		return new byte[][]{map, data};

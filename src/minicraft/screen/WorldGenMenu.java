@@ -1,86 +1,109 @@
 package minicraft.screen;
 
 import java.util.Arrays;
-import minicraft.Sound;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Locale;
+import java.util.Random;
+
+import minicraft.Game;
+import minicraft.Settings;
 import minicraft.gfx.Color;
 import minicraft.gfx.Font;
 import minicraft.gfx.Screen;
+import minicraft.screen.entry.InputEntry;
+import minicraft.screen.entry.SelectEntry;
 
-public class WorldGenMenu extends SelectMenu {
-	//this the the "more world options" menu.
+public class WorldGenMenu extends Display {
 	
-	private static final int[] sizes = {128, 256, 512};
+	private static final String worldNameRegex = "[a-zA-Z0-9 ]+";
 	
-	private static final String[] settings = {"Theme", "Type", "Size"};
-	private static final String[][] choices = {
-		{"Normal", "Forest", "Desert", "Plain", "Hell"}, //theme
-		{"Island", "Box", "Mountain", "Irregular"}, //type
-		{"Normal (128 x 128)", "Big (256 x 256)", "Huge (512 x 512)"} //size
-	};
+	private static InputEntry worldSeed = new InputEntry("World Seed", "[0-9]", 20);
 	
-	private static int[] selections = new int[choices.length];
+	public static long getSeed() {
+		String seedStr = worldSeed.getUserInput();
+		if(seedStr.length() == 0)
+			return new Random().nextLong();
+		else
+			return Long.parseLong(seedStr);
+	}
+	
+	public static InputEntry makeWorldNameInput(String prompt, List<String> takenNames, String initValue) {
+		return new InputEntry(prompt, worldNameRegex, 36, initValue) {
+			@Override
+			public boolean isValid() {
+				if(!super.isValid()) return false;
+				String name = getUserInput();
+				for(String other: takenNames)
+					if(other.equalsIgnoreCase(name))
+						return false;
+				
+				return true;
+			}
+			
+			@Override
+			public String getUserInput() {
+				return super.getUserInput().toLowerCase(Locale.ENGLISH);
+			}
+		};
+	}
 	
 	public WorldGenMenu() {
-		super(Arrays.asList(Arrays.copyOf(settings, settings.length)), 8 * 8 + 4, 8 * 8, 8, Color.get(-1, 555), Color.get(-1, 111));
-	}
-	
-	public void tick() {
-		if (input.getKey("exit").clicked) {
-			game.setMenu(new ModeMenu());
-			return;
-		}
+		super(true);
 		
-		super.tick();
+		InputEntry nameField = makeWorldNameInput("Enter World Name", WorldSelectMenu.getWorldNames(), "");
 		
-		int prevSel = selections[selected];
-		if (input.getKey("left").clicked) selections[selected]--;
-		if (input.getKey("right").clicked) selections[selected]++;
+		SelectEntry nameHelp = new SelectEntry("Trouble with world name?", () -> Game.setMenu(new BookDisplay("by default, w and s move the cursor up and down. This can be changed in the key binding menu. To type the letter instead of moving the cursor, hold the shift key while typing the world name."))) {
+			@Override
+			public int getColor(boolean isSelected) {
+				return Color.get(-1, 444);
+			}
+		};
 		
-		if(selections[selected] >= choices[selected].length) selections[selected] = 0;
-		if(selections[selected] < 0) selections[selected] = choices[selected].length - 1;
+		nameHelp.setVisible(false);
 		
-		if(prevSel != selections[selected]) Sound.craft.play();
-	}
-
-	public void render(Screen screen) {
-		screen.clear(0);
-		
-		for(int i = 0; i < settings.length; i++) {
-			options.set(i, settings[i] + ": " + choices[i][selections[i]]);
-		}
-		
-		super.render(screen);
-		
-		Font.drawCentered("World options", screen, 3 * 8, Color.get(-1, 555));
-		Font.drawCentered(input.getMapping("up")+" and "+input.getMapping("down")+" to scroll", screen, 16 * 8, Color.get(-1, 555));
-		Font.drawCentered("Press "+input.getMapping("exit")+" to exit", screen, 18 * 8, Color.get(-1, 555));
-	}
-	
-	private static int getIdx(String query) {
-		for(int i = 0; i < settings.length; i++) {
-			if(settings[i].equals(query))
-				return i;
-		}
-		return -1;
-	}
-	
-	public static String get(String query) {
-		int idx = getIdx(query);
-		if(idx >= 0)
-			return choices[idx][selections[idx]];
-		return "";
-	}
-	
-	public static int getSize() {
-		return sizes[selections[getIdx("Size")]];
-	}
-	
-	public static void setSize(int size) {
-		for(int i = 0; i < sizes.length; i++) {
-			if(sizes[i] == size) {
-				selections[getIdx("Size")] = i;
+		HashSet<String> controls = new HashSet<>();
+		controls.addAll(Arrays.asList(Game.input.getMapping("up").split("/")));
+		controls.addAll(Arrays.asList(Game.input.getMapping("down").split("/")));
+		for(String key: controls) {
+			if(key.matches("^\\w$")) {
+				nameHelp.setVisible(true);
 				break;
 			}
 		}
+		
+		worldSeed = new InputEntry("World Seed", "[0-9]+", 20) {
+			@Override
+			public boolean isValid() { return true; }
+		};
+		
+		menus = new Menu[] {
+			new Menu.Builder(false, 10, RelPos.LEFT,
+				nameField,
+				nameHelp,
+				Settings.getEntry("mode"),
+				Settings.getEntry("scoretime"),
+				
+				new SelectEntry("Create World", () -> {
+					if(!nameField.isValid()) return;
+					WorldSelectMenu.setWorldName(nameField.getUserInput());
+					Game.setMenu(new LoadingDisplay());
+				}) {
+					@Override
+					public void render(Screen screen, int x, int y, boolean isSelected) {
+						Font.draw(toString(), screen, x, y, Color.CYAN);
+					}
+				},
+				
+				Settings.getEntry("size"),
+				Settings.getEntry("theme"),
+				Settings.getEntry("type"),
+				worldSeed
+			)
+				.setDisplayLength(5)
+				.setScrollPolicies(0.8f, false)
+				.setTitle("World Gen Options")
+				.createMenu()
+		};
 	}
 }

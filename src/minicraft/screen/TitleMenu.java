@@ -1,34 +1,161 @@
 package minicraft.screen;
 
-import java.io.File;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Random;
+
+import com.sun.istack.internal.NotNull;
 import minicraft.Game;
-import minicraft.GameApplet;
 import minicraft.InputHandler;
-import minicraft.Sound;
 import minicraft.entity.RemotePlayer;
 import minicraft.gfx.Color;
 import minicraft.gfx.Font;
+import minicraft.gfx.Point;
 import minicraft.gfx.Screen;
 import minicraft.level.Level;
+import minicraft.screen.entry.BlankEntry;
+import minicraft.screen.entry.ListEntry;
+import minicraft.screen.entry.SelectEntry;
 
-public class TitleMenu extends SelectMenu {
-	protected final Random random = new Random();
-private static final String[] options = {"New game", "Join Online World", "Instructions", "Tutorial", "Options", "Change Key Bindings", "About", "Quit"/*, "Kill"*/}; // Options that are on the main menu.
-	int rand;
-	int count = 0; // this and reverse are for the logo; they produce the fade-in/out effect.
-	boolean reverse = false;
-	String location = Game.gameDir;
-	File folder;
+public class TitleMenu extends Display {
+	private static final Random random = new Random();
+	
+	private int rand;
+	private int count = 0; // this and reverse are for the logo; they produce the fade-in/out effect.
+	private boolean reverse = false;
+	
+	public TitleMenu() {
+		super(true, false);
+		
+		ArrayList<ListEntry> entries = new ArrayList<>();
+		Menu.Builder menu = new Menu.Builder(false, 2, RelPos.CENTER)
+			.setPositioning(new Point(Game.WIDTH/2, Game.HEIGHT*3/5), RelPos.CENTER);
+		
+		if(WorldSelectMenu.getWorldNames().size() > 0)
+			entries.add(displayFactory("Play",
+					new SelectEntry("Load World", () -> Game.setMenu(new WorldSelectMenu())),
+					new SelectEntry("New World", () -> Game.setMenu(new WorldGenMenu()))
+				)
+			);
+		else
+			entries.add(new SelectEntry("Play", () -> Game.setMenu(new WorldGenMenu())));
+		
+		entries.addAll(Arrays.asList(
+				new SelectEntry("Join Online World", () -> Game.setMenu(new MultiplayerMenu())),
+				new SelectEntry("Options", () -> Game.setMenu(new OptionsMenu())),
+				displayFactory("Help",
+					new SelectEntry("Instructions", () -> Game.setMenu(new BookDisplay(Displays.instructions))),
+					new BlankEntry(),
+					new SelectEntry("Storyline Guide (for the weak)", () -> Game.setMenu(new BookDisplay(Displays.storylineGuide))),
+					new BlankEntry(),
+					new SelectEntry("About", () -> Game.setMenu(new BookDisplay(Displays.about)))
+				),
+				new SelectEntry("Quit", () -> System.exit(0))
+		));
+		
+		menu.setEntries(entries);
+		
+		menus = new Menu[] {menu.createMenu()};
+	}
+	
+	@Override
+	public void init(Display parent) {
+		super.init(parent);
+		Game.readyToRenderGameplay = false;
+		/// this is just in case; though, i do take advantage of it in other places.
+		if(Game.server != null) {
+			if (Game.debug) System.out.println("wrapping up loose server ends");
+			Game.server.endConnection();
+			Game.server = null;
+		}
+		if(Game.client != null) {
+			if (Game.debug) System.out.println("wrapping up loose client ends");
+			Game.client.endConnection();
+			Game.client = null;
+		}
+		Game.ISONLINE = false;
+		
+		rand = random.nextInt(splashes.length);
+		
+		Game.levels = new Level[Game.levels.length];
+		
+		// was in init
+		if(Game.player == null || Game.player instanceof RemotePlayer) {
+			//if(Game.player != null) Game.player.remove();
+			Game.player = null;
+			Game.resetGame();
+		}
+	}
+	
+	@NotNull
+	private static SelectEntry displayFactory(String entryText, ListEntry... entries) {
+		return new SelectEntry(entryText, () -> Game.setMenu(new Display(true, new Menu.Builder(false, 2, RelPos.CENTER, entries).createMenu())));
+	}
+	
+	@Override
+	public void tick(InputHandler input) {
+		if (input.getKey("r").clicked) rand = random.nextInt(splashes.length);
+		
+		if (!reverse) {
+			count++;
+			if (count == 25) reverse = true;
+		} else {
+			count--;
+			if (count == 0) reverse = false;
+		}
+		
+		super.tick(input);
+	}
+	
+	@Override
+	public void render(Screen screen) {
+		super.render(screen);
+		
+		int h = 2; // Height of squares (on the spritesheet)
+		int w = 15; // Width of squares (on the spritesheet)
+		int titleColor = Color.get(-1, 10, 131, 551);
+		int xo = (Screen.w - w * 8) / 2; // X location of the title
+		int yo = 36; // Y location of the title
+		int cols = Color.YELLOW;
+		
+		for (int y = 0; y < h; y++) {
+			for (int x = 0; x < w; x++) {
+				screen.render(xo + x * 8, yo + y * 8, x + (y + 6) * 32, titleColor, 0);
+			}
+		}
+		
+		boolean isblue = splashes[rand].contains("blue");
+		boolean isGreen = splashes[rand].contains("Green");
+		boolean isRed = splashes[rand].contains("Red");
+		
+		/// this isn't as complicated as it looks. It just gets a color based off of count, which oscilates between 0 and 25.
+		int bcol = 5 - count / 5; // this number ends up being between 1 and 5, inclusive.
+		cols = isblue ? Color.get(-1, bcol) : isRed ? Color.get(-1, bcol*100) : isGreen ? Color.get(-1, bcol*10) : Color.get(-1, (bcol-1)*100+5, bcol*100+bcol*10, bcol*100+bcol*10);
+		// *100 means red, *10 means green; simple.
+		
+		Font.drawCentered(splashes[rand], screen, 60, cols);
+		
+		/*if(GameApplet.isApplet) {
+			String greeting = "Welcome!", name = GameApplet.username;
+			if(name.length() < 36) greeting = name+"!";
+			if(name.length() < 27) greeting = "Welcome, " + greeting;
+			
+			Font.drawCentered(greeting, screen, 10, Color.get(-1, 330));
+		}*/
+		
+		Font.draw("Version " + Game.VERSION, screen, 1, 1, Color.get(-1, 111));
+		
+		Font.drawCentered("("+Game.input.getMapping("up")+", "+Game.input.getMapping("down")+" to select)", screen, Screen.h - 32, Color.get(-1, 111));
+		Font.drawCentered("("+Game.input.getMapping("select")+" to accept)", screen, Screen.h - 22, Color.get(-1, 111));
+		Font.drawCentered("("+Game.input.getMapping("exit")+" to return)", screen, Screen.h - 12, Color.get(-1, 111));
+	}
 	
 	private static final String[] splashes = {//new ArrayList<String>();
 		"Multiplayer Now Included!",
 		"Also play InfinityTale!",
-		"Also play Minicraft Delux!",
+		"Also play Minicraft Deluxe!",
 		"Also play Alecraft!",
 		"Also play Hackcraft!",
-		//"Also play RPGcraft!(When it's done)",
 		"Also play MiniCrate!",
 		"Also play MiniCraft Mob Overload!",
 		"Only on PlayMinicraft.com!",
@@ -133,160 +260,4 @@ private static final String[] options = {"New game", "Join Online World", "Instr
 		"Red is my favorite color!"
 		//"try with --debug",
 	};
-	
-	public TitleMenu() {
-		super(Arrays.asList(options), 11*8, 1, Color.get(-1, 555), Color.get(-1, 222));
-		Game.readyToRenderGameplay = false;
-		/// this is just in case; though, i do take advantage of it in other places.
-		if(Game.server != null) {
-			if (Game.debug) System.out.println("wrapping up loose server ends");
-			Game.server.endConnection();
-			Game.server = null;
-		}
-		if(Game.client != null) {
-			if (Game.debug) System.out.println("wrapping up loose client ends");
-			Game.client.endConnection();
-			Game.client = null;
-		}
-		Game.ISONLINE = false;
-		
-		folder = new File(location);
-		rand = random.nextInt(splashes.length);
-		
-		Game.levels = new Level[Game.levels.length];
-	}
-	
-	public void init(Game game, InputHandler input) {
-		super.init(game, input);
-		if(game.player == null || game.player instanceof RemotePlayer) {
-			//if(game.player != null) game.player.remove();
-			game.player = null;
-			game.resetGame();
-		}
-	}
-	
-	/*public void getSplashes() {
-		if(!loadedsplashes) {
-			try {
-				URL br = new URL("http://minicraftplus.webs.com/-splashes.txt");
-				URLConnection e = br.openConnection();
-				e.setReadTimeout(1000);
-				Scanner bufferedWriter = new Scanner(br.openStream());
-				splashes.clear();
-
-				while(bufferedWriter.hasNextLine()) {
-					String splash = bufferedWriter.nextLine();
-					if(splash.contains("]")) {
-						if(splash.substring(splash.indexOf("]")).length() > 3) {
-							splash = splash.substring(splash.indexOf("]") + 2, splash.length());
-						} else continue;
-					}
-					
-					if(splash.length() > 0) splashes.add(splash);
-				}
-
-				bufferedWriter.close();
-			} catch (MalformedURLException urlEx) {
-				urlEx.printStackTrace();
-				splashes.clear();
-				splashes.add("");
-			} catch (ConnectException conEx) {
-				conEx.printStackTrace();
-				splashes.clear();
-				splashes.add("Connection issue! D:");
-			} catch (IOException ioEx) {
-				ioEx.printStackTrace();
-				splashes.clear();
-				splashes.add("Offline Mode :<");
-			}
-			
-			loadedsplashes = true;
-		}
-	}*/
-	
-	public void tick() {
-		super.tick();
-		
-		if (input.getKey("r").clicked) rand = random.nextInt(splashes.length);
-		
-		if (!reverse) {
-			count++;
-			if (count == 25) reverse = true;
-		} else {
-			count--;
-			if (count == 0) reverse = false;
-		}
-		
-		if (input.getKey("select").clicked) {
-			Sound.confirm.play();
-			
-			if (options[selected].equals("New game")) {
-				WorldSelectMenu.loadworld = false;
-				game.setMenu(new WorldSelectMenu());
-				//(this method should now stop getting called by Game)
-			}
-			if(options[selected].contains("Join Online")) game.setMenu(new MultiplayerMenu());
-			if(options[selected].equals("Instructions")) game.setMenu(new InstructionsMenu(this));
-			if (options[selected].equals("Tutorial")) {
-				try {
-					//This is for the tutorial Video
-					String url = "http://minicraftplus.webs.com/Tutorial.htm";
-					java.awt.Desktop.getDesktop().browse(java.net.URI.create(url));
-				} catch (java.io.IOException e) {
-					if(minicraft.Game.debug) System.out.println(e.getMessage());
-				}
-			}
-			if (options[selected].equals("Options")) game.setMenu(new OptionsMenu(this));
-			if (options[selected].equals("Change Key Bindings")) game.setMenu(new KeyInputMenu(this));
-			if (options[selected].equals("About")) game.setMenu(new AboutMenu(this));
-			if (options[selected].equals("Quit")) System.exit(0);//game.quit();
-			//if (options[selected].equals("Kill")) {game.levels[currentLevel].add(game.player); game.setMenu(null);}
-		}
-	}
-	
-	/* This section is used to display the minicraft title */
-	
-	public void render(Screen screen) {
-		screen.clear(0);
-		int h = 2; // Height of squares (on the spritesheet)
-		int w = 15; // Width of squares (on the spritesheet)
-		int titleColor = Color.get(-1, 10, 131, 551);
-		int xo = (Screen.w - w * 8) / 2; // X location of the title
-		int yo = 36; // Y location of the title
-		int cols = Color.get(-1, 550);
-		
-		for (int y = 0; y < h; y++) {
-			for (int x = 0; x < w; x++) {
-				screen.render(xo + x * 8, yo + y * 8, x + (y + 6) * 32, titleColor, 0);
-			}
-		}
-		
-		/* This is used to display this options on the screen */
-		super.render(screen);
-		
-		boolean isblue = splashes[rand].contains("blue");
-		boolean isGreen = splashes[rand].contains("Green");
-		boolean isRed = splashes[rand].contains("Red");
-		
-		/// this isn't as complicated as it looks. It just gets a color based off of count, which oscilates between 0 and 25.
-		int bcol = 5 - count / 5; // this number ends up being between 1 and 5, inclusive.
-		cols = isblue ? Color.get(-1, bcol) : isRed ? Color.get(-1, bcol*100) : isGreen ? Color.get(-1, bcol*10) : Color.get(-1, (bcol-1)*100+5, bcol*100+bcol*10, bcol*100+bcol*10);
-		// *100 means red, *10 means green; simple.
-		
-		Font.drawCentered(splashes[rand], screen, 60, cols);
-		
-		if(GameApplet.isApplet) {
-			String greeting = "Welcome!", name = GameApplet.username;
-			if(name.length() < 36) greeting = name+"!";
-			if(name.length() < 27) greeting = "Welcome, " + greeting;
-			
-			Font.drawCentered(greeting, screen, 10, Color.get(-1, 330));
-		}
-		
-		Font.draw("Version " + Game.VERSION, screen, 1, 1, Color.get(-1, 111));
-		
-		Font.drawCentered("("+input.getMapping("up")+", "+input.getMapping("down")+" to select)", screen, Screen.h - 32, Color.get(-1, 111));
-		Font.drawCentered("("+input.getMapping("select")+" to accept)", screen, Screen.h - 22, Color.get(-1, 111));
-		Font.drawCentered("("+input.getMapping("exit")+" to return)", screen, Screen.h - 12, Color.get(-1, 111));
-	}
 }

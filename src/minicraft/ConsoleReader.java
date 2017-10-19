@@ -3,20 +3,16 @@ package minicraft;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import java.util.Scanner;
 import java.util.Locale;
+import java.util.Scanner;
 
 import minicraft.entity.RemotePlayer;
-import minicraft.network.MinicraftServerThread;
 import minicraft.level.Level;
+import minicraft.network.MinicraftServerThread;
 import minicraft.saveload.Save;
-import minicraft.screen.OptionsMenu;
-import minicraft.screen.ModeMenu;
 import minicraft.screen.WorldSelectMenu;
 
 class ConsoleReader extends Thread {
-	
-	private Game game;
 	
 	private enum Config {
 		PLAYERCAP {
@@ -37,11 +33,11 @@ class ConsoleReader extends Thread {
 		
 		AUTOSAVE {
 			public String getValue() {
-				return String.valueOf(OptionsMenu.autosave);
+				return String.valueOf(Settings.get("autosave"));
 			}
 			
 			public boolean setValue(String val) {
-				OptionsMenu.autosave = Boolean.parseBoolean(val);
+				Settings.set("autosave", Boolean.parseBoolean(val));
 				return true;
 			}
 		};
@@ -55,7 +51,7 @@ class ConsoleReader extends Thread {
 	private enum Command {
 		HELP
 		("--all | [cmd]", "describes the function of each command. Specify a command name to read more about how to use it.", "no arguments: prints a list of all available commands, with a short description of each.", "cmd: a command name. will print the short description of that command, along with usage details such as what parameters/arguments it uses, and what function each argument has, and what the defualt behavior is if a given argument is ommitted.", "--all: prints the long description of all the commands.", "Usage symbol meanings:", "\t| = OR; specifies two possible choices for a given argument.", "\t[] = Optional; the arguments within may be specified, but they are not required.", "\t<> = Required; you must include the arguments within for the command to work.", "Note that the usage symbols may be nested, so a <> inside a [] is only required if you do whatever else is inside the [].") {
-			public void run(String[] args, Game game) {
+			public void run(String[] args) {
 				if(args.length == 0) {
 					System.out.println("available commands:");
 					for(Command cmd: Command.values)
@@ -72,8 +68,8 @@ class ConsoleReader extends Thread {
 		
 		STATUS
 		(null, "display some server stats.", "displays server fps, and number of players connected.") {
-			public void run(String[] args, Game game) {
-				System.out.println("fps: " + game.fra);
+			public void run(String[] args) {
+				System.out.println("fps: " + Game.fra);
 				System.out.println("players connected: " + Game.server.getThreads().length);
 				for(String info: Game.server.getClientInfo())
 					System.out.println("\t"+info);
@@ -83,7 +79,7 @@ class ConsoleReader extends Thread {
 		CONFIG
 		("[option_name [value]]", "change various server settings.", "no arguments: displays all config options and their current values", "option_name: displays the current value of that option", "option_name value:, will set the option to the specified value, provided it is a valid value for that option.") {
 			
-			public void run(String[] args, Game game) {
+			public void run(String[] args) {
 				if(args.length == 0) {
 					for(Config c: Config.values)
 						System.out.println("\t"+c.name() + " = " + c.getValue());
@@ -101,7 +97,7 @@ class ConsoleReader extends Thread {
 						if(set) {
 							System.out.println(configOption.name()+" set successfully.");
 							/// HERE is where we save the modified config options.
-							new Save(game, WorldSelectMenu.worldname, Game.server);
+							new Save(WorldSelectMenu.getWorldName(), Game.server);
 						} else
 							System.out.println("failed to set " + configOption.name());
 					}
@@ -111,7 +107,7 @@ class ConsoleReader extends Thread {
 		
 		STOP
 		(null, "close the server.") {
-			public void run(String[] args, Game game) {
+			public void run(String[] args) {
 				System.out.println("shutting down server...");
 				Game.server.endConnection();
 			}
@@ -119,18 +115,18 @@ class ConsoleReader extends Thread {
 		
 		RESTART
 		(null, "restart the server.", "closes the server, then starts it back up again.") {
-			public void run(String[] args, Game game) {
-				Command.STOP.run(null, game); // shuts down the server.
+			public void run(String[] args) {
+				Command.STOP.run(null); // shuts down the server.
 				try {
 					Thread.sleep(500); // give the computer some time to, uh, recuperate? idk, I think it's a good idea.
 				} catch(InterruptedException ignored) {}
-				game.startMultiplayerServer(); // start the server back up.
+				Game.startMultiplayerServer(); // start the server back up.
 			}
 		},
 		
 		SAVE
 		(null, "Save the world to file.") {
-			public void run(String[] args, Game game) {
+			public void run(String[] args) {
 				Game.server.saveWorld();
 				System.out.println("World Saved.");
 			}
@@ -138,33 +134,33 @@ class ConsoleReader extends Thread {
 		
 		GAMEMODE
 		("<mode>", "change the server gamemode.", "mode: one of the following: c(reative), su(rvivial), t(imed) / score, h(ardcore)") {
-			public void run(String[] args, Game game) {
+			public void run(String[] args) {
 				if(args.length != 1) {
 					System.out.println("incorrect number of arguments. Please specify the game mode in one word:");
-					printHelp(this, game);
+					printHelp(this);
 					return;
 				}
 				
 				switch(args[0].toLowerCase()) {
 					case "s": case "survival":
-						ModeMenu.updateModeBools("Survival");
+						Settings.set("mode", "Survival");
 						break;
 					
 					case "c": case "creative":
-						ModeMenu.updateModeBools("Creative");
+						Settings.set("mode", "Creative");
 						break;
 					
 					case "h": case "hardcore":
-						ModeMenu.updateModeBools("Hardcore");
+						Settings.set("mode", "Hardcore");
 						break;
 					
 					case "t": case "timed": case "score":
-						ModeMenu.updateModeBools("Score");
+						Settings.set("mode", "Score");
 						break;
 					
 					default:
 						System.out.println(args[0] + " is not a valid game mode.");
-						printHelp(this, game);
+						printHelp(this);
 						break;
 				}
 			}
@@ -172,7 +168,7 @@ class ConsoleReader extends Thread {
 		
 		TIME
 		("[timeString]", "sets or prints the time of day." , "no arguments: prints the current time of day, in ticks.", "timeString: sets the time of day to the given value; it can be a number, in which case it is a tick count from 0 to 64000 or so, or one of the following strings: Morning, Day, Evening, Night. the time of day will be set to the beginning of the given time period.") {
-			public void run(String[] args, Game game) {
+			public void run(String[] args) {
 				if(args.length == 0) {
 					System.out.println("time of day is: " + Game.tickCount + " ("+ Game.getTime()+")");
 					return;
@@ -199,14 +195,14 @@ class ConsoleReader extends Thread {
 					Game.server.updateGameVars();
 				} else {
 					System.out.println("time specified is in an invalid format.");
-					Command.printHelp(this, game);
+					Command.printHelp(this);
 				}
 			}
 		},
 		
 		MSG
 		("[username] <message>", "make a message appear on other players' screens.", "w/o username: sends to all players,", "with username: sends to that player only.") {
-			public void run(String[] args, Game game) {
+			public void run(String[] args) {
 				if(args.length == 0) {
 					System.out.println("please specify a message to send.");
 					return;
@@ -227,10 +223,10 @@ class ConsoleReader extends Thread {
 		
 		TP
 		("<playername> <x y [level] | playername>", "teleports a player to a given location in the world.", "the first player name is the player that will be teleported. the second argument can be either another player, or a set of world coordinates.", "if the second argument is a player name, then the first player will be teleported to the second player, possibly traversing different levels.", "if world coordinates are specified, an x and y coordinate are required. A level depth may optionally be specified to go to a different level; if not specified, the current level is assumed.", "the symbol \"~\" may be used in place of an x or y coordinate, or a level, to mean the current player position on that axis. additionally, an offset may be specified by writing it like so: \"~-3 ~\". this means 3 tiles to the left of the current player position.") { /// future usage: "<x> <y> | "
-			public void run(String[] args, Game game) {
+			public void run(String[] args) {
 				if(args.length == 0) {
 					System.out.println("you must specify a username, and coordinates or another username to teleport to.");
-					printHelp(this, game);
+					printHelp(this);
 					return;
 				}
 				MinicraftServerThread clientThread = Game.server.getAssociatedThread(args[0]);
@@ -262,7 +258,7 @@ class ConsoleReader extends Thread {
 						}
 					} catch(NumberFormatException ex) {
 						System.out.println("invalid command syntax; specify a player or world coordinates for tp destination.");
-						printHelp(this, game);
+						printHelp(this);
 						return;
 					}
 				} else {
@@ -305,7 +301,7 @@ class ConsoleReader extends Thread {
 		
 		PING ("", "Pings all the clients, and prints a message when each responds.") {
 			@Override
-			public void run(String[] args, Game game) {
+			public void run(String[] args) {
 				Game.server.pingClients();
 			}
 		};
@@ -327,13 +323,13 @@ class ConsoleReader extends Thread {
 				detailedHelp += System.lineSeparator()+"\t"+String.join(System.lineSeparator()+"\t", specific);
 		}
 		
-		public abstract void run(String[] args, Game game);
+		public abstract void run(String[] args);
 		
 		public String getUsage() { return usage; }
 		public String getGeneralHelp() { return generalHelp; }
 		public String getDetailedHelp() { return detailedHelp; }
 		
-		public static void printHelp(Command cmd, Game game) {
+		public static void printHelp(Command cmd) {
 			System.out.println("Usage: " + cmd.getUsage());
 			System.out.println("type \"help " + cmd + "\" for more info.");
 		}
@@ -351,9 +347,8 @@ class ConsoleReader extends Thread {
 	
 	private boolean shouldRun;
 	
-	public ConsoleReader(Game game) {
+	public ConsoleReader() {
 		super("ConsoleReader");
-		this.game = game;
 		shouldRun = true;
 	}
 	
@@ -390,16 +385,16 @@ class ConsoleReader extends Thread {
 			
 			Command cmd = getCommandByName(parsed.remove(0)); // will print its own error message if not found.
 			if(cmd == null)
-				Command.HELP.run(new String[0], game);
+				Command.HELP.run(new String[0]);
 			else if(Game.isValidServer() || cmd == Command.HELP)
-				cmd.run(parsed.toArray(new String[parsed.size()]), game);
+				cmd.run(parsed.toArray(new String[parsed.size()]));
 			else
 				System.out.println("no server running.");
 			
 			if(cmd == Command.STOP) shouldRun = false;
 		}
 		
-		game.quit();
+		Game.quit();
 	}
 	
 	private static Command getCommandByName(String name) {

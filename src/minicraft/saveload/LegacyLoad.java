@@ -7,7 +7,9 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+
 import minicraft.Game;
+import minicraft.Settings;
 import minicraft.entity.*;
 import minicraft.item.ArmorItem;
 import minicraft.item.Item;
@@ -16,9 +18,7 @@ import minicraft.item.PotionItem;
 import minicraft.item.PotionType;
 import minicraft.level.Level;
 import minicraft.level.tile.Tiles;
-import minicraft.screen.LoadingMenu;
-import minicraft.screen.ModeMenu;
-import minicraft.screen.OptionsMenu;
+import minicraft.screen.LoadingDisplay;
 
 /// this class is simply a way to seperate all the old, compatibility complications into a seperate file.
 public class LegacyLoad {
@@ -46,7 +46,7 @@ public class LegacyLoad {
 		hasloadedbigworldalready = false;
 	}
 	
-	public LegacyLoad(Game game, String worldname) {
+	public LegacyLoad(String worldname) {
 		location += "/saves/" + worldname + "/";
 		
 		File testFile = new File(location + "KeyPrefs" + extension);
@@ -56,14 +56,14 @@ public class LegacyLoad {
 		} else
 			testFile.delete(); // we don't care about it anymore anyway.
 		
-		this.game = game; // this is used in loadInventory().
+		// this is used in loadInventory().
 		
-		loadGame("Game", game); // more of the version will be determined here
-		loadWorld("Level", game);
-		loadPlayer("Player", game.player);
-		loadInventory("Inventory", game.player.inventory);
-		loadEntities("Entities", game.player);
-		LoadingMenu.percentage = 0; // reset
+		loadGame("Game"); // more of the version will be determined here
+		loadWorld("Level");
+		loadPlayer("Player", Game.player);
+		loadInventory("Inventory", Game.player.inventory);
+		loadEntities("Entities", Game.player);
+		LoadingDisplay.setPercentage(0); // reset
 	}
 	
 	protected LegacyLoad(File unlocksFile) {
@@ -97,9 +97,9 @@ public class LegacyLoad {
 			ex.printStackTrace();
 		} finally {
 			try {
-				LoadingMenu.percentage += 13;
-				if(LoadingMenu.percentage > 100) {
-					LoadingMenu.percentage = 100;
+				LoadingDisplay.progress(13);
+				if(LoadingDisplay.getPercentage() > 100) {
+					LoadingDisplay.setPercentage(100);
 				}
 				
 				if(br != null) {
@@ -145,7 +145,7 @@ public class LegacyLoad {
 	
 	private int playerac = 0; // this is a temp storage var for use to restore player arrow count.
 	
-	public void loadGame(String filename, Game game) {
+	public void loadGame(String filename) {
 		loadFromFile(location + filename + extension);
 		boolean hasVersion = data.get(0).contains(".");
 		if(hasVersion) {
@@ -154,12 +154,12 @@ public class LegacyLoad {
 			Game.gameTime = 65000; // prevents time cheating.
 			
 			if(worldVer.compareTo(new Load.Version("1.9.2")) < 0) {
-				OptionsMenu.autosave = Boolean.parseBoolean(data.get(3));
-				OptionsMenu.isSoundAct = Boolean.parseBoolean(data.get(4));
+				Settings.set("autosave", Boolean.parseBoolean(data.get(3)));
+				Settings.set("sound", Boolean.parseBoolean(data.get(4)));
 				if(worldVer.compareTo(new Load.Version("1.9.2-dev2")) >= 0)
 					AirWizard.beaten = Boolean.parseBoolean(data.get(5));
 			} else { // this is 1.9.2 official or after
-				OptionsMenu.diff = Integer.parseInt(data.get(3));
+				Settings.setIdx("diff", Integer.parseInt(data.get(3)));
 				AirWizard.beaten = Boolean.parseBoolean(data.get(4));
 			}
 		}
@@ -167,8 +167,8 @@ public class LegacyLoad {
 			if(data.size() == 5) {
 				worldVer = new Load.Version("1.9");
 				Game.setTime(Integer.parseInt(data.get(0)));
-				OptionsMenu.autosave = Boolean.parseBoolean(data.get(3));
-				OptionsMenu.isSoundAct = Boolean.parseBoolean(data.get(4));
+				Settings.set("autosave", Boolean.parseBoolean(data.get(3)));
+				Settings.set("sound", Boolean.parseBoolean(data.get(4)));
 			} else { // version == 1.8?
 				if(!oldSave) {
 					System.out.println("UNEXPECTED WORLD VERSION");
@@ -177,12 +177,12 @@ public class LegacyLoad {
 				// for backwards compatibility
 				Game.tickCount = Integer.parseInt(data.get(0));
 				playerac = Integer.parseInt(data.get(3));
-				OptionsMenu.autosave = false;
+				Settings.set("autosave", false);
 			}
 		}
 	}
 	
-	public void loadWorld(String filename, Game game) {
+	public void loadWorld(String filename) {
 		for(int l = 0; l < Game.levels.length; l++) {
 			loadFromFile(location + filename + l + extension);
 			
@@ -203,7 +203,7 @@ public class LegacyLoad {
 			}
 			
 			//Level parent = l == Game.levels.length-1 ? null : Game.levels[l+1];
-			Game.levels[l] = new Level(game, lvlw, lvlh, lvldepth, null, false);
+			Game.levels[l] = new Level(lvlw, lvlh, lvldepth, null, false);
 			Game.levels[l].tiles = tiles;
 			Game.levels[l].data = tdata;
 		}
@@ -227,17 +227,17 @@ public class LegacyLoad {
 			} else player.armor = 0;
 			
 			//player.ac = Integer.parseInt(data.get(7));
-			player.game.currentLevel = Integer.parseInt(data.get(8));
+			Game.currentLevel = Integer.parseInt(data.get(8));
 			modedata = data.get(9);
 			
 		} else {
 			// old, 1.8 save.
-			player.game.currentLevel = Integer.parseInt(data.get(7));
+			Game.currentLevel = Integer.parseInt(data.get(7));
 			modedata = data.get(8);
 		}
 		
 		player.score = Integer.parseInt(data.get(6));
-		Game.levels[player.game.currentLevel].add(player);
+		Game.levels[Game.currentLevel].add(player);
 		
 		int mode;
 		if(modedata.contains(";")) {
@@ -250,7 +250,7 @@ public class LegacyLoad {
 			if (mode == 4) Game.scoreTime = 300;
 		}
 		
-		ModeMenu.updateModeBools(mode);
+		Settings.setIdx("mode", mode);
 		
 		boolean hasEffects;
 		int potionIdx = 10;
@@ -289,7 +289,7 @@ public class LegacyLoad {
 			loadItemToInventory(item, inventory);
 		}
 		
-		if(playerac > 0 && inventory == game.player.inventory) {
+		if(playerac > 0 && inventory == Game.player.inventory) {
 			inventory.add(Items.get("arrow"), playerac);
 			playerac = 0;
 		}

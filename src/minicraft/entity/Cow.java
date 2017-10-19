@@ -1,9 +1,9 @@
 package minicraft.entity;
 
+import minicraft.Settings;
 import minicraft.gfx.Color;
 import minicraft.gfx.MobSprite;
 import minicraft.item.Items;
-import minicraft.screen.OptionsMenu;
 
 public class Cow extends PassiveMob {
 	private static MobSprite[][] sprites = MobSprite.compileMobSpriteAnimations(16, 16);
@@ -15,9 +15,9 @@ public class Cow extends PassiveMob {
 	
 	protected void die() {
 		int min = 0, max = 0;
-		if (OptionsMenu.diff == OptionsMenu.easy) {min = 1; max = 3;}
-		if (OptionsMenu.diff == OptionsMenu.norm) {min = 1; max = 2;}
-		if (OptionsMenu.diff == OptionsMenu.hard) {min = 0; max = 1;}
+		if (Settings.get("diff").equals("Easy")) {min = 1; max = 3;}
+		if (Settings.get("diff").equals("Normal")) {min = 1; max = 2;}
+		if (Settings.get("diff").equals("Hard")) {min = 0; max = 1;}
 		
 		dropItem(min, max, Items.get("leather"), Items.get("raw beef"));
 		

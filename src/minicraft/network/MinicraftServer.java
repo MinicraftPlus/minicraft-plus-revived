@@ -9,7 +9,9 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Timer;
 import java.util.TimerTask;
+
 import minicraft.Game;
+import minicraft.Settings;
 import minicraft.entity.Bed;
 import minicraft.entity.Chest;
 import minicraft.entity.Entity;
@@ -26,7 +28,6 @@ import minicraft.level.Level;
 import minicraft.level.tile.Tile;
 import minicraft.saveload.Load;
 import minicraft.saveload.Save;
-import minicraft.screen.ModeMenu;
 import minicraft.screen.WorldSelectMenu;
 
 public class MinicraftServer extends Thread implements MinicraftProtocol {
@@ -41,21 +42,18 @@ public class MinicraftServer extends Thread implements MinicraftProtocol {
 	private ArrayList<MinicraftServerThread> threadList = new ArrayList<>();
 	private ServerSocket socket;
 	
-	private Game game;
 	private RemotePlayer hostPlayer = null;
 	private String worldPath;
 	
 	private int playerCap = 5;
 	
-	public MinicraftServer(Game game) {
+	public MinicraftServer() {
 		super("MinicraftServer");
-		this.game = game;
-		
 		Game.ISONLINE = true;
 		Game.ISHOST = true; // just in case.
-		game.player.remove(); // the server has no player...
+		Game.player.remove(); // the server has no player...
 		
-		worldPath = Game.gameDir + "/saves/" + WorldSelectMenu.worldname;
+		worldPath = Game.gameDir + "/saves/" + WorldSelectMenu.getWorldName();
 		
 		try {
 			System.out.println("opening server socket...");
@@ -78,7 +76,7 @@ public class MinicraftServer extends Thread implements MinicraftProtocol {
 		try {
 			while (socket != null) {
 				//if(playerCap < 0 || threadList.size() < playerCap) {
-					MinicraftServerThread mst = new MinicraftServerThread(game, socket.accept(), this);
+					MinicraftServerThread mst = new MinicraftServerThread(socket.accept(), this);
 					if(mst.isConnected())
 						threadList.add(mst);
 				/*} else {
@@ -294,7 +292,7 @@ public class MinicraftServer extends Thread implements MinicraftProtocol {
 	
 	public void saveWorld() {
 		broadcastData(InputType.SAVE, ""); // tell all the other clients to send their data over to be saved.
-		new Save(game, WorldSelectMenu.worldname);
+		new Save(WorldSelectMenu.getWorldName());
 	}
 	
 	public void broadcastNotification(String note, int notetime) {
@@ -316,7 +314,7 @@ public class MinicraftServer extends Thread implements MinicraftProtocol {
 		if(sendTo.length == 0) return;
 		
 		String[] varArray = {
-			ModeMenu.mode+"",
+			Settings.get("mode").toString(),
 			Game.tickCount+"",
 			Game.gamespeed+"",
 			Game.pastDay1+"",
@@ -395,7 +393,7 @@ public class MinicraftServer extends Thread implements MinicraftProtocol {
 				
 				/// versions match, and username is unique; make client player
 				clientPlayer.setUsername(username);
-				//RemotePlayer clientPlayer = new RemotePlayer(null, game, address, port);
+				//RemotePlayer clientPlayer = new RemotePlayer(null, address, port);
 				
 				/// now, we need to check if this player has played in this world before. If they have, then all previoeus settings and items and such will be restored.
 				String playerdata = ""; // this stores the data fetched from the files.
@@ -404,13 +402,13 @@ public class MinicraftServer extends Thread implements MinicraftProtocol {
 					/// this is the first person on localhost. I believe that a second person will be saved as a loopback address (later: jk the first one actually will), but a third will simply overwrite the second.
 					if (Game.debug) System.out.println("SERVER: host player found");
 					
-					if(game.player != null) {
+					if(Game.player != null) {
 						// save the player, and then remove it.
-						playerdata = game.player.getPlayerData();
+						playerdata = Game.player.getPlayerData();
 						
 						//if (Game.debug) System.out.println("SERVER: setting main player as remote from login.");
-						game.player.remove(); // all the important data has been saved.
-						game.player = null;
+						Game.player.remove(); // all the important data has been saved.
+						Game.player = null;
 					} else {
 						/// load the data from file instead.
 						try {
@@ -431,7 +429,7 @@ public class MinicraftServer extends Thread implements MinicraftProtocol {
 				if(playerdata.length() > 0) {
 					/// if a save file was found, then send the data to the client so they can resume where they left off.
 					// and now, initialize the RemotePlayer instance with the data.
-					(new Load()).loadPlayer(clientPlayer, Arrays.asList(playerdata.split("\\n")[0].split(",")));
+					new Load().loadPlayer(clientPlayer, Arrays.asList(playerdata.split("\\n")[0].split(",")));
 					// we really don't need to load the inventory.
 				} else {
 					clientPlayer.findStartPos(Game.levels[Game.lvlIdx(0)]); // find a new start pos
@@ -536,7 +534,7 @@ public class MinicraftServer extends Thread implements MinicraftProtocol {
 			
 			case DIE:
 				if (Game.debug) System.out.println("received player death");
-				Entity dc = Load.loadEntity(alldata, game, false);
+				Entity dc = Load.loadEntity(alldata, false);
 				broadcastEntityRemoval(clientPlayer);
 				return true;
 			
@@ -555,7 +553,7 @@ public class MinicraftServer extends Thread implements MinicraftProtocol {
 				Level playerLevel = clientPlayer.getLevel();
 				if(playerLevel != null)
 					playerLevel.dropItem(clientPlayer.x, clientPlayer.y, dropped);
-				//Entity dropped = Load.loadEntity(alldata, game, false);
+				//Entity dropped = Load.loadEntity(alldata, false);
 				//broadcastEntityAddition(dropped, true);
 				return true;
 			
@@ -702,7 +700,7 @@ public class MinicraftServer extends Thread implements MinicraftProtocol {
 				
 				//boolean pickedUpFurniture = wasGlove && !(clientPlayer.activeItem instanceof PowerGloveItem);
 				
-				//if(!ModeMenu.creative) { // the second part allows the player to pick up furniture in creative mode.
+				//if(!Game.isMode("creative")) { // the second part allows the player to pick up furniture in creative mode.
 					// now, send back the state of the activeItem. In creative though, this won't change, so it's unnecessary.
 					//if(pickedUpFurniture)
 						//sendData(InputType.CHESTOUT, (new PowerGloveItem()).getData());

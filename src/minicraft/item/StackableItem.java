@@ -1,10 +1,11 @@
 package minicraft.item;
 
 import java.util.ArrayList;
+
+import minicraft.Game;
 import minicraft.gfx.Color;
 import minicraft.gfx.Screen;
 import minicraft.gfx.Sprite;
-import minicraft.screen.ModeMenu;
 
 // some items are direct instances of this class; those instances are the true "items", like stone, wood, wheat, or coal; you can't do anything with them besides use them to make something else.
 
@@ -13,13 +14,13 @@ public class StackableItem extends Item {
 	protected static ArrayList<Item> getAllInstances() {
 		ArrayList<Item> items = new ArrayList<>();
 	
-		items.add(new StackableItem("Wood", new Sprite(1, 4, Color.get(-1, 200, 531, 430))));
+		items.add(new StackableItem("Wood", new Sprite(28, 4, Color.get(-1, 310, 532, 532))));
 		items.add(new StackableItem("Stone", new Sprite(2, 4, Color.get(-1, 111, 333, 555))));
 		items.add(new StackableItem("Leather", new Sprite(19, 4, Color.get(-1, 100, 211, 322))));
 		items.add(new StackableItem("Wheat", new Sprite(6, 4, Color.get(-1, 110, 330, 550))));
 		items.add(new StackableItem("Key", new Sprite(26, 4, Color.get(-1, -1, 444, 550))));
 		items.add(new StackableItem("arrow", new Sprite(13, 5, Color.get(-1, 111, 222, 430))));
-		items.add(new StackableItem("string", new Sprite(25, 4, Color.get(-1, 555))));
+		items.add(new StackableItem("string", new Sprite(25, 4, Color.WHITE)));
 		items.add(new StackableItem("Coal", new Sprite(10, 4, Color.get(-1, 000, 111, 111))));
 		items.add(new StackableItem("Iron Ore", new Sprite(10, 4, Color.get(-1, 100, 322, 544))));
 		items.add(new StackableItem("Lapis", new Sprite(10, 4, Color.get(-1, 005, 115, 115))));
@@ -29,7 +30,7 @@ public class StackableItem extends Item {
 		items.add(new StackableItem("Rose", new Sprite(0, 4, Color.get(-1, 100, 300, 500))));
 		items.add(new StackableItem("GunPowder", new Sprite(2, 4, Color.get(-1, 111, 222, 333))));
 		items.add(new StackableItem("Slime", new Sprite(10, 4, Color.get(-1, 10, 30, 50))));
-		items.add(new StackableItem("glass", new Sprite(12, 4, Color.get(-1, 555))));
+		items.add(new StackableItem("glass", new Sprite(12, 4, Color.WHITE)));
 		items.add(new StackableItem("cloth", new Sprite(1, 4, Color.get(-1, 25, 252, 141))));
 		items.add(new StackableItem("gem", new Sprite(13, 4, Color.get(-1, 101, 404, 545))));
 		items.add(new StackableItem("Scale", new Sprite(22, 4, Color.get(-1, 10, 30, 20))));
@@ -62,7 +63,7 @@ public class StackableItem extends Item {
 	
 	/// this is used by (most) subclasses, to standardize the count decrement behavior. This is not the normal interactOn method.
 	protected boolean interactOn(boolean subClassSuccess) {
-		if(subClassSuccess && !ModeMenu.creative)
+		if(subClassSuccess && !Game.isMode("creative"))
 			count--;
 		return subClassSuccess;
 	}
@@ -82,5 +83,11 @@ public class StackableItem extends Item {
 	
 	public String getData() {
 		return name+"_"+count;
+	}
+	
+	@Override
+	public String getDisplayName() {
+		String extra = (count > 999 ? 999 : count) + " ";
+		return " " + extra + name;
 	}
 }

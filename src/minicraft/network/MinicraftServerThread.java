@@ -10,6 +10,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Timer;
 import java.util.TimerTask;
+
 import minicraft.Game;
 import minicraft.entity.Entity;
 import minicraft.entity.RemotePlayer;
@@ -34,7 +35,6 @@ public class MinicraftServerThread extends MinicraftConnection {
 	
 	protected boolean isPlaying = false;
 	
-	private Game game;
 	
 	//private NetworkInterface computer = null;
 	
@@ -48,19 +48,17 @@ public class MinicraftServerThread extends MinicraftConnection {
 	private List<InputType> packetTypesToCache = new ArrayList<>();
 	private List<String> cachedPackets = new ArrayList<>();
 	
-	public MinicraftServerThread(Game game, Socket socket, MinicraftServer serverInstance) {
+	public MinicraftServerThread(Socket socket, MinicraftServer serverInstance) {
 		super("MinicraftServerThread", socket);
 		
 		this.serverInstance = serverInstance;
-		this.game = game;
-		
 		if(serverInstance.isFull()) {
 			sendError("server at max capacity.");
 			super.endConnection();
 			return;
 		}
 		
-		client = new RemotePlayer(null, game, false, socket.getInetAddress(), socket.getPort());
+		client = new RemotePlayer(null, false, socket.getInetAddress(), socket.getPort());
 		
 		// username is set later
 		
@@ -203,7 +201,7 @@ public class MinicraftServerThread extends MinicraftConnection {
 	
 	protected void respawnPlayer() {
 		client.remove(); // hopefully removes it from any level it might still be on
-		client = new RemotePlayer(game, false, client);
+		client = new RemotePlayer(false, client);
 		client.respawn(Game.levels[Game.lvlIdx(0)]); // get the spawn loc. of the client
 		sendData(InputType.PLAYER, client.getPlayerData()); // send spawn loc.
 	}

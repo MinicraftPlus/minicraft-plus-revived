@@ -1,128 +1,144 @@
 package minicraft.screen;
 
-import java.util.Arrays;
 import minicraft.Game;
+import minicraft.InputHandler;
 import minicraft.gfx.Color;
 import minicraft.gfx.Font;
-import minicraft.gfx.FontStyle;
+import minicraft.gfx.Point;
 import minicraft.gfx.Screen;
 import minicraft.saveload.Save;
+import minicraft.screen.entry.KeyInputEntry;
+import minicraft.screen.entry.StringEntry;
 
-public class KeyInputMenu extends ScrollingMenu {
+public class KeyInputMenu extends Display {
 	
 	private boolean listeningForBind, confirmReset;
-	private Menu parent;
 	
-	private String[] actionKeys;
+	//private static final FontStyle style = new FontStyle().setYPos(Font.textHeight()*2).setXPos(0);
 	
-	public KeyInputMenu(Menu parent) {
-		super(Arrays.asList(parent.input.getKeyPrefs()), (Game.HEIGHT-Font.textHeight()*9)/8, 0, Font.textHeight()*2, 1, Color.get(-1, 555), Color.get(-1, 333));
+	//private static Frame inputFrame = new Frame("", new Rectangle(4, 4, Screen.w/SpriteSheet.boxWidth-8,Screen.h/SpriteSheet.boxWidth-8));
+	
+	private static Menu.Builder builder;
+	
+	private static KeyInputEntry[] getEntries() {
+		String[] prefs = Game.input.getKeyPrefs();
+		KeyInputEntry[] entries = new KeyInputEntry[prefs.length];
 		
-		this.parent = parent;
-		listeningForBind = false;
-		confirmReset = false;
-		String[] keys = options.toArray(new String[0]);
-		actionKeys = new String[keys.length];
-		updateKeys(keys);
+		for (int i = 0; i < entries.length; i++)
+			entries[i] = new KeyInputEntry(prefs[i]);
+		
+		return entries;
 	}
 	
-	public void tick() {
+	public KeyInputMenu() {
+		super(true);
+		builder = new Menu.Builder(false, 0, RelPos.CENTER, getEntries())
+			//.setSize(Screen.w, Screen.h)
+			.setTitle("Controls")
+			//.setScrollPolicies(1, false)
+			.setPositioning(new Point(Game.WIDTH/2, Screen.h - Font.textHeight()*5), RelPos.TOP);
+		
+		Menu.Builder popupBuilder = new Menu.Builder(true, 4, RelPos.CENTER)
+			.setShouldRender(false)
+			.setSelectable(false);
+		
+		menus = new Menu[] {
+			builder.createMenu(),
+			
+			popupBuilder
+				.setEntries(StringEntry.useLines(Color.YELLOW, "Press the desired", "key sequence"))
+				.createMenu(),
+			
+			popupBuilder
+				.setEntries(StringEntry.useLines(Color.RED, "Are you sure you want to reset all key bindings to the default keys?", "enter to confirm", "escape to cancel"))
+				.setTitle("Confirm Action")
+				.createMenu()
+		};
+		
+		listeningForBind = false;
+		confirmReset = false;
+	}
+	
+	@Override
+	public void tick(InputHandler input) {
 		if(listeningForBind) {
 			if(input.keyToChange == null) {
 				// the key has just been set
-				//System.out.println("binding changed at " + input.ticks);
 				listeningForBind = false;
-				updateKeys(input.getKeyPrefs());
+				menus[1].shouldRender = false;
+				menus[0].updateSelectedEntry(new KeyInputEntry(input.getChangedKey()));
+				selection = 0;
 			}
+			
 			return;
 		}
-		
-		if(input.getKey("exit").clicked && !confirmReset) {
-			game.setMenu(parent);
-			new Save(game);
-			return;
-		}
-		
-		super.tick();
 		
 		if(confirmReset) {
 			if(input.getKey("exit").clicked) {
 				confirmReset = false;
+				menus[2].shouldRender = false;
+				selection = 0;
 			}
 			else if(input.getKey("select").clicked) {
 				confirmReset = false;
 				input.resetKeyBindings();
-				updateKeys(input.getKeyPrefs());
+				menus[2].shouldRender = false;
+				menus[0] = builder.setEntries(getEntries())
+					.setSelection(menus[0].getSelection(), menus[0].getDispSelection())
+					.createMenu()
+				;
+				selection = 0;
 			}
+			
+			return;
 		}
-		else if(input.getKey("c").clicked || input.getKey("enter").clicked) {
-			//System.out.println("changing input binding at " + input.ticks);
-			input.changeKeyBinding(actionKeys[selected]);
+		
+		super.tick(input); // ticks menu
+		
+		if(input.keyToChange != null) {
 			listeningForBind = true;
-		}
-		else if(input.getKey("a").clicked) {
-			// add a binding, don't remove previous.
-			input.addKeyBinding(actionKeys[selected]);
-			listeningForBind = true;
-		}
-		else if(input.getKey("shift-d").clicked && !confirmReset) {
+			selection = 1;
+			menus[selection].shouldRender = true;
+		} else if(input.getKey("shift-d").clicked && !confirmReset) {
 			confirmReset = true;
-		}
-	}
-	
-	private void updateKeys(String[] keys) {
-		for(int i = 0; i < keys.length; i++) {
-			String key = keys[i];
-			
-			String action = key.substring(0, key.indexOf(";"));
-			String mapping = key.substring(key.indexOf(";")+1);
-			
-			StringBuilder buffer = new StringBuilder();
-			for(int spaces = 0; spaces < Game.WIDTH/8 - action.length() - mapping.length(); spaces++) {
-				buffer.append(" ");
-			}
-			
-			actionKeys[i] = action;
-			options.set(i, action+buffer+mapping);
+			selection = 2;
+			menus[selection].shouldRender = true;
 		}
 	}
 	
 	public void render(Screen screen) {
-		screen.clear(0);
-		
-		Font.drawCentered("Controls", screen, 0, Color.get(-1, 555));
-		
-		/*if(Game.debug) {
-			System.out.println("current status:");
-			System.out.println("selected: " + selected + " of " + options.size());
-			System.out.println("disp sel: " + dispSelected + " of " + dispSize);
-			System.out.println("offset: " + offset);
-			System.out.println("CONTENTS:");
-			for(String str: options)
-				System.out.println(str);
-		}*/
+		if(selection == 0) // not necessary to put in if statement now, but it's probably more efficient anyway
+			screen.clear(0);
 		
 		super.render(screen);
 		
-		if(listeningForBind) {
-			renderFrame(screen, "", 4, 4, Screen.w/8-4, Screen.h/8-4);
-			Font.drawCentered("Press the desired", screen, (Screen.h-Font.textHeight()) / 2 - 4, Color.get(-1, 450));
-			Font.drawCentered("key sequence", screen, (Screen.h-Font.textHeight()) / 2 + 4, Color.get(-1, 450));
-		} else if (confirmReset) {
-			renderFrame(screen, "Confirm Action", 4, 4, Screen.w/8-4, Screen.h/8-4);
-			FontStyle style = new FontStyle(Color.get(-1, 511));
-			Font.drawParagraph("Are you sure you want to reset all key bindings to the default keys?", screen, 8*4, true, 8*4, true, style, 4);
-			style.setColor(Color.get(-1, 533));
-			Font.drawParagraph(input.getMapping("select")+" to confirm\n"+input.getMapping("exit")+" to cancel", screen, 8, true, (Screen.h-Font.textHeight()) / 2 + 8*3, false, style, 4);
-		} else {
+		//Font.drawCentered("Controls", screen, 0, Color.WHITE);
+		
+		if(!listeningForBind && !confirmReset) {
 			String[] lines = {
 				"Press C/Enter to change key binding",
 				"Press A to add key binding",
 				"Shift-D to reset all keys to default",
-				input.getMapping("exit")+" to Return to menu"
+				Game.input.getMapping("exit")+" to Return to menu"
 			};
 			for(int i = 0; i < lines.length; i++)
-				Font.drawCentered(lines[i], screen, Screen.h-Font.textHeight()*(4-i), Color.get(-1, 555));
+				Font.drawCentered(lines[i], screen, Screen.h-Font.textHeight()*(4-i), Color.WHITE);
 		}
+		
+		/*if(listeningForBind) {
+			inputFrame.setTitle("");
+			inputFrame.render(screen);
+			Font.drawCentered("Press the desired", screen, (Screen.h-Font.textHeight()) / 2 - 4, Color.get(-1, 450));
+			Font.drawCentered("key sequence", screen, (Screen.h-Font.textHeight()) / 2 + 4, Color.get(-1, 450));
+		}
+		else if(confirmReset) {
+			inputFrame.setTitle("Confirm Action");
+			inputFrame.render(screen);
+			
+			FontStyle style = new FontStyle(Color.get(-1, 511));
+			Font.drawParagraph("Are you sure you want to reset all key bindings to the default keys?", screen, 8*4, true, 8*4, true, style, 4);
+			style.setColor(Color.get(-1, 533));
+			Font.drawParagraph("enter to confirm\nescape to cancel", screen, 8, true, (Screen.h-Font.textHeight()) / 2 + 8*3, false, style, 4);
+		}*/
 	}
 }

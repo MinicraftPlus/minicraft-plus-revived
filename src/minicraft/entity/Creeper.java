@@ -1,12 +1,12 @@
 package minicraft.entity;
 
+import minicraft.Settings;
 import minicraft.Sound;
 import minicraft.gfx.Color;
 import minicraft.gfx.MobSprite;
 import minicraft.gfx.Screen;
 import minicraft.item.Items;
 import minicraft.level.tile.Tiles;
-import minicraft.screen.OptionsMenu;
 
 public class Creeper extends EnemyMob {
 	private static final MobSprite[][] sprites;
@@ -60,9 +60,9 @@ public class Creeper extends EnemyMob {
 				int pdy = Math.abs(player.y - y);
 				if(pdx < BLAST_RADIUS && pdy < BLAST_RADIUS) {
 					float pd = (float) Math.sqrt(pdx * pdx + pdy * pdy);
-					int dmg = (int) (BLAST_DAMAGE * (1 - (pd / BLAST_RADIUS))) + OptionsMenu.diff;
+					int dmg = (int) (BLAST_DAMAGE * (1 - (pd / BLAST_RADIUS))) + Settings.getIdx("diff");
 					player.hurt(this, dmg, Mob.getAttackDir(this, player));
-					player.payStamina(dmg * (OptionsMenu.diff == OptionsMenu.easy?1:2));
+					player.payStamina(dmg * (Settings.get("diff").equals("Easy")?1:2));
 					hurtOne = true;
 				}
 			}
@@ -122,7 +122,7 @@ public class Creeper extends EnemyMob {
 	}
 	
 	protected void die() {
-		dropItem(1, 4-OptionsMenu.diff, Items.get("Gunpowder"));
+		dropItem(1, 4-Settings.getIdx("diff"), Items.get("Gunpowder"));
 		super.die();
 	}
 	

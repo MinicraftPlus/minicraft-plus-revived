@@ -1,13 +1,12 @@
 package minicraft.entity;
 
 import minicraft.Game;
+import minicraft.Settings;
 import minicraft.gfx.MobSprite;
 import minicraft.gfx.Screen;
 import minicraft.level.Level;
 import minicraft.level.tile.Tile;
 import minicraft.level.tile.Tiles;
-import minicraft.screen.ModeMenu;
-import minicraft.screen.OptionsMenu;
 
 public class EnemyMob extends MobAi {
 	
@@ -15,12 +14,16 @@ public class EnemyMob extends MobAi {
 	protected int[] lvlcols;
 	public int detectDist;
 	
-	public EnemyMob(int lvl, MobSprite[][] sprites, int[] lvlcols, int health, boolean isFactor, int detectDist, int rwTime, int rwChance) {
-		super(sprites, isFactor ? (lvl==0?1:lvl * lvl) * health*((Double)(Math.pow(2, OptionsMenu.diff))).intValue() : health, 60*Game.normSpeed, rwTime, rwChance);
+	public EnemyMob(int lvl, MobSprite[][] sprites, int[] lvlcols, int health, boolean isFactor, int detectDist, int lifetime, int rwTime, int rwChance) {
+		super(sprites, isFactor ? (lvl==0?1:lvl * lvl) * health*((Double)(Math.pow(2, Settings.getIdx("diff")))).intValue() : health, lifetime, rwTime, rwChance);
 		this.lvl = lvl == 0 ? 1 : lvl;
 		this.lvlcols = java.util.Arrays.copyOf(lvlcols, lvlcols.length);
 		col = lvlcols[this.lvl-1];
 		this.detectDist = detectDist;
+	}
+	
+	public EnemyMob(int lvl, MobSprite[][] sprites, int[] lvlcols, int health, boolean isFactor, int detectDist, int rwTime, int rwChance) {
+		this(lvl, sprites, lvlcols, health, isFactor, detectDist, 60*Game.normSpeed, rwTime, rwChance);
 	}
 	
 	public EnemyMob(int lvl, MobSprite[][] sprites, int[] lvlcols, int health, int detectDist) {
@@ -55,11 +58,11 @@ public class EnemyMob extends MobAi {
 		super.render(screen);
 	}
 	
-	protected void touchedBy(Entity entity) { // if the entity touches the player
+	protected void touchedBy(Entity entity) { // if an entity (like the player) touches the enemy mob
 		super.touchedBy(entity);
 		// hurts the player, damage is based on lvl.
 		if(entity instanceof Player) {
-			entity.hurt(this, lvl * (OptionsMenu.diff == OptionsMenu.hard ? 2 : 1), Mob.getAttackDir(this, entity));
+			entity.hurt(this, lvl * (Settings.get("diff").equals("Hard") ? 2 : 1), Mob.getAttackDir(this, entity));
 		}
 	}
 	
@@ -68,7 +71,7 @@ public class EnemyMob extends MobAi {
 	}
 	
 	public static boolean checkStartPos(Level level, int x, int y) { // Find a place to spawn the mob
-		int r = (level.depth == -4 ? (ModeMenu.score ? 22 : 15) : 13);
+		int r = (level.depth == -4 ? (Game.isMode("score") ? 22 : 15) : 13);
 		
 		if(!MobAi.checkStartPos(level, x, y, 60, r))
 			return false;

@@ -1,3 +1,16 @@
+Minicraft+ version 2.0.4
+
+* HUGE menu renovation! Menus will be changed forever. You'll see. It's pretty obvious.
++ Added world seeding! You now have a reliable way of recreating a world... provided you used a seed in the first place, that is... Commands aren't quite here yet...
++ Added a splash screen! So it's pretty while it's loading.
++ Added an official logo! Curtesy of contributors on our discord server.
++ Added a new sprite for the log, so it will stop getting confused with planks.
+* Added/fixed the hints that pop up when you try to place walls/floors/doors.
++ Added an in-game, in-depth storyline guide.
++ Added an FPS slider.
+* Made default game mode Normal instead of Easy.
+
+
 Minicraft+ version 2.0.3
 
 + Added support for dedicated servers! With a CLI OS, meaning an OS without a GUI. This allows for more compatibility, not to mention more resources being able to be devoted to the game.

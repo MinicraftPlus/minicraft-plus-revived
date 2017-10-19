@@ -61,7 +61,7 @@ public class Arrow extends Entity {
 				mob.hurt(owner, damage + extradamage, (xdir<0?2:(xdir>0?3:(ydir<0?1:0)))); // that should correctly convert to mob directions.
 			}
 			
-			/*if(owner instanceof Player && minicraft.screen.ModeMenu.creative && minicraft.Game.debug) {
+			/*if(owner instanceof Player && minicraft.screen.Game.isMode("creative") && minicraft.Game.debug) {
 				/// debug fun!
 				level.getTile(x/16, y/16).hurt(level, x/16, y/16, 500); // KO all tiles
 			} else { /// normal behavior

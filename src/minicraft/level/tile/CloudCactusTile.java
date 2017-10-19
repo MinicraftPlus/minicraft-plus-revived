@@ -1,5 +1,7 @@
 package minicraft.level.tile;
 
+import minicraft.Settings;
+import minicraft.Game;
 import minicraft.entity.AirWizard;
 import minicraft.entity.Entity;
 import minicraft.entity.Mob;
@@ -12,8 +14,6 @@ import minicraft.item.Item;
 import minicraft.item.ToolItem;
 import minicraft.item.ToolType;
 import minicraft.level.Level;
-import minicraft.screen.ModeMenu;
-import minicraft.screen.OptionsMenu;
 
 public class CloudCactusTile extends Tile {
 	private static Sprite sprite = new Sprite(17, 1, 2, 2, Color.get(444, 111, 333, 555));
@@ -46,9 +46,9 @@ public class CloudCactusTile extends Tile {
 	public void hurt(Level level, int x, int y, int dmg) {
 		int damage = level.getData(x, y) + dmg;
 		int health = 10;
-		if(ModeMenu.creative) dmg = damage = health;
+		if(Game.isMode("creative")) dmg = damage = health;
 		level.add(new SmashParticle(x * 16, y * 16));
-		level.add(new TextParticle("" + dmg, x * 16 + 8, y * 16 + 8, Color.get(-1, 500)));
+		level.add(new TextParticle("" + dmg, x * 16 + 8, y * 16 + 8, Color.RED));
 		if (damage >= health)
 			level.setTile(x, y, Tiles.get("cloud"));
 		else
@@ -57,6 +57,6 @@ public class CloudCactusTile extends Tile {
 
 	public void bumpedInto(Level level, int x, int y, Entity entity) {
 		if (entity instanceof AirWizard) return;
-		entity.hurt(this, x, y, 1+OptionsMenu.diff);
+		entity.hurt(this, x, y, 1+Settings.getIdx("diff"));
 	}
 }

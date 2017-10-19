@@ -9,7 +9,6 @@ import minicraft.gfx.Screen;
 import minicraft.item.Item;
 import minicraft.item.PotionType;
 import minicraft.level.Level;
-import minicraft.screen.ModeMenu;
 
 public abstract class MobAi extends Mob {
 	
@@ -38,10 +37,12 @@ public abstract class MobAi extends Mob {
 	public void tick() {
 		super.tick();
 		
-		age++;
-		if(age > lifetime) {
-			remove();
-			return;
+		if(lifetime > 0) {
+			age++;
+			if (age > lifetime) {
+				remove();
+				return;
+			}
 		}
 		
 		if(getLevel() != null) {
@@ -76,7 +77,7 @@ public abstract class MobAi extends Mob {
 		
 		int color = col;
 		if (hurtTime > 0) {
-			color = Color.get(-1, 555);
+			color = Color.WHITE;
 		}
 		
 		MobSprite curSprite = sprites[dir][(walkDist >> 3) % sprites[dir].length];
@@ -102,7 +103,7 @@ public abstract class MobAi extends Mob {
 				Sound.monsterHurt.play();
 			}
 		}
-		level.add(new TextParticle("" + damage, x, y, Color.get(-1, 500))); // Make a text particle at this position in this level, bright red and displaying the damage inflicted
+		level.add(new TextParticle("" + damage, x, y, Color.RED)); // Make a text particle at this position in this level, bright red and displaying the damage inflicted
 		
 		super.doHurt(damage, attackDir);
 	}
@@ -150,9 +151,9 @@ public abstract class MobAi extends Mob {
 	public void die(int points) { die(points, 0); }
 	public void die(int points, int multAdd) {
 		for(Player p: level.getPlayers()) {
-			p.score += points * (ModeMenu.score ? p.game.multiplier : 1); // add score for zombie death
-			if(multAdd != 0 && ModeMenu.score)
-				p.game.addMultiplier(multAdd);
+			p.score += points * (Game.isMode("score") ? Game.getMultiplier() : 1); // add score for zombie death
+			if(multAdd != 0 && Game.isMode("score"))
+				Game.addMultiplier(multAdd);
 		}
 		
 		super.die();

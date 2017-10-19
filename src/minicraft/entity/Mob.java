@@ -9,7 +9,6 @@ import minicraft.item.PotionType;
 import minicraft.level.tile.Tile;
 import minicraft.level.tile.Tiles;
 import minicraft.network.MinicraftServer;
-import minicraft.screen.ModeMenu;
 
 public abstract class Mob extends Entity {
 	
@@ -62,7 +61,7 @@ public abstract class Mob extends Entity {
 			yKnockback--;
 		}
 		
-		if(moved && Game.isValidClient() && this == Game.main.player) {
+		if(moved && Game.isConnectedClient() && this == Game.player) {
 			Game.client.move((Player)this);
 		}
 	}
@@ -165,8 +164,12 @@ public abstract class Mob extends Entity {
 	}
 	
 	public void hurt(Mob mob, int damage, int attackDir) { // Hurt the mob, when the source is another mob
-		if(mob instanceof Player && ModeMenu.creative && mob != this) doHurt(health, attackDir); // kill the mob instantly
+		if(mob instanceof Player && Game.isMode("creative") && mob != this) doHurt(health, attackDir); // kill the mob instantly
 		else doHurt(damage, attackDir); // Call the method that actually performs damage, and use our provided attackDir
+	}
+	
+	public void hurt(Tnt tnt, int dmg, int attackDir) {
+		doHurt(dmg, attackDir);
 	}
 	
 	protected void doHurt(int damage, int attackDir) { // Actually hurt the mob, based on only damage and a direction
@@ -185,7 +188,7 @@ public abstract class Mob extends Entity {
 	public void heal(int heal) { // Restore health on the mob
 		if (hurtTime > 0) return; // If the mob has been hurt recently and hasn't cooled down, don't continue
 		
-		level.add(new TextParticle("" + heal, x, y, Color.get(-1, 50))); // Add a text particle in our level at our position, that is green and displays the amount healed
+		level.add(new TextParticle("" + heal, x, y, Color.GREEN)); // Add a text particle in our level at our position, that is green and displays the amount healed
 		health += heal; // Actually add the amount to heal to our current health
 		if (health > maxHealth) health = maxHealth; // If our health has exceeded our maximum, lower it back down to said maximum
 	}

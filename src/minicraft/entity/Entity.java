@@ -52,8 +52,6 @@ public abstract class Entity {
 			System.out.println("Note: remove() called on entity with no level reference: " + getClass());
 		else
 			level.remove(this);
-		//if(Game.isValidClient() && !Game.isValidServer() && !(this instanceof minicraft.entity.particle.Particle))
-			//System.out.println("WARNING: client game is removing "+getClass().getName().replace("minicraft.entity.","")+" entity from level " + (level==null?"null":level.depth));
 	}
 	public void remove(Level level) {
 		if(level != this.level && Game.debug)
@@ -162,7 +160,7 @@ public abstract class Entity {
 		}
 		List<Entity> isInside = level.getEntitiesInRect(x + xa - xr, y + ya - yr, x + xa + xr, y + ya + yr); // gets the entities that this entity will touch once moved.
 		for (int i = 0; i < isInside.size(); i++) {
-			/// cycles through entites about to be touched, and calls touchedBy(this) for each of them.
+			/// cycles through entities about to be touched, and calls touchedBy(this) for each of them.
 			Entity e = isInside.get(i);
 			if (e == this) continue; // touching yourself doesn't count.
 			
@@ -218,10 +216,7 @@ public abstract class Entity {
 	}
 	
 	/** This, strangely enough, determines if the entity can walk on wool; among some other things..? */
-	public boolean canWool() {
-		// TODO I personally think this should be removed, and replaced in the wool mayPass mothod. Speaking of the Wool classes, I see no reason why they are more than one class...
-		return false;
-	}
+	public boolean canWool() { return false; }
 	
 	/** If the entity can light up..? */
 	public boolean canLight() {

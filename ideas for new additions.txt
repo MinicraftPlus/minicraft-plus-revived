@@ -2,6 +2,10 @@
 
 ----
 
+
+
+----
+
 Make it so cloud tile can be placed in the sky level, on empty air tiles. Otherwise, they're useful for nothing...
 
 ----
@@ -34,13 +38,45 @@ Give the player 20 health instead of 10; this means that 1 health will be a half
 
 ----
 
+add an escape potion, that brings you either up one level, or to the surface (haven't decided yet).
+
+----
+
+Make it so a hoe on grass turns it into dirt, but with a *much* higher chance of producing seeds; like, maybe 95%
+
+----
+
 
 
  ++++++++ More Complicated Ideas ++++++++
 
 ++++
 
+Add signs. So, when you walk over them, a message is displayed!
+
+++++
+
+LAZORS
+  • laser bridges
+  • laser rails
+  • laser "Redstone" (and receivers, emitters, etc)
+  • laser barriers (poss. selectively permiable)
+
+maybe lasers can be made using the "cloud cactus"?
+
+++++
+
+add a key input (default shift-attack) that charges your attack rather than spamming it. Will probably do as much damage as however many spams you could have done while charging, a full stamina bar's worth; the difference is, you deal the damage all at once.
+
+++++
+
+add key controls to move items around in inventory menu, one up/down, or to the top/bottom of the inventory.
+
+++++
+
 Add some Easter eggs into the game, like Christmas graphics or something.
+
+Add the snake game I made in processing to minicraft as an Easter egg, accessible by typing the Konami code at the about page. Even better, maybe I could have it run a variety of my old games, picking one at random each time the code is entered... :D
 
 ++++
 
@@ -114,18 +150,14 @@ Turn player.score into the experience system of 1.4; or, maybe I should just mak
 
 ????
 
+Ragdoll Potion? Allows you to control other mobs, but not other players.
+
+????
+
 Add a feature so that a changelog will be displayed if on lower version...?
 
 ????
 
 Add feature to notifications display: if it starts with ":error:", then make the text red (but don't show the ":Error:" part). Any further than that, though, and it would be better to just pass it in.
-
-????
-
-Make a way to resize the font... In specific instances only, though, I'm thinking. For example, the F3 overlay.
-
-????
-
-Make menu frames change size based on the largest (text) item in it. Not totally sure I want to do it...
 
 ????

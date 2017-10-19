@@ -1,7 +1,6 @@
 package minicraft.entity;
 
 import minicraft.Game;
-import minicraft.Sound;
 import minicraft.gfx.Color;
 import minicraft.gfx.Screen;
 import minicraft.item.Item;
@@ -98,31 +97,34 @@ public class ItemEntity extends Entity {
 		if (time >= lifeTime - 6 * 20) {
 			if (time / 6 % 2 == 0) return;
 		}
-		item.sprite.render(screen, x-4, y-4, Color.get(-1, 0));
+		item.sprite.render(screen, x-4, y-4, Color.BLACK);
 		item.sprite.render(screen, x-4, y-4 - (int)(zz) );
 	}
 
 	protected void touchedBy(Entity entity) {
 		if (time > 30) { // conditional prevents this from being collected immediately.
-			if(Game.isValidClient() && entity instanceof Player && entity == ((Player)entity).game.player) { // only register if the main player picks it up, on a client.
-				if(!pickedUp) {
-					Game.client.pickupItem(this);
-					pickedUp = true;
-					pickupTimestamp = System.nanoTime();
-				} else if ((System.nanoTime() - pickupTimestamp) / 1E8 > 15L) { // should be converted to tenths of a second.
+			if(Game.isConnectedClient() && entity == Game.player) {// only register if the main player picks it up, on a client.
+				if (pickedUp && (System.nanoTime() - pickupTimestamp) / 1E8 > 15L) { // should be converted to tenths of a second.
 					/// the item has already been picked up;
 					// but since more than 1.5 seconds has past, the item will be remarked as not picked up.
 					pickedUp = false;
 				}
-			} else if(!(Game.isValidServer() && entity instanceof Player)) // don't register if a player touches it on a server; the player will register that.
+				
+				if(!pickedUp) {
+					Game.client.pickupItem(this);
+					pickedUp = true;
+					pickupTimestamp = System.nanoTime();
+				}
+			}
+			else if(!pickedUp && !(Game.ISONLINE && entity instanceof Player)) {// don't register if we are online and a player touches it; the client will register that.
+				pickedUp = true;
 				entity.touchItem(this);
+				pickedUp = isRemoved();
+			}
 		}
 	}
 	
-	/** What happens when the player takes the item */
-	public void take(Player player) {
-		Sound.pickup.play();
-		player.score++; // increase the player's score by 1
-		remove(); // removes this from the world
+	public String toString() {
+		return "ItemEntity["+item+"]";
 	}
 }

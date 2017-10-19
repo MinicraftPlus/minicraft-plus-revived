@@ -1,7 +1,6 @@
 package minicraft.screen;
 
 import java.io.InputStream;
-import java.util.regex.Pattern;
 
 import com.mashape.unirest.http.HttpResponse;
 import com.mashape.unirest.http.JsonNode;
@@ -9,6 +8,7 @@ import com.mashape.unirest.http.Unirest;
 import com.mashape.unirest.http.async.Callback;
 import com.mashape.unirest.http.exceptions.UnirestException;
 import minicraft.Game;
+import minicraft.InputHandler;
 import minicraft.gfx.Color;
 import minicraft.gfx.Font;
 import minicraft.gfx.FontStyle;
@@ -17,7 +17,7 @@ import minicraft.network.MinicraftClient;
 import minicraft.saveload.Save;
 import org.json.JSONObject;
 
-public class MultiplayerMenu extends Menu {
+public class MultiplayerMenu extends Display {
 	
 	private static String domain = "https://playminicraft.com";
 	private static String apiDomain = domain+"/api";
@@ -63,7 +63,7 @@ public class MultiplayerMenu extends Menu {
 				else
 					System.out.println("warning: minicraft site ping returned status code " + httpResponse.getStatus());
 				
-				//if(Game.main.menu != MultiplayerMenu.this) return; // don't continue if the player moved to a different menu. 
+				//if(Game.getMenu() != MultiplayerMenu.this) return; // don't continue if the player moved to a different menu. 
 				
 				if(savedUUID.length() > 0) {
 					// there is a previous login that can be used; check that it's valid
@@ -105,27 +105,24 @@ public class MultiplayerMenu extends Menu {
 				curState = State.ENTERIP;
 			}
 		});
-		
-		//if(Game.debug) System.out.println("end of mm constructor");
 	}
 	
 	// this automatically sets the ipAddress.
-	public MultiplayerMenu(Game game, String ipAddress) {
+	public MultiplayerMenu(String ipAddress) {
 		this();
 		//if(Game.debug) System.out.println("ip mm constructor");
-		this.game = game;
 		if(curState == State.ENTERIP) { // login was automatic
 			setWaitMessage("connecting to server");
-			Game.client = new MinicraftClient(game, savedUsername,this, ipAddress);
+			Game.client = new MinicraftClient(savedUsername,this, ipAddress);
 		} else
 			savedIP = ipAddress; // must login manually, so the ip address is saved for now.
 	}
 	
-	public void tick() {
-		
+	@Override
+	public void tick(InputHandler input) {
 		switch(curState) {
 			case LOGIN:
-				checkKeyTyped(/*Pattern.compile("[0-9A-Za-z \\-\\.]")*/null);
+				typing = input.addKeyTyped(typing, null);
 				
 				inputIsValid = typing.length() != 0;
 				
@@ -141,36 +138,36 @@ public class MultiplayerMenu extends Menu {
 					}
 					return;
 				}
-			break;
+				break;
 			
 			case ENTERIP:
-				checkKeyTyped(/*Pattern.compile("[a-zA-Z0-9 \\-/_\\.:%\\?&=]")*/null);
+				typing = input.addKeyTyped(typing, null);
 				if(input.getKey("select").clicked) {
 					setWaitMessage("connecting to server");
 					savedIP = typing;
-					Game.client = new MinicraftClient(game, savedUsername,this, typing); // typing = ipAddress
-					new Save(game); // write the saved ip to file
+					Game.client = new MinicraftClient(savedUsername,this, typing); // typing = ipAddress
+					new Save(); // write the saved ip to file
 					typing = "";
 					return;
 				} else if(input.getKey("shift-escape").clicked) {
 					// logout
-					MultiplayerMenu.savedUUID = "";
-					MultiplayerMenu.savedUsername = "";
-					new Save(game); // so the next time they start up the game to log in, it won't try to log in automatically.
+					savedUUID = "";
+					savedUsername = "";
+					new Save(); // so the next time they start up the game to log in, it won't try to log in automatically.
 					typing = "";
 					curState = State.LOGIN;
 				}
-			break;
+				break;
 			
 			case WAITING:
 				/// this is just in case something gets set too early or something and the error state is overridden.
 				if(errorMessage.length() > 0)
 					curState = State.ERROR;
-			break;
+				break;
 		}
 		
 		if(input.getKey("exit").clicked && !Game.ISHOST) {
-			game.setMenu(new TitleMenu());
+			Game.setMenu(new TitleMenu());
 		}
 	}
 	
@@ -179,40 +176,40 @@ public class MultiplayerMenu extends Menu {
 		
 		/// HTTP REQUEST - send username and password to server via HTTPS, expecting a UUID in return.
 		Unirest.post(apiDomain+"/login")
-				.field("email", email)
-				.field("password", password)
-				.asJsonAsync(new Callback<JsonNode>() {
-					@Override
-					public void completed(HttpResponse<JsonNode> response) {
-						JSONObject json = response.getBody().getObject();
-						if(Game.debug) System.out.println("received json from login attempt: " + json.toString());
-						switch(json.getString("status")) {
-							case "error":
-								setError(json.getString("message"), false); // in case the user abandoned the menu, don't drag them back.
-								break;
-							
-							case "success":
-								MultiplayerMenu.savedUUID = json.getString("uuid");
-								MultiplayerMenu.savedUsername = json.getString("name");
-								setWaitMessage("saving credentials");
-								new Save(game);
-								typing = MultiplayerMenu.savedIP;
-								curState = State.ENTERIP;
-								break;
-						}
+			.field("email", email)
+			.field("password", password)
+			.asJsonAsync(new Callback<JsonNode>() {
+				@Override
+				public void completed(HttpResponse<JsonNode> response) {
+					JSONObject json = response.getBody().getObject();
+					if(Game.debug) System.out.println("received json from login attempt: " + json.toString());
+					switch(json.getString("status")) {
+						case "error":
+							setError(json.getString("message"), false); // in case the user abandoned the menu, don't drag them back.
+							break;
+						
+						case "success":
+							savedUUID = json.getString("uuid");
+							savedUsername = json.getString("name");
+							setWaitMessage("saving credentials");
+							new Save();
+							typing = savedIP;
+							curState = State.ENTERIP;
+							break;
 					}
-					
-					@Override
-					public void failed(UnirestException e) {
-						e.printStackTrace();
-						cancelled();
-					}
-					
-					@Override
-					public void cancelled() {
-						setError("login failed.", false);
-					}
-				});
+				}
+				
+				@Override
+				public void failed(UnirestException e) {
+					e.printStackTrace();
+					cancelled();
+				}
+				
+				@Override
+				public void cancelled() {
+					setError("login failed.", false);
+				}
+			});
 	}
 	
 	private void fetchName(String uuid) {
@@ -221,8 +218,8 @@ public class MultiplayerMenu extends Menu {
 		
 		try {
 			response = Unirest.post(apiDomain+"/fetch-name")
-					.field("uuid", savedUUID)
-					.asJson();
+				.field("uuid", savedUUID)
+				.asJson();
 		} catch (UnirestException e) {
 			e.printStackTrace();
 		}
@@ -246,20 +243,6 @@ public class MultiplayerMenu extends Menu {
 		//System.out.println("response to username fetch was null");
 	}
 	
-	private static final Pattern control = Pattern.compile("\\p{Print}"); // should match only printable characters.
-	private void checkKeyTyped(Pattern pattern) {
-		if(input.lastKeyTyped.length() > 0) {
-			String letter = input.lastKeyTyped;
-			input.lastKeyTyped = "";
-			if(control.matcher(letter).matches() && (pattern == null || pattern.matcher(letter).matches()))
-				typing += letter;
-		}
-		
-		if(input.getKey("backspace").clicked && typing.length() > 0) {
-			// backspace counts as a letter itself, but we don't have to worry about it if it's part of the regex.
-			typing = typing.substring(0, typing.length()-1);
-		}
-	}
 	
 	public void setWaitMessage(String message) {
 		waitingMessage = message;
@@ -275,63 +258,64 @@ public class MultiplayerMenu extends Menu {
 	public void setError(String msg, boolean overrideMenu) {
 		this.curState = State.ERROR;
 		errorMessage = msg;
-		if(overrideMenu && Game.main.menu != this && Game.isValidClient())
-			Game.main.setMenu(this);
+		if(overrideMenu && Game.getMenu() != this && Game.isValidClient())
+			Game.setMenu(this);
 	}
 	
+	@Override
 	public void render(Screen screen) {
 		screen.clear(0);
 		
 		switch(curState) {
 			case ENTERIP:
-				Font.drawCentered("logged in as: " + MultiplayerMenu.savedUsername, screen, 6, Color.get(-1, 252));
+				Font.drawCentered("logged in as: " + savedUsername, screen, 6, Color.get(-1, 252));
 				
 				if(!online)
 					Font.drawCentered("offline mode: local servers only", screen, Screen.h/2 - Font.textHeight()*6,
-							Color.get(-1, 335));
+						Color.get(-1, 335));
 				
 				Font.drawCentered("Enter ip address to connect to:", screen, Screen.h/2-Font.textHeight()-2, Color
-						.get
+					.get
 						(-1, 555));
 				Font.drawCentered(typing, screen, Screen.h/2, Color.get(-1, 552));
 				
 				Font.drawCentered("Press Shift-Escape to logout", screen, Screen.h-Font.textHeight()*7, Color.get
-						(-1, 444));
+					(-1, 444));
 				break;
 			
 			case LOGIN:
 				String msg = "Enter email:";
 				if(!typingEmail)
 					msg = "Enter password:";
-				Font.drawCentered(msg, screen, Screen.h/2-6, Color.get(-1, 555));
+				Font.drawCentered(msg, screen, Screen.h/2-6, Color.WHITE);
 				
 				msg = typing;
 				if(!typingEmail)
 					//noinspection ReplaceAllDot
 					msg = msg.replaceAll(".", ".");
-				Font.drawCentered(msg, screen, Screen.h/2+6, (inputIsValid?Color.get(-1, 444):Color.get(-1, 500)));
+				Font.drawCentered(msg, screen, Screen.h/2+6, (inputIsValid?Color.get(-1, 444):Color.RED));
 				if(!inputIsValid) {
-					Font.drawCentered("field is blank", screen, Screen.h/2+20, Color.get(-1, 500));
+					Font.drawCentered("field is blank", screen, Screen.h/2+20, Color.RED);
 				}
 				
 				Font.drawCentered("get an account at:", screen, Font.textHeight()/2-1, Color.get(-1, 345));
 				Font.drawCentered(domain.substring(domain.indexOf("://")+3)+"/register", screen, Font.textHeight()*3/2, Color.get
-						(-1, 345));
+					(-1, 345));
 				
 				break;
 			
 			case WAITING:
-				Font.drawCentered(waitingMessage+getElipses(), screen, Screen.h/2, Color.get(-1, 555));
+				Font.drawCentered(waitingMessage+getElipses(), screen, Screen.h/2, Color.WHITE);
 				break;
 			
 			case LOADING:
-				Font.drawCentered("Loading "+loadingMessage+" from server"+getElipses(), screen, Screen.h/2, Color.get(-1, 555));
-				//Font.drawCentered(transferPercent+"%", screen, Screen.h/2+6, Color.get(-1, 555));
+				Font.drawCentered("Loading "+loadingMessage+" from server"+getElipses(), screen, Screen.h/2, Color.WHITE);
+				//Font.drawCentered(transferPercent+"%", screen, Screen.h/2+6, Color.WHITE);
 				break;
 			
 			case ERROR:
 				//if(Game.tickCount % 10 == 0) System.out.println("error message: " + errorMessage);
-				Font.drawCentered("Could not connect to server:", screen, Screen.h/2-6, Color.get(-1, 500));
+				Font.drawCentered("Could not connect to server:", screen, Screen.h/2-6, Color.RED);
 				FontStyle style = new FontStyle(Color.get(-1, 511));
 				Font.drawParagraph(errorMessage, screen, 0, true, Screen.h/2+6, false, style, 1);
 				//Font.drawCentered(errorMessage, screen, Screen.h/2+6, Color.get(-1, 511));
@@ -339,7 +323,7 @@ public class MultiplayerMenu extends Menu {
 		}
 		
 		if(curState == State.ENTERIP || curState == State.ERROR) {
-			Font.drawCentered("Press "+input.getMapping("exit")+" to return", screen, Screen.h-Font.textHeight()*2, Color.get(-1, 333));
+			Font.drawCentered("Press "+Game.input.getMapping("exit")+" to return", screen, Screen.h-Font.textHeight()*2, Color.GRAY);
 		}
 	}
 	

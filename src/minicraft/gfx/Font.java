@@ -1,7 +1,7 @@
 package minicraft.gfx;
 
-import java.text.StringCharacterIterator;
 import java.util.ArrayList;
+import java.util.Arrays;
 
 public class Font {
 	// These are all the characters that will be translated to the screen. (The spaces are important)
@@ -26,7 +26,20 @@ public class Font {
 	public static int textWidth(String text) {
 		return text.length() * 8;
 	}
-	public static int textHeight() {return 8;}
+	public static int textWidth(String[] para) {
+		// this returns the maximum length of all the lines.
+		if(para == null || para.length == 0) return 0;
+		
+		int max = textWidth(para[0]);
+		
+		for(int i = 1; i < para.length; i++)
+			max = Math.max(max, textWidth(para[i]));
+		
+		return max;
+	}
+	
+	public static int textHeight() {//noinspection SuspiciousNameCombination
+		return SpriteSheet.boxWidth;}
 	
 	public static int centerX(String msg, int minX, int maxX) {
 		return (maxX + minX) / 2 - textWidth(msg) / 2;
@@ -47,16 +60,16 @@ public class Font {
 	/// these draws a paragraph from an array of lines (or a string, at which point it calls getLines()), with the specified properties.
 	
 	/// this one assumes the screen width, minus a given padding.
-	public static String drawParagraph(String para, Screen screen, int paddingX, boolean centerPaddingX, int paddingY, boolean centerPaddingY, FontStyle style, int lineSpacing) {
+	public static void drawParagraph(String para, Screen screen, int paddingX, boolean centerPaddingX, int paddingY, boolean centerPaddingY, FontStyle style, int lineSpacing) {
 		
 		style.xCenterBounds(paddingX, Screen.w - (centerPaddingX?paddingX:0));
 		style.yCenterBounds(paddingY, Screen.h - (centerPaddingY?paddingY:0));
 		
-		return drawParagraph(para, screen, style.centerMaxX - style.centerMinX, style.centerMaxY - style.centerMinY, style, centerPaddingX, lineSpacing);
+		drawParagraph(para, screen, style.centerMaxX - style.centerMinX, style.centerMaxY - style.centerMinY, style, centerPaddingX, lineSpacing);
 	}
 	
 	/// note: the y centering values in the FontStyle object will be used as a paragraph y centering value instead.
-	public static String drawParagraph(String para, Screen screen, int w, int h, FontStyle style, boolean centered, int lineSpacing) {
+	public static void drawParagraph(String para, Screen screen, int w, int h, FontStyle style, boolean centered, int lineSpacing) {
 		//int w = style.centerMaxX - style.centerMinX;
 		//int h = style.centerMaxY - style.centerMinY;
 		
@@ -66,29 +79,19 @@ public class Font {
 		if (centered) style.xPosition = -1;
 		//else style.xPosition = (Screen.w - w) / 2;
 		
-		return drawParagraph(lines, screen, style, lineSpacing);
+		drawParagraph(lines, screen, style, lineSpacing);
 	}
 	
 	/// all the other drawParagraph() methods end up calling this one.
-	public static String drawParagraph(String[] lines, Screen screen, FontStyle style, int lineSpacing) {
-		int minY = style.yPosition;
-		if(minY == -1) {
-			int centerY = (style.centerMinY + style.centerMaxY) / 2;
-			//int h = style.centerMaxY - style.centerMinY;
-			int halfheight = (lines.length * (textHeight() + lineSpacing)) / 2;
-			minY = centerY - halfheight;
-		}
-		for(int i = 0; i < lines.length-1; i++) {
-			style.setYPos(minY + i*textHeight() + i*lineSpacing);
-			//if(centered) drawCentered(lines[i], screen, x, x + w, curY, color); // draw centered in the rectangle
-			//else draw(lines[i], screen, x, curY, color); // draw left-justified in the rectangle
-			style.draw(lines[i], screen);
-		}
-		return lines[lines.length-1]; // this is where the rest of the string that there wasn't space for is stored.
+	public static void drawParagraph(String[] lines, Screen screen, FontStyle style, int lineSpacing) {
+		for(int i = 0; i < lines.length; i++)
+			style.drawParagraphLine(lines, i, lineSpacing, screen);
+		
+		//return lines[lines.length-1]; // this is where the rest of the string that there wasn't space for is stored.
 	}
 	
-	
-	public static String[] getLines(String para, int w, int h, int lineSpacing) {
+	public static String[] getLines(String para, int w, int lineSpacing) { return getLines(para, w, 0, lineSpacing); }
+	/*public static String[] getLines(String para, int w, int h, int lineSpacing) {
 		ArrayList<String> lines = new ArrayList<>();
 		int curPos = 0, curY = 0;
 		while(curPos < para.length() && curY < h) { // continue until we run out of characters, or lines.
@@ -126,8 +129,57 @@ public class Font {
 		if(curPos < para.length())
 			leftover = para.substring(curPos); // get any text from the string that didn't fit in the given rectangle.
 		
-		lines.add(leftover);
+		if(h > 0 || leftover.length() > 0)
+			lines.add(leftover);
 		
-		return lines.toArray(new String[0]);
+		return lines.toArray(new String[lines.size()]);
+	}*/
+	
+	public static String[] getLines(String para, int w, int h, int lineSpacing) {
+		//para = para.replaceAll("-", "- "); // I'll try this later when the current system works.
+		ArrayList<String> lines = new ArrayList<>();
+		
+		// So, I have a paragraph. I give it to getLine, and it returns an index. Cut the string at that index, and add it to the lines list.
+		// check if the index returned by getLine is less than para.length(), and is a space, and if so skip the space character.
+		// then I reset the para String at the index, and do it again until para is an empty string.
+		
+		int height = textHeight();
+		while(para.length() > 0) {
+			int splitIndex = getLine(para, w);
+			lines.add(para.substring(0, splitIndex));
+			
+			if(splitIndex < para.length() && para.substring(splitIndex, splitIndex+1).matches(" |\n"))
+				splitIndex++;
+			para = para.substring(splitIndex);
+			
+			height += lineSpacing + textHeight();
+			if(height > h)
+				break;
+		}
+		
+		lines.add(para); // add remainder
+		
+		return lines.toArray(new String[lines.size()]);
+	}
+	
+	// this returns the position index at which the given string should be split so that the first part is the longest line possible.
+	private static int getLine(String text, int maxWidth) {
+		text = text.replaceAll(" ?\n ?", " \n ");
+		
+		String[] words = text.split(" ", -1);
+		int curWidth = textWidth(words[0]);
+		
+		int i;
+		for(i = 1; i < words.length; i++) {
+			if(words[i].equals("\n")) break;
+			
+			curWidth += textWidth(" "+words[i]);
+			if(curWidth > maxWidth)
+				break;
+		}
+		// i now contains the number of words that fit on the line.
+		
+		String line = String.join(" ", Arrays.copyOfRange(words, 0, i));
+		return line.length();
 	}
 }

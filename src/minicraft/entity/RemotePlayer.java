@@ -22,14 +22,14 @@ public class RemotePlayer extends Player {
 	private InetAddress ipAddress;
 	private int port;
 	
-	public RemotePlayer(Player previous, Game game, InetAddress ip, int port) { this(previous, game, false, ip, port); }
-	public RemotePlayer(Player previous, Game game, boolean isMainPlayer, InetAddress ip, int port) {
-		super(previous, game, (isMainPlayer?game.input:new InputHandler(game, false)));
+	public RemotePlayer(Player previous, InetAddress ip, int port) { this(previous, false, ip, port); }
+	public RemotePlayer(Player previous, boolean isMainPlayer, InetAddress ip, int port) {
+		super(previous, (isMainPlayer?Game.input:new InputHandler(false)));
 		this.ipAddress = ip;
 		this.port = port;
 	}
-	public RemotePlayer(Game game, boolean isMainPlayer, RemotePlayer model) {
-		this(model, game, isMainPlayer, model.ipAddress, model.port);
+	public RemotePlayer(boolean isMainPlayer, RemotePlayer model) {
+		this(model, isMainPlayer, model.ipAddress, model.port);
 		eid = model.eid;
 		setUsername(model.getUsername());
 	}
@@ -45,7 +45,7 @@ public class RemotePlayer extends Player {
 	}
 	
 	public void tick() {
-		if(!Game.isValidServer() && this == game.player)
+		if(!Game.isValidServer() && this == Game.player)
 			super.tick();
 		else {
 			// a minimal thing for render update purposes.
@@ -67,7 +67,7 @@ public class RemotePlayer extends Player {
 		
 		boolean moved = super.move(xa, ya);
 		
-		if(!(oldxt == x>>4 && oldyt == y>>4) && Game.isValidClient() && this == game.player) {
+		if(!(oldxt == x>>4 && oldyt == y>>4) && Game.isConnectedClient() && this == Game.player) {
 			// if moved (and is client), then check any tiles no longer loaded, and remove any entities on them.
 			updateSyncArea(oldxt, oldyt);
 		}
@@ -77,7 +77,7 @@ public class RemotePlayer extends Player {
 	
 	public void render(Screen screen) {
 		super.render(screen);
-		new FontStyle(Color.get(-1, 444)).setShadowType(Color.get(-1, 0), true).setXPos(x - Font.textWidth(username)/2).setYPos(y - 20).draw(username, screen); // draw the username of the player above their head
+		new FontStyle(Color.get(-1, 444)).setShadowType(Color.BLACK, true).setXPos(x - Font.textWidth(username)/2).setYPos(y - 20).draw(username, screen); // draw the username of the player above their head
 	}
 	
 	/// this determines if something at a given coordinate should be synced to this client, or if it is too far away to matter.
@@ -113,7 +113,7 @@ public class RemotePlayer extends Player {
 			return;
 		
 		boolean isServer = Game.isValidServer();
-		boolean isClient = Game.isValidClient();
+		boolean isClient = Game.isConnectedClient();
 		
 		int xr = xSyncRadius + entityTrackingBuffer;
 		int yr = ySyncRadius + entityTrackingBuffer;
@@ -131,7 +131,7 @@ public class RemotePlayer extends Player {
 			xt1 = oldxt;
 			yt1 = oldyt;
 		} else {
-			System.err.println("ERROR: RemotePlayer sync method called when game is not client or server.");
+			System.err.println("ERROR: RemotePlayer sync method called when game is not client or server. Could be a disconnected client.");
 			return;
 		}
 		

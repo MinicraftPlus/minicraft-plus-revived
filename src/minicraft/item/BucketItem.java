@@ -1,13 +1,14 @@
 package minicraft.item;
 
 import java.util.ArrayList;
+
+import minicraft.Game;
 import minicraft.entity.Player;
 import minicraft.gfx.Color;
 import minicraft.gfx.Sprite;
 import minicraft.level.Level;
 import minicraft.level.tile.Tile;
 import minicraft.level.tile.Tiles;
-import minicraft.screen.ModeMenu;
 
 public class BucketItem extends StackableItem {
 	
@@ -56,12 +57,12 @@ public class BucketItem extends StackableItem {
 		boolean success = false;
 		if(fill == Fill.Empty && filling != Fill.Empty) {
 			level.setTile(xt, yt, filling.contained);
-			if(!ModeMenu.creative) player.activeItem = editBucket(player, Fill.Empty);
+			if(!Game.isMode("creative")) player.activeItem = editBucket(player, Fill.Empty);
 			return true;
 		}
 		else if(filling == Fill.Empty) {
 			level.setTile(xt, yt, Tiles.get("hole"));
-			if(!ModeMenu.creative) player.activeItem = editBucket(player, fill);
+			if(!Game.isMode("creative")) player.activeItem = editBucket(player, fill);
 			return true;
 		}
 		
