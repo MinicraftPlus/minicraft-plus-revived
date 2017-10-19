@@ -1,11 +1,15 @@
 package minicraft.gfx;
 
+import java.util.Arrays;
+
 public class Color {
 	
 	/* To explain this class, you have to know how Bit-Shifting works.
 	 	David made a small post, so go here if you don't already know: http://minicraftforums.com/viewtopic.php?f=9&t=2256
 		
 		Note: this class still confuses me a bit, lol. -David
+		
+		On bit shifting: the new bits will always be zero, UNLESS it is a negative number aka the left-most bit is 1. Then, shifting right will fill with 1's, it seems.
 	*/
 	
 	/*... he later explains:
@@ -25,7 +29,17 @@ public class Color {
 	*/
 	
 	/*
-		To provide a method to the madness, all methods ending in "Color" are copies of the methods of the same name without the "Color" part, execpt they convert the given value to 24bit Java RGB rather than the normal, minicraft 8-bit total RGB (that really only goes up to 216).
+		To provide a method to the madness, all methods ending in "Color" are copies of the methods of the same name without the "Color" part, except they convert the given value to 24bit Java RGB rather than the normal, minicraft 8-bit total RGB (that really only goes up to 216).
+		Methods containing the word "get" deal with converting the 0-5 rgb to something else, and unGet for the other way.
+		
+		Another point:
+		
+		rgbByte = int using 8 bits to store the r, g, and b.
+		rgbInt = int using 24 bits to store r, g, and b, with 8 bits each; this is the classic 0-255 scale for each color component, compacted into one integer variable.
+		rgb4Sprite = int using the 4 bytes in an int to store each of the 4 rgbBytes used for coloring a sprite.
+		rgbReadable = int representing rgb in a readable decimal format, by having the values 0-5 in the 100s, 10s, and 1s place for r, g, and b respectively.
+		
+		So, the methods ending in "Color" deal with rgbInts, while their counterparts deal with rgbBytes.
 	*/
 	
 	public static final int WHITE = Color.get(-1, 555);
@@ -42,150 +56,134 @@ public class Color {
 	/** This returns a integer with 4 rgb color values. */
 	public static int get(int a, int b, int c, int d) {
 		//converts each color to 8-bit, and shifts each one 8-bits to the left a certain number of times, to create 4 colors set one after the other.
-		// if r,g,b were 8 bits each, these would have to be shifted 72, 48, 24. The number would be 2^98; far too big for an int. Heck, this number is barely small enough, being... 2^32. wait, that's bigger than 2^31-1!
-		return (get(d) << 24) + (get(c) << 16) + (get(b) << 8) + (get(a));
+		return (get(a) << 24) + (get(b) << 16) + (get(c) << 8) + (get(d));
 	}
 	public static int get(int a, int bcd) {
 		return get(a, bcd, bcd, bcd); // just a shortcut.
 	}
-	//public static int get(int abcd) {return get(abcd, abcd, abcd, abcd);}
 	
-	/** converts a 0-5 scale rgb color to a 24-bit color, r,g,b are each 8 bits. Used 4 times in 4 param. get() method, for each color. */
-	public static int get(int d) {
-		if (d < 0) return 255; // if d is smaller than 0, then return 255.
-		int r = d / 100 % 10; // the red value is the remainder of (d/100) / 10
-		int g = d / 10 % 10; // the green value is the remainder of (d/10) / 10
-		int b = d % 10; // the blue value is the remainder of d / 10.
+	/** converts a 0-5 scale rgb color to an 8-bit rgb color, using base 6 to encode it as a value from 0 to 255. (but instead of representing r, g, or b only, it holds all three in the one number.) */
+	public static int get(int rgbReadable) {
+		if (rgbReadable < 0) return 255; // if d is smaller than 0, then return 255. This is actually 255 for a reason: -1 is represented as 32 1's, all the bits on. 255 is 8 bits all on. So, to put it in another int, and not mess everything up, you have to use 255. 
+		int r = rgbReadable / 100 % 10; // the red value is the remainder of (d/100) / 10
+		int g = rgbReadable / 10 % 10; // the green value is the remainder of (d/10) / 10
+		int b = rgbReadable % 10; // the blue value is the remainder of d / 10.
 		
 		return r * 36 + g * 6 + b; // returns (red value * 36) + (green value * 6) + (blue value)
-		
-		// Why do we need all this math to get the colors? I don't even know. -David
-		// This is just converting minicraft colors, which can only go 0 to 5, to regular, 8-bit rgb colors, which go from 0 to 255. Though, these add up to 216, max... -Chris J
 	}
 	
-	/*//similar to get(), it looks like, but just one value..?
-	public static int pixel(int a) {
-		return (get(a) << 24) + (get(a) << 16) + (get(a) << 8) + get(a);
-	}*/
+	private static int limit(int num, int min, int max) {
+		if(num < min) num = min;
+		if(num > max) num = max;
+		return num;
+	}
 	
-	// this makes an int that you would pass to the get(a,b,c,d), or get(d), method, from three seperate 8-bit r,g,b values.
-	public static int rgb(int red, int green, int blue) {
-		if (red > 255) red = 255;
-		if (green > 255) green = 255;
-		if (blue > 255) blue = 255;
+	// this makes an int that you would pass to the get(a,b,c,d), or get(d), method, from three separate 8-bit r,g,b values.
+	public static int rgb(int red, int green, int blue) { // rgbInt array -> rgbReadable
+		red = limit(red, 0, 250);
+		green = limit(green, 0, 250);
+		blue = limit(blue, 0, 250);
 		
-		if (red < 50 && red != 0) red = 50;
-		if (green < 50 && green != 0) green = 50;
-		if (blue < 50 && blue != 0) blue = 50;
-		
-		return red / 50 * 100 + green / 50 * 10 + blue / 50;
+		return red / 50 * 100 + green / 50 * 10 + blue / 50; // this is: rgbReadable
 	}
 	
 	/** This method darkens or lightens a color (0 to 216 value) by the specified amount. */
 	public static int tint(int color, int amount, boolean isSpriteCol) {
 		if(isSpriteCol) {
-			int[] colors = seperateEncodedSprite(color); // this just seperates the four 8-bit sprite colors; they are still in base-6 added form.
-			for(int i = 0; i < colors.length; i++) {
-				colors[i] = tint(colors[i], amount);
+			int[] rgbBytes = separateEncodedSprite(color); // this just separates the four 8-bit sprite colors; they are still in base-6 added form.
+			System.out.println("the 4 colors for the sprite, to be tinted: " + Arrays.toString(rgbBytes));
+			System.out.println("the 4 colors for the sprite to be tinted, as inputted: " + Arrays.toString(separateEncodedSprite(color, true)));
+			for(int i = 0; i < rgbBytes.length; i++) {
+				rgbBytes[i] = tint(rgbBytes[i], amount);
 			}
-			return (colors[0] << 24) + (colors[1] << 16) + (colors[2] << 8) + colors[3];
+			return rgbBytes[0] << 24 | rgbBytes[1] << 16 | rgbBytes[2] << 8 | rgbBytes[3]; // this is: rgb4Sprite
 		} else {
-			return tint(color, amount);
+			return tint(color, amount); // this is: rgbByte
 		}
 	}
-	private static int tint(int rgb, int amount) {
-		if(rgb == -1) return -1;
+	private static int tint(int rgbByte, int amount) {
+		if(rgbByte == 255) return 255; // see description of bit shifting above; it will hold the 255 value, not -1  
 		
-		int r = (rgb / 36) % 6;
-		int g = (rgb / 6) % 6;
-		int b = rgb % 6;
-		r+=amount; g+=amount; b+=amount;
+		int[] rgb = decodeRGB(rgbByte); // this returns the rgb values as 0-5 numbers.
+		for(int i = 0; i < rgb.length; i++)
+			rgb[i] = limit(rgb[i]+amount, 0, 5);
 		
-		if(r<0) r = 0; if(g<0) g = 0; if(b<0) b = 0;
-		if(r>255) r = 255; if(g>255) g = 255; if(b>255) b = 255;
-		
-		return r * 36 + g * 6 + b;
+		return rgb[0] * 36 + rgb[1] * 6 + rgb[2]; // this is: rgbByte
 	}
 	
-	/** seperates a 4-part sprite color into it's original 4 component colors (which each have an rgb value) */
+	/** seperates a 4-part sprite color (rgb4Sprite) into it's original 4 component colors (which are each rgbBytes) */
 	/// reverse of Color.get(a, b, c, d).
-	public static int[] seperateEncodedSprite(int col) { return seperateEncodedSprite(col, false); }
-	public static int[] seperateEncodedSprite(int col, boolean convertToReadable) {
-		int ap = (col >> 24) << 24;
-		int bp = ((col - ap) >> 16) << 16;
-		int cp = ((col - ap - bp) >> 8) << 8;
-		int d = col-ap-bp-cp;
-		int a = ap >> 24, b = bp >> 16, c = cp >> 8;
+	public static int[] separateEncodedSprite(int rgb4Sprite) { return separateEncodedSprite(rgb4Sprite, false); }
+	public static int[] separateEncodedSprite(int rgb4Sprite, boolean convertToReadable) {
+		// the numbers are stored, most to least shifted, as d, c, b, a.
+		int a = (rgb4Sprite >> 24) & 0xFF; // See note at top; this is to remove left-hand 1's.
+		int b = (rgb4Sprite & 0x00_FF_00_00) >> 16;
+		int c = (rgb4Sprite & 0x00_00_FF_00) >> 8;
+		int d = (rgb4Sprite & 0x00_00_00_FF);
 		
 		if(convertToReadable) {
+			// they become rgbReadable
 			a = unGet(a);
 			b = unGet(b);
 			c = unGet(c);
 			d = unGet(d);
-		}
+		} // else, they are rgbByte
 		
-		return new int[] {d, c, b, a};
-		/// the colors have been seperated. Now they must be converted from 216 scale to 0-5 scale.
-		/*for(int i = 0; i < cols.length; i++) {
-			cols[i] = unGetRGB(cols[i]);
-		}
-		return cols;*/
+		return new int[] {a, b, c, d};
 	}
-	/** This turns a 216 scale rgb int into a 0-5 scale "concatenated" rgb int. */
-	public static int[] decodeRGB(int rgb) {
-		int r = (rgb / 36) % 6;
-		int g = (rgb / 6) % 6;
-		int b = rgb % 6;
+	
+	/** This turns a 216 scale rgb int into a 0-5 scale "concatenated" rgb int. (aka rgbByte -> r/g/b Readables) */
+	public static int[] decodeRGB(int rgbByte) {
+		int r = (rgbByte / 36) % 6;
+		int g = (rgbByte / 6) % 6;
+		int b = rgbByte % 6;
 		return new int[] {r, g, b};
 	}
 	
-	public static int unGet(int rgb216) {
-		int[] cols = decodeRGB(rgb216);
+	public static int unGet(int rgbByte) { // rgbByte -> rgbReadable
+		int[] cols = decodeRGB(rgbByte);
 		return cols[0]*100 + cols[1]*10 + cols[2];
 	}
 	
-	public static int mixRGB(int rgb1, int rgb2) {
-		if(rgb1 == -1 || rgb2 == -1) return -1;
-		int newcol = (rgb1 + rgb2) / 2;
+	public static int mixRGB(int rgbByte1, int rgbByte2) { // rgbByte,rgbByte -> rgbReadable
+		if(rgbByte1 == 255 || rgbByte2 == 255) return -1;
+		int newcol = (rgbByte1 + rgbByte2) / 2;
 		return unGet(newcol);
 		//int[] col1 = decodeRGB(get(rgb1));
 		//int[] col2 = decodeRGB(get(rgb2));
 		//return ((col1[0] + col2[0])/2) * 100 + ((col1[1] + col2[1])/2) * 10 + ((col1[2] + col2[2])/2);
 	}
 	
-	/// this turns a 0-216 combined minicraft color into a 24-bit r,g,b color.
-	protected static int upgrade(int col) {
-		// int r = ((col / 36) % 6) * 255 / 5;
-		// int g = ((col / 6) % 6) * 255 / 5;
-		// int b = (col % 6) * 255 / 5;
-		int r = ((col / 36) % 6) * 51;
-		int g = ((col / 6) % 6) * 51;
-		int b = (col % 6) * 51;
+	/// this turns a 0-216 combined minicraft color into a 24-bit r,g,b color. AKA: rgbByte -> rgbInt
+	protected static int upgrade(int rgbByte) {
+		if(rgbByte == 255) return 0xFF_FF_FF_FF;
+		
+		int r = ((rgbByte / 36) % 6) * 51;
+		int g = ((rgbByte / 6) % 6) * 51;
+		int b = (rgbByte % 6) * 51;
 		
 		int mid = (r * 30 + g * 59 + b * 11) / 100;
 		
 		int r1 = ((r + mid) / 2) * 230 / 255 + 10;
 		int g1 = ((g + mid) / 2) * 230 / 255 + 10;
 		int b1 = ((b + mid) / 2) * 230 / 255 + 10;
-		// int r1 = (r + mid) * 115 / 255 + 10;
-		// int b1 = (g + mid) * 115 / 255 + 10;
-		// int g1 = (b + mid) * 115 / 255 + 10;
-		return r1 << 16 | g1 << 8 | b1; // wow, this would work... it's like:
 		
-		//return getColor(newcol);
+		return r1 << 16 | g1 << 8 | b1;
 	}
 	
-	/// this takes a 24 bit color, and turns it into an 8-bit color minicraft sprites use.
-	protected static int downgrade(int col) {
-		int[] comps = decodeRGBColor(col);
-		return rgb(comps[0], comps[1], comps[2]);
+	/// this takes a 24 bit color, and turns it into an 8-bit color minicraft sprites use. AKA: rgbInt -> rgbByte
+	protected static int downgrade(int rgbInt) { // 
+		int[] comps = decodeRGBColor(rgbInt);
+		return get(rgb(comps[0], comps[1], comps[2])); // this is: rgbByte
 	}
 	
 	/// this is like get(d), above, but it returns a 24 bit color, with r,g,b each taking 8 bits, rather than them all taking 8 bits together.
-	protected static int getColor(int d) {
-		int r = d / 100 % 10; // the red value is the remainder of (d/100) / 10
-		int g = d / 10 % 10; // the green value is the remainder of (d/10) / 10
-		int b = d % 10; // the blue value is the remainder of d / 10.
+	protected static int getColor(int rgbReadable) { // rgbReadable -> rgbInt
+		if(rgbReadable < 0) return 0x01_FF_FF_FF;
+		
+		int r = rgbReadable / 100 % 10; // the red value is the remainder of (d/100) / 10
+		int g = rgbReadable / 10 % 10; // the green value is the remainder of (d/10) / 10
+		int b = rgbReadable % 10; // the blue value is the remainder of d / 10.
 		
 		/// this is taken from Game.java when it's making the colors. I think the end result is a 0-5 r, g, or b turning into a 0-255 r, g, or b.
 		int rr = (r * 255 / 5);
@@ -196,6 +194,7 @@ public class Color {
 		int r1 = ((rr + mid * 1) / 2) * 230 / 255 + 10;
 		int g1 = ((gg + mid * 1) / 2) * 230 / 255 + 10;
 		int b1 = ((bb + mid * 1) / 2) * 230 / 255 + 10;
+		
 		return r1 << 16 | g1 << 8 | b1; // wow, this would work... it's like:
 		/*
 			pattern 1: 00101010 00000000 00000000
@@ -205,25 +204,21 @@ public class Color {
 		*/
 	}
 	
-	protected static int tintColor(int rgb, int amount) {
-		if(rgb == -1) return -1;
+	protected static int tintColor(int rgbInt, int amount) {
+		if(rgbInt < 0) return rgbInt; // this is "transparent".
 		
-		int[] comps = decodeRGBColor(rgb);
-		int r = comps[0], g = comps[1], b = comps[2];
+		int[] comps = decodeRGBColor(rgbInt);
 		
-		r+=amount; g+=amount; b+=amount;
+		for(int i = 0; i < comps.length; i++)
+			comps[i] = limit(comps[i]+amount, 0, 255);
 		
-		if(r<0) r = 0; if(g<0) g = 0; if(b<0) b = 0;
-		if(r>255) r = 255; if(g>255) g = 255; if(b>255) b = 255;
-		
-		return r << 16 | g << 8 | b;
+		return comps[0] << 16 | comps[1] << 8 | comps[2];
 	}
 	
-	protected static int[] decodeRGBColor(int col) {
-		int r = col >> 16;
-		int rp = r << 16;
-		int g = (col - rp) >> 8;
-		int b = col-rp-(g<<8);
+	protected static int[] decodeRGBColor(int rgbInt) {
+		int r = (rgbInt & 0xFF_00_00) >> 16;
+		int g = (rgbInt & 0x00_FF_00) >> 8;
+		int b = (rgbInt & 0x00_00_FF);
 		
 		return new int[] {r, g, b};
 	}
@@ -239,27 +234,10 @@ public class Color {
 		System.out.println(rgb(r, g, b));
 	}
 	
-	protected static String toStringSingle(int col) {
-		return java.util.Arrays.toString(decodeRGB(col));
-	}
+	protected static String toStringSingle(int col) { return java.util.Arrays.toString(decodeRGB(col)); }
 	
 	/// for sprite colors
 	public static String toString(int col) {
-		return java.util.Arrays.toString(Color.seperateEncodedSprite(col, true));
-		/*int[] cols = seperateEncodedSprite(col);
-		int[][] rgbs = new int[cols.length][];
-		for(int i = 0; i < cols.length; i++)
-			rgbs[i] = decodeRGB(cols[i]);
-		
-		String[] colstrs = new String[cols.length];
-		for(int i = 0; i < colstrs.length; i++) {
-			String rgb = "";
-			for(int j = 0; j < rgbs[i].length; j++)
-				rgb += rgbs[i][j];
-			colstrs[i] = ""+rgb;
-		}
-		
-		return java.util.Arrays.toString(colstrs);
-		*/
+		return java.util.Arrays.toString(Color.separateEncodedSprite(col, true));
 	}
 }

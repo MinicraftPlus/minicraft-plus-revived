@@ -48,7 +48,7 @@ public class WorldEditMenu extends Display {
 		} else {
 			entries.addAll(Arrays.asList(
 				new StringEntry("Are you sure you want to delete", action.color),
-				new StringEntry("\""+worldName+"\"?", Color.tint(action.color, 10, true)),
+				new StringEntry("\""+worldName+"\"?", Color.tint(action.color, 1, true)),
 				new StringEntry("This can not be undone!", action.color)
 			));
 		}

@@ -56,7 +56,7 @@ public class Screen {
 		
 		int xTile = tile % 32; // gets x position of the spritesheet "tile"
 		int yTile = tile / 32; // gets y position
-		int toffs = xTile * 8 + yTile * 8 * sheet.width; // Gets the offset, the 8's represent the size of the tile. (8 by 8 pixels)
+		int toffs = xTile * 8 + yTile * 8 * sheet.width; // Gets the offset of the sprite into the spritesheet pixel array, the 8's represent the size of the box. (8 by 8 pixel sprite boxes)
 		
 		/// THIS LOOPS FOR EVERY LITTLE PIXEL
 		for (int y = 0; y < 8; y++) { // Loops 8 times (because of the height of the tile)
@@ -68,7 +68,8 @@ public class Screen {
 				
 				int xs = x; // current x pixel
 				if (mirrorX) xs = 7 - x; // Reverses the pixel for a mirroring effect
-				int col = (colors >> (sheet.pixels[xs + ys * sheet.width + toffs] * 8)) & 255; // gets the color of this single pixel of the sprite based on the passed in colors value; also insures that the color is less than or equal to 255.
+				// the "sheet.pixels" array stores values of 0, 1, 2, or 3, and they correspond to each shade of gray on the spritesheet.
+				int col = (colors >> ((3 - sheet.pixels[toffs + xs + ys * sheet.width]) * 8)) & 0xFF; // Gets the color of the current pixel from the colors int passed in, based on the 0-3 value stored in sheet.pixels. The color is retrieved by bit shifting right 0-3 bytes, from sheet.pixels, and then using & 0xFF to cut off bytes to the left, leaving only one byte: the rgbByte of the color. Normally, a sheet value of 0 would cause it to use the right-most color, but since black is the first (aka left-most) color, we do 3 - sheet.pixels value. 
 				if (col < 255) pixels[(x + xp) + (y + yp) * w] = Color.upgrade(col); // Inserts the colors into the image.
 				// the above only doesn't execute when the color value is 255, or white. Well, I think it should... but it doesn't work...
 			}
