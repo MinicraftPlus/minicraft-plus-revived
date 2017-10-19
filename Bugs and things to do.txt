@@ -8,6 +8,8 @@ Note to self: for more little bugs/ideas/concerns, search code for "TODO"
 
 	####BUGS####
 ####
+Check: airwizard despawn timer should be disabled.
+####
 Well. I've learned something. I really ought to be aware of hashes, since I've overridden .equals(), but not .hashCode(), so if I've used HashMaps or HashSets of objects of those classes, they may not work right. They will not follow the specified .equals() method. I'm not sure if I expected it to, but now that I know, I can override it and make use of HashMaps/HashSets to improve performance in lists. And it will no longer be cloudy as to what will affect Object.equals(); as long as I implement both methods, it should compare objects solely using those methods.
 ####
 investigate the disappearace of furniture -- I think I may be getting it with dungeon chests.
@@ -19,14 +21,29 @@ PastDay1 doesn't save/work, I think.
 MULTIPLAYER-Related:
  - Players aren't kicked out if they are on a menu when the server goes down..? (only tested/seen once)
  
+ - Sounds play in multiplayer even when game is paused, and when another player does something far away; add checks for distance and pause state before playing sounds
+ 
  It would be nice if I could find a way to not even bother telling the server for things like potions, that don't even interact with the world.
 #####
+
 -----------------------------------------------------------------------------------
 
 	****IDEAS(that should probably be implemented)****
 ****
 
+make the quick-save key configurable.
+
+****
+
+make it so all tile sprites are caculated only once, then get updated whenever something happens in an adjacent tile. Might help especially with ConnectorSprites, I think. To do this, I'll just have to make an update method in the Tile class, and somehow save the last generated sprite..?
+
+****
+
 Make it so the world loading menu displays both a percentage and a message saying what it is doing, ie, "Generating surface level..."
+
+****
+
+‎Add little black tics to the tile in front of you, so you know which tile planks and walls will be placed on to.
 
 ****
 
@@ -50,11 +67,7 @@ Allow clients to add a port number to the end of the ip with ":". for example: 1
 
 ****
 
-Fix menu inheritance stuff. How about I keep Menu.renderItemList() (because it's a great idea) but with some modifications: put it in the InventoryMenu class. Also make that class more flexible, so that it can nicely parent ContainerMenu. How about... it just holds the renderItemList() method? Yeah, and the current inventory list. The thing with ContainerMenu is that the two inv lists are *not* the same; on is active, one is not. So, it just needs to add a reference to the inactive list, and its current index!
-
-****
-
-The Font.drawParagraph() methods' centering system (and/or I suppose the FontStyle centering system) should revolve around three things, for each axis: whether or not to center at all, and if so, the **OFFSET FROM THE ABSOLUTE CENTER**, and the x and y padding. That second one is the one not taken care of in the main drawParagraph method, and I think it would make things a hell of a lot easier.
+make arrows go away after hitting a certain number of enemies, or dealing a certain amount of damage
 
 ****
 
@@ -70,27 +83,7 @@ PROJECT: encapsulate many classes, as much as possible. This means making prefer
 
 ****
 
-Make the mob package and furniture package - I'm not sure why there were so many errors... There aren't any package-private variables...
-
-****
-
-Add a note that describes how new score mode times can be unlocked. Probably should add them in the tutorial...
-
-****
-
-Make the TileItem instances get their name from the tile they will make. This is so that the tile class can drop that item when it is destroyed, and it doesn't have to know the name of the item; it just has to do Items.get(name).
-
-****
-
-add ability to mark players as ops ("operators") so they can do stuff to the game... but... what exactly can they do, then, anyway? Maybe the game isn't ready for this yet...
-
-****
-
 the server stalls or something when the username is too long; client probably throws error, out of bounds exception.
-
-****
-
-lengthen timout times... Some computers take a fairly long while.... Perhaps I should check the connection speed for a few seconds, and then set timeous based on that? :/
 
 ****
 
@@ -123,6 +116,14 @@ To save, maybe I should separate this data from other data like health, and put 
 ****
 
 Add world backup option, that user can select a download location. Then maybe... pack to zip? Also, I'll need to make a "restore" feature, and unzip it, so this could get complicated...
+
+****
+
+check light levels for mob spawning below ground, as well as above ground. But spawners will still spawn mobs. But it should check to make sure it doesn't spawn a mob on top of another. Basically, try to have some way for players to "turn off" a mob spawner without destroying it.
+
+****
+
+make creeper holes like TNT, just only one block. Though I should still have the thing where it hurts entities based on distance.
 
 ****
 
