@@ -151,7 +151,7 @@ public class Save {
 		data.add(Game.VERSION);
 		data.add(String.valueOf(Settings.get("sound")));
 		data.add(String.valueOf(Settings.get("autosave")));
-		//data.add(String.valueOf(Settings.get("fps"))); // TODO in 2.0.4-dev2
+		data.add(String.valueOf(Settings.get("fps")));
 		data.add(MultiplayerMenu.savedIP);
 		data.add(MultiplayerMenu.savedUUID);
 		data.add(MultiplayerMenu.savedUsername);
