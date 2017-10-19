@@ -1196,11 +1196,6 @@ public class Game {
 			}
 		});*/
 		
-		SplashScreen splash = SplashScreen.getSplashScreen();
-		if(splash != null) {
-			// TODO maybe in the future, I can make it so that the window is not displayed until the title menu is first rendered?
-		}
-		
 		
 		boolean debug = false;
 		boolean autoclient = false;
@@ -1226,6 +1221,14 @@ public class Game {
 		}
 		Game.debug = debug;
 		HAS_GUI = !autoserver;
+		
+		//if(HAS_GUI) {
+			/*SplashScreen splash = SplashScreen.getSplashScreen();
+			if (splash != null) {
+				// TODO maybe in the future, I can make it so that the window is not displayed until the title menu is first rendered?
+			}*/
+		//}
+		
 		Game.gameDir = saveDir + Game.localGameDir;
 		if(Game.debug) System.out.println("determined gameDir: " + Game.gameDir);
 		
