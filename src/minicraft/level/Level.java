@@ -22,7 +22,7 @@ import minicraft.level.tile.TorchTile;
 public class Level {
 	private Random random = new Random();
 	
-	private static final int MOB_SPAWN_FACTOR = 500; // the chance of a mob actually trying to spawn when trySpawn is called equals: mobCount / maxMobCount * MOB_SPAWN_FACTOR. so, it basically equals the chance, 1/number, of a mob spawning when the mob cap is reached. I hope that makes sense...
+	private static final int MOB_SPAWN_FACTOR = 100; // the chance of a mob actually trying to spawn when trySpawn is called equals: mobCount / maxMobCount * MOB_SPAWN_FACTOR. so, it basically equals the chance, 1/number, of a mob spawning when the mob cap is reached. I hope that makes sense...
 	
 	public int w, h; // width and height of the level
 	
@@ -67,7 +67,6 @@ public class Level {
 				if(getTile(x, y).id == t.id)
 					printLevelLoc(t.name, x, y);
 	}
-	public void printEntityLocs(Entity e) { printEntityLocs(e.getClass()); }
 	public void printEntityLocs(Class<? extends Entity> c) {
 		int numfound = 0;
 		for(Entity entity: getEntityArray()) {
@@ -83,9 +82,9 @@ public class Level {
 	}
 	
 	public void updateMobCap() {
-		maxMobCount = 100 + 150* Settings.getIdx("diff");
-		if(depth == 0) maxMobCount = maxMobCount * 2 / 3;
-		if(depth == 1 || depth == -4) maxMobCount /= 2;
+		maxMobCount = 150 + 150 * Settings.getIdx("diff");
+		if(depth == 1) maxMobCount /= 2;
+		if(depth == 0 || depth == -4) maxMobCount = maxMobCount * 2 / 3;
 	}
 	
 	@SuppressWarnings("unchecked") // @SuppressWarnings ignores the warnings (yellow underline) in this method.
@@ -413,10 +412,10 @@ public class Level {
 		if(Game.isValidServer() && players.size() == 0)
 			return; // don't try to spawn any mobs when there's no player on the level, on a server.
 		
-		int spawnAttempts = 2;
-		if(depth == 0) spawnAttempts = 18;
-		if(count < maxMobCount && !Game.isValidClient() && Game.tickCount % 5 == 0)
-			trySpawn(spawnAttempts);
+		//int spawnAttempts = 2;
+		//if(depth == 0) spawnAttempts = 18;
+		if(count < maxMobCount && !Game.isValidClient())
+			trySpawn();
 	}
 	
 	public void printEntityStatus(String entityMessage, Entity entity, String... searching) {
@@ -591,11 +590,12 @@ public class Level {
 		entitiesToAdd.remove(e);
 	}
 	
-	private void trySpawn(int count) {
+	private void trySpawn() {
+		if(random.nextInt((int) (MOB_SPAWN_FACTOR * Math.pow(mobCount, 2) / Math.pow(maxMobCount, 2))) != 0)
+			return; // hopefully will make mobs spawn a lot slower.
+		
 		boolean spawned = false;
-		for (int i = 0; i < count && !spawned; i++) {
-			if(random.nextInt(Math.max((int) Math.ceil(mobCount * MOB_SPAWN_FACTOR / maxMobCount), 1)) == 0) continue; // hopefully will make mobs spawn a lot slower.
-			
+		for (int i = 0; i < 30 && !spawned; i++) {
 			int minLevel = 1, maxLevel = 1;
 			if (depth < 0) {
 				maxLevel = (-depth) + 1;

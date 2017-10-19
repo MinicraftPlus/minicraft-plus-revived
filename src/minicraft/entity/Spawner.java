@@ -22,6 +22,7 @@ public class Spawner extends Furniture {
 	
 	private static final int ACTIVE_RADIUS = 8*16;
 	private static final int minSpawnInterval = 200, maxSpawnInterval = 500;
+	private static final int minMobSpawnChance = 10; // 1 in minMobSpawnChance chance of calling trySpawn every interval.
 	
 	public MobAi mob;
 	private int health, lvl, maxMobLevel;
@@ -57,7 +58,9 @@ public class Spawner extends Furniture {
 		
 		spawnTick--;
 		if(spawnTick <= 0) {
-			trySpawn();
+			double chance = minMobSpawnChance * Math.pow(level.mobCount, 2) / Math.pow(level.maxMobCount, 2); // this forms a quadratic function that determines the mob spawn chance.
+			if(random.nextInt((int)chance) == 0)
+				trySpawn();
 			resetSpawnInterval();
 		}
 	}
