@@ -2,6 +2,7 @@ package minicraft.screen;
 
 import minicraft.Game;
 import minicraft.Settings;
+import minicraft.saveload.Save;
 import minicraft.screen.entry.SelectEntry;
 
 public class OptionsMenu extends Display {
@@ -19,4 +20,7 @@ public class OptionsMenu extends Display {
 			.createMenu()
 		);
 	}
+	
+	@Override
+	public void onExit() { new Save(); }
 }

@@ -106,12 +106,6 @@ public class KeyInputMenu extends Display {
 		}
 	}
 	
-	@Override
-	public void onExit() {
-		if(Game.debug) System.out.println("saving keys...");
-		new Save();
-	}
-	
 	public void render(Screen screen) {
 		if(selection == 0) // not necessary to put in if statement now, but it's probably more efficient anyway
 			screen.clear(0);
