@@ -8,11 +8,6 @@ import java.util.HashMap;
 import java.util.LinkedHashMap;
 
 public class InputHandler implements /*MouseListener, */KeyListener {
-	/* Note: Yay! I made HUGE revisions to this class, so I get to make the comments!
-		...and I actually know what I'm talking about. ;)
-			-Chris J
-	*/
-		
 	/**
 		This class handles key presses; this also implements MouseListener... but I have no idea why.
 		It's not used in any way. Ever. As far as I know. Anyway, here are a few tips about this class:
