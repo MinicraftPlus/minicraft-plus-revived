@@ -712,6 +712,10 @@ public class Player extends Mob {
 		return findStartPos(level);
 	}
 	public boolean findStartPos(Level level) {
+		/*if(level == null) {
+			System.err.println("ERROR: can't find start position on null level");
+			return false;
+		}*/
 		while (true) { // will loop until it returns
 			// gets coordinates of a random tile (in tile coordinates)
 			int x = random.nextInt(level.w);

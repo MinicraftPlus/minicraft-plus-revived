@@ -58,8 +58,8 @@ public class Spawner extends Furniture {
 		
 		spawnTick--;
 		if(spawnTick <= 0) {
-			double chance = minMobSpawnChance * Math.pow(level.mobCount, 2) / Math.pow(level.maxMobCount, 2); // this forms a quadratic function that determines the mob spawn chance.
-			if(random.nextInt((int)chance) == 0)
+			int chance = (int) (minMobSpawnChance * Math.pow(level.mobCount, 2) / Math.pow(level.maxMobCount, 2)); // this forms a quadratic function that determines the mob spawn chance.
+			if(chance <= 0 || random.nextInt(chance) == 0)
 				trySpawn();
 			resetSpawnInterval();
 		}

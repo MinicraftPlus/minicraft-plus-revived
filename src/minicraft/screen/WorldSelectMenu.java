@@ -21,9 +21,9 @@ public class WorldSelectMenu extends Display {
 	private static boolean loadedWorld = true;
 	
 	public static String getWorldName() { return worldName; }
-	public static void setWorldName(String world) {
+	public static void setWorldName(String world, boolean loaded) {
 		worldName = world;
-		loadedWorld = false;
+		loadedWorld = loaded;
 	}
 	
 	enum Action {
@@ -123,6 +123,8 @@ public class WorldSelectMenu extends Display {
 				}
 			};
 		}
+		
+		
 		
 		menus = new Menu[] {
 			new Menu.Builder(false, 0, RelPos.CENTER, entries)

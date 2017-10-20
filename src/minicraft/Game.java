@@ -2,11 +2,11 @@ package minicraft;
 
 import javax.imageio.ImageIO;
 import javax.swing.JFrame;
+import javax.swing.Timer;
 import javax.swing.WindowConstants;
 import java.awt.BorderLayout;
 import java.awt.Canvas;
 import java.awt.Graphics;
-import java.awt.SplashScreen;
 import java.awt.event.ComponentAdapter;
 import java.awt.event.ComponentEvent;
 import java.awt.event.WindowEvent;
@@ -198,6 +198,7 @@ public class Game {
 	}
 	
 	public static void exitMenu() {
+		Sound.back.play();
 		if(menu == null) return; // no action required; cannot exit from no menu
 		//newMenu.onExit();
 		//if(debug) System.out.println("exiting menu from " + newMenu + " to " + newMenu.getParent());
@@ -254,6 +255,8 @@ public class Game {
 		
 		Tiles.initTileList();
 		
+		Sound.init();
+		
 		resetGame(); // "half"-starts a new game, to set up initial variables
 		player.eid = 0;
 		new Load(true); // this loads any saved preferences.
@@ -261,7 +264,7 @@ public class Game {
 		if(autoclient)
 			setMenu(new MultiplayerMenu( "localhost"));
 		else if(!HAS_GUI)
-			setMenu(new WorldSelectMenu());
+			startMultiplayerServer();//setMenu(null);//new WorldSelectMenu());
 		else
 			setMenu(new TitleMenu()); //sets menu to the title screen.
 	}
@@ -510,8 +513,6 @@ public class Game {
 						level.tick();
 						Tile.tickCount++;
 					}
-					
-					if(!HAS_GUI) startMultiplayerServer();
 				}
 				else if(Game.isValidServer()) {
 					// here is where I should put things like select up/down, backspace to boot, esc to open pause menu, etc.
@@ -1114,11 +1115,23 @@ public class Game {
 				ex.printStackTrace();
 			}
 		}
-		// now that that's done, let's turn *this* running JVM into a server:
-		server = new MinicraftServer();
+		else
+			Game.setMenu(new LoadingDisplay()); // gets things going to load up a world
 		
-		/// load up any saved config options for the server.
-		new Load(WorldSelectMenu.getWorldName(), server);
+		/*try {
+			Thread.sleep(2000);
+		} catch(InterruptedException ignored) {}
+		*/
+		
+		Timer t = new Timer(1000, e -> {
+			// now that that's done, let's turn *this* running JVM into a server:
+			server = new MinicraftServer();
+			
+			/// load up any saved config options for the server.
+			new Load(WorldSelectMenu.getWorldName(), server);
+		});
+		t.setRepeats(false);
+		t.start();
 	}
 	
 	/**
@@ -1215,7 +1228,7 @@ public class Game {
 				autoserver = true;
 				if(i+1 < args.length) {
 					i++;
-					WorldSelectMenu.setWorldName(args[i]);
+					WorldSelectMenu.setWorldName(args[i], true);
 				}
 			}
 		}

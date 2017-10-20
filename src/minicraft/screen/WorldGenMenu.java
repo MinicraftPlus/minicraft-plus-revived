@@ -86,7 +86,7 @@ public class WorldGenMenu extends Display {
 				
 				new SelectEntry("Create World", () -> {
 					if(!nameField.isValid()) return;
-					WorldSelectMenu.setWorldName(nameField.getUserInput());
+					WorldSelectMenu.setWorldName(nameField.getUserInput(), false);
 					Game.setMenu(new LoadingDisplay());
 				}) {
 					@Override

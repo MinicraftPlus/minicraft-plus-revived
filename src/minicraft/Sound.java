@@ -27,6 +27,8 @@ public class Sound {
 	public static void init() {} // a way to initialize the class without actually doing anything
 	
 	private Sound(String name) {
+		if(!Game.HAS_GUI) return;
+		
 		try {
 			clip = (Clip)AudioSystem.getLine(new Line.Info(Clip.class));
 			clip.open(AudioSystem.getAudioInputStream(getClass().getResource(name)));
