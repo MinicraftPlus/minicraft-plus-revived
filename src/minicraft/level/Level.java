@@ -8,7 +8,31 @@ import java.util.function.ToIntFunction;
 
 import minicraft.Game;
 import minicraft.Settings;
-import minicraft.entity.*;
+import minicraft.entity.AirWizard;
+import minicraft.entity.Chest;
+import minicraft.entity.Cow;
+import minicraft.entity.Crafter;
+import minicraft.entity.Creeper;
+import minicraft.entity.DungeonChest;
+import minicraft.entity.EnemyMob;
+import minicraft.entity.Entity;
+import minicraft.entity.Inventory;
+import minicraft.entity.ItemEntity;
+import minicraft.entity.Knight;
+import minicraft.entity.Lantern;
+import minicraft.entity.Mob;
+import minicraft.entity.MobAi;
+import minicraft.entity.PassiveMob;
+import minicraft.entity.Pig;
+import minicraft.entity.Player;
+import minicraft.entity.RemotePlayer;
+import minicraft.entity.Sheep;
+import minicraft.entity.Skeleton;
+import minicraft.entity.Slime;
+import minicraft.entity.Snake;
+import minicraft.entity.Spawner;
+import minicraft.entity.Tnt;
+import minicraft.entity.Zombie;
 import minicraft.entity.particle.Particle;
 import minicraft.gfx.Point;
 import minicraft.gfx.Screen;
@@ -591,8 +615,9 @@ public class Level {
 	}
 	
 	private void trySpawn() {
-		if(random.nextInt((int) (MOB_SPAWN_FACTOR * Math.pow(mobCount, 2) / Math.pow(maxMobCount, 2))) != 0)
-			return; // hopefully will make mobs spawn a lot slower.
+	     int spawnFailChance = (int) (MOB_SPAWN_FACTOR * Math.pow(mobCount, 2) / Math.pow(maxMobCount, 2));
+        if(spawnFailChance > 0 && random.nextInt(spawnFailChance) != 0)
+            return; // hopefully will make mobs spawn a lot slower.
 		
 		boolean spawned = false;
 		for (int i = 0; i < 30 && !spawned; i++) {
