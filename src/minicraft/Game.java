@@ -198,10 +198,8 @@ public class Game {
 	}
 	
 	public static void exitMenu() {
-		Sound.back.play();
 		if(menu == null) return; // no action required; cannot exit from no menu
-		//newMenu.onExit();
-		//if(debug) System.out.println("exiting menu from " + newMenu + " to " + newMenu.getParent());
+		Sound.back.play();
 		newMenu = menu.getParent();
 	}
 	
@@ -378,7 +376,7 @@ public class Game {
 	// In the end, calls menu.tick() if there's a menu, or level.tick() if no menu.
 	public static void tick() {
 		if(newMenu != menu) {
-			if(menu != null)
+			if(menu != null && (newMenu == null || newMenu.getParent() != menu))
 				menu.onExit();
 				
 			//if(debug) System.out.println("setting menu from " + newMenu + " to " + display);
