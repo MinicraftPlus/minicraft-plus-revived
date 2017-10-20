@@ -28,16 +28,13 @@ public class Level {
 	
 	public byte[] tiles; // an array of all the tiles in the world.
 	public byte[] data; // an array of the data of the tiles in the world. // ?
-	//private List<Entity>[] entitiesInTiles; // An array of lists of entities in the world, by tile
 	
 	public int depth; // depth level of the level
 	public int monsterDensity = 8; // affects the number of monsters that are on the level, bigger the number the less monsters spawn.
 	public int maxMobCount;
 	public int chestcount;
 	public int mobCount = 0;
-
-	private static List<String> ls = new ArrayList<>();
-
+	
 	private List<Entity> entities = java.util.Collections.synchronizedList(new ArrayList<Entity>()); // A list of all the entities in the world
 	private List<Player> players = java.util.Collections.synchronizedList(new ArrayList<Player>()); // A list of all the players in the world
 	private List<Entity> entitiesToAdd = new ArrayList<>(); /// entites that will be added to the level on next tick are stored here. This is for the sake of multithreading optimization. (hopefully)
@@ -81,7 +78,7 @@ public class Level {
 		System.out.println("found " + numfound + " entities in level of depth " + depth);
 	}
 	
-	public void updateMobCap() {
+	private void updateMobCap() {
 		maxMobCount = 150 + 150 * Settings.getIdx("diff");
 		if(depth == 1) maxMobCount /= 2;
 		if(depth == 0 || depth == -4) maxMobCount = maxMobCount * 2 / 3;
@@ -96,11 +93,6 @@ public class Level {
 		this.h = h;
 		byte[][] maps; // multidimensional array (an array within a array), used for the map
 		int saveTile;
-		
-		/*entitiesInTiles = new ArrayList[w * h]; // This is actually an array of arrayLists (of entities), with one arraylist per tile.
-		for (int i = 0; i < w * h; i++) {
-			entitiesInTiles[i] = new ArrayList<Entity>(); // Adds a entity list in that tile.
-		}*/
 		
 		if(level != -4 && level != 0)
 			monsterDensity = 4;
@@ -130,29 +122,24 @@ public class Level {
 				for (int x = 0; x < w; x++) { // loop through width
 					if (parentLevel.getTile(x, y) == Tiles.get("Stairs Down")) { // If the tile in the level above the current one is a stairs down then...
 						setTile(x, y, Tiles.get("Stairs Up")); // set a stairs up tile in the same position on the current level
-						if (level == -4) { /// make the obsidian wall formation around the stair to the dungeon level
-							//setAreaTiles(x, y, 2, Tiles.get("Obsidian"), 0);
+						if (level == -4) /// make the obsidian wall formation around the stair to the dungeon level
 							Structure.dungeonGate.draw(this, x, y);
-						}
-						if (level == 0) { // surface
-							/// surround the sky stairs with hard rock:
-							setAreaTiles(x, y, 1, Tiles.get("Hard Rock"), 0); // won't overwrite the stairs
-						}
-
-						if (level != 0 && level != -4) {
-							// any other level, the up-stairs should have dirt on all sides.
+						
+						else if (level == 0) // surface
+							setAreaTiles(x, y, 1, Tiles.get("Hard Rock"), 0); // surround the sky stairs with hard rock; won't overwrite the stairs
+						
+						else // any other level, the up-stairs should have dirt on all sides.
 							setAreaTiles(x, y, 1, Tiles.get("dirt"), 0); // won't overwrite the stairs
-						}
 					}
 				}
 			}
 		}
-
+		
 		
 		/// if the level is the dungeon, and we're not just loading the world...
 		if (level == -4) {
+			/// make DungeonChests!
 			for (int i = 0; i < 10 * (w / 128); i++) {
-				/// make DungeonChests!
 				DungeonChest d = new DungeonChest();
 				boolean addedchest = false;
 				while(!addedchest) { // keep running until we successfully add a DungeonChest
@@ -190,121 +177,11 @@ public class Level {
 				}
 			}
 		}
-		if (level < 0) {
-			for (int i = 0; i < 18 / -level * (w / 128); i++) {
-				/// for generating spawner dungeons
-				MobAi m;
-				int r = random.nextInt(5);
-				if (r == 1) {
-					m = new Skeleton(-level);
-				} else if (r == 2 || r == 0) {
-					m = new Slime(-level);
-				} else {
-					m = new Zombie(-level);
-				}
-				
-				Spawner sp = new Spawner(m);
-				int x3 = random.nextInt(16 * w) / 16;
-				int y3 = random.nextInt(16 * h) / 16;
-				if (getTile(x3, y3) == Tiles.get("dirt")) {
-					boolean xaxis2 = random.nextBoolean();
-					
-					if (xaxis2) {
-						for (int s2 = x3; s2 < w - s2; s2++) {
-							if (getTile(s2, y3) == Tiles.get("rock")) {
-							sp.x = s2 * 16 - 24;
-							sp.y = y3 * 16 - 24;
-							}
-						}
-					} else {
-						for (int s2 = y3; s2 < y3 - s2; s2++) {
-							if (getTile(x3, s2) == Tiles.get("rock")) {
-							sp.x = x3 * 16 - 24;
-							sp.y = s2 * 16 - 24;
-							}
-						}
-					}
-					
-					if (sp.x == 0 && sp.y == 0) {
-							sp.x = x3 * 16 - 8;
-							sp.y = y3 * 16 - 8;
-					}
+		
+		if (level < 0)
+			generateSpawnerStructures();
 
-					if (getTile(sp.x / 16, sp.y / 16) == Tiles.get("rock")) {
-						setTile(sp.x / 16, sp.y / 16, Tiles.get("dirt"));
-					}
-
-					for (int xx = 0; xx < 5; xx++) {
-						for (int yy = 0; yy < 5; yy++) {
-							if (noStairs(sp.x / 16 - 2 + xx, sp.y / 16 - 2 + yy)) {
-								setTile(sp.x / 16 - 2 + xx, sp.y / 16 - 2 + yy, Tiles.get("Stone Bricks"));
-
-								if((xx < 1 || yy < 1 || xx > 3 || yy > 3) && (xx != 2 || yy != 0) && (xx != 2 || yy != 4) && (xx != 0 || yy != 2) && (xx != 4 || yy != 2)) {
-									setTile(sp.x / 16 - 2 + xx, sp.y / 16 - 2 + yy, Tiles.get("Stone Wall"));
-								}
-							}
-						}
-					}
-
-					add(sp);
-					for(int rpt = 0; rpt < 2; rpt++) {
-						if (random.nextInt(2) != 0) continue;
-						Chest c = new Chest();
-						Inventory inv = c.inventory;
-						int chance = -level;
-						inv.tryAdd(9/chance, new Tnt());
-				  		inv.tryAdd(10/chance, new Crafter(Crafter.Type.Anvil));
-				  		inv.tryAdd(7/chance, new Lantern(Lantern.Type.NORM));
-				  		inv.tryAdd(3/chance, Items.get("bread"), 2);
-				  		inv.tryAdd(4/chance, Items.get("bread"), 3);
-				  		inv.tryAdd(7/chance, Items.get("Leather Armor"), 1);
-				  		inv.tryAdd(50/chance, Items.get("Gold Apple"), 1);
-				  		inv.tryAdd(3/chance, Items.get("Lapis"), 2);
-				  		inv.tryAdd(4/chance, Items.get("glass"), 2);
-				  		inv.tryAdd(4/chance, Items.get("Gunpowder"), 3);
-				  		inv.tryAdd(4/chance, Items.get("Gunpowder"), 3);
-				  		inv.tryAdd(4/chance, Items.get("Torch"), 4);
-				  		inv.tryAdd(14/chance, Items.get("swim potion"), 1);
-				  		inv.tryAdd(16/chance, Items.get("haste potion"), 1);
-				  		inv.tryAdd(14/chance, Items.get("light potion"), 1);
-				  		inv.tryAdd(14/chance, Items.get("speed potion"), 1);
-				  		inv.tryAdd(16/chance, Items.get("Iron Armor"), 1);
-				  		inv.tryAdd(5/chance, Items.get("Stone Brick"), 4);
-				  		inv.tryAdd(5/chance, Items.get("Stone Brick"), 6);
-				  		inv.tryAdd(4/chance, Items.get("string"), 3);
-				  		inv.tryAdd(4/chance, Items.get("bone"), 2);
-				  		inv.tryAdd(3/chance, Items.get("bone"), 1);
-				  		inv.tryAdd(7/chance, ToolType.Claymore, 1);
-				  		inv.tryAdd(5/chance, Items.get("Torch"), 3);
-				  		inv.tryAdd(6/chance, Items.get("Torch"), 6);
-						inv.tryAdd(6/chance, Items.get("Torch"), 6);
-				  		inv.tryAdd(7/chance, Items.get("steak"), 3);
-				  		inv.tryAdd(9/chance, Items.get("steak"), 4);
-				  		inv.tryAdd(7/chance, Items.get("gem"), 3);
-				  		inv.tryAdd(7/chance, Items.get("gem"), 5);
-				  		inv.tryAdd(7/chance, Items.get("gem"), 4);
-				  		inv.tryAdd(10/chance, Items.get("yellow clothes"), 1);
-				  		inv.tryAdd(10/chance, Items.get("black clothes"), 1);
-				  		inv.tryAdd(12/chance, Items.get("orange clothes"), 1);
-				  		inv.tryAdd(12/chance, Items.get("cyan clothes"), 1);
-				  		inv.tryAdd(12/chance, Items.get("purple clothes"), 1);
-				  		inv.tryAdd(4/chance, Items.get("arrow"), 5);
-						
-						if (inv.invSize() < 1) {
-							inv.add(Items.get("potion"), 1);
-							inv.add(Items.get("coal"), 3);
-							inv.add(Items.get("apple"), 3);
-							inv.add(Items.get("dirt"), 7);
-				  		}
-						
-						// chance = -level
-						add(c, sp.x - 16, sp.y - 16);
-					}
-				}
-			}
-		}
-
-		if (level == 1) {
+		if (level == 1) { // add the airwizard to the surface
 			AirWizard aw = new AirWizard(false);
 			add(aw, w * 16 / 2, h * 16 / 2);
 		}
@@ -412,8 +289,6 @@ public class Level {
 		if(Game.isValidServer() && players.size() == 0)
 			return; // don't try to spawn any mobs when there's no player on the level, on a server.
 		
-		//int spawnAttempts = 2;
-		//if(depth == 0) spawnAttempts = 18;
 		if(count < maxMobCount && !Game.isValidClient())
 			trySpawn();
 	}
@@ -502,12 +377,6 @@ public class Level {
 			for (int x = xo - r; x <= w + xo + r; x++) {
 				if (x < 0 || y < 0 || x >= this.w || y >= this.h) continue;
 				
-				/*List<Entity> entities = entitiesInTiles[x + y * this.w];
-				for (int i = 0; i < entities.size(); i++) {
-					Entity e = entities.get(i);
-					int lr = e.getLightRadius();
-					if (lr > 0) screen.renderLight(e.x - 1, e.y - 4, lr * 8);
-				}*/
 				int lr = getTile(x, y).getLightRadius(this, x, y);
 				if (lr > 0) screen.renderLight(x * 16 + 8, y * 16 + 8, lr * brightness);
 			}
@@ -556,9 +425,8 @@ public class Level {
 			data[x + y * w] = (byte) dataVal;
 		}
 		
-		if(Game.isValidServer()) {
+		if(Game.isValidServer())
 			Game.server.broadcastTileUpdate(this, x, y);
-		}
 	}
 	
 	public int getData(int x, int y) {
@@ -655,14 +523,9 @@ public class Level {
 	}
 	
 	public synchronized Entity[] getEntityArray() {
-		//List<Entity> newList = new ArrayList<Entity>().addAll(entities);
-		//return newList;
 		return entities.toArray(new Entity[0]);
 	}
 	
-	/*private List<Entity> getEntitiesInTile(int xt, int yt) {
-		return getEntitiesInTiles(xt, yt, xt, yt);
-	}*/
 	public List<Entity> getEntitiesInTiles(int xt0, int yt0, int xt1, int yt1) {
 		List<Entity> contained = new ArrayList<>();
 		for(Entity e: getEntityArray()) {
@@ -761,6 +624,121 @@ public class Level {
 	
 	private boolean noStairs(int x, int y) {
 		return getTile(x, y) != Tiles.get("Stairs Down");
+	}
+	
+	
+	private void generateSpawnerStructures() {
+		for (int i = 0; i < 18 / -depth * (w / 128); i++) {
+			/// for generating spawner dungeons
+			MobAi m;
+			int r = random.nextInt(5);
+			if (r == 1) {
+				m = new Skeleton(-depth);
+			} else if (r == 2 || r == 0) {
+				m = new Slime(-depth);
+			} else {
+				m = new Zombie(-depth);
+			}
+			
+			Spawner sp = new Spawner(m);
+			int x3 = random.nextInt(16 * w) / 16;
+			int y3 = random.nextInt(16 * h) / 16;
+			if (getTile(x3, y3) == Tiles.get("dirt")) {
+				boolean xaxis2 = random.nextBoolean();
+				
+				if (xaxis2) {
+					for (int s2 = x3; s2 < w - s2; s2++) {
+						if (getTile(s2, y3) == Tiles.get("rock")) {
+							sp.x = s2 * 16 - 24;
+							sp.y = y3 * 16 - 24;
+						}
+					}
+				} else {
+					for (int s2 = y3; s2 < y3 - s2; s2++) {
+						if (getTile(x3, s2) == Tiles.get("rock")) {
+							sp.x = x3 * 16 - 24;
+							sp.y = s2 * 16 - 24;
+						}
+					}
+				}
+				
+				if (sp.x == 0 && sp.y == 0) {
+					sp.x = x3 * 16 - 8;
+					sp.y = y3 * 16 - 8;
+				}
+				
+				if (getTile(sp.x / 16, sp.y / 16) == Tiles.get("rock")) {
+					setTile(sp.x / 16, sp.y / 16, Tiles.get("dirt"));
+				}
+				
+				for (int xx = 0; xx < 5; xx++) {
+					for (int yy = 0; yy < 5; yy++) {
+						if (noStairs(sp.x / 16 - 2 + xx, sp.y / 16 - 2 + yy)) {
+							setTile(sp.x / 16 - 2 + xx, sp.y / 16 - 2 + yy, Tiles.get("Stone Bricks"));
+							
+							if((xx < 1 || yy < 1 || xx > 3 || yy > 3) && (xx != 2 || yy != 0) && (xx != 2 || yy != 4) && (xx != 0 || yy != 2) && (xx != 4 || yy != 2)) {
+								setTile(sp.x / 16 - 2 + xx, sp.y / 16 - 2 + yy, Tiles.get("Stone Wall"));
+							}
+						}
+					}
+				}
+				
+				add(sp);
+				for(int rpt = 0; rpt < 2; rpt++) {
+					if (random.nextInt(2) != 0) continue;
+					Chest c = new Chest();
+					Inventory inv = c.inventory;
+					int chance = -depth;
+					inv.tryAdd(9/chance, new Tnt());
+					inv.tryAdd(10/chance, new Crafter(Crafter.Type.Anvil));
+					inv.tryAdd(7/chance, new Lantern(Lantern.Type.NORM));
+					inv.tryAdd(3/chance, Items.get("bread"), 2);
+					inv.tryAdd(4/chance, Items.get("bread"), 3);
+					inv.tryAdd(7/chance, Items.get("Leather Armor"), 1);
+					inv.tryAdd(50/chance, Items.get("Gold Apple"), 1);
+					inv.tryAdd(3/chance, Items.get("Lapis"), 2);
+					inv.tryAdd(4/chance, Items.get("glass"), 2);
+					inv.tryAdd(4/chance, Items.get("Gunpowder"), 3);
+					inv.tryAdd(4/chance, Items.get("Gunpowder"), 3);
+					inv.tryAdd(4/chance, Items.get("Torch"), 4);
+					inv.tryAdd(14/chance, Items.get("swim potion"), 1);
+					inv.tryAdd(16/chance, Items.get("haste potion"), 1);
+					inv.tryAdd(14/chance, Items.get("light potion"), 1);
+					inv.tryAdd(14/chance, Items.get("speed potion"), 1);
+					inv.tryAdd(16/chance, Items.get("Iron Armor"), 1);
+					inv.tryAdd(5/chance, Items.get("Stone Brick"), 4);
+					inv.tryAdd(5/chance, Items.get("Stone Brick"), 6);
+					inv.tryAdd(4/chance, Items.get("string"), 3);
+					inv.tryAdd(4/chance, Items.get("bone"), 2);
+					inv.tryAdd(3/chance, Items.get("bone"), 1);
+					inv.tryAdd(7/chance, ToolType.Claymore, 1);
+					inv.tryAdd(5/chance, Items.get("Torch"), 3);
+					inv.tryAdd(6/chance, Items.get("Torch"), 6);
+					inv.tryAdd(6/chance, Items.get("Torch"), 6);
+					inv.tryAdd(7/chance, Items.get("steak"), 3);
+					inv.tryAdd(9/chance, Items.get("steak"), 4);
+					inv.tryAdd(7/chance, Items.get("gem"), 3);
+					inv.tryAdd(7/chance, Items.get("gem"), 5);
+					inv.tryAdd(7/chance, Items.get("gem"), 4);
+					inv.tryAdd(10/chance, Items.get("yellow clothes"), 1);
+					inv.tryAdd(10/chance, Items.get("black clothes"), 1);
+					inv.tryAdd(12/chance, Items.get("orange clothes"), 1);
+					inv.tryAdd(12/chance, Items.get("cyan clothes"), 1);
+					inv.tryAdd(12/chance, Items.get("purple clothes"), 1);
+					inv.tryAdd(4/chance, Items.get("arrow"), 5);
+					
+					if (inv.invSize() < 1) {
+						inv.add(Items.get("potion"), 1);
+						inv.add(Items.get("coal"), 3);
+						inv.add(Items.get("apple"), 3);
+						inv.add(Items.get("dirt"), 7);
+					}
+					
+					// chance = -level
+					add(c, sp.x - 16, sp.y - 16);
+				}
+			}
+		}
 	}
 	
 	public String toString() {
