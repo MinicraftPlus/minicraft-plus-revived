@@ -360,6 +360,7 @@ class ConsoleReader extends Thread {
 		System.out.println("type \"help\" for a list of commands...");
 		
 		while(shouldRun/* && stdin.hasNext()*/) {
+			System.out.println();
 			System.out.print("Enter a command: ");
 			String command = stdin.next().trim();
 			if(command.length() == 0) continue;
