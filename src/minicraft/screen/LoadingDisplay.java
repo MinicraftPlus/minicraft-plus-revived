@@ -19,7 +19,6 @@ public class LoadingDisplay extends Display {
 		t = new javax.swing.Timer(500, e -> {
 			Game.initWorld();
 			Game.setMenu(null);
-			percentage = 0;
 		});
 		t.setRepeats(false);
 	}
