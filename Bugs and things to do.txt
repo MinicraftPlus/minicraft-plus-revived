@@ -1,14 +1,13 @@
 	---Quick TODO's---
 
--reorder tools a bit in ToolType.java b/c I'm picky. Hoes should be first, at least. ;)
-- add to F3 menu: "heartticks" left until regen another heart.
+--CURRENT: 
+
+- 
 
 Note to self: for more little bugs/ideas/concerns, search code for "TODO"
 -----------------------------------------------------------------------------------
 
 	####BUGS####
-####
-Check: airwizard despawn timer should be disabled.
 ####
 Well. I've learned something. I really ought to be aware of hashes, since I've overridden .equals(), but not .hashCode(), so if I've used HashMaps or HashSets of objects of those classes, they may not work right. They will not follow the specified .equals() method. I'm not sure if I expected it to, but now that I know, I can override it and make use of HashMaps/HashSets to improve performance in lists. And it will no longer be cloudy as to what will affect Object.equals(); as long as I implement both methods, it should compare objects solely using those methods.
 ####
@@ -19,9 +18,11 @@ PastDay1 doesn't save/work, I think.
 
 #####
 MULTIPLAYER-Related:
- - Players aren't kicked out if they are on a menu when the server goes down..? (only tested/seen once)
+ # Players aren't kicked out if they are on a menu when the server goes down..? (only tested/seen once)
  
- - Sounds play in multiplayer even when game is paused, and when another player does something far away; add checks for distance and pause state before playing sounds
+ # Sounds play in multiplayer even when game is paused, and when another player does something far away; add checks for distance and pause state before playing sounds
+ 
+ # the server stalls or something when the username is too long; client probably throws error, out of bounds exception.
  
  It would be nice if I could find a way to not even bother telling the server for things like potions, that don't even interact with the world.
 #####
@@ -31,43 +32,7 @@ MULTIPLAYER-Related:
 	****IDEAS(that should probably be implemented)****
 ****
 
-make the quick-save key configurable.
-
-****
-
-make it so all tile sprites are caculated only once, then get updated whenever something happens in an adjacent tile. Might help especially with ConnectorSprites, I think. To do this, I'll just have to make an update method in the Tile class, and somehow save the last generated sprite..?
-
-****
-
-Make it so the world loading menu displays both a percentage and a message saying what it is doing, ie, "Generating surface level..."
-
-****
-
-‎Add little black tics to the tile in front of you, so you know which tile planks and walls will be placed on to.
-
-****
-
-Add a feature where the player is knocked back when mobs attack them, but not by water or lava. So... well, actually, anything that's self-inflicted, and nothing else. So, hunger, water, and lava, don't knock back, but everthing else should.
-
-****
-
-make the text when typing a world name become uppercase according to English locale.
-
-****
-
-Make spawners break with one hit in creative. ...with any tool?
-
-****
-
-allow creative mode player to walk in sky without clouds.
-
-****
-
-Allow clients to add a port number to the end of the ip with ":". for example: 12.34.145.1:1122
-
-****
-
-make arrows go away after hitting a certain number of enemies, or dealing a certain amount of damage
+change "xa" and "ya" to something else; b/c they are NOT accelerations! They're distances! Specifically, they are the distance that a given entity is about to move.
 
 ****
 
@@ -75,33 +40,12 @@ Add more colors? Or try and turn sprites into 32x32 (currently are 16x16) for be
 
 ****
 
-localization? (Be sure to credit whoever makes any given localization.)
+COULD BE IRRELEVANT DUE TO UPCOMING RENDERING OVERHAUL
+make it so all tile sprites are calculated only once, then get updated whenever something happens in an adjacent tile. Might help especially with ConnectorSprites, I think. To do this, I'll just have to make an update method in the Tile class, and somehow save the last generated sprite..?
 
 ****
 
-PROJECT: encapsulate many classes, as much as possible. This means making preferably zero public fields, and so making more getters and setters... I haven't done that very well...
-
-****
-
-the server stalls or something when the username is too long; client probably throws error, out of bounds exception.
-
-****
-
-It would be really good if I could seperate all the stuff in the Save and Load classes into their respective classes -- I'm not saying remove them altogether, just take the stuff that turns a list of strings into a specific full entity object, and the stuff that brings all the class's important variables and states into a String, and put those parts into the matching class. Then, Load and Save will be there to go through all of them, and get them in a nice list or bigger string, and then write them to a file. Or vice versa for Load, it will read the file and turn it sequentially into entities. Of course, not to mention all the other things besides entities that Load and Save deal with!
-
-So, what will be added to each class is:
-
-  -TO SAVE: a method (getData(), I think), that compiles all the data, necessary to remake the entity, into a string. Maybe have a boolean fullSave or something that determines how much is enough to remake it; some things I may deem unnecessary.
-
-  -TO LOAD: a constructor, I think, with parameters being all the stuff in the save. Oh, actually, no, better idea! It just literally takes the String! Hopefully thing won't be a problem... with Chest.java maybe, but if we make it a string and a boolean, then it should be good.
-
-****
-
-Stop saving player arrow count, and refit the load class indexes to reflect that. I should really find a better way to represent each piece of info in loading, so the removal of one save item doesn't break everything.
-
-****
-
-Make respawn without bed += 20 blocks x/y of last spawn.
+make the text when typing a world name become uppercase according to English locale.
 
 ****
 
@@ -109,31 +53,11 @@ Go over all the "Warnings" from Xlint, and fix them.
 
 ****
 
-My idea for the new tile data system:
-Have Tiles.java store an Array list of Arrays, the first one for tile id, and the inner array to represent a data type. I haven't decided what data type the inner array should be; could be int (direct to save file), String (direct to read), or Enum (direct to save and read, but many enums and *might* not work).
-To save, maybe I should separate this data from other data like health, and put it directly in the ids file. Maybe put it as id_data, both integers here for sure. And for referencing in tiles.get, same deal: "name_data". This shows just how nice enums would be. I hope they work.
+reorder tools a bit in ToolType.java b/c I'm picky. Hoes should be first, at least. ;)
 
 ****
 
-Add world backup option, that user can select a download location. Then maybe... pack to zip? Also, I'll need to make a "restore" feature, and unzip it, so this could get complicated...
+add to F3 menu: "heartticks" left until regen another heart.
 
 ****
 
-check light levels for mob spawning below ground, as well as above ground. But spawners will still spawn mobs. But it should check to make sure it doesn't spawn a mob on top of another. Basically, try to have some way for players to "turn off" a mob spawner without destroying it.
-
-****
-
-make creeper holes like TNT, just only one block. Though I should still have the thing where it hurts entities based on distance.
-
-****
-
------------------------------------------------------------------------------------
-
-*?*?*?* Questionable Improvements (But still seem important)*?*?*?*
-
-LegacyLoad class is becoming annoying to handle; it should be reimplemented so that it won't have to be changed at all to reflect future updates. This could be done by making it only return values, and not actually reference any current variables. This may prove overcomplicated, though.
-
-IDEA: Let's make an "Update.java" file, maybe multiple, that handle different versions. However, instead of setting values in the rest of the game files, it will be set up as a "getter" sort of thing, where it doesn't reference all the game vars in full detail; but, it fetches them in the way that needs to be, for the main Load class. Basically, I want to have Load.java run everytime, but all the things that would otherwise be copied to LegacyLoad just stay in Load.java, and Load.java will "call" certain methods of LegacyLoad, to setup something the way it used to be.
-Yeah, it's fishy, but.... there we go.
-
-*?*?*?*
