@@ -525,8 +525,8 @@ public class MinicraftClient extends MinicraftConnection {
 		
 		curState = State.DISCONNECTED;
 		
-		if(Game.ISONLINE)
-			menu.setError("Connection to server has ended.");
+		// one may end the connection without an error; any errors should be set before calling this method, so there's no need to say anything here.
+		if(Game.debug) System.out.println("client has ended its connection.");
 	}
 	
 	public boolean isConnected() {

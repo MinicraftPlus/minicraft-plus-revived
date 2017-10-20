@@ -203,7 +203,7 @@ public class Game {
 		newMenu = menu.getParent();
 	}
 	
-	public static Display getMenu() { return menu; }
+	public static Display getMenu() { return newMenu; }
 	
 	public static boolean isValidClient() {
 		return ISONLINE && client != null;
