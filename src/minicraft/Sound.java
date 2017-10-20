@@ -53,4 +53,24 @@ public class Sound {
 		
 		clip.start();
 	}
+	
+	public void loop(boolean start) {
+		if (!(boolean)Settings.get("sound") || clip == null) return;
+		
+		if(start)
+			clip.loop(Clip.LOOP_CONTINUOUSLY);
+		else
+			clip.stop();
+	}
+	
+	/*
+	public static class Music {
+		
+		
+		
+		public Music(String name) {
+			AudioInputStream stream = AudioSystem.getAudioInputStream()
+		}
+		
+	}*/
 }
