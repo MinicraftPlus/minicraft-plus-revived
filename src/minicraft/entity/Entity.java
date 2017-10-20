@@ -9,6 +9,7 @@ import minicraft.level.Level;
 import minicraft.level.tile.Tile;
 
 public abstract class Entity {
+	
 	/// entity coordinates are per pixel, not per tile; each tile is 16x16 entity pixels.
 	protected final Random random = new Random();
 	public int x, y; // x, y entity coordinates on the map
@@ -203,25 +204,16 @@ public abstract class Entity {
 	protected void touchedBy(Entity entity) {}
 	
 	/** returns if mobs can block this entity (aka: can't pass through them) */
-	public boolean isBlockableBy(Mob mob) {
-		return true; // yes, mobs generally block other entities.
-	}
+	public boolean isBlockableBy(Mob mob) { return true; // yes, mobs generally block other entities. }
 	
 	/** Used in ItemEntity.java, extended with Player.java */
 	public void touchItem(ItemEntity itemEntity) {}
 	
 	/** Determines if the entity can swim (extended in sub-classes) */
-	public boolean canSwim() {
-		return false;
-	}
+	public boolean canSwim() { return false; }
 	
 	/** This, strangely enough, determines if the entity can walk on wool; among some other things..? */
 	public boolean canWool() { return false; }
-	
-	/** If the entity can light up..? */
-	public boolean canLight() {
-		return false;
-	}
 	
 	/** Item interact, used in player.java */
 	public boolean interact(Player player, Item item, int attackDir) {
@@ -361,5 +353,15 @@ public abstract class Entity {
 	public String toClassString() {
 		String clazz = getClass().getName();
 		return clazz.substring(clazz.lastIndexOf(".")+1);
+	}
+	
+	@Override
+	public final boolean equals(Object other) {
+		return other instanceof Entity && hashCode() == other.hashCode();
+	}
+	
+	@Override
+	public final int hashCode() {
+		return eid;
 	}
 }
