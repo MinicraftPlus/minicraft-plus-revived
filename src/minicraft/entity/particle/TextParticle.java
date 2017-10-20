@@ -15,7 +15,7 @@ public class TextParticle extends Particle {
 		super(x, y, 60, null);
 		this.xr = msg.length();
 		
-		style = new FontStyle(col).setShadowType(Color.get(-1, 000), false);
+		style = new FontStyle(col).setShadowType(Color.BLACK, false);
 		this.msg = msg;
 		xx = x; //assigns x pos
 		yy = y; //assigns y pos
@@ -53,8 +53,8 @@ public class TextParticle extends Particle {
 		/*} else { // special, for "Thanks for Playing!" message? Second message is right below...
 			String msg1 = msg.substring(0, 19);
 			String msg2 = msg.substring(19, msg.length());
-			Font.draw(msg1, screen, x - msg.length() * 4, y - (int)zz - 8, color, Color.get(-1, 0));
-			Font.draw(msg2, screen, x - msg.length() * 4, y - (int)zz, color, Color.get(-1, 0));
+			Font.draw(msg1, screen, x - msg.length() * 4, y - (int)zz - 8, color, Color.BLACK);
+			Font.draw(msg2, screen, x - msg.length() * 4, y - (int)zz, color, Color.BLACK);
 		}*/
 	}
 	

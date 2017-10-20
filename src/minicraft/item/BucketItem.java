@@ -1,17 +1,18 @@
 package minicraft.item;
 
 import java.util.ArrayList;
+
+import minicraft.Game;
 import minicraft.entity.Player;
 import minicraft.gfx.Color;
 import minicraft.gfx.Sprite;
 import minicraft.level.Level;
 import minicraft.level.tile.Tile;
 import minicraft.level.tile.Tiles;
-import minicraft.screen.ModeMenu;
 
 public class BucketItem extends StackableItem {
 	
-	public static enum Fill {
+	public enum Fill {
 		Empty (Tiles.get("hole"), 333),
 		Water (Tiles.get("water"), 005),
 		Lava (Tiles.get("lava"), 400);
@@ -19,14 +20,14 @@ public class BucketItem extends StackableItem {
 		public Tile contained;
 		public int innerColor; // TODO make it so that the inside color is fetched from the tile color.
 		
-		private Fill(Tile contained, int innerCol) {
+		Fill(Tile contained, int innerCol) {
 			this.contained = contained;
 			innerColor = innerCol;
 		}
 	}
 	
 	protected static ArrayList<Item> getAllInstances() {
-		ArrayList<Item> items = new ArrayList<Item>();
+		ArrayList<Item> items = new ArrayList<>();
 		
 		for(Fill fill: Fill.values())
 			items.add(new BucketItem(fill));
@@ -34,7 +35,7 @@ public class BucketItem extends StackableItem {
 		return items;
 	}
 	
-	private static final Fill getFilling(Tile tile) {
+	private static Fill getFilling(Tile tile) {
 		for(Fill fill: Fill.values())
 			if(fill.contained.id == tile.id)
 				return fill;
@@ -56,12 +57,12 @@ public class BucketItem extends StackableItem {
 		boolean success = false;
 		if(fill == Fill.Empty && filling != Fill.Empty) {
 			level.setTile(xt, yt, filling.contained);
-			if(!ModeMenu.creative) player.activeItem = editBucket(player, Fill.Empty);
+			if(!Game.isMode("creative")) player.activeItem = editBucket(player, Fill.Empty);
 			return true;
 		}
 		else if(filling == Fill.Empty) {
 			level.setTile(xt, yt, Tiles.get("hole"));
-			if(!ModeMenu.creative) player.activeItem = editBucket(player, fill);
+			if(!Game.isMode("creative")) player.activeItem = editBucket(player, fill);
 			return true;
 		}
 		

@@ -1,12 +1,12 @@
 package minicraft.entity;
 
+import minicraft.Settings;
 import minicraft.Sound;
 import minicraft.gfx.Color;
 import minicraft.gfx.MobSprite;
 import minicraft.gfx.Screen;
 import minicraft.item.Items;
 import minicraft.level.tile.Tiles;
-import minicraft.screen.OptionsMenu;
 
 public class Creeper extends EnemyMob {
 	private static final MobSprite[][] sprites;
@@ -55,15 +55,14 @@ public class Creeper extends EnemyMob {
 			
 			boolean hurtOne = false; // tells if any players were hurt
 			
-			for(Entity entity: level.getEntitiesOfClass(Player.class)) {
-				Player player = (Player) entity;
+			for(Player player: level.getPlayers()) {
 				int pdx = Math.abs(player.x - x);
 				int pdy = Math.abs(player.y - y);
 				if(pdx < BLAST_RADIUS && pdy < BLAST_RADIUS) {
 					float pd = (float) Math.sqrt(pdx * pdx + pdy * pdy);
-					int dmg = (int) (BLAST_DAMAGE * (1 - (pd / BLAST_RADIUS))) + OptionsMenu.diff;
-					player.hurt(this, dmg, 0);
-					player.payStamina(dmg * (OptionsMenu.diff == OptionsMenu.easy?1:2));
+					int dmg = (int) (BLAST_DAMAGE * (1 - (pd / BLAST_RADIUS))) + Settings.getIdx("diff");
+					player.hurt(this, dmg, Mob.getAttackDir(this, player));
+					player.payStamina(dmg * (Settings.get("diff").equals("Easy")?1:2));
 					hurtOne = true;
 				}
 			}
@@ -102,7 +101,7 @@ public class Creeper extends EnemyMob {
 		else
 			super.lvlcols[lvl-1] = Creeper.lvlcols[lvl-1];
 		
-		this.sprites[0] = walkDist == 0 ? standing : walking;
+		sprites[0] = walkDist == 0 ? standing : walking;
 		
 		super.render(screen);
 	}
@@ -114,7 +113,7 @@ public class Creeper extends EnemyMob {
 				fuseTime = MAX_FUSE_TIME;
 				fuseLit = true;
 			}
-			entity.hurt(this, 1, dir);
+			entity.hurt(this, 1, Mob.getAttackDir(this, entity));
 		}
 	}
 	
@@ -123,7 +122,7 @@ public class Creeper extends EnemyMob {
 	}
 	
 	protected void die() {
-		dropItem(1, 4-OptionsMenu.diff, Items.get("Gunpowder"));
+		dropItem(1, 4-Settings.getIdx("diff"), Items.get("Gunpowder"));
 		super.die();
 	}
 	

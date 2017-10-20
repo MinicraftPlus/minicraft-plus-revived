@@ -1,9 +1,9 @@
 package minicraft.entity;
 
+import minicraft.Settings;
 import minicraft.gfx.Color;
 import minicraft.gfx.MobSprite;
 import minicraft.item.Items;
-import minicraft.screen.OptionsMenu;
 
 public class Skeleton extends EnemyMob {
 	private static MobSprite[][] sprites = MobSprite.compileMobSpriteAnimations(8, 16);
@@ -20,10 +20,10 @@ public class Skeleton extends EnemyMob {
 	public Skeleton(int lvl) {
 		super(lvl, sprites, lvlcols, 6, true, 100, 45, 200);
 		
-		arrowtime = 300 / (lvl + 5);
+		arrowtime = 500 / (lvl + 5);
 		artime = arrowtime;
 	}
-
+	
 	public void tick() {
 		super.tick();
 		
@@ -52,17 +52,17 @@ public class Skeleton extends EnemyMob {
 	protected void die() {
 		int[] diffrands = {20, 20, 30};
 		int[] diffvals = {13, 18, 28};
-		int diff = OptionsMenu.diff;
+		int diff = Settings.getIdx("diff");
 		
 		int count = random.nextInt(3 - diff) + 1;
 		int bookcount = random.nextInt(1) + 1;
 		int rand = random.nextInt(diffrands[diff]);
 		if (rand <= diffvals[diff])
 			level.dropItem(x, y, count, Items.get("bone"), Items.get("arrow"));
-		else if (diff == 0 && rand < 19 || diff != 0)
-			level.dropItem(x, y, bookcount, Items.get("Antidious"), Items.get("arrow"));
-		else if (diff == 0) // rare chance of 10 arrows on easy mode
+		else if (diff == 0 && rand >= 19) // rare chance of 10 arrows on easy mode
 			level.dropItem(x, y, 10, Items.get("arrow"));
+		else
+			level.dropItem(x, y, bookcount, Items.get("Antidious"), Items.get("arrow"));
 		
 		super.die();
 	}

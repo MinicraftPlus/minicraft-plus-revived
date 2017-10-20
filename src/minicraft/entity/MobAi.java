@@ -1,24 +1,25 @@
 package minicraft.entity;
 
 import minicraft.Game;
+import minicraft.Sound;
+import minicraft.entity.particle.TextParticle;
 import minicraft.gfx.Color;
 import minicraft.gfx.MobSprite;
 import minicraft.gfx.Screen;
 import minicraft.item.Item;
 import minicraft.item.PotionType;
 import minicraft.level.Level;
-import minicraft.screen.ModeMenu;
 
 public abstract class MobAi extends Mob {
 	
 	int randomWalkTime, randomWalkChance, randomWalkDuration;
 	int xa, ya;
-	int lifetime;
-	int age = 0;
+	private int lifetime;
+	private int age = 0;
 	
 	private boolean slowtick = false;
 	
-	public MobAi(MobSprite[][] sprites, int maxHealth, int lifetime, int rwTime, int rwChance) {
+	protected MobAi(MobSprite[][] sprites, int maxHealth, int lifetime, int rwTime, int rwChance) {
 		super(sprites, maxHealth);
 		this.lifetime = lifetime;
 		randomWalkTime = 0;
@@ -36,16 +37,18 @@ public abstract class MobAi extends Mob {
 	public void tick() {
 		super.tick();
 		
-		age++;
-		if(age > lifetime) {
-			remove();
-			return;
+		if(lifetime > 0) {
+			age++;
+			if (age > lifetime) {
+				remove();
+				return;
+			}
 		}
 		
 		if(getLevel() != null) {
 			boolean foundPlayer = false;
-			for(Entity e: level.getEntitiesOfClass(Player.class)) {
-				if(e.isWithin(8, this) && ((Player)e).potioneffects.containsKey(PotionType.Time)) {
+			for(Player p: level.getPlayers()) {
+				if(p.isWithin(8, this) && p.potioneffects.containsKey(PotionType.Time)) {
 					foundPlayer = true;
 					break;
 				}
@@ -74,7 +77,7 @@ public abstract class MobAi extends Mob {
 		
 		int color = col;
 		if (hurtTime > 0) {
-			color = Color.get(-1, 555);
+			color = Color.WHITE;
 		}
 		
 		MobSprite curSprite = sprites[dir][(walkDist >> 3) % sprites[dir].length];
@@ -82,9 +85,27 @@ public abstract class MobAi extends Mob {
 	}
 	
 	public boolean move(int xa, int ya) {
+		//noinspection SimplifiableIfStatement
 		if(Game.isValidClient()) return false; // client mobAi's should not move at all.
 		
 		return super.move(xa, ya);
+	}
+	
+	public void doHurt(int damage, int attackDir) {
+		if (isRemoved() || hurtTime > 0) return; // If the mob has been hurt recently and hasn't cooled down, don't continue
+		
+		Player player = getClosestPlayer();
+		if (player != null) { // If there is a player in the level
+			/// play the hurt sound only if the player is less than 80 entity coordinates away; or 5 tiles away.
+			int xd = player.x - x;
+			int yd = player.y - y;
+			if (xd * xd + yd * yd < 80 * 80) {
+				Sound.monsterHurt.play();
+			}
+		}
+		level.add(new TextParticle("" + damage, x, y, Color.RED)); // Make a text particle at this position in this level, bright red and displaying the damage inflicted
+		
+		super.doHurt(damage, attackDir);
 	}
 	
 	public boolean canWool() {
@@ -119,6 +140,7 @@ public abstract class MobAi extends Mob {
 		
 		int r = level.monsterDensity * soloRadius; // get no-mob radius
 		
+		//noinspection SimplifiableIfStatement
 		if (level.getEntitiesInRect(x - r, y - r, x + r, y + r).size() > 0) return false;
 		
 		return level.getTile(x >> 4, y >> 4).maySpawn; // the last check.
@@ -128,11 +150,10 @@ public abstract class MobAi extends Mob {
 	
 	public void die(int points) { die(points, 0); }
 	public void die(int points, int multAdd) {
-		for(Entity e: level.getEntitiesOfClass(Player.class)) {
-			Player p = (Player)e;
-			p.score += points * (ModeMenu.score ? p.game.multiplier : 1); // add score for zombie death
-			if(multAdd != 0 && ModeMenu.score)
-				p.game.addMultiplier(multAdd);
+		for(Player p: level.getPlayers()) {
+			p.score += points * (Game.isMode("score") ? Game.getMultiplier() : 1); // add score for zombie death
+			if(multAdd != 0 && Game.isMode("score"))
+				Game.addMultiplier(multAdd);
 		}
 		
 		super.die();

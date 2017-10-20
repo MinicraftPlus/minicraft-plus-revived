@@ -1,16 +1,17 @@
 package minicraft.item;
 
 import java.util.ArrayList;
+
+import minicraft.Game;
 import minicraft.entity.*;
 import minicraft.gfx.Sprite;
 import minicraft.level.Level;
 import minicraft.level.tile.Tile;
-import minicraft.screen.ModeMenu;
 
 public class FurnitureItem extends Item {
 	
 	protected static ArrayList<Item> getAllInstances() {
-		ArrayList<Item> items = new ArrayList<Item>();
+		ArrayList<Item> items = new ArrayList<>();
 		
 		/// there should be a spawner for each level of mob, or at least make the level able to be changed.
 		items.add(new FurnitureItem(new Spawner(new Cow())));
@@ -43,7 +44,7 @@ public class FurnitureItem extends Item {
 	public Furniture furniture; // the furniture of this item
 	public boolean placed; // value if the furniture has been placed or not.
 	
-	private static final int getSpritePos(int fpos) {
+	private static int getSpritePos(int fpos) {
 		int x = fpos%32;
 		int y = fpos/32;
 		return (x/2) + (y+2)*32;
@@ -67,7 +68,7 @@ public class FurnitureItem extends Item {
 			furniture.x = xt * 16 + 8;
 			furniture.y = yt * 16 + 8;
 			level.add(furniture); // adds the furniture to the world
-			if(ModeMenu.creative)
+			if(Game.isMode("creative"))
 				furniture = furniture.clone();
 			else
 				placed = true; // the value becomes true, which removes it from the player's active item

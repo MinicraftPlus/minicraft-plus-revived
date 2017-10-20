@@ -90,7 +90,7 @@ public class Arrow extends Entity {
 			
 			if (hit != null && hit instanceof Mob && hit != owner) {
 				Mob mob = (Mob) hit;
-				
+	
 				// Doesn't hit the entity if it has already exceeded the allowed amount of hits
 				if (hitsOnEntities.containsKey(hit)) {
 					if (hitsOnEntities.get(hit) >= maxHitCount) {

@@ -4,13 +4,14 @@ import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
+
 import minicraft.Game;
+import minicraft.Settings;
 import minicraft.Sound;
 import minicraft.gfx.Color;
 import minicraft.gfx.Font;
 import minicraft.gfx.MobSprite;
 import minicraft.gfx.Screen;
-import minicraft.screen.OptionsMenu;
 
 public class AirWizard extends EnemyMob {
 	private static MobSprite[][] sprites = MobSprite.compileMobSpriteAnimations(8, 14);
@@ -26,7 +27,7 @@ public class AirWizard extends EnemyMob {
 	
 	public AirWizard(int lvl) { this(lvl>1); }
 	public AirWizard(boolean secondform) {
-		super(secondform?2:1, sprites, (new int[2]), secondform?5000:2000, false, 16*8, 10, 50);
+		super(secondform?2:1, sprites, (new int[2]), secondform?5000:2000, false, 16*8, -1, 10, 50);
 		
 		this.secondform = secondform;
 		if(secondform) speed = 3;
@@ -106,15 +107,13 @@ public class AirWizard extends EnemyMob {
 		if (player != null && randomWalkTime == 0) {
 			int xd = player.x - x; // x dist to player
 			int yd = player.y - y; // y dist to player
-			if (random.nextInt(4) == 0 && xd * xd + yd * yd < 50 * 50 && attackDelay == 0 && attackTime == 0) { // if a random number, 0-3, equals 0, and the player is less than 50 blocks away...
-				if (attackDelay == 0 && attackTime == 0) { // ...and attackDelay and attackTime equal 0...
-					attackDelay = 60 * 2; // ...then set attackDelay to 120 (2 seconds at default 60 ticks/sec)
-				}
+			if (random.nextInt(4) == 0 && xd * xd + yd * yd < 50 * 50 && attackDelay == 0 && attackTime == 0) { // if a random number, 0-3, equals 0, and the player is less than 50 blocks away, and attackDelay and attackTime equal 0...
+				attackDelay = 60 * 2; // ...then set attackDelay to 120 (2 seconds at default 60 ticks/sec)
 			}
 		}
 	}
 	
-	protected void doHurt(int damage, int attackDir) {
+	public void doHurt(int damage, int attackDir) {
 		super.doHurt(damage, attackDir);
 		if (attackDelay == 0 && attackTime == 0) {
 			attackDelay = 60 * 2;
@@ -137,8 +136,8 @@ public class AirWizard extends EnemyMob {
 		
 		if (hurtTime > 0) { //if the air wizards hurt time is above 0... (hurtTime value in Mob.java)
 			// turn the sprite white, momentarily.
-			col1 = Color.get(-1, 555);
-			col2 = Color.get(-1, 555);
+			col1 = Color.WHITE;
+			col2 = Color.WHITE;
 		}
 		
 		MobSprite curSprite = sprites[dir][(walkDist >> 3) & 1];
@@ -160,7 +159,7 @@ public class AirWizard extends EnemyMob {
 			textcol = Color.get(-1, 440);
 			textcol2 = Color.get(-1, 110);
 		}
-		int textwidth = h.length() * 8;
+		int textwidth = Font.textWidth(h);
 		Font.draw(h, screen, (x - textwidth/2) + 1, y - 17, textcol2);
 		Font.draw(h, screen, (x - textwidth/2), y - 18, textcol);
 	}
@@ -169,19 +168,19 @@ public class AirWizard extends EnemyMob {
 	protected void touchedBy(Entity entity) {
 		if (entity instanceof Player) {
 			// if the entity is the Player, then deal them 1 or 2 damage points.
-			entity.hurt(this, (secondform ? 2 : 1), dir);
+			entity.hurt(this, (secondform ? 2 : 1), Mob.getAttackDir(this, entity));
 		}
 	}
 	
 	/** What happens when the air wizard dies */
 	protected void die() {
-		Entity[] players = level.getEntitiesOfClass(Player.class);
+		Player[] players = level.getPlayers();
 		if (players.length > 0) { // if the player is still here
-			for(Entity p: players)
-				((Player)p).score += (secondform ? 500000 : 100000); // give the player 100K or 500K points.
+			for(Player p: players)
+				p.score += (secondform ? 500000 : 100000); // give the player 100K or 500K points.
 		}
 		
-		Sound.bossdeath.play(); // play boss-death sound.
+		Sound.bossDeath.play(); // play boss-death sound.
 		
 		if(!secondform) {
 			Game.notifyAll("Air Wizard: Defeated!");
@@ -189,8 +188,8 @@ public class AirWizard extends EnemyMob {
 			beaten = true;
 		} else {
 			Game.notifyAll("Air Wizard II: Defeated!");
-			if (!OptionsMenu.unlockedskin) Game.notifyAll("A costume lies on the ground...", -200);
-			OptionsMenu.unlockedskin = true;
+			if (!(boolean)Settings.get("wear suit")) Game.notifyAll("A costume lies on the ground...", -200);
+			Settings.set("wear suit", true);
 			BufferedWriter bufferedWriter = null;
 			
 			try {

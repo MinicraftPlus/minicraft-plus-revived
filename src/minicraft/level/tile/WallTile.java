@@ -1,5 +1,6 @@
 package minicraft.level.tile;
 
+import minicraft.Game;
 import minicraft.entity.AirWizard;
 import minicraft.entity.Entity;
 import minicraft.entity.Mob;
@@ -14,7 +15,6 @@ import minicraft.item.Items;
 import minicraft.item.ToolItem;
 import minicraft.item.ToolType;
 import minicraft.level.Level;
-import minicraft.screen.ModeMenu;
 
 public class WallTile extends Tile {
 	private ConnectorSprite sprite;
@@ -41,7 +41,7 @@ public class WallTile extends Tile {
 	
 	public void hurt(Level level, int x, int y, Mob source, int dmg, int attackDir) {
 		/*int playDmg;
-		if (ModeMenu.creative) playDmg = random.nextInt(5);
+		if (Game.isMode("creative")) playDmg = random.nextInt(5);
 		else {
 			playDmg = 0;
 		}*/
@@ -58,7 +58,7 @@ public class WallTile extends Tile {
 						return true;
 					}
 				} else if(level.depth == -3)
-					player.game.notifications.add("Only True heroes may enter."); // display a cryptic
+					Game.notifications.add("Only True heroes may enter."); // display a cryptic
 			}
 		}
 		return false;
@@ -67,10 +67,10 @@ public class WallTile extends Tile {
 	public void hurt(Level level, int x, int y, int dmg) {
 		int damage = level.getData(x, y) + dmg;
 		int sbwHealth = 100;
-		if (ModeMenu.creative) dmg = damage = sbwHealth;
+		if (Game.isMode("creative")) dmg = damage = sbwHealth;
 		
 		level.add(new SmashParticle(x * 16, y * 16));
-		level.add(new TextParticle("" + dmg, x * 16 + 8, y * 16 + 8, Color.get(-1, 500)));
+		level.add(new TextParticle("" + dmg, x * 16 + 8, y * 16 + 8, Color.RED));
 		if (damage >= sbwHealth) {
 			String itemName = "", tilename = "";
 			switch(type) {

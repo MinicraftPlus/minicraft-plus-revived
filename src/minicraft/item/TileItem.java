@@ -3,6 +3,8 @@ package minicraft.item;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+
+import minicraft.Game;
 import minicraft.entity.Player;
 import minicraft.gfx.Color;
 import minicraft.gfx.Sprite;
@@ -13,7 +15,7 @@ import minicraft.level.tile.Tiles;
 public class TileItem extends StackableItem {
 	
 	protected static ArrayList<Item> getAllInstances() {
-		ArrayList<Item> items = new ArrayList<Item>();
+		ArrayList<Item> items = new ArrayList<>();
 		
 		/// TileItem sprites are all on line 4, and have 1x1 sprites.
 		items.add(new TileItem("Flower", (new Sprite(0, 4, Color.get(-1, 10, 444, 330))), "flower", "grass"));
@@ -31,7 +33,7 @@ public class TileItem extends StackableItem {
 		items.add(new TileItem("Obsidian Door", (new Sprite(17, 4, Color.get(-1, 159, 59, 59))), "Obsidian Door", "Obsidian"));
 	
 		// TODO make a method in Item.java; calls clone(), but then changes color, and returns itself. Call it cloneAsColor, or changeColor, or maybe *asColor()*.
-		items.add(new TileItem("Wool", (new Sprite(2, 4, Color.get(-1, 555))), "wool", "hole", "water"));
+		items.add(new TileItem("Wool", (new Sprite(2, 4, Color.WHITE)), "wool", "hole", "water"));
 		items.add(new TileItem("Red Wool", (new Sprite(2, 4, Color.get(-1, 100, 300, 500))), "Wool_RED", "hole", "water"));
 		items.add(new TileItem("Blue Wool", (new Sprite(2, 4, Color.get(-1, 005, 115, 115))), "Wool_BLUE", "hole", "water"));
 		items.add(new TileItem("Green Wool", (new Sprite(2, 4, Color.get(-1, 10, 40, 50))), "Wool_GREEN", "hole", "water"));
@@ -60,7 +62,7 @@ public class TileItem extends StackableItem {
 	protected TileItem(String name, Sprite sprite, int count, String model, List<String> validTiles) {
 		super(name, sprite, count);
 		this.model = model.toUpperCase();
-		this.validTiles = new ArrayList<String>();
+		this.validTiles = new ArrayList<>();
 		for(String tile: validTiles)
 			this.validTiles.add(tile.toUpperCase());
 	}
@@ -73,11 +75,19 @@ public class TileItem extends StackableItem {
 				return super.interactOn(true);
 			}
 		}
-		//if (Game.debug) System.out.println(model + " cannot be placed on " + tile.name);
 		
-		if(model.contains("Wall") && validTiles.size() == 1) {
-			player.game.notifications.add("Can only be placed on " + Tiles.getName(validTiles.get(0)) + "!");
+		if (Game.debug) System.out.println(model + " cannot be placed on " + tile.name);
+		
+		if(model.contains("WALL")) {
+			Game.notifications.add("Can only be placed on " + Tiles.getName(validTiles.get(0)) + "!");
 		}
+		else if(model.contains("DOOR")) {
+			Game.notifications.add("Can only be placed on " + Tiles.getName(validTiles.get(0)) + "!");
+		}
+		else if((model.contains("BRICK") || model.contains("PLANK"))) {
+			Game.notifications.add("Dig a hole first!");
+		}
+		
 		return super.interactOn(false);
 	}
 	

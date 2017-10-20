@@ -8,6 +8,7 @@ import minicraft.gfx.Color;
 import minicraft.gfx.Font;
 import minicraft.gfx.FontStyle;
 import minicraft.gfx.Screen;
+import minicraft.level.Level;
 
 /** This is used for players in multiplayer mode. */
 public class RemotePlayer extends Player {
@@ -21,16 +22,16 @@ public class RemotePlayer extends Player {
 	private InetAddress ipAddress;
 	private int port;
 	
-	public RemotePlayer(Player previous, Game game, InetAddress ip, int port) { this(previous, game, false, ip, port); }
-	public RemotePlayer(Player previous, Game game, boolean isMainPlayer, InetAddress ip, int port) {
-		super(previous, game, (isMainPlayer?game.input:new InputHandler(game, false)));
+	public RemotePlayer(Player previous, InetAddress ip, int port) { this(previous, false, ip, port); }
+	public RemotePlayer(Player previous, boolean isMainPlayer, InetAddress ip, int port) {
+		super(previous, (isMainPlayer?Game.input:new InputHandler(false)));
 		this.ipAddress = ip;
 		this.port = port;
 	}
-	public RemotePlayer(Game game, boolean isMainPlayer, RemotePlayer model) {
-		this(model, game, isMainPlayer, model.ipAddress, model.port);
+	public RemotePlayer(boolean isMainPlayer, RemotePlayer model) {
+		this(model, isMainPlayer, model.ipAddress, model.port);
 		eid = model.eid;
-		setUsername(username);
+		setUsername(model.getUsername());
 	}
 	
 	public void setUsername(String username) {
@@ -44,7 +45,7 @@ public class RemotePlayer extends Player {
 	}
 	
 	public void tick() {
-		if(!Game.isValidServer() && this == game.player)
+		if(!Game.isValidServer() && this == Game.player)
 			super.tick();
 		else {
 			// a minimal thing for render update purposes.
@@ -52,7 +53,7 @@ public class RemotePlayer extends Player {
 				attackTime--;
 				if(attackTime == 0) attackItem = null; // null the attackItem once we are done attacking.
 			}
-			if (hurtTime > 0) hurtTime--;
+			if (hurtTime > 0) hurtTime--; // to update the attack animation.
 		}
 	}
 	
@@ -66,7 +67,7 @@ public class RemotePlayer extends Player {
 		
 		boolean moved = super.move(xa, ya);
 		
-		if(!(oldxt == x>>4 && oldyt == y>>4) && Game.isValidClient() && this == game.player) {
+		if(!(oldxt == x>>4 && oldyt == y>>4) && Game.isConnectedClient() && this == Game.player) {
 			// if moved (and is client), then check any tiles no longer loaded, and remove any entities on them.
 			updateSyncArea(oldxt, oldyt);
 		}
@@ -76,17 +77,20 @@ public class RemotePlayer extends Player {
 	
 	public void render(Screen screen) {
 		super.render(screen);
-		new FontStyle(Color.get(-1, 444)).setShadowType(Color.get(-1, 0), true).setXPos(x - Font.textWidth(username)/2).setYPos(y - 20).draw(username, screen); // draw the username of the player above their head
+		new FontStyle(Color.get(-1, 444)).setShadowType(Color.BLACK, true).setXPos(x - Font.textWidth(username)/2).setYPos(y - 20).draw(username, screen); // draw the username of the player above their head
 	}
 	
 	/// this determines if something at a given coordinate should be synced to this client, or if it is too far away to matter.
-	public boolean shouldSync(int xt, int yt) {
-		return shouldSync(xt, yt, 0);
+	public boolean shouldSync(int xt, int yt, Level level) {
+		return shouldSync(level, xt, yt, 0);
 	}
-	public boolean shouldTrack(int xt, int yt) {
-		return shouldSync(xt, yt, entityTrackingBuffer); /// this means that there is one tile past the syncRadii in all directions, which marks the distance at which entities are added or removed.
+	public boolean shouldTrack(int xt, int yt, Level level) {
+		return shouldSync(level, xt, yt, entityTrackingBuffer); /// this means that there is one tile past the syncRadii in all directions, which marks the distance at which entities are added or removed.
 	}
-	private boolean shouldSync(int xt, int yt, int offset) { // IDEA make this isWithin(). Decided not to b/c different x and y radii.
+	private boolean shouldSync(Level level, int xt, int yt, int offset) { // IDEA make this isWithin(). Decided not to b/c different x and y radii.
+		if(level == null || level != getLevel())
+			return false;
+		
 		int px = x >> 4, py = y >> 4;
 		int xdist = Math.abs(xt - px);
 		int ydist = Math.abs(yt - py);
@@ -94,7 +98,7 @@ public class RemotePlayer extends Player {
 	}
 	
 	public String toString() {
-		return super.toString()+"{"+username+" on "+ipAddress.getHostAddress()+":"+port+"}";
+		return super.toString()+"{"+username+"}";
 	}
 	
 	public void updateSyncArea(int oldxt, int oldyt) {
@@ -109,7 +113,7 @@ public class RemotePlayer extends Player {
 			return;
 		
 		boolean isServer = Game.isValidServer();
-		boolean isClient = Game.isValidClient();
+		boolean isClient = Game.isConnectedClient();
 		
 		int xr = xSyncRadius + entityTrackingBuffer;
 		int yr = ySyncRadius + entityTrackingBuffer;
@@ -127,7 +131,7 @@ public class RemotePlayer extends Player {
 			xt1 = oldxt;
 			yt1 = oldyt;
 		} else {
-			System.err.println("ERROR: RemotePlayer sync method called when game is not client or server.");
+			System.err.println("ERROR: RemotePlayer sync method called when game is not client or server. Could be a disconnected client.");
 			return;
 		}
 		

@@ -8,7 +8,7 @@ Here is a small share of the more major features that this mod adds to the origi
 * More Game modes -- Creative, Hardcore, and Score mode in addition to Survival
 * Save / Load System for worlds and settings, and respawn after death
 * World creation and management options, such as name, size, and terrain type of world, and rename, delete, and copy world
-* Multiplayer mode, complete with dedicated server support, with or without a GUI.
+* Multiplayer mode, complete with dedicated server support, with or without a GUI, as well as an online account system
 * Many more mobs
 * Many more tiles
 * More weapons / tools, such as claymores and torches
@@ -41,7 +41,7 @@ Things I will probably add later, rather than sooner.
 
 * Add back Experience bar, from version 1.4
 * Milk & bad status effects
-* Accounts
+* ...LAZORS
 
 #### Far, far away...
 
@@ -50,9 +50,7 @@ If their implementation becomes more likely, they will be moved to a different s
 
 * Custom Skins
 * Enchantments
-* Redstone
 * Fire
 * Chickens
-* Minecarts
 * World editors
 * Boats, b/c they require infinite terrain and vast oceans. ;)

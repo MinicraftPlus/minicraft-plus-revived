@@ -8,9 +8,8 @@ import minicraft.gfx.Screen;
 import minicraft.gfx.Sprite;
 import minicraft.level.Level;
 import minicraft.level.tile.Tile;
-import minicraft.screen.ListItem;
 
-public abstract class Item implements ListItem {
+public abstract class Item {
 	
 	/* Note: Most of the stuff in the class is expanded upon in StackableItem/PowerGloveItem/FurnitureItem/etc */
 	
@@ -37,7 +36,7 @@ public abstract class Item implements ListItem {
 		sprite.render(screen, x, y);
 		if(ininv) {
 			String shortname = name.length() > 20 ? name.substring(0, 20) : name;
-			Font.draw(shortname, screen, x + 8, y, Color.get(-1, 555));
+			Font.draw(shortname, screen, x + 8, y, Color.WHITE);
 		}
 		else
 			Font.draw(name, screen, x + 8, y, Color.get(0, 555));
@@ -79,5 +78,10 @@ public abstract class Item implements ListItem {
 	/** Gets the necessary data to send over a connection. This data should always be directly input-able into Items.get() to create a valid item with the given properties. */
 	public String getData() {
 		return name;
+	}
+	
+	// returns the String that should be used to display this item in a menu or list. 
+	public String getDisplayName() {
+		return " " + name;
 	}
 }

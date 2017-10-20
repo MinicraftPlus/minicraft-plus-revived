@@ -6,8 +6,8 @@ import minicraft.gfx.Screen;
 
 public class Spark extends Entity {
 	private int lifeTime; // how much time until the spark disappears
-	public double xa, ya; // the x and y acceleration
-	public double xx, yy; // the x and y positions
+	private double xa, ya; // the x and y acceleration
+	private double xx, yy; // the x and y positions
 	private int time; // the amount of time that has passed
 	private AirWizard owner; // the AirWizard that created this spark
 	
@@ -40,7 +40,7 @@ public class Spark extends Entity {
 			Entity e = toHit.get(i);
 			if (e instanceof Mob && !(e instanceof AirWizard)) {
 				 // if the entity is a mob, but not a Air Wizard, then hurt the mob with 1 damage.
-				e.hurt(owner, 1, ((Mob) e).dir ^ 1);
+				e.hurt(owner, 1, Mob.getAttackDir(this, e));
 			}
 		}
 	}
@@ -61,8 +61,8 @@ public class Spark extends Entity {
 		
 		///shouldn't the random be stored before being used twice...? Let me try.
 		int randmirror = random.nextInt(4);
-		screen.render(x - 4, y - 4 - 2, xt + yt * 32, Color.get(-1, 555), randmirror); // renders the spark
-		screen.render(x - 4, y - 4 + 2, xt + yt * 32, Color.get(-1, 000), randmirror); // renders the shadow on the ground
+		screen.render(x - 4, y - 4 - 2, xt + yt * 32, Color.WHITE, randmirror); // renders the spark
+		screen.render(x - 4, y - 4 + 2, xt + yt * 32, Color.BLACK, randmirror); // renders the shadow on the ground
 	}
 	
 	public String getData() {

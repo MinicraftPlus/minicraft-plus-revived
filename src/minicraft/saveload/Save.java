@@ -5,19 +5,20 @@ import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
+
 import minicraft.Game;
+import minicraft.Settings;
 import minicraft.entity.*;
-import minicraft.entity.particle.*;
+import minicraft.entity.particle.Particle;
+import minicraft.entity.particle.TextParticle;
 import minicraft.item.Item;
 import minicraft.item.PotionType;
 import minicraft.item.StackableItem;
 import minicraft.network.MinicraftServer;
-import minicraft.screen.LoadingMenu;
-import minicraft.screen.ModeMenu;
+import minicraft.screen.LoadingDisplay;
 import minicraft.screen.MultiplayerMenu;
-import minicraft.screen.OptionsMenu;
-import minicraft.screen.WorldGenMenu;
 import minicraft.screen.WorldSelectMenu;
 
 public class Save {
@@ -30,10 +31,23 @@ public class Save {
 	List<String> data;
 	Game game;
 	
-	private Save(Game game, File worldFolder) {
-		data = new ArrayList<String>();
+	private Save(File worldFolder) {
+		data = new ArrayList<>();
 		
-		this.game = game;
+		
+		if(worldFolder.getParent().equals("saves")) {
+			String worldName = worldFolder.getName();
+			if (!worldName.toLowerCase().equals(worldName)) {
+				if (Game.debug) System.out.println("renaming world in " + worldFolder + " to lowercase");
+				String path = worldFolder.toString();
+				path = path.substring(0, path.lastIndexOf(worldName));
+				File newFolder = new File(path + worldName.toLowerCase());
+				if (worldFolder.renameTo(newFolder))
+					worldFolder = newFolder;
+				else
+					System.err.println("failed to rename world folder " + worldFolder + " to " + newFolder);
+			}
+		}
 		
 		//location += dir;
 		folder = worldFolder;
@@ -42,9 +56,8 @@ public class Save {
 	}
 	
 	/// this saves world options
-	public Save(Player player, String worldname) { this(player.game, worldname); }
-	public Save(Game game, String worldname) {
-		this(game, new File(Game.gameDir+"/saves/" + worldname.toLowerCase() + "/"));
+	public Save(String worldname) {
+		this(new File(Game.gameDir+"/saves/" + worldname + "/"));
 		
 		if(Game.isValidClient()) {
 			// clients are not allowed to save.
@@ -56,8 +69,8 @@ public class Save {
 		//writePrefs("KeyPrefs");
 		writeWorld("Level");
 		if(!Game.isValidServer()) { // this must be waited for on a server.
-			writePlayer("Player", game.player);
-			writeInventory("Inventory", game.player);
+			writePlayer("Player", Game.player);
+			writeInventory("Inventory", Game.player);
 		}
 		writeEntities("Entities");
 		
@@ -67,23 +80,29 @@ public class Save {
 	}
 	
 	/// this saves server config options
-	public Save(Game game, String worldname, MinicraftServer server) {
-		this(game, new File(Game.gameDir+"/saves/" + worldname.toLowerCase() + "/"));
+	public Save(String worldname, MinicraftServer server) {
+		this(new File(Game.gameDir+"/saves/" + worldname + "/"));
 		
 		if (Game.debug) System.out.println("writing server config...");
 		writeServerConfig("ServerConfig", server);
 	}
 	
 	// this saves global options
-	public Save(Game game) {
-		this(game, new File(Game.gameDir+"/"));
+	public Save() {
+		this(new File(Game.gameDir+"/"));
 		if(Game.debug) System.out.println("writing preferences...");
 		writePrefs("Preferences");
 	}
 	
 	public Save(Player player) {
 		// this is simply for access to writeToFile.
-		this(player.game, new File(Game.gameDir+"/saves/"+WorldSelectMenu.worldname + "/"));
+		this(new File(Game.gameDir+"/saves/"+ WorldSelectMenu.getWorldName() + "/"));
+	}
+	
+	public static void writeFile(String filename, String[] lines) throws IOException {
+		try (BufferedWriter br = new BufferedWriter(new FileWriter(filename))) {
+			br.write(String.join(System.lineSeparator(), lines));
+		}
 	}
 	
 	public void writeToFile(String filename, List<String> savedata) {
@@ -95,28 +114,15 @@ public class Save {
 		
 		data.clear();
 		
-		LoadingMenu.percentage += 7;
-		if(LoadingMenu.percentage > 100) {
-			LoadingMenu.percentage = 100;
+		LoadingDisplay.progress(7);
+		if(LoadingDisplay.getPercentage() > 100) {
+			LoadingDisplay.setPercentage(100);
 		}
 		
-		game.render(); // AH HA!!! HERE'S AN IMPORTANT STATEMENT!!!!
+		Game.render(); // AH HA!!! HERE'S AN IMPORTANT STATEMENT!!!!
 	}
 	
 	public static void writeToFile(String filename, String[] savedata, boolean isWorldSave) throws IOException {
-		//BufferedWriter bufferedWriter = null;
-		
-		/*String content = "";
-		for(String data: savedata) {
-			content += data + ",";
-		}
-		if(filename.contains("Level5")) content += ",";
-		*/
-		/*if(base64Encode) {
-			byte[] bytes = content.getBytes();
-			content = Base64.getEncoder().encodeToString(bytes);
-		}*/
-		
 		try (BufferedWriter bufferedWriter = new BufferedWriter(new FileWriter(filename))) {
 			//bufferedWriter.write(content);
 			for(int i = 0; i < savedata.length; i++) {
@@ -129,42 +135,31 @@ public class Save {
 				} else
 					bufferedWriter.write("\n");
 			}
-		} catch (IOException ex) {
-			throw ex;
-		}/* finally {
-			try {
-				if(bufferedWriter != null) {
-					
-					
-					bufferedWriter.flush();
-					bufferedWriter.close();
-				}
-			} catch (IOException ex) {
-				ex.printStackTrace();
-			}
-		}*/
+		}
 	}
 	
 	public void writeGame(String filename) {
 		data.add(String.valueOf(Game.VERSION));
 		data.add(String.valueOf(Game.tickCount));
-		data.add(String.valueOf(game.gameTime));
-		data.add(String.valueOf(OptionsMenu.diff));
+		data.add(String.valueOf(Game.gameTime));
+		data.add(String.valueOf(Settings.getIdx("diff")));
 		data.add(String.valueOf(AirWizard.beaten));
 		writeToFile(location + filename + extension, data);
 	}
 	
 	public void writePrefs(String filename) {
 		data.add(Game.VERSION);
-		data.add(String.valueOf(OptionsMenu.isSoundAct));
-		data.add(String.valueOf(OptionsMenu.autosave));
+		data.add(String.valueOf(Settings.get("sound")));
+		data.add(String.valueOf(Settings.get("autosave")));
+		data.add(String.valueOf(Settings.get("fps")));
 		data.add(MultiplayerMenu.savedIP);
+		data.add(MultiplayerMenu.savedUUID);
+		data.add(MultiplayerMenu.savedUsername);
 		
-		List<String> keyPairs = new ArrayList<String>();
-		for(String keyPref: game.input.getKeyPrefs())
-			keyPairs.add(keyPref);
+		List<String> keyPairs = new ArrayList<>();
+		Collections.addAll(keyPairs, Game.input.getKeyPrefs());
 		
-		data.add(String.join(":", keyPairs.toArray(new String[0])));
+		data.add(String.join(":", keyPairs.toArray(new String[keyPairs.size()])));
 		
 		writeToFile(location + filename + extension, data);
 	}
@@ -178,8 +173,9 @@ public class Save {
 	
 	public void writeWorld(String filename) {
 		for(int l = 0; l < Game.levels.length; l++) {
-			data.add(String.valueOf(WorldGenMenu.getSize()));
-			data.add(String.valueOf(WorldGenMenu.getSize()));
+			String worldSize = String.valueOf(Settings.get("size"));
+			data.add(worldSize);
+			data.add(worldSize);
 			data.add(String.valueOf(Game.levels[l].depth));
 			
 			for(int x = 0; x < Game.levels[l].w; x++) {
@@ -219,18 +215,18 @@ public class Save {
 		data.add(String.valueOf(player.score));
 		//data.add(String.valueOf(player.ac));
 		data.add("25"); // TODO filler; remove this, but make sure not to break the Load class's LoadPlayer() method while doing so.
-		data.add(String.valueOf(player.game.currentLevel));
-		data.add(ModeMenu.mode + (ModeMenu.score?";"+Game.scoreTime+";"+ModeMenu.getSelectedTime():""));
+		data.add(String.valueOf(Game.currentLevel));
+		data.add(Settings.getIdx("mode") + (Game.isMode("score")?";"+Game.scoreTime+";"+Settings.get("scoretime"):""));
 		
-		String subdata = "PotionEffects[";
+		StringBuilder subdata = new StringBuilder("PotionEffects[");
 		
 		for(java.util.Map.Entry<PotionType, Integer> potion: player.potioneffects.entrySet())
-			subdata += potion.getKey() + ";" + potion.getValue() + ":";
+			subdata.append(potion.getKey()).append(";").append(potion.getValue()).append(":");
 		
 		if(player.potioneffects.size() > 0)
-			subdata = subdata.substring(0, subdata.length()-(1))+"]"; // cuts off extra ":" and appends "]"
-		else subdata += "]";
-		data.add(subdata);
+			subdata = new StringBuilder(subdata.substring(0, subdata.length() - (1)) + "]"); // cuts off extra ":" and appends "]"
+		else subdata.append("]");
+		data.add(subdata.toString());
 		
 		data.add(String.valueOf(player.shirtColor));
 		data.add(String.valueOf(player.skinon));
@@ -280,50 +276,50 @@ public class Save {
 	public static String writeEntity(Entity e, boolean isLocalSave) {
 		String name = e.getClass().getName().replace("minicraft.entity.", "");
 		//name = name.substring(name.lastIndexOf(".")+1);
-		String extradata = "";
+		StringBuilder extradata = new StringBuilder();
 		
-		// don't even write ItemEntities or particle effects; Spark... will probably is saved, eventually; it presents an unfair cheat to remove the sparks by reloading the game.
+		// don't even write ItemEntities or particle effects; Spark... will probably is saved, eventually; it presents an unfair cheat to remove the sparks by reloading the Game.
 		
 		//if(e instanceof Particle) return ""; // TODO I don't want to, but there are complications.
 		
-		if(isLocalSave && (e instanceof ItemEntity || e instanceof Arrow || e instanceof RemotePlayer || e instanceof Spark || e instanceof Particle)) // wirte these only when sending a world, not writing it. (RemotePlayers are saved seperately, when their info is recieved.)
+		if(isLocalSave && (e instanceof ItemEntity || e instanceof Arrow || e instanceof RemotePlayer || e instanceof Spark || e instanceof Particle)) // wirte these only when sending a world, not writing it. (RemotePlayers are saved seperately, when their info is received.)
 			return "";
 		
 		if(!isLocalSave)
-			extradata += ":" + e.eid;
+			extradata.append(":").append(e.eid);
 		
 		if(!isLocalSave && e instanceof RemotePlayer) {
 			RemotePlayer rp = (RemotePlayer)e;
-			extradata += ":" + rp.getData();
+			extradata.append(":").append(rp.getData());
 		} // the "else" part is so that remote player, which is a mob, doesn't get the health thing.
 		else if(e instanceof Mob) {
 			Mob m = (Mob)e;
-			extradata += ":" + m.health;
+			extradata.append(":").append(m.health);
 			if(e instanceof EnemyMob)
-				extradata += ":" + ((EnemyMob)m).lvl;
+				extradata.append(":").append(((EnemyMob) m).lvl);
 		}
 		
 		if(e instanceof Chest) {
 			Chest chest = (Chest)e;
 			
 			for(int ii = 0; ii < chest.inventory.invSize(); ii++) {
-				Item item = (Item)chest.inventory.get(ii);
-				extradata += ":" + item.name;
+				Item item = chest.inventory.get(ii);
+				extradata.append(":").append(item.name);
 				if(item instanceof StackableItem)
-					extradata += ";" + chest.inventory.count(item);
+					extradata.append(";").append(chest.inventory.count(item));
 			}
 			
-			if(chest instanceof DeathChest) extradata += ":" + ((DeathChest)chest).time;
-			if(chest instanceof DungeonChest) extradata += ":" + ((DungeonChest)chest).isLocked;
+			if(chest instanceof DeathChest) extradata.append(":").append(((DeathChest) chest).time);
+			if(chest instanceof DungeonChest) extradata.append(":").append(((DungeonChest) chest).isLocked);
 		}
 		
 		if(e instanceof Spawner) {
 			Spawner egg = (Spawner)e;
-			extradata += ":" + egg.mob.getClass().getName().replace("minicraft.entity.", "") + ":" + (egg.mob instanceof EnemyMob ? ((EnemyMob)egg.mob).lvl : 1);
+			extradata.append(":").append(egg.mob.getClass().getName().replace("minicraft.entity.", "")).append(":").append(egg.mob instanceof EnemyMob ? ((EnemyMob) egg.mob).lvl : 1);
 		}
 		
 		if (e instanceof Lantern) {
-			extradata += ":"+((Lantern)e).type.ordinal();
+			extradata.append(":").append(((Lantern) e).type.ordinal());
 		}
 		
 		if (e instanceof Crafter) {
@@ -331,10 +327,10 @@ public class Save {
 		}
 		
 		if (!isLocalSave) {
-			if(e instanceof ItemEntity) extradata += ":" + ((ItemEntity)e).getData();
-			if(e instanceof Arrow) extradata += ":" + ((Arrow)e).getData();
-			if(e instanceof Spark) extradata += ":" + ((Spark)e).getData();
-			if(e instanceof TextParticle) extradata += ":" + ((TextParticle)e).getData();
+			if(e instanceof ItemEntity) extradata.append(":").append(((ItemEntity) e).getData());
+			if(e instanceof Arrow) extradata.append(":").append(((Arrow) e).getData());
+			if(e instanceof Spark) extradata.append(":").append(((Spark) e).getData());
+			if(e instanceof TextParticle) extradata.append(":").append(((TextParticle) e).getData());
 		}
 		//else // is a local save
 		
@@ -344,7 +340,7 @@ public class Save {
 		else
 			depth = e.getLevel().depth;
 		
-		extradata += ":" + Game.lvlIdx(depth);
+		extradata.append(":").append(Game.lvlIdx(depth));
 		
 		return name + "[" + e.x + ":" + e.y + extradata + "]";
 	}
