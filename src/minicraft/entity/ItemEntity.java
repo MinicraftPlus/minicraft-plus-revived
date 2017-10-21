@@ -103,6 +103,8 @@ public class ItemEntity extends Entity {
 	}
 
 	protected void touchedBy(Entity entity) {
+		if(!(entity instanceof Player)) return; // for the time being, we only care when a player touches an item.
+		
 		if (time > 30) { // conditional prevents this from being collected immediately.
 			if(Game.isConnectedClient() && entity == Game.player) {// only register if the main player picks it up, on a client.
 				if (pickedUp && (System.nanoTime() - pickupTimestamp) / 1E8 > 15L) { // should be converted to tenths of a second.
@@ -117,7 +119,7 @@ public class ItemEntity extends Entity {
 					pickupTimestamp = System.nanoTime();
 				}
 			}
-			else if(!pickedUp && !(Game.ISONLINE && entity instanceof Player)) {// don't register if we are online and a player touches it; the client will register that.
+			else if(!pickedUp && !Game.ISONLINE) {// don't register if we are online and a player touches it; the client will register that.
 				pickedUp = true;
 				((Player)entity).pickupItem(this);
 				pickedUp = isRemoved();
