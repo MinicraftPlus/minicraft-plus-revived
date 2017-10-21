@@ -1,6 +1,7 @@
 package minicraft.entity;
 
 import minicraft.Game;
+import minicraft.entity.mob.Player;
 import minicraft.gfx.Color;
 import minicraft.gfx.Screen;
 import minicraft.item.Item;
@@ -88,7 +89,7 @@ public class ItemEntity extends Entity {
 		yy += goty - expectedy;
 	}
 
-	public boolean isBlockableBy(Mob mob) {
+	public boolean isSolid() {
 		return false; // mobs cannot block this
 	}
 

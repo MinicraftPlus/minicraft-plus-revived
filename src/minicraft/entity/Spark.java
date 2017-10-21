@@ -1,7 +1,11 @@
 package minicraft.entity;
 
 import java.util.List;
+
+import minicraft.entity.mob.AirWizard;
+import minicraft.entity.mob.Mob;
 import minicraft.gfx.Color;
+import minicraft.gfx.Rectangle;
 import minicraft.gfx.Screen;
 
 public class Spark extends Entity {
@@ -35,18 +39,18 @@ public class Spark extends Entity {
 		yy += ya;
 		x = (int) xx;
 		y = (int) yy;
-		List<Entity> toHit = level.getEntitiesInRect(x, y, x, y); // gets the entities in the current position to hit.
+		List<Entity> toHit = level.getEntitiesInRect(new Rectangle(x, y, 0, 0, Rectangle.CENTER_DIMS)); // gets the entities in the current position to hit.
 		for (int i = 0; i < toHit.size(); i++) {
 			Entity e = toHit.get(i);
 			if (e instanceof Mob && !(e instanceof AirWizard)) {
 				 // if the entity is a mob, but not a Air Wizard, then hurt the mob with 1 damage.
-				e.hurt(owner, 1, Mob.getAttackDir(this, e));
+				((Mob)e).hurt(owner, 1);
 			}
 		}
 	}
 	
 	/** Can this entity block you? Nope. */
-	public boolean isBlockableBy(Mob mob) {
+	public boolean isSolid() {
 		return false;
 	}
 

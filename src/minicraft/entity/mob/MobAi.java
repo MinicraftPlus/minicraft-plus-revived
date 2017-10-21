@@ -1,10 +1,12 @@
-package minicraft.entity;
+package minicraft.entity.mob;
 
 import minicraft.Game;
 import minicraft.Sound;
+import minicraft.entity.Direction;
 import minicraft.entity.particle.TextParticle;
 import minicraft.gfx.Color;
 import minicraft.gfx.MobSprite;
+import minicraft.gfx.Rectangle;
 import minicraft.gfx.Screen;
 import minicraft.item.Item;
 import minicraft.item.PotionType;
@@ -80,10 +82,11 @@ public abstract class MobAi extends Mob {
 			color = Color.WHITE;
 		}
 		
-		MobSprite curSprite = sprites[dir][(walkDist >> 3) % sprites[dir].length];
+		MobSprite curSprite = sprites[dir.ordinal()][(walkDist >> 3) % sprites[dir.ordinal()].length];
 		curSprite.render(screen, xo, yo, color);
 	}
 	
+	@Override
 	public boolean move(int xa, int ya) {
 		//noinspection SimplifiableIfStatement
 		if(Game.isValidClient()) return false; // client mobAi's should not move at all.
@@ -91,7 +94,8 @@ public abstract class MobAi extends Mob {
 		return super.move(xa, ya);
 	}
 	
-	public void doHurt(int damage, int attackDir) {
+	@Override
+	public void doHurt(int damage, Direction attackDir) {
 		if (isRemoved() || hurtTime > 0) return; // If the mob has been hurt recently and hasn't cooled down, don't continue
 		
 		Player player = getClosestPlayer();
@@ -141,7 +145,7 @@ public abstract class MobAi extends Mob {
 		int r = level.monsterDensity * soloRadius; // get no-mob radius
 		
 		//noinspection SimplifiableIfStatement
-		if (level.getEntitiesInRect(x - r, y - r, x + r, y + r).size() > 0) return false;
+		if (level.getEntitiesInRect(new Rectangle(x, y, r*2, r*2, Rectangle.CENTER_DIMS)).size() > 0) return false;
 		
 		return level.getTile(x >> 4, y >> 4).maySpawn; // the last check.
 	}

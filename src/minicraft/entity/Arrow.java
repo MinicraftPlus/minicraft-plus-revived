@@ -1,26 +1,28 @@
 package minicraft.entity;
 
 import java.util.List;
+
+import minicraft.entity.mob.Mob;
+import minicraft.entity.mob.Player;
 import minicraft.gfx.Color;
+import minicraft.gfx.Rectangle;
 import minicraft.gfx.Screen;
 
 public class Arrow extends Entity {
-	private int xdir;
-	private int ydir;
+	private Direction dir;
 	private int damage;
 	public Mob owner;
 	private int speed;
 	
-	public Arrow(Mob owner, int dirx, int diry, int dmg) {
-		this(owner, owner.x, owner.y, dirx, diry, dmg);
+	public Arrow(Mob owner, Direction dir, int dmg) {
+		this(owner, owner.x, owner.y, dir, dmg);
 	}
-	public Arrow(Mob owner, int x, int y, int dirx, int diry, int dmg) {
-		super(Math.abs(dirx)+1, Math.abs(diry)+1);
+	public Arrow(Mob owner, int x, int y, Direction dir, int dmg) {
+		super(Math.abs(dir.getX())+1, Math.abs(dir.getY())+1);
 		this.owner = owner;
 		this.x = x;
 		this.y = y;
-		xdir = dirx;
-		ydir = diry;
+		this.dir = dir;
 		
 		damage = dmg;
 		col = Color.get(-1, 111, 222, 430);
@@ -37,7 +39,7 @@ public class Arrow extends Entity {
 	}
 	
 	public String getData() {
-		return owner.eid+":"+xdir+":"+ydir+":"+damage;
+		return owner.eid+":"+dir.ordinal()+":"+damage;
 	}
 	
 	public void tick() {
@@ -46,11 +48,11 @@ public class Arrow extends Entity {
 			return;
 		}
 
-		x += xdir * speed;
-		y += ydir * speed;
+		x += dir.getX() * speed;
+		y += dir.getY() * speed;
 		
 		// TODO I think I can just use the xr yr vars, and the normal system with touchedBy(entity) to detect collisions instead.
-		List<Entity> entitylist = level.getEntitiesInRect(x, y, x, y);
+		List<Entity> entitylist = level.getEntitiesInRect(new Rectangle(x, y, 0, 0, Rectangle.CENTER_DIMS));
 		boolean criticalHit = random.nextInt(11) < 9;
 		for (int i = 0; i < entitylist.size(); i++) {
 			Entity hit = entitylist.get(i);
@@ -58,7 +60,7 @@ public class Arrow extends Entity {
 			if (hit != null && hit instanceof Mob && hit != owner) {
 				Mob mob = (Mob) hit;
 				int extradamage = (hit instanceof Player ? 0 : 3) + (criticalHit ? 0 : 1);
-				mob.hurt(owner, damage + extradamage, (xdir<0?2:(xdir>0?3:(ydir<0?1:0)))); // that should correctly convert to mob directions.
+				mob.hurt(owner, damage + extradamage, dir);
 			}
 			
 			/*if(owner instanceof Player && minicraft.screen.Game.isMode("creative") && minicraft.Game.debug) {
@@ -74,7 +76,7 @@ public class Arrow extends Entity {
 		}
 	}
 
-	public boolean isBlockableBy(Mob mob) {
+	public boolean isSolid() {
 		return false;
 	}
 
@@ -84,13 +86,19 @@ public class Arrow extends Entity {
 			if (time / 6 % 2 == 0) return;
 		}*/
 		
-		byte xt = 0;
-		byte yt = 5;
+		int xt;
+		int yt = 5;
 		
-		if (xdir == 0 && ydir == -1) xt = 15;
-		else if (xdir == 1 && ydir == 0) xt = 14;
-		else if (xdir == -1 && ydir == 0) xt = 13;
-		else if (xdir == 0 && ydir == 1) xt = 16;
+		if(dir == Direction.DOWN) xt = 16;
+		if(dir == Direction.UP) xt = 15;
+		if(dir == Direction.LEFT) xt = 13;
+		else xt = 14;
+		
+		/*if (xdir == 0 && ydir == -1) xt = 15; // up
+		else if (xdir == 1 && ydir == 0) xt = 14; // right
+		else if (xdir == -1 && ydir == 0) xt = 13; // left
+		else if (xdir == 0 && ydir == 1) xt = 16; // down
+		*/
 		
 		screen.render(x - 4, y - 4, xt + yt * 32, col, 1);
 	}

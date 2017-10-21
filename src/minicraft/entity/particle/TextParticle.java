@@ -12,8 +12,7 @@ public class TextParticle extends Particle {
 	private FontStyle style;
 	
 	public TextParticle(String msg, int x, int y, int col) {
-		super(x, y, 60, null);
-		this.xr = msg.length();
+		super(x, y, msg.length(), 60, null);
 		
 		style = new FontStyle(col).setShadowType(Color.BLACK, false);
 		this.msg = msg;

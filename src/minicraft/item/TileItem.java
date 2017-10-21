@@ -5,7 +5,8 @@ import java.util.Arrays;
 import java.util.List;
 
 import minicraft.Game;
-import minicraft.entity.Player;
+import minicraft.entity.Direction;
+import minicraft.entity.mob.Player;
 import minicraft.gfx.Color;
 import minicraft.gfx.Sprite;
 import minicraft.level.Level;
@@ -67,7 +68,7 @@ public class TileItem extends StackableItem {
 			this.validTiles.add(tile.toUpperCase());
 	}
 	
-	public boolean interactOn(Tile tile, Level level, int xt, int yt, Player player, int attackDir) {
+	public boolean interactOn(Tile tile, Level level, int xt, int yt, Player player, Direction attackDir) {
 		for(String tilename: validTiles) {
 			//Tile t = Tiles.get(tilename.contains("_")?tilename.substring(0, tilename.indexOf("_")):tilename);
 			if(tile.matches(level.getData(xt, yt), tilename)) {

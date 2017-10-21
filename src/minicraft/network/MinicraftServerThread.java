@@ -12,8 +12,9 @@ import java.util.Timer;
 import java.util.TimerTask;
 
 import minicraft.Game;
+import minicraft.entity.Direction;
 import minicraft.entity.Entity;
-import minicraft.entity.RemotePlayer;
+import minicraft.entity.mob.RemotePlayer;
 import minicraft.item.Item;
 import minicraft.item.PowerGloveItem;
 import minicraft.level.Level;
@@ -177,8 +178,8 @@ public class MinicraftServerThread extends MinicraftConnection {
 		sendData(InputType.NOTIFY, notetime+";"+note);
 	}
 	
-	public void sendPlayerHurt(int eid, int damage, int attackDir) {
-		sendData(InputType.HURT, eid+";"+damage+";"+attackDir);
+	public void sendPlayerHurt(int eid, int damage, Direction attackDir) {
+		sendData(InputType.HURT, eid+";"+damage+";"+attackDir.ordinal());
 	}
 	
 	public void updatePlayerActiveItem(Item heldItem) {

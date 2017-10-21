@@ -1,7 +1,8 @@
 package minicraft.level.tile;
 
 import minicraft.Sound;
-import minicraft.entity.Player;
+import minicraft.entity.Direction;
+import minicraft.entity.mob.Player;
 import minicraft.gfx.Color;
 import minicraft.gfx.Screen;
 import minicraft.gfx.Sprite;
@@ -37,7 +38,7 @@ public class DirtTile extends Tile {
 		sprite.render(screen, x*16, y*16, getColor(level.depth));
 	}
 	
-	public boolean interact(Level level, int xt, int yt, Player player, Item item, int attackDir) {
+	public boolean interact(Level level, int xt, int yt, Player player, Item item, Direction attackDir) {
 		if (item instanceof ToolItem) {
 			ToolItem tool = (ToolItem) item;
 			if (tool.type == ToolType.Shovel) {

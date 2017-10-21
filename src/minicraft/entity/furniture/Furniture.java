@@ -1,6 +1,10 @@
-package minicraft.entity;
+package minicraft.entity.furniture;
 
 import minicraft.Game;
+import minicraft.entity.Direction;
+import minicraft.entity.Entity;
+import minicraft.entity.mob.Player;
+import minicraft.entity.mob.RemotePlayer;
 import minicraft.gfx.Screen;
 import minicraft.gfx.Sprite;
 import minicraft.item.FurnitureItem;
@@ -11,7 +15,7 @@ import minicraft.item.PowerGloveItem;
 public class Furniture extends Entity {
 	
 	protected int pushTime = 0, multiPushTime = 0; // time for each push; multi is for multiplayer, to make it so not so many updates are sent.
-	protected int pushDir = -1; // the direction to push the furniture
+	private Direction pushDir = Direction.NONE; // the direction to push the furniture
 	public Sprite sprite;
 	public String name;
 	
@@ -35,23 +39,28 @@ public class Furniture extends Entity {
 
 	public void tick() {
 		// moves the furniture in the correct direction.
-		if (pushDir == 0) move(0, +1);
+		/*if (pushDir == 0) move(0, +1);
 		if (pushDir == 1) move(0, -1);
 		if (pushDir == 2) move(-1, 0);
 		if (pushDir == 3) move(+1, 0);
 		pushDir = -1; // makes pushDir -1 so it won't repeat itself.
+		*/
+		move(pushDir.getX(), pushDir.getY());
+		pushDir = Direction.NONE;
+		
 		if (pushTime > 0) pushTime--; // update pushTime by subtracting 1.
 		else multiPushTime = 0;
 	}
 	
 	/** Draws the furniture on the screen. */
-	public void render(Screen screen) {
-		sprite.render(screen, x-8, y-8);
-	}
+	public void render(Screen screen) { sprite.render(screen, x-8, y-8); }
 	
-	/** Determines if this entity can block others */
+	/** Called when the player presses the MENU key in front of this. */
+	public boolean use(Player player) { return false; }
+	
+	@Override
 	public boolean blocks(Entity e) {
-		return true; // yes this can block your way (Needed for pushing)
+		return true; // furniture blocks all entities, even non-solid ones like arrows.
 	}
 	
 	/** What happens when this is touched by another entity */
@@ -86,9 +95,8 @@ public class Furniture extends Entity {
 		//if (Game.debug) System.out.println("set active item of player " + player + " to " + player.activeItem + "; picked up furniture: " + this);
 	}
 	
-	public boolean canWool() {
-		return true;
-	}
+	@Override
+	public boolean canWool() { return true; }
 	
 	protected String getUpdateString() {
 		return super.getUpdateString()+

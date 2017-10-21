@@ -12,13 +12,14 @@ import java.util.TimerTask;
 
 import minicraft.Game;
 import minicraft.Settings;
-import minicraft.entity.Bed;
-import minicraft.entity.Chest;
+import minicraft.entity.furniture.Bed;
+import minicraft.entity.furniture.Chest;
+import minicraft.entity.Direction;
 import minicraft.entity.Entity;
-import minicraft.entity.Furniture;
+import minicraft.entity.furniture.Furniture;
 import minicraft.entity.ItemEntity;
-import minicraft.entity.Player;
-import minicraft.entity.RemotePlayer;
+import minicraft.entity.mob.Player;
+import minicraft.entity.mob.RemotePlayer;
 import minicraft.item.Item;
 import minicraft.item.Items;
 import minicraft.item.PotionItem;
@@ -300,7 +301,7 @@ public class MinicraftServer extends Thread implements MinicraftProtocol {
 		broadcastData(InputType.NOTIFY, data);
 	}
 	
-	public void broadcastPlayerHurt(int eid, int damage, int attackDir) {
+	public void broadcastPlayerHurt(int eid, int damage, Direction attackDir) {
 		for(MinicraftServerThread thread: getThreads())
 			thread.sendPlayerHurt(eid, damage, attackDir);
 	}
@@ -716,7 +717,7 @@ public class MinicraftServer extends Thread implements MinicraftProtocol {
 					System.out.println("SERVER: entity is not a bed: " + bed);
 					return false;
 				}
-				bed.use(clientPlayer, 0);
+				((Bed)bed).use(clientPlayer);
 				return true;
 			
 			case POTION:
@@ -745,7 +746,7 @@ public class MinicraftServer extends Thread implements MinicraftProtocol {
 				
 				boolean moved = clientPlayer.move(newx - clientPlayer.x, newy - clientPlayer.y); // this moves the player, and updates other clients.
 				
-				clientPlayer.dir = Integer.parseInt(data[2]); // do this AFTERWARD, so that the move method doesn't mess something up.
+				clientPlayer.dir = Direction.values[Integer.parseInt(data[2])]; // do this AFTERWARD, so that the move method doesn't mess something up.
 				
 				if(moved) clientPlayer.updateSyncArea(oldx, oldy); // this updates the current client.
 				

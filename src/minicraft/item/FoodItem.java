@@ -1,7 +1,9 @@
 package minicraft.item;
 
 import java.util.ArrayList;
-import minicraft.entity.Player;
+
+import minicraft.entity.Direction;
+import minicraft.entity.mob.Player;
 import minicraft.gfx.Color;
 import minicraft.gfx.Sprite;
 import minicraft.level.Level;
@@ -37,7 +39,7 @@ public class FoodItem extends StackableItem {
 	}
 	
 	/** What happens when the player uses the item on a tile */
-	public boolean interactOn(Tile tile, Level level, int xt, int yt, Player player, int attackDir) {
+	public boolean interactOn(Tile tile, Level level, int xt, int yt, Player player, Direction attackDir) {
 		boolean success = false;
 		if (count > 0 && player.hunger < 10 && player.payStamina(staminaCost)) { // if the player has hunger to fill, and stamina to pay...
 			player.hunger += heal; // restore the hunger

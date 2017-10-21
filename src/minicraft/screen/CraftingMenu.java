@@ -6,7 +6,7 @@ import java.util.List;
 
 import minicraft.Game;
 import minicraft.InputHandler;
-import minicraft.entity.Player;
+import minicraft.entity.mob.Player;
 import minicraft.gfx.Point;
 import minicraft.gfx.SpriteSheet;
 import minicraft.item.Item;

@@ -1,6 +1,8 @@
-package minicraft.entity;
+package minicraft.entity.furniture;
 
 import minicraft.Game;
+import minicraft.entity.Inventory;
+import minicraft.entity.mob.Player;
 import minicraft.gfx.Color;
 import minicraft.gfx.Sprite;
 import minicraft.screen.ContainerMenu;
@@ -16,7 +18,7 @@ public class Chest extends Furniture {
 	}
 	
 	/** This is what occurs when the player uses the "Menu" command near this */
-	public boolean use(Player player, int attackDir) {
+	public boolean use(Player player) {
 		Game.setMenu(new ContainerMenu(player, this));
 		return true;
 	}

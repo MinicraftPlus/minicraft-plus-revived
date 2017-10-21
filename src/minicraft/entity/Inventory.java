@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 
+import minicraft.entity.furniture.Furniture;
 import minicraft.item.FurnitureItem;
 import minicraft.item.Item;
 import minicraft.item.Items;

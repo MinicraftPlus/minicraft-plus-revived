@@ -1,7 +1,9 @@
-package minicraft.entity;
+package minicraft.entity.mob;
 
 import minicraft.Settings;
 import minicraft.Sound;
+import minicraft.entity.Direction;
+import minicraft.entity.Entity;
 import minicraft.gfx.Color;
 import minicraft.gfx.MobSprite;
 import minicraft.gfx.Screen;
@@ -32,13 +34,11 @@ public class Creeper extends EnemyMob {
 	private int fuseTime = 0;
 	private boolean fuseLit = false;
 	
-	public Creeper(int lvl) {
-		super(lvl, sprites, lvlcols, 10, 50);
-	}
+	public Creeper(int lvl) { super(lvl, sprites, lvlcols, 10, 50); }
 	
 	public boolean move(int xa, int ya) {
 		boolean result = super.move(xa, ya);
-		dir = 0;
+		dir = Direction.DOWN;
 		if (xa == 0 && ya == 0) walkDist = 0;
 		return result;
 	}
@@ -61,7 +61,7 @@ public class Creeper extends EnemyMob {
 				if(pdx < BLAST_RADIUS && pdy < BLAST_RADIUS) {
 					float pd = (float) Math.sqrt(pdx * pdx + pdy * pdy);
 					int dmg = (int) (BLAST_DAMAGE * (1 - (pd / BLAST_RADIUS))) + Settings.getIdx("diff");
-					player.hurt(this, dmg, Mob.getAttackDir(this, player));
+					player.hurt(this, dmg);
 					player.payStamina(dmg * (Settings.get("diff").equals("Easy")?1:2));
 					hurtOne = true;
 				}
@@ -113,13 +113,11 @@ public class Creeper extends EnemyMob {
 				fuseTime = MAX_FUSE_TIME;
 				fuseLit = true;
 			}
-			entity.hurt(this, 1, Mob.getAttackDir(this, entity));
+			((Player)entity).hurt(this, 1);
 		}
 	}
 	
-	public boolean canWool() {
-		return false;
-	}
+	public boolean canWool() { return false; }
 	
 	protected void die() {
 		dropItem(1, 4-Settings.getIdx("diff"), Items.get("Gunpowder"));

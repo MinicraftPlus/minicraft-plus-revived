@@ -2,7 +2,7 @@ package minicraft.screen;
 
 import minicraft.Game;
 import minicraft.InputHandler;
-import minicraft.entity.Player;
+import minicraft.entity.mob.Player;
 
 public class PlayerInvMenu extends Display {
 	

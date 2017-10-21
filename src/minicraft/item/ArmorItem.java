@@ -1,7 +1,9 @@
 package minicraft.item;
 
 import java.util.ArrayList;
-import minicraft.entity.Player;
+
+import minicraft.entity.Direction;
+import minicraft.entity.mob.Player;
 import minicraft.gfx.Color;
 import minicraft.gfx.Sprite;
 import minicraft.level.Level;
@@ -33,7 +35,7 @@ public class ArmorItem extends StackableItem {
 		staminaCost = 9;
 	}
 
-	public boolean interactOn(Tile tile, Level level, int xt, int yt, Player player, int attackDir) {
+	public boolean interactOn(Tile tile, Level level, int xt, int yt, Player player, Direction attackDir) {
 		boolean success = false;
 		if (player.curArmor == null && player.payStamina(staminaCost)) {
 			player.curArmor = this; // set the current armor being worn to this.

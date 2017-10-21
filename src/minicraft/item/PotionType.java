@@ -1,6 +1,6 @@
 package minicraft.item;
 
-import minicraft.entity.Player;
+import minicraft.entity.mob.Player;
 
 public enum PotionType {
 	None (5, 0),

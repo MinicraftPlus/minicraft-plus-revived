@@ -11,14 +11,15 @@ import java.util.List;
 
 import minicraft.Game;
 import minicraft.Settings;
-import minicraft.entity.Bed;
-import minicraft.entity.Chest;
-import minicraft.entity.DeathChest;
+import minicraft.entity.furniture.Bed;
+import minicraft.entity.furniture.Chest;
+import minicraft.entity.furniture.DeathChest;
+import minicraft.entity.Direction;
 import minicraft.entity.Entity;
-import minicraft.entity.Furniture;
+import minicraft.entity.furniture.Furniture;
 import minicraft.entity.ItemEntity;
-import minicraft.entity.Player;
-import minicraft.entity.RemotePlayer;
+import minicraft.entity.mob.Player;
+import minicraft.entity.mob.RemotePlayer;
 import minicraft.item.Item;
 import minicraft.item.Items;
 import minicraft.item.PotionItem;
@@ -431,7 +432,7 @@ public class MinicraftClient extends MinicraftConnection {
 				//if(Game.debug) System.out.println("CLIENT: received hurt packet");
 				int hurteid = Integer.parseInt(data[0]);
 				int damage = Integer.parseInt(data[1]);
-				int attackDir = Integer.parseInt(data[2]);
+				Direction attackDir = Direction.values[Integer.parseInt(data[2])];
 				Entity p = Game.getEntity(hurteid);
 				if (p instanceof Player)
 					((Player)p).hurt(damage, attackDir);
@@ -446,7 +447,7 @@ public class MinicraftClient extends MinicraftConnection {
 	
 	public void move(Player player) {
 		//if(Game.debug) System.out.println("CLIENT: sending player movement to ("+player.x+","+player.y+"): " + player);
-		String movedata = player.x+";"+player.y+";"+player.dir+";"+Game.lvlIdx(player.getLevel().depth);
+		String movedata = player.x+";"+player.y+";"+player.dir.ordinal()+";"+Game.lvlIdx(player.getLevel().depth);
 		sendData(InputType.MOVE, movedata);
 	}
 	
@@ -462,9 +463,7 @@ public class MinicraftClient extends MinicraftConnection {
 		sendData(InputType.TILE, level.depth+";"+xt+";"+yt);
 	}
 	
-	public void dropItem(Item drop) {
-		sendData(InputType.DROP, drop.getData()/*Save.writeEntity(drop, false)*/);
-	}
+	public void dropItem(Item drop) { sendData(InputType.DROP, drop.getData()); }
 	
 	public void sendPlayerUpdate(Player player) {
 		if(player.getUpdates().length() > 0) {
@@ -483,11 +482,7 @@ public class MinicraftClient extends MinicraftConnection {
 		sendData(InputType.DIE, chestData);
 	}
 	
-	public void requestRespawn() {
-		sendData(InputType.RESPAWN, "");
-		//menu.setLoadingMessage("spawnpoint")
-		//Game.setMenu(menu);
-	}
+	public void requestRespawn() { sendData(InputType.RESPAWN, ""); }
 	
 	public void addToChest(Chest chest, Item item) {
 		if(chest == null || item == null) return;
@@ -499,18 +494,14 @@ public class MinicraftClient extends MinicraftConnection {
 		sendData(InputType.CHESTOUT, chest.eid+";"+index+";"+wholeStack);
 	}
 	
-	public void pushFurniture(Furniture f, int pushDir) {
-		sendData(InputType.PUSH, String.valueOf(f.eid));
-	}
+	public void pushFurniture(Furniture f, Direction pushDir) { sendData(InputType.PUSH, String.valueOf(f.eid)); }
 	
 	public void pickupItem(ItemEntity ie) {
 		if(ie == null) return;
 		sendData(InputType.PICKUP, String.valueOf(ie.eid));
 	}
 	
-	public void sendBedRequest(Player player, Bed bed) {
-		sendData(InputType.BED, String.valueOf(bed.eid));
-	}
+	public void sendBedRequest(Player player, Bed bed) { sendData(InputType.BED, String.valueOf(bed.eid)); }
 	
 	public void requestLevel(int lvlidx) {
 		Game.currentLevel = lvlidx; // just in case.
@@ -529,9 +520,7 @@ public class MinicraftClient extends MinicraftConnection {
 		if(Game.debug) System.out.println("client has ended its connection.");
 	}
 	
-	public boolean isConnected() {
-		return super.isConnected() && curState != State.DISCONNECTED;
-	}
+	public boolean isConnected() { return super.isConnected() && curState != State.DISCONNECTED; }
 	
 	public String toString() { return "CLIENT"; }
 }

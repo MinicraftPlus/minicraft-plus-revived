@@ -6,7 +6,7 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Scanner;
 
-import minicraft.entity.RemotePlayer;
+import minicraft.entity.mob.RemotePlayer;
 import minicraft.level.Level;
 import minicraft.network.MinicraftServerThread;
 import minicraft.saveload.Save;
@@ -16,9 +16,7 @@ class ConsoleReader extends Thread {
 	
 	private enum Config {
 		PLAYERCAP {
-			public String getValue() {
-				return String.valueOf(Game.server.getPlayerCap());
-			}
+			public String getValue()  { return String.valueOf(Game.server.getPlayerCap()); }
 			
 			public boolean setValue(String val) {
 				try {
@@ -32,9 +30,7 @@ class ConsoleReader extends Thread {
 		},
 		
 		AUTOSAVE {
-			public String getValue() {
-				return String.valueOf(Settings.get("autosave"));
-			}
+			public String getValue()  { return String.valueOf(Settings.get("autosave")); }
 			
 			public boolean setValue(String val) {
 				Settings.set("autosave", Boolean.parseBoolean(val));
@@ -301,9 +297,7 @@ class ConsoleReader extends Thread {
 		
 		PING ("", "Pings all the clients, and prints a message when each responds.") {
 			@Override
-			public void run(String[] args) {
-				Game.server.pingClients();
-			}
+			public void run(String[] args)  { Game.server.pingClients(); }
 		};
 		
 		private String generalHelp, detailedHelp, usage;

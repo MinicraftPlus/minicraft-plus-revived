@@ -1,7 +1,8 @@
 package minicraft.level.tile;
 
+import minicraft.entity.Direction;
 import minicraft.entity.Entity;
-import minicraft.entity.Player;
+import minicraft.entity.mob.Player;
 import minicraft.gfx.Color;
 import minicraft.gfx.Sprite;
 import minicraft.item.Item;
@@ -16,7 +17,7 @@ public class FarmTile extends Tile {
 		super(name, sprite);
 	}
 	
-	public boolean interact(Level level, int xt, int yt, Player player, Item item, int attackDir) {
+	public boolean interact(Level level, int xt, int yt, Player player, Item item, Direction attackDir) {
 		if (item instanceof ToolItem) {
 			ToolItem tool = (ToolItem) item;
 			if (tool.type == ToolType.Shovel) {

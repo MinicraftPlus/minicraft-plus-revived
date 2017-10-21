@@ -1,4 +1,4 @@
-package minicraft.entity;
+package minicraft.entity.furniture;
 
 import minicraft.gfx.Color;
 import minicraft.gfx.Sprite;

@@ -13,6 +13,15 @@ import java.util.List;
 import minicraft.Game;
 import minicraft.Settings;
 import minicraft.entity.*;
+import minicraft.entity.furniture.Bed;
+import minicraft.entity.furniture.Chest;
+import minicraft.entity.furniture.Crafter;
+import minicraft.entity.furniture.DeathChest;
+import minicraft.entity.furniture.DungeonChest;
+import minicraft.entity.furniture.Lantern;
+import minicraft.entity.furniture.Spawner;
+import minicraft.entity.furniture.Tnt;
+import minicraft.entity.mob.*;
 import minicraft.entity.particle.FireParticle;
 import minicraft.entity.particle.SmashParticle;
 import minicraft.entity.particle.TextParticle;
@@ -671,9 +680,17 @@ public class Load {
 			Class c = null;
 			if(!Crafter.names.contains(entityName)) {
 				try {
-					c = Class.forName("minicraft.entity."+entityName);
-				} catch(ClassNotFoundException ex) {
-					ex.printStackTrace();
+					c = Class.forName("minicraft.entity.mob."+entityName);
+				} catch(ClassNotFoundException ex1) {
+					try {
+						c = Class.forName("minicraft.entity.furniture."+entityName);
+					} catch (ClassNotFoundException ex2) {
+						try {
+							c = Class.forName("minicraft.entity."+entityName);
+						} catch (ClassNotFoundException ex3) {
+							ex3.printStackTrace();
+						}
+					}
 				}
 			}
 			if(c != null && EnemyMob.class.isAssignableFrom(c))
@@ -751,10 +768,9 @@ public class Load {
 		if(!isLocalSave) {
 			if(newEntity instanceof Arrow) {
 				int ownerID = Integer.parseInt(info.get(2));
-				int dirx = Integer.parseInt(info.get(3));
-				int diry = Integer.parseInt(info.get(4));
+				Direction dir = Direction.values[Integer.parseInt(info.get(3))];
 				int dmg = Integer.parseInt(info.get(5));
-				newEntity = new Arrow((Mob)Game.getEntity(ownerID), x, y, dirx, diry, dmg);
+				newEntity = new Arrow((Mob)Game.getEntity(ownerID), x, y, dir, dmg);
 			}
 			if(newEntity instanceof ItemEntity) {
 				Item item = Items.get(info.get(2));
@@ -781,7 +797,7 @@ public class Load {
 		if(Game.levels[curLevel] != null) {
 			Game.levels[curLevel].add(newEntity, x, y);
 			if(Game.debug && newEntity instanceof RemotePlayer)
-				Game.levels[curLevel].printEntityStatus("Loaded ", newEntity, "RemotePlayer");
+				Game.levels[curLevel].printEntityStatus("Loaded ", newEntity, "mob.RemotePlayer");
 		} else if(newEntity instanceof RemotePlayer && Game.isValidClient())
 			System.out.println("CLIENT: remote player not added b/c on null level");
 		
@@ -817,7 +833,7 @@ public class Load {
 			case "Lantern": return new Lantern(Lantern.Type.NORM);
 			//case "Iron Lantern": return (Entity)(new Lantern(Lantern.Type.IRON));
 			//case "Gold Lantern": return (Entity)(new Lantern(Lantern.Type.GOLD));
-			case "Arrow": return new Arrow(null, 0, 0, 0, 0, 0);
+			case "Arrow": return new Arrow(null, 0, 0, Direction.NONE, 0);
 			case "ItemEntity": return new ItemEntity(null, 0, 0);
 			//case "Spark": return (Entity)(new Spark());
 			case "FireParticle": return new FireParticle(0, 0);

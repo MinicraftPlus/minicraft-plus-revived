@@ -1,7 +1,10 @@
-package minicraft.entity;
+package minicraft.entity.mob;
 
 import java.util.List;
 import minicraft.Game;
+import minicraft.entity.Direction;
+import minicraft.entity.Entity;
+import minicraft.entity.furniture.Tnt;
 import minicraft.entity.particle.TextParticle;
 import minicraft.gfx.Color;
 import minicraft.gfx.MobSprite;
@@ -15,13 +18,14 @@ public abstract class Mob extends Entity {
 	protected MobSprite[][] sprites; // This contains all the mob's sprites, sorted first by direction (index corresponding to the dir variable), and then by walk animation state.
 	public int walkDist = 0; // How far we've walked currently, incremented after each movement. This is used to change the sprite; "(walkDist >> 3) & 1" switches between a value of 0 and 1 every 8 increments of walkDist.
 	
-	public int dir = 0; // The direction the mob is facing, used in attacking and rendering. 0 is down, 1 is up, 2 is left, 3 is right
-	public int hurtTime = 0; // A delay after being hurt, that temporarily prevents further damage for a short time
-	protected int xKnockback, yKnockback; // The amount of vertical/horizontal knockback that needs to be inflicted, if it's not 0, it will be moved one pixel at a time.
-	public int health, maxHealth; // The amount of health we currently have, and the maximum.
-	protected int walkTime;
+	public Direction dir = Direction.DOWN; // The direction the mob is facing, used in attacking and rendering. 0 is down, 1 is up, 2 is left, 3 is right
+	int hurtTime = 0; // A delay after being hurt, that temporarily prevents further damage for a short time
+	private int xKnockback, yKnockback; // The amount of vertical/horizontal knockback that needs to be inflicted, if it's not 0, it will be moved one pixel at a time.
+	public int health;
+	final int maxHealth; // The amount of health we currently have, and the maximum.
+	int walkTime;
 	public int speed;
-	public int tickTime = 0; // Incremented whenever tick() is called, is effectively the age in ticks
+	int tickTime = 0; // Incremented whenever tick() is called, is effectively the age in ticks
 	
 	public Mob(MobSprite[][] sprites, int health) {
 		super(4, 3);
@@ -43,32 +47,27 @@ public abstract class Mob extends Entity {
 		
 		
 		boolean moved = false;
-		/// These 4 following conditionals check the direction of the knockback, move the Mob accordingly, and bring knockback closer to 0.
-		if (xKnockback < 0) { // If we have negative horizontal knockback (to the left)
-			moved = move2(-1, 0); // Move to the left 1 pixel
-			xKnockback++; // And increase the knockback by 1 so it is gradually closer to 0, and this will stop being called
+		/// The code below checks the direction of the knockback, moves the Mob accordingly, and brings the knockback closer to 0.
+		Direction xKnock = Direction.getDirection(xKnockback, 0);
+		Direction yKnock = Direction.getDirection(0, yKnockback);
+		
+		if(xKnock != Direction.NONE) {
+			moved = move2(xKnock, 1);
+			xKnockback += xKnock.getX();
 		}
-		if (xKnockback > 0) { // knocked to the right
-			moved = moved || move2(1, 0);
-			xKnockback--;
-		}
-		if (yKnockback < 0) { // knocked upwards
-			moved = moved || move2(0, -1);
-			yKnockback++;
-		}
-		if (yKnockback > 0) { // knocked downwards
-			moved = moved || move2(0, 1);
-			yKnockback--;
+		if(yKnock != Direction.NONE) {
+			moved = moved || move2(yKnock, 1);
+			yKnockback += yKnock.getY();
 		}
 		
+		// if the player moved via knockback, update the server
 		if(moved && Game.isConnectedClient() && this == Game.player) {
 			Game.client.move((Player)this);
 		}
 	}
 	
-	protected void die() { // Kill the mob, called when health drops to 0
-		remove(); // Remove the mob, with the method inherited from Entity
-	}
+	// Kill the mob, called when health drops to 0
+	protected void die() { remove(); } // Remove the mob, with the method inherited from Entity
 	
 	public boolean move(int xa, int ya) { // Move the mob, overrides from Entity
 		if(level == null) return false; // stopped b/c there's no level to move in!
@@ -85,18 +84,13 @@ public abstract class Mob extends Entity {
 				return true;
 		}
 		
-		//if (Game.debug && this instanceof MobAi && isWithin(9, getClosestPlayer())) System.out.println("ticking mob " + this + "; tickTime = " + tickTime);
-		
 		boolean moved = true;
 		
 		if (hurtTime == 0 || this instanceof Player) { // If a mobAi has been hurt recently and hasn't yet cooled down, it won't perform the movement (by not calling super)
-		
-			if (xa != 0 || ya != 0) { // Only if horizontal or vertical movement is actually happening
-				walkDist++; // Increment our walking/movement counter
-				if (xa < 0) dir = 2; // Set the mob's direction based on movement: left
-				if (xa > 0) dir = 3; // right
-				if (ya < 0) dir = 1; // up
-				if (ya > 0) dir = 0; // down
+			Direction dir = Direction.getDirection(xa, ya); // set the mob's direction
+			if(dir != Direction.NONE) {
+				this.dir = dir; // NEVER set the mob direction to None.
+				walkDist++;
 			}
 			
 			// this part makes it so you can't move in a direction that you are currently being knocked back from.
@@ -132,7 +126,7 @@ public abstract class Mob extends Entity {
 		return moved;
 	}
 
-	protected boolean isWooling() { // supposed to walk at half speed on wool
+	private boolean isWooling() { // supposed to walk at half speed on wool
 		if(level == null) return false;
 		Tile tile = level.getTile(x >> 4, y >> 4);
 		return tile == Tiles.get("wool");
@@ -151,37 +145,28 @@ public abstract class Mob extends Entity {
 		return tile == Tiles.get("water") || tile == Tiles.get("lava"); // Check if the tile is liquid, and return true if so
 	}
 	
-	// this is useless, I think. Why have both "blocks" and "isBlockableBy"?
-	public boolean blocks(Entity e) { // Check if another entity would be prevented from moving through this one
-		return e.isBlockableBy(this); // Call the method on the other entity to determine this, and return it
-	}
-
 	public void hurt(Tile tile, int x, int y, int damage) { // Hurt the mob, when the source of damage is a tile
-		//int attackDir = dir ^ 1; // Set attackDir to our own direction, inverted. XORing it with 1 flips the 
-		// rightmost bit in the variable, this effectively adds one when even, and subtracts one when odd
+		//Direction attackDir = Direction.getDirection(dir.getDir() ^ 1); // Set attackDir to our own direction, inverted. XORing it with 1 flips the rightmost bit in the variable, this effectively adds one when even, and subtracts one when odd.
 		if(!(tile == Tiles.get("lava") && this instanceof Player && ((Player)this).potioneffects.containsKey(PotionType.Lava)))
-			doHurt(damage, -1); // Call the method that actually performs damage, and set it to no particular direction
+			doHurt(damage, Direction.NONE); // Call the method that actually performs damage, and set it to no particular direction
 	}
 	
-	public void hurt(Mob mob, int damage, int attackDir) { // Hurt the mob, when the source is another mob
+	public void hurt(Mob mob, int damage) { hurt(mob, damage, getAttackDir(mob, this)); }
+	public void hurt(Mob mob, int damage, Direction attackDir) { // Hurt the mob, when the source is another mob
 		if(mob instanceof Player && Game.isMode("creative") && mob != this) doHurt(health, attackDir); // kill the mob instantly
 		else doHurt(damage, attackDir); // Call the method that actually performs damage, and use our provided attackDir
 	}
 	
-	public void hurt(Tnt tnt, int dmg, int attackDir) {
-		doHurt(dmg, attackDir);
-	}
+	public void hurt(Tnt tnt, int dmg) { doHurt(dmg, getAttackDir(tnt, this)); }
 	
-	protected void doHurt(int damage, int attackDir) { // Actually hurt the mob, based on only damage and a direction
+	protected void doHurt(int damage, Direction attackDir) { // Actually hurt the mob, based on only damage and a direction
 		// this is overridden in Player.java
 		if (isRemoved() || hurtTime > 0) return; // If the mob has been hurt recently and hasn't cooled down, don't continue
 		
 		health -= damage; // Actually change the health
 		// add the knockback in the correct direction
-		if (attackDir == 0) yKnockback = +6;
-		if (attackDir == 1) yKnockback = -6;
-		if (attackDir == 2) xKnockback = -6;
-		if (attackDir == 3) xKnockback = +6;
+		xKnockback = attackDir.getX()*6;
+		yKnockback = attackDir.getY()*6;
 		hurtTime = 10; // Set a delay before we can be hurt again
 	}
 	
@@ -193,40 +178,15 @@ public abstract class Mob extends Entity {
 		if (health > maxHealth) health = maxHealth; // If our health has exceeded our maximum, lower it back down to said maximum
 	}
 	
-	protected static int getAttackDir(Entity attacker, Entity hurt) {
-		/*
-		  Just a note here for reference:
-		  down = 0
-		  up = 1
-		  left = 2
-		  right = 3
-		 */
-		
-		int xd = hurt.x - attacker.x;
-		int yd = hurt.y - attacker.y;
-		
-		if (xd == 0 && yd == 0) return -1; // the attack was from the same entity, probably; or at least the exact same space.
-		
-		if(Math.abs(xd) > Math.abs(yd)) {
-			// the x distance is more prominent than the y distance
-			if(xd < 0)
-				return Direction.LEFT;
-			else
-				return Direction.RIGHT;
-		} else {
-			if(yd < 0)
-				return Direction.UP;
-			else
-				return Direction.DOWN;
-		}
+	protected static Direction getAttackDir(Entity attacker, Entity hurt) {
+		return Direction.getDirection(hurt.x - attacker.x, hurt.y - attacker.y);
 	}
 	
 	protected String getUpdateString() {
 		String updates = super.getUpdateString() + ";";
-		updates += "dir,"+dir+
+		updates += "dir,"+dir.ordinal()+
 		";health,"+health+
 		";hurtTime,"+hurtTime;
-		//";walkDist,"+walkDist;
 		
 		return updates;
 	}
@@ -235,7 +195,7 @@ public abstract class Mob extends Entity {
 		if(field.equals("x") || field.equals("y")) walkDist++;
 		if(super.updateField(field, val)) return true;
 		switch(field) {
-			case "dir": dir = Integer.parseInt(val); return true;
+			case "dir": dir = Direction.values[Integer.parseInt(val)]; return true;
 			case "health": health = Integer.parseInt(val); return true;
 			case "hurtTime": hurtTime = Integer.parseInt(val); return true;
 			//case "walkDist": walkDist = Integer.parseInt(val); return true;

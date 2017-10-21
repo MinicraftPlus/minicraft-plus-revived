@@ -1,6 +1,7 @@
-package minicraft.entity;
+package minicraft.entity.mob;
 
 import minicraft.Settings;
+import minicraft.entity.Entity;
 import minicraft.gfx.Color;
 import minicraft.gfx.MobSprite;
 import minicraft.item.Items;
@@ -15,14 +16,12 @@ public class Snake extends EnemyMob {
 		Color.get(-1, 000, 555, 459)
 	};
 	
-	public Snake(int lvl) {
-		super(lvl, sprites, lvlcols, lvl>1?8:7, 100);
-	}
+	public Snake(int lvl) { super(lvl, sprites, lvlcols, lvl>1?8:7, 100); }
 	
 	protected void touchedBy(Entity entity) {
 		if(entity instanceof Player) {
 			int damage = lvl + Settings.getIdx("diff");
-			entity.hurt(this, damage, Mob.getAttackDir(this, entity));
+			((Player)entity).hurt(this, damage);
 		}
 	}
 	

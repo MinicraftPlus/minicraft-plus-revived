@@ -1,4 +1,4 @@
-package minicraft.entity;
+package minicraft.entity.mob;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -8,23 +8,23 @@ import minicraft.Game;
 import minicraft.InputHandler;
 import minicraft.Settings;
 import minicraft.Sound;
+import minicraft.entity.*;
+import minicraft.entity.furniture.Bed;
+import minicraft.entity.furniture.DeathChest;
+import minicraft.entity.furniture.Furniture;
+import minicraft.entity.furniture.Tnt;
 import minicraft.entity.particle.TextParticle;
 import minicraft.gfx.Color;
 import minicraft.gfx.MobSprite;
+import minicraft.gfx.Point;
+import minicraft.gfx.Rectangle;
 import minicraft.gfx.Screen;
 import minicraft.item.*;
 import minicraft.level.Level;
 import minicraft.level.tile.Tile;
 import minicraft.level.tile.Tiles;
 import minicraft.saveload.Save;
-import minicraft.screen.CraftingMenu;
-import minicraft.screen.Display;
-import minicraft.screen.InfoDisplay;
-import minicraft.screen.LoadingDisplay;
-import minicraft.screen.Menu;
-import minicraft.screen.PauseMenu;
-import minicraft.screen.PlayerInvMenu;
-import minicraft.screen.WorldSelectMenu;
+import minicraft.screen.*;
 
 public class Player extends Mob {
 	protected InputHandler input;
@@ -46,14 +46,15 @@ public class Player extends Mob {
 	// the player can have.
 	
 	public static MobSprite[][] sprites =  MobSprite.compileMobSpriteAnimations(0, 14);
-	public static MobSprite[][] carrySprites = MobSprite.compileMobSpriteAnimations(0, 16); // the sprites while carrying something.
-	public static MobSprite[][] suitSprites = MobSprite.compileMobSpriteAnimations(18, 20); // the "airwizard suit" sprites.
-	public static MobSprite[][] carrySuitSprites = MobSprite.compileMobSpriteAnimations(18, 22); // the "airwizard suit" sprites.
+	private static MobSprite[][] carrySprites = MobSprite.compileMobSpriteAnimations(0, 16); // the sprites while carrying something.
+	private static MobSprite[][] suitSprites = MobSprite.compileMobSpriteAnimations(18, 20); // the "airwizard suit" sprites.
+	private static MobSprite[][] carrySuitSprites = MobSprite.compileMobSpriteAnimations(18, 22); // the "airwizard suit" sprites.
 	
 	public Inventory inventory;
 	public Item activeItem, attackItem; // attackItem is useful again b/c of the power glove.
 	private Item prevItem; // holds the item held before using the POW glove.
-	public int attackTime, attackDir;
+	public int attackTime;
+	public Direction attackDir;
 	
 	private int onStairDelay; // the delay before changing levels.
 	
@@ -62,7 +63,7 @@ public class Player extends Mob {
 	public ArmorItem curArmor; // the color of the armor to be displayed.
 	
 	public int staminaRecharge; // the ticks before charging a bolt of the player's stamina
-	private static int maxStaminaRecharge = 10; // cutoff value for staminaRecharge
+	private static final int maxStaminaRecharge = 10; // cutoff value for staminaRecharge
 	public int staminaRechargeDelay; // the recharge delay ticks when the player uses up their stamina.
 	
 	public int hungerStamCnt, stamHungerTicks; // tiers of hunger penalties before losing a burger.
@@ -77,7 +78,7 @@ public class Player extends Mob {
 	private int cooldowninfo; // prevents you from toggling the info pane on and off super fast.
 	private int regentick; // counts time between each time the regen potion effect heals you.
 	
-	private int acs = 25; // default ("start") arrow count
+	private final int acs = 25; // default ("start") arrow count
 	public int shirtColor = 110; // player shirt color.
 	
 	// Note: the player's health & max health are inherited from Mob.java
@@ -248,7 +249,7 @@ public class Player extends Mob {
 			if (hunger == 0 && health > healths[Settings.getIdx("diff")]) {
 				if (hungerStarveDelay > 0) hungerStarveDelay--;
 				if (hungerStarveDelay == 0) {
-					hurt(this, 1, -1); // do 1 damage to the player
+					hurt(this, 1, Direction.NONE); // do 1 damage to the player
 				}
 			}
 		}
@@ -280,7 +281,7 @@ public class Player extends Mob {
 			//executes if not saving; and... essentially halves speed if out of stamina.
 			if ((xa != 0 || ya != 0) && (staminaRechargeDelay % 2 == 0 || isSwimming()) && !Game.saving) {
 				double spd = moveSpeed * (potioneffects.containsKey(PotionType.Speed) ? 1.5D : 1);
-				int oldDir = dir;
+				Direction oldDir = dir;
 				boolean moved = move((int) (xa * spd), (int) (ya * spd)); // THIS is where the player moves; part of Mob.java
 				if (moved) stepCount++;
 				if ((moved || oldDir != dir) && Game.isConnectedClient() && this == Game.player)
@@ -290,7 +291,7 @@ public class Player extends Mob {
 			
 			if (isSwimming() && tickTime % 60 == 0 && !potioneffects.containsKey(PotionType.Swim)) { // if drowning... :P
 				if (stamina > 0) stamina--; // take away stamina
-				else hurt(this, 1, -1); // if no stamina, take damage.
+				else hurt(this, 1, Direction.NONE); // if no stamina, take damage.
 			}
 			
 			if(activeItem != null && (input.getKey("drop-one").clicked || input.getKey("drop-stack").clicked)) {
@@ -402,29 +403,15 @@ public class Player extends Mob {
 	private boolean use() {
 		
 		// if an entity in the direction the player is facing has a use() method, call it, then return true.
-		int yo = -2;
+		/*int yo = -2;
 		if (dir == 0 && use(x - 8, y + 4 + yo, x + 8, y + 12 + yo)) return true;
 		if (dir == 1 && use(x - 8, y - 12 + yo, x + 8, y - 4 + yo)) return true;
 		if (dir == 3 && use(x + 4, y - 8 + yo, x + 12, y + 8 + yo)) return true;
 		if (dir == 2 && use(x - 12, y - 8 + yo, x - 4, y + 8 + yo)) return true;
+		*/
+		//return false;
 		
-		/*
-		// otherwise, if there is no entity, check if the current tile has a use method.
-			//...which, as it happens, never does...
-		// round off player coordinates to Tile coordinates.
-		int xt = x >> 4;
-		int yt = (y + yo) >> 4;
-		int r = 12;
-		if (attackDir == 0) yt = (y + r + yo) >> 4;
-		if (attackDir == 1) yt = (y - r + yo) >> 4;
-		if (attackDir == 2) xt = (x - r) >> 4;
-		if (attackDir == 3) xt = (x + r) >> 4;
-		// do the check
-		if (xt >= 0 && yt >= 0 && xt < level.w && yt < level.h) {
-			if (level.getTile(xt, yt).use(level, xt, yt, this, attackDir)) return true;
-		}*/
-		
-		return false;
+		return use(getInteractionBox(12));
 	}
 	
 	/** This method is called when we press the attack button. */
@@ -459,48 +446,44 @@ public class Player extends Mob {
 			ToolItem tool = (ToolItem) activeItem;
 			
 			if (tool.type == ToolType.Bow && inventory.count(Items.arrowItem) > 0) { // if the player is holding a bow, and has arrows...
-				//if (!energy) stamina -= 0; // must be a leftover.
-				//...then shoot the arrow in the right direction.
-				int spx = 0, spy = 0;
-				switch (attackDir) {
-					case 0: spx = 0; spy = 1; break;
-					case 1: spx = 0; spy = -1; break;
-					case 2: spx = -1; spy = 0; break;
-					case 3: spx = 1; spy = 0; break;
-				}
 				if (!Game.isMode("creative")) inventory.removeItem(Items.arrowItem);
-				level.add(new Arrow(this, spx, spy, tool.level));
+				level.add(new Arrow(this, attackDir, tool.level));
 				done = true; // we have attacked!
+				//return;
 			}
 		}
 		
 		// if we are simply holding an item...
 		if (activeItem != null) {
 			attackTime = 10; // attack time will be set to 10.
-			int yo = -2; // y-offset
-			int range = 12; // range (distance?) from an object
+			//int yo = -2; // y-offset
+			//int range = 12; // range (distance?) from an object
 			
 			/* if the interaction between you and an entity is successful then return. */
-			if (dir == 0 && interact(x - 8, y + 4 + yo, x + 8, y + range + yo)) done = true;
-			if (dir == 1 && interact(x - 8, y - range + yo, x + 8, y - 4 + yo)) done = true;
-			if (dir == 3 && interact(x + 4, y - 8 + yo, x + range, y + 8 + yo)) done = true;
-			if (dir == 2 && interact(x - range, y - 8 + yo, x - 4, y + 8 + yo)) done = true;
-			if (done) return;
+			if(interact(getInteractionBox(12))) return;
+			/*if (dir == 0 && interact(x - 8, y + 4, x + 8, y + range)) done = true;
+			if (dir == 1 && interact(x - 8, y - range, x + 8, y - 4)) done = true;
+			if (dir == 3 && interact(x + 4, y - 8, x + range, y + 8)) done = true;
+			if (dir == 2 && interact(x - range, y - 8, x - 4, y + 8)) done = true;
+			if (done) return;*/
 			
+			/*
 			int xt = x >> 4; // current x-tile coordinate you are on.
 			int yt = (y + yo) >> 4; // current y-tile coordinate you are on.
 			int r = 12; // radius
 			// gets the tile on the side of you that you're attacking.
-			if (attackDir == 0) yt = (y + r + yo) >> 4;
-			if (attackDir == 1) yt = (y - r + yo) >> 4;
-			if (attackDir == 2) xt = (x - r) >> 4;
-			if (attackDir == 3) xt = (x + r) >> 4;
+			if (attackDir == Direction.DOWN)  yt = (y + r + yo) >> 4;
+			if (attackDir == Direction.UP)    yt = (y - r + yo) >> 4;
+			if (attackDir == Direction.LEFT)  xt = (x - r) >> 4;
+			if (attackDir == Direction.RIGHT) xt = (x + r) >> 4;
+			*/
+			Point t = getInteractionTile(12);
 			
-			if (xt >= 0 && yt >= 0 && xt < level.w && yt < level.h) { // if the target coordinates are a valid tile...
-				if (activeItem.interactOn(level.getTile(xt, yt), level, xt, yt, this, attackDir)) { // returns true if your held item successfully interacts with the target tile.
+			if (t.x >= 0 && t.y >= 0 && t.x < level.w && t.y < level.h) { // if the target coordinates are a valid tile...
+				if (activeItem.interactOn(level.getTile(t.x, t.y), level, t.x, t.y, this, attackDir)) { // returns true if your held item successfully interacts with the target tile.
 					done = true;
 				} else { // item can't interact with tile
-					if (level.getTile(xt, yt).interact(level, xt, yt, this, activeItem, attackDir)) { // returns true if the target tile successfully interacts with the item.
+					if (level.getTile(t.x, t.y).interact(level, t.x, t.y, this, activeItem, attackDir)) { // returns true if the target tile successfully interacts with the item.
 						done = true;
 					}
 				}
@@ -508,7 +491,7 @@ public class Player extends Mob {
 				if(Game.isValidServer() && this instanceof RemotePlayer) {// only do this if no interaction was actually made; b/c a tile update packet will generally happen then anyway.
 					minicraft.network.MinicraftServerThread thread = Game.server.getAssociatedThread((RemotePlayer)this);
 					if(thread != null)
-						thread.sendTileUpdate(level, xt, yt); /// FIXME this part is as a semi-temporary fix for those odd tiles that don't update when they should; instead of having to make another system like the entity additions and removals (and it wouldn't quite work as well for this anyway), this will just update whatever tile the player interacts with (and fails, since a successful interaction changes the tile and therefore updates it anyway).
+						thread.sendTileUpdate(level, t.x, t.y); /// FIXME this part is as a semi-temporary fix for those odd tiles that don't update when they should; instead of having to make another system like the entity additions and removals (and it wouldn't quite work as well for this anyway), this will just update whatever tile the player interacts with (and fails, since a successful interaction changes the tile and therefore updates it anyway).
 				}
 				
 				if (activeItem.isDepleted() && !Game.isMode("creative")) {
@@ -517,35 +500,59 @@ public class Player extends Mob {
 				}
 			}
 		}
-
+		
 		if (done) return; // skip the rest if interaction was handled.
-
+		
 		if (activeItem == null || activeItem.canAttack()) { // if there is no active item, OR if the item can be used to attack...
 			attackTime = 5;
-			int yo = -2;
-			int range = 20;
 			// attacks the enemy in the appropriate direction.
-			if (dir == 0) hurt(x - 8, y + 4 + yo, x + 8, y + range + yo);
-			if (dir == 1) hurt(x - 8, y - range + yo, x + 8, y - 4 + yo);
-			if (dir == 2) hurt(x - range, y - 8 + yo, x - 4, y + 8 + yo);
-			if (dir == 3) hurt(x + 4, y - 8 + yo, x + range, y + 8 + yo);
-			
+			hurt(getInteractionBox(20));
+			/*if (dir == Direction.DOWN)  hurt(x - 8, y + 4 + yo, x + 8, y + range + yo);
+			if (dir == Direction.UP)    hurt(x - 8, y - range + yo, x + 8, y - 4 + yo);
+			if (dir == Direction.LEFT)  hurt(x - range, y - 8 + yo, x - 4, y + 8 + yo);
+			if (dir == Direction.RIGHT) hurt(x + 4, y - 8 + yo, x + range, y + 8 + yo);
+			*/
 			// attempts to hurt the tile in the appropriate direction.
 			
-			int xt = x >> 4;
+			Point t = getInteractionTile(12);
+			
+			/*int xt = x >> 4;
 			int yt = (y + yo) >> 4;
 			int r = 12;
 			if (attackDir == 0) yt = (y + r + yo) >> 4; // down
 			if (attackDir == 1) yt = (y - r + yo) >> 4; // up
 			if (attackDir == 2) xt = (x - r) >> 4; // left
 			if (attackDir == 3) xt = (x + r) >> 4; // right
-
-			if (xt >= 0 && yt >= 0 && xt < level.w && yt < level.h) {
-				Tile t = level.getTile(xt, yt);
-				//if (Game.debug) System.out.println(Game.onlinePrefix()+"attacking tile " + xt+","+yt + ": "+t.name + " (facing " + dir+"/"+attackDir+" - " + Direction.values[dir]+"/"+Direction.values[attackDir] + ")");
-				t.hurt(level, xt, yt, this, random.nextInt(3) + 1, attackDir);
+			*/
+			if (t.x >= 0 && t.y >= 0 && t.x < level.w && t.y < level.h) {
+				Tile tile = level.getTile(t.x, t.y);
+				tile.hurt(level, t.x, t.y, this, random.nextInt(3) + 1, attackDir);
 			}
 		}
+	}
+	
+	private Rectangle getInteractionBox(int range) {
+		int x = this.x, y = this.y - 2;
+		
+		//noinspection UnnecessaryLocalVariable
+		int paraClose = 4, paraFar = range;
+		int perpClose = 0, perpFar = 8;
+		
+		int xClose = x + dir.getX()*paraClose + dir.getY()*perpClose;
+		int yClose = y + dir.getY()*paraClose + dir.getX()*perpClose;
+		int xFar = x + dir.getX()*paraFar + dir.getY()*perpFar;
+		int yFar = y + dir.getY()*paraFar + dir.getX()*perpFar;
+		
+		return new Rectangle(Math.min(xClose, xFar), Math.min(yClose, yFar), Math.max(xClose, xFar), Math.max(yClose, yFar), Rectangle.CORNERS);
+	}
+	
+	private Point getInteractionTile(int distance) {
+		int x = this.x, y = this.y - 2;
+		
+		x += dir.getX()*distance;
+		y += dir.getY()*distance;
+		
+		return new Point(x >> 4, y >> 4);
 	}
 	
 	public void goFishing(int x, int y) {
@@ -558,18 +565,18 @@ public class Player extends Mob {
 	}
 	
 	/** called by other use method; this serves as a buffer in case there is no entity in front of the player. */
-	private boolean use(int x0, int y0, int x1, int y1) {
-		List<Entity> entities = level.getEntitiesInRect(x0, y0, x1, y1); // gets the entities within the 4 points
+	private boolean use(Rectangle area) {
+		List<Entity> entities = level.getEntitiesInRect(area); // gets the entities within the 4 points
 		for (int i = 0; i < entities.size(); i++) {
 			Entity e = entities.get(i);
-			if (e != this) if (e.use(this, attackDir)) return true; // if the entity is not the player, then call it's use method, and return the result. Only some furniture classes use this.
+			if (e instanceof Furniture && ((Furniture)e).use(this)) return true; // if the entity is not the player, then call it's use method, and return the result. Only some furniture classes use this.
 		}
 		return false;
 	}
 	
 	/** same, but for interaction. */
-	private boolean interact(int x0, int y0, int x1, int y1) {
-		List<Entity> entities = level.getEntitiesInRect(x0, y0, x1, y1);
+	private boolean interact(Rectangle area) {
+		List<Entity> entities = level.getEntitiesInRect(area);
 		for (int i = 0; i < entities.size(); i++) {
 			Entity e = entities.get(i);
 			if ( e != this && e.interact(this, activeItem, attackDir) ) return true; // this is the ONLY place that the Entity.interact method is actually called.
@@ -578,11 +585,11 @@ public class Player extends Mob {
 	}
 	
 	/** same, but for attacking. */
-	private void hurt(int x0, int y0, int x1, int y1) {
-		List<Entity> entities = level.getEntitiesInRect(x0, y0, x1, y1);
+	private void hurt(Rectangle area) {
+		List<Entity> entities = level.getEntitiesInRect(area);
 		for (int i = 0; i < entities.size(); i++) {
 			Entity e = entities.get(i);
-			if (e != this) e.hurt(this, getAttackDamage(e), attackDir); // note: this really only does something for mobs.
+			if (e != this && e instanceof Mob) ((Mob)e).hurt(this, getAttackDamage(e), attackDir); // note: this really only does something for mobs.
 		}
 	}
 	
@@ -626,7 +633,7 @@ public class Player extends Mob {
 			screen.render(xo + 8, yo + 3, 5 + 13 * 32, liquidColor, 1); // render the mirrored water graphic to the right.
 		}
 		
-		if (attackTime > 0 && attackDir == 1) { // if currently attacking upwards...
+		if (attackTime > 0 && attackDir == Direction.UP) { // if currently attacking upwards...
 			screen.render(xo + 0, yo - 4, 6 + 13 * 32, Color.WHITE, 0); //render left half-slash
 			screen.render(xo + 8, yo - 4, 6 + 13 * 32, Color.WHITE, 1); //render right half-slash (mirror of left).
 			if (attackItem != null) { // if the player had an item when they last attacked...
@@ -638,7 +645,7 @@ public class Player extends Mob {
 			col = Color.WHITE; // make the sprite white.
 		}
 		
-		MobSprite curSprite = spriteSet[dir][(walkDist >> 3) & 1]; // gets the correct sprite to render.
+		MobSprite curSprite = spriteSet[dir.ordinal()][(walkDist >> 3) & 1]; // gets the correct sprite to render.
 		
 		// render each corner of the sprite
 		if (!isSwimming()) { // don't render the bottom half if swimming.
@@ -649,21 +656,21 @@ public class Player extends Mob {
 		
 		// renders slashes:
 		
-		if (attackTime > 0 && attackDir == 2) { // if attacking to the left.... (same as above)
+		if (attackTime > 0 && attackDir == Direction.LEFT) { // if attacking to the left.... (same as above)
 			screen.render(xo - 4, yo, 7 + 13 * 32, Color.WHITE, 1);
 			screen.render(xo - 4, yo + 8, 7 + 13 * 32, Color.WHITE, 3);
 			if (attackItem != null) {
 				attackItem.sprite.render(screen, xo - 4, yo + 4);
 			}
 		}
-		if (attackTime > 0 && attackDir == 3) { // attacking to the right
+		if (attackTime > 0 && attackDir == Direction.RIGHT) { // attacking to the right
 			screen.render(xo + 8 + 4, yo, 7 + 13 * 32, Color.WHITE, 0);
 			screen.render(xo + 8 + 4, yo + 8, 7 + 13 * 32, Color.WHITE, 2);
 			if (attackItem != null) {
 				attackItem.sprite.render(screen, xo + 8 + 4, yo + 4);
 			}
 		}
-		if (attackTime > 0 && attackDir == 0) { // attacking downwards
+		if (attackTime > 0 && attackDir == Direction.DOWN) { // attacking downwards
 			screen.render(xo + 0, yo + 8 + 4, 6 + 13 * 32, Color.WHITE, 2);
 			screen.render(xo + 8, yo + 8 + 4, 6 + 13 * 32, Color.WHITE, 3);
 			if (attackItem != null) {
@@ -751,7 +758,7 @@ public class Player extends Mob {
 				// move player to home coordinates
 				this.x = homeSetX;
 				this.y = homeSetY;
-				if (Game.isMode("hardcore")) hurt(this, 2, -1); // give penalty for using home if in hardcore mode.
+				if (Game.isMode("hardcore")) hurt(this, 2, Direction.NONE); // give penalty for using home if in hardcore mode.
 				stamina = 0; // teleportation uses up all your stamina.
 				Game.notifications.add("Home Sweet Home!"); // give success message
 				if (Game.isMode("hardcore")) Game.notifications.add("Mode penalty: -2 health"); // give penalty message
@@ -837,16 +844,17 @@ public class Player extends Mob {
 		super.die(); // calls the die() method in Mob.java
 	}
 	
-	/** What happens when the player touches an entity */
-	protected void touchedBy(Entity entity) {
-		if (!(entity instanceof Player)) { // prevents stack-overflow
-			entity.touchedBy(this); // calls the other entity's touchedBy method.
-		}
+	@Override
+	public void hurt(Tnt tnt, int dmg) {
+		super.hurt(tnt, dmg);
+		payStamina(dmg * 2);
 	}
 	
-	public void hurt(int damage, int attackDir) { doHurt(damage, attackDir); }
+	public void hurt(int damage, Direction attackDir) { doHurt(damage, attackDir); }
+	
 	/** What happens when the player is hurt */
-	protected void doHurt(int damage, int attackDir) {
+	@Override
+	protected void doHurt(int damage, Direction attackDir) {
 		if (Game.isMode("creative") || hurtTime > 0 || Bed.inBed) return; // can't get hurt in creative, hurt cooldown, or while someone is in bed
 		
 		if(Game.isValidServer() && this instanceof RemotePlayer) {
@@ -854,14 +862,6 @@ public class Player extends Mob {
 			Game.server.broadcastPlayerHurt(eid, damage, attackDir);
 			return;
 		}
-		
-		/*// apply the appropriate knockback
-		if (attackDir == 0) yKnockback = +6;
-		if (attackDir == 1) yKnockback = -6;
-		if (attackDir == 2) xKnockback = -6;
-		if (attackDir == 3) xKnockback = +6;
-		// set invulnerability time
-		*/
 		
 		boolean fullPlayer = !(Game.isValidClient() && this != Game.player);
 		
@@ -908,7 +908,7 @@ public class Player extends Mob {
 		//";activeItem,"+(activeItem==null?"null":activeItem.name)+
 		";armor,"+armor+
 		";attackTime,"+attackTime+
-		";attackDir,"+attackDir+
+		";attackDir,"+attackDir.ordinal()+
 		";attackItem,"+(attackItem==null?"null":attackItem.name);
 		/*";potioneffects,";
 		if(potioneffects.size() == 0)
@@ -931,7 +931,7 @@ public class Player extends Mob {
 			//case "activeItem": activeItem = Items.get(val); return true;
 			case "armor": armor = Integer.parseInt(val); return true;
 			case "attackTime": attackTime = Integer.parseInt(val); return true;
-			case "attackDir": attackDir = Integer.parseInt(val); return true;
+			case "attackDir": attackDir = Direction.values[Integer.parseInt(val)]; return true;
 			case "attackItem": attackItem = Items.get(val); return true;
 			case "potioneffects":
 				potioneffects.clear();

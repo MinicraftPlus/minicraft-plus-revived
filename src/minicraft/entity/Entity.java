@@ -2,18 +2,33 @@ package minicraft.entity;
 
 import java.util.List;
 import java.util.Random;
+
 import minicraft.Game;
+import minicraft.entity.mob.MobAi;
+import minicraft.entity.mob.Player;
+import minicraft.gfx.Rectangle;
 import minicraft.gfx.Screen;
 import minicraft.item.Item;
 import minicraft.level.Level;
-import minicraft.level.tile.Tile;
 
 public abstract class Entity {
+	
+	/* I guess I should explain something real quick. The coordinates between tiles and entities are different.
+	 * The world coordinates for tiles is 128x128
+	 * The world coordinates for entities is 2048x2048
+	 * This is because each tile is 16x16 pixels big
+	 * 128 x 16 = 2048.
+	 * When ever you see a ">>", it means that it is a right shift operator. This means it shifts bits to the right (making them smaller)
+	 * x >> 4 is the equivalent to x / (2^4). Which means it's dividing the X value by 16. (2x2x2x2 = 16)
+	 * xt << 4 is the equivalent to xt * (2^4). Which means it's multiplying the X tile value by 16.
+	 *
+	 * These bit shift operators are used to easily get the X & Y coordinates of a tile that the entity is standing on.
+	 */
 	
 	/// entity coordinates are per pixel, not per tile; each tile is 16x16 entity pixels.
 	protected final Random random = new Random();
 	public int x, y; // x, y entity coordinates on the map
-	public int xr, yr; // x, y radius of entity
+	private int xr, yr; // x, y radius of entity
 	private boolean removed; // Determines if the entity is removed from it's level; checked in Level.java
 	protected Level level; // the level that the entity is on
 	public int col; // current color.
@@ -60,7 +75,6 @@ public abstract class Entity {
 		else {
 			removed = true; // should already be set.
 			this.level = null;
-			//if (Game.debug && !(this instanceof Particle)) System.out.println(Game.onlinePrefix()+"set level reference of entity " + this + " to null.");
 		}
 	}
 	
@@ -82,49 +96,47 @@ public abstract class Entity {
 			eid = Game.generateUniqueEntityId();
 	}
 	
+	private Rectangle getBounds() { return new Rectangle(x, y, xr*2, yr*2, Rectangle.CENTER_DIMS); }
+	
 	/** returns true if this entity is found in the rectangle specified by given two coordinates. */
-	public boolean intersects(int x0, int y0, int x1, int y1) {
+	public boolean intersects(Rectangle area) {
 		// x0,y0 = upper-left corner of rect; x1,y1 = bottom-right corner of rect
-		return !(x + xr < x0 || y + yr < y0 || x - xr > x1 || y - yr > y1);
+		//return !(x + xr < x0 || y + yr < y0 || x - xr > x1 || y - yr > y1);
+		return area.intersects(getBounds());
 	}
 	
-	/** Extended in Mob.java & Furniture.java */
-	public boolean blocks(Entity e) {
-		return false;
-	}
+	/** returns if this entity stops other solid entities from moving. */
+	public boolean isSolid() { return true; } // most entities are solid
+	
+	/** Determines if the given entity should prevent this entity from moving. */
+	public boolean blocks(Entity e) { return isSolid() && e.isSolid(); }
 		
 	/** Moves an entity horizontally and vertically. Returns whether entity was unimpeded in it's movement.  */
 	public boolean move(int xa, int ya) {
-		if (!Game.saving && (xa != 0 || ya != 0)) { // if not saving, and the entity is actually going to move...
-			boolean stopped = true; // used to check if the entity has BEEN stopped, COMPLETELY; below checks for a lack of collision.
-			if (xa != 0 && move2(xa, 0)) stopped = false; // horizontal movement was successful.
-			if (ya != 0 && move2(0, ya)) stopped = false; // vertical movement was successful.
-			if (!stopped) {
-				
-				/* I guess I should explain something real quick. The coordinates between tiles and entities are different.
-				 * The world coordinates for tiles is 128x128
-				 * The world coordinates for entities is 2048x2048
-				 * This is because each tile is 16x16 pixels big
-				 * 128 x 16 = 2048.
-				 * When ever you see a ">>", it means that it is a right shift operator. This means it shifts bits to the right (making them smaller)
-				 * x >> 4 is the equivalent to x / (2^4). Which means it's dividing the X value by 16. (2x2x2x2 = 16)
-				 * xt << 4 is the equivalent to xt * (2^4). Which means it's multiplying the X tile value by 16.
-				 *
-				 * These bit shift operators are used to easily get the X & Y coordinates of a tile that the entity is standing on. */
-				
-				int xt = x >> 4; // the x tile coordinate that the entity is standing on.
-				int yt = y >> 4; // the y tile coordinate that the entity is standing on.
-				level.getTile(xt, yt).steppedOn(level, xt, yt, this); // Calls the steppedOn() method in a tile's class. (used for tiles like sand (footprints) or lava (burning))
-			}
-			return !stopped;
+		if(Game.saving) return true; // pretend that it kept moving
+		
+		Direction dir = Direction.getDirection(xa, ya);
+		
+		if(dir == Direction.NONE) return true; // technically, it wasn't "stopped", so return true
+		
+		boolean stopped = true; // used to check if the entity has BEEN stopped, COMPLETELY; below checks for a lack of collision.
+		if(xa != 0 && move2(dir, xa)) stopped = false; // becomes false if horizontal movement was successful.
+		if(ya != 0 && move2(dir, ya)) stopped = false; // becomes false if vertical movement was successful.
+		if (!stopped) {
+			int xt = x >> 4; // the x tile coordinate that the entity is standing on.
+			int yt = y >> 4; // the y tile coordinate that the entity is standing on.
+			level.getTile(xt, yt).steppedOn(level, xt, yt, this); // Calls the steppedOn() method in a tile's class. (used for tiles like sand (footprints) or lava (burning))
 		}
-		return true; // reaches this if no movement was requested / game was saving. return true, becuase MobAis should still do the moving phase thing, just paused, not obstructed.
+		
+		return !stopped;
 	}
 	
 	/** Second part to the move method (moves in one direction at a time) */
-	protected boolean move2(int xa, int ya) {
-		if (xa != 0 && ya != 0)
-			throw new IllegalArgumentException("Move2 can only move along one axis at a time!");
+	protected boolean move2(Direction dir, int amount) {
+		if(dir == Direction.NONE || amount == 0) return true; // was not stopped
+		
+		int xa = dir.getX() * amount;
+		int ya = dir.getY() * amount;
 		
 		// gets the tile coordinate of each direction from the sprite...
 		int xto0 = ((x) - xr) >> 4; // to the left
@@ -152,59 +164,45 @@ public abstract class Entity {
 		}
 		
 		// these lists are named as if the entity has already moved-- it hasn't, though.
-		List<Entity> wasInside = level.getEntitiesInRect(x - xr, y - yr, x + xr, y + yr); // gets all of the entities that are inside this entity (aka: colliding) before moving.
+		List<Entity> wasInside = level.getEntitiesInRect(getBounds()); // gets all of the entities that are inside this entity (aka: colliding) before moving.
 		
 		int xr = this.xr, yr = this.yr;
 		if(Game.isValidClient() && this instanceof Player) {
 			xr++;
 			yr++;
 		}
-		List<Entity> isInside = level.getEntitiesInRect(x + xa - xr, y + ya - yr, x + xa + xr, y + ya + yr); // gets the entities that this entity will touch once moved.
+		List<Entity> isInside = level.getEntitiesInRect(new Rectangle(x+xa, y+ya, xr*2, yr*2, Rectangle.CENTER_DIMS)); // gets the entities that this entity will touch once moved.
 		for (int i = 0; i < isInside.size(); i++) {
 			/// cycles through entities about to be touched, and calls touchedBy(this) for each of them.
 			Entity e = isInside.get(i);
 			if (e == this) continue; // touching yourself doesn't count.
 			
-			e.touchedBy(this); // call the method. ("touch" the entity)
-			
-			//if(Game.debug && e != this && (e instanceof Player || this instanceof Player)) System.out.println("entity " + this.toClassString() + " is moving inside furniture " + e.toClassString());
-		}
-		
-		/*if(Game.debug) {
-			for(Entity e: wasInside) {
-				if(e != this && (e instanceof Player || this instanceof Player))
-					System.out.println(Game.onlinePrefix()+"entity " + this.toClassString() + " is moving from inside " + e.toClassString());
+			if(e instanceof Player) {
+				if(!(this instanceof Player))
+					touchedBy(e);
 			}
-		}*/
+			else
+				e.touchedBy(this); // call the method. ("touch" the entity)
+		}
 		
 		isInside.removeAll(wasInside); // remove all the entites that this one is already touching before moving.
 		for (int i = 0; i < isInside.size(); i++) {
 			Entity e = isInside.get(i);
 			
-			//if(Game.debug && e != this && (e instanceof Player || this instanceof Player)) System.out.println(Game.onlinePrefix()+"entity " + this.toClassString() + " is moving to be inside " + e.toClassString());
+			if (e == this) continue; // can't interact with yourself
 			
-			if (e == this) continue;
-			
-			if (e.blocks(this)) {
-				//if (Game.debug && (e instanceof Player || this instanceof Player)) System.out.println(Game.onlinePrefix()+"entity " + this.toClassString() + " was blocked by entity " + e.toClassString());
-				return false; // if the entity can block this entity, then this can't move.
-			}
+			if (e.blocks(this)) return false; // if the entity prevents this one from movement, don't move.
 		}
 		
 		// finally, the entity moves!
 		x += xa;
 		y += ya;
 		
-		//if (Game.debug && !(this instanceof MobAi)) System.out.println(Game.onlinePrefix()+"entity " + this.toClassString() + " allowed to move by ("+xa+","+ya+"), to: ("+x+","+y+")");
-		
 		return true; // the move was successful.
 	}
 	
 	/** if this entity is touched by another entity (extended by sub-classes) */
 	protected void touchedBy(Entity entity) {}
-	
-	/** returns if mobs can block this entity (aka: can't pass through them) */
-	public boolean isBlockableBy(Mob mob) { return true; // yes, mobs generally block other entities. }
 	
 	/** Used in ItemEntity.java, extended with Player.java */
 	public void touchItem(ItemEntity itemEntity) {}
@@ -215,25 +213,12 @@ public abstract class Entity {
 	/** This, strangely enough, determines if the entity can walk on wool; among some other things..? */
 	public boolean canWool() { return false; }
 	
-	/** Item interact, used in player.java */
-	public boolean interact(Player player, Item item, int attackDir) {
+	/** Item interact */
+	public boolean interact(Player player, Item item, Direction attackDir) {
 		return item.interact(player, this, attackDir);
 	}
 	
-	/** sees if the player has used an item in a direction (extended in player.java) */
-	public boolean use(Player player, int attackDir) {
-		// this may not be necessary for all entities.
-		return false;
-	}
-	
-	public int getLightRadius() {
-		return 0;
-	}
-	
-	/** Extended in Mob.java */
-	public void hurt(Mob mob, int dmg, int attackDir) {}
-	public void hurt(Tnt tnt, int dmg, int attackDir) {}
-	public void hurt(Tile tile, int x, int y, int dmg) {}
+	public int getLightRadius() { return 0; }
 	
 	public boolean isWithin(int tileRadius, Entity other) {
 		if(level == null || other.getLevel() == null) return false;
@@ -361,7 +346,5 @@ public abstract class Entity {
 	}
 	
 	@Override
-	public final int hashCode() {
-		return eid;
-	}
+	public final int hashCode() { return eid; }
 }

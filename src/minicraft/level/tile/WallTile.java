@@ -1,10 +1,11 @@
 package minicraft.level.tile;
 
 import minicraft.Game;
-import minicraft.entity.AirWizard;
+import minicraft.entity.Direction;
+import minicraft.entity.mob.AirWizard;
 import minicraft.entity.Entity;
-import minicraft.entity.Mob;
-import minicraft.entity.Player;
+import minicraft.entity.mob.Mob;
+import minicraft.entity.mob.Player;
 import minicraft.entity.particle.SmashParticle;
 import minicraft.entity.particle.TextParticle;
 import minicraft.gfx.Color;
@@ -39,7 +40,8 @@ public class WallTile extends Tile {
 		return false;
 	}
 	
-	public void hurt(Level level, int x, int y, Mob source, int dmg, int attackDir) {
+	@Override
+	public void hurt(Level level, int x, int y, Mob source, int dmg, Direction attackDir) {
 		/*int playDmg;
 		if (Game.isMode("creative")) playDmg = random.nextInt(5);
 		else {
@@ -48,7 +50,7 @@ public class WallTile extends Tile {
 		hurt(level, x, y, 0);
 	}
 	
-	public boolean interact(Level level, int xt, int yt, Player player, Item item, int attackDir) {
+	public boolean interact(Level level, int xt, int yt, Player player, Item item, Direction attackDir) {
 		if (item instanceof ToolItem) {
 			ToolItem tool = (ToolItem) item;
 			if (tool.type == ToolType.Pickaxe) {

@@ -1,8 +1,9 @@
-package minicraft.entity;
+package minicraft.entity.furniture;
 
 import java.util.ArrayList;
 
 import minicraft.Game;
+import minicraft.entity.mob.Player;
 import minicraft.gfx.Color;
 import minicraft.gfx.Sprite;
 import minicraft.item.Recipe;
@@ -41,7 +42,7 @@ public class Crafter extends Furniture {
 		this.type = type;
 	}
 	
-	public boolean use(Player player, int attackDir) {
+	public boolean use(Player player) {
 		Game.setMenu(new CraftingMenu(type.recipes, type.name(), player));
 		return true;
 	}

@@ -1,9 +1,13 @@
-package minicraft.entity;
+package minicraft.entity.furniture;
 
 import java.util.Random;
 
 import minicraft.Game;
 import minicraft.Sound;
+import minicraft.entity.Direction;
+import minicraft.entity.mob.EnemyMob;
+import minicraft.entity.mob.MobAi;
+import minicraft.entity.mob.Player;
 import minicraft.entity.particle.FireParticle;
 import minicraft.entity.particle.TextParticle;
 import minicraft.gfx.Color;
@@ -113,8 +117,9 @@ public class Spawner extends Furniture {
 			level.add(new FireParticle(x - 8 + randX, y - 6 + randY));
 		}
 	}
-
-	public boolean interact(Player player, Item item, int attackDir) {
+	
+	@Override
+	public boolean interact(Player player, Item item, Direction attackDir) {
 		if(item instanceof ToolItem) {
 			ToolItem tool = (ToolItem)item;
 			//if(tool.type != ToolType.Pickaxe && !Game.isMode("creative")) return false;
@@ -155,9 +160,10 @@ public class Spawner extends Furniture {
 		return false;
 	}
 	
+	@Override
 	@SuppressWarnings("JavaReflectionMemberAccess")
-	public void hurt(Mob attacker, int dmg, int attackDir) {
-		if(attacker instanceof Player && Game.isMode("creative") && mob instanceof EnemyMob) {
+	public boolean use(Player player) {
+		if(Game.isMode("creative") && mob instanceof EnemyMob) {
 			lvl++;
 			if(lvl > maxMobLevel) lvl = 1;
 			EnemyMob newmob = null;
@@ -167,12 +173,13 @@ public class Spawner extends Furniture {
 				ex.printStackTrace();
 			}
 			initMob(newmob);
+			return true;
 		}
+		
+		return false;
 	}
 	
-	public Furniture clone() {
-		return new Spawner(mob);
-	}
+	public Furniture clone() { return new Spawner(mob); }
 	
 	protected String getUpdateString() {
 		String updates = super.getUpdateString() + ";";

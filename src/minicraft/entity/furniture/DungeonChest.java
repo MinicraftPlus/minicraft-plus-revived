@@ -1,7 +1,11 @@
-package minicraft.entity;
+package minicraft.entity.furniture;
 
 import java.util.Random;
 import minicraft.Game;
+import minicraft.entity.Entity;
+import minicraft.entity.Inventory;
+import minicraft.entity.mob.AirWizard;
+import minicraft.entity.mob.Player;
 import minicraft.entity.particle.SmashParticle;
 import minicraft.entity.particle.TextParticle;
 import minicraft.gfx.Color;
@@ -23,7 +27,7 @@ public class DungeonChest extends Chest {
 		isLocked = true;
 	}
 	
-	public boolean use(Player player, int attackDir) {
+	public boolean use(Player player) {
 		if (isLocked) {
 			boolean activeKey = player.activeItem != null && player.activeItem.matches(Items.get("Key"));
 			boolean invKey = player.inventory.count(Items.get("key")) > 0;
@@ -54,12 +58,12 @@ public class DungeonChest extends Chest {
 					Game.levels[Game.lvlIdx(0)].add(wizard);
 				}
 				
-				return super.use(player, attackDir); // the player unlocked the chest.
+				return super.use(player); // the player unlocked the chest.
 			}
 			
 			return false; // the chest is locked, and the player has no key.
 		}
-		else return super.use(player, attackDir); // the chest was already unlocked.
+		else return super.use(player); // the chest was already unlocked.
 	}
 	
 	public void render(Screen screen) {

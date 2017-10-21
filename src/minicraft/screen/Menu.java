@@ -4,7 +4,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-import com.sun.istack.internal.NotNull;
+import org.jetbrains.annotations.NotNull;
 import minicraft.InputHandler;
 import minicraft.Sound;
 import minicraft.gfx.Color;
@@ -20,6 +20,7 @@ import minicraft.screen.entry.ListEntry;
 
 public class Menu {
 	
+	@NotNull
 	private ArrayList<ListEntry> entries = new ArrayList<>();
 	
 	private int spacing = 0;

@@ -8,7 +8,7 @@ import java.net.Socket;
 import java.util.Arrays;
 import minicraft.Game;
 import minicraft.item.PotionType;
-import com.sun.istack.internal.NotNull;
+import org.jetbrains.annotations.NotNull;
 
 public abstract class MinicraftConnection extends Thread implements MinicraftProtocol {
 	

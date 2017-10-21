@@ -64,7 +64,5 @@ public class Rectangle {
 		y += yoff;
 	}
 	
-	public String toString() {
-		return super.toString()+"[center="+getCenter()+"; size="+getSize()+"]";
-	}
+	public String toString() { return super.toString()+"[center="+getCenter()+"; size="+getSize()+"]"; }
 }

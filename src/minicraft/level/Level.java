@@ -9,8 +9,16 @@ import java.util.function.ToIntFunction;
 import minicraft.Game;
 import minicraft.Settings;
 import minicraft.entity.*;
+import minicraft.entity.furniture.Chest;
+import minicraft.entity.furniture.Crafter;
+import minicraft.entity.furniture.DungeonChest;
+import minicraft.entity.furniture.Lantern;
+import minicraft.entity.furniture.Spawner;
+import minicraft.entity.furniture.Tnt;
+import minicraft.entity.mob.*;
 import minicraft.entity.particle.Particle;
 import minicraft.gfx.Point;
+import minicraft.gfx.Rectangle;
 import minicraft.gfx.Screen;
 import minicraft.item.Item;
 import minicraft.item.Items;
@@ -201,7 +209,7 @@ public class Level {
 					Game.server.broadcastEntityAddition(entity);
 				
 				if (!Game.isValidServer() || !(entity instanceof Particle)) {
-					if (Game.debug) printEntityStatus("Adding ", entity, "DungeonChest", "AirWizard", "Player");
+					if (Game.debug) printEntityStatus("Adding ", entity, "furniture.DungeonChest", "mob.AirWizard", "mob.Player");
 					
 					entities.add(entity);
 					if(entity instanceof Player)
@@ -274,7 +282,7 @@ public class Level {
 			if(Game.isValidServer() && !(entity instanceof Particle) && entity.getLevel() == this)
 				Game.server.broadcastEntityRemoval(entity);
 			
-			if(Game.debug) printEntityStatus("Removing ", entity, "Player");
+			if(Game.debug) printEntityStatus("Removing ", entity, "mob.Player");
 			
 			entity.remove(this); // this will safely fail if the entity's level doesn't match this one.
 			entities.remove(entity);
@@ -538,10 +546,10 @@ public class Level {
 		return contained;
 	}
 	
-	public List<Entity> getEntitiesInRect(int x0, int y0, int x1, int y1) {
+	public List<Entity> getEntitiesInRect(Rectangle area) {
 		List<Entity> result = new ArrayList<>();
 		for(Entity e: getEntityArray()) {
-			if (e.intersects(x0, y0, x1, y1))
+			if (e.intersects(area))
 				result.add(e);
 		}
 		return result;

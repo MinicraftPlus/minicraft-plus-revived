@@ -1,7 +1,8 @@
-package minicraft.entity;
+package minicraft.entity.furniture;
 
 import minicraft.Settings;
 import minicraft.Game;
+import minicraft.entity.mob.Player;
 import minicraft.gfx.Color;
 
 public class DeathChest extends Chest {

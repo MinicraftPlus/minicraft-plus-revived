@@ -1,17 +1,20 @@
-package minicraft.entity;
+package minicraft.entity.mob;
 
 import java.io.BufferedWriter;
-import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 
 import minicraft.Game;
 import minicraft.Settings;
 import minicraft.Sound;
+import minicraft.entity.Direction;
+import minicraft.entity.Entity;
+import minicraft.entity.Spark;
 import minicraft.gfx.Color;
 import minicraft.gfx.Font;
 import minicraft.gfx.MobSprite;
 import minicraft.gfx.Screen;
+import minicraft.saveload.Save;
 
 public class AirWizard extends EnemyMob {
 	private static MobSprite[][] sprites = MobSprite.compileMobSpriteAnimations(8, 14);
@@ -22,8 +25,6 @@ public class AirWizard extends EnemyMob {
 	private int attackDelay = 0;
 	private int attackTime = 0;
 	private int attackType = 0;
-	String location = Game.gameDir;
-	File folder;
 	
 	public AirWizard(int lvl) { this(lvl>1); }
 	public AirWizard(boolean secondform) {
@@ -34,20 +35,14 @@ public class AirWizard extends EnemyMob {
 		else speed = 2;
 		walkTime = 2;
 		
-		folder = new File(location);
-		
 		lvlcols[0] = secondform ? Color.get(-1, 0, 2, 46) : Color.get(-1, 100, 500, 555); // top half color
 		lvlcols[1] = secondform ? Color.get(-1, 0, 2, 46) : Color.get(-1, 100, 500, 532); // bottom half color
 		col = lvlcols[lvl-1];
 	}
 	
-	public boolean canSwim() {
-		return secondform;
-	}
+	public boolean canSwim() { return secondform; }
 	
-	public boolean canWool() {
-		return false;
-	}
+	public boolean canWool() { return false; }
 	
 	public void tick() {
 		super.tick();
@@ -55,11 +50,13 @@ public class AirWizard extends EnemyMob {
 		
 		if (attackDelay > 0) {
 			xa = ya = 0;
-			dir = (attackDelay - 45) / 4 % 4; // the direction of attack.
+			int dir = (attackDelay - 45) / 4 % 4; // the direction of attack.
 			dir = (dir * 2 % 4) + (dir / 2); // direction attack changes
-			if (attackDelay < 45) {
-				dir = 0; // direction is reset, if attackDelay is less than 45; preping for attack.
-			}
+			if (attackDelay < 45)
+				dir = 0; // direction is reset, if attackDelay is less than 45; prepping for attack.
+			
+			this.dir = Direction.getDirection(dir);
+			
 			attackDelay--;
 			if (attackDelay == 0) {
 				//attackType = 0; // attack type is set to 0, as the default.
@@ -113,7 +110,8 @@ public class AirWizard extends EnemyMob {
 		}
 	}
 	
-	public void doHurt(int damage, int attackDir) {
+	@Override
+	public void doHurt(int damage, Direction attackDir) {
 		super.doHurt(damage, attackDir);
 		if (attackDelay == 0 && attackTime == 0) {
 			attackDelay = 60 * 2;
@@ -140,7 +138,7 @@ public class AirWizard extends EnemyMob {
 			col2 = Color.WHITE;
 		}
 		
-		MobSprite curSprite = sprites[dir][(walkDist >> 3) & 1];
+		MobSprite curSprite = sprites[dir.ordinal()][(walkDist >> 3) & 1];
 		curSprite.renderRow(0, screen, xo, yo, col1);
 		curSprite.renderRow(1, screen, xo, yo+8, col2);
 		
@@ -168,7 +166,7 @@ public class AirWizard extends EnemyMob {
 	protected void touchedBy(Entity entity) {
 		if (entity instanceof Player) {
 			// if the entity is the Player, then deal them 1 or 2 damage points.
-			entity.hurt(this, (secondform ? 2 : 1), Mob.getAttackDir(this, entity));
+			((Player)entity).hurt(this, (secondform ? 2 : 1));
 		}
 	}
 	
@@ -193,7 +191,7 @@ public class AirWizard extends EnemyMob {
 			BufferedWriter bufferedWriter = null;
 			
 			try {
-				bufferedWriter = new BufferedWriter(new FileWriter(location + "/unlocks.miniplussave", true));
+				bufferedWriter = new BufferedWriter(new FileWriter(Game.gameDir+"/Unlocks"+Save.extension, true));
 				bufferedWriter.write("AirSkin");
 			} catch (IOException ex) {
 				ex.printStackTrace();
@@ -212,7 +210,5 @@ public class AirWizard extends EnemyMob {
 		super.die(); // calls the die() method in EnemyMob.java
 	}
 	
-	public int getMaxLevel() {
-		return 2;
-	}
+	public int getMaxLevel() { return 2; }
 }

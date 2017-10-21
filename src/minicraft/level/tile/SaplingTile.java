@@ -1,6 +1,7 @@
 package minicraft.level.tile;
 
-import minicraft.entity.Mob;
+import minicraft.entity.Direction;
+import minicraft.entity.mob.Mob;
 import minicraft.gfx.Color;
 import minicraft.gfx.Screen;
 import minicraft.gfx.Sprite;
@@ -38,7 +39,7 @@ public class SaplingTile extends Tile {
 		}
 	}
 
-	public void hurt(Level level, int x, int y, Mob source, int dmg, int attackDir) {
+	public void hurt(Level level, int x, int y, Mob source, int dmg, Direction attackDir) {
 		level.setTile(x, y, onType);
 	}
 }

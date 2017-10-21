@@ -1,9 +1,10 @@
-package minicraft.entity;
+package minicraft.entity.mob;
 
 import java.net.InetAddress;
 import java.util.List;
 import minicraft.Game;
 import minicraft.InputHandler;
+import minicraft.entity.Entity;
 import minicraft.gfx.Color;
 import minicraft.gfx.Font;
 import minicraft.gfx.FontStyle;

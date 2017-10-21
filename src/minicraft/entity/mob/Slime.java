@@ -1,7 +1,8 @@
-package minicraft.entity;
+package minicraft.entity.mob;
 
 import minicraft.Settings;
 import minicraft.Game;
+import minicraft.entity.Direction;
 import minicraft.gfx.Color;
 import minicraft.gfx.MobSprite;
 import minicraft.gfx.Screen;
@@ -49,7 +50,7 @@ public class Slime extends EnemyMob {
 	
 	public boolean move(int xa, int ya) {
 		boolean result = super.move(xa, ya);
-		dir = 0;
+		dir = Direction.DOWN;
 		return result;
 	}
 	
@@ -61,7 +62,7 @@ public class Slime extends EnemyMob {
 		}
 		else walkDist = 0; // set to ground sprite.
 		
-		dir = 0;
+		dir = Direction.DOWN;
 		
 		super.render(screen);
 		

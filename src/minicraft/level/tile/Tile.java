@@ -2,9 +2,10 @@ package minicraft.level.tile;
 
 import java.util.Random;
 import minicraft.Game;
+import minicraft.entity.Direction;
 import minicraft.entity.Entity;
-import minicraft.entity.Mob;
-import minicraft.entity.Player;
+import minicraft.entity.mob.Mob;
+import minicraft.entity.mob.Player;
 import minicraft.gfx.Color;
 import minicraft.gfx.ConnectorSprite;
 import minicraft.gfx.Screen;
@@ -99,7 +100,7 @@ public abstract class Tile {
 		return 0;
 	}
 	
-	public void hurt(Level level, int x, int y, Mob source, int dmg, int attackDir) {}
+	public void hurt(Level level, int x, int y, Mob source, int dmg, Direction attackDir) {}
 	public void hurt(Level level, int x, int y, int dmg) {}
 	
 	/** What happens when you run into the tile (ex: run into a cactus) */
@@ -112,18 +113,12 @@ public abstract class Tile {
 	public void steppedOn(Level level, int xt, int yt, Entity entity) {}
 	
 	/** What happens when you hit an item on a tile (ex: Pickaxe on rock) */
-	public boolean interact(Level level, int xt, int yt, Player player, Item item, int attackDir) {
+	public boolean interact(Level level, int xt, int yt, Player player, Item item, Direction attackDir) {
 		return false;
 	}
-	/*
-	public boolean use(Level level, int xt, int yt, Player player, int attackDir) {
-		return false;
-	}
-	*/
+	
 	/** Sees if the tile connects to Water or Lava. */
-	public boolean connectsToLiquid() {
-		return connectsToWater || connectsToLava;
-	}
+	public boolean connectsToLiquid() { return connectsToWater || connectsToLava; }
 	
 	public int getData(String data) {
 		try {

@@ -2,9 +2,9 @@ package minicraft.screen;
 
 import minicraft.Game;
 import minicraft.InputHandler;
-import minicraft.entity.Chest;
+import minicraft.entity.furniture.Chest;
 import minicraft.entity.Inventory;
-import minicraft.entity.Player;
+import minicraft.entity.mob.Player;
 import minicraft.gfx.Screen;
 
 public class ContainerMenu extends Display {

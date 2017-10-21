@@ -1,7 +1,8 @@
 package minicraft.item;
 
+import minicraft.entity.Direction;
 import minicraft.entity.Entity;
-import minicraft.entity.Player;
+import minicraft.entity.mob.Player;
 import minicraft.gfx.Color;
 import minicraft.gfx.Font;
 import minicraft.gfx.Screen;
@@ -44,12 +45,10 @@ public abstract class Item {
 	
 	/** Determines what happens when the player interacts with an entity */
 	// TODO I want to move this to the individual entity classes.
-	public boolean interact(Player player, Entity entity, int attackDir) {
-		return false;
-	}
+	public boolean interact(Player player, Entity entity, Direction attackDir) { return false; }
 	
 	/** Determines what happens when the player interacts with a tile */
-	public boolean interactOn(Tile tile, Level level, int xt, int yt, Player player, int attackDir) {
+	public boolean interactOn(Tile tile, Level level, int xt, int yt, Player player, Direction attackDir) {
 		return false;
 	}
 	

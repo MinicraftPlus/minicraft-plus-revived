@@ -1,4 +1,4 @@
-package minicraft.entity;
+package minicraft.entity.furniture;
 
 import javax.swing.Timer;
 import java.awt.event.ActionEvent;
@@ -6,9 +6,15 @@ import java.awt.event.ActionListener;
 import java.util.List;
 
 import minicraft.Sound;
+import minicraft.entity.Direction;
+import minicraft.entity.Entity;
+import minicraft.entity.mob.Mob;
+import minicraft.entity.mob.Player;
 import minicraft.gfx.Color;
+import minicraft.gfx.Rectangle;
 import minicraft.gfx.Screen;
 import minicraft.gfx.Sprite;
+import minicraft.item.Item;
 import minicraft.level.Level;
 import minicraft.level.tile.Tiles;
 
@@ -41,14 +47,21 @@ public class Tnt extends Furniture implements ActionListener {
 			
 			if(ftik >= FUSE_TIME) {
 				// blow up
-				List<Entity> entitiesInRange = level.getEntitiesInRect(x - BLAST_RADIUS, y - BLAST_RADIUS, x + BLAST_RADIUS, y + BLAST_RADIUS);
+				List<Entity> entitiesInRange = level.getEntitiesInRect(new Rectangle(x, y, BLAST_RADIUS*2, BLAST_RADIUS*2, Rectangle.CENTER_DIMS));
 				
 				for(Entity e: entitiesInRange) {
 					float dist = (float) Math.hypot(e.x - x, e.y - y);
 					int dmg = (int) (BLAST_DAMAGE * (1 - (dist / BLAST_RADIUS))) + 1;
-					e.hurt(this, dmg, Mob.getAttackDir(this, e));
-					if(e instanceof Player)
-						((Player)e).payStamina(dmg * 2);
+					if(e instanceof Mob)
+						((Mob)e).hurt(this, dmg);
+					if(e instanceof Tnt) {
+						Tnt tnt = (Tnt) e;
+						if (!tnt.fuseLit) {
+							tnt.fuseLit = true;
+							Sound.fuse.play();
+							tnt.ftik = FUSE_TIME * 2 / 3;
+						}
+					}
 				}
 				
 				Sound.explode.play();
@@ -81,19 +94,15 @@ public class Tnt extends Furniture implements ActionListener {
 		levelSave = null;
 	}
 	
-	public void hurt(Mob m, int dmg, int attackDir) {
+	@Override
+	public boolean interact(Player player, Item heldItem, Direction attackDir) {
 		if (!fuseLit) {
 			fuseLit = true;
 			Sound.fuse.play();
+			return true;
 		}
-	}
-	
-	public void hurt(Tnt tnt, int dmg, int attackDir) {
-		if (!fuseLit) {
-			fuseLit = true;
-			Sound.fuse.play();
-			ftik = FUSE_TIME * 2 / 3;
-		}
+		
+		return false;
 	}
 	
 	protected String getUpdateString() {

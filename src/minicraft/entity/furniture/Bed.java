@@ -1,6 +1,8 @@
-package minicraft.entity;
+package minicraft.entity.furniture;
 
 import minicraft.Game;
+import minicraft.entity.mob.Player;
+import minicraft.entity.mob.RemotePlayer;
 import minicraft.gfx.Color;
 import minicraft.gfx.Sprite;
 import minicraft.level.Level;
@@ -15,7 +17,7 @@ public class Bed extends Furniture {
 	}
 	
 	/** Called when the player attempts to get in bed. */
-	public boolean use(Player player, int attackDir) {
+	public boolean use(Player player) {
 		if (Game.tickCount >= Game.sleepStartTime || Game.tickCount < Game.sleepEndTime && Game.pastDay1) { // if it is late enough in the day to sleep...
 			// set the player spawn coord. to their current position, in tile coords (hence " >> 4")
 			player.spawnx = player.x >> 4;
