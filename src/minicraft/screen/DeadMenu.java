@@ -24,8 +24,7 @@ public class DeadMenu extends Display {
 		entries.addAll(Arrays.asList(
 			new StringEntry("Time: " + InfoDisplay.getTimeString()),
 			new StringEntry("Score: " + Game.player.score),
-			new BlankEntry(),
-			new SelectEntry("Quit", () -> Game.setMenu(new TitleMenu()))
+			new BlankEntry()
 		));
 		
 		if(!Settings.get("mode").equals("hardcore")) {
@@ -35,6 +34,8 @@ public class DeadMenu extends Display {
 					Game.setMenu(null); //sets the menu to nothing
 			}));
 		}
+		
+		entries.add(new SelectEntry("Quit", () -> Game.setMenu(new TitleMenu())));
 		
 		menus = new Menu[]{
 			new Menu.Builder(true, 0, RelPos.LEFT, entries)
