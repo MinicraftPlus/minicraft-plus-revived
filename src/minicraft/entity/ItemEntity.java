@@ -8,8 +8,8 @@ import minicraft.item.Item;
 
 public class ItemEntity extends Entity {
 	private int lifeTime; // the life time of this entity in the level
-	public double xa, ya, za; // the x, y, and z accelerations.
-	public double xx, yy, zz; // the x, y, and z coordinates; in double precision.
+	private double xa, ya, za; // the x, y, and z accelerations.
+	private double xx, yy, zz; // the x, y, and z coordinates; in double precision.
 	public Item item; // the item that this entity is based off of.
 	private int time = 0; // time it has lasted in the level
 	
