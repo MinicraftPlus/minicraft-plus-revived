@@ -2,8 +2,8 @@ package minicraft.entity.mob;
 
 import java.net.InetAddress;
 import java.util.List;
-import minicraft.Game;
-import minicraft.InputHandler;
+import minicraft.core.Game;
+import minicraft.core.InputHandler;
 import minicraft.entity.Entity;
 import minicraft.gfx.Color;
 import minicraft.gfx.Font;

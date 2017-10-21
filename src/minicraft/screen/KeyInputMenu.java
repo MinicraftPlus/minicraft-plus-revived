@@ -1,12 +1,11 @@
 package minicraft.screen;
 
-import minicraft.Game;
-import minicraft.InputHandler;
+import minicraft.core.Game;
+import minicraft.core.InputHandler;
 import minicraft.gfx.Color;
 import minicraft.gfx.Font;
 import minicraft.gfx.Point;
 import minicraft.gfx.Screen;
-import minicraft.saveload.Save;
 import minicraft.screen.entry.KeyInputEntry;
 import minicraft.screen.entry.StringEntry;
 

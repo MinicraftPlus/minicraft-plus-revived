@@ -5,8 +5,8 @@ import java.util.Arrays;
 import java.util.Random;
 
 import org.jetbrains.annotations.NotNull;
-import minicraft.Game;
-import minicraft.InputHandler;
+import minicraft.core.Game;
+import minicraft.core.InputHandler;
 import minicraft.entity.mob.RemotePlayer;
 import minicraft.gfx.Color;
 import minicraft.gfx.Font;

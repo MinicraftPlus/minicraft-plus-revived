@@ -1,7 +1,7 @@
 package minicraft.entity.furniture;
 
-import minicraft.Settings;
-import minicraft.Game;
+import minicraft.core.Settings;
+import minicraft.core.Game;
 import minicraft.entity.mob.Player;
 import minicraft.gfx.Color;
 

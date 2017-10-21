@@ -9,8 +9,8 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 
-import minicraft.Game;
-import minicraft.Settings;
+import minicraft.core.Game;
+import minicraft.core.Settings;
 import minicraft.entity.furniture.Bed;
 import minicraft.entity.furniture.Chest;
 import minicraft.entity.furniture.DeathChest;

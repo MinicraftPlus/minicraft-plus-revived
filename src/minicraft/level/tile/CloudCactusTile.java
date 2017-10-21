@@ -1,7 +1,7 @@
 package minicraft.level.tile;
 
-import minicraft.Settings;
-import minicraft.Game;
+import minicraft.core.Settings;
+import minicraft.core.Game;
 import minicraft.entity.Direction;
 import minicraft.entity.mob.AirWizard;
 import minicraft.entity.Entity;

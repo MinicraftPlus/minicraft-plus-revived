@@ -1,6 +1,6 @@
 package minicraft.gfx;
 
-import minicraft.Game;
+import minicraft.core.Game;
 
 public class Screen {
 	

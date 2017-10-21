@@ -6,8 +6,8 @@ import java.awt.Image;
 import java.awt.image.BufferedImage;
 import java.util.Random;
 
-import minicraft.Game;
-import minicraft.Settings;
+import minicraft.core.Game;
+import minicraft.core.Settings;
 import minicraft.level.tile.Tiles;
 import minicraft.screen.WorldGenMenu;
 

@@ -1,7 +1,7 @@
 package minicraft.entity.furniture;
 
 import java.util.Random;
-import minicraft.Game;
+import minicraft.core.Game;
 import minicraft.entity.Entity;
 import minicraft.item.Inventory;
 import minicraft.entity.mob.AirWizard;

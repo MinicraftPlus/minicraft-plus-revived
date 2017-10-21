@@ -1,8 +1,8 @@
 package minicraft.screen;
 
-import minicraft.Game;
-import minicraft.InputHandler;
-import minicraft.Sound;
+import minicraft.core.Game;
+import minicraft.core.InputHandler;
+import minicraft.core.Sound;
 import minicraft.gfx.Screen;
 import minicraft.screen.entry.ListEntry;
 import minicraft.screen.entry.SelectEntry;

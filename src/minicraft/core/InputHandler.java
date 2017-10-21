@@ -1,4 +1,4 @@
-package minicraft;
+package minicraft.core;
 
 import java.awt.Component;
 import java.awt.event.KeyEvent;

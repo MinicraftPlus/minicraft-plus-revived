@@ -1,4 +1,4 @@
-package minicraft;
+package minicraft.core;
 
 import javax.sound.sampled.AudioSystem;
 import javax.sound.sampled.Clip;

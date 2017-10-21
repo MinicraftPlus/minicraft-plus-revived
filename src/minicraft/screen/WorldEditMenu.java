@@ -12,8 +12,8 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-import minicraft.Game;
-import minicraft.InputHandler;
+import minicraft.core.Game;
+import minicraft.core.InputHandler;
 import minicraft.gfx.Color;
 import minicraft.screen.Menu.Builder;
 import minicraft.screen.WorldSelectMenu.Action;

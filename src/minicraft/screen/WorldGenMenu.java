@@ -6,8 +6,8 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Random;
 
-import minicraft.Game;
-import minicraft.Settings;
+import minicraft.core.Game;
+import minicraft.core.Settings;
 import minicraft.gfx.Color;
 import minicraft.gfx.Font;
 import minicraft.gfx.Screen;

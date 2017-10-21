@@ -3,7 +3,7 @@ package minicraft.entity;
 import java.util.List;
 import java.util.Random;
 
-import minicraft.Game;
+import minicraft.core.Game;
 import minicraft.entity.mob.MobAi;
 import minicraft.entity.mob.Player;
 import minicraft.gfx.Rectangle;

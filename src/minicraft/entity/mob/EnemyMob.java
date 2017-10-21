@@ -1,7 +1,7 @@
 package minicraft.entity.mob;
 
-import minicraft.Game;
-import minicraft.Settings;
+import minicraft.core.Game;
+import minicraft.core.Settings;
 import minicraft.entity.furniture.Bed;
 import minicraft.entity.Entity;
 import minicraft.gfx.MobSprite;

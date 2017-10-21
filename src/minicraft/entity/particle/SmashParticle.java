@@ -1,6 +1,6 @@
 package minicraft.entity.particle;
 
-import minicraft.Sound;
+import minicraft.core.Sound;
 import minicraft.gfx.Color;
 import minicraft.gfx.Sprite;
 

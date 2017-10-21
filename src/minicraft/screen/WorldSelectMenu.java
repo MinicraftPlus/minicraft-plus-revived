@@ -3,8 +3,8 @@ package minicraft.screen;
 import java.io.File;
 import java.util.ArrayList;
 
-import minicraft.Game;
-import minicraft.InputHandler;
+import minicraft.core.Game;
+import minicraft.core.InputHandler;
 import minicraft.gfx.Color;
 import minicraft.gfx.Font;
 import minicraft.gfx.Screen;

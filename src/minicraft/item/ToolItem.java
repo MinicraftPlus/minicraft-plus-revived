@@ -3,7 +3,7 @@ package minicraft.item;
 import java.util.ArrayList;
 import java.util.Random;
 
-import minicraft.Game;
+import minicraft.core.Game;
 import minicraft.entity.Direction;
 import minicraft.entity.Entity;
 import minicraft.entity.mob.Mob;

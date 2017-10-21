@@ -1,6 +1,6 @@
 package minicraft.entity.mob;
 
-import minicraft.Settings;
+import minicraft.core.Settings;
 import minicraft.entity.Arrow;
 import minicraft.gfx.Color;
 import minicraft.gfx.MobSprite;

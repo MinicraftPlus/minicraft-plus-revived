@@ -1,6 +1,6 @@
 package minicraft.screen.entry;
 
-import minicraft.InputHandler;
+import minicraft.core.InputHandler;
 import minicraft.gfx.Screen;
 import minicraft.gfx.SpriteSheet;
 

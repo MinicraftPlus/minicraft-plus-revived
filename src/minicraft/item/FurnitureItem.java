@@ -2,7 +2,7 @@ package minicraft.item;
 
 import java.util.ArrayList;
 
-import minicraft.Game;
+import minicraft.core.Game;
 import minicraft.entity.*;
 import minicraft.entity.furniture.Bed;
 import minicraft.entity.furniture.Chest;

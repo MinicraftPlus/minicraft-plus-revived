@@ -4,10 +4,10 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
-import minicraft.Game;
-import minicraft.InputHandler;
-import minicraft.Settings;
-import minicraft.Sound;
+import minicraft.core.Game;
+import minicraft.core.InputHandler;
+import minicraft.core.Settings;
+import minicraft.core.Sound;
 import minicraft.entity.*;
 import minicraft.entity.furniture.Bed;
 import minicraft.entity.furniture.DeathChest;

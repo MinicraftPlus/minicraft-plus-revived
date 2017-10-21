@@ -10,8 +10,8 @@ import java.util.List;
 import java.util.Timer;
 import java.util.TimerTask;
 
-import minicraft.Game;
-import minicraft.Settings;
+import minicraft.core.Game;
+import minicraft.core.Settings;
 import minicraft.entity.furniture.Bed;
 import minicraft.entity.furniture.Chest;
 import minicraft.entity.Direction;

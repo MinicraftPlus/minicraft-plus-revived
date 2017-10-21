@@ -6,7 +6,7 @@ import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.net.Socket;
 import java.util.Arrays;
-import minicraft.Game;
+import minicraft.core.Game;
 import minicraft.item.PotionType;
 import org.jetbrains.annotations.NotNull;
 

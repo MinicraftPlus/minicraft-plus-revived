@@ -1,7 +1,7 @@
 package minicraft.screen.entry;
 
-import minicraft.InputHandler;
-import minicraft.Sound;
+import minicraft.core.InputHandler;
+import minicraft.core.Sound;
 import minicraft.gfx.Font;
 
 public class SelectEntry extends ListEntry {

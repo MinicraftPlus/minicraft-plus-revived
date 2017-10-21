@@ -6,8 +6,8 @@ import java.util.List;
 import java.util.Random;
 import java.util.function.ToIntFunction;
 
-import minicraft.Game;
-import minicraft.Settings;
+import minicraft.core.Game;
+import minicraft.core.Settings;
 import minicraft.entity.*;
 import minicraft.entity.furniture.Chest;
 import minicraft.entity.furniture.Crafter;
