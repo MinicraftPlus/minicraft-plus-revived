@@ -47,11 +47,7 @@ public class TorchTile extends Tile {
 	public int getLightRadius(Level level, int x, int y) {
 		return 6;
 	}
-	/*
-	public boolean canLight() {
-		return true;
-	}
-	*/
+	
 	public boolean interact(Level level, int xt, int yt, Player player, Item item, Direction attackDir) {
 		if(item instanceof PowerGloveItem) {
 			level.setTile(xt, yt, this.onType);

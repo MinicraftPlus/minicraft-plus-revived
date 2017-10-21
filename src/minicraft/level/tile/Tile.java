@@ -91,10 +91,6 @@ public abstract class Tile {
 		return true;
 	}
 
-	/*public boolean canLight() {
-		return false;
-	}*/
-	
 	/** Gets the light radius of a tile, Bigger number = bigger circle */
 	public int getLightRadius(Level level, int x, int y) {
 		return 0;

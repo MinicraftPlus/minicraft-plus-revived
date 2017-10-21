@@ -1,5 +1,6 @@
 package minicraft;
 
+import java.awt.Component;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.lang.reflect.Field;
@@ -77,8 +78,7 @@ public class InputHandler implements /*MouseListener, */KeyListener {
 	public Mouse tri = new Mouse();
 	*/
 	
-	public InputHandler() { this(true); }
-	public InputHandler(boolean listenToKeyboard) {
+	public InputHandler() {
 		keymap = new LinkedHashMap<>(); //stores custom key name with physical key name in keyboard.
 		keyboard = new HashMap<>(); //stores physical keyboard keys; auto-generated :D
 		
@@ -88,12 +88,12 @@ public class InputHandler implements /*MouseListener, */KeyListener {
 		keyboard.put("SHIFT", new Key(true));
 		keyboard.put("CTRL", new Key(true));
 		keyboard.put("ALT", new Key(true));
-		
-		if(listenToKeyboard)
-			Game.getCanvas().addKeyListener(this); //add key listener to game
-		//Game.addMouseListener(this); //add mouse listener to game (though it's never used)
-		//ticks = 0;
-		}
+	}
+	public InputHandler(Component inputSource) {
+		this();
+		inputSource.addKeyListener(this); //add key listener to game
+		//inputSource.addMouseListener(this); //add mouse listener to game (though it's never used)
+	}
 	
 	private void initKeyMap() {
 		keymap.put("UP", "UP|W"); //up action references up arrow key

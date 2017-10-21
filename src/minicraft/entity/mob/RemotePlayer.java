@@ -25,7 +25,7 @@ public class RemotePlayer extends Player {
 	
 	public RemotePlayer(Player previous, InetAddress ip, int port) { this(previous, false, ip, port); }
 	public RemotePlayer(Player previous, boolean isMainPlayer, InetAddress ip, int port) {
-		super(previous, (isMainPlayer?Game.input:new InputHandler(false)));
+		super(previous, (isMainPlayer?Game.input:new InputHandler()));
 		this.ipAddress = ip;
 		this.port = port;
 	}

@@ -119,7 +119,7 @@ public class ItemEntity extends Entity {
 			}
 			else if(!pickedUp && !(Game.ISONLINE && entity instanceof Player)) {// don't register if we are online and a player touches it; the client will register that.
 				pickedUp = true;
-				entity.touchItem(this);
+				((Player)entity).pickupItem(this);
 				pickedUp = isRemoved();
 			}
 		}

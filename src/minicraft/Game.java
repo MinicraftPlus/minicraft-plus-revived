@@ -1019,11 +1019,6 @@ public class Game {
 					info.add("armor: " + player.armor);
 					info.add("dam buffer: " + player.armorDamageBuffer);
 				}
-				
-				//info.add("steps: " + player.stepCount);
-				if(debug)
-					info.add("micro-hunger:" + player.hungerStamCnt);
-				//info.add("health regen:" + player.hungerStamCnt);
 			}
 			
 			FontStyle style = new FontStyle(textcol).setShadowType(Color.BLACK, true).setXPos(1);
@@ -1115,11 +1110,6 @@ public class Game {
 		}
 		else
 			Game.setMenu(new LoadingDisplay()); // gets things going to load up a world
-		
-		/*try {
-			Thread.sleep(2000);
-		} catch(InterruptedException ignored) {}
-		*/
 		
 		Timer t = new Timer(1000, e -> {
 			// now that that's done, let's turn *this* running JVM into a server:
@@ -1260,12 +1250,9 @@ public class Game {
 			
 			File[] files = getAllFiles(testFileOld).toArray(new File[0]);
 			for(File file: files) {
-				//testFile
 				File newFile = new File(file.getPath().replace(testFileOld.getPath(), testFile.getPath()));
-				//System.out.println("new file: " + newFile.getPath());
 				if(file.isDirectory()) newFile.mkdirs(); // these should be unnecessary.
 				else file.renameTo(newFile);
-				//File main = new File(testFileOld.getPath()+"/Preferences.miniplussave");
 			}
 			
 			deleteAllFiles(testFileOld);
@@ -1320,23 +1307,15 @@ public class Game {
 			});
 			
 			frame.setVisible(true);
-			
-			/*canvas.createBufferStrategy(3);
-			BufferStrategy bs = canvas.getBufferStrategy();
-			Graphics g = bs.getDrawGraphics();
-			g.drawString("Loading menus...", Game.WIDTH/4, Game.HEIGHT/2);
-			g.dispose();
-			bs.show();*/
 		}
 		
 		Game.autoclient = autoclient; // this will make the game automatically jump to the MultiplayerMenu, and attempt to connect to localhost.
 		
-		input = new InputHandler();
+		input = new InputHandler(getCanvas());
 		
 		fra = 0; // the frames processed in the previous second
 		tik = 0; // the ticks processed in the previous second
 		
-		//colors = new int[256];
 		image = new BufferedImage(WIDTH, HEIGHT, BufferedImage.TYPE_INT_RGB);
 		pixels = ((DataBufferInt) image.getRaster().getDataBuffer()).getData();
 		
@@ -1349,9 +1328,9 @@ public class Game {
 		run(); // Starts the game!
 	}
 	
-	public static Canvas getCanvas() { return canvas; }
+	private static Canvas getCanvas() { return canvas; }
 	
-	public static java.awt.Dimension getWindowSize() {
+	private static java.awt.Dimension getWindowSize() {
 		return new java.awt.Dimension(new Float(WIDTH * SCALE).intValue(), new Float(HEIGHT * SCALE).intValue());
 	}
 	

@@ -4,19 +4,13 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-import org.jetbrains.annotations.NotNull;
 import minicraft.InputHandler;
 import minicraft.Sound;
-import minicraft.gfx.Color;
-import minicraft.gfx.Dimension;
-import minicraft.gfx.Font;
-import minicraft.gfx.Insets;
-import minicraft.gfx.Point;
-import minicraft.gfx.Rectangle;
-import minicraft.gfx.Screen;
-import minicraft.gfx.SpriteSheet;
+import minicraft.gfx.*;
 import minicraft.screen.entry.BlankEntry;
 import minicraft.screen.entry.ListEntry;
+
+import org.jetbrains.annotations.NotNull;
 
 public class Menu {
 	

@@ -8,20 +8,16 @@ import minicraft.item.Item;
 import minicraft.item.StackableItem;
 import minicraft.screen.entry.ItemEntry;
 
-public class InventoryMenu extends ItemListMenu {
+class InventoryMenu extends ItemListMenu {
 	
 	private Inventory inv;
 	private Entity holder;
 	
-	public InventoryMenu(Entity holder, Inventory inv, String title) {
+	InventoryMenu(Entity holder, Inventory inv, String title) {
 		super(ItemEntry.useItems(inv.getItems()), title);
 		this.inv = inv;
 		this.holder = holder;
 	}
-	
-	/*Item getSelectedItem() {
-		return ((ItemEntry)getCurEntry()).getItem();
-	}*/
 	
 	@Override
 	public void tick(InputHandler input) {

@@ -418,7 +418,7 @@ public class MinicraftClient extends MinicraftConnection {
 					System.err.println("CLIENT error with PICKUP response: specified entity does not exist or is not an ItemEntity: " + ieid);
 					return false;
 				}
-				Game.player.touchItem((ItemEntity)ie);
+				Game.player.pickupItem((ItemEntity)ie);
 				return true;
 			
 			case POTION:

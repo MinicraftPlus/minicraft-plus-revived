@@ -42,9 +42,9 @@ public class Recipe {
 	
 	public int getAmount() { return amount; }
 	public boolean getCanCraft() { return canCraft; }
-	public void checkCanCraft(Player player) {
+	public boolean checkCanCraft(Player player) {
 		canCraft = getCanCraft(player);
-		//if(Game.debug) System.out.println("player can craft " + getProduct() + ": " + canCraft);
+		return canCraft;
 	}
 	/** Checks if the player can craft the recipe */
 	private boolean getCanCraft(Player player) {

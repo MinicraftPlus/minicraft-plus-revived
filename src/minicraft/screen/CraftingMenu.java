@@ -13,7 +13,6 @@ import minicraft.item.Item;
 import minicraft.item.Items;
 import minicraft.item.Recipe;
 import minicraft.screen.entry.ItemListing;
-import minicraft.screen.entry.RecipeEntry;
 
 public class CraftingMenu extends Display {
 	
@@ -23,30 +22,22 @@ public class CraftingMenu extends Display {
 	private RecipeMenu recipeMenu;
 	private Menu.Builder itemCountMenu, costsMenu;
 	
-	private static RecipeEntry[] getRecipeList(Recipe[] recipes) {
-		RecipeEntry[] entries = new RecipeEntry[recipes.length];
-		
-		for(int i = 0; i < recipes.length; i++) {
-			entries[i] = new RecipeEntry(recipes[i]);
-		}
-		
-		return entries;
-	}
+	private boolean isPersonalCrafter;
 	
-	
-	/*public CraftingMenu(List<Recipe> recipes, String title, Player player) {
-		this(recipes, title, player, false);
-	}
-	*/public CraftingMenu(List<Recipe> recipes, String title, Player player/*, boolean isPersonalMenu*/) {
+	public CraftingMenu(List<Recipe> recipes, String title, Player player) { this(recipes, title, player, false); }
+	public CraftingMenu(List<Recipe> recipes, String title, Player player, boolean isPersonal) {
 		for(Recipe recipe: recipes)
 			recipe.checkCanCraft(player);
 		
-		recipeMenu = new RecipeMenu(recipes, title);
+		this.isPersonalCrafter = isPersonal;
+		
+		if(!isPersonal)
+			recipeMenu = new RecipeMenu(recipes, title, player);
+		else
+			recipeMenu = new RecipeMenu(recipes, title, player, 300, 1, 400);
 		
 		this.player = player;
 		this.recipes = recipes.toArray(new Recipe[recipes.size()]);
-		
-		//ItemListing itemCount = new ItemListing(this.recipes[0].getProduct(), "0");
 		
 		itemCountMenu = new Menu.Builder(true, 0, RelPos.LEFT)
 			.setTitle("Have:")
@@ -59,8 +50,6 @@ public class CraftingMenu extends Display {
 			.setPositioning(new Point(itemCountMenu.createMenu().getBounds().getLeft(), recipeMenu.getBounds().getBottom()), RelPos.TOP_RIGHT);
 		
 		menus = new Menu[] {recipeMenu, itemCountMenu.createMenu(), costsMenu.createMenu()};
-		//menus = new Menu[3];
-		//menus[0] = recipeMenu;
 		
 		refreshData();
 	}
@@ -95,7 +84,7 @@ public class CraftingMenu extends Display {
 	
 	@Override
 	public void tick(InputHandler input) {
-		if(input.getKey("menu").clicked) {
+		if(input.getKey("menu").clicked || (isPersonalCrafter && input.getKey("craft").clicked)) {
 			Game.exitMenu();
 			return;
 		}

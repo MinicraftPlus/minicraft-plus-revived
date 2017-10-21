@@ -42,8 +42,9 @@ public class Player extends Mob {
 	public boolean skinon;
 	private int homeSetX, homeSetY;
 	
-	public static final int maxHealth = 10, maxStamina = 10, maxHunger = 10, maxArmor = 100; // the maximum stats that
-	// the player can have.
+	// the maximum stats that the player can have.
+	private static final int maxHealth = 10, maxStamina = 10, maxHunger = 10;
+	public static final int maxArmor = 100;
 	
 	public static MobSprite[][] sprites =  MobSprite.compileMobSpriteAnimations(0, 14);
 	private static MobSprite[][] carrySprites = MobSprite.compileMobSpriteAnimations(0, 16); // the sprites while carrying something.
@@ -51,9 +52,12 @@ public class Player extends Mob {
 	private static MobSprite[][] carrySuitSprites = MobSprite.compileMobSpriteAnimations(18, 22); // the "airwizard suit" sprites.
 	
 	public Inventory inventory;
-	public Item activeItem, attackItem; // attackItem is useful again b/c of the power glove.
+	
+	public Item activeItem;
+	Item attackItem; // attackItem is useful again b/c of the power glove.
 	private Item prevItem; // holds the item held before using the POW glove.
-	public int attackTime;
+	
+	int attackTime;
 	public Direction attackDir;
 	
 	private int onStairDelay; // the delay before changing levels.
@@ -62,11 +66,11 @@ public class Player extends Mob {
 	public int armorDamageBuffer;
 	public ArmorItem curArmor; // the color of the armor to be displayed.
 	
-	public int staminaRecharge; // the ticks before charging a bolt of the player's stamina
+	private int staminaRecharge; // the ticks before charging a bolt of the player's stamina
 	private static final int maxStaminaRecharge = 10; // cutoff value for staminaRecharge
 	public int staminaRechargeDelay; // the recharge delay ticks when the player uses up their stamina.
 	
-	public int hungerStamCnt, stamHungerTicks; // tiers of hunger penalties before losing a burger.
+	private int hungerStamCnt, stamHungerTicks; // tiers of hunger penalties before losing a burger.
 	private static final int[] maxHungerStams = {10, 7, 5}; // hungerStamCnt required to lose a burger.
 	private static final int maxHungerTicks = 300; // the cutoff value for stamHungerTicks
 	private int stepCount; // used to penalize hunger for movement.
@@ -91,7 +95,6 @@ public class Player extends Mob {
 		this.input = input;
 		inventory = new Inventory();
 		
-		//ac = acs;
 		if(previousInstance == null)
 			inventory.add(Items.arrowItem, acs);
 		
@@ -100,7 +103,6 @@ public class Player extends Mob {
 		
 		cooldowninfo = 0;
 		regentick = 0;
-		shirtColor = 110;
 		
 		armor = 0;
 		curArmor = null;
@@ -341,21 +343,7 @@ public class Player extends Mob {
 			if (input.getKey("pause").clicked)
 				Game.setMenu(new PauseMenu());
 			if (input.getKey("craft").clicked && !use())
-				Game.setMenu(new CraftingMenu(Recipes.craftRecipes, "Crafting", this) {
-					@Override
-					public void init(Display parent) {
-						super.init(parent);
-						for(Menu m: menus)
-							m.setFrameColors(300, 1, 400);
-					}
-					@Override
-					public void tick(InputHandler input) {
-						if(input.getKey("craft").clicked)
-							Game.exitMenu();
-						else
-							super.tick(input);
-					}
-				});
+				Game.setMenu(new CraftingMenu(Recipes.craftRecipes, "Crafting", this, true));
 			if (input.getKey("sethome").clicked) setHome();
 			if (input.getKey("home").clicked && !Bed.inBed) goHome();
 			
@@ -401,16 +389,6 @@ public class Player extends Mob {
 	
 	/* This actually ends up calling another use method down below. */
 	private boolean use() {
-		
-		// if an entity in the direction the player is facing has a use() method, call it, then return true.
-		/*int yo = -2;
-		if (dir == 0 && use(x - 8, y + 4 + yo, x + 8, y + 12 + yo)) return true;
-		if (dir == 1 && use(x - 8, y - 12 + yo, x + 8, y - 4 + yo)) return true;
-		if (dir == 3 && use(x + 4, y - 8 + yo, x + 12, y + 8 + yo)) return true;
-		if (dir == 2 && use(x - 12, y - 8 + yo, x - 4, y + 8 + yo)) return true;
-		*/
-		//return false;
-		
 		return use(getInteractionBox(12));
 	}
 	
@@ -456,29 +434,12 @@ public class Player extends Mob {
 		// if we are simply holding an item...
 		if (activeItem != null) {
 			attackTime = 10; // attack time will be set to 10.
-			//int yo = -2; // y-offset
-			//int range = 12; // range (distance?) from an object
 			
-			/* if the interaction between you and an entity is successful then return. */
+			// if the interaction between you and an entity is successful, then return.
 			if(interact(getInteractionBox(12))) return;
-			/*if (dir == 0 && interact(x - 8, y + 4, x + 8, y + range)) done = true;
-			if (dir == 1 && interact(x - 8, y - range, x + 8, y - 4)) done = true;
-			if (dir == 3 && interact(x + 4, y - 8, x + range, y + 8)) done = true;
-			if (dir == 2 && interact(x - range, y - 8, x - 4, y + 8)) done = true;
-			if (done) return;*/
 			
-			/*
-			int xt = x >> 4; // current x-tile coordinate you are on.
-			int yt = (y + yo) >> 4; // current y-tile coordinate you are on.
-			int r = 12; // radius
-			// gets the tile on the side of you that you're attacking.
-			if (attackDir == Direction.DOWN)  yt = (y + r + yo) >> 4;
-			if (attackDir == Direction.UP)    yt = (y - r + yo) >> 4;
-			if (attackDir == Direction.LEFT)  xt = (x - r) >> 4;
-			if (attackDir == Direction.RIGHT) xt = (x + r) >> 4;
-			*/
+			// otherwise, attempt to interact with the tile.
 			Point t = getInteractionTile(12);
-			
 			if (t.x >= 0 && t.y >= 0 && t.x < level.w && t.y < level.h) { // if the target coordinates are a valid tile...
 				if (activeItem.interactOn(level.getTile(t.x, t.y), level, t.x, t.y, this, attackDir)) { // returns true if your held item successfully interacts with the target tile.
 					done = true;
@@ -507,23 +468,9 @@ public class Player extends Mob {
 			attackTime = 5;
 			// attacks the enemy in the appropriate direction.
 			hurt(getInteractionBox(20));
-			/*if (dir == Direction.DOWN)  hurt(x - 8, y + 4 + yo, x + 8, y + range + yo);
-			if (dir == Direction.UP)    hurt(x - 8, y - range + yo, x + 8, y - 4 + yo);
-			if (dir == Direction.LEFT)  hurt(x - range, y - 8 + yo, x - 4, y + 8 + yo);
-			if (dir == Direction.RIGHT) hurt(x + 4, y - 8 + yo, x + range, y + 8 + yo);
-			*/
+			
 			// attempts to hurt the tile in the appropriate direction.
-			
 			Point t = getInteractionTile(12);
-			
-			/*int xt = x >> 4;
-			int yt = (y + yo) >> 4;
-			int r = 12;
-			if (attackDir == 0) yt = (y + r + yo) >> 4; // down
-			if (attackDir == 1) yt = (y - r + yo) >> 4; // up
-			if (attackDir == 2) xt = (x - r) >> 4; // left
-			if (attackDir == 3) xt = (x + r) >> 4; // right
-			*/
 			if (t.x >= 0 && t.y >= 0 && t.x < level.w && t.y < level.h) {
 				Tile tile = level.getTile(t.x, t.y);
 				tile.hurt(level, t.x, t.y, this, random.nextInt(3) + 1, attackDir);
@@ -688,11 +635,10 @@ public class Player extends Mob {
 	}
 	
 	/** What happens when the player interacts with a itemEntity */
-	public void touchItem(ItemEntity itemEntity) {
+	public void pickupItem(ItemEntity itemEntity) {
 		Sound.pickup.play();
 		itemEntity.remove();
 		score++; // increase the player's score by 1
-		//itemEntity.take(this); // calls the take() method in ItemEntity
 		if(Game.isMode("creative")) return; // we shall not bother the inventory on creative mode.
 		
 		if(activeItem != null && activeItem.name.equals(itemEntity.item.name) && activeItem instanceof StackableItem && itemEntity.item instanceof StackableItem) // picked up item matches the one in your hand
@@ -701,17 +647,11 @@ public class Player extends Mob {
 			inventory.add(itemEntity.item); // add item to inventory
 	}
 	
-	public boolean canSwim() {
-		return true; // the player can swim.
-	}
+	// the player can swim.
+	public boolean canSwim() { return true; }
 	
-	public boolean canWool() {
-		return true; // can... something..?
-	}
-	
-	public boolean canLight() {
-		return true; // can be lit up? has a lighter version?
-	}
+	// can walk on wool tiles..? quickly..?
+	public boolean canWool() { return true; }
 	
 	/** Finds a start position for the player to start in. */
 	public boolean findStartPos(Level level, long spawnSeed) {
@@ -719,10 +659,6 @@ public class Player extends Mob {
 		return findStartPos(level);
 	}
 	public boolean findStartPos(Level level) {
-		/*if(level == null) {
-			System.err.println("ERROR: can't find start position on null level");
-			return false;
-		}*/
 		while (true) { // will loop until it returns
 			// gets coordinates of a random tile (in tile coordinates)
 			int x = random.nextInt(level.w);
@@ -740,7 +676,7 @@ public class Player extends Mob {
 	}
 	
 	/** Set player's home coordinates. */
-	public void setHome() {
+	private void setHome() {
 		if (Game.currentLevel == 3) { // if on surface
 			// set home coordinates
 			homeSetX = this.x;
@@ -752,7 +688,7 @@ public class Player extends Mob {
 		}
 	}
 
-	public void goHome() {
+	private void goHome() {
 		if (Game.currentLevel == 3) { // if on surface
 			if (hasSetHome) {
 				// move player to home coordinates
@@ -802,9 +738,6 @@ public class Player extends Mob {
 		
 		if (Game.currentLevel == 5) r = 5 * light; // more light than usual on dungeon level.
 		
-		//if (Game.isMode("creative")) r = 12 * light; // creative mode light radius is much bigger; whole screen.
-		
-		
 		if (activeItem != null && activeItem instanceof FurnitureItem) { // if player is holding furniture
 			int rr = ((FurnitureItem) activeItem).furniture.getLightRadius(); // gets furniture light radius
 			if (rr > r) r = rr; // brings player light up to furniture light, if less, since the furnture is not yet part of the level and so doesn't emit light even if it should.
@@ -824,15 +757,9 @@ public class Player extends Mob {
 		dc.x = this.x;
 		dc.y = this.y;
 		dc.inventory = this.inventory;
-		if (activeItem != null) {
-			dc.inventory.add(activeItem);
-		}
-		if(curArmor != null) {
-			//ArmorItem armorItem = new ArmorItem(curArmor);
-			//armorItem.amount = armor;
-			dc.inventory.add(curArmor);
-		}
-		//dc.inventory.removeItem(new PowerGloveItem());
+		
+		if (activeItem != null) dc.inventory.add(activeItem);
+		if (curArmor != null) dc.inventory.add(curArmor);
 		
 		Sound.playerDeath.play();
 		
@@ -905,20 +832,10 @@ public class Player extends Mob {
 		String updates = super.getUpdateString() + ";";
 		updates += "skinon,"+skinon+
 		";shirtColor,"+shirtColor+
-		//";activeItem,"+(activeItem==null?"null":activeItem.name)+
 		";armor,"+armor+
 		";attackTime,"+attackTime+
 		";attackDir,"+attackDir.ordinal()+
 		";attackItem,"+(attackItem==null?"null":attackItem.name);
-		/*";potioneffects,";
-		if(potioneffects.size() == 0)
-			updates += "null";
-		else {
-			for(PotionType p: potioneffects.keySet().toArray(new PotionType[0]))
-				updates += p.ordinal() + "_" + potioneffects.get(p) + ":";
-			
-			updates = updates.substring(0, updates.length()-1);
-		}*/
 		
 		return updates;
 	}
@@ -928,7 +845,6 @@ public class Player extends Mob {
 		switch(field) {
 			case "skinon": skinon = Boolean.parseBoolean(val); return true;
 			case "shirtColor": shirtColor = Integer.parseInt(val); return true;
-			//case "activeItem": activeItem = Items.get(val); return true;
 			case "armor": armor = Integer.parseInt(val); return true;
 			case "attackTime": attackTime = Integer.parseInt(val); return true;
 			case "attackDir": attackDir = Direction.values[Integer.parseInt(val)]; return true;

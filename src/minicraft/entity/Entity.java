@@ -37,7 +37,7 @@ public abstract class Entity {
 	private String prevUpdates = ""; /// holds the last value returned from getUpdateString(), for comparison with the next call.
 	private String curDeltas = ""; /// holds the updates returned from the last time getUpdates() was called.
 	private boolean accessedUpdates = false;
-	public long lastUpdate;
+	private long lastUpdate;
 	
 	public Entity(int xr, int yr) { // add color to this later, in color update
 		this.xr = xr;
@@ -178,7 +178,7 @@ public abstract class Entity {
 				e.touchedBy(this); // call the method. ("touch" the entity)
 		}
 		
-		isInside.removeAll(wasInside); // remove all the entites that this one is already touching before moving.
+		isInside.removeAll(wasInside); // remove all the entities that this one is already touching before moving.
 		for (int i = 0; i < isInside.size(); i++) {
 			Entity e = isInside.get(i);
 			
@@ -196,9 +196,6 @@ public abstract class Entity {
 	
 	/** if this entity is touched by another entity (extended by sub-classes) */
 	protected void touchedBy(Entity entity) {}
-	
-	/** Used in ItemEntity.java, extended with Player.java */
-	public void touchItem(ItemEntity itemEntity) {}
 	
 	/** Determines if the entity can swim (extended in sub-classes) */
 	public boolean canSwim() { return false; }
@@ -306,7 +303,6 @@ public abstract class Entity {
 			/// loop though each of the updates this call. If it is differnt from the last one, then add it to the list.
 			if(!curUpdates[i].equals(prevUpdates[i])) {
 				deltas.append(curUpdates[i]).append(";");
-				//if(Game.debug) System.out.println("found delta for "+this+"; old:\""+prevUpdates[i]+"\" -- new:\""+curUpdates[i]+"\"");
 			}
 		}
 		
@@ -318,15 +314,9 @@ public abstract class Entity {
 	}
 	
 	/// this marks the entity as having a new state to fetch.
-	public void flushUpdates() {
-		accessedUpdates = false;
-	}
+	public void flushUpdates() { accessedUpdates = false; }
 	
-	public String toString() {
-		//String superName = super.toString();
-		//superName = superName.substring(superName.lastIndexOf(".")+1);
-		return toClassString() + "(eid="+eid+")";
-	}
+	public String toString() { return toClassString() + "(eid="+eid+")"; }
 	
 	public String toClassString() {
 		String clazz = getClass().getName();
