@@ -3,7 +3,7 @@ package minicraft.screen;
 import minicraft.Game;
 import minicraft.InputHandler;
 import minicraft.entity.Entity;
-import minicraft.entity.Inventory;
+import minicraft.item.Inventory;
 import minicraft.item.Item;
 import minicraft.item.StackableItem;
 import minicraft.screen.entry.ItemEntry;

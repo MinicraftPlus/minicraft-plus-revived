@@ -3,7 +3,7 @@ package minicraft.screen;
 import minicraft.Game;
 import minicraft.InputHandler;
 import minicraft.entity.furniture.Chest;
-import minicraft.entity.Inventory;
+import minicraft.item.Inventory;
 import minicraft.entity.mob.Player;
 import minicraft.gfx.Screen;
 

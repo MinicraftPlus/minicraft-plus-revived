@@ -2,7 +2,6 @@ package minicraft.item;
 
 import java.util.ArrayList;
 import minicraft.Game;
-import minicraft.entity.Inventory;
 
 public class Items {
 	

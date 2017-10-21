@@ -21,6 +21,7 @@ import minicraft.entity.furniture.Spawner;
 import minicraft.entity.furniture.Tnt;
 import minicraft.entity.mob.*;
 import minicraft.item.ArmorItem;
+import minicraft.item.Inventory;
 import minicraft.item.Item;
 import minicraft.item.Items;
 import minicraft.item.PotionItem;

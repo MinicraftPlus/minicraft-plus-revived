@@ -3,7 +3,7 @@ package minicraft.entity.furniture;
 import java.util.Random;
 import minicraft.Game;
 import minicraft.entity.Entity;
-import minicraft.entity.Inventory;
+import minicraft.item.Inventory;
 import minicraft.entity.mob.AirWizard;
 import minicraft.entity.mob.Player;
 import minicraft.entity.particle.SmashParticle;
