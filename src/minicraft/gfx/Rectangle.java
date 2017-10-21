@@ -54,8 +54,8 @@ public class Rectangle {
 	public boolean intersects(Rectangle other) {
 		return !( getLeft() > other.getRight() // left side is past the other right side
 		  || other.getLeft() > getRight() // other left side is past the right side
-		  || getBottom() > other.getTop() // top is below the other bottom
-		  || other.getBottom() > getTop() // other top is below the bottom
+		  || getBottom() < other.getTop() // other top is below the bottom
+		  || other.getBottom() < getTop() // top is below the other bottom
 		);
 	}
 	

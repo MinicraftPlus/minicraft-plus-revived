@@ -99,11 +99,7 @@ public abstract class Entity {
 	private Rectangle getBounds() { return new Rectangle(x, y, xr*2, yr*2, Rectangle.CENTER_DIMS); }
 	
 	/** returns true if this entity is found in the rectangle specified by given two coordinates. */
-	public boolean intersects(Rectangle area) {
-		// x0,y0 = upper-left corner of rect; x1,y1 = bottom-right corner of rect
-		//return !(x + xr < x0 || y + yr < y0 || x - xr > x1 || y - yr > y1);
-		return area.intersects(getBounds());
-	}
+	public boolean isTouching(Rectangle area) { return area.intersects(getBounds()); }
 	
 	/** returns if this entity stops other solid entities from moving. */
 	public boolean isSolid() { return true; } // most entities are solid

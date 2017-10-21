@@ -549,7 +549,7 @@ public class Level {
 	public List<Entity> getEntitiesInRect(Rectangle area) {
 		List<Entity> result = new ArrayList<>();
 		for(Entity e: getEntityArray()) {
-			if (e.intersects(area))
+			if (e.isTouching(area))
 				result.add(e);
 		}
 		return result;
