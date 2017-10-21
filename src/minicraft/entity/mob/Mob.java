@@ -48,16 +48,13 @@ public abstract class Mob extends Entity {
 		
 		boolean moved = false;
 		/// The code below checks the direction of the knockback, moves the Mob accordingly, and brings the knockback closer to 0.
-		Direction xKnock = Direction.getDirection(xKnockback, 0);
-		Direction yKnock = Direction.getDirection(0, yKnockback);
-		
-		if(xKnock != Direction.NONE) {
-			moved = move2(xKnock, 1);
-			xKnockback += xKnock.getX();
+		if(xKnockback != 0) {
+			moved = move2(xKnockback, 0);
+			xKnockback -= xKnockback/Math.abs(xKnockback);
 		}
-		if(yKnock != Direction.NONE) {
-			moved = moved || move2(yKnock, 1);
-			yKnockback += yKnock.getY();
+		if(yKnockback != 0) {
+			moved = move2(0, yKnockback);
+			yKnockback -= yKnockback/Math.abs(yKnockback);
 		}
 		
 		// if the player moved via knockback, update the server
@@ -87,9 +84,8 @@ public abstract class Mob extends Entity {
 		boolean moved = true;
 		
 		if (hurtTime == 0 || this instanceof Player) { // If a mobAi has been hurt recently and hasn't yet cooled down, it won't perform the movement (by not calling super)
-			Direction dir = Direction.getDirection(xa, ya); // set the mob's direction
-			if(dir != Direction.NONE) {
-				this.dir = dir; // NEVER set the mob direction to None.
+			if(xa != 0 || ya != 0) {
+				dir = Direction.getDirection(xa, ya); // set the mob's direction; NEVER set it to NONE
 				walkDist++;
 			}
 			

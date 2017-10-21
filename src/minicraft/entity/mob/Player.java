@@ -645,7 +645,7 @@ public class Player extends Mob {
 			col = Color.WHITE; // make the sprite white.
 		}
 		
-		MobSprite curSprite = spriteSet[dir.ordinal()][(walkDist >> 3) & 1]; // gets the correct sprite to render.
+		MobSprite curSprite = spriteSet[dir.getDir()][(walkDist >> 3) & 1]; // gets the correct sprite to render.
 		
 		// render each corner of the sprite
 		if (!isSwimming()) { // don't render the bottom half if swimming.

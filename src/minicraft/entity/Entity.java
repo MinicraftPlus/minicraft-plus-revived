@@ -113,15 +113,11 @@ public abstract class Entity {
 		
 	/** Moves an entity horizontally and vertically. Returns whether entity was unimpeded in it's movement.  */
 	public boolean move(int xa, int ya) {
-		if(Game.saving) return true; // pretend that it kept moving
-		
-		Direction dir = Direction.getDirection(xa, ya);
-		
-		if(dir == Direction.NONE) return true; // technically, it wasn't "stopped", so return true
+		if(Game.saving || (xa == 0 && ya == 0)) return true; // pretend that it kept moving
 		
 		boolean stopped = true; // used to check if the entity has BEEN stopped, COMPLETELY; below checks for a lack of collision.
-		if(xa != 0 && move2(dir, xa)) stopped = false; // becomes false if horizontal movement was successful.
-		if(ya != 0 && move2(dir, ya)) stopped = false; // becomes false if vertical movement was successful.
+		if(move2(xa, 0)) stopped = false; // becomes false if horizontal movement was successful.
+		if(move2(0, ya)) stopped = false; // becomes false if vertical movement was successful.
 		if (!stopped) {
 			int xt = x >> 4; // the x tile coordinate that the entity is standing on.
 			int yt = y >> 4; // the y tile coordinate that the entity is standing on.
@@ -132,11 +128,8 @@ public abstract class Entity {
 	}
 	
 	/** Second part to the move method (moves in one direction at a time) */
-	protected boolean move2(Direction dir, int amount) {
-		if(dir == Direction.NONE || amount == 0) return true; // was not stopped
-		
-		int xa = dir.getX() * amount;
-		int ya = dir.getY() * amount;
+	protected boolean move2(int xa, int ya) {
+		if(xa == 0 && ya == 0) return true; // was not stopped
 		
 		// gets the tile coordinate of each direction from the sprite...
 		int xto0 = ((x) - xr) >> 4; // to the left

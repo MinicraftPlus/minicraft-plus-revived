@@ -138,7 +138,7 @@ public class AirWizard extends EnemyMob {
 			col2 = Color.WHITE;
 		}
 		
-		MobSprite curSprite = sprites[dir.ordinal()][(walkDist >> 3) & 1];
+		MobSprite curSprite = sprites[dir.getDir()][(walkDist >> 3) & 1];
 		curSprite.renderRow(0, screen, xo, yo, col1);
 		curSprite.renderRow(1, screen, xo, yo+8, col2);
 		
