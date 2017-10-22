@@ -22,7 +22,7 @@ import minicraft.level.tile.Tile;
 
 public class Spawner extends Furniture {
 	
-	Random rnd = new Random();
+	private Random rnd = new Random();
 	
 	private static final int ACTIVE_RADIUS = 8*16;
 	private static final int minSpawnInterval = 200, maxSpawnInterval = 500;

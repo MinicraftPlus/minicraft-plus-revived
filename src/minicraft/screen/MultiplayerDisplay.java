@@ -2,11 +2,6 @@ package minicraft.screen;
 
 import java.io.InputStream;
 
-import com.mashape.unirest.http.HttpResponse;
-import com.mashape.unirest.http.JsonNode;
-import com.mashape.unirest.http.Unirest;
-import com.mashape.unirest.http.async.Callback;
-import com.mashape.unirest.http.exceptions.UnirestException;
 import minicraft.core.Game;
 import minicraft.core.InputHandler;
 import minicraft.gfx.Color;
@@ -15,6 +10,12 @@ import minicraft.gfx.FontStyle;
 import minicraft.gfx.Screen;
 import minicraft.network.MinicraftClient;
 import minicraft.saveload.Save;
+
+import com.mashape.unirest.http.HttpResponse;
+import com.mashape.unirest.http.JsonNode;
+import com.mashape.unirest.http.Unirest;
+import com.mashape.unirest.http.async.Callback;
+import com.mashape.unirest.http.exceptions.UnirestException;
 import org.json.JSONObject;
 
 public class MultiplayerDisplay extends Display {
@@ -42,6 +43,8 @@ public class MultiplayerDisplay extends Display {
 	}
 	
 	private State curState;
+	
+	public static void init() {} // as a way to initialize the class.
 	
 	public MultiplayerDisplay() {
 		Game.ISONLINE = true;

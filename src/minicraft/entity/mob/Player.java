@@ -104,6 +104,7 @@ public class Player extends Mob {
 		cooldowninfo = 0;
 		regentick = 0;
 		
+		attackDir = dir;
 		armor = 0;
 		curArmor = null;
 		armorDamageBuffer = 0;
@@ -113,9 +114,8 @@ public class Player extends Mob {
 		hungerStamCnt = maxHungerStams[Settings.getIdx("diff")];
 		stamHungerTicks = maxHungerTicks;
 		
-		if (Game.isMode("creative")) {
+		if (Game.isMode("creative"))
 			Items.fillCreativeInv(inventory);
-		}
 		
 		if(previousInstance != null) {
 			spawnx = previousInstance.spawnx;
@@ -267,9 +267,8 @@ public class Player extends Mob {
 			}
 		}
 		
-		if (Game.savecooldown > 0 && !Game.saving) {
+		if (Game.savecooldown > 0 && !Game.saving)
 			Game.savecooldown--;
-		}
 		
 		
 		if (Game.getMenu() == null && !Bed.inBed) {
@@ -388,9 +387,7 @@ public class Player extends Mob {
 	}
 	
 	/* This actually ends up calling another use method down below. */
-	private boolean use() {
-		return use(getInteractionBox(12));
-	}
+	private boolean use() { return use(getInteractionBox(12)); }
 	
 	/** This method is called when we press the attack button. */
 	protected void attack() {

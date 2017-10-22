@@ -22,20 +22,22 @@ public class PauseDisplay extends Display {
 			new SelectEntry("Options", () -> Game.setMenu(new OptionsDisplay()))
 			));
 		
-		if(!Game.ISONLINE)
+		if(!Game.ISONLINE) {
 			entries.add(new SelectEntry("Make World Multiplayer", () -> {
 				Game.setMenu(null);
 				Game.startMultiplayerServer();
 			}));
-		
-		entries.addAll(Arrays.asList(
-			new SelectEntry("Save Game", () -> {
+			
+			entries.add(new SelectEntry("Save Game", () -> {
 				Game.setMenu(null);
 				if(!Game.isValidServer())
 					new Save(WorldSelectDisplay.getWorldName());
 				else
 					Game.server.saveWorld();
-			}),
+			}));
+		}
+		
+		entries.addAll(Arrays.asList(
 			new SelectEntry("Main Menu", () -> Game.setMenu(new TitleDisplay())),
 			
 			new BlankEntry(),

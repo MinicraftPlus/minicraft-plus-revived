@@ -22,5 +22,8 @@ public class OptionsDisplay extends Display {
 	}
 	
 	@Override
-	public void onExit() { new Save(); }
+	public void onExit() {
+		new Save();
+		Game.MAX_FPS = (int)Settings.get("fps");
+	}
 }

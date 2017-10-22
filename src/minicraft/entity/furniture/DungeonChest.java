@@ -46,8 +46,8 @@ public class DungeonChest extends Chest {
 				
 				level.add(new SmashParticle(x * 16, y * 16));
 				level.add(new TextParticle("-1 key", x, y, Color.RED));
-				level.chestcount--;
-				if(level.chestcount == 0) { // if this was the last chest...
+				level.chestCount--;
+				if(level.chestCount == 0) { // if this was the last chest...
 					level.dropItem(x, y, 5, Items.get("Gold Apple"));
 					
 					Game.notifyAll("You hear a noise from the surface!", -100); // notify the player of the developments

@@ -286,7 +286,8 @@ public class Save {
 	}
 	
 	public static String writeEntity(Entity e, boolean isLocalSave) {
-		String name = e.getClass().getName().replace("minicraft.entity.", "");
+		String name = e.getClass().getName();
+		name = name.substring(name.lastIndexOf(".")+1);
 		//name = name.substring(name.lastIndexOf(".")+1);
 		StringBuilder extradata = new StringBuilder();
 		
@@ -294,7 +295,7 @@ public class Save {
 		
 		//if(e instanceof Particle) return ""; // TODO I don't want to, but there are complications.
 		
-		if(isLocalSave && (e instanceof ItemEntity || e instanceof Arrow || e instanceof RemotePlayer || e instanceof Spark || e instanceof Particle)) // wirte these only when sending a world, not writing it. (RemotePlayers are saved seperately, when their info is received.)
+		if(isLocalSave && (e instanceof ItemEntity || e instanceof Arrow || e instanceof RemotePlayer || e instanceof Spark || e instanceof Particle)) // wirte these only when sending a world, not writing it. (RemotePlayers are saved separately, when their info is received.)
 			return "";
 		
 		if(!isLocalSave)

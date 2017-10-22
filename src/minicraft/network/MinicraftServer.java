@@ -31,6 +31,8 @@ import minicraft.saveload.Load;
 import minicraft.saveload.Save;
 import minicraft.screen.WorldSelectDisplay;
 
+import org.jetbrains.annotations.Nullable;
+
 public class MinicraftServer extends Thread implements MinicraftProtocol {
 	
 	class MyTask extends TimerTask {
@@ -191,6 +193,7 @@ public class MinicraftServer extends Thread implements MinicraftProtocol {
 		return threads;
 	}
 	
+	@Nullable
 	public MinicraftServerThread getAssociatedThread(RemotePlayer player) {
 		MinicraftServerThread thread = null;
 		
@@ -227,7 +230,7 @@ public class MinicraftServer extends Thread implements MinicraftProtocol {
 	public void broadcastEntityUpdate(Entity e) { broadcastEntityUpdate(e, false); }
 	public void broadcastEntityUpdate(Entity e, boolean updateSelf) {
 		if(e.isRemoved()) {
-			if(Game.debug) System.out.println("SERVER tried to broadcast addition of removed entity: " + e);
+			if(Game.debug) System.out.println("SERVER tried to broadcast update of removed entity: " + e);
 			return;
 		}
 		List<RemotePlayer> players = getPlayersInRange(e, false);
@@ -274,6 +277,7 @@ public class MinicraftServer extends Thread implements MinicraftProtocol {
 	public void broadcastEntityRemoval(Entity e) { broadcastEntityRemoval(e, true); }
 	public void broadcastEntityRemoval(Entity e, boolean removeSelf) {
 		List<RemotePlayer> players = getPlayersInRange(e, true);
+		if(players.size() == 0) return;
 		if (Game.debug && e instanceof Player) {
 			System.out.println("SERVER: sending removal of player " + e + " to " + players.size() + " players (may remove equal player): ");
 			for(RemotePlayer rp: players)

@@ -207,7 +207,7 @@ public class MinicraftServerThread extends MinicraftConnection {
 		sendData(InputType.PLAYER, client.getPlayerData()); // send spawn loc.
 	}
 	
-	protected File getRemotePlayerFile() {
+	private File getRemotePlayerFile() {
 		File[] clientFiles = serverInstance.getRemotePlayerFiles();
 		
 		for(File file: clientFiles) {

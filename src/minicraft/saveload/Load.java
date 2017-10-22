@@ -453,7 +453,7 @@ public class Load {
 		
 		Game.currentLevel = Integer.parseInt(data.get(8));
 		Level level = Game.levels[Game.currentLevel];
-		if(Game.player != null)
+		if(Game.player != null && !Game.player.isRemoved())
 			Game.player.remove(); // removes the user player from the level, in case they would be added twice.
 		if(level != null)
 			level.add(player);
@@ -677,15 +677,19 @@ public class Load {
 				try {
 					c = Class.forName("minicraft.entity.mob."+entityName);
 				} catch(ClassNotFoundException ex1) {
-					try {
+					/*try {
 						c = Class.forName("minicraft.entity.furniture."+entityName);
 					} catch (ClassNotFoundException ex2) {
 						try {
 							c = Class.forName("minicraft.entity."+entityName);
 						} catch (ClassNotFoundException ex3) {
-							ex3.printStackTrace();
+							try {
+								c = Class.forName("minicraft.entity.particle."+entityName);
+							} catch (ClassNotFoundException ex4) {
+								ex4.printStackTrace();
+							}
 						}
-					}
+					}*/
 				}
 			}
 			if(c != null && EnemyMob.class.isAssignableFrom(c))
@@ -740,7 +744,7 @@ public class Load {
 				((DeathChest)chest).time = Integer.parseInt(chestInfo.get(chestInfo.size()-1));
 			} else if (isDungeonChest) {
 				((DungeonChest)chest).isLocked = Boolean.parseBoolean(chestInfo.get(chestInfo.size()-1));
-				Game.levels[Integer.parseInt(info.get(info.size()-1))].chestcount++;
+				Game.levels[Integer.parseInt(info.get(info.size()-1))].chestCount++;
 			}
 			
 			newEntity = chest;
