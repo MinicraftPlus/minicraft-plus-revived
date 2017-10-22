@@ -58,7 +58,7 @@ Add giants, and make them eat trees.
 
 ++++
 
-make friendly mobs able to be fed and bred.
+make friendly mobs able to be fed and bred, and led.
 
 ++++
 
