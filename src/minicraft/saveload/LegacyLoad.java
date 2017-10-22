@@ -8,7 +8,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-import minicraft.core.Game;
+import minicraft.core.*;
 import minicraft.core.Settings;
 import minicraft.entity.*;
 import minicraft.entity.furniture.Bed;
@@ -193,7 +193,7 @@ public class LegacyLoad {
 	}
 	
 	public void loadWorld(String filename) {
-		for(int l = 0; l < Game.levels.length; l++) {
+		for(int l = 0; l < World.levels.length; l++) {
 			loadFromFile(location + filename + l + extension);
 			
 			int lvlw = Integer.parseInt(data.get(0));
@@ -212,10 +212,10 @@ public class LegacyLoad {
 				}
 			}
 			
-			//Level parent = l == Game.levels.length-1 ? null : Game.levels[l+1];
-			Game.levels[l] = new Level(lvlw, lvlh, lvldepth, null, false);
-			Game.levels[l].tiles = tiles;
-			Game.levels[l].data = tdata;
+			//Level parent = l == World.levels.length-1 ? null : World.levels[l+1];
+			World.levels[l] = new Level(lvlw, lvlh, lvldepth, null, false);
+			World.levels[l].tiles = tiles;
+			World.levels[l].data = tdata;
 		}
 	}
 	
@@ -247,7 +247,7 @@ public class LegacyLoad {
 		}
 		
 		player.score = Integer.parseInt(data.get(6));
-		Game.levels[Game.currentLevel].add(player);
+		World.levels[Game.currentLevel].add(player);
 		
 		int mode;
 		if(modedata.contains(";")) {
@@ -333,8 +333,8 @@ public class LegacyLoad {
 	public void loadEntities(String filename, Player player) {
 		loadFromFile(location + filename + extension);
 		
-		for(int i = 0; i < Game.levels.length; i++) {
-			Game.levels[i].clearEntities();
+		for(int i = 0; i < World.levels.length; i++) {
+			World.levels[i].clearEntities();
 		}
 		
 		for(int i = 0; i < data.size(); i++) {
@@ -358,7 +358,7 @@ public class LegacyLoad {
 					Mob mob = (Mob)newEntity;
 					mob.health = Integer.parseInt(info.get(2));
 					currentlevel = Integer.parseInt(info.get(info.size()-1));
-					Game.levels[currentlevel].add(mob, x, y);
+					World.levels[currentlevel].add(mob, x, y);
 				} else if(newEntity instanceof Chest) {
 					Chest chest = (Chest)newEntity;
 					boolean isDeathChest = chest instanceof DeathChest;
@@ -390,18 +390,18 @@ public class LegacyLoad {
 					}
 					
 					currentlevel = Integer.parseInt(info.get(info.size() - 1));
-					Game.levels[currentlevel].add(chest instanceof DeathChest ? (DeathChest)chest : chest instanceof DungeonChest ? (DungeonChest)chest : chest, x, y);
+					World.levels[currentlevel].add(chest instanceof DeathChest ? (DeathChest)chest : chest instanceof DungeonChest ? (DungeonChest)chest : chest, x, y);
 				}
 				else if(newEntity instanceof Spawner) {
 					Spawner egg = new Spawner((MobAi)getEntity(info.get(2), player, Integer.parseInt(info.get(3))));
 					//egg.lvl = Integer.parseInt(info.get(3));
 					//egg.initMob((MobAi)getEntity(info.get(2), player, info.get(3)));
 					currentlevel = Integer.parseInt(info.get(info.size() - 1));
-					Game.levels[currentlevel].add(egg, x, y);
+					World.levels[currentlevel].add(egg, x, y);
 				}
 				else {
 					currentlevel = Integer.parseInt(info.get(2));
-					Game.levels[currentlevel].add(newEntity, x, y);
+					World.levels[currentlevel].add(newEntity, x, y);
 				}
 			} // end of entity not null conditional
 		}

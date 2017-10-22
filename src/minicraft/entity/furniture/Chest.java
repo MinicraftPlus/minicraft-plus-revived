@@ -1,6 +1,6 @@
 package minicraft.entity.furniture;
 
-import minicraft.core.Game;
+import minicraft.core.*;
 import minicraft.item.Inventory;
 import minicraft.entity.mob.Player;
 import minicraft.gfx.Color;

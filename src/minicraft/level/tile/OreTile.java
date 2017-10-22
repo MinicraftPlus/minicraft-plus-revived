@@ -1,6 +1,6 @@
 package minicraft.level.tile;
 
-import minicraft.core.Game;
+import minicraft.core.*;
 import minicraft.entity.Direction;
 import minicraft.entity.Entity;
 import minicraft.entity.mob.Mob;

@@ -1,7 +1,10 @@
 package minicraft.item;
 
 import java.util.ArrayList;
-import minicraft.core.Game;
+import minicraft.core.*;
+
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 public class Items {
 	
@@ -43,6 +46,7 @@ public class Items {
 	}
 	
 	/** fetches an item from the list given its name. */
+	@NotNull
 	public static Item get(String name) {
 		name = name.toUpperCase();
 		//System.out.println("fetching name: \"" + name + "\"");
@@ -56,7 +60,7 @@ public class Items {
 			name = name.substring(0, name.indexOf("_"));
 		}
 		
-		if(name.equals("NULL")) return null;
+		if(name.equals("NULL")) return new UnknownItem("NULL");
 		
 		Item i = null;
 		for(Item cur: items) {
@@ -65,12 +69,13 @@ public class Items {
 				break;
 			}
 		}
+		
 		if(i != null) {
 			if(i instanceof StackableItem)
 				((StackableItem)i).count = amount;
 			return i.clone();
 		} else {
-			System.out.println(Game.onlinePrefix()+"ITEMS GET: invalid name requested: \"" + name + "\"");
+			System.out.println(Network.onlinePrefix()+"ITEMS GET: invalid name requested: \"" + name + "\"");
 			//Thread.dumpStack();
 			return new UnknownItem(name);
 		}

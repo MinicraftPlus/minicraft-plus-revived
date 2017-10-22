@@ -1,7 +1,7 @@
 package minicraft.item;
 
 import java.util.ArrayList;
-import minicraft.core.Game;
+import minicraft.core.*;
 import minicraft.entity.Direction;
 import minicraft.entity.mob.Player;
 import minicraft.entity.mob.RemotePlayer;

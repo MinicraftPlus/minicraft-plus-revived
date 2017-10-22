@@ -1,7 +1,7 @@
 package minicraft.level.tile;
 
 import java.util.Random;
-import minicraft.core.Game;
+import minicraft.core.*;
 import minicraft.entity.Direction;
 import minicraft.entity.Entity;
 import minicraft.entity.mob.Mob;
@@ -138,8 +138,8 @@ public abstract class Tile {
 	
 	public static String getData(int depth, int x, int y) {
 		try {
-			byte lvlidx = (byte) Game.lvlIdx(depth);
-			Level curLevel = Game.levels[lvlidx];
+			byte lvlidx = (byte) World.lvlIdx(depth);
+			Level curLevel = World.levels[lvlidx];
 			int pos = x + curLevel.w * y;
 			
 			int tileid = curLevel.tiles[pos];

@@ -1,7 +1,7 @@
 package minicraft.entity.mob;
 
 import minicraft.core.Settings;
-import minicraft.core.Game;
+import minicraft.core.*;
 import minicraft.entity.Direction;
 import minicraft.gfx.Color;
 import minicraft.gfx.MobSprite;

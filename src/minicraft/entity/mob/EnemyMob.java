@@ -1,6 +1,6 @@
 package minicraft.entity.mob;
 
-import minicraft.core.Game;
+import minicraft.core.*;
 import minicraft.core.Settings;
 import minicraft.entity.furniture.Bed;
 import minicraft.entity.Entity;

@@ -2,7 +2,7 @@ package minicraft.item;
 
 import java.util.HashMap;
 
-import minicraft.core.Game;
+import minicraft.core.*;
 import minicraft.entity.mob.Player;
 
 public class Recipe {

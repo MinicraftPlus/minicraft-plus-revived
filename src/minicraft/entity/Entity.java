@@ -3,7 +3,7 @@ package minicraft.entity;
 import java.util.List;
 import java.util.Random;
 
-import minicraft.core.Game;
+import minicraft.core.*;
 import minicraft.entity.mob.MobAi;
 import minicraft.entity.mob.Player;
 import minicraft.gfx.Rectangle;
@@ -93,7 +93,7 @@ public abstract class Entity {
 		this.y = y;
 		
 		if(eid < 0)
-			eid = Game.generateUniqueEntityId();
+			eid = Network.generateUniqueEntityId();
 	}
 	
 	private Rectangle getBounds() { return new Rectangle(x, y, xr*2, yr*2, Rectangle.CENTER_DIMS); }
@@ -109,7 +109,7 @@ public abstract class Entity {
 		
 	/** Moves an entity horizontally and vertically. Returns whether entity was unimpeded in it's movement.  */
 	public boolean move(int xa, int ya) {
-		if(Game.saving || (xa == 0 && ya == 0)) return true; // pretend that it kept moving
+		if(Updater.saving || (xa == 0 && ya == 0)) return true; // pretend that it kept moving
 		
 		boolean stopped = true; // used to check if the entity has BEEN stopped, COMPLETELY; below checks for a lack of collision.
 		if(move2(xa, 0)) stopped = false; // becomes false if horizontal movement was successful.
@@ -244,7 +244,7 @@ public abstract class Entity {
 			case "y": y = Integer.parseInt(val); return true;
 			case "level":
 				if(val.equals("null")) return true; // this means no level.
-				Level newLvl = Game.levels[Integer.parseInt(val)];
+				Level newLvl = World.levels[Integer.parseInt(val)];
 				if(newLvl != null && level != null) {
 					if(newLvl.depth == level.depth) return true;
 					level.remove(this);
@@ -260,7 +260,7 @@ public abstract class Entity {
 	protected String getUpdateString() {
 		return "x,"+x+";"
 		+"y,"+y+";"
-		+"level,"+(level==null?"null":Game.lvlIdx(level.depth));
+		+"level,"+(level==null?"null":World.lvlIdx(level.depth));
 	}
 	
 	public final String getUpdates(boolean fetchAll) {

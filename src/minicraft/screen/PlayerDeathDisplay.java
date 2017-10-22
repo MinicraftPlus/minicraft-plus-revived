@@ -3,7 +3,7 @@ package minicraft.screen;
 import java.util.ArrayList;
 import java.util.Arrays;
 
-import minicraft.core.Game;
+import minicraft.core.*;
 import minicraft.core.Settings;
 import minicraft.gfx.Point;
 import minicraft.gfx.SpriteSheet;
@@ -29,7 +29,7 @@ public class PlayerDeathDisplay extends Display {
 		
 		if(!Settings.get("mode").equals("hardcore")) {
 			entries.add(new SelectEntry("Respawn", () -> {
-				Game.resetGame();
+				World.resetGame();
 				if (!Game.isValidClient())
 					Game.setMenu(null); //sets the menu to nothing
 			}));

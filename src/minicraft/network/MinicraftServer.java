@@ -10,7 +10,7 @@ import java.util.List;
 import java.util.Timer;
 import java.util.TimerTask;
 
-import minicraft.core.Game;
+import minicraft.core.*;
 import minicraft.core.Settings;
 import minicraft.entity.furniture.Bed;
 import minicraft.entity.furniture.Chest;
@@ -320,10 +320,10 @@ public class MinicraftServer extends Thread implements MinicraftProtocol {
 		
 		String[] varArray = {
 			Settings.get("mode").toString(),
-			Game.tickCount+"",
-			Game.gamespeed+"",
-			Game.pastDay1+"",
-			Game.scoreTime+""
+			Updater.tickCount+"",
+			Updater.gamespeed+"",
+			Updater.pastDay1+"",
+			Updater.scoreTime+""
 		};
 		
 		String vars = String.join(";", varArray);
@@ -437,7 +437,7 @@ public class MinicraftServer extends Thread implements MinicraftProtocol {
 					new Load().loadPlayer(clientPlayer, Arrays.asList(playerdata.split("\\n")[0].split(",")));
 					// we really don't need to load the inventory.
 				} else {
-					clientPlayer.findStartPos(Game.levels[Game.lvlIdx(0)]); // find a new start pos
+					clientPlayer.findStartPos(World.levels[World.lvlIdx(0)]); // find a new start pos
 					// this is a new player.
 					playerdata = clientPlayer.getPlayerData();
 				}
@@ -445,16 +445,16 @@ public class MinicraftServer extends Thread implements MinicraftProtocol {
 				
 				// now, we send the INIT_W packet and notify the others clients.
 				
-				int playerlvl = Game.lvlIdx(clientPlayer.getLevel() != null ? clientPlayer.getLevel().depth : 0);
-				if(!Arrays.asList(Game.levels[playerlvl].getEntityArray()).contains(clientPlayer) && clientPlayer != hostPlayer) // this will be true if their file was already found, since they are added in Load.loadPlayer().
-					Game.levels[playerlvl].add(clientPlayer); // add to level (**id is generated here**) and also, maybe, broadcasted to other players?
+				int playerlvl = World.lvlIdx(clientPlayer.getLevel() != null ? clientPlayer.getLevel().depth : 0);
+				if(!Arrays.asList(World.levels[playerlvl].getEntityArray()).contains(clientPlayer) && clientPlayer != hostPlayer) // this will be true if their file was already found, since they are added in Load.loadPlayer().
+					World.levels[playerlvl].add(clientPlayer); // add to level (**id is generated here**) and also, maybe, broadcasted to other players?
 				
 				updateGameVars(serverThread);
 				//making INIT_W packet
 				int[] toSend = {
 					clientPlayer.eid,
-					Game.levels[playerlvl].w,
-					Game.levels[playerlvl].h,
+					World.levels[playerlvl].w,
+					World.levels[playerlvl].h,
 					playerlvl, // these bottom three are actually unnecessary because of the previous PLAYER packet.
 					clientPlayer.x,
 					clientPlayer.y
@@ -471,7 +471,7 @@ public class MinicraftServer extends Thread implements MinicraftProtocol {
 				if (Game.debug) System.out.println("SERVER: received level data request");
 				// send back the tiles in the level specified.
 				int levelidx = Integer.parseInt(alldata);
-				if(levelidx < 0 || levelidx >= Game.levels.length) {
+				if(levelidx < 0 || levelidx >= World.levels.length) {
 					System.err.println("SERVER warning: Client " + clientPlayer + " tried to request tiles from nonexistent level " + levelidx);
 					serverThread.sendError("requested level ("+levelidx+") does not exist.");
 					return false;
@@ -479,15 +479,15 @@ public class MinicraftServer extends Thread implements MinicraftProtocol {
 				
 				// move the associated player to the level they requested -- they shouldn't be requesting it if they aren't going to transfer to it.
 				clientPlayer.remove();
-				Game.levels[levelidx].add(clientPlayer);
+				World.levels[levelidx].add(clientPlayer);
 				// if it's the same level, it will cancel out.
 				
-				byte[] tiledata = new byte[Game.levels[levelidx].tiles.length*2];
+				byte[] tiledata = new byte[World.levels[levelidx].tiles.length*2];
 				//tiledata[0] = (byte) InputType.TILES.ordinal();
 				//tiledata[1] = 0; // the index to start on.
 				for(int i = 0; i < tiledata.length/2 - 1; i++) {
-					tiledata[i*2] = Game.levels[levelidx].tiles[i];
-					tiledata[i*2+1] = Game.levels[levelidx].data[i];
+					tiledata[i*2] = World.levels[levelidx].tiles[i];
+					tiledata[i*2+1] = World.levels[levelidx].data[i];
 				}
 				serverThread.cachePacketTypes(InputType.tileUpdates);
 				
@@ -511,7 +511,7 @@ public class MinicraftServer extends Thread implements MinicraftProtocol {
 				
 				/// send back the entities in the level specified.
 				
-				Entity[] entities = Game.levels[levelidx].getEntityArray();
+				Entity[] entities = World.levels[levelidx].getEntityArray();
 				serverThread.cachePacketTypes(InputType.entityUpdates);
 				
 				//if (Game.debug) System.out.println("client player level on load request: " + clientPlayer.getLevel());
@@ -574,7 +574,7 @@ public class MinicraftServer extends Thread implements MinicraftProtocol {
 			case ENTITY:
 				// client wants the specified entity sent in an ADD packet, becuase it couldn't find that entity upon recieving an ENTITY packet from the server.
 				int enid = Integer.parseInt(alldata);
-				Entity entityToSend = Game.getEntity(enid);
+				Entity entityToSend = Network.getEntity(enid);
 				if(entityToSend == null) {
 					/// well THIS would be a problem, I think. Though... Actually, not really. It just means that an entity was removed between the time of sending an update for it, and the client then asking for it to be added. But since it would be useless to add it at this point, we'll just ignore the request.
 					if (Game.debug) System.out.println("SERVER: ignoring request to add unknown entity (probably already removed): " + enid);
@@ -616,7 +616,7 @@ public class MinicraftServer extends Thread implements MinicraftProtocol {
 			case CHESTIN: case CHESTOUT:
 				//if (Game.debug) System.out.println("SERVER: received chest request: " + inType);
 				int eid = Integer.parseInt(data[0]);
-				Entity e = Game.getEntity(eid);
+				Entity e = Network.getEntity(eid);
 				if(e == null || !(e instanceof Chest)) {
 					System.err.println("SERVER error with CHESTOUT request: Specified chest entity did not exist or was not a chest.");
 					return false;
@@ -657,7 +657,7 @@ public class MinicraftServer extends Thread implements MinicraftProtocol {
 			
 			case PUSH:
 				int furnitureID = Integer.parseInt(alldata);
-				Entity furniture = Game.getEntity(furnitureID);
+				Entity furniture = Network.getEntity(furnitureID);
 				if(furniture == null) {
 					System.err.println("SERVER: couldn't find the specified piece of furniture to push: " + furnitureID);
 					return false;
@@ -672,7 +672,7 @@ public class MinicraftServer extends Thread implements MinicraftProtocol {
 			case PICKUP:
 				//if (Game.debug) System.out.println("SERVER: received itementity pickup request");
 				int ieid = Integer.parseInt(alldata);
-				Entity entity = Game.getEntity(ieid);
+				Entity entity = Network.getEntity(ieid);
 				if(entity == null || !(entity instanceof ItemEntity) || entity.isRemoved()) {
 					System.err.println("SERVER could not find item entity in PICKUP request: " + ieid + ". Telling client to remove...");
 					serverThread.sendEntityRemoval(ieid); // will happen when another guy gets to it first, so the this client shouldn't have it on the level anymore. It could also happen if the client didn't recieve the packet telling them to pick it up... in which case it will be lost, but oh well.
@@ -716,7 +716,7 @@ public class MinicraftServer extends Thread implements MinicraftProtocol {
 				return true;
 			
 			case BED:
-				Entity bed = Game.getEntity(Integer.parseInt(alldata));
+				Entity bed = Network.getEntity(Integer.parseInt(alldata));
 				if(!(bed instanceof Bed)) {
 					System.out.println("SERVER: entity is not a bed: " + bed);
 					return false;
@@ -739,9 +739,9 @@ public class MinicraftServer extends Thread implements MinicraftProtocol {
 				//if (Game.debug) System.out.println(serverThread+": received move packet");
 				//int olddir = clientPlayer.dir;
 				int plvlidx = Integer.parseInt(data[3]);
-				if(plvlidx >= 0 && plvlidx < Game.levels.length && Game.levels[plvlidx] != clientPlayer.getLevel()) {
+				if(plvlidx >= 0 && plvlidx < World.levels.length && World.levels[plvlidx] != clientPlayer.getLevel()) {
 					clientPlayer.remove();
-					Game.levels[plvlidx].add(clientPlayer);
+					World.levels[plvlidx].add(clientPlayer);
 				}
 				
 				int oldx = clientPlayer.x>>4, oldy = clientPlayer.y>>4;

@@ -2,7 +2,7 @@ package minicraft.entity.furniture;
 
 import java.util.ArrayList;
 
-import minicraft.core.Game;
+import minicraft.core.*;
 import minicraft.entity.mob.Player;
 import minicraft.gfx.Color;
 import minicraft.gfx.Sprite;

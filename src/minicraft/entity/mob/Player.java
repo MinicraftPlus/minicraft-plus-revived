@@ -4,7 +4,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
-import minicraft.core.Game;
+import minicraft.core.*;
 import minicraft.core.InputHandler;
 import minicraft.core.Settings;
 import minicraft.core.Sound;
@@ -25,6 +25,8 @@ import minicraft.level.tile.Tile;
 import minicraft.level.tile.Tiles;
 import minicraft.saveload.Save;
 import minicraft.screen.*;
+
+import org.jetbrains.annotations.Nullable;
 
 public class Player extends Mob {
 	protected InputHandler input;
@@ -87,7 +89,7 @@ public class Player extends Mob {
 	
 	// Note: the player's health & max health are inherited from Mob.java
 	
-	public Player(Player previousInstance, InputHandler input) {
+	public Player(@Nullable Player previousInstance, InputHandler input) {
 		super(sprites, Player.maxHealth);
 		
 		x = 24;
@@ -156,7 +158,7 @@ public class Player extends Mob {
 		Tile onTile = level.getTile(x >> 4, y >> 4); // gets the current tile the player is on.
 		if (onTile == Tiles.get("Stairs Down") || onTile == Tiles.get("Stairs Up")) {
 			if (onStairDelay <= 0) { // when the delay time has passed...
-				Game.scheduleLevelChange((onTile == Tiles.get("Stairs Up")) ? 1 : -1); // decide whether to go up or down.
+				World.scheduleLevelChange((onTile == Tiles.get("Stairs Up")) ? 1 : -1); // decide whether to go up or down.
 				onStairDelay = 10; // resets delay, since the level has now been changed.
 				return; // SKIPS the rest of the tick() method.
 			}
@@ -212,7 +214,7 @@ public class Player extends Mob {
 			// on easy mode, hunger doesn't deplete from walking or from time.
 			
 			if (Settings.get("diff").equals("Normal")) {
-				if(Game.tickCount % 5000 == 0 && hunger > 3) hungerStamCnt--; // hunger due to time.
+				if(Updater.tickCount % 5000 == 0 && hunger > 3) hungerStamCnt--; // hunger due to time.
 				
 				if (stepCount >= 800) { // hunger due to exercise.
 					hungerStamCnt--;
@@ -220,7 +222,7 @@ public class Player extends Mob {
 				}
 			}
 			if (Settings.get("diff").equals("Hard")) {
-				if(Game.tickCount % 3000 == 0 && hunger > 0) hungerStamCnt--; // hunger due to time.
+				if(Updater.tickCount % 3000 == 0 && hunger > 0) hungerStamCnt--; // hunger due to time.
 				
 				if (stepCount >= 400) { // hunger due to exercise.
 					hungerStamCnt--;
@@ -267,8 +269,8 @@ public class Player extends Mob {
 			}
 		}
 		
-		if (Game.savecooldown > 0 && !Game.saving)
-			Game.savecooldown--;
+		if (Updater.savecooldown > 0 && !Updater.saving)
+			Updater.savecooldown--;
 		
 		
 		if (Game.getMenu() == null && !Bed.inBed) {
@@ -280,7 +282,7 @@ public class Player extends Mob {
 			if (input.getKey("right").down) xa++;
 			
 			//executes if not saving; and... essentially halves speed if out of stamina.
-			if ((xa != 0 || ya != 0) && (staminaRechargeDelay % 2 == 0 || isSwimming()) && !Game.saving) {
+			if ((xa != 0 || ya != 0) && (staminaRechargeDelay % 2 == 0 || isSwimming()) && !Updater.saving) {
 				double spd = moveSpeed * (potioneffects.containsKey(PotionType.Speed) ? 1.5D : 1);
 				Direction oldDir = dir;
 				boolean moved = move((int) (xa * spd), (int) (ya * spd)); // THIS is where the player moves; part of Mob.java
@@ -348,8 +350,8 @@ public class Player extends Mob {
 			
 			if (input.getKey("info").clicked) Game.setMenu(new InfoDisplay());
 			
-			if (input.getKey("r").clicked && !Game.saving && !(this instanceof RemotePlayer) && !Game.isValidClient()) {
-				Game.saving = true;
+			if (input.getKey("r").clicked && !Updater.saving && !(this instanceof RemotePlayer) && !Game.isValidClient()) {
+				Updater.saving = true;
 				LoadingDisplay.setPercentage(0);
 				new Save(WorldSelectDisplay.getWorldName());
 			}
@@ -747,7 +749,7 @@ public class Player extends Mob {
 	protected void die() {
 		int lostscore = score / 3; // finds score penalty
 		score -= lostscore; // subtracts score penalty
-		Game.setMultiplier(1);
+		World.setMultiplier(1);
 		
 		//make death chest
 		DeathChest dc = new DeathChest();
@@ -761,7 +763,7 @@ public class Player extends Mob {
 		Sound.playerDeath.play();
 		
 		if(!Game.ISONLINE)
-			Game.levels[Game.currentLevel].add(dc);
+			World.levels[Game.currentLevel].add(dc);
 		else if(Game.isConnectedClient())
 			Game.client.sendPlayerDeath(this, dc);
 		

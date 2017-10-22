@@ -6,6 +6,8 @@ import java.util.Random;
 
 import minicraft.entity.furniture.Furniture;
 
+import org.jetbrains.annotations.Nullable;
+
 public class Inventory {
 	private Random random = new Random();
 	private List<Item> items = new ArrayList<>(); // the list of items that is in the inventory.
@@ -35,7 +37,7 @@ public class Inventory {
 	}
 	
 	/** Adds an item to the inventory */
-	public void add(Item item) {
+	public void add(@Nullable Item item) {
 		add(items.size(), item);  // adds the item to the end of the inventory list
 	}
 	
@@ -181,14 +183,14 @@ public class Inventory {
 				if(allOrNothing || random.nextInt(chance) == 0)
 					add(item.clone());
 	}
-	public void tryAdd(int chance, Item item, int num) {
+	public void tryAdd(int chance, @Nullable Item item, int num) {
 		if(item instanceof StackableItem) {
 			((StackableItem)item).count *= num;
 			tryAdd(chance, item, 1, true);
 		} else
 			tryAdd(chance, item, num, false);
 	}
-	public void tryAdd(int chance, Item item) { tryAdd(chance, item, 1); }
+	public void tryAdd(int chance, @Nullable Item item) { tryAdd(chance, item, 1); }
 	public void tryAdd(int chance, ToolType type, int lvl) {
 		tryAdd(chance, new ToolItem(type, lvl));
 	}

@@ -8,7 +8,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-import minicraft.core.Game;
+import minicraft.core.*;
 import minicraft.core.Settings;
 import minicraft.entity.*;
 import minicraft.entity.furniture.Chest;
@@ -73,7 +73,7 @@ public class Save {
 		
 		if(Game.isValidClient()) {
 			// clients are not allowed to save.
-			Game.saving = false;
+			Updater.saving = false;
 			return;
 		}
 		
@@ -86,9 +86,9 @@ public class Save {
 		}
 		writeEntities("Entities");
 		
-		Game.notifyAll("World Saved!");
-		Game.asTick = 0;
-		Game.saving = false;
+		Updater.notifyAll("World Saved!");
+		Updater.asTick = 0;
+		Updater.saving = false;
 	}
 	
 	/// this saves server config options
@@ -131,7 +131,7 @@ public class Save {
 			LoadingDisplay.setPercentage(100);
 		}
 		
-		Game.render(); // AH HA!!! HERE'S AN IMPORTANT STATEMENT!!!!
+		Renderer.render(); // AH HA!!! HERE'S AN IMPORTANT STATEMENT!!!!
 	}
 	
 	public static void writeToFile(String filename, String[] savedata, boolean isWorldSave) throws IOException {
@@ -150,16 +150,16 @@ public class Save {
 		}
 	}
 	
-	public void writeGame(String filename) {
+	private void writeGame(String filename) {
 		data.add(String.valueOf(Game.VERSION));
-		data.add(String.valueOf(Game.tickCount));
-		data.add(String.valueOf(Game.gameTime));
+		data.add(String.valueOf(Updater.tickCount));
+		data.add(String.valueOf(Updater.gameTime));
 		data.add(String.valueOf(Settings.getIdx("diff")));
 		data.add(String.valueOf(AirWizard.beaten));
 		writeToFile(location + filename + extension, data);
 	}
 	
-	public void writePrefs(String filename) {
+	private void writePrefs(String filename) {
 		data.add(Game.VERSION);
 		data.add(String.valueOf(Settings.get("sound")));
 		data.add(String.valueOf(Settings.get("autosave")));
@@ -183,26 +183,26 @@ public class Save {
 		writeToFile(location + filename + extension, data);
 	}
 	
-	public void writeWorld(String filename) {
-		for(int l = 0; l < Game.levels.length; l++) {
+	private void writeWorld(String filename) {
+		for(int l = 0; l < World.levels.length; l++) {
 			String worldSize = String.valueOf(Settings.get("size"));
 			data.add(worldSize);
 			data.add(worldSize);
-			data.add(String.valueOf(Game.levels[l].depth));
+			data.add(String.valueOf(World.levels[l].depth));
 			
-			for(int x = 0; x < Game.levels[l].w; x++) {
-				for(int y = 0; y < Game.levels[l].h; y++) {
-					data.add(String.valueOf(Game.levels[l].getTile(x, y).name));
+			for(int x = 0; x < World.levels[l].w; x++) {
+				for(int y = 0; y < World.levels[l].h; y++) {
+					data.add(String.valueOf(World.levels[l].getTile(x, y).name));
 				}
 			}
 			
 			writeToFile(location + filename + l + extension, data);
 		}
 		
-		for(int l = 0; l < Game.levels.length; l++) {
-			for(int x = 0; x < Game.levels[l].w; x++) {
-				for(int y = 0; y < Game.levels[l].h; y++) {
-					data.add(String.valueOf(Game.levels[l].getData(x, y)));
+		for(int l = 0; l < World.levels.length; l++) {
+			for(int x = 0; x < World.levels[l].w; x++) {
+				for(int y = 0; y < World.levels[l].h; y++) {
+					data.add(String.valueOf(World.levels[l].getData(x, y)));
 				}
 			}
 			
@@ -211,7 +211,7 @@ public class Save {
 		
 	}
 	
-	public void writePlayer(String filename, Player player) {
+	private void writePlayer(String filename, Player player) {
 		writePlayer(player, data);
 		writeToFile(location + filename + extension, data);
 	}
@@ -228,7 +228,7 @@ public class Save {
 		//data.add(String.valueOf(player.ac));
 		data.add("25"); // TODO filler; remove this, but make sure not to break the Load class's LoadPlayer() method while doing so.
 		data.add(String.valueOf(Game.currentLevel));
-		data.add(Settings.getIdx("mode") + (Game.isMode("score")?";"+Game.scoreTime+";"+Settings.get("scoretime"):""));
+		data.add(Settings.getIdx("mode") + (Game.isMode("score")?";"+Updater.scoreTime+";"+Settings.get("scoretime"):""));
 		
 		StringBuilder subdata = new StringBuilder("PotionEffects[");
 		
@@ -248,7 +248,7 @@ public class Save {
 		}
 	}
 	
-	public void writeInventory(String filename, Player player) {
+	private void writeInventory(String filename, Player player) {
 		writeInventory(player, data);
 		writeToFile(location + filename + extension, data);
 	}
@@ -273,9 +273,9 @@ public class Save {
 		}
 	}
 	
-	public void writeEntities(String filename) {
-		for(int l = 0; l < Game.levels.length; l++) {
-			for(Entity e: Game.levels[l].getEntityArray()) {
+	private void writeEntities(String filename) {
+		for(int l = 0; l < World.levels.length; l++) {
+			for(Entity e: World.levels[l].getEntityArray()) {
 				String saved = writeEntity(e, true);
 				if(saved.length() > 0)
 					data.add(saved);
@@ -353,7 +353,7 @@ public class Save {
 		else
 			depth = e.getLevel().depth;
 		
-		extradata.append(":").append(Game.lvlIdx(depth));
+		extradata.append(":").append(World.lvlIdx(depth));
 		
 		return name + "[" + e.x + ":" + e.y + extradata + "]";
 	}

@@ -4,7 +4,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Random;
 
-import minicraft.core.Game;
+import minicraft.core.*;
 import minicraft.core.InputHandler;
 import minicraft.core.Settings;
 import minicraft.entity.mob.Player;

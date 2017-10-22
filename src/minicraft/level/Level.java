@@ -2,13 +2,16 @@ package minicraft.level;
 
 import java.util.ArrayList;
 import java.util.Comparator;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Random;
+import java.util.Set;
 import java.util.function.ToIntFunction;
 
-import minicraft.core.Game;
+import minicraft.core.*;
 import minicraft.core.Settings;
-import minicraft.entity.*;
+import minicraft.entity.Entity;
+import minicraft.entity.ItemEntity;
 import minicraft.entity.furniture.Chest;
 import minicraft.entity.furniture.Crafter;
 import minicraft.entity.furniture.DungeonChest;
@@ -41,23 +44,20 @@ public class Level {
 	public int depth; // depth level of the level
 	public int monsterDensity = 8; // affects the number of monsters that are on the level, bigger the number the less monsters spawn.
 	public int maxMobCount;
-	public int chestcount;
+	public int chestCount;
 	public int mobCount = 0;
 	
-	private List<Entity> entities = java.util.Collections.synchronizedList(new ArrayList<Entity>()); // A list of all the entities in the world
-	private List<Player> players = java.util.Collections.synchronizedList(new ArrayList<Player>()); // A list of all the players in the world
-	private List<Entity> entitiesToAdd = new ArrayList<>(); /// entites that will be added to the level on next tick are stored here. This is for the sake of multithreading optimization. (hopefully)
-	private List<Entity> entitiesToRemove = new ArrayList<>(); /// entites that will be removed from the level on next tick are stored here. This is for the sake of multithreading optimization. (hopefully)
+	private Set<Entity> entities = java.util.Collections.synchronizedSet(new HashSet<>()); // A list of all the entities in the world
+	private Set<Player> players = java.util.Collections.synchronizedSet(new HashSet<>()); // A list of all the players in the world
+	private List<Entity> entitiesToAdd = new ArrayList<>(); /// entities that will be added to the level on next tick are stored here. This is for the sake of multithreading optimization. (hopefully)
+	private List<Entity> entitiesToRemove = new ArrayList<>(); /// entities that will be removed from the level on next tick are stored here. This is for the sake of multithreading optimization. (hopefully)
 	// creates a sorter for all the entities to be rendered.
-	//private List<Entity> rowSprites = new ArrayList<Entity>();
 	private static Comparator<Entity> spriteSorter = Comparator.comparingInt(new ToIntFunction<Entity>() {
 		@Override
-		public int applyAsInt(Entity e) {
-			return e.y;
-		}
+		public int applyAsInt(Entity e) { return e.y; }
 	});
 	
-	/// This is a solely debug method I made, to make printing repetetive stuff easier.
+	/// This is a solely debug method I made, to make printing repetitive stuff easier.
 		// should be changed to accept prepend and entity, or a tile (as an Object). It will get the coordinates and class name from the object, and will divide coords by 16 if passed an entity.
 	public void printLevelLoc(String prefix, int x, int y) { printLevelLoc(prefix, x, y, ""); }
 	public void printLevelLoc(String prefix, int x, int y, String suffix) {
@@ -180,7 +180,7 @@ public class Level {
 							setTile(d.x / 16, d.y / 16, Tiles.get("Obsidian"));
 						}
 						add(d);
-						chestcount++;
+						chestCount++;
 						addedchest = true;
 					}
 				}
@@ -251,8 +251,10 @@ public class Level {
 				
 				if (e.isRemoved()) continue;
 				
-				if(e != Game.player) // it is ticked seperately.
+				if(e != Game.player) // it is ticked separately.
 					e.tick(); /// the main entity tick call.
+				
+				if (e.isRemoved()) continue;
 				
 				if (Game.hasConnectedClients()) // this means it's a server
 					Game.server.broadcastEntityUpdate(e);
@@ -270,7 +272,7 @@ public class Level {
 		}
 		
 		while(count > maxMobCount) {
-			Entity removeThis = entities.get(random.nextInt(entities.size()));
+			Entity removeThis = (Entity)entities.toArray()[(random.nextInt(entities.size()))];
 			if(removeThis instanceof MobAi) {
 				remove(removeThis);
 				count--;
@@ -453,18 +455,15 @@ public class Level {
 		if(entity == null) return;
 		entity.setLevel(this, x, y);
 		
-		if(!entitiesToAdd.contains(entity)) // they are not even worth putting here. All they need to do is get sent to the the other clients.
-			entitiesToAdd.add(entity);
-		//if(entitiesToRemove.contains(entity))
 		entitiesToRemove.remove(entity); // to make sure the most recent request is satisfied.
+		if(!entitiesToAdd.contains(entity))
+			entitiesToAdd.add(entity);
 	}
 	
 	public void remove(Entity e) {
-		//e.remove();
-		
+		entitiesToAdd.remove(e);
 		if(!entitiesToRemove.contains(e))
 			entitiesToRemove.add(e);
-		entitiesToAdd.remove(e);
 	}
 	
 	private void trySpawn() {

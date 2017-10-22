@@ -1,7 +1,7 @@
 package minicraft.entity.mob;
 
 import minicraft.core.Settings;
-import minicraft.core.Game;
+import minicraft.core.*;
 import minicraft.gfx.MobSprite;
 import minicraft.gfx.Screen;
 import minicraft.level.Level;

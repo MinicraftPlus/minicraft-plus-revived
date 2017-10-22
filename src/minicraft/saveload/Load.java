@@ -10,7 +10,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-import minicraft.core.Game;
+import minicraft.core.*;
 import minicraft.core.Settings;
 import minicraft.entity.*;
 import minicraft.entity.furniture.Bed;
@@ -71,7 +71,7 @@ public class Load {
 		else {
 			location += "/saves/" + worldname + "/";
 			
-			percentInc = 5 + Game.levels.length-1; // for the methods below, and world.
+			percentInc = 5 + World.levels.length-1; // for the methods below, and world.
 			
 			percentInc = 100f / percentInc;
 			
@@ -336,9 +336,9 @@ public class Load {
 	
 	public void loadWorld(String filename) {
 		for(int l = Game.maxLevelDepth; l >= Game.minLevelDepth; l--) {
-			//if(l == Game.levels.length-1) l = 4;
-			//if(l == 0) l = Game.levels.length-1;
-			int lvlidx = Game.lvlIdx(l);
+			//if(l == World.levels.length-1) l = 4;
+			//if(l == 0) l = World.levels.length-1;
+			int lvlidx = World.lvlIdx(l);
 			loadFromFile(location + filename + lvlidx + extension);
 			
 			int lvlw = Integer.parseInt(data.get(0));
@@ -371,10 +371,10 @@ public class Load {
 				}
 			}
 			
-			Level parent = Game.levels[Game.lvlIdx(l+1)];
-			Game.levels[lvlidx] = new Level(lvlw, lvlh, l, parent, false);
+			Level parent = World.levels[World.lvlIdx(l+1)];
+			World.levels[lvlidx] = new Level(lvlw, lvlh, l, parent, false);
 			
-			Level curLevel = Game.levels[lvlidx];
+			Level curLevel = World.levels[lvlidx];
 			curLevel.tiles = tiles;
 			curLevel.data = tdata;
 			
@@ -402,8 +402,8 @@ public class Load {
 			}
 			
 			// fixes some parenting issues.
-			//if(l == 0) l = Game.levels.length;
-			//if(l == Game.levels.length-1) l = 0;
+			//if(l == 0) l = World.levels.length;
+			//if(l == World.levels.length-1) l = 0;
 		}
 	}
 	
@@ -452,7 +452,7 @@ public class Load {
 			player.inventory.add(Items.get("arrow"), Integer.parseInt(data.get(7)));
 		
 		Game.currentLevel = Integer.parseInt(data.get(8));
-		Level level = Game.levels[Game.currentLevel];
+		Level level = World.levels[Game.currentLevel];
 		if(Game.player != null && !Game.player.isRemoved())
 			Game.player.remove(); // removes the user player from the level, in case they would be added twice.
 		if(level != null)
@@ -562,8 +562,8 @@ public class Load {
 	public void loadEntities(String filename) {
 		loadFromFile(location + filename + extension);
 		
-		for(int i = 0; i < Game.levels.length; i++) {
-			Game.levels[i].clearEntities();
+		for(int i = 0; i < World.levels.length; i++) {
+			World.levels[i].clearEntities();
 		}
 		
 		for(int i = 0; i < data.size(); i++) {
@@ -599,7 +599,7 @@ public class Load {
 			eid = Integer.parseInt(info.remove(2));
 			
 			/// If I find an entity that is loaded locally, but on another level in the entity data provided, then I ditch the current entity and make a new one from the info provided.
-			Entity existing = Game.getEntity(eid);
+			Entity existing = Network.getEntity(eid);
 			int entityLevel = Integer.parseInt(info.get(info.size()-1));
 			
 			if(existing != null) {
@@ -613,8 +613,8 @@ public class Load {
 			/*if(existing == null && Game.isValidClient() && Game.player.eid == eid) {
 				existing = Game.player;
 				//int playerLevel = Integer.parseInt(info.get(info.size()-1));
-				//if(Game.levels[playerLevel] != null)
-				//Game.levels[playerLevel].add(existing, x, y);
+				//if(World.levels[playerLevel] != null)
+				//World.levels[playerLevel].add(existing, x, y);
 			}
 			if(existing != null) {
 				System.out.println(Game.onlinePrefix()+"already loaded entity with eid " + eid + "; returning that one");
@@ -622,7 +622,7 @@ public class Load {
 			}*/
 			
 			if(Game.isValidClient() && Game.player instanceof RemotePlayer && 
-				!((RemotePlayer)Game.player).shouldTrack(x >> 4, y >> 4, Game.levels[entityLevel])
+				!((RemotePlayer)Game.player).shouldTrack(x >> 4, y >> 4, World.levels[entityLevel])
 				) {
 				// the entity is too far away to bother adding to the level.
 				if(Game.debug) System.out.println("CLIENT: entity is too far away to bother loading: " + eid);
@@ -662,7 +662,7 @@ public class Load {
 		}
 		else if(entityName.equals("Spark") && !isLocalSave) {
 			int awID = Integer.parseInt(info.get(2));
-			Entity sparkOwner = Game.getEntity(awID);
+			Entity sparkOwner = Network.getEntity(awID);
 			if(sparkOwner != null && sparkOwner instanceof AirWizard)
 				newEntity = new Spark((AirWizard)sparkOwner, x, y);
 			else {
@@ -744,7 +744,7 @@ public class Load {
 				((DeathChest)chest).time = Integer.parseInt(chestInfo.get(chestInfo.size()-1));
 			} else if (isDungeonChest) {
 				((DungeonChest)chest).isLocked = Boolean.parseBoolean(chestInfo.get(chestInfo.size()-1));
-				Game.levels[Integer.parseInt(info.get(info.size()-1))].chestCount++;
+				World.levels[Integer.parseInt(info.get(info.size()-1))].chestCount++;
 			}
 			
 			newEntity = chest;
@@ -769,7 +769,7 @@ public class Load {
 				int ownerID = Integer.parseInt(info.get(2));
 				Direction dir = Direction.values[Integer.parseInt(info.get(3))];
 				int dmg = Integer.parseInt(info.get(5));
-				newEntity = new Arrow((Mob)Game.getEntity(ownerID), x, y, dir, dmg);
+				newEntity = new Arrow((Mob)Network.getEntity(ownerID), x, y, dir, dmg);
 			}
 			if(newEntity instanceof ItemEntity) {
 				Item item = Items.get(info.get(2));
@@ -793,10 +793,10 @@ public class Load {
 			System.out.println("Warning: item entity was loaded with no eid");
 		
 		int curLevel = Integer.parseInt(info.get(info.size()-1));
-		if(Game.levels[curLevel] != null) {
-			Game.levels[curLevel].add(newEntity, x, y);
+		if(World.levels[curLevel] != null) {
+			World.levels[curLevel].add(newEntity, x, y);
 			if(Game.debug && newEntity instanceof RemotePlayer)
-				Game.levels[curLevel].printEntityStatus("Loaded ", newEntity, "mob.RemotePlayer");
+				World.levels[curLevel].printEntityStatus("Loaded ", newEntity, "mob.RemotePlayer");
 		} else if(newEntity instanceof RemotePlayer && Game.isValidClient())
 			System.out.println("CLIENT: remote player not added b/c on null level");
 		

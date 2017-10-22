@@ -38,7 +38,7 @@ public class Settings {
 			options.get("skinon").setVisible((boolean)value)
 		);
 		
-		options.get("fps").setChangeAction(value -> Game.MAX_FPS = (int)value);
+		//options.get("fps").setChangeAction(value -> Game.MAX_FPS = (int)value);
 	}
 	
 	// returns the value of the specified option

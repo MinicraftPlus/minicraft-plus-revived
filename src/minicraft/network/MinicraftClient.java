@@ -9,8 +9,11 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 
-import minicraft.core.Game;
+import minicraft.core.*;
+import minicraft.core.Renderer;
 import minicraft.core.Settings;
+import minicraft.core.Updater;
+import minicraft.core.World;
 import minicraft.entity.furniture.Bed;
 import minicraft.entity.furniture.Chest;
 import minicraft.entity.furniture.DeathChest;
@@ -30,6 +33,8 @@ import minicraft.saveload.Save;
 import minicraft.screen.PlayerDeathDisplay;
 import minicraft.screen.MultiplayerDisplay;
 
+import org.jetbrains.annotations.Nullable;
+
 /// This class is only used by the client runtime; the server runtime doesn't touch it.
 public class MinicraftClient extends MinicraftConnection {
 	
@@ -44,6 +49,7 @@ public class MinicraftClient extends MinicraftConnection {
 	
 	private HashMap<Integer, Long> entityRequests = new HashMap<>();
 	
+	@Nullable
 	private static Socket openSocket(String hostName, MultiplayerDisplay menu) {
 		InetAddress hostAddress;
 		Socket socket;
@@ -95,8 +101,8 @@ public class MinicraftClient extends MinicraftConnection {
 			
 			case PLAY:
 				if (Game.debug) System.out.println("CLIENT: Begin game!");
-				Game.levels[Game.currentLevel].add(Game.player);
-				Game.readyToRenderGameplay = true;
+				World.levels[Game.currentLevel].add(Game.player);
+				Renderer.readyToRenderGameplay = true;
 				Game.setMenu(null);
 				break;
 		}
@@ -160,10 +166,10 @@ public class MinicraftClient extends MinicraftConnection {
 			
 			case GAME:
 				Settings.set("mode", data[0]);
-				Game.setTime(Integer.parseInt(data[1]));
-				Game.gamespeed = Float.parseFloat(data[2]);
-				Game.pastDay1 = Boolean.parseBoolean(data[3]);
-				Game.scoreTime = Integer.parseInt(data[4]);
+				Updater.setTime(Integer.parseInt(data[1]));
+				Updater.gamespeed = Float.parseFloat(data[2]);
+				Updater.pastDay1 = Boolean.parseBoolean(data[3]);
+				Updater.scoreTime = Integer.parseInt(data[4]);
 				
 				if(Game.isMode("creative"))
 					Items.fillCreativeInv(Game.player.inventory, false);
@@ -186,9 +192,9 @@ public class MinicraftClient extends MinicraftConnection {
 				for(int i = 0; i < info.length; i++)
 					info[i] = Integer.parseInt(infostrings[i]);
 				Game.player.eid = info[0];
-				Game.lvlw = info[1];
-				Game.lvlh = info[2];
-				Game.currentLevel = info[3];
+				World.lvlw = info[1];
+				World.lvlh = info[2];
+				World.currentLevel = info[3];
 				Game.player.x = info[4];
 				Game.player.y = info[5];
 				return true;
@@ -200,10 +206,10 @@ public class MinicraftClient extends MinicraftConnection {
 				}
 				if (Game.debug) System.out.println("CLIENT: received tiles");
 				/// recieve tiles.
-				Level level = Game.levels[Game.currentLevel];
+				Level level = World.levels[World.currentLevel];
 				if(level == null) {
-					int lvldepth = Game.idxToDepth[Game.currentLevel];
-					Game.levels[Game.currentLevel] = level = new Level(Game.lvlw, Game.lvlh, lvldepth, Game.levels[Game.lvlIdx(lvldepth+1)], false);
+					int lvldepth = World.idxToDepth[World.currentLevel];
+					World.levels[World.currentLevel] = level = new Level(World.lvlw, World.lvlh, lvldepth, World.levels[World.lvlIdx(lvldepth+1)], false);
 				}
 				
 				/*byte[] tiledata = new byte[alldata.length()];
@@ -241,7 +247,7 @@ public class MinicraftClient extends MinicraftConnection {
 				}
 				
 				if (Game.debug) System.out.println("CLIENT: received entities");
-				Level curLevel = Game.levels[Game.currentLevel];
+				Level curLevel = World.levels[Game.currentLevel];
 				Game.player.setLevel(curLevel, Game.player.x, Game.player.y); // so the shouldTrack() calls check correctly.
 				
 				String[] entities = alldata.split(",");
@@ -262,12 +268,12 @@ public class MinicraftClient extends MinicraftConnection {
 				int newLvlDepth = Integer.parseInt(data[0]);
 				if(Game.player.getLevel() == null || newLvlDepth != Game.player.getLevel().depth) {
 					// switch to the other level.
-					Game.changeLevel(Game.lvlIdx(newLvlDepth) - Game.currentLevel);
+					World.changeLevel(World.lvlIdx(newLvlDepth) - Game.currentLevel);
 				}
 				return true;
 			
 			case TILE:
-				Level theLevel = Game.levels[Integer.parseInt(data[0])];
+				Level theLevel = World.levels[Integer.parseInt(data[0])];
 				if(theLevel == null)
 					return false; // ignore, this is for an unvisited level.
 				int pos = Integer.parseInt(data[1]);
@@ -291,7 +297,7 @@ public class MinicraftClient extends MinicraftConnection {
 				if(addedEntity != null) {
 					if(addedEntity.eid == Game.player.eid/* && Game.player.getLevel() == null*/) {
 						if (Game.debug) System.out.println("CLIENT: added main game player back to level based on add packet");
-						Game.levels[Game.currentLevel].add(Game.player);
+						World.levels[Game.currentLevel].add(Game.player);
 						Bed.inBed = false;
 					}
 					
@@ -310,7 +316,7 @@ public class MinicraftClient extends MinicraftConnection {
 				int eid = Integer.parseInt(alldata);
 				//if (Game.debug) System.out.println("CLIENT: received entity removal: " + eid);
 				
-				Entity toRemove = Game.getEntity(eid);
+				Entity toRemove = Network.getEntity(eid);
 				if(toRemove != null) {
 					toRemove.remove();
 					return true;
@@ -325,7 +331,7 @@ public class MinicraftClient extends MinicraftConnection {
 				int entityid = Integer.parseInt(alldata.substring(0, alldata.indexOf(";")));
 				//if (Game.debug) System.out.println("CLIENT: received entity update for: " + entityid);
 				String updates = alldata.substring(alldata.indexOf(";")+1);
-				Entity entity = Game.getEntity(entityid);
+				Entity entity = Network.getEntity(entityid);
 				if(entity == null) {
 					//System.err.println("CLIENT: couldn't find entity specified to update: " + entityid + "; could not apply updates: " + updates);
 					if(entityRequests.containsKey(entityid) && (System.nanoTime() - entityRequests.get(entityid))/1E8 > 15L) { // this will make it so that there has to be at least 1.5 seconds between each time a certain entity is requested. Also, it won't request the entity the first time around; it has to wait a bit after the first attempt before it will actually request it.
@@ -386,7 +392,7 @@ public class MinicraftClient extends MinicraftConnection {
 				int notetime = Integer.parseInt(alldata.substring(0, alldata.indexOf(";")));
 				String note = alldata.substring(alldata.indexOf(";")+1);
 				Game.notifications.add(note);
-				Game.notetick = notetime;
+				Updater.notetick = notetime;
 				return true;
 			
 			case CHESTOUT:
@@ -413,7 +419,7 @@ public class MinicraftClient extends MinicraftConnection {
 				if(curState != State.PLAY) return false; // shouldn't happen.
 				int ieid = Integer.parseInt(alldata);
 				//if (Game.debug) System.out.println("CLIENT: received pickup approval for: " + ieid);
-				Entity ie = Game.getEntity(ieid);
+				Entity ie = Network.getEntity(ieid);
 				if(ie == null || !(ie instanceof ItemEntity)) {
 					System.err.println("CLIENT error with PICKUP response: specified entity does not exist or is not an ItemEntity: " + ieid);
 					return false;
@@ -433,7 +439,7 @@ public class MinicraftClient extends MinicraftConnection {
 				int hurteid = Integer.parseInt(data[0]);
 				int damage = Integer.parseInt(data[1]);
 				Direction attackDir = Direction.values[Integer.parseInt(data[2])];
-				Entity p = Game.getEntity(hurteid);
+				Entity p = Network.getEntity(hurteid);
 				if (p instanceof Player)
 					((Player)p).hurt(damage, attackDir);
 				return true;
@@ -447,7 +453,7 @@ public class MinicraftClient extends MinicraftConnection {
 	
 	public void move(Player player) {
 		//if(Game.debug) System.out.println("CLIENT: sending player movement to ("+player.x+","+player.y+"): " + player);
-		String movedata = player.x+";"+player.y+";"+player.dir.ordinal()+";"+Game.lvlIdx(player.getLevel().depth);
+		String movedata = player.x+";"+player.y+";"+player.dir.ordinal()+";"+World.lvlIdx(player.getLevel().depth);
 		sendData(InputType.MOVE, movedata);
 	}
 	
@@ -474,7 +480,7 @@ public class MinicraftClient extends MinicraftConnection {
 	
 	public void sendPlayerDeath(Player player, DeathChest dc) {
 		if(player != Game.player && Game.player != null) return; // this is client is not responsible for that player.
-		Level level = Game.levels[Game.currentLevel];
+		Level level = World.levels[Game.currentLevel];
 		level.add(dc);
 		dc.eid = -1;
 		String chestData = Save.writeEntity(dc, false);

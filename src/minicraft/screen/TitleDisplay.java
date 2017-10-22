@@ -4,7 +4,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Random;
 
-import minicraft.core.Game;
+import minicraft.core.*;
 import minicraft.core.InputHandler;
 import minicraft.entity.mob.RemotePlayer;
 import minicraft.gfx.Color;
@@ -30,7 +30,7 @@ public class TitleDisplay extends Display {
 		
 		ArrayList<ListEntry> entries = new ArrayList<>();
 		Menu.Builder menu = new Menu.Builder(false, 2, RelPos.CENTER)
-			.setPositioning(new Point(Game.WIDTH/2, Game.HEIGHT*3/5), RelPos.CENTER);
+			.setPositioning(new Point(Screen.w/2, Screen.h*3/5), RelPos.CENTER);
 		
 		if(WorldSelectDisplay.getWorldNames().size() > 0)
 			entries.add(displayFactory("Play",
@@ -62,7 +62,7 @@ public class TitleDisplay extends Display {
 	@Override
 	public void init(Display parent) {
 		super.init(parent);
-		Game.readyToRenderGameplay = false;
+		Renderer.readyToRenderGameplay = false;
 		/// this is just in case; though, i do take advantage of it in other places.
 		if(Game.server != null) {
 			if (Game.debug) System.out.println("wrapping up loose server ends");
@@ -78,13 +78,13 @@ public class TitleDisplay extends Display {
 		
 		rand = random.nextInt(splashes.length);
 		
-		Game.levels = new Level[Game.levels.length];
+		World.levels = new Level[World.levels.length];
 		
 		// was in init
 		if(Game.player == null || Game.player instanceof RemotePlayer) {
 			//if(Game.player != null) Game.player.remove();
 			Game.player = null;
-			Game.resetGame();
+			World.resetGame();
 		}
 	}
 	

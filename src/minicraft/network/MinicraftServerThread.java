@@ -11,7 +11,7 @@ import java.util.List;
 import java.util.Timer;
 import java.util.TimerTask;
 
-import minicraft.core.Game;
+import minicraft.core.*;
 import minicraft.entity.Direction;
 import minicraft.entity.Entity;
 import minicraft.entity.mob.RemotePlayer;
@@ -203,7 +203,7 @@ public class MinicraftServerThread extends MinicraftConnection {
 	protected void respawnPlayer() {
 		client.remove(); // hopefully removes it from any level it might still be on
 		client = new RemotePlayer(false, client);
-		client.respawn(Game.levels[Game.lvlIdx(0)]); // get the spawn loc. of the client
+		client.respawn(World.levels[World.lvlIdx(0)]); // get the spawn loc. of the client
 		sendData(InputType.PLAYER, client.getPlayerData()); // send spawn loc.
 	}
 	

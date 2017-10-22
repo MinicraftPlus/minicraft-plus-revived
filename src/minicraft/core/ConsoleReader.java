@@ -65,7 +65,7 @@ class ConsoleReader extends Thread {
 		STATUS
 		(null, "display some server stats.", "displays server fps, and number of players connected.") {
 			public void run(String[] args) {
-				System.out.println("fps: " + Game.fra);
+				System.out.println("fps: " + Initializer.fra);
 				System.out.println("players connected: " + Game.server.getThreads().length);
 				for(String info: Game.server.getClientInfo())
 					System.out.println("\t"+info);
@@ -116,7 +116,7 @@ class ConsoleReader extends Thread {
 				try {
 					Thread.sleep(500); // give the computer some time to, uh, recuperate? idk, I think it's a good idea.
 				} catch(InterruptedException ignored) {}
-				Game.startMultiplayerServer(); // start the server back up.
+				Network.startMultiplayerServer(); // start the server back up.
 			}
 		},
 		
@@ -166,7 +166,7 @@ class ConsoleReader extends Thread {
 		("[timeString]", "sets or prints the time of day." , "no arguments: prints the current time of day, in ticks.", "timeString: sets the time of day to the given value; it can be a number, in which case it is a tick count from 0 to 64000 or so, or one of the following strings: Morning, Day, Evening, Night. the time of day will be set to the beginning of the given time period.") {
 			public void run(String[] args) {
 				if(args.length == 0) {
-					System.out.println("time of day is: " + Game.tickCount + " ("+ Game.getTime()+")");
+					System.out.println("time of day is: " + Updater.tickCount + " ("+ Updater.getTime()+")");
 					return;
 				}
 				
@@ -176,7 +176,7 @@ class ConsoleReader extends Thread {
 					try {
 						String firstLetter = String.valueOf(args[0].charAt(0)).toUpperCase();
 						String remainder = args[0].substring(1).toLowerCase();
-						Game.Time time = Enum.valueOf(Game.Time.class, firstLetter+remainder);
+						Updater.Time time = Enum.valueOf(Updater.Time.class, firstLetter+remainder);
 						targetTicks = time.tickTime;
 					} catch(IllegalArgumentException iaex) {
 						try {
@@ -187,7 +187,7 @@ class ConsoleReader extends Thread {
 				}
 				
 				if(targetTicks >= 0) {
-					Game.setTime(targetTicks);
+					Updater.setTime(targetTicks);
 					Game.server.updateGameVars();
 				} else {
 					System.out.println("time specified is in an invalid format.");
@@ -243,7 +243,7 @@ class ConsoleReader extends Thread {
 						if(args.length == 4) {
 							try {
 								int lvl = getCoordinate(args[3], (level != null ? level.depth : 0));
-								level = Game.levels[Game.lvlIdx(lvl)];
+								level = World.levels[World.lvlIdx(lvl)];
 							} catch (NumberFormatException ex) {
 								System.out.println("specified level index is not a number: " + args[3]);
 								return;
