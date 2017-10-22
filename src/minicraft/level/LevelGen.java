@@ -9,7 +9,7 @@ import java.util.Random;
 import minicraft.core.Game;
 import minicraft.core.Settings;
 import minicraft.level.tile.Tiles;
-import minicraft.screen.WorldGenMenu;
+import minicraft.screen.WorldGenDisplay;
 
 public class LevelGen {
 	private static long worldSeed = 0;
@@ -112,7 +112,7 @@ public class LevelGen {
 	}
 	
 	protected static byte[][] createAndValidateMap(int w, int h, int level) {
-		worldSeed = WorldGenMenu.getSeed();
+		worldSeed = WorldGenDisplay.getSeed();
 		
 		if (level == 1)
 			return createAndValidateSkyMap(w, h);

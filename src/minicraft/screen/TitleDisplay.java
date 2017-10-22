@@ -4,7 +4,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Random;
 
-import org.jetbrains.annotations.NotNull;
 import minicraft.core.Game;
 import minicraft.core.InputHandler;
 import minicraft.entity.mob.RemotePlayer;
@@ -17,38 +16,40 @@ import minicraft.screen.entry.BlankEntry;
 import minicraft.screen.entry.ListEntry;
 import minicraft.screen.entry.SelectEntry;
 
-public class TitleMenu extends Display {
+import org.jetbrains.annotations.NotNull;
+
+public class TitleDisplay extends Display {
 	private static final Random random = new Random();
 	
 	private int rand;
 	private int count = 0; // this and reverse are for the logo; they produce the fade-in/out effect.
 	private boolean reverse = false;
 	
-	public TitleMenu() {
+	public TitleDisplay() {
 		super(true, false);
 		
 		ArrayList<ListEntry> entries = new ArrayList<>();
 		Menu.Builder menu = new Menu.Builder(false, 2, RelPos.CENTER)
 			.setPositioning(new Point(Game.WIDTH/2, Game.HEIGHT*3/5), RelPos.CENTER);
 		
-		if(WorldSelectMenu.getWorldNames().size() > 0)
+		if(WorldSelectDisplay.getWorldNames().size() > 0)
 			entries.add(displayFactory("Play",
-					new SelectEntry("Load World", () -> Game.setMenu(new WorldSelectMenu())),
-					new SelectEntry("New World", () -> Game.setMenu(new WorldGenMenu()))
+					new SelectEntry("Load World", () -> Game.setMenu(new WorldSelectDisplay())),
+					new SelectEntry("New World", () -> Game.setMenu(new WorldGenDisplay()))
 				)
 			);
 		else
-			entries.add(new SelectEntry("Play", () -> Game.setMenu(new WorldGenMenu())));
+			entries.add(new SelectEntry("Play", () -> Game.setMenu(new WorldGenDisplay())));
 		
 		entries.addAll(Arrays.asList(
-				new SelectEntry("Join Online World", () -> Game.setMenu(new MultiplayerMenu())),
-				new SelectEntry("Options", () -> Game.setMenu(new OptionsMenu())),
+				new SelectEntry("Join Online World", () -> Game.setMenu(new MultiplayerDisplay())),
+				new SelectEntry("Options", () -> Game.setMenu(new OptionsDisplay())),
 				displayFactory("Help",
-					new SelectEntry("Instructions", () -> Game.setMenu(new BookDisplay(Displays.instructions))),
+					new SelectEntry("Instructions", () -> Game.setMenu(new BookDisplay(BookData.instructions))),
 					new BlankEntry(),
-					new SelectEntry("Storyline Guide (for the weak)", () -> Game.setMenu(new BookDisplay(Displays.storylineGuide))),
+					new SelectEntry("Storyline Guide (for the weak)", () -> Game.setMenu(new BookDisplay(BookData.storylineGuide))),
 					new BlankEntry(),
-					new SelectEntry("About", () -> Game.setMenu(new BookDisplay(Displays.about)))
+					new SelectEntry("About", () -> Game.setMenu(new BookDisplay(BookData.about)))
 				),
 				new SelectEntry("Quit", () -> System.exit(0))
 		));

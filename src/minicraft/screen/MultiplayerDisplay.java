@@ -17,7 +17,7 @@ import minicraft.network.MinicraftClient;
 import minicraft.saveload.Save;
 import org.json.JSONObject;
 
-public class MultiplayerMenu extends Display {
+public class MultiplayerDisplay extends Display {
 	
 	private static String domain = "https://playminicraft.com";
 	private static String apiDomain = domain+"/api";
@@ -43,7 +43,7 @@ public class MultiplayerMenu extends Display {
 	
 	private State curState;
 	
-	public MultiplayerMenu() {
+	public MultiplayerDisplay() {
 		Game.ISONLINE = true;
 		Game.ISHOST = false;
 		
@@ -108,7 +108,7 @@ public class MultiplayerMenu extends Display {
 	}
 	
 	// this automatically sets the ipAddress.
-	public MultiplayerMenu(String ipAddress) {
+	public MultiplayerDisplay(String ipAddress) {
 		this();
 		//if(Game.debug) System.out.println("ip mm constructor");
 		if(curState == State.ENTERIP) { // login was automatic
@@ -167,7 +167,7 @@ public class MultiplayerMenu extends Display {
 		}
 		
 		if(input.getKey("exit").clicked && !Game.ISHOST) {
-			Game.setMenu(new TitleMenu());
+			Game.setMenu(new TitleDisplay());
 		}
 	}
 	

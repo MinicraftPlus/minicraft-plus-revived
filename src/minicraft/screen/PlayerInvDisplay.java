@@ -4,11 +4,11 @@ import minicraft.core.Game;
 import minicraft.core.InputHandler;
 import minicraft.entity.mob.Player;
 
-public class PlayerInvMenu extends Display {
+public class PlayerInvDisplay extends Display {
 	
 	private Player player;
 	
-	public PlayerInvMenu(Player player) {
+	public PlayerInvDisplay(Player player) {
 		super(new InventoryMenu(player, player.inventory, "Inventory"));
 		this.player = player;
 	}

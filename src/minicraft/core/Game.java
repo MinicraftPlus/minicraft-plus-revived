@@ -260,11 +260,11 @@ public class Game {
 		new Load(true); // this loads any saved preferences.
 		
 		if(autoclient)
-			setMenu(new MultiplayerMenu( "localhost"));
+			setMenu(new MultiplayerDisplay( "localhost"));
 		else if(!HAS_GUI)
 			startMultiplayerServer();//setMenu(null);//new WorldSelectMenu());
 		else
-			setMenu(new TitleMenu()); //sets menu to the title screen.
+			setMenu(new TitleDisplay()); //sets menu to the title screen.
 	}
 	
 	/** This method is used when respawning, and by initWorld to reset the vars. It does not generate any new terrain. */
@@ -288,7 +288,7 @@ public class Game {
 		if (levels[currentLevel] == null) return;
 		
 		// "shouldRespawn" is false on hardcore, or when making a new world.
-		if (DeadMenu.shouldRespawn) { // respawn, don't regenerate level.
+		if (PlayerDeathDisplay.shouldRespawn) { // respawn, don't regenerate level.
 			//if (debug) System.out.println("Current Level = " + currentLevel);
 			if(!Game.isValidClient()) {
 				Level level = levels[currentLevel];
@@ -311,7 +311,7 @@ public class Game {
 			return;
 		}
 		
-		DeadMenu.shouldRespawn = false;
+		PlayerDeathDisplay.shouldRespawn = false;
 		resetGame();
 		player = new Player(null, input);
 		Bed.inBed = false;
@@ -330,8 +330,8 @@ public class Game {
 		if(!isValidClient()) {
 			if(Game.debug) System.out.println("initializing world non-client...");
 			
-			if(WorldSelectMenu.loadedWorld())
-				new Load(WorldSelectMenu.getWorldName());
+			if(WorldSelectDisplay.loadedWorld())
+				new Load(WorldSelectDisplay.getWorldName());
 			else {
 				worldSize = (Integer) Settings.get("size");
 				
@@ -339,7 +339,7 @@ public class Game {
 				for (int i = maxLevelDepth; i >= minLevelDepth; i--) {
 					// i = level depth; the array starts from the top because the parent level is used as a reference, so it should be constructed first. It is expected that the highest level will have a null parent.
 					if(Game.debug) System.out.println("loading level " + i + "...");
-					levels[lvlIdx(i)] = new Level(worldSize, worldSize, i, levels[lvlIdx(i+1)], !WorldSelectMenu.loadedWorld());
+					levels[lvlIdx(i)] = new Level(worldSize, worldSize, i, levels[lvlIdx(i+1)], !WorldSelectDisplay.loadedWorld());
 					
 					LoadingDisplay.progress(loadingInc);
 				}
@@ -354,7 +354,7 @@ public class Game {
 				
 				Level level = levels[currentLevel]; // sets level to the current level (3; surface)
 				pastDay1 = false;
-				player.findStartPos(level, WorldGenMenu.getSeed()); // finds the start level for the player
+				player.findStartPos(level, WorldGenDisplay.getSeed()); // finds the start level for the player
 				level.add(player);
 			}
 			
@@ -367,7 +367,7 @@ public class Game {
 			currentLevel = 3;
 		}
 		
-		DeadMenu.shouldRespawn = true;
+		PlayerDeathDisplay.shouldRespawn = true;
 		
 		if(Game.debug) System.out.println("world initialized.");
 	}
@@ -430,7 +430,7 @@ public class Game {
 		if (asTick > astime) {
 			if ((boolean)Settings.get("autosave") && player.health > 0 && !gameOver) {
 				if(!Game.ISONLINE)
-					new Save(WorldSelectMenu.getWorldName());
+					new Save(WorldSelectDisplay.getWorldName());
 				else if(Game.isValidServer())
 					Game.server.saveWorld();
 			}
@@ -498,7 +498,7 @@ public class Game {
 						//makes delay between death and death menu.
 						playerDeadTime++;
 						if (playerDeadTime > 60) {
-							setMenu(new DeadMenu());
+							setMenu(new PlayerDeathDisplay());
 						}
 					} else if (pendingLevelChange != 0) {
 						setMenu(new LevelTransitionDisplay(pendingLevelChange));
@@ -515,7 +515,7 @@ public class Game {
 				else if(Game.isValidServer()) {
 					// here is where I should put things like select up/down, backspace to boot, esc to open pause menu, etc.
 					if(input.getKey("pause").clicked)
-						setMenu(new PauseMenu());
+						setMenu(new PauseDisplay());
 				}
 				
 				if(menu == null && input.getKey("F3").clicked) { // shows debug info in upper-left
@@ -1116,7 +1116,7 @@ public class Game {
 			server = new MinicraftServer();
 			
 			/// load up any saved config options for the server.
-			new Load(WorldSelectMenu.getWorldName(), server);
+			new Load(WorldSelectDisplay.getWorldName(), server);
 		});
 		t.setRepeats(false);
 		t.start();
@@ -1216,7 +1216,7 @@ public class Game {
 				autoserver = true;
 				if(i+1 < args.length) {
 					i++;
-					WorldSelectMenu.setWorldName(args[i], true);
+					WorldSelectDisplay.setWorldName(args[i], true);
 				}
 			}
 		}

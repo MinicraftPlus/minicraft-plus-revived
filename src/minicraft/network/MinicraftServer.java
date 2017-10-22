@@ -29,7 +29,7 @@ import minicraft.level.Level;
 import minicraft.level.tile.Tile;
 import minicraft.saveload.Load;
 import minicraft.saveload.Save;
-import minicraft.screen.WorldSelectMenu;
+import minicraft.screen.WorldSelectDisplay;
 
 public class MinicraftServer extends Thread implements MinicraftProtocol {
 	
@@ -54,7 +54,7 @@ public class MinicraftServer extends Thread implements MinicraftProtocol {
 		Game.ISHOST = true; // just in case.
 		Game.player.remove(); // the server has no player...
 		
-		worldPath = Game.gameDir + "/saves/" + WorldSelectMenu.getWorldName();
+		worldPath = Game.gameDir + "/saves/" + WorldSelectDisplay.getWorldName();
 		
 		try {
 			System.out.println("opening server socket...");
@@ -293,7 +293,7 @@ public class MinicraftServer extends Thread implements MinicraftProtocol {
 	
 	public void saveWorld() {
 		broadcastData(InputType.SAVE, ""); // tell all the other clients to send their data over to be saved.
-		new Save(WorldSelectMenu.getWorldName());
+		new Save(WorldSelectDisplay.getWorldName());
 	}
 	
 	public void broadcastNotification(String note, int notetime) {

@@ -10,7 +10,7 @@ import minicraft.entity.mob.RemotePlayer;
 import minicraft.level.Level;
 import minicraft.network.MinicraftServerThread;
 import minicraft.saveload.Save;
-import minicraft.screen.WorldSelectMenu;
+import minicraft.screen.WorldSelectDisplay;
 
 class ConsoleReader extends Thread {
 	
@@ -93,7 +93,7 @@ class ConsoleReader extends Thread {
 						if(set) {
 							System.out.println(configOption.name()+" set successfully.");
 							/// HERE is where we save the modified config options.
-							new Save(WorldSelectMenu.getWorldName(), Game.server);
+							new Save(WorldSelectDisplay.getWorldName(), Game.server);
 						} else
 							System.out.println("failed to set " + configOption.name());
 					}

@@ -30,7 +30,7 @@ import minicraft.level.Level;
 import minicraft.level.tile.Tiles;
 import minicraft.network.MinicraftServer;
 import minicraft.screen.LoadingDisplay;
-import minicraft.screen.MultiplayerMenu;
+import minicraft.screen.MultiplayerDisplay;
 
 public class Load {
 	
@@ -313,10 +313,10 @@ public class Load {
 		if(prefVer.compareTo(new Version("2.0.3-dev1")) < 0) {
 			subdata = data;
 		} else {
-			MultiplayerMenu.savedIP = data.remove(0);
+			MultiplayerDisplay.savedIP = data.remove(0);
 			if(prefVer.compareTo(new Version("2.0.3-dev3")) > 0) {
-				MultiplayerMenu.savedUUID = data.remove(0);
-				MultiplayerMenu.savedUsername = data.remove(0);
+				MultiplayerDisplay.savedUUID = data.remove(0);
+				MultiplayerDisplay.savedUsername = data.remove(0);
 			}
 			String keyData = data.get(0);
 			subdata = Arrays.asList(keyData.split(":"));

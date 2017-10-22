@@ -14,7 +14,7 @@ import minicraft.gfx.Screen;
 import minicraft.screen.entry.InputEntry;
 import minicraft.screen.entry.SelectEntry;
 
-public class WorldGenMenu extends Display {
+public class WorldGenDisplay extends Display {
 	
 	private static final String worldNameRegex = "[a-zA-Z0-9 ]+";
 	
@@ -48,10 +48,10 @@ public class WorldGenMenu extends Display {
 		};
 	}
 	
-	public WorldGenMenu() {
+	public WorldGenDisplay() {
 		super(true);
 		
-		InputEntry nameField = makeWorldNameInput("Enter World Name", WorldSelectMenu.getWorldNames(), "");
+		InputEntry nameField = makeWorldNameInput("Enter World Name", WorldSelectDisplay.getWorldNames(), "");
 		
 		SelectEntry nameHelp = new SelectEntry("Trouble with world name?", () -> Game.setMenu(new BookDisplay("by default, w and s move the cursor up and down. This can be changed in the key binding menu. To type the letter instead of moving the cursor, hold the shift key while typing the world name."))) {
 			@Override
@@ -86,7 +86,7 @@ public class WorldGenMenu extends Display {
 				
 				new SelectEntry("Create World", () -> {
 					if(!nameField.isValid()) return;
-					WorldSelectMenu.setWorldName(nameField.getUserInput(), false);
+					WorldSelectDisplay.setWorldName(nameField.getUserInput(), false);
 					Game.setMenu(new LoadingDisplay());
 				}) {
 					@Override

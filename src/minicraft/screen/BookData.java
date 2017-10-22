@@ -4,7 +4,7 @@ import java.io.IOException;
 
 import minicraft.saveload.Load;
 
-public class Displays {
+public class BookData {
 	
 	public static final String about = "Modded by David.b and +Dillyg10+ until 1.8, then taken over by Chris J. Our goal is to expand Minicraft to be more fun and continuous.\nMinicraft was originally made by Markus Perrson for ludum dare 22 competition.";
 	

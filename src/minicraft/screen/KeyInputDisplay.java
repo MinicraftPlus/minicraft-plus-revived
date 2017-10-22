@@ -9,7 +9,7 @@ import minicraft.gfx.Screen;
 import minicraft.screen.entry.KeyInputEntry;
 import minicraft.screen.entry.StringEntry;
 
-public class KeyInputMenu extends Display {
+public class KeyInputDisplay extends Display {
 	
 	private boolean listeningForBind, confirmReset;
 	
@@ -29,7 +29,7 @@ public class KeyInputMenu extends Display {
 		return entries;
 	}
 	
-	public KeyInputMenu() {
+	public KeyInputDisplay() {
 		super(true);
 		builder = new Menu.Builder(false, 0, RelPos.CENTER, getEntries())
 			//.setSize(Screen.w, Screen.h)

@@ -11,7 +11,7 @@ import minicraft.gfx.Screen;
 import minicraft.saveload.Save;
 import minicraft.screen.entry.SelectEntry;
 
-public class WorldSelectMenu extends Display {
+public class WorldSelectDisplay extends Display {
 	
 	// NOTE this will only be responsible for the world load selection screen.
 	
@@ -50,8 +50,8 @@ public class WorldSelectMenu extends Display {
 	private static ArrayList<String> getWorldNames(boolean recalc) {
 		ArrayList<String> worldNames = new ArrayList<>();
 		
-		if(!recalc && WorldSelectMenu.worldNames != null) {
-			worldNames.addAll(WorldSelectMenu.worldNames);
+		if(!recalc && WorldSelectDisplay.worldNames != null) {
+			worldNames.addAll(WorldSelectDisplay.worldNames);
 			return worldNames;
 		}
 		
@@ -78,23 +78,23 @@ public class WorldSelectMenu extends Display {
 			}
 		}
 		
-		if(WorldSelectMenu.worldNames == null)
-			WorldSelectMenu.worldNames = new ArrayList<>();
+		if(WorldSelectDisplay.worldNames == null)
+			WorldSelectDisplay.worldNames = new ArrayList<>();
 		else
-			WorldSelectMenu.worldNames.clear();
+			WorldSelectDisplay.worldNames.clear();
 		
-		WorldSelectMenu.worldNames.addAll(worldNames);
+		WorldSelectDisplay.worldNames.addAll(worldNames);
 		
 		return worldNames;
 	}
 	
-	public WorldSelectMenu() {
+	public WorldSelectDisplay() {
 		super(true);
 	}
 	
 	@Override
 	public void init(Display parent) {
-		super.init(parent instanceof TitleMenu ? parent : new TitleMenu());
+		super.init(parent instanceof TitleDisplay ? parent : new TitleDisplay());
 		worldName = "";
 		loadedWorld = true;
 		
@@ -110,7 +110,7 @@ public class WorldSelectMenu extends Display {
 					Game.setMenu(new LoadingDisplay());
 				}
 				else {
-					Game.setMenu(new WorldEditMenu(curAction, name));
+					Game.setMenu(new WorldEditDisplay(curAction, name));
 					curAction = null;
 				}
 			}) {

@@ -12,14 +12,14 @@ import minicraft.screen.entry.ListEntry;
 import minicraft.screen.entry.SelectEntry;
 import minicraft.screen.entry.StringEntry;
 
-public class PauseMenu extends Display {
+public class PauseDisplay extends Display {
 	
-	public PauseMenu() {
+	public PauseDisplay() {
 		ArrayList<ListEntry> entries = new ArrayList<>();
 		entries.addAll(Arrays.asList(
 			new BlankEntry(),
 			new SelectEntry("Return to Game", () -> Game.setMenu(null)),
-			new SelectEntry("Options", () -> Game.setMenu(new OptionsMenu()))
+			new SelectEntry("Options", () -> Game.setMenu(new OptionsDisplay()))
 			));
 		
 		if(!Game.ISONLINE)
@@ -32,11 +32,11 @@ public class PauseMenu extends Display {
 			new SelectEntry("Save Game", () -> {
 				Game.setMenu(null);
 				if(!Game.isValidServer())
-					new Save(WorldSelectMenu.getWorldName());
+					new Save(WorldSelectDisplay.getWorldName());
 				else
 					Game.server.saveWorld();
 			}),
-			new SelectEntry("Main Menu", () -> Game.setMenu(new TitleMenu())),
+			new SelectEntry("Main Menu", () -> Game.setMenu(new TitleDisplay())),
 			
 			new BlankEntry(),
 			

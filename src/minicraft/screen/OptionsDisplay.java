@@ -5,16 +5,16 @@ import minicraft.core.Settings;
 import minicraft.saveload.Save;
 import minicraft.screen.entry.SelectEntry;
 
-public class OptionsMenu extends Display {
+public class OptionsDisplay extends Display {
 	
-	public OptionsMenu() {
+	public OptionsDisplay() {
 		super(true, new Menu.Builder(false, 6, RelPos.LEFT,
 				Settings.getEntry("diff"),
 				Settings.getEntry("fps"),
 				Settings.getEntry("sound"),
 				Settings.getEntry("autosave"),
 				Settings.getEntry("skinon"),
-				new SelectEntry("Change Key Bindings", () -> Game.setMenu(new KeyInputMenu()))
+				new SelectEntry("Change Key Bindings", () -> Game.setMenu(new KeyInputDisplay()))
 			)
 			.setTitle("Options")
 			.createMenu()

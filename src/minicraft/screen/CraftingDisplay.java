@@ -14,7 +14,7 @@ import minicraft.item.Items;
 import minicraft.item.Recipe;
 import minicraft.screen.entry.ItemListing;
 
-public class CraftingMenu extends Display {
+public class CraftingDisplay extends Display {
 	
 	private Player player;
 	private Recipe[] recipes;
@@ -24,8 +24,8 @@ public class CraftingMenu extends Display {
 	
 	private boolean isPersonalCrafter;
 	
-	public CraftingMenu(List<Recipe> recipes, String title, Player player) { this(recipes, title, player, false); }
-	public CraftingMenu(List<Recipe> recipes, String title, Player player, boolean isPersonal) {
+	public CraftingDisplay(List<Recipe> recipes, String title, Player player) { this(recipes, title, player, false); }
+	public CraftingDisplay(List<Recipe> recipes, String title, Player player, boolean isPersonal) {
 		for(Recipe recipe: recipes)
 			recipe.checkCanCraft(player);
 		

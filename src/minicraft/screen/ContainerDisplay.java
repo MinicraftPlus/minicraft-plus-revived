@@ -7,14 +7,14 @@ import minicraft.item.Inventory;
 import minicraft.entity.mob.Player;
 import minicraft.gfx.Screen;
 
-public class ContainerMenu extends Display {
+public class ContainerDisplay extends Display {
 	
 	private static final int padding = 10;
 	
 	private Player player;
 	private Chest chest;
 	
-	public ContainerMenu(Player player, Chest chest) {
+	public ContainerDisplay(Player player, Chest chest) {
 		super(new InventoryMenu(chest, chest.inventory, chest.name), new InventoryMenu(player, player.inventory, "Inventory"));
 		//pInv = player.inventory;
 		//cInv = chest.inventory;

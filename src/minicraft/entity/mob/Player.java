@@ -339,11 +339,11 @@ public class Player extends Mob {
 			}
 			
 			if (input.getKey("menu").clicked && !use()) // !use() = no furniture in front of the player; this prevents player inventory from opening (will open furniture inventory instead)
-				Game.setMenu(new PlayerInvMenu(this));
+				Game.setMenu(new PlayerInvDisplay(this));
 			if (input.getKey("pause").clicked)
-				Game.setMenu(new PauseMenu());
+				Game.setMenu(new PauseDisplay());
 			if (input.getKey("craft").clicked && !use())
-				Game.setMenu(new CraftingMenu(Recipes.craftRecipes, "Crafting", this, true));
+				Game.setMenu(new CraftingDisplay(Recipes.craftRecipes, "Crafting", this, true));
 			if (input.getKey("sethome").clicked) setHome();
 			if (input.getKey("home").clicked && !Bed.inBed) goHome();
 			
@@ -352,7 +352,7 @@ public class Player extends Mob {
 			if (input.getKey("r").clicked && !Game.saving && !(this instanceof RemotePlayer) && !Game.isValidClient()) {
 				Game.saving = true;
 				LoadingDisplay.setPercentage(0);
-				new Save(WorldSelectMenu.getWorldName());
+				new Save(WorldSelectDisplay.getWorldName());
 			}
 			//debug feature:
 			if (Game.debug && input.getKey("shift-p").clicked) { // remove all potion effects

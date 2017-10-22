@@ -56,7 +56,7 @@ public class EndGameDisplay extends Display {
 		// add any unlocks
 		entries.addAll(Arrays.asList(getAndWriteUnlocks()));
 		
-		entries.add(new SelectEntry("Exit to Menu", () -> Game.setMenu(new TitleMenu())));
+		entries.add(new SelectEntry("Exit to Menu", () -> Game.setMenu(new TitleDisplay())));
 		
 		//title = "Game Over!" + (Game.isMode("score") ? " (" + ModeMenu.getSelectedTime() + ")" : "");
 		menus = new Menu[] {

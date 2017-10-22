@@ -16,12 +16,12 @@ import minicraft.core.Game;
 import minicraft.core.InputHandler;
 import minicraft.gfx.Color;
 import minicraft.screen.Menu.Builder;
-import minicraft.screen.WorldSelectMenu.Action;
+import minicraft.screen.WorldSelectDisplay.Action;
 import minicraft.screen.entry.InputEntry;
 import minicraft.screen.entry.ListEntry;
 import minicraft.screen.entry.StringEntry;
 
-public class WorldEditMenu extends Display {
+public class WorldEditDisplay extends Display {
 	
 	/// this class will be used to enact the extra actions (copy, delete, rename) that you can do for worlds in the WorldSelectMenu.
 	
@@ -30,7 +30,7 @@ public class WorldEditMenu extends Display {
 	
 	private static final String worldsDir = Game.gameDir + "/saves/";
 	
-	public WorldEditMenu(Action action, String worldName) {
+	public WorldEditDisplay(Action action, String worldName) {
 		super(true);
 		this.action = action;
 		this.worldName = worldName;
@@ -39,12 +39,12 @@ public class WorldEditMenu extends Display {
 		ArrayList<ListEntry> entries = new ArrayList<>();
 		
 		if(action != Action.Delete) {
-			List<String> names = WorldSelectMenu.getWorldNames();
+			List<String> names = WorldSelectDisplay.getWorldNames();
 			if(action == Action.Rename)
 				names.remove(worldName);
 			//String prompt = action == Action.Rename ? "New World Name:" : "New World Name";
 			entries.add(new StringEntry("New World Name:", action.color));
-			entries.add(WorldGenMenu.makeWorldNameInput("", names, worldName));
+			entries.add(WorldGenDisplay.makeWorldNameInput("", names, worldName));
 		} else {
 			entries.addAll(Arrays.asList(
 				new StringEntry("Are you sure you want to delete", action.color),
@@ -80,10 +80,10 @@ public class WorldEditMenu extends Display {
 					}
 					world.delete();
 					
-					if(WorldSelectMenu.getWorldNames().size() > 0)
-						Game.setMenu(new WorldSelectMenu());
+					if(WorldSelectDisplay.getWorldNames().size() > 0)
+						Game.setMenu(new WorldSelectDisplay());
 					else
-						Game.setMenu(new TitleMenu());
+						Game.setMenu(new TitleDisplay());
 				break;
 				
 				case Copy:
@@ -125,7 +125,7 @@ public class WorldEditMenu extends Display {
 						ex.printStackTrace();
 					}
 					
-					Game.setMenu(new WorldSelectMenu());
+					Game.setMenu(new WorldSelectDisplay());
 					
 				break;
 				
@@ -137,7 +137,7 @@ public class WorldEditMenu extends Display {
 					String name = entry.getUserInput();
 					if (Game.debug) System.out.println("renaming world " + world + " to new name: " + name);
 					world.renameTo(new File(worldsDir + name));
-					Game.setMenu(new WorldSelectMenu());
+					Game.setMenu(new WorldSelectDisplay());
 				break;
 			}
 		}

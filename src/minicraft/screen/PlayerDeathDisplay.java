@@ -12,12 +12,12 @@ import minicraft.screen.entry.ListEntry;
 import minicraft.screen.entry.SelectEntry;
 import minicraft.screen.entry.StringEntry;
 
-public class DeadMenu extends Display {
+public class PlayerDeathDisplay extends Display {
 	//private int inputDelay = 60;
 	// this is an IMPORTANT bool, determines if the user should respawn or not. :)
 	public static boolean shouldRespawn;
 	
-	public DeadMenu() {
+	public PlayerDeathDisplay() {
 		super(false, false);
 		
 		ArrayList<ListEntry> entries = new ArrayList<>();
@@ -35,7 +35,7 @@ public class DeadMenu extends Display {
 			}));
 		}
 		
-		entries.add(new SelectEntry("Quit", () -> Game.setMenu(new TitleMenu())));
+		entries.add(new SelectEntry("Quit", () -> Game.setMenu(new TitleDisplay())));
 		
 		menus = new Menu[]{
 			new Menu.Builder(true, 0, RelPos.LEFT, entries)

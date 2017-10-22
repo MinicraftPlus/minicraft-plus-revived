@@ -8,7 +8,7 @@ import minicraft.gfx.Color;
 import minicraft.gfx.Sprite;
 import minicraft.item.Recipe;
 import minicraft.item.Recipes;
-import minicraft.screen.CraftingMenu;
+import minicraft.screen.CraftingDisplay;
 
 public class Crafter extends Furniture {
 	
@@ -43,7 +43,7 @@ public class Crafter extends Furniture {
 	}
 	
 	public boolean use(Player player) {
-		Game.setMenu(new CraftingMenu(type.recipes, type.name(), player));
+		Game.setMenu(new CraftingDisplay(type.recipes, type.name(), player));
 		return true;
 	}
 	

@@ -30,8 +30,8 @@ import minicraft.item.PotionType;
 import minicraft.item.StackableItem;
 import minicraft.network.MinicraftServer;
 import minicraft.screen.LoadingDisplay;
-import minicraft.screen.MultiplayerMenu;
-import minicraft.screen.WorldSelectMenu;
+import minicraft.screen.MultiplayerDisplay;
+import minicraft.screen.WorldSelectDisplay;
 
 public class Save {
 
@@ -108,7 +108,7 @@ public class Save {
 	
 	public Save(Player player) {
 		// this is simply for access to writeToFile.
-		this(new File(Game.gameDir+"/saves/"+ WorldSelectMenu.getWorldName() + "/"));
+		this(new File(Game.gameDir+"/saves/"+ WorldSelectDisplay.getWorldName() + "/"));
 	}
 	
 	public static void writeFile(String filename, String[] lines) throws IOException {
@@ -164,9 +164,9 @@ public class Save {
 		data.add(String.valueOf(Settings.get("sound")));
 		data.add(String.valueOf(Settings.get("autosave")));
 		data.add(String.valueOf(Settings.get("fps")));
-		data.add(MultiplayerMenu.savedIP);
-		data.add(MultiplayerMenu.savedUUID);
-		data.add(MultiplayerMenu.savedUsername);
+		data.add(MultiplayerDisplay.savedIP);
+		data.add(MultiplayerDisplay.savedUUID);
+		data.add(MultiplayerDisplay.savedUsername);
 		
 		List<String> keyPairs = new ArrayList<>();
 		Collections.addAll(keyPairs, Game.input.getKeyPrefs());

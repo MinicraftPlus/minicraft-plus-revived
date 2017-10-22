@@ -27,13 +27,13 @@ import minicraft.item.PotionType;
 import minicraft.level.Level;
 import minicraft.saveload.Load;
 import minicraft.saveload.Save;
-import minicraft.screen.DeadMenu;
-import minicraft.screen.MultiplayerMenu;
+import minicraft.screen.PlayerDeathDisplay;
+import minicraft.screen.MultiplayerDisplay;
 
 /// This class is only used by the client runtime; the server runtime doesn't touch it.
 public class MinicraftClient extends MinicraftConnection {
 	
-	private MultiplayerMenu menu;
+	private MultiplayerDisplay menu;
 	
 	private enum State {
 		LOGIN, LOADING, PLAY, DISCONNECTED
@@ -44,7 +44,7 @@ public class MinicraftClient extends MinicraftConnection {
 	
 	private HashMap<Integer, Long> entityRequests = new HashMap<>();
 	
-	private static Socket openSocket(String hostName, MultiplayerMenu menu) {
+	private static Socket openSocket(String hostName, MultiplayerDisplay menu) {
 		InetAddress hostAddress;
 		Socket socket;
 		
@@ -69,7 +69,7 @@ public class MinicraftClient extends MinicraftConnection {
 		return socket;
 	}
 	
-	public MinicraftClient(String username, MultiplayerMenu menu, String hostName) {
+	public MinicraftClient(String username, MultiplayerDisplay menu, String hostName) {
 		super("MinicraftClient", openSocket(hostName, menu));
 		this.menu = menu;
 		Game.ISONLINE = true;
@@ -368,7 +368,7 @@ public class MinicraftClient extends MinicraftConnection {
 					load.loadInventory(Game.player.inventory, playerinv);
 				load.loadPlayer(Game.player, playerinfo);
 				//setPlayer = true;
-				if(Game.getMenu() instanceof DeadMenu) {
+				if(Game.getMenu() instanceof PlayerDeathDisplay) {
 					Game.setMenu(null);
 				}
 				return true;
