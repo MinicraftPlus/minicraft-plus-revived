@@ -1,28 +1,41 @@
 package minicraft.core;
 
 import java.io.File;
-import java.util.ArrayList;
-import java.util.List;
+import java.io.IOException;
+import java.nio.file.FileVisitResult;
+import java.nio.file.FileVisitor;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.StandardCopyOption;
+import java.nio.file.attribute.BasicFileAttributes;
 
-class FileHandler extends Game {
+import minicraft.saveload.Save;
+
+public class FileHandler extends Game {
 	private FileHandler() {}
 	
+	public static final int REPLACE_EXISTING = 0;
+	public static final int RENAME_COPY = 1;
+	public static final int SKIP = 2;
+	
 	static final String OS;
-	static final String localGameDir;
+	private static final String localGameDir;
 	static final String systemGameDir;
 	
 	static {
 		OS = System.getProperty("os.name").toLowerCase();
 		//System.out.println("os name: \"" +os + "\"");
+		String local = "playminicraft/mods/Minicraft_Plus";
+		
 		if(OS.contains("windows")) // windows
 			systemGameDir = System.getenv("APPDATA");
-		else
+		else {
 			systemGameDir = System.getProperty("user.home");
+			if(!OS.contains("mac"))
+				local = "."+local; // linux
+		}
 		
-		if(OS.contains("mac") || OS.contains("nix") || OS.contains("nux") || OS.contains("aix")) // mac or linux
-			localGameDir = "/.playminicraft/mods/Minicraft_Plus";
-		else
-			localGameDir = "/playminicraft/mods/Minicraft_Plus"; // windows, probably.
+		localGameDir = "/"+local;
 		
 		//System.out.println("system game dir: " + systemGameDir);
 	}
@@ -32,66 +45,83 @@ class FileHandler extends Game {
 		gameDir = saveDir + localGameDir;
 		if(debug) System.out.println("determined gameDir: " + gameDir);
 		
-		String prevLocalGameDir = "/.playminicraft/mods/Minicraft Plus";
-		File testFile = new File(systemGameDir + localGameDir);
-		File testFileOld = new File(systemGameDir + prevLocalGameDir);
-		if(!testFile.exists() && testFileOld.exists()) {
-			// rename the old folders to the new scheme
-			testFile.mkdirs();
-			if(OS.contains("windows")) {
+		File testFile = new File(gameDir);
+		testFile.mkdirs();
+		
+		File oldFolder = new File(saveDir + "/.playminicraft/mods/Minicraft Plus");
+		if(oldFolder.exists()) {
+			try {
+				copyFolderContents(oldFolder.toPath(), testFile.toPath(), RENAME_COPY, true);
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+		}
+		
+		if(OS.contains("mac")) {
+			oldFolder = new File(saveDir+"/.playminicraft");
+			if(oldFolder.exists()) {
 				try {
-					java.nio.file.Files.setAttribute(testFile.toPath(), "dos:hidden", true);
-				} catch (java.io.IOException ex) {
-					System.err.println("couldn't make game folder hidden on windows:");
-					ex.printStackTrace();
+					copyFolderContents(oldFolder.toPath(), testFile.toPath(), RENAME_COPY, true);
+				} catch (IOException e) {
+					e.printStackTrace();
 				}
 			}
-			
-			File[] files = getAllFiles(testFileOld).toArray(new File[0]);
-			for(File file: files) {
-				File newFile = new File(file.getPath().replace(testFileOld.getPath(), testFile.getPath()));
-				if(file.isDirectory()) newFile.mkdirs(); // these should be unnecessary.
-				else file.renameTo(newFile);
-			}
-			
-			deleteAllFiles(testFileOld);
-			
-			testFile = new File(systemGameDir + ".playminicraft");
-			if(OS.contains("windows") && testFile.exists())
-				deleteAllFiles(testFile);
 		}
 	}
 	
-	private static List<File> getAllFiles(File top) {
-		List<File> files = new ArrayList<File>();
-		if(top == null) {
-			System.err.println("GAME: cannot search files of null folder.");
-			return files;
-		}
-		if(!top.isDirectory()) {
-			files.add(top);
-			return files;
-		} else
-			files.add(top);
-		
-		File[] subfiles = top.listFiles();
-		if(subfiles != null)
-			for(File subfile: subfiles)
-				files.addAll(getAllFiles(subfile));
-		
-		return files;
-	}
-	
-	private static void deleteAllFiles(File top) {
+	private static void deleteFolder(File top) {
 		if(top == null) return;
 		if(top.isDirectory()) {
 			File[] subfiles = top.listFiles();
 			if(subfiles != null)
 				for (File subfile : subfiles)
-					deleteAllFiles(subfile);
+					deleteFolder(subfile);
 		}
 		//noinspection ResultOfMethodCallIgnored
 		top.delete();
+	}
+	
+	public static void copyFolderContents(Path origFolder, Path newFolder, int ifExisting, boolean deleteOriginal) throws IOException {
+		// I can determine the local folder structure with origFolder.relativize(file), then use newFolder.resolve(relative).
+		if (Game.debug) System.out.println("copying contents of folder " + origFolder + " to new folder " + newFolder);
+		
+		Files.walkFileTree(origFolder, new FileVisitor<Path>() {
+			public FileVisitResult visitFile(Path file, BasicFileAttributes attr) {
+				String newFilename = newFolder.resolve(origFolder.relativize(file)).toString();
+				if(new File(newFilename).exists()) {
+					if(ifExisting == SKIP)
+						return FileVisitResult.CONTINUE;
+					else if(ifExisting == RENAME_COPY) {
+						newFilename = newFilename.substring(0, newFilename.lastIndexOf("."));
+						do {
+							newFilename += "(Old)";
+						} while(new File(newFilename).exists());
+						newFilename += Save.extension;
+					}
+				}
+				
+				Path newFile = new File(newFilename).toPath();
+				//if (Game.debug) System.out.println("visiting file " + file + "; translating to " + newFile);
+				try {
+					Files.copy(file, newFile, StandardCopyOption.REPLACE_EXISTING);
+				} catch(Exception ex) {
+					ex.printStackTrace();
+				}
+				return FileVisitResult.CONTINUE;
+			}
+			public FileVisitResult preVisitDirectory(Path p, BasicFileAttributes bfa) {
+				return FileVisitResult.CONTINUE;
+			}
+			public FileVisitResult postVisitDirectory(Path p, IOException ex) {
+				return FileVisitResult.CONTINUE;
+			}
+			public FileVisitResult visitFileFailed(Path p, IOException ex) {
+				return FileVisitResult.CONTINUE;
+			}
+		});
+		
+		if(deleteOriginal)
+			deleteFolder(origFolder.toFile());
 	}
 	
 }

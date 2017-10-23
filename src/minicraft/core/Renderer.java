@@ -64,7 +64,7 @@ public class Renderer extends Game {
 	
 	/** renders the current screen. Called in game loop, a bit after tick(). */
 	public static void render() {
-		if(!HAS_GUI) return; // no point in this if there's no gui... :P
+		if(!HAS_GUI || screen == null) return; // no point in this if there's no gui... :P
 		
 		if(readyToRenderGameplay) {
 			if(isValidServer()) {

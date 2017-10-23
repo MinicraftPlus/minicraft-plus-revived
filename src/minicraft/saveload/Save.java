@@ -8,9 +8,15 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-import minicraft.core.*;
+import minicraft.core.Game;
+import minicraft.core.Renderer;
 import minicraft.core.Settings;
-import minicraft.entity.*;
+import minicraft.core.Updater;
+import minicraft.core.World;
+import minicraft.entity.Arrow;
+import minicraft.entity.Entity;
+import minicraft.entity.ItemEntity;
+import minicraft.entity.Spark;
 import minicraft.entity.furniture.Chest;
 import minicraft.entity.furniture.Crafter;
 import minicraft.entity.furniture.DeathChest;

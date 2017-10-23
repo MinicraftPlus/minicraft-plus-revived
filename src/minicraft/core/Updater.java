@@ -32,7 +32,7 @@ public class Updater extends Game {
 	//public static int noon = 32400; //this value determines when the sky switches from getting lighter to getting darker.
 	
 	public static int gameTime = 0; // This stores the total time (number of ticks) you've been playing your 
-	public static boolean pastDay1 = true; // used to prefent mob spawn on surface on day 1.
+	public static boolean pastDay1 = true; // used to prevent mob spawn on surface on day 1.
 	public static int scoreTime; // time remaining for score mode
 	
 	

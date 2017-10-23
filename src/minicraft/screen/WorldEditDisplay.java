@@ -2,17 +2,12 @@ package minicraft.screen;
 
 import java.io.File;
 import java.io.IOException;
-import java.nio.file.FileVisitResult;
-import java.nio.file.FileVisitor;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.StandardCopyOption;
-import java.nio.file.attribute.BasicFileAttributes;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-import minicraft.core.*;
+import minicraft.core.FileHandler;
+import minicraft.core.Game;
 import minicraft.core.InputHandler;
 import minicraft.gfx.Color;
 import minicraft.screen.Menu.Builder;
@@ -97,33 +92,11 @@ public class WorldEditDisplay extends Display {
 					File newworld = new File(worldsDir + newname);
 					newworld.mkdirs();
 					if (Game.debug) System.out.println("copying world " + world + " to world " + newworld);
+					// walk file tree
 					try {
-						Files.walkFileTree(world.toPath(), new FileVisitor<Path>() {
-							public FileVisitResult visitFile(Path file, BasicFileAttributes attr) {
-								String path = file.toString();
-								path = path.replace(worldsDir+oldname, worldsDir+newname);
-								File newFile = new File(path);
-								newFile.mkdirs();
-								if (Game.debug) System.out.println("copying file at \"" + file + "\" to path \"" + newFile + "\"...");
-									try {
-										Files.copy(file, newFile.toPath(), StandardCopyOption.REPLACE_EXISTING);
-									} catch(Exception ex) {
-										ex.printStackTrace();
-									}
-								return FileVisitResult.CONTINUE;
-							}
-							public FileVisitResult preVisitDirectory(Path p, BasicFileAttributes bfa) {
-								return FileVisitResult.CONTINUE;
-							}
-							public FileVisitResult postVisitDirectory(Path p, IOException ex) {
-								return FileVisitResult.CONTINUE;
-							}
-							public FileVisitResult visitFileFailed(Path p, IOException ex) {
-								return FileVisitResult.CONTINUE;
-							}
-						});
-					} catch(Exception ex) {
-						ex.printStackTrace();
+						FileHandler.copyFolderContents(new File(worldsDir+oldname).toPath(), newworld.toPath(), FileHandler.REPLACE_EXISTING, false);
+					} catch (IOException e) {
+						e.printStackTrace();
 					}
 					
 					Game.setMenu(new WorldSelectDisplay());
