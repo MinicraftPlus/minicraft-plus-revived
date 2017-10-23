@@ -23,11 +23,12 @@ public class ContainerDisplay extends Display {
 		
 		menus[1].translate(menus[0].getBounds().getWidth() + padding, 0);
 		
-		if(menus[0].getNumOptions() == 0) selection = 1;
+		if(menus[0].getNumOptions() == 0) onSelectionChange(0, 1);
 	}
 	
 	@Override
 	protected void onSelectionChange(int oldSel, int newSel) {
+		super.onSelectionChange(oldSel, newSel);
 		if(oldSel == newSel) return; // this also serves as a protection against access to menus[0] when such may not exist.
 		int shift = 0;
 		if(newSel == 0) shift = padding - menus[0].getBounds().getLeft();
@@ -64,12 +65,13 @@ public class ContainerDisplay extends Display {
 			
 			to.add(toSel, from.remove(fromSel));
 			
-			menus[selection] = new InventoryMenu(selection==0?chest:player, from, menus[selection].getTitle());
-			menus[otherIdx] = new InventoryMenu(selection==0?player:chest, to, menus[otherIdx].getTitle());
+			menus[selection] = new InventoryMenu((InventoryMenu)menus[selection]);
+			menus[otherIdx] = new InventoryMenu((InventoryMenu)menus[otherIdx]);
+			//menus[otherIdx] = new InventoryMenu(selection==0?player:chest, to, menus[otherIdx].getTitle());
 			menus[1].translate(menus[0].getBounds().getWidth() + padding, 0);
 			onSelectionChange(0, selection);
-			menus[selection].setSelection(fromSel);
-			menus[otherIdx].setSelection(toSel);
+			//menus[selection].setSelection(fromSel);
+			//menus[otherIdx].setSelection(toSel);
 		}
 	}
 }

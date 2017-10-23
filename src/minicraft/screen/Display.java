@@ -84,7 +84,9 @@ public class Display {
 			menus[selection].tick(input);
 	}
 	
-	protected void onSelectionChange(int oldSel, int newSel) {}
+	protected void onSelectionChange(int oldSel, int newSel) {
+		selection = newSel;
+	}
 	
 	/// sub-classes can do extra rendering here; this renders each menu that should be rendered, in the order of the array, such that the currently selected menu is rendered last, so it appears on top (if they even overlap in the first place).
 	public void render(Screen screen) {

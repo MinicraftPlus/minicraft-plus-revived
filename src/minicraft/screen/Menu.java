@@ -12,6 +12,7 @@ import minicraft.screen.entry.BlankEntry;
 import minicraft.screen.entry.ListEntry;
 
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 public class Menu {
 	
@@ -104,23 +105,23 @@ public class Menu {
 		if(idx < 0) idx = 0;
 		
 		this.selection = idx;
+		
+		doScroll();
 	}
 	int getSelection() { return selection; }
 	int getDispSelection() { return dispSelection; }
 	
 	ListEntry[] getEntries() { return entries.toArray(new ListEntry[entries.size()]); }
-	ListEntry getCurEntry() { return entries.get(selection); }
+	@Nullable ListEntry getCurEntry() { return entries.size() == 0 ? null : entries.get(selection); }
 	int getNumOptions() { return entries.size(); }
 	
-	Rectangle getBounds() {
-		return new Rectangle(bounds);
-	}
+	Rectangle getBounds() { return new Rectangle(bounds); }
 	String getTitle() { return title; }
 	
 	boolean isSelectable() { return selectable; }
 	boolean shouldRender() { return shouldRender; }
 	
-	@SuppressWarnings("SameParameterValue")
+	/** @noinspection SameParameterValue*/
 	void translate(int xoff, int yoff) {
 		bounds.translate(xoff, yoff);
 		entryBounds.translate(xoff, yoff);

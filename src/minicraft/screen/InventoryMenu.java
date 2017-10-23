@@ -19,6 +19,13 @@ class InventoryMenu extends ItemListMenu {
 		this.holder = holder;
 	}
 	
+	InventoryMenu(InventoryMenu model) {
+		super(ItemEntry.useItems(model.inv.getItems()), model.getTitle());
+		this.inv = model.inv;
+		this.holder = model.holder;
+		setSelection(model.getSelection());
+	}
+	
 	@Override
 	public void tick(InputHandler input) {
 		super.tick(input);
