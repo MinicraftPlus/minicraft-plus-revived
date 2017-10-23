@@ -204,14 +204,15 @@ public class Load {
 		return lines;//.toArray(new String[lines.size()]);
 	}
 	
-	public void loadFromFile(String filename) {
+	private void loadFromFile(String filename) {
 		data.clear();
 		extradata.clear();
 		
 		String total;
 		try {
 			total = loadFromFile(filename, true);
-			data.addAll(Arrays.asList(total.split(",")));
+			if(total.length() > 0)
+				data.addAll(Arrays.asList(total.split(",")));
 		} catch (IOException ex) {
 			ex.printStackTrace();
 		}
@@ -410,7 +411,7 @@ public class Load {
 		}
 	}
 	
-	public static void loadLevel(Level level, int[] lvlids, int[] lvldata) {
+	/*public static void loadLevel(Level level, int[] lvlids, int[] lvldata) {
 		int lvlw = lvlids[0];
 		int lvlh = lvldata[0];
 		
@@ -431,7 +432,7 @@ public class Load {
 		
 		level.tiles = tiles;
 		level.data = tdata;
-	}
+	}*/
 	
 	public void loadPlayer(String filename, Player player) {
 		loadFromFile(location + filename + extension);
@@ -531,6 +532,10 @@ public class Load {
 		
 		for(int i = 0; i < data.size(); i++) {
 			String item = data.get(i);
+			if(item.length() == 0) {
+				System.err.println("loadInventory: item in data list is \"\", skipping item");
+				continue;
+			}
 			
 			if(worldVer.compareTo(new Version("1.9.4")) < 0) {
 				item = subOldName(item, worldVer);
