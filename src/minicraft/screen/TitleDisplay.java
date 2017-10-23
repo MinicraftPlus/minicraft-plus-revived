@@ -26,37 +26,30 @@ public class TitleDisplay extends Display {
 	private boolean reverse = false;
 	
 	public TitleDisplay() {
-		super(true, false);
-		
-		ArrayList<ListEntry> entries = new ArrayList<>();
-		Menu.Builder menu = new Menu.Builder(false, 2, RelPos.CENTER)
-			.setPositioning(new Point(Screen.w/2, Screen.h*3/5), RelPos.CENTER);
-		
-		if(WorldSelectDisplay.getWorldNames().size() > 0)
-			entries.add(displayFactory("Play",
-					new SelectEntry("Load World", () -> Game.setMenu(new WorldSelectDisplay())),
-					new SelectEntry("New World", () -> Game.setMenu(new WorldGenDisplay()))
-				)
-			);
-		else
-			entries.add(new SelectEntry("Play", () -> Game.setMenu(new WorldGenDisplay())));
-		
-		entries.addAll(Arrays.asList(
-				new SelectEntry("Join Online World", () -> Game.setMenu(new MultiplayerDisplay())),
-				new SelectEntry("Options", () -> Game.setMenu(new OptionsDisplay())),
-				displayFactory("Help",
-					new SelectEntry("Instructions", () -> Game.setMenu(new BookDisplay(BookData.instructions))),
-					new BlankEntry(),
-					new SelectEntry("Storyline Guide (for the weak)", () -> Game.setMenu(new BookDisplay(BookData.storylineGuide))),
-					new BlankEntry(),
-					new SelectEntry("About", () -> Game.setMenu(new BookDisplay(BookData.about)))
-				),
-				new SelectEntry("Quit", () -> System.exit(0))
-		));
-		
-		menu.setEntries(entries);
-		
-		menus = new Menu[] {menu.createMenu()};
+		super(true, false, new Menu.Builder(false, 2, RelPos.CENTER,
+			new SelectEntry("Play", () -> {
+				if(WorldSelectDisplay.getWorldNames().size() > 0)
+					Game.setMenu(new Display(true, new Menu.Builder(false, 2, RelPos.CENTER,
+						new SelectEntry("Load World", () -> Game.setMenu(new WorldSelectDisplay())),
+						new SelectEntry("New World", () -> Game.setMenu(new WorldGenDisplay()))
+					).createMenu()));
+				else
+					Game.setMenu(new WorldGenDisplay());
+			}),
+			new SelectEntry("Join Online World", () -> Game.setMenu(new MultiplayerDisplay())),
+			new SelectEntry("Options", () -> Game.setMenu(new OptionsDisplay())),
+			displayFactory("Help",
+				new SelectEntry("Instructions", () -> Game.setMenu(new BookDisplay(BookData.instructions))),
+				new BlankEntry(),
+				new SelectEntry("Storyline Guide (for the weak)", () -> Game.setMenu(new BookDisplay(BookData.storylineGuide))),
+				new BlankEntry(),
+				new SelectEntry("About", () -> Game.setMenu(new BookDisplay(BookData.about)))
+			),
+			new SelectEntry("Quit", () -> System.exit(0))
+			)
+			.setPositioning(new Point(Screen.w/2, Screen.h*3/5), RelPos.CENTER)
+			.createMenu()
+		);
 	}
 	
 	@Override

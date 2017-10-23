@@ -80,6 +80,7 @@ public class WorldEditDisplay extends Display {
 					}
 					world.delete();
 					
+					WorldSelectDisplay.refreshWorldNames();
 					if(WorldSelectDisplay.getWorldNames().size() > 0)
 						Game.setMenu(new WorldSelectDisplay());
 					else

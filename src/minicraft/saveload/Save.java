@@ -64,6 +64,7 @@ public class Save {
 		//location += dir;
 		folder = worldFolder;
 		location = worldFolder.getPath() + "/";
+		
 		folder.mkdirs();
 	}
 	
@@ -85,6 +86,8 @@ public class Save {
 			writeInventory("Inventory", Game.player);
 		}
 		writeEntities("Entities");
+		
+		WorldSelectDisplay.refreshWorldNames();
 		
 		Updater.notifyAll("World Saved!");
 		Updater.asTick = 0;

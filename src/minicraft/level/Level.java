@@ -260,14 +260,14 @@ public class Level {
 					Game.server.broadcastEntityUpdate(e);
 				
 				
-				if (Game.isValidServer() && e instanceof RemotePlayer && Game.server.getAssociatedThread((RemotePlayer) e) == null)
-					e.remove();
-				else if (e instanceof Mob) count++;
+				//if (Game.isValidServer() && e instanceof RemotePlayer && Game.server.getThreads().getAssociatedThread((RemotePlayer) e))
+				//	e.remove();
+				if (e instanceof Mob) count++;
 			}
 			
 			
 			for (Entity e : getEntityArray())
-				if (e == null || e.isRemoved() || e.getLevel() != this)
+				if (e.isRemoved() || e.getLevel() != this)
 					remove(e);
 		}
 		

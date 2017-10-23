@@ -91,8 +91,6 @@ public class Color {
 	public static int tint(int color, int amount, boolean isSpriteCol) {
 		if(isSpriteCol) {
 			int[] rgbBytes = separateEncodedSprite(color); // this just separates the four 8-bit sprite colors; they are still in base-6 added form.
-			System.out.println("the 4 colors for the sprite, to be tinted: " + Arrays.toString(rgbBytes));
-			System.out.println("the 4 colors for the sprite to be tinted, as inputted: " + Arrays.toString(separateEncodedSprite(color, true)));
 			for(int i = 0; i < rgbBytes.length; i++) {
 				rgbBytes[i] = tint(rgbBytes[i], amount);
 			}

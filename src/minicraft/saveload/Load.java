@@ -133,7 +133,7 @@ public class Load {
 	}
 	
 	public static class Version implements Comparable {
-		public Integer make, major, minor, dev;
+		private Integer make, major, minor, dev;
 		
 		public Version(String version) {
 			String[] nums = version.split("\\.");
@@ -456,8 +456,7 @@ public class Load {
 		
 		Game.currentLevel = Integer.parseInt(data.get(8));
 		Level level = World.levels[Game.currentLevel];
-		if(Game.player != null && !Game.player.isRemoved())
-			Game.player.remove(); // removes the user player from the level, in case they would be added twice.
+		if(!player.isRemoved()) player.remove(); // removes the user player from the level, in case they would be added twice.
 		if(level != null)
 			level.add(player);
 		else if(Game.debug) System.out.println(Network.onlinePrefix()+"game level to add player " + player + " to is null.");
@@ -570,6 +569,7 @@ public class Load {
 		}
 		
 		for(int i = 0; i < data.size(); i++) {
+			if(data.get(i).equalsIgnoreCase("player")) continue;
 			loadEntity(data.get(i), worldVer, true);
 			//LoadingDisplay.progress(percentInc);
 		}

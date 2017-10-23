@@ -4,6 +4,7 @@ import minicraft.core.*;
 import minicraft.core.InputHandler;
 import minicraft.core.Sound;
 import minicraft.gfx.Screen;
+import minicraft.screen.entry.ArrayEntry;
 import minicraft.screen.entry.ListEntry;
 import minicraft.screen.entry.SelectEntry;
 import org.jetbrains.annotations.NotNull;
@@ -42,7 +43,6 @@ public class Display {
 	public void onExit() {}
 	
 	public Display getParent() { return parent; }
-	public Menu getCurMenu() { return menus[selection]; }
 	
 	public void tick(InputHandler input) {
 		
@@ -58,8 +58,9 @@ public class Display {
 		if(menus.length > 1 && menus[selection].isSelectable()) { // if menu set is unselectable, it must have been intentional, so prevent the user from setting it back.
 			int prevSel = selection;
 			
-			if (input.getKey("shift-left").clicked) selection--;
-			if (input.getKey("shift-right").clicked) selection++;
+			String shift = menus[selection].getCurEntry() instanceof ArrayEntry ? "shift-" : "";
+			if (input.getKey(shift+"left").clicked) selection--;
+			if (input.getKey(shift+"right").clicked) selection++;
 			
 			if(prevSel != selection) {
 				Sound.select.play();
@@ -100,10 +101,5 @@ public class Display {
 			if(menus[idx].shouldRender())
 				menus[idx].render(screen);
 		} while(idx != selection);
-	}
-	
-	@NotNull
-	public static ListEntry entryFactory(String text, Display menu) {
-		return new SelectEntry(text, () -> Game.setMenu(menu));
 	}
 }

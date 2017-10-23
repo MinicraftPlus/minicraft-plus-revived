@@ -25,6 +25,7 @@ public class LoadingDisplay extends Display {
 	@Override
 	public void init(Display parent) {
 		super.init(parent);
+		percentage = 0;
 		t.start();
 	}
 	

@@ -46,6 +46,8 @@ public class WorldSelectDisplay extends Display {
 	
 	private static ArrayList<String> worldNames = null;
 	
+	public static void refreshWorldNames() { worldNames = null; }
+	
 	public static ArrayList<String> getWorldNames() { return getWorldNames(false); }
 	private static ArrayList<String> getWorldNames(boolean recalc) {
 		ArrayList<String> worldNames = new ArrayList<>();

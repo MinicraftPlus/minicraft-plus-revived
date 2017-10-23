@@ -22,6 +22,8 @@ public class ContainerDisplay extends Display {
 		this.chest = chest;
 		
 		menus[1].translate(menus[0].getBounds().getWidth() + padding, 0);
+		
+		if(menus[0].getNumOptions() == 0) selection = 1;
 	}
 	
 	@Override

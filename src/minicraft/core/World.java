@@ -110,7 +110,7 @@ public class World extends Game {
 		
 		levels = new Level[6];
 		
-		Updater.scoreTime = (Integer) Settings.get("scoretime");
+		Updater.scoreTime = (Integer) Settings.get("scoretime") * 60 * Updater.normSpeed;
 		
 		LoadingDisplay.setPercentage(0); // this actually isn't necessary, I think; it's just in case.
 		

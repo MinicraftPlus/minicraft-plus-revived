@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+import minicraft.core.Game;
 import minicraft.core.InputHandler;
 import minicraft.core.Sound;
 import minicraft.gfx.*;
@@ -235,7 +236,11 @@ public class Menu {
 		if(selection < 0)
 			selection = 0;
 		
+		if (Game.debug) System.out.println("offset 1: " + offset);
+		
 		doScroll();
+		
+		if (Game.debug) System.out.println("offset 2:" + offset);
 	}
 	
 	public void setFrameColors(int fillCol, int edgeStrokeCol, int edgeFillCol) {
