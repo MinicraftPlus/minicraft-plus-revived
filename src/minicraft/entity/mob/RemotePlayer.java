@@ -11,6 +11,8 @@ import minicraft.gfx.FontStyle;
 import minicraft.gfx.Screen;
 import minicraft.level.Level;
 
+import org.jetbrains.annotations.Nullable;
+
 /** This is used for players in multiplayer mode. */
 public class RemotePlayer extends Player {
 	
@@ -24,7 +26,7 @@ public class RemotePlayer extends Player {
 	private int port;
 	
 	public RemotePlayer(Player previous, InetAddress ip, int port) { this(previous, false, ip, port); }
-	public RemotePlayer(Player previous, boolean isMainPlayer, InetAddress ip, int port) {
+	public RemotePlayer(@Nullable Player previous, boolean isMainPlayer, InetAddress ip, int port) {
 		super(previous, (isMainPlayer?Game.input:new InputHandler()));
 		this.ipAddress = ip;
 		this.port = port;

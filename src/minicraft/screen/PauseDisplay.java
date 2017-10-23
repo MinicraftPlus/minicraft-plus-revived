@@ -3,8 +3,9 @@ package minicraft.screen;
 import java.util.ArrayList;
 import java.util.Arrays;
 
-import minicraft.core.*;
+import minicraft.core.Game;
 import minicraft.core.InputHandler;
+import minicraft.core.Network;
 import minicraft.gfx.Color;
 import minicraft.saveload.Save;
 import minicraft.screen.entry.BlankEntry;
@@ -25,7 +26,7 @@ public class PauseDisplay extends Display {
 		if(!Game.ISONLINE) {
 			entries.add(new SelectEntry("Make World Multiplayer", () -> {
 				Game.setMenu(null);
-				Game.startMultiplayerServer();
+				Network.startMultiplayerServer();
 			}));
 			
 			entries.add(new SelectEntry("Save Game", () -> {

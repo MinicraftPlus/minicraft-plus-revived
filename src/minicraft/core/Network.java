@@ -21,7 +21,7 @@ public class Network extends Game {
 	
 	private static final Random random = new Random();
 	
-	static boolean autoclient = false; // used in the init method; jumps to multiplayer menu as client
+	static boolean autoclient = false; // used in the initScreen method; jumps to multiplayer menu as client
 	
 	@Nullable
 	public static Entity getEntity(int eid) {

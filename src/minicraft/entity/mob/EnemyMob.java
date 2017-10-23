@@ -25,7 +25,7 @@ public class EnemyMob extends MobAi {
 	}
 	
 	public EnemyMob(int lvl, MobSprite[][] sprites, int[] lvlcols, int health, boolean isFactor, int detectDist, int rwTime, int rwChance) {
-		this(lvl, sprites, lvlcols, health, isFactor, detectDist, 60*Game.normSpeed, rwTime, rwChance);
+		this(lvl, sprites, lvlcols, health, isFactor, detectDist, 60*Updater.normSpeed, rwTime, rwChance);
 	}
 	
 	public EnemyMob(int lvl, MobSprite[][] sprites, int[] lvlcols, int health, int detectDist) {

@@ -9,6 +9,7 @@ import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Objects;
 
 import minicraft.core.*;
 import minicraft.core.Settings;
@@ -31,6 +32,8 @@ import minicraft.level.tile.Tiles;
 import minicraft.network.MinicraftServer;
 import minicraft.screen.LoadingDisplay;
 import minicraft.screen.MultiplayerDisplay;
+
+import org.jetbrains.annotations.Nullable;
 
 public class Load {
 	
@@ -276,13 +279,13 @@ public class Load {
 		loadFromFile(location + filename + extension);
 		
 		worldVer = new Version(data.get(0)); // gets the world version
-		Game.setTime(Integer.parseInt(data.get(1)));
+		Updater.setTime(Integer.parseInt(data.get(1)));
 		
 		if(worldVer.compareTo(new Version("1.9.3-dev2")) >= 0) {
-			Game.gameTime = Integer.parseInt(data.get(2));
-			Game.pastDay1 = Game.gameTime > 65000;
+			Updater.gameTime = Integer.parseInt(data.get(2));
+			Updater.pastDay1 = Updater.gameTime > 65000;
 		} else {
-			Game.gameTime = 65000; // prevents time cheating.
+			Updater.gameTime = 65000; // prevents time cheating.
 		}
 		
 		int diffIdx = Integer.parseInt(data.get(3));
@@ -335,7 +338,7 @@ public class Load {
 	}
 	
 	public void loadWorld(String filename) {
-		for(int l = Game.maxLevelDepth; l >= Game.minLevelDepth; l--) {
+		for(int l = World.maxLevelDepth; l >= World.minLevelDepth; l--) {
 			//if(l == World.levels.length-1) l = 4;
 			//if(l == 0) l = World.levels.length-1;
 			int lvlidx = World.lvlIdx(l);
@@ -362,7 +365,7 @@ public class Load {
 							tilename = "grass";
 						}
 					}
-					if(l == Game.minLevelDepth+1 && tilename.equalsIgnoreCase("LAPIS") && worldVer.compareTo(new Version("2.0.3-dev6")) < 0) {
+					if(l == World.minLevelDepth+1 && tilename.equalsIgnoreCase("LAPIS") && worldVer.compareTo(new Version("2.0.3-dev6")) < 0) {
 						if(Math.random() < 0.8) // don't replace *all* the lapis
 							tilename = "Gem Ore";
 					}
@@ -457,7 +460,7 @@ public class Load {
 			Game.player.remove(); // removes the user player from the level, in case they would be added twice.
 		if(level != null)
 			level.add(player);
-		else if(Game.debug) System.out.println(Game.onlinePrefix()+"game level to add player " + player + " to is null.");
+		else if(Game.debug) System.out.println(Network.onlinePrefix()+"game level to add player " + player + " to is null.");
 		//Tile spawnTile = level.getTile(player.spawnx >> 4, player.spawny >> 4);
 		//if(spawnTile.id != Tiles.get("grass").id && spawnTile.mayPass(level, player.spawnx >> 4, player.spawny >> 4, player))
 			//player.bedSpawn = true; //A semi-advanced little algorithm to determine if the player has a bed save; and though if you sleep on a grass tile, this won't get set, it doesn't matter b/c you'll spawn there anyway!
@@ -468,14 +471,14 @@ public class Load {
 			String[] modeinfo = modedata.split(";");
 			mode = Integer.parseInt(modeinfo[0]);
 			if (mode == 4) {
-				Game.scoreTime = Integer.parseInt(modeinfo[1]);
+				Updater.scoreTime = Integer.parseInt(modeinfo[1]);
 				if(worldVer.compareTo(new Version("1.9.4")) >= 0)
 					Settings.set("scoretime", modeinfo[2]);
 			}
 		}
 		else {
 			mode = Integer.parseInt(modedata);
-			if (mode == 4) Game.scoreTime = 300;
+			if (mode == 4) Updater.scoreTime = 300;
 		}
 		
 		Settings.setIdx("mode", mode);
@@ -572,10 +575,12 @@ public class Load {
 		}
 	}
 	
+	@Nullable
 	public static Entity loadEntity(String entityData, boolean isLocalSave) {
 		if(isLocalSave) System.out.println("warning: assuming version of save file is current while loading entity: " + entityData);
 		return Load.loadEntity(entityData, (new Version(Game.VERSION)), isLocalSave);
 	}
+	@Nullable
 	public static Entity loadEntity(String entityData, Version worldVer, boolean isLocalSave) {
 		entityData = entityData.trim();
 		if(entityData.length() == 0) return null;
@@ -605,7 +610,7 @@ public class Load {
 			if(existing != null) {
 				// the entity loaded is now out of date; remove it.
 				if(/*existing instanceof Player && */Game.debug)
-					System.out.println(Game.onlinePrefix()+"received entity data matches a loaded entity: " + existing + "; removing from level " + existing.getLevel());
+					System.out.println(Network.onlinePrefix()+"received entity data matches a loaded entity: " + existing + "; removing from level " + existing.getLevel());
 				
 				existing.remove();
 			}
@@ -617,7 +622,7 @@ public class Load {
 				//World.levels[playerLevel].add(existing, x, y);
 			}
 			if(existing != null) {
-				System.out.println(Game.onlinePrefix()+"already loaded entity with eid " + eid + "; returning that one");
+				System.out.println(Network.onlinePrefix()+"already loaded entity with eid " + eid + "; returning that one");
 				return existing;
 			}*/
 			
@@ -727,7 +732,7 @@ public class Load {
 				if (itemData.contains(";")) {
 					String[] aitemData = itemData.split(";");
 					StackableItem stack = (StackableItem)Items.get(aitemData[0]);
-					if (stack != null) {
+					if (!stack.name.equals("UNKNOWN")) {
 						stack.count = Integer.parseInt(aitemData[1]);
 						chest.inventory.add(stack);
 					} else {
@@ -749,9 +754,11 @@ public class Load {
 			
 			newEntity = chest;
 		}
-		else if(newEntity instanceof Spawner)
-			newEntity = new Spawner((MobAi)getEntity(info.get(2), Integer.parseInt(info.get(3))));
-		else if(newEntity instanceof Lantern && worldVer.compareTo(new Version("1.9.4")) >= 0 && info.size() > 3)
+		else if(newEntity instanceof Spawner) {
+			MobAi mob = (MobAi) getEntity(info.get(2), Integer.parseInt(info.get(3)));
+			if(mob != null)
+				newEntity = new Spawner(mob);
+		} else if(newEntity instanceof Lantern && worldVer.compareTo(new Version("1.9.4")) >= 0 && info.size() > 3)
 			newEntity = new Lantern(Lantern.Type.values()[Integer.parseInt(info.get(2))]);
 		
 		/*else if(newEntity instanceof Crafter && worldVer.compareTo(new Version("2.0.0-dev4")) >= 0) {
@@ -767,9 +774,12 @@ public class Load {
 		if(!isLocalSave) {
 			if(newEntity instanceof Arrow) {
 				int ownerID = Integer.parseInt(info.get(2));
-				Direction dir = Direction.values[Integer.parseInt(info.get(3))];
-				int dmg = Integer.parseInt(info.get(5));
-				newEntity = new Arrow((Mob)Network.getEntity(ownerID), x, y, dir, dmg);
+				Mob m = (Mob)Network.getEntity(ownerID);
+				if(m != null) {
+					Direction dir = Direction.values[Integer.parseInt(info.get(3))];
+					int dmg = Integer.parseInt(info.get(5));
+					newEntity = new Arrow(m, x, y, dir, dmg);
+				}
 			}
 			if(newEntity instanceof ItemEntity) {
 				Item item = Items.get(info.get(2));
@@ -803,6 +813,7 @@ public class Load {
 		return newEntity;
 	}
 	
+	@Nullable
 	private static Entity getEntity(String string, int moblvl) {
 		switch(string) {
 			case "Player": return null;
@@ -832,8 +843,8 @@ public class Load {
 			case "Lantern": return new Lantern(Lantern.Type.NORM);
 			//case "Iron Lantern": return (Entity)(new Lantern(Lantern.Type.IRON));
 			//case "Gold Lantern": return (Entity)(new Lantern(Lantern.Type.GOLD));
-			case "Arrow": return new Arrow(null, 0, 0, Direction.NONE, 0);
-			case "ItemEntity": return new ItemEntity(null, 0, 0);
+			case "Arrow": return new Arrow(new Skeleton(0), 0, 0, Direction.NONE, 0);
+			case "ItemEntity": return new ItemEntity(Items.get("unknown"), 0, 0);
 			//case "Spark": return (Entity)(new Spark());
 			case "FireParticle": return new FireParticle(0, 0);
 			case "SmashParticle": return new SmashParticle(0, 0);

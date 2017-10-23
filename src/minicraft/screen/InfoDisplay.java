@@ -31,7 +31,7 @@ public class InfoDisplay extends Display {
 	}
 	
 	public static String getTimeString() {
-		int seconds = Game.gameTime / Game.normSpeed;
+		int seconds = Updater.gameTime / Updater.normSpeed;
 		int minutes = seconds / 60;
 		int hours = minutes / 60;
 		minutes %= 60;

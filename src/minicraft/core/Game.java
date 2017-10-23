@@ -5,9 +5,13 @@ import java.util.List;
 
 import minicraft.entity.mob.Player;
 import minicraft.level.Level;
+import minicraft.level.tile.Tiles;
 import minicraft.network.MinicraftClient;
 import minicraft.network.MinicraftServer;
+import minicraft.saveload.Load;
 import minicraft.screen.Display;
+import minicraft.screen.MultiplayerDisplay;
+import minicraft.screen.TitleDisplay;
 
 import org.jetbrains.annotations.Nullable;
 
@@ -61,7 +65,7 @@ public class Game {
 	public static Level[] levels = new Level[6]; // This array stores the different levels.
 	public static int currentLevel = 3; // This is the level the player is on. It defaults to 3, the surface.
 	
-	static boolean gameOver; // If the player wins this is set to true.
+	static boolean gameOver = false; // If the player wins this is set to true.
 	
 	
 	static boolean running = true;
@@ -70,5 +74,38 @@ public class Game {
 		if(isConnectedClient()) client.endConnection();
 		if(isValidServer()) server.endConnection();
 		running = false;
+	}
+	
+	
+	public static void main(String[] args) {
+		Initializer.parseArgs(args);
+		
+		input = new InputHandler(Renderer.canvas);
+		
+		Tiles.initTileList();
+		Sound.init();
+		
+		World.resetGame(); // "half"-starts a new game, to set up initial variables
+		player.eid = 0;
+		new Load(true); // this loads any saved preferences.
+		
+		
+		if(Network.autoclient)
+			setMenu(new MultiplayerDisplay( "localhost"));
+		else if(!HAS_GUI)
+			Network.startMultiplayerServer();//setMenu(null);//new WorldSelectMenu());
+		else
+			setMenu(new TitleDisplay()); //sets menu to the title screen.
+		
+		
+		Initializer.createAndDisplayFrame();
+		
+		Renderer.initScreen();
+		
+		Initializer.run();
+		
+		
+		if (debug) System.out.println("main game loop ended; terminating application...");
+		System.exit(0);
 	}
 }

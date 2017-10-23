@@ -40,7 +40,7 @@ public class MinicraftServerThread extends MinicraftConnection {
 	//private NetworkInterface computer = null;
 	
 	//private List<Integer> trackedEntities = new ArrayList<Integer>();
-	private List<Timer> gameTimers;
+	private List<Timer> gameTimers = new ArrayList<>();
 	private boolean receivedPing = true;
 	
 	private long manualPingTimestamp;
@@ -49,7 +49,7 @@ public class MinicraftServerThread extends MinicraftConnection {
 	private List<InputType> packetTypesToCache = new ArrayList<>();
 	private List<String> cachedPackets = new ArrayList<>();
 	
-	public MinicraftServerThread(Socket socket, MinicraftServer serverInstance) {
+	MinicraftServerThread(Socket socket, MinicraftServer serverInstance) {
 		super("MinicraftServerThread", socket);
 		
 		this.serverInstance = serverInstance;
@@ -66,8 +66,6 @@ public class MinicraftServerThread extends MinicraftConnection {
 		packetTypesToKeep.addAll(InputType.tileUpdates);
 		packetTypesToKeep.addAll(InputType.entityUpdates);
 		
-		gameTimers = new ArrayList<>();
-		
 		Timer t = new Timer("ClientPing");
 		t.schedule((new MyTask() {
 			public void run() { MinicraftServerThread.this.ping(); }
@@ -75,6 +73,13 @@ public class MinicraftServerThread extends MinicraftConnection {
 		gameTimers.add(t);
 		
 		start();
+	}
+	
+	// this is to be a dummy thread.
+	MinicraftServerThread(RemotePlayer player, MinicraftServer server) {
+		super("MinicraftServerThread", null);
+		this.client = player;
+		this.serverInstance = server;
 	}
 	
 	public RemotePlayer getClient() { return client; }
@@ -110,22 +115,22 @@ public class MinicraftServerThread extends MinicraftConnection {
 		}
 	}
 	
-	protected void doPing() {
+	void doPing() {
 		sendData(InputType.PING, manualPing);
 		manualPingTimestamp = System.nanoTime();
 	}
 	
-	protected void sendError(String message) {
+	void sendError(String message) {
 		if (Game.debug) System.out.println("SERVER: sending error to " + client + ": \"" + message + "\"");
 		sendData(InputType.INVALID, message);
 	}
 	
-	protected void cachePacketTypes(List<InputType> packetTypes) {
+	void cachePacketTypes(List<InputType> packetTypes) {
 		packetTypesToCache.addAll(packetTypes);
 		packetTypesToKeep.removeAll(packetTypes);
 	}
 	
-	protected void sendCachedPackets() {
+	void sendCachedPackets() {
 		packetTypesToCache.clear();
 		
 		for(String packet: cachedPackets) {

@@ -11,10 +11,6 @@ import java.awt.event.WindowListener;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
 
-import minicraft.level.tile.Tiles;
-import minicraft.saveload.Load;
-import minicraft.screen.MultiplayerDisplay;
-import minicraft.screen.TitleDisplay;
 import minicraft.screen.WorldSelectDisplay;
 
 class Initializer extends Game {
@@ -22,28 +18,8 @@ class Initializer extends Game {
 	
 	static int fra, tik; //these store the number of frames and ticks in the previous second; used for fps, at least.
 	
-	/** The main method! *
-	 *
-	 * This is the main loop that runs the  It:
-	 *	-sets up the frame
-	 *  -initializes variables	
-	 *	-keeps track of the amount of time that has passed
-	 *	-fires the ticks needed to run the game
-	 *	-fires the command to render out the screen.
-	 */
 	
-	public static void main(String[] args) {
-		
-		/*Thread.currentThread().setUncaughtExceptionHandler(new Thread.UncaughtExceptionHandler() {
-			public void uncaughtException(Thread t, Throwable e) {
-				String exceptionTrace = "Exception in thread " + t + ":P\n";
-				exceptionTrace += getExceptionTrace(e);
-				System.err.println(exceptionTrace);
-				javax.swing.JOptionPane.showInternalMessageDialog(null, exceptionTrace, "Fatal Error", javax.swing.JOptionPane.ERROR_MESSAGE);
-			}
-		});*/
-		
-		
+	static void parseArgs(String[] args) {
 		boolean debug = false;
 		boolean autoclient = false;
 		boolean autoserver = false;
@@ -70,53 +46,19 @@ class Initializer extends Game {
 		Game.debug = debug;
 		HAS_GUI = !autoserver;
 		
-		//if(HAS_GUI) {
-			/*SplashScreen splash = SplashScreen.getSplashScreen();
-			if (splash != null) {
-				// TODO maybe in the future, I can make it so that the window is not displayed until the title menu is first rendered?
-			}*/
-		//}
-		
 		FileHandler.determineGameDir(saveDir);
 		
-		if(HAS_GUI) {
-			
-		}
-		
 		Network.autoclient = autoclient; // this will make the game automatically jump to the MultiplayerMenu, and attempt to connect to localhost.
-		
-		input = new InputHandler(Renderer.canvas);
-		
-		gameOver = false;
-		
-		running = true;
-		
-		
-		Tiles.initTileList();
-		
-		Sound.init();
-		
-		World.resetGame(); // "half"-starts a new game, to set up initial variables
-		player.eid = 0;
-		new Load(true); // this loads any saved preferences.
-		
-		
-		if(autoclient)
-			setMenu(new MultiplayerDisplay( "localhost"));
-		else if(!HAS_GUI)
-			Network.startMultiplayerServer();//setMenu(null);//new WorldSelectMenu());
-		else
-			setMenu(new TitleDisplay()); //sets menu to the title screen.
-		
-		
-		run();
-		
-		
-		if (debug) System.out.println("main game loop ended; terminating application...");
-		System.exit(0);
 	}
 	
-	private static void run() {
+	
+	
+	/** This is the main loop that runs the game. It:
+	 *	-keeps track of the amount of time that has passed
+	 *	-fires the ticks needed to run the game
+	 *	-fires the command to render out the screen.
+	 */
+	static void run() {
 		long lastTime = System.nanoTime();
 		long lastRender = System.nanoTime();
 		double unprocessed = 0;
@@ -133,13 +75,11 @@ class Initializer extends Game {
 			if(menu == null) nsPerTick /= Updater.gamespeed;
 			unprocessed += (now - lastTime) / nsPerTick; //figures out the unprocessed time between now and lastTime.
 			lastTime = now;
-			boolean shouldRender = true;
 			while (unprocessed >= 1) { // If there is unprocessed time, then tick.
 				//if(debug) System.out.println("ticking...");
 				ticks++;
 				Updater.tick(); // calls the tick method (in which it calls the other tick methods throughout the code.
 				unprocessed--;
-				shouldRender = true; // sets shouldRender to be true... maybe tick() could make it false?
 			}
 			
 			try {
@@ -148,7 +88,7 @@ class Initializer extends Game {
 				e.printStackTrace();
 			}
 			
-			if (shouldRender && (now - lastRender) / 1.0E9 > 1.0 / MAX_FPS) {
+			if ((now - lastRender) / 1.0E9 > 1.0 / MAX_FPS) {
 				frames++;
 				lastRender = System.nanoTime();
 				Renderer.render();
@@ -165,7 +105,9 @@ class Initializer extends Game {
 		}
 	}
 	
-	private static void createAndDisplayFrame() {
+	
+	/// Creates and displays the JFrame window that the game appears in. 
+	static void createAndDisplayFrame() {
 		Renderer.canvas.setMinimumSize(new java.awt.Dimension(1, 1));
 		Renderer.canvas.setPreferredSize(Renderer.getWindowSize());
 		JFrame frame = new JFrame(NAME);
@@ -212,6 +154,17 @@ class Initializer extends Game {
 		frame.setVisible(true);
 	}
 	
+	
+	static void setupExceptionHandler() {
+		/*Thread.currentThread().setUncaughtExceptionHandler(new Thread.UncaughtExceptionHandler() {
+			public void uncaughtException(Thread t, Throwable e) {
+				String exceptionTrace = "Exception in thread " + t + ":P\n";
+				exceptionTrace += getExceptionTrace(e);
+				System.err.println(exceptionTrace);
+				javax.swing.JOptionPane.showInternalMessageDialog(null, exceptionTrace, "Fatal Error", javax.swing.JOptionPane.ERROR_MESSAGE);
+			}
+		});*/
+	}
 	
 	/**
 	 * Provides a String representation of the provided Throwable's stack trace

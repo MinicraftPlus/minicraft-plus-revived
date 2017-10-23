@@ -160,8 +160,8 @@ public class LegacyLoad {
 		boolean hasVersion = data.get(0).contains(".");
 		if(hasVersion) {
 			worldVer = new Load.Version(data.get(0)); // gets the world version
-			Game.setTime(Integer.parseInt(data.get(1)));
-			Game.gameTime = 65000; // prevents time cheating.
+			Updater.setTime(Integer.parseInt(data.get(1)));
+			Updater.gameTime = 65000; // prevents time cheating.
 			
 			if(worldVer.compareTo(new Load.Version("1.9.2")) < 0) {
 				Settings.set("autosave", Boolean.parseBoolean(data.get(3)));
@@ -176,7 +176,7 @@ public class LegacyLoad {
 		else {
 			if(data.size() == 5) {
 				worldVer = new Load.Version("1.9");
-				Game.setTime(Integer.parseInt(data.get(0)));
+				Updater.setTime(Integer.parseInt(data.get(0)));
 				Settings.set("autosave", Boolean.parseBoolean(data.get(3)));
 				Settings.set("sound", Boolean.parseBoolean(data.get(4)));
 			} else { // version == 1.8?
@@ -185,7 +185,7 @@ public class LegacyLoad {
 					worldVer = new Load.Version("1.8.1");
 				}
 				// for backwards compatibility
-				Game.tickCount = Integer.parseInt(data.get(0));
+				Updater.tickCount = Integer.parseInt(data.get(0));
 				playerac = Integer.parseInt(data.get(3));
 				Settings.set("autosave", false);
 			}
@@ -253,11 +253,11 @@ public class LegacyLoad {
 		if(modedata.contains(";")) {
 			mode = Integer.parseInt(modedata.substring(0, modedata.indexOf(";")));
 			if (mode == 4)
-				Game.scoreTime = Integer.parseInt(modedata.substring(modedata.indexOf(";") + 1));
+				Updater.scoreTime = Integer.parseInt(modedata.substring(modedata.indexOf(";") + 1));
 		}
 		else {
 			mode = Integer.parseInt(modedata);
-			if (mode == 4) Game.scoreTime = 300;
+			if (mode == 4) Updater.scoreTime = 300;
 		}
 		
 		Settings.setIdx("mode", mode);

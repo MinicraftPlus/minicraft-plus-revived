@@ -21,6 +21,8 @@ public abstract class MinicraftConnection extends Thread implements MinicraftPro
 		super(threadName);
 		this.socket = socket;
 		
+		if(socket == null) return;
+		
 		try {
 			in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
 			out = new PrintWriter(socket.getOutputStream(), true);
@@ -65,12 +67,6 @@ public abstract class MinicraftConnection extends Thread implements MinicraftPro
 				//if (Game.debug) System.out.println(this + " completed data packet: " + currentData);
 				
 				InputType inType = MinicraftProtocol.getInputType(currentData.charAt(0));
-				//if (Game.debug) System.out.println(this + " received "+inType+" packet");//: " + stringToInts(currentData.toString(), 30));
-				
-				//if(inType == InputType.INIT) initCount++;
-				//if(initCount > 20) System.exit(1);
-				
-				//if(Game.debug && (inType == InputType.MOVE || inType == InputType.INTERACT)) System.out.println(this+" received "+inType+" packet");
 				
 				if(inType == null)
 					System.err.println("SERVER: invalid packet received; input type is not valid.");
@@ -90,6 +86,8 @@ public abstract class MinicraftConnection extends Thread implements MinicraftPro
 	protected abstract boolean parsePacket(InputType inType, String data);
 	
 	protected synchronized void sendData(InputType inType, String data) {
+		if(socket == null) return;
+		
 		char inTypeChar = (char) (inType.ordinal()+1);
 		//if (Game.debug && inType == InputType.TILES) System.out.println(this + ": printing " + inType + " data:");
 		if(data.contains("\0")) System.err.println("WARNING from "+this+": data to send contains a null character. Not sending data.");

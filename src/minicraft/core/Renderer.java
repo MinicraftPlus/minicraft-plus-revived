@@ -27,8 +27,8 @@ import minicraft.screen.LoadingDisplay;
 public class Renderer extends Game {
 	private Renderer() {}
 	
-	static final int HEIGHT = 192;
-	static final int WIDTH = 288;
+	public static final int HEIGHT = 192;
+	public static final int WIDTH = 288;
 	static float SCALE = 3;
 	
 	public static Screen screen; // Creates the main screen
@@ -58,6 +58,7 @@ public class Renderer extends Game {
 		screen.pixels = pixels;
 		
 		canvas.createBufferStrategy(3);
+		canvas.requestFocus();
 	}
 	
 	

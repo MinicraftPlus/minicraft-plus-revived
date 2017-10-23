@@ -27,7 +27,7 @@ public class DeathChest extends Chest {
 	// for death chest time count, I imagine.
 	public void tick() {
 		super.tick();
-		name = "Death Chest:" + time / Game.normSpeed + "S"; // add the current
+		name = "Death Chest:" + time / Updater.normSpeed + "S"; // add the current
 		
 		if (inventory.invSize() < 1) {
 			remove();

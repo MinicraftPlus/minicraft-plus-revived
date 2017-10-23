@@ -44,8 +44,6 @@ public class MultiplayerDisplay extends Display {
 	
 	private State curState;
 	
-	public static void init() {} // as a way to initialize the class.
-	
 	public MultiplayerDisplay() {
 		Game.ISONLINE = true;
 		Game.ISHOST = false;
@@ -317,7 +315,7 @@ public class MultiplayerDisplay extends Display {
 				break;
 			
 			case ERROR:
-				//if(Game.tickCount % 10 == 0) System.out.println("error message: " + errorMessage);
+				//if(Updater.tickCount % 10 == 0) System.out.println("error message: " + errorMessage);
 				Font.drawCentered("Could not connect to server:", screen, Screen.h/2-6, Color.RED);
 				FontStyle style = new FontStyle(Color.get(-1, 511));
 				Font.drawParagraph(errorMessage, screen, 0, true, Screen.h/2+6, false, style, 1);
@@ -343,7 +341,7 @@ public class MultiplayerDisplay extends Display {
 		}
 		
 		eposTick++;
-		if(eposTick >= Game.normSpeed) {
+		if(eposTick >= Updater.normSpeed) {
 			eposTick = 0;
 			ePos++;
 		}

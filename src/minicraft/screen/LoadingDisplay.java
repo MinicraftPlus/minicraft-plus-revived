@@ -13,11 +13,10 @@ public class LoadingDisplay extends Display {
 	
 	private Timer t;
 	
-	// TODO I could use the Menu class to display the percentage... but that might be overcomplicated...
 	public LoadingDisplay() {
 		super(true,false);
 		t = new javax.swing.Timer(500, e -> {
-			Game.initWorld();
+			World.initWorld();
 			Game.setMenu(null);
 		});
 		t.setRepeats(false);
@@ -47,7 +46,7 @@ public class LoadingDisplay extends Display {
 	public void render(Screen screen) {
 		super.render(screen);
 		int percent = Math.round(percentage);
-		Font.drawCentered("Loading...", screen, Game.HEIGHT/2-Font.textHeight()/2, Color.RED);
-		Font.drawCentered(percent+"%", screen, Game.HEIGHT/2+Font.textHeight()/2, Color.RED);
+		Font.drawCentered("Loading...", screen, Screen.h/2-Font.textHeight()/2, Color.RED);
+		Font.drawCentered(percent+"%", screen, Screen.h/2+Font.textHeight()/2, Color.RED);
 	}
 }

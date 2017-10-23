@@ -181,12 +181,12 @@ public class AirWizard extends EnemyMob {
 		Sound.bossDeath.play(); // play boss-death sound.
 		
 		if(!secondform) {
-			Game.notifyAll("Air Wizard: Defeated!");
-			if (!beaten) Game.notifyAll("The Dungeon is now open!", -400);
+			Updater.notifyAll("Air Wizard: Defeated!");
+			if (!beaten) Updater.notifyAll("The Dungeon is now open!", -400);
 			beaten = true;
 		} else {
-			Game.notifyAll("Air Wizard II: Defeated!");
-			if (!(boolean)Settings.get("wear suit")) Game.notifyAll("A costume lies on the ground...", -200);
+			Updater.notifyAll("Air Wizard II: Defeated!");
+			if (!(boolean)Settings.get("wear suit")) Updater.notifyAll("A costume lies on the ground...", -200);
 			Settings.set("wear suit", true);
 			BufferedWriter bufferedWriter = null;
 			

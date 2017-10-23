@@ -35,7 +35,7 @@ public class KeyInputDisplay extends Display {
 			//.setSize(Screen.w, Screen.h)
 			.setTitle("Controls")
 			//.setScrollPolicies(1, false)
-			.setPositioning(new Point(Game.WIDTH/2, Screen.h - Font.textHeight()*5), RelPos.TOP);
+			.setPositioning(new Point(Screen.w/2, Screen.h - Font.textHeight()*5), RelPos.TOP);
 		
 		Menu.Builder popupBuilder = new Menu.Builder(true, 4, RelPos.CENTER)
 			.setShouldRender(false)

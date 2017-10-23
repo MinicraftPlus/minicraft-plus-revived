@@ -18,7 +18,7 @@ public class Bed extends Furniture {
 	
 	/** Called when the player attempts to get in bed. */
 	public boolean use(Player player) {
-		if (Game.tickCount >= Game.sleepStartTime || Game.tickCount < Game.sleepEndTime && Game.pastDay1) { // if it is late enough in the day to sleep...
+		if (Updater.tickCount >= Updater.sleepStartTime || Updater.tickCount < Updater.sleepEndTime && Updater.pastDay1) { // if it is late enough in the day to sleep...
 			// set the player spawn coord. to their current position, in tile coords (hence " >> 4")
 			player.spawnx = player.x >> 4;
 			player.spawny = player.y >> 4;
@@ -26,7 +26,7 @@ public class Bed extends Furniture {
 			Bed.player = player;
 			Bed.playerLevel = player.getLevel();
 			Bed.inBed = true;
-			if (Game.debug) System.out.println(Game.onlinePrefix()+"player got in bed: " + player);
+			if (Game.debug) System.out.println(Network.onlinePrefix()+"player got in bed: " + player);
 			if(Game.isConnectedClient() && player == Game.player) {
 				Game.client.sendBedRequest(player, this);
 			}
@@ -37,7 +37,7 @@ public class Bed extends Furniture {
 			}
 		} else {
 			// it is too early to sleep; display how much time is remaining.
-			int sec = (int)Math.ceil((Game.sleepStartTime - Game.tickCount)*1.0 / Game.normSpeed); // gets the seconds until sleeping is allowed. // normSpeed is in tiks/sec.
+			int sec = (int)Math.ceil((Updater.sleepStartTime - Updater.tickCount)*1.0 / Updater.normSpeed); // gets the seconds until sleeping is allowed. // normSpeed is in tiks/sec.
 			String note = "Can't sleep! " + (sec / 60) + "Min " + (sec % 60) + " Sec left!";
 			if(!Game.isValidServer())
 				Game.notifications.add(note); // add the notification displaying the time remaining in minutes and seconds.

@@ -31,6 +31,7 @@ import minicraft.saveload.Load;
 import minicraft.saveload.Save;
 import minicraft.screen.WorldSelectDisplay;
 
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 public class MinicraftServer extends Thread implements MinicraftProtocol {
@@ -193,7 +194,7 @@ public class MinicraftServer extends Thread implements MinicraftProtocol {
 		return threads;
 	}
 	
-	@Nullable
+	@NotNull
 	public MinicraftServerThread getAssociatedThread(RemotePlayer player) {
 		MinicraftServerThread thread = null;
 		
@@ -205,8 +206,9 @@ public class MinicraftServer extends Thread implements MinicraftProtocol {
 		}
 		
 		if(thread == null) {
-			System.out.println("SERVER could not find thread for remote player " + player + "; stack trace:");
-			Thread.dumpStack();
+			System.err.println("SERVER could not find thread for remote player " + player/* + "; stack trace:"*/);
+			//Thread.dumpStack();
+			thread = new MinicraftServerThread(player, this);
 		}
 		
 		return thread;

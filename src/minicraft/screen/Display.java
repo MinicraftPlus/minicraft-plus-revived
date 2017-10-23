@@ -7,6 +7,7 @@ import minicraft.gfx.Screen;
 import minicraft.screen.entry.ListEntry;
 import minicraft.screen.entry.SelectEntry;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 public class Display {
 	
@@ -31,7 +32,7 @@ public class Display {
 	
 	private boolean setParent = false;
 	// called during setMenu()
-	public void init(Display parent) {
+	public void init(@Nullable Display parent) {
 		if(!setParent) {
 			setParent = true;
 			this.parent = parent;

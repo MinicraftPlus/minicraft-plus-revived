@@ -312,7 +312,7 @@ public class Level {
 			try {
 				if(Class.forName("minicraft.entity."+search).isAssignableFrom(entity.getClass())) {
 					if (clazz.equals("AirWizard")) clazz += ((AirWizard)entity).secondform ? " II" : "";
-					printLevelLoc(Game.onlinePrefix()+entityMessage + clazz, entity.x>>4, entity.y>>4, ": " + entity);
+					printLevelLoc(Network.onlinePrefix()+entityMessage + clazz, entity.x>>4, entity.y>>4, ": " + entity);
 					break;
 				}
 			} catch(ClassNotFoundException ex) {
@@ -467,7 +467,8 @@ public class Level {
 	}
 	
 	private void trySpawn() {
-		if(random.nextInt((int) (MOB_SPAWN_FACTOR * Math.pow(mobCount, 2) / Math.pow(maxMobCount, 2))) != 0)
+		int spawnSkipChance = (int) (MOB_SPAWN_FACTOR * Math.pow(mobCount, 2) / Math.pow(maxMobCount, 2));
+		if(spawnSkipChance > 0 && random.nextInt(spawnSkipChance) != 0)
 			return; // hopefully will make mobs spawn a lot slower.
 		
 		boolean spawned = false;
@@ -487,7 +488,7 @@ public class Level {
 			//System.out.println("trySpawn on level " + depth + " of lvl " + lvl + " mob w/ rand " + rnd + " at tile " + nx + "," + ny);
 			
 			// spawns the enemy mobs; first part prevents enemy mob spawn on surface on first day, more or less.
-			if ((Game.getTime() == Game.Time.Night && Game.pastDay1 || depth != 0) && EnemyMob.checkStartPos(this, nx, ny)) { // if night or underground, with a valid tile, spawn an enemy mob.
+			if ((Updater.getTime() == Updater.Time.Night && Updater.pastDay1 || depth != 0) && EnemyMob.checkStartPos(this, nx, ny)) { // if night or underground, with a valid tile, spawn an enemy mob.
 				if(depth != -4) { // normal mobs
 					if (rnd <= 40) add((new Slime(lvl)), nx, ny);
 					else if (rnd <= 75) add((new Zombie(lvl)), nx, ny);
@@ -505,7 +506,7 @@ public class Level {
 			
 			if(depth == 0 && PassiveMob.checkStartPos(this, nx, ny)) {
 				// spawns the friendly mobs.
-				if (rnd <= (Game.getTime()==Game.Time.Night?22:33)) add((new Cow()), nx, ny);
+				if (rnd <= (Updater.getTime()==Updater.Time.Night?22:33)) add((new Cow()), nx, ny);
 				else if (rnd >= 68) add((new Pig()), nx, ny);
 				else add((new Sheep()), nx, ny);
 				

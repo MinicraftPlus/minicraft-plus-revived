@@ -163,7 +163,7 @@ public class WorldSelectDisplay extends Display {
 		int color = Color.WHITE;
 		
 		if(curAction == null) {
-			int y = Game.HEIGHT - Font.textHeight() * Action.values.length;
+			int y = Screen.h - Font.textHeight() * Action.values.length;
 			
 			for (Action a : Action.values) {
 				Font.drawCentered(a.key + " to " + a, screen, y, a.color);
