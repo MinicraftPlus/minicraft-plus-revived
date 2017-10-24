@@ -113,7 +113,8 @@ public class Player extends Mob {
 					Item cur = get(idx);
 					if(cur instanceof StackableItem)
 						((StackableItem)cur).count = 1;
-					return cur.clone();
+					if(count(cur) == 1)
+						return cur.clone();
 				}
 				return super.remove(idx);
 			}

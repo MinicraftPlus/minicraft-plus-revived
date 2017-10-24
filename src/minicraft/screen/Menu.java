@@ -237,11 +237,7 @@ public class Menu {
 		if(selection < 0)
 			selection = 0;
 		
-		if (Game.debug) System.out.println("offset 1: " + offset);
-		
 		doScroll();
-		
-		if (Game.debug) System.out.println("offset 2:" + offset);
 	}
 	
 	public void setFrameColors(int fillCol, int edgeStrokeCol, int edgeFillCol) {

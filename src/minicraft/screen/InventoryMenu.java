@@ -3,6 +3,7 @@ package minicraft.screen;
 import minicraft.core.*;
 import minicraft.core.InputHandler;
 import minicraft.entity.Entity;
+import minicraft.entity.mob.Player;
 import minicraft.item.Inventory;
 import minicraft.item.Item;
 import minicraft.item.StackableItem;
@@ -31,7 +32,9 @@ class InventoryMenu extends ItemListMenu {
 		super.tick(input);
 		
 		if(getNumOptions() > 0 && (input.getKey("drop-one").clicked || input.getKey("drop-stack").clicked)) {
-			Item invItem = ((ItemEntry)getCurEntry()).getItem();
+			ItemEntry entry = ((ItemEntry)getCurEntry());
+			if(entry == null) return;
+			Item invItem = entry.getItem();
 			Item drop = invItem.clone();
 			
 			if(input.getKey("drop-one").clicked && drop instanceof StackableItem && ((StackableItem)drop).count > 1) {
@@ -40,7 +43,7 @@ class InventoryMenu extends ItemListMenu {
 				((StackableItem)invItem).count--;
 			} else {
 				// drop the whole item.
-				if(!Game.isMode("creative"))
+				if(!Game.isMode("creative") || !(holder instanceof Player))
 					removeSelectedEntry();
 			}
 			

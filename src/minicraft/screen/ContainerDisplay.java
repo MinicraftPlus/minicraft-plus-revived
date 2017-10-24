@@ -64,18 +64,12 @@ public class ContainerDisplay extends Display {
 			int toSel = menus[otherIdx].getSelection();
 			int fromSel = curMenu.getSelection();
 			
-			if(from == player.inventory && Game.isMode("creative"))
-				to.add(toSel, from.get(fromSel).clone());
-			else
-				to.add(toSel, from.remove(fromSel));
+			to.add(toSel, from.remove(fromSel));
 			
 			menus[selection] = new InventoryMenu((InventoryMenu)menus[selection]);
 			menus[otherIdx] = new InventoryMenu((InventoryMenu)menus[otherIdx]);
-			//menus[otherIdx] = new InventoryMenu(selection==0?player:chest, to, menus[otherIdx].getTitle());
 			menus[1].translate(menus[0].getBounds().getWidth() + padding, 0);
 			onSelectionChange(0, selection);
-			//menus[selection].setSelection(fromSel);
-			//menus[otherIdx].setSelection(toSel);
 		}
 	}
 }
