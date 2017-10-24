@@ -1,15 +1,18 @@
 package minicraft.entity.furniture;
 
 import java.util.Random;
-import minicraft.core.*;
+
+import minicraft.core.Game;
+import minicraft.core.Updater;
+import minicraft.core.World;
 import minicraft.entity.Entity;
-import minicraft.item.Inventory;
 import minicraft.entity.mob.AirWizard;
 import minicraft.entity.mob.Player;
 import minicraft.entity.particle.SmashParticle;
 import minicraft.entity.particle.TextParticle;
 import minicraft.gfx.Color;
 import minicraft.gfx.Screen;
+import minicraft.item.Inventory;
 import minicraft.item.Items;
 import minicraft.item.StackableItem;
 

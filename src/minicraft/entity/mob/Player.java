@@ -4,11 +4,16 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
-import minicraft.core.*;
+import minicraft.core.Game;
 import minicraft.core.InputHandler;
 import minicraft.core.Settings;
 import minicraft.core.Sound;
-import minicraft.entity.*;
+import minicraft.core.Updater;
+import minicraft.core.World;
+import minicraft.entity.Arrow;
+import minicraft.entity.Direction;
+import minicraft.entity.Entity;
+import minicraft.entity.ItemEntity;
 import minicraft.entity.furniture.Bed;
 import minicraft.entity.furniture.DeathChest;
 import minicraft.entity.furniture.Furniture;
@@ -24,7 +29,12 @@ import minicraft.level.Level;
 import minicraft.level.tile.Tile;
 import minicraft.level.tile.Tiles;
 import minicraft.saveload.Save;
-import minicraft.screen.*;
+import minicraft.screen.CraftingDisplay;
+import minicraft.screen.InfoDisplay;
+import minicraft.screen.LoadingDisplay;
+import minicraft.screen.PauseDisplay;
+import minicraft.screen.PlayerInvDisplay;
+import minicraft.screen.WorldSelectDisplay;
 
 import org.jetbrains.annotations.Nullable;
 

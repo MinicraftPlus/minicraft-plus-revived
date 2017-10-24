@@ -1,13 +1,11 @@
 package minicraft.screen;
 
-import minicraft.core.*;
+import minicraft.core.Game;
 import minicraft.core.InputHandler;
 import minicraft.core.Sound;
 import minicraft.gfx.Screen;
 import minicraft.screen.entry.ArrayEntry;
-import minicraft.screen.entry.ListEntry;
-import minicraft.screen.entry.SelectEntry;
-import org.jetbrains.annotations.NotNull;
+
 import org.jetbrains.annotations.Nullable;
 
 public class Display {

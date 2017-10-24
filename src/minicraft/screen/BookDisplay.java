@@ -3,7 +3,7 @@ package minicraft.screen;
 import java.util.ArrayList;
 import java.util.Arrays;
 
-import minicraft.core.*;
+import minicraft.core.Game;
 import minicraft.core.InputHandler;
 import minicraft.gfx.Color;
 import minicraft.gfx.Font;

@@ -2,7 +2,8 @@ package minicraft.screen;
 
 import javax.swing.Timer;
 
-import minicraft.core.*;
+import minicraft.core.Game;
+import minicraft.core.World;
 import minicraft.gfx.Color;
 import minicraft.gfx.Font;
 import minicraft.gfx.Screen;

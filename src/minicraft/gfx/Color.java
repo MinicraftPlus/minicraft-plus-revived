@@ -1,7 +1,5 @@
 package minicraft.gfx;
 
-import java.util.Arrays;
-
 public class Color {
 	
 	/* To explain this class, you have to know how Bit-Shifting works.

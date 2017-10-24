@@ -4,7 +4,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-import minicraft.core.*;
+import minicraft.core.Game;
 import minicraft.entity.Direction;
 import minicraft.entity.mob.Player;
 import minicraft.gfx.Color;

@@ -1,6 +1,6 @@
 package minicraft.entity;
 
-import minicraft.core.*;
+import minicraft.core.Game;
 import minicraft.entity.mob.Player;
 import minicraft.gfx.Color;
 import minicraft.gfx.Screen;

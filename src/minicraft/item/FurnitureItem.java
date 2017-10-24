@@ -2,15 +2,9 @@ package minicraft.item;
 
 import java.util.ArrayList;
 
-import minicraft.core.*;
-import minicraft.entity.*;
-import minicraft.entity.furniture.Bed;
-import minicraft.entity.furniture.Chest;
-import minicraft.entity.furniture.Crafter;
-import minicraft.entity.furniture.Furniture;
-import minicraft.entity.furniture.Lantern;
-import minicraft.entity.furniture.Spawner;
-import minicraft.entity.furniture.Tnt;
+import minicraft.core.Game;
+import minicraft.entity.Direction;
+import minicraft.entity.furniture.*;
 import minicraft.entity.mob.*;
 import minicraft.gfx.Sprite;
 import minicraft.level.Level;

@@ -1,7 +1,8 @@
 package minicraft.screen;
 
-import minicraft.core.*;
+import minicraft.core.Game;
 import minicraft.core.InputHandler;
+import minicraft.core.Updater;
 import minicraft.gfx.Point;
 import minicraft.gfx.SpriteSheet;
 import minicraft.screen.entry.StringEntry;

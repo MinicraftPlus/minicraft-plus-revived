@@ -1,9 +1,9 @@
 package minicraft.level.tile;
 
-import minicraft.core.*;
+import minicraft.core.Game;
 import minicraft.entity.Direction;
-import minicraft.entity.mob.AirWizard;
 import minicraft.entity.Entity;
+import minicraft.entity.mob.AirWizard;
 import minicraft.entity.mob.Mob;
 import minicraft.entity.mob.Player;
 import minicraft.entity.particle.SmashParticle;

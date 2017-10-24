@@ -2,15 +2,15 @@ package minicraft.item;
 
 import java.util.ArrayList;
 
-import minicraft.core.*;
+import minicraft.core.Game;
 import minicraft.entity.Direction;
 import minicraft.entity.mob.Player;
 import minicraft.gfx.Color;
 import minicraft.gfx.Sprite;
 import minicraft.level.Level;
 import minicraft.level.tile.Tile;
-import minicraft.screen.BookDisplay;
 import minicraft.screen.BookData;
+import minicraft.screen.BookDisplay;
 
 public class BookItem extends Item {
 	

@@ -1,6 +1,6 @@
 package minicraft.screen;
 
-import minicraft.core.*;
+import minicraft.core.Game;
 import minicraft.core.InputHandler;
 import minicraft.entity.mob.Player;
 

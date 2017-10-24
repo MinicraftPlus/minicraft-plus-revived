@@ -1,10 +1,10 @@
 package minicraft.entity.furniture;
 
-import minicraft.core.*;
-import minicraft.item.Inventory;
+import minicraft.core.Game;
 import minicraft.entity.mob.Player;
 import minicraft.gfx.Color;
 import minicraft.gfx.Sprite;
+import minicraft.item.Inventory;
 import minicraft.screen.ContainerDisplay;
 
 public class Chest extends Furniture {

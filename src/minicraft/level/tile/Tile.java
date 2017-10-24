@@ -1,7 +1,8 @@
 package minicraft.level.tile;
 
 import java.util.Random;
-import minicraft.core.*;
+
+import minicraft.core.World;
 import minicraft.entity.Direction;
 import minicraft.entity.Entity;
 import minicraft.entity.mob.Mob;

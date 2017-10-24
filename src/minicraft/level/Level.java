@@ -8,8 +8,10 @@ import java.util.Random;
 import java.util.Set;
 import java.util.function.ToIntFunction;
 
-import minicraft.core.*;
+import minicraft.core.Game;
+import minicraft.core.Network;
 import minicraft.core.Settings;
+import minicraft.core.Updater;
 import minicraft.entity.Entity;
 import minicraft.entity.ItemEntity;
 import minicraft.entity.furniture.Chest;

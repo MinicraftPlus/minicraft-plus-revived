@@ -4,9 +4,10 @@ import java.io.BufferedWriter;
 import java.io.FileWriter;
 import java.io.IOException;
 
-import minicraft.core.*;
+import minicraft.core.Game;
 import minicraft.core.Settings;
 import minicraft.core.Sound;
+import minicraft.core.Updater;
 import minicraft.entity.Direction;
 import minicraft.entity.Entity;
 import minicraft.entity.Spark;

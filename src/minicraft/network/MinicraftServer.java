@@ -10,14 +10,17 @@ import java.util.List;
 import java.util.Timer;
 import java.util.TimerTask;
 
-import minicraft.core.*;
+import minicraft.core.Game;
+import minicraft.core.Network;
 import minicraft.core.Settings;
-import minicraft.entity.furniture.Bed;
-import minicraft.entity.furniture.Chest;
+import minicraft.core.Updater;
+import minicraft.core.World;
 import minicraft.entity.Direction;
 import minicraft.entity.Entity;
-import minicraft.entity.furniture.Furniture;
 import minicraft.entity.ItemEntity;
+import minicraft.entity.furniture.Bed;
+import minicraft.entity.furniture.Chest;
+import minicraft.entity.furniture.Furniture;
 import minicraft.entity.mob.Player;
 import minicraft.entity.mob.RemotePlayer;
 import minicraft.item.Item;
@@ -32,7 +35,6 @@ import minicraft.saveload.Save;
 import minicraft.screen.WorldSelectDisplay;
 
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 public class MinicraftServer extends Thread implements MinicraftProtocol {
 	
