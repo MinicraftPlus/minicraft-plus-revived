@@ -43,6 +43,8 @@ public class Renderer extends Game {
 	public static boolean showinfo = false;
 	
 	static void initScreen() {
+		if(!HAS_GUI) return;
+		
 		image = new BufferedImage(WIDTH, HEIGHT, BufferedImage.TYPE_INT_RGB);
 		pixels = ((DataBufferInt) image.getRaster().getDataBuffer()).getData();
 		
@@ -57,8 +59,10 @@ public class Renderer extends Game {
 		}
 		screen.pixels = pixels;
 		
-		canvas.createBufferStrategy(3);
-		canvas.requestFocus();
+		if(HAS_GUI) {
+			canvas.createBufferStrategy(3);
+			canvas.requestFocus();
+		}
 	}
 	
 	
