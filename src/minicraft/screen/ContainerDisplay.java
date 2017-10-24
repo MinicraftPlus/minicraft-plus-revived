@@ -63,7 +63,10 @@ public class ContainerDisplay extends Display {
 			int toSel = menus[otherIdx].getSelection();
 			int fromSel = curMenu.getSelection();
 			
-			to.add(toSel, from.remove(fromSel));
+			if(Game.isMode("creative"))
+				to.add(toSel, from.get(fromSel).clone());
+			else
+				to.add(toSel, from.remove(fromSel));
 			
 			menus[selection] = new InventoryMenu((InventoryMenu)menus[selection]);
 			menus[otherIdx] = new InventoryMenu((InventoryMenu)menus[otherIdx]);
