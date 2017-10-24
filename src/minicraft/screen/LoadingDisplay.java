@@ -6,6 +6,7 @@ import minicraft.core.*;
 import minicraft.gfx.Color;
 import minicraft.gfx.Font;
 import minicraft.gfx.Screen;
+import minicraft.saveload.Save;
 
 public class LoadingDisplay extends Display {
 	
@@ -32,6 +33,10 @@ public class LoadingDisplay extends Display {
 	@Override
 	public void onExit() {
 		percentage = 0;
+		if(!WorldSelectDisplay.loadedWorld()) {
+			new Save(WorldSelectDisplay.getWorldName());
+			Game.notifications.clear();
+		}
 	}
 	
 	public static void setPercentage(float percent) {
