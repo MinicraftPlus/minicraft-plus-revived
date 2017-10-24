@@ -214,7 +214,7 @@ public class Updater extends Game {
 					if(!ISONLINE || isValidServer()) {
 						/// server-only cheats.
 						if (input.getKey("Shift-r").clicked && !isValidServer())
-							World.initWorld(); // this will almost certainaly break in multiplayer, i think...
+							World.initWorld(); // this will almost certainly break in multiplayer, i think...
 						
 						if (input.getKey("1").clicked) changeTimeOfDay(Time.Morning);
 						if (input.getKey("2").clicked) changeTimeOfDay(Time.Day);
@@ -225,7 +225,8 @@ public class Updater extends Game {
 							Items.fillCreativeInv(player.inventory, false);}
 						if (input.getKey("survival").clicked) Settings.set("mode", "survival");
 						if (input.getKey("shift-t").clicked) Settings.set("mode", "score");
-						if (isMode("score") && input.getKey("ctrl-t").clicked){ scoreTime = normSpeed * 5; // 5 seconds
+						if (isMode("score") && input.getKey("ctrl-t").clicked) {
+							scoreTime = normSpeed * 5; // 5 seconds
 							if(isValidServer()) server.updateGameVars();
 						}
 						

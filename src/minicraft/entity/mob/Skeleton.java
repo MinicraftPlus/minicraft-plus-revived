@@ -15,8 +15,8 @@ public class Skeleton extends EnemyMob {
 		Color.get(-1, 000, 111, 555)
 	};
 	
-	public int arrowtime;
-	public int artime;
+	private int arrowtime;
+	private int artime;
 	
 	public Skeleton(int lvl) {
 		super(lvl, sprites, lvlcols, 6, true, 100, 45, 200);

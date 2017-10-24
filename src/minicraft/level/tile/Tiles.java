@@ -159,7 +159,7 @@ public final class Tiles {
 		oldids.set(55, "torch black wool");
 	}
 	
-	static int overflowCheck = 0;
+	private static int overflowCheck = 0;
 	public static Tile get(String name) {
 		//System.out.println("getting from tile list: " + name);
 		
