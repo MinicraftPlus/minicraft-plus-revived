@@ -86,13 +86,13 @@ public class Arrow extends Entity {
 			if (time / 6 % 2 == 0) return;
 		}*/
 		
-		int xt;
+		int xt = 13;
 		int yt = 5;
 		
-		if(dir == Direction.DOWN) xt = 16;
+		//if(dir == Direction.RIGHT) xt = 13;
+		if(dir == Direction.LEFT) xt = 14;
 		if(dir == Direction.UP) xt = 15;
-		if(dir == Direction.LEFT) xt = 13;
-		else xt = 14;
+		if(dir == Direction.DOWN) xt = 16;
 		
 		/*if (xdir == 0 && ydir == -1) xt = 15; // up
 		else if (xdir == 1 && ydir == 0) xt = 14; // right
@@ -100,6 +100,6 @@ public class Arrow extends Entity {
 		else if (xdir == 0 && ydir == 1) xt = 16; // down
 		*/
 		
-		screen.render(x - 4, y - 4, xt + yt * 32, col, 1);
+		screen.render(x - 4, y - 4, xt + yt * 32, col, 0);
 	}
 }
