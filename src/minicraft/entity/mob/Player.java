@@ -123,8 +123,11 @@ public class Player extends Mob {
 					Item cur = get(idx);
 					if(cur instanceof StackableItem)
 						((StackableItem)cur).count = 1;
-					if(count(cur) == 1)
+					if(count(cur) == 1) {
+						super.remove(idx);
+						super.add(0, cur);
 						return cur.clone();
+					}
 				}
 				return super.remove(idx);
 			}
