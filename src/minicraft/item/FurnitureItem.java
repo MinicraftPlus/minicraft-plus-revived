@@ -28,7 +28,7 @@ public class FurnitureItem extends Item {
 		items.add(new FurnitureItem(new Spawner(new AirWizard(false))));
 		
 		items.add(new FurnitureItem(new Chest()));
-		// add the various crafting furnitures
+		// add the various types of crafting furniture
 		for(Crafter.Type type: Crafter.Type.values()) {
 			items.add(new FurnitureItem(new Crafter(type)));
 		}
