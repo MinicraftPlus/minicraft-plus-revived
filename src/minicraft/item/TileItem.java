@@ -92,8 +92,8 @@ public class TileItem extends StackableItem {
 		return super.interactOn(false);
 	}
 	
-	public boolean matches(Item other) {
-		return super.matches(other) && model.equals(((TileItem)other).model);
+	public boolean equals(Item other) {
+		return super.equals(other) && model.equals(((TileItem)other).model);
 	}
 	
 	public TileItem clone() {

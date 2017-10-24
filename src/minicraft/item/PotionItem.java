@@ -56,8 +56,8 @@ public class PotionItem extends StackableItem {
 		return true;
 	}
 	
-	public boolean matches(Item other) {
-		return super.matches(other) && ((PotionItem)other).type == type;
+	public boolean equals(Item other) {
+		return super.equals(other) && ((PotionItem)other).type == type;
 	}
 	
 	public PotionItem clone() {

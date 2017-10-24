@@ -17,19 +17,17 @@ public class Inventory {
 		newItems.addAll(items);
 		return newItems;
 	}
-	public void clearInv() {items.clear();}
-	public int invSize() {return items.size();}
+	public void clearInv() { items.clear(); }
+	public int invSize() { return items.size(); }
 	
-	public Item get(int idx) {return items.get(idx);}
+	public Item get(int idx) { return items.get(idx); }
 	
-	public Item remove(int idx) {
-		return items.remove(idx);
-	}
+	public Item remove(int idx) { return items.remove(idx); }
 	
 	public boolean remove(Item item) {
-		for(Item i: items) {
-			if(i.matches(item)) {
-				items.remove(i);
+		for(int i = 0; i < items.size(); i++) {
+			if(items.get(i).equals(item)) {
+				remove(i);
 				return true;
 			}
 		}
@@ -38,7 +36,8 @@ public class Inventory {
 	
 	/** Adds an item to the inventory */
 	public void add(@Nullable Item item) {
-		add(items.size(), item);  // adds the item to the end of the inventory list
+		if(item != null)
+			add(items.size(), item);  // adds the item to the end of the inventory list
 	}
 	
 	public void add(Item item, int num) {
@@ -60,7 +59,7 @@ public class Inventory {
 			
 			boolean added = false;
 			for(int i = 0; i < items.size(); i++) {
-				if(items.get(i).matches(toTake)) {
+				if(items.get(i).equals(toTake)) {
 					// matching implies that the other item is stackable, too.
 					((StackableItem)items.get(i)).count += toTake.count;
 					added = true;
@@ -75,17 +74,17 @@ public class Inventory {
 	}
 	
 	/** Removes items from your inventory; looks for stacks, and removes from each until reached count. returns amount removed. */
-	public int removeFromStack(StackableItem given, int count) {
+	private int removeFromStack(StackableItem given, int count) {
 		int removed = 0; // to keep track of amount removed.
 		for(int i = 0; i < items.size(); i++) {
 			if(!(items.get(i) instanceof StackableItem)) continue;
 			StackableItem curItem = (StackableItem) items.get(i);
-			if(!curItem.name.equals(given.name)) continue; // can't do matches, becuase that includes the stack size.
-			// matches; and current item is stackable.
+			if(!curItem.name.equals(given.name)) continue; // can't do equals, becuase that includes the stack size.
+			// equals; and current item is stackable.
 			int amountRemoving = Math.min(count-removed, curItem.count); // this is the number of items that are being removed from the stack this run-through.
 			curItem.count -= amountRemoving;
 			if(curItem.count == 0) { // remove the item from the inventory if its stack is empty.
-				items.remove(curItem);
+				remove(i);
 				i--;
 			}
 			removed += amountRemoving;
@@ -118,8 +117,8 @@ public class Inventory {
 		else {
 			for(int i = 0; i < items.size(); i++) {
 				Item curItem = items.get(i);
-				if(curItem.matches(given)) {
-					items.remove(curItem);
+				if(curItem.equals(given)) {
+					remove(i);
 					count--;
 					if(count == 0) break;
 				}
@@ -130,6 +129,10 @@ public class Inventory {
 			System.out.println("WARNING: could not remove " + count + " "+given+(count>1?"s":"")+" from inventory");
 	}
 	
+	public boolean hasItem(Item given) {
+		return items.contains(given);
+	}
+	
 	/** Returns the how many of an item you have in the inventory. */
 	public int count(Item given) {
 		if (given == null) return 0; // null requests get no items. :)
@@ -137,7 +140,7 @@ public class Inventory {
 		int found = 0; // initialize counting var
 		for(int i = 0; i < items.size(); i++) { // loop though items in inv
 			Item curItem = items.get(i); // assign current item
-			if(!curItem.matches(given)) continue; // ignore it if it doesn't match the given item
+			if(!curItem.equals(given)) continue; // ignore it if it doesn't match the given item
 			
 			if (curItem instanceof StackableItem) // if the item can be a stack...
 				found += ((StackableItem)curItem).count; // add however many items are in the stack.
@@ -184,6 +187,7 @@ public class Inventory {
 					add(item.clone());
 	}
 	public void tryAdd(int chance, @Nullable Item item, int num) {
+		if(item == null) return;
 		if(item instanceof StackableItem) {
 			((StackableItem)item).count *= num;
 			tryAdd(chance, item, 1, true);

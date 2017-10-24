@@ -95,7 +95,29 @@ public class Player extends Mob {
 		x = 24;
 		y = 24;
 		this.input = input;
-		inventory = new Inventory();
+		inventory = new Inventory() {
+			@Override
+			public void add(int idx, Item item) {
+				if(Game.isMode("creative")) {
+					if(count(item) > 0) return;
+					item = item.clone();
+					if(item instanceof StackableItem)
+						((StackableItem)item).count = 1;
+				}
+				super.add(idx, item);
+			}
+			
+			@Override
+			public Item remove(int idx) {
+				if(Game.isMode("creative")) {
+					Item cur = get(idx);
+					if(cur instanceof StackableItem)
+						((StackableItem)cur).count = 1;
+					return cur.clone();
+				}
+				return super.remove(idx);
+			}
+		};
 		
 		if(previousInstance == null)
 			inventory.add(Items.arrowItem, acs);
@@ -640,7 +662,7 @@ public class Player extends Mob {
 		score++; // increase the player's score by 1
 		if(Game.isMode("creative")) return; // we shall not bother the inventory on creative mode.
 		
-		if(activeItem != null && activeItem.name.equals(itemEntity.item.name) && activeItem instanceof StackableItem && itemEntity.item instanceof StackableItem) // picked up item matches the one in your hand
+		if(activeItem != null && activeItem.name.equals(itemEntity.item.name) && activeItem instanceof StackableItem && itemEntity.item instanceof StackableItem) // picked up item equals the one in your hand
 			((StackableItem)activeItem).count += ((StackableItem)itemEntity.item).count;
 		else
 			inventory.add(itemEntity.item); // add item to inventory

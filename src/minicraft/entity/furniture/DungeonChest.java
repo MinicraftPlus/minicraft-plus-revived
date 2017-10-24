@@ -29,7 +29,7 @@ public class DungeonChest extends Chest {
 	
 	public boolean use(Player player) {
 		if (isLocked) {
-			boolean activeKey = player.activeItem != null && player.activeItem.matches(Items.get("Key"));
+			boolean activeKey = player.activeItem != null && player.activeItem.equals(Items.get("Key"));
 			boolean invKey = player.inventory.count(Items.get("key")) > 0;
 			if(activeKey || invKey) { // if the player has a key...
 				if (!Game.isMode("creative")) { // remove the key unless on creative mode.

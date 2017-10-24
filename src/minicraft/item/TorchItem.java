@@ -31,7 +31,7 @@ public class TorchItem extends TileItem {
 		return super.interactOn(false);
 	}
 	
-	public boolean matches(Item other) {
+	public boolean equals(Item other) {
 		return other instanceof TorchItem;
 	}
 	

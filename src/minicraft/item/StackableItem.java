@@ -51,8 +51,8 @@ public class StackableItem extends Item {
 		this.count = count;
 	}
 	
-	public boolean matches(Item other) {
-		return super.matches(other) && other instanceof StackableItem;
+	public boolean equals(Item other) {
+		return super.equals(other) && other instanceof StackableItem;
 	}
 	
 	/** Renders the icon, name, and count of the item. */

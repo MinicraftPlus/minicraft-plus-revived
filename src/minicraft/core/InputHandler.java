@@ -238,7 +238,7 @@ public class InputHandler implements /*MouseListener, */KeyListener {
 			}
 			
 			if(getFromMap) { // if false, we assume that keytext is a physical key.
-				// if the passed-in key matches one in keymap, then replace it with it's match, a key in keyboard.
+				// if the passed-in key equals one in keymap, then replace it with it's match, a key in keyboard.
 				if (keymap.containsKey(keytext))
 					keytext = keymap.get(keytext); // converts action name to physical key name
 			}

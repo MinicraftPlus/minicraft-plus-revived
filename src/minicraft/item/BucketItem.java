@@ -81,8 +81,8 @@ public class BucketItem extends StackableItem {
 		return this;
 	}
 	
-	public boolean matches(Item other) {
-		return super.matches(other) && filling == ((BucketItem)other).filling;
+	public boolean equals(Item other) {
+		return super.equals(other) && filling == ((BucketItem)other).filling;
 	}
 	
 	public BucketItem clone() {

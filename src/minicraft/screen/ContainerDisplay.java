@@ -6,6 +6,7 @@ import minicraft.entity.furniture.Chest;
 import minicraft.item.Inventory;
 import minicraft.entity.mob.Player;
 import minicraft.gfx.Screen;
+import minicraft.item.Item;
 
 public class ContainerDisplay extends Display {
 	
@@ -63,7 +64,10 @@ public class ContainerDisplay extends Display {
 			int toSel = menus[otherIdx].getSelection();
 			int fromSel = curMenu.getSelection();
 			
-			to.add(toSel, from.remove(fromSel));
+			if(from == player.inventory && Game.isMode("creative"))
+				to.add(toSel, from.get(fromSel).clone());
+			else
+				to.add(toSel, from.remove(fromSel));
 			
 			menus[selection] = new InventoryMenu((InventoryMenu)menus[selection]);
 			menus[otherIdx] = new InventoryMenu((InventoryMenu)menus[otherIdx]);

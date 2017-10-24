@@ -62,8 +62,8 @@ public abstract class Item {
 		return false;
 	}
 	
-	/** Sees if an item matches another item */
-	public boolean matches(Item item) {
+	/** Sees if an item equals another item */
+	public boolean equals(Item item) {
 		return item.getClass().equals(getClass()) && item.name.equals(name);
 	}
 	

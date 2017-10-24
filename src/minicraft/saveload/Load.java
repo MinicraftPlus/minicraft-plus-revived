@@ -614,7 +614,7 @@ public class Load {
 			if(existing != null) {
 				// the entity loaded is now out of date; remove it.
 				if(/*existing instanceof Player && */Game.debug)
-					System.out.println(Network.onlinePrefix()+"received entity data matches a loaded entity: " + existing + "; removing from level " + existing.getLevel());
+					System.out.println(Network.onlinePrefix()+"received entity data equals a loaded entity: " + existing + "; removing from level " + existing.getLevel());
 				
 				existing.remove();
 			}
