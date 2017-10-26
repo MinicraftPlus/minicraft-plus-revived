@@ -74,7 +74,7 @@ public class Spawner extends Furniture {
 	}
 	
 	private void trySpawn() {
-		if(level == null) return;
+		if(level == null || Game.isValidClient()) return;
 		if(level.mobCount >= level.maxMobCount) return; // can't spawn more entities
 		
 		Player player = getClosestPlayer();
@@ -158,6 +158,8 @@ public class Spawner extends Furniture {
 			return true;
 		}
 		
+		if(item == null) return use(player);
+		
 		return false;
 	}
 	
@@ -167,13 +169,12 @@ public class Spawner extends Furniture {
 		if(Game.isMode("creative") && mob instanceof EnemyMob) {
 			lvl++;
 			if(lvl > maxMobLevel) lvl = 1;
-			EnemyMob newmob = null;
 			try {
-				newmob = (EnemyMob)mob.getClass().getConstructor(int.class).newInstance(lvl);
+				EnemyMob newmob = (EnemyMob)mob.getClass().getConstructor(int.class).newInstance(lvl);
+				initMob(newmob);
 			} catch(Exception ex) {
 				ex.printStackTrace();
 			}
-			initMob(newmob);
 			return true;
 		}
 		

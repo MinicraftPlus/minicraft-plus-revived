@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import minicraft.core.Network;
 
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 public class Items {
 	
@@ -48,6 +49,12 @@ public class Items {
 	/** fetches an item from the list given its name. */
 	@NotNull
 	public static Item get(String name) {
+		Item i = get(name, false);
+		if(i == null) return new UnknownItem("NULL"); // technically shouldn't ever happen
+		return i;
+	}
+	@Nullable
+	public static Item get(String name, boolean allowNull) {
 		name = name.toUpperCase();
 		//System.out.println("fetching name: \"" + name + "\"");
 		int amount = 1;
@@ -60,7 +67,17 @@ public class Items {
 			name = name.substring(0, name.indexOf("_"));
 		}
 		
-		if(name.equals("NULL")) return new UnknownItem("NULL");
+		if(name.equals("NULL")) {
+			if(allowNull) return null;
+			else {
+				System.out.println("WARNING: Items.get passed argument \"null\" when null is not allowed; returning UnknownItem. StackTrace:");
+				Thread.dumpStack();
+				return new UnknownItem("NULL");
+			}
+		}
+		
+		if(name.equals("UNKNOWN"))
+			return new UnknownItem("BLANK");
 		
 		Item i = null;
 		for(Item cur: items) {

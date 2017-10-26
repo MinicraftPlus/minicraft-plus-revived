@@ -337,7 +337,9 @@ public class Save {
 		
 		if(e instanceof Spawner) {
 			Spawner egg = (Spawner)e;
-			extradata.append(":").append(egg.mob.getClass().getName().replace("minicraft.entity.", "")).append(":").append(egg.mob instanceof EnemyMob ? ((EnemyMob) egg.mob).lvl : 1);
+			String mobname = egg.mob.getClass().getName();
+			mobname = mobname.substring(mobname.lastIndexOf(".")+1);
+			extradata.append(":").append(mobname).append(":").append(egg.mob instanceof EnemyMob ? ((EnemyMob) egg.mob).lvl : 1);
 		}
 		
 		if (e instanceof Lantern) {

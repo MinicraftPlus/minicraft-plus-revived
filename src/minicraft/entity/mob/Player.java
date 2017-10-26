@@ -432,6 +432,13 @@ public class Player extends Mob {
 		// walkDist is not synced, so this can happen for both the client and server.
 		walkDist += 8; // increase the walkDist (changes the sprite, like you moved your arm)
 		
+		if(activeItem instanceof BookItem) {
+			attackDir = dir; // make the attack direction equal the current direction
+			attackItem = activeItem; // make attackItem equal activeItem
+			activeItem.interactOn(Tiles.get("rock"), level, 0, 0, this, attackDir);
+			return;
+		}
+		
 		if(Game.isConnectedClient()) {
 			// if this is a multiplayer game, than the server will execute the full method instead.
 			attackDir = dir;
@@ -572,6 +579,7 @@ public class Player extends Mob {
 		for (int i = 0; i < entities.size(); i++) {
 			Entity e = entities.get(i);
 			if (e != this && e instanceof Mob) ((Mob)e).hurt(this, getAttackDamage(e), attackDir); // note: this really only does something for mobs.
+			if (e != this && e instanceof Furniture) e.interact(this, null, attackDir); // note: this really only does something for mobs.
 		}
 	}
 	
@@ -883,7 +891,7 @@ public class Player extends Mob {
 			case "armor": armor = Integer.parseInt(val); return true;
 			case "attackTime": attackTime = Integer.parseInt(val); return true;
 			case "attackDir": attackDir = Direction.values[Integer.parseInt(val)]; return true;
-			case "attackItem": attackItem = Items.get(val); return true;
+			case "attackItem": attackItem = Items.get(val, true); return true;
 			case "potioneffects":
 				potioneffects.clear();
 				for(String potion: val.split(":")) {

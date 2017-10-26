@@ -697,7 +697,7 @@ public class MinicraftServer extends Thread implements MinicraftProtocol {
 				//clientPlayer.x = Integer.parseInt(data[0]);
 				//clientPlayer.y = Integer.parseInt(data[1]);
 				//clientPlayer.dir = Integer.parseInt(data[0]);
-				clientPlayer.activeItem = Items.get(data[0]); // this can be null; and that's fine, it means a fist. ;)
+				clientPlayer.activeItem = Items.get(data[0], true); // this can be null; and that's fine, it means a fist. ;)
 				int arrowCount = Integer.parseInt(data[1]);
 				int curArrows = clientPlayer.inventory.count(Items.arrowItem);
 				if(curArrows < arrowCount)

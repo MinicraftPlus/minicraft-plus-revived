@@ -5,8 +5,10 @@ import java.util.Arrays;
 import java.util.List;
 
 import minicraft.core.Game;
+import minicraft.core.Network;
 import minicraft.entity.Direction;
 import minicraft.entity.mob.Player;
+import minicraft.entity.mob.RemotePlayer;
 import minicraft.gfx.Color;
 import minicraft.gfx.Sprite;
 import minicraft.level.Level;
@@ -79,14 +81,22 @@ public class TileItem extends StackableItem {
 		
 		if (Game.debug) System.out.println(model + " cannot be placed on " + tile.name);
 		
+		String note = "";
 		if(model.contains("WALL")) {
-			Game.notifications.add("Can only be placed on " + Tiles.getName(validTiles.get(0)) + "!");
+			note = "Can only be placed on " + Tiles.getName(validTiles.get(0)) + "!";
 		}
 		else if(model.contains("DOOR")) {
-			Game.notifications.add("Can only be placed on " + Tiles.getName(validTiles.get(0)) + "!");
+			note = "Can only be placed on " + Tiles.getName(validTiles.get(0)) + "!";
 		}
 		else if((model.contains("BRICK") || model.contains("PLANK"))) {
-			Game.notifications.add("Dig a hole first!");
+			note = "Dig a hole first!";
+		}
+		
+		if(note.length() > 0) {
+			if(!Game.isValidServer())
+				Game.notifications.add(note);
+			else
+				Game.server.getAssociatedThread((RemotePlayer)player).sendNotification(note, 0);
 		}
 		
 		return super.interactOn(false);

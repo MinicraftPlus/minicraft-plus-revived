@@ -412,7 +412,7 @@ public class MinicraftClient extends MinicraftConnection {
 				// the server went through with the interaction, and has sent back the new activeItem.
 				//Item holdItem = Items.get(alldata);
 				//if(Game.debug) System.out.println("CLIENT: received interaction success; setting player item to " + holdItem);
-				Game.player.activeItem = Items.get(alldata);
+				Game.player.activeItem = Items.get(alldata, true);
 				Game.player.resolveHeldItem();
 				return true;
 			
