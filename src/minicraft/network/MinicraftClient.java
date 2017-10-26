@@ -161,7 +161,7 @@ public class MinicraftClient extends MinicraftConnection {
 			
 			case DISCONNECT:
 				if (Game.debug) System.out.println("CLIENT: received disconnect");
-				menu.setError("Server Disconnected."); // this sets the menu back to the multiplayer menu, and tells the user what happened.
+				menu.setError("Server Disconnected.", true); // this sets the menu back to the multiplayer menu, and tells the user what happened.
 				endConnection();
 				return true;
 			
