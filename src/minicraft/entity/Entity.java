@@ -14,6 +14,8 @@ import minicraft.gfx.Screen;
 import minicraft.item.Item;
 import minicraft.level.Level;
 
+import org.jetbrains.annotations.Nullable;
+
 public abstract class Entity {
 	
 	/* I guess I should explain something real quick. The coordinates between tiles and entities are different.
@@ -60,56 +62,31 @@ public abstract class Entity {
 	public boolean isRemoved() { return removed/* || level == null*/; }
 	public Level getLevel() { return level; }
 	
-	/** Removes the entity from the level. */
-	public void remove() {
-		if(removed && !(this instanceof ItemEntity)) // apparently this happens fairly often with item entities.
-			System.out.println("Note: remove() called on removed entity: " + this);
-		
-		removed = true;
-		
-		if(level == null)
-			System.out.println("Note: remove() called on entity with no level reference: " + getClass());
-		else
-			level.remove(this);
-	}
-	public void remove(Level level) {
-		if(level != this.level && Game.debug)
-			System.out.println("tried to remove entity "+this+" from level it is not in: " + level + "; in level " + this.level);
-		else {
-			removed = true; // should already be set.
-			this.level = null;
-		}
-	}
-	
-	/** This should ONLY be called by the Level class. To properly add an entity to a level, use level.add(entity) */
-	public void setLevel(Level level, int x, int y) {
-		if(level == null) {
-			System.out.println("tried to set level of entity " + this + " to a null level; should use remove(level)");
-			return;
-		} else if(level != this.level && Game.isValidServer()) {
-			Game.server.broadcastEntityRemoval(this);
-		}
-		
-		this.level = level;
-		removed = false;
-		this.x = x;
-		this.y = y;
-		
-		if(eid < 0)
-			eid = Network.generateUniqueEntityId();
-	}
-	
+	/** Returns a Rectangle instance using the defined bounds of the entity. */
 	private Rectangle getBounds() { return new Rectangle(x, y, xr*2, yr*2, Rectangle.CENTER_DIMS); }
-	
 	/** returns true if this entity is found in the rectangle specified by given two coordinates. */
 	public boolean isTouching(Rectangle area) { return area.intersects(getBounds()); }
-	
 	/** returns if this entity stops other solid entities from moving. */
 	public boolean isSolid() { return true; } // most entities are solid
-	
 	/** Determines if the given entity should prevent this entity from moving. */
 	public boolean blocks(Entity e) { return isSolid() && e.isSolid(); }
-		
+	
+	public boolean canSwim() { return false; } // Determines if the entity can swim (extended in sub-classes)
+	public boolean canWool() { return false; } // This, strangely enough, determines if the entity can walk on wool; among some other things..?
+	
+	public int getLightRadius() { return 0; } // used for lanterns... and player? that might be about it, though, so idk if I want to put it here.
+	
+	
+	/** if this entity is touched by another entity (extended by sub-classes) */
+	protected void touchedBy(Entity entity) {}
+	
+	/** Item interact */
+	public boolean interact(Player player, @Nullable Item item, Direction attackDir) {
+		if(item != null)
+			return item.interact(player, this, attackDir);
+		return false;
+	}
+	
 	/** Moves an entity horizontally and vertically. Returns whether entity was unimpeded in it's movement.  */
 	public boolean move(int xa, int ya) {
 		if(Updater.saving || (xa == 0 && ya == 0)) return true; // pretend that it kept moving
@@ -193,21 +170,44 @@ public abstract class Entity {
 		return true; // the move was successful.
 	}
 	
-	/** if this entity is touched by another entity (extended by sub-classes) */
-	protected void touchedBy(Entity entity) {}
-	
-	/** Determines if the entity can swim (extended in sub-classes) */
-	public boolean canSwim() { return false; }
-	
-	/** This, strangely enough, determines if the entity can walk on wool; among some other things..? */
-	public boolean canWool() { return false; }
-	
-	/** Item interact */
-	public boolean interact(Player player, Item item, Direction attackDir) {
-		return item.interact(player, this, attackDir);
+	/** Removes the entity from the level. */
+	public void remove() {
+		if(removed && !(this instanceof ItemEntity)) // apparently this happens fairly often with item entities.
+			System.out.println("Note: remove() called on removed entity: " + this);
+		
+		removed = true;
+		
+		if(level == null)
+			System.out.println("Note: remove() called on entity with no level reference: " + getClass());
+		else
+			level.remove(this);
+	}
+	public void remove(Level level) {
+		if(level != this.level && Game.debug)
+			System.out.println("tried to remove entity "+this+" from level it is not in: " + level + "; in level " + this.level);
+		else {
+			removed = true; // should already be set.
+			this.level = null;
+		}
 	}
 	
-	public int getLightRadius() { return 0; }
+	/** This should ONLY be called by the Level class. To properly add an entity to a level, use level.add(entity) */
+	public void setLevel(Level level, int x, int y) {
+		if(level == null) {
+			System.out.println("tried to set level of entity " + this + " to a null level; should use remove(level)");
+			return;
+		} else if(level != this.level && Game.isValidServer()) {
+			Game.server.broadcastEntityRemoval(this);
+		}
+		
+		this.level = level;
+		removed = false;
+		this.x = x;
+		this.y = y;
+		
+		if(eid < 0)
+			eid = Network.generateUniqueEntityId();
+	}
 	
 	public boolean isWithin(int tileRadius, Entity other) {
 		if(level == null || other.getLevel() == null) return false;
