@@ -1,4 +1,4 @@
-package minicraft.core;
+package minicraft.core.io;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -6,13 +6,18 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Scanner;
 
+import minicraft.core.Game;
+import minicraft.core.Initializer;
+import minicraft.core.Network;
+import minicraft.core.Updater;
+import minicraft.core.World;
 import minicraft.entity.mob.RemotePlayer;
 import minicraft.level.Level;
 import minicraft.network.MinicraftServerThread;
 import minicraft.saveload.Save;
 import minicraft.screen.WorldSelectDisplay;
 
-class ConsoleReader extends Thread {
+public class ConsoleReader extends Thread {
 	
 	private enum Config {
 		PLAYERCAP {
@@ -65,8 +70,8 @@ class ConsoleReader extends Thread {
 		STATUS
 		(null, "display some server stats.", "displays server fps, and number of players connected.") {
 			public void run(String[] args) {
-				System.out.println("fps: " + Initializer.fra);
-				System.out.println("players connected: " + Game.server.getThreads().length);
+				System.out.println("fps: " + Initializer.getCurFps());
+				System.out.println("players connected: " + Game.server.getNumPlayers());
 				for(String info: Game.server.getClientInfo())
 					System.out.println("\t"+info);
 			}

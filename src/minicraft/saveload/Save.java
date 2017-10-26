@@ -10,7 +10,7 @@ import java.util.List;
 
 import minicraft.core.Game;
 import minicraft.core.Renderer;
-import minicraft.core.Settings;
+import minicraft.core.io.Settings;
 import minicraft.core.Updater;
 import minicraft.core.World;
 import minicraft.entity.Arrow;

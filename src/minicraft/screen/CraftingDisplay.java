@@ -5,7 +5,7 @@ import java.util.HashMap;
 import java.util.List;
 
 import minicraft.core.Game;
-import minicraft.core.InputHandler;
+import minicraft.core.io.InputHandler;
 import minicraft.entity.mob.Player;
 import minicraft.gfx.Point;
 import minicraft.gfx.SpriteSheet;

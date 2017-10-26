@@ -10,7 +10,7 @@ import java.util.function.ToIntFunction;
 
 import minicraft.core.Game;
 import minicraft.core.Network;
-import minicraft.core.Settings;
+import minicraft.core.io.Settings;
 import minicraft.core.Updater;
 import minicraft.entity.Entity;
 import minicraft.entity.ItemEntity;

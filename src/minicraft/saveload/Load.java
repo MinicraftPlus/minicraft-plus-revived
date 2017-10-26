@@ -12,7 +12,7 @@ import java.util.List;
 
 import minicraft.core.Game;
 import minicraft.core.Network;
-import minicraft.core.Settings;
+import minicraft.core.io.Settings;
 import minicraft.core.Updater;
 import minicraft.core.World;
 import minicraft.entity.Arrow;
@@ -613,10 +613,13 @@ public class Load {
 			
 			if(existing != null) {
 				// the entity loaded is now out of date; remove it.
-				if(/*existing instanceof Player && */Game.debug)
+				/*if(*//*existing instanceof Player && *//*Game.debug)
 					System.out.println(Network.onlinePrefix()+"received entity data equals a loaded entity: " + existing + "; removing from level " + existing.getLevel());
-				
+				*/
+				//existing.remove();
 				existing.remove();
+				Game.levels[Game.currentLevel].add(existing);
+				return null;
 			}
 			
 			/*if(existing == null && Game.isValidClient() && Game.player.eid == eid) {
@@ -759,7 +762,7 @@ public class Load {
 			newEntity = chest;
 		}
 		else if(newEntity instanceof Spawner) {
-			MobAi mob = (MobAi) getEntity(info.get(2), Integer.parseInt(info.get(3)));
+			MobAi mob = (MobAi) getEntity(info.get(2).substring(info.get(2).lastIndexOf(".")+1), Integer.parseInt(info.get(3)));
 			if(mob != null)
 				newEntity = new Spawner(mob);
 		} else if(newEntity instanceof Lantern && worldVer.compareTo(new Version("1.9.4")) >= 0 && info.size() > 3)

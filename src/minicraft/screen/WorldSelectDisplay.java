@@ -4,7 +4,7 @@ import java.io.File;
 import java.util.ArrayList;
 
 import minicraft.core.Game;
-import minicraft.core.InputHandler;
+import minicraft.core.io.InputHandler;
 import minicraft.gfx.Color;
 import minicraft.gfx.Font;
 import minicraft.gfx.Screen;

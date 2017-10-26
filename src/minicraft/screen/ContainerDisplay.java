@@ -1,7 +1,7 @@
 package minicraft.screen;
 
 import minicraft.core.Game;
-import minicraft.core.InputHandler;
+import minicraft.core.io.InputHandler;
 import minicraft.entity.furniture.Chest;
 import minicraft.entity.mob.Player;
 import minicraft.gfx.Screen;

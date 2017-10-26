@@ -2,8 +2,8 @@ package minicraft.screen.entry;
 
 import java.util.Arrays;
 
-import minicraft.core.InputHandler;
-import minicraft.core.Sound;
+import minicraft.core.io.InputHandler;
+import minicraft.core.io.Sound;
 import minicraft.gfx.Font;
 
 public class ArrayEntry<T> extends ListEntry {

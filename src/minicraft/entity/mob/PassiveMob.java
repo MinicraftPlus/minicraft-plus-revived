@@ -1,7 +1,7 @@
 package minicraft.entity.mob;
 
 import minicraft.core.Game;
-import minicraft.core.Settings;
+import minicraft.core.io.Settings;
 import minicraft.core.Updater;
 import minicraft.gfx.MobSprite;
 import minicraft.gfx.Screen;

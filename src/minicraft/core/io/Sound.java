@@ -1,4 +1,4 @@
-package minicraft.core;
+package minicraft.core.io;
 
 import javax.sound.sampled.AudioSystem;
 import javax.sound.sampled.Clip;
@@ -7,6 +7,8 @@ import javax.sound.sampled.LineEvent;
 import javax.sound.sampled.LineUnavailableException;
 import javax.sound.sampled.UnsupportedAudioFileException;
 import java.io.IOException;
+
+import minicraft.core.Game;
 
 public class Sound {
 	//creates sounds from their respective files

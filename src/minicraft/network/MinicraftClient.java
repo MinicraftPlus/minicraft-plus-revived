@@ -12,7 +12,7 @@ import java.util.List;
 import minicraft.core.Game;
 import minicraft.core.Network;
 import minicraft.core.Renderer;
-import minicraft.core.Settings;
+import minicraft.core.io.Settings;
 import minicraft.core.Updater;
 import minicraft.core.World;
 import minicraft.entity.Direction;
@@ -206,7 +206,7 @@ public class MinicraftClient extends MinicraftConnection {
 					return false;
 				}
 				if (Game.debug) System.out.println("CLIENT: received tiles");
-				/// recieve tiles.
+				/// receive tiles.
 				Level level = World.levels[World.currentLevel];
 				if(level == null) {
 					int lvldepth = World.idxToDepth[World.currentLevel];
@@ -243,7 +243,7 @@ public class MinicraftClient extends MinicraftConnection {
 			
 			case ENTITIES:
 				if(curState != State.LOADING) {// ignore
-					System.out.println("ignoring level entity data becuase client state is not LOADING: " + curState);
+					System.out.println("ignoring level entity data because client state is not LOADING: " + curState);
 					return false;
 				}
 				

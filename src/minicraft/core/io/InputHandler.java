@@ -1,4 +1,4 @@
-package minicraft.core;
+package minicraft.core.io;
 
 import java.awt.Component;
 import java.awt.event.KeyEvent;
@@ -7,6 +7,8 @@ import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
+
+import minicraft.core.Game;
 
 public class InputHandler implements /*MouseListener, */KeyListener {
 	/**

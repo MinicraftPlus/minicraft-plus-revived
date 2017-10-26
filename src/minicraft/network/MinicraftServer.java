@@ -6,13 +6,14 @@ import java.net.ServerSocket;
 import java.net.SocketException;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 import java.util.Timer;
 import java.util.TimerTask;
 
 import minicraft.core.Game;
 import minicraft.core.Network;
-import minicraft.core.Settings;
+import minicraft.core.io.Settings;
 import minicraft.core.Updater;
 import minicraft.core.World;
 import minicraft.entity.Direction;
@@ -43,9 +44,9 @@ public class MinicraftServer extends Thread implements MinicraftProtocol {
 		public void run() {}
 	}
 	
-	private static final int UPDATE_INTERVAL = 30; // measured in seconds
+	private static final int UPDATE_INTERVAL = 10; // measured in seconds
 	
-	private ArrayList<MinicraftServerThread> threadList = new ArrayList<>();
+	private List<MinicraftServerThread> threadList = Collections.synchronizedList(new ArrayList<>());
 	private ServerSocket socket;
 	
 	private RemotePlayer hostPlayer = null;
@@ -115,8 +116,10 @@ public class MinicraftServer extends Thread implements MinicraftProtocol {
 		return threadList.size() >= playerCap;
 	}
 	
-	public synchronized MinicraftServerThread[] getThreads() {
-		return threadList.toArray(new MinicraftServerThread[0]);
+	public int getNumPlayers() { return threadList.size(); }
+	
+	private MinicraftServerThread[] getThreads() {
+		return threadList.toArray(new MinicraftServerThread[threadList.size()]);
 	}
 	
 	public String[] getClientInfo() {
@@ -364,6 +367,8 @@ public class MinicraftServer extends Thread implements MinicraftProtocol {
 	public synchronized boolean parsePacket(MinicraftServerThread serverThread, InputType inType, String alldata) {
 		String[] data = alldata.split(";");
 		
+		//if (Game.debug) System.out.println("received packet");
+		
 		RemotePlayer clientPlayer = serverThread.getClient();
 		if(clientPlayer == null) {
 			System.err.println("CRITICAL SERVER ERROR: server thread client is null: " + serverThread + "; cannot parse the received "+inType+" packet: " + alldata);
@@ -576,7 +581,7 @@ public class MinicraftServer extends Thread implements MinicraftProtocol {
 				return true;
 			
 			case ENTITY:
-				// client wants the specified entity sent in an ADD packet, becuase it couldn't find that entity upon recieving an ENTITY packet from the server.
+				// client wants the specified entity sent in an ADD packet, becuase it couldn't find that entity upon receiving an ENTITY packet from the server.
 				int enid = Integer.parseInt(alldata);
 				Entity entityToSend = Network.getEntity(enid);
 				if(entityToSend == null) {
@@ -679,7 +684,7 @@ public class MinicraftServer extends Thread implements MinicraftProtocol {
 				Entity entity = Network.getEntity(ieid);
 				if(entity == null || !(entity instanceof ItemEntity) || entity.isRemoved()) {
 					System.err.println("SERVER could not find item entity in PICKUP request: " + ieid + ". Telling client to remove...");
-					serverThread.sendEntityRemoval(ieid); // will happen when another guy gets to it first, so the this client shouldn't have it on the level anymore. It could also happen if the client didn't recieve the packet telling them to pick it up... in which case it will be lost, but oh well.
+					serverThread.sendEntityRemoval(ieid); // will happen when another guy gets to it first, so the this client shouldn't have it on the level anymore. It could also happen if the client didn't receive the packet telling them to pick it up... in which case it will be lost, but oh well.
 					return false;
 				}
 				

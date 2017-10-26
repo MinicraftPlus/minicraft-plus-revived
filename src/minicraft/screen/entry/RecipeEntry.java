@@ -2,7 +2,7 @@ package minicraft.screen.entry;
 
 import java.util.List;
 
-import minicraft.core.InputHandler;
+import minicraft.core.io.InputHandler;
 import minicraft.gfx.Font;
 import minicraft.gfx.Screen;
 import minicraft.item.Recipe;

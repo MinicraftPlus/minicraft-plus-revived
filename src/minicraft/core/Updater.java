@@ -1,5 +1,6 @@
 package minicraft.core;
 
+import minicraft.core.io.Settings;
 import minicraft.entity.Entity;
 import minicraft.entity.furniture.Bed;
 import minicraft.entity.mob.Mob;
@@ -115,7 +116,7 @@ public class Updater extends Game {
 		if(!paused || isValidServer())
 			asTick++;
 		if (asTick > astime) {
-			if ((boolean)Settings.get("autosave") && player.health > 0 && !gameOver) {
+			if ((boolean) Settings.get("autosave") && player.health > 0 && !gameOver) {
 				if(!ISONLINE)
 					new Save(WorldSelectDisplay.getWorldName());
 				else if(isValidServer())

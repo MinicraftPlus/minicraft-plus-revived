@@ -1,5 +1,6 @@
 package minicraft.core;
 
+import minicraft.core.io.Settings;
 import minicraft.entity.furniture.Bed;
 import minicraft.entity.furniture.Furniture;
 import minicraft.entity.furniture.Lantern;

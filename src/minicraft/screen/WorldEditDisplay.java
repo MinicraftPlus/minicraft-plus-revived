@@ -8,7 +8,7 @@ import java.util.List;
 
 import minicraft.core.FileHandler;
 import minicraft.core.Game;
-import minicraft.core.InputHandler;
+import minicraft.core.io.InputHandler;
 import minicraft.gfx.Color;
 import minicraft.screen.Menu.Builder;
 import minicraft.screen.WorldSelectDisplay.Action;

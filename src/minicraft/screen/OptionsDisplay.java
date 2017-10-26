@@ -1,7 +1,7 @@
 package minicraft.screen;
 
 import minicraft.core.Game;
-import minicraft.core.Settings;
+import minicraft.core.io.Settings;
 import minicraft.saveload.Save;
 import minicraft.screen.entry.SelectEntry;
 

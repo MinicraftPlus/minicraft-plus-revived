@@ -3,7 +3,7 @@ package minicraft.screen;
 import java.util.Random;
 
 import minicraft.core.Game;
-import minicraft.core.InputHandler;
+import minicraft.core.io.InputHandler;
 import minicraft.core.Renderer;
 import minicraft.core.World;
 import minicraft.entity.mob.RemotePlayer;
@@ -45,7 +45,7 @@ public class TitleDisplay extends Display {
 				new BlankEntry(),
 				new SelectEntry("About", () -> Game.setMenu(new BookDisplay(BookData.about)))
 			),
-			new SelectEntry("Quit", () -> System.exit(0))
+			new SelectEntry("Quit", () -> Game.quit())
 			)
 			.setPositioning(new Point(Screen.w/2, Screen.h*3/5), RelPos.CENTER)
 			.createMenu()

@@ -11,13 +11,15 @@ import java.awt.event.WindowListener;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
 
+import minicraft.core.io.ConsoleReader;
 import minicraft.screen.WorldSelectDisplay;
 
-class Initializer extends Game {
+public class Initializer extends Game {
 	private Initializer() {}
 	
 	static int fra, tik; //these store the number of frames and ticks in the previous second; used for fps, at least.
 	
+	public static int getCurFps() { return fra; }
 	
 	static void parseArgs(String[] args) {
 		boolean debug = false;

@@ -1,4 +1,4 @@
-package minicraft.core;
+package minicraft.core.io;
 
 import java.util.HashMap;
 

@@ -3,6 +3,9 @@ package minicraft.core;
 import java.util.ArrayList;
 import java.util.List;
 
+import minicraft.core.io.InputHandler;
+import minicraft.core.io.Settings;
+import minicraft.core.io.Sound;
 import minicraft.entity.mob.Player;
 import minicraft.level.Level;
 import minicraft.level.tile.Tiles;
@@ -30,7 +33,7 @@ public class Game {
 	public static String gameDir; // The directory in which all the game files are stored
 	public static List<String> notifications = new ArrayList<>();
 	
-	public static int MAX_FPS = (int)Settings.get("fps");
+	public static int MAX_FPS = (int) Settings.get("fps");
 	
 	
 	static Display menu = null, newMenu = null; // the current menu you are on.
@@ -70,7 +73,7 @@ public class Game {
 	
 	static boolean running = true;
 	
-	static void quit() {
+	public static void quit() {
 		if(isConnectedClient()) client.endConnection();
 		if(isValidServer()) server.endConnection();
 		running = false;

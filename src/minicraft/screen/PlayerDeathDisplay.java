@@ -4,7 +4,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 
 import minicraft.core.Game;
-import minicraft.core.Settings;
+import minicraft.core.io.Settings;
 import minicraft.core.World;
 import minicraft.gfx.Point;
 import minicraft.gfx.SpriteSheet;

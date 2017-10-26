@@ -3,7 +3,7 @@ package minicraft.entity.furniture;
 import java.util.Random;
 
 import minicraft.core.Game;
-import minicraft.core.Sound;
+import minicraft.core.io.Sound;
 import minicraft.entity.Direction;
 import minicraft.entity.mob.EnemyMob;
 import minicraft.entity.mob.MobAi;

@@ -4,8 +4,8 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-import minicraft.core.InputHandler;
-import minicraft.core.Sound;
+import minicraft.core.io.InputHandler;
+import minicraft.core.io.Sound;
 import minicraft.gfx.*;
 import minicraft.screen.entry.BlankEntry;
 import minicraft.screen.entry.ListEntry;

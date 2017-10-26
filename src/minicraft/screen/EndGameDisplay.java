@@ -5,8 +5,8 @@ import java.util.Arrays;
 import java.util.Random;
 
 import minicraft.core.Game;
-import minicraft.core.InputHandler;
-import minicraft.core.Settings;
+import minicraft.core.io.InputHandler;
+import minicraft.core.io.Settings;
 import minicraft.core.Updater;
 import minicraft.entity.mob.Player;
 import minicraft.gfx.Color;

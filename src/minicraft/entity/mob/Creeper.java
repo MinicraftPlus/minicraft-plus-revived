@@ -1,7 +1,7 @@
 package minicraft.entity.mob;
 
-import minicraft.core.Settings;
-import minicraft.core.Sound;
+import minicraft.core.io.Settings;
+import minicraft.core.io.Sound;
 import minicraft.entity.Direction;
 import minicraft.entity.Entity;
 import minicraft.gfx.Color;
