@@ -736,7 +736,7 @@ public class Load {
 				if (itemData.contains(";")) {
 					String[] aitemData = itemData.split(";");
 					StackableItem stack = (StackableItem)Items.get(aitemData[0]);
-					if (!stack.name.equals("UNKNOWN")) {
+					if (!(stack instanceof UnknownItem)) {
 						stack.count = Integer.parseInt(aitemData[1]);
 						chest.inventory.add(stack);
 					} else {
