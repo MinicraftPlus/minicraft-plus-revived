@@ -15,6 +15,8 @@ investigate the disappearace of furniture -- I think I may be getting it with du
 ####
 PastDay1 doesn't save/work, I think.
 ####
+Something weird happens with creeper explosions... I think, if you stay next to it, then the game freezes. Or maybe it has something to do with the spawner..? Idk, it's really wierd...
+####
 
 #####
 MULTIPLAYER-Related:
@@ -25,8 +27,6 @@ MULTIPLAYER-Related:
  # Players aren't kicked out if they are on a menu when the server goes down..? (only tested/seen once)
  
  # Sounds play in multiplayer even when game is paused, and when another player does something far away; add checks for distance and pause state before playing sounds
- 
- # the server stalls or something when the username is too long; client probably throws error, out of bounds exception.
  
  It would be nice if I could find a way to not even bother telling the server for things like potions, that don't even interact with the world.
 #####
