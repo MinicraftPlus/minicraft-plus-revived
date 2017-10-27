@@ -1,12 +1,8 @@
 package minicraft;
 
-import javax.imageio.ImageIO;
-import javax.swing.JFrame;
-import javax.swing.WindowConstants;
 import java.awt.BorderLayout;
 import java.awt.Canvas;
 import java.awt.Graphics;
-import java.awt.SplashScreen;
 import java.awt.event.ComponentAdapter;
 import java.awt.event.ComponentEvent;
 import java.awt.event.WindowEvent;
@@ -21,6 +17,10 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Random;
+
+import javax.imageio.ImageIO;
+import javax.swing.JFrame;
+import javax.swing.WindowConstants;
 
 import minicraft.entity.Bed;
 import minicraft.entity.Entity;
@@ -46,7 +46,16 @@ import minicraft.network.MinicraftClient;
 import minicraft.network.MinicraftServer;
 import minicraft.saveload.Load;
 import minicraft.saveload.Save;
-import minicraft.screen.*;
+import minicraft.screen.DeadMenu;
+import minicraft.screen.Display;
+import minicraft.screen.EndGameDisplay;
+import minicraft.screen.LevelTransitionDisplay;
+import minicraft.screen.LoadingDisplay;
+import minicraft.screen.MultiplayerMenu;
+import minicraft.screen.PauseMenu;
+import minicraft.screen.TitleMenu;
+import minicraft.screen.WorldGenMenu;
+import minicraft.screen.WorldSelectMenu;
 
 public class Game {
 	
@@ -251,6 +260,8 @@ public class Game {
 			e.printStackTrace();
 		}
 		screen.pixels = pixels;
+		
+		Localization.loadSelectedLanguageFile();
 		
 		Tiles.initTileList();
 		
@@ -702,6 +713,7 @@ public class Game {
 		notifyAll(msg, 0);
 	}
 	public static void notifyAll(String msg, int notetick) {
+		msg = Localization.getLocalized(msg);
 		Game.notifications.add(msg);
 		Game.notetick = notetick;
 		if(isValidServer())

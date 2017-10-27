@@ -1,5 +1,6 @@
 package minicraft.item;
 
+import minicraft.Localization;
 import minicraft.entity.Entity;
 import minicraft.entity.Player;
 import minicraft.gfx.Color;
@@ -25,6 +26,7 @@ public abstract class Item {
 	protected Item(String name, Sprite sprite) {
 		this.name = name;
 		this.sprite = sprite;
+		
 	}
 	
 	/// TODO this method (and Menu.renderItemList) is actually slowly getting depricated; I just haven't gotten around to updating all the menus yet.
@@ -33,6 +35,8 @@ public abstract class Item {
 	public void renderInventory(Screen screen, int x, int y, boolean ininv) {
 		renderInventory(screen, x, y, ininv, name);}
 	protected void renderInventory(Screen screen, int x, int y, boolean ininv, String name) {
+		name = Localization.getLocalized(name);
+		
 		sprite.render(screen, x, y);
 		if(ininv) {
 			String shortname = name.length() > 20 ? name.substring(0, 20) : name;
@@ -82,6 +86,7 @@ public abstract class Item {
 	
 	// returns the String that should be used to display this item in a menu or list. 
 	public String getDisplayName() {
-		return " " + name;
+		String localName = Localization.getLocalized(name);
+		return " " + localName;
 	}
 }

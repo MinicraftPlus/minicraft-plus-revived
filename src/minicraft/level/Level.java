@@ -44,6 +44,7 @@ import minicraft.level.tile.Tiles;
 import minicraft.level.tile.TorchTile;
 
 public class Level {
+	
 	private Random random = new Random();
 	
 	private static final int MOB_SPAWN_FACTOR = 100; // the chance of a mob actually trying to spawn when trySpawn is called equals: mobCount / maxMobCount * MOB_SPAWN_FACTOR. so, it basically equals the chance, 1/number, of a mob spawning when the mob cap is reached. I hope that makes sense...
@@ -149,6 +150,8 @@ public class Level {
 		tiles = maps[0]; // assigns the tiles in the map
 		data = maps[1]; // assigns the data of the tiles
 		
+		if(Game.debug) System.out.println("test1");
+		
 		if (parentLevel != null) { // If the level above this one is not null (aka, if this isn't the sky level)
 			for (int y = 0; y < h; y++) { // loop through height
 				for (int x = 0; x < w; x++) { // loop through width
@@ -172,6 +175,7 @@ public class Level {
 			}
 		}
 
+		if(Game.debug) System.out.println("test12");
 		
 		/// if the level is the dungeon, and we're not just loading the world...
 		if (level == -4) {
@@ -328,10 +332,14 @@ public class Level {
 			}
 		}
 
+		if(Game.debug) System.out.println("test123");
+		
 		if (level == 1) {
 			AirWizard aw = new AirWizard(false);
 			add(aw, w * 16 / 2, h * 16 / 2);
 		}
+		
+		if(Game.debug) System.out.println("test1234");
 		
 		if (Game.debug) printTileLocs(Tiles.get("Stairs Down"));
 	}

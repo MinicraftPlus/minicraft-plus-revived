@@ -3,6 +3,7 @@ package minicraft.screen;
 import javax.swing.Timer;
 
 import minicraft.Game;
+import minicraft.Localization;
 import minicraft.gfx.Color;
 import minicraft.gfx.Font;
 import minicraft.gfx.Screen;
@@ -48,7 +49,7 @@ public class LoadingDisplay extends Display {
 	public void render(Screen screen) {
 		super.render(screen);
 		int percent = Math.round(percentage);
-		Font.drawCentered("Loading...", screen, Game.HEIGHT/2-Font.textHeight()/2, Color.RED);
+		Font.drawCentered(Localization.getLocalized("Loading..."), screen, Game.HEIGHT/2-Font.textHeight()/2, Color.RED);
 		Font.drawCentered(percent+"%", screen, Game.HEIGHT/2+Font.textHeight()/2, Color.RED);
 	}
 }

@@ -1,10 +1,11 @@
 package minicraft.level;
 
-import javax.swing.ImageIcon;
-import javax.swing.JOptionPane;
 import java.awt.Image;
 import java.awt.image.BufferedImage;
 import java.util.Random;
+
+import javax.swing.ImageIcon;
+import javax.swing.JOptionPane;
 
 import minicraft.Game;
 import minicraft.Settings;
@@ -134,6 +135,7 @@ public class LevelGen {
 		random.setSeed(worldSeed);
 		int attempt = 0;
 		do {
+			attempt++;
 			byte[][] result = createTopMap(w, h);
 			
 			int[] count = new int[256];

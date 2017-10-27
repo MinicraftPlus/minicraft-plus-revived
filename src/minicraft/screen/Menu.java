@@ -5,7 +5,9 @@ import java.util.Arrays;
 import java.util.List;
 
 import com.sun.istack.internal.NotNull;
+
 import minicraft.InputHandler;
+import minicraft.Localization;
 import minicraft.Sound;
 import minicraft.gfx.Color;
 import minicraft.gfx.Dimension;
@@ -192,12 +194,14 @@ public class Menu {
 		
 		// render the title
 		if(title.length() > 0) {
+			String localTitle = Localization.getLocalized(title);
+			
 			if (drawVertically) {
-				for (int i = 0; i < title.length(); i++) {
-					Font.draw(title.substring(i, i + 1), screen, titleLoc.x, titleLoc.y + i * Font.textHeight(), titleColor);
+				for (int i = 0; i < localTitle.length(); i++) {
+					Font.draw(localTitle.substring(i, i + 1), screen, titleLoc.x, titleLoc.y + i * Font.textHeight(), titleColor);
 				}
 			} else
-				Font.draw(title, screen, titleLoc.x, titleLoc.y, titleColor);
+				Font.draw(localTitle, screen, titleLoc.x, titleLoc.y, titleColor);
 		}
 		
 		// render the options
@@ -339,7 +343,10 @@ public class Menu {
 		
 		public Builder setTitlePos(RelPos rp) { titlePos = (rp == null ? RelPos.TOP : rp); return this; }
 		
-		public Builder setTitle(String title) { menu.title = title; return this; }
+		public Builder setTitle(String title) { 
+			menu.title = title;
+			return this; 
+		}
 		
 		public Builder setTitle(String title, int color) { return setTitle(title, color, false); }
 		public Builder setTitle(String title, int color, boolean fullColor) {
