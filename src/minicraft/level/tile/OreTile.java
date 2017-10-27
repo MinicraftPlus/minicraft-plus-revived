@@ -47,7 +47,7 @@ public class OreTile extends Tile {
 	}
 
 	public void render(Screen screen, Level level, int x, int y) {
-		sprite.color = (type.color & 0xffffff00) + Color.get(DirtTile.dCol(level.depth));
+		sprite.color = (type.color & 0x00_ff_ff_ff) | (Color.get(DirtTile.dCol(level.depth)) << 24);
 		sprite.render(screen, x*16, y*16);
 	}
 
