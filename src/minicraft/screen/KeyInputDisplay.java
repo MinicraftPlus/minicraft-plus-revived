@@ -13,10 +13,6 @@ public class KeyInputDisplay extends Display {
 	
 	private boolean listeningForBind, confirmReset;
 	
-	//private static final FontStyle style = new FontStyle().setYPos(Font.textHeight()*2).setXPos(0);
-	
-	//private static Frame inputFrame = new Frame("", new Rectangle(4, 4, Screen.w/SpriteSheet.boxWidth-8,Screen.h/SpriteSheet.boxWidth-8));
-	
 	private static Menu.Builder builder;
 	
 	private static KeyInputEntry[] getEntries() {
@@ -32,9 +28,7 @@ public class KeyInputDisplay extends Display {
 	public KeyInputDisplay() {
 		super(true);
 		builder = new Menu.Builder(false, 0, RelPos.CENTER, getEntries())
-			//.setSize(Screen.w, Screen.h)
 			.setTitle("Controls")
-			//.setScrollPolicies(1, false)
 			.setPositioning(new Point(Screen.w/2, Screen.h - Font.textHeight()*5), RelPos.TOP);
 		
 		Menu.Builder popupBuilder = new Menu.Builder(true, 4, RelPos.CENTER)
@@ -111,8 +105,6 @@ public class KeyInputDisplay extends Display {
 		
 		super.render(screen);
 		
-		//Font.drawCentered("Controls", screen, 0, Color.WHITE);
-		
 		if(!listeningForBind && !confirmReset) {
 			String[] lines = {
 				"Press C/Enter to change key binding",
@@ -123,21 +115,5 @@ public class KeyInputDisplay extends Display {
 			for(int i = 0; i < lines.length; i++)
 				Font.drawCentered(lines[i], screen, Screen.h-Font.textHeight()*(4-i), Color.WHITE);
 		}
-		
-		/*if(listeningForBind) {
-			inputFrame.setTitle("");
-			inputFrame.render(screen);
-			Font.drawCentered("Press the desired", screen, (Screen.h-Font.textHeight()) / 2 - 4, Color.get(-1, 450));
-			Font.drawCentered("key sequence", screen, (Screen.h-Font.textHeight()) / 2 + 4, Color.get(-1, 450));
-		}
-		else if(confirmReset) {
-			inputFrame.setTitle("Confirm Action");
-			inputFrame.render(screen);
-			
-			FontStyle style = new FontStyle(Color.get(-1, 511));
-			Font.drawParagraph("Are you sure you want to reset all key bindings to the default keys?", screen, 8*4, true, 8*4, true, style, 4);
-			style.setColor(Color.get(-1, 533));
-			Font.drawParagraph("enter to confirm\nescape to cancel", screen, 8, true, (Screen.h-Font.textHeight()) / 2 + 8*3, false, style, 4);
-		}*/
 	}
 }
