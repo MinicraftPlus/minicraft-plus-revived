@@ -2,11 +2,11 @@ package minicraft.screen;
 
 import minicraft.Game;
 import minicraft.InputHandler;
+import minicraft.Localization;
 import minicraft.gfx.Color;
 import minicraft.gfx.Font;
 import minicraft.gfx.Point;
 import minicraft.gfx.Screen;
-import minicraft.saveload.Save;
 import minicraft.screen.entry.KeyInputEntry;
 import minicraft.screen.entry.StringEntry;
 
@@ -121,8 +121,12 @@ public class KeyInputMenu extends Display {
 				"Shift-D to reset all keys to default",
 				Game.input.getMapping("exit")+" to Return to menu"
 			};
-			for(int i = 0; i < lines.length; i++)
-				Font.drawCentered(lines[i], screen, Screen.h-Font.textHeight()*(4-i), Color.WHITE);
+			
+			for(int i = 0; i < lines.length; i++) {
+				String localLine = Localization.getLocalized(lines[i]);
+				Font.drawCentered((localLine == null ? lines[i] : localLine),
+						screen, Screen.h-Font.textHeight()*(4-i), Color.WHITE);
+			}
 		}
 		
 		/*if(listeningForBind) {

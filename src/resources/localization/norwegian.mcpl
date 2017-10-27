@@ -1,0 +1,1025 @@
+#### Norwegian translation for MinicraftPlus
+#### Created by Christoffer Holmesland
+
+### entity
+
+## entity.particle
+## entity.particle end
+
+# AirWizard.java
+Air Wizard: Defeated!
+Luft Trollmann: Slaatt
+
+The Dungeon is now open!
+Fangehullet er naa aapent!
+
+A costume lies on the ground...
+Et kostyme ligger paa bakken...
+
+# Bed.java
+Can't sleep! 
+Kan ikke sove! 
+
+Min 
+Minst 
+
+ Sec left!
+ sekunder igjen!
+
+# DungeonChest.java
+You hear a noise from the surface!
+Du hoerer en lyd fra overflaten!
+
+# Player.java
+
+Crafting
+Crafting
+
+Set your home!
+Velg hjem!
+
+Can't set home here!
+Kan ikke sette hjem her!
+
+Home Sweet Home!
+Hjem kjeare hjem!
+
+Mode penalty: -2 health
+Modus straff: -2 helse
+
+You don't have a home!
+Du har ikke et hjem!
+
+You can't go home from here!
+Du kan ikke gaa hjem herfra!
+ 
+### entity end
+
+### gfx
+### gfx end
+
+### item
+
+# ArmorItem.java
+Leather Armor
+Laer rustning
+
+Snake Armor
+Slange rustning
+
+Iron Armor
+Jern rustning
+
+Gold Armor
+Gull rustning
+
+Gem Armor
+Juvel rustning
+
+# BookItem.java
+
+Book
+Bok
+
+Antidious
+Antidious
+
+# BucketItem.java
+
+Empty Bucket
+Tom Boette
+
+Water Bucket
+Vann Boette
+
+Lava Bucket
+Lava Boette
+
+ Bucket
+ Boette
+ 
+# ClothingItem.java
+
+Red Clothes
+Roede Klear
+
+Blue Clothes
+Blaa Klear
+
+Green Clothes
+Groenn Klear
+
+Yellow Clothes
+Gul Klear
+
+Black Clothes
+Svart Klear
+
+Orange Clothes
+Oransje Klear
+
+Purple Clothes
+Lilla Klear
+
+Cyan Clothes
+Cyan Klear
+
+Reg Clothes
+Vanlige Klear
+
+# FoodItem.java
+
+Bread
+Broed
+
+Apple
+Eple
+
+Raw Pork
+Raatt svinekjoett
+
+Raw Fish
+Raa fisk
+
+Raw Beef
+Raa biff
+
+Pork Chop
+Svinekjoett
+
+Cooked Fish
+Kokt fisk
+
+Cooked Pork
+Stekt svinekjoett
+
+Steak
+Biff
+
+Gold Apple
+Gull Eple
+
+# FurnitureItem.java
+
+Cow Spawner
+Ku Spawner
+
+Pig Spawner
+Gris Spawner
+
+Sheep Spawner
+Sau Spawner
+
+Slime Spawner
+Slim Spawner
+
+Zombie Spawner
+Zombie Spawner
+
+Creeper Spawner
+Creeper Spawner
+
+Skeleton Spawner
+Skjelett Spawner
+
+Snake Spawner
+Slange Spawner
+
+Knight Spawner
+Ridder Spawner
+
+AirWizard Spawner
+LuftTrollmann Spawner
+
+Workbench
+Arbeidsbenk
+
+Oven
+Stekeovn
+
+Furnace
+Ovn
+
+Anvil
+Ambolt
+
+Enchanter
+Forhekser
+
+Loom
+Vevstol
+
+Lantern
+Lykt
+
+Iron Lantern
+Jern Lykt
+
+Gold Lantern
+Gull Lykt
+
+Tnt
+Tnt
+
+Bed
+Seng
+
+Chest
+Kiste
+
+# PotionType.java
+
+None Potion
+Ingen Trylledrikk
+
+Speed Potion
+Fart Trylledrikk
+
+Light Potion
+Lys Trylledrikk
+
+Swim Potion
+Svomme Trylledrikk
+
+Energy Potion
+Energi Trylledrikk
+
+Regen Potion
+Regen Trylledrikk
+
+Health Potion
+Helse Trylledrikk
+
+Time Potion
+Tid Trylledrikk
+
+Lava Potion
+Lava Trylledrikk
+
+Shield Potion
+Skjold Trylledrikk
+
+Haste Potion
+Hastighet Trylledrikk
+
+Potion
+Trylledrikk
+
+# PowerGloveItem.java
+
+Power Glove
+Kraft hanske
+
+# StackableItem.java
+
+Wood
+Tre
+
+Stone
+Stein
+
+Leather
+Lear
+
+Wheat
+Hvete
+
+Key
+Noekkel
+
+arrow
+pil
+
+string
+traad
+
+Coal
+Kull
+
+Iron Ore
+Jern Malm
+
+Lapis
+Lapis
+
+Gold Ore
+Gull malm
+
+Iron
+Jern
+
+Gold
+Gull
+
+Rose
+Rose
+
+GunPowder
+Krutt
+
+Slime
+Slim
+
+glass
+glass
+
+cloth
+toeystykke
+
+gem
+juvel
+
+Scale
+skala
+
+Shard
+Fragment
+
+# TileItem.java
+
+Flower
+Blomst
+
+Acorn
+Eikenoett
+
+Dirt
+Jord
+
+Plank
+Planke
+
+Plank Wall
+Planke Vegg
+
+Wood Door
+Tre doer
+
+Stone Brick
+Stein murstein
+
+Stone Wall
+Stein vegg
+
+Stone Door
+Stein doer
+
+Obsidian Brick
+Lavastein murstein
+
+Obsidian Wall
+Lavastein vegg
+
+Obsidian Door
+Lavastein doer
+
+Wool
+Ull
+
+Red Wool
+Roed Ull
+
+Blue Wool
+Blaa Ull
+
+Green Wool
+Groenn Ull
+
+Yellow Wool
+Gul Ull
+
+Black Wool
+Svart Ull
+
+Sand
+Sand
+
+Cactus
+Kaktus
+
+Seeds
+Froe
+
+Grass Seeds
+Grass Froe
+
+Bone
+Bein
+
+Cloud
+Sky
+
+Can only be placed on 
+Kan bare settes paa 
+
+Dig a hole first!
+Grav et hull foerst!
+
+# ToolItem.java
+
+Wood
+Tre
+
+Rock
+Stein
+
+Iron
+Jern
+
+Gold
+Gull
+
+Gem
+Juvel
+
+Fishing Rod
+Fiskestang
+
+# ToolType.java
+
+Shovel
+Spade
+
+Hoe
+Ljaa
+
+Sword
+Sverd
+
+Pickaxe
+Hakke
+
+Axe
+Oeks
+
+Bow
+Bue
+
+FishingRod
+Fiskestang
+
+Claymore
+Claymore
+
+# TorchItem.java
+
+Torch
+Fakkel
+
+### item end
+
+### level
+
+## tile 
+
+# Tiles.java
+
+Gem Ore
+Juvel malm
+
+Wood Planks
+Tre planker
+
+Stone Bricks
+Stein murstein
+
+Obsidian
+Lavastein
+
+Wood Wall
+Tre vegg
+
+Grass
+Grass
+
+Dirt
+Jord
+
+Flower
+Blomst
+
+Hole
+Hull
+
+Stairs Up
+Trapp opp
+
+Stairs Down
+Trapp ned
+
+Water
+Vann
+
+Rock
+Stein
+
+Tree
+Tre
+
+Tree Sapling
+Tre Spire
+
+Sand
+Sand
+
+Cactus
+Kaktus
+
+Cactus Sapling
+Kaktus Spire
+
+Lava
+Lava
+
+Lava Brick
+Lava Murstein
+
+Explode
+Eksploder
+
+Farmland
+Dyrket mark
+
+Wheat
+Hvete
+
+Hard Rock
+Hard Stein
+
+Infinite Fall
+Uendelig Fall
+
+Cloud
+Sky
+
+Cloud Cactus
+Sky Kaktus
+
+# OreTile.java
+
+Iron
+Jern
+
+Lapis
+Lapis
+
+Gold
+Gull
+
+Gem
+Juvel
+
+Ore
+Malm
+
+## tile end
+
+### level end
+
+### network
+
+# MinicraftClient.java
+
+host not found
+finner ikke verten
+
+unable to get localhost address
+kan ikke hente localhost adressen
+
+### network end
+
+### saveload
+### saveload end
+
+### screen
+
+## entry
+
+# BooleanEntry.java
+
+On
+Paa
+
+Off
+Av
+
+## entry end
+
+# BookDisplay.java
+
+There is nothing of use here.
+Det er ikke noe nyttig her.
+
+Still nothing... :P
+Fortsatt ingenting... :P
+
+# CraftingMenu.java
+
+Have:
+Har:
+
+Cost:
+Kostnad:
+
+# DeadMenu.java
+
+Time: 
+Tid: 
+
+Score: 
+Poeng: 
+
+Quit
+Avslutt
+
+Respawn
+Gjennoppstaa
+
+You died! Aww!
+Du doede! Aww!
+
+# Displays.java
+With the default controls...\n\nMove your character with arrow keys or WSAD. Press C to attack and X to open the inventory, and to use items. Select an item in the inventory to equip it.\n\nKill the air wizard to win the game!
+Med de vanlige kontrollene...\n\nFlytt karakteren med piltastene eller WASD. Trykk C for aa angripe og X for aa aapne inventaret, og for aa bruke ting. Velg en ting i inventaret for aa utruste deg med det.\n\nDrep LuftTrollmannen for aa vinne!
+
+# EndGameDisplay.java
+
+Player Score: 
+Spiller poeng: 
+
+<Bonuses>
+<Bonuser>
+
+Final Score: 
+Endelig poeng: 
+
+Exit to Menu
+Avslutt til menyen
+
+# InfoDisplay.java
+
+Time Played: 
+Tid Spillt: 
+
+Current Score: 
+Naavearende poeng: 
+
+Exit
+Gaa ut
+
+Player Stats
+Spiller statistikk
+
+# KeyInputMenu.java
+
+Controls
+Kontroller
+
+Press the desired
+Trykk oensket
+
+key sequence
+tastesekvens
+
+Are you sure you want to reset all key bindings to the default keys?
+Er du sikker paa at du vil resette alle tastene?
+
+enter to confirm
+enter for aa bekrefte
+
+escape to cancel
+escape for aavbyte
+
+Confirm Action
+Bekreft handling
+
+Press C/Enter to change key binding
+Trykk C/Enter for aa endre tast
+
+Press A to add key binding
+Trykk A for aa legge til tastebinding
+
+Shift-D to reset all keys to default
+Shift-D for aa resette alle tastene
+
+ESCAPE to Return to menu
+ESC for aa gaa tilbake til menyen 
+
+# LoadingDisplay.java
+
+Loading...
+Laster...
+
+# MultiplayerMenu.java
+
+waiting...
+venter...
+
+nothing
+ingenting
+
+attempting log in
+forsoeker aa logge inn
+
+no internet connection, but no login data saved; cannot enter offline mode.
+ingen internett tilgang, og ingen login data lagret; kan ikke gaa i offline modus.
+
+connecting to server
+kobler til serveren
+
+logging in
+logger inn
+
+saving credentials
+lagrer legitimasjon
+
+login failed.
+login mislyktes.
+
+problem with saved login data; please exit and login again.
+problemer med lagret login data; vennligst logg inn paa nytt.
+
+Internal server error: Couldn't fetch username from uuid
+Intern server feil: Kunne ikke hente brukernavn fra uuid
+
+logged in as: 
+logget inn som: 
+
+offline mode: local servers only
+offline modus: bare lokale servere
+
+Enter ip address to connect to:
+Skriv inn ipadressen du vil koble til
+
+Press Shift-Escape to logout
+Trykk Shift-Escape for aa logge ut
+
+Enter email:
+Skriv email:
+
+Enter password:
+Skriv passord:
+
+field is blank
+feltet er tomt
+
+get an account at:
+faa en bruker paa:
+
+Loading 
+Laster 
+
+ from server
+ fra server
+ 
+Could not connect to server:
+Kunne ikke koble til server:
+
+Press 
+Trykk 
+
+ to return
+ for aa returnere
+
+# OptionsMenu.java
+
+Change Key Bindings
+Endre tastene
+
+Options
+Innstillinger
+
+Change language
+Skift spraak
+
+# PauseMenu.java
+
+Return to Game
+Gaa tilbake til spillet
+
+Options
+Innstillinger
+
+Make World Multiplayer
+Gjoer verdenen til flerspiller
+
+Save Game
+Lagre spill
+
+ and 
+ og 
+ 
+ to Scroll
+ for aa skrolle
+ 
+: Choose
+: Velg
+ 
+Paused
+Pauset
+
+Main Menu
+Hovedmeny
+
+# PlayerInvMenu.java
+
+Inventory
+Inventar
+
+# TitleMenu.java
+
+Play
+Start spill
+
+Load World
+Last verden
+
+New World
+Ny verden
+
+Join Online World
+Spill paa nett
+
+Options
+Innstilinger
+
+Help
+Hjelp
+
+Instructions
+Instruksjoner
+
+Storyline Guide (for the weak)
+Historie guide (for de svake)
+
+About
+Om spillet
+
+Quit
+Avslutt
+
+ to select
+ for aa velge
+ 
+ to accept
+ for aa akseptere
+ 
+ to return
+ for aa gaa tilbake
+
+# WorldEditMenu.java
+
+New World Name:
+Nytt navn:
+
+Are you sure you want to delete
+Er du sikker paa at du vil slette
+
+This can not be undone!
+Du kan ikke angre dette!
+
+ to confirm
+ for aa bekrefte
+ 
+ to cancel
+ for aa avbryte
+
+# WorldGenMenu.java
+
+World Seed
+Verden froe
+
+Enter World Name
+Navn paa verden
+
+Trouble with world name?
+Problemer med navnet?
+
+by default, w and s move the cursor up and down. This can be changed in the key binding menu. To type the letter instead of moving the cursor, hold the shift key while typing the world name.
+vanligvis brukes w og s til aa flytte pekeren opp og ned. Dette kan du endre i key binding menyen. For aa skrive i stedet for aa flytte pekeren kan du holde inne shift knappen.
+
+Create World
+Lag verden
+
+World Gen Options
+Verden instillinger
+
+# WorldSelectMenu.java
+
+Copy
+Kopier
+
+Rename
+Gi nytt navn
+
+Delete
+Slett
+
+ to confirm
+ for aa bekrefte
+ 
+ to return
+ for aa avbryte
+ 
+Select World
+Velg verden
+
+Select a World to
+Velg en verden til
+
+# LocalizationMenu.java
+
+Languages
+Spraakmeny
+
+Language
+Spraak
+
+Select
+Velg
+
+### screen end
+
+### minicraft
+
+# Settings.java
+
+Max FPS
+Maks FPS
+
+Difficulty
+Vanskelighetsgrad
+
+Easy
+Lett
+
+Normal
+Normal
+
+Hard
+Vanskelig
+
+Game Mode
+Spill modus
+
+Survival
+Overlevelse
+
+Creative
+Kreativ
+
+Hardcore
+Hardcore
+
+Score
+Poeng
+
+Time (Score Mode)
+Tid (Poeng modus)
+
+Sound
+Lyd
+
+Autosave
+Autolagre
+
+World Size
+Verden storrelse
+
+World Theme
+Verden tema
+
+Normal
+Normal
+
+Forest
+Skog
+
+Desert
+Oerken
+
+Plain
+Plain
+
+Hell
+Helvete
+
+Terrain Type
+Terreng type
+
+Island
+Oey
+
+Box
+Boks
+
+Mountain
+Fjell
+
+Irregular
+Uregulear
+
+Wear Suit
+Ta paa drakt
+
+### minicraft end

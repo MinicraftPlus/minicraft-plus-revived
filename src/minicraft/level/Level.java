@@ -8,7 +8,31 @@ import java.util.function.ToIntFunction;
 
 import minicraft.Game;
 import minicraft.Settings;
-import minicraft.entity.*;
+import minicraft.entity.AirWizard;
+import minicraft.entity.Chest;
+import minicraft.entity.Cow;
+import minicraft.entity.Crafter;
+import minicraft.entity.Creeper;
+import minicraft.entity.DungeonChest;
+import minicraft.entity.EnemyMob;
+import minicraft.entity.Entity;
+import minicraft.entity.Inventory;
+import minicraft.entity.ItemEntity;
+import minicraft.entity.Knight;
+import minicraft.entity.Lantern;
+import minicraft.entity.Mob;
+import minicraft.entity.MobAi;
+import minicraft.entity.PassiveMob;
+import minicraft.entity.Pig;
+import minicraft.entity.Player;
+import minicraft.entity.RemotePlayer;
+import minicraft.entity.Sheep;
+import minicraft.entity.Skeleton;
+import minicraft.entity.Slime;
+import minicraft.entity.Snake;
+import minicraft.entity.Spawner;
+import minicraft.entity.Tnt;
+import minicraft.entity.Zombie;
 import minicraft.entity.particle.Particle;
 import minicraft.gfx.Point;
 import minicraft.gfx.Screen;
@@ -20,6 +44,7 @@ import minicraft.level.tile.Tiles;
 import minicraft.level.tile.TorchTile;
 
 public class Level {
+	
 	private Random random = new Random();
 	
 	private static final int MOB_SPAWN_FACTOR = 100; // the chance of a mob actually trying to spawn when trySpawn is called equals: mobCount / maxMobCount * MOB_SPAWN_FACTOR. so, it basically equals the chance, 1/number, of a mob spawning when the mob cap is reached. I hope that makes sense...
@@ -125,6 +150,8 @@ public class Level {
 		tiles = maps[0]; // assigns the tiles in the map
 		data = maps[1]; // assigns the data of the tiles
 		
+		if(Game.debug) System.out.println("test1");
+		
 		if (parentLevel != null) { // If the level above this one is not null (aka, if this isn't the sky level)
 			for (int y = 0; y < h; y++) { // loop through height
 				for (int x = 0; x < w; x++) { // loop through width
@@ -148,6 +175,7 @@ public class Level {
 			}
 		}
 
+		if(Game.debug) System.out.println("test12");
 		
 		/// if the level is the dungeon, and we're not just loading the world...
 		if (level == -4) {
@@ -304,10 +332,14 @@ public class Level {
 			}
 		}
 
+		if(Game.debug) System.out.println("test123");
+		
 		if (level == 1) {
 			AirWizard aw = new AirWizard(false);
 			add(aw, w * 16 / 2, h * 16 / 2);
 		}
+		
+		if(Game.debug) System.out.println("test1234");
 		
 		if (Game.debug) printTileLocs(Tiles.get("Stairs Down"));
 	}
@@ -591,8 +623,9 @@ public class Level {
 	}
 	
 	private void trySpawn() {
-		if(random.nextInt((int) (MOB_SPAWN_FACTOR * Math.pow(mobCount, 2) / Math.pow(maxMobCount, 2))) != 0)
-			return; // hopefully will make mobs spawn a lot slower.
+	     int spawnFailChance = (int) (MOB_SPAWN_FACTOR * Math.pow(mobCount, 2) / Math.pow(maxMobCount, 2));
+        if(spawnFailChance > 0 && random.nextInt(spawnFailChance) != 0)
+            return; // hopefully will make mobs spawn a lot slower.
 		
 		boolean spawned = false;
 		for (int i = 0; i < 30 && !spawned; i++) {

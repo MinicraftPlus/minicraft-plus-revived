@@ -5,6 +5,7 @@ import java.util.Arrays;
 
 import minicraft.Game;
 import minicraft.InputHandler;
+import minicraft.Localization;
 import minicraft.gfx.Color;
 import minicraft.gfx.Font;
 import minicraft.gfx.Point;
@@ -27,6 +28,9 @@ public class BookDisplay extends Display {
 		page = 0;
 		if(book == null)
 			book = defaultBook;
+		
+		String localBook = Localization.getLocalized(book);
+		if (localBook != null) book = localBook;
 		
 		ArrayList<String[]> pages = new ArrayList<>();
 		String[] splitContents = book.split("\0");

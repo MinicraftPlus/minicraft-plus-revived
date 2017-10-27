@@ -1,6 +1,8 @@
 package minicraft.entity;
 
+import java.util.HashMap;
 import java.util.List;
+
 import minicraft.gfx.Color;
 import minicraft.gfx.Screen;
 
@@ -10,6 +12,23 @@ public class Arrow extends Entity {
 	private int damage;
 	public Mob owner;
 	private int speed;
+	
+	// How many entities the arrow can hit before its removed.
+	private int hitsLeft;
+	// How much damage the arrow can do before its removed.
+	private int damageLeft;
+	// Chance of a critical hit in percent.
+	private int criticalChance;
+	// How much damage is added when the hit is critical.
+	private int criticalDamage;
+	// How much extra damage is done to non-player entities
+	private int extraDamageToMobs;
+	// Used to check if an arrow has already hit an entity. This allows
+	// the arrow to pass through entities instead of just hitting it again the next tick.
+	// Implemented as a HashMap so it is possible to make some arrows be able to hit the same entity twice.
+	private HashMap<Entity, Integer> hitsOnEntities;
+	// How many times the arrow can hit the same entity
+	private int maxHitCount;
 	
 	public Arrow(Mob owner, int dirx, int diry, int dmg) {
 		this(owner, owner.x, owner.y, dirx, diry, dmg);
@@ -28,6 +47,19 @@ public class Arrow extends Entity {
 		if (damage > 3) speed = 3;
 		else if (damage >= 0) speed = 2;
 		else speed = 1;
+		
+		// I picked some values which seems to work fine.
+		// Critical damage and chance is the same as before.
+		criticalDamage = 1;
+		criticalChance = 20;
+		hitsLeft = 2;
+		extraDamageToMobs = 3;
+		maxHitCount = 1;
+		// At the moment this makes the arrow able to do full damage at both hits,
+		// but only one of them can crit.
+		damageLeft = hitsLeft * (damage + extraDamageToMobs) + criticalDamage;
+		hitsOnEntities = new HashMap<>();
+		
 		
 		/* // maybe this was a "critical arrow" system or something?
 		if (flag) {
@@ -51,14 +83,48 @@ public class Arrow extends Entity {
 		
 		// TODO I think I can just use the xr yr vars, and the normal system with touchedBy(entity) to detect collisions instead.
 		List<Entity> entitylist = level.getEntitiesInRect(x, y, x, y);
-		boolean criticalHit = random.nextInt(11) < 9;
+		boolean doCriticalDamage = random.nextInt(101) < criticalChance;
+		
 		for (int i = 0; i < entitylist.size(); i++) {
 			Entity hit = entitylist.get(i);
 			
 			if (hit != null && hit instanceof Mob && hit != owner) {
 				Mob mob = (Mob) hit;
-				int extradamage = (hit instanceof Player ? 0 : 3) + (criticalHit ? 0 : 1);
-				mob.hurt(owner, damage + extradamage, (xdir<0?2:(xdir>0?3:(ydir<0?1:0)))); // that should correctly convert to mob directions.
+	
+				// Doesn't hit the entity if it has already exceeded the allowed amount of hits
+				if (hitsOnEntities.containsKey(hit)) {
+					if (hitsOnEntities.get(hit) >= maxHitCount) {
+						continue;
+					}
+				}
+				
+				int totalDamage = damage;
+				if (doCriticalDamage) totalDamage += criticalDamage;
+				if (!(hit instanceof Player)) totalDamage += extraDamageToMobs;
+				
+				// Caps the damage to the damage which can be done.
+				if (totalDamage > damageLeft) {
+					totalDamage = damageLeft;
+					damageLeft = 0;
+				} else {
+					damageLeft -= totalDamage;
+				}
+				
+				mob.hurt(owner, totalDamage, (xdir<0?2:(xdir>0?3:(ydir<0?1:0)))); // that should correctly convert to mob directions.
+				hitsLeft--;
+				
+				// Updates the hit count from this arrow on the given entity.
+				if (hitsOnEntities.containsKey(hit)) {
+					int count = hitsOnEntities.get(hit);
+					hitsOnEntities.put(hit, count + 1);
+				} else {
+					hitsOnEntities.put(hit, 1);
+				}
+				
+				// Removes the arrow if it can't hit more entities or if it has dealt all its damage.
+				if (hitsLeft <= 0 || damageLeft <= 0) {
+					this.remove();
+				}
 			}
 			
 			/*if(owner instanceof Player && minicraft.screen.Game.isMode("creative") && minicraft.Game.debug) {

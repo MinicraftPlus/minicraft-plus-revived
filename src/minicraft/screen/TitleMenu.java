@@ -5,8 +5,10 @@ import java.util.Arrays;
 import java.util.Random;
 
 import com.sun.istack.internal.NotNull;
+
 import minicraft.Game;
 import minicraft.InputHandler;
+import minicraft.Localization;
 import minicraft.entity.RemotePlayer;
 import minicraft.gfx.Color;
 import minicraft.gfx.Font;
@@ -145,9 +147,12 @@ public class TitleMenu extends Display {
 		
 		Font.draw("Version " + Game.VERSION, screen, 1, 1, Color.get(-1, 111));
 		
-		Font.drawCentered("("+Game.input.getMapping("up")+", "+Game.input.getMapping("down")+" to select)", screen, Screen.h - 32, Color.get(-1, 111));
-		Font.drawCentered("("+Game.input.getMapping("select")+" to accept)", screen, Screen.h - 22, Color.get(-1, 111));
-		Font.drawCentered("("+Game.input.getMapping("exit")+" to return)", screen, Screen.h - 12, Color.get(-1, 111));
+		String upString = "("+Game.input.getMapping("up")+", "+Game.input.getMapping("down")+Localization.getLocalized(" to select")+")";
+		String selectString = "("+Game.input.getMapping("select")+Localization.getLocalized(" to accept")+")";
+		String exitString = "("+Game.input.getMapping("exit")+Localization.getLocalized(" to return")+")";
+		Font.drawCentered(upString, screen, Screen.h - 32, Color.get(-1, 111));
+		Font.drawCentered(selectString, screen, Screen.h - 22, Color.get(-1, 111));
+		Font.drawCentered(exitString, screen, Screen.h - 12, Color.get(-1, 111));
 	}
 	
 	private static final String[] splashes = {//new ArrayList<String>();

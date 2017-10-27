@@ -1,10 +1,11 @@
 package minicraft.level;
 
-import javax.swing.ImageIcon;
-import javax.swing.JOptionPane;
 import java.awt.Image;
 import java.awt.image.BufferedImage;
 import java.util.Random;
+
+import javax.swing.ImageIcon;
+import javax.swing.JOptionPane;
 
 import minicraft.Game;
 import minicraft.Settings;
@@ -14,6 +15,7 @@ import minicraft.screen.WorldGenMenu;
 public class LevelGen {
 	private static long worldSeed = 0;
 	private static final Random random = new Random(worldSeed);
+
 	public double[] values; //An array of doubles, used to help making noise for the map
 	private int w, h; // width and height of the map
 	private static int d = 0;
@@ -133,6 +135,7 @@ public class LevelGen {
 		random.setSeed(worldSeed);
 		int attempt = 0;
 		do {
+			attempt++;
 			byte[][] result = createTopMap(w, h);
 			
 			int[] count = new int[256];
