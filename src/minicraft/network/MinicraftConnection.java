@@ -87,7 +87,7 @@ public abstract class MinicraftConnection extends Thread implements MinicraftPro
 	
 	protected abstract boolean parsePacket(InputType inType, String data);
 	
-	protected synchronized void sendData(InputType inType, String data) {
+	protected void sendData(InputType inType, String data) {
 		if(socket == null) return;
 		
 		char inTypeChar = (char) (inType.ordinal()+1);

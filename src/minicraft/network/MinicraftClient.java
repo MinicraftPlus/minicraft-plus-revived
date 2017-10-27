@@ -141,7 +141,7 @@ public class MinicraftClient extends MinicraftConnection {
 	}
 	
 	/** This method is responsible for parsing all data received by the socket. */
-	public synchronized boolean parsePacket(InputType inType, String alldata) {
+	public boolean parsePacket(InputType inType, String alldata) {
 		String[] data = alldata.split(";");
 		
 		switch(inType) {

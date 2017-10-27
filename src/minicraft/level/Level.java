@@ -533,7 +533,7 @@ public class Level {
 				e.remove();
 	}
 	
-	public synchronized Entity[] getEntityArray() {
+	public Entity[] getEntityArray() {
 		return entities.toArray(new Entity[0]);
 	}
 	

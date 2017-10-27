@@ -364,7 +364,7 @@ public class MinicraftServer extends Thread implements MinicraftProtocol {
 		return names.toString();
 	}
 	
-	public synchronized boolean parsePacket(MinicraftServerThread serverThread, InputType inType, String alldata) {
+	public boolean parsePacket(MinicraftServerThread serverThread, InputType inType, String alldata) {
 		String[] data = alldata.split(";");
 		
 		//if (Game.debug) System.out.println("received packet");

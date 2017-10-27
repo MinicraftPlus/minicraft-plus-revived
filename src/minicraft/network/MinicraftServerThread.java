@@ -85,7 +85,7 @@ public class MinicraftServerThread extends MinicraftConnection {
 	
 	public RemotePlayer getClient() { return client; }
 	
-	protected synchronized boolean parsePacket(InputType inType, String data) {
+	protected boolean parsePacket(InputType inType, String data) {
 		//if(inType == InputType.LOAD) isPlaying = true;
 		
 		if(inType == InputType.PING) {
@@ -143,7 +143,7 @@ public class MinicraftServerThread extends MinicraftConnection {
 		cachedPackets.clear();
 	}
 	
-	protected synchronized void sendData(InputType inType, String data) {
+	protected void sendData(InputType inType, String data) {
 		if(packetTypesToCache.contains(inType))
 			cachedPackets.add(inType.ordinal()+":"+data);
 		else if(!packetTypesToKeep.contains(inType))
