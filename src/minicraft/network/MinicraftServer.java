@@ -405,11 +405,16 @@ public class MinicraftServer extends Thread implements MinicraftProtocol {
 					return false;
 				}
 				
+				// check if the same username already exists on the server (due to glitches), and if so, remove it
+				MinicraftServerThread oldThread;
+				while((oldThread = getAssociatedThread(username)) != null)
+					oldThread.endConnection();
+				
 				/// versions match, and username is unique; make client player
 				clientPlayer.setUsername(username);
 				//RemotePlayer clientPlayer = new RemotePlayer(null, address, port);
 				
-				/// now, we need to check if this player has played in this world before. If they have, then all previoeus settings and items and such will be restored.
+				/// now, we need to check if this player has played in this world before. If they have, then all previous settings and items and such will be restored.
 				String playerdata = ""; // this stores the data fetched from the files.
 				
 				if(serverThread.getClient().getIpAddress().isLoopbackAddress() && hostPlayer == null) {
