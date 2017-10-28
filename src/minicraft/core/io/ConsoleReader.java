@@ -11,11 +11,17 @@ import minicraft.core.Initializer;
 import minicraft.core.Network;
 import minicraft.core.Updater;
 import minicraft.core.World;
+import minicraft.entity.Entity;
+import minicraft.entity.mob.Mob;
+import minicraft.entity.mob.Player;
 import minicraft.entity.mob.RemotePlayer;
+import minicraft.gfx.Rectangle;
 import minicraft.level.Level;
 import minicraft.network.MinicraftServerThread;
 import minicraft.saveload.Save;
 import minicraft.screen.WorldSelectDisplay;
+
+import org.jetbrains.annotations.Nullable;
 
 public class ConsoleReader extends Thread {
 	
@@ -303,6 +309,27 @@ public class ConsoleReader extends Thread {
 		PING ("", "Pings all the clients, and prints a message when each responds.") {
 			@Override
 			public void run(String[] args)  { Game.server.pingClients(); }
+		},
+		
+		KILL ("<playername> | @[!]<all|entity|player|mob> <level | <playername> <radius>>", "Kills the specified entities.", "Specifying only a playername will kill that player.", "In the second form, use @all to refer to all entities, @entity to refer to all non-mob entities, @mob to refer to only mob entities, and @player to refer to all players.", "the \"!\" reverses the effect.", "@_ level will target all matching entities for that level.", "using a playername and radius will target all matching entities within the given radius of the player, the radius being a number of tiles.") {
+			@Override
+			public void run(String[] args) {
+				List<Entity> entities = targetEntities(args);
+				if(entities == null) {
+					printHelp(this);
+					return;
+				}
+				
+				int count = entities.size();
+				for(Entity e: entities) {
+					if(e instanceof Mob)
+						((Mob)e).kill();
+					else
+						e.remove();
+				}
+				
+				System.out.println("removed " + count + " entities.");
+			}
 		};
 		
 		private String generalHelp, detailedHelp, usage;
@@ -339,6 +366,100 @@ public class ConsoleReader extends Thread {
 				else return Integer.parseInt(coord.replace("~", "")) + baseline;
 			} else
 				return Integer.parseInt(coord);
+		}
+		
+		@Nullable
+		private static List<Entity> targetEntities(String[] args) {
+			List<Entity> matches = new ArrayList<>();
+			
+			if(args.length == 0) {
+				//printHelp();
+				System.out.println("cannot target entities without arguments.");
+				return null;
+			}
+			
+			if(args.length == 1) {
+				// must be player name
+				MinicraftServerThread thread = Game.server.getAssociatedThread(args[0]);
+				if(thread != null)
+					matches.add(thread.getClient());
+				return matches;
+			}
+			
+			// must specify @_ as first argument
+			
+			if(!args[0].startsWith("@")) {
+				System.out.println("invalid entity targeting format. Please read help.");
+				return null;
+			}
+			
+			String target = args[0].substring(1).toLowerCase(Locale.ENGLISH); // cut off "@"
+			List<Entity> allEntities = new ArrayList<>();
+			
+			if(args.length == 2) {
+				// specified @_ level
+				try {
+					allEntities.addAll(Arrays.asList(Game.levels[new Integer(args[1])].getEntityArray()));
+				} catch(NumberFormatException ex) {
+					System.out.println("invalid entity targeting format: specified level is not an integer: " + args[1]);
+					return null;
+				} catch (IndexOutOfBoundsException ex) {
+					System.out.println("invalid entity targeting format: specified level does not exist: " + args[1]);
+					return null;
+				}
+			}
+			
+			if(args.length == 3) {
+				// @_ playername radius
+				RemotePlayer rp = Game.server.getAssociatedThread(args[1]).getClient();
+				if(rp == null) {
+					System.out.println("invalid entity targeting format: remote player does not exist: " + args[1]);
+					return null;
+				}
+				
+				try {
+					int radius = new Integer(args[2]);
+					allEntities.addAll(rp.getLevel().getEntitiesInRect(new Rectangle(rp.x, rp.y, radius*2, radius*2, Rectangle.CENTER_DIMS)));
+					allEntities.remove(rp);
+				} catch(NumberFormatException ex) {
+					System.out.println("invalid entity targeting format: specified radius is not an integer: " + args[2]);
+					return null;
+				}
+			}
+			
+			boolean invert = false;
+			if(target.startsWith("!")) {
+				invert = true;
+				target = target.substring(1);
+			}
+			
+			List<Entity> remainingEntities = new ArrayList<>(allEntities);
+			switch(target) {
+				case "all": break; // target all entities
+				
+				case "entity": // target only non-mobs
+					allEntities.removeIf(entity -> entity instanceof Mob);
+				break;
+				
+				case "mob": // target only mobs
+					allEntities.removeIf(entity -> !(entity instanceof Mob));
+				break;
+				
+				case "player": // target only players
+					allEntities.removeIf(entity -> !(entity instanceof Player));
+				break;
+				
+				default:
+					System.out.println("invalid entity targeting format: @_ argument is not valid: @" + target);
+					return null;
+			}
+			
+			remainingEntities.removeAll(allEntities);
+			
+			if(invert)
+				return remainingEntities;
+			
+			return allEntities;
 		}
 		
 		public static final Command[] values = Command.values();
