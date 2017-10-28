@@ -11,6 +11,14 @@ public class TextParticle extends Particle {
 	
 	private FontStyle style;
 	
+	/**
+	 * Creates a text particle which shows a message on the screen.
+	 * 
+	 * @param msg Message to display
+	 * @param x X map position
+	 * @param y Y map position
+	 * @param col Text color
+	 */
 	public TextParticle(String msg, int x, int y, int col) {
 		super(x, y, msg.length(), 60, null);
 		
@@ -26,6 +34,7 @@ public class TextParticle extends Particle {
 		za = random.nextFloat() * 0.7 + 2;
 	}
 
+	@Override
 	public void tick() {
 		super.tick();
 		
@@ -46,6 +55,7 @@ public class TextParticle extends Particle {
 		y = (int) yy;
 	}
 	
+	@Override
 	public void render(Screen screen) {
 		//if(!msg.contains("Thanks")) {
 		style.setXPos(x - msg.length() * 4).setYPos(y - (int)zz).draw(msg, screen);
@@ -57,6 +67,10 @@ public class TextParticle extends Particle {
 		}*/
 	}
 	
+	/**
+	 * Returns the message and color divied by the character :.
+	 * @return string representation of the particle
+	 */
 	public String getData() {
 		return msg+":"+style.getColor();
 	}
