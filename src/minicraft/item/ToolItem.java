@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.Random;
 
 import minicraft.core.Game;
+import minicraft.core.io.Localization;
 import minicraft.entity.Direction;
 import minicraft.entity.Entity;
 import minicraft.entity.mob.Mob;
@@ -79,8 +80,8 @@ public class ToolItem extends Item {
 	
 	/** Gets the name of this tool (and it's type) */
 	public String getName() {
-		if (type == ToolType.FishingRod) return "Fishing Rod";
-		return LEVEL_NAMES[level] + " " + type;
+		if (type == ToolType.FishingRod) return Localization.getLocalized("Fishing Rod");
+		return Localization.getLocalized(LEVEL_NAMES[level]) + " " + Localization.getLocalized(type.toString());
 	}
 	
 	@Override
