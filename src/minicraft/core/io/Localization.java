@@ -18,10 +18,12 @@ public class Localization {
 	public static String getLocalized(String string) {
 		if (!isLoaded) loadSelectedLanguageFile();
 		
+		if(string.length() == 0) return "";
+		
 		String localString = localization.get(string);
 		
 		if (localString == null)
-			System.out.println("The string @" + string + "@ is not localized, returning itself instead.");
+			System.out.println("The string \"" + string + "\" is not localized, returning itself instead.");
 		
 		return (localString == null ? string : localString);
 	}
