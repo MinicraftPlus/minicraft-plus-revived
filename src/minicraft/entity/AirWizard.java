@@ -25,7 +25,18 @@ public class AirWizard extends EnemyMob {
 	String location = Game.gameDir;
 	File folder;
 	
-	public AirWizard(int lvl) { this(lvl>1); }
+	/**
+	 * Constructor for the AirWizard. Will spawn as secondary form if lvl>1.
+	 * @param lvl The AirWizard level.
+	 */
+	public AirWizard(int lvl) { 
+		this(lvl>1);
+	}
+	
+	/**
+	 * Constructor for the AirWizard.
+	 * @param secondform determines if the wizard should be level 2 or 1.
+	 */
 	public AirWizard(boolean secondform) {
 		super(secondform?2:1, sprites, (new int[2]), secondform?5000:2000, false, 16*8, -1, 10, 50);
 		
@@ -41,14 +52,20 @@ public class AirWizard extends EnemyMob {
 		col = lvlcols[lvl-1];
 	}
 	
+	/**
+	 * Only the secondary form can swim.
+	 */
+	@Override
 	public boolean canSwim() {
 		return secondform;
 	}
 	
+	@Override
 	public boolean canWool() {
 		return false;
 	}
 	
+	@Override
 	public void tick() {
 		super.tick();
 		//if(secondform) super.tick(); // double speed for lvl 2
@@ -113,6 +130,7 @@ public class AirWizard extends EnemyMob {
 		}
 	}
 	
+	@Override
 	public void doHurt(int damage, int attackDir) {
 		super.doHurt(damage, attackDir);
 		if (attackDelay == 0 && attackTime == 0) {
@@ -120,7 +138,7 @@ public class AirWizard extends EnemyMob {
 		}
 	}
 	
-	/** Renders the air wizard on the screen */
+	@Override
 	public void render(Screen screen) {
 		int xo = x - 8; // the horizontal location to start drawing the sprite
 		int yo = y - 11; // the vertical location to start drawing the sprite
@@ -164,7 +182,7 @@ public class AirWizard extends EnemyMob {
 		Font.draw(h, screen, (x - textwidth/2), y - 18, textcol);
 	}
 	
-	/** What happens when the player (or any entity) touches the air wizard */
+	@Override
 	protected void touchedBy(Entity entity) {
 		if (entity instanceof Player) {
 			// if the entity is the Player, then deal them 1 or 2 damage points.
@@ -172,7 +190,7 @@ public class AirWizard extends EnemyMob {
 		}
 	}
 	
-	/** What happens when the air wizard dies */
+	@Override
 	protected void die() {
 		Player[] players = level.getPlayers();
 		if (players.length > 0) { // if the player is still here
@@ -212,6 +230,10 @@ public class AirWizard extends EnemyMob {
 		super.die(); // calls the die() method in EnemyMob.java
 	}
 	
+	/**
+	 * The AirWizard's max level is 2.
+	 */
+	@Override
 	public int getMaxLevel() {
 		return 2;
 	}

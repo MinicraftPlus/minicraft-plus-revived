@@ -8,11 +8,15 @@ import minicraft.item.Items;
 public class Cow extends PassiveMob {
 	private static MobSprite[][] sprites = MobSprite.compileMobSpriteAnimations(16, 16);
 	
+	/**
+	 * Creates the cow with the right sprites and color.
+	 */
 	public Cow() {
 		super(sprites, Color.get(-1, 000, 333, 322), 5);
 		col = Color.get(-1, 000, 333, 322);
 	}
 	
+	@Override
 	protected void die() {
 		int min = 0, max = 0;
 		if (Settings.get("diff").equals("Easy")) {min = 1; max = 3;}

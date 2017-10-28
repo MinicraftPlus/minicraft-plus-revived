@@ -36,20 +36,27 @@ public class Crafter extends Furniture {
 	
 	public Crafter.Type type;
 	
+	/**
+	 * Creates a crafter of a given type.
+	 * @param type What type of crafter this is.
+	 */
 	public Crafter(Crafter.Type type) {
 		super(type.name(), type.sprite, type.xr, type.yr);
 		this.type = type;
 	}
 	
+	@Override
 	public boolean use(Player player, int attackDir) {
 		Game.setMenu(new CraftingMenu(type.recipes, type.name(), player));
 		return true;
 	}
 	
+	@Override
 	public Furniture clone() {
 		return new Crafter(type);
 	}
 	
+	@Override
 	public String toString() {
 		return super.toString().replace("Crafter", type.name());
 	}

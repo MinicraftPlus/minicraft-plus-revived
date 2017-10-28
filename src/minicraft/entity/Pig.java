@@ -8,10 +8,14 @@ import minicraft.item.Items;
 public class Pig extends PassiveMob {
 	private static MobSprite[][] sprites = MobSprite.compileMobSpriteAnimations(16, 14);
 	
+	/**
+	 * Creates a pig.
+	 */
 	public Pig() {
 		super(sprites, Color.get(-1, 000, 555, 522));
 	}
 	
+	@Override
 	protected void die() {
 		int min = 0, max = 0;
 		if (Settings.get("diff").equals("Easy")) {min = 1; max = 3;}

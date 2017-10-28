@@ -1,6 +1,7 @@
 package minicraft.entity;
 
 import java.util.List;
+
 import minicraft.gfx.Color;
 import minicraft.gfx.Screen;
 
@@ -11,9 +12,26 @@ public class Arrow extends Entity {
 	public Mob owner;
 	private int speed;
 	
+	/**
+	 * Constructs an arrow at the owner's (mob who shoots arrow) position. 
+	 * @param owner Mob shooting the arrow.
+	 * @param dirx Horizontal direction.
+	 * @param diry Vertical direction.
+	 * @param dmg How much damage the arrow does.
+	 */
 	public Arrow(Mob owner, int dirx, int diry, int dmg) {
 		this(owner, owner.x, owner.y, dirx, diry, dmg);
 	}
+	
+	/**
+	 * Constructs an arrow.
+	 * @param owner Mob shooting the arrow.
+	 * @param x Starting X map position.
+	 * @param y Starting Y map position.
+	 * @param dirx Horizontal direction.
+	 * @param diry Vertical direction.
+	 * @param dmg How much damage the arrow does.
+	 */
 	public Arrow(Mob owner, int x, int y, int dirx, int diry, int dmg) {
 		super(Math.abs(dirx)+1, Math.abs(diry)+1);
 		this.owner = owner;
@@ -36,10 +54,15 @@ public class Arrow extends Entity {
 		}*/
 	}
 	
+	/**
+	 * Generates information about the arrow.
+	 * @return string representation of owner, xdir, ydir and damage.
+	 */
 	public String getData() {
 		return owner.eid+":"+xdir+":"+ydir+":"+damage;
 	}
 	
+	@Override
 	public void tick() {
 		if (x < 0 || x>>4 > level.w || y < 0 || y>>4 > level.h) {
 			remove(); // remove when out of bounds
@@ -74,10 +97,12 @@ public class Arrow extends Entity {
 		}
 	}
 
+	@Override
 	public boolean isBlockableBy(Mob mob) {
 		return false;
 	}
 
+	@Override
 	public void render(Screen screen) {
 		/* // probably makes a blinking effect.
 		if (time >= lifeTime - 3 * 20) {

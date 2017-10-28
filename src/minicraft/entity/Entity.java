@@ -2,6 +2,7 @@ package minicraft.entity;
 
 import java.util.List;
 import java.util.Random;
+
 import minicraft.Game;
 import minicraft.gfx.Screen;
 import minicraft.item.Item;
@@ -23,6 +24,14 @@ public abstract class Entity {
 	private boolean accessedUpdates = false;
 	public long lastUpdate;
 	
+	/**
+	 * Default constructor for the Entity class.
+	 * Assings null/none values to the instace variables.
+	 * The exception is removed which is set to true, and
+	 * lastUpdate which is set to System.nanoTime().
+	 * @param xr X radius of entity.
+	 * @param yr Y radius of entity.
+	 */
 	public Entity(int xr, int yr) { // add color to this later, in color update
 		this.xr = xr;
 		this.yr = yr;
@@ -35,13 +44,32 @@ public abstract class Entity {
 		lastUpdate = System.nanoTime();
 	}
 	
-	public abstract void render(Screen screen); /// used to render the entity on screen.
-	public abstract void tick(); /// used to update the entity.
+	/**
+	 * Draws the entity to a screen.
+	 * @param screen The screen which the entity should be drawn to.
+	 */
+	public abstract void render(Screen screen);
 	
+	/**
+	 * Updates the entity.
+	 */
+	public abstract void tick();
+	
+	/**
+	 * Returns true if the entity is removed from the level, otherwise false.
+	 * @return removed
+	 */
 	public boolean isRemoved() { return removed/* || level == null*/; }
+	
+	/**
+	 * Returns the level which this entity belongs in.
+	 * @return level
+	 */
 	public Level getLevel() { return level; }
 	
-	/** Removes the entity from the level. */
+	/**
+	 * Removes the entity from the level.
+	 */
 	public void remove() {
 		if(removed && !(this instanceof ItemEntity)) // apparently this happens fairly often with item entities.
 			System.out.println("Note: remove() called on removed entity: " + this);
@@ -53,6 +81,11 @@ public abstract class Entity {
 		else
 			level.remove(this);
 	}
+	
+	/**
+	 * Called when the level removes an entity from itself.
+	 * @param level The level removing this entity.
+	 */
 	public void remove(Level level) {
 		if(level != this.level && Game.debug)
 			System.out.println("tried to remove entity "+this+" from level it is not in: " + level + "; in level " + this.level);
@@ -63,7 +96,12 @@ public abstract class Entity {
 		}
 	}
 	
-	/** This should ONLY be called by the Level class. To properly add an entity to a level, use level.add(entity) */
+	/**
+	 * This should ONLY be called by the Level class. To properly add an entity to a level, use level.add(entity) 
+	 * @param level New level for entity.
+	 * @param x Entity x position.
+	 * @param y Entity y position.
+	 */
 	public void setLevel(Level level, int x, int y) {
 		if(level == null) {
 			System.out.println("tried to set level of entity " + this + " to a null level; should use remove(level)");
@@ -81,18 +119,36 @@ public abstract class Entity {
 			eid = Game.generateUniqueEntityId();
 	}
 	
-	/** returns true if this entity is found in the rectangle specified by given two coordinates. */
+	/**
+	 * Checks if this entity is inside a rectangle given by two coordinates.
+	 * @param x0 First x coordinate.
+	 * @param y0 First y coordinate.
+	 * @param x1 Second x coordinate.
+	 * @param y1 Second y coordinate.
+	 * @return true if the entity is inside the rectangle, false otherwise.
+	 */
 	public boolean intersects(int x0, int y0, int x1, int y1) {
 		// x0,y0 = upper-left corner of rect; x1,y1 = bottom-right corner of rect
 		return !(x + xr < x0 || y + yr < y0 || x - xr > x1 || y - yr > y1);
 	}
 	
-	/** Extended in Mob.java & Furniture.java */
+	/**
+	 * Determines if this entity should prevent another entity from moving inside it.
+	 * Extended in Mob.java & Furniture.java
+	 * @param e The other entity.
+	 * @return false
+	 */
 	public boolean blocks(Entity e) {
 		return false;
 	}
 		
-	/** Moves an entity horizontally and vertically. Returns whether entity was unimpeded in it's movement.  */
+	/**
+	 * Moves an entity horizontally and vertically. Returns whether entity was unimpeded in it's movement.
+	 * @param xa Horizontal velocity.
+	 * @param ya Vertical velocity.
+	 * @return only returns true if the game is saving and at least one direction has zero velocity, or 
+	 * if the entity was able to move unobstructed in both directions.
+	 */
 	public boolean move(int xa, int ya) {
 		if (!Game.saving && (xa != 0 || ya != 0)) { // if not saving, and the entity is actually going to move...
 			boolean stopped = true; // used to check if the entity has BEEN stopped, COMPLETELY; below checks for a lack of collision.
@@ -120,7 +176,15 @@ public abstract class Entity {
 		return true; // reaches this if no movement was requested / game was saving. return true, becuase MobAis should still do the moving phase thing, just paused, not obstructed.
 	}
 	
-	/** Second part to the move method (moves in one direction at a time) */
+	/**
+	 * Moves the entity a long only one direction.
+	 * If xa != 0 then ya should be 0.
+	 * If xa = 0 then ya should be != 0.
+	 * Will throw exception otherwise.
+	 * @param xa Horizontal velocity.
+	 * @param ya Vertical velocity.
+	 * @return true if the move was successful, false if not.
+	 */
 	protected boolean move2(int xa, int ya) {
 		if (xa != 0 && ya != 0)
 			throw new IllegalArgumentException("Move2 can only move along one axis at a time!");
@@ -199,50 +263,118 @@ public abstract class Entity {
 		return true; // the move was successful.
 	}
 	
-	/** if this entity is touched by another entity (extended by sub-classes) */
+	/**
+	 * This is called whenever this entity is touched by another entity.
+	 * @param entity The entity touching this entity.
+	 */
 	protected void touchedBy(Entity entity) {}
 	
-	/** returns if mobs can block this entity (aka: can't pass through them) */
+	/**
+	 * Checks if the mob can block this entity's movement.
+	 * @param mob The mob.
+	 * @return true if the mob blocks movement, false if not.
+	 */
 	public boolean isBlockableBy(Mob mob) {
 		return true; // yes, mobs generally block other entities.
 	}
 	
-	/** Used in ItemEntity.java, extended with Player.java */
+	/**
+	 * This is called when a entity touches an ItemEntity.
+	 * Used by the Player class to make the player pick up an item.
+	 * @param itemEntity The ItemEntity touching this entity.
+	 */
 	public void touchItem(ItemEntity itemEntity) {}
 	
-	/** Determines if the entity can swim (extended in sub-classes) */
+	/**
+	 * Determines if the entity can swim.
+	 * @return false by default, true if the entity can swim.
+	 */
 	public boolean canSwim() {
 		return false;
 	}
 	
-	/** This, strangely enough, determines if the entity can walk on wool; among some other things..? */
+	/**
+	 * Strange behavior ahead! This determines if this entity can walk on wool.
+	 * And also does some other things? Consider changing this methods name.
+	 * @return false by default.
+	 */
 	public boolean canWool() { return false; }
 	
-	/** If the entity can light up..? */
+	/**
+	 * Marked as deprecated because its only used by the player and its not really 
+	 * possible to tell what it does. The player always returns true.
+	 * 
+	 * Determines if this entity can light up?
+	 * @return false by default.
+	 */
+	@Deprecated
 	public boolean canLight() {
 		return false;
 	}
 	
-	/** Item interact, used in player.java */
+	/**
+	 * Only used by the Player class to interact with this entity.
+	 * It's called when the player uses an item on this entity.
+	 * @param player The player using an item.
+	 * @param item The item the player is using.
+	 * @param attackDir Which direction the player is attacking from.
+	 * @return the result of the item.interact() method.
+	 */
 	public boolean interact(Player player, Item item, int attackDir) {
 		return item.interact(player, this, attackDir);
 	}
 	
-	/** sees if the player has used an item in a direction (extended in player.java) */
+	/**
+	 * Called when the player interacts with this entity.
+	 * Used by some of the furniture classes.
+	 * @param player The player trying to use this entity.
+	 * @param attackDir Which direction the player is using it from.
+	 * @return false by default, but true if this entity accepts the player's interaction.
+	 */
 	public boolean use(Player player, int attackDir) {
 		// this may not be necessary for all entities.
 		return false;
 	}
 	
+	/**
+	 * Returns how far the entity can see underground.
+	 * @return integer saying how far (in tiles) the entity can see.
+	 */
 	public int getLightRadius() {
 		return 0;
 	}
 	
-	/** Extended in Mob.java */
+	/**
+	 * Damages this entity when a mob is the damage source.
+	 * @param mob Mob which is damaging this entity.
+	 * @param dmg How much damage is done.
+	 * @param attackDir From which direction.
+	 */
 	public void hurt(Mob mob, int dmg, int attackDir) {}
+	
+	/**
+	 * Damages this entity when tnt is damage the source. 
+	 * @param tnt The tnt doing the damage.
+	 * @param dmg How much damage is done.
+	 * @param attackDir From which direction.
+	 */
 	public void hurt(Tnt tnt, int dmg, int attackDir) {}
+	
+	/**
+	 * Damages this entity when a tile is the damage source.
+	 * @param tile The tile doing damage.
+	 * @param x Not sure if this is even used?
+	 * @param y Not sure if this is even used?
+	 * @param dmg How much damage is done.
+	 */
 	public void hurt(Tile tile, int x, int y, int dmg) {}
 	
+	/**
+	 * Determines if another entity is within a given radius of this entity.
+	 * @param tileRadius How far apart the other entity can be.
+	 * @param other The other entity.
+	 * @return true if the entities are within the given radius, false if not.
+	 */
 	public boolean isWithin(int tileRadius, Entity other) {
 		if(level == null || other.getLevel() == null) return false;
 		if(level.depth != other.getLevel().depth) return false; // obviously, if they are on different levels, they can't be next to each other.}
@@ -252,7 +384,20 @@ public abstract class Entity {
 		return Math.round(distance) >> 4 <= tileRadius; // compare the distance (converted to tile units) with the specified radius.
 	}
 	
-	protected Player getClosestPlayer() { return getClosestPlayer(true); }
+	/**
+	 * Returns the closest player to this entity.
+	 * @return the closest player.
+	 */
+	protected Player getClosestPlayer() { 
+		return getClosestPlayer(true);
+	}
+	
+	/**
+	 * Returns the closes player to this entity.
+	 * If this is called on a player it can return itself.
+	 * @param returnSelf determines if the method can return itself.
+	 * @return The closest player to this entity.
+	 */
 	protected Player getClosestPlayer(boolean returnSelf) {
 		if (this instanceof Player && returnSelf)
 			return (Player) this;
@@ -262,6 +407,12 @@ public abstract class Entity {
 		return level.getClosestPlayer(x, y);
 	}
 	
+	/**
+	 * I think this is used to update a entity over a network.
+	 * The server will send a correction of this entity's state
+	 * which will then be updated.
+	 * @param deltas A string representation of the new entity state.
+	 */
 	public final void update(String deltas) {
 		for(String field: deltas.split(";")) {
 			String fieldName = field.substring(0, field.indexOf(","));
@@ -274,6 +425,13 @@ public abstract class Entity {
 		}
 	}
 	
+	/**
+	 * Updates one of the entity's fields based on a string pair.
+	 * Used to parse data from a server.
+	 * @param fieldName Which variable is being updated.
+	 * @param val The new value.
+	 * @return true if a variable was updated, false if not.
+	 */
 	protected boolean updateField(String fieldName, String val) {
 		switch(fieldName) {
 			case "eid": eid = Integer.parseInt(val); return true;
@@ -294,12 +452,22 @@ public abstract class Entity {
 	
 	/// I think I'll make these "getUpdates()" methods be an established thing, that returns all the things that can change that you need to account for when updating entities across a server.
 	/// by extension, the update() method should always account for all the variables specified here.
+	/**
+	 * Converts this entity to a string representation which can be sent to
+	 * a server or client.
+	 * @return Networking string representation of this entity.
+	 */
 	protected String getUpdateString() {
 		return "x,"+x+";"
 		+"y,"+y+";"
 		+"level,"+(level==null?"null":Game.lvlIdx(level.depth));
 	}
 	
+	/**
+	 * Returns a string representation of this entity.
+	 * @param fetchAll true if all variables should be returned, false if only the ones who have changed should be returned.
+	 * @return Networking string representation of this entity.
+	 */
 	public final String getUpdates(boolean fetchAll) {
 		if(accessedUpdates) {
 			if(fetchAll) return prevUpdates;
@@ -310,6 +478,11 @@ public abstract class Entity {
 			else return getUpdates();
 		}
 	}
+	
+	/**
+	 * Determines what has been updated and only return that.
+	 * @return String representation of all the variables which has changed since last time.
+	 */
 	public final String getUpdates() {
 		// if the updates have already been fetched and written, but not flushed, then just return those.
 		if(accessedUpdates) return curDeltas;
@@ -347,17 +520,27 @@ public abstract class Entity {
 		return curDeltas;
 	}
 	
-	/// this marks the entity as having a new state to fetch.
+	/**
+	 * Marks the entity so a new state will be fetched from the server.
+	 */
 	public void flushUpdates() {
 		accessedUpdates = false;
 	}
 	
+	/**
+	 * Returns a string representation of the entity. (Which can't be sent to a server/client)
+	 */
+	@Override
 	public String toString() {
 		//String superName = super.toString();
 		//superName = superName.substring(superName.lastIndexOf(".")+1);
 		return toClassString() + "(eid="+eid+")";
 	}
 	
+	/**
+	 * Returns the name of the class which this entity belongs to.
+	 * @return Name of the entity's class.
+	 */
 	public String toClassString() {
 		String clazz = getClass().getName();
 		return clazz.substring(clazz.lastIndexOf(".")+1);

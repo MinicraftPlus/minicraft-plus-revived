@@ -15,10 +15,15 @@ public class Knight extends EnemyMob {
 		Color.get(-1, 000, 555, 459)
 	};
 	
+	/**
+	 * Creates a knight of a given level.
+	 * @param lvl The knights level.
+	 */
 	public Knight(int lvl) {
 		super(lvl, sprites, lvlcols, 9, 100);
 	}
 
+	@Override
 	protected void die() {
 		if (Settings.get("diff").equals("Easy"))
 			dropItem(1, 3, Items.get("shard"));
@@ -28,6 +33,10 @@ public class Knight extends EnemyMob {
 		super.die();
 	}
 	
+	/**
+	 * Knight's max level is 5.
+	 */
+	@Override
 	public int getMaxLevel() {
 		return 5;
 	}
