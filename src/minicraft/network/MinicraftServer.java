@@ -113,7 +113,7 @@ public class MinicraftServer extends Thread implements MinicraftProtocol {
 	}
 	
 	public boolean isFull() {
-		return threadList.size() >= playerCap;
+		return playerCap >= 0 && threadList.size() >= playerCap;
 	}
 	
 	public int getNumPlayers() { return threadList.size(); }
