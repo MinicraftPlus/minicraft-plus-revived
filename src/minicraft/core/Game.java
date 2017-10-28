@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import minicraft.core.io.InputHandler;
+import minicraft.core.io.Localization;
 import minicraft.core.io.Settings;
 import minicraft.core.io.Sound;
 import minicraft.entity.mob.Player;
@@ -85,6 +86,7 @@ public class Game {
 		
 		input = new InputHandler(Renderer.canvas);
 		
+		Localization.loadSelectedLanguageFile();
 		Tiles.initTileList();
 		Sound.init();
 		

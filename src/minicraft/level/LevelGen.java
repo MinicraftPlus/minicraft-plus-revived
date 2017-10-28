@@ -11,6 +11,8 @@ import minicraft.core.io.Settings;
 import minicraft.level.tile.Tiles;
 import minicraft.screen.WorldGenDisplay;
 
+import org.jetbrains.annotations.Nullable;
+
 public class LevelGen {
 	private static long worldSeed = 0;
 	private static final Random random = new Random(worldSeed);
@@ -111,7 +113,8 @@ public class LevelGen {
 		values[(x & (w - 1)) + (y & (h - 1)) * w] = value;
 	}
 	
-	protected static byte[][] createAndValidateMap(int w, int h, int level) {
+	@Nullable
+	static byte[][] createAndValidateMap(int w, int h, int level) {
 		worldSeed = WorldGenDisplay.getSeed();
 		
 		if (level == 1)
@@ -129,9 +132,8 @@ public class LevelGen {
 		return null;
 	}
 	
-	public static byte[][] createAndValidateTopMap(int w, int h) {
+	private static byte[][] createAndValidateTopMap(int w, int h) {
 		random.setSeed(worldSeed);
-		int attempt = 0;
 		do {
 			byte[][] result = createTopMap(w, h);
 			
@@ -152,9 +154,8 @@ public class LevelGen {
 		} while (true);
 	}
 	
-  public static byte[][] createAndValidateUndergroundMap(int w, int h, int depth) {
+	private static byte[][] createAndValidateUndergroundMap(int w, int h, int depth) {
 		random.setSeed(worldSeed);
-		int attempt = 0;
 		do {
 			byte[][] result = createUndergroundMap(w, h, depth);
 			
@@ -175,7 +176,7 @@ public class LevelGen {
 		} while (true);
 	}
 	
-  public static byte[][] createAndValidateDungeon(int w, int h) {
+	private static byte[][] createAndValidateDungeon(int w, int h) {
 		random.setSeed(worldSeed);
 		int attempt = 0;
 		do {
@@ -194,7 +195,7 @@ public class LevelGen {
 		} while (true);
 	}
 
-	public static byte[][] createAndValidateSkyMap(int w, int h) {
+	private static byte[][] createAndValidateSkyMap(int w, int h) {
 		random.setSeed(worldSeed);
 		int attempt = 0;
 		do {

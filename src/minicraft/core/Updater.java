@@ -1,5 +1,6 @@
 package minicraft.core;
 
+import minicraft.core.io.Localization;
 import minicraft.core.io.Settings;
 import minicraft.entity.Entity;
 import minicraft.entity.furniture.Bed;
@@ -319,13 +320,14 @@ public class Updater extends Game {
 		return times[time];
 	}
 	
-	/** This adds a notifcation to all player games. */
+	/** This adds a notification to all player games. */
 	public static void notifyAll(String msg) {
 		notifyAll(msg, 0);
 	}
 	public static void notifyAll(String msg, int notetick) {
+		msg = Localization.getLocalized(msg);
 		notifications.add(msg);
-		notetick = notetick;
+		Updater.notetick = notetick;
 		if(isValidServer())
 			server.broadcastNotification(msg, notetick);
 		else if(isConnectedClient())

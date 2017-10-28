@@ -3,6 +3,7 @@ package minicraft.item;
 import java.util.ArrayList;
 
 import minicraft.core.Game;
+import minicraft.core.io.Localization;
 import minicraft.gfx.Color;
 import minicraft.gfx.Screen;
 import minicraft.gfx.Sprite;
@@ -88,6 +89,6 @@ public class StackableItem extends Item {
 	@Override
 	public String getDisplayName() {
 		String extra = (count > 999 ? 999 : count) + " ";
-		return " " + extra + name;
+		return " " + extra + Localization.getLocalized(name);
 	}
 }

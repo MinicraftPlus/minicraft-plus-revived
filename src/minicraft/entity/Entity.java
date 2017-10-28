@@ -290,16 +290,16 @@ public abstract class Entity {
 			return updates; // and we're done!
 		}
 		
-		/// if we did have updates last time, then save them as an array, before overriting the update field for next time.
+		/// if we did have updates last time, then save them as an array, before overwriting the update field for next time.
 		String[] curUpdates = updates.split(";");
 		String[] prevUpdates = this.prevUpdates.split(";");
 		this.prevUpdates = updates;
 		
-		/// now, we have the current values, and the previous values, as arrays of key-value pairs sep. by commas. Now, the goal is to seperate which are actually *updates*, meaning they are different from last time.
+		/// now, we have the current values, and the previous values, as arrays of key-value pairs sep. by commas. Now, the goal is to separate which are actually *updates*, meaning they are different from last time.
 		
 		StringBuilder deltas = new StringBuilder();
 		for(int i = 0; i < curUpdates.length; i++) { // b/c the string always contains the same number of pairs (and the same keys, in the same order), the indexes of cur and prev updates will be the same.
-			/// loop though each of the updates this call. If it is differnt from the last one, then add it to the list.
+			/// loop though each of the updates this call. If it is different from the last one, then add it to the list.
 			if(!curUpdates[i].equals(prevUpdates[i])) {
 				deltas.append(curUpdates[i]).append(";");
 			}

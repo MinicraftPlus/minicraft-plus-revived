@@ -2,6 +2,7 @@ package minicraft.screen.entry;
 
 import minicraft.core.Action;
 import minicraft.core.io.InputHandler;
+import minicraft.core.io.Localization;
 import minicraft.core.io.Sound;
 import minicraft.gfx.Font;
 
@@ -27,10 +28,10 @@ public class SelectEntry extends ListEntry {
 	
 	@Override
 	public int getWidth() {
-		return Font.textWidth(text);
+		return Font.textWidth(Localization.getLocalized(text));
 	}
 	
 	public String toString() {
-		return text;
+		return Localization.getLocalized(text);
 	}
 }

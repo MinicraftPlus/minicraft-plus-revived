@@ -3,6 +3,7 @@ package minicraft.screen.entry;
 import java.util.Arrays;
 
 import minicraft.core.io.InputHandler;
+import minicraft.core.io.Localization;
 import minicraft.core.io.Sound;
 import minicraft.gfx.Font;
 
@@ -126,12 +127,12 @@ public class ArrayEntry<T> extends ListEntry {
 	
 	@Override
 	public int getWidth() {
-		return Font.textWidth(label+": ") + maxWidth;
+		return Font.textWidth(Localization.getLocalized(label)+": ") + maxWidth;
 	}
 	
 	@Override
 	public String toString() {
-		return label + ": " + options[selection];
+		return Localization.getLocalized(label) + ": " + Localization.getLocalized(options[selection].toString());
 	}
 	
 	public void setChangeAction(ChangeListener l) {

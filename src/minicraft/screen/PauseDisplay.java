@@ -6,6 +6,7 @@ import java.util.Arrays;
 import minicraft.core.Game;
 import minicraft.core.io.InputHandler;
 import minicraft.core.Network;
+import minicraft.core.io.Localization;
 import minicraft.gfx.Color;
 import minicraft.saveload.Save;
 import minicraft.screen.entry.BlankEntry;
@@ -16,6 +17,10 @@ import minicraft.screen.entry.StringEntry;
 public class PauseDisplay extends Display {
 	
 	public PauseDisplay() {
+		String upString = Game.input.getMapping("up")+ Localization.getLocalized(" and ")+Game.input.getMapping("down")+Localization.getLocalized(" to Scroll");
+		String selectString = Game.input.getMapping("select")+Localization.getLocalized(": Choose");
+		
+		
 		ArrayList<ListEntry> entries = new ArrayList<>();
 		entries.addAll(Arrays.asList(
 			new BlankEntry(),
@@ -43,8 +48,8 @@ public class PauseDisplay extends Display {
 			
 			new BlankEntry(),
 			
-			new StringEntry(Game.input.getMapping("up")+" and "+Game.input.getMapping("down")+" to Scroll", Color.GRAY),
-			new StringEntry(Game.input.getMapping("select")+": Choose", Color.GRAY)
+			new StringEntry(upString, Color.GRAY),
+			new StringEntry(selectString, Color.GRAY)
 		));
 		
 		//Menu.Builder msgBuilder = new Menu.Builder(8);

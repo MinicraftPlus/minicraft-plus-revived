@@ -1,5 +1,6 @@
 package minicraft.item;
 
+import minicraft.core.io.Localization;
 import minicraft.entity.Direction;
 import minicraft.entity.Entity;
 import minicraft.entity.mob.Player;
@@ -32,8 +33,10 @@ public abstract class Item {
 	/** Renders an item (sprite & name) in an inventory */
 	public void renderInventory(Screen screen, int x, int y) { renderInventory(screen, x, y, true); }
 	public void renderInventory(Screen screen, int x, int y, boolean ininv) {
-		renderInventory(screen, x, y, ininv, name);}
+		renderInventory(screen, x, y, ininv, name);
+	}
 	protected void renderInventory(Screen screen, int x, int y, boolean ininv, String name) {
+		name = Localization.getLocalized(name);
 		sprite.render(screen, x, y);
 		if(ininv) {
 			String shortname = name.length() > 20 ? name.substring(0, 20) : name;
@@ -81,6 +84,6 @@ public abstract class Item {
 	
 	// returns the String that should be used to display this item in a menu or list. 
 	public String getDisplayName() {
-		return " " + name;
+		return " " + Localization.getLocalized(name);
 	}
 }

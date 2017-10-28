@@ -5,6 +5,7 @@ import java.util.Arrays;
 import java.util.List;
 
 import minicraft.core.io.InputHandler;
+import minicraft.core.io.Localization;
 import minicraft.core.io.Sound;
 import minicraft.gfx.*;
 import minicraft.screen.entry.BlankEntry;
@@ -187,6 +188,7 @@ public class Menu {
 		renderFrame(screen);
 		
 		// render the title
+		title = Localization.getLocalized(title);
 		if(title.length() > 0) {
 			if (drawVertically) {
 				for (int i = 0; i < title.length(); i++) {
