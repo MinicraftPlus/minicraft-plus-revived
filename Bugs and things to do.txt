@@ -20,8 +20,6 @@ Something weird happens with creeper explosions... I think, if you stay next to 
 
 #####
 MULTIPLAYER-Related:
- # Can't set player clothing color
- 
  # Spawner level should change upon hitting it in creative; it only works with menu button
 
  # Players aren't kicked out if they are on a menu when the server goes down..? (only tested/seen once)
