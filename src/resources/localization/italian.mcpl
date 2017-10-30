@@ -1,0 +1,1025 @@
+### Translation created by superandrea_04
+
+### entity
+
+## entity.particle
+## entity.particle end
+
+# AirWizard.java
+Air Wizard: Defeated!
+Mago del Vento: Sconfitto!
+
+The Dungeon is now open!
+Il dungeon ora e' aperto!
+
+A costume lies on the ground...
+Un costume e' sul terreno...
+
+# Bed.java
+Can't sleep! 
+Impossibile dormire! 
+	
+Min 
+Min 
+	
+ Sec left!
+Mancano  secondi!
+
+# DungeonChest.java
+You hear a noise from the surface!
+Senti un rumore sulla superficie!
+
+# Player.java
+
+Crafting
+Fabbricazione
+
+Set your home!
+Piazza la tua casa!
+
+Can't set home here!
+Impossibile piazzarla qui!
+
+Home Sweet Home!
+Casa Dolce Casa!
+
+Mode penalty: -2 health
+Penalita': -2 vita
+
+You don't have a home!
+Non hai una casa!
+
+You can't go home from here!
+Non puoi tornare a casa qui!
+ 
+### entity end
+
+### gfx
+### gfx end
+
+### item
+
+# ArmorItem.java
+Leather Armor
+Armatura di Pelle
+
+Snake Armor
+Armatura di Serpenti
+
+Iron Armor
+Armatura di Ferro
+
+Gold Armor
+Armatura di Oro
+
+Gem Armor
+Armatura di Gemme
+
+# BookItem.java
+
+Book
+Libro
+
+Antidious
+Antidioso
+
+# BucketItem.java
+
+Empty Bucket
+Secchio Vuoto
+
+Water Bucket
+Secchio di Acqua
+
+Lava Bucket
+Secchio di Lava
+
+ Bucket
+ Secchio
+ 
+# ClothingItem.java
+
+Red Clothes
+Veste Rossa
+
+Blue Clothes
+Veste Blu
+
+Green Clothes
+Veste Verde
+
+Yellow Clothes
+Veste Gialla
+
+Black Clothes
+Veste Nera
+
+Orange Clothes
+Veste Arancione
+
+Purple Clothes
+Veste Viola
+
+Cyan Clothes
+Veste Azzurra
+
+Reg Clothes
+Veste Regolare
+
+# FoodItem.java
+
+Bread
+Pane
+
+Apple
+Mela
+
+Raw Pork
+Maiale Crudo
+
+Raw Fish
+Pesce Crudo
+
+Raw Beef
+Bistecca Cruda
+
+Pork Chop
+Braciola Cruda
+
+Cooked Fish
+Pesce Cotto
+
+Cooked Pork
+Braciola
+
+Steak
+Bistecca
+
+Gold Apple
+Mela d'Oro
+
+# FurnitureItem.java
+
+Cow Spawner
+Spawner di Mucche
+
+Pig Spawner
+Spawner di Maiali
+
+Sheep Spawner
+Spawner di Pecore
+
+Slime Spawner
+Spawner di Slime
+
+Zombie Spawner
+Spawner di Zombie
+
+Creeper Spawner
+Spawner di Creeper
+
+Skeleton Spawner
+Spawner di Scheletri
+
+Snake Spawner
+Spawner di Serpenti
+
+Knight Spawner
+Spawner di Cavalieri
+
+AirWizard Spawner
+Spawner di Mago del Vento
+
+Workbench
+Banco da Lavoro
+
+Oven
+Forno
+
+Furnace
+Fornace
+
+Anvil
+Incudine
+
+Enchanter
+Incantatore
+
+Loom
+Telaio
+
+Lantern
+Lanterna
+
+Iron Lantern
+Lanterna di Ferro
+
+Gold Lantern
+Lanterna di Oro
+
+Tnt
+Tnt
+
+Bed
+Letto
+
+Chest
+Cassa
+
+# PotionType.java
+
+None Potion
+Pozione Vuota
+
+Speed Potion
+Pozione di Velocita'
+
+Light Potion
+Pozione di Luce
+
+Swim Potion
+Pozione per Nuotare
+
+Energy Potion
+Pozione di Energia
+
+Regen Potion
+Pozione di Rigenerazione
+
+Health Potion
+Pozione di Vita
+
+Time Potion
+Pozione del Tempo
+
+Lava Potion
+Pozione di Lava
+
+Shield Potion
+Pozione Scudo
+
+Haste Potion
+Pozione di Rapidita'
+
+Potion
+Pozione
+
+# PowerGloveItem.java
+
+Power Glove
+Guanto del Potere
+
+# StackableItem.java
+
+Wood
+Legno
+
+Stone
+Pietra
+
+Leather
+Pelle
+
+Wheat
+Grano
+
+Key
+Chiave
+
+arrow
+freccia
+
+string
+stringa
+
+Coal
+Carbone
+
+Iron Ore
+Ferro Grezzo
+
+Lapis
+Lapis
+
+Gold Ore
+Oro Grezzo
+
+Iron
+Ferro
+
+Gold
+Oro
+
+Rose
+Rosa
+
+GunPowder
+PolvereDaSparo
+
+Slime
+Slime
+
+glass
+vetro
+
+cloth
+stoffa
+
+gem
+gemma
+
+Scale
+Squama
+
+Shard
+Coccio
+
+# TileItem.java
+
+Flower
+Fiore
+
+Acorn
+Ghianda
+
+Dirt
+Terra
+
+Plank
+Asse
+
+Plank Wall
+Muro d'Assi
+
+Wood Door
+Porta di Legno
+
+Stone Brick
+Mattone di Pietra
+
+Stone Wall
+Muro di Pietra
+
+Stone Door
+Porta di Pietra
+
+Obsidian Brick
+Mattone di Ossidiana
+
+Obsidian Wall
+Muro di Ossidiana
+
+Obsidian Door
+Porta di Ossidiana
+
+Wool
+Lana
+
+Red Wool
+Lana Rossa
+
+Blue Wool
+Lana Blu
+
+Green Wool
+Lana Verde
+
+Yellow Wool
+Lana Gialla
+
+Black Wool
+Lana Nera
+
+Sand
+Sabbia
+
+Cactus
+Cactus
+
+Seeds
+Semi
+
+Grass Seeds
+Semi d'Erba
+
+Bone
+Osso
+
+Cloud
+Nuvola
+
+Can only be placed on 
+Piazzato soltanto su 
+
+Dig a hole first!
+Scava prima un buco!
+
+# ToolItem.java
+
+Wood
+Legno
+
+Rock
+Pietra
+
+Iron
+Ferro
+
+Gold
+Oro
+
+Gem
+Gemma
+
+Fishing Rod
+Canna da Pesca
+
+# ToolType.java
+
+Shovel
+Pala
+
+Hoe
+Zappa
+
+Sword
+Spada
+
+Pickaxe
+Piccone
+
+Axe
+Ascia
+
+Bow
+Arco
+
+FishingRod
+Canna da Pesca
+
+Claymore
+Claymore
+
+# TorchItem.java
+
+Torch
+Torcia
+
+### item end
+
+### level
+
+## tile 
+
+# Tiles.java
+
+Gem Ore
+Gemma Grezza
+
+Wood Planks
+Assi di Legno
+
+Stone Bricks
+Mattoni di Pietra
+
+Obsidian
+Ossidiana
+
+Wood Wall
+Muro di Legna
+
+Grass
+Erba
+
+Dirt
+Terra
+
+Flower
+Fiore
+
+Hole
+Buco
+
+Stairs Up
+Scale in Su
+
+Stairs Down
+Scale in Giu'
+
+Water
+Acqua
+
+Rock
+Pietra
+
+Tree
+Albero
+
+Tree Sapling
+Arboscello
+
+Sand
+Sand
+
+Cactus
+Cactus
+
+Cactus Sapling
+Cactus Sapling
+
+Lava
+Lava
+
+Lava Brick
+Mattone di Lava
+
+Explode
+Esplodere
+
+Farmland
+Terreno Agricolo
+
+Wheat
+Grano
+
+Hard Rock
+Pietra Forte
+
+Infinite Fall
+Caduta Infinita
+
+Cloud
+Nuvola
+
+Cloud Cactus
+Cactus di Nuvole
+
+# OreTile.java
+
+Iron
+Ferro
+
+Lapis
+Lapis
+
+Gold
+Oro
+
+Gem
+Gemma
+
+Ore
+Minerale
+
+## tile end
+
+### level end
+
+### network
+
+# MinicraftClient.java
+
+host not found
+host non trovato
+
+unable to get localhost address
+impossibile ottenere indirizzo locale
+
+### network end
+
+### saveload
+### saveload end
+
+### screen
+
+## entry
+
+# BooleanEntry.java
+
+On
+On
+
+Off
+Off
+
+## entry end
+
+# BookDisplay.java
+
+There is nothing of use here.
+Niente da fare qui.
+
+Still nothing... :P
+Ancora niente... :P
+
+# CraftingMenu.java
+
+Have:
+Hai:
+
+Cost:
+Costo:
+
+# DeadMenu.java
+
+Time: 
+Tempo: 
+
+Score: 
+Punteggio: 
+
+Quit
+Esci
+
+Respawn
+Respawn
+
+You died! Aww!
+Sei morto! Aww!
+
+# Displays.java
+
+With the default controls...\n\nMove your character with arrow keys or WSAD. Press C to attack and X to open the inventory, and to use items. Select an item in the inventory to equip it.\n\nKill the air wizard to win the game!
+Con i controlli di default...\n\nMuovi il personaggio con le freccie direzionali o WSAD. Premi C per attaccare e X per aprire l'inventario, e per usare gli oggetti. Seleziona un oggetto per equippagiarlo.\n\nUccidi il mago del vento per vincere il gioco!
+
+# EndGameDisplay.java
+
+Player Score: 
+Punteggio del Giocatore: 
+
+<Bonuses>
+<Bonus>
+
+Final Score: 
+Punteggio Finale: 
+
+Exit to Menu
+Torna al Menu
+
+# InfoDisplay.java
+
+Time Played: 
+Tempo Giocato: 
+
+Current Score: 
+Punteggio Attuale: 
+
+Exit
+Esci
+
+Player Stats
+Statistiche
+
+# KeyInputMenu.java
+
+Controls
+Controlli
+
+Press the desired
+Premi la sequenza
+
+key sequence
+di tasti desiderata
+
+Are you sure you want to reset all key bindings to the default keys?
+Vuoi davvero resettare tutte le sequenze di tasti?
+
+enter to confirm
+invio per confermare
+
+escape to cancel
+escape per annullare
+
+Confirm Action
+Conferma Azione
+
+Press C/Enter to change key binding
+Premi C/Invio per cambiare sequenza
+
+Press A to add key binding
+Premi A per aggiungere sequenza
+
+Shift-D to reset all keys to default
+Shift-D per resettare tutti i tasi
+
+ESCAPE to Return to menu
+ESCAPE per Ritornare al menu 
+
+# LoadingDisplay.java
+
+Loading...
+Caricamento...
+
+# MultiplayerMenu.java
+
+waiting...
+aspettando...
+
+nothing
+niente
+
+attempting log in
+tentando il log in
+
+no internet connection, but no login data saved; cannot enter offline mode.
+nessuna connessione, ma nessuna data del login salvata; impossibile entrare in modalita' offline.
+
+connecting to server
+connessione al server
+
+logging in
+entrando nell'account
+
+saving credentials
+salvataggio credenziali
+
+login failed.
+log in fallito.
+
+problem with saved login data; please exit and login again.
+problema ad entrare con data login salvata; per favore uscire e fare di nuovo il log in.
+
+Internal server error: Couldn't fetch username from uuid
+Errore: Impossibile recuperare username dalla uuid
+
+logged in as: 
+entrato come: 
+
+offline mode: local servers only
+modalita' offline: server locali soltanto
+
+Enter ip address to connect to:
+Entra l'indirizzo ip:
+
+Press Shift-Escape to logout
+Premere Shift-Escape per uscire dall'account
+
+Enter email:
+Scrivi l'email:
+
+Enter password:
+Scrivi password:
+
+field is blank
+campo vuoto
+
+get an account at:
+registrati su:
+
+Loading 
+Caricamento 
+
+ from server
+ dal server
+ 
+Could not connect to server:
+Impossibile connettersi sul server:
+
+Press 
+Premi 
+
+ to return
+ per ritornare
+
+# OptionsMenu.java
+
+Change Key Bindings
+Cambia Tasti
+
+Options
+Opzioni
+
+Change language
+Cambia lingua
+
+# PauseMenu.java
+
+Return to Game
+Riprendi
+
+Options
+Opzioni
+
+Make World Multiplayer
+Mondo Multiplayer
+
+Save Game
+Salva
+
+ and 
+ e 
+ 
+ to Scroll
+ per Scorrere
+ 
+: Choose
+: Scegli
+ 
+Paused
+In pausa
+
+Main Menu
+Menu
+
+# PlayerInvMenu.java
+
+Inventory
+Inventario
+
+# TitleMenu.java
+
+Play
+Gioca
+
+Load World
+Carica Mondo
+
+New World
+Nuovo Mondo
+
+Join Online World
+Entra Mondo Online
+
+Options
+Opzioni
+
+Help
+Aiuto
+
+Instructions
+Istruzioni
+
+Storyline Guide (for the weak)
+Guida (per i novellini)
+
+About
+Riguardo
+
+Quit
+Esci
+
+ to select
+ per selezionare
+ 
+ to accept
+ per accettare
+ 
+ to return
+ per ritornare
+
+# WorldEditMenu.java
+
+New World Name:
+Nome del Mondo:
+
+Are you sure you want to delete
+Vuoi davvero cancellare
+
+This can not be undone!
+Questo non puo' essere annulato!
+
+ to confirm
+ per confermare
+ 
+ to cancel
+ per annullare
+
+# WorldGenMenu.java
+
+World Seed
+Seme del Mondo
+
+Enter World Name
+Scrivi Nome Mondo
+
+Trouble with world name?
+Problemi a scrivere?
+
+by default, w and s move the cursor up and down. This can be changed in the key binding menu. To type the letter instead of moving the cursor, hold the shift key while typing the world name.
+per default, w e s muovono il cursore su e giu'. Questo puo' essere cambiato nel menu dei tasti. Per scrivere la lettera invece di scorrere, tieni premuto shift mentre stai scrivendo.
+
+Create World
+Crea Mondo
+
+World Gen Options
+Opzioni di Generazione
+
+# WorldSelectMenu.java
+
+Copy
+Copia
+
+Rename
+Rinomina
+
+Delete
+Cancella
+
+ to confirm
+ per confermare
+ 
+ to return
+ per ritornare
+ 
+Select World
+Seleziona Mondo
+
+Select a World to
+Seleziona un Mondo per
+
+# LocalizationMenu.java
+
+Languages
+Lingue
+
+Language
+Lingua
+
+Select
+Seleziona
+
+### screen end
+
+### minicraft
+
+# Settings.java
+
+Max FPS
+FPS Max
+
+Difficulty
+Difficolta'
+
+Easy
+Facile
+
+Normal
+Normale
+
+Hard
+Difficile
+
+Game Mode
+Modalita'
+
+Survival
+Sopravvivenza
+
+Creative
+Creativa
+
+Hardcore
+Estrema
+
+Score
+Punteggio
+
+Time (Score Mode)
+Tempo (Modalita' Punteggio)
+
+Sound
+Suono
+
+Autosave
+Autosalvataggio
+
+World Size
+Dimensione
+
+World Theme
+Tema Mondo
+
+Normal
+Normale
+
+Forest
+Foresta
+
+Desert
+Deserto
+
+Plain
+Pianuta
+
+Hell
+Inferno
+
+Terrain Type
+Tipo Terreno
+
+Island
+Isola
+
+Box
+Scatola
+
+Mountain
+Montagna
+
+Irregular
+Irregolare
+
+Wear Suit
+Indossare Abiti
+
+### minicraft end
