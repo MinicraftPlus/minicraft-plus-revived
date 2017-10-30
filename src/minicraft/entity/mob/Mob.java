@@ -64,6 +64,9 @@ public abstract class Mob extends Entity {
 		}
 	}
 	
+	// kill the mob, programmatically.
+	public void kill() { die(); }
+	
 	// Kill the mob, called when health drops to 0
 	protected void die() { remove(); } // Remove the mob, with the method inherited from Entity
 	
