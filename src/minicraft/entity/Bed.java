@@ -10,11 +10,17 @@ public class Bed extends Furniture {
 	private static Player player = null; // the player that is in bed.
 	private static Level playerLevel = null; // the player that is in bed.
 	
+	/**
+	 * Creates a new furniture with the name Bed and the bed sprite and color.
+	 */
 	public Bed() {
 		super("Bed", new Sprite(16, 8, 2, 2, Color.get(-1, 100, 444, 400)), 3, 2);
 	}
 	
-	/** Called when the player attempts to get in bed. */
+	/**
+	 * Called when the player attempts to get in bed.
+	 */
+	@Override
 	public boolean use(Player player, int attackDir) {
 		if (Game.tickCount >= Game.sleepStartTime || Game.tickCount < Game.sleepEndTime && Game.pastDay1) { // if it is late enough in the day to sleep...
 			// set the player spawn coord. to their current position, in tile coords (hence " >> 4")
@@ -48,6 +54,10 @@ public class Bed extends Furniture {
 		return true;
 	}
 	
+	/**
+	 * Removes the player for the bed and places him/her back into the level.
+	 * @return The player which was sleeping.
+	 */
 	public static Player restorePlayer() {
 		if(Bed.playerLevel != null) {
 			Bed.playerLevel.add(Bed.player); // this adds the player to all the other clients' levels

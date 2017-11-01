@@ -12,7 +12,17 @@ import minicraft.entity.particle.TextParticle;
 import minicraft.gfx.Color;
 import minicraft.gfx.MobSprite;
 import minicraft.gfx.Screen;
-import minicraft.item.*;
+import minicraft.item.ArmorItem;
+import minicraft.item.FurnitureItem;
+import minicraft.item.Item;
+import minicraft.item.Items;
+import minicraft.item.PotionItem;
+import minicraft.item.PotionType;
+import minicraft.item.PowerGloveItem;
+import minicraft.item.Recipes;
+import minicraft.item.StackableItem;
+import minicraft.item.ToolItem;
+import minicraft.item.ToolType;
 import minicraft.level.Level;
 import minicraft.level.tile.Tile;
 import minicraft.level.tile.Tiles;
@@ -82,6 +92,11 @@ public class Player extends Mob {
 	
 	// Note: the player's health & max health are inherited from Mob.java
 	
+	/**
+	 * Creates a new player with values from a previous state if it exists.
+	 * @param previousInstance Previous state of the player if it exists.
+	 * @param input Used for input from the player.
+	 */
 	public Player(Player previousInstance, InputHandler input) {
 		super(sprites, Player.maxHealth);
 		
@@ -120,14 +135,30 @@ public class Player extends Mob {
 		}
 	}
 	
+	/**
+	 * Adds a new potion effect to the player.
+	 * @param type Type of potion.
+	 * @param duration How long the effect lasts.
+	 */
 	public void addPotionEffect(PotionType type, int duration) {
 		potioneffects.put(type, duration);
 	}
+	
+	/**
+	 * Adds a potion effect to the player.
+	 * @param type Type of effect.
+	 */
 	public void addPotionEffect(PotionType type) {
 		addPotionEffect(type, type.duration);
 	}
+	
+	/**
+	 * Returns all the potion effects currently affecting the player.
+	 * @return all potion effects on the player.
+	 */
 	public HashMap<PotionType, Integer> getPotionEffects() { return potioneffects; }
 	
+	@Override
 	public void tick() {
 		if(level == null || isRemoved()) return;
 		
@@ -383,6 +414,10 @@ public class Player extends Mob {
 		if(Game.isConnectedClient() && this == Game.player) Game.client.sendPlayerUpdate(this);
 	}
 	
+	/**
+	 * Removes an held item and places it back into the inventory.
+	 * Looks complicated to so it can handle the powerglove.
+	 */
 	public void resolveHeldItem() {
 		//if(Game.debug) System.out.println("prev item: " + prevItem + "; curItem: " + activeItem);
 		if(!(activeItem instanceof PowerGloveItem)) { // if you are now holding something other than a power glove...
@@ -398,7 +433,10 @@ public class Player extends Mob {
 			activeItem = null;
 	}
 	
-	/* This actually ends up calling another use method down below. */
+	/**
+	 * Uses the active item in the direction the player is facing.
+	 * @return true if the other use method returns true, false otherwise.
+	 */
 	private boolean use() {
 		
 		// if an entity in the direction the player is facing has a use() method, call it, then return true.
@@ -427,7 +465,9 @@ public class Player extends Mob {
 		return false;
 	}
 	
-	/** This method is called when we press the attack button. */
+	/** 
+	 * This method is called when we press the attack button.
+	 */
 	protected void attack() {
 		// walkDist is not synced, so this can happen for both the client and server.
 		walkDist += 8; // increase the walkDist (changes the sprite, like you moved your arm)
@@ -548,6 +588,11 @@ public class Player extends Mob {
 		}
 	}
 	
+	/**
+	 * "Fishes" on a given position.
+	 * @param x Drop location of fish.
+	 * @param y Drop location of fish.
+	 */
 	public void goFishing(int x, int y) {
 		int fcatch = random.nextInt(90);
 		
@@ -557,7 +602,15 @@ public class Player extends Mob {
 		else if (fcatch == 42 && random.nextInt(5) == 0) System.out.println("FISHNORRIS got away... just kidding, FISHNORRIS din't get away from you, you got away from FISHNORRIS...");
 	}
 	
-	/** called by other use method; this serves as a buffer in case there is no entity in front of the player. */
+	/**
+	 * Called by other use method; this serves as a buffer in case there is no entity in front of the player.
+	 * Arguments make a rectangle in which the entities can be.
+	 * @param x0 First x coordinate.
+	 * @param y0 First y coordinate.
+	 * @param x1 Second x coordinate.
+	 * @param y1 Second y coordinate.
+	 * @return true if the item was used on a entity.
+	 */
 	private boolean use(int x0, int y0, int x1, int y1) {
 		List<Entity> entities = level.getEntitiesInRect(x0, y0, x1, y1); // gets the entities within the 4 points
 		for (int i = 0; i < entities.size(); i++) {
@@ -567,7 +620,15 @@ public class Player extends Mob {
 		return false;
 	}
 	
-	/** same, but for interaction. */
+	/**
+	 * Interacts with entities.
+	 * Arguments make a rectangle in which the entities can be.
+	 * @param x0 First x coordinate.
+	 * @param y0 First y coordinate.
+	 * @param x1 Second x coordinate.
+	 * @param y1 Second y coordinate.
+	 * @return true if interaction happend.
+	 */
 	private boolean interact(int x0, int y0, int x1, int y1) {
 		List<Entity> entities = level.getEntitiesInRect(x0, y0, x1, y1);
 		for (int i = 0; i < entities.size(); i++) {
@@ -577,7 +638,15 @@ public class Player extends Mob {
 		return false;
 	}
 	
-	/** same, but for attacking. */
+	/**
+	 * Attacking with entities.
+	 * Arguments make a rectangle in which the entities can be.
+	 * @param x0 First x coordinate.
+	 * @param y0 First y coordinate.
+	 * @param x1 Second x coordinate.
+	 * @param y1 Second y coordinate.
+	 * @return true if attack happend.
+	 */
 	private void hurt(int x0, int y0, int x1, int y1) {
 		List<Entity> entities = level.getEntitiesInRect(x0, y0, x1, y1);
 		for (int i = 0; i < entities.size(); i++) {
@@ -586,7 +655,11 @@ public class Player extends Mob {
 		}
 	}
 	
-	/** Gets the attack damage the player will deal. */
+	/**
+	 * Calculates how much damage the player will do.
+	 * @param e Entity being attacked.
+	 * @return How much damage the player does.
+	 */
 	private int getAttackDamage(Entity e) {
 		int dmg = random.nextInt(2) + 1;
 		if (activeItem != null && activeItem instanceof ToolItem) {
@@ -595,7 +668,7 @@ public class Player extends Mob {
 		return dmg;
 	}
 	
-	/** Draws the player on the screen */
+	@Override
 	public void render(Screen screen) {
 		col = Color.get(-1, 100, shirtColor, 532);
 		
@@ -680,7 +753,7 @@ public class Player extends Mob {
 		}
 	}
 	
-	/** What happens when the player interacts with a itemEntity */
+	@Override
 	public void touchItem(ItemEntity itemEntity) {
 		Sound.pickup.play();
 		itemEntity.remove();
@@ -694,23 +767,46 @@ public class Player extends Mob {
 			inventory.add(itemEntity.item); // add item to inventory
 	}
 	
+	/**
+	 * The player can swim.
+	 */
+	@Override
 	public boolean canSwim() {
 		return true; // the player can swim.
 	}
 	
+	/**
+	 * The player can walk on wool.
+	 */
+	@Override
 	public boolean canWool() {
 		return true; // can... something..?
 	}
 	
+	/**
+	 * The player can light... yeah idk.
+	 */
+	@Override
 	public boolean canLight() {
 		return true; // can be lit up? has a lighter version?
 	}
 	
-	/** Finds a start position for the player to start in. */
+	/**
+	 * Finds a starting position for the player.
+	 * @param level Level which the player wants to start in.
+	 * @param spawnSeed Spawnseed.
+	 * @return true
+	 */
 	public boolean findStartPos(Level level, long spawnSeed) {
 		random.setSeed(spawnSeed);
 		return findStartPos(level);
 	}
+	
+	/**
+	 * Finds the starting position for the player in a level.
+	 * @param level The level.
+	 * @return true.
+	 */
 	public boolean findStartPos(Level level) {
 		while (true) { // will loop until it returns
 			// gets coordinates of a random tile (in tile coordinates)
@@ -728,7 +824,9 @@ public class Player extends Mob {
 		}
 	}
 	
-	/** Set player's home coordinates. */
+	/**
+	 * Sets the player's home position.
+	 */
 	public void setHome() {
 		if (Game.currentLevel == 3) { // if on surface
 			// set home coordinates
@@ -741,6 +839,9 @@ public class Player extends Mob {
 		}
 	}
 
+	/**
+	 * Teleports the player to his/her home.
+	 */
 	public void goHome() {
 		if (Game.currentLevel == 3) { // if on surface
 			if (hasSetHome) {
@@ -760,7 +861,11 @@ public class Player extends Mob {
 		}
 	}
 	
-	/** finds a location to respawn the player after death. */
+	/**
+	 * Finds a location where the player can respawn in a given level.
+	 * @param level The level.
+	 * @return true
+	 */
 	public boolean respawn(Level level) {
 		if (!level.getTile(spawnx, spawny).maySpawn)
 			findStartPos(level); // if there's no bed to spawn from, and the stored coordinates don't point to a grass tile, then find a new point.
@@ -771,7 +876,11 @@ public class Player extends Mob {
 		return true; // again, why the "return true"'s for methods that never return false?
 	}
 	
-	/** Pays the stamina used for an action */
+	/**
+	 * Uses an amount of stamina to do an action.
+	 * @param cost How much stamina the action requires.
+	 * @return true if the player had enough stamina, false if not.
+	 */
 	public boolean payStamina(int cost) {
 		if (potioneffects.containsKey(PotionType.Energy)) return true; // if the player has the potion effect for infinite stamina, return true (without subtracting cost).
 		else if (cost > stamina) return false; // if the player doesn't have enough stamina, then return false; failure.
@@ -781,7 +890,10 @@ public class Player extends Mob {
 		return true; // success
 	}
 	
-	/** Gets the player's light radius underground */
+	/** 
+	 * Gets the player's light radius underground 
+	 */
+	@Override
 	public int getLightRadius() {
 		//if (Game.currentLevel == 3) return 0; // I don't want the player to have an automatic halo on the surface.
 		
@@ -802,7 +914,7 @@ public class Player extends Mob {
 		return (int) r; // return light radius
 	}
 	
-	/** What happens when the player dies */
+	@Override
 	protected void die() {
 		int lostscore = score / 3; // finds score penalty
 		score -= lostscore; // subtracts score penalty
@@ -833,15 +945,23 @@ public class Player extends Mob {
 		super.die(); // calls the die() method in Mob.java
 	}
 	
-	/** What happens when the player touches an entity */
+	@Override
 	protected void touchedBy(Entity entity) {
 		if (!(entity instanceof Player)) { // prevents stack-overflow
 			entity.touchedBy(this); // calls the other entity's touchedBy method.
 		}
 	}
 	
-	public void hurt(int damage, int attackDir) { doHurt(damage, attackDir); }
-	/** What happens when the player is hurt */
+	/**
+	 * Hurts the player from a direction.
+	 * @param damage How much health is removed.
+	 * @param attackDir The direction of attack.
+	 */
+	public void hurt(int damage, int attackDir) { 
+		doHurt(damage, attackDir);
+	}
+	
+	@Override
 	protected void doHurt(int damage, int attackDir) {
 		if (Game.isMode("creative") || hurtTime > 0 || Bed.inBed) return; // can't get hurt in creative, hurt cooldown, or while someone is in bed
 		
@@ -897,6 +1017,7 @@ public class Player extends Mob {
 		hurtTime = playerHurtTime;
 	}
 	
+	@Override
 	protected String getUpdateString() {
 		String updates = super.getUpdateString() + ";";
 		updates += "skinon,"+skinon+
@@ -919,6 +1040,7 @@ public class Player extends Mob {
 		return updates;
 	}
 	
+	@Override
 	protected boolean updateField(String field, String val) {
 		if(super.updateField(field, val)) return true;
 		switch(field) {
@@ -941,6 +1063,10 @@ public class Player extends Mob {
 		return false;
 	}
 	
+	/**
+	 * String representation of the player which can be sent over the network.
+	 * @return String representation of the player.
+	 */
 	public String getPlayerData() {
 		List<String> datalist = new ArrayList<>();
 		StringBuilder playerdata = new StringBuilder();

@@ -14,14 +14,20 @@ public class Zombie extends EnemyMob {
 		Color.get(-1, 000, 111, 20)
 	};
 	
+	/**
+	 * Creates a zombie of the given level.
+	 * @param lvl Zombie's level.
+	 */
 	public Zombie(int lvl) {
 		super(lvl, sprites, lvlcols, 5, 100);
 	}
 	
+	@Override
 	public void tick() {
 		super.tick();
 	}
 	
+	@Override
 	protected void die() {
 		if (Settings.get("diff").equals("Easy")) dropItem(2, 4, Items.get("cloth"));
 		if (Settings.get("diff").equals("Normal")) dropItem(2, 3, Items.get("cloth"));

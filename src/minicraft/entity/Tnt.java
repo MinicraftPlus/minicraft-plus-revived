@@ -1,9 +1,10 @@
 package minicraft.entity;
 
-import javax.swing.Timer;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.List;
+
+import javax.swing.Timer;
 
 import minicraft.Sound;
 import minicraft.gfx.Color;
@@ -25,6 +26,9 @@ public class Tnt extends Furniture implements ActionListener {
 	private Timer explodeTimer;
 	private Level levelSave;
 	
+	/**
+	 * Creates a new tnt furniture.
+	 */
 	public Tnt() {
 		super("Tnt", new Sprite(14, 8, 2, 2, color), 3, 2);
 		fuseLit = false;
@@ -33,6 +37,7 @@ public class Tnt extends Furniture implements ActionListener {
 		explodeTimer = new Timer(300, this);
 	}
 
+	@Override
 	public void tick() {
 		super.tick();
 		
@@ -65,6 +70,7 @@ public class Tnt extends Furniture implements ActionListener {
 		}
 	}
 	
+	@Override
 	public void render(Screen screen) {
 		if(fuseLit) {
 			int colFctr = 100*((ftik%15)/5) + 200;
@@ -73,6 +79,9 @@ public class Tnt extends Furniture implements ActionListener {
 		super.render(screen);
 	}
 	
+	/**
+	 * Does the explosion.
+	 */
 	public void actionPerformed(ActionEvent e) {
 		explodeTimer.stop();
 		int xt = x >> 4;
@@ -81,13 +90,15 @@ public class Tnt extends Furniture implements ActionListener {
 		levelSave = null;
 	}
 	
+	@Override
 	public void hurt(Mob m, int dmg, int attackDir) {
 		if (!fuseLit) {
 			fuseLit = true;
 			Sound.fuse.play();
 		}
 	}
-	
+
+	@Override
 	public void hurt(Tnt tnt, int dmg, int attackDir) {
 		if (!fuseLit) {
 			fuseLit = true;
@@ -96,6 +107,7 @@ public class Tnt extends Furniture implements ActionListener {
 		}
 	}
 	
+	@Override
 	protected String getUpdateString() {
 		String updates = super.getUpdateString() + ";";
 		updates += "fuseLit,"+fuseLit+
@@ -104,6 +116,7 @@ public class Tnt extends Furniture implements ActionListener {
 		return updates;
 	}
 	
+	@Override
 	protected boolean updateField(String field, String val) {
 		if(super.updateField(field, val)) return true;
 		switch(field) {

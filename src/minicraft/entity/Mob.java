@@ -1,6 +1,7 @@
 package minicraft.entity;
 
 import java.util.List;
+
 import minicraft.Game;
 import minicraft.entity.particle.TextParticle;
 import minicraft.gfx.Color;
@@ -23,6 +24,12 @@ public abstract class Mob extends Entity {
 	public int speed;
 	public int tickTime = 0; // Incremented whenever tick() is called, is effectively the age in ticks
 	
+	/**
+	 * Default constructor for a mob.
+	 * Default x radius is 4, and y radius is 3.
+	 * @param sprites All of this mob's sprites.
+	 * @param health The mob's max health.
+	 */
 	public Mob(MobSprite[][] sprites, int health) {
 		super(4, 3);
 		this.sprites = sprites;
@@ -31,6 +38,10 @@ public abstract class Mob extends Entity {
 		speed = 1;
 	}
 	
+	/**
+	 * Updates the mob.
+	 */
+	@Override
 	public void tick() {
 		tickTime++; // Increment our tick counter
 		
@@ -66,10 +77,14 @@ public abstract class Mob extends Entity {
 		}
 	}
 	
+	/**
+	 * This is called when the mob's health hits 0 and will remove the mob.
+	 */
 	protected void die() { // Kill the mob, called when health drops to 0
 		remove(); // Remove the mob, with the method inherited from Entity
 	}
 	
+	@Override
 	public boolean move(int xa, int ya) { // Move the mob, overrides from Entity
 		if(level == null) return false; // stopped b/c there's no level to move in!
 		
@@ -132,19 +147,30 @@ public abstract class Mob extends Entity {
 		return moved;
 	}
 
+	/**
+	 * Returns if the mob is above a wool tile.
+	 * @return true if the mob is standing on a wool tile, false if not.
+	 */
 	protected boolean isWooling() { // supposed to walk at half speed on wool
 		if(level == null) return false;
 		Tile tile = level.getTile(x >> 4, y >> 4);
 		return tile == Tiles.get("wool");
 	}
 	
-	/** checks if this Mob is currently on a light tile; if so, the mob sprite is brightened. */
+	/**
+	 * Checks if this Mob is currently on a light tile; if so, the mob sprite is brightened.
+	 * @return true if the mob is on a light tile, false if not.
+	 */
 	public boolean isLight() {
 		if(level == null) return false;
 		//Tile tile = level.getTile(x >> 4, y >> 4);
 		return level.isLight(x>>4, y>>4);
 	}
 
+	/**
+	 * Checks if the mob is swimming (standing on a liquid tile).
+	 * @return true if the mob is swimming, false if not.
+	 */
 	protected boolean isSwimming() {
 		if(level == null) return false;
 		Tile tile = level.getTile(x >> 4, y >> 4); // Get the tile the mob is standing on (at x/16, y/16)
@@ -152,10 +178,12 @@ public abstract class Mob extends Entity {
 	}
 	
 	// this is useless, I think. Why have both "blocks" and "isBlockableBy"?
+	@Override
 	public boolean blocks(Entity e) { // Check if another entity would be prevented from moving through this one
 		return e.isBlockableBy(this); // Call the method on the other entity to determine this, and return it
 	}
 
+	@Override
 	public void hurt(Tile tile, int x, int y, int damage) { // Hurt the mob, when the source of damage is a tile
 		//int attackDir = dir ^ 1; // Set attackDir to our own direction, inverted. XORing it with 1 flips the 
 		// rightmost bit in the variable, this effectively adds one when even, and subtracts one when odd
@@ -163,15 +191,22 @@ public abstract class Mob extends Entity {
 			doHurt(damage, -1); // Call the method that actually performs damage, and set it to no particular direction
 	}
 	
+	@Override
 	public void hurt(Mob mob, int damage, int attackDir) { // Hurt the mob, when the source is another mob
 		if(mob instanceof Player && Game.isMode("creative") && mob != this) doHurt(health, attackDir); // kill the mob instantly
 		else doHurt(damage, attackDir); // Call the method that actually performs damage, and use our provided attackDir
 	}
 	
+	@Override
 	public void hurt(Tnt tnt, int dmg, int attackDir) {
 		doHurt(dmg, attackDir);
 	}
 	
+	/**
+	 * Damages this mob.
+	 * @param damage How much health is removed.
+	 * @param attackDir From what direction is the damage comming from.
+	 */
 	protected void doHurt(int damage, int attackDir) { // Actually hurt the mob, based on only damage and a direction
 		// this is overridden in Player.java
 		if (isRemoved() || hurtTime > 0) return; // If the mob has been hurt recently and hasn't cooled down, don't continue
@@ -185,6 +220,10 @@ public abstract class Mob extends Entity {
 		hurtTime = 10; // Set a delay before we can be hurt again
 	}
 	
+	/**
+	 * Restores health to this mob.
+	 * @param heal How much health is restored.
+	 */
 	public void heal(int heal) { // Restore health on the mob
 		if (hurtTime > 0) return; // If the mob has been hurt recently and hasn't cooled down, don't continue
 		
@@ -193,6 +232,17 @@ public abstract class Mob extends Entity {
 		if (health > maxHealth) health = maxHealth; // If our health has exceeded our maximum, lower it back down to said maximum
 	}
 	
+	/**
+	 * Calculates from which direction an attacking entity hits
+	 * another entity. Direction is given by an integer where
+	 * 0 = Down,
+	 * 1 = Up,
+	 * 2 = Left,
+	 * 3 = Right,
+	 * @param attacker The attacking entity.
+	 * @param hurt The entity which is attacked.
+	 * @return direction of the attack.
+	 */
 	protected static int getAttackDir(Entity attacker, Entity hurt) {
 		/*
 		  Just a note here for reference:
@@ -221,6 +271,7 @@ public abstract class Mob extends Entity {
 		}
 	}
 	
+	@Override
 	protected String getUpdateString() {
 		String updates = super.getUpdateString() + ";";
 		updates += "dir,"+dir+
@@ -231,6 +282,7 @@ public abstract class Mob extends Entity {
 		return updates;
 	}
 	
+	@Override
 	protected boolean updateField(String field, String val) {
 		if(field.equals("x") || field.equals("y")) walkDist++;
 		if(super.updateField(field, val)) return true;

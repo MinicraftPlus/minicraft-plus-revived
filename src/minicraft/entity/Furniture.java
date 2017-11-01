@@ -15,7 +15,24 @@ public class Furniture extends Entity {
 	public Sprite sprite;
 	public String name;
 	
-	public Furniture(String name, Sprite sprite) { this(name, sprite, 3, 3); }
+	/**
+	 * Constructor for the furniture entity.
+	 * Size will be set to 3.
+	 * @param name Name of the furniture.
+	 * @param sprite Furniture sprite.
+	 */
+	public Furniture(String name, Sprite sprite) { 
+		this(name, sprite, 3, 3);
+	}
+	
+	/**
+	 * Constructor for the furniture entity.
+	 * Radius is only used for collision detection.
+	 * @param name Name of the furniture.
+	 * @param sprite Furniture sprite.
+	 * @param xr Horizontal radius.
+	 * @param yr Vertical radius.
+	 */
 	public Furniture(String name, Sprite sprite, int xr, int yr) {
 		// all of these are 2x2 on the spritesheet; radius is for collisions only.
 		super(xr, yr);
@@ -24,6 +41,7 @@ public class Furniture extends Entity {
 		col = sprite.color;
 	}
 	
+	@Override
 	public Furniture clone() {
 		try {
 			return getClass().newInstance();//new Furniture(name, color, sprite, xr, yr);
@@ -33,6 +51,7 @@ public class Furniture extends Entity {
 		return null;
 	}
 
+	@Override
 	public void tick() {
 		// moves the furniture in the correct direction.
 		if (pushDir == 0) move(0, +1);
@@ -44,22 +63,29 @@ public class Furniture extends Entity {
 		else multiPushTime = 0;
 	}
 	
-	/** Draws the furniture on the screen. */
+	@Override
 	public void render(Screen screen) {
 		sprite.render(screen, x-8, y-8);
 	}
 	
-	/** Determines if this entity can block others */
+	/**
+	 * Entities can't move through furniture.
+	 */
+	@Override
 	public boolean blocks(Entity e) {
 		return true; // yes this can block your way (Needed for pushing)
 	}
 	
-	/** What happens when this is touched by another entity */
+	@Override
 	protected void touchedBy(Entity entity) {
 		if (entity instanceof Player)
 			tryPush((Player) entity);
 	}
 	
+	/**
+	 * Tries to let the player push this furniture.
+	 * @param player The player doing the pushing.
+	 */
 	public void tryPush(Player player) {
 		if (pushTime == 0) {
 			pushDir = player.dir; // set pushDir to the player's dir.
@@ -70,7 +96,10 @@ public class Furniture extends Entity {
 		}
 	}
 	
-	/** Used in PowerGloveItem.java */
+	/**
+	 * Used in PowerGloveItem.java to let the user pick up furniture.
+	 * @param player The player picking up the furniture.
+	 */
 	public void take(Player player) {
 		remove(); // remove this from the world
 		if(!Game.ISONLINE) {
@@ -86,16 +115,22 @@ public class Furniture extends Entity {
 		//if (Game.debug) System.out.println("set active item of player " + player + " to " + player.activeItem + "; picked up furniture: " + this);
 	}
 	
+	/**
+	 * Can be placed on wool.
+	 */
+	@Override
 	public boolean canWool() {
 		return true;
 	}
 	
+	@Override
 	protected String getUpdateString() {
 		return super.getUpdateString()+
 		//";pushDir,"+pushDir+
 		";pushTime,"+multiPushTime;
 	}
 	
+	@Override
 	protected boolean updateField(String field, String val) {
 		if(super.updateField(field, val)) return true;
 		
