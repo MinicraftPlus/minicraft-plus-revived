@@ -201,6 +201,9 @@ public class Level {
 	}
 
 	public void tick() {
+		tick(true);
+	}
+	public void tick(boolean fullTick) {
 		int count = 0;
 		
 		while(entitiesToAdd.size() > 0) {
@@ -222,7 +225,7 @@ public class Level {
 			entitiesToAdd.remove(entity);
 		}
 		
-		if(!Game.isValidServer() || getPlayers().length > 0) {
+		if(fullTick && (!Game.isValidServer() || getPlayers().length > 0)) {
 			// this prevents any entity (or tile) tick action from happening on a server level with no players.
 			
 			if (!Game.isValidClient()) {
@@ -302,7 +305,7 @@ public class Level {
 		if(Game.isValidServer() && players.size() == 0)
 			return; // don't try to spawn any mobs when there's no player on the level, on a server.
 		
-		if(count < maxMobCount && !Game.isValidClient())
+		if(fullTick && count < maxMobCount && !Game.isValidClient())
 			trySpawn();
 	}
 	

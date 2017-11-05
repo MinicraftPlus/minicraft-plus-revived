@@ -151,8 +151,8 @@ public class Updater extends Game {
 		if(isValidServer()) {
 			/// this is to keep the game going while online, even with an unfocused window.
 			input.tick();
-			for(Level floor: levels) {
-				if(floor == null) continue;
+			for (Level floor : levels) {
+				if (floor == null) continue;
 				floor.tick();
 			}
 			
@@ -170,6 +170,12 @@ public class Updater extends Game {
 			
 			if(!isValidServer() || menu != null && !hadMenu)
 				input.tick(); // INPUT TICK; no other class should call this, I think...especially the *Menu classes.
+			
+			if(isValidClient() && Renderer.readyToRenderGameplay) {
+				for(int i = 0; i < levels.length; i++)
+					if(i != currentLevel && levels[i] != null)
+						levels[i].tick(false);
+			}
 			
 			if (menu != null) {
 				//a menu is active.
@@ -196,7 +202,7 @@ public class Updater extends Game {
 					player.tick(); // ticks the player when there's no menu.
 					
 					if(level != null) {
-						level.tick();
+						level.tick(true);
 						Tile.tickCount++;
 					}
 				}

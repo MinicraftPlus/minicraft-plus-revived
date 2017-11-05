@@ -2,6 +2,7 @@ package minicraft.entity;
 
 import java.util.List;
 
+import minicraft.core.Game;
 import minicraft.entity.mob.Mob;
 import minicraft.entity.mob.Player;
 import minicraft.gfx.Color;
@@ -63,16 +64,16 @@ public class Arrow extends Entity {
 				mob.hurt(owner, damage + extradamage, dir);
 			}
 			
-			/*if(owner instanceof Player && minicraft.screen.Game.isMode("creative") && minicraft.Game.debug) {
+			if(owner instanceof Player && Game.isMode("creative") && Game.debug) {
 				/// debug fun!
 				level.getTile(x/16, y/16).hurt(level, x/16, y/16, 500); // KO all tiles
 			} else { /// normal behavior
-			*/	if (!level.getTile(x / 16, y / 16).mayPass(level, x / 16, y / 16, this)
+				if (!level.getTile(x / 16, y / 16).mayPass(level, x / 16, y / 16, this)
 						&& !level.getTile(x / 16, y / 16).connectsToWater
 						&& level.getTile(x / 16, y / 16).id != 16) {
 					this.remove();
 				}
-			//}
+			}
 		}
 	}
 
