@@ -42,7 +42,7 @@ public class MinicraftClient extends MinicraftConnection {
 	private MultiplayerDisplay menu;
 	
 	private enum State {
-		LOGIN, LOADING, PLAY, DISCONNECTED
+		LOGIN, LOADING, PLAY, RESPAWNING, DISCONNECTED
 	}
 	private State curState = State.DISCONNECTED;
 	
@@ -105,6 +105,12 @@ public class MinicraftClient extends MinicraftConnection {
 				World.levels[Game.currentLevel].add(Game.player);
 				Renderer.readyToRenderGameplay = true;
 				Game.setMenu(null);
+				break;
+			
+			case RESPAWNING:
+				Game.setMenu(menu);
+				menu.setLoadingMessage("Spawnpoint");
+				sendData(InputType.RESPAWN, "");
 				break;
 		}
 	}
@@ -213,13 +219,6 @@ public class MinicraftClient extends MinicraftConnection {
 					World.levels[World.currentLevel] = level = new Level(World.lvlw, World.lvlh, lvldepth, World.levels[World.lvlIdx(lvldepth+1)], false);
 				}
 				
-				/*byte[] tiledata = new byte[alldata.length()];
-				for(int i = 0; i < alldata.length(); i++) {
-					int tbit = (int) alldata.charAt(i);
-					tbit--;
-					if(tbit >= 128) tbit -= 256;
-					tiledata[i] = (byte) tbit;
-				}*/
 				String[] tilestrs = alldata.split(",");
 				byte[] tiledata = new byte[tilestrs.length];
 				for(int i = 0; i < tiledata.length; i++)
@@ -357,27 +356,18 @@ public class MinicraftClient extends MinicraftConnection {
 			
 			case PLAYER:
 				//if (Game.debug) System.out.println("CLIENT: received player packet");
-				/*if(setPlayer) {
-					if (Game.debug) System.out.println("CLIENT: ignoring set player, already set");
-					return false;
-				}*/
-				// use the contained data to load up the player object vars.
-				//if(Game.debug) System.out.println("CLIENT: player data received: " + alldata);
 				String[] playerparts = alldata.split("\\n");
 				List<String> playerinfo = Arrays.asList(playerparts[0].split(","));
 				List<String> playerinv = Arrays.asList(playerparts[1].split(","));
 				Load load = new Load();
 				if (Game.debug) System.out.println("CLIENT: setting player vars from packet...");
-				//if(Game.isMode("creative")) {
-					//if(Game.debug) System.out.println("CLIENT: in creative mode, filling creative inv...");
 					
 				if(!(playerinv.size() == 1 && playerinv.get(0).equals("null")))
 					load.loadInventory(Game.player.inventory, playerinv);
 				load.loadPlayer(Game.player, playerinfo);
-				//setPlayer = true;
-				if(Game.getMenu() instanceof PlayerDeathDisplay) {
-					Game.setMenu(null);
-				}
+				
+				if(curState == State.RESPAWNING)
+					changeState(State.LOADING); // load the new data
 				return true;
 			
 			case SAVE:
@@ -489,7 +479,7 @@ public class MinicraftClient extends MinicraftConnection {
 		sendData(InputType.DIE, chestData);
 	}
 	
-	public void requestRespawn() { sendData(InputType.RESPAWN, ""); }
+	public void requestRespawn() { changeState(State.RESPAWNING); }
 	
 	public void addToChest(Chest chest, Item item) {
 		if(chest == null || item == null) return;

@@ -560,6 +560,7 @@ public class MinicraftServer extends Thread implements MinicraftProtocol {
 			case RESPAWN:
 				serverThread.respawnPlayer();
 				broadcastEntityAddition(clientPlayer);
+				// added player; client will request level data when it's ready
 				return true;
 			
 			case DISCONNECT:
@@ -700,13 +701,6 @@ public class MinicraftServer extends Thread implements MinicraftProtocol {
 				return true;
 			
 			case INTERACT:
-				//if (Game.debug) System.out.println("SERVER: received interaction request");
-				//x, y, dir, item
-				// since this should be the most up-to-date data, just update the remote player coords with them.
-				//int ox = clientPlayer.x>>4, oy = clientPlayer.y>>4;
-				//clientPlayer.x = Integer.parseInt(data[0]);
-				//clientPlayer.y = Integer.parseInt(data[1]);
-				//clientPlayer.dir = Integer.parseInt(data[0]);
 				clientPlayer.activeItem = Items.get(data[0], true); // this can be null; and that's fine, it means a fist. ;)
 				int arrowCount = Integer.parseInt(data[1]);
 				int curArrows = clientPlayer.inventory.count(Items.arrowItem);
@@ -714,19 +708,9 @@ public class MinicraftServer extends Thread implements MinicraftProtocol {
 					clientPlayer.inventory.add(Items.arrowItem, arrowCount-curArrows);
 				if(curArrows > arrowCount)
 					clientPlayer.inventory.removeItems(Items.arrowItem, curArrows-arrowCount);
-				//boolean wasGlove = clientPlayer.activeItem instanceof PowerGloveItem;
 				clientPlayer.attack(); /// NOTE the player may fire an arrow, but we won't sync the arrow count because that player will update it theirself.
 				
-				//boolean pickedUpFurniture = wasGlove && !(clientPlayer.activeItem instanceof PowerGloveItem);
-				
-				//if(!Game.isMode("creative")) { // the second part allows the player to pick up furniture in creative mode.
-					// now, send back the state of the activeItem. In creative though, this won't change, so it's unnecessary.
-					//if(pickedUpFurniture)
-						//sendData(InputType.CHESTOUT, (new PowerGloveItem()).getData());
-					
-					//if(Game.debug) System.out.println("SERVER: new activeItem for player " + clientPlayer + " after interaction: " + clientPlayer.activeItem);
-					serverThread.sendData(InputType.INTERACT, ( clientPlayer.activeItem == null ? "null" : clientPlayer.activeItem.getData() ));
-				//}
+				serverThread.sendData(InputType.INTERACT, ( clientPlayer.activeItem == null ? "null" : clientPlayer.activeItem.getData() ));
 				return true;
 			
 			case BED:
