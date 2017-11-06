@@ -46,7 +46,7 @@ public class TitleDisplay extends Display {
 				new BlankEntry(),
 				new SelectEntry("About", () -> Game.setMenu(new BookDisplay(BookData.about)))
 			),
-			new SelectEntry("Quit", () -> Game.quit())
+			new SelectEntry("Quit", Game::quit)
 			)
 			.setPositioning(new Point(Screen.w/2, Screen.h*3/5), RelPos.CENTER)
 			.createMenu()
