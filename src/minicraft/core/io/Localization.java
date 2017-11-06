@@ -22,8 +22,8 @@ public class Localization {
 		
 		String localString = localization.get(string);
 		
-		if (localString == null)
-			System.out.println("The string \"" + string + "\" is not localized, returning itself instead.");
+		// if (localString == null && Game.debug)
+		// 	System.out.println("The string \"" + string + "\" is not localized, returning itself instead.");
 		
 		return (localString == null ? string : localString);
 	}
