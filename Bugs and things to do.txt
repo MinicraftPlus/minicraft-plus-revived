@@ -2,6 +2,10 @@
 
 --CURRENT: 
 
+- ping server every 5 seconds, and if it doesn't respond after 3 consecutive pings, disconnect automatically.
+- fix localization of names; need to separate item names.
+- remove all players from level on server when someone uses a bed; then add them all back when they get out
+  -- or better yet, maybe make a system to not speed up time until everyone is in bed?
 - 
 
 Note to self: for more little bugs/ideas/concerns, search code for "TODO"
