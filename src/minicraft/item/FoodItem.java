@@ -53,6 +53,6 @@ public class FoodItem extends StackableItem {
 	}
 	
 	public FoodItem clone() {
-		return new FoodItem(name, sprite, count, heal);
+		return new FoodItem(getName(), sprite, count, heal);
 	}
 }

@@ -22,7 +22,7 @@ public class Items {
 	private static ArrayList<Item> items = new ArrayList<>();
 	
 	private static void add(Item i) {
-		String name = i.name.toUpperCase();
+		String name = i.getName().toUpperCase();
 		//if(Game.debug) System.out.println("adding " + name);
 		items.add(i);
 	}
@@ -81,7 +81,7 @@ public class Items {
 		
 		Item i = null;
 		for(Item cur: items) {
-			if(cur.name.compareToIgnoreCase(name) == 0) {
+			if(cur.getName().compareToIgnoreCase(name) == 0) {
 				i = cur;
 				break;
 			}

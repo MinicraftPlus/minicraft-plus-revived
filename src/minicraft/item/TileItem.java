@@ -5,7 +5,6 @@ import java.util.Arrays;
 import java.util.List;
 
 import minicraft.core.Game;
-import minicraft.core.Network;
 import minicraft.entity.Direction;
 import minicraft.entity.mob.Player;
 import minicraft.entity.mob.RemotePlayer;
@@ -107,6 +106,6 @@ public class TileItem extends StackableItem {
 	}
 	
 	public TileItem clone() {
-		return new TileItem(name, sprite, count, model, validTiles);
+		return new TileItem(getName(), sprite, count, model, validTiles);
 	}
 }

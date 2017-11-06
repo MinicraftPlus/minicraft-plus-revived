@@ -9,6 +9,6 @@ public class UnknownItem extends StackableItem {
 	}
 	
 	public UnknownItem clone() {
-		return new UnknownItem(name);
+		return new UnknownItem(getName());
 	}
 }

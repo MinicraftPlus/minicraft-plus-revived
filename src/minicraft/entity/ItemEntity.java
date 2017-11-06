@@ -46,7 +46,7 @@ public class ItemEntity extends Entity {
 	}
 	
 	public String getData() {
-		return String.join(":", (new String[] {item.name, zz+"", lifeTime+"", time+"", xa+"", ya+"", za+""}));
+		return String.join(":", (new String[] {item.getData(), zz+"", lifeTime+"", time+"", xa+"", ya+"", za+""}));
 	}
 	
 	public void tick() {

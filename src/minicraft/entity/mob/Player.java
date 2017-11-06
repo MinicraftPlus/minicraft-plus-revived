@@ -685,7 +685,7 @@ public class Player extends Mob implements ItemHolder {
 		score++; // increase the player's score by 1
 		if(Game.isMode("creative")) return; // we shall not bother the inventory on creative mode.
 		
-		if(activeItem != null && activeItem.name.equals(itemEntity.item.name) && activeItem instanceof StackableItem && itemEntity.item instanceof StackableItem) // picked up item equals the one in your hand
+		if(itemEntity.item instanceof StackableItem && ((StackableItem)itemEntity.item).stacksWith(activeItem)) // picked up item equals the one in your hand
 			((StackableItem)activeItem).count += ((StackableItem)itemEntity.item).count;
 		else
 			inventory.add(itemEntity.item); // add item to inventory
@@ -876,7 +876,7 @@ public class Player extends Mob implements ItemHolder {
 		";armor,"+armor+
 		";attackTime,"+attackTime+
 		";attackDir,"+attackDir.ordinal()+
-		";attackItem,"+(attackItem==null?"null":attackItem.name);
+		";attackItem,"+(attackItem==null?"null": attackItem.getName());
 		
 		return updates;
 	}

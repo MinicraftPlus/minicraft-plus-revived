@@ -15,7 +15,7 @@ public abstract class Item {
 	
 	/* Note: Most of the stuff in the class is expanded upon in StackableItem/PowerGloveItem/FurnitureItem/etc */
 	
-	public String name;
+	private final String name;
 	public Sprite sprite;
 	
 	public boolean used_pending = false; // this is for multiplayer, when an item has been used, and is pending server response as to the outcome, this is set to true so it cannot be used again unless the server responds that the item wasn't used. Which should basically replace the item anyway, soo... yeah. this never gets set back.
@@ -31,19 +31,16 @@ public abstract class Item {
 	
 	/// TODO this method (and Menu.renderItemList) is actually slowly getting depricated; I just haven't gotten around to updating all the menus yet.
 	/** Renders an item (sprite & name) in an inventory */
-	public void renderInventory(Screen screen, int x, int y) { renderInventory(screen, x, y, true); }
+	//public void renderInventory(Screen screen, int x, int y) { renderInventory(screen, x, y, true); }
 	public void renderInventory(Screen screen, int x, int y, boolean ininv) {
-		renderInventory(screen, x, y, ininv, name);
-	}
-	protected void renderInventory(Screen screen, int x, int y, boolean ininv, String name) {
-		name = Localization.getLocalized(name);
+		String dispName = getDisplayName();
 		sprite.render(screen, x, y);
 		if(ininv) {
-			String shortname = name.length() > 20 ? name.substring(0, 20) : name;
+			String shortname = dispName.length() > 20 ? dispName.substring(0, 20) : dispName;
 			Font.draw(shortname, screen, x + 8, y, Color.WHITE);
 		}
 		else
-			Font.draw(name, screen, x + 8, y, Color.get(0, 555));
+			Font.draw(dispName, screen, x + 8, y, Color.get(0, 555));
 	}
 	
 	/** Determines what happens when the player interacts with an entity */
@@ -65,14 +62,17 @@ public abstract class Item {
 		return false;
 	}
 	
+	//@Override
+	//public boolean equals(Object other) { return other instanceof Item && this.equals((Item)other); }
 	/** Sees if an item equals another item */
 	public boolean equals(Item item) {
-		return item.getClass().equals(getClass()) && item.name.equals(name);
+		return item != null && item.getClass().equals(getClass()) && item.name.equals(name);
 	}
 	
 	/** This returns a copy of this item, in all necessary detail. */
 	public abstract Item clone();
 	
+	@Override
 	public String toString() {
 		return name + "-Item";
 	}
@@ -82,7 +82,7 @@ public abstract class Item {
 		return name;
 	}
 	
-	public String getName() { return name; }
+	public final String getName() { return name; }
 	
 	// returns the String that should be used to display this item in a menu or list. 
 	public String getDisplayName() {

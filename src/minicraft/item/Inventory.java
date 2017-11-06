@@ -24,7 +24,7 @@ public class Inventory {
 	
 	public Item remove(int idx) { return items.remove(idx); }
 	
-	public boolean remove(Item item) {
+	/*public boolean remove(Item item) {
 		for(int i = 0; i < items.size(); i++) {
 			if(items.get(i).equals(item)) {
 				remove(i);
@@ -32,7 +32,7 @@ public class Inventory {
 			}
 		}
 		return false;
-	}
+	}*/
 	
 	public void addAll(Inventory other) {
 		for(Item i: other.getItems())
@@ -84,7 +84,7 @@ public class Inventory {
 		for(int i = 0; i < items.size(); i++) {
 			if(!(items.get(i) instanceof StackableItem)) continue;
 			StackableItem curItem = (StackableItem) items.get(i);
-			if(!curItem.name.equals(given.name)) continue; // can't do equals, becuase that includes the stack size.
+			if(!curItem.getName().equals(given.getName())) continue; // can't do equals, becuase that includes the stack size.
 			// equals; and current item is stackable.
 			int amountRemoving = Math.min(count-removed, curItem.count); // this is the number of items that are being removed from the stack this run-through.
 			curItem.count -= amountRemoving;
@@ -159,7 +159,7 @@ public class Inventory {
 	public List<String> getItemNames() {
 		List<String> names = new ArrayList<>();
 		for(int i = 0; i < items.size(); i++)
-			names.add(items.get(i).name);
+			names.add(items.get(i).getName());
 		
 		return names;
 	}

@@ -34,6 +34,6 @@ public class BookItem extends Item {
 	}
 	
 	public BookItem clone() {
-		return new BookItem(name, sprite.color, book);
+		return new BookItem(getName(), sprite.color, book);
 	}
 }

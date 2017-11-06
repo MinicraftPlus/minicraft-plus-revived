@@ -47,6 +47,6 @@ public class ArmorItem extends StackableItem {
 	}
 	
 	public ArmorItem clone() {
-		return new ArmorItem(name, sprite, count, armor, level);
+		return new ArmorItem(getName(), sprite, count, armor, level);
 	}
 }

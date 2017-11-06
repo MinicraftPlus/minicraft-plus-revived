@@ -46,6 +46,6 @@ public class ClothingItem extends StackableItem {
 	}
 	
 	public ClothingItem clone() {
-		return new ClothingItem(name, count, sprite.color, playerCol);
+		return new ClothingItem(getName(), count, sprite.color, playerCol);
 	}
 }

@@ -253,7 +253,7 @@ public class Save {
 		data.add(String.valueOf(player.skinon));
 		if(player.curArmor != null) {
 			data.add(String.valueOf(player.armorDamageBuffer));
-			data.add(String.valueOf(player.curArmor.name));
+			data.add(String.valueOf(player.curArmor.getName()));
 		}
 	}
 	
@@ -265,9 +265,9 @@ public class Save {
 		data.clear();
 		if(player.activeItem != null) {
 			if(player.activeItem instanceof StackableItem) {
-				data.add(player.activeItem.name + ";" + ((StackableItem)player.activeItem).count);
+				data.add(player.activeItem.getName() + ";" + ((StackableItem)player.activeItem).count);
 			} else {
-				data.add(player.activeItem.name);
+				data.add(player.activeItem.getName());
 			}
 		}
 		
@@ -275,9 +275,9 @@ public class Save {
 		
 		for(int i = 0; i < inventory.invSize(); i++) {
 			if(inventory.get(i) instanceof StackableItem) {
-				data.add(inventory.get(i).name + ";" + ((StackableItem)inventory.get(i)).count);
+				data.add(inventory.get(i).getName() + ";" + ((StackableItem)inventory.get(i)).count);
 			} else {
-				data.add(inventory.get(i).name);
+				data.add(inventory.get(i).getName());
 			}
 		}
 	}
@@ -326,7 +326,7 @@ public class Save {
 			
 			for(int ii = 0; ii < chest.getInventory().invSize(); ii++) {
 				Item item = chest.getInventory().get(ii);
-				extradata.append(":").append(item.name);
+				extradata.append(":").append(item.getName());
 				if(item instanceof StackableItem)
 					extradata.append(";").append(chest.getInventory().count(item));
 			}
