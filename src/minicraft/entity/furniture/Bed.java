@@ -20,7 +20,7 @@ public class Bed extends Furniture {
 	
 	/** Called when the player attempts to get in bed. */
 	public boolean use(Player player) {
-		if (Updater.tickCount >= Updater.sleepStartTime || Updater.tickCount < Updater.sleepEndTime && Updater.pastDay1) { // if it is late enough in the day to sleep...
+		if (checkCanSleep()) { // if it is late enough in the day to sleep...
 			// set the player spawn coord. to their current position, in tile coords (hence " >> 4")
 			player.spawnx = player.x >> 4;
 			player.spawny = player.y >> 4;
@@ -37,7 +37,13 @@ public class Bed extends Furniture {
 				if(Game.isValidServer() && player instanceof RemotePlayer)
 					Game.server.getAssociatedThread((RemotePlayer)player).sendEntityRemoval(player.eid);
 			}
-		} else {
+		}
+		
+		return true;
+	}
+	
+	public static boolean checkCanSleep() {
+		if(!(Updater.tickCount >= Updater.sleepStartTime || Updater.tickCount < Updater.sleepEndTime && Updater.pastDay1)) {
 			// it is too early to sleep; display how much time is remaining.
 			int sec = (int)Math.ceil((Updater.sleepStartTime - Updater.tickCount)*1.0 / Updater.normSpeed); // gets the seconds until sleeping is allowed. // normSpeed is in tiks/sec.
 			String note = "Can't sleep! " + (sec / 60) + "Min " + (sec % 60) + " Sec left!";
@@ -47,6 +53,8 @@ public class Bed extends Furniture {
 				Game.server.getAssociatedThread((RemotePlayer)player).sendNotification(note, 0);
 			else
 				System.out.println("WARNING: regular player found trying to get into bed on server; not a RemotePlayer: " + player);
+			
+			return false;
 		}
 		
 		return true;

@@ -94,19 +94,23 @@ public class Updater extends Game {
 					server.updateGameVars();
 			}
 			if (tickCount <= sleepStartTime && tickCount >= sleepEndTime) { // it has reached morning.
-				Player playerInBed = Bed.restorePlayer();
-				gamespeed = 1;
-				if(isValidServer())
+				if(isValidServer()) {
 					server.updateGameVars();
-				
-				// seems this removes all entities within a certain radius of the player when you get OUT of Bed.
-				for (Entity e: level.getEntityArray()) {
-					if (e.getLevel() == levels[currentLevel]) {
-						int xd = playerInBed.x - e.x;
-						int yd = playerInBed.y - e.y;
-						if (xd * xd + yd * yd < 48 && e instanceof Mob && !(e instanceof Player)) {
-							// this comes down to a radius of about half a tile... huh...
-							level.remove(e);
+					server.setBed(false);
+				}
+				else {
+					Player playerInBed = Bed.restorePlayer();
+					gamespeed = 1;
+					
+					// seems this removes all entities within a certain radius of the player when you get OUT of Bed.
+					for (Entity e : level.getEntityArray()) {
+						if (e.getLevel() == levels[currentLevel]) {
+							int xd = playerInBed.x - e.x;
+							int yd = playerInBed.y - e.y;
+							if (xd * xd + yd * yd < 48 && e instanceof Mob && !(e instanceof Player)) {
+								// this comes down to a radius of about half a tile... huh...
+								level.remove(e);
+							}
 						}
 					}
 				}

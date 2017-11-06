@@ -347,6 +347,11 @@ public class MinicraftServer extends Thread implements MinicraftProtocol {
 			thread.doPing();
 	}
 	
+	public void setBed(boolean inBed) {
+		Bed.inBed = inBed;
+		broadcastData(InputType.BED, ""+inBed);
+	}
+	
 	protected File[] getRemotePlayerFiles() {
 		File saveFolder = new File(worldPath);
 		
@@ -358,15 +363,15 @@ public class MinicraftServer extends Thread implements MinicraftProtocol {
 		return clientSaves;
 	}
 	
-	protected String getUsernames() {
+	/*protected String getUsernames() {
 		StringBuilder names = new StringBuilder();
 		for(MinicraftServerThread thread: getThreads())
 			names.append(thread.getClient().getUsername()).append("\n");
 		
 		return names.toString();
-	}
+	}*/
 	
-	public boolean parsePacket(MinicraftServerThread serverThread, InputType inType, String alldata) {
+	boolean parsePacket(MinicraftServerThread serverThread, InputType inType, String alldata) {
 		String[] data = alldata.split(";");
 		
 		//if (Game.debug) System.out.println("received packet");
@@ -499,26 +504,13 @@ public class MinicraftServer extends Thread implements MinicraftProtocol {
 				// if it's the same level, it will cancel out.
 				
 				byte[] tiledata = new byte[World.levels[levelidx].tiles.length*2];
-				//tiledata[0] = (byte) InputType.TILES.ordinal();
-				//tiledata[1] = 0; // the index to start on.
 				for(int i = 0; i < tiledata.length/2 - 1; i++) {
 					tiledata[i*2] = World.levels[levelidx].tiles[i];
 					tiledata[i*2+1] = World.levels[levelidx].data[i];
 				}
 				serverThread.cachePacketTypes(InputType.tileUpdates);
 				
-				//System.out.println("TILE DATA ARRAY AS SENT BY SERVER BEFORE CHAR CONVERSION (length="+tiledata.length+"):");
-				//System.out.println(Arrays.toString(tiledata));
-				
 				StringBuilder tiledataString = new StringBuilder();
-				/*for(byte b: tiledata) {
-					int tbit = (int) b;
-					if(Game.debug) System.out.print(tbit+",");
-					tbit++;
-					if(tbit < 0) tbit += 256;
-					if(tbit < 0) System.out.println("\nTBIT < 0: " + tbit);
-					tiledataString.append((char) tbit);
-				}*/
 				for(byte b: tiledata) {
 					tiledataString.append(b).append(",");
 				}
@@ -530,7 +522,6 @@ public class MinicraftServer extends Thread implements MinicraftProtocol {
 				Entity[] entities = World.levels[levelidx].getEntityArray();
 				serverThread.cachePacketTypes(InputType.entityUpdates);
 				
-				//if (Game.debug) System.out.println("client player level on load request: " + clientPlayer.getLevel());
 				StringBuilder edata = new StringBuilder();
 				for(int i = 0; i < entities.length; i++) {
 					Entity curEntity = entities[i];
@@ -575,8 +566,6 @@ public class MinicraftServer extends Thread implements MinicraftProtocol {
 				Level playerLevel = clientPlayer.getLevel();
 				if(playerLevel != null)
 					playerLevel.dropItem(clientPlayer.x, clientPlayer.y, dropped);
-				//Entity dropped = Load.loadEntity(alldata, false);
-				//broadcastEntityAddition(dropped, true);
 				return true;
 			
 			case TILE:
@@ -731,7 +720,12 @@ public class MinicraftServer extends Thread implements MinicraftProtocol {
 					System.out.println("SERVER: entity is not a bed: " + bed);
 					return false;
 				}
-				((Bed)bed).use(clientPlayer);
+				//((Bed)bed).use(clientPlayer);
+				if(Bed.inBed || !Bed.checkCanSleep())
+					return false;
+				setBed(true);
+				for(MinicraftServerThread thread: getThreads())
+					thread.getClient().remove();
 				return true;
 			
 			case POTION:

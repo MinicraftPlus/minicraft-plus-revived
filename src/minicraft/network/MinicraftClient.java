@@ -440,6 +440,18 @@ public class MinicraftClient extends MinicraftConnection {
 				if (p instanceof Player)
 					((Player)p).hurt(damage, attackDir);
 				return true;
+			
+			case BED:
+				boolean inBed = Boolean.parseBoolean(alldata);
+				if(Bed.inBed == inBed) return false; // no action needed.
+				Bed.inBed = inBed;
+				if(inBed)
+					Game.player.remove();
+				else {
+					Game.levels[Game.currentLevel].add(Game.player);
+					move(Game.player);
+				}
+				return true;
 		}
 		
 		//System.out.println("CLIENT: received unexpected packet type " + inType + "; ignoring packet.");
