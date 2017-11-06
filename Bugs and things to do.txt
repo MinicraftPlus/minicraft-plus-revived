@@ -3,10 +3,8 @@
 --CURRENT: 
 
 - ping server every 5 seconds, and if it doesn't respond after 3 consecutive pings, disconnect automatically.
-- fix localization of names; need to separate item names.
 - remove all players from level on server when someone uses a bed; then add them all back when they get out
   -- or better yet, maybe make a system to not speed up time until everyone is in bed?
-- 
 
 Note to self: for more little bugs/ideas/concerns, search code for "TODO"
 -----------------------------------------------------------------------------------
@@ -36,6 +34,10 @@ MULTIPLAYER-Related:
 -----------------------------------------------------------------------------------
 
 	****IDEAS(that should probably be implemented)****
+****
+
+Redo death chests, so it displays the time above it, and you can't open a menu; it just puts everything into your inventory, and removes the chest, and adds a notification: "death chest items added to inventory".
+
 ****
 
 Make an Interactable interface, and both Entity AND Tile implement it, because both are interactable. Interactable holds methods for things like collision detection, tangibility, events for touching, and events for player key presses like interact ("v") and attack (that will also pickup furniture; it's sort of like, "swipe"). There will be a dedicated button to open the inventory. intereact will open chests, activate tnt, etc.
