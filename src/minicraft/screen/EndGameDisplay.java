@@ -69,7 +69,7 @@ public class EndGameDisplay extends Display {
 	}
 	
 	private StringEntry addBonus(String item) {
-		int count = Game.player.inventory.count(Items.get(item));
+		int count = Game.player.getInventory().count(Items.get(item));
 		int score = count * (random.nextInt(2) + 1) * 10;
 		finalscore += score;
 		StringBuilder buffer = new StringBuilder();

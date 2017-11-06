@@ -66,7 +66,7 @@ public class LegacyLoad {
 		loadGame("Game"); // more of the version will be determined here
 		loadWorld("Level");
 		loadPlayer("Player", Game.player);
-		loadInventory("Inventory", Game.player.inventory);
+		loadInventory("Inventory", Game.player.getInventory());
 		loadEntities("Entities", Game.player);
 		LoadingDisplay.setPercentage(0); // reset
 	}
@@ -294,7 +294,7 @@ public class LegacyLoad {
 			loadItemToInventory(item, inventory);
 		}
 		
-		if(playerac > 0 && inventory == Game.player.inventory) {
+		if(playerac > 0 && inventory == Game.player.getInventory()) {
 			inventory.add(Items.get("arrow"), playerac);
 			playerac = 0;
 		}
@@ -365,16 +365,16 @@ public class LegacyLoad {
 						String itemData = chestInfo.get(idx);
 						if(worldVer.compareTo(new Load.Version("1.9.1")) < 0) // if this world is before 1.9.1
 							if(itemData.equals("")) continue; // this skips any null items
-						loadItemToInventory(itemData, chest.inventory);
+						loadItemToInventory(itemData, chest.getInventory());
 						/*if(oldSave) itemData = subOldName(itemData);
 						Item item = Items.get(itemData);
 						if (item instanceof StackableItem) {
 							String[] aitemData = (itemData + ";1").split(";"); // this appends ";1" to the end, meaning one item, to everything; but if it was already there, then it becomes the 3rd element in the list, which is ignored.
 							StackableItem stack = (StackableItem)Items.get(aitemData[0]);
 							stack.count = Integer.parseInt(aitemData[1]);
-							chest.inventory.add(stack);
+							chest.getInventory().add(stack);
 						} else {
-							chest.inventory.add(item);
+							chest.getInventory().add(item);
 						}*/
 					}
 					

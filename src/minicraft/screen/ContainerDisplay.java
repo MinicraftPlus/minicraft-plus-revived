@@ -15,9 +15,9 @@ public class ContainerDisplay extends Display {
 	private Chest chest;
 	
 	public ContainerDisplay(Player player, Chest chest) {
-		super(new InventoryMenu(chest, chest.inventory, chest.name), new InventoryMenu(player, player.inventory, "Inventory"));
-		//pInv = player.inventory;
-		//cInv = chest.inventory;
+		super(new InventoryMenu(chest, chest.getInventory(), chest.name), new InventoryMenu(player, player.getInventory(), "Inventory"));
+		//pInv = player.getInventory();
+		//cInv = chest.getInventory();
 		this.player = player;
 		this.chest = chest;
 		
@@ -53,11 +53,11 @@ public class ContainerDisplay extends Display {
 			// switch inventories
 			Inventory from, to;
 			if(selection == 0) {
-				from = chest.inventory;
-				to = player.inventory;
+				from = chest.getInventory();
+				to = player.getInventory();
 			} else {
-				from = player.inventory;
-				to = chest.inventory;
+				from = player.getInventory();
+				to = chest.getInventory();
 			}
 			
 			int toSel = menus[otherIdx].getSelection();

@@ -271,7 +271,7 @@ public class Save {
 			}
 		}
 		
-		Inventory inventory = player.inventory;
+		Inventory inventory = player.getInventory();
 		
 		for(int i = 0; i < inventory.invSize(); i++) {
 			if(inventory.get(i) instanceof StackableItem) {
@@ -324,11 +324,11 @@ public class Save {
 		if(e instanceof Chest) {
 			Chest chest = (Chest)e;
 			
-			for(int ii = 0; ii < chest.inventory.invSize(); ii++) {
-				Item item = chest.inventory.get(ii);
+			for(int ii = 0; ii < chest.getInventory().invSize(); ii++) {
+				Item item = chest.getInventory().get(ii);
 				extradata.append(":").append(item.name);
 				if(item instanceof StackableItem)
-					extradata.append(";").append(chest.inventory.count(item));
+					extradata.append(";").append(chest.getInventory().count(item));
 			}
 			
 			if(chest instanceof DeathChest) extradata.append(":").append(((DeathChest) chest).time);

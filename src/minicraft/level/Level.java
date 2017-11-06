@@ -701,7 +701,7 @@ public class Level {
 				for(int rpt = 0; rpt < 2; rpt++) {
 					if (random.nextInt(2) != 0) continue;
 					Chest c = new Chest();
-					Inventory inv = c.inventory;
+					Inventory inv = c.getInventory();
 					int chance = -depth;
 					inv.tryAdd(9/chance, new Tnt());
 					inv.tryAdd(10/chance, new Crafter(Crafter.Type.Anvil));

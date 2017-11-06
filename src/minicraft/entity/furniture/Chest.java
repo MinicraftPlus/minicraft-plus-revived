@@ -1,14 +1,15 @@
 package minicraft.entity.furniture;
 
 import minicraft.core.Game;
+import minicraft.entity.ItemHolder;
 import minicraft.entity.mob.Player;
 import minicraft.gfx.Color;
 import minicraft.gfx.Sprite;
 import minicraft.item.Inventory;
 import minicraft.screen.ContainerDisplay;
 
-public class Chest extends Furniture {
-	public Inventory inventory; // Inventory of the chest
+public class Chest extends Furniture implements ItemHolder {
+	private Inventory inventory; // Inventory of the chest
 	
 	public Chest() {this("Chest", Color.get(-1, 220, 331, 552));}
 	public Chest(String name, int color) {
@@ -37,5 +38,10 @@ public class Chest extends Furniture {
 				return true;
 		}
 		return false;
+	}
+	
+	@Override
+	public Inventory getInventory() {
+		return inventory;
 	}
 }

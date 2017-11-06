@@ -24,12 +24,19 @@ public class DeathChest extends Chest {
 		}
 	}
 	
+	public DeathChest(Player player) {
+		this();
+		this.x = player.x;
+		this.y = player.y;
+		getInventory().addAll(player.getInventory());
+	}
+	
 	// for death chest time count, I imagine.
 	public void tick() {
 		super.tick();
 		name = "Death Chest:" + time / Updater.normSpeed + "S"; // add the current
 		
-		if (inventory.invSize() < 1) {
+		if (getInventory().invSize() < 1) {
 			remove();
 		}
 

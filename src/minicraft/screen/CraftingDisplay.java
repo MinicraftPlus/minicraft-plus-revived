@@ -68,7 +68,7 @@ public class CraftingDisplay extends Display {
 	}
 	
 	private int getCurItemCount() {
-		return player.inventory.count(recipes[recipeMenu.getSelection()].getProduct());
+		return player.getInventory().count(recipes[recipeMenu.getSelection()].getProduct());
 	}
 	
 	private ItemListing[] getCurItemCosts() {
@@ -76,7 +76,7 @@ public class CraftingDisplay extends Display {
 		HashMap<String, Integer> costMap = recipes[recipeMenu.getSelection()].getCosts();
 		for(String itemName: costMap.keySet()) {
 			Item cost = Items.get(itemName);
-			costList.add(new ItemListing(cost, costMap.get(itemName)+"/"+player.inventory.count(cost)));
+			costList.add(new ItemListing(cost, costMap.get(itemName)+"/"+player.getInventory().count(cost)));
 		}
 		
 		return costList.toArray(new ItemListing[costList.size()]);

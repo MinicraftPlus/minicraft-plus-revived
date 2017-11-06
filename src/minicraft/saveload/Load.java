@@ -81,10 +81,10 @@ public class Load {
 			loadGame("Game"); // more of the version will be determined here
 			loadWorld("Level");
 			loadEntities("Entities");
-			loadInventory("Inventory", Game.player.inventory);
+			loadInventory("Inventory", Game.player.getInventory());
 			loadPlayer("Player", Game.player);
 			if(Game.isMode("creative")) {
-				Items.fillCreativeInv(Game.player.inventory, false);
+				Items.fillCreativeInv(Game.player.getInventory(), false);
 			}
 			//LoadingDisplay.setPercentage(0); // reset
 		}
@@ -452,7 +452,7 @@ public class Load {
 		
 		player.score = Integer.parseInt(data.get(6));
 		if(worldVer.compareTo(new Version("2.0.1-dev1")) < 0)
-			player.inventory.add(Items.get("arrow"), Integer.parseInt(data.get(7)));
+			player.getInventory().add(Items.get("arrow"), Integer.parseInt(data.get(7)));
 		
 		Game.currentLevel = Integer.parseInt(data.get(8));
 		Level level = World.levels[Game.currentLevel];
@@ -741,14 +741,14 @@ public class Load {
 					StackableItem stack = (StackableItem)Items.get(aitemData[0]);
 					if (!(stack instanceof UnknownItem)) {
 						stack.count = Integer.parseInt(aitemData[1]);
-						chest.inventory.add(stack);
+						chest.getInventory().add(stack);
 					} else {
 						System.err.println("LOAD ERROR: encountered invalid item name, expected to be stackable: " + aitemData[0] + "; stack trace:");
 						Thread.dumpStack();
 					}
 				} else {
 					Item item = Items.get(itemData);
-					chest.inventory.add(item);
+					chest.getInventory().add(item);
 				}
 			}
 			

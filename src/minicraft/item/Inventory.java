@@ -34,6 +34,11 @@ public class Inventory {
 		return false;
 	}
 	
+	public void addAll(Inventory other) {
+		for(Item i: other.getItems())
+			add(i.clone());
+	}
+	
 	/** Adds an item to the inventory */
 	public void add(@Nullable Item item) {
 		if(item != null)

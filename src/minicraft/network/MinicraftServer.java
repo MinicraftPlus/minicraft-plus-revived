@@ -644,24 +644,24 @@ public class MinicraftServer extends Thread implements MinicraftProtocol {
 						System.err.println("SERVER error with CHESTIN request: specified item could not be found from string: " + data[1]);
 						return false;
 					}
-					chest.inventory.add(item);
+					chest.getInventory().add(item);
 				}
 				else { /// inType == InputType.CHESTOUT
 					int index = Integer.parseInt(data[1]);
-					if(index >= chest.inventory.invSize() || index < 0) {
-						System.err.println("SERVER error with CHESTOUT request: specified chest inv index is out of bounds: "+index+"; inv size:"+chest.inventory.invSize());
+					if(index >= chest.getInventory().invSize() || index < 0) {
+						System.err.println("SERVER error with CHESTOUT request: specified chest inv index is out of bounds: "+index+"; inv size:"+chest.getInventory().invSize());
 						return false;
 					}
 					// if here, the index is valid
 					boolean wholeStack = Boolean.parseBoolean(data[2]);
-					Item toRemove = chest.inventory.get(index);
+					Item toRemove = chest.getInventory().get(index);
 					Item itemToSend = toRemove;
 					if(!wholeStack && toRemove instanceof StackableItem && ((StackableItem)toRemove).count > 1) {
 						itemToSend = toRemove.clone();
 						((StackableItem)itemToSend).count = 1;
 						((StackableItem)toRemove).count--;
 					} else
-						chest.inventory.remove(index);
+						chest.getInventory().remove(index);
 					
 					//if(Game.debug) System.out.println("SERVER sending chestout with item data: \"" + itemToSend.getData() + "\"");
 					serverThread.sendData(InputType.CHESTOUT, itemToSend.getData()); // send back the item that the player should put in their inventory.
@@ -703,11 +703,11 @@ public class MinicraftServer extends Thread implements MinicraftProtocol {
 			case INTERACT:
 				clientPlayer.activeItem = Items.get(data[0], true); // this can be null; and that's fine, it means a fist. ;)
 				int arrowCount = Integer.parseInt(data[1]);
-				int curArrows = clientPlayer.inventory.count(Items.arrowItem);
+				int curArrows = clientPlayer.getInventory().count(Items.arrowItem);
 				if(curArrows < arrowCount)
-					clientPlayer.inventory.add(Items.arrowItem, arrowCount-curArrows);
+					clientPlayer.getInventory().add(Items.arrowItem, arrowCount-curArrows);
 				if(curArrows > arrowCount)
-					clientPlayer.inventory.removeItems(Items.arrowItem, curArrows-arrowCount);
+					clientPlayer.getInventory().removeItems(Items.arrowItem, curArrows-arrowCount);
 				clientPlayer.attack(); /// NOTE the player may fire an arrow, but we won't sync the arrow count because that player will update it theirself.
 				
 				serverThread.sendData(InputType.INTERACT, ( clientPlayer.activeItem == null ? "null" : clientPlayer.activeItem.getData() ));

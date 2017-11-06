@@ -84,7 +84,7 @@ public class Furniture extends Entity {
 		remove(); // remove this from the world
 		if(!Game.ISONLINE) {
 			if (!Game.isMode("creative") && player.activeItem != null && !(player.activeItem instanceof PowerGloveItem))
-				player.inventory.add(0, player.activeItem); // put whatever item the player is holding into their inventory (should never be a power glove, since it is put in a taken out again all in the same frame).
+				player.getInventory().add(0, player.activeItem); // put whatever item the player is holding into their inventory (should never be a power glove, since it is put in a taken out again all in the same frame).
 			player.activeItem = new FurnitureItem(this); // make this the player's current item.
 		}
 		else if(Game.isValidServer() && player instanceof RemotePlayer)

@@ -14,6 +14,7 @@ import minicraft.entity.Arrow;
 import minicraft.entity.Direction;
 import minicraft.entity.Entity;
 import minicraft.entity.ItemEntity;
+import minicraft.entity.ItemHolder;
 import minicraft.entity.furniture.Bed;
 import minicraft.entity.furniture.DeathChest;
 import minicraft.entity.furniture.Furniture;
@@ -38,7 +39,7 @@ import minicraft.screen.WorldSelectDisplay;
 
 import org.jetbrains.annotations.Nullable;
 
-public class Player extends Mob {
+public class Player extends Mob implements ItemHolder {
 	protected InputHandler input;
 	
 	private static final int playerHurtTime = 30;
@@ -63,7 +64,7 @@ public class Player extends Mob {
 	private static MobSprite[][] suitSprites = MobSprite.compileMobSpriteAnimations(18, 20); // the "airwizard suit" sprites.
 	private static MobSprite[][] carrySuitSprites = MobSprite.compileMobSpriteAnimations(18, 22); // the "airwizard suit" sprites.
 	
-	public Inventory inventory;
+	private Inventory inventory;
 	
 	public Item activeItem;
 	Item attackItem; // attackItem is useful again b/c of the power glove.
@@ -796,13 +797,10 @@ public class Player extends Mob {
 		World.setMultiplier(1);
 		
 		//make death chest
-		DeathChest dc = new DeathChest();
-		dc.x = this.x;
-		dc.y = this.y;
-		dc.inventory = this.inventory;
+		DeathChest dc = new DeathChest(this);
 		
-		if (activeItem != null) dc.inventory.add(activeItem);
-		if (curArmor != null) dc.inventory.add(curArmor);
+		if (activeItem != null) dc.getInventory().add(activeItem);
+		if (curArmor != null) dc.getInventory().add(curArmor);
 		
 		Sound.playerDeath.play();
 		
@@ -924,5 +922,10 @@ public class Player extends Mob {
 			playerdata = new StringBuilder(playerdata.substring(0, playerdata.length() - 1));
 		
 		return playerdata.toString();
+	}
+	
+	@Override
+	public Inventory getInventory() {
+		return inventory;
 	}
 }

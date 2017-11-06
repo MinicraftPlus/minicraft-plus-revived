@@ -179,7 +179,7 @@ public class MinicraftClient extends MinicraftConnection {
 				Updater.scoreTime = Integer.parseInt(data[4]);
 				
 				if(Game.isMode("creative"))
-					Items.fillCreativeInv(Game.player.inventory, false);
+					Items.fillCreativeInv(Game.player.getInventory(), false);
 				
 				return true;
 			
@@ -363,7 +363,7 @@ public class MinicraftClient extends MinicraftConnection {
 				if (Game.debug) System.out.println("CLIENT: setting player vars from packet...");
 					
 				if(!(playerinv.size() == 1 && playerinv.get(0).equals("null")))
-					load.loadInventory(Game.player.inventory, playerinv);
+					load.loadInventory(Game.player.getInventory(), playerinv);
 				load.loadPlayer(Game.player, playerinfo);
 				
 				if(curState == State.RESPAWNING)
@@ -391,9 +391,9 @@ public class MinicraftClient extends MinicraftConnection {
 				Item item = Items.get(alldata);
 				//if (Game.debug) System.out.println("CLIENT: received chestout with item: " + item);
 				if(!Game.isMode("creative")) {
-					Game.player.inventory.add(0, item);
+					Game.player.getInventory().add(0, item);
 					//if(Game.getMenu() instanceof InventoryMenu)
-					//	((InventoryMenu)Game.getMenu()).onInvUpdate(Game.player.inventory);
+					//	((InventoryMenu)Game.getMenu()).onInvUpdate(Game.player.getInventory());
 				}
 				//if (Game.debug) System.out.println("CLIENT successfully took " + item + " from chest and added to inv.");
 				return true;
@@ -452,7 +452,7 @@ public class MinicraftClient extends MinicraftConnection {
 	public void requestInteraction(Player player) {
 		/// I don't think the player parameter is necessary, but it doesn't harm anything.
 		String itemString = player.activeItem != null ? player.activeItem.getData() : "null";
-		sendData(InputType.INTERACT, itemString+";"+player.inventory.count(Items.arrowItem));
+		sendData(InputType.INTERACT, itemString+";"+player.getInventory().count(Items.arrowItem));
 	}
 	
 	public void requestTile(Level level, int xt, int yt) {

@@ -77,7 +77,7 @@ public class BucketItem extends StackableItem {
 		
 		// this item object is a stack of buckets.
 		count--;
-		player.inventory.add(new BucketItem(newFill));
+		player.getInventory().add(new BucketItem(newFill));
 		return this;
 	}
 	

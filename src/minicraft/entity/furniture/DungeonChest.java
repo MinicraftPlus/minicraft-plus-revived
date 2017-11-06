@@ -33,14 +33,14 @@ public class DungeonChest extends Chest {
 	public boolean use(Player player) {
 		if (isLocked) {
 			boolean activeKey = player.activeItem != null && player.activeItem.equals(Items.get("Key"));
-			boolean invKey = player.inventory.count(Items.get("key")) > 0;
+			boolean invKey = player.getInventory().count(Items.get("key")) > 0;
 			if(activeKey || invKey) { // if the player has a key...
 				if (!Game.isMode("creative")) { // remove the key unless on creative mode.
 					if (activeKey) { // remove activeItem
 						StackableItem key = (StackableItem)player.activeItem;
 						key.count--;
 					} else { // remove from inv
-						player.inventory.removeItem(Items.get("key"));
+						player.getInventory().removeItem(Items.get("key"));
 					}
 				}
 				
@@ -76,8 +76,8 @@ public class DungeonChest extends Chest {
 	
 	/** Populate the inventory of the DungeonChest, psudo-randomly. */
 	private void populateInv() {
-		inventory.clearInv(); // clear the inventory.
-		Inventory inv = inventory; // Yes, I'm that lazy. ;P
+		Inventory inv = getInventory(); // Yes, I'm that lazy. ;P
+		inv.clearInv(); // clear the inventory.
 		inv.tryAdd(5, Items.get("steak"), 6);
 		inv.tryAdd(5, Items.get("cooked pork"), 6);
 		inv.tryAdd(4, Items.get("Wood"), 20);
@@ -107,10 +107,10 @@ public class DungeonChest extends Chest {
 		inv.tryAdd(4, Items.get("Rock Claymore"));
 		inv.tryAdd(6, Items.get("Iron Claymore"));
 		
-		if(inventory.invSize() < 1) { // add this if none of the above was added.
-			inventory.add(Items.get("steak"), 6);
-			inventory.add(Items.get("Time Potion"));
-			inventory.add(Items.get("Gem Axe"));
+		if(inv.invSize() < 1) { // add this if none of the above was added.
+			inv.add(Items.get("steak"), 6);
+			inv.add(Items.get("Time Potion"));
+			inv.add(Items.get("Gem Axe"));
 		}
 	}
 	

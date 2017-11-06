@@ -147,7 +147,7 @@ public class World extends Game {
 			}
 			
 			if(Settings.get("Theme").equals("Hell")) {
-				player.inventory.add(Items.get("lava potion"));
+				player.getInventory().add(Items.get("lava potion"));
 			}
 			Renderer.readyToRenderGameplay = true;
 		} else {

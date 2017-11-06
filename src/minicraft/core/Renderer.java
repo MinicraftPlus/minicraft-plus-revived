@@ -156,7 +156,7 @@ public class Renderer extends Game {
 		renderDebugInfo();
 		
 		// This is the arrow counter. ^ = infinite symbol.
-		int ac = player.inventory.count(Items.arrowItem);
+		int ac = player.getInventory().count(Items.arrowItem);
 		if (isMode("creative") || ac >= 10000)
 			Font.draw("	x" + "^", screen, 84, Screen.h - 16, Color.get(0, 333, 444, 555));
 		else

@@ -230,7 +230,7 @@ public class Updater extends Game {
 						if (input.getKey("4").clicked) changeTimeOfDay(Time.Night);
 						
 						if (input.getKey("creative").clicked) {Settings.set("mode", "creative");
-							Items.fillCreativeInv(player.inventory, false);}
+							Items.fillCreativeInv(player.getInventory(), false);}
 						if (input.getKey("survival").clicked) Settings.set("mode", "survival");
 						if (input.getKey("shift-t").clicked) Settings.set("mode", "score");
 						if (isMode("score") && input.getKey("ctrl-t").clicked) {
@@ -259,7 +259,7 @@ public class Updater extends Game {
 						/// client-only cheats, since they are player-specific.
 						
 						if (input.getKey("shift-g").clicked) // this should not be needed, since the inventory should not be altered.
-							Items.fillCreativeInv(player.inventory);
+							Items.fillCreativeInv(player.getInventory());
 						
 						if(input.getKey("ctrl-h").clicked) player.health--;
 						
