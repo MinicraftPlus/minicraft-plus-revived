@@ -36,7 +36,8 @@ public class PlayerDeathDisplay extends Display {
 			}));
 		}
 		
-		entries.add(new SelectEntry("Quit", () -> Game.setMenu(new TitleDisplay())));
+		if(Settings.get("mode").equals("hardcore") || !Game.isValidClient())
+			entries.add(new SelectEntry("Quit", () -> Game.setMenu(new TitleDisplay())));
 		
 		menus = new Menu[]{
 			new Menu.Builder(true, 0, RelPos.LEFT, entries)
