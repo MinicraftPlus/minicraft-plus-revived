@@ -31,6 +31,7 @@ import minicraft.item.PotionType;
 import minicraft.level.Level;
 import minicraft.saveload.Load;
 import minicraft.saveload.Save;
+import minicraft.screen.ContainerDisplay;
 import minicraft.screen.MultiplayerDisplay;
 import minicraft.screen.PlayerDeathDisplay;
 
@@ -392,8 +393,8 @@ public class MinicraftClient extends MinicraftConnection {
 				//if (Game.debug) System.out.println("CLIENT: received chestout with item: " + item);
 				if(!Game.isMode("creative")) {
 					Game.player.getInventory().add(0, item);
-					//if(Game.getMenu() instanceof InventoryMenu)
-					//	((InventoryMenu)Game.getMenu()).onInvUpdate(Game.player.getInventory());
+					if(Game.getMenu() instanceof ContainerDisplay)
+						((ContainerDisplay)Game.getMenu()).onInvUpdate(Game.player);
 				}
 				//if (Game.debug) System.out.println("CLIENT successfully took " + item + " from chest and added to inv.");
 				return true;
@@ -481,9 +482,9 @@ public class MinicraftClient extends MinicraftConnection {
 	
 	public void requestRespawn() { changeState(State.RESPAWNING); }
 	
-	public void addToChest(Chest chest, Item item) {
+	public void addToChest(Chest chest, int index, Item item) {
 		if(chest == null || item == null) return;
-		sendData(InputType.CHESTIN, chest.eid+";"+item.getData());
+		sendData(InputType.CHESTIN, chest.eid+";"+index+";"+item.getData());
 	}
 	
 	public void removeFromChest(Chest chest, int index, boolean wholeStack) {

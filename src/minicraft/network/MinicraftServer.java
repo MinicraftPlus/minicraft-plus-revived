@@ -21,6 +21,7 @@ import minicraft.entity.Entity;
 import minicraft.entity.ItemEntity;
 import minicraft.entity.furniture.Bed;
 import minicraft.entity.furniture.Chest;
+import minicraft.entity.furniture.DeathChest;
 import minicraft.entity.furniture.Furniture;
 import minicraft.entity.mob.Player;
 import minicraft.entity.mob.RemotePlayer;
@@ -29,6 +30,7 @@ import minicraft.item.Items;
 import minicraft.item.PotionItem;
 import minicraft.item.PotionType;
 import minicraft.item.StackableItem;
+import minicraft.item.UnknownItem;
 import minicraft.level.Level;
 import minicraft.level.tile.Tile;
 import minicraft.saveload.Load;
@@ -638,36 +640,46 @@ public class MinicraftServer extends Thread implements MinicraftProtocol {
 				}
 				Chest chest = (Chest) e;
 				
+				int itemIdx = Integer.parseInt(data[1]);
+				
 				if(inType == InputType.CHESTIN) {
-					Item item = Items.get(data[1]);
-					if(item == null) {
-						System.err.println("SERVER error with CHESTIN request: specified item could not be found from string: " + data[1]);
+					Item item = Items.get(data[2]);
+					if(item instanceof UnknownItem) {
+						System.err.println("SERVER error with CHESTIN request: specified item could not be found from string: " + data[2]);
 						return false;
 					}
-					chest.getInventory().add(item);
+					if(itemIdx > chest.getInventory().invSize())
+						itemIdx = chest.getInventory().invSize();
+					chest.getInventory().add(itemIdx, item);
 				}
 				else { /// inType == InputType.CHESTOUT
-					int index = Integer.parseInt(data[1]);
-					if(index >= chest.getInventory().invSize() || index < 0) {
-						System.err.println("SERVER error with CHESTOUT request: specified chest inv index is out of bounds: "+index+"; inv size:"+chest.getInventory().invSize());
+					//if (Game.debug) System.out.println("SERVER: received CHESTOUT request");
+					
+					if(itemIdx >= chest.getInventory().invSize() || itemIdx < 0) {
+						System.err.println("SERVER error with CHESTOUT request: specified chest inv index is out of bounds: "+itemIdx+"; inv size:"+chest.getInventory().invSize());
 						return false;
 					}
 					// if here, the index is valid
 					boolean wholeStack = Boolean.parseBoolean(data[2]);
-					Item toRemove = chest.getInventory().get(index);
-					Item itemToSend = toRemove;
+					Item toRemove = chest.getInventory().get(itemIdx);
+					Item itemToSend = toRemove.clone();
 					if(!wholeStack && toRemove instanceof StackableItem && ((StackableItem)toRemove).count > 1) {
-						itemToSend = toRemove.clone();
 						((StackableItem)itemToSend).count = 1;
 						((StackableItem)toRemove).count--;
 					} else
-						chest.getInventory().remove(index);
+						chest.getInventory().remove(itemIdx);
 					
-					//if(Game.debug) System.out.println("SERVER sending chestout with item data: \"" + itemToSend.getData() + "\"");
+					//if(Game.debug) System.out.println("SERVER sending chestout with item data: \"" + itemToSend.getDatax() + "\"");
 					serverThread.sendData(InputType.CHESTOUT, itemToSend.getData()); // send back the item that the player should put in their inventory.
 				}
 				
 				serverThread.sendEntityUpdate(chest, chest.getUpdates());
+				
+				// remove it if it is a death chest and there are no more items
+				if(chest instanceof DeathChest && chest.getInventory().invSize() == 0) {
+					//if (Game.debug) System.out.println("removed final item from death chest; removing chest");
+					chest.remove();
+				}
 				return true;
 			
 			case PUSH:

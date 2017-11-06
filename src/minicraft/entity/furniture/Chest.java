@@ -35,6 +35,8 @@ public class Chest extends Furniture implements ItemHolder {
 		switch(fieldName) {
 			case "inventory":
 				inventory.updateInv(val);
+				if(Game.getMenu() instanceof ContainerDisplay)
+					((ContainerDisplay)Game.getMenu()).onInvUpdate(this);
 				return true;
 		}
 		return false;
