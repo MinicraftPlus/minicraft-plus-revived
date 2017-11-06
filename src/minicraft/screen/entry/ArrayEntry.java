@@ -9,36 +9,36 @@ import minicraft.gfx.Font;
 
 public class ArrayEntry<T> extends ListEntry {
 	
-	/// TO-DO the locking mechanism will be implemented later, when I've verified that the rest works. They will still be selectable, but they'll just be a different color..? Idk about that, actually. Well, maybe they will just not be saved if they end on an invalid value.
-	
-	//private static final int LOCKED_COLOR = Color.get(200);
-	
 	private String label;
 	private T[] options;
 	private boolean[] optionVis;
 	
 	private int selection;
 	private boolean wrap;
+	private boolean localize;
 	
 	private int maxWidth;
-	//private ArrayList<Integer> lockedOptions = new ArrayList<>();
 	
 	private ChangeListener changeAction;
 	
 	@SafeVarargs
-	public ArrayEntry(String label, T... options) {
-		this(label, true, options);
-	}
+	public ArrayEntry(String label, T... options) { this(label, true, true, options); }
 	
 	@SafeVarargs
-	public ArrayEntry(String label, boolean wrap, T... options) {
+	public ArrayEntry(String label, boolean wrap, T... options) { this(label, wrap, true, options); }
+	
+	@SafeVarargs
+	public ArrayEntry(String label, boolean wrap, boolean localize, T... options) {
 		this.label = label;
 		this.options = options;
 		this.wrap = wrap;
+		this.localize = localize;
 		
 		maxWidth = 0;
 		for(T option: options)
-			maxWidth = Math.max(maxWidth, Font.textWidth(option.toString()));
+			maxWidth = Math.max(maxWidth, Font.textWidth(
+				localize ? Localization.getLocalized(option.toString()) : option.toString()
+			));
 		
 		optionVis = new boolean[options.length];
 		Arrays.fill(optionVis, true);
@@ -57,7 +57,7 @@ public class ArrayEntry<T> extends ListEntry {
 		setSelection(getIndex(value)); // if it is -1, setSelection simply won't set the value.
 	}
 	
-	public String getLabel() { return label; }
+	protected String getLabel() { return label; }
 	
 	public int getSelection() { return selection; }
 	public T getValue() { return options[selection]; }
@@ -132,7 +132,12 @@ public class ArrayEntry<T> extends ListEntry {
 	
 	@Override
 	public String toString() {
-		return Localization.getLocalized(label) + ": " + Localization.getLocalized(options[selection].toString());
+		String str = Localization.getLocalized(label) + ": ";
+		String option = options[selection].toString();
+		
+		str += localize ? Localization.getLocalized(option) : option;
+		
+		return str;
 	}
 	
 	public void setChangeAction(ChangeListener l) {

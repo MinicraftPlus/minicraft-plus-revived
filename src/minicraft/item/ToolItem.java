@@ -81,8 +81,8 @@ public class ToolItem extends Item {
 	/** Gets the name of this tool (and it's type) as a display string. */
 	@Override
 	public String getDisplayName() {
-		if (type == ToolType.FishingRod) return Localization.getLocalized("Fishing Rod");
-		return Localization.getLocalized(LEVEL_NAMES[level]) + " " + Localization.getLocalized(type.toString());
+		if (type == ToolType.FishingRod) return " " + Localization.getLocalized("Fishing Rod");
+		return " "+Localization.getLocalized(LEVEL_NAMES[level]) + " " + Localization.getLocalized(type.toString());
 	}
 	
 	@Override

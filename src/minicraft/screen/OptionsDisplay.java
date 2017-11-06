@@ -1,6 +1,7 @@
 package minicraft.screen;
 
 import minicraft.core.Game;
+import minicraft.core.io.Localization;
 import minicraft.core.io.Settings;
 import minicraft.saveload.Save;
 import minicraft.screen.entry.SelectEntry;
@@ -15,7 +16,7 @@ public class OptionsDisplay extends Display {
 				Settings.getEntry("autosave"),
 				Settings.getEntry("skinon"),
 				new SelectEntry("Change Key Bindings", () -> Game.setMenu(new KeyInputDisplay())),
-				new SelectEntry("Change language", () -> Game.setMenu(new LocalizationDisplay()))
+				Settings.getEntry("language")
 			)
 			.setTitle("Options")
 			.createMenu()
@@ -24,6 +25,7 @@ public class OptionsDisplay extends Display {
 	
 	@Override
 	public void onExit() {
+		Localization.changeLanguage((String)Settings.get("language"));
 		new Save();
 		Game.MAX_FPS = (int)Settings.get("fps");
 	}

@@ -12,6 +12,7 @@ import java.util.List;
 
 import minicraft.core.Game;
 import minicraft.core.Network;
+import minicraft.core.io.Localization;
 import minicraft.core.io.Settings;
 import minicraft.core.Updater;
 import minicraft.core.World;
@@ -290,6 +291,13 @@ public class Load {
 				MultiplayerDisplay.savedUUID = data.remove(0);
 				MultiplayerDisplay.savedUsername = data.remove(0);
 			}
+			
+			if(prefVer.compareTo(new Version("2.0.4-dev3")) >= 0) {
+				String lang = data.remove(0);
+				Settings.set("language", lang);
+				Localization.changeLanguage(lang);
+			}
+			
 			String keyData = data.get(0);
 			subdata = Arrays.asList(keyData.split(":"));
 		}

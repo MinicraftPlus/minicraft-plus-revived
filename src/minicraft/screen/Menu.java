@@ -188,7 +188,7 @@ public class Menu {
 		renderFrame(screen);
 		
 		// render the title
-		title = Localization.getLocalized(title);
+		//String title = Localization.getLocalized(this.title);
 		if(title.length() > 0) {
 			if (drawVertically) {
 				for (int i = 0; i < title.length(); i++) {
@@ -393,6 +393,8 @@ public class Menu {
 		private Menu createMenu(Builder b) {
 			if(b == this)
 				return copy().createMenu(this);
+			
+			menu.title = Localization.getLocalized(menu.title);
 			
 			// set default selectability
 			if(!setSelectable) {

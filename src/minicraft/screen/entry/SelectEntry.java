@@ -10,10 +10,13 @@ public class SelectEntry extends ListEntry {
 	
 	private Action onSelect;
 	private String text;
+	private boolean localize;
 	
-	public SelectEntry(String text, Action onSelect) {
+	public SelectEntry(String text, Action onSelect) { this(text, onSelect, true); }
+	public SelectEntry(String text, Action onSelect, boolean localize) {
 		this.onSelect = onSelect;
 		this.text = text;
+		this.localize = localize;
 	}
 	
 	void setText(String text) { this.text = text; }
@@ -27,11 +30,8 @@ public class SelectEntry extends ListEntry {
 	}
 	
 	@Override
-	public int getWidth() {
-		return Font.textWidth(Localization.getLocalized(text));
-	}
+	public int getWidth() { return Font.textWidth(toString()); }
 	
-	public String toString() {
-		return Localization.getLocalized(text);
-	}
+	@Override
+	public String toString() { return localize ? Localization.getLocalized(text) : text; }
 }

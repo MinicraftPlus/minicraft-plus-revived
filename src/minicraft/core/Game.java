@@ -86,9 +86,9 @@ public class Game {
 		
 		input = new InputHandler(Renderer.canvas);
 		
-		Localization.loadSelectedLanguageFile();
 		Tiles.initTileList();
 		Sound.init();
+		Settings.init();
 		
 		World.resetGame(); // "half"-starts a new game, to set up initial variables
 		player.eid = 0;

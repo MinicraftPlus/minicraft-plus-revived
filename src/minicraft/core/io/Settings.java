@@ -15,6 +15,7 @@ public class Settings {
 		options.put("diff", new ArrayEntry<>("Difficulty", "Easy", "Normal", "Hard"));
 		options.get("diff").setSelection(1);
 		options.put("mode", new ArrayEntry<>("Game Mode", "Survival", "Creative", "Hardcore", "Score"));
+		
 		options.put("scoretime", new ArrayEntry<>("Time (Score Mode)", 10, 20, 40, 60, 120));
 		options.get("scoretime").setValueVisibility(10, false);
 		options.get("scoretime").setValueVisibility(120, false);
@@ -29,6 +30,9 @@ public class Settings {
 		options.put("unlockedskin", new BooleanEntry("Wear Suit", false));
 		options.put("skinon", new BooleanEntry("Wear Suit", false));
 		
+		options.put("language", new ArrayEntry<>("Language", true, false, Localization.getLanguages()));
+		options.get("language").setValue(Localization.getSelectedLanguage());
+		
 		
 		options.get("mode").setChangeAction(value ->
 			options.get("scoretime").setVisible("Score".equals(value))
@@ -38,8 +42,9 @@ public class Settings {
 			options.get("skinon").setVisible((boolean)value)
 		);
 		
-		//options.get("fps").setChangeAction(value -> Game.MAX_FPS = (int)value);
 	}
+	
+	public static void init() {}
 	
 	// returns the value of the specified option
 	public static Object get(String option) { return options.get(option.toLowerCase()).getValue(); }

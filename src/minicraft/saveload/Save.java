@@ -10,6 +10,7 @@ import java.util.List;
 
 import minicraft.core.Game;
 import minicraft.core.Renderer;
+import minicraft.core.io.Localization;
 import minicraft.core.io.Settings;
 import minicraft.core.Updater;
 import minicraft.core.World;
@@ -176,6 +177,7 @@ public class Save {
 		data.add(MultiplayerDisplay.savedIP);
 		data.add(MultiplayerDisplay.savedUUID);
 		data.add(MultiplayerDisplay.savedUsername);
+		data.add(Localization.getSelectedLanguage());
 		
 		List<String> keyPairs = new ArrayList<>();
 		Collections.addAll(keyPairs, Game.input.getKeyPrefs());

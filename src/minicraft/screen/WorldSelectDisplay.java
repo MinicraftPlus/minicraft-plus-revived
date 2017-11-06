@@ -115,7 +115,7 @@ public class WorldSelectDisplay extends Display {
 					Game.setMenu(new WorldEditDisplay(curAction, name));
 					curAction = null;
 				}
-			}) {
+			}, false) {
 				@Override
 				public int getColor(boolean isSelected) {
 					if(curAction != null && isSelected)
