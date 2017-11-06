@@ -170,6 +170,8 @@ public class ConsoleReader extends Thread {
 						printHelp(this);
 						break;
 				}
+				
+				Game.server.updateGameVars();
 			}
 		},
 		

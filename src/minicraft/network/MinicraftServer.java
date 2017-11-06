@@ -38,6 +38,7 @@ import minicraft.saveload.Save;
 import minicraft.screen.WorldSelectDisplay;
 
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 public class MinicraftServer extends Thread implements MinicraftProtocol {
 	
@@ -350,6 +351,12 @@ public class MinicraftServer extends Thread implements MinicraftProtocol {
 	public void setBed(boolean inBed) {
 		Bed.inBed = inBed;
 		broadcastData(InputType.BED, ""+inBed);
+		if(inBed) {
+			for(MinicraftServerThread thread: getThreads()) {
+				thread.getClient().remove();
+				broadcastEntityRemoval(thread.getClient(), true);
+			}
+		}
 	}
 	
 	protected File[] getRemotePlayerFiles() {
@@ -703,7 +710,8 @@ public class MinicraftServer extends Thread implements MinicraftProtocol {
 			
 			case INTERACT:
 				clientPlayer.activeItem = Items.get(data[0], true); // this can be null; and that's fine, it means a fist. ;)
-				int arrowCount = Integer.parseInt(data[1]);
+				clientPlayer.stamina = Integer.parseInt(data[1]);
+				int arrowCount = Integer.parseInt(data[2]);
 				int curArrows = clientPlayer.getInventory().count(Items.arrowItem);
 				if(curArrows < arrowCount)
 					clientPlayer.getInventory().add(Items.arrowItem, arrowCount-curArrows);
@@ -715,6 +723,7 @@ public class MinicraftServer extends Thread implements MinicraftProtocol {
 				return true;
 			
 			case BED:
+				if (Game.debug) System.out.println("received bed request: " + alldata);
 				Entity bed = Network.getEntity(Integer.parseInt(alldata));
 				if(!(bed instanceof Bed)) {
 					System.out.println("SERVER: entity is not a bed: " + bed);
@@ -724,8 +733,6 @@ public class MinicraftServer extends Thread implements MinicraftProtocol {
 				if(Bed.inBed || !Bed.checkCanSleep())
 					return false;
 				setBed(true);
-				for(MinicraftServerThread thread: getThreads())
-					thread.getClient().remove();
 				return true;
 			
 			case POTION:
@@ -776,7 +783,7 @@ public class MinicraftServer extends Thread implements MinicraftProtocol {
 	private void broadcastData(InputType inType, String data) {
 		broadcastData(inType, data, (MinicraftServerThread)null);
 	}
-	private void broadcastData(InputType inType, String data, MinicraftServerThread clientThreadToExclude) {
+	private void broadcastData(InputType inType, String data, @Nullable MinicraftServerThread clientThreadToExclude) {
 		for(MinicraftServerThread thread: getThreads()) {
 			if(thread != clientThreadToExclude) // send this packet to all EXCEPT the specified one.
 				thread.sendData(inType, data);

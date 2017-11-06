@@ -433,7 +433,7 @@ public class Player extends Mob implements ItemHolder {
 		// walkDist is not synced, so this can happen for both the client and server.
 		walkDist += 8; // increase the walkDist (changes the sprite, like you moved your arm)
 		
-		if(!activeItem.interactsWithWorld()) {
+		if(activeItem != null && !activeItem.interactsWithWorld()) {
 			attackDir = dir; // make the attack direction equal the current direction
 			attackItem = activeItem; // make attackItem equal activeItem
 			activeItem.interactOn(Tiles.get("rock"), level, 0, 0, this, attackDir);

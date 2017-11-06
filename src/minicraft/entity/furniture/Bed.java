@@ -21,22 +21,29 @@ public class Bed extends Furniture {
 	/** Called when the player attempts to get in bed. */
 	public boolean use(Player player) {
 		if (checkCanSleep()) { // if it is late enough in the day to sleep...
+			if(Game.isValidServer()) {
+				if(inBed) return false;
+				Game.server.setBed(true);
+				return true;
+			}
+			
 			// set the player spawn coord. to their current position, in tile coords (hence " >> 4")
 			player.spawnx = player.x >> 4;
 			player.spawny = player.y >> 4;
+			
 			//player.bedSpawn = true; // the bed is now set as the player spawn point.
 			Bed.player = player;
 			Bed.playerLevel = player.getLevel();
 			Bed.inBed = true;
-			if (Game.debug) System.out.println(Network.onlinePrefix()+"player got in bed: " + player);
 			if(Game.isConnectedClient() && player == Game.player) {
 				Game.client.sendBedRequest(player, this);
 			}
-			else {
+			if (Game.debug) System.out.println(Network.onlinePrefix()+"player got in bed: " + player);
+			//else {
 				player.remove();
-				if(Game.isValidServer() && player instanceof RemotePlayer)
-					Game.server.getAssociatedThread((RemotePlayer)player).sendEntityRemoval(player.eid);
-			}
+				//if(Game.isValidServer() && player instanceof RemotePlayer)
+				//	Game.server.getAssociatedThread((RemotePlayer)player).sendEntityRemoval(player.eid);
+			//}
 		}
 		
 		return true;

@@ -10,6 +10,7 @@ import minicraft.item.Items;
 import minicraft.level.Level;
 import minicraft.level.tile.Tile;
 import minicraft.level.tile.Tiles;
+import minicraft.network.MinicraftServerThread;
 import minicraft.saveload.Save;
 import minicraft.screen.EndGameDisplay;
 import minicraft.screen.LevelTransitionDisplay;
@@ -94,13 +95,13 @@ public class Updater extends Game {
 					server.updateGameVars();
 			}
 			if (tickCount <= sleepStartTime && tickCount >= sleepEndTime) { // it has reached morning.
+				gamespeed = 1;
 				if(isValidServer()) {
 					server.updateGameVars();
 					server.setBed(false);
 				}
 				else {
 					Player playerInBed = Bed.restorePlayer();
-					gamespeed = 1;
 					
 					// seems this removes all entities within a certain radius of the player when you get OUT of Bed.
 					for (Entity e : level.getEntityArray()) {

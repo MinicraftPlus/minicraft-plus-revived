@@ -316,9 +316,9 @@ public class MinicraftClient extends MinicraftConnection {
 					System.out.println("CLIENT: received entity removal while loading level");
 				
 				int eid = Integer.parseInt(alldata);
-				//if (Game.debug) System.out.println("CLIENT: received entity removal: " + eid);
 				
 				Entity toRemove = Network.getEntity(eid);
+				if (Game.debug) System.out.println("CLIENT: received entity removal: " + toRemove);
 				if(toRemove != null) {
 					toRemove.remove();
 					return true;
@@ -442,6 +442,7 @@ public class MinicraftClient extends MinicraftConnection {
 				return true;
 			
 			case BED:
+				if (Game.debug) System.out.println("received bed request: " + alldata);
 				boolean inBed = Boolean.parseBoolean(alldata);
 				if(Bed.inBed == inBed) return false; // no action needed.
 				Bed.inBed = inBed;
@@ -470,7 +471,7 @@ public class MinicraftClient extends MinicraftConnection {
 	public void requestInteraction(Player player) {
 		/// I don't think the player parameter is necessary, but it doesn't harm anything.
 		String itemString = player.activeItem != null ? player.activeItem.getData() : "null";
-		sendData(InputType.INTERACT, itemString+";"+player.getInventory().count(Items.arrowItem));
+		sendData(InputType.INTERACT, itemString+";"+player.stamina+";"+player.getInventory().count(Items.arrowItem));
 	}
 	
 	public void requestTile(Level level, int xt, int yt) {
