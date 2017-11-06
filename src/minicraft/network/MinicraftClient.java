@@ -24,6 +24,7 @@ import minicraft.entity.furniture.DeathChest;
 import minicraft.entity.furniture.Furniture;
 import minicraft.entity.mob.Player;
 import minicraft.entity.mob.RemotePlayer;
+import minicraft.item.Inventory;
 import minicraft.item.Item;
 import minicraft.item.Items;
 import minicraft.item.PotionItem;
@@ -389,10 +390,14 @@ public class MinicraftClient extends MinicraftConnection {
 			
 			case CHESTOUT:
 				if(curState != State.PLAY) return false; // shouldn't happen.
-				Item item = Items.get(alldata);
+				Item item = Items.get(data[0]);
+				int idx = Integer.parseInt(data[1]);
+				Inventory playerInv = Game.player.getInventory();
+				if(idx > playerInv.invSize())
+					idx = playerInv.invSize();
 				//if (Game.debug) System.out.println("CLIENT: received chestout with item: " + item);
 				if(!Game.isMode("creative")) {
-					Game.player.getInventory().add(0, item);
+					Game.player.getInventory().add(idx, item);
 					if(Game.getMenu() instanceof ContainerDisplay)
 						((ContainerDisplay)Game.getMenu()).onInvUpdate(Game.player);
 				}
@@ -487,9 +492,9 @@ public class MinicraftClient extends MinicraftConnection {
 		sendData(InputType.CHESTIN, chest.eid+";"+index+";"+item.getData());
 	}
 	
-	public void removeFromChest(Chest chest, int index, boolean wholeStack) {
+	public void removeFromChest(Chest chest, int itemIndex, int inputIndex, boolean wholeStack) {
 		if(chest == null) return;
-		sendData(InputType.CHESTOUT, chest.eid+";"+index+";"+wholeStack);
+		sendData(InputType.CHESTOUT, chest.eid+";"+itemIndex+";"+wholeStack+";"+inputIndex);
 	}
 	
 	public void pushFurniture(Furniture f, Direction pushDir) { sendData(InputType.PUSH, String.valueOf(f.eid)); }

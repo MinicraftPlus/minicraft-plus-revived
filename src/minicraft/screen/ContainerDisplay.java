@@ -7,6 +7,8 @@ import minicraft.entity.furniture.Chest;
 import minicraft.entity.mob.Player;
 import minicraft.gfx.Screen;
 import minicraft.item.Inventory;
+import minicraft.item.Item;
+import minicraft.item.StackableItem;
 
 public class ContainerDisplay extends Display {
 	
@@ -52,7 +54,7 @@ public class ContainerDisplay extends Display {
 		Menu curMenu = menus[selection];
 		int otherIdx = getOtherIdx();
 		
-		if(input.getKey("attack").clicked && curMenu.getNumOptions() > 0) {
+		if(curMenu.getNumOptions() > 0 && (input.getKey("attack").clicked || input.getKey("drop-one").clicked)) {
 			// switch inventories
 			Inventory from, to;
 			if(selection == 0) {
@@ -66,34 +68,47 @@ public class ContainerDisplay extends Display {
 			int toSel = menus[otherIdx].getSelection();
 			int fromSel = curMenu.getSelection();
 			
+			if(Game.isValidClient() && from == chest.getInventory()) {
+				// just send, take no actual action
+				Game.client.removeFromChest(chest, fromSel, toSel, input.getKey("attack").clicked);
+				return;
+			}
+			
+			Item fromItem = from.get(fromSel);
+			
+			boolean transferAll = input.getKey("attack").clicked || !(fromItem instanceof StackableItem) || ((StackableItem)fromItem).count == 1;
+			
+			Item toItem = fromItem.clone();
+			
+			if(!transferAll) {
+				((StackableItem)fromItem).count--; // this is known to be valid.
+				((StackableItem)toItem).count = 1;
+				// items are setup for sending.
+			}
+			else { // transfer whole item/stack.
+				if(! (Game.isMode("creative") && from == player.getInventory()) )
+					from.remove(fromSel); // remove it
+			}
+			
 			if(!Game.isValidClient()) {
-				
-				if (Game.isMode("creative"))
-					to.add(toSel, from.get(fromSel).clone());
-				else
-					to.add(toSel, from.remove(fromSel));
-				
-				menus[selection] = new InventoryMenu((InventoryMenu) menus[selection]);
-				menus[otherIdx] = new InventoryMenu((InventoryMenu) menus[otherIdx]);
-				menus[1].translate(menus[0].getBounds().getWidth() + padding, 0);
-				onSelectionChange(0, selection);
-				
-			} else {
-				// is online client
-				if(from == chest.getInventory())
-					Game.client.removeFromChest(chest, fromSel, true);
-				else if(to == chest.getInventory())
-					Game.client.addToChest(chest, toSel, from.remove(fromSel));
+				to.add(toSel, toItem);
+				update();
+			} else if(to == chest.getInventory()) {
+				// is online client, and from == player
+				Game.client.addToChest(chest, toSel, toItem);
 			}
 		}
 	}
 	
 	public void onInvUpdate(ItemHolder holder) {
-		if(holder == player || holder == chest) {
-			menus[0] = new InventoryMenu((InventoryMenu) menus[0]);
-			menus[1] = new InventoryMenu((InventoryMenu) menus[1]);
-			menus[1].translate(menus[0].getBounds().getWidth() + padding, 0);
-			onSelectionChange(0, selection);
-		}
+		if(holder == player || holder == chest)
+			update();
+	}
+	
+	private void update() {
+		menus[0] = new InventoryMenu((InventoryMenu) menus[0]);
+		menus[1] = new InventoryMenu((InventoryMenu) menus[1]);
+		menus[1].translate(menus[0].getBounds().getWidth() + padding, 0);
+		onSelectionChange(0, selection);
 	}
 }

@@ -31,13 +31,15 @@ class InventoryMenu extends ItemListMenu {
 	public void tick(InputHandler input) {
 		super.tick(input);
 		
-		if(getNumOptions() > 0 && (input.getKey("drop-one").clicked || input.getKey("drop-stack").clicked)) {
+		boolean dropOne = input.getKey("drop-one").clicked && !(Game.getMenu() instanceof ContainerDisplay);
+		
+		if(getNumOptions() > 0 && (dropOne || input.getKey("drop-stack").clicked)) {
 			ItemEntry entry = ((ItemEntry)getCurEntry());
 			if(entry == null) return;
 			Item invItem = entry.getItem();
 			Item drop = invItem.clone();
 			
-			if(input.getKey("drop-one").clicked && drop instanceof StackableItem && ((StackableItem)drop).count > 1) {
+			if(dropOne && drop instanceof StackableItem && ((StackableItem)drop).count > 1) {
 				// just drop one from the stack
 				((StackableItem)drop).count = 1;
 				((StackableItem)invItem).count--;

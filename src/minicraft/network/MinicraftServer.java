@@ -669,8 +669,8 @@ public class MinicraftServer extends Thread implements MinicraftProtocol {
 					} else
 						chest.getInventory().remove(itemIdx);
 					
-					//if(Game.debug) System.out.println("SERVER sending chestout with item data: \"" + itemToSend.getDatax() + "\"");
-					serverThread.sendData(InputType.CHESTOUT, itemToSend.getData()); // send back the item that the player should put in their inventory.
+					//if(Game.debug) System.out.println("SERVER sending chestout with item data: \"" + itemToSend.getData() + "\"");
+					serverThread.sendData(InputType.CHESTOUT, itemToSend.getData()+";"+data[3]); // send back the item that the player should put in their inventory.
 				}
 				
 				serverThread.sendEntityUpdate(chest, chest.getUpdates());
