@@ -64,7 +64,7 @@ public class Inventory {
 			
 			boolean added = false;
 			for(int i = 0; i < items.size(); i++) {
-				if(items.get(i).equals(toTake)) {
+				if(toTake.stacksWith(items.get(i))) {
 					// matching implies that the other item is stackable, too.
 					((StackableItem)items.get(i)).count += toTake.count;
 					added = true;
@@ -84,7 +84,7 @@ public class Inventory {
 		for(int i = 0; i < items.size(); i++) {
 			if(!(items.get(i) instanceof StackableItem)) continue;
 			StackableItem curItem = (StackableItem) items.get(i);
-			if(!curItem.getName().equals(given.getName())) continue; // can't do equals, becuase that includes the stack size.
+			if(!curItem.stacksWith(given)) continue; // can't do equals, becuase that includes the stack size.
 			// equals; and current item is stackable.
 			int amountRemoving = Math.min(count-removed, curItem.count); // this is the number of items that are being removed from the stack this run-through.
 			curItem.count -= amountRemoving;
@@ -134,9 +134,7 @@ public class Inventory {
 			System.out.println("WARNING: could not remove " + count + " "+given+(count>1?"s":"")+" from inventory");
 	}
 	
-	public boolean hasItem(Item given) {
-		return items.contains(given);
-	}
+	//public boolean hasItem(Item given) { return items.contains(given); }
 	
 	/** Returns the how many of an item you have in the inventory. */
 	public int count(Item given) {
@@ -145,24 +143,24 @@ public class Inventory {
 		int found = 0; // initialize counting var
 		for(int i = 0; i < items.size(); i++) { // loop though items in inv
 			Item curItem = items.get(i); // assign current item
-			if(!curItem.equals(given)) continue; // ignore it if it doesn't match the given item
 			
-			if (curItem instanceof StackableItem) // if the item can be a stack...
+			// if the item can be a stack...
+			if (curItem instanceof StackableItem && ((StackableItem)curItem).stacksWith(given))
 				found += ((StackableItem)curItem).count; // add however many items are in the stack.
-			else
+			else if(curItem.equals(given))
 				found++; // otherwise, just add 1 to the found count.
 		}
 		
 		return found;
 	}
 	
-	public List<String> getItemNames() {
+	/*public List<String> getItemNames() {
 		List<String> names = new ArrayList<>();
 		for(int i = 0; i < items.size(); i++)
 			names.add(items.get(i).getName());
 		
 		return names;
-	}
+	}*/
 	
 	public String getItemData() {
 		StringBuilder itemdata = new StringBuilder();

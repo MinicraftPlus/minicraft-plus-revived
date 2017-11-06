@@ -51,10 +51,10 @@ public class StackableItem extends Item {
 		this.count = count;
 	}
 	
-	@Override
+	/*@Override
 	public boolean equals(Item other) {
 		return super.equals(other) && ((StackableItem)other).count == count;
-	}
+	}*/
 	
 	public boolean stacksWith(Item other) { return other instanceof StackableItem && other.getName().equals(getName()); }
 	/** Renders the icon, name, and count of the item. */
