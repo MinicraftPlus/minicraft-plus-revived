@@ -88,4 +88,6 @@ public abstract class Item {
 	public String getDisplayName() {
 		return " " + Localization.getLocalized(getName());
 	}
+	
+	public boolean interactsWithWorld() { return true; }
 }

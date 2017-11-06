@@ -46,6 +46,9 @@ public class ArmorItem extends StackableItem {
 		return super.interactOn(success);
 	}
 	
+	@Override
+	public boolean interactsWithWorld() { return false; }
+	
 	public ArmorItem clone() {
 		return new ArmorItem(getName(), sprite, count, armor, level);
 	}

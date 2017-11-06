@@ -433,7 +433,7 @@ public class Player extends Mob implements ItemHolder {
 		// walkDist is not synced, so this can happen for both the client and server.
 		walkDist += 8; // increase the walkDist (changes the sprite, like you moved your arm)
 		
-		if(activeItem instanceof BookItem) {
+		if(!activeItem.interactsWithWorld()) {
 			attackDir = dir; // make the attack direction equal the current direction
 			attackItem = activeItem; // make attackItem equal activeItem
 			activeItem.interactOn(Tiles.get("rock"), level, 0, 0, this, attackDir);
@@ -874,6 +874,9 @@ public class Player extends Mob implements ItemHolder {
 		updates += "skinon,"+skinon+
 		";shirtColor,"+shirtColor+
 		";armor,"+armor+
+		";stamina,"+stamina+
+		";health,"+health+
+		";hunger,"+hunger+
 		";attackTime,"+attackTime+
 		";attackDir,"+attackDir.ordinal()+
 		";attackItem,"+(attackItem==null?"null": attackItem.getName());
@@ -887,6 +890,9 @@ public class Player extends Mob implements ItemHolder {
 			case "skinon": skinon = Boolean.parseBoolean(val); return true;
 			case "shirtColor": shirtColor = Integer.parseInt(val); return true;
 			case "armor": armor = Integer.parseInt(val); return true;
+			case "stamina": stamina = Integer.parseInt(val); return true;
+			case "health": health = Integer.parseInt(val); return true;
+			case "hunger": hunger = Integer.parseInt(val); return true;
 			case "attackTime": attackTime = Integer.parseInt(val); return true;
 			case "attackDir": attackDir = Direction.values[Integer.parseInt(val)]; return true;
 			case "attackItem": attackItem = Items.get(val, true); return true;

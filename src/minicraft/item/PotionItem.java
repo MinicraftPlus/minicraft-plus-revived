@@ -61,6 +61,9 @@ public class PotionItem extends StackableItem {
 		return super.equals(other) && ((PotionItem)other).type == type;
 	}
 	
+	@Override
+	public boolean interactsWithWorld() { return false; }
+	
 	public PotionItem clone() {
 		return new PotionItem(type, count);
 	}

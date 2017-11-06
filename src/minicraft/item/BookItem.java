@@ -33,6 +33,9 @@ public class BookItem extends Item {
 		return true;
 	}
 	
+	@Override
+	public boolean interactsWithWorld() { return false; }
+	
 	public BookItem clone() {
 		return new BookItem(getName(), sprite.color, book);
 	}

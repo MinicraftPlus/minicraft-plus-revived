@@ -45,6 +45,9 @@ public class ClothingItem extends StackableItem {
 		}
 	}
 	
+	@Override
+	public boolean interactsWithWorld() { return false; }
+	
 	public ClothingItem clone() {
 		return new ClothingItem(getName(), count, sprite.color, playerCol);
 	}

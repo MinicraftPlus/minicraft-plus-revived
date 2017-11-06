@@ -52,6 +52,9 @@ public class FoodItem extends StackableItem {
 		return super.interactOn(success);
 	}
 	
+	@Override
+	public boolean interactsWithWorld() { return false; }
+	
 	public FoodItem clone() {
 		return new FoodItem(getName(), sprite, count, heal);
 	}
