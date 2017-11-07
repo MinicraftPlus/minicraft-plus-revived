@@ -404,6 +404,12 @@ public class MinicraftClient extends MinicraftConnection {
 				//if (Game.debug) System.out.println("CLIENT successfully took " + item + " from chest and added to inv.");
 				return true;
 			
+			case ADDITEMS:
+				Inventory inv = Game.player.getInventory();
+				for(String itemStr: data)
+					inv.add(Items.get(itemStr));
+				return true;
+			
 			case INTERACT:
 				// the server went through with the interaction, and has sent back the new activeItem.
 				//Item holdItem = Items.get(alldata);
@@ -508,6 +514,10 @@ public class MinicraftClient extends MinicraftConnection {
 	public void removeFromChest(Chest chest, int itemIndex, int inputIndex, boolean wholeStack) {
 		if(chest == null) return;
 		sendData(InputType.CHESTOUT, chest.eid+";"+itemIndex+";"+wholeStack+";"+inputIndex);
+	}
+	
+	public void touchDeathChest(Player player, DeathChest chest) {
+		sendData(InputType.CHESTOUT, chest.eid+"");
 	}
 	
 	public void pushFurniture(Furniture f, Direction pushDir) { sendData(InputType.PUSH, String.valueOf(f.eid)); }

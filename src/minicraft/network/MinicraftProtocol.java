@@ -12,10 +12,10 @@ public interface MinicraftProtocol {
 	String manualPing = "manual";
 	
 	enum InputType {
-		INVALID, PING, USERNAMES, LOGIN, GAME, INIT, LOAD, TILES, ENTITIES, TILE, ENTITY, PLAYER, MOVE, ADD, REMOVE, DISCONNECT, SAVE, NOTIFY, INTERACT, PUSH, PICKUP, CHESTIN, CHESTOUT, BED, POTION, HURT, DIE, RESPAWN, DROP;
+		INVALID, PING, USERNAMES, LOGIN, GAME, INIT, LOAD, TILES, ENTITIES, TILE, ENTITY, PLAYER, MOVE, ADD, REMOVE, DISCONNECT, SAVE, NOTIFY, INTERACT, PUSH, PICKUP, CHESTIN, CHESTOUT, ADDITEMS, BED, POTION, HURT, DIE, RESPAWN, DROP;
 		
 		public static final InputType[] values = InputType.values();
-		public static final List<InputType> serverOnly = Arrays.asList(INIT, TILES, ENTITIES, ADD, REMOVE, HURT, GAME);
+		public static final List<InputType> serverOnly = Arrays.asList(INIT, TILES, ENTITIES, ADD, REMOVE, HURT, GAME, ADDITEMS);
 		public static final List<InputType> entityUpdates = Arrays.asList(ENTITY, ADD, REMOVE);
 		public static final List<InputType> tileUpdates = Collections.singletonList(TILE);
 	}

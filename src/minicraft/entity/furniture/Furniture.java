@@ -34,7 +34,7 @@ public class Furniture extends Entity {
 		} catch(Exception ex) {
 			ex.printStackTrace();
 		}
-		return null;
+		return new Furniture(name, sprite);
 	}
 
 	public void tick() {

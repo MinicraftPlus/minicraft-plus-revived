@@ -63,7 +63,7 @@ public abstract class Entity {
 	public Level getLevel() { return level; }
 	
 	/** Returns a Rectangle instance using the defined bounds of the entity. */
-	private Rectangle getBounds() { return new Rectangle(x, y, xr*2, yr*2, Rectangle.CENTER_DIMS); }
+	protected Rectangle getBounds() { return new Rectangle(x, y, xr*2, yr*2, Rectangle.CENTER_DIMS); }
 	/** returns true if this entity is found in the rectangle specified by given two coordinates. */
 	public boolean isTouching(Rectangle area) { return area.intersects(getBounds()); }
 	/** returns if this entity stops other solid entities from moving. */

@@ -1,26 +1,33 @@
 package minicraft.entity.furniture;
 
+import minicraft.core.Game;
 import minicraft.core.io.Settings;
 import minicraft.core.Updater;
+import minicraft.entity.Entity;
 import minicraft.entity.mob.Player;
+import minicraft.entity.mob.RemotePlayer;
 import minicraft.gfx.Color;
+import minicraft.gfx.Font;
+import minicraft.gfx.Screen;
+import minicraft.item.Item;
+import minicraft.network.MinicraftServerThread;
 
 public class DeathChest extends Chest {
 	
 	public int time; // time passed (used for death chest despawn)
-	int redtick = 0; // this is used to determine the shade of red when the chest is about to expire.
-	boolean reverse; // what direction the red shade (redtick) is changing.
+	private int redtick = 0; // this is used to determine the shade of red when the chest is about to expire.
+	private boolean reverse; // what direction the red shade (redtick) is changing.
 	
 	public DeathChest() {
 		super("Death Chest", Color.get(-1, 220, 331, 552));
 		
 		/// set the expiration time based on the world difficulty.
 		if (Settings.get("diff").equals("Easy")) {
-			time = 18000;
+			time = 300*Updater.normSpeed;
 		} else if (Settings.get("diff").equals("Normal")) {
-			time = 6000;
+			time = 120*Updater.normSpeed;
 		} else if (Settings.get("diff").equals("Hard")) {
-			time = 1200;
+			time = 30*Updater.normSpeed;
 		}
 	}
 	
@@ -34,18 +41,18 @@ public class DeathChest extends Chest {
 	// for death chest time count, I imagine.
 	public void tick() {
 		super.tick();
-		name = "Death Chest:" + time / Updater.normSpeed + "S"; // add the current
+		//name = "Death Chest:"; // add the current
 		
-		if (getInventory().invSize() < 1) {
+		if (getInventory().invSize() == 0) {
 			remove();
 		}
-
-		if (time < 3600) { // if there is less than 3600 ticks left... (1 min @ 60tiks/sec)
+		
+		if (time < 30*Updater.normSpeed) { // if there is less than 30 seconds left...
 			redtick += reverse ? -1 : 1; // inc/dec-rement redtick, changing the red shading.
 			
 			// set the chest color based on redtick's value
 			int expcol = 100 * (redtick / 5 + 1);
-			col = Color.get(-1, expcol, expcol+100, expcol+200);
+			sprite.color = Color.get(-1, expcol, expcol+100, expcol+200);
 			
 			/// these two statements keep the red color oscillating.
 			if (redtick > 13) {
@@ -55,17 +62,40 @@ public class DeathChest extends Chest {
 				reverse = false;
 			}
 		}
-
+		
 		if (time > 0) {
 			time--; // decrement the time if it is not already zero.
 		}
-
+		
 		if (time == 0) {
 			remove(); // remove the death chest when the time expires.
 		}
 	}
 	
+	public void render(Screen screen) {
+		super.render(screen);
+		String timeString = (time / Updater.normSpeed) + "S";
+		Font.draw(timeString, screen, x - Font.textWidth(timeString)/2, y - Font.textHeight() - getBounds().getHeight()/2, Color.WHITE);
+	}
+	
+	public boolean use(Player player) { return false; } // can't open it, just walk into it.
+	
 	public void take(Player player) {} // can't grab a death chest.
+	
+	@Override
+	public void touchedBy(Entity other) {
+		if(other instanceof Player) {
+			if(!Game.ISONLINE) {
+				((Player)other).getInventory().addAll(getInventory());
+				remove();
+				Game.notifications.add("Death chest retrieved!");
+			}
+			else if(Game.isValidClient()) {
+				Game.client.touchDeathChest((Player)other, this);
+				remove();
+			}
+		}
+	}
 	
 	protected String getUpdateString() {
 		String updates = super.getUpdateString() + ";";

@@ -634,7 +634,20 @@ public class MinicraftServer extends Thread implements MinicraftProtocol {
 					System.err.println("SERVER error with CHESTOUT request: Specified chest entity did not exist or was not a chest.");
 					return false;
 				}
+				
 				Chest chest = (Chest) e;
+				
+				if(e instanceof DeathChest) {
+					StringBuilder itemDataB = new StringBuilder();
+					for(Item i: chest.getInventory().getItems())
+						itemDataB.append(i.getData()).append(";");
+					String itemData = itemDataB.toString();
+					itemData = itemData.length() == 0 ? itemData : itemData.substring(0, itemData.length()-1);
+					serverThread.sendItems(itemData);
+					serverThread.sendNotification("Death chest retrieved!", 0);
+					chest.remove();
+					return true;
+				}
 				
 				int itemIdx = Integer.parseInt(data[1]);
 				

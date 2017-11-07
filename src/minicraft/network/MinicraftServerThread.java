@@ -202,6 +202,10 @@ public class MinicraftServerThread extends MinicraftConnection {
 		sendData(InputType.INTERACT, ( client.activeItem == null ? "null" : client.activeItem.getData() ));
 	}
 	
+	public void sendItems(String itemData) {
+		sendData(InputType.ADDITEMS, itemData);
+	}
+	
 	public void setClientPos(int lvlDepth, int x, int y) {
 		sendData(InputType.MOVE, lvlDepth+";"+x+";"+y);
 	}
