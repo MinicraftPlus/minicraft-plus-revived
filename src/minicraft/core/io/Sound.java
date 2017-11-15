@@ -1,12 +1,9 @@
 package minicraft.core.io;
 
-import javax.sound.sampled.AudioSystem;
-import javax.sound.sampled.Clip;
-import javax.sound.sampled.Line;
-import javax.sound.sampled.LineEvent;
-import javax.sound.sampled.LineUnavailableException;
-import javax.sound.sampled.UnsupportedAudioFileException;
+import javax.sound.sampled.*;
+
 import java.io.IOException;
+import java.net.URL;
 
 import minicraft.core.Game;
 
@@ -32,8 +29,44 @@ public class Sound {
 		if(!Game.HAS_GUI) return;
 		
 		try {
-			clip = (Clip)AudioSystem.getLine(new Line.Info(Clip.class));
-			clip.open(AudioSystem.getAudioInputStream(getClass().getResource(name)));
+			URL url = getClass().getResource(name);
+			
+			DataLine.Info info = new DataLine.Info(Clip.class, AudioSystem.getAudioFileFormat(url).getFormat());
+			
+			if(!AudioSystem.isLineSupported(info)) {
+				System.err.println("ERROR: audio format of file " + name + " is not supported: " + AudioSystem.getAudioFileFormat(url));
+				
+				System.out.println("supported audio formats:");
+				System.out.println("-source:");
+				Line.Info[] sinfo = AudioSystem.getSourceLineInfo(info);
+				Line.Info[] tinfo = AudioSystem.getTargetLineInfo(info);
+				for (int i = 0; i < sinfo.length; i++)
+				{
+					if (sinfo[i] instanceof DataLine.Info)
+					{
+						DataLine.Info dataLineInfo = (DataLine.Info) sinfo[i];
+						AudioFormat[] supportedFormats = dataLineInfo.getFormats();
+						for(AudioFormat af: supportedFormats)
+							System.out.println(af);
+					}
+				}
+				System.out.println("-target:");
+				for (int i = 0; i < tinfo.length; i++)
+				{
+					if (tinfo[i] instanceof DataLine.Info)
+					{
+						DataLine.Info dataLineInfo = (DataLine.Info) tinfo[i];
+						AudioFormat[] supportedFormats = dataLineInfo.getFormats();
+						for(AudioFormat af: supportedFormats)
+							System.out.println(af);
+					}
+				}
+				
+				return;
+			}
+			
+			clip = (Clip)AudioSystem.getLine(info);
+			clip.open(AudioSystem.getAudioInputStream(url));
 			
 			clip.addLineListener(e -> {
 				if(e.getType() == LineEvent.Type.STOP) {
@@ -43,6 +76,7 @@ public class Sound {
 			});
 			
 		} catch (LineUnavailableException | UnsupportedAudioFileException | IOException e) {
+			System.err.println("could not load sound file " + name);
 			e.printStackTrace();
 		}
 	}
