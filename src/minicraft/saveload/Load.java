@@ -520,6 +520,7 @@ public class Load {
 		
 		for(int i = 0; i < World.levels.length; i++) {
 			World.levels[i].checkChestCount();
+			World.levels[i].checkAirWizard();
 		}
 	}
 	

@@ -156,23 +156,43 @@ public class Level {
 			}
 		}
 		
-		checkChestCount(false, makeWorld);
+		checkChestCount(false);
 		
 		if (level < 0)
 			generateSpawnerStructures();
 
-		if (level == 1) { // add the airwizard to the surface
-			AirWizard aw = new AirWizard(false);
-			add(aw, w * 16 / 2, h * 16 / 2);
-		}
+		checkAirWizard();
 		
 		if (Game.debug) printTileLocs(Tiles.get("Stairs Down"));
 	}
 	
-	public void checkChestCount() {
-		checkChestCount(true, false);
+	public void checkAirWizard() {
+		checkAirWizard(true);
 	}
-	private void checkChestCount(boolean check, boolean makeWorld) {
+	private void checkAirWizard(boolean check) {
+		if (depth == 1 && !AirWizard.beaten) { // add the airwizard to the surface
+			
+			boolean found = false;
+			if(check) {
+				for(Entity e: entitiesToAdd)
+					if(e instanceof AirWizard)
+						found = true;
+				for(Entity e: entities)
+					if(e instanceof AirWizard)
+						found = true;
+			}
+			
+			if (!found) {
+				AirWizard aw = new AirWizard(false);
+				add(aw, w * 16 / 2, h * 16 / 2);
+			}
+		}
+	}
+	
+	public void checkChestCount() {
+		checkChestCount(true);
+	}
+	private void checkChestCount(boolean check) {
 		/// if the level is the dungeon, and we're not just loading the world...
 		if (depth != -4) return;
 		
@@ -187,7 +207,6 @@ public class Level {
 					numChests++;
 			System.out.println("found " + numChests + " chests.");
 		}
-		else if(!makeWorld) return;
 		
 		/// make DungeonChests!
 		for (int i = numChests; i < 10 * (w / 128); i++) {
