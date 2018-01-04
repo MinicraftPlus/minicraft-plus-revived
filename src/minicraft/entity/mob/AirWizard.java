@@ -187,8 +187,8 @@ public class AirWizard extends EnemyMob {
 			beaten = true;
 		} else {
 			Updater.notifyAll("Air Wizard II: Defeated!");
-			if (!(boolean)Settings.get("wear suit")) Updater.notifyAll("A costume lies on the ground...", -200);
-			Settings.set("wear suit", true);
+			if (!(boolean)Settings.get("unlockedskin")) Updater.notifyAll("A costume lies on the ground...", -200);
+			Settings.set("unlockedskin", true);
 			BufferedWriter bufferedWriter = null;
 			
 			try {
