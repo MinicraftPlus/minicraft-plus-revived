@@ -512,11 +512,14 @@ public class Load {
 		for(int i = 0; i < World.levels.length; i++) {
 			World.levels[i].clearEntities();
 		}
-		
 		for(int i = 0; i < data.size(); i++) {
 			if(data.get(i).equalsIgnoreCase("player")) continue;
 			loadEntity(data.get(i), worldVer, true);
 			//LoadingDisplay.progress(percentInc);
+		}
+		
+		for(int i = 0; i < World.levels.length; i++) {
+			World.levels[i].checkChestCount();
 		}
 	}
 	
@@ -659,7 +662,7 @@ public class Load {
 				((DeathChest)chest).time = Integer.parseInt(chestInfo.get(chestInfo.size()-1));
 			} else if (isDungeonChest) {
 				((DungeonChest)chest).isLocked = Boolean.parseBoolean(chestInfo.get(chestInfo.size()-1));
-				World.levels[Integer.parseInt(info.get(info.size()-1))].chestCount++;
+				if(((DungeonChest)chest).isLocked) World.levels[Integer.parseInt(info.get(info.size()-1))].chestCount++;
 			}
 			
 			newEntity = chest;

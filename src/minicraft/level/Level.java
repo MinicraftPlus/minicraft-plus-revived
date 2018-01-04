@@ -59,6 +59,16 @@ public class Level {
 		public int applyAsInt(Entity e) { return e.y; }
 	});
 	
+	public Entity[] getEntitiesToSave() {
+		Entity[] allEntities = new Entity[entities.size()+entitiesToAdd.size()];
+		Entity[] toAdd = entitiesToAdd.toArray(new Entity[entitiesToAdd.size()]);
+		Entity[] current = getEntityArray();
+		System.arraycopy(current, 0, allEntities, 0, current.length);
+		System.arraycopy(toAdd, 0, allEntities, current.length, toAdd.length);
+		
+		return allEntities;
+	}
+	
 	/// This is a solely debug method I made, to make printing repetitive stuff easier.
 		// should be changed to accept prepend and entity, or a tile (as an Object). It will get the coordinates and class name from the object, and will divide coords by 16 if passed an entity.
 	public void printLevelLoc(String prefix, int x, int y) { printLevelLoc(prefix, x, y, ""); }
@@ -146,48 +156,7 @@ public class Level {
 			}
 		}
 		
-		
-		/// if the level is the dungeon, and we're not just loading the world...
-		if (level == -4) {
-			/// make DungeonChests!
-			for (int i = 0; i < 10 * (w / 128); i++) {
-				DungeonChest d = new DungeonChest();
-				boolean addedchest = false;
-				while(!addedchest) { // keep running until we successfully add a DungeonChest
-					//pick a random tile:
-					int x2 = random.nextInt(16 * w) / 16;
-					int y2 = random.nextInt(16 * h) / 16;
-					if (getTile(x2, y2) == Tiles.get("Obsidian")) {
-						boolean xaxis = random.nextBoolean();
-						if (xaxis) {
-							for (int s = x2; s < w - s; s++) {
-								if (getTile(s, y2) == Tiles.get("Obsidian Wall")) {
-									d.x = s * 16 - 24;
-									d.y = y2 * 16 - 24;
-								}
-							}
-						} else { // y axis
-							for (int s = y2; s < y2 - s; s++) {
-								if (getTile(x2, s) == Tiles.get("Obsidian Wall")) {
-									d.x = x2 * 16 - 24;
-									d.y = s * 16 - 24;
-								}
-							}
-						}
-						if (d.x == 0 && d.y == 0) {
-							d.x = x2 * 16 - 8;
-							d.y = y2 * 16 - 8;
-						}
-						if (getTile(d.x / 16, d.y / 16) == Tiles.get("Obsidian Wall")) {
-							setTile(d.x / 16, d.y / 16, Tiles.get("Obsidian"));
-						}
-						add(d);
-						chestCount++;
-						addedchest = true;
-					}
-				}
-			}
-		}
+		checkChestCount(false, makeWorld);
 		
 		if (level < 0)
 			generateSpawnerStructures();
@@ -198,6 +167,66 @@ public class Level {
 		}
 		
 		if (Game.debug) printTileLocs(Tiles.get("Stairs Down"));
+	}
+	
+	public void checkChestCount() {
+		checkChestCount(true, false);
+	}
+	private void checkChestCount(boolean check, boolean makeWorld) {
+		/// if the level is the dungeon, and we're not just loading the world...
+		if (depth != -4) return;
+		
+		int numChests = 0;
+		
+		if(check) {
+			for(Entity e: entitiesToAdd)
+				if(e instanceof DungeonChest)
+					numChests++;
+			for(Entity e: entities)
+				if(e instanceof DungeonChest)
+					numChests++;
+			System.out.println("found " + numChests + " chests.");
+		}
+		else if(!makeWorld) return;
+		
+		/// make DungeonChests!
+		for (int i = numChests; i < 10 * (w / 128); i++) {
+			DungeonChest d = new DungeonChest();
+			boolean addedchest = false;
+			while(!addedchest) { // keep running until we successfully add a DungeonChest
+				//pick a random tile:
+				int x2 = random.nextInt(16 * w) / 16;
+				int y2 = random.nextInt(16 * h) / 16;
+				if (getTile(x2, y2) == Tiles.get("Obsidian")) {
+					boolean xaxis = random.nextBoolean();
+					if (xaxis) {
+						for (int s = x2; s < w - s; s++) {
+							if (getTile(s, y2) == Tiles.get("Obsidian Wall")) {
+								d.x = s * 16 - 24;
+								d.y = y2 * 16 - 24;
+							}
+						}
+					} else { // y axis
+						for (int s = y2; s < y2 - s; s++) {
+							if (getTile(x2, s) == Tiles.get("Obsidian Wall")) {
+								d.x = x2 * 16 - 24;
+								d.y = s * 16 - 24;
+							}
+						}
+					}
+					if (d.x == 0 && d.y == 0) {
+						d.x = x2 * 16 - 8;
+						d.y = y2 * 16 - 8;
+					}
+					if (getTile(d.x / 16, d.y / 16) == Tiles.get("Obsidian Wall")) {
+						setTile(d.x / 16, d.y / 16, Tiles.get("Obsidian"));
+					}
+					add(d);
+					chestCount++;
+					addedchest = true;
+				}
+			}
+		}
 	}
 
 	public void tick() {
@@ -215,7 +244,7 @@ public class Level {
 					Game.server.broadcastEntityAddition(entity);
 				
 				if (!Game.isValidServer() || !(entity instanceof Particle)) {
-					if (Game.debug) printEntityStatus("Adding ", entity, "furniture.DungeonChest", "mob.AirWizard", "mob.Player");
+					if (Game.debug) printEntityStatus("Adding ", entity, "furniture.DungeonChest", "mob.AirWizard", "mob.Player", "ItemEntity");
 					
 					entities.add(entity);
 					if(entity instanceof Player)
@@ -290,7 +319,7 @@ public class Level {
 			if(Game.isValidServer() && !(entity instanceof Particle) && entity.getLevel() == this)
 				Game.server.broadcastEntityRemoval(entity);
 			
-			if(Game.debug) printEntityStatus("Removing ", entity, "mob.Player");
+			if(Game.debug) printEntityStatus("Removing ", entity, "mob.Player", "ItemEntity");
 			
 			entity.remove(this); // this will safely fail if the entity's level doesn't match this one.
 			entities.remove(entity);

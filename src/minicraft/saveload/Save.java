@@ -286,7 +286,7 @@ public class Save {
 	
 	private void writeEntities(String filename) {
 		for(int l = 0; l < World.levels.length; l++) {
-			for(Entity e: World.levels[l].getEntityArray()) {
+			for(Entity e: World.levels[l].getEntitiesToSave()) {
 				String saved = writeEntity(e, true);
 				if(saved.length() > 0)
 					data.add(saved);
