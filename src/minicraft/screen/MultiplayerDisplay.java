@@ -63,7 +63,7 @@ public class MultiplayerDisplay extends Display {
 				if(httpResponse.getStatus() == 200)
 					online = true;
 				else
-					System.out.println("warning: minicraft site ping returned status code " + httpResponse.getStatus());
+					System.err.println("warning: minicraft site ping returned status code " + httpResponse.getStatus());
 				
 				//if(Game.getMenu() != MultiplayerMenu.this) return; // don't continue if the player moved to a different menu. 
 				
@@ -90,12 +90,14 @@ public class MultiplayerDisplay extends Display {
 			
 			@Override
 			public void failed(UnirestException e) {
+				System.err.println("website ping failed.");
 				e.printStackTrace();
 				cancelled();
 			}
 			
 			@Override
 			public void cancelled() {
+				System.err.println("cancel method called.");
 				if(savedUsername.length() == 0 || savedUUID.length() == 0) {
 					// couldn't validate username, and can't enter offline mode b/c there is no username
 					setError("no internet connection, but no login data saved; cannot enter offline mode.", false);
