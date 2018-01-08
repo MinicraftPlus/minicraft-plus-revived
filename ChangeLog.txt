@@ -12,6 +12,7 @@ Minicraft+ version 2.0.4
 * Redid and fixed death chests; they now display time left above the chest, and you "pickup" everything in the chest by touching it. It also flashes red when there are < 20 seconds before disappearing.
 * Fixed multiplayer bug where you could only deal 1 damage to things
 * Fixed a long-standing bug that mainly affected dungeon chests and airwizards not appearing when they should, as well as mob spawner dungeons
++ Added keys being dropped back into the game... because apparently that feature disappeared somewhere.
 
 
 Minicraft+ version 2.0.3
