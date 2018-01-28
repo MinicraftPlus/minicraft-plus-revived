@@ -5,6 +5,7 @@ import java.util.HashMap;
 import java.util.List;
 
 import minicraft.core.Game;
+import minicraft.core.Network;
 import minicraft.core.io.InputHandler;
 import minicraft.core.io.Settings;
 import minicraft.core.io.Sound;
@@ -436,6 +437,7 @@ public class Player extends Mob implements ItemHolder {
 		if(activeItem != null && !activeItem.interactsWithWorld()) {
 			attackDir = dir; // make the attack direction equal the current direction
 			attackItem = activeItem; // make attackItem equal activeItem
+			if (Game.debug) System.out.println(Network.onlinePrefix()+"player is using reflexive item: " + activeItem);
 			activeItem.interactOn(Tiles.get("rock"), level, 0, 0, this, attackDir);
 			if (activeItem.isDepleted() && !Game.isMode("creative"))
 				activeItem = null;
@@ -496,7 +498,7 @@ public class Player extends Mob implements ItemHolder {
 				
 				if(Game.isValidServer() && this instanceof RemotePlayer) {// only do this if no interaction was actually made; b/c a tile update packet will generally happen then anyway.
 					minicraft.network.MinicraftServerThread thread = Game.server.getAssociatedThread((RemotePlayer)this);
-					if(thread != null)
+					//if(thread != null)
 						thread.sendTileUpdate(level, t.x, t.y); /// FIXME this part is as a semi-temporary fix for those odd tiles that don't update when they should; instead of having to make another system like the entity additions and removals (and it wouldn't quite work as well for this anyway), this will just update whatever tile the player interacts with (and fails, since a successful interaction changes the tile and therefore updates it anyway).
 				}
 				
@@ -767,10 +769,12 @@ public class Player extends Mob implements ItemHolder {
 	/** Pays the stamina used for an action */
 	public boolean payStamina(int cost) {
 		if (potioneffects.containsKey(PotionType.Energy)) return true; // if the player has the potion effect for infinite stamina, return true (without subtracting cost).
-		else if (cost > stamina) return false; // if the player doesn't have enough stamina, then return false; failure.
-
+		else if (stamina <= 0) return false; // if the player doesn't have enough stamina, then return false; failure.
+		
 		if (cost < 0) cost = 0; // error correction
-		stamina -= cost; // subtract the cost from the current stamina
+		stamina -= Math.min(stamina, cost); // subtract the cost from the current stamina
+		if(Game.isValidServer() && this instanceof RemotePlayer)
+			Game.server.getAssociatedThread((RemotePlayer)this).sendStaminaChange(cost);
 		return true; // success
 	}
 	

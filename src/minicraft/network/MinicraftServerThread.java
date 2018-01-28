@@ -188,6 +188,10 @@ public class MinicraftServerThread extends MinicraftConnection {
 		sendData(InputType.HURT, eid+";"+damage+";"+attackDir.ordinal());
 	}
 	
+	public void sendStaminaChange(int amt) {
+		sendData(InputType.STAMINA, amt+"");
+	}
+	
 	public void updatePlayerActiveItem(Item heldItem) {
 		/*if(client.activeItem == null && heldItem == null || client.activeItem != null && client.activeItem.equals
 				(heldItem)) {
