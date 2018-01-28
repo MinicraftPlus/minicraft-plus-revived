@@ -161,6 +161,7 @@ public class MinicraftServer extends Thread implements MinicraftProtocol {
 		return players;
 	}
 	
+	@Nullable
 	private RemotePlayer getIfPlayer(Entity e) {
 		if(e instanceof RemotePlayer) {
 			RemotePlayer given = (RemotePlayer) e;
@@ -294,7 +295,7 @@ public class MinicraftServer extends Thread implements MinicraftProtocol {
 				System.out.println(rp);
 		}
 		
-		if(removeSelf)
+		if(!removeSelf)
 			players.remove(getIfPlayer(e)); // if "e" is a player, this removes it from the list.
 		
 		if (Game.debug && e instanceof Player) System.out.println("...now sending player removal to " + players.size() + " players.");
@@ -506,7 +507,7 @@ public class MinicraftServer extends Thread implements MinicraftProtocol {
 				}
 				
 				// move the associated player to the level they requested -- they shouldn't be requesting it if they aren't going to transfer to it.
-				clientPlayer.remove();
+				//clientPlayer.remove();
 				World.levels[levelidx].add(clientPlayer);
 				// if it's the same level, it will cancel out.
 				
