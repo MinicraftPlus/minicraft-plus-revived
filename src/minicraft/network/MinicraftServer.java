@@ -13,9 +13,9 @@ import java.util.TimerTask;
 
 import minicraft.core.Game;
 import minicraft.core.Network;
-import minicraft.core.io.Settings;
 import minicraft.core.Updater;
 import minicraft.core.World;
+import minicraft.core.io.Settings;
 import minicraft.entity.Direction;
 import minicraft.entity.Entity;
 import minicraft.entity.ItemEntity;
@@ -753,6 +753,12 @@ public class MinicraftServer extends Thread implements MinicraftProtocol {
 				boolean addEffect = Boolean.parseBoolean(data[0]);
 				int typeIdx = Integer.parseInt(data[1]);
 				PotionItem.applyPotion(clientPlayer, PotionType.values[typeIdx], addEffect);
+				return true;
+			
+			case SHIRT:
+				//if (Game.debug) System.out.println("recieved shirt color update");
+				clientPlayer.shirtColor = Integer.parseInt(alldata);
+				broadcastEntityUpdate(clientPlayer, false);
 				return true;
 			
 			case PLAYER:

@@ -2,6 +2,7 @@ package minicraft.item;
 
 import java.util.ArrayList;
 
+import minicraft.core.Game;
 import minicraft.entity.Direction;
 import minicraft.entity.mob.Player;
 import minicraft.gfx.Color;
@@ -41,6 +42,8 @@ public class ClothingItem extends StackableItem {
 			return false;
 		} else {
 			player.shirtColor = playerCol;
+			if(Game.isValidClient())
+				Game.client.sendShirtColor();
 			return super.interactOn(true);
 		}
 	}

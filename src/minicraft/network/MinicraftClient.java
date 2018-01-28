@@ -12,9 +12,9 @@ import java.util.List;
 import minicraft.core.Game;
 import minicraft.core.Network;
 import minicraft.core.Renderer;
-import minicraft.core.io.Settings;
 import minicraft.core.Updater;
 import minicraft.core.World;
+import minicraft.core.io.Settings;
 import minicraft.entity.Direction;
 import minicraft.entity.Entity;
 import minicraft.entity.ItemEntity;
@@ -34,7 +34,6 @@ import minicraft.saveload.Load;
 import minicraft.saveload.Save;
 import minicraft.screen.ContainerDisplay;
 import minicraft.screen.MultiplayerDisplay;
-import minicraft.screen.PlayerDeathDisplay;
 
 import org.jetbrains.annotations.Nullable;
 
@@ -530,6 +529,8 @@ public class MinicraftClient extends MinicraftConnection {
 		if(ie == null) return;
 		sendData(InputType.PICKUP, String.valueOf(ie.eid));
 	}
+	
+	public void sendShirtColor() { sendData(InputType.SHIRT, Game.player.shirtColor+""); }
 	
 	public void sendBedRequest(Player player, Bed bed) { sendData(InputType.BED, String.valueOf(bed.eid)); }
 	
