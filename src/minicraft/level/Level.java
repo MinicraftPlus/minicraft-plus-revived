@@ -146,9 +146,10 @@ public class Level {
 						if (level == -4) /// make the obsidian wall formation around the stair to the dungeon level
 							Structure.dungeonGate.draw(this, x, y);
 						
-						else if (level == 0) // surface
+						else if (level == 0) { // surface
+							if (Game.debug) System.out.println("setting tiles around "+x+","+y+" to hard rock");
 							setAreaTiles(x, y, 1, Tiles.get("Hard Rock"), 0); // surround the sky stairs with hard rock; won't overwrite the stairs
-						
+						}
 						else // any other level, the up-stairs should have dirt on all sides.
 							setAreaTiles(x, y, 1, Tiles.get("dirt"), 0); // won't overwrite the stairs
 					}
@@ -160,7 +161,7 @@ public class Level {
 		
 		if (level < 0)
 			generateSpawnerStructures();
-
+		
 		checkAirWizard();
 		
 		if (Game.debug) printTileLocs(Tiles.get("Stairs Down"));
@@ -660,7 +661,7 @@ public class Level {
 	public void setAreaTiles(int xt, int yt, int r, Tile tile, int data, boolean overwriteStairs) {
 		for(int y = yt-r; y <= yt+r; y++) {
 			for (int x = xt - r; x <= xt + r; x++) {
-				if(overwriteStairs || (!getTile(xt, yt).name.toLowerCase().contains("stairs")))
+				if(overwriteStairs || (!getTile(x, y).name.toLowerCase().contains("stairs")))
 					setTile(x, y, tile, data);
 			}
 		}
