@@ -267,6 +267,7 @@ public class Updater extends Game {
 							Items.fillCreativeInv(player.getInventory());
 						
 						if(input.getKey("ctrl-h").clicked) player.health--;
+						if(input.getKey("ctrl-b").clicked) player.hunger--;
 						
 						if (input.getKey("0").clicked) player.moveSpeed = 1;
 						if (input.getKey("equals").clicked) player.moveSpeed++;//= 0.5D;

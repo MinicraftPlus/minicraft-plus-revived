@@ -363,7 +363,7 @@ public class Player extends Mob implements ItemHolder {
 				else
 					attack();
 				
-				if(Game.ISONLINE && activeItem != null && !(activeItem instanceof ToolItem))
+				if(Game.ISONLINE && activeItem != null && activeItem.interactsWithWorld() && !(activeItem instanceof ToolItem))
 					activeItem.used_pending = true;
 			}
 			
@@ -432,7 +432,7 @@ public class Player extends Mob implements ItemHolder {
 		if(activeItem != null && !activeItem.interactsWithWorld()) {
 			attackDir = dir; // make the attack direction equal the current direction
 			attackItem = activeItem; // make attackItem equal activeItem
-			if (Game.debug) System.out.println(Network.onlinePrefix()+"player is using reflexive item: " + activeItem);
+			//if (Game.debug) System.out.println(Network.onlinePrefix()+"player is using reflexive item: " + activeItem);
 			activeItem.interactOn(Tiles.get("rock"), level, 0, 0, this, attackDir);
 			if (activeItem.isDepleted() && !Game.isMode("creative"))
 				activeItem = null;
