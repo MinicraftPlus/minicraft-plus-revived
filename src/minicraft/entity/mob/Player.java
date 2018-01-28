@@ -85,8 +85,11 @@ public class Player extends Mob implements ItemHolder {
 	public int staminaRechargeDelay; // the recharge delay ticks when the player uses up their stamina.
 	
 	private int hungerStamCnt, stamHungerTicks; // tiers of hunger penalties before losing a burger.
+	private static final int maxHungerTicks = 400; // the cutoff value for stamHungerTicks
 	private static final int[] maxHungerStams = {10, 7, 5}; // hungerStamCnt required to lose a burger.
-	private static final int maxHungerTicks = 300; // the cutoff value for stamHungerTicks
+	private static final int[] hungerTickCount = {120, 30, 10}; // ticks before decrementing stamHungerTicks.
+	private static final int[] hungerStepCount = {8, 3, 1}; // steps before decrementing stamHungerTicks.
+	private static final int[] minStarveHealth = {5, 3, 0}; // min hearts required for hunger to hurt you.
 	private int stepCount; // used to penalize hunger for movement.
 	private int hungerChargeDelay; // the delay between each time the hunger bar increases your health
 	private int hungerStarveDelay; // the delay between each time the hunger bar decreases your health
@@ -100,6 +103,8 @@ public class Player extends Mob implements ItemHolder {
 	public int shirtColor = 110; // player shirt color.
 	
 	// Note: the player's health & max health are inherited from Mob.java
+	
+	public String getDebugHunger() { return hungerStamCnt+"_"+stamHungerTicks; }
 	
 	public Player(@Nullable Player previousInstance, InputHandler input) {
 		super(sprites, Player.maxHealth);
@@ -230,47 +235,38 @@ public class Player extends Mob implements ItemHolder {
 			}
 		}
 		
+		int diffIdx = Settings.getIdx("diff");
+		
 		if (hunger < 0) hunger = 0; // error correction
 		
 		if(stamina < maxStamina) {
-			stamHungerTicks--; // affect hunger if not at full stamina; this is 2 levels away from a hunger "burger".
-			if(stamina == 0) stamHungerTicks--; // double effect if no stamina at all.
+			stamHungerTicks-=diffIdx; // affect hunger if not at full stamina; this is 2 levels away from a hunger "burger".
+			if(stamina == 0) stamHungerTicks-=diffIdx; // double effect if no stamina at all.
 		}
 		
 		/// this if statement encapsulates the hunger system
 		if(!Bed.inBed) {
 			if(hungerChargeDelay > 0) { // if the hunger is recharging health...
-				stamHungerTicks -= 2+Settings.getIdx("diff"); // penalize the hunger
-				if(hunger == maxHunger) stamHungerTicks -= Settings.getIdx("diff"); // further penalty if at full hunger
+				stamHungerTicks -= 2+diffIdx; // penalize the hunger
+				if(hunger == maxHunger) stamHungerTicks -= diffIdx; // further penalty if at full hunger
 			}
 			
-			if(stamHungerTicks >= maxHungerTicks) {
-				stamHungerTicks -= maxHungerTicks; // reset stamHungerTicks
+			if(Updater.tickCount % Player.hungerTickCount[diffIdx] == 0)
+				stamHungerTicks--; // hunger due to time.
+			
+			if (stepCount >= Player.hungerStepCount[diffIdx]) {
+				stamHungerTicks--; // hunger due to exercise.
+				stepCount = 0; // reset.
+			}
+			
+			if(stamHungerTicks <= 0) {
+				stamHungerTicks += maxHungerTicks; // reset stamHungerTicks
 				hungerStamCnt--; // enter 1 level away from burger.
-			}
-			
-			// on easy mode, hunger doesn't deplete from walking or from time.
-			
-			if (Settings.get("diff").equals("Normal")) {
-				if(Updater.tickCount % 5000 == 0 && hunger > 3) hungerStamCnt--; // hunger due to time.
-				
-				if (stepCount >= 800) { // hunger due to exercise.
-					hungerStamCnt--;
-					stepCount = 0; // reset.
-				}
-			}
-			if (Settings.get("diff").equals("Hard")) {
-				if(Updater.tickCount % 3000 == 0 && hunger > 0) hungerStamCnt--; // hunger due to time.
-				
-				if (stepCount >= 400) { // hunger due to exercise.
-					hungerStamCnt--;
-					stepCount = 0; // reset.
-				}
 			}
 			
 			while (hungerStamCnt <= 0) {
 				hunger--; // reached burger level.
-				hungerStamCnt += maxHungerStams[Settings.getIdx("diff")];
+				hungerStamCnt += maxHungerStams[diffIdx];
 			}
 			
 			/// system that heals you depending on your hunger
@@ -287,8 +283,7 @@ public class Player extends Mob implements ItemHolder {
 				hungerStarveDelay = 120;
 			}
 			
-			int[] healths = {5, 3, 0};
-			if (hunger == 0 && health > healths[Settings.getIdx("diff")]) {
+			if (hunger == 0 && health > minStarveHealth[diffIdx]) {
 				if (hungerStarveDelay > 0) hungerStarveDelay--;
 				if (hungerStarveDelay == 0) {
 					hurt(this, 1, Direction.NONE); // do 1 damage to the player

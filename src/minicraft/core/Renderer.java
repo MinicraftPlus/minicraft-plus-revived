@@ -299,6 +299,8 @@ public class Renderer extends Game {
 					info.add("Mob Load Cnt " + levels[currentLevel].mobCount);
 			}
 			
+			info.add("Hunger stam: " + player.getDebugHunger());
+			
 			/// Displays number of chests left, if on dungeon level.
 			if (levels[currentLevel] != null && (isValidServer() || currentLevel == 5 && !isValidClient())) {
 				if (levels[5].chestCount > 0)
