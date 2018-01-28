@@ -822,18 +822,18 @@ public class MinicraftServer extends Thread implements MinicraftProtocol {
 			hostPlayer = null;
 	}
 	
-	public void endConnection() {
-		if (Game.debug) System.out.println("SERVER: ending connection");
+	public synchronized void endConnection() {
+		if (Game.debug) System.out.println("SERVER: ending connection with threads: " + threadList);
 		
-		for(int i = 0; i < threadList.size(); i++) {
-			threadList.get(i).endConnection();
-		}
+		MinicraftServerThread[] threads = getThreads();
+		for(MinicraftServerThread thread: threads)
+			thread.endConnection();
 		
 		try {
 			socket.close();
 		} catch (IOException ignored) {}
 		
-		threadList.clear();
+		threadList.clear(); // should already be clear
 	}
 	
 	public boolean isConnected() {
