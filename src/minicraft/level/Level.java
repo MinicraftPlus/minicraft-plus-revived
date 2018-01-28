@@ -263,7 +263,7 @@ public class Level {
 					Game.server.broadcastEntityAddition(entity);
 				
 				if (!Game.isValidServer() || !(entity instanceof Particle)) {
-					if (Game.debug) printEntityStatus("Adding ", entity, "furniture.DungeonChest", "mob.AirWizard", "mob.Player", "ItemEntity");
+					if (Game.debug) printEntityStatus("Adding ", entity, "furniture.DungeonChest", "mob.AirWizard", "mob.Player");
 					
 					entities.add(entity);
 					if(entity instanceof Player)
@@ -338,7 +338,7 @@ public class Level {
 			if(Game.isValidServer() && !(entity instanceof Particle) && entity.getLevel() == this)
 				Game.server.broadcastEntityRemoval(entity);
 			
-			if(Game.debug) printEntityStatus("Removing ", entity, "mob.Player", "ItemEntity");
+			if(Game.debug) printEntityStatus("Removing ", entity, "mob.Player");
 			
 			entity.remove(this); // this will safely fail if the entity's level doesn't match this one.
 			entities.remove(entity);

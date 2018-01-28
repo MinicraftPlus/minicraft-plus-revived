@@ -226,7 +226,7 @@ public class LevelGen {
 		
 		byte[] map = new byte[w * h];
 		byte[] data = new byte[w * h];
-		double min = 0, max = 0;
+		//double min = 0, max = 0;
 		//double average = 0;
 		for (int y = 0; y < h; y++) {
 			for (int x = 0; x < w; x++) {
@@ -246,8 +246,8 @@ public class LevelGen {
 				dist = dist * dist * dist * dist;
 				val += 1 - dist*20;
 				
-				min = Math.min(mval, min);
-				max = Math.max(mval, max);
+				//min = Math.min(mval, min);
+				//max = Math.max(mval, max);
 				//average += val;
 				
 				switch ((String) Settings.get("Type")) {
@@ -475,8 +475,8 @@ public class LevelGen {
 			if (count >= w / 21) break;
 		}
 		
-		System.out.println("min="+min);
-		System.out.println("max="+max);
+		//System.out.println("min="+min);
+		//System.out.println("max="+max);
 		//average /= w*h;
 		//System.out.println(average);
 		
