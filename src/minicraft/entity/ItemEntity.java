@@ -1,5 +1,7 @@
 package minicraft.entity;
 
+import java.util.List;
+
 import minicraft.core.Game;
 import minicraft.entity.mob.Player;
 import minicraft.gfx.Color;
@@ -127,7 +129,10 @@ public class ItemEntity extends Entity {
 		}
 	}
 	
-	public String toString() {
-		return "ItemEntity["+item+"]";
+	@Override
+	protected List<String> getDataPrints() {
+		List<String> prints = super.getDataPrints();
+		prints.add(0, item.toString());
+		return prints;
 	}
 }

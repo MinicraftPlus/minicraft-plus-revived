@@ -109,8 +109,11 @@ public class RemotePlayer extends Player {
 		return xdist <= xSyncRadius+offset && ydist <= ySyncRadius+offset;
 	}
 	
-	public String toString() {
-		return super.toString()+"{"+username+"}";
+	@Override
+	protected List<String> getDataPrints() {
+		List<String> prints = super.getDataPrints();
+		prints.add(0, "user="+username);
+		return prints;
 	}
 	
 	public void updateSyncArea(int oldxt, int oldyt) {

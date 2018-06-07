@@ -47,11 +47,11 @@ public class Crafter extends Furniture {
 		return true;
 	}
 	
+	@Override
 	public Furniture clone() {
 		return new Crafter(type);
 	}
 	
-	public String toString() {
-		return super.toString().replace("Crafter", type.name());
-	}
+	@Override
+	public String toString() { return type.name()+getDataPrints(); }
 }

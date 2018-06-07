@@ -89,9 +89,7 @@ public class Level {
 		int numfound = 0;
 		for(Entity entity: getEntityArray()) {
 			if(c.isAssignableFrom(entity.getClass())) {
-				String className = entity.getClass().getName();
-				String entityName = className.substring(className.lastIndexOf(".")+1);
-				printLevelLoc(entityName, entity.x>>4, entity.y>>4);
+				printLevelLoc(entity.toString(), entity.x>>4, entity.y>>4);
 				numfound++;
 			}
 		}

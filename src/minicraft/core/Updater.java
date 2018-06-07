@@ -223,6 +223,15 @@ public class Updater extends Game {
 				//for debugging only
 				if (debug && HAS_GUI) {
 					
+					if(input.getKey("ctrl-p").clicked) {
+						// print all players on all levels, and their coordinates.
+						System.out.println("printing players on all levels "+Network.onlinePrefix());
+						for(int i = 0; i < levels.length; i++) {
+							if(levels[i] == null) continue;
+							levels[i].printEntityLocs(Player.class);
+						}
+					}
+					
 					if(!ISONLINE || isValidServer()) {
 						/// server-only cheats.
 						if (input.getKey("Shift-r").clicked && !isValidServer())
@@ -279,24 +288,9 @@ public class Updater extends Game {
 							levels[currentLevel].setTile(player.x>>4, player.y>>4, Tiles.get("Stairs Down"));
 						}
 						
-						if(input.getKey("ctrl-p").clicked) {
-							/// list all the remote players in the level and their coordinates.
-							//System.out.println("searching for players on current level...");
-							levels[currentLevel].printEntityLocs(Player.class);
-						}
-						
 						if(isConnectedClient() && input.getKey("alt-t").clicked) {
 							// update the tile with the server's value for it.
 							client.requestTile(player.getLevel(), player.x >> 4, player.y >> 4);
-						}
-						
-						if(input.getKey("shift-p").clicked) {
-							// print all players on all levels
-							for(int i = 0; i < levels.length; i++) {
-								if(levels[i] == null) continue;
-								for(Player p: levels[i].getPlayers())
-									levels[i].printLevelLoc("player "+p, p.x, p.y);
-							}
 						}
 					}
 				} // end debug only cond.

@@ -1,5 +1,6 @@
 package minicraft.entity;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 
@@ -315,11 +316,11 @@ public abstract class Entity {
 	/// this marks the entity as having a new state to fetch.
 	public void flushUpdates() { accessedUpdates = false; }
 	
-	public String toString() { return toClassString() + "(eid="+eid+")"; }
-	
-	public String toClassString() {
-		String clazz = getClass().getName();
-		return clazz.substring(clazz.lastIndexOf(".")+1);
+	public String toString() { return getClass().getSimpleName() + getDataPrints(); }
+	protected List<String> getDataPrints() {
+		List<String> prints = new ArrayList<>();
+		prints.add("eid="+eid);
+		return prints;
 	}
 	
 	@Override
