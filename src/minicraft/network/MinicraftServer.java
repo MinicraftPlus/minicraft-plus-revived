@@ -35,6 +35,7 @@ import minicraft.level.Level;
 import minicraft.level.tile.Tile;
 import minicraft.saveload.Load;
 import minicraft.saveload.Save;
+import minicraft.saveload.Version;
 import minicraft.screen.WorldSelectDisplay;
 
 import org.jetbrains.annotations.NotNull;
@@ -432,9 +433,9 @@ public class MinicraftServer extends Thread implements MinicraftProtocol {
 				if (Game.debug) System.out.println("SERVER: received login request");
 				if (Game.debug) System.out.println("SERVER: login data: " + Arrays.toString(data));
 				String username = data[0];
-				Load.Version clientVersion = new Load.Version(data[1]);
+				Version clientVersion = new Version(data[1]);
 				// check version; send back invalid if they don't match.
-				if(clientVersion.compareTo(new Load.Version(Game.VERSION)) != 0) {
+				if(clientVersion.compareTo(new Version(Game.VERSION)) != 0) {
 					serverThread.sendError("wrong game version; need " + Game.VERSION);
 					return false;
 				}

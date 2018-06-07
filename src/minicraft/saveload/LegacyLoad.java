@@ -37,13 +37,13 @@ public class LegacyLoad {
 	ArrayList<String> extradata;
 	
 	public boolean hasloadedbigworldalready;
-	Load.Version currentVer, worldVer;
+	Version currentVer, worldVer;
 	boolean oldSave = false;
 	
 	Game game = null;
 	
 	{
-		currentVer = new Load.Version(Game.VERSION);
+		currentVer = new Version(Game.VERSION);
 		worldVer = null;
 		
 		data = new ArrayList<>();
@@ -56,7 +56,7 @@ public class LegacyLoad {
 		
 		File testFile = new File(location + "KeyPrefs" + extension);
 		if(!testFile.exists()) {
-			worldVer = new Load.Version("1.8");
+			worldVer = new Version("1.8");
 			oldSave = true;
 		} else
 			testFile.delete(); // we don't care about it anymore anyway.
@@ -154,14 +154,14 @@ public class LegacyLoad {
 		loadFromFile(location + filename + extension);
 		boolean hasVersion = data.get(0).contains(".");
 		if(hasVersion) {
-			worldVer = new Load.Version(data.get(0)); // gets the world version
+			worldVer = new Version(data.get(0)); // gets the world version
 			Updater.setTime(Integer.parseInt(data.get(1)));
 			Updater.gameTime = 65000; // prevents time cheating.
 			
-			if(worldVer.compareTo(new Load.Version("1.9.2")) < 0) {
+			if(worldVer.compareTo(new Version("1.9.2")) < 0) {
 				Settings.set("autosave", Boolean.parseBoolean(data.get(3)));
 				Settings.set("sound", Boolean.parseBoolean(data.get(4)));
-				if(worldVer.compareTo(new Load.Version("1.9.2-dev2")) >= 0)
+				if(worldVer.compareTo(new Version("1.9.2-dev2")) >= 0)
 					AirWizard.beaten = Boolean.parseBoolean(data.get(5));
 			} else { // this is 1.9.2 official or after
 				Settings.setIdx("diff", Integer.parseInt(data.get(3)));
@@ -170,14 +170,14 @@ public class LegacyLoad {
 		}
 		else {
 			if(data.size() == 5) {
-				worldVer = new Load.Version("1.9");
+				worldVer = new Version("1.9");
 				Updater.setTime(Integer.parseInt(data.get(0)));
 				Settings.set("autosave", Boolean.parseBoolean(data.get(3)));
 				Settings.set("sound", Boolean.parseBoolean(data.get(4)));
 			} else { // version == 1.8?
 				if(!oldSave) {
 					System.out.println("UNEXPECTED WORLD VERSION");
-					worldVer = new Load.Version("1.8.1");
+					worldVer = new Version("1.8.1");
 				}
 				// for backwards compatibility
 				Updater.tickCount = Integer.parseInt(data.get(0));
@@ -226,7 +226,7 @@ public class LegacyLoad {
 		String modedata;
 		if(!oldSave) {
 			if(data.size() >= 14) {
-				if(worldVer == null) worldVer = new Load.Version("1.9.1-pre1");
+				if(worldVer == null) worldVer = new Version("1.9.1-pre1");
 				player.armorDamageBuffer = Integer.parseInt(data.get(13));
 				player.curArmor = (ArmorItem)Items.get(data.get(14));
 			} else player.armor = 0;
@@ -363,7 +363,7 @@ public class LegacyLoad {
 					int endIdx = chestInfo.size()-(isDeathChest||isDungeonChest?1:0);
 					for(int idx = 0; idx < endIdx; idx++) {
 						String itemData = chestInfo.get(idx);
-						if(worldVer.compareTo(new Load.Version("1.9.1")) < 0) // if this world is before 1.9.1
+						if(worldVer.compareTo(new Version("1.9.1")) < 0) // if this world is before 1.9.1
 							if(itemData.equals("")) continue; // this skips any null items
 						loadItemToInventory(itemData, chest.getInventory());
 						/*if(oldSave) itemData = subOldName(itemData);

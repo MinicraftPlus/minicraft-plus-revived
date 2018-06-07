@@ -33,7 +33,6 @@ import minicraft.network.MinicraftServer;
 import minicraft.screen.LoadingDisplay;
 import minicraft.screen.MultiplayerDisplay;
 
-import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 public class Load {
@@ -46,7 +45,7 @@ public class Load {
 	private ArrayList<String> data;
 	private ArrayList<String> extradata;
 	
-	private boolean hasloadedbigworldalready;
+	//private boolean hasloadedbigworldalready;
 	private Version currentVer, worldVer;
 	private boolean hasGlobalPrefs = false;
 	
@@ -59,7 +58,7 @@ public class Load {
 		
 		data = new ArrayList<>();
 		extradata = new ArrayList<>();
-		hasloadedbigworldalready = false;
+		//hasloadedbigworldalready = false;
 	}
 	
 	public Load(String worldname) {
@@ -128,54 +127,6 @@ public class Load {
 		}
 		
 		loadUnlocks("Unlocks");
-	}
-	
-	public static class Version implements Comparable<Version> {
-		private int make, major, minor, dev;
-		
-		public Version(String version) {
-			String[] nums = version.split("\\.");
-			try {
-				if(nums.length > 0) make = Integer.parseInt(nums[0]);
-				else make = 0;
-				
-				if(nums.length > 1) major = Integer.parseInt(nums[1]);
-				else major = 0;
-				
-				String min;
-				if(nums.length > 2) min = nums[2];
-				else min = "";
-				
-				if(min.contains("-")) {
-					String[] mindev = min.split("-");
-					minor = Integer.parseInt(mindev[0]);
-					dev = Integer.parseInt(mindev[1].replace("pre", "").replace("dev", ""));
-				} else {
-					if(!min.equals("")) minor = Integer.parseInt(min);
-					else minor = 0;
-					dev = 0;
-				}
-			} catch(NumberFormatException ex) {
-				System.out.println("INVALID version number: \"" + version + "\"");
-			} catch(Exception ex) {
-				ex.printStackTrace();
-			}
-		}
-		
-		// the returned value of this method (-1, 0, or 1) is determined by whether this object is less than, equal to, or greater than the specified object.
-		public int compareTo(@NotNull Version ov) {
-			if(make != ov.make) return Integer.compare(make, ov.make);
-			if(major != ov.major) return Integer.compare(major, ov.major);
-			if(minor != ov.minor) return Integer.compare(minor, ov.minor);
-			if(dev != ov.dev) {
-				if(dev == 0) return 1; //0 is the last "dev" version, as it is not a dev.
-				if(ov.dev == 0) return -1;
-				return Integer.compare(dev, ov.dev);
-			}
-			return 0; // the versions are equal.
-		}
-		
-		public String toString() { return make + "." + major + "." + minor + (dev == 0 ? "" : "-dev" + dev); }
 	}
 	
 	public static ArrayList<String> loadFile(String filename) throws IOException {
@@ -248,23 +199,23 @@ public class Load {
 	private void loadGame(String filename) {
 		loadFromFile(location + filename + extension);
 		
-		worldVer = new Version(data.get(0)); // gets the world version
-		Updater.setTime(Integer.parseInt(data.get(1)));
+		worldVer = new Version(data.remove(0)); // gets the world version
+		Updater.setTime(Integer.parseInt(data.remove(0)));
 		
+		Updater.gameTime = Integer.parseInt(data.remove(0));
 		if(worldVer.compareTo(new Version("1.9.3-dev2")) >= 0) {
-			Updater.gameTime = Integer.parseInt(data.get(2));
 			Updater.pastDay1 = Updater.gameTime > 65000;
 		} else {
 			Updater.gameTime = 65000; // prevents time cheating.
 		}
 		
-		int diffIdx = Integer.parseInt(data.get(3));
+		int diffIdx = Integer.parseInt(data.remove(0));
 		if(worldVer.compareTo(new Version("1.9.3-dev3")) < 0)
 			diffIdx--; // account for change in difficulty
 		
 		Settings.setIdx("diff", diffIdx);
 		
-		AirWizard.beaten = Boolean.parseBoolean(data.get(4));
+		AirWizard.beaten = Boolean.parseBoolean(data.remove(0));
 	}
 	
 	private void loadPrefs(String filename) {
@@ -379,23 +330,32 @@ public class Load {
 		loadPlayer(player, data);
 	}
 	public void loadPlayer(Player player, List<String> data) {
-		player.x = Integer.parseInt(data.get(0));
-		player.y = Integer.parseInt(data.get(1));
-		player.spawnx = Integer.parseInt(data.get(2));
-		player.spawny = Integer.parseInt(data.get(3));
-		player.health = Integer.parseInt(data.get(4));
-		player.armor = Integer.parseInt(data.get(5));
+		player.x = Integer.parseInt(data.remove(0));
+		player.y = Integer.parseInt(data.remove(0));
+		player.spawnx = Integer.parseInt(data.remove(0));
+		player.spawny = Integer.parseInt(data.remove(0));
+		player.health = Integer.parseInt(data.remove(0));
+		player.armor = Integer.parseInt(data.remove(0));
 		
 		if(player.armor > 0) {
-			player.armorDamageBuffer = Integer.parseInt(data.get(13));
-			player.curArmor = (ArmorItem)Items.get(data.get(14));
+			if(worldVer.compareTo(new Version("2.0.4-dev7")) < 0) {
+				player.armorDamageBuffer = Integer.parseInt(data.remove(data.size()-1));
+				player.curArmor = (ArmorItem) Items.get(data.remove(data.size()-1));
+			}
+			else {
+				player.armorDamageBuffer = Integer.parseInt(data.remove(0));
+				player.curArmor = (ArmorItem) Items.get(data.remove(0));
+			}
+		}
+		player.score = Integer.parseInt(data.remove(0));
+		
+		if(worldVer.compareTo(new Version("2.0.4-dev7")) < 0) {
+			int arrowCount = Integer.parseInt(data.remove(0));
+			if(worldVer.compareTo(new Version("2.0.1-dev1")) < 0)
+				player.getInventory().add(Items.get("arrow"), arrowCount);
 		}
 		
-		player.score = Integer.parseInt(data.get(6));
-		if(worldVer.compareTo(new Version("2.0.1-dev1")) < 0)
-			player.getInventory().add(Items.get("arrow"), Integer.parseInt(data.get(7)));
-		
-		Game.currentLevel = Integer.parseInt(data.get(8));
+		Game.currentLevel = Integer.parseInt(data.remove(0));
 		Level level = World.levels[Game.currentLevel];
 		if(!player.isRemoved()) player.remove(); // removes the user player from the level, in case they would be added twice.
 		if(level != null)
@@ -405,7 +365,7 @@ public class Load {
 		//if(spawnTile.id != Tiles.get("grass").id && spawnTile.mayPass(level, player.spawnx >> 4, player.spawny >> 4, player))
 			//player.bedSpawn = true; //A semi-advanced little algorithm to determine if the player has a bed save; and though if you sleep on a grass tile, this won't get set, it doesn't matter b/c you'll spawn there anyway!
 		
-		String modedata = data.get(9);
+		String modedata = data.remove(0);
 		int mode;
 		if(modedata.contains(";")) {
 			String[] modeinfo = modedata.split(";");
@@ -423,8 +383,9 @@ public class Load {
 		
 		Settings.setIdx("mode", mode);
 		
-		if(!data.get(10).equals("PotionEffects[]")) {
-			String[] effects = data.get(10).replace("PotionEffects[", "").replace("]", "").split(":");
+		String potioneffects = data.remove(0);
+		if(!potioneffects.equals("PotionEffects[]")) {
+			String[] effects = potioneffects.replace("PotionEffects[", "").replace("]", "").split(":");
 			
 			for(int i = 0; i < effects.length; i++) {
 				String[] effect = effects[i].split(";");
@@ -434,7 +395,7 @@ public class Load {
 		}
 		
 		if(worldVer.compareTo(new Version("1.9.4-dev4")) < 0) {
-			String colors = data.get(11).replace("[", "").replace("]", "");
+			String colors = data.remove(0).replace("[", "").replace("]", "");
 			String[] color = colors.split(";");
 			int[] cols = new int[color.length];
 			for(int i = 0; i < cols.length; i++)
@@ -444,9 +405,9 @@ public class Load {
 			player.shirtColor = Integer.parseInt(col);
 		}
 		else
-			player.shirtColor = Integer.parseInt(data.get(11));
+			player.shirtColor = Integer.parseInt(data.remove(0));
 		
-		player.skinon = Boolean.parseBoolean(data.get(12));
+		player.skinon = Boolean.parseBoolean(data.remove(0));
 	}
 	
 	protected static String subOldName(String name, Version worldVer) {
@@ -486,12 +447,12 @@ public class Load {
 			//System.out.println("loading item: " + item);
 			
 			if(item.contains(";")) {
-				List<String> curData = Arrays.asList(item.split(";"));
-				String itemName = curData.get(0);
+				String[] curData = item.split(";");
+				String itemName = curData[0];
 				
 				Item newItem = Items.get(itemName);
 				
-				int count = Integer.parseInt(curData.get(1));
+				int count = Integer.parseInt(curData[1]);
 				
 				if(newItem instanceof StackableItem) {
 					((StackableItem)newItem).count = count;
