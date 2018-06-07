@@ -10,7 +10,6 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.security.CodeSource;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
@@ -45,7 +44,7 @@ public class Localization {
 		
 		String localString = localization.get(string);
 		
-		if (localString == null && Game.debug)
+		if (Game.debug && localString == null)
 			System.out.println("The string \"" + string + "\" is not localized, returning itself instead.");
 		
 		return (localString == null ? string : localString);

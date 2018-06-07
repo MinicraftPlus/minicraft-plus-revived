@@ -197,7 +197,7 @@ public abstract class Entity {
 			System.out.println("tried to set level of entity " + this + " to a null level; should use remove(level)");
 			return;
 		} else if(level != this.level && Game.isValidServer()) {
-			Game.server.broadcastEntityRemoval(this, !(this instanceof Player));
+			Game.server.broadcastEntityRemoval(this, this.level, !(this instanceof Player));
 		}
 		
 		this.level = level;

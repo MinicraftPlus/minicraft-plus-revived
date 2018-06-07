@@ -3,14 +3,15 @@ package minicraft.screen;
 import java.io.InputStream;
 
 import minicraft.core.Game;
-import minicraft.core.io.InputHandler;
 import minicraft.core.Updater;
+import minicraft.core.io.InputHandler;
 import minicraft.gfx.Color;
 import minicraft.gfx.Font;
 import minicraft.gfx.FontStyle;
 import minicraft.gfx.Screen;
 import minicraft.network.MinicraftClient;
 import minicraft.saveload.Save;
+import minicraft.screen.entry.RangeEntry;
 
 import com.mashape.unirest.http.HttpResponse;
 import com.mashape.unirest.http.JsonNode;
@@ -35,6 +36,8 @@ public class MultiplayerDisplay extends Display {
 	
 	private String typing = email;
 	private boolean inputIsValid = false;
+	
+	private final RangeEntry connectTimeout = new RangeEntry("Timeout (sec) (0=none)", 0, 120, (int)Math.ceil(MinicraftClient.DEFAULT_CONNECT_TIMEOUT/1000f));
 	
 	private boolean online = false;
 	private boolean typingEmail = true;
@@ -146,12 +149,16 @@ public class MultiplayerDisplay extends Display {
 			
 			case ENTERIP:
 				typing = input.addKeyTyped(typing, null);
+				connectTimeout.tick(input);
 				if(input.getKey("select").clicked) {
 					setWaitMessage("connecting to server");
 					savedIP = typing;
-					Game.client = new MinicraftClient(savedUsername,this, typing); // typing = ipAddress
-					new Save(); // write the saved ip to file
-					typing = "";
+					new Thread(() -> {
+						Game.client = new MinicraftClient(savedUsername, this, typing, connectTimeout.getValue()*1000); // typing = ipAddress
+						if(Game.client.isConnected())
+							new Save(); // write the saved ip to file
+						typing = "";
+					}).start();
 					return;
 				} else if(input.getKey("shift-escape").clicked) {
 					// logout
@@ -275,16 +282,14 @@ public class MultiplayerDisplay extends Display {
 				Font.drawCentered("logged in as: " + savedUsername, screen, 6, Color.get(-1, 252));
 				
 				if(!online)
-					Font.drawCentered("offline mode: local servers only", screen, Screen.h/2 - Font.textHeight()*6,
-						Color.get(-1, 335));
+					Font.drawCentered("offline mode: local servers only", screen, Screen.h/2 - Font.textHeight()*6, Color.get(-1, 335));
 				
-				Font.drawCentered("Enter ip address to connect to:", screen, Screen.h/2-Font.textHeight()-2, Color
-					.get
-						(-1, 555));
+				Font.drawCentered("Enter ip address to connect to:", screen, Screen.h/2-Font.textHeight()-2, Color.get(-1, 555));
 				Font.drawCentered(typing, screen, Screen.h/2, Color.get(-1, 552));
 				
-				Font.drawCentered("Press Shift-Escape to logout", screen, Screen.h-Font.textHeight()*7, Color.get
-					(-1, 444));
+				connectTimeout.render(screen, (Screen.w-connectTimeout.getWidth()) / 2, Screen.h/2+Font.textHeight()*2, true);
+				
+				Font.drawCentered("Press Shift-Escape to logout", screen, Screen.h-Font.textHeight()*7, Color.get(-1, 444));
 				break;
 			
 			case LOGIN:
@@ -303,8 +308,7 @@ public class MultiplayerDisplay extends Display {
 				}
 				
 				Font.drawCentered("get an account at:", screen, Font.textHeight()/2-1, Color.get(-1, 345));
-				Font.drawCentered(domain.substring(domain.indexOf("://")+3)+"/register", screen, Font.textHeight()*3/2, Color.get
-					(-1, 345));
+				Font.drawCentered(domain.substring(domain.indexOf("://")+3)+"/register", screen, Font.textHeight()*3/2, Color.get(-1, 345));
 				
 				break;
 			

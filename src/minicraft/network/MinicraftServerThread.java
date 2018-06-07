@@ -175,8 +175,10 @@ public class MinicraftServerThread extends MinicraftConnection {
 			sendData(InputType.ADD, edata);
 	}
 	
-	public void sendEntityRemoval(int eid) {
-		//trackedEntities.remove(eid);
+	public void sendEntityRemoval(int eid, int levelDepth) {
+		sendData(InputType.REMOVE, String.valueOf(eid)+";"+String.valueOf(levelDepth));
+	}
+	public void sendEntityRemoval(int eid) { // remove regardless of current level
 		sendData(InputType.REMOVE, String.valueOf(eid));
 	}
 	

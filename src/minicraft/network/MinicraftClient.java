@@ -2,6 +2,7 @@ package minicraft.network;
 
 import java.io.IOException;
 import java.net.InetAddress;
+import java.net.InetSocketAddress;
 import java.net.Socket;
 import java.net.UnknownHostException;
 import java.util.ArrayList;
@@ -40,6 +41,8 @@ import org.jetbrains.annotations.Nullable;
 /// This class is only used by the client runtime; the server runtime doesn't touch it.
 public class MinicraftClient extends MinicraftConnection {
 	
+	public static final int DEFAULT_CONNECT_TIMEOUT = 5_000; // in milliseconds
+	
 	private MultiplayerDisplay menu;
 	
 	private enum State {
@@ -47,14 +50,14 @@ public class MinicraftClient extends MinicraftConnection {
 	}
 	private State curState = State.DISCONNECTED;
 	
-	private boolean pingSuccessful = false; // this is more or less useless. -_-
-	
 	private HashMap<Integer, Long> entityRequests = new HashMap<>();
 	
 	@Nullable
-	private static Socket openSocket(String hostName, MultiplayerDisplay menu) {
+	private static Socket openSocket(String hostName, MultiplayerDisplay menu, int connectTimeout) {
 		InetAddress hostAddress;
 		Socket socket;
+		
+		if(Game.debug) System.out.println("getting host address from host name...");
 		
 		try {
 			hostAddress = InetAddress.getByName(hostName);
@@ -65,8 +68,11 @@ public class MinicraftClient extends MinicraftConnection {
 			return null;
 		}
 		
+		if(Game.debug) System.out.println("host found. attempting to open socket...");
+		
 		try {
-			socket = new Socket(hostAddress, PORT);
+			socket = new Socket();
+			socket.connect(new InetSocketAddress(hostAddress, PORT), connectTimeout);
 		} catch (IOException ex) {
 			System.err.println("Problem connecting socket to server:");
 			menu.setError(ex.getMessage().replace(" (Connection refused)", ""));
@@ -74,11 +80,14 @@ public class MinicraftClient extends MinicraftConnection {
 			return null;
 		}
 		
+		if(Game.debug) System.out.println("successfully connected to game server. Returning socket...");
+		
 		return socket;
 	}
 	
-	public MinicraftClient(String username, MultiplayerDisplay menu, String hostName) {
-		super("MinicraftClient", openSocket(hostName, menu));
+	public MinicraftClient(String username, MultiplayerDisplay menu, String hostName) { this(username, menu, hostName, DEFAULT_CONNECT_TIMEOUT); }
+	public MinicraftClient(String username, MultiplayerDisplay menu, String hostName, int connectTimeout) {
+		super("MinicraftClient", openSocket(hostName, menu, connectTimeout));
 		this.menu = menu;
 		Game.ISONLINE = true;
 		Game.ISHOST = false;
@@ -314,12 +323,24 @@ public class MinicraftClient extends MinicraftConnection {
 				if(curState == State.LOADING)
 					System.out.println("CLIENT: received entity removal while loading level");
 				
-				int eid = Integer.parseInt(alldata);
+				int eid = Integer.parseInt(data[0]);
+				Integer entityLevelDepth;
+				if(data.length > 1)
+					entityLevelDepth = Integer.parseInt(data[1]);
+				else
+					entityLevelDepth = null;
 				
 				Entity toRemove = Network.getEntity(eid);
 				if (Game.debug) System.out.println("CLIENT: received entity removal: " + toRemove);
 				if(toRemove != null) {
-					toRemove.remove();
+					if(entityLevelDepth != null && toRemove.getLevel() != null && toRemove.getLevel().depth != entityLevelDepth) {
+						if(Game.debug) System.out.println("CLIENT: not removing entity "+toRemove+" because it is not on the specified level depth, "+entityLevelDepth+"; current depth = "+toRemove.getLevel().depth+". Removing from specified level only...");
+						Level l = World.levels[World.lvlIdx(entityLevelDepth)];
+						if(l != null)
+							l.remove(toRemove);
+					}
+					else
+						toRemove.remove();
 					return true;
 				}
 				return false;

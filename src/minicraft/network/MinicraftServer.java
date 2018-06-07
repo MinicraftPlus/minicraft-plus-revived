@@ -285,10 +285,9 @@ public class MinicraftServer extends Thread implements MinicraftProtocol {
 	
 	//public void sendEntityAddition(Entity e, RemotePlayer sender) { sendEntityAddition(e, sender, false); }
 	
-	public void broadcastEntityRemoval(Entity e) { broadcastEntityRemoval(e, true); }
-	public void broadcastEntityRemoval(Entity e, boolean removeSelf) {
+	private List<RemotePlayer> getPlayersToRemove(Entity e, boolean removeSelf) {
 		List<RemotePlayer> players = getPlayersInRange(e, true);
-		if(players.size() == 0) return;
+		if(players.size() == 0) return players;
 		if (Game.debug && e instanceof Player) {
 			System.out.println("SERVER: sending removal of player " + e + " to " + players.size() + " players (may remove equal player): ");
 			for(RemotePlayer rp: players)
@@ -300,9 +299,29 @@ public class MinicraftServer extends Thread implements MinicraftProtocol {
 		
 		if (Game.debug && e instanceof Player) System.out.println("...now sending player removal to " + players.size() + " players.");
 		
+		return players;
+	}
+	
+	// remove only if on given level
+	public void broadcastEntityRemoval(Entity e, Level level, boolean removeSelf) {
+		List<RemotePlayer> players = getPlayersToRemove(e, removeSelf);
+		
+		if(level == null) {
+			if(Game.debug) System.out.println("SERVER: cannot remove entity "+e+" from specified level, level given is null; ignoring request to broadcast entity removal.");
+			return;
+		}
+		
+		for(MinicraftServerThread thread: getAssociatedThreads(players))
+			thread.sendEntityRemoval(e.eid, level.depth);
+	}
+	// remove regardless of level
+	public void broadcastEntityRemoval(Entity e, boolean removeSelf) {
+		List<RemotePlayer> players = getPlayersToRemove(e, removeSelf);
+		
 		for(MinicraftServerThread thread: getAssociatedThreads(players))
 			thread.sendEntityRemoval(e.eid);
 	}
+	
 	//public void sendEntityRemoval(Entity e) { sendEntityRemoval(e, getIfPlayer(e)); }
 	//public void sendEntityRemoval(Entity e, RemotePlayer sender) { sendEntityRemoval(e.eid, sender, false); }
 	
@@ -354,8 +373,8 @@ public class MinicraftServer extends Thread implements MinicraftProtocol {
 		broadcastData(InputType.BED, ""+inBed);
 		if(inBed) {
 			for(MinicraftServerThread thread: getThreads()) {
-				thread.getClient().remove();
 				broadcastEntityRemoval(thread.getClient(), true);
+				thread.getClient().remove();
 			}
 		}
 	}
@@ -555,7 +574,7 @@ public class MinicraftServer extends Thread implements MinicraftProtocol {
 			case DIE:
 				if (Game.debug) System.out.println("received player death");
 				Entity dc = Load.loadEntity(alldata, false);
-				broadcastEntityRemoval(clientPlayer);
+				broadcastEntityRemoval(clientPlayer, true);
 				return true;
 			
 			case RESPAWN:

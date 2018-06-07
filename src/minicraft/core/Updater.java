@@ -10,7 +10,6 @@ import minicraft.item.Items;
 import minicraft.level.Level;
 import minicraft.level.tile.Tile;
 import minicraft.level.tile.Tiles;
-import minicraft.network.MinicraftServerThread;
 import minicraft.saveload.Save;
 import minicraft.screen.EndGameDisplay;
 import minicraft.screen.LevelTransitionDisplay;
@@ -289,6 +288,15 @@ public class Updater extends Game {
 						if(isConnectedClient() && input.getKey("alt-t").clicked) {
 							// update the tile with the server's value for it.
 							client.requestTile(player.getLevel(), player.x >> 4, player.y >> 4);
+						}
+						
+						if(input.getKey("shift-p").clicked) {
+							// print all players on all levels
+							for(int i = 0; i < levels.length; i++) {
+								if(levels[i] == null) continue;
+								for(Player p: levels[i].getPlayers())
+									levels[i].printLevelLoc("player "+p, p.x, p.y);
+							}
 						}
 					}
 				} // end debug only cond.

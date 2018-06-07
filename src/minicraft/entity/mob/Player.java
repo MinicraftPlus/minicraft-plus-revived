@@ -6,11 +6,11 @@ import java.util.List;
 
 import minicraft.core.Game;
 import minicraft.core.Network;
+import minicraft.core.Updater;
+import minicraft.core.World;
 import minicraft.core.io.InputHandler;
 import minicraft.core.io.Settings;
 import minicraft.core.io.Sound;
-import minicraft.core.Updater;
-import minicraft.core.World;
 import minicraft.entity.Arrow;
 import minicraft.entity.Direction;
 import minicraft.entity.Entity;
@@ -868,6 +868,15 @@ public class Player extends Mob implements ItemHolder {
 		}
 		
 		hurtTime = playerHurtTime;
+	}
+	
+	@Override
+	public void remove() {
+		if(Game.debug) {
+			System.out.println(Network.onlinePrefix()+"removing player from level "+getLevel());
+			//Thread.dumpStack();
+		}
+		super.remove();
 	}
 	
 	protected String getUpdateString() {

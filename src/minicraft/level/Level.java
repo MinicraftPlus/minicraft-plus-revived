@@ -10,8 +10,8 @@ import java.util.function.ToIntFunction;
 
 import minicraft.core.Game;
 import minicraft.core.Network;
-import minicraft.core.io.Settings;
 import minicraft.core.Updater;
+import minicraft.core.io.Settings;
 import minicraft.entity.Entity;
 import minicraft.entity.ItemEntity;
 import minicraft.entity.furniture.Chest;
@@ -43,7 +43,7 @@ public class Level {
 	public byte[] tiles; // an array of all the tiles in the world.
 	public byte[] data; // an array of the data of the tiles in the world. // ?
 	
-	public int depth; // depth level of the level
+	public final int depth; // depth level of the level
 	public int monsterDensity = 8; // affects the number of monsters that are on the level, bigger the number the less monsters spawn.
 	public int maxMobCount;
 	public int chestCount;
@@ -337,7 +337,7 @@ public class Level {
 			Entity entity = entitiesToRemove.get(0);
 			
 			if(Game.isValidServer() && !(entity instanceof Particle) && entity.getLevel() == this)
-				Game.server.broadcastEntityRemoval(entity);
+				Game.server.broadcastEntityRemoval(entity, this, true);
 			
 			if(Game.debug) printEntityStatus("Removing ", entity, "mob.Player");
 			
