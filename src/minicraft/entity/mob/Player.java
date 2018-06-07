@@ -52,9 +52,9 @@ public class Player extends Mob implements ItemHolder {
 	public int spawnx = 0, spawny = 0; // these are stored as tile coordinates, not entity coordinates.
 	//public boolean bedSpawn = false;
 	
-	private boolean hasSetHome = false;
+	//private boolean hasSetHome = false;
 	public boolean skinon;
-	private int homeSetX, homeSetY;
+	//private int homeSetX, homeSetY;
 	
 	// the maximum stats that the player can have.
 	private static final int maxHealth = 10, maxStamina = 10, maxHunger = 10;
@@ -99,7 +99,7 @@ public class Player extends Mob implements ItemHolder {
 	private int cooldowninfo; // prevents you from toggling the info pane on and off super fast.
 	private int regentick; // counts time between each time the regen potion effect heals you.
 	
-	private final int acs = 25; // default ("start") arrow count
+	//private final int acs = 25; // default ("start") arrow count
 	public int shirtColor = 110; // player shirt color.
 	
 	// Note: the player's health & max health are inherited from Mob.java
@@ -140,8 +140,8 @@ public class Player extends Mob implements ItemHolder {
 			}
 		};
 		
-		if(previousInstance == null)
-			inventory.add(Items.arrowItem, acs);
+		//if(previousInstance == null)
+		//	inventory.add(Items.arrowItem, acs);
 		
 		potioneffects = new HashMap<>();
 		showpotioneffects = true;
@@ -378,8 +378,8 @@ public class Player extends Mob implements ItemHolder {
 				Game.setMenu(new PauseDisplay());
 			if (input.getKey("craft").clicked && !use())
 				Game.setMenu(new CraftingDisplay(Recipes.craftRecipes, "Crafting", this, true));
-			if (input.getKey("sethome").clicked) setHome();
-			if (input.getKey("home").clicked && !Bed.inBed) goHome();
+			//if (input.getKey("sethome").clicked) setHome();
+			//if (input.getKey("home").clicked && !Bed.inBed) goHome();
 			
 			if (input.getKey("info").clicked) Game.setMenu(new InfoDisplay());
 			
@@ -719,7 +719,7 @@ public class Player extends Mob implements ItemHolder {
 	}
 	
 	/** Set player's home coordinates. */
-	private void setHome() {
+	/*private void setHome() {
 		if (Game.currentLevel == 3) { // if on surface
 			// set home coordinates
 			homeSetX = this.x;
@@ -748,7 +748,7 @@ public class Player extends Mob implements ItemHolder {
 		} else { // can only go home from surface
 			Game.notifications.add("You can't go home from here!");
 		}
-	}
+	}*/
 	
 	/** finds a location to respawn the player after death. */
 	public boolean respawn(Level level) {

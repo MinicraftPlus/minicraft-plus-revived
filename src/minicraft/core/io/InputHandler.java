@@ -114,8 +114,8 @@ public class InputHandler implements /*MouseListener, */KeyListener {
 		keymap.put("DROP-STACK", "SHIFT-Q"); // drops the item in your hand, or selected in your inventory, entirely; even if it's a stack.
 		
 		keymap.put("PAUSE", "ESCAPE"); // pause the Game.
-		keymap.put("SETHOME", "SHIFT-H"); // set your home.
-		keymap.put("HOME", "H"); // go to set home.
+		//keymap.put("SETHOME", "SHIFT-H"); // set your home.
+		//keymap.put("HOME", "H"); // go to set home.
 		//keymap.put("SAVE", "R");
 		
 		keymap.put("SURVIVAL=debug", "SHIFT-S|SHIFT-1");
