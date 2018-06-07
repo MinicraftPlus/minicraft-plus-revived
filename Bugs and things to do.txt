@@ -19,6 +19,8 @@ PastDay1 doesn't save/work, I think.
 ####
 Something weird happens with creeper explosions... I think, if you stay next to it, then the game freezes. Or maybe it has something to do with the spawner..? Idk, it's really wierd...
 ####
+hunger doesn't save with world
+####
 
 #####
 MULTIPLAYER-Related:
@@ -29,6 +31,10 @@ MULTIPLAYER-Related:
  # Sounds play in multiplayer even when game is paused, and when another player does something far away; add checks for distance and pause state before playing sounds
  
  It would be nice if I could find a way to not even bother telling the server for things like potions, that don't even interact with the world.
+ 
+ # food stacks only go down one per type
+
+ # mobs drop too many items when shot with an arrow
 #####
 
 -----------------------------------------------------------------------------------
