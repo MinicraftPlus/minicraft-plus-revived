@@ -183,9 +183,9 @@ public abstract class Entity {
 			level.remove(this);
 	}
 	public void remove(Level level) {
-		if(level != this.level && Game.debug)
-			System.out.println("tried to remove entity "+this+" from level it is not in: " + level + "; in level " + this.level);
-		else {
+		if(level != this.level) {
+			if(Game.debug) System.out.println("tried to remove entity " + this + " from level it is not in: " + level + "; in level " + this.level);
+		} else {
 			removed = true; // should already be set.
 			this.level = null;
 		}
