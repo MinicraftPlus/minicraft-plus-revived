@@ -266,11 +266,11 @@ public class MultiplayerDisplay extends Display {
 	}
 	
 	public void setError(String msg) { setError(msg, true); }
-	public void setError(String msg, boolean overrideMenu) {
+	private void setError(String msg, boolean overrideMenu) {
 		this.curState = State.ERROR;
 		errorMessage = msg;
 		if(overrideMenu && Game.getMenu() != this && Game.isValidClient())
-			Game.setMenu(this);
+			Game.setMenu(this); // if you don't override the menu, then you'd have to already be viewing the multiplayer menu.
 	}
 	
 	@Override

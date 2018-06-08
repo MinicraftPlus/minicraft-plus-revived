@@ -76,6 +76,9 @@ public class Updater extends Game {
 			menu = newMenu;
 		}
 		
+		if(isValidClient())
+			Game.client.checkConnection();
+		
 		Level level = levels[currentLevel];
 		if (Bed.inBed && !isValidClient()) {
 			// IN BED

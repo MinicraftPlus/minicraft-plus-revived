@@ -8,6 +8,7 @@ public interface MinicraftProtocol {
 	
 	int PORT = 4225;
 	//int packetSize = 2048;
+	int PING_INTERVAL = 1_000; // measured in milliseconds 
 	String autoPing = "ping";
 	String manualPing = "manual";
 	

@@ -15,7 +15,7 @@ public class Display {
 	protected Menu[] menus;
 	int selection;
 	
-	private boolean canExit, clearScreen;
+	private final boolean canExit, clearScreen;
 	
 	public Display() { this(new Menu[0]); }
 	public Display(Menu... menus) { this(false, true, menus); }

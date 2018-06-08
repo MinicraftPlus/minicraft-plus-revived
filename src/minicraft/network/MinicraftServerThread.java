@@ -31,12 +31,12 @@ public class MinicraftServerThread extends MinicraftConnection {
 		public void run() {}
 	}
 	
-	private static final int PING_INTERVAL = 10; // measured in seconds
+	//private static final int PING_INTERVAL = 5_000; // measured in milliseconds
 	
 	private MinicraftServer serverInstance;
 	private RemotePlayer client;
 	
-	protected boolean isPlaying = false;
+	//protected boolean isPlaying = false;
 	
 	
 	//private NetworkInterface computer = null;
@@ -71,7 +71,7 @@ public class MinicraftServerThread extends MinicraftConnection {
 		Timer t = new Timer("ClientPing");
 		t.schedule((new MyTask() {
 			public void run() { MinicraftServerThread.this.ping(); }
-		}), 1000, PING_INTERVAL*1000);
+		}), 1000, PING_INTERVAL);
 		gameTimers.add(t);
 		
 		start();
