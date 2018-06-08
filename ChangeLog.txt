@@ -13,6 +13,8 @@ Minicraft+ version 2.0.4
 * Fixed multiplayer bug where you could only deal 1 damage to things
 * Fixed a long-standing bug that mainly affected dungeon chests and airwizards not appearing when they should, as well as mob spawner dungeons
 + Added keys being dropped back into the game... because apparently that feature disappeared somewhere.
++ Added player hunger to world save.
+- Removed the "home" functionality.
 
 
 Minicraft+ version 2.0.3
