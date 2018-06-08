@@ -11,6 +11,7 @@ import java.nio.file.Paths;
 import java.security.CodeSource;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 
@@ -20,6 +21,8 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 public class Localization {
+	
+	private static HashSet<String> knownUnlocalizedStrings = new HashSet<>();
 	
 	private static HashMap<String, String> localization = new HashMap<>();
 	private static String selectedLanguage = "english";
@@ -44,8 +47,11 @@ public class Localization {
 		
 		String localString = localization.get(string);
 		
-		if (Game.debug && localString == null)
-			System.out.println("The string \"" + string + "\" is not localized, returning itself instead.");
+		if (Game.debug && localString == null) {
+			if(!knownUnlocalizedStrings.contains(string))
+				System.out.println("The string \"" + string + "\" is not localized, returning itself instead.");
+			knownUnlocalizedStrings.add(string);
+		}
 		
 		return (localString == null ? string : localString);
 	}
