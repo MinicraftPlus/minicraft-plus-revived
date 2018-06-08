@@ -13,8 +13,6 @@ Note to self: for more little bugs/ideas/concerns, search code for "TODO"
 ####
 Well. I've learned something. I really ought to be aware of hashes, since I've overridden .equals(), but not .hashCode(), so if I've used HashMaps or HashSets of objects of those classes, they may not work right. They will not follow the specified .equals() method. I'm not sure if I expected it to, but now that I know, I can override it and make use of HashMaps/HashSets to improve performance in lists. And it will no longer be cloudy as to what will affect Object.equals(); as long as I implement both methods, it should compare objects solely using those methods.
 ####
-hunger doesn't save with world
-####
 
 #####
 MULTIPLAYER-Related:

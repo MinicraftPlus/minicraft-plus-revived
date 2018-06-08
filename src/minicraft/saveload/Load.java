@@ -335,6 +335,8 @@ public class Load {
 		player.spawnx = Integer.parseInt(data.remove(0));
 		player.spawny = Integer.parseInt(data.remove(0));
 		player.health = Integer.parseInt(data.remove(0));
+		if(worldVer.compareTo(new Version("2.0.4-dev7")) >= 0)
+			player.hunger = Integer.parseInt(data.remove(0));
 		player.armor = Integer.parseInt(data.remove(0));
 		
 		if(player.armor > 0) {
