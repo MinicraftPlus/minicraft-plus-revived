@@ -22,6 +22,7 @@ import minicraft.level.Level;
 import minicraft.level.tile.Tile;
 import minicraft.saveload.Load;
 import minicraft.saveload.Save;
+import minicraft.saveload.Version;
 
 public class MinicraftServerThread extends MinicraftConnection {
 	
@@ -258,7 +259,10 @@ public class MinicraftServerThread extends MinicraftConnection {
 		if(rpFile != null && rpFile.exists()) {
 			try {
 				String content = Load.loadFromFile(rpFile.getPath(), false); //Files.readAllLines(rpFile.toPath(), StandardCharsets.UTF_8);
-				playerdata = content.substring(content.indexOf("\n")+1);
+				playerdata = content.substring(content.indexOf("\n")+1); // cut off username
+				// assume the data version is dev6 if it isn't written (it isn't before dev7).
+				if(!Version.isValid(playerdata.substring(0, playerdata.indexOf("\n"))))
+					playerdata = "2.0.4-dev6\n"+playerdata;
 			} catch(IOException ex) {
 				System.err.println("failed to read remote player file: " + rpFile);
 				ex.printStackTrace();
@@ -281,7 +285,7 @@ public class MinicraftServerThread extends MinicraftConnection {
 			filename = "RemotePlayer"+numFiles+Save.extension;
 		}
 		
-		String filedata = client.getUsername() + "\n" + playerdata;
+		String filedata = String.join("\n", client.getUsername(), Game.VERSION, playerdata);
 		
 		String filepath = serverInstance.getWorldPath()+"/"+filename;
 		try {

@@ -33,6 +33,7 @@ import minicraft.item.PotionType;
 import minicraft.level.Level;
 import minicraft.saveload.Load;
 import minicraft.saveload.Save;
+import minicraft.saveload.Version;
 import minicraft.screen.ContainerDisplay;
 import minicraft.screen.MultiplayerDisplay;
 
@@ -379,11 +380,11 @@ public class MinicraftClient extends MinicraftConnection {
 			case PLAYER:
 				//if (Game.debug) System.out.println("CLIENT: received player packet");
 				String[] playerparts = alldata.split("\\n");
-				List<String> playerinfo = Arrays.asList(playerparts[0].split(","));
-				List<String> playerinv = Arrays.asList(playerparts[1].split(","));
-				Load load = new Load();
+				List<String> playerinfo = Arrays.asList(playerparts[1].split(","));
+				List<String> playerinv = Arrays.asList(playerparts[2].split(","));
+				Load load = new Load(new Version(playerparts[0]));
 				if (Game.debug) System.out.println("CLIENT: setting player vars from packet...");
-					
+				
 				if(!(playerinv.size() == 1 && playerinv.get(0).equals("null")))
 					load.loadInventory(Game.player.getInventory(), playerinv);
 				load.loadPlayer(Game.player, playerinfo);

@@ -97,9 +97,13 @@ public class Load {
 			loadServerConfig("ServerConfig", server);
 	}
 	
-	public Load() { this(false); }
-	public Load(boolean loadStuff) {
-		if(!loadStuff) {
+	public Load() { this(new Version(Game.VERSION)); }
+	public Load(Version worldVersion) {
+		this(false);
+		worldVer = worldVersion;
+	}
+	public Load(boolean loadConfig) {
+		if(!loadConfig) {
 			worldVer = currentVer;
 			return;
 		}
@@ -329,7 +333,8 @@ public class Load {
 		loadFromFile(location + filename + extension);
 		loadPlayer(player, data);
 	}
-	public void loadPlayer(Player player, List<String> data) {
+	public void loadPlayer(Player player, List<String> origData) {
+		List<String> data = new ArrayList<>(origData);
 		player.x = Integer.parseInt(data.remove(0));
 		player.y = Integer.parseInt(data.remove(0));
 		player.spawnx = Integer.parseInt(data.remove(0));

@@ -4,8 +4,10 @@ import org.jetbrains.annotations.NotNull;
 
 public class Version implements Comparable<Version> {
 	private int make, major, minor, dev;
+	private boolean valid = true;
 	
-	public Version(String version) {
+	public Version(String version) { this(version, true); }
+	private Version(String version, boolean printError) {
 		String[] nums = version.split("\\.");
 		try {
 			if(nums.length > 0) make = Integer.parseInt(nums[0]);
@@ -28,11 +30,16 @@ public class Version implements Comparable<Version> {
 				dev = 0;
 			}
 		} catch(NumberFormatException ex) {
-			System.out.println("INVALID version number: \"" + version + "\"");
+			if(printError) System.err.println("INVALID version number: \"" + version + "\"");
+			valid = false;
 		} catch(Exception ex) {
-			ex.printStackTrace();
+			if(printError) ex.printStackTrace();
+			valid = false;
 		}
 	}
+	
+	public boolean isValid() { return valid; }
+	public static boolean isValid(String version) { return new Version(version, false).isValid(); }
 	
 	// the returned value of this method (-1, 0, or 1) is determined by whether this object is less than, equal to, or greater than the specified object.
 	public int compareTo(@NotNull Version ov) {

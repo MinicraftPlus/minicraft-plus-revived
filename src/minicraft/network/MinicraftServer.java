@@ -458,15 +458,15 @@ public class MinicraftServer extends Thread implements MinicraftProtocol {
 					
 					if(Game.player != null) {
 						// save the player, and then remove it.
-						playerdata = Game.player.getPlayerData();
-						
+						playerdata = Game.VERSION+"\n"+Game.player.getPlayerData();
 						//if (Game.debug) System.out.println("SERVER: setting main player as remote from login.");
 						Game.player.remove(); // all the important data has been saved.
 						Game.player = null;
 					} else {
 						/// load the data from file instead.
+						playerdata = Game.VERSION+"\n";
 						try {
-							playerdata = Load.loadFromFile(worldPath+"/Player"+Save.extension, true) + "\n";
+							playerdata += Load.loadFromFile(worldPath+"/Player"+Save.extension, true) + "\n";
 							playerdata += Load.loadFromFile(worldPath+"/Inventory"+Save.extension, true);
 						} catch(IOException ex) {
 							System.err.println("SERVER had error while trying to load host player data from file:");
@@ -483,7 +483,10 @@ public class MinicraftServer extends Thread implements MinicraftProtocol {
 				if(playerdata.length() > 0) {
 					/// if a save file was found, then send the data to the client so they can resume where they left off.
 					// and now, initialize the RemotePlayer instance with the data.
-					new Load().loadPlayer(clientPlayer, Arrays.asList(playerdata.split("\\n")[0].split(",")));
+					// first get the version that saved the file, which can be different if this is a remote player.
+					//if(Game.debug) System.out.println("loaded player data: "+playerdata);
+					String[] saveData = playerdata.split("\\n");
+					new Load(new Version(saveData[0])).loadPlayer(clientPlayer, Arrays.asList(saveData[1].split(",")));
 					// we really don't need to load the inventory.
 				} else {
 					clientPlayer.findStartPos(World.levels[World.lvlIdx(0)]); // find a new start pos

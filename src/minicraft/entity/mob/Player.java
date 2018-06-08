@@ -926,6 +926,7 @@ public class Player extends Mob implements ItemHolder {
 	public String getPlayerData() {
 		List<String> datalist = new ArrayList<>();
 		StringBuilder playerdata = new StringBuilder();
+		playerdata.append(Game.VERSION).append("\n");
 		
 		Save.writePlayer(this, datalist);
 		for(String str: datalist)
