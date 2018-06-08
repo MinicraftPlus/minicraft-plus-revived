@@ -9,6 +9,8 @@ import minicraft.entity.mob.RemotePlayer;
 import minicraft.item.Items;
 import minicraft.level.Level;
 import minicraft.saveload.Load;
+import minicraft.saveload.Save;
+import minicraft.saveload.Version;
 import minicraft.screen.LoadingDisplay;
 import minicraft.screen.PlayerDeathDisplay;
 import minicraft.screen.WorldGenDisplay;
@@ -94,10 +96,10 @@ public class World extends Game {
 	public static void initWorld() { // this is a full reset; everything.
 		if(debug) System.out.println("resetting world...");
 		
-		if(isValidServer()) {
+		/*if(isValidServer()) {
 			System.err.println("Cannot initialize world while acting as a server runtime; not running initWorld().");
 			return;
-		}
+		}*/
 		
 		PlayerDeathDisplay.shouldRespawn = false;
 		resetGame();
@@ -118,9 +120,13 @@ public class World extends Game {
 		if(!isValidClient()) {
 			if(debug) System.out.println("initializing world non-client...");
 			
-			if(WorldSelectDisplay.loadedWorld())
-				new Load(WorldSelectDisplay.getWorldName());
-			else {
+			if(WorldSelectDisplay.loadedWorld()) {
+				Load loader = new Load(WorldSelectDisplay.getWorldName());
+				if(isValidServer() && loader.getWorldVersion().compareTo(new Version(Game.VERSION)) < 0) {
+					new Save(player, true); // overwrite the old player save, to update it.
+					new Save(WorldSelectDisplay.getWorldName()); // save the main world
+				}
+			} else {
 				worldSize = (Integer) Settings.get("size");
 				
 				float loadingInc = 100f / (maxLevelDepth - minLevelDepth + 1); // the .002 is for floating point errors, in case they occur.

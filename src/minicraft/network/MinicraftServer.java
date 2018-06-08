@@ -457,7 +457,7 @@ public class MinicraftServer extends Thread implements MinicraftProtocol {
 					if (Game.debug) System.out.println("SERVER: host player found");
 					
 					if(Game.player != null) {
-						// save the player, and then remove it.
+						// save the player, and then remove it. It is leftover from when this was a single player world.
 						playerdata = Game.VERSION+"\n"+Game.player.getPlayerData();
 						//if (Game.debug) System.out.println("SERVER: setting main player as remote from login.");
 						Game.player.remove(); // all the important data has been saved.
@@ -636,7 +636,7 @@ public class MinicraftServer extends Thread implements MinicraftProtocol {
 					String[] parts = alldata.split("\\n");
 					List<String> datastrs = new ArrayList<>();
 					
-					Save save = new Save(clientPlayer);
+					Save save = new Save(clientPlayer, false);
 					datastrs.addAll(Arrays.asList(parts[0].split(",")));
 					save.writeToFile(save.location+"Player"+Save.extension, datastrs);
 					datastrs.clear();

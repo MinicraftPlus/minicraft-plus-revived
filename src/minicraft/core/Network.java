@@ -118,11 +118,13 @@ public class Network extends Game {
 			}
 		}
 		else
-			setMenu(new LoadingDisplay()); // gets things going to load up a world
+			setMenu(new LoadingDisplay()); // gets things going to load up a (server) world
+		
+		// now that that's done, let's turn *this* running JVM into a server:
+		server = new MinicraftServer();
 		
 		Timer t = new Timer(1000, e -> {
-			// now that that's done, let's turn *this* running JVM into a server:
-			server = new MinicraftServer();
+			// meanwhile... the loading screen is about to initialize the world, if this was started from the command line.
 			
 			/// load up any saved config options for the server.
 			new Load(WorldSelectDisplay.getWorldName(), server);

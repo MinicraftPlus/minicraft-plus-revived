@@ -238,7 +238,7 @@ public class Updater extends Game {
 					if(!ISONLINE || isValidServer()) {
 						/// server-only cheats.
 						if (input.getKey("Shift-r").clicked && !isValidServer())
-							World.initWorld(); // this will almost certainly break in multiplayer, i think...
+							World.initWorld(); // for single-player use only.
 						
 						if (input.getKey("1").clicked) changeTimeOfDay(Time.Morning);
 						if (input.getKey("2").clicked) changeTimeOfDay(Time.Day);

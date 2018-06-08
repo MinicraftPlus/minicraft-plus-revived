@@ -116,9 +116,11 @@ public class Save {
 		writePrefs("Preferences");
 	}
 	
-	public Save(Player player) {
+	public Save(Player player, boolean writePlayer) {
 		// this is simply for access to writeToFile.
 		this(new File(Game.gameDir+"/saves/"+ WorldSelectDisplay.getWorldName() + "/"));
+		if(writePlayer)
+			writePlayer("Player", player);
 	}
 	
 	public static void writeFile(String filename, String[] lines) throws IOException {
