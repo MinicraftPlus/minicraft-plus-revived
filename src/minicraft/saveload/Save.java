@@ -236,6 +236,10 @@ public class Save {
 		data.add(String.valueOf(player.health));
 		data.add(String.valueOf(player.hunger));
 		data.add(String.valueOf(player.armor));
+		if(player.curArmor != null) {
+			data.add(String.valueOf(player.armorDamageBuffer));
+			data.add(String.valueOf(player.curArmor.getName()));
+		}
 		data.add(String.valueOf(player.score));
 		//data.add(String.valueOf(player.ac));
 		//data.add("25");
@@ -254,10 +258,6 @@ public class Save {
 		
 		data.add(String.valueOf(player.shirtColor));
 		data.add(String.valueOf(player.skinon));
-		if(player.curArmor != null) {
-			data.add(String.valueOf(player.armorDamageBuffer));
-			data.add(String.valueOf(player.curArmor.getName()));
-		}
 	}
 	
 	private void writeInventory(String filename, Player player) {
