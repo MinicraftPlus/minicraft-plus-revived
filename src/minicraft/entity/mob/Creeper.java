@@ -1,13 +1,19 @@
 package minicraft.entity.mob;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import minicraft.core.io.Settings;
 import minicraft.core.io.Sound;
 import minicraft.entity.Direction;
 import minicraft.entity.Entity;
+import minicraft.entity.furniture.Spawner;
 import minicraft.gfx.Color;
 import minicraft.gfx.MobSprite;
+import minicraft.gfx.Point;
 import minicraft.gfx.Screen;
 import minicraft.item.Items;
+import minicraft.level.tile.Tile;
 import minicraft.level.tile.Tiles;
 
 public class Creeper extends EnemyMob {
@@ -55,15 +61,18 @@ public class Creeper extends EnemyMob {
 			
 			boolean hurtOne = false; // tells if any players were hurt
 			
-			for(Player player: level.getPlayers()) {
-				int pdx = Math.abs(player.x - x);
-				int pdy = Math.abs(player.y - y);
+			for(Entity e: level.getEntitiesOfClass(Mob.class)) {
+				Mob mob = (Mob) e;
+				int pdx = Math.abs(mob.x - x);
+				int pdy = Math.abs(mob.y - y);
 				if(pdx < BLAST_RADIUS && pdy < BLAST_RADIUS) {
 					float pd = (float) Math.sqrt(pdx * pdx + pdy * pdy);
 					int dmg = (int) (BLAST_DAMAGE * (1 - (pd / BLAST_RADIUS))) + Settings.getIdx("diff");
-					player.hurt(this, dmg);
-					player.payStamina(dmg * (Settings.get("diff").equals("Easy")?1:2));
-					hurtOne = true;
+					mob.hurt(this, dmg);
+					if(mob instanceof Player) {
+						((Player) mob).payStamina(dmg * (Settings.get("diff").equals("Easy") ? 1 : 2));
+						hurtOne = true;
+					}
 				}
 			}
 			
@@ -76,16 +85,49 @@ public class Creeper extends EnemyMob {
 				int yt = (y - 2) >> 4;
 				
 				// change tile to an appropriate crater
-				//if(!level.getTile(xt, yt).name.toLowerCase().contains("stairs")) {
-					level.setAreaTiles(xt, yt, lvl/3, Tiles.get("hole"), 0);
-					/*if (lvl == 4) {
-						level.setTile(xt, yt, Tiles.get("hole"));
-					} else if (lvl == 3) {
-						level.setTile(xt, yt, Tiles.get("lava"));
-					} else {
-						level.setTile(xt, yt, Tiles.get("hole"));
-					}*/
-				//}
+				
+				// basically, this sets all tiles within a certain radius to a hole, unless they have a Spawner on them or stairs (stairs check happens in Level class). All entities on the reset tiles which are not allowed to occupy a hole tile are then removed (or killed, in the case of mobs).
+				
+				int radius = lvl*2/3;
+				List<Entity> entitiesInRange = level.getEntitiesInTiles(xt, yt, radius);
+				Point[] tilePositions = level.getAreaTilePositions(xt, yt, radius);
+				
+				ArrayList<Entity> skipEntities = new ArrayList<>();
+				for(Entity e: entitiesInRange)
+					if(e instanceof Spawner)
+						skipEntities.add(e);
+				
+				if(skipEntities.size() == 0)
+					level.setAreaTiles(xt, yt, radius, Tiles.get("hole"), 0);
+				else {
+					for(Point pos : tilePositions) {
+						boolean match = false;
+						for(Entity e: skipEntities) {
+							if(e.x>>4 == pos.x && e.y>>4 == pos.y) {
+								match = true;
+								break;
+							}
+						}
+						if(!match)
+							level.setAreaTiles(pos.x, pos.y, 0, Tiles.get("hole"), 0);
+					}
+				}
+				
+				for(Entity e : entitiesInRange) {
+					if(e == this) continue;
+					Point ePos = new Point(e.x>>4, e.y>>4);
+					
+					for(Point p: tilePositions) {
+						if(!p.equals(ePos)) continue;
+						
+						if(!level.getTile(p.x, p.y).mayPass(level, p.x, p.y, e)) {
+							if(e instanceof Mob)
+								((Mob) e).kill();
+							else
+								e.remove();
+						}
+					}
+				}
 				
 				die(); // dying now kind of kills everything. the super class will take care of it.
 			} else {

@@ -1,5 +1,7 @@
 package minicraft.entity.furniture;
 
+import java.util.ArrayList;
+import java.util.ListIterator;
 import java.util.Random;
 
 import minicraft.core.Game;
@@ -11,6 +13,7 @@ import minicraft.entity.mob.Player;
 import minicraft.entity.particle.FireParticle;
 import minicraft.entity.particle.TextParticle;
 import minicraft.gfx.Color;
+import minicraft.gfx.Point;
 import minicraft.gfx.Sprite;
 import minicraft.item.FurnitureItem;
 import minicraft.item.Item;
@@ -97,23 +100,26 @@ public class Spawner extends Furniture {
 			return;
 		}
 		
-		int randX, randY;
-		Tile tile;
-		do {
-			randX = (x>>4) + rnd.nextInt(2) - 1; // the rand is really just one tile in any direction
-			randY = (y>>4) + rnd.nextInt(2) - 1;
-			tile = level.getTile(randX, randY);
-		} while(!tile.mayPass(level, randX, randY, newmob) || mob instanceof EnemyMob && tile.getLightRadius(level, randX, randY) > 0);
+		Point pos = new Point(x>>4, y>>4);
+		Point[] areaPositions = level.getAreaTilePositions(pos.x, pos.y, 1);
+		ArrayList<Point> validPositions = new ArrayList<>();
+		for(Point p: areaPositions)
+			if(!( !level.getTile(p.x, p.y).mayPass(level, p.x, p.y, newmob) || mob instanceof EnemyMob && level.getTile(p.x, p.y).getLightRadius(level, p.x, p.y) > 0 ))
+				validPositions.add(p);
 		
-		newmob.x = randX << 4;
-		newmob.y = randY << 4;
+		if(validPositions.size() == 0) return; // cannot spawn mob.
+		
+		Point spawnPos = validPositions.get(random.nextInt(validPositions.size()));
+		
+		newmob.x = spawnPos.x << 4;
+		newmob.y = spawnPos.y << 4;
 		//if (Game.debug) level.printLevelLoc("spawning new " + mob, (newmob.x>>4), (newmob.y>>4), "...");
 		
 		level.add(newmob);
 		Sound.monsterHurt.play();
 		for(int i = 0; i < 6; i++) {
-			randX = rnd.nextInt(16);
-			randY = rnd.nextInt(12);
+			int randX = rnd.nextInt(16);
+			int randY = rnd.nextInt(12);
 			level.add(new FireParticle(x - 8 + randX, y - 6 + randY));
 		}
 	}

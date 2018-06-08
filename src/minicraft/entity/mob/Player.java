@@ -459,7 +459,6 @@ public class Player extends Mob implements ItemHolder {
 		
 		attackDir = dir; // make the attack direction equal the current direction
 		attackItem = activeItem; // make attackItem equal activeItem
-		boolean done = false; // we're not done yet (we just started!)
 		
 		if (activeItem instanceof ToolItem && stamina - 1 >= 0) {
 			// the player is holding a tool, and has stamina available.
@@ -468,10 +467,12 @@ public class Player extends Mob implements ItemHolder {
 			if (tool.type == ToolType.Bow && inventory.count(Items.arrowItem) > 0) { // if the player is holding a bow, and has arrows...
 				if (!Game.isMode("creative")) inventory.removeItem(Items.arrowItem);
 				level.add(new Arrow(this, attackDir, tool.level));
-				done = true; // we have attacked!
-				//return;
+				attackTime = 10;
+				return; // we have attacked!
 			}
 		}
+		
+		boolean done = false; // we're not done yet (we just started!)
 		
 		// if we are simply holding an item...
 		if (activeItem != null) {
@@ -483,11 +484,15 @@ public class Player extends Mob implements ItemHolder {
 			// otherwise, attempt to interact with the tile.
 			Point t = getInteractionTile(12);
 			if (t.x >= 0 && t.y >= 0 && t.x < level.w && t.y < level.h) { // if the target coordinates are a valid tile...
-				if (activeItem.interactOn(level.getTile(t.x, t.y), level, t.x, t.y, this, attackDir)) { // returns true if your held item successfully interacts with the target tile.
-					done = true;
-				} else { // item can't interact with tile
-					if (level.getTile(t.x, t.y).interact(level, t.x, t.y, this, activeItem, attackDir)) { // returns true if the target tile successfully interacts with the item.
+				List<Entity> tileEntities = level.getEntitiesInTiles(t.x, t.y, t.x, t.y, false, ItemEntity.class);
+				if(tileEntities.size() == 0 || tileEntities.size() == 1 && tileEntities.get(0) == this) {
+					Tile tile = level.getTile(t.x, t.y);
+					if(activeItem.interactOn(tile, level, t.x, t.y, this, attackDir)) { // returns true if your held item successfully interacts with the target tile.
 						done = true;
+					} else { // item can't interact with tile
+						if(tile.interact(level, t.x, t.y, this, activeItem, attackDir)) { // returns true if the target tile successfully interacts with the item.
+							done = true;
+						}
 					}
 				}
 				

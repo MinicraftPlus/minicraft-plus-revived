@@ -587,13 +587,25 @@ public class Level {
 		return entities.toArray(new Entity[0]);
 	}
 	
-	public List<Entity> getEntitiesInTiles(int xt0, int yt0, int xt1, int yt1) {
+	public List<Entity> getEntitiesInTiles(int xt, int yt, int radius) { return getEntitiesInTiles(xt, yt, radius, false); }
+	@SafeVarargs
+	public final List<Entity> getEntitiesInTiles(int xt, int yt, int radius, boolean includeGiven, Class<? extends Entity>... entityClasses) { return getEntitiesInTiles(xt-radius, yt-radius, xt+radius, yt+radius, includeGiven, entityClasses); }
+	public List<Entity> getEntitiesInTiles(int xt0, int yt0, int xt1, int yt1) { return getEntitiesInTiles(xt0, yt0, xt1, yt1, false); }
+	@SafeVarargs
+	public final List<Entity> getEntitiesInTiles(int xt0, int yt0, int xt1, int yt1, boolean includeGiven, Class<? extends Entity>... entityClasses) {
 		List<Entity> contained = new ArrayList<>();
 		for(Entity e: getEntityArray()) {
 			int xt = e.x >> 4;
 			int yt = e.y >> 4;
-			if(xt >= xt0 && xt <= xt1 && yt >= yt0 && yt <= yt1)
-				contained.add(e);
+			if(xt >= xt0 && xt <= xt1 && yt >= yt0 && yt <= yt1) {
+				boolean matches = false;
+				for(int i = 0; !matches && i < entityClasses.length; i++)
+					if(entityClasses[i].isAssignableFrom(e.getClass()))
+						matches = true;
+				
+				if(matches == includeGiven)
+					contained.add(e);
+			}
 		}
 		
 		return contained;
@@ -644,15 +656,24 @@ public class Level {
 		return closest;
 	}
 	
+	public Point[] getAreaTilePositions(int x, int y, int r) { return getAreaTilePositions(x, y, r, r); }
+	public Point[] getAreaTilePositions(int x, int y, int rx, int ry) {
+		ArrayList<Point> local = new ArrayList<>();
+		for(int yp = y-ry; yp <= y+ry; yp++)
+			for(int xp = x-rx; xp <= x+rx; xp++)
+				if(xp >= 0 && xp < w && yp >= 0 && yp < h)
+					local.add(new Point(xp, yp));
+		return local.toArray(new Point[local.size()]);
+	}
+	
 	public Tile[] getAreaTiles(int x, int y, int r) { return getAreaTiles(x, y, r, r); }
 	public Tile[] getAreaTiles(int x, int y, int rx, int ry) {
 		ArrayList<Tile> local = new ArrayList<>();
-		for(int yo = y-ry; yo <= y+ry; yo++)
-			for(int xo = x-rx; xo <= x+rx; xo++)
-				if(xo >= 0 && xo < w && yo >= 0 && yo < h)
-					local.add(getTile(xo, yo));
 		
-		return local.toArray(new Tile[0]);
+		for(Point p: getAreaTilePositions(x, y, rx, ry))
+			local.add(getTile(p.x, p.y));
+		
+		return local.toArray(new Tile[local.size()]);
 	}
 	
 	public void setAreaTiles(int xt, int yt, int r, Tile tile, int data) { setAreaTiles(xt, yt, r, tile, data, false); }
