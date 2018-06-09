@@ -11,7 +11,7 @@ public class Settings {
 	private static HashMap<String, ArrayEntry> options = new HashMap<>();
 	
 	static {
-		options.put("fps", new RangeEntry("Max FPS", 10, 300, 50));
+		options.put("fps", new RangeEntry("Max FPS", 10, 300, 60));
 		options.put("diff", new ArrayEntry<>("Difficulty", "Easy", "Normal", "Hard"));
 		options.get("diff").setSelection(1);
 		options.put("mode", new ArrayEntry<>("Game Mode", "Survival", "Creative", "Hardcore", "Score"));
