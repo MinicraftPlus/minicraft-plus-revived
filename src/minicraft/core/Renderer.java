@@ -177,7 +177,6 @@ public class Renderer extends Game {
 		}
 		
 		if(permStatus.size() > 0) {
-			// FIXME this is left-aligned for some reason, when it should be center-aligned.
 			FontStyle style = new FontStyle(Color.WHITE).setYPos(Screen.h / 2 - 20, false).setRelTextPos(RelPos.TOP, false).setShadowType(Color.DARK_GRAY, false);
 			
 			Font.drawParagraph(permStatus.toArray(new String[permStatus.size()]), screen, style, 1);
