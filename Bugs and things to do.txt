@@ -2,9 +2,6 @@
 
 --CURRENT: 
 
-- remove all players from level on server when someone uses a bed; then add them all back when they get out
-  -- or better yet, maybe make a system to not speed up time until everyone is in bed?
-
 Note to self: for more little bugs/ideas/concerns, search code for "TODO"
 -----------------------------------------------------------------------------------
 
@@ -15,15 +12,11 @@ Well. I've learned something. I really ought to be aware of hashes, since I've o
 
 #####
 MULTIPLAYER-Related:
- # Spawner level should change upon hitting it in creative; it only works with menu button
-
- # Players aren't kicked out if they are on a menu when the server goes down..? (only tested/seen once)
- 
  # Sounds play in multiplayer even when game is paused, and when another player does something far away; add checks for distance and pause state before playing sounds
  
  It would be nice if I could find a way to not even bother telling the server for things like potions, that don't even interact with the world.
  
- # food stacks only go down one per type
+ # food stacks only go down one per type..? Needs testing.
 
  # mobs drop too many items when shot with an arrow
 #####
