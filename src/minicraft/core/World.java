@@ -104,7 +104,7 @@ public class World extends Game {
 		PlayerDeathDisplay.shouldRespawn = false;
 		resetGame();
 		player = new Player(null, input);
-		Bed.inBed = false;
+		Bed.removePlayers();
 		Updater.gameTime = 0;
 		Updater.gamespeed = 1;
 		

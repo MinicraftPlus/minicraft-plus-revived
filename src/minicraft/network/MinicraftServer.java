@@ -354,7 +354,8 @@ public class MinicraftServer extends Thread implements MinicraftProtocol {
 			Updater.tickCount+"",
 			Updater.gamespeed+"",
 			Updater.pastDay1+"",
-			Updater.scoreTime+""
+			Updater.scoreTime+"",
+			Bed.getPlayersAwake()+""
 		};
 		
 		String vars = String.join(";", varArray);
@@ -369,7 +370,7 @@ public class MinicraftServer extends Thread implements MinicraftProtocol {
 			thread.doPing();
 	}
 	
-	public void setBed(boolean inBed) {
+	/*public void setBed(boolean inBed) {
 		Bed.inBed = inBed;
 		broadcastData(InputType.BED, ""+inBed);
 		if(inBed) {
@@ -378,7 +379,7 @@ public class MinicraftServer extends Thread implements MinicraftProtocol {
 				thread.getClient().remove();
 			}
 		}
-	}
+	}*/
 	
 	protected File[] getRemotePlayerFiles() {
 		File saveFolder = new File(worldPath);
@@ -761,15 +762,24 @@ public class MinicraftServer extends Thread implements MinicraftProtocol {
 			
 			case BED:
 				if (Game.debug) System.out.println("received bed request: " + alldata);
-				Entity bed = Network.getEntity(Integer.parseInt(alldata));
-				if(!(bed instanceof Bed)) {
-					System.out.println("SERVER: entity is not a bed: " + bed);
-					return false;
+				boolean getIn = Boolean.parseBoolean(data[0]);
+				if(getIn) {
+					Entity bed = Network.getEntity(Integer.parseInt(data[1]));
+					if(!(bed instanceof Bed)) {
+						System.out.println("SERVER: entity is not a bed: " + bed);
+						return false;
+					}
+					if(!Bed.checkCanSleep(clientPlayer))
+						return false;
+					((Bed) bed).use(clientPlayer);
 				}
-				//((Bed)bed).use(clientPlayer);
-				if(Bed.inBed || !Bed.checkCanSleep())
-					return false;
-				setBed(true);
+				else {
+					if(Bed.sleeping()) return false; // can't quit once everyone is in bed
+					
+				}
+				// if(Bed.inBed(clientPlayer) || !Bed.checkCanSleep(clientPlayer))
+				// 	return false;
+				// setBed(true);
 				return true;
 			
 			case POTION:

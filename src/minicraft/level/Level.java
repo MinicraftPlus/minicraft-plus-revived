@@ -259,7 +259,7 @@ public class Level {
 			
 			if(!inLevel) {
 				if(Game.isValidServer())
-					Game.server.broadcastEntityAddition(entity);
+					Game.server.broadcastEntityAddition(entity, true);
 				
 				if (!Game.isValidServer() || !(entity instanceof Particle)) {
 					if (Game.debug) printEntityStatus("Adding ", entity, "furniture.DungeonChest", "mob.AirWizard", "mob.Player");

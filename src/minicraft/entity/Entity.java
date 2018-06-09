@@ -183,6 +183,8 @@ public abstract class Entity {
 		else
 			level.remove(this);
 	}
+	
+	/** This should ONLY be called by the Level class. To properly remove an entity from a level, use level.remove(entity) */
 	public void remove(Level level) {
 		if(level != this.level) {
 			if(Game.debug) System.out.println("tried to remove entity " + this + " from level it is not in: " + level + "; in level " + this.level);

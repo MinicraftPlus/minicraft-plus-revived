@@ -532,14 +532,18 @@ public class Load {
 				return null;
 			}
 			
-			if(Game.isValidClient() && Game.player instanceof RemotePlayer && 
-				!((RemotePlayer)Game.player).shouldTrack(x >> 4, y >> 4, World.levels[entityLevel])
+			if(Game.isValidClient()) {
+				if(eid == Game.player.eid)
+					return Game.player;
+				if(Game.player instanceof RemotePlayer &&
+					!((RemotePlayer)Game.player).shouldTrack(x >> 4, y >> 4, World.levels[entityLevel])
 				) {
-				// the entity is too far away to bother adding to the level.
-				if(Game.debug) System.out.println("CLIENT: entity is too far away to bother loading: " + eid);
-				Entity dummy = new Cow();
-				dummy.eid = eid;
-				return dummy; /// we need a dummy b/c it's the only way to pass along to entity id.
+					// the entity is too far away to bother adding to the level.
+					if(Game.debug) System.out.println("CLIENT: entity is too far away to bother loading: " + eid);
+					Entity dummy = new Cow();
+					dummy.eid = eid;
+					return dummy; /// we need a dummy b/c it's the only way to pass along to entity id.
+				}
 			}
 		}
 		

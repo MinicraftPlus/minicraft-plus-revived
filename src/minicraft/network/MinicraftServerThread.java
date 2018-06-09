@@ -15,6 +15,7 @@ import minicraft.core.Game;
 import minicraft.core.World;
 import minicraft.entity.Direction;
 import minicraft.entity.Entity;
+import minicraft.entity.mob.Player;
 import minicraft.entity.mob.RemotePlayer;
 import minicraft.item.Item;
 import minicraft.item.PowerGloveItem;
@@ -169,6 +170,8 @@ public class MinicraftServerThread extends MinicraftConnection {
 	}
 	
 	public void sendEntityAddition(Entity e) {
+		if(Game.debug && e instanceof Player) System.out.println("");
+		if(Game.debug && e.eid == client.eid) System.out.println("SERVER: sending addition of player to itself");
 		String edata = Save.writeEntity(e, false);
 		if(edata.length() == 0)
 			System.out.println("entity not worth adding to client level: " + e + "; not sending to " + client);

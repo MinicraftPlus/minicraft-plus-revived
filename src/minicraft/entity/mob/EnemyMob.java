@@ -37,7 +37,7 @@ public class EnemyMob extends MobAi {
 		super.tick();
 		
 		Player player = getClosestPlayer();
-		if (player != null && !Bed.inBed && randomWalkTime <= 0) { // checks if player is on zombies level and if there is no time left on randonimity timer
+		if (player != null && !Bed.sleeping() && randomWalkTime <= 0) { // checks if player is on zombies level and if there is no time left on randonimity timer
 			int xd = player.x - x;
 			int yd = player.y - y;
 			if (xd * xd + yd * yd < detectDist * detectDist) {

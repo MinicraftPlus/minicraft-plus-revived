@@ -80,7 +80,7 @@ public class Updater extends Game {
 			Game.client.checkConnection();
 		
 		Level level = levels[currentLevel];
-		if (Bed.inBed && !isValidClient()) {
+		if (Bed.sleeping() && !isValidClient()) {
 			// IN BED
 			//Bed.player.remove();
 			if(gamespeed != 20) {
@@ -91,18 +91,21 @@ public class Updater extends Game {
 				}
 			}
 			if(tickCount > sleepEndTime) {
+				if(Game.debug) System.out.println(Network.onlinePrefix()+"passing midnight in bed");
 				pastDay1 = true;
 				tickCount = 0;
 				if(isValidServer())
 					server.updateGameVars();
 			}
 			if (tickCount <= sleepStartTime && tickCount >= sleepEndTime) { // it has reached morning.
+				if(Game.debug) System.out.println(Network.onlinePrefix()+"reached morning, getting out of bed");
 				gamespeed = 1;
 				if(isValidServer()) {
 					server.updateGameVars();
-					server.setBed(false);
+					//server.setBed(false);
 				}
-				else {
+				Bed.restorePlayers();
+				/*else {
 					Player playerInBed = Bed.restorePlayer();
 					
 					// seems this removes all entities within a certain radius of the player when you get OUT of Bed.
@@ -116,7 +119,7 @@ public class Updater extends Game {
 							}
 						}
 					}
-				}
+				}*/
 			}
 		}
 		
@@ -195,7 +198,7 @@ public class Updater extends Game {
 				
 				if(!isValidServer()) {
 					//if player is alive, but no level change, nothing happens here.
-					if (player.isRemoved() && Renderer.readyToRenderGameplay && !Bed.inBed) {
+					if (player.isRemoved() && Renderer.readyToRenderGameplay && !Bed.inBed(player)) {
 						//makes delay between death and death menu.
 						World.playerDeadTime++;
 						if (World.playerDeadTime > 60) {
@@ -207,6 +210,8 @@ public class Updater extends Game {
 					}
 					
 					player.tick(); // ticks the player when there's no menu.
+					if(isValidClient() && Bed.inBed(player) && !Bed.sleeping() && input.getKey("exit").clicked)
+						Game.client.sendBedExitRequest();
 					
 					if(level != null) {
 						level.tick(true);

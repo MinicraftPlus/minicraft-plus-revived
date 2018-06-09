@@ -194,7 +194,7 @@ public class MinicraftClient extends MinicraftConnection {
 			case PING:
 				pingTimeout.restart();
 				missedPings = 0;
-				if(Game.debug) System.out.println("CLIENT: received server ping, reset missed ping count");
+				//if(Game.debug) System.out.println("CLIENT: received server ping, reset missed ping count");
 				sendData(InputType.PING, alldata);
 				return true;
 			
@@ -214,6 +214,7 @@ public class MinicraftClient extends MinicraftConnection {
 				Updater.gamespeed = Float.parseFloat(data[2]);
 				Updater.pastDay1 = Boolean.parseBoolean(data[3]);
 				Updater.scoreTime = Integer.parseInt(data[4]);
+				Bed.setPlayersAwake(Integer.parseInt(data[5]));
 				
 				if(Game.isMode("creative"))
 					Items.fillCreativeInv(Game.player.getInventory(), false);
@@ -323,7 +324,7 @@ public class MinicraftClient extends MinicraftConnection {
 				if(curState == State.LOADING)
 					System.out.println("CLIENT: received entity addition while loading level");
 				
-				//if (Game.debug) System.out.println("CLIENT: received entity addition: " + alldata);
+				if (Game.debug) System.out.println("CLIENT: received entity addition: " + alldata);
 				
 				if(alldata.length() == 0) {
 					System.err.println("CLIENT WARNING: received entity addition is blank...");
@@ -335,7 +336,7 @@ public class MinicraftClient extends MinicraftConnection {
 					if(addedEntity.eid == Game.player.eid/* && Game.player.getLevel() == null*/) {
 						if (Game.debug) System.out.println("CLIENT: added main game player back to level based on add packet");
 						World.levels[Game.currentLevel].add(Game.player);
-						Bed.inBed = false;
+						Bed.removePlayer(Game.player);
 					}
 					
 					if(entityRequests.containsKey(addedEntity.eid))
@@ -494,8 +495,9 @@ public class MinicraftClient extends MinicraftConnection {
 					((Player)p).hurt(damage, attackDir);
 				return true;
 			
-			case BED:
-				if (Game.debug) System.out.println("received bed request: " + alldata);
+			/*case BED:
+				Bed.setPlayersAwake(Integer.parseInt(alldata));
+				*//*if (Game.debug) System.out.println("received bed request: " + alldata);
 				boolean inBed = Boolean.parseBoolean(alldata);
 				if(Bed.inBed == inBed) return false; // no action needed.
 				Bed.inBed = inBed;
@@ -504,9 +506,8 @@ public class MinicraftClient extends MinicraftConnection {
 				else {
 					Game.levels[Game.currentLevel].add(Game.player);
 					move(Game.player);
-				}
-				return true;
-			
+				}*//*
+				return true;*/
 			case STAMINA:
 				Game.player.payStamina(Integer.parseInt(alldata));
 				return true;
@@ -580,7 +581,8 @@ public class MinicraftClient extends MinicraftConnection {
 	
 	public void sendShirtColor() { sendData(InputType.SHIRT, Game.player.shirtColor+""); }
 	
-	public void sendBedRequest(Player player, Bed bed) { sendData(InputType.BED, String.valueOf(bed.eid)); }
+	public void sendBedRequest(Bed bed) { sendData(InputType.BED, "true;"+String.valueOf(bed.eid)); }
+	public void sendBedExitRequest() { sendData(InputType.BED, "false"); }
 	
 	public void requestLevel(int lvlidx) {
 		Game.currentLevel = lvlidx; // just in case.

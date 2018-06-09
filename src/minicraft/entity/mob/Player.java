@@ -183,7 +183,7 @@ public class Player extends Mob implements ItemHolder {
 		
 		super.tick(); // ticks Mob.java
 		
-		if(potioneffects.size() > 0 && !Bed.inBed) {
+		if(potioneffects.size() > 0 && !Bed.inBed(this)) {
 			for(PotionType potionType: potioneffects.keySet().toArray(new PotionType[0])) {
 				if(potioneffects.get(potionType) <= 1) // if time is zero (going to be set to 0 in a moment)...
 					PotionItem.applyPotion(this, potionType, false); // automatically removes this potion effect.
@@ -245,7 +245,7 @@ public class Player extends Mob implements ItemHolder {
 		}
 		
 		/// this if statement encapsulates the hunger system
-		if(!Bed.inBed) {
+		if(!Bed.inBed(this)) {
 			if(hungerChargeDelay > 0) { // if the hunger is recharging health...
 				stamHungerTicks -= 2+diffIdx; // penalize the hunger
 				if(hunger == maxHunger) stamHungerTicks -= diffIdx; // further penalty if at full hunger
@@ -306,7 +306,7 @@ public class Player extends Mob implements ItemHolder {
 			Updater.savecooldown--;
 		
 		
-		if (Game.getMenu() == null && !Bed.inBed) {
+		if (Game.getMenu() == null && !Bed.inBed(this)) {
 			// this is where movement detection occurs.
 			int xa = 0, ya = 0;
 			if (input.getKey("up").down) ya--;
@@ -829,7 +829,7 @@ public class Player extends Mob implements ItemHolder {
 	/** What happens when the player is hurt */
 	@Override
 	protected void doHurt(int damage, Direction attackDir) {
-		if (Game.isMode("creative") || hurtTime > 0 || Bed.inBed) return; // can't get hurt in creative, hurt cooldown, or while someone is in bed
+		if (Game.isMode("creative") || hurtTime > 0 || Bed.inBed(this)) return; // can't get hurt in creative, hurt cooldown, or while someone is in bed
 		
 		if(Game.isValidServer() && this instanceof RemotePlayer) {
 			// let the clients deal with it.

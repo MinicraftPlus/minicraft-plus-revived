@@ -23,6 +23,7 @@ import minicraft.item.ToolItem;
 import minicraft.item.ToolType;
 import minicraft.level.Level;
 import minicraft.screen.LoadingDisplay;
+import minicraft.screen.RelPos;
 
 public class Renderer extends Game {
 	private Renderer() {}
@@ -164,12 +165,20 @@ public class Renderer extends Game {
 		//displays arrow icon
 		screen.render(10 * 8 + 4, Screen.h - 16, 13 + 5 * 32, Color.get(0, 111, 222, 430), 0);
 		
+		ArrayList<String> permStatus = new ArrayList<>();
 		String msg = "";
-		if (Updater.saving) msg = "Saving... " + Math.round(LoadingDisplay.getPercentage()) + "%";
-		else if (Bed.inBed) msg = "Sleeping...";
+		if (Updater.saving) permStatus.add("Saving... " + Math.round(LoadingDisplay.getPercentage()) + "%");
+		if (Bed.sleeping()) permStatus.add("Sleeping...");
+		else if (!Game.isValidServer() && Bed.inBed(Game.player)) {
+			permStatus.add(Bed.getPlayersAwake() + " players still awake");
+			permStatus.add("");
+			permStatus.add("Press "+input.getMapping("exit")+" to stop trying to sleep");
+		}
 		
-		if(msg.length() > 0)
-			new FontStyle(Color.WHITE).setYPos(Screen.h / 2 - 20).setShadowType(Color.DARK_GRAY, false).draw(msg, screen);
+		if(permStatus.size() > 0) {
+			FontStyle style = new FontStyle(Color.WHITE).setYPos(Screen.h / 2 - 20, false).setRelTextPos(RelPos.TOP).setShadowType(Color.DARK_GRAY, false);
+			Font.drawParagraph(permStatus.toArray(new String[permStatus.size()]), screen, style, 1);
+		}
 		
 		/// NOTIFICATIONS
 		
@@ -282,7 +291,7 @@ public class Renderer extends Game {
 			ArrayList<String> info = new ArrayList<>();
 			info.add("VERSION " + Initializer.VERSION);
 			info.add(Initializer.fra + " fps");
-			info.add("day tiks " + Updater.tickCount);
+			info.add("day tiks " + Updater.tickCount+" ("+Updater.getTime()+")");
 			info.add((Updater.normSpeed * Updater.gamespeed) + " tik/sec");
 			if(!isValidServer()) {
 				info.add("walk spd " + player.moveSpeed);
@@ -327,7 +336,7 @@ public class Renderer extends Game {
 	private static void renderFocusNagger() {
 		String msg = "Click to focus!"; // the message when you click off the screen.
 		Updater.paused = true; //perhaps paused is only used for this.
-		int xx = Font.centerX(msg, 0, Screen.w); // the width of the box
+		int xx = (Screen.w - Font.textWidth(msg)) / 2; // the width of the box
 		int yy = (HEIGHT - 8) / 2; // the height of the box
 		int w = msg.length(); // length of message in characters.
 		int h = 1;
