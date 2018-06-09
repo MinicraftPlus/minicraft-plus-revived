@@ -106,4 +106,9 @@ public class WorldGenDisplay extends Display {
 				.createMenu()
 		};
 	}
+	
+	@Override
+	public void init(Display parent) {
+		super.init(parent instanceof TitleDisplay ? parent : new TitleDisplay());
+	}
 }
