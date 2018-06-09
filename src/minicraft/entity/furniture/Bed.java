@@ -87,6 +87,12 @@ public class Bed extends Furniture {
 	public static boolean sleeping() { return playersAwake == 0; }
 	
 	public static boolean inBed(Player player) { return sleepingPlayers.containsKey(player); }
+	public static Level getBedLevel(Player player) {
+		Bed bed = sleepingPlayers.get(player);
+		if(bed == null)
+			return null;
+		return bed.getLevel();
+	}
 	
 	// get the player "out of bed"; used on the client only.
 	public static void removePlayer(Player player) {
@@ -95,6 +101,24 @@ public class Bed extends Furniture {
 	
 	public static void removePlayers() { sleepingPlayers.clear(); }
 	
+	// client should not call this.
+	public static void restorePlayer(Player player) {
+		Bed bed = sleepingPlayers.remove(player);
+		if(bed != null) {
+			if(bed.getLevel() == null)
+				Game.levels[Game.currentLevel].add(player);
+			else
+				bed.getLevel().add(player);
+			
+			if(!Game.ISONLINE)
+				playersAwake = 1;
+			else if(Game.isValidServer()) {
+				int total = Game.server.getNumPlayers();
+				playersAwake = total - sleepingPlayers.size();
+				Game.server.updateGameVars();
+			}
+		}
+	}
 	// client should not call this.
 	public static void restorePlayers() {
 		for(Player p: sleepingPlayers.keySet()) {

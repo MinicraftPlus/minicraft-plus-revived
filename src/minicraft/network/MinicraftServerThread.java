@@ -170,7 +170,7 @@ public class MinicraftServerThread extends MinicraftConnection {
 	}
 	
 	public void sendEntityAddition(Entity e) {
-		if(Game.debug && e instanceof Player) System.out.println("");
+		if(Game.debug && e instanceof Player) System.out.println("SERVER: sending addition of player "+e+" to client through "+this);
 		if(Game.debug && e.eid == client.eid) System.out.println("SERVER: sending addition of player to itself");
 		String edata = Save.writeEntity(e, false);
 		if(edata.length() == 0)
@@ -288,7 +288,7 @@ public class MinicraftServerThread extends MinicraftConnection {
 			filename = "RemotePlayer"+numFiles+Save.extension;
 		}
 		
-		String filedata = String.join("\n", client.getUsername(), Game.VERSION, playerdata);
+		String filedata = String.join("\n", client.getUsername(), playerdata);
 		
 		String filepath = serverInstance.getWorldPath()+"/"+filename;
 		try {

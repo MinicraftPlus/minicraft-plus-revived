@@ -367,7 +367,7 @@ public class Load {
 		Game.currentLevel = Integer.parseInt(data.remove(0));
 		Level level = World.levels[Game.currentLevel];
 		if(!player.isRemoved()) player.remove(); // removes the user player from the level, in case they would be added twice.
-		if(level != null)
+		if(level != null && !(Game.isValidServer() && player == Game.player))
 			level.add(player);
 		else if(Game.debug) System.out.println(Network.onlinePrefix()+"game level to add player " + player + " to is null.");
 		//Tile spawnTile = level.getTile(player.spawnx >> 4, player.spawny >> 4);
@@ -534,7 +534,7 @@ public class Load {
 			
 			if(Game.isValidClient()) {
 				if(eid == Game.player.eid)
-					return Game.player;
+					return Game.player; // don't reload the main player via an entity addition, though do add it to the level (will be done elsewhere)
 				if(Game.player instanceof RemotePlayer &&
 					!((RemotePlayer)Game.player).shouldTrack(x >> 4, y >> 4, World.levels[entityLevel])
 				) {

@@ -75,7 +75,7 @@ public abstract class Mob extends Entity {
 		
 		boolean checkPlayers = Game.isValidServer() && (xa != 0 || ya != 0);
 		List<RemotePlayer> prevPlayers = null;
-		if(checkPlayers) prevPlayers = MinicraftServer.getPlayersInRange(this, true);
+		if(checkPlayers) prevPlayers = Game.server.getPlayersInRange(this, true);
 		
 		if(!(Game.isValidServer() && this instanceof RemotePlayer)) { // this will be the case when the client has sent a move packet to the server. In this case, we DO want to always move.
 			// these should return true b/c the mob is still technically moving; these are just to make it move *slower*.
@@ -103,7 +103,7 @@ public abstract class Mob extends Entity {
 		}
 		
 		if(checkPlayers) {
-			List<RemotePlayer> activePlayers = MinicraftServer.getPlayersInRange(this, true);
+			List<RemotePlayer> activePlayers = Game.server.getPlayersInRange(this, true);
 			for(int i = 0; i < prevPlayers.size(); i++) {
 				if(activePlayers.contains(prevPlayers.get(i))) {
 					activePlayers.remove(prevPlayers.remove(i));

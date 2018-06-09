@@ -923,7 +923,7 @@ public class Player extends Mob implements ItemHolder {
 		return false;
 	}
 	
-	public String getPlayerData() {
+	public final String getPlayerData() {
 		List<String> datalist = new ArrayList<>();
 		StringBuilder playerdata = new StringBuilder();
 		playerdata.append(Game.VERSION).append("\n");

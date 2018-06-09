@@ -142,19 +142,20 @@ public class MinicraftServer extends Thread implements MinicraftProtocol {
 		return playerStrings.toArray(new String[0]);
 	}
 	
-	public static List<RemotePlayer> getPlayersInRange(Entity e, boolean useTrackRange) {
+	public List<RemotePlayer> getPlayersInRange(Entity e, boolean useTrackRange) {
 		if(e == null || e.getLevel() == null) return new ArrayList<>();
 		int xt = e.x >> 4, yt = e.y >> 4;
 		return getPlayersInRange(e.getLevel(), xt, yt, useTrackRange); // NOTE if "e" is a RemotePlayer, the list returned *will* contain "e".
 	}
-	public static List<RemotePlayer> getPlayersInRange(Level level, int xt, int yt, boolean useTrackRange) {
+	public List<RemotePlayer> getPlayersInRange(Level level, int xt, int yt, boolean useTrackRange) {
 		List<RemotePlayer> players = new ArrayList<>();
 		//if(e == null || e.getLevel() == null) return players;
 		/// screen is 18 tiles hori, 14 tiles vert. So, rect is 20x16 tiles.
 		//List<Entity> entities = level.getEntitiesInTiles(xt - RemotePlayer.xSyncRadius, yt - RemotePlayer.ySyncRadius, xt + RemotePlayer.xSyncRadius, yt + RemotePlayer.ySyncRadius);
-		for(Entity e: level.getEntitiesOfClass(RemotePlayer.class)) {
-			if(e.isRemoved()) continue;
-			RemotePlayer rp = (RemotePlayer)e;
+		for(MinicraftServerThread thread: getThreads()) {
+			RemotePlayer rp = thread.getClient();
+			//if(p.isRemoved()) continue;
+			//RemotePlayer rp = (RemotePlayer)e;
 			if(useTrackRange && rp.shouldTrack(xt, yt, level) || !useTrackRange && rp.shouldSync(xt, yt, level))
 				players.add(rp);
 		}
@@ -280,8 +281,13 @@ public class MinicraftServer extends Thread implements MinicraftProtocol {
 		List<RemotePlayer> players = getPlayersInRange(e, true);
 		if(!addSelf)
 			players.remove(getIfPlayer(e)); // if "e" is a player, this removes it from the list.
-		for(MinicraftServerThread thread: getAssociatedThreads(players))
+		int cnt = 0;
+		if(Game.debug && e instanceof Player) System.out.println("SERVER: broadcasting player addition of "+e);
+		for(MinicraftServerThread thread: getAssociatedThreads(players)) {
 			thread.sendEntityAddition(e);
+			cnt++;
+		}
+		if(Game.debug && e instanceof Player) System.out.println("SERVER: broadcasted player addition of "+e+" to "+cnt+" clients");
 	}
 	
 	//public void sendEntityAddition(Entity e, RemotePlayer sender) { sendEntityAddition(e, sender, false); }
@@ -459,7 +465,7 @@ public class MinicraftServer extends Thread implements MinicraftProtocol {
 					
 					if(Game.player != null) {
 						// save the player, and then remove it. It is leftover from when this was a single player world.
-						playerdata = Game.VERSION+"\n"+Game.player.getPlayerData();
+						playerdata = Game.player.getPlayerData();
 						//if (Game.debug) System.out.println("SERVER: setting main player as remote from login.");
 						Game.player.remove(); // all the important data has been saved.
 						Game.player = null;
@@ -493,6 +499,8 @@ public class MinicraftServer extends Thread implements MinicraftProtocol {
 					clientPlayer.findStartPos(World.levels[World.lvlIdx(0)]); // find a new start pos
 					// this is a new player.
 					playerdata = clientPlayer.getPlayerData();
+					// save the new player once, immediately.
+					serverThread.writeClientSave(playerdata);
 				}
 				serverThread.sendData(InputType.PLAYER, playerdata);
 				
@@ -775,7 +783,8 @@ public class MinicraftServer extends Thread implements MinicraftProtocol {
 				}
 				else {
 					if(Bed.sleeping()) return false; // can't quit once everyone is in bed
-					
+					// else, get the player out of bed
+					Bed.restorePlayer(clientPlayer);
 				}
 				// if(Bed.inBed(clientPlayer) || !Bed.checkCanSleep(clientPlayer))
 				// 	return false;

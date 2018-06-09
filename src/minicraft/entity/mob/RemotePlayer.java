@@ -7,6 +7,7 @@ import minicraft.core.Game;
 import minicraft.core.io.InputHandler;
 import minicraft.entity.Direction;
 import minicraft.entity.Entity;
+import minicraft.entity.furniture.Bed;
 import minicraft.gfx.Color;
 import minicraft.gfx.Font;
 import minicraft.gfx.FontStyle;
@@ -100,7 +101,15 @@ public class RemotePlayer extends Player {
 		return shouldSync(level, xt, yt, entityTrackingBuffer); /// this means that there is one tile past the syncRadii in all directions, which marks the distance at which entities are added or removed.
 	}
 	private boolean shouldSync(Level level, int xt, int yt, int offset) { // IDEA make this isWithin(). Decided not to b/c different x and y radii.
-		if(level == null || level != getLevel())
+		if(level == null)
+			return false;
+		if(getLevel() == null) {
+			if(!Bed.inBed(this))
+				return false; // no excuse
+			if(level != Bed.getBedLevel(this))
+				return false;
+		}
+		else if(level != getLevel())
 			return false;
 		
 		int px = x >> 4, py = y >> 4;

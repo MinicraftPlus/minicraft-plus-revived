@@ -164,7 +164,7 @@ public class MinicraftClient extends MinicraftConnection {
 		//return null;
 	}
 	
-	private static String getPlayerData(Player player) {
+	/*static String getPlayerData(Player player) {
 		StringBuilder playerdata = new StringBuilder();
 		List<String> sdata = new ArrayList<>();
 		Save.writePlayer(player, sdata);
@@ -178,7 +178,7 @@ public class MinicraftClient extends MinicraftConnection {
 			playerdata.append(String.join(",", sdata.toArray(new String[0])));
 		
 		return playerdata.toString();
-	}
+	}*/
 	
 	/** This method is responsible for parsing all data received by the socket. */
 	public boolean parsePacket(InputType inType, String alldata) {
@@ -424,7 +424,7 @@ public class MinicraftClient extends MinicraftConnection {
 				if (Game.debug) System.out.println("CLIENT: received save request");
 				// send back the player data.
 				if (Game.debug) System.out.println("CLIENT: sending save data");
-				sendData(InputType.SAVE, getPlayerData(Game.player));
+				sendData(InputType.SAVE, Game.player.getPlayerData());
 				return true;
 			
 			case NOTIFY:
@@ -598,7 +598,7 @@ public class MinicraftClient extends MinicraftConnection {
 	
 	public void endConnection() {
 		if(isConnected() && curState == State.PLAY)
-			sendData(InputType.SAVE, getPlayerData(Game.player)); // try to make sure that the player's info is saved before they leave.
+			sendData(InputType.SAVE, Game.player.getPlayerData()); // try to make sure that the player's info is saved before they leave.
 		
 		pingTimeout.stop();
 		

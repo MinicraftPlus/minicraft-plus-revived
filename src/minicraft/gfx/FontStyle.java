@@ -2,6 +2,8 @@ package minicraft.gfx;
 
 import java.util.Arrays;
 
+import minicraft.core.Game;
+import minicraft.core.Network;
 import minicraft.screen.RelPos;
 
 public class FontStyle {
@@ -60,7 +62,7 @@ public class FontStyle {
 	private int shadowColor;
 	private String shadowType;
 	//private int anchorMinX, anchorMaxX, anchorMinY, anchorMaxY; // specifies the anchor pos as the center of the two bounds, while also specifying paragraph dimensions.
-	private Point anchor;
+	private Point anchor, lineAnchor;
 	//private int xPosition = -1, yPosition = -1;
 	private RelPos relTextPos = RelPos.CENTER; // aligns the complete block of text with the anchor. 
 	private RelPos relLinePos = RelPos.CENTER; // when setup for a paragraph with multiple lines, this determines the alignment of each line within the bounds of the paragraph.
@@ -105,14 +107,14 @@ public class FontStyle {
 		
 		Dimension size = new Dimension(Font.textWidth(msg), Font.textHeight());
 		
-		Rectangle textBounds = relTextPos.positionRect(size, anchor, new Rectangle());
+		Rectangle textBounds = relTextPos.positionRect(size, lineAnchor, new Rectangle());
 		
 		if(padX != 0 || padY != 0) {
 			size.width += padX;
 			size.height += padY;
-			Rectangle textBox = relTextPos.positionRect(size, anchor, new Rectangle());
+			Rectangle textBox = relTextPos.positionRect(size, lineAnchor, new Rectangle());
 			
-			relLinePos.positionRect(size, textBox, textBounds);
+			relLinePos.positionRect(textBounds.getSize(), textBox, textBounds);
 		}
 		
 		// account for anchor
@@ -151,7 +153,8 @@ public class FontStyle {
 		// either way, the draw method needs to use a different position.
 		
 		Dimension size = new Dimension(Font.textWidth(para), para.length*(Font.textHeight()+spacing));
-		paraBounds = relLinePos.positionRect(size, anchor, new Rectangle());
+		paraBounds = relTextPos.positionRect(size, anchor, new Rectangle());
+		
 		/*
 		if(yPosition == -1) { // yPosition is auto-centered
 			int centerYDouble = anchorMinY + anchorMaxY;
@@ -174,9 +177,12 @@ public class FontStyle {
 			configureForParagraph(para, spacing);
 		
 		//setYPos(paraMinY + line*Font.textHeight() + line*spacing);
-		Rectangle textArea = new Rectangle(paraBounds.getLeft(), paraBounds.getTop() + line*(Font.textHeight()+spacing), paraBounds.getWidth(), Font.textHeight()+spacing, Rectangle.CORNER_DIMS);
+		Rectangle textArea = new Rectangle(paraBounds);
+		textArea.setSize(textArea.getWidth(), Font.textHeight()+spacing, RelPos.TOP_LEFT);
+		textArea.translate(0, line*textArea.getHeight());
+		//Rectangle textArea = new Rectangle(paraBounds.getLeft(), paraBounds.getTop() + line*(Font.textHeight()+spacing), paraBounds.getWidth(), Font.textHeight()+spacing, Rectangle.CORNER_DIMS);
 		
-		anchor = textArea.getPosition(relTextPos);
+		lineAnchor = textArea.getPosition(relTextPos);
 		
 		padX = paraBounds.getWidth() - Font.textWidth(para[line]);
 		padY = spacing;
@@ -201,6 +207,7 @@ public class FontStyle {
 	public FontStyle setXPos(int pos) { return setXPos(pos, true); }
 	public FontStyle setXPos(int pos, boolean resetAlignment) {
 		anchor.x = pos;
+		lineAnchor = new Point(anchor);
 		if(resetAlignment) {
 			relTextPos = RelPos.getPos(RelPos.RIGHT.xIndex, relTextPos.yIndex);
 			relLinePos = RelPos.getPos(RelPos.LEFT.xIndex, relLinePos.yIndex);
@@ -211,6 +218,7 @@ public class FontStyle {
 	public FontStyle setYPos(int pos) { return setYPos(pos, true); }
 	public FontStyle setYPos(int pos, boolean resetAlignment) {
 		anchor.y = pos;
+		lineAnchor = new Point(anchor);
 		if(resetAlignment) {
 			relTextPos = RelPos.getPos(relTextPos.xIndex, RelPos.BOTTOM.yIndex);
 			// relLinePos = RelPos.getPos(relLinePos.xIndex, RelPos.BOTTOM.yIndex);

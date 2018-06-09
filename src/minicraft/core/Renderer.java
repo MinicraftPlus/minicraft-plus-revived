@@ -170,13 +170,16 @@ public class Renderer extends Game {
 		if (Updater.saving) permStatus.add("Saving... " + Math.round(LoadingDisplay.getPercentage()) + "%");
 		if (Bed.sleeping()) permStatus.add("Sleeping...");
 		else if (!Game.isValidServer() && Bed.inBed(Game.player)) {
-			permStatus.add(Bed.getPlayersAwake() + " players still awake");
-			permStatus.add("");
-			permStatus.add("Press "+input.getMapping("exit")+" to stop trying to sleep");
+			int numAwake = Bed.getPlayersAwake();
+			permStatus.add(numAwake + " player"+(numAwake==1?"":"s")+" still awake");
+			permStatus.add(" ");
+			permStatus.add("Press "+input.getMapping("exit")+" to cancel");
 		}
 		
 		if(permStatus.size() > 0) {
-			FontStyle style = new FontStyle(Color.WHITE).setYPos(Screen.h / 2 - 20, false).setRelTextPos(RelPos.TOP).setShadowType(Color.DARK_GRAY, false);
+			// FIXME this is left-aligned for some reason, when it should be center-aligned.
+			FontStyle style = new FontStyle(Color.WHITE).setYPos(Screen.h / 2 - 20, false).setRelTextPos(RelPos.TOP, false).setShadowType(Color.DARK_GRAY, false);
+			
 			Font.drawParagraph(permStatus.toArray(new String[permStatus.size()]), screen, style, 1);
 		}
 		
