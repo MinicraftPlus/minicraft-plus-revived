@@ -509,7 +509,7 @@ public class Menu {
 				menu.displayLength = (entrySize.height + menu.spacing) / (ListEntry.getHeight() + menu.spacing);
 				
 			// based on the menu centering, and the anchor, determine the upper-left point from which to draw the menu.
-			menu.bounds = new Rectangle(menuPos.positionRect(menuSize, anchor), menuSize); // reset to a value that is actually useful to the menu
+			menu.bounds = menuPos.positionRect(menuSize, anchor, new Rectangle()); // reset to a value that is actually useful to the menu
 			
 			menu.entryBounds = border.subtractFrom(menu.bounds);
 			

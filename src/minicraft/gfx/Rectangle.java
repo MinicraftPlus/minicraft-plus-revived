@@ -1,5 +1,7 @@
 package minicraft.gfx;
 
+import minicraft.screen.RelPos;
+
 public class Rectangle {
 	
 	public static final int CORNER_DIMS = 0;
@@ -8,6 +10,7 @@ public class Rectangle {
 	
 	private int x, y, w, h;
 	
+	public Rectangle() {} // 0 all.
 	public Rectangle(int x, int y, int x1, int y1, int type) {
 		if(type < 0 || type > 2) type = 0;
 		
@@ -51,6 +54,13 @@ public class Rectangle {
 	public Point getCenter() { return new Point(x + w/2, y + h/2); }
 	public Dimension getSize() { return new Dimension(w, h); }
 	
+	public Point getPosition(RelPos relPos) {
+		Point p = new Point(x, y);
+		p.x += relPos.xIndex * w/2;
+		p.y += relPos.yIndex * h/2;
+		return p;
+	}
+	
 	public boolean intersects(Rectangle other) {
 		return !( getLeft() > other.getRight() // left side is past the other right side
 		  || other.getLeft() > getRight() // other left side is past the right side
@@ -59,9 +69,23 @@ public class Rectangle {
 		);
 	}
 	
+	public void setPosition(Point p, RelPos relPos) { setPosition(p.x, p.y, relPos); }
+	public void setPosition(int x, int y, RelPos relPos) {
+		this.x = x - relPos.xIndex*w/2;
+		this.y = y - relPos.yIndex*h/2;
+	}
+	
 	public void translate(int xoff, int yoff) {
 		x += xoff;
 		y += yoff;
+	}
+	
+	public void setSize(Dimension d, RelPos anchor) { setSize(d.width, d.height, anchor); }
+	public void setSize(int width, int height, RelPos anchor) {
+		Point p = getPosition(anchor);
+		this.w = width;
+		this.h = height;
+		setPosition(p, anchor);
 	}
 	
 	public String toString() { return super.toString()+"[center="+getCenter()+"; size="+getSize()+"]"; }

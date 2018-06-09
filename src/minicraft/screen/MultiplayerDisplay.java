@@ -324,8 +324,8 @@ public class MultiplayerDisplay extends Display {
 			case ERROR:
 				//if(Updater.tickCount % 10 == 0) System.out.println("error message: " + errorMessage);
 				Font.drawCentered("Could not connect to server:", screen, Screen.h/2-6, Color.RED);
-				FontStyle style = new FontStyle(Color.get(-1, 511));
-				Font.drawParagraph(errorMessage, screen, 0, true, Screen.h/2+6, false, style, 1);
+				FontStyle style = new FontStyle(Color.get(-1, 511)).setYPos(Screen.h/2+6);
+				Font.drawParagraph(errorMessage, screen, style, 1);
 				//Font.drawCentered(errorMessage, screen, Screen.h/2+6, Color.get(-1, 511));
 				break;
 		}

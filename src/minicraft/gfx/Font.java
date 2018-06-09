@@ -3,6 +3,8 @@ package minicraft.gfx;
 import java.util.ArrayList;
 import java.util.Arrays;
 
+import minicraft.screen.RelPos;
+
 public class Font {
 	// These are all the characters that will be translated to the screen. (The spaces are important)
 	private static String chars = "" + //
@@ -23,9 +25,7 @@ public class Font {
 		}
 	}
 	
-	public static int textWidth(String text) {
-		return text.length() * 8;
-	}
+	public static int textWidth(String text) { return text.length() * 8; }
 	public static int textWidth(String[] para) {
 		// this returns the maximum length of all the lines.
 		if(para == null || para.length == 0) return 0;
@@ -39,46 +39,46 @@ public class Font {
 	}
 	
 	public static int textHeight() {//noinspection SuspiciousNameCombination
-		return SpriteSheet.boxWidth;}
+		return SpriteSheet.boxWidth;
+	}
 	
-	public static int centerX(String msg, int minX, int maxX) {
+	/*public static int centerX(String msg, int minX, int maxX) {
 		return (maxX + minX) / 2 - textWidth(msg) / 2;
-	}
+	}*/
 	
-	public static int centerY(String msg, int minY, int maxY) {
+	/*public static int centerY(String msg, int minY, int maxY) {
 		return (maxY + minY) / 2 - textHeight() / 2;
-	}
+	}*/
 	
 	public static void drawCentered(String msg, Screen screen, int y, int color) {
 		new FontStyle(color).setYPos(y).draw(msg, screen);
 	}
 	
-	public static void drawCentered(String msg, Screen screen, int x, int y, int color) {
+	/*public static void drawCentered(String msg, Screen screen, int x, int y, int color) {
 		new FontStyle(color).xCenterBounds(x-(Screen.w-x), Screen.w).setYPos(y).draw(msg, screen);
-	}
+	}*/
 	
 	/// these draws a paragraph from an array of lines (or a string, at which point it calls getLines()), with the specified properties.
 	
 	/// this one assumes the screen width, minus a given padding.
-	public static void drawParagraph(String para, Screen screen, int paddingX, boolean centerPaddingX, int paddingY, boolean centerPaddingY, FontStyle style, int lineSpacing) {
+	/*public static void drawParagraph(String para, Screen screen, int paddingX, boolean mirrorPaddingX, int paddingY, boolean mirrorPaddingY, FontStyle style, int lineSpacing) {
 		
-		style.xCenterBounds(paddingX, Screen.w - (centerPaddingX?paddingX:0));
-		style.yCenterBounds(paddingY, Screen.h - (centerPaddingY?paddingY:0));
+		//style.xCenterBounds(paddingX, Screen.w - (mirrorPaddingX?paddingX:0));
+		//style.yCenterBounds(paddingY, Screen.h - (mirrorPaddingY?paddingY:0));
+		if(mirrorPaddingX) {
+			style.setXPos(Screen.w / 2);
+			style.setParaJustify(RelPos.TOP);
+		}
+		if(mirrorPaddingY)
+			style.setYPos(Screen.h/2);
 		
-		drawParagraph(para, screen, style.centerMaxX - style.centerMinX, style.centerMaxY - style.centerMinY, style, centerPaddingX, lineSpacing);
-	}
+		drawParagraph(para, screen, Screen.w-paddingX*(mirrorPaddingX?2:1), Screen.h-paddingY*(mirrorPaddingY?2:1), style, lineSpacing);
+	}*/
 	
 	/// note: the y centering values in the FontStyle object will be used as a paragraph y centering value instead.
-	public static void drawParagraph(String para, Screen screen, int w, int h, FontStyle style, boolean centered, int lineSpacing) {
-		//int w = style.centerMaxX - style.centerMinX;
-		//int h = style.centerMaxY - style.centerMinY;
-		
+	public static void drawParagraph(String para, Screen screen, FontStyle style, int lineSpacing) { drawParagraph(para, screen, Screen.w, Screen.h, style, lineSpacing); }
+	public static void drawParagraph(String para, Screen screen, int w, int h, FontStyle style, int lineSpacing) {
 		String[] lines = getLines(para, w, h, lineSpacing);
-		//System.out.println("lines: " + java.util.Arrays.toString(lines));
-		
-		if (centered) style.xPosition = -1;
-		//else style.xPosition = (Screen.w - w) / 2;
-		
 		drawParagraph(lines, screen, style, lineSpacing);
 	}
 	
@@ -90,7 +90,7 @@ public class Font {
 		//return lines[lines.length-1]; // this is where the rest of the string that there wasn't space for is stored.
 	}
 	
-	public static String[] getLines(String para, int w, int lineSpacing) { return getLines(para, w, 0, lineSpacing); }
+	//public static String[] getLines(String para, int w, int lineSpacing) { return getLines(para, w, 0, lineSpacing); }
 	/*public static String[] getLines(String para, int w, int h, int lineSpacing) {
 		ArrayList<String> lines = new ArrayList<>();
 		int curPos = 0, curY = 0;
