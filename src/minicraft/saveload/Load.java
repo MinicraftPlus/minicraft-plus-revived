@@ -84,9 +84,8 @@ public class Load {
 			loadEntities("Entities");
 			loadInventory("Inventory", Game.player.getInventory());
 			loadPlayer("Player", Game.player);
-			if(Game.isMode("creative")) {
+			if(Game.isMode("creative"))
 				Items.fillCreativeInv(Game.player.getInventory(), false);
-			}
 		}
 	}
 	
@@ -206,6 +205,9 @@ public class Load {
 		loadFromFile(location + filename + extension);
 		
 		worldVer = new Version(data.remove(0)); // gets the world version
+		if(worldVer.compareTo(new Version("2.0.4-dev8")) >= 0)
+			loadMode(data.remove(0));
+		
 		Updater.setTime(Integer.parseInt(data.remove(0)));
 		
 		Updater.gameTime = Integer.parseInt(data.remove(0));
@@ -222,6 +224,24 @@ public class Load {
 		Settings.setIdx("diff", diffIdx);
 		
 		AirWizard.beaten = Boolean.parseBoolean(data.remove(0));
+	}
+	
+	private void loadMode(String modedata) {
+		int mode;
+		if(modedata.contains(";")) {
+			String[] modeinfo = modedata.split(";");
+			mode = Integer.parseInt(modeinfo[0]);
+			if(mode == 4) {
+				Updater.scoreTime = Integer.parseInt(modeinfo[1]);
+				if(worldVer.compareTo(new Version("1.9.4")) >= 0)
+					Settings.set("scoretime", modeinfo[2]);
+			}
+		} else {
+			mode = Integer.parseInt(modedata);
+			if(mode == 4) Updater.scoreTime = 300;
+		}
+		
+		Settings.setIdx("mode", mode);
 	}
 	
 	private void loadPrefs(String filename) {
@@ -374,23 +394,11 @@ public class Load {
 		//if(spawnTile.id != Tiles.get("grass").id && spawnTile.mayPass(level, player.spawnx >> 4, player.spawny >> 4, player))
 			//player.bedSpawn = true; //A semi-advanced little algorithm to determine if the player has a bed save; and though if you sleep on a grass tile, this won't get set, it doesn't matter b/c you'll spawn there anyway!
 		
-		String modedata = data.remove(0);
-		int mode;
-		if(modedata.contains(";")) {
-			String[] modeinfo = modedata.split(";");
-			mode = Integer.parseInt(modeinfo[0]);
-			if (mode == 4) {
-				Updater.scoreTime = Integer.parseInt(modeinfo[1]);
-				if(worldVer.compareTo(new Version("1.9.4")) >= 0)
-					Settings.set("scoretime", modeinfo[2]);
-			}
+		if(worldVer.compareTo(new Version("2.0.4-dev8")) < 0) {
+			String modedata = data.remove(0);
+			if(player == Game.player)
+				loadMode(modedata); // only load if you're loading the main player
 		}
-		else {
-			mode = Integer.parseInt(modedata);
-			if (mode == 4) Updater.scoreTime = 300;
-		}
-		
-		Settings.setIdx("mode", mode);
 		
 		String potioneffects = data.remove(0);
 		if(!potioneffects.equals("PotionEffects[]")) {

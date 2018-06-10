@@ -1,5 +1,7 @@
 package minicraft.network;
 
+import javax.swing.Timer;
+
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -8,8 +10,6 @@ import java.io.IOException;
 import java.net.Socket;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Timer;
-import java.util.TimerTask;
 
 import minicraft.core.Game;
 import minicraft.core.World;
@@ -27,26 +27,24 @@ import minicraft.saveload.Version;
 
 public class MinicraftServerThread extends MinicraftConnection {
 	
-	class MyTask extends TimerTask {
-		public MyTask() {}
-		public void run() {}
-	}
+	private static final String autoPing = "ping";
+	private static final String manualPing = "manual";
 	
-	//private static final int PING_INTERVAL = 5_000; // measured in milliseconds
+	private static final int MISSED_PING_THRESHOLD = 5;
+	private static final int PING_INTERVAL = 1_000; // measured in milliseconds
+	
 	
 	private MinicraftServer serverInstance;
 	private RemotePlayer client;
 	
-	//protected boolean isPlaying = false;
+	/// PING
 	
-	
-	//private NetworkInterface computer = null;
-	
-	//private List<Integer> trackedEntities = new ArrayList<Integer>();
-	private List<Timer> gameTimers = new ArrayList<>();
-	private boolean receivedPing = true;
+	private Timer pingTimer;
+	private boolean receivedPing = true; // after first pause, it will act as if the ping was successful, since it didn't even send one in the first place and was just buying time for everything to get settled before pinging.
+	private int missedPings = 0;
 	
 	private long manualPingTimestamp;
+	
 	
 	private List<InputType> packetTypesToKeep = new ArrayList<>();
 	private List<InputType> packetTypesToCache = new ArrayList<>();
@@ -69,11 +67,32 @@ public class MinicraftServerThread extends MinicraftConnection {
 		packetTypesToKeep.addAll(InputType.tileUpdates);
 		packetTypesToKeep.addAll(InputType.entityUpdates);
 		
-		Timer t = new Timer("ClientPing");
-		t.schedule((new MyTask() {
-			public void run() { MinicraftServerThread.this.ping(); }
-		}), 1000, PING_INTERVAL);
-		gameTimers.add(t);
+		pingTimer = new Timer(PING_INTERVAL, e -> {
+			if(!isConnected()) {
+				pingTimer.stop();
+				return;
+			}
+			
+			//if(Game.debug) System.out.println("received ping from "+this+": "+receivedPing+". Previously missed "+missedPings+" pings.");
+			
+			if(!receivedPing) {
+				missedPings++;
+				if(missedPings >= MISSED_PING_THRESHOLD) {
+					// disconnect from the client; they are taking too long to respond and probably don't exist at this point.
+					pingTimer.stop();
+					sendError("client ping too slow, server timed out");
+					endConnection();
+				}
+			} else {
+				missedPings = 0;
+				receivedPing = false;
+			}
+			
+			sendData(InputType.PING, autoPing);
+		});
+		pingTimer.setRepeats(true);
+		pingTimer.setCoalesce(true); // don't try to make up for lost pings.
+		pingTimer.start();
 		
 		start();
 	}
@@ -105,7 +124,7 @@ public class MinicraftServerThread extends MinicraftConnection {
 		return serverInstance.parsePacket(this, inType, data);
 	}
 	
-	private void ping() {
+	/*private void ping() {
 		//if (Game.debug) System.out.println(this+" is doing ping sequence. received ping: " + receivedPing);
 		
 		if(!receivedPing) {
@@ -116,7 +135,7 @@ public class MinicraftServerThread extends MinicraftConnection {
 			receivedPing = false;
 			sendData(InputType.PING, autoPing);
 		}
-	}
+	}*/
 	
 	void doPing() {
 		sendData(InputType.PING, manualPing);
@@ -301,8 +320,9 @@ public class MinicraftServerThread extends MinicraftConnection {
 	}
 	
 	public void endConnection() {
-		for(Timer t: gameTimers)
-			t.cancel();
+		//for(Timer t: gameTimers)
+		// 	t.cancel();
+		pingTimer.stop();
 		super.endConnection();
 		
 		client.remove();

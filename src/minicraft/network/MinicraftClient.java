@@ -1,13 +1,10 @@
 package minicraft.network;
 
-import javax.swing.Timer;
-
 import java.io.IOException;
 import java.net.InetAddress;
 import java.net.InetSocketAddress;
 import java.net.Socket;
 import java.net.UnknownHostException;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
@@ -45,12 +42,8 @@ import org.jetbrains.annotations.Nullable;
 public class MinicraftClient extends MinicraftConnection {
 	
 	public static final int DEFAULT_CONNECT_TIMEOUT = 5_000; // in milliseconds
-	private static final int PING_COUNT_TIMEOUT = 5; // after the server fails to send this many consecutive pings, the client will disconnect automatically.
 	
 	private MultiplayerDisplay menu;
-	
-	private int missedPings = 0;
-	private Timer pingTimeout;
 	
 	private enum State {
 		LOGIN, LOADING, PLAY, RESPAWNING, DISCONNECTED
@@ -99,26 +92,9 @@ public class MinicraftClient extends MinicraftConnection {
 		Game.ISONLINE = true;
 		Game.ISHOST = false;
 		
-		pingTimeout = new Timer(PING_INTERVAL, e -> {
-			if(Game.debug) System.out.println("ping timeout triggered, missed pings: "+missedPings);
-			if(curState == State.DISCONNECTED) {
-				pingTimeout.stop();
-				return;
-			}
-			missedPings++;
-			if(missedPings >= PING_COUNT_TIMEOUT) {
-				endConnection();
-				menu.setError("Server ping timed out");
-			}
-		});
-		pingTimeout.setInitialDelay(PING_INTERVAL*3/2);
-		pingTimeout.setRepeats(true);
-		pingTimeout.setCoalesce(false);
-		
 		if(super.isConnected()) {
 			login(username);
 			start();
-			pingTimeout.start();
 		}
 	}
 	
@@ -192,9 +168,7 @@ public class MinicraftClient extends MinicraftConnection {
 				return false;
 			
 			case PING:
-				pingTimeout.restart();
-				missedPings = 0;
-				//if(Game.debug) System.out.println("CLIENT: received server ping, reset missed ping count");
+				//if(Game.debug) System.out.println("CLIENT: received server ping");
 				sendData(InputType.PING, alldata);
 				return true;
 			
@@ -599,8 +573,6 @@ public class MinicraftClient extends MinicraftConnection {
 	public void endConnection() {
 		if(isConnected() && curState == State.PLAY)
 			sendData(InputType.SAVE, Game.player.getPlayerData()); // try to make sure that the player's info is saved before they leave.
-		
-		pingTimeout.stop();
 		
 		super.endConnection();
 		

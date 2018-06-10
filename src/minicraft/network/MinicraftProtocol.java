@@ -8,9 +8,6 @@ public interface MinicraftProtocol {
 	
 	int PORT = 4225;
 	//int packetSize = 2048;
-	int PING_INTERVAL = 1_000; // measured in milliseconds 
-	String autoPing = "ping";
-	String manualPing = "manual";
 	
 	enum InputType {
 		INVALID, PING, USERNAMES, LOGIN, GAME, INIT, LOAD, TILES, ENTITIES, TILE, ENTITY, PLAYER, MOVE, ADD, REMOVE, DISCONNECT, SAVE, NOTIFY, INTERACT, PUSH, PICKUP, CHESTIN, CHESTOUT, ADDITEMS, BED, POTION, HURT, DIE, RESPAWN, DROP, STAMINA, SHIRT;

@@ -355,6 +355,8 @@ public class MinicraftServer extends Thread implements MinicraftProtocol {
 		//if (Game.debug) System.out.println("SERVER: updating game vars...");
 		if(sendTo.length == 0) return;
 		
+		if(Game.debug) System.out.println("SERVER: broadcasting game update (mode = "+Settings.get("mode")+")");
+		
 		String[] varArray = {
 			Settings.get("mode").toString(),
 			Updater.tickCount+"",

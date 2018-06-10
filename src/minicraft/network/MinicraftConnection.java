@@ -9,7 +9,6 @@ import java.util.Arrays;
 
 import minicraft.core.Game;
 import minicraft.item.PotionType;
-import minicraft.screen.TitleDisplay;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
