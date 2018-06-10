@@ -12,7 +12,6 @@ import minicraft.gfx.Sprite;
 import minicraft.level.Level;
 
 public class Bed extends Furniture {
-	//public static boolean inBed = false; // If a player is in a bed.
 	
 	private static int playersAwake = 1;
 	private static final HashMap<Player, Bed> sleepingPlayers = new HashMap<>();
@@ -24,22 +23,15 @@ public class Bed extends Furniture {
 	/** Called when the player attempts to get in bed. */
 	public boolean use(Player player) {
 		if (checkCanSleep(player)) { // if it is late enough in the day to sleep...
-			/*if(Game.isValidServer()) {
-				// if(inBed) return false;
-				// Game.server.setBed(true);
-				return true;
-			}*/
 			
 			// set the player spawn coord. to their current position, in tile coords (hence " >> 4")
 			player.spawnx = player.x >> 4;
 			player.spawny = player.y >> 4;
 			
-			//player.bedSpawn = true; // the bed is now set as the player spawn point.
-			// this.player = player;
-			// this.playerLevel = player.getLevel();
 			sleepingPlayers.put(player, this);
 			if(Game.isConnectedClient() && player == Game.player) {
 				Game.client.sendBedRequest(this);
+				playersAwake = -1;
 			}
 			if (Game.debug) System.out.println(Network.onlinePrefix()+"player got in bed: " + player);
 			player.remove();
@@ -137,18 +129,4 @@ public class Bed extends Furniture {
 			Game.server.updateGameVars();
 		}
 	}
-	
-	/*public static Player restorePlayer() {
-		if(Bed.playerLevel != null) {
-			Bed.playerLevel.add(Bed.player); // this adds the player to all the other clients' levels
-			if(Game.isValidServer() && player instanceof RemotePlayer)
-				Game.server.getAssociatedThread((RemotePlayer)player).sendEntityAddition(player);
-		} else
-			System.out.println("player was previously on null level before bed... can't restore player: " + Bed.player);
-		Bed.playerLevel = null;
-		Player p = player;
-		Bed.player = null;
-		Bed.inBed = false;
-		return p;
-	}*/
 }

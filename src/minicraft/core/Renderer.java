@@ -1,6 +1,7 @@
 package minicraft.core;
 
 import javax.imageio.ImageIO;
+
 import java.awt.Canvas;
 import java.awt.Graphics;
 import java.awt.image.BufferStrategy;
@@ -171,9 +172,11 @@ public class Renderer extends Game {
 		if (Bed.sleeping()) permStatus.add("Sleeping...");
 		else if (!Game.isValidServer() && Bed.inBed(Game.player)) {
 			int numAwake = Bed.getPlayersAwake();
-			permStatus.add(numAwake + " player"+(numAwake==1?"":"s")+" still awake");
-			permStatus.add(" ");
-			permStatus.add("Press "+input.getMapping("exit")+" to cancel");
+			if(numAwake >= 0) {
+				permStatus.add(numAwake + " player" + (numAwake == 1 ? "" : "s") + " still awake");
+				permStatus.add(" ");
+				permStatus.add("Press " + input.getMapping("exit") + " to cancel");
+			}
 		}
 		
 		if(permStatus.size() > 0) {

@@ -733,12 +733,11 @@ public class MinicraftServer extends Thread implements MinicraftProtocol {
 				boolean getIn = Boolean.parseBoolean(data[0]);
 				if(getIn) {
 					Entity bed = Network.getEntity(Integer.parseInt(data[1]));
-					if(!(bed instanceof Bed)) {
-						System.out.println("SERVER: entity is not a bed: " + bed);
+					if(!(bed instanceof Bed) || !Bed.checkCanSleep(clientPlayer)) {
+						updateGameVars();
 						return false;
 					}
-					if(!Bed.checkCanSleep(clientPlayer))
-						return false;
+					
 					((Bed) bed).use(clientPlayer);
 				}
 				else {
