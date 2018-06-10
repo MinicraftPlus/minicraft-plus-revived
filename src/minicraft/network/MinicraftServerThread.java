@@ -50,8 +50,11 @@ public class MinicraftServerThread extends MinicraftConnection {
 	private List<InputType> packetTypesToCache = new ArrayList<>();
 	private List<String> cachedPackets = new ArrayList<>();
 	
+	private final boolean valid;
+	
 	MinicraftServerThread(Socket socket, MinicraftServer serverInstance) {
 		super("MinicraftServerThread", socket);
+		valid = true;
 		
 		this.serverInstance = serverInstance;
 		if(serverInstance.isFull()) {
@@ -100,15 +103,16 @@ public class MinicraftServerThread extends MinicraftConnection {
 	// this is to be a dummy thread.
 	MinicraftServerThread(RemotePlayer player, MinicraftServer server) {
 		super("MinicraftServerThread", null);
+		valid = false;
 		this.client = player;
 		this.serverInstance = server;
 	}
 	
+	public boolean isValid() { return valid; }
+	
 	public RemotePlayer getClient() { return client; }
 	
 	protected boolean parsePacket(InputType inType, String data) {
-		//if(inType == InputType.LOAD) isPlaying = true;
-		
 		if(inType == InputType.PING) {
 			//if (Game.debug) System.out.println(this+" received ping");
 			receivedPing = true;
@@ -123,19 +127,6 @@ public class MinicraftServerThread extends MinicraftConnection {
 		
 		return serverInstance.parsePacket(this, inType, data);
 	}
-	
-	/*private void ping() {
-		//if (Game.debug) System.out.println(this+" is doing ping sequence. received ping: " + receivedPing);
-		
-		if(!receivedPing) {
-			// disconnect from the client; they are taking too long to respond and probably don't exist anyway.
-			sendError("connection timed out; ping too slow");
-			endConnection();
-		} else {
-			receivedPing = false;
-			sendData(InputType.PING, autoPing);
-		}
-	}*/
 	
 	void doPing() {
 		sendData(InputType.PING, manualPing);
@@ -218,12 +209,6 @@ public class MinicraftServerThread extends MinicraftConnection {
 	}
 	
 	public void updatePlayerActiveItem(Item heldItem) {
-		/*if(client.activeItem == null && heldItem == null || client.activeItem != null && client.activeItem.equals
-				(heldItem)) {
-			System.out.println("SERVER THREAD: player active item is already the one specified: " + heldItem + "; not updating.");
-			return;
-		}*/
-		
 		if(client.activeItem != null && !(client.activeItem instanceof PowerGloveItem))
 			sendData(InputType.CHESTOUT, client.activeItem.getData());
 		client.activeItem = heldItem;
@@ -280,7 +265,7 @@ public class MinicraftServerThread extends MinicraftConnection {
 		String playerdata = "";
 		if(rpFile != null && rpFile.exists()) {
 			try {
-				String content = Load.loadFromFile(rpFile.getPath(), false); //Files.readAllLines(rpFile.toPath(), StandardCharsets.UTF_8);
+				String content = Load.loadFromFile(rpFile.getPath(), false);
 				playerdata = content.substring(content.indexOf("\n")+1); // cut off username
 				// assume the data version is dev6 if it isn't written (it isn't before dev7).
 				if(!Version.isValid(playerdata.substring(0, playerdata.indexOf("\n"))))
@@ -320,8 +305,6 @@ public class MinicraftServerThread extends MinicraftConnection {
 	}
 	
 	public void endConnection() {
-		//for(Timer t: gameTimers)
-		// 	t.cancel();
 		pingTimer.stop();
 		super.endConnection();
 		

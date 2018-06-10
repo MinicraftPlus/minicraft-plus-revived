@@ -137,24 +137,7 @@ public class MinicraftClient extends MinicraftConnection {
 			menu.setError("unable to get localhost address");
 		}
 		changeState(State.LOGIN);
-		//return null;
 	}
-	
-	/*static String getPlayerData(Player player) {
-		StringBuilder playerdata = new StringBuilder();
-		List<String> sdata = new ArrayList<>();
-		Save.writePlayer(player, sdata);
-		if(sdata.size() > 0) // should always be the case
-			playerdata.append(String.join(",", sdata.toArray(new String[0])));
-		playerdata.append("\n");
-		Save.writeInventory(player, sdata);
-		if(sdata.size() == 0)
-			playerdata.append("null");
-		else
-			playerdata.append(String.join(",", sdata.toArray(new String[0])));
-		
-		return playerdata.toString();
-	}*/
 	
 	/** This method is responsible for parsing all data received by the socket. */
 	public boolean parsePacket(InputType inType, String alldata) {
@@ -315,8 +298,6 @@ public class MinicraftClient extends MinicraftConnection {
 					
 					if(entityRequests.containsKey(addedEntity.eid))
 						entityRequests.remove(addedEntity.eid);
-					//else if(Game.debug && addedEntity instanceof RemotePlayer)
-						//System.out.println("CLIENT: added remote player from packet: " + addedEntity + "; game player has eid " + Game.player.eid + "; this player has eid " + addedEntity.eid + "; are equal: " + (Game.player.eid == addedEntity.eid));
 				}
 				
 				return true;
@@ -434,8 +415,6 @@ public class MinicraftClient extends MinicraftConnection {
 			
 			case INTERACT:
 				// the server went through with the interaction, and has sent back the new activeItem.
-				//Item holdItem = Items.get(alldata);
-				//if(Game.debug) System.out.println("CLIENT: received interaction success; setting player item to " + holdItem);
 				Game.player.activeItem = Items.get(alldata, true);
 				Game.player.resolveHeldItem();
 				return true;
@@ -469,19 +448,6 @@ public class MinicraftClient extends MinicraftConnection {
 					((Player)p).hurt(damage, attackDir);
 				return true;
 			
-			/*case BED:
-				Bed.setPlayersAwake(Integer.parseInt(alldata));
-				*//*if (Game.debug) System.out.println("received bed request: " + alldata);
-				boolean inBed = Boolean.parseBoolean(alldata);
-				if(Bed.inBed == inBed) return false; // no action needed.
-				Bed.inBed = inBed;
-				if(inBed)
-					Game.player.remove();
-				else {
-					Game.levels[Game.currentLevel].add(Game.player);
-					move(Game.player);
-				}*//*
-				return true;*/
 			case STAMINA:
 				Game.player.payStamina(Integer.parseInt(alldata));
 				return true;

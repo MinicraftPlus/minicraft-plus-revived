@@ -413,7 +413,8 @@ public class ConsoleReader extends Thread {
 			
 			if(args.length == 3) {
 				// @_ playername radius
-				RemotePlayer rp = Game.server.getAssociatedThread(args[1]).getClient();
+				MinicraftServerThread thread = Game.server.getAssociatedThread(args[1]);
+				RemotePlayer rp = thread == null ? null : thread.getClient();
 				if(rp == null) {
 					System.out.println("invalid entity targeting format: remote player does not exist: " + args[1]);
 					return null;

@@ -12,10 +12,10 @@ import java.util.List;
 
 import minicraft.core.Game;
 import minicraft.core.Network;
-import minicraft.core.io.Localization;
-import minicraft.core.io.Settings;
 import minicraft.core.Updater;
 import minicraft.core.World;
+import minicraft.core.io.Localization;
+import minicraft.core.io.Settings;
 import minicraft.entity.Arrow;
 import minicraft.entity.Direction;
 import minicraft.entity.Entity;
@@ -45,7 +45,6 @@ public class Load {
 	private ArrayList<String> data;
 	private ArrayList<String> extradata;
 	
-	//private boolean hasloadedbigworldalready;
 	private Version currentVer, worldVer;
 	private boolean hasGlobalPrefs = false;
 	
@@ -58,7 +57,6 @@ public class Load {
 		
 		data = new ArrayList<>();
 		extradata = new ArrayList<>();
-		//hasloadedbigworldalready = false;
 	}
 	
 	public Load(String worldname) {
@@ -390,9 +388,6 @@ public class Load {
 		if(level != null && !(Game.isValidServer() && player == Game.player))
 			level.add(player);
 		else if(Game.debug) System.out.println(Network.onlinePrefix()+"game level to add player " + player + " to is null.");
-		//Tile spawnTile = level.getTile(player.spawnx >> 4, player.spawny >> 4);
-		//if(spawnTile.id != Tiles.get("grass").id && spawnTile.mayPass(level, player.spawnx >> 4, player.spawny >> 4, player))
-			//player.bedSpawn = true; //A semi-advanced little algorithm to determine if the player has a bed save; and though if you sleep on a grass tile, this won't get set, it doesn't matter b/c you'll spawn there anyway!
 		
 		if(worldVer.compareTo(new Version("2.0.4-dev8")) < 0) {
 			String modedata = data.remove(0);
@@ -493,7 +488,6 @@ public class Load {
 		for(int i = 0; i < data.size(); i++) {
 			if(data.get(i).equalsIgnoreCase("player")) continue;
 			loadEntity(data.get(i), worldVer, true);
-			//LoadingDisplay.progress(percentInc);
 		}
 		
 		for(int i = 0; i < World.levels.length; i++) {

@@ -10,10 +10,10 @@ import java.util.List;
 
 import minicraft.core.Game;
 import minicraft.core.Renderer;
-import minicraft.core.io.Localization;
-import minicraft.core.io.Settings;
 import minicraft.core.Updater;
 import minicraft.core.World;
+import minicraft.core.io.Localization;
+import minicraft.core.io.Settings;
 import minicraft.entity.Arrow;
 import minicraft.entity.Entity;
 import minicraft.entity.ItemEntity;
@@ -68,7 +68,6 @@ public class Save {
 			}
 		}
 		
-		//location += dir;
 		folder = worldFolder;
 		location = worldFolder.getPath() + "/";
 		
@@ -86,7 +85,6 @@ public class Save {
 		}
 		
 		writeGame("Game");
-		//writePrefs("KeyPrefs");
 		writeWorld("Level");
 		if(!Game.isValidServer()) { // this must be waited for on a server.
 			writePlayer("Player", Game.player);
@@ -148,7 +146,6 @@ public class Save {
 	
 	public static void writeToFile(String filename, String[] savedata, boolean isWorldSave) throws IOException {
 		try (BufferedWriter bufferedWriter = new BufferedWriter(new FileWriter(filename))) {
-			//bufferedWriter.write(content);
 			for(int i = 0; i < savedata.length; i++) {
 				bufferedWriter.write(savedata[i]);
 				if(isWorldSave) {
@@ -300,7 +297,6 @@ public class Save {
 	public static String writeEntity(Entity e, boolean isLocalSave) {
 		String name = e.getClass().getName();
 		name = name.substring(name.lastIndexOf(".")+1);
-		//name = name.substring(name.lastIndexOf(".")+1);
 		StringBuilder extradata = new StringBuilder();
 		
 		// don't even write ItemEntities or particle effects; Spark... will probably is saved, eventually; it presents an unfair cheat to remove the sparks by reloading the Game.

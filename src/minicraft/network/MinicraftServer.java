@@ -86,15 +86,9 @@ public class MinicraftServer extends Thread implements MinicraftProtocol {
 		
 		try {
 			while (socket != null) {
-				//if(playerCap < 0 || threadList.size() < playerCap) {
-					MinicraftServerThread mst = new MinicraftServerThread(socket.accept(), this);
-					if(mst.isConnected())
-						threadList.add(mst);
-				/*} else {
-					try {
-						Thread.sleep(10); // this is simply so we don't go through the while loop at insane speeds for no reason.
-					} catch(InterruptedException ex) {}
-				}*/
+				MinicraftServerThread mst = new MinicraftServerThread(socket.accept(), this);
+				if(mst.isConnected())
+					threadList.add(mst);
 			}
 		} catch (SocketException ex) { // this should occur when closing the thread.
 			//ex.printStackTrace();
@@ -149,13 +143,8 @@ public class MinicraftServer extends Thread implements MinicraftProtocol {
 	}
 	public List<RemotePlayer> getPlayersInRange(Level level, int xt, int yt, boolean useTrackRange) {
 		List<RemotePlayer> players = new ArrayList<>();
-		//if(e == null || e.getLevel() == null) return players;
-		/// screen is 18 tiles hori, 14 tiles vert. So, rect is 20x16 tiles.
-		//List<Entity> entities = level.getEntitiesInTiles(xt - RemotePlayer.xSyncRadius, yt - RemotePlayer.ySyncRadius, xt + RemotePlayer.xSyncRadius, yt + RemotePlayer.ySyncRadius);
 		for(MinicraftServerThread thread: getThreads()) {
 			RemotePlayer rp = thread.getClient();
-			//if(p.isRemoved()) continue;
-			//RemotePlayer rp = (RemotePlayer)e;
 			if(useTrackRange && rp.shouldTrack(xt, yt, level) || !useTrackRange && rp.shouldSync(xt, yt, level))
 				players.add(rp);
 		}
@@ -166,18 +155,21 @@ public class MinicraftServer extends Thread implements MinicraftProtocol {
 	@Nullable
 	private RemotePlayer getIfPlayer(Entity e) {
 		if(e instanceof RemotePlayer) {
-			RemotePlayer given = (RemotePlayer) e;
+			return (RemotePlayer) e;
+			// this method is only used to remove a player from an array, so it is probably better that is doesn't check...
+			/*RemotePlayer given = (RemotePlayer) e;
 			MinicraftServerThread filed = getAssociatedThread(given);
-			if(filed == null) {
+			if(!filed.isValid()) {
 				System.err.println("SERVER encountered a RemotePlayer not matched in the thread list: " + given);
 				return null;
 			}
-			return filed.getClient();
+			return filed.getClient();*/
 		}
 		else
 			return null;
 	}
 	
+	@Nullable
 	public MinicraftServerThread getAssociatedThread(String username) {
 		MinicraftServerThread match = null;
 		
@@ -231,7 +223,7 @@ public class MinicraftServer extends Thread implements MinicraftProtocol {
 		/// NOTE I could do this the other way around, by looping though the thread list, and adding those whose player is found in the given list, which might be slightly more optimal... but I think it's better that this tells you when a player in the list doesn't have a matching thread.
 		for(RemotePlayer client: players) {
 			MinicraftServerThread thread = getAssociatedThread(client);
-			if(thread != null)
+			if(thread.isValid())
 				threads.add(thread);
 			else
 				System.err.println("SERVER WARNING: couldn't find server thread for client " + client);
@@ -263,14 +255,6 @@ public class MinicraftServer extends Thread implements MinicraftProtocol {
 	public void broadcastTileUpdate(Level level, int x, int y) {
 		broadcastData(InputType.TILE, Tile.getData(level.depth, x, y));
 	}
-	/*public void sendTileUpdate(int x, int y, RemotePlayer client) {
-		if(client == null || client.getLevel() == null) {
-			System.err.println("SERVER: can't update tile for null player, or player without level: " + client);
-			return;
-		}
-		
-		sendData(prependType(InputType.TILE, getTileBytes(client.getLevel().depth, x, y)), client.ipAddress, client.port);
-	}*/
 	
 	public void broadcastEntityAddition(Entity e) { broadcastEntityAddition(e, false); }
 	public void broadcastEntityAddition(Entity e, boolean addSelf) {
@@ -289,8 +273,6 @@ public class MinicraftServer extends Thread implements MinicraftProtocol {
 		}
 		if(Game.debug && e instanceof Player) System.out.println("SERVER: broadcasted player addition of "+e+" to "+cnt+" clients");
 	}
-	
-	//public void sendEntityAddition(Entity e, RemotePlayer sender) { sendEntityAddition(e, sender, false); }
 	
 	private List<RemotePlayer> getPlayersToRemove(Entity e, boolean removeSelf) {
 		List<RemotePlayer> players = getPlayersInRange(e, true);
@@ -328,9 +310,6 @@ public class MinicraftServer extends Thread implements MinicraftProtocol {
 		for(MinicraftServerThread thread: getAssociatedThreads(players))
 			thread.sendEntityRemoval(e.eid);
 	}
-	
-	//public void sendEntityRemoval(Entity e) { sendEntityRemoval(e, getIfPlayer(e)); }
-	//public void sendEntityRemoval(Entity e, RemotePlayer sender) { sendEntityRemoval(e.eid, sender, false); }
 	
 	public void saveWorld() {
 		broadcastData(InputType.SAVE, ""); // tell all the other clients to send their data over to be saved.
@@ -378,17 +357,6 @@ public class MinicraftServer extends Thread implements MinicraftProtocol {
 			thread.doPing();
 	}
 	
-	/*public void setBed(boolean inBed) {
-		Bed.inBed = inBed;
-		broadcastData(InputType.BED, ""+inBed);
-		if(inBed) {
-			for(MinicraftServerThread thread: getThreads()) {
-				broadcastEntityRemoval(thread.getClient(), true);
-				thread.getClient().remove();
-			}
-		}
-	}*/
-	
 	protected File[] getRemotePlayerFiles() {
 		File saveFolder = new File(worldPath);
 		
@@ -399,14 +367,6 @@ public class MinicraftServer extends Thread implements MinicraftProtocol {
 		
 		return clientSaves;
 	}
-	
-	/*protected String getUsernames() {
-		StringBuilder names = new StringBuilder();
-		for(MinicraftServerThread thread: getThreads())
-			names.append(thread.getClient().getUsername()).append("\n");
-		
-		return names.toString();
-	}*/
 	
 	boolean parsePacket(MinicraftServerThread serverThread, InputType inType, String alldata) {
 		String[] data = alldata.split(";");
@@ -456,7 +416,6 @@ public class MinicraftServer extends Thread implements MinicraftProtocol {
 				
 				/// versions match, and username is unique; make client player
 				clientPlayer.setUsername(username);
-				//RemotePlayer clientPlayer = new RemotePlayer(null, address, port);
 				
 				/// now, we need to check if this player has played in this world before. If they have, then all previous settings and items and such will be restored.
 				String playerdata = ""; // this stores the data fetched from the files.
@@ -541,7 +500,6 @@ public class MinicraftServer extends Thread implements MinicraftProtocol {
 				}
 				
 				// move the associated player to the level they requested -- they shouldn't be requesting it if they aren't going to transfer to it.
-				//clientPlayer.remove();
 				World.levels[levelidx].add(clientPlayer);
 				// if it's the same level, it will cancel out.
 				
@@ -788,9 +746,6 @@ public class MinicraftServer extends Thread implements MinicraftProtocol {
 					// else, get the player out of bed
 					Bed.restorePlayer(clientPlayer);
 				}
-				// if(Bed.inBed(clientPlayer) || !Bed.checkCanSleep(clientPlayer))
-				// 	return false;
-				// setBed(true);
 				return true;
 			
 			case POTION:
@@ -800,7 +755,6 @@ public class MinicraftServer extends Thread implements MinicraftProtocol {
 				return true;
 			
 			case SHIRT:
-				//if (Game.debug) System.out.println("recieved shirt color update");
 				clientPlayer.shirtColor = Integer.parseInt(alldata);
 				broadcastEntityUpdate(clientPlayer, false);
 				return true;
@@ -812,7 +766,6 @@ public class MinicraftServer extends Thread implements MinicraftProtocol {
 			case MOVE:
 				/// the player moved.
 				//if (Game.debug) System.out.println(serverThread+": received move packet");
-				//int olddir = clientPlayer.dir;
 				int plvlidx = Integer.parseInt(data[3]);
 				if(plvlidx >= 0 && plvlidx < World.levels.length && World.levels[plvlidx] != clientPlayer.getLevel()) {
 					clientPlayer.remove();
@@ -860,8 +813,6 @@ public class MinicraftServer extends Thread implements MinicraftProtocol {
 	
 	protected void onThreadDisconnect(MinicraftServerThread thread) {
 		threadList.remove(thread);
-		//broadcastEntityRemoval(thread.getClient());
-		//broadcastData(InputType.REMOVE, String.valueOf(thread.getClient().eid), thread);
 		if(thread.getClient() == hostPlayer)
 			hostPlayer = null;
 	}
