@@ -22,7 +22,7 @@ public class Zombie extends EnemyMob {
 		super.tick();
 	}
 	
-	protected void die() {
+	public void die() {
 		if (Settings.get("diff").equals("Easy")) dropItem(2, 4, Items.get("cloth"));
 		if (Settings.get("diff").equals("Normal")) dropItem(2, 3, Items.get("cloth"));
 		if (Settings.get("diff").equals("Hard")) dropItem(1, 2, Items.get("cloth"));

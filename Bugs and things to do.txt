@@ -16,8 +16,6 @@ MULTIPLAYER-Related:
  
  It would be nice if I could find a way to not even bother telling the server for things like potions, that don't even interact with the world.
  
- # food stacks only go down one per type..? Needs testing.
-
  # mobs drop too many items when shot with an arrow
 #####
 

@@ -9,7 +9,6 @@ import minicraft.gfx.Color;
 import minicraft.gfx.Sprite;
 import minicraft.item.Inventory;
 import minicraft.item.Item;
-import minicraft.level.Level;
 import minicraft.screen.ContainerDisplay;
 
 public class Chest extends Furniture implements ItemHolder {
@@ -52,12 +51,11 @@ public class Chest extends Furniture implements ItemHolder {
 	}
 	
 	@Override
-	public void remove() {
-		Level level = this.level;
-		super.remove();
+	public void die() {
 		if(level != null) {
 			List<Item> items = inventory.getItems();
 			level.dropItem(x, y, items.toArray(new Item[items.size()]));
 		}
+		super.die();
 	}
 }

@@ -144,7 +144,7 @@ public class Updater extends Game {
 			input.tick();
 			for (Level floor : levels) {
 				if (floor == null) continue;
-				floor.tick();
+				floor.tick(true);
 			}
 			
 			Tile.tickCount++;
@@ -164,8 +164,8 @@ public class Updater extends Game {
 			
 			if(isValidClient() && Renderer.readyToRenderGameplay) {
 				for(int i = 0; i < levels.length; i++)
-					if(i != currentLevel && levels[i] != null)
-						levels[i].tick(false);
+					if(levels[i] != null)
+						levels[i].tick(i == currentLevel);
 			}
 			
 			if (menu != null) {
@@ -196,7 +196,8 @@ public class Updater extends Game {
 						Game.client.sendBedExitRequest();
 					
 					if(level != null) {
-						level.tick(true);
+						if(!isValidClient())
+							level.tick(true);
 						Tile.tickCount++;
 					}
 				}
@@ -223,7 +224,7 @@ public class Updater extends Game {
 					}
 					
 					if(!ISONLINE || isValidServer()) {
-						/// server-only cheats.
+						/// host-only cheats.
 						if (input.getKey("Shift-r").clicked && !isValidServer())
 							World.initWorld(); // for single-player use only.
 						
@@ -232,10 +233,17 @@ public class Updater extends Game {
 						if (input.getKey("3").clicked) changeTimeOfDay(Time.Evening);
 						if (input.getKey("4").clicked) changeTimeOfDay(Time.Night);
 						
-						if (input.getKey("creative").clicked) {Settings.set("mode", "creative");
-							Items.fillCreativeInv(player.getInventory(), false);}
+						String prevMode = (String)Settings.get("mode");
+						if (input.getKey("creative").clicked) {
+							Settings.set("mode", "creative");
+							if(!ISONLINE)
+								Items.fillCreativeInv(player.getInventory(), false);
+						}
 						if (input.getKey("survival").clicked) Settings.set("mode", "survival");
 						if (input.getKey("shift-t").clicked) Settings.set("mode", "score");
+						if(!Settings.get("mode").equals(prevMode) && isValidServer())
+							server.updateGameVars(); // gamemode changed
+						
 						if (isMode("score") && input.getKey("ctrl-t").clicked) {
 							scoreTime = normSpeed * 5; // 5 seconds
 							if(isValidServer()) server.updateGameVars();

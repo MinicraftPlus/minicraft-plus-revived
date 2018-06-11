@@ -1,8 +1,8 @@
 package minicraft.entity.mob;
 
 import minicraft.core.Game;
-import minicraft.core.io.Settings;
 import minicraft.core.Updater;
+import minicraft.core.io.Settings;
 import minicraft.gfx.MobSprite;
 import minicraft.gfx.Screen;
 import minicraft.level.Level;
@@ -33,7 +33,7 @@ public class PassiveMob extends MobAi {
 		}
 	}
 	
-	protected void die() {
+	public void die() {
 		super.die(15);
 	}
 	

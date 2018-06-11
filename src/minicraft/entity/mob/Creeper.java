@@ -13,7 +13,6 @@ import minicraft.gfx.MobSprite;
 import minicraft.gfx.Point;
 import minicraft.gfx.Screen;
 import minicraft.item.Items;
-import minicraft.level.tile.Tile;
 import minicraft.level.tile.Tiles;
 
 public class Creeper extends EnemyMob {
@@ -120,12 +119,8 @@ public class Creeper extends EnemyMob {
 					for(Point p: tilePositions) {
 						if(!p.equals(ePos)) continue;
 						
-						if(!level.getTile(p.x, p.y).mayPass(level, p.x, p.y, e)) {
-							if(e instanceof Mob)
-								((Mob) e).kill();
-							else
-								e.remove();
-						}
+						if(!level.getTile(p.x, p.y).mayPass(level, p.x, p.y, e))
+							e.die();
 					}
 				}
 				
@@ -162,7 +157,7 @@ public class Creeper extends EnemyMob {
 	
 	public boolean canWool() { return false; }
 	
-	protected void die() {
+	public void die() {
 		dropItem(1, 4-Settings.getIdx("diff"), Items.get("Gunpowder"));
 		super.die();
 	}

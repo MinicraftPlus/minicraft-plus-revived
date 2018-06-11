@@ -1,8 +1,8 @@
 package minicraft.entity.mob;
 
 import minicraft.core.Game;
-import minicraft.core.io.Sound;
 import minicraft.core.World;
+import minicraft.core.io.Sound;
 import minicraft.entity.Direction;
 import minicraft.entity.particle.TextParticle;
 import minicraft.gfx.Color;
@@ -153,8 +153,8 @@ public abstract class MobAi extends Mob {
 	
 	public abstract int getMaxLevel();
 	
-	public void die(int points) { die(points, 0); }
-	public void die(int points, int multAdd) {
+	protected void die(int points) { die(points, 0); }
+	protected void die(int points, int multAdd) {
 		for(Player p: level.getPlayers()) {
 			p.score += points * (Game.isMode("score") ? World.getMultiplier() : 1); // add score for zombie death
 			if(multAdd != 0 && Game.isMode("score"))

@@ -1,16 +1,13 @@
 package minicraft.entity.furniture;
 
 import minicraft.core.Game;
-import minicraft.core.io.Settings;
 import minicraft.core.Updater;
+import minicraft.core.io.Settings;
 import minicraft.entity.Entity;
 import minicraft.entity.mob.Player;
-import minicraft.entity.mob.RemotePlayer;
 import minicraft.gfx.Color;
 import minicraft.gfx.Font;
 import minicraft.gfx.Screen;
-import minicraft.item.Item;
-import minicraft.network.MinicraftServerThread;
 
 public class DeathChest extends Chest {
 	
@@ -68,7 +65,7 @@ public class DeathChest extends Chest {
 		}
 		
 		if (time == 0) {
-			remove(); // remove the death chest when the time expires.
+			die(); // remove the death chest when the time expires, spilling all the contents.
 		}
 	}
 	

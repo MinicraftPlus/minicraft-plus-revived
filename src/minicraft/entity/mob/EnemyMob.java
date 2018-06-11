@@ -1,8 +1,8 @@
 package minicraft.entity.mob;
 
 import minicraft.core.Game;
-import minicraft.core.io.Settings;
 import minicraft.core.Updater;
+import minicraft.core.io.Settings;
 import minicraft.entity.Entity;
 import minicraft.entity.furniture.Bed;
 import minicraft.gfx.MobSprite;
@@ -69,7 +69,7 @@ public class EnemyMob extends MobAi {
 		}
 	}
 	
-	protected void die() {
+	public void die() {
 		super.die(50 * lvl, 1);
 	}
 	

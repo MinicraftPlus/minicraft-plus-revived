@@ -244,8 +244,7 @@ public class ConsoleReader extends Thread {
 					return;
 				}
 				
-				int xt = -1;
-				int yt = -1;
+				int xt, yt;
 				Level level = clientThread.getClient().getLevel();
 				
 				if(args.length > 2) {
@@ -299,7 +298,15 @@ public class ConsoleReader extends Thread {
 						System.out.println("specified tile is solid and cannot be moved though.");
 						return;
 					}
-					clientThread.setClientPos(level.depth, xt << 4, yt << 4);
+					if(playerToMove.getLevel().depth != level.depth) {
+						playerToMove.remove();
+						level.add(playerToMove, xt<<4, yt<<4);
+					}
+					else {
+						playerToMove.x = xt << 4;
+						playerToMove.y = yt << 4;
+					}
+					Game.server.broadcastEntityUpdate(playerToMove, true);
 					
 					System.out.println("teleported player " + playerToMove.getUsername() + " to tile coordinates " + xt+","+yt+", on level " + level.depth);
 				} else {
@@ -323,12 +330,8 @@ public class ConsoleReader extends Thread {
 				}
 				
 				int count = entities.size();
-				for(Entity e: entities) {
-					if(e instanceof Mob)
-						((Mob)e).kill();
-					else
-						e.remove();
-				}
+				for(Entity e: entities)
+					e.die();
 				
 				System.out.println("removed " + count + " entities.");
 			}

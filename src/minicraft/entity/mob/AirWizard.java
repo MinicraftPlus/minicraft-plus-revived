@@ -5,9 +5,9 @@ import java.io.FileWriter;
 import java.io.IOException;
 
 import minicraft.core.Game;
+import minicraft.core.Updater;
 import minicraft.core.io.Settings;
 import minicraft.core.io.Sound;
-import minicraft.core.Updater;
 import minicraft.entity.Direction;
 import minicraft.entity.Entity;
 import minicraft.entity.Spark;
@@ -172,7 +172,7 @@ public class AirWizard extends EnemyMob {
 	}
 	
 	/** What happens when the air wizard dies */
-	protected void die() {
+	public void die() {
 		Player[] players = level.getPlayers();
 		if (players.length > 0) { // if the player is still here
 			for(Player p: players)

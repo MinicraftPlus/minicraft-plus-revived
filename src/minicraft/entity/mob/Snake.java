@@ -25,7 +25,7 @@ public class Snake extends EnemyMob {
 		}
 	}
 	
-	protected void die() {
+	public void die() {
 		int num = Settings.get("diff").equals("Hard") ? 1 : 0;
 		dropItem(num, num+1, Items.get("scale"));
 		

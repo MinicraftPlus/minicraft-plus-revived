@@ -262,16 +262,6 @@ public class MinicraftClient extends MinicraftConnection {
 				changeState(State.PLAY); // this will be set before the client receives any cached entities, so that should work out.
 				return true;
 			
-			case MOVE:
-				Game.player.x = Integer.parseInt(data[1]);
-				Game.player.y = Integer.parseInt(data[2]);
-				int newLvlDepth = Integer.parseInt(data[0]);
-				if(Game.player.getLevel() == null || newLvlDepth != Game.player.getLevel().depth) {
-					// switch to the other level.
-					World.changeLevel(World.lvlIdx(newLvlDepth) - Game.currentLevel);
-				}
-				return true;
-			
 			case TILE:
 				Level theLevel = World.levels[Integer.parseInt(data[0])];
 				if(theLevel == null)
@@ -464,9 +454,10 @@ public class MinicraftClient extends MinicraftConnection {
 	
 	/// the below methods are all about sending data to the server, *not* setting any game values.
 	
-	public void move(Player player) {
+	//public void move(Player player) { move(player, player.x, player.y); }
+	public void move(Player player, int x, int y) {
 		//if(Game.debug) System.out.println("CLIENT: sending player movement to ("+player.x+","+player.y+"): " + player);
-		String movedata = player.x+";"+player.y+";"+player.dir.ordinal()+";"+World.lvlIdx(player.getLevel().depth);
+		String movedata = x+";"+y+";"+player.dir.ordinal()+";"+World.lvlIdx(player.getLevel().depth);
 		sendData(InputType.MOVE, movedata);
 	}
 	

@@ -1,10 +1,11 @@
 package minicraft.entity.particle;
 
+import minicraft.entity.ClientTickable;
 import minicraft.entity.Entity;
 import minicraft.gfx.Screen;
 import minicraft.gfx.Sprite;
 
-public class Particle extends Entity {
+public class Particle extends Entity implements ClientTickable {
 	private int time; // lifetime elapsed.
 	private int lifetime;
 	

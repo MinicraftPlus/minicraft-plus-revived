@@ -12,7 +12,7 @@ public class Pig extends PassiveMob {
 		super(sprites, Color.get(-1, 000, 555, 522));
 	}
 	
-	protected void die() {
+	public void die() {
 		int min = 0, max = 0;
 		if (Settings.get("diff").equals("Easy")) {min = 1; max = 3;}
 		if (Settings.get("diff").equals("Normal")) {min = 1; max = 2;}

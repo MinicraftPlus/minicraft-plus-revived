@@ -12,6 +12,7 @@ import minicraft.core.Game;
 import minicraft.core.Network;
 import minicraft.core.Updater;
 import minicraft.core.io.Settings;
+import minicraft.entity.ClientTickable;
 import minicraft.entity.Entity;
 import minicraft.entity.ItemEntity;
 import minicraft.entity.furniture.Chest;
@@ -247,9 +248,6 @@ public class Level {
 		}
 	}
 
-	public void tick() {
-		tick(true);
-	}
 	public void tick(boolean fullTick) {
 		int count = 0;
 		
@@ -303,17 +301,18 @@ public class Level {
 				
 				if (e.isRemoved()) continue;
 				
-				if(e != Game.player) // it is ticked separately.
-					e.tick(); /// the main entity tick call.
+				if(e != Game.player) { // player is ticked separately, others are ticked on server
+					if(!Game.isValidClient())
+						e.tick(); /// the main entity tick call.
+					else if(e instanceof ClientTickable)
+						((ClientTickable)e).clientTick();
+				}
 				
 				if (e.isRemoved()) continue;
 				
 				if (Game.hasConnectedClients()) // this means it's a server
 					Game.server.broadcastEntityUpdate(e);
 				
-				
-				//if (Game.isValidServer() && e instanceof RemotePlayer && Game.server.getThreads().getAssociatedThread((RemotePlayer) e))
-				//	e.remove();
 				if (e instanceof Mob) count++;
 			}
 			
@@ -385,6 +384,8 @@ public class Level {
 			dropItem(x, y, i);
 	}
 	public ItemEntity dropItem(int x, int y, Item i) {
+		if(Game.isValidClient())
+			System.err.println("dropping item on client: "+i);
 		int ranx, rany;
 		do {
 			ranx = x + random.nextInt(11) - 5;

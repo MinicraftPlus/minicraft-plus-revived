@@ -292,8 +292,8 @@ public class MultiplayerDisplay extends Display {
 				if(!online)
 					Font.drawCentered("offline mode: local servers only", screen, Screen.h/2 - Font.textHeight()*6, Color.get(-1, 335));
 				
-				Font.drawCentered("Enter ip address to connect to:", screen, Screen.h/2-Font.textHeight()-2, Color.get(-1, 555));
-				Font.drawCentered(typing, screen, Screen.h/2, Color.get(-1, 552));
+				Font.drawCentered("Enter ip address to connect to:", screen, Screen.h/2-Font.textHeight()*2-2, Color.get(-1, 555));
+				Font.drawCentered(typing, screen, Screen.h/2-Font.textHeight(), Color.get(-1, 552));
 				
 				connectTimeout.render(screen, (Screen.w-connectTimeout.getWidth()) / 2, Screen.h/2+Font.textHeight()*2, true);
 				

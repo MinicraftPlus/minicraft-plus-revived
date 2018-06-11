@@ -5,6 +5,7 @@ import java.util.List;
 
 import minicraft.core.Game;
 import minicraft.core.io.InputHandler;
+import minicraft.entity.ClientTickable;
 import minicraft.entity.Direction;
 import minicraft.entity.Entity;
 import minicraft.entity.furniture.Bed;
@@ -17,7 +18,7 @@ import minicraft.level.Level;
 import org.jetbrains.annotations.Nullable;
 
 /** This is used for players in multiplayer mode. */
-public class RemotePlayer extends Player {
+public class RemotePlayer extends Player implements ClientTickable {
 	
 	/// these are used by the server to determine the distance limit for an entity/tile to be updated/added for a given player.
 	private static final int xSyncRadius = 12;
@@ -50,17 +51,14 @@ public class RemotePlayer extends Player {
 		return username + ":" + ipAddress.getCanonicalHostName() + ":" + port;
 	}
 	
-	public void tick() {
-		if(!Game.isValidServer() && this == Game.player)
-			super.tick();
-		else {
-			// a minimal thing for render update purposes.
-			if (attackTime > 0) {
-				attackTime--;
-				if(attackTime == 0) attackItem = null; // null the attackItem once we are done attacking.
-			}
-			if (hurtTime > 0) hurtTime--; // to update the attack animation.
+	@Override
+	public void clientTick() {
+		// a minimal thing for render update purposes.
+		if (attackTime > 0) {
+			attackTime--;
+			if(attackTime == 0) attackItem = null; // null the attackItem once we are done attacking.
 		}
+		if (hurtTime > 0) hurtTime--; // to update the attack animation.
 	}
 	
 	/// this is simply to broaden the access permissions.
@@ -86,7 +84,7 @@ public class RemotePlayer extends Player {
 		new FontStyle(Color.get(-1, 444)).setShadowType(Color.BLACK, true).setXPos(x - Font.textWidth(username)/2).setYPos(y - 20).draw(username, screen); // draw the username of the player above their head
 	}
 	
-	protected void die() {
+	public void die() {
 		if(Game.isValidServer())
 			Game.server.getAssociatedThread(this).sendPlayerHurt(eid, health, Direction.NONE);
 		else

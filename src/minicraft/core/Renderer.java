@@ -187,7 +187,9 @@ public class Renderer extends Game {
 		}
 		
 		if(permStatus.size() > 0) {
-			FontStyle style = new FontStyle(Color.WHITE).setYPos(Screen.h / 2 - 25, false).setRelTextPos(RelPos.TOP, false).setShadowType(Color.DARK_GRAY, false);
+			FontStyle style = new FontStyle(Color.WHITE).setYPos(Screen.h / 2 - 25)
+				.setRelTextPos(RelPos.TOP)
+				.setShadowType(Color.DARK_GRAY, false);
 			
 			Font.drawParagraph(permStatus, screen, style, 1);
 		}
@@ -338,9 +340,13 @@ public class Renderer extends Game {
 				}
 			}
 			
-			FontStyle style = new FontStyle(textcol).setShadowType(Color.BLACK, true)
-				.setXPos(1)
-				.setYPos(2);
+			FontStyle style = new FontStyle(textcol).setShadowType(Color.BLACK, true).setXPos(1);
+			if(Game.isValidServer()) {
+				style.setYPos(Screen.h).setRelTextPos(RelPos.TOP_RIGHT, true);
+				for(int i = 1; i < info.size(); i++) // reverse order
+					info.add(0, info.remove(i));
+			} else
+				style.setYPos(2);
 			Font.drawParagraph(info, screen, style, 2);
 			/*for(int i = 0; i < info.size(); i++) {
 				style.setYPos(2 + i*10).draw(info.get(i), screen);

@@ -12,7 +12,6 @@ import minicraft.gfx.MobSprite;
 import minicraft.item.PotionType;
 import minicraft.level.tile.Tile;
 import minicraft.level.tile.Tiles;
-import minicraft.network.MinicraftServer;
 
 public abstract class Mob extends Entity {
 	
@@ -47,28 +46,26 @@ public abstract class Mob extends Entity {
 		if (hurtTime > 0) hurtTime--; // If a timer preventing damage temporarily is set, decrement it's value
 		
 		
-		boolean moved = false;
+		//boolean moved = false;
 		/// The code below checks the direction of the knockback, moves the Mob accordingly, and brings the knockback closer to 0.
+		int xd = 0, yd = 0;
 		if(xKnockback != 0) {
-			moved = move2(xKnockback, 0);
+			xd = (int)Math.ceil(xKnockback/2);
 			xKnockback -= xKnockback/Math.abs(xKnockback);
 		}
 		if(yKnockback != 0) {
-			moved = move2(0, yKnockback);
+			yd = (int)Math.ceil(yKnockback/2);
 			yKnockback -= yKnockback/Math.abs(yKnockback);
 		}
 		
 		// if the player moved via knockback, update the server
-		if(moved && Game.isConnectedClient() && this == Game.player) {
-			Game.client.move((Player)this);
-		}
+		if((xd != 0 || yd != 0) && Game.isConnectedClient() && this == Game.player)
+			Game.client.move((Player)this, x+xd, y+yd);
+		
+		//if(xd != 0) move2(xd, 0);
+		//if(yd != 0) move2(0, yd);
+		move(xd, yd);
 	}
-	
-	// kill the mob, programmatically.
-	public void kill() { die(); }
-	
-	// Kill the mob, called when health drops to 0
-	protected void die() { remove(); } // Remove the mob, with the method inherited from Entity
 	
 	public boolean move(int xa, int ya) { // Move the mob, overrides from Entity
 		if(level == null) return false; // stopped b/c there's no level to move in!
@@ -172,6 +169,8 @@ public abstract class Mob extends Entity {
 	
 	public void heal(int heal) { // Restore health on the mob
 		if (hurtTime > 0) return; // If the mob has been hurt recently and hasn't cooled down, don't continue
+		
+		//if(Game.isValidClient()) return;
 		
 		level.add(new TextParticle("" + heal, x, y, Color.GREEN)); // Add a text particle in our level at our position, that is green and displays the amount healed
 		health += heal; // Actually add the amount to heal to our current health

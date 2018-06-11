@@ -12,6 +12,7 @@ import minicraft.core.io.InputHandler;
 import minicraft.core.io.Settings;
 import minicraft.core.io.Sound;
 import minicraft.entity.Arrow;
+import minicraft.entity.ClientTickable;
 import minicraft.entity.Direction;
 import minicraft.entity.Entity;
 import minicraft.entity.ItemEntity;
@@ -40,7 +41,7 @@ import minicraft.screen.WorldSelectDisplay;
 
 import org.jetbrains.annotations.Nullable;
 
-public class Player extends Mob implements ItemHolder {
+public class Player extends Mob implements ItemHolder, ClientTickable {
 	protected InputHandler input;
 	
 	private static final int playerHurtTime = 30;
@@ -317,11 +318,14 @@ public class Player extends Mob implements ItemHolder {
 			//executes if not saving; and... essentially halves speed if out of stamina.
 			if ((xa != 0 || ya != 0) && (staminaRechargeDelay % 2 == 0 || isSwimming()) && !Updater.saving) {
 				double spd = moveSpeed * (potioneffects.containsKey(PotionType.Speed) ? 1.5D : 1);
-				Direction oldDir = dir;
-				boolean moved = move((int) (xa * spd), (int) (ya * spd)); // THIS is where the player moves; part of Mob.java
+				int xd = (int) (xa * spd);
+				int yd = (int) (ya * spd);
+				Direction newDir = Direction.getDirection(xd, yd);
+				if(newDir == Direction.NONE) newDir = dir;
+				if ((xd != 0 || yd != 0 || newDir != dir) && Game.isConnectedClient() && this == Game.player)
+					Game.client.move(this, x+xd, y+yd);
+				boolean moved = move(xd, yd); // THIS is where the player moves; part of Mob.java
 				if (moved) stepCount++;
-				if ((moved || oldDir != dir) && Game.isConnectedClient() && this == Game.player)
-					Game.client.move(this);
 			}
 			
 			
@@ -797,7 +801,7 @@ public class Player extends Mob implements ItemHolder {
 	}
 	
 	/** What happens when the player dies */
-	protected void die() {
+	public void die() {
 		int lostscore = score / 3; // finds score penalty
 		score -= lostscore; // subtracts score penalty
 		World.setMultiplier(1);

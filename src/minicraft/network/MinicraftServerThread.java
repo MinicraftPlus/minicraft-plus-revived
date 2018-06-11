@@ -220,10 +220,6 @@ public class MinicraftServerThread extends MinicraftConnection {
 		sendData(InputType.ADDITEMS, itemData);
 	}
 	
-	public void setClientPos(int lvlDepth, int x, int y) {
-		sendData(InputType.MOVE, lvlDepth+";"+x+";"+y);
-	}
-	
 	protected void respawnPlayer() {
 		client.remove(); // hopefully removes it from any level it might still be on
 		client = new RemotePlayer(false, client);

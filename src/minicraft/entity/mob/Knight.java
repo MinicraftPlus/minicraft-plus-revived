@@ -19,7 +19,7 @@ public class Knight extends EnemyMob {
 		super(lvl, sprites, lvlcols, 9, 100);
 	}
 
-	protected void die() {
+	public void die() {
 		if (Settings.get("diff").equals("Easy"))
 			dropItem(1, 3, Items.get("shard"));
 		else

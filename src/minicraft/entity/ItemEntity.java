@@ -8,7 +8,7 @@ import minicraft.gfx.Color;
 import minicraft.gfx.Screen;
 import minicraft.item.Item;
 
-public class ItemEntity extends Entity {
+public class ItemEntity extends Entity implements ClientTickable {
 	private int lifeTime; // the life time of this entity in the level
 	private double xa, ya, za; // the x, y, and z accelerations.
 	private double xx, yy, zz; // the x, y, and z coordinates; in double precision.

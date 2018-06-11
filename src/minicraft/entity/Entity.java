@@ -17,7 +17,7 @@ import minicraft.level.Level;
 
 import org.jetbrains.annotations.Nullable;
 
-public abstract class Entity {
+public abstract class Entity implements Tickable {
 	
 	/* I guess I should explain something real quick. The coordinates between tiles and entities are different.
 	 * The world coordinates for tiles is 128x128
@@ -58,7 +58,7 @@ public abstract class Entity {
 	}
 	
 	public abstract void render(Screen screen); /// used to render the entity on screen.
-	public abstract void tick(); /// used to update the entity.
+	@Override public abstract void tick(); /// used to update the entity.
 	
 	public boolean isRemoved() { return removed/* || level == null*/; }
 	public Level getLevel() { return level; }
@@ -125,7 +125,8 @@ public abstract class Entity {
 			for (int xt = xt0; xt <= xt1; xt++) { // cycles through x's of tile after movement
 				if (xt >= xto0 && xt <= xto1 && yt >= yto0 && yt <= yto1) continue; // skip this position if this entity's sprite is touching it
 				// tile positions that make it here are the ones that the entity will be in, but are not in now.
-				level.getTile(xt, yt).bumpedInto(level, xt, yt, this); // Used in tiles like cactus
+				if(!Game.isValidClient())
+					level.getTile(xt, yt).bumpedInto(level, xt, yt, this); // Used in tiles like cactus
 				if (!level.getTile(xt, yt).mayPass(level, xt, yt, this)) { // if the entity can't pass this tile...
 					//blocked = true; // then the entity is blocked
 					return false;
@@ -142,7 +143,7 @@ public abstract class Entity {
 			yr++;
 		}
 		List<Entity> isInside = level.getEntitiesInRect(new Rectangle(x+xa, y+ya, xr*2, yr*2, Rectangle.CENTER_DIMS)); // gets the entities that this entity will touch once moved.
-		for (int i = 0; i < isInside.size(); i++) {
+		for (int i = 0; !Game.isValidClient() && i < isInside.size(); i++) {
 			/// cycles through entities about to be touched, and calls touchedBy(this) for each of them.
 			Entity e = isInside.get(i);
 			if (e == this) continue; // touching yourself doesn't count.
@@ -170,6 +171,11 @@ public abstract class Entity {
 		
 		return true; // the move was successful.
 	}
+	
+	// kill the entity, programmatically.
+	//public void kill() { die(); }
+	/** This exists as a way to signify that the entity has been removed through player action and/or world action; basically, it's actually gone, not just removed from a level because it's out of range or something. Calls to this method are used to, say, drop items. */
+	public void die() { remove(); }
 	
 	/** Removes the entity from the level. */
 	public void remove() {

@@ -69,7 +69,7 @@ public class Slime extends EnemyMob {
 		y = oldy;
 	}
 	
-	protected void die() {
+	public void die() {
 		dropItem(1, Game.isMode("score") ? 2 : 4 - Settings.getIdx("diff"), Items.get("slime"));
 		
 		super.die(); // Parent death call
