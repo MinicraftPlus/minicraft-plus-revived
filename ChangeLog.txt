@@ -15,6 +15,7 @@ Minicraft+ version 2.0.4
 + Added keys being dropped back into the game... because apparently that feature disappeared somewhere.
 + Added player hunger to world save.
 - Removed the "home" functionality.
+* Changed beds in multiplayer, so that all players must be sleeping before the game speeds up.
 
 
 Minicraft+ version 2.0.3
