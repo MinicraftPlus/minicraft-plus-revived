@@ -57,7 +57,8 @@ public class World extends Game {
 	
 	
 	/** This method is used when respawning, and by initWorld to reset the vars. It does not generate any new terrain. */
-	public static void resetGame() {
+	public static void resetGame() { resetGame(true); }
+	public static void resetGame(boolean keepPlayer) {
 		if(debug) System.out.println("resetting ..");
 		playerDeadTime = 0;
 		currentLevel = 3;
@@ -69,10 +70,13 @@ public class World extends Game {
 			player = null;
 			return;
 		}
-		if(player instanceof RemotePlayer) {
-			player = new RemotePlayer(true, (RemotePlayer)player);
+		if(keepPlayer) {
+			if(player instanceof RemotePlayer)
+				player = new RemotePlayer(true, (RemotePlayer) player);
+			else
+				player = new Player(player, input);
 		} else
-			player = new Player(player, input);
+			player = new Player(null, input);
 		
 		if (levels[currentLevel] == null) return;
 		

@@ -74,12 +74,9 @@ public class TitleDisplay extends Display {
 		
 		World.levels = new Level[World.levels.length];
 		
-		// was in init
-		if(Game.player == null || Game.player instanceof RemotePlayer) {
-			//if(Game.player != null) Game.player.remove();
-			Game.player = null;
-			World.resetGame();
-		}
+		if(Game.player == null || Game.player instanceof RemotePlayer)
+			// was online, need to reset player
+			World.resetGame(false);
 	}
 	
 	@NotNull
@@ -130,14 +127,6 @@ public class TitleDisplay extends Display {
 		
 		Font.drawCentered(splashes[rand], screen, 60, cols);
 		
-		/*if(GameApplet.isApplet) {
-			String greeting = "Welcome!", name = GameApplet.username;
-			if(name.length() < 36) greeting = name+"!";
-			if(name.length() < 27) greeting = "Welcome, " + greeting;
-			
-			Font.drawCentered(greeting, screen, 10, Color.get(-1, 330));
-		}*/
-		
 		Font.draw("Version " + Game.VERSION, screen, 1, 1, Color.get(-1, 111));
 		
 		
@@ -152,23 +141,28 @@ public class TitleDisplay extends Display {
 	
 	private static final String[] splashes = {//new ArrayList<String>();
 		"Multiplayer Now Included!",
-		"Also play InfinityTale!",
-		"Also play Minicraft Deluxe!",
-		"Also play Alecraft!",
-		"Also play Hackcraft!",
-		"Also play MiniCrate!",
-		"Also play MiniCraft Mob Overload!",
+		// "Also play InfinityTale!",
+		// "Also play Minicraft Deluxe!",
+		// "Also play Alecraft!",
+		// "Also play Hackcraft!",
+		// "Also play MiniCrate!",
+		// "Also play MiniCraft Mob Overload!",
 		"Only on PlayMinicraft.com!",
 		"Playminicraft.com is the bomb!",
-		"@MinicraftPlus on Twitter",
+		// "@MinicraftPlus on Twitter",
 		"MinicraftPlus on Youtube",
 		//"Join the Forums!",
-		//"The Wiki is weak! Help it!",
+		"The Wiki is weak! Help it!",
 		"Notch is Awesome!",
 		"Dillyg10 is cool as Ice!",
 		"Shylor is the man!",
 		"AntVenom loves cows! Honest!",
 		"You should read Antidious Venomi!",
+		"Oh Hi Mark",
+		"Use the force!",
+		"Keep calm!",
+		"Get him, Steve!",
+		"Forty-Two!",
 		"Kill Creeper, get Gunpowder!",
 		"Kill Cow, get Beef!",
 		"Kill Zombie, get Cloth!",
@@ -179,18 +173,13 @@ public class TitleDisplay extends Display {
 		"Gold > Iron",
 		"Gem > Gold",
 		"Test == InDev!",
-		//"Alpha? What's that?",
-		//"Beta? What's that?",
-		//"Infdev? What's that?",
-		"Story? Hmm...",
+		"Story? Uhh...",
 		"Infinite terrain? What's that?",
 		"Redstone? What's that?",
-		//"Spiders? What are those?",
 		"Minecarts? What are those?",
-		"3D? What's that?",
-		"3.1D is the new thing!",
-		"Windows? I perfer Doors!",
-		//"Mouse? I perfer Keyboard!",
+		"Windows? I prefer Doors!",
+		"2.5D FTW!",
+		"3rd dimension not included!",
 		"Mouse not included!",
 		"No spiders included!",
 		"No Endermen included!",
@@ -203,8 +192,6 @@ public class TitleDisplay extends Display {
 		"Cows included!",
 		"Sheep included!",
 		"Pigs included!",
-		//"Saving Now Included!",
-		//"Loading Now Included!",
 		"Bigger Worlds!",
 		"World types!",
 		"World themes!",
@@ -217,30 +204,8 @@ public class TitleDisplay extends Display {
 		"saying ay-oh, that creeper's KO'd!",
 		"Gimmie a bucket!",
 		"Farming with water!",
-		"Made with 10000% Vitamin Z!",
-		"Too much DP!",
-		"Y U NO BOAT!?",
-		//"PBAT is in the house!",
-		"Punch the Moon!",
-		"This is String qq!",
-		"Why?",
-		"You are null!",
-		"That guy is such a sly fox!",
-		"Hola senor!",
-		"Sonic Boom!",
-		"Hakuna Matata!",
-		"One truth prevails!",
-		//"1.8? Ehhhh....",
-		"011011000110111101101100!",
-		"001100010011000000110001!",
-		"011010000110110101101101?",
-		//"Buckets? YESH!",
 		"Press \"R\"!",
 		"Get the High-Score!",
-		"Awesome!",
-		"Sweet!",
-		"Cool!",
-		"Radical!",
 		"Potions ftw!",
 		"Beds ftw!",
 		"Defeat the Air Wizard!",
@@ -251,13 +216,32 @@ public class TitleDisplay extends Display {
 		"Sand + Gunpowder = TNT!",
 		"Sleep at Night!",
 		"Farm at Day!",
-		//"Leave a comment below!",
 		"Explanation Mark!",
 		"!sdrawkcab si sihT",
 		"This is forwards!",
 		"Why is this blue?",
 		"Green is a nice color!",
-		"Red is my favorite color!"
-		//"try with --debug",
+		"Red is my favorite color!",
+		"Y U NO BOAT!?",
+		"Made with 10000% Vitamin Z!",
+		"Too much DP!",
+		"Punch the Moon!",
+		"This is String qq!",
+		"Why?",
+		"You are null!",
+		"hello down there!",
+		"That guy is such a sly fox!",
+		"Hola senor!",
+		"Sonic Boom!",
+		"Hakuna Matata!",
+		"One truth prevails!",
+		"Awesome!",
+		"Sweet!",
+		"Cool!",
+		"Radical!",
+		"011011000110111101101100!",
+		"001100010011000000110001!",
+		"011010000110110101101101?",
+		"...zzz..."
 	};
 }
