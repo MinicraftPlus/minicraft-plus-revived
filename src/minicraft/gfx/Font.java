@@ -3,8 +3,6 @@ package minicraft.gfx;
 import java.util.ArrayList;
 import java.util.Arrays;
 
-import minicraft.screen.RelPos;
-
 public class Font {
 	// These are all the characters that will be translated to the screen. (The spaces are important)
 	private static String chars = "" + //
@@ -42,38 +40,10 @@ public class Font {
 		return SpriteSheet.boxWidth;
 	}
 	
-	/*public static int centerX(String msg, int minX, int maxX) {
-		return (maxX + minX) / 2 - textWidth(msg) / 2;
-	}*/
-	
-	/*public static int centerY(String msg, int minY, int maxY) {
-		return (maxY + minY) / 2 - textHeight() / 2;
-	}*/
-	
 	public static void drawCentered(String msg, Screen screen, int y, int color) {
 		new FontStyle(color).setYPos(y).draw(msg, screen);
 	}
 	
-	/*public static void drawCentered(String msg, Screen screen, int x, int y, int color) {
-		new FontStyle(color).xCenterBounds(x-(Screen.w-x), Screen.w).setYPos(y).draw(msg, screen);
-	}*/
-	
-	/// these draws a paragraph from an array of lines (or a string, at which point it calls getLines()), with the specified properties.
-	
-	/// this one assumes the screen width, minus a given padding.
-	/*public static void drawParagraph(String para, Screen screen, int paddingX, boolean mirrorPaddingX, int paddingY, boolean mirrorPaddingY, FontStyle style, int lineSpacing) {
-		
-		//style.xCenterBounds(paddingX, Screen.w - (mirrorPaddingX?paddingX:0));
-		//style.yCenterBounds(paddingY, Screen.h - (mirrorPaddingY?paddingY:0));
-		if(mirrorPaddingX) {
-			style.setXPos(Screen.w / 2);
-			style.setParaJustify(RelPos.TOP);
-		}
-		if(mirrorPaddingY)
-			style.setYPos(Screen.h/2);
-		
-		drawParagraph(para, screen, Screen.w-paddingX*(mirrorPaddingX?2:1), Screen.h-paddingY*(mirrorPaddingY?2:1), style, lineSpacing);
-	}*/
 	
 	/// note: the y centering values in the FontStyle object will be used as a paragraph y centering value instead.
 	public static void drawParagraph(String para, Screen screen, FontStyle style, int lineSpacing) { drawParagraph(para, screen, Screen.w, Screen.h, style, lineSpacing); }
@@ -86,57 +56,9 @@ public class Font {
 	public static void drawParagraph(String[] lines, Screen screen, FontStyle style, int lineSpacing) {
 		for(int i = 0; i < lines.length; i++)
 			style.drawParagraphLine(lines, i, lineSpacing, screen);
-		
-		//return lines[lines.length-1]; // this is where the rest of the string that there wasn't space for is stored.
 	}
 	
-	//public static String[] getLines(String para, int w, int lineSpacing) { return getLines(para, w, 0, lineSpacing); }
-	/*public static String[] getLines(String para, int w, int h, int lineSpacing) {
-		ArrayList<String> lines = new ArrayList<>();
-		int curPos = 0, curY = 0;
-		while(curPos < para.length() && curY < h) { // continue until we run out of characters, or lines.
-			StringBuilder line = new StringBuilder();
-			StringBuilder nextWord = new StringBuilder();
-			while(textWidth(line.toString()) + textWidth(nextWord.toString()) <= w) { // if the next word will fit...
-				line.append(nextWord); // append it to the line
-				curPos += nextWord.length(); // advance past the word (including space)
-				if(curPos >= para.length()) {
-					//System.out.println("no more chars");
-					break; // skip the rest, break from the loop, if we've run out of characters to process.
-				}
-				if(para.charAt(curPos) == '\n') { // skip to next line on line break
-					curPos++;
-					//System.out.println("newline");
-					break;
-				}
-				
-				nextWord = new StringBuilder(line.length() == 0 ? "" : " "); // space this word from the previous word, if there is one.
-				StringCharacterIterator text = new StringCharacterIterator(para, curPos);
-				for(char c = text.current(); c != StringCharacterIterator.DONE && c != ' ' && c != '\n'; c = text.next()) {
-					nextWord.append(String.valueOf(c)); // iterate through text from curPos, until the end of the text, or a space, or special char.
-				}
-				if(text.current() != ' ' && curPos+nextWord.length() < para.length())
-					curPos--; // if we didn't end on a space, and this is going to loop again, then take away one from curPos (b/c we are adding a space that wasn't there before, and so without this we would skip a character).
-				if(text.current() == ' ' && line.length() == 0)
-					curPos++; // if we ended on a space, advance past the space.
-			}
-			//System.out.println("adding line " + line);
-			lines.add(line.toString()); // add the finished line to the list
-			curY += textHeight() + lineSpacing; // move the y position down one line.
-		}
-		
-		String leftover = "";
-		if(curPos < para.length())
-			leftover = para.substring(curPos); // get any text from the string that didn't fit in the given rectangle.
-		
-		if(h > 0 || leftover.length() > 0)
-			lines.add(leftover);
-		
-		return lines.toArray(new String[lines.size()]);
-	}*/
-	
 	public static String[] getLines(String para, int w, int h, int lineSpacing) {
-		//para = para.replaceAll("-", "- "); // I'll try this later when the current system works.
 		ArrayList<String> lines = new ArrayList<>();
 		
 		// So, I have a paragraph. I give it to getLine, and it returns an index. Cut the string at that index, and add it to the lines list.
