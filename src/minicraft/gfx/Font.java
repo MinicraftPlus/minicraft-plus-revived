@@ -2,6 +2,7 @@ package minicraft.gfx;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 
 public class Font {
 	// These are all the characters that will be translated to the screen. (The spaces are important)
@@ -48,11 +49,13 @@ public class Font {
 	/// note: the y centering values in the FontStyle object will be used as a paragraph y centering value instead.
 	public static void drawParagraph(String para, Screen screen, FontStyle style, int lineSpacing) { drawParagraph(para, screen, Screen.w, Screen.h, style, lineSpacing); }
 	public static void drawParagraph(String para, Screen screen, int w, int h, FontStyle style, int lineSpacing) {
-		String[] lines = getLines(para, w, h, lineSpacing);
-		drawParagraph(lines, screen, style, lineSpacing);
+		drawParagraph(getLines(para, w, h, lineSpacing), screen, style, lineSpacing);
 	}
 	
 	/// all the other drawParagraph() methods end up calling this one.
+	public static void drawParagraph(List<String> lines, Screen screen, FontStyle style, int lineSpacing) {
+		drawParagraph(lines.toArray(new String[lines.size()]), screen, style, lineSpacing);
+	}
 	public static void drawParagraph(String[] lines, Screen screen, FontStyle style, int lineSpacing) {
 		for(int i = 0; i < lines.length; i++)
 			style.drawParagraphLine(lines, i, lineSpacing, screen);

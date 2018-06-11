@@ -4,8 +4,8 @@ import java.util.ArrayList;
 import java.util.Arrays;
 
 import minicraft.core.Game;
-import minicraft.core.io.InputHandler;
 import minicraft.core.Network;
+import minicraft.core.io.InputHandler;
 import minicraft.core.io.Localization;
 import minicraft.gfx.Color;
 import minicraft.saveload.Save;
@@ -33,7 +33,9 @@ public class PauseDisplay extends Display {
 				Game.setMenu(null);
 				Network.startMultiplayerServer();
 			}));
-			
+		}
+		
+		if(!Game.isValidClient()) {
 			entries.add(new SelectEntry("Save Game", () -> {
 				Game.setMenu(null);
 				if(!Game.isValidServer())

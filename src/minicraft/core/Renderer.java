@@ -167,27 +167,34 @@ public class Renderer extends Game {
 		screen.render(10 * 8 + 4, Screen.h - 16, 13 + 5 * 32, Color.get(0, 111, 222, 430), 0);
 		
 		ArrayList<String> permStatus = new ArrayList<>();
-		String msg = "";
 		if (Updater.saving) permStatus.add("Saving... " + Math.round(LoadingDisplay.getPercentage()) + "%");
 		if (Bed.sleeping()) permStatus.add("Sleeping...");
-		else if (!Game.isValidServer() && Bed.inBed(Game.player)) {
+		else if (!Game.isValidServer() && Bed.getPlayersAwake() > 0) {
 			int numAwake = Bed.getPlayersAwake();
-			if(numAwake >= 0) {
-				permStatus.add(numAwake + " player" + (numAwake == 1 ? "" : "s") + " still awake");
+			if(Bed.inBed(Game.player)) {
+				permStatus.add(MyUtils.plural(numAwake, "player") + " still awake");
 				permStatus.add(" ");
 				permStatus.add("Press " + input.getMapping("exit") + " to cancel");
+			}
+			else if(Game.isValidClient()) {
+				// draw it in a corner
+				int total = Game.client.getPlayerCount();
+				int sleepCount = total - numAwake;
+				if(sleepCount > 0)
+					new FontStyle(Color.WHITE).setRelTextPos(RelPos.BOTTOM_LEFT).setAnchor(Screen.w, 0)
+				.draw(sleepCount+"/"+total+" players sleeping", screen);
 			}
 		}
 		
 		if(permStatus.size() > 0) {
-			FontStyle style = new FontStyle(Color.WHITE).setYPos(Screen.h / 2 - 20, false).setRelTextPos(RelPos.TOP, false).setShadowType(Color.DARK_GRAY, false);
+			FontStyle style = new FontStyle(Color.WHITE).setYPos(Screen.h / 2 - 25, false).setRelTextPos(RelPos.TOP, false).setShadowType(Color.DARK_GRAY, false);
 			
-			Font.drawParagraph(permStatus.toArray(new String[permStatus.size()]), screen, style, 1);
+			Font.drawParagraph(permStatus, screen, style, 1);
 		}
 		
 		/// NOTIFICATIONS
 		
-		if (notifications.size() > 0 && msg.length() == 0) {
+		if (permStatus.size() == 0 && notifications.size() > 0) {
 			Updater.notetick++;
 			if (notifications.size() > 3) { //only show 3 notifs max at one time; erase old notifs.
 				notifications = notifications.subList(notifications.size() - 3, notifications.size());
@@ -199,12 +206,14 @@ public class Renderer extends Game {
 			}
 			
 			// draw each current notification, with shadow text effect.
-			FontStyle style = new FontStyle(Color.WHITE).setShadowType(Color.DARK_GRAY, false);
-			for (int i = 0; i < notifications.size(); i++) {
+			FontStyle style = new FontStyle(Color.WHITE).setShadowType(Color.DARK_GRAY, false)
+				.setYPos(Screen.h*2/5).setRelTextPos(RelPos.TOP, false);
+			Font.drawParagraph(notifications, screen, style, 0);
+			/*for (int i = 0; i < notifications.size(); i++) {
 				String note = notifications.get(i);
 				int y = Screen.h - 120 - notifications.size()*8 + i * 8;
 				style.setYPos(y).draw(note, screen);
-			}
+			}*/
 		}
 		
 		
@@ -313,8 +322,6 @@ public class Renderer extends Game {
 					info.add("Mob Load Cnt " + levels[currentLevel].mobCount);
 			}
 			
-			info.add("Hunger stam: " + player.getDebugHunger());
-			
 			/// Displays number of chests left, if on dungeon level.
 			if (levels[currentLevel] != null && (isValidServer() || currentLevel == 5 && !isValidClient())) {
 				if (levels[5].chestCount > 0)
@@ -324,16 +331,20 @@ public class Renderer extends Game {
 			}
 			
 			if(!isValidServer()) {
+				info.add("Hunger stam: " + player.getDebugHunger());
 				if(player.armor > 0) {
 					info.add("armor: " + player.armor);
 					info.add("dam buffer: " + player.armorDamageBuffer);
 				}
 			}
 			
-			FontStyle style = new FontStyle(textcol).setShadowType(Color.BLACK, true).setXPos(1);
-			for(int i = 0; i < info.size(); i++) {
+			FontStyle style = new FontStyle(textcol).setShadowType(Color.BLACK, true)
+				.setXPos(1)
+				.setYPos(2);
+			Font.drawParagraph(info, screen, style, 2);
+			/*for(int i = 0; i < info.size(); i++) {
 				style.setYPos(2 + i*10).draw(info.get(i), screen);
-			}
+			}*/
 		}
 	}
 	

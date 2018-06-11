@@ -10,4 +10,16 @@ public final class MyUtils {
 		return val;
 	}
 	
+	public static String plural(int num, String word) {
+		String p = num == 1 ? "" : "s";
+		return num + " " + word + p;
+	}
+	
+	public static void sleep(int millis) {
+		try {
+			Thread.sleep(millis);
+		} catch(InterruptedException ignored) {
+		}
+	}
+	
 }

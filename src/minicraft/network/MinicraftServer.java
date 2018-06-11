@@ -334,14 +334,13 @@ public class MinicraftServer extends Thread implements MinicraftProtocol {
 		//if (Game.debug) System.out.println("SERVER: updating game vars...");
 		if(sendTo.length == 0) return;
 		
-		if(Game.debug) System.out.println("SERVER: broadcasting game update (mode = "+Settings.get("mode")+")");
-		
 		String[] varArray = {
 			Settings.get("mode").toString(),
 			Updater.tickCount+"",
 			Updater.gamespeed+"",
 			Updater.pastDay1+"",
 			Updater.scoreTime+"",
+			getNumPlayers()+"",
 			Bed.getPlayersAwake()+""
 		};
 		
@@ -389,7 +388,6 @@ public class MinicraftServer extends Thread implements MinicraftProtocol {
 		if(InputType.serverOnly.contains(inType)) {
 			/// these are ALL illegal for a client to send.
 			System.err.println("SERVER warning: client " + clientPlayer + " sent illegal packet type " + inType + " to server.");
-			//sendError("You cannot set the world variables.", address, port);
 			return false;
 		}
 		
@@ -409,10 +407,17 @@ public class MinicraftServer extends Thread implements MinicraftProtocol {
 					return false;
 				}
 				
-				// check if the same username already exists on the server (due to glitches), and if so, remove it
-				MinicraftServerThread oldThread;
-				while((oldThread = getAssociatedThread(username)) != null)
+				// check if the same username already exists on the server (due to signing on a second time with the same account), and if so, prevent the new login
+				if(getAssociatedThread(username) != null) {
+					serverThread.sendError("Account is already logged in to server");
+					return false;
+				}
+				/*while((oldThread = getAssociatedThread(username)) != null) {
+					if(oldThread.isConnected())
+						oldThread.sendError("User");
 					oldThread.endConnection();
+					oldThread.getClient().remove();
+				}*/
 				
 				/// versions match, and username is unique; make client player
 				clientPlayer.setUsername(username);
@@ -471,7 +476,7 @@ public class MinicraftServer extends Thread implements MinicraftProtocol {
 				if(!Arrays.asList(World.levels[playerlvl].getEntityArray()).contains(clientPlayer) && clientPlayer != hostPlayer) // this will be true if their file was already found, since they are added in Load.loadPlayer().
 					World.levels[playerlvl].add(clientPlayer); // add to level (**id is generated here**) and also, maybe, broadcasted to other players?
 				
-				updateGameVars(serverThread);
+				updateGameVars();
 				//making INIT_W packet
 				int[] toSend = {
 					clientPlayer.eid,
@@ -606,10 +611,10 @@ public class MinicraftServer extends Thread implements MinicraftProtocol {
 					List<String> datastrs = new ArrayList<>();
 					
 					Save save = new Save(clientPlayer, false);
-					datastrs.addAll(Arrays.asList(parts[0].split(",")));
+					datastrs.addAll(Arrays.asList(parts[1].split(",")));
 					save.writeToFile(save.location+"Player"+Save.extension, datastrs);
 					datastrs.clear();
-					datastrs.addAll(Arrays.asList(parts[1].split(",")));
+					datastrs.addAll(Arrays.asList(parts[2].split(",")));
 					save.writeToFile(save.location+"Inventory"+Save.extension, datastrs);
 					
 					return true;
@@ -810,7 +815,7 @@ public class MinicraftServer extends Thread implements MinicraftProtocol {
 			thread.sendData(inType, data);
 	}
 	
-	protected void onThreadDisconnect(MinicraftServerThread thread) {
+	protected synchronized void onThreadDisconnect(MinicraftServerThread thread) {
 		threadList.remove(thread);
 		if(thread.getClient() == hostPlayer)
 			hostPlayer = null;

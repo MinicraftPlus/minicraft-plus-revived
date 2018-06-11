@@ -2,9 +2,7 @@ package minicraft.core;
 
 import minicraft.core.io.Localization;
 import minicraft.core.io.Settings;
-import minicraft.entity.Entity;
 import minicraft.entity.furniture.Bed;
-import minicraft.entity.mob.Mob;
 import minicraft.entity.mob.Player;
 import minicraft.item.Items;
 import minicraft.level.Level;
@@ -100,26 +98,9 @@ public class Updater extends Game {
 			if (tickCount <= sleepStartTime && tickCount >= sleepEndTime) { // it has reached morning.
 				if(Game.debug) System.out.println(Network.onlinePrefix()+"reached morning, getting out of bed");
 				gamespeed = 1;
-				if(isValidServer()) {
+				if(isValidServer())
 					server.updateGameVars();
-					//server.setBed(false);
-				}
 				Bed.restorePlayers();
-				/*else {
-					Player playerInBed = Bed.restorePlayer();
-					
-					// seems this removes all entities within a certain radius of the player when you get OUT of Bed.
-					for (Entity e : level.getEntityArray()) {
-						if (e.getLevel() == levels[currentLevel]) {
-							int xd = playerInBed.x - e.x;
-							int yd = playerInBed.y - e.y;
-							if (xd * xd + yd * yd < 48 && e instanceof Mob && !(e instanceof Player)) {
-								// this comes down to a radius of about half a tile... huh...
-								level.remove(e);
-							}
-						}
-					}
-				}*/
 			}
 		}
 		
@@ -189,7 +170,8 @@ public class Updater extends Game {
 			
 			if (menu != null) {
 				//a menu is active.
-				player.tick(); // it is CRUCIAL that the player is ticked HERE, before the menu is ticked. I'm not quite sure why... the menus break otherwise, though.
+				if(player != null)
+					player.tick(); // it is CRUCIAL that the player is ticked HERE, before the menu is ticked. I'm not quite sure why... the menus break otherwise, though.
 				menu.tick(input);
 				paused = true;
 			} else {

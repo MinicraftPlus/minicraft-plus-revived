@@ -2,6 +2,7 @@ package minicraft.screen;
 
 import java.io.InputStream;
 
+import minicraft.core.Action;
 import minicraft.core.Game;
 import minicraft.core.Updater;
 import minicraft.core.io.InputHandler;
@@ -48,7 +49,8 @@ public class MultiplayerDisplay extends Display {
 	
 	private State curState;
 	
-	public MultiplayerDisplay() {
+	public MultiplayerDisplay() { this(true); }
+	public MultiplayerDisplay(boolean pingSite) {
 		Game.ISONLINE = true;
 		Game.ISHOST = false;
 		
@@ -56,8 +58,23 @@ public class MultiplayerDisplay extends Display {
 		if(email == null) email = "";
 		if(savedUsername == null) savedUsername = "";
 		
-		// HTTP REQUEST - determine if there is internet connectivity.
-		//String url = "https://www.playminicraft.com"; // test request
+		if(pingSite)
+			contactAccountServer(() -> {});
+	}
+	
+	// this automatically sets the ipAddress.
+	public MultiplayerDisplay(String ipAddress) {
+		this(false);
+		contactAccountServer(() -> {
+			if(curState == State.ENTERIP) { // login was automatic
+				setWaitMessage("connecting to server");
+				Game.client = new MinicraftClient(savedUsername,this, ipAddress);
+			} else
+				savedIP = ipAddress; // must login manually, so the ip address is saved for now.
+		});
+	}
+	
+	private void contactAccountServer(Action sitePingCallback) {
 		setWaitMessage("testing connection");
 		
 		Unirest.get(domain).asBinaryAsync(new Callback<InputStream>() {
@@ -67,8 +84,6 @@ public class MultiplayerDisplay extends Display {
 					online = true;
 				else
 					System.err.println("warning: minicraft site ping returned status code " + httpResponse.getStatus());
-				
-				//if(Game.getMenu() != MultiplayerMenu.this) return; // don't continue if the player moved to a different menu. 
 				
 				if(savedUUID.length() > 0) {
 					// there is a previous login that can be used; check that it's valid
@@ -89,40 +104,33 @@ public class MultiplayerDisplay extends Display {
 					typing = savedIP;
 					curState = State.ENTERIP; // the user has sufficient credentials; skip login phase
 				}
+				
+				sitePingCallback.act();
 			}
 			
 			@Override
 			public void failed(UnirestException e) {
-				System.err.println("website ping failed.");
-				e.printStackTrace();
+				System.err.println("website ping failed: "+e.getMessage());
+				if(!e.getMessage().equalsIgnoreCase("connection reset by peer"))
+					e.printStackTrace();
 				cancelled();
 			}
 			
 			@Override
 			public void cancelled() {
-				System.err.println("cancel method called.");
+				System.err.println("website ping cancelled.");
 				if(savedUsername.length() == 0 || savedUUID.length() == 0) {
 					// couldn't validate username, and can't enter offline mode b/c there is no username
-					setError("no internet connection, but no login data saved; cannot enter offline mode.", false);
-					//setError("could not access "+url);
+					setError("could not connect to playminicraft account server, but no login data saved; cannot enter offline mode.", false);
 					return;
 				}
 				
 				// there is a saved copy of the uuid and username of the last player; use it for offline mode.
 				curState = State.ENTERIP;
+				
+				sitePingCallback.act();
 			}
 		});
-	}
-	
-	// this automatically sets the ipAddress.
-	public MultiplayerDisplay(String ipAddress) {
-		this();
-		//if(Game.debug) System.out.println("ip mm constructor");
-		if(curState == State.ENTERIP) { // login was automatic
-			setWaitMessage("connecting to server");
-			Game.client = new MinicraftClient(savedUsername,this, ipAddress);
-		} else
-			savedIP = ipAddress; // must login manually, so the ip address is saved for now.
 	}
 	
 	@Override

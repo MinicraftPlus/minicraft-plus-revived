@@ -52,12 +52,14 @@ public class MinicraftClient extends MinicraftConnection {
 	
 	private HashMap<Integer, Long> entityRequests = new HashMap<>();
 	
+	private int serverPlayerCount = 0;
+	
 	@Nullable
 	private static Socket openSocket(String hostName, MultiplayerDisplay menu, int connectTimeout) {
 		InetAddress hostAddress;
 		Socket socket;
 		
-		if(Game.debug) System.out.println("getting host address from host name...");
+		if(Game.debug) System.out.println("getting host address from host name \""+hostName+"\"...");
 		
 		try {
 			hostAddress = InetAddress.getByName(hostName);
@@ -97,6 +99,8 @@ public class MinicraftClient extends MinicraftConnection {
 			start();
 		}
 	}
+	
+	public int getPlayerCount() { return serverPlayerCount; }
 	
 	private void changeState(State newState) {
 		curState = newState;
@@ -171,7 +175,8 @@ public class MinicraftClient extends MinicraftConnection {
 				Updater.gamespeed = Float.parseFloat(data[2]);
 				Updater.pastDay1 = Boolean.parseBoolean(data[3]);
 				Updater.scoreTime = Integer.parseInt(data[4]);
-				Bed.setPlayersAwake(Integer.parseInt(data[5]));
+				serverPlayerCount = Integer.parseInt(data[5]);
+				Bed.setPlayersAwake(Integer.parseInt(data[6]));
 				
 				if(Game.isMode("creative"))
 					Items.fillCreativeInv(Game.player.getInventory(), false);
@@ -281,7 +286,7 @@ public class MinicraftClient extends MinicraftConnection {
 				if(curState == State.LOADING)
 					System.out.println("CLIENT: received entity addition while loading level");
 				
-				if (Game.debug) System.out.println("CLIENT: received entity addition: " + alldata);
+				//if (Game.debug) System.out.println("CLIENT: received entity addition: " + alldata);
 				
 				if(alldata.length() == 0) {
 					System.err.println("CLIENT WARNING: received entity addition is blank...");
@@ -314,7 +319,7 @@ public class MinicraftClient extends MinicraftConnection {
 					entityLevelDepth = null;
 				
 				Entity toRemove = Network.getEntity(eid);
-				if (Game.debug) System.out.println("CLIENT: received entity removal: " + toRemove);
+				//if (Game.debug) System.out.println("CLIENT: received entity removal: " + toRemove);
 				if(toRemove != null) {
 					if(entityLevelDepth != null && toRemove.getLevel() != null && toRemove.getLevel().depth != entityLevelDepth) {
 						if(Game.debug) System.out.println("CLIENT: not removing entity "+toRemove+" because it is not on the specified level depth, "+entityLevelDepth+"; current depth = "+toRemove.getLevel().depth+". Removing from specified level only...");
