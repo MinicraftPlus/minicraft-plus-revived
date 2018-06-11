@@ -331,6 +331,10 @@ public class MinicraftClient extends MinicraftConnection {
 				int entityid = Integer.parseInt(alldata.substring(0, alldata.indexOf(";")));
 				//if (Game.debug) System.out.println("CLIENT: received entity update for: " + entityid);
 				String updates = alldata.substring(alldata.indexOf(";")+1);
+				if(entityid == Game.player.eid) {
+					Game.player.update(updates);
+					return true;
+				}
 				Entity entity = Network.getEntity(entityid);
 				if(entity == null) {
 					//System.err.println("CLIENT: couldn't find entity specified to update: " + entityid + "; could not apply updates: " + updates);

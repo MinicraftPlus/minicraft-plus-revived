@@ -303,10 +303,14 @@ public class ConsoleReader extends Thread {
 						level.add(playerToMove, xt<<4, yt<<4);
 					}
 					else {
+						int oldxt = playerToMove.x >> 4;
+						int oldyt = playerToMove.y >> 4;
 						playerToMove.x = xt << 4;
 						playerToMove.y = yt << 4;
+						Game.server.broadcastEntityUpdate(playerToMove, true);
+						playerToMove.updatePlayers(oldxt, oldyt);
+						playerToMove.updateSyncArea(oldxt, oldyt);
 					}
-					Game.server.broadcastEntityUpdate(playerToMove, true);
 					
 					System.out.println("teleported player " + playerToMove.getUsername() + " to tile coordinates " + xt+","+yt+", on level " + level.depth);
 				} else {
