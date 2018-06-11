@@ -39,8 +39,7 @@ public class Bed extends Furniture {
 			if(!Game.ISONLINE)
 				playersAwake = 0;
 			else if(Game.isValidServer()) {
-				int total = Game.server.getNumPlayers();
-				playersAwake = total - sleepingPlayers.size();
+				playersAwake = getPlayersAwake();
 				Game.server.updateGameVars();
 			}
 		}
@@ -48,7 +47,13 @@ public class Bed extends Furniture {
 		return true;
 	}
 	
-	public static int getPlayersAwake() { return playersAwake; }
+	public static int getPlayersAwake() {
+		if(!Game.isValidServer())
+			return playersAwake;
+		
+		int total = Game.server.getNumPlayers();
+		return total - sleepingPlayers.size();
+	}
 	public static void setPlayersAwake(int count) {
 		if(!Game.isValidClient())
 			throw new IllegalStateException("Bed.setPlayersAwake() can only be called on a client runtime");
@@ -105,8 +110,7 @@ public class Bed extends Furniture {
 			if(!Game.ISONLINE)
 				playersAwake = 1;
 			else if(Game.isValidServer()) {
-				int total = Game.server.getNumPlayers();
-				playersAwake = total - sleepingPlayers.size();
+				playersAwake = getPlayersAwake();
 				Game.server.updateGameVars();
 			}
 		}
