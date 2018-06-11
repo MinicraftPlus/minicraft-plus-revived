@@ -247,6 +247,10 @@ public class Load {
 		
 		Version prefVer = new Version("2.0.2"); // the default, b/c this doesn't really matter much being specific past this if it's not set below.
 		
+		// TODO reformat the preferences file so that it uses key-value pairs. or json. JSON would be good.
+		// TODO then, allow multiple saved accounts.
+		// TODO do both of these in the same version (likely 2.0.5-dev1) because I also want to Make another iteration of LegacyLoad.
+		
 		if(!data.get(2).contains(";")) // signifies that this file was last written to by a version after 2.0.2.
 			prefVer = new Version(data.remove(0));
 		
