@@ -46,7 +46,18 @@ public class PauseDisplay extends Display {
 		}
 		
 		entries.addAll(Arrays.asList(
-			new SelectEntry("Main Menu", () -> Game.setMenu(new TitleDisplay())),
+			new SelectEntry("Main Menu", () -> {
+				Game.setMenu(new Display(false, true, new Menu.Builder(true, 8, RelPos.CENTER,
+					new StringEntry("Are you sure you want to"),
+					new StringEntry("exit the game?"),
+					new BlankEntry(),
+					new StringEntry("All unsaved progress", Color.RED),
+					new StringEntry("will be lost!", Color.RED),
+					new BlankEntry(),
+					new SelectEntry("No", Game::exitMenu),
+					new SelectEntry("Yes", () -> Game.setMenu(new TitleDisplay()))
+				).createMenu()));
+			}),
 			
 			new BlankEntry(),
 			
