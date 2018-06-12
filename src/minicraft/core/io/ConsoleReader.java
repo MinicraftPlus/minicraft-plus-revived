@@ -298,7 +298,8 @@ public class ConsoleReader extends Thread {
 						System.out.println("specified tile is solid and cannot be moved though.");
 						return;
 					}
-					if(playerToMove.getLevel().depth != level.depth) {
+					Level pLevel = playerToMove.getLevel();
+					if(pLevel == null || pLevel.depth != level.depth) {
 						playerToMove.remove();
 						level.add(playerToMove, xt<<4, yt<<4);
 					}
