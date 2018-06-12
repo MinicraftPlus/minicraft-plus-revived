@@ -3,6 +3,7 @@ package minicraft.core;
 import javax.imageio.ImageIO;
 import javax.swing.JFrame;
 import javax.swing.WindowConstants;
+
 import java.awt.BorderLayout;
 import java.awt.event.ComponentAdapter;
 import java.awt.event.ComponentEvent;
@@ -42,6 +43,9 @@ public class Initializer extends Game {
 				if(i+1 < args.length) {
 					i++;
 					WorldSelectDisplay.setWorldName(args[i], true);
+				} else {
+					System.err.println("A world name is required.");
+					System.exit(1);
 				}
 			}
 		}
