@@ -210,7 +210,7 @@ public class InputHandler implements /*MouseListener, */KeyListener {
 	
 	/// this is meant for changing the default keys. Call it from the options menu, or something.
 	public void setKey(String keymapKey, String keyboardKey) {
-		if (keymapKey != null && (!keymapKey.contains("=debug") || Game.debug)) //the keyboardKey can be null, I suppose, if you want to disable a key...
+		if (keymapKey != null && keymap.containsKey(keymapKey) && (!keymapKey.contains("=debug") || Game.debug)) //the keyboardKey can be null, I suppose, if you want to disable a key...
 			keymap.put(keymapKey, keyboardKey);
 	}
 	
