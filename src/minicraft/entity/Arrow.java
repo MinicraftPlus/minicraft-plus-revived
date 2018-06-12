@@ -27,9 +27,9 @@ public class Arrow extends Entity implements ClientTickable {
 		damage = dmg;
 		col = Color.get(-1, 111, 222, 430);
 		
-		if (damage > 3) speed = 3;
-		else if (damage >= 0) speed = 2;
-		else speed = 1;
+		if (damage > 3) speed = 8;
+		else if (damage >= 0) speed = 7;
+		else speed = 6;
 		
 		/* // maybe this was a "critical arrow" system or something?
 		if (flag) {
