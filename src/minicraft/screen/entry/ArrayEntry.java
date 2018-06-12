@@ -91,6 +91,12 @@ public class ArrayEntry<T> extends ListEntry {
 		}
 	}
 	
+	public boolean getValueVisibility(Object value) {
+		int idx = getIndex(value);
+		if(idx < 0) return false;
+		return optionVis[idx];
+	}
+	
 	
 	@Override
 	public void tick(InputHandler input) {

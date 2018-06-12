@@ -111,7 +111,13 @@ public class Save {
 	public Save() {
 		this(new File(Game.gameDir+"/"));
 		if(Game.debug) System.out.println("writing preferences...");
-		writePrefs("Preferences");
+		writePrefs();
+	}
+	
+	public Save(List<String> unlocks) {
+		this(new File(Game.gameDir+"/"));
+		if(Game.debug) System.out.println("writing unlocks: "+unlocks);
+		writeToFile(location+"Unlocks"+extension, unlocks);
 	}
 	
 	public Save(Player player, boolean writePlayer) {
@@ -169,7 +175,7 @@ public class Save {
 		writeToFile(location + filename + extension, data);
 	}
 	
-	private void writePrefs(String filename) {
+	private void writePrefs() {
 		data.add(Game.VERSION);
 		data.add(String.valueOf(Settings.get("sound")));
 		data.add(String.valueOf(Settings.get("autosave")));
@@ -184,7 +190,17 @@ public class Save {
 		
 		data.add(String.join(":", keyPairs.toArray(new String[keyPairs.size()])));
 		
-		writeToFile(location + filename + extension, data);
+		writeToFile(location + "Preferences" + extension, data);
+		
+		if((boolean)Settings.get("unlockedskin"))
+			data.add("AirSkin");
+		
+		if(Settings.getEntry("scoretime").getValueVisibility(10))
+			data.add("10_ScoreTime");
+		if(Settings.getEntry("scoretime").getValueVisibility(120))
+			data.add("120_ScoreTime");
+		
+		writeToFile(location + "Unlocks" + extension, data);
 	}
 	
 	private void writeServerConfig(String filename, MinicraftServer server) {

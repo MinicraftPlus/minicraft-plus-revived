@@ -1,10 +1,5 @@
 package minicraft.entity.mob;
 
-import java.io.BufferedWriter;
-import java.io.FileWriter;
-import java.io.IOException;
-
-import minicraft.core.Game;
 import minicraft.core.Updater;
 import minicraft.core.io.Settings;
 import minicraft.core.io.Sound;
@@ -189,23 +184,7 @@ public class AirWizard extends EnemyMob {
 			Updater.notifyAll("Air Wizard II: Defeated!");
 			if (!(boolean)Settings.get("unlockedskin")) Updater.notifyAll("A costume lies on the ground...", -200);
 			Settings.set("unlockedskin", true);
-			BufferedWriter bufferedWriter = null;
-			
-			try {
-				bufferedWriter = new BufferedWriter(new FileWriter(Game.gameDir+"/Unlocks"+Save.extension, true));
-				bufferedWriter.write("AirSkin");
-			} catch (IOException ex) {
-				ex.printStackTrace();
-			} finally {
-				try {
-					if(bufferedWriter != null) {
-						bufferedWriter.flush();
-						bufferedWriter.close();
-					}
-				} catch (IOException ex) {
-					ex.printStackTrace();
-				}
-			}
+			new Save();
 		}
 		
 		super.die(); // calls the die() method in EnemyMob.java
