@@ -8,7 +8,7 @@ import minicraft.gfx.Color;
 import minicraft.gfx.Rectangle;
 import minicraft.gfx.Screen;
 
-public class Arrow extends Entity {
+public class Arrow extends Entity implements ClientTickable {
 	private Direction dir;
 	private int damage;
 	public Mob owner;

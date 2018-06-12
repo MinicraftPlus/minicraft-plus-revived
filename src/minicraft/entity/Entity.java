@@ -108,6 +108,8 @@ public abstract class Entity implements Tickable {
 	protected boolean move2(int xa, int ya) {
 		if(xa == 0 && ya == 0) return true; // was not stopped
 		
+		boolean interact = true;//!Game.isValidClient() || this instanceof ClientTickable;
+		
 		// gets the tile coordinate of each direction from the sprite...
 		int xto0 = ((x) - xr) >> 4; // to the left
 		int yto0 = ((y) - yr) >> 4; // above
@@ -125,7 +127,7 @@ public abstract class Entity implements Tickable {
 			for (int xt = xt0; xt <= xt1; xt++) { // cycles through x's of tile after movement
 				if (xt >= xto0 && xt <= xto1 && yt >= yto0 && yt <= yto1) continue; // skip this position if this entity's sprite is touching it
 				// tile positions that make it here are the ones that the entity will be in, but are not in now.
-				if(!Game.isValidClient())
+				if(interact)
 					level.getTile(xt, yt).bumpedInto(level, xt, yt, this); // Used in tiles like cactus
 				if (!level.getTile(xt, yt).mayPass(level, xt, yt, this)) { // if the entity can't pass this tile...
 					//blocked = true; // then the entity is blocked
@@ -143,7 +145,7 @@ public abstract class Entity implements Tickable {
 			yr++;
 		}
 		List<Entity> isInside = level.getEntitiesInRect(new Rectangle(x+xa, y+ya, xr*2, yr*2, Rectangle.CENTER_DIMS)); // gets the entities that this entity will touch once moved.
-		for (int i = 0; !Game.isValidClient() && i < isInside.size(); i++) {
+		for (int i = 0; interact && i < isInside.size(); i++) {
 			/// cycles through entities about to be touched, and calls touchedBy(this) for each of them.
 			Entity e = isInside.get(i);
 			if (e == this) continue; // touching yourself doesn't count.
