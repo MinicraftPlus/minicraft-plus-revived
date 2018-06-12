@@ -229,14 +229,19 @@ public class Load {
 		if(modedata.contains(";")) {
 			String[] modeinfo = modedata.split(";");
 			mode = Integer.parseInt(modeinfo[0]);
-			if(mode == 4) {
+			if(worldVer.compareTo(new Version("2.0.3")) <= 0)
+				mode--; // we changed the min mode idx from 1 to 0.
+			if(mode == 3) {
 				Updater.scoreTime = Integer.parseInt(modeinfo[1]);
 				if(worldVer.compareTo(new Version("1.9.4")) >= 0)
 					Settings.set("scoretime", modeinfo[2]);
 			}
 		} else {
 			mode = Integer.parseInt(modedata);
-			if(mode == 4) Updater.scoreTime = 300;
+			if(worldVer.compareTo(new Version("2.0.3")) <= 0)
+				mode--; // we changed the min mode idx from 1 to 0.
+			
+			if(mode == 3) Updater.scoreTime = 300;
 		}
 		
 		Settings.setIdx("mode", mode);
