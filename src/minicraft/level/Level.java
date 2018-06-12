@@ -205,7 +205,7 @@ public class Level {
 			for(Entity e: entities)
 				if(e instanceof DungeonChest)
 					numChests++;
-			System.out.println("found " + numChests + " chests.");
+			if (Game.debug) System.out.println("found " + numChests + " chests.");
 		}
 		
 		/// make DungeonChests!
