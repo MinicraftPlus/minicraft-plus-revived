@@ -57,9 +57,13 @@ public class PotionItem extends StackableItem {
 		return true;
 	}
 	
+	@Override
 	public boolean equals(Item other) {
 		return super.equals(other) && ((PotionItem)other).type == type;
 	}
+	
+	@Override
+	public int hashCode() { return super.hashCode() + type.name.hashCode(); }
 	
 	@Override
 	public boolean interactsWithWorld() { return false; }

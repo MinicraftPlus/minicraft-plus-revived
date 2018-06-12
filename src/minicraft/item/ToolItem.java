@@ -129,6 +129,7 @@ public class ToolItem extends Item {
 	}
 	
 	/** Sees if this item equals another. */
+	@Override
 	public boolean equals(Item item) {
 		if (item instanceof ToolItem) {
 			ToolItem other = (ToolItem) item;
@@ -136,6 +137,9 @@ public class ToolItem extends Item {
 		}
 		return false;
 	}
+	
+	@Override
+	public int hashCode() { return type.name().hashCode() + level; }
 	
 	public ToolItem clone() {
 		ToolItem ti = new ToolItem(type, level);

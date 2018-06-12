@@ -101,9 +101,13 @@ public class TileItem extends StackableItem {
 		return super.interactOn(false);
 	}
 	
+	@Override
 	public boolean equals(Item other) {
 		return super.equals(other) && model.equals(((TileItem)other).model);
 	}
+	
+	@Override
+	public int hashCode() { return super.hashCode() + model.hashCode(); }
 	
 	public TileItem clone() {
 		return new TileItem(getName(), sprite, count, model, validTiles);

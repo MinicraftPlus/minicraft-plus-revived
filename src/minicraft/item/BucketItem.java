@@ -85,6 +85,9 @@ public class BucketItem extends StackableItem {
 		return super.equals(other) && filling == ((BucketItem)other).filling;
 	}
 	
+	@Override
+	public int hashCode() { return super.hashCode() + filling.innerColor * 31; }
+	
 	public BucketItem clone() {
 		return new BucketItem(filling, count);
 	}

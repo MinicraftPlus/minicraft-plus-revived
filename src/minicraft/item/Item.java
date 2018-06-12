@@ -69,6 +69,9 @@ public abstract class Item {
 		return item != null && item.getClass().equals(getClass()) && item.name.equals(name);
 	}
 	
+	@Override
+	public int hashCode() { return name.hashCode(); }
+	
 	/** This returns a copy of this item, in all necessary detail. */
 	public abstract Item clone();
 	

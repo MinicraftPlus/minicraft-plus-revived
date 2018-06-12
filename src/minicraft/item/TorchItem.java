@@ -31,9 +31,13 @@ public class TorchItem extends TileItem {
 		return super.interactOn(false);
 	}
 	
+	@Override
 	public boolean equals(Item other) {
 		return other instanceof TorchItem;
 	}
+	
+	@Override
+	public int hashCode() { return 8931; }
 	
 	public TorchItem clone() {
 		return new TorchItem(count);
