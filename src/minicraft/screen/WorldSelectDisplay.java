@@ -8,7 +8,9 @@ import minicraft.core.io.InputHandler;
 import minicraft.gfx.Color;
 import minicraft.gfx.Font;
 import minicraft.gfx.Screen;
+import minicraft.saveload.Load;
 import minicraft.saveload.Save;
+import minicraft.saveload.Version;
 import minicraft.screen.entry.SelectEntry;
 
 public class WorldSelectDisplay extends Display {
@@ -45,6 +47,7 @@ public class WorldSelectDisplay extends Display {
 	private Action curAction = null;
 	
 	private static ArrayList<String> worldNames = null;
+	private static ArrayList<Version> worldVersions = new ArrayList<>();
 	
 	public static void refreshWorldNames() { worldNames = null; }
 	
@@ -67,6 +70,7 @@ public class WorldSelectDisplay extends Display {
 			return new ArrayList<>();
 		}
 		
+		worldVersions.clear();
 		for (int i = 0; i < listOfFiles.length; i++) {
 			if (listOfFiles[i].isDirectory()) {
 				String path = worldsDir + listOfFiles[i].getName() + "/";
@@ -74,8 +78,10 @@ public class WorldSelectDisplay extends Display {
 				folder2.mkdirs();
 				String[] files = folder2.list();
 				if (files != null && files.length > 0 && files[0].endsWith(Save.extension)) {
-					worldNames.add(listOfFiles[i].getName());
-					if(Game.debug) System.out.println("World found: " + listOfFiles[i].getName());
+					String name = listOfFiles[i].getName();
+					worldNames.add(name);
+					if(Game.debug) System.out.println("World found: " + name);
+					worldVersions.add(new Load(name, false).getWorldVersion());
 				}
 			}
 		}
@@ -106,8 +112,11 @@ public class WorldSelectDisplay extends Display {
 		
 		for(int i = 0; i < entries.length; i++) {
 			String name = worldNames.get(i);
+			final Version version = worldVersions.get(i);
 			entries[i] = new SelectEntry(worldNames.get(i), () -> {
 				if(curAction == null) {
+					if(version.compareTo(Game.VERSION) > 0)
+						return; // cannot load a game saved by a higher version!
 					worldName = name;
 					Game.setMenu(new LoadingDisplay());
 				}
@@ -157,6 +166,19 @@ public class WorldSelectDisplay extends Display {
 	@Override
 	public void render(Screen screen) {
 		super.render(screen);
+		
+		int sel = menus[0].getSelection();
+		if(sel >= 0 && sel < worldVersions.size()) {
+			Version version = worldVersions.get(sel);
+			int col = Color.WHITE;
+			if(version.compareTo(Game.VERSION) > 0) {
+				col = Color.RED;
+				Font.drawCentered("Higher version, cannot load world", screen, Font.textHeight() * 5, col);
+			}
+			//else if(version.compareTo(Game.VERSION) < 0)
+			//	Font.drawCentered("outdated", screen, Font.textHeight() * 5, Color.DARK_GRAY);
+			Font.drawCentered("World Version: " + (version.compareTo(new Version("1.9.2")) <= 0 ? "~" : "") + version, screen, Font.textHeight() * 7/2, col);
+		}
 		
 		Font.drawCentered(Game.input.getMapping("select")+" to confirm", screen, Screen.h - 60, Color.GRAY);
 		Font.drawCentered(Game.input.getMapping("exit")+" to return", screen, Screen.h - 40, Color.GRAY);

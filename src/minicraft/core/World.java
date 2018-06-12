@@ -10,7 +10,6 @@ import minicraft.item.Items;
 import minicraft.level.Level;
 import minicraft.saveload.Load;
 import minicraft.saveload.Save;
-import minicraft.saveload.Version;
 import minicraft.screen.LoadingDisplay;
 import minicraft.screen.PlayerDeathDisplay;
 import minicraft.screen.WorldGenDisplay;
@@ -126,7 +125,7 @@ public class World extends Game {
 			
 			if(WorldSelectDisplay.loadedWorld()) {
 				Load loader = new Load(WorldSelectDisplay.getWorldName());
-				if(isValidServer() && loader.getWorldVersion().compareTo(new Version(Game.VERSION)) < 0) {
+				if(isValidServer() && loader.getWorldVersion().compareTo(Game.VERSION) < 0) {
 					new Save(player, true); // overwrite the old player save, to update it.
 					new Save(WorldSelectDisplay.getWorldName()); // save the main world
 				}

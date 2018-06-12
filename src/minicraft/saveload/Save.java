@@ -176,7 +176,7 @@ public class Save {
 	}
 	
 	private void writePrefs() {
-		data.add(Game.VERSION);
+		data.add(String.valueOf(Game.VERSION));
 		data.add(String.valueOf(Settings.get("sound")));
 		data.add(String.valueOf(Settings.get("autosave")));
 		data.add(String.valueOf(Settings.get("fps")));

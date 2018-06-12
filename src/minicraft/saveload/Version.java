@@ -54,5 +54,6 @@ public class Version implements Comparable<Version> {
 		return 0; // the versions are equal.
 	}
 	
+	@Override
 	public String toString() { return make + "." + major + "." + minor + (dev == 0 ? "" : "-dev" + dev); }
 }

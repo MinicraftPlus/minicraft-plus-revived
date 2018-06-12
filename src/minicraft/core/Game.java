@@ -12,6 +12,7 @@ import minicraft.level.tile.Tiles;
 import minicraft.network.MinicraftClient;
 import minicraft.network.MinicraftServer;
 import minicraft.saveload.Load;
+import minicraft.saveload.Version;
 import minicraft.screen.Display;
 import minicraft.screen.MultiplayerDisplay;
 import minicraft.screen.TitleDisplay;
@@ -25,7 +26,7 @@ public class Game {
 	public static boolean HAS_GUI = true;
 	
 	public static final String NAME = "Minicraft Plus"; // This is the name on the application window
-	public static final String VERSION = "2.0.4";
+	public static final Version VERSION = new Version("2.0.4");
 	
 	public static InputHandler input; // input used in Game, Player, and just about all the *Menu classes.
 	public static Player player;

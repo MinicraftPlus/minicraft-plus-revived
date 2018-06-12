@@ -45,11 +45,10 @@ public class Load {
 	private ArrayList<String> data;
 	private ArrayList<String> extradata;
 	
-	private Version currentVer, worldVer;
+	private Version worldVer;
 	private boolean hasGlobalPrefs = false;
 	
 	{
-		currentVer = new Version(Game.VERSION);
 		worldVer = null;
 		
 		File testFile = new File(location + "/Preferences" + extension);
@@ -59,13 +58,16 @@ public class Load {
 		extradata = new ArrayList<>();
 	}
 	
-	public Load(String worldname) {
+	public Load(String worldname) { this(worldname, true); }
+	public Load(String worldname, boolean loadGame) {
 		loadFromFile(location + "/saves/" + worldname + "/Game" + extension);
 		if(data.get(0).contains(".")) worldVer = new Version(data.get(0));
 		if(worldVer == null) worldVer = new Version("1.8");
 		
 		if(!hasGlobalPrefs)
 			hasGlobalPrefs = worldVer.compareTo(new Version("1.9.2")) >= 0;
+		
+		if(!loadGame) return;
 		
 		if(worldVer.compareTo(new Version("1.9.2")) < 0)
 			new LegacyLoad(worldname);
@@ -94,16 +96,13 @@ public class Load {
 			loadServerConfig("ServerConfig", server);
 	}
 	
-	public Load() { this(new Version(Game.VERSION)); }
+	public Load() { this(Game.VERSION); }
 	public Load(Version worldVersion) {
 		this(false);
 		worldVer = worldVersion;
 	}
 	public Load(boolean loadConfig) {
-		if(!loadConfig) {
-			worldVer = currentVer;
-			return;
-		}
+		if(!loadConfig) return;
 		
 		location += "/";
 		
@@ -508,7 +507,7 @@ public class Load {
 	@Nullable
 	public static Entity loadEntity(String entityData, boolean isLocalSave) {
 		if(isLocalSave) System.out.println("warning: assuming version of save file is current while loading entity: " + entityData);
-		return Load.loadEntity(entityData, (new Version(Game.VERSION)), isLocalSave);
+		return Load.loadEntity(entityData, Game.VERSION, isLocalSave);
 	}
 	@Nullable
 	public static Entity loadEntity(String entityData, Version worldVer, boolean isLocalSave) {

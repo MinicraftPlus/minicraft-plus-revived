@@ -9,9 +9,9 @@ import java.util.Arrays;
 import java.util.List;
 
 import minicraft.core.Game;
-import minicraft.core.io.Settings;
 import minicraft.core.Updater;
 import minicraft.core.World;
+import minicraft.core.io.Settings;
 import minicraft.entity.Entity;
 import minicraft.entity.furniture.*;
 import minicraft.entity.mob.*;
@@ -43,7 +43,7 @@ public class LegacyLoad {
 	Game game = null;
 	
 	{
-		currentVer = new Version(Game.VERSION);
+		currentVer = Game.VERSION;
 		worldVer = null;
 		
 		data = new ArrayList<>();

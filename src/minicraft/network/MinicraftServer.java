@@ -402,7 +402,7 @@ public class MinicraftServer extends Thread implements MinicraftProtocol {
 				String username = data[0];
 				Version clientVersion = new Version(data[1]);
 				// check version; send back invalid if they don't match.
-				if(clientVersion.compareTo(new Version(Game.VERSION)) != 0) {
+				if(clientVersion.compareTo(Game.VERSION) != 0) {
 					serverThread.sendError("wrong game version; need " + Game.VERSION);
 					return false;
 				}
