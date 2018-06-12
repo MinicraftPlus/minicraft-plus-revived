@@ -786,18 +786,18 @@ public class Player extends Mob implements ItemHolder, ClientTickable {
 	public int getLightRadius() {
 		//if (Game.currentLevel == 3) return 0; // I don't want the player to have an automatic halo on the surface.
 		
-		float light = potioneffects.containsKey(PotionType.Light) ? 2.5f : 1; // multiplier for the light potion effect.
-		float r = 3 * light; // the radius of the light.
-		if (Game.currentLevel == 3) r = (light-1) * 3;
-		
-		if (Game.currentLevel == 5) r = 5 * light; // more light than usual on dungeon level.
+		//float light = potioneffects.containsKey(PotionType.Light) ? 2.5f : 1; // multiplier for the light potion effect.
+		int r = 5; // the radius of the light.
+		// if (Game.currentLevel == 3) r = (light-1) * 3;
+		//
+		// if (Game.currentLevel == 5) r = 5 * light; // more light than usual on dungeon level.
 		
 		if (activeItem != null && activeItem instanceof FurnitureItem) { // if player is holding furniture
 			int rr = ((FurnitureItem) activeItem).furniture.getLightRadius(); // gets furniture light radius
 			if (rr > r) r = rr; // brings player light up to furniture light, if less, since the furnture is not yet part of the level and so doesn't emit light even if it should.
 		}
 		
-		return (int) r; // return light radius
+		return r; // return light radius
 	}
 	
 	/** What happens when the player dies */
@@ -898,7 +898,7 @@ public class Player extends Mob implements ItemHolder, ClientTickable {
 		";hunger,"+hunger+
 		";attackTime,"+attackTime+
 		";attackDir,"+attackDir.ordinal()+
-		";attackItem,"+(attackItem==null?"null": attackItem.getName());
+		";activeItem,"+(activeItem==null?"null": activeItem.getName());
 		
 		return updates;
 	}
@@ -914,7 +914,10 @@ public class Player extends Mob implements ItemHolder, ClientTickable {
 			case "hunger": hunger = Integer.parseInt(val); return true;
 			case "attackTime": attackTime = Integer.parseInt(val); return true;
 			case "attackDir": attackDir = Direction.values[Integer.parseInt(val)]; return true;
-			case "attackItem": attackItem = Items.get(val, true); return true;
+			case "activeItem": 
+				activeItem = Items.get(val, true);
+				attackItem = activeItem != null && activeItem.canAttack() ? activeItem : null;
+				return true;
 			case "potioneffects":
 				potioneffects.clear();
 				for(String potion: val.split(":")) {

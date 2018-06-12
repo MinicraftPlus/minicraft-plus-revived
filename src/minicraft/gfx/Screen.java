@@ -101,7 +101,7 @@ public class Screen {
 	/** Overlays the screen with pixels */
     public void overlay(Screen screen2, int currentLevel, int xa, int ya) {
 		double tintFactor = 0;
-		if(currentLevel >= 3) {
+		if(currentLevel >= 3 && currentLevel < 5) {
 			int transTime = Updater.dayLength / 4;
 			double relTime = (Updater.tickCount % transTime)*1.0 / transTime;
 			
@@ -111,10 +111,12 @@ public class Screen {
 				case Evening: tintFactor = relTime * MAXDARK; break;
 				case Night: tintFactor = MAXDARK; break;
 			}
-			if(currentLevel == 4) tintFactor -= (tintFactor < 10 ? tintFactor : 10);
+			if(currentLevel > 3) tintFactor -= (tintFactor < 10 ? tintFactor : 10);
 			tintFactor *= -1; // all previous operations were assumping this was a darkening factor.
 			//tintFactor += 20;
 		}
+		else if(currentLevel >= 5)
+			tintFactor = -MAXDARK;
         
 		int[] oPixels = screen2.pixels;  // The Integer array of pixels to overlay the screen with.
 		int i = 0; // current pixel on the screen

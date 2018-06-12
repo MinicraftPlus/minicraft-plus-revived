@@ -45,7 +45,7 @@ public class Level {
 	public byte[] data; // an array of the data of the tiles in the world. // ?
 	
 	public final int depth; // depth level of the level
-	public int monsterDensity = 8; // affects the number of monsters that are on the level, bigger the number the less monsters spawn.
+	public int monsterDensity = 16; // affects the number of monsters that are on the level, bigger the number the less monsters spawn.
 	public int maxMobCount;
 	public int chestCount;
 	public int mobCount = 0;
@@ -115,7 +115,7 @@ public class Level {
 		int saveTile;
 		
 		if(level != -4 && level != 0)
-			monsterDensity = 4;
+			monsterDensity = 8;
 	
 		updateMobCap();
 		
@@ -434,7 +434,7 @@ public class Level {
 		List<Entity> entities = getEntitiesInTiles(xo - r, yo - r, w + xo + r, h + yo + r);
 		for(Entity e: entities) {
 			int lr = e.getLightRadius();
-			if (lr > 0) screen.renderLight(e.x - 1, e.y - 4, lr * 8);
+			if (lr > 0) screen.renderLight(e.x - 1, e.y - 4, lr * brightness);
 		}
 		
 		for (int y = yo - r; y <= h + yo + r; y++) {
@@ -528,12 +528,13 @@ public class Level {
 		for (int i = 0; i < 30 && !spawned; i++) {
 			int minLevel = 1, maxLevel = 1;
 			if (depth < 0) {
-				maxLevel = (-depth) + 1;
+				maxLevel = (-depth) + (Math.random() > 0.75 ? 1 : 0);
 			}
 			if (depth > 0) {
 				minLevel = maxLevel = 4;
 			}
-
+			
+			
 			int lvl = random.nextInt(maxLevel - minLevel + 1) + minLevel;
 			int rnd = random.nextInt(100);
 			int nx = random.nextInt(w) * 16 + 8, ny = random.nextInt(h) * 16 + 8;
