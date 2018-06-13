@@ -40,6 +40,7 @@ public class Color {
 		So, the methods ending in "Color" deal with rgbInts, while their counterparts deal with rgbBytes.
 	*/
 	
+	public static final int TRANS = Color.get(-1, -1);
 	public static final int WHITE = Color.get(-1, 555);
 	public static final int GRAY = Color.get(-1, 333);
 	public static final int DARK_GRAY = Color.get(-1, 222);
