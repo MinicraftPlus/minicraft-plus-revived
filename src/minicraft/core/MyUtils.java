@@ -10,6 +10,11 @@ public final class MyUtils {
 		return val;
 	}
 	
+	public static int randInt(int max) { return randInt(0, max); }
+	public static int randInt(int min, int max) {
+		return (int) (Math.random() * (max - min + 1)) + min;
+	}
+	
 	public static String plural(int num, String word) {
 		String p = num == 1 ? "" : "s";
 		return num + " " + word + p;

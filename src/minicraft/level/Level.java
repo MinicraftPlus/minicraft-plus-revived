@@ -187,7 +187,7 @@ public class Level {
 			
 			if (!found) {
 				AirWizard aw = new AirWizard(false);
-				add(aw, w/2, h/2);
+				add(aw, w/2, h/2, true);
 			}
 		}
 	}
@@ -507,8 +507,13 @@ public class Level {
 	}
 	
 	public void add(Entity e) { if(e==null) return; add(e, e.x, e.y); }
-	public void add(Entity entity, int x, int y) {
+	public void add(Entity entity, int x, int y) { add(entity, x, y, false); }
+	public void add(Entity entity, int x, int y, boolean tileCoords) {
 		if(entity == null) return;
+		if(tileCoords) {
+			x = x*16+8;
+			y = y*16+8;
+		}
 		entity.setLevel(this, x, y);
 		
 		entitiesToRemove.remove(entity); // to make sure the most recent request is satisfied.

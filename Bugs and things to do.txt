@@ -2,8 +2,6 @@
 
 --CURRENT: 
 
- - make it so you add entities to the center of tiles
- - fix notification when hitting obsidian
  - move Save/Load stuff into FileData enum; use it to call each method
  - move all the old loading code into another LegacyLoad class (rename them to reflect their versions)
  - fix score mode multiplier - should multiply pickup additions when multiplier is > 1

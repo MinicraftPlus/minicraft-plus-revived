@@ -299,15 +299,17 @@ public class ConsoleReader extends Thread {
 						return;
 					}
 					Level pLevel = playerToMove.getLevel();
+					int nx = xt*16+8;
+					int ny = yt*16+8;
 					if(pLevel == null || pLevel.depth != level.depth) {
 						playerToMove.remove();
-						level.add(playerToMove, xt<<4, yt<<4);
+						level.add(playerToMove, nx, ny);
 					}
 					else {
 						int oldxt = playerToMove.x >> 4;
 						int oldyt = playerToMove.y >> 4;
-						playerToMove.x = xt << 4;
-						playerToMove.y = yt << 4;
+						playerToMove.x = nx;
+						playerToMove.y = ny;
 						Game.server.broadcastEntityUpdate(playerToMove, true);
 						playerToMove.updatePlayers(oldxt, oldyt);
 						playerToMove.updateSyncArea(oldxt, oldyt);

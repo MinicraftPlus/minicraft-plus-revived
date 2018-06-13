@@ -32,7 +32,7 @@ public class Structure {
 			level.setTile(xt+p.x, yt+p.y, p.t);
 		
 		for(Point p: furniture.keySet())
-			level.add(furniture.get(p).clone(), (xt+p.x)<<4, (yt+p.y)<<4);
+			level.add(furniture.get(p).clone(), xt+p.x, yt+p.y, true);
 	}
 	
 	static class TilePoint {
