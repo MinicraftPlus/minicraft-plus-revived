@@ -268,11 +268,11 @@ public class Renderer extends Game {
 		
 		// This is the status icons, like health hearts, stamina bolts, and hunger "burgers".
 		if (!isMode("creative")) {
-			for (int i = 0; i < 10; i++) {
+			for (int i = 0; i < Player.maxStat; i++) {
 				int color;
 				
 				// renders armor
-				int armor = player.armor*10 / Player.maxArmor;
+				int armor = player.armor*Player.maxStat / Player.maxArmor;
 				color = (i <= armor && player.curArmor != null) ? player.curArmor.sprite.color : Color.get(-1, -1);
 				screen.render(i * 8, Screen.h - 24, 3 + 12 * 32, color, 0);
 				

@@ -374,8 +374,9 @@ public class Load {
 		
 		if(player.armor > 0) {
 			if(worldVer.compareTo(new Version("2.0.4-dev7")) < 0) {
-				player.armorDamageBuffer = Integer.parseInt(data.remove(data.size()-1));
+				// reverse order b/c we are taking from the end
 				player.curArmor = (ArmorItem) Items.get(data.remove(data.size()-1));
+				player.armorDamageBuffer = Integer.parseInt(data.remove(data.size()-1));
 			}
 			else {
 				player.armorDamageBuffer = Integer.parseInt(data.remove(0));
