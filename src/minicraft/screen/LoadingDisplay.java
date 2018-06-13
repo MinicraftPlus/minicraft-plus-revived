@@ -7,6 +7,9 @@ import minicraft.core.Updater;
 import minicraft.core.World;
 import minicraft.core.io.Localization;
 import minicraft.gfx.Color;
+import minicraft.gfx.Ellipses;
+import minicraft.gfx.Ellipses.SequentialEllipses;
+import minicraft.gfx.Ellipses.SmoothEllipses;
 import minicraft.gfx.Font;
 import minicraft.gfx.FontStyle;
 import minicraft.gfx.Screen;
@@ -19,6 +22,7 @@ public class LoadingDisplay extends Display {
 	
 	private Timer t;
 	private String msg = "";
+	private Ellipses ellipses = new SequentialEllipses();
 	
 	public LoadingDisplay() {
 		super(true,false);
@@ -67,29 +71,8 @@ public class LoadingDisplay extends Display {
 		super.render(screen);
 		int percent = Math.round(percentage);
 		Font.drawParagraph(screen, new FontStyle(Color.RED), 6,
-			Localization.getLocalized(msg)+(progressType.length()>0?" "+Localization.getLocalized(progressType):"")+ getEllipses(),
+			Localization.getLocalized(msg)+(progressType.length()>0?" "+Localization.getLocalized(progressType):"")+ ellipses.updateAndGet(),
 			percent+"%"
 		);
-	}
-	
-	private int ePos = 0;
-	private int eposTick = 0;
-	private String getEllipses() {
-		StringBuilder dots = new StringBuilder();
-		for(int i = 0; i < 3; i++) {
-			if (ePos == i)
-				dots.append(".");
-			else
-				dots.append(" ");
-		}
-		
-		eposTick++;
-		if(eposTick >= Updater.normSpeed) {
-			eposTick = 0;
-			ePos++;
-		}
-		if(ePos >= 3) ePos = 0;
-		
-		return dots.toString();
 	}
 }

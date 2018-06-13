@@ -14,6 +14,9 @@ import java.util.Map;
 import minicraft.entity.furniture.Bed;
 import minicraft.entity.mob.Player;
 import minicraft.gfx.Color;
+import minicraft.gfx.Ellipses;
+import minicraft.gfx.Ellipses.DotUpdater.TickUpdater;
+import minicraft.gfx.Ellipses.SmoothEllipses;
 import minicraft.gfx.Font;
 import minicraft.gfx.FontStyle;
 import minicraft.gfx.Screen;
@@ -43,6 +46,8 @@ public class Renderer extends Game {
 	
 	public static boolean readyToRenderGameplay = false;
 	public static boolean showinfo = false;
+	
+	private static Ellipses ellipses = new SmoothEllipses(new TickUpdater());
 	
 	static void initScreen() {
 		if(!HAS_GUI) return;
@@ -75,7 +80,7 @@ public class Renderer extends Game {
 		if(readyToRenderGameplay) {
 			if(isValidServer()) {
 				screen.clear(0);
-				Font.drawCentered("Awaiting client connections"+ getEllipses(), screen, 10, Color.get(-1, 444));
+				Font.drawCentered("Awaiting client connections"+ ellipses.updateAndGet(), screen, 10, Color.get(-1, 444));
 				Font.drawCentered("So far:", screen, 20, Color.get(-1, 444));
 				int i = 0;
 				for(String playerString: server.getClientInfo()) {
@@ -387,20 +392,6 @@ public class Renderer extends Game {
 			Font.draw(msg, screen, xx, yy, Color.get(5, 555));
 	}
 	
-	
-	private static char[] dots = "   ".toCharArray();
-	
-	/// just a little thing to make a progressive dot elipses.
-	private static String getEllipses() {
-		int time = Updater.tickCount % Updater.normSpeed; // sets the "dot clock" to normSpeed.
-		int interval = Updater.normSpeed / 2; // specifies the time taken for each fill up and empty of the dots.
-		int epos = (time % interval) / (interval/dots.length); // transforms time into a number specifying which part of the dots array it is in, by index.
-		char set = time < interval ? '.' : ' '; // get the character to set in this cycle.
-		
-		dots[epos] = set;
-		
-		return new String(dots);
-	}
 	
 	static java.awt.Dimension getWindowSize() {
 		return new java.awt.Dimension(new Float(WIDTH * SCALE).intValue(), new Float(HEIGHT * SCALE).intValue());
