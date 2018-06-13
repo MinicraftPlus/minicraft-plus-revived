@@ -4,9 +4,11 @@ import java.io.InputStream;
 
 import minicraft.core.Action;
 import minicraft.core.Game;
-import minicraft.core.Updater;
 import minicraft.core.io.InputHandler;
 import minicraft.gfx.Color;
+import minicraft.gfx.Ellipse;
+import minicraft.gfx.Ellipse.SequentialEllipses;
+import minicraft.gfx.Ellipses;
 import minicraft.gfx.Font;
 import minicraft.gfx.FontStyle;
 import minicraft.gfx.Screen;
@@ -48,6 +50,7 @@ public class MultiplayerDisplay extends Display {
 	}
 	
 	private State curState;
+	private Ellipses ellipses = new Ellipses();
 	
 	public MultiplayerDisplay() { this(true); }
 	public MultiplayerDisplay(boolean pingSite) {
@@ -321,11 +324,11 @@ public class MultiplayerDisplay extends Display {
 				break;
 			
 			case WAITING:
-				Font.drawCentered(waitingMessage+getElipses(), screen, Screen.h/2, Color.WHITE);
+				Font.drawCentered(waitingMessage+ellipses.updateAndGet(), screen, Screen.h/2, Color.WHITE);
 				break;
 			
 			case LOADING:
-				Font.drawCentered("Loading "+loadingMessage+" from server"+getElipses(), screen, Screen.h/2, Color.WHITE);
+				Font.drawCentered("Loading "+loadingMessage+" from server"+ellipses.updateAndGet(), screen, Screen.h/2, Color.WHITE);
 				//Font.drawCentered(transferPercent+"%", screen, Screen.h/2+6, Color.WHITE);
 				break;
 			
@@ -341,27 +344,5 @@ public class MultiplayerDisplay extends Display {
 		if(curState == State.ENTERIP || curState == State.ERROR) {
 			Font.drawCentered("Press "+Game.input.getMapping("exit")+" to return", screen, Screen.h-Font.textHeight()*2, Color.GRAY);
 		}
-	}
-	
-	private int ePos = 0;
-	private int eposTick = 0;
-	
-	private String getElipses() {
-		StringBuilder dots = new StringBuilder();
-		for(int i = 0; i < 3; i++) {
-			if (ePos == i)
-				dots.append(".");
-			else
-				dots.append(" ");
-		}
-		
-		eposTick++;
-		if(eposTick >= Updater.normSpeed) {
-			eposTick = 0;
-			ePos++;
-		}
-		if(ePos >= 3) ePos = 0;
-		
-		return dots.toString();
 	}
 }

@@ -143,12 +143,6 @@ public class World extends Game {
 				
 				if(debug) System.out.println("level loading complete.");
 				
-				// add an Iron lantern to level 5, at (984, 984), when making a new world
-				Furniture f = new Lantern(Lantern.Type.IRON);//Items.get("Iron Lantern").furniture;
-				f.x = 984;
-				f.y = 984;
-				levels[lvlIdx(-4)].add(f);
-				
 				Level level = levels[currentLevel]; // sets level to the current level (3; surface)
 				Updater.pastDay1 = false;
 				player.findStartPos(level, WorldGenDisplay.getSeed()); // finds the start level for the player

@@ -187,7 +187,7 @@ public class Level {
 			
 			if (!found) {
 				AirWizard aw = new AirWizard(false);
-				add(aw, w * 16 / 2, h * 16 / 2);
+				add(aw, w/2, h/2);
 			}
 		}
 	}

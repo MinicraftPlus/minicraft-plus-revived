@@ -2,6 +2,11 @@
 
 --CURRENT: 
 
+ - make it so you add entities to the center of tiles
+ - fix notification when hitting obsidian
+ - finish ellipses
+ - 
+
 Note to self: for more little bugs/ideas/concerns, search code for "TODO"
 -----------------------------------------------------------------------------------
 

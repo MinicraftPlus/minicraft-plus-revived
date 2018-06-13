@@ -6,6 +6,8 @@ import minicraft.core.Game;
 import minicraft.core.World;
 import minicraft.core.io.Localization;
 import minicraft.gfx.Color;
+import minicraft.gfx.Ellipse;
+import minicraft.gfx.Ellipses;
 import minicraft.gfx.Font;
 import minicraft.gfx.FontStyle;
 import minicraft.gfx.Screen;
@@ -18,6 +20,7 @@ public class LoadingDisplay extends Display {
 	
 	private Timer t;
 	private String msg = "";
+	private Ellipses ellipses = new Ellipses();
 	
 	public LoadingDisplay() {
 		super(true,false);
@@ -66,7 +69,7 @@ public class LoadingDisplay extends Display {
 		super.render(screen);
 		int percent = Math.round(percentage);
 		Font.drawParagraph(screen, new FontStyle(Color.RED), 6,
-			Localization.getLocalized(msg)+(progressType.length()>0?" "+Localization.getLocalized(progressType):"")+"...",
+			Localization.getLocalized(msg)+(progressType.length()>0?" "+Localization.getLocalized(progressType):"")+ellipses.updateAndGet(),
 			percent+"%"
 		);
 	}
