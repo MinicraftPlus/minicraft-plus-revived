@@ -207,6 +207,7 @@ public class Save {
 	}
 	
 	private void writeWorld(String filename) {
+		LoadingDisplay.setMessage("Levels");
 		for(int l = 0; l < World.levels.length; l++) {
 			String worldSize = String.valueOf(Settings.get("size"));
 			data.add(worldSize);
@@ -235,6 +236,7 @@ public class Save {
 	}
 	
 	private void writePlayer(String filename, Player player) {
+		LoadingDisplay.setMessage("Player");
 		writePlayer(player, data);
 		writeToFile(location + filename + extension, data);
 	}
@@ -295,6 +297,7 @@ public class Save {
 	}
 	
 	private void writeEntities(String filename) {
+		LoadingDisplay.setMessage("Entities");
 		for(int l = 0; l < World.levels.length; l++) {
 			for(Entity e: World.levels[l].getEntitiesToSave()) {
 				String saved = writeEntity(e, true);

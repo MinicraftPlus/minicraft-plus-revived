@@ -299,6 +299,7 @@ public class Load {
 	
 	private void loadWorld(String filename) {
 		for(int l = World.maxLevelDepth; l >= World.minLevelDepth; l--) {
+			LoadingDisplay.setMessage(Level.getDepthString(l));
 			int lvlidx = World.lvlIdx(l);
 			loadFromFile(location + filename + lvlidx + extension);
 			
@@ -358,6 +359,7 @@ public class Load {
 	}
 	
 	public void loadPlayer(String filename, Player player) {
+		LoadingDisplay.setMessage("Player");
 		loadFromFile(location + filename + extension);
 		loadPlayer(player, data);
 	}
@@ -492,13 +494,14 @@ public class Load {
 	}
 	
 	private void loadEntities(String filename) {
+		LoadingDisplay.setMessage("Entities");
 		loadFromFile(location + filename + extension);
 		
 		for(int i = 0; i < World.levels.length; i++) {
 			World.levels[i].clearEntities();
 		}
 		for(int i = 0; i < data.size(); i++) {
-			if(data.get(i).equalsIgnoreCase("player")) continue;
+			if(data.get(i).startsWith("Player")) continue;
 			loadEntity(data.get(i), worldVer, true);
 		}
 		

@@ -49,14 +49,14 @@ public class Font {
 	/// note: the y centering values in the FontStyle object will be used as a paragraph y centering value instead.
 	public static void drawParagraph(String para, Screen screen, FontStyle style, int lineSpacing) { drawParagraph(para, screen, Screen.w, Screen.h, style, lineSpacing); }
 	public static void drawParagraph(String para, Screen screen, int w, int h, FontStyle style, int lineSpacing) {
-		drawParagraph(getLines(para, w, h, lineSpacing), screen, style, lineSpacing);
+		drawParagraph(screen, style, lineSpacing, getLines(para, w, h, lineSpacing));
 	}
 	
 	/// all the other drawParagraph() methods end up calling this one.
 	public static void drawParagraph(List<String> lines, Screen screen, FontStyle style, int lineSpacing) {
-		drawParagraph(lines.toArray(new String[lines.size()]), screen, style, lineSpacing);
+		drawParagraph(screen, style, lineSpacing, lines.toArray(new String[lines.size()]));
 	}
-	public static void drawParagraph(String[] lines, Screen screen, FontStyle style, int lineSpacing) {
+	public static void drawParagraph(Screen screen, FontStyle style, int lineSpacing, String... lines) {
 		for(int i = 0; i < lines.length; i++)
 			style.drawParagraphLine(lines, i, lineSpacing, screen);
 	}

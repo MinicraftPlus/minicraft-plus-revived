@@ -37,6 +37,10 @@ import minicraft.level.tile.TorchTile;
 public class Level {
 	private Random random = new Random();
 	
+	private static final String[] levelNames = {"Sky", "Surface", "Iron", "Gold", "Lava", "Dungeon"};
+	public static String getLevelName(int depth) { return levelNames[-1*depth+1]; }
+	public static String getDepthString(int depth) { return "Level "+(depth<0?"B"+(-depth):depth); }
+	
 	private static final int MOB_SPAWN_FACTOR = 100; // the chance of a mob actually trying to spawn when trySpawn is called equals: mobCount / maxMobCount * MOB_SPAWN_FACTOR. so, it basically equals the chance, 1/number, of a mob spawning when the mob cap is reached. I hope that makes sense...
 	
 	public int w, h; // width and height of the level
@@ -74,8 +78,7 @@ public class Level {
 		// should be changed to accept prepend and entity, or a tile (as an Object). It will get the coordinates and class name from the object, and will divide coords by 16 if passed an entity.
 	public void printLevelLoc(String prefix, int x, int y) { printLevelLoc(prefix, x, y, ""); }
 	public void printLevelLoc(String prefix, int x, int y, String suffix) {
-		String[] levelNames = {"Sky", "Surface", "Iron", "Gold", "Lava", "Dungeon"};
-		String levelName = levelNames[-1*depth+1];
+		String levelName = getLevelName(depth);
 		
 		System.out.println(prefix + " on " + levelName + " level ("+x+","+y+")" + suffix);
 	}
