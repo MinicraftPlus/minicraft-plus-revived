@@ -120,12 +120,14 @@ public class DungeonChest extends Chest {
 		}
 	}
 	
+	/** what happens if the player tries to push a Dungeon Chest. */
 	@Override
 	protected void touchedBy(Entity entity) {
 		if(!isLocked) // can only be pushed if unlocked.
 			super.touchedBy(entity);
 	}
 	
+	/** what happens if the player tries to grab a Dungeon Chest. */
 	@Override
 	public void take(Player player) {
 		if(!isLocked) // can only be taken if unlocked.
