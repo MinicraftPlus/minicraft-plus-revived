@@ -1,5 +1,7 @@
 package minicraft.entity.furniture;
 
+import javax.swing.Timer;
+
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.List;
