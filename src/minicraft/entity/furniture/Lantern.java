@@ -21,6 +21,10 @@ public class Lantern extends Furniture {
 	
 	public Lantern.Type type;
 	
+	/**
+	 * Creates a lantern of a given type.
+	 * @param type Type of lantern.
+	 */
 	public Lantern(Lantern.Type type) {
 		super(type.title, new Sprite(10, 8, 2, 2, type.col), 3, 2);
 		this.type = type;
@@ -31,7 +35,10 @@ public class Lantern extends Furniture {
 		return new Lantern(type);
 	}
 	
-	/** Gets the size of the radius for light underground (Bigger number, larger light) */
+	/** 
+	 * Gets the size of the radius for light underground (Bigger number, larger light) 
+	 */
+	@Override
 	public int getLightRadius() {
 		return type.light;
 	}

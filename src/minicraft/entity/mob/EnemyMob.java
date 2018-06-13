@@ -17,6 +17,20 @@ public class EnemyMob extends MobAi {
 	protected int[] lvlcols;
 	public int detectDist;
 	
+	/**
+	 * Constructor for a hostile (enemy) mob. The level determines what the mob does. sprites contains all the graphics and animations for the mob.
+	 * lvlcols is the different color the mob has depending on its level. isFactor determines if the mob's health should be affected by the level and
+	 * the difficulty.
+	 * @param lvl The mob's level.
+	 * @param sprites The mob's sprites.
+	 * @param lvlcols The different colors mapped to the level.
+	 * @param health How much health the mob has.
+	 * @param isFactor false if maxHealth=health, true if maxHealth=health*level*level*difficulty
+	 * @param detectDist The distance where the mob will detect the player and start moving towards him/her.
+	 * @param lifetime How many ticks this mob will live.
+	 * @param rwTime How long the mob will walk in a random direction. (random walk duration)
+	 * @param rwChance The chance of this mob will walk in a random direction (random walk chance)
+	 */
 	public EnemyMob(int lvl, MobSprite[][] sprites, int[] lvlcols, int health, boolean isFactor, int detectDist, int lifetime, int rwTime, int rwChance) {
 		super(sprites, isFactor ? (lvl==0?1:lvl * lvl) * health*((Double)(Math.pow(2, Settings.getIdx("diff")))).intValue() : health, lifetime, rwTime, rwChance);
 		this.lvl = lvl == 0 ? 1 : lvl;
@@ -25,14 +39,39 @@ public class EnemyMob extends MobAi {
 		this.detectDist = detectDist;
 	}
 	
+	/**
+	 * Constructor for a hostile (enemy) mob. 
+	 * Lifetime will be set to 60 * Game.normSpeed.
+	 * @param lvl The mob's level.
+	 * @param sprites The mob's sprites.
+	 * @param lvlcols The different colors mapped to the level.
+	 * @param health How much health the mob has.
+	 * @param isFactor false if maxHealth=health, true if maxHealth=health*level*level*difficulty
+	 * @param detectDist The distance where the mob will detect the player and start moving towards him/her.
+	 * @param rwTime How long the mob will walk in a random direction. (random walk duration)
+	 * @param rwChance The chance of this mob will walk in a random direction (random walk chance)
+	 */
 	public EnemyMob(int lvl, MobSprite[][] sprites, int[] lvlcols, int health, boolean isFactor, int detectDist, int rwTime, int rwChance) {
 		this(lvl, sprites, lvlcols, health, isFactor, detectDist, 60*Updater.normSpeed, rwTime, rwChance);
 	}
 	
+	/**
+	 * Constructor for a hostile (enemy) mob.
+	 * isFactor=true,
+	 * rwTime=60,
+	 * rwChance=200.
+	 * 
+	 * @param lvl The mob's level.
+	 * @param sprites The mob's sprites.
+	 * @param lvlcols The different colors mapped to the level.
+	 * @param health How much health the mob has.
+	 * @param detectDist The distance where the mob will detect the player and start moving towards him/her.
+	 */
 	public EnemyMob(int lvl, MobSprite[][] sprites, int[] lvlcols, int health, int detectDist) {
 		this(lvl, sprites, lvlcols, health, true, detectDist, 60, 200);
 	}
 	
+	@Override
 	public void tick() {
 		super.tick();
 		
@@ -56,11 +95,13 @@ public class EnemyMob extends MobAi {
 		}
 	}
 	
+	@Override
 	public void render(Screen screen) {
 		col = lvlcols[lvl-1];
 		super.render(screen);
 	}
 	
+	@Override
 	protected void touchedBy(Entity entity) { // if an entity (like the player) touches the enemy mob
 		super.touchedBy(entity);
 		// hurts the player, damage is based on lvl.
@@ -73,6 +114,13 @@ public class EnemyMob extends MobAi {
 		super.die(50 * lvl, 1);
 	}
 	
+	/**
+	 * Determines if the mob can spawn at the giving position in the given map. 
+	 * @param level The level which the mob wants to spawn in.
+	 * @param x X map spawn coordinate.
+	 * @param y Y map spawn coordinate.
+	 * @return true if the mob can spawn here, false if not.
+	 */
 	public static boolean checkStartPos(Level level, int x, int y) { // Find a place to spawn the mob
 		int r = (level.depth == -4 ? (Game.isMode("score") ? 22 : 15) : 13);
 		
@@ -93,6 +141,7 @@ public class EnemyMob extends MobAi {
 		return true;
 	}
 	
+	@Override
 	public int getMaxLevel() {
 		return lvlcols.length;
 	}

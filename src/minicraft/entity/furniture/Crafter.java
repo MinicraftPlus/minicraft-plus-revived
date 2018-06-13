@@ -37,6 +37,10 @@ public class Crafter extends Furniture {
 	
 	public Crafter.Type type;
 	
+	/**
+	 * Creates a crafter of a given type.
+	 * @param type What type of crafter this is.
+	 */
 	public Crafter(Crafter.Type type) {
 		super(type.name(), type.sprite, type.xr, type.yr);
 		this.type = type;

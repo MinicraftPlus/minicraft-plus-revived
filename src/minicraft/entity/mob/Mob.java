@@ -27,6 +27,12 @@ public abstract class Mob extends Entity {
 	public int speed;
 	int tickTime = 0; // Incremented whenever tick() is called, is effectively the age in ticks
 	
+	/**
+	 * Default constructor for a mob.
+	 * Default x radius is 4, and y radius is 3.
+	 * @param sprites All of this mob's sprites.
+	 * @param health The mob's max health.
+	 */
 	public Mob(MobSprite[][] sprites, int health) {
 		super(4, 3);
 		this.sprites = sprites;
@@ -35,6 +41,10 @@ public abstract class Mob extends Entity {
 		speed = 1;
 	}
 	
+	/**
+	 * Updates the mob.
+	 */
+	@Override
 	public void tick() {
 		tickTime++; // Increment our tick counter
 		
@@ -67,6 +77,7 @@ public abstract class Mob extends Entity {
 		move(xd, yd);
 	}
 	
+	@Override
 	public boolean move(int xa, int ya) { // Move the mob, overrides from Entity
 		if(level == null) return false; // stopped b/c there's no level to move in!
 		
@@ -135,13 +146,20 @@ public abstract class Mob extends Entity {
 		return tile == Tiles.get("wool");
 	}
 	
-	/** checks if this Mob is currently on a light tile; if so, the mob sprite is brightened. */
+	/**
+	 * Checks if this Mob is currently on a light tile; if so, the mob sprite is brightened.
+	 * @return true if the mob is on a light tile, false if not.
+	 */
 	public boolean isLight() {
 		if(level == null) return false;
 		//Tile tile = level.getTile(x >> 4, y >> 4);
 		return level.isLight(x>>4, y>>4);
 	}
 
+	/**
+	 * Checks if the mob is swimming (standing on a liquid tile).
+	 * @return true if the mob is swimming, false if not.
+	 */
 	protected boolean isSwimming() {
 		if(level == null) return false;
 		Tile tile = level.getTile(x >> 4, y >> 4); // Get the tile the mob is standing on (at x/16, y/16)
@@ -173,6 +191,10 @@ public abstract class Mob extends Entity {
 		hurtTime = 10; // Set a delay before we can be hurt again
 	}
 	
+	/**
+	 * Restores health to this mob.
+	 * @param heal How much health is restored.
+	 */
 	public void heal(int heal) { // Restore health on the mob
 		if (hurtTime > 0) return; // If the mob has been hurt recently and hasn't cooled down, don't continue
 		
@@ -187,6 +209,7 @@ public abstract class Mob extends Entity {
 		return Direction.getDirection(hurt.x - attacker.x, hurt.y - attacker.y);
 	}
 	
+	@Override
 	protected String getUpdateString() {
 		String updates = super.getUpdateString() + ";";
 		updates += "dir,"+dir.ordinal()+
@@ -196,6 +219,7 @@ public abstract class Mob extends Entity {
 		return updates;
 	}
 	
+	@Override
 	protected boolean updateField(String field, String val) {
 		if(field.equals("x") || field.equals("y")) walkDist++;
 		if(super.updateField(field, val)) return true;

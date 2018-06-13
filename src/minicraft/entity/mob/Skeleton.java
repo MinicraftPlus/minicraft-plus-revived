@@ -18,6 +18,10 @@ public class Skeleton extends EnemyMob {
 	private int arrowtime;
 	private int artime;
 	
+	/**
+	 * Creates a skeleton of a given level.
+	 * @param lvl The skeleton's level.
+	 */
 	public Skeleton(int lvl) {
 		super(lvl, sprites, lvlcols, 6, true, 100, 45, 200);
 		
@@ -25,6 +29,7 @@ public class Skeleton extends EnemyMob {
 		artime = arrowtime;
 	}
 	
+	@Override
 	public void tick() {
 		super.tick();
 		

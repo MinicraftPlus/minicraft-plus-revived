@@ -41,6 +41,7 @@ public class Creeper extends EnemyMob {
 	
 	public Creeper(int lvl) { super(lvl, sprites, lvlcols, 10, 50); }
 	
+	@Override
 	public boolean move(int xa, int ya) {
 		boolean result = super.move(xa, ya);
 		dir = Direction.DOWN;
@@ -48,6 +49,7 @@ public class Creeper extends EnemyMob {
 		return result;
 	}
 	
+	@Override
 	public void tick() {
 		super.tick();
 		
@@ -132,6 +134,7 @@ public class Creeper extends EnemyMob {
 		}
 	}
 
+	@Override
 	public void render(Screen screen) {
 		if (fuseLit && fuseTime % 6 == 0) {
 			super.lvlcols[lvl-1] = Color.get(-1, 252);
@@ -144,6 +147,7 @@ public class Creeper extends EnemyMob {
 		super.render(screen);
 	}
 
+	@Override
 	protected void touchedBy(Entity entity) {
 		if (entity instanceof Player) {
 			if (fuseTime == 0) {
@@ -162,6 +166,7 @@ public class Creeper extends EnemyMob {
 		super.die();
 	}
 	
+	@Override
 	protected String getUpdateString() {
 		String updates = super.getUpdateString() + ";";
 		updates += "fuseTime,"+fuseTime+
@@ -170,6 +175,7 @@ public class Creeper extends EnemyMob {
 		return updates;
 	}
 	
+	@Override
 	protected boolean updateField(String field, String val) {
 		if(super.updateField(field, val)) return true;
 		switch(field) {

@@ -23,6 +23,9 @@ public class DungeonChest extends Chest {
 	public Random random = new Random();
 	public boolean isLocked;
 	
+	/**
+	 * Creates a custom chest with the name Dungeon Chest.
+	 */
 	public DungeonChest() {
 		super("Dungeon Chest", lockCol);
 		populateInv();
@@ -69,12 +72,15 @@ public class DungeonChest extends Chest {
 		else return super.use(player); // the chest was already unlocked.
 	}
 	
+	@Override
 	public void render(Screen screen) {
 		sprite.color = col = isLocked?lockCol:openCol;
 		super.render(screen);
 	}
 	
-	/** Populate the inventory of the DungeonChest, psudo-randomly. */
+	/**
+	 * Populate the inventory of the DungeonChest, psudo-randomly.
+	 */
 	private void populateInv() {
 		Inventory inv = getInventory(); // Yes, I'm that lazy. ;P
 		inv.clearInv(); // clear the inventory.
@@ -114,18 +120,19 @@ public class DungeonChest extends Chest {
 		}
 	}
 	
-	/** what happens if the player tries to push a Dungeon Chest. */
+	@Override
 	protected void touchedBy(Entity entity) {
 		if(!isLocked) // can only be pushed if unlocked.
 			super.touchedBy(entity);
 	}
 	
-	/** what happens if the player tries to grab a Dungeon Chest. */
+	@Override
 	public void take(Player player) {
 		if(!isLocked) // can only be taken if unlocked.
 			super.take(player);
 	}
 	
+	@Override
 	protected String getUpdateString() {
 		String updates = super.getUpdateString() + ";";
 		updates += "isLocked,"+isLocked;
@@ -133,6 +140,7 @@ public class DungeonChest extends Chest {
 		return updates;
 	}
 	
+	@Override
 	protected boolean updateField(String field, String val) {
 		if(super.updateField(field, val)) return true;
 		switch(field) {

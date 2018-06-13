@@ -22,6 +22,14 @@ public abstract class MobAi extends Mob {
 	
 	private boolean slowtick = false;
 	
+	/**
+	 * Constructor for a mob with an ai.
+	 * @param sprites All of this mob's sprites.
+	 * @param maxHealth Maximum health of the mob.
+	 * @param lifetime How many ticks this mob can live before its removed.
+	 * @param rwTime How long the mob will walk in a random direction. (random walk duration)
+	 * @param rwChance The chance of this mob will walk in a random direction (random walk chance)
+	 */
 	protected MobAi(MobSprite[][] sprites, int maxHealth, int lifetime, int rwTime, int rwChance) {
 		super(sprites, maxHealth);
 		this.lifetime = lifetime;
@@ -33,10 +41,15 @@ public abstract class MobAi extends Mob {
 		walkTime = 2;
 	}
 	
+	/**
+	 * Checks if the mob should sleep this tick.
+	 * @return true if mob should sleep, false if not.
+	 */
 	protected boolean skipTick() {
 		return slowtick && (tickTime+1) % 4 == 0;
 	}
 	
+	@Override
 	public void tick() {
 		super.tick();
 		
@@ -74,6 +87,7 @@ public abstract class MobAi extends Mob {
 		if (randomWalkTime > 0) randomWalkTime--;
 	}
 	
+	@Override
 	public void render(Screen screen) {
 		int xo = x - 8;
 		int yo = y - 11;
@@ -113,10 +127,16 @@ public abstract class MobAi extends Mob {
 		super.doHurt(damage, attackDir);
 	}
 	
+	@Override
 	public boolean canWool() {
 		return true;
 	}
 	
+	/**
+	 * Sets the mob to walk in a random direction for a given amount of time.
+	 * @param byChance true if the mob should always get a new direction to walk, false if 
+	 * there should be a chance that the mob moves.
+	 */
 	public void randomizeWalkDir(boolean byChance) { // boolean specifies if this method, from where it's called, is called every tick, or after a random chance.
 		if(!byChance && random.nextInt(randomWalkChance) != 0) return;
 		
@@ -127,13 +147,28 @@ public abstract class MobAi extends Mob {
 		ya = (random.nextInt(3) - 1);
 	}
 	
+	/**
+	 * Adds some items to the level.
+	 * @param mincount Least amount of items to add.
+	 * @param maxcount Most amount of items to add.
+	 * @param items Which items should be added.
+	 */
 	protected void dropItem(int mincount, int maxcount, Item... items) {
 		int count = random.nextInt(maxcount-mincount+1) + mincount;
 		for (int i = 0; i < count; i++)
 			level.dropItem(x, y, items);
 	}
 	
-	/** Determines if the given spawn location is appropriate for friendly mobs. */
+	/**
+	 * Determines if a friendly mob can spawn here.
+	 * @param level The level the mob is trying to spawn in.
+	 * @param x X map coordinate of spawn.
+	 * @param y Y map coordinate of spawn.
+	 * @param playerDist Max distance from the player the mob can be spawned in.
+	 * @param soloRadius How far out can there not already be any entities.
+	 * This is multiplied by the monster density of the level
+	 * @return true if the mob can spawn, false if not.
+	 */
 	protected static boolean checkStartPos(Level level, int x, int y, int playerDist, int soloRadius) {
 		Player player = level.getClosestPlayer(x, y);
 		if (player != null) {
@@ -151,6 +186,10 @@ public abstract class MobAi extends Mob {
 		return level.getTile(x >> 4, y >> 4).maySpawn; // the last check.
 	}
 	
+	/**
+	 * Returns the maximum level of this mob.
+	 * @return max level of the mob.
+	 */
 	public abstract int getMaxLevel();
 	
 	protected void die(int points) { die(points, 0); }

@@ -45,6 +45,14 @@ public abstract class Entity implements Tickable {
 	private boolean accessedUpdates = false;
 	private long lastUpdate;
 	
+	/**
+	 * Default constructor for the Entity class.
+	 * Assings null/none values to the instace variables.
+	 * The exception is removed which is set to true, and
+	 * lastUpdate which is set to System.nanoTime().
+	 * @param xr X radius of entity.
+	 * @param yr Y radius of entity.
+	 */
 	public Entity(int xr, int yr) { // add color to this later, in color update
 		this.xr = xr;
 		this.yr = yr;
@@ -60,7 +68,16 @@ public abstract class Entity implements Tickable {
 	public abstract void render(Screen screen); /// used to render the entity on screen.
 	@Override public abstract void tick(); /// used to update the entity.
 	
+	/**
+	 * Returns true if the entity is removed from the level, otherwise false.
+	 * @return removed
+	 */
 	public boolean isRemoved() { return removed/* || level == null*/; }
+	
+	/**
+	 * Returns the level which this entity belongs in.
+	 * @return level
+	 */
 	public Level getLevel() { return level; }
 	
 	/** Returns a Rectangle instance using the defined bounds of the entity. */
@@ -104,7 +121,15 @@ public abstract class Entity implements Tickable {
 		return !stopped;
 	}
 	
-	/** Second part to the move method (moves in one direction at a time) */
+	/**
+	 * Moves the entity a long only one direction.
+	 * If xa != 0 then ya should be 0.
+	 * If xa = 0 then ya should be != 0.
+	 * Will throw exception otherwise.
+	 * @param xa Horizontal velocity.
+	 * @param ya Vertical velocity.
+	 * @return true if the move was successful, false if not.
+	 */
 	protected boolean move2(int xa, int ya) {
 		if(xa == 0 && ya == 0) return true; // was not stopped
 		
@@ -229,7 +254,20 @@ public abstract class Entity implements Tickable {
 		return Math.round(distance) >> 4 <= tileRadius; // compare the distance (converted to tile units) with the specified radius.
 	}
 	
-	protected Player getClosestPlayer() { return getClosestPlayer(true); }
+	/**
+	 * Returns the closest player to this entity.
+	 * @return the closest player.
+	 */
+	protected Player getClosestPlayer() { 
+		return getClosestPlayer(true);
+	}
+	
+	/**
+	 * Returns the closes player to this entity.
+	 * If this is called on a player it can return itself.
+	 * @param returnSelf determines if the method can return itself.
+	 * @return The closest player to this entity.
+	 */
 	protected Player getClosestPlayer(boolean returnSelf) {
 		if (this instanceof Player && returnSelf)
 			return (Player) this;
@@ -239,6 +277,12 @@ public abstract class Entity implements Tickable {
 		return level.getClosestPlayer(x, y);
 	}
 	
+	/**
+	 * I think this is used to update a entity over a network.
+	 * The server will send a correction of this entity's state
+	 * which will then be updated.
+	 * @param deltas A string representation of the new entity state.
+	 */
 	public final void update(String deltas) {
 		for(String field: deltas.split(";")) {
 			String fieldName = field.substring(0, field.indexOf(","));
@@ -251,6 +295,13 @@ public abstract class Entity implements Tickable {
 		}
 	}
 	
+	/**
+	 * Updates one of the entity's fields based on a string pair.
+	 * Used to parse data from a server.
+	 * @param fieldName Which variable is being updated.
+	 * @param val The new value.
+	 * @return true if a variable was updated, false if not.
+	 */
 	protected boolean updateField(String fieldName, String val) {
 		switch(fieldName) {
 			case "eid": eid = Integer.parseInt(val); return true;
@@ -271,12 +322,22 @@ public abstract class Entity implements Tickable {
 	
 	/// I think I'll make these "getUpdates()" methods be an established thing, that returns all the things that can change that you need to account for when updating entities across a server.
 	/// by extension, the update() method should always account for all the variables specified here.
+	/**
+	 * Converts this entity to a string representation which can be sent to
+	 * a server or client.
+	 * @return Networking string representation of this entity.
+	 */
 	protected String getUpdateString() {
 		return "x,"+x+";"
 		+"y,"+y+";"
 		+"level,"+(level==null?"null":World.lvlIdx(level.depth));
 	}
 	
+	/**
+	 * Returns a string representation of this entity.
+	 * @param fetchAll true if all variables should be returned, false if only the ones who have changed should be returned.
+	 * @return Networking string representation of this entity.
+	 */
 	public final String getUpdates(boolean fetchAll) {
 		if(accessedUpdates) {
 			if(fetchAll) return prevUpdates;
@@ -287,6 +348,11 @@ public abstract class Entity implements Tickable {
 			else return getUpdates();
 		}
 	}
+	
+	/**
+	 * Determines what has been updated and only return that.
+	 * @return String representation of all the variables which has changed since last time.
+	 */
 	public final String getUpdates() {
 		// if the updates have already been fetched and written, but not flushed, then just return those.
 		if(accessedUpdates) return curDeltas;

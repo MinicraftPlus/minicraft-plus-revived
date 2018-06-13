@@ -8,6 +8,9 @@ import minicraft.item.Items;
 public class Pig extends PassiveMob {
 	private static MobSprite[][] sprites = MobSprite.compileMobSpriteAnimations(16, 14);
 	
+	/**
+	 * Creates a pig.
+	 */
 	public Pig() {
 		super(sprites, Color.get(-1, 000, 555, 522));
 	}

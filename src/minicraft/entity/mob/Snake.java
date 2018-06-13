@@ -18,6 +18,7 @@ public class Snake extends EnemyMob {
 	
 	public Snake(int lvl) { super(lvl, sprites, lvlcols, lvl>1?8:7, 100); }
 	
+	@Override
 	protected void touchedBy(Entity entity) {
 		if(entity instanceof Player) {
 			int damage = lvl + Settings.getIdx("diff");

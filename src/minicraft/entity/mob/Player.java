@@ -27,7 +27,17 @@ import minicraft.gfx.MobSprite;
 import minicraft.gfx.Point;
 import minicraft.gfx.Rectangle;
 import minicraft.gfx.Screen;
-import minicraft.item.*;
+import minicraft.item.ArmorItem;
+import minicraft.item.FurnitureItem;
+import minicraft.item.Item;
+import minicraft.item.Items;
+import minicraft.item.PotionItem;
+import minicraft.item.PotionType;
+import minicraft.item.PowerGloveItem;
+import minicraft.item.Recipes;
+import minicraft.item.StackableItem;
+import minicraft.item.ToolItem;
+import minicraft.item.ToolType;
 import minicraft.level.Level;
 import minicraft.level.tile.Tile;
 import minicraft.level.tile.Tiles;
@@ -169,14 +179,30 @@ public class Player extends Mob implements ItemHolder, ClientTickable {
 		}
 	}
 	
+	/**
+	 * Adds a new potion effect to the player.
+	 * @param type Type of potion.
+	 * @param duration How long the effect lasts.
+	 */
 	public void addPotionEffect(PotionType type, int duration) {
 		potioneffects.put(type, duration);
 	}
+	
+	/**
+	 * Adds a potion effect to the player.
+	 * @param type Type of effect.
+	 */
 	public void addPotionEffect(PotionType type) {
 		addPotionEffect(type, type.duration);
 	}
+	
+	/**
+	 * Returns all the potion effects currently affecting the player.
+	 * @return all potion effects on the player.
+	 */
 	public HashMap<PotionType, Integer> getPotionEffects() { return potioneffects; }
 	
+	@Override
 	public void tick() {
 		if(level == null || isRemoved()) return;
 		
@@ -410,6 +436,10 @@ public class Player extends Mob implements ItemHolder, ClientTickable {
 		if(Game.isConnectedClient() && this == Game.player) Game.client.sendPlayerUpdate(this);
 	}
 	
+	/**
+	 * Removes an held item and places it back into the inventory.
+	 * Looks complicated to so it can handle the powerglove.
+	 */
 	public void resolveHeldItem() {
 		//if(Game.debug) System.out.println("prev item: " + prevItem + "; curItem: " + activeItem);
 		if(!(activeItem instanceof PowerGloveItem)) { // if you are now holding something other than a power glove...
@@ -428,7 +458,9 @@ public class Player extends Mob implements ItemHolder, ClientTickable {
 	/* This actually ends up calling another use method down below. */
 	private boolean use() { return use(getInteractionBox(12)); }
 	
-	/** This method is called when we press the attack button. */
+	/** 
+	 * This method is called when we press the attack button.
+	 */
 	protected void attack() {
 		// walkDist is not synced, so this can happen for both the client and server.
 		walkDist += 8; // increase the walkDist (changes the sprite, like you moved your arm)
@@ -592,7 +624,11 @@ public class Player extends Mob implements ItemHolder, ClientTickable {
 		}
 	}
 	
-	/** Gets the attack damage the player will deal. */
+	/**
+	 * Calculates how much damage the player will do.
+	 * @param e Entity being attacked.
+	 * @return How much damage the player does.
+	 */
 	private int getAttackDamage(Entity e) {
 		int dmg = random.nextInt(2) + 1;
 		if (activeItem != null && activeItem instanceof ToolItem) {
@@ -601,7 +637,7 @@ public class Player extends Mob implements ItemHolder, ClientTickable {
 		return dmg;
 	}
 	
-	/** Draws the player on the screen */
+	@Override
 	public void render(Screen screen) {
 		col = Color.get(-1, 100, shirtColor, 532);
 		
@@ -705,11 +741,22 @@ public class Player extends Mob implements ItemHolder, ClientTickable {
 	// can walk on wool tiles..? quickly..?
 	public boolean canWool() { return true; }
 	
-	/** Finds a start position for the player to start in. */
+	/**
+	 * Finds a starting position for the player.
+	 * @param level Level which the player wants to start in.
+	 * @param spawnSeed Spawnseed.
+	 * @return true
+	 */
 	public boolean findStartPos(Level level, long spawnSeed) {
 		random.setSeed(spawnSeed);
 		return findStartPos(level);
 	}
+	
+	/**
+	 * Finds the starting position for the player in a level.
+	 * @param level The level.
+	 * @return true.
+	 */
 	public boolean findStartPos(Level level) {
 		while (true) { // will loop until it returns
 			// gets coordinates of a random tile (in tile coordinates)
@@ -759,7 +806,11 @@ public class Player extends Mob implements ItemHolder, ClientTickable {
 		}
 	}*/
 	
-	/** finds a location to respawn the player after death. */
+	/**
+	 * Finds a location where the player can respawn in a given level.
+	 * @param level The level.
+	 * @return true
+	 */
 	public boolean respawn(Level level) {
 		if (!level.getTile(spawnx, spawny).maySpawn)
 			findStartPos(level); // if there's no bed to spawn from, and the stored coordinates don't point to a grass tile, then find a new point.
@@ -770,7 +821,11 @@ public class Player extends Mob implements ItemHolder, ClientTickable {
 		return true; // again, why the "return true"'s for methods that never return false?
 	}
 	
-	/** Pays the stamina used for an action */
+	/**
+	 * Uses an amount of stamina to do an action.
+	 * @param cost How much stamina the action requires.
+	 * @return true if the player had enough stamina, false if not.
+	 */
 	public boolean payStamina(int cost) {
 		if (potioneffects.containsKey(PotionType.Energy)) return true; // if the player has the potion effect for infinite stamina, return true (without subtracting cost).
 		else if (stamina <= 0) return false; // if the player doesn't have enough stamina, then return false; failure.
@@ -782,7 +837,10 @@ public class Player extends Mob implements ItemHolder, ClientTickable {
 		return true; // success
 	}
 	
-	/** Gets the player's light radius underground */
+	/** 
+	 * Gets the player's light radius underground 
+	 */
+	@Override
 	public int getLightRadius() {
 		//if (Game.currentLevel == 3) return 0; // I don't want the player to have an automatic halo on the surface.
 		
@@ -903,6 +961,7 @@ public class Player extends Mob implements ItemHolder, ClientTickable {
 		return updates;
 	}
 	
+	@Override
 	protected boolean updateField(String field, String val) {
 		if(super.updateField(field, val)) return true;
 		switch(field) {

@@ -16,6 +16,9 @@ public class Bed extends Furniture {
 	private static int playersAwake = 1;
 	private static final HashMap<Player, Bed> sleepingPlayers = new HashMap<>();
 	
+	/**
+	 * Creates a new furniture with the name Bed and the bed sprite and color.
+	 */
 	public Bed() {
 		super("Bed", new Sprite(16, 8, 2, 2, Color.get(-1, 100, 444, 400)), 3, 2);
 	}

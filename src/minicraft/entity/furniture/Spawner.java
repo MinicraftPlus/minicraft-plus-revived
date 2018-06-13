@@ -35,6 +35,10 @@ public class Spawner extends Furniture {
 	private int health, lvl, maxMobLevel;
 	private int spawnTick;
 	
+	/**
+	 * Initializes the spawners variables to the corresponding values from the mob.
+	 * @param m The mob which this spawner will spawn.
+	 */
 	private void initMob(MobAi m) {
 		mob = m;
 		sprite.color = col = mob.col;
@@ -48,6 +52,10 @@ public class Spawner extends Furniture {
 		}
 	}
 	
+	/**
+	 * Creates a new spawner for the mob m.
+	 * @param m Mob which will be spawned.
+	 */
 	public Spawner(MobAi m) {
 		super(getClassName(m.getClass()) + " Spawner", new Sprite(20, 8, 2, 2, m.col), 7, 2);
 		health = 100;
@@ -55,11 +63,17 @@ public class Spawner extends Furniture {
 		resetSpawnInterval();
 	}
 	
+	/**
+	 * Returns the classname of a class.
+	 * @param c The class.
+	 * @return String representation of the classname.
+	 */
 	private static String getClassName(Class c) {
 		String fullName = c.getCanonicalName();
 		return fullName.substring(fullName.lastIndexOf(".")+1);
 	}
 	
+	@Override
 	public void tick() {
 		super.tick();
 		
@@ -72,10 +86,16 @@ public class Spawner extends Furniture {
 		}
 	}
 	
+	/**
+	 * Resets the spawner so it can spawn another mob.
+	 */
 	private void resetSpawnInterval() {
 		spawnTick = rnd.nextInt(maxSpawnInterval - minSpawnInterval + 1) + minSpawnInterval;
 	}
 	
+	/**
+	 * Tries to spawn a new mob.
+	 */
 	private void trySpawn() {
 		if(level == null || Game.isValidClient()) return;
 		if(level.mobCount >= level.maxMobCount) return; // can't spawn more entities
@@ -189,6 +209,7 @@ public class Spawner extends Furniture {
 	
 	public Furniture clone() { return new Spawner(mob); }
 	
+	@Override
 	protected String getUpdateString() {
 		String updates = super.getUpdateString() + ";";
 		updates += "health,"+health+
@@ -197,6 +218,7 @@ public class Spawner extends Furniture {
 		return updates;
 	}
 	
+	@Override
 	protected boolean updateField(String field, String val) {
 		if(super.updateField(field, val)) return true;
 		switch(field) {

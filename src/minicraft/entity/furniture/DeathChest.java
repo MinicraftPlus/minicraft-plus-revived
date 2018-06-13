@@ -15,6 +15,9 @@ public class DeathChest extends Chest {
 	private int redtick = 0; // this is used to determine the shade of red when the chest is about to expire.
 	private boolean reverse; // what direction the red shade (redtick) is changing.
 	
+	/**
+	 * Creates a custom chest with the name Death Chest
+	 */
 	public DeathChest() {
 		super("Death Chest", Color.get(-1, 220, 331, 552));
 		
@@ -36,6 +39,7 @@ public class DeathChest extends Chest {
 	}
 	
 	// for death chest time count, I imagine.
+	@Override
 	public void tick() {
 		super.tick();
 		//name = "Death Chest:"; // add the current
@@ -101,6 +105,7 @@ public class DeathChest extends Chest {
 		return updates;
 	}
 	
+	@Override
 	protected boolean updateField(String field, String val) {
 		if(super.updateField(field, val)) return true;
 		switch(field) {

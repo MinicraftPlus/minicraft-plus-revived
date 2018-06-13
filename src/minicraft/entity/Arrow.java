@@ -38,10 +38,15 @@ public class Arrow extends Entity implements ClientTickable {
 		}*/
 	}
 	
+	/**
+	 * Generates information about the arrow.
+	 * @return string representation of owner, xdir, ydir and damage.
+	 */
 	public String getData() {
 		return owner.eid+":"+dir.ordinal()+":"+damage;
 	}
 	
+	@Override
 	public void tick() {
 		if (x < 0 || x>>4 > level.w || y < 0 || y>>4 > level.h) {
 			remove(); // remove when out of bounds
@@ -80,6 +85,7 @@ public class Arrow extends Entity implements ClientTickable {
 		return false;
 	}
 
+	@Override
 	public void render(Screen screen) {
 		/* // probably makes a blinking effect.
 		if (time >= lifeTime - 3 * 20) {

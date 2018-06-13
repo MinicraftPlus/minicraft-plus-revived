@@ -12,6 +12,10 @@ public class Inventory {
 	private Random random = new Random();
 	private List<Item> items = new ArrayList<>(); // the list of items that is in the inventory.
 	
+	/**
+	 * Returns all the items which are in this inventory.
+	 * @return ArrayList containing all the items in the inventory.
+	 */
 	public List<Item> getItems() {
 		List<Item> newItems = new ArrayList<>();
 		newItems.addAll(items);
@@ -45,12 +49,21 @@ public class Inventory {
 			add(items.size(), item);  // adds the item to the end of the inventory list
 	}
 	
+	/**
+	 * Adds several copies of the same item to the end of the inventory.
+	 * @param item Item to be added.
+	 * @param num Amount of items to add.
+	 */
 	public void add(Item item, int num) {
 		for(int i = 0; i < num; i++)
 			add(item.clone());
 	}
 	
-	/** Adds an item to a specific spot in the inventory */
+	/**
+	 * Adds an item to a specific spot in the inventory.
+	 * @param slot Index to place item at.
+	 * @param item Item to be added.
+	 */
 	public void add(int slot, Item item) {
 		//if (Game.debug) System.out.println("adding item to an inventory: " + item);
 		if(item instanceof PowerGloveItem) {
@@ -105,9 +118,11 @@ public class Inventory {
 		return removed;
 	}
 	
-	/** Removes the item from the inventory entirely, whether it's a stack, or a lone item. */
+	/** 
+	 * Removes the item from the inventory entirely, whether it's a stack, or a lone item.
+	 */
 	public void removeItem(Item i) {
-		Item save = i.clone();
+		Item save = i.clone(); // never used?
 		//if (Game.debug) System.out.println("original item: " + i);
 		if(i instanceof StackableItem)
 			removeItems(i.clone(), ((StackableItem)i).count);
@@ -115,7 +130,11 @@ public class Inventory {
 			removeItems(i.clone(), 1);
 	}
 	
-	/** removes items from this inventory. Note, if passed a stackable item, this will only remove a max of count from the stack. */
+	/**
+	 * Removes items from this inventory. Note, if passed a stackable item, this will only remove a max of count from the stack.
+	 * @param given Item to remove.
+	 * @param count Max amount of the item to remove.
+	 */
 	public void removeItems(Item given, int count) {
 		if(given instanceof StackableItem)
 			count -= removeFromStack((StackableItem)given, count);
@@ -162,6 +181,11 @@ public class Inventory {
 		return names;
 	}*/
 	
+	/**
+	 * Generates a string representation of all the items in the inventory which can be sent
+	 * over the network.
+	 * @return String representation of all the items in the inventory.
+	 */
 	public String getItemData() {
 		StringBuilder itemdata = new StringBuilder();
 		for(Item i: items)
@@ -173,6 +197,10 @@ public class Inventory {
 		return itemdata.toString();
 	}
 	
+	/**
+	 * Replaces all the items in the inventory with the items in the string.
+	 * @param items String representation of an inventory.
+	 */
 	public void updateInv(String items) {
 		clearInv();
 		
@@ -182,7 +210,14 @@ public class Inventory {
 			add(Items.get(item));
 	}
 	
-	/** These functions (possibly) add Items and/or Tools to the inventory. */
+	/**
+	 * Tries to add an item to the inventory.
+	 * @param chance Chance for the item to be added.
+	 * @param item Item to be added.
+	 * @param num How many of the item.
+	 * @param allOrNothing if true, either all items will be added or none, if false its possible to add
+	 * between 0-num items.
+	 */
 	public void tryAdd(int chance, Item item, int num, boolean allOrNothing) {
 		if(!allOrNothing || random.nextInt(chance) == 0)
 			for(int i = 0; i < num; i++)
@@ -201,6 +236,12 @@ public class Inventory {
 	public void tryAdd(int chance, ToolType type, int lvl) {
 		tryAdd(chance, new ToolItem(type, lvl));
 	}
+	
+	/**
+	 * Tries to add an Furniture to the inventory.
+	 * @param chance Chance for the item to be added.
+	 * @param type Type of furniture to add.
+	 */
 	public void tryAdd(int chance, Furniture type) {
 		tryAdd(chance, new FurnitureItem(type));
 	}
