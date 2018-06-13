@@ -1,3 +1,7 @@
+Minicraft+ version 2.0.5
+
+
+
 Minicraft+ version 2.0.4
 
 * HUGE menu renovation! Menus will be changed forever. You'll see. It's pretty obvious.
