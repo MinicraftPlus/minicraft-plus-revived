@@ -41,7 +41,7 @@ import minicraft.screen.MultiplayerDisplay;
 import minicraft.screen.WorldSelectDisplay;
 
 public class Save {
-
+	
 	public String location = Game.gameDir;
 	File folder;
 	
@@ -110,21 +110,17 @@ public class Save {
 	// this saves global options
 	public Save() {
 		this(new File(Game.gameDir+"/"));
-		if(Game.debug) System.out.println("writing preferences...");
+		if(Game.debug) System.out.println("writing preferences and unlocks...");
 		writePrefs();
-	}
-	
-	public Save(List<String> unlocks) {
-		this(new File(Game.gameDir+"/"));
-		if(Game.debug) System.out.println("writing unlocks: "+unlocks);
-		writeToFile(location+"Unlocks"+extension, unlocks);
 	}
 	
 	public Save(Player player, boolean writePlayer) {
 		// this is simply for access to writeToFile.
 		this(new File(Game.gameDir+"/saves/"+ WorldSelectDisplay.getWorldName() + "/"));
-		if(writePlayer)
+		if(writePlayer) {
 			writePlayer("Player", player);
+			writeInventory("Inventory", player);
+		}
 	}
 	
 	public static void writeFile(String filename, String[] lines) throws IOException {
