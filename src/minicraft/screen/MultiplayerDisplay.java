@@ -321,11 +321,11 @@ public class MultiplayerDisplay extends Display {
 				break;
 			
 			case WAITING:
-				Font.drawCentered(waitingMessage+getElipses(), screen, Screen.h/2, Color.WHITE);
+				Font.drawCentered(waitingMessage+ getEllipses(), screen, Screen.h/2, Color.WHITE);
 				break;
 			
 			case LOADING:
-				Font.drawCentered("Loading "+loadingMessage+" from server"+getElipses(), screen, Screen.h/2, Color.WHITE);
+				Font.drawCentered("Loading "+loadingMessage+" from server"+ getEllipses(), screen, Screen.h/2, Color.WHITE);
 				//Font.drawCentered(transferPercent+"%", screen, Screen.h/2+6, Color.WHITE);
 				break;
 			
@@ -345,8 +345,7 @@ public class MultiplayerDisplay extends Display {
 	
 	private int ePos = 0;
 	private int eposTick = 0;
-	
-	private String getElipses() {
+	private String getEllipses() {
 		StringBuilder dots = new StringBuilder();
 		for(int i = 0; i < 3; i++) {
 			if (ePos == i)

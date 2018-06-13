@@ -299,6 +299,7 @@ public class Load {
 	
 	private void loadWorld(String filename) {
 		for(int l = World.maxLevelDepth; l >= World.minLevelDepth; l--) {
+			LoadingDisplay.setMessage(Level.getDepthString(l));
 			int lvlidx = World.lvlIdx(l);
 			loadFromFile(location + filename + lvlidx + extension);
 			
@@ -358,6 +359,7 @@ public class Load {
 	}
 	
 	public void loadPlayer(String filename, Player player) {
+		LoadingDisplay.setMessage("Player");
 		loadFromFile(location + filename + extension);
 		loadPlayer(player, data);
 	}
@@ -374,8 +376,9 @@ public class Load {
 		
 		if(player.armor > 0) {
 			if(worldVer.compareTo(new Version("2.0.4-dev7")) < 0) {
-				player.armorDamageBuffer = Integer.parseInt(data.remove(data.size()-1));
+				// reverse order b/c we are taking from the end
 				player.curArmor = (ArmorItem) Items.get(data.remove(data.size()-1));
+				player.armorDamageBuffer = Integer.parseInt(data.remove(data.size()-1));
 			}
 			else {
 				player.armorDamageBuffer = Integer.parseInt(data.remove(0));
@@ -393,9 +396,12 @@ public class Load {
 		Game.currentLevel = Integer.parseInt(data.remove(0));
 		Level level = World.levels[Game.currentLevel];
 		if(!player.isRemoved()) player.remove(); // removes the user player from the level, in case they would be added twice.
-		if(level != null && !(Game.isValidServer() && player == Game.player))
-			level.add(player);
-		else if(Game.debug) System.out.println(Network.onlinePrefix()+"game level to add player " + player + " to is null.");
+		if(!Game.isValidServer() || player != Game.player) {
+			if(level != null)
+				level.add(player);
+			else if(Game.debug)
+				System.out.println(Network.onlinePrefix() + "game level to add player " + player + " to is null.");
+		}
 		
 		if(worldVer.compareTo(new Version("2.0.4-dev8")) < 0) {
 			String modedata = data.remove(0);
@@ -488,13 +494,14 @@ public class Load {
 	}
 	
 	private void loadEntities(String filename) {
+		LoadingDisplay.setMessage("Entities");
 		loadFromFile(location + filename + extension);
 		
 		for(int i = 0; i < World.levels.length; i++) {
 			World.levels[i].clearEntities();
 		}
 		for(int i = 0; i < data.size(); i++) {
-			if(data.get(i).equalsIgnoreCase("player")) continue;
+			if(data.get(i).startsWith("Player")) continue;
 			loadEntity(data.get(i), worldVer, true);
 		}
 		

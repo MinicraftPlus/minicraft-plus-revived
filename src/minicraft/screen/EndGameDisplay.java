@@ -5,9 +5,9 @@ import java.util.Arrays;
 import java.util.Random;
 
 import minicraft.core.Game;
+import minicraft.core.Updater;
 import minicraft.core.io.InputHandler;
 import minicraft.core.io.Settings;
-import minicraft.core.Updater;
 import minicraft.entity.mob.Player;
 import minicraft.gfx.Color;
 import minicraft.gfx.Screen;
@@ -96,20 +96,19 @@ public class EndGameDisplay extends Display {
 		
 		if(scoreTime == 20 && !Settings.getEntry("scoretime").valueIs(10) && finalscore > 1000) {
 			unlocks.add(10);
-			// TODO implement hidden options in ArrayEntries, or allow options to be added
-			// Settings.getEntry("scoretime").addValue(10)
+			Settings.getEntry("scoretime").setValueVisibility(10, true);
 		}
 		
 		if(scoreTime == 60 && !Settings.getEntry("scoretime").valueIs(120) && finalscore > 100000) {
 			unlocks.add(120);
-			// Settings.getEntry("scoretime").addValue(120)
+			Settings.getEntry("scoretime").setValueVisibility(120, true);
 		}
 		
 		StringEntry[] entries = new StringEntry[unlocks.size()];
 		for(int i = 0; i < entries.length; i++)
 			entries[i] = new StringEntry("Unlocked! " + unlocks.get(i) + " Score Time");
 		
-		new Save(); // TODO make this write unlocks
+		new Save(); // writes unlocks, and preferences
 		
 		return entries;
 	}

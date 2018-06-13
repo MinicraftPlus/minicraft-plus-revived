@@ -58,7 +58,8 @@ public class Player extends Mob implements ItemHolder, ClientTickable {
 	//private int homeSetX, homeSetY;
 	
 	// the maximum stats that the player can have.
-	private static final int maxHealth = 10, maxStamina = 10, maxHunger = 10;
+	public static final int maxStat = 10;
+	public static final int maxHealth = maxStat, maxStamina = maxStat, maxHunger = maxStat;
 	public static final int maxArmor = 100;
 	
 	public static MobSprite[][] sprites =  MobSprite.compileMobSpriteAnimations(0, 14);
@@ -228,8 +229,8 @@ public class Player extends Mob implements ItemHolder, ClientTickable {
 
 		if (Game.isMode("creative")) {
 			// prevent stamina/hunger decay in creative mode.
-			stamina = 10;
-			hunger = 10;
+			stamina = maxStamina;
+			hunger = maxHunger;
 		}
 		
 		// remember: staminaRechargeDelay is a penalty delay for when the player uses up all their stamina.
@@ -265,7 +266,7 @@ public class Player extends Mob implements ItemHolder, ClientTickable {
 		if(!Bed.inBed(this)) {
 			if(hungerChargeDelay > 0) { // if the hunger is recharging health...
 				stamHungerTicks -= 2+diffIdx; // penalize the hunger
-				if(hunger == maxHunger) stamHungerTicks -= diffIdx; // further penalty if at full hunger
+				if(hunger == 0) stamHungerTicks -= diffIdx; // further penalty if at full hunger
 			}
 			
 			if(Updater.tickCount % Player.hungerTickCount[diffIdx] == 0)

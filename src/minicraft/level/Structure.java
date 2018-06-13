@@ -1,45 +1,58 @@
 package minicraft.level;
 
+import java.util.HashMap;
 import java.util.HashSet;
 
+import minicraft.entity.furniture.Furniture;
+import minicraft.entity.furniture.Lantern;
+import minicraft.gfx.Point;
 import minicraft.level.tile.Tile;
 import minicraft.level.tile.Tiles;
 
 // this stores structures that can be drawn at any location.
 public class Structure {
 	
-	private HashSet<Point> tiles;
+	private HashSet<TilePoint> tiles;
+	private HashMap<Point, Furniture> furniture;
 	
 	public Structure() {
 		tiles = new HashSet<>();
+		furniture = new HashMap<>();
 	}
 	
 	public void setTile(int x, int y, Tile tile) {
-		tiles.add(new Point(x, y, tile));
+		tiles.add(new TilePoint(x, y, tile));
+	}
+	public void addFurniture(int x, int y, Furniture furniture) {
+		this.furniture.put(new Point(x, y), furniture);
 	}
 	
 	public void draw(Level level, int xt, int yt) {
-		for(Point p: tiles) {
+		for(TilePoint p: tiles)
 			level.setTile(xt+p.x, yt+p.y, p.t);
-		}
+		
+		for(Point p: furniture.keySet())
+			level.add(furniture.get(p).clone(), (xt+p.x)<<4, (yt+p.y)<<4);
 	}
 	
-	static class Point {
+	static class TilePoint {
 		int x, y;
 		Tile t;
 		
-		public Point(int x, int y, Tile tile) {
+		public TilePoint(int x, int y, Tile tile) {
 			this.x = x;
 			this.y = y;
 			this.t = tile;
 		}
 		
+		@Override
 		public boolean equals(Object o) {
-			if(!(o instanceof Point)) return false;
-			Point p = (Point) o;
+			if(!(o instanceof TilePoint)) return false;
+			TilePoint p = (TilePoint) o;
 			return x == p.x && y == p.y && t.id == p.t.id;
 		}
 		
+		@Override
 		public int hashCode() {
 			return x+y*51 + t.id * 131;
 		}
@@ -49,6 +62,7 @@ public class Structure {
 	
 	static {
 		Structure s = new Structure();
+		s.addFurniture(-1, 1, new Lantern(Lantern.Type.IRON));
 		s.setTile(-1, 0, Tiles.get("Obsidian"));
 		s.setTile(+1, 0, Tiles.get("Obsidian"));
 		s.setTile(+2, 0, Tiles.get("Obsidian Door"));

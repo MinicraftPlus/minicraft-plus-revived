@@ -6,7 +6,6 @@ import minicraft.entity.furniture.Furniture;
 import minicraft.entity.furniture.Lantern;
 import minicraft.entity.mob.Player;
 import minicraft.entity.mob.RemotePlayer;
-import minicraft.item.Items;
 import minicraft.level.Level;
 import minicraft.saveload.Load;
 import minicraft.saveload.Save;
@@ -136,6 +135,7 @@ public class World extends Game {
 				for (int i = maxLevelDepth; i >= minLevelDepth; i--) {
 					// i = level depth; the array starts from the top because the parent level is used as a reference, so it should be constructed first. It is expected that the highest level will have a null parent.
 					if(debug) System.out.println("loading level " + i + "...");
+					LoadingDisplay.setMessage(Level.getDepthString(i));
 					levels[lvlIdx(i)] = new Level(worldSize, worldSize, i, levels[lvlIdx(i+1)], !WorldSelectDisplay.loadedWorld());
 					
 					LoadingDisplay.progress(loadingInc);
@@ -143,21 +143,12 @@ public class World extends Game {
 				
 				if(debug) System.out.println("level loading complete.");
 				
-				// add an Iron lantern to level 5, at (984, 984), when making a new world
-				Furniture f = new Lantern(Lantern.Type.IRON);//Items.get("Iron Lantern").furniture;
-				f.x = 984;
-				f.y = 984;
-				levels[lvlIdx(-4)].add(f);
-				
 				Level level = levels[currentLevel]; // sets level to the current level (3; surface)
 				Updater.pastDay1 = false;
 				player.findStartPos(level, WorldGenDisplay.getSeed()); // finds the start level for the player
 				level.add(player);
 			}
 			
-			if(Settings.get("Theme").equals("Hell")) {
-				player.getInventory().add(Items.get("lava potion"));
-			}
 			Renderer.readyToRenderGameplay = true;
 		} else {
 			levels = new Level[6];

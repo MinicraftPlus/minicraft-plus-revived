@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 
 import minicraft.core.Game;
+import minicraft.core.MyUtils;
 import minicraft.core.Network;
 import minicraft.core.io.InputHandler;
 import minicraft.core.io.Localization;
@@ -47,15 +48,28 @@ public class PauseDisplay extends Display {
 		
 		entries.addAll(Arrays.asList(
 			new SelectEntry("Main Menu", () -> {
-				Game.setMenu(new Display(false, true, new Menu.Builder(true, 8, RelPos.CENTER,
-					new StringEntry("Are you sure you want to"),
-					new StringEntry("exit the game?"),
-					new BlankEntry(),
-					new StringEntry("All unsaved progress", Color.RED),
-					new StringEntry("will be lost!", Color.RED),
+				ArrayList<ListEntry> items = new ArrayList<>();
+				items.addAll(Arrays.asList(StringEntry.useLines(
+					"Are you sure you want to",
+					MyUtils.fromNetworkStatus("Exit the Game?", "Leave the Server?", "Close the Server?")
+				)));
+				
+				if(!Game.isValidServer()) {
+					int color = MyUtils.fromNetworkStatus(Color.RED, Color.GREEN, Color.TRANS);
+					items.addAll(Arrays.asList(StringEntry.useLines(color, "",
+						MyUtils.fromNetworkStatus("All unsaved progress", "Your progress", ""),
+						MyUtils.fromNetworkStatus("will be lost!", "will be saved.", ""),
+						""
+					)));
+				}
+				
+				items.addAll(Arrays.asList(
 					new BlankEntry(),
 					new SelectEntry("No", Game::exitMenu),
 					new SelectEntry("Yes", () -> Game.setMenu(new TitleDisplay()))
+				));
+				
+				Game.setMenu(new Display(false, true, new Menu.Builder(true, 8, RelPos.CENTER, items
 				).createMenu()));
 			}),
 			
