@@ -12,6 +12,7 @@ import java.util.Timer;
 import java.util.TimerTask;
 
 import minicraft.core.Game;
+import minicraft.core.MyUtils;
 import minicraft.core.Network;
 import minicraft.core.Updater;
 import minicraft.core.World;
@@ -821,12 +822,20 @@ public class MinicraftServer extends Thread implements MinicraftProtocol {
 			hostPlayer = null;
 	}
 	
+	@Override
 	public synchronized void endConnection() {
+		if(!isConnected()) return;
+		
 		if (Game.debug) System.out.println("SERVER: ending connection with threads: " + threadList);
 		
-		MinicraftServerThread[] threads = getThreads();
-		for(MinicraftServerThread thread: threads)
-			thread.endConnection();
+		if(hasClients()) {
+			broadcastData(InputType.SAVE, "");
+			MyUtils.sleep(1000); // give time for the clients to send back their player data
+			
+			MinicraftServerThread[] threads = getThreads();
+			for(MinicraftServerThread thread: threads)
+				thread.endConnection();
+		}
 		
 		try {
 			socket.close();
@@ -835,6 +844,7 @@ public class MinicraftServer extends Thread implements MinicraftProtocol {
 		threadList.clear(); // should already be clear
 	}
 	
+	@Override
 	public boolean isConnected() {
 		return socket != null && !socket.isClosed();
 	}

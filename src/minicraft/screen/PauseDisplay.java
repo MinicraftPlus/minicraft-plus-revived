@@ -63,11 +63,17 @@ public class PauseDisplay extends Display {
 					)));
 				}
 				
-				items.addAll(Arrays.asList(
-					new BlankEntry(),
-					new SelectEntry("No", Game::exitMenu),
-					new SelectEntry("Yes", () -> Game.setMenu(new TitleDisplay()))
-				));
+				items.add(new BlankEntry());
+				items.add(new SelectEntry(Game.isValidServer()?"Cancel":"No", Game::exitMenu));
+				
+				if(Game.isValidServer())
+					items.add(new SelectEntry("Save and Quit", () -> {
+						Game.setMenu(new LoadingDisplay());
+						new Save(WorldSelectDisplay.getWorldName());
+						Game.setMenu(new TitleDisplay());
+					}));
+				
+				items.add(new SelectEntry(Game.isValidServer()?"Quit without saving":"Yes", () -> Game.setMenu(new TitleDisplay())));
 				
 				Game.setMenu(new Display(false, true, new Menu.Builder(true, 8, RelPos.CENTER, items
 				).createMenu()));
@@ -84,12 +90,7 @@ public class PauseDisplay extends Display {
 		menus = new Menu[] {
 			new Menu.Builder(true, 4, RelPos.CENTER, entries)
 				.setTitle("Paused", 550)
-				.createMenu()/*,
-			
-			msgBuilder.setEntries(new StringEntry("Save Game?"), new StringEntry("(Hint: Press \"r\" to save in-game)", Color.DARK_GRAY))
-				.createMenu(),
-			
-			msgBuilder.setEntries(new StringEntry(""))*/
+				.createMenu()
 		};
 	}
 	
