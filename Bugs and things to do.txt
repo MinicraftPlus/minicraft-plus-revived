@@ -4,8 +4,11 @@
 
  - make it so you add entities to the center of tiles
  - fix notification when hitting obsidian
- - finish ellipses
- - 
+ - move Save/Load stuff into FileData enum; use it to call each method
+ - move all the old loading code into another LegacyLoad class (rename them to reflect their versions)
+ - fix score mode multiplier - should multiply pickup additions when multiplier is > 1
+ - add feature to save multiple multiplayer users and ip addresses
+ 
 
 Note to self: for more little bugs/ideas/concerns, search code for "TODO"
 -----------------------------------------------------------------------------------
