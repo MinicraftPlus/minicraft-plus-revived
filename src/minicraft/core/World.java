@@ -6,7 +6,6 @@ import minicraft.entity.furniture.Furniture;
 import minicraft.entity.furniture.Lantern;
 import minicraft.entity.mob.Player;
 import minicraft.entity.mob.RemotePlayer;
-import minicraft.item.Items;
 import minicraft.level.Level;
 import minicraft.saveload.Load;
 import minicraft.saveload.Save;
@@ -155,9 +154,6 @@ public class World extends Game {
 				level.add(player);
 			}
 			
-			if(Settings.get("Theme").equals("Hell")) {
-				player.getInventory().add(Items.get("lava potion"));
-			}
 			Renderer.readyToRenderGameplay = true;
 		} else {
 			levels = new Level[6];
