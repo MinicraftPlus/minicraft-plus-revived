@@ -1,14 +1,14 @@
 package minicraft.gfx;
 
 import minicraft.core.Updater;
-import minicraft.gfx.Ellipses.DotUpdater.CallUpdater;
-import minicraft.gfx.Ellipses.DotUpdater.TimeUpdater;
+import minicraft.gfx.Ellipsis.DotUpdater.CallUpdater;
+import minicraft.gfx.Ellipsis.DotUpdater.TimeUpdater;
 
-public abstract class Ellipses {
+public abstract class Ellipsis {
 	
 	private final DotUpdater updateMethod;
 	
-	protected Ellipses(DotUpdater updateMethod, int intervalCount) {
+	protected Ellipsis(DotUpdater updateMethod, int intervalCount) {
 		this.updateMethod = updateMethod;
 		updateMethod.setIntervalCount(intervalCount);
 	}
@@ -23,9 +23,9 @@ public abstract class Ellipses {
 	protected int getInterval() { return updateMethod.getInterval(); }
 	protected int getIntervalCount() { return updateMethod.getIntervalCount(); }
 	
-	public static class SequentialEllipses extends Ellipses {
-		public SequentialEllipses() { this(new CallUpdater(Updater.normSpeed*2/3)); }
-		public SequentialEllipses(DotUpdater updater) {
+	public static class SequentialEllipsis extends Ellipsis {
+		public SequentialEllipsis() { this(new CallUpdater(Updater.normSpeed*2/3)); }
+		public SequentialEllipsis(DotUpdater updater) {
 			super(updater, 3);
 		}
 		
@@ -44,16 +44,16 @@ public abstract class Ellipses {
 		}
 	}
 	
-	public static class SmoothEllipses extends Ellipses {
+	public static class SmoothEllipsis extends Ellipsis {
 		
 		private static final String dotString = "   ";
 		
 		private final char[] dots = dotString.toCharArray();
 		
-		public SmoothEllipses() { this(new TimeUpdater()); }
-		public SmoothEllipses(DotUpdater updater) {
+		public SmoothEllipsis() { this(new TimeUpdater()); }
+		public SmoothEllipsis(DotUpdater updater) {
 			super(updater, dotString.length()*2);
-			updater.setEllipses(this);
+			updater.setEllipsis(this);
 		}
 		
 		@Override
@@ -75,7 +75,7 @@ public abstract class Ellipses {
 		private int countPerInterval;
 		private int counter;
 		
-		private Ellipses ellipses = null;
+		private Ellipsis ellipsis = null;
 		
 		private boolean started = false;
 		
@@ -83,9 +83,9 @@ public abstract class Ellipses {
 			this.countPerCycle = countPerCycle;
 		}
 		
-		void setEllipses(Ellipses ellipses) { this.ellipses = ellipses; }
+		void setEllipsis(Ellipsis ellipsis) { this.ellipsis = ellipsis; }
 		
-		// called by Ellipses classes, passing their value.
+		// called by Ellipsis classes, passing their value.
 		void setIntervalCount(int numIntervals) {
 			intervalCount = numIntervals;
 			countPerInterval = Math.max(1, Math.round(countPerCycle / (float)intervalCount));
@@ -95,9 +95,9 @@ public abstract class Ellipses {
 		public int getIntervalCount() { return intervalCount; }
 		
 		private void incInterval(int amt) {
-			if(ellipses != null)
+			if(ellipsis != null)
 				for(int i = curInterval+1; i <= curInterval+amt; i++)
-					ellipses.nextInterval(i%intervalCount);
+					ellipsis.nextInterval(i%intervalCount);
 			
 			curInterval += amt;
 			curInterval %= intervalCount;

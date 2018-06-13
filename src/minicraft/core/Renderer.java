@@ -14,9 +14,9 @@ import java.util.Map;
 import minicraft.entity.furniture.Bed;
 import minicraft.entity.mob.Player;
 import minicraft.gfx.Color;
-import minicraft.gfx.Ellipses;
-import minicraft.gfx.Ellipses.DotUpdater.TickUpdater;
-import minicraft.gfx.Ellipses.SmoothEllipses;
+import minicraft.gfx.Ellipsis;
+import minicraft.gfx.Ellipsis.DotUpdater.TickUpdater;
+import minicraft.gfx.Ellipsis.SmoothEllipsis;
 import minicraft.gfx.Font;
 import minicraft.gfx.FontStyle;
 import minicraft.gfx.Screen;
@@ -47,7 +47,7 @@ public class Renderer extends Game {
 	public static boolean readyToRenderGameplay = false;
 	public static boolean showinfo = false;
 	
-	private static Ellipses ellipses = new SmoothEllipses(new TickUpdater());
+	private static Ellipsis ellipsis = new SmoothEllipsis(new TickUpdater());
 	
 	static void initScreen() {
 		if(!HAS_GUI) return;
@@ -80,7 +80,7 @@ public class Renderer extends Game {
 		if(readyToRenderGameplay) {
 			if(isValidServer()) {
 				screen.clear(0);
-				Font.drawCentered("Awaiting client connections"+ ellipses.updateAndGet(), screen, 10, Color.get(-1, 444));
+				Font.drawCentered("Awaiting client connections"+ ellipsis.updateAndGet(), screen, 10, Color.get(-1, 444));
 				Font.drawCentered("So far:", screen, 20, Color.get(-1, 444));
 				int i = 0;
 				for(String playerString: server.getClientInfo()) {

@@ -6,8 +6,8 @@ import minicraft.core.Action;
 import minicraft.core.Game;
 import minicraft.core.io.InputHandler;
 import minicraft.gfx.Color;
-import minicraft.gfx.Ellipses;
-import minicraft.gfx.Ellipses.SequentialEllipses;
+import minicraft.gfx.Ellipsis;
+import minicraft.gfx.Ellipsis.SequentialEllipsis;
 import minicraft.gfx.Font;
 import minicraft.gfx.FontStyle;
 import minicraft.gfx.Screen;
@@ -44,7 +44,7 @@ public class MultiplayerDisplay extends Display {
 	private boolean online = false;
 	private boolean typingEmail = true;
 	
-	private Ellipses ellipses = new SequentialEllipses();
+	private Ellipsis ellipsis = new SequentialEllipsis();
 	
 	private enum State {
 		WAITING, LOGIN, ENTERIP, LOADING, ERROR
@@ -324,11 +324,11 @@ public class MultiplayerDisplay extends Display {
 				break;
 			
 			case WAITING:
-				Font.drawCentered(waitingMessage+ ellipses.updateAndGet(), screen, Screen.h/2, Color.WHITE);
+				Font.drawCentered(waitingMessage+ ellipsis.updateAndGet(), screen, Screen.h/2, Color.WHITE);
 				break;
 			
 			case LOADING:
-				Font.drawCentered("Loading "+loadingMessage+" from server"+ ellipses.updateAndGet(), screen, Screen.h/2, Color.WHITE);
+				Font.drawCentered("Loading "+loadingMessage+" from server"+ ellipsis.updateAndGet(), screen, Screen.h/2, Color.WHITE);
 				//Font.drawCentered(transferPercent+"%", screen, Screen.h/2+6, Color.WHITE);
 				break;
 			
