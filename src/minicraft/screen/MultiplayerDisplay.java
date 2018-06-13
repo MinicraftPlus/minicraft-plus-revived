@@ -4,7 +4,6 @@ import java.io.InputStream;
 
 import minicraft.core.Action;
 import minicraft.core.Game;
-import minicraft.core.Updater;
 import minicraft.core.io.InputHandler;
 import minicraft.gfx.Color;
 import minicraft.gfx.Ellipses;

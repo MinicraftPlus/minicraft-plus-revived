@@ -3,12 +3,11 @@ package minicraft.screen;
 import javax.swing.Timer;
 
 import minicraft.core.Game;
-import minicraft.core.Updater;
 import minicraft.core.World;
 import minicraft.core.io.Localization;
 import minicraft.gfx.Color;
 import minicraft.gfx.Ellipses;
-import minicraft.gfx.Ellipses.SequentialEllipses;
+import minicraft.gfx.Ellipses.DotUpdater.TimeUpdater;
 import minicraft.gfx.Ellipses.SmoothEllipses;
 import minicraft.gfx.Font;
 import minicraft.gfx.FontStyle;
@@ -22,7 +21,7 @@ public class LoadingDisplay extends Display {
 	
 	private Timer t;
 	private String msg = "";
-	private Ellipses ellipses = new SequentialEllipses();
+	private Ellipses ellipses = new SmoothEllipses(new TimeUpdater());
 	
 	public LoadingDisplay() {
 		super(true,false);

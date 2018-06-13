@@ -18,12 +18,13 @@ public abstract class Ellipses {
 		return get();
 	}
 	protected abstract String get();
+	protected void nextInterval(int interval) {}
 	
 	protected int getInterval() { return updateMethod.getInterval(); }
 	protected int getIntervalCount() { return updateMethod.getIntervalCount(); }
 	
 	public static class SequentialEllipses extends Ellipses {
-		public SequentialEllipses() { this(new CallUpdater(Updater.normSpeed/2)); }
+		public SequentialEllipses() { this(new CallUpdater(Updater.normSpeed*2/3)); }
 		public SequentialEllipses(DotUpdater updater) {
 			super(updater, 3);
 		}
@@ -52,24 +53,17 @@ public abstract class Ellipses {
 		public SmoothEllipses() { this(new TimeUpdater()); }
 		public SmoothEllipses(DotUpdater updater) {
 			super(updater, dotString.length()*2);
+			updater.setEllipses(this);
 		}
 		
-		/// just a little thing to make a progressive dot ellipses.
 		@Override
-		public String get() {
-			/*int time = Updater.tickCount % Updater.normSpeed; // sets the "dot clock" to normSpeed.
-			int interval = Updater.normSpeed / 2; // specifies the time taken for each fill up and empty of the dots.
-			int epos = (time % interval) / (interval/dots.length); // transforms time into a number specifying which part of the dots array it is in, by index.
-			char set = time < interval ? '.' : ' '; // get the character to set in this cycle.
-			*/
-			
-			int pos = getInterval();
-			
-			int epos = pos % dots.length;
-			char set = pos < getIntervalCount()/2 ? '.' : ' ';
+		public String get() { return new String(dots); }
+		
+		@Override
+		protected void nextInterval(int interval) {
+			int epos = interval % dots.length;
+			char set = interval < getIntervalCount()/2 ? '.' : ' ';
 			dots[epos] = set;
-			
-			return new String(dots);
 		}
 	}
 	
@@ -81,11 +75,15 @@ public abstract class Ellipses {
 		private int countPerInterval;
 		private int counter;
 		
+		private Ellipses ellipses = null;
+		
 		private boolean started = false;
 		
 		protected DotUpdater(int countPerCycle) {
 			this.countPerCycle = countPerCycle;
 		}
+		
+		void setEllipses(Ellipses ellipses) { this.ellipses = ellipses; }
 		
 		// called by Ellipses classes, passing their value.
 		void setIntervalCount(int numIntervals) {
@@ -97,6 +95,10 @@ public abstract class Ellipses {
 		public int getIntervalCount() { return intervalCount; }
 		
 		private void incInterval(int amt) {
+			if(ellipses != null)
+				for(int i = curInterval+1; i <= curInterval+amt; i++)
+					ellipses.nextInterval(i%intervalCount);
+			
 			curInterval += amt;
 			curInterval %= intervalCount;
 		}
@@ -140,7 +142,7 @@ public abstract class Ellipses {
 		public static class TimeUpdater extends DotUpdater {
 			private long lastTime;
 			
-			public TimeUpdater() { this(1000); }
+			public TimeUpdater() { this(750); }
 			public TimeUpdater(int millisPerCycle) {
 				super(millisPerCycle);
 			}
