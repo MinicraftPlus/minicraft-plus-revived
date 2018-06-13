@@ -394,9 +394,12 @@ public class Load {
 		Game.currentLevel = Integer.parseInt(data.remove(0));
 		Level level = World.levels[Game.currentLevel];
 		if(!player.isRemoved()) player.remove(); // removes the user player from the level, in case they would be added twice.
-		if(level != null && !(Game.isValidServer() && player == Game.player))
-			level.add(player);
-		else if(Game.debug) System.out.println(Network.onlinePrefix()+"game level to add player " + player + " to is null.");
+		if(!Game.isValidServer() || player != Game.player) {
+			if(level != null)
+				level.add(player);
+			else if(Game.debug)
+				System.out.println(Network.onlinePrefix() + "game level to add player " + player + " to is null.");
+		}
 		
 		if(worldVer.compareTo(new Version("2.0.4-dev8")) < 0) {
 			String modedata = data.remove(0);
