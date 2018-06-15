@@ -61,7 +61,8 @@ public class Font {
 			style.drawParagraphLine(lines, i, lineSpacing, screen);
 	}
 	
-	public static String[] getLines(String para, int w, int h, int lineSpacing) {
+	public static String[] getLines(String para, int w, int h, int lineSpacing) { return getLines(para, w, h, lineSpacing, false); }
+	public static String[] getLines(String para, int w, int h, int lineSpacing, boolean keepEmptyRemainder) {
 		ArrayList<String> lines = new ArrayList<>();
 		
 		// So, I have a paragraph. I give it to getLine, and it returns an index. Cut the string at that index, and add it to the lines list.
@@ -69,30 +70,46 @@ public class Font {
 		// then I reset the para String at the index, and do it again until para is an empty string.
 		
 		int height = textHeight();
-		while(para.length() > 0) {
-			int splitIndex = getLine(para, w);
-			lines.add(para.substring(0, splitIndex));
+		while(para.length() > 0) { // continues to loop as long as there are more characters to parse.
 			
-			if(splitIndex < para.length() && para.substring(splitIndex, splitIndex+1).matches(" |\n"))
-				splitIndex++;
-			para = para.substring(splitIndex);
+			int splitIndex = getLine(para, w); // determine how many letters can be fit on to this line.
+			lines.add(para.substring(0, splitIndex)); // add the specified number of characters.
 			
-			height += lineSpacing + textHeight();
+			if(splitIndex < para.length() && para.substring(splitIndex, splitIndex+1).matches("[ \n]"))
+				splitIndex++; // if there are more characters to do, and the next character is a space or newline, skip it (because the getLine() method will always break before newlines, and will usually otherwise break before spaces.
+			para = para.substring(splitIndex); // remove the characters that have now been added on to the line
+			
+			height += lineSpacing + textHeight(); // move y pos down a line
 			if(height > h)
-				break;
+				break; // If we've run out of space to draw lines, then there's no point in parsing more characters, so we should break out of the loop.
 		}
 		
-		lines.add(para); // add remainder
+		if(para.length() > 0 || keepEmptyRemainder)
+			lines.add(para); // add remainder, but don't add empty lines unintentionally.
 		
 		return lines.toArray(new String[lines.size()]);
 	}
 	
 	// this returns the position index at which the given string should be split so that the first part is the longest line possible.
+	// note, the index returned is exclusive; it should not be included in the line.
 	private static int getLine(String text, int maxWidth) {
+		if(maxWidth <= 0) return 0; // just to pass the monkey test. :P
+		
 		text = text.replaceAll(" ?\n ?", " \n ");
 		
 		String[] words = text.split(" ", -1);
+		
 		int curWidth = textWidth(words[0]);
+		
+		if(curWidth > maxWidth) {
+			// we can't even fit the first word on to the line, even by itself. So we'll have to fit what we can.
+			int i;
+			for(i = 1; i < words[0].length(); i++) // find how many characters do fit
+				if(textWidth(words[0].substring(0, i+1)) > maxWidth)
+					break;
+			
+			return i; // stop here and return, because we know we can't fit more so we can ignore all that's below
+		}
 		
 		int i;
 		for(i = 1; i < words.length; i++) {

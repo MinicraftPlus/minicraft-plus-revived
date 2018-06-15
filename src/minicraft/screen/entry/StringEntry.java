@@ -2,8 +2,6 @@ package minicraft.screen.entry;
 
 import minicraft.core.io.InputHandler;
 import minicraft.gfx.Color;
-import minicraft.gfx.Font;
-import minicraft.gfx.Screen;
 
 // an unselectable line.
 public class StringEntry extends ListEntry {
@@ -40,9 +38,7 @@ public class StringEntry extends ListEntry {
 	public void tick(InputHandler input) {}
 	
 	@Override
-	public void render(Screen screen, int x, int y, boolean isSelected) {
-		Font.draw(toString(), screen, x, y, color);
-	}
+	public int getColor(boolean isSelected) { return color; }
 	
 	@Override
 	public String toString() { return text; }

@@ -24,31 +24,42 @@ public class BookDisplay extends Display {
 	private String[][] lines;
 	private int page;
 	
-	public BookDisplay(String book) {
+	private final boolean hasTitle;
+	private final boolean showPageCount;
+	private final int pageOffset;
+	
+	public BookDisplay(String book) { this(book, true); }
+	public BookDisplay(String book, boolean hasTitle) { this(book, hasTitle, !hasTitle); }
+	public BookDisplay(String book, boolean hasTitle, boolean hideCountIfOnePage) {
 		page = 0;
 		if(book == null) {
 			book = defaultBook;
+			hasTitle = false;
 		}
 		book = Localization.getLocalized(book);
+		this.hasTitle = hasTitle;
 		
 		ArrayList<String[]> pages = new ArrayList<>();
 		String[] splitContents = book.split("\0");
 		for(String content: splitContents) {
 			String[] remainder = {content};
 			while(remainder[remainder.length-1].length() > 0) {
-				remainder = Font.getLines(remainder[remainder.length-1], maxX-minX, maxY-minY, spacing);
+				remainder = Font.getLines(remainder[remainder.length-1], maxX-minX, maxY-minY, spacing, true);
 				pages.add(Arrays.copyOf(remainder, remainder.length-1)); // removes the last element of remainder, which is the leftover.
 			}
 		}
 		
 		lines = pages.toArray(new String[pages.size()][]);
 		
+		showPageCount = !hideCountIfOnePage || lines.length != 1;
+		pageOffset = showPageCount ? 1 : 0;
+		
 		Menu.Builder builder = new Menu.Builder(true, spacing, RelPos.CENTER)
 			.setFrame(554, 1, 554);
 		
 		Menu pageCount = builder // the small rect for the title
 			.setPositioning(new Point(Screen.w/2, 0), RelPos.BOTTOM)
-			.setEntries(StringEntry.useLines(Color.BLACK, "Page", "Title"))
+			.setEntries(StringEntry.useLines(Color.BLACK, "Page", hasTitle?"Title":"1"))
 			.setSelection(1)
 			.createMenu();
 		
@@ -57,21 +68,21 @@ public class BookDisplay extends Display {
 			.setSize(maxX-minX + SpriteSheet.boxWidth*2, maxY-minY + SpriteSheet.boxWidth*2)
 			.setShouldRender(false);
 		
-		menus = new Menu[lines.length+1];
-		menus[0] = pageCount;
+		menus = new Menu[lines.length+pageOffset];
+		if(showPageCount) menus[0] = pageCount;
 		for(int i = 0; i < lines.length; i++) {
-			menus[i+1] = builder.setEntries(StringEntry.useLines(Color.BLACK, lines[i])).createMenu();
+			menus[i+pageOffset] = builder.setEntries(StringEntry.useLines(Color.BLACK, lines[i])).createMenu();
 		}
 		
-		menus[page+1].shouldRender = true;
+		menus[page+pageOffset].shouldRender = true;
 	}
 	
 	private void turnPage(int dir) {
 		if(page+dir >= 0 && page+dir < lines.length) {
-			menus[page+1].shouldRender = false;
+			menus[page+pageOffset].shouldRender = false;
 			page += dir;
-			menus[0].updateSelectedEntry(new StringEntry(page==0?"Title":page+"", Color.BLACK));
-			menus[page+1].shouldRender = true;
+			if(showPageCount) menus[0].updateSelectedEntry(new StringEntry(page==0 && hasTitle?"Title":(page+1)+"", Color.BLACK));
+			menus[page+pageOffset].shouldRender = true;
 		}
 	}
 	

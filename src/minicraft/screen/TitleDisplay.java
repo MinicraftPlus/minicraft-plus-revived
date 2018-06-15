@@ -3,9 +3,11 @@ package minicraft.screen;
 import java.util.Random;
 
 import minicraft.core.Game;
-import minicraft.core.io.InputHandler;
+import minicraft.core.Network;
 import minicraft.core.Renderer;
+import minicraft.core.VersionInfo;
 import minicraft.core.World;
+import minicraft.core.io.InputHandler;
 import minicraft.core.io.Localization;
 import minicraft.entity.mob.RemotePlayer;
 import minicraft.gfx.Color;
@@ -14,8 +16,10 @@ import minicraft.gfx.Point;
 import minicraft.gfx.Screen;
 import minicraft.level.Level;
 import minicraft.screen.entry.BlankEntry;
+import minicraft.screen.entry.LinkEntry;
 import minicraft.screen.entry.ListEntry;
 import minicraft.screen.entry.SelectEntry;
+import minicraft.screen.entry.StringEntry;
 
 import org.jetbrains.annotations.NotNull;
 
@@ -28,6 +32,9 @@ public class TitleDisplay extends Display {
 	
 	public TitleDisplay() {
 		super(true, false, new Menu.Builder(false, 2, RelPos.CENTER,
+			new StringEntry("Checking for updates...", Color.BLUE),
+			new BlankEntry(),
+			new BlankEntry(),
 			new SelectEntry("Play", () -> {
 				if(WorldSelectDisplay.getWorldNames().size() > 0)
 					Game.setMenu(new Display(true, new Menu.Builder(false, 2, RelPos.CENTER,
@@ -55,9 +62,13 @@ public class TitleDisplay extends Display {
 	
 	@Override
 	public void init(Display parent) {
-		super.init(parent);
+		super.init(null); // The TitleScreen never has a parent.
 		Renderer.readyToRenderGameplay = false;
-		/// this is just in case; though, i do take advantage of it in other places.
+		
+		// check version
+		checkVersion();
+		
+		/// this is useful to just ensure that everything is really reset as it should be. 
 		if(Game.server != null) {
 			if (Game.debug) System.out.println("wrapping up loose server ends");
 			Game.server.endConnection();
@@ -77,6 +88,24 @@ public class TitleDisplay extends Display {
 		if(Game.player == null || Game.player instanceof RemotePlayer)
 			// was online, need to reset player
 			World.resetGame(false);
+	}
+	
+	private void checkVersion() {
+		VersionInfo latestVersion = Network.getLatestVersion();
+		if(latestVersion == null) {
+			Network.findLatestVersion(this::checkVersion);
+		}
+		else {
+			if(Game.debug) System.out.println("latest version = "+latestVersion.version);
+			if(latestVersion.version.compareTo(Game.VERSION) > 0) { // link new version
+				menus[0].updateEntry(0, new StringEntry("New: "+latestVersion.releaseName, Color.GREEN));
+				menus[0].updateEntry(1, new LinkEntry(Color.CYAN, "--Select here to Download--", latestVersion.releaseUrl, "Direct link to latest version: " + latestVersion.releaseUrl + "\nCan also be found here with change log: https://www.github.com/chrisj42/minicraft-plus-revived/releases"));
+			}
+			else if(latestVersion.releaseName.length() > 0)
+				menus[0].updateEntry(0, new StringEntry("You have the latest version.", Color.DARK_GRAY));
+			else
+				menus[0].updateEntry(0, new StringEntry("Connection failed, could not check for updates.", Color.RED));
+		}
 	}
 	
 	@NotNull
@@ -107,8 +136,7 @@ public class TitleDisplay extends Display {
 		int w = 15; // Width of squares (on the spritesheet)
 		int titleColor = Color.get(-1, 10, 131, 551);
 		int xo = (Screen.w - w * 8) / 2; // X location of the title
-		int yo = 36; // Y location of the title
-		int cols = Color.YELLOW;
+		int yo = 28; // Y location of the title
 		
 		for (int y = 0; y < h; y++) {
 			for (int x = 0; x < w; x++) {
@@ -122,10 +150,10 @@ public class TitleDisplay extends Display {
 		
 		/// this isn't as complicated as it looks. It just gets a color based off of count, which oscilates between 0 and 25.
 		int bcol = 5 - count / 5; // this number ends up being between 1 and 5, inclusive.
-		cols = isblue ? Color.get(-1, bcol) : isRed ? Color.get(-1, bcol*100) : isGreen ? Color.get(-1, bcol*10) : Color.get(-1, (bcol-1)*100+5, bcol*100+bcol*10, bcol*100+bcol*10);
+		int splashColor = isblue ? Color.get(-1, bcol) : isRed ? Color.get(-1, bcol*100) : isGreen ? Color.get(-1, bcol*10) : Color.get(-1, (bcol-1)*100+5, bcol*100+bcol*10, bcol*100+bcol*10);
 		// *100 means red, *10 means green; simple.
 		
-		Font.drawCentered(splashes[rand], screen, 60, cols);
+		Font.drawCentered(splashes[rand], screen, 52, splashColor);
 		
 		Font.draw("Version " + Game.VERSION, screen, 1, 1, Color.get(-1, 111));
 		

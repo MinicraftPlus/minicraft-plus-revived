@@ -17,6 +17,7 @@ Minicraft+ version 2.0.4
 - Removed the "home" functionality.
 * Changed beds in multiplayer, so that all players must be sleeping before the game speeds up.
 * Fixed score mode in multiplayer
++ Added a version checker, so you know when new updates are available without having to look. It even opens the link for you. ;)
 
 
 Minicraft+ version 2.0.3

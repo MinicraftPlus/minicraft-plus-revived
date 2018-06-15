@@ -228,7 +228,11 @@ public class Menu {
 		}
 	}
 	
-	void updateSelectedEntry(ListEntry newEntry) { entries.set(selection, newEntry); }
+	void updateSelectedEntry(ListEntry newEntry) { updateEntry(selection, newEntry); }
+	void updateEntry(int idx, ListEntry newEntry) {
+		if(idx >= 0 && idx < entries.size())
+			entries.set(idx, newEntry);
+	}
 	
 	public void removeSelectedEntry() {
 		entries.remove(selection);

@@ -75,6 +75,8 @@ public class MinicraftServer extends Thread implements MinicraftProtocol {
 			System.err.println("failed to open server socket on port " + PORT);
 			ex.printStackTrace();
 		}
+		
+		
 	}
 	
 	public void run() {
