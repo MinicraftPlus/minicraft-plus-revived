@@ -1,7 +1,3 @@
-Minicraft+ version 2.0.5
-
-
-
 Minicraft+ version 2.0.4
 
 * HUGE menu renovation! Menus will be changed forever. You'll see. It's pretty obvious.
@@ -20,6 +16,7 @@ Minicraft+ version 2.0.4
 + Added player hunger to world save.
 - Removed the "home" functionality.
 * Changed beds in multiplayer, so that all players must be sleeping before the game speeds up.
+* Fixed score mode in multiplayer
 
 
 Minicraft+ version 2.0.3

@@ -23,13 +23,6 @@ Here is a small share of the more major features that this mod adds to the origi
 
 You can find a more comprehensive list of the earlier versions, before 1.9, in [this minecraft forum post](http://www.minecraftforum.net/forums/off-topic/general-gaming/452036-v1-6-minicraft-plus). Be aware however, that it's old; it's from many years ago before the project was originally abandoned, and then subsequently rediscovered 5 years later. :3
 
-### Current Goals
+#### Goals
 
-Things that are sort-of being worked on at the moment, by various people:
-
-* Nice music! And upgraded sound effects. They will remain remenicient of 8-bit music, but they won't actually be 8-bit quality.
-
-* Auto-update system, along with a version chooser. It exists, but isn't exactly pretty at the moment... currently, it's only posted on the [minicraft discord server](https://discord.me/minicraft).
-
-
-There's lots more ideas, that may or may not get implemented, in the "ideas" folder.
+For goals and bugs, as well as ideas, read "Bugs and things to do.txt", and the stuff in the "ideas" folder.
