@@ -8,7 +8,6 @@ import minicraft.core.io.InputHandler;
 import minicraft.entity.ClientTickable;
 import minicraft.entity.Direction;
 import minicraft.entity.Entity;
-import minicraft.entity.ItemEntity;
 import minicraft.entity.furniture.Bed;
 import minicraft.gfx.Color;
 import minicraft.gfx.Font;
@@ -79,13 +78,6 @@ public class RemotePlayer extends Player implements ClientTickable {
 	@Override
 	public void addScore(int points) { 
 		super.addScore(points);
-		if(Game.isMode("score") && Game.isValidServer())
-			Game.server.getAssociatedThread(this).sendEntityUpdate(this, "score,"+getScore());
-	}
-	
-	@Override
-	public void pickupItem(ItemEntity item) {
-		super.pickupItem(item);
 		if(Game.isMode("score") && Game.isValidServer())
 			Game.server.getAssociatedThread(this).sendEntityUpdate(this, "score,"+getScore());
 	}

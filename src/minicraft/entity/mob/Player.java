@@ -755,8 +755,7 @@ public class Player extends Mob implements ItemHolder, ClientTickable {
 	public void pickupItem(ItemEntity itemEntity) {
 		Sound.pickup.play();
 		itemEntity.remove();
-		if(!Game.isValidClient())
-			score += Math.min(getMultiplier(), 5); // increase the player's score by 1 * the score multiplier, but cap it at 5 points.
+		addScore(1);
 		if(Game.isMode("creative")) return; // we shall not bother the inventory on creative mode.
 		
 		if(itemEntity.item instanceof StackableItem && ((StackableItem)itemEntity.item).stacksWith(activeItem)) // picked up item equals the one in your hand
