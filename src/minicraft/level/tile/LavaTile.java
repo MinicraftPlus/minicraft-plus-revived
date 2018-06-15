@@ -1,6 +1,7 @@
 package minicraft.level.tile;
 
 import java.util.Random;
+
 import minicraft.entity.Entity;
 import minicraft.gfx.Color;
 import minicraft.gfx.ConnectorSprite;

@@ -1,7 +1,8 @@
 package minicraft.level.tile;
 
-import minicraft.entity.Mob;
-import minicraft.entity.Player;
+import minicraft.entity.Direction;
+import minicraft.entity.mob.Mob;
+import minicraft.entity.mob.Player;
 import minicraft.gfx.Color;
 import minicraft.gfx.ConnectorSprite;
 import minicraft.gfx.Screen;
@@ -34,7 +35,7 @@ public class FlowerTile extends Tile {
 		flowersprite.render(screen, x + 8*(shape==0?1:0), y + 8);
 	}
 
-	public boolean interact(Level level, int x, int y, Player player, Item item, int attackDir) {
+	public boolean interact(Level level, int x, int y, Player player, Item item, Direction attackDir) {
 		if (item instanceof ToolItem) {
 			ToolItem tool = (ToolItem) item;
 			if (tool.type == ToolType.Shovel) {
@@ -49,7 +50,7 @@ public class FlowerTile extends Tile {
 		return false;
 	}
 
-	public void hurt(Level level, int x, int y, Mob source, int dmg, int attackDir) {
+	public void hurt(Level level, int x, int y, Mob source, int dmg, Direction attackDir) {
 		level.dropItem(x*16+8, y*16+8, 1, 2, Items.get("Flower"));
 		level.dropItem(x*16+8, y*16+8, 0, 1, Items.get("Rose"));
 		level.setTile(x, y, Tiles.get("grass"));

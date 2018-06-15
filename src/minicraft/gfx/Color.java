@@ -1,7 +1,5 @@
 package minicraft.gfx;
 
-import java.util.Arrays;
-
 public class Color {
 	
 	/* To explain this class, you have to know how Bit-Shifting works.
@@ -42,6 +40,7 @@ public class Color {
 		So, the methods ending in "Color" deal with rgbInts, while their counterparts deal with rgbBytes.
 	*/
 	
+	public static final int TRANS = Color.get(-1, -1);
 	public static final int WHITE = Color.get(-1, 555);
 	public static final int GRAY = Color.get(-1, 333);
 	public static final int DARK_GRAY = Color.get(-1, 222);
@@ -91,8 +90,6 @@ public class Color {
 	public static int tint(int color, int amount, boolean isSpriteCol) {
 		if(isSpriteCol) {
 			int[] rgbBytes = separateEncodedSprite(color); // this just separates the four 8-bit sprite colors; they are still in base-6 added form.
-			System.out.println("the 4 colors for the sprite, to be tinted: " + Arrays.toString(rgbBytes));
-			System.out.println("the 4 colors for the sprite to be tinted, as inputted: " + Arrays.toString(separateEncodedSprite(color, true)));
 			for(int i = 0; i < rgbBytes.length; i++) {
 				rgbBytes[i] = tint(rgbBytes[i], amount);
 			}
@@ -145,10 +142,10 @@ public class Color {
 		return cols[0]*100 + cols[1]*10 + cols[2];
 	}
 	
-	public static int mixRGB(int rgbByte1, int rgbByte2) { // rgbByte,rgbByte -> rgbReadable
+	public static int mixRGB(int rgbByte1, int rgbByte2) { // rgbByte,rgbByte -> rgbByte
 		if(rgbByte1 == 255 || rgbByte2 == 255) return -1;
 		int newcol = (rgbByte1 + rgbByte2) / 2;
-		return unGet(newcol);
+		return newcol;
 		//int[] col1 = decodeRGB(get(rgb1));
 		//int[] col2 = decodeRGB(get(rgb2));
 		//return ((col1[0] + col2[0])/2) * 100 + ((col1[1] + col2[1])/2) * 10 + ((col1[2] + col2[2])/2);
@@ -175,6 +172,20 @@ public class Color {
 	protected static int downgrade(int rgbInt) { // 
 		int[] comps = decodeRGBColor(rgbInt);
 		return get(rgb(comps[0], comps[1], comps[2])); // this is: rgbByte
+	}
+	
+	public static int mixRGBColor(int rgbInt1, int rgbInt2) { // rgbInt,rgbInt -> rgbInt
+		if(rgbInt1 >> 24 > 0 || rgbInt2 >> 24 > 0) return 0x01_FF_FF_FF;
+		int[] cols1 = decodeRGBColor(rgbInt1);
+		int[] cols2 = decodeRGBColor(rgbInt2);
+		for(int i = 0; i < cols1.length; i++)
+			cols1[i] = (cols1[i] + cols2[i]) / 2;
+		
+		return rgbColor(cols1[0], cols1[1], cols1[2]);
+	}
+	
+	public static int rgbColor(int r, int g, int b) { // rgbInt array -> rgbInt
+		return r << 16 | g << 8 | b;
 	}
 	
 	/// this is like get(d), above, but it returns a 24 bit color, with r,g,b each taking 8 bits, rather than them all taking 8 bits together.

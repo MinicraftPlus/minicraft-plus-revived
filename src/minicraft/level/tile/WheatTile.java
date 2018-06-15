@@ -1,8 +1,9 @@
 package minicraft.level.tile;
 
+import minicraft.entity.Direction;
 import minicraft.entity.Entity;
-import minicraft.entity.Mob;
-import minicraft.entity.Player;
+import minicraft.entity.mob.Mob;
+import minicraft.entity.mob.Player;
 import minicraft.gfx.Color;
 import minicraft.gfx.Screen;
 import minicraft.gfx.Sprite;
@@ -60,7 +61,7 @@ public class WheatTile extends Tile {
 		}
 	}
 	
-	public boolean interact(Level level, int xt, int yt, Player player, Item item, int attackDir) {
+	public boolean interact(Level level, int xt, int yt, Player player, Item item, Direction attackDir) {
 		if (item instanceof ToolItem) {
 			ToolItem tool = (ToolItem) item;
 			if (tool.type == ToolType.Shovel) {
@@ -79,7 +80,8 @@ public class WheatTile extends Tile {
 		harvest(level, xt, yt, entity);
 	}
 	
-	public void hurt(Level level, int x, int y, Mob source, int dmg, int attackDir) {
+	@Override
+	public void hurt(Level level, int x, int y, Mob source, int dmg, Direction attackDir) {
 		harvest(level, x, y, source);
 	}
 	
@@ -98,7 +100,7 @@ public class WheatTile extends Tile {
 		level.dropItem(x*16+8, y*16+8, count, Items.get("Wheat"));
 		
 		if (age >= 50 && entity instanceof Player) {
-			((Player)entity).score += random.nextInt(5) + 1;
+			((Player)entity).addScore(random.nextInt(5) + 1);
 		}
 		level.setTile(x, y, Tiles.get("dirt"));
 	}

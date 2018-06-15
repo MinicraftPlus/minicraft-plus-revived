@@ -1,8 +1,10 @@
 package minicraft.level.tile;
 
-import minicraft.Sound;
+import minicraft.core.io.Sound;
+import minicraft.entity.Direction;
 import minicraft.entity.Entity;
-import minicraft.entity.Player;
+import minicraft.entity.mob.Mob;
+import minicraft.entity.mob.Player;
 import minicraft.gfx.Color;
 import minicraft.gfx.Sprite;
 import minicraft.item.Item;
@@ -17,7 +19,7 @@ public class LavaBrickTile extends Tile {
 		super(name, sprite);
 	}
 	
-	public boolean interact(Level level, int xt, int yt, Player player, Item item, int attackDir) {
+	public boolean interact(Level level, int xt, int yt, Player player, Item item, Direction attackDir) {
 		if (item instanceof ToolItem) {
 			ToolItem tool = (ToolItem) item;
 			if (tool.type == ToolType.Pickaxe) {
@@ -32,10 +34,9 @@ public class LavaBrickTile extends Tile {
 	}
 
 	public void bumpedInto(Level level, int x, int y, Entity entity) {
-		entity.hurt(this, x, y, 3);
+		if(entity instanceof Mob)
+			((Mob)entity).hurt(this, x, y, 3);
 	}
 
-	public boolean mayPass(Level level, int x, int y, Entity e) {
-		return e.canWool();
-	}
+	public boolean mayPass(Level level, int x, int y, Entity e) { return e.canWool(); }
 }

@@ -1,43 +1,51 @@
 package minicraft.screen;
 
-import minicraft.Game;
-import minicraft.InputHandler;
+import minicraft.core.Game;
+import minicraft.core.io.InputHandler;
 import minicraft.entity.Entity;
-import minicraft.entity.Inventory;
+import minicraft.entity.mob.Player;
+import minicraft.item.Inventory;
 import minicraft.item.Item;
 import minicraft.item.StackableItem;
 import minicraft.screen.entry.ItemEntry;
 
-public class InventoryMenu extends ItemListMenu {
+class InventoryMenu extends ItemListMenu {
 	
 	private Inventory inv;
 	private Entity holder;
 	
-	public InventoryMenu(Entity holder, Inventory inv, String title) {
+	InventoryMenu(Entity holder, Inventory inv, String title) {
 		super(ItemEntry.useItems(inv.getItems()), title);
 		this.inv = inv;
 		this.holder = holder;
 	}
 	
-	/*Item getSelectedItem() {
-		return ((ItemEntry)getCurEntry()).getItem();
-	}*/
+	InventoryMenu(InventoryMenu model) {
+		super(ItemEntry.useItems(model.inv.getItems()), model.getTitle());
+		this.inv = model.inv;
+		this.holder = model.holder;
+		setSelection(model.getSelection());
+	}
 	
 	@Override
 	public void tick(InputHandler input) {
 		super.tick(input);
 		
-		if(getNumOptions() > 0 && (input.getKey("drop-one").clicked || input.getKey("drop-stack").clicked)) {
-			Item invItem = ((ItemEntry)getCurEntry()).getItem();
+		boolean dropOne = input.getKey("drop-one").clicked && !(Game.getMenu() instanceof ContainerDisplay);
+		
+		if(getNumOptions() > 0 && (dropOne || input.getKey("drop-stack").clicked)) {
+			ItemEntry entry = ((ItemEntry)getCurEntry());
+			if(entry == null) return;
+			Item invItem = entry.getItem();
 			Item drop = invItem.clone();
 			
-			if(input.getKey("drop-one").clicked && drop instanceof StackableItem && ((StackableItem)drop).count > 1) {
+			if(dropOne && drop instanceof StackableItem && ((StackableItem)drop).count > 1) {
 				// just drop one from the stack
 				((StackableItem)drop).count = 1;
 				((StackableItem)invItem).count--;
 			} else {
 				// drop the whole item.
-				if(!Game.isMode("creative"))
+				if(!Game.isMode("creative") || !(holder instanceof Player))
 					removeSelectedEntry();
 			}
 			

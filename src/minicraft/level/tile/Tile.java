@@ -1,10 +1,12 @@
 package minicraft.level.tile;
 
 import java.util.Random;
-import minicraft.Game;
+
+import minicraft.core.World;
+import minicraft.entity.Direction;
 import minicraft.entity.Entity;
-import minicraft.entity.Mob;
-import minicraft.entity.Player;
+import minicraft.entity.mob.Mob;
+import minicraft.entity.mob.Player;
 import minicraft.gfx.Color;
 import minicraft.gfx.ConnectorSprite;
 import minicraft.gfx.Screen;
@@ -30,7 +32,7 @@ public abstract class Tile {
 	public boolean connectsToLava = false;
 	public boolean connectsToWater = false;
 	public int light;
-	public boolean maySpawn;
+	protected boolean maySpawn;
 	
 	protected Sprite sprite;
 	protected ConnectorSprite csprite;
@@ -71,6 +73,8 @@ public abstract class Tile {
 			csprite.render(screen, level, x, y);
 	}
 	
+	public boolean maySpawn() { return maySpawn; }
+	
 	//public abstract void updateSprite();
 	
 	public int getConnectColor(Level level) {
@@ -90,16 +94,12 @@ public abstract class Tile {
 		return true;
 	}
 
-	/*public boolean canLight() {
-		return false;
-	}*/
-	
 	/** Gets the light radius of a tile, Bigger number = bigger circle */
 	public int getLightRadius(Level level, int x, int y) {
 		return 0;
 	}
 	
-	public void hurt(Level level, int x, int y, Mob source, int dmg, int attackDir) {}
+	public void hurt(Level level, int x, int y, Mob source, int dmg, Direction attackDir) {}
 	public void hurt(Level level, int x, int y, int dmg) {}
 	
 	/** What happens when you run into the tile (ex: run into a cactus) */
@@ -112,18 +112,12 @@ public abstract class Tile {
 	public void steppedOn(Level level, int xt, int yt, Entity entity) {}
 	
 	/** What happens when you hit an item on a tile (ex: Pickaxe on rock) */
-	public boolean interact(Level level, int xt, int yt, Player player, Item item, int attackDir) {
+	public boolean interact(Level level, int xt, int yt, Player player, Item item, Direction attackDir) {
 		return false;
 	}
-	/*
-	public boolean use(Level level, int xt, int yt, Player player, int attackDir) {
-		return false;
-	}
-	*/
+	
 	/** Sees if the tile connects to Water or Lava. */
-	public boolean connectsToLiquid() {
-		return connectsToWater || connectsToLava;
-	}
+	public boolean connectsToLiquid() { return connectsToWater || connectsToLava; }
 	
 	public int getData(String data) {
 		try {
@@ -133,12 +127,8 @@ public abstract class Tile {
 		}
 	}
 	
-	public boolean matches(Tile other) {
-		return name.equals(other.name);
-	}
-	
-	public boolean matches(int thisData, String otherTile) {
-		return name.equals(otherTile.split("_")[0]);
+	public boolean matches(int thisData, String tileInfo) {
+		return name.equals(tileInfo.split("_")[0]);
 	}
 	
 	public String getName(int data) {
@@ -147,8 +137,8 @@ public abstract class Tile {
 	
 	public static String getData(int depth, int x, int y) {
 		try {
-			byte lvlidx = (byte) Game.lvlIdx(depth);
-			Level curLevel = Game.levels[lvlidx];
+			byte lvlidx = (byte) World.lvlIdx(depth);
+			Level curLevel = World.levels[lvlidx];
 			int pos = x + curLevel.w * y;
 			
 			int tileid = curLevel.tiles[pos];
@@ -160,4 +150,14 @@ public abstract class Tile {
 		
 		return "";
 	}
+	
+	@Override
+	public boolean equals(Object other) {
+		if(!(other instanceof Tile)) return false;
+		Tile o = (Tile) other;
+		return name.equals(o.name);
+	}
+	
+	@Override
+	public int hashCode() { return name.hashCode(); }
 }

@@ -2,9 +2,9 @@ package minicraft.item;
 
 import java.util.ArrayList;
 
-import minicraft.Game;
+import minicraft.core.Game;
+import minicraft.core.io.Localization;
 import minicraft.gfx.Color;
-import minicraft.gfx.Screen;
 import minicraft.gfx.Sprite;
 
 // some items are direct instances of this class; those instances are the true "items", like stone, wood, wheat, or coal; you can't do anything with them besides use them to make something else.
@@ -51,15 +51,17 @@ public class StackableItem extends Item {
 		this.count = count;
 	}
 	
-	public boolean matches(Item other) {
-		return super.matches(other) && other instanceof StackableItem;
-	}
+	/*@Override
+	public boolean equals(Item other) {
+		return super.equals(other) && ((StackableItem)other).count == count;
+	}*/
 	
+	public boolean stacksWith(Item other) { return other instanceof StackableItem && other.getName().equals(getName()); }
 	/** Renders the icon, name, and count of the item. */
-	public void renderInventory(Screen screen, int x, int y, boolean ininv) {
+	/*public void renderInventory(Screen screen, int x, int y, boolean ininv) {
 		// If the item count is above 999, then just render 999 (for spacing reasons)
 		super.renderInventory(screen, x, y, ininv, (count>999?999:count)+" "+name);
-	}
+	}*/
 	
 	/// this is used by (most) subclasses, to standardize the count decrement behavior. This is not the normal interactOn method.
 	protected boolean interactOn(boolean subClassSuccess) {
@@ -69,25 +71,28 @@ public class StackableItem extends Item {
 	}
 	
 	/** Called to determine if this item should be removed from an inventory. */
+	@Override
 	public boolean isDepleted() {
 		return count <= 0;
 	}
 	
+	@Override
 	public StackableItem clone() {
-		return new StackableItem(name, sprite, count);
+		return new StackableItem(getName(), sprite, count);
 	}
 	
+	@Override
 	public String toString() {
 		return super.toString() + "-Stack_Size:"+count;
 	}
 	
 	public String getData() {
-		return name+"_"+count;
+		return getName() +"_"+count;
 	}
 	
 	@Override
 	public String getDisplayName() {
-		String extra = (count > 999 ? 999 : count) + " ";
-		return " " + extra + name;
+		String amt = (count > 999 ? 999 : count) + " ";
+		return " " + amt + Localization.getLocalized(getName());
 	}
 }

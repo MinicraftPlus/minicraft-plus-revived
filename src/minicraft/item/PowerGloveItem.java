@@ -1,8 +1,9 @@
 package minicraft.item;
 
+import minicraft.entity.Direction;
 import minicraft.entity.Entity;
-import minicraft.entity.Furniture;
-import minicraft.entity.Player;
+import minicraft.entity.furniture.Furniture;
+import minicraft.entity.mob.Player;
 import minicraft.gfx.Color;
 import minicraft.gfx.Sprite;
 
@@ -12,7 +13,7 @@ public class PowerGloveItem extends Item {
 		super("Power Glove", new Sprite(7, 4, Color.get(-1, 100, 320, 430)));
 	}
 	
-	public boolean interact(Player player, Entity entity, int attackDir) {
+	public boolean interact(Player player, Entity entity, Direction attackDir) {
 		if (entity instanceof Furniture) { // If the power glove is used on a piece of furniture...
 			Furniture f = (Furniture) entity;
 			f.take(player); // Takes (picks up) the furniture

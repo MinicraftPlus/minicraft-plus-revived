@@ -1,6 +1,7 @@
 package minicraft.level.tile;
 
-import minicraft.entity.Player;
+import minicraft.entity.Direction;
+import minicraft.entity.mob.Player;
 import minicraft.gfx.Color;
 import minicraft.gfx.Screen;
 import minicraft.gfx.Sprite;
@@ -44,14 +45,10 @@ public class TorchTile extends Tile {
 	}
 	
 	public int getLightRadius(Level level, int x, int y) {
-		return 6;
+		return 4;
 	}
-	/*
-	public boolean canLight() {
-		return true;
-	}
-	*/
-	public boolean interact(Level level, int xt, int yt, Player player, Item item, int attackDir) {
+	
+	public boolean interact(Level level, int xt, int yt, Player player, Item item, Direction attackDir) {
 		if(item instanceof PowerGloveItem) {
 			level.setTile(xt, yt, this.onType);
 			level.dropItem(xt*16+8, yt*16+8, Items.get("Torch"));

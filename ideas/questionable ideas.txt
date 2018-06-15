@@ -1,0 +1,34 @@
+Ideas I'm not sure I want to implement.
+??????
+
+Change the lighting in caves; maybe I could experiment with having surface lighting, but just really, really low...?
+
+????
+
+I guess maybe make a system of item attributes? Entity attributes? Even tile attributes? Item attributes could be for making beds colorable...
+
+????
+
+Make lapis do more. Maybe lapis tools, that make everything drop more items?
+
+????
+
+Add feature to notifications display: if it starts with ":error:", then make the text red (but don't show the ":Error:" part). Any further than that, though, and it would be better to just pass it in.
+
+????
+
+Add a feature so that a changelog will be displayed if on lower version...?
+
+????
+
+What about a zoomin-zoomout feature?
+And if you zoomed out far enough clouds would obstruct your view
+
+????
+
+Cook 200 coal in an oven to get gem
+Cook 100 gems in an oven to get rock candy
+rock candy restores one burger, causes a heart of damage
+
+????
+

@@ -9,6 +9,14 @@ Minicraft+ version 2.0.4
 + Added an in-game, in-depth storyline guide.
 + Added an FPS slider.
 * Made default game mode Normal instead of Easy.
+* Redid and fixed death chests; they now display time left above the chest, and you "pickup" everything in the chest by touching it. It also flashes red when there are < 20 seconds before disappearing.
+* Fixed multiplayer bug where you could only deal 1 damage to things
+* Fixed a long-standing bug that mainly affected dungeon chests and airwizards not appearing when they should, as well as mob spawner dungeons
++ Added keys being dropped back into the game... because apparently that feature disappeared somewhere.
++ Added player hunger to world save.
+- Removed the "home" functionality.
+* Changed beds in multiplayer, so that all players must be sleeping before the game speeds up.
+* Fixed score mode in multiplayer
 
 
 Minicraft+ version 2.0.3

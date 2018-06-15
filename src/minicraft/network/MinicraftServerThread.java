@@ -1,5 +1,7 @@
 package minicraft.network;
 
+import javax.swing.Timer;
+
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -8,48 +10,51 @@ import java.io.IOException;
 import java.net.Socket;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Timer;
-import java.util.TimerTask;
 
-import minicraft.Game;
+import minicraft.core.Game;
+import minicraft.core.World;
+import minicraft.entity.Direction;
 import minicraft.entity.Entity;
-import minicraft.entity.RemotePlayer;
+import minicraft.entity.mob.Player;
+import minicraft.entity.mob.RemotePlayer;
 import minicraft.item.Item;
 import minicraft.item.PowerGloveItem;
 import minicraft.level.Level;
 import minicraft.level.tile.Tile;
 import minicraft.saveload.Load;
 import minicraft.saveload.Save;
+import minicraft.saveload.Version;
 
 public class MinicraftServerThread extends MinicraftConnection {
 	
-	class MyTask extends TimerTask {
-		public MyTask() {}
-		public void run() {}
-	}
+	private static final String autoPing = "ping";
+	private static final String manualPing = "manual";
 	
-	private static final int PING_INTERVAL = 10; // measured in seconds
+	private static final int MISSED_PING_THRESHOLD = 5;
+	private static final int PING_INTERVAL = 1_000; // measured in milliseconds
+	
 	
 	private MinicraftServer serverInstance;
 	private RemotePlayer client;
 	
-	protected boolean isPlaying = false;
+	/// PING
 	
-	
-	//private NetworkInterface computer = null;
-	
-	//private List<Integer> trackedEntities = new ArrayList<Integer>();
-	private List<Timer> gameTimers;
-	private boolean receivedPing = true;
+	private Timer pingTimer;
+	private boolean receivedPing = true; // after first pause, it will act as if the ping was successful, since it didn't even send one in the first place and was just buying time for everything to get settled before pinging.
+	private int missedPings = 0;
 	
 	private long manualPingTimestamp;
+	
 	
 	private List<InputType> packetTypesToKeep = new ArrayList<>();
 	private List<InputType> packetTypesToCache = new ArrayList<>();
 	private List<String> cachedPackets = new ArrayList<>();
 	
-	public MinicraftServerThread(Socket socket, MinicraftServer serverInstance) {
+	private final boolean valid;
+	
+	MinicraftServerThread(Socket socket, MinicraftServer serverInstance) {
 		super("MinicraftServerThread", socket);
+		valid = true;
 		
 		this.serverInstance = serverInstance;
 		if(serverInstance.isFull()) {
@@ -65,22 +70,49 @@ public class MinicraftServerThread extends MinicraftConnection {
 		packetTypesToKeep.addAll(InputType.tileUpdates);
 		packetTypesToKeep.addAll(InputType.entityUpdates);
 		
-		gameTimers = new ArrayList<>();
-		
-		Timer t = new Timer("ClientPing");
-		t.schedule((new MyTask() {
-			public void run() { MinicraftServerThread.this.ping(); }
-		}), 1000, PING_INTERVAL*1000);
-		gameTimers.add(t);
+		pingTimer = new Timer(PING_INTERVAL, e -> {
+			if(!isConnected()) {
+				pingTimer.stop();
+				return;
+			}
+			
+			//if(Game.debug) System.out.println("received ping from "+this+": "+receivedPing+". Previously missed "+missedPings+" pings.");
+			
+			if(!receivedPing) {
+				missedPings++;
+				if(missedPings >= MISSED_PING_THRESHOLD) {
+					// disconnect from the client; they are taking too long to respond and probably don't exist at this point.
+					pingTimer.stop();
+					sendError("client ping too slow, server timed out");
+					endConnection();
+				}
+			} else {
+				missedPings = 0;
+				receivedPing = false;
+			}
+			
+			sendData(InputType.PING, autoPing);
+		});
+		pingTimer.setRepeats(true);
+		pingTimer.setCoalesce(true); // don't try to make up for lost pings.
+		pingTimer.start();
 		
 		start();
 	}
 	
+	// this is to be a dummy thread.
+	MinicraftServerThread(RemotePlayer player, MinicraftServer server) {
+		super("MinicraftServerThread", null);
+		valid = false;
+		this.client = player;
+		this.serverInstance = server;
+	}
+	
+	public boolean isValid() { return valid; }
+	
 	public RemotePlayer getClient() { return client; }
 	
-	protected synchronized boolean parsePacket(InputType inType, String data) {
-		//if(inType == InputType.LOAD) isPlaying = true;
-		
+	protected boolean parsePacket(InputType inType, String data) {
 		if(inType == InputType.PING) {
 			//if (Game.debug) System.out.println(this+" received ping");
 			receivedPing = true;
@@ -96,35 +128,22 @@ public class MinicraftServerThread extends MinicraftConnection {
 		return serverInstance.parsePacket(this, inType, data);
 	}
 	
-	private void ping() {
-		//if (Game.debug) System.out.println(this+" is doing ping sequence. received ping: " + receivedPing);
-		
-		if(!receivedPing) {
-			// disconnect from the client; they are taking too long to respond and probably don't exist anyway.
-			sendError("connection timed out; ping too slow");
-			endConnection();
-		} else {
-			receivedPing = false;
-			sendData(InputType.PING, autoPing);
-		}
-	}
-	
-	protected void doPing() {
+	void doPing() {
 		sendData(InputType.PING, manualPing);
 		manualPingTimestamp = System.nanoTime();
 	}
 	
-	protected void sendError(String message) {
+	void sendError(String message) {
 		if (Game.debug) System.out.println("SERVER: sending error to " + client + ": \"" + message + "\"");
 		sendData(InputType.INVALID, message);
 	}
 	
-	protected void cachePacketTypes(List<InputType> packetTypes) {
+	void cachePacketTypes(List<InputType> packetTypes) {
 		packetTypesToCache.addAll(packetTypes);
 		packetTypesToKeep.removeAll(packetTypes);
 	}
 	
-	protected void sendCachedPackets() {
+	void sendCachedPackets() {
 		packetTypesToCache.clear();
 		
 		for(String packet: cachedPackets) {
@@ -136,7 +155,7 @@ public class MinicraftServerThread extends MinicraftConnection {
 		cachedPackets.clear();
 	}
 	
-	protected synchronized void sendData(InputType inType, String data) {
+	protected void sendData(InputType inType, String data) {
 		if(packetTypesToCache.contains(inType))
 			cachedPackets.add(inType.ordinal()+":"+data);
 		else if(!packetTypesToKeep.contains(inType))
@@ -161,6 +180,8 @@ public class MinicraftServerThread extends MinicraftConnection {
 	}
 	
 	public void sendEntityAddition(Entity e) {
+		if(Game.debug && e instanceof Player) System.out.println("SERVER: sending addition of player "+e+" to client through "+this);
+		if(Game.debug && e.eid == client.eid) System.out.println("SERVER: sending addition of player to itself");
 		String edata = Save.writeEntity(e, false);
 		if(edata.length() == 0)
 			System.out.println("entity not worth adding to client level: " + e + "; not sending to " + client);
@@ -168,8 +189,10 @@ public class MinicraftServerThread extends MinicraftConnection {
 			sendData(InputType.ADD, edata);
 	}
 	
-	public void sendEntityRemoval(int eid) {
-		//trackedEntities.remove(eid);
+	public void sendEntityRemoval(int eid, int levelDepth) {
+		sendData(InputType.REMOVE, String.valueOf(eid)+";"+String.valueOf(levelDepth));
+	}
+	public void sendEntityRemoval(int eid) { // remove regardless of current level
 		sendData(InputType.REMOVE, String.valueOf(eid));
 	}
 	
@@ -177,17 +200,15 @@ public class MinicraftServerThread extends MinicraftConnection {
 		sendData(InputType.NOTIFY, notetime+";"+note);
 	}
 	
-	public void sendPlayerHurt(int eid, int damage, int attackDir) {
-		sendData(InputType.HURT, eid+";"+damage+";"+attackDir);
+	public void sendPlayerHurt(int eid, int damage, Direction attackDir) {
+		sendData(InputType.HURT, eid+";"+damage+";"+attackDir.ordinal());
+	}
+	
+	public void sendStaminaChange(int amt) {
+		sendData(InputType.STAMINA, amt+"");
 	}
 	
 	public void updatePlayerActiveItem(Item heldItem) {
-		/*if(client.activeItem == null && heldItem == null || client.activeItem != null && client.activeItem.matches
-				(heldItem)) {
-			System.out.println("SERVER THREAD: player active item is already the one specified: " + heldItem + "; not updating.");
-			return;
-		}*/
-		
 		if(client.activeItem != null && !(client.activeItem instanceof PowerGloveItem))
 			sendData(InputType.CHESTOUT, client.activeItem.getData());
 		client.activeItem = heldItem;
@@ -195,18 +216,18 @@ public class MinicraftServerThread extends MinicraftConnection {
 		sendData(InputType.INTERACT, ( client.activeItem == null ? "null" : client.activeItem.getData() ));
 	}
 	
-	public void setClientPos(int lvlDepth, int x, int y) {
-		sendData(InputType.MOVE, lvlDepth+";"+x+";"+y);
+	public void sendItems(String itemData) {
+		sendData(InputType.ADDITEMS, itemData);
 	}
 	
 	protected void respawnPlayer() {
 		client.remove(); // hopefully removes it from any level it might still be on
 		client = new RemotePlayer(false, client);
-		client.respawn(Game.levels[Game.lvlIdx(0)]); // get the spawn loc. of the client
+		client.respawn(World.levels[World.lvlIdx(0)]); // get the spawn loc. of the client
 		sendData(InputType.PLAYER, client.getPlayerData()); // send spawn loc.
 	}
 	
-	protected File getRemotePlayerFile() {
+	private File getRemotePlayerFile() {
 		File[] clientFiles = serverInstance.getRemotePlayerFiles();
 		
 		for(File file: clientFiles) {
@@ -240,8 +261,11 @@ public class MinicraftServerThread extends MinicraftConnection {
 		String playerdata = "";
 		if(rpFile != null && rpFile.exists()) {
 			try {
-				String content = Load.loadFromFile(rpFile.getPath(), false); //Files.readAllLines(rpFile.toPath(), StandardCharsets.UTF_8);
-				playerdata = content.substring(content.indexOf("\n")+1);
+				String content = Load.loadFromFile(rpFile.getPath(), false);
+				playerdata = content.substring(content.indexOf("\n")+1); // cut off username
+				// assume the data version is dev6 if it isn't written (it isn't before dev7).
+				if(!Version.isValid(playerdata.substring(0, playerdata.indexOf("\n"))))
+					playerdata = "2.0.4-dev6\n"+playerdata;
 			} catch(IOException ex) {
 				System.err.println("failed to read remote player file: " + rpFile);
 				ex.printStackTrace();
@@ -264,7 +288,7 @@ public class MinicraftServerThread extends MinicraftConnection {
 			filename = "RemotePlayer"+numFiles+Save.extension;
 		}
 		
-		String filedata = client.getUsername() + "\n" + playerdata;
+		String filedata = String.join("\n", client.getUsername(), playerdata);
 		
 		String filepath = serverInstance.getWorldPath()+"/"+filename;
 		try {
@@ -277,8 +301,7 @@ public class MinicraftServerThread extends MinicraftConnection {
 	}
 	
 	public void endConnection() {
-		for(Timer t: gameTimers)
-			t.cancel();
+		pingTimer.stop();
 		super.endConnection();
 		
 		client.remove();
@@ -287,6 +310,6 @@ public class MinicraftServerThread extends MinicraftConnection {
 	}
 	
 	public String toString() {
-		return "ServerThread for " + client.getUsername()/*client.getIpAddress().getCanonicalHostName()*/;
+		return "ServerThread for " + (client==null?"null":client.getUsername());
 	}
 }

@@ -1,10 +1,11 @@
 package minicraft.level.tile;
 
-import minicraft.Game;
-import minicraft.entity.AirWizard;
+import minicraft.core.Game;
+import minicraft.entity.Direction;
 import minicraft.entity.Entity;
-import minicraft.entity.Mob;
-import minicraft.entity.Player;
+import minicraft.entity.mob.AirWizard;
+import minicraft.entity.mob.Mob;
+import minicraft.entity.mob.Player;
 import minicraft.entity.particle.SmashParticle;
 import minicraft.entity.particle.TextParticle;
 import minicraft.gfx.Color;
@@ -17,6 +18,9 @@ import minicraft.item.ToolType;
 import minicraft.level.Level;
 
 public class WallTile extends Tile {
+	
+	private static final String obrickMsg = "The airwizard must be defeated first.";
+	
 	private ConnectorSprite sprite;
 	
 	protected Material type;
@@ -39,26 +43,25 @@ public class WallTile extends Tile {
 		return false;
 	}
 	
-	public void hurt(Level level, int x, int y, Mob source, int dmg, int attackDir) {
-		/*int playDmg;
-		if (Game.isMode("creative")) playDmg = random.nextInt(5);
-		else {
-			playDmg = 0;
-		}*/
-		hurt(level, x, y, 0);
+	@Override
+	public void hurt(Level level, int x, int y, Mob source, int dmg, Direction attackDir) {
+		if(level.depth != -3 || type != Material.Obsidian || AirWizard.beaten)
+			hurt(level, x, y, random.nextInt(6)/6*dmg/2);
+		else
+			Game.notifications.add(obrickMsg);
 	}
 	
-	public boolean interact(Level level, int xt, int yt, Player player, Item item, int attackDir) {
+	public boolean interact(Level level, int xt, int yt, Player player, Item item, Direction attackDir) {
 		if (item instanceof ToolItem) {
 			ToolItem tool = (ToolItem) item;
 			if (tool.type == ToolType.Pickaxe) {
-				if(type != Material.Obsidian || AirWizard.beaten) {
+				if(level.depth != -3 || type != Material.Obsidian || AirWizard.beaten) {
 					if (player.payStamina(4 - tool.level)) {
 						hurt(level, xt, yt, random.nextInt(10) + (tool.level) * 5 + 10);
 						return true;
 					}
-				} else if(level.depth == -3)
-					Game.notifications.add("Only True heroes may enter."); // display a cryptic
+				} else
+					Game.notifications.add(obrickMsg);
 			}
 		}
 		return false;
@@ -80,7 +83,7 @@ public class WallTile extends Tile {
 			}
 			
 			level.dropItem(x*16+8, y*16+8, 1, 3-type.ordinal(), Items.get(itemName));
-			level.setTile(x, y, Tiles.get(tilename)); // TODO this will be a problem...
+			level.setTile(x, y, Tiles.get(tilename));
 		}
 		else {
 			level.setData(x, y, damage);

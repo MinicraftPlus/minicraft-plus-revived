@@ -4,10 +4,11 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Random;
 
-import minicraft.Game;
-import minicraft.InputHandler;
-import minicraft.Settings;
-import minicraft.entity.Player;
+import minicraft.core.Game;
+import minicraft.core.Updater;
+import minicraft.core.io.InputHandler;
+import minicraft.core.io.Settings;
+import minicraft.entity.mob.Player;
 import minicraft.gfx.Color;
 import minicraft.gfx.Screen;
 import minicraft.item.Items;
@@ -37,17 +38,17 @@ public class EndGameDisplay extends Display {
 	public EndGameDisplay(Player player) {
 		super(false, false);
 		
-		displayTimer = Game.normSpeed; // wait 3 seconds before rendering the menu.
-		inputDelay = Game.normSpeed/2; // wait a half-second after rendering before allowing user input.
+		displayTimer = Updater.normSpeed; // wait 3 seconds before rendering the menu.
+		inputDelay = Updater.normSpeed/2; // wait a half-second after rendering before allowing user input.
 		
 		
 		ArrayList<ListEntry> entries = new ArrayList<>();
 		
 		// calculate the score
-		entries.add(new StringEntry("Player Score: " + Game.player.score, Color.WHITE));
+		entries.add(new StringEntry("Player Score: " + Game.player.getScore(), Color.WHITE));
 		entries.add(new StringEntry("<Bonuses>", Color.YELLOW));
 		
-		finalscore = Game.player.score;
+		finalscore = Game.player.getScore();
 		for(String item: scoredItems)
 			addBonus(item);
 		
@@ -56,7 +57,7 @@ public class EndGameDisplay extends Display {
 		// add any unlocks
 		entries.addAll(Arrays.asList(getAndWriteUnlocks()));
 		
-		entries.add(new SelectEntry("Exit to Menu", () -> Game.setMenu(new TitleMenu())));
+		entries.add(new SelectEntry("Exit to Menu", () -> Game.setMenu(new TitleDisplay())));
 		
 		//title = "Game Over!" + (Game.isMode("score") ? " (" + ModeMenu.getSelectedTime() + ")" : "");
 		menus = new Menu[] {
@@ -68,7 +69,7 @@ public class EndGameDisplay extends Display {
 	}
 	
 	private StringEntry addBonus(String item) {
-		int count = Game.player.inventory.count(Items.get(item));
+		int count = Game.player.getInventory().count(Items.get(item));
 		int score = count * (random.nextInt(2) + 1) * 10;
 		finalscore += score;
 		StringBuilder buffer = new StringBuilder();
@@ -95,20 +96,19 @@ public class EndGameDisplay extends Display {
 		
 		if(scoreTime == 20 && !Settings.getEntry("scoretime").valueIs(10) && finalscore > 1000) {
 			unlocks.add(10);
-			// TODO implement hidden options in ArrayEntries, or allow options to be added
-			// Settings.getEntry("scoretime").addValue(10)
+			Settings.getEntry("scoretime").setValueVisibility(10, true);
 		}
 		
 		if(scoreTime == 60 && !Settings.getEntry("scoretime").valueIs(120) && finalscore > 100000) {
 			unlocks.add(120);
-			// Settings.getEntry("scoretime").addValue(120)
+			Settings.getEntry("scoretime").setValueVisibility(120, true);
 		}
 		
 		StringEntry[] entries = new StringEntry[unlocks.size()];
 		for(int i = 0; i < entries.length; i++)
 			entries[i] = new StringEntry("Unlocked! " + unlocks.get(i) + " Score Time");
 		
-		new Save(); // TODO make this write unlocks
+		new Save(); // writes unlocks, and preferences
 		
 		return entries;
 	}

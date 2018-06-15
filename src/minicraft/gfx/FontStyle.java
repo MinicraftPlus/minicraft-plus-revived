@@ -2,47 +2,9 @@ package minicraft.gfx;
 
 import java.util.Arrays;
 
+import minicraft.screen.RelPos;
+
 public class FontStyle {
-	/*
-		draw needs some parameters...
-		CENTERED or no - and can be screen, or given bounds
-			-centering bounds: nothing, or two ints
-		
-		SHADOWED or no - and can be single default, full outline, or custom
-			-shadow color: int
-			-shadow type: nothing, boolean, or string
-		
-		ALL COMBOS:
-		--centering possibilities--
-			++centering types++
-				not centered
-				auto centered to screen
-				centered in given bounds
-			++ with each var:
-				x
-				y
-		-- repeated for each shadow type:
-			no shadow
-			shadow true (outline)
-			shadow false (norm shadow)
-			shadow custom positions
-		
-		total possibilities: 6561...
-		
-		All draw methods have the parameters:
-		-String msg
-		-Screen screen
-		-int color
-	*/
-	/*
-		the method:
-		have a font builder, with the various options:
-		
-		.addCenterX( | int min, int max) - nothing means screen width, or can specify bounds
-		.addCenterY( | int min, int max) - nothing means screen height, or can specify bounds
-		.addShadow( | boolean fullOutline | String outlineType, int color) - specifies shadow outline
-		.draw() - draws the text to the screen with the given options.
-	*/
 	
 	/// this specifies the x and y offsets for each binary value in the "shadow location byte", and is what causes each value to progress in a circle.
 	private static int[] shadowPosMap = {	 0,  1,  1,  1,  0, -1, -1, -1,
@@ -53,25 +15,25 @@ public class FontStyle {
 		For an example, for the default shadow, the string is "00010000". though, becuase of the way it's designed, the trailing zeros may be dropped, so it could just be "0001". This doesn't quite read like binary, but it doesn't have to, so whatever. :P
 	*/
 	
-	protected int mainColor;
+	private int mainColor;
 	
-	protected int shadowColor;
-	protected String shadowType;
-	protected int centerMinX, centerMaxX, centerMinY, centerMaxY;
-	protected int xPosition = -1, yPosition = -1;
+	private int shadowColor;
+	private String shadowType;
+	private Point anchor;
+	private RelPos relTextPos = RelPos.CENTER; // aligns the complete block of text with the anchor. 
 	
+	// used only when drawing paragraphs:
+	private RelPos relLinePos = RelPos.CENTER; // when setup for a paragraph with multiple lines, this determines the alignment of each line within the bounds of the paragraph.
 	private String[] configuredPara;
-	private int paraMinY;
+	private Rectangle paraBounds;
+	private int padX = 0, padY = 0;
 	
 	public FontStyle() { this(Color.WHITE); }
 	public FontStyle(int mainColor) {
 		this.mainColor = mainColor;
 		shadowColor = Color.get(-1, -1);
 		shadowType = "";
-		centerMinX = 0;
-		centerMinY = 0;
-		centerMaxX = Screen.w;
-		centerMaxY = Screen.h;
+		anchor = new Point(Screen.w/2, Screen.h/2);
 		
 		/// by default, the styling is set so as to center the text in the middle of the screen, with no shadow.
 	}
@@ -85,12 +47,20 @@ public class FontStyle {
 		/// the field variables should NOT be modified! modify local vars instead.
 		
 		/// for centering
-		int cxMin = centerMinX, cyMin = centerMinY;
-		int cxMax = centerMaxX == -1 ? Screen.w : centerMaxX;
-		int cyMax = centerMaxY == -1 ? Screen.h : centerMaxY;
+		Dimension size = new Dimension(Font.textWidth(msg), Font.textHeight());
 		
-		int xPos = xPosition == -1 ? Font.centerX(msg, cxMin, cxMax) : xPosition;
-		int yPos = yPosition == -1 ? Font.centerY(msg, cyMin, cyMax) : yPosition;
+		Rectangle textBounds = relTextPos.positionRect(size, anchor, new Rectangle());
+		
+		if(padX != 0 || padY != 0) {
+			size.width += padX;
+			size.height += padY;
+			Rectangle textBox = relTextPos.positionRect(size, anchor, new Rectangle());
+			
+			relLinePos.positionRect(textBounds.getSize(), textBox, textBounds);
+		}
+		
+		int xPos = textBounds.getLeft();
+		int yPos = textBounds.getTop();
 		
 		/// for the shadow
 		char[] sides = shadowType.toCharArray();
@@ -98,13 +68,6 @@ public class FontStyle {
 			if(sides[i] == '1')
 				Font.draw(msg, screen, xPos + shadowPosMap[i], yPos + shadowPosMap[i+8], shadowColor);
 	    
-		/*// a little feature to control what color you paint with.
-		int mainCol = mainColor;
-		if(msg.startsWith("~")) {
-			msg = msg.substring(1);
-			mainCol = shadowColor;
-		}*/
-		
 		/// the main drawing of the text:
 		Font.draw(msg, screen, xPos, yPos, mainColor);
 	}
@@ -112,12 +75,13 @@ public class FontStyle {
 	public void configureForParagraph(String[] para, int spacing) {
 		configuredPara = para; // save the passed in paragraph for later comparison
 		
-		if(yPosition == -1) { // yPosition is auto-centered
-			int centerYDouble = centerMinY + centerMaxY;
-			int height = para.length * (Font.textHeight() + spacing);
-			paraMinY = (centerYDouble - height) / 2; // by doubles to maybe avoid possible rounding errors.
-		} else
-			paraMinY = yPosition; // save the y position.
+		// at this point, the main anchor is meant for the whole paragraph block.
+		// when drawing a line, there's an anchor, and then a position around that anchor.
+		// in a paragraph, it could be the left side, or right, or top... it depends.
+		// either way, the draw method needs to use a different position.
+		
+		Dimension size = new Dimension(Font.textWidth(para), para.length*(Font.textHeight()+spacing));
+		paraBounds = relTextPos.positionRect(size, anchor, new Rectangle());
 	}
 	
 	public void setupParagraphLine(String[] para, int line, int spacing) {
@@ -132,15 +96,24 @@ public class FontStyle {
 		if(configuredPara == null || !Arrays.equals(para, configuredPara))
 			configureForParagraph(para, spacing);
 		
-		setYPos(paraMinY + line*Font.textHeight() + line*spacing);
+		Rectangle textArea = new Rectangle(paraBounds);
+		textArea.setSize(textArea.getWidth(), Font.textHeight()+spacing, RelPos.TOP_LEFT);
+		textArea.translate(0, line*textArea.getHeight());
+		
+		anchor = textArea.getPosition(relTextPos.getOpposite()); // for the relpos to put the rect in the correct pos, the anchor should be fetched using to opposite relpos. 
+		
+		padX = paraBounds.getWidth() - Font.textWidth(para[line]);
+		padY = spacing;
 	}
 	
 	public void drawParagraphLine(String[] para, int line, int spacing, Screen screen) {
 		setupParagraphLine(para, line, spacing);
 		draw(para[line], screen);
+		padX = 0;
+		padY = 0;
 	}
 	
-	/** All the font modifier methods are below. They all return the current FontStyle instance for chaining. */
+	/* -- All the font modifier methods are below. They all return the current FontStyle instance for chaining. -- */
 	
 	/** Sets the color of the text itself. */
 	public FontStyle setColor(int col) {
@@ -148,30 +121,43 @@ public class FontStyle {
 		return this;
 	}
 	
-	/** (assuming pos is >= 0) sets the absolute left x position of the text. This causes the text to be left-justified. */
-	public FontStyle setXPos(int pos) {
-		xPosition = pos;
+	/** sets the x position of the text anchor. This causes the text to be left-justified, if alignment is reset. */
+	public FontStyle setXPos(int pos) { return setXPos(pos, true); }
+	public FontStyle setXPos(int pos, boolean resetAlignment) {
+		anchor.x = pos;
+		if(resetAlignment) {
+			relTextPos = RelPos.getPos(RelPos.RIGHT.xIndex, relTextPos.yIndex);
+			relLinePos = RelPos.getPos(RelPos.LEFT.xIndex, relLinePos.yIndex);
+		}
 		return this;
 	}
-	/** (assuming pos is >= 0) sets the absolute top y position of the text. This removes vertical centering. */
-	public FontStyle setYPos(int pos) {
-		yPosition = pos;
+	/** sets the y position of the text anchor. This sets the y pos to be the top of the block, if alignment is reset. */
+	public FontStyle setYPos(int pos) { return setYPos(pos, true); }
+	public FontStyle setYPos(int pos, boolean resetAlignment) {
+		anchor.y = pos;
+		if(resetAlignment) {
+			relTextPos = RelPos.getPos(relTextPos.xIndex, RelPos.BOTTOM.yIndex);
+			relLinePos = RelPos.getPos(relLinePos.xIndex, RelPos.TOP.yIndex);
+		}
 		return this;
 	}
 	
-	/** sets the two anchors to center the text between horizontally. This enables horizontal centering. */
-	public FontStyle xCenterBounds(int min, int max) {
-		centerMinX = min;
-		centerMaxX = max;
-		xPosition = -1;
+	public FontStyle setAnchor(int x, int y) {
+		anchor = new Point(x, y);
 		return this;
 	}
 	
-	/** same as above, but vertically. */
-	public FontStyle yCenterBounds(int min, int max) {
-		centerMinY = min;
-		centerMaxY = max;
-		yPosition = -1;
+	/** Sets the position of the text box relative to the anchor. */
+	public FontStyle setRelTextPos(RelPos relPos) { return setRelTextPos(relPos, true); }
+	public FontStyle setRelTextPos(RelPos relPos, boolean setBoth) {
+		this.relTextPos = relPos;
+		if(setBoth) relLinePos = relTextPos.getOpposite();
+		return this;
+	}
+	
+	/** Sets the position of a paragraph of text relative to the anchor. */
+	public FontStyle setRelLinePos(RelPos relPos) {
+		relLinePos = relPos;
 		return this;
 	}
 	
@@ -189,9 +175,5 @@ public class FontStyle {
 		return this;
 	}
 	
-	/** getters. */
-	
-	public int getColor() {return mainColor;}
-	public int getXPos() { return xPosition < 0 ? centerMinX : xPosition; }
-	public int getYPos() { return yPosition < 0 ? centerMinY : yPosition; }
+	public int getColor() { return mainColor; }
 }

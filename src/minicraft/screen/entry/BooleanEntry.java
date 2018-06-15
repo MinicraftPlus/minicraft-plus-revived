@@ -1,5 +1,7 @@
 package minicraft.screen.entry;
 
+import minicraft.core.io.Localization;
+
 public class BooleanEntry extends ArrayEntry<Boolean> {
 	
 	public BooleanEntry(String label, boolean initial) {
@@ -10,6 +12,9 @@ public class BooleanEntry extends ArrayEntry<Boolean> {
 	
 	@Override
 	public String toString() {
-		return getLabel() + ": " + (getValue() ? "On" : "Off");
+		return getLabel() + ": " + (getValue() ?
+			Localization.getLocalized("On") :
+			Localization.getLocalized("Off")
+		);
 	}
 }

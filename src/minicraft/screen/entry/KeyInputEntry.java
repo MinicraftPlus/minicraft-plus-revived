@@ -1,6 +1,7 @@
 package minicraft.screen.entry;
 
-import minicraft.InputHandler;
+import minicraft.core.io.InputHandler;
+import minicraft.core.io.Localization;
 import minicraft.gfx.Font;
 import minicraft.gfx.Screen;
 
@@ -41,6 +42,6 @@ public class KeyInputEntry extends SelectEntry {
 	
 	@Override
 	public String toString() {
-		return action + buffer + mapping;
+		return Localization.getLocalized(action) + buffer + mapping;
 	}
 }

@@ -1,8 +1,9 @@
 package minicraft.level.tile;
 
-import minicraft.Sound;
+import minicraft.core.io.Sound;
+import minicraft.entity.Direction;
 import minicraft.entity.Entity;
-import minicraft.entity.Player;
+import minicraft.entity.mob.Player;
 import minicraft.gfx.Color;
 import minicraft.gfx.Screen;
 import minicraft.gfx.Sprite;
@@ -42,7 +43,7 @@ public class WoolTile extends Tile {
 		sprite.render(screen, x*16, y*16, color);
 	}
 	
-	public boolean interact(Level level, int xt, int yt, Player player, Item item, int attackDir) {
+	public boolean interact(Level level, int xt, int yt, Player player, Item item, Direction attackDir) {
 		if (item instanceof ToolItem) {
 			ToolItem tool = (ToolItem) item;
 			if (tool.type == ToolType.Shovel) {
@@ -68,11 +69,12 @@ public class WoolTile extends Tile {
 	public boolean matches(String woolColor, String otherTile) {
 		return matches(getData(woolColor), otherTile);
 	}
-	public boolean matches(int thisData, String otherTile) {
-		if(!otherTile.contains("_"))
-			return name.equals(otherTile);
+	@Override
+	public boolean matches(int thisData, String tileInfo) {
+		if(!tileInfo.contains("_"))
+			return name.equals(tileInfo);
 		else {
-			String[] parts = otherTile.split("_");
+			String[] parts = tileInfo.split("_");
 			String tname = parts[0];
 			int tdata = Integer.parseInt(parts[1]);
 			return name.equals(tname) && thisData == tdata;

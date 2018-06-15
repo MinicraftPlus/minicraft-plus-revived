@@ -8,10 +8,15 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-import minicraft.Game;
-import minicraft.Settings;
-import minicraft.entity.*;
+import minicraft.core.Game;
+import minicraft.core.Updater;
+import minicraft.core.World;
+import minicraft.core.io.Settings;
+import minicraft.entity.Entity;
+import minicraft.entity.furniture.*;
+import minicraft.entity.mob.*;
 import minicraft.item.ArmorItem;
+import minicraft.item.Inventory;
 import minicraft.item.Item;
 import minicraft.item.Items;
 import minicraft.item.PotionItem;
@@ -32,13 +37,13 @@ public class LegacyLoad {
 	ArrayList<String> extradata;
 	
 	public boolean hasloadedbigworldalready;
-	Load.Version currentVer, worldVer;
+	Version currentVer, worldVer;
 	boolean oldSave = false;
 	
 	Game game = null;
 	
 	{
-		currentVer = new Load.Version(Game.VERSION);
+		currentVer = Game.VERSION;
 		worldVer = null;
 		
 		data = new ArrayList<>();
@@ -51,7 +56,7 @@ public class LegacyLoad {
 		
 		File testFile = new File(location + "KeyPrefs" + extension);
 		if(!testFile.exists()) {
-			worldVer = new Load.Version("1.8");
+			worldVer = new Version("1.8");
 			oldSave = true;
 		} else
 			testFile.delete(); // we don't care about it anymore anyway.
@@ -61,7 +66,7 @@ public class LegacyLoad {
 		loadGame("Game"); // more of the version will be determined here
 		loadWorld("Level");
 		loadPlayer("Player", Game.player);
-		loadInventory("Inventory", Game.player.inventory);
+		loadInventory("Inventory", Game.player.getInventory());
 		loadEntities("Entities", Game.player);
 		LoadingDisplay.setPercentage(0); // reset
 	}
@@ -149,14 +154,14 @@ public class LegacyLoad {
 		loadFromFile(location + filename + extension);
 		boolean hasVersion = data.get(0).contains(".");
 		if(hasVersion) {
-			worldVer = new Load.Version(data.get(0)); // gets the world version
-			Game.setTime(Integer.parseInt(data.get(1)));
-			Game.gameTime = 65000; // prevents time cheating.
+			worldVer = new Version(data.get(0)); // gets the world version
+			Updater.setTime(Integer.parseInt(data.get(1)));
+			Updater.gameTime = 65000; // prevents time cheating.
 			
-			if(worldVer.compareTo(new Load.Version("1.9.2")) < 0) {
+			if(worldVer.compareTo(new Version("1.9.2")) < 0) {
 				Settings.set("autosave", Boolean.parseBoolean(data.get(3)));
 				Settings.set("sound", Boolean.parseBoolean(data.get(4)));
-				if(worldVer.compareTo(new Load.Version("1.9.2-dev2")) >= 0)
+				if(worldVer.compareTo(new Version("1.9.2-dev2")) >= 0)
 					AirWizard.beaten = Boolean.parseBoolean(data.get(5));
 			} else { // this is 1.9.2 official or after
 				Settings.setIdx("diff", Integer.parseInt(data.get(3)));
@@ -165,17 +170,17 @@ public class LegacyLoad {
 		}
 		else {
 			if(data.size() == 5) {
-				worldVer = new Load.Version("1.9");
-				Game.setTime(Integer.parseInt(data.get(0)));
+				worldVer = new Version("1.9");
+				Updater.setTime(Integer.parseInt(data.get(0)));
 				Settings.set("autosave", Boolean.parseBoolean(data.get(3)));
 				Settings.set("sound", Boolean.parseBoolean(data.get(4)));
 			} else { // version == 1.8?
 				if(!oldSave) {
 					System.out.println("UNEXPECTED WORLD VERSION");
-					worldVer = new Load.Version("1.8.1");
+					worldVer = new Version("1.8.1");
 				}
 				// for backwards compatibility
-				Game.tickCount = Integer.parseInt(data.get(0));
+				Updater.tickCount = Integer.parseInt(data.get(0));
 				playerac = Integer.parseInt(data.get(3));
 				Settings.set("autosave", false);
 			}
@@ -183,7 +188,7 @@ public class LegacyLoad {
 	}
 	
 	public void loadWorld(String filename) {
-		for(int l = 0; l < Game.levels.length; l++) {
+		for(int l = 0; l < World.levels.length; l++) {
 			loadFromFile(location + filename + l + extension);
 			
 			int lvlw = Integer.parseInt(data.get(0));
@@ -202,10 +207,10 @@ public class LegacyLoad {
 				}
 			}
 			
-			//Level parent = l == Game.levels.length-1 ? null : Game.levels[l+1];
-			Game.levels[l] = new Level(lvlw, lvlh, lvldepth, null, false);
-			Game.levels[l].tiles = tiles;
-			Game.levels[l].data = tdata;
+			//Level parent = l == World.levels.length-1 ? null : World.levels[l+1];
+			World.levels[l] = new Level(lvlw, lvlh, lvldepth, null, false);
+			World.levels[l].tiles = tiles;
+			World.levels[l].data = tdata;
 		}
 	}
 	
@@ -221,7 +226,7 @@ public class LegacyLoad {
 		String modedata;
 		if(!oldSave) {
 			if(data.size() >= 14) {
-				if(worldVer == null) worldVer = new Load.Version("1.9.1-pre1");
+				if(worldVer == null) worldVer = new Version("1.9.1-pre1");
 				player.armorDamageBuffer = Integer.parseInt(data.get(13));
 				player.curArmor = (ArmorItem)Items.get(data.get(14));
 			} else player.armor = 0;
@@ -236,18 +241,18 @@ public class LegacyLoad {
 			modedata = data.get(8);
 		}
 		
-		player.score = Integer.parseInt(data.get(6));
-		Game.levels[Game.currentLevel].add(player);
+		player.setScore(Integer.parseInt(data.get(6)));
+		World.levels[Game.currentLevel].add(player);
 		
 		int mode;
 		if(modedata.contains(";")) {
 			mode = Integer.parseInt(modedata.substring(0, modedata.indexOf(";")));
 			if (mode == 4)
-				Game.scoreTime = Integer.parseInt(modedata.substring(modedata.indexOf(";") + 1));
+				Updater.scoreTime = Integer.parseInt(modedata.substring(modedata.indexOf(";") + 1));
 		}
 		else {
 			mode = Integer.parseInt(modedata);
-			if (mode == 4) Game.scoreTime = 300;
+			if (mode == 4) Updater.scoreTime = 300;
 		}
 		
 		Settings.setIdx("mode", mode);
@@ -289,7 +294,7 @@ public class LegacyLoad {
 			loadItemToInventory(item, inventory);
 		}
 		
-		if(playerac > 0 && inventory == Game.player.inventory) {
+		if(playerac > 0 && inventory == Game.player.getInventory()) {
 			inventory.add(Items.get("arrow"), playerac);
 			playerac = 0;
 		}
@@ -323,8 +328,8 @@ public class LegacyLoad {
 	public void loadEntities(String filename, Player player) {
 		loadFromFile(location + filename + extension);
 		
-		for(int i = 0; i < Game.levels.length; i++) {
-			Game.levels[i].clearEntities();
+		for(int i = 0; i < World.levels.length; i++) {
+			World.levels[i].clearEntities();
 		}
 		
 		for(int i = 0; i < data.size(); i++) {
@@ -348,7 +353,7 @@ public class LegacyLoad {
 					Mob mob = (Mob)newEntity;
 					mob.health = Integer.parseInt(info.get(2));
 					currentlevel = Integer.parseInt(info.get(info.size()-1));
-					Game.levels[currentlevel].add(mob, x, y);
+					World.levels[currentlevel].add(mob, x, y);
 				} else if(newEntity instanceof Chest) {
 					Chest chest = (Chest)newEntity;
 					boolean isDeathChest = chest instanceof DeathChest;
@@ -358,18 +363,18 @@ public class LegacyLoad {
 					int endIdx = chestInfo.size()-(isDeathChest||isDungeonChest?1:0);
 					for(int idx = 0; idx < endIdx; idx++) {
 						String itemData = chestInfo.get(idx);
-						if(worldVer.compareTo(new Load.Version("1.9.1")) < 0) // if this world is before 1.9.1
+						if(worldVer.compareTo(new Version("1.9.1")) < 0) // if this world is before 1.9.1
 							if(itemData.equals("")) continue; // this skips any null items
-						loadItemToInventory(itemData, chest.inventory);
+						loadItemToInventory(itemData, chest.getInventory());
 						/*if(oldSave) itemData = subOldName(itemData);
 						Item item = Items.get(itemData);
 						if (item instanceof StackableItem) {
 							String[] aitemData = (itemData + ";1").split(";"); // this appends ";1" to the end, meaning one item, to everything; but if it was already there, then it becomes the 3rd element in the list, which is ignored.
 							StackableItem stack = (StackableItem)Items.get(aitemData[0]);
 							stack.count = Integer.parseInt(aitemData[1]);
-							chest.inventory.add(stack);
+							chest.getInventory().add(stack);
 						} else {
-							chest.inventory.add(item);
+							chest.getInventory().add(item);
 						}*/
 					}
 					
@@ -380,18 +385,18 @@ public class LegacyLoad {
 					}
 					
 					currentlevel = Integer.parseInt(info.get(info.size() - 1));
-					Game.levels[currentlevel].add(chest instanceof DeathChest ? (DeathChest)chest : chest instanceof DungeonChest ? (DungeonChest)chest : chest, x, y);
+					World.levels[currentlevel].add(chest instanceof DeathChest ? (DeathChest)chest : chest instanceof DungeonChest ? (DungeonChest)chest : chest, x, y);
 				}
 				else if(newEntity instanceof Spawner) {
 					Spawner egg = new Spawner((MobAi)getEntity(info.get(2), player, Integer.parseInt(info.get(3))));
 					//egg.lvl = Integer.parseInt(info.get(3));
 					//egg.initMob((MobAi)getEntity(info.get(2), player, info.get(3)));
 					currentlevel = Integer.parseInt(info.get(info.size() - 1));
-					Game.levels[currentlevel].add(egg, x, y);
+					World.levels[currentlevel].add(egg, x, y);
 				}
 				else {
 					currentlevel = Integer.parseInt(info.get(2));
-					Game.levels[currentlevel].add(newEntity, x, y);
+					World.levels[currentlevel].add(newEntity, x, y);
 				}
 			} // end of entity not null conditional
 		}

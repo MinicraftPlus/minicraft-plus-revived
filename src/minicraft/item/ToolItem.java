@@ -3,10 +3,12 @@ package minicraft.item;
 import java.util.ArrayList;
 import java.util.Random;
 
-import minicraft.Game;
+import minicraft.core.Game;
+import minicraft.core.io.Localization;
+import minicraft.entity.Direction;
 import minicraft.entity.Entity;
-import minicraft.entity.Mob;
-import minicraft.entity.Player;
+import minicraft.entity.mob.Mob;
+import minicraft.entity.mob.Player;
 import minicraft.gfx.Color;
 import minicraft.gfx.Sprite;
 import minicraft.level.Level;
@@ -76,13 +78,15 @@ public class ToolItem extends Item {
 		return col;
 	}
 	
-	/** Gets the name of this tool (and it's type) */
-	public String getName() {
-		if (type == ToolType.FishingRod) return "Fishing Rod";
-		return LEVEL_NAMES[level] + " " + type;
+	/** Gets the name of this tool (and it's type) as a display string. */
+	@Override
+	public String getDisplayName() {
+		if (type == ToolType.FishingRod) return " " + Localization.getLocalized("Fishing Rod");
+		return " "+Localization.getLocalized(LEVEL_NAMES[level]) + " " + Localization.getLocalized(type.toString());
 	}
 	
-	public boolean interactOn(Tile tile, Level level, int xt, int yt, Player player, int attackDir) {
+	@Override
+	public boolean interactOn(Tile tile, Level level, int xt, int yt, Player player, Direction attackDir) {
 		if (type == ToolType.FishingRod && dur > 0) {
 			if (tile == Tiles.get("water")) {
 				player.goFishing(player.x - 5, player.y - 5);
@@ -124,14 +128,18 @@ public class ToolItem extends Item {
 		return 0;
 	}
 	
-	/** Sees if this item matches another. */
-	public boolean matches(Item item) {
+	/** Sees if this item equals another. */
+	@Override
+	public boolean equals(Item item) {
 		if (item instanceof ToolItem) {
 			ToolItem other = (ToolItem) item;
 			return other.type == type && other.level == level;
 		}
 		return false;
 	}
+	
+	@Override
+	public int hashCode() { return type.name().hashCode() + level; }
 	
 	public ToolItem clone() {
 		ToolItem ti = new ToolItem(type, level);

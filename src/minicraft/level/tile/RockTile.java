@@ -1,10 +1,11 @@
 package minicraft.level.tile;
 
-import minicraft.Game;
-import minicraft.Settings;
+import minicraft.core.Game;
+import minicraft.core.io.Settings;
+import minicraft.entity.Direction;
 import minicraft.entity.Entity;
-import minicraft.entity.Mob;
-import minicraft.entity.Player;
+import minicraft.entity.mob.Mob;
+import minicraft.entity.mob.Player;
 import minicraft.entity.particle.SmashParticle;
 import minicraft.entity.particle.TextParticle;
 import minicraft.gfx.Color;
@@ -43,11 +44,11 @@ public class RockTile extends Tile {
 		return false;
 	}
 	
-	public void hurt(Level level, int x, int y, Mob source, int dmg, int attackDir) {
+	public void hurt(Level level, int x, int y, Mob source, int dmg, Direction attackDir) {
 		hurt(level, x, y, 1);
 	}
 
-	public boolean interact(Level level, int xt, int yt, Player player, Item item, int attackDir) {
+	public boolean interact(Level level, int xt, int yt, Player player, Item item, Direction attackDir) {
 		if (item instanceof ToolItem) {
 			ToolItem tool = (ToolItem) item;
 			if (tool.type == ToolType.Pickaxe && player.payStamina(4 - tool.level)) {

@@ -1,14 +1,13 @@
 package minicraft.gfx;
 
-import minicraft.Game;
+import minicraft.core.Renderer;
+import minicraft.core.Updater;
 
 public class Screen {
 	
-	public static final int w = Game.WIDTH; // width of the screen
-	public static final int h = Game.HEIGHT; // height of the screen
+	public static final int w = Renderer.WIDTH; // width of the screen
+	public static final int h = Renderer.HEIGHT; // height of the screen
 	public static final Point center = new Point(w/2, h/2);
-	
-	private static java.util.Random random = new java.util.Random();
 	
 	private static final int MAXDARK = 128;
 	//private static final int MAXLIGHT = 20;
@@ -18,12 +17,12 @@ public class Screen {
 	private int yOffset;
 	
 	// used for mirroring an image:
-	public static final int BIT_MIRROR_X = 0x01; // written in hexadecimal; binary: 01
-	public static final int BIT_MIRROR_Y = 0x02; // binary: 10
+	private static final int BIT_MIRROR_X = 0x01; // written in hexadecimal; binary: 01
+	private static final int BIT_MIRROR_Y = 0x02; // binary: 10
 	
 	public int[] pixels; // pixels on the screen
 	
-	protected SpriteSheet sheet; // the sprite sheet used in the Game.
+	private SpriteSheet sheet; // the sprite sheet used in the Game.
 	
 	public Screen(SpriteSheet sheet) {
 		this.sheet = sheet;
@@ -102,20 +101,22 @@ public class Screen {
 	/** Overlays the screen with pixels */
     public void overlay(Screen screen2, int currentLevel, int xa, int ya) {
 		double tintFactor = 0;
-		if(currentLevel >= 3) {
-			int transTime = Game.dayLength / 4;
-			double relTime = (Game.tickCount % transTime)*1.0 / transTime;
+		if(currentLevel >= 3 && currentLevel < 5) {
+			int transTime = Updater.dayLength / 4;
+			double relTime = (Updater.tickCount % transTime)*1.0 / transTime;
 			
-			switch(Game.getTime()) {
-				case Morning: tintFactor = Game.pastDay1 ? (1-relTime) * MAXDARK : 0; break;
+			switch(Updater.getTime()) {
+				case Morning: tintFactor = Updater.pastDay1 ? (1-relTime) * MAXDARK : 0; break;
 				case Day: tintFactor = 0; break;
 				case Evening: tintFactor = relTime * MAXDARK; break;
 				case Night: tintFactor = MAXDARK; break;
 			}
-			if(currentLevel == 4) tintFactor -= (tintFactor < 10 ? tintFactor : 10);
+			if(currentLevel > 3) tintFactor -= (tintFactor < 10 ? tintFactor : 10);
 			tintFactor *= -1; // all previous operations were assumping this was a darkening factor.
 			//tintFactor += 20;
 		}
+		else if(currentLevel >= 5)
+			tintFactor = -MAXDARK;
         
 		int[] oPixels = screen2.pixels;  // The Integer array of pixels to overlay the screen with.
 		int i = 0; // current pixel on the screen

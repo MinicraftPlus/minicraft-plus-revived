@@ -1,6 +1,7 @@
 package minicraft.screen.entry;
 
-import minicraft.InputHandler;
+import minicraft.core.io.InputHandler;
+import minicraft.core.io.Localization;
 import minicraft.gfx.Color;
 import minicraft.gfx.Font;
 import minicraft.gfx.Screen;
@@ -43,7 +44,7 @@ public class InputEntry extends ListEntry {
 	public String getUserInput() { return userInput; }
 	
 	public String toString() {
-		return prompt+(prompt.length()==0?"":": ") + userInput;
+		return Localization.getLocalized(prompt)+(prompt.length()==0?"":": ") + userInput;
 	}
 	
 	public void render(Screen screen, int x, int y, boolean isSelected) {

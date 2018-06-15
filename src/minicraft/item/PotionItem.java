@@ -1,9 +1,11 @@
 package minicraft.item;
 
 import java.util.ArrayList;
-import minicraft.Game;
-import minicraft.entity.Player;
-import minicraft.entity.RemotePlayer;
+
+import minicraft.core.Game;
+import minicraft.entity.Direction;
+import minicraft.entity.mob.Player;
+import minicraft.entity.mob.RemotePlayer;
 import minicraft.gfx.Color;
 import minicraft.gfx.Sprite;
 import minicraft.level.Level;
@@ -29,7 +31,7 @@ public class PotionItem extends StackableItem {
 	}
 	
 	// the return value is used to determine if the potion was used, which means being discarded.
-	public boolean interactOn(Tile tile, Level level, int xt, int yt, Player player, int attackDir) {
+	public boolean interactOn(Tile tile, Level level, int xt, int yt, Player player, Direction attackDir) {
 		return super.interactOn(applyPotion(player, type, true));
 	}
 	
@@ -55,9 +57,16 @@ public class PotionItem extends StackableItem {
 		return true;
 	}
 	
-	public boolean matches(Item other) {
-		return super.matches(other) && ((PotionItem)other).type == type;
+	@Override
+	public boolean equals(Item other) {
+		return super.equals(other) && ((PotionItem)other).type == type;
 	}
+	
+	@Override
+	public int hashCode() { return super.hashCode() + type.name.hashCode(); }
+	
+	@Override
+	public boolean interactsWithWorld() { return false; }
 	
 	public PotionItem clone() {
 		return new PotionItem(type, count);

@@ -1,6 +1,7 @@
 package minicraft.level.tile;
 
 import minicraft.entity.Entity;
+import minicraft.entity.mob.Mob;
 import minicraft.gfx.Color;
 import minicraft.gfx.ConnectorSprite;
 import minicraft.gfx.Sprite;
@@ -23,7 +24,8 @@ public class ExplodedTile extends Tile {
 	}
 	
 	public void steppedOn(Level level, int x, int y, Entity entity) {
-		entity.hurt(this, x, y, 50);
+		if(entity instanceof Mob)
+			((Mob)entity).hurt(this, x, y, 50);
 	}
 	
 	public boolean mayPass(Level level, int x, int y, Entity e) {

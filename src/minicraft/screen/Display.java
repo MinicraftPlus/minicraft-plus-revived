@@ -1,12 +1,12 @@
 package minicraft.screen;
 
-import minicraft.Game;
-import minicraft.InputHandler;
-import minicraft.Sound;
+import minicraft.core.Game;
+import minicraft.core.io.InputHandler;
+import minicraft.core.io.Sound;
 import minicraft.gfx.Screen;
-import minicraft.screen.entry.ListEntry;
-import minicraft.screen.entry.SelectEntry;
-import com.sun.istack.internal.NotNull;
+import minicraft.screen.entry.ArrayEntry;
+
+import org.jetbrains.annotations.Nullable;
 
 public class Display {
 	
@@ -15,7 +15,7 @@ public class Display {
 	protected Menu[] menus;
 	int selection;
 	
-	private boolean canExit, clearScreen;
+	private final boolean canExit, clearScreen;
 	
 	public Display() { this(new Menu[0]); }
 	public Display(Menu... menus) { this(false, true, menus); }
@@ -31,7 +31,7 @@ public class Display {
 	
 	private boolean setParent = false;
 	// called during setMenu()
-	public void init(Display parent) {
+	public void init(@Nullable Display parent) {
 		if(!setParent) {
 			setParent = true;
 			this.parent = parent;
@@ -41,7 +41,6 @@ public class Display {
 	public void onExit() {}
 	
 	public Display getParent() { return parent; }
-	public Menu getCurMenu() { return menus[selection]; }
 	
 	public void tick(InputHandler input) {
 		
@@ -57,8 +56,9 @@ public class Display {
 		if(menus.length > 1 && menus[selection].isSelectable()) { // if menu set is unselectable, it must have been intentional, so prevent the user from setting it back.
 			int prevSel = selection;
 			
-			if (input.getKey("shift-left").clicked) selection--;
-			if (input.getKey("shift-right").clicked) selection++;
+			String shift = menus[selection].getCurEntry() instanceof ArrayEntry ? "shift-" : "";
+			if (input.getKey(shift+"left").clicked) selection--;
+			if (input.getKey(shift+"right").clicked) selection++;
 			
 			if(prevSel != selection) {
 				Sound.select.play();
@@ -82,7 +82,9 @@ public class Display {
 			menus[selection].tick(input);
 	}
 	
-	protected void onSelectionChange(int oldSel, int newSel) {}
+	protected void onSelectionChange(int oldSel, int newSel) {
+		selection = newSel;
+	}
 	
 	/// sub-classes can do extra rendering here; this renders each menu that should be rendered, in the order of the array, such that the currently selected menu is rendered last, so it appears on top (if they even overlap in the first place).
 	public void render(Screen screen) {
@@ -99,10 +101,5 @@ public class Display {
 			if(menus[idx].shouldRender())
 				menus[idx].render(screen);
 		} while(idx != selection);
-	}
-	
-	@NotNull
-	public static ListEntry entryFactory(String text, Display menu) {
-		return new SelectEntry(text, () -> Game.setMenu(menu));
 	}
 }

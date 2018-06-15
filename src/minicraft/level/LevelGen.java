@@ -6,10 +6,12 @@ import java.awt.Image;
 import java.awt.image.BufferedImage;
 import java.util.Random;
 
-import minicraft.Game;
-import minicraft.Settings;
+import minicraft.core.Game;
+import minicraft.core.io.Settings;
 import minicraft.level.tile.Tiles;
-import minicraft.screen.WorldGenMenu;
+import minicraft.screen.WorldGenDisplay;
+
+import org.jetbrains.annotations.Nullable;
 
 public class LevelGen {
 	private static long worldSeed = 0;
@@ -111,8 +113,9 @@ public class LevelGen {
 		values[(x & (w - 1)) + (y & (h - 1)) * w] = value;
 	}
 	
-	protected static byte[][] createAndValidateMap(int w, int h, int level) {
-		worldSeed = WorldGenMenu.getSeed();
+	@Nullable
+	static byte[][] createAndValidateMap(int w, int h, int level) {
+		worldSeed = WorldGenDisplay.getSeed();
 		
 		if (level == 1)
 			return createAndValidateSkyMap(w, h);
@@ -129,9 +132,8 @@ public class LevelGen {
 		return null;
 	}
 	
-	public static byte[][] createAndValidateTopMap(int w, int h) {
+	private static byte[][] createAndValidateTopMap(int w, int h) {
 		random.setSeed(worldSeed);
-		int attempt = 0;
 		do {
 			byte[][] result = createTopMap(w, h);
 			
@@ -152,9 +154,8 @@ public class LevelGen {
 		} while (true);
 	}
 	
-  public static byte[][] createAndValidateUndergroundMap(int w, int h, int depth) {
+	private static byte[][] createAndValidateUndergroundMap(int w, int h, int depth) {
 		random.setSeed(worldSeed);
-		int attempt = 0;
 		do {
 			byte[][] result = createUndergroundMap(w, h, depth);
 			
@@ -175,7 +176,7 @@ public class LevelGen {
 		} while (true);
 	}
 	
-  public static byte[][] createAndValidateDungeon(int w, int h) {
+	private static byte[][] createAndValidateDungeon(int w, int h) {
 		random.setSeed(worldSeed);
 		int attempt = 0;
 		do {
@@ -194,7 +195,7 @@ public class LevelGen {
 		} while (true);
 	}
 
-	public static byte[][] createAndValidateSkyMap(int w, int h) {
+	private static byte[][] createAndValidateSkyMap(int w, int h) {
 		random.setSeed(worldSeed);
 		int attempt = 0;
 		do {
@@ -225,6 +226,8 @@ public class LevelGen {
 		
 		byte[] map = new byte[w * h];
 		byte[] data = new byte[w * h];
+		//double min = 0, max = 0;
+		//double average = 0;
 		for (int y = 0; y < h; y++) {
 			for (int x = 0; x < w; x++) {
 				int i = x + y * w;
@@ -241,7 +244,11 @@ public class LevelGen {
 				double dist = xd >= yd ? xd : yd;
 				dist = dist * dist * dist * dist;
 				dist = dist * dist * dist * dist;
-				val += 1 - dist * 20;
+				val += 1 - dist*20;
+				
+				//min = Math.min(mval, min);
+				//max = Math.max(mval, max);
+				//average += val;
 				
 				switch ((String) Settings.get("Type")) {
 					case "Island":
@@ -424,7 +431,7 @@ public class LevelGen {
 				if (xx >= 0 && yy >= 0 && xx < w && yy < h) {
 					if (map[xx + yy * w] == Tiles.get("grass").id) {
 						map[xx + yy * w] = Tiles.get("flower").id;
-						data[xx + yy * w] = (byte) (col + random.nextInt(4) * 16);
+						data[xx + yy * w] = (byte) (col + random.nextInt(4) * 16); // data determines which way the flower faces
 					}
 				}
 			}
@@ -467,6 +474,11 @@ public class LevelGen {
 			count++;
 			if (count >= w / 21) break;
 		}
+		
+		//System.out.println("min="+min);
+		//System.out.println("max="+max);
+		//average /= w*h;
+		//System.out.println(average);
 		
 		return new byte[][]{map, data};
 	}
@@ -792,8 +804,8 @@ public class LevelGen {
 		
 		//noinspection InfiniteLoopStatement
 		while (true) {
-			int w = 256;
-			int h = 256;
+			int w = 128;
+			int h = 128;
 			
 			int lvl = maplvls[idx++ % maplvls.length];
 			if (lvl > 1 || lvl < -4) continue;
@@ -827,7 +839,7 @@ public class LevelGen {
 				}
 			}
 			img.setRGB(0, 0, w, h, pixels, 0, w);
-			JOptionPane.showMessageDialog(null, null, "Another Map", JOptionPane.PLAIN_MESSAGE, new ImageIcon(img.getScaledInstance(w * 2, h * 2, Image.SCALE_AREA_AVERAGING)));
+			JOptionPane.showMessageDialog(null, null, "Another Map", JOptionPane.PLAIN_MESSAGE, new ImageIcon(img.getScaledInstance(w * 4, h * 4, Image.SCALE_AREA_AVERAGING)));
 			if (LevelGen.worldSeed == 0x100)
 				LevelGen.worldSeed = 0xAAFF20;
 			else

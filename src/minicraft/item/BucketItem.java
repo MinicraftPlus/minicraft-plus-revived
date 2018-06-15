@@ -2,8 +2,9 @@ package minicraft.item;
 
 import java.util.ArrayList;
 
-import minicraft.Game;
-import minicraft.entity.Player;
+import minicraft.core.Game;
+import minicraft.entity.Direction;
+import minicraft.entity.mob.Player;
 import minicraft.gfx.Color;
 import minicraft.gfx.Sprite;
 import minicraft.level.Level;
@@ -51,7 +52,7 @@ public class BucketItem extends StackableItem {
 		this.filling = fill;
 	}
 	
-	public boolean interactOn(Tile tile, Level level, int xt, int yt, Player player, int attackDir) {
+	public boolean interactOn(Tile tile, Level level, int xt, int yt, Player player, Direction attackDir) {
 		Fill fill = getFilling(tile);
 		if(fill == null) return false;
 		boolean success = false;
@@ -76,13 +77,16 @@ public class BucketItem extends StackableItem {
 		
 		// this item object is a stack of buckets.
 		count--;
-		player.inventory.add(new BucketItem(newFill));
+		player.getInventory().add(new BucketItem(newFill));
 		return this;
 	}
 	
-	public boolean matches(Item other) {
-		return super.matches(other) && filling == ((BucketItem)other).filling;
+	public boolean equals(Item other) {
+		return super.equals(other) && filling == ((BucketItem)other).filling;
 	}
+	
+	@Override
+	public int hashCode() { return super.hashCode() + filling.innerColor * 31; }
 	
 	public BucketItem clone() {
 		return new BucketItem(filling, count);

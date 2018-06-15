@@ -2,21 +2,22 @@ package minicraft.item;
 
 import java.util.ArrayList;
 
-import minicraft.Game;
-import minicraft.entity.Player;
+import minicraft.core.Game;
+import minicraft.entity.Direction;
+import minicraft.entity.mob.Player;
 import minicraft.gfx.Color;
 import minicraft.gfx.Sprite;
 import minicraft.level.Level;
 import minicraft.level.tile.Tile;
+import minicraft.screen.BookData;
 import minicraft.screen.BookDisplay;
-import minicraft.screen.Displays;
 
 public class BookItem extends Item {
 	
 	protected static ArrayList<Item> getAllInstances() {
 		ArrayList<Item> items = new ArrayList<Item>();
 		items.add(new BookItem("Book", Color.get(-1, 200, 531, 430), null));
-		items.add(new BookItem("Antidious", Color.get(-1, 100, 300, 500), Displays.antVenomBook));
+		items.add(new BookItem("Antidious", Color.get(-1, 100, 300, 500), BookData.antVenomBook));
 		return items;
 	}
 	
@@ -27,12 +28,15 @@ public class BookItem extends Item {
 		this.book = book;
 	}
 	
-	public boolean interactOn(Tile tile, Level level, int xt, int yt, Player player, int attackDir) {
+	public boolean interactOn(Tile tile, Level level, int xt, int yt, Player player, Direction attackDir) {
 		Game.setMenu(new BookDisplay(book));
 		return true;
 	}
 	
+	@Override
+	public boolean interactsWithWorld() { return false; }
+	
 	public BookItem clone() {
-		return new BookItem(name, sprite.color, book);
+		return new BookItem(getName(), sprite.color, book);
 	}
 }

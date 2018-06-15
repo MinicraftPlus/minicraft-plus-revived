@@ -1,5 +1,6 @@
 package minicraft.screen;
 
+import minicraft.core.MyUtils;
 import minicraft.gfx.Dimension;
 import minicraft.gfx.Point;
 import minicraft.gfx.Rectangle;
@@ -24,6 +25,16 @@ public enum RelPos {
 		}
 	}
 	
+	public static RelPos getPos(int xIndex, int yIndex) {
+		return values()[MyUtils.clamp(xIndex, 0, 2) + MyUtils.clamp(yIndex, 0, 2)*3];
+	}
+	
+	public RelPos getOpposite() {
+		int nx = -(xIndex-1) + 1;
+		int ny = -(yIndex-1) + 1;
+		return getPos(nx, ny);
+	}
+	
 	/// this method returns a Rectangle of the given size, such that it is in the corresponding position relative to the given anchor.
 	/*@NotNull
 	@Contract(pure = true)
@@ -45,11 +56,20 @@ public enum RelPos {
 		return new Point(x, y);
 	}*/
 	
+	/** positions the given rect around the given anchor. The double size is what aligns it to a point rather than a rect. */
 	public Point positionRect(Dimension rectSize, Point anchor) {
 		Rectangle bounds = new Rectangle(anchor.x, anchor.y, rectSize.width*2, rectSize.height*2, Rectangle.CENTER_DIMS);
 		return positionRect(rectSize, bounds);
 	}
+	// the point is returned as a rectangle with the given dimension and the found location, within the provided dummy rectangle.
+	public Rectangle positionRect(Dimension rectSize, Point anchor, Rectangle dummy) {
+		Point pos = positionRect(rectSize, anchor);
+		dummy.setSize(rectSize, RelPos.TOP_LEFT);
+		dummy.setPosition(pos, RelPos.TOP_LEFT);
+		return dummy;
+	}
 	
+	/** positions the given rect to a relative position in the container. */ 
 	public Point positionRect(Dimension rectSize, Rectangle container) {
 		Point tlcorner = container.getCenter();
 		
@@ -65,6 +85,14 @@ public enum RelPos {
 			anchor.x = container.getRight() - rectSize.width; // 1 * c.w/2 - 2*w/2*/
 		
 		return tlcorner;
+	}
+	
+	// the point is returned as a rectangle with the given dimension and the found location, within the provided dummy rectangle.
+	public Rectangle positionRect(Dimension rectSize, Rectangle container, Rectangle dummy) {
+		Point pos = positionRect(rectSize, container);
+		dummy.setSize(rectSize, RelPos.TOP_LEFT);
+		dummy.setPosition(pos, RelPos.TOP_LEFT);
+		return dummy;
 	}
 	
 	/*public Point positionSubRect(final Dimension innerDim, Dimension container, Point anchor) {

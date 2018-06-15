@@ -1,9 +1,10 @@
 package minicraft.level.tile;
 
-import minicraft.Game;
+import minicraft.core.Game;
+import minicraft.entity.Direction;
 import minicraft.entity.Entity;
-import minicraft.entity.Mob;
-import minicraft.entity.Player;
+import minicraft.entity.mob.Mob;
+import minicraft.entity.mob.Player;
 import minicraft.entity.particle.SmashParticle;
 import minicraft.entity.particle.TextParticle;
 import minicraft.gfx.Color;
@@ -69,18 +70,20 @@ public class TreeTile extends Tile {
 
 	public boolean mayPass(Level level, int x, int y, Entity e) {
 		/// make arrow fly through trees!
-		if(Game.debug && e instanceof minicraft.entity.Arrow && ((minicraft.entity.Arrow)e).owner instanceof Player) {
+		/*if(Game.debug && e instanceof minicraft.entity.Arrow && ((minicraft.entity.Arrow)e).owner instanceof Player) {
 			hurt(level, x, y, 25);
 			return true;
-		}
+		}*/
 		return false;
 	}
-
-	public void hurt(Level level, int x, int y, Mob source, int dmg, int attackDir) {
+	
+	@Override
+	public void hurt(Level level, int x, int y, Mob source, int dmg, Direction attackDir) {
 		hurt(level, x, y, dmg);
 	}
-
-	public boolean interact(Level level, int xt, int yt, Player player, Item item, int attackDir) {
+	
+	@Override
+	public boolean interact(Level level, int xt, int yt, Player player, Item item, Direction attackDir) {
 		if (item instanceof ToolItem) {
 			ToolItem tool = (ToolItem) item;
 			if (tool.type == ToolType.Axe) {

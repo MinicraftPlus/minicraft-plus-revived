@@ -2,8 +2,10 @@ package minicraft.item;
 
 import java.util.ArrayList;
 
-import minicraft.Game;
-import minicraft.entity.*;
+import minicraft.core.Game;
+import minicraft.entity.Direction;
+import minicraft.entity.furniture.*;
+import minicraft.entity.mob.*;
 import minicraft.gfx.Sprite;
 import minicraft.level.Level;
 import minicraft.level.tile.Tile;
@@ -26,7 +28,7 @@ public class FurnitureItem extends Item {
 		items.add(new FurnitureItem(new Spawner(new AirWizard(false))));
 		
 		items.add(new FurnitureItem(new Chest()));
-		// add the various crafting furnitures
+		// add the various types of crafting furniture
 		for(Crafter.Type type: Crafter.Type.values()) {
 			items.add(new FurnitureItem(new Crafter(type)));
 		}
@@ -62,7 +64,7 @@ public class FurnitureItem extends Item {
 	}
 	
 	/** What happens when you press the "Attack" key with the furniture in your hands */
-	public boolean interactOn(Tile tile, Level level, int xt, int yt, Player player, int attackDir) {
+	public boolean interactOn(Tile tile, Level level, int xt, int yt, Player player, Direction attackDir) {
 		if (tile.mayPass(level, xt, yt, furniture)) { // If the furniture can go on the tile
 			// Placed furniture's X and Y positions
 			furniture.x = xt * 16 + 8;

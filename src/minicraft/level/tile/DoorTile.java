@@ -1,9 +1,10 @@
 package minicraft.level.tile;
 
-import minicraft.Sound;
+import minicraft.core.io.Sound;
+import minicraft.entity.Direction;
 import minicraft.entity.Entity;
-import minicraft.entity.Mob;
-import minicraft.entity.Player;
+import minicraft.entity.mob.Mob;
+import minicraft.entity.mob.Player;
 import minicraft.gfx.Color;
 import minicraft.gfx.Screen;
 import minicraft.gfx.Sprite;
@@ -45,7 +46,7 @@ public class DoorTile extends Tile {
 		curSprite.render(screen, x*16, y*16);
 	}
 	
-	public boolean interact(Level level, int xt, int yt, Player player, Item item, int attackDir) {
+	public boolean interact(Level level, int xt, int yt, Player player, Item item, Direction attackDir) {
 		if (item instanceof ToolItem) {
 			ToolItem tool = (ToolItem) item;
 			if (tool.type == ToolType.Pickaxe) {
@@ -60,7 +61,7 @@ public class DoorTile extends Tile {
 		return false;
 	}
 
-	public void hurt(Level level, int x, int y, Mob source, int dmg, int attackDir) {
+	public void hurt(Level level, int x, int y, Mob source, int dmg, Direction attackDir) {
 		if(source instanceof Player) {
 			boolean closed = level.getData(x, y) == 0;
 			level.setData(x, y, closed?1:0);

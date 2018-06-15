@@ -1,9 +1,10 @@
 package minicraft.level.tile;
 
-import minicraft.Settings;
-import minicraft.Game;
+import minicraft.core.Game;
+import minicraft.core.io.Settings;
+import minicraft.entity.Direction;
 import minicraft.entity.Entity;
-import minicraft.entity.Mob;
+import minicraft.entity.mob.Mob;
 import minicraft.entity.particle.SmashParticle;
 import minicraft.entity.particle.TextParticle;
 import minicraft.gfx.Color;
@@ -29,7 +30,7 @@ public class CactusTile extends Tile {
 		return false;
 	}
 
-	public void hurt(Level level, int x, int y, Mob source, int dmg, int attackDir) {
+	public void hurt(Level level, int x, int y, Mob source, int dmg, Direction attackDir) {
 		int damage = level.getData(x, y) + dmg;
 		int cHealth = 10;
 		if (Game.isMode("creative")) dmg = damage = cHealth;
@@ -46,14 +47,16 @@ public class CactusTile extends Tile {
 	}
 	
 	public void bumpedInto(Level level, int x, int y, Entity entity) {
+		if(!(entity instanceof Mob)) return;
+		Mob m = (Mob) entity;
 		if (Settings.get("diff").equals("Easy")) {
-			entity.hurt(this, x, y, 1);
+			m.hurt(this, x, y, 1);
 		}
 		if (Settings.get("diff").equals("Normal")) {
-			entity.hurt(this, x, y, 1);
+			m.hurt(this, x, y, 1);
 		}
 		if (Settings.get("diff").equals("Hard")) {
-			entity.hurt(this, x, y, 2);
+			m.hurt(this, x, y, 2);
 		}
 	}
 

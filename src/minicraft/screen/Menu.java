@@ -4,22 +4,19 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-import com.sun.istack.internal.NotNull;
-import minicraft.InputHandler;
-import minicraft.Sound;
-import minicraft.gfx.Color;
-import minicraft.gfx.Dimension;
-import minicraft.gfx.Font;
-import minicraft.gfx.Insets;
-import minicraft.gfx.Point;
-import minicraft.gfx.Rectangle;
-import minicraft.gfx.Screen;
-import minicraft.gfx.SpriteSheet;
+import minicraft.core.io.InputHandler;
+import minicraft.core.io.Localization;
+import minicraft.core.io.Sound;
+import minicraft.gfx.*;
 import minicraft.screen.entry.BlankEntry;
 import minicraft.screen.entry.ListEntry;
 
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
 public class Menu {
 	
+	@NotNull
 	private ArrayList<ListEntry> entries = new ArrayList<>();
 	
 	private int spacing = 0;
@@ -108,23 +105,23 @@ public class Menu {
 		if(idx < 0) idx = 0;
 		
 		this.selection = idx;
+		
+		doScroll();
 	}
 	int getSelection() { return selection; }
 	int getDispSelection() { return dispSelection; }
 	
 	ListEntry[] getEntries() { return entries.toArray(new ListEntry[entries.size()]); }
-	ListEntry getCurEntry() { return entries.get(selection); }
+	@Nullable ListEntry getCurEntry() { return entries.size() == 0 ? null : entries.get(selection); }
 	int getNumOptions() { return entries.size(); }
 	
-	Rectangle getBounds() {
-		return new Rectangle(bounds);
-	}
+	Rectangle getBounds() { return new Rectangle(bounds); }
 	String getTitle() { return title; }
 	
 	boolean isSelectable() { return selectable; }
 	boolean shouldRender() { return shouldRender; }
 	
-	@SuppressWarnings("SameParameterValue")
+	/** @noinspection SameParameterValue*/
 	void translate(int xoff, int yoff) {
 		bounds.translate(xoff, yoff);
 		entryBounds.translate(xoff, yoff);
@@ -191,6 +188,7 @@ public class Menu {
 		renderFrame(screen);
 		
 		// render the title
+		//String title = Localization.getLocalized(this.title);
 		if(title.length() > 0) {
 			if (drawVertically) {
 				for (int i = 0; i < title.length(); i++) {
@@ -396,6 +394,8 @@ public class Menu {
 			if(b == this)
 				return copy().createMenu(this);
 			
+			menu.title = Localization.getLocalized(menu.title);
+			
 			// set default selectability
 			if(!setSelectable) {
 				for(ListEntry entry: menu.entries) {
@@ -509,7 +509,7 @@ public class Menu {
 				menu.displayLength = (entrySize.height + menu.spacing) / (ListEntry.getHeight() + menu.spacing);
 				
 			// based on the menu centering, and the anchor, determine the upper-left point from which to draw the menu.
-			menu.bounds = new Rectangle(menuPos.positionRect(menuSize, anchor), menuSize); // reset to a value that is actually useful to the menu
+			menu.bounds = menuPos.positionRect(menuSize, anchor, new Rectangle()); // reset to a value that is actually useful to the menu
 			
 			menu.entryBounds = border.subtractFrom(menu.bounds);
 			

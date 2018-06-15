@@ -1,7 +1,8 @@
 package minicraft.level.tile;
 
 import java.util.ArrayList;
-import minicraft.Game;
+
+import minicraft.core.Game;
 
 public final class Tiles {
 	/// idea: to save tile names while saving space, I could encode the names in base 64 in the save file...^M
@@ -159,7 +160,7 @@ public final class Tiles {
 		oldids.set(55, "torch black wool");
 	}
 	
-	static int overflowCheck = 0;
+	private static int overflowCheck = 0;
 	public static Tile get(String name) {
 		//System.out.println("getting from tile list: " + name);
 		
