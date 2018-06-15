@@ -13,6 +13,9 @@ public class StringEntry extends ListEntry {
 	private String text;
 	private int color;
 	
+	/**
+	 * 
+	 */
 	public static StringEntry[] useLines(String... lines) {
 		return useLines(DEFAULT_COLOR, lines);
 	}
