@@ -74,11 +74,12 @@ public abstract class Mob extends Entity {
 		
 		//if(xd != 0) move2(xd, 0);
 		//if(yd != 0) move2(0, yd);
-		move(xd, yd);
+		move(xd, yd, false);
 	}
 	
 	@Override
-	public boolean move(int xa, int ya) { // Move the mob, overrides from Entity
+	public boolean move(int xa, int ya) { return move(xa, ya, true); } // Move the mob, overrides from Entity
+	private boolean move(int xa, int ya, boolean changeDir) { // knockback shouldn't change mob direction
 		if(level == null) return false; // stopped b/c there's no level to move in!
 		
 		int oldxt = x >> 4;
@@ -96,7 +97,8 @@ public abstract class Mob extends Entity {
 		
 		if (hurtTime == 0 || this instanceof Player) { // If a mobAi has been hurt recently and hasn't yet cooled down, it won't perform the movement (by not calling super)
 			if(xa != 0 || ya != 0) {
-				dir = Direction.getDirection(xa, ya); // set the mob's direction; NEVER set it to NONE
+				if(changeDir)
+					dir = Direction.getDirection(xa, ya); // set the mob's direction; NEVER set it to NONE
 				walkDist++;
 			}
 			
