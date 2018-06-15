@@ -2,10 +2,7 @@
 
 --CURRENT: 
 
- - move Save/Load stuff into FileData enum; use it to call each method
- - move all the old loading code into another LegacyLoad class (rename them to reflect their versions)
  - add feature to save multiple multiplayer users and ip addresses
- - check that score mode works in multiplayer, I have a feeling that the clients might not see the correct score...
  
 
 Note to self: for more little bugs/ideas/concerns, search code for "TODO"

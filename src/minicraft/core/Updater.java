@@ -130,12 +130,6 @@ public class Updater extends Game {
 			}
 			
 			scoreTime--;
-			
-			if (!paused && World.multiplier > 1) {
-				if (World.multipliertime != 0) World.multipliertime--;
-				if (World.multipliertime == 0) World.setMultiplier(1);
-			}
-			if (World.multiplier > 50) World.multiplier = 50;
 		}
 		
 		boolean hadMenu = menu != null;

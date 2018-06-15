@@ -48,8 +48,14 @@ public class Player extends Mob implements ItemHolder, ClientTickable {
 	private static final int INTERACT_DIST = 12;
 	private static final int ATTACK_DIST = 20;
 	
+	private static final int mtm = 300; // time given to increase multiplier before it goes back to 1.
+	public static final int MAX_MULTIPLIER = 50; // maximum score multiplier.
+	
 	public double moveSpeed = 1; // the number of coordinate squares to move; each tile is 16x16.
 	private int score; // the player's score
+	
+	private int multipliertime = mtm; // Time left on the current multiplier.
+	private int multiplier = 1; // Score multiplier
 	
 	//These 2 ints are ints saved from the first spawn - this way the spawn pos is always saved.
 	public int spawnx = 0, spawny = 0; // these are stored as tile coordinates, not entity coordinates.
@@ -172,9 +178,32 @@ public class Player extends Mob implements ItemHolder, ClientTickable {
 		}
 	}
 	
+	public int getMultiplier() { return Game.isMode("score") ? multiplier : 1; }
+	
+	void resetMultiplier() {
+		multiplier = 1;
+		multipliertime = mtm;
+	}
+	
+	public void addMultiplier(int value) {
+		if(!Game.isMode("score")) return;
+		multiplier = Math.min(MAX_MULTIPLIER, multiplier+value);
+		multipliertime = Math.max(multipliertime, mtm - 5);
+	}
+	
+	public void tickMultiplier() {
+		if ((Game.ISONLINE || !Updater.paused) && multiplier > 1) {
+			if (multipliertime != 0) multipliertime--;
+			if (multipliertime <= 0) resetMultiplier();
+		}
+	}
+	
 	public int getScore() { return score; }
 	public void setScore(int score) { this.score = score; }
-	public void addScore(int points) { score += points * World.getMultiplier(); }
+	public void addScore(int points) {
+		if(!Game.isValidClient()) // the server will handle the score.
+			score += points * getMultiplier();
+	}
 	
 	/**
 	 * Adds a new potion effect to the player.
@@ -206,6 +235,9 @@ public class Player extends Mob implements ItemHolder, ClientTickable {
 		if(Game.getMenu() != null && !Game.ISONLINE) return; // don't tick player when menu is open
 		
 		super.tick(); // ticks Mob.java
+		
+		if(!Game.isValidClient())
+			tickMultiplier();
 		
 		if(potioneffects.size() > 0 && !Bed.inBed(this)) {
 			for(PotionType potionType: potioneffects.keySet().toArray(new PotionType[0])) {
@@ -723,7 +755,8 @@ public class Player extends Mob implements ItemHolder, ClientTickable {
 	public void pickupItem(ItemEntity itemEntity) {
 		Sound.pickup.play();
 		itemEntity.remove();
-		score += Math.min(World.getMultiplier(), 5); // increase the player's score by 1 * the score multiplier, but cap it at 5 points.
+		if(!Game.isValidClient())
+			score += Math.min(getMultiplier(), 5); // increase the player's score by 1 * the score multiplier, but cap it at 5 points.
 		if(Game.isMode("creative")) return; // we shall not bother the inventory on creative mode.
 		
 		if(itemEntity.item instanceof StackableItem && ((StackableItem)itemEntity.item).stacksWith(activeItem)) // picked up item equals the one in your hand
@@ -835,7 +868,7 @@ public class Player extends Mob implements ItemHolder, ClientTickable {
 	@Override
 	public void die() {
 		score -= score / 3; // subtracts score penalty (minus 1/3 of the original score)
-		World.setMultiplier(1);
+		resetMultiplier();
 		
 		//make death chest
 		DeathChest dc = new DeathChest(this);
@@ -944,6 +977,8 @@ public class Player extends Mob implements ItemHolder, ClientTickable {
 			case "stamina": stamina = Integer.parseInt(val); return true;
 			case "health": health = Integer.parseInt(val); return true;
 			case "hunger": hunger = Integer.parseInt(val); return true;
+			case "score": score = Integer.parseInt(val); return true;
+			case "mult": multiplier = Integer.parseInt(val); return true;
 			case "attackTime": attackTime = Integer.parseInt(val); return true;
 			case "attackDir": attackDir = Direction.values[Integer.parseInt(val)]; return true;
 			case "activeItem": 

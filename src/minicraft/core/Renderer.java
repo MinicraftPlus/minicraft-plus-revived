@@ -243,9 +243,9 @@ public class Renderer extends Game {
 			String scoreString = "Current score: " + player.getScore();
 			Font.draw(scoreString, screen, Screen.w - Font.textWidth(scoreString)-2, 3 + 8, Color.WHITE);
 			
-			if(World.multiplier > 1) {
-				int multColor = World.multiplier < 50 ? Color.get(-1, 540) : Color.RED;
-				String mult = "X" + World.multiplier;
+			if(player.getMultiplier() > 1) {
+				int multColor = player.getMultiplier() < Player.MAX_MULTIPLIER ? Color.get(-1, 540) : Color.RED;
+				String mult = "X" + player.getMultiplier();
 				Font.draw(mult, screen, Screen.w-Font.textWidth(mult)-2, 4 + 2*8, multColor);
 			}
 		}

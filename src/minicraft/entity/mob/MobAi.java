@@ -1,7 +1,6 @@
 package minicraft.entity.mob;
 
 import minicraft.core.Game;
-import minicraft.core.World;
 import minicraft.core.io.Sound;
 import minicraft.entity.Direction;
 import minicraft.entity.particle.TextParticle;
@@ -197,7 +196,7 @@ public abstract class MobAi extends Mob {
 		for(Player p: level.getPlayers()) {
 			p.addScore(points); // add score for mob death
 			if(multAdd != 0)
-				World.addMultiplier(multAdd);
+				p.addMultiplier(multAdd);
 		}
 		
 		super.die();
