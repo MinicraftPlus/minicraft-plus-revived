@@ -240,7 +240,7 @@ public class Renderer extends Game {
 			
 			Font.draw("Time left " + (hours > 0 ? hours+"h ":"") + minutes + "m " + seconds + "s", screen, Screen.w/2-9*8, 2, timeCol);
 			
-			String scoreString = "Current score: " + player.score;
+			String scoreString = "Current score: " + player.getScore();
 			Font.draw(scoreString, screen, Screen.w - Font.textWidth(scoreString)-2, 3 + 8, Color.WHITE);
 			
 			if(World.multiplier > 1) {
@@ -320,7 +320,7 @@ public class Renderer extends Game {
 				info.add("Y " + (player.y / 16) + "-" + (player.y % 16));
 				if(levels[currentLevel] != null)
 					info.add("Tile " + levels[currentLevel].getTile(player.x>>4, player.y>>4).name);
-				if (isMode("score")) info.add("Score " + player.score);
+				if (isMode("score")) info.add("Score " + player.getScore());
 			}
 			if(levels[currentLevel] != null) {
 				if(!isValidClient())

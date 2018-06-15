@@ -2,8 +2,6 @@ package minicraft.core;
 
 import minicraft.core.io.Settings;
 import minicraft.entity.furniture.Bed;
-import minicraft.entity.furniture.Furniture;
-import minicraft.entity.furniture.Lantern;
 import minicraft.entity.mob.Player;
 import minicraft.entity.mob.RemotePlayer;
 import minicraft.level.Level;
@@ -203,12 +201,13 @@ public class World extends Game {
 	static final int mtm = 300; // time given to increase multiplier before it goes back to 1.
 	static int multipliertime = mtm; // Time left on the current multiplier.
 	
-	public static int getMultiplier() { return multiplier; }
+	public static int getMultiplier() { return isMode("score") ? multiplier : 1; }
 	public static void setMultiplier(int value) {
 		multiplier = value;
 		multipliertime = mtm;
 	}
 	public static void addMultiplier(int value) {
+		if(!isMode("score")) return;
 		multiplier += value;
 		multipliertime = mtm - 5;
 	}

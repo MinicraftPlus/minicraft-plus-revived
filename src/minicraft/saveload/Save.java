@@ -254,7 +254,7 @@ public class Save {
 			data.add(String.valueOf(player.armorDamageBuffer));
 			data.add(String.valueOf(player.curArmor.getName()));
 		}
-		data.add(String.valueOf(player.score));
+		data.add(String.valueOf(player.getScore()));
 		data.add(String.valueOf(Game.currentLevel));
 		
 		StringBuilder subdata = new StringBuilder("PotionEffects[");

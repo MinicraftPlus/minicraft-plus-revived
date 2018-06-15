@@ -4,8 +4,8 @@ import java.util.ArrayList;
 import java.util.Arrays;
 
 import minicraft.core.Game;
-import minicraft.core.io.Settings;
 import minicraft.core.World;
+import minicraft.core.io.Settings;
 import minicraft.gfx.Point;
 import minicraft.gfx.SpriteSheet;
 import minicraft.screen.entry.BlankEntry;
@@ -24,7 +24,7 @@ public class PlayerDeathDisplay extends Display {
 		ArrayList<ListEntry> entries = new ArrayList<>();
 		entries.addAll(Arrays.asList(
 			new StringEntry("Time: " + InfoDisplay.getTimeString()),
-			new StringEntry("Score: " + Game.player.score),
+			new StringEntry("Score: " + Game.player.getScore()),
 			new BlankEntry()
 		));
 		

@@ -385,7 +385,7 @@ public class Load {
 				player.curArmor = (ArmorItem) Items.get(data.remove(0));
 			}
 		}
-		player.score = Integer.parseInt(data.remove(0));
+		player.setScore(Integer.parseInt(data.remove(0)));
 		
 		if(worldVer.compareTo(new Version("2.0.4-dev7")) < 0) {
 			int arrowCount = Integer.parseInt(data.remove(0));

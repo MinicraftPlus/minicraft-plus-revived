@@ -100,7 +100,7 @@ public class WheatTile extends Tile {
 		level.dropItem(x*16+8, y*16+8, count, Items.get("Wheat"));
 		
 		if (age >= 50 && entity instanceof Player) {
-			((Player)entity).score += random.nextInt(5) + 1;
+			((Player)entity).addScore(random.nextInt(5) + 1);
 		}
 		level.setTile(x, y, Tiles.get("dirt"));
 	}

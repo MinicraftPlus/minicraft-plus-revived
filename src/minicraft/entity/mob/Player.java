@@ -45,9 +45,11 @@ public class Player extends Mob implements ItemHolder, ClientTickable {
 	protected InputHandler input;
 	
 	private static final int playerHurtTime = 30;
+	private static final int INTERACT_DIST = 12;
+	private static final int ATTACK_DIST = 20;
 	
 	public double moveSpeed = 1; // the number of coordinate squares to move; each tile is 16x16.
-	public int score; // the player's score
+	private int score; // the player's score
 	
 	//These 2 ints are ints saved from the first spawn - this way the spawn pos is always saved.
 	public int spawnx = 0, spawny = 0; // these are stored as tile coordinates, not entity coordinates.
@@ -169,6 +171,10 @@ public class Player extends Mob implements ItemHolder, ClientTickable {
 			spawny = previousInstance.spawny;
 		}
 	}
+	
+	public int getScore() { return score; }
+	public void setScore(int score) { this.score = score; }
+	public void addScore(int points) { score += points * World.getMultiplier(); }
 	
 	/**
 	 * Adds a new potion effect to the player.
@@ -447,7 +453,7 @@ public class Player extends Mob implements ItemHolder, ClientTickable {
 	}
 	
 	/* This actually ends up calling another use method down below. */
-	private boolean use() { return use(getInteractionBox(12)); }
+	private boolean use() { return use(getInteractionBox(INTERACT_DIST)); }
 	
 	/** 
 	 * This method is called when we press the attack button.
@@ -506,10 +512,10 @@ public class Player extends Mob implements ItemHolder, ClientTickable {
 			attackTime = 10; // attack time will be set to 10.
 			
 			// if the interaction between you and an entity is successful, then return.
-			if(interact(getInteractionBox(12))) return;
+			if(interact(getInteractionBox(INTERACT_DIST))) return;
 			
 			// otherwise, attempt to interact with the tile.
-			Point t = getInteractionTile(12);
+			Point t = getInteractionTile();
 			if (t.x >= 0 && t.y >= 0 && t.x < level.w && t.y < level.h) { // if the target coordinates are a valid tile...
 				List<Entity> tileEntities = level.getEntitiesInTiles(t.x, t.y, t.x, t.y, false, ItemEntity.class);
 				if(tileEntities.size() == 0 || tileEntities.size() == 1 && tileEntities.get(0) == this) {
@@ -541,10 +547,10 @@ public class Player extends Mob implements ItemHolder, ClientTickable {
 		if (activeItem == null || activeItem.canAttack()) { // if there is no active item, OR if the item can be used to attack...
 			attackTime = 5;
 			// attacks the enemy in the appropriate direction.
-			hurt(getInteractionBox(20));
+			hurt(getInteractionBox(ATTACK_DIST));
 			
 			// attempts to hurt the tile in the appropriate direction.
-			Point t = getInteractionTile(12);
+			Point t = getInteractionTile();
 			if (t.x >= 0 && t.y >= 0 && t.x < level.w && t.y < level.h) {
 				Tile tile = level.getTile(t.x, t.y);
 				tile.hurt(level, t.x, t.y, this, random.nextInt(3) + 1, attackDir);
@@ -567,11 +573,11 @@ public class Player extends Mob implements ItemHolder, ClientTickable {
 		return new Rectangle(Math.min(xClose, xFar), Math.min(yClose, yFar), Math.max(xClose, xFar), Math.max(yClose, yFar), Rectangle.CORNERS);
 	}
 	
-	private Point getInteractionTile(int distance) {
+	private Point getInteractionTile() {
 		int x = this.x, y = this.y - 2;
 		
-		x += dir.getX()*distance;
-		y += dir.getY()*distance;
+		x += dir.getX()*INTERACT_DIST;
+		y += dir.getY()*INTERACT_DIST;
 		
 		return new Point(x >> 4, y >> 4);
 	}
@@ -717,7 +723,7 @@ public class Player extends Mob implements ItemHolder, ClientTickable {
 	public void pickupItem(ItemEntity itemEntity) {
 		Sound.pickup.play();
 		itemEntity.remove();
-		score++; // increase the player's score by 1
+		addScore(1); // increase the player's score by 1
 		if(Game.isMode("creative")) return; // we shall not bother the inventory on creative mode.
 		
 		if(itemEntity.item instanceof StackableItem && ((StackableItem)itemEntity.item).stacksWith(activeItem)) // picked up item equals the one in your hand
@@ -828,8 +834,7 @@ public class Player extends Mob implements ItemHolder, ClientTickable {
 	/** What happens when the player dies */
 	@Override
 	public void die() {
-		int lostscore = score / 3; // finds score penalty
-		score -= lostscore; // subtracts score penalty
+		score -= score / 3; // subtracts score penalty (minus 1/3 of the original score)
 		World.setMultiplier(1);
 		
 		//make death chest

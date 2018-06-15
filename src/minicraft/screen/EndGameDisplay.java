@@ -45,10 +45,10 @@ public class EndGameDisplay extends Display {
 		ArrayList<ListEntry> entries = new ArrayList<>();
 		
 		// calculate the score
-		entries.add(new StringEntry("Player Score: " + Game.player.score, Color.WHITE));
+		entries.add(new StringEntry("Player Score: " + Game.player.getScore(), Color.WHITE));
 		entries.add(new StringEntry("<Bonuses>", Color.YELLOW));
 		
-		finalscore = Game.player.score;
+		finalscore = Game.player.getScore();
 		for(String item: scoredItems)
 			addBonus(item);
 		

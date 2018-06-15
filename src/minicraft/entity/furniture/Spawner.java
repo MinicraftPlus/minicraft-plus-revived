@@ -1,7 +1,6 @@
 package minicraft.entity.furniture;
 
 import java.util.ArrayList;
-import java.util.ListIterator;
 import java.util.Random;
 
 import minicraft.core.Game;
@@ -21,7 +20,6 @@ import minicraft.item.PotionType;
 import minicraft.item.PowerGloveItem;
 import minicraft.item.ToolItem;
 import minicraft.item.ToolType;
-import minicraft.level.tile.Tile;
 
 public class Spawner extends Furniture {
 	
@@ -170,7 +168,7 @@ public class Spawner extends Furniture {
 			if(health <= 0) {
 				level.remove(this);
 				Sound.playerDeath.play();
-				player.score += 500;
+				player.addScore(500);
 			}
 			
 			return true;

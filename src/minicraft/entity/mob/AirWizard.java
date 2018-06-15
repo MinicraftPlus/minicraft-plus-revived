@@ -183,7 +183,7 @@ public class AirWizard extends EnemyMob {
 		Player[] players = level.getPlayers();
 		if (players.length > 0) { // if the player is still here
 			for(Player p: players)
-				p.score += (secondform ? 500000 : 100000); // give the player 100K or 500K points.
+				p.addScore((secondform ? 500000 : 100000)); // give the player 100K or 500K points.
 		}
 		
 		Sound.bossDeath.play(); // play boss-death sound.

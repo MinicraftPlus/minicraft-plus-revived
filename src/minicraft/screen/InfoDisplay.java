@@ -1,8 +1,8 @@
 package minicraft.screen;
 
 import minicraft.core.Game;
-import minicraft.core.io.InputHandler;
 import minicraft.core.Updater;
+import minicraft.core.io.InputHandler;
 import minicraft.gfx.Point;
 import minicraft.gfx.SpriteSheet;
 import minicraft.screen.entry.StringEntry;
@@ -14,7 +14,7 @@ public class InfoDisplay extends Display {
 		super(new Menu.Builder(true, 4, RelPos.LEFT, StringEntry.useLines(
 			"----------------------------",
 			"Time Played: " + getTimeString(),
-			"Current Score: " + Game.player.score,
+			"Current Score: " + Game.player.getScore(),
 			"----------------------------",
 			Game.input.getMapping("select")+"/"+Game.input.getMapping("exit")+":Exit"
 			))

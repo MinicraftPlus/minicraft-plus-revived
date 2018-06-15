@@ -195,8 +195,8 @@ public abstract class MobAi extends Mob {
 	protected void die(int points) { die(points, 0); }
 	protected void die(int points, int multAdd) {
 		for(Player p: level.getPlayers()) {
-			p.score += points * (Game.isMode("score") ? World.getMultiplier() : 1); // add score for zombie death
-			if(multAdd != 0 && Game.isMode("score"))
+			p.addScore(points); // add score for mob death
+			if(multAdd != 0)
 				World.addMultiplier(multAdd);
 		}
 		
