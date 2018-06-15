@@ -736,66 +736,42 @@ public class Player extends Mob implements ItemHolder, ClientTickable {
 	 * Finds a starting position for the player.
 	 * @param level Level which the player wants to start in.
 	 * @param spawnSeed Spawnseed.
-	 * @return true
 	 */
-	public boolean findStartPos(Level level, long spawnSeed) {
+	public void findStartPos(Level level, long spawnSeed) {
 		random.setSeed(spawnSeed);
-		return findStartPos(level);
+		findStartPos(level);
 	}
 	
 	/**
 	 * Finds the starting position for the player in a level.
 	 * @param level The level.
-	 * @return true.
 	 */
-	public boolean findStartPos(Level level) {
-		while (true) { // will loop until it returns
-			// gets coordinates of a random tile (in tile coordinates)
-			int x = random.nextInt(level.w);
-			int y = random.nextInt(level.h);
-			if (level.getTile(x, y) == Tiles.get("grass")) { // player will only spawn on a grass tile.
-				// used to save (tile) coordinates of spawnpoint outside of this method.
-				spawnx = x;
-				spawny = y;
-				// set (entity) coordinates of player to the center of the tile.
-				this.x = spawnx * 16 + 8; // conversion from tile coords to entity coords.
-				this.y = spawny * 16 + 8;
-				return true; // why bother returning anything..? it's always true...
-			}
+	public void findStartPos(Level level) {
+		Point spawnPos;
+		
+		List<Point> spawnTilePositions = level.getMatchingTiles(Tiles.get("grass"));
+		
+		if(spawnTilePositions.size() == 0)
+			spawnTilePositions.addAll(level.getMatchingTiles((t, x, y) -> t.maySpawn()));
+		
+		if(spawnTilePositions.size() == 0)
+			spawnTilePositions.addAll(level.getMatchingTiles((t, x, y) -> t.mayPass(level, x, y, Player.this)));
+		
+		// there are no tiles in the entire map which the player is allowed to stand on. Not likely.
+		if(spawnTilePositions.size() == 0) {
+			spawnPos = new Point(random.nextInt(level.w/4)+level.w*3/8, random.nextInt(level.h/4)+level.h*3/8);
+			level.setTile(spawnPos.x, spawnPos.y, Tiles.get("grass"));
 		}
+		else // gets random valid spawn tile position.
+			spawnPos = spawnTilePositions.get(random.nextInt(spawnTilePositions.size()));
+		
+		// used to save (tile) coordinates of spawnpoint outside of this method.
+		spawnx = spawnPos.x;
+		spawny = spawnPos.y;
+		// set (entity) coordinates of player to the center of the tile.
+		this.x = spawnx * 16 + 8; // conversion from tile coords to entity coords.
+		this.y = spawny * 16 + 8;
 	}
-	
-	/** Set player's home coordinates. */
-	/*private void setHome() {
-		if (Game.currentLevel == 3) { // if on surface
-			// set home coordinates
-			homeSetX = this.x;
-			homeSetY = this.y;
-			hasSetHome = true; // confirm that home coordinates are indeed set
-			Game.notifications.add("Set your home!"); // give success message
-		} else { // can only set home on surface
-			Game.notifications.add("Can't set home here!"); // give failure message
-		}
-	}
-
-	private void goHome() {
-		if (Game.currentLevel == 3) { // if on surface
-			if (hasSetHome) {
-				// move player to home coordinates
-				this.x = homeSetX;
-				this.y = homeSetY;
-				if (Game.isMode("hardcore")) hurt(this, 2, Direction.NONE); // give penalty for using home if in hardcore mode.
-				stamina = 0; // teleportation uses up all your stamina.
-				Game.notifications.add("Home Sweet Home!"); // give success message
-				if (Game.isMode("hardcore")) Game.notifications.add("Mode penalty: -2 health"); // give penalty message
-			} else {
-				//can go home, but no home set.
-				Game.notifications.add("You don't have a home!");
-			}
-		} else { // can only go home from surface
-			Game.notifications.add("You can't go home from here!");
-		}
-	}*/
 	
 	/**
 	 * Finds a location where the player can respawn in a given level.
@@ -803,7 +779,7 @@ public class Player extends Mob implements ItemHolder, ClientTickable {
 	 * @return true
 	 */
 	public boolean respawn(Level level) {
-		if (!level.getTile(spawnx, spawny).maySpawn)
+		if (!level.getTile(spawnx, spawny).maySpawn())
 			findStartPos(level); // if there's no bed to spawn from, and the stored coordinates don't point to a grass tile, then find a new point.
 		
 		// move the player to the spawnpoint
@@ -850,6 +826,7 @@ public class Player extends Mob implements ItemHolder, ClientTickable {
 	}
 	
 	/** What happens when the player dies */
+	@Override
 	public void die() {
 		int lostscore = score / 3; // finds score penalty
 		score -= lostscore; // subtracts score penalty

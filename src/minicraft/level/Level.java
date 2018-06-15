@@ -696,11 +696,25 @@ public class Level {
 		}
 	}
 	
-	public List<Point> getMatchingTiles(Tile search) {
+	@FunctionalInterface
+	public interface TileCheck {
+		boolean check(Tile t, int x, int y);
+	}
+	
+	public List<Point> getMatchingTiles(Tile search) { return getMatchingTiles((t, x, y) -> t.equals(search)); }
+	public List<Point> getMatchingTiles(Tile... search) {
+		return getMatchingTiles((t, x, y) -> {
+			for(Tile poss: search)
+				if(t.equals(poss))
+					return true;
+			return false;
+		});
+	}
+	public List<Point> getMatchingTiles(TileCheck condition) {
 		List<Point> matches = new ArrayList<>();
 		for(int y = 0; y < h; y++)
 			for(int x = 0; x < w; x++)
-				if(getTile(x, y) == search)
+				if(condition.check(getTile(x, y), x, y))
 					matches.add(new Point(x, y));
 		
 		return matches;

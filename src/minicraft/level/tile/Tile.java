@@ -32,7 +32,7 @@ public abstract class Tile {
 	public boolean connectsToLava = false;
 	public boolean connectsToWater = false;
 	public int light;
-	public boolean maySpawn;
+	protected boolean maySpawn;
 	
 	protected Sprite sprite;
 	protected ConnectorSprite csprite;
@@ -72,6 +72,8 @@ public abstract class Tile {
 		if(csprite != null)
 			csprite.render(screen, level, x, y);
 	}
+	
+	public boolean maySpawn() { return maySpawn; }
 	
 	//public abstract void updateSprite();
 	
@@ -125,12 +127,8 @@ public abstract class Tile {
 		}
 	}
 	
-	public boolean matches(Tile other) {
-		return name.equals(other.name);
-	}
-	
-	public boolean matches(int thisData, String otherTile) {
-		return name.equals(otherTile.split("_")[0]);
+	public boolean matches(int thisData, String tileInfo) {
+		return name.equals(tileInfo.split("_")[0]);
 	}
 	
 	public String getName(int data) {
@@ -152,4 +150,14 @@ public abstract class Tile {
 		
 		return "";
 	}
+	
+	@Override
+	public boolean equals(Object other) {
+		if(!(other instanceof Tile)) return false;
+		Tile o = (Tile) other;
+		return name.equals(o.name);
+	}
+	
+	@Override
+	public int hashCode() { return name.hashCode(); }
 }

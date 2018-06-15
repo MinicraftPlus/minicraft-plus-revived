@@ -183,7 +183,7 @@ public abstract class MobAi extends Mob {
 		//noinspection SimplifiableIfStatement
 		if (level.getEntitiesInRect(new Rectangle(x, y, r*2, r*2, Rectangle.CENTER_DIMS)).size() > 0) return false;
 		
-		return level.getTile(x >> 4, y >> 4).maySpawn; // the last check.
+		return level.getTile(x >> 4, y >> 4).maySpawn(); // the last check.
 	}
 	
 	/**

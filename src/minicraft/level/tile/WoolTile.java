@@ -69,11 +69,12 @@ public class WoolTile extends Tile {
 	public boolean matches(String woolColor, String otherTile) {
 		return matches(getData(woolColor), otherTile);
 	}
-	public boolean matches(int thisData, String otherTile) {
-		if(!otherTile.contains("_"))
-			return name.equals(otherTile);
+	@Override
+	public boolean matches(int thisData, String tileInfo) {
+		if(!tileInfo.contains("_"))
+			return name.equals(tileInfo);
 		else {
-			String[] parts = otherTile.split("_");
+			String[] parts = tileInfo.split("_");
 			String tname = parts[0];
 			int tdata = Integer.parseInt(parts[1]);
 			return name.equals(tname) && thisData == tdata;
