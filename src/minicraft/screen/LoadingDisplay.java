@@ -24,7 +24,7 @@ public class LoadingDisplay extends Display {
 	private Ellipsis ellipsis = new SmoothEllipsis(new TimeUpdater());
 	
 	public LoadingDisplay() {
-		super(true,false);
+		super(true, false);
 		t = new Timer(500, e -> {
 			World.initWorld();
 			Game.setMenu(null);
