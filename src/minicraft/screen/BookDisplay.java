@@ -28,9 +28,9 @@ public class BookDisplay extends Display {
 	private final boolean showPageCount;
 	private final int pageOffset;
 	
-	public BookDisplay(String book) { this(book, true); }
-	public BookDisplay(String book, boolean hasTitle) { this(book, hasTitle, !hasTitle); }
-	public BookDisplay(String book, boolean hasTitle, boolean hideCountIfOnePage) {
+	public BookDisplay(String book) { this(book, false); }
+	public BookDisplay(String book, boolean hasTitle) {// this(book, hasTitle, !hasTitle); }
+	//public BookDisplay(String book, boolean hasTitle, boolean hideCountIfOnePage) {
 		page = 0;
 		if(book == null) {
 			book = defaultBook;
@@ -51,7 +51,7 @@ public class BookDisplay extends Display {
 		
 		lines = pages.toArray(new String[pages.size()][]);
 		
-		showPageCount = !hideCountIfOnePage || lines.length != 1;
+		showPageCount = hasTitle || lines.length != 1;
 		pageOffset = showPageCount ? 1 : 0;
 		
 		Menu.Builder builder = new Menu.Builder(true, spacing, RelPos.CENTER)
@@ -59,7 +59,7 @@ public class BookDisplay extends Display {
 		
 		Menu pageCount = builder // the small rect for the title
 			.setPositioning(new Point(Screen.w/2, 0), RelPos.BOTTOM)
-			.setEntries(StringEntry.useLines(Color.BLACK, "Page", hasTitle?"Title":"1"))
+			.setEntries(StringEntry.useLines(Color.BLACK, "Page", hasTitle?"Title":"1/"+lines.length))
 			.setSelection(1)
 			.createMenu();
 		
@@ -81,7 +81,7 @@ public class BookDisplay extends Display {
 		if(page+dir >= 0 && page+dir < lines.length) {
 			menus[page+pageOffset].shouldRender = false;
 			page += dir;
-			if(showPageCount) menus[0].updateSelectedEntry(new StringEntry(page==0 && hasTitle?"Title":(page+1)+"", Color.BLACK));
+			if(showPageCount) menus[0].updateSelectedEntry(new StringEntry(page==0 && hasTitle?"Title":(page+1)+"/"+lines.length, Color.BLACK));
 			menus[page+pageOffset].shouldRender = true;
 		}
 	}
