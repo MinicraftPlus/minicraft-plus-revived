@@ -1,0 +1,1027 @@
+﻿### entity
+
+## entity.particle
+## entity.particle end
+
+# AirWizard.java
+Air Wizard: Defeated!
+Волщебник воздуха: Побежден!
+
+The Dungeon is now open!
+Подземелье теперь открыто!
+
+A costume lies on the ground...
+Костюм лежит на земле...
+
+# Bed.java
+Can't sleep! 
+Невозможно уснуть!
+	
+Min 
+Мин
+	
+ Sec left!
+ Секунд осталось!
+
+# DungeonChest.java
+You hear a noise from the surface!
+Вы слышете шум на поверхности!
+
+# DeathChest.java
+Death Chest
+Мертвый сундук
+
+# Player.java
+
+Crafting
+Крафт
+
+Set your home!
+Установи дом!
+
+Can't set home here!
+Нельзя здесь поставить дом!
+
+Home Sweet Home!
+Дом, милый дом!
+
+Mode penalty: -2 health
+Модификатор: -2 здоровья
+
+You don't have a home!
+У вас нет дома!
+
+You can't go home from here!
+Вы не можете переместится домой отсюда!
+ 
+### entity end
+
+### gfx
+### gfx end
+
+### item
+
+# ArmorItem.java
+Leather Armor
+Кожаная броня
+
+Snake Armor
+Змеиная броня
+
+Iron Armor
+Железная броня
+
+Gold Armor
+Золотая броня
+
+Gem Armor
+Самоцветная броня
+
+# BookItem.java
+
+Book
+Книга
+
+Antidious
+Antidious
+
+# BucketItem.java
+
+Empty Bucket
+Пустое ведро
+
+Water Bucket
+Ведро с водой
+
+Lava Bucket
+Ведро с лавой
+
+ Bucket
+ Ведро
+ 
+# ClothingItem.java
+
+Red Clothes
+Красная одежда
+
+Blue Clothes
+Синия одежда
+
+Green Clothes
+Зеленая одежда
+
+Yellow Clothes
+Желтая одежда
+
+Black Clothes
+Черная одежда
+
+Orange Clothes
+Оранжевая одежда
+
+Purple Clothes
+Багровая одежда
+
+Cyan Clothes
+Бирюзовая одежда
+
+Reg Clothes
+Reg Clothes
+
+# FoodItem.java
+
+Bread
+Хлеб
+
+Apple
+Яблоко
+
+Raw Pork
+Сырая свинина
+
+Raw Fish
+Сырая рыба
+
+Raw Beef
+Сырая говядина
+
+Pork Chop
+Свиная отбивная
+
+Cooked Fish
+Жареная рыба
+
+Cooked Pork
+Жареная свинина
+
+Steak
+Стейк
+
+Gold Apple
+Золотое яблоко
+
+# FurnitureItem.java
+
+Cow Spawner
+Спавнер коров
+
+Pig Spawner
+Спавнер свиней
+
+Sheep Spawner
+Спавнер овец
+
+Slime Spawner
+Спавнер слаймов
+
+Zombie Spawner
+Спавнер зомби
+
+Creeper Spawner
+Спавнер криперов
+
+Skeleton Spawner
+Спавнер скелетов
+
+Snake Spawner
+Спавнер змей
+
+Knight Spawner
+Спавнер воинов
+
+AirWizard Spawner
+Спавнер волшебников воздуха
+
+Workbench
+Верстак
+
+Oven
+Духовка
+
+Furnace
+Печь
+
+Anvil
+Наковальня
+
+Enchanter
+Зачаровальный стол
+
+Loom
+Ткацкий станок
+
+Lantern
+Фонарь
+
+Iron Lantern
+Железный фонарь
+
+Gold Lantern
+Золотой фонарь
+
+Tnt
+Тнт
+
+Bed
+Кровать
+
+Chest
+Сундук
+
+# PotionType.java
+
+None Potion
+None Potion
+
+Speed Potion
+Зелье скорости
+
+Light Potion
+Зелье света
+
+Swim Potion
+Зелье плавца
+
+Energy Potion
+Зелье энергии
+
+Regen Potion
+Зелье восстановления
+
+Health Potion
+Зелье жизни
+
+Time Potion
+Зелье времени
+
+Lava Potion
+Зелье лавы
+
+Shield Potion
+Зелье защиты
+
+Haste Potion
+Зелье спешки
+
+Potion
+Зелье
+
+# PowerGloveItem.java
+
+Power Glove
+Перчатка силы
+
+# StackableItem.java
+
+Wood
+Дерево
+
+Stone
+Камень
+
+Leather
+Кожа
+
+Wheat
+Пшеница
+
+Key
+Ключ
+
+arrow
+Стрела
+
+string
+Нить
+
+Coal
+Уголь
+
+Iron Ore
+Железная руда
+
+Lapis
+Ляпис
+
+Gold Ore
+Золотая руда
+
+Iron
+Железо
+
+Gold
+Золото
+
+Rose
+Роза
+
+GunPowder
+Порох
+
+Slime
+Слайм
+
+glass
+Стекло
+
+cloth
+Ткань
+
+gem
+Самоцвет
+
+Scale
+Scale
+
+Shard
+Осколок
+
+# TileItem.java
+
+Flower
+Цветок
+
+Acorn
+Желудь
+
+Dirt
+Земля
+
+Plank
+Доска
+
+Plank Wall
+Деревянная стена
+
+Wood Door
+Деревянная дверь
+
+Stone Brick
+Каменный кирпич
+
+Stone Wall
+Каменная стена
+
+Stone Door
+Каменная дверь
+
+Obsidian Brick
+Обсидиановый кирпич
+
+Obsidian Wall
+Обсидиановая стена
+
+Obsidian Door
+Обсидиановая дверь
+
+Wool
+Шерсть
+
+Red Wool
+Красная шерсть
+
+Blue Wool
+Синия шерсть
+
+Green Wool
+Зеленая шерсть
+
+Yellow Wool
+Желтая шерсть
+
+Black Wool
+Черная шерсть
+
+Sand
+Песок
+
+Cactus
+Кактус
+
+Seeds
+Семена
+
+Grass Seeds
+Семена травы
+
+Bone
+Кость
+
+Cloud
+Облако
+
+Can only be placed on 
+Может быть установлено на
+
+Dig a hole first!
+Вскопай яму сначала!
+
+# ToolItem.java
+
+Wood
+Дерево
+
+Rock
+Камень
+
+Iron
+Железо
+
+Gold
+Золото
+
+Gem
+Самоцвет
+
+Fishing Rod
+Удочка
+
+# ToolType.java
+
+Shovel
+Лопата
+
+Hoe
+Тяпка
+
+Sword
+Меч
+
+Pickaxe
+Кирка
+
+Axe
+Топор
+
+Bow
+Лук
+
+FishingRod
+Удочка
+
+Claymore
+Клеймор
+
+# TorchItem.java
+
+Torch
+Факел
+
+### item end
+
+### level
+
+## tile 
+
+# Tiles.java
+
+Gem Ore
+Самоцветная руда
+
+Wood Planks
+Деревянные доски
+
+Stone Bricks
+Каменные кирпичи
+
+Obsidian
+Обсидиан
+
+Wood Wall
+Дереаянная стена
+
+Grass
+Трава
+
+Dirt
+Земля
+
+Flower
+Цветок
+
+Hole
+Яма
+
+Stairs Up
+Лестница наверх
+
+Stairs Down
+Лестница вниз
+
+Water
+Вода
+
+Rock
+Камень
+
+Tree
+Дерево
+
+Tree Sapling
+Росток дерева
+
+Sand
+Песок
+
+Cactus
+Кактус
+
+Cactus Sapling
+Росток кактуса
+
+Lava
+Лава
+
+Lava Brick
+Лавовый кирпич
+
+Explode
+Взрыв
+
+Farmland
+Плодородная земля
+
+Wheat
+Пшеница
+
+Hard Rock
+Твердый камень
+
+Infinite Fall
+Бесконечное падение
+
+Cloud
+Облако
+
+Cloud Cactus
+Облачный кактус
+
+# OreTile.java
+
+Iron
+Железо
+
+Lapis
+Ляпис
+
+Gold
+Золото
+
+Gem
+Самоцвет
+
+Ore
+Руда
+
+## tile end
+
+### level end
+
+### network
+
+# MinicraftClient.java
+
+host not found
+Хост не найден
+
+unable to get localhost address
+Невозможно получить localhost
+
+### network end
+
+### saveload
+### saveload end
+
+### screen
+
+## entry
+
+# BooleanEntry.java
+
+On
+Включить
+
+Off
+Выключить
+
+## entry end
+
+# BookDisplay.java
+
+There is nothing of use here.
+Здесь нечего использовать.
+
+Still nothing... :P
+До сих пор нечего... :P
+
+# CraftingMenu.java
+
+Have:
+Будет:
+
+Cost:
+Стоит:
+
+# DeadMenu.java
+
+Time: 
+Время: 
+
+Score: 
+Счет: 
+
+Quit
+Выход
+
+Respawn
+Респавн
+
+You died! Aww!
+Ты умер!
+
+# Displays.java
+
+With the default controls...\n\nMove your character with arrow keys or WSAD. Press C to attack and X to open the inventory, and to use items. Select an item in the inventory to equip it.\n\nKill the air wizard to win the game!
+При стандартных настройках...\n\nДвигайся с помощью стрелочек или WASD. Нажмите C для атаки и X чтобы открыть инвентарь, и использовать предметы. Выберете предмет в инвентаре чтобы взять его.\n\nУбейте волшебника воздуха чтобы выиграть игру!
+
+# EndGameDisplay.java
+
+Player Score: 
+Счет игрока: 
+
+<Bonuses>
+<Bonuses>
+
+Final Score: 
+Финальный счет: 
+
+Exit to Menu
+Выйти в меню
+
+# InfoDisplay.java
+
+Time Played: 
+Времени наиграно: 
+
+Current Score: 
+Текущий счет: 
+
+Exit
+Выход
+
+Player Stats
+Статистика игрока
+
+# KeyInputMenu.java
+
+Controls
+Управление
+
+Press the desired
+Нажмите клавишу
+
+key sequence
+Последовательность клавиш
+
+Are you sure you want to reset all key bindings to the default keys?
+Вы уверены что хотите сбросить все клавиши к стандартным настройкам?
+
+enter to confirm
+enter для подтверждения
+
+escape to cancel
+escape для отмены
+
+Confirm Action
+Подтвердить
+
+Press C/Enter to change key binding
+Нажмите C/Enter для смены клавиши
+
+Press A to add key binding
+Нажмите A для добавления клавиши
+
+Shift-D to reset all keys to default
+Shift-D для сброса всех клавиш
+
+ESCAPE to Return to menu
+ESCAPE для возврата к меню
+
+# LoadingDisplay.java
+
+Loading...
+Загрузка...
+
+# MultiplayerMenu.java
+
+waiting...
+Ожидание...
+
+nothing
+Ничего
+
+attempting log in
+Попытка подключения
+
+no internet connection, but no login data saved; cannot enter offline mode.
+Нет соединения с интернетом, но данные для входа не сохранены; невозможно вернуться в оффлайн.
+
+connecting to server
+Подключение
+
+logging in
+Вход
+
+saving credentials
+Сохраняем права
+
+login failed.
+Вход неудался.
+
+problem with saved login data; please exit and login again.
+Проблема с сохранением данных вхожа; пожалуйста попробуйте еще раз.
+
+Internal server error: Couldn't fetch username from uuid
+Внутрення ошибка сервера: Невозможно сравнить имя игрока с его id
+
+logged in as: 
+Зашел как: 
+
+offline mode: local servers only
+Оффлайн: Только локальные сервера
+
+Enter ip address to connect to:
+Введите ip для соединения:
+
+Press Shift-Escape to logout
+Нажмите Shift-Escape для выхода
+
+Enter email:
+Введите почту:
+
+Enter password:
+Ввежите пароль:
+
+field is blank
+Поле пустое
+
+get an account at:
+get an account at:
+
+Loading 
+Загрузка 
+
+ from server
+ с сервера
+ 
+Could not connect to server:
+Неудалось подключится к серверу:
+
+Press 
+Нажмите 
+
+ to return
+ чтобы вернутся
+
+# OptionsMenu.java
+
+Change Key Bindings
+Изменить раскладку
+
+Options
+Настройки
+
+Change language
+Сменить язык
+
+# PauseMenu.java
+
+Return to Game
+Вернуться к игре
+
+Options
+Настройки
+
+Make World Multiplayer
+Создать сервер
+
+Save Game
+Сохранить игру
+
+ and 
+ и 
+ 
+ to Scroll
+ для прокрутки
+ 
+: Choose
+: Выбрать
+ 
+Paused
+Пауза
+
+Main Menu
+Главное меню
+
+# PlayerInvMenu.java
+
+Inventory
+Инвентарь
+
+# TitleMenu.java
+
+Play
+Играть
+
+Load World
+Загрузить мир
+
+New World
+Новый мир
+
+Join Online World
+Присоединиться
+
+Options
+Настройки
+
+Help
+Помощь
+
+Instructions
+Инструкции
+
+Storyline Guide (for the weak)
+Гайд по истории (для ленивых)
+
+About
+О нас
+
+Quit
+Выйти
+
+ to select
+ для выбора
+ 
+ to accept
+ для принятия
+ 
+ to return
+ для возврата
+
+# WorldEditMenu.java
+
+New World Name:
+Имя мира:
+
+Are you sure you want to delete
+Вы уверены что хотите удалить
+
+This can not be undone!
+Невозможно выполнить!
+
+ to confirm
+ для принятия
+ 
+ to cancel
+ для отмены
+
+# WorldGenMenu.java
+
+World Seed
+Сид Мира
+
+Enter World Name
+Название Мира
+
+Trouble with world name?
+Проблемы с названием?
+
+by default, w and s move the cursor up and down. This can be changed in the key binding menu. To type the letter instead of moving the cursor, hold the shift key while typing the world name.
+По умолчанию, w и s движение курсора вверх и вниз. Это можно изменить в раскладке клавиатуры. Чтобы написать сообщение вместо движения курсора, зажмите shift во время ввода имени мира.
+
+Create World
+Создать мир
+
+World Gen Options
+Настройки генератора мира
+
+# WorldSelectMenu.java
+
+Copy
+Копировать
+
+Rename
+Переименовать
+
+Delete
+Удалить
+
+ to confirm
+ для принятия
+ 
+ to return
+ для отмены
+ 
+Select World
+Выбрать мир
+
+Select a World to
+Выбрать мир для
+
+# LocalizationMenu.java
+
+Languages
+Языки
+
+Language
+Язык
+
+Select
+Выбрать
+
+### screen end
+
+### minicraft
+
+# Settings.java
+
+Max FPS
+Максимальный FPS
+
+Difficulty
+Сложность
+
+Easy
+Легко
+
+Normal
+Нормально
+
+Hard
+Сложно
+
+Game Mode
+Игровой режим
+
+Survival
+Выживание
+
+Creative
+Креатив
+
+Hardcore
+Хардкор
+
+Score
+Счет
+
+Time (Score Mode)
+Время (Рейтинг)
+
+Sound
+Звук
+
+Autosave
+Автосохранение
+
+World Size
+Размер мира
+
+World Theme
+Тема мира
+
+Normal
+Нормальный
+
+Forest
+Лес
+
+Desert
+Пустыня
+
+Plain
+Плоский
+
+Hell
+Ад
+
+Terrain Type
+Тип поверхности
+
+Island
+Острова
+
+Box
+Коробка
+
+Mountain
+Горы
+
+Irregular
+Нестандартный
+
+Wear Suit
+Wear Suit
+
+### minicraft end
