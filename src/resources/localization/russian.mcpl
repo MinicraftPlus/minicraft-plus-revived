@@ -29,7 +29,7 @@ You hear a noise from the surface!
 
 # DeathChest.java
 Death Chest
-Мертвый сундук
+Сундук смерти
 
 # Player.java
 
@@ -75,7 +75,7 @@ Gold Armor
 Золотая броня
 
 Gem Armor
-Самоцветная броня
+Драгоценная броня
 
 # BookItem.java
 
@@ -163,43 +163,43 @@ Gold Apple
 # FurnitureItem.java
 
 Cow Spawner
-Спавнер коров
+Призыватель коров
 
 Pig Spawner
-Спавнер свиней
+Призыватель свиней
 
 Sheep Spawner
-Спавнер овец
+Призыватель овец
 
 Slime Spawner
-Спавнер слаймов
+Призыватель слаймов
 
 Zombie Spawner
-Спавнер зомби
+Призыватель зомби
 
 Creeper Spawner
-Спавнер криперов
+Призыватель криперов
 
 Skeleton Spawner
-Спавнер скелетов
+Призыватель скелетов
 
 Snake Spawner
-Спавнер змей
+Призыватель змей
 
 Knight Spawner
-Спавнер воинов
+Призыватель воинов
 
 AirWizard Spawner
-Спавнер волшебников воздуха
+Призыватель волшебников воздуха
 
 Workbench
 Верстак
 
 Oven
-Духовка
+Печь
 
 Furnace
-Печь
+Плавильня
 
 Anvil
 Наковальня
@@ -220,7 +220,7 @@ Gold Lantern
 Золотой фонарь
 
 Tnt
-Тнт
+Динамит
 
 Bed
 Кровать
@@ -231,7 +231,7 @@ Chest
 # PotionType.java
 
 None Potion
-None Potion
+Пустое зелье
 
 Speed Potion
 Зелье скорости
@@ -243,19 +243,19 @@ Swim Potion
 Зелье плавца
 
 Energy Potion
-Зелье энергии
+Энергетическое зелье
 
 Regen Potion
 Зелье восстановления
 
 Health Potion
-Зелье жизни
+Зелье здоровья
 
 Time Potion
 Зелье времени
 
 Lava Potion
-Зелье лавы
+Лавовое зелье
 
 Shield Potion
 Зелье защиты
@@ -301,7 +301,7 @@ Iron Ore
 Железная руда
 
 Lapis
-Ляпис
+Лазурит
 
 Gold Ore
 Золотая руда
@@ -351,10 +351,10 @@ Plank
 Доска
 
 Plank Wall
-Деревянная стена
+Дощатая стена
 
 Wood Door
-Деревянная дверь
+Дощатая дверь
 
 Stone Brick
 Каменный кирпич
@@ -411,10 +411,10 @@ Cloud
 Облако
 
 Can only be placed on 
-Может быть установлено на
+Может быть установлено только на 
 
 Dig a hole first!
-Вскопай яму сначала!
+Сначала вскопай яму!
 
 # ToolItem.java
 
@@ -518,7 +518,7 @@ Tree
 Дерево
 
 Tree Sapling
-Росток дерева
+Саженец дерева
 
 Sand
 Песок
@@ -527,7 +527,7 @@ Cactus
 Кактус
 
 Cactus Sapling
-Росток кактуса
+Саженец кактуса
 
 Lava
 Лава
@@ -599,10 +599,10 @@ unable to get localhost address
 # BooleanEntry.java
 
 On
-Включить
+Вкл
 
 Off
-Выключить
+Выкл
 
 ## entry end
 
@@ -617,10 +617,10 @@ Still nothing... :P
 # CraftingMenu.java
 
 Have:
-Будет:
+Есть:
 
 Cost:
-Стоит:
+Надо:
 
 # DeadMenu.java
 
@@ -631,18 +631,18 @@ Score:
 Счет: 
 
 Quit
-Выход
+Выйти
 
 Respawn
 Респавн
 
 You died! Aww!
-Ты умер!
+О нет, ты умер!
 
 # Displays.java
 
 With the default controls...\n\nMove your character with arrow keys or WSAD. Press C to attack and X to open the inventory, and to use items. Select an item in the inventory to equip it.\n\nKill the air wizard to win the game!
-При стандартных настройках...\n\nДвигайся с помощью стрелочек или WASD. Нажмите C для атаки и X чтобы открыть инвентарь, и использовать предметы. Выберете предмет в инвентаре чтобы взять его.\n\nУбейте волшебника воздуха чтобы выиграть игру!
+При стандартных настройках...\n\nДвигайся с помощью стрелочек или WASD. Нажимай C для атаки и X чтобы открыть инвентарь и использовать предметы. Выберай предмет в инвентаре, чтобы экипировать его.\n\nУбей волшебника воздуха, чтобы выиграть игру!
 
 # EndGameDisplay.java
 
@@ -678,22 +678,22 @@ Controls
 Управление
 
 Press the desired
-Нажмите клавишу
+Нажми нужную
 
 key sequence
-Последовательность клавиш
+последовательность клавиш
 
 Are you sure you want to reset all key bindings to the default keys?
-Вы уверены что хотите сбросить все клавиши к стандартным настройкам?
+Вы уверены, что хотите сбросить настройки клавиш к стандартным значениям?
 
 enter to confirm
 enter для подтверждения
 
 escape to cancel
-escape для отмены
+esc для отмены
 
 Confirm Action
-Подтвердить
+Подтвердить действие
 
 Press C/Enter to change key binding
 Нажмите C/Enter для смены клавиши
@@ -705,7 +705,7 @@ Shift-D to reset all keys to default
 Shift-D для сброса всех клавиш
 
 ESCAPE to Return to menu
-ESCAPE для возврата к меню
+ESC для возврата к меню
 
 # LoadingDisplay.java
 
@@ -724,28 +724,28 @@ attempting log in
 Попытка подключения
 
 no internet connection, but no login data saved; cannot enter offline mode.
-Нет соединения с интернетом, но данные для входа не сохранены; невозможно вернуться в оффлайн.
+Нет соединения с интернетом, но данные для входа не сохранены; невозможно вернуться в оффлайн-режим.
 
 connecting to server
-Подключение
+Подключение к серверу
 
 logging in
 Вход
 
 saving credentials
-Сохраняем права
+Сохраняем данные для входа
 
 login failed.
 Вход неудался.
 
 problem with saved login data; please exit and login again.
-Проблема с сохранением данных вхожа; пожалуйста попробуйте еще раз.
+Проблема с сохранением данных входа; пожалуйста попробуйте еще раз.
 
 Internal server error: Couldn't fetch username from uuid
-Внутрення ошибка сервера: Невозможно сравнить имя игрока с его id
+Внутрення ошибка сервера: Невозможно получить имя игрока из uuid
 
 logged in as: 
-Зашел как: 
+Выполнен вход как: 
 
 offline mode: local servers only
 Оффлайн: Только локальные сервера
@@ -781,7 +781,7 @@ Press
 Нажмите 
 
  to return
- чтобы вернутся
+ чтобы вернуться
 
 # OptionsMenu.java
 
@@ -840,7 +840,7 @@ New World
 Новый мир
 
 Join Online World
-Присоединиться
+Присоединиться к миру
 
 Options
 Настройки
@@ -852,7 +852,7 @@ Instructions
 Инструкции
 
 Storyline Guide (for the weak)
-Гайд по истории (для ленивых)
+Руководство по истории (для слабаков)
 
 About
 О нас
@@ -878,7 +878,7 @@ Are you sure you want to delete
 Вы уверены что хотите удалить
 
 This can not be undone!
-Невозможно выполнить!
+Это не может быть отменено!
 
  to confirm
  для принятия
@@ -892,19 +892,19 @@ World Seed
 Сид Мира
 
 Enter World Name
-Название Мира
+Введите название мира
 
 Trouble with world name?
 Проблемы с названием?
 
 by default, w and s move the cursor up and down. This can be changed in the key binding menu. To type the letter instead of moving the cursor, hold the shift key while typing the world name.
-По умолчанию, w и s движение курсора вверх и вниз. Это можно изменить в раскладке клавиатуры. Чтобы написать сообщение вместо движения курсора, зажмите shift во время ввода имени мира.
+По умолчанию, w и s - движение курсора вверх и вниз. Это можно изменить в раскладке клавиатуры. Чтобы написать сообщение вместо движения курсора, зажмите shift во время ввода имени мира.
 
 Create World
 Создать мир
 
 World Gen Options
-Настройки генератора мира
+Настройки генерации мира
 
 # WorldSelectMenu.java
 
@@ -953,13 +953,13 @@ Difficulty
 Сложность
 
 Easy
-Легко
+Простая
 
 Normal
-Нормально
+Нормальная
 
 Hard
-Сложно
+Сложная
 
 Game Mode
 Игровой режим
@@ -968,7 +968,7 @@ Survival
 Выживание
 
 Creative
-Креатив
+Творческий
 
 Hardcore
 Хардкор
@@ -1001,13 +1001,13 @@ Desert
 Пустыня
 
 Plain
-Плоский
+Степь
 
 Hell
 Ад
 
 Terrain Type
-Тип поверхности
+Тип местности
 
 Island
 Острова
