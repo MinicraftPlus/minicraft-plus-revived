@@ -8,7 +8,8 @@ public class Font {
 	// These are all the characters that will be translated to the screen. (The spaces are important)
 	private static String chars = "" + //
                        "ABCDEFGHIJKLMNOPQRSTUVWXYZ      " + //
-                       "0123456789.,!?'\"-+=/\\%()<>:;^@bcdefghijklmnopqrstuvwxyz";//
+                       "0123456789.,!?'\"-+=/\\%()<>:;^@bcdefghijklmnopqrstuvwxyz" + 
+                       "аимсзя©║";//
 	
 	/* The order of the letters in the chars string is represented in the order that they appear in the sprite-sheet. */
 	
@@ -21,6 +22,10 @@ public class Font {
 				// if that character's position is larger than or equal to 0, then render the character on the screen.
 				screen.render(x + i * textWidth(msg.substring(i, i+1)), y, ix + 30 * 32, col, 0);
 			}
+			/*System.out.println("ix="+ix+"; char="+msg.charAt(i));
+			if(msg.charAt(i) == 'м') {
+				System.out.println("ix="+ix+"; tile="+ix+"+30*32="+ix+30*32);
+			}*/
 		}
 	}
 	
