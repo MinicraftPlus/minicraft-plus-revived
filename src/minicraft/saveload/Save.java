@@ -278,21 +278,13 @@ public class Save {
 	public static void writeInventory(Player player, List<String> data) {
 		data.clear();
 		if(player.activeItem != null) {
-			if(player.activeItem instanceof StackableItem) {
-				data.add(player.activeItem.getName() + ";" + ((StackableItem)player.activeItem).count);
-			} else {
-				data.add(player.activeItem.getName());
-			}
+			data.add(player.activeItem.getData());
 		}
 		
 		Inventory inventory = player.getInventory();
 		
 		for(int i = 0; i < inventory.invSize(); i++) {
-			if(inventory.get(i) instanceof StackableItem) {
-				data.add(inventory.get(i).getName() + ";" + ((StackableItem)inventory.get(i)).count);
-			} else {
-				data.add(inventory.get(i).getName());
-			}
+			data.add(inventory.get(i).getData());
 		}
 	}
 	

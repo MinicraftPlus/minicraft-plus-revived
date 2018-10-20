@@ -50,7 +50,7 @@ public class DoorTile extends Tile {
 		if (item instanceof ToolItem) {
 			ToolItem tool = (ToolItem) item;
 			if (tool.type == ToolType.Pickaxe) {
-				if (player.payStamina(4 - tool.level)) {
+				if (player.payStamina(4 - tool.level) && tool.payDurability()) {
 					level.setTile(xt, yt, Tiles.get(id+3)); // will get the corresponding floor tile.
 					level.dropItem(xt*16+8, yt*16+8, Items.get(type.name() + " Door"));
 					Sound.monsterHurt.play();
@@ -61,11 +61,12 @@ public class DoorTile extends Tile {
 		return false;
 	}
 
-	public void hurt(Level level, int x, int y, Mob source, int dmg, Direction attackDir) {
+	public boolean hurt(Level level, int x, int y, Mob source, int dmg, Direction attackDir) {
 		if(source instanceof Player) {
 			boolean closed = level.getData(x, y) == 0;
 			level.setData(x, y, closed?1:0);
 		}
+		return false;
 	}
 
 	public boolean mayPass(Level level, int x, int y, Entity e) {

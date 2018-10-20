@@ -529,10 +529,11 @@ public class Player extends Mob implements ItemHolder, ClientTickable {
 			// the player is holding a tool, and has stamina available.
 			ToolItem tool = (ToolItem) activeItem;
 			
-			if (tool.type == ToolType.Bow && inventory.count(Items.arrowItem) > 0) { // if the player is holding a bow, and has arrows...
+			if (tool.type == ToolType.Bow && tool.dur > 0 && inventory.count(Items.arrowItem) > 0) { // if the player is holding a bow, and has arrows...
 				if (!Game.isMode("creative")) inventory.removeItem(Items.arrowItem);
 				level.add(new Arrow(this, attackDir, tool.level));
 				attackTime = 10;
+				if (!Game.isMode("creative")) tool.dur--;
 				return; // we have attacked!
 			}
 		}
@@ -579,14 +580,17 @@ public class Player extends Mob implements ItemHolder, ClientTickable {
 		if (activeItem == null || activeItem.canAttack()) { // if there is no active item, OR if the item can be used to attack...
 			attackTime = 5;
 			// attacks the enemy in the appropriate direction.
-			hurt(getInteractionBox(ATTACK_DIST));
+			boolean used = hurt(getInteractionBox(ATTACK_DIST));
 			
 			// attempts to hurt the tile in the appropriate direction.
 			Point t = getInteractionTile();
 			if (t.x >= 0 && t.y >= 0 && t.x < level.w && t.y < level.h) {
 				Tile tile = level.getTile(t.x, t.y);
-				tile.hurt(level, t.x, t.y, this, random.nextInt(3) + 1, attackDir);
+				used = tile.hurt(level, t.x, t.y, this, random.nextInt(3) + 1, attackDir) || used;
 			}
+			
+			if(used && activeItem instanceof ToolItem)
+				((ToolItem)activeItem).payDurability();
 		}
 	}
 	
@@ -644,13 +648,19 @@ public class Player extends Mob implements ItemHolder, ClientTickable {
 	}
 	
 	/** same, but for attacking. */
-	private void hurt(Rectangle area) {
+	private boolean hurt(Rectangle area) {
 		List<Entity> entities = level.getEntitiesInRect(area);
+		int maxDmg = 0;
 		for (int i = 0; i < entities.size(); i++) {
 			Entity e = entities.get(i);
-			if (e != this && e instanceof Mob) ((Mob)e).hurt(this, getAttackDamage(e), attackDir); // note: this really only does something for mobs.
+			if (e != this && e instanceof Mob) {
+				int dmg = getAttackDamage(e);
+				maxDmg = Math.max(dmg, maxDmg);
+				((Mob)e).hurt(this, dmg, attackDir); // note: this really only does something for mobs.
+			}
 			if (e != this && e instanceof Furniture) e.interact(this, null, attackDir); // note: this really only does something for mobs.
 		}
+		return maxDmg > 0;
 	}
 	
 	/**
@@ -961,7 +971,7 @@ public class Player extends Mob implements ItemHolder, ClientTickable {
 		";hunger,"+hunger+
 		";attackTime,"+attackTime+
 		";attackDir,"+attackDir.ordinal()+
-		";activeItem,"+(activeItem==null?"null": activeItem.getName());
+		";activeItem,"+(activeItem==null?"null": activeItem.getData());
 		
 		return updates;
 	}

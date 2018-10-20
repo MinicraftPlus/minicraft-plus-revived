@@ -65,7 +65,7 @@ public class WheatTile extends Tile {
 		if (item instanceof ToolItem) {
 			ToolItem tool = (ToolItem) item;
 			if (tool.type == ToolType.Shovel) {
-				if (player.payStamina(4 - tool.level)) {
+				if (player.payStamina(4 - tool.level) && tool.payDurability()) {
 					level.setTile(xt, yt, Tiles.get("dirt"));
 					return true;
 				}
@@ -81,8 +81,9 @@ public class WheatTile extends Tile {
 	}
 	
 	@Override
-	public void hurt(Level level, int x, int y, Mob source, int dmg, Direction attackDir) {
+	public boolean hurt(Level level, int x, int y, Mob source, int dmg, Direction attackDir) {
 		harvest(level, x, y, source);
+		return true;
 	}
 	
 	private void harvest(Level level, int x, int y, Entity entity) {

@@ -39,7 +39,8 @@ public class SaplingTile extends Tile {
 		}
 	}
 
-	public void hurt(Level level, int x, int y, Mob source, int dmg, Direction attackDir) {
+	public boolean hurt(Level level, int x, int y, Mob source, int dmg, Direction attackDir) {
 		level.setTile(x, y, onType);
+		return true;
 	}
 }

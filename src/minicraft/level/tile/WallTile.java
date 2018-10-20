@@ -44,11 +44,14 @@ public class WallTile extends Tile {
 	}
 	
 	@Override
-	public void hurt(Level level, int x, int y, Mob source, int dmg, Direction attackDir) {
-		if(level.depth != -3 || type != Material.Obsidian || AirWizard.beaten)
-			hurt(level, x, y, random.nextInt(6)/6*dmg/2);
-		else
+	public boolean hurt(Level level, int x, int y, Mob source, int dmg, Direction attackDir) {
+		if(level.depth != -3 || type != Material.Obsidian || AirWizard.beaten) {
+			hurt(level, x, y, random.nextInt(6) / 6 * dmg / 2);
+			return true;
+		} else {
 			Game.notifications.add(obrickMsg);
+			return false;
+		}
 	}
 	
 	public boolean interact(Level level, int xt, int yt, Player player, Item item, Direction attackDir) {
@@ -56,7 +59,7 @@ public class WallTile extends Tile {
 			ToolItem tool = (ToolItem) item;
 			if (tool.type == ToolType.Pickaxe) {
 				if(level.depth != -3 || type != Material.Obsidian || AirWizard.beaten) {
-					if (player.payStamina(4 - tool.level)) {
+					if (player.payStamina(4 - tool.level) && tool.payDurability()) {
 						hurt(level, xt, yt, random.nextInt(10) + (tool.level) * 5 + 10);
 						return true;
 					}

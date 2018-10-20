@@ -58,7 +58,9 @@ public class Items {
 		name = name.toUpperCase();
 		//System.out.println("fetching name: \"" + name + "\"");
 		int amount = 1;
+		boolean hadUnderscore = false;
 		if(name.contains("_")) {
+			hadUnderscore = true;
 			try {
 				amount = Integer.parseInt(name.substring(name.indexOf("_")+1));
 			} catch(Exception ex) {
@@ -90,6 +92,8 @@ public class Items {
 		if(i != null) {
 			if(i instanceof StackableItem)
 				((StackableItem)i).count = amount;
+			if(i instanceof ToolItem && hadUnderscore)
+				((ToolItem)i).dur = amount;
 			return i.clone();
 		} else {
 			System.out.println(Network.onlinePrefix()+"ITEMS GET: invalid name requested: \"" + name + "\"");

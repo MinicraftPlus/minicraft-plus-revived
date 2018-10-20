@@ -27,15 +27,16 @@ public class CloudCactusTile extends Tile {
 		return e instanceof AirWizard;
 	}
 
-	public void hurt(Level level, int x, int y, Mob source, int dmg, Direction attackDir) {
+	public boolean hurt(Level level, int x, int y, Mob source, int dmg, Direction attackDir) {
 		hurt(level, x, y, 0);
+		return true;
 	}
 
 	public boolean interact(Level level, int xt, int yt, Player player, Item item, Direction attackDir) {
 		if (item instanceof ToolItem) {
 			ToolItem tool = (ToolItem) item;
 			if (tool.type == ToolType.Pickaxe) {
-				if (player.payStamina(6 - tool.level)) {
+				if (player.payStamina(6 - tool.level) && tool.payDurability()) {
 					hurt(level, xt, yt, 1);
 					return true;
 				}

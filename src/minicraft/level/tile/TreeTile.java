@@ -78,8 +78,9 @@ public class TreeTile extends Tile {
 	}
 	
 	@Override
-	public void hurt(Level level, int x, int y, Mob source, int dmg, Direction attackDir) {
+	public boolean hurt(Level level, int x, int y, Mob source, int dmg, Direction attackDir) {
 		hurt(level, x, y, dmg);
+		return true;
 	}
 	
 	@Override
@@ -87,7 +88,7 @@ public class TreeTile extends Tile {
 		if (item instanceof ToolItem) {
 			ToolItem tool = (ToolItem) item;
 			if (tool.type == ToolType.Axe) {
-				if (player.payStamina(4 - tool.level)) {
+				if (player.payStamina(4 - tool.level) && tool.payDurability()) {
 					hurt(level, xt, yt, random.nextInt(10) + (tool.level) * 5 + 10);
 					return true;
 				}

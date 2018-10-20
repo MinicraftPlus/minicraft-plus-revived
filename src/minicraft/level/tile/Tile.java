@@ -99,7 +99,7 @@ public abstract class Tile {
 		return 0;
 	}
 	
-	public void hurt(Level level, int x, int y, Mob source, int dmg, Direction attackDir) {}
+	public boolean hurt(Level level, int x, int y, Mob source, int dmg, Direction attackDir) { return false; }
 	public void hurt(Level level, int x, int y, int dmg) {}
 	
 	/** What happens when you run into the tile (ex: run into a cactus) */

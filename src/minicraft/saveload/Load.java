@@ -472,7 +472,7 @@ public class Load {
 			
 			//System.out.println("loading item: " + item);
 			
-			if(item.contains(";")) {
+			if(worldVer.compareTo(new Version("2.0.4")) <= 0 && item.contains(";")) {
 				String[] curData = item.split(";");
 				String itemName = curData[0];
 				

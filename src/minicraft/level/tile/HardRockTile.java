@@ -27,8 +27,9 @@ public class HardRockTile extends Tile {
 		return false;
 	}
 
-	public void hurt(Level level, int x, int y, Mob source, int dmg, Direction attackDir) {
+	public boolean hurt(Level level, int x, int y, Mob source, int dmg, Direction attackDir) {
 		hurt(level, x, y, 0);
+		return true;
 	}
 
 	public boolean interact(Level level, int xt, int yt, Player player, Item item, Direction attackDir) {
@@ -36,7 +37,7 @@ public class HardRockTile extends Tile {
 			ToolItem tool = (ToolItem) item;
 			if (Game.isMode("creative")) return true;
 			if (tool.type == ToolType.Pickaxe && tool.level == 4) {
-				if (player.payStamina(4 - tool.level)) {
+				if (player.payStamina(4 - tool.level) && tool.payDurability()) {
 					hurt(level, xt, yt, random.nextInt(10) + (tool.level) * 5 + 10);
 					return true;
 				}
@@ -44,7 +45,6 @@ public class HardRockTile extends Tile {
 			else Game.notifications.add("Gem Pickaxe Required.");
 		}
 		return Game.isMode("creative");
-		
 	}
 
 	public void hurt(Level level, int x, int y, int dmg) {

@@ -36,7 +36,7 @@ public class FloorTile extends Tile {
 		if (item instanceof ToolItem) {
 			ToolItem tool = (ToolItem) item;
 			if (tool.type == ToolType.Pickaxe) {
-				if (player.payStamina(4 - tool.level)) {
+				if (player.payStamina(4 - tool.level) && tool.payDurability()) {
 					level.setTile(xt, yt, Tiles.get("hole"));
 					Item drop;
 					switch(type) {

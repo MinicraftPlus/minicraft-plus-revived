@@ -30,7 +30,7 @@ public class CactusTile extends Tile {
 		return false;
 	}
 
-	public void hurt(Level level, int x, int y, Mob source, int dmg, Direction attackDir) {
+	public boolean hurt(Level level, int x, int y, Mob source, int dmg, Direction attackDir) {
 		int damage = level.getData(x, y) + dmg;
 		int cHealth = 10;
 		if (Game.isMode("creative")) dmg = damage = cHealth;
@@ -44,6 +44,7 @@ public class CactusTile extends Tile {
 		} else {
 			level.setData(x, y, damage);
 		}
+		return true;
 	}
 	
 	public void bumpedInto(Level level, int x, int y, Entity entity) {

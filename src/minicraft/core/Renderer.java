@@ -24,7 +24,6 @@ import minicraft.gfx.SpriteSheet;
 import minicraft.item.Items;
 import minicraft.item.PotionType;
 import minicraft.item.ToolItem;
-import minicraft.item.ToolType;
 import minicraft.level.Level;
 import minicraft.screen.LoadingDisplay;
 import minicraft.screen.RelPos;
@@ -250,9 +249,10 @@ public class Renderer extends Game {
 			}
 		}
 		
-		// FISHING ROD STATUS
-		if (player.activeItem instanceof ToolItem && ((ToolItem)player.activeItem).type == ToolType.FishingRod) {
-			int dura = ((ToolItem)player.activeItem).dur * 100 / ((ToolItem)player.activeItem).type.durability;
+		// TOOL DURABILITY STATUS
+		if (player.activeItem instanceof ToolItem) {
+			ToolItem tool = (ToolItem) player.activeItem;
+			int dura = tool.dur * 100 / (tool.type.durability * (tool.level+1));
 			//if (dura > 100) dura = 100;
 			Font.draw(dura + "%", screen, 164, Screen.h - 16, Color.get(0, 30));
 		}

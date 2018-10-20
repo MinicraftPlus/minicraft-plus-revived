@@ -44,14 +44,15 @@ public class RockTile extends Tile {
 		return false;
 	}
 	
-	public void hurt(Level level, int x, int y, Mob source, int dmg, Direction attackDir) {
+	public boolean hurt(Level level, int x, int y, Mob source, int dmg, Direction attackDir) {
 		hurt(level, x, y, 1);
+		return true;
 	}
 
 	public boolean interact(Level level, int xt, int yt, Player player, Item item, Direction attackDir) {
 		if (item instanceof ToolItem) {
 			ToolItem tool = (ToolItem) item;
-			if (tool.type == ToolType.Pickaxe && player.payStamina(4 - tool.level)) {
+			if (tool.type == ToolType.Pickaxe && player.payStamina(4 - tool.level) && tool.payDurability()) {
 				coallvl = 1;
 				hurt(level, xt, yt, random.nextInt(10) + (tool.level) * 5 + 10);
 				return true;

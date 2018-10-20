@@ -47,7 +47,7 @@ public class GrassTile extends Tile {
 		if (item instanceof ToolItem) {
 			ToolItem tool = (ToolItem) item;
 			if (tool.type == ToolType.Shovel) {
-				if (player.payStamina(4 - tool.level)) {
+				if (player.payStamina(4 - tool.level) && tool.payDurability()) {
 					level.setTile(xt, yt, Tiles.get("dirt"));
 					Sound.monsterHurt.play();
 					if (random.nextInt(5) == 0) {
@@ -57,7 +57,7 @@ public class GrassTile extends Tile {
 				}
 			}
 			if (tool.type == ToolType.Hoe) {
-				if (player.payStamina(4 - tool.level)) {
+				if (player.payStamina(4 - tool.level) && tool.payDurability()) {
 					Sound.monsterHurt.play();
 					if (random.nextInt(5) == 0) {
 						level.dropItem(xt*16+8, yt*16+8, Items.get("seeds"));

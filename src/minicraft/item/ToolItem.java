@@ -32,13 +32,11 @@ public class ToolItem extends Item {
 	
 	private Random random = new Random();
 	
-	public static final int MAX_LEVEL = 5; // How many different levels of tools there are
 	public static final String[] LEVEL_NAMES = {"Wood", "Rock", "Iron", "Gold", "Gem"}; // The names of the different levels. A later level means a stronger tool.
 	
 	public ToolType type; // Type of tool (Sword, hoe, axe, pickaxe, shovel)
 	public int level; // Level of said tool
-	public int dur; // the durability of the tool; currently only used for fishing rod.
-	// TODO implement durabilities for all tools?
+	public int dur; // the durability of the tool
 	
 	public static final int[] LEVEL_COLORS = { // Colors of the tools, same position as LEVEL_NAMES
 		Color.get(-1, 100, 321, 431), // wood
@@ -63,7 +61,7 @@ public class ToolItem extends Item {
 		this.type = type;
 		this.level = level;
 		
-		dur = type.durability; // initial durability fetched from the ToolType
+		dur = type.durability * (level+1); // initial durability fetched from the ToolType
 	}
 	
 	private static int getColor(ToolType type, int level) {
@@ -87,10 +85,9 @@ public class ToolItem extends Item {
 	
 	@Override
 	public boolean interactOn(Tile tile, Level level, int xt, int yt, Player player, Direction attackDir) {
-		if (type == ToolType.FishingRod && dur > 0) {
-			if (tile == Tiles.get("water")) {
+		if (type == ToolType.FishingRod && tile == Tiles.get("water")) {
+			if (payDurability()) {
 				player.goFishing(player.x - 5, player.y - 5);
-				if(!Game.isMode("creative")) dur--;
 				return true;
 			}
 		}
@@ -107,8 +104,16 @@ public class ToolItem extends Item {
 		return true;
 	}
 	
+	public boolean payDurability() {
+		if(dur <= 0) return false;
+		if(!Game.isMode("creative")) dur--;
+		return true;
+	}
+	
 	/** Gets the attack damage bonus from an item/tool (sword/axe) */
 	public int getAttackDamageBonus(Entity e) {
+		if(!payDurability())
+			return 0;
 		
 		if(e instanceof Mob) {
 			if (type == ToolType.Axe) {
@@ -126,6 +131,11 @@ public class ToolItem extends Item {
 		//if(e instanceof Spawner)
 		
 		return 0;
+	}
+	
+	@Override
+	public String getData() {
+		return super.getData()+"_"+dur;
 	}
 	
 	/** Sees if this item equals another. */
