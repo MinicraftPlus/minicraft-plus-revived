@@ -18,7 +18,9 @@ import minicraft.level.Level;
 
 public class TreeTile extends Tile {
 	//private ConnectorSprite sprite = new ConnectorSprite();
-	
+
+	public boolean canHurt = true;
+
 	protected TreeTile(String name) {
 		super(name, (ConnectorSprite)null);
 		connectsToGrass = true;

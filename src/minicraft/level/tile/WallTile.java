@@ -24,6 +24,8 @@ public class WallTile extends Tile {
 	private ConnectorSprite sprite;
 	
 	protected Material type;
+
+	public boolean canHurt = true;
 	
 	protected WallTile(Material type) {
 		super(type.name()+" Wall", (ConnectorSprite)null);

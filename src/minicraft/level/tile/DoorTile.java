@@ -19,6 +19,8 @@ public class DoorTile extends Tile {
 	private Sprite openSprite = new Sprite(0, 24, 2, 2);
 	
 	protected Material type;
+
+	public boolean canHurt = true;
 	
 	protected DoorTile(Material type) {
 		super(type.name() + " Door", (Sprite)null);

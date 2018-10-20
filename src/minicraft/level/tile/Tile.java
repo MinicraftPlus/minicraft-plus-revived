@@ -33,6 +33,8 @@ public abstract class Tile {
 	public boolean connectsToWater = false;
 	public int light;
 	protected boolean maySpawn;
+
+	public boolean canHurt = false;
 	
 	protected Sprite sprite;
 	protected ConnectorSprite csprite;

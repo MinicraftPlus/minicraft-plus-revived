@@ -533,6 +533,7 @@ public class Player extends Mob implements ItemHolder, ClientTickable {
 				if (!Game.isMode("creative")) inventory.removeItem(Items.arrowItem);
 				level.add(new Arrow(this, attackDir, tool.level));
 				attackTime = 10;
+				((ToolItem) activeItem).dur--;
 				return; // we have attacked!
 			}
 		}
@@ -556,6 +557,7 @@ public class Player extends Mob implements ItemHolder, ClientTickable {
 						done = true;
 					} else { // item can't interact with tile
 						if(tile.interact(level, t.x, t.y, this, activeItem, attackDir)) { // returns true if the target tile successfully interacts with the item.
+							if (activeItem != null && activeItem instanceof ToolItem) ((ToolItem) activeItem).dur--;
 							done = true;
 						}
 					}
@@ -573,19 +575,24 @@ public class Player extends Mob implements ItemHolder, ClientTickable {
 				}
 			}
 		}
-		
+
 		if (done) return; // skip the rest if interaction was handled.
 		
 		if (activeItem == null || activeItem.canAttack()) { // if there is no active item, OR if the item can be used to attack...
 			attackTime = 5;
 			// attacks the enemy in the appropriate direction.
-			hurt(getInteractionBox(ATTACK_DIST));
+			if (hurt(getInteractionBox(ATTACK_DIST))) {
+				if (activeItem != null && activeItem instanceof ToolItem) ((ToolItem) activeItem).dur--;
+			}
 			
 			// attempts to hurt the tile in the appropriate direction.
 			Point t = getInteractionTile();
 			if (t.x >= 0 && t.y >= 0 && t.x < level.w && t.y < level.h) {
 				Tile tile = level.getTile(t.x, t.y);
 				tile.hurt(level, t.x, t.y, this, random.nextInt(3) + 1, attackDir);
+				if (tile.canHurt) {
+					if (activeItem != null && activeItem instanceof ToolItem) ((ToolItem) activeItem).dur--;
+				}
 			}
 		}
 	}
@@ -644,13 +651,17 @@ public class Player extends Mob implements ItemHolder, ClientTickable {
 	}
 	
 	/** same, but for attacking. */
-	private void hurt(Rectangle area) {
+	private boolean hurt(Rectangle area) {
 		List<Entity> entities = level.getEntitiesInRect(area);
 		for (int i = 0; i < entities.size(); i++) {
 			Entity e = entities.get(i);
-			if (e != this && e instanceof Mob) ((Mob)e).hurt(this, getAttackDamage(e), attackDir); // note: this really only does something for mobs.
+			if (e != this && e instanceof Mob) {
+				((Mob)e).hurt(this, getAttackDamage(e), attackDir); // note: this really only does something for mobs.
+				return true;
+			}
 			if (e != this && e instanceof Furniture) e.interact(this, null, attackDir); // note: this really only does something for mobs.
 		}
+		return false;
 	}
 	
 	/**

@@ -14,7 +14,9 @@ import minicraft.level.Level;
 
 public class CactusTile extends Tile {
 	private static Sprite sprite = new Sprite(8, 2, 2, 2, Color.get(30, 40, 50, 550));
-	
+
+	public boolean canHurt = true;
+
 	protected CactusTile(String name) {
 		super(name, sprite);
 		connectsToSand = true;

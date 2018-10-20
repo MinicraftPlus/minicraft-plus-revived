@@ -37,8 +37,7 @@ public class ToolItem extends Item {
 	
 	public ToolType type; // Type of tool (Sword, hoe, axe, pickaxe, shovel)
 	public int level; // Level of said tool
-	public int dur; // the durability of the tool; currently only used for fishing rod.
-	// TODO implement durabilities for all tools?
+	public int dur; // the durability of the tool
 	
 	public static final int[] LEVEL_COLORS = { // Colors of the tools, same position as LEVEL_NAMES
 		Color.get(-1, 100, 321, 431), // wood
@@ -55,6 +54,14 @@ public class ToolItem extends Item {
 		Color.get(-1, 100, 444, 550),
 		Color.get(-1, 100, 444, 55),
 	};
+
+	public static final int[] MATERIAL_DUR = { // Durability multipliers for the materials
+			1,
+			2,
+			3,
+			2,
+			5,
+	};
 	
 	/** Tool Item, requires a tool type (ToolType.Sword, ToolType.Axe, ToolType.Hoe, etc) and a level (0 = wood, 2 = iron, 4 = gem, etc) */
 	public ToolItem(ToolType type, int level) {
@@ -63,7 +70,7 @@ public class ToolItem extends Item {
 		this.type = type;
 		this.level = level;
 		
-		dur = type.durability; // initial durability fetched from the ToolType
+		dur = type.durability * MATERIAL_DUR[level]; // initial durability fetched from the ToolType
 	}
 	
 	private static int getColor(ToolType type, int level) {

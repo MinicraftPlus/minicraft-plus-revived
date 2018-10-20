@@ -24,6 +24,8 @@ public class RockTile extends Tile {
 	private ConnectorSprite sprite = new ConnectorSprite(RockTile.class, new Sprite(4, 0, 3, 3, Color.get(111, 444, 555, 321), 3), new Sprite(7, 0, 2, 2, Color.get(111, 444, 555, 321), 3), Sprite.dots(Color.get(444, 444, 333, 333)));
 	
 	private int coallvl = 0;
+
+	public boolean canHurt = true;
 	
 	protected RockTile(String name) {
 		super(name, (ConnectorSprite)null);

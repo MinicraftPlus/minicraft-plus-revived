@@ -20,6 +20,8 @@ import minicraft.level.Level;
 public class OreTile extends Tile {
 	private Sprite sprite;
 	private OreType type;
+
+	public boolean canHurt = true;
 	
 	public enum OreType {
         Iron (Items.get("Iron Ore"), Color.get(-1, 100, 322, 544)),

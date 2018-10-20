@@ -12,6 +12,8 @@ public class SaplingTile extends Tile {
 	
 	private Tile onType;
 	private Tile growsTo;
+
+	public boolean canHurt = true;
 	
 	protected SaplingTile(String name, Tile onType, Tile growsTo) {
 		super(name, sprite);
