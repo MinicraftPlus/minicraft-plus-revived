@@ -1,5 +1,11 @@
 package minicraft.core;
 
+import javax.swing.JOptionPane;
+import javax.swing.JScrollPane;
+import javax.swing.JTextArea;
+
+import java.io.PrintWriter;
+import java.io.StringWriter;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -82,6 +88,19 @@ public class Game {
 	
 	
 	public static void main(String[] args) {
+		Thread.setDefaultUncaughtExceptionHandler((thread, throwable) -> {
+			throwable.printStackTrace();
+			
+			StringWriter string = new StringWriter();
+			PrintWriter printer = new PrintWriter(string);
+			throwable.printStackTrace(printer);
+			
+			JTextArea errorDisplay = new JTextArea(string.toString());
+			errorDisplay.setEditable(false);
+			JScrollPane errorPane = new JScrollPane(errorDisplay);
+			JOptionPane.showMessageDialog(null, errorPane, "An error has occurred", JOptionPane.ERROR_MESSAGE);
+		});
+		
 		Initializer.parseArgs(args);
 		
 		input = new InputHandler(Renderer.canvas);
