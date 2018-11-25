@@ -278,6 +278,7 @@ public class MultiplayerDisplay extends Display {
 	
 	public void setError(String msg) { setError(msg, true); }
 	private void setError(String msg, boolean overrideMenu) {
+		if(curState == State.ERROR) return; // keep original message
 		this.curState = State.ERROR;
 		errorMessage = msg;
 		if(overrideMenu && Game.getMenu() != this && Game.isValidClient())
