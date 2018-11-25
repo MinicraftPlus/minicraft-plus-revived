@@ -519,8 +519,7 @@ public class Player extends Mob implements ItemHolder, ClientTickable {
 				inventory.removeItem(Items.arrowItem); // do it here so we don't need a response.
 			
 			return;
-		}// else if(Game.isValidClient())
-		//	return;
+		}
 		
 		attackDir = dir; // make the attack direction equal the current direction
 		attackItem = activeItem; // make attackItem equal activeItem

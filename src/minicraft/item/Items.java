@@ -68,6 +68,15 @@ public class Items {
 			}
 			name = name.substring(0, name.indexOf("_"));
 		}
+		else if(name.contains(";")) {
+			hadUnderscore = true;
+			try {
+				amount = Integer.parseInt(name.substring(name.indexOf(";")+1));
+			} catch(Exception ex) {
+				ex.printStackTrace();
+			}
+			name = name.substring(0, name.indexOf(";"));
+		}
 		
 		if(name.equals("NULL")) {
 			if(allowNull) return null;
