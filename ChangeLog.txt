@@ -2,6 +2,7 @@ Minicraft+ version 2.0.5
 
 + Added tool durability to all tools
 * Updated door sprites and a couple others in minor ways
+* Fixed a couple more multiplayer bugs
 
 
 Minicraft+ version 2.0.4
