@@ -486,7 +486,7 @@ public class ConsoleReader extends Thread {
 	}
 	
 	public void run() {
-		Scanner stdin = new Scanner(System.in).useDelimiter(System.lineSeparator());
+		Scanner stdin = new Scanner(System.in);//.useDelimiter(System.lineSeparator());
 		try {
 			Thread.sleep(500); // this is to let it get past the debug statements at world load, and any others, maybe, if not in debug mode.
 		} catch(InterruptedException ignored) {}
@@ -495,7 +495,7 @@ public class ConsoleReader extends Thread {
 		while(shouldRun/* && stdin.hasNext()*/) {
 			System.out.println();
 			System.out.print("Enter a command: ");
-			String command = stdin.next().trim();
+			String command = stdin.nextLine().trim();
 			if(command.length() == 0) continue;
 			List<String> parsed = new ArrayList<>();
 			parsed.addAll(Arrays.asList(command.split(" ")));
