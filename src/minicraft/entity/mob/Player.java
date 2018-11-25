@@ -942,6 +942,8 @@ public class Player extends Mob implements ItemHolder, ClientTickable {
 				}
 			}
 		}
+		else
+			Sound.monsterHurt.play();
 		
 		if(healthDam > 0 || !fullPlayer) {
 			level.add(new TextParticle("" + damage, x, y, Color.get(-1, 504)));
