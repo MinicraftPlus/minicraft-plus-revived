@@ -74,8 +74,9 @@ public class ConsoleReader extends Thread {
 		},
 		
 		STATUS
-		(null, "display some server stats.", "displays server fps, and number of players connected.") {
+		(null, "display some server stats.", "displays game version, server fps, and number of players connected.") {
 			public void run(String[] args) {
+				System.out.println("running "+Game.NAME+' '+Game.VERSION+(Game.debug?" (debug mode)":""));
 				System.out.println("fps: " + Initializer.getCurFps());
 				System.out.println("players connected: " + Game.server.getNumPlayers());
 				for(String info: Game.server.getClientInfo())
