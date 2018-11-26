@@ -23,7 +23,7 @@ Min
 Min 
 	
  Sec left!
-Minuto  segundo!
+Segundo restante!
 
 # DungeonChest.java
 You hear a noise from the surface!
@@ -85,7 +85,7 @@ Book
 Livro
 
 Antidious
-Antidoso
+Gibi
 
 # BucketItem.java
 
@@ -104,31 +104,31 @@ Balde com Lava
 # ClothingItem.java
 
 Red Clothes
-Vestimenta Vermelha
+Camisa Vermelha
 
 Blue Clothes
-Vestimenta Azul
+Camisa Azul
 
 Green Clothes
-Vestimenta Verde
+Camisa Verde
 
 Yellow Clothes
-Vestimenta Amarela
+Camisa Amarela
 
 Black Clothes
-Vestimenta Preta
+Camisa Preta
 
 Orange Clothes
-Vestimenta Laranja
+Camisa Laranja
 
 Purple Clothes
-Vestimenta Lilás
+Camisa Lilás
 
 Cyan Clothes
-Vestimenta Ciana
+Camisa Ciana
 
 Reg Clothes
-Vestimenta Regular
+Camisa Regular
 
 # FoodItem.java
 
@@ -165,34 +165,34 @@ Maçã Dourada
 # FurnitureItem.java
 
 Cow Spawner
-Invocador de Vaca
+Invocar Vaca
 
 Pig Spawner
-Invocador de Porco
+Invocar Porco
 
 Sheep Spawner
-Invocador de Cabra
+Invocar Cabra
 
 Slime Spawner
-Invocador de Gosma
+Invocar Gosma
 
 Zombie Spawner
-Invocador de Zumbi
+Invocar Zumbi
 
 Creeper Spawner
-Invocador de Creeper
+Invocar Creeper
 
 Skeleton Spawner
-Invocador de Esqueleto
+Invocar Esqueleto
 
 Snake Spawner
-Invocador de Cobra
+Invocar Cobra
 
 Knight Spawner
-Invocador de Cavaleiro
+Invocar Cavaleiro
 
 AirWizard Spawner
-Invocador do Mago dos ventos
+Invocar Mago dos Ventos
 
 Workbench
 Mesa de fabricação
@@ -213,13 +213,13 @@ Loom
 Costureira
 
 Lantern
-Lanterna
+Lamparina
 
 Iron Lantern
-Lanterna de Aço
+Lamparina de Aço
 
 Gold Lantern
-Lanterna Dourada
+Lamparina de Ouro
 
 Tnt
 Dinamite

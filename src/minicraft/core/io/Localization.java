@@ -1,9 +1,13 @@
 package minicraft.core.io;
 
+import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.net.URISyntaxException;
 import java.net.URL;
+import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.DirectoryStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -12,7 +16,9 @@ import java.security.CodeSource;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Locale;
+import java.util.stream.Collectors;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 
@@ -51,6 +57,8 @@ public class Localization {
 		
 		String localString = localization.get(string);
 		
+		// System.out.println(string +" to "+localString);
+		
 		if (Game.debug && localString == null) {
 			if(!knownUnlocalizedStrings.contains(string))
 				System.out.println("The string \"" + string + "\" is not localized, returning itself instead.");
@@ -73,6 +81,9 @@ public class Localization {
 	private static void loadSelectedLanguageFile() {
 		String fileText = getFileAsString();
 		
+		// System.out.println("file:");
+		// System.out.println(fileText);
+		
 		String currentKey = "";
 		
 		for (String line : fileText.split("\r\n|\n|\r")) {
@@ -91,10 +102,11 @@ public class Localization {
 	
 	@NotNull
 	private static String getFileAsString() {
-		int character;
-		StringBuilder builder = new StringBuilder();
+		// int character;
+		// StringBuilder builder = new StringBuilder();
 		
-		try (InputStream fileStream = Game.class.getResourceAsStream(localizationFiles.get(selectedLanguage))) {
+		BufferedReader reader = new BufferedReader(new InputStreamReader(Game.class.getResourceAsStream(localizationFiles.get(selectedLanguage)), selectedLanguage.equals("portugues")?StandardCharsets.UTF_8 : Charset.defaultCharset()));
+		/*try (InputStream fileStream = ) {
 			character = fileStream.read();
 			do {
 				builder.append((char)character);
@@ -102,10 +114,11 @@ public class Localization {
 			} while (character != -1);
 		} catch (IOException e) {
 			e.printStackTrace();
-		}
+		}*/
+		return String.join("\n", reader.lines().toArray(String[]::new));
 		// Using getResourceAsStream since we're publishing this as a jar file.
 		
-		return builder.toString();
+		// return builder.toString();
 	}
 	
 	@NotNull
