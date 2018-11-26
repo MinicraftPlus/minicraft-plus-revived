@@ -7,6 +7,7 @@ import java.util.Locale;
 import java.util.Random;
 
 import minicraft.core.Game;
+import minicraft.core.io.Localization;
 import minicraft.core.io.Settings;
 import minicraft.gfx.Color;
 import minicraft.gfx.Font;
@@ -43,7 +44,7 @@ public class WorldGenDisplay extends Display {
 			
 			@Override
 			public String getUserInput() {
-				return super.getUserInput().toLowerCase(Locale.ENGLISH);
+				return super.getUserInput().toLowerCase(Localization.getSelectedLocale());
 			}
 		};
 	}

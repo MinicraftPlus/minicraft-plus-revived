@@ -93,7 +93,7 @@ public class ConsoleReader extends Thread {
 				} else {
 					Config configOption = null;
 					try {
-						configOption = Enum.valueOf(Config.class, args[0].toUpperCase(Locale.ENGLISH));
+						configOption = Enum.valueOf(Config.class, args[0].toUpperCase(Localization.getSelectedLocale()));
 					} catch(IllegalArgumentException ex) {
 						System.out.println("\""+args[0]+"\" is not a valid config option. run \"config\" for a list of the available config options.");
 					}
@@ -405,7 +405,7 @@ public class ConsoleReader extends Thread {
 				return null;
 			}
 			
-			String target = args[0].substring(1).toLowerCase(Locale.ENGLISH); // cut off "@"
+			String target = args[0].substring(1).toLowerCase(Localization.getSelectedLocale()); // cut off "@"
 			List<Entity> allEntities = new ArrayList<>();
 			
 			if(args.length == 2) {
@@ -534,7 +534,7 @@ public class ConsoleReader extends Thread {
 	private static Command getCommandByName(String name) {
 		Command cmd = null;
 		try {
-			cmd = Enum.valueOf(Command.class, name.toUpperCase(Locale.ENGLISH));
+			cmd = Enum.valueOf(Command.class, name.toUpperCase(Localization.getSelectedLocale()));
 		} catch(IllegalArgumentException ex) {
 			System.out.println("unknown command: \"" + name + "\"");
 		}

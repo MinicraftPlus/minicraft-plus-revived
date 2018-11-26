@@ -12,6 +12,7 @@ import java.security.CodeSource;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Locale;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 
@@ -26,6 +27,9 @@ public class Localization {
 	
 	private static HashMap<String, String> localization = new HashMap<>();
 	private static String selectedLanguage = "english";
+	
+	private static HashMap<String, Locale> locales = new HashMap<>();
+	private static HashMap<String, String> localizationFiles = new HashMap<>();
 	
 	private static String[] loadedLanguages = getLanguagesFromDirectory();
 	
@@ -55,6 +59,8 @@ public class Localization {
 		
 		return (localString == null ? string : localString);
 	}
+	
+	public static Locale getSelectedLocale() { return locales.get(selectedLanguage); }
 	
 	@NotNull
 	public static String getSelectedLanguage() { return selectedLanguage; }
@@ -88,8 +94,7 @@ public class Localization {
 		int character;
 		StringBuilder builder = new StringBuilder();
 		
-		// Using getResourceAsStream since we're publishing this as a jar file.
-		try (InputStream fileStream = Game.class.getResourceAsStream("/resources/localization/" + selectedLanguage + ".mcpl")) {
+		try (InputStream fileStream = Game.class.getResourceAsStream(localizationFiles.get(selectedLanguage))) {
 			character = fileStream.read();
 			do {
 				builder.append((char)character);
@@ -98,22 +103,10 @@ public class Localization {
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
+		// Using getResourceAsStream since we're publishing this as a jar file.
 		
 		return builder.toString();
 	}
-	
-	/*private static boolean isEmptyOrWhitespace(String string) {
-		int whitespaceCount = 0;
-		
-		for (char c : string.toCharArray())
-			if (c == ' ')
-				whitespaceCount++;
-		
-		if (string.isEmpty()) return true;
-		if (whitespaceCount >= string.length()) return true;
-		
-		return false;
-	}*/
 	
 	@NotNull
 	public static String[] getLanguages() { return loadedLanguages; }
@@ -144,8 +137,12 @@ public class Localization {
 					}
 					reads++;
 					String name = e.getName();
-					if (name.startsWith("resources/localization/") && name.contains(".mcpl")) {
-						languages.add(name.replace("resources/localization/", "").replace(".mcpl", ""));
+					if (name.startsWith("resources/localization/") && name.endsWith(".mcpl")) {
+						String data = name.replace("resources/localization/", "").replace(".mcpl", "");
+						String lang = data.substring(0, data.indexOf('_'));
+						languages.add(lang);
+						localizationFiles.put(lang, '/'+name);
+						locales.put(lang, Locale.forLanguageTag(data.substring(data.indexOf('_')+1)));
 					}
 				}
 			}
