@@ -260,14 +260,18 @@ public class Level {
 			
 			if(!inLevel) {
 				if(Game.isValidServer())
-					Game.server.broadcastEntityAddition(entity, true);
+					if (!(Settings.get("diff") == "Peaceful" && entity instanceof EnemyMob))
+						Game.server.broadcastEntityAddition(entity, true);
 				
 				if (!Game.isValidServer() || !(entity instanceof Particle)) {
-					if (Game.debug) printEntityStatus("Adding ", entity, "furniture.DungeonChest", "mob.AirWizard", "mob.Player");
-					
-					entities.add(entity);
-					if(entity instanceof Player)
-						players.add((Player)entity);
+					if (!(Settings.get("diff") == "Peaceful" && entity instanceof EnemyMob)) {
+						if (Game.debug)
+							printEntityStatus("Adding ", entity, "furniture.DungeonChest", "mob.AirWizard", "mob.Player");
+
+						entities.add(entity);
+						if (entity instanceof Player)
+							players.add((Player) entity);
+					}
 				}
 			}
 			entitiesToAdd.remove(entity);
