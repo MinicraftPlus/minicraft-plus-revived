@@ -4,23 +4,30 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+import minicraft.core.io.Localization;
+
 public class Font {
 	// These are all the characters that will be translated to the screen. (The spaces are important)
-	private static String chars = "" + //
-                       "ABCDEFGHIJKLMNOPQRSTUVWXYZ      " + //
-                       "0123456789.,!?'\"-+=/\\%()<>:;^@bcdefghijklmnopqrstuvwxyz";//
+	private static String chars =
+		"ABCDEFGHIJKLMNOPQRSTUVWXYZ012345"+
+		"6789.,!?'\"-+=/\\%()<>:;^@¡…Õ”⁄—ø°"+
+		"√ «‘’";
 	
 	/* The order of the letters in the chars string is represented in the order that they appear in the sprite-sheet. */
 	
 	/** Draws the message to the x & y coordinates on the screen. */
 	public static void draw(String msg, Screen screen, int x, int y, int col) {
-		msg = msg.toUpperCase(java.util.Locale.ENGLISH); //makes all letters uppercase.
+		msg = msg.toUpperCase(Localization.getSelectedLocale()); //makes all letters uppercase.
 		for (int i = 0; i < msg.length(); i++) { // Loops through all the characters that you typed
 			int ix = chars.indexOf(msg.charAt(i)); // the current letter in the message loop
 			if (ix >= 0) {
 				// if that character's position is larger than or equal to 0, then render the character on the screen.
 				screen.render(x + i * textWidth(msg.substring(i, i+1)), y, ix + 30 * 32, col, 0);
 			}
+			/*System.out.println("ix="+ix+"; char="+msg.charAt(i));
+			if(msg.charAt(i) == 'Õ') {
+				System.out.println("ix="+ix+"; tile="+ix+"+30*32="+ix+30*32);
+			}*/
 		}
 	}
 	
