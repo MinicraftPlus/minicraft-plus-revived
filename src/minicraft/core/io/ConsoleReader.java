@@ -106,6 +106,7 @@ public class ConsoleReader extends Thread {
 							System.out.println(configOption.name()+" set successfully.");
 							/// HERE is where we save the modified config options.
 							new Save(WorldSelectDisplay.getWorldName(), Game.server);
+							new Save(); 	
 						} else
 							System.out.println("failed to set " + configOption.name());
 					}
