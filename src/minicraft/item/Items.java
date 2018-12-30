@@ -99,11 +99,12 @@ public class Items {
 		}
 		
 		if(i != null) {
+			i = i.clone();
 			if(i instanceof StackableItem)
 				((StackableItem)i).count = amount;
 			if(i instanceof ToolItem && hadUnderscore)
 				((ToolItem)i).dur = amount;
-			return i.clone();
+			return i;
 		} else {
 			System.out.println(Network.onlinePrefix()+"ITEMS GET: invalid name requested: \"" + name + "\"");
 			//Thread.dumpStack();

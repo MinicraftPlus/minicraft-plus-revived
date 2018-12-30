@@ -14,8 +14,8 @@ public enum ToolType {
 	//Pick (12);
 	
 	//public String name;
-	public int sprite; // sprite location on the spritesheet
-	public int durability;
+	public final int sprite; // sprite location on the spritesheet
+	public final int durability;
 	
 	ToolType(int sprite, int dur) {
 		this.sprite = sprite;
