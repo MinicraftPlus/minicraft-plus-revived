@@ -4,6 +4,9 @@ Minicraft+ version 2.0.5
 * Updated door sprites and a couple others in minor ways
 * Fixed a couple more multiplayer bugs
 + Added window popup to display errors
++ Added Spanish localization
+* Fixed some localization bugs
+* Fixed bug with item crafting and reference
 
 
 Minicraft+ version 2.0.4
