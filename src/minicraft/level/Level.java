@@ -213,7 +213,7 @@ public class Level {
 		
 		/// make DungeonChests!
 		for (int i = numChests; i < 10 * (w / 128); i++) {
-			DungeonChest d = new DungeonChest();
+			DungeonChest d = new DungeonChest(true);
 			boolean addedchest = false;
 			while(!addedchest) { // keep running until we successfully add a DungeonChest
 				//pick a random tile:

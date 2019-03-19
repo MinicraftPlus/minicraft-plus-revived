@@ -25,10 +25,12 @@ public class DungeonChest extends Chest {
 	
 	/**
 	 * Creates a custom chest with the name Dungeon Chest.
+	 * @param populateInv
 	 */
-	public DungeonChest() {
+	public DungeonChest(boolean populateInv) {
 		super("Dungeon Chest", lockCol);
-		populateInv();
+		if(populateInv)
+			populateInv();
 		
 		isLocked = true;
 	}
