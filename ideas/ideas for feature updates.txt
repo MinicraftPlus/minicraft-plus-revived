@@ -23,10 +23,6 @@ Give the player 20 health instead of 10; this means that 1 health will be a half
 
 ----
 
-Make it so a hoe on grass turns it into dirt, but with a *much* higher chance of producing seeds; like, maybe 95%
-
-----
-
 Make it so the world loading menu displays both a percentage and a message saying what it is doing, ie, "Generating surface level..."
 
 ----
