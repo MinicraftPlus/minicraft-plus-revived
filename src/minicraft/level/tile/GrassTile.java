@@ -59,9 +59,11 @@ public class GrassTile extends Tile {
 			if (tool.type == ToolType.Hoe) {
 				if (player.payStamina(4 - tool.level) && tool.payDurability()) {
 					Sound.monsterHurt.play();
-					if (random.nextInt(5) == 0) {
+					if (random.nextInt(5) < 4) {
 						level.dropItem(xt*16+8, yt*16+8, Items.get("seeds"));
-						return true;
+						if (random.nextInt(5) == 0) {
+							level.dropItem(xt*16+8, yt*16+8, Items.get("seeds"));
+						}
 					}
 					level.setTile(xt, yt, Tiles.get("farmland"));
 					return true;
