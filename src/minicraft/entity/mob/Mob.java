@@ -174,23 +174,24 @@ public abstract class Mob extends Entity {
 			doHurt(damage, tile.mayPass(level, x, y, this) ? Direction.NONE : attackDir); // Call the method that actually performs damage, and set it to no particular direction
 	}
 	
-	public void hurt(Mob mob, int damage) { hurt(mob, damage, getAttackDir(mob, this)); }
-	public void hurt(Mob mob, int damage, Direction attackDir) { // Hurt the mob, when the source is another mob
-		if(mob instanceof Player && Game.isMode("creative") && mob != this) doHurt(health, attackDir); // kill the mob instantly
-		else doHurt(damage, attackDir); // Call the method that actually performs damage, and use our provided attackDir
+	public boolean hurt(Mob mob, int damage) { return hurt(mob, damage, getAttackDir(mob, this)); }
+	public boolean hurt(Mob mob, int damage, Direction attackDir) { // Hurt the mob, when the source is another mob
+		if(mob instanceof Player && Game.isMode("creative") && mob != this) return doHurt(health, attackDir); // kill the mob instantly
+		else return doHurt(damage, attackDir); // Call the method that actually performs damage, and use our provided attackDir
 	}
 	
 	public void hurt(Tnt tnt, int dmg) { doHurt(dmg, getAttackDir(tnt, this)); }
 	
-	protected void doHurt(int damage, Direction attackDir) { // Actually hurt the mob, based on only damage and a direction
+	protected boolean doHurt(int damage, Direction attackDir) { // Actually hurt the mob, based on only damage and a direction
 		// this is overridden in Player.java
-		if (isRemoved() || hurtTime > 0) return; // If the mob has been hurt recently and hasn't cooled down, don't continue
+		if (isRemoved() || hurtTime > 0) return false; // If the mob has been hurt recently and hasn't cooled down, don't continue
 		
 		health -= damage; // Actually change the health
 		// add the knockback in the correct direction
 		xKnockback = attackDir.getX()*6;
 		yKnockback = attackDir.getY()*6;
 		hurtTime = 10; // Set a delay before we can be hurt again
+		return true;
 	}
 	
 	/**

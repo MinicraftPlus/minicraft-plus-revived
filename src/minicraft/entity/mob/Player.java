@@ -904,13 +904,16 @@ public class Player extends Mob implements ItemHolder, ClientTickable {
 	
 	/** What happens when the player is hurt */
 	@Override
-	protected void doHurt(int damage, Direction attackDir) {
-		if (Game.isMode("creative") || hurtTime > 0 || Bed.inBed(this)) return; // can't get hurt in creative, hurt cooldown, or while someone is in bed
-		
+	protected boolean doHurt(int damage, Direction attackDir) {
+		if (Game.isMode("creative") || hurtTime > 0 || Bed.inBed(this)) return false; // can't get hurt in creative, hurt cooldown, or while someone is in bed
+
+		boolean washurt = false;
+
 		if(Game.isValidServer() && this instanceof RemotePlayer) {
 			// let the clients deal with it.
 			Game.server.broadcastPlayerHurt(eid, damage, attackDir);
-			return;
+			// TODO: really should do something proper here, but I don't know how and we don't need the return for this
+			return false;
 		}
 		
 		boolean fullPlayer = !(Game.isValidClient() && this != Game.player);
@@ -947,10 +950,11 @@ public class Player extends Mob implements ItemHolder, ClientTickable {
 		
 		if(healthDam > 0 || !fullPlayer) {
 			level.add(new TextParticle("" + damage, x, y, Color.get(-1, 504)));
-			if(fullPlayer) super.doHurt(healthDam, attackDir); // sets knockback, and takes away health.
+			if(fullPlayer) washurt = super.doHurt(healthDam, attackDir); // sets knockback, and takes away health.
 		}
 		
 		hurtTime = playerHurtTime;
+		return washurt;
 	}
 	
 	@Override

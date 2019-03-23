@@ -119,11 +119,11 @@ public class AirWizard extends EnemyMob {
 	}
 	
 	@Override
-	public void doHurt(int damage, Direction attackDir) {
-		super.doHurt(damage, attackDir);
+	public boolean doHurt(int damage, Direction attackDir) {
 		if (attackDelay == 0 && attackTime == 0) {
 			attackDelay = 60 * 2;
 		}
+		return super.doHurt(damage, attackDir);
 	}
 	
 	@Override

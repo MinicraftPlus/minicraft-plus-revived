@@ -109,8 +109,8 @@ public abstract class MobAi extends Mob {
 	}
 	
 	@Override
-	public void doHurt(int damage, Direction attackDir) {
-		if (isRemoved() || hurtTime > 0) return; // If the mob has been hurt recently and hasn't cooled down, don't continue
+	public boolean doHurt(int damage, Direction attackDir) {
+		if (isRemoved() || hurtTime > 0) return false; // If the mob has been hurt recently and hasn't cooled down, don't continue
 		
 		Player player = getClosestPlayer();
 		if (player != null) { // If there is a player in the level
@@ -123,7 +123,7 @@ public abstract class MobAi extends Mob {
 		}
 		level.add(new TextParticle("" + damage, x, y, Color.RED)); // Make a text particle at this position in this level, bright red and displaying the damage inflicted
 		
-		super.doHurt(damage, attackDir);
+		return super.doHurt(damage, attackDir);
 	}
 	
 	@Override
