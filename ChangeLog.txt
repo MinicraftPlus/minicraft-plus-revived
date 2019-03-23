@@ -8,6 +8,8 @@ Minicraft+ version 2.0.5
 * Fixed some localization bugs
 * Fixed bug with item crafting and reference
 * Fixed bug with dungeon chests refilling on load
+* Allowed creative player to walk outside cloud tiles in the sky
+* Made hoe turn grass into dirt instead of straight to farmland; but with significantly higher chance of seeds
 
 
 Minicraft+ version 2.0.4
