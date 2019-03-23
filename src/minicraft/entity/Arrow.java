@@ -13,6 +13,7 @@ public class Arrow extends Entity implements ClientTickable {
 	private int damage;
 	public Mob owner;
 	private int speed;
+	private int mobsHit;
 	
 	public Arrow(Mob owner, Direction dir, int dmg) {
 		this(owner, owner.x, owner.y, dir, dmg);
@@ -30,6 +31,8 @@ public class Arrow extends Entity implements ClientTickable {
 		if (damage > 3) speed = 8;
 		else if (damage >= 0) speed = 7;
 		else speed = 6;
+
+		mobsHit = 0;
 		
 		/* // maybe this was a "critical arrow" system or something?
 		if (flag) {
@@ -66,6 +69,10 @@ public class Arrow extends Entity implements ClientTickable {
 				Mob mob = (Mob) hit;
 				int extradamage = (hit instanceof Player ? 0 : 3) + (criticalHit ? 0 : 1);
 				mob.hurt(owner, damage + extradamage, dir);
+				mobsHit++;
+				if (mobsHit > 1) {
+					this.remove();
+				}
 			}
 			
 			// if(owner instanceof Player && Game.isMode("creative") && Game.debug) {
