@@ -35,10 +35,6 @@ Add little black tics to the tile in front of you, so you know which tile things
 
 ----
 
-allow creative mode player to walk in sky without clouds.
-
-----
-
 Allow clients to add a port number to the end of the ip with ":". for example: 12.34.145.1:1122
 
 ----
