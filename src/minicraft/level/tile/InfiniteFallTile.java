@@ -19,6 +19,6 @@ public class InfiniteFallTile extends Tile {
 	public void tick(Level level, int xt, int yt) {}
 
 	public boolean mayPass(Level level, int x, int y, Entity e) {
-		return e instanceof AirWizard || e instanceof Player && ((Player) e).skinon || e instanceof Player && Game.isMode("creative");
+		return e instanceof AirWizard || e instanceof Player && ( ((Player) e).skinon || Game.isMode("creative") );
 	}
 }
