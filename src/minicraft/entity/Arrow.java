@@ -67,9 +67,9 @@ public class Arrow extends Entity implements ClientTickable {
 			
 			if (hit != null && hit instanceof Mob && hit != owner) {
 				Mob mob = (Mob) hit;
-				int extradamage = (hit instanceof Player ? 0 : 3) + (criticalHit ? 0 : 1);
-				mob.hurt(owner, damage + extradamage, dir);
 				mobsHit++;
+				int extradamage = (hit instanceof Player ? 0 : 3) + (criticalHit ? 0 : 1);
+				mob.hurt(owner, damage / (3 * (mobsHit - 1) + 1) + extradamage, dir);
 				if (mobsHit > 1) {
 					this.remove();
 				}
