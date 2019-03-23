@@ -1,5 +1,6 @@
 package minicraft.level.tile;
 
+import minicraft.core.Game;
 import minicraft.entity.Entity;
 import minicraft.entity.mob.AirWizard;
 import minicraft.entity.mob.Player;
@@ -18,6 +19,6 @@ public class InfiniteFallTile extends Tile {
 	public void tick(Level level, int xt, int yt) {}
 
 	public boolean mayPass(Level level, int x, int y, Entity e) {
-		return e instanceof AirWizard || e instanceof Player && ((Player) e).skinon;
+		return e instanceof AirWizard || e instanceof Player && ( ((Player) e).skinon || Game.isMode("creative") );
 	}
 }
