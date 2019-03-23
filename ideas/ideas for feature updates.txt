@@ -43,10 +43,6 @@ Allow clients to add a port number to the end of the ip with ":". for example: 1
 
 ----
 
-make arrows go away after hitting a certain number of enemies, or dealing a certain amount of damage
-
-----
-
 make creeper holes like TNT, just only one block. Though I should still have the thing where it hurts entities based on distance.
 
 ----
