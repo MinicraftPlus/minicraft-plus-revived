@@ -384,8 +384,12 @@ public class Renderer extends Game {
 			screen.render(xx - 8, yy + y * 8, 2 + 13 * 32, txtcolor, 0); // ...left part
 			screen.render(xx + w * 8, yy + y * 8, 2 + 13 * 32, txtcolor, 1); // ...right part
 		}
+
+		// cover up black spots from gaps in text
+		screen.render(xx + (w - 7) * 8, yy, 3 + 13 * 32, txtcolor, 0);
+		screen.render(xx + (w - 10) * 8, yy, 3 + 13 * 32, txtcolor, 0);
 		
-		//renders the focus nagger text with a flash effect...
+		// renders the focus nagger text with a flash effect...
 		if ((Updater.tickCount / 20) % 2 == 0) // ...medium yellow color
 			Font.draw(msg, screen, xx, yy, Color.get(5, 333));
 		else // ...bright yellow color
