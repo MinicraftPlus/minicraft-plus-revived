@@ -1,6 +1,9 @@
 package minicraft.item;
 
+import minicraft.core.Game;
+import minicraft.core.World;
 import minicraft.entity.mob.Player;
+import minicraft.entity.mob.RemotePlayer;
 
 public enum PotionType {
 	None (5, 0),
@@ -26,7 +29,29 @@ public enum PotionType {
 	Time (222, 1800),
 	Lava (400, 7200),
 	Shield (115, 5400),
-	Haste (303, 4800);
+	Haste (303, 4800),
+	Escape (211, 0) {
+		public boolean toggleEffect(Player player, boolean addEffect) {
+			if(addEffect) {
+				int playerDepth = player.getLevel().depth;
+
+				if(playerDepth >= 0) {
+					// player is in overworld
+					// TODO: still consumes potion even on failure
+					String note = "You can't escape from here!";
+					if(!Game.isValidServer())
+						Game.notifications.add(note); // add the notification telling you
+					else if(player instanceof RemotePlayer)
+						Game.server.getAssociatedThread((RemotePlayer)player).sendNotification(note, 0);
+					return false;
+				}
+
+				World.scheduleLevelChange(1);
+				player.findStartPos(Game.levels[playerDepth+4]);
+			}
+			return true;
+		}
+	};
 	
 	public int dispColor, duration;
 	public String name;
