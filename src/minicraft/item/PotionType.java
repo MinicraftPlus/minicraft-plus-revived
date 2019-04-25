@@ -24,6 +24,11 @@ public enum PotionType {
 			if(addEffect) player.heal(5);
 			return true;
 		}
+		
+		@Override
+		public boolean transmitEffect() {
+			return true; // technically the player update would tell the server of the increased health as well, but this potentially allows the server to know sooner.
+		}
 	},
 	
 	Time (222, 1800),
@@ -34,20 +39,18 @@ public enum PotionType {
 		public boolean toggleEffect(Player player, boolean addEffect) {
 			if(addEffect) {
 				int playerDepth = player.getLevel().depth;
-
+				
 				if(playerDepth >= 0) {
 					// player is in overworld
-					// TODO: still consumes potion even on failure
 					String note = "You can't escape from here!";
 					if(!Game.isValidServer())
-						Game.notifications.add(note); // add the notification telling you
-					else if(player instanceof RemotePlayer)
+						Game.notifications.add(note);
+					else if(player instanceof RemotePlayer) // technically, this is never going to be executed in the server...
 						Game.server.getAssociatedThread((RemotePlayer)player).sendNotification(note, 0);
 					return false;
 				}
-
+				
 				World.scheduleLevelChange(1);
-				player.findStartPos(Game.levels[playerDepth+4]);
 			}
 			return true;
 		}
@@ -64,7 +67,11 @@ public enum PotionType {
 	}
 	
 	public boolean toggleEffect(Player player, boolean addEffect) {
-		return true;
+		return duration > 0; // if you have no duration and do nothing, then you can't be used.
+	}
+	
+	public boolean transmitEffect() {
+		return duration > 0; // generally instant potions cause effects that are transmitted separately.
 	}
 	
 	public static final PotionType[] values = PotionType.values();
