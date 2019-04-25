@@ -507,8 +507,6 @@ public class MinicraftServer extends Thread implements MinicraftProtocol {
 					return false;
 				}
 				
-				// move the associated player to the level they requested -- they shouldn't be requesting it if they aren't going to transfer to it.
-				World.levels[levelidx].add(clientPlayer);
 				// if it's the same level, it will cancel out.
 				
 				byte[] tiledata = new byte[World.levels[levelidx].tiles.length*2];
@@ -524,6 +522,10 @@ public class MinicraftServer extends Thread implements MinicraftProtocol {
 				}
 				serverThread.sendData(InputType.TILES, tiledataString.substring(0, tiledataString.length()-1));
 				serverThread.sendCachedPackets();
+				
+				// move the associated player to the level they requested -- they shouldn't be requesting it if they aren't going to transfer to it.
+				// moved to after the tile data is sent so that the client doesn't try to add anything to the level before it gets created.
+				World.levels[levelidx].add(clientPlayer);
 				
 				/// send back the entities in the level specified.
 				

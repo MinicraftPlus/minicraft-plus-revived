@@ -250,10 +250,10 @@ public class Save {
 		data.add(String.valueOf(player.health));
 		data.add(String.valueOf(player.hunger));
 		data.add(String.valueOf(player.armor));
-		if(player.curArmor != null) {
+		// if(player.armor > 0) {
 			data.add(String.valueOf(player.armorDamageBuffer));
-			data.add(String.valueOf(player.curArmor.getName()));
-		}
+			data.add(String.valueOf(player.curArmor == null ? "NULL" : player.curArmor.getName()));
+		// }
 		data.add(String.valueOf(player.getScore()));
 		data.add(String.valueOf(Game.currentLevel));
 		

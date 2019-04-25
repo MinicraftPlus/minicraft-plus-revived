@@ -183,6 +183,7 @@ public class World extends Game {
 		if (nextLevel <= -1) nextLevel = levels.length-1; // fix accidental level underflow
 		if (nextLevel >= levels.length) nextLevel = 0; // fix accidental level overflow
 		//level = levels[currentLevel]; // sets the level to the current level
+		if(Game.debug) System.out.println(Network.onlinePrefix()+": setting level from "+currentLevel+" to "+nextLevel);
 		currentLevel = nextLevel;
 		
 		player.x = (player.x >> 4) * 16 + 8; // sets the player's x coord (to center yourself on the stairs)

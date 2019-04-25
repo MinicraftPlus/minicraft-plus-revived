@@ -78,7 +78,7 @@ public class Items {
 			name = name.substring(0, name.indexOf(";"));
 		}
 		
-		if(name.equals("NULL")) {
+		if(name.equalsIgnoreCase("NULL")) {
 			if(allowNull) return null;
 			else {
 				System.out.println("WARNING: Items.get passed argument \"null\" when null is not allowed; returning UnknownItem. StackTrace:");
@@ -107,7 +107,7 @@ public class Items {
 			return i;
 		} else {
 			System.out.println(Network.onlinePrefix()+"ITEMS GET: invalid name requested: \"" + name + "\"");
-			//Thread.dumpStack();
+			Thread.dumpStack();
 			return new UnknownItem(name);
 		}
 		/*if(!name.equals("")) { // name is not nothing

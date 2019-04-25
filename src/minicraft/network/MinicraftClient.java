@@ -103,6 +103,7 @@ public class MinicraftClient extends MinicraftConnection {
 	public int getPlayerCount() { return serverPlayerCount; }
 	
 	private void changeState(State newState) {
+		if(Game.debug) System.out.println("CLIENT: client state change from "+curState+" to "+newState);
 		curState = newState;
 		
 		switch(newState) {
@@ -211,7 +212,7 @@ public class MinicraftClient extends MinicraftConnection {
 					if (Game.debug) System.out.println("ignoring level tile data because client state is not LOADING: " + curState);
 					return false;
 				}
-				if (Game.debug) System.out.println("CLIENT: received tiles");
+				if (Game.debug) System.out.println("CLIENT: received tiles for level "+World.currentLevel);
 				/// receive tiles.
 				Level level = World.levels[World.currentLevel];
 				if(level == null) {
@@ -525,6 +526,7 @@ public class MinicraftClient extends MinicraftConnection {
 	public void sendBedExitRequest() { sendData(InputType.BED, "false"); }
 	
 	public void requestLevel(int lvlidx) {
+		if(Game.debug) System.out.println("CLIENT: setting level before request to be sure, from "+Game.currentLevel+" to "+lvlidx);
 		Game.currentLevel = lvlidx; // just in case.
 		changeState(State.LOADING);
 	}

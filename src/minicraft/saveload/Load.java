@@ -374,7 +374,7 @@ public class Load {
 			player.hunger = Integer.parseInt(data.remove(0));
 		player.armor = Integer.parseInt(data.remove(0));
 		
-		if(player.armor > 0) {
+		if(worldVer.compareTo(new Version("2.0.5-dev5")) >= 0 || player.armor > 0 || worldVer.compareTo(new Version("2.0.5-dev4")) == 0 && data.size() > 5) {
 			if(worldVer.compareTo(new Version("2.0.4-dev7")) < 0) {
 				// reverse order b/c we are taking from the end
 				player.curArmor = (ArmorItem) Items.get(data.remove(data.size()-1));
@@ -382,7 +382,12 @@ public class Load {
 			}
 			else {
 				player.armorDamageBuffer = Integer.parseInt(data.remove(0));
-				player.curArmor = (ArmorItem) Items.get(data.remove(0));
+				player.curArmor = (ArmorItem) Items.get(data.remove(0), true);
+				// not sure if I should fix "armor" or curArmor...
+				/*if(player.armor == 0) {
+					player.armorDamageBuffer = 0;
+					player.curArmor = null;
+				}*/
 			}
 		}
 		player.setScore(Integer.parseInt(data.remove(0)));

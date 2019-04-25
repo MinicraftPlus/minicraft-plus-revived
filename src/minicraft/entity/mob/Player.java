@@ -88,7 +88,7 @@ public class Player extends Mob implements ItemHolder, ClientTickable {
 	
 	public int hunger, stamina, armor; // the current stats
 	public int armorDamageBuffer;
-	public ArmorItem curArmor; // the color/type of armor to be displayed.
+	@Nullable public ArmorItem curArmor; // the color/type of armor to be displayed.
 	
 	private int staminaRecharge; // the ticks before charging a bolt of the player's stamina
 	private static final int maxStaminaRecharge = 10; // cutoff value for staminaRecharge
