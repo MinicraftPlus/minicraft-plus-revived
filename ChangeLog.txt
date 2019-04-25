@@ -2,7 +2,7 @@ Minicraft+ version 2.0.5
 
 + Added tool durability to all tools
 * Updated door sprites and a couple others in minor ways
-* Fixed a couple more multiplayer bugs
+* Fixed a couple more multiplayer bugs; also, as of dev6, players should stop crashing when changing levels
 + Added window popup to display errors
 + Added Spanish localization
 * Fixed some localization bugs
