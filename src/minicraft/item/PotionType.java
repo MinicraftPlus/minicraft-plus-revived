@@ -1,6 +1,11 @@
 package minicraft.item;
 
+import minicraft.core.Action;
+import minicraft.core.Game;
+import minicraft.core.World;
 import minicraft.entity.mob.Player;
+import minicraft.entity.mob.RemotePlayer;
+import minicraft.level.Level;
 
 public enum PotionType {
 	None (5, 0),
@@ -26,7 +31,33 @@ public enum PotionType {
 	Time (222, 1800),
 	Lava (400, 7200),
 	Shield (115, 5400),
-	Haste (303, 4800);
+	Haste (303, 4800),
+	
+	Escape (211, 0) {
+		public boolean toggleEffect(Player player, boolean addEffect) {
+			if(addEffect) {
+				int playerDepth = player.getLevel().depth;
+				
+				if(playerDepth == 0) {
+					if(!Game.isValidServer()) {
+						// player is in overworld
+						String note = "You can't escape from here!";
+						Game.notifications.add(note);
+					}
+					return false;
+				}
+				
+				int depthDiff = playerDepth > 0 ? -1 : 1;
+				
+				World.scheduleLevelChange(depthDiff, () -> {
+					Level plevel = World.levels[World.lvlIdx(playerDepth + depthDiff)];
+					if(plevel != null && !plevel.getTile(player.x >> 4, player.y >> 4).mayPass(plevel, player.x >> 4, player.y >> 4, player))
+						player.findStartPos(plevel, false);
+				});
+			}
+			return true;
+		}
+	};
 	
 	public int dispColor, duration;
 	public String name;
@@ -39,7 +70,12 @@ public enum PotionType {
 	}
 	
 	public boolean toggleEffect(Player player, boolean addEffect) {
-		return true;
+		return duration > 0; // if you have no duration and do nothing, then you can't be used.
+	}
+	
+	public boolean transmitEffect() {
+		return true; // any effect which could be duplicated and result poorly should not be sent to the server.
+		// for the case of the Health potion, the player health is not transmitted separately until after the potion effect finishes, so having it send just gets the change there earlier.
 	}
 	
 	public static final PotionType[] values = PotionType.values();

@@ -793,7 +793,8 @@ public class Player extends Mob implements ItemHolder, ClientTickable {
 	 * Finds the starting position for the player in a level.
 	 * @param level The level.
 	 */
-	public void findStartPos(Level level) {
+	public void findStartPos(Level level) { findStartPos(level, true); }
+	public void findStartPos(Level level, boolean setSpawn) {
 		Point spawnPos;
 		
 		List<Point> spawnTilePositions = level.getMatchingTiles(Tiles.get("grass"));
@@ -812,12 +813,14 @@ public class Player extends Mob implements ItemHolder, ClientTickable {
 		else // gets random valid spawn tile position.
 			spawnPos = spawnTilePositions.get(random.nextInt(spawnTilePositions.size()));
 		
-		// used to save (tile) coordinates of spawnpoint outside of this method.
-		spawnx = spawnPos.x;
-		spawny = spawnPos.y;
+		if(setSpawn) {
+			// used to save (tile) coordinates of spawnpoint outside of this method.
+			spawnx = spawnPos.x;
+			spawny = spawnPos.y;
+		}
 		// set (entity) coordinates of player to the center of the tile.
-		this.x = spawnx * 16 + 8; // conversion from tile coords to entity coords.
-		this.y = spawny * 16 + 8;
+		this.x = spawnPos.x * 16 + 8; // conversion from tile coords to entity coords.
+		this.y = spawnPos.y * 16 + 8;
 	}
 	
 	/**

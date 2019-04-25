@@ -9,8 +9,6 @@ Milk & bad status effects.
 
 Invisibility potion: Allows you to go through walls, but lava will still hurt you. If you get stuck in a wall, you will begin to take suffocation damage as in Minecraft.
 +
-Escape potion: Brings you up one level, or to the surface (haven't decided yet).
-+
 Ragdoll potion: Allows you to control other mobs, but not other players.
 
 ++++

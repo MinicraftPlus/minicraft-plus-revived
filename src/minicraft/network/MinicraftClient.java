@@ -239,6 +239,11 @@ public class MinicraftClient extends MinicraftConnection {
 				
 				menu.setLoadingMessage("Entities");
 				
+				if(World.onChangeAction != null) {
+					World.onChangeAction.act();
+					World.onChangeAction = null;
+				}
+				
 				return true;
 			
 			case ENTITIES:

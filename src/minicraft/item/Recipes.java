@@ -117,6 +117,7 @@ public class Recipes {
 		enchantRecipes.add(new Recipe("energy potion_1", "potion_1", "gem_25"));
 		enchantRecipes.add(new Recipe("regen potion_1", "potion_1", "Gold Apple_1"));
 		enchantRecipes.add(new Recipe("Health Potion_1", "potion_1", "GunPowder_2", "Leather Armor_1"));
+		enchantRecipes.add(new Recipe("Escape Potions_1", "potion_1", "GunPower_3", "lapis_7"));
 	}
 
 }

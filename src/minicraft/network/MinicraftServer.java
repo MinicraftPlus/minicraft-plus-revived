@@ -525,7 +525,11 @@ public class MinicraftServer extends Thread implements MinicraftProtocol {
 				
 				// move the associated player to the level they requested -- they shouldn't be requesting it if they aren't going to transfer to it.
 				// moved to after the tile data is sent so that the client doesn't try to add anything to the level before it gets created.
-				World.levels[levelidx].add(clientPlayer);
+				Level next = World.levels[levelidx];
+				if(clientPlayer.getLevel() != null && !next.getTile(clientPlayer.x >> 4, clientPlayer.y >> 4).mayPass(next, clientPlayer.x >> 4, clientPlayer.y >> 4, clientPlayer))
+					clientPlayer.findStartPos(next, false);
+				
+				next.add(clientPlayer);
 				
 				/// send back the entities in the level specified.
 				

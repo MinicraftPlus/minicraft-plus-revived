@@ -35,19 +35,20 @@ public class PotionItem extends StackableItem {
 		return super.interactOn(applyPotion(player, type, true));
 	}
 	
+	/// only ever called to load from file
 	public static boolean applyPotion(Player player, PotionType type, int time) {
 		boolean result = applyPotion(player, type, time > 0);
-		if(result) player.addPotionEffect(type, time);
+		if(result && time > 0) player.addPotionEffect(type, time); // overrides time
 		return result;
 	}
-	/// this method is seperate from the above method b/c this is called sepeately by Load.java.
+	/// main apply potion method
 	public static boolean applyPotion(Player player, PotionType type, boolean addEffect) {
-		if(type == PotionType.None) return false; // regular potions don't do anything.
-		
 		if(player.getPotionEffects().containsKey(type) != addEffect) { // if hasEffect, and is disabling, or doesn't have effect, and is enabling...
-			type.toggleEffect(player, addEffect);
+			if(!type.toggleEffect(player, addEffect))
+				return false; // usage failed
 			
-			if (Game.isValidServer() && player instanceof RemotePlayer) // transmit the effect
+			// transmit the effect; server never uses potions without this.
+			if (type.transmitEffect() && Game.isValidServer() && player instanceof RemotePlayer) 
 				Game.server.getAssociatedThread((RemotePlayer)player).sendPotionEffect(type, addEffect);
 		}
 		
