@@ -12,6 +12,8 @@ import minicraft.screen.PlayerDeathDisplay;
 import minicraft.screen.WorldGenDisplay;
 import minicraft.screen.WorldSelectDisplay;
 
+import org.jetbrains.annotations.Nullable;
+
 public class World extends Game {
 	private World() {}
 	
@@ -36,6 +38,8 @@ public class World extends Game {
 	
 	static int playerDeadTime; // the time after you die before the dead menu shows up.
 	static int pendingLevelChange; // used to determine if the player should change levels or not.
+	@Nullable
+	public static Action onChangeAction; // allows action to be stored during a change schedule that should only occur once the screen is blacked out.
 	
 	/// SCORE MODE
 	
@@ -162,7 +166,13 @@ public class World extends Game {
 	
 	
 	/** This method is called when you interact with stairs, this will give you the transition effect. While changeLevel(int) just changes the level. */
-	public static void scheduleLevelChange(int dir) { if(!isValidServer()) pendingLevelChange = dir; }
+	public static void scheduleLevelChange(int dir) { scheduleLevelChange(dir, null); }
+	public static void scheduleLevelChange(int dir, @Nullable Action changeAction) {
+		if(!isValidServer()) {
+			onChangeAction = changeAction;
+			pendingLevelChange = dir;
+		}
+	}
 	
 	/** This method changes the level that the player is currently on.
 	 * It takes 1 integer variable, which is used to tell the game which direction to go.
@@ -174,6 +184,11 @@ public class World extends Game {
 			return;
 		}
 		
+		if(onChangeAction != null && !Game.isConnectedClient()) {
+			onChangeAction.act();
+			onChangeAction = null;
+		}
+		
 		if(isConnectedClient())
 			levels[currentLevel].clearEntities(); // clear all the entities from the last level, so that no artifacts remain. They're loaded dynamically, anyway.
 		else
@@ -183,7 +198,7 @@ public class World extends Game {
 		if (nextLevel <= -1) nextLevel = levels.length-1; // fix accidental level underflow
 		if (nextLevel >= levels.length) nextLevel = 0; // fix accidental level overflow
 		//level = levels[currentLevel]; // sets the level to the current level
-		if(Game.debug) System.out.println(Network.onlinePrefix()+": setting level from "+currentLevel+" to "+nextLevel);
+		if(Game.debug) System.out.println(Network.onlinePrefix()+"setting level from "+currentLevel+" to "+nextLevel);
 		currentLevel = nextLevel;
 		
 		player.x = (player.x >> 4) * 16 + 8; // sets the player's x coord (to center yourself on the stairs)
