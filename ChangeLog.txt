@@ -12,6 +12,7 @@ Minicraft+ version 2.0.5
 * Made hoe turn grass into dirt instead of straight to farmland; but with significantly higher chance of seeds
 * Fixed bug with "Click to focus" text rendering
 * Fixed bug with armor loading
++ Added escape potion, which brings you one level closer to the surface from where it's used
 
 
 Minicraft+ version 2.0.4
