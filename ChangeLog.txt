@@ -11,6 +11,7 @@ Minicraft+ version 2.0.5
 * Allowed creative player to walk outside cloud tiles in the sky
 * Made hoe turn grass into dirt instead of straight to farmland; but with significantly higher chance of seeds
 * Fixed bug with "Click to focus" text rendering
+* Fixed bug with armor loading
 
 
 Minicraft+ version 2.0.4
