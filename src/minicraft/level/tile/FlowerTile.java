@@ -21,6 +21,21 @@ public class FlowerTile extends Tile {
 		connectsToGrass = true;
 		maySpawn = true;
 	}
+
+	public void tick(Level level, int xt, int yt) {
+		// TODO revise this method.
+		if (random.nextInt(30) != 0) return;
+
+		int xn = xt;
+		int yn = yt;
+
+		if (random.nextBoolean()) xn += random.nextInt(2) * 2 - 1;
+		else yn += random.nextInt(2) * 2 - 1;
+
+		if (level.getTile(xn, yn) == Tiles.get("dirt")) {
+			level.setTile(xn, yn, Tiles.get("grass"));
+		}
+	}
 	
 	public void render(Screen screen, Level level, int x, int y) {
 		Tiles.get("grass").render(screen, level, x, y);
