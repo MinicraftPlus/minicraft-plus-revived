@@ -20,7 +20,7 @@ public class StackableItem extends Item {
 		items.add(new StackableItem("Wheat", new Sprite(6, 4, Color.get(-1, 110, 330, 550))));
 		items.add(new StackableItem("Key", new Sprite(26, 4, Color.get(-1, -1, 444, 550))));
 		items.add(new StackableItem("arrow", new Sprite(13, 5, Color.get(-1, 111, 222, 430))));
-		items.add(new StackableItem("string", new Sprite(25, 4, Color.WHITE)));
+		items.add(new StackableItem("string", new Sprite(25, 4, Color.get(-1, 444, 555, 000))));
 		items.add(new StackableItem("Coal", new Sprite(10, 4, Color.get(-1, 000, 111, 111))));
 		items.add(new StackableItem("Iron Ore", new Sprite(10, 4, Color.get(-1, 100, 322, 544))));
 		items.add(new StackableItem("Lapis", new Sprite(10, 4, Color.get(-1, 005, 115, 115))));
