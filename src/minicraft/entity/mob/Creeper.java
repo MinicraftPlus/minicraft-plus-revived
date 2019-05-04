@@ -98,9 +98,13 @@ public class Creeper extends EnemyMob {
 					if(e instanceof Spawner)
 						skipEntities.add(e);
 				
-				if(skipEntities.size() == 0)
-					level.setAreaTiles(xt, yt, radius, Tiles.get("hole"), 0);
-				else {
+				if(skipEntities.size() == 0) {
+					if (level.depth != 1) {
+						level.setAreaTiles(xt, yt, radius, Tiles.get("hole"), 0);
+					} else {
+						level.setAreaTiles(xt, yt, radius, Tiles.get("Infinite Fall"), 0);
+					}
+				} else {
 					for(Point pos : tilePositions) {
 						boolean match = false;
 						for(Entity e: skipEntities) {
@@ -109,8 +113,13 @@ public class Creeper extends EnemyMob {
 								break;
 							}
 						}
-						if(!match)
-							level.setAreaTiles(pos.x, pos.y, 0, Tiles.get("hole"), 0);
+						if(!match) {
+							if (level.depth != 1) {
+								level.setAreaTiles(pos.x, pos.y, 0, Tiles.get("hole"), 0);
+							} else {
+								level.setAreaTiles(pos.x, pos.y, 0, Tiles.get("Infinite Fall"), 0);
+							}
+						}
 					}
 				}
 				
