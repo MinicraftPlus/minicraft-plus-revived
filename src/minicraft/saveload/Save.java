@@ -31,10 +31,7 @@ import minicraft.entity.mob.Player;
 import minicraft.entity.mob.RemotePlayer;
 import minicraft.entity.particle.Particle;
 import minicraft.entity.particle.TextParticle;
-import minicraft.item.Inventory;
-import minicraft.item.Item;
-import minicraft.item.PotionType;
-import minicraft.item.StackableItem;
+import minicraft.item.*;
 import minicraft.network.MinicraftServer;
 import minicraft.screen.LoadingDisplay;
 import minicraft.screen.MultiplayerDisplay;
@@ -335,6 +332,8 @@ public class Save {
 				extradata.append(":").append(item.getName());
 				if(item instanceof StackableItem)
 					extradata.append(";").append(chest.getInventory().count(item));
+				if(item instanceof ToolItem)
+					extradata.append(".").append(((ToolItem)item).dur);
 			}
 			
 			if(chest instanceof DeathChest) extradata.append(":").append(((DeathChest) chest).time);
