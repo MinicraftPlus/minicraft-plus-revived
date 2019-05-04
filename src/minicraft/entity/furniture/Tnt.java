@@ -99,7 +99,11 @@ public class Tnt extends Furniture implements ActionListener {
 		explodeTimer.stop();
 		int xt = x >> 4;
 		int yt = (y - 2) >> 4;
-		levelSave.setAreaTiles(xt, yt, 1, Tiles.get("hole"), 0);
+		if (levelSave.depth != 1) {
+			levelSave.setAreaTiles(xt, yt, 1, Tiles.get("hole"), 0);
+		} else {
+			levelSave.setAreaTiles(xt, yt, 1, Tiles.get("Infinite Fall"), 0);
+		}
 		levelSave = null;
 	}
 	
