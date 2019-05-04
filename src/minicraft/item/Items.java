@@ -22,8 +22,6 @@ public class Items {
 	private static ArrayList<Item> items = new ArrayList<>();
 	
 	private static void add(Item i) {
-		String name = i.getName().toUpperCase();
-		//if(Game.debug) System.out.println("adding " + name);
 		items.add(i);
 	}
 	private static void addAll(ArrayList<Item> items) {
@@ -31,7 +29,6 @@ public class Items {
 	}
 	
 	static {
-		//add(new UnknownItem());
 		add(new PowerGloveItem());
 		addAll(FurnitureItem.getAllInstances());
 		addAll(TorchItem.getAllInstances());
@@ -110,20 +107,6 @@ public class Items {
 			Thread.dumpStack();
 			return new UnknownItem(name);
 		}
-		/*if(!name.equals("")) { // name is not nothing
-			if(name.contains(";")) { // if has ";" in name for whatever reason...
-				name = name.substring(0, name.indexOf(";")); // cut it off, plus anything after it.
-			}
-			
-			for(int i = 0; i < items.size(); i++) { // loop through the items
-				if(items.get(i).getName().equals(name)) { // if names match
-					return items.get(i);//.clone(); // set the item
-				}
-			}
-		}
-		
-		return null;
-		*/
 	}
 	
 	public static Item arrowItem = get("arrow");
