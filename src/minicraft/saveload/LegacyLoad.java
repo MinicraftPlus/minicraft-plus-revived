@@ -200,14 +200,13 @@ public class LegacyLoad {
 			
 			for(int x = 0; x < lvlw - 1; x++) {
 				for(int y = 0; y < lvlh - 1; y++) {
-					int tileArrIdx = /*worldVer.compareTo(new Version("1.9.3-dev3")) < 0 ?*/ y + x * lvlw;// : x + y * lvlw;
+					int tileArrIdx = y + x * lvlw;
 					int tileidx = x + y * lvlw; // the tiles are saved with x outer loop, and y inner loop, meaning that the list reads down, then right one, rather than right, then down one.
 					tiles[tileArrIdx] = Tiles.get(Tiles.oldids.get(Integer.parseInt(data.get(tileidx + 3)))).id;
 					tdata[tileArrIdx] = Byte.parseByte(extradata.get(tileidx));
 				}
 			}
-			
-			//Level parent = l == World.levels.length-1 ? null : World.levels[l+1];
+
 			World.levels[l] = new Level(lvlw, lvlh, lvldepth, null, false);
 			World.levels[l].tiles = tiles;
 			World.levels[l].data = tdata;
@@ -230,8 +229,7 @@ public class LegacyLoad {
 				player.armorDamageBuffer = Integer.parseInt(data.get(13));
 				player.curArmor = (ArmorItem)Items.get(data.get(14));
 			} else player.armor = 0;
-			
-			//player.ac = Integer.parseInt(data.get(7));
+
 			Game.currentLevel = Integer.parseInt(data.get(8));
 			modedata = data.get(9);
 			
@@ -366,16 +364,6 @@ public class LegacyLoad {
 						if(worldVer.compareTo(new Version("1.9.1")) < 0) // if this world is before 1.9.1
 							if(itemData.equals("")) continue; // this skips any null items
 						loadItemToInventory(itemData, chest.getInventory());
-						/*if(oldSave) itemData = subOldName(itemData);
-						Item item = Items.get(itemData);
-						if (item instanceof StackableItem) {
-							String[] aitemData = (itemData + ";1").split(";"); // this appends ";1" to the end, meaning one item, to everything; but if it was already there, then it becomes the 3rd element in the list, which is ignored.
-							StackableItem stack = (StackableItem)Items.get(aitemData[0]);
-							stack.count = Integer.parseInt(aitemData[1]);
-							chest.getInventory().add(stack);
-						} else {
-							chest.getInventory().add(item);
-						}*/
 					}
 					
 					if (isDeathChest) {
@@ -389,8 +377,6 @@ public class LegacyLoad {
 				}
 				else if(newEntity instanceof Spawner) {
 					Spawner egg = new Spawner((MobAi)getEntity(info.get(2), player, Integer.parseInt(info.get(3))));
-					//egg.lvl = Integer.parseInt(info.get(3));
-					//egg.initMob((MobAi)getEntity(info.get(2), player, info.get(3)));
 					currentlevel = Integer.parseInt(info.get(info.size() - 1));
 					World.levels[currentlevel].add(egg, x, y);
 				}
@@ -430,8 +416,7 @@ public class LegacyLoad {
 			case "Lantern": return new Lantern(Lantern.Type.NORM);
 			case "IronLantern": return new Lantern(Lantern.Type.IRON);
 			case "GoldLantern": return new Lantern(Lantern.Type.GOLD);
-			//case "Spark": return (Entity)(new Spark());
-			default : /*if(Game.debug)*/ System.out.println("LEGACYLOAD: unknown or outdated entity requested: " + string);
+			default : System.out.println("LEGACYLOAD: unknown or outdated entity requested: " + string);
 				return null;
 		}
 	}

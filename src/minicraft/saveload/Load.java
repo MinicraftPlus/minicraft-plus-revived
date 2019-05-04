@@ -383,11 +383,6 @@ public class Load {
 			else {
 				player.armorDamageBuffer = Integer.parseInt(data.remove(0));
 				player.curArmor = (ArmorItem) Items.get(data.remove(0), true);
-				// not sure if I should fix "armor" or curArmor...
-				/*if(player.armor == 0) {
-					player.armorDamageBuffer = 0;
-					player.curArmor = null;
-				}*/
 			}
 		}
 		player.setScore(Integer.parseInt(data.remove(0)));
@@ -743,11 +738,10 @@ public class Load {
 			case "Lantern": return new Lantern(Lantern.Type.NORM);
 			case "Arrow": return new Arrow(new Skeleton(0), 0, 0, Direction.NONE, 0);
 			case "ItemEntity": return new ItemEntity(Items.get("unknown"), 0, 0);
-			//case "Spark": return (Entity)(new Spark());
 			case "FireParticle": return new FireParticle(0, 0);
 			case "SmashParticle": return new SmashParticle(0, 0);
 			case "TextParticle": return new TextParticle("", 0, 0, 0);
-			default : /*if(Game.debug)*/ System.err.println("LOAD ERROR: unknown or outdated entity requested: " + string);
+			default : System.err.println("LOAD ERROR: unknown or outdated entity requested: " + string);
 				return null;
 		}
 	}
