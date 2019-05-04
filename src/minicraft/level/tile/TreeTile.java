@@ -17,7 +17,6 @@ import minicraft.item.ToolType;
 import minicraft.level.Level;
 
 public class TreeTile extends Tile {
-	//private ConnectorSprite sprite = new ConnectorSprite();
 	
 	protected TreeTile(String name) {
 		super(name, (ConnectorSprite)null);
@@ -69,11 +68,6 @@ public class TreeTile extends Tile {
 	}
 
 	public boolean mayPass(Level level, int x, int y, Entity e) {
-		/// make arrow fly through trees!
-		/*if(Game.debug && e instanceof minicraft.entity.Arrow && ((minicraft.entity.Arrow)e).owner instanceof Player) {
-			hurt(level, x, y, 25);
-			return true;
-		}*/
 		return false;
 	}
 	

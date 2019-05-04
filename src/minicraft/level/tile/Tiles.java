@@ -182,10 +182,8 @@ public final class Tiles {
 			isTorch = true;
 			name = name.substring(6); // cuts off torch prefix.
 		}
-		
-		//String data = "";
+
 		if(name.contains("_")) {
-			//data = name.substring(name.indexOf("_")+1);
 			name = name.substring(0, name.indexOf("_"));
 		}
 		

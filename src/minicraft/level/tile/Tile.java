@@ -75,8 +75,6 @@ public abstract class Tile {
 	
 	public boolean maySpawn() { return maySpawn; }
 	
-	//public abstract void updateSprite();
-	
 	public int getConnectColor(Level level) {
 		int scolor;
 		if(sprite != null)
