@@ -28,16 +28,6 @@ public class Inventory {
 	
 	public Item remove(int idx) { return items.remove(idx); }
 	
-	/*public boolean remove(Item item) {
-		for(int i = 0; i < items.size(); i++) {
-			if(items.get(i).equals(item)) {
-				remove(i);
-				return true;
-			}
-		}
-		return false;
-	}*/
-	
 	public void addAll(Inventory other) {
 		for(Item i: other.getItems())
 			add(i.clone());
@@ -152,8 +142,6 @@ public class Inventory {
 			System.out.println("WARNING: could not remove " + count + " "+given+(count>1?"s":"")+" from inventory");
 	}
 	
-	//public boolean hasItem(Item given) { return items.contains(given); }
-	
 	/** Returns the how many of an item you have in the inventory. */
 	public int count(Item given) {
 		if (given == null) return 0; // null requests get no items. :)
@@ -171,14 +159,6 @@ public class Inventory {
 		
 		return found;
 	}
-	
-	/*public List<String> getItemNames() {
-		List<String> names = new ArrayList<>();
-		for(int i = 0; i < items.size(); i++)
-			names.add(items.get(i).getName());
-		
-		return names;
-	}*/
 	
 	/**
 	 * Generates a string representation of all the items in the inventory which can be sent
