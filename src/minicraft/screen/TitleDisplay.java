@@ -265,6 +265,7 @@ public class TitleDisplay extends Display {
 		"One truth prevails!",
 		"Awesome!",
 		"Sweet!",
+		"Great!",
 		"Cool!",
 		"Radical!",
 		"011011000110111101101100!",
