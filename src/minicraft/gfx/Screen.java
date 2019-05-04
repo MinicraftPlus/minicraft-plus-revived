@@ -10,7 +10,6 @@ public class Screen {
 	public static final Point center = new Point(w/2, h/2);
 	
 	private static final int MAXDARK = 128;
-	//private static final int MAXLIGHT = 20;
 	
 	/// x and y offset of screen:
 	private int xOffset;
@@ -113,7 +112,6 @@ public class Screen {
 			}
 			if(currentLevel > 3) tintFactor -= (tintFactor < 10 ? tintFactor : 10);
 			tintFactor *= -1; // all previous operations were assumping this was a darkening factor.
-			//tintFactor += 20;
 		}
 		else if(currentLevel >= 5)
 			tintFactor = -MAXDARK;
