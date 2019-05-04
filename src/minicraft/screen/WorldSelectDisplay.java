@@ -146,7 +146,7 @@ public class WorldSelectDisplay extends Display {
 	}
 	
 	public static boolean loadedWorld() {
-		return loadedWorld;//worldName.length() > 0;
+		return loadedWorld;
 	}
 	
 	@Override
@@ -175,8 +175,6 @@ public class WorldSelectDisplay extends Display {
 				col = Color.RED;
 				Font.drawCentered("Higher version, cannot load world", screen, Font.textHeight() * 5, col);
 			}
-			//else if(version.compareTo(Game.VERSION) < 0)
-			//	Font.drawCentered("outdated", screen, Font.textHeight() * 5, Color.DARK_GRAY);
 			Font.drawCentered("World Version: " + (version.compareTo(new Version("1.9.2")) <= 0 ? "~" : "") + version, screen, Font.textHeight() * 7/2, col);
 		}
 		

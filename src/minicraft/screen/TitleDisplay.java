@@ -167,7 +167,7 @@ public class TitleDisplay extends Display {
 		Font.drawCentered(exitString, screen, Screen.h - 12, Color.get(-1, 111));
 	}
 	
-	private static final String[] splashes = {//new ArrayList<String>();
+	private static final String[] splashes = {
 		"Multiplayer Now Included!",
 		// "Also play InfinityTale!",
 		// "Also play Minicraft Deluxe!",

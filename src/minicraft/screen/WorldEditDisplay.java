@@ -37,7 +37,6 @@ public class WorldEditDisplay extends Display {
 			List<String> names = WorldSelectDisplay.getWorldNames();
 			if(action == Action.Rename)
 				names.remove(worldName);
-			//String prompt = action == Action.Rename ? "New World Name:" : "New World Name";
 			entries.add(new StringEntry("New World Name:", action.color));
 			entries.add(WorldGenDisplay.makeWorldNameInput("", names, worldName));
 		} else {
