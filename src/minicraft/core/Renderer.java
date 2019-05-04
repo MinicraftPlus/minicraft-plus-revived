@@ -215,11 +215,6 @@ public class Renderer extends Game {
 			FontStyle style = new FontStyle(Color.WHITE).setShadowType(Color.DARK_GRAY, false)
 				.setYPos(Screen.h*2/5).setRelTextPos(RelPos.TOP, false);
 			Font.drawParagraph(notifications, screen, style, 0);
-			/*for (int i = 0; i < notifications.size(); i++) {
-				String note = notifications.get(i);
-				int y = Screen.h - 120 - notifications.size()*8 + i * 8;
-				style.setYPos(y).draw(note, screen);
-			}*/
 		}
 		
 		
@@ -253,7 +248,6 @@ public class Renderer extends Game {
 		if (player.activeItem instanceof ToolItem) {
 			ToolItem tool = (ToolItem) player.activeItem;
 			int dura = tool.dur * 100 / (tool.type.durability * (tool.level+1));
-			//if (dura > 100) dura = 100;
 			Font.draw(dura + "%", screen, 164, Screen.h - 16, Color.get(0, 30));
 		}
 		
@@ -353,9 +347,6 @@ public class Renderer extends Game {
 			} else
 				style.setYPos(2);
 			Font.drawParagraph(info, screen, style, 2);
-			/*for(int i = 0; i < info.size(); i++) {
-				style.setYPos(2 + i*10).draw(info.get(i), screen);
-			}*/
 		}
 	}
 	
