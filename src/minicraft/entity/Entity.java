@@ -198,9 +198,7 @@ public abstract class Entity implements Tickable {
 		
 		return true; // the move was successful.
 	}
-	
-	// kill the entity, programmatically.
-	//public void kill() { die(); }
+
 	/** This exists as a way to signify that the entity has been removed through player action and/or world action; basically, it's actually gone, not just removed from a level because it's out of range or something. Calls to this method are used to, say, drop items. */
 	public void die() { remove(); }
 	
@@ -247,7 +245,7 @@ public abstract class Entity implements Tickable {
 	
 	public boolean isWithin(int tileRadius, Entity other) {
 		if(level == null || other.getLevel() == null) return false;
-		if(level.depth != other.getLevel().depth) return false; // obviously, if they are on different levels, they can't be next to each other.}
+		if(level.depth != other.getLevel().depth) return false; // obviously, if they are on different levels, they can't be next to each other.
 		
 		double distance = Math.abs(Math.hypot(x - other.x, y - other.y)); // calculate the distance between the two entities, in entity coordinates.
 		

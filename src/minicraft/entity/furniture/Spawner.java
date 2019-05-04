@@ -146,7 +146,6 @@ public class Spawner extends Furniture {
 	public boolean interact(Player player, Item item, Direction attackDir) {
 		if(item instanceof ToolItem) {
 			ToolItem tool = (ToolItem)item;
-			//if(tool.type != ToolType.Pickaxe && !Game.isMode("creative")) return false;
 			
 			Sound.monsterHurt.play();
 			

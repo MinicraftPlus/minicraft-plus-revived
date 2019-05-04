@@ -136,7 +136,7 @@ public class ItemEntity extends Entity implements ClientTickable {
 		if (time > 30) { // conditional prevents this from being collected immediately.
 			if(Game.isConnectedClient() && entity == Game.player) {// only register if the main player picks it up, on a client.
 				if (pickedUp && (System.nanoTime() - pickupTimestamp) / 1E8 > 15L) { // should be converted to tenths of a second.
-					/// the item has already been picked up;
+					// the item has already been picked up,
 					// but since more than 1.5 seconds has past, the item will be remarked as not picked up.
 					pickedUp = false;
 				}

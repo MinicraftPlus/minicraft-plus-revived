@@ -30,12 +30,6 @@ public class Arrow extends Entity implements ClientTickable {
 		if (damage > 3) speed = 8;
 		else if (damage >= 0) speed = 7;
 		else speed = 6;
-		
-		/* // maybe this was a "critical arrow" system or something?
-		if (flag) {
-			damage = 2*damage + 1;
-			col = Color.get(-1, 111, 222, 430);
-		}*/
 	}
 	
 	/**
@@ -67,17 +61,12 @@ public class Arrow extends Entity implements ClientTickable {
 				int extradamage = (hit instanceof Player ? 0 : 3) + (criticalHit ? 0 : 1);
 				mob.hurt(owner, damage + extradamage, dir);
 			}
-			
-			// if(owner instanceof Player && Game.isMode("creative") && Game.debug) {
-			// 	/// debug fun!
-			// 	level.getTile(x/16, y/16).hurt(level, x/16, y/16, 500); // KO all tiles
-			// } else { /// normal behavior
-				if (!level.getTile(x / 16, y / 16).mayPass(level, x / 16, y / 16, this)
+
+			if (!level.getTile(x / 16, y / 16).mayPass(level, x / 16, y / 16, this)
 						&& !level.getTile(x / 16, y / 16).connectsToWater
 						&& level.getTile(x / 16, y / 16).id != 16) {
 					this.remove();
-				}
-			// }
+			}
 		}
 	}
 
@@ -87,24 +76,12 @@ public class Arrow extends Entity implements ClientTickable {
 
 	@Override
 	public void render(Screen screen) {
-		/* // probably makes a blinking effect.
-		if (time >= lifeTime - 3 * 20) {
-			if (time / 6 % 2 == 0) return;
-		}*/
-		
 		int xt = 13;
 		int yt = 5;
-		
-		//if(dir == Direction.RIGHT) xt = 13;
+
 		if(dir == Direction.LEFT) xt = 14;
 		if(dir == Direction.UP) xt = 15;
 		if(dir == Direction.DOWN) xt = 16;
-		
-		/*if (xdir == 0 && ydir == -1) xt = 15; // up
-		else if (xdir == 1 && ydir == 0) xt = 14; // right
-		else if (xdir == -1 && ydir == 0) xt = 13; // left
-		else if (xdir == 0 && ydir == 1) xt = 16; // down
-		*/
 		
 		screen.render(x - 4, y - 4, xt + yt * 32, col, 0);
 	}

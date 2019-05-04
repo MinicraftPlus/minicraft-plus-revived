@@ -48,7 +48,7 @@ public class Furniture extends Entity {
 	@Override
 	public Furniture clone() {
 		try {
-			return getClass().newInstance();//new Furniture(name, color, sprite, xr, yr);
+			return getClass().newInstance();
 		} catch(Exception ex) {
 			ex.printStackTrace();
 		}
@@ -58,12 +58,6 @@ public class Furniture extends Entity {
 	@Override
 	public void tick() {
 		// moves the furniture in the correct direction.
-		/*if (pushDir == 0) move(0, +1);
-		if (pushDir == 1) move(0, -1);
-		if (pushDir == 2) move(-1, 0);
-		if (pushDir == 3) move(+1, 0);
-		pushDir = -1; // makes pushDir -1 so it won't repeat itself.
-		*/
 		move(pushDir.getX(), pushDir.getY());
 		pushDir = Direction.NONE;
 		
@@ -136,7 +130,6 @@ public class Furniture extends Entity {
 		if(super.updateField(field, val)) return true;
 		
 		switch(field) {
-			//case "pushDir": pushDir = Integer.parseInt(val); return true;
 			case "pushTime": pushTime = Integer.parseInt(val); return true;
 		}
 		
