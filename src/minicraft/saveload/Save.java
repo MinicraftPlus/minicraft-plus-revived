@@ -330,10 +330,11 @@ public class Save {
 			for(int ii = 0; ii < chest.getInventory().invSize(); ii++) {
 				Item item = chest.getInventory().get(ii);
 				extradata.append(":").append(item.getName());
-				if(item instanceof StackableItem)
+				if(item instanceof StackableItem) {
 					extradata.append(";").append(chest.getInventory().count(item));
-				if(item instanceof ToolItem)
-					extradata.append(".").append(((ToolItem)item).dur);
+				} else if(item instanceof ToolItem) {
+					extradata.append(".").append(((ToolItem) item).dur);
+				}
 			}
 			
 			if(chest instanceof DeathChest) extradata.append(":").append(((DeathChest) chest).time);
