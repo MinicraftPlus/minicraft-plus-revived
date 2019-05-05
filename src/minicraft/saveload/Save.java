@@ -333,7 +333,7 @@ public class Save {
 				if(item instanceof StackableItem) {
 					extradata.append(";").append(chest.getInventory().count(item));
 				} else if(item instanceof ToolItem) {
-					extradata.append(".").append(((ToolItem) item).dur);
+					extradata.append(";").append(((ToolItem) item).dur);
 				}
 			}
 			
