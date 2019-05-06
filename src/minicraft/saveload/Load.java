@@ -652,7 +652,7 @@ public class Load {
 				} else if (itemData.contains(".")) {
 					String[] bitemData = itemData.split("\\.");
 					ToolItem tool = (ToolItem) Items.get(bitemData[0], true);
-					if (!(tool == null)) {
+					if (tool != null) {
 						tool.dur = Integer.parseInt(bitemData[1]);
 						chest.getInventory().add(tool);
 					} else {
