@@ -13,6 +13,8 @@ Minicraft+ version 2.0.5
 * Fixed bug with "Click to focus" text rendering
 * Fixed bug with armor loading
 + Added escape potion, which brings you one level closer to the surface from where it's used
+* Made some adjustments to some of the sprites for improved detail
+* Made flowers spread grass to dirt like grass spreads grass to dirt, since a flower tile is technically grass too
 
 
 Minicraft+ version 2.0.4
