@@ -758,6 +758,13 @@ public class Player extends Mob implements ItemHolder, ClientTickable {
 			furniture.y = yo-4;
 			furniture.render(screen);
 		}
+
+		// renders indicator for what tile the item will be placed on
+		if (activeItem instanceof TileItem) {
+			Point t = getInteractionTile();
+
+			screen.render(t.x * 16 + 4, t.y * 16 + 4,10 + 13 * 32, Color.WHITE, 0);
+		}
 	}
 	
 	/** What happens when the player interacts with a itemEntity */
