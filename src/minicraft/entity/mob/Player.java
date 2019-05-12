@@ -686,6 +686,13 @@ public class Player extends Mob implements ItemHolder, ClientTickable {
 		} else {
 			spriteSet = skinon ? suitSprites : sprites;
 		}
+
+		// renders indicator for what tile the item will be placed on
+		if (activeItem instanceof TileItem) {
+			Point t = getInteractionTile();
+
+			screen.render(t.x * 16 + 4, t.y * 16 + 4,10 + 13 * 32, Color.WHITE, 0);
+		}
 		
 		/* offset locations to start drawing the sprite relative to our position */
 		int xo = x - 8; // horizontal
@@ -757,13 +764,6 @@ public class Player extends Mob implements ItemHolder, ClientTickable {
 			furniture.x = x;
 			furniture.y = yo-4;
 			furniture.render(screen);
-		}
-
-		// renders indicator for what tile the item will be placed on
-		if (activeItem instanceof TileItem) {
-			Point t = getInteractionTile();
-
-			screen.render(t.x * 16 + 4, t.y * 16 + 4,10 + 13 * 32, Color.WHITE, 0);
 		}
 	}
 	
