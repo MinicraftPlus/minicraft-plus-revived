@@ -12,6 +12,7 @@ import minicraft.entity.particle.TextParticle;
 import minicraft.gfx.Color;
 import minicraft.gfx.Sprite;
 import minicraft.item.Item;
+import minicraft.item.Items;
 import minicraft.item.ToolItem;
 import minicraft.item.ToolType;
 import minicraft.level.Level;
@@ -40,6 +41,11 @@ public class CloudCactusTile extends Tile {
 					hurt(level, xt, yt, 1);
 					return true;
 				}
+			} else if (tool.type == ToolType.Axe) {
+				if (player.payStamina(5 - tool.level) && tool.payDurability()) {
+					hurt(level, xt, yt, 2);
+					return true;
+				}
 			}
 		}
 		return false;
@@ -47,12 +53,14 @@ public class CloudCactusTile extends Tile {
 	
 	public void hurt(Level level, int x, int y, int dmg) {
 		int damage = level.getData(x, y) + dmg;
-		int health = 10;
+		int health = 7;
 		if(Game.isMode("creative")) dmg = damage = health;
 		level.add(new SmashParticle(x * 16, y * 16));
 		level.add(new TextParticle("" + dmg, x * 16 + 8, y * 16 + 8, Color.RED));
-		if (damage >= health)
+		if (damage >= health) {
+			level.dropItem(x * 16 + 8, y * 16 + 8, Items.get("Cloud Cacti"));
 			level.setTile(x, y, Tiles.get("cloud"));
+		}
 		else
 			level.setData(x, y, damage);
 	}
