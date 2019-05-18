@@ -70,6 +70,9 @@ public class WheatTile extends Tile {
 					return true;
 				}
 			}
+		} else if (item.equals(Items.get("Cloud Dust"))) {
+			int newAge = random.nextInt(10) + 40; // chose a number between 40 and 50
+			level.setData(xt, yt, newAge);
 		}
 		return false;
 	}

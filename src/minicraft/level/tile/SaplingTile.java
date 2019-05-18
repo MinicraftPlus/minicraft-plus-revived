@@ -2,9 +2,12 @@ package minicraft.level.tile;
 
 import minicraft.entity.Direction;
 import minicraft.entity.mob.Mob;
+import minicraft.entity.mob.Player;
 import minicraft.gfx.Color;
 import minicraft.gfx.Screen;
 import minicraft.gfx.Sprite;
+import minicraft.item.Item;
+import minicraft.item.Items;
 import minicraft.level.Level;
 
 public class SaplingTile extends Tile {
@@ -42,5 +45,15 @@ public class SaplingTile extends Tile {
 	public boolean hurt(Level level, int x, int y, Mob source, int dmg, Direction attackDir) {
 		level.setTile(x, y, onType);
 		return true;
+	}
+
+	@Override
+	public boolean interact(Level level, int xt, int yt, Player player, Item item, Direction attackDir) {
+		if (item.equals(Items.get("Cloud Dust"))) {
+			level.setTile(xt, yt, Tiles.get("Tree"));
+			return true;
+		} else {
+			return this.hurt(level, xt, yt, player, 1, attackDir);
+		}
 	}
 }
