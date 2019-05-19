@@ -37,7 +37,7 @@ public class MapDisplay extends Display {
 
         Rectangle menuBounds = menus[0].getBounds();
 
-        // used for world sizes bigger than 128, since the map can only render 128x128 pixels
+        // used for world sizes bigger than 128, since the map can only render 128x128 tiles
         int[] offset = new int[2];
         offset[0] = 0;
         offset[1] = 0;
@@ -53,9 +53,10 @@ public class MapDisplay extends Display {
         }
 
         // player tile coords
-        int ptx = (Game.player.x - 8) / 16;
-        int pty = (Game.player.y - 8) / 16;
+        int ptx = (Game.player.x) / 16;
+        int pty = (Game.player.y) / 16;
 
+        // determines which 128x128 "chunk" the player is in
         if (level.w == 256) {
             if (ptx  >= 128) {
                 offset[0] = 1;
@@ -122,11 +123,14 @@ public class MapDisplay extends Display {
 
         if (arrows[0]) {
             screen.render(menuBounds.getWidth() / 2 + menuBounds.getLeft() - 4, menuBounds.getTop() - 8, 10 + 13 * 32, Color.get(-1, 400, 500, 500), 0);
-        } if (arrows[1]) {
+        }
+        if (arrows[1]) {
             screen.render(menuBounds.getRight() + 1, menuBounds.getHeight() / 2 + menuBounds.getTop(), 5 + 13 * 32, Color.get(-1, 400, 500, 500), 1);
-        } if (arrows[2]) {
+        }
+        if (arrows[2]) {
             screen.render(menuBounds.getWidth() / 2 + menuBounds.getLeft() - 4, menuBounds.getBottom() + 1, 10 + 13 * 32, Color.get(-1, 400, 500, 500), 2);
-        } if (arrows[3]) {
+        }
+        if (arrows[3]) {
             screen.render(menuBounds.getLeft() - 8, menuBounds.getHeight() / 2 + menuBounds.getTop(), 5 + 13 * 32, Color.get(-1, 400, 500, 500), 0);
         }
 
