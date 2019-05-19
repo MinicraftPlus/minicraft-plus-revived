@@ -53,6 +53,9 @@ public class JungleTile extends Tile {
                 if (player.payStamina(4 - tool.level) && tool.payDurability()) {
                     level.setTile(xt, yt, Tiles.get("dirt"));
                     Sound.monsterHurt.play();
+                    if (random.nextInt(5) == 0) { // 20%
+                        level.dropItem(xt * 16 + 8, yt * 16 + 8, Items.get("Jungle Seeds"));
+                    }
                     return true;
                 }
             }
@@ -60,7 +63,10 @@ public class JungleTile extends Tile {
                 if (player.payStamina(4 - tool.level) && tool.payDurability()) {
                     level.setTile(xt, yt, Tiles.get("dirt"));
                     Sound.monsterHurt.play();
-                    return true;
+                    if (random.nextInt(5) < 3) { // 60%
+                        level.dropItem(xt * 16 + 8, yt * 16 + 8, Items.get("Jungle Seeds"));
+                    }
+                        return true;
                 }
             }
         }

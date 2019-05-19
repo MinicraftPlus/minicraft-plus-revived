@@ -33,6 +33,7 @@ public class Recipes {
 		workbenchRecipes.add(new Recipe("Tnt_1", "Gunpowder_10", "Sand_8"));
 		workbenchRecipes.add(new Recipe("Loom_1", "Wood_10", "Wool_5"));
 		workbenchRecipes.add(new Recipe("Fishing Rod_1", "Wood_5", "String_3"));
+		workbenchRecipes.add(new Recipe("Paper_2", "Bamboo_1"));
 		
 		loomRecipes.add(new Recipe("String_2", "Wool_1"));
 		loomRecipes.add(new Recipe("red wool_1", "Wool_1", "rose_1"));
