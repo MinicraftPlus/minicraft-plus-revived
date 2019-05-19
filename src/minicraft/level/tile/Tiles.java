@@ -3,6 +3,7 @@ package minicraft.level.tile;
 import java.util.ArrayList;
 
 import minicraft.core.Game;
+import minicraft.level.tile.WoolTiles.*;
 
 public final class Tiles {
 	/// idea: to save tile names while saving space, I could encode the names in base 64 in the save file...^M
@@ -53,9 +54,14 @@ public final class Tiles {
 		tiles.set(26, new DoorTile(Tile.Material.Wood));
 		tiles.set(27, new DoorTile(Tile.Material.Stone));
 		tiles.set(28, new DoorTile(Tile.Material.Obsidian));
-		tiles.set(35, new WoolTile());
 		tiles.set(36, new BambooTile("Bamboo"));
 		tiles.set(37, new JungleTile("Jungle"));
+		tiles.set(35, new NormalWoolTile());
+		tiles.set(38, new RedWoolTile());
+		tiles.set(39, new YellowWoolTile());
+		tiles.set(40, new BlueWoolTile());
+		tiles.set(41, new GreenWoolTile());
+		tiles.set(42, new BlackWoolTile());
 		
 		for(int i = 0; i < tiles.size(); i++) {
 			if(tiles.get(i) == null) continue;

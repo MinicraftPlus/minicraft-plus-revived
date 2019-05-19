@@ -33,7 +33,12 @@ public enum MapData {
     OBSIDIAN_FLOOR(Tiles.get("Obsidian").id, 203),
     OBSIDIAN_WALL(Tiles.get("Obsidian Wall").id, 304),
     OBSIDIAN_DOOR(Tiles.get("Obsidian Door").id, 304),
-    WOOL(Tiles.get("Wool").id, 555), // Yes I know woolColor isn't taken into account
+    WOOL(Tiles.get("Wool").id, 555),
+    RED_WOOL(Tiles.get("Red Wool").id, 400),
+    YELLOW_WOOL(Tiles.get("Yellow Wool").id, 440),
+    GREEN_WOOL(Tiles.get("Green Wool").id, 40),
+    BLUE_WOOL(Tiles.get("Blue Wool").id, 15),
+    BLACK_WOOL(Tiles.get("Black Wool").id, 0),
     FARMLAND(Tiles.get("Farmland").id, 422),
     WHEAT(Tiles.get("Wheat").id, 350),
     INFINITE_FALL(Tiles.get("Infinite Fall").id, 20),

@@ -327,6 +327,10 @@ public class Load {
 						if(Math.random() < 0.8) // don't replace *all* the lapis
 							tilename = "Gem Ore";
 					}
+					if(tilename.equalsIgnoreCase("WOOL") && worldVer.compareTo(new Version("2.0.5-dev6")) < 0) {
+						// each color of wool now has it's own class
+						// Chris J please do this part
+					}
 					tiles[tileArrIdx] = Tiles.get(tilename).id;
 					tdata[tileArrIdx] = Byte.parseByte(extradata.get(tileidx));
 				}
