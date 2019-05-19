@@ -109,7 +109,7 @@ public class Recipes {
 		
 		enchantRecipes.add(new Recipe("Gold Apple_1", "apple_1", "gold_8"));
 		enchantRecipes.add(new Recipe("potion_1", "glass_1", "Lapis_3"));
-		enchantRecipes.add(new Recipe("Cloud Dust_1", "Cloud Cacti_1"));
+		enchantRecipes.add(new Recipe("Cloud Dust_4", "Cloud Cacti_1"));
 		enchantRecipes.add(new Recipe("speed potion_1", "potion_1", "Cactus_5"));
 		enchantRecipes.add(new Recipe("light potion_1", "potion_1", "slime_5"));
 		enchantRecipes.add(new Recipe("swim potion_1", "potion_1", "raw fish_5"));
