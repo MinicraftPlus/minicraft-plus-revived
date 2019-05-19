@@ -52,15 +52,51 @@ public class MapDisplay extends Display {
             arrows[i] = false;
         }
 
+        // player tile coords
+        int ptx = (Game.player.x - 8) / 16;
+        int pty = (Game.player.y - 8) / 16;
+
         if (level.w == 256) {
-            if ((Game.player.x - 8) / 16  > 128) { // make sure to convert entity coords to tile coords
+            if (ptx  >= 128) {
                 offset[0] = 1;
                 arrows[3] = true;
             } else {
                 arrows[1] = true;
             }
-            if ((Game.player.y - 8) / 16 > 128) {
+            if (pty >= 128) {
                 offset[1] = 1;
+                arrows[0] = true;
+            } else {
+                arrows[2] = true;
+            }
+        }
+
+        if (level.w == 512) {
+            if (ptx >= 128 && ptx < 257) {
+                offset[0] = 1;
+                arrows[3] = true;
+                arrows[1] = true;
+            } else if (ptx >= 257 && ptx < 385) {
+                offset[0] = 2;
+                arrows[3] = true;
+                arrows[1] = true;
+            } else if (ptx >= 385 && ptx < 512) {
+                offset[0] = 3;
+                arrows[3] = true;
+            } else {
+                arrows[1] = true;
+            }
+
+            if (pty >= 128 && pty < 257) {
+                offset[1] = 1;
+                arrows[0] = true;
+                arrows[2] = true;
+            } else if (pty >= 257 && pty < 385) {
+                offset[1] = 2;
+                arrows[0] = true;
+                arrows[2] = true;
+            } else if (pty >= 385 && pty < 512) {
+                offset[1] = 3;
                 arrows[0] = true;
             } else {
                 arrows[2] = true;
