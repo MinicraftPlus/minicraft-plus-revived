@@ -44,6 +44,7 @@ public class Items {
 		addAll(ClothingItem.getAllInstances());
 		addAll(ArmorItem.getAllInstances());
 		addAll(PotionItem.getAllInstances());
+		add(new MapItem());
 	}
 	
 	/** fetches an item from the list given its name. */
