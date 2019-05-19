@@ -8,6 +8,7 @@ import java.util.Random;
 
 import minicraft.core.Game;
 import minicraft.core.io.Settings;
+import minicraft.level.tile.Tile;
 import minicraft.level.tile.Tiles;
 import minicraft.screen.WorldGenDisplay;
 
@@ -220,6 +221,10 @@ public class LevelGen {
 		LevelGen mnoise1 = new LevelGen(w, h, 16);
 		LevelGen mnoise2 = new LevelGen(w, h, 16);
 		LevelGen mnoise3 = new LevelGen(w, h, 16);
+
+		LevelGen jnoise1 = new LevelGen(w, h, 8);
+		LevelGen jnoise2 = new LevelGen(w, h, 8);
+		LevelGen jnoise3 = new LevelGen(w, h, 8);
 		// ...and some with larger size.
 		LevelGen noise1 = new LevelGen(w, h, 32);
 		LevelGen noise2 = new LevelGen(w, h, 32);
@@ -235,6 +240,8 @@ public class LevelGen {
 				double val = Math.abs(noise1.values[i] - noise2.values[i]) * 3 - 2;
 				double mval = Math.abs(mnoise1.values[i] - mnoise2.values[i]);
 				mval = Math.abs(mval - mnoise3.values[i]) * 3 - 2;
+
+				double jval = Math.abs(jnoise1.values[i] - jnoise2.values[i]) * 3 - 2;
 				
 				// this calculates a sort of distance based on the current coordinate.
 				double xd = x / (w - 1.0) * 2 - 1;
@@ -260,6 +267,10 @@ public class LevelGen {
 								map[i] = Tiles.get("water").id;
 						} else if (val > 0.5 && mval < -1.5) {
 							map[i] = Tiles.get("rock").id;
+						} else if (val > 0.5 && mval < -0.75 && jval < -1) {
+							if (map[i] != Tiles.get("rock").id) {
+								map[i] = Tiles.get("jungle").id;
+							}
 						} else {
 							map[i] = Tiles.get("grass").id;
 						}
@@ -443,6 +454,16 @@ public class LevelGen {
 			if (xx >= 0 && yy >= 0 && xx < w && yy < h) {
 				if (map[xx + yy * w] == Tiles.get("sand").id) {
 					map[xx + yy * w] = Tiles.get("cactus").id;
+				}
+			}
+		}
+
+		for (int i = 0; i < w * h / 10; i++) {
+			int xx = random.nextInt(w);
+			int yy = random.nextInt(h);
+			if (xx >= 0 && yy >= 0 && xx < w && yy < h) {
+				if (map[xx + yy * w] == Tiles.get("jungle").id) {
+					map[xx + yy * w] = Tiles.get("bamboo").id;
 				}
 			}
 		}

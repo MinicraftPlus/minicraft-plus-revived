@@ -31,6 +31,7 @@ public abstract class Tile {
 	public boolean connectsToSand = false;
 	public boolean connectsToLava = false;
 	public boolean connectsToWater = false;
+	public boolean connectsToJungle = false;
 	public int light;
 	protected boolean maySpawn;
 	
