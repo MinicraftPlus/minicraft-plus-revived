@@ -194,7 +194,8 @@ public class LegacyLoad {
 			int lvlw = Integer.parseInt(data.get(0));
 			int lvlh = Integer.parseInt(data.get(1));
 			int lvldepth = Integer.parseInt(data.get(2));
-			
+			Settings.set("size", lvlw);
+
 			byte[] tiles = new byte[lvlw * lvlh];
 			byte[] tdata = new byte[lvlw * lvlh];
 			
