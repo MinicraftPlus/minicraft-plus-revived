@@ -29,7 +29,6 @@ public class LavaTile extends Tile {
 		super.csprite = sprite;
 		connectsToSand = true;
 		connectsToLava = true;
-		mobDamage = 4;
 	}
 
 	private Random wRandom = new Random();
@@ -43,6 +42,11 @@ public class LavaTile extends Tile {
 	
 	public boolean mayPass(Level level, int x, int y, Entity e) {
 		return e.canSwim();
+	}
+
+	@Override
+	public int getMobDamage(int xt, int yt) {
+		return 4;
 	}
 
 	@Override

@@ -62,7 +62,7 @@ public final class Tiles {
 		tiles.set(40, new BlueWoolTile());
 		tiles.set(41, new GreenWoolTile());
 		tiles.set(42, new BlackWoolTile());
-		tiles.set(43, new SpikeTile("Spike"));
+		tiles.set(43, new SpikeTile("Spikes"));
 		
 		for(int i = 0; i < tiles.size(); i++) {
 			if(tiles.get(i) == null) continue;

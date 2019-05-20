@@ -51,7 +51,7 @@ public abstract class Mob extends Entity {
 		if(isRemoved()) return;
 		
 		if (level != null && level.getTile(x >> 4, y >> 4).canHurtMob()) // If we are on a tile that hurts us
-			hurt(level.getTile(x >> 4, y >> 4), x, y, level.getTile(x >> 4, y >> 4).mobDamage);
+			hurt(level.getTile(x >> 4, y >> 4), x, y, level.getTile(x >> 4, y >> 4).getMobDamage(x >> 4, y >> 4));
 		if (health <= 0) die(); // die if no health
 		if (hurtTime > 0) hurtTime--; // If a timer preventing damage temporarily is set, decrement it's value
 		

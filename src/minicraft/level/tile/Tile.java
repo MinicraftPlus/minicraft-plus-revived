@@ -34,7 +34,6 @@ public abstract class Tile {
 	public boolean connectsToJungle = false;
 	public int light;
 	protected boolean maySpawn;
-	public int mobDamage;
 	
 	protected Sprite sprite;
 	protected ConnectorSprite csprite;
@@ -155,6 +154,8 @@ public abstract class Tile {
 		
 		return "";
 	}
+
+	public int getMobDamage(int xt, int yt) { return 0; }
 	
 	@Override
 	public boolean equals(Object other) {
