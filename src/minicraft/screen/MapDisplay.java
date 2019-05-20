@@ -13,7 +13,7 @@ public class MapDisplay extends Display {
     public MapDisplay() {
 
         Menu.Builder builder = new Menu.Builder(false, 0, RelPos.CENTER)
-                .setFrame(332, 1, 332);
+                .setFrame(443, 1, 443);
 
         builder.setSize(138, 138);
 

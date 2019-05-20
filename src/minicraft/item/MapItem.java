@@ -13,7 +13,7 @@ import minicraft.screen.MapDisplay;
 public class MapItem extends Item {
 
     public MapItem() {
-        super("Map", new Sprite(30, 4, Color.get(-1, 332, 115, 40)));
+        super("Map", new Sprite(30, 4, Color.get(-1, 443, 115, 40)));
     }
 
     @Override

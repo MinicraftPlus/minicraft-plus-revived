@@ -19,6 +19,7 @@ public enum MapData {
     GEM_ORE(Tiles.get("Gem Ore").id, 333),
     JUNGLE(Tiles.get("Jungle").id, 210),
     BAMBOO(Tiles.get("Bamboo").id, 210),
+    SPIKES(Tiles.get("Spikes").id, 232),
     TREE(Tiles.get("Tree").id, 30),
     SAND(Tiles.get("Sand").id, 550),
     CACTUS(Tiles.get("Cactus").id, 550),
