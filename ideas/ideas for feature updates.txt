@@ -1,16 +1,10 @@
 Ideas for ways to update or improve existing features.
-------
-
-Add a feature where the player is knocked back when mobs attack them, but not by water or lava. So... well, actually, anything that's self-inflicted, and nothing else. So, hunger, water, and lava, don't knock back, but everthing else should.
-
 ----
 
 make the quick-save key configurable.
 
 ----
 
-Make it so cloud tiles can be placed in the sky level, on empty air tiles.
--
 Design a system where cloud tiles respawn around existing cloud tiles if the total number of cloud tiles is below a certain number.
 
 ----
