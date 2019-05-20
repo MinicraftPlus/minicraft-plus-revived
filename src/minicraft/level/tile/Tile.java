@@ -34,6 +34,7 @@ public abstract class Tile {
 	public boolean connectsToJungle = false;
 	public int light;
 	protected boolean maySpawn;
+	public int mobDamage;
 	
 	protected Sprite sprite;
 	protected ConnectorSprite csprite;
@@ -111,6 +112,9 @@ public abstract class Tile {
 	
 	/** What happens when you are inside the tile (ex: lava) */
 	public void steppedOn(Level level, int xt, int yt, Entity entity) {}
+
+	/** Whether or not the tile hurts you when you're in it */
+	public boolean canHurtMob() { return false; }
 	
 	/** What happens when you hit an item on a tile (ex: Pickaxe on rock) */
 	public boolean interact(Level level, int xt, int yt, Player player, Item item, Direction attackDir) {

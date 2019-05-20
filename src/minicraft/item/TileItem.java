@@ -49,6 +49,7 @@ public class TileItem extends StackableItem {
 		items.add(new TileItem("Jungle Seeds", (new Sprite(5, 4, Color.get(-1, 10, 20, 30))), "jungle", "dirt"));
 		items.add(new TileItem("Bone", (new Sprite(15, 4, Color.get(-1, 222, 555, 555))), "tree", "tree Sapling"));
 		items.add(new TileItem("Cloud", (new Sprite(2, 4, Color.get(-1, 222, 555, 444))), "cloud", "Infinite Fall"));
+		items.add(new TileItem("Spike", (new Sprite(23, 4, Color.get(-1, 30, 141, 252))), "spike", "Hole"));
 
 		return items;
 	}

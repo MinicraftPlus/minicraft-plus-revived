@@ -50,8 +50,8 @@ public abstract class Mob extends Entity {
 		
 		if(isRemoved()) return;
 		
-		if (level != null && level.getTile(x >> 4, y >> 4) == Tiles.get("lava")) // If we are trying to swim in lava
-			hurt(Tiles.get("lava"), x, y, 4); // Inflict 4 damage to ourselves, sourced from the lava Tile, with the direction as the opposite of ours.
+		if (level != null && level.getTile(x >> 4, y >> 4).canHurtMob()) // If we are on a tile that hurts us
+			hurt(level.getTile(x >> 4, y >> 4), x, y, level.getTile(x >> 4, y >> 4).mobDamage);
 		if (health <= 0) die(); // die if no health
 		if (hurtTime > 0) hurtTime--; // If a timer preventing damage temporarily is set, decrement it's value
 		

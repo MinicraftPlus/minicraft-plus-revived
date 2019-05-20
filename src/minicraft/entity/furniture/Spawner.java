@@ -122,7 +122,7 @@ public class Spawner extends Furniture {
 		Point[] areaPositions = level.getAreaTilePositions(pos.x, pos.y, 1);
 		ArrayList<Point> validPositions = new ArrayList<>();
 		for(Point p: areaPositions)
-			if(!( !level.getTile(p.x, p.y).mayPass(level, p.x, p.y, newmob) || mob instanceof EnemyMob && level.getTile(p.x, p.y).getLightRadius(level, p.x, p.y) > 0 ))
+			if(!( !level.getTile(p.x, p.y).mayPass(level, p.x, p.y, newmob) || mob instanceof EnemyMob && level.getTile(p.x, p.y).getLightRadius(level, p.x, p.y) > 0 || level.getTile(p.x, p.y).canHurtMob()))
 				validPositions.add(p);
 		
 		if(validPositions.size() == 0) return; // cannot spawn mob.

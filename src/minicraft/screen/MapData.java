@@ -37,7 +37,7 @@ public enum MapData {
     RED_WOOL(Tiles.get("Red Wool").id, 400),
     YELLOW_WOOL(Tiles.get("Yellow Wool").id, 440),
     GREEN_WOOL(Tiles.get("Green Wool").id, 40),
-    BLUE_WOOL(Tiles.get("Blue Wool").id, 15),
+    BLUE_WOOL(Tiles.get("Blue Wool").id, 5),
     BLACK_WOOL(Tiles.get("Black Wool").id, 0),
     FARMLAND(Tiles.get("Farmland").id, 422),
     WHEAT(Tiles.get("Wheat").id, 350),
