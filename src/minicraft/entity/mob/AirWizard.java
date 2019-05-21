@@ -10,6 +10,7 @@ import minicraft.gfx.Color;
 import minicraft.gfx.Font;
 import minicraft.gfx.MobSprite;
 import minicraft.gfx.Screen;
+import minicraft.item.Items;
 import minicraft.saveload.Save;
 
 public class AirWizard extends EnemyMob {
@@ -190,7 +191,10 @@ public class AirWizard extends EnemyMob {
 		
 		if(!secondform) {
 			Updater.notifyAll("Air Wizard: Defeated!");
-			if (!beaten) Updater.notifyAll("The Dungeon is now open!", -400);
+			if (!beaten) {
+				Updater.notifyAll("The Dungeon is now open!", -400);
+				level.dropItem(this.x * 16 + 8, this.y * 16 + 8, Items.get("The Story"));
+			}
 			beaten = true;
 		} else {
 			Updater.notifyAll("Air Wizard II: Defeated!");
