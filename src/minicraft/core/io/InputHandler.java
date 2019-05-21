@@ -98,6 +98,15 @@ public class InputHandler implements /*MouseListener, */KeyListener {
 	}
 	
 	private void initKeyMap() {
+
+		keymap.put("UP", "UP|W");
+		keymap.put("UP-BUTTON", "UP");
+		keymap.put("RIGHT", "RIGHT|D");
+		keymap.put("RIGHT-BUTTON", "RIGHT");
+		keymap.put("DOWN", "DOWN|S");
+		keymap.put("DOWN-BUTTON", "DOWN");
+		keymap.put("LEFT", "LEFT|A");
+		keymap.put("LEFT-BUTTON", "LEFT");
 		
 		keymap.put("SELECT", "ENTER");
 		keymap.put("EXIT", "ESCAPE");
