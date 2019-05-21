@@ -37,7 +37,7 @@ public class BookItem extends Item {
 	}
 	
 	public boolean interactOn(Tile tile, Level level, int xt, int yt, Player player, Direction attackDir) {
-		Game.setMenu(new BookDisplay(book, hasTitlePage));
+		Game.setMenu(new BookDisplay(book, hasTitlePage, editable));
 		return true;
 	}
 	

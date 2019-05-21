@@ -11,7 +11,7 @@ public class BookDisplay extends Display {
     int height = 128;
     int width = 256;
 
-    private String alphabet = "abcdefghijklmnopqrstuvwxyz1234567890/\\";
+    private String alphabet = "abcdefghijklmnopqrstuvwxyz1234567890";
     private String alphabetShifted = "ABCDEFGHIJKLMNOPQRSTUVWXYZ!@  %^  ()? ";
 
     String defaultBook = "";
@@ -29,18 +29,27 @@ public class BookDisplay extends Display {
 
     public BookDisplay(String book) { this(book, false); }
     public BookDisplay(String book, boolean hasTitlePage) { this(book, hasTitlePage, false); }
-    public BookDisplay(String book, boolean hasTitlePage, boolean editbale) {
+    public BookDisplay(String book, boolean hasTitlePage, boolean editable) {
 
-        if (book == null) {
+        if (!editable && book == null) {
             book = defaultBook;
         }
-        pages = book.split("\0");
+
+        if (editable) {
+            pages = new String[30];
+
+            for (int p = 0; p < 30; p++) {
+                pages[p] = "";
+            }
+        } else if (book != null) {
+            pages = book.split("\0");
+        }
 
         pageCountIdx = pages.length;
 
         titlePage = hasTitlePage;
 
-        this.editable = editbale;
+        this.editable = editable;
 
         menus = new Menu[pages.length + (hasTitlePage ? 2 : 1)];
 
@@ -60,9 +69,7 @@ public class BookDisplay extends Display {
     }
 
     private void turnPage(int direction) {
-        if (page + direction < 0 || page + direction > pages.length - 1) {
-            // don't do anything
-        } else {
+        if (!(page + direction < 0 || page + direction > pages.length - 1)) {
             page += direction;
         }
 
@@ -70,8 +77,11 @@ public class BookDisplay extends Display {
     }
 
     private void addChar(char character) {
-        if (pages[page].length() + 1 < 200) {
+        if (pages[page].length() + 1 < 270) {
             pages[page] += character;
+        } else if (page < 28) {
+                turnPage(1);
+                addChar(character);
         }
     }
 
@@ -83,29 +93,44 @@ public class BookDisplay extends Display {
 
     @Override
     public void tick(InputHandler input) {
-        if (input.getKey("exit").clicked)
-            Game.exitMenu();
-        // Use the button variants so people can still type 'A' and 'D'
-        if (input.getKey("left" + (editable ? "-button" : "")).clicked) turnPage(-1);
-        if (input.getKey("right" + (editable ? "-button" : "")).clicked) turnPage(1);
+        if (editable) {
+            if (input.getKey("exit").clicked)
+                Game.exitMenu();
+            // Use the button variants so people can still type 'A' and 'D'
+            if (input.getKey("left" + (editable ? "-button" : "")).clicked) turnPage(-1);
+            if (input.getKey("right" + (editable ? "-button" : "")).clicked) turnPage(1);
 
-        for (int a = 0; a < alphabet.length(); a++) {
-            if (input.getKey(Character.toString(alphabet.toCharArray()[a])).clicked) {
-                if (input.getKey("shift").down) {
-                    addChar(alphabetShifted.toCharArray()[a]);
-                } else {
+            for (int a = 0; a < alphabet.length(); a++) {
+                if (input.getKey(Character.toString(alphabet.toCharArray()[a])).clicked) {
                     addChar(alphabet.toCharArray()[a]);
+                } else if (input.getKey("shift-" + Character.toString(alphabet.toCharArray()[a])).clicked) {
+                    addChar(alphabetShifted.toCharArray()[a]);
                 }
             }
-        }
 
-        // special characters
-        if (input.getKey("backspace").clicked) {
-            removeChar();
+            // special characters
+            if (input.getKey("backspace").clicked) removeChar();
+            if (input.getKey("space").clicked) addChar(' ');
+            if (input.getKey("period").clicked) addChar('.');
+            if (input.getKey("shift-period").clicked) addChar('>');
+            if (input.getKey("comma").clicked) addChar(',');
+            if (input.getKey("shift-comma").clicked) addChar('<');
+            if (input.getKey("slash").clicked) addChar('/');
+            if (input.getKey("back_slash").clicked) addChar('\\');
+            if (input.getKey("minus").clicked) addChar('-');
+            if (input.getKey("equals").clicked) addChar('=');
+            if (input.getKey("add").clicked || input.getKey("shift-equals").clicked) addChar('+');
+            if (input.getKey("semicolon").clicked) addChar(';');
+            if (input.getKey("shift-semicolon").clicked) addChar(':');
+            if (input.getKey("quote").clicked) addChar('\'');
+            if (input.getKey("shift-quote").clicked) addChar('\"');
+        } else {
+            if (input.getKey("exit").clicked || input.getKey("menu").clicked)
+                Game.exitMenu();
+
+            if (input.getKey("left").clicked) turnPage(-1);
+            if (input.getKey("right").clicked) turnPage(1);
         }
-        if (input.getKey("space").clicked) addChar(' ');
-        if (input.getKey("period").clicked) addChar('.');
-        if (input.getKey("comma").clicked) addChar(',');
     }
 
     @Override
