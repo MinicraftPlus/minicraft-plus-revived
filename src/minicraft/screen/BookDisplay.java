@@ -11,6 +11,9 @@ public class BookDisplay extends Display {
     int height = 128;
     int width = 256;
 
+    private String alphabet = "abcdefghijklmnopqrstuvwxyz1234567890/\\";
+    private String alphabetShifted = "ABCDEFGHIJKLMNOPQRSTUVWXYZ!@  %^  ()? ";
+
     String defaultBook = "";
 
     Menu.Builder builder;
@@ -21,6 +24,8 @@ public class BookDisplay extends Display {
     private int pageCountIdx;
 
     private boolean titlePage;
+
+    private boolean editable;
 
     public BookDisplay(String book) { this(book, false); }
     public BookDisplay(String book, boolean hasTitlePage) { this(book, hasTitlePage, false); }
@@ -34,6 +39,8 @@ public class BookDisplay extends Display {
         pageCountIdx = pages.length;
 
         titlePage = hasTitlePage;
+
+        this.editable = editbale;
 
         menus = new Menu[pages.length + (hasTitlePage ? 2 : 1)];
 
@@ -62,12 +69,43 @@ public class BookDisplay extends Display {
         menus[pageCountIdx] = updatePageCount();
     }
 
+    private void addChar(char character) {
+        if (pages[page].length() + 1 < 200) {
+            pages[page] += character;
+        }
+    }
+
+    private void removeChar() {
+        if (pages[page].length() - 1 >= 0) {
+            pages[page] = pages[page].substring(0, pages[page].length()-1);
+        }
+    }
+
     @Override
     public void tick(InputHandler input) {
         if (input.getKey("exit").clicked)
             Game.exitMenu();
-        if (input.getKey("left").clicked) turnPage(-1);
-        if (input.getKey("right").clicked) turnPage(1);
+        // Use the button variants so people can still type 'A' and 'D'
+        if (input.getKey("left" + (editable ? "-button" : "")).clicked) turnPage(-1);
+        if (input.getKey("right" + (editable ? "-button" : "")).clicked) turnPage(1);
+
+        for (int a = 0; a < alphabet.length(); a++) {
+            if (input.getKey(Character.toString(alphabet.toCharArray()[a])).clicked) {
+                if (input.getKey("shift").down) {
+                    addChar(alphabetShifted.toCharArray()[a]);
+                } else {
+                    addChar(alphabet.toCharArray()[a]);
+                }
+            }
+        }
+
+        // special characters
+        if (input.getKey("backspace").clicked) {
+            removeChar();
+        }
+        if (input.getKey("space").clicked) addChar(' ');
+        if (input.getKey("period").clicked) addChar('.');
+        if (input.getKey("comma").clicked) addChar(',');
     }
 
     @Override

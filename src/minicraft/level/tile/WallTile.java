@@ -49,6 +49,7 @@ public class WallTile extends Tile {
 			hurt(level, x, y, random.nextInt(6) / 6 * dmg / 2);
 			return true;
 		} else {
+			if (Game.isMode("creative")) return true;
 			Game.notifications.add(obrickMsg);
 			return false;
 		}
@@ -63,8 +64,10 @@ public class WallTile extends Tile {
 						hurt(level, xt, yt, random.nextInt(10) + (tool.level) * 5 + 10);
 						return true;
 					}
-				} else
+				} else {
+					if (Game.isMode("creative")) return true;
 					Game.notifications.add(obrickMsg);
+				}
 			}
 		}
 		return false;

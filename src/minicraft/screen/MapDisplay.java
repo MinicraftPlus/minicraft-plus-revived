@@ -25,7 +25,7 @@ public class MapDisplay extends Display {
 
     @Override
     public void tick(InputHandler input) {
-        if (input.getKey("menu").clicked || input.getKey("attack").clicked)
+        if (input.getKey("menu").clicked || input.getKey("attack").clicked || input.getKey("exit").clicked)
             Game.exitMenu();
     }
 
