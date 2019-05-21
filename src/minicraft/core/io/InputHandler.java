@@ -98,10 +98,10 @@ public class InputHandler implements /*MouseListener, */KeyListener {
 	}
 	
 	private void initKeyMap() {
-		keymap.put("UP", "UP|W"); //up action references up arrow key
-		keymap.put("DOWN", "DOWN|S"); //move down action references down arrow key
-		keymap.put("LEFT", "LEFT|A"); //move left action references left arrow key
-		keymap.put("RIGHT", "RIGHT|D"); //move right action references right arrow key
+		keymap.put("UP", "UP"); //up action references up arrow key
+		keymap.put("DOWN", "DOWN"); //move down action references down arrow key
+		keymap.put("LEFT", "LEFT"); //move left action references left arrow key
+		keymap.put("RIGHT", "RIGHT"); //move right action references right arrow key
 		
 		keymap.put("SELECT", "ENTER");
 		keymap.put("EXIT", "ESCAPE");
