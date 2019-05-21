@@ -148,4 +148,15 @@ public class BookDisplay extends Display {
 
         Font.drawParagraph(pages[page], screen, width - 12, height - 24, fontStyle, 2);
     }
+
+    public String getSaveBook() {
+
+        String bookToSave = "";
+
+        for (String currentPage: pages) {
+            bookToSave += currentPage + "\0";
+        }
+
+        return bookToSave;
+    }
 }
