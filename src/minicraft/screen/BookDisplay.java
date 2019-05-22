@@ -14,7 +14,7 @@ public class BookDisplay extends Display {
     private String alphabet = "abcdefghijklmnopqrstuvwxyz1234567890";
     private String alphabetShifted = "ABCDEFGHIJKLMNOPQRSTUVWXYZ!@  %^  ()? ";
 
-    String defaultBook = "";
+    String defaultBook = "Record Num. 023\0Name: Paul                    Gender: Male               Time: 99999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999              Status: Unknown             Location: 247584793847582340189747108236473502837451209348109247028935720834572054723059872";
 
     Menu.Builder builder;
 

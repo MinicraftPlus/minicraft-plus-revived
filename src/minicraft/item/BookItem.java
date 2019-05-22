@@ -16,7 +16,7 @@ public class BookItem extends Item {
 	
 	protected static ArrayList<Item> getAllInstances() {
 		ArrayList<Item> items = new ArrayList<Item>();
-		items.add(new BookItem("Book", Color.get(-1, 200, 531, 430), null));
+		items.add(new BookItem("Record 23", Color.get(-1, 200, 531, 430), null, true));
 		items.add(new BookItem("Antidious", Color.get(-1, 100, 300, 500), BookData.antVenomBook, true));
 		items.add(new BookItem("Paul's Story", Color.get(-1, 131, 242, 353), BookData.theStoryOfPaul));
 		items.add(new BookItem("Editable Book", Color.get(-1, 202, 303, 404), null, false, true));
