@@ -12,7 +12,9 @@ public class BookData {
 	
 	public static final String antVenomBook = loadBook("antidous");
 	public static final String storylineGuide = loadBook("story_guide");
-
+	
+	public static final String record23 = "Record Num. 023\0Name: Paul                    Gender: Male               Time: 99999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999              Status: Unknown             Location: 247584793847582340189747108236473502837451209348109247028935720834572054723059872";
+	
 	public static final String theStoryOfPaul = "One day There was a man named Paul.\0He was dropped on an island with no hope of escape, and told to defeat the only other person there.\0Paul followed his orders, and fullfilled them.\0But he was only one...\0There were many others, sent to other islands, other tests.\0And the best of them?\0They would be used in the next wave of wars.\0They were the warriors who would go on to face dangers, challenges, fear.\0Many would lose their lives.\0But not Paul.\0You are PÃ&¡A%ÑU/Í?L.";
 	
 	private static final String loadBook(String bookTitle) {

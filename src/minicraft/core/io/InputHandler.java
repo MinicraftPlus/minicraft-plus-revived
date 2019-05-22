@@ -10,6 +10,8 @@ import java.util.LinkedHashMap;
 
 import minicraft.core.Game;
 
+import org.jetbrains.annotations.Nullable;
+
 public class InputHandler implements /*MouseListener, */KeyListener {
 	/**
 		This class handles key presses; this also implements MouseListener... but I have no idea why.
@@ -99,14 +101,15 @@ public class InputHandler implements /*MouseListener, */KeyListener {
 	
 	private void initKeyMap() {
 
-		keymap.put("UP", "UP|W");
-		keymap.put("UP-BUTTON", "UP");
-		keymap.put("RIGHT", "RIGHT|D");
-		keymap.put("RIGHT-BUTTON", "RIGHT");
-		keymap.put("DOWN", "DOWN|S");
-		keymap.put("DOWN-BUTTON", "DOWN");
-		keymap.put("LEFT", "LEFT|A");
-		keymap.put("LEFT-BUTTON", "LEFT");
+		keymap.put("MOVE-UP", "UP|W");
+		keymap.put("MOVE-RIGHT", "RIGHT|D");
+		keymap.put("MOVE-DOWN", "DOWN|S");
+		keymap.put("MOVE-LEFT", "LEFT|A");
+		
+		keymap.put("CURSOR-UP", "UP");
+		keymap.put("CURSOR-RIGHT", "RIGHT");
+		keymap.put("CURSOR-DOWN", "DOWN");
+		keymap.put("CURSOR-LEFT", "LEFT");
 		
 		keymap.put("SELECT", "ENTER");
 		keymap.put("EXIT", "ESCAPE");
@@ -257,7 +260,7 @@ public class InputHandler implements /*MouseListener, */KeyListener {
 			/// multiple key possibilities exist for this action; so, combine the results of each one!
 			key = new Key();
 			for(String keyposs: keytext.split("\\|")) { // String.split() uses regex, and "|" is a special character, so it must be escaped; but the backslash must be passed in, so it needs escaping.
-				Key aKey = getKey(keyposs, false); //this time, do NOT attempt to fetch from keymap.
+				Key aKey = getKey(keyposs, false); //this time, do NOT attempt to fetch from keymap, because the fetching should already have happened.
 				
 				// it really does combine using "or":
 				key.down = key.down || aKey.down;
@@ -313,13 +316,13 @@ public class InputHandler implements /*MouseListener, */KeyListener {
 		return key; // return the Key object.
 	}
 	
-	/// this method preovides a way to press physical keys without actually generating a key event.
-	public void pressKey(String keyname, boolean pressed) {
+	/// this method provides a way to press physical keys without actually generating a key event.
+	/*public void pressKey(String keyname, boolean pressed) {
 		Key key = getPhysKey(keyname);
 		key.toggle(pressed);
 		//key.down = key.clicked = pressed;
 		//System.out.println("key " + keyname + " is clicked: " + getPhysKey(keyname).clicked);
-	}
+	}*/
 	
 	public ArrayList<String> getAllPressedKeys() {
 		ArrayList<String> keys = new ArrayList<>();
@@ -434,7 +437,7 @@ public class InputHandler implements /*MouseListener, */KeyListener {
 	}*/
 	
 	private static final String control = "\\p{Print}"; // should match only printable characters.
-	public String addKeyTyped(String typing, String pattern) {
+	public String addKeyTyped(String typing, @Nullable String pattern) {
 		if(lastKeyTyped.length() > 0) {
 			String letter = lastKeyTyped;
 			lastKeyTyped = "";
