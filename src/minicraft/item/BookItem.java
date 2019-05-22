@@ -24,8 +24,8 @@ public class BookItem extends Item {
 	}
 	
 	protected String book; // TODO this is not saved yet; it could be, for editable books.
-	private final boolean hasTitlePage;
-	private final boolean editable;
+	public final boolean hasTitlePage;
+	public final boolean editable;
 	
 	private BookItem(String title, int color, String book) { this(title, color, book, false); }
 	private BookItem(String title, int color, String book, boolean hasTitlePage) { this(title, color, book, hasTitlePage, false); }
@@ -37,7 +37,7 @@ public class BookItem extends Item {
 	}
 	
 	public boolean interactOn(Tile tile, Level level, int xt, int yt, Player player, Direction attackDir) {
-		Game.setMenu(new BookDisplay(book, hasTitlePage, editable));
+		Game.setMenu(new BookDisplay(this));
 		return true;
 	}
 	
@@ -46,5 +46,17 @@ public class BookItem extends Item {
 	
 	public BookItem clone() {
 		return new BookItem(getName(), sprite.color, book, hasTitlePage, editable);
+	}
+
+	public void setBookData(String text) {
+		this.book = text;
+	}
+
+	public String getBookData() {
+		return this.book;
+	}
+
+	public static BookItem getBookWithData(String text) {
+		return new BookItem("", Color.get(-1, 0), text);
 	}
 }

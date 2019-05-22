@@ -4,6 +4,7 @@ import minicraft.core.Game;
 import minicraft.core.Renderer;
 import minicraft.core.io.InputHandler;
 import minicraft.gfx.*;
+import minicraft.item.BookItem;
 import minicraft.screen.entry.StringEntry;
 
 public class BookDisplay extends Display {
@@ -27,9 +28,17 @@ public class BookDisplay extends Display {
 
     private boolean editable;
 
-    public BookDisplay(String book) { this(book, false); }
-    public BookDisplay(String book, boolean hasTitlePage) { this(book, hasTitlePage, false); }
-    public BookDisplay(String book, boolean hasTitlePage, boolean editable) {
+    private BookItem bookItem;
+
+    public BookDisplay(String book) { this(BookItem.getBookWithData(book)); }
+    public BookDisplay(BookItem bookItem) {
+
+        this.bookItem = bookItem;
+        String book = bookItem.getBookData();
+
+        editable = bookItem.editable;
+
+        titlePage = bookItem.hasTitlePage;
 
         if (!editable && book == null) {
             book = defaultBook;
@@ -47,11 +56,11 @@ public class BookDisplay extends Display {
 
         pageCountIdx = pages.length;
 
-        titlePage = hasTitlePage;
+        titlePage = titlePage;
 
         this.editable = editable;
 
-        menus = new Menu[pages.length + (hasTitlePage ? 2 : 1)];
+        menus = new Menu[pages.length + (titlePage ? 2 : 1)];
 
         builder =  new Menu.Builder(false, 3, RelPos.CENTER).setSize(width, height).setPositioning(new Point(Renderer.WIDTH/2, Renderer.HEIGHT/2), RelPos.CENTER).setFrame(443, 3, 443);
 
@@ -94,8 +103,10 @@ public class BookDisplay extends Display {
     @Override
     public void tick(InputHandler input) {
         if (editable) {
-            if (input.getKey("exit").clicked)
+            if (input.getKey("exit").clicked) {
+                bookItem.setBookData(getSaveBook());
                 Game.exitMenu();
+            }
             // Use the button variants so people can still type 'A' and 'D'
             if (input.getKey("left" + (editable ? "-button" : "")).clicked) turnPage(-1);
             if (input.getKey("right" + (editable ? "-button" : "")).clicked) turnPage(1);

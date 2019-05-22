@@ -53,7 +53,7 @@ public class LinkEntry extends SelectEntry {
 			}
 			
 			if(!canBrowse) {
-				Game.setMenu(new BookDisplay(failMsg, false));
+				Game.setMenu(new BookDisplay(failMsg));
 			}
 			
 		}, localize);
