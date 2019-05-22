@@ -10,7 +10,10 @@ import minicraft.level.tile.Tile;
 
 public class MapDisplay extends Display {
 
-    public MapDisplay() {
+    private boolean showOre;
+
+    public MapDisplay() { this(false); }
+    public MapDisplay(boolean showOre) {
 
         Menu.Builder builder = new Menu.Builder(false, 0, RelPos.CENTER)
                 .setFrame(443, 1, 443);
@@ -21,6 +24,8 @@ public class MapDisplay extends Display {
         menus[0] = builder.createMenu();
 
         menus[0].shouldRender = true;
+
+        this.showOre = showOre;
     }
 
     @Override
@@ -111,7 +116,11 @@ public class MapDisplay extends Display {
                 Tile tile = level.getTile(i + (offset[0] * 128), c + (offset[1] * 128));
                 for (int e = 0; e < MapData.values().length; e++) {
                     if (MapData.values()[e].tileID == tile.id) {
-                        color = MapData.values()[e].color;
+                        if (!showOre) {
+                            color = MapData.values()[e].color;
+                        } else {
+                            color = MapData.values()[e].oreColor;
+                        }
                         break;
                     }
                 }

@@ -10,21 +10,35 @@ import minicraft.level.Level;
 import minicraft.level.tile.Tile;
 import minicraft.screen.MapDisplay;
 
+import java.util.ArrayList;
+
 public class MapItem extends Item {
 
-    public MapItem() {
-        super("Map", new Sprite(30, 4, Color.get(-1, 443, 115, 40)));
+    protected static ArrayList<Item> getAllInstances() {
+        ArrayList<Item> items = new ArrayList<>();
+
+        items.add(new MapItem("Map", false));
+        items.add(new MapItem("Ore Map", true));
+
+        return items;
     }
+
+    public MapItem(String name, boolean showOre) {
+        super(name, new Sprite(30, 4, Color.get(-1, 443, 115, 40)));
+        this.showOre = showOre;
+    }
+
+    private boolean showOre;
 
     @Override
     public Item clone() {
-        return new MapItem();
+        return new MapItem(super.getName(), showOre);
     }
 
     @Override
     public boolean interact(Player player, Entity entity, Direction attackDir) {
         if (!Game.isValidServer()) {
-            Game.setMenu(new MapDisplay());
+            Game.setMenu(new MapDisplay(showOre));
         }
         return false;
     }

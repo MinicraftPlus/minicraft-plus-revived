@@ -12,11 +12,11 @@ public enum MapData {
     LAVA(Tiles.get("Lava").id, 511),
     ROCK(Tiles.get("Rock").id, 333),
     HARD_ROCK(Tiles.get("Hard Rock").id, 202),
-    // don't reveal ores on the map by making them look the same as rocks
-    IRON_ORE(Tiles.get("Iron Ore").id, 333),
-    LAPIS_ORE(Tiles.get("Lapis").id, 333),
-    GOLD_ORE(Tiles.get("Gold Ore").id, 333),
-    GEM_ORE(Tiles.get("Gem Ore").id, 333),
+    // don't reveal ores on the normal map by making them look the same as rocks
+    IRON_ORE(Tiles.get("Iron Ore").id, 333, 322),
+    LAPIS_ORE(Tiles.get("Lapis").id, 333, 115),
+    GOLD_ORE(Tiles.get("Gold Ore").id, 333, 440),
+    GEM_ORE(Tiles.get("Gem Ore").id, 333, 505),
     JUNGLE(Tiles.get("Jungle").id, 210),
     BAMBOO(Tiles.get("Bamboo").id, 210),
     SPIKES(Tiles.get("Spikes").id, 232),
@@ -48,10 +48,18 @@ public enum MapData {
 
     public int tileID;
     public int color;
+    public int oreColor; // used for the upgraded map
 
     MapData(int id, int color) {
         tileID = id;
         this.color = color;
+        this.oreColor = color;
+    }
+
+    MapData(int id, int color, int oreColor) {
+        tileID = id;
+        this.color = color;
+        this.oreColor = oreColor;
     }
 
 }

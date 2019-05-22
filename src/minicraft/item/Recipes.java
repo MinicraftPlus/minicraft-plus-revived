@@ -36,6 +36,7 @@ public class Recipes {
 		workbenchRecipes.add(new Recipe("Paper_2", "Bamboo_1"));
 		workbenchRecipes.add(new Recipe("Spike_1", "Bamboo_2"));
 		workbenchRecipes.add(new Recipe("Map_1", "Paper_20"));
+		workbenchRecipes.add(new Recipe("Ore Map_1", "Map_1", "Iron_2", "Lapis_2"));
 		workbenchRecipes.add(new Recipe("Editable Book_1", "Paper_30", "Leather_5"));
 		
 		loomRecipes.add(new Recipe("String_2", "Wool_1"));
