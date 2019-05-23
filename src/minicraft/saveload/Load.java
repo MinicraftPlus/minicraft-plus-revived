@@ -287,6 +287,8 @@ public class Load {
 		
 		for (String keymap : subdata) {
 			String[] map = keymap.split(";");
+			if(prefVer.compareTo(new Version("2.0.6-dev1")) < 0)
+				map[0] = map[0].replaceAll("(UP|DOWN|LEFT|RIGHT)", "MOVE-\\1");
 			Game.input.setKey(map[0], map[1]);
 		}
 	}
@@ -456,6 +458,9 @@ public class Load {
 			name = name.replace("I.Armor", "Iron Armor").replace("S.Armor", "Snake Armor").replace("L.Armor", "Leather Armor").replace("G.Armor", "Gold Armor").replace("BrickWall", "Wall");
 		}
 		
+		if(worldVer.compareTo(new Version("2.0.6-dev1")) < 0)
+			name = name.replace("Book", "Editable Book");
+		
 		return name;
 	}
 	
@@ -473,13 +478,11 @@ public class Load {
 				continue;
 			}
 			
-			if(worldVer.compareTo(new Version("1.9.4")) < 0) {
-				item = subOldName(item, worldVer);
-			}
+			item = subOldName(item, worldVer);
 			
 			if (item.contains("Power Glove")) continue; // just pretend it doesn't exist. Because it doesn't. :P
 			
-			//System.out.println("loading item: " + item);
+			if(Game.debug) System.out.println("loading item: " + item);
 			
 			if(worldVer.compareTo(new Version("2.0.4")) <= 0 && item.contains(";")) {
 				String[] curData = item.split(";");
