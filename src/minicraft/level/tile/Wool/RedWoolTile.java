@@ -1,4 +1,4 @@
-package minicraft.level.tile.WoolTiles;
+package minicraft.level.tile.Wool;
 
 import minicraft.core.io.Sound;
 import minicraft.entity.Direction;

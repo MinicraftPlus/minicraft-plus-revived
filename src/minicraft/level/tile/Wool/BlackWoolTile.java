@@ -1,4 +1,4 @@
-package minicraft.level.tile.WoolTiles;
+package minicraft.level.tile.Wool;
 
 import minicraft.core.io.Sound;
 import minicraft.entity.Direction;
@@ -13,12 +13,12 @@ import minicraft.level.Level;
 import minicraft.level.tile.Tile;
 import minicraft.level.tile.Tiles;
 
-public class GreenWoolTile extends Tile {
+public class BlackWoolTile extends Tile {
 
-    private static Sprite sprite = Sprite.repeat(17, 0, 2, 2, Color.get(30, 40, 40, 50));
+    private static Sprite sprite = Sprite.repeat(17, 0, 2, 2, Color.get(111, 111, 000, 111));
 
-    public GreenWoolTile() {
-        super("Green Wool", sprite);
+    public BlackWoolTile() {
+        super("Black Wool", sprite);
     }
 
     public boolean interact(Level level, int xt, int yt, Player player, Item item, Direction attackDir) {
@@ -27,7 +27,7 @@ public class GreenWoolTile extends Tile {
             if (tool.type == ToolType.Shovel) {
                 if (player.payStamina(3 - tool.level) && tool.payDurability()) {
                     level.setTile(xt, yt, Tiles.get("hole"));
-                    level.dropItem(xt*16+8, yt*16+8, Items.get("Green Wool"));
+                    level.dropItem(xt*16+8, yt*16+8, Items.get("Black Wool"));
                     Sound.monsterHurt.play();
                     return true;
                 }
