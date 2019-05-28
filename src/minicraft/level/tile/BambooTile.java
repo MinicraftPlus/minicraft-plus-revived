@@ -1,9 +1,13 @@
 package minicraft.level.tile;
 
+import minicraft.core.Game;
 import minicraft.core.io.Sound;
 import minicraft.entity.Direction;
 import minicraft.entity.Entity;
+import minicraft.entity.mob.Mob;
 import minicraft.entity.mob.Player;
+import minicraft.entity.particle.SmashParticle;
+import minicraft.entity.particle.TextParticle;
 import minicraft.gfx.Color;
 import minicraft.gfx.Screen;
 import minicraft.gfx.Sprite;
@@ -26,15 +30,18 @@ public class BambooTile extends Tile {
     }
 
     @Override
+    public boolean hurt(Level level, int x, int y, Mob source, int dmg, Direction attackDir) {
+        hurt(level, x, y, dmg);
+        return true;
+    }
+
+    @Override
     public boolean interact(Level level, int xt, int yt, Player player, Item item, Direction attackDir) {
         if (item instanceof ToolItem) {
             ToolItem tool = (ToolItem)item;
             if (tool.type == ToolType.Axe) {
                 if (player.payStamina(4 - tool.level) && tool.payDurability()) {
-                    level.setTile(xt, yt, Tiles.get("Jungle"));
-                    Sound.monsterHurt.play();
-                    int count = random.nextInt(2) + 1;
-                    level.dropItem(xt * 16 + 8, yt * 16 + 8, count, Items.get("Bamboo"));
+                    hurt(level, xt, yt, random.nextInt(10) + (tool.level) * 5 + 1);
                     return true;
                 }
             }
@@ -42,6 +49,22 @@ public class BambooTile extends Tile {
         return false;
     }
 
+    @Override
+    public void hurt(Level level, int x, int y, int dmg) {
+        int damage = level.getData(x, y) + dmg;
+        int bambooHealth = 25;
+        if (Game.isMode("creative")) dmg = damage = bambooHealth;
+
+        level.add(new SmashParticle(x * 16, y * 16));
+        level.add(new TextParticle("" + dmg, x * 16 + 8, y * 16 + 8, Color.RED));
+
+        if (damage >= bambooHealth) {
+            level.dropItem(x*16+8, y*16+8, 1, 2, Items.get("bamboo"));
+            level.setTile(x, y, Tiles.get("jungle"));
+        } else {
+            level.setData(x, y, damage);
+        }
+    }
 
     @Override
     public boolean mayPass(Level level, int x, int y, Entity e) {
