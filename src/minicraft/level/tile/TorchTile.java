@@ -1,5 +1,6 @@
 package minicraft.level.tile;
 
+import minicraft.core.io.Sound;
 import minicraft.entity.Direction;
 import minicraft.entity.mob.Player;
 import minicraft.gfx.Color;
@@ -51,6 +52,7 @@ public class TorchTile extends Tile {
 	public boolean interact(Level level, int xt, int yt, Player player, Item item, Direction attackDir) {
 		if(item instanceof PowerGloveItem) {
 			level.setTile(xt, yt, this.onType);
+			Sound.monsterHurt.play();
 			level.dropItem(xt*16+8, yt*16+8, Items.get("Torch"));
 			return true;
 		} else {

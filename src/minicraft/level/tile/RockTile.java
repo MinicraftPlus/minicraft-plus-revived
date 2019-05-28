@@ -2,6 +2,7 @@ package minicraft.level.tile;
 
 import minicraft.core.Game;
 import minicraft.core.io.Settings;
+import minicraft.core.io.Sound;
 import minicraft.entity.Direction;
 import minicraft.entity.Entity;
 import minicraft.entity.mob.Mob;
@@ -69,6 +70,8 @@ public class RockTile extends Tile {
 			coallvl = 1;
 		}
 		level.add(new SmashParticle(x * 16, y * 16));
+		Sound.monsterHurt.play();
+
 		level.add(new TextParticle("" + dmg, x * 16 + 8, y * 16 + 8, Color.RED));
 		if (damage >= rockHealth) {
 			int count = random.nextInt(1) + 0;

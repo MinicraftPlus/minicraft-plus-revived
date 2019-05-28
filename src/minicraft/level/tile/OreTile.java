@@ -1,6 +1,7 @@
 package minicraft.level.tile;
 
 import minicraft.core.Game;
+import minicraft.core.io.Sound;
 import minicraft.entity.Direction;
 import minicraft.entity.Entity;
 import minicraft.entity.mob.Mob;
@@ -88,6 +89,8 @@ public class OreTile extends Tile {
 		if (Game.isMode("creative")) dmg = damage = oreH;
 		
 		level.add(new SmashParticle(x * 16, y * 16));
+		Sound.monsterHurt.play();
+
 		level.add(new TextParticle("" + dmg, x * 16 + 8, y * 16 + 8, Color.RED));
 		if (dmg > 0) {
 			int count = random.nextInt(2) + 0;
