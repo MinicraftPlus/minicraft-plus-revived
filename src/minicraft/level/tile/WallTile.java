@@ -49,8 +49,13 @@ public class WallTile extends Tile {
 			hurt(level, x, y, random.nextInt(6) / 6 * dmg / 2);
 			return true;
 		} else {
-			Game.notifications.add(obrickMsg);
-			return false;
+			if (Game.isMode("creative")) {
+				hurt(level, x, y, random.nextInt(6) / 6 * dmg / 2);
+				return true;
+			} else {
+				Game.notifications.add(obrickMsg);
+				return false;
+			}
 		}
 	}
 	
@@ -59,12 +64,14 @@ public class WallTile extends Tile {
 			ToolItem tool = (ToolItem) item;
 			if (tool.type == ToolType.Pickaxe) {
 				if(level.depth != -3 || type != Material.Obsidian || AirWizard.beaten) {
-					if (player.payStamina(4 - tool.level) && tool.payDurability()) {
-						hurt(level, xt, yt, random.nextInt(10) + (tool.level) * 5 + 10);
-						return true;
-					}
-				} else
-					Game.notifications.add(obrickMsg);
+						if (player.payStamina(4 - tool.level) && tool.payDurability()) {
+							hurt(level, xt, yt, random.nextInt(10) + (tool.level) * 5 + 10);
+							return true;
+						}
+				} else {
+					if (!Game.isMode("creative"))
+						Game.notifications.add(obrickMsg);
+				}
 			}
 		}
 		return false;
