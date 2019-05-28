@@ -312,13 +312,16 @@ public class Save {
 		Inventory inventory = player.getInventory();
 
 		if (player.activeItem != null && player.activeItem.equals(Items.get("Editable Book"))) {
+			// make sure to include the book in the player's hand
 			inventory.add(player.activeItem);
 		}
 
 		for (int i = 0; i < inventory.invSize(); i++) {
+			// TODO: makes this just check the book's 'editable' property instead of checking for a particular name
 			if (inventory.get(i).equals(Items.get("Editable Book"))) {
 				String text = ((BookItem)inventory.get(i)).getText();
 
+				// make sure we can save it, since returns are used to separate the books from each other in the file
 				text = text.replace("\n", "\\n");
 
 				data.add(text);

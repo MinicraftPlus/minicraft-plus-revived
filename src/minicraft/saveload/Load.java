@@ -329,9 +329,8 @@ public class Load {
 						if(Math.random() < 0.8) // don't replace *all* the lapis
 							tilename = "Gem Ore";
 					}
-					if(tilename.equalsIgnoreCase("WOOL") && worldVer.compareTo(new Version("2.0.5-dev6")) < 0) {
-						// each color of wool now has it's own class
-						// Chris J please do this part
+					if(tilename.equalsIgnoreCase("WOOL") && worldVer.compareTo(new Version("2.0.5")) < 0) {
+
 					}
 					tiles[tileArrIdx] = Tiles.get(tilename).id;
 					tdata[tileArrIdx] = Byte.parseByte(extradata.get(tileidx));
@@ -477,14 +476,15 @@ public class Load {
 				System.err.println("loadInventory: item in data list is \"\", skipping item");
 				continue;
 			}
-			
+
+			// changes old item names to their new version
 			item = subOldName(item, worldVer);
 			
 			if (item.contains("Power Glove")) continue; // just pretend it doesn't exist. Because it doesn't. :P
 			
 			if(Game.debug) System.out.println("loading item: " + item);
-			
-			if(worldVer.compareTo(new Version("2.0.4")) <= 0 && item.contains(";")) {
+
+			if(worldVer.compareTo(new Version("2.0.4")) <= 0 && item.contains(";")) { // for backwards compatibility with old inventory data
 				String[] curData = item.split(";");
 				String itemName = curData[0];
 				
@@ -502,18 +502,22 @@ public class Load {
 				if (toAdd instanceof BookItem) {
 					if (item.contains(";")) {
 						try {
+							// tmpData is used so that loadBook (or more accurately, loadFromFile) doesn't overwrite the other items in the inventory
 							ArrayList<String> tmpData = new ArrayList<>(data);
 							String text = loadBook("BookData", Integer.parseInt(item.split(";")[1]));
 							data = tmpData;
 
+							// find our "fake" returns and replace them with "true" ones for the in-game book text
 							text = text.replace("\\n", "\n");
 
 							((BookItem) toAdd).setText(text);
 							inventory.add(toAdd);
 						} catch (Exception e) {
+							// if the data doesn't exist or the index isn't an integer
 							System.out.println("WARNING: Bad data for book");
 						}
 					} else {
+						// it's not editable, so we can just add it
 						inventory.add(toAdd);
 					}
 				} else {
@@ -531,6 +535,7 @@ public class Load {
 			e.printStackTrace();
 			return "";
 		}
+		// split the file at returns and get the right one
 		return file.split("\n")[idx];
 	}
 	
