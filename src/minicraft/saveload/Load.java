@@ -329,8 +329,26 @@ public class Load {
 						if(Math.random() < 0.8) // don't replace *all* the lapis
 							tilename = "Gem Ore";
 					}
-					if(tilename.equalsIgnoreCase("WOOL") && worldVer.compareTo(new Version("2.0.5")) < 0) {
-
+					if(tilename.equalsIgnoreCase("WOOL") && worldVer.compareTo(new Version("2.0.6-dev1")) < 0) {
+						switch(Integer.parseInt(extradata.get(tileidx))) {
+							case 1:
+								tilename = "Red Wool";
+								break;
+							case 2:
+								tilename = "Yellow Wool";
+								break;
+							case 3:
+								tilename = "Green Wool";
+								break;
+							case 4:
+								tilename = "Blue Wool";
+								break;
+							case 5:
+								tilename = "Black Wool";
+								break;
+							default:
+								tilename = "Wool";
+						}
 					}
 					tiles[tileArrIdx] = Tiles.get(tilename).id;
 					tdata[tileArrIdx] = Byte.parseByte(extradata.get(tileidx));
