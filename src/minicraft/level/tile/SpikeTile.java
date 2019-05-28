@@ -57,14 +57,14 @@ public class SpikeTile extends Tile {
         x = x << 4;
         y = y << 4;
 
-        screen.render(x - 4, y, 20 + 1 * 32, Color.get(-1, 30, 141, 252), 0);
-        screen.render(x + 4, y, 20 + 1 * 32, Color.get(-1, 30, 141, 252), 1);
-        screen.render(x + 4, y, 20 + 1 * 32, Color.get(-1, 30, 141, 252), 0);
-        screen.render(x + 12, y, 20 + 1 * 32, Color.get(-1, 30, 141, 252), 1);
-        screen.render(x - 4, y + 8, 20 + 1 * 32, Color.get(-1, 30, 141, 252), 0);
-        screen.render(x + 4, y + 8, 20 + 1 * 32, Color.get(-1, 30, 141, 252), 1);
-        screen.render(x + 4, y + 8, 20 + 1 * 32, Color.get(-1, 30, 141, 252), 0);
-        screen.render(x + 12, y + 8, 20 + 1 * 32, Color.get(-1, 30, 141, 252), 1);
+        screen.render(x - 4, y, 21 + 1 * 32, Color.get(-1, 30, 141, 252), 0);
+        screen.render(x + 4, y, 21 + 1 * 32, Color.get(-1, 30, 141, 252), 1);
+        screen.render(x + 4, y, 21 + 1 * 32, Color.get(-1, 30, 141, 252), 0);
+        screen.render(x + 12, y, 21 + 1 * 32, Color.get(-1, 30, 141, 252), 1);
+        screen.render(x - 4, y + 8, 21 + 1 * 32, Color.get(-1, 30, 141, 252), 0);
+        screen.render(x + 4, y + 8, 21 + 1 * 32, Color.get(-1, 30, 141, 252), 1);
+        screen.render(x + 4, y + 8, 21 + 1 * 32, Color.get(-1, 30, 141, 252), 0);
+        screen.render(x + 12, y + 8, 21 + 1 * 32, Color.get(-1, 30, 141, 252), 1);
     }
 
     @Override
