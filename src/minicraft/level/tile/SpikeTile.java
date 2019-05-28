@@ -14,8 +14,6 @@ import minicraft.item.ToolType;
 import minicraft.level.Level;
 
 public class SpikeTile extends Tile {
-    private static Sprite sprite = new Sprite(20, 1, Color.get(-1, 30, 141, 252));
-
     public SpikeTile(String name) {
         super(name, (Sprite)null);
         connectsToSand = true;

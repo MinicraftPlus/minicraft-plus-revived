@@ -495,14 +495,43 @@ public class Load {
 				if(newItem instanceof StackableItem) {
 					((StackableItem)newItem).count = count;
 					inventory.add(newItem);
-				}
-				else
+				} else
 					inventory.add(newItem, count);
 			} else {
 				Item toAdd = Items.get(item);
-				inventory.add(toAdd);
+				if (toAdd instanceof BookItem) {
+					if (item.contains(";")) {
+						try {
+							ArrayList<String> tmpData = new ArrayList<>(data);
+							String text = loadBook("BookData", Integer.parseInt(item.split(";")[1]));
+							data = tmpData;
+
+							text = text.replace("\\n", "\n");
+
+							((BookItem) toAdd).setText(text);
+							inventory.add(toAdd);
+						} catch (Exception e) {
+							System.out.println("WARNING: Bad data for book");
+						}
+					} else {
+						inventory.add(toAdd);
+					}
+				} else {
+					inventory.add(toAdd);
+				}
 			}
 		}
+	}
+
+	private String loadBook(String filename, int idx) {
+		String file;
+		try {
+			file = loadFromFile(location + filename + extension, false);
+		} catch (IOException e) {
+			e.printStackTrace();
+			return "";
+		}
+		return file.split("\n")[idx];
 	}
 	
 	private void loadEntities(String filename) {

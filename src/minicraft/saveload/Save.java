@@ -31,10 +31,7 @@ import minicraft.entity.mob.Player;
 import minicraft.entity.mob.RemotePlayer;
 import minicraft.entity.particle.Particle;
 import minicraft.entity.particle.TextParticle;
-import minicraft.item.Inventory;
-import minicraft.item.Item;
-import minicraft.item.PotionType;
-import minicraft.item.StackableItem;
+import minicraft.item.*;
 import minicraft.network.MinicraftServer;
 import minicraft.screen.LoadingDisplay;
 import minicraft.screen.MultiplayerDisplay;
@@ -89,6 +86,7 @@ public class Save {
 		if(!Game.isValidServer()) { // this must be waited for on a server.
 			writePlayer("Player", Game.player);
 			writeInventory("Inventory", Game.player);
+			writeBooks("BookData", Game.player);
 		}
 		writeEntities("Entities");
 		
@@ -120,6 +118,7 @@ public class Save {
 		if(writePlayer) {
 			writePlayer("Player", player);
 			writeInventory("Inventory", player);
+			writeBooks("BookData", player);
 		}
 	}
 	
@@ -277,14 +276,53 @@ public class Save {
 	}
 	public static void writeInventory(Player player, List<String> data) {
 		data.clear();
-		if(player.activeItem != null) {
-			data.add(player.activeItem.getData());
-		}
+
+		int numBooks = 0;
 		
 		Inventory inventory = player.getInventory();
+
+		if (player.activeItem != null) {
+			inventory.add(player.activeItem);
+		}
 		
 		for(int i = 0; i < inventory.invSize(); i++) {
-			data.add(inventory.get(i).getData());
+			Item item = inventory.get(i);
+			if (item.equals(Items.get("Editable Book"))) {
+				data.add(item.getData() + ";" + numBooks);
+				numBooks++;
+			} else {
+				data.add(item.getData());
+			}
+		}
+	}
+
+	private void writeBooks(String filename, Player player) {
+		writeBooks(player, data);
+		String[] stringData = data.toArray(new String[]{});
+		try {
+			writeToFile(location + filename + extension, stringData, false);
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		data.clear();
+	}
+	public static void writeBooks(Player player, List<String> data) {
+		data.clear();
+
+		Inventory inventory = player.getInventory();
+
+		if (player.activeItem != null && player.activeItem.equals(Items.get("Editable Book"))) {
+			inventory.add(player.activeItem);
+		}
+
+		for (int i = 0; i < inventory.invSize(); i++) {
+			if (inventory.get(i).equals(Items.get("Editable Book"))) {
+				String text = ((BookItem)inventory.get(i)).getText();
+
+				text = text.replace("\n", "\\n");
+
+				data.add(text);
+			}
 		}
 	}
 	
