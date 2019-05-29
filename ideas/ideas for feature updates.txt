@@ -21,10 +21,6 @@ Make it so the world loading menu displays both a percentage and a message sayin
 
 ----
 
-Add little black tics to the tile in front of you, so you know which tile things like planks and walls will be placed on.
-
-----
-
 Allow clients to add a port number to the end of the ip with ":". for example: 12.34.145.1:1122
 
 ----
