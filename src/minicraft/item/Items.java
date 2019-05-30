@@ -57,12 +57,12 @@ public class Items {
 	public static Item get(String name, boolean allowNull) {
 		name = name.toUpperCase();
 		//System.out.println("fetching name: \"" + name + "\"");
-		int amount = 1;
+		int data = 1;
 		boolean hadUnderscore = false;
 		if(name.contains("_")) {
 			hadUnderscore = true;
 			try {
-				amount = Integer.parseInt(name.substring(name.indexOf("_")+1));
+				data = Integer.parseInt(name.substring(name.indexOf("_")+1));
 			} catch(Exception ex) {
 				ex.printStackTrace();
 			}
@@ -71,7 +71,7 @@ public class Items {
 		else if(name.contains(";")) {
 			hadUnderscore = true;
 			try {
-				amount = Integer.parseInt(name.substring(name.indexOf(";")+1));
+				data = Integer.parseInt(name.substring(name.indexOf(";")+1));
 			} catch(Exception ex) {
 				ex.printStackTrace();
 			}
@@ -101,9 +101,9 @@ public class Items {
 		if(i != null) {
 			i = i.clone();
 			if(i instanceof StackableItem)
-				((StackableItem)i).count = amount;
+				((StackableItem)i).count = data;
 			if(i instanceof ToolItem && hadUnderscore)
-				((ToolItem)i).dur = amount;
+				((ToolItem)i).dur = data;
 			return i;
 		} else {
 			System.out.println(Network.onlinePrefix()+"ITEMS GET: invalid name requested: \"" + name + "\"");

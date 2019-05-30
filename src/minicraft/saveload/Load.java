@@ -638,31 +638,9 @@ public class Load {
 					itemData = subOldName(itemData, worldVer);
 				
 				if(itemData.contains("Power Glove")) continue; // ignore it.
-				
-				if (itemData.contains(";")) {
-					String[] aitemData = itemData.split(";");
-					StackableItem stack = (StackableItem)Items.get(aitemData[0]);
-					if (!(stack instanceof UnknownItem)) {
-						stack.count = Integer.parseInt(aitemData[1]);
-						chest.getInventory().add(stack);
-					} else {
-						System.err.println("LOAD ERROR: encountered invalid item name, expected to be stackable: " + aitemData[0] + "; stack trace:");
-						Thread.dumpStack();
-					}
-				} else if (itemData.contains(".")) {
-					String[] bitemData = itemData.split("\\.");
-					ToolItem tool = (ToolItem) Items.get(bitemData[0], true);
-					if (tool != null) {
-						tool.dur = Integer.parseInt(bitemData[1]);
-						chest.getInventory().add(tool);
-					} else {
-						System.err.println("LOAD ERROR: encountered invalid item name, expected to be tool: " + bitemData[0] + "; stack trace:");
-						Thread.dumpStack();
-					}
-				} else {
-					Item item = Items.get(itemData);
-					chest.getInventory().add(item);
-				}
+
+				Item item = Items.get(itemData);
+				chest.getInventory().add(item);
 			}
 			
 			if (isDeathChest) {
