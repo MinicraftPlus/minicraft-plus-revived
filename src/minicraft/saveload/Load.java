@@ -637,9 +637,9 @@ public class Load {
 				String itemData = chestInfo.get(idx);
 				if(worldVer.compareTo(new Version("1.9.4-dev4")) < 0)
 					itemData = subOldName(itemData, worldVer);
-				
+								
 				if(itemData.contains("Power Glove")) continue; // ignore it.
-
+				
 				Item item = Items.get(itemData);
 				chest.getInventory().add(item);
 			}

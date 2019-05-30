@@ -329,11 +329,7 @@ public class Save {
 			
 			for(int ii = 0; ii < chest.getInventory().invSize(); ii++) {
 				Item item = chest.getInventory().get(ii);
-				extradata.append(":").append(item.getName());
-				int data = -1;
-				if (item instanceof StackableItem) data = ((StackableItem) item).count;
-				if (item instanceof ToolItem) data = ((ToolItem) item).dur;
-				if (data != -1) extradata.append(";").append(data);
+				extradata.append(":").append(item.getData());
 			}
 			
 			if(chest instanceof DeathChest) extradata.append(":").append(((DeathChest) chest).time);
