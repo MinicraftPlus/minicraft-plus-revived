@@ -868,13 +868,7 @@ public class Player extends Mob implements ItemHolder, ClientTickable {
 	 */
 	@Override
 	public int getLightRadius() {
-		//if (Game.currentLevel == 3) return 0; // I don't want the player to have an automatic halo on the surface.
-		
-		//float light = potioneffects.containsKey(PotionType.Light) ? 2.5f : 1; // multiplier for the light potion effect.
 		int r = 5; // the radius of the light.
-		// if (Game.currentLevel == 3) r = (light-1) * 3;
-		//
-		// if (Game.currentLevel == 5) r = 5 * light; // more light than usual on dungeon level.
 		
 		if (activeItem != null && activeItem instanceof FurnitureItem) { // if player is holding furniture
 			int rr = ((FurnitureItem) activeItem).furniture.getLightRadius(); // gets furniture light radius

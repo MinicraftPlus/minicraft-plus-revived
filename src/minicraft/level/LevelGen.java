@@ -18,7 +18,6 @@ public class LevelGen {
 	private static final Random random = new Random(worldSeed);
 	public double[] values; //An array of doubles, used to help making noise for the map
 	private int w, h; // width and height of the map
-	private static int d = 0;
 	private static final int stairRadius = 15;
 	
 	/** This creates noise to create random values for level generation */
@@ -226,8 +225,7 @@ public class LevelGen {
 		
 		byte[] map = new byte[w * h];
 		byte[] data = new byte[w * h];
-		//double min = 0, max = 0;
-		//double average = 0;
+
 		for (int y = 0; y < h; y++) {
 			for (int x = 0; x < w; x++) {
 				int i = x + y * w;
@@ -245,10 +243,6 @@ public class LevelGen {
 				dist = dist * dist * dist * dist;
 				dist = dist * dist * dist * dist;
 				val += 1 - dist*20;
-				
-				//min = Math.min(mval, min);
-				//max = Math.max(mval, max);
-				//average += val;
 				
 				switch ((String) Settings.get("Type")) {
 					case "Island":
@@ -448,7 +442,6 @@ public class LevelGen {
 		}
 		
 		int count = 0;
-		//int tries = 0;
 		
 		//if (Game.debug) System.out.println("generating stairs for surface level...");
 		
@@ -530,23 +523,6 @@ public class LevelGen {
 			map[x + 1 + (y) * w] = Tiles.get("lava").id;
 		}
 		
-		/*int count = 0;
-		stairsLoop:
-		for (int i = 0; i < w * h; i++) {
-			int x = random.nextInt(w - 2) + 1;
-			int y = random.nextInt(h - 2) + 1;
-			
-			for (int yy = y - 1; yy <= y + 1; yy++)
-				for (int xx = x - 1; xx <= x + 1; xx++) {
-					if (map[xx + yy * w] != Tiles.get("Obsidian Wall").id) continue stairsLoop;
-				}
-			
-			map[x + y * w] = Tiles.get("Obsidian Wall").id;
-			
-			count++;
-			if (count == 2) break;
-		}*/
-		
 		return new byte[][]{map, data};
 	}
 	
@@ -592,8 +568,6 @@ public class LevelGen {
 				if (xd < 0) xd = -xd;
 				if (yd < 0) yd = -yd;
 				double dist = xd >= yd ? xd : yd;
-				//dist = dist * dist * dist * dist;
-				//dist = dist * dist * dist * dist;
 				dist = Math.pow(dist, 8);
 				val += 1 - dist * 20;
 				
@@ -627,7 +601,7 @@ public class LevelGen {
 					int yy = y + random.nextInt(3) - random.nextInt(2);
 					if (xx >= r && yy >= r && xx < w - r && yy < h - r) {
 						if (map[xx + yy * w] == Tiles.get("rock").id) {
-							map[xx + yy * w] = (byte) ((Tiles.get("Lapis").id & 0xff));
+							map[xx + yy * w] = (byte) (Tiles.get("Lapis").id & 0xff);
 						}
 					}
 				}
@@ -642,31 +616,31 @@ public class LevelGen {
 				for (int j = 0; j < 10; j++) {
 					if (xx < w - r && yy < h - r) {
 						/// The "& 0xff" is a common way to convert a byte to an unsigned int, which basically prevents negative values... except... this doesn't do anything if you flip it back to a byte again...
-						map[xx + yy * w] = (byte) ((Tiles.get("Obsidian Wall").id & 0xff));
-						map[xx + 1 + yy * w] = (byte) ((Tiles.get("Obsidian Wall").id & 0xff));
-						map[xx + (yy + 1) * w] = (byte) ((Tiles.get("Obsidian Wall").id & 0xff));
-						map[xx + 2 + yy * w] = (byte) ((Tiles.get("Obsidian Wall").id & 0xff));
-						map[xx + (yy + 2) * w] = (byte) ((Tiles.get("Obsidian Wall").id & 0xff));
-						map[xx + 3 + yy * w] = (byte) ((Tiles.get("Obsidian Wall").id & 0xff));
-						map[xx + (yy + 3) * w] = (byte) ((Tiles.get("Obsidian Wall").id & 0xff));
-						map[xx + 4 + yy * w] = (byte) ((Tiles.get("Obsidian Wall").id & 0xff));
-						map[xx + (yy + 4) * w] = (byte) ((Tiles.get("Obsidian Wall").id & 0xff));
-						map[xx + 4 + (yy + 1) * w] = (byte) ((Tiles.get("Obsidian Wall").id & 0xff));
-						map[xx + 4 + (yy + 2) * w] = (byte) ((Tiles.get("Obsidian Wall").id & 0xff));
-						map[xx + 4 + (yy + 3) * w] = (byte) ((Tiles.get("Obsidian Wall").id & 0xff));
-						map[xx + 4 + (yy + 4) * w] = (byte) ((Tiles.get("Obsidian Wall").id & 0xff));
-						map[xx + 3 + (yy + 1) * w] = (byte) ((Tiles.get("Obsidian").id & 0xff));
-						map[xx + 3 + (yy + 2) * w] = (byte) ((Tiles.get("Obsidian").id & 0xff));
-						map[xx + 3 + (yy + 3) * w] = (byte) ((Tiles.get("Obsidian").id & 0xff));
-						map[xx + 3 + (yy + 4) * w] = (byte) ((Tiles.get("Obsidian Wall").id & 0xff));
-						map[xx + 2 + (yy + 1) * w] = (byte) ((Tiles.get("Obsidian").id & 0xff));
-						map[xx + 2 + (yy + 2) * w] = (byte) ((Tiles.get("Stairs Down").id & 0xff));
-						map[xx + 2 + (yy + 3) * w] = (byte) ((Tiles.get("Obsidian").id & 0xff));
-						map[xx + 2 + (yy + 4) * w] = (byte) ((Tiles.get("Obsidian Wall").id & 0xff));
-						map[xx + 1 + (yy + 1) * w] = (byte) ((Tiles.get("Obsidian").id & 0xff));
-						map[xx + 1 + (yy + 2) * w] = (byte) ((Tiles.get("Obsidian").id & 0xff));
-						map[xx + 1 + (yy + 3) * w] = (byte) ((Tiles.get("Obsidian").id & 0xff));
-						map[xx + 1 + (yy + 4) * w] = (byte) ((Tiles.get("Obsidian Wall").id & 0xff));
+						map[xx + yy * w] = (byte) (Tiles.get("Obsidian Wall").id & 0xff);
+						map[xx + 1 + yy * w] = (byte) (Tiles.get("Obsidian Wall").id & 0xff);
+						map[xx + (yy + 1) * w] = (byte) (Tiles.get("Obsidian Wall").id & 0xff);
+						map[xx + 2 + yy * w] = (byte) (Tiles.get("Obsidian Wall").id & 0xff);
+						map[xx + (yy + 2) * w] = (byte) (Tiles.get("Obsidian Wall").id & 0xff);
+						map[xx + 3 + yy * w] = (byte) (Tiles.get("Obsidian Wall").id & 0xff);
+						map[xx + (yy + 3) * w] = (byte) (Tiles.get("Obsidian Wall").id & 0xff);
+						map[xx + 4 + yy * w] = (byte) (Tiles.get("Obsidian Wall").id & 0xff);
+						map[xx + (yy + 4) * w] = (byte) (Tiles.get("Obsidian Wall").id & 0xff);
+						map[xx + 4 + (yy + 1) * w] = (byte) (Tiles.get("Obsidian Wall").id & 0xff);
+						map[xx + 4 + (yy + 2) * w] = (byte) (Tiles.get("Obsidian Wall").id & 0xff);
+						map[xx + 4 + (yy + 3) * w] = (byte) (Tiles.get("Obsidian Wall").id & 0xff);
+						map[xx + 4 + (yy + 4) * w] = (byte) (Tiles.get("Obsidian Wall").id & 0xff);
+						map[xx + 3 + (yy + 1) * w] = (byte) (Tiles.get("Obsidian").id & 0xff);
+						map[xx + 3 + (yy + 2) * w] = (byte) (Tiles.get("Obsidian").id & 0xff);
+						map[xx + 3 + (yy + 3) * w] = (byte) (Tiles.get("Obsidian").id & 0xff);
+						map[xx + 3 + (yy + 4) * w] = (byte) (Tiles.get("Obsidian Wall").id & 0xff);
+						map[xx + 2 + (yy + 1) * w] = (byte) (Tiles.get("Obsidian").id & 0xff);
+						map[xx + 2 + (yy + 2) * w] = (byte) (Tiles.get("Stairs Down").id & 0xff);
+						map[xx + 2 + (yy + 3) * w] = (byte) (Tiles.get("Obsidian").id & 0xff);
+						map[xx + 2 + (yy + 4) * w] = (byte) (Tiles.get("Obsidian Wall").id & 0xff);
+						map[xx + 1 + (yy + 1) * w] = (byte) (Tiles.get("Obsidian").id & 0xff);
+						map[xx + 1 + (yy + 2) * w] = (byte) (Tiles.get("Obsidian").id & 0xff);
+						map[xx + 1 + (yy + 3) * w] = (byte) (Tiles.get("Obsidian").id & 0xff);
+						map[xx + 1 + (yy + 4) * w] = (byte) (Tiles.get("Obsidian Wall").id & 0xff);
 					}
 				}
 			}
@@ -691,11 +665,6 @@ public class LevelGen {
 				map[x + y * w] = Tiles.get("Stairs Down").id;
 				count++;
 				if (count >= w / 32) break;
-				/*if (Settings.getSize() == 128) {
-					if (count == 4) break;
-				} else {
-					if (count == 8) break;
-				}*/
 			}
 		}
 		

@@ -57,14 +57,7 @@ public class TextParticle extends Particle {
 	
 	@Override
 	public void render(Screen screen) {
-		//if(!msg.contains("Thanks")) {
 		style.setXPos(x - msg.length() * 4).setYPos(y - (int)zz).draw(msg, screen);
-		/*} else { // special, for "Thanks for Playing!" message? Second message is right below...
-			String msg1 = msg.substring(0, 19);
-			String msg2 = msg.substring(19, msg.length());
-			Font.draw(msg1, screen, x - msg.length() * 4, y - (int)zz - 8, color, Color.BLACK);
-			Font.draw(msg2, screen, x - msg.length() * 4, y - (int)zz, color, Color.BLACK);
-		}*/
 	}
 	
 	/**

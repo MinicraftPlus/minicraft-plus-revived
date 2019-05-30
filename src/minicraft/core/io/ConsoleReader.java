@@ -3,7 +3,6 @@ package minicraft.core.io;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import java.util.Locale;
 import java.util.Scanner;
 
 import minicraft.core.Game;
@@ -387,7 +386,6 @@ public class ConsoleReader extends Thread {
 			List<Entity> matches = new ArrayList<>();
 			
 			if(args.length == 0) {
-				//printHelp();
 				System.out.println("cannot target entities without arguments.");
 				return null;
 			}
@@ -488,7 +486,7 @@ public class ConsoleReader extends Thread {
 	}
 	
 	public void run() {
-		Scanner stdin = new Scanner(System.in);//.useDelimiter(System.lineSeparator());
+		Scanner stdin = new Scanner(System.in);
 		try {
 			Thread.sleep(500); // this is to let it get past the debug statements at world load, and any others, maybe, if not in debug mode.
 		} catch(InterruptedException ignored) {}

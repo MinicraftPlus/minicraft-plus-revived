@@ -54,7 +54,6 @@ public class AirWizard extends EnemyMob {
 	@Override
 	public void tick() {
 		super.tick();
-		//if(secondform) super.tick(); // double speed for lvl 2
 		
 		if (attackDelay > 0) {
 			xa = ya = 0;

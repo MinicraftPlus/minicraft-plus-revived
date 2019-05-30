@@ -99,15 +99,4 @@ public class Sound {
 		else
 			clip.stop();
 	}
-	
-	/*
-	public static class Music {
-		
-		
-		
-		public Music(String name) {
-			AudioInputStream stream = AudioSystem.getAudioInputStream()
-		}
-		
-	}*/
 }

@@ -55,8 +55,7 @@ public abstract class Mob extends Entity {
 		if (health <= 0) die(); // die if no health
 		if (hurtTime > 0) hurtTime--; // If a timer preventing damage temporarily is set, decrement it's value
 		
-		
-		//boolean moved = false;
+
 		/// The code below checks the direction of the knockback, moves the Mob accordingly, and brings the knockback closer to 0.
 		int xd = 0, yd = 0;
 		if(xKnockback != 0) {
@@ -71,9 +70,7 @@ public abstract class Mob extends Entity {
 		// if the player moved via knockback, update the server
 		if((xd != 0 || yd != 0) && Game.isConnectedClient() && this == Game.player)
 			Game.client.move((Player)this, x+xd, y+yd);
-		
-		//if(xd != 0) move2(xd, 0);
-		//if(yd != 0) move2(0, yd);
+
 		move(xd, yd, false);
 	}
 	
@@ -154,7 +151,6 @@ public abstract class Mob extends Entity {
 	 */
 	public boolean isLight() {
 		if(level == null) return false;
-		//Tile tile = level.getTile(x >> 4, y >> 4);
 		return level.isLight(x>>4, y>>4);
 	}
 
@@ -200,8 +196,6 @@ public abstract class Mob extends Entity {
 	public void heal(int heal) { // Restore health on the mob
 		if (hurtTime > 0) return; // If the mob has been hurt recently and hasn't cooled down, don't continue
 		
-		//if(Game.isValidClient()) return;
-		
 		level.add(new TextParticle("" + heal, x, y, Color.GREEN)); // Add a text particle in our level at our position, that is green and displays the amount healed
 		health += heal; // Actually add the amount to heal to our current health
 		if (health > maxHealth) health = maxHealth; // If our health has exceeded our maximum, lower it back down to said maximum
@@ -229,7 +223,6 @@ public abstract class Mob extends Entity {
 			case "dir": dir = Direction.values[Integer.parseInt(val)]; return true;
 			case "health": health = Integer.parseInt(val); return true;
 			case "hurtTime": hurtTime = Integer.parseInt(val); return true;
-			//case "walkDist": walkDist = Integer.parseInt(val); return true;
 		}
 		
 		return false;

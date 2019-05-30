@@ -13,7 +13,7 @@ class RecipeMenu extends ItemListMenu {
 			boolean craft1 = r1.checkCanCraft(player);
 			boolean craft2 = r2.checkCanCraft(player);
 			if(craft1 == craft2)
-				return 0;//r1.getProduct().name.compareToIgnoreCase(r2.getProduct().name);
+				return 0;
 			if(craft1) return -1;
 			if(craft2) return 1;
 			

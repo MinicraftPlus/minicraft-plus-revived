@@ -71,7 +71,6 @@ public class TileItem extends StackableItem {
 	
 	public boolean interactOn(Tile tile, Level level, int xt, int yt, Player player, Direction attackDir) {
 		for(String tilename: validTiles) {
-			//Tile t = Tiles.get(tilename.contains("_")?tilename.substring(0, tilename.indexOf("_")):tilename);
 			if(tile.matches(level.getData(xt, yt), tilename)) {
 				level.setTile(xt, yt, model); // TODO maybe data should be part of the saved tile..?
 				return super.interactOn(true);

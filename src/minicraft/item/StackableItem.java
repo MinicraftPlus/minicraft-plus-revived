@@ -51,17 +51,7 @@ public class StackableItem extends Item {
 		this.count = count;
 	}
 	
-	/*@Override
-	public boolean equals(Item other) {
-		return super.equals(other) && ((StackableItem)other).count == count;
-	}*/
-	
 	public boolean stacksWith(Item other) { return other instanceof StackableItem && other.getName().equals(getName()); }
-	/** Renders the icon, name, and count of the item. */
-	/*public void renderInventory(Screen screen, int x, int y, boolean ininv) {
-		// If the item count is above 999, then just render 999 (for spacing reasons)
-		super.renderInventory(screen, x, y, ininv, (count>999?999:count)+" "+name);
-	}*/
 	
 	/// this is used by (most) subclasses, to standardize the count decrement behavior. This is not the normal interactOn method.
 	protected boolean interactOn(boolean subClassSuccess) {
