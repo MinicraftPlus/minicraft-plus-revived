@@ -1,6 +1,7 @@
 package minicraft.level.tile;
 
 import minicraft.core.Game;
+import minicraft.core.io.Sound;
 import minicraft.entity.Direction;
 import minicraft.entity.Entity;
 import minicraft.entity.mob.AirWizard;
@@ -45,7 +46,7 @@ public class WallTile extends Tile {
 	
 	@Override
 	public boolean hurt(Level level, int x, int y, Mob source, int dmg, Direction attackDir) {
-		if(level.depth != -3 || type != Material.Obsidian || AirWizard.beaten) {
+		if(Game.isMode("creative") || level.depth != -3 || type != Material.Obsidian || AirWizard.beaten) {
 			hurt(level, x, y, random.nextInt(6) / 6 * dmg / 2);
 			return true;
 		} else {
@@ -55,16 +56,19 @@ public class WallTile extends Tile {
 	}
 	
 	public boolean interact(Level level, int xt, int yt, Player player, Item item, Direction attackDir) {
+		if(Game.isMode("creative"))
+			return false; // go directly to hurt method
 		if (item instanceof ToolItem) {
 			ToolItem tool = (ToolItem) item;
 			if (tool.type == ToolType.Pickaxe) {
 				if(level.depth != -3 || type != Material.Obsidian || AirWizard.beaten) {
-					if (player.payStamina(4 - tool.level) && tool.payDurability()) {
-						hurt(level, xt, yt, random.nextInt(10) + (tool.level) * 5 + 10);
-						return true;
-					}
-				} else
+						if (player.payStamina(4 - tool.level) && tool.payDurability()) {
+							hurt(level, xt, yt, random.nextInt(10) + (tool.level) * 5 + 10);
+							return true;
+						}
+				} else {
 					Game.notifications.add(obrickMsg);
+				}
 			}
 		}
 		return false;
@@ -76,6 +80,8 @@ public class WallTile extends Tile {
 		if (Game.isMode("creative")) dmg = damage = sbwHealth;
 		
 		level.add(new SmashParticle(x * 16, y * 16));
+		Sound.monsterHurt.play();
+
 		level.add(new TextParticle("" + dmg, x * 16 + 8, y * 16 + 8, Color.RED));
 		if (damage >= sbwHealth) {
 			String itemName = "", tilename = "";

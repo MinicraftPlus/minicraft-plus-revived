@@ -16,6 +16,5 @@ public class SmashParticle extends Particle {
 	 */
 	public SmashParticle(int x, int y) {
 		super(x, y, 10, new Sprite(5, 12, 2, 2, Color.WHITE, true, mirrors));
-		Sound.monsterHurt.play(); // plays the sound of a monster getting hit.
 	}
 }
