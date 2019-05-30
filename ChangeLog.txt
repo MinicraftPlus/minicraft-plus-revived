@@ -20,6 +20,7 @@ Minicraft+ version 2.0.5
 * Fixed the wheat tile's background
 * Fixed bug where creative player couldn't break a tile
 * Made sand behave like dirt when being placed
+* Fixed item data in chests
 
 
 Minicraft+ version 2.0.4
