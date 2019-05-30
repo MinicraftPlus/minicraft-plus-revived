@@ -705,6 +705,13 @@ public class Player extends Mob implements ItemHolder, ClientTickable {
 			screen.render(xo + 0, yo + 3, 5 + 13 * 32, liquidColor, 0); // render the water graphic
 			screen.render(xo + 8, yo + 3, 5 + 13 * 32, liquidColor, 1); // render the mirrored water graphic to the right.
 		}
+
+		// renders indicator for what tile the item will be placed on
+		if (activeItem instanceof TileItem) {
+			Point t = getInteractionTile();
+
+			screen.render(t.x * 16 + 4, t.y * 16 + 4,10 + 13 * 32, Color.WHITE, 0);
+		}
 		
 		if (attackTime > 0 && attackDir == Direction.UP) { // if currently attacking upwards...
 			screen.render(xo + 0, yo - 4, 6 + 13 * 32, Color.WHITE, 0); //render left half-slash

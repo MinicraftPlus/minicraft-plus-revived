@@ -263,6 +263,9 @@ Poción de Escudo
 Haste Potion
 Poción de Prisa
 
+Escape Potion
+Poción de Escapar
+
 Potion
 Poción
 
@@ -822,6 +825,14 @@ Pausado
 
 Main Menu
 Menú Principal
+
+# PauseDisplay.java
+
+Yes
+Sí
+
+No
+No
 
 # PlayerInvMenu.java
 
