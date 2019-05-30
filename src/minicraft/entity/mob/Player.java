@@ -365,10 +365,10 @@ public class Player extends Mob implements ItemHolder, ClientTickable {
 		if (Game.getMenu() == null && !Bed.inBed(this)) {
 			// this is where movement detection occurs.
 			int xa = 0, ya = 0;
-			if (input.getKey("up").down) ya--;
-			if (input.getKey("down").down) ya++;
-			if (input.getKey("left").down) xa--;
-			if (input.getKey("right").down) xa++;
+			if (input.getKey("move-up").down) ya--;
+			if (input.getKey("move-down").down) ya++;
+			if (input.getKey("move-left").down) xa--;
+			if (input.getKey("move-right").down) xa++;
 			
 			//executes if not saving; and... essentially halves speed if out of stamina.
 			if ((xa != 0 || ya != 0) && (staminaRechargeDelay % 2 == 0 || isSwimming()) && !Updater.saving) {
@@ -430,29 +430,31 @@ public class Player extends Mob implements ItemHolder, ClientTickable {
 				inventory.add(0, activeItem);
 				activeItem = null;
 			}
-			
-			if (input.getKey("menu").clicked && !use()) // !use() = no furniture in front of the player; this prevents player inventory from opening (will open furniture inventory instead)
-				Game.setMenu(new PlayerInvDisplay(this));
-			if (input.getKey("pause").clicked)
-				Game.setMenu(new PauseDisplay());
-			if (input.getKey("craft").clicked && !use())
-				Game.setMenu(new CraftingDisplay(Recipes.craftRecipes, "Crafting", this, true));
-			//if (input.getKey("sethome").clicked) setHome();
-			//if (input.getKey("home").clicked && !Bed.inBed) goHome();
-			
-			if (input.getKey("info").clicked) Game.setMenu(new InfoDisplay());
-			
-			if (input.getKey("r").clicked && !Updater.saving && !(this instanceof RemotePlayer) && !Game.isValidClient()) {
-				Updater.saving = true;
-				LoadingDisplay.setPercentage(0);
-				new Save(WorldSelectDisplay.getWorldName());
-			}
-			//debug feature:
-			if (Game.debug && input.getKey("shift-p").clicked) { // remove all potion effects
-				for(PotionType potionType: potioneffects.keySet()) {
-					PotionItem.applyPotion(this, potionType, false);
-					if(Game.isConnectedClient() && this == Game.player)
-						Game.client.sendPotionEffect(potionType, false);
+
+			if(Game.getMenu() == null) {
+				if (input.getKey("menu").clicked && !use()) // !use() = no furniture in front of the player; this prevents player inventory from opening (will open furniture inventory instead)
+					Game.setMenu(new PlayerInvDisplay(this));
+				if (input.getKey("pause").clicked)
+					Game.setMenu(new PauseDisplay());
+				if (input.getKey("craft").clicked && !use())
+					Game.setMenu(new CraftingDisplay(Recipes.craftRecipes, "Crafting", this, true));
+				//if (input.getKey("sethome").clicked) setHome();
+				//if (input.getKey("home").clicked && !Bed.inBed) goHome();
+
+				if (input.getKey("info").clicked) Game.setMenu(new InfoDisplay());
+
+				if (input.getKey("r").clicked && !Updater.saving && !(this instanceof RemotePlayer) && !Game.isValidClient()) {
+					Updater.saving = true;
+					LoadingDisplay.setPercentage(0);
+					new Save(WorldSelectDisplay.getWorldName());
+				}
+				//debug feature:
+				if (Game.debug && input.getKey("shift-p").clicked) { // remove all potion effects
+					for (PotionType potionType : potioneffects.keySet()) {
+						PotionItem.applyPotion(this, potionType, false);
+						if (Game.isConnectedClient() && this == Game.player)
+							Game.client.sendPotionEffect(potionType, false);
+					}
 				}
 			}
 			
