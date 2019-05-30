@@ -16,6 +16,7 @@ Minicraft+ version 2.0.5
 * Made some adjustments to some of the sprites for improved detail
 * Made flowers spread grass to dirt like grass spreads grass to dirt, since a flower tile is technically grass too
 + Added an indicator to tell you what tile in item will be placed on
++ Separated directional input into movement and cursor, for player movement and menu selection respectively.
 
 
 Minicraft+ version 2.0.4
