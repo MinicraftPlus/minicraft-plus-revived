@@ -2,6 +2,7 @@ package minicraft.level.tile;
 
 import minicraft.core.Game;
 import minicraft.core.io.Settings;
+import minicraft.core.io.Sound;
 import minicraft.entity.Direction;
 import minicraft.entity.Entity;
 import minicraft.entity.mob.Mob;
@@ -39,8 +40,9 @@ public class CactusTile extends Tile {
 		
 		if (damage >= cHealth) {
 			//int count = random.nextInt(2) + 2;
-			level.dropItem(x*16+8, y*16+8, 2, 4, Items.get("Cactus"));
 			level.setTile(x, y, Tiles.get("sand"));
+			Sound.monsterHurt.play();
+			level.dropItem(x*16+8, y*16+8, 2, 4, Items.get("Cactus"));
 		} else {
 			level.setData(x, y, damage);
 		}

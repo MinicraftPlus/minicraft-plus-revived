@@ -1,6 +1,7 @@
 package minicraft.level.tile;
 
 import minicraft.core.Game;
+import minicraft.core.io.Sound;
 import minicraft.entity.Direction;
 import minicraft.entity.Entity;
 import minicraft.entity.mob.Mob;
@@ -56,16 +57,13 @@ public class OreTile extends Tile {
 	}
 
 	public boolean hurt(Level level, int x, int y, Mob source, int dmg, Direction attackDir) {
-		int playHurt;
-		if (Game.isMode("creative")) playHurt = random.nextInt(4);
-		else {
-			playHurt = 0;
-		}
-		hurt(level, x, y, playHurt);
+		hurt(level, x, y, 0);
 		return true;
 	}
 
 	public boolean interact(Level level, int xt, int yt, Player player, Item item, Direction attackDir) {
+		if(Game.isMode("creative"))
+			return false; // go directly to hurt method
 		if (item instanceof ToolItem) {
 			ToolItem tool = (ToolItem) item;
 			if (tool.type == ToolType.Pickaxe) {
@@ -88,6 +86,8 @@ public class OreTile extends Tile {
 		if (Game.isMode("creative")) dmg = damage = oreH;
 		
 		level.add(new SmashParticle(x * 16, y * 16));
+		Sound.monsterHurt.play();
+
 		level.add(new TextParticle("" + dmg, x * 16 + 8, y * 16 + 8, Color.RED));
 		if (dmg > 0) {
 			int count = random.nextInt(2) + 0;

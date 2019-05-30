@@ -263,6 +263,9 @@ Shield Potion
 Haste Potion
 Haste Potion
 
+Escape Potion
+Escape Potion
+
 Potion
 Potion
 
@@ -709,8 +712,11 @@ ESCAPE to Return to menu
 
 # LoadingDisplay.java
 
-Loading...
-Loading...
+Loading
+Loading
+
+World
+World
 
 # MultiplayerMenu.java
 
@@ -822,6 +828,14 @@ Paused
 
 Main Menu
 Main Menu
+
+# PauseDisplay.java
+
+No
+No
+
+Yes
+Yes
 
 # PlayerInvMenu.java
 

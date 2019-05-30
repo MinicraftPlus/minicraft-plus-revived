@@ -17,10 +17,6 @@ Add signs. So, when you walk over them, a message is displayed!
 
 ++++
 
-add a key input (default shift-attack, aka shift-c)  that charges your attack rather than spamming it. Will probably do as much damage as however many spams you could have done while charging, a full stamina bar's worth; the difference is, you deal the damage all at once.
-
-++++
-
 Jukeboxes / noteblocks.
 
 ++++

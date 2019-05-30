@@ -1,5 +1,6 @@
 package minicraft.level.tile;
 
+import minicraft.core.io.Sound;
 import minicraft.entity.Direction;
 import minicraft.entity.mob.Mob;
 import minicraft.entity.mob.Player;
@@ -55,9 +56,10 @@ public class FlowerTile extends Tile {
 			ToolItem tool = (ToolItem) item;
 			if (tool.type == ToolType.Shovel) {
 				if (player.payStamina(2 - tool.level) && tool.payDurability()) {
+					level.setTile(x, y, Tiles.get("grass"));
+					Sound.monsterHurt.play();
 					level.dropItem(x*16+8, y*16+8, Items.get("Flower"));
 					level.dropItem(x*16+8, y*16+8, Items.get("Rose"));
-					level.setTile(x, y, Tiles.get("grass"));
 					return true;
 				}
 			}
