@@ -132,8 +132,8 @@ public class Menu {
 		if(!selectable || entries.size() == 0) return;
 		
 		int prevSel = selection;
-		if(input.getKey("up").clicked) selection--;
-		if(input.getKey("down").clicked) selection++;
+		if(input.getKey("cursor-up").clicked) selection--;
+		if(input.getKey("cursor-down").clicked) selection++;
 		
 		int delta = selection - prevSel;
 		selection = prevSel;
@@ -441,7 +441,6 @@ public class Menu {
 				if (menu.title.length() > 0 && titlePos != RelPos.CENTER) {
 					RelPos c = titlePos;
 					int space = SpriteSheet.boxWidth * 2;
-					//noinspection SuspiciousNameCombination
 					if (c.yIndex == 0)
 						border.top = space;
 					else if (c.yIndex == 2)
@@ -551,7 +550,7 @@ public class Menu {
 		}
 		
 		// returns a new Builder instance, that can be further modified to create another menu.
-		private Builder copy() {
+		public Builder copy() {
 			Builder b = new Builder(menu.hasFrame, menu.spacing, menu.entryPos, menu.entries);
 			
 			b.menu = new Menu(menu);
