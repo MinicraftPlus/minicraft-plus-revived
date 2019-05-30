@@ -31,10 +31,7 @@ import minicraft.entity.mob.Player;
 import minicraft.entity.mob.RemotePlayer;
 import minicraft.entity.particle.Particle;
 import minicraft.entity.particle.TextParticle;
-import minicraft.item.Inventory;
-import minicraft.item.Item;
-import minicraft.item.PotionType;
-import minicraft.item.StackableItem;
+import minicraft.item.*;
 import minicraft.network.MinicraftServer;
 import minicraft.screen.LoadingDisplay;
 import minicraft.screen.MultiplayerDisplay;
@@ -303,7 +300,7 @@ public class Save {
 	
 	public static String writeEntity(Entity e, boolean isLocalSave) {
 		String name = e.getClass().getName();
-		name = name.substring(name.lastIndexOf(".")+1);
+		name = name.substring(name.lastIndexOf('.')+1);
 		StringBuilder extradata = new StringBuilder();
 		
 		// don't even write ItemEntities or particle effects; Spark... will probably is saved, eventually; it presents an unfair cheat to remove the sparks by reloading the Game.
@@ -332,9 +329,7 @@ public class Save {
 			
 			for(int ii = 0; ii < chest.getInventory().invSize(); ii++) {
 				Item item = chest.getInventory().get(ii);
-				extradata.append(":").append(item.getName());
-				if(item instanceof StackableItem)
-					extradata.append(";").append(chest.getInventory().count(item));
+				extradata.append(":").append(item.getData());
 			}
 			
 			if(chest instanceof DeathChest) extradata.append(":").append(((DeathChest) chest).time);
