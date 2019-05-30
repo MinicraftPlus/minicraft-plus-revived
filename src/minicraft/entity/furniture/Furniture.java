@@ -121,7 +121,6 @@ public class Furniture extends Entity {
 	@Override
 	protected String getUpdateString() {
 		return super.getUpdateString()+
-		//";pushDir,"+pushDir+
 		";pushTime,"+multiPushTime;
 	}
 	

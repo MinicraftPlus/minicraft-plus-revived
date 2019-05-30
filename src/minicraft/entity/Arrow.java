@@ -56,16 +56,16 @@ public class Arrow extends Entity implements ClientTickable {
 		for (int i = 0; i < entitylist.size(); i++) {
 			Entity hit = entitylist.get(i);
 			
-			if (hit != null && hit instanceof Mob && hit != owner) {
+			if (hit instanceof Mob && hit != owner) {
 				Mob mob = (Mob) hit;
 				int extradamage = (hit instanceof Player ? 0 : 3) + (criticalHit ? 0 : 1);
 				mob.hurt(owner, damage + extradamage, dir);
 			}
 
 			if (!level.getTile(x / 16, y / 16).mayPass(level, x / 16, y / 16, this)
-						&& !level.getTile(x / 16, y / 16).connectsToWater
-						&& level.getTile(x / 16, y / 16).id != 16) {
-					this.remove();
+					&& !level.getTile(x / 16, y / 16).connectsToWater
+					&& level.getTile(x / 16, y / 16).id != 16) {
+				this.remove();
 			}
 		}
 	}
