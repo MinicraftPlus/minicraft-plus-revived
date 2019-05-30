@@ -30,6 +30,7 @@ public class CloudTile extends Tile {
 	}
 
 	public boolean interact(Level level, int xt, int yt, Player player, Item item, Direction attackDir) {
+		// we don't want the tile to break when attacked with just anything, even in creative mode
 		if (item instanceof ToolItem) {
 			ToolItem tool = (ToolItem) item;
 			if (tool.type == ToolType.Shovel && player.payStamina(5)) {

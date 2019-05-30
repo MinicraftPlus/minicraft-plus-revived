@@ -86,6 +86,8 @@ public class TreeTile extends Tile {
 	
 	@Override
 	public boolean interact(Level level, int xt, int yt, Player player, Item item, Direction attackDir) {
+		if(Game.isMode("creative"))
+			return false; // go directly to hurt method
 		if (item instanceof ToolItem) {
 			ToolItem tool = (ToolItem) item;
 			if (tool.type == ToolType.Axe) {

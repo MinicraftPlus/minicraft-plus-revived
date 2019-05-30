@@ -56,6 +56,8 @@ public class WallTile extends Tile {
 	}
 	
 	public boolean interact(Level level, int xt, int yt, Player player, Item item, Direction attackDir) {
+		if(Game.isMode("creative"))
+			return false; // go directly to hurt method
 		if (item instanceof ToolItem) {
 			ToolItem tool = (ToolItem) item;
 			if (tool.type == ToolType.Pickaxe) {
@@ -64,7 +66,7 @@ public class WallTile extends Tile {
 							hurt(level, xt, yt, random.nextInt(10) + (tool.level) * 5 + 10);
 							return true;
 						}
-				} else if (!Game.isMode("creative")) {
+				} else {
 					Game.notifications.add(obrickMsg);
 				}
 			}

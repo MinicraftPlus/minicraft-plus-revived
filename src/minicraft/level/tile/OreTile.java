@@ -57,16 +57,13 @@ public class OreTile extends Tile {
 	}
 
 	public boolean hurt(Level level, int x, int y, Mob source, int dmg, Direction attackDir) {
-		int playHurt;
-		if (Game.isMode("creative")) playHurt = random.nextInt(4);
-		else {
-			playHurt = 0;
-		}
-		hurt(level, x, y, playHurt);
+		hurt(level, x, y, 0);
 		return true;
 	}
 
 	public boolean interact(Level level, int xt, int yt, Player player, Item item, Direction attackDir) {
+		if(Game.isMode("creative"))
+			return false; // go directly to hurt method
 		if (item instanceof ToolItem) {
 			ToolItem tool = (ToolItem) item;
 			if (tool.type == ToolType.Pickaxe) {
