@@ -643,21 +643,29 @@ public class Player extends Mob implements ItemHolder, ClientTickable {
 		boolean caught = false;
 
 		List<String> data = null;
-		if (fcatch > 50) { // 49% chance for fish
+		if (fcatch > 49) { // 50% chance for fish
 			data = FishingData.fishData;
-		} else if (fcatch > 20) { // 29% chance for junk items
+		} else if (fcatch > 19) { // 30% chance for junk items
 			data = FishingData.junkData;
-		} else if (fcatch > 10) { // 9% chance for rare items
+		} else if (fcatch > 9) { // 10% chance for tools
+			data = FishingData.toolData;
+		} else if (fcatch >= 0) { // 10% chance for rare items
 			data = FishingData.rareData;
-		} // 13% chance of nothing
+		}
 
-		if (data != null) { // there's a chance of catching something
+		if (data != null) { // just in case
 			for (String line: data) {
 				// check all the entries in the data
 				// the number is a percent, if one fails, it moves down the list
+				// for entries with a "," it chooses between the options
 				int chance = Integer.parseInt(line.split(":")[0]);
 				String itemData = line.split(":")[1];
 				if (random.nextInt(100) + 1 <= chance) {
+					if (itemData.contains(",")) { // if it has multiple items choose between them
+						String[] extendedData = itemData.split(",");
+						int randomChance = random.nextInt(extendedData.length);
+						itemData = extendedData[randomChance];
+					}
 					if (itemData.startsWith(";")) {
 						// for secret messages :=)
 						Game.notifications.add(itemData.replace(';', ' '));

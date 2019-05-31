@@ -1,0 +1,3 @@
+50:key
+15:scale
+10:gold apple
