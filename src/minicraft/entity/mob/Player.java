@@ -719,7 +719,7 @@ public class Player extends Mob implements ItemHolder, ClientTickable {
 			screen.render(xo + 0, yo - 4, 6 + 13 * 32, Color.WHITE, 0); //render left half-slash
 			screen.render(xo + 8, yo - 4, 6 + 13 * 32, Color.WHITE, 1); //render right half-slash (mirror of left).
 			if (attackItem != null) { // if the player had an item when they last attacked...
-				attackItem.sprite.render(screen, xo + 4, yo - 4); // then render the icon of the item.
+				attackItem.sprite.render(screen, xo + 4, yo - 4, attackItem.sprite.color, 1); // then render the icon of the item, mirrored
 			}
 		}
 		
@@ -742,7 +742,7 @@ public class Player extends Mob implements ItemHolder, ClientTickable {
 			screen.render(xo - 4, yo, 7 + 13 * 32, Color.WHITE, 1);
 			screen.render(xo - 4, yo + 8, 7 + 13 * 32, Color.WHITE, 3);
 			if (attackItem != null) {
-				attackItem.sprite.render(screen, xo - 4, yo + 4);
+				attackItem.sprite.render(screen, xo - 4, yo + 4, attackItem.sprite.color, 1);
 			}
 		}
 		if (attackTime > 0 && attackDir == Direction.RIGHT) { // attacking to the right
