@@ -113,7 +113,8 @@ public class Player extends Mob implements ItemHolder, ClientTickable {
 	public int shirtColor = 110; // player shirt color.
 
 	public boolean isFishing = false;
-	public int fishingTicks;
+	private int maxFishingTicks = 120;
+	private int fishingTicks = maxFishingTicks;
 	
 	// Note: the player's health & max health are inherited from Mob.java
 	
@@ -251,14 +252,14 @@ public class Player extends Mob implements ItemHolder, ClientTickable {
 		}
 
 		if (isFishing) {
-			if (!Bed.inBed(this)) {
+			if (!Bed.inBed(this) && !isSwimming()) {
 				fishingTicks--;
 				if (fishingTicks <= 0) {
 					goFishing();
 				}
 			} else {
 				isFishing = false;
-				fishingTicks = 100;
+				fishingTicks = maxFishingTicks;
 			}
 		}
 		
@@ -642,21 +643,29 @@ public class Player extends Mob implements ItemHolder, ClientTickable {
 		boolean caught = false;
 
 		List<String> data = null;
-		if (fcatch > 60) { // 39% chance for fish
+		if (fcatch > 50) { // 49% chance for fish
 			data = FishingData.fishData;
-		} else if (fcatch > 20) { // 39% chance for junk items
+		} else if (fcatch > 20) { // 29% chance for junk items
 			data = FishingData.junkData;
 		} else if (fcatch > 10) { // 9% chance for rare items
 			data = FishingData.rareData;
 		} // 13% chance of nothing
 
-		if (data != null) {
-			for (int i = 0; i < data.size(); i++) {
-				int chance = Integer.parseInt(data.get(i).split(":")[0]);
-				if (random.nextInt(100) < chance) {
-					level.dropItem(x, y, Items.get(data.get(i).split(":")[1]));
-					caught = true;
-					break;
+		if (data != null) { // there's a chance of catching something
+			for (String line: data) {
+				// check all the entries in the data
+				// the number is a percent, if one fails, it moves down the list
+				int chance = Integer.parseInt(line.split(":")[0]);
+				String itemData = line.split(":")[1];
+				if (random.nextInt(100) + 1 <= chance) {
+					if (itemData.startsWith(";")) {
+						// for secret messages :=)
+						Game.notifications.add(itemData.replace(';', ' '));
+					} else {
+						level.dropItem(x, y, Items.get(itemData));
+						caught = true;
+						break; // don't let people catch more than one thing with one use
+					}
 				}
 			}
 		} else {
@@ -666,7 +675,7 @@ public class Player extends Mob implements ItemHolder, ClientTickable {
 		if (caught) {
 			isFishing = false;
 		}
-		fishingTicks = 100; // if you didn't catch anything, try again in 100 ticks
+		fishingTicks = maxFishingTicks; // if you didn't catch anything, try again in 120 ticks
 	}
 	
 	/** called by other use method; this serves as a buffer in case there is no entity in front of the player. */
