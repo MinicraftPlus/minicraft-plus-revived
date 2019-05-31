@@ -1,3 +1,3 @@
-50:key
-15:scale
-10:gold apple
+33:gunpowder
+20:gem
+15:gold apple

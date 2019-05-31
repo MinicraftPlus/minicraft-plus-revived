@@ -115,6 +115,7 @@ public class Player extends Mob implements ItemHolder, ClientTickable {
 	public boolean isFishing = false;
 	private int maxFishingTicks = 120;
 	private int fishingTicks = maxFishingTicks;
+	public int fishingLevel;
 	
 	// Note: the player's health & max health are inherited from Mob.java
 	
@@ -643,13 +644,13 @@ public class Player extends Mob implements ItemHolder, ClientTickable {
 		boolean caught = false;
 
 		List<String> data = null;
-		if (fcatch > 49) { // 50% chance for fish
+		if (fcatch > FishingRodItem.getChance(0, fishingLevel)) {
 			data = FishingData.fishData;
-		} else if (fcatch > 19) { // 30% chance for junk items
+		} else if (fcatch > FishingRodItem.getChance(1, fishingLevel)) {
 			data = FishingData.junkData;
-		} else if (fcatch > 9) { // 10% chance for tools
+		} else if (fcatch > FishingRodItem.getChance(2, fishingLevel)) {
 			data = FishingData.toolData;
-		} else if (fcatch >= 0) { // 10% chance for rare items
+		} else if (fcatch >= FishingRodItem.getChance(3, fishingLevel)) {
 			data = FishingData.rareData;
 		}
 
@@ -821,16 +822,16 @@ public class Player extends Mob implements ItemHolder, ClientTickable {
 		if (isFishing) {
 			switch (dir) {
 				case UP:
-					screen.render(xo + 4, yo - 4, 11 + 13 * 32, Color.get(-1, 210, 321, 555), 1);
+					screen.render(xo + 4, yo - 4, 11 + 13 * 32, FishingRodItem.COLORS[fishingLevel], 1);
 					break;
 				case LEFT:
-					screen.render(xo - 4, yo + 4, 11 + 13 * 32, Color.get(-1, 210, 321, 555), 1);
+					screen.render(xo - 4, yo + 4, 11 + 13 * 32, FishingRodItem.COLORS[fishingLevel], 1);
 					break;
 				case RIGHT:
-					screen.render(xo + 8 + 4, yo + 4, 11 + 13 * 32, Color.get(-1, 210, 321, 555), 0);
+					screen.render(xo + 8 + 4, yo + 4, 11 + 13 * 32, FishingRodItem.COLORS[fishingLevel], 0);
 					break;
 				case DOWN:
-					screen.render(xo + 4, yo + 8 + 4, 11 + 13 * 32, Color.get(-1, 210, 321, 555), 0);
+					screen.render(xo + 4, yo + 8 + 4, 11 + 13 * 32, FishingRodItem.COLORS[fishingLevel], 0);
 					break;
 				case NONE:
 					break;
