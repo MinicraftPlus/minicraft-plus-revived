@@ -111,6 +111,9 @@ public class Player extends Mob implements ItemHolder, ClientTickable {
 	
 	//private final int acs = 25; // default ("start") arrow count
 	public int shirtColor = 110; // player shirt color.
+
+	public boolean isFishing = false;
+	public int fishingTicks;
 	
 	// Note: the player's health & max health are inherited from Mob.java
 	
@@ -244,6 +247,18 @@ public class Player extends Mob implements ItemHolder, ClientTickable {
 				if(potioneffects.get(potionType) <= 1) // if time is zero (going to be set to 0 in a moment)...
 					PotionItem.applyPotion(this, potionType, false); // automatically removes this potion effect.
 				else potioneffects.put(potionType, potioneffects.get(potionType) - 1); // otherwise, replace it with one less.
+			}
+		}
+
+		if (isFishing) {
+			if (!Bed.inBed(this)) {
+				fishingTicks--;
+				if (fishingTicks <= 0) {
+					goFishing();
+				}
+			} else {
+				isFishing = false;
+				fishingTicks = 100;
 			}
 		}
 		
@@ -495,7 +510,9 @@ public class Player extends Mob implements ItemHolder, ClientTickable {
 	protected void attack() {
 		// walkDist is not synced, so this can happen for both the client and server.
 		walkDist += 8; // increase the walkDist (changes the sprite, like you moved your arm)
-		
+
+		if (isFishing) isFishing = false;
+
 		if(activeItem != null && !activeItem.interactsWithWorld()) {
 			attackDir = dir; // make the attack direction equal the current direction
 			attackItem = activeItem; // make attackItem equal activeItem
@@ -569,7 +586,7 @@ public class Player extends Mob implements ItemHolder, ClientTickable {
 						thread.sendTileUpdate(level, t.x, t.y); /// FIXME this part is as a semi-temporary fix for those odd tiles that don't update when they should; instead of having to make another system like the entity additions and removals (and it wouldn't quite work as well for this anyway), this will just update whatever tile the player interacts with (and fails, since a successful interaction changes the tile and therefore updates it anyway).
 				}
 				
-				if (activeItem.isDepleted() && !Game.isMode("creative")) {
+				if (!Game.isMode("creative") && activeItem.isDepleted()) {
 					// if the activeItem has 0 items left, then "destroy" it.
 					activeItem = null;
 				}
@@ -619,13 +636,37 @@ public class Player extends Mob implements ItemHolder, ClientTickable {
 		return new Point(x >> 4, y >> 4);
 	}
 	
-	public void goFishing(int x, int y) {
-		int fcatch = random.nextInt(90);
-		
-		if (fcatch < 10) level.dropItem(x, y, Items.get("raw fish"));
-		else if (fcatch < 15) level.dropItem(x, y, Items.get("slime"));
-		else if (fcatch == 15) level.dropItem(x, y, Items.get("Leather Armor"));
-		else if (fcatch == 42 && random.nextInt(5) == 0) System.out.println("FISHNORRIS got away... just kidding, FISHNORRIS din't get away from you, you got away from FISHNORRIS...");
+	public void goFishing() {
+		int fcatch = random.nextInt(100);
+
+		boolean caught = false;
+
+		List<String> data = null;
+		if (fcatch > 60) { // 39% chance for fish
+			data = FishingData.fishData;
+		} else if (fcatch > 20) { // 39% chance for junk items
+			data = FishingData.junkData;
+		} else if (fcatch > 10) { // 9% chance for rare items
+			data = FishingData.rareData;
+		} // 13% chance of nothing
+
+		if (data != null) {
+			for (int i = 0; i < data.size(); i++) {
+				int chance = Integer.parseInt(data.get(i).split(":")[0]);
+				if (random.nextInt(100) < chance) {
+					level.dropItem(x, y, Items.get(data.get(i).split(":")[1]));
+					caught = true;
+					break;
+				}
+			}
+		} else {
+			caught = true; // end this fishing session
+		}
+
+		if (caught) {
+			isFishing = false;
+		}
+		fishingTicks = 100; // if you didn't catch anything, try again in 100 ticks
 	}
 	
 	/** called by other use method; this serves as a buffer in case there is no entity in front of the player. */
@@ -757,6 +798,25 @@ public class Player extends Mob implements ItemHolder, ClientTickable {
 			screen.render(xo + 8, yo + 8 + 4, 6 + 13 * 32, Color.WHITE, 3);
 			if (attackItem != null) {
 				attackItem.sprite.render(screen, xo + 4, yo + 8 + 4);
+			}
+		}
+
+		if (isFishing) {
+			switch (dir) {
+				case UP:
+					screen.render(xo + 4, yo - 4, 11 + 13 * 32, Color.get(-1, 210, 321, 555), 1);
+					break;
+				case LEFT:
+					screen.render(xo - 4, yo + 4, 11 + 13 * 32, Color.get(-1, 210, 321, 555), 1);
+					break;
+				case RIGHT:
+					screen.render(xo + 8 + 4, yo + 4, 11 + 13 * 32, Color.get(-1, 210, 321, 555), 0);
+					break;
+				case DOWN:
+					screen.render(xo + 4, yo + 8 + 4, 11 + 13 * 32, Color.get(-1, 210, 321, 555), 0);
+					break;
+				case NONE:
+					break;
 			}
 		}
 		
