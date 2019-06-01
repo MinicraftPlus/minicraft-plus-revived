@@ -122,7 +122,7 @@ public class TitleDisplay extends Display {
 	
 	@Override
 	public void tick(InputHandler input) {
-		if (input.getKey("r").clicked) rand = random.nextInt(splashes.length);
+		if (input.getKey("r").clicked) rand = random.nextInt(splashes.length - 1) + 1;
 		
 		if (!reverse) {
 			count++;
@@ -192,6 +192,7 @@ public class TitleDisplay extends Display {
 		"Notch is Awesome!",
 		"Dillyg10 is cool as Ice!",
 		"Shylor is the man!",
+		"Chris J is great with portals!",
 		"AntVenom loves cows! Honest!",
 		"You should read Antidious Venomi!",
 		"Oh Hi Mark",
@@ -216,6 +217,7 @@ public class TitleDisplay extends Display {
 		"Windows? I prefer Doors!",
 		"2.5D FTW!",
 		"3rd dimension not included!",
+		"Null not included",
 		"Mouse not included!",
 		"No spiders included!",
 		"No Endermen included!",
@@ -264,7 +266,7 @@ public class TitleDisplay extends Display {
 		"Punch the Moon!",
 		"This is String qq!",
 		"Why?",
-		"You are null!",
+		//"You are null!",
 		"hello down there!",
 		"That guy is such a sly fox!",
 		"Hola senor!",
