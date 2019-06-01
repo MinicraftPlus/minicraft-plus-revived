@@ -66,17 +66,17 @@ public class TitleDisplay extends Display {
 	public void init(Display parent) {
 		super.init(null); // The TitleScreen never has a parent.
 		Renderer.readyToRenderGameplay = false;
-		
+
 		// check version
 		checkVersion();
-		
+
 		/// this is useful to just ensure that everything is really reset as it should be. 
-		if(Game.server != null) {
+		if (Game.server != null) {
 			if (Game.debug) System.out.println("wrapping up loose server ends");
 			Game.server.endConnection();
 			Game.server = null;
 		}
-		if(Game.client != null) {
+		if (Game.client != null) {
 			if (Game.debug) System.out.println("wrapping up loose client ends");
 			Game.client.endConnection();
 			Game.client = null;
@@ -84,10 +84,11 @@ public class TitleDisplay extends Display {
 		Game.ISONLINE = false;
 
 		LocalDateTime time = LocalDateTime.now();
-		if (time.getDayOfMonth() == 19 && time.getMonth() == Month.DECEMBER) {
-			rand = 0;
+		if (time.getMonth() == Month.DECEMBER) {
+			if (time.getDayOfMonth() == 19) rand = 0;
+			if (time.getDayOfMonth() == 25) rand = 1;
 		} else {
-			rand = random.nextInt(splashes.length - 1) + 1;
+			rand = random.nextInt(splashes.length - 2) + 2;
 		}
 		
 		World.levels = new Level[World.levels.length];
@@ -122,7 +123,7 @@ public class TitleDisplay extends Display {
 	
 	@Override
 	public void tick(InputHandler input) {
-		if (input.getKey("r").clicked) rand = random.nextInt(splashes.length - 1) + 1;
+		if (input.getKey("r").clicked) rand = random.nextInt(splashes.length - 2) + 2;
 		
 		if (!reverse) {
 			count++;
@@ -176,6 +177,7 @@ public class TitleDisplay extends Display {
 	
 	private static final String[] splashes = {
 		"Happy birthday Minicraft!",
+		"Happyy XMAS!",
 		"Multiplayer Now Included!",
 		// "Also play InfinityTale!",
 		// "Also play Minicraft Deluxe!",
