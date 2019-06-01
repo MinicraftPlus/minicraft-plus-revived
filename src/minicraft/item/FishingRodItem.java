@@ -37,9 +37,9 @@ public class FishingRodItem extends Item {
 
     private static final int[][] LEVEL_CHANCES = {
             {39, 9, 4, 0}, // they're in the order "fish", "junk", "tools", "rare"
-            {49, 14, 4, 0},
-            {59, 29, 9, 0},
-            {79, 69, 49, 0}
+            {59, 14, 4, 0}, // iron has very high chance of junk
+            {59, 39, 9, 0}, // gold has very high chance of tools
+            {79, 69, 59, 0} // gem has very high chance of rare items
     };
 
     private static final String[] LEVEL_NAMES = {
