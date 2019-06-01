@@ -36,10 +36,10 @@ public class FishingRodItem extends Item {
     };
 
     private static final int[][] LEVEL_CHANCES = {
-            {39, 9, 4, 0},
+            {39, 9, 4, 0}, // they're in the order "fish", "junk", "tools", "rare"
             {49, 14, 4, 0},
             {59, 29, 9, 0},
-            {79, 59, 39, 0}
+            {79, 69, 49, 0}
     };
 
     private static final String[] LEVEL_NAMES = {

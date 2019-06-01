@@ -520,8 +520,13 @@ public class Player extends Mob implements ItemHolder, ClientTickable {
 			attackItem = activeItem; // make attackItem equal activeItem
 			//if (Game.debug) System.out.println(Network.onlinePrefix()+"player is using reflexive item: " + activeItem);
 			activeItem.interactOn(Tiles.get("rock"), level, 0, 0, this, attackDir);
-			if (activeItem.isDepleted() && !Game.isMode("creative"))
+			if (activeItem.isDepleted() && !Game.isMode("creative")) {
 				activeItem = null;
+				if (isFishing) {
+					isFishing = false;
+					fishingTicks = maxFishingTicks;
+				}
+			}
 			return;
 		}
 		
