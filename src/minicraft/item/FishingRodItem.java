@@ -35,6 +35,9 @@ public class FishingRodItem extends Item {
             Color.get(-1, 321, 55, 555)
     };
 
+    /* these numbers are a bit confusing, so here's an explanation
+    * if you want to know the percent chance of a category (let's say tool, which is third)
+    * you have to subtract 1 + the "tool" number from the number before it (for the first number subtract from 100)*/
     private static final int[][] LEVEL_CHANCES = {
             {39, 9, 4, 0}, // they're in the order "fish", "junk", "tools", "rare"
             {59, 14, 4, 0}, // iron has very high chance of junk
