@@ -1,5 +1,7 @@
 package minicraft.screen;
 
+import java.time.LocalDateTime;
+import java.time.Month;
 import java.util.Random;
 
 import minicraft.core.Game;
@@ -80,8 +82,13 @@ public class TitleDisplay extends Display {
 			Game.client = null;
 		}
 		Game.ISONLINE = false;
-		
-		rand = random.nextInt(splashes.length);
+
+		LocalDateTime time = LocalDateTime.now();
+		if (time.getDayOfMonth() == 19 && time.getMonth() == Month.DECEMBER) {
+			rand = 0;
+		} else {
+			rand = random.nextInt(splashes.length - 1) + 1;
+		}
 		
 		World.levels = new Level[World.levels.length];
 		
@@ -168,6 +175,7 @@ public class TitleDisplay extends Display {
 	}
 	
 	private static final String[] splashes = {
+			"Happy birthday Minicraft!",
 		"Multiplayer Now Included!",
 		// "Also play InfinityTale!",
 		// "Also play Minicraft Deluxe!",
