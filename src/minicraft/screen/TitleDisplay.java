@@ -177,7 +177,7 @@ public class TitleDisplay extends Display {
 	
 	private static final String[] splashes = {
 		"Happy birthday Minicraft!",
-		"Happyy XMAS!",
+		"Happy XMAS!",
 		"Multiplayer Now Included!",
 		// "Also play InfinityTale!",
 		// "Also play Minicraft Deluxe!",
