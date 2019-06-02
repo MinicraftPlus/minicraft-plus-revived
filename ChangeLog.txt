@@ -1,3 +1,7 @@
+Minicraft+ version 2.0.6
+* Made the quick-save key configurable
+
+
 Minicraft+ version 2.0.5
 
 + Added tool durability to all tools
