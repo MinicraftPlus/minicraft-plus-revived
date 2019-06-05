@@ -2,7 +2,6 @@ package minicraft.core.io;
 
 import java.io.BufferedReader;
 import java.io.IOException;
-import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.URISyntaxException;
 import java.net.URL;
@@ -16,9 +15,7 @@ import java.security.CodeSource;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Locale;
-import java.util.stream.Collectors;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 
@@ -102,23 +99,11 @@ public class Localization {
 	
 	@NotNull
 	private static String getFileAsString() {
-		// int character;
-		// StringBuilder builder = new StringBuilder();
 		
 		BufferedReader reader = new BufferedReader(new InputStreamReader(Game.class.getResourceAsStream(localizationFiles.get(selectedLanguage)), selectedLanguage.equals("portugues")?StandardCharsets.UTF_8 : Charset.defaultCharset()));
-		/*try (InputStream fileStream = ) {
-			character = fileStream.read();
-			do {
-				builder.append((char)character);
-				character = fileStream.read();
-			} while (character != -1);
-		} catch (IOException e) {
-			e.printStackTrace();
-		}*/
+
 		return String.join("\n", reader.lines().toArray(String[]::new));
 		// Using getResourceAsStream since we're publishing this as a jar file.
-		
-		// return builder.toString();
 	}
 	
 	@NotNull
@@ -191,7 +176,6 @@ public class Localization {
 			e.printStackTrace();
 			// Nothing to do in this menu if we can't load the languages so we
 			// just return to the title menu.
-			//Game.exitMenu();
 			return null;
 		}
 		

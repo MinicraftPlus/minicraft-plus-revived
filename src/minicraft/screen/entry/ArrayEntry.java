@@ -103,8 +103,8 @@ public class ArrayEntry<T> extends ListEntry {
 		int prevSel = selection;
 		int selection = this.selection;
 		
-		if(input.getKey("left").clicked) selection--;
-		if(input.getKey("right").clicked) selection++;
+		if(input.getKey("cursor-left").clicked) selection--;
+		if(input.getKey("cursor-right").clicked) selection++;
 		
 		if(prevSel != selection) {
 			Sound.select.play();

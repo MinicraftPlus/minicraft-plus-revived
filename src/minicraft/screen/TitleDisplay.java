@@ -158,7 +158,7 @@ public class TitleDisplay extends Display {
 		Font.draw("Version " + Game.VERSION, screen, 1, 1, Color.get(-1, 111));
 		
 		
-		String upString = "("+Game.input.getMapping("up")+", "+Game.input.getMapping("down")+Localization.getLocalized(" to select")+")";
+		String upString = "("+Game.input.getMapping("cursor-up")+", "+Game.input.getMapping("cursor-down")+Localization.getLocalized(" to select")+")";
 		String selectString = "("+Game.input.getMapping("select")+Localization.getLocalized(" to accept")+")";
 		String exitString = "("+Game.input.getMapping("exit")+ Localization.getLocalized(" to return")+")";
 		
@@ -167,7 +167,7 @@ public class TitleDisplay extends Display {
 		Font.drawCentered(exitString, screen, Screen.h - 12, Color.get(-1, 111));
 	}
 	
-	private static final String[] splashes = {//new ArrayList<String>();
+	private static final String[] splashes = {
 		"Multiplayer Now Included!",
 		// "Also play InfinityTale!",
 		// "Also play Minicraft Deluxe!",
@@ -269,6 +269,7 @@ public class TitleDisplay extends Display {
 		"One truth prevails!",
 		"Awesome!",
 		"Sweet!",
+		"Great!",
 		"Cool!",
 		"Radical!",
 		"011011000110111101101100!",

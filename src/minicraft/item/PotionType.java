@@ -1,10 +1,8 @@
 package minicraft.item;
 
-import minicraft.core.Action;
 import minicraft.core.Game;
 import minicraft.core.World;
 import minicraft.entity.mob.Player;
-import minicraft.entity.mob.RemotePlayer;
 import minicraft.level.Level;
 
 public enum PotionType {

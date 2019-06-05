@@ -117,7 +117,7 @@ public class Game {
 		if(Network.autoclient)
 			setMenu(new MultiplayerDisplay( "localhost"));
 		else if(!HAS_GUI)
-			Network.startMultiplayerServer();//setMenu(null);//new WorldSelectMenu());
+			Network.startMultiplayerServer();
 		else
 			setMenu(new TitleDisplay()); //sets menu to the title screen.
 		

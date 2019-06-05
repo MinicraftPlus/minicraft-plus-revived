@@ -48,8 +48,6 @@ public class Sprite {
 		this(sx, sy, sw, sh, 0, 0);}
 	public Sprite(int sx, int sy, int sw, int sh, int color) {
 		this(sx, sy, sw, sh, color, 0);}
-	//public Sprite(int sx, int sy, int sw, int sh, int mirror) {
-		//this(sx, sy, sw, sh, 0, mirror);}
 	
 	public Sprite(int sx, int sy, int sw, int sh, int color, int mirror) {
 		this(sx, sy, sw, sh, color, mirror, false);}

@@ -365,10 +365,10 @@ public class Player extends Mob implements ItemHolder, ClientTickable {
 		if (Game.getMenu() == null && !Bed.inBed(this)) {
 			// this is where movement detection occurs.
 			int xa = 0, ya = 0;
-			if (input.getKey("up").down) ya--;
-			if (input.getKey("down").down) ya++;
-			if (input.getKey("left").down) xa--;
-			if (input.getKey("right").down) xa++;
+			if (input.getKey("move-up").down) ya--;
+			if (input.getKey("move-down").down) ya++;
+			if (input.getKey("move-left").down) xa--;
+			if (input.getKey("move-right").down) xa++;
 			
 			//executes if not saving; and... essentially halves speed if out of stamina.
 			if ((xa != 0 || ya != 0) && (staminaRechargeDelay % 2 == 0 || isSwimming()) && !Updater.saving) {
@@ -430,29 +430,31 @@ public class Player extends Mob implements ItemHolder, ClientTickable {
 				inventory.add(0, activeItem);
 				activeItem = null;
 			}
-			
-			if (input.getKey("menu").clicked && !use()) // !use() = no furniture in front of the player; this prevents player inventory from opening (will open furniture inventory instead)
-				Game.setMenu(new PlayerInvDisplay(this));
-			if (input.getKey("pause").clicked)
-				Game.setMenu(new PauseDisplay());
-			if (input.getKey("craft").clicked && !use())
-				Game.setMenu(new CraftingDisplay(Recipes.craftRecipes, "Crafting", this, true));
-			//if (input.getKey("sethome").clicked) setHome();
-			//if (input.getKey("home").clicked && !Bed.inBed) goHome();
-			
-			if (input.getKey("info").clicked) Game.setMenu(new InfoDisplay());
-			
-			if (input.getKey("r").clicked && !Updater.saving && !(this instanceof RemotePlayer) && !Game.isValidClient()) {
-				Updater.saving = true;
-				LoadingDisplay.setPercentage(0);
-				new Save(WorldSelectDisplay.getWorldName());
-			}
-			//debug feature:
-			if (Game.debug && input.getKey("shift-p").clicked) { // remove all potion effects
-				for(PotionType potionType: potioneffects.keySet()) {
-					PotionItem.applyPotion(this, potionType, false);
-					if(Game.isConnectedClient() && this == Game.player)
-						Game.client.sendPotionEffect(potionType, false);
+
+			if(Game.getMenu() == null) {
+				if (input.getKey("menu").clicked && !use()) // !use() = no furniture in front of the player; this prevents player inventory from opening (will open furniture inventory instead)
+					Game.setMenu(new PlayerInvDisplay(this));
+				if (input.getKey("pause").clicked)
+					Game.setMenu(new PauseDisplay());
+				if (input.getKey("craft").clicked && !use())
+					Game.setMenu(new CraftingDisplay(Recipes.craftRecipes, "Crafting", this, true));
+				//if (input.getKey("sethome").clicked) setHome();
+				//if (input.getKey("home").clicked && !Bed.inBed) goHome();
+
+				if (input.getKey("info").clicked) Game.setMenu(new InfoDisplay());
+
+				if (input.getKey("r").clicked && !Updater.saving && !(this instanceof RemotePlayer) && !Game.isValidClient()) {
+					Updater.saving = true;
+					LoadingDisplay.setPercentage(0);
+					new Save(WorldSelectDisplay.getWorldName());
+				}
+				//debug feature:
+				if (Game.debug && input.getKey("shift-p").clicked) { // remove all potion effects
+					for (PotionType potionType : potioneffects.keySet()) {
+						PotionItem.applyPotion(this, potionType, false);
+						if (Game.isConnectedClient() && this == Game.player)
+							Game.client.sendPotionEffect(potionType, false);
+					}
 				}
 			}
 			
@@ -705,6 +707,13 @@ public class Player extends Mob implements ItemHolder, ClientTickable {
 			screen.render(xo + 0, yo + 3, 5 + 13 * 32, liquidColor, 0); // render the water graphic
 			screen.render(xo + 8, yo + 3, 5 + 13 * 32, liquidColor, 1); // render the mirrored water graphic to the right.
 		}
+
+		// renders indicator for what tile the item will be placed on
+		if (activeItem instanceof TileItem) {
+			Point t = getInteractionTile();
+
+			screen.render(t.x * 16 + 4, t.y * 16 + 4,10 + 13 * 32, Color.WHITE, 0);
+		}
 		
 		if (attackTime > 0 && attackDir == Direction.UP) { // if currently attacking upwards...
 			screen.render(xo + 0, yo - 4, 6 + 13 * 32, Color.WHITE, 0); //render left half-slash
@@ -859,13 +868,7 @@ public class Player extends Mob implements ItemHolder, ClientTickable {
 	 */
 	@Override
 	public int getLightRadius() {
-		//if (Game.currentLevel == 3) return 0; // I don't want the player to have an automatic halo on the surface.
-		
-		//float light = potioneffects.containsKey(PotionType.Light) ? 2.5f : 1; // multiplier for the light potion effect.
 		int r = 5; // the radius of the light.
-		// if (Game.currentLevel == 3) r = (light-1) * 3;
-		//
-		// if (Game.currentLevel == 5) r = 5 * light; // more light than usual on dungeon level.
 		
 		if (activeItem != null && activeItem instanceof FurnitureItem) { // if player is holding furniture
 			int rr = ((FurnitureItem) activeItem).furniture.getLightRadius(); // gets furniture light radius

@@ -1,5 +1,6 @@
 package minicraft.level.tile;
 
+import minicraft.core.io.Sound;
 import minicraft.entity.Direction;
 import minicraft.entity.Entity;
 import minicraft.entity.mob.Mob;
@@ -65,7 +66,8 @@ public class SandTile extends Tile {
 			ToolItem tool = (ToolItem) item;
 			if (tool.type == ToolType.Shovel) {
 				if (player.payStamina(4 - tool.level) && tool.payDurability()) {
-					level.setTile(xt, yt, Tiles.get("dirt"));
+					level.setTile(xt, yt, Tiles.get("hole"));
+					Sound.monsterHurt.play();
 					level.dropItem(xt*16+8, yt*16+8, Items.get("sand"));
 					return true;
 				}

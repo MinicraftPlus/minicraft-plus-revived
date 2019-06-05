@@ -9,11 +9,7 @@ public enum ToolType {
 	Bow (5, 20),
 	FishingRod (6, 16),
 	Claymore (7, 34);
-	//Hatchet (10),
-	//Spade (11),
-	//Pick (12);
-	
-	//public String name;
+
 	public final int sprite; // sprite location on the spritesheet
 	public final int durability;
 	

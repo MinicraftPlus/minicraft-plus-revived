@@ -169,14 +169,6 @@ public class Network extends Game {
 					System.out.println("VERSIONCHECK: Connection failed, could not check for updates.");
 			});
 		}
-		/*Timer t = new Timer(1000, e -> {
-			// meanwhile... the loading screen is about to initialize the world, if this was started from the command line.
-			
-			/// load up any saved config options for the server.
-			new Load(WorldSelectDisplay.getWorldName(), server);
-		});
-		t.setRepeats(false);
-		t.start();*/
 	}
 	
 	

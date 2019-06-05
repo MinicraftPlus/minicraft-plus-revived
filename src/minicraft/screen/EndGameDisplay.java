@@ -59,12 +59,8 @@ public class EndGameDisplay extends Display {
 		
 		entries.add(new SelectEntry("Exit to Menu", () -> Game.setMenu(new TitleDisplay())));
 		
-		//title = "Game Over!" + (Game.isMode("score") ? " (" + ModeMenu.getSelectedTime() + ")" : "");
 		menus = new Menu[] {
-			new Menu.Builder(true, 0, RelPos.LEFT, entries)
-				//.setPositioning(Screen.center, RelPos.CENTER)
-				//.setTitle()
-				.createMenu()
+			new Menu.Builder(true, 0, RelPos.LEFT, entries).createMenu()
 		};
 	}
 	

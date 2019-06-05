@@ -49,8 +49,8 @@ public class WoolTile extends Tile {
 			if (tool.type == ToolType.Shovel) {
 				if (player.payStamina(3 - tool.level) && tool.payDurability()) {
 					level.setTile(xt, yt, Tiles.get("hole"));
-					level.dropItem(xt*16+8, yt*16+8, Items.get("Wool"));
 					Sound.monsterHurt.play();
+					level.dropItem(xt*16+8, yt*16+8, Items.get("Wool"));
 					return true;
 				}
 			}

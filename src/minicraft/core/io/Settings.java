@@ -55,11 +55,6 @@ public class Settings {
 	// return the ArrayEntry object associated with the given option name.
 	public static ArrayEntry getEntry(String option) { return options.get(option.toLowerCase()); }
 	
-	// checks if the given option is set to the specified value
-	/*public static boolean valueMatches(String option, Object value) {
-		return options.get(option.toLowerCase()).valueIs(value);
-	}*/
-	
 	// sets the value of the given option name, to the given value, provided it is a valid value for that option.
 	public static void set(String option, Object value) {
 		options.get(option.toLowerCase()).setValue(value);
