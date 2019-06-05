@@ -659,7 +659,7 @@ public class Player extends Mob implements ItemHolder, ClientTickable {
 			data = FishingData.rareData;
 		}
 
-		if (data != null) { // just in case
+		if (data != null) { // if they caught something
 			for (String line: data) {
 				// check all the entries in the data
 				// the number is a percent, if one fails, it moves down the list
@@ -674,7 +674,7 @@ public class Player extends Mob implements ItemHolder, ClientTickable {
 					}
 					if (itemData.startsWith(";")) {
 						// for secret messages :=)
-						Game.notifications.add(itemData.replace(';', ' '));
+						Game.notifications.add(itemData.replace(";", ""));
 					} else {
 						level.dropItem(x, y, Items.get(itemData));
 						caught = true;

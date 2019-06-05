@@ -39,10 +39,10 @@ public class FishingRodItem extends Item {
     * if you want to know the percent chance of a category (let's say tool, which is third)
     * you have to subtract 1 + the "tool" number from the number before it (for the first number subtract from 100)*/
     private static final int[][] LEVEL_CHANCES = {
-            {39, 9, 4, 0}, // they're in the order "fish", "junk", "tools", "rare"
-            {59, 14, 4, 0}, // iron has very high chance of junk
-            {59, 39, 9, 0}, // gold has very high chance of tools
-            {79, 69, 59, 0} // gem has very high chance of rare items
+            {44, 14, 9, 4}, // they're in the order "fish", "junk", "tools", "rare"
+            {24, 14, 9, 4}, // iron has very high chance of fish
+            {59, 49, 9, 4}, // gold has very high chance of tools
+            {79, 69, 59, 4} // gem has very high chance of rare items
     };
 
     private static final String[] LEVEL_NAMES = {
@@ -78,7 +78,7 @@ public class FishingRodItem extends Item {
 
     @Override
     public boolean isDepleted() {
-        if (random.nextInt(100) > 120 - uses - level * 6) { // breaking is random
+        if (random.nextInt(100) > 120 - uses - level * 6) { // breaking is random, the higher the level, and the more times you use it, the higher the chance
             Game.notifications.add("Your Fishing rod broke.");
             return true;
         }
