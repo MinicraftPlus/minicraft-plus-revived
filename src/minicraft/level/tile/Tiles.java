@@ -54,6 +54,7 @@ public final class Tiles {
 		tiles.set(27, new DoorTile(Tile.Material.Stone));
 		tiles.set(28, new DoorTile(Tile.Material.Obsidian));
 		tiles.set(35, new WoolTile());
+		tiles.set(36, new FloatingTile());
 		
 		for(int i = 0; i < tiles.size(); i++) {
 			if(tiles.get(i) == null) continue;
