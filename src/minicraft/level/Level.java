@@ -144,16 +144,17 @@ public class Level {
 			for (int y = 0; y < h; y++) { // loop through height
 				for (int x = 0; x < w; x++) { // loop through width
 					if (parentLevel.getTile(x, y) == Tiles.get("Stairs Down")) { // If the tile in the level above the current one is a stairs down then...
-						setTile(x, y, Tiles.get("Stairs Up")); // set a stairs up tile in the same position on the current level
 						if (level == -4) /// make the obsidian wall formation around the stair to the dungeon level
 							Structure.dungeonGate.draw(this, x, y);
 						
 						else if (level == 0) { // surface
 							if (Game.debug) System.out.println("setting tiles around "+x+","+y+" to hard rock");
-							setAreaTiles(x, y, 1, Tiles.get("Hard Rock"), 0); // surround the sky stairs with hard rock; won't overwrite the stairs
+							setAreaTiles(x, y, 1, Tiles.get("Hard Rock"), 0); // surround the sky stairs with hard rock
 						}
 						else // any other level, the up-stairs should have dirt on all sides.
-							setAreaTiles(x, y, 1, Tiles.get("dirt"), 0); // won't overwrite the stairs
+							setAreaTiles(x, y, 1, Tiles.get("dirt"), 0);
+
+						setTile(x, y, Tiles.get("Stairs Up")); // set a stairs up tile in the same position on the current level
 					}
 				}
 			}
