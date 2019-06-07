@@ -158,6 +158,19 @@ public class Level {
 					}
 				}
 			}
+		} else { // this is the sky level
+			boolean placedHouse = false;
+			while (!placedHouse) {
+				int x = random.nextInt(this.w - 7);
+				int y = random.nextInt(this.h - 5);
+
+				if (this.getTile(x - 3, y - 2) == Tiles.get("Cloud") && this.getTile(x + 3, y - 2) == Tiles.get("Cloud")) {
+					if (this.getTile(x - 3, y + 2) == Tiles.get("Cloud") && this.getTile(x + 3, y + 2) == Tiles.get("Cloud")) {
+						Structure.airWizardHouse.draw(this, x, y);
+						placedHouse = true;
+					}
+				}
+			}
 		}
 		
 		checkChestCount(false);

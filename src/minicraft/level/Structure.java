@@ -3,6 +3,7 @@ package minicraft.level;
 import java.util.HashMap;
 import java.util.HashSet;
 
+import minicraft.entity.furniture.Crafter;
 import minicraft.entity.furniture.Furniture;
 import minicraft.entity.furniture.Lantern;
 import minicraft.gfx.Point;
@@ -83,7 +84,9 @@ public class Structure {
 	
 	static final Structure dungeonGate;
 	static final Structure mobDungeon;
-	
+	static final Structure airWizardHouse;
+
+	// ok, because of the way the system works, these structures are rotated 90 degrees clockwise when placed
 	static {
 		dungeonGate = new Structure();
 		dungeonGate.setData("O:Obsidian,D:Obsidian Door,W:Obsidian Wall",
@@ -103,5 +106,16 @@ public class Structure {
 					"WBBBW\n" +
 					"WWBWW"
 		);
+
+		airWizardHouse = new Structure();
+		airWizardHouse.setData("F:Wood Planks,W:Wood Wall,D:Wood Door",
+				"WWWWWWW\n" +
+					"WFFFFFW\n" +
+					"DFFFFFW\n" +
+					"WFFFFFW\n" +
+					"WWWWWWW"
+		);
+		airWizardHouse.addFurniture(-2, 0, new Lantern(Lantern.Type.GOLD));
+		airWizardHouse.addFurniture(0, 0, new Crafter(Crafter.Type.Enchanter));
 	}
 }
