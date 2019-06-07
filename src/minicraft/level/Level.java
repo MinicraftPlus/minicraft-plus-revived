@@ -777,18 +777,8 @@ public class Level {
 				if (getTile(sp.x / 16, sp.y / 16) == Tiles.get("rock")) {
 					setTile(sp.x / 16, sp.y / 16, Tiles.get("dirt"));
 				}
-				
-				for (int xx = 0; xx < 5; xx++) {
-					for (int yy = 0; yy < 5; yy++) {
-						if (noStairs(sp.x / 16 - 2 + xx, sp.y / 16 - 2 + yy)) {
-							setTile(sp.x / 16 - 2 + xx, sp.y / 16 - 2 + yy, Tiles.get("Stone Bricks"));
-							
-							if((xx < 1 || yy < 1 || xx > 3 || yy > 3) && (xx != 2 || yy != 0) && (xx != 2 || yy != 4) && (xx != 0 || yy != 2) && (xx != 4 || yy != 2)) {
-								setTile(sp.x / 16 - 2 + xx, sp.y / 16 - 2 + yy, Tiles.get("Stone Wall"));
-							}
-						}
-					}
-				}
+
+				Structure.mobDungeon.draw(this, sp.x / 16, sp.y / 16);
 				
 				add(sp);
 				for(int rpt = 0; rpt < 2; rpt++) {

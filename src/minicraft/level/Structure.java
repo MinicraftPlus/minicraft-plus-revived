@@ -82,6 +82,7 @@ public class Structure {
 	}
 	
 	static final Structure dungeonGate;
+	static final Structure mobDungeon;
 	
 	static {
 		dungeonGate = new Structure();
@@ -93,5 +94,14 @@ public class Structure {
 					"WWDWW"
 		);
 		dungeonGate.addFurniture(-1, -1, new Lantern(Lantern.Type.IRON));
+
+		mobDungeon = new Structure();
+		mobDungeon.setData("B:Stone Bricks,W:Stone Wall",
+				"WWBWW\n" +
+					"WBBBW\n" +
+					"BBBBB\n" +
+					"WBBBW\n" +
+					"WWBWW"
+		);
 	}
 }
