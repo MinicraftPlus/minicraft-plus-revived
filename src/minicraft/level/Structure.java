@@ -83,6 +83,7 @@ public class Structure {
 	}
 	
 	static final Structure dungeonGate;
+	// All the "mobDungeon" structures are for the spawner structures
 	static final Structure mobDungeonCenter;
 	static final Structure mobDungeonNorth;
 	static final Structure mobDungeonSouth;
