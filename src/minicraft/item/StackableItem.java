@@ -36,7 +36,7 @@ public class StackableItem extends Item {
 		items.add(new StackableItem("Scale", new Sprite(22, 4, Color.get(-1, 10, 30, 20))));
 		items.add(new StackableItem("Shard", new Sprite(23, 4, Color.get(-1, 222, 333, 444))));
 		items.add(new StackableItem("Cloud Cacti", new Sprite(4, 4, Color.get(-1, 333, 444, 555))));
-		items.add(new StackableItem("Cloud Dust", new Sprite(22, 4, Color.get(-1, 333, 555, 555))));
+		items.add(new StackableItem("Cloud Dust", new Sprite(22, 4, Color.get(-1, 333, 444, 555))));
 
 		return items;
 	}
