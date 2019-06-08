@@ -791,7 +791,20 @@ public class Level {
 					setTile(sp.x / 16, sp.y / 16, Tiles.get("dirt"));
 				}
 
-				Structure.mobDungeon.draw(this, sp.x / 16, sp.y / 16);
+				Structure.mobDungeonCenter.draw(this, sp.x / 16, sp.y / 16);
+
+				if (getTile(sp.x / 16, sp.y / 16 - 4) == Tiles.get("dirt")) {
+					Structure.mobDungeonNorth.draw(this, sp.x / 16, sp.y / 16 - 5);
+				}
+				if (getTile(sp.x / 16, sp.y / 16 + 4) == Tiles.get("dirt")) {
+					Structure.mobDungeonSouth.draw(this, sp.x / 16, sp.y / 16 + 5);
+				}
+				if (getTile(sp.x / 16 + 4, sp.y / 16) == Tiles.get("dirt")) {
+					Structure.mobDungeonEast.draw(this, sp.x / 16 + 5, sp.y / 16);
+				}
+				if (getTile(sp.x / 16 - 4, sp.y / 16) == Tiles.get("dirt")) {
+					Structure.mobDungeonWest.draw(this, sp.x / 16 - 5, sp.y / 16);
+				}
 				
 				add(sp);
 				for(int rpt = 0; rpt < 2; rpt++) {

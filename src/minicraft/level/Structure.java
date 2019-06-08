@@ -83,10 +83,15 @@ public class Structure {
 	}
 	
 	static final Structure dungeonGate;
-	static final Structure mobDungeon;
+	static final Structure mobDungeonCenter;
+	static final Structure mobDungeonNorth;
+	static final Structure mobDungeonSouth;
+	static final Structure mobDungeonEast;
+	static final Structure mobDungeonWest;
 	static final Structure airWizardHouse;
 
 	// ok, because of the way the system works, these structures are rotated 90 degrees clockwise when placed
+	// then it's flipped on the vertical
 	static {
 		dungeonGate = new Structure();
 		dungeonGate.setData("O:Obsidian,D:Obsidian Door,W:Obsidian Wall",
@@ -98,13 +103,45 @@ public class Structure {
 		);
 		dungeonGate.addFurniture(-1, -1, new Lantern(Lantern.Type.IRON));
 
-		mobDungeon = new Structure();
-		mobDungeon.setData("B:Stone Bricks,W:Stone Wall",
+		mobDungeonCenter = new Structure();
+		mobDungeonCenter.setData("B:Stone Bricks,W:Stone Wall",
 				"WWBWW\n" +
 					"WBBBW\n" +
 					"BBBBB\n" +
 					"WBBBW\n" +
 					"WWBWW"
+		);
+		mobDungeonNorth = new Structure();
+		mobDungeonNorth.setData("B:Stone Bricks,W:Stone Wall",
+				"WWWWW\n" +
+					"WBBBB\n" +
+					"BBBBB\n" +
+					"WBBBB\n" +
+					"WWWWW"
+		);
+		mobDungeonSouth = new Structure();
+		mobDungeonSouth.setData("B:Stone Bricks,W:Stone Wall",
+				"WWWWW\n" +
+					"BBBBW\n" +
+					"BBBBB\n" +
+					"BBBBW\n" +
+					"WWWWW"
+		);
+		mobDungeonEast = new Structure();
+		mobDungeonEast.setData("B:Stone Bricks,W:Stone Wall",
+				"WBBBW\n" +
+					"WBBBW\n" +
+					"WBBBW\n" +
+					"WBBBW\n" +
+					"WWBWW"
+		);
+		mobDungeonWest = new Structure();
+		mobDungeonWest.setData("B:Stone Bricks,W:Stone Wall",
+				"WWBWW\n" +
+					"WBBBW\n" +
+					"WBBBW\n" +
+					"WBBBW\n" +
+					"WBBBW"
 		);
 
 		airWizardHouse = new Structure();
