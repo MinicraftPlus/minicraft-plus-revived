@@ -812,52 +812,9 @@ public class Level {
 					Chest c = new Chest();
 					Inventory inv = c.getInventory();
 					int chance = -depth;
-					inv.tryAdd(9/chance, new Tnt());
-					inv.tryAdd(10/chance, new Crafter(Crafter.Type.Anvil));
-					inv.tryAdd(7/chance, new Lantern(Lantern.Type.NORM));
-					inv.tryAdd(3/chance, Items.get("bread"), 2);
-					inv.tryAdd(4/chance, Items.get("bread"), 3);
-					inv.tryAdd(7/chance, Items.get("Leather Armor"), 1);
-					inv.tryAdd(50/chance, Items.get("Gold Apple"), 1);
-					inv.tryAdd(3/chance, Items.get("Lapis"), 2);
-					inv.tryAdd(4/chance, Items.get("glass"), 2);
-					inv.tryAdd(4/chance, Items.get("Gunpowder"), 3);
-					inv.tryAdd(4/chance, Items.get("Gunpowder"), 3);
-					inv.tryAdd(4/chance, Items.get("Torch"), 4);
-					inv.tryAdd(14/chance, Items.get("swim potion"), 1);
-					inv.tryAdd(16/chance, Items.get("haste potion"), 1);
-					inv.tryAdd(14/chance, Items.get("light potion"), 1);
-					inv.tryAdd(14/chance, Items.get("speed potion"), 1);
-					inv.tryAdd(16/chance, Items.get("Iron Armor"), 1);
-					inv.tryAdd(5/chance, Items.get("Stone Brick"), 4);
-					inv.tryAdd(5/chance, Items.get("Stone Brick"), 6);
-					inv.tryAdd(4/chance, Items.get("string"), 3);
-					inv.tryAdd(4/chance, Items.get("bone"), 2);
-					inv.tryAdd(3/chance, Items.get("bone"), 1);
-					inv.tryAdd(7/chance, ToolType.Claymore, 1);
-					inv.tryAdd(5/chance, Items.get("Torch"), 3);
-					inv.tryAdd(6/chance, Items.get("Torch"), 6);
-					inv.tryAdd(6/chance, Items.get("Torch"), 6);
-					inv.tryAdd(7/chance, Items.get("steak"), 3);
-					inv.tryAdd(9/chance, Items.get("steak"), 4);
-					inv.tryAdd(7/chance, Items.get("gem"), 3);
-					inv.tryAdd(7/chance, Items.get("gem"), 5);
-					inv.tryAdd(7/chance, Items.get("gem"), 4);
-					inv.tryAdd(10/chance, Items.get("yellow clothes"), 1);
-					inv.tryAdd(10/chance, Items.get("black clothes"), 1);
-					inv.tryAdd(12/chance, Items.get("orange clothes"), 1);
-					inv.tryAdd(12/chance, Items.get("cyan clothes"), 1);
-					inv.tryAdd(12/chance, Items.get("purple clothes"), 1);
-					inv.tryAdd(4/chance, Items.get("arrow"), 5);
-					
-					if (inv.invSize() < 1) {
-						inv.add(Items.get("potion"), 1);
-						inv.add(Items.get("coal"), 3);
-						inv.add(Items.get("apple"), 3);
-						inv.add(Items.get("dirt"), 7);
-					}
-					
-					// chance = -level
+
+					c.populateInvRandom("minidungeon", chance);
+
 					add(c, sp.x - 16, sp.y - 16);
 				}
 			}
