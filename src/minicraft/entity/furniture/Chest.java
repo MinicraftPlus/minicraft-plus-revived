@@ -54,14 +54,14 @@ public class Chest extends Furniture implements ItemHolder {
 					inventory.tryAdd(Integer.parseInt(data[0]), Items.get(data[1]), data.length < 3 ? 1 : Integer.parseInt(data[2]));
 				} else if (inventory.invSize() == 0) {
 					// adds the "fallback" items to ensure there's some stuff
-					String[] fallbacks = line.split(":");
+					String[] fallbacks = line.substring(1).split(":");
 					for (String item : fallbacks) {
 						inventory.add(Items.get(item.split(",")[0]), Integer.parseInt(item.split(",")[1]));
 					}
 				}
 			}
 		} catch (IOException e) {
-			System.out.println("Couldn't read loot table:");
+			System.out.println("Couldn't read loot table \"" + lootTable + ".txt" + "\"");
 			e.printStackTrace();
 		}
 	}

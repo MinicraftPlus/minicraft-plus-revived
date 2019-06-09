@@ -20,6 +20,10 @@ public class Structure {
 		tiles = new HashSet<>();
 		furniture = new HashMap<>();
 	}
+	public Structure(Structure struct) {
+		this.tiles = struct.tiles;
+		this.furniture = struct.furniture;
+	}
 	
 	public void setTile(int x, int y, Tile tile) {
 		tiles.add(new TilePoint(x, y, tile));
@@ -31,7 +35,7 @@ public class Structure {
 	public void draw(Level level, int xt, int yt) {
 		for(TilePoint p: tiles)
 			level.setTile(xt+p.x, yt+p.y, p.t);
-		
+
 		for(Point p: furniture.keySet())
 			level.add(furniture.get(p).clone(), xt+p.x, yt+p.y, true);
 	}
@@ -89,7 +93,12 @@ public class Structure {
 	static final Structure mobDungeonSouth;
 	static final Structure mobDungeonEast;
 	static final Structure mobDungeonWest;
+
 	static final Structure airWizardHouse;
+
+	// used for random villages
+	static final Structure villageHouseNormal;
+	static final Structure villageHouseTwoDoor;
 
 	// ok, because of the way the system works, these structures are rotated 90 degrees clockwise when placed
 	// then it's flipped on the vertical
@@ -155,5 +164,23 @@ public class Structure {
 		);
 		airWizardHouse.addFurniture(-2, 0, new Lantern(Lantern.Type.GOLD));
 		airWizardHouse.addFurniture(0, 0, new Crafter(Crafter.Type.Enchanter));
+
+		villageHouseNormal = new Structure();
+		villageHouseNormal.setData("F:Wood Planks,W:Wood Wall,D:Wood Door",
+				"WWWWW\n" +
+					"WFFFW\n" +
+					"WFFFD\n" +
+					"WFFFW\n" +
+					"WWWWW"
+		);
+
+		villageHouseTwoDoor = new Structure();
+		villageHouseTwoDoor.setData("F:Wood Planks,W:Wood Wall,D:Wood Door",
+				"WWWWW\n" +
+					"WFFFW\n" +
+					"DFFFW\n" +
+					"WFFFW\n" +
+					"WWDWW"
+		);
 	}
 }

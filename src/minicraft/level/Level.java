@@ -150,6 +150,7 @@ public class Level {
 						else if (level == 0) { // surface
 							if (Game.debug) System.out.println("setting tiles around "+x+","+y+" to hard rock");
 							setAreaTiles(x, y, 1, Tiles.get("Hard Rock"), 0); // surround the sky stairs with hard rock
+							generateVillages();
 						}
 						else // any other level, the up-stairs should have dirt on all sides.
 							setAreaTiles(x, y, 1, Tiles.get("dirt"), 0);
@@ -810,12 +811,49 @@ public class Level {
 				for(int rpt = 0; rpt < 2; rpt++) {
 					if (random.nextInt(2) != 0) continue;
 					Chest c = new Chest();
-					Inventory inv = c.getInventory();
 					int chance = -depth;
 
 					c.populateInvRandom("minidungeon", chance);
 
 					add(c, sp.x - 16, sp.y - 16);
+				}
+			}
+		}
+	}
+
+	public void generateVillages() {
+		for (int i = 0; i < w / 128 * 2; i++) {
+			// makes 2-8 villages based on world size
+
+			for (int t = 0; t < 4; t++) {
+				// tries 4 times for each one
+
+				int x = random.nextInt(w);
+				int y = random.nextInt(h);
+
+				if (getTile(x, y) == Tiles.get("grass")) {
+					int numHouses = random.nextInt(4);
+
+					for (int h = 0; h < numHouses; h++) {
+						boolean hasChest = random.nextBoolean();
+						boolean twoDoors = random.nextBoolean();
+
+						// basically just gets what offset this house should have from the center of the village
+						int xo = h == 0 || h == 3 ? -4 : 4;
+						int yo = h < 2 ? -4 : 4;
+
+						if (twoDoors) {
+							Structure.villageHouseTwoDoor.draw(this, x + xo, y + yo);
+						} else {
+							Structure.villageHouseNormal.draw(this, x + xo, y + yo);
+						}
+
+						if (hasChest) {
+							Chest c = new Chest();
+							c.populateInvRandom("villagehouse", 1);
+							add(c, (x + + random.nextInt(2) + xo) << 4, (y + random.nextInt(2) + yo) << 4);
+						}
+					}
 				}
 			}
 		}
