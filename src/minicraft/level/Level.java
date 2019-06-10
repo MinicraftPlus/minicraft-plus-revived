@@ -821,9 +821,11 @@ public class Level {
 		}
 	}
 
-	public void generateVillages() {
+	private void generateVillages() {
 		for (int i = 0; i < w / 128 * 2; i++) {
 			// makes 2-8 villages based on world size
+			int lastVillageX = 0;
+			int lastVillageY = 0;
 
 			for (int t = 0; t < 4; t++) {
 				// tries 4 times for each one
@@ -831,9 +833,12 @@ public class Level {
 				int x = random.nextInt(w);
 				int y = random.nextInt(h);
 
-				if (getTile(x, y) == Tiles.get("grass")) {
-					int numHouses = random.nextInt(4);
+				// makes sure the village isn't to close to the previous village
+				if (getTile(x, y) == Tiles.get("grass") && (Math.abs(x - lastVillageX) > 16 && Math.abs(y - lastVillageY) > 16)) {
+					// a number between 1 and 4
+					int numHouses = random.nextInt(4) + 1;
 
+					// loops for each house in the village
 					for (int h = 0; h < numHouses; h++) {
 						boolean hasChest = random.nextBoolean();
 						boolean twoDoors = random.nextBoolean();
@@ -841,6 +846,9 @@ public class Level {
 						// basically just gets what offset this house should have from the center of the village
 						int xo = h == 0 || h == 3 ? -4 : 4;
 						int yo = h < 2 ? -4 : 4;
+
+						xo += random.nextInt(4) - 3;
+						yo += random.nextInt(4) - 3;
 
 						if (twoDoors) {
 							Structure.villageHouseTwoDoor.draw(this, x + xo, y + yo);
@@ -851,7 +859,7 @@ public class Level {
 						if (hasChest) {
 							Chest c = new Chest();
 							c.populateInvRandom("villagehouse", 1);
-							add(c, (x + + random.nextInt(2) + xo) << 4, (y + random.nextInt(2) + yo) << 4);
+							add(c, (x + random.nextInt(2) + xo) << 4, (y + random.nextInt(2) + yo) << 4);
 						}
 					}
 				}
