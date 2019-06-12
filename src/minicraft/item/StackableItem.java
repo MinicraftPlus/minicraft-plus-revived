@@ -28,7 +28,7 @@ public class StackableItem extends Item {
 		items.add(new StackableItem("Iron", new Sprite(11, 4, Color.get(-1, 100, 322, 544))));
 		items.add(new StackableItem("Gold", new Sprite(11, 4, Color.get(-1, 110, 330, 553))));
 		items.add(new StackableItem("Rose", new Sprite(0, 4, Color.get(-1, 100, 300, 500))));
-		items.add(new StackableItem("GunPowder", new Sprite(2, 4, Color.get(-1, 111, 222, 333))));
+		items.add(new StackableItem("GunPowder", new Sprite(22, 4, Color.get(-1, 111, 333, 333))));
 		items.add(new StackableItem("Slime", new Sprite(10, 4, Color.get(-1, 10, 30, 50))));
 		items.add(new StackableItem("glass", new Sprite(12, 4, Color.WHITE)));
 		items.add(new StackableItem("cloth", new Sprite(1, 4, Color.get(-1, 25, 252, 141))));

@@ -1,5 +1,7 @@
 package minicraft.screen;
 
+import java.time.LocalDateTime;
+import java.time.Month;
 import java.util.Random;
 
 import minicraft.core.Game;
@@ -64,24 +66,30 @@ public class TitleDisplay extends Display {
 	public void init(Display parent) {
 		super.init(null); // The TitleScreen never has a parent.
 		Renderer.readyToRenderGameplay = false;
-		
+
 		// check version
 		checkVersion();
-		
+
 		/// this is useful to just ensure that everything is really reset as it should be. 
-		if(Game.server != null) {
+		if (Game.server != null) {
 			if (Game.debug) System.out.println("wrapping up loose server ends");
 			Game.server.endConnection();
 			Game.server = null;
 		}
-		if(Game.client != null) {
+		if (Game.client != null) {
 			if (Game.debug) System.out.println("wrapping up loose client ends");
 			Game.client.endConnection();
 			Game.client = null;
 		}
 		Game.ISONLINE = false;
-		
-		rand = random.nextInt(splashes.length);
+
+		LocalDateTime time = LocalDateTime.now();
+		if (time.getMonth() == Month.DECEMBER) {
+			if (time.getDayOfMonth() == 19) rand = 0;
+			if (time.getDayOfMonth() == 25) rand = 1;
+		} else {
+			rand = random.nextInt(splashes.length - 2) + 2;
+		}
 		
 		World.levels = new Level[World.levels.length];
 		
@@ -115,7 +123,7 @@ public class TitleDisplay extends Display {
 	
 	@Override
 	public void tick(InputHandler input) {
-		if (input.getKey("r").clicked) rand = random.nextInt(splashes.length);
+		if (input.getKey("r").clicked) rand = random.nextInt(splashes.length - 2) + 2;
 		
 		if (!reverse) {
 			count++;
@@ -168,6 +176,8 @@ public class TitleDisplay extends Display {
 	}
 	
 	private static final String[] splashes = {
+		"Happy birthday Minicraft!",
+		"Happy XMAS!",
 		"Multiplayer Now Included!",
 		// "Also play InfinityTale!",
 		// "Also play Minicraft Deluxe!",
@@ -184,6 +194,7 @@ public class TitleDisplay extends Display {
 		"Notch is Awesome!",
 		"Dillyg10 is cool as Ice!",
 		"Shylor is the man!",
+		"Chris J is great with portals!",
 		"AntVenom loves cows! Honest!",
 		"You should read Antidious Venomi!",
 		"Oh Hi Mark",
@@ -208,6 +219,7 @@ public class TitleDisplay extends Display {
 		"Windows? I prefer Doors!",
 		"2.5D FTW!",
 		"3rd dimension not included!",
+		"Null not included",
 		"Mouse not included!",
 		"No spiders included!",
 		"No Endermen included!",
@@ -256,7 +268,7 @@ public class TitleDisplay extends Display {
 		"Punch the Moon!",
 		"This is String qq!",
 		"Why?",
-		"You are null!",
+		//"You are null!",
 		"hello down there!",
 		"That guy is such a sly fox!",
 		"Hola senor!",
