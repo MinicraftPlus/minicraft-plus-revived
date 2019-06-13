@@ -1,4 +1,5 @@
 Minicraft+ version 2.0.6
+
 * Made the quick-save key configurable
 
 
