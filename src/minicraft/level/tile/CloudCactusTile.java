@@ -2,6 +2,7 @@ package minicraft.level.tile;
 
 import minicraft.core.Game;
 import minicraft.core.io.Settings;
+import minicraft.core.io.Sound;
 import minicraft.entity.Direction;
 import minicraft.entity.Entity;
 import minicraft.entity.mob.AirWizard;
@@ -33,6 +34,8 @@ public class CloudCactusTile extends Tile {
 	}
 
 	public boolean interact(Level level, int xt, int yt, Player player, Item item, Direction attackDir) {
+		if(Game.isMode("creative"))
+			return false; // go directly to hurt method
 		if (item instanceof ToolItem) {
 			ToolItem tool = (ToolItem) item;
 			if (tool.type == ToolType.Pickaxe) {
@@ -50,10 +53,12 @@ public class CloudCactusTile extends Tile {
 		int health = 10;
 		if(Game.isMode("creative")) dmg = damage = health;
 		level.add(new SmashParticle(x * 16, y * 16));
+		Sound.monsterHurt.play();
+
 		level.add(new TextParticle("" + dmg, x * 16 + 8, y * 16 + 8, Color.RED));
-		if (damage >= health)
+		if (damage >= health) {
 			level.setTile(x, y, Tiles.get("cloud"));
-		else
+		} else
 			level.setData(x, y, damage);
 	}
 

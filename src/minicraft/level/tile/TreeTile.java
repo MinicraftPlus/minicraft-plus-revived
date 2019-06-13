@@ -1,6 +1,7 @@
 package minicraft.level.tile;
 
 import minicraft.core.Game;
+import minicraft.core.io.Sound;
 import minicraft.entity.Direction;
 import minicraft.entity.Entity;
 import minicraft.entity.mob.Mob;
@@ -17,7 +18,6 @@ import minicraft.item.ToolType;
 import minicraft.level.Level;
 
 public class TreeTile extends Tile {
-	//private ConnectorSprite sprite = new ConnectorSprite();
 	
 	protected TreeTile(String name) {
 		super(name, (ConnectorSprite)null);
@@ -69,11 +69,6 @@ public class TreeTile extends Tile {
 	}
 
 	public boolean mayPass(Level level, int x, int y, Entity e) {
-		/// make arrow fly through trees!
-		/*if(Game.debug && e instanceof minicraft.entity.Arrow && ((minicraft.entity.Arrow)e).owner instanceof Player) {
-			hurt(level, x, y, 25);
-			return true;
-		}*/
 		return false;
 	}
 	
@@ -85,6 +80,8 @@ public class TreeTile extends Tile {
 	
 	@Override
 	public boolean interact(Level level, int xt, int yt, Player player, Item item, Direction attackDir) {
+		if(Game.isMode("creative"))
+			return false; // go directly to hurt method
 		if (item instanceof ToolItem) {
 			ToolItem tool = (ToolItem) item;
 			if (tool.type == ToolType.Axe) {
@@ -106,6 +103,8 @@ public class TreeTile extends Tile {
 		if (Game.isMode("creative")) dmg = damage = treeHealth;
 		
 		level.add(new SmashParticle(x*16, y*16));
+		Sound.monsterHurt.play();
+
 		level.add(new TextParticle("" + dmg, x*16+8, y*16+8, Color.RED));
 		if (damage >= treeHealth) {
 			level.dropItem(x*16+8, y*16+8, 1, 2, Items.get("Wood"));

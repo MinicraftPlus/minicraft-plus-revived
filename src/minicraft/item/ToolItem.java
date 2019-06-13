@@ -128,8 +128,6 @@ public class ToolItem extends Item {
 			return 1; // all other tools do very little damage to mobs.
 		}
 		
-		//if(e instanceof Spawner)
-		
 		return 0;
 	}
 	

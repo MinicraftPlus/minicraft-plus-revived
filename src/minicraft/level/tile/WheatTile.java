@@ -1,5 +1,6 @@
 package minicraft.level.tile;
 
+import minicraft.core.io.Sound;
 import minicraft.entity.Direction;
 import minicraft.entity.Entity;
 import minicraft.entity.mob.Mob;
@@ -25,7 +26,7 @@ public class WheatTile extends Tile {
 		
 		int col = Color.get(301, 411, 321, 50);
 		int col1 = Color.get(301, 411, 50 + (icon) * 100, 40 + (icon - 3) * 2 * 100);
-		int col2 = Color.get(0, 0, 50 + (icon) * 100, 40 + (icon - 3) * 2 * 100);
+		int col2 = Color.get(0, 411, 50 + (icon) * 100, 40 + (icon - 3) * 2 * 100);
 		
 		if (icon >= 3) {
 			col = col1;
@@ -67,6 +68,7 @@ public class WheatTile extends Tile {
 			if (tool.type == ToolType.Shovel) {
 				if (player.payStamina(4 - tool.level) && tool.payDurability()) {
 					level.setTile(xt, yt, Tiles.get("dirt"));
+					Sound.monsterHurt.play();
 					return true;
 				}
 			}

@@ -1,5 +1,6 @@
 package minicraft.level.tile;
 
+import minicraft.core.io.Sound;
 import minicraft.entity.Direction;
 import minicraft.entity.mob.Mob;
 import minicraft.gfx.Color;
@@ -41,6 +42,7 @@ public class SaplingTile extends Tile {
 
 	public boolean hurt(Level level, int x, int y, Mob source, int dmg, Direction attackDir) {
 		level.setTile(x, y, onType);
+		Sound.monsterHurt.play();
 		return true;
 	}
 }

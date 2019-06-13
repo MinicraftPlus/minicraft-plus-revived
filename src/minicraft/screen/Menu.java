@@ -70,7 +70,6 @@ public class Menu {
 	}
 	
 	public void init() {
-		//recalcEntryPos();
 		
 		if(entries.size() == 0) {
 			selection = 0;
@@ -160,8 +159,7 @@ public class Menu {
 	
 	private void doScroll() {
 		// check if dispSelection is past padding point, and if so, bring it back in
-		
-		//int offset = this.offset;//getSelection() - dispSelection;
+
 		dispSelection = selection - offset;
 		int offset = this.offset;
 		
@@ -188,7 +186,6 @@ public class Menu {
 		renderFrame(screen);
 		
 		// render the title
-		//String title = Localization.getLocalized(this.title);
 		if(title.length() > 0) {
 			if (drawVertically) {
 				for (int i = 0; i < title.length(); i++) {
@@ -202,7 +199,6 @@ public class Menu {
 		int y = entryBounds.getTop();
 		boolean special = wrap && entries.size() < displayLength;
 		if(special) {
-			//int renderidx = (int)Math.ceil(displayLength/2.0);
 			int diff = displayLength - entries.size(); // we have to account for this many entry heights.
 			int extra = diff*(ListEntry.getHeight()+spacing) / 2;
 			y += extra;
@@ -215,7 +211,7 @@ public class Menu {
 			
 			if(!(entry instanceof BlankEntry)) {
 				Point pos = entryPos.positionRect(new Dimension(entry.getWidth(), ListEntry.getHeight()), new Rectangle(entryBounds.getLeft(), y, entryBounds.getWidth(), ListEntry.getHeight(), Rectangle.CORNER_DIMS));
-				boolean selected = idx == selection;// && (!wrap || i-offset == displayLength/2);
+				boolean selected = idx == selection;
 				entry.render(screen, pos.x, pos.y, selected);
 				if (selected && entry.isSelectable()) {
 					// draw the arrows
@@ -464,10 +460,7 @@ public class Menu {
 			// I have anchor and menu's relative position to it, and may or may not have size.
 			Dimension entrySize;
 			
-			/*if(menuSize == null && menu.entries.size() == 0) {
-				menuSize = new Dimension(border.left + border.right, border.top + border.bottom);
-				entrySize	 = new Dimension();
-			} else */if(menuSize == null) {
+			if(menuSize == null) {
 				int width = titleDim.width;
 				for(ListEntry entry: menu.entries) {
 					int entryWidth = entry.getWidth();

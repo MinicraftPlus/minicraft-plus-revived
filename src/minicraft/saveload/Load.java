@@ -407,11 +407,6 @@ public class Load {
 			else {
 				player.armorDamageBuffer = Integer.parseInt(data.remove(0));
 				player.curArmor = (ArmorItem) Items.get(data.remove(0), true);
-				// not sure if I should fix "armor" or curArmor...
-				/*if(player.armor == 0) {
-					player.armorDamageBuffer = 0;
-					player.curArmor = null;
-				}*/
 			}
 		}
 		player.setScore(Integer.parseInt(data.remove(0)));
@@ -696,23 +691,11 @@ public class Load {
 				String itemData = chestInfo.get(idx);
 				if(worldVer.compareTo(new Version("1.9.4-dev4")) < 0)
 					itemData = subOldName(itemData, worldVer);
-				
+								
 				if(itemData.contains("Power Glove")) continue; // ignore it.
 				
-				if (itemData.contains(";")) {
-					String[] aitemData = itemData.split(";");
-					StackableItem stack = (StackableItem)Items.get(aitemData[0]);
-					if (!(stack instanceof UnknownItem)) {
-						stack.count = Integer.parseInt(aitemData[1]);
-						chest.getInventory().add(stack);
-					} else {
-						System.err.println("LOAD ERROR: encountered invalid item name, expected to be stackable: " + aitemData[0] + "; stack trace:");
-						Thread.dumpStack();
-					}
-				} else {
-					Item item = Items.get(itemData);
-					chest.getInventory().add(item);
-				}
+				Item item = Items.get(itemData);
+				chest.getInventory().add(item);
 			}
 			
 			if (isDeathChest) {
@@ -803,11 +786,10 @@ public class Load {
 			case "Lantern": return new Lantern(Lantern.Type.NORM);
 			case "Arrow": return new Arrow(new Skeleton(0), 0, 0, Direction.NONE, 0);
 			case "ItemEntity": return new ItemEntity(Items.get("unknown"), 0, 0);
-			//case "Spark": return (Entity)(new Spark());
 			case "FireParticle": return new FireParticle(0, 0);
 			case "SmashParticle": return new SmashParticle(0, 0);
 			case "TextParticle": return new TextParticle("", 0, 0, 0);
-			default : /*if(Game.debug)*/ System.err.println("LOAD ERROR: unknown or outdated entity requested: " + string);
+			default : System.err.println("LOAD ERROR: unknown or outdated entity requested: " + string);
 				return null;
 		}
 	}

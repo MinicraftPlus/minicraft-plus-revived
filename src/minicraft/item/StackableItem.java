@@ -28,7 +28,7 @@ public class StackableItem extends Item {
 		items.add(new StackableItem("Iron", new Sprite(11, 4, Color.get(-1, 100, 322, 544))));
 		items.add(new StackableItem("Gold", new Sprite(11, 4, Color.get(-1, 110, 330, 553))));
 		items.add(new StackableItem("Rose", new Sprite(0, 4, Color.get(-1, 100, 300, 500))));
-		items.add(new StackableItem("GunPowder", new Sprite(2, 4, Color.get(-1, 111, 222, 333))));
+		items.add(new StackableItem("GunPowder", new Sprite(22, 4, Color.get(-1, 111, 333, 333))));
 		items.add(new StackableItem("Slime", new Sprite(10, 4, Color.get(-1, 10, 30, 50))));
 		items.add(new StackableItem("glass", new Sprite(12, 4, Color.WHITE)));
 		items.add(new StackableItem("cloth", new Sprite(1, 4, Color.get(-1, 25, 252, 141))));
@@ -53,17 +53,7 @@ public class StackableItem extends Item {
 		this.count = count;
 	}
 	
-	/*@Override
-	public boolean equals(Item other) {
-		return super.equals(other) && ((StackableItem)other).count == count;
-	}*/
-	
 	public boolean stacksWith(Item other) { return other instanceof StackableItem && other.getName().equals(getName()); }
-	/** Renders the icon, name, and count of the item. */
-	/*public void renderInventory(Screen screen, int x, int y, boolean ininv) {
-		// If the item count is above 999, then just render 999 (for spacing reasons)
-		super.renderInventory(screen, x, y, ininv, (count>999?999:count)+" "+name);
-	}*/
 	
 	/// this is used by (most) subclasses, to standardize the count decrement behavior. This is not the normal interactOn method.
 	protected boolean interactOn(boolean subClassSuccess) {

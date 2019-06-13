@@ -39,6 +39,12 @@ public class Chest extends Furniture implements ItemHolder {
 	}
 	
 	@Override
+	public void take(Player player) {
+		if(inventory.invSize() == 0)
+			super.take(player);
+	}
+	
+	@Override
 	protected String getUpdateString() {
 		String updates = super.getUpdateString()+";";
 		updates += "inventory,"+inventory.getItemData();

@@ -22,8 +22,6 @@ public class Items {
 	private static ArrayList<Item> items = new ArrayList<>();
 	
 	private static void add(Item i) {
-		String name = i.getName().toUpperCase();
-		//if(Game.debug) System.out.println("adding " + name);
 		items.add(i);
 	}
 	private static void addAll(ArrayList<Item> items) {
@@ -31,7 +29,6 @@ public class Items {
 	}
 	
 	static {
-		//add(new UnknownItem());
 		add(new PowerGloveItem());
 		addAll(FurnitureItem.getAllInstances());
 		addAll(TorchItem.getAllInstances());
@@ -58,12 +55,12 @@ public class Items {
 	public static Item get(String name, boolean allowNull) {
 		name = name.toUpperCase();
 		//System.out.println("fetching name: \"" + name + "\"");
-		int amount = 1;
+		int data = 1;
 		boolean hadUnderscore = false;
 		if(name.contains("_")) {
 			hadUnderscore = true;
 			try {
-				amount = Integer.parseInt(name.substring(name.indexOf("_")+1));
+				data = Integer.parseInt(name.substring(name.indexOf("_")+1));
 			} catch(Exception ex) {
 				ex.printStackTrace();
 			}
@@ -72,7 +69,7 @@ public class Items {
 		else if(name.contains(";")) {
 			hadUnderscore = true;
 			try {
-				amount = Integer.parseInt(name.substring(name.indexOf(";")+1));
+				data = Integer.parseInt(name.substring(name.indexOf(";")+1));
 			} catch(Exception ex) {
 				ex.printStackTrace();
 			}
@@ -102,29 +99,15 @@ public class Items {
 		if(i != null) {
 			i = i.clone();
 			if(i instanceof StackableItem)
-				((StackableItem)i).count = amount;
+				((StackableItem)i).count = data;
 			if(i instanceof ToolItem && hadUnderscore)
-				((ToolItem)i).dur = amount;
+				((ToolItem)i).dur = data;
 			return i;
 		} else {
 			System.out.println(Network.onlinePrefix()+"ITEMS GET: invalid name requested: \"" + name + "\"");
 			Thread.dumpStack();
 			return new UnknownItem(name);
 		}
-		/*if(!name.equals("")) { // name is not nothing
-			if(name.contains(";")) { // if has ";" in name for whatever reason...
-				name = name.substring(0, name.indexOf(";")); // cut it off, plus anything after it.
-			}
-			
-			for(int i = 0; i < items.size(); i++) { // loop through the items
-				if(items.get(i).getName().equals(name)) { // if names match
-					return items.get(i);//.clone(); // set the item
-				}
-			}
-		}
-		
-		return null;
-		*/
 	}
 	
 	public static Item arrowItem = get("arrow");

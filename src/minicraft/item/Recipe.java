@@ -60,15 +60,6 @@ public class Recipe {
 		return true;
 	}
 	
-	/** Renders the icon & text of an item to the screen. */
-	/*public void renderInventory(Screen screen, int x, int y) {
-		getProduct().sprite.render(screen, x, y); //renders the item sprite.
-		int textColor = canCraft ? Color.WHITE : Color.DARK_GRAY; // gets the text color, based on whether the player can craft the item.
-		
-		String amountIndicator = amount > 1 ? " x"+amount : "";
-		Font.draw(product + amountIndicator, screen, x + 8, y, textColor); // draws the text to the screen
-	}*/
-	
 	// (WAS) abstract method given to the sub-recipe classes.
 	public boolean craft(Player player) {
 		if(!getCanCraft(player)) return false;

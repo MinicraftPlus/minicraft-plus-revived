@@ -14,7 +14,6 @@ import minicraft.screen.entry.SelectEntry;
 import minicraft.screen.entry.StringEntry;
 
 public class PlayerDeathDisplay extends Display {
-	//private int inputDelay = 60;
 	// this is an IMPORTANT bool, determines if the user should respawn or not. :)
 	public static boolean shouldRespawn = true;
 	

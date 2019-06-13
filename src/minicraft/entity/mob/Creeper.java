@@ -1,7 +1,6 @@
 package minicraft.entity.mob;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 
 import minicraft.core.io.Settings;
 import minicraft.core.io.Sound;
@@ -13,7 +12,9 @@ import minicraft.gfx.MobSprite;
 import minicraft.gfx.Point;
 import minicraft.gfx.Screen;
 import minicraft.item.Items;
+import minicraft.level.tile.Tile;
 import minicraft.level.tile.Tiles;
+import org.jetbrains.annotations.NotNull;
 
 public class Creeper extends EnemyMob {
 	private static final MobSprite[][] sprites;
@@ -33,8 +34,8 @@ public class Creeper extends EnemyMob {
 	};
 	
 	private static final int MAX_FUSE_TIME = 60;
-	private static final int BLAST_RADIUS = 60;
-	private static final int BLAST_DAMAGE = 10;
+	private static final int TRIGGER_RADIUS = 60;
+	private static final int BLAST_DAMAGE = 100;
 	
 	private int fuseTime = 0;
 	private boolean fuseLit = false;
@@ -57,81 +58,74 @@ public class Creeper extends EnemyMob {
 			fuseTime--; // fuse getting shorter...
 			xa = ya = 0;
 		} else if (fuseLit) { // fuseLit is set to true when fuseTime is set to max, so this happens after fuseTime hits zero, while fuse is lit.
-			// blow up
 			xa = ya = 0;
 			
-			boolean hurtOne = false; // tells if any players were hurt
+			boolean playerInRange = false; // tells if any players are within the blast
 			
 			for(Entity e: level.getEntitiesOfClass(Mob.class)) {
 				Mob mob = (Mob) e;
 				int pdx = Math.abs(mob.x - x);
 				int pdy = Math.abs(mob.y - y);
-				if(pdx < BLAST_RADIUS && pdy < BLAST_RADIUS) {
-					float pd = (float) Math.sqrt(pdx * pdx + pdy * pdy);
-					int dmg = (int) (BLAST_DAMAGE * (1 - (pd / BLAST_RADIUS))) + Settings.getIdx("diff");
-					mob.hurt(this, dmg);
-					if(mob instanceof Player) {
-						((Player) mob).payStamina(dmg * (Settings.get("diff").equals("Easy") ? 1 : 2));
-						hurtOne = true;
+				if(pdx < TRIGGER_RADIUS && pdy < TRIGGER_RADIUS) {
+					if (mob instanceof Player) {
+						playerInRange = true;
 					}
 				}
 			}
-			
-			if (hurtOne) {
+
+			// basically, if there aren't any players it "defuses" itself and doesn't blow up
+			if (playerInRange) {
+				// blow up
 				
 				Sound.explode.play();
 				
 				// figure out which tile the mob died on
 				int xt = x >> 4;
 				int yt = (y - 2) >> 4;
-				
-				// change tile to an appropriate crater
-				
-				// basically, this sets all tiles within a certain radius to a hole, unless they have a Spawner on them or stairs (stairs check happens in Level class). All entities on the reset tiles which are not allowed to occupy a hole tile are then removed (or killed, in the case of mobs).
-				
+
+				// hurt all the entities
 				int radius = lvl*2/3;
 				List<Entity> entitiesInRange = level.getEntitiesInTiles(xt, yt, radius);
-				Point[] tilePositions = level.getAreaTilePositions(xt, yt, radius);
-				
-				ArrayList<Entity> skipEntities = new ArrayList<>();
-				for(Entity e: entitiesInRange)
-					if(e instanceof Spawner)
-						skipEntities.add(e);
-				
-				if(skipEntities.size() == 0) {
-					if (level.depth != 1) {
-						level.setAreaTiles(xt, yt, radius, Tiles.get("hole"), 0);
-					} else {
-						level.setAreaTiles(xt, yt, radius, Tiles.get("Infinite Fall"), 0);
-					}
-				} else {
-					for(Point pos : tilePositions) {
-						boolean match = false;
-						for(Entity e: skipEntities) {
-							if(e.x>>4 == pos.x && e.y>>4 == pos.y) {
-								match = true;
-								break;
-							}
-						}
-						if(!match) {
-							if (level.depth != 1) {
-								level.setAreaTiles(pos.x, pos.y, 0, Tiles.get("hole"), 0);
-							} else {
-								level.setAreaTiles(pos.x, pos.y, 0, Tiles.get("Infinite Fall"), 0);
-							}
-						}
+				List<Entity> spawners = new ArrayList<>();
+
+				for (Entity entity : entitiesInRange) {
+					if (entity instanceof Mob) {
+						Mob mob = (Mob) entity;
+						int distx = Math.abs(mob.x - x);
+						int disty = Math.abs(mob.y - y);
+						float distDiag = (float) Math.sqrt(distx * distx + disty * disty);
+						mob.hurt(this, (int) (BLAST_DAMAGE * (1 - (distDiag / TRIGGER_RADIUS))) + Settings.getIdx("diff"));
+					} else if (entity instanceof Spawner) {
+						spawners.add(entity);
 					}
 				}
-				
-				for(Entity e : entitiesInRange) {
-					if(e == this) continue;
-					Point ePos = new Point(e.x>>4, e.y>>4);
-					
+
+				Point[] tilePositions = level.getAreaTilePositions(xt, yt, radius);
+				for (int p = 0; p < tilePositions.length; p++) {
+					boolean hasSpawner = false;
+					for (Entity spawner : spawners) {
+						if (spawner.x >> 4 == tilePositions[p].x && spawner.y >> 4 == tilePositions[p].y) {
+							hasSpawner = true;
+							break;
+						}
+					}
+					if (!hasSpawner) {
+						if (level.depth != 1) {
+							level.setAreaTiles(tilePositions[p].x, tilePositions[p].y, 0, Tiles.get("hole"), 0);
+						} else {
+							level.setAreaTiles(tilePositions[p].x, tilePositions[p].y, 0, Tiles.get("Infinite Fall"), 0);
+						}
+
+					}
+				}
+
+				for (Entity entity : entitiesInRange) {
+					if (entity == this) continue;
+					Point ePos = new Point(entity.x>>4, entity.y>>4);
 					for(Point p: tilePositions) {
-						if(!p.equals(ePos)) continue;
-						
-						if(!level.getTile(p.x, p.y).mayPass(level, p.x, p.y, e))
-							e.die();
+						if (!p.equals(ePos)) continue;
+						if (!level.getTile(p.x, p.y).mayPass(level, p.x, p.y, entity))
+							entity.die();
 					}
 				}
 				

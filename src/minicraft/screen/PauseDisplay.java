@@ -85,8 +85,6 @@ public class PauseDisplay extends Display {
 			new StringEntry(selectString, Color.GRAY)
 		));
 		
-		//Menu.Builder msgBuilder = new Menu.Builder(8);
-		
 		menus = new Menu[] {
 			new Menu.Builder(true, 4, RelPos.CENTER, entries)
 				.setTitle("Paused", 550)
