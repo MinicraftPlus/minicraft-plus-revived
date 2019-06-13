@@ -85,6 +85,7 @@ public class Player extends Mob implements ItemHolder, ClientTickable {
 	public Direction attackDir;
 	
 	private int onStairDelay; // the delay before changing levels.
+	private int onFallDelay; // the delay before falling b/c we're on an InfiniteFallTile
 	
 	public int hunger, stamina, armor; // the current stats
 	public int armorDamageBuffer;
@@ -265,6 +266,14 @@ public class Player extends Mob implements ItemHolder, ClientTickable {
 			onStairDelay = 10; //resets the delay, if on a stairs tile, but the delay is greater than 0. In other words, this prevents you from ever activating a level change on a stair tile, UNTIL you get off the tile for 10+ ticks.
 		} else if (onStairDelay > 0) onStairDelay--; // decrements stairDelay if it's > 0, but not on stair tile... does the player get removed from the tile beforehand, or something?
 
+		if (onTile == Tiles.get("Infinite Fall") && !Game.isMode("creative")) {
+			if (onFallDelay <= 0) {
+				World.scheduleLevelChange(-1);
+				onFallDelay = 40;
+				return;
+			}
+		} else if (onFallDelay > 0) onFallDelay--;
+
 		if (Game.isMode("creative")) {
 			// prevent stamina/hunger decay in creative mode.
 			stamina = maxStamina;
@@ -365,10 +374,12 @@ public class Player extends Mob implements ItemHolder, ClientTickable {
 		if (Game.getMenu() == null && !Bed.inBed(this)) {
 			// this is where movement detection occurs.
 			int xa = 0, ya = 0;
-			if (input.getKey("move-up").down) ya--;
-			if (input.getKey("move-down").down) ya++;
-			if (input.getKey("move-left").down) xa--;
-			if (input.getKey("move-right").down) xa++;
+			if (onFallDelay <= 0) { // prevent movement while falling
+				if (input.getKey("move-up").down) ya--;
+				if (input.getKey("move-down").down) ya++;
+				if (input.getKey("move-left").down) xa--;
+				if (input.getKey("move-right").down) xa++;
+			}
 			
 			//executes if not saving; and... essentially halves speed if out of stamina.
 			if ((xa != 0 || ya != 0) && (staminaRechargeDelay % 2 == 0 || isSwimming()) && !Updater.saving) {
@@ -406,7 +417,7 @@ public class Player extends Mob implements ItemHolder, ClientTickable {
 					level.dropItem(x, y, drop);
 			}
 			
-			if ((activeItem == null || !activeItem.used_pending) && (input.getKey("attack").clicked || input.getKey("pickup").clicked) && stamina != 0) { // this only allows attacks or pickups when such action is possible.
+			if ((activeItem == null || !activeItem.used_pending) && (input.getKey("attack").clicked || input.getKey("pickup").clicked) && stamina != 0 && onFallDelay <= 0) { // this only allows attacks or pickups when such action is possible.
 				if (!potioneffects.containsKey(PotionType.Energy)) stamina--;
 				staminaRecharge = 0;
 				
@@ -714,24 +725,34 @@ public class Player extends Mob implements ItemHolder, ClientTickable {
 
 			screen.render(t.x * 16 + 4, t.y * 16 + 4,10 + 13 * 32, Color.WHITE, 0);
 		}
-		
+
 		if (attackTime > 0 && attackDir == Direction.UP) { // if currently attacking upwards...
 			screen.render(xo + 0, yo - 4, 6 + 13 * 32, Color.WHITE, 0); //render left half-slash
 			screen.render(xo + 8, yo - 4, 6 + 13 * 32, Color.WHITE, 1); //render right half-slash (mirror of left).
 			if (attackItem != null) { // if the player had an item when they last attacked...
-				attackItem.sprite.render(screen, xo + 4, yo - 4); // then render the icon of the item.
+				attackItem.sprite.render(screen, xo + 4, yo - 4, attackItem.sprite.color, 1); // then render the icon of the item, mirrored
 			}
 		}
 		
 		if (hurtTime > playerHurtTime - 10) { // if the player has just gotten hurt...
 			col = Color.WHITE; // make the sprite white.
 		}
-		
-		MobSprite curSprite = spriteSet[dir.getDir()][(walkDist >> 3) & 1]; // gets the correct sprite to render.
-		
+
+		MobSprite curSprite;
+		if (onFallDelay > 0) {
+			// what this does is make falling look really cool
+			float spriteToUse = onFallDelay / 2f;
+			while (spriteToUse > spriteSet.length - 1) {
+				spriteToUse -= 4;
+			}
+			curSprite = spriteSet[Math.round(spriteToUse)][(walkDist >> 3) & 1];
+		} else {
+			curSprite = spriteSet[dir.getDir()][(walkDist >> 3) & 1]; // gets the correct sprite to render.
+		}
+
 		// render each corner of the sprite
 		if (!isSwimming()) { // don't render the bottom half if swimming.
-			curSprite.render(screen, xo, yo, col);
+			curSprite.render(screen, xo, yo - 4 * onFallDelay, col);
 		} else {
 			curSprite.renderRow(0, screen, xo, yo, col);
 		}
@@ -742,7 +763,7 @@ public class Player extends Mob implements ItemHolder, ClientTickable {
 			screen.render(xo - 4, yo, 7 + 13 * 32, Color.WHITE, 1);
 			screen.render(xo - 4, yo + 8, 7 + 13 * 32, Color.WHITE, 3);
 			if (attackItem != null) {
-				attackItem.sprite.render(screen, xo - 4, yo + 4);
+				attackItem.sprite.render(screen, xo - 4, yo + 4, attackItem.sprite.color, 1);
 			}
 		}
 		if (attackTime > 0 && attackDir == Direction.RIGHT) { // attacking to the right
