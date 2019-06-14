@@ -685,7 +685,7 @@ public class Player extends Mob implements ItemHolder, ClientTickable {
 					}
 					if (itemData.startsWith(";")) {
 						// for secret messages :=)
-						Game.notifications.add(itemData.replace(";", ""));
+						Game.notifications.add(itemData.substring(1));
 					} else {
 						level.dropItem(x, y, Items.get(itemData));
 						caught = true;
