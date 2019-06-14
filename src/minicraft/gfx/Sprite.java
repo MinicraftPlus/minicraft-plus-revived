@@ -94,9 +94,15 @@ public class Sprite {
 	public void render(Screen screen, int x, int y) { render(screen, x, y, color); }
 	public void render(Screen screen, int x, int y, int color) {
 		/// here, x and y are screen coordinates.
-		
+
 		for(int row = 0; row < spritePixels.length; row++) { // loop down through each row
 			renderRow(row, screen, x, y + row*8, color);
+		}
+	}
+	public void render(Screen screen, int x, int y, int color, int mirror) {
+
+		for(int row = 0; row < spritePixels.length; row++) {
+			renderRow(row, screen, x, y + row*8, color, mirror);
 		}
 	}
 	
@@ -105,6 +111,12 @@ public class Sprite {
 		Px[] row = spritePixels[r];
 		for(int c = 0; c < row.length; c++) { // loop across through each column
 			screen.render(x + c*8, y, row[c].sheetPos, color, row[c].mirror); // render the sprite pixel.
+		}
+	}
+	public void renderRow(int r, Screen screen, int x, int y, int color, int mirror) {
+		Px[] row = spritePixels[r];
+		for(int c = 0; c < row.length; c++) { // loop across through each column
+			screen.render(x + c*8, y, row[c].sheetPos, color, mirror); // render the sprite pixel.
 		}
 	}
 	

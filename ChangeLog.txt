@@ -28,6 +28,7 @@ Minicraft+ version 2.0.5
 * Fixed bug where creative player couldn't break a tile
 * Made sand behave like dirt when being placed
 * Fixed item data in chests
+* Made items face the right way when you attack with them
 
 
 Minicraft+ version 2.0.4

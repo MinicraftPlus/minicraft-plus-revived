@@ -328,8 +328,19 @@ public class Level {
 		while(count > maxMobCount) {
 			Entity removeThis = (Entity)entities.toArray()[(random.nextInt(entities.size()))];
 			if(removeThis instanceof MobAi) {
-				remove(removeThis);
-				count--;
+				// make sure there aren't any close players
+				boolean playerClose = false;
+				for (Player player : players) {
+					if (Math.abs(player.x - removeThis.x) < 128 && Math.abs(player.y - removeThis.x) < 76) {
+						playerClose = true;
+						break;
+					}
+				}
+
+				if (!playerClose) {
+					remove(removeThis);
+					count--;
+				}
 			}
 		}
 		
