@@ -454,7 +454,7 @@ public class Player extends Mob implements ItemHolder, ClientTickable {
 
 				if (input.getKey("info").clicked) Game.setMenu(new InfoDisplay());
 
-				if (input.getKey("r").clicked && !Updater.saving && !(this instanceof RemotePlayer) && !Game.isValidClient()) {
+				if (input.getKey("quicksave").clicked && !Updater.saving && !(this instanceof RemotePlayer) && !Game.isValidClient()) {
 					Updater.saving = true;
 					LoadingDisplay.setPercentage(0);
 					new Save(WorldSelectDisplay.getWorldName());

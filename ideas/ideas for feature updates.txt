@@ -1,10 +1,6 @@
 Ideas for ways to update or improve existing features.
 ----
 
-make the quick-save key configurable.
-
-----
-
 Design a system where cloud tiles respawn around existing cloud tiles if the total number of cloud tiles is below a certain number.
 
 ----

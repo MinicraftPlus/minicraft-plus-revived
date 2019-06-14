@@ -2,6 +2,7 @@ Minicraft+ version 2.0.6
 
 + Prevented players from getting stuck in skyholes with a cool animation
 * Fixed the creeper's explosion to only hurt mobs if it actually explodes
+* Made the quick-save key configurable
 
 
 Minicraft+ version 2.0.5
