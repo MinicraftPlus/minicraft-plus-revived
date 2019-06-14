@@ -12,6 +12,7 @@
 
 # build folder
 build/
+bin/
 
 # Log file
 *.log
