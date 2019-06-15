@@ -104,6 +104,8 @@ public class InputHandler implements KeyListener {
 		
 		keymap.put("SELECT", "ENTER");
 		keymap.put("EXIT", "ESCAPE");
+
+		keymap.put("QUICKSAVE", "R"); // saves the game while still playing
 		
 		keymap.put("ATTACK", "C|SPACE|ENTER"); //attack action references "C" key
 		keymap.put("MENU", "X|E"); //and so on... menu does various things.

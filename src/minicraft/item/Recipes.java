@@ -107,7 +107,7 @@ public class Recipes {
 		ovenRecipes.add(new Recipe("steak_1", "raw beef_1", "coal_1"));
 		ovenRecipes.add(new Recipe("cooked fish_1", "raw fish_1", "coal_1"));
 		ovenRecipes.add(new Recipe("bread_1", "wheat_4"));
-		
+
 		workbenchRecipes.add(new Recipe("Gold Apple_1", "apple_1", "gold_8"));
 
 		potionRecipes.add(new Recipe("potion_1", "glass_1", "Lapis_3"));
