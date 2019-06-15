@@ -8,7 +8,7 @@ public class Recipes {
 	public static final ArrayList<Recipe> ovenRecipes = new ArrayList<>();
 	public static final ArrayList<Recipe> furnaceRecipes = new ArrayList<>();
 	public static final ArrayList<Recipe> workbenchRecipes = new ArrayList<>();
-	public static final ArrayList<Recipe> enchantRecipes = new ArrayList<>();
+	public static final ArrayList<Recipe> potionRecipes = new ArrayList<>();
 	public static final ArrayList<Recipe> craftRecipes = new ArrayList<>();
 	public static final ArrayList<Recipe> loomRecipes = new ArrayList<>();
 	
@@ -67,6 +67,7 @@ public class Recipes {
 		workbenchRecipes.add(new Recipe("arrow_3", "Wood_2", "Stone_2"));
 		workbenchRecipes.add(new Recipe("Leather Armor_1", "leather_10"));
 		workbenchRecipes.add(new Recipe("Snake Armor_1", "scale_15"));
+		workbenchRecipes.add(new Recipe("Cloud Dust_3", "Cloud Cacti_1"));
 		
 		loomRecipes.add(new Recipe("Leather Armor_1", "leather_10"));
 		
@@ -107,18 +108,18 @@ public class Recipes {
 		ovenRecipes.add(new Recipe("cooked fish_1", "raw fish_1", "coal_1"));
 		ovenRecipes.add(new Recipe("bread_1", "wheat_4"));
 		
-		enchantRecipes.add(new Recipe("Gold Apple_1", "apple_1", "gold_8"));
-		enchantRecipes.add(new Recipe("potion_1", "glass_1", "Lapis_3"));
-		enchantRecipes.add(new Recipe("Cloud Dust_4", "Cloud Cacti_1"));
-		enchantRecipes.add(new Recipe("speed potion_1", "potion_1", "Cactus_5"));
-		enchantRecipes.add(new Recipe("light potion_1", "potion_1", "slime_5"));
-		enchantRecipes.add(new Recipe("swim potion_1", "potion_1", "raw fish_5"));
-		enchantRecipes.add(new Recipe("haste potion_1", "potion_1", "Wood_5", "Stone_5"));
-		enchantRecipes.add(new Recipe("lava potion_1", "potion_1", "Lava Bucket_1"));
-		enchantRecipes.add(new Recipe("energy potion_1", "potion_1", "gem_25"));
-		enchantRecipes.add(new Recipe("regen potion_1", "potion_1", "Gold Apple_1"));
-		enchantRecipes.add(new Recipe("Health Potion_1", "potion_1", "GunPowder_2", "Leather Armor_1"));
-		enchantRecipes.add(new Recipe("Escape Potions_1", "potion_1", "GunPower_3", "lapis_7"));
+		workbenchRecipes.add(new Recipe("Gold Apple_1", "apple_1", "gold_8"));
+
+		potionRecipes.add(new Recipe("potion_1", "glass_1", "Lapis_3"));
+		potionRecipes.add(new Recipe("speed potion_1", "potion_1", "Cactus_5"));
+		potionRecipes.add(new Recipe("light potion_1", "potion_1", "slime_5"));
+		potionRecipes.add(new Recipe("swim potion_1", "potion_1", "raw fish_5"));
+		potionRecipes.add(new Recipe("haste potion_1", "potion_1", "Wood_5", "Stone_5"));
+		potionRecipes.add(new Recipe("lava potion_1", "potion_1", "Lava Bucket_1"));
+		potionRecipes.add(new Recipe("energy potion_1", "potion_1", "gem_25"));
+		potionRecipes.add(new Recipe("regen potion_1", "potion_1", "Gold Apple_1"));
+		potionRecipes.add(new Recipe("Health Potion_1", "potion_1", "GunPowder_2", "Leather Armor_1"));
+		potionRecipes.add(new Recipe("Escape Potions_1", "potion_1", "GunPower_3", "lapis_7"));
 	}
 
 }

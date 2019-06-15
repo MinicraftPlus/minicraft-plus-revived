@@ -37,6 +37,7 @@ public class ToolItem extends Item {
 	public ToolType type; // Type of tool (Sword, hoe, axe, pickaxe, shovel)
 	public int level; // Level of said tool
 	public int dur; // the durability of the tool
+	public int ench; // 1 if enchanted, 0 if not
 	
 	public static final int[] LEVEL_COLORS = { // Colors of the tools, same position as LEVEL_NAMES
 		Color.get(-1, 100, 321, 431), // wood
@@ -60,6 +61,7 @@ public class ToolItem extends Item {
 		
 		this.type = type;
 		this.level = level;
+		this.ench = 0;
 		
 		dur = type.durability * (level+1); // initial durability fetched from the ToolType
 	}
@@ -114,26 +116,32 @@ public class ToolItem extends Item {
 	public int getAttackDamageBonus(Entity e) {
 		if(!payDurability())
 			return 0;
-		
+
+		int damageBonus = 0;
 		if(e instanceof Mob) {
 			if (type == ToolType.Axe) {
-				return (level + 1) * 2 + random.nextInt(4); // wood axe damage: 2-5; gem axe damage: 10-13.
+				damageBonus = (level + 1) * 2 + random.nextInt(4); // wood axe damage: 2-5; gem axe damage: 10-13.
+				// enchant bonus
+				damageBonus += ench * 3; // three extra damage
+			} else if (type == ToolType.Sword) {
+				damageBonus = (level + 1) * 3 + random.nextInt(2 + level * level); // wood: 3-5 damage; gem: 15-32 damage.
+
+				damageBonus += ench * 6; // six extra damage
+			} else if (type == ToolType.Claymore) {
+				damageBonus = (level + 1) * 3 + random.nextInt(4 + level * level * 3); // wood: 3-6 damage; gem: 15-66 damage.
+
+				damageBonus += ench * 10; // ten extra damage
+			} else {
+				damageBonus = 1; // all other tools do very little damage to mobs.
 			}
-			if (type == ToolType.Sword) {
-				return (level + 1) * 3 + random.nextInt(2 + level * level); // wood: 3-5 damage; gem: 15-32 damage.
-			}
-			if (type == ToolType.Claymore) {
-				return (level + 1) * 3 + random.nextInt(4 + level * level * 3); // wood: 3-6 damage; gem: 15-66 damage.
-			}
-			return 1; // all other tools do very little damage to mobs.
 		}
 		
-		return 0;
+		return damageBonus;
 	}
 	
 	@Override
 	public String getData() {
-		return super.getData()+"_"+dur;
+		return super.getData()+"_"+dur+"_"+ench;
 	}
 	
 	/** Sees if this item equals another. */

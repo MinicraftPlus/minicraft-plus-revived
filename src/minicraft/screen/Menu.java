@@ -19,10 +19,10 @@ public class Menu {
 	@NotNull
 	private ArrayList<ListEntry> entries = new ArrayList<>();
 	
-	private int spacing = 0;
+	protected int spacing = 0;
 	private Rectangle bounds = null;
-	private Rectangle entryBounds = null;
-	private RelPos entryPos = RelPos.CENTER; // the x part of this is re-applied per entry, while the y part is calculated once using the cumulative height of all entries and spacing.
+	protected Rectangle entryBounds = null;
+	protected RelPos entryPos = RelPos.CENTER; // the x part of this is re-applied per entry, while the y part is calculated once using the cumulative height of all entries and spacing.
 	
 	private String title = "";
 	private int titleColor;
@@ -35,14 +35,14 @@ public class Menu {
 	private boolean selectable = false;
 	boolean shouldRender = true;
 	
-	private int displayLength = 0;
+	protected int displayLength = 0;
 	private int padding = 0;
 	private boolean wrap = false;
 	
 	// menu selection vars
 	private int selection = 0;
 	private int dispSelection = 0;
-	private int offset = 0;
+	protected int offset = 0;
 	
 	
 	private Menu() {}

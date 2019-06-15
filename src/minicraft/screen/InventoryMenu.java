@@ -4,10 +4,14 @@ import minicraft.core.Game;
 import minicraft.core.io.InputHandler;
 import minicraft.entity.Entity;
 import minicraft.entity.mob.Player;
+import minicraft.gfx.*;
 import minicraft.item.Inventory;
 import minicraft.item.Item;
 import minicraft.item.StackableItem;
+import minicraft.item.ToolItem;
+import minicraft.screen.entry.BlankEntry;
 import minicraft.screen.entry.ItemEntry;
+import minicraft.screen.entry.ListEntry;
 
 class InventoryMenu extends ItemListMenu {
 	
@@ -62,5 +66,26 @@ class InventoryMenu extends ItemListMenu {
 	public void removeSelectedEntry() {
 		inv.remove(getSelection());
 		super.removeSelectedEntry();
+	}
+
+	@Override
+	public void render(Screen screen) {
+		super.render(screen);
+
+		// just for rendering the enchantment indicator
+		int y = super.getBounds().getTop();
+		for (int i = super.offset; i < super.offset + super.displayLength; i++) {
+
+			int idx = i % getEntries().length;
+			ListEntry entry = getEntries()[idx];
+			if (!(entry instanceof BlankEntry)) {
+				if (inv.get(idx) instanceof ToolItem && ((ToolItem) inv.get(idx)).ench == 1) {
+					Point pos = entryPos.positionRect(new Dimension(entry.getWidth(), ListEntry.getHeight()), new Rectangle(entryBounds.getLeft(), y, entryBounds.getWidth(), ListEntry.getHeight(), Rectangle.CORNER_DIMS));
+					screen.render(pos.x - 8, pos.y + 8, 6 + 10 * 32, Color.get(-1, 50, 40, 40), 0);
+				}
+			}
+
+			y += ListEntry.getHeight() + spacing;
+		}
 	}
 }

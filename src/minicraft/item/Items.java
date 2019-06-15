@@ -55,24 +55,31 @@ public class Items {
 		name = name.toUpperCase();
 		//System.out.println("fetching name: \"" + name + "\"");
 		int data = 1;
+		int extraData = 0;
 		boolean hadUnderscore = false;
 		if(name.contains("_")) {
 			hadUnderscore = true;
+			String[] splitData = name.split("_");
 			try {
-				data = Integer.parseInt(name.substring(name.indexOf("_")+1));
+				data = Integer.parseInt(splitData[1]);
+				if (splitData[2] != null)
+					extraData = Integer.parseInt(splitData[2]);
 			} catch(Exception ex) {
 				ex.printStackTrace();
 			}
-			name = name.substring(0, name.indexOf("_"));
+			name = splitData[0];
 		}
 		else if(name.contains(";")) {
 			hadUnderscore = true;
+			String[] splitData = name.split(";");
 			try {
-				data = Integer.parseInt(name.substring(name.indexOf(";")+1));
+				data = Integer.parseInt(splitData[1]);
+				if (splitData[2] != null)
+					extraData = Integer.parseInt(splitData[2]);
 			} catch(Exception ex) {
 				ex.printStackTrace();
 			}
-			name = name.substring(0, name.indexOf(";"));
+			name = splitData[0];
 		}
 		
 		if(name.equalsIgnoreCase("NULL")) {
@@ -99,8 +106,10 @@ public class Items {
 			i = i.clone();
 			if(i instanceof StackableItem)
 				((StackableItem)i).count = data;
-			if(i instanceof ToolItem && hadUnderscore)
-				((ToolItem)i).dur = data;
+			if(i instanceof ToolItem && hadUnderscore) {
+				((ToolItem) i).dur = data;
+				((ToolItem) i).ench = extraData;
+			}
 			return i;
 		} else {
 			System.out.println(Network.onlinePrefix()+"ITEMS GET: invalid name requested: \"" + name + "\"");
