@@ -4,7 +4,9 @@ Minicraft+ version 2.0.6
 * Fixed the creeper's explosion to only hurt mobs if it actually explodes
 * Made the quick-save key configurable
 + Added French localization
-+ Cloud cacti now drop, they can then be crafted into cloud dust, which makes plants fully grown, among other things
++ Cloud cacti now drop, they can then be crafted into cloud dust, which makes plants fully grown
++ Enchantments! You can now use cloud dust and the enchanter to make your weapons stronger
++ The brewer, this is where you craft all your potions now
 
 
 Minicraft+ version 2.0.5

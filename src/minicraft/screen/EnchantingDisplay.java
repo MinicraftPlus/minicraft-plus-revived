@@ -9,6 +9,7 @@ import minicraft.gfx.Screen;
 import minicraft.item.Item;
 import minicraft.item.Items;
 import minicraft.item.ToolItem;
+import minicraft.item.ToolType;
 import minicraft.screen.entry.*;
 
 import java.util.ArrayList;
@@ -31,9 +32,12 @@ public class EnchantingDisplay extends Display {
 
         int numTools = 0;
         for (int i = 0; i < this.player.getInventory().invSize(); i++) {
-            if (this.player.getInventory().get(i) instanceof ToolItem) {
-                tools[numTools] = this.player.getInventory().get(i);
-                numTools++;
+            if (this.player.getInventory().get(i) instanceof ToolItem && ((ToolItem) this.player.getInventory().get(i)).ench == 0) {
+                // make sure not to include fishing rods
+                if (((ToolItem) this.player.getInventory().get(i)).type != ToolType.FishingRod) {
+                    tools[numTools] = this.player.getInventory().get(i);
+                    numTools++;
+                }
             }
         }
 
@@ -62,10 +66,10 @@ public class EnchantingDisplay extends Display {
         menus = new Menu[]{ toolList, selectedItemBox.createMenu(), choiceBox.createMenu() };
     }
 
-    public void enchantItem() {
+    private void enchantItem() {
         ToolItem tool = ((ToolItem) selectedItem);
 
-        if (tool.ench == 0 && player.getInventory().count(Items.get("cloud dust")) >= 5) {
+        if (player.getInventory().count(Items.get("cloud dust")) >= 5) {
             player.getInventory().removeItems(Items.get("cloud dust"), 5);
             player.getInventory().removeItem(selectedItem);
             tool.ench = 1;
@@ -73,6 +77,7 @@ public class EnchantingDisplay extends Display {
             Game.exitMenu();
         } else {
             Sound.monsterHurt.play();
+            Game.notifications.add("Not enough cloud dust!");
         }
     }
 
