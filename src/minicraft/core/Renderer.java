@@ -296,8 +296,12 @@ public class Renderer extends Game {
 		}
 		
 		/// CURRENT ITEM
-		if (player.activeItem != null) // shows active item sprite and name in bottom toolbar, if one exists.
-			player.activeItem.renderInventory(screen, 12 * 7, Screen.h - 8, false);
+		if (player.activeItem != null) { // shows active item sprite and name in bottom toolbar, if one exists.
+			player.activeItem.renderInventory(screen, 92, Screen.h - 8, false);
+			if (player.activeItem instanceof ToolItem && ((ToolItem) player.activeItem).ench == 1) {
+				screen.render(84, Screen.h - 8, 6 + 10 * 32, Color.get(0, 50, 40, 40), 0);
+			}
+		}
 	}
 	
 	private static void renderDebugInfo() {

@@ -76,16 +76,20 @@ class InventoryMenu extends ItemListMenu {
 		int y = super.getBounds().getTop();
 		for (int i = super.offset; i < super.offset + super.displayLength; i++) {
 
-			int idx = i % getEntries().length;
-			ListEntry entry = getEntries()[idx];
-			if (!(entry instanceof BlankEntry)) {
-				if (inv.get(idx) instanceof ToolItem && ((ToolItem) inv.get(idx)).ench == 1) {
-					Point pos = entryPos.positionRect(new Dimension(entry.getWidth(), ListEntry.getHeight()), new Rectangle(entryBounds.getLeft(), y, entryBounds.getWidth(), ListEntry.getHeight(), Rectangle.CORNER_DIMS));
-					screen.render(pos.x - 8, pos.y + 8, 6 + 10 * 32, Color.get(-1, 50, 40, 40), 0);
+			try {
+				int idx = i % getEntries().length;
+				ListEntry entry = getEntries()[idx];
+				if (!(entry instanceof BlankEntry)) {
+					if (inv.get(idx) instanceof ToolItem && ((ToolItem) inv.get(idx)).ench == 1) {
+						Point pos = entryPos.positionRect(new Dimension(entry.getWidth(), ListEntry.getHeight()), new Rectangle(entryBounds.getLeft(), y, entryBounds.getWidth(), ListEntry.getHeight(), Rectangle.CORNER_DIMS));
+						screen.render(pos.x - 8, pos.y + 8, 6 + 10 * 32, Color.get(-1, 50, 40, 40), 0);
+					}
 				}
-			}
 
-			y += ListEntry.getHeight() + spacing;
+				y += ListEntry.getHeight() + spacing;
+			} catch (IndexOutOfBoundsException ignored) {
+				// this just means we removed an item from the inventory while we can see the last item in it
+			}
 		}
 	}
 }
