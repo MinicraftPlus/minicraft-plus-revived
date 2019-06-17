@@ -1,0 +1,14 @@
+20,book
+7,gunpowder
+7,torch,3
+5,torch,2
+6,bread,2
+5,bread,1
+7,wood,5
+5,wood,4
+3,wood,1
+10,string,3
+6,string,2
+3,string
+6,cloth
+:steak,2:wood,7

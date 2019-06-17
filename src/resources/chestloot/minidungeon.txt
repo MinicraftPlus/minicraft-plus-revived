@@ -1,0 +1,36 @@
+9,tnt
+10,anvil
+7,bread,2
+2,bread,3
+7,leather armor
+50,gold apple
+3,lapis,2
+4,glass,2
+4,gunpowder,3
+4,gunpowder,3
+4,torch,4
+14,swim potion
+16,haste potion
+14,light potion
+14,speed potion
+16,iron armor
+5,stone brick,4
+5,stone brick,6
+4,string,3
+4,bone,2
+3,bone
+5,torch,3
+6,torch,6
+6,torch,6
+7,steak,3
+9,steak,4
+7,gem,3
+7,gem,5
+7,gem,4
+10,yellow clothes
+10,black clothes
+12,orange clothes
+12,cyan clothes
+12,purple clothes
+4,arrow,5
+:potion,1:coal,3:apple,3:dirt,7

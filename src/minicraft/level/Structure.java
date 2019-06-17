@@ -3,6 +3,7 @@ package minicraft.level;
 import java.util.HashMap;
 import java.util.HashSet;
 
+import minicraft.entity.furniture.Crafter;
 import minicraft.entity.furniture.Furniture;
 import minicraft.entity.furniture.Lantern;
 import minicraft.gfx.Point;
@@ -19,6 +20,10 @@ public class Structure {
 		tiles = new HashSet<>();
 		furniture = new HashMap<>();
 	}
+	public Structure(Structure struct) {
+		this.tiles = struct.tiles;
+		this.furniture = struct.furniture;
+	}
 	
 	public void setTile(int x, int y, Tile tile) {
 		tiles.add(new TilePoint(x, y, tile));
@@ -30,9 +35,32 @@ public class Structure {
 	public void draw(Level level, int xt, int yt) {
 		for(TilePoint p: tiles)
 			level.setTile(xt+p.x, yt+p.y, p.t);
-		
+
 		for(Point p: furniture.keySet())
 			level.add(furniture.get(p).clone(), xt+p.x, yt+p.y, true);
+	}
+
+	public void setData(String keys, String data) {
+		// so, the keys are single letters, each letter represents a tile
+		HashMap<String, String> keyPairs = new HashMap<>();
+		String[] stringKeyPairs = keys.split(",");
+
+		// puts all the keys in the keyPairs HashMap
+		for (int i = 0; i < stringKeyPairs.length; i++) {
+			String[] thisKey = stringKeyPairs[i].split(":");
+			keyPairs.put(thisKey[0], thisKey[1]);
+		}
+
+		String[] dataLines = data.split("\n");
+		int width = dataLines[0].length();
+		int height = dataLines.length;
+
+		for (int i = 0; i < dataLines.length; i++) {
+			for (int c = 0; c < dataLines[i].length(); c++) {
+				Tile tile = Tiles.get(keyPairs.get(String.valueOf(dataLines[i].charAt(c))));
+				this.setTile(Math.round(-width / 2f) + i, Math.round(-height / 2f) + c, tile);
+			}
+		}
 	}
 	
 	static class TilePoint {
@@ -59,75 +87,100 @@ public class Structure {
 	}
 	
 	static final Structure dungeonGate;
-	
+	// All the "mobDungeon" structures are for the spawner structures
+	static final Structure mobDungeonCenter;
+	static final Structure mobDungeonNorth;
+	static final Structure mobDungeonSouth;
+	static final Structure mobDungeonEast;
+	static final Structure mobDungeonWest;
+
+	static final Structure airWizardHouse;
+
+	// used for random villages
+	static final Structure villageHouseNormal;
+	static final Structure villageHouseTwoDoor;
+
+	// ok, because of the way the system works, these structures are rotated 90 degrees clockwise when placed
+	// then it's flipped on the vertical
 	static {
-		Structure s = new Structure();
-		s.addFurniture(-1, 1, new Lantern(Lantern.Type.IRON));
-		s.setTile(-1, 0, Tiles.get("Obsidian"));
-		s.setTile(+1, 0, Tiles.get("Obsidian"));
-		s.setTile(+2, 0, Tiles.get("Obsidian Door"));
-		s.setTile(-2, 0, Tiles.get("Obsidian Door"));
-		s.setTile(0, -1, Tiles.get("Obsidian"));
-		s.setTile(0, +1, Tiles.get("Obsidian"));
-		s.setTile(0, +2, Tiles.get("Obsidian Door"));
-		s.setTile(0, -2, Tiles.get("Obsidian Door"));
-		s.setTile(-1, -1, Tiles.get("Obsidian"));
-		s.setTile(-1, +1, Tiles.get("Obsidian"));
-		s.setTile(+1, -1, Tiles.get("Obsidian"));
-		s.setTile(+1, +1, Tiles.get("Obsidian"));
-		s.setTile(+3, 0, Tiles.get("Obsidian"));
-		s.setTile(-3, 0, Tiles.get("Obsidian"));
-		s.setTile(+3, -1, Tiles.get("Obsidian"));
-		s.setTile(-3, -1, Tiles.get("Obsidian"));
-		s.setTile(+3, +1, Tiles.get("Obsidian"));
-		s.setTile(-3, +1, Tiles.get("Obsidian"));
-		s.setTile(+4, 0, Tiles.get("Obsidian"));
-		s.setTile(-4, 0, Tiles.get("Obsidian"));
-		s.setTile(+4, -1, Tiles.get("Obsidian"));
-		s.setTile(-4, -1, Tiles.get("Obsidian"));
-		s.setTile(+4, +1, Tiles.get("Obsidian"));
-		s.setTile(-4, +1, Tiles.get("Obsidian"));
-		s.setTile(0, +3, Tiles.get("Obsidian"));
-		s.setTile(0, -3, Tiles.get("Obsidian"));
-		s.setTile(+1, -3, Tiles.get("Obsidian"));
-		s.setTile(-1, -3, Tiles.get("Obsidian"));
-		s.setTile(+1, +3, Tiles.get("Obsidian"));
-		s.setTile(-1, +3, Tiles.get("Obsidian"));
-		s.setTile(0, +4, Tiles.get("Obsidian"));
-		s.setTile(0, -4, Tiles.get("Obsidian"));
-		s.setTile(+1, -4, Tiles.get("Obsidian"));
-		s.setTile(-1, -4, Tiles.get("Obsidian"));
-		s.setTile(+1, +4, Tiles.get("Obsidian"));
-		s.setTile(-1, +4, Tiles.get("Obsidian"));
-		s.setTile(-2, -2, Tiles.get("Obsidian Wall"));
-		s.setTile(-3, -2, Tiles.get("Obsidian Wall"));
-		s.setTile(-3, +2, Tiles.get("Obsidian Wall"));
-		s.setTile(-2, +1, Tiles.get("Obsidian Wall"));
-		s.setTile(+2, -2, Tiles.get("Obsidian Wall"));
-		s.setTile(+4, -2, Tiles.get("Obsidian Wall"));
-		s.setTile(+4, +2, Tiles.get("Obsidian Wall"));
-		s.setTile(-4, -2, Tiles.get("Obsidian Wall"));
-		s.setTile(-4, +2, Tiles.get("Obsidian Wall"));
-		s.setTile(+1, -2, Tiles.get("Obsidian Wall"));
-		s.setTile(-2, +2, Tiles.get("Obsidian Wall"));
-		s.setTile(+2, +3, Tiles.get("Obsidian Wall"));
-		s.setTile(+2, +4, Tiles.get("Obsidian Wall"));
-		s.setTile(-2, -3, Tiles.get("Obsidian Wall"));
-		s.setTile(-2, -4, Tiles.get("Obsidian Wall"));
-		s.setTile(+2, -3, Tiles.get("Obsidian Wall"));
-		s.setTile(+2, -4, Tiles.get("Obsidian Wall"));
-		s.setTile(-2, +3, Tiles.get("Obsidian Wall"));
-		s.setTile(-2, +4, Tiles.get("Obsidian Wall"));
-		s.setTile(+3, -2, Tiles.get("Obsidian Wall"));
-		s.setTile(+3, +2, Tiles.get("Obsidian Wall"));
-		s.setTile(+2, +2, Tiles.get("Obsidian Wall"));
-		s.setTile(-1, +2, Tiles.get("Obsidian Wall"));
-		s.setTile(+2, -1, Tiles.get("Obsidian Wall"));
-		s.setTile(+2, +1, Tiles.get("Obsidian Wall"));
-		s.setTile(+1, +2, Tiles.get("Obsidian Wall"));
-		s.setTile(-2, -1, Tiles.get("Obsidian Wall"));
-		s.setTile(-1, -2, Tiles.get("Obsidian Wall"));
-		
-		dungeonGate = s;
+		dungeonGate = new Structure();
+		dungeonGate.setData("O:Obsidian,D:Obsidian Door,W:Obsidian Wall",
+					"WWDWW\n" +
+					"WOOOW\n" +
+					"DOOOD\n" +
+					"WOOOW\n" +
+					"WWDWW"
+		);
+		dungeonGate.addFurniture(-1, -1, new Lantern(Lantern.Type.IRON));
+
+		mobDungeonCenter = new Structure();
+		mobDungeonCenter.setData("B:Stone Bricks,W:Stone Wall",
+					"WWBWW\n" +
+					"WBBBW\n" +
+					"BBBBB\n" +
+					"WBBBW\n" +
+					"WWBWW"
+		);
+		mobDungeonNorth = new Structure();
+		mobDungeonNorth.setData("B:Stone Bricks,W:Stone Wall",
+					"WWWWW\n" +
+					"WBBBB\n" +
+					"BBBBB\n" +
+					"WBBBB\n" +
+					"WWWWW"
+		);
+		mobDungeonSouth = new Structure();
+		mobDungeonSouth.setData("B:Stone Bricks,W:Stone Wall",
+					"WWWWW\n" +
+					"BBBBW\n" +
+					"BBBBB\n" +
+					"BBBBW\n" +
+					"WWWWW"
+		);
+		mobDungeonEast = new Structure();
+		mobDungeonEast.setData("B:Stone Bricks,W:Stone Wall",
+					"WBBBW\n" +
+					"WBBBW\n" +
+					"WBBBW\n" +
+					"WBBBW\n" +
+					"WWBWW"
+		);
+		mobDungeonWest = new Structure();
+		mobDungeonWest.setData("B:Stone Bricks,W:Stone Wall",
+					"WWBWW\n" +
+					"WBBBW\n" +
+					"WBBBW\n" +
+					"WBBBW\n" +
+					"WBBBW"
+		);
+
+		airWizardHouse = new Structure();
+		airWizardHouse.setData("F:Wood Planks,W:Wood Wall,D:Wood Door",
+					"WWWWWWW\n" +
+					"WFFFFFW\n" +
+					"DFFFFFW\n" +
+					"WFFFFFW\n" +
+					"WWWWWWW"
+		);
+		airWizardHouse.addFurniture(-2, 0, new Lantern(Lantern.Type.GOLD));
+		airWizardHouse.addFurniture(0, 0, new Crafter(Crafter.Type.Enchanter));
+
+		villageHouseNormal = new Structure();
+		villageHouseNormal.setData("F:Wood Planks,W:Wood Wall,D:Wood Door",
+					"WWWWW\n" +
+					"WFFFW\n" +
+					"WFFFD\n" +
+					"WFFFW\n" +
+					"WWWWW"
+		);
+
+		villageHouseTwoDoor = new Structure();
+		villageHouseTwoDoor.setData("F:Wood Planks,W:Wood Wall,D:Wood Door",
+					"WWWWW\n" +
+					"WFFFW\n" +
+					"DFFFW\n" +
+					"WFFFW\n" +
+					"WWDWW"
+		);
 	}
 }
