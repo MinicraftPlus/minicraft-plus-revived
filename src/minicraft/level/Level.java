@@ -150,7 +150,6 @@ public class Level {
 						else if (level == 0) { // surface
 							if (Game.debug) System.out.println("setting tiles around "+x+","+y+" to hard rock");
 							setAreaTiles(x, y, 1, Tiles.get("Hard Rock"), 0); // surround the sky stairs with hard rock
-							generateVillages();
 						}
 						else // any other level, the up-stairs should have dirt on all sides.
 							setAreaTiles(x, y, 1, Tiles.get("dirt"), 0);
@@ -178,6 +177,9 @@ public class Level {
 		
 		if (level < 0)
 			generateSpawnerStructures();
+
+		if (level == 0)
+			generateVillages();
 		
 		checkAirWizard();
 		
@@ -838,14 +840,14 @@ public class Level {
 			int lastVillageX = 0;
 			int lastVillageY = 0;
 
-			for (int t = 0; t < 4; t++) {
-				// tries 4 times for each one
+			for (int t = 0; t < 10; t++) {
+				// tries 10 times for each one
 
 				int x = random.nextInt(w);
 				int y = random.nextInt(h);
 
 				// makes sure the village isn't to close to the previous village
-				if (getTile(x, y) == Tiles.get("grass") && (Math.abs(x - lastVillageX) > 16 && Math.abs(y - lastVillageY) > 16)) {
+				if (getTile(x, y) == Tiles.get("grass") && (Math.abs(x - lastVillageX) > 32 && Math.abs(y - lastVillageY) > 32)) {
 					// a number between 1 and 4
 					int numHouses = random.nextInt(4) + 1;
 
@@ -873,6 +875,8 @@ public class Level {
 							add(c, (x + random.nextInt(2) + xo) << 4, (y + random.nextInt(2) + yo) << 4);
 						}
 					}
+
+					break;
 				}
 			}
 		}
