@@ -864,8 +864,8 @@ public class Level {
 						int xo = h == 0 || h == 3 ? -4 : 4;
 						int yo = h < 2 ? -4 : 4;
 
-						xo += random.nextInt(4) - 3;
-						yo += random.nextInt(4) - 3;
+						xo += random.nextInt(5) - 2;
+						yo += random.nextInt(5) - 2;
 
 						if (twoDoors) {
 							Structure.villageHouseTwoDoor.draw(this, x + xo, y + yo);
