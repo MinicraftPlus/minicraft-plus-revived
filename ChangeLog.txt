@@ -1,3 +1,11 @@
+Minicraft+ version 2.0.6
+
++ Prevented players from getting stuck in skyholes with a cool animation
+* Fixed the creeper's explosion to only hurt mobs if it actually explodes
+* Made the quick-save key configurable
++ Added French localization
+
+
 Minicraft+ version 2.0.5
 
 + Added tool durability to all tools
@@ -21,6 +29,7 @@ Minicraft+ version 2.0.5
 * Fixed bug where creative player couldn't break a tile
 * Made sand behave like dirt when being placed
 * Fixed item data in chests
+* Made items face the right way when you attack with them
 
 
 Minicraft+ version 2.0.4
