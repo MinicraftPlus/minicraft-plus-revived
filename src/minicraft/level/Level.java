@@ -835,10 +835,11 @@ public class Level {
 	}
 
 	private void generateVillages() {
+		int lastVillageX = 0;
+		int lastVillageY = 0;
+
 		for (int i = 0; i < w / 128 * 2; i++) {
 			// makes 2-8 villages based on world size
-			int lastVillageX = 0;
-			int lastVillageY = 0;
 
 			for (int t = 0; t < 10; t++) {
 				// tries 10 times for each one
@@ -847,7 +848,10 @@ public class Level {
 				int y = random.nextInt(h);
 
 				// makes sure the village isn't to close to the previous village
-				if (getTile(x, y) == Tiles.get("grass") && (Math.abs(x - lastVillageX) > 32 && Math.abs(y - lastVillageY) > 32)) {
+				if (getTile(x, y) == Tiles.get("grass") && (Math.abs(x - lastVillageX) > 16 && Math.abs(y - lastVillageY) > 16)) {
+					lastVillageX = x;
+					lastVillageY = y;
+
 					// a number between 1 and 4
 					int numHouses = random.nextInt(4) + 1;
 
