@@ -5,6 +5,7 @@ Minicraft+ version 2.0.6
 * Made the quick-save key configurable
 + Added French localization
 + Added more buildings, including abandoned villages
+* Let you place floors on clouds
 
 
 Minicraft+ version 2.0.5

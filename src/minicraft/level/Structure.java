@@ -105,7 +105,7 @@ public class Structure {
 	static {
 		dungeonGate = new Structure();
 		dungeonGate.setData("O:Obsidian,D:Obsidian Door,W:Obsidian Wall",
-				"WWDWW\n" +
+					"WWDWW\n" +
 					"WOOOW\n" +
 					"DOOOD\n" +
 					"WOOOW\n" +
@@ -115,7 +115,7 @@ public class Structure {
 
 		mobDungeonCenter = new Structure();
 		mobDungeonCenter.setData("B:Stone Bricks,W:Stone Wall",
-				"WWBWW\n" +
+					"WWBWW\n" +
 					"WBBBW\n" +
 					"BBBBB\n" +
 					"WBBBW\n" +
@@ -123,7 +123,7 @@ public class Structure {
 		);
 		mobDungeonNorth = new Structure();
 		mobDungeonNorth.setData("B:Stone Bricks,W:Stone Wall",
-				"WWWWW\n" +
+					"WWWWW\n" +
 					"WBBBB\n" +
 					"BBBBB\n" +
 					"WBBBB\n" +
@@ -131,7 +131,7 @@ public class Structure {
 		);
 		mobDungeonSouth = new Structure();
 		mobDungeonSouth.setData("B:Stone Bricks,W:Stone Wall",
-				"WWWWW\n" +
+					"WWWWW\n" +
 					"BBBBW\n" +
 					"BBBBB\n" +
 					"BBBBW\n" +
@@ -139,7 +139,7 @@ public class Structure {
 		);
 		mobDungeonEast = new Structure();
 		mobDungeonEast.setData("B:Stone Bricks,W:Stone Wall",
-				"WBBBW\n" +
+					"WBBBW\n" +
 					"WBBBW\n" +
 					"WBBBW\n" +
 					"WBBBW\n" +
@@ -147,7 +147,7 @@ public class Structure {
 		);
 		mobDungeonWest = new Structure();
 		mobDungeonWest.setData("B:Stone Bricks,W:Stone Wall",
-				"WWBWW\n" +
+					"WWBWW\n" +
 					"WBBBW\n" +
 					"WBBBW\n" +
 					"WBBBW\n" +
@@ -156,7 +156,7 @@ public class Structure {
 
 		airWizardHouse = new Structure();
 		airWizardHouse.setData("F:Wood Planks,W:Wood Wall,D:Wood Door",
-				"WWWWWWW\n" +
+					"WWWWWWW\n" +
 					"WFFFFFW\n" +
 					"DFFFFFW\n" +
 					"WFFFFFW\n" +
@@ -167,7 +167,7 @@ public class Structure {
 
 		villageHouseNormal = new Structure();
 		villageHouseNormal.setData("F:Wood Planks,W:Wood Wall,D:Wood Door",
-				"WWWWW\n" +
+					"WWWWW\n" +
 					"WFFFW\n" +
 					"WFFFD\n" +
 					"WFFFW\n" +
@@ -176,7 +176,7 @@ public class Structure {
 
 		villageHouseTwoDoor = new Structure();
 		villageHouseTwoDoor.setData("F:Wood Planks,W:Wood Wall,D:Wood Door",
-				"WWWWW\n" +
+					"WWWWW\n" +
 					"WFFFW\n" +
 					"DFFFW\n" +
 					"WFFFW\n" +
