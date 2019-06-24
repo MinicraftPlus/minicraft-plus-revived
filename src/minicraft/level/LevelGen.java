@@ -517,10 +517,7 @@ public class LevelGen {
 					if (map[xx + yy * w] != Tiles.get("Obsidian Wall").id) continue lavaLoop;
 				}
 			
-			map[x + y * w] = Tiles.get("lava").id;
-			map[x + (y + 1) * w] = Tiles.get("lava").id;
-			map[x + 1 + (y + 1) * w] = Tiles.get("lava").id;
-			map[x + 1 + (y) * w] = Tiles.get("lava").id;
+			Structure.lavaPool.draw(map, x, y, w);
 		}
 		
 		return new byte[][]{map, data};
