@@ -28,7 +28,7 @@ public class ToolItem extends Item {
 		return items;
 	}
 	
-	private Random random = new Random(System.nanoTime());
+	private Random random = new Random();
 	
 	public static final String[] LEVEL_NAMES = {"Wood", "Rock", "Iron", "Gold", "Gem"}; // The names of the different levels. A later level means a stronger tool.
 	

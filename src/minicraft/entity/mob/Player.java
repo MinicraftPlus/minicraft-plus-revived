@@ -524,19 +524,18 @@ public class Player extends Mob implements ItemHolder, ClientTickable {
 		// walkDist is not synced, so this can happen for both the client and server.
 		walkDist += 8; // increase the walkDist (changes the sprite, like you moved your arm)
 
-		if (isFishing) isFishing = false;
+		if (isFishing) {
+			isFishing = false;
+			fishingTicks = maxFishingTicks;
+		}
 
 		if(activeItem != null && !activeItem.interactsWithWorld()) {
 			attackDir = dir; // make the attack direction equal the current direction
 			attackItem = activeItem; // make attackItem equal activeItem
 			//if (Game.debug) System.out.println(Network.onlinePrefix()+"player is using reflexive item: " + activeItem);
 			activeItem.interactOn(Tiles.get("rock"), level, 0, 0, this, attackDir);
-			if (activeItem.isDepleted() && !Game.isMode("creative")) {
+			if (!Game.isMode("creative") && activeItem.isDepleted()) {
 				activeItem = null;
-				if (isFishing) {
-					isFishing = false;
-					fishingTicks = maxFishingTicks;
-				}
 			}
 			return;
 		}
@@ -654,7 +653,7 @@ public class Player extends Mob implements ItemHolder, ClientTickable {
 		return new Point(x >> 4, y >> 4);
 	}
 	
-	public void goFishing() {
+	private void goFishing() {
 		int fcatch = random.nextInt(100);
 
 		boolean caught = false;
@@ -670,7 +669,7 @@ public class Player extends Mob implements ItemHolder, ClientTickable {
 			data = FishingData.rareData;
 		}
 
-		if (data != null) { // if they caught something
+		if (data != null) { // if you've caught something
 			for (String line: data) {
 				// check all the entries in the data
 				// the number is a percent, if one fails, it moves down the list

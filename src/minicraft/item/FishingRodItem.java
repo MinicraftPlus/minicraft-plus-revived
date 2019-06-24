@@ -24,9 +24,9 @@ public class FishingRodItem extends Item {
         return items;
     }
     private int uses = 0; // the more uses, the higher the chance of breaking
-    public int level; // the higher the level the higher the chance of breaking
+    public int level; // the higher the level the lower the chance of breaking
 
-    private Random random = new Random(System.nanoTime());
+    private Random random = new Random();
 
     public static final int[] COLORS = {
             Color.get(-1, 210, 321, 555),
@@ -78,7 +78,7 @@ public class FishingRodItem extends Item {
 
     @Override
     public boolean isDepleted() {
-        if (random.nextInt(100) > 120 - uses - level * 6) { // breaking is random, the higher the level, and the more times you use it, the higher the chance
+        if (random.nextInt(100) > 120 - uses + level * 6) { // breaking is random, the lower the level, and the more times you use it, the higher the chance
             Game.notifications.add("Your Fishing rod broke.");
             return true;
         }

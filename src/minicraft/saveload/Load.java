@@ -448,7 +448,7 @@ public class Load {
 			name = name.replace("I.Armor", "Iron Armor").replace("S.Armor", "Snake Armor").replace("L.Armor", "Leather Armor").replace("G.Armor", "Gold Armor").replace("BrickWall", "Wall");
 		}
 
-		if(worldVer.compareTo(new Version("2.0.6-dev1")) < 0) {
+		if(worldVer.compareTo(new Version("2.0.6-dev3")) < 0) {
 			name = name.replace("Fishing Rod", "Wood Fishing Rod");
 		}
 		
