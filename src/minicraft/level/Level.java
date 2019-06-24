@@ -144,7 +144,7 @@ public class Level {
 			for (int y = 0; y < h; y++) { // loop through height
 				for (int x = 0; x < w; x++) { // loop through width
 					if (parentLevel.getTile(x, y) == Tiles.get("Stairs Down")) { // If the tile in the level above the current one is a stairs down then...
-						if (level == -4) /// make the obsidian wall formation around the stair to the dungeon level
+						if (level == -4) /// make the obsidian wall formation around the stair in the dungeon level
 							Structure.dungeonGate.draw(this, x, y);
 						
 						else if (level == 0) { // surface

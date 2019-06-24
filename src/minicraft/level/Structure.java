@@ -40,6 +40,11 @@ public class Structure {
 			level.add(furniture.get(p).clone(), xt+p.x, yt+p.y, true);
 	}
 
+	public void draw(byte[] map, int xt, int yt, int mapWidth) {
+		for(TilePoint p: tiles)
+			map[(xt + p.x) + (yt + p.y) * mapWidth] = p.t.id;
+	}
+
 	public void setData(String keys, String data) {
 		// so, the keys are single letters, each letter represents a tile
 		HashMap<String, String> keyPairs = new HashMap<>();
@@ -58,7 +63,7 @@ public class Structure {
 		for (int i = 0; i < dataLines.length; i++) {
 			for (int c = 0; c < dataLines[i].length(); c++) {
 				Tile tile = Tiles.get(keyPairs.get(String.valueOf(dataLines[i].charAt(c))));
-				this.setTile(Math.round(-width / 2f) + i, Math.round(-height / 2f) + c, tile);
+				this.setTile(-width / 2 + i, -height / 2 + c, tile);
 			}
 		}
 	}
@@ -87,6 +92,8 @@ public class Structure {
 	}
 	
 	static final Structure dungeonGate;
+	static final Structure dungeonLock;
+	static final Structure lavaPool;
 	// All the "mobDungeon" structures are for the spawner structures
 	static final Structure mobDungeonCenter;
 	static final Structure mobDungeonNorth;
@@ -112,6 +119,21 @@ public class Structure {
 					"WWDWW"
 		);
 		dungeonGate.addFurniture(-1, -1, new Lantern(Lantern.Type.IRON));
+
+		dungeonLock = new Structure();
+		dungeonLock.setData("O:Obsidian,W:Obsidian Wall",
+					"WWWWW\n" +
+					"WOOOW\n" +
+					"WOOOW\n" +
+					"WOOOW\n" +
+					"WWWWW"
+		);
+
+		lavaPool = new Structure();
+		lavaPool.setData("L:Lava",
+					"LL\n" +
+					"LL"
+		);
 
 		mobDungeonCenter = new Structure();
 		mobDungeonCenter.setData("B:Stone Bricks,W:Stone Wall",
