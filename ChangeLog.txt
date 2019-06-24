@@ -6,6 +6,8 @@ Minicraft+ version 2.0.6
 + Added French localization
 + Added more buildings, including abandoned villages
 * Let you place floors on clouds
+* Fixed small line in the snake sprite that shouldn't be there
+* Water and lava now form obsidian, and don't look like sand when they are next to each other
 
 
 Minicraft+ version 2.0.5
