@@ -36,8 +36,7 @@ public class TorchTile extends Tile {
 		this.onType = onType;
 		this.connectsToSand = onType.connectsToSand;
 		this.connectsToGrass = onType.connectsToGrass;
-		this.connectsToWater = onType.connectsToWater;
-		this.connectsToLava = onType.connectsToLava;
+		this.connectsToFluid = onType.connectsToFluid;
 	}
 	
 	public void render(Screen screen, Level level, int x, int y) {
