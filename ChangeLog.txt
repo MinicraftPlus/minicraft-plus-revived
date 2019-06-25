@@ -2,6 +2,12 @@ Minicraft+ version 2.0.6
 
 + Prevented players from getting stuck in skyholes with a cool animation
 * Fixed the creeper's explosion to only hurt mobs if it actually explodes
+* Made the quick-save key configurable
++ Added French localization
++ Added more buildings, including abandoned villages
+* Let you place floors on clouds
+* Fixed small line in the snake sprite that shouldn't be there
+* Water and lava now form obsidian, and don't look like sand when they are next to each other
 * Totally overhauled fishing!
 
 

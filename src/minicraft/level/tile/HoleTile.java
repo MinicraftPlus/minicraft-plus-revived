@@ -25,8 +25,7 @@ public class HoleTile extends Tile {
 	protected HoleTile(String name) {
 		super(name, sprite);
 		connectsToSand = true;
-		connectsToWater = true;
-		connectsToLava = true;
+		connectsToFluid = true;
 	}
 	
 	public void render(Screen screen, Level level, int x, int y) {

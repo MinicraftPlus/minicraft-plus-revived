@@ -517,10 +517,7 @@ public class LevelGen {
 					if (map[xx + yy * w] != Tiles.get("Obsidian Wall").id) continue lavaLoop;
 				}
 			
-			map[x + y * w] = Tiles.get("lava").id;
-			map[x + (y + 1) * w] = Tiles.get("lava").id;
-			map[x + 1 + (y + 1) * w] = Tiles.get("lava").id;
-			map[x + 1 + (y) * w] = Tiles.get("lava").id;
+			Structure.lavaPool.draw(map, x, y, w);
 		}
 		
 		return new byte[][]{map, data};
@@ -615,32 +612,9 @@ public class LevelGen {
 			for (int i = 0; i < w * h / 380; i++) {
 				for (int j = 0; j < 10; j++) {
 					if (xx < w - r && yy < h - r) {
+						Structure.dungeonLock.draw(map, xx, yy, w);
 						/// The "& 0xff" is a common way to convert a byte to an unsigned int, which basically prevents negative values... except... this doesn't do anything if you flip it back to a byte again...
-						map[xx + yy * w] = (byte) (Tiles.get("Obsidian Wall").id & 0xff);
-						map[xx + 1 + yy * w] = (byte) (Tiles.get("Obsidian Wall").id & 0xff);
-						map[xx + (yy + 1) * w] = (byte) (Tiles.get("Obsidian Wall").id & 0xff);
-						map[xx + 2 + yy * w] = (byte) (Tiles.get("Obsidian Wall").id & 0xff);
-						map[xx + (yy + 2) * w] = (byte) (Tiles.get("Obsidian Wall").id & 0xff);
-						map[xx + 3 + yy * w] = (byte) (Tiles.get("Obsidian Wall").id & 0xff);
-						map[xx + (yy + 3) * w] = (byte) (Tiles.get("Obsidian Wall").id & 0xff);
-						map[xx + 4 + yy * w] = (byte) (Tiles.get("Obsidian Wall").id & 0xff);
-						map[xx + (yy + 4) * w] = (byte) (Tiles.get("Obsidian Wall").id & 0xff);
-						map[xx + 4 + (yy + 1) * w] = (byte) (Tiles.get("Obsidian Wall").id & 0xff);
-						map[xx + 4 + (yy + 2) * w] = (byte) (Tiles.get("Obsidian Wall").id & 0xff);
-						map[xx + 4 + (yy + 3) * w] = (byte) (Tiles.get("Obsidian Wall").id & 0xff);
-						map[xx + 4 + (yy + 4) * w] = (byte) (Tiles.get("Obsidian Wall").id & 0xff);
-						map[xx + 3 + (yy + 1) * w] = (byte) (Tiles.get("Obsidian").id & 0xff);
-						map[xx + 3 + (yy + 2) * w] = (byte) (Tiles.get("Obsidian").id & 0xff);
-						map[xx + 3 + (yy + 3) * w] = (byte) (Tiles.get("Obsidian").id & 0xff);
-						map[xx + 3 + (yy + 4) * w] = (byte) (Tiles.get("Obsidian Wall").id & 0xff);
-						map[xx + 2 + (yy + 1) * w] = (byte) (Tiles.get("Obsidian").id & 0xff);
-						map[xx + 2 + (yy + 2) * w] = (byte) (Tiles.get("Stairs Down").id & 0xff);
-						map[xx + 2 + (yy + 3) * w] = (byte) (Tiles.get("Obsidian").id & 0xff);
-						map[xx + 2 + (yy + 4) * w] = (byte) (Tiles.get("Obsidian Wall").id & 0xff);
-						map[xx + 1 + (yy + 1) * w] = (byte) (Tiles.get("Obsidian").id & 0xff);
-						map[xx + 1 + (yy + 2) * w] = (byte) (Tiles.get("Obsidian").id & 0xff);
-						map[xx + 1 + (yy + 3) * w] = (byte) (Tiles.get("Obsidian").id & 0xff);
-						map[xx + 1 + (yy + 4) * w] = (byte) (Tiles.get("Obsidian Wall").id & 0xff);
+						map[xx + yy * w] = (byte) (Tiles.get("Stairs Down").id & 0xff);
 					}
 				}
 			}

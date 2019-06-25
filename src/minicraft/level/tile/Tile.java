@@ -29,8 +29,7 @@ public abstract class Tile {
 	
 	public boolean connectsToGrass = false;
 	public boolean connectsToSand = false;
-	public boolean connectsToLava = false;
-	public boolean connectsToWater = false;
+	public boolean connectsToFluid = false;
 	public int light;
 	protected boolean maySpawn;
 	
@@ -115,7 +114,7 @@ public abstract class Tile {
 	}
 	
 	/** Sees if the tile connects to Water or Lava. */
-	public boolean connectsToLiquid() { return connectsToWater || connectsToLava; }
+	public boolean connectsToLiquid() { return connectsToFluid; }
 	
 	public int getData(String data) {
 		try {

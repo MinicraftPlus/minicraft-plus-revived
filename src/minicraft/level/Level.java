@@ -144,16 +144,30 @@ public class Level {
 			for (int y = 0; y < h; y++) { // loop through height
 				for (int x = 0; x < w; x++) { // loop through width
 					if (parentLevel.getTile(x, y) == Tiles.get("Stairs Down")) { // If the tile in the level above the current one is a stairs down then...
-						setTile(x, y, Tiles.get("Stairs Up")); // set a stairs up tile in the same position on the current level
-						if (level == -4) /// make the obsidian wall formation around the stair to the dungeon level
+						if (level == -4) /// make the obsidian wall formation around the stair in the dungeon level
 							Structure.dungeonGate.draw(this, x, y);
 						
 						else if (level == 0) { // surface
 							if (Game.debug) System.out.println("setting tiles around "+x+","+y+" to hard rock");
-							setAreaTiles(x, y, 1, Tiles.get("Hard Rock"), 0); // surround the sky stairs with hard rock; won't overwrite the stairs
+							setAreaTiles(x, y, 1, Tiles.get("Hard Rock"), 0); // surround the sky stairs with hard rock
 						}
 						else // any other level, the up-stairs should have dirt on all sides.
-							setAreaTiles(x, y, 1, Tiles.get("dirt"), 0); // won't overwrite the stairs
+							setAreaTiles(x, y, 1, Tiles.get("dirt"), 0);
+
+						setTile(x, y, Tiles.get("Stairs Up")); // set a stairs up tile in the same position on the current level
+					}
+				}
+			}
+		} else { // this is the sky level
+			boolean placedHouse = false;
+			while (!placedHouse) {
+				int x = random.nextInt(this.w - 7);
+				int y = random.nextInt(this.h - 5);
+
+				if (this.getTile(x - 3, y - 2) == Tiles.get("Cloud") && this.getTile(x + 3, y - 2) == Tiles.get("Cloud")) {
+					if (this.getTile(x - 3, y + 2) == Tiles.get("Cloud") && this.getTile(x + 3, y + 2) == Tiles.get("Cloud")) {
+						Structure.airWizardHouse.draw(this, x, y);
+						placedHouse = true;
 					}
 				}
 			}
@@ -163,6 +177,9 @@ public class Level {
 		
 		if (level < 0)
 			generateSpawnerStructures();
+
+		if (level == 0)
+			generateVillages();
 		
 		checkAirWizard();
 		
@@ -787,72 +804,83 @@ public class Level {
 				if (getTile(sp.x / 16, sp.y / 16) == Tiles.get("rock")) {
 					setTile(sp.x / 16, sp.y / 16, Tiles.get("dirt"));
 				}
-				
-				for (int xx = 0; xx < 5; xx++) {
-					for (int yy = 0; yy < 5; yy++) {
-						if (noStairs(sp.x / 16 - 2 + xx, sp.y / 16 - 2 + yy)) {
-							setTile(sp.x / 16 - 2 + xx, sp.y / 16 - 2 + yy, Tiles.get("Stone Bricks"));
-							
-							if((xx < 1 || yy < 1 || xx > 3 || yy > 3) && (xx != 2 || yy != 0) && (xx != 2 || yy != 4) && (xx != 0 || yy != 2) && (xx != 4 || yy != 2)) {
-								setTile(sp.x / 16 - 2 + xx, sp.y / 16 - 2 + yy, Tiles.get("Stone Wall"));
-							}
-						}
-					}
+
+				Structure.mobDungeonCenter.draw(this, sp.x / 16, sp.y / 16);
+
+				if (getTile(sp.x / 16, sp.y / 16 - 4) == Tiles.get("dirt")) {
+					Structure.mobDungeonNorth.draw(this, sp.x / 16, sp.y / 16 - 5);
+				}
+				if (getTile(sp.x / 16, sp.y / 16 + 4) == Tiles.get("dirt")) {
+					Structure.mobDungeonSouth.draw(this, sp.x / 16, sp.y / 16 + 5);
+				}
+				if (getTile(sp.x / 16 + 4, sp.y / 16) == Tiles.get("dirt")) {
+					Structure.mobDungeonEast.draw(this, sp.x / 16 + 5, sp.y / 16);
+				}
+				if (getTile(sp.x / 16 - 4, sp.y / 16) == Tiles.get("dirt")) {
+					Structure.mobDungeonWest.draw(this, sp.x / 16 - 5, sp.y / 16);
 				}
 				
 				add(sp);
 				for(int rpt = 0; rpt < 2; rpt++) {
 					if (random.nextInt(2) != 0) continue;
 					Chest c = new Chest();
-					Inventory inv = c.getInventory();
 					int chance = -depth;
-					inv.tryAdd(9/chance, new Tnt());
-					inv.tryAdd(10/chance, new Crafter(Crafter.Type.Anvil));
-					inv.tryAdd(7/chance, new Lantern(Lantern.Type.NORM));
-					inv.tryAdd(3/chance, Items.get("bread"), 2);
-					inv.tryAdd(4/chance, Items.get("bread"), 3);
-					inv.tryAdd(7/chance, Items.get("Leather Armor"), 1);
-					inv.tryAdd(50/chance, Items.get("Gold Apple"), 1);
-					inv.tryAdd(3/chance, Items.get("Lapis"), 2);
-					inv.tryAdd(4/chance, Items.get("glass"), 2);
-					inv.tryAdd(4/chance, Items.get("Gunpowder"), 3);
-					inv.tryAdd(4/chance, Items.get("Gunpowder"), 3);
-					inv.tryAdd(4/chance, Items.get("Torch"), 4);
-					inv.tryAdd(14/chance, Items.get("swim potion"), 1);
-					inv.tryAdd(16/chance, Items.get("haste potion"), 1);
-					inv.tryAdd(14/chance, Items.get("light potion"), 1);
-					inv.tryAdd(14/chance, Items.get("speed potion"), 1);
-					inv.tryAdd(16/chance, Items.get("Iron Armor"), 1);
-					inv.tryAdd(5/chance, Items.get("Stone Brick"), 4);
-					inv.tryAdd(5/chance, Items.get("Stone Brick"), 6);
-					inv.tryAdd(4/chance, Items.get("string"), 3);
-					inv.tryAdd(4/chance, Items.get("bone"), 2);
-					inv.tryAdd(3/chance, Items.get("bone"), 1);
-					inv.tryAdd(7/chance, ToolType.Claymore, 1);
-					inv.tryAdd(5/chance, Items.get("Torch"), 3);
-					inv.tryAdd(6/chance, Items.get("Torch"), 6);
-					inv.tryAdd(6/chance, Items.get("Torch"), 6);
-					inv.tryAdd(7/chance, Items.get("steak"), 3);
-					inv.tryAdd(9/chance, Items.get("steak"), 4);
-					inv.tryAdd(7/chance, Items.get("gem"), 3);
-					inv.tryAdd(7/chance, Items.get("gem"), 5);
-					inv.tryAdd(7/chance, Items.get("gem"), 4);
-					inv.tryAdd(10/chance, Items.get("yellow clothes"), 1);
-					inv.tryAdd(10/chance, Items.get("black clothes"), 1);
-					inv.tryAdd(12/chance, Items.get("orange clothes"), 1);
-					inv.tryAdd(12/chance, Items.get("cyan clothes"), 1);
-					inv.tryAdd(12/chance, Items.get("purple clothes"), 1);
-					inv.tryAdd(4/chance, Items.get("arrow"), 5);
-					
-					if (inv.invSize() < 1) {
-						inv.add(Items.get("potion"), 1);
-						inv.add(Items.get("coal"), 3);
-						inv.add(Items.get("apple"), 3);
-						inv.add(Items.get("dirt"), 7);
-					}
-					
-					// chance = -level
+
+					c.populateInvRandom("minidungeon", chance);
+
 					add(c, sp.x - 16, sp.y - 16);
+				}
+			}
+		}
+	}
+
+	private void generateVillages() {
+		int lastVillageX = 0;
+		int lastVillageY = 0;
+
+		for (int i = 0; i < w / 128 * 2; i++) {
+			// makes 2-8 villages based on world size
+
+			for (int t = 0; t < 10; t++) {
+				// tries 10 times for each one
+
+				int x = random.nextInt(w);
+				int y = random.nextInt(h);
+
+				// makes sure the village isn't to close to the previous village
+				if (getTile(x, y) == Tiles.get("grass") && (Math.abs(x - lastVillageX) > 16 && Math.abs(y - lastVillageY) > 16)) {
+					lastVillageX = x;
+					lastVillageY = y;
+
+					// a number between 1 and 4
+					int numHouses = random.nextInt(4) + 1;
+
+					// loops for each house in the village
+					for (int h = 0; h < numHouses; h++) {
+						boolean hasChest = random.nextBoolean();
+						boolean twoDoors = random.nextBoolean();
+
+						// basically just gets what offset this house should have from the center of the village
+						int xo = h == 0 || h == 3 ? -4 : 4;
+						int yo = h < 2 ? -4 : 4;
+
+						xo += random.nextInt(5) - 2;
+						yo += random.nextInt(5) - 2;
+
+						if (twoDoors) {
+							Structure.villageHouseTwoDoor.draw(this, x + xo, y + yo);
+						} else {
+							Structure.villageHouseNormal.draw(this, x + xo, y + yo);
+						}
+
+						if (hasChest) {
+							Chest c = new Chest();
+							c.populateInvRandom("villagehouse", 1);
+							add(c, (x + random.nextInt(2) + xo) << 4, (y + random.nextInt(2) + yo) << 4);
+						}
+					}
+
+					break;
 				}
 			}
 		}

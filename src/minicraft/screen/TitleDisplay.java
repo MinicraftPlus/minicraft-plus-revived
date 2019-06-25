@@ -85,10 +85,10 @@ public class TitleDisplay extends Display {
 
 		LocalDateTime time = LocalDateTime.now();
 		if (time.getMonth() == Month.DECEMBER) {
-			if (time.getDayOfMonth() == 19) rand = 0;
-			if (time.getDayOfMonth() == 25) rand = 1;
+			if (time.getDayOfMonth() == 19) rand = 1;
+			if (time.getDayOfMonth() == 25) rand = 2;
 		} else {
-			rand = random.nextInt(splashes.length - 2) + 2;
+			rand = random.nextInt(splashes.length - 3) + 3;
 		}
 		
 		World.levels = new Level[World.levels.length];
@@ -123,7 +123,7 @@ public class TitleDisplay extends Display {
 	
 	@Override
 	public void tick(InputHandler input) {
-		if (input.getKey("r").clicked) rand = random.nextInt(splashes.length - 2) + 2;
+		if (input.getKey("r").clicked) rand = random.nextInt(splashes.length - 3) + 3;
 		
 		if (!reverse) {
 			count++;
@@ -176,6 +176,7 @@ public class TitleDisplay extends Display {
 	}
 	
 	private static final String[] splashes = {
+		"Secret Splash!",
 		"Happy birthday Minicraft!",
 		"Happy XMAS!",
 		"Multiplayer Now Included!",
