@@ -114,8 +114,8 @@ public class Player extends Mob implements ItemHolder, ClientTickable {
 	public int shirtColor = 110; // player shirt color.
 
 	public boolean isFishing = false;
-	private int maxFishingTicks = 120;
-	private int fishingTicks = maxFishingTicks;
+	public int maxFishingTicks = 120;
+	public int fishingTicks = maxFishingTicks;
 	public int fishingLevel;
 	
 	// Note: the player's health & max health are inherited from Mob.java
@@ -257,7 +257,10 @@ public class Player extends Mob implements ItemHolder, ClientTickable {
 			if (!Bed.inBed(this) && !isSwimming()) {
 				fishingTicks--;
 				if (fishingTicks <= 0) {
-					goFishing();
+					// checks to make sure that the client doesn't drop a "fake" item
+					if (!Game.isConnectedClient()) {
+						goFishing();
+					}
 				}
 			} else {
 				isFishing = false;
@@ -524,9 +527,16 @@ public class Player extends Mob implements ItemHolder, ClientTickable {
 		// walkDist is not synced, so this can happen for both the client and server.
 		walkDist += 8; // increase the walkDist (changes the sprite, like you moved your arm)
 
-		if (isFishing) {
+		if(isFishing) {
 			isFishing = false;
 			fishingTicks = maxFishingTicks;
+		}
+
+		// bit of a FIXME for fishing to work on servers
+		if(activeItem instanceof FishingRodItem && Game.isValidClient()) {
+			Point t = getInteractionTile();
+			Tile tile = level.getTile(t.x, t.y);
+			activeItem.interactOn(tile, level, t.x, t.y, this, attackDir);
 		}
 
 		if(activeItem != null && !activeItem.interactsWithWorld()) {
@@ -698,6 +708,9 @@ public class Player extends Mob implements ItemHolder, ClientTickable {
 
 		if (caught) {
 			isFishing = false;
+			if (Game.isValidServer()) {
+				Game.server.broadcastStopFishing(this.eid);
+			}
 		}
 		fishingTicks = maxFishingTicks; // if you didn't catch anything, try again in 120 ticks
 	}
@@ -1081,7 +1094,8 @@ public class Player extends Mob implements ItemHolder, ClientTickable {
 		";hunger,"+hunger+
 		";attackTime,"+attackTime+
 		";attackDir,"+attackDir.ordinal()+
-		";activeItem,"+(activeItem==null?"null": activeItem.getData());
+		";activeItem,"+(activeItem==null?"null": activeItem.getData())+
+		";isFishing,"+(isFishing==true?"1": "0");
 		
 		return updates;
 	}
@@ -1104,6 +1118,7 @@ public class Player extends Mob implements ItemHolder, ClientTickable {
 				activeItem = Items.get(val, true);
 				attackItem = activeItem != null && activeItem.canAttack() ? activeItem : null;
 				return true;
+			case "isFishing": isFishing = Integer.parseInt(val) == 1; return true;
 			case "potioneffects":
 				potioneffects.clear();
 				for(String potion: val.split(":")) {
