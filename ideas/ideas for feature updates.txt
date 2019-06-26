@@ -13,10 +13,6 @@ Give the player 20 health instead of 10; this means that 1 health will be a half
 
 ----
 
-Make it so the world loading menu displays both a percentage and a message saying what it is doing, ie, "Generating surface level..."
-
-----
-
 Allow clients to add a port number to the end of the ip with ":". for example: 12.34.145.1:1122
 
 ----
