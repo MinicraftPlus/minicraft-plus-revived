@@ -456,6 +456,15 @@ public class MinicraftClient extends MinicraftConnection {
 			case STAMINA:
 				Game.player.payStamina(Integer.parseInt(alldata));
 				return true;
+
+			case STOPFISHING:
+				int stopeid = Integer.parseInt(data[0]);
+				Entity player = Network.getEntity(stopeid);
+				if (player instanceof Player) {
+					((Player) player).isFishing = false;
+					((Player) player).fishingTicks = ((Player) player).maxFishingTicks;
+				}
+				return true;
 		}
 		
 		//System.out.println("CLIENT: received unexpected packet type " + inType + "; ignoring packet.");

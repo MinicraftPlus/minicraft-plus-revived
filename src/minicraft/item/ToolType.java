@@ -7,7 +7,6 @@ public enum ToolType {
 	Pickaxe (3, 28),
 	Axe (4, 24),
 	Bow (5, 20),
-	FishingRod (6, 16),
 	Claymore (7, 34);
 
 	public final int sprite; // sprite location on the spritesheet

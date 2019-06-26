@@ -112,6 +112,11 @@ public class Player extends Mob implements ItemHolder, ClientTickable {
 	
 	//private final int acs = 25; // default ("start") arrow count
 	public int shirtColor = 110; // player shirt color.
+
+	public boolean isFishing = false;
+	public int maxFishingTicks = 120;
+	public int fishingTicks = maxFishingTicks;
+	public int fishingLevel;
 	
 	// Note: the player's health & max health are inherited from Mob.java
 	
@@ -245,6 +250,21 @@ public class Player extends Mob implements ItemHolder, ClientTickable {
 				if(potioneffects.get(potionType) <= 1) // if time is zero (going to be set to 0 in a moment)...
 					PotionItem.applyPotion(this, potionType, false); // automatically removes this potion effect.
 				else potioneffects.put(potionType, potioneffects.get(potionType) - 1); // otherwise, replace it with one less.
+			}
+		}
+
+		if (isFishing) {
+			if (!Bed.inBed(this) && !isSwimming()) {
+				fishingTicks--;
+				if (fishingTicks <= 0) {
+					// checks to make sure that the client doesn't drop a "fake" item
+					if (!Game.isConnectedClient()) {
+						goFishing();
+					}
+				}
+			} else {
+				isFishing = false;
+				fishingTicks = maxFishingTicks;
 			}
 		}
 		
@@ -506,14 +526,27 @@ public class Player extends Mob implements ItemHolder, ClientTickable {
 	protected void attack() {
 		// walkDist is not synced, so this can happen for both the client and server.
 		walkDist += 8; // increase the walkDist (changes the sprite, like you moved your arm)
-		
+
+		if(isFishing) {
+			isFishing = false;
+			fishingTicks = maxFishingTicks;
+		}
+
+		// bit of a FIXME for fishing to work on servers
+		if(activeItem instanceof FishingRodItem && Game.isValidClient()) {
+			Point t = getInteractionTile();
+			Tile tile = level.getTile(t.x, t.y);
+			activeItem.interactOn(tile, level, t.x, t.y, this, attackDir);
+		}
+
 		if(activeItem != null && !activeItem.interactsWithWorld()) {
 			attackDir = dir; // make the attack direction equal the current direction
 			attackItem = activeItem; // make attackItem equal activeItem
 			//if (Game.debug) System.out.println(Network.onlinePrefix()+"player is using reflexive item: " + activeItem);
 			activeItem.interactOn(Tiles.get("rock"), level, 0, 0, this, attackDir);
-			if (activeItem.isDepleted() && !Game.isMode("creative"))
+			if (!Game.isMode("creative") && activeItem.isDepleted()) {
 				activeItem = null;
+			}
 			return;
 		}
 		
@@ -580,7 +613,7 @@ public class Player extends Mob implements ItemHolder, ClientTickable {
 						thread.sendTileUpdate(level, t.x, t.y); /// FIXME this part is as a semi-temporary fix for those odd tiles that don't update when they should; instead of having to make another system like the entity additions and removals (and it wouldn't quite work as well for this anyway), this will just update whatever tile the player interacts with (and fails, since a successful interaction changes the tile and therefore updates it anyway).
 				}
 				
-				if (activeItem.isDepleted() && !Game.isMode("creative")) {
+				if (!Game.isMode("creative") && activeItem.isDepleted()) {
 					// if the activeItem has 0 items left, then "destroy" it.
 					activeItem = null;
 				}
@@ -630,13 +663,56 @@ public class Player extends Mob implements ItemHolder, ClientTickable {
 		return new Point(x >> 4, y >> 4);
 	}
 	
-	public void goFishing(int x, int y) {
-		int fcatch = random.nextInt(90);
-		
-		if (fcatch < 10) level.dropItem(x, y, Items.get("raw fish"));
-		else if (fcatch < 15) level.dropItem(x, y, Items.get("slime"));
-		else if (fcatch == 15) level.dropItem(x, y, Items.get("Leather Armor"));
-		else if (fcatch == 42 && random.nextInt(5) == 0) System.out.println("FISHNORRIS got away... just kidding, FISHNORRIS din't get away from you, you got away from FISHNORRIS...");
+	private void goFishing() {
+		int fcatch = random.nextInt(100);
+
+		boolean caught = false;
+
+		List<String> data = null;
+		if (fcatch > FishingRodItem.getChance(0, fishingLevel)) {
+			data = FishingData.fishData;
+		} else if (fcatch > FishingRodItem.getChance(1, fishingLevel)) {
+			data = FishingData.junkData;
+		} else if (fcatch > FishingRodItem.getChance(2, fishingLevel)) {
+			data = FishingData.toolData;
+		} else if (fcatch >= FishingRodItem.getChance(3, fishingLevel)) {
+			data = FishingData.rareData;
+		}
+
+		if (data != null) { // if you've caught something
+			for (String line: data) {
+				// check all the entries in the data
+				// the number is a percent, if one fails, it moves down the list
+				// for entries with a "," it chooses between the options
+				int chance = Integer.parseInt(line.split(":")[0]);
+				String itemData = line.split(":")[1];
+				if (random.nextInt(100) + 1 <= chance) {
+					if (itemData.contains(",")) { // if it has multiple items choose between them
+						String[] extendedData = itemData.split(",");
+						int randomChance = random.nextInt(extendedData.length);
+						itemData = extendedData[randomChance];
+					}
+					if (itemData.startsWith(";")) {
+						// for secret messages :=)
+						Game.notifications.add(itemData.substring(1));
+					} else {
+						level.dropItem(x, y, Items.get(itemData));
+						caught = true;
+						break; // don't let people catch more than one thing with one use
+					}
+				}
+			}
+		} else {
+			caught = true; // end this fishing session
+		}
+
+		if (caught) {
+			isFishing = false;
+			if (Game.isValidServer()) {
+				Game.server.broadcastStopFishing(this.eid);
+			}
+		}
+		fishingTicks = maxFishingTicks; // if you didn't catch anything, try again in 120 ticks
 	}
 	
 	/** called by other use method; this serves as a buffer in case there is no entity in front of the player. */
@@ -778,6 +854,25 @@ public class Player extends Mob implements ItemHolder, ClientTickable {
 			screen.render(xo + 8, yo + 8 + 4, 6 + 13 * 32, Color.WHITE, 3);
 			if (attackItem != null) {
 				attackItem.sprite.render(screen, xo + 4, yo + 8 + 4);
+			}
+		}
+
+		if (isFishing) {
+			switch (dir) {
+				case UP:
+					screen.render(xo + 4, yo - 4, 11 + 13 * 32, FishingRodItem.COLORS[fishingLevel], 1);
+					break;
+				case LEFT:
+					screen.render(xo - 4, yo + 4, 11 + 13 * 32, FishingRodItem.COLORS[fishingLevel], 1);
+					break;
+				case RIGHT:
+					screen.render(xo + 8 + 4, yo + 4, 11 + 13 * 32, FishingRodItem.COLORS[fishingLevel], 0);
+					break;
+				case DOWN:
+					screen.render(xo + 4, yo + 8 + 4, 11 + 13 * 32, FishingRodItem.COLORS[fishingLevel], 0);
+					break;
+				case NONE:
+					break;
 			}
 		}
 		
@@ -999,7 +1094,8 @@ public class Player extends Mob implements ItemHolder, ClientTickable {
 		";hunger,"+hunger+
 		";attackTime,"+attackTime+
 		";attackDir,"+attackDir.ordinal()+
-		";activeItem,"+(activeItem==null?"null": activeItem.getData());
+		";activeItem,"+(activeItem==null?"null": activeItem.getData())+
+		";isFishing,"+(isFishing==true?"1": "0");
 		
 		return updates;
 	}
@@ -1022,6 +1118,7 @@ public class Player extends Mob implements ItemHolder, ClientTickable {
 				activeItem = Items.get(val, true);
 				attackItem = activeItem != null && activeItem.canAttack() ? activeItem : null;
 				return true;
+			case "isFishing": isFishing = Integer.parseInt(val) == 1; return true;
 			case "potioneffects":
 				potioneffects.clear();
 				for(String potion: val.split(":")) {
