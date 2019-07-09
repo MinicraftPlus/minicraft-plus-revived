@@ -1,0 +1,1041 @@
+### entity
+
+## entity.particle
+## entity.particle end
+
+# AirWizard.java
+Air Wizard: Defeated!
+空中巫师: 胜利
+
+The Dungeon is now open!
+地牢现在开放了
+
+A costume lies on the ground...
+地上有一件服装...
+
+# Bed.java
+Can't sleep! 
+无法睡着
+	
+Min 
+分 
+	
+ Sec left!
+ 秒经过了
+
+# DungeonChest.java
+You hear a noise from the surface!
+你听到地面的噪音
+
+# DeathChest.java
+Death Chest
+死亡箱子
+
+# Player.java
+
+Crafting
+合成
+
+Set your home!
+设置你的家
+
+Can't set home here!
+不能把家设置在这里
+
+Home Sweet Home!
+家，甜蜜的家
+
+Mode penalty: -2 health
+模式惩罚: -2 生命
+
+You don't have a home!
+你还没有一个家
+
+You can't go home from here!
+你不能从这里回家
+ 
+### entity end
+
+### gfx
+### gfx end
+
+### item
+
+# ArmorItem.java
+Leather Armor
+皮革盔甲
+
+Snake Armor
+蛇盔甲
+
+Iron Armor
+铁质盔甲
+
+Gold Armor
+金质盔甲
+
+Gem Armor
+宝石盔甲
+
+# BookItem.java
+
+Book
+书
+
+Antidious
+Antidious
+
+# BucketItem.java
+
+Empty Bucket
+空桶
+
+Water Bucket
+水桶
+
+Lava Bucket
+熔岩桶
+
+ Bucket
+ 桶
+ 
+# ClothingItem.java
+
+Red Clothes
+红色衣服
+
+Blue Clothes
+蓝色衣服
+
+Green Clothes
+绿色衣服
+
+Yellow Clothes
+黄色衣服
+
+Black Clothes
+黑色衣服
+
+Orange Clothes
+橙色衣服
+
+Purple Clothes
+紫色衣服
+
+Cyan Clothes
+青色衣服
+
+Reg Clothes
+Reg Clothes
+
+# FoodItem.java
+
+Bread
+面包
+
+Apple
+苹果
+
+Raw Pork
+生猪肉
+
+Raw Fish
+生鱼
+
+Raw Beef
+生牛肉
+
+Pork Chop
+猪排
+
+Cooked Fish
+熟鱼
+
+Cooked Pork
+熟猪肉
+
+Steak
+牛排
+
+Gold Apple
+金苹果
+
+# FurnitureItem.java
+
+Cow Spawner
+牛刷怪箱
+
+Pig Spawner
+猪刷怪箱
+
+Sheep Spawner
+羊刷怪箱
+
+Slime Spawner
+史莱姆刷怪箱
+
+Zombie Spawner
+僵尸刷怪箱
+
+Creeper Spawner
+爬行者刷怪箱
+
+Skeleton Spawner
+骷髅刷怪箱
+
+Snake Spawner
+蛇刷怪箱
+
+Knight Spawner
+骑士刷怪箱
+
+AirWizard Spawner
+天空巫师刷怪箱
+
+Workbench
+工作台
+
+Oven
+烤炉
+
+Furnace
+熔炉
+
+Anvil
+铁砧
+
+Enchanter
+附魔台
+
+Loom
+织布机
+
+Lantern
+灯笼
+
+Iron Lantern
+铁灯
+
+Gold Lantern
+黄金灯
+
+Tnt
+TNT
+
+Bed
+床
+
+Chest
+箱子
+
+# PotionType.java
+
+None Potion
+无药水
+
+Speed Potion
+速度药水
+
+Light Potion
+光药水
+
+Swim Potion
+游泳药水
+
+Energy Potion
+能量药水
+
+Regen Potion
+再生药水
+
+Health Potion
+生命药水
+
+Time Potion
+时间药水
+
+Lava Potion
+熔岩药水
+
+Shield Potion
+盾药水
+
+Haste Potion
+急迫药水
+
+Escape Potion
+逃生药水
+
+Potion
+药水
+
+# PowerGloveItem.java
+
+Power Glove
+力量手套
+
+# StackableItem.java
+
+Wood
+木头
+
+Stone
+石头
+
+Leather
+皮革
+
+Wheat
+小麦
+
+Key
+钥匙
+
+arrow
+箭
+
+string
+线
+
+Coal
+煤炭
+
+Iron Ore
+铁矿石
+
+Lapis
+青金石
+
+Gold Ore
+金矿石
+
+Iron
+铁
+
+Gold
+金
+
+Rose
+玫瑰
+
+GunPowder
+火药
+
+Slime
+史莱姆
+
+glass
+玻璃
+
+cloth
+布
+
+gem
+宝石
+
+Scale
+缩放
+
+Shard
+碎片
+
+# TileItem.java
+
+Flower
+花
+
+Acorn
+橡树果
+
+Dirt
+泥土
+
+Plank
+木板
+
+Plank Wall
+木板墙
+
+Wood Door
+木门
+
+Stone Brick
+石砖
+
+Stone Wall
+石墙
+
+Stone Door
+石门
+
+Obsidian Brick
+黑曜石砖
+
+Obsidian Wall
+黑曜石墙
+
+Obsidian Door
+黑曜石门
+
+Wool
+羊毛
+
+Red Wool
+红色羊毛
+
+Blue Wool
+蓝色羊毛
+
+Green Wool
+绿色羊毛
+
+Yellow Wool
+黄色羊毛
+
+Black Wool
+黑色羊毛
+
+Sand
+沙
+
+Cactus
+仙人掌
+
+Seeds
+种子
+
+Grass Seeds
+草种子
+
+Bone
+骨头
+
+Cloud
+云
+
+Can only be placed on 
+只能放在
+
+Dig a hole first!
+先挖个洞
+
+# ToolItem.java
+
+Wood
+木头
+
+Rock
+岩石
+
+Iron
+铁
+
+Gold
+金
+
+Gem
+宝石
+
+Fishing Rod
+钓鱼竿
+
+# ToolType.java
+
+Shovel
+锹
+
+Hoe
+锄
+
+Sword
+剑
+
+Pickaxe
+镐
+
+Axe
+斧
+
+Bow
+弓
+
+FishingRod
+钓鱼竿
+
+Claymore
+大剑
+
+# TorchItem.java
+
+Torch
+Torch
+
+### item end
+
+### level
+
+## tile 
+
+# Tiles.java
+
+Gem Ore
+宝石矿石
+
+Wood Planks
+木板
+
+Stone Bricks
+石砖
+
+Obsidian
+黑曜石
+
+Wood Wall
+木墙
+
+Grass
+草
+
+Dirt
+泥土
+
+Flower
+花
+
+Hole
+洞
+
+Stairs Up
+向上楼梯
+
+Stairs Down
+向下楼梯
+
+Water
+水
+
+Rock
+岩石
+
+Tree
+数
+
+Tree Sapling
+树苗
+
+Sand
+沙
+
+Cactus
+仙人掌
+
+Cactus Sapling
+仙人掌苗
+
+Lava
+熔岩
+
+Lava Brick
+熔岩块
+
+Explode
+爆炸
+
+Farmland
+耕地
+
+Wheat
+小麦
+
+Hard Rock
+硬石
+
+Infinite Fall
+无限坠落
+
+Cloud
+云
+
+Cloud Cactus
+仙人掌云
+
+# OreTile.java
+
+Iron
+铁
+
+Lapis
+青金石
+
+Gold
+金
+
+Gem
+宝石
+
+Ore
+矿石
+
+## tile end
+
+### level end
+
+### network
+
+# MinicraftClient.java
+
+host not found
+未找到主机
+
+unable to get localhost address
+无法获取本地主机地址
+
+### network end
+
+### saveload
+### saveload end
+
+### screen
+
+## entry
+
+# BooleanEntry.java
+
+On
+打开
+
+Off
+关闭
+
+## entry end
+
+# BookDisplay.java
+
+There is nothing of use here.
+在这没什么用。
+
+Still nothing... :P
+还是什么都没有... :P
+
+# CraftingMenu.java
+
+Have:
+拥有:
+
+Cost:
+花费:
+
+# DeadMenu.java
+
+Time: 
+时间: 
+
+Score: 
+得分: 
+
+Quit
+退出
+
+Respawn
+重生
+
+You died! Aww!
+你死了! 啊!
+
+# Displays.java
+
+With the default controls...\n\nMove your character with arrow keys or WSAD. Press C to attack and X to open the inventory, and to use items. Select an item in the inventory to equip it.\n\nKill the air wizard to win the game!
+使用默认控制...\n\n使用箭头键或 WSAD 移动角色。按 C 攻击，按 X 打开物品栏和使用物品。在物品栏中选择一个物品来装备它。\n\n杀死空中巫师以赢得游戏胜利。
+
+# EndGameDisplay.java
+
+Player Score: 
+玩家得分: 
+
+<Bonuses>
+<奖励>
+
+Final Score: 
+最终得分: 
+
+Exit to Menu
+退出到菜单
+
+# InfoDisplay.java
+
+Time Played: 
+游戏时间: 
+
+Current Score: 
+当前得分: 
+
+Exit
+退出
+
+Player Stats
+玩家状态
+
+# KeyInputMenu.java
+
+Controls
+控制
+
+Press the desired
+按想要的
+
+key sequence
+按键序列
+
+Are you sure you want to reset all key bindings to the default keys?
+是否确实要将所有按键绑定重置为默认？
+
+enter to confirm
+按 Enter 确认
+
+escape to cancel
+按 Esc 取消
+
+Confirm Action
+确认操作
+
+Press C/Enter to change key binding
+按 C 或 Enter 更改按键绑定
+
+Press A to add key binding
+按 A 添加按键绑定
+
+Shift-D to reset all keys to default
+按 Shift + D 将所有按键重置为默认值
+
+ESCAPE to Return to menu
+按 Esc 返回菜单 
+
+# LoadingDisplay.java
+
+Loading
+正在载入
+
+World
+世界
+
+# MultiplayerMenu.java
+
+waiting...
+等待中...
+
+nothing
+不存在
+
+attempting log in
+尝试登录
+
+no internet connection, but no login data saved; cannot enter offline mode.
+没有互联网连接，也没有保存登录数据，无法进入离线模式。
+
+connecting to server
+连接到服务器
+
+logging in
+登录
+
+saving credentials
+保存凭据
+
+login failed.
+登录失败。
+
+problem with saved login data; please exit and login again.
+保存的登录数据出现问题，请退出并再次登录。
+
+Internal server error: Couldn't fetch username from uuid
+内部服务器错误: 无法从 uuid 获取用户名
+
+logged in as: 
+登录为:
+
+offline mode: local servers only
+离线模式: 仅限本地服务器
+
+Enter ip address to connect to:
+输入要连接的 IP 地址:
+
+Press Shift-Escape to logout
+按 Shift + Esc 以注销
+
+Enter email:
+输入电子邮件:
+
+Enter password:
+输入密码:
+
+field is blank
+不能留空
+
+get an account at:
+在此获取帐户:
+
+Loading 
+加载
+
+ from server
+ 自服务器
+ 
+Could not connect to server:
+无法连接到服务器:
+
+Press 
+按
+
+ to return
+ 返回
+
+# OptionsMenu.java
+
+Change Key Bindings
+更改按键绑定
+
+Options
+选项
+
+Change language
+更改语言
+
+# PauseMenu.java
+
+Return to Game
+返回游戏
+
+Options
+选项
+
+Make World Multiplayer
+启用多人游戏世界
+
+Save Game
+保存游戏
+
+ and 
+ 和 
+ 
+ to Scroll
+ 滚动
+ 
+: Choose
+: 选择
+ 
+Paused
+暂停
+
+Main Menu
+主菜单
+
+# PauseDisplay.java
+
+No
+否
+
+Yes
+是
+
+# PlayerInvMenu.java
+
+Inventory
+物品栏
+
+# TitleMenu.java
+
+Play
+启动
+
+Load World
+载入世界
+
+New World
+新建世界
+
+Join Online World
+加入在线世界
+
+Options
+选项
+
+Help
+帮助
+
+Instructions
+教程
+
+Storyline Guide (for the weak)
+故事情节指南 (针对弱者)
+
+About
+关于
+
+Quit
+推出
+
+ to select
+ 选择
+ 
+ to accept
+ 接受
+ 
+ to return
+ 返回
+
+# WorldEditMenu.java
+
+New World Name:
+New World Name:
+
+Are you sure you want to delete
+Are you sure you want to delete
+
+This can not be undone!
+This can not be undone!
+
+ to confirm
+ 确认
+ 
+ to cancel
+ 取消
+
+# WorldGenMenu.java
+
+World Seed
+世界种子
+
+Enter World Name
+输入世界名称
+
+Trouble with world name?
+输入世界名称时出了问题?
+
+by default, w and s move the cursor up and down. This can be changed in the key binding menu. To type the letter instead of moving the cursor, hold the shift key while typing the world name.
+默认情况下, W 和 S 分别是向上和向下移动光标。这些可以在按键绑定菜单中更改。如果要键入字母而不是移动光标,在键入世界名称时按住 Shift 键。
+
+Create World
+创建世界
+
+World Gen Options
+生成世界选项
+
+# WorldSelectMenu.java
+
+Copy
+拷贝
+
+Rename
+重命名
+
+Delete
+删除
+
+ to confirm
+ 确认
+ 
+ to return
+ 返回
+ 
+Select World
+选择世界
+
+Select a World to
+选择一个世界
+
+# LocalizationMenu.java
+
+Languages
+语言
+
+Language
+语言
+
+Select
+选择
+
+### screen end
+
+### minicraft
+
+# Settings.java
+
+Max FPS
+最大 FPS
+
+Difficulty
+游戏难度
+
+Easy
+简单
+
+Normal
+普通
+
+Hard
+困难
+
+Game Mode
+游戏模式
+
+Survival
+生存模式
+
+Creative
+创造模式
+
+Hardcore
+极限模式
+
+Score
+得分
+
+Time (Score Mode)
+时间 (得分模式下)
+
+Sound
+声音
+
+Autosave
+自动存档
+
+World Size
+世界大小
+
+World Theme
+世界主题
+
+Normal
+普通
+
+Forest
+森林
+
+Desert
+沙漠
+
+Plain
+平原
+
+Hell
+地狱
+
+Terrain Type
+地形类型
+
+Island
+岛屿
+
+Box
+盒
+
+Mountain
+山地
+
+Irregular
+不规则
+
+Wear Suit
+穿外套
+
+### minicraft end
