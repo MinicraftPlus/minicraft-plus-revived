@@ -852,13 +852,14 @@ public class Level {
 					lastVillageX = x;
 					lastVillageY = y;
 
-					// a number between 1 and 4
-					int numHouses = random.nextInt(4) + 1;
+					// a number between 2 and 4
+					int numHouses = random.nextInt(3) + 2;
 
 					// loops for each house in the village
 					for (int h = 0; h < numHouses; h++) {
 						boolean hasChest = random.nextBoolean();
 						boolean twoDoors = random.nextBoolean();
+						int overlay = random.nextInt(2) + 1;
 
 						// basically just gets what offset this house should have from the center of the village
 						int xo = h == 0 || h == 3 ? -4 : 4;
@@ -873,6 +874,14 @@ public class Level {
 							Structure.villageHouseNormal.draw(this, x + xo, y + yo);
 						}
 
+						// make the village look ruined
+						if (overlay == 1) {
+							Structure.villageRuinedOverlay1.draw(this, x + xo, y + yo);
+						} else if (overlay == 2) {
+							Structure.villageRuinedOverlay2.draw(this, x + xo, y + yo);
+						}
+
+						// add a chest to some of the houses
 						if (hasChest) {
 							Chest c = new Chest();
 							c.populateInvRandom("villagehouse", 1);
