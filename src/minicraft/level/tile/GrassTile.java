@@ -66,6 +66,12 @@ public class GrassTile extends Tile {
 					return true;
 				}
 			}
+			if (tool.type == ToolType.Pickaxe) {
+				if (player.payStamina(4 - tool.level) && tool.payDurability()) {
+					level.setTile(xt, yt, Tiles.get("path"));
+					Sound.monsterHurt.play();
+				}
+			}
 		}
 		return false;
 	}
