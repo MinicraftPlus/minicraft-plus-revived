@@ -62,8 +62,10 @@ public class Structure {
 
 		for (int i = 0; i < dataLines.length; i++) {
 			for (int c = 0; c < dataLines[i].length(); c++) {
-				Tile tile = Tiles.get(keyPairs.get(String.valueOf(dataLines[i].charAt(c))));
-				this.setTile(-width / 2 + i, -height / 2 + c, tile);
+				if (dataLines[i].charAt(c) != '*') {
+					Tile tile = Tiles.get(keyPairs.get(String.valueOf(dataLines[i].charAt(c))));
+					this.setTile(-width / 2 + i, -height / 2 + c, tile);
+				}
 			}
 		}
 	}
@@ -106,6 +108,9 @@ public class Structure {
 	// used for random villages
 	static final Structure villageHouseNormal;
 	static final Structure villageHouseTwoDoor;
+
+	static final Structure villageRuinedOverlay1;
+	static final Structure villageRuinedOverlay2;
 
 	// ok, because of the way the system works, these structures are rotated 90 degrees clockwise when placed
 	// then it's flipped on the vertical
@@ -188,21 +193,39 @@ public class Structure {
 		airWizardHouse.addFurniture(0, 0, new Crafter(Crafter.Type.Enchanter));
 
 		villageHouseNormal = new Structure();
-		villageHouseNormal.setData("F:Wood Planks,W:Wood Wall,D:Wood Door",
+		villageHouseNormal.setData("F:Wood Planks,W:Wood Wall,D:Wood Door,G:Grass",
 					"WWWWW\n" +
 					"WFFFW\n" +
 					"WFFFD\n" +
-					"WFFFW\n" +
+					"WFFFG\n" +
 					"WWWWW"
 		);
 
 		villageHouseTwoDoor = new Structure();
-		villageHouseTwoDoor.setData("F:Wood Planks,W:Wood Wall,D:Wood Door",
+		villageHouseTwoDoor.setData("F:Wood Planks,W:Wood Wall,D:Wood Door,G:Grass",
 					"WWWWW\n" +
 					"WFFFW\n" +
 					"DFFFW\n" +
 					"WFFFW\n" +
 					"WWDWW"
+		);
+
+		villageRuinedOverlay1 = new Structure();
+		villageRuinedOverlay1.setData("G:Grass,F:Wood Planks",
+					"**FG*\n" +
+					"F*GG*\n" +
+					"*G**F\n" +
+					"G*G**\n" +
+					"***G*"
+		);
+
+		villageRuinedOverlay2 = new Structure();
+		villageRuinedOverlay2.setData("G:Grass,F:Wood Planks",
+					"F**G*\n" +
+					"*****\n" +
+					"*GG**\n" +
+					"F**G*\n" +
+					"*F**G"
 		);
 	}
 }
