@@ -9,6 +9,7 @@ Minicraft+ version 2.0.6
 * Fixed small line in the snake sprite that shouldn't be there
 * Water and lava now form obsidian, and don't look like sand when they are next to each other
 * Totally overhauled fishing!
++ Added paths, use a pickaxe on grass to make them
 
 
 Minicraft+ version 2.0.5
