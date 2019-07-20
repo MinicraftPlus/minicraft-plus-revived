@@ -287,7 +287,7 @@ public class Load {
 		
 		for (String keymap : subdata) {
 			String[] map = keymap.split(";");
-			if(prefVer.compareTo(new Version("2.1.0-dev1")) < 0)
+			if(prefVer.compareTo(new Version("2.0.6-dev3")) < 0)
 				map[0] = map[0].replaceAll("(UP|DOWN|LEFT|RIGHT)", "MOVE-\\1");
 			Game.input.setKey(map[0], map[1]);
 		}
@@ -330,7 +330,7 @@ public class Load {
 						if(Math.random() < 0.8) // don't replace *all* the lapis
 							tilename = "Gem Ore";
 					}
-					if(tilename.equalsIgnoreCase("WOOL") && worldVer.compareTo(new Version("2.1.0-dev1")) < 0) {
+					if(tilename.equalsIgnoreCase("WOOL") && worldVer.compareTo(new Version("2.0.6-dev3")) < 0) {
 						switch(Integer.parseInt(extradata.get(tileidx))) {
 							case 1:
 								tilename = "Red Wool";
@@ -473,10 +473,8 @@ public class Load {
 
 		if(worldVer.compareTo(new Version("2.0.6-dev3")) < 0) {
 			name = name.replace("Fishing Rod", "Wood Fishing Rod");
-		}
-		
-		if(worldVer.compareTo(new Version("2.1.0-dev1")) < 0)
-			name = name.replace("Book", "Editable Book");
+			name = name.replace("Book", "Paper");
+		}	
 		
 		return name;
 	}
