@@ -131,13 +131,13 @@ public class MapDisplay extends Display {
         }
 
         if (arrows[0]) {
-            screen.render(menuBounds.getWidth() / 2 + menuBounds.getLeft() - 4, menuBounds.getTop() - 8, 10 + 13 * 32, Color.get(-1, 400, 500, 500), 0);
+            screen.render(menuBounds.getWidth() / 2 + menuBounds.getLeft() - 4, menuBounds.getTop() - 8, 12 + 13 * 32, Color.get(-1, 400, 500, 500), 0);
         }
         if (arrows[1]) {
             screen.render(menuBounds.getRight() + 1, menuBounds.getHeight() / 2 + menuBounds.getTop(), 5 + 13 * 32, Color.get(-1, 400, 500, 500), 1);
         }
         if (arrows[2]) {
-            screen.render(menuBounds.getWidth() / 2 + menuBounds.getLeft() - 4, menuBounds.getBottom() + 1, 10 + 13 * 32, Color.get(-1, 400, 500, 500), 2);
+            screen.render(menuBounds.getWidth() / 2 + menuBounds.getLeft() - 4, menuBounds.getBottom() + 1, 12 + 13 * 32, Color.get(-1, 400, 500, 500), 2);
         }
         if (arrows[3]) {
             screen.render(menuBounds.getLeft() - 8, menuBounds.getHeight() / 2 + menuBounds.getTop(), 5 + 13 * 32, Color.get(-1, 400, 500, 500), 0);

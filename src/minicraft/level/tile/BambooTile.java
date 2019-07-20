@@ -54,10 +54,10 @@ public class BambooTile extends Tile {
         int damage = level.getData(x, y) + dmg;
         int bambooHealth = 25;
         if (Game.isMode("creative")) dmg = damage = bambooHealth;
-
         level.add(new SmashParticle(x * 16, y * 16));
-        level.add(new TextParticle("" + dmg, x * 16 + 8, y * 16 + 8, Color.RED));
+        Sound.monsterHurt.play();
 
+        level.add(new TextParticle("" + dmg, x * 16 + 8, y * 16 + 8, Color.RED));
         if (damage >= bambooHealth) {
             level.dropItem(x*16+8, y*16+8, 1, 2, Items.get("bamboo"));
             level.setTile(x, y, Tiles.get("jungle"));
