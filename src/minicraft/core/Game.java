@@ -115,7 +115,7 @@ public class Game {
 		
 		
 		if(Network.autoclient)
-			setMenu(new MultiplayerDisplay( "localhost"));
+			setMenu(new MultiplayerDisplay("localhost"));
 		else if(!HAS_GUI)
 			Network.startMultiplayerServer();
 		else
