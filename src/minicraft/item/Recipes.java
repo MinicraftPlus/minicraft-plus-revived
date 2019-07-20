@@ -32,13 +32,16 @@ public class Recipes {
 		workbenchRecipes.add(new Recipe("Anvil_1", "iron_5"));
 		workbenchRecipes.add(new Recipe("Tnt_1", "Gunpowder_10", "Sand_8"));
 		workbenchRecipes.add(new Recipe("Loom_1", "Wood_10", "Wool_5"));
-		workbenchRecipes.add(new Recipe("Fishing Rod_1", "Wood_5", "String_3"));
 		workbenchRecipes.add(new Recipe("Paper_2", "Bamboo_1"));
 		workbenchRecipes.add(new Recipe("Spike_1", "Bamboo_2"));
 		workbenchRecipes.add(new Recipe("Map_1", "Paper_20"));
 		workbenchRecipes.add(new Recipe("Ore Map_1", "Map_1", "Iron_2", "Lapis_2"));
-		workbenchRecipes.add(new Recipe("Editable Book_1", "Paper_30", "Leather_5"));
-		
+
+		workbenchRecipes.add(new Recipe("Wood Fishing Rod_1", "Wood_10", "String_3"));
+		workbenchRecipes.add(new Recipe("Iron Fishing Rod_1", "Iron_10", "String_3"));
+		workbenchRecipes.add(new Recipe("Gold Fishing Rod_1", "Gold_10", "String_3"));
+		workbenchRecipes.add(new Recipe("Gem Fishing Rod_1", "Gem_10", "String_3"));
+
 		loomRecipes.add(new Recipe("String_2", "Wool_1"));
 		loomRecipes.add(new Recipe("red wool_1", "Wool_1", "rose_1"));
 		loomRecipes.add(new Recipe("blue wool_1", "Wool_1", "Lapis_1"));

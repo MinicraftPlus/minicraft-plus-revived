@@ -153,7 +153,7 @@ public class Creeper extends EnemyMob {
 	@Override
 	protected void touchedBy(Entity entity) {
 		if (entity instanceof Player) {
-			if (fuseTime == 0) {
+			if (fuseTime == 0 && !fuseLit) {
 				Sound.fuse.play();
 				fuseTime = MAX_FUSE_TIME;
 				fuseLit = true;

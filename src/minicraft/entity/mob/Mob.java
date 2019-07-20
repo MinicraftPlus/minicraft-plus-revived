@@ -158,7 +158,7 @@ public abstract class Mob extends Entity {
 	 * Checks if the mob is swimming (standing on a liquid tile).
 	 * @return true if the mob is swimming, false if not.
 	 */
-	protected boolean isSwimming() {
+	public boolean isSwimming() {
 		if(level == null) return false;
 		Tile tile = level.getTile(x >> 4, y >> 4); // Get the tile the mob is standing on (at x/16, y/16)
 		return tile == Tiles.get("water") || tile == Tiles.get("lava"); // Check if the tile is liquid, and return true if so

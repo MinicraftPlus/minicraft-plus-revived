@@ -37,7 +37,11 @@ public class FloorTile extends Tile {
 			ToolItem tool = (ToolItem) item;
 			if (tool.type == ToolType.Pickaxe) {
 				if (player.payStamina(4 - tool.level) && tool.payDurability()) {
-					level.setTile(xt, yt, Tiles.get("hole"));
+					if (level.depth == 1) {
+						level.setTile(xt, yt, Tiles.get("Cloud"));
+					} else {
+						level.setTile(xt, yt, Tiles.get("hole"));
+					}
 					Item drop;
 					switch(type) {
 						case Wood: drop = Items.get("Plank"); break;

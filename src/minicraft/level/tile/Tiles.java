@@ -54,6 +54,7 @@ public final class Tiles {
 		tiles.set(26, new DoorTile(Tile.Material.Wood));
 		tiles.set(27, new DoorTile(Tile.Material.Stone));
 		tiles.set(28, new DoorTile(Tile.Material.Obsidian));
+        tiles.set(29, new PathTile("Path"));
 		tiles.set(36, new BambooTile("Bamboo"));
 		tiles.set(37, new JungleTile("Jungle"));
 		tiles.set(35, new NormalWoolTile());
