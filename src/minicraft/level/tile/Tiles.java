@@ -32,12 +32,12 @@ public final class Tiles {
 		tiles.set(10, new SandTile("Sand"));
 		tiles.set(11, new CactusTile("Cactus"));
 		tiles.set(12, new SaplingTile("Cactus Sapling", Tiles.get("Sand"), Tiles.get("Cactus")));
-		tiles.set(17, new LavaTile("Lava"));
-		tiles.set(18, new LavaBrickTile("Lava Brick"));
 		tiles.set(13, new OreTile(OreTile.OreType.Iron));
 		tiles.set(14, new OreTile(OreTile.OreType.Gold));
 		tiles.set(15, new OreTile(OreTile.OreType.Gem));
 		tiles.set(16, new OreTile(OreTile.OreType.Lapis));
+		tiles.set(17, new LavaTile("Lava"));
+		tiles.set(18, new LavaBrickTile("Lava Brick"));
 		tiles.set(19, new ExplodedTile("Explode"));
 		tiles.set(20, new FarmTile("Farmland"));
 		tiles.set(21, new WheatTile("Wheat"));
@@ -45,25 +45,25 @@ public final class Tiles {
 		tiles.set(23, new InfiniteFallTile("Infinite Fall"));
 		tiles.set(24, new CloudTile("Cloud"));
 		tiles.set(25, new CloudCactusTile("Cloud Cactus"));
+		tiles.set(26, new DoorTile(Tile.Material.Wood));
+		tiles.set(27, new DoorTile(Tile.Material.Stone));
+		tiles.set(28, new DoorTile(Tile.Material.Obsidian));
 		tiles.set(29, new FloorTile(Tile.Material.Wood));
 		tiles.set(30, new FloorTile(Tile.Material.Stone));
 		tiles.set(31, new FloorTile(Tile.Material.Obsidian));
 		tiles.set(32, new WallTile(Tile.Material.Wood));
 		tiles.set(33, new WallTile(Tile.Material.Stone));
 		tiles.set(34, new WallTile(Tile.Material.Obsidian));
-		tiles.set(26, new DoorTile(Tile.Material.Wood));
-		tiles.set(27, new DoorTile(Tile.Material.Stone));
-		tiles.set(28, new DoorTile(Tile.Material.Obsidian));
-        tiles.set(29, new PathTile("Path"));
+		tiles.set(35, new NormalWoolTile());
 		tiles.set(36, new BambooTile("Bamboo"));
 		tiles.set(37, new JungleTile("Jungle"));
-		tiles.set(35, new NormalWoolTile());
 		tiles.set(38, new RedWoolTile());
 		tiles.set(39, new YellowWoolTile());
 		tiles.set(40, new BlueWoolTile());
 		tiles.set(41, new GreenWoolTile());
 		tiles.set(42, new BlackWoolTile());
 		tiles.set(43, new SpikeTile("Spikes"));
+		tiles.set(44, new PathTile("Path"));
 		
 		for(int i = 0; i < tiles.size(); i++) {
 			if(tiles.get(i) == null) continue;
