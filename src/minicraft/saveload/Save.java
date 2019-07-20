@@ -86,7 +86,6 @@ public class Save {
 		if(!Game.isValidServer()) { // this must be waited for on a server.
 			writePlayer("Player", Game.player);
 			writeInventory("Inventory", Game.player);
-			writeBooks("BookData", Game.player);
 		}
 		writeEntities("Entities");
 		
@@ -118,7 +117,6 @@ public class Save {
 		if(writePlayer) {
 			writePlayer("Player", player);
 			writeInventory("Inventory", player);
-			writeBooks("BookData", player);
 		}
 	}
 	
@@ -284,45 +282,7 @@ public class Save {
 		
 		for(int i = 0; i < inventory.invSize(); i++) {
 			Item item = inventory.get(i);
-			if (item.equals(Items.get("Editable Book"))) {
-				data.add(item.getData() + ";" + numBooks);
-				numBooks++;
-			} else {
-				data.add(item.getData());
-			}
-		}
-	}
-
-	private void writeBooks(String filename, Player player) {
-		writeBooks(player, data);
-		String[] stringData = data.toArray(new String[]{});
-		try {
-			writeToFile(location + filename + extension, stringData, false);
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
-		data.clear();
-	}
-	public static void writeBooks(Player player, List<String> data) {
-		data.clear();
-
-		Inventory inventory = player.getInventory();
-
-		if (player.activeItem != null && player.activeItem.equals(Items.get("Editable Book"))) {
-			// make sure to include the book in the player's hand
-			inventory.add(player.activeItem);
-		}
-
-		for (int i = 0; i < inventory.invSize(); i++) {
-			// TODO: makes this just check the book's 'editable' property instead of checking for a particular name
-			if (inventory.get(i).equals(Items.get("Editable Book"))) {
-				String text = ((BookItem)inventory.get(i)).getText();
-
-				// make sure we can save it, since returns are used to separate the books from each other in the file
-				text = text.replace("\n", "\\n");
-
-				data.add(text);
-			}
+			data.add(item.getData());
 		}
 	}
 	
