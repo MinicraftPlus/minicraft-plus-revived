@@ -17,8 +17,7 @@ public class SpikeTile extends Tile {
     public SpikeTile(String name) {
         super(name, (Sprite)null);
         connectsToSand = true;
-        connectsToWater = true;
-        connectsToLava = true;
+        connectsToFluid = true;
     }
 
     @Override
