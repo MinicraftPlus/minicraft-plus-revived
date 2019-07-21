@@ -856,14 +856,14 @@ public class Level {
 					int numHouses = random.nextInt(3) + 2;
 
 					// loops for each house in the village
-					for (int h = 0; h < numHouses; h++) {
+					for (int hs = 0; hs < numHouses; hs++) {
 						boolean hasChest = random.nextBoolean();
 						boolean twoDoors = random.nextBoolean();
 						int overlay = random.nextInt(2) + 1;
 
 						// basically just gets what offset this house should have from the center of the village
-						int xo = h == 0 || h == 3 ? -4 : 4;
-						int yo = h < 2 ? -4 : 4;
+						int xo = hs == 0 || hs == 3 ? -4 : 4;
+						int yo = hs < 2 ? -4 : 4;
 
 						xo += random.nextInt(5) - 2;
 						yo += random.nextInt(5) - 2;
