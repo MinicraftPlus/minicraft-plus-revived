@@ -53,8 +53,8 @@ public final class Tiles {
 		tiles.set(26, new DoorTile(Tile.Material.Wood));
 		tiles.set(27, new DoorTile(Tile.Material.Stone));
 		tiles.set(28, new DoorTile(Tile.Material.Obsidian));
-		tiles.set(29, new PathTile("Path"));
 		tiles.set(35, new WoolTile());
+		tiles.set(36, new PathTile("Path"));
 		
 		for(int i = 0; i < tiles.size(); i++) {
 			if(tiles.get(i) == null) continue;
