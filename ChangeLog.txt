@@ -10,6 +10,7 @@ Minicraft+ version 2.0.6
 * Water and lava now form obsidian, and don't look like sand when they are next to each other
 * Totally overhauled fishing!
 + Added paths, use a pickaxe on grass to make them
++ You can now craft obsidian walls and doors
 
 
 Minicraft+ version 2.0.5
