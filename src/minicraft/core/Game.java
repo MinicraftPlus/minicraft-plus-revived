@@ -47,7 +47,10 @@ public class Game {
 	// Sets the current menu.
 	public static void setMenu(@Nullable Display display) { newMenu = display; }
 	public static void exitMenu() {
-		if(menu == null) return; // no action required; cannot exit from no menu
+		if(menu == null) {
+			if (debug) System.out.println("Game.exitMenu(): No menu found, returning!");
+			return; // no action required; cannot exit from no menu
+		}
 		Sound.back.play();
 		newMenu = menu.getParent();
 	}
@@ -115,7 +118,7 @@ public class Game {
 		
 		
 		if(Network.autoclient)
-			setMenu(new MultiplayerDisplay( "localhost"));
+			setMenu(new MultiplayerDisplay("localhost"));
 		else if(!HAS_GUI)
 			Network.startMultiplayerServer();
 		else
