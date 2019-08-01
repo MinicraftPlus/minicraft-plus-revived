@@ -288,6 +288,7 @@ public class TitleDisplay extends Display {
 		"011011000110111101101100!",
 		"001100010011000000110001!",
 		"011010000110110101101101?",
-		"...zzz..."
+		"...zzz...",
+		"Creeper, aw man"
 	};
 }
