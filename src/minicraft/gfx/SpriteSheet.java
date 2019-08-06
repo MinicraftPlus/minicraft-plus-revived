@@ -44,16 +44,16 @@ public class SpriteSheet {
 			blue /= 16;
 
 			// this stuff is to figure out if the pixel is transparent or not
-			int[] alpha = image.getAlphaRaster().getPixel(0, 0, pixels.clone());
+			int transparent = 1;
 
 			// a value of 0 means transparent, a value of 1 means opaque
-			if (alpha[i] != 0) {
-				alpha[i] = 1;
+			if (pixels[i] >> 24 == 0x00) {
+				transparent = 0;
 			}
 
 			// actually put the data in the array
 			// uses 13 bits to store everything (4 for red, 4 for green, 4 for blue, and 1 for alpha)
-			pixels[i] = (alpha[i] << 12) + (red << 8) + (green << 4) + blue;
+			pixels[i] = (transparent << 12) + (red << 8) + (green << 4) + blue;
 
 		}
 	}
