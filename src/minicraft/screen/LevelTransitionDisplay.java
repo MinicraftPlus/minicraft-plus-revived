@@ -28,8 +28,8 @@ public class LevelTransitionDisplay extends Display {
 			for (int y = 0; y < 150; y++) { // Loop however many times depending on the height (It's divided by 3 because the pixels are scaled up by 3)
 				int dd = (y + x % 2 * 2 + x / 3) - time*2; // Used as part of the positioning.
 				if (dd < 0 && dd > -30) {
-					if (dir > 0) screen.render(x * 8, y * 8, 0, 0, 0); // If the direction is upwards then render the squares going up
-					else screen.render(x * 8, Screen.h - y * 8 - 8, 0, 0, 0);  // If the direction is negative, then the squares will go down.
+					if (dir > 0) screen.render(x * 8, y * 8, 0, 0); // If the direction is upwards then render the squares going up
+					else screen.render(x * 8, Screen.h - y * 8 - 8, 0, 0);  // If the direction is negative, then the squares will go down.
 				}
 			}
 		}

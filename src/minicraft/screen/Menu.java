@@ -269,7 +269,7 @@ public class Menu {
 				
 				int color = xend || yend ? frameEdgeColor : frameFillColor;//sideColor; // gets the color; slightly different in upper right corner, and middle is all blue.
 				
-				screen.render(x, y, spriteoffset + 13*32, color, mirrors);
+				screen.render(x, y, spriteoffset + 13*32, mirrors);
 				
 				if(x < right && x + SpriteSheet.boxWidth > right)
 					x = right - SpriteSheet.boxWidth;

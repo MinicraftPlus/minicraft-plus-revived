@@ -40,7 +40,7 @@ public class Color {
 		So, the methods ending in "Color" deal with rgbInts, while their counterparts deal with rgbBytes.
 	*/
 	
-	public static final int TRANS = Color.get(-1, -1);
+	public static final int TRANSPARENT = Color.get(-1, -1);
 	public static final int WHITE = Color.get(-1, 555);
 	public static final int GRAY = Color.get(-1, 333);
 	public static final int DARK_GRAY = Color.get(-1, 222);
@@ -142,30 +142,15 @@ public class Color {
 		return cols[0]*100 + cols[1]*10 + cols[2];
 	}
 	
-	public static int mixRGB(int rgbByte1, int rgbByte2) { // rgbByte,rgbByte -> rgbByte
-		if(rgbByte1 == 255 || rgbByte2 == 255) return -1;
-		int newcol = (rgbByte1 + rgbByte2) / 2;
-		return newcol;
-		//int[] col1 = decodeRGB(get(rgb1));
-		//int[] col2 = decodeRGB(get(rgb2));
-		//return ((col1[0] + col2[0])/2) * 100 + ((col1[1] + col2[1])/2) * 10 + ((col1[2] + col2[2])/2);
-	}
-	
-	/// this turns a 0-216 combined minicraft color into a 24-bit r,g,b color. AKA: rgbByte -> rgbInt
-	protected static int upgrade(int rgbByte) {
-		if(rgbByte == 255) return 0xFF_FF_FF_FF;
+	/// this turns a 0-8191 combined minicraft color into a 24-bit r,g,b color.
+	protected static int upgrade(int rgbMinicraft) {
+
+		int r = (rgbMinicraft & 0xf00) >> 8;
+		int g = (rgbMinicraft & 0xf0) >> 4;
+		int b = (rgbMinicraft & 0xf);
+
 		
-		int r = ((rgbByte / 36) % 6) * 51;
-		int g = ((rgbByte / 6) % 6) * 51;
-		int b = (rgbByte % 6) * 51;
-		
-		int mid = (r * 30 + g * 59 + b * 11) / 100;
-		
-		int r1 = ((r + mid) / 2) * 230 / 255 + 10;
-		int g1 = ((g + mid) / 2) * 230 / 255 + 10;
-		int b1 = ((b + mid) / 2) * 230 / 255 + 10;
-		
-		return r1 << 16 | g1 << 8 | b1;
+		return r << 20 | g << 12 | b << 4;
 	}
 	
 	/// this takes a 24 bit color, and turns it into an 8-bit color minicraft sprites use. AKA: rgbInt -> rgbByte

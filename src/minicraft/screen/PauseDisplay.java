@@ -55,7 +55,7 @@ public class PauseDisplay extends Display {
 				)));
 				
 				if(!Game.isValidServer()) {
-					int color = MyUtils.fromNetworkStatus(Color.RED, Color.GREEN, Color.TRANS);
+					int color = MyUtils.fromNetworkStatus(Color.RED, Color.GREEN, Color.TRANSPARENT);
 					items.addAll(Arrays.asList(StringEntry.useLines(color, "",
 						MyUtils.fromNetworkStatus("All unsaved progress", "Your progress", ""),
 						MyUtils.fromNetworkStatus("will be lost!", "will be saved.", ""),

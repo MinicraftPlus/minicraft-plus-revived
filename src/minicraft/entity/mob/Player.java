@@ -791,22 +791,22 @@ public class Player extends Mob implements ItemHolder, ClientTickable {
 				if (tickTime / 8 % 2 == 0) liquidColor = Color.get(-1, 300, 400, 500);
 			}
 
-			screen.render(xo + 0, yo + 3, 5 + 13 * 32, liquidColor, 0); // render the water graphic
-			screen.render(xo + 8, yo + 3, 5 + 13 * 32, liquidColor, 1); // render the mirrored water graphic to the right.
+			screen.render(xo + 0, yo + 3, 5 + 13 * 32, 0); // render the water graphic
+			screen.render(xo + 8, yo + 3, 5 + 13 * 32, 1); // render the mirrored water graphic to the right.
 		}
 
 		// renders indicator for what tile the item will be placed on
 		if (activeItem instanceof TileItem) {
 			Point t = getInteractionTile();
 
-			screen.render(t.x * 16 + 4, t.y * 16 + 4,10 + 13 * 32, Color.WHITE, 0);
+			screen.render(t.x * 16 + 4, t.y * 16 + 4,10 + 13 * 32, 0);
 		}
 
 		if (attackTime > 0 && attackDir == Direction.UP) { // if currently attacking upwards...
-			screen.render(xo + 0, yo - 4, 6 + 13 * 32, Color.WHITE, 0); //render left half-slash
-			screen.render(xo + 8, yo - 4, 6 + 13 * 32, Color.WHITE, 1); //render right half-slash (mirror of left).
+			screen.render(xo + 0, yo - 4, 6 + 13 * 32, 0); //render left half-slash
+			screen.render(xo + 8, yo - 4, 6 + 13 * 32, 1); //render right half-slash (mirror of left).
 			if (attackItem != null) { // if the player had an item when they last attacked...
-				attackItem.sprite.render(screen, xo + 4, yo - 4, attackItem.sprite.color, 1); // then render the icon of the item, mirrored
+				attackItem.sprite.render(screen, xo + 4, yo - 4/*, attackItem.sprite.color*/, 1); // then render the icon of the item, mirrored
 			}
 		}
 		
@@ -836,22 +836,22 @@ public class Player extends Mob implements ItemHolder, ClientTickable {
 		// renders slashes:
 		
 		if (attackTime > 0 && attackDir == Direction.LEFT) { // if attacking to the left.... (same as above)
-			screen.render(xo - 4, yo, 7 + 13 * 32, Color.WHITE, 1);
-			screen.render(xo - 4, yo + 8, 7 + 13 * 32, Color.WHITE, 3);
+			screen.render(xo - 4, yo, 7 + 13 * 32, 1);
+			screen.render(xo - 4, yo + 8, 7 + 13 * 32, 3);
 			if (attackItem != null) {
-				attackItem.sprite.render(screen, xo - 4, yo + 4, attackItem.sprite.color, 1);
+				attackItem.sprite.render(screen, xo - 4, yo + 4/*, attackItem.sprite.color*/, 1);
 			}
 		}
 		if (attackTime > 0 && attackDir == Direction.RIGHT) { // attacking to the right
-			screen.render(xo + 8 + 4, yo, 7 + 13 * 32, Color.WHITE, 0);
-			screen.render(xo + 8 + 4, yo + 8, 7 + 13 * 32, Color.WHITE, 2);
+			screen.render(xo + 8 + 4, yo, 7 + 13 * 32, 0);
+			screen.render(xo + 8 + 4, yo + 8, 7 + 13 * 32, 2);
 			if (attackItem != null) {
 				attackItem.sprite.render(screen, xo + 8 + 4, yo + 4);
 			}
 		}
 		if (attackTime > 0 && attackDir == Direction.DOWN) { // attacking downwards
-			screen.render(xo + 0, yo + 8 + 4, 6 + 13 * 32, Color.WHITE, 2);
-			screen.render(xo + 8, yo + 8 + 4, 6 + 13 * 32, Color.WHITE, 3);
+			screen.render(xo + 0, yo + 8 + 4, 6 + 13 * 32, 2);
+			screen.render(xo + 8, yo + 8 + 4, 6 + 13 * 32, 3);
 			if (attackItem != null) {
 				attackItem.sprite.render(screen, xo + 4, yo + 8 + 4);
 			}
@@ -860,16 +860,16 @@ public class Player extends Mob implements ItemHolder, ClientTickable {
 		if (isFishing) {
 			switch (dir) {
 				case UP:
-					screen.render(xo + 4, yo - 4, 11 + 13 * 32, FishingRodItem.COLORS[fishingLevel], 1);
+					screen.render(xo + 4, yo - 4, 11 + 13 * 32, 1);
 					break;
 				case LEFT:
-					screen.render(xo - 4, yo + 4, 11 + 13 * 32, FishingRodItem.COLORS[fishingLevel], 1);
+					screen.render(xo - 4, yo + 4, 11 + 13 * 32, 1);
 					break;
 				case RIGHT:
-					screen.render(xo + 8 + 4, yo + 4, 11 + 13 * 32, FishingRodItem.COLORS[fishingLevel], 0);
+					screen.render(xo + 8 + 4, yo + 4, 11 + 13 * 32, 0);
 					break;
 				case DOWN:
-					screen.render(xo + 4, yo + 8 + 4, 11 + 13 * 32, FishingRodItem.COLORS[fishingLevel], 0);
+					screen.render(xo + 4, yo + 8 + 4, 11 + 13 * 32, 0);
 					break;
 				case NONE:
 					break;

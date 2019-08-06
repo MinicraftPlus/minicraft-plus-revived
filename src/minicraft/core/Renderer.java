@@ -136,7 +136,7 @@ public class Renderer extends Game {
 			for (int y = 0; y < 28; y++)
 				for (int x = 0; x < 48; x++) {
 					// creates the background for the sky (and dungeon) level:
-					screen.render(x * 8 - ((xScroll / 4) & 7), y * 8 - ((yScroll / 4) & 7), 0, col, 0);
+					screen.render(x * 8 - ((xScroll / 4) & 7), y * 8 - ((yScroll / 4) & 7), 0, 0);
 				}
 		}
 		
@@ -157,7 +157,7 @@ public class Renderer extends Game {
 	private static void renderGui() {
 		/// AH-HA! THIS DRAWS THE BLACK SQUARE!!
 		for (int x = 12; x < 29; x++)
-			screen.render(x * 7, Screen.h - 8, 0 + 1 * 32, Color.get(0, 0), 0);
+			screen.render(x * 7, Screen.h - 8, 0 + 1 * 32, 0);
 		
 		renderDebugInfo();
 		
@@ -168,7 +168,7 @@ public class Renderer extends Game {
 		else
 			Font.draw("	x" + ac, screen, 84, Screen.h - 16, Color.get(0, 555));
 		//displays arrow icon
-		screen.render(10 * 8 + 4, Screen.h - 16, 13 + 5 * 32, Color.get(0, 111, 222, 430), 0);
+		screen.render(10 * 8 + 4, Screen.h - 16, 13 + 5 * 32, 0);
 		
 		ArrayList<String> permStatus = new ArrayList<>();
 		if (Updater.saving) permStatus.add("Saving... " + Math.round(LoadingDisplay.getPercentage()) + "%");
@@ -273,25 +273,25 @@ public class Renderer extends Game {
 				// renders armor
 				int armor = player.armor*Player.maxStat / Player.maxArmor;
 				color = (i <= armor && player.curArmor != null) ? player.curArmor.sprite.color : Color.get(-1, -1);
-				screen.render(i * 8, Screen.h - 24, 3 + 12 * 32, color, 0);
+				screen.render(i * 8, Screen.h - 24, 3 + 12 * 32, 0);
 				
 				// renders your current red hearts, or black hearts for damaged health.
 				color = (i < player.health) ? Color.get(-1, 200, 500, 533) : Color.get(-1, 100, 0, 0);
-				screen.render(i * 8, Screen.h - 16, 0 + 12 * 32, color, 0);
+				screen.render(i * 8, Screen.h - 16, 0 + 12 * 32, 0);
 				
 				if (player.staminaRechargeDelay > 0) {
 					// creates the white/gray blinking effect when you run out of stamina.
 					color = (player.staminaRechargeDelay / 4 % 2 == 0) ? Color.get(-1, 555, 0, 0) : Color.get(-1, 110, 0, 0);
-					screen.render(i * 8, Screen.h - 8, 1 + 12 * 32, color, 0);
+					screen.render(i * 8, Screen.h - 8, 1 + 12 * 32, 0);
 				} else {
 					// renders your current stamina, and uncharged gray stamina.
 					color = (i < player.stamina) ? Color.get(-1, 220, 550, 553) : Color.get(-1, 110, 0, 0);
-					screen.render(i * 8, Screen.h - 8, 1 + 12 * 32, color, 0);
+					screen.render(i * 8, Screen.h - 8, 1 + 12 * 32, 0);
 				}
 				
 				// renders hunger
 				color = (i < player.hunger) ? Color.get(-1, 100, 530, 211) : Color.get(-1, 100, 0, 0);
-				screen.render(i * 8 + (Screen.w - 80), Screen.h - 16, 2 + 12 * 32, color, 0);
+				screen.render(i * 8 + (Screen.w - 80), Screen.h - 16, 2 + 12 * 32, 0);
 			}
 		}
 		
@@ -361,24 +361,24 @@ public class Renderer extends Game {
 		int txtcolor = Color.get(-1, 1, 5, 445);
 		
 		// renders the four corners of the box
-		screen.render(xx - 8, yy - 8, 0 + 13 * 32, txtcolor, 0);
-		screen.render(xx + w * 8, yy - 8, 0 + 13 * 32, txtcolor, 1);
-		screen.render(xx - 8, yy + 8, 0 + 13 * 32, txtcolor, 2);
-		screen.render(xx + w * 8, yy + 8, 0 + 13 * 32, txtcolor, 3);
+		screen.render(xx - 8, yy - 8, 0 + 13 * 32, 0);
+		screen.render(xx + w * 8, yy - 8, 0 + 13 * 32, 1);
+		screen.render(xx - 8, yy + 8, 0 + 13 * 32, 2);
+		screen.render(xx + w * 8, yy + 8, 0 + 13 * 32, 3);
 		
 		// renders each part of the box...
 		for (int x = 0; x < w; x++) {
-			screen.render(xx + x * 8, yy - 8, 1 + 13 * 32, txtcolor, 0); // ...top part
-			screen.render(xx + x * 8, yy + 8, 1 + 13 * 32, txtcolor, 2); // ...bottom part
+			screen.render(xx + x * 8, yy - 8, 1 + 13 * 32, 0); // ...top part
+			screen.render(xx + x * 8, yy + 8, 1 + 13 * 32, 2); // ...bottom part
 		}
 		for (int y = 0; y < h; y++) {
-			screen.render(xx - 8, yy + y * 8, 2 + 13 * 32, txtcolor, 0); // ...left part
-			screen.render(xx + w * 8, yy + y * 8, 2 + 13 * 32, txtcolor, 1); // ...right part
+			screen.render(xx - 8, yy + y * 8, 2 + 13 * 32, 0); // ...left part
+			screen.render(xx + w * 8, yy + y * 8, 2 + 13 * 32, 1); // ...right part
 		}
 
 		// cover up black spots from gaps in text
-		screen.render(xx + (w - 7) * 8, yy, 3 + 13 * 32, txtcolor, 0);
-		screen.render(xx + (w - 10) * 8, yy, 3 + 13 * 32, txtcolor, 0);
+		screen.render(xx + (w - 7) * 8, yy, 3 + 13 * 32, 0);
+		screen.render(xx + (w - 10) * 8, yy, 3 + 13 * 32, 0);
 		
 		// renders the focus nagger text with a flash effect...
 		if ((Updater.tickCount / 20) % 2 == 0) // ...medium yellow color

@@ -44,7 +44,7 @@ public class Screen {
 	}
 	
 	/** Renders an object from the sprite sheet based on screen coordinates, tile (SpriteSheet location), colors, and bits (for mirroring). I believe that xp and yp refer to the desired position of the upper-left-most pixel. */
-	public void render(int xp, int yp, int tile, int colors, int bits) {
+	public void render(int xp, int yp, int tile, int bits) {
 		// xp and yp are originally in level coordinates, but offset turns them to screen coordinates.
 		xp -= xOffset; //account for screen offset
 		yp -= yOffset;
@@ -66,10 +66,9 @@ public class Screen {
 				
 				int xs = x; // current x pixel
 				if (mirrorX) xs = 7 - x; // Reverses the pixel for a mirroring effect
-				// the "sheet.pixels" array stores values of 0, 1, 2, or 3, and they correspond to each shade of gray on the spritesheet.
-				int col = (colors >> ((3 - sheet.pixels[toffs + xs + ys * sheet.width]) * 8)) & 0xFF; // Gets the color of the current pixel from the colors int passed in, based on the 0-3 value stored in sheet.pixels. The color is retrieved by bit shifting right 0-3 bytes, from sheet.pixels, and then using & 0xFF to cut off bytes to the left, leaving only one byte: the rgbByte of the color. Normally, a sheet value of 0 would cause it to use the right-most color, but since black is the first (aka left-most) color, we do 3 - sheet.pixels value. 
-				if (col < 255) pixels[(x + xp) + (y + yp) * w] = Color.upgrade(col); // Inserts the colors into the image.
-				// the above only doesn't execute when the color value is 255, or white. Well, I think it should... but it doesn't work...
+
+				int col = sheet.pixels[toffs + xs + ys * sheet.width]; // Gets the color of the current pixel from the value stored in sheet.pixels.
+				pixels[(x + xp) + (y + yp) * w] = Color.upgrade(col); // Inserts the colors into the image.
 			}
 		}
 	}

@@ -42,24 +42,24 @@ public class TreeTile extends Tile {
 		boolean dr = level.getTile(x + 1, y + 1) == this;
 
 		if (u && ul && l) {
-			screen.render(x * 16 + 0, y * 16 + 0, 10 + 1 * 32, col, 0);
+			screen.render(x * 16 + 0, y * 16 + 0, 10 + 1 * 32, 0);
 		} else {
-			screen.render(x * 16 + 0, y * 16 + 0, 9 + 0 * 32, col, 0);
+			screen.render(x * 16 + 0, y * 16 + 0, 9 + 0 * 32, 0);
 		}
 		if (u && ur && r) {
-			screen.render(x * 16 + 8, y * 16 + 0, 10 + 2 * 32, barkCol2, 0);
+			screen.render(x * 16 + 8, y * 16 + 0, 10 + 2 * 32, 0);
 		} else {
-			screen.render(x * 16 + 8, y * 16 + 0, 10 + 0 * 32, col, 0);
+			screen.render(x * 16 + 8, y * 16 + 0, 10 + 0 * 32, 0);
 		}
 		if (d && dl && l) {
-			screen.render(x * 16 + 0, y * 16 + 8, 10 + 2 * 32, barkCol2, 0);
+			screen.render(x * 16 + 0, y * 16 + 8, 10 + 2 * 32, 0);
 		} else {
-			screen.render(x * 16 + 0, y * 16 + 8, 9 + 1 * 32, barkCol1, 0);
+			screen.render(x * 16 + 0, y * 16 + 8, 9 + 1 * 32, 0);
 		}
 		if (d && dr && r) {
-			screen.render(x * 16 + 8, y * 16 + 8, 10 + 1 * 32, col, 0);
+			screen.render(x * 16 + 8, y * 16 + 8, 10 + 1 * 32, 0);
 		} else {
-			screen.render(x * 16 + 8, y * 16 + 8, 10 + 3 * 32, barkCol2, 0);
+			screen.render(x * 16 + 8, y * 16 + 8, 10 + 3 * 32, 0);
 		}
 	}
 

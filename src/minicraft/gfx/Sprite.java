@@ -52,7 +52,6 @@ public class Sprite {
 	public Sprite(int sx, int sy, int sw, int sh, int color, int mirror) {
 		this(sx, sy, sw, sh, color, mirror, false);}
 	public Sprite(int sx, int sy, int sw, int sh, int color, int mirror, boolean onepixel) {
-		this.color = color;
 		sheetLoc = new Rectangle(sx, sy, sw, sh);
 		
 		spritePixels = new Px[sh][sw];
@@ -73,7 +72,6 @@ public class Sprite {
 	public Sprite(Px[][] pixels) { this(pixels, 0); }
 	public Sprite(Px[][] pixels, int color) {
 		spritePixels = pixels;
-		this.color = color;
 	}
 	
 	public int getPos() {
@@ -90,43 +88,42 @@ public class Sprite {
 			java.util.Arrays.fill(values[i], value);
 		return values;
 	}
-	
-	public void render(Screen screen, int x, int y) { render(screen, x, y, color); }
-	public void render(Screen screen, int x, int y, int color) {
+
+	public void render(Screen screen, int x, int y) {
 		/// here, x and y are screen coordinates.
 
 		for(int row = 0; row < spritePixels.length; row++) { // loop down through each row
-			renderRow(row, screen, x, y + row*8, color);
+			renderRow(row, screen, x, y + row*8);
 		}
 	}
-	public void render(Screen screen, int x, int y, int color, int mirror) {
+	public void render(Screen screen, int x, int y, int mirror) {
 
 		for(int row = 0; row < spritePixels.length; row++) {
-			renderRow(row, screen, x, y + row*8, color, mirror);
+			renderRow(row, screen, x, y + row*8, mirror);
+		}
+	}
+
+	public void renderRow(int r, Screen screen, int x, int y) {
+		Px[] row = spritePixels[r];
+		for(int c = 0; c < row.length; c++) { // loop across through each column
+			//screen.render(x + c*8, y, row[c].sheetPos, row[c].mirror); // render the sprite pixel.
+			renderPixel(c, r, screen, x + c * 8, y, row[c].mirror);
+		}
+	}
+	public void renderRow(int r, Screen screen, int x, int y, int mirror) {
+		Px[] row = spritePixels[r];
+		for(int c = 0; c < row.length; c++) { // loop across through each column
+			//screen.render(x + c*8, y, row[c].sheetPos, mirror); // render the sprite pixel.
+			renderPixel(c, r, screen, x + c * 8, y, mirror);
 		}
 	}
 	
-	public void renderRow(int r, Screen screen, int x, int y) { renderRow(r, screen, x, y, color); }
-	public void renderRow(int r, Screen screen, int x, int y, int color) {
-		Px[] row = spritePixels[r];
-		for(int c = 0; c < row.length; c++) { // loop across through each column
-			screen.render(x + c*8, y, row[c].sheetPos, color, row[c].mirror); // render the sprite pixel.
-		}
+	protected void renderPixel(int c, int r, Screen screen, int x, int y) {
+		renderPixel(c, r, screen, x, y, spritePixels[r][c].mirror);
 	}
-	public void renderRow(int r, Screen screen, int x, int y, int color, int mirror) {
-		Px[] row = spritePixels[r];
-		for(int c = 0; c < row.length; c++) { // loop across through each column
-			screen.render(x + c*8, y, row[c].sheetPos, color, mirror); // render the sprite pixel.
-		}
-	}
-	
-	protected void renderPixel(int c, int r, Screen screen, int x, int y) { renderPixel(c, r, screen, x, y, color); }
-	protected void renderPixel(int c, int r, Screen screen, int x, int y, int color) {
-		renderPixel(c, r, screen, x, y, color, spritePixels[r][c].mirror);
-	}
-	protected void renderPixel(int c, int r, Screen screen, int x, int y, int col, int mirror) {
+	protected void renderPixel(int c, int r, Screen screen, int x, int y, int mirror) {
 		//System.out.println("rendering pixel ("+c+","+r+") at ("+x+","+y+")");
-		screen.render(x, y, spritePixels[r][c].sheetPos, col, mirror); // render the sprite pixel.
+		screen.render(x, y, spritePixels[r][c].sheetPos, mirror); // render the sprite pixel.
 	}
 	
 	public String toString() {
@@ -147,7 +144,7 @@ public class Sprite {
 			sheetPos = sheetX + 32*sheetY;
 			mirror = mirroring;
 		}
-		
+
 		public String toString() {
 			return "SpritePixel:x="+(sheetPos%32)+";y="+(sheetPos/32)+";mirror="+mirror;
 		}
