@@ -68,7 +68,10 @@ public class Screen {
 				if (mirrorX) xs = 7 - x; // Reverses the pixel for a mirroring effect
 
 				int col = sheet.pixels[toffs + xs + ys * sheet.width]; // Gets the color of the current pixel from the value stored in sheet.pixels.
-				pixels[(x + xp) + (y + yp) * w] = Color.upgrade(col); // Inserts the colors into the image.
+
+				boolean isTransparent = (col >> 12 == 0);
+
+				if (!isTransparent) pixels[(x + xp) + (y + yp) * w] = Color.upgrade(col); // Inserts the colors into the image.
 			}
 		}
 	}
