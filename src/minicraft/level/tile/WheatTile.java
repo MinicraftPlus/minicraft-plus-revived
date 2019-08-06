@@ -36,6 +36,8 @@ public class WheatTile extends Tile {
 			icon = 3;
 		}
 
+		Tiles.get("farmland").render(screen, level, x, y);
+
 		screen.render(x * 16 + 0, y * 16 + 0, 4 + 3 * 32 + icon, 0);
 		screen.render(x * 16 + 8, y * 16 + 0, 4 + 3 * 32 + icon, 0);
 		screen.render(x * 16 + 0, y * 16 + 8, 4 + 3 * 32 + icon, 1);

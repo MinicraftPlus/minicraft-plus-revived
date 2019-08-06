@@ -31,6 +31,8 @@ public class TreeTile extends Tile {
 	public void render(Screen screen, Level level, int x, int y) {
 		int barkCol1 = col1;
 		int barkCol2 = col2;
+
+		Tiles.get("grass").render(screen, level, x, y);
 		
 		boolean u = level.getTile(x, y - 1) == this;
 		boolean l = level.getTile(x - 1, y) == this;
