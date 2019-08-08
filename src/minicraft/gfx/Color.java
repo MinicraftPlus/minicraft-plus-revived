@@ -37,10 +37,10 @@ public class Color {
 	public static final int MAGENTA = Color.get(-1, 505);
 	public static final int CYAN = Color.get(-1, 55);
 	
-	/** This returns a integer with 4 rgb color values. */
-	public static int get(int a, int b, int c, int d) {
-		//converts each color to 8-bit, and shifts each one 8-bits to the left a certain number of times, to create 4 colors set one after the other.
-		return (get(a) << 24) + (get(b) << 16) + (get(c) << 8) + (get(d));
+	/** This returns a minicraftrgb.
+	 * a should be between 0-1, r,g,and b should be 0-15 */
+	public static int get(int a, int r, int g, int b) {
+		return (a << 12) + (r << 8) + (g << 4) + (b);
 	}
 	public static int get(int a, int bcd) {
 		return get(a, bcd, bcd, bcd); // just a shortcut.

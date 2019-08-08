@@ -828,9 +828,9 @@ public class Player extends Mob implements ItemHolder, ClientTickable {
 
 		// render each corner of the sprite
 		if (!isSwimming()) { // don't render the bottom half if swimming.
-			curSprite.render(screen, xo, yo - 4 * onFallDelay, col);
+			curSprite.render(screen, xo, yo - 4 * onFallDelay, -1, Color.get(1, 13, 7, 3));
 		} else {
-			curSprite.renderRow(0, screen, xo, yo, col);
+			curSprite.renderRow(0, screen, xo, yo);
 		}
 		
 		// renders slashes:

@@ -264,11 +264,10 @@ public class Menu {
 				
 				boolean xend = x == bounds.getLeft() || x == right;
 				boolean yend = y == bounds.getTop() || y == bottom;
-				int spriteoffset = (xend && yend ? 0 : (yend ? 1 : 2)); // determines which sprite to use
+				int spriteoffset = (xend && yend ? 0 : (yend ? 1 : (xend ? 2 : 3))); // determines which sprite to use
 				int mirrors = ( x == right ? 1 : 0 ) + ( y == bottom ? 2 : 0 ); // gets mirroring
 				
-				int color = xend || yend ? frameEdgeColor : frameFillColor;//sideColor; // gets the color; slightly different in upper right corner, and middle is all blue.
-				
+
 				screen.render(x, y, spriteoffset + 13*32, mirrors);
 				
 				if(x < right && x + SpriteSheet.boxWidth > right)

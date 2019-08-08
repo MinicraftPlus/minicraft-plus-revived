@@ -23,7 +23,7 @@ public class SandTile extends Tile {
 		pixels[0][1] = new Sprite.Px(1, 0, 0);
 		pixels[1][0] = new Sprite.Px(1, 0, 0);
 		pixels[1][1] = new Sprite.Px(3, 1, 0);
-		steppedOn = new Sprite(pixels, Color.get(552, 550, 440, 440));
+		steppedOn = new Sprite(pixels);
 	}
 	
 	private ConnectorSprite sprite = new ConnectorSprite(SandTile.class, new Sprite(11, 0, 3, 3, Color.get(440, 550, 440, 321), 3), normal)

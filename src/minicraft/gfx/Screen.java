@@ -42,9 +42,11 @@ public class Screen {
 	public void render(int[] pixelColors) {
 		System.arraycopy(pixelColors, 0, pixels, 0, Math.min(pixelColors.length, pixels.length));
 	}
-	
+
+	public void render(int xp, int yp, int tile, int bits) { render(xp, yp, tile, bits, -1); }
+
 	/** Renders an object from the sprite sheet based on screen coordinates, tile (SpriteSheet location), colors, and bits (for mirroring). I believe that xp and yp refer to the desired position of the upper-left-most pixel. */
-	public void render(int xp, int yp, int tile, int bits) {
+	public void render(int xp, int yp, int tile, int bits, int whiteTint) {
 		// xp and yp are originally in level coordinates, but offset turns them to screen coordinates.
 		xp -= xOffset; //account for screen offset
 		yp -= yOffset;
@@ -72,6 +74,9 @@ public class Screen {
 				boolean isTransparent = (col >> 12 == 0);
 
 				if (!isTransparent) pixels[(x + xp) + (y + yp) * w] = Color.upgrade(col); // Inserts the colors into the image.
+
+				// if this is white, write over it the other color
+				if (col == 0x1FFF && whiteTint != -1) pixels[(x + xp) + (y + yp) * w] = Color.upgrade(whiteTint);
 			}
 		}
 	}
