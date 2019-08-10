@@ -79,14 +79,6 @@ public class Sprite {
 	public java.awt.Dimension getSize() {
 		return sheetLoc.getSize();
 	}
-	
-	public static int[][] fillArray(int value, int s1, int s2) {
-		int[][] values = new int[s1][s2];
-		System.out.println("filling array");
-		for(int i = 0; i < s1; i++)
-			java.util.Arrays.fill(values[i], value);
-		return values;
-	}
 
 	public void render(Screen screen, int x, int y) {
 		/// here, x and y are screen coordinates.

@@ -25,25 +25,25 @@ public class Color {
 		So, the methods ending in "Color" deal with rgbInts, while their counterparts deal with rgbBytes.
 	*/
 	
-	public static final int TRANSPARENT = Color.get(-1, -1);
-	public static final int WHITE = Color.get(-1, 555);
-	public static final int GRAY = Color.get(-1, 333);
-	public static final int DARK_GRAY = Color.get(-1, 222);
-	public static final int BLACK = Color.get(-1, 0);
-	public static final int RED = Color.get(-1, 500);
-	public static final int GREEN = Color.get(-1, 50);
-	public static final int BLUE = Color.get(-1, 5);
-	public static final int YELLOW = Color.get(-1, 550);
-	public static final int MAGENTA = Color.get(-1, 505);
-	public static final int CYAN = Color.get(-1, 55);
+	public static final int TRANSPARENT = Color.get(0, 0);
+	public static final int WHITE = Color.get(1, 15);
+	public static final int GRAY = Color.get(1, 7);
+	public static final int DARK_GRAY = Color.get(1, 3);
+	public static final int BLACK = Color.get(1, 0);
+	public static final int RED = Color.get(1, 15, 0, 0);
+	public static final int GREEN = Color.get(1, 0, 15, 0);
+	public static final int BLUE = Color.get(1, 0, 0, 15);
+	public static final int YELLOW = Color.get(1, 15, 15, 0);
+	public static final int MAGENTA = Color.get(1, 15, 0, 15);
+	public static final int CYAN = Color.get(1, 0, 15, 15);
 	
 	/** This returns a minicraftrgb.
 	 * a should be between 0-1, r,g,and b should be 0-15 */
 	public static int get(int a, int r, int g, int b) {
 		return (a << 12) + (r << 8) + (g << 4) + (b);
 	}
-	public static int get(int a, int bcd) {
-		return get(a, bcd, bcd, bcd);
+	public static int get(int a, int copy) {
+		return get(a, copy, copy, copy);
 	}
 	
 	/** converts a 0-5 scale rgb color to an 8-bit rgb color, using base 6 to encode it as a value from 0 to 255. (but instead of representing r, g, or b only, it holds all three in the one number.) */
