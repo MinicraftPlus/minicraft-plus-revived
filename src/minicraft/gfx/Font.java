@@ -16,13 +16,13 @@ public class Font {
 	/* The order of the letters in the chars string is represented in the order that they appear in the sprite-sheet. */
 	
 	/** Draws the message to the x & y coordinates on the screen. */
-	public static void draw(String msg, Screen screen, int x, int y, int col) {
+	public static void draw(String msg, Screen screen, int x, int y, int whiteTint) {
 		msg = msg.toUpperCase(Localization.getSelectedLocale()); //makes all letters uppercase.
 		for (int i = 0; i < msg.length(); i++) { // Loops through all the characters that you typed
 			int ix = chars.indexOf(msg.charAt(i)); // the current letter in the message loop
 			if (ix >= 0) {
 				// if that character's position is larger than or equal to 0, then render the character on the screen.
-				screen.render(x + i * textWidth(msg.substring(i, i+1)), y, ix + 30 * 32, 0);
+				screen.render(x + i * textWidth(msg.substring(i, i+1)), y, ix + 30 * 32, 0, whiteTint);
 			}
 			/*System.out.println("ix="+ix+"; char="+msg.charAt(i));
 			if(msg.charAt(i) == 'Í') {

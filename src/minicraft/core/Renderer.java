@@ -54,12 +54,14 @@ public class Renderer extends Game {
 		image = new BufferedImage(WIDTH, HEIGHT, BufferedImage.TYPE_INT_RGB);
 		pixels = ((DataBufferInt) image.getRaster().getDataBuffer()).getData();
 		
-		/* This sets up the screens, and loads the icons.png spritesheet. */
+		/* This sets up the screens, and loads the different spritesheets. */
 		try {
-			screen = new Screen(new SpriteSheet(ImageIO.read(Game.class.getResourceAsStream
-				("/resources/icons.png"))));
-			lightScreen = new Screen(new SpriteSheet(ImageIO.read(Game.class.getResourceAsStream
-				("/resources/icons.png"))));
+			SpriteSheet itemSheet = new SpriteSheet(ImageIO.read(Game.class.getResourceAsStream("/resources/textures/items.png")));
+			SpriteSheet tileSheet = new SpriteSheet(ImageIO.read(Game.class.getResourceAsStream("/resources/textures/tiles.png")));
+			SpriteSheet entitySheet = new SpriteSheet(ImageIO.read(Game.class.getResourceAsStream("/resources/textures/entities.png")));
+			SpriteSheet guiSheet = new SpriteSheet(ImageIO.read(Game.class.getResourceAsStream("/resources/textures/gui.png")));
+			screen = new Screen(itemSheet, tileSheet, entitySheet, guiSheet);
+			lightScreen = new Screen(itemSheet, tileSheet, entitySheet, guiSheet);
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
@@ -104,7 +106,7 @@ public class Renderer extends Game {
 		BufferStrategy bs = canvas.getBufferStrategy(); // creates a buffer strategy to determine how the graphics should be buffered.
 		Graphics g = bs.getDrawGraphics(); // gets the graphics in which java draws the picture
 		g.fillRect(0, 0, canvas.getWidth(), canvas.getHeight()); // draws the a rect to fill the whole window (to cover last?)
-		
+
 		// scales the pixels.
 		int ww = getWindowSize().width;
 		int hh = getWindowSize().height;
@@ -272,21 +274,27 @@ public class Renderer extends Game {
 				
 				// renders armor
 				int armor = player.armor*Player.maxStat / Player.maxArmor;
-				color = (i <= armor && player.curArmor != null) ? player.curArmor.sprite.color : Color.get(-1, -1);
-				screen.render(i * 8, Screen.h - 24, 3 + 12 * 32, 0);
+				if (i <= armor && player.curArmor != null) {
+					screen.render(i * 8, Screen.h - 24, 3 + 12 * 32, 0);
+				}
 				
 				// renders your current red hearts, or black hearts for damaged health.
-				color = (i < player.health) ? Color.get(-1, 200, 500, 533) : Color.get(-1, 100, 0, 0);
-				screen.render(i * 8, Screen.h - 16, 0 + 12 * 32, 0);
+				if (i < player.health) {
+					screen.render(i * 8, Screen.h - 16, 3072 + (0 + 2 * 32), 0);
+				} else {
+					screen.render(i * 8, Screen.h - 16, 3072 + (0 + 3 * 32), 0);
+				}
 				
 				if (player.staminaRechargeDelay > 0) {
 					// creates the white/gray blinking effect when you run out of stamina.
-					color = (player.staminaRechargeDelay / 4 % 2 == 0) ? Color.get(-1, 555, 0, 0) : Color.get(-1, 110, 0, 0);
-					screen.render(i * 8, Screen.h - 8, 1 + 12 * 32, 0);
+					screen.render(i * 8, Screen.h - 8, 3072 + (1 + 3 * 32), 0);
 				} else {
 					// renders your current stamina, and uncharged gray stamina.
-					color = (i < player.stamina) ? Color.get(-1, 220, 550, 553) : Color.get(-1, 110, 0, 0);
-					screen.render(i * 8, Screen.h - 8, 1 + 12 * 32, 0);
+					if (i < player.stamina) {
+						screen.render(i * 8, Screen.h - 8, 3072 + (1 + 2 * 32), 0);
+					} else {
+						screen.render(i * 8, Screen.h - 8, 3072 + (1 + 3 * 32), 0);
+					}
 				}
 				
 				// renders hunger
@@ -358,7 +366,6 @@ public class Renderer extends Game {
 		int yy = (HEIGHT - 8) / 2; // the height of the box
 		int w = msg.length(); // length of message in characters.
 		int h = 1;
-		int txtcolor = Color.get(-1, 1, 5, 445);
 		
 		// renders the four corners of the box
 		screen.render(xx - 8, yy - 8, 0 + 13 * 32, 0);

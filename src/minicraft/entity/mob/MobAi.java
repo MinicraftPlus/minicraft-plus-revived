@@ -97,7 +97,7 @@ public abstract class MobAi extends Mob {
 		}
 		
 		MobSprite curSprite = sprites[dir.getDir()][(walkDist >> 3) % sprites[dir.getDir()].length];
-		curSprite.render(screen, xo, yo, color);
+		curSprite.render(screen, xo, yo);
 	}
 	
 	@Override

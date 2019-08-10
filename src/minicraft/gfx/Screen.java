@@ -20,17 +20,42 @@ public class Screen {
 	private static final int BIT_MIRROR_Y = 0x02; // binary: 10
 	
 	public int[] pixels; // pixels on the screen
-	
+
+	// DEPRECATED!!!! for backwards compatibility during porting
 	private SpriteSheet sheet; // the sprite sheet used in the Game.
+
+	// since each sheet is 256x256 pixels, each one has 1024 8x8 "tiles"
+	// so 0 is the start of the item sheet 1024 the start of the tile sheet, 2048 the start of the entity sheet,
+	// and 3072 the start of the gui sheet
+	private SpriteSheet itemSheet;
+
+	private SpriteSheet tileSheet;
+
+	private SpriteSheet entitySheet;
+
+	private SpriteSheet guiSheet;
+
+	private SpriteSheet[] sheets;
 	
 	public Screen(SpriteSheet sheet) {
+		this(sheet, sheet, sheet, sheet);
 		this.sheet = sheet;
+	}
+
+	public Screen(SpriteSheet itemSheet, SpriteSheet tileSheet, SpriteSheet entitySheet, SpriteSheet guiSheet) {
+		this.itemSheet = itemSheet;
+		this.tileSheet = tileSheet;
+		this.entitySheet = entitySheet;
+		this.guiSheet = guiSheet;
+
+		sheets = new SpriteSheet[]{itemSheet, tileSheet, entitySheet, guiSheet};
+
 		/// screen width and height are determined by the actual game window size, meaning the screen is only as big as the window.
 		pixels = new int[Screen.w * Screen.h]; // makes new integer array for all the pixels on the screen.
 	}
 	
 	public Screen(Screen model) {
-		this(model.sheet);
+		this(model.itemSheet, model.tileSheet, model.entitySheet, model.guiSheet);
 	}
 	
 	/** Clears all the colors on the screen */
@@ -53,10 +78,14 @@ public class Screen {
 		// determines if the image should be mirrored...
 		boolean mirrorX = (bits & BIT_MIRROR_X) > 0; // horizontally.
 		boolean mirrorY = (bits & BIT_MIRROR_Y) > 0; // vertically.
-		
-		int xTile = tile % 32; // gets x position of the spritesheet "tile"
-		int yTile = tile / 32; // gets y position
-		int toffs = xTile * 8 + yTile * 8 * sheet.width; // Gets the offset of the sprite into the spritesheet pixel array, the 8's represent the size of the box. (8 by 8 pixel sprite boxes)
+
+		int currentSheetIdx = tile >> 10;
+
+		SpriteSheet currentSheet = sheets[currentSheetIdx]; // since tile should be between 0-4095 we can bit shift it to find the proper sheet
+
+		int xTile = (tile - currentSheetIdx * 1024) % 32; // gets x position of the spritesheet "tile"
+		int yTile = (tile - currentSheetIdx * 1024) / 32; // gets y position
+		int toffs = xTile * 8 + yTile * 8 * currentSheet.width; // Gets the offset of the sprite into the spritesheet pixel array, the 8's represent the size of the box. (8 by 8 pixel sprite boxes)
 		
 		/// THIS LOOPS FOR EVERY LITTLE PIXEL
 		for (int y = 0; y < 8; y++) { // Loops 8 times (because of the height of the tile)
@@ -69,7 +98,7 @@ public class Screen {
 				int xs = x; // current x pixel
 				if (mirrorX) xs = 7 - x; // Reverses the pixel for a mirroring effect
 
-				int col = sheet.pixels[toffs + xs + ys * sheet.width]; // Gets the color of the current pixel from the value stored in sheet.pixels.
+				int col = currentSheet.pixels[toffs + xs + ys * currentSheet.width]; // Gets the color of the current pixel from the value stored in the sheet.
 
 				boolean isTransparent = (col >> 12 == 0);
 

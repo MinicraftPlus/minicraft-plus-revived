@@ -43,7 +43,7 @@ public class Color {
 		return (a << 12) + (r << 8) + (g << 4) + (b);
 	}
 	public static int get(int a, int bcd) {
-		return get(a, bcd, bcd, bcd); // just a shortcut.
+		return get(a, bcd, bcd, bcd);
 	}
 	
 	/** converts a 0-5 scale rgb color to an 8-bit rgb color, using base 6 to encode it as a value from 0 to 255. (but instead of representing r, g, or b only, it holds all three in the one number.) */

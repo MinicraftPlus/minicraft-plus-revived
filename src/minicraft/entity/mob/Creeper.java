@@ -27,10 +27,10 @@ public class Creeper extends EnemyMob {
 		sprites[0] = standing;
 	}
 	private static int[] lvlcols = {
-		Color.get(-1, 20, 40, 30),
-		Color.get(-1, 200, 262, 232),
-		Color.get(-1, 200, 272, 222),
-		Color.get(-1, 200, 292, 282)
+		2048 + (4 + 0 * 32),
+		2048 + (4 + 1 * 32),
+		2048 + (4 * 2 * 32),
+		2048 + (4 + 3 * 32)
 	};
 	
 	private static final int MAX_FUSE_TIME = 60;
