@@ -22,7 +22,7 @@ public class Font {
 			int ix = chars.indexOf(msg.charAt(i)); // the current letter in the message loop
 			if (ix >= 0) {
 				// if that character's position is larger than or equal to 0, then render the character on the screen.
-				screen.render(x + i * textWidth(msg.substring(i, i+1)), y, ix + 30 * 32, 0, whiteTint);
+				screen.render(x + i * textWidth(msg.substring(i, i+1)), y, 3072 + (ix + 28 * 32), 0, whiteTint);
 			}
 			/*System.out.println("ix="+ix+"; char="+msg.charAt(i));
 			if(msg.charAt(i) == 'Í') {
