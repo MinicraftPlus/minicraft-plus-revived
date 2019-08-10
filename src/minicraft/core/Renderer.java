@@ -270,12 +270,11 @@ public class Renderer extends Game {
 		// This is the status icons, like health hearts, stamina bolts, and hunger "burgers".
 		if (!isMode("creative")) {
 			for (int i = 0; i < Player.maxStat; i++) {
-				int color;
 				
 				// renders armor
 				int armor = player.armor*Player.maxStat / Player.maxArmor;
 				if (i <= armor && player.curArmor != null) {
-					screen.render(i * 8, Screen.h - 24, 3 + 12 * 32, 0);
+					screen.render(i * 8, Screen.h - 24, 0 + ((player.curArmor.level - 1) + 9 * 32), 0);
 				}
 				
 				// renders your current red hearts, or black hearts for damaged health.
@@ -287,7 +286,11 @@ public class Renderer extends Game {
 				
 				if (player.staminaRechargeDelay > 0) {
 					// creates the white/gray blinking effect when you run out of stamina.
-					screen.render(i * 8, Screen.h - 8, 3072 + (1 + 3 * 32), 0);
+					if (player.staminaRechargeDelay / 4 % 2 == 0) {
+						screen.render(i * 8, Screen.h - 8, 3072 + (1 + 4 * 32), 0);
+					} else {
+						screen.render(i * 8, Screen.h - 8, 3072 + (1 + 3 * 32), 0);
+					}
 				} else {
 					// renders your current stamina, and uncharged gray stamina.
 					if (i < player.stamina) {
@@ -298,8 +301,11 @@ public class Renderer extends Game {
 				}
 				
 				// renders hunger
-				color = (i < player.hunger) ? Color.get(-1, 100, 530, 211) : Color.get(-1, 100, 0, 0);
-				screen.render(i * 8 + (Screen.w - 80), Screen.h - 16, 2 + 12 * 32, 0);
+				if (i < player.hunger) {
+					screen.render(i * 8 + (Screen.w - 80), Screen.h - 16, 3072 + (2 + 2 * 32), 0);
+				} else {
+					screen.render(i * 8 + (Screen.w - 80), Screen.h - 16, 3072 + (2 + 3 * 32), 0);
+				}
 			}
 		}
 		

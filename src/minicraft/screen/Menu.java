@@ -268,7 +268,7 @@ public class Menu {
 				int mirrors = ( x == right ? 1 : 0 ) + ( y == bottom ? 2 : 0 ); // gets mirroring
 				
 
-				screen.render(x, y, spriteoffset + 13*32, mirrors);
+				screen.render(x, y, 3072 + (spriteoffset + 21 * 32), mirrors);
 				
 				if(x < right && x + SpriteSheet.boxWidth > right)
 					x = right - SpriteSheet.boxWidth;
