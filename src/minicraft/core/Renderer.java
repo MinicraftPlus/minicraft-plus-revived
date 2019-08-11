@@ -274,37 +274,37 @@ public class Renderer extends Game {
 				// renders armor
 				int armor = player.armor*Player.maxStat / Player.maxArmor;
 				if (i <= armor && player.curArmor != null) {
-					screen.render(i * 8, Screen.h - 24, 0 + ((player.curArmor.level - 1) + 9 * 32), 0);
+					screen.render(i * 8, Screen.h - 24, (player.curArmor.level - 1) + 9 * 32, 0, 0);
 				}
 				
 				// renders your current red hearts, or black hearts for damaged health.
 				if (i < player.health) {
-					screen.render(i * 8, Screen.h - 16, 3072 + (0 + 2 * 32), 0);
+					screen.render(i * 8, Screen.h - 16, 0 + 2 * 32, 0, 3);
 				} else {
-					screen.render(i * 8, Screen.h - 16, 3072 + (0 + 3 * 32), 0);
+					screen.render(i * 8, Screen.h - 16, 0 + 3 * 32, 0, 3);
 				}
 				
 				if (player.staminaRechargeDelay > 0) {
 					// creates the white/gray blinking effect when you run out of stamina.
 					if (player.staminaRechargeDelay / 4 % 2 == 0) {
-						screen.render(i * 8, Screen.h - 8, 3072 + (1 + 4 * 32), 0);
+						screen.render(i * 8, Screen.h - 8, 1 + 4 * 32, 0, 3);
 					} else {
-						screen.render(i * 8, Screen.h - 8, 3072 + (1 + 3 * 32), 0);
+						screen.render(i * 8, Screen.h - 8, 1 + 3 * 32, 0, 3);
 					}
 				} else {
 					// renders your current stamina, and uncharged gray stamina.
 					if (i < player.stamina) {
-						screen.render(i * 8, Screen.h - 8, 3072 + (1 + 2 * 32), 0);
+						screen.render(i * 8, Screen.h - 8, 1 + 2 * 32, 0, 3);
 					} else {
-						screen.render(i * 8, Screen.h - 8, 3072 + (1 + 3 * 32), 0);
+						screen.render(i * 8, Screen.h - 8, 1 + 3 * 32, 0, 3);
 					}
 				}
 				
 				// renders hunger
 				if (i < player.hunger) {
-					screen.render(i * 8 + (Screen.w - 80), Screen.h - 16, 3072 + (2 + 2 * 32), 0);
+					screen.render(i * 8 + (Screen.w - 80), Screen.h - 16, 2 + 2 * 32, 0, 3);
 				} else {
-					screen.render(i * 8 + (Screen.w - 80), Screen.h - 16, 3072 + (2 + 3 * 32), 0);
+					screen.render(i * 8 + (Screen.w - 80), Screen.h - 16, 2 + 3 * 32, 0, 3);
 				}
 			}
 		}

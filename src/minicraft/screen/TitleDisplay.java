@@ -147,7 +147,7 @@ public class TitleDisplay extends Display {
 		
 		for (int y = 0; y < h; y++) {
 			for (int x = 0; x < w; x++) {
-				screen.render(xo + x * 8, yo + y * 8, 3072 + (x + y * 32), 0);
+				screen.render(xo + x * 8, yo + y * 8, x + y * 32, 0, 3);
 			}
 		}
 		
