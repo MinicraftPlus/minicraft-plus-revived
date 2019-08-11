@@ -103,19 +103,19 @@ public class Sprite {
 	public void renderRow(int r, Screen screen, int x, int y) {
 		Px[] row = spritePixels[r];
 		for(int c = 0; c < row.length; c++) { // loop across through each column
-			screen.render(x + c*8, y, row[c].sheetPos, row[c].mirror); // render the sprite pixel.
+			screen.render(x + c*8, y, row[c].sheetPos, row[c].mirror, row[c].sheetNum); // render the sprite pixel.
 		}
 	}
 	public void renderRow(int r, Screen screen, int x, int y, int mirror) {
 		Px[] row = spritePixels[r];
 		for(int c = 0; c < row.length; c++) { // loop across through each column
-			screen.render(x + c*8, y, row[c].sheetPos, mirror); // render the sprite pixel.
+			screen.render(x + c*8, y, row[c].sheetPos, mirror, row[c].sheetNum); // render the sprite pixel.
 		}
 	}
 	public void renderRow(int r, Screen screen, int x, int y, int mirror, int whiteTint) {
 		Px[] row = spritePixels[r];
 		for (int c = 0; c < row.length; c++) {
-			screen.render(x + c*8, y, row[c].sheetPos, (mirror != -1 ? mirror : row[c].mirror), whiteTint);
+			screen.render(x + c*8, y, row[c].sheetPos, (mirror != -1 ? mirror : row[c].mirror), row[c].sheetNum, whiteTint);
 		}
 	}
 
@@ -138,12 +138,17 @@ public class Sprite {
 	}
 	
 	public static class Px {
-		protected int sheetPos, mirror;
+		protected int sheetPos, mirror, sheetNum;
 		
 		public Px(int sheetX, int sheetY, int mirroring) {
+			this(sheetX, sheetY, 0, mirroring);
+		}
+
+		public Px(int sheetX, int sheetY, int sheetNum, int mirroring) {
 			//pixelX and pixelY are the relative positions each pixel should have relative to the top-left-most pixel of the sprite.
-			sheetPos = sheetX + 32*sheetY;
+			sheetPos = sheetX + 32 * sheetY;
 			mirror = mirroring;
+			this.sheetNum = sheetNum;
 		}
 
 		public String toString() {

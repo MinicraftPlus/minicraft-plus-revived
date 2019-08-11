@@ -27,13 +27,6 @@ public class Screen {
 	// since each sheet is 256x256 pixels, each one has 1024 8x8 "tiles"
 	// so 0 is the start of the item sheet 1024 the start of the tile sheet, 2048 the start of the entity sheet,
 	// and 3072 the start of the gui sheet
-	private SpriteSheet itemSheet;
-
-	private SpriteSheet tileSheet;
-
-	private SpriteSheet entitySheet;
-
-	private SpriteSheet guiSheet;
 
 	private SpriteSheet[] sheets;
 	
@@ -43,10 +36,6 @@ public class Screen {
 	}
 
 	public Screen(SpriteSheet itemSheet, SpriteSheet tileSheet, SpriteSheet entitySheet, SpriteSheet guiSheet) {
-		this.itemSheet = itemSheet;
-		this.tileSheet = tileSheet;
-		this.entitySheet = entitySheet;
-		this.guiSheet = guiSheet;
 
 		sheets = new SpriteSheet[]{itemSheet, tileSheet, entitySheet, guiSheet};
 
@@ -55,7 +44,7 @@ public class Screen {
 	}
 	
 	public Screen(Screen model) {
-		this(model.itemSheet, model.tileSheet, model.entitySheet, model.guiSheet);
+		this(model.sheets[0], model.sheets[1], model.sheets[2], model.sheets[3]);
 	}
 	
 	/** Clears all the colors on the screen */
@@ -68,10 +57,12 @@ public class Screen {
 		System.arraycopy(pixelColors, 0, pixels, 0, Math.min(pixelColors.length, pixels.length));
 	}
 
-	public void render(int xp, int yp, int tile, int bits) { render(xp, yp, tile, bits, -1); }
+	public void render(int xp, int yp, int tile, int bits) { render(xp, yp, tile, bits, 0); }
+
+	public void render(int xp, int yp, int tile, int bits, int sheet) { render(xp, yp, tile, bits, sheet, -1); }
 
 	/** Renders an object from the sprite sheet based on screen coordinates, tile (SpriteSheet location), colors, and bits (for mirroring). I believe that xp and yp refer to the desired position of the upper-left-most pixel. */
-	public void render(int xp, int yp, int tile, int bits, int whiteTint) {
+	public void render(int xp, int yp, int tile, int bits, int sheet, int whiteTint) {
 		// xp and yp are originally in level coordinates, but offset turns them to screen coordinates.
 		xp -= xOffset; //account for screen offset
 		yp -= yOffset;
@@ -79,13 +70,11 @@ public class Screen {
 		boolean mirrorX = (bits & BIT_MIRROR_X) > 0; // horizontally.
 		boolean mirrorY = (bits & BIT_MIRROR_Y) > 0; // vertically.
 
-		int currentSheetIdx = tile >> 10;
+		SpriteSheet currentSheet = sheets[sheet];
 
-		SpriteSheet currentSheet = sheets[currentSheetIdx]; // since tile should be between 0-4095 we can bit shift it to find the proper sheet
-
-		int xTile = (tile - currentSheetIdx * 1024) % 32; // gets x position of the spritesheet "tile"
-		int yTile = (tile - currentSheetIdx * 1024) / 32; // gets y position
-		int toffs = xTile * 8 + yTile * 8 * currentSheet.width; // Gets the offset of the sprite into the spritesheet pixel array, the 8's represent the size of the box. (8 by 8 pixel sprite boxes)
+		int xTile = tile % 32; // gets x position of the spritesheet "tile"
+		int yTile = tile / 32; // gets y position
+		int toffs = xTile * 8 + yTile * 8; // Gets the offset of the sprite into the spritesheet pixel array, the 8's represent the size of the box. (8 by 8 pixel sprite boxes)
 		
 		/// THIS LOOPS FOR EVERY LITTLE PIXEL
 		for (int y = 0; y < 8; y++) { // Loops 8 times (because of the height of the tile)
