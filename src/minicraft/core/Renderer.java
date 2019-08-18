@@ -24,7 +24,6 @@ import minicraft.gfx.SpriteSheet;
 import minicraft.item.Items;
 import minicraft.item.PotionType;
 import minicraft.item.ToolItem;
-import minicraft.item.ToolType;
 import minicraft.level.Level;
 import minicraft.screen.LoadingDisplay;
 import minicraft.screen.RelPos;
@@ -216,11 +215,6 @@ public class Renderer extends Game {
 			FontStyle style = new FontStyle(Color.WHITE).setShadowType(Color.DARK_GRAY, false)
 				.setYPos(Screen.h*2/5).setRelTextPos(RelPos.TOP, false);
 			Font.drawParagraph(notifications, screen, style, 0);
-			/*for (int i = 0; i < notifications.size(); i++) {
-				String note = notifications.get(i);
-				int y = Screen.h - 120 - notifications.size()*8 + i * 8;
-				style.setYPos(y).draw(note, screen);
-			}*/
 		}
 		
 		
@@ -250,10 +244,10 @@ public class Renderer extends Game {
 			}
 		}
 		
-		// FISHING ROD STATUS
-		if (player.activeItem instanceof ToolItem && ((ToolItem)player.activeItem).type == ToolType.FishingRod) {
-			int dura = ((ToolItem)player.activeItem).dur * 100 / ((ToolItem)player.activeItem).type.durability;
-			//if (dura > 100) dura = 100;
+		// TOOL DURABILITY STATUS
+		if (player.activeItem instanceof ToolItem) {
+			ToolItem tool = (ToolItem) player.activeItem;
+			int dura = tool.dur * 100 / (tool.type.durability * (tool.level+1));
 			Font.draw(dura + "%", screen, 164, Screen.h - 16, Color.get(0, 30));
 		}
 		
@@ -353,9 +347,6 @@ public class Renderer extends Game {
 			} else
 				style.setYPos(2);
 			Font.drawParagraph(info, screen, style, 2);
-			/*for(int i = 0; i < info.size(); i++) {
-				style.setYPos(2 + i*10).draw(info.get(i), screen);
-			}*/
 		}
 	}
 	
@@ -384,8 +375,12 @@ public class Renderer extends Game {
 			screen.render(xx - 8, yy + y * 8, 2 + 13 * 32, txtcolor, 0); // ...left part
 			screen.render(xx + w * 8, yy + y * 8, 2 + 13 * 32, txtcolor, 1); // ...right part
 		}
+
+		// cover up black spots from gaps in text
+		screen.render(xx + (w - 7) * 8, yy, 3 + 13 * 32, txtcolor, 0);
+		screen.render(xx + (w - 10) * 8, yy, 3 + 13 * 32, txtcolor, 0);
 		
-		//renders the focus nagger text with a flash effect...
+		// renders the focus nagger text with a flash effect...
 		if ((Updater.tickCount / 20) % 2 == 0) // ...medium yellow color
 			Font.draw(msg, screen, xx, yy, Color.get(5, 333));
 		else // ...bright yellow color

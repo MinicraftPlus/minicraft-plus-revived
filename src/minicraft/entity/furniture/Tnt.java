@@ -22,7 +22,6 @@ import minicraft.level.tile.Tiles;
 public class Tnt extends Furniture implements ActionListener {
 	private static int FUSE_TIME = 90;
 	private static int BLAST_RADIUS = 32;
-	//private static int BLAST_RADIUSTWO = 2000;
 	private static int BLAST_DAMAGE = 30;
 	
 	private static int color = Color.get(-1, 200, 300, 555);
@@ -99,7 +98,11 @@ public class Tnt extends Furniture implements ActionListener {
 		explodeTimer.stop();
 		int xt = x >> 4;
 		int yt = (y - 2) >> 4;
-		levelSave.setAreaTiles(xt, yt, 1, Tiles.get("hole"), 0);
+		if (levelSave.depth != 1) {
+			levelSave.setAreaTiles(xt, yt, 1, Tiles.get("hole"), 0);
+		} else {
+			levelSave.setAreaTiles(xt, yt, 1, Tiles.get("Infinite Fall"), 0);
+		}
 		levelSave = null;
 	}
 	

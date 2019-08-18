@@ -1,5 +1,11 @@
 package minicraft.core;
 
+import javax.swing.JOptionPane;
+import javax.swing.JScrollPane;
+import javax.swing.JTextArea;
+
+import java.io.PrintWriter;
+import java.io.StringWriter;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -26,7 +32,7 @@ public class Game {
 	public static boolean HAS_GUI = true;
 	
 	public static final String NAME = "Minicraft Plus"; // This is the name on the application window
-	public static final Version VERSION = new Version("2.0.4");
+	public static final Version VERSION = new Version("2.0.6-dev3");
 	
 	public static InputHandler input; // input used in Game, Player, and just about all the *Menu classes.
 	public static Player player;
@@ -41,7 +47,10 @@ public class Game {
 	// Sets the current menu.
 	public static void setMenu(@Nullable Display display) { newMenu = display; }
 	public static void exitMenu() {
-		if(menu == null) return; // no action required; cannot exit from no menu
+		if(menu == null) {
+			if (debug) System.out.println("Game.exitMenu(): No menu found, returning!");
+			return; // no action required; cannot exit from no menu
+		}
 		Sound.back.play();
 		newMenu = menu.getParent();
 	}
@@ -82,6 +91,19 @@ public class Game {
 	
 	
 	public static void main(String[] args) {
+		Thread.setDefaultUncaughtExceptionHandler((thread, throwable) -> {
+			throwable.printStackTrace();
+			
+			StringWriter string = new StringWriter();
+			PrintWriter printer = new PrintWriter(string);
+			throwable.printStackTrace(printer);
+			
+			JTextArea errorDisplay = new JTextArea(string.toString());
+			errorDisplay.setEditable(false);
+			JScrollPane errorPane = new JScrollPane(errorDisplay);
+			JOptionPane.showMessageDialog(null, errorPane, "An error has occurred", JOptionPane.ERROR_MESSAGE);
+		});
+		
 		Initializer.parseArgs(args);
 		
 		input = new InputHandler(Renderer.canvas);
@@ -96,9 +118,9 @@ public class Game {
 		
 		
 		if(Network.autoclient)
-			setMenu(new MultiplayerDisplay( "localhost"));
+			setMenu(new MultiplayerDisplay("localhost"));
 		else if(!HAS_GUI)
-			Network.startMultiplayerServer();//setMenu(null);//new WorldSelectMenu());
+			Network.startMultiplayerServer();
 		else
 			setMenu(new TitleDisplay()); //sets menu to the title screen.
 		

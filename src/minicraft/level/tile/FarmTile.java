@@ -1,5 +1,6 @@
 package minicraft.level.tile;
 
+import minicraft.core.io.Sound;
 import minicraft.entity.Direction;
 import minicraft.entity.Entity;
 import minicraft.entity.mob.Player;
@@ -21,8 +22,9 @@ public class FarmTile extends Tile {
 		if (item instanceof ToolItem) {
 			ToolItem tool = (ToolItem) item;
 			if (tool.type == ToolType.Shovel) {
-				if (player.payStamina(4 - tool.level)) {
+				if (player.payStamina(4 - tool.level) && tool.payDurability()) {
 					level.setTile(xt, yt, Tiles.get("dirt"));
+					Sound.monsterHurt.play();
 					return true;
 				}
 			}

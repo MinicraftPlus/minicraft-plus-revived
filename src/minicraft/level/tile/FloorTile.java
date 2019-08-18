@@ -36,15 +36,19 @@ public class FloorTile extends Tile {
 		if (item instanceof ToolItem) {
 			ToolItem tool = (ToolItem) item;
 			if (tool.type == ToolType.Pickaxe) {
-				if (player.payStamina(4 - tool.level)) {
-					level.setTile(xt, yt, Tiles.get("hole"));
+				if (player.payStamina(4 - tool.level) && tool.payDurability()) {
+					if (level.depth == 1) {
+						level.setTile(xt, yt, Tiles.get("Cloud"));
+					} else {
+						level.setTile(xt, yt, Tiles.get("hole"));
+					}
 					Item drop;
 					switch(type) {
 						case Wood: drop = Items.get("Plank"); break;
 						default: drop = Items.get(type.name()+" Brick"); break;
 					}
-					level.dropItem(xt*16+8, yt*16+8, drop);
 					Sound.monsterHurt.play();
+					level.dropItem(xt*16+8, yt*16+8, drop);
 					return true;
 				}
 			}

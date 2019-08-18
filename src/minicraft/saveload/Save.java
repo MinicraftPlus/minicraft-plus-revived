@@ -31,10 +31,7 @@ import minicraft.entity.mob.Player;
 import minicraft.entity.mob.RemotePlayer;
 import minicraft.entity.particle.Particle;
 import minicraft.entity.particle.TextParticle;
-import minicraft.item.Inventory;
-import minicraft.item.Item;
-import minicraft.item.PotionType;
-import minicraft.item.StackableItem;
+import minicraft.item.*;
 import minicraft.network.MinicraftServer;
 import minicraft.screen.LoadingDisplay;
 import minicraft.screen.MultiplayerDisplay;
@@ -201,7 +198,6 @@ public class Save {
 	
 	private void writeServerConfig(String filename, MinicraftServer server) {
 		data.add(String.valueOf(server.getPlayerCap()));
-		//data.add(String.join(":", server.getOpNames().toArray(new String[0])));
 		
 		writeToFile(location + filename + extension, data);
 	}
@@ -250,10 +246,8 @@ public class Save {
 		data.add(String.valueOf(player.health));
 		data.add(String.valueOf(player.hunger));
 		data.add(String.valueOf(player.armor));
-		if(player.curArmor != null) {
-			data.add(String.valueOf(player.armorDamageBuffer));
-			data.add(String.valueOf(player.curArmor.getName()));
-		}
+		data.add(String.valueOf(player.armorDamageBuffer));
+		data.add(String.valueOf(player.curArmor == null ? "NULL" : player.curArmor.getName()));
 		data.add(String.valueOf(player.getScore()));
 		data.add(String.valueOf(Game.currentLevel));
 		
@@ -278,21 +272,13 @@ public class Save {
 	public static void writeInventory(Player player, List<String> data) {
 		data.clear();
 		if(player.activeItem != null) {
-			if(player.activeItem instanceof StackableItem) {
-				data.add(player.activeItem.getName() + ";" + ((StackableItem)player.activeItem).count);
-			} else {
-				data.add(player.activeItem.getName());
-			}
+			data.add(player.activeItem.getData());
 		}
 		
 		Inventory inventory = player.getInventory();
 		
 		for(int i = 0; i < inventory.invSize(); i++) {
-			if(inventory.get(i) instanceof StackableItem) {
-				data.add(inventory.get(i).getName() + ";" + ((StackableItem)inventory.get(i)).count);
-			} else {
-				data.add(inventory.get(i).getName());
-			}
+			data.add(inventory.get(i).getData());
 		}
 	}
 	
@@ -311,7 +297,7 @@ public class Save {
 	
 	public static String writeEntity(Entity e, boolean isLocalSave) {
 		String name = e.getClass().getName();
-		name = name.substring(name.lastIndexOf(".")+1);
+		name = name.substring(name.lastIndexOf('.')+1);
 		StringBuilder extradata = new StringBuilder();
 		
 		// don't even write ItemEntities or particle effects; Spark... will probably is saved, eventually; it presents an unfair cheat to remove the sparks by reloading the Game.
@@ -340,9 +326,7 @@ public class Save {
 			
 			for(int ii = 0; ii < chest.getInventory().invSize(); ii++) {
 				Item item = chest.getInventory().get(ii);
-				extradata.append(":").append(item.getName());
-				if(item instanceof StackableItem)
-					extradata.append(";").append(chest.getInventory().count(item));
+				extradata.append(":").append(item.getData());
 			}
 			
 			if(chest instanceof DeathChest) extradata.append(":").append(((DeathChest) chest).time);

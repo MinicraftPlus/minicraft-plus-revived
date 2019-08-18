@@ -90,7 +90,7 @@ public class BookDisplay extends Display {
 	public void tick(InputHandler input) {
 		if (input.getKey("menu").clicked || input.getKey("exit").clicked)
 			Game.exitMenu(); // this is what closes the book; TODO if books were editable, I would probably remake the book here with the edited pages.
-		if (input.getKey("left").clicked) turnPage(-1); // this is what turns the page back
-		if (input.getKey("right").clicked) turnPage(1); // this is what turns the page forward
+		if (input.getKey("cursor-left").clicked) turnPage(-1); // this is what turns the page back
+		if (input.getKey("cursor-right").clicked) turnPage(1); // this is what turns the page forward
 	}
 }

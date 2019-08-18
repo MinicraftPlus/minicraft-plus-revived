@@ -1,5 +1,6 @@
 package minicraft.level.tile;
 
+import minicraft.core.io.Sound;
 import minicraft.entity.Direction;
 import minicraft.entity.mob.Mob;
 import minicraft.entity.mob.Player;
@@ -21,6 +22,21 @@ public class FlowerTile extends Tile {
 		connectsToGrass = true;
 		maySpawn = true;
 	}
+
+	public void tick(Level level, int xt, int yt) {
+		// TODO revise this method.
+		if (random.nextInt(30) != 0) return;
+
+		int xn = xt;
+		int yn = yt;
+
+		if (random.nextBoolean()) xn += random.nextInt(2) * 2 - 1;
+		else yn += random.nextInt(2) * 2 - 1;
+
+		if (level.getTile(xn, yn) == Tiles.get("dirt")) {
+			level.setTile(xn, yn, Tiles.get("grass"));
+		}
+	}
 	
 	public void render(Screen screen, Level level, int x, int y) {
 		Tiles.get("grass").render(screen, level, x, y);
@@ -39,10 +55,11 @@ public class FlowerTile extends Tile {
 		if (item instanceof ToolItem) {
 			ToolItem tool = (ToolItem) item;
 			if (tool.type == ToolType.Shovel) {
-				if (player.payStamina(2 - tool.level)) {
+				if (player.payStamina(2 - tool.level) && tool.payDurability()) {
+					level.setTile(x, y, Tiles.get("grass"));
+					Sound.monsterHurt.play();
 					level.dropItem(x*16+8, y*16+8, Items.get("Flower"));
 					level.dropItem(x*16+8, y*16+8, Items.get("Rose"));
-					level.setTile(x, y, Tiles.get("grass"));
 					return true;
 				}
 			}
@@ -50,9 +67,10 @@ public class FlowerTile extends Tile {
 		return false;
 	}
 
-	public void hurt(Level level, int x, int y, Mob source, int dmg, Direction attackDir) {
+	public boolean hurt(Level level, int x, int y, Mob source, int dmg, Direction attackDir) {
 		level.dropItem(x*16+8, y*16+8, 1, 2, Items.get("Flower"));
 		level.dropItem(x*16+8, y*16+8, 0, 1, Items.get("Rose"));
 		level.setTile(x, y, Tiles.get("grass"));
+		return true;
 	}
 }

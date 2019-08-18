@@ -162,18 +162,6 @@ public class Initializer extends Game {
 		frame.setVisible(true);
 	}
 	
-	
-	static void setupExceptionHandler() {
-		/*Thread.currentThread().setUncaughtExceptionHandler(new Thread.UncaughtExceptionHandler() {
-			public void uncaughtException(Thread t, Throwable e) {
-				String exceptionTrace = "Exception in thread " + t + ":P\n";
-				exceptionTrace += getExceptionTrace(e);
-				System.err.println(exceptionTrace);
-				javax.swing.JOptionPane.showInternalMessageDialog(null, exceptionTrace, "Fatal Error", javax.swing.JOptionPane.ERROR_MESSAGE);
-			}
-		});*/
-	}
-	
 	/**
 	 * Provides a String representation of the provided Throwable's stack trace
 	 * that is extracted via PrintStream.

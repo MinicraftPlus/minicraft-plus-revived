@@ -2,6 +2,7 @@ package minicraft.level.tile;
 
 import minicraft.core.Game;
 import minicraft.core.io.Settings;
+import minicraft.core.io.Sound;
 import minicraft.entity.Direction;
 import minicraft.entity.Entity;
 import minicraft.entity.mob.Mob;
@@ -44,14 +45,16 @@ public class RockTile extends Tile {
 		return false;
 	}
 	
-	public void hurt(Level level, int x, int y, Mob source, int dmg, Direction attackDir) {
+	public boolean hurt(Level level, int x, int y, Mob source, int dmg, Direction attackDir) {
 		hurt(level, x, y, 1);
+		return true;
 	}
 
 	public boolean interact(Level level, int xt, int yt, Player player, Item item, Direction attackDir) {
+		// creative mode can just act like survival here
 		if (item instanceof ToolItem) {
 			ToolItem tool = (ToolItem) item;
-			if (tool.type == ToolType.Pickaxe && player.payStamina(4 - tool.level)) {
+			if (tool.type == ToolType.Pickaxe && player.payStamina(4 - tool.level) && tool.payDurability()) {
 				coallvl = 1;
 				hurt(level, xt, yt, random.nextInt(10) + (tool.level) * 5 + 10);
 				return true;
@@ -68,6 +71,8 @@ public class RockTile extends Tile {
 			coallvl = 1;
 		}
 		level.add(new SmashParticle(x * 16, y * 16));
+		Sound.monsterHurt.play();
+
 		level.add(new TextParticle("" + dmg, x * 16 + 8, y * 16 + 8, Color.RED));
 		if (damage >= rockHealth) {
 			int count = random.nextInt(1) + 0;

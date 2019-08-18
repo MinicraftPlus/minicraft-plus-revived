@@ -1,0 +1,5 @@
+33:cloth,leather
+20:leather
+33:bone
+20:slime
+10:wood

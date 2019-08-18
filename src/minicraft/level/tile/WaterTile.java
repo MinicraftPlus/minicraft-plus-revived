@@ -11,11 +11,11 @@ public class WaterTile extends Tile {
 	private ConnectorSprite sprite = new ConnectorSprite(WaterTile.class, new Sprite(14, 0, 3, 3, Color.get(3, 105, 211, 321), 3), Sprite.dots(Color.get(005, 105, 115, 115)))
 	{
 		public boolean connectsTo(Tile tile, boolean isSide) {
-			return tile.connectsToWater;
+			return tile.connectsToFluid;
 		}
 		
 		public int getSparseColor(Tile tile, int origCol) {
-			if(!tile.connectsToWater && tile.connectsToSand) {
+			if(!tile.connectsToFluid && tile.connectsToSand) {
 				//System.out.println("water tile colored as sand with " + tile.name);
 				return Color.get(3, 105, 440, 550);
 			} else
@@ -27,7 +27,7 @@ public class WaterTile extends Tile {
 		super(name, (ConnectorSprite)null);
 		csprite = sprite;
 		connectsToSand = true;
-		connectsToWater = true;
+		connectsToFluid = true;
 	}
 	
 	public void render(Screen screen, Level level, int x, int y) {
@@ -51,8 +51,14 @@ public class WaterTile extends Tile {
 		if (level.getTile(xn, yn) == Tiles.get("hole")) {
 			level.setTile(xn, yn, this);
 		}
-		if (level.getTile(xn, yn) == Tiles.get("lava")) {
-			level.setTile(xn, yn, Tiles.get("Stone Bricks"));
+		// these set only the non-diagonally adjacent lava tiles to obsidian
+		for (int x = -1; x < 2; x++) {
+			if (level.getTile(xt + x, yt) == Tiles.get("lava"))
+				level.setTile(xt + x, yt, Tiles.get("obsidian"));
+		}
+		for (int y = -1; y < 2; y++) {
+			if (level.getTile(xt, yt + y) == Tiles.get("lava"))
+				level.setTile(xt, yt + y, Tiles.get("obsidian"));
 		}
 	}
 }

@@ -1,0 +1,4 @@
+33:gunpowder
+20:gem
+20:book
+15:gold apple

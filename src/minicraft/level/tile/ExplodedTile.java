@@ -19,8 +19,7 @@ public class ExplodedTile extends Tile {
 	protected ExplodedTile(String name) {
 		super(name, sprite);
 		connectsToSand = true;
-		connectsToWater = true;
-		connectsToLava = true;
+		connectsToFluid = true;
 	}
 	
 	public void steppedOn(Level level, int x, int y, Entity entity) {

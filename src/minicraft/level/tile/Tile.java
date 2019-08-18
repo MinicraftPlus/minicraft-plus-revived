@@ -29,8 +29,7 @@ public abstract class Tile {
 	
 	public boolean connectsToGrass = false;
 	public boolean connectsToSand = false;
-	public boolean connectsToLava = false;
-	public boolean connectsToWater = false;
+	public boolean connectsToFluid = false;
 	public int light;
 	protected boolean maySpawn;
 	
@@ -75,8 +74,6 @@ public abstract class Tile {
 	
 	public boolean maySpawn() { return maySpawn; }
 	
-	//public abstract void updateSprite();
-	
 	public int getConnectColor(Level level) {
 		int scolor;
 		if(sprite != null)
@@ -99,7 +96,7 @@ public abstract class Tile {
 		return 0;
 	}
 	
-	public void hurt(Level level, int x, int y, Mob source, int dmg, Direction attackDir) {}
+	public boolean hurt(Level level, int x, int y, Mob source, int dmg, Direction attackDir) { return false; }
 	public void hurt(Level level, int x, int y, int dmg) {}
 	
 	/** What happens when you run into the tile (ex: run into a cactus) */
@@ -117,7 +114,7 @@ public abstract class Tile {
 	}
 	
 	/** Sees if the tile connects to Water or Lava. */
-	public boolean connectsToLiquid() { return connectsToWater || connectsToLava; }
+	public boolean connectsToLiquid() { return connectsToFluid; }
 	
 	public int getData(String data) {
 		try {

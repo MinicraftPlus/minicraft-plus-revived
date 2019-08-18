@@ -159,14 +159,6 @@ public class MinicraftServer extends Thread implements MinicraftProtocol {
 	private RemotePlayer getIfPlayer(Entity e) {
 		if(e instanceof RemotePlayer) {
 			return (RemotePlayer) e;
-			// this method is only used to remove a player from an array, so it is probably better that is doesn't check...
-			/*RemotePlayer given = (RemotePlayer) e;
-			MinicraftServerThread filed = getAssociatedThread(given);
-			if(!filed.isValid()) {
-				System.err.println("SERVER encountered a RemotePlayer not matched in the thread list: " + given);
-				return null;
-			}
-			return filed.getClient();*/
 		}
 		else
 			return null;
@@ -328,6 +320,11 @@ public class MinicraftServer extends Thread implements MinicraftProtocol {
 		for(MinicraftServerThread thread: getThreads())
 			thread.sendPlayerHurt(eid, damage, attackDir);
 	}
+
+	public void broadcastStopFishing(int eid) {
+		for (MinicraftServerThread thread: getThreads())
+			thread.sendStopFishing(eid);
+	}
 	
 	public void updateGameVars() { updateGameVars(getThreads()); }
 	public void updateGameVars(MinicraftServerThread sendTo) {
@@ -415,12 +412,6 @@ public class MinicraftServer extends Thread implements MinicraftProtocol {
 					serverThread.sendError("Account is already logged in to server");
 					return false;
 				}
-				/*while((oldThread = getAssociatedThread(username)) != null) {
-					if(oldThread.isConnected())
-						oldThread.sendError("User");
-					oldThread.endConnection();
-					oldThread.getClient().remove();
-				}*/
 				
 				/// versions match, and username is unique; make client player
 				clientPlayer.setUsername(username);
@@ -507,8 +498,6 @@ public class MinicraftServer extends Thread implements MinicraftProtocol {
 					return false;
 				}
 				
-				// move the associated player to the level they requested -- they shouldn't be requesting it if they aren't going to transfer to it.
-				World.levels[levelidx].add(clientPlayer);
 				// if it's the same level, it will cancel out.
 				
 				byte[] tiledata = new byte[World.levels[levelidx].tiles.length*2];
@@ -524,6 +513,14 @@ public class MinicraftServer extends Thread implements MinicraftProtocol {
 				}
 				serverThread.sendData(InputType.TILES, tiledataString.substring(0, tiledataString.length()-1));
 				serverThread.sendCachedPackets();
+				
+				// move the associated player to the level they requested -- they shouldn't be requesting it if they aren't going to transfer to it.
+				// moved to after the tile data is sent so that the client doesn't try to add anything to the level before it gets created.
+				Level next = World.levels[levelidx];
+				if(clientPlayer.getLevel() != null && !next.getTile(clientPlayer.x >> 4, clientPlayer.y >> 4).mayPass(next, clientPlayer.x >> 4, clientPlayer.y >> 4, clientPlayer))
+					clientPlayer.findStartPos(next, false);
+				
+				next.add(clientPlayer);
 				
 				/// send back the entities in the level specified.
 				

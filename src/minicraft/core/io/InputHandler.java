@@ -9,8 +9,9 @@ import java.util.HashMap;
 import java.util.LinkedHashMap;
 
 import minicraft.core.Game;
+import org.jetbrains.annotations.Nullable;
 
-public class InputHandler implements /*MouseListener, */KeyListener {
+public class InputHandler implements KeyListener {
 	/**
 		This class handles key presses; this also implements MouseListener... but I have no idea why.
 		It's not used in any way. Ever. As far as I know. Anyway, here are a few tips about this class:
@@ -73,13 +74,6 @@ public class InputHandler implements /*MouseListener, */KeyListener {
 	private String lastKeyTyped = ""; // Used for things like typing world names.
 	private String keyTypedBuffer = ""; // used to store the last key typed before putting it into the main var during tick().
 	
-	// mouse stuff that's never used
-	/*public List<Mouse> mouse = new ArrayList<>();
-	public Mouse one = new Mouse();
-	public Mouse two = new Mouse();
-	public Mouse tri = new Mouse();
-	*/
-	
 	public InputHandler() {
 		keymap = new LinkedHashMap<>(); //stores custom key name with physical key name in keyboard.
 		keyboard = new HashMap<>(); //stores physical keyboard keys; auto-generated :D
@@ -98,13 +92,20 @@ public class InputHandler implements /*MouseListener, */KeyListener {
 	}
 	
 	private void initKeyMap() {
-		keymap.put("UP", "UP|W"); //up action references up arrow key
-		keymap.put("DOWN", "DOWN|S"); //move down action references down arrow key
-		keymap.put("LEFT", "LEFT|A"); //move left action references left arrow key
-		keymap.put("RIGHT", "RIGHT|D"); //move right action references right arrow key
+		keymap.put("MOVE-UP", "UP|W");
+		keymap.put("MOVE-DOWN", "DOWN|S");
+		keymap.put("MOVE-LEFT", "LEFT|A");
+		keymap.put("MOVE-RIGHT", "RIGHT|D");
+
+		keymap.put("CURSOR-UP", "UP");
+		keymap.put("CURSOR-DOWN", "DOWN");
+		keymap.put("CURSOR-LEFT", "LEFT");
+		keymap.put("CURSOR-RIGHT", "RIGHT");
 		
 		keymap.put("SELECT", "ENTER");
 		keymap.put("EXIT", "ESCAPE");
+
+		keymap.put("QUICKSAVE", "R"); // saves the game while still playing
 		
 		keymap.put("ATTACK", "C|SPACE|ENTER"); //attack action references "C" key
 		keymap.put("MENU", "X|E"); //and so on... menu does various things.
@@ -114,9 +115,6 @@ public class InputHandler implements /*MouseListener, */KeyListener {
 		keymap.put("DROP-STACK", "SHIFT-Q"); // drops the item in your hand, or selected in your inventory, entirely; even if it's a stack.
 		
 		keymap.put("PAUSE", "ESCAPE"); // pause the Game.
-		//keymap.put("SETHOME", "SHIFT-H"); // set your home.
-		//keymap.put("HOME", "H"); // go to set home.
-		//keymap.put("SAVE", "R");
 		
 		keymap.put("SURVIVAL=debug", "SHIFT-S|SHIFT-1");
 		keymap.put("CREATIVE=debug", "SHIFT-C|SHIFT-2");
@@ -133,7 +131,6 @@ public class InputHandler implements /*MouseListener, */KeyListener {
 	
 	/** Processes each key one by one, in keyboard. */
 	public void tick() {
-		//ticks++;
 		lastKeyTyped = keyTypedBuffer;
 		keyTypedBuffer = "";
 		synchronized ("lock") {
@@ -154,7 +151,6 @@ public class InputHandler implements /*MouseListener, */KeyListener {
 		private boolean sticky;
 		
 		boolean stayDown;
-		private int inactiveTime;
 		
 		public Key() { this(false); }
 		public Key(boolean stayDown) {
@@ -177,9 +173,6 @@ public class InputHandler implements /*MouseListener, */KeyListener {
 				if (!sticky) sticky = presses > 3;
 				else sticky = down;
 				clicked = sticky; // set clicked to false, since we're done processing; UNLESS the key has been held down for a bit, and hasn't yet been released.
-				
-				//if(down && !clicked)
-					//inactiveTime++;
 				
 				//reset the presses and absorbs, to ensure they don't get too high, or something:
 				presses = 0;
@@ -308,13 +301,12 @@ public class InputHandler implements /*MouseListener, */KeyListener {
 		return key; // return the Key object.
 	}
 	
-	/// this method preovides a way to press physical keys without actually generating a key event.
-	public void pressKey(String keyname, boolean pressed) {
+	/// this method provides a way to press physical keys without actually generating a key event.
+	/*public void pressKey(String keyname, boolean pressed) {
 		Key key = getPhysKey(keyname);
 		key.toggle(pressed);
-		//key.down = key.clicked = pressed;
 		//System.out.println("key " + keyname + " is clicked: " + getPhysKey(keyname).clicked);
-	}
+	}*/
 	
 	public ArrayList<String> getAllPressedKeys() {
 		ArrayList<String> keys = new ArrayList<>();
@@ -403,33 +395,8 @@ public class InputHandler implements /*MouseListener, */KeyListener {
 		keyTypedBuffer = String.valueOf(ke.getKeyChar());
 	}
 	
-	/*
-	//Mouse class! That...never really ever gets used... and so shall not be commented...
-	public class Mouse {
-		public int pressesd, absorbsd; //d=down?
-		public boolean click, down;
-
-		public Mouse() {
-			mouse.add(this);
-		}
-
-		public void toggle(boolean clickd) {
-			if (clickd != down) down = clickd;
-			if (clickd) pressesd++;
-		}
-		
-		public void tick() {
-			if (absorbsd < pressesd) {
-				absorbsd++;
-				click = true;
-			} else {
-				click = false;
-			}
-		}
-	}*/
-	
 	private static final String control = "\\p{Print}"; // should match only printable characters.
-	public String addKeyTyped(String typing, String pattern) {
+	public String addKeyTyped(String typing, @Nullable String pattern) {
 		if(lastKeyTyped.length() > 0) {
 			String letter = lastKeyTyped;
 			lastKeyTyped = "";
@@ -444,20 +411,4 @@ public class InputHandler implements /*MouseListener, */KeyListener {
 		
 		return typing;
 	}
-	
-	
-	
-	/*//called by MouseListener methods.
-	private void click(MouseEvent e, boolean clickd) {
-		if (e.getButton() == MouseEvent.BUTTON1) one.toggle(clickd);
-		if (e.getButton() == MouseEvent.BUTTON2) two.toggle(clickd);
-		if (e.getButton() == MouseEvent.BUTTON3) tri.toggle(clickd);
-	}
-	
-	public void mouseClicked(MouseEvent e) {}
-	public void mouseEntered(MouseEvent e) {}
-	public void mouseExited(MouseEvent e) {}
-	
-	public void mousePressed(MouseEvent e) { click(e, true); }
-	public void mouseReleased(MouseEvent e) { click(e, false); }*/
 }

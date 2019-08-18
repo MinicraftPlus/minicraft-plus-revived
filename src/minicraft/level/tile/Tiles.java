@@ -54,6 +54,7 @@ public final class Tiles {
 		tiles.set(27, new DoorTile(Tile.Material.Stone));
 		tiles.set(28, new DoorTile(Tile.Material.Obsidian));
 		tiles.set(35, new WoolTile());
+		tiles.set(36, new PathTile("Path"));
 		
 		for(int i = 0; i < tiles.size(); i++) {
 			if(tiles.get(i) == null) continue;
@@ -182,10 +183,8 @@ public final class Tiles {
 			isTorch = true;
 			name = name.substring(6); // cuts off torch prefix.
 		}
-		
-		//String data = "";
+
 		if(name.contains("_")) {
-			//data = name.substring(name.indexOf("_")+1);
 			name = name.substring(0, name.indexOf("_"));
 		}
 		

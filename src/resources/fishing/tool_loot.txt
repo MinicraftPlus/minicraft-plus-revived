@@ -1,0 +1,5 @@
+50:wood pickaxe,wood axe,wood shovel
+50:rock pickaxe,rock axe,rock shovel
+25:iron pickaxe,iron axe,iron shovel
+25:gold pickaxe,gold axe,gold shovel
+25:gem pickaxe,gem axe,gem shovel

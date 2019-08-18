@@ -55,13 +55,18 @@ public class BucketItem extends StackableItem {
 	public boolean interactOn(Tile tile, Level level, int xt, int yt, Player player, Direction attackDir) {
 		Fill fill = getFilling(tile);
 		if(fill == null) return false;
-		boolean success = false;
-		if(fill == Fill.Empty && filling != Fill.Empty) {
-			level.setTile(xt, yt, filling.contained);
-			if(!Game.isMode("creative")) player.activeItem = editBucket(player, Fill.Empty);
-			return true;
-		}
-		else if(filling == Fill.Empty) {
+
+		if(filling != Fill.Empty) {
+			if(fill == Fill.Empty) {
+				level.setTile(xt, yt, filling.contained);
+				if (!Game.isMode("creative")) player.activeItem = editBucket(player, Fill.Empty);
+				return true;
+			} else if (fill == Fill.Lava && filling == Fill.Water) {
+				level.setTile(xt, yt, Tiles.get("Obsidian"));
+				if (!Game.isMode("creative")) player.activeItem = editBucket(player, Fill.Empty);
+				return true;
+			}
+		} else { // this is an empty bucket
 			level.setTile(xt, yt, Tiles.get("hole"));
 			if(!Game.isMode("creative")) player.activeItem = editBucket(player, fill);
 			return true;

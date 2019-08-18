@@ -37,8 +37,6 @@ public abstract class MinicraftConnection extends Thread implements MinicraftPro
 		}
 	}
 	
-	//static int initCount = 0;
-	
 	public void run() {
 		if (Game.debug) System.out.println("starting " + this);
 		

@@ -2,6 +2,7 @@ package minicraft.level.tile;
 
 import minicraft.core.Game;
 import minicraft.core.io.Settings;
+import minicraft.core.io.Sound;
 import minicraft.entity.Direction;
 import minicraft.entity.Entity;
 import minicraft.entity.mob.Mob;
@@ -30,7 +31,7 @@ public class CactusTile extends Tile {
 		return false;
 	}
 
-	public void hurt(Level level, int x, int y, Mob source, int dmg, Direction attackDir) {
+	public boolean hurt(Level level, int x, int y, Mob source, int dmg, Direction attackDir) {
 		int damage = level.getData(x, y) + dmg;
 		int cHealth = 10;
 		if (Game.isMode("creative")) dmg = damage = cHealth;
@@ -39,11 +40,13 @@ public class CactusTile extends Tile {
 		
 		if (damage >= cHealth) {
 			//int count = random.nextInt(2) + 2;
-			level.dropItem(x*16+8, y*16+8, 2, 4, Items.get("Cactus"));
 			level.setTile(x, y, Tiles.get("sand"));
+			Sound.monsterHurt.play();
+			level.dropItem(x*16+8, y*16+8, 2, 4, Items.get("Cactus"));
 		} else {
 			level.setData(x, y, damage);
 		}
+		return true;
 	}
 	
 	public void bumpedInto(Level level, int x, int y, Entity entity) {

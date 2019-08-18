@@ -31,7 +31,6 @@ public abstract class Item {
 	
 	/// TODO this method (and Menu.renderItemList) is actually slowly getting depricated; I just haven't gotten around to updating all the menus yet.
 	/** Renders an item (sprite & name) in an inventory */
-	//public void renderInventory(Screen screen, int x, int y) { renderInventory(screen, x, y, true); }
 	public void renderInventory(Screen screen, int x, int y, boolean ininv) {
 		String dispName = getDisplayName();
 		sprite.render(screen, x, y);
@@ -61,9 +60,7 @@ public abstract class Item {
 	public boolean canAttack() {
 		return false;
 	}
-	
-	//@Override
-	//public boolean equals(Object other) { return other instanceof Item && this.equals((Item)other); }
+
 	/** Sees if an item equals another item */
 	public boolean equals(Item item) {
 		return item != null && item.getClass().equals(getClass()) && item.name.equals(name);

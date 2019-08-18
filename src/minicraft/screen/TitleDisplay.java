@@ -1,5 +1,7 @@
 package minicraft.screen;
 
+import java.time.LocalDateTime;
+import java.time.Month;
 import java.util.Random;
 
 import minicraft.core.Game;
@@ -64,24 +66,30 @@ public class TitleDisplay extends Display {
 	public void init(Display parent) {
 		super.init(null); // The TitleScreen never has a parent.
 		Renderer.readyToRenderGameplay = false;
-		
+
 		// check version
 		checkVersion();
-		
+
 		/// this is useful to just ensure that everything is really reset as it should be. 
-		if(Game.server != null) {
+		if (Game.server != null) {
 			if (Game.debug) System.out.println("wrapping up loose server ends");
 			Game.server.endConnection();
 			Game.server = null;
 		}
-		if(Game.client != null) {
+		if (Game.client != null) {
 			if (Game.debug) System.out.println("wrapping up loose client ends");
 			Game.client.endConnection();
 			Game.client = null;
 		}
 		Game.ISONLINE = false;
-		
-		rand = random.nextInt(splashes.length);
+
+		LocalDateTime time = LocalDateTime.now();
+		if (time.getMonth() == Month.DECEMBER) {
+			if (time.getDayOfMonth() == 19) rand = 1;
+			if (time.getDayOfMonth() == 25) rand = 2;
+		} else {
+			rand = random.nextInt(splashes.length - 3) + 3;
+		}
 		
 		World.levels = new Level[World.levels.length];
 		
@@ -115,7 +123,7 @@ public class TitleDisplay extends Display {
 	
 	@Override
 	public void tick(InputHandler input) {
-		if (input.getKey("r").clicked) rand = random.nextInt(splashes.length);
+		if (input.getKey("r").clicked) rand = random.nextInt(splashes.length - 3) + 3;
 		
 		if (!reverse) {
 			count++;
@@ -158,7 +166,7 @@ public class TitleDisplay extends Display {
 		Font.draw("Version " + Game.VERSION, screen, 1, 1, Color.get(-1, 111));
 		
 		
-		String upString = "("+Game.input.getMapping("up")+", "+Game.input.getMapping("down")+Localization.getLocalized(" to select")+")";
+		String upString = "("+Game.input.getMapping("cursor-up")+", "+Game.input.getMapping("cursor-down")+Localization.getLocalized(" to select")+")";
 		String selectString = "("+Game.input.getMapping("select")+Localization.getLocalized(" to accept")+")";
 		String exitString = "("+Game.input.getMapping("exit")+ Localization.getLocalized(" to return")+")";
 		
@@ -167,7 +175,10 @@ public class TitleDisplay extends Display {
 		Font.drawCentered(exitString, screen, Screen.h - 12, Color.get(-1, 111));
 	}
 	
-	private static final String[] splashes = {//new ArrayList<String>();
+	private static final String[] splashes = {
+		"Secret Splash!",
+		"Happy birthday Minicraft!",
+		"Happy XMAS!",
 		"Multiplayer Now Included!",
 		// "Also play InfinityTale!",
 		// "Also play Minicraft Deluxe!",
@@ -175,6 +186,10 @@ public class TitleDisplay extends Display {
 		// "Also play Hackcraft!",
 		// "Also play MiniCrate!",
 		// "Also play MiniCraft Mob Overload!",
+		"Now with better fishing!",
+		"Now with better tools!",
+		"Now with better chests!",
+		"Now with better dungeons!",
 		"Only on PlayMinicraft.com!",
 		"Playminicraft.com is the bomb!",
 		// "@MinicraftPlus on Twitter",
@@ -184,6 +199,7 @@ public class TitleDisplay extends Display {
 		"Notch is Awesome!",
 		"Dillyg10 is cool as Ice!",
 		"Shylor is the man!",
+		"Chris J is great with portals!",
 		"AntVenom loves cows! Honest!",
 		"You should read Antidious Venomi!",
 		"Oh Hi Mark",
@@ -208,6 +224,7 @@ public class TitleDisplay extends Display {
 		"Windows? I prefer Doors!",
 		"2.5D FTW!",
 		"3rd dimension not included!",
+		"Null not included",
 		"Mouse not included!",
 		"No spiders included!",
 		"No Endermen included!",
@@ -256,7 +273,7 @@ public class TitleDisplay extends Display {
 		"Punch the Moon!",
 		"This is String qq!",
 		"Why?",
-		"You are null!",
+		//"You are null!",
 		"hello down there!",
 		"That guy is such a sly fox!",
 		"Hola senor!",
@@ -265,11 +282,13 @@ public class TitleDisplay extends Display {
 		"One truth prevails!",
 		"Awesome!",
 		"Sweet!",
+		"Great!",
 		"Cool!",
 		"Radical!",
 		"011011000110111101101100!",
 		"001100010011000000110001!",
 		"011010000110110101101101?",
-		"...zzz..."
+		"...zzz...",
+		"Creeper, aw man"
 	};
 }

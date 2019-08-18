@@ -305,6 +305,7 @@ public class Load {
 			
 			int lvlw = Integer.parseInt(data.get(0));
 			int lvlh = Integer.parseInt(data.get(1));
+			Settings.set("size", lvlw);
 			
 			byte[] tiles = new byte[lvlw * lvlh];
 			byte[] tdata = new byte[lvlw * lvlh];
@@ -374,7 +375,7 @@ public class Load {
 			player.hunger = Integer.parseInt(data.remove(0));
 		player.armor = Integer.parseInt(data.remove(0));
 		
-		if(player.armor > 0) {
+		if(worldVer.compareTo(new Version("2.0.5-dev5")) >= 0 || player.armor > 0 || worldVer.compareTo(new Version("2.0.5-dev4")) == 0 && data.size() > 5) {
 			if(worldVer.compareTo(new Version("2.0.4-dev7")) < 0) {
 				// reverse order b/c we are taking from the end
 				player.curArmor = (ArmorItem) Items.get(data.remove(data.size()-1));
@@ -382,7 +383,7 @@ public class Load {
 			}
 			else {
 				player.armorDamageBuffer = Integer.parseInt(data.remove(0));
-				player.curArmor = (ArmorItem) Items.get(data.remove(0));
+				player.curArmor = (ArmorItem) Items.get(data.remove(0), true);
 			}
 		}
 		player.setScore(Integer.parseInt(data.remove(0)));
@@ -446,6 +447,10 @@ public class Load {
 		if(worldVer.compareTo(new Version("1.9.4")) < 0) {
 			name = name.replace("I.Armor", "Iron Armor").replace("S.Armor", "Snake Armor").replace("L.Armor", "Leather Armor").replace("G.Armor", "Gold Armor").replace("BrickWall", "Wall");
 		}
+
+		if(worldVer.compareTo(new Version("2.0.6-dev3")) < 0) {
+			name = name.replace("Fishing Rod", "Wood Fishing Rod");
+		}
 		
 		return name;
 	}
@@ -472,7 +477,7 @@ public class Load {
 			
 			//System.out.println("loading item: " + item);
 			
-			if(item.contains(";")) {
+			if(worldVer.compareTo(new Version("2.0.4")) <= 0 && item.contains(";")) {
 				String[] curData = item.split(";");
 				String itemName = curData[0];
 				
@@ -631,23 +636,11 @@ public class Load {
 				String itemData = chestInfo.get(idx);
 				if(worldVer.compareTo(new Version("1.9.4-dev4")) < 0)
 					itemData = subOldName(itemData, worldVer);
-				
+								
 				if(itemData.contains("Power Glove")) continue; // ignore it.
 				
-				if (itemData.contains(";")) {
-					String[] aitemData = itemData.split(";");
-					StackableItem stack = (StackableItem)Items.get(aitemData[0]);
-					if (!(stack instanceof UnknownItem)) {
-						stack.count = Integer.parseInt(aitemData[1]);
-						chest.getInventory().add(stack);
-					} else {
-						System.err.println("LOAD ERROR: encountered invalid item name, expected to be stackable: " + aitemData[0] + "; stack trace:");
-						Thread.dumpStack();
-					}
-				} else {
-					Item item = Items.get(itemData);
-					chest.getInventory().add(item);
-				}
+				Item item = Items.get(itemData);
+				chest.getInventory().add(item);
 			}
 			
 			if (isDeathChest) {
@@ -727,7 +720,7 @@ public class Load {
 			case "Workbench": return new Crafter(Crafter.Type.Workbench);
 			case "Chest": return new Chest();
 			case "DeathChest": return new DeathChest();
-			case "DungeonChest": return new DungeonChest();
+			case "DungeonChest": return new DungeonChest(false);
 			case "Anvil": return new Crafter(Crafter.Type.Anvil);
 			case "Enchanter": return new Crafter(Crafter.Type.Enchanter);
 			case "Loom": return new Crafter(Crafter.Type.Loom);
@@ -738,11 +731,10 @@ public class Load {
 			case "Lantern": return new Lantern(Lantern.Type.NORM);
 			case "Arrow": return new Arrow(new Skeleton(0), 0, 0, Direction.NONE, 0);
 			case "ItemEntity": return new ItemEntity(Items.get("unknown"), 0, 0);
-			//case "Spark": return (Entity)(new Spark());
 			case "FireParticle": return new FireParticle(0, 0);
 			case "SmashParticle": return new SmashParticle(0, 0);
 			case "TextParticle": return new TextParticle("", 0, 0, 0);
-			default : /*if(Game.debug)*/ System.err.println("LOAD ERROR: unknown or outdated entity requested: " + string);
+			default : System.err.println("LOAD ERROR: unknown or outdated entity requested: " + string);
 				return null;
 		}
 	}

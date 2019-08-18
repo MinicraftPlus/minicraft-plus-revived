@@ -83,6 +83,7 @@ public class Sound {
 	
 	public void play() {
 		if (!(boolean)Settings.get("sound") || clip == null) return;
+		if(Game.isValidServer()) return;
 		
 		if(clip.isRunning() || clip.isActive())
 			clip.stop();
@@ -98,15 +99,4 @@ public class Sound {
 		else
 			clip.stop();
 	}
-	
-	/*
-	public static class Music {
-		
-		
-		
-		public Music(String name) {
-			AudioInputStream stream = AudioSystem.getAudioInputStream()
-		}
-		
-	}*/
 }

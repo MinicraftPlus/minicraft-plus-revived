@@ -203,6 +203,10 @@ public class MinicraftServerThread extends MinicraftConnection {
 	public void sendPlayerHurt(int eid, int damage, Direction attackDir) {
 		sendData(InputType.HURT, eid+";"+damage+";"+attackDir.ordinal());
 	}
+
+	public void sendStopFishing(int eid) {
+		sendData(InputType.STOPFISHING, "" + eid);
+	}
 	
 	public void sendStaminaChange(int amt) {
 		sendData(InputType.STAMINA, amt+"");

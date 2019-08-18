@@ -25,6 +25,8 @@ public class Recipes {
 		workbenchRecipes.add(new Recipe("Stone Brick_2", "Stone_2"));
 		workbenchRecipes.add(new Recipe("Stone Wall_1", "Stone Brick_3"));
 		workbenchRecipes.add(new Recipe("Stone Door_1", "Stone Brick_5"));
+		workbenchRecipes.add(new Recipe("Obsidian Wall_1", "Obsidian Brick_3"));
+		workbenchRecipes.add(new Recipe("Obsidian Door_1", "Obsidian Brick_5"));
 		workbenchRecipes.add(new Recipe("Oven_1", "Stone_15"));
 		workbenchRecipes.add(new Recipe("Furnace_1", "Stone_20"));
 		workbenchRecipes.add(new Recipe("Enchanter_1", "Wood_5", "String_2", "Lapis_10"));
@@ -32,8 +34,11 @@ public class Recipes {
 		workbenchRecipes.add(new Recipe("Anvil_1", "iron_5"));
 		workbenchRecipes.add(new Recipe("Tnt_1", "Gunpowder_10", "Sand_8"));
 		workbenchRecipes.add(new Recipe("Loom_1", "Wood_10", "Wool_5"));
-		workbenchRecipes.add(new Recipe("Fishing Rod_1", "Wood_5", "String_3"));
-		
+		workbenchRecipes.add(new Recipe("Wood Fishing Rod_1", "Wood_10", "String_3"));
+		workbenchRecipes.add(new Recipe("Iron Fishing Rod_1", "Iron_10", "String_3"));
+		workbenchRecipes.add(new Recipe("Gold Fishing Rod_1", "Gold_10", "String_3"));
+		workbenchRecipes.add(new Recipe("Gem Fishing Rod_1", "Gem_10", "String_3"));
+
 		loomRecipes.add(new Recipe("String_2", "Wool_1"));
 		loomRecipes.add(new Recipe("red wool_1", "Wool_1", "rose_1"));
 		loomRecipes.add(new Recipe("blue wool_1", "Wool_1", "Lapis_1"));
@@ -117,6 +122,7 @@ public class Recipes {
 		enchantRecipes.add(new Recipe("energy potion_1", "potion_1", "gem_25"));
 		enchantRecipes.add(new Recipe("regen potion_1", "potion_1", "Gold Apple_1"));
 		enchantRecipes.add(new Recipe("Health Potion_1", "potion_1", "GunPowder_2", "Leather Armor_1"));
+		enchantRecipes.add(new Recipe("Escape Potion_1", "potion_1", "GunPowder_3", "Lapis_7"));
 	}
 
 }

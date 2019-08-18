@@ -7,8 +7,12 @@
 # Text file, b/c I have many w/o need
 *.txt
 
+# hidden files
+/.*
+
 # build folder
 build/
+bin/
 
 # Log file
 *.log

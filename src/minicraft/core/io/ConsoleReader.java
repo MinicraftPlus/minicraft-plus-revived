@@ -3,7 +3,6 @@ package minicraft.core.io;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import java.util.Locale;
 import java.util.Scanner;
 
 import minicraft.core.Game;
@@ -74,8 +73,9 @@ public class ConsoleReader extends Thread {
 		},
 		
 		STATUS
-		(null, "display some server stats.", "displays server fps, and number of players connected.") {
+		(null, "display some server stats.", "displays game version, server fps, and number of players connected.") {
 			public void run(String[] args) {
+				System.out.println("running "+Game.NAME+' '+Game.VERSION+(Game.debug?" (debug mode)":""));
 				System.out.println("fps: " + Initializer.getCurFps());
 				System.out.println("players connected: " + Game.server.getNumPlayers());
 				for(String info: Game.server.getClientInfo())
@@ -93,7 +93,7 @@ public class ConsoleReader extends Thread {
 				} else {
 					Config configOption = null;
 					try {
-						configOption = Enum.valueOf(Config.class, args[0].toUpperCase(Locale.ENGLISH));
+						configOption = Enum.valueOf(Config.class, args[0].toUpperCase(Localization.getSelectedLocale()));
 					} catch(IllegalArgumentException ex) {
 						System.out.println("\""+args[0]+"\" is not a valid config option. run \"config\" for a list of the available config options.");
 					}
@@ -105,6 +105,7 @@ public class ConsoleReader extends Thread {
 							System.out.println(configOption.name()+" set successfully.");
 							/// HERE is where we save the modified config options.
 							new Save(WorldSelectDisplay.getWorldName(), Game.server);
+							new Save(); 	
 						} else
 							System.out.println("failed to set " + configOption.name());
 					}
@@ -385,7 +386,6 @@ public class ConsoleReader extends Thread {
 			List<Entity> matches = new ArrayList<>();
 			
 			if(args.length == 0) {
-				//printHelp();
 				System.out.println("cannot target entities without arguments.");
 				return null;
 			}
@@ -405,7 +405,7 @@ public class ConsoleReader extends Thread {
 				return null;
 			}
 			
-			String target = args[0].substring(1).toLowerCase(Locale.ENGLISH); // cut off "@"
+			String target = args[0].substring(1).toLowerCase(Localization.getSelectedLocale()); // cut off "@"
 			List<Entity> allEntities = new ArrayList<>();
 			
 			if(args.length == 2) {
@@ -486,7 +486,7 @@ public class ConsoleReader extends Thread {
 	}
 	
 	public void run() {
-		Scanner stdin = new Scanner(System.in).useDelimiter(System.lineSeparator());
+		Scanner stdin = new Scanner(System.in);
 		try {
 			Thread.sleep(500); // this is to let it get past the debug statements at world load, and any others, maybe, if not in debug mode.
 		} catch(InterruptedException ignored) {}
@@ -495,7 +495,7 @@ public class ConsoleReader extends Thread {
 		while(shouldRun/* && stdin.hasNext()*/) {
 			System.out.println();
 			System.out.print("Enter a command: ");
-			String command = stdin.next().trim();
+			String command = stdin.nextLine().trim();
 			if(command.length() == 0) continue;
 			List<String> parsed = new ArrayList<>();
 			parsed.addAll(Arrays.asList(command.split(" ")));
@@ -534,7 +534,7 @@ public class ConsoleReader extends Thread {
 	private static Command getCommandByName(String name) {
 		Command cmd = null;
 		try {
-			cmd = Enum.valueOf(Command.class, name.toUpperCase(Locale.ENGLISH));
+			cmd = Enum.valueOf(Command.class, name.toUpperCase(Localization.getSelectedLocale()));
 		} catch(IllegalArgumentException ex) {
 			System.out.println("unknown command: \"" + name + "\"");
 		}

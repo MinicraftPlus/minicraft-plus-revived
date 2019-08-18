@@ -7,6 +7,7 @@ import java.util.Locale;
 import java.util.Random;
 
 import minicraft.core.Game;
+import minicraft.core.io.Localization;
 import minicraft.core.io.Settings;
 import minicraft.gfx.Color;
 import minicraft.gfx.Font;
@@ -43,7 +44,7 @@ public class WorldGenDisplay extends Display {
 			
 			@Override
 			public String getUserInput() {
-				return super.getUserInput().toLowerCase(Locale.ENGLISH);
+				return super.getUserInput().toLowerCase(Localization.getSelectedLocale());
 			}
 		};
 	}
@@ -53,7 +54,7 @@ public class WorldGenDisplay extends Display {
 		
 		InputEntry nameField = makeWorldNameInput("Enter World Name", WorldSelectDisplay.getWorldNames(), "");
 		
-		SelectEntry nameHelp = new SelectEntry("Trouble with world name?", () -> Game.setMenu(new BookDisplay("by default, w and s move the cursor up and down. This can be changed in the key binding menu. To type the letter instead of moving the cursor, hold the shift key while typing the world name."))) {
+		SelectEntry nameHelp = new SelectEntry("Trouble with world name?", () -> Game.setMenu(new BookDisplay("it seems you've set letters as the controls to move the cursor up and down, which is probably annoying. This can be changed in the key binding menu as the \"cursor-XXX\" keys. For now, to type the letter instead of moving the cursor, hold the shift key while typing."))) {
 			@Override
 			public int getColor(boolean isSelected) {
 				return Color.get(-1, 444);
@@ -63,8 +64,8 @@ public class WorldGenDisplay extends Display {
 		nameHelp.setVisible(false);
 		
 		HashSet<String> controls = new HashSet<>();
-		controls.addAll(Arrays.asList(Game.input.getMapping("up").split("/")));
-		controls.addAll(Arrays.asList(Game.input.getMapping("down").split("/")));
+		controls.addAll(Arrays.asList(Game.input.getMapping("cursor-up").split("/")));
+		controls.addAll(Arrays.asList(Game.input.getMapping("cursor-down").split("/")));
 		for(String key: controls) {
 			if(key.matches("^\\w$")) {
 				nameHelp.setVisible(true);

@@ -47,24 +47,29 @@ public class GrassTile extends Tile {
 		if (item instanceof ToolItem) {
 			ToolItem tool = (ToolItem) item;
 			if (tool.type == ToolType.Shovel) {
-				if (player.payStamina(4 - tool.level)) {
+				if (player.payStamina(4 - tool.level) && tool.payDurability()) {
 					level.setTile(xt, yt, Tiles.get("dirt"));
 					Sound.monsterHurt.play();
-					if (random.nextInt(5) == 0) {
+					if (random.nextInt(5) == 0) { // 20% chance to drop seeds
 						level.dropItem(xt*16+8, yt*16+8, 2, Items.get("seeds"));
-						return true;
 					}
+					return true;
 				}
 			}
 			if (tool.type == ToolType.Hoe) {
-				if (player.payStamina(4 - tool.level)) {
+				if (player.payStamina(4 - tool.level) && tool.payDurability()) {
+					level.setTile(xt, yt, Tiles.get("dirt"));
 					Sound.monsterHurt.play();
-					if (random.nextInt(5) == 0) {
+					if (random.nextInt(5) != 0) { // 80% chance to drop seeds
 						level.dropItem(xt*16+8, yt*16+8, Items.get("seeds"));
-						return true;
 					}
-					level.setTile(xt, yt, Tiles.get("farmland"));
 					return true;
+				}
+			}
+			if (tool.type == ToolType.Pickaxe) {
+				if (player.payStamina(4 - tool.level) && tool.payDurability()) {
+					level.setTile(xt, yt, Tiles.get("path"));
+					Sound.monsterHurt.play();
 				}
 			}
 		}

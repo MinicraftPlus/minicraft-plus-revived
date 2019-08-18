@@ -23,8 +23,8 @@ public class ArmorItem extends StackableItem {
 		return items;
 	}
 	
-	private float armor;
-	private int staminaCost;
+	private final float armor;
+	private final int staminaCost;
 	public final int level;
 	
 	private ArmorItem(String name, Sprite sprite, float health, int level) { this(name, sprite, 1, health, level); }

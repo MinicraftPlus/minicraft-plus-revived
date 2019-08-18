@@ -80,7 +80,6 @@ public class Updater extends Game {
 		Level level = levels[currentLevel];
 		if (Bed.sleeping() && !isValidClient()) {
 			// IN BED
-			//Bed.player.remove();
 			if(gamespeed != 20) {
 				gamespeed = 20;
 				if(isValidServer()) {
@@ -270,7 +269,7 @@ public class Updater extends Game {
 						if(input.getKey("ctrl-b").clicked) player.hunger--;
 						
 						if (input.getKey("0").clicked) player.moveSpeed = 1;
-						if (input.getKey("equals").clicked) player.moveSpeed++;//= 0.5D;
+						if (input.getKey("equals").clicked) player.moveSpeed++;
 						if (input.getKey("minus").clicked && player.moveSpeed > 1) player.moveSpeed--;// -= 0.5D;
 						
 						if(input.getKey("shift-u").clicked) {

@@ -24,13 +24,13 @@ public class TileItem extends StackableItem {
 		items.add(new TileItem("Acorn", (new Sprite(3, 4, Color.get(-1, 100, 531, 320))), "tree Sapling", "grass"));
 		items.add(new TileItem("Dirt", (new Sprite(2, 4, Color.get(-1, 100, 322, 432))), "dirt", "hole", "water", "lava"));
 		
-		items.add(new TileItem("Plank", (new Sprite(1, 4, Color.get(-1, 200, 531, 530))), "Wood Planks", "hole", "water"));
+		items.add(new TileItem("Plank", (new Sprite(1, 4, Color.get(-1, 200, 531, 530))), "Wood Planks", "hole", "water", "cloud"));
 		items.add(new TileItem("Plank Wall", (new Sprite(16, 4, Color.get(-1, 200, 531, 530))), "Wood Wall", "Wood Planks"));
 		items.add(new TileItem("Wood Door", (new Sprite(17, 4, Color.get(-1, 200, 531, 530))), "Wood Door", "Wood Planks"));
-		items.add(new TileItem("Stone Brick", (new Sprite(1, 4, Color.get(-1, 333, 444, 444))), "Stone Bricks", "hole", "water", "lava"));
+		items.add(new TileItem("Stone Brick", (new Sprite(1, 4, Color.get(-1, 333, 444, 444))), "Stone Bricks", "hole", "water", "cloud", "lava"));
 		items.add(new TileItem("Stone Wall", (new Sprite(16, 4, Color.get(-1, 100, 333, 444))), "Stone Wall", "Stone Bricks"));
 		items.add(new TileItem("Stone Door", (new Sprite(17, 4, Color.get(-1, 111, 333, 444))), "Stone Door", "Stone Bricks"));
-		items.add(new TileItem("Obsidian Brick", (new Sprite(1, 4, Color.get(-1, 159, 59, 59))), "Obsidian", "hole", "water", "lava"));
+		items.add(new TileItem("Obsidian Brick", (new Sprite(1, 4, Color.get(-1, 159, 59, 59))), "Obsidian", "hole", "water", "cloud", "lava"));
 		items.add(new TileItem("Obsidian Wall", (new Sprite(16, 4, Color.get(-1, 159, 59, 59))), "Obsidian Wall", "Obsidian"));
 		items.add(new TileItem("Obsidian Door", (new Sprite(17, 4, Color.get(-1, 159, 59, 59))), "Obsidian Door", "Obsidian"));
 	
@@ -42,7 +42,7 @@ public class TileItem extends StackableItem {
 		items.add(new TileItem("Yellow Wool", (new Sprite(2, 4, Color.get(-1, 110, 440, 552))), "Wool_YELLOW", "hole", "water"));
 		items.add(new TileItem("Black Wool", (new Sprite(2, 4, Color.get(-1, 000, 111, 111))), "Wool_BLACK", "hole", "water"));
 		
-		items.add(new TileItem("Sand", (new Sprite(2, 4, Color.get(-1, 110, 440, 550))), "sand", "dirt"));
+		items.add(new TileItem("Sand", (new Sprite(2, 4, Color.get(-1, 110, 440, 550))), "sand", "hole", "water", "lava"));
 		items.add(new TileItem("Cactus", (new Sprite(4, 4, Color.get(-1, 10, 40, 50))), "cactus Sapling", "sand"));
 		items.add(new TileItem("Seeds", (new Sprite(5, 4, Color.get(-1, 10, 40, 50))), "wheat", "farmland"));
 		items.add(new TileItem("Grass Seeds", (new Sprite(5, 4, Color.get(-1, 10, 30, 50))), "grass", "dirt"));
@@ -71,7 +71,6 @@ public class TileItem extends StackableItem {
 	
 	public boolean interactOn(Tile tile, Level level, int xt, int yt, Player player, Direction attackDir) {
 		for(String tilename: validTiles) {
-			//Tile t = Tiles.get(tilename.contains("_")?tilename.substring(0, tilename.indexOf("_")):tilename);
 			if(tile.matches(level.getData(xt, yt), tilename)) {
 				level.setTile(xt, yt, model); // TODO maybe data should be part of the saved tile..?
 				return super.interactOn(true);
