@@ -21,6 +21,7 @@ import minicraft.gfx.Font;
 import minicraft.gfx.FontStyle;
 import minicraft.gfx.Screen;
 import minicraft.gfx.SpriteSheet;
+import minicraft.item.Item;
 import minicraft.item.Items;
 import minicraft.item.PotionType;
 import minicraft.item.ToolItem;
@@ -155,20 +156,24 @@ public class Renderer extends Game {
 	
 	/** Renders the main game GUI (hearts, Stamina bolts, name of the current item, etc.) */
 	private static void renderGui() {
-		/// AH-HA! THIS DRAWS THE BLACK SQUARE!!
-		for (int x = 12; x < 29; x++)
-			screen.render(x * 7, Screen.h - 8, 0 + 1 * 32, Color.get(0, 0), 0);
+		// AH-HA! THIS DRAWS THE BLACK SQUARE!!
+		if (!isMode("creative") || player.activeItem != null)
+			for (int x = 12; x < 29; x++)
+				screen.render(x * 7, Screen.h - 8, 0 + 1 * 32, Color.get(0, 0), 0);
+
+		// This is the arrow counter. "^" is an infinite symbol.
+		if (player.activeItem != null) {
+			int ac = player.getInventory().count(Items.arrowItem);
+			if (isMode("creative") || ac >= 10000)
+				Font.draw(" x" + "^", screen, 84, Screen.h - 16, Color.get(0, 333, 444, 555));
+			else
+				Font.draw(" x" + ac, screen, 84, Screen.h - 16, Color.get(0, 555));
+
+			// Displays the arrow icon
+			screen.render(10 * 8 + 4, Screen.h - 16, 13 + 5 * 32, Color.get(0, 111, 222, 430), 0);
+		}
 		
 		renderDebugInfo();
-		
-		// This is the arrow counter. ^ = infinite symbol.
-		int ac = player.getInventory().count(Items.arrowItem);
-		if (isMode("creative") || ac >= 10000)
-			Font.draw("	x" + "^", screen, 84, Screen.h - 16, Color.get(0, 333, 444, 555));
-		else
-			Font.draw("	x" + ac, screen, 84, Screen.h - 16, Color.get(0, 555));
-		//displays arrow icon
-		screen.render(10 * 8 + 4, Screen.h - 16, 13 + 5 * 32, Color.get(0, 111, 222, 430), 0);
 		
 		ArrayList<String> permStatus = new ArrayList<>();
 		if (Updater.saving) permStatus.add("Saving... " + Math.round(LoadingDisplay.getPercentage()) + "%");
