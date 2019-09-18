@@ -30,7 +30,6 @@ public class Menu {
 	private boolean drawVertically = false;
 	
 	private boolean hasFrame;
-	private int frameFillColor, frameEdgeColor;
 	
 	private boolean selectable = false;
 	boolean shouldRender = true;
@@ -57,8 +56,6 @@ public class Menu {
 		titleLoc = m.titleLoc;
 		drawVertically = m.drawVertically;
 		hasFrame = m.hasFrame;
-		frameFillColor = m.frameFillColor;
-		frameEdgeColor = m.frameEdgeColor;
 		selectable = m.selectable;
 		shouldRender = m.shouldRender;
 		displayLength = m.displayLength;
@@ -240,16 +237,8 @@ public class Menu {
 		
 		doScroll();
 	}
-	
-	public void setFrameColors(int fillCol, int edgeStrokeCol, int edgeFillCol) {
-		frameFillColor = Color.get(fillCol, fillCol);
-		frameEdgeColor = Color.get(-1, edgeStrokeCol, fillCol, edgeFillCol);
-		int[] titleCols = Color.separateEncodedSprite(titleColor, true);
-		titleColor = Color.get(fillCol, titleCols[3]<0?550:titleCols[3]);
-	}
-	public void setFrameColors(Menu model) {
-		frameFillColor = model.frameFillColor;
-		frameEdgeColor = model.frameEdgeColor;
+
+	public void setColors(Menu model) {
 		titleColor = model.titleColor;
 	}
 	
@@ -294,7 +283,7 @@ public class Menu {
 		
 		@NotNull private RelPos titlePos = RelPos.TOP;
 		private boolean fullTitleColor = false, setTitleColor = false;
-		private int titleCol = 550, frameFillCol = 5, frameEdgeStroke = 1, frameEdgeFill = 445;
+		private int titleCol = Color.YELLOW;
 		
 		@NotNull private Point anchor = center;
 		@NotNull private RelPos menuPos = RelPos.CENTER;
@@ -353,16 +342,7 @@ public class Menu {
 		}
 		
 		public Builder setFrame(boolean hasFrame) { menu.hasFrame = hasFrame; return this; }
-		
-		public Builder setFrame(int fillCol, int edgeStroke, int edgeFill) {
-			setFrame(true);
-			// these are not full colors, only the components that matter.
-			frameFillCol = fillCol;
-			frameEdgeStroke = edgeStroke;
-			frameEdgeFill = edgeFill;
-			
-			return this;
-		}
+
 		
 		public Builder setScrollPolicies(float padding, boolean wrap) {
 			this.padding = padding;
@@ -521,14 +501,8 @@ public class Menu {
 					menu.titleColor = titleCol;
 				else {
 					if (!setTitleColor) titleCol = menu.hasFrame ? 550 : 555;
-					menu.titleColor = Color.get((menu.hasFrame ? frameFillCol : -1), titleCol); // make it match the frame color, or be transparent
+					menu.titleColor = titleCol; // make it match the frame color, or be transparent
 				}
-			}
-			
-			// set the menu frame colors
-			if(menu.hasFrame) {
-				menu.frameFillColor = Color.get(frameFillCol, frameFillCol);
-				menu.frameEdgeColor = Color.get(-1, frameEdgeStroke, frameFillCol, frameEdgeFill);
 			}
 			
 			if(padding < 0) padding = 0;
@@ -556,9 +530,6 @@ public class Menu {
 			b.fullTitleColor = fullTitleColor;
 			b.setTitleColor = setTitleColor;
 			b.titleCol = titleCol;
-			b.frameFillCol = frameFillCol;
-			b.frameEdgeStroke = frameEdgeStroke;
-			b.frameEdgeFill = frameEdgeFill;
 			
 			return b;
 		}

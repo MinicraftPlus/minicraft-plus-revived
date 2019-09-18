@@ -54,8 +54,7 @@ public class BookDisplay extends Display {
 		showPageCount = hasTitle || lines.length != 1;
 		pageOffset = showPageCount ? 1 : 0;
 		
-		Menu.Builder builder = new Menu.Builder(true, spacing, RelPos.CENTER)
-			.setFrame(554, 1, 554);
+		Menu.Builder builder = new Menu.Builder(true, spacing, RelPos.CENTER);
 		
 		Menu pageCount = builder // the small rect for the title
 			.setPositioning(new Point(Screen.w/2, 0), RelPos.BOTTOM)
