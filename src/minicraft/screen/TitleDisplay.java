@@ -157,7 +157,7 @@ public class TitleDisplay extends Display {
 		
 		/// this isn't as complicated as it looks. It just gets a color based off of count, which oscilates between 0 and 25.
 		int bcol = 5 - count / 5; // this number ends up being between 1 and 5, inclusive.
-		int splashColor = isblue ? Color.BLUE : isRed ? Color.RED : isGreen ? Color.GREEN : Color.get(1, (bcol-1)*100+5, bcol*100+bcol*10, bcol*100+bcol*10);
+		int splashColor = isblue ? Color.BLUE : isRed ? Color.RED : isGreen ? Color.GREEN : Color.get(1, bcol*51, bcol*51, bcol*25);
 
 		
 		Font.drawCentered(splashes[rand], screen, 52, splashColor);

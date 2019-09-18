@@ -89,27 +89,27 @@ public class Screen {
 
 				int col = currentSheet.pixels[toffs + xs + ys * currentSheet.width]; // Gets the color of the current pixel from the value stored in the sheet.
 
-				boolean isTransparent = (col >> 12 == 0);
+				boolean isTransparent = (col >> 24 == 0);
 
 				if (!isTransparent) pixels[(x + xp) + (y + yp) * w] = Color.upgrade(col); // Inserts the colors into the image.
 
-				// if this is white, write over it the other color
-				if (col == 0x1FFF && whiteTint != -1) pixels[(x + xp) + (y + yp) * w] = Color.upgrade(whiteTint);
+				// if this is white, write the whiteTint over it
+				if (col == 0x1FFFFFF && whiteTint != -1) pixels[(x + xp) + (y + yp) * w] = Color.upgrade(whiteTint);
 			}
 		}
 	}
 	
 	/** Sets the offset of the screen */
 	public void setOffset(int xOffset, int yOffset) {
-		// this is called in few places, one of which is level.renderBackground, rigth before all the tiles are rendered. The offset is determined by the Game class (this only place renderBackground is called), by using the screen's width and the player's position in the level.
+		// this is called in few places, one of which is level.renderBackground, right before all the tiles are rendered. The offset is determined by the Game class (this only place renderBackground is called), by using the screen's width and the player's position in the level.
 		// in other words, the offset is a conversion factor from level coordinates to screen coordinates. It makes a certain coord in the level the upper left corner of the screen, when subtracted from the tile coord.
 		
 		this.xOffset = xOffset;
 		this.yOffset = yOffset;
 	}
 	
-	/* Used for the scattered dots at the edge of the light radius underground. */
-	/*
+	/* Used for the scattered dots at the edge of the light radius underground.
+
 		These values represent the minimum light level, on a scale from 0 to 25 (255/10), 0 being no light, 25 being full light (which will be portrayed as transparent on the overlay lightScreen pixels) that a pixel must have in order to remain lit (not black).
 		each row and column is repeated every 4 pixels in the proper direction, so the pixel lightness minimum varies. It's highly worth note that, as the rows progress and loop, there's two sets or rows (1,4 and 2,3) whose values in the same column add to 15. The exact same is true for columns (sets are also 1,4 and 2,3), execpt the sums of values in the same row and set differ for each row: 10, 18, 12, 20. Which... themselves... are another set... adding to 30... which makes sense, sort of, since each column totals 15+15=30.
 		In the end, "every other every row", will need, for example in column 1, 15 light to be lit, then 0 light to be lit, then 12 light to be lit, then 3 light to be lit. So, the pixels of lower light levels will generally be lit every other pixel, while the brighter ones appear more often. The reason for the variance in values is to provide EVERY number between 0 and 15, so that all possible light levels (below 16) are represented fittingly with their own pattern of lit and not lit.
@@ -136,7 +136,7 @@ public class Screen {
 				case Night: tintFactor = MAXDARK; break;
 			}
 			if(currentLevel > 3) tintFactor -= (tintFactor < 10 ? tintFactor : 10);
-			tintFactor *= -1; // all previous operations were assumping this was a darkening factor.
+			tintFactor *= -1; // all previous operations were assuming this was a darkening factor.
 		}
 		else if(currentLevel >= 5)
 			tintFactor = -MAXDARK;

@@ -22,10 +22,10 @@ public class DirtTile extends Tile {
 
 	protected static int dCol(int depth) {
 		switch(depth) {
-			case 1: return 444; // sky.
-			case 0: return 321; // surface.
-			case -4: return 203; // dungeons.
-			default: return 222; // caves.
+			case 1: return 13421772; // sky.
+			case 0: return 26830387; // surface.
+			case -4: return 23462041; // dungeons.
+			default: return Color.get(1, 102); // caves.
 		}
 	}
 	

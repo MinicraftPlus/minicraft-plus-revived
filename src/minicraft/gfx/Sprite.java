@@ -39,34 +39,33 @@ public class Sprite {
 	protected java.awt.Rectangle sheetLoc;
 	/// spritePixels is arranged so that the pixels are in their correct positions relative to the top left of the full sprite. This means that their render positions are built-in to the array.
 	
-	public Sprite(int pos, int color) {
-		this(pos%32, pos/32, 1, 1, color);}
-	public Sprite(int sx, int sy, int color) {
-		this(sx, sy, 1, 1, color);
+	public Sprite(int pos, int sheet) {
+		this(pos%32, pos/32, 1, 1, sheet);}
+	public Sprite(int sx, int sy, int sheet) {
+		this(sx, sy, 1, 1, sheet);
 	}
 	public Sprite(int sx, int sy, int sw, int sh) {
 		this(sx, sy, sw, sh, 0, 0);}
 	public Sprite(int sx, int sy, int sw, int sh, int color) {
 		this(sx, sy, sw, sh, color, 0);}
 	
-	public Sprite(int sx, int sy, int sw, int sh, int color, int mirror) {
-		this(sx, sy, sw, sh, color, mirror, false);}
-	public Sprite(int sx, int sy, int sw, int sh, int color, int mirror, boolean onepixel) {
+	public Sprite(int sx, int sy, int sw, int sh, int sheet, int mirror) {
+		this(sx, sy, sw, sh, sheet, mirror, false);}
+	public Sprite(int sx, int sy, int sw, int sh, int sheet, int mirror, boolean onepixel) {
 		sheetLoc = new Rectangle(sx, sy, sw, sh);
 		
 		spritePixels = new Px[sh][sw];
 		for(int r = 0; r < sh; r++)
 			for(int c = 0; c < sw; c++)
-				spritePixels[r][c] = new Px(sx+(onepixel?0:c), sy+(onepixel?0:r), mirror);
+				spritePixels[r][c] = new Px(sx+(onepixel?0:c), sy+(onepixel?0:r), mirror, sheet);
 	}
-	public Sprite(int sx, int sy, int sw, int sh, int color, boolean onepixel, int[][] mirrors) {
-		this.color = color;
+	public Sprite(int sx, int sy, int sw, int sh, int sheet, boolean onepixel, int[][] mirrors) {
 		sheetLoc = new Rectangle(sx, sy, sw, sh);
 		
 		spritePixels = new Px[sh][sw];
 		for(int r = 0; r < sh; r++)
 			for(int c = 0; c < sw; c++)
-				spritePixels[r][c] = new Px(sx+(onepixel?0:c), sy+(onepixel?0:r), mirrors[r][c]);
+				spritePixels[r][c] = new Px(sx+(onepixel?0:c), sy+(onepixel?0:r), mirrors[r][c], sheet);
 	}
 
 	public Sprite(Px[][] pixels) {

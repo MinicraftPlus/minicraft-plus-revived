@@ -26,34 +26,24 @@ public class Color {
 	*/
 	
 	public static final int TRANSPARENT = Color.get(0, 0);
-	public static final int WHITE = Color.get(1, 15);
-	public static final int GRAY = Color.get(1, 7);
-	public static final int DARK_GRAY = Color.get(1, 3);
+	public static final int WHITE = Color.get(1, 255);
+	public static final int GRAY = Color.get(1, 153);
+	public static final int DARK_GRAY = Color.get(1, 51);
 	public static final int BLACK = Color.get(1, 0);
-	public static final int RED = Color.get(1, 15, 0, 0);
-	public static final int GREEN = Color.get(1, 0, 15, 0);
-	public static final int BLUE = Color.get(1, 0, 0, 15);
-	public static final int YELLOW = Color.get(1, 15, 15, 0);
-	public static final int MAGENTA = Color.get(1, 15, 0, 15);
-	public static final int CYAN = Color.get(1, 0, 15, 15);
+	public static final int RED = Color.get(1, 255, 0, 0);
+	public static final int GREEN = Color.get(1, 0, 255, 0);
+	public static final int BLUE = Color.get(1, 0, 0, 255);
+	public static final int YELLOW = Color.get(1, 255, 255, 0);
+	public static final int MAGENTA = Color.get(1, 255, 0, 255);
+	public static final int CYAN = Color.get(1, 0, 255, 255);
 	
 	/** This returns a minicraftrgb.
-	 * a should be between 0-1, r,g,and b should be 0-15 */
+	 * a should be between 0-1, r,g,and b should be 0-255 */
 	public static int get(int a, int r, int g, int b) {
-		return (a << 12) + (r << 8) + (g << 4) + (b);
+		return (a << 24) + (r << 16) + (g << 8) + (b);
 	}
 	public static int get(int a, int copy) {
 		return get(a, copy, copy, copy);
-	}
-	
-	/** converts a 0-5 scale rgb color to an 8-bit rgb color, using base 6 to encode it as a value from 0 to 255. (but instead of representing r, g, or b only, it holds all three in the one number.) */
-	public static int get(int rgbReadable) {
-		if (rgbReadable < 0) return 255; // if d is smaller than 0, then return 255. This is actually 255 for a reason: -1 is represented as 32 1's, all the bits on. 255 is 8 bits all on. So, to put it in another int, and not mess everything up, you have to use 255. 
-		int r = rgbReadable / 100 % 10; // the red value is the remainder of (d/100) / 10
-		int g = rgbReadable / 10 % 10; // the green value is the remainder of (d/10) / 10
-		int b = rgbReadable % 10; // the blue value is the remainder of d / 10.
-		
-		return r * 36 + g * 6 + b; // returns (red value * 36) + (green value * 6) + (blue value)
 	}
 	
 	private static int limit(int num, int min, int max) {
@@ -127,15 +117,10 @@ public class Color {
 		return cols[0]*100 + cols[1]*10 + cols[2];
 	}
 	
-	/// this turns a 13-bit minicraft color into a 24-bit rgb color.
+	/// this turns a 25-bit minicraft color into a 24-bit rgb color.
 	protected static int upgrade(int rgbMinicraft) {
 
-		int r = (rgbMinicraft & 0xf00) >> 8;
-		int g = (rgbMinicraft & 0xf0) >> 4;
-		int b = (rgbMinicraft & 0xf);
-
-		
-		return r << 20 | g << 12 | b << 4;
+		return rgbMinicraft & 0xFF_FF_FF;
 	}
 	
 	protected static int tintColor(int rgbInt, int amount) {
