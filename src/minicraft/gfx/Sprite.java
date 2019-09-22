@@ -5,7 +5,7 @@ import java.util.Random;
 
 public class Sprite {
 	/**
-		This class needs to store a list of similar segments that make up a sprite, plus the color, just once for everything. There's usually four groups, but the components are:
+		This class needs to store a list of similar segments that make up a sprite, just once for everything. There's usually four groups, but the components are:
 			-spritesheet location (x, y)
 			-mirror type
 		
@@ -46,8 +46,8 @@ public class Sprite {
 	}
 	public Sprite(int sx, int sy, int sw, int sh) {
 		this(sx, sy, sw, sh, 0, 0);}
-	public Sprite(int sx, int sy, int sw, int sh, int color) {
-		this(sx, sy, sw, sh, color, 0);}
+	public Sprite(int sx, int sy, int sw, int sh, int sheet) {
+		this(sx, sy, sw, sh, sheet, 0);}
 	
 	public Sprite(int sx, int sy, int sw, int sh, int sheet, int mirror) {
 		this(sx, sy, sw, sh, sheet, mirror, false);}

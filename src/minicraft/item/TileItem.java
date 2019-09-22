@@ -19,35 +19,34 @@ public class TileItem extends StackableItem {
 	protected static ArrayList<Item> getAllInstances() {
 		ArrayList<Item> items = new ArrayList<>();
 		
-		/// TileItem sprites are all on line 4, and have 1x1 sprites.
-		items.add(new TileItem("Flower", (new Sprite(0, 4, Color.get(-1, 10, 444, 330))), "flower", "grass"));
-		items.add(new TileItem("Acorn", (new Sprite(3, 4, Color.get(-1, 100, 531, 320))), "tree Sapling", "grass"));
-		items.add(new TileItem("Dirt", (new Sprite(2, 4, Color.get(-1, 100, 322, 432))), "dirt", "hole", "water", "lava"));
+		/// TileItem sprites all have 1x1 sprites.
+		items.add(new TileItem("Flower", (new Sprite(4, 0, 0)), "flower", "grass"));
+		items.add(new TileItem("Acorn", (new Sprite(0, 0, 0)), "tree Sapling", "grass"));
+		items.add(new TileItem("Dirt", (new Sprite(2, 4, 0)), "dirt", "hole", "water", "lava"));
 		
-		items.add(new TileItem("Plank", (new Sprite(1, 4, Color.get(-1, 200, 531, 530))), "Wood Planks", "hole", "water", "cloud"));
-		items.add(new TileItem("Plank Wall", (new Sprite(16, 4, Color.get(-1, 200, 531, 530))), "Wood Wall", "Wood Planks"));
-		items.add(new TileItem("Wood Door", (new Sprite(17, 4, Color.get(-1, 200, 531, 530))), "Wood Door", "Wood Planks"));
-		items.add(new TileItem("Stone Brick", (new Sprite(1, 4, Color.get(-1, 333, 444, 444))), "Stone Bricks", "hole", "water", "cloud", "lava"));
-		items.add(new TileItem("Stone Wall", (new Sprite(16, 4, Color.get(-1, 100, 333, 444))), "Stone Wall", "Stone Bricks"));
-		items.add(new TileItem("Stone Door", (new Sprite(17, 4, Color.get(-1, 111, 333, 444))), "Stone Door", "Stone Bricks"));
-		items.add(new TileItem("Obsidian Brick", (new Sprite(1, 4, Color.get(-1, 159, 59, 59))), "Obsidian", "hole", "water", "cloud", "lava"));
-		items.add(new TileItem("Obsidian Wall", (new Sprite(16, 4, Color.get(-1, 159, 59, 59))), "Obsidian Wall", "Obsidian"));
-		items.add(new TileItem("Obsidian Door", (new Sprite(17, 4, Color.get(-1, 159, 59, 59))), "Obsidian Door", "Obsidian"));
+		items.add(new TileItem("Plank", (new Sprite(1, 4, 0)), "Wood Planks", "hole", "water", "cloud"));
+		items.add(new TileItem("Plank Wall", (new Sprite(16, 4, 0)), "Wood Wall", "Wood Planks"));
+		items.add(new TileItem("Wood Door", (new Sprite(17, 4, 0)), "Wood Door", "Wood Planks"));
+		items.add(new TileItem("Stone Brick", (new Sprite(1, 4, 0)), "Stone Bricks", "hole", "water", "cloud", "lava"));
+		items.add(new TileItem("Stone Wall", (new Sprite(16, 4, 0)), "Stone Wall", "Stone Bricks"));
+		items.add(new TileItem("Stone Door", (new Sprite(17, 4, 0)), "Stone Door", "Stone Bricks"));
+		items.add(new TileItem("Obsidian Brick", (new Sprite(1, 4, 0)), "Obsidian", "hole", "water", "cloud", "lava"));
+		items.add(new TileItem("Obsidian Wall", (new Sprite(16, 4, 0)), "Obsidian Wall", "Obsidian"));
+		items.add(new TileItem("Obsidian Door", (new Sprite(17, 4, 0)), "Obsidian Door", "Obsidian"));
 	
-		// TODO make a method in Item.java; calls clone(), but then changes color, and returns itself. Call it cloneAsColor, or changeColor, or maybe *asColor()*.
-		items.add(new TileItem("Wool", (new Sprite(2, 4, Color.WHITE)), "wool", "hole", "water"));
-		items.add(new TileItem("Red Wool", (new Sprite(2, 4, Color.get(-1, 100, 300, 500))), "Wool_RED", "hole", "water"));
-		items.add(new TileItem("Blue Wool", (new Sprite(2, 4, Color.get(-1, 005, 115, 115))), "Wool_BLUE", "hole", "water"));
-		items.add(new TileItem("Green Wool", (new Sprite(2, 4, Color.get(-1, 10, 40, 50))), "Wool_GREEN", "hole", "water"));
-		items.add(new TileItem("Yellow Wool", (new Sprite(2, 4, Color.get(-1, 110, 440, 552))), "Wool_YELLOW", "hole", "water"));
-		items.add(new TileItem("Black Wool", (new Sprite(2, 4, Color.get(-1, 000, 111, 111))), "Wool_BLACK", "hole", "water"));
+		items.add(new TileItem("Wool", (new Sprite(2, 4, 0)), "wool", "hole", "water"));
+		items.add(new TileItem("Red Wool", (new Sprite(2, 4, 0)), "Wool_RED", "hole", "water"));
+		items.add(new TileItem("Blue Wool", (new Sprite(2, 4, 0)), "Wool_BLUE", "hole", "water"));
+		items.add(new TileItem("Green Wool", (new Sprite(2, 4, 0)), "Wool_GREEN", "hole", "water"));
+		items.add(new TileItem("Yellow Wool", (new Sprite(2, 4, 0)), "Wool_YELLOW", "hole", "water"));
+		items.add(new TileItem("Black Wool", (new Sprite(2, 4, 0)), "Wool_BLACK", "hole", "water"));
 		
-		items.add(new TileItem("Sand", (new Sprite(2, 4, Color.get(-1, 110, 440, 550))), "sand", "hole", "water", "lava"));
-		items.add(new TileItem("Cactus", (new Sprite(4, 4, Color.get(-1, 10, 40, 50))), "cactus Sapling", "sand"));
-		items.add(new TileItem("Seeds", (new Sprite(5, 4, Color.get(-1, 10, 40, 50))), "wheat", "farmland"));
-		items.add(new TileItem("Grass Seeds", (new Sprite(5, 4, Color.get(-1, 10, 30, 50))), "grass", "dirt"));
-		items.add(new TileItem("Bone", (new Sprite(15, 4, Color.get(-1, 222, 555, 555))), "tree", "tree Sapling"));
-		items.add(new TileItem("Cloud", (new Sprite(2, 4, Color.get(-1, 222, 555, 444))), "cloud", "Infinite Fall"));
+		items.add(new TileItem("Sand", (new Sprite(2, 4, 0)), "sand", "hole", "water", "lava"));
+		items.add(new TileItem("Cactus", (new Sprite(4, 4, 0)), "cactus Sapling", "sand"));
+		items.add(new TileItem("Seeds", (new Sprite(3, 0, 0)), "wheat", "farmland"));
+		items.add(new TileItem("Grass Seeds", (new Sprite(3, 0, 0)), "grass", "dirt"));
+		items.add(new TileItem("Bone", (new Sprite(15, 4, 0)), "tree", "tree Sapling"));
+		items.add(new TileItem("Cloud", (new Sprite(2, 4, 0)), "cloud", "Infinite Fall"));
 		
 		return items;
 	}
