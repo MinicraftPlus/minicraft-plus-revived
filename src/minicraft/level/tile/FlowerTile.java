@@ -4,7 +4,6 @@ import minicraft.core.io.Sound;
 import minicraft.entity.Direction;
 import minicraft.entity.mob.Mob;
 import minicraft.entity.mob.Player;
-import minicraft.gfx.Color;
 import minicraft.gfx.ConnectorSprite;
 import minicraft.gfx.Screen;
 import minicraft.gfx.Sprite;
@@ -15,7 +14,7 @@ import minicraft.item.ToolType;
 import minicraft.level.Level;
 
 public class FlowerTile extends Tile {
-	private static Sprite flowersprite = new Sprite(1, 1, Color.get(10, 141, 555, 440));
+	private static Sprite flowersprite = new Sprite(1, 1, 1);
 	
 	protected FlowerTile(String name) {
 		super(name, (ConnectorSprite)null);

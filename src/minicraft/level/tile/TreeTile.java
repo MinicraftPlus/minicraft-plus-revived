@@ -24,14 +24,7 @@ public class TreeTile extends Tile {
 		connectsToGrass = true;
 	}
 	
-	public static int col = Color.get(10, 30, 151, 141);
-	public static int col1 = Color.get(10, 30, 430, 141);
-	public static int col2 = Color.get(10, 30, 320, 141);
-	
 	public void render(Screen screen, Level level, int x, int y) {
-		int barkCol1 = col1;
-		int barkCol2 = col2;
-
 		Tiles.get("grass").render(screen, level, x, y);
 		
 		boolean u = level.getTile(x, y - 1) == this;
@@ -44,24 +37,24 @@ public class TreeTile extends Tile {
 		boolean dr = level.getTile(x + 1, y + 1) == this;
 
 		if (u && ul && l) {
-			screen.render(x * 16 + 0, y * 16 + 0, 10 + 1 * 32, 0);
+			screen.render(x * 16 + 0, y * 16 + 0, 1 + 1 * 32, 0, 1);
 		} else {
-			screen.render(x * 16 + 0, y * 16 + 0, 9 + 0 * 32, 0);
+			screen.render(x * 16 + 0, y * 16 + 0, 0 + 0 * 32, 0, 1);
 		}
 		if (u && ur && r) {
-			screen.render(x * 16 + 8, y * 16 + 0, 10 + 2 * 32, 0);
+			screen.render(x * 16 + 8, y * 16 + 0, 1 + 2 * 32, 0, 1);
 		} else {
-			screen.render(x * 16 + 8, y * 16 + 0, 10 + 0 * 32, 0);
+			screen.render(x * 16 + 8, y * 16 + 0, 1 + 0 * 32, 0, 1);
 		}
 		if (d && dl && l) {
-			screen.render(x * 16 + 0, y * 16 + 8, 10 + 2 * 32, 0);
+			screen.render(x * 16 + 0, y * 16 + 8, 1 + 2 * 32, 0, 1);
 		} else {
-			screen.render(x * 16 + 0, y * 16 + 8, 9 + 1 * 32, 0);
+			screen.render(x * 16 + 0, y * 16 + 8, 0 + 1 * 32, 0, 1);
 		}
 		if (d && dr && r) {
-			screen.render(x * 16 + 8, y * 16 + 8, 10 + 1 * 32, 0);
+			screen.render(x * 16 + 8, y * 16 + 8, 1 + 1 * 32, 0, 1);
 		} else {
-			screen.render(x * 16 + 8, y * 16 + 8, 10 + 3 * 32, 0);
+			screen.render(x * 16 + 8, y * 16 + 8, 1 + 3 * 32, 0, 1);
 		}
 	}
 

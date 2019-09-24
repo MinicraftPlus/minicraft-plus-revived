@@ -16,7 +16,7 @@ import minicraft.item.ToolType;
 import minicraft.level.Level;
 
 public class SandTile extends Tile {
-	static Sprite steppedOn, normal = Sprite.dots(Color.get(552, 550, 440, 440));
+	static Sprite steppedOn, normal = Sprite.dots(/*Color.get(552, 550, 440, 440)*/0);
 	static {
 		Sprite.Px[][] pixels = new Sprite.Px[2][2];
 		pixels[0][0] = new Sprite.Px(3, 1, 0);
@@ -26,7 +26,7 @@ public class SandTile extends Tile {
 		steppedOn = new Sprite(pixels);
 	}
 	
-	private ConnectorSprite sprite = new ConnectorSprite(SandTile.class, new Sprite(11, 0, 3, 3, Color.get(440, 550, 440, 321), 3), normal)
+	private ConnectorSprite sprite = new ConnectorSprite(SandTile.class, new Sprite(11, 0, 3, 3, 1, 3), normal)
 	{
 		public boolean connectsTo(Tile tile, boolean isSide) {
 			if(!isSide) return true;
@@ -45,7 +45,7 @@ public class SandTile extends Tile {
 		boolean steppedOn = level.getData(x, y) > 0;
 		
 		if(steppedOn) csprite.full = SandTile.steppedOn;
-		else csprite.full = Sprite.dots(Color.get(552, 550, 440, 440));
+		else csprite.full = Sprite.dots(/*Color.get(552, 550, 440, 440)*/ 0);
 		
 		csprite.render(screen, level, x, y);
 	}
