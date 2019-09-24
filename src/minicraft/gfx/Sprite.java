@@ -123,7 +123,7 @@ public class Sprite {
 	}
 	protected void renderPixel(int c, int r, Screen screen, int x, int y, int mirror) {
 		//System.out.println("rendering pixel ("+c+","+r+") at ("+x+","+y+")");
-		screen.render(x, y, spritePixels[r][c].sheetPos, mirror); // render the sprite pixel.
+		screen.render(x, y, spritePixels[r][c].sheetPos, mirror, spritePixels[r][c].sheetNum); // render the sprite pixel.
 	}
 	
 	public String toString() {
@@ -140,10 +140,10 @@ public class Sprite {
 		protected int sheetPos, mirror, sheetNum;
 		
 		public Px(int sheetX, int sheetY, int mirroring) {
-			this(sheetX, sheetY, 0, mirroring);
+			this(sheetX, sheetY, mirroring, 0);
 		}
 
-		public Px(int sheetX, int sheetY, int sheetNum, int mirroring) {
+		public Px(int sheetX, int sheetY, int mirroring, int sheetNum) {
 			//pixelX and pixelY are the relative positions each pixel should have relative to the top-left-most pixel of the sprite.
 			sheetPos = sheetX + 32 * sheetY;
 			mirror = mirroring;
