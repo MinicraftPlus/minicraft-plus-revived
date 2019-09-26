@@ -9,24 +9,19 @@ import minicraft.entity.mob.Mob;
 import minicraft.entity.particle.SmashParticle;
 import minicraft.entity.particle.TextParticle;
 import minicraft.gfx.Color;
+import minicraft.gfx.Screen;
 import minicraft.gfx.Sprite;
 import minicraft.item.Items;
 import minicraft.level.Level;
 
 public class CactusTile extends Tile {
-	private static Sprite sprite = new Sprite(8, 2, 2, 2, Color.get(30, 40, 50, 550));
+	private static Sprite sprite = new Sprite(6, 0, 2, 2, 1);
 	
 	protected CactusTile(String name) {
 		super(name, sprite);
 		connectsToSand = true;
 	}
-	
-	//public static int col = Color.get(30, 40, 50, 550);
-	/*
-	public void render(Screen screen, Level level, int x, int y) {
-		sprite.render(screen, x * 16, y * 16);
-	}
-	*/
+
 	public boolean mayPass(Level level, int x, int y, Entity e) {
 		return false;
 	}
@@ -48,7 +43,14 @@ public class CactusTile extends Tile {
 		}
 		return true;
 	}
-	
+
+	@Override
+	public void render(Screen screen, Level level, int x, int y) {
+		Tiles.get("Sand").render(screen, level, x, y);
+
+		sprite.render(screen, x<<4, y<<4);
+	}
+
 	public void bumpedInto(Level level, int x, int y, Entity entity) {
 		if(!(entity instanceof Mob)) return;
 		Mob m = (Mob) entity;
