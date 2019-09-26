@@ -34,12 +34,12 @@ public class TileItem extends StackableItem {
 		items.add(new TileItem("Obsidian Wall", (new Sprite(16, 4, 0)), "Obsidian Wall", "Obsidian"));
 		items.add(new TileItem("Obsidian Door", (new Sprite(17, 4, 0)), "Obsidian Door", "Obsidian"));
 	
-		items.add(new TileItem("Wool", (new Sprite(2, 4, 0)), "wool", "hole", "water"));
-		items.add(new TileItem("Red Wool", (new Sprite(2, 4, 0)), "Wool_RED", "hole", "water"));
-		items.add(new TileItem("Blue Wool", (new Sprite(2, 4, 0)), "Wool_BLUE", "hole", "water"));
-		items.add(new TileItem("Green Wool", (new Sprite(2, 4, 0)), "Wool_GREEN", "hole", "water"));
-		items.add(new TileItem("Yellow Wool", (new Sprite(2, 4, 0)), "Wool_YELLOW", "hole", "water"));
-		items.add(new TileItem("Black Wool", (new Sprite(2, 4, 0)), "Wool_BLACK", "hole", "water"));
+		items.add(new TileItem("Wool", (new Sprite(2, 4, 0)), "Wool", "hole", "water"));
+		items.add(new TileItem("Red Wool", (new Sprite(2, 4, 0)), "Red Wool", "hole", "water"));
+		items.add(new TileItem("Blue Wool", (new Sprite(2, 4, 0)), "Blue Wool", "hole", "water"));
+		items.add(new TileItem("Green Wool", (new Sprite(2, 4, 0)), "Green Wool", "hole", "water"));
+		items.add(new TileItem("Yellow Wool", (new Sprite(2, 4, 0)), "Yellow Wool", "hole", "water"));
+		items.add(new TileItem("Black Wool", (new Sprite(2, 4, 0)), "Black Wool", "hole", "water"));
 		
 		items.add(new TileItem("Sand", (new Sprite(2, 4, 0)), "sand", "hole", "water", "lava"));
 		items.add(new TileItem("Cactus", (new Sprite(4, 4, 0)), "cactus Sapling", "sand"));
