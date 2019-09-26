@@ -324,7 +324,8 @@ public class Load {
 							tilename = "grass";
 						}
 					}
-					if(tilename.equalsIgnoreCase("WOOL") && worldVer.compareTo(new Version("2.0.6-dev3")) < 0) {
+
+					if(tilename.equalsIgnoreCase("WOOL") && worldVer.compareTo(new Version("2.0.6-dev4")) < 0) {
 						switch (Integer.parseInt(extradata.get(tileidx))) {
 							case 1:
 								tilename = "Red Wool";
@@ -342,7 +343,7 @@ public class Load {
 								tilename = "Black Wool";
 								break;
 							default:
-								tilename = "Wool";
+								tilename = "Normal Wool";
 						}
 					}
 
