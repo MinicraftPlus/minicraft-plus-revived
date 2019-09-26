@@ -88,14 +88,21 @@ public class ConnectorSprite {
 		//System.out.println("original connection check");
 		return tile.getClass() == owner;
 	}
-	
-	public static Sprite makeSprite(int w, int h, int color, int mirror, boolean repeat, int... coords) {
+
+	public int getSparseOffset(Tile tile) {
+		return 0;
+	}
+
+	public static Sprite makeSprite(int w, int h, int mirror, boolean repeat, int... coords) {
+		return makeSprite(w, h, mirror, 1, repeat, coords);
+	}
+	public static Sprite makeSprite(int w, int h, int mirror, int sheet, boolean repeat, int... coords) {
 		Sprite.Px[][] pixels = new Sprite.Px[h][w];
 		int i = 0;
 		for(int r = 0; r < h && i < coords.length; r++) {
 			for(int c = 0; c < w && i < coords.length; c++) {
 				int pos = coords[i];
-				pixels[r][c] = new Sprite.Px(pos%32, pos/32, mirror);
+				pixels[r][c] = new Sprite.Px(pos%32, pos/32, mirror, sheet);
 				i++;
 				if(i == coords.length && repeat) i = 0;
 			}

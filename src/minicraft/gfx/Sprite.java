@@ -22,16 +22,16 @@ public class Sprite {
 		return new Sprite(7, 2, w, h, Color.get(col, col));
 	}
 	
-	public static Sprite repeat(int sx, int sy, int w, int h, int col) {
-		return ConnectorSprite.makeSprite(w, h, col, 0, true, sx + sy * 32);
+	public static Sprite repeat(int sx, int sy, int w, int h) {
+		return ConnectorSprite.makeSprite(w, h, 0, true, sx + sy * 32);
 	}
 	
 	public static Sprite dots(int col) {
-		return ConnectorSprite.makeSprite(2, 2, col, 0, false, 0, 1, 2, 3);
+		return ConnectorSprite.makeSprite(2, 2, 0, false, 0, 1, 2, 3);
 	}
-	public static Sprite randomDots(long seed, int col) {
+	public static Sprite randomDots(long seed, int offset) {
 		ran.setSeed(seed);
-		return ConnectorSprite.makeSprite(2, 2, col, ran.nextInt(4), false, ran.nextInt(4), ran.nextInt(4), ran.nextInt(4), ran.nextInt(4));
+		return ConnectorSprite.makeSprite(2, 2, ran.nextInt(4), 1, false, offset + ran.nextInt(4), offset + ran.nextInt(4), offset + ran.nextInt(4), offset + ran.nextInt(4));
 	}
 	
 	protected Px[][] spritePixels;
