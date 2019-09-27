@@ -12,7 +12,7 @@ import minicraft.item.PowerGloveItem;
 import minicraft.level.Level;
 
 public class TorchTile extends Tile {
-	private static Sprite sprite = new Sprite(12, 3, Color.get(320, 500, 520, -1));
+	private static Sprite sprite = new Sprite(11, 3, 0);
 	
 	private Tile onType;
 	

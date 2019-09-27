@@ -20,7 +20,7 @@ public class TorchItem extends TileItem {
 	
 	private TorchItem() { this(1); }
 	private TorchItem(int count) {
-		super("Torch", (new Sprite(18, 4, Color.get(-1, 500, 520, 320))), count, "", "dirt", "Wood Planks", "Stone Bricks", "Obsidian", "Wool", "grass", "sand");
+		super("Torch", (new Sprite(11, 3, 0)), count, "", "dirt", "Wood Planks", "Stone Bricks", "Obsidian", "Wool", "grass", "sand");
 	}
 	
 	public boolean interactOn(Tile tile, Level level, int xt, int yt, Player player, Direction attackDir) {

@@ -14,16 +14,16 @@ import minicraft.level.tile.Tiles;
 public class BucketItem extends StackableItem {
 	
 	public enum Fill {
-		Empty (Tiles.get("hole"), 333),
-		Water (Tiles.get("water"), 005),
-		Lava (Tiles.get("lava"), 400);
+		Empty (Tiles.get("hole"), 2),
+		Water (Tiles.get("water"), 0),
+		Lava (Tiles.get("lava"), 1);
 		
 		public Tile contained;
-		public int innerColor; // TODO make it so that the inside color is fetched from the tile color.
-		
-		Fill(Tile contained, int innerCol) {
+		public int offset;
+
+		Fill(Tile contained, int offset) {
 			this.contained = contained;
-			innerColor = innerCol;
+			this.offset = offset;
 		}
 	}
 	
@@ -48,7 +48,7 @@ public class BucketItem extends StackableItem {
 	
 	private BucketItem(Fill fill) { this(fill, 1); }
 	private BucketItem(Fill fill, int count) {
-		super(fill.name() + " Bucket", new Sprite(21, 4, Color.get(-1, 222, fill.innerColor, 555)), count);
+		super(fill.name() + " Bucket", new Sprite(fill.offset, 6, 0), count);
 		this.filling = fill;
 	}
 	
@@ -91,7 +91,7 @@ public class BucketItem extends StackableItem {
 	}
 	
 	@Override
-	public int hashCode() { return super.hashCode() + filling.innerColor * 31; }
+	public int hashCode() { return super.hashCode() + filling.offset * 31; }
 	
 	public BucketItem clone() {
 		return new BucketItem(filling, count);

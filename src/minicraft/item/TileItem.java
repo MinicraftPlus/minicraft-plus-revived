@@ -21,7 +21,7 @@ public class TileItem extends StackableItem {
 		
 		/// TileItem sprites all have 1x1 sprites.
 		items.add(new TileItem("Flower", (new Sprite(4, 0, 0)), "flower", "grass"));
-		items.add(new TileItem("Acorn", (new Sprite(0, 0, 0)), "tree Sapling", "grass"));
+		items.add(new TileItem("Acorn", (new Sprite(7, 3, 0)), "tree Sapling", "grass"));
 		items.add(new TileItem("Dirt", (new Sprite(2, 4, 0)), "dirt", "hole", "water", "lava"));
 		
 		items.add(new TileItem("Plank", (new Sprite(1, 4, 0)), "Wood Planks", "hole", "water", "cloud"));
@@ -34,19 +34,19 @@ public class TileItem extends StackableItem {
 		items.add(new TileItem("Obsidian Wall", (new Sprite(16, 4, 0)), "Obsidian Wall", "Obsidian"));
 		items.add(new TileItem("Obsidian Door", (new Sprite(17, 4, 0)), "Obsidian Door", "Obsidian"));
 	
-		items.add(new TileItem("Wool", (new Sprite(2, 4, 0)), "Wool", "hole", "water"));
-		items.add(new TileItem("Red Wool", (new Sprite(2, 4, 0)), "Red Wool", "hole", "water"));
-		items.add(new TileItem("Blue Wool", (new Sprite(2, 4, 0)), "Blue Wool", "hole", "water"));
-		items.add(new TileItem("Green Wool", (new Sprite(2, 4, 0)), "Green Wool", "hole", "water"));
-		items.add(new TileItem("Yellow Wool", (new Sprite(2, 4, 0)), "Yellow Wool", "hole", "water"));
-		items.add(new TileItem("Black Wool", (new Sprite(2, 4, 0)), "Black Wool", "hole", "water"));
+		items.add(new TileItem("Wool", (new Sprite(5, 3, 0)), "Wool", "hole", "water"));
+		items.add(new TileItem("Red Wool", (new Sprite(4, 3, 0)), "Red Wool", "hole", "water"));
+		items.add(new TileItem("Blue Wool", (new Sprite(3, 3, 0)), "Blue Wool", "hole", "water"));
+		items.add(new TileItem("Green Wool", (new Sprite(2, 3, 0)), "Green Wool", "hole", "water"));
+		items.add(new TileItem("Yellow Wool", (new Sprite(1, 3, 0)), "Yellow Wool", "hole", "water"));
+		items.add(new TileItem("Black Wool", (new Sprite(0, 3, 0)), "Black Wool", "hole", "water"));
 		
-		items.add(new TileItem("Sand", (new Sprite(2, 4, 0)), "sand", "hole", "water", "lava"));
-		items.add(new TileItem("Cactus", (new Sprite(4, 4, 0)), "cactus Sapling", "sand"));
+		items.add(new TileItem("Sand", (new Sprite(6, 3, 0)), "sand", "hole", "water", "lava"));
+		items.add(new TileItem("Cactus", (new Sprite(8, 3, 0)), "cactus Sapling", "sand"));
 		items.add(new TileItem("Seeds", (new Sprite(3, 0, 0)), "wheat", "farmland"));
 		items.add(new TileItem("Grass Seeds", (new Sprite(3, 0, 0)), "grass", "dirt"));
-		items.add(new TileItem("Bone", (new Sprite(15, 4, 0)), "tree", "tree Sapling"));
-		items.add(new TileItem("Cloud", (new Sprite(2, 4, 0)), "cloud", "Infinite Fall"));
+		items.add(new TileItem("Bone", (new Sprite(9, 3, 0)), "tree", "tree Sapling"));
+		items.add(new TileItem("Cloud", (new Sprite(10, 3, 0)), "cloud", "Infinite Fall"));
 		
 		return items;
 	}
