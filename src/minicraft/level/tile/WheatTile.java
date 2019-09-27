@@ -23,25 +23,13 @@ public class WheatTile extends Tile {
 	public void render(Screen screen, Level level, int x, int y) {
 		int age = level.getData(x, y);
 		int icon = age / 10;
-		
-		int col = Color.get(301, 411, 321, 50);
-		int col1 = Color.get(301, 411, 50 + (icon) * 100, 40 + (icon - 3) * 2 * 100);
-		int col2 = Color.get(0, 411, 50 + (icon) * 100, 40 + (icon - 3) * 2 * 100);
-		
-		if (icon >= 3) {
-			col = col1;
-			if (age == 50) {
-				col = col2;
-			}
-			icon = 3;
-		}
 
 		Tiles.get("farmland").render(screen, level, x, y);
 
-		screen.render(x * 16 + 0, y * 16 + 0, 4 + 3 * 32 + icon, 0);
-		screen.render(x * 16 + 8, y * 16 + 0, 4 + 3 * 32 + icon, 0);
-		screen.render(x * 16 + 0, y * 16 + 8, 4 + 3 * 32 + icon, 1);
-		screen.render(x * 16 + 8, y * 16 + 8, 4 + 3 * 32 + icon, 1);
+		screen.render(x * 16 + 0, y * 16 + 0, 13 + 0 * 32 + icon, 0, 1);
+		screen.render(x * 16 + 8, y * 16 + 0, 13 + 0 * 32 + icon, 0, 1);
+		screen.render(x * 16 + 0, y * 16 + 8, 13 + 0 * 32 + icon, 1, 1);
+		screen.render(x * 16 + 8, y * 16 + 8, 13 + 0 * 32 + icon, 1, 1);
 	}
 	
 	public boolean IfWater(Level level, int xs, int ys) {
