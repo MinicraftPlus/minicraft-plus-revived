@@ -14,7 +14,7 @@ import minicraft.item.ToolType;
 import minicraft.level.Level;
 
 public class FlowerTile extends Tile {
-	private static Sprite flowersprite = new Sprite(1, 1, 1);
+	private static Sprite flowerSprite = new Sprite(3, 8, 1);
 	
 	protected FlowerTile(String name) {
 		super(name, (ConnectorSprite)null);
@@ -46,8 +46,8 @@ public class FlowerTile extends Tile {
 		x = x << 4;
 		y = y << 4;
 		
-		flowersprite.render(screen, x + 8*shape, y);
-		flowersprite.render(screen, x + 8*(shape==0?1:0), y + 8);
+		flowerSprite.render(screen, x + 8*shape, y);
+		flowerSprite.render(screen, x + 8*(shape==0?1:0), y + 8);
 	}
 
 	public boolean interact(Level level, int x, int y, Player player, Item item, Direction attackDir) {

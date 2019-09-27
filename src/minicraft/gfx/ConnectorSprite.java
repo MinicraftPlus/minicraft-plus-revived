@@ -89,10 +89,6 @@ public class ConnectorSprite {
 		return tile.getClass() == owner;
 	}
 
-	public int getSparseOffset(Tile tile) {
-		return 0;
-	}
-
 	public static Sprite makeSprite(int w, int h, int mirror, boolean repeat, int... coords) {
 		return makeSprite(w, h, mirror, 1, repeat, coords);
 	}
