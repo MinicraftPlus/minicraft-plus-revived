@@ -860,16 +860,16 @@ public class Player extends Mob implements ItemHolder, ClientTickable {
 		if (isFishing) {
 			switch (dir) {
 				case UP:
-					screen.render(xo + 4, yo - 4, 11 + 13 * 32, 1);
+					screen.render(xo + 4, yo - 4, fishingLevel + 11 * 32, 1);
 					break;
 				case LEFT:
-					screen.render(xo - 4, yo + 4, 11 + 13 * 32, 1);
+					screen.render(xo - 4, yo + 4, fishingLevel + 11 * 32, 1);
 					break;
 				case RIGHT:
-					screen.render(xo + 8 + 4, yo + 4, 11 + 13 * 32, 0);
+					screen.render(xo + 8 + 4, yo + 4, fishingLevel + 11 * 32, 0);
 					break;
 				case DOWN:
-					screen.render(xo + 4, yo + 8 + 4, 11 + 13 * 32, 0);
+					screen.render(xo + 4, yo + 8 + 4, fishingLevel + 11 * 32, 0);
 					break;
 				case NONE:
 					break;
