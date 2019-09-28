@@ -122,8 +122,10 @@ public class Sprite {
 		renderPixel(c, r, screen, x, y, spritePixels[r][c].mirror);
 	}
 	protected void renderPixel(int c, int r, Screen screen, int x, int y, int mirror) {
-		//System.out.println("rendering pixel ("+c+","+r+") at ("+x+","+y+")");
-		screen.render(x, y, spritePixels[r][c].sheetPos, mirror, spritePixels[r][c].sheetNum); // render the sprite pixel.
+		renderPixel(c, r, screen, x, y, mirror, this.color);
+	}
+	protected void renderPixel(int c, int r, Screen screen, int x, int y, int mirror, int whiteTint) {
+		screen.render(x, y, spritePixels[r][c].sheetPos, mirror, spritePixels[r][c].sheetNum, whiteTint); // render the sprite pixel.
 	}
 	
 	public String toString() {

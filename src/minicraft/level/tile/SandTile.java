@@ -45,6 +45,8 @@ public class SandTile extends Tile {
 		
 		if(steppedOn) csprite.full = SandTile.steppedOn;
 		else csprite.full = SandTile.normal;
+
+		csprite.sparse.color = DirtTile.dCol(level.depth);
 		
 		csprite.render(screen, level, x, y);
 	}

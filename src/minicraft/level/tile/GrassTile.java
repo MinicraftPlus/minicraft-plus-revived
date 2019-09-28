@@ -43,6 +43,12 @@ public class GrassTile extends Tile {
 		}
 	}
 
+	@Override
+	public void render(Screen screen, Level level, int x, int y) {
+		sprite.sparse.color = DirtTile.dCol(level.depth);
+		sprite.render(screen, level, x, y);
+	}
+
 	public boolean interact(Level level, int xt, int yt, Player player, Item item, Direction attackDir) {
 		if (item instanceof ToolItem) {
 			ToolItem tool = (ToolItem) item;

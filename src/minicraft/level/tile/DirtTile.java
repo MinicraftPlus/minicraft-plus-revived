@@ -13,29 +13,36 @@ import minicraft.item.ToolType;
 import minicraft.level.Level;
 
 public class DirtTile extends Tile {
-	private static Sprite sprite = Sprite.dots(getColor(0));
+	private static Sprite[] levelSprite = new Sprite[4];
+	static {
+		levelSprite[0] = new Sprite(12, 2, 2, 2, 1);
+		levelSprite[1] = new Sprite(14, 2, 2, 2, 1);
+		levelSprite[2] = new Sprite(12, 4, 2, 2, 1);
+	}
 	
 	protected DirtTile(String name) {
-		super(name, sprite);
+		super(name, levelSprite[0]);
 		maySpawn = true;
 	}
 
 	protected static int dCol(int depth) {
 		switch(depth) {
-			case 1: return 13421772; // sky.
-			case 0: return 26830387; // surface.
-			case -4: return 23462041; // dungeons.
+			case 0: return Color.get(1, 129, 105, 83); // surface.
+			case -4: return Color.get(1, 76, 30, 100); // dungeons.
 			default: return Color.get(1, 102); // caves.
 		}
 	}
-	
-	private static int getColor(int depth) {
-		int dcol = dCol(depth);
-		return Color.get(dcol, dcol, dcol-111, dcol-111);
+
+	protected static int dIdx(int depth) {
+		switch(depth) {
+			case 0: return 0; // surface
+			case -4: return 2; // dungeons
+			default: return 1; // caves
+		}
 	}
 	
 	public void render(Screen screen, Level level, int x, int y) {
-		sprite.render(screen, x*16, y*16, getColor(level.depth));
+		levelSprite[dIdx(level.depth)].render(screen, x*16, y*16, 0);
 	}
 	
 	public boolean interact(Level level, int xt, int yt, Player player, Item item, Direction attackDir) {
