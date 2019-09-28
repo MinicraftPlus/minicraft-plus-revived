@@ -8,17 +8,10 @@ import minicraft.gfx.Sprite;
 import minicraft.level.Level;
 
 public class HoleTile extends Tile {
-	private static ConnectorSprite sprite = new ConnectorSprite(HoleTile.class, new Sprite(14, 0, 3, 3, Color.get(3, 222, 211, 321), 3), Sprite.dots(Color.get(222, 222, 220, 220)))
+	private static ConnectorSprite sprite = new ConnectorSprite(HoleTile.class, new Sprite(24, 6, 3, 3, 1, 3), new Sprite(27, 6, 2, 2, 1))
 	{
 		public boolean connectsTo(Tile tile, boolean isSide) {
 			return tile.connectsToLiquid();
-		}
-		
-		public int getSparseColor(Tile tile, int origCol) {
-			if(!tile.connectsToLiquid() && tile.connectsToSand)
-				return Color.get(3, 222, 440, 550);
-			else
-				return origCol;
 		}
 	};
 	
@@ -29,7 +22,7 @@ public class HoleTile extends Tile {
 	}
 	
 	public void render(Screen screen, Level level, int x, int y) {
-		sprite.sparse.color = Color.get(3, 222, 211, DirtTile.dCol(level.depth));
+		sprite.sparse.color = DirtTile.dCol(level.depth);
 		sprite.render(screen, level, x, y);
 	}
 

@@ -31,8 +31,10 @@ public class ConnectorSprite {
 	public ConnectorSprite(Class<? extends Tile> owner, Sprite sparse, Sprite full) {
 		this(owner, sparse, sparse, full, false);
 	}
-	
-	public void render(Screen screen, Level level, int x, int y) {
+
+	public void render(Screen screen, Level level, int x, int y) { render(screen, level, x, y, -1); }
+
+	public void render(Screen screen, Level level, int x, int y, int whiteTint) {
 		//System.out.println("rendering sprite for tile " + owner);
 		
 		Tile ut = level.getTile(x, y - 1);

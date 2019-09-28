@@ -32,8 +32,7 @@ public class RockTile extends Tile {
 	}
 	
 	public void render(Screen screen, Level level, int x, int y) {
-		sprite.sides.color = Color.get(111, 444, 555, DirtTile.dCol(level.depth));
-		sprite.sparse.color = Color.get(111, 444, 555, DirtTile.dCol(level.depth));
+		sprite.sparse.color = DirtTile.dCol(level.depth);
 		sprite.render(screen, level, x, y);
 	}
 	
