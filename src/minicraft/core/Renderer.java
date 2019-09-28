@@ -159,16 +159,16 @@ public class Renderer extends Game {
 	private static void renderGui() {
 		/// AH-HA! THIS DRAWS THE BLACK SQUARE!!
 		for (int x = 12; x < 29; x++)
-			screen.render(x * 7, Screen.h - 8, 0 + 1 * 32, 0);
+			screen.render(x * 7, Screen.h - 8, 30 + 30 * 32, 0, 3);
 		
 		renderDebugInfo();
 		
 		// This is the arrow counter. ^ = infinite symbol.
 		int ac = player.getInventory().count(Items.arrowItem);
 		if (isMode("creative") || ac >= 10000)
-			Font.draw("	x" + "^", screen, 84, Screen.h - 16, Color.get(0, 333, 444, 555));
+			Font.draw("	x" + "^", screen, 84, Screen.h - 16);
 		else
-			Font.draw("	x" + ac, screen, 84, Screen.h - 16, Color.get(0, 555));
+			Font.draw("	x" + ac, screen, 84, Screen.h - 16);
 		//displays arrow icon
 		screen.render(10 * 8 + 4, Screen.h - 16, 13 + 5 * 32, 0);
 		
@@ -248,9 +248,16 @@ public class Renderer extends Game {
 		
 		// TOOL DURABILITY STATUS
 		if (player.activeItem instanceof ToolItem) {
+			// draws a black box
+			for (int i = 0; i < 4; i++) {
+				screen.render(164 + (i * 8), Screen.h - 16, 30 + 30 * 32, 0, 3);
+			}
+
+			// draws the text
 			ToolItem tool = (ToolItem) player.activeItem;
 			int dura = tool.dur * 100 / (tool.type.durability * (tool.level+1));
-			Font.draw(dura + "%", screen, 164, Screen.h - 16, Color.get(0, 30));
+			int green = (int)(dura * 2.55f);
+			Font.draw(dura + "%", screen, 164, Screen.h - 16, Color.get(1, 255 - green, green, 0));
 		}
 		
 		/// This renders the potions overlay

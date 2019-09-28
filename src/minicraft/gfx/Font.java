@@ -14,7 +14,9 @@ public class Font {
 		"√ «‘’";
 	
 	/* The order of the letters in the chars string is represented in the order that they appear in the sprite-sheet. */
-	
+
+	public static void draw(String msg, Screen screen, int x, int y) { draw(msg, screen, x, y, -1); }
+
 	/** Draws the message to the x & y coordinates on the screen. */
 	public static void draw(String msg, Screen screen, int x, int y, int whiteTint) {
 		msg = msg.toUpperCase(Localization.getSelectedLocale()); //makes all letters uppercase.
