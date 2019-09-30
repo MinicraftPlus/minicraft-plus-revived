@@ -36,40 +36,14 @@ public class ToolItem extends Item {
 	public int level; // Level of said tool
 	public int dur; // the durability of the tool
 	
-	public static final int[] LEVEL_COLORS = { // Colors of the tools, same position as LEVEL_NAMES
-		Color.get(-1, 100, 321, 431), // wood
-		Color.get(-1, 100, 321, 111), // rock/stone
-		Color.get(-1, 100, 321, 555), // iron
-		Color.get(-1, 100, 321, 550), // gold
-		Color.get(-1, 100, 321, 55), // gem
-	};
-	
-	public static final int[] BOW_COLORS = { // Colors of the bows, specifically.
-		Color.get(-1, 100, 444, 431),
-		Color.get(-1, 100, 444, 111),
-		Color.get(-1, 100, 444, 555),
-		Color.get(-1, 100, 444, 550),
-		Color.get(-1, 100, 444, 55),
-	};
-	
 	/** Tool Item, requires a tool type (ToolType.Sword, ToolType.Axe, ToolType.Hoe, etc) and a level (0 = wood, 2 = iron, 4 = gem, etc) */
 	public ToolItem(ToolType type, int level) {
-		super(LEVEL_NAMES[level]+" "+type.name(), new Sprite(type.sprite, 5, getColor(type, level)));
+		super(LEVEL_NAMES[level]+" "+type.name(), new Sprite(type.sprite, 13 + level, 0));
 		
 		this.type = type;
 		this.level = level;
 		
 		dur = type.durability * (level+1); // initial durability fetched from the ToolType
-	}
-	
-	private static int getColor(ToolType type, int level) {
-		int col;
-		if (type == ToolType.Bow)
-			col = BOW_COLORS[level];
-		else
-			col = LEVEL_COLORS[level];
-		
-		return col;
 	}
 	
 	/** Gets the name of this tool (and it's type) as a display string. */
