@@ -111,7 +111,7 @@ public class Player extends Mob implements ItemHolder, ClientTickable {
 	private int regentick; // counts time between each time the regen potion effect heals you.
 	
 	//private final int acs = 25; // default ("start") arrow count
-	public int shirtColor = Color.get(1, 53, 53, 29); // player shirt color.
+	public int shirtColor = Color.get(1, 51, 51, 0); // player shirt color.
 
 	public boolean isFishing = false;
 	public int maxFishingTicks = 120;
