@@ -26,6 +26,7 @@ import minicraft.entity.mob.*;
 import minicraft.entity.particle.FireParticle;
 import minicraft.entity.particle.SmashParticle;
 import minicraft.entity.particle.TextParticle;
+import minicraft.gfx.Color;
 import minicraft.item.*;
 import minicraft.level.Level;
 import minicraft.level.tile.Tiles;
@@ -453,6 +454,12 @@ public class Load {
 			String col = ""+cols[0]+cols[1]+cols[2];
 			System.out.println("getting color as " + col);
 			player.shirtColor = Integer.parseInt(col);
+		} else if (worldVer.compareTo(new Version("2.0.6-dev4")) < 0) {
+			String color = data.remove(0);
+			int[] colors = new int[3];
+			for (int i = 0; i < 3; i++)
+				colors[i] = Integer.parseInt(String.valueOf(color.charAt(i)));
+			player.shirtColor = Color.get(1, colors[0] * 51, colors[1] * 51, colors[2] * 51);
 		}
 		else
 			player.shirtColor = Integer.parseInt(data.remove(0));
