@@ -16,28 +16,23 @@ public class PassiveMob extends MobAi {
 	 * Constructor for a non-hostile (passive) mob.
 	 * healthFactor = 3.
 	 * @param sprites The mob's sprites.
-	 * @param color The mob's color.
 	 */
-	public PassiveMob(MobSprite[][] sprites, int color) {
-		this(sprites, color, 3);
+	public PassiveMob(MobSprite[][] sprites) {
+		this(sprites, 3);
 	}
 	
 	/**
 	 * Constructor for a non-hostile (passive) mob.
 	 * @param sprites The mob's sprites.
-	 * @param color The mob's color.
 	 * @param healthFactor Determines the mobs health. Will be multiplied by the difficulty
 	 * and then added with 5.
 	 */
-	public PassiveMob(MobSprite[][] sprites, int color, int healthFactor) {
+	public PassiveMob(MobSprite[][] sprites, int healthFactor) {
 		super(sprites, 5 + healthFactor * Settings.getIdx("diff"), 5*60*Updater.normSpeed, 45, 40);
-		this.color = color;
-		col = color;
 	}
 	
 	@Override
 	public void render(Screen screen) {
-		col = color;
 		super.render(screen);
 	}
 	

@@ -6,14 +6,13 @@ import minicraft.gfx.MobSprite;
 import minicraft.item.Items;
 
 public class Cow extends PassiveMob {
-	private static MobSprite[][] sprites = MobSprite.compileMobSpriteAnimations(16, 16);
+	private static MobSprite[][] sprites = MobSprite.compileMobSpriteAnimations(0, 26);
 	
 	/**
 	 * Creates the cow with the right sprites and color.
 	 */
 	public Cow() {
-		super(sprites, Color.get(-1, 000, 333, 322), 5);
-		col = Color.get(-1, 000, 333, 322);
+		super(sprites, 5);
 	}
 	
 	public void die() {

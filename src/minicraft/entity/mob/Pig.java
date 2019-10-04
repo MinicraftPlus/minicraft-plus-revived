@@ -6,13 +6,13 @@ import minicraft.gfx.MobSprite;
 import minicraft.item.Items;
 
 public class Pig extends PassiveMob {
-	private static MobSprite[][] sprites = MobSprite.compileMobSpriteAnimations(16, 14);
+	private static MobSprite[][] sprites = MobSprite.compileMobSpriteAnimations(0, 30);
 	
 	/**
 	 * Creates a pig.
 	 */
 	public Pig() {
-		super(sprites, Color.get(-1, 000, 555, 522));
+		super(sprites);
 	}
 	
 	public void die() {
