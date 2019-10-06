@@ -91,13 +91,12 @@ public abstract class MobAi extends Mob {
 		int xo = x - 8;
 		int yo = y - 11;
 		
-		int color = col;
-		if (hurtTime > 0) {
-			color = Color.WHITE;
-		}
-		
 		MobSprite curSprite = sprites[dir.getDir()][(walkDist >> 3) % sprites[dir.getDir()].length];
-		curSprite.render(screen, xo, yo);
+		if (hurtTime > 0) {
+			curSprite.render(screen, xo, yo, true);
+		} else {
+			curSprite.render(screen, xo, yo);
+		}
 	}
 	
 	@Override

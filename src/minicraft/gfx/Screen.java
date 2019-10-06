@@ -61,43 +61,54 @@ public class Screen {
 
 	public void render(int xp, int yp, int tile, int bits, int sheet) { render(xp, yp, tile, bits, sheet, -1); }
 
-	/** Renders an object from the sprite sheet based on screen coordinates, tile (SpriteSheet location), colors, and bits (for mirroring). I believe that xp and yp refer to the desired position of the upper-left-most pixel. */
-	public void render(int xp, int yp, int tile, int bits, int sheet, int whiteTint) {
-		// xp and yp are originally in level coordinates, but offset turns them to screen coordinates.
-		xp -= xOffset; //account for screen offset
-		yp -= yOffset;
-		// determines if the image should be mirrored...
-		boolean mirrorX = (bits & BIT_MIRROR_X) > 0; // horizontally.
-		boolean mirrorY = (bits & BIT_MIRROR_Y) > 0; // vertically.
+    public void render(int xp, int yp, int tile, int bits, int sheet, int whiteTint) { render(xp, yp, tile, bits, sheet, whiteTint, false); }
+
+    /** Renders an object from the sprite sheet based on screen coordinates, tile (SpriteSheet location), colors, and bits (for mirroring). I believe that xp and yp refer to the desired position of the upper-left-most pixel. */
+    public void render(int xp, int yp, int tile, int bits, int sheet, int whiteTint, boolean fullbright) {
+        // xp and yp are originally in level coordinates, but offset turns them to screen coordinates.
+        xp -= xOffset; //account for screen offset
+        yp -= yOffset;
+        // determines if the image should be mirrored...
+        boolean mirrorX = (bits & BIT_MIRROR_X) > 0; // horizontally.
+        boolean mirrorY = (bits & BIT_MIRROR_Y) > 0; // vertically.
 
 		SpriteSheet currentSheet = sheets[sheet];
 
-		int xTile = tile % 32; // gets x position of the spritesheet "tile"
-		int yTile = tile / 32; // gets y position
-		int toffs = xTile * 8 + yTile * 8 * currentSheet.width; // Gets the offset of the sprite into the spritesheet pixel array, the 8's represent the size of the box. (8 by 8 pixel sprite boxes)
-		
-		/// THIS LOOPS FOR EVERY LITTLE PIXEL
-		for (int y = 0; y < 8; y++) { // Loops 8 times (because of the height of the tile)
-			int ys = y; // current y pixel
-			if (mirrorY) ys = 7 - y; // Reverses the pixel for a mirroring effect
-			if (y + yp < 0 || y + yp >= h) continue; // If the pixel is out of bounds, then skip the rest of the loop.
-			for (int x = 0; x < 8; x++) { // Loops 8 times (because of the width of the tile)
-				if (x + xp < 0 || x + xp >= w) continue; // skip rest if out of bounds.
-				
-				int xs = x; // current x pixel
-				if (mirrorX) xs = 7 - x; // Reverses the pixel for a mirroring effect
+        int xTile = tile % 32; // gets x position of the spritesheet "tile"
+        int yTile = tile / 32; // gets y position
+        int toffs = xTile * 8 + yTile * 8 * currentSheet.width; // Gets the offset of the sprite into the spritesheet pixel array, the 8's represent the size of the box. (8 by 8 pixel sprite boxes)
 
-				int col = currentSheet.pixels[toffs + xs + ys * currentSheet.width]; // Gets the color of the current pixel from the value stored in the sheet.
+        /// THIS LOOPS FOR EVERY LITTLE PIXEL
+        for (int y = 0; y < 8; y++) { // Loops 8 times (because of the height of the tile)
+            int ys = y; // current y pixel
+            if (mirrorY) ys = 7 - y; // Reverses the pixel for a mirroring effect
+            if (y + yp < 0 || y + yp >= h) continue; // If the pixel is out of bounds, then skip the rest of the loop.
+            for (int x = 0; x < 8; x++) { // Loops 8 times (because of the width of the tile)
+                if (x + xp < 0 || x + xp >= w) continue; // skip rest if out of bounds.
 
-				boolean isTransparent = (col >> 24 == 0);
+                int xs = x; // current x pixel
+                if (mirrorX) xs = 7 - x; // Reverses the pixel for a mirroring effect
 
-				if (!isTransparent) pixels[(x + xp) + (y + yp) * w] = Color.upgrade(col); // Inserts the colors into the image.
+                int col = currentSheet.pixels[toffs + xs + ys * currentSheet.width]; // Gets the color of the current pixel from the value stored in the sheet.
 
-				// if this is white, write the whiteTint over it
-				if (col == 0x1FFFFFF && whiteTint != -1) pixels[(x + xp) + (y + yp) * w] = Color.upgrade(whiteTint);
-			}
-		}
-	}
+                boolean isTransparent = (col >> 24 == 0);
+
+                if (!isTransparent) {
+                    if (whiteTint != -1 && col == 0x1FFFFFF) {
+                        // if this is white, write the whiteTint over it
+                        pixels[(x + xp) + (y + yp) * w] = Color.upgrade(whiteTint);
+                    } else {
+                        // Inserts the colors into the image
+                        if (fullbright) {
+                            pixels[(x + xp) + (y + yp) * w] = Color.WHITE;
+                        } else {
+							pixels[(x + xp) + (y + yp) * w] = Color.upgrade(col);
+						}
+                    }
+                }
+            }
+        }
+    }
 	
 	/** Sets the offset of the screen */
 	public void setOffset(int xOffset, int yOffset) {

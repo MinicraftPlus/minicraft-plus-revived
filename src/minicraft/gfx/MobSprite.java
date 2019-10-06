@@ -55,4 +55,17 @@ public class MobSprite extends Sprite {
 		
 		return sprites;
 	}
+
+	public void render(Screen screen, int x, int y, boolean fullbright) {
+		for(int row = 0; row < spritePixels.length; row++) { // loop down through each row
+			renderRow(row, screen, x, y + row*8, fullbright);
+		}
+	}
+
+	public void renderRow(int r, Screen screen, int x, int y, boolean fullbright) {
+		Px[] row = spritePixels[r];
+		for(int c = 0; c < row.length; c++) { // loop across through each column
+			screen.render(x + c*8, y, row[c].sheetPos, row[c].mirror, row[c].sheetNum, -1, fullbright); // render the sprite pixel.
+		}
+	}
 }
