@@ -35,7 +35,7 @@ public class Sprite {
 	}
 	
 	protected Px[][] spritePixels;
-	public int color;
+	public int color = -1;
 	protected java.awt.Rectangle sheetLoc;
 	/// spritePixels is arranged so that the pixels are in their correct positions relative to the top left of the full sprite. This means that their render positions are built-in to the array.
 	
@@ -102,13 +102,13 @@ public class Sprite {
 	public void renderRow(int r, Screen screen, int x, int y) {
 		Px[] row = spritePixels[r];
 		for(int c = 0; c < row.length; c++) { // loop across through each column
-			screen.render(x + c*8, y, row[c].sheetPos, row[c].mirror, row[c].sheetNum); // render the sprite pixel.
+			screen.render(x + c*8, y, row[c].sheetPos, row[c].mirror, row[c].sheetNum, this.color); // render the sprite pixel.
 		}
 	}
 	public void renderRow(int r, Screen screen, int x, int y, int mirror) {
 		Px[] row = spritePixels[r];
 		for(int c = 0; c < row.length; c++) { // loop across through each column
-			screen.render(x + c*8, y, row[c].sheetPos, mirror, row[c].sheetNum); // render the sprite pixel.
+			screen.render(x + c*8, y, row[c].sheetPos, mirror, row[c].sheetNum, this.color); // render the sprite pixel.
 		}
 	}
 	public void renderRow(int r, Screen screen, int x, int y, int mirror, int whiteTint) {

@@ -6,7 +6,6 @@ import minicraft.core.Game;
 import minicraft.entity.Direction;
 import minicraft.entity.mob.Player;
 import minicraft.entity.mob.RemotePlayer;
-import minicraft.gfx.Color;
 import minicraft.gfx.Sprite;
 import minicraft.level.Level;
 import minicraft.level.tile.Tile;
@@ -26,8 +25,9 @@ public class PotionItem extends StackableItem {
 	
 	private PotionItem(PotionType type) { this(type, 1); }
 	private PotionItem(PotionType type, int count) {
-		super(type.name, new Sprite(27, 4, Color.get(-1, 333, 310, type.dispColor)), count);
+		super(type.name, new Sprite(0, 7, 0), count);
 		this.type = type;
+		this.sprite.color = type.dispColor;
 	}
 	
 	// the return value is used to determine if the potion was used, which means being discarded.
