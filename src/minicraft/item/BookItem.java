@@ -16,19 +16,21 @@ public class BookItem extends Item {
 	
 	protected static ArrayList<Item> getAllInstances() {
 		ArrayList<Item> items = new ArrayList<Item>();
-		items.add(new BookItem("Book", Color.get(-1, 200, 531, 430), null));
-		items.add(new BookItem("Antidious", Color.get(-1, 100, 300, 500), BookData.antVenomBook, true));
+		items.add(new BookItem("Book", new Sprite(0, 8, 0), null));
+		items.add(new BookItem("Antidious", new Sprite(1, 8, 0), BookData.antVenomBook, true));
 		return items;
 	}
 	
 	protected String book; // TODO this is not saved yet; it could be, for editable books.
 	private final boolean hasTitlePage;
+	private Sprite sprite;
 	
-	private BookItem(String title, int color, String book) { this(title, color, book, false); }
-	private BookItem(String title, int color, String book, boolean hasTitlePage) {
-		super(title, new Sprite(14, 4, color));
+	private BookItem(String title, Sprite sprite, String book) { this(title, sprite, book, false); }
+	private BookItem(String title, Sprite sprite, String book, boolean hasTitlePage) {
+		super(title, sprite);
 		this.book = book;
 		this.hasTitlePage = hasTitlePage;
+		this.sprite = sprite;
 	}
 	
 	public boolean interactOn(Tile tile, Level level, int xt, int yt, Player player, Direction attackDir) {
@@ -40,6 +42,6 @@ public class BookItem extends Item {
 	public boolean interactsWithWorld() { return false; }
 	
 	public BookItem clone() {
-		return new BookItem(getName(), sprite.color, book, hasTitlePage);
+		return new BookItem(getName(), sprite, book, hasTitlePage);
 	}
 }
