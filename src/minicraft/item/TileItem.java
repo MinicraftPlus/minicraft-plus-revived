@@ -24,15 +24,15 @@ public class TileItem extends StackableItem {
 		items.add(new TileItem("Acorn", (new Sprite(7, 3, 0)), "tree Sapling", "grass"));
 		items.add(new TileItem("Dirt", (new Sprite(2, 4, 0)), "dirt", "hole", "water", "lava"));
 		
-		items.add(new TileItem("Plank", (new Sprite(1, 4, 0)), "Wood Planks", "hole", "water", "cloud"));
-		items.add(new TileItem("Plank Wall", (new Sprite(16, 4, 0)), "Wood Wall", "Wood Planks"));
-		items.add(new TileItem("Wood Door", (new Sprite(17, 4, 0)), "Wood Door", "Wood Planks"));
-		items.add(new TileItem("Stone Brick", (new Sprite(1, 4, 0)), "Stone Bricks", "hole", "water", "cloud", "lava"));
-		items.add(new TileItem("Stone Wall", (new Sprite(16, 4, 0)), "Stone Wall", "Stone Bricks"));
-		items.add(new TileItem("Stone Door", (new Sprite(17, 4, 0)), "Stone Door", "Stone Bricks"));
-		items.add(new TileItem("Obsidian Brick", (new Sprite(1, 4, 0)), "Obsidian", "hole", "water", "cloud", "lava"));
-		items.add(new TileItem("Obsidian Wall", (new Sprite(16, 4, 0)), "Obsidian Wall", "Obsidian"));
-		items.add(new TileItem("Obsidian Door", (new Sprite(17, 4, 0)), "Obsidian Door", "Obsidian"));
+		items.add(new TileItem("Plank", (new Sprite(0, 5, 0)), "Wood Planks", "hole", "water", "cloud"));
+		items.add(new TileItem("Plank Wall", (new Sprite(1, 5, 0)), "Wood Wall", "Wood Planks"));
+		items.add(new TileItem("Wood Door", (new Sprite(2, 5, 0)), "Wood Door", "Wood Planks"));
+		items.add(new TileItem("Stone Brick", (new Sprite(3, 5, 0)), "Stone Bricks", "hole", "water", "cloud", "lava"));
+		items.add(new TileItem("Stone Wall", (new Sprite(4, 5, 0)), "Stone Wall", "Stone Bricks"));
+		items.add(new TileItem("Stone Door", (new Sprite(5, 5, 0)), "Stone Door", "Stone Bricks"));
+		items.add(new TileItem("Obsidian Brick", (new Sprite(6, 5, 0)), "Obsidian", "hole", "water", "cloud", "lava"));
+		items.add(new TileItem("Obsidian Wall", (new Sprite(7, 5, 0)), "Obsidian Wall", "Obsidian"));
+		items.add(new TileItem("Obsidian Door", (new Sprite(8, 5, 0)), "Obsidian Door", "Obsidian"));
 	
 		items.add(new TileItem("Wool", (new Sprite(5, 3, 0)), "Wool", "hole", "water"));
 		items.add(new TileItem("Red Wool", (new Sprite(4, 3, 0)), "Red Wool", "hole", "water"));
