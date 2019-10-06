@@ -4,7 +4,6 @@ import java.util.ArrayList;
 
 import minicraft.core.Game;
 import minicraft.entity.mob.Player;
-import minicraft.gfx.Color;
 import minicraft.gfx.Sprite;
 import minicraft.item.Recipe;
 import minicraft.item.Recipes;
@@ -13,12 +12,12 @@ import minicraft.screen.CraftingDisplay;
 public class Crafter extends Furniture {
 	
 	public enum Type {
-		Workbench (new Sprite(8, 8, 2, 2, Color.get(-1, 100, 321, 431)), 3, 2, Recipes.workbenchRecipes),
-		Oven (new Sprite(4, 8, 2, 2, Color.get(-1, 000, 332, 442)), 3, 2, Recipes.ovenRecipes),
-		Furnace (new Sprite(6, 8, 2, 2, Color.get(-1, 000, 222, 333)), 3, 2, Recipes.furnaceRecipes),
-		Anvil (new Sprite(0, 8, 2, 2, Color.get(-1, 000, 222, 333)), 3, 2, Recipes.anvilRecipes),
-		Enchanter (new Sprite(12, 8, 2, 2, Color.get(-1, 623, 999, 111)), 7, 2, Recipes.enchantRecipes),
-		Loom (new Sprite(18, 8, 2, 2, Color.get(-1, 100, 333, 211)), 7, 2, Recipes.loomRecipes);
+		Workbench (new Sprite(16, 28, 2, 2, 2), 3, 2, Recipes.workbenchRecipes),
+		Oven (new Sprite(12, 28, 2, 2, 2), 3, 2, Recipes.ovenRecipes),
+		Furnace (new Sprite(14, 28, 2, 2, 2), 3, 2, Recipes.furnaceRecipes),
+		Anvil (new Sprite(8, 28, 2, 2, 2), 3, 2, Recipes.anvilRecipes),
+		Enchanter (new Sprite(24, 28, 2, 2, 2), 7, 2, Recipes.enchantRecipes),
+		Loom (new Sprite(26, 28, 2, 2, 2), 7, 2, Recipes.loomRecipes);
 		
 		public ArrayList<Recipe> recipes;
 		protected Sprite sprite;
