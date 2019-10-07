@@ -8,8 +8,11 @@ import minicraft.entity.mob.Player;
 import minicraft.gfx.Color;
 import minicraft.gfx.Font;
 import minicraft.gfx.Screen;
+import minicraft.gfx.Sprite;
 
 public class DeathChest extends Chest {
+	private static Sprite normalSprite = new Sprite(10, 28, 2, 2, 2);
+	private static Sprite redSprite = new Sprite(10, 26, 2, 2, 2);
 	
 	public int time; // time passed (used for death chest despawn)
 	private int redtick = 0; // this is used to determine the shade of red when the chest is about to expire.
@@ -19,7 +22,8 @@ public class DeathChest extends Chest {
 	 * Creates a custom chest with the name Death Chest
 	 */
 	public DeathChest() {
-		super("Death Chest", Color.get(-1, 220, 331, 552));
+		super("Death Chest");
+		this.sprite = normalSprite;
 		
 		/// set the expiration time based on the world difficulty.
 		if (Settings.get("diff").equals("Easy")) {
@@ -51,16 +55,14 @@ public class DeathChest extends Chest {
 		if (time < 30*Updater.normSpeed) { // if there is less than 30 seconds left...
 			redtick += reverse ? -1 : 1; // inc/dec-rement redtick, changing the red shading.
 			
-			// set the chest color based on redtick's value
-			int expcol = 100 * (redtick / 5 + 1);
-			sprite.color = Color.get(-1, expcol, expcol+100, expcol+200);
-			
 			/// these two statements keep the red color oscillating.
 			if (redtick > 13) {
 				reverse = true;
+				this.sprite = normalSprite;
 			}
 			if (redtick < 0) {
 				reverse = false;
+				this.sprite = redSprite;
 			}
 		}
 		

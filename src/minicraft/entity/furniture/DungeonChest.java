@@ -12,13 +12,14 @@ import minicraft.entity.particle.SmashParticle;
 import minicraft.entity.particle.TextParticle;
 import minicraft.gfx.Color;
 import minicraft.gfx.Screen;
+import minicraft.gfx.Sprite;
 import minicraft.item.Inventory;
 import minicraft.item.Items;
 import minicraft.item.StackableItem;
 
 public class DungeonChest extends Chest {
-	private static int openCol = Color.get(-1, 2, 115, 225);
-	private static int lockCol = Color.get(-1, 222, 333, 555);
+	private static Sprite openSprite = new Sprite(14, 26, 2, 2, 2);
+	private static Sprite lockSprite = new Sprite(12, 26, 2, 2, 2);
 	
 	public Random random = new Random();
 	public boolean isLocked;
@@ -28,7 +29,9 @@ public class DungeonChest extends Chest {
 	 * @param populateInv
 	 */
 	public DungeonChest(boolean populateInv) {
-		super("Dungeon Chest", lockCol);
+		super("Dungeon Chest");
+		this.sprite = lockSprite;
+
 		if(populateInv)
 			populateInv();
 		
@@ -50,7 +53,7 @@ public class DungeonChest extends Chest {
 				}
 				
 				isLocked = false;
-				col = openCol; // set to the unlocked color
+				this.sprite = openSprite; // set to the unlocked color
 				
 				level.add(new SmashParticle(x * 16, y * 16));
 				level.add(new TextParticle("-1 key", x, y, Color.RED));
@@ -72,12 +75,6 @@ public class DungeonChest extends Chest {
 			return false; // the chest is locked, and the player has no key.
 		}
 		else return super.use(player); // the chest was already unlocked.
-	}
-	
-	@Override
-	public void render(Screen screen) {
-		sprite.color = col = isLocked?lockCol:openCol;
-		super.render(screen);
 	}
 	
 	/**
