@@ -32,7 +32,22 @@ public class Font {
 			}*/
 		}
 	}
-	
+
+	public static void drawBackground(String msg, Screen screen, int x, int y) { drawBackground(msg, screen, x, y, -1); }
+
+	public static void drawBackground(String msg, Screen screen, int x, int y, int whiteTint) {
+		msg = msg.toUpperCase(Localization.getSelectedLocale());
+		for (int i = 0; i < msg.length(); i++) {
+			int ix = chars.indexOf(msg.charAt(i));
+			if (ix >= 0) {
+				// render the black background
+				screen.render(x + i * textWidth(msg.substring(i, i+1)), y, 30 + 30 * 32, 0, 3);
+
+				screen.render(x + i * textWidth(msg.substring(i, i+1)), y, ix + 28 * 32, 0, 3, whiteTint);
+			}
+		}
+	}
+
 	public static int textWidth(String text) { return text.length() * 8; }
 	public static int textWidth(String[] para) {
 		// this returns the maximum length of all the lines.

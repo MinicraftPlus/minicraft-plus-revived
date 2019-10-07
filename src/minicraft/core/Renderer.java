@@ -166,11 +166,11 @@ public class Renderer extends Game {
 		// This is the arrow counter. ^ = infinite symbol.
 		int ac = player.getInventory().count(Items.arrowItem);
 		if (isMode("creative") || ac >= 10000)
-			Font.draw("	x" + "^", screen, 84, Screen.h - 16);
+			Font.drawBackground("	x" + "^", screen, 84, Screen.h - 16);
 		else
-			Font.draw("	x" + ac, screen, 84, Screen.h - 16);
-		//displays arrow icon
-		screen.render(10 * 8 + 4, Screen.h - 16, 13 + 5 * 32, 0);
+			Font.drawBackground("	x" + ac, screen, 84, Screen.h - 16);
+		// displays arrow icon
+		screen.render(10 * 8 + 4, Screen.h - 16, 4 + 3 * 32, 0, 3);
 		
 		ArrayList<String> permStatus = new ArrayList<>();
 		if (Updater.saving) permStatus.add("Saving... " + Math.round(LoadingDisplay.getPercentage()) + "%");
@@ -248,16 +248,11 @@ public class Renderer extends Game {
 		
 		// TOOL DURABILITY STATUS
 		if (player.activeItem instanceof ToolItem) {
-			// draws a black box
-			for (int i = 0; i < 4; i++) {
-				screen.render(164 + (i * 8), Screen.h - 16, 30 + 30 * 32, 0, 3);
-			}
-
 			// draws the text
 			ToolItem tool = (ToolItem) player.activeItem;
 			int dura = tool.dur * 100 / (tool.type.durability * (tool.level+1));
 			int green = (int)(dura * 2.55f);
-			Font.draw(dura + "%", screen, 164, Screen.h - 16, Color.get(1, 255 - green, green, 0));
+			Font.drawBackground(dura + "%", screen, 164, Screen.h - 16, Color.get(1, 255 - green, green, 0));
 		}
 		
 		/// This renders the potions overlay
