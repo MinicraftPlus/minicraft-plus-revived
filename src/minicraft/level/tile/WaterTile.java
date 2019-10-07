@@ -23,7 +23,7 @@ public class WaterTile extends Tile {
 	
 	public void render(Screen screen, Level level, int x, int y) {
 		long seed = (tickCount + (x / 2 - y) * 4311) / 10 * 54687121l + x * 3271612l + y * 3412987161l;
-		sprite.full = Sprite.randomDots(seed, 2);
+		sprite.full = Sprite.randomDots(seed, 0);
 		sprite.sparse.color = DirtTile.dCol(level.depth);
 		sprite.render(screen, level, x, y);
 	}

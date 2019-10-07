@@ -31,7 +31,7 @@ public class Sprite {
 	}
 	public static Sprite randomDots(long seed, int offset) {
 		ran.setSeed(seed);
-		return ConnectorSprite.makeSprite(2, 2, ran.nextInt(4), 1, false, offset + ran.nextInt(4), offset + ran.nextInt(4), offset + ran.nextInt(4), offset + ran.nextInt(4));
+		return ConnectorSprite.makeSprite(2, 2, ran.nextInt(4), 1, false, (2 + ran.nextInt(4)) + offset * 32, (2 + ran.nextInt(4)) + offset * 32, (2 + ran.nextInt(4)) + offset * 32, (2 + ran.nextInt(4)) + offset * 32);
 	}
 	
 	protected Px[][] spritePixels;

@@ -26,6 +26,9 @@ public final class Tiles {
 		tiles.set(4, new StairsTile("Stairs Up", true));
 		tiles.set(5, new StairsTile("Stairs Down", false));
 		tiles.set(6, new WaterTile("Water"));
+		// this is out of order because of lava buckets
+		tiles.set(17, new LavaTile("Lava"));
+
 		tiles.set(7, new RockTile("Rock"));
 		tiles.set(8, new TreeTile("Tree"));
 		tiles.set(9, new SaplingTile("Tree Sapling", Tiles.get("Grass"), Tiles.get("Tree")));
@@ -36,7 +39,6 @@ public final class Tiles {
 		tiles.set(14, new OreTile(OreTile.OreType.Gold));
 		tiles.set(15, new OreTile(OreTile.OreType.Gem));
 		tiles.set(16, new OreTile(OreTile.OreType.Lapis));
-		tiles.set(17, new LavaTile("Lava"));
 		tiles.set(18, new LavaBrickTile("Lava Brick"));
 		tiles.set(19, new ExplodedTile("Explode"));
 		tiles.set(20, new FarmTile("Farmland"));
