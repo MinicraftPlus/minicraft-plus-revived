@@ -23,10 +23,10 @@ public class OreTile extends Tile {
 	private OreType type;
 	
 	public enum OreType {
-        Iron (Items.get("Iron Ore"), Color.get(-1, 100, 322, 544)),
-		Lapis (Items.get("Lapis"), Color.get(-1, 005, 115, 115)),
-		Gold (Items.get("Gold Ore"), Color.get(-1, 110, 440, 553)),
-		Gem (Items.get("Gem"), Color.get(-1, 101, 404, 545));
+        Iron (Items.get("Iron Ore"), 0),
+		Lapis (Items.get("Lapis"), 2),
+		Gold (Items.get("Gold Ore"), 4),
+		Gem (Items.get("Gem"), 6);
 		
 		private Item drop;
 		public final int color;
@@ -42,13 +42,13 @@ public class OreTile extends Tile {
     }
 	
 	protected OreTile(OreType o) {
-		super((o == OreTile.OreType.Lapis ? "Lapis" : o.name() + " Ore"), new Sprite(17, 1, 2, 2, o.color));
+		super((o == OreTile.OreType.Lapis ? "Lapis" : o.name() + " Ore"), new Sprite(24 + o.color, 0, 2, 2, 1));
         this.type = o;
 		this.sprite = super.sprite;
 	}
 
 	public void render(Screen screen, Level level, int x, int y) {
-		sprite.color = (type.color & 0x00_ff_ff_ff) | (DirtTile.dCol(level.depth) << 24);
+		sprite.color = DirtTile.dCol(level.depth);
 		sprite.render(screen, x*16, y*16);
 	}
 
