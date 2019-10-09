@@ -9,7 +9,7 @@ import minicraft.gfx.Sprite;
 import minicraft.level.Level;
 
 public class SaplingTile extends Tile {
-	private static Sprite sprite = new Sprite(11, 3, Color.get(20, 40, 50, -1));
+	private static Sprite sprite = new Sprite(12, 1, 1);
 	
 	private Tile onType;
 	private Tile growsTo;

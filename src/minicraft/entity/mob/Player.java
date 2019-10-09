@@ -795,7 +795,7 @@ public class Player extends Mob implements ItemHolder, ClientTickable {
 		if (activeItem instanceof TileItem) {
 			Point t = getInteractionTile();
 
-			screen.render(t.x * 16 + 4, t.y * 16 + 4,10 + 13 * 32, 0);
+			screen.render(t.x * 16 + 4, t.y * 16 + 4, 3 + 4 * 32, 0, 3);
 		}
 
 		if (attackTime > 0 && attackDir == Direction.UP) { // if currently attacking upwards...
