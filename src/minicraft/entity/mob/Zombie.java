@@ -6,20 +6,21 @@ import minicraft.gfx.MobSprite;
 import minicraft.item.Items;
 
 public class Zombie extends EnemyMob {
-	private static MobSprite[][] sprites = MobSprite.compileMobSpriteAnimations(0, 14);
-	private static int[] lvlcols = {
-		Color.get(-1, 10, 152, 40),
-		Color.get(-1, 100, 522, 40),
-		Color.get(-1, 111, 444, 40),
-		Color.get(-1, 000, 111, 20)
-	};
+	private static MobSprite[][][] sprites;
+	static {
+		sprites = new MobSprite[4][4][2];
+		for (int i = 0; i < 4; i++) {
+			MobSprite[][] list  = MobSprite.compileMobSpriteAnimations(8, 0 + (i * 2));
+			sprites[i] = list;
+		}
+	}
 	
 	/**
 	 * Creates a zombie of the given level.
 	 * @param lvl Zombie's level.
 	 */
 	public Zombie(int lvl) {
-		super(lvl, sprites, lvlcols, 5, 100);
+		super(lvl, sprites, 5, 100);
 	}
 	
 	@Override

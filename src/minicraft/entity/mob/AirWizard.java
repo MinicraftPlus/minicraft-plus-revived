@@ -13,7 +13,14 @@ import minicraft.gfx.Screen;
 import minicraft.saveload.Save;
 
 public class AirWizard extends EnemyMob {
-	private static MobSprite[][] sprites = MobSprite.compileMobSpriteAnimations(8, 14);
+	private static MobSprite[][][] sprites;
+	static {
+		sprites = new MobSprite[2][4][2];
+		for (int i = 0; i < 2; i++) {
+			MobSprite[][] list  = MobSprite.compileMobSpriteAnimations(18, 0 + (i * 2));
+			sprites[i] = list;
+		}
+	}
 	
 	public static boolean beaten = false;
 	
@@ -35,16 +42,12 @@ public class AirWizard extends EnemyMob {
 	 * @param secondform determines if the wizard should be level 2 or 1.
 	 */
 	public AirWizard(boolean secondform) {
-		super(secondform?2:1, sprites, (new int[2]), secondform?5000:2000, false, 16*8, -1, 10, 50);
+		super(secondform?2:1, sprites, secondform?5000:2000, false, 16*8, -1, 10, 50);
 		
 		this.secondform = secondform;
 		if(secondform) speed = 3;
 		else speed = 2;
 		walkTime = 2;
-		
-		lvlcols[0] = secondform ? Color.get(-1, 0, 2, 46) : Color.get(-1, 100, 500, 555); // top half color
-		lvlcols[1] = secondform ? Color.get(-1, 0, 2, 46) : Color.get(-1, 100, 500, 532); // bottom half color
-		col = lvlcols[lvl-1];
 	}
 	
 	public boolean canSwim() { return secondform; }
@@ -145,9 +148,9 @@ public class AirWizard extends EnemyMob {
 			col2 = Color.WHITE;
 		}
 		
-		MobSprite curSprite = sprites[dir.getDir()][(walkDist >> 3) & 1];
-		curSprite.renderRow(0, screen, xo, yo, col1);
-		curSprite.renderRow(1, screen, xo, yo+8, col2);
+		//MobSprite curSprite = sprites[dir.getDir()][(walkDist >> 3) & 1];
+		//curSprite.renderRow(0, screen, xo, yo, col1);
+		//curSprite.renderRow(1, screen, xo, yo+8, col2);
 		
 		int textcol = Color.get(-1, 40);
 		int textcol2 = Color.get(-1, 10);

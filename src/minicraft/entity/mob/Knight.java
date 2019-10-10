@@ -6,21 +6,22 @@ import minicraft.gfx.MobSprite;
 import minicraft.item.Items;
 
 public class Knight extends EnemyMob {
-	private static MobSprite[][] sprites = MobSprite.compileMobSpriteAnimations(24, 14);
-	private static int[] lvlcols = {
-		Color.get(-1, 000, 555, 10),
-		Color.get(-1, 000, 555, 220),
-		Color.get(-1, 000, 555, 5),
-		Color.get(-1, 000, 555, 400),
-		Color.get(-1, 000, 555, 459)
-	};
+	private static MobSprite[][][] sprites;
+	static {
+		sprites = new MobSprite[4][4][2];
+		for (int i = 0; i < 4; i++) {
+			MobSprite[][] list  = MobSprite.compileMobSpriteAnimations(18, 0 + (i * 2));
+			sprites[i] = list;
+		}
+	}
+
 	
 	/**
 	 * Creates a knight of a given level.
 	 * @param lvl The knights level.
 	 */
 	public Knight(int lvl) {
-		super(lvl, sprites, lvlcols, 9, 100);
+		super(lvl, sprites, 9, 100);
 	}
 
 	public void die() {

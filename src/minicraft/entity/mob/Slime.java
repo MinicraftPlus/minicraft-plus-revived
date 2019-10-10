@@ -9,18 +9,14 @@ import minicraft.gfx.Screen;
 import minicraft.item.Items;
 
 public class Slime extends EnemyMob {
-	private static MobSprite[][] sprites;
+	private static MobSprite[][][] sprites;
 	static {
-		MobSprite[] list = MobSprite.compileSpriteList(0, 18, 2, 2, 0, 2);
-		sprites = new MobSprite[1][2];
-		sprites[0] = list;
+		sprites = new MobSprite[4][1][2];
+		for (int i = 0; i < 4; i++) {
+			MobSprite[] list = MobSprite.compileSpriteList(0, 0 + (i * 2), 2, 2, 0, 2);
+			sprites[i][0] = list;
+		}
 	}
-	private static int[] lvlcols = {
-		Color.get(-1, 20, 40, 222),
-		Color.get(-1, 100, 522, 555),
-		Color.get(-1, 111, 444, 555),
-		Color.get(-1, 000, 111, 224)
-	};
 	
 	private int jumpTime = 0; // jumpTimer, also acts as a rest timer before the next jump
 	
@@ -29,7 +25,7 @@ public class Slime extends EnemyMob {
 	 * @param lvl Slime's level.
 	 */
 	public Slime(int lvl) {
-		super(lvl, sprites, lvlcols, 1, true, 50, 60, 40);
+		super(lvl, sprites, 1, true, 50, 60, 40);
 	}
 	
 	@Override
