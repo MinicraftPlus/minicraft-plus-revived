@@ -10,7 +10,7 @@ public class Knight extends EnemyMob {
 	static {
 		sprites = new MobSprite[4][4][2];
 		for (int i = 0; i < 4; i++) {
-			MobSprite[][] list  = MobSprite.compileMobSpriteAnimations(18, 0 + (i * 2));
+			MobSprite[][] list  = MobSprite.compileMobSpriteAnimations(0, 8 + (i * 2));
 			sprites[i] = list;
 		}
 	}
@@ -31,17 +31,9 @@ public class Knight extends EnemyMob {
 			dropItem(0, 2, Items.get("shard")
 			);
 		
-		if(random.nextInt(30/lvl/(Settings.getIdx("diff")+1)) == 0)
+		if(random.nextInt(24/lvl/(Settings.getIdx("diff")+1)) == 0)
 			dropItem(1, 1, Items.get("key"));
 		
 		super.die();
-	}
-	
-	/**
-	 * Knight's max level is 5.
-	 */
-	@Override
-	public int getMaxLevel() {
-		return 5;
 	}
 }

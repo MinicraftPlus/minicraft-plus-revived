@@ -17,7 +17,7 @@ public class AirWizard extends EnemyMob {
 	static {
 		sprites = new MobSprite[2][4][2];
 		for (int i = 0; i < 2; i++) {
-			MobSprite[][] list  = MobSprite.compileMobSpriteAnimations(18, 0 + (i * 2));
+			MobSprite[][] list  = MobSprite.compileMobSpriteAnimations(8, 20 + (i * 2));
 			sprites[i] = list;
 		}
 	}
@@ -130,7 +130,7 @@ public class AirWizard extends EnemyMob {
 	
 	@Override
 	public void render(Screen screen) {
-		int xo = x - 8; // the horizontal location to start drawing the sprite
+		/*int xo = x - 8; // the horizontal location to start drawing the sprite
 		int yo = y - 11; // the vertical location to start drawing the sprite
 		
 		int col1 = secondform ? Color.get(-1, 0, 2, 46) : Color.get(-1, 100, 500, 555); // top half color
@@ -151,21 +151,23 @@ public class AirWizard extends EnemyMob {
 		//MobSprite curSprite = sprites[dir.getDir()][(walkDist >> 3) & 1];
 		//curSprite.renderRow(0, screen, xo, yo, col1);
 		//curSprite.renderRow(1, screen, xo, yo+8, col2);
-		
-		int textcol = Color.get(-1, 40);
-		int textcol2 = Color.get(-1, 10);
+		*/
+		super.render(screen);
+
+		int textcol = Color.get(1, 0, 204, 0);
+		int textcol2 = Color.get(1, 0, 51, 0);
 		int percent = health / (maxHealth / 100);
 		String h = percent + "%";
 		
 		if(percent < 1) h = "1%";
 		
 		if(percent < 16) {
-			textcol = Color.get(-1, 400);
-			textcol2 = Color.get(-1, 100);
+			textcol = Color.get(1, 204, 0, 0);
+			textcol2 = Color.get(1, 51, 0, 0);
 		}
 		else if(percent < 51) {
-			textcol = Color.get(-1, 440);
-			textcol2 = Color.get(-1, 110);
+			textcol = Color.get(1, 204, 204, 9);
+			textcol2 = Color.get(1, 51, 51, 0);
 		}
 		int textwidth = Font.textWidth(h);
 		Font.draw(h, screen, (x - textwidth/2) + 1, y - 17, textcol2);

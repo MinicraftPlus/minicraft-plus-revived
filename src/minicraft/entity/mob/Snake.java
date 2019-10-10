@@ -9,9 +9,9 @@ import minicraft.item.Items;
 public class Snake extends EnemyMob {
 	private static MobSprite[][][] sprites;
 	static {
+		sprites = new MobSprite[4][4][2];
 		for (int i = 0; i < 4; i++) {
-			MobSprite[][] list  = MobSprite.compileMobSpriteAnimations(18, 0 + (i * 2));
-			sprites = new MobSprite[4][4][2];
+			MobSprite[][] list  = MobSprite.compileMobSpriteAnimations(8, 8 + (i * 2));
 			sprites[i] = list;
 		}
 	}
@@ -32,7 +32,7 @@ public class Snake extends EnemyMob {
 		int num = Settings.get("diff").equals("Hard") ? 1 : 0;
 		dropItem(num, num+1, Items.get("scale"));
 		
-		if(random.nextInt(30/lvl/(Settings.getIdx("diff")+1)) == 0)
+		if(random.nextInt(24/lvl/(Settings.getIdx("diff")+1)) == 0)
 			dropItem(1, 1, Items.get("key"));
 		
 		super.die();
