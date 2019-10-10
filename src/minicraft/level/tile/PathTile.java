@@ -12,7 +12,7 @@ import minicraft.item.ToolType;
 import minicraft.level.Level;
 
 public class PathTile extends Tile {
-    private static Sprite sprite = Sprite.dots(Color.get(531, 531, 421, 421));
+    private static Sprite sprite = new Sprite(14, 4, 2, 2, 1);
 
     public PathTile(String name) {
         super(name, sprite);
