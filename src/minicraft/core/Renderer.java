@@ -138,7 +138,7 @@ public class Renderer extends Game {
 			for (int y = 0; y < 28; y++)
 				for (int x = 0; x < 48; x++) {
 					// creates the background for the sky (and dungeon) level:
-					screen.render(x * 8 - ((xScroll / 4) & 7), y * 8 - ((yScroll / 4) & 7), 0, 0);
+					screen.render(x * 8 - ((xScroll / 4) & 7), y * 8 - ((yScroll / 4) & 7), 2 + 25 * 32, 0, 1);
 				}
 		}
 		
