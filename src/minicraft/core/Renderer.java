@@ -270,9 +270,8 @@ public class Renderer extends Game {
 			for(int i = 0; i < effects.length; i++) {
 				PotionType pType = effects[i].getKey();
 				int pTime = effects[i].getValue() / Updater.normSpeed;
-				int pcol = Color.get(pType.dispColor, 555);
-				Font.draw("("+input.getMapping("potionEffects")+" to hide!)", screen, 180, 9, Color.get(0, 555));
-				Font.draw(pType + " (" + (pTime / 60) + ":" + (pTime % 60) + ")", screen, 180, 17 + i * Font.textHeight(), pcol);
+				Font.drawBackground("("+input.getMapping("potionEffects")+" to hide!)", screen, 180, 9);
+				Font.drawBackground(pType + " (" + (pTime / 60) + ":" + (pTime % 60) + ")", screen, 180, 17 + i * Font.textHeight(), pType.dispColor);
 			}
 		}
 		
