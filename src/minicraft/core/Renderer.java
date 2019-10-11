@@ -25,6 +25,7 @@ import minicraft.item.Items;
 import minicraft.item.PotionType;
 import minicraft.item.ToolItem;
 import minicraft.level.Level;
+import minicraft.saveload.Load;
 import minicraft.screen.LoadingDisplay;
 import minicraft.screen.RelPos;
 
@@ -47,21 +48,29 @@ public class Renderer extends Game {
 	public static boolean showinfo = false;
 	
 	private static Ellipsis ellipsis = new SmoothEllipsis(new TickUpdater());
+
+	private static void initSpriteSheets() throws IOException {
+		BufferedImage[] sheets = Load.loadSpriteSheets();
+
+		// these actually set the sprites to be used
+		SpriteSheet itemSheet = sheets[0] == null ? new SpriteSheet(ImageIO.read(Game.class.getResourceAsStream("/resources/textures/items.png"))) : new SpriteSheet(sheets[0]);
+		SpriteSheet tileSheet = sheets[1] == null ? new SpriteSheet(ImageIO.read(Game.class.getResourceAsStream("/resources/textures/tiles.png"))) : new SpriteSheet(sheets[1]);
+		SpriteSheet entitySheet = sheets[2] == null ? new SpriteSheet(ImageIO.read(Game.class.getResourceAsStream("/resources/textures/entities.png"))) : new SpriteSheet(sheets[2]);
+		SpriteSheet guiSheet = sheets[3] == null ? new SpriteSheet(ImageIO.read(Game.class.getResourceAsStream("/resources/textures/gui.png"))) : new SpriteSheet(sheets[3]);
+
+		screen = new Screen(itemSheet, tileSheet, entitySheet, guiSheet);
+		lightScreen = new Screen(itemSheet, tileSheet, entitySheet, guiSheet);
+	}
 	
 	static void initScreen() {
 		if(!HAS_GUI) return;
 		
 		image = new BufferedImage(WIDTH, HEIGHT, BufferedImage.TYPE_INT_RGB);
 		pixels = ((DataBufferInt) image.getRaster().getDataBuffer()).getData();
-		
-		/* This sets up the screens, and loads the different spritesheets. */
+
 		try {
-			SpriteSheet itemSheet = new SpriteSheet(ImageIO.read(Game.class.getResourceAsStream("/resources/textures/items.png")));
-			SpriteSheet tileSheet = new SpriteSheet(ImageIO.read(Game.class.getResourceAsStream("/resources/textures/tiles.png")));
-			SpriteSheet entitySheet = new SpriteSheet(ImageIO.read(Game.class.getResourceAsStream("/resources/textures/entities.png")));
-			SpriteSheet guiSheet = new SpriteSheet(ImageIO.read(Game.class.getResourceAsStream("/resources/textures/gui.png")));
-			screen = new Screen(itemSheet, tileSheet, entitySheet, guiSheet);
-			lightScreen = new Screen(itemSheet, tileSheet, entitySheet, guiSheet);
+			// This sets up the screens, and loads the different spritesheets.
+			initSpriteSheets();
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
@@ -134,7 +143,6 @@ public class Renderer extends Game {
 		if (xScroll > level.w * 16 - Screen.w) xScroll = level.w * 16 - Screen.w; // ...right border.
 		if (yScroll > level.h * 16 - Screen.h) yScroll = level.h * 16 - Screen.h; // ...bottom border.
 		if (currentLevel > 3) { // if the current level is higher than 3 (which only the sky level (and dungeon) is)
-			int col = Color.get(20, 20, 121, 121); // background color.
 			for (int y = 0; y < 28; y++)
 				for (int x = 0; x < 48; x++) {
 					// creates the background for the sky (and dungeon) level:
