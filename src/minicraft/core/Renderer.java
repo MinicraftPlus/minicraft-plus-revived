@@ -13,14 +13,9 @@ import java.util.Map;
 
 import minicraft.entity.furniture.Bed;
 import minicraft.entity.mob.Player;
-import minicraft.gfx.Color;
-import minicraft.gfx.Ellipsis;
+import minicraft.gfx.*;
 import minicraft.gfx.Ellipsis.DotUpdater.TickUpdater;
 import minicraft.gfx.Ellipsis.SmoothEllipsis;
-import minicraft.gfx.Font;
-import minicraft.gfx.FontStyle;
-import minicraft.gfx.Screen;
-import minicraft.gfx.SpriteSheet;
 import minicraft.item.Items;
 import minicraft.item.PotionType;
 import minicraft.item.ToolItem;
@@ -53,13 +48,18 @@ public class Renderer extends Game {
 		BufferedImage[] sheets = Load.loadSpriteSheets();
 
 		// these actually set the sprites to be used
-		SpriteSheet itemSheet = sheets[0] == null ? new SpriteSheet(ImageIO.read(Game.class.getResourceAsStream("/resources/textures/items.png"))) : new SpriteSheet(sheets[0]);
-		SpriteSheet tileSheet = sheets[1] == null ? new SpriteSheet(ImageIO.read(Game.class.getResourceAsStream("/resources/textures/tiles.png"))) : new SpriteSheet(sheets[1]);
-		SpriteSheet entitySheet = sheets[2] == null ? new SpriteSheet(ImageIO.read(Game.class.getResourceAsStream("/resources/textures/entities.png"))) : new SpriteSheet(sheets[2]);
-		SpriteSheet guiSheet = sheets[3] == null ? new SpriteSheet(ImageIO.read(Game.class.getResourceAsStream("/resources/textures/gui.png"))) : new SpriteSheet(sheets[3]);
+		SpriteSheet itemSheet = new SpriteSheet(ImageIO.read(Game.class.getResourceAsStream("/resources/textures/items.png")));
+		SpriteSheet tileSheet = new SpriteSheet(ImageIO.read(Game.class.getResourceAsStream("/resources/textures/tiles.png")));
+		SpriteSheet entitySheet = new SpriteSheet(ImageIO.read(Game.class.getResourceAsStream("/resources/textures/entities.png")));
+		SpriteSheet guiSheet = new SpriteSheet(ImageIO.read(Game.class.getResourceAsStream("/resources/textures/gui.png")));
 
-		screen = new Screen(itemSheet, tileSheet, entitySheet, guiSheet);
-		lightScreen = new Screen(itemSheet, tileSheet, entitySheet, guiSheet);
+		SpriteSheet itemSheetCustom = sheets[0] != null ? new SpriteSheet(sheets[0]) : null;
+		SpriteSheet tileSheetCustom = sheets[1] != null ? new SpriteSheet(sheets[1]) : null;
+		SpriteSheet entitySheetCustom = sheets[2] != null ? new SpriteSheet(sheets[2]) : null;
+		SpriteSheet guiSheetCustom = sheets[3] != null ? new SpriteSheet(sheets[3]) : null;
+
+		screen = new Screen(itemSheet, tileSheet, entitySheet, guiSheet, itemSheetCustom, tileSheetCustom, entitySheetCustom, guiSheetCustom);
+		lightScreen = new Screen(itemSheet, tileSheet, entitySheet, guiSheet, itemSheetCustom, tileSheetCustom, entitySheetCustom, guiSheetCustom);
 	}
 	
 	static void initScreen() {

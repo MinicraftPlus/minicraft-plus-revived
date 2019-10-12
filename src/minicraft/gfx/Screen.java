@@ -2,6 +2,7 @@ package minicraft.gfx;
 
 import minicraft.core.Renderer;
 import minicraft.core.Updater;
+import minicraft.core.io.Settings;
 
 public class Screen {
 	
@@ -29,6 +30,7 @@ public class Screen {
 	// and 3072 the start of the gui sheet
 
 	private SpriteSheet[] sheets;
+	private SpriteSheet[] sheetsCustom;
 	
 	public Screen(SpriteSheet sheet) {
 		this(sheet, sheet, sheet, sheet);
@@ -41,6 +43,13 @@ public class Screen {
 
 		/// screen width and height are determined by the actual game window size, meaning the screen is only as big as the window.
 		pixels = new int[Screen.w * Screen.h]; // makes new integer array for all the pixels on the screen.
+	}
+
+	public Screen(SpriteSheet itemSheet, SpriteSheet tileSheet, SpriteSheet entitySheet, SpriteSheet guiSheet,
+					SpriteSheet itemSheetCustom, SpriteSheet tileSheetCustom, SpriteSheet entitySheetCustom, SpriteSheet guiSheetCustom) {
+		this(itemSheet, tileSheet, entitySheet, guiSheet);
+
+		sheetsCustom = new SpriteSheet[]{itemSheetCustom, tileSheetCustom, entitySheetCustom, guiSheetCustom};
 	}
 	
 	public Screen(Screen model) {
@@ -72,7 +81,14 @@ public class Screen {
         boolean mirrorX = (bits & BIT_MIRROR_X) > 0; // horizontally.
         boolean mirrorY = (bits & BIT_MIRROR_Y) > 0; // vertically.
 
-		SpriteSheet currentSheet = sheets[sheet];
+
+		SpriteSheet currentSheet;
+		if (Settings.get("textures").equals("Custom")) {
+			// make it custom unless the custom sheet isn't working
+			currentSheet = sheetsCustom[sheet] != null ? sheetsCustom[sheet] : sheets[sheet];
+		} else {
+			currentSheet = sheets[sheet];
+		}
 
         int xTile = tile % 32; // gets x position of the spritesheet "tile"
         int yTile = tile / 32; // gets y position

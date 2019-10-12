@@ -5,6 +5,7 @@ import java.util.HashMap;
 import minicraft.screen.entry.ArrayEntry;
 import minicraft.screen.entry.BooleanEntry;
 import minicraft.screen.entry.RangeEntry;
+import minicraft.screen.entry.StringEntry;
 
 public class Settings {
 	
@@ -41,7 +42,9 @@ public class Settings {
 		options.get("unlockedskin").setChangeAction(value ->
 			options.get("skinon").setVisible((boolean)value)
 		);
-		
+
+		options.put("textures", new ArrayEntry("Textures", "Original", "Custom"));
+		options.get("textures").setSelection(0);
 	}
 	
 	public static void init() {}
