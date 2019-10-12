@@ -383,30 +383,31 @@ public class Renderer extends Game {
 		int h = 1;
 		
 		// renders the four corners of the box
-		screen.render(xx - 8, yy - 8, 0 + 13 * 32, 0);
-		screen.render(xx + w * 8, yy - 8, 0 + 13 * 32, 1);
-		screen.render(xx - 8, yy + 8, 0 + 13 * 32, 2);
-		screen.render(xx + w * 8, yy + 8, 0 + 13 * 32, 3);
+		screen.render(xx - 8, yy - 8, 0 + 21 * 32, 0, 3);
+		screen.render(xx + w * 8, yy - 8, 0 + 21 * 32, 1, 3);
+		screen.render(xx - 8, yy + 8, 0 + 21 * 32, 2, 3);
+		screen.render(xx + w * 8, yy + 8, 0 + 21 * 32, 3, 3);
 		
 		// renders each part of the box...
 		for (int x = 0; x < w; x++) {
-			screen.render(xx + x * 8, yy - 8, 1 + 13 * 32, 0); // ...top part
-			screen.render(xx + x * 8, yy + 8, 1 + 13 * 32, 2); // ...bottom part
+			screen.render(xx + x * 8, yy - 8, 1 + 21 * 32, 0, 3); // ...top part
+			screen.render(xx + x * 8, yy + 8, 1 + 21 * 32, 2, 3); // ...bottom part
 		}
 		for (int y = 0; y < h; y++) {
-			screen.render(xx - 8, yy + y * 8, 2 + 13 * 32, 0); // ...left part
-			screen.render(xx + w * 8, yy + y * 8, 2 + 13 * 32, 1); // ...right part
+			screen.render(xx - 8, yy + y * 8, 2 + 21 * 32, 0, 3); // ...left part
+			screen.render(xx + w * 8, yy + y * 8, 2 + 21 * 32, 1, 3); // ...right part
 		}
 
-		// cover up black spots from gaps in text
-		screen.render(xx + (w - 7) * 8, yy, 3 + 13 * 32, 0);
-		screen.render(xx + (w - 10) * 8, yy, 3 + 13 * 32, 0);
+		// the middle
+		for (int x = 0; x < w; x++) {
+			screen.render(xx + x * 8, yy, 3 + 21 * 32, 0, 3);
+		}
 		
 		// renders the focus nagger text with a flash effect...
 		if ((Updater.tickCount / 20) % 2 == 0) // ...medium yellow color
-			Font.draw(msg, screen, xx, yy, Color.get(5, 333));
+			Font.draw(msg, screen, xx, yy, Color.get(1, 153));
 		else // ...bright yellow color
-			Font.draw(msg, screen, xx, yy, Color.get(5, 555));
+			Font.draw(msg, screen, xx, yy, Color.get(5, 255));
 	}
 	
 	
