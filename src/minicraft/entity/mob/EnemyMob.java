@@ -93,7 +93,11 @@ public class EnemyMob extends MobAi {
 	
 	@Override
 	public void render(Screen screen) {
-		sprites = lvlSprites[lvl - 1];
+		if (this.getMaxLevel() < lvl) {
+			sprites = lvlSprites[this.getMaxLevel() - 1];
+		} else {
+			sprites = lvlSprites[lvl - 1];
+		}
 		super.render(screen);
 	}
 	
