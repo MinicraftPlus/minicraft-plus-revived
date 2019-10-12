@@ -32,7 +32,7 @@ public class EnemyMob extends MobAi {
 	 */
 	public EnemyMob(int lvl, MobSprite[][][] lvlSprites, int health, boolean isFactor, int detectDist, int lifetime, int rwTime, int rwChance) {
 		super(lvlSprites[0], isFactor ? (lvl==0?1:lvl * lvl) * health*((Double)(Math.pow(2, Settings.getIdx("diff")))).intValue() : health, lifetime, rwTime, rwChance);
-		this.lvl = lvl == 0 ? 1 : lvl;
+		this.lvl = lvl == 0 ? 1 : lvl > getMaxLevel() ? getMaxLevel() : lvl;
 		this.lvlSprites = java.util.Arrays.copyOf(lvlSprites, lvlSprites.length);
 		this.detectDist = detectDist;
 	}
@@ -93,11 +93,7 @@ public class EnemyMob extends MobAi {
 	
 	@Override
 	public void render(Screen screen) {
-		if (this.getMaxLevel() < lvl) {
-			sprites = lvlSprites[this.getMaxLevel() - 1];
-		} else {
-			sprites = lvlSprites[lvl - 1];
-		}
+		sprites = lvlSprites[lvl - 1];
 		super.render(screen);
 	}
 	
