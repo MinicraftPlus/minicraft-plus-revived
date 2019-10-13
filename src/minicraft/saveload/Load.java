@@ -744,6 +744,12 @@ public class Load {
 		newEntity.eid = eid; // this will be -1 unless set earlier, so a new one will be generated when adding it to the level.
 		if(newEntity instanceof ItemEntity && eid == -1)
 			System.out.println("Warning: item entity was loaded with no eid");
+
+		if(newEntity instanceof EnemyMob) {
+			if (((EnemyMob)newEntity).lvl > ((EnemyMob)newEntity).getMaxLevel()) {
+				((EnemyMob)newEntity).lvl = ((EnemyMob)newEntity).getMaxLevel();
+			}
+		}
 		
 		int curLevel = Integer.parseInt(info.get(info.size()-1));
 		if(World.levels[curLevel] != null) {
