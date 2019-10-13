@@ -27,7 +27,7 @@ public class GreenWoolTile extends Tile {
                 if (player.payStamina(3 - tool.level) && tool.payDurability()) {
                     level.setTile(xt, yt, Tiles.get("hole"));
                     Sound.monsterHurt.play();
-                    level.dropItem(xt*16+8, yt*16+8, Items.get("Wool"));
+                    level.dropItem(xt*16+8, yt*16+8, Items.get("Green Wool"));
                     return true;
                 }
             }
