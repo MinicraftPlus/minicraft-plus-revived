@@ -369,7 +369,7 @@ public class Load {
 								tilename = "Black Wool";
 								break;
 							default:
-								tilename = "Normal Wool";
+								tilename = "Wool";
 						}
 					}
 

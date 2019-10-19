@@ -56,7 +56,7 @@ public final class Tiles {
 		tiles.set(32, new WallTile(Tile.Material.Wood));
 		tiles.set(33, new WallTile(Tile.Material.Stone));
 		tiles.set(34, new WallTile(Tile.Material.Obsidian));
-		tiles.set(35, new NormalWoolTile("Normal Wool"));
+		tiles.set(35, new NormalWoolTile("Wool"));
 		tiles.set(36, new PathTile("Path"));
 		tiles.set(37, new RedWoolTile("Red Wool"));
 		tiles.set(38, new BlueWoolTile("Blue Wool"));
