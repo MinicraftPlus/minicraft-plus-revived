@@ -57,7 +57,7 @@ public class WorldGenDisplay extends Display {
 		SelectEntry nameHelp = new SelectEntry("Trouble with world name?", () -> Game.setMenu(new BookDisplay("it seems you've set letters as the controls to move the cursor up and down, which is probably annoying. This can be changed in the key binding menu as the \"cursor-XXX\" keys. For now, to type the letter instead of moving the cursor, hold the shift key while typing."))) {
 			@Override
 			public int getColor(boolean isSelected) {
-				return Color.get(-1, 444);
+				return Color.get(1, 204);
 			}
 		};
 		
