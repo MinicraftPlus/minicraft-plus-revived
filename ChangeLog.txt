@@ -11,6 +11,8 @@ Minicraft+ version 2.0.6
 * Totally overhauled fishing!
 + Added paths, use a pickaxe on grass to make them
 + You can now craft obsidian walls and doors
++ Resource packs are now possible! Guide is on the wiki
+- Knights and Snakes only have 4 levels instead of 5
 
 
 Minicraft+ version 2.0.5
