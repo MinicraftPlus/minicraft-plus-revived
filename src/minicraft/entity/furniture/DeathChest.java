@@ -11,8 +11,8 @@ import minicraft.gfx.Screen;
 import minicraft.gfx.Sprite;
 
 public class DeathChest extends Chest {
-	private static Sprite normalSprite = new Sprite(10, 28, 2, 2, 2);
-	private static Sprite redSprite = new Sprite(10, 26, 2, 2, 2);
+	private static Sprite normalSprite = new Sprite(10, 26, 2, 2, 2);
+	private static Sprite redSprite = new Sprite(10, 24, 2, 2, 2);
 	
 	public int time; // time passed (used for death chest despawn)
 	private int redtick = 0; // this is used to determine the shade of red when the chest is about to expire.

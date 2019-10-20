@@ -26,7 +26,7 @@ public class Chest extends Furniture implements ItemHolder {
 	 * @param name Name of chest.
 	 */
 	public Chest(String name) {
-		super(name, new Sprite(10, 28, 2, 2, 2), 3, 3); // Name of the chest
+		super(name, new Sprite(10, 26, 2, 2, 2), 3, 3); // Name of the chest
 		
 		inventory = new Inventory(); // initialize the inventory.
 	}

@@ -12,12 +12,12 @@ import minicraft.screen.CraftingDisplay;
 public class Crafter extends Furniture {
 	
 	public enum Type {
-		Workbench (new Sprite(16, 28, 2, 2, 2), 3, 2, Recipes.workbenchRecipes),
-		Oven (new Sprite(12, 28, 2, 2, 2), 3, 2, Recipes.ovenRecipes),
-		Furnace (new Sprite(14, 28, 2, 2, 2), 3, 2, Recipes.furnaceRecipes),
-		Anvil (new Sprite(8, 28, 2, 2, 2), 3, 2, Recipes.anvilRecipes),
-		Enchanter (new Sprite(24, 28, 2, 2, 2), 7, 2, Recipes.enchantRecipes),
-		Loom (new Sprite(26, 28, 2, 2, 2), 7, 2, Recipes.loomRecipes);
+		Workbench (new Sprite(16, 26, 2, 2, 2), 3, 2, Recipes.workbenchRecipes),
+		Oven (new Sprite(12, 26, 2, 2, 2), 3, 2, Recipes.ovenRecipes),
+		Furnace (new Sprite(14, 26, 2, 2, 2), 3, 2, Recipes.furnaceRecipes),
+		Anvil (new Sprite(8, 26, 2, 2, 2), 3, 2, Recipes.anvilRecipes),
+		Enchanter (new Sprite(24, 26, 2, 2, 2), 7, 2, Recipes.enchantRecipes),
+		Loom (new Sprite(26, 26, 2, 2, 2), 7, 2, Recipes.loomRecipes);
 		
 		public ArrayList<Recipe> recipes;
 		protected Sprite sprite;

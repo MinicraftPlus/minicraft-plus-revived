@@ -49,7 +49,7 @@ public class FurnitureItem extends Item {
 	private static int getSpritePos(int fpos) {
 		int x = fpos%32;
 		int y = fpos/32;
-		return ((x-8)/2) + (y+2)*32;
+		return ((x-8)/2) + y*32;
 	}
 	
 	public FurnitureItem(Furniture furniture) {

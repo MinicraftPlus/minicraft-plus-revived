@@ -564,7 +564,7 @@ public class Level {
 		for (int i = 0; i < 30 && !spawned; i++) {
 			int minLevel = 1, maxLevel = 1;
 			if (depth < 0) {
-				maxLevel = (-depth) + (Math.random() > 0.75 ? 1 : 0);
+				maxLevel = (-depth) + ((Math.random() > 0.75 && -depth != 4) ? 1 : 0);
 			}
 			if (depth > 0) {
 				minLevel = maxLevel = 4;

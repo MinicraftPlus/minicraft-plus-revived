@@ -18,8 +18,8 @@ import minicraft.item.Items;
 import minicraft.item.StackableItem;
 
 public class DungeonChest extends Chest {
-	private static Sprite openSprite = new Sprite(14, 26, 2, 2, 2);
-	private static Sprite lockSprite = new Sprite(12, 26, 2, 2, 2);
+	private static Sprite openSprite = new Sprite(14, 24, 2, 2, 2);
+	private static Sprite lockSprite = new Sprite(12, 24, 2, 2, 2);
 	
 	public Random random = new Random();
 	public boolean isLocked;
