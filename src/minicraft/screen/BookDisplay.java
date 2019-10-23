@@ -70,7 +70,7 @@ public class BookDisplay extends Display {
 		menus = new Menu[lines.length+pageOffset];
 		if(showPageCount) menus[0] = pageCount;
 		for(int i = 0; i < lines.length; i++) {
-			menus[i+pageOffset] = builder.setEntries(StringEntry.useLines(Color.BLACK, lines[i])).createMenu();
+			menus[i+pageOffset] = builder.setEntries(StringEntry.useLines(Color.WHITE, lines[i])).createMenu();
 		}
 		
 		menus[page+pageOffset].shouldRender = true;
