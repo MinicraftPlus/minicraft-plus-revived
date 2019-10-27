@@ -15,8 +15,8 @@ import minicraft.item.ToolType;
 import minicraft.level.Level;
 
 public class DoorTile extends Tile {
-	private Sprite closedSprite = new Sprite(2, 24, 2, 2);
-	private Sprite openSprite = new Sprite(0, 24, 2, 2);
+	private Sprite closedSprite;
+	private Sprite openSprite;
 	
 	protected Material type;
 	
@@ -25,16 +25,16 @@ public class DoorTile extends Tile {
 		this.type = type;
 		switch(type) {
 			case Wood:
-				closedSprite.color = Color.get(320, 430, 210, 430);
-				openSprite.color = Color.get(320, 430, 430, 210);
+				closedSprite = new Sprite(5, 16, 2, 2, 1);
+				openSprite = new Sprite(3, 16, 2, 2, 1);
 				break;
 			case Stone:
-				closedSprite.color = Color.get(444, 333, 222, 333);
-				openSprite.color = Color.get(444, 333, 333, 222);
+				closedSprite = new Sprite(15, 16, 2, 2, 1);
+				openSprite = new Sprite(13, 16, 2, 2, 1);
 				break;
 			case Obsidian:
-				closedSprite.color = Color.get(203, 102, 203, 102);
-				openSprite.color = Color.get(203, 102);
+				closedSprite = new Sprite(25, 16, 2, 2, 1);
+				openSprite = new Sprite(23, 16, 2, 2, 1);
 				break;
 		}
 		sprite = closedSprite;

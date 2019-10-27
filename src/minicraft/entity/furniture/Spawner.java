@@ -48,6 +48,10 @@ public class Spawner extends Furniture {
 			lvl = 1;
 			maxMobLevel = 1;
 		}
+
+		if (lvl > maxMobLevel) {
+			lvl = maxMobLevel;
+		}
 	}
 	
 	/**
@@ -55,7 +59,7 @@ public class Spawner extends Furniture {
 	 * @param m Mob which will be spawned.
 	 */
 	public Spawner(MobAi m) {
-		super(getClassName(m.getClass()) + " Spawner", new Sprite(20, 8, 2, 2, m.col), 7, 2);
+		super(getClassName(m.getClass()) + " Spawner", new Sprite(8, 28, 2, 2, 2), 7, 2);
 		health = 100;
 		initMob(m);
 		resetSpawnInterval();
@@ -109,7 +113,7 @@ public class Spawner extends Furniture {
 		try {
 			if(mob instanceof EnemyMob)
 				//noinspection JavaReflectionMemberAccess
-				newmob = mob.getClass().getConstructor(int.class).newInstance(((EnemyMob)mob).lvl);
+				newmob = mob.getClass().getConstructor(int.class).newInstance(lvl);
 			else
 				newmob = mob.getClass().newInstance();
 		} catch(Exception ex) {

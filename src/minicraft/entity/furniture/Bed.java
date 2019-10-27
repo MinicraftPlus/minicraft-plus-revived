@@ -20,7 +20,7 @@ public class Bed extends Furniture {
 	 * Creates a new furniture with the name Bed and the bed sprite and color.
 	 */
 	public Bed() {
-		super("Bed", new Sprite(16, 8, 2, 2, Color.get(-1, 100, 444, 400)), 3, 2);
+		super("Bed", new Sprite(30, 26, 2, 2, 2), 3, 2);
 	}
 	
 	/** Called when the player attempts to get in bed. */

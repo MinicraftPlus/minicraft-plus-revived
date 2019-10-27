@@ -28,13 +28,6 @@ public class FishingRodItem extends Item {
 
     private Random random = new Random();
 
-    public static final int[] COLORS = {
-            Color.get(-1, 210, 321, 555),
-            Color.get(-1, 333, 444, 555),
-            Color.get(-1, 321, 440, 555),
-            Color.get(-1, 321, 55, 555)
-    };
-
     /* these numbers are a bit confusing, so here's an explanation
     * if you want to know the percent chance of a category (let's say tool, which is third)
     * you have to subtract 1 + the "tool" number from the number before it (for the first number subtract from 100)*/
@@ -53,7 +46,7 @@ public class FishingRodItem extends Item {
     };
 
     public FishingRodItem(int level) {
-        super(LEVEL_NAMES[level] + " Fishing rod", new Sprite(6, 5, COLORS[level]));
+        super(LEVEL_NAMES[level] + " Fishing rod", new Sprite(level, 11, 0));
         this.level = level;
     }
 

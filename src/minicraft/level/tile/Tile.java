@@ -51,11 +51,7 @@ public abstract class Tile {
 		this.name = name.toUpperCase();
 		csprite = sprite;
 	}
-	
-	/// ?
-	public String setDataChar() {
-		return null;
-	}
+
 	
 	/** This method is used by tiles to specify the default "data" they have in a level's data array.
 		Used for starting health, color/type of tile, etc. */
@@ -73,18 +69,6 @@ public abstract class Tile {
 	}
 	
 	public boolean maySpawn() { return maySpawn; }
-	
-	public int getConnectColor(Level level) {
-		int scolor;
-		if(sprite != null)
-			scolor = sprite.color;
-		else if(csprite != null)
-			scolor = csprite.sparse.color;
-		else
-			return DirtTile.dCol(level.depth);
-		
-		return Color.separateEncodedSprite(scolor)[3];
-	}
 	
 	/** Returns if the player can walk on it, overrides in sub-classes  */
 	public boolean mayPass(Level level, int x, int y, Entity e) {

@@ -14,16 +14,15 @@ public class FoodItem extends StackableItem {
 	protected static ArrayList<Item> getAllInstances() {
 		ArrayList<Item> items = new ArrayList<>();
 		
-		items.add(new FoodItem("Bread", new Sprite(8, 4, Color.get(-1, 110, 330, 550)), 2));
-		items.add(new FoodItem("Apple", new Sprite(9, 4, Color.get(-1, 100, 300, 500)), 1));
-		items.add(new FoodItem("Raw Pork", new Sprite(20, 4, Color.get(-1, 211, 311, 411)), 1));
-		items.add(new FoodItem("Raw Fish", new Sprite(24, 4, Color.get(-1, 660, 670, 680)), 1));
-		items.add(new FoodItem("Raw Beef", new Sprite(20, 4, Color.get(-1, 200, 300, 400)), 1));
-		items.add(new FoodItem("Pork Chop", new Sprite(20, 4, Color.get(-1, 220, 440, 330)), 3));
-		items.add(new FoodItem("Cooked Fish", new Sprite(24, 4, Color.get(-1, 220, 330, 440)), 3));
-		items.add(new FoodItem("Cooked Pork", new Sprite(20, 4, Color.get(-1, 220, 440, 330)), 3));
-		items.add(new FoodItem("Steak", new Sprite(20, 4, Color.get(-1, 100, 333, 211)), 3));
-		items.add(new FoodItem("Gold Apple", new Sprite(9, 4, Color.get(-1, 110, 440, 550)), 10));
+		items.add(new FoodItem("Bread", new Sprite(7, 0, 0), 2));
+		items.add(new FoodItem("Apple", new Sprite(16, 0, 0), 1));
+		items.add(new FoodItem("Raw Pork", new Sprite(10, 0, 0), 1));
+		items.add(new FoodItem("Raw Fish", new Sprite(14, 0, 0), 1));
+		items.add(new FoodItem("Raw Beef", new Sprite(12, 0, 0), 1));
+		items.add(new FoodItem("Cooked Fish", new Sprite(15, 0, 0), 3));
+		items.add(new FoodItem("Cooked Pork", new Sprite(11, 0, 0), 3));
+		items.add(new FoodItem("Steak", new Sprite(13, 0, 0), 3));
+		items.add(new FoodItem("Gold Apple", new Sprite(17, 0, 0), 10));
 		
 		return items;
 	}

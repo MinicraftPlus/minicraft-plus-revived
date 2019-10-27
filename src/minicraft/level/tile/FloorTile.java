@@ -13,7 +13,7 @@ import minicraft.item.ToolType;
 import minicraft.level.Level;
 
 public class FloorTile extends Tile {
-	private Sprite sprite = new Sprite(19, 2, 2, 2, 0, 0, true);
+	private Sprite sprite;
 	
 	protected Material type;
 	
@@ -22,12 +22,15 @@ public class FloorTile extends Tile {
 		this.type = type;
 		maySpawn = true;
 		switch(type) {
-			case Wood: sprite.color = Color.get(210, 210, 430, 320);
-			break;
-			case Stone: sprite.color = Color.get(333, 333, 444, 444);
-			break;
-			case Obsidian: sprite.color = Color.get(102, 102, 203, 203);
-			break;
+			case Wood:
+				sprite = new Sprite(5, 14, 2, 2, 1, 0);
+				break;
+			case Stone:
+				sprite = new Sprite(15, 14, 2, 2, 1, 0);
+				break;
+			case Obsidian:
+				sprite = new Sprite(25, 14, 2, 2, 1, 0);
+				break;
 		}
 		super.sprite = sprite;
 	}

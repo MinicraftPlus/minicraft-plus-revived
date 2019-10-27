@@ -7,13 +7,14 @@ import minicraft.gfx.MobSprite;
 import minicraft.item.Items;
 
 public class Skeleton extends EnemyMob {
-	private static MobSprite[][] sprites = MobSprite.compileMobSpriteAnimations(8, 16);
-	private static int[] lvlcols = {
-		Color.get(-1, 111, 40, 444),
-		Color.get(-1, 100, 522, 555),
-		Color.get(-1, 111, 444, 555),
-		Color.get(-1, 000, 111, 555)
-	};
+	private static MobSprite[][][] sprites;
+	static {
+		sprites = new MobSprite[4][4][2];
+		for (int i = 0; i < 4; i++) {
+			MobSprite[][] list  = MobSprite.compileMobSpriteAnimations(16, 0 + (i * 2));
+			sprites[i] = list;
+		}
+	}
 	
 	private int arrowtime;
 	private int artime;
@@ -23,7 +24,7 @@ public class Skeleton extends EnemyMob {
 	 * @param lvl The skeleton's level.
 	 */
 	public Skeleton(int lvl) {
-		super(lvl, sprites, lvlcols, 6, true, 100, 45, 200);
+		super(lvl, sprites, 6, true, 100, 45, 200);
 		
 		arrowtime = 500 / (lvl + 5);
 		artime = arrowtime;

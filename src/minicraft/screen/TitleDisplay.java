@@ -142,13 +142,12 @@ public class TitleDisplay extends Display {
 		
 		int h = 2; // Height of squares (on the spritesheet)
 		int w = 15; // Width of squares (on the spritesheet)
-		int titleColor = Color.get(-1, 10, 131, 551);
 		int xo = (Screen.w - w * 8) / 2; // X location of the title
 		int yo = 28; // Y location of the title
 		
 		for (int y = 0; y < h; y++) {
 			for (int x = 0; x < w; x++) {
-				screen.render(xo + x * 8, yo + y * 8, x + (y + 6) * 32, titleColor, 0);
+				screen.render(xo + x * 8, yo + y * 8, x + y * 32, 0, 3);
 			}
 		}
 		
@@ -158,21 +157,21 @@ public class TitleDisplay extends Display {
 		
 		/// this isn't as complicated as it looks. It just gets a color based off of count, which oscilates between 0 and 25.
 		int bcol = 5 - count / 5; // this number ends up being between 1 and 5, inclusive.
-		int splashColor = isblue ? Color.get(-1, bcol) : isRed ? Color.get(-1, bcol*100) : isGreen ? Color.get(-1, bcol*10) : Color.get(-1, (bcol-1)*100+5, bcol*100+bcol*10, bcol*100+bcol*10);
-		// *100 means red, *10 means green; simple.
+		int splashColor = isblue ? Color.BLUE : isRed ? Color.RED : isGreen ? Color.GREEN : Color.get(1, bcol*51, bcol*51, bcol*25);
+
 		
 		Font.drawCentered(splashes[rand], screen, 52, splashColor);
 		
-		Font.draw("Version " + Game.VERSION, screen, 1, 1, Color.get(-1, 111));
+		Font.draw("Version " + Game.VERSION, screen, 1, 1, Color.get(1, 51));
 		
 		
 		String upString = "("+Game.input.getMapping("cursor-up")+", "+Game.input.getMapping("cursor-down")+Localization.getLocalized(" to select")+")";
 		String selectString = "("+Game.input.getMapping("select")+Localization.getLocalized(" to accept")+")";
 		String exitString = "("+Game.input.getMapping("exit")+ Localization.getLocalized(" to return")+")";
 		
-		Font.drawCentered(upString, screen, Screen.h - 32, Color.get(-1, 111));
-		Font.drawCentered(selectString, screen, Screen.h - 22, Color.get(-1, 111));
-		Font.drawCentered(exitString, screen, Screen.h - 12, Color.get(-1, 111));
+		Font.drawCentered(upString, screen, Screen.h - 32, Color.get(1, 51));
+		Font.drawCentered(selectString, screen, Screen.h - 22, Color.get(1, 51));
+		Font.drawCentered(exitString, screen, Screen.h - 12, Color.get(1, 51));
 	}
 	
 	private static final String[] splashes = {
@@ -242,10 +241,11 @@ public class TitleDisplay extends Display {
 		"World themes!",
 		"Sugarcane is a Idea!",
 		"Milk is an idea!",
+		"Creeper, aw man",
 		"So we back in the mine,",
 		"pickaxe swinging from side to side",
-		"Life itself suspended by a thread",
 		"In search of Gems!",
+		"Life itself suspended by a thread",
 		"saying ay-oh, that creeper's KO'd!",
 		"Gimmie a bucket!",
 		"Farming with water!",
@@ -289,6 +289,5 @@ public class TitleDisplay extends Display {
 		"001100010011000000110001!",
 		"011010000110110101101101?",
 		"...zzz...",
-		"Creeper, aw man"
 	};
 }

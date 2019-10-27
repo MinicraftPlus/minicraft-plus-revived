@@ -17,21 +17,14 @@ import minicraft.level.tile.Tiles;
 import org.jetbrains.annotations.NotNull;
 
 public class Creeper extends EnemyMob {
-	private static final MobSprite[][] sprites;
-	private static final MobSprite[] walking, standing;
+	private static MobSprite[][][] sprites;
 	static {
-		MobSprite[] list = MobSprite.compileSpriteList(4, 18, 2, 2, 0, 3);
-		walking = new MobSprite[] {list[1], list[2]};
-		standing = new MobSprite[] {list[0], list[0]};
-		sprites = new MobSprite[1][2];
-		sprites[0] = standing;
+		sprites = new MobSprite[4][1][2];
+		for (int i = 0; i < 4; i++) {
+			MobSprite[] list = MobSprite.compileSpriteList(4, 0 + (i * 2), 2, 2, 0, 2);
+			sprites[i][0] = list;
+		}
 	}
-	private static int[] lvlcols = {
-		Color.get(-1, 20, 40, 30),
-		Color.get(-1, 200, 262, 232),
-		Color.get(-1, 200, 272, 222),
-		Color.get(-1, 200, 292, 282)
-	};
 	
 	private static final int MAX_FUSE_TIME = 60;
 	private static final int TRIGGER_RADIUS = 60;
@@ -40,7 +33,9 @@ public class Creeper extends EnemyMob {
 	private int fuseTime = 0;
 	private boolean fuseLit = false;
 	
-	public Creeper(int lvl) { super(lvl, sprites, lvlcols, 10, 50); }
+	public Creeper(int lvl) {
+		super(lvl, sprites, 10, 50);
+	}
 	
 	@Override
 	public boolean move(int xa, int ya) {
@@ -139,13 +134,13 @@ public class Creeper extends EnemyMob {
 
 	@Override
 	public void render(Screen screen) {
-		if (fuseLit && fuseTime % 6 == 0) {
+		/*if (fuseLit && fuseTime % 6 == 0) {
 			super.lvlcols[lvl-1] = Color.get(-1, 252);
 		}
 		else
 			super.lvlcols[lvl-1] = Creeper.lvlcols[lvl-1];
-		
-		sprites[0] = walkDist == 0 ? standing : walking;
+
+		sprites[0] = walkDist == 0 ? standing : walking;*/
 		
 		super.render(screen);
 	}

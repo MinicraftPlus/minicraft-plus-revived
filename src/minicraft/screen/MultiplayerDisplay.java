@@ -291,17 +291,17 @@ public class MultiplayerDisplay extends Display {
 		
 		switch(curState) {
 			case ENTERIP:
-				Font.drawCentered("logged in as: " + savedUsername, screen, 6, Color.get(-1, 252));
+				Font.drawCentered("logged in as: " + savedUsername, screen, 6, Color.get(1, 102, 255, 102));
 				
 				if(!online)
-					Font.drawCentered("offline mode: local servers only", screen, Screen.h/2 - Font.textHeight()*6, Color.get(-1, 335));
+					Font.drawCentered("offline mode: local servers only", screen, Screen.h/2 - Font.textHeight()*6, Color.get(1, 153, 153, 255));
 				
-				Font.drawCentered("Enter ip address to connect to:", screen, Screen.h/2-Font.textHeight()*2-2, Color.get(-1, 555));
-				Font.drawCentered(typing, screen, Screen.h/2-Font.textHeight(), Color.get(-1, 552));
+				Font.drawCentered("Enter ip address to connect to:", screen, Screen.h/2-Font.textHeight()*2-2, Color.get(1, 255));
+				Font.drawCentered(typing, screen, Screen.h/2-Font.textHeight(), Color.get(1, 255, 255, 102));
 				
 				connectTimeout.render(screen, (Screen.w-connectTimeout.getWidth()) / 2, Screen.h/2+Font.textHeight()*2, true);
 				
-				Font.drawCentered("Press Shift-Escape to logout", screen, Screen.h-Font.textHeight()*7, Color.get(-1, 444));
+				Font.drawCentered("Press Shift-Escape to logout", screen, Screen.h-Font.textHeight()*7, Color.get(1, 204));
 				break;
 			
 			case LOGIN:
@@ -314,13 +314,13 @@ public class MultiplayerDisplay extends Display {
 				if(!typingEmail)
 					//noinspection ReplaceAllDot
 					msg = msg.replaceAll(".", ".");
-				Font.drawCentered(msg, screen, Screen.h/2+6, (inputIsValid?Color.get(-1, 444):Color.RED));
+				Font.drawCentered(msg, screen, Screen.h/2+6, (inputIsValid?Color.get(1, 204):Color.RED));
 				if(!inputIsValid) {
 					Font.drawCentered("field is blank", screen, Screen.h/2+20, Color.RED);
 				}
 				
-				Font.drawCentered("get an account at:", screen, Font.textHeight()/2-1, Color.get(-1, 345));
-				Font.drawCentered(domain.substring(domain.indexOf("://")+3)+"/register", screen, Font.textHeight()*3/2, Color.get(-1, 345));
+				Font.drawCentered("get an account at:", screen, Font.textHeight()/2-1, Color.get(1, 153, 204, 255));
+				Font.drawCentered(domain.substring(domain.indexOf("://")+3)+"/register", screen, Font.textHeight()*3/2, Color.get(1, 153, 204, 255));
 				
 				break;
 			
@@ -336,9 +336,9 @@ public class MultiplayerDisplay extends Display {
 			case ERROR:
 				//if(Updater.tickCount % 10 == 0) System.out.println("error message: " + errorMessage);
 				Font.drawCentered("Could not connect to server:", screen, Screen.h/2-6, Color.RED);
-				FontStyle style = new FontStyle(Color.get(-1, 511)).setYPos(Screen.h/2+6);
+				FontStyle style = new FontStyle(Color.get(1, 255, 51, 51)).setYPos(Screen.h/2+6);
 				Font.drawParagraph(errorMessage, screen, style, 1);
-				//Font.drawCentered(errorMessage, screen, Screen.h/2+6, Color.get(-1, 511));
+				//Font.drawCentered(errorMessage, screen, Screen.h/2+6, Color.get(1, 255, 51, 51));
 				break;
 		}
 		

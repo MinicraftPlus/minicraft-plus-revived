@@ -26,12 +26,4 @@ class RecipeMenu extends ItemListMenu {
 	RecipeMenu(List<Recipe> recipes, String title, Player player) {
 		super(getAndSortRecipes(recipes, player), title);
 	}
-	
-	RecipeMenu(List<Recipe> recipes, String title, Player player, int fillCol, int edgeStrokeCol, int edgeFillCol) {
-		super(
-			ItemListMenu.getBuilder().setFrame(fillCol, edgeStrokeCol, edgeFillCol),
-			getAndSortRecipes(recipes, player),
-			title
-		);
-	}
 }

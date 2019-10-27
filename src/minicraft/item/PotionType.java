@@ -3,35 +3,36 @@ package minicraft.item;
 import minicraft.core.Game;
 import minicraft.core.World;
 import minicraft.entity.mob.Player;
+import minicraft.gfx.Color;
 import minicraft.level.Level;
 
 public enum PotionType {
-	None (5, 0),
+	None (Color.get(1, 22, 22, 137), 0),
 	
-	Speed (10, 4200) {
+	Speed (Color.get(1, 23, 46, 23), 4200) {
 		public boolean toggleEffect(Player player, boolean addEffect) {
 			player.moveSpeed += (double)( addEffect ? 1 : (player.moveSpeed > 1 ? -1 : 0) );
 			return true;
 		}
 	},
 	
-	Light (440, 6000),
-	Swim (3, 4800),
-	Energy (510, 8400),
-	Regen (504, 1800),
-	Health (501, 0) {
+	Light (Color.get(1, 183, 183, 91), 6000),
+	Swim (Color.get(1, 17, 17, 85), 4800),
+	Energy (Color.get(1, 172, 80, 57), 8400),
+	Regen (Color.get(1, 168, 54, 146), 1800),
+	Health (Color.get(1, 161, 46, 69), 0) {
 		public boolean toggleEffect(Player player, boolean addEffect) {
 			if(addEffect) player.heal(5);
 			return true;
 		}
 	},
 	
-	Time (222, 1800),
-	Lava (400, 7200),
-	Shield (115, 5400),
-	Haste (303, 4800),
+	Time (Color.get(1, 102), 1800),
+	Lava (Color.get(1, 129, 37, 37), 7200),
+	Shield (Color.get(1, 65, 65, 157), 5400),
+	Haste (Color.get(1, 106, 37, 106), 4800),
 	
-	Escape (211, 0) {
+	Escape (Color.get(1, 85, 62, 62), 0) {
 		public boolean toggleEffect(Player player, boolean addEffect) {
 			if(addEffect) {
 				int playerDepth = player.getLevel().depth;

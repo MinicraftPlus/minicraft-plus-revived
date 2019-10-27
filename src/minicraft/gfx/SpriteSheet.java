@@ -14,13 +14,33 @@ public class SpriteSheet {
 		width = image.getWidth();
 		height = image.getHeight();
 		pixels = image.getRGB(0, 0, width, height, null, 0, width); //gets the color array of the image pixels
+
 		for (int i = 0; i < pixels.length; i++) { // loops through all the pixels
-			pixels[i] = (pixels[i] & 0xff) / 64; // This sets the pixel value of each color, which determines which of the 4 sprite colors the pixel is set to.
-			// The calculation is based on the blue value of the pixel, the last byte in the ARGB int returned. Since they should be gray, r g and b should be the same anyway.
-			// The r/g/b value should be one of: 0, 51, 173, 255; those are the shades of gray the spritesheet uses.
-			// Dividing each of these by 64, and truncating to an integer, gives: 0, 1, 2, 3.
-			// That number, 0-3, is the index of the sprite color to use.
-			// This explains why the first number in a sprite color determines the color of the black pixels, the 2nd controls the dark gray, etc.
+			int red;
+			int green;
+			int blue;
+
+			// this should be a number from 0-255 that is the red of the pixel
+			red = (pixels[i] & 0xff0000);
+
+			// same, but green
+			green = (pixels[i] & 0xff00);
+
+			// same, but blue
+			blue = (pixels[i] & 0xff);
+
+			// this stuff is to figure out if the pixel is transparent or not
+			int transparent = 1;
+
+			// a value of 0 means transparent, a value of 1 means opaque
+			if (pixels[i] >> 24 == 0x00) {
+				transparent = 0;
+			}
+
+			// actually put the data in the array
+			// uses 25 bits to store everything (8 for red, 8 for green, 8 for blue, and 1 for alpha)
+			pixels[i] = (transparent << 24) + red + green + blue;
+
 		}
 	}
 }

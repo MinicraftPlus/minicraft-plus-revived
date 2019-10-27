@@ -14,7 +14,7 @@ import minicraft.level.tile.Tiles;
 public class EnemyMob extends MobAi {
 	
 	public int lvl;
-	protected int[] lvlcols;
+	protected MobSprite[][][] lvlSprites;
 	public int detectDist;
 	
 	/**
@@ -22,8 +22,7 @@ public class EnemyMob extends MobAi {
 	 * lvlcols is the different color the mob has depending on its level. isFactor determines if the mob's health should be affected by the level and
 	 * the difficulty.
 	 * @param lvl The mob's level.
-	 * @param sprites The mob's sprites.
-	 * @param lvlcols The different colors mapped to the level.
+	 * @param lvlSprites The mob's sprites (ordered by level, then direction, then animation frame).
 	 * @param health How much health the mob has.
 	 * @param isFactor false if maxHealth=health, true if maxHealth=health*level*level*difficulty
 	 * @param detectDist The distance where the mob will detect the player and start moving towards him/her.
@@ -31,11 +30,10 @@ public class EnemyMob extends MobAi {
 	 * @param rwTime How long the mob will walk in a random direction. (random walk duration)
 	 * @param rwChance The chance of this mob will walk in a random direction (random walk chance)
 	 */
-	public EnemyMob(int lvl, MobSprite[][] sprites, int[] lvlcols, int health, boolean isFactor, int detectDist, int lifetime, int rwTime, int rwChance) {
-		super(sprites, isFactor ? (lvl==0?1:lvl * lvl) * health*((Double)(Math.pow(2, Settings.getIdx("diff")))).intValue() : health, lifetime, rwTime, rwChance);
+	public EnemyMob(int lvl, MobSprite[][][] lvlSprites, int health, boolean isFactor, int detectDist, int lifetime, int rwTime, int rwChance) {
+		super(lvlSprites[0], isFactor ? (lvl==0?1:lvl * lvl) * health*((Double)(Math.pow(2, Settings.getIdx("diff")))).intValue() : health, lifetime, rwTime, rwChance);
 		this.lvl = lvl == 0 ? 1 : lvl;
-		this.lvlcols = java.util.Arrays.copyOf(lvlcols, lvlcols.length);
-		col = lvlcols[this.lvl-1];
+		this.lvlSprites = java.util.Arrays.copyOf(lvlSprites, lvlSprites.length);
 		this.detectDist = detectDist;
 	}
 	
@@ -43,16 +41,15 @@ public class EnemyMob extends MobAi {
 	 * Constructor for a hostile (enemy) mob. 
 	 * Lifetime will be set to 60 * Game.normSpeed.
 	 * @param lvl The mob's level.
-	 * @param sprites The mob's sprites.
-	 * @param lvlcols The different colors mapped to the level.
+	 * @param lvlSprites The mob's sprites (ordered by level, then direction, then animation frame).
 	 * @param health How much health the mob has.
 	 * @param isFactor false if maxHealth=health, true if maxHealth=health*level*level*difficulty
 	 * @param detectDist The distance where the mob will detect the player and start moving towards him/her.
 	 * @param rwTime How long the mob will walk in a random direction. (random walk duration)
 	 * @param rwChance The chance of this mob will walk in a random direction (random walk chance)
 	 */
-	public EnemyMob(int lvl, MobSprite[][] sprites, int[] lvlcols, int health, boolean isFactor, int detectDist, int rwTime, int rwChance) {
-		this(lvl, sprites, lvlcols, health, isFactor, detectDist, 60*Updater.normSpeed, rwTime, rwChance);
+	public EnemyMob(int lvl, MobSprite[][][] lvlSprites, int health, boolean isFactor, int detectDist, int rwTime, int rwChance) {
+		this(lvl, lvlSprites, health, isFactor, detectDist, 60*Updater.normSpeed, rwTime, rwChance);
 	}
 	
 	/**
@@ -62,13 +59,12 @@ public class EnemyMob extends MobAi {
 	 * rwChance=200.
 	 * 
 	 * @param lvl The mob's level.
-	 * @param sprites The mob's sprites.
-	 * @param lvlcols The different colors mapped to the level.
+	 * @param lvlSprites The mob's sprites (ordered by level, then direction, then animation frame).
 	 * @param health How much health the mob has.
 	 * @param detectDist The distance where the mob will detect the player and start moving towards him/her.
 	 */
-	public EnemyMob(int lvl, MobSprite[][] sprites, int[] lvlcols, int health, int detectDist) {
-		this(lvl, sprites, lvlcols, health, true, detectDist, 60, 200);
+	public EnemyMob(int lvl, MobSprite[][][] lvlSprites, int health, int detectDist) {
+		this(lvl, lvlSprites, health, true, detectDist, 60, 200);
 	}
 	
 	@Override
@@ -97,7 +93,7 @@ public class EnemyMob extends MobAi {
 	
 	@Override
 	public void render(Screen screen) {
-		col = lvlcols[lvl-1];
+		sprites = lvlSprites[lvl - 1];
 		super.render(screen);
 	}
 	
@@ -143,6 +139,6 @@ public class EnemyMob extends MobAi {
 	
 	@Override
 	public int getMaxLevel() {
-		return lvlcols.length;
+		return lvlSprites.length;
 	}
 }

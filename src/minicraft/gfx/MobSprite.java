@@ -16,7 +16,7 @@ public class MobSprite extends Sprite {
 				// the offsets are there to determine the pixel that will be there: the one in order, or on the opposite side.
 				int xOffset = flipX ? spritePixels[r].length-1 - c : c;
 				int yOffset = flipY ? spritePixels.length-1 - r : r;
-				spritePixels[r][c] = new Px(sx+xOffset, sy+yOffset, mirror);
+				spritePixels[r][c] = new Px(sx+xOffset, sy+yOffset, mirror, 2);
 			}
 		}
 	}
@@ -25,7 +25,7 @@ public class MobSprite extends Sprite {
 	public static MobSprite[] compileSpriteList(int sheetX, int sheetY, int width, int height, int mirror, int number) {
 		MobSprite[] sprites = new MobSprite[number];
 		for(int i = 0; i < sprites.length; i++)
-			sprites[i] = new MobSprite(sheetX + width*i, sheetY, width, height, mirror);
+			sprites[i] = new MobSprite(sheetX + width * i, sheetY, width, height, mirror);
 		
 		return sprites;
 	}
@@ -33,7 +33,7 @@ public class MobSprite extends Sprite {
 	public static MobSprite[][] compileMobSpriteAnimations(int sheetX, int sheetY) {
 		MobSprite[][] sprites = new MobSprite[4][2];
 		//dir numbers: 0=down, 1=up, 2=left, 3=right.
-		/// On the spritesheet, most mobs have 4 sprites there, first facing down, then up, then right 1, then right 2. Th first two get flipped to animate them, but the last two get flipped to change direction.
+		/// On the spritesheet, most mobs have 4 sprites there, first facing down, then up, then right 1, then right 2. The first two get flipped to animate them, but the last two get flipped to change direction.
 		
 		// contents: down 1, up 1, right 1, right 2
 		MobSprite[] set1 = MobSprite.compileSpriteList(sheetX, sheetY, 2, 2, 0, 4);
@@ -54,5 +54,18 @@ public class MobSprite extends Sprite {
 		sprites[3][1] = set1[3];
 		
 		return sprites;
+	}
+
+	public void render(Screen screen, int x, int y, boolean fullbright) {
+		for(int row = 0; row < spritePixels.length; row++) { // loop down through each row
+			renderRow(row, screen, x, y + row*8, fullbright);
+		}
+	}
+
+	public void renderRow(int r, Screen screen, int x, int y, boolean fullbright) {
+		Px[] row = spritePixels[r];
+		for(int c = 0; c < row.length; c++) { // loop across through each column
+			screen.render(x + c*8, y, row[c].sheetPos, row[c].mirror, row[c].sheetNum, -1, fullbright); // render the sprite pixel.
+		}
 	}
 }

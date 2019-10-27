@@ -102,7 +102,7 @@ public class RemotePlayer extends Player implements ClientTickable {
 	
 	public void render(Screen screen) {
 		super.render(screen);
-		new FontStyle(Color.get(-1, 444)).setShadowType(Color.BLACK, true).setXPos(x - Font.textWidth(username)/2).setYPos(y - 20).draw(username, screen); // draw the username of the player above their head
+		new FontStyle(Color.get(1, 204)).setShadowType(Color.BLACK, true).setXPos(x - Font.textWidth(username)/2).setYPos(y - 20).draw(username, screen); // draw the username of the player above their head
 	}
 	
 	public void die() {

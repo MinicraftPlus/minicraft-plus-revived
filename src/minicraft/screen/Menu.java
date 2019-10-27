@@ -30,7 +30,6 @@ public class Menu {
 	private boolean drawVertically = false;
 	
 	private boolean hasFrame;
-	private int frameFillColor, frameEdgeColor;
 	
 	private boolean selectable = false;
 	boolean shouldRender = true;
@@ -57,8 +56,6 @@ public class Menu {
 		titleLoc = m.titleLoc;
 		drawVertically = m.drawVertically;
 		hasFrame = m.hasFrame;
-		frameFillColor = m.frameFillColor;
-		frameEdgeColor = m.frameEdgeColor;
 		selectable = m.selectable;
 		shouldRender = m.shouldRender;
 		displayLength = m.displayLength;
@@ -189,10 +186,15 @@ public class Menu {
 		if(title.length() > 0) {
 			if (drawVertically) {
 				for (int i = 0; i < title.length(); i++) {
+					screen.render(titleLoc.x, titleLoc.y + i * Font.textHeight(), 3 + 21 * 32, 0, 3);
 					Font.draw(title.substring(i, i + 1), screen, titleLoc.x, titleLoc.y + i * Font.textHeight(), titleColor);
 				}
-			} else
-				Font.draw(title, screen, titleLoc.x, titleLoc.y, titleColor);
+			} else {
+				for (int i = 0; i < title.length(); i++) {
+					screen.render(titleLoc.x + i * Font.textWidth(" "), titleLoc.y, 3 + 21 * 32, 0, 3);
+					Font.draw(title.substring(i, i + 1), screen, titleLoc.x + i * Font.textWidth(" "), titleLoc.y, titleColor);
+				}
+			}
 		}
 		
 		// render the options
@@ -240,16 +242,8 @@ public class Menu {
 		
 		doScroll();
 	}
-	
-	public void setFrameColors(int fillCol, int edgeStrokeCol, int edgeFillCol) {
-		frameFillColor = Color.get(fillCol, fillCol);
-		frameEdgeColor = Color.get(-1, edgeStrokeCol, fillCol, edgeFillCol);
-		int[] titleCols = Color.separateEncodedSprite(titleColor, true);
-		titleColor = Color.get(fillCol, titleCols[3]<0?550:titleCols[3]);
-	}
-	public void setFrameColors(Menu model) {
-		frameFillColor = model.frameFillColor;
-		frameEdgeColor = model.frameEdgeColor;
+
+	public void setColors(Menu model) {
 		titleColor = model.titleColor;
 	}
 	
@@ -264,12 +258,11 @@ public class Menu {
 				
 				boolean xend = x == bounds.getLeft() || x == right;
 				boolean yend = y == bounds.getTop() || y == bottom;
-				int spriteoffset = (xend && yend ? 0 : (yend ? 1 : 2)); // determines which sprite to use
+				int spriteoffset = (xend && yend ? 0 : (yend ? 1 : (xend ? 2 : 3))); // determines which sprite to use
 				int mirrors = ( x == right ? 1 : 0 ) + ( y == bottom ? 2 : 0 ); // gets mirroring
 				
-				int color = xend || yend ? frameEdgeColor : frameFillColor;//sideColor; // gets the color; slightly different in upper right corner, and middle is all blue.
-				
-				screen.render(x, y, spriteoffset + 13*32, color, mirrors);
+
+				screen.render(x, y, spriteoffset + 21 * 32, mirrors, 3);
 				
 				if(x < right && x + SpriteSheet.boxWidth > right)
 					x = right - SpriteSheet.boxWidth;
@@ -295,7 +288,7 @@ public class Menu {
 		
 		@NotNull private RelPos titlePos = RelPos.TOP;
 		private boolean fullTitleColor = false, setTitleColor = false;
-		private int titleCol = 550, frameFillCol = 5, frameEdgeStroke = 1, frameEdgeFill = 445;
+		private int titleCol = Color.YELLOW;
 		
 		@NotNull private Point anchor = center;
 		@NotNull private RelPos menuPos = RelPos.CENTER;
@@ -354,16 +347,7 @@ public class Menu {
 		}
 		
 		public Builder setFrame(boolean hasFrame) { menu.hasFrame = hasFrame; return this; }
-		
-		public Builder setFrame(int fillCol, int edgeStroke, int edgeFill) {
-			setFrame(true);
-			// these are not full colors, only the components that matter.
-			frameFillCol = fillCol;
-			frameEdgeStroke = edgeStroke;
-			frameEdgeFill = edgeFill;
-			
-			return this;
-		}
+
 		
 		public Builder setScrollPolicies(float padding, boolean wrap) {
 			this.padding = padding;
@@ -521,15 +505,9 @@ public class Menu {
 				if(fullTitleColor)
 					menu.titleColor = titleCol;
 				else {
-					if (!setTitleColor) titleCol = menu.hasFrame ? 550 : 555;
-					menu.titleColor = Color.get((menu.hasFrame ? frameFillCol : -1), titleCol); // make it match the frame color, or be transparent
+					if (!setTitleColor) titleCol = menu.hasFrame ? Color.YELLOW : Color.WHITE;
+					menu.titleColor = titleCol; // make it match the frame color, or be transparent
 				}
-			}
-			
-			// set the menu frame colors
-			if(menu.hasFrame) {
-				menu.frameFillColor = Color.get(frameFillCol, frameFillCol);
-				menu.frameEdgeColor = Color.get(-1, frameEdgeStroke, frameFillCol, frameEdgeFill);
 			}
 			
 			if(padding < 0) padding = 0;
@@ -557,9 +535,6 @@ public class Menu {
 			b.fullTitleColor = fullTitleColor;
 			b.setTitleColor = setTitleColor;
 			b.titleCol = titleCol;
-			b.frameFillCol = frameFillCol;
-			b.frameEdgeStroke = frameEdgeStroke;
-			b.frameEdgeFill = frameEdgeFill;
 			
 			return b;
 		}

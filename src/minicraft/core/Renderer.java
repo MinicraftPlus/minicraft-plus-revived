@@ -13,18 +13,14 @@ import java.util.Map;
 
 import minicraft.entity.furniture.Bed;
 import minicraft.entity.mob.Player;
-import minicraft.gfx.Color;
-import minicraft.gfx.Ellipsis;
+import minicraft.gfx.*;
 import minicraft.gfx.Ellipsis.DotUpdater.TickUpdater;
 import minicraft.gfx.Ellipsis.SmoothEllipsis;
-import minicraft.gfx.Font;
-import minicraft.gfx.FontStyle;
-import minicraft.gfx.Screen;
-import minicraft.gfx.SpriteSheet;
 import minicraft.item.Items;
 import minicraft.item.PotionType;
 import minicraft.item.ToolItem;
 import minicraft.level.Level;
+import minicraft.saveload.Load;
 import minicraft.screen.LoadingDisplay;
 import minicraft.screen.RelPos;
 
@@ -47,19 +43,34 @@ public class Renderer extends Game {
 	public static boolean showinfo = false;
 	
 	private static Ellipsis ellipsis = new SmoothEllipsis(new TickUpdater());
+
+	private static void initSpriteSheets() throws IOException {
+		BufferedImage[] sheets = Load.loadSpriteSheets();
+
+		// these actually set the sprites to be used
+		SpriteSheet itemSheet = new SpriteSheet(ImageIO.read(Game.class.getResourceAsStream("/resources/textures/items.png")));
+		SpriteSheet tileSheet = new SpriteSheet(ImageIO.read(Game.class.getResourceAsStream("/resources/textures/tiles.png")));
+		SpriteSheet entitySheet = new SpriteSheet(ImageIO.read(Game.class.getResourceAsStream("/resources/textures/entities.png")));
+		SpriteSheet guiSheet = new SpriteSheet(ImageIO.read(Game.class.getResourceAsStream("/resources/textures/gui.png")));
+
+		SpriteSheet itemSheetCustom = sheets[0] != null ? new SpriteSheet(sheets[0]) : null;
+		SpriteSheet tileSheetCustom = sheets[1] != null ? new SpriteSheet(sheets[1]) : null;
+		SpriteSheet entitySheetCustom = sheets[2] != null ? new SpriteSheet(sheets[2]) : null;
+		SpriteSheet guiSheetCustom = sheets[3] != null ? new SpriteSheet(sheets[3]) : null;
+
+		screen = new Screen(itemSheet, tileSheet, entitySheet, guiSheet, itemSheetCustom, tileSheetCustom, entitySheetCustom, guiSheetCustom);
+		lightScreen = new Screen(itemSheet, tileSheet, entitySheet, guiSheet, itemSheetCustom, tileSheetCustom, entitySheetCustom, guiSheetCustom);
+	}
 	
 	static void initScreen() {
 		if(!HAS_GUI) return;
 		
 		image = new BufferedImage(WIDTH, HEIGHT, BufferedImage.TYPE_INT_RGB);
 		pixels = ((DataBufferInt) image.getRaster().getDataBuffer()).getData();
-		
-		/* This sets up the screens, and loads the icons.png spritesheet. */
+
 		try {
-			screen = new Screen(new SpriteSheet(ImageIO.read(Game.class.getResourceAsStream
-				("/resources/icons.png"))));
-			lightScreen = new Screen(new SpriteSheet(ImageIO.read(Game.class.getResourceAsStream
-				("/resources/icons.png"))));
+			// This sets up the screens, and loads the different spritesheets.
+			initSpriteSheets();
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
@@ -104,7 +115,7 @@ public class Renderer extends Game {
 		BufferStrategy bs = canvas.getBufferStrategy(); // creates a buffer strategy to determine how the graphics should be buffered.
 		Graphics g = bs.getDrawGraphics(); // gets the graphics in which java draws the picture
 		g.fillRect(0, 0, canvas.getWidth(), canvas.getHeight()); // draws the a rect to fill the whole window (to cover last?)
-		
+
 		// scales the pixels.
 		int ww = getWindowSize().width;
 		int hh = getWindowSize().height;
@@ -132,11 +143,10 @@ public class Renderer extends Game {
 		if (xScroll > level.w * 16 - Screen.w) xScroll = level.w * 16 - Screen.w; // ...right border.
 		if (yScroll > level.h * 16 - Screen.h) yScroll = level.h * 16 - Screen.h; // ...bottom border.
 		if (currentLevel > 3) { // if the current level is higher than 3 (which only the sky level (and dungeon) is)
-			int col = Color.get(20, 20, 121, 121); // background color.
 			for (int y = 0; y < 28; y++)
 				for (int x = 0; x < 48; x++) {
 					// creates the background for the sky (and dungeon) level:
-					screen.render(x * 8 - ((xScroll / 4) & 7), y * 8 - ((yScroll / 4) & 7), 0, col, 0);
+					screen.render(x * 8 - ((xScroll / 4) & 7), y * 8 - ((yScroll / 4) & 7), 2 + 25 * 32, 0, 1);
 				}
 		}
 		
@@ -157,18 +167,18 @@ public class Renderer extends Game {
 	private static void renderGui() {
 		/// AH-HA! THIS DRAWS THE BLACK SQUARE!!
 		for (int x = 12; x < 29; x++)
-			screen.render(x * 7, Screen.h - 8, 0 + 1 * 32, Color.get(0, 0), 0);
+			screen.render(x * 7, Screen.h - 8, 30 + 30 * 32, 0, 3);
 		
 		renderDebugInfo();
 		
 		// This is the arrow counter. ^ = infinite symbol.
 		int ac = player.getInventory().count(Items.arrowItem);
 		if (isMode("creative") || ac >= 10000)
-			Font.draw("	x" + "^", screen, 84, Screen.h - 16, Color.get(0, 333, 444, 555));
+			Font.drawBackground("	x" + "^", screen, 84, Screen.h - 16);
 		else
-			Font.draw("	x" + ac, screen, 84, Screen.h - 16, Color.get(0, 555));
-		//displays arrow icon
-		screen.render(10 * 8 + 4, Screen.h - 16, 13 + 5 * 32, Color.get(0, 111, 222, 430), 0);
+			Font.drawBackground("	x" + ac, screen, 84, Screen.h - 16);
+		// displays arrow icon
+		screen.render(10 * 8 + 4, Screen.h - 16, 4 + 3 * 32, 0, 3);
 		
 		ArrayList<String> permStatus = new ArrayList<>();
 		if (Updater.saving) permStatus.add("Saving... " + Math.round(LoadingDisplay.getPercentage()) + "%");
@@ -246,9 +256,11 @@ public class Renderer extends Game {
 		
 		// TOOL DURABILITY STATUS
 		if (player.activeItem instanceof ToolItem) {
+			// draws the text
 			ToolItem tool = (ToolItem) player.activeItem;
 			int dura = tool.dur * 100 / (tool.type.durability * (tool.level+1));
-			Font.draw(dura + "%", screen, 164, Screen.h - 16, Color.get(0, 30));
+			int green = (int)(dura * 2.55f);
+			Font.drawBackground(dura + "%", screen, 164, Screen.h - 16, Color.get(1, 255 - green, green, 0));
 		}
 		
 		/// This renders the potions overlay
@@ -258,9 +270,8 @@ public class Renderer extends Game {
 			for(int i = 0; i < effects.length; i++) {
 				PotionType pType = effects[i].getKey();
 				int pTime = effects[i].getValue() / Updater.normSpeed;
-				int pcol = Color.get(pType.dispColor, 555);
-				Font.draw("("+input.getMapping("potionEffects")+" to hide!)", screen, 180, 9, Color.get(0, 555));
-				Font.draw(pType + " (" + (pTime / 60) + ":" + (pTime % 60) + ")", screen, 180, 17 + i * Font.textHeight(), pcol);
+				Font.drawBackground("("+input.getMapping("potionEffects")+" to hide!)", screen, 180, 9);
+				Font.drawBackground(pType + " (" + (pTime / 60) + ":" + (pTime % 60) + ")", screen, 180, 17 + i * Font.textHeight(), pType.dispColor);
 			}
 		}
 		
@@ -268,30 +279,42 @@ public class Renderer extends Game {
 		// This is the status icons, like health hearts, stamina bolts, and hunger "burgers".
 		if (!isMode("creative")) {
 			for (int i = 0; i < Player.maxStat; i++) {
-				int color;
 				
 				// renders armor
 				int armor = player.armor*Player.maxStat / Player.maxArmor;
-				color = (i <= armor && player.curArmor != null) ? player.curArmor.sprite.color : Color.get(-1, -1);
-				screen.render(i * 8, Screen.h - 24, 3 + 12 * 32, color, 0);
+				if (i <= armor && player.curArmor != null) {
+					screen.render(i * 8, Screen.h - 24, (player.curArmor.level - 1) + 9 * 32, 0, 0);
+				}
 				
 				// renders your current red hearts, or black hearts for damaged health.
-				color = (i < player.health) ? Color.get(-1, 200, 500, 533) : Color.get(-1, 100, 0, 0);
-				screen.render(i * 8, Screen.h - 16, 0 + 12 * 32, color, 0);
+				if (i < player.health) {
+					screen.render(i * 8, Screen.h - 16, 0 + 2 * 32, 0, 3);
+				} else {
+					screen.render(i * 8, Screen.h - 16, 0 + 3 * 32, 0, 3);
+				}
 				
 				if (player.staminaRechargeDelay > 0) {
 					// creates the white/gray blinking effect when you run out of stamina.
-					color = (player.staminaRechargeDelay / 4 % 2 == 0) ? Color.get(-1, 555, 0, 0) : Color.get(-1, 110, 0, 0);
-					screen.render(i * 8, Screen.h - 8, 1 + 12 * 32, color, 0);
+					if (player.staminaRechargeDelay / 4 % 2 == 0) {
+						screen.render(i * 8, Screen.h - 8, 1 + 4 * 32, 0, 3);
+					} else {
+						screen.render(i * 8, Screen.h - 8, 1 + 3 * 32, 0, 3);
+					}
 				} else {
 					// renders your current stamina, and uncharged gray stamina.
-					color = (i < player.stamina) ? Color.get(-1, 220, 550, 553) : Color.get(-1, 110, 0, 0);
-					screen.render(i * 8, Screen.h - 8, 1 + 12 * 32, color, 0);
+					if (i < player.stamina) {
+						screen.render(i * 8, Screen.h - 8, 1 + 2 * 32, 0, 3);
+					} else {
+						screen.render(i * 8, Screen.h - 8, 1 + 3 * 32, 0, 3);
+					}
 				}
 				
 				// renders hunger
-				color = (i < player.hunger) ? Color.get(-1, 100, 530, 211) : Color.get(-1, 100, 0, 0);
-				screen.render(i * 8 + (Screen.w - 80), Screen.h - 16, 2 + 12 * 32, color, 0);
+				if (i < player.hunger) {
+					screen.render(i * 8 + (Screen.w - 80), Screen.h - 16, 2 + 2 * 32, 0, 3);
+				} else {
+					screen.render(i * 8 + (Screen.w - 80), Screen.h - 16, 2 + 3 * 32, 0, 3);
+				}
 			}
 		}
 		
@@ -358,33 +381,33 @@ public class Renderer extends Game {
 		int yy = (HEIGHT - 8) / 2; // the height of the box
 		int w = msg.length(); // length of message in characters.
 		int h = 1;
-		int txtcolor = Color.get(-1, 1, 5, 445);
 		
 		// renders the four corners of the box
-		screen.render(xx - 8, yy - 8, 0 + 13 * 32, txtcolor, 0);
-		screen.render(xx + w * 8, yy - 8, 0 + 13 * 32, txtcolor, 1);
-		screen.render(xx - 8, yy + 8, 0 + 13 * 32, txtcolor, 2);
-		screen.render(xx + w * 8, yy + 8, 0 + 13 * 32, txtcolor, 3);
+		screen.render(xx - 8, yy - 8, 0 + 21 * 32, 0, 3);
+		screen.render(xx + w * 8, yy - 8, 0 + 21 * 32, 1, 3);
+		screen.render(xx - 8, yy + 8, 0 + 21 * 32, 2, 3);
+		screen.render(xx + w * 8, yy + 8, 0 + 21 * 32, 3, 3);
 		
 		// renders each part of the box...
 		for (int x = 0; x < w; x++) {
-			screen.render(xx + x * 8, yy - 8, 1 + 13 * 32, txtcolor, 0); // ...top part
-			screen.render(xx + x * 8, yy + 8, 1 + 13 * 32, txtcolor, 2); // ...bottom part
+			screen.render(xx + x * 8, yy - 8, 1 + 21 * 32, 0, 3); // ...top part
+			screen.render(xx + x * 8, yy + 8, 1 + 21 * 32, 2, 3); // ...bottom part
 		}
 		for (int y = 0; y < h; y++) {
-			screen.render(xx - 8, yy + y * 8, 2 + 13 * 32, txtcolor, 0); // ...left part
-			screen.render(xx + w * 8, yy + y * 8, 2 + 13 * 32, txtcolor, 1); // ...right part
+			screen.render(xx - 8, yy + y * 8, 2 + 21 * 32, 0, 3); // ...left part
+			screen.render(xx + w * 8, yy + y * 8, 2 + 21 * 32, 1, 3); // ...right part
 		}
 
-		// cover up black spots from gaps in text
-		screen.render(xx + (w - 7) * 8, yy, 3 + 13 * 32, txtcolor, 0);
-		screen.render(xx + (w - 10) * 8, yy, 3 + 13 * 32, txtcolor, 0);
+		// the middle
+		for (int x = 0; x < w; x++) {
+			screen.render(xx + x * 8, yy, 3 + 21 * 32, 0, 3);
+		}
 		
 		// renders the focus nagger text with a flash effect...
 		if ((Updater.tickCount / 20) % 2 == 0) // ...medium yellow color
-			Font.draw(msg, screen, xx, yy, Color.get(5, 333));
+			Font.draw(msg, screen, xx, yy, Color.get(1, 153));
 		else // ...bright yellow color
-			Font.draw(msg, screen, xx, yy, Color.get(5, 555));
+			Font.draw(msg, screen, xx, yy, Color.get(5, 255));
 	}
 	
 	

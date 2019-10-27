@@ -12,7 +12,7 @@ import minicraft.item.ToolType;
 import minicraft.level.Level;
 
 public class FarmTile extends Tile {
-	private static Sprite sprite = new Sprite(2, 1, 2, 2, Color.get(301, 411, 422, 533), true, new int[][] {{1, 0}, {0, 1}});
+	private static Sprite sprite = new Sprite(12, 0, 2, 2, 1, true, new int[][] {{1, 0}, {0, 1}});
 	
 	protected FarmTile(String name) {
 		super(name, sprite);

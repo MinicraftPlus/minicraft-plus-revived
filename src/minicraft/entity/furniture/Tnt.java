@@ -24,8 +24,6 @@ public class Tnt extends Furniture implements ActionListener {
 	private static int BLAST_RADIUS = 32;
 	private static int BLAST_DAMAGE = 30;
 	
-	private static int color = Color.get(-1, 200, 300, 555);
-	
 	private int ftik = 0;
 	private boolean fuseLit = false;
 	private Timer explodeTimer;
@@ -35,7 +33,7 @@ public class Tnt extends Furniture implements ActionListener {
 	 * Creates a new tnt furniture.
 	 */
 	public Tnt() {
-		super("Tnt", new Sprite(14, 8, 2, 2, color), 3, 2);
+		super("Tnt", new Sprite(28, 26, 2, 2, 2), 3, 2);
 		fuseLit = false;
 		ftik = 0;
 		

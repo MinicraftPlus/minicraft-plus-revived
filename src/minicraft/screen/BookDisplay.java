@@ -54,8 +54,7 @@ public class BookDisplay extends Display {
 		showPageCount = hasTitle || lines.length != 1;
 		pageOffset = showPageCount ? 1 : 0;
 		
-		Menu.Builder builder = new Menu.Builder(true, spacing, RelPos.CENTER)
-			.setFrame(554, 1, 554);
+		Menu.Builder builder = new Menu.Builder(true, spacing, RelPos.CENTER);
 		
 		Menu pageCount = builder // the small rect for the title
 			.setPositioning(new Point(Screen.w/2, 0), RelPos.BOTTOM)
@@ -71,7 +70,7 @@ public class BookDisplay extends Display {
 		menus = new Menu[lines.length+pageOffset];
 		if(showPageCount) menus[0] = pageCount;
 		for(int i = 0; i < lines.length; i++) {
-			menus[i+pageOffset] = builder.setEntries(StringEntry.useLines(Color.BLACK, lines[i])).createMenu();
+			menus[i+pageOffset] = builder.setEntries(StringEntry.useLines(Color.WHITE, lines[i])).createMenu();
 		}
 		
 		menus[page+pageOffset].shouldRender = true;

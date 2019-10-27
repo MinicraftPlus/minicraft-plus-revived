@@ -67,14 +67,10 @@ public class Spark extends Entity {
 		if (time >= lifeTime - 6 * 20) {
 			if (time / 6 % 2 == 0) return; // if time is divisible by 12, then skip the rest of the code.
 		}
-		
-		int xt = 8;
-		int yt = 13;
-		
-		///shouldn't the random be stored before being used twice...? Let me try.
+
 		int randmirror = random.nextInt(4);
-		screen.render(x - 4, y - 4 - 2, xt + yt * 32, Color.WHITE, randmirror); // renders the spark
-		screen.render(x - 4, y - 4 + 2, xt + yt * 32, Color.BLACK, randmirror); // renders the shadow on the ground
+
+		screen.render(x - 4, y - 4 - 2, 8 + 24 * 32, randmirror, 2); // renders the spark
 	}
 	
 	/**

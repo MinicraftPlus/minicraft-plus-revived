@@ -6,13 +6,13 @@ import minicraft.gfx.MobSprite;
 import minicraft.item.Items;
 
 public class Sheep extends PassiveMob {
-	private static MobSprite[][] sprites = MobSprite.compileMobSpriteAnimations(10, 18);
+	private static MobSprite[][] sprites = MobSprite.compileMobSpriteAnimations(0, 28);
 	
 	/**
 	 * Creates a sheep entity.
 	 */
 	public Sheep() {
-		super(sprites, Color.get(-1, 000, 555, 432));
+		super(sprites);
 	}
 	
 	public void die() {

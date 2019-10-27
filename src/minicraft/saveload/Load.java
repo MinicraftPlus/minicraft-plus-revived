@@ -1,5 +1,6 @@
 package minicraft.saveload;
 
+import java.awt.image.BufferedImage;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
@@ -26,6 +27,7 @@ import minicraft.entity.mob.*;
 import minicraft.entity.particle.FireParticle;
 import minicraft.entity.particle.SmashParticle;
 import minicraft.entity.particle.TextParticle;
+import minicraft.gfx.Color;
 import minicraft.item.*;
 import minicraft.level.Level;
 import minicraft.level.tile.Tiles;
@@ -34,6 +36,8 @@ import minicraft.screen.LoadingDisplay;
 import minicraft.screen.MultiplayerDisplay;
 
 import org.jetbrains.annotations.Nullable;
+
+import javax.imageio.ImageIO;
 
 public class Load {
 	
@@ -222,6 +226,28 @@ public class Load {
 		
 		AirWizard.beaten = Boolean.parseBoolean(data.remove(0));
 	}
+
+	public static BufferedImage[] loadSpriteSheets() throws IOException {
+		BufferedImage[] images = new BufferedImage[] { null, null, null, null };
+
+		File itemFile = new File(Game.gameDir + "/resources/items.png");
+		if (itemFile.exists()) {
+			images[0] = ImageIO.read(itemFile);
+		}
+		File tileFile = new File(Game.gameDir + "/resources/tiles.png");
+		if (tileFile.exists()) {
+			images[1] = ImageIO.read(tileFile);
+		}
+		File entityFile = new File(Game.gameDir + "/resources/entities.png");
+		if (entityFile.exists()) {
+			images[2] = ImageIO.read(entityFile);
+		}
+		File guiFile = new File(Game.gameDir + "/resources/gui.png");
+		if (guiFile.exists()) {
+			images[3] = ImageIO.read(guiFile);
+		}
+		return images;
+	}
 	
 	private void loadMode(String modedata) {
 		int mode;
@@ -324,6 +350,29 @@ public class Load {
 							tilename = "grass";
 						}
 					}
+
+					if(tilename.equalsIgnoreCase("WOOL") && worldVer.compareTo(new Version("2.0.6-dev4")) < 0) {
+						switch (Integer.parseInt(extradata.get(tileidx))) {
+							case 1:
+								tilename = "Red Wool";
+								break;
+							case 2:
+								tilename = "Yellow Wool";
+								break;
+							case 3:
+								tilename = "Green Wool";
+								break;
+							case 4:
+								tilename = "Blue Wool";
+								break;
+							case 5:
+								tilename = "Black Wool";
+								break;
+							default:
+								tilename = "Wool";
+						}
+					}
+
 					if(l == World.minLevelDepth+1 && tilename.equalsIgnoreCase("LAPIS") && worldVer.compareTo(new Version("2.0.3-dev6")) < 0) {
 						if(Math.random() < 0.8) // don't replace *all* the lapis
 							tilename = "Gem Ore";
@@ -430,6 +479,12 @@ public class Load {
 			String col = ""+cols[0]+cols[1]+cols[2];
 			System.out.println("getting color as " + col);
 			player.shirtColor = Integer.parseInt(col);
+		} else if (worldVer.compareTo(new Version("2.0.6-dev4")) < 0) {
+			String color = data.remove(0);
+			int[] colors = new int[3];
+			for (int i = 0; i < 3; i++)
+				colors[i] = Integer.parseInt(String.valueOf(color.charAt(i)));
+			player.shirtColor = Color.get(1, colors[0] * 51, colors[1] * 51, colors[2] * 51);
 		}
 		else
 			player.shirtColor = Integer.parseInt(data.remove(0));
@@ -689,6 +744,12 @@ public class Load {
 		newEntity.eid = eid; // this will be -1 unless set earlier, so a new one will be generated when adding it to the level.
 		if(newEntity instanceof ItemEntity && eid == -1)
 			System.out.println("Warning: item entity was loaded with no eid");
+
+		if(newEntity instanceof EnemyMob) {
+			if (((EnemyMob)newEntity).lvl > ((EnemyMob)newEntity).getMaxLevel()) {
+				((EnemyMob)newEntity).lvl = ((EnemyMob)newEntity).getMaxLevel();
+			}
+		}
 		
 		int curLevel = Integer.parseInt(info.get(info.size()-1));
 		if(World.levels[curLevel] != null) {

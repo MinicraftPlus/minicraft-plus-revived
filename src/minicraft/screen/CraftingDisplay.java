@@ -34,7 +34,7 @@ public class CraftingDisplay extends Display {
 		if(!isPersonal)
 			recipeMenu = new RecipeMenu(recipes, title, player);
 		else
-			recipeMenu = new RecipeMenu(recipes, title, player, 300, 1, 400);
+			recipeMenu = new RecipeMenu(recipes, title, player);
 		
 		this.player = player;
 		this.recipes = recipes.toArray(new Recipe[recipes.size()]);
@@ -59,12 +59,12 @@ public class CraftingDisplay extends Display {
 		menus[2] = costsMenu
 			.setEntries(getCurItemCosts())
 			.createMenu();
-		menus[2].setFrameColors(prev);
+		menus[2].setColors(prev);
 		
 		menus[1] = itemCountMenu
 			.setEntries(new ItemListing(recipes[recipeMenu.getSelection()].getProduct(), String.valueOf(getCurItemCount())))
 			.createMenu();
-		menus[1].setFrameColors(prev);
+		menus[1].setColors(prev);
 	}
 	
 	private int getCurItemCount() {

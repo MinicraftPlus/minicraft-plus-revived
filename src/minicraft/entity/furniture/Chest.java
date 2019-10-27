@@ -18,21 +18,15 @@ import minicraft.screen.ContainerDisplay;
 
 public class Chest extends Furniture implements ItemHolder {
 	private Inventory inventory; // Inventory of the chest
-	
+
+	public Chest() { this("Chest"); }
+
 	/**
-	 * Constructs a furniture with the name Chest and the chest sprite and color.
-	 */
-	public Chest() {
-		this("Chest", Color.get(-1, 220, 331, 552));
-	}
-	
-	/**
-	 * Creates a chest with a custom name and color.
+	 * Creates a chest with a custom name.
 	 * @param name Name of chest.
-	 * @param color Color of chest.
 	 */
-	public Chest(String name, int color) {
-		super(name, new Sprite(2, 8, 2, 2, color), 3, 3); // Name of the chest
+	public Chest(String name) {
+		super(name, new Sprite(10, 26, 2, 2, 2), 3, 3); // Name of the chest
 		
 		inventory = new Inventory(); // initialize the inventory.
 	}

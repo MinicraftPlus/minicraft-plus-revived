@@ -31,9 +31,10 @@ public class ConnectorSprite {
 	public ConnectorSprite(Class<? extends Tile> owner, Sprite sparse, Sprite full) {
 		this(owner, sparse, sparse, full, false);
 	}
-	
-	public void render(Screen screen, Level level, int x, int y) { render(screen, level, x, y, sparse.color, sides.color, full.color); }
-	public void render(Screen screen, Level level, int x, int y, int colsparse, int colside, int colfull) {
+
+	public void render(Screen screen, Level level, int x, int y) { render(screen, level, x, y, -1); }
+
+	public void render(Screen screen, Level level, int x, int y, int whiteTint) {
 		//System.out.println("rendering sprite for tile " + owner);
 		
 		Tile ut = level.getTile(x, y - 1);
@@ -53,55 +54,34 @@ public class ConnectorSprite {
 		
 		x = x << 4;
 		y = y << 4;
-		
-		//full.render(screen, x, y);
-		//int[] spc = Color.separateEncodedSprite(colsparse); // TODO maybe the getConnectColor method decide the whole thing; just pass in the original color too?
-		
-		// full.renderPixel(0, 0, screen, x, y, colfull);
-		// full.renderPixel(1, 0, screen, x+8, y, colfull);
-		// full.renderPixel(0, 1, screen, x, y+8, colfull);
-		// full.renderPixel(1, 1, screen, x+8, y+8, colfull);
-		int orig = colsparse;
-		
-		colsparse = getSparseColor(ut, colsparse);
-		colsparse = getSparseColor(lt, colsparse);
+
 		
 		if (u && l) {
-			if (ul || !checkCorners) full.renderPixel(1, 1, screen, x, y, colfull);
-			else sides.renderPixel(0, 0, screen, x, y, colside);
+			if (ul || !checkCorners) full.renderPixel(1, 1, screen, x, y);
+			else sides.renderPixel(0, 0, screen, x, y);
 		} else
-			sparse.renderPixel(l?1:2, u?1:2, screen, x, y, colsparse/*);Color.get(spc[0], spc[1], spc[2], Color.mixRGB(ut.getConnectColor(level), lt.getConnectColor(level)))*/);
-		
-		colsparse = orig;
-		colsparse = getSparseColor(ut, colsparse);
-		colsparse = getSparseColor(rt, colsparse);
+			sparse.renderPixel(l?1:2, u?1:2, screen, x, y);
+
 		
 		if (u && r) {
-			if (ur || !checkCorners) full.renderPixel(0, 1, screen, x+8, y, colfull);
-			else sides.renderPixel(1, 0, screen, x+8, y, colside);
-		} else// if(!checkCorners)
-			sparse.renderPixel(r?1:0, u?1:2, screen, x+8, y, colsparse/*);Color.get(spc[0], spc[1], spc[2], Color.mixRGB(ut.getConnectColor(level), rt.getConnectColor(level)))*/);
-		//else // useful for trees
-		
-		colsparse = orig;
-		colsparse = getSparseColor(dt, colsparse);
-		colsparse = getSparseColor(lt, colsparse);
+			if (ur || !checkCorners) full.renderPixel(0, 1, screen, x+8, y);
+			else sides.renderPixel(1, 0, screen, x+8, y);
+		} else
+			sparse.renderPixel(r?1:0, u?1:2, screen, x+8, y);
+
 		
 		if (d && l) {
-			if (dl || !checkCorners) full.renderPixel(1, 0, screen, x, y+8, colfull);
-			else sides.renderPixel(0, 1, screen, x, y+8, colside);
+			if (dl || !checkCorners) full.renderPixel(1, 0, screen, x, y+8);
+			else sides.renderPixel(0, 1, screen, x, y+8);
 		} else
-			sparse.renderPixel(l?1:2, d?1:0, screen, x, y+8, colsparse/*);Color.get(spc[0], spc[1], spc[2], Color.mixRGB(dt.getConnectColor(level), lt.getConnectColor(level)))*/);
-			
-		colsparse = orig;
-		colsparse = getSparseColor(dt, colsparse);
-		colsparse = getSparseColor(rt, colsparse);
+			sparse.renderPixel(l?1:2, d?1:0, screen, x, y+8);
+
 			
 		if (d && r) {
-			if (dr || !checkCorners) full.renderPixel(0, 0, screen, x+8, y+8, colfull);
-			else sides.renderPixel(1, 1, screen, x+8, y+8, colside);
+			if (dr || !checkCorners) full.renderPixel(0, 0, screen, x+8, y+8);
+			else sides.renderPixel(1, 1, screen, x+8, y+8);
 		} else
-			sparse.renderPixel(r?1:0, d?1:0, screen, x+8, y+8, colsparse/*);Color.get(spc[0], spc[1], spc[2], Color.mixRGB(dt.getConnectColor(level), rt.getConnectColor(level)))*/);
+			sparse.renderPixel(r?1:0, d?1:0, screen, x+8, y+8);
 		
 	}
 	
@@ -110,23 +90,22 @@ public class ConnectorSprite {
 		//System.out.println("original connection check");
 		return tile.getClass() == owner;
 	}
-	
-	public int getSparseColor(Tile tile, int origCol) {
-		return origCol;
+
+	public static Sprite makeSprite(int w, int h, int mirror, boolean repeat, int... coords) {
+		return makeSprite(w, h, mirror, 1, repeat, coords);
 	}
-	
-	public static Sprite makeSprite(int w, int h, int color, int mirror, boolean repeat, int... coords) {
+	public static Sprite makeSprite(int w, int h, int mirror, int sheet, boolean repeat, int... coords) {
 		Sprite.Px[][] pixels = new Sprite.Px[h][w];
 		int i = 0;
 		for(int r = 0; r < h && i < coords.length; r++) {
 			for(int c = 0; c < w && i < coords.length; c++) {
 				int pos = coords[i];
-				pixels[r][c] = new Sprite.Px(pos%32, pos/32, mirror);
+				pixels[r][c] = new Sprite.Px(pos%32, pos/32, mirror, sheet);
 				i++;
 				if(i == coords.length && repeat) i = 0;
 			}
 		}
 		
-		return new Sprite(pixels, color);
+		return new Sprite(pixels);
 	}
 }

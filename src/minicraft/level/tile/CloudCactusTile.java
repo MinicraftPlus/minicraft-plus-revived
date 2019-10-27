@@ -18,7 +18,7 @@ import minicraft.item.ToolType;
 import minicraft.level.Level;
 
 public class CloudCactusTile extends Tile {
-	private static Sprite sprite = new Sprite(17, 1, 2, 2, Color.get(444, 111, 333, 555));
+	private static Sprite sprite = new Sprite(6, 2, 2, 2, 1);
 	
 	protected CloudCactusTile(String name) {
 		super(name, sprite);

@@ -76,13 +76,13 @@ public class Arrow extends Entity implements ClientTickable {
 
 	@Override
 	public void render(Screen screen) {
-		int xt = 13;
-		int yt = 5;
+		int xt = 0;
+		int yt = 2;
 
-		if(dir == Direction.LEFT) xt = 14;
-		if(dir == Direction.UP) xt = 15;
-		if(dir == Direction.DOWN) xt = 16;
+		if(dir == Direction.LEFT) xt = 1;
+		if(dir == Direction.UP) xt = 2;
+		if(dir == Direction.DOWN) xt = 3;
 		
-		screen.render(x - 4, y - 4, xt + yt * 32, col, 0);
+		screen.render(x - 4, y - 4, xt + yt * 32, 0);
 	}
 }

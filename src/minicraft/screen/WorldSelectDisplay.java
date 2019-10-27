@@ -29,16 +29,16 @@ public class WorldSelectDisplay extends Display {
 	}
 	
 	enum Action {
-		Copy("C", 5),
-		Rename("R", 50),
-		Delete("D", 500);
+		Copy("C", Color.get(1, 0, 0, 255)),
+		Rename("R", Color.get(1, 0, 255, 0)),
+		Delete("D", Color.get(1, 255, 0, 0));
 		
 		public final String key;
 		public final int color;
 		
 		Action(String key, int col) {
 			this.key = key;
-			this.color = Color.get(-1, col);
+			this.color = col;
 		}
 		
 		public static final Action[] values = Action.values();

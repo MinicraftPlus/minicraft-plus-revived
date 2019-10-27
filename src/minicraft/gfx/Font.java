@@ -14,15 +14,17 @@ public class Font {
 		"√ «‘’";
 	
 	/* The order of the letters in the chars string is represented in the order that they appear in the sprite-sheet. */
-	
+
+	public static void draw(String msg, Screen screen, int x, int y) { draw(msg, screen, x, y, -1); }
+
 	/** Draws the message to the x & y coordinates on the screen. */
-	public static void draw(String msg, Screen screen, int x, int y, int col) {
+	public static void draw(String msg, Screen screen, int x, int y, int whiteTint) {
 		msg = msg.toUpperCase(Localization.getSelectedLocale()); //makes all letters uppercase.
 		for (int i = 0; i < msg.length(); i++) { // Loops through all the characters that you typed
 			int ix = chars.indexOf(msg.charAt(i)); // the current letter in the message loop
 			if (ix >= 0) {
 				// if that character's position is larger than or equal to 0, then render the character on the screen.
-				screen.render(x + i * textWidth(msg.substring(i, i+1)), y, ix + 30 * 32, col, 0);
+				screen.render(x + i * textWidth(msg.substring(i, i+1)), y, ix + 28 * 32, 0, 3, whiteTint);
 			}
 			/*System.out.println("ix="+ix+"; char="+msg.charAt(i));
 			if(msg.charAt(i) == 'Õ') {
@@ -30,7 +32,22 @@ public class Font {
 			}*/
 		}
 	}
-	
+
+	public static void drawBackground(String msg, Screen screen, int x, int y) { drawBackground(msg, screen, x, y, -1); }
+
+	public static void drawBackground(String msg, Screen screen, int x, int y, int whiteTint) {
+		msg = msg.toUpperCase(Localization.getSelectedLocale());
+		for (int i = 0; i < msg.length(); i++) {
+			int ix = chars.indexOf(msg.charAt(i));
+			if (ix >= 0) {
+				// render the black background
+				screen.render(x + i * textWidth(msg.substring(i, i+1)), y, 30 + 30 * 32, 0, 3);
+
+				screen.render(x + i * textWidth(msg.substring(i, i+1)), y, ix + 28 * 32, 0, 3, whiteTint);
+			}
+		}
+	}
+
 	public static int textWidth(String text) { return text.length() * 8; }
 	public static int textWidth(String[] para) {
 		// this returns the maximum length of all the lines.

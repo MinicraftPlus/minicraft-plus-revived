@@ -70,10 +70,10 @@ public class Player extends Mob implements ItemHolder, ClientTickable {
 	public static final int maxHealth = maxStat, maxStamina = maxStat, maxHunger = maxStat;
 	public static final int maxArmor = 100;
 	
-	public static MobSprite[][] sprites =  MobSprite.compileMobSpriteAnimations(0, 14);
-	private static MobSprite[][] carrySprites = MobSprite.compileMobSpriteAnimations(0, 16); // the sprites while carrying something.
-	private static MobSprite[][] suitSprites = MobSprite.compileMobSpriteAnimations(18, 20); // the "airwizard suit" sprites.
-	private static MobSprite[][] carrySuitSprites = MobSprite.compileMobSpriteAnimations(18, 22); // the "airwizard suit" sprites.
+	public static MobSprite[][] sprites =  MobSprite.compileMobSpriteAnimations(0, 16);
+	private static MobSprite[][] carrySprites = MobSprite.compileMobSpriteAnimations(0, 18); // the sprites while carrying something.
+	private static MobSprite[][] suitSprites = MobSprite.compileMobSpriteAnimations(8, 16); // the "airwizard suit" sprites.
+	private static MobSprite[][] carrySuitSprites = MobSprite.compileMobSpriteAnimations(8, 18); // the "airwizard suit" sprites.
 	
 	private Inventory inventory;
 	
@@ -111,7 +111,7 @@ public class Player extends Mob implements ItemHolder, ClientTickable {
 	private int regentick; // counts time between each time the regen potion effect heals you.
 	
 	//private final int acs = 25; // default ("start") arrow count
-	public int shirtColor = 110; // player shirt color.
+	public int shirtColor = Color.get(1, 51, 51, 0); // player shirt color.
 
 	public boolean isFishing = false;
 	public int maxFishingTicks = 120;
@@ -668,6 +668,7 @@ public class Player extends Mob implements ItemHolder, ClientTickable {
 
 		boolean caught = false;
 
+		// figure out which table to roll for
 		List<String> data = null;
 		if (fcatch > FishingRodItem.getChance(0, fishingLevel)) {
 			data = FishingData.fishData;
@@ -766,7 +767,6 @@ public class Player extends Mob implements ItemHolder, ClientTickable {
 	
 	@Override
 	public void render(Screen screen) {
-		col = Color.get(-1, 100, shirtColor, 532);
 		
 		MobSprite[][] spriteSet; // the default, walking sprites.
 		
@@ -782,31 +782,27 @@ public class Player extends Mob implements ItemHolder, ClientTickable {
 		
 		if (isSwimming()) {
 			yo += 4; // y offset is moved up by 4
-			int liquidColor = 0; // color of water / lava circle
 			if (level.getTile(x / 16, y / 16) == Tiles.get("water")) {
-				liquidColor = Color.get(-1, -1, 115, 335);
-				if (tickTime / 8 % 2 == 0) liquidColor = Color.get(-1, 335, 5, 115);
+				screen.render(xo + 0, yo + 3, 5 + 2 * 32, 0, 3); // render the water graphic
+				screen.render(xo + 8, yo + 3, 5 + 2 * 32, 1, 3); // render the mirrored water graphic to the right.
 			} else if (level.getTile(x / 16, y / 16) == Tiles.get("lava")) {
-				liquidColor = Color.get(-1, -1, 500, 300);
-				if (tickTime / 8 % 2 == 0) liquidColor = Color.get(-1, 300, 400, 500);
+				screen.render(xo + 0, yo + 3, 6 + 2 * 32, 1, 3); // render the water graphic
+				screen.render(xo + 8, yo + 3, 6 + 2 * 32, 0, 3); // render the mirrored water graphic to the right.
 			}
-
-			screen.render(xo + 0, yo + 3, 5 + 13 * 32, liquidColor, 0); // render the water graphic
-			screen.render(xo + 8, yo + 3, 5 + 13 * 32, liquidColor, 1); // render the mirrored water graphic to the right.
 		}
 
 		// renders indicator for what tile the item will be placed on
 		if (activeItem instanceof TileItem) {
 			Point t = getInteractionTile();
 
-			screen.render(t.x * 16 + 4, t.y * 16 + 4,10 + 13 * 32, Color.WHITE, 0);
+			screen.render(t.x * 16 + 4, t.y * 16 + 4, 3 + 4 * 32, 0, 3);
 		}
 
 		if (attackTime > 0 && attackDir == Direction.UP) { // if currently attacking upwards...
-			screen.render(xo + 0, yo - 4, 6 + 13 * 32, Color.WHITE, 0); //render left half-slash
-			screen.render(xo + 8, yo - 4, 6 + 13 * 32, Color.WHITE, 1); //render right half-slash (mirror of left).
+			screen.render(xo + 0, yo - 4, 3 + 2 * 32, 0, 3); //render left half-slash
+			screen.render(xo + 8, yo - 4, 3 + 2 * 32, 1, 3); //render right half-slash (mirror of left).
 			if (attackItem != null) { // if the player had an item when they last attacked...
-				attackItem.sprite.render(screen, xo + 4, yo - 4, attackItem.sprite.color, 1); // then render the icon of the item, mirrored
+				attackItem.sprite.render(screen, xo + 4, yo - 4, 1); // then render the icon of the item, mirrored
 			}
 		}
 		
@@ -828,30 +824,30 @@ public class Player extends Mob implements ItemHolder, ClientTickable {
 
 		// render each corner of the sprite
 		if (!isSwimming()) { // don't render the bottom half if swimming.
-			curSprite.render(screen, xo, yo - 4 * onFallDelay, col);
+			curSprite.render(screen, xo, yo - 4 * onFallDelay, -1, shirtColor);
 		} else {
-			curSprite.renderRow(0, screen, xo, yo, col);
+			curSprite.renderRow(0, screen, xo, yo, -1, shirtColor);
 		}
 		
 		// renders slashes:
 		
 		if (attackTime > 0 && attackDir == Direction.LEFT) { // if attacking to the left.... (same as above)
-			screen.render(xo - 4, yo, 7 + 13 * 32, Color.WHITE, 1);
-			screen.render(xo - 4, yo + 8, 7 + 13 * 32, Color.WHITE, 3);
+			screen.render(xo - 4, yo, 4 + 2 * 32, 1, 3);
+			screen.render(xo - 4, yo + 8, 4 + 2 * 32, 3, 3);
 			if (attackItem != null) {
-				attackItem.sprite.render(screen, xo - 4, yo + 4, attackItem.sprite.color, 1);
+				attackItem.sprite.render(screen, xo - 4, yo + 4, 1);
 			}
 		}
 		if (attackTime > 0 && attackDir == Direction.RIGHT) { // attacking to the right
-			screen.render(xo + 8 + 4, yo, 7 + 13 * 32, Color.WHITE, 0);
-			screen.render(xo + 8 + 4, yo + 8, 7 + 13 * 32, Color.WHITE, 2);
+			screen.render(xo + 8 + 4, yo, 4 + 2 * 32, 0, 3);
+			screen.render(xo + 8 + 4, yo + 8, 4 + 2 * 32, 2, 3);
 			if (attackItem != null) {
 				attackItem.sprite.render(screen, xo + 8 + 4, yo + 4);
 			}
 		}
 		if (attackTime > 0 && attackDir == Direction.DOWN) { // attacking downwards
-			screen.render(xo + 0, yo + 8 + 4, 6 + 13 * 32, Color.WHITE, 2);
-			screen.render(xo + 8, yo + 8 + 4, 6 + 13 * 32, Color.WHITE, 3);
+			screen.render(xo + 0, yo + 8 + 4, 3 + 2 * 32, 2, 3);
+			screen.render(xo + 8, yo + 8 + 4, 3 + 2 * 32, 3, 3);
 			if (attackItem != null) {
 				attackItem.sprite.render(screen, xo + 4, yo + 8 + 4);
 			}
@@ -860,16 +856,16 @@ public class Player extends Mob implements ItemHolder, ClientTickable {
 		if (isFishing) {
 			switch (dir) {
 				case UP:
-					screen.render(xo + 4, yo - 4, 11 + 13 * 32, FishingRodItem.COLORS[fishingLevel], 1);
+					screen.render(xo + 4, yo - 4, fishingLevel + 11 * 32, 1);
 					break;
 				case LEFT:
-					screen.render(xo - 4, yo + 4, 11 + 13 * 32, FishingRodItem.COLORS[fishingLevel], 1);
+					screen.render(xo - 4, yo + 4, fishingLevel + 11 * 32, 1);
 					break;
 				case RIGHT:
-					screen.render(xo + 8 + 4, yo + 4, 11 + 13 * 32, FishingRodItem.COLORS[fishingLevel], 0);
+					screen.render(xo + 8 + 4, yo + 4, fishingLevel + 11 * 32, 0);
 					break;
 				case DOWN:
-					screen.render(xo + 4, yo + 8 + 4, 11 + 13 * 32, FishingRodItem.COLORS[fishingLevel], 0);
+					screen.render(xo + 4, yo + 8 + 4, fishingLevel + 11 * 32, 0);
 					break;
 				case NONE:
 					break;
