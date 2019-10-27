@@ -19,6 +19,7 @@ import minicraft.gfx.Ellipsis.SmoothEllipsis;
 import minicraft.item.Items;
 import minicraft.item.PotionType;
 import minicraft.item.ToolItem;
+import minicraft.item.ToolType;
 import minicraft.level.Level;
 import minicraft.saveload.Load;
 import minicraft.screen.LoadingDisplay;
@@ -165,20 +166,26 @@ public class Renderer extends Game {
 	
 	/** Renders the main game GUI (hearts, Stamina bolts, name of the current item, etc.) */
 	private static void renderGui() {
-		/// AH-HA! THIS DRAWS THE BLACK SQUARE!!
-		for (int x = 12; x < 29; x++)
-			screen.render(x * 7, Screen.h - 8, 30 + 30 * 32, 0, 3);
+		// AH-HA! THIS DRAWS THE BLACK SQUARE!!
+		if (!isMode("creative") || player.activeItem != null)
+			for (int x = 12; x < 29; x++)
+				screen.render(x * 7, Screen.h - 8, 30 + 30 * 32, 0, 3);
+
+		// This checks if the player is holding a bow, and shows the arrow counter accordingly.
+		if (player.activeItem instanceof ToolItem) {
+			if (((ToolItem)player.activeItem).type == ToolType.Bow) {
+				int ac = player.getInventory().count(Items.arrowItem);
+				// "^" is an infinite symbol.
+				if (isMode("creative") || ac >= 10000)
+					Font.drawBackground("	x" + "^", screen, 84, Screen.h - 16);
+				else
+					Font.drawBackground("	x" + ac, screen, 84, Screen.h - 16);
+				// Displays the arrow icon
+				screen.render(10 * 8 + 4, Screen.h - 16, 4 + 3 * 32, 0, 3);
+			}
+		}
 		
 		renderDebugInfo();
-		
-		// This is the arrow counter. ^ = infinite symbol.
-		int ac = player.getInventory().count(Items.arrowItem);
-		if (isMode("creative") || ac >= 10000)
-			Font.drawBackground("	x" + "^", screen, 84, Screen.h - 16);
-		else
-			Font.drawBackground("	x" + ac, screen, 84, Screen.h - 16);
-		// displays arrow icon
-		screen.render(10 * 8 + 4, Screen.h - 16, 4 + 3 * 32, 0, 3);
 		
 		ArrayList<String> permStatus = new ArrayList<>();
 		if (Updater.saving) permStatus.add("Saving... " + Math.round(LoadingDisplay.getPercentage()) + "%");
