@@ -505,7 +505,7 @@ public class Menu {
 				if(fullTitleColor)
 					menu.titleColor = titleCol;
 				else {
-					if (!setTitleColor) titleCol = menu.hasFrame ? 550 : 555;
+					if (!setTitleColor) titleCol = menu.hasFrame ? Color.YELLOW : Color.WHITE;
 					menu.titleColor = titleCol; // make it match the frame color, or be transparent
 				}
 			}

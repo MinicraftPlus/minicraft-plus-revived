@@ -87,7 +87,7 @@ public class PauseDisplay extends Display {
 		
 		menus = new Menu[] {
 			new Menu.Builder(true, 4, RelPos.CENTER, entries)
-				.setTitle("Paused", 550)
+				.setTitle("Paused", Color.YELLOW)
 				.createMenu()
 		};
 	}
