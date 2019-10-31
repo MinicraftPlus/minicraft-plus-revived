@@ -139,6 +139,13 @@ public class Level {
 		
 		tiles = maps[0]; // assigns the tiles in the map
 		data = maps[1]; // assigns the data of the tiles
+
+		if (level < 0)
+			generateSpawnerStructures();
+
+		if (level == 0)
+			generateVillages();
+
 		
 		if (parentLevel != null) { // If the level above this one is not null (aka, if this isn't the sky level)
 			for (int y = 0; y < h; y++) { // loop through height
@@ -174,12 +181,6 @@ public class Level {
 		}
 		
 		checkChestCount(false);
-		
-		if (level < 0)
-			generateSpawnerStructures();
-
-		if (level == 0)
-			generateVillages();
 		
 		checkAirWizard();
 		
