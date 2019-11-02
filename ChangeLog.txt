@@ -13,6 +13,8 @@ Minicraft+ version 2.0.6
 + You can now craft obsidian walls and doors
 + Resource packs are now possible! Guide is on the wiki
 - Knights and Snakes only have 4 levels instead of 5
+* Creepers have been buffed
+* Villages and spawners can no longer override stair barriers (to the sky or the dungeon)
 
 
 Minicraft+ version 2.0.5
