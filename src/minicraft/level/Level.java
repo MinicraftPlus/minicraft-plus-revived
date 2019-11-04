@@ -1,11 +1,6 @@
 package minicraft.level;
 
-import java.util.ArrayList;
-import java.util.Comparator;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Random;
-import java.util.Set;
+import java.util.*;
 import java.util.function.ToIntFunction;
 
 import minicraft.core.Game;
@@ -16,20 +11,14 @@ import minicraft.entity.ClientTickable;
 import minicraft.entity.Entity;
 import minicraft.entity.ItemEntity;
 import minicraft.entity.furniture.Chest;
-import minicraft.entity.furniture.Crafter;
 import minicraft.entity.furniture.DungeonChest;
-import minicraft.entity.furniture.Lantern;
 import minicraft.entity.furniture.Spawner;
-import minicraft.entity.furniture.Tnt;
 import minicraft.entity.mob.*;
 import minicraft.entity.particle.Particle;
 import minicraft.gfx.Point;
 import minicraft.gfx.Rectangle;
 import minicraft.gfx.Screen;
-import minicraft.item.Inventory;
 import minicraft.item.Item;
-import minicraft.item.Items;
-import minicraft.item.ToolType;
 import minicraft.level.tile.Tile;
 import minicraft.level.tile.Tiles;
 import minicraft.level.tile.TorchTile;
@@ -720,6 +709,15 @@ public class Level {
 		for(int y = yt-r; y <= yt+r; y++) {
 			for (int x = xt - r; x <= xt + r; x++) {
 				if(overwriteStairs || (!getTile(x, y).name.toLowerCase().contains("stairs")))
+					setTile(x, y, tile, data);
+			}
+		}
+	}
+
+	public void setAreaTiles(int xt, int yt, int r, Tile tile, int data, String[] blacklist) {
+		for(int y = yt-r; y <= yt+r; y++) {
+			for (int x = xt - r; x <= xt + r; x++) {
+				if (!Arrays.asList(blacklist).contains(getTile(x, y).name.toLowerCase()))
 					setTile(x, y, tile, data);
 			}
 		}
