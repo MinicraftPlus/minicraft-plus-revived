@@ -27,9 +27,9 @@ public class Creeper extends EnemyMob {
 	}
 	
 	private static final int MAX_FUSE_TIME = 60;
-	private static final int TRIGGER_RADIUS = 60;
-	private static final int BLAST_DAMAGE = 100;
-	
+	private static final int TRIGGER_RADIUS = 64;
+	private static final int BLAST_DAMAGE = 50;
+
 	private int fuseTime = 0;
 	private boolean fuseLit = false;
 	
@@ -78,8 +78,12 @@ public class Creeper extends EnemyMob {
 				int xt = x >> 4;
 				int yt = (y - 2) >> 4;
 
+				// used for calculations
+				int radius = lvl;
+
+				int lvlDamage = BLAST_DAMAGE * lvl;
+
 				// hurt all the entities
-				int radius = lvl*2/3;
 				List<Entity> entitiesInRange = level.getEntitiesInTiles(xt, yt, radius);
 				List<Entity> spawners = new ArrayList<>();
 
@@ -89,7 +93,7 @@ public class Creeper extends EnemyMob {
 						int distx = Math.abs(mob.x - x);
 						int disty = Math.abs(mob.y - y);
 						float distDiag = (float) Math.sqrt(distx * distx + disty * disty);
-						mob.hurt(this, (int) (BLAST_DAMAGE * (1 - (distDiag / TRIGGER_RADIUS))) + Settings.getIdx("diff"));
+						mob.hurt(this, (int) (lvlDamage * (1 / (distDiag + 1)) + Settings.getIdx("diff")));
 					} else if (entity instanceof Spawner) {
 						spawners.add(entity);
 					}

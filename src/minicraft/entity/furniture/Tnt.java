@@ -17,6 +17,7 @@ import minicraft.gfx.Screen;
 import minicraft.gfx.Sprite;
 import minicraft.item.Item;
 import minicraft.level.Level;
+import minicraft.level.tile.Tile;
 import minicraft.level.tile.Tiles;
 
 public class Tnt extends Furniture implements ActionListener {
@@ -28,6 +29,8 @@ public class Tnt extends Furniture implements ActionListener {
 	private boolean fuseLit = false;
 	private Timer explodeTimer;
 	private Level levelSave;
+
+	private String[] explosionBlacklist = new String[]{ "hard rock", "obsidian wall" };
 	
 	/**
 	 * Creates a new tnt furniture.
@@ -70,8 +73,8 @@ public class Tnt extends Furniture implements ActionListener {
 				
 				int xt = x >> 4;
 				int yt = (y - 2) >> 4;
-				
-				level.setAreaTiles(xt, yt, 1, Tiles.get("explode"), 0);
+
+				level.setAreaTiles(xt, yt, 1, Tiles.get("explode"), 0, explosionBlacklist);
 				
 				levelSave = level;
 				explodeTimer.start();
@@ -97,9 +100,9 @@ public class Tnt extends Furniture implements ActionListener {
 		int xt = x >> 4;
 		int yt = (y - 2) >> 4;
 		if (levelSave.depth != 1) {
-			levelSave.setAreaTiles(xt, yt, 1, Tiles.get("hole"), 0);
+			levelSave.setAreaTiles(xt, yt, 1, Tiles.get("hole"), 0, explosionBlacklist);
 		} else {
-			levelSave.setAreaTiles(xt, yt, 1, Tiles.get("Infinite Fall"), 0);
+			levelSave.setAreaTiles(xt, yt, 1, Tiles.get("Infinite Fall"), 0, explosionBlacklist);
 		}
 		levelSave = null;
 	}
