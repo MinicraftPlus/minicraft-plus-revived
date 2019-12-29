@@ -100,7 +100,7 @@ public class Localization {
 	@NotNull
 	private static String getFileAsString() {
 		
-		BufferedReader reader = new BufferedReader(new InputStreamReader(Game.class.getResourceAsStream(localizationFiles.get(selectedLanguage)), selectedLanguage.equals("portugues")?StandardCharsets.UTF_8 : Charset.defaultCharset()));
+		BufferedReader reader = new BufferedReader(new InputStreamReader(Game.class.getResourceAsStream(localizationFiles.get(selectedLanguage)), StandardCharsets.UTF_8));
 
 		return String.join("\n", reader.lines().toArray(String[]::new));
 		// Using getResourceAsStream since we're publishing this as a jar file.
