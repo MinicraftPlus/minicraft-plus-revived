@@ -5,7 +5,6 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.URISyntaxException;
 import java.net.URL;
-import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.DirectoryStream;
 import java.nio.file.Files;
@@ -65,7 +64,7 @@ public class Localization {
 		return (localString == null ? string : localString);
 	}
 	
-	public static Locale getSelectedLocale() { return locales.get(selectedLanguage); }
+	public static Locale getSelectedLocale() { return locales.getOrDefault(selectedLanguage, Locale.getDefault()); }
 	
 	@NotNull
 	public static String getSelectedLanguage() { return selectedLanguage; }
@@ -99,8 +98,7 @@ public class Localization {
 	
 	@NotNull
 	private static String getFileAsString() {
-		
-		BufferedReader reader = new BufferedReader(new InputStreamReader(Game.class.getResourceAsStream(localizationFiles.get(selectedLanguage)), selectedLanguage.equals("portugues")?StandardCharsets.UTF_8 : Charset.defaultCharset()));
+		BufferedReader reader = new BufferedReader(new InputStreamReader(Game.class.getResourceAsStream(localizationFiles.getOrDefault(selectedLanguage, "/resources/localization/english_en-us.mcpl")), StandardCharsets.UTF_8));
 
 		return String.join("\n", reader.lines().toArray(String[]::new));
 		// Using getResourceAsStream since we're publishing this as a jar file.
