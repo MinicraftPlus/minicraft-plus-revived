@@ -82,7 +82,7 @@ public class Initializer extends Game {
 			unprocessed += (now - lastTime) / nsPerTick; //figures out the unprocessed time between now and lastTime.
 			lastTime = now;
 			while (unprocessed >= 1) { // If there is unprocessed time, then tick.
-				//if(debug) System.out.println("ticking...");
+				//if(debug) System.out.println("Ticking...");
 				ticks++;
 				Updater.tick(); // calls the tick method (in which it calls the other tick methods throughout the code.
 				unprocessed--;
@@ -147,9 +147,9 @@ public class Initializer extends Game {
 			public void windowIconified(WindowEvent e) {}
 			public void windowDeiconified(WindowEvent e) {}
 			public void windowOpened(WindowEvent e) {}
-			public void windowClosed(WindowEvent e) {System.out.println("window closed");}
+			public void windowClosed(WindowEvent e) {System.out.println("Window closed");}
 			public void windowClosing(WindowEvent e) {
-				System.out.println("window closing");
+				System.out.println("Window closing");
 				if(isConnectedClient())
 					client.endConnection();
 				if(isValidServer())

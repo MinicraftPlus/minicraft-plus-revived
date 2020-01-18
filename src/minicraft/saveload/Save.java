@@ -54,14 +54,14 @@ public class Save {
 		if(worldFolder.getParent().equals("saves")) {
 			String worldName = worldFolder.getName();
 			if (!worldName.toLowerCase().equals(worldName)) {
-				if (Game.debug) System.out.println("renaming world in " + worldFolder + " to lowercase");
+				if (Game.debug) System.out.println("Renaming world in " + worldFolder + " to lowercase");
 				String path = worldFolder.toString();
 				path = path.substring(0, path.lastIndexOf(worldName));
 				File newFolder = new File(path + worldName.toLowerCase());
 				if (worldFolder.renameTo(newFolder))
 					worldFolder = newFolder;
 				else
-					System.err.println("failed to rename world folder " + worldFolder + " to " + newFolder);
+					System.err.println("Failed to rename world folder " + worldFolder + " to " + newFolder);
 			}
 		}
 		
@@ -100,14 +100,14 @@ public class Save {
 	public Save(String worldname, MinicraftServer server) {
 		this(new File(Game.gameDir+"/saves/" + worldname + "/"));
 		
-		if (Game.debug) System.out.println("writing server config...");
+		if (Game.debug) System.out.println("Writing server config...");
 		writeServerConfig("ServerConfig", server);
 	}
 	
 	// this saves global options
 	public Save() {
 		this(new File(Game.gameDir+"/"));
-		if(Game.debug) System.out.println("writing preferences and unlocks...");
+		if(Game.debug) System.out.println("Writing preferences and unlocks...");
 		writePrefs();
 	}
 	
@@ -358,7 +358,7 @@ public class Save {
 		
 		int depth = 0;
 		if(e.getLevel() == null)
-			System.out.println("WARNING: saving entity with no level reference: " + e + "; setting level to surface");
+			System.out.println("WARNING: Saving entity with no level reference: " + e + "; setting level to surface");
 		else
 			depth = e.getLevel().depth;
 		

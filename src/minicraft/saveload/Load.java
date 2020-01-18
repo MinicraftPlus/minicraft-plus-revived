@@ -346,7 +346,7 @@ public class Load {
 						if(Tiles.oldids.get(tileID) != null)
 							tilename = Tiles.oldids.get(tileID);
 						else {
-							System.out.println("tile list doesn't contain tile " + tileID);
+							System.out.println("Tile list doesn't contain tile " + tileID);
 							tilename = "grass";
 						}
 					}
@@ -477,7 +477,7 @@ public class Load {
 			for(int i = 0; i < cols.length; i++)
 				cols[i] = Integer.valueOf(color[i])/50;
 			String col = ""+cols[0]+cols[1]+cols[2];
-			System.out.println("getting color as " + col);
+			System.out.println("Getting color as " + col);
 			player.shirtColor = Integer.parseInt(col);
 		} else if (worldVer.compareTo(new Version("2.0.6-dev4")) < 0) {
 			String color = data.remove(0);
@@ -520,7 +520,7 @@ public class Load {
 		for(int i = 0; i < data.size(); i++) {
 			String item = data.get(i);
 			if(item.length() == 0) {
-				System.err.println("loadInventory: item in data list is \"\", skipping item");
+				System.err.println("loadInventory: Item in data list is \"\", skipping item");
 				continue;
 			}
 			
@@ -530,7 +530,7 @@ public class Load {
 			
 			if (item.contains("Power Glove")) continue; // just pretend it doesn't exist. Because it doesn't. :P
 			
-			//System.out.println("loading item: " + item);
+			//System.out.println("Loading item: " + item);
 			
 			if(worldVer.compareTo(new Version("2.0.4")) <= 0 && item.contains(";")) {
 				String[] curData = item.split(";");
@@ -573,7 +573,7 @@ public class Load {
 	
 	@Nullable
 	public static Entity loadEntity(String entityData, boolean isLocalSave) {
-		if(isLocalSave) System.out.println("warning: assuming version of save file is current while loading entity: " + entityData);
+		if(isLocalSave) System.out.println("Warning: Assuming version of save file is current while loading entity: " + entityData);
 		return Load.loadEntity(entityData, Game.VERSION, isLocalSave);
 	}
 	@Nullable
@@ -582,14 +582,14 @@ public class Load {
 		if(entityData.length() == 0) return null;
 		
 		List<String> info = new ArrayList<>(); // this gets everything inside the "[...]" after the entity name.
-		//System.out.println("loading entity:" + entityData);
+		//System.out.println("Loading entity:" + entityData);
 		String[] stuff = entityData.substring(entityData.indexOf("[") + 1, entityData.indexOf("]")).split(":");
 		info.addAll(Arrays.asList(stuff));
 		
 		String entityName = entityData.substring(0, entityData.indexOf("[")); // this gets the text before "[", which is the entity name.
 		
 		if(entityName.equals("Player") && Game.debug && Game.isValidClient())
-			System.out.println("CLIENT WARNING: loading regular player: " + entityData);
+			System.out.println("CLIENT WARNING: Loading regular player: " + entityData);
 		
 		int x = Integer.parseInt(info.get(0));
 		int y = Integer.parseInt(info.get(1));
@@ -616,7 +616,7 @@ public class Load {
 					!((RemotePlayer)Game.player).shouldTrack(x >> 4, y >> 4, World.levels[entityLevel])
 				) {
 					// the entity is too far away to bother adding to the level.
-					if(Game.debug) System.out.println("CLIENT: entity is too far away to bother loading: " + eid);
+					if(Game.debug) System.out.println("CLIENT: Entity is too far away to bother loading: " + eid);
 					Entity dummy = new Cow();
 					dummy.eid = eid;
 					return dummy; /// we need a dummy b/c it's the only way to pass along to entity id.
@@ -628,7 +628,7 @@ public class Load {
 		
 		if(entityName.equals("RemotePlayer")) {
 			if(isLocalSave) {
-				System.err.println("remote player found in local save file.");
+				System.err.println("Remote player found in local save file.");
 				return null; // don't load them; in fact, they shouldn't be here.
 			}
 			String username = info.get(2);
@@ -666,7 +666,7 @@ public class Load {
 				mobLvl = Integer.parseInt(info.get(info.size()-2));
 			
 			if(mobLvl == 0) {
-				if(Game.debug) System.out.println("level 0 mob: " + entityName);
+				if(Game.debug) System.out.println("Level 0 mob: " + entityName);
 				mobLvl = 1;
 			}
 			
@@ -737,13 +737,13 @@ public class Load {
 			if(newEntity instanceof TextParticle) {
 				int textcol = Integer.parseInt(info.get(3));
 				newEntity = new TextParticle(info.get(2), x, y, textcol);
-				//if (Game.debug) System.out.println("loaded text particle; color: "+Color.toString(textcol)+", text: " + info.get(2));
+				//if (Game.debug) System.out.println("Loaded text particle; color: "+Color.toString(textcol)+", text: " + info.get(2));
 			}
 		}
 		
 		newEntity.eid = eid; // this will be -1 unless set earlier, so a new one will be generated when adding it to the level.
 		if(newEntity instanceof ItemEntity && eid == -1)
-			System.out.println("Warning: item entity was loaded with no eid");
+			System.out.println("Warning: Item entity was loaded with no eid");
 
 		if(newEntity instanceof EnemyMob) {
 			if (((EnemyMob)newEntity).lvl > ((EnemyMob)newEntity).getMaxLevel()) {
@@ -757,7 +757,7 @@ public class Load {
 			if(Game.debug && newEntity instanceof RemotePlayer)
 				World.levels[curLevel].printEntityStatus("Loaded ", newEntity, "mob.RemotePlayer");
 		} else if(newEntity instanceof RemotePlayer && Game.isValidClient())
-			System.out.println("CLIENT: remote player not added b/c on null level");
+			System.out.println("CLIENT: Remote player not added b/c on null level");
 		
 		return newEntity;
 	}

@@ -305,7 +305,7 @@ public class LegacyLoad {
 			String itemName = curData[0];
 			if(oldSave) itemName = subOldName(itemName);
 			
-			//System.out.println("item to fetch: " + itemName + "; count=" + curData[1]);
+			//System.out.println("Item to fetch: " + itemName + "; count=" + curData[1]);
 			Item newItem = Items.get(itemName);
 			int count = Integer.parseInt(curData[1]);
 			inventory.add(newItem, count);
@@ -317,10 +317,10 @@ public class LegacyLoad {
 	}
 	
 	private String subOldName(String oldName) {
-		//System.out.println("old name: " + oldName);
+		//System.out.println("Old name: " + oldName);
 		String newName = oldName.replace("P.", "Potion").replace("Fish Rod", "Fishing Rod").replace("bed", "Bed");
 		newName = Load.subOldName(newName, worldVer);
-		//System.out.println("new name: " + newName);
+		//System.out.println("New name: " + newName);
 		return newName;
 	}
 	
@@ -417,7 +417,7 @@ public class LegacyLoad {
 			case "Lantern": return new Lantern(Lantern.Type.NORM);
 			case "IronLantern": return new Lantern(Lantern.Type.IRON);
 			case "GoldLantern": return new Lantern(Lantern.Type.GOLD);
-			default : System.out.println("LEGACYLOAD: unknown or outdated entity requested: " + string);
+			default : System.out.println("LEGACYLOAD: Unknown or outdated entity requested: " + string);
 				return null;
 		}
 	}

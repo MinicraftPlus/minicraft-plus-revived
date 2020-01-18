@@ -5,15 +5,9 @@ import java.util.Random;
 
 import minicraft.core.Game;
 import minicraft.core.io.Localization;
-import minicraft.entity.Direction;
 import minicraft.entity.Entity;
 import minicraft.entity.mob.Mob;
-import minicraft.entity.mob.Player;
-import minicraft.gfx.Color;
 import minicraft.gfx.Sprite;
-import minicraft.level.Level;
-import minicraft.level.tile.Tile;
-import minicraft.level.tile.Tiles;
 
 public class ToolItem extends Item {
 	
@@ -50,11 +44,6 @@ public class ToolItem extends Item {
 	@Override
 	public String getDisplayName() {
 		return " "+Localization.getLocalized(LEVEL_NAMES[level]) + " " + Localization.getLocalized(type.toString());
-	}
-	
-	@Override
-	public boolean interactOn(Tile tile, Level level, int xt, int yt, Player player, Direction attackDir) {
-		return false;
 	}
 	
 	public boolean isDepleted() {

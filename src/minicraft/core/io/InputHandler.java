@@ -296,7 +296,7 @@ public class InputHandler implements KeyListener {
 		}
 		else if(!modMatch) key = new Key();
 		
-		//if(key.clicked && Game.debug) System.out.println("processed key: " + keytext + " is clicked; tickNum=" + ticks);
+		//if(key.clicked && Game.debug) System.out.println("Processed key: " + keytext + " is clicked; tickNum=" + ticks);
 		
 		return key; // return the Key object.
 	}
@@ -305,7 +305,7 @@ public class InputHandler implements KeyListener {
 	/*public void pressKey(String keyname, boolean pressed) {
 		Key key = getPhysKey(keyname);
 		key.toggle(pressed);
-		//System.out.println("key " + keyname + " is clicked: " + getPhysKey(keyname).clicked);
+		//System.out.println("Key " + keyname + " is clicked: " + getPhysKey(keyname).clicked);
 	}*/
 	
 	public ArrayList<String> getAllPressedKeys() {
@@ -342,9 +342,9 @@ public class InputHandler implements KeyListener {
 		
 		keytext = keytext.toUpperCase();
 		
-		//System.out.println("interpreted key press: " + keytext);
+		//System.out.println("Interpreted key press: " + keytext);
 		
-		//System.out.println("toggling " + keytext + " key (keycode " + keycode + ") to "+pressed+".");
+		//System.out.println("Toggling " + keytext + " key (keycode " + keycode + ") to "+pressed+".");
 		if( pressed && keyToChange != null && !isMod(keytext) ) {
 			keymap.put(keyToChange, ( overwrite?"":keymap.get(keyToChange)+"|" ) + getCurModifiers()+keytext);
 			keyChanged = keyToChange;

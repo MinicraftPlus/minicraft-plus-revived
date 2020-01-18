@@ -66,7 +66,7 @@ public class Updater extends Game {
 			if(menu != null && (newMenu == null || newMenu.getParent() != menu))
 				menu.onExit();
 			
-			//if(debug) System.out.println("setting menu from " + newMenu + " to " + display);
+			//if(debug) System.out.println("Setting menu from " + newMenu + " to " + display);
 			
 			if (newMenu != null && (menu == null || newMenu != menu.getParent()))
 				newMenu.init(menu);
@@ -83,7 +83,7 @@ public class Updater extends Game {
 			if(gamespeed != 20) {
 				gamespeed = 20;
 				if(isValidServer()) {
-					if (debug) System.out.println("SERVER: setting time for bed");
+					if (debug) System.out.println("SERVER: Setting time for bed");
 					server.updateGameVars();
 				}
 			}
@@ -209,7 +209,7 @@ public class Updater extends Game {
 					
 					if(input.getKey("ctrl-p").clicked) {
 						// print all players on all levels, and their coordinates.
-						System.out.println("printing players on all levels "+Network.onlinePrefix());
+						System.out.println("Printing players on all levels "+Network.onlinePrefix());
 						for(int i = 0; i < levels.length; i++) {
 							if(levels[i] == null) continue;
 							levels[i].printEntityLocs(Player.class);
@@ -317,7 +317,7 @@ public class Updater extends Game {
 		if(t > 0 && t < times.length)
 			changeTimeOfDay(times[t]); // it just references the other one.
 		else
-			System.out.println("time " + t + " does not exist.");
+			System.out.println("Time " + t + " does not exist.");
 	}
 	
 	public static Time getTime() {

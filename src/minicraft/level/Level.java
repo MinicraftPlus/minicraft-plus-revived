@@ -87,7 +87,7 @@ public class Level {
 			}
 		}
 		
-		System.out.println("found " + numfound + " entities in level of depth " + depth);
+		System.out.println("Found " + numfound + " entities in level of depth " + depth);
 	}
 	
 	private void updateMobCap() {
@@ -122,7 +122,7 @@ public class Level {
 		
 		maps = LevelGen.createAndValidateMap(w, h, level);
 		if(maps == null) {
-			System.err.println("Level Gen ERROR: returned maps array is null");
+			System.err.println("Level Gen ERROR: Returned maps array is null");
 			return;
 		}
 		
@@ -144,7 +144,7 @@ public class Level {
 							Structure.dungeonGate.draw(this, x, y);
 						
 						else if (level == 0) { // surface
-							if (Game.debug) System.out.println("setting tiles around "+x+","+y+" to hard rock");
+							if (Game.debug) System.out.println("Setting tiles around "+x+","+y+" to hard rock");
 							setAreaTiles(x, y, 1, Tiles.get("Hard Rock"), 0); // surround the sky stairs with hard rock
 						}
 						else // any other level, the up-stairs should have dirt on all sides.
@@ -215,7 +215,7 @@ public class Level {
 			for(Entity e: entities)
 				if(e instanceof DungeonChest)
 					numChests++;
-			if (Game.debug) System.out.println("found " + numChests + " chests.");
+			if (Game.debug) System.out.println("Found " + numChests + " chests.");
 		}
 		
 		/// make DungeonChests!
@@ -305,7 +305,7 @@ public class Level {
 				if (Game.isValidServer() && e instanceof Particle) {
 					// there is no need to track this.
 					if (Game.debug)
-						System.out.println("SERVER warning: found particle in entity list: " + e + ". Removing from level " + this);
+						System.out.println("SERVER warning: Found particle in entity list: " + e + ". Removing from level " + this);
 					e.remove();
 				}
 				
