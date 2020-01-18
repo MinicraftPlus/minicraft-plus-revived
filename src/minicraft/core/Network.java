@@ -77,12 +77,12 @@ public class Network extends Game {
 				System.out.println("Note: Trying 1000th time to find valid entity id...(Will continue)");
 			
 			eid = random.nextInt();
-		} while(!idIsAvaliable(eid));
+		} while(!idIsAvailable(eid));
 		
 		return eid;
 	}
 	
-	public static boolean idIsAvaliable(int eid) {
+	public static boolean idIsAvailable(int eid) {
 		if(eid == 0) return false; // this is reserved for the main player... kind of...
 		if(eid < 0) return false; // id's must be positive numbers.
 		
