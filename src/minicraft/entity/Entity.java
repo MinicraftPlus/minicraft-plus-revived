@@ -218,7 +218,7 @@ public abstract class Entity implements Tickable {
 	/** This should ONLY be called by the Level class. To properly remove an entity from a level, use level.remove(entity) */
 	public void remove(Level level) {
 		if(level != this.level) {
-			if(Game.debug) System.out.println("tried to remove entity " + this + " from level it is not in: " + level + "; in level " + this.level);
+			if(Game.debug) System.out.println("Tried to remove entity " + this + " from level it is not in: " + level + "; in level " + this.level);
 		} else {
 			removed = true; // should already be set.
 			this.level = null;
@@ -228,7 +228,7 @@ public abstract class Entity implements Tickable {
 	/** This should ONLY be called by the Level class. To properly add an entity to a level, use level.add(entity) */
 	public void setLevel(Level level, int x, int y) {
 		if(level == null) {
-			System.out.println("tried to set level of entity " + this + " to a null level; should use remove(level)");
+			System.out.println("Tried to set level of entity " + this + " to a null level; Should use remove(level)");
 			return;
 		} else if(level != this.level && Game.isValidServer() && this.level != null) {
 			Game.server.broadcastEntityRemoval(this, this.level, !(this instanceof Player));

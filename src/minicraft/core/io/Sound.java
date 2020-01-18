@@ -34,9 +34,9 @@ public class Sound {
 			DataLine.Info info = new DataLine.Info(Clip.class, AudioSystem.getAudioFileFormat(url).getFormat());
 			
 			if(!AudioSystem.isLineSupported(info)) {
-				System.err.println("ERROR: audio format of file " + name + " is not supported: " + AudioSystem.getAudioFileFormat(url));
+				System.err.println("ERROR: Audio format of file " + name + " is not supported: " + AudioSystem.getAudioFileFormat(url));
 				
-				System.out.println("supported audio formats:");
+				System.out.println("Supported audio formats:");
 				System.out.println("-source:");
 				Line.Info[] sinfo = AudioSystem.getSourceLineInfo(info);
 				Line.Info[] tinfo = AudioSystem.getTargetLineInfo(info);
@@ -76,7 +76,7 @@ public class Sound {
 			});
 			
 		} catch (LineUnavailableException | UnsupportedAudioFileException | IOException e) {
-			System.err.println("could not load sound file " + name);
+			System.err.println("Could not load sound file " + name);
 			e.printStackTrace();
 		}
 	}

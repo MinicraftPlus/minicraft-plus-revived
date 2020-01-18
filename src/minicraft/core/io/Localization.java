@@ -77,7 +77,7 @@ public class Localization {
 	private static void loadSelectedLanguageFile() {
 		String fileText = getFileAsString();
 		
-		// System.out.println("file:");
+		// System.out.println("File:");
 		// System.out.println(fileText);
 		
 		String currentKey = "";
@@ -144,7 +144,7 @@ public class Localization {
 			}
 			else {
 			  /* Fail... */
-				System.out.println("failed to get code source.");
+				System.out.println("Failed to get code source.");
 				return null;
 			}
 		} catch (IOException e) {

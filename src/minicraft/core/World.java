@@ -59,7 +59,7 @@ public class World extends Game {
 	/** This method is used when respawning, and by initWorld to reset the vars. It does not generate any new terrain. */
 	public static void resetGame() { resetGame(true); }
 	public static void resetGame(boolean keepPlayer) {
-		if(debug) System.out.println("resetting ..");
+		if(debug) System.out.println("Resetting...");
 		playerDeadTime = 0;
 		currentLevel = 3;
 		Updater.asTick = 0;
@@ -98,7 +98,7 @@ public class World extends Game {
 	 * For the loading screen updates to work, it it assumed that *this* is called by a thread *other* than the one rendering the current *menu*.
 	 **/
 	public static void initWorld() { // this is a full reset; everything.
-		if(debug) System.out.println("resetting world...");
+		if(debug) System.out.println("Resetting world...");
 		
 		/*if(isValidServer()) {
 			System.err.println("Cannot initialize world while acting as a server runtime; not running initWorld().");
@@ -122,7 +122,7 @@ public class World extends Game {
 		LoadingDisplay.setPercentage(0); // this actually isn't necessary, I think; it's just in case.
 		
 		if(!isValidClient()) {
-			if(debug) System.out.println("initializing world non-client...");
+			if(debug) System.out.println("Initializing world non-client...");
 			
 			if(WorldSelectDisplay.loadedWorld()) {
 				Load loader = new Load(WorldSelectDisplay.getWorldName());
@@ -136,14 +136,14 @@ public class World extends Game {
 				float loadingInc = 100f / (maxLevelDepth - minLevelDepth + 1); // the .002 is for floating point errors, in case they occur.
 				for (int i = maxLevelDepth; i >= minLevelDepth; i--) {
 					// i = level depth; the array starts from the top because the parent level is used as a reference, so it should be constructed first. It is expected that the highest level will have a null parent.
-					if(debug) System.out.println("loading level " + i + "...");
+					if(debug) System.out.println("Loading level " + i + "...");
 					LoadingDisplay.setMessage(Level.getDepthString(i));
 					levels[lvlIdx(i)] = new Level(worldSize, worldSize, i, levels[lvlIdx(i+1)], !WorldSelectDisplay.loadedWorld());
 					
 					LoadingDisplay.progress(loadingInc);
 				}
 				
-				if(debug) System.out.println("level loading complete.");
+				if(debug) System.out.println("Level loading complete.");
 				
 				Level level = levels[currentLevel]; // sets level to the current level (3; surface)
 				Updater.pastDay1 = false;
@@ -159,7 +159,7 @@ public class World extends Game {
 		
 		PlayerDeathDisplay.shouldRespawn = true;
 		
-		if(debug) System.out.println("world initialized.");
+		if(debug) System.out.println("World initialized.");
 	}
 	
 	
@@ -180,7 +180,7 @@ public class World extends Game {
 	 while 'changeLevel(-1)' will make you go down a level. */
 	public static void changeLevel(int dir) {
 		if(isValidServer()) {
-			System.out.println("server tried to change level.");
+			System.out.println("Server tried to change level.");
 			return;
 		}
 		

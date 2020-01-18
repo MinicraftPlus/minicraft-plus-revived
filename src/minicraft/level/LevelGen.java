@@ -443,7 +443,7 @@ public class LevelGen {
 		
 		int count = 0;
 		
-		//if (Game.debug) System.out.println("generating stairs for surface level...");
+		//if (Game.debug) System.out.println("Generating stairs for surface level...");
 		
 		stairsLoop:
 		for (int i = 0; i < w * h / 100; i++) { // loops a certain number of times, more for bigger world sizes.

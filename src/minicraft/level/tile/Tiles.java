@@ -14,7 +14,7 @@ public final class Tiles {
 	private static ArrayList<Tile> tiles = new ArrayList<>();
 	
 	public static void initTileList() {
-		if(Game.debug) System.out.println("initializing tile list...");
+		if(Game.debug) System.out.println("Initializing tile list...");
 		
 		for(int i = 0; i < 256; i++)
 			tiles.add(null);
@@ -73,7 +73,7 @@ public final class Tiles {
 	
 	protected static void add(int id, Tile tile) {
 		tiles.set(id, tile);
-		System.out.println("adding " + tile.name + " to tile list with id " + id);
+		System.out.println("Adding " + tile.name + " to tile list with id " + id);
 		tile.id = (byte) id;
 	}
 	
@@ -171,7 +171,7 @@ public final class Tiles {
 	
 	private static int overflowCheck = 0;
 	public static Tile get(String name) {
-		//System.out.println("getting from tile list: " + name);
+		//System.out.println("Getting from tile list: " + name);
 		
 		name = name.toUpperCase();
 		
@@ -182,7 +182,7 @@ public final class Tiles {
 			System.exit(1);
 		}
 		
-		//System.out.println("fetching tile " + name);
+		//System.out.println("Fetching tile " + name);
 		
 		Tile getting = null;
 		
@@ -205,7 +205,7 @@ public final class Tiles {
 		}
 		
 		if(getting == null) {
-			System.out.println("TILES.GET: invalid tile requested: " + name);
+			System.out.println("TILES.GET: Invalid tile requested: " + name);
 			getting = tiles.get(0);
 		}
 		
@@ -218,7 +218,7 @@ public final class Tiles {
 	}
 	
 	public static Tile get(int id) {
-		//System.out.println("requesting tile by id: " + id);
+		//System.out.println("Requesting tile by id: " + id);
 		if(id < 0) id += 256;
 		
 		if(tiles.get(id) != null) {
@@ -228,7 +228,7 @@ public final class Tiles {
 			return TorchTile.getTorchTile(get(id-128));
 		}
 		else {
-			System.out.println("TILES.GET: unknown tile id requested: " + id);
+			System.out.println("TILES.GET: Unknown tile id requested: " + id);
 			return tiles.get(0);
 		}
 	}

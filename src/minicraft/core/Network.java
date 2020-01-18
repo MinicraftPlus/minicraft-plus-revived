@@ -36,12 +36,12 @@ public class Network extends Game {
 	public static void findLatestVersion(Action callback) {
 		new Thread(() -> {
 			// fetch the latest version from github
-			if(debug) System.out.println("fetching release list from github...");
+			if(debug) System.out.println("Fetching release list from github...");
 			try {
 				HttpResponse<JsonNode> response = Unirest.get("https://api.github.com/repos/chrisj42/minicraft-plus-revived/releases").asJson();
 				if(response.getStatus() != 200) {
-					System.err.println("version request returned status code "+response.getStatus()+": "+response.getStatusText());
-					System.err.println("response body: "+response.getBody());
+					System.err.println("Version request returned status code "+response.getStatus()+": "+response.getStatusText());
+					System.err.println("Response body: "+response.getBody());
 					latestVersion = new VersionInfo(VERSION, "", "");
 				}
 				else {
@@ -74,7 +74,7 @@ public class Network extends Game {
 		do {
 			tries++;
 			if(tries == 1000)
-				System.out.println("note: trying 1000th time to find valid entity id...(will continue)");
+				System.out.println("Note: Trying 1000th time to find valid entity id...(Will continue)");
 			
 			eid = random.nextInt();
 		} while(!idIsAvaliable(eid));
@@ -112,7 +112,7 @@ public class Network extends Game {
 	}
 	
 	public static void startMultiplayerServer() {
-		if(debug) System.out.println("starting multiplayer server...");
+		if(debug) System.out.println("Starting multiplayer server...");
 		
 		if(HAS_GUI) {
 			// here is where we need to start the new client.
@@ -125,7 +125,7 @@ public class Network extends Game {
 				if(FileHandler.OS.contains("windows") && jarFilePath.startsWith("/"))
 					jarFilePath = jarFilePath.substring(1);
 			} catch(URISyntaxException ex) {
-				System.err.println("problem with jar file URI syntax.");
+				System.err.println("Problem with jar file URI syntax.");
 				ex.printStackTrace();
 			}
 			List<String> arguments = new ArrayList<>();
@@ -146,7 +146,7 @@ public class Network extends Game {
 			try {
 				new ProcessBuilder(arguments).inheritIO().start();
 			} catch(IOException ex) {
-				System.err.println("problem starting new jar file process:");
+				System.err.println("Problem starting new jar file process:");
 				ex.printStackTrace();
 			}
 		}

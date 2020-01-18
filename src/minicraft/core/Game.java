@@ -132,7 +132,7 @@ public class Game {
 		Initializer.run();
 		
 		
-		if (debug) System.out.println("main game loop ended; terminating application...");
+		if (debug) System.out.println("Main game loop ended; Terminating application...");
 		System.exit(0);
 	}
 }
