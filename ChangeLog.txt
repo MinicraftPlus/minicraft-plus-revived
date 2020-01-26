@@ -16,6 +16,7 @@ Minicraft+ version 2.0.6
 * Creepers have been buffed
 * Villages and spawners can no longer override stair barriers (to the sky or the dungeon)
 * TNT can't break hard rock tiles or obsidian walls
+* Menus that don't have frames don't render the title background
 
 
 Minicraft+ version 2.0.5
