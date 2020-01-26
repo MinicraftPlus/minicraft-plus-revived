@@ -186,12 +186,12 @@ public class Menu {
 		if(title.length() > 0) {
 			if (drawVertically) {
 				for (int i = 0; i < title.length(); i++) {
-					screen.render(titleLoc.x, titleLoc.y + i * Font.textHeight(), 3 + 21 * 32, 0, 3);
+					if (hasFrame) screen.render(titleLoc.x, titleLoc.y + i * Font.textHeight(), 3 + 21 * 32, 0, 3);
 					Font.draw(title.substring(i, i + 1), screen, titleLoc.x, titleLoc.y + i * Font.textHeight(), titleColor);
 				}
 			} else {
 				for (int i = 0; i < title.length(); i++) {
-					screen.render(titleLoc.x + i * Font.textWidth(" "), titleLoc.y, 3 + 21 * 32, 0, 3);
+					if (hasFrame) screen.render(titleLoc.x + i * Font.textWidth(" "), titleLoc.y, 3 + 21 * 32, 0, 3);
 					Font.draw(title.substring(i, i + 1), screen, titleLoc.x + i * Font.textWidth(" "), titleLoc.y, titleColor);
 				}
 			}
