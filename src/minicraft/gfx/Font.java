@@ -1,4 +1,4 @@
-﻿package minicraft.gfx;
+package minicraft.gfx;
 
 import java.util.ArrayList;
 import java.util.Arrays;
