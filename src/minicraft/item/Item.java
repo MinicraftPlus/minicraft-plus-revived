@@ -29,17 +29,22 @@ public abstract class Item {
 		this.sprite = sprite;
 	}
 	
-	/// TODO this method (and Menu.renderItemList) is actually slowly getting depricated; I just haven't gotten around to updating all the menus yet.
-	/** Renders an item (sprite & name) in an inventory */
-	public void renderInventory(Screen screen, int x, int y, boolean ininv) {
-		String dispName = getDisplayName();
-		sprite.render(screen, x, y);
+	// TODO this method (and Menu.renderItemList) is actually slowly getting depricated; I just haven't gotten around to updating all the menus yet.
+	public void renderInventory(Screen screen, int x, int y, boolean ininv) { 
 		if(ininv) {
+			String dispName = getDisplayName();
+			sprite.render(screen, x, y);
 			String shortname = dispName.length() > 20 ? dispName.substring(0, 20) : dispName;
 			Font.draw(shortname, screen, x + 8, y, Color.WHITE);
+		} else
+			renderInventory(screen, x, y, Color.get(0, 555)); 
 		}
-		else
-			Font.draw(dispName, screen, x + 8, y, Color.get(0, 555));
+	
+	/* Renders an item (sprite & name) in an inventory */
+	public void renderInventory(Screen screen, int x, int y, int fontColor) {
+		String dispName = getDisplayName();
+		sprite.render(screen, x, y);
+		Font.draw(dispName, screen, x + 8, y, fontColor);
 	}
 	
 	/** Determines what happens when the player interacts with an entity */

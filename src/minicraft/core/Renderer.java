@@ -170,6 +170,11 @@ public class Renderer extends Game {
 		if (!isMode("creative") || player.activeItem != null)
 			for (int x = 12; x < 29; x++)
 				screen.render(x * 7, Screen.h - 8, 30 + 30 * 32, 0, 3);
+		
+		/// CURRENT ITEM
+		if (player.activeItem != null) // shows active item sprite and name in bottom toolbar, if one exists.
+			player.activeItem.renderInventory(screen, 12 * 7, Screen.h - 8, Color.WHITE);
+
 
 		// This checks if the player is holding a bow, and shows the arrow counter accordingly.
 		if (player.activeItem instanceof ToolItem) {
@@ -324,10 +329,6 @@ public class Renderer extends Game {
 				}
 			}
 		}
-		
-		/// CURRENT ITEM
-		if (player.activeItem != null) // shows active item sprite and name in bottom toolbar, if one exists.
-			player.activeItem.renderInventory(screen, 12 * 7, Screen.h - 8, false);
 	}
 	
 	private static void renderDebugInfo() {
