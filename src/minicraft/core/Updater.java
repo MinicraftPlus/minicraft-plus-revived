@@ -18,7 +18,7 @@ import minicraft.screen.WorldSelectDisplay;
 public class Updater extends Game {
 	private Updater() {}
 	
-	/// TIME AND TICKS
+	// TIME AND TICKS
 	
 	public static final int normSpeed = 60; // measured in ticks / second.
 	public static float gamespeed = 1; // measured in MULTIPLES OF NORMSPEED.
@@ -36,7 +36,7 @@ public class Updater extends Game {
 	public static int scoreTime; // time remaining for score mode
 	
 	
-	/// AUTOSAVE AND NOTIFICATIONS
+	// AUTOSAVE AND NOTIFICATIONS
 	
 	public static int notetick = 0; // "note"= notifications.
 	

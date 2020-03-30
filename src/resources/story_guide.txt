@@ -12,7 +12,7 @@ The enemies there are of two new types: snakes, and knights. Snakes drop scales,
 
 As for the additional storyline, you will find immovable, grayed-out chests scattered about on the dungeon floor. These are known as "dungeon chests", and are locked at first. In order to open a dungeon chest, you need to have a key, which knights and snakes will occasionally drop. As long as the key is in your inventory, you can then unlock a locked dungeon chest, using up the key in the process. Inside are numerous fantastic goodies.
 
-The significance of these chests to the storyline is that you must find and unlock all of them. How may there are depends on map size and random chance. If you press F3 while on the dungeon level, it will display how many locked chests remain.
+The significance of these chests to the storyline is that you must find and unlock all of them. The amount is dependent on map size and random chance. If you press F3 while on the dungeon level, it will display how many locked chests remain.
 Upon unlocking the final chest, you will receive 5 golden apples (because why not), and something will happen. Should you return to the surface, you'll run into a second airwizard boss. However, this one is much different. Besides the fact that you're on the surface, rather than the sky, and it is colored differently, the airwizard is much faster, has more health, is not stopped by any tiles, and does more damage.
 Should you defeat this monster airwizard, you get a cool reward.
 

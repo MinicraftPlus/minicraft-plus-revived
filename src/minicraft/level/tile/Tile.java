@@ -55,7 +55,7 @@ public abstract class Tile {
 	
 	/** This method is used by tiles to specify the default "data" they have in a level's data array.
 		Used for starting health, color/type of tile, etc. */
-	/// at least, that was the idea at first...
+	// at least, that was the idea at first...
 	public int getDefaultData() {
 		return 0;
 	}

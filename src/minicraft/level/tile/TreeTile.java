@@ -90,7 +90,7 @@ public class TreeTile extends Tile {
 	}
 
 	public void hurt(Level level, int x, int y, int dmg) {
-		if(random.nextInt(100) == 0)
+		if (random.nextInt(100) == 0)
 			level.dropItem(x*16+8, y*16+8, Items.get("Apple"));
 		
 		int damage = level.getData(x, y) + dmg;

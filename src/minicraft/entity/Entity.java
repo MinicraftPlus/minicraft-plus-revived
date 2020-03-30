@@ -31,7 +31,7 @@ public abstract class Entity implements Tickable {
 	 * These bit shift operators are used to easily get the X & Y coordinates of a tile that the entity is standing on.
 	 */
 	
-	/// entity coordinates are per pixel, not per tile; each tile is 16x16 entity pixels.
+	// entity coordinates are per pixel, not per tile; each tile is 16x16 entity pixels.
 	protected final Random random = new Random();
 	public int x, y; // x, y entity coordinates on the map
 	private int xr, yr; // x, y radius of entity
@@ -39,9 +39,9 @@ public abstract class Entity implements Tickable {
 	protected Level level; // the level that the entity is on
 	public int col; // current color.
 	
-	public int eid; /// this is intended for multiplayer, but I think it could be helpful in single player, too. certainly won't harm anything, I think... as long as finding a valid id doesn't take long...
-	private String prevUpdates = ""; /// holds the last value returned from getUpdateString(), for comparison with the next call.
-	private String curDeltas = ""; /// holds the updates returned from the last time getUpdates() was called.
+	public int eid; // this is intended for multiplayer, but I think it could be helpful in single player, too. certainly won't harm anything, I think... as long as finding a valid id doesn't take long...
+	private String prevUpdates = ""; // holds the last value returned from getUpdateString(), for comparison with the next call.
+	private String curDeltas = ""; // holds the updates returned from the last time getUpdates() was called.
 	private boolean accessedUpdates = false;
 	private long lastUpdate;
 	
