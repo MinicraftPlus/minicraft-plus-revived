@@ -15,10 +15,10 @@ import minicraft.item.Item;
 import minicraft.level.Level;
 
 public abstract class Tile {
-	public static int tickCount = 0; //A global tickCount used in the Lava & water tiles.
+	public static int tickCount = 0; // A global tickCount used in the Lava & water tiles.
 	protected Random random = new Random();
 	
-	protected enum Material {
+	protected static enum Material {
 		Wood, Stone, Obsidian;
 		public static final Material[] values = Material.values();
 	}

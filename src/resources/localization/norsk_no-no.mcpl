@@ -8,13 +8,13 @@
 
 # AirWizard.java
 Air Wizard: Defeated!
-Luft Trollmann: Slaatt
+Luft Trollmann: Slått
 
 The Dungeon is now open!
-Fangehullet er naa aapent!
+Fangehullet er nå åpent!
 
 A costume lies on the ground...
-Et kostyme ligger paa bakken...
+Et kostyme ligger på bakken...
 
 # Bed.java
 Can't sleep! 
@@ -28,13 +28,16 @@ Minst
 
 # DungeonChest.java
 You hear a noise from the surface!
-Du hoerer en lyd fra overflaten!
+Du hører en lyd fra overflaten!
 
 # DeathChest.java
 Death Chest
-Death Chest
+Døds Kiste
 
 # Player.java
+
+Player
+Spiller
 
 Crafting
 Crafting
@@ -46,7 +49,7 @@ Can't set home here!
 Kan ikke sette hjem her!
 
 Home Sweet Home!
-Hjem kjeare hjem!
+Hjem kjære hjem!
 
 Mode penalty: -2 health
 Modus straff: -2 helse
@@ -55,7 +58,7 @@ You don't have a home!
 Du har ikke et hjem!
 
 You can't go home from here!
-Du kan ikke gaa hjem herfra!
+Du kan ikke gå hjem herfra!
  
 ### entity end
 
@@ -66,7 +69,7 @@ Du kan ikke gaa hjem herfra!
 
 # ArmorItem.java
 Leather Armor
-Laer rustning
+Lær rustning
 
 Snake Armor
 Slange rustning
@@ -91,71 +94,71 @@ Antidious
 # BucketItem.java
 
 Empty Bucket
-Tom Boette
+Tom Bøtte
 
 Water Bucket
-Vann Boette
+Vann Bøtte
 
 Lava Bucket
-Lava Boette
+Lava Bøtte
 
  Bucket
- Boette
+ Bøtte
  
 # ClothingItem.java
 
 Red Clothes
-Roede Klear
+Røde Klær
 
 Blue Clothes
-Blaa Klear
+Blå Klær
 
 Green Clothes
-Groenn Klear
+Grønne Klær
 
 Yellow Clothes
-Gul Klear
+Gule Klær
 
 Black Clothes
-Svart Klear
+Svarte Klær
 
 Orange Clothes
-Oransje Klear
+Oransje Klær
 
 Purple Clothes
-Lilla Klear
+Lilla Klær
 
 Cyan Clothes
-Cyan Klear
+Cyan Klær
 
 Reg Clothes
-Vanlige Klear
+Vanlige Klær
 
 # FoodItem.java
 
 Bread
-Broed
+Brød
 
 Apple
 Eple
 
 Raw Pork
-Raatt svinekjoett
+Rått svinekjøtt
 
 Raw Fish
-Raa fisk
+Rå fisk
 
 Raw Beef
-Raa biff
+Rå biff
 
 Pork Chop
-Svinekjoett
+Svinekjøtt
 
 Cooked Fish
 Kokt fisk
 
 Cooked Pork
-Stekt svinekjoett
+Stekt svinekjøtt
 
 Steak
 Biff
@@ -283,19 +286,19 @@ Stone
 Stein
 
 Leather
-Lear
+Lær
 
 Wheat
 Hvete
 
 Key
-Noekkel
+Nøkkel
 
 arrow
 pil
 
 string
-traad
+tråd
 
 Coal
 Kull
@@ -328,7 +331,7 @@ glass
 glass
 
 cloth
-toeystykke
+tøystykke
 
 gem
 juvel
@@ -345,7 +348,7 @@ Flower
 Blomst
 
 Acorn
-Eikenoett
+Eikenøtt
 
 Dirt
 Jord
@@ -357,7 +360,7 @@ Plank Wall
 Planke Vegg
 
 Wood Door
-Tre doer
+Tre dør
 
 Stone Brick
 Stein murstein
@@ -366,7 +369,7 @@ Stone Wall
 Stein vegg
 
 Stone Door
-Stein doer
+Stein dør
 
 Obsidian Brick
 Lavastein murstein
@@ -375,19 +378,19 @@ Obsidian Wall
 Lavastein vegg
 
 Obsidian Door
-Lavastein doer
+Lavastein dør
 
 Wool
 Ull
 
 Red Wool
-Roed Ull
+Rød Ull
 
 Blue Wool
-Blaa Ull
+Blå Ull
 
 Green Wool
-Groenn Ull
+Grønn Ull
 
 Yellow Wool
 Gul Ull
@@ -402,10 +405,10 @@ Cactus
 Kaktus
 
 Seeds
-Froe
+Frø
 
 Grass Seeds
-Grass Froe
+Grass Frø
 
 Bone
 Bein
@@ -414,10 +417,10 @@ Cloud
 Sky
 
 Can only be placed on 
-Kan bare settes paa 
+Kan bare settes på 
 
 Dig a hole first!
-Grav et hull foerst!
+Grav et hull først!
 
 # ToolItem.java
 
@@ -445,7 +448,7 @@ Shovel
 Spade
 
 Hoe
-Ljaa
+Ljå
 
 Sword
 Sverd
@@ -454,7 +457,7 @@ Pickaxe
 Hakke
 
 Axe
-Oeks
+Øks
 
 Bow
 Bue
@@ -602,7 +605,7 @@ kan ikke hente localhost adressen
 # BooleanEntry.java
 
 On
-Paa
+På
 
 Off
 Av
@@ -637,14 +640,14 @@ Quit
 Avslutt
 
 Respawn
-Gjennoppstaa
+Gjennoppstå
 
 You died! Aww!
-Du doede! Aww!
+Du døde! Aww!
 
 # Displays.java
 With the default controls...\n\nMove your character with arrow keys or WSAD. Press C to attack and X to open the inventory, and to use items. Select an item in the inventory to equip it.\n\nKill the air wizard to win the game!
-Med de vanlige kontrollene...\n\nFlytt karakteren med piltastene eller WASD. Trykk C for aa angripe og X for aa aapne inventaret, og for aa bruke ting. Velg en ting i inventaret for aa utruste deg med det.\n\nDrep LuftTrollmannen for aa vinne!
+Med de vanlige kontrollene...\n\nFlytt karakteren med piltastene eller WASD. Trykk C for å angripe og X for å åpne inventaret, og for å bruke ting. Velg en ting i inventaret for å utruste deg med det.\n\nDrep LuftTrollmannen for å vinne!
 
 # EndGameDisplay.java
 
@@ -666,10 +669,10 @@ Time Played:
 Tid Spillt: 
 
 Current Score: 
-Naavearende poeng: 
+Nåværende poeng: 
 
 Exit
-Gaa ut
+Gå ut
 
 Player Stats
 Spiller statistikk
@@ -680,34 +683,34 @@ Controls
 Kontroller
 
 Press the desired
-Trykk oensket
+Trykk ønsket
 
 key sequence
 tastesekvens
 
 Are you sure you want to reset all key bindings to the default keys?
-Er du sikker paa at du vil resette alle tastene?
+Er du sikker på at du vil resette alle tastene?
 
 enter to confirm
-enter for aa bekrefte
+enter for å bekrefte
 
 escape to cancel
-escape for aavbyte
+escape for åvbyte
 
 Confirm Action
 Bekreft handling
 
 Press C/Enter to change key binding
-Trykk C/Enter for aa endre tast
+Trykk C/Enter for å endre tast
 
 Press A to add key binding
-Trykk A for aa legge til tastebinding
+Trykk A for å legge til tastebinding
 
 Shift-D to reset all keys to default
-Shift-D for aa resette alle tastene
+Shift-D for å resette alle tastene
 
 ESCAPE to Return to menu
-ESC for aa gaa tilbake til menyen 
+ESC for å gå tilbake til menyen 
 
 # LoadingDisplay.java
 
@@ -723,10 +726,10 @@ nothing
 ingenting
 
 attempting log in
-forsoeker aa logge inn
+forsøker å logge inn
 
 no internet connection, but no login data saved; cannot enter offline mode.
-ingen internett tilgang, og ingen login data lagret; kan ikke gaa i offline modus.
+ingen internett tilgang, og ingen login data lagret; kan ikke gå i offline modus.
 
 connecting to server
 kobler til serveren
@@ -741,7 +744,7 @@ login failed.
 login mislyktes.
 
 problem with saved login data; please exit and login again.
-problemer med lagret login data; vennligst logg inn paa nytt.
+problemer med lagret login data; vennligst logg inn på nytt.
 
 Internal server error: Couldn't fetch username from uuid
 Intern server feil: Kunne ikke hente brukernavn fra uuid
@@ -756,7 +759,7 @@ Enter ip address to connect to:
 Skriv inn ipadressen du vil koble til
 
 Press Shift-Escape to logout
-Trykk Shift-Escape for aa logge ut
+Trykk Shift-Escape for å logge ut
 
 Enter email:
 Skriv email:
@@ -768,7 +771,7 @@ field is blank
 feltet er tomt
 
 get an account at:
-faa en bruker paa:
+få en bruker på:
 
 Loading 
 Laster 
@@ -783,7 +786,7 @@ Press
 Trykk 
 
  to return
- for aa returnere
+ for å returnere
 
 # OptionsMenu.java
 
@@ -794,18 +797,18 @@ Options
 Innstillinger
 
 Change language
-Skift spraak
+Skift språk
 
 # PauseMenu.java
 
 Return to Game
-Gaa tilbake til spillet
+Gå tilbake til spillet
 
 Options
 Innstillinger
 
 Make World Multiplayer
-Gjoer verdenen til flerspiller
+Gjør verdenen til flerspiller
 
 Save Game
 Lagre spill
@@ -814,7 +817,7 @@ Lagre spill
  og 
  
  to Scroll
- for aa skrolle
+ for å skrolle
  
 : Choose
 : Velg
@@ -842,7 +845,7 @@ New World
 Ny verden
 
 Join Online World
-Spill paa nett
+Spill på nett
 
 Options
 Innstilinger
@@ -863,13 +866,13 @@ Quit
 Avslutt
 
  to select
- for aa velge
+ for å velge
  
  to accept
- for aa akseptere
+ for å akseptere
  
  to return
- for aa gaa tilbake
+ for å gå tilbake
 
 # WorldEditMenu.java
 
@@ -877,30 +880,30 @@ New World Name:
 Nytt navn:
 
 Are you sure you want to delete
-Er du sikker paa at du vil slette
+Er du sikker på at du vil slette
 
 This can not be undone!
 Du kan ikke angre dette!
 
  to confirm
- for aa bekrefte
+ for å bekrefte
  
  to cancel
- for aa avbryte
+ for å avbryte
 
 # WorldGenMenu.java
 
 World Seed
-Verden froe
+Verden frø
 
 Enter World Name
-Navn paa verden
+Navn på verden
 
 Trouble with world name?
 Problemer med navnet?
 
 by default, w and s move the cursor up and down. This can be changed in the key binding menu. To type the letter instead of moving the cursor, hold the shift key while typing the world name.
-vanligvis brukes w og s til aa flytte pekeren opp og ned. Dette kan du endre i key binding menyen. For aa skrive i stedet for aa flytte pekeren kan du holde inne shift knappen.
+vanligvis brukes w og s til å flytte pekeren opp og ned. Dette kan du endre i key binding menyen. For å skrive i stedet for å flytte pekeren kan du holde inne shift knappen.
 
 Create World
 Lag verden
@@ -920,10 +923,10 @@ Delete
 Slett
 
  to confirm
- for aa bekrefte
+ for å bekrefte
  
  to return
- for aa avbryte
+ for å avbryte
  
 Select World
 Velg verden
@@ -934,10 +937,10 @@ Velg en verden til
 # LocalizationMenu.java
 
 Languages
-Spraakmeny
+Språkmeny
 
 Language
-Spraak
+Språk
 
 Select
 Velg
@@ -988,7 +991,7 @@ Autosave
 Autolagre
 
 World Size
-Verden storrelse
+Verden størrelse
 
 World Theme
 Verden tema
@@ -1000,7 +1003,7 @@ Forest
 Skog
 
 Desert
-Oerken
+Ørken
 
 Plain
 Plain
@@ -1012,7 +1015,7 @@ Terrain Type
 Terreng type
 
 Island
-Oey
+Øy
 
 Box
 Boks
@@ -1021,9 +1024,9 @@ Mountain
 Fjell
 
 Irregular
-Uregulear
+Uregulær
 
 Wear Suit
-Ta paa drakt
+Ta på drakt
 
 ### minicraft end

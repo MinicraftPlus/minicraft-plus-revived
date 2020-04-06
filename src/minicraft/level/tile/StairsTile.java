@@ -13,6 +13,7 @@ public class StairsTile extends Tile {
 		maySpawn = false;
 	}
 	
+	@Override
 	public void render(Screen screen, Level level, int x, int y) {
 		sprite.render(screen, x*16, y*16, 0, DirtTile.dCol(level.depth));
 	}

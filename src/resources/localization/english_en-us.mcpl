@@ -1,8 +1,5 @@
 ### entity
 
-## entity.particle
-## entity.particle end
-
 # AirWizard.java
 Air Wizard: Defeated!
 Air Wizard: Defeated!
@@ -14,8 +11,8 @@ A costume lies on the ground...
 A costume lies on the ground...
 
 # Bed.java
-Can't sleep! 
-Can't sleep! 
+Can't sleep!
+Can't sleep!
 	
 Min 
 Min 
@@ -32,6 +29,9 @@ Death Chest
 Death Chest
 
 # Player.java
+
+Player
+Player
 
 Crafting
 Crafting
@@ -436,8 +436,19 @@ Gold
 Gem
 Gem
 
-Fishing Rod
-Fishing Rod
+# FishingRodItem.java
+
+Wood Fishing Rod
+Wood Fishing Rod
+
+Iron Fishing Rod
+Iron Fishing Rod
+
+Gold Fishing Rod
+Gold Fishing Rod
+
+Gem Fishing Rod
+Gem Fishing Rod
 
 # ToolType.java
 
@@ -458,9 +469,6 @@ Axe
 
 Bow
 Bow
-
-FishingRod
-FishingRod
 
 Claymore
 Claymore

@@ -27,7 +27,7 @@ public class Initializer extends Game {
 		boolean autoclient = false;
 		boolean autoserver = false;
 		
-		/// parses command line arguments
+		// parses command line arguments
 		String saveDir = FileHandler.systemGameDir;
 		for(int i = 0; i < args.length; i++) {
 			if(args[i].equals("--debug"))
@@ -74,7 +74,8 @@ public class Initializer extends Game {
 		
 		//main game loop? calls tick() and render().
 		if(!HAS_GUI)
-			(new ConsoleReader()).start();
+			new ConsoleReader().start();
+		
 		while (running) {
 			long now = System.nanoTime();
 			double nsPerTick = 1E9D / Updater.normSpeed; // nanosecs per sec divided by ticks per sec = nanosecs per tick
@@ -112,7 +113,7 @@ public class Initializer extends Game {
 	}
 	
 	
-	/// Creates and displays the JFrame window that the game appears in. 
+	// Creates and displays the JFrame window that the game appears in.
 	static void createAndDisplayFrame() {
 		if(!HAS_GUI) return;
 		

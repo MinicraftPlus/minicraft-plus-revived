@@ -65,8 +65,10 @@ public abstract class Entity implements Tickable {
 		lastUpdate = System.nanoTime();
 	}
 	
-	public abstract void render(Screen screen); /// used to render the entity on screen.
-	@Override public abstract void tick(); /// used to update the entity.
+	public abstract void render(Screen screen); // used to render the entity on screen.
+	
+	@Override
+	public abstract void tick(); // used to update the entity.
 	
 	/**
 	 * Returns true if the entity is removed from the level, otherwise false.

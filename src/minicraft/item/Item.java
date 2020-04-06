@@ -29,9 +29,9 @@ public abstract class Item {
 		this.sprite = sprite;
 	}
 	
-	// TODO this method (and Menu.renderItemList) is actually slowly getting depricated; I just haven't gotten around to updating all the menus yet.
+	// TODO this method (and Menu.renderItemList) is actually slowly getting deprecated; I just haven't gotten around to updating all the menus yet.
 	public void renderInventory(Screen screen, int x, int y, boolean ininv) { 
-		if(ininv) {
+		if (ininv) {
 			String dispName = getDisplayName();
 			sprite.render(screen, x, y);
 			String shortname = dispName.length() > 20 ? dispName.substring(0, 20) : dispName;
