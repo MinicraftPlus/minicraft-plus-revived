@@ -329,7 +329,7 @@ public class Player extends Mob implements ItemHolder, ClientTickable {
 			if(stamina == 0) stamHungerTicks-=diffIdx; // double effect if no stamina at all.
 		}
 		
-		/// this if statement encapsulates the hunger system
+		// this if statement encapsulates the hunger system
 		if(!Bed.inBed(this)) {
 			if(hungerChargeDelay > 0) { // if the hunger is recharging health...
 				stamHungerTicks -= 2+diffIdx; // penalize the hunger
@@ -517,9 +517,6 @@ public class Player extends Mob implements ItemHolder, ClientTickable {
 			activeItem = null;
 	}
 	
-	/* This actually ends up calling another use method down below. */
-	private boolean use() { return use(getInteractionBox(INTERACT_DIST)); }
-	
 	/** 
 	 * This method is called when we press the attack button.
 	 */
@@ -527,19 +524,19 @@ public class Player extends Mob implements ItemHolder, ClientTickable {
 		// walkDist is not synced, so this can happen for both the client and server.
 		walkDist += 8; // increase the walkDist (changes the sprite, like you moved your arm)
 
-		if(isFishing) {
+		if (isFishing) {
 			isFishing = false;
 			fishingTicks = maxFishingTicks;
 		}
 
 		// bit of a FIXME for fishing to work on servers
-		if(activeItem instanceof FishingRodItem && Game.isValidClient()) {
+		if (activeItem instanceof FishingRodItem && Game.isValidClient()) {
 			Point t = getInteractionTile();
 			Tile tile = level.getTile(t.x, t.y);
 			activeItem.interactOn(tile, level, t.x, t.y, this, attackDir);
 		}
 
-		if(activeItem != null && !activeItem.interactsWithWorld()) {
+		if (activeItem != null && !activeItem.interactsWithWorld()) {
 			attackDir = dir; // make the attack direction equal the current direction
 			attackItem = activeItem; // make attackItem equal activeItem
 			//if (Game.debug) System.out.println(Network.onlinePrefix()+"player is using reflexive item: " + activeItem);
@@ -550,8 +547,8 @@ public class Player extends Mob implements ItemHolder, ClientTickable {
 			return;
 		}
 		
-		if(Game.isConnectedClient()) {
-			// if this is a multiplayer game, than the server will execute the full method instead.
+		// if this is a multiplayer game, than the server will execute the full method instead.
+		if (Game.isConnectedClient()) {
 			attackDir = dir;
 			if(activeItem != null)
 				attackTime = 10;
@@ -570,8 +567,8 @@ public class Player extends Mob implements ItemHolder, ClientTickable {
 		attackDir = dir; // make the attack direction equal the current direction
 		attackItem = activeItem; // make attackItem equal activeItem
 		
+		// If the player is holding a tool, and has stamina available do this.
 		if (activeItem instanceof ToolItem && stamina - 1 >= 0) {
-			// the player is holding a tool, and has stamina available.
 			ToolItem tool = (ToolItem) activeItem;
 			
 			if (tool.type == ToolType.Bow && tool.dur > 0 && inventory.count(Items.arrowItem) > 0) { // if the player is holding a bow, and has arrows...
@@ -590,24 +587,24 @@ public class Player extends Mob implements ItemHolder, ClientTickable {
 			attackTime = 10; // attack time will be set to 10.
 			
 			// if the interaction between you and an entity is successful, then return.
-			if(interact(getInteractionBox(INTERACT_DIST))) return;
+			if (interact(getInteractionBox(INTERACT_DIST))) return;
 			
 			// otherwise, attempt to interact with the tile.
 			Point t = getInteractionTile();
 			if (t.x >= 0 && t.y >= 0 && t.x < level.w && t.y < level.h) { // if the target coordinates are a valid tile...
 				List<Entity> tileEntities = level.getEntitiesInTiles(t.x, t.y, t.x, t.y, false, ItemEntity.class);
-				if(tileEntities.size() == 0 || tileEntities.size() == 1 && tileEntities.get(0) == this) {
+				if (tileEntities.size() == 0 || tileEntities.size() == 1 && tileEntities.get(0) == this) {
 					Tile tile = level.getTile(t.x, t.y);
-					if(activeItem.interactOn(tile, level, t.x, t.y, this, attackDir)) { // returns true if your held item successfully interacts with the target tile.
+					if (activeItem.interactOn(tile, level, t.x, t.y, this, attackDir)) { // returns true if your held item successfully interacts with the target tile.
 						done = true;
 					} else { // item can't interact with tile
-						if(tile.interact(level, t.x, t.y, this, activeItem, attackDir)) { // returns true if the target tile successfully interacts with the item.
+						if (tile.interact(level, t.x, t.y, this, activeItem, attackDir)) { // returns true if the target tile successfully interacts with the item.
 							done = true;
 						}
 					}
 				}
 				
-				if(Game.isValidServer() && this instanceof RemotePlayer) {// only do this if no interaction was actually made; b/c a tile update packet will generally happen then anyway.
+				if (Game.isValidServer() && this instanceof RemotePlayer) {// only do this if no interaction was actually made; b/c a tile update packet will generally happen then anyway.
 					minicraft.network.MinicraftServerThread thread = Game.server.getAssociatedThread((RemotePlayer)this);
 					//if(thread != null)
 						thread.sendTileUpdate(level, t.x, t.y); /// FIXME this part is as a semi-temporary fix for those odd tiles that don't update when they should; instead of having to make another system like the entity additions and removals (and it wouldn't quite work as well for this anyway), this will just update whatever tile the player interacts with (and fails, since a successful interaction changes the tile and therefore updates it anyway).
@@ -634,7 +631,7 @@ public class Player extends Mob implements ItemHolder, ClientTickable {
 				used = tile.hurt(level, t.x, t.y, this, random.nextInt(3) + 1, attackDir) || used;
 			}
 			
-			if(used && activeItem instanceof ToolItem)
+			if (used && activeItem instanceof ToolItem)
 				((ToolItem)activeItem).payDurability();
 		}
 	}
@@ -715,6 +712,8 @@ public class Player extends Mob implements ItemHolder, ClientTickable {
 		}
 		fishingTicks = maxFishingTicks; // if you didn't catch anything, try again in 120 ticks
 	}
+	
+	private boolean use() { return use(getInteractionBox(INTERACT_DIST)); }
 	
 	/** called by other use method; this serves as a buffer in case there is no entity in front of the player. */
 	private boolean use(Rectangle area) {
@@ -1018,9 +1017,12 @@ public class Player extends Mob implements ItemHolder, ClientTickable {
 		payStamina(dmg * 2);
 	}
 	
+	/** Hurt the player.
+	 * @param damage How much damage to do to player.
+	 * @param attackDir What direction to attack.
+	 */
 	public void hurt(int damage, Direction attackDir) { doHurt(damage, attackDir); }
-	
-	/** What happens when the player is hurt */
+
 	@Override
 	protected void doHurt(int damage, Direction attackDir) {
 		if (Game.isMode("creative") || hurtTime > 0 || Bed.inBed(this)) return; // can't get hurt in creative, hurt cooldown, or while someone is in bed
@@ -1035,7 +1037,6 @@ public class Player extends Mob implements ItemHolder, ClientTickable {
 		
 		int healthDam = 0, armorDam = 0;
 		if(fullPlayer) {
-			Sound.playerHurt.play();
 			if (curArmor == null) { // no armor
 				healthDam = damage; // subtract that amount
 			} else { // has armor
@@ -1060,8 +1061,8 @@ public class Player extends Mob implements ItemHolder, ClientTickable {
 				}
 			}
 		}
-		else
-			Sound.monsterHurt.play();
+		
+		Sound.monsterHurt.play();
 		
 		if(healthDam > 0 || !fullPlayer) {
 			level.add(new TextParticle("" + damage, x, y, Color.get(-1, 504)));
@@ -1074,7 +1075,7 @@ public class Player extends Mob implements ItemHolder, ClientTickable {
 	@Override
 	public void remove() {
 		if(Game.debug) {
-			System.out.println(Network.onlinePrefix()+"removing player from level "+getLevel());
+			System.out.println(Network.onlinePrefix() + "removing player from level " + getLevel());
 			//Thread.dumpStack();
 		}
 		super.remove();

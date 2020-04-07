@@ -97,15 +97,15 @@ public class ConsoleReader extends Thread {
 					} catch(IllegalArgumentException ex) {
 						System.out.println("\""+args[0]+"\" is not a valid config option. run \"config\" for a list of the available config options.");
 					}
-					if(configOption == null) return;
-					if(args.length > 1) { // we want to set the config option.
-						if(args.length > 2) System.out.println("Note: Additional arguments (more than two) will be ignored.");
+					if (configOption == null) return;
+					if (args.length > 1) { // we want to set the config option.
+						if (args.length > 2) System.out.println("Note: Additional arguments (more than two) will be ignored.");
 						boolean set = configOption.setValue(args[1]);
-						if(set) {
+						if (set) {
 							System.out.println(configOption.name()+" set successfully.");
-							/// HERE is where we save the modified config options.
+							// HERE is where we save the modified config options.
 							new Save(WorldSelectDisplay.getWorldName(), Game.server);
-							new Save(); 	
+							new Save();
 						} else
 							System.out.println("Failed to set " + configOption.name());
 					}
@@ -179,14 +179,14 @@ public class ConsoleReader extends Thread {
 		TIME
 		("[timeString]", "sets or prints the time of day." , "no arguments: prints the current time of day, in ticks.", "timeString: sets the time of day to the given value; it can be a number, in which case it is a tick count from 0 to 64000 or so, or one of the following strings: Morning, Day, Evening, Night. the time of day will be set to the beginning of the given time period.") {
 			public void run(String[] args) {
-				if(args.length == 0) {
+				if (args.length == 0) {
 					System.out.println("Time of day is: " + Updater.tickCount + " ("+ Updater.getTime()+")");
 					return;
 				}
 				
 				int targetTicks = -1;
 				
-				if(args[0].length() > 0) {
+				if (args[0].length() > 0) {
 					try {
 						String firstLetter = String.valueOf(args[0].charAt(0)).toUpperCase();
 						String remainder = args[0].substring(1).toLowerCase();
@@ -200,7 +200,7 @@ public class ConsoleReader extends Thread {
 					}
 				}
 				
-				if(targetTicks >= 0) {
+				if (targetTicks >= 0) {
 					Updater.setTime(targetTicks);
 					Game.server.updateGameVars();
 				} else {
@@ -528,6 +528,7 @@ public class ConsoleReader extends Thread {
 			if(cmd == Command.STOP) shouldRun = false;
 		}
 		
+		stdin.close();
 		Game.quit();
 	}
 	

@@ -31,7 +31,7 @@ public class Game {
 	public static boolean debug = false;
 	public static boolean HAS_GUI = true;
 	
-	public static final String NAME = "Minicraft Plus"; // This is the name on the application window
+	public static final String NAME = "Minicraft Plus"; // This is the name on the application window.
 	public static final Version VERSION = new Version("2.0.6");
 	
 	public static InputHandler input; // input used in Game, Player, and just about all the *Menu classes.
@@ -47,7 +47,7 @@ public class Game {
 	// Sets the current menu.
 	public static void setMenu(@Nullable Display display) { newMenu = display; }
 	public static void exitMenu() {
-		if(menu == null) {
+		if (menu == null) {
 			if (debug) System.out.println("Game.exitMenu(): No menu found, returning!");
 			return; // no action required; cannot exit from no menu
 		}
@@ -59,7 +59,7 @@ public class Game {
 	public static boolean isMode(String mode) { return ((String)Settings.get("mode")).equalsIgnoreCase(mode); }
 	
 	
-	/// MULTIPLAYER
+	// MULTIPLAYER
 	
 	public static boolean ISONLINE = false;
 	public static boolean ISHOST = false;
@@ -84,8 +84,8 @@ public class Game {
 	static boolean running = true;
 	
 	public static void quit() {
-		if(isConnectedClient()) client.endConnection();
-		if(isValidServer()) server.endConnection();
+		if (isConnectedClient()) client.endConnection();
+		if (isValidServer()) server.endConnection();
 		running = false;
 	}
 	
@@ -117,9 +117,9 @@ public class Game {
 		new Load(true); // this loads any saved preferences.
 		
 		
-		if(Network.autoclient)
+		if (Network.autoclient)
 			setMenu(new MultiplayerDisplay("localhost"));
-		else if(!HAS_GUI)
+		else if (!HAS_GUI)
 			Network.startMultiplayerServer();
 		else
 			setMenu(new TitleDisplay()); //sets menu to the title screen.

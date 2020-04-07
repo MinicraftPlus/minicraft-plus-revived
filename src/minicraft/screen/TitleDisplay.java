@@ -104,7 +104,6 @@ public class TitleDisplay extends Display {
 			Network.findLatestVersion(this::checkVersion);
 		}
 		else {
-			if(Game.debug) System.out.println("latest version = "+latestVersion.version);
 			if(latestVersion.version.compareTo(Game.VERSION) > 0) { // link new version
 				menus[0].updateEntry(0, new StringEntry("New: "+latestVersion.releaseName, Color.GREEN));
 				menus[0].updateEntry(1, new LinkEntry(Color.CYAN, "--Select here to Download--", latestVersion.releaseUrl, "Direct link to latest version: " + latestVersion.releaseUrl + "\nCan also be found here with change log: https://www.github.com/chrisj42/minicraft-plus-revived/releases"));

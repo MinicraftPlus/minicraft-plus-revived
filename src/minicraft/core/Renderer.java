@@ -166,10 +166,19 @@ public class Renderer extends Game {
 	
 	/** Renders the main game GUI (hearts, Stamina bolts, name of the current item, etc.) */
 	private static void renderGui() {
-		// AH-HA! THIS DRAWS THE BLACK SQUARE!!
-		if (!isMode("creative") || player.activeItem != null)
-			for (int x = 12; x < 29; x++)
+		// This draws the black square underneath the selected item, as long as the player isn't in creative.
+		if (!isMode("creative") || player.activeItem != null) {
+			for (int x = 12; x < 29; x++) {
 				screen.render(x * 7, Screen.h - 8, 30 + 30 * 32, 0, 3);
+			}
+		}
+			
+		// Shows active item sprite and name in bottom toolbar.
+		if (player.activeItem != null) {
+			player.activeItem.renderInventory(screen, 12 * 7, Screen.h - 8, Color.WHITE);
+		}
+
+
 
 		// This checks if the player is holding a bow, and shows the arrow counter accordingly.
 		if (player.activeItem instanceof ToolItem) {
@@ -184,8 +193,6 @@ public class Renderer extends Game {
 				screen.render(10 * 8 + 4, Screen.h - 16, 4 + 3 * 32, 0, 3);
 			}
 		}
-		
-		renderDebugInfo();
 		
 		ArrayList<String> permStatus = new ArrayList<>();
 		if (Updater.saving) permStatus.add("Saving... " + Math.round(LoadingDisplay.getPercentage()) + "%");
@@ -215,15 +222,15 @@ public class Renderer extends Game {
 			Font.drawParagraph(permStatus, screen, style, 1);
 		}
 		
-		/// NOTIFICATIONS
+		// NOTIFICATIONS
 		
 		if (permStatus.size() == 0 && notifications.size() > 0) {
 			Updater.notetick++;
-			if (notifications.size() > 3) { //only show 3 notifs max at one time; erase old notifs.
+			if (notifications.size() > 3) { // only show 3 notifs max at one time; erase old notifs.
 				notifications = notifications.subList(notifications.size() - 3, notifications.size());
 			}
 			
-			if (Updater.notetick > 120) { //display time per notification.
+			if (Updater.notetick > 120) { // display time per notification.
 				notifications.remove(0);
 				Updater.notetick = 0;
 			}
@@ -245,7 +252,7 @@ public class Renderer extends Game {
 			seconds %= 60;
 			
 			int timeCol;
-			if(Updater.scoreTime >= 18000) timeCol = Color.get(0, 555);
+			if (Updater.scoreTime >= 18000) timeCol = Color.get(0, 555);
 			else if (Updater.scoreTime >= 3600) timeCol = Color.get(330, 555);
 			else timeCol = Color.get(400, 555);
 			
@@ -254,7 +261,7 @@ public class Renderer extends Game {
 			String scoreString = "Current score: " + player.getScore();
 			Font.draw(scoreString, screen, Screen.w - Font.textWidth(scoreString)-2, 3 + 8, Color.WHITE);
 			
-			if(player.getMultiplier() > 1) {
+			if (player.getMultiplier() > 1) {
 				int multColor = player.getMultiplier() < Player.MAX_MULTIPLIER ? Color.get(-1, 540) : Color.RED;
 				String mult = "X" + player.getMultiplier();
 				Font.draw(mult, screen, Screen.w-Font.textWidth(mult)-2, 4 + 2*8, multColor);
@@ -270,8 +277,8 @@ public class Renderer extends Game {
 			Font.drawBackground(dura + "%", screen, 164, Screen.h - 16, Color.get(1, 255 - green, green, 0));
 		}
 		
-		/// This renders the potions overlay
-		if(player.showpotioneffects && player.potioneffects.size() > 0) {
+		// This renders the potions overlay
+		if (player.showpotioneffects && player.potioneffects.size() > 0) {
 			Map.Entry<PotionType, Integer>[] effects = player.potioneffects.entrySet().toArray(new Map.Entry[0]);
 			// the key is potion type, value is remaining potion duration.
 			for(int i = 0; i < effects.length; i++) {
@@ -325,9 +332,7 @@ public class Renderer extends Game {
 			}
 		}
 		
-		/// CURRENT ITEM
-		if (player.activeItem != null) // shows active item sprite and name in bottom toolbar, if one exists.
-			player.activeItem.renderInventory(screen, 12 * 7, Screen.h - 8, false);
+		renderDebugInfo();
 	}
 	
 	private static void renderDebugInfo() {

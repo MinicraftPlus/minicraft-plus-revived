@@ -11,7 +11,7 @@ public class Font {
 	private static String chars =
 			"ABCDEFGHIJKLMNOPQRSTUVWXYZ012345"+
 			"6789.,!?'\"-+=/\\%()<>:;^@ÁÉÍÓÚÑ¿¡"+
-			"ÃÊÇÔÕĞÇÜİÖŞ";
+			"ÃÊÇÔÕĞÇÜİÖŞÆØÅ";
 	
 	/* The order of the letters in the chars string is represented in the order that they appear in the sprite-sheet. */
 

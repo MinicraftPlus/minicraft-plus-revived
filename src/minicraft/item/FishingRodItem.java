@@ -3,7 +3,6 @@ package minicraft.item;
 import minicraft.core.Game;
 import minicraft.entity.Direction;
 import minicraft.entity.mob.Player;
-import minicraft.gfx.Color;
 import minicraft.gfx.Sprite;
 import minicraft.level.Level;
 import minicraft.level.tile.Tile;
@@ -46,7 +45,7 @@ public class FishingRodItem extends Item {
     };
 
     public FishingRodItem(int level) {
-        super(LEVEL_NAMES[level] + " Fishing rod", new Sprite(level, 11, 0));
+        super(LEVEL_NAMES[level] + " Fishing Rod", new Sprite(level, 11, 0));
         this.level = level;
     }
 

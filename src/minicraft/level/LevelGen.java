@@ -177,7 +177,7 @@ public class LevelGen {
 	
 	private static byte[][] createAndValidateDungeon(int w, int h) {
 		random.setSeed(worldSeed);
-		int attempt = 0;
+		
 		do {
 			byte[][] result = createDungeon(w, h);
 			
@@ -196,7 +196,7 @@ public class LevelGen {
 
 	private static byte[][] createAndValidateSkyMap(int w, int h) {
 		random.setSeed(worldSeed);
-		int attempt = 0;
+		
 		do {
 			byte[][] result = createSkyMap(w, h);
 			

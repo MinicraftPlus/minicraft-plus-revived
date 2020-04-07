@@ -96,7 +96,6 @@ public class Level {
 		if(depth == 0 || depth == -4) maxMobCount = maxMobCount * 2 / 3;
 	}
 	
-	@SuppressWarnings("unchecked") // @SuppressWarnings ignores the warnings (yellow underline) in this method.
 	/** Level which the world is contained in */
 	public Level(int w, int h, int level, Level parentLevel) {this(w, h, level, parentLevel, true); }
 	public Level(int w, int h, int level, Level parentLevel, boolean makeWorld) {
@@ -104,7 +103,6 @@ public class Level {
 		this.w = w;
 		this.h = h;
 		byte[][] maps; // multidimensional array (an array within a array), used for the map
-		int saveTile;
 		
 		if(level != -4 && level != 0)
 			monsterDensity = 8;

@@ -80,7 +80,7 @@ public class WorldSelectDisplay extends Display {
 				if (files != null && files.length > 0 && files[0].endsWith(Save.extension)) {
 					String name = listOfFiles[i].getName();
 					worldNames.add(name);
-					if(Game.debug) System.out.println("World found: " + name);
+					//if(Game.debug) System.out.println("World found: " + name);
 					worldVersions.add(new Load(name, false).getWorldVersion());
 				}
 			}
