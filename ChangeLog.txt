@@ -1,3 +1,10 @@
+Minicraft+ version 2.0.7
+* Farming update.
+* Made crops grow slower.
++ Added potatoes.
+* Updated some textures; wood now looks better.
+
+
 Minicraft+ version 2.0.6
 
 + Prevented players from getting stuck in skyholes with a cool animation

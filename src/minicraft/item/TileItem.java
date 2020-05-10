@@ -42,11 +42,13 @@ public class TileItem extends StackableItem {
 		
 		items.add(new TileItem("Sand", (new Sprite(6, 3, 0)), "sand", "hole", "water", "lava"));
 		items.add(new TileItem("Cactus", (new Sprite(8, 3, 0)), "cactus Sapling", "sand"));
-		items.add(new TileItem("Seeds", (new Sprite(3, 0, 0)), "wheat", "farmland"));
-		items.add(new TileItem("Grass Seeds", (new Sprite(3, 0, 0)), "grass", "dirt"));
 		items.add(new TileItem("Bone", (new Sprite(9, 3, 0)), "tree", "tree Sapling"));
 		items.add(new TileItem("Cloud", (new Sprite(10, 3, 0)), "cloud", "Infinite Fall"));
-		
+
+		items.add(new TileItem("Wheat Seeds", (new Sprite(3, 0, 0)), "wheat", "farmland"));
+		items.add(new TileItem("Potato", (new Sprite(18, 0, 0)), "potato", "farmland"));
+		items.add(new TileItem("Grass Seeds", (new Sprite(3, 0, 0)), "grass", "dirt"));
+
 		return items;
 	}
 	

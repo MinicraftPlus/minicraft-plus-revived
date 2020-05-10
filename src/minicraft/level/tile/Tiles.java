@@ -3,6 +3,7 @@ package minicraft.level.tile;
 import java.util.ArrayList;
 
 import minicraft.core.Game;
+import minicraft.level.tile.farming.*;
 import minicraft.level.tile.wool.*;
 
 public final class Tiles {
@@ -63,6 +64,7 @@ public final class Tiles {
 		tiles.set(39, new GreenWoolTile("Green Wool"));
 		tiles.set(40, new YellowWoolTile("Yellow Wool"));
 		tiles.set(41, new BlackWoolTile("Black Wool"));
+		tiles.set(42, new PotatoTile("Potato"));
 		
 		for(int i = 0; i < tiles.size(); i++) {
 			if(tiles.get(i) == null) continue;
