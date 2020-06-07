@@ -2,6 +2,7 @@ package minicraft.level.tile.farming;
 
 import minicraft.entity.Entity;
 import minicraft.entity.mob.Player;
+import minicraft.gfx.Screen;
 import minicraft.item.Items;
 import minicraft.level.Level;
 import minicraft.level.tile.Tiles;
@@ -9,6 +10,21 @@ import minicraft.level.tile.Tiles;
 public class PotatoTile extends Plant {
     public PotatoTile(String name) {
         super(name);
+    }
+
+    private int maxAge = 60;
+
+    @Override
+    public void render(Screen screen, Level level, int x, int y) {
+        int age = level.getData(x, y);
+        int icon = age / (maxAge / 5);
+
+        Tiles.get("Farmland").render(screen, level, x, y);
+
+        screen.render(x * 16 + 0, y * 16 + 0, 13 + 1 * 32 + icon, 0, 1);
+        screen.render(x * 16 + 8, y * 16 + 0, 13 + 1 * 32 + icon, 0, 1);
+        screen.render(x * 16 + 0, y * 16 + 8, 13 + 1 * 32 + icon, 1, 1);
+        screen.render(x * 16 + 8, y * 16 + 8, 13 + 1 * 32 + icon, 1, 1);
     }
 
     @Override

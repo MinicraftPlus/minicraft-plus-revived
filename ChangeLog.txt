@@ -1,8 +1,11 @@
 Minicraft+ version 2.0.7
-* Farming update.
+
+* Farming overhaul.
+* Farm tiles will no longer be destroyed if an item is dropped on it.
 * Made crops grow slower.
-+ Added potatoes.
 * Updated some textures; wood now looks better.
++ Added potatoes.
++ Added baked potatoes as food.
 
 
 Minicraft+ version 2.0.6

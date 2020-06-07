@@ -37,20 +37,31 @@ public class Sprite {
 	protected Px[][] spritePixels;
 	public int color = -1;
 	protected java.awt.Rectangle sheetLoc;
-	/// spritePixels is arranged so that the pixels are in their correct positions relative to the top left of the full sprite. This means that their render positions are built-in to the array.
-	
+	// spritePixels is arranged so that the pixels are in their correct positions relative to the top left of the full sprite. This means that their render positions are built-in to the array.
+
 	public Sprite(int pos, int sheet) {
-		this(pos%32, pos/32, 1, 1, sheet);}
+		this(pos%32, pos/32, 1, 1, sheet);
+	}
+
+	/**
+	 * 	Creates a reference to an 8x8 sprite in a spritesheet. Specify the position and sheet of the sprite to create.
+	 * @param sx X position of the sprite in spritesheet coordinates.
+	 * @param sy Y position of the sprite in spritesheet coordinates.
+	 * @param sheet What spritesheet to use.
+	 */
 	public Sprite(int sx, int sy, int sheet) {
 		this(sx, sy, 1, 1, sheet);
 	}
 	public Sprite(int sx, int sy, int sw, int sh) {
-		this(sx, sy, sw, sh, 0, 0);}
+		this(sx, sy, sw, sh, 0, 0);
+	}
 	public Sprite(int sx, int sy, int sw, int sh, int sheet) {
-		this(sx, sy, sw, sh, sheet, 0);}
+		this(sx, sy, sw, sh, sheet, 0);
+	}
 	
 	public Sprite(int sx, int sy, int sw, int sh, int sheet, int mirror) {
-		this(sx, sy, sw, sh, sheet, mirror, false);}
+		this(sx, sy, sw, sh, sheet, mirror, false);
+	}
 	public Sprite(int sx, int sy, int sw, int sh, int sheet, int mirror, boolean onepixel) {
 		sheetLoc = new Rectangle(sx, sy, sw, sh);
 		

@@ -295,7 +295,7 @@ public class Renderer extends Game {
 			for (int i = 0; i < Player.maxStat; i++) {
 				
 				// renders armor
-				int armor = player.armor*Player.maxStat / Player.maxArmor;
+				int armor = player.armor * Player.maxStat / Player.maxArmor;
 				if (i <= armor && player.curArmor != null) {
 					screen.render(i * 8, Screen.h - 24, (player.curArmor.level - 1) + 9 * 32, 0, 0);
 				}
@@ -343,22 +343,22 @@ public class Renderer extends Game {
 			info.add(Initializer.fra + " fps");
 			info.add("day tiks " + Updater.tickCount+" ("+Updater.getTime()+")");
 			info.add((Updater.normSpeed * Updater.gamespeed) + " tik/sec");
-			if(!isValidServer()) {
+			if (!isValidServer()) {
 				info.add("walk spd " + player.moveSpeed);
 				info.add("X " + (player.x / 16) + "-" + (player.x % 16));
 				info.add("Y " + (player.y / 16) + "-" + (player.y % 16));
-				if(levels[currentLevel] != null)
+				if (levels[currentLevel] != null)
 					info.add("Tile " + levels[currentLevel].getTile(player.x>>4, player.y>>4).name);
 				if (isMode("score")) info.add("Score " + player.getScore());
 			}
-			if(levels[currentLevel] != null) {
-				if(!isValidClient())
+			if (levels[currentLevel] != null) {
+				if (!isValidClient())
 					info.add("Mob Cnt " + levels[currentLevel].mobCount + "/" + levels[currentLevel].maxMobCount);
 				else
 					info.add("Mob Load Cnt " + levels[currentLevel].mobCount);
 			}
 			
-			/// Displays number of chests left, if on dungeon level.
+			// Displays number of chests left, if on dungeon level.
 			if (levels[currentLevel] != null && (isValidServer() || currentLevel == 5 && !isValidClient())) {
 				if (levels[5].chestCount > 0)
 					info.add("Chests: " + levels[5].chestCount);
@@ -366,18 +366,18 @@ public class Renderer extends Game {
 					info.add("Chests: Complete!");
 			}
 			
-			if(!isValidServer()) {
+			if (!isValidServer()) {
 				info.add("Hunger stam: " + player.getDebugHunger());
-				if(player.armor > 0) {
+				if (player.armor > 0) {
 					info.add("armor: " + player.armor);
 					info.add("dam buffer: " + player.armorDamageBuffer);
 				}
 			}
 			
 			FontStyle style = new FontStyle(textcol).setShadowType(Color.BLACK, true).setXPos(1);
-			if(Game.isValidServer()) {
+			if (Game.isValidServer()) {
 				style.setYPos(Screen.h).setRelTextPos(RelPos.TOP_RIGHT, true);
-				for(int i = 1; i < info.size(); i++) // reverse order
+				for (int i = 1; i < info.size(); i++) // reverse order
 					info.add(0, info.remove(i));
 			} else
 				style.setYPos(2);

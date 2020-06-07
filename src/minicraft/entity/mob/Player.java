@@ -1075,7 +1075,7 @@ public class Player extends Mob implements ItemHolder, ClientTickable {
 	@Override
 	public void remove() {
 		if(Game.debug) {
-			System.out.println(Network.onlinePrefix() + "removing player from level " + getLevel());
+			System.out.println(Network.onlinePrefix() + "Removing player from level " + getLevel());
 			//Thread.dumpStack();
 		}
 		super.remove();
