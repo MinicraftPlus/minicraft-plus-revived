@@ -3,6 +3,7 @@ package minicraft.core.io;
 import java.awt.GraphicsEnvironment;
 import java.util.HashMap;
 
+import minicraft.core.Game;
 import minicraft.screen.entry.ArrayEntry;
 import minicraft.screen.entry.BooleanEntry;
 import minicraft.screen.entry.RangeEntry;
@@ -12,7 +13,8 @@ public class Settings {
 	private static HashMap<String, ArrayEntry> options = new HashMap<>();
 	
 	static {
-		options.put("fps", new RangeEntry("Max FPS", 10, 300, GraphicsEnvironment.getLocalGraphicsEnvironment().getDefaultScreenDevice().getDisplayMode().getRefreshRate()));
+		// Has to check if the game is running in a headless mode. If it doesn't set the fps to 60
+		options.put("fps", new RangeEntry("Max FPS", 10, 300, Game.HAS_GUI ? GraphicsEnvironment.getLocalGraphicsEnvironment().getDefaultScreenDevice().getDisplayMode().getRefreshRate() : 60));
 		options.put("diff", new ArrayEntry<>("Difficulty", "Easy", "Normal", "Hard"));
 		options.get("diff").setSelection(1);
 		options.put("mode", new ArrayEntry<>("Game Mode", "Survival", "Creative", "Hardcore", "Score"));

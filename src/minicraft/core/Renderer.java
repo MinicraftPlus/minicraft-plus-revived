@@ -339,23 +339,23 @@ public class Renderer extends Game {
 		int textcol = Color.WHITE;
 		if (showinfo) { // renders show debug info on the screen.
 			ArrayList<String> info = new ArrayList<>();
-			info.add("VERSION " + Initializer.VERSION);
+			info.add("VERSION: " + Initializer.VERSION);
 			info.add(Initializer.fra + " fps");
-			info.add("day tiks " + Updater.tickCount+" ("+Updater.getTime()+")");
-			info.add((Updater.normSpeed * Updater.gamespeed) + " tik/sec");
+			info.add("Day tiks: " + Updater.tickCount + " (" + Updater.getTime() + ")");
+			info.add((Updater.normSpeed * Updater.gamespeed) + " tps");
 			if (!isValidServer()) {
-				info.add("walk spd " + player.moveSpeed);
-				info.add("X " + (player.x / 16) + "-" + (player.x % 16));
-				info.add("Y " + (player.y / 16) + "-" + (player.y % 16));
+				info.add("walk spd: " + player.moveSpeed);
+				info.add("X: " + (player.x / 16) + "-" + (player.x % 16));
+				info.add("Y: " + (player.y / 16) + "-" + (player.y % 16));
 				if (levels[currentLevel] != null)
-					info.add("Tile " + levels[currentLevel].getTile(player.x>>4, player.y>>4).name);
-				if (isMode("score")) info.add("Score " + player.getScore());
+					info.add("Tile: " + levels[currentLevel].getTile(player.x>>4, player.y>>4).name);
+				if (isMode("score")) info.add("Score: " + player.getScore());
 			}
 			if (levels[currentLevel] != null) {
 				if (!isValidClient())
-					info.add("Mob Cnt " + levels[currentLevel].mobCount + "/" + levels[currentLevel].maxMobCount);
+					info.add("Mob Cnt: " + levels[currentLevel].mobCount + "/" + levels[currentLevel].maxMobCount);
 				else
-					info.add("Mob Load Cnt " + levels[currentLevel].mobCount);
+					info.add("Mob Load Cnt: " + levels[currentLevel].mobCount);
 			}
 			
 			// Displays number of chests left, if on dungeon level.
@@ -369,8 +369,8 @@ public class Renderer extends Game {
 			if (!isValidServer()) {
 				info.add("Hunger stam: " + player.getDebugHunger());
 				if (player.armor > 0) {
-					info.add("armor: " + player.armor);
-					info.add("dam buffer: " + player.armorDamageBuffer);
+					info.add("Armor: " + player.armor);
+					info.add("Dam buffer: " + player.armorDamageBuffer);
 				}
 			}
 			
