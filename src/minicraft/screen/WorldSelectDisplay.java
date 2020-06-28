@@ -5,6 +5,7 @@ import java.util.ArrayList;
 
 import minicraft.core.Game;
 import minicraft.core.io.InputHandler;
+import minicraft.core.io.Localization;
 import minicraft.gfx.Color;
 import minicraft.gfx.Font;
 import minicraft.gfx.Screen;
@@ -71,14 +72,14 @@ public class WorldSelectDisplay extends Display {
 		}
 		
 		worldVersions.clear();
-		for (int i = 0; i < listOfFiles.length; i++) {
-			if (listOfFiles[i].isDirectory()) {
-				String path = worldsDir + listOfFiles[i].getName() + "/";
+		for (File listOfFile : listOfFiles) {
+			if (listOfFile.isDirectory()) {
+				String path = worldsDir + listOfFile.getName() + "/";
 				File folder2 = new File(path);
 				folder2.mkdirs();
 				String[] files = folder2.list();
 				if (files != null && files.length > 0 && files[0].endsWith(Save.extension)) {
-					String name = listOfFiles[i].getName();
+					String name = listOfFile.getName();
 					worldNames.add(name);
 					//if(Game.debug) System.out.println("World found: " + name);
 					worldVersions.add(new Load(name, false).getWorldVersion());
@@ -173,27 +174,27 @@ public class WorldSelectDisplay extends Display {
 			int col = Color.WHITE;
 			if(version.compareTo(Game.VERSION) > 0) {
 				col = Color.RED;
-				Font.drawCentered("Higher version, cannot load world", screen, Font.textHeight() * 5, col);
+				Font.drawCentered(Localization.getLocalized("Higher version, cannot load world!"), screen, Font.textHeight() * 5, col);
 			}
-			Font.drawCentered("World Version: " + (version.compareTo(new Version("1.9.2")) <= 0 ? "~" : "") + version, screen, Font.textHeight() * 7/2, col);
+			Font.drawCentered(Localization.getLocalized("World Version:") + " " + (version.compareTo(new Version("1.9.2")) <= 0 ? "~" : "") + version, screen, Font.textHeight() * 7/2, col);
 		}
 		
-		Font.drawCentered(Game.input.getMapping("select")+" to confirm", screen, Screen.h - 60, Color.GRAY);
-		Font.drawCentered(Game.input.getMapping("exit")+" to return", screen, Screen.h - 40, Color.GRAY);
+		Font.drawCentered(Game.input.getMapping("select") + Localization.getLocalized(" to confirm"), screen, Screen.h - 60, Color.GRAY);
+		Font.drawCentered(Game.input.getMapping("exit") + Localization.getLocalized(" to return"), screen, Screen.h - 40, Color.GRAY);
 		
-		String title = "Select World";
+		String title = Localization.getLocalized("Select World");
 		int color = Color.WHITE;
 		
 		if(curAction == null) {
 			int y = Screen.h - Font.textHeight() * Action.values.length;
 			
 			for (Action a : Action.values) {
-				Font.drawCentered(a.key + " to " + a, screen, y, a.color);
+				Font.drawCentered(a.key + Localization.getLocalized(" to " + a), screen, y, a.color);
 				y += Font.textHeight();
 			}
 		}
 		else {
-			title = "Select a World to " + curAction;
+			title = Localization.getLocalized("Select a World to " + curAction);
 			color = curAction.color;
 		}
 		

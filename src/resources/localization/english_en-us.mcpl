@@ -1,5 +1,9 @@
 ### entity
 
+# Entity.java
+Entities
+Entities
+
 # AirWizard.java
 Air Wizard: Defeated!
 Air Wizard: Defeated!
@@ -13,10 +17,10 @@ A costume lies on the ground...
 # Bed.java
 Can't sleep!
 Can't sleep!
-	
+
 Min 
 Min 
-	
+
  Sec left!
  Sec left!
 
@@ -29,7 +33,6 @@ Death Chest
 Death Chest
 
 # Player.java
-
 Player
 Player
 
@@ -410,9 +413,6 @@ Wheat Seeds
 Grass Seeds
 Grass Seeds
 
-Potato
-Potato
-
 Bone
 Bone
 
@@ -610,6 +610,12 @@ unable to get localhost address
 ### network end
 
 ### saveload
+
+# Save.java
+
+World Saved!
+World Saved!
+
 ### saveload end
 
 ### screen
@@ -939,26 +945,38 @@ World Gen Options
 
 # WorldSelectMenu.java
 
-Copy
-Copy
+ to Copy
+ to Copy
 
-Rename
-Rename
+ to Rename
+ to Rename
 
-Delete
-Delete
+ to Delete
+ to Delete
 
  to confirm
  to confirm
  
  to return
  to return
- 
+
 Select World
 Select World
 
-Select a World to
-Select a World to
+Select a World to Delete
+Select a World to Delete
+
+Select a World to Rename
+Select a World to Rename
+
+Select a World to Copy
+Select a World to Copy
+
+Higher version, cannot load world!
+Higher version, cannot load world!
+
+World Version:
+World Version:
 
 # LocalizationMenu.java
 
