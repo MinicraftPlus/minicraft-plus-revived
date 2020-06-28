@@ -482,7 +482,7 @@ public class MinicraftClient extends MinicraftConnection {
 	
 	/** This is called when the player.attack() method is called. */
 	public void requestInteraction(Player player) {
-		/// I don't think the player parameter is necessary, but it doesn't harm anything.
+		// I don't think the player parameter is necessary, but it doesn't harm anything.
 		String itemString = player.activeItem != null ? player.activeItem.getData() : "null";
 		sendData(InputType.INTERACT, itemString+";"+player.stamina+";"+player.getInventory().count(Items.arrowItem));
 	}

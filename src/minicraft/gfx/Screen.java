@@ -22,20 +22,12 @@ public class Screen {
 	
 	public int[] pixels; // pixels on the screen
 
-	// DEPRECATED!!!! for backwards compatibility during porting
-	private SpriteSheet sheet; // the sprite sheet used in the Game.
-
 	// since each sheet is 256x256 pixels, each one has 1024 8x8 "tiles"
 	// so 0 is the start of the item sheet 1024 the start of the tile sheet, 2048 the start of the entity sheet,
 	// and 3072 the start of the gui sheet
 
 	private SpriteSheet[] sheets;
 	private SpriteSheet[] sheetsCustom;
-	
-	public Screen(SpriteSheet sheet) {
-		this(sheet, sheet, sheet, sheet);
-		this.sheet = sheet;
-	}
 
 	public Screen(SpriteSheet itemSheet, SpriteSheet tileSheet, SpriteSheet entitySheet, SpriteSheet guiSheet) {
 

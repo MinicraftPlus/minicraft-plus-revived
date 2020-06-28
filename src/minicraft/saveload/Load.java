@@ -115,17 +115,17 @@ public class Load {
 		else
 			new Save();
 		
-		File testFileOld = new File(location+"unlocks"+extension);
-		File testFile = new File(location+"Unlocks"+extension);
+		File testFileOld = new File(location + "unlocks" + extension);
+		File testFile = new File(location + "Unlocks" + extension);
 		if (testFileOld.exists() && !testFile.exists()) {
 			testFileOld.renameTo(testFile);
 			new LegacyLoad(testFile);
 		}
-		else if(!testFile.exists()) {
+		else if (!testFile.exists()) {
 			try {
 				testFile.createNewFile();
 			} catch(IOException ex) {
-				System.err.println("could not create Unlocks"+extension+":");
+				System.err.println("Could not create Unlocks" + extension + ":");
 				ex.printStackTrace();
 			}
 		}
@@ -158,13 +158,13 @@ public class Load {
 		String total;
 		try {
 			total = loadFromFile(filename, true);
-			if(total.length() > 0)
+			if (total.length() > 0)
 				data.addAll(Arrays.asList(total.split(",")));
 		} catch (IOException ex) {
 			ex.printStackTrace();
 		}
 		
-		if(filename.contains("Level")) {
+		if (filename.contains("Level")) {
 			try {
 				total = Load.loadFromFile(filename.substring(0, filename.lastIndexOf("/") + 7) + "data" + extension, true);
 				extradata.addAll(Arrays.asList(total.split(",")));
@@ -522,9 +522,9 @@ public class Load {
 	public void loadInventory(Inventory inventory, List<String> data) {
 		inventory.clearInv();
 		
-		for(int i = 0; i < data.size(); i++) {
+		for (int i = 0; i < data.size(); i++) {
 			String item = data.get(i);
-			if(item.length() == 0) {
+			if (item.length() == 0) {
 				System.err.println("loadInventory: Item in data list is \"\", skipping item");
 				continue;
 			}
@@ -535,9 +535,9 @@ public class Load {
 			
 			if (item.contains("Power Glove")) continue; // just pretend it doesn't exist. Because it doesn't. :P
 			
-			//System.out.println("Loading item: " + item);
+			// System.out.println("Loading item: " + item);
 			
-			if(worldVer.compareTo(new Version("2.0.4")) <= 0 && item.contains(";")) {
+			if (worldVer.compareTo(new Version("2.0.4")) <= 0 && item.contains(";")) {
 				String[] curData = item.split(";");
 				String itemName = curData[0];
 				
@@ -545,12 +545,10 @@ public class Load {
 				
 				int count = Integer.parseInt(curData[1]);
 				
-				if(newItem instanceof StackableItem) {
+				if (newItem instanceof StackableItem) {
 					((StackableItem)newItem).count = count;
 					inventory.add(newItem);
-				}
-				else
-					inventory.add(newItem, count);
+				} else inventory.add(newItem, count);
 			} else {
 				Item toAdd = Items.get(item);
 				inventory.add(toAdd);
@@ -562,15 +560,15 @@ public class Load {
 		LoadingDisplay.setMessage("Entities");
 		loadFromFile(location + filename + extension);
 		
-		for(int i = 0; i < World.levels.length; i++) {
+		for (int i = 0; i < World.levels.length; i++) {
 			World.levels[i].clearEntities();
 		}
-		for(int i = 0; i < data.size(); i++) {
+		for (int i = 0; i < data.size(); i++) {
 			if(data.get(i).startsWith("Player")) continue;
 			loadEntity(data.get(i), worldVer, true);
 		}
 		
-		for(int i = 0; i < World.levels.length; i++) {
+		for (int i = 0; i < World.levels.length; i++) {
 			World.levels[i].checkChestCount();
 			World.levels[i].checkAirWizard();
 		}
@@ -584,7 +582,7 @@ public class Load {
 	@Nullable
 	public static Entity loadEntity(String entityData, Version worldVer, boolean isLocalSave) {
 		entityData = entityData.trim();
-		if(entityData.length() == 0) return null;
+		if (entityData.length() == 0) return null;
 		
 		List<String> info = new ArrayList<>(); // this gets everything inside the "[...]" after the entity name.
 		//System.out.println("Loading entity:" + entityData);
@@ -593,31 +591,31 @@ public class Load {
 		
 		String entityName = entityData.substring(0, entityData.indexOf("[")); // this gets the text before "[", which is the entity name.
 		
-		if(entityName.equals("Player") && Game.debug && Game.isValidClient())
+		if (entityName.equals("Player") && Game.debug && Game.isValidClient())
 			System.out.println("CLIENT WARNING: Loading regular player: " + entityData);
 		
 		int x = Integer.parseInt(info.get(0));
 		int y = Integer.parseInt(info.get(1));
 		
 		int eid = -1;
-		if(!isLocalSave) {
+		if (!isLocalSave) {
 			eid = Integer.parseInt(info.remove(2));
 			
 			/// If I find an entity that is loaded locally, but on another level in the entity data provided, then I ditch the current entity and make a new one from the info provided.
 			Entity existing = Network.getEntity(eid);
 			int entityLevel = Integer.parseInt(info.get(info.size()-1));
 			
-			if(existing != null) {
+			if (existing != null) {
 				// existing one is out of date; replace it.
 				existing.remove();
 				Game.levels[Game.currentLevel].add(existing);
 				return null;
 			}
 			
-			if(Game.isValidClient()) {
-				if(eid == Game.player.eid)
+			if (Game.isValidClient()) {
+				if (eid == Game.player.eid)
 					return Game.player; // don't reload the main player via an entity addition, though do add it to the level (will be done elsewhere)
-				if(Game.player instanceof RemotePlayer &&
+				if (Game.player instanceof RemotePlayer &&
 					!((RemotePlayer)Game.player).shouldTrack(x >> 4, y >> 4, World.levels[entityLevel])
 				) {
 					// the entity is too far away to bother adding to the level.
@@ -631,8 +629,8 @@ public class Load {
 		
 		Entity newEntity = null;
 		
-		if(entityName.equals("RemotePlayer")) {
-			if(isLocalSave) {
+		if (entityName.equals("RemotePlayer")) {
+			if (isLocalSave) {
 				System.err.println("Remote player found in local save file.");
 				return null; // don't load them; in fact, they shouldn't be here.
 			}
@@ -649,10 +647,10 @@ public class Load {
 				ex.printStackTrace();
 			}
 		}
-		else if(entityName.equals("Spark") && !isLocalSave) {
+		else if (entityName.equals("Spark") && !isLocalSave) {
 			int awID = Integer.parseInt(info.get(2));
 			Entity sparkOwner = Network.getEntity(awID);
-			if(sparkOwner != null && sparkOwner instanceof AirWizard)
+			if (sparkOwner != null && sparkOwner instanceof AirWizard)
 				newEntity = new Spark((AirWizard)sparkOwner, x, y);
 			else {
 				System.err.println("failed to load spark; owner id doesn't point to a correct entity");
@@ -800,7 +798,7 @@ public class Load {
 			case "FireParticle": return new FireParticle(0, 0);
 			case "SmashParticle": return new SmashParticle(0, 0);
 			case "TextParticle": return new TextParticle("", 0, 0, 0);
-			default : System.err.println("LOAD ERROR: unknown or outdated entity requested: " + string);
+			default : System.err.println("LOAD ERROR: Unknown or outdated entity requested: " + string);
 				return null;
 		}
 	}

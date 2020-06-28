@@ -88,7 +88,6 @@ public class InputHandler implements KeyListener {
 	public InputHandler(Component inputSource) {
 		this();
 		inputSource.addKeyListener(this); //add key listener to game
-		//inputSource.addMouseListener(this); //add mouse listener to game (though it's never used)
 	}
 	
 	private void initKeyMap() {

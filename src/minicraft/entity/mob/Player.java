@@ -558,9 +558,13 @@ public class Player extends Mob implements ItemHolder, ClientTickable {
 			attackItem = activeItem;
 			
 			Game.client.requestInteraction(this);
-			if(activeItem instanceof ToolItem && stamina - 1 >= 0 && ((ToolItem)activeItem).type == ToolType.Bow && inventory.count(Items.arrowItem) > 0) // we are going to use an arrow.
-				inventory.removeItem(Items.arrowItem); // do it here so we don't need a response.
-			
+			// we are going to use an arrow.
+			if((activeItem instanceof ToolItem) // Is the player currently holding a tool?
+					&& ((stamina - 1) >= 0) // Does the player have any more stamina left?
+					&& (((ToolItem) activeItem).type == ToolType.Bow) // Is the item a bow?
+					&& (inventory.count(Items.arrowItem) > 0)) { // Does the player have an arrow in its inventory?
+				inventory.removeItem(Items.arrowItem); // Remove the arrow from the inventory.
+			}
 			return;
 		}
 		

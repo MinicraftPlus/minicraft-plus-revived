@@ -88,7 +88,7 @@ public class Updater extends Game {
 				}
 			}
 			if (tickCount > sleepEndTime) {
-				if (Game.debug) System.out.println(Network.onlinePrefix()+"passing midnight in bed");
+				if (Game.debug) System.out.println(Network.onlinePrefix() + "passing midnight in bed");
 				pastDay1 = true;
 				tickCount = 0;
 				if (isValidServer())

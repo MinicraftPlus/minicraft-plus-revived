@@ -64,7 +64,7 @@ public class Renderer extends Game {
 	}
 	
 	static void initScreen() {
-		if(!HAS_GUI) return;
+		if (!HAS_GUI) return;
 		
 		image = new BufferedImage(WIDTH, HEIGHT, BufferedImage.TYPE_INT_RGB);
 		pixels = ((DataBufferInt) image.getRaster().getDataBuffer()).getData();
@@ -77,7 +77,7 @@ public class Renderer extends Game {
 		}
 		screen.pixels = pixels;
 		
-		if(HAS_GUI) {
+		if (HAS_GUI) {
 			canvas.createBufferStrategy(3);
 			canvas.requestFocus();
 		}
@@ -86,15 +86,15 @@ public class Renderer extends Game {
 	
 	/** renders the current screen. Called in game loop, a bit after tick(). */
 	public static void render() {
-		if(!HAS_GUI || screen == null) return; // no point in this if there's no gui... :P
+		if (!HAS_GUI || screen == null) return; // no point in this if there's no gui... :P
 		
-		if(readyToRenderGameplay) {
-			if(isValidServer()) {
+		if (readyToRenderGameplay) {
+			if (isValidServer()) {
 				screen.clear(0);
 				Font.drawCentered("Awaiting client connections"+ ellipsis.updateAndGet(), screen, 10, Color.get(-1, 444));
 				Font.drawCentered("So far:", screen, 20, Color.get(-1, 444));
 				int i = 0;
-				for(String playerString: server.getClientInfo()) {
+				for (String playerString: server.getClientInfo()) {
 					Font.drawCentered(playerString, screen, 30+i*10, Color.get(-1, 134));
 					i++;
 				}
