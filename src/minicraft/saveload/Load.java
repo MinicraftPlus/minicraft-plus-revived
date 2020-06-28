@@ -493,20 +493,25 @@ public class Load {
 	}
 	
 	protected static String subOldName(String name, Version worldVer) {
-		if(worldVer.compareTo(new Version("1.9.4-dev4")) < 0) {
+		if (worldVer.compareTo(new Version("1.9.4-dev4")) < 0) {
 			name = name.replace("Hatchet", "Axe").replace("Pick", "Pickaxe").replace("Pickaxeaxe", "Pickaxe").replace("Spade", "Shovel").replace("Pow glove", "Power Glove").replace("II", "").replace("W.Bucket", "Water Bucket").replace("L.Bucket", "Lava Bucket").replace("G.Apple", "Gold Apple").replace("St.", "Stone").replace("Ob.", "Obsidian").replace("I.Lantern", "Iron Lantern").replace("G.Lantern", "Gold Lantern").replace("BrickWall", "Wall").replace("Brick", " Brick").replace("Wall", " Wall").replace("  ", " ");
-			if(name.equals("Bucket"))
+			if (name.equals("Bucket"))
 				name = "Empty Bucket";
 		}
 		
-		if(worldVer.compareTo(new Version("1.9.4")) < 0) {
+		if (worldVer.compareTo(new Version("1.9.4")) < 0) {
 			name = name.replace("I.Armor", "Iron Armor").replace("S.Armor", "Snake Armor").replace("L.Armor", "Leather Armor").replace("G.Armor", "Gold Armor").replace("BrickWall", "Wall");
 		}
 
-		if(worldVer.compareTo(new Version("2.0.6-dev3")) < 0) {
+		if (worldVer.compareTo(new Version("2.0.6-dev3")) < 0) {
 			name = name.replace("Fishing Rod", "Wood Fishing Rod");
 		}
-		
+
+		// Only runs if the version is less than 2.0.7-dev1. If it were to run at a later version, items such as wheat seeds would be renamed to "wheat wheat seeds".
+		if (worldVer.compareTo(new Version("2.0.7-dev1")) < 0) {
+			name = name.replace("Seeds", "Wheat Seeds");
+		}
+
 		return name;
 	}
 	
@@ -524,7 +529,7 @@ public class Load {
 				continue;
 			}
 			
-			if(worldVer.compareTo(new Version("1.9.4")) < 0) {
+			if (worldVer.compareTo(new Version("2.0.7-dev1")) < 0) {
 				item = subOldName(item, worldVer);
 			}
 			
@@ -689,7 +694,7 @@ public class Load {
 			int endIdx = chestInfo.size()-(isDeathChest||isDungeonChest?1:0);
 			for(int idx = 0; idx < endIdx; idx++) {
 				String itemData = chestInfo.get(idx);
-				if(worldVer.compareTo(new Version("1.9.4-dev4")) < 0)
+				if(worldVer.compareTo(new Version("2.0.7-dev1")) < 0)
 					itemData = subOldName(itemData, worldVer);
 								
 				if(itemData.contains("Power Glove")) continue; // ignore it.

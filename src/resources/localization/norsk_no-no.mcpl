@@ -166,6 +166,9 @@ Biff
 Gold Apple
 Gull Eple
 
+Baked Potato
+Bakt Potet
+
 # FurnitureItem.java
 
 Cow Spawner
@@ -421,6 +424,9 @@ Kan bare settes på
 
 Dig a hole first!
 Grav et hull først!
+
+Potato
+Potet
 
 # ToolItem.java
 

@@ -13,16 +13,13 @@ import minicraft.level.tile.Tile;
 import minicraft.level.tile.Tiles;
 
 public class Plant extends FarmTile {
-    protected static final int maxAge = 100;
+    protected static int maxAge = 100;
     private String name;
 
     protected Plant(String name) {
         super(name, (Sprite)null);
         this.name = name;
     }
-
-    @Override
-    public void render(Screen screen, Level level, int x, int y) {}
 
     @Override
     public void steppedOn(Level level, int xt, int yt, Entity entity) {
@@ -57,6 +54,8 @@ public class Plant extends FarmTile {
 
         return false;
     }
+
+    /** Default harvest method, used for everything that doesn't really need any special behavior. */
     protected void harvest(Level level, int x, int y, Entity entity) {
         int age = level.getData(x, y);
 

@@ -12,7 +12,9 @@ public class PotatoTile extends Plant {
         super(name);
     }
 
-    private int maxAge = 60;
+    static {
+        maxAge = 70;
+    }
 
     @Override
     public void render(Screen screen, Level level, int x, int y) {
@@ -35,13 +37,13 @@ public class PotatoTile extends Plant {
         if (age >= maxAge) {
             count = random.nextInt(3) + 2;
         } else if (age >= maxAge - maxAge / 5) {
-            count = random.nextInt(2) + 1;
+            count = random.nextInt(2);
         }
 
         level.dropItem(x*16+8, y*16+8, count + 1, Items.get("Potato"));
 
         if (age >= maxAge && entity instanceof Player) {
-            ((Player)entity).addScore(random.nextInt(5) + 1);
+            ((Player)entity).addScore(random.nextInt(4) + 1);
         }
 
         level.setTile(x, y, Tiles.get("Dirt"));
