@@ -462,9 +462,9 @@ public class Load {
 		String potioneffects = data.remove(0);
 		if(!potioneffects.equals("PotionEffects[]")) {
 			String[] effects = potioneffects.replace("PotionEffects[", "").replace("]", "").split(":");
-			
-			for(int i = 0; i < effects.length; i++) {
-				String[] effect = effects[i].split(";");
+
+			for (String s : effects) {
+				String[] effect = s.split(";");
 				PotionType pName = Enum.valueOf(PotionType.class, effect[0]);
 				PotionItem.applyPotion(player, pName, Integer.parseInt(effect[1]));
 			}
@@ -509,7 +509,8 @@ public class Load {
 
 		// Only runs if the version is less than 2.0.7-dev1. If it were to run at a later version, items such as wheat seeds would be renamed to "wheat wheat seeds".
 		if (worldVer.compareTo(new Version("2.0.7-dev1")) < 0) {
-			name = name.replace("Seeds", "Wheat Seeds");
+			if (name.startsWith("Seeds"))
+				name = name.replace("Seeds", "Wheat Seeds");
 		}
 
 		return name;
@@ -521,32 +522,31 @@ public class Load {
 	}
 	public void loadInventory(Inventory inventory, List<String> data) {
 		inventory.clearInv();
-		
-		for (int i = 0; i < data.size(); i++) {
-			String item = data.get(i);
+
+		for (String item : data) {
 			if (item.length() == 0) {
 				System.err.println("loadInventory: Item in data list is \"\", skipping item");
 				continue;
 			}
-			
+
 			if (worldVer.compareTo(new Version("2.0.7-dev1")) < 0) {
 				item = subOldName(item, worldVer);
 			}
-			
+
 			if (item.contains("Power Glove")) continue; // just pretend it doesn't exist. Because it doesn't. :P
-			
+
 			// System.out.println("Loading item: " + item);
-			
+
 			if (worldVer.compareTo(new Version("2.0.4")) <= 0 && item.contains(";")) {
 				String[] curData = item.split(";");
 				String itemName = curData[0];
-				
+
 				Item newItem = Items.get(itemName);
-				
+
 				int count = Integer.parseInt(curData[1]);
-				
+
 				if (newItem instanceof StackableItem) {
-					((StackableItem)newItem).count = count;
+					((StackableItem) newItem).count = count;
 					inventory.add(newItem);
 				} else inventory.add(newItem, count);
 			} else {
@@ -563,9 +563,9 @@ public class Load {
 		for (int i = 0; i < World.levels.length; i++) {
 			World.levels[i].clearEntities();
 		}
-		for (int i = 0; i < data.size(); i++) {
-			if(data.get(i).startsWith("Player")) continue;
-			loadEntity(data.get(i), worldVer, true);
+		for (String name : data) {
+			if (name.startsWith("Player")) continue;
+			loadEntity(name, worldVer, true);
 		}
 		
 		for (int i = 0; i < World.levels.length; i++) {
