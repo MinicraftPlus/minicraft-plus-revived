@@ -1,21 +1,6 @@
 package minicraft.network;
 
-import java.io.File;
-import java.io.IOException;
-import java.net.ServerSocket;
-import java.net.SocketException;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
-import java.util.Timer;
-import java.util.TimerTask;
-
-import minicraft.core.Game;
-import minicraft.core.MyUtils;
-import minicraft.core.Network;
-import minicraft.core.Updater;
-import minicraft.core.World;
+import minicraft.core.*;
 import minicraft.core.io.Settings;
 import minicraft.entity.Direction;
 import minicraft.entity.Entity;
@@ -26,21 +11,21 @@ import minicraft.entity.furniture.DeathChest;
 import minicraft.entity.furniture.Furniture;
 import minicraft.entity.mob.Player;
 import minicraft.entity.mob.RemotePlayer;
-import minicraft.item.Item;
-import minicraft.item.Items;
-import minicraft.item.PotionItem;
-import minicraft.item.PotionType;
-import minicraft.item.StackableItem;
-import minicraft.item.UnknownItem;
+import minicraft.item.*;
 import minicraft.level.Level;
 import minicraft.level.tile.Tile;
 import minicraft.saveload.Load;
 import minicraft.saveload.Save;
 import minicraft.saveload.Version;
 import minicraft.screen.WorldSelectDisplay;
-
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+
+import java.io.File;
+import java.io.IOException;
+import java.net.ServerSocket;
+import java.net.SocketException;
+import java.util.*;
 
 public class MinicraftServer extends Thread implements MinicraftProtocol {
 	
@@ -81,7 +66,6 @@ public class MinicraftServer extends Thread implements MinicraftProtocol {
 	
 	public void run() {
 		if(Game.debug) System.out.println("server started.");
-		
 		Timer gameUpdateTimer = new Timer("GameUpdateTimer");
 		gameUpdateTimer.schedule((new MyTask() {
 			public void run() { updateGameVars(); }
