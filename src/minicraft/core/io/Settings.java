@@ -14,7 +14,7 @@ public class Settings {
 	
 	static {
 		// Has to check if the game is running in a headless mode. If it doesn't set the fps to 60
-		options.put("fps", new RangeEntry("Max FPS", 10, 300, Game.HAS_GUI ? GraphicsEnvironment.getLocalGraphicsEnvironment().getDefaultScreenDevice().getDisplayMode().getRefreshRate() : 60));
+		options.put("fps", new RangeEntry("Max FPS", 10, 300, getRefreshRate()));
 		options.put("diff", new ArrayEntry<>("Difficulty", "Easy", "Normal", "Hard"));
 		options.get("diff").setSelection(1);
 		options.put("mode", new ArrayEntry<>("Game Mode", "Survival", "Creative", "Hardcore", "Score"));
@@ -68,5 +68,14 @@ public class Settings {
 	// sets the index of the value of the given option, provided it is a valid index
 	public static void setIdx(String option, int idx) {
 		options.get(option.toLowerCase()).setSelection(idx);
+	}
+
+	private static int getRefreshRate() {
+		if (GraphicsEnvironment.isHeadless()) return 60;
+
+		int hz = GraphicsEnvironment.getLocalGraphicsEnvironment().getDefaultScreenDevice().getDisplayMode().getRefreshRate();
+		if (10 > hz) return 60;
+		if (hz > 300) return 60;
+		return hz;
 	}
 }
