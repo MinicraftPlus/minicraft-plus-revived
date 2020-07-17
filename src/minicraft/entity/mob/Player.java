@@ -706,6 +706,7 @@ public class Player extends Mob implements ItemHolder, ClientTickable {
 		for (int i = 0; i < entities.size(); i++) {
 			Entity e = entities.get(i);
 			if (e instanceof Furniture && ((Furniture)e).use(this)) return true; // if the entity is not the player, then call it's use method, and return the result. Only some furniture classes use this.
+			else if (e instanceof Boat && ((Boat)e).use(this)) return true;
 		}
 		return false;
 	}
