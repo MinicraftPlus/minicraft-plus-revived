@@ -9,17 +9,17 @@ import minicraft.core.Game;
 
 public class Sound {
 	//creates sounds from their respective files
-	public static final Sound playerHurt = new Sound("/resources/playerhurt.wav");
-	public static final Sound playerDeath = new Sound("/resources/death.wav");
-	public static final Sound monsterHurt = new Sound("/resources/monsterhurt.wav");
-	public static final Sound bossDeath = new Sound("/resources/bossdeath.wav");
-	public static final Sound fuse = new Sound("/resources/fuse.wav");
-	public static final Sound explode = new Sound("/resources/explode.wav");
-	public static final Sound pickup = new Sound("/resources/pickup.wav");
-	public static final Sound craft = new Sound("/resources/craft.wav");
-	public static final Sound back = new Sound("/resources/craft.wav");
-	public static final Sound select = new Sound("/resources/select.wav");
-	public static final Sound confirm = new Sound("/resources/confirm.wav");
+	public static final Sound playerHurt = new Sound("/resources/sound/playerhurt.wav");
+	public static final Sound playerDeath = new Sound("/resources/sound/death.wav");
+	public static final Sound monsterHurt = new Sound("/resources/sound/monsterhurt.wav");
+	public static final Sound bossDeath = new Sound("/resources/sound/bossdeath.wav");
+	public static final Sound fuse = new Sound("/resources/sound/fuse.wav");
+	public static final Sound explode = new Sound("/resources/sound/explode.wav");
+	public static final Sound pickup = new Sound("/resources/sound/pickup.wav");
+	public static final Sound craft = new Sound("/resources/sound/craft.wav");
+	public static final Sound back = new Sound("/resources/sound/craft.wav");
+	public static final Sound select = new Sound("/resources/sound/select.wav");
+	public static final Sound confirm = new Sound("/resources/sound/confirm.wav");
 	
 	private Clip clip; // Creates a audio clip to be played
 	

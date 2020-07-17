@@ -1,0 +1,5 @@
+With the default controls...
+
+Move your character with arrow keys or WSAD. Press C to attack and X to open the inventory, and to use items. Pickup furniture and torches with V. Select an item in the inventory to equip it.
+
+The Goal: Defeat the air wizard!
