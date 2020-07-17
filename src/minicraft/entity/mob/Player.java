@@ -1,9 +1,5 @@
 package minicraft.entity.mob;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-
 import minicraft.core.Game;
 import minicraft.core.Network;
 import minicraft.core.Updater;
@@ -11,35 +7,24 @@ import minicraft.core.World;
 import minicraft.core.io.InputHandler;
 import minicraft.core.io.Settings;
 import minicraft.core.io.Sound;
-import minicraft.entity.Arrow;
-import minicraft.entity.ClientTickable;
-import minicraft.entity.Direction;
-import minicraft.entity.Entity;
-import minicraft.entity.ItemEntity;
-import minicraft.entity.ItemHolder;
+import minicraft.entity.*;
 import minicraft.entity.furniture.Bed;
 import minicraft.entity.furniture.DeathChest;
 import minicraft.entity.furniture.Furniture;
 import minicraft.entity.furniture.Tnt;
 import minicraft.entity.particle.TextParticle;
-import minicraft.gfx.Color;
-import minicraft.gfx.MobSprite;
-import minicraft.gfx.Point;
-import minicraft.gfx.Rectangle;
-import minicraft.gfx.Screen;
+import minicraft.gfx.*;
 import minicraft.item.*;
 import minicraft.level.Level;
 import minicraft.level.tile.Tile;
 import minicraft.level.tile.Tiles;
 import minicraft.saveload.Save;
-import minicraft.screen.CraftingDisplay;
-import minicraft.screen.InfoDisplay;
-import minicraft.screen.LoadingDisplay;
-import minicraft.screen.PauseDisplay;
-import minicraft.screen.PlayerInvDisplay;
-import minicraft.screen.WorldSelectDisplay;
-
+import minicraft.screen.*;
 import org.jetbrains.annotations.Nullable;
+
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
 
 public class Player extends Mob implements ItemHolder, ClientTickable {
 	protected InputHandler input;
