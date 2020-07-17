@@ -1,11 +1,10 @@
 package minicraft.item;
 
-import java.util.ArrayList;
-
 import minicraft.core.Network;
-
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+
+import java.util.ArrayList;
 
 public class Items {
 	
@@ -42,6 +41,7 @@ public class Items {
 		addAll(ArmorItem.getAllInstances());
 		addAll(PotionItem.getAllInstances());
 		addAll(FishingRodItem.getAllInstances());
+		add(new BoatItem("Boat"));
 	}
 	
 	/** fetches an item from the list given its name. */
