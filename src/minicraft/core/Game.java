@@ -1,14 +1,5 @@
 package minicraft.core;
 
-import javax.swing.JOptionPane;
-import javax.swing.JScrollPane;
-import javax.swing.JTextArea;
-
-import java.io.PrintWriter;
-import java.io.StringWriter;
-import java.util.ArrayList;
-import java.util.List;
-
 import minicraft.core.io.InputHandler;
 import minicraft.core.io.Settings;
 import minicraft.core.io.Sound;
@@ -22,8 +13,13 @@ import minicraft.saveload.Version;
 import minicraft.screen.Display;
 import minicraft.screen.MultiplayerDisplay;
 import minicraft.screen.TitleDisplay;
-
 import org.jetbrains.annotations.Nullable;
+
+import javax.swing.*;
+import java.io.PrintWriter;
+import java.io.StringWriter;
+import java.util.ArrayList;
+import java.util.List;
 
 public class Game {
 	Game() {} // can't instantiate the Game class.
@@ -72,7 +68,10 @@ public class Game {
 	public static boolean isValidServer() { return ISONLINE && ISHOST && server != null; }
 	public static boolean hasConnectedClients() { return isValidServer() && server.hasClients(); }
 	
-	
+
+	// Unlocks
+	public static final UnlockableRecipes unlockableRecipes = new UnlockableRecipes();
+
 	// LEVEL
 	
 	public static Level[] levels = new Level[6]; // This array stores the different levels.
