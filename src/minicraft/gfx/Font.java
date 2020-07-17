@@ -1,10 +1,10 @@
 package minicraft.gfx;
 
+import minicraft.core.io.Localization;
+
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-
-import minicraft.core.io.Localization;
 
 public class Font {
 	// These are all the characters that will be translated to the screen. (The spaces are important)
@@ -39,6 +39,23 @@ public class Font {
 				// render the black background
 				screen.render(x + i * textWidth(msg.substring(i, i+1)), y, 30 + 30 * 32, 0, 3);
 
+				screen.render(x + i * textWidth(msg.substring(i, i+1)), y, ix + 28 * 32, 0, 3, whiteTint);
+			}
+		}
+	}
+
+	public static void drawCompleteBackground(String msg, Screen screen, int x, int y) {
+		drawCompleteBackground(msg, screen, x, y, -1);
+	}
+
+	public static void drawCompleteBackground(String msg, Screen screen, int x, int y, int whiteTint) {
+		msg = msg.toUpperCase(Localization.getSelectedLocale());
+
+		for (int i = 0; i < msg.length(); i++) {
+			int ix = chars.indexOf(msg.charAt(i));
+			// render the black background
+			screen.render(x + i * textWidth(msg.substring(i, i+1)), y, 30 + 30 * 32, 0, 3);
+			if (ix >= 0) {
 				screen.render(x + i * textWidth(msg.substring(i, i+1)), y, ix + 28 * 32, 0, 3, whiteTint);
 			}
 		}
