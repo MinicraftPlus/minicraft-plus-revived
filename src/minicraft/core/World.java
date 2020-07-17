@@ -2,6 +2,7 @@ package minicraft.core;
 
 import minicraft.core.io.Settings;
 import minicraft.entity.furniture.Bed;
+import minicraft.entity.mob.BoatMan;
 import minicraft.entity.mob.Player;
 import minicraft.entity.mob.RemotePlayer;
 import minicraft.level.Level;
@@ -148,7 +149,15 @@ public class World extends Game {
 				Level level = levels[currentLevel]; // sets level to the current level (3; surface)
 				Updater.pastDay1 = false;
 				player.findStartPos(level, WorldGenDisplay.getSeed()); // finds the start level for the player
+
+				BoatMan boatMan = new BoatMan();
+				boatMan.x = player.x + 16;
+				boatMan.y = player.y + 16;
+
+				level.add(boatMan);
 				level.add(player);
+
+				boatMan.setStartingPosition();
 			}
 			
 			Renderer.readyToRenderGameplay = true;
