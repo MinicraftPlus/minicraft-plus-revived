@@ -1,27 +1,12 @@
 package minicraft.saveload;
 
-import java.awt.image.BufferedImage;
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileReader;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-
 import minicraft.core.Game;
 import minicraft.core.Network;
 import minicraft.core.Updater;
 import minicraft.core.World;
 import minicraft.core.io.Localization;
 import minicraft.core.io.Settings;
-import minicraft.entity.Arrow;
-import minicraft.entity.Direction;
-import minicraft.entity.Entity;
-import minicraft.entity.ItemEntity;
-import minicraft.entity.Spark;
+import minicraft.entity.*;
 import minicraft.entity.furniture.*;
 import minicraft.entity.mob.*;
 import minicraft.entity.particle.FireParticle;
@@ -34,10 +19,14 @@ import minicraft.level.tile.Tiles;
 import minicraft.network.MinicraftServer;
 import minicraft.screen.LoadingDisplay;
 import minicraft.screen.MultiplayerDisplay;
-
 import org.jetbrains.annotations.Nullable;
 
 import javax.imageio.ImageIO;
+import java.awt.image.BufferedImage;
+import java.io.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
 public class Load {
 	
@@ -795,6 +784,7 @@ public class Load {
 			case "FireParticle": return new FireParticle(0, 0);
 			case "SmashParticle": return new SmashParticle(0, 0);
 			case "TextParticle": return new TextParticle("", 0, 0, 0);
+			case "BoatMan": return new BoatMan();
 			default : System.err.println("LOAD ERROR: unknown or outdated entity requested: " + string);
 				return null;
 		}
