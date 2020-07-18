@@ -1,6 +1,7 @@
 package minicraft.entity;
 
 import minicraft.core.Game;
+import minicraft.core.Updater;
 import minicraft.entity.mob.Player;
 import minicraft.entity.mob.RemotePlayer;
 import minicraft.gfx.Rectangle;
@@ -15,6 +16,8 @@ public class Boat extends Entity {
     private static final Sprite boatSprite = new Sprite(0, 25, 0);
 
     private Player playerInBoat = null;
+
+    private int exitTimer = 0;
 
     public Boat() {
         super(1, 1);
@@ -32,13 +35,22 @@ public class Boat extends Entity {
     @Override
     public void tick() {
         if (playerInBoat != null) {
-            int ya = 0;
-            int xa = 0;
+            exitTimer--;
 
-            if (Game.input.getKey("move-up").down) ya--;
-            if (Game.input.getKey("move-down").down) ya++;
-            if (Game.input.getKey("move-left").down) xa--;
-            if (Game.input.getKey("move-right").down) xa++;
+            if (exitTimer <= 0 && Game.input.getKey("craft").down) {
+                if (Game.player.equals(playerInBoat)) {
+                    playerInBoat = null;
+                    return;
+                }
+            }
+
+            double ya = 0;
+            double xa = 0;
+
+            if (Game.input.getKey("move-up").down) ya -= 2;
+            if (Game.input.getKey("move-down").down) ya += 2;
+            if (Game.input.getKey("move-left").down) xa -= 2;
+            if (Game.input.getKey("move-right").down) xa += 2;
 
             move(xa, ya);
             playerInBoat.x = x;
@@ -53,15 +65,9 @@ public class Boat extends Entity {
     }
 
     public boolean use(Player player) {
-        System.out.println("use");
-
         if (playerInBoat == null) {
             playerInBoat = player;
-            return true;
-        }
-
-        if (playerInBoat.equals(player)) {
-            playerInBoat = null;
+            exitTimer = 10;
             return true;
         }
 
@@ -88,8 +94,22 @@ public class Boat extends Entity {
         //if (Game.debug) System.out.println("set active item of player " + player + " to " + player.activeItem + "; picked up furniture: " + this);
     }
 
-    @Override
-    public boolean move2(int xa, int ya) {
+    public boolean move(double xa, double ya) {
+        if(Updater.saving || (xa == 0 && ya == 0)) return true; // pretend that it kept moving
+
+        boolean stopped = true; // used to check if the entity has BEEN stopped, COMPLETELY; below checks for a lack of collision.
+        if(move2(xa, 0)) stopped = false; // becomes false if horizontal movement was successful.
+        if(move2(0, ya)) stopped = false; // becomes false if vertical movement was successful.
+        if (!stopped) {
+            int xt = x >> 4; // the x tile coordinate that the entity is standing on.
+            int yt = y >> 4; // the y tile coordinate that the entity is standing on.
+            level.getTile(xt, yt).steppedOn(level, xt, yt, this); // Calls the steppedOn() method in a tile's class. (used for tiles like sand (footprints) or lava (burning))
+        }
+
+        return !stopped;
+    }
+
+    public boolean move2(double xa, double ya) {
         if(xa == 0 && ya == 0) return true; // was not stopped
 
         boolean interact = true;//!Game.isValidClient() || this instanceof ClientTickable;
@@ -101,10 +121,10 @@ public class Boat extends Entity {
         int yto1 = ((y) + 1) >> 4; // below
 
         // gets same as above, but after movement.
-        int xt0 = ((x + xa) - 1) >> 4;
-        int yt0 = ((y + ya) - 1) >> 4;
-        int xt1 = ((x + xa) + 1) >> 4;
-        int yt1 = ((y + ya) + 1) >> 4;
+        int xt0 = (int)((x + xa) - 1) >> 4;
+        int yt0 = (int)((y + ya) - 1) >> 4;
+        int xt1 = (int)((x + xa) + 1) >> 4;
+        int yt1 = (int)((y + ya) + 1) >> 4;
 
         //boolean blocked = false; // if the next tile can block you.
         for (int yt = yt0; yt <= yt1; yt++) { // cycles through y's of tile after movement
@@ -118,7 +138,7 @@ public class Boat extends Entity {
         List<Entity> wasInside = level.getEntitiesInRect(getBounds()); // gets all of the entities that are inside this entity (aka: colliding) before moving.
 
         int xr = 1, yr = 1;
-        List<Entity> isInside = level.getEntitiesInRect(new Rectangle(x+xa, y+ya, xr*2, yr*2, Rectangle.CENTER_DIMS)); // gets the entities that this entity will touch once moved.
+        List<Entity> isInside = level.getEntitiesInRect(new Rectangle(x+(int)xa, y+(int)ya, xr*2, yr*2, Rectangle.CENTER_DIMS)); // gets the entities that this entity will touch once moved.
         for (int i = 0; interact && i < isInside.size(); i++) {
             /// cycles through entities about to be touched, and calls touchedBy(this) for each of them.
             Entity e = isInside.get(i);
