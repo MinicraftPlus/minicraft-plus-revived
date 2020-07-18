@@ -117,16 +117,7 @@ public class BoatMan extends Mob {
             }
         }
 
-        //x = startPos.x;
-        //y = startPos.y;
-        System.out.println("Found starting point: " + startPos.x + ", " + startPos.y);
-
-        System.out.println(Game.isValidServer());
-        System.out.println(Game.hasConnectedClients());
-        System.out.println(Game.isValidClient());
-        System.out.println(Game.isConnectedClient());
-        System.out.println(Game.server);
-        System.out.println(Game.client);
-
+        x = startPos.x;
+        y = startPos.y;
     }
 }

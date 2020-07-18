@@ -151,13 +151,9 @@ public class World extends Game {
 				player.findStartPos(level, WorldGenDisplay.getSeed()); // finds the start level for the player
 
 				BoatMan boatMan = new BoatMan();
-				boatMan.x = player.x + 16;
-				boatMan.y = player.y + 16;
-
+				boatMan.setStartingPosition();
 				level.add(boatMan);
 				level.add(player);
-
-				boatMan.setStartingPosition();
 			}
 			
 			Renderer.readyToRenderGameplay = true;
