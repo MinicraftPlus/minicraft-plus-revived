@@ -1,5 +1,24 @@
 package minicraft.saveload;
 
+import minicraft.core.*;
+import minicraft.core.io.Localization;
+import minicraft.core.io.Settings;
+import minicraft.entity.Arrow;
+import minicraft.entity.Entity;
+import minicraft.entity.ItemEntity;
+import minicraft.entity.Spark;
+import minicraft.entity.furniture.*;
+import minicraft.entity.mob.*;
+import minicraft.entity.particle.Particle;
+import minicraft.entity.particle.TextParticle;
+import minicraft.item.Inventory;
+import minicraft.item.Item;
+import minicraft.item.PotionType;
+import minicraft.network.MinicraftServer;
+import minicraft.screen.LoadingDisplay;
+import minicraft.screen.MultiplayerDisplay;
+import minicraft.screen.WorldSelectDisplay;
+
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileWriter;
@@ -7,35 +26,6 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-
-import minicraft.core.Game;
-import minicraft.core.Renderer;
-import minicraft.core.Updater;
-import minicraft.core.World;
-import minicraft.core.io.Localization;
-import minicraft.core.io.Settings;
-import minicraft.entity.Arrow;
-import minicraft.entity.Entity;
-import minicraft.entity.ItemEntity;
-import minicraft.entity.Spark;
-import minicraft.entity.furniture.Chest;
-import minicraft.entity.furniture.Crafter;
-import minicraft.entity.furniture.DeathChest;
-import minicraft.entity.furniture.DungeonChest;
-import minicraft.entity.furniture.Lantern;
-import minicraft.entity.furniture.Spawner;
-import minicraft.entity.mob.AirWizard;
-import minicraft.entity.mob.EnemyMob;
-import minicraft.entity.mob.Mob;
-import minicraft.entity.mob.Player;
-import minicraft.entity.mob.RemotePlayer;
-import minicraft.entity.particle.Particle;
-import minicraft.entity.particle.TextParticle;
-import minicraft.item.*;
-import minicraft.network.MinicraftServer;
-import minicraft.screen.LoadingDisplay;
-import minicraft.screen.MultiplayerDisplay;
-import minicraft.screen.WorldSelectDisplay;
 
 public class Save {
 	
@@ -165,6 +155,16 @@ public class Save {
 		data.add(String.valueOf(Updater.gameTime));
 		data.add(String.valueOf(Settings.getIdx("diff")));
 		data.add(String.valueOf(AirWizard.beaten));
+
+		StringBuilder recipes = new StringBuilder();
+		for (UnlockableRecipes.UnlockableRecipe recipe : Game.unlockableRecipes.recipes) {
+			if (recipe.unlocked) {
+				recipes.append(";");
+				recipes.append(recipe.name);
+			}
+		}
+		data.add(recipes.toString());
+
 		writeToFile(location + filename + extension, data);
 	}
 	

@@ -63,6 +63,7 @@ public class UnlockableRecipes {
 
     public class UnlockableRecipe {
         public String name;
+        public boolean unlocked;
         public RecipeType type;
         public Recipe recipe;
 
@@ -76,6 +77,7 @@ public class UnlockableRecipes {
             List<Recipe> recipeList = getRecipeList(this.type);
             assert recipeList != null;
 
+            this.unlocked = true;
             recipeList.add(this.recipe);
 
             // TODO: If networked game, update other players.
@@ -84,14 +86,9 @@ public class UnlockableRecipes {
         public void lock() {
             List<Recipe> recipeList = getRecipeList(this.type);
             assert recipeList != null;
-
-            for (Recipe r : recipeList) {
-                if (r.equals(this.recipe)) {
-                    recipeList.remove(r);
-                    // TODO: If networked game, update other players.
-                    break;
-                }
-            }
+            this.unlocked = false;
+            recipeList.remove(this.recipe);
+            // TODO: If networked game, update other players.
         }
     }
 }

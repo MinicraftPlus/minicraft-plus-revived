@@ -1,9 +1,6 @@
 package minicraft.saveload;
 
-import minicraft.core.Game;
-import minicraft.core.Network;
-import minicraft.core.Updater;
-import minicraft.core.World;
+import minicraft.core.*;
 import minicraft.core.io.Localization;
 import minicraft.core.io.Settings;
 import minicraft.entity.*;
@@ -214,6 +211,16 @@ public class Load {
 		Settings.setIdx("diff", diffIdx);
 		
 		AirWizard.beaten = Boolean.parseBoolean(data.remove(0));
+
+		String[] recipes = data.remove(0).split(";");
+		for (String name : recipes) {
+			if (name.equals("")) continue;
+			for (UnlockableRecipes.UnlockableRecipe recipe : Game.unlockableRecipes.recipes) {
+				if (recipe.name.equals(name)) {
+					recipe.unlock();
+				}
+			}
+		}
 	}
 
 	public static BufferedImage[] loadSpriteSheets() throws IOException {
@@ -785,6 +792,7 @@ public class Load {
 			case "SmashParticle": return new SmashParticle(0, 0);
 			case "TextParticle": return new TextParticle("", 0, 0, 0);
 			case "BoatMan": return new BoatMan();
+			case "Boat": return new Boat();
 			default : System.err.println("LOAD ERROR: unknown or outdated entity requested: " + string);
 				return null;
 		}
