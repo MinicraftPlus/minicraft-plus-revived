@@ -157,6 +157,7 @@ public class Save {
 		data.add(String.valueOf(AirWizard.beaten));
 
 		StringBuilder recipes = new StringBuilder();
+		recipes.append(";");
 		for (UnlockableRecipes.UnlockableRecipe recipe : Game.unlockableRecipes.recipes) {
 			if (recipe.unlocked) {
 				recipes.append(";");
