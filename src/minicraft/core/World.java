@@ -4,6 +4,7 @@ import minicraft.core.io.Settings;
 import minicraft.entity.furniture.Bed;
 import minicraft.entity.mob.BoatMan;
 import minicraft.entity.mob.Player;
+import minicraft.entity.mob.Prince;
 import minicraft.entity.mob.RemotePlayer;
 import minicraft.level.Level;
 import minicraft.saveload.Load;
@@ -151,7 +152,8 @@ public class World extends Game {
 				player.findStartPos(level, WorldGenDisplay.getSeed()); // finds the start level for the player
 
 				BoatMan boatMan = new BoatMan();
-				boatMan.setStartingPosition();
+				boatMan.setStartingPosition(level);
+
 				level.add(boatMan);
 				level.add(player);
 			}

@@ -5,6 +5,7 @@ import minicraft.gfx.Font;
 import minicraft.gfx.MobSprite;
 import minicraft.gfx.Point;
 import minicraft.gfx.Screen;
+import minicraft.level.Level;
 import minicraft.level.tile.Tile;
 import minicraft.level.tile.Tiles;
 
@@ -87,30 +88,30 @@ public class BoatMan extends Mob {
         super.die();
     }
 
-    public void setStartingPosition() {
+    public void setStartingPosition(Level newLevel) {
         Point startPos = new Point(25, 25);
 
-        List<Point> tiles = level.getMatchingTiles(Tiles.get("Sand"));
-        tiles.addAll(level.getMatchingTiles(Tiles.get("Grass")));
+        List<Point> tiles = newLevel.getMatchingTiles(Tiles.get("Sand"));
+        tiles.addAll(newLevel.getMatchingTiles(Tiles.get("Grass")));
 
         // Find a sand tile that is next to water.
         for (Point p : tiles) {
-            Tile t = level.getTile(p.x - 1, p.y);
+            Tile t = newLevel.getTile(p.x - 1, p.y);
             if (t.id == 6) {
                 startPos = p;
                 break;
             }
-            t = level.getTile(p.x + 1, p.y);
+            t = newLevel.getTile(p.x + 1, p.y);
             if (t.id == 6) {
                 startPos = p;
                 break;
             }
-            t = level.getTile(p.x, p.y - 1);
+            t = newLevel.getTile(p.x, p.y - 1);
             if (t.id == 6) {
                 startPos = p;
                 break;
             }
-            t = level.getTile(p.x, p.y + 1);
+            t = newLevel.getTile(p.x, p.y + 1);
             if (t.id == 6) {
                 startPos = p;
                 break;
