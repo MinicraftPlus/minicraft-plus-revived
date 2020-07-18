@@ -1,10 +1,11 @@
 Minicraft+ version 2.0.7
 
-* Farm tiles will no longer be destroyed if an item is dropped on it.
-* Made crops grow slower.
-* Updated some textures; wood looks like wood now.
-+ Added potatoes.
-+ Added baked potatoes as food.
+* Farm tiles will no longer be destroyed if an item is dropped onto it
+* Made crops grow slower
+* Updated some textures; made wood, apples and gold apples look better
++ Added potatoes
++ Added baked potatoes as food
++ Made zombies drop potatoes
 
 
 Minicraft+ version 2.0.6
