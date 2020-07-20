@@ -57,7 +57,7 @@ public class GrassTile extends Tile {
 					level.setTile(xt, yt, Tiles.get("Dirt"));
 					Sound.monsterHurt.play();
 					if (random.nextInt(5) == 0) { // 20% chance to drop seeds
-						level.dropItem(xt * 16 + 8, yt * 16 + 8, 2, Items.get("Wheat Seeds"));
+						level.dropItem(xt * 16 + 8, yt * 16 + 8, 1, Items.get("Grass Seeds"));
 					}
 					return true;
 				}

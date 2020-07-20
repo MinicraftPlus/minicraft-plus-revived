@@ -584,12 +584,11 @@ public class Player extends Mob implements ItemHolder, ClientTickable {
 			}
 		}
 		
-		boolean done = false; // we're not done yet (we just started!)
-		
 		// if we are simply holding an item...
 		if (activeItem != null) {
 			attackTime = 10; // attack time will be set to 10.
-			
+			boolean done = false;
+
 			// if the interaction between you and an entity is successful, then return.
 			if (interact(getInteractionBox(INTERACT_DIST))) return;
 			
@@ -619,9 +618,8 @@ public class Player extends Mob implements ItemHolder, ClientTickable {
 					activeItem = null;
 				}
 			}
+			if (done) return; // skip the rest if interaction was handled
 		}
-		
-		if (done) return; // skip the rest if interaction was handled.
 		
 		if (activeItem == null || activeItem.canAttack()) { // if there is no active item, OR if the item can be used to attack...
 			attackTime = 5;

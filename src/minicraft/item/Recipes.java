@@ -15,7 +15,6 @@ public class Recipes {
 	static {
 		craftRecipes.add(new Recipe("Workbench_1", "Wood_10"));
 		craftRecipes.add(new Recipe("Torch_2", "Wood_1", "coal_1"));
-		craftRecipes.add(new Recipe("Grass Seeds_1", "seeds_1", "Flower_2"));
 		craftRecipes.add(new Recipe("plank_2", "Wood_1"));
 		craftRecipes.add(new Recipe("Plank Wall_1", "plank_3"));
 		craftRecipes.add(new Recipe("Wood Door_1", "plank_5"));
