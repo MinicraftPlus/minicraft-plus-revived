@@ -42,6 +42,7 @@ public class Items {
 		addAll(ArmorItem.getAllInstances());
 		addAll(PotionItem.getAllInstances());
 		addAll(FishingRodItem.getAllInstances());
+		addAll(ShearItem.getAllInstances());
 	}
 	
 	/** fetches an item from the list given its name. */
