@@ -18,7 +18,6 @@ public class TorchTile extends Tile {
 	
 	public static TorchTile getTorchTile(Tile onTile) {
 		int id = onTile.id & 0xFF;
-		//noinspection ConstantConditions
 		if(id < 128) id += 128;
 		else System.out.println("tried to place torch on torch tile...");
 		

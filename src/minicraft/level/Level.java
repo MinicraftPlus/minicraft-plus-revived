@@ -35,7 +35,7 @@ public class Level {
 	public int w, h; // width and height of the level
 	
 	public byte[] tiles; // an array of all the tiles in the world.
-	public byte[] data; // an array of the data of the tiles in the world. // ?
+	public byte[] data; // an array of the data of the tiles in the world.
 	
 	public final int depth; // depth level of the level
 	public int monsterDensity = 16; // affects the number of monsters that are on the level, bigger the number the less monsters spawn.
@@ -178,7 +178,7 @@ public class Level {
 		checkAirWizard(true);
 	}
 	private void checkAirWizard(boolean check) {
-		if (depth == 1 && !AirWizard.beaten) { // add the airwizard to the surface
+		if (depth == 1 && !AirWizard.beaten) { // Add the airwizard to the surface
 			
 			boolean found = false;
 			if(check) {
@@ -201,7 +201,7 @@ public class Level {
 		checkChestCount(true);
 	}
 	private void checkChestCount(boolean check) {
-		/// if the level is the dungeon, and we're not just loading the world...
+		// If the level is the dungeon, and we're not just loading the world...
 		if (depth != -4) return;
 		
 		int numChests = 0;
@@ -499,7 +499,6 @@ public class Level {
 	}
 	public void setTile(int x, int y, Tile t, int dataVal) {
 		if (x < 0 || y < 0 || x >= w || y >= h) return;
-		//if (Game.debug) printLevelLoc("setting tile from " + Tiles.get(tiles[x+y*w]).name + " to " + t.name, x, y);
 		
 		if(Game.isValidClient() && !Game.isValidServer()) {
 			System.out.println("Client requested a tile update for the " + t.name + " tile at " + x + "," + y);
