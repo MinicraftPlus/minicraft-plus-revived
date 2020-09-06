@@ -24,11 +24,7 @@ import minicraft.entity.furniture.DeathChest;
 import minicraft.entity.furniture.DungeonChest;
 import minicraft.entity.furniture.Lantern;
 import minicraft.entity.furniture.Spawner;
-import minicraft.entity.mob.AirWizard;
-import minicraft.entity.mob.EnemyMob;
-import minicraft.entity.mob.Mob;
-import minicraft.entity.mob.Player;
-import minicraft.entity.mob.RemotePlayer;
+import minicraft.entity.mob.*;
 import minicraft.entity.particle.Particle;
 import minicraft.entity.particle.TextParticle;
 import minicraft.item.*;
@@ -45,7 +41,6 @@ public class Save {
 	public static String extension = ".miniplussave";
 
 	List<String> data;
-	Game game;
 
 	private Save(File worldFolder) {
 		data = new ArrayList<>();
@@ -319,6 +314,8 @@ public class Save {
 			extradata.append(":").append(m.health);
 			if(e instanceof EnemyMob)
 				extradata.append(":").append(((EnemyMob) m).lvl);
+			else if (e instanceof Sheep)
+				extradata.append(":").append(((Sheep) m).cut); // Saves if the sheep is cut. If not, we could reload the save and the wool would regenerate.
 		}
 		
 		if(e instanceof Chest) {
