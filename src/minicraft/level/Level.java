@@ -404,7 +404,7 @@ public class Level {
 	}
 	public ItemEntity dropItem(int x, int y, Item i) {
 		if(Game.isValidClient())
-			System.err.println("dropping item on client: "+i);
+			System.out.println("Dropping item on client: " + i);
 		int ranx, rany;
 		do {
 			ranx = x + random.nextInt(11) - 5;

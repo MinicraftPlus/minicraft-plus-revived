@@ -693,10 +693,10 @@ public class MinicraftServer extends Thread implements MinicraftProtocol {
 				int furnitureID = Integer.parseInt(alldata);
 				Entity furniture = Network.getEntity(furnitureID);
 				if(furniture == null) {
-					System.err.println("SERVER: couldn't find the specified piece of furniture to push: " + furnitureID);
+					System.err.println("SERVER: Couldn't find the specified piece of furniture to push: " + furnitureID);
 					return false;
 				} else if(!(furniture instanceof Furniture)) {
-					System.err.println("SERVER: specified entity is not an instance of the furniture class: " + furniture + "; cannot push.");
+					System.err.println("SERVER: Specified entity is not an instance of the furniture class: " + furniture + "; cannot push.");
 					return false;
 				}
 				
@@ -708,7 +708,7 @@ public class MinicraftServer extends Thread implements MinicraftProtocol {
 				int ieid = Integer.parseInt(alldata);
 				Entity entity = Network.getEntity(ieid);
 				if(entity == null || !(entity instanceof ItemEntity) || entity.isRemoved()) {
-					System.err.println("SERVER could not find item entity in PICKUP request: " + ieid + ". Telling client to remove...");
+					System.err.println("SERVER: Could not find item entity in pickup request " + ieid + ". Telling client to remove...");
 					serverThread.sendEntityRemoval(ieid); // will happen when another guy gets to it first, so the this client shouldn't have it on the level anymore. It could also happen if the client didn't receive the packet telling them to pick it up... in which case it will be lost, but oh well.
 					return false;
 				}

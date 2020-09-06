@@ -13,8 +13,7 @@ public class Settings {
 	private static HashMap<String, ArrayEntry> options = new HashMap<>();
 	
 	static {
-		// Has to check if the game is running in a headless mode. If it doesn't set the fps to 60
-		options.put("fps", new RangeEntry("Max FPS", 10, 300, getRefreshRate()));
+		options.put("fps", new RangeEntry("Max FPS", 10, 300, getRefreshRate())); // Has to check if the game is running in a headless mode. If it doesn't set the fps to 60
 		options.put("diff", new ArrayEntry<>("Difficulty", "Easy", "Normal", "Hard"));
 		options.get("diff").setSelection(1);
 		options.put("mode", new ArrayEntry<>("Game Mode", "Survival", "Creative", "Hardcore", "Score"));
