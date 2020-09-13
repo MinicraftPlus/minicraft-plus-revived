@@ -4,7 +4,6 @@ import minicraft.core.io.Localization;
 import minicraft.entity.Direction;
 import minicraft.entity.Entity;
 import minicraft.entity.mob.Player;
-import minicraft.gfx.Color;
 import minicraft.gfx.Font;
 import minicraft.gfx.Screen;
 import minicraft.gfx.Sprite;

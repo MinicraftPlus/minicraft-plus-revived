@@ -40,7 +40,6 @@ public class Sheep extends PassiveMob {
 	@Override
 	public void tick() {
 		super.tick();
-		if (random.nextInt(1) == 0) return; // 1/2 chance of ticking
 		if (age - ageWhenCut > WOOL_GROW_TIME) cut = false;
 	}
 
