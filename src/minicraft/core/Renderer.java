@@ -168,14 +168,14 @@ public class Renderer extends Game {
 	private static void renderGui() {
 		// This draws the black square underneath the selected item, as long as the player isn't in creative.
 		if (!isMode("creative") || player.activeItem != null) {
-			for (int x = 12; x < 29; x++) {
-				screen.render(x * 7, Screen.h - 8, 30 + 30 * 32, 0, 3);
+			for (int x = 10; x < 26; x++) {
+				screen.render(x * 8, Screen.h - 8, 30 + 30 * 32, 0, 3);
 			}
 		}
 			
 		// Shows active item sprite and name in bottom toolbar.
 		if (player.activeItem != null) {
-			player.activeItem.renderInventory(screen, 12 * 7, Screen.h - 8, Color.WHITE);
+			player.activeItem.renderInventory(screen, 10 * 8, Screen.h - 8, Color.WHITE);
 		}
 
 

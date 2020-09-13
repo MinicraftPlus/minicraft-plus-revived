@@ -74,8 +74,8 @@ public class Sprite {
 		sheetLoc = new Rectangle(sx, sy, sw, sh);
 		
 		spritePixels = new Px[sh][sw];
-		for(int r = 0; r < sh; r++)
-			for(int c = 0; c < sw; c++)
+		for (int r = 0; r < sh; r++)
+			for (int c = 0; c < sw; c++)
 				spritePixels[r][c] = new Px(sx+(onepixel?0:c), sy+(onepixel?0:r), mirrors[r][c], sheet);
 	}
 
@@ -91,20 +91,17 @@ public class Sprite {
 	}
 
 	public void render(Screen screen, int x, int y) {
-		/// here, x and y are screen coordinates.
-
-		for(int row = 0; row < spritePixels.length; row++) { // loop down through each row
+		// here, x and y are screen coordinates.
+		for (int row = 0; row < spritePixels.length; row++) { // loop down through each row
 			renderRow(row, screen, x, y + row*8);
 		}
 	}
 	public void render(Screen screen, int x, int y, int mirror) {
-
-		for(int row = 0; row < spritePixels.length; row++) {
+		for (int row = 0; row < spritePixels.length; row++) {
 			renderRow(row, screen, x, y + row*8, mirror);
 		}
 	}
 	public void render(Screen screen, int x, int y, int mirror, int whiteTint) {
-
 		for (int row = 0; row < spritePixels.length; row++) {
 			renderRow(row, screen, x, y + row*8, mirror, whiteTint);
 		}
@@ -112,13 +109,13 @@ public class Sprite {
 
 	public void renderRow(int r, Screen screen, int x, int y) {
 		Px[] row = spritePixels[r];
-		for(int c = 0; c < row.length; c++) { // loop across through each column
+		for (int c = 0; c < row.length; c++) { // loop across through each column
 			screen.render(x + c*8, y, row[c].sheetPos, row[c].mirror, row[c].sheetNum, this.color); // render the sprite pixel.
 		}
 	}
 	public void renderRow(int r, Screen screen, int x, int y, int mirror) {
 		Px[] row = spritePixels[r];
-		for(int c = 0; c < row.length; c++) { // loop across through each column
+		for (int c = 0; c < row.length; c++) { // loop across through each column
 			screen.render(x + c*8, y, row[c].sheetPos, mirror, row[c].sheetNum, this.color); // render the sprite pixel.
 		}
 	}
