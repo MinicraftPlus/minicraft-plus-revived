@@ -18,7 +18,7 @@ Here is a small share of the more major features that this mod adds to the origi
 * Bigger/Resizable screen size
 * Key Binding customization, so you can change the key controls
 * Tutorials
-* And best of all, active community!
+* And best of all, active development and community!
 
 
 You can find a more comprehensive list of the earlier versions, before 1.9, in [this minecraft forum post](http://www.minecraftforum.net/forums/off-topic/general-gaming/452036-v1-6-minicraft-plus). Be aware however, that it's old; it's from many years ago before the project was originally abandoned, and then subsequently rediscovered 5 years later. :3

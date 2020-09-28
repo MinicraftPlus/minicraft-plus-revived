@@ -43,11 +43,11 @@ public class Load {
 	
 	private String location = Game.gameDir;
 	
-	private static String extension = Save.extension;
+	private static final String extension = Save.extension;
 	private float percentInc;
 	
 	private ArrayList<String> data;
-	private ArrayList<String> extradata;
+	private ArrayList<String> extradata; // These two are changed when loading a new file. (see loadFromFile())
 	
 	private Version worldVer;
 	private boolean hasGlobalPrefs = false;
@@ -94,7 +94,7 @@ public class Load {
 	}
 	
 	public Load(String worldname, MinicraftServer server) {
-		location += "/saves/"+worldname+"/";
+		location += "/saves/" + worldname + "/";
 		File testFile = new File(location + "ServerConfig" + extension);
 		if(testFile.exists())
 			loadServerConfig("ServerConfig", server);
@@ -115,17 +115,17 @@ public class Load {
 		else
 			new Save();
 		
-		File testFileOld = new File(location+"unlocks"+extension);
-		File testFile = new File(location+"Unlocks"+extension);
+		File testFileOld = new File(location + "unlocks" + extension);
+		File testFile = new File(location + "Unlocks" + extension);
 		if (testFileOld.exists() && !testFile.exists()) {
 			testFileOld.renameTo(testFile);
 			new LegacyLoad(testFile);
 		}
-		else if(!testFile.exists()) {
+		else if (!testFile.exists()) {
 			try {
 				testFile.createNewFile();
 			} catch(IOException ex) {
-				System.err.println("could not create Unlocks"+extension+":");
+				System.err.println("Could not create Unlocks" + extension + ":");
 				ex.printStackTrace();
 			}
 		}
@@ -158,13 +158,13 @@ public class Load {
 		String total;
 		try {
 			total = loadFromFile(filename, true);
-			if(total.length() > 0)
+			if (total.length() > 0)
 				data.addAll(Arrays.asList(total.split(",")));
 		} catch (IOException ex) {
 			ex.printStackTrace();
 		}
 		
-		if(filename.contains("Level")) {
+		if (filename.contains("Level")) {
 			try {
 				total = Load.loadFromFile(filename.substring(0, filename.lastIndexOf("/") + 7) + "data" + extension, true);
 				extradata.addAll(Arrays.asList(total.split(",")));
@@ -462,9 +462,9 @@ public class Load {
 		String potioneffects = data.remove(0);
 		if(!potioneffects.equals("PotionEffects[]")) {
 			String[] effects = potioneffects.replace("PotionEffects[", "").replace("]", "").split(":");
-			
-			for(int i = 0; i < effects.length; i++) {
-				String[] effect = effects[i].split(";");
+
+			for (String s : effects) {
+				String[] effect = s.split(";");
 				PotionType pName = Enum.valueOf(PotionType.class, effect[0]);
 				PotionItem.applyPotion(player, pName, Integer.parseInt(effect[1]));
 			}
@@ -475,8 +475,9 @@ public class Load {
 			String[] color = colors.split(";");
 			int[] cols = new int[color.length];
 			for(int i = 0; i < cols.length; i++)
-				cols[i] = Integer.valueOf(color[i])/50;
-			String col = ""+cols[0]+cols[1]+cols[2];
+				cols[i] = Integer.parseInt(color[i]) / 50;
+
+			String col = "" + cols[0] + cols[1] + cols[2];
 			System.out.println("Getting color as " + col);
 			player.shirtColor = Integer.parseInt(col);
 		} else if (worldVer.compareTo(new Version("2.0.6-dev4")) < 0) {
@@ -493,20 +494,26 @@ public class Load {
 	}
 	
 	protected static String subOldName(String name, Version worldVer) {
-		if(worldVer.compareTo(new Version("1.9.4-dev4")) < 0) {
+		if (worldVer.compareTo(new Version("1.9.4-dev4")) < 0) {
 			name = name.replace("Hatchet", "Axe").replace("Pick", "Pickaxe").replace("Pickaxeaxe", "Pickaxe").replace("Spade", "Shovel").replace("Pow glove", "Power Glove").replace("II", "").replace("W.Bucket", "Water Bucket").replace("L.Bucket", "Lava Bucket").replace("G.Apple", "Gold Apple").replace("St.", "Stone").replace("Ob.", "Obsidian").replace("I.Lantern", "Iron Lantern").replace("G.Lantern", "Gold Lantern").replace("BrickWall", "Wall").replace("Brick", " Brick").replace("Wall", " Wall").replace("  ", " ");
-			if(name.equals("Bucket"))
+			if (name.equals("Bucket"))
 				name = "Empty Bucket";
 		}
 		
-		if(worldVer.compareTo(new Version("1.9.4")) < 0) {
+		if (worldVer.compareTo(new Version("1.9.4")) < 0) {
 			name = name.replace("I.Armor", "Iron Armor").replace("S.Armor", "Snake Armor").replace("L.Armor", "Leather Armor").replace("G.Armor", "Gold Armor").replace("BrickWall", "Wall");
 		}
 
-		if(worldVer.compareTo(new Version("2.0.6-dev3")) < 0) {
+		if (worldVer.compareTo(new Version("2.0.6-dev3")) < 0) {
 			name = name.replace("Fishing Rod", "Wood Fishing Rod");
 		}
-		
+
+		// Only runs if the version is less than 2.0.7-dev1.
+		if (worldVer.compareTo(new Version("2.0.7-dev1")) < 0) {
+			if (name.startsWith("Seeds"))
+				name = name.replace("Seeds", "Wheat Seeds");
+		}
+
 		return name;
 	}
 	
@@ -516,36 +523,33 @@ public class Load {
 	}
 	public void loadInventory(Inventory inventory, List<String> data) {
 		inventory.clearInv();
-		
-		for(int i = 0; i < data.size(); i++) {
-			String item = data.get(i);
-			if(item.length() == 0) {
+
+		for (String item : data) {
+			if (item.length() == 0) {
 				System.err.println("loadInventory: Item in data list is \"\", skipping item");
 				continue;
 			}
-			
-			if(worldVer.compareTo(new Version("1.9.4")) < 0) {
+
+			if (worldVer.compareTo(new Version("2.0.7-dev1")) < 0) {
 				item = subOldName(item, worldVer);
 			}
-			
+
 			if (item.contains("Power Glove")) continue; // just pretend it doesn't exist. Because it doesn't. :P
-			
-			//System.out.println("Loading item: " + item);
-			
-			if(worldVer.compareTo(new Version("2.0.4")) <= 0 && item.contains(";")) {
+
+			// System.out.println("Loading item: " + item);
+
+			if (worldVer.compareTo(new Version("2.0.4")) <= 0 && item.contains(";")) {
 				String[] curData = item.split(";");
 				String itemName = curData[0];
-				
+
 				Item newItem = Items.get(itemName);
-				
+
 				int count = Integer.parseInt(curData[1]);
-				
-				if(newItem instanceof StackableItem) {
-					((StackableItem)newItem).count = count;
+
+				if (newItem instanceof StackableItem) {
+					((StackableItem) newItem).count = count;
 					inventory.add(newItem);
-				}
-				else
-					inventory.add(newItem, count);
+				} else inventory.add(newItem, count);
 			} else {
 				Item toAdd = Items.get(item);
 				inventory.add(toAdd);
@@ -557,15 +561,15 @@ public class Load {
 		LoadingDisplay.setMessage("Entities");
 		loadFromFile(location + filename + extension);
 		
-		for(int i = 0; i < World.levels.length; i++) {
+		for (int i = 0; i < World.levels.length; i++) {
 			World.levels[i].clearEntities();
 		}
-		for(int i = 0; i < data.size(); i++) {
-			if(data.get(i).startsWith("Player")) continue;
-			loadEntity(data.get(i), worldVer, true);
+		for (String name : data) {
+			if (name.startsWith("Player")) continue;
+			loadEntity(name, worldVer, true);
 		}
 		
-		for(int i = 0; i < World.levels.length; i++) {
+		for (int i = 0; i < World.levels.length; i++) {
 			World.levels[i].checkChestCount();
 			World.levels[i].checkAirWizard();
 		}
@@ -579,7 +583,7 @@ public class Load {
 	@Nullable
 	public static Entity loadEntity(String entityData, Version worldVer, boolean isLocalSave) {
 		entityData = entityData.trim();
-		if(entityData.length() == 0) return null;
+		if (entityData.length() == 0) return null;
 		
 		List<String> info = new ArrayList<>(); // this gets everything inside the "[...]" after the entity name.
 		//System.out.println("Loading entity:" + entityData);
@@ -588,31 +592,31 @@ public class Load {
 		
 		String entityName = entityData.substring(0, entityData.indexOf("[")); // this gets the text before "[", which is the entity name.
 		
-		if(entityName.equals("Player") && Game.debug && Game.isValidClient())
+		if (entityName.equals("Player") && Game.debug && Game.isValidClient())
 			System.out.println("CLIENT WARNING: Loading regular player: " + entityData);
 		
 		int x = Integer.parseInt(info.get(0));
 		int y = Integer.parseInt(info.get(1));
 		
 		int eid = -1;
-		if(!isLocalSave) {
+		if (!isLocalSave) {
 			eid = Integer.parseInt(info.remove(2));
 			
 			/// If I find an entity that is loaded locally, but on another level in the entity data provided, then I ditch the current entity and make a new one from the info provided.
 			Entity existing = Network.getEntity(eid);
 			int entityLevel = Integer.parseInt(info.get(info.size()-1));
 			
-			if(existing != null) {
+			if (existing != null) {
 				// existing one is out of date; replace it.
 				existing.remove();
 				Game.levels[Game.currentLevel].add(existing);
 				return null;
 			}
 			
-			if(Game.isValidClient()) {
-				if(eid == Game.player.eid)
+			if (Game.isValidClient()) {
+				if (eid == Game.player.eid)
 					return Game.player; // don't reload the main player via an entity addition, though do add it to the level (will be done elsewhere)
-				if(Game.player instanceof RemotePlayer &&
+				if (Game.player instanceof RemotePlayer &&
 					!((RemotePlayer)Game.player).shouldTrack(x >> 4, y >> 4, World.levels[entityLevel])
 				) {
 					// the entity is too far away to bother adding to the level.
@@ -626,8 +630,8 @@ public class Load {
 		
 		Entity newEntity = null;
 		
-		if(entityName.equals("RemotePlayer")) {
-			if(isLocalSave) {
+		if (entityName.equals("RemotePlayer")) {
+			if (isLocalSave) {
 				System.err.println("Remote player found in local save file.");
 				return null; // don't load them; in fact, they shouldn't be here.
 			}
@@ -643,31 +647,22 @@ public class Load {
 				System.err.println("LOAD could not read ip address of remote player in file.");
 				ex.printStackTrace();
 			}
-		}
-		else if(entityName.equals("Spark") && !isLocalSave) {
+		} else if (entityName.equals("Spark") && !isLocalSave) {
 			int awID = Integer.parseInt(info.get(2));
 			Entity sparkOwner = Network.getEntity(awID);
-			if(sparkOwner != null && sparkOwner instanceof AirWizard)
+			if (sparkOwner instanceof AirWizard)
 				newEntity = new Spark((AirWizard)sparkOwner, x, y);
 			else {
 				System.err.println("failed to load spark; owner id doesn't point to a correct entity");
 				return null;
 			}
-		}
-		else {
+		} else {
 			int mobLvl = 1;
 			Class c = null;
 			if(!Crafter.names.contains(entityName)) {
 				try {
 					c = Class.forName("minicraft.entity.mob."+entityName);
 				} catch(ClassNotFoundException ignored) {}
-			}
-			if(c != null && EnemyMob.class.isAssignableFrom(c))
-				mobLvl = Integer.parseInt(info.get(info.size()-2));
-			
-			if(mobLvl == 0) {
-				if(Game.debug) System.out.println("Level 0 mob: " + entityName);
-				mobLvl = 1;
 			}
 			
 			newEntity = getEntity(entityName.substring(entityName.lastIndexOf(".")+1), mobLvl);
@@ -676,20 +671,52 @@ public class Load {
 		if(newEntity == null)
 			return null;
 		
-		if(newEntity instanceof Mob && !(newEntity instanceof RemotePlayer)) {
+		if(newEntity instanceof Mob && !(newEntity instanceof RemotePlayer)) { // This is structured the same way as in Save.java.
 			Mob mob = (Mob)newEntity;
 			mob.health = Integer.parseInt(info.get(2));
+
+			Class c = null;
+			try {
+				c = Class.forName("minicraft.entity.mob." + entityName);
+			} catch (ClassNotFoundException e) {
+				e.printStackTrace();
+			}
+
+			if (EnemyMob.class.isAssignableFrom(c)) {
+				EnemyMob enemyMob = ((EnemyMob) mob);
+				enemyMob.lvl = Integer.parseInt(info.get(info.size()-2));
+
+				if (enemyMob.lvl == 0) {
+					if (Game.debug) System.out.println("Level 0 mob: " + entityName);
+					enemyMob.lvl = 1;
+				} else if (enemyMob.lvl > enemyMob.getMaxLevel()) {
+					enemyMob.lvl = enemyMob.getMaxLevel();
+				}
+
+				mob = enemyMob;
+			} else if (worldVer.compareTo(new Version("2.0.7-dev1")) >= 0) { // If the version is more or equal to 2.0.7-dev1
+				if (newEntity instanceof Sheep) {
+					Sheep sheep = ((Sheep) mob);
+					if (info.get(3).equalsIgnoreCase("true")) {
+
+						sheep.cut = true;
+					}
+
+					mob = sheep;
+				}
+			}
+
 			newEntity = mob;
 		} else if(newEntity instanceof Chest) {
 			Chest chest = (Chest)newEntity;
 			boolean isDeathChest = chest instanceof DeathChest;
 			boolean isDungeonChest = chest instanceof DungeonChest;
 			List<String> chestInfo = info.subList(2, info.size()-1);
-			
+
 			int endIdx = chestInfo.size()-(isDeathChest||isDungeonChest?1:0);
 			for(int idx = 0; idx < endIdx; idx++) {
 				String itemData = chestInfo.get(idx);
-				if(worldVer.compareTo(new Version("1.9.4-dev4")) < 0)
+				if(worldVer.compareTo(new Version("2.0.7-dev1")) < 0)
 					itemData = subOldName(itemData, worldVer);
 								
 				if(itemData.contains("Power Glove")) continue; // ignore it.
@@ -706,13 +733,13 @@ public class Load {
 			}
 			
 			newEntity = chest;
-		}
-		else if(newEntity instanceof Spawner) {
+		} else if(newEntity instanceof Spawner) {
 			MobAi mob = (MobAi) getEntity(info.get(2).substring(info.get(2).lastIndexOf(".")+1), Integer.parseInt(info.get(3)));
 			if(mob != null)
 				newEntity = new Spawner(mob);
-		} else if(newEntity instanceof Lantern && worldVer.compareTo(new Version("1.9.4")) >= 0 && info.size() > 3)
+		} else if(newEntity instanceof Lantern && worldVer.compareTo(new Version("1.9.4")) >= 0 && info.size() > 3) {
 			newEntity = new Lantern(Lantern.Type.values()[Integer.parseInt(info.get(2))]);
+		}
 		
 		if(!isLocalSave) {
 			if(newEntity instanceof Arrow) {
@@ -744,12 +771,6 @@ public class Load {
 		newEntity.eid = eid; // this will be -1 unless set earlier, so a new one will be generated when adding it to the level.
 		if(newEntity instanceof ItemEntity && eid == -1)
 			System.out.println("Warning: Item entity was loaded with no eid");
-
-		if(newEntity instanceof EnemyMob) {
-			if (((EnemyMob)newEntity).lvl > ((EnemyMob)newEntity).getMaxLevel()) {
-				((EnemyMob)newEntity).lvl = ((EnemyMob)newEntity).getMaxLevel();
-			}
-		}
 		
 		int curLevel = Integer.parseInt(info.get(info.size()-1));
 		if(World.levels[curLevel] != null) {
@@ -757,7 +778,7 @@ public class Load {
 			if(Game.debug && newEntity instanceof RemotePlayer)
 				World.levels[curLevel].printEntityStatus("Loaded ", newEntity, "mob.RemotePlayer");
 		} else if(newEntity instanceof RemotePlayer && Game.isValidClient())
-			System.out.println("CLIENT: Remote player not added b/c on null level");
+			System.out.println("CLIENT: Remote player not added because on null level");
 		
 		return newEntity;
 	}
@@ -795,7 +816,7 @@ public class Load {
 			case "FireParticle": return new FireParticle(0, 0);
 			case "SmashParticle": return new SmashParticle(0, 0);
 			case "TextParticle": return new TextParticle("", 0, 0, 0);
-			default : System.err.println("LOAD ERROR: unknown or outdated entity requested: " + string);
+			default : System.err.println("LOAD ERROR: Unknown or outdated entity requested: " + string);
 				return null;
 		}
 	}

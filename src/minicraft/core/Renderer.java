@@ -64,7 +64,7 @@ public class Renderer extends Game {
 	}
 	
 	static void initScreen() {
-		if(!HAS_GUI) return;
+		if (!HAS_GUI) return;
 		
 		image = new BufferedImage(WIDTH, HEIGHT, BufferedImage.TYPE_INT_RGB);
 		pixels = ((DataBufferInt) image.getRaster().getDataBuffer()).getData();
@@ -77,7 +77,7 @@ public class Renderer extends Game {
 		}
 		screen.pixels = pixels;
 		
-		if(HAS_GUI) {
+		if (HAS_GUI) {
 			canvas.createBufferStrategy(3);
 			canvas.requestFocus();
 		}
@@ -86,15 +86,15 @@ public class Renderer extends Game {
 	
 	/** renders the current screen. Called in game loop, a bit after tick(). */
 	public static void render() {
-		if(!HAS_GUI || screen == null) return; // no point in this if there's no gui... :P
+		if (!HAS_GUI || screen == null) return; // no point in this if there's no gui... :P
 		
-		if(readyToRenderGameplay) {
-			if(isValidServer()) {
+		if (readyToRenderGameplay) {
+			if (isValidServer()) {
 				screen.clear(0);
 				Font.drawCentered("Awaiting client connections"+ ellipsis.updateAndGet(), screen, 10, Color.get(-1, 444));
 				Font.drawCentered("So far:", screen, 20, Color.get(-1, 444));
 				int i = 0;
-				for(String playerString: server.getClientInfo()) {
+				for (String playerString: server.getClientInfo()) {
 					Font.drawCentered(playerString, screen, 30+i*10, Color.get(-1, 134));
 					i++;
 				}
@@ -168,14 +168,14 @@ public class Renderer extends Game {
 	private static void renderGui() {
 		// This draws the black square underneath the selected item, as long as the player isn't in creative.
 		if (!isMode("creative") || player.activeItem != null) {
-			for (int x = 12; x < 29; x++) {
-				screen.render(x * 7, Screen.h - 8, 30 + 30 * 32, 0, 3);
+			for (int x = 10; x < 26; x++) {
+				screen.render(x * 8, Screen.h - 8, 30 + 30 * 32, 0, 3);
 			}
 		}
 			
 		// Shows active item sprite and name in bottom toolbar.
 		if (player.activeItem != null) {
-			player.activeItem.renderInventory(screen, 12 * 7, Screen.h - 8, Color.WHITE);
+			player.activeItem.renderInventory(screen, 10 * 8, Screen.h - 8, Color.WHITE);
 		}
 
 
@@ -295,7 +295,7 @@ public class Renderer extends Game {
 			for (int i = 0; i < Player.maxStat; i++) {
 				
 				// renders armor
-				int armor = player.armor*Player.maxStat / Player.maxArmor;
+				int armor = player.armor * Player.maxStat / Player.maxArmor;
 				if (i <= armor && player.curArmor != null) {
 					screen.render(i * 8, Screen.h - 24, (player.curArmor.level - 1) + 9 * 32, 0, 0);
 				}
@@ -339,26 +339,26 @@ public class Renderer extends Game {
 		int textcol = Color.WHITE;
 		if (showinfo) { // renders show debug info on the screen.
 			ArrayList<String> info = new ArrayList<>();
-			info.add("VERSION " + Initializer.VERSION);
+			info.add("VERSION: " + Initializer.VERSION);
 			info.add(Initializer.fra + " fps");
-			info.add("day tiks " + Updater.tickCount+" ("+Updater.getTime()+")");
-			info.add((Updater.normSpeed * Updater.gamespeed) + " tik/sec");
-			if(!isValidServer()) {
-				info.add("walk spd " + player.moveSpeed);
-				info.add("X " + (player.x / 16) + "-" + (player.x % 16));
-				info.add("Y " + (player.y / 16) + "-" + (player.y % 16));
-				if(levels[currentLevel] != null)
-					info.add("Tile " + levels[currentLevel].getTile(player.x>>4, player.y>>4).name);
-				if (isMode("score")) info.add("Score " + player.getScore());
+			info.add("Day tiks: " + Updater.tickCount + " (" + Updater.getTime() + ")");
+			info.add((Updater.normSpeed * Updater.gamespeed) + " tps");
+			if (!isValidServer()) {
+				info.add("walk spd: " + player.moveSpeed);
+				info.add("X: " + (player.x / 16) + "-" + (player.x % 16));
+				info.add("Y: " + (player.y / 16) + "-" + (player.y % 16));
+				if (levels[currentLevel] != null)
+					info.add("Tile: " + levels[currentLevel].getTile(player.x>>4, player.y>>4).name);
+				if (isMode("score")) info.add("Score: " + player.getScore());
 			}
-			if(levels[currentLevel] != null) {
-				if(!isValidClient())
-					info.add("Mob Cnt " + levels[currentLevel].mobCount + "/" + levels[currentLevel].maxMobCount);
+			if (levels[currentLevel] != null) {
+				if (!isValidClient())
+					info.add("Mob Cnt: " + levels[currentLevel].mobCount + "/" + levels[currentLevel].maxMobCount);
 				else
-					info.add("Mob Load Cnt " + levels[currentLevel].mobCount);
+					info.add("Mob Load Cnt: " + levels[currentLevel].mobCount);
 			}
 			
-			/// Displays number of chests left, if on dungeon level.
+			// Displays number of chests left, if on dungeon level.
 			if (levels[currentLevel] != null && (isValidServer() || currentLevel == 5 && !isValidClient())) {
 				if (levels[5].chestCount > 0)
 					info.add("Chests: " + levels[5].chestCount);
@@ -366,18 +366,18 @@ public class Renderer extends Game {
 					info.add("Chests: Complete!");
 			}
 			
-			if(!isValidServer()) {
+			if (!isValidServer()) {
 				info.add("Hunger stam: " + player.getDebugHunger());
-				if(player.armor > 0) {
-					info.add("armor: " + player.armor);
-					info.add("dam buffer: " + player.armorDamageBuffer);
+				if (player.armor > 0) {
+					info.add("Armor: " + player.armor);
+					info.add("Dam buffer: " + player.armorDamageBuffer);
 				}
 			}
 			
 			FontStyle style = new FontStyle(textcol).setShadowType(Color.BLACK, true).setXPos(1);
-			if(Game.isValidServer()) {
+			if (Game.isValidServer()) {
 				style.setYPos(Screen.h).setRelTextPos(RelPos.TOP_RIGHT, true);
-				for(int i = 1; i < info.size(); i++) // reverse order
+				for (int i = 1; i < info.size(); i++) // reverse order
 					info.add(0, info.remove(i));
 			} else
 				style.setYPos(2);

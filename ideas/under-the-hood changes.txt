@@ -1,7 +1,4 @@
-Most of the stuff here won't make sense unless you have a prior knowledge of the code structure and details.
-~~~~~~
-
-Find something to do with Npc.java, and Giant.java; currently, they were never even implemented in the first place, even though they were made...
+Most of the stuff here won't make sense unless you have a prior knowledge of the code structure and details
 
 ~~~~
 

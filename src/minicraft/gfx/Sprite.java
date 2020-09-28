@@ -37,20 +37,31 @@ public class Sprite {
 	protected Px[][] spritePixels;
 	public int color = -1;
 	protected java.awt.Rectangle sheetLoc;
-	/// spritePixels is arranged so that the pixels are in their correct positions relative to the top left of the full sprite. This means that their render positions are built-in to the array.
-	
+	// spritePixels is arranged so that the pixels are in their correct positions relative to the top left of the full sprite. This means that their render positions are built-in to the array.
+
 	public Sprite(int pos, int sheet) {
-		this(pos%32, pos/32, 1, 1, sheet);}
+		this(pos%32, pos/32, 1, 1, sheet);
+	}
+
+	/**
+	 * 	Creates a reference to an 8x8 sprite in a spritesheet. Specify the position and sheet of the sprite to create.
+	 * @param sx X position of the sprite in spritesheet coordinates.
+	 * @param sy Y position of the sprite in spritesheet coordinates.
+	 * @param sheet What spritesheet to use.
+	 */
 	public Sprite(int sx, int sy, int sheet) {
 		this(sx, sy, 1, 1, sheet);
 	}
 	public Sprite(int sx, int sy, int sw, int sh) {
-		this(sx, sy, sw, sh, 0, 0);}
+		this(sx, sy, sw, sh, 0, 0);
+	}
 	public Sprite(int sx, int sy, int sw, int sh, int sheet) {
-		this(sx, sy, sw, sh, sheet, 0);}
+		this(sx, sy, sw, sh, sheet, 0);
+	}
 	
 	public Sprite(int sx, int sy, int sw, int sh, int sheet, int mirror) {
-		this(sx, sy, sw, sh, sheet, mirror, false);}
+		this(sx, sy, sw, sh, sheet, mirror, false);
+	}
 	public Sprite(int sx, int sy, int sw, int sh, int sheet, int mirror, boolean onepixel) {
 		sheetLoc = new Rectangle(sx, sy, sw, sh);
 		
@@ -63,8 +74,8 @@ public class Sprite {
 		sheetLoc = new Rectangle(sx, sy, sw, sh);
 		
 		spritePixels = new Px[sh][sw];
-		for(int r = 0; r < sh; r++)
-			for(int c = 0; c < sw; c++)
+		for (int r = 0; r < sh; r++)
+			for (int c = 0; c < sw; c++)
 				spritePixels[r][c] = new Px(sx+(onepixel?0:c), sy+(onepixel?0:r), mirrors[r][c], sheet);
 	}
 
@@ -80,20 +91,17 @@ public class Sprite {
 	}
 
 	public void render(Screen screen, int x, int y) {
-		/// here, x and y are screen coordinates.
-
-		for(int row = 0; row < spritePixels.length; row++) { // loop down through each row
+		// here, x and y are screen coordinates.
+		for (int row = 0; row < spritePixels.length; row++) { // loop down through each row
 			renderRow(row, screen, x, y + row*8);
 		}
 	}
 	public void render(Screen screen, int x, int y, int mirror) {
-
-		for(int row = 0; row < spritePixels.length; row++) {
+		for (int row = 0; row < spritePixels.length; row++) {
 			renderRow(row, screen, x, y + row*8, mirror);
 		}
 	}
 	public void render(Screen screen, int x, int y, int mirror, int whiteTint) {
-
 		for (int row = 0; row < spritePixels.length; row++) {
 			renderRow(row, screen, x, y + row*8, mirror, whiteTint);
 		}
@@ -101,13 +109,13 @@ public class Sprite {
 
 	public void renderRow(int r, Screen screen, int x, int y) {
 		Px[] row = spritePixels[r];
-		for(int c = 0; c < row.length; c++) { // loop across through each column
+		for (int c = 0; c < row.length; c++) { // loop across through each column
 			screen.render(x + c*8, y, row[c].sheetPos, row[c].mirror, row[c].sheetNum, this.color); // render the sprite pixel.
 		}
 	}
 	public void renderRow(int r, Screen screen, int x, int y, int mirror) {
 		Px[] row = spritePixels[r];
-		for(int c = 0; c < row.length; c++) { // loop across through each column
+		for (int c = 0; c < row.length; c++) { // loop across through each column
 			screen.render(x + c*8, y, row[c].sheetPos, mirror, row[c].sheetNum, this.color); // render the sprite pixel.
 		}
 	}

@@ -15,7 +15,7 @@ public class PowerGloveItem extends Item {
 	public boolean interact(Player player, Entity entity, Direction attackDir) {
 		if (entity instanceof Furniture) { // If the power glove is used on a piece of furniture...
 			Furniture f = (Furniture) entity;
-			f.take(player); // Takes (picks up) the furniture
+			f.take(player); // Picks up the furniture
 			return true;
 		}
 		return false; // method returns false if we were not given a furniture entity.

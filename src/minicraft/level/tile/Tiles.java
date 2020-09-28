@@ -3,6 +3,7 @@ package minicraft.level.tile;
 import java.util.ArrayList;
 
 import minicraft.core.Game;
+import minicraft.level.tile.farming.*;
 import minicraft.level.tile.wool.*;
 
 public final class Tiles {
@@ -14,11 +15,11 @@ public final class Tiles {
 	private static ArrayList<Tile> tiles = new ArrayList<>();
 	
 	public static void initTileList() {
-		if(Game.debug) System.out.println("Initializing tile list...");
+		if (Game.debug) System.out.println("Initializing tile list...");
 		
 		for(int i = 0; i < 256; i++)
 			tiles.add(null);
-		
+
 		tiles.set(0, new GrassTile("Grass"));
 		tiles.set(1, new DirtTile("Dirt"));
 		tiles.set(2, new FlowerTile("Flower"));
@@ -63,6 +64,7 @@ public final class Tiles {
 		tiles.set(39, new GreenWoolTile("Green Wool"));
 		tiles.set(40, new YellowWoolTile("Yellow Wool"));
 		tiles.set(41, new BlackWoolTile("Black Wool"));
+		tiles.set(42, new PotatoTile("Potato"));
 		
 		for(int i = 0; i < tiles.size(); i++) {
 			if(tiles.get(i) == null) continue;
@@ -70,13 +72,13 @@ public final class Tiles {
 		}
 	}
 	
-	
+
 	protected static void add(int id, Tile tile) {
 		tiles.set(id, tile);
 		System.out.println("Adding " + tile.name + " to tile list with id " + id);
 		tile.id = (byte) id;
 	}
-	
+
 	static {
 		for(int i = 0; i < 256; i++)
 			oldids.add(null);
@@ -187,7 +189,7 @@ public final class Tiles {
 		Tile getting = null;
 		
 		boolean isTorch = false;
-		if(name.startsWith("TORCH ")) {
+		if(name.startsWith("TORCH")) {
 			isTorch = true;
 			name = name.substring(6); // cuts off torch prefix.
 		}

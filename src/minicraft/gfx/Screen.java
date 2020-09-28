@@ -4,6 +4,8 @@ import minicraft.core.Renderer;
 import minicraft.core.Updater;
 import minicraft.core.io.Settings;
 
+import java.util.Arrays;
+
 public class Screen {
 	
 	public static final int w = Renderer.WIDTH; // width of the screen
@@ -22,20 +24,12 @@ public class Screen {
 	
 	public int[] pixels; // pixels on the screen
 
-	// DEPRECATED!!!! for backwards compatibility during porting
-	private SpriteSheet sheet; // the sprite sheet used in the Game.
-
 	// since each sheet is 256x256 pixels, each one has 1024 8x8 "tiles"
 	// so 0 is the start of the item sheet 1024 the start of the tile sheet, 2048 the start of the entity sheet,
 	// and 3072 the start of the gui sheet
 
 	private SpriteSheet[] sheets;
 	private SpriteSheet[] sheetsCustom;
-	
-	public Screen(SpriteSheet sheet) {
-		this(sheet, sheet, sheet, sheet);
-		this.sheet = sheet;
-	}
 
 	public Screen(SpriteSheet itemSheet, SpriteSheet tileSheet, SpriteSheet entitySheet, SpriteSheet guiSheet) {
 
@@ -58,8 +52,8 @@ public class Screen {
 	
 	/** Clears all the colors on the screen */
 	public void clear(int color) {
-		for (int i = 0; i < pixels.length; i++)
-			pixels[i] = color; // turns each pixel into a single color (clearing the screen!)
+		// turns each pixel into a single color (clearing the screen!)
+		Arrays.fill(pixels, color);
 	}
 	
 	public void render(int[] pixelColors) {
@@ -142,7 +136,7 @@ public class Screen {
 		In the end, "every other every row", will need, for example in column 1, 15 light to be lit, then 0 light to be lit, then 12 light to be lit, then 3 light to be lit. So, the pixels of lower light levels will generally be lit every other pixel, while the brighter ones appear more often. The reason for the variance in values is to provide EVERY number between 0 and 15, so that all possible light levels (below 16) are represented fittingly with their own pattern of lit and not lit.
 		16 is the minimum pixel lighness required to ensure that the pixel will always remain lit.
 	*/
-	private int[] dither = new int[] {
+	private static final int[] dither = new int[] {
 		0, 8, 2, 10,
 		12, 4, 14, 6,
 		3, 11, 1, 9,

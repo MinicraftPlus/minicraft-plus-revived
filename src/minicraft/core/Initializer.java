@@ -148,14 +148,9 @@ public class Initializer extends Game {
 			public void windowIconified(WindowEvent e) {}
 			public void windowDeiconified(WindowEvent e) {}
 			public void windowOpened(WindowEvent e) {}
-			public void windowClosed(WindowEvent e) {System.out.println("Window closed");}
+			public void windowClosed(WindowEvent e) { System.out.println("Window closed"); }
 			public void windowClosing(WindowEvent e) {
 				System.out.println("Window closing");
-				if(isConnectedClient())
-					client.endConnection();
-				if(isValidServer())
-					server.endConnection();
-				
 				quit();
 			}
 		});

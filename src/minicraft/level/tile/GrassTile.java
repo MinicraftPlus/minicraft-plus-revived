@@ -38,7 +38,7 @@ public class GrassTile extends Tile {
 		if (random.nextBoolean()) xn += random.nextInt(2) * 2 - 1;
 		else yn += random.nextInt(2) * 2 - 1;
 
-		if (level.getTile(xn, yn) == Tiles.get("dirt")) {
+		if (level.getTile(xn, yn) == Tiles.get("Dirt")) {
 			level.setTile(xn, yn, this);
 		}
 	}
@@ -54,27 +54,27 @@ public class GrassTile extends Tile {
 			ToolItem tool = (ToolItem) item;
 			if (tool.type == ToolType.Shovel) {
 				if (player.payStamina(4 - tool.level) && tool.payDurability()) {
-					level.setTile(xt, yt, Tiles.get("dirt"));
+					level.setTile(xt, yt, Tiles.get("Dirt"));
 					Sound.monsterHurt.play();
 					if (random.nextInt(5) == 0) { // 20% chance to drop seeds
-						level.dropItem(xt*16+8, yt*16+8, 2, Items.get("seeds"));
+						level.dropItem(xt * 16 + 8, yt * 16 + 8, 1, Items.get("Grass Seeds"));
 					}
 					return true;
 				}
 			}
 			if (tool.type == ToolType.Hoe) {
 				if (player.payStamina(4 - tool.level) && tool.payDurability()) {
-					level.setTile(xt, yt, Tiles.get("dirt"));
+					level.setTile(xt, yt, Tiles.get("Dirt"));
 					Sound.monsterHurt.play();
 					if (random.nextInt(5) != 0) { // 80% chance to drop seeds
-						level.dropItem(xt*16+8, yt*16+8, Items.get("seeds"));
+						level.dropItem(xt*16+8, yt*16+8, Items.get("Wheat Seeds"));
 					}
 					return true;
 				}
 			}
 			if (tool.type == ToolType.Pickaxe) {
 				if (player.payStamina(4 - tool.level) && tool.payDurability()) {
-					level.setTile(xt, yt, Tiles.get("path"));
+					level.setTile(xt, yt, Tiles.get("Path"));
 					Sound.monsterHurt.play();
 				}
 			}

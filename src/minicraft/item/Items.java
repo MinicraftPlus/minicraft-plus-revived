@@ -9,8 +9,8 @@ import org.jetbrains.annotations.Nullable;
 
 public class Items {
 	
-	/// I've checked -- this is only used for making the creative inventory, and in Load.java.
-	/// ...well, that used to be true...
+	// I've checked -- this is only used for making the creative inventory, and in Load.java.
+	// ...well, that used to be true...
 	
 	/**
 		Ok, so here's the actual big idea:
@@ -42,13 +42,14 @@ public class Items {
 		addAll(ArmorItem.getAllInstances());
 		addAll(PotionItem.getAllInstances());
 		addAll(FishingRodItem.getAllInstances());
+		addAll(ShearItem.getAllInstances());
 	}
 	
 	/** fetches an item from the list given its name. */
 	@NotNull
 	public static Item get(String name) {
 		Item i = get(name, false);
-		if(i == null) return new UnknownItem("NULL"); // technically shouldn't ever happen
+		if (i == null) return new UnknownItem("NULL"); // technically shouldn't ever happen
 		return i;
 	}
 	@Nullable
@@ -57,27 +58,27 @@ public class Items {
 		//System.out.println("fetching name: \"" + name + "\"");
 		int data = 1;
 		boolean hadUnderscore = false;
-		if(name.contains("_")) {
+		if (name.contains("_")) {
 			hadUnderscore = true;
 			try {
 				data = Integer.parseInt(name.substring(name.indexOf("_")+1));
-			} catch(Exception ex) {
+			} catch (Exception ex) {
 				ex.printStackTrace();
 			}
 			name = name.substring(0, name.indexOf("_"));
 		}
-		else if(name.contains(";")) {
+		else if (name.contains(";")) {
 			hadUnderscore = true;
 			try {
 				data = Integer.parseInt(name.substring(name.indexOf(";")+1));
-			} catch(Exception ex) {
+			} catch (Exception ex) {
 				ex.printStackTrace();
 			}
 			name = name.substring(0, name.indexOf(";"));
 		}
 		
-		if(name.equalsIgnoreCase("NULL")) {
-			if(allowNull) return null;
+		if (name.equalsIgnoreCase("NULL")) {
+			if (allowNull) return null;
 			else {
 				System.out.println("WARNING: Items.get passed argument \"null\" when null is not allowed; returning UnknownItem. StackTrace:");
 				Thread.dumpStack();
@@ -85,26 +86,26 @@ public class Items {
 			}
 		}
 		
-		if(name.equals("UNKNOWN"))
+		if (name.equals("UNKNOWN"))
 			return new UnknownItem("BLANK");
 		
 		Item i = null;
-		for(Item cur: items) {
-			if(cur.getName().compareToIgnoreCase(name) == 0) {
+		for (Item cur: items) {
+			if (cur.getName().compareToIgnoreCase(name) == 0) {
 				i = cur;
 				break;
 			}
 		}
 		
-		if(i != null) {
+		if (i != null) {
 			i = i.clone();
-			if(i instanceof StackableItem)
+			if (i instanceof StackableItem)
 				((StackableItem)i).count = data;
-			if(i instanceof ToolItem && hadUnderscore)
+			if (i instanceof ToolItem && hadUnderscore)
 				((ToolItem)i).dur = data;
 			return i;
 		} else {
-			System.out.println(Network.onlinePrefix()+"ITEMS GET: invalid name requested: \"" + name + "\"");
+			System.out.println(Network.onlinePrefix() + "ITEMS GET: Invalid name requested: \"" + name + "\"");
 			Thread.dumpStack();
 			return new UnknownItem(name);
 		}
@@ -114,9 +115,9 @@ public class Items {
 	
 	public static void fillCreativeInv(Inventory inv) { fillCreativeInv(inv, true); }
 	public static void fillCreativeInv(Inventory inv, boolean addAll) {
-		for(Item item: items) {
-			if(item instanceof PowerGloveItem) continue;
-			if(addAll || inv.count(item) == 0)
+		for (Item item: items) {
+			if (item instanceof PowerGloveItem) continue;
+			if (addAll || inv.count(item) == 0)
 				inv.add(item.clone());
 		}
 	}
