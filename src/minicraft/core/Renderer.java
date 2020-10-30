@@ -166,7 +166,8 @@ public class Renderer extends Game {
 	
 	/** Renders the main game GUI (hearts, Stamina bolts, name of the current item, etc.) */
 	private static void renderGui() {
-		// This draws the black square underneath the selected item, as long as the player isn't in creative.
+		// This draws the black square where the selected item would be if you were holding it
+		// yes, this drawing even when you are holding something is important
 		if (!isMode("creative") || player.activeItem != null) {
 			for (int x = 10; x < 26; x++) {
 				screen.render(x * 8, Screen.h - 8, 30 + 30 * 32, 0, 3);
@@ -175,7 +176,7 @@ public class Renderer extends Game {
 			
 		// Shows active item sprite and name in bottom toolbar.
 		if (player.activeItem != null) {
-			player.activeItem.renderInventory(screen, 10 * 8, Screen.h - 8, Color.WHITE);
+			player.activeItem.renderHUD(screen, 10 * 8, Screen.h - 8, Color.WHITE);
 		}
 
 
