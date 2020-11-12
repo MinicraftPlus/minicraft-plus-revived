@@ -28,11 +28,18 @@ public abstract class Item {
 		this.sprite = sprite;
 	}
 
-	/* Renders an item (sprite & name) in an inventory */
+	/** Renders an item (sprite & name) in an inventory */
 	public void renderInventory(Screen screen, int x, int y, int fontColor) {
 		String dispName = getDisplayName();
 		sprite.render(screen, x, y);
 		Font.draw(dispName, screen, x + 8, y, fontColor);
+	}
+
+	/** Renders an item on the HUD */
+	public void renderHUD(Screen screen, int x, int y, int fontColor) {
+		String dispName = getDisplayName();
+		sprite.render(screen, x, y);
+		Font.drawBackground(dispName, screen, x + 8, y, fontColor);
 	}
 	
 	/** Determines what happens when the player interacts with an entity */
