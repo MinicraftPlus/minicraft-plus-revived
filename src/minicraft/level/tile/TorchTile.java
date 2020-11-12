@@ -44,7 +44,7 @@ public class TorchTile extends Tile {
 	}
 	
 	public int getLightRadius(Level level, int x, int y) {
-		return 4;
+		return 5;
 	}
 	
 	public boolean interact(Level level, int xt, int yt, Player player, Item item, Direction attackDir) {
