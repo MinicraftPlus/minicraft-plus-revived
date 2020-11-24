@@ -7,7 +7,7 @@ public class MobSprite extends Sprite {
 	
 	public MobSprite(int sx, int sy, int w, int h, int mirror) {
 		/// this assumes the pixels are all neatly laid out on the spreadsheet, and should be flipped in position according to their mirroring.
-		super(new Px[h][w]);
+		super(new Pixel[h][w]);
 		
 		boolean flipX = (0x01 & mirror) > 0, flipY = (0x02 & mirror) > 0;
 		
@@ -63,9 +63,9 @@ public class MobSprite extends Sprite {
 	}
 
 	public void renderRow(int r, Screen screen, int x, int y, boolean fullbright) {
-		Px[] row = spritePixels[r];
+		Pixel[] row = spritePixels[r];
 		for(int c = 0; c < row.length; c++) { // loop across through each column
-			screen.render(x + c*8, y, row[c].sheetPos, row[c].mirror, row[c].sheetNum, -1, fullbright); // render the sprite pixel.
+			screen.render(x + c*8, y, row[c], -1, fullbright); // render the sprite pixel.
 		}
 	}
 }
