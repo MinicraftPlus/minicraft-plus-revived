@@ -24,8 +24,8 @@ import org.json.JSONObject;
 
 public class MultiplayerDisplay extends Display {
 	
-	private static String domain = "https://playminicraft.com";
-	private static String apiDomain = domain+"/api";
+	private static final String domain = "https://playminicraft.com";
+	private static final String apiDomain = domain+"/api";
 	
 	public static String savedIP = "";
 	public static String savedUUID = "";
@@ -56,7 +56,7 @@ public class MultiplayerDisplay extends Display {
 	public MultiplayerDisplay(boolean pingSite) {
 		Game.ISONLINE = true;
 		Game.ISHOST = false;
-		
+
 		if(savedUUID == null) savedUUID = "";
 		if(email == null) email = "";
 		if(savedUsername == null) savedUsername = "";
@@ -86,7 +86,7 @@ public class MultiplayerDisplay extends Display {
 				if(httpResponse.getStatus() == 200)
 					online = true;
 				else
-					System.err.println("warning: minicraft site ping returned status code " + httpResponse.getStatus());
+					System.err.println("Warning: Minicraft site ping returned status code " + httpResponse.getStatus());
 				
 				if(savedUUID.length() > 0) {
 					// there is a previous login that can be used; check that it's valid
@@ -113,7 +113,7 @@ public class MultiplayerDisplay extends Display {
 			
 			@Override
 			public void failed(UnirestException e) {
-				System.err.println("website ping failed: "+e.getMessage());
+				System.err.println("Website ping failed: "+e.getMessage());
 				if(!e.getMessage().equalsIgnoreCase("connection reset by peer"))
 					e.printStackTrace();
 				cancelled();
@@ -121,7 +121,7 @@ public class MultiplayerDisplay extends Display {
 			
 			@Override
 			public void cancelled() {
-				System.err.println("website ping cancelled.");
+				System.err.println("Website ping cancelled.");
 				if(savedUsername.length() == 0 || savedUUID.length() == 0) {
 					// couldn't validate username, and can't enter offline mode b/c there is no username
 					setError("could not connect to playminicraft account server, but no login data saved; cannot enter offline mode.", false);
@@ -189,7 +189,7 @@ public class MultiplayerDisplay extends Display {
 		}
 		
 		if(input.getKey("exit").clicked && !Game.ISHOST) {
-			Game.setMenu(new TitleDisplay());
+			Game.exitMenu();
 		}
 	}
 	
@@ -204,7 +204,7 @@ public class MultiplayerDisplay extends Display {
 				@Override
 				public void completed(HttpResponse<JsonNode> response) {
 					JSONObject json = response.getBody().getObject();
-					if(Game.debug) System.out.println("received json from login attempt: " + json.toString());
+					if(Game.debug) System.out.println("Received json from login attempt: " + json.toString());
 					switch(json.getString("status")) {
 						case "error":
 							setError(json.getString("message"), false); // in case the user abandoned the menu, don't drag them back.
@@ -291,10 +291,10 @@ public class MultiplayerDisplay extends Display {
 		
 		switch(curState) {
 			case ENTERIP:
-				Font.drawCentered("logged in as: " + savedUsername, screen, 6, Color.get(1, 102, 255, 102));
+				Font.drawCentered("Logged in as: " + savedUsername, screen, 6, Color.get(1, 102, 255, 102));
 				
 				if(!online)
-					Font.drawCentered("offline mode: local servers only", screen, Screen.h/2 - Font.textHeight()*6, Color.get(1, 153, 153, 255));
+					Font.drawCentered("Offline mode: local servers only", screen, Screen.h/2 - Font.textHeight()*6, Color.get(1, 153, 153, 255));
 				
 				Font.drawCentered("Enter ip address to connect to:", screen, Screen.h/2-Font.textHeight()*2-2, Color.get(1, 255));
 				Font.drawCentered(typing, screen, Screen.h/2-Font.textHeight(), Color.get(1, 255, 255, 102));

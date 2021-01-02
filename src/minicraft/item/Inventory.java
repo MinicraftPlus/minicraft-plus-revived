@@ -61,27 +61,26 @@ public class Inventory {
 	 * @param item Item to be added.
 	 */
 	public void add(int slot, Item item) {
-		//if (Game.debug) System.out.println("adding item to an inventory: " + item);
 		if(item instanceof PowerGloveItem) {
 			System.out.println("WARNING: tried to add power glove to inventory. stack trace:");
 			Thread.dumpStack();
-			return; // do NOT add to inventory
+			return;
 		}
-		
+
 		if (item instanceof StackableItem) { // if the item is a item...
 			StackableItem toTake = (StackableItem) item; // ...convert it into a StackableItem object.
 			
 			boolean added = false;
-			for(int i = 0; i < items.size(); i++) {
-				if(toTake.stacksWith(items.get(i))) {
+			for (Item value : items) {
+				if (toTake.stacksWith(value)) {
 					// matching implies that the other item is stackable, too.
-					((StackableItem)items.get(i)).count += toTake.count;
+					((StackableItem) value).count += toTake.count;
 					added = true;
 					break;
 				}
 			}
 			
-			if(!added) items.add(slot, toTake);
+			if (!added) items.add(slot, toTake);
 		} else {
 			items.add(slot, item); // add the item to the items list
 		}
@@ -90,20 +89,20 @@ public class Inventory {
 	/** Removes items from your inventory; looks for stacks, and removes from each until reached count. returns amount removed. */
 	private int removeFromStack(StackableItem given, int count) {
 		int removed = 0; // to keep track of amount removed.
-		for(int i = 0; i < items.size(); i++) {
-			if(!(items.get(i) instanceof StackableItem)) continue;
+		for (int i = 0; i < items.size(); i++) {
+			if (!(items.get(i) instanceof StackableItem)) continue;
 			StackableItem curItem = (StackableItem) items.get(i);
-			if(!curItem.stacksWith(given)) continue; // can't do equals, becuase that includes the stack size.
+			if (!curItem.stacksWith(given)) continue; // can't do equals, becuase that includes the stack size.
 			// equals; and current item is stackable.
 			int amountRemoving = Math.min(count-removed, curItem.count); // this is the number of items that are being removed from the stack this run-through.
 			curItem.count -= amountRemoving;
-			if(curItem.count == 0) { // remove the item from the inventory if its stack is empty.
+			if (curItem.count == 0) { // remove the item from the inventory if its stack is empty.
 				remove(i);
 				i--;
 			}
 			removed += amountRemoving;
-			if(removed == count) break;
-			if(removed > count) { // just in case...
+			if (removed == count) break;
+			if (removed > count) { // just in case...
 				System.out.println("SCREW UP while removing items from stack: " + (removed-count) + " too many.");
 				break;
 			}
@@ -153,13 +152,12 @@ public class Inventory {
 		if (given == null) return 0; // null requests get no items. :)
 		
 		int found = 0; // initialize counting var
-		for(int i = 0; i < items.size(); i++) { // loop though items in inv
-			Item curItem = items.get(i); // assign current item
-			
+		// assign current item
+		for (Item curItem : items) { // loop though items in inv
 			// if the item can be a stack...
-			if (curItem instanceof StackableItem && ((StackableItem)curItem).stacksWith(given))
-				found += ((StackableItem)curItem).count; // add however many items are in the stack.
-			else if(curItem.equals(given))
+			if (curItem instanceof StackableItem && ((StackableItem) curItem).stacksWith(given))
+				found += ((StackableItem) curItem).count; // add however many items are in the stack.
+			else if (curItem.equals(given))
 				found++; // otherwise, just add 1 to the found count.
 		}
 		

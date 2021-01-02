@@ -21,12 +21,6 @@ Note to self: for more little bugs/ideas/concerns, search code for "TODO"
 
 Make an Interactable interface, and both Entity AND Tile implement it, because both are interactable. Interactable holds methods for things like collision detection, tangibility, events for touching, and events for player key presses like interact ("v") and attack (that will also pickup furniture; it's sort of like, "swipe"). There will be a dedicated button to open the inventory. intereact will open chests, activate tnt, etc.
 
-****
-
-change "xa" and "ya" to something else; b/c they are NOT accelerations! They're distances! Specifically, they are the distance that a given entity is about to move.
-
-****
-
 Add more colors? Or try and turn sprites into 32x32 (currently are 16x16) for better graphics? Also, change game aspect ratio from 4:3 to 16:9. This probably means searching for hard-coding refs to the screen size, and changing them. Also make smaller font size, for chat and debug.
 
 ****

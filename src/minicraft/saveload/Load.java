@@ -584,12 +584,10 @@ public class Load {
 	public static Entity loadEntity(String entityData, Version worldVer, boolean isLocalSave) {
 		entityData = entityData.trim();
 		if (entityData.length() == 0) return null;
-		
-		List<String> info = new ArrayList<>(); // this gets everything inside the "[...]" after the entity name.
-		//System.out.println("Loading entity:" + entityData);
-		String[] stuff = entityData.substring(entityData.indexOf("[") + 1, entityData.indexOf("]")).split(":");
-		info.addAll(Arrays.asList(stuff));
-		
+
+		String[] stuff = entityData.substring(entityData.indexOf("[") + 1, entityData.indexOf("]")).split(":"); // this gets everything inside the "[...]" after the entity name.
+		List<String> info = new ArrayList<>(Arrays.asList(stuff));
+
 		String entityName = entityData.substring(0, entityData.indexOf("[")); // this gets the text before "[", which is the entity name.
 		
 		if (entityName.equals("Player") && Game.debug && Game.isValidClient())
@@ -602,7 +600,7 @@ public class Load {
 		if (!isLocalSave) {
 			eid = Integer.parseInt(info.remove(2));
 			
-			/// If I find an entity that is loaded locally, but on another level in the entity data provided, then I ditch the current entity and make a new one from the info provided.
+			// If I find an entity that is loaded locally, but on another level in the entity data provided, then I ditch the current entity and make a new one from the info provided.
 			Entity existing = Network.getEntity(eid);
 			int entityLevel = Integer.parseInt(info.get(info.size()-1));
 			
@@ -661,13 +659,13 @@ public class Load {
 			Class c = null;
 			if(!Crafter.names.contains(entityName)) {
 				try {
-					c = Class.forName("minicraft.entity.mob."+entityName);
+					c = Class.forName("minicraft.entity.mob." + entityName);
 				} catch(ClassNotFoundException ignored) {}
 			}
 			
 			newEntity = getEntity(entityName.substring(entityName.lastIndexOf(".")+1), mobLvl);
 		}
-		
+
 		if(newEntity == null)
 			return null;
 		

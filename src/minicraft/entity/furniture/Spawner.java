@@ -14,12 +14,7 @@ import minicraft.entity.particle.TextParticle;
 import minicraft.gfx.Color;
 import minicraft.gfx.Point;
 import minicraft.gfx.Sprite;
-import minicraft.item.FurnitureItem;
-import minicraft.item.Item;
-import minicraft.item.PotionType;
-import minicraft.item.PowerGloveItem;
-import minicraft.item.ToolItem;
-import minicraft.item.ToolType;
+import minicraft.item.*;
 
 public class Spawner extends Furniture {
 	
@@ -176,7 +171,7 @@ public class Spawner extends Furniture {
 			
 			return true;
 		}
-		
+
 		if(item instanceof PowerGloveItem && Game.isMode("creative")) {
 			level.remove(this);
 			if(!(player.activeItem instanceof PowerGloveItem))
@@ -207,7 +202,7 @@ public class Spawner extends Furniture {
 		
 		return false;
 	}
-	
+
 	public Furniture clone() { return new Spawner(mob); }
 	
 	@Override

@@ -1,20 +1,19 @@
 package minicraft.entity.furniture;
 
-import java.io.File;
 import java.io.IOException;
 import java.util.List;
 
-import minicraft.core.FileHandler;
 import minicraft.core.Game;
+import minicraft.entity.Direction;
 import minicraft.entity.ItemHolder;
 import minicraft.entity.mob.Player;
-import minicraft.gfx.Color;
 import minicraft.gfx.Sprite;
 import minicraft.item.Inventory;
 import minicraft.item.Item;
 import minicraft.item.Items;
 import minicraft.saveload.Load;
 import minicraft.screen.ContainerDisplay;
+import org.jetbrains.annotations.Nullable;
 
 public class Chest extends Furniture implements ItemHolder {
 	private Inventory inventory; // Inventory of the chest
@@ -59,11 +58,12 @@ public class Chest extends Furniture implements ItemHolder {
 			e.printStackTrace();
 		}
 	}
-	
+
 	@Override
-	public void take(Player player) {
+	public boolean interact(Player player, @Nullable Item item, Direction attackDir) {
 		if(inventory.invSize() == 0)
-			super.take(player);
+			return super.interact(player, item, attackDir);
+		return false;
 	}
 	
 	@Override

@@ -15,6 +15,7 @@ import minicraft.screen.WorldSelectDisplay.Action;
 import minicraft.screen.entry.InputEntry;
 import minicraft.screen.entry.ListEntry;
 import minicraft.screen.entry.StringEntry;
+import org.jetbrains.annotations.Nullable;
 
 public class WorldEditDisplay extends Display {
 	
@@ -61,8 +62,7 @@ public class WorldEditDisplay extends Display {
 	public void tick(InputHandler input) {
 		super.tick(input);
 		
-		if(input.getKey("select").clicked) {
-			// do action
+		if(input.getKey("select").clicked) { // do action
 			InputEntry entry;
 			File world = new File(worldsDir + worldName);
 			switch (action) {
@@ -76,7 +76,7 @@ public class WorldEditDisplay extends Display {
 					
 					WorldSelectDisplay.refreshWorldNames();
 					if(WorldSelectDisplay.getWorldNames().size() > 0)
-						Game.setMenu(new WorldSelectDisplay());
+						Game.exitMenu();
 					else
 						Game.setMenu(new TitleDisplay());
 				break;
@@ -98,7 +98,7 @@ public class WorldEditDisplay extends Display {
 						e.printStackTrace();
 					}
 					
-					Game.setMenu(new WorldSelectDisplay());
+					Game.exitMenu();
 					
 				break;
 				
@@ -110,11 +110,10 @@ public class WorldEditDisplay extends Display {
 					String name = entry.getUserInput();
 					if (Game.debug) System.out.println("renaming world " + world + " to new name: " + name);
 					world.renameTo(new File(worldsDir + name));
-					Game.setMenu(new WorldSelectDisplay());
+					Game.exitMenu();
 				break;
 			}
 		}
-		// Display class will take care to exiting
+		// Display class will take care of exiting
 	}
-	
 }

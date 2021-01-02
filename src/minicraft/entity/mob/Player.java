@@ -45,7 +45,7 @@ public class Player extends Mob implements ItemHolder, ClientTickable {
 	protected InputHandler input;
 	
 	private static final int playerHurtTime = 30;
-	private static final int INTERACT_DIST = 12;
+	public static final int INTERACT_DIST = 12;
 	private static final int ATTACK_DIST = 20;
 	
 	private static final int mtm = 300; // time given to increase multiplier before it goes back to 1.
@@ -393,19 +393,19 @@ public class Player extends Mob implements ItemHolder, ClientTickable {
 		
 		if (Game.getMenu() == null && !Bed.inBed(this)) {
 			// this is where movement detection occurs.
-			int xa = 0, ya = 0;
+			int xmov = 0, ymov = 0;
 			if (onFallDelay <= 0) { // prevent movement while falling
-				if (input.getKey("move-up").down) ya--;
-				if (input.getKey("move-down").down) ya++;
-				if (input.getKey("move-left").down) xa--;
-				if (input.getKey("move-right").down) xa++;
+				if (input.getKey("move-up").down) ymov--;
+				if (input.getKey("move-down").down) ymov++;
+				if (input.getKey("move-left").down) xmov--;
+				if (input.getKey("move-right").down) xmov++;
 			}
 			
 			//executes if not saving; and... essentially halves speed if out of stamina.
-			if ((xa != 0 || ya != 0) && (staminaRechargeDelay % 2 == 0 || isSwimming()) && !Updater.saving) {
+			if ((xmov != 0 || ymov != 0) && (staminaRechargeDelay % 2 == 0 || isSwimming()) && !Updater.saving) {
 				double spd = moveSpeed * (potioneffects.containsKey(PotionType.Speed) ? 1.5D : 1);
-				int xd = (int) (xa * spd);
-				int yd = (int) (ya * spd);
+				int xd = (int) (xmov * spd);
+				int yd = (int) (ymov * spd);
 				Direction newDir = Direction.getDirection(xd, yd);
 				if(newDir == Direction.NONE) newDir = dir;
 				if ((xd != 0 || yd != 0 || newDir != dir) && Game.isConnectedClient() && this == Game.player)
@@ -416,7 +416,7 @@ public class Player extends Mob implements ItemHolder, ClientTickable {
 			
 			
 			if (isSwimming() && tickTime % 60 == 0 && !potioneffects.containsKey(PotionType.Swim)) { // if drowning... :P
-				if (stamina > 0) stamina--; // take away stamina
+				if (stamina > 0) payStamina(1); // take away stamina
 				else hurt(this, 1, Direction.NONE); // if no stamina, take damage.
 			}
 			
@@ -437,21 +437,11 @@ public class Player extends Mob implements ItemHolder, ClientTickable {
 					level.dropItem(x, y, drop);
 			}
 			
-			if ((activeItem == null || !activeItem.used_pending) && (input.getKey("attack").clicked || input.getKey("pickup").clicked) && stamina != 0 && onFallDelay <= 0) { // this only allows attacks or pickups when such action is possible.
+			if ((activeItem == null || !activeItem.used_pending) && (input.getKey("attack").clicked) && stamina != 0 && onFallDelay <= 0) { // this only allows attacks when such action is possible.
 				if (!potioneffects.containsKey(PotionType.Energy)) stamina--;
 				staminaRecharge = 0;
-				
-				if (input.getKey("pickup").clicked) {
-					if(!(activeItem instanceof PowerGloveItem)) { // if you are not already holding a power glove (aka in the middle of a separate interaction)...
-						prevItem = activeItem; // then save the current item...
-						activeItem = new PowerGloveItem(); // and replace it with a power glove.
-					}
-					attack(); // attack (with the power glove)
-					if(!Game.ISONLINE)
-						resolveHeldItem();
-				}
-				else
-					attack();
+
+				attack();
 				
 				if(Game.ISONLINE && activeItem != null && activeItem.interactsWithWorld() && !(activeItem instanceof ToolItem))
 					activeItem.used_pending = true;
@@ -469,8 +459,6 @@ public class Player extends Mob implements ItemHolder, ClientTickable {
 					Game.setMenu(new PauseDisplay());
 				if (input.getKey("craft").clicked && !use())
 					Game.setMenu(new CraftingDisplay(Recipes.craftRecipes, "Crafting", this, true));
-				//if (input.getKey("sethome").clicked) setHome();
-				//if (input.getKey("home").clicked && !Bed.inBed) goHome();
 
 				if (input.getKey("info").clicked) Game.setMenu(new InfoDisplay());
 
@@ -486,6 +474,16 @@ public class Player extends Mob implements ItemHolder, ClientTickable {
 						if (Game.isConnectedClient() && this == Game.player)
 							Game.client.sendPotionEffect(potionType, false);
 					}
+				}
+
+				if (input.getKey("pickup").clicked) {
+					if(!(activeItem instanceof PowerGloveItem)) { // if you are not already holding a power glove (aka in the middle of a separate interaction)...
+						prevItem = activeItem; // then save the current item...
+						activeItem = new PowerGloveItem(); // and replace it with a power glove.
+					}
+					attack(); // attack (with the power glove)
+					if(!Game.ISONLINE)
+						resolveHeldItem();
 				}
 			}
 			
@@ -503,21 +501,20 @@ public class Player extends Mob implements ItemHolder, ClientTickable {
 	 * Looks complicated to so it can handle the powerglove.
 	 */
 	public void resolveHeldItem() {
-		//if(Game.debug) System.out.println("prev item: " + prevItem + "; curItem: " + activeItem);
 		if(!(activeItem instanceof PowerGloveItem)) { // if you are now holding something other than a power glove...
 			if(prevItem != null && !Game.isMode("creative")) // and you had a previous item that we should care about...
 				inventory.add(0, prevItem); // then add that previous item to your inventory so it isn't lost.
 			// if something other than a power glove is being held, but the previous item is null, then nothing happens; nothing added to inventory, and current item remains as the new one.
 		} else
 			activeItem = prevItem; // otherwise, if you're holding a power glove, then the held item didn't change, so we can remove the power glove and make it what it was before.
-		
+
 		prevItem = null; // this is no longer of use.
-		
+
 		if(activeItem instanceof PowerGloveItem) // if, for some odd reason, you are still holding a power glove at this point, then null it because it's useless and shouldn't remain in hand.
 			activeItem = null;
 	}
-	
-	/** 
+
+	/**
 	 * This method is called when we press the attack button.
 	 */
 	protected void attack() {
@@ -730,9 +727,8 @@ public class Player extends Mob implements ItemHolder, ClientTickable {
 	/** same, but for interaction. */
 	private boolean interact(Rectangle area) {
 		List<Entity> entities = level.getEntitiesInRect(area);
-		for (int i = 0; i < entities.size(); i++) {
-			Entity e = entities.get(i);
-			if ( e != this && e.interact(this, activeItem, attackDir) ) return true; // this is the ONLY place that the Entity.interact method is actually called.
+		for (Entity e : entities) {
+			if (e != this && e.interact(this, activeItem, attackDir)) return true; // this is the ONLY place that the Entity.interact method is actually called.
 		}
 		return false;
 	}
@@ -741,14 +737,14 @@ public class Player extends Mob implements ItemHolder, ClientTickable {
 	private boolean hurt(Rectangle area) {
 		List<Entity> entities = level.getEntitiesInRect(area);
 		int maxDmg = 0;
-		for (int i = 0; i < entities.size(); i++) {
-			Entity e = entities.get(i);
+		for (Entity e : entities) {
 			if (e != this && e instanceof Mob) {
 				int dmg = getAttackDamage(e);
 				maxDmg = Math.max(dmg, maxDmg);
-				((Mob)e).hurt(this, dmg, attackDir); // note: this really only does something for mobs.
+				((Mob) e).hurt(this, dmg, attackDir); // note: this really only does something for mobs.
 			}
-			if (e != this && e instanceof Furniture) e.interact(this, null, attackDir); // note: this really only does something for mobs.
+			if (e instanceof Furniture)
+				e.interact(this, null, attackDir);
 		}
 		return maxDmg > 0;
 	}
@@ -1094,7 +1090,7 @@ public class Player extends Mob implements ItemHolder, ClientTickable {
 		";attackTime,"+attackTime+
 		";attackDir,"+attackDir.ordinal()+
 		";activeItem,"+(activeItem==null?"null": activeItem.getData())+
-		";isFishing,"+(isFishing==true?"1": "0");
+		";isFishing,"+(isFishing ?"1": "0");
 		
 		return updates;
 	}

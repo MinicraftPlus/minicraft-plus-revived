@@ -103,7 +103,7 @@ public class WorldSelectDisplay extends Display {
 	
 	@Override
 	public void init(Display parent) {
-		super.init(parent instanceof TitleDisplay ? parent : new TitleDisplay());
+		super.init(parent);
 		worldName = "";
 		loadedWorld = true;
 		

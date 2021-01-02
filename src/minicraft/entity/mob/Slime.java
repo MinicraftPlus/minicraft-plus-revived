@@ -3,7 +3,6 @@ package minicraft.entity.mob;
 import minicraft.core.Game;
 import minicraft.core.io.Settings;
 import minicraft.entity.Direction;
-import minicraft.gfx.Color;
 import minicraft.gfx.MobSprite;
 import minicraft.gfx.Screen;
 import minicraft.item.Items;
@@ -34,13 +33,13 @@ public class Slime extends EnemyMob {
 		
 		/// jumpTime from 0 to -10 (or less) is the slime deciding where to jump.
 		/// 10 to 0 is it jumping.
-		
-		if(jumpTime <= -10 && (xa != 0 || ya != 0))
+
+		if(jumpTime <= -10 && (xmov != 0 || ymov != 0))
 			jumpTime = 10;
 		
 		jumpTime--;
 		if(jumpTime == 0) {
-			xa = ya = 0;
+			xmov = ymov = 0;
 		}
 	}
 	
@@ -51,8 +50,8 @@ public class Slime extends EnemyMob {
 	}
 	
 	@Override
-	public boolean move(int xa, int ya) {
-		boolean result = super.move(xa, ya);
+	public boolean move(int xmov, int ymov) {
+		boolean result = super.move(xmov, ymov);
 		dir = Direction.DOWN;
 		return result;
 	}

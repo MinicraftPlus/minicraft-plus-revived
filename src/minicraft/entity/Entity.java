@@ -36,7 +36,7 @@ public abstract class Entity implements Tickable {
 	public int x, y; // x, y entity coordinates on the map
 	private int xr, yr; // x, y radius of entity
 	private boolean removed; // Determines if the entity is removed from it's level; checked in Level.java
-	protected Level level; // the level that the entity is on
+	public Level level; // the level that the entity is on
 	public int col; // current color.
 	
 	public int eid; // this is intended for multiplayer, but I think it could be helpful in single player, too. certainly won't harm anything, I think... as long as finding a valid id doesn't take long...
@@ -99,21 +99,25 @@ public abstract class Entity implements Tickable {
 	
 	/** if this entity is touched by another entity (extended by sub-classes) */
 	protected void touchedBy(Entity entity) {}
-	
-	/** Item interact */
+
+	/**
+	 * Interacts with the entity this method is called on
+	 * @param player The player attacking
+	 * @param item The item the player attacked with
+	 * @param attackDir The direction to interact
+	 * @return If the interaction was successful
+	 */
 	public boolean interact(Player player, @Nullable Item item, Direction attackDir) {
-		if(item != null)
-			return item.interact(player, this, attackDir);
 		return false;
 	}
 	
 	/** Moves an entity horizontally and vertically. Returns whether entity was unimpeded in it's movement.  */
-	public boolean move(int xa, int ya) {
-		if(Updater.saving || (xa == 0 && ya == 0)) return true; // pretend that it kept moving
+	public boolean move(int xmov, int ymov) {
+		if(Updater.saving || (xmov == 0 && ymov == 0)) return true; // pretend that it kept moving
 		
 		boolean stopped = true; // used to check if the entity has BEEN stopped, COMPLETELY; below checks for a lack of collision.
-		if(move2(xa, 0)) stopped = false; // becomes false if horizontal movement was successful.
-		if(move2(0, ya)) stopped = false; // becomes false if vertical movement was successful.
+		if(move2(xmov, 0)) stopped = false; // becomes false if horizontal movement was successful.
+		if(move2(0, ymov)) stopped = false; // becomes false if vertical movement was successful.
 		if (!stopped) {
 			int xt = x >> 4; // the x tile coordinate that the entity is standing on.
 			int yt = y >> 4; // the y tile coordinate that the entity is standing on.
@@ -125,15 +129,15 @@ public abstract class Entity implements Tickable {
 	
 	/**
 	 * Moves the entity a long only one direction.
-	 * If xa != 0 then ya should be 0.
-	 * If xa = 0 then ya should be != 0.
+	 * If xmov != 0 then ya should be 0.
+	 * If xmov = 0 then ya should be != 0.
 	 * Will throw exception otherwise.
-	 * @param xa Horizontal velocity.
-	 * @param ya Vertical velocity.
+	 * @param xmov Horizontal velocity.
+	 * @param ymov Vertical velocity.
 	 * @return true if the move was successful, false if not.
 	 */
-	protected boolean move2(int xa, int ya) {
-		if(xa == 0 && ya == 0) return true; // was not stopped
+	protected boolean move2(int xmov, int ymov) {
+		if(xmov == 0 && ymov == 0) return true; // was not stopped
 		
 		boolean interact = true;//!Game.isValidClient() || this instanceof ClientTickable;
 		
@@ -144,10 +148,10 @@ public abstract class Entity implements Tickable {
 		int yto1 = ((y) + yr) >> 4; // below
 		
 		// gets same as above, but after movement.
-		int xt0 = ((x + xa) - xr) >> 4;
-		int yt0 = ((y + ya) - yr) >> 4;
-		int xt1 = ((x + xa) + xr) >> 4;
-		int yt1 = ((y + ya) + yr) >> 4;
+		int xt0 = ((x + xmov) - xr) >> 4;
+		int yt0 = ((y + ymov) - yr) >> 4;
+		int xt1 = ((x + xmov) + xr) >> 4;
+		int yt1 = ((y + ymov) + yr) >> 4;
 		
 		//boolean blocked = false; // if the next tile can block you.
 		for (int yt = yt0; yt <= yt1; yt++) { // cycles through y's of tile after movement
@@ -171,32 +175,30 @@ public abstract class Entity implements Tickable {
 			xr++;
 			yr++;
 		}
-		List<Entity> isInside = level.getEntitiesInRect(new Rectangle(x+xa, y+ya, xr*2, yr*2, Rectangle.CENTER_DIMS)); // gets the entities that this entity will touch once moved.
-		for (int i = 0; interact && i < isInside.size(); i++) {
-			/// cycles through entities about to be touched, and calls touchedBy(this) for each of them.
-			Entity e = isInside.get(i);
-			if (e == this) continue; // touching yourself doesn't count.
-			
-			if(e instanceof Player) {
-				if(!(this instanceof Player))
-					touchedBy(e);
+
+		List<Entity> isInside = level.getEntitiesInRect(new Rectangle(x+xmov, y+ymov, xr*2, yr*2, Rectangle.CENTER_DIMS)); // gets the entities that this entity will touch once moved.
+		if (interact) {
+			for (Entity e : isInside) {
+				/// cycles through entities about to be touched, and calls touchedBy(this) for each of them.
+				if (e == this) continue; // touching yourself doesn't count.
+
+				if (e instanceof Player) {
+					if (!(this instanceof Player))
+						touchedBy(e);
+				} else
+					e.touchedBy(this); // call the method. ("touch" the entity)
 			}
-			else
-				e.touchedBy(this); // call the method. ("touch" the entity)
 		}
 		
 		isInside.removeAll(wasInside); // remove all the entities that this one is already touching before moving.
-		for (int i = 0; i < isInside.size(); i++) {
-			Entity e = isInside.get(i);
-			
+		for (Entity e : isInside) {
 			if (e == this) continue; // can't interact with yourself
-			
 			if (e.blocks(this)) return false; // if the entity prevents this one from movement, don't move.
 		}
 		
 		// finally, the entity moves!
-		x += xa;
-		y += ya;
+		x += xmov;
+		y += ymov;
 		
 		return true; // the move was successful.
 	}

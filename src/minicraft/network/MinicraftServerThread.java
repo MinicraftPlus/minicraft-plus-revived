@@ -175,7 +175,7 @@ public class MinicraftServerThread extends MinicraftConnection {
 	}
 	
 	public void sendEntityAddition(Entity e) {
-		if (Game.debug && e instanceof Player) System.out.println("SERVER: Sending addition of player " +e+ " to client through " +this);
+		if (Game.debug && e instanceof Player) System.out.println("SERVER: Sending addition of player " + e + " to client through " + this);
 		if (Game.debug && e.eid == client.eid) System.out.println("SERVER: Sending addition of player to itself");
 		String edata = Save.writeEntity(e, false);
 		if (edata.length() == 0)
@@ -185,7 +185,7 @@ public class MinicraftServerThread extends MinicraftConnection {
 	}
 	
 	public void sendEntityRemoval(int eid, int levelDepth) {
-		sendData(InputType.REMOVE, String.valueOf(eid)+ ";" +String.valueOf(levelDepth));
+		sendData(InputType.REMOVE, eid + ";" + levelDepth);
 	}
 	public void sendEntityRemoval(int eid) { // remove regardless of current level
 		sendData(InputType.REMOVE, String.valueOf(eid));

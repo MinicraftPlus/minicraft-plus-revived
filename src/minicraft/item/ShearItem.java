@@ -23,16 +23,5 @@ public class ShearItem extends Item {
 	}
 
 	@Override
-	public boolean interact(Player player, Entity entity, Direction attackDir) {
-		if (entity instanceof Sheep) {
-			if (!((Sheep) entity).cut) {
-				((Sheep) entity).shear();
-				return true;
-			}
-		}
-		return false;
-	}
-
-	@Override
 	public Item clone() { return new ShearItem(); }
 }

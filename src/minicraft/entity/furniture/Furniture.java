@@ -1,6 +1,7 @@
 package minicraft.entity.furniture;
 
 import minicraft.core.Game;
+import minicraft.core.io.Sound;
 import minicraft.entity.Direction;
 import minicraft.entity.Entity;
 import minicraft.entity.mob.Player;
@@ -8,7 +9,9 @@ import minicraft.entity.mob.RemotePlayer;
 import minicraft.gfx.Screen;
 import minicraft.gfx.Sprite;
 import minicraft.item.FurnitureItem;
+import minicraft.item.Item;
 import minicraft.item.PowerGloveItem;
+import org.jetbrains.annotations.Nullable;
 
 /** Many furniture classes are very similar; they might not even need to be there at all... */
 
@@ -81,7 +84,31 @@ public class Furniture extends Entity {
 		if (entity instanceof Player)
 			tryPush((Player) entity);
 	}
-	
+
+	/**
+	 * Used in PowerGloveItem.java to let the user pick up furniture.
+	 * @param player The player picking up the furniture.
+	 */
+	@Override
+	public boolean interact(Player player, @Nullable Item item, Direction attackDir) {
+		if (item instanceof PowerGloveItem) {
+			Sound.monsterHurt.play();
+			if (!Game.ISONLINE) {
+				remove();
+				if (!Game.isMode("creative") && player.activeItem != null && !(player.activeItem instanceof PowerGloveItem))
+					player.getInventory().add(0, player.activeItem); // put whatever item the player is holding into their inventory
+				player.activeItem = new FurnitureItem(this); // make this the player's current item.
+				return true;
+			} else if (Game.isValidServer() && player instanceof RemotePlayer) {
+				remove();
+				Game.server.getAssociatedThread((RemotePlayer) player).updatePlayerActiveItem(new FurnitureItem(this));
+				return true;
+			} else
+				System.out.println("WARNING: undefined behavior; online game was not server and ticked furniture: " + this + "; and/or player in online game found that isn't a RemotePlayer: " + player);
+		}
+		return false;
+	}
+
 	/**
 	 * Tries to let the player push this furniture.
 	 * @param player The player doing the pushing.
@@ -96,25 +123,6 @@ public class Furniture extends Entity {
 		}
 	}
 	
-	/**
-	 * Used in PowerGloveItem.java to let the user pick up furniture.
-	 * @param player The player picking up the furniture.
-	 */
-	public void take(Player player) {
-		remove(); // remove this from the world
-		if(!Game.ISONLINE) {
-			if (!Game.isMode("creative") && player.activeItem != null && !(player.activeItem instanceof PowerGloveItem))
-				player.getInventory().add(0, player.activeItem); // put whatever item the player is holding into their inventory (should never be a power glove, since it is put in a taken out again all in the same frame).
-			player.activeItem = new FurnitureItem(this); // make this the player's current item.
-		}
-		else if(Game.isValidServer() && player instanceof RemotePlayer)
-			Game.server.getAssociatedThread((RemotePlayer)player).updatePlayerActiveItem(new FurnitureItem(this));
-		else
-			System.out.println("WARNING: undefined behavior; online game was not server and ticked furniture: "+this+"; and/or player in online game found that isn't a RemotePlayer: " + player);
-		
-		//if (Game.debug) System.out.println("set active item of player " + player + " to " + player.activeItem + "; picked up furniture: " + this);
-	}
-	
 	@Override
 	public boolean canWool() { return true; }
 	
@@ -126,9 +134,9 @@ public class Furniture extends Entity {
 	
 	@Override
 	protected boolean updateField(String field, String val) {
-		if(super.updateField(field, val)) return true;
-		
-		switch(field) {
+		if (super.updateField(field, val)) return true;
+
+		switch (field) {
 			case "pushTime": pushTime = Integer.parseInt(val); return true;
 		}
 		

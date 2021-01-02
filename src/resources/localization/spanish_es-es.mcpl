@@ -8,7 +8,7 @@ Air Wizard: Defeated!
 Mago de Aire: Derrotado!
 
 The Dungeon is now open!
-El calabozo está abierto ahora
+El calabozo estÃ¡ abierto ahora
 
 A costume lies on the ground...
 Un disfraz descansa en el suelo...
@@ -40,19 +40,19 @@ Set your home!
 Establece tu casa!
 
 Can't set home here!
-No puedes establecer la casa aquí!
+No puedes establecer la casa aquÃ­!
 
 Home Sweet Home!
 Hogar Dulce Hogar!
 
 Mode penalty: -2 health
-Modo de penalización: -2 de salud
+Modo de penalizaciÃ³n: -2 de salud
 
 You don't have a home!
 No tienes una casa!
 
 You can't go home from here!
-No puedes ir a casa desde aquí!
+No puedes ir a casa desde aquÃ­!
  
 ### entity end
 
@@ -83,12 +83,12 @@ Book
 Libro
 
 Antidious
-Antídoto
+AntÃ­doto
 
 # BucketItem.java
 
 Empty Bucket
-Cubo vacío
+Cubo vacÃ­o
 
 Water Bucket
 Cubo de Agua
@@ -193,7 +193,7 @@ AirWizard Spawner
 Generador de MagoAire
 
 Workbench
-Mesa de Elaboración
+Mesa de ElaboraciÃ³n
 
 Oven
 Horno
@@ -231,43 +231,43 @@ Cofre
 # PotionType.java
 
 None Potion
-Ninguna Poción
+Ninguna PociÃ³n
 
 Speed Potion
-Poción de Velocidad
+PociÃ³n de Velocidad
 
 Light Potion
-Poción de Luz
+PociÃ³n de Luz
 
 Swim Potion
-Poción de Nadar
+PociÃ³n de Nadar
 
 Energy Potion
-Poción de Energía
+PociÃ³n de EnergÃ­a
 
 Regen Potion
-Poción de Reneg
+PociÃ³n de Reneg
 
 Health Potion
-Poción de Vida
+PociÃ³n de Vida
 
 Time Potion
-Poción de Tiempo
+PociÃ³n de Tiempo
 
 Lava Potion
-Poción de Lava
+PociÃ³n de Lava
 
 Shield Potion
-Poción de Escudo
+PociÃ³n de Escudo
 
 Haste Potion
-Poción de Prisa
+PociÃ³n de Prisa
 
 Escape Potion
-Poción de Escapar
+PociÃ³n de Escapar
 
 Potion
-Poción
+PociÃ³n
 
 # PowerGloveItem.java
 
@@ -298,7 +298,7 @@ string
 cuerda
 
 Coal
-Carbón
+CarbÃ³n
 
 Iron Ore
 Mena de Hierro
@@ -319,7 +319,7 @@ Rose
 Rosa
 
 GunPowder
-Pólvora
+PÃ³lvora
 
 Slime
 Slime
@@ -328,7 +328,7 @@ glass
 cristal
 
 cloth
-paño
+paÃ±o
 
 gem
 gema
@@ -337,7 +337,7 @@ Scale
 Escala
 
 Shard
-Élitro
+Ã‰litro
 
 # TileItem.java
 
@@ -351,10 +351,10 @@ Dirt
 Tierra
 
 Plank
-Tablón
+TablÃ³n
 
 Plank Wall
-Muro de Tablón
+Muro de TablÃ³n
 
 Wood Door
 Puerta de Madera
@@ -417,7 +417,7 @@ Can only be placed on
 Solo se puede colocar en
 
 Dig a hole first!
-¡Cava un hoyo primero!
+Â¡Cava un hoyo primero!
 
 # ToolItem.java
 
@@ -437,7 +437,7 @@ Gem
 Gema
 
 Fishing Rod
-Caña de Pescar
+CaÃ±a de Pescar
 
 # ToolType.java
 
@@ -460,7 +460,7 @@ Bow
 Arco
 
 FishingRod
-CañaDePescar
+CaÃ±aDePescar
 
 Claymore
 Casa antigua
@@ -482,7 +482,7 @@ Gem Ore
 Mena de Gema
 
 Wood Planks
-Tablón de Madera
+TablÃ³n de Madera
 
 Stone Bricks
 Ladrillo de piedra
@@ -551,7 +551,7 @@ Hard Rock
 Roca Dura
 
 Infinite Fall
-Caída Infinita
+CaÃ­da Infinita
 
 Cloud
 Nube
@@ -588,7 +588,7 @@ host not found
 alojamiento no encontrado
 
 unable to get localhost address
-incapaz de obtener la dirección localhost
+incapaz de obtener la direcciÃ³n localhost
 
 ### network end
 
@@ -612,10 +612,10 @@ Off
 # BookDisplay.java
 
 There is nothing of use here.
-No hay nada de uso aquí.
+No hay nada de uso aquÃ­.
 
 Still nothing... :P
-Todavía nada... :P
+TodavÃ­a nada... :P
 
 # CraftingMenu.java
 
@@ -653,7 +653,7 @@ Player Score:
 Puntos del Jugador: 
 
 <Bonuses>
-<Bonús>
+<BonÃºs>
 
 Final Score: 
 Puntos final: 
@@ -667,7 +667,7 @@ Time Played:
 Tiempo Jugado: 
 
 Current Score: 
-Puntuación Actual: 
+PuntuaciÃ³n Actual: 
 
 Exit
 Salir
@@ -687,7 +687,7 @@ key sequence
 secuencia de tecla
 
 Are you sure you want to reset all key bindings to the default keys?
-Estás seguro que quieres reiniciar todos los atajos de teclado a las teclas predeterminadas?
+EstÃ¡s seguro que quieres reiniciar todos los atajos de teclado a las teclas predeterminadas?
 
 enter to confirm
 enter para confirmar
@@ -696,19 +696,19 @@ escape to cancel
 ESC para cancelar
 
 Confirm Action
-Confirmar Acción
+Confirmar AcciÃ³n
 
 Press C/Enter to change key binding
 Presiona C/Enter para cambiar el atajo de teclado
 
 Press A to add key binding
-Presiona A para añadir atajo de teclado
+Presiona A para aÃ±adir atajo de teclado
 
 Shift-D to reset all keys to default
 Shift-D para restablecer todas las teclas a sus valores predeterminados
 
 ESCAPE to Return to menu
-ESC para Regresar al menú
+ESC para Regresar al menÃº
 
 # LoadingDisplay.java
 
@@ -724,16 +724,16 @@ nothing
 nada
 
 attempting log in
-intentando iniciar sesión
+intentando iniciar sesiÃ³n
 
 no internet connection, but no login data saved; cannot enter offline mode.
-no hay conexión a Internet, pero no se guardaron datos de inicio de sesión; no puede ingresar al modo fuera de línea.
+no hay conexiÃ³n a Internet, pero no se guardaron datos de inicio de sesiÃ³n; no puede ingresar al modo fuera de lÃ­nea.
 
 connecting to server
 conectando al servidor
 
 logging in
-iniciando sesión
+iniciando sesiÃ³n
 
 saving credentials
 guardando credenciales
@@ -742,7 +742,7 @@ login failed.
 error de inicio de sesion.
 
 problem with saved login data; please exit and login again.
-problema con los datos de inicio de sesión guardados; por favor salga y vuelva a iniciar sesión.
+problema con los datos de inicio de sesiÃ³n guardados; por favor salga y vuelva a iniciar sesiÃ³n.
 
 Internal server error: Couldn't fetch username from uuid
 Error interno del servidor: no se pudo obtener el nombre de usuario de uuid
@@ -751,19 +751,19 @@ logged in as:
 conectado como: 
 
 offline mode: local servers only
-modo fuera de línea: solo servidores locales
+modo fuera de lÃ­nea: solo servidores locales
 
 Enter ip address to connect to:
-Ingrese la dirección de IP para conectarse:
+Ingrese la direcciÃ³n de IP para conectarse:
 
 Press Shift-Escape to logout
-Presione Shift-ESC para cerrar la sesión
+Presione Shift-ESC para cerrar la sesiÃ³n
 
 Enter email:
 Ingrese correo electronico:
 
 Enter password:
-Ingrese contraseña:
+Ingrese contraseÃ±a:
 
 field is blank
 el campo esta en blanco
@@ -824,12 +824,12 @@ Paused
 Pausado
 
 Main Menu
-Menú Principal
+MenÃº Principal
 
 # PauseDisplay.java
 
 Yes
-Sí
+SÃ­
 
 No
 No
@@ -850,8 +850,8 @@ Cargar Mundo
 New World
 Nuevo Mundo
 
-Join Online World
-Entrar en Mundo en línea
+Multiplayer
+Entrar en Mundo en lÃ­nea
 
 Options
 Opciones
@@ -862,8 +862,8 @@ Ayuda
 Instructions
 Instrucciones
 
-Storyline Guide (for the weak)
-Guía de historias (para los débiles)
+Storyline Guide
+GuÃ­a de historias
 
 About
 Acerca de
@@ -886,10 +886,10 @@ New World Name:
 Nuevo Nombre del Mundo:
 
 Are you sure you want to delete
-Estás seguro que quieres eliminarlo
+EstÃ¡s seguro que quieres eliminarlo
 
 This can not be undone!
-¡Esto no se puede deshacer!
+Â¡Esto no se puede deshacer!
 
  to confirm
  para confirmar
@@ -906,10 +906,10 @@ Enter World Name
 Ingrese Nombre del Mundo
 
 Trouble with world name?
-¿Problema con el nombre?
+Â¿Problema con el nombre?
 
 by default, w and s move the cursor up and down. This can be changed in the key binding menu. To type the letter instead of moving the cursor, hold the shift key while typing the world name.
-de forma predeterminada, w y s mueven el cursor hacia arriba y hacia abajo. Esto se puede cambiar en el menú de enlace de teclas. Para escribir la letra en lugar de mover el cursor, mantenga presionada la tecla Mayús mientras escribe el nombre del mundo.
+de forma predeterminada, w y s mueven el cursor hacia arriba y hacia abajo. Esto se puede cambiar en el menÃº de enlace de teclas. Para escribir la letra en lugar de mover el cursor, mantenga presionada la tecla MayÃºs mientras escribe el nombre del mundo.
 
 Create World
 Crear Mundo
@@ -964,13 +964,13 @@ Difficulty
 Dificultad
 
 Easy
-Facíl
+FacÃ­l
 
 Normal
 Normal
 
 Hard
-Difícil
+DifÃ­cil
 
 Game Mode
 Modo de Juego
@@ -997,7 +997,7 @@ Autosave
 Autoguardado
 
 World Size
-Tamaño del Mundo
+TamaÃ±o del Mundo
 
 World Theme
 Tema del Mundo
@@ -1027,7 +1027,7 @@ Box
 Caja
 
 Mountain
-Montaña
+MontaÃ±a
 
 Irregular
 Irregular

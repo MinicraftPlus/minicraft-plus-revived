@@ -15,7 +15,7 @@ import minicraft.level.Level;
 public abstract class MobAi extends Mob {
 	
 	int randomWalkTime, randomWalkChance, randomWalkDuration;
-	int xa, ya;
+	int xmov, ymov;
 	private int lifetime;
 	protected int age = 0; // Not private because it is used in Sheep.java.
 	
@@ -35,8 +35,8 @@ public abstract class MobAi extends Mob {
 		randomWalkTime = 0;
 		randomWalkDuration = rwTime;
 		randomWalkChance = rwChance;
-		xa = 0;
-		ya = 0;
+		xmov = 0;
+		ymov = 0;
 		walkTime = 2;
 	}
 	
@@ -74,9 +74,9 @@ public abstract class MobAi extends Mob {
 		
 		if(skipTick()) return;
 		
-		if(!move(xa * speed, ya * speed)) {
-			xa = 0;
-			ya = 0;
+		if(!move(xmov * speed, ymov * speed)) {
+			xmov = 0;
+			ymov = 0;
 		}
 		
 		if (random.nextInt(randomWalkChance) == 0) { // if the mob could not or did not move, or a random small chance occurred...
@@ -100,11 +100,11 @@ public abstract class MobAi extends Mob {
 	}
 	
 	@Override
-	public boolean move(int xa, int ya) {
+	public boolean move(int xmov, int ymov) {
 		//noinspection SimplifiableIfStatement
 		if(Game.isValidClient()) return false; // client mobAi's should not move at all.
 		
-		return super.move(xa, ya);
+		return super.move(xmov, ymov);
 	}
 	
 	@Override
@@ -141,8 +141,8 @@ public abstract class MobAi extends Mob {
 		randomWalkTime = randomWalkDuration; // set the mob to walk about in a random direction for a time
 		
 		// set the random direction; randir is from -1 to 1.
-		xa = (random.nextInt(3) - 1);
-		ya = (random.nextInt(3) - 1);
+		xmov = (random.nextInt(3) - 1);
+		ymov = (random.nextInt(3) - 1);
 	}
 	
 	/**

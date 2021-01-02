@@ -1,5 +1,5 @@
 # Minicraft Plus
-Minicraft+ is a modded version of Minicraft that adds many more features to the original version. To learn more about Minicraft, or play it yourself, take a look at all the [releases](https://github.com/hrisj42/minicraft-plus-revived/releases).
+Minicraft+ is a modded version of Minicraft that adds many more features to the original version. To learn more about Minicraft, or play it yourself, take a look at all the [releases](https://github.com/chrisj42/minicraft-plus-revived/releases).
 
 The code was a bit of a mess at first due to inexperience and several years of abandonment. Now it works pretty well; though there's still some to do, and the code still isn't perfect, but hopefully it will get there eventually.
 

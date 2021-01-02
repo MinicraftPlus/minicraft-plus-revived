@@ -7,14 +7,11 @@ import minicraft.core.io.Sound;
 import minicraft.entity.Direction;
 import minicraft.entity.Entity;
 import minicraft.entity.furniture.Spawner;
-import minicraft.gfx.Color;
 import minicraft.gfx.MobSprite;
 import minicraft.gfx.Point;
 import minicraft.gfx.Screen;
 import minicraft.item.Items;
-import minicraft.level.tile.Tile;
 import minicraft.level.tile.Tiles;
-import org.jetbrains.annotations.NotNull;
 
 public class Creeper extends EnemyMob {
 	private static MobSprite[][][] sprites;
@@ -38,10 +35,10 @@ public class Creeper extends EnemyMob {
 	}
 	
 	@Override
-	public boolean move(int xa, int ya) {
-		boolean result = super.move(xa, ya);
+	public boolean move(int xmov, int ymov) {
+		boolean result = super.move(xmov, ymov);
 		dir = Direction.DOWN;
-		if (xa == 0 && ya == 0) walkDist = 0;
+		if (xmov == 0 && ymov == 0) walkDist = 0;
 		return result;
 	}
 	
@@ -51,9 +48,9 @@ public class Creeper extends EnemyMob {
 		
 		if (fuseTime > 0) {
 			fuseTime--; // fuse getting shorter...
-			xa = ya = 0;
+			xmov = ymov = 0;
 		} else if (fuseLit) { // fuseLit is set to true when fuseTime is set to max, so this happens after fuseTime hits zero, while fuse is lit.
-			xa = ya = 0;
+			xmov = ymov = 0;
 			
 			boolean playerInRange = false; // tells if any players are within the blast
 			

@@ -59,7 +59,7 @@ public class AirWizard extends EnemyMob {
 		super.tick();
 		
 		if (attackDelay > 0) {
-			xa = ya = 0;
+			xmov = ymov = 0;
 			int dir = (attackDelay - 45) / 4 % 4; // the direction of attack.
 			dir = (dir * 2 % 4) + (dir / 2); // direction attack changes
 			if (attackDelay < 45)
@@ -78,7 +78,7 @@ public class AirWizard extends EnemyMob {
 		}
 		
 		if (attackTime > 0) {
-			xa = ya = 0;
+			xmov = ymov = 0;
 			attackTime--; // attackTime will decrease by 1.
 			double dir = attackTime * 0.25 * (attackTime % 2 * 2 - 1); //assigns a local direction variable from the attack time.
 			double speed = (secondform ? 1.2 : 0.7) + attackType * 0.2; // speed is dependent on the attackType. (higher attackType, faster speeds)
@@ -94,13 +94,13 @@ public class AirWizard extends EnemyMob {
 			if (xd * xd + yd * yd < 16*16 * 2*2) {
 				/// Move away from the player if less than 2 blocks away
 				
-				xa = 0; //accelerations
-				ya = 0;
+				xmov = 0; //accelerations
+				ymov = 0;
 				// these four statements basically just find which direction is away from the player:
-				if (xd < 0) xa = +1;
-				if (xd > 0) xa = -1;
-				if (yd < 0) ya = +1;
-				if (yd > 0) ya = -1;
+				if (xd < 0) xmov = +1;
+				if (xd > 0) xmov = -1;
+				if (yd < 0) ymov = +1;
+				if (yd > 0) ymov = -1;
 			} else if (xd * xd + yd * yd > 16*16 * 15*15) {// 15 squares away
 				/// drags the airwizard to the player, maintaining relative position.
 				double hypot = Math.sqrt(xd*xd + yd*yd);
@@ -130,28 +130,6 @@ public class AirWizard extends EnemyMob {
 	
 	@Override
 	public void render(Screen screen) {
-		/*int xo = x - 8; // the horizontal location to start drawing the sprite
-		int yo = y - 11; // the vertical location to start drawing the sprite
-		
-		int col1 = secondform ? Color.get(-1, 0, 2, 46) : Color.get(-1, 100, 500, 555); // top half color
-		int col2 = secondform ? Color.get(-1, 0, 2, 46) : Color.get(-1, 100, 500, 532); // bottom half color
-		
-		if (attackType == 1 && tickTime / 5 % 4 == 0 || attackType == 2 && tickTime / 3 % 2 == 0) {
-				// change colors.
-				col1 = secondform ? Color.get(-1, 2, 0, 46) : Color.get(-1, 500, 100, 555);
-				col2 = secondform ? Color.get(-1, 2, 0, 46) : Color.get(-1, 500, 100, 532);
-		}
-		
-		if (hurtTime > 0) { //if the air wizards hurt time is above 0... (hurtTime value in Mob.java)
-			// turn the sprite white, momentarily.
-			col1 = Color.WHITE;
-			col2 = Color.WHITE;
-		}
-		
-		//MobSprite curSprite = sprites[dir.getDir()][(walkDist >> 3) & 1];
-		//curSprite.renderRow(0, screen, xo, yo, col1);
-		//curSprite.renderRow(1, screen, xo, yo+8, col2);
-		*/
 		super.render(screen);
 
 		int textcol = Color.get(1, 0, 204, 0);
