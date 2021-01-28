@@ -57,7 +57,7 @@ public class Level {
 	});
 	
 	public Entity[] getEntitiesToSave() {
-		Entity[] allEntities = new Entity[entities.size()+entitiesToAdd.size()];
+		Entity[] allEntities = new Entity[entities.size() + sparks.size() + entitiesToAdd.size()];
 		Entity[] toAdd = entitiesToAdd.toArray(new Entity[entitiesToAdd.size()]);
 		Entity[] current = getEntityArray();
 		System.arraycopy(current, 0, allEntities, 0, current.length);
