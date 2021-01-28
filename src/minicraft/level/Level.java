@@ -1,6 +1,7 @@
 package minicraft.level;
 
 import java.util.*;
+import java.util.function.Predicate;
 import java.util.function.ToIntFunction;
 
 import minicraft.core.Game;
@@ -10,6 +11,7 @@ import minicraft.core.io.Settings;
 import minicraft.entity.ClientTickable;
 import minicraft.entity.Entity;
 import minicraft.entity.ItemEntity;
+import minicraft.entity.Spark;
 import minicraft.entity.furniture.Chest;
 import minicraft.entity.furniture.DungeonChest;
 import minicraft.entity.furniture.Spawner;
@@ -44,6 +46,7 @@ public class Level {
 	public int mobCount = 0;
 	
 	private Set<Entity> entities = java.util.Collections.synchronizedSet(new HashSet<>()); // A list of all the entities in the world
+	private Set<Spark> sparks = java.util.Collections.synchronizedSet(new HashSet<>()); // A list of all the sparks in the world
 	private Set<Player> players = java.util.Collections.synchronizedSet(new HashSet<>()); // A list of all the players in the world
 	private List<Entity> entitiesToAdd = new ArrayList<>(); /// entities that will be added to the level on next tick are stored here. This is for the sake of multithreading optimization. (hopefully)
 	private List<Entity> entitiesToRemove = new ArrayList<>(); /// entities that will be removed from the level on next tick are stored here. This is for the sake of multithreading optimization. (hopefully)
@@ -256,11 +259,48 @@ public class Level {
 		}
 	}
 
+	private void tickEntity(Entity entity) {
+		if (entity == null) return;
+
+		if (Game.hasConnectedClients() && entity instanceof Player && !(entity instanceof RemotePlayer)) {
+			if (Game.debug)
+				System.out.println("SERVER is removing regular player " + entity + " from level " + this);
+			entity.remove();
+		}
+		if (Game.isValidServer() && entity instanceof Particle) {
+			// there is no need to track this.
+			if (Game.debug)
+				System.out.println("SERVER warning: Found particle in entity list: " + entity + ". Removing from level " + this);
+			entity.remove();
+		}
+
+		if (entity.isRemoved()) {
+			remove(entity);
+			return;
+		}
+
+		if (entity != Game.player) { // player is ticked separately, others are ticked on server
+			if (!Game.isValidClient())
+				entity.tick(); /// the main entity tick call.
+			else if (entity instanceof ClientTickable)
+				((ClientTickable) entity).clientTick();
+		}
+
+		if (entity.isRemoved() || entity.getLevel() != this) {
+			remove(entity);
+			return;
+		}
+
+		if (Game.hasConnectedClients()) // this means it's a server
+			Game.server.broadcastEntityUpdate(entity);
+	}
+
 	public void tick(boolean fullTick) {
 		int count = 0;
-		
-		while(entitiesToAdd.size() > 0) {
-			Entity entity = entitiesToAdd.get(0);
+
+		Iterator<Entity> entityAdderIt = entitiesToAdd.iterator();
+		while (entityAdderIt.hasNext()) {
+			Entity entity = entityAdderIt.next();
 			boolean inLevel = entities.contains(entity);
 			
 			if(!inLevel) {
@@ -270,12 +310,17 @@ public class Level {
 				if (!Game.isValidServer() || !(entity instanceof Particle)) {
 					if (Game.debug) printEntityStatus("Adding ", entity, "furniture.DungeonChest", "mob.AirWizard", "mob.Player");
 					
-					entities.add(entity);
-					if(entity instanceof Player)
-						players.add((Player)entity);
+					if (entity instanceof Spark) {
+						sparks.add((Spark) entity);
+					} else {
+						entities.add(entity);
+						if (entity instanceof Player)
+							players.add((Player) entity);
+					}
 				}
 			}
-			entitiesToAdd.remove(entity);
+
+			entityAdderIt.remove();
 		}
 		
 		if(fullTick && (!Game.isValidServer() || getPlayers().length > 0)) {
@@ -292,42 +337,13 @@ public class Level {
 			}
 			
 			// entity loop
-			for (Entity e : getEntityArray()) {
-				if (e == null) continue;
-				
-				if (Game.hasConnectedClients() && e instanceof Player && !(e instanceof RemotePlayer)) {
-					if (Game.debug)
-						System.out.println("SERVER is removing regular player " + e + " from level " + this);
-					e.remove();
-				}
-				if (Game.isValidServer() && e instanceof Particle) {
-					// there is no need to track this.
-					if (Game.debug)
-						System.out.println("SERVER warning: Found particle in entity list: " + e + ". Removing from level " + this);
-					e.remove();
-				}
-				
-				if (e.isRemoved()) continue;
-				
-				if(e != Game.player) { // player is ticked separately, others are ticked on server
-					if(!Game.isValidClient())
-						e.tick(); /// the main entity tick call.
-					else if(e instanceof ClientTickable)
-						((ClientTickable)e).clientTick();
-				}
-				
-				if (e.isRemoved()) continue;
-				
-				if (Game.hasConnectedClients()) // this means it's a server
-					Game.server.broadcastEntityUpdate(e);
-				
+			for (Entity e : entities) {
+				tickEntity(e);
 				if (e instanceof Mob) count++;
 			}
-			
-			
-			for (Entity e : getEntityArray())
-				if (e.isRemoved() || e.getLevel() != this)
-					remove(e);
+
+			// spark loop
+			sparks.forEach(this::tickEntity);
 		}
 		
 		while(count > maxMobCount) {
@@ -348,7 +364,7 @@ public class Level {
 				}
 			}
 		}
-		
+
 		while(entitiesToRemove.size() > 0) {
 			Entity entity = entitiesToRemove.get(0);
 			
@@ -358,7 +374,11 @@ public class Level {
 			if(Game.debug) printEntityStatus("Removing ", entity, "mob.Player");
 			
 			entity.remove(this); // this will safely fail if the entity's level doesn't match this one.
-			entities.remove(entity);
+			if (entity instanceof Spark) {
+				sparks.remove(entity);
+			} else {
+				entities.remove(entity);
+			}
 			
 			if(entity instanceof Player)
 				players.remove(entity);
@@ -609,7 +629,17 @@ public class Level {
 	}
 	
 	public Entity[] getEntityArray() {
-		return entities.toArray(new Entity[0]);
+		Entity[] entityArray = new Entity[entities.size() + sparks.size()];
+		int index = 0;
+
+		for (Entity entity : entities) {
+			entityArray[index++] = entity;
+		}
+		for (Spark spark : sparks) {
+			entityArray[index++] = spark;
+		}
+
+		return entityArray;
 	}
 	
 	public List<Entity> getEntitiesInTiles(int xt, int yt, int radius) { return getEntitiesInTiles(xt, yt, radius, false); }
@@ -641,6 +671,16 @@ public class Level {
 		for(Entity e: getEntityArray()) {
 			if (e.isTouching(area))
 				result.add(e);
+		}
+		return result;
+	}
+
+	public List<Entity> getEntitiesInRect(Predicate<Entity> filter, Rectangle area) {
+		List<Entity> result = new LinkedList<>();
+		for (Entity entity : entities) {
+			if (filter.test(entity) && entity.isTouching(area)) {
+				result.add(entity);
+			}
 		}
 		return result;
 	}
