@@ -14,10 +14,11 @@ Here is a small share of the more major features that this mod adds to the origi
 * Personal crafting menu
 * Beds
 * Mob Spawners (with loot chests)
-* expanded storyline; 4th dungeon level, and Second Boss
+* Expanded storyline: 4th dungeon level, and Second Boss
 * Bigger/Resizable screen size
 * Key Binding customization, so you can change the key controls
 * Tutorials
+* Texture Packs
 * And best of all, active development and community!
 
 
