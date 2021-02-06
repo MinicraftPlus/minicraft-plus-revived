@@ -1,6 +1,7 @@
 package minicraft.gfx;
 
 import minicraft.level.Level;
+import minicraft.level.tile.ConnectTile;
 import minicraft.level.tile.Tile;
 
 public class ConnectorSprite {
@@ -42,15 +43,15 @@ public class ConnectorSprite {
 		Tile lt = level.getTile(x - 1, y);
 		Tile rt = level.getTile(x + 1, y);
 		
-		boolean u = connectsTo(ut, true);
-		boolean d = connectsTo(dt, true);
-		boolean l = connectsTo(lt, true);
-		boolean r = connectsTo(rt, true);
+		boolean u = connectsToDoEdgeCheck(ut, true);
+		boolean d = connectsToDoEdgeCheck(dt, true);
+		boolean l = connectsToDoEdgeCheck(lt, true);
+		boolean r = connectsToDoEdgeCheck(rt, true);
 		
-		boolean ul = connectsTo(level.getTile(x - 1, y - 1), false);
-		boolean dl = connectsTo(level.getTile(x - 1, y + 1), false);
-		boolean ur = connectsTo(level.getTile(x + 1, y - 1), false);
-		boolean dr = connectsTo(level.getTile(x + 1, y + 1), false);
+		boolean ul = connectsToDoEdgeCheck(level.getTile(x - 1, y - 1), false);
+		boolean dl = connectsToDoEdgeCheck(level.getTile(x - 1, y + 1), false);
+		boolean ur = connectsToDoEdgeCheck(level.getTile(x + 1, y - 1), false);
+		boolean dr = connectsToDoEdgeCheck(level.getTile(x + 1, y + 1), false);
 		
 		x = x << 4;
 		y = y << 4;
@@ -89,6 +90,15 @@ public class ConnectorSprite {
 	public boolean connectsTo(Tile tile, boolean isSide) {
 		//System.out.println("original connection check");
 		return tile.getClass() == owner;
+	}
+
+	public boolean connectsToDoEdgeCheck(Tile tile, boolean isSide) {
+		if (tile.getClass() == ConnectTile.class) {
+			return true;
+		}
+		else {
+			return connectsTo(tile, isSide);
+		}
 	}
 
 	public static Sprite makeSprite(int w, int h, int mirror, boolean repeat, int... coords) {

@@ -499,7 +499,7 @@ public class Level {
 	}
 	
 	public Tile getTile(int x, int y) {
-		if (x < 0 || y < 0 || x >= w || y >= h/* || (x + y * w) >= tiles.length*/) return Tiles.get("rock");
+		if (x < 0 || y < 0 || x >= w || y >= h/* || (x + y * w) >= tiles.length*/) return Tiles.get("connector tile");
 		int id = tiles[x + y * w];
 		if(id < 0) id += 256;
 		return Tiles.get(id);
