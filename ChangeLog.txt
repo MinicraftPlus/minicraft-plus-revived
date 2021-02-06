@@ -9,6 +9,9 @@ Minicraft+ version 2.0.7
 + Added potatoes
 + Added baked potatoes as food
 + Made zombies drop potatoes
+* Sparks (the airwizard bullets) have been optimised
+* Fixed picked up dungeon chests
+* Tiles now connect to the edge of the world
 
 
 Minicraft+ version 2.0.6
