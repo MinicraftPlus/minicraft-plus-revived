@@ -89,45 +89,13 @@ public class DungeonChest extends Chest {
 	}
 	
 	/**
-	 * Populate the inventory of the DungeonChest, psudo-randomly.
+	 * Populate the inventory of the DungeonChest using the loot table system
 	 */
 	private void populateInv() {
 		Inventory inv = getInventory(); // Yes, I'm that lazy. ;P
 		inv.clearInv(); // clear the inventory.
-		inv.tryAdd(5, Items.get("steak"), 6);
-		inv.tryAdd(5, Items.get("cooked pork"), 6);
-		inv.tryAdd(4, Items.get("Wood"), 20);
-		inv.tryAdd(4, Items.get("Wool"), 12);
-		inv.tryAdd(2, Items.get("coal"), 4);
-		inv.tryAdd(5, Items.get("gem"), 7);
-		inv.tryAdd(5, Items.get("gem"), 8);
-		inv.tryAdd(8, Items.get("Gem Armor"));
-		inv.tryAdd(6, Items.get("Gold Armor"));
-		inv.tryAdd(5, Items.get("Iron Armor"), 2);
-		inv.tryAdd(3, Items.get("potion"), 10);
-		inv.tryAdd(4, Items.get("speed potion"), 2);
-		inv.tryAdd(6, Items.get("speed potion"), 5);
-		inv.tryAdd(3, Items.get("light potion"), 2);
-		inv.tryAdd(4, Items.get("light potion"), 3);
-		inv.tryAdd(7, Items.get("regen potion"));
-		inv.tryAdd(7, Items.get("energy potion"));
-		inv.tryAdd(14, Items.get("time potion"));
-		inv.tryAdd(14, Items.get("shield potion"));
-		inv.tryAdd(7, Items.get("lava potion"));
-		inv.tryAdd(5, Items.get("haste potion"), 3);
-		
-		inv.tryAdd(6, Items.get("Gold Bow"));
-		inv.tryAdd(7, Items.get("Gem Bow"));
-		inv.tryAdd(4, Items.get("Gold Sword"));
-		inv.tryAdd(7, Items.get("Gem Sword"));
-		inv.tryAdd(4, Items.get("Rock Claymore"));
-		inv.tryAdd(6, Items.get("Iron Claymore"));
-		
-		if(inv.invSize() < 1) { // add this if none of the above was added.
-			inv.add(Items.get("steak"), 6);
-			inv.add(Items.get("Time Potion"));
-			inv.add(Items.get("Gem Axe"));
-		}
+
+		populateInvRandom("dungeonchest", 0);
 	}
 	
 	/** what happens if the player tries to push a Dungeon Chest. */
