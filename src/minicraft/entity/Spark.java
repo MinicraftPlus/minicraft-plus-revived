@@ -4,7 +4,6 @@ import java.util.List;
 
 import minicraft.entity.mob.AirWizard;
 import minicraft.entity.mob.Mob;
-import minicraft.gfx.Color;
 import minicraft.gfx.Rectangle;
 import minicraft.gfx.Screen;
 
@@ -30,8 +29,8 @@ public class Spark extends Entity {
 		this.xa = xa;
 		this.ya = ya;
 		
-		// Max time = 629 ticks. Min time = 600 ticks.
-		lifeTime = 60 * 10 + random.nextInt(30);
+		// Max time = 389 ticks. Min time = 360 ticks.
+		lifeTime = 60 * 6 + random.nextInt(30);
 	}
 	
 	@Override
@@ -46,14 +45,10 @@ public class Spark extends Entity {
 		yy += ya;
 		x = (int) xx;
 		y = (int) yy;
-		List<Entity> toHit = level.getEntitiesInRect(new Rectangle(x, y, 0, 0, Rectangle.CENTER_DIMS)); // gets the entities in the current position to hit.
-		for (int i = 0; i < toHit.size(); i++) {
-			Entity e = toHit.get(i);
-			if (e instanceof Mob && !(e instanceof AirWizard)) {
-				 // if the entity is a mob, but not a Air Wizard, then hurt the mob with 1 damage.
-				((Mob)e).hurt(owner, 1);
-			}
-		}
+
+		// if the entity is a mob, but not a Air Wizard, then hurt the mob with 1 damage.
+		List<Entity> toHit = level.getEntitiesInRect(entity -> entity instanceof Mob && !(entity instanceof AirWizard), new Rectangle(x, y, 0, 0, Rectangle.CENTER_DIMS)); // gets the entities in the current position to hit.
+		toHit.forEach(entity -> ((Mob) entity).hurt(owner, 1));
 	}
 	
 	/** Can this entity block you? Nope. */

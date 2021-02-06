@@ -65,6 +65,9 @@ public final class Tiles {
 		tiles.set(40, new YellowWoolTile("Yellow Wool"));
 		tiles.set(41, new BlackWoolTile("Black Wool"));
 		tiles.set(42, new PotatoTile("Potato"));
+
+		// WARNING: don't use this tile for anything!
+		tiles.set(255, new ConnectTile());
 		
 		for(int i = 0; i < tiles.size(); i++) {
 			if(tiles.get(i) == null) continue;

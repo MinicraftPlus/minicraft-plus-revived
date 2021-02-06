@@ -1,0 +1,28 @@
+5,steak,6
+5,cooked pork,6
+4,wood,20
+4,wool,12
+2,coal,4
+5,gem,7
+5,gem,8
+8,gem armor
+6,gold armor
+5,iron armor,2
+3,potion,10
+4,speed potion,2
+6,speed potion,5
+3,light potion,2
+4,light potion,3
+7,regen potion
+7,energy potion
+14,time potion
+14,shield potion
+7,lava potion
+5,haste potion,3
+6,gold bow
+7,gem bow
+4,gold sword
+7,gem sword
+4,rock claymore
+6,iron claymore
+:steak,6:time potion,1:gem axe,1

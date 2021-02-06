@@ -1,8 +1,6 @@
 # Minicraft Plus
 Minicraft+ is a modded version of Minicraft that adds many more features to the original version. To learn more about Minicraft, or play it yourself, take a look at all the [releases](https://github.com/chrisj42/minicraft-plus-revived/releases).
 
-The code was a bit of a mess at first due to inexperience and several years of abandonment. Now it works pretty well; though there's still some to do, and the code still isn't perfect, but hopefully it will get there eventually.
-
 ## Major Features
 Here is a small share of the more major features that this mod adds to the original minicraft game:
 * More Game modes -- Creative, Hardcore, and Score mode in addition to Survival
@@ -16,10 +14,12 @@ Here is a small share of the more major features that this mod adds to the origi
 * Personal crafting menu
 * Beds
 * Mob Spawners (with loot chests)
-* An expanded storyline; 4th dungeon level, and Second Boss
+* An expanded storyline: 4th dungeon level, and Second Boss
 * Bigger/Resizable screen size
 * Key Binding customization, so you can change the key controls
 * Tutorials
+* Texture Packs
+* And best of all, active development and community!
 * Localization: Different languages
 
 You can find a more comprehensive list of the earlier versions, before 1.9, in [this minecraft forum post](http://www.minecraftforum.net/forums/off-topic/general-gaming/452036-v1-6-minicraft-plus). Be aware however, that it's old; it's from many years ago before the project was abandoned.
@@ -39,12 +39,10 @@ You can find a more comprehensive list of the earlier versions, before 1.9, in [
 
 Things we plan on implementing, _hopefully_ sooner rather than later...
 * Bugfixes and cleanup
-
-### Ideas for future additions
-
-Things we will probably add later, rather than sooner.
-
 * Add back Experience bar, from version 1.4
+
+
+You can find a more comprehensive list of the earlier versions, before 1.9, in [this minecraft forum post](http://www.minecraftforum.net/forums/off-topic/general-gaming/452036-v1-6-minicraft-plus). Be aware however, that it's old; it's from many years ago before the project was originally abandoned, and then subsequently rediscovered 5 years later. :3
 
 #### Far, far away...
 

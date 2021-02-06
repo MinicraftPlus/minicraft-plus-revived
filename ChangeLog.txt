@@ -1,11 +1,14 @@
 Minicraft+ version 2.0.7
 
 + Added sheep shearing
-+ Added shear item
++ Added shearing
 + Added potatoes
 + Added baked potatoes as food
 + Made zombies drop potatoes
 + Added a play menu with Multiplayer and Singleplayer as options
+* Sparks (the airwizard bullets) have been optimised
+* Fixed picked up dungeon chests
+* Tiles now connect to the edge of the world
 * Farm tiles will no longer be destroyed if an item is dropped onto it
 * Made crops grow slower
 * Updated some textures; made wood, apples and gold apples look better
