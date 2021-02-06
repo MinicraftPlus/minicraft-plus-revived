@@ -4,7 +4,6 @@ import java.util.List;
 
 import minicraft.entity.mob.AirWizard;
 import minicraft.entity.mob.Mob;
-import minicraft.gfx.Color;
 import minicraft.gfx.Rectangle;
 import minicraft.gfx.Screen;
 

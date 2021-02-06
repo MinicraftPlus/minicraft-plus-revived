@@ -11,7 +11,6 @@ import minicraft.entity.mob.Player;
 import minicraft.entity.particle.SmashParticle;
 import minicraft.entity.particle.TextParticle;
 import minicraft.gfx.Color;
-import minicraft.gfx.Screen;
 import minicraft.gfx.Sprite;
 import minicraft.item.Inventory;
 import minicraft.item.Items;
@@ -29,15 +28,27 @@ public class DungeonChest extends Chest {
 	 * @param populateInv
 	 */
 	public DungeonChest(boolean populateInv) {
+		this(populateInv, false);
+	}
+
+	public DungeonChest(boolean populateInv, boolean unlocked) {
 		super("Dungeon Chest");
-		this.sprite = lockSprite;
+		if (!unlocked)
+			this.sprite = lockSprite;
+		else
+			this.sprite = openSprite;
 
 		if(populateInv)
 			populateInv();
-		
-		isLocked = true;
+
+		isLocked = !unlocked;
 	}
-	
+
+	@Override
+	public Furniture clone() {
+		return new DungeonChest(false, !this.isLocked);
+	}
+
 	public boolean use(Player player) {
 		if (isLocked) {
 			boolean activeKey = player.activeItem != null && player.activeItem.equals(Items.get("Key"));
