@@ -1,14 +1,11 @@
 package minicraft.entity.furniture;
 
-import java.io.File;
 import java.io.IOException;
 import java.util.List;
 
-import minicraft.core.FileHandler;
 import minicraft.core.Game;
 import minicraft.entity.ItemHolder;
 import minicraft.entity.mob.Player;
-import minicraft.gfx.Color;
 import minicraft.gfx.Sprite;
 import minicraft.item.Inventory;
 import minicraft.item.Item;
