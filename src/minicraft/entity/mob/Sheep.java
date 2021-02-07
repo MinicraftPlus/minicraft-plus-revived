@@ -7,6 +7,8 @@ import minicraft.gfx.MobSprite;
 import minicraft.gfx.Screen;
 import minicraft.item.Item;
 import minicraft.item.Items;
+import minicraft.item.ToolItem;
+import minicraft.item.ToolType;
 import org.jetbrains.annotations.Nullable;
 
 public class Sheep extends PassiveMob {
@@ -46,13 +48,16 @@ public class Sheep extends PassiveMob {
 		if (age - ageWhenCut > WOOL_GROW_TIME) cut = false;
 	}
 
-	/** This function is called when an item interacts with this sheep. */
 	public boolean interact(Player player, @Nullable Item item, Direction attackDir) {
-		if(item == Items.get("Shear")) {
-			cut = true;
-			dropItem(1, 3, Items.get("Wool"));
-			ageWhenCut = age;
-			return true;
+		if (cut) return false;
+
+		if (item instanceof ToolItem) {
+			if (((ToolItem) item).type == ToolType.Shear) {
+				cut = true;
+				dropItem(1, 3, Items.get("Wool"));
+				ageWhenCut = age;
+				return true;
+			}
 		}
 		return false;
 	}
