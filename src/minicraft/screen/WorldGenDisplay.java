@@ -3,7 +3,6 @@ package minicraft.screen;
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
-import java.util.Locale;
 import java.util.Random;
 
 import minicraft.core.Game;

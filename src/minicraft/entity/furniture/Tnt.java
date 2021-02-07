@@ -17,7 +17,6 @@ import minicraft.gfx.Screen;
 import minicraft.gfx.Sprite;
 import minicraft.item.Item;
 import minicraft.level.Level;
-import minicraft.level.tile.Tile;
 import minicraft.level.tile.Tiles;
 
 public class Tnt extends Furniture implements ActionListener {

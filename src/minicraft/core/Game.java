@@ -32,7 +32,7 @@ public class Game {
 	public static boolean HAS_GUI = true;
 	
 	public static final String NAME = "Minicraft Plus"; // This is the name on the application window.
-	public static final Version VERSION = new Version("2.0.6");
+	public static final Version VERSION = new Version("2.0.7-dev1");
 	
 	public static InputHandler input; // input used in Game, Player, and just about all the *Menu classes.
 	public static Player player;
@@ -103,15 +103,15 @@ public class Game {
 			JScrollPane errorPane = new JScrollPane(errorDisplay);
 			JOptionPane.showMessageDialog(null, errorPane, "An error has occurred", JOptionPane.ERROR_MESSAGE);
 		});
-		
-		Initializer.parseArgs(args);
+
+		Initializer.parseArgs(args); // Parses the command line arguments
 		
 		input = new InputHandler(Renderer.canvas);
 		
 		Tiles.initTileList();
 		Sound.init();
 		Settings.init();
-		
+
 		World.resetGame(); // "half"-starts a new game, to set up initial variables
 		player.eid = 0;
 		new Load(true); // this loads any saved preferences.

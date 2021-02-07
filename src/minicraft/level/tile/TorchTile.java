@@ -3,7 +3,6 @@ package minicraft.level.tile;
 import minicraft.core.io.Sound;
 import minicraft.entity.Direction;
 import minicraft.entity.mob.Player;
-import minicraft.gfx.Color;
 import minicraft.gfx.Screen;
 import minicraft.gfx.Sprite;
 import minicraft.item.Item;
@@ -18,7 +17,6 @@ public class TorchTile extends Tile {
 	
 	public static TorchTile getTorchTile(Tile onTile) {
 		int id = onTile.id & 0xFF;
-		//noinspection ConstantConditions
 		if(id < 128) id += 128;
 		else System.out.println("tried to place torch on torch tile...");
 		

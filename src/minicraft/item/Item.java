@@ -4,7 +4,6 @@ import minicraft.core.io.Localization;
 import minicraft.entity.Direction;
 import minicraft.entity.Entity;
 import minicraft.entity.mob.Player;
-import minicraft.gfx.Color;
 import minicraft.gfx.Font;
 import minicraft.gfx.Screen;
 import minicraft.gfx.Sprite;
@@ -28,23 +27,19 @@ public abstract class Item {
 		this.name = name;
 		this.sprite = sprite;
 	}
-	
-	// TODO this method (and Menu.renderItemList) is actually slowly getting deprecated; I just haven't gotten around to updating all the menus yet.
-	public void renderInventory(Screen screen, int x, int y, boolean ininv) { 
-		if (ininv) {
-			String dispName = getDisplayName();
-			sprite.render(screen, x, y);
-			String shortname = dispName.length() > 20 ? dispName.substring(0, 20) : dispName;
-			Font.draw(shortname, screen, x + 8, y, Color.WHITE);
-		} else
-			renderInventory(screen, x, y, Color.get(0, 555)); 
-		}
-	
-	/* Renders an item (sprite & name) in an inventory */
+
+	/** Renders an item (sprite & name) in an inventory */
 	public void renderInventory(Screen screen, int x, int y, int fontColor) {
 		String dispName = getDisplayName();
 		sprite.render(screen, x, y);
 		Font.draw(dispName, screen, x + 8, y, fontColor);
+	}
+
+	/** Renders an item on the HUD */
+	public void renderHUD(Screen screen, int x, int y, int fontColor) {
+		String dispName = getDisplayName();
+		sprite.render(screen, x, y);
+		Font.drawBackground(dispName, screen, x + 8, y, fontColor);
 	}
 	
 	/** Determines what happens when the player interacts with an entity */

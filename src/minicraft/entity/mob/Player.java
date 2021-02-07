@@ -558,9 +558,13 @@ public class Player extends Mob implements ItemHolder, ClientTickable {
 			attackItem = activeItem;
 			
 			Game.client.requestInteraction(this);
-			if(activeItem instanceof ToolItem && stamina - 1 >= 0 && ((ToolItem)activeItem).type == ToolType.Bow && inventory.count(Items.arrowItem) > 0) // we are going to use an arrow.
-				inventory.removeItem(Items.arrowItem); // do it here so we don't need a response.
-			
+			// we are going to use an arrow.
+			if((activeItem instanceof ToolItem) // Is the player currently holding a tool?
+					&& ((stamina - 1) >= 0) // Does the player have any more stamina left?
+					&& (((ToolItem) activeItem).type == ToolType.Bow) // Is the item a bow?
+					&& (inventory.count(Items.arrowItem) > 0)) { // Does the player have an arrow in its inventory?
+				inventory.removeItem(Items.arrowItem); // Remove the arrow from the inventory.
+			}
 			return;
 		}
 		
@@ -580,12 +584,11 @@ public class Player extends Mob implements ItemHolder, ClientTickable {
 			}
 		}
 		
-		boolean done = false; // we're not done yet (we just started!)
-		
 		// if we are simply holding an item...
 		if (activeItem != null) {
 			attackTime = 10; // attack time will be set to 10.
-			
+			boolean done = false;
+
 			// if the interaction between you and an entity is successful, then return.
 			if (interact(getInteractionBox(INTERACT_DIST))) return;
 			
@@ -615,9 +618,8 @@ public class Player extends Mob implements ItemHolder, ClientTickable {
 					activeItem = null;
 				}
 			}
+			if (done) return; // skip the rest if interaction was handled
 		}
-		
-		if (done) return; // skip the rest if interaction was handled.
 		
 		if (activeItem == null || activeItem.canAttack()) { // if there is no active item, OR if the item can be used to attack...
 			attackTime = 5;
@@ -1075,7 +1077,7 @@ public class Player extends Mob implements ItemHolder, ClientTickable {
 	@Override
 	public void remove() {
 		if(Game.debug) {
-			System.out.println(Network.onlinePrefix() + "removing player from level " + getLevel());
+			System.out.println(Network.onlinePrefix() + "Removing player from level " + getLevel());
 			//Thread.dumpStack();
 		}
 		super.remove();

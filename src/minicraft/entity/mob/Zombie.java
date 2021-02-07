@@ -1,7 +1,6 @@
 package minicraft.entity.mob;
 
 import minicraft.core.io.Settings;
-import minicraft.gfx.Color;
 import minicraft.gfx.MobSprite;
 import minicraft.item.Items;
 
@@ -10,7 +9,7 @@ public class Zombie extends EnemyMob {
 	static {
 		sprites = new MobSprite[4][4][2];
 		for (int i = 0; i < 4; i++) {
-			MobSprite[][] list  = MobSprite.compileMobSpriteAnimations(8, 0 + (i * 2));
+			MobSprite[][] list = MobSprite.compileMobSpriteAnimations(8, 0 + (i * 2));
 			sprites[i] = list;
 		}
 	}
@@ -30,7 +29,7 @@ public class Zombie extends EnemyMob {
 	
 	public void die() {
 		if (Settings.get("diff").equals("Easy")) dropItem(2, 4, Items.get("cloth"));
-		if (Settings.get("diff").equals("Normal")) dropItem(2, 3, Items.get("cloth"));
+		if (Settings.get("diff").equals("Normal")) dropItem(1, 3, Items.get("cloth"));
 		if (Settings.get("diff").equals("Hard")) dropItem(1, 2, Items.get("cloth"));
 		
 		if(random.nextInt(60) == 2) {
@@ -46,6 +45,10 @@ public class Zombie extends EnemyMob {
 			} else if(rand == 2) {
 				level.dropItem(x, y, Items.get("blue clothes"));
 			}
+		}
+
+		if(random.nextInt(100) < 4) {
+			level.dropItem(x, y, Items.get("Potato"));
 		}
 		
 		super.die();

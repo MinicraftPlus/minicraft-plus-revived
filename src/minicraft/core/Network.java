@@ -25,7 +25,7 @@ public class Network extends Game {
 	
 	private static final Random random = new Random();
 	
-	static boolean autoclient = false; // used in the initScreen method; jumps to multiplayer menu as client
+	static boolean autoclient = false; // Used in the initScreen method; jumps to multiplayer menu as client
 	
 	private static VersionInfo latestVersion = null;
 	
@@ -35,8 +35,7 @@ public class Network extends Game {
 	
 	public static void findLatestVersion(Action callback) {
 		new Thread(() -> {
-			// fetch the latest version from github
-			if (debug) System.out.println("Fetching release list from GitHub...");
+			if (debug) System.out.println("Fetching release list from GitHub..."); // Fetch the latest version from GitHub
 			try {
 				HttpResponse<JsonNode> response = Unirest.get("https://api.github.com/repos/chrisj42/minicraft-plus-revived/releases").asJson();
 				if (response.getStatus() != 200) {
@@ -118,8 +117,6 @@ public class Network extends Game {
 			String jarFilePath = "";
 			try {
 				java.net.URI uri = Game.class.getProtectionDomain().getCodeSource().getLocation().toURI();
-				//if (debug) System.out.println("jar path: " + uri.getPath());
-				//if (debug) System.out.println("jar string: " + uri.toString());
 				jarFilePath = uri.getPath();
 				if(FileHandler.OS.contains("windows") && jarFilePath.startsWith("/"))
 					jarFilePath = jarFilePath.substring(1);
