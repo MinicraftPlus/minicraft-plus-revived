@@ -3,9 +3,8 @@
 
 ### entity
 
-# Entity.java
-Entities
-Entities
+## entity.particle
+## entity.particle end
 
 # AirWizard.java
 Air Wizard: Defeated!
@@ -18,8 +17,8 @@ A costume lies on the ground...
 Et kostyme ligger på bakken...
 
 # Bed.java
-Can't sleep!
-Kan ikke sove!
+Can't sleep! 
+Kan ikke sove! 
 
 Min 
 Minst 
@@ -36,6 +35,7 @@ Death Chest
 Døds Kiste
 
 # Player.java
+
 Player
 Spiller
 
@@ -166,9 +166,6 @@ Biff
 Gold Apple
 Gull Eple
 
-Baked Potato
-Bakt Potet
-
 # FurnitureItem.java
 
 Cow Spawner
@@ -272,9 +269,6 @@ Skjold Trylledrikk
 Haste Potion
 Hastighet Trylledrikk
 
-Escape Potion
-Forsvinnelses Trylledrikk
-
 Potion
 Trylledrikk
 
@@ -282,11 +276,6 @@ Trylledrikk
 
 Power Glove
 Kraft hanske
-
-# ShearItem.java
-
-Shear
-Saks
 
 # StackableItem.java
 
@@ -415,8 +404,8 @@ Sand
 Cactus
 Kaktus
 
-Wheat Seeds
-Hvete Frø
+Seeds
+Frø
 
 Grass Seeds
 Grass Frø
@@ -450,22 +439,8 @@ Gull
 Gem
 Juvel
 
-Potato
-Potet
-
-# FishingRodItem.java
-
-Wood Fishing Rod
-Tre Fiskestang
-
-Iron Fishing Rod
-Jern Fiskestang
-
-Gold Fishing Rod
-Gull Fiskestang
-
-Gem Fishing Rod
-Juvel Fiskestang
+Fishing Rod
+Fiskestang
 
 # ToolType.java
 
@@ -486,6 +461,9 @@ Axe
 
 Bow
 Bue
+
+FishingRod
+Fiskestang
 
 Claymore
 Claymore
@@ -618,12 +596,6 @@ kan ikke hente localhost adressen
 ### network end
 
 ### saveload
-
-# Save.java
-
-World Saved!
-Verden Lagret!
-
 ### saveload end
 
 ### screen
@@ -674,7 +646,6 @@ You died! Aww!
 Du døde! Aww!
 
 # Displays.java
-
 With the default controls...\n\nMove your character with arrow keys or WSAD. Press C to attack and X to open the inventory, and to use items. Select an item in the inventory to equip it.\n\nKill the air wizard to win the game!
 Med de vanlige kontrollene...\n\nFlytt karakteren med piltastene eller WASD. Trykk C for å angripe og X for å åpne inventaret, og for å bruke ting. Velg en ting i inventaret for å utruste deg med det.\n\nDrep LuftTrollmannen for å vinne!
 
@@ -745,9 +716,6 @@ ESC for å gå tilbake til menyen
 
 Loading...
 Laster...
-
-World
-Verden
 
 # MultiplayerMenu.java
 
@@ -860,14 +828,6 @@ Pauset
 Main Menu
 Hovedmeny
 
-# PauseDisplay.java
-
-No
-Nei
-
-Yes
-Ja
-
 # PlayerInvMenu.java
 
 Inventory
@@ -953,38 +913,26 @@ Verden instillinger
 
 # WorldSelectMenu.java
 
- to Copy
- for å kopiere
+Copy
+Kopier
 
- to Rename
- for å gi nytt navn
+Rename
+Gi nytt navn
 
- to Delete
- for å slette
+Delete
+Slett
 
  to confirm
  for å bekrefte
  
  to return
  for å avbryte
-
+ 
 Select World
 Velg verden
 
-Select a World to Delete
-Velg en verden til å Slette
-
-Select a World to Rename
-Velg en verden til å endre navn
-
-Select a World to Copy
-Velg en verden til å Kopiere
-
-Higher version, cannot load world!
-Høyere versjon, kan ikke laste verden!
-
-World Version:
-Verden Versjon:
+Select a World to
+Velg en verden til
 
 # LocalizationMenu.java
 
@@ -1019,7 +967,7 @@ Hard
 Vanskelig
 
 Game Mode
-Spillmodus
+Spill modus
 
 Survival
 Overlevelse
@@ -1058,7 +1006,7 @@ Desert
 Ørken
 
 Plain
-Slette
+Plain
 
 Hell
 Helvete

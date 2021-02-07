@@ -92,7 +92,7 @@ public class Furniture extends Entity {
 			pushTime = multiPushTime = 10; // set pushTime to 10.
 			
 			if(Game.isConnectedClient())
-				Game.client.pushFurniture(this);
+				Game.client.pushFurniture(this, pushDir);
 		}
 	}
 	

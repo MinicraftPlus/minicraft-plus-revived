@@ -36,6 +36,7 @@ public class Color {
 	public static final int YELLOW = Color.get(1, 255, 255, 0);
 	public static final int MAGENTA = Color.get(1, 255, 0, 255);
 	public static final int CYAN = Color.get(1, 0, 255, 255);
+	public static final int ORANGE = Color.get(1, 255, 138, 28);
 	
 	/** This returns a minicraftrgb.
 	 * a should be between 0-1, r,g,and b should be 0-255 */

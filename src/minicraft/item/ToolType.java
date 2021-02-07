@@ -16,4 +16,7 @@ public enum ToolType {
 		this.sprite = sprite;
 		durability = dur;
 	}
+	ToolType(int sprite) {
+		this(sprite, -1); // durability defualts to -1 if not specified (means infinite durability)
+	}
 }

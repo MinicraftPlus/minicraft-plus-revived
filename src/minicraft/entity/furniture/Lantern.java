@@ -1,5 +1,6 @@
 package minicraft.entity.furniture;
 
+import minicraft.gfx.Color;
 import minicraft.gfx.Sprite;
 
 public class Lantern extends Furniture {

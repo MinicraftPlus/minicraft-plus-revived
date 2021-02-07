@@ -17,7 +17,7 @@ public abstract class MobAi extends Mob {
 	int randomWalkTime, randomWalkChance, randomWalkDuration;
 	int xa, ya;
 	private int lifetime;
-	protected int age = 0; // Not private because it is used in Sheep.java.
+	private int age = 0;
 	
 	private boolean slowtick = false;
 	

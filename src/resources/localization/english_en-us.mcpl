@@ -1,9 +1,5 @@
 ### entity
 
-# Entity.java
-Entities
-Entities
-
 # AirWizard.java
 Air Wizard: Defeated!
 Air Wizard: Defeated!
@@ -17,10 +13,10 @@ A costume lies on the ground...
 # Bed.java
 Can't sleep!
 Can't sleep!
-
+	
 Min 
 Min 
-
+	
  Sec left!
  Sec left!
 
@@ -33,6 +29,7 @@ Death Chest
 Death Chest
 
 # Player.java
+
 Player
 Player
 
@@ -163,9 +160,6 @@ Steak
 Gold Apple
 Gold Apple
 
-Baked Potato
-Baked Potato
-
 # FurnitureItem.java
 
 Cow Spawner
@@ -279,11 +273,6 @@ Potion
 
 Power Glove
 Power Glove
-
-# ShearItem.java
-
-Shear
-Shear
 
 # StackableItem.java
 
@@ -412,8 +401,8 @@ Sand
 Cactus
 Cactus
 
-Wheat Seeds
-Wheat Seeds
+Seeds
+Seeds
 
 Grass Seeds
 Grass Seeds
@@ -446,9 +435,6 @@ Gold
 
 Gem
 Gem
-
-Potato
-Potato
 
 # FishingRodItem.java
 
@@ -615,12 +601,6 @@ unable to get localhost address
 ### network end
 
 ### saveload
-
-# Save.java
-
-World Saved!
-World Saved!
-
 ### saveload end
 
 ### screen
@@ -950,38 +930,26 @@ World Gen Options
 
 # WorldSelectMenu.java
 
- to Copy
- to Copy
+Copy
+Copy
 
- to Rename
- to Rename
+Rename
+Rename
 
- to Delete
- to Delete
+Delete
+Delete
 
  to confirm
  to confirm
  
  to return
  to return
-
+ 
 Select World
 Select World
 
-Select a World to Delete
-Select a World to Delete
-
-Select a World to Rename
-Select a World to Rename
-
-Select a World to Copy
-Select a World to Copy
-
-Higher version, cannot load world!
-Higher version, cannot load world!
-
-World Version:
-World Version:
+Select a World to
+Select a World to
 
 # LocalizationMenu.java
 

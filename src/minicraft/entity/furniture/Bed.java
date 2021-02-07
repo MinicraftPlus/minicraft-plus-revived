@@ -7,6 +7,7 @@ import minicraft.core.Network;
 import minicraft.core.Updater;
 import minicraft.entity.mob.Player;
 import minicraft.entity.mob.RemotePlayer;
+import minicraft.gfx.Color;
 import minicraft.gfx.Sprite;
 import minicraft.level.Level;
 
