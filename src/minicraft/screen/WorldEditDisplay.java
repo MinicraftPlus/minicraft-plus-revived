@@ -69,16 +69,16 @@ public class WorldEditDisplay extends Display {
 				case Delete:
 					if(Game.debug) System.out.println("deleting world: " + world);
 					File[] list = world.listFiles();
-					for (int i = 0; i < list.length; i++) {
-						list[i].delete();
+					for (File file : list) {
+						file.delete();
 					}
 					world.delete();
 					
 					WorldSelectDisplay.refreshWorldNames();
 					if(WorldSelectDisplay.getWorldNames().size() > 0)
-						Game.exitMenu();
+						Game.setMenu(new WorldSelectDisplay());
 					else
-						Game.setMenu(new TitleDisplay());
+						Game.setMenu(new PlayDisplay());
 				break;
 				
 				case Copy:

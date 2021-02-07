@@ -14,9 +14,13 @@ public class ToolItem extends Item {
 	protected static ArrayList<Item> getAllInstances() {
 		ArrayList<Item> items = new ArrayList<>();
 
-		for(ToolType tooltype: ToolType.values()) {
-			for(int lvl = 0; lvl <= 4; lvl++)
-				items.add(new ToolItem(tooltype, lvl));
+		for(ToolType tool : ToolType.values()) {
+			if (!tool.noLevel) {
+				for(int lvl = 0; lvl <= 4; lvl++)
+					items.add(new ToolItem(tool, lvl));
+			} else {
+				items.add(new ToolItem(tool));
+			}
 		}
 		
 		return items;
@@ -32,18 +36,26 @@ public class ToolItem extends Item {
 	
 	/** Tool Item, requires a tool type (ToolType.Sword, ToolType.Axe, ToolType.Hoe, etc) and a level (0 = wood, 2 = iron, 4 = gem, etc) */
 	public ToolItem(ToolType type, int level) {
-		super(LEVEL_NAMES[level]+" "+type.name(), new Sprite(type.sprite, 13 + level, 0));
+		super(LEVEL_NAMES[level] + " " + type.name(), new Sprite(type.xPos, type.yPos + level, 0));
 		
 		this.type = type;
 		this.level = level;
 		
 		dur = type.durability * (level+1); // initial durability fetched from the ToolType
 	}
+
+	public ToolItem(ToolType type) {
+		super(type.name(), new Sprite(type.xPos, type.yPos, 0));
+
+		this.type = type;
+		dur = type.durability;
+	}
 	
 	/** Gets the name of this tool (and it's type) as a display string. */
 	@Override
 	public String getDisplayName() {
-		return " " + Localization.getLocalized(LEVEL_NAMES[level]) + " " + Localization.getLocalized(type.toString());
+		if (!type.noLevel) return " " + Localization.getLocalized(LEVEL_NAMES[level]) + " " + Localization.getLocalized(type.toString());
+		else return " " + Localization.getLocalized(type.toString());
 	}
 	
 	public boolean isDepleted() {
@@ -52,7 +64,7 @@ public class ToolItem extends Item {
 	
 	/** You can attack mobs with tools. */
 	public boolean canAttack() {
-		return true;
+		return type != ToolType.Shear;
 	}
 	
 	public boolean payDurability() {
@@ -101,7 +113,12 @@ public class ToolItem extends Item {
 	public int hashCode() { return type.name().hashCode() + level; }
 	
 	public ToolItem clone() {
-		ToolItem ti = new ToolItem(type, level);
+		ToolItem ti;
+		if (type.noLevel) {
+			ti = new ToolItem(type);
+		} else {
+			ti = new ToolItem(type, level);
+		}
 		ti.dur = dur;
 		return ti;
 	}

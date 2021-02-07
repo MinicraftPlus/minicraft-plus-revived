@@ -741,7 +741,7 @@ public class Player extends Mob implements ItemHolder, ClientTickable {
 			if (e != this && e instanceof Mob) {
 				int dmg = getAttackDamage(e);
 				maxDmg = Math.max(dmg, maxDmg);
-				((Mob) e).hurt(this, dmg, attackDir); // note: this really only does something for mobs.
+				((Mob) e).hurt(this, dmg, attackDir);
 			}
 			if (e instanceof Furniture)
 				e.interact(this, null, attackDir);
