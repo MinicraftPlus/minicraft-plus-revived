@@ -35,10 +35,10 @@ public class Creeper extends EnemyMob {
 	}
 	
 	@Override
-	public boolean move(int xmov, int ymov) {
-		boolean result = super.move(xmov, ymov);
+	public boolean move(int xmov, int yd) {
+		boolean result = super.move(xmov, yd);
 		dir = Direction.DOWN;
-		if (xmov == 0 && ymov == 0) walkDist = 0;
+		if (xmov == 0 && yd == 0) walkDist = 0;
 		return result;
 	}
 	

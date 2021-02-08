@@ -39,7 +39,7 @@ public class StackableItem extends Item {
 	}
 	
 	public int count;
-	public int maxCount = 999; // TODO I want to implement this later.
+	//public int maxCount = 100; // TODO I want to implement this later.
 	
 	protected StackableItem(String name, Sprite sprite) {
 		super(name, sprite);

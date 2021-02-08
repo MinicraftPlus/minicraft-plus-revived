@@ -61,7 +61,9 @@ public class Inventory {
 	 * @param item Item to be added.
 	 */
 	public void add(int slot, Item item) {
-		if(item instanceof PowerGloveItem) {
+
+		// Do not add to inventory if it is a PowerGlove
+		if (item instanceof PowerGloveItem) {
 			System.out.println("WARNING: tried to add power glove to inventory. stack trace:");
 			Thread.dumpStack();
 			return;

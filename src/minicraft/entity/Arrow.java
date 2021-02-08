@@ -50,6 +50,8 @@ public class Arrow extends Entity implements ClientTickable {
 		x += dir.getX() * speed;
 		y += dir.getY() * speed;
 
+		// TODO I think I can just use the xr yr vars, and the normal system with touchedBy(entity) to detect collisions instead.
+
 		List<Entity> entitylist = level.getEntitiesInRect(new Rectangle(x, y, 0, 0, Rectangle.CENTER_DIMS));
 		boolean criticalHit = random.nextInt(11) < 9;
 		for (Entity hit : entitylist) {
