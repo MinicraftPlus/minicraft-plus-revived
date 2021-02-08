@@ -87,10 +87,10 @@ public class RemotePlayer extends Player implements ClientTickable {
 		super.attack();
 	}
 	
-	public boolean move(int xmov, int ymov) {
+	public boolean move(int xmov, int yd) {
 		int oldxt = x >> 4, oldyt = y >> 4;
 		
-		boolean moved = super.move(xmov, ymov);
+		boolean moved = super.move(xmov, yd);
 		
 		if(!(oldxt == x>>4 && oldyt == y>>4) && Game.isConnectedClient() && this == Game.player) {
 			// if moved (and is client), then check any tiles no longer loaded, and remove any entities on them.

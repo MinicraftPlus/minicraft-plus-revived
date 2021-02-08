@@ -36,7 +36,7 @@ public abstract class Entity implements Tickable {
 	public int x, y; // x, y entity coordinates on the map
 	private int xr, yr; // x, y radius of entity
 	private boolean removed; // Determines if the entity is removed from it's level; checked in Level.java
-	public Level level; // the level that the entity is on
+	protected Level level; // the level that the entity is on
 	public int col; // current color.
 	
 	public int eid; // this is intended for multiplayer, but I think it could be helpful in single player, too. certainly won't harm anything, I think... as long as finding a valid id doesn't take long...
@@ -112,12 +112,12 @@ public abstract class Entity implements Tickable {
 	}
 	
 	/** Moves an entity horizontally and vertically. Returns whether entity was unimpeded in it's movement.  */
-	public boolean move(int xmov, int ymov) {
-		if(Updater.saving || (xmov == 0 && ymov == 0)) return true; // pretend that it kept moving
+	public boolean move(int xd, int yd) {
+		if(Updater.saving || (xd == 0 && yd == 0)) return true; // pretend that it kept moving
 		
 		boolean stopped = true; // used to check if the entity has BEEN stopped, COMPLETELY; below checks for a lack of collision.
-		if(move2(xmov, 0)) stopped = false; // becomes false if horizontal movement was successful.
-		if(move2(0, ymov)) stopped = false; // becomes false if vertical movement was successful.
+		if(move2(xd, 0)) stopped = false; // becomes false if horizontal movement was successful.
+		if(move2(0, yd)) stopped = false; // becomes false if vertical movement was successful.
 		if (!stopped) {
 			int xt = x >> 4; // the x tile coordinate that the entity is standing on.
 			int yt = y >> 4; // the y tile coordinate that the entity is standing on.
@@ -129,15 +129,15 @@ public abstract class Entity implements Tickable {
 	
 	/**
 	 * Moves the entity a long only one direction.
-	 * If xmov != 0 then ya should be 0.
-	 * If xmov = 0 then ya should be != 0.
+	 * If xd != 0 then ya should be 0.
+	 * If xd = 0 then ya should be != 0.
 	 * Will throw exception otherwise.
-	 * @param xmov Horizontal velocity.
-	 * @param ymov Vertical velocity.
+	 * @param xd Horizontal move.
+	 * @param yd Vertical move.
 	 * @return true if the move was successful, false if not.
 	 */
-	protected boolean move2(int xmov, int ymov) {
-		if(xmov == 0 && ymov == 0) return true; // was not stopped
+	protected boolean move2(int xd, int yd) {
+		if(xd == 0 && yd == 0) return true; // was not stopped
 		
 		boolean interact = true;//!Game.isValidClient() || this instanceof ClientTickable;
 		
@@ -148,10 +148,10 @@ public abstract class Entity implements Tickable {
 		int yto1 = ((y) + yr) >> 4; // below
 		
 		// gets same as above, but after movement.
-		int xt0 = ((x + xmov) - xr) >> 4;
-		int yt0 = ((y + ymov) - yr) >> 4;
-		int xt1 = ((x + xmov) + xr) >> 4;
-		int yt1 = ((y + ymov) + yr) >> 4;
+		int xt0 = ((x + xd) - xr) >> 4;
+		int yt0 = ((y + yd) - yr) >> 4;
+		int xt1 = ((x + xd) + xr) >> 4;
+		int yt1 = ((y + yd) + yr) >> 4;
 		
 		//boolean blocked = false; // if the next tile can block you.
 		for (int yt = yt0; yt <= yt1; yt++) { // cycles through y's of tile after movement
@@ -176,7 +176,7 @@ public abstract class Entity implements Tickable {
 			yr++;
 		}
 
-		List<Entity> isInside = level.getEntitiesInRect(new Rectangle(x+xmov, y+ymov, xr*2, yr*2, Rectangle.CENTER_DIMS)); // gets the entities that this entity will touch once moved.
+		List<Entity> isInside = level.getEntitiesInRect(new Rectangle(x+xd, y+yd, xr*2, yr*2, Rectangle.CENTER_DIMS)); // gets the entities that this entity will touch once moved.
 		if (interact) {
 			for (Entity e : isInside) {
 				/// cycles through entities about to be touched, and calls touchedBy(this) for each of them.
@@ -197,8 +197,8 @@ public abstract class Entity implements Tickable {
 		}
 		
 		// finally, the entity moves!
-		x += xmov;
-		y += ymov;
+		x += xd;
+		y += yd;
 		
 		return true; // the move was successful.
 	}

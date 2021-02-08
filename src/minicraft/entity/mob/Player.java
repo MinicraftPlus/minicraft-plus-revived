@@ -476,7 +476,7 @@ public class Player extends Mob implements ItemHolder, ClientTickable {
 					}
 				}
 
-				if (input.getKey("pickup").clicked) {
+				if (input.getKey("pickup").clicked && (activeItem == null || !activeItem.used_pending)) {
 					if(!(activeItem instanceof PowerGloveItem)) { // if you are not already holding a power glove (aka in the middle of a separate interaction)...
 						prevItem = activeItem; // then save the current item...
 						activeItem = new PowerGloveItem(); // and replace it with a power glove.

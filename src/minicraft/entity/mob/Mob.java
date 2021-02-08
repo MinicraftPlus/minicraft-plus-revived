@@ -76,7 +76,7 @@ public abstract class Mob extends Entity {
 	}
 	
 	@Override
-	public boolean move(int xmov, int ymov) { return move(xmov, ymov, true); } // Move the mob, overrides from Entity
+	public boolean move(int xmov, int yd) { return move(xmov, yd, true); } // Move the mob, overrides from Entity
 	private boolean move(int xmov, int ymov, boolean changeDir) { // knockback shouldn't change mob direction
 		if(level == null) return false; // stopped b/c there's no level to move in!
 		

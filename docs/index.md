@@ -1,6 +1,5 @@
 # minicraft-plus-revived
 Minicraft+ is a modded version of Minicraft that adds many more features to the original version. To learn more about Minicraft, or play it yourself, take a look at [www.playminicraft.com](https://www.playminicraft.com).
-
 ## Major Features
 Here is a small share of the more major features that this mod adds to the original minicraft game:
 * More Game modes -- Creative, Hardcore, and Score mode in addition to Survival
@@ -22,7 +21,7 @@ Here is a small share of the more major features that this mod adds to the origi
 * And best of all, active development and community!
 * Localization: Different languages
 
-You can find a more comprehensive list of the earlier versions, before 1.9, in [this minecraft forum post](http://www.minecraftforum.net/forums/off-topic/general-gaming/452036-v1-6-minicraft-plus). Be aware however, that it's old; it's from many years ago before the original project was abandoned.
+You can find a more comprehensive list of the earlier versions, before 1.9, in [this minecraft forum post](http://www.minecraftforum.net/forums/off-topic/general-gaming/452036-v1-6-minicraft-plus). Be aware however, that it's old; it's from many years ago before the project was abandoned.
 
 ##### Features that Chris J added to the mod:
 * Rename, copy world options
@@ -37,7 +36,12 @@ You can find a more comprehensive list of the earlier versions, before 1.9, in [
 
 ### Current Goals
 
-For current goals, as well as ideas, read "Bugs and things to do.txt", and the other stuff in the "ideas" folder.
+Things we plan on implementing, _hopefully_ sooner rather than later...
+* Bugfixes and cleanup
+* Add back Experience bar, from version 1.4
+
+
+You can find a more comprehensive list of the earlier versions, before 1.9, in [this minecraft forum post](http://www.minecraftforum.net/forums/off-topic/general-gaming/452036-v1-6-minicraft-plus). Be aware however, that it's old; it's from many years ago before the project was originally abandoned, and then subsequently rediscovered 5 years later. :3
 
 #### Far, far away...
 

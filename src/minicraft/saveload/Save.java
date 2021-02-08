@@ -307,7 +307,8 @@ public class Save {
 		StringBuilder extradata = new StringBuilder();
 		
 		// don't even write ItemEntities or particle effects; Spark... will probably is saved, eventually; it presents an unfair cheat to remove the sparks by reloading the Game.
-		
+
+		//if(e instanceof Particle) return ""; // TODO I don't want to, but there are complications.
 		if(e instanceof Particle && Game.debug) System.out.println("Saving particle with id: " + e.eid);
 		
 		if(isLocalSave && (e instanceof ItemEntity || e instanceof Arrow || e instanceof RemotePlayer || e instanceof Spark || e instanceof Particle)) // wirte these only when sending a world, not writing it. (RemotePlayers are saved separately, when their info is received.)
