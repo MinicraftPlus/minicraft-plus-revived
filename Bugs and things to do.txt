@@ -10,7 +10,7 @@ Note to self: for more little bugs/ideas/concerns, search code for "TODO"
 
 	####BUGS####
 ####
- 
+ - when explode a tile with TNT where there is a furniture item, the furniture item remains on the hole tile
  
 #####
 
