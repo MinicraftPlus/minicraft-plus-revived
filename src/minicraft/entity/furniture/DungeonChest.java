@@ -17,11 +17,11 @@ import minicraft.item.Items;
 import minicraft.item.StackableItem;
 
 public class DungeonChest extends Chest {
-	private static Sprite openSprite = new Sprite(14, 24, 2, 2, 2);
-	private static Sprite lockSprite = new Sprite(12, 24, 2, 2, 2);
+	private static final Sprite openSprite = new Sprite(14, 24, 2, 2, 2);
+	private static final Sprite lockSprite = new Sprite(12, 24, 2, 2, 2);
 	
 	public Random random = new Random();
-	public boolean isLocked;
+	private boolean isLocked;
 	
 	/**
 	 * Creates a custom chest with the name Dungeon Chest.
@@ -33,15 +33,11 @@ public class DungeonChest extends Chest {
 
 	public DungeonChest(boolean populateInv, boolean unlocked) {
 		super("Dungeon Chest");
-		if (!unlocked)
-			this.sprite = lockSprite;
-		else
-			this.sprite = openSprite;
-
-		if(populateInv)
+		if (populateInv) {
 			populateInv();
+		}
 
-		isLocked = !unlocked;
+		setLocked(!unlocked);
 	}
 
 	@Override
@@ -96,6 +92,17 @@ public class DungeonChest extends Chest {
 		inv.clearInv(); // clear the inventory.
 
 		populateInvRandom("dungeonchest", 0);
+	}
+
+	public boolean isLocked() {
+		return isLocked;
+	}
+
+	public void setLocked(boolean locked) {
+		this.isLocked = locked;
+
+		// auto update sprite
+		sprite = locked ? DungeonChest.lockSprite : DungeonChest.openSprite;
 	}
 	
 	/** what happens if the player tries to push a Dungeon Chest. */
