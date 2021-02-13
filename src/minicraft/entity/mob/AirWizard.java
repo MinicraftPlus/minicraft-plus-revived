@@ -94,13 +94,13 @@ public class AirWizard extends EnemyMob {
 			if (xd * xd + yd * yd < 16*16 * 2*2) {
 				/// Move away from the player if less than 2 blocks away
 				
-				xmov = 0; //accelerations
-				ymov = 0;
+				this.xmov = 0; //accelerations
+				this.ymov = 0;
 				// these four statements basically just find which direction is away from the player:
-				if (xd < 0) xmov = +1;
-				if (xd > 0) xmov = -1;
-				if (yd < 0) ymov = +1;
-				if (yd > 0) ymov = -1;
+				if (xd < 0) this.xmov = +1;
+				if (xd > 0) this.xmov = -1;
+				if (yd < 0) this.ymov = +1;
+				if (yd > 0) this.ymov = -1;
 			} else if (xd * xd + yd * yd > 16*16 * 15*15) {// 15 squares away
 				/// drags the airwizard to the player, maintaining relative position.
 				double hypot = Math.sqrt(xd*xd + yd*yd);

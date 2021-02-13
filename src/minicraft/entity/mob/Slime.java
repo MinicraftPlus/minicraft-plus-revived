@@ -50,8 +50,8 @@ public class Slime extends EnemyMob {
 	}
 	
 	@Override
-	public boolean move(int xmov, int yd) {
-		boolean result = super.move(xmov, yd);
+	public boolean move(int xd, int yd) {
+		boolean result = super.move(xd, yd);
 		dir = Direction.DOWN;
 		return result;
 	}

@@ -26,8 +26,8 @@ public class RemotePlayer extends Player implements ClientTickable {
 	private static final int entityTrackingBuffer = 0;
 	
 	private String username = "";
-	private InetAddress ipAddress;
-	private int port;
+	private final InetAddress ipAddress;
+	private final int port;
 	
 	public RemotePlayer(Player previous, InetAddress ip, int port) { this(previous, false, ip, port); }
 	public RemotePlayer(@Nullable Player previous, boolean isMainPlayer, InetAddress ip, int port) {
@@ -41,15 +41,11 @@ public class RemotePlayer extends Player implements ClientTickable {
 		setUsername(model.getUsername());
 	}
 	
-	public void setUsername(String username) {
-		this.username = username;
-	}
+	public void setUsername(String username) { this.username = username; }
 	public String getUsername() { return username; }
 	public InetAddress getIpAddress() { return ipAddress; }
 	
-	public String getData() {
-		return username + ":" + ipAddress.getCanonicalHostName() + ":" + port;
-	}
+	public String getData() { return username + ":" + ipAddress.getCanonicalHostName() + ":" + port; }
 	
 	@Override
 	public void clientTick() {
@@ -87,10 +83,10 @@ public class RemotePlayer extends Player implements ClientTickable {
 		super.attack();
 	}
 	
-	public boolean move(int xmov, int yd) {
+	public boolean move(int xd, int yd) {
 		int oldxt = x >> 4, oldyt = y >> 4;
 		
-		boolean moved = super.move(xmov, yd);
+		boolean moved = super.move(xd, yd);
 		
 		if(!(oldxt == x>>4 && oldyt == y>>4) && Game.isConnectedClient() && this == Game.player) {
 			// if moved (and is client), then check any tiles no longer loaded, and remove any entities on them.
