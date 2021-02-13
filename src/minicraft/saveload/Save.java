@@ -327,7 +327,7 @@ public class Save {
 			}
 			
 			if(chest instanceof DeathChest) extradata.append(":").append(((DeathChest) chest).time);
-			if(chest instanceof DungeonChest) extradata.append(":").append(((DungeonChest) chest).isLocked);
+			if(chest instanceof DungeonChest) extradata.append(":").append(((DungeonChest) chest).isLocked());
 		}
 		
 		if(e instanceof Spawner) {

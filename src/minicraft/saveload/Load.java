@@ -728,8 +728,8 @@ public class Load {
 			if (isDeathChest) {
 				((DeathChest)chest).time = Integer.parseInt(chestInfo.get(chestInfo.size()-1));
 			} else if (isDungeonChest) {
-				((DungeonChest)chest).isLocked = Boolean.parseBoolean(chestInfo.get(chestInfo.size()-1));
-				if(((DungeonChest)chest).isLocked) World.levels[Integer.parseInt(info.get(info.size()-1))].chestCount++;
+				((DungeonChest)chest).setLocked(Boolean.parseBoolean(chestInfo.get(chestInfo.size()-1)));
+				if(((DungeonChest)chest).isLocked()) World.levels[Integer.parseInt(info.get(info.size()-1))].chestCount++;
 			}
 			
 			newEntity = chest;

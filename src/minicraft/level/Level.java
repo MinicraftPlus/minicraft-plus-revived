@@ -298,9 +298,8 @@ public class Level {
 	public void tick(boolean fullTick) {
 		int count = 0;
 
-		Iterator<Entity> entityAdderIt = entitiesToAdd.iterator();
-		while (entityAdderIt.hasNext()) {
-			Entity entity = entityAdderIt.next();
+		while (entitiesToAdd.size() > 0) {
+			Entity entity = entitiesToAdd.get(0);
 			boolean inLevel = entities.contains(entity);
 			
 			if(!inLevel) {
@@ -320,7 +319,7 @@ public class Level {
 				}
 			}
 
-			entityAdderIt.remove();
+			entitiesToAdd.remove(entity);
 		}
 		
 		if(fullTick && (!Game.isValidServer() || getPlayers().length > 0)) {
