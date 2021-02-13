@@ -24,6 +24,7 @@ public class Initializer extends Game {
 	
 	static void parseArgs(String[] args) {
 		boolean debug = false;
+		boolean packetdebug = false;
 		boolean autoclient = false;
 		boolean autoserver = false;
 		
@@ -32,6 +33,8 @@ public class Initializer extends Game {
 		for(int i = 0; i < args.length; i++) {
 			if(args[i].equals("--debug"))
 				debug = true;
+			if (args[i].equals("--packetdebug"))
+				packetdebug = true;
 			if(args[i].equals("--savedir") && i+1 < args.length) {
 				i++;
 				saveDir = args[i];
@@ -50,6 +53,7 @@ public class Initializer extends Game {
 			}
 		}
 		Game.debug = debug;
+		Game.packet_debug = packetdebug;
 		HAS_GUI = !autoserver;
 		
 		FileHandler.determineGameDir(saveDir);

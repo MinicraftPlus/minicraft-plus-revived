@@ -34,15 +34,17 @@ public class Plant extends FarmTile {
     }
 
     @Override
-    public void tick(Level level, int xt, int yt) {
-        if (random.nextInt(2) == 0) return;
+    public boolean tick(Level level, int xt, int yt) {
+        if (random.nextInt(2) == 0) return false;
 
         int age = level.getData(xt, yt);
-        if (!IfWater(level, xt, yt)) {
-            if (age < maxAge) level.setData(xt, yt, age + 1);
-        } else if (IfWater(level, xt, yt)) {
-            if (age < maxAge) level.setData(xt, yt, age + 2);
+        if (age < maxAge) {
+            if (!IfWater(level, xt, yt)) level.setData(xt, yt, age + 1);
+            else if (IfWater(level, xt, yt)) level.setData(xt, yt, age + 2);
+            return true;
         }
+
+        return false;
     }
 
     protected boolean IfWater(Level level, int xs, int ys) {

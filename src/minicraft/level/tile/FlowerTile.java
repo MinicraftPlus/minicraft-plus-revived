@@ -22,9 +22,9 @@ public class FlowerTile extends Tile {
 		maySpawn = true;
 	}
 
-	public void tick(Level level, int xt, int yt) {
+	public boolean tick(Level level, int xt, int yt) {
 		// TODO revise this method.
-		if (random.nextInt(30) != 0) return;
+		if (random.nextInt(30) != 0) return false;
 
 		int xn = xt;
 		int yn = yt;
@@ -35,6 +35,7 @@ public class FlowerTile extends Tile {
 		if (level.getTile(xn, yn) == Tiles.get("dirt")) {
 			level.setTile(xn, yn, Tiles.get("grass"));
 		}
+		return false;
 	}
 	
 	public void render(Screen screen, Level level, int x, int y) {

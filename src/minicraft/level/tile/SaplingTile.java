@@ -30,13 +30,14 @@ public class SaplingTile extends Tile {
 		sprite.render(screen, x*16, y*16);
 	}
 
-	public void tick(Level level, int x, int y) {
+	public boolean tick(Level level, int x, int y) {
 		int age = level.getData(x, y) + 1;
 		if (age > 100) {
 			level.setTile(x, y, growsTo);
 		} else {
 			level.setData(x, y, age);
 		}
+		return true;
 	}
 
 	public boolean hurt(Level level, int x, int y, Mob source, int dmg, Direction attackDir) {

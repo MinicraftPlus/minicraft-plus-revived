@@ -29,10 +29,11 @@ public class Game {
 	Game() {} // can't instantiate the Game class.
 	
 	public static boolean debug = false;
+	public static boolean packet_debug = false;
 	public static boolean HAS_GUI = true;
 	
 	public static final String NAME = "Minicraft Plus"; // This is the name on the application window.
-	public static final Version VERSION = new Version("2.0.7-dev1");
+	public static final Version VERSION = new Version("2.0.7-dev2");
 	
 	public static InputHandler input; // input used in Game, Player, and just about all the *Menu classes.
 	public static Player player;

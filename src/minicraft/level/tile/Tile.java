@@ -87,7 +87,7 @@ public abstract class Tile {
 	public void bumpedInto(Level level, int xt, int yt, Entity entity) {}
 	
 	/** Update method */
-	public void tick(Level level, int xt, int yt) {}
+	public boolean tick(Level level, int xt, int yt) { return false; }
 	
 	/** What happens when you are inside the tile (ex: lava) */
 	public void steppedOn(Level level, int xt, int yt, Entity entity) {}

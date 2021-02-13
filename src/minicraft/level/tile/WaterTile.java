@@ -32,7 +32,7 @@ public class WaterTile extends Tile {
 		return e.canSwim();
 	}
 
-	public void tick(Level level, int xt, int yt) {
+	public boolean tick(Level level, int xt, int yt) {
 		int xn = xt;
 		int yn = yt;
 
@@ -51,5 +51,6 @@ public class WaterTile extends Tile {
 			if (level.getTile(xt, yt + y) == Tiles.get("lava"))
 				level.setTile(xt, yt + y, Tiles.get("obsidian"));
 		}
+		return false;
 	}
 }

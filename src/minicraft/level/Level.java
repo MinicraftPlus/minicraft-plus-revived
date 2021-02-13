@@ -330,8 +330,8 @@ public class Level {
 				for (int i = 0; i < w * h / 50; i++) {
 					int xt = random.nextInt(w);
 					int yt = random.nextInt(w);
-					getTile(xt, yt).tick(this, xt, yt);
-					if(Game.isValidServer())
+					boolean notableTick = getTile(xt, yt).tick(this, xt, yt);
+					if(Game.isValidServer() && notableTick)
 						Game.server.broadcastTileUpdate(this, xt, yt);
 				}
 			}

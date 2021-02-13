@@ -147,6 +147,8 @@ public class MinicraftClient extends MinicraftConnection {
 	/** This method is responsible for parsing all data received by the socket. */
 	public boolean parsePacket(InputType inType, String alldata) {
 		String[] data = alldata.split(";");
+
+		if (Game.packet_debug) System.out.println("Received:" + inType.toString() + ", " + alldata);
 		
 		switch(inType) {
 			case INVALID:

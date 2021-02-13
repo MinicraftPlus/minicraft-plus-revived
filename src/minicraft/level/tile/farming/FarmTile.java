@@ -39,9 +39,10 @@ public class FarmTile extends Tile {
     }
 
     @Override
-    public void tick(Level level, int xt, int yt) {
+    public boolean tick(Level level, int xt, int yt) {
         int age = level.getData(xt, yt);
         if (age < 5) level.setData(xt, yt, age + 1);
+        return true;
     }
 
     @Override

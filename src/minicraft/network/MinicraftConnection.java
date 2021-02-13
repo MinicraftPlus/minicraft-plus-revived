@@ -82,6 +82,8 @@ public abstract class MinicraftConnection extends Thread implements MinicraftPro
 	
 	protected void sendData(InputType inType, String data) {
 		if (socket == null) return;
+
+		if (Game.packet_debug && Game.isConnectedClient()) System.out.println("Sent:" + inType.toString() + ", " + data);
 		
 		char inTypeChar = (char) (inType.ordinal() + 1);
 		if (data.contains("\0")) System.err.println("WARNING from " + this + ": data to send contains a null character. Not sending data.");
