@@ -76,8 +76,8 @@ public abstract class Mob extends Entity {
 	}
 	
 	@Override
-	public boolean move(int xmov, int yd) { return move(xmov, yd, true); } // Move the mob, overrides from Entity
-	private boolean move(int xmov, int ymov, boolean changeDir) { // knockback shouldn't change mob direction
+	public boolean move(int xd, int yd) { return move(xd, yd, true); } // Move the mob, overrides from Entity
+	private boolean move(int xd, int yd, boolean changeDir) { // knockback shouldn't change mob direction
 		if(level == null) return false; // stopped b/c there's no level to move in!
 		
 		int oldxt = x >> 4;
@@ -94,22 +94,22 @@ public abstract class Mob extends Entity {
 		boolean moved = true;
 		
 		if (hurtTime == 0 || this instanceof Player) { // If a mobAi has been hurt recently and hasn't yet cooled down, it won't perform the movement (by not calling super)
-			if(xmov != 0 || ymov != 0) {
+			if(xd != 0 || yd != 0) {
 				if(changeDir)
-					dir = Direction.getDirection(xmov, ymov); // set the mob's direction; NEVER set it to NONE
+					dir = Direction.getDirection(xd, yd); // set the mob's direction; NEVER set it to NONE
 				walkDist++;
 			}
 			
 			// this part makes it so you can't move in a direction that you are currently being knocked back from.
 			if(xKnockback != 0)
-				xmov = Math.copySign(xmov, xKnockback)*-1 != xmov ? xmov : 0; // if xKnockback and xmov have different signs, do nothing, otherwise, set xmov to 0.
+				xd = Math.copySign(xd, xKnockback)*-1 != xd ? xd : 0; // if xKnockback and xd have different signs, do nothing, otherwise, set xd to 0.
 			if(yKnockback != 0)
-				ymov = Math.copySign(ymov, yKnockback)*-1 != ymov ? ymov : 0; // same as above.
+				yd = Math.copySign(yd, yKnockback)*-1 != yd ? yd : 0; // same as above.
 			
-			moved = super.move(xmov, ymov); // Call the move method from Entity
+			moved = super.move(xd, yd); // Call the move method from Entity
 		}
 		
-		if(Game.isValidServer() && (xmov != 0 || ymov != 0))
+		if(Game.isValidServer() && (xd != 0 || yd != 0))
 			updatePlayers(oldxt, oldyt);
 		
 		return moved;

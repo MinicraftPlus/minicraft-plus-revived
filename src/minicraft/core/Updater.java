@@ -131,13 +131,13 @@ public class Updater extends Game {
 			scoreTime--;
 		}
 		
-		boolean hadMenu = menu != null;
+		boolean hasMenu = menu != null;
 		if(isValidServer()) {
 			// this is to keep the game going while online, even with an unfocused window.
 			input.tick();
-			for (Level floor : levels) {
-				if (floor == null) continue;
-				floor.tick(true);
+			for (Level level1 : levels) {
+				if (level1 == null) continue;
+				level1.tick(true);
 			}
 			
 			Tile.tickCount++;
@@ -152,7 +152,7 @@ public class Updater extends Game {
 				gameTime++;
 			}
 			
-			if (!isValidServer() || menu != null && !hadMenu)
+			if (!isValidServer() || menu != null && !hasMenu)
 				input.tick(); // INPUT TICK; no other class should call this, I think...especially the *Menu classes.
 			
 			if (isValidClient() && Renderer.readyToRenderGameplay) {
