@@ -2,6 +2,7 @@ package minicraft.entity.mob;
 
 import java.util.*;
 
+import minicraft.core.Game;
 import minicraft.core.io.Settings;
 import minicraft.core.io.Sound;
 import minicraft.entity.Direction;
@@ -45,6 +46,8 @@ public class Creeper extends EnemyMob {
 	@Override
 	public void tick() {
 		super.tick();
+
+		if (Game.isMode("Creative")) return; // Creeper should not explode if player is in creative mode
 		
 		if (fuseTime > 0) {
 			fuseTime--; // fuse getting shorter...
@@ -53,8 +56,9 @@ public class Creeper extends EnemyMob {
 			xmov = ymov = 0;
 			
 			boolean playerInRange = false; // tells if any players are within the blast
-			
-			for(Entity e: level.getEntitiesOfClass(Mob.class)) {
+
+			// Find if the player is in range and store it in playerInRange.
+			for(Entity e : level.getEntitiesOfClass(Mob.class)) {
 				Mob mob = (Mob) e;
 				int pdx = Math.abs(mob.x - x);
 				int pdy = Math.abs(mob.y - y);
@@ -89,7 +93,7 @@ public class Creeper extends EnemyMob {
 						Mob mob = (Mob) entity;
 						int distx = Math.abs(mob.x - x);
 						int disty = Math.abs(mob.y - y);
-						float distDiag = (float) Math.sqrt(distx * distx + disty * disty);
+						float distDiag = (float) Math.sqrt(distx^2 + disty^2);
 						mob.hurt(this, (int) (lvlDamage * (1 / (distDiag + 1)) + Settings.getIdx("diff")));
 					} else if (entity instanceof Spawner) {
 						spawners.add(entity);
@@ -97,25 +101,25 @@ public class Creeper extends EnemyMob {
 				}
 
 				Point[] tilePositions = level.getAreaTilePositions(xt, yt, radius);
-				for (int p = 0; p < tilePositions.length; p++) {
+				for (Point tilePosition : tilePositions) {
 					boolean hasSpawner = false;
 					for (Entity spawner : spawners) {
-						if (spawner.x >> 4 == tilePositions[p].x && spawner.y >> 4 == tilePositions[p].y) {
+						if (spawner.x >> 4 == tilePosition.x && spawner.y >> 4 == tilePosition.y) {
 							hasSpawner = true;
 							break;
 						}
 					}
 					if (!hasSpawner) {
 						if (level.depth != 1) {
-							level.setAreaTiles(tilePositions[p].x, tilePositions[p].y, 0, Tiles.get("hole"), 0);
+							level.setAreaTiles(tilePosition.x, tilePosition.y, 0, Tiles.get("hole"), 0);
 						} else {
-							level.setAreaTiles(tilePositions[p].x, tilePositions[p].y, 0, Tiles.get("Infinite Fall"), 0);
+							level.setAreaTiles(tilePosition.x, tilePosition.y, 0, Tiles.get("Infinite Fall"), 0);
 						}
 
 					}
 				}
 
-				for (Entity entity : entitiesInRange) {
+				for (Entity entity : entitiesInRange) { // This is repeated because of tilePositions need to be calculated
 					if (entity == this) continue;
 					Point ePos = new Point(entity.x>>4, entity.y>>4);
 					for(Point p: tilePositions) {
@@ -148,6 +152,8 @@ public class Creeper extends EnemyMob {
 
 	@Override
 	protected void touchedBy(Entity entity) {
+		if (Game.isMode("Creative")) return;
+
 		if (entity instanceof Player) {
 			if (fuseTime == 0 && !fuseLit) {
 				Sound.fuse.play();
@@ -161,7 +167,8 @@ public class Creeper extends EnemyMob {
 	public boolean canWool() { return false; }
 	
 	public void die() {
-		dropItem(1, 4-Settings.getIdx("diff"), Items.get("Gunpowder"));
+		// Only drop items if the creeper has not exploded
+		if (!fuseLit) dropItem(1, 4-Settings.getIdx("diff"), Items.get("Gunpowder"));
 		super.die();
 	}
 	

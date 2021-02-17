@@ -1,20 +1,7 @@
 Most of the stuff here won't make sense unless you have a prior knowledge of the code structure and details
-
-~~~~
-
-Turn player.score into the experience system of 1.4; or, maybe I should just make my own experience system... it wouldn't hurt to use things like colors and such from 1.4, though.
-
-~~~~
-
-Make the "sticky keys" feature off by default on survival, and on by default on creative.
-
-~~~~
-
-PROJECT: encapsulate many classes, as much as possible. This means making preferably zero public fields, and so making more getters and setters... I haven't done that very well...
-
-~~~~
-
-Stop saving player arrow count, and refit the load class indexes to reflect that. I should really find a better way to represent each piece of info in loading, so the removal of one save item doesn't break everything.
-
-~~~~
-
+----
+[ ] Turn player.score into the experience system of 1.4; or, maybe I should just make my own experience system... it wouldn't hurt to use things like colors and such from 1.4, though.
+[ ] Make the "sticky keys" feature off by default on survival, and on by default on creative.
+[ ] PROJECT: encapsulate many classes, as much as possible. This means making preferably zero public fields, and so making more getters and setters... I haven't done that very well...
+[ ] Stop saving player arrow count, and refit the load class indexes to reflect that. I should really find a better way to represent each piece of info in loading, so the removal of one save item doesn't break everything.
+[ ] Add a camera class for anything related to the game view.

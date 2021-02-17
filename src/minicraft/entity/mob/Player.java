@@ -717,9 +717,8 @@ public class Player extends Mob implements ItemHolder, ClientTickable {
 	/** called by other use method; this serves as a buffer in case there is no entity in front of the player. */
 	private boolean use(Rectangle area) {
 		List<Entity> entities = level.getEntitiesInRect(area); // gets the entities within the 4 points
-		for (int i = 0; i < entities.size(); i++) {
-			Entity e = entities.get(i);
-			if (e instanceof Furniture && ((Furniture)e).use(this)) return true; // if the entity is not the player, then call it's use method, and return the result. Only some furniture classes use this.
+		for (Entity e : entities) {
+			if (e instanceof Furniture && ((Furniture) e).use(this)) return true; // if the entity is not the player, then call it's use method, and return the result. Only some furniture classes use this.
 		}
 		return false;
 	}
@@ -766,7 +765,7 @@ public class Player extends Mob implements ItemHolder, ClientTickable {
 	public void render(Screen screen) {
 		
 		MobSprite[][] spriteSet; // the default, walking sprites.
-		
+
 		if(activeItem instanceof FurnitureItem) {
 			spriteSet = skinon ? carrySuitSprites : carrySprites;
 		} else {
@@ -776,7 +775,8 @@ public class Player extends Mob implements ItemHolder, ClientTickable {
 		/* offset locations to start drawing the sprite relative to our position */
 		int xo = x - 8; // horizontal
 		int yo = y - 11; // vertical
-		
+
+		// Renders swimming
 		if (isSwimming()) {
 			yo += 4; // y offset is moved up by 4
 			if (level.getTile(x / 16, y / 16) == Tiles.get("water")) {
@@ -788,25 +788,19 @@ public class Player extends Mob implements ItemHolder, ClientTickable {
 			}
 		}
 
-		// renders indicator for what tile the item will be placed on
+		// Renders indicator for what tile the item will be placed on
 		if (activeItem instanceof TileItem) {
 			Point t = getInteractionTile();
 
 			screen.render(t.x * 16 + 4, t.y * 16 + 4, 3 + 4 * 32, 0, 3);
 		}
 
-		if (attackTime > 0 && attackDir == Direction.UP) { // if currently attacking upwards...
-			screen.render(xo + 0, yo - 4, 3 + 2 * 32, 0, 3); //render left half-slash
-			screen.render(xo + 8, yo - 4, 3 + 2 * 32, 1, 3); //render right half-slash (mirror of left).
-			if (attackItem != null) { // if the player had an item when they last attacked...
-				attackItem.sprite.render(screen, xo + 4, yo - 4, 1); // then render the icon of the item, mirrored
-			}
-		}
-		
-		if (hurtTime > playerHurtTime - 10) { // if the player has just gotten hurt...
+		// Makes the player white if they have just gotten hurt
+		if (hurtTime > playerHurtTime - 10) {
 			col = Color.WHITE; // make the sprite white.
 		}
 
+		// Renders falling
 		MobSprite curSprite;
 		if (onFallDelay > 0) {
 			// what this does is make falling look really cool
@@ -827,29 +821,40 @@ public class Player extends Mob implements ItemHolder, ClientTickable {
 		}
 		
 		// renders slashes:
-		
-		if (attackTime > 0 && attackDir == Direction.LEFT) { // if attacking to the left.... (same as above)
-			screen.render(xo - 4, yo, 4 + 2 * 32, 1, 3);
-			screen.render(xo - 4, yo + 8, 4 + 2 * 32, 3, 3);
-			if (attackItem != null) {
-				attackItem.sprite.render(screen, xo - 4, yo + 4, 1);
-			}
-		}
-		if (attackTime > 0 && attackDir == Direction.RIGHT) { // attacking to the right
-			screen.render(xo + 8 + 4, yo, 4 + 2 * 32, 0, 3);
-			screen.render(xo + 8 + 4, yo + 8, 4 + 2 * 32, 2, 3);
-			if (attackItem != null) {
-				attackItem.sprite.render(screen, xo + 8 + 4, yo + 4);
-			}
-		}
-		if (attackTime > 0 && attackDir == Direction.DOWN) { // attacking downwards
-			screen.render(xo + 0, yo + 8 + 4, 3 + 2 * 32, 2, 3);
-			screen.render(xo + 8, yo + 8 + 4, 3 + 2 * 32, 3, 3);
-			if (attackItem != null) {
-				attackItem.sprite.render(screen, xo + 4, yo + 8 + 4);
+		if (attackTime > 0) {
+			switch (attackDir) {
+				case UP:  // if currently attacking upwards...
+					screen.render(xo + 0, yo - 4, 3 + 2 * 32, 0, 3); //render left half-slash
+					screen.render(xo + 8, yo - 4, 3 + 2 * 32, 1, 3); //render right half-slash (mirror of left).
+					if (attackItem != null && !(attackItem instanceof PowerGloveItem)) { // if the player had an item when they last attacked...
+						attackItem.sprite.render(screen, xo + 4, yo - 4, 1); // then render the icon of the item, mirrored
+					}
+					break;
+				case LEFT:  // attacking to the left... (Same as above)
+					screen.render(xo - 4, yo, 4 + 2 * 32, 1, 3);
+					screen.render(xo - 4, yo + 8, 4 + 2 * 32, 3, 3);
+					if (attackItem != null && !(attackItem instanceof PowerGloveItem)) {
+						attackItem.sprite.render(screen, xo - 4, yo + 4, 1);
+					}
+					break;
+				case RIGHT:  // attacking to the right (Same as above)
+					screen.render(xo + 8 + 4, yo, 4 + 2 * 32, 0, 3);
+					screen.render(xo + 8 + 4, yo + 8, 4 + 2 * 32, 2, 3);
+					if (attackItem != null && !(attackItem instanceof PowerGloveItem)) {
+						attackItem.sprite.render(screen, xo + 8 + 4, yo + 4);
+					}
+					break;
+				case DOWN:  // attacking downwards (Same as above)
+					screen.render(xo + 0, yo + 8 + 4, 3 + 2 * 32, 2, 3);
+					screen.render(xo + 8, yo + 8 + 4, 3 + 2 * 32, 3, 3);
+					if (attackItem != null && !(attackItem instanceof PowerGloveItem)) {
+						attackItem.sprite.render(screen, xo + 4, yo + 8 + 4);
+					}
+					break;
 			}
 		}
 
+		// Renders the fishing rods when fishing
 		if (isFishing) {
 			switch (dir) {
 				case UP:
@@ -869,7 +874,7 @@ public class Player extends Mob implements ItemHolder, ClientTickable {
 			}
 		}
 		
-		 // renders the furniture if the player is holding one.
+		// Renders the furniture if the player is holding one.
 		if (activeItem instanceof FurnitureItem) {
 			Furniture furniture = ((FurnitureItem) activeItem).furniture;
 			furniture.x = x;
@@ -1059,14 +1064,13 @@ public class Player extends Mob implements ItemHolder, ClientTickable {
 				}
 			}
 		}
-		
-		Sound.monsterHurt.play();
-		
+
 		if(healthDam > 0 || !fullPlayer) {
 			level.add(new TextParticle("" + damage, x, y, Color.get(-1, 504)));
 			if(fullPlayer) super.doHurt(healthDam, attackDir); // sets knockback, and takes away health.
 		}
-		
+
+		Sound.playerHurt.play();
 		hurtTime = playerHurtTime;
 	}
 	

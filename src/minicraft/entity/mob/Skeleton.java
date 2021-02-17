@@ -1,5 +1,6 @@
 package minicraft.entity.mob;
 
+import minicraft.core.Game;
 import minicraft.core.io.Settings;
 import minicraft.entity.Arrow;
 import minicraft.gfx.Color;
@@ -11,7 +12,7 @@ public class Skeleton extends EnemyMob {
 	static {
 		sprites = new MobSprite[4][4][2];
 		for (int i = 0; i < 4; i++) {
-			MobSprite[][] list  = MobSprite.compileMobSpriteAnimations(16, 0 + (i * 2));
+			MobSprite[][] list = MobSprite.compileMobSpriteAnimations(16, 0 + (i * 2));
 			sprites[i] = list;
 		}
 	}
@@ -33,11 +34,11 @@ public class Skeleton extends EnemyMob {
 	@Override
 	public void tick() {
 		super.tick();
-		
-		if(skipTick()) return;
+
+		if (skipTick()) return;
 		
 		Player player = getClosestPlayer();
-		if (player != null && randomWalkTime == 0) {
+		if (player != null && randomWalkTime == 0 && !Game.isMode("Creative")) { // If there is a player nearby, the skeleton does not walk randomly, and gamemode is not creative.
 			artime--;
 			
 			int xd = player.x - x;
