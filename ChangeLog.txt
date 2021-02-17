@@ -14,6 +14,8 @@ Minicraft+ version 2.0.7
 * Updated some textures; made wood, apples and gold apples look better
 * Made sheep drop beef
 * Picking up things no longer require stamina
+* Mobs no longer target you and attack you when you are in creative mode
+* Fixed sound not playing on certain actions
 
 
 Minicraft+ version 2.0.6

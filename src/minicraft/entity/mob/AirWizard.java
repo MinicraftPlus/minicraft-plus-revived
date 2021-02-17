@@ -1,5 +1,6 @@
 package minicraft.entity.mob;
 
+import minicraft.core.Game;
 import minicraft.core.Updater;
 import minicraft.core.io.Settings;
 import minicraft.core.io.Sound;
@@ -57,7 +58,9 @@ public class AirWizard extends EnemyMob {
 	@Override
 	public void tick() {
 		super.tick();
-		
+
+		if (Game.isMode("Creative")) return; // Should not attack if player is in creative
+
 		if (attackDelay > 0) {
 			xmov = ymov = 0;
 			int dir = (attackDelay - 45) / 4 % 4; // the direction of attack.
@@ -76,7 +79,8 @@ public class AirWizard extends EnemyMob {
 			}
 			return; // skips the rest of the code (attackDelay must have been > 0)
 		}
-		
+
+		// Send out sparks
 		if (attackTime > 0) {
 			xmov = ymov = 0;
 			attackTime *= 0.92; // attackTime will decrease by 7% every time.
@@ -87,7 +91,6 @@ public class AirWizard extends EnemyMob {
 		}
 		
 		Player player = getClosestPlayer();
-		
 		if (player != null && randomWalkTime == 0) { // if there is a player around, and the walking is not random
 			int xd = player.x - x; // the horizontal distance between the player and the air wizard.
 			int yd = player.y - y; // the vertical distance between the player and the air wizard.
@@ -109,11 +112,9 @@ public class AirWizard extends EnemyMob {
 				x = player.x - newxd;
 				y = player.y - newyd;
 			}
-		}
-		
-		if (player != null && randomWalkTime == 0) {
-			int xd = player.x - x; // x dist to player
-			int yd = player.y - y; // y dist to player
+
+			xd = player.x - x; // recalculate these two
+			yd = player.y - y;
 			if (random.nextInt(4) == 0 && xd * xd + yd * yd < 50 * 50 && attackDelay == 0 && attackTime == 0) { // if a random number, 0-3, equals 0, and the player is less than 50 blocks away, and attackDelay and attackTime equal 0...
 				attackDelay = 60 * 2; // ...then set attackDelay to 120 (2 seconds at default 60 ticks/sec)
 			}
