@@ -152,7 +152,7 @@ public class Updater extends Game {
 				gameTime++;
 			}
 			
-			if (!isValidServer() || menu != null && !hasMenu)
+			if (!isValidServer() || menu != null && !hasMenu) // What?
 				input.tick(); // INPUT TICK; no other class should call this, I think...especially the *Menu classes.
 			
 			if (isValidClient() && Renderer.readyToRenderGameplay) {
