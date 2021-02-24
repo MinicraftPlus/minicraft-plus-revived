@@ -44,7 +44,11 @@ public class Level {
 	public int maxMobCount;
 	public int chestCount;
 	public int mobCount = 0;
-	
+
+	/**
+	 * I will be using this lock to avoid concurrency exceptions in entities and sparks set
+	 */
+	private final Object entityLock = new Object();
 	private Set<Entity> entities = java.util.Collections.synchronizedSet(new HashSet<>()); // A list of all the entities in the world
 	private Set<Spark> sparks = java.util.Collections.synchronizedSet(new HashSet<>()); // A list of all the sparks in the world
 	private Set<Player> players = java.util.Collections.synchronizedSet(new HashSet<>()); // A list of all the players in the world
@@ -309,12 +313,15 @@ public class Level {
 				if (!Game.isValidServer() || !(entity instanceof Particle)) {
 					if (Game.debug) printEntityStatus("Adding ", entity, "furniture.DungeonChest", "mob.AirWizard", "mob.Player");
 					
-					if (entity instanceof Spark) {
-						sparks.add((Spark) entity);
-					} else {
-						entities.add(entity);
-						if (entity instanceof Player)
-							players.add((Player) entity);
+					synchronized (entityLock) {
+						if (entity instanceof Spark) {
+							sparks.add((Spark) entity);
+						} else {
+							entities.add(entity);
+							if (entity instanceof Player) {
+								players.add((Player) entity);
+							}
+						}
 					}
 				}
 			}
@@ -373,10 +380,12 @@ public class Level {
 			if(Game.debug) printEntityStatus("Removing ", entity, "mob.Player");
 			
 			entity.remove(this); // this will safely fail if the entity's level doesn't match this one.
-			if (entity instanceof Spark) {
-				sparks.remove(entity);
-			} else {
-				entities.remove(entity);
+			synchronized (entityLock) {
+				if (entity instanceof Spark) {
+					sparks.remove(entity);
+				} else {
+					entities.remove(entity);
+				}
 			}
 			
 			if(entity instanceof Player)
@@ -628,14 +637,18 @@ public class Level {
 	}
 	
 	public Entity[] getEntityArray() {
-		Entity[] entityArray = new Entity[entities.size() + sparks.size()];
+		Entity[] entityArray;
 		int index = 0;
 
-		for (Entity entity : entities) {
-			entityArray[index++] = entity;
-		}
-		for (Spark spark : sparks) {
-			entityArray[index++] = spark;
+		synchronized (entityLock) {
+			entityArray = new Entity[entities.size() + sparks.size()];
+
+			for (Entity entity : entities) {
+				entityArray[index++] = entity;
+			}
+			for (Spark spark : sparks) {
+				entityArray[index++] = spark;
+			}
 		}
 
 		return entityArray;
