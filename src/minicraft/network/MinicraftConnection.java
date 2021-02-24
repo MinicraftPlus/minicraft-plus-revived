@@ -77,6 +77,10 @@ public abstract class MinicraftConnection extends Thread implements MinicraftPro
 		
 		endConnection();
 	}
+
+	protected int getConnectedPort() {
+		return socket.getPort();
+	}
 	
 	protected abstract boolean parsePacket(InputType inType, String data);
 	

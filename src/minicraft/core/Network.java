@@ -150,7 +150,7 @@ public class Network extends Game {
 			setMenu(new LoadingDisplay()); // gets things going to load up a (server) world
 		
 		// now that that's done, let's turn *this* running JVM into a server:
-		server = new MinicraftServer();
+		server = new MinicraftServer(Game.CUSTOM_PORT);
 		
 		new Load(WorldSelectDisplay.getWorldName(), server); // load server config
 		
