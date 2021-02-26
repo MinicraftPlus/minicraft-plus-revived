@@ -75,8 +75,12 @@ public class HardRockTile extends Tile {
 		super.render(screen, level, x, y);
 	}
 
-	public void tick(Level level, int xt, int yt) {
+	public boolean tick(Level level, int xt, int yt) {
 		int damage = level.getData(xt, yt);
-		if (damage > 0) level.setData(xt, yt, damage - 1);
+		if (damage > 0) {
+			level.setData(xt, yt, damage - 1);
+			return true;
+		}
+		return false;
 	}
 }

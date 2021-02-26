@@ -39,7 +39,7 @@ public class StackableItem extends Item {
 	}
 	
 	public int count;
-	///public int maxCount; // TODO I want to implement this later.
+	// public int maxCount; // TODO I want to implement this later.
 	
 	protected StackableItem(String name, Sprite sprite) {
 		super(name, sprite);
@@ -52,7 +52,7 @@ public class StackableItem extends Item {
 	
 	public boolean stacksWith(Item other) { return other instanceof StackableItem && other.getName().equals(getName()); }
 	
-	/// this is used by (most) subclasses, to standardize the count decrement behavior. This is not the normal interactOn method.
+	// this is used by (most) subclasses, to standardize the count decrement behavior. This is not the normal interactOn method.
 	protected boolean interactOn(boolean subClassSuccess) {
 		if(subClassSuccess && !Game.isMode("creative"))
 			count--;
@@ -81,7 +81,7 @@ public class StackableItem extends Item {
 	
 	@Override
 	public String getDisplayName() {
-		String amt = (count > 999 ? 999 : count) + " ";
+		String amt = (Math.min(count, 999)) + " ";
 		return " " + amt + Localization.getLocalized(getName());
 	}
 }

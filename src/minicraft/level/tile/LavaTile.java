@@ -35,7 +35,7 @@ public class LavaTile extends Tile {
 		return e.canSwim();
 	}
 
-	public void tick(Level level, int xt, int yt) {
+	public boolean tick(Level level, int xt, int yt) {
 		int xn = xt;
 		int yn = yt;
 
@@ -45,6 +45,7 @@ public class LavaTile extends Tile {
 		if (level.getTile(xn, yn) == Tiles.get("hole")) {
 			level.setTile(xn, yn, this);
 		}
+		return false;
 	}
 
 	public int getLightRadius(Level level, int x, int y) {

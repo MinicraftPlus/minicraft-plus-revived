@@ -26,8 +26,7 @@ public class PauseDisplay extends Display {
 		entries.addAll(Arrays.asList(
 			new BlankEntry(),
 			new SelectEntry("Return to Game", () -> Game.setMenu(null)),
-			new SelectEntry("Options", () -> Game.setMenu(new OptionsDisplay())),
-			new SelectEntry("World", () -> Game.setMenu(new WorldInfoDisplay()))
+			new SelectEntry("Options", () -> Game.setMenu(new OptionsDisplay()))
 			));
 		
 		if(!Game.ISONLINE) {

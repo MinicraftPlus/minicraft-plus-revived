@@ -40,7 +40,6 @@ public class SpriteSheet {
 			// actually put the data in the array
 			// uses 25 bits to store everything (8 for red, 8 for green, 8 for blue, and 1 for alpha)
 			pixels[i] = (transparent << 24) + red + green + blue;
-
 		}
 	}
 }

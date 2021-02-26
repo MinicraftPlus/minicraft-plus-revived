@@ -370,7 +370,7 @@ public class LegacyLoad {
 					if (isDeathChest) {
 						((DeathChest)chest).time = Integer.parseInt(chestInfo.get(chestInfo.size()-1).replace("tl;", "")); // "tl;" is only for old save support
 					} else if (isDungeonChest) {
-						((DungeonChest)chest).isLocked = Boolean.parseBoolean(chestInfo.get(chestInfo.size()-1));
+						((DungeonChest)chest).setLocked(Boolean.parseBoolean(chestInfo.get(chestInfo.size()-1)));
 					}
 					
 					currentlevel = Integer.parseInt(info.get(info.size() - 1));

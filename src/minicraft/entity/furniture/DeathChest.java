@@ -94,7 +94,7 @@ public class DeathChest extends Chest {
 				Game.notifications.add("Death chest retrieved!");
 			}
 			else if(Game.isValidClient()) {
-				Game.client.touchDeathChest((Player)other, this);
+				Game.client.touchDeathChest(this);
 				remove();
 			}
 		}

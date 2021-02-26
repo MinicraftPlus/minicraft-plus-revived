@@ -146,7 +146,7 @@ public class RemotePlayer extends Player implements ClientTickable {
 	
 	public void updateSyncArea(int oldxt, int oldyt) {
 		if(level == null) {
-			System.err.println("CLIENT couldn't check world around player b/c player has no level: " + this);
+			System.err.println("CLIENT: Couldn't check world around player because player has no level: " + this);
 			return;
 		}
 		

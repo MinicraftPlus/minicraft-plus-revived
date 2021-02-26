@@ -62,7 +62,7 @@ public class LoadingDisplay extends Display {
 	public static void setMessage(String progressType) { LoadingDisplay.progressType = progressType; }
 	
 	public static void progress(float amt) {
-		percentage = Math.min(100, percentage+amt);
+		percentage = Math.min(100, percentage + amt);
 	}
 	
 	@Override
