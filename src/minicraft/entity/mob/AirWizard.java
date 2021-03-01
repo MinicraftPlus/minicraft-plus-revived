@@ -130,28 +130,6 @@ public class AirWizard extends EnemyMob {
 	
 	@Override
 	public void render(Screen screen) {
-		/*int xo = x - 8; // the horizontal location to start drawing the sprite
-		int yo = y - 11; // the vertical location to start drawing the sprite
-		
-		int col1 = secondform ? Color.get(-1, 0, 2, 46) : Color.get(-1, 100, 500, 555); // top half color
-		int col2 = secondform ? Color.get(-1, 0, 2, 46) : Color.get(-1, 100, 500, 532); // bottom half color
-		
-		if (attackType == 1 && tickTime / 5 % 4 == 0 || attackType == 2 && tickTime / 3 % 2 == 0) {
-				// change colors.
-				col1 = secondform ? Color.get(-1, 2, 0, 46) : Color.get(-1, 500, 100, 555);
-				col2 = secondform ? Color.get(-1, 2, 0, 46) : Color.get(-1, 500, 100, 532);
-		}
-		
-		if (hurtTime > 0) { //if the air wizards hurt time is above 0... (hurtTime value in Mob.java)
-			// turn the sprite white, momentarily.
-			col1 = Color.WHITE;
-			col2 = Color.WHITE;
-		}
-		
-		//MobSprite curSprite = sprites[dir.getDir()][(walkDist >> 3) & 1];
-		//curSprite.renderRow(0, screen, xo, yo, col1);
-		//curSprite.renderRow(1, screen, xo, yo+8, col2);
-		*/
 		super.render(screen);
 
 		int textcol = Color.get(1, 0, 204, 0);
