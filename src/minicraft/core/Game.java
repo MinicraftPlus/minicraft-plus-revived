@@ -16,6 +16,7 @@ import minicraft.entity.mob.Player;
 import minicraft.level.Level;
 import minicraft.level.tile.Tiles;
 import minicraft.network.MinicraftClient;
+import minicraft.network.MinicraftProtocol;
 import minicraft.network.MinicraftServer;
 import minicraft.saveload.Load;
 import minicraft.saveload.Version;
@@ -42,7 +43,13 @@ public class Game {
 	public static List<String> notifications = new ArrayList<>();
 	
 	public static int MAX_FPS = (int) Settings.get("fps");
-	
+
+	/**
+	 * This specifies a custom port instead of default to server-side using
+	 * --port parameter if something goes wrong in setting the new port
+	 * it'll use the default one {@link MinicraftProtocol#PORT}
+	 */
+	public static int CUSTOM_PORT = MinicraftProtocol.PORT;
 	
 	static Display menu = null, newMenu = null; // the current menu you are on.
 	// Sets the current menu.
