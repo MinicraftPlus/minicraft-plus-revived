@@ -3,9 +3,9 @@ Ideas for ways to update or improve existing features.
 [ ] Design a system where cloud tiles respawn around existing cloud tiles if the total number of cloud tiles is below a certain number.
 [ ] limit the number of airwizards at one time to 3.
 [ ] Give the player 20 health instead of 10; this means that 1 health will be a half of a heart.
-[ ] Allow clients to add a port number to the end of the ip with ":". for example: 12.34.145.1:1122
 [ ] make arrows go away after hitting a certain number of enemies, or dealing a certain amount of damage
 [ ] make creeper holes like TNT, just only one block. Though I should still have the thing where it hurts entities based on distance.
 [ ] check light levels for mob spawning below ground, as well as above ground. But spawners will still spawn mobs. But it should check to make sure it doesn't spawn a mob on top of another. Basically, try to have some way for players to "turn off" a mob spawner without destroying it.
 [ ] Make respawn without bed += 20 blocks x/y of last spawn.
 [ ] Enchantments
+[X] Allow clients to add a port number to the end of the ip with ":". for example: 12.34.145.1:1122
