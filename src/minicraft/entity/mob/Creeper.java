@@ -7,14 +7,11 @@ import minicraft.core.io.Sound;
 import minicraft.entity.Direction;
 import minicraft.entity.Entity;
 import minicraft.entity.furniture.Spawner;
-import minicraft.gfx.Color;
 import minicraft.gfx.MobSprite;
 import minicraft.gfx.Point;
 import minicraft.gfx.Screen;
 import minicraft.item.Items;
-import minicraft.level.tile.Tile;
 import minicraft.level.tile.Tiles;
-import org.jetbrains.annotations.NotNull;
 
 public class Creeper extends EnemyMob {
 	private static MobSprite[][][] sprites;
