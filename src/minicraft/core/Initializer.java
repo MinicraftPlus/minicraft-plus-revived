@@ -13,6 +13,7 @@ import java.awt.image.BufferedImage;
 import java.io.IOException;
 
 import minicraft.core.io.ConsoleReader;
+import minicraft.network.MinicraftProtocol;
 import minicraft.screen.WorldSelectDisplay;
 
 public class Initializer extends Game {
@@ -30,26 +31,40 @@ public class Initializer extends Game {
 		
 		// parses command line arguments
 		String saveDir = FileHandler.systemGameDir;
-		for(int i = 0; i < args.length; i++) {
-			if(args[i].equals("--debug"))
+		for (int i = 0; i < args.length; i++) {
+			if (args[i].equals("--debug")) {
 				debug = true;
-			if (args[i].equals("--packetdebug"))
+			} else if (args[i].equals("--packetdebug")) {
 				packetdebug = true;
-			if(args[i].equals("--savedir") && i+1 < args.length) {
+			} else if (args[i].equals("--savedir") && i+1 < args.length) {
 				i++;
 				saveDir = args[i];
-			}
-			if(args[i].equals("--localclient"))
+			} else if (args[i].equals("--localclient")) {
 				autoclient = true;
-			if(args[i].equals("--server")) {
+			} else if(args[i].equals("--server")) {
 				autoserver = true;
-				if(i+1 < args.length) {
+				if (i + 1 < args.length) {
 					i++;
 					WorldSelectDisplay.setWorldName(args[i], true);
 				} else {
 					System.err.println("A world name is required.");
 					System.exit(1);
 				}
+			} else if (args[i].equals("--port")) {
+				int customPort = MinicraftProtocol.PORT;
+
+				if (i + 1 < args.length) {
+					String portString = args[++i];
+					try {
+						customPort = Integer.parseInt(portString);
+					} catch (NumberFormatException exception) {
+						System.err.println("Port wasn't a number! Using the default port: " + portString);
+					}
+				} else {
+					System.err.println("Missing new port! Using the default port " + MinicraftProtocol.PORT);
+				}
+
+				Game.CUSTOM_PORT = customPort;
 			}
 		}
 		Game.debug = debug;
