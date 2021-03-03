@@ -49,7 +49,7 @@ public class Game {
 	 * --port parameter if something goes wrong in setting the new port
 	 * it'll use the default one {@link MinicraftProtocol#PORT}
 	 */
-	public static int CUSTOM_PORT;
+	public static int CUSTOM_PORT = MinicraftProtocol.PORT;
 	
 	static Display menu = null, newMenu = null; // the current menu you are on.
 	// Sets the current menu.
