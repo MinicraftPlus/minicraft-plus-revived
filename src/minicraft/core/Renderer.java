@@ -374,6 +374,10 @@ public class Renderer extends Game {
 					info.add("Dam buffer: " + player.armorDamageBuffer);
 				}
 			}
+
+			if (levels[currentLevel] != null) {
+				info.add("Seed: " + levels[currentLevel].getSeed());
+			}
 			
 			FontStyle style = new FontStyle(textcol).setShadowType(Color.BLACK, true).setXPos(1);
 			if (Game.isValidServer()) {

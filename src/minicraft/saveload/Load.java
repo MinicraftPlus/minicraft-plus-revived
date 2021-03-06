@@ -331,6 +331,9 @@ public class Load {
 			
 			int lvlw = Integer.parseInt(data.get(0));
 			int lvlh = Integer.parseInt(data.get(1));
+
+			boolean hasSeed = worldVer.compareTo(new Version("2.0.7-dev2")) >= 0;
+			long seed = hasSeed ? Long.parseLong(data.get(2)) : 0;
 			Settings.set("size", lvlw);
 			
 			byte[] tiles = new byte[lvlw * lvlh];
@@ -340,7 +343,7 @@ public class Load {
 				for(int y = 0; y < lvlh; y++) {
 					int tileArrIdx = y + x * lvlw;
 					int tileidx = x + y * lvlw; // the tiles are saved with x outer loop, and y inner loop, meaning that the list reads down, then right one, rather than right, then down one.
-					String tilename = data.get(tileidx + 3);
+					String tilename = data.get(tileidx + (hasSeed ? 4 : 3));
 					if(worldVer.compareTo(new Version("1.9.4-dev6")) < 0) {
 						int tileID = Integer.parseInt(tilename); // they were id numbers, not names, at this point
 						if(Tiles.oldids.get(tileID) != null)
@@ -383,7 +386,7 @@ public class Load {
 			}
 			
 			Level parent = World.levels[World.lvlIdx(l+1)];
-			World.levels[lvlidx] = new Level(lvlw, lvlh, l, parent, false);
+			World.levels[lvlidx] = new Level(lvlw, lvlh, seed, l, parent, false);
 			
 			Level curLevel = World.levels[lvlidx];
 			curLevel.tiles = tiles;
