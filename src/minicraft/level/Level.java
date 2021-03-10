@@ -33,8 +33,9 @@ public class Level {
 	public static String getDepthString(int depth) { return "Level "+(depth<0?"B"+(-depth):depth); }
 	
 	private static final int MOB_SPAWN_FACTOR = 100; // the chance of a mob actually trying to spawn when trySpawn is called equals: mobCount / maxMobCount * MOB_SPAWN_FACTOR. so, it basically equals the chance, 1/number, of a mob spawning when the mob cap is reached. I hope that makes sense...
-	
+
 	public int w, h; // width and height of the level
+	private long seed; // the used seed that was used to generate the world
 	
 	public byte[] tiles; // an array of all the tiles in the world.
 	public byte[] data; // an array of the data of the tiles in the world.
@@ -102,13 +103,12 @@ public class Level {
 		if(depth == 1) maxMobCount /= 2;
 		if(depth == 0 || depth == -4) maxMobCount = maxMobCount * 2 / 3;
 	}
-	
-	/** Level which the world is contained in */
-	public Level(int w, int h, int level, Level parentLevel) {this(w, h, level, parentLevel, true); }
-	public Level(int w, int h, int level, Level parentLevel, boolean makeWorld) {
+
+	public Level(int w, int h, long seed, int level, Level parentLevel, boolean makeWorld) {
 		depth = level;
 		this.w = w;
 		this.h = h;
+		this.seed = seed;
 		byte[][] maps; // multidimensional array (an array within a array), used for the map
 		
 		if(level != -4 && level != 0)
@@ -180,7 +180,20 @@ public class Level {
 		
 		if (Game.debug) printTileLocs(Tiles.get("Stairs Down"));
 	}
-	
+
+	public Level(int w, int h, int level, Level parentLevel, boolean makeWorld) {
+		this(w, h, 0, level, parentLevel, makeWorld);
+	}
+
+	/** Level which the world is contained in */
+	public Level(int w, int h, int level, Level parentLevel) {
+		this(w, h, level, parentLevel, true);
+	}
+
+	public long getSeed() {
+		return seed;
+	}
+
 	public void checkAirWizard() {
 		checkAirWizard(true);
 	}

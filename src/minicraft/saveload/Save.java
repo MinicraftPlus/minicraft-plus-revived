@@ -214,6 +214,7 @@ public class Save {
 			String worldSize = String.valueOf(Settings.get("size"));
 			data.add(worldSize);
 			data.add(worldSize);
+			data.add(Long.toString(World.levels[l].getSeed()));
 			data.add(String.valueOf(World.levels[l].depth));
 			
 			for(int x = 0; x < World.levels[l].w; x++) {
