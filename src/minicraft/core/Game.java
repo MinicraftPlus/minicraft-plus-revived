@@ -77,6 +77,8 @@ public class Game {
 	public static boolean isConnectedClient() { return isValidClient() && client.isConnected(); }
 	
 	public static MinicraftServer server = null;
+
+	/** Checks if you are a host and the game is a server */
 	public static boolean isValidServer() { return ISONLINE && ISHOST && server != null; }
 	public static boolean hasConnectedClients() { return isValidServer() && server.hasClients(); }
 	

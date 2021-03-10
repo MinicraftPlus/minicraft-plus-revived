@@ -1,5 +1,6 @@
 package minicraft.entity.mob;
 
+import minicraft.core.Game;
 import minicraft.core.Updater;
 import minicraft.core.io.Settings;
 import minicraft.core.io.Sound;
@@ -57,9 +58,11 @@ public class AirWizard extends EnemyMob {
 	@Override
 	public void tick() {
 		super.tick();
-		
+
+		if (Game.isMode("Creative")) return; // Should not attack if player is in creative
+
 		if (attackDelay > 0) {
-			xa = ya = 0;
+			xmov = ymov = 0;
 			int dir = (attackDelay - 45) / 4 % 4; // the direction of attack.
 			dir = (dir * 2 % 4) + (dir / 2); // direction attack changes
 			if (attackDelay < 45)
@@ -76,9 +79,10 @@ public class AirWizard extends EnemyMob {
 			}
 			return; // skips the rest of the code (attackDelay must have been > 0)
 		}
-		
+
+		// Send out sparks
 		if (attackTime > 0) {
-			xa = ya = 0;
+			xmov = ymov = 0;
 			attackTime *= 0.92; // attackTime will decrease by 7% every time.
 			double dir = attackTime * 0.25 * (attackTime % 2 * 2 - 1); //assigns a local direction variable from the attack time.
 			double speed = (secondform ? 1.2 : 0.7) + attackType * 0.2; // speed is dependent on the attackType. (higher attackType, faster speeds)
@@ -87,20 +91,19 @@ public class AirWizard extends EnemyMob {
 		}
 		
 		Player player = getClosestPlayer();
-		
 		if (player != null && randomWalkTime == 0) { // if there is a player around, and the walking is not random
 			int xd = player.x - x; // the horizontal distance between the player and the air wizard.
 			int yd = player.y - y; // the vertical distance between the player and the air wizard.
 			if (xd * xd + yd * yd < 16*16 * 2*2) {
 				/// Move away from the player if less than 2 blocks away
 				
-				xa = 0; //accelerations
-				ya = 0;
+				this.xmov = 0; //accelerations
+				this.ymov = 0;
 				// these four statements basically just find which direction is away from the player:
-				if (xd < 0) xa = +1;
-				if (xd > 0) xa = -1;
-				if (yd < 0) ya = +1;
-				if (yd > 0) ya = -1;
+				if (xd < 0) this.xmov = +1;
+				if (xd > 0) this.xmov = -1;
+				if (yd < 0) this.ymov = +1;
+				if (yd > 0) this.ymov = -1;
 			} else if (xd * xd + yd * yd > 16*16 * 15*15) {// 15 squares away
 				/// drags the airwizard to the player, maintaining relative position.
 				double hypot = Math.sqrt(xd*xd + yd*yd);
@@ -109,11 +112,9 @@ public class AirWizard extends EnemyMob {
 				x = player.x - newxd;
 				y = player.y - newyd;
 			}
-		}
-		
-		if (player != null && randomWalkTime == 0) {
-			int xd = player.x - x; // x dist to player
-			int yd = player.y - y; // y dist to player
+
+			xd = player.x - x; // recalculate these two
+			yd = player.y - y;
 			if (random.nextInt(4) == 0 && xd * xd + yd * yd < 50 * 50 && attackDelay == 0 && attackTime == 0) { // if a random number, 0-3, equals 0, and the player is less than 50 blocks away, and attackDelay and attackTime equal 0...
 				attackDelay = 60 * 2; // ...then set attackDelay to 120 (2 seconds at default 60 ticks/sec)
 			}
@@ -130,28 +131,6 @@ public class AirWizard extends EnemyMob {
 	
 	@Override
 	public void render(Screen screen) {
-		/*int xo = x - 8; // the horizontal location to start drawing the sprite
-		int yo = y - 11; // the vertical location to start drawing the sprite
-		
-		int col1 = secondform ? Color.get(-1, 0, 2, 46) : Color.get(-1, 100, 500, 555); // top half color
-		int col2 = secondform ? Color.get(-1, 0, 2, 46) : Color.get(-1, 100, 500, 532); // bottom half color
-		
-		if (attackType == 1 && tickTime / 5 % 4 == 0 || attackType == 2 && tickTime / 3 % 2 == 0) {
-				// change colors.
-				col1 = secondform ? Color.get(-1, 2, 0, 46) : Color.get(-1, 500, 100, 555);
-				col2 = secondform ? Color.get(-1, 2, 0, 46) : Color.get(-1, 500, 100, 532);
-		}
-		
-		if (hurtTime > 0) { //if the air wizards hurt time is above 0... (hurtTime value in Mob.java)
-			// turn the sprite white, momentarily.
-			col1 = Color.WHITE;
-			col2 = Color.WHITE;
-		}
-		
-		//MobSprite curSprite = sprites[dir.getDir()][(walkDist >> 3) & 1];
-		//curSprite.renderRow(0, screen, xo, yo, col1);
-		//curSprite.renderRow(1, screen, xo, yo+8, col2);
-		*/
 		super.render(screen);
 
 		int textcol = Color.get(1, 0, 204, 0);

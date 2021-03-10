@@ -102,7 +102,6 @@ public class Initializer extends Game {
 			unprocessed += (now - lastTime) / nsPerTick; //figures out the unprocessed time between now and lastTime.
 			lastTime = now;
 			while (unprocessed >= 1) { // If there is unprocessed time, then tick.
-				//if(debug) System.out.println("Ticking...");
 				ticks++;
 				Updater.tick(); // calls the tick method (in which it calls the other tick methods throughout the code.
 				unprocessed--;

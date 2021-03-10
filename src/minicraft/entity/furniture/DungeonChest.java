@@ -5,6 +5,7 @@ import java.util.Random;
 import minicraft.core.Game;
 import minicraft.core.Updater;
 import minicraft.core.World;
+import minicraft.entity.Direction;
 import minicraft.entity.Entity;
 import minicraft.entity.mob.AirWizard;
 import minicraft.entity.mob.Player;
@@ -13,8 +14,10 @@ import minicraft.entity.particle.TextParticle;
 import minicraft.gfx.Color;
 import minicraft.gfx.Sprite;
 import minicraft.item.Inventory;
+import minicraft.item.Item;
 import minicraft.item.Items;
 import minicraft.item.StackableItem;
+import org.jetbrains.annotations.Nullable;
 
 public class DungeonChest extends Chest {
 	private static final Sprite openSprite = new Sprite(14, 24, 2, 2, 2);
@@ -111,12 +114,12 @@ public class DungeonChest extends Chest {
 		if(!isLocked) // can only be pushed if unlocked.
 			super.touchedBy(entity);
 	}
-	
-	/** what happens if the player tries to grab a Dungeon Chest. */
+
 	@Override
-	public void take(Player player) {
-		if(!isLocked) // can only be taken if unlocked.
-			super.take(player);
+	public boolean interact(Player player, @Nullable Item item, Direction attackDir) {
+		if(!isLocked)
+			return super.interact(player, item, attackDir);
+		return false;
 	}
 	
 	@Override

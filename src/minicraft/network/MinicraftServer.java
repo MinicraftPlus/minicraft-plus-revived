@@ -26,12 +26,7 @@ import minicraft.entity.furniture.DeathChest;
 import minicraft.entity.furniture.Furniture;
 import minicraft.entity.mob.Player;
 import minicraft.entity.mob.RemotePlayer;
-import minicraft.item.Item;
-import minicraft.item.Items;
-import minicraft.item.PotionItem;
-import minicraft.item.PotionType;
-import minicraft.item.StackableItem;
-import minicraft.item.UnknownItem;
+import minicraft.item.*;
 import minicraft.level.Level;
 import minicraft.level.tile.Tile;
 import minicraft.saveload.Load;
@@ -86,9 +81,9 @@ public class MinicraftServer extends Thread implements MinicraftProtocol {
 		if (Game.debug) System.out.println("Server started.");
 		
 		Timer gameUpdateTimer = new Timer("GameUpdateTimer");
-		gameUpdateTimer.schedule((new MyTask() {
+		gameUpdateTimer.schedule(new MyTask() {
 			public void run() { updateGameVars(); }
-		}), 5000, UPDATE_INTERVAL*1000);
+		}, 5000, UPDATE_INTERVAL*1000);
 		
 		try {
 			while (socket != null) {
@@ -775,9 +770,7 @@ public class MinicraftServer extends Thread implements MinicraftProtocol {
 		}
 	}
 	
-	private void broadcastData(InputType inType, String data) {
-		broadcastData(inType, data, (MinicraftServerThread)null);
-	}
+	private void broadcastData(InputType inType, String data) { broadcastData(inType, data, (MinicraftServerThread)null); }
 	private void broadcastData(InputType inType, String data, @Nullable MinicraftServerThread clientThreadToExclude) {
 		for (MinicraftServerThread thread: getThreads()) {
 			if (thread != clientThreadToExclude) // send this packet to all EXCEPT the specified one.

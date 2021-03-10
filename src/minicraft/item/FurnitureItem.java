@@ -3,6 +3,7 @@ package minicraft.item;
 import java.util.ArrayList;
 
 import minicraft.core.Game;
+import minicraft.core.io.Sound;
 import minicraft.entity.Direction;
 import minicraft.entity.furniture.*;
 import minicraft.entity.mob.*;
@@ -67,6 +68,8 @@ public class FurnitureItem extends Item {
 	/** What happens when you press the "Attack" key with the furniture in your hands */
 	public boolean interactOn(Tile tile, Level level, int xt, int yt, Player player, Direction attackDir) {
 		if (tile.mayPass(level, xt, yt, furniture)) { // If the furniture can go on the tile
+			Sound.place.play();
+
 			// Placed furniture's X and Y positions
 			furniture.x = xt * 16 + 8;
 			furniture.y = yt * 16 + 8;

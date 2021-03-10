@@ -3,6 +3,7 @@ package minicraft.entity.mob;
 import java.util.List;
 
 import minicraft.core.Game;
+import minicraft.entity.Arrow;
 import minicraft.entity.Direction;
 import minicraft.entity.Entity;
 import minicraft.entity.furniture.Tnt;
@@ -75,8 +76,8 @@ public abstract class Mob extends Entity {
 	}
 	
 	@Override
-	public boolean move(int xa, int ya) { return move(xa, ya, true); } // Move the mob, overrides from Entity
-	private boolean move(int xa, int ya, boolean changeDir) { // knockback shouldn't change mob direction
+	public boolean move(int xd, int yd) { return move(xd, yd, true); } // Move the mob, overrides from Entity
+	private boolean move(int xd, int yd, boolean changeDir) { // knockback shouldn't change mob direction
 		if(level == null) return false; // stopped b/c there's no level to move in!
 		
 		int oldxt = x >> 4;
@@ -93,22 +94,22 @@ public abstract class Mob extends Entity {
 		boolean moved = true;
 		
 		if (hurtTime == 0 || this instanceof Player) { // If a mobAi has been hurt recently and hasn't yet cooled down, it won't perform the movement (by not calling super)
-			if(xa != 0 || ya != 0) {
+			if(xd != 0 || yd != 0) {
 				if(changeDir)
-					dir = Direction.getDirection(xa, ya); // set the mob's direction; NEVER set it to NONE
+					dir = Direction.getDirection(xd, yd); // set the mob's direction; NEVER set it to NONE
 				walkDist++;
 			}
 			
 			// this part makes it so you can't move in a direction that you are currently being knocked back from.
 			if(xKnockback != 0)
-				xa = Math.copySign(xa, xKnockback)*-1 != xa ? xa : 0; // if xKnockback and xa have different signs, do nothing, otherwise, set xa to 0.
+				xd = Math.copySign(xd, xKnockback)*-1 != xd ? xd : 0; // if xKnockback and xd have different signs, do nothing, otherwise, set xd to 0.
 			if(yKnockback != 0)
-				ya = Math.copySign(ya, yKnockback)*-1 != ya ? ya : 0; // same as above.
+				yd = Math.copySign(yd, yKnockback)*-1 != yd ? yd : 0; // same as above.
 			
-			moved = super.move(xa, ya); // Call the move method from Entity
+			moved = super.move(xd, yd); // Call the move method from Entity
 		}
 		
-		if(Game.isValidServer() && (xa != 0 || ya != 0))
+		if(Game.isValidServer() && (xd != 0 || yd != 0))
 			updatePlayers(oldxt, oldyt);
 		
 		return moved;
@@ -163,23 +164,46 @@ public abstract class Mob extends Entity {
 		Tile tile = level.getTile(x >> 4, y >> 4); // Get the tile the mob is standing on (at x/16, y/16)
 		return tile == Tiles.get("water") || tile == Tiles.get("lava"); // Check if the tile is liquid, and return true if so
 	}
-	
+
+	/**
+	 * Do damage to the mob this method is called on.
+	 * @param tile The tile that hurt the player
+	 * @param x The x position of the mob
+	 * @param y The x position of the mob
+	 * @param damage The amount of damage to hurt the mob with
+	 */
 	public void hurt(Tile tile, int x, int y, int damage) { // Hurt the mob, when the source of damage is a tile
 		Direction attackDir = Direction.getDirection(dir.getDir() ^ 1); // Set attackDir to our own direction, inverted. XORing it with 1 flips the rightmost bit in the variable, this effectively adds one when even, and subtracts one when odd.
 		if (!(tile == Tiles.get("lava") && this instanceof Player && ((Player)this).potioneffects.containsKey(PotionType.Lava)))
 			doHurt(damage, tile.mayPass(level, x, y, this) ? Direction.NONE : attackDir); // Call the method that actually performs damage, and set it to no particular direction
 	}
-	
+
+	/**
+	 * Do damage to the mob this method is called on.
+	 * @param mob The mob that hurt this mob
+	 * @param damage The amount of damage to hurt the mob with
+	 */
 	public void hurt(Mob mob, int damage) { hurt(mob, damage, getAttackDir(mob, this)); }
+
+	/**
+	 * Do damage to the mob this method is called on.
+	 * @param mob The mob that hurt this mob
+	 * @param damage The amount of damage to hurt the mob with
+	 * @param attackDir The direction this mob was attacked from
+	 */
 	public void hurt(Mob mob, int damage, Direction attackDir) { // Hurt the mob, when the source is another mob
 		if (mob instanceof Player && Game.isMode("creative") && mob != this) doHurt(health, attackDir); // kill the mob instantly
 		else doHurt(damage, attackDir); // Call the method that actually performs damage, and use our provided attackDir
 	}
 	
 	public void hurt(Tnt tnt, int dmg) { doHurt(dmg, getAttackDir(tnt, this)); }
-	
-	// Actually hurt the mob, based on only damage and a direction
-	// This is overridden in Player.java
+
+	/**
+	 * Hurt the mob, based on only damage and a direction
+	 * This is overridden in Player.java
+	 * @param damage The amount of damage to hurt the mob with
+	 * @param attackDir The direction this mob was attacked from
+	 */
 	protected void doHurt(int damage, Direction attackDir) {
 		if (isRemoved() || hurtTime > 0) return; // If the mob has been hurt recently and hasn't cooled down, don't continue
 		
@@ -201,7 +225,7 @@ public abstract class Mob extends Entity {
 		health += heal; // Actually add the amount to heal to our current health
 		if (health > maxHealth) health = maxHealth; // If our health has exceeded our maximum, lower it back down to said maximum
 	}
-	
+
 	protected static Direction getAttackDir(Entity attacker, Entity hurt) {
 		return Direction.getDirection(hurt.x - attacker.x, hurt.y - attacker.y);
 	}

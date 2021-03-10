@@ -3,7 +3,6 @@ package minicraft.level.tile;
 import minicraft.core.io.Sound;
 import minicraft.entity.Direction;
 import minicraft.entity.mob.Player;
-import minicraft.gfx.Color;
 import minicraft.gfx.Screen;
 import minicraft.gfx.Sprite;
 import minicraft.item.Item;
@@ -44,7 +43,7 @@ public class TorchTile extends Tile {
 	}
 	
 	public int getLightRadius(Level level, int x, int y) {
-		return 4;
+		return 5;
 	}
 	
 	public boolean interact(Level level, int xt, int yt, Player player, Item item, Direction attackDir) {

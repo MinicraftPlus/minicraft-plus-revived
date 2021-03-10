@@ -38,11 +38,11 @@ public class PassiveMob extends MobAi {
 	
 	@Override
 	public void randomizeWalkDir(boolean byChance) {
-		if(xa == 0 && ya == 0 && random.nextInt(5) == 0 || byChance || random.nextInt(randomWalkChance) == 0) {
+		if(xmov == 0 && ymov == 0 && random.nextInt(5) == 0 || byChance || random.nextInt(randomWalkChance) == 0) {
 			randomWalkTime = randomWalkDuration;
 			// multiple at end ups the chance of not moving by 50%.
-			xa = (random.nextInt(3) - 1) * random.nextInt(2);
-			ya = (random.nextInt(3) - 1) * random.nextInt(2);
+			xmov = (random.nextInt(3) - 1) * random.nextInt(2);
+			ymov = (random.nextInt(3) - 1) * random.nextInt(2);
 		}
 	}
 	

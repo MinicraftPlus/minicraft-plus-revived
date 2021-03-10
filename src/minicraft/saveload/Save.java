@@ -42,6 +42,10 @@ public class Save {
 
 	List<String> data;
 
+	/**
+	 * This is the main save method. Called by all Save() methods.
+	 * @param worldFolder The folder of where to save
+	 */
 	private Save(File worldFolder) {
 		data = new ArrayList<>();
 
@@ -66,7 +70,10 @@ public class Save {
 		folder.mkdirs();
 	}
 
-	// This saves world options
+	/**
+	 * This will save world options
+	 * @param worldname The name of the world.
+	 */
 	public Save(String worldname) {
 		this(new File(Game.gameDir+"/saves/" + worldname + "/"));
 
@@ -90,22 +97,26 @@ public class Save {
 		Updater.asTick = 0;
 		Updater.saving = false;
 	}
-	
-	// this saves server config options
+
+	/**
+	 * This will save server config options
+	 * @param worldname The name of the world.
+	 * @param server
+	 */
 	public Save(String worldname, MinicraftServer server) {
 		this(new File(Game.gameDir+"/saves/" + worldname + "/"));
 		
 		if (Game.debug) System.out.println("Writing server config...");
 		writeServerConfig("ServerConfig", server);
 	}
-	
-	// this saves global options
+
+	/** This will save the settings in the settings menu. */
 	public Save() {
 		this(new File(Game.gameDir+"/"));
 		if (Game.debug) System.out.println("Writing preferences and unlocks...");
 		writePrefs();
 	}
-	
+
 	public Save(Player player, boolean writePlayer) {
 		// this is simply for access to writeToFile.
 		this(new File(Game.gameDir+"/saves/"+ WorldSelectDisplay.getWorldName() + "/"));
@@ -296,7 +307,7 @@ public class Save {
 		StringBuilder extradata = new StringBuilder();
 		
 		// don't even write ItemEntities or particle effects; Spark... will probably is saved, eventually; it presents an unfair cheat to remove the sparks by reloading the Game.
-		
+
 		//if(e instanceof Particle) return ""; // TODO I don't want to, but there are complications.
 		
 		if(isLocalSave && (e instanceof ItemEntity || e instanceof Arrow || e instanceof RemotePlayer || e instanceof Spark || e instanceof Particle)) // wirte these only when sending a world, not writing it. (RemotePlayers are saved separately, when their info is received.)

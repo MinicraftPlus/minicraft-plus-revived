@@ -23,11 +23,6 @@ public class Zombie extends EnemyMob {
 		super(lvl, sprites, 5, 100);
 	}
 	
-	@Override
-	public void tick() {
-		super.tick();
-	}
-	
 	public void die() {
 		if (Settings.get("diff").equals("Easy")) dropItem(2, 4, Items.get("cloth"));
 		if (Settings.get("diff").equals("Normal")) dropItem(1, 3, Items.get("cloth"));

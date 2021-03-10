@@ -37,21 +37,12 @@ public class TitleDisplay extends Display {
 			new StringEntry("Checking for updates...", Color.BLUE),
 			new BlankEntry(),
 			new BlankEntry(),
-			new SelectEntry("Play", () -> {
-				if(WorldSelectDisplay.getWorldNames().size() > 0)
-					Game.setMenu(new Display(true, new Menu.Builder(false, 2, RelPos.CENTER,
-						new SelectEntry("Load World", () -> Game.setMenu(new WorldSelectDisplay())),
-						new SelectEntry("New World", () -> Game.setMenu(new WorldGenDisplay()))
-					).createMenu()));
-				else
-					Game.setMenu(new WorldGenDisplay());
-			}),
-			new SelectEntry("Join Online World", () -> Game.setMenu(new MultiplayerDisplay())),
+			new SelectEntry("Play", () -> Game.setMenu(new PlayDisplay())),
 			new SelectEntry("Options", () -> Game.setMenu(new OptionsDisplay())),
 			displayFactory("Help",
 				new SelectEntry("Instructions", () -> Game.setMenu(new BookDisplay(BookData.instructions))),
 				new BlankEntry(),
-				new SelectEntry("Storyline Guide (for the weak)", () -> Game.setMenu(new BookDisplay(BookData.storylineGuide))),
+				new SelectEntry("Storyline Guide", () -> Game.setMenu(new BookDisplay(BookData.storylineGuide))),
 				new BlankEntry(),
 				new SelectEntry("About", () -> Game.setMenu(new BookDisplay(BookData.about)))
 			),
@@ -72,12 +63,12 @@ public class TitleDisplay extends Display {
 
 		/// this is useful to just ensure that everything is really reset as it should be. 
 		if (Game.server != null) {
-			if (Game.debug) System.out.println("wrapping up loose server ends");
+			if (Game.debug) System.out.println("Wrapping up loose server ends.");
 			Game.server.endConnection();
 			Game.server = null;
 		}
 		if (Game.client != null) {
-			if (Game.debug) System.out.println("wrapping up loose client ends");
+			if (Game.debug) System.out.println("Wrapping up loose client ends.");
 			Game.client.endConnection();
 			Game.client = null;
 		}
@@ -122,16 +113,16 @@ public class TitleDisplay extends Display {
 	
 	@Override
 	public void tick(InputHandler input) {
-		if (input.getKey("r").clicked) rand = random.nextInt(splashes.length - 3) + 3;
-		
-		if (!reverse) {
-			count++;
-			if (count == 25) reverse = true;
-		} else {
+		if (input.getKey("r").clicked && Game.debug) rand = random.nextInt(splashes.length - 3) + 3;
+
+		if (reverse) {
 			count--;
 			if (count == 0) reverse = false;
+		} else {
+			count++;
+			if (count == 25) reverse = true;
 		}
-		
+
 		super.tick(input);
 	}
 	
@@ -178,21 +169,12 @@ public class TitleDisplay extends Display {
 		"Happy birthday Minicraft!",
 		"Happy XMAS!",
 		"Multiplayer Now Included!",
-		// "Also play InfinityTale!",
-		// "Also play Minicraft Deluxe!",
-		// "Also play Alecraft!",
-		// "Also play Hackcraft!",
-		// "Also play MiniCrate!",
-		// "Also play MiniCraft Mob Overload!",
 		"Now with better fishing!",
 		"Now with better tools!",
 		"Now with better chests!",
 		"Now with better dungeons!",
 		"Only on PlayMinicraft.com!",
 		"Playminicraft.com is the bomb!",
-		// "@MinicraftPlus on Twitter",
-		"MinicraftPlus on Youtube",
-		//"Join the Forums!",
 		"The Wiki is weak! Help it!",
 		"Notch is Awesome!",
 		"Dillyg10 is cool as Ice!",
@@ -238,17 +220,15 @@ public class TitleDisplay extends Display {
 		"Bigger Worlds!",
 		"World types!",
 		"World themes!",
-		"Sugarcane is a Idea!",
+		"Sugarcane is a idea!",
 		"Milk is an idea!",
-		"Creeper, aw man",
 		"So we back in the mine,",
-		"pickaxe swinging from side to side",
+		"Pickaxe swinging from side to side",
 		"In search of Gems!",
 		"Life itself suspended by a thread",
 		"saying ay-oh, that creeper's KO'd!",
 		"Gimmie a bucket!",
 		"Farming with water!",
-		"Press \"R\"!",
 		"Get the High-Score!",
 		"Potions ftw!",
 		"Beds ftw!",
@@ -266,13 +246,10 @@ public class TitleDisplay extends Display {
 		"Why is this blue?",
 		"Green is a nice color!",
 		"Red is my favorite color!",
-		"Y U NO BOAT!?",
 		"Made with 10000% Vitamin Z!",
-		"Too much DP!",
 		"Punch the Moon!",
 		"This is String qq!",
 		"Why?",
-		//"You are null!",
 		"hello down there!",
 		"That guy is such a sly fox!",
 		"Hola senor!",

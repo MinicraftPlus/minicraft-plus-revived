@@ -5,6 +5,7 @@ import java.util.Arrays;
 import java.util.List;
 
 import minicraft.core.Game;
+import minicraft.core.io.Sound;
 import minicraft.entity.Direction;
 import minicraft.entity.mob.Player;
 import minicraft.entity.mob.RemotePlayer;
@@ -70,9 +71,12 @@ public class TileItem extends StackableItem {
 	}
 	
 	public boolean interactOn(Tile tile, Level level, int xt, int yt, Player player, Direction attackDir) {
-		for(String tilename: validTiles) {
-			if(tile.matches(level.getData(xt, yt), tilename)) {
+		for (String tilename : validTiles) {
+			if (tile.matches(level.getData(xt, yt), tilename)) {
 				level.setTile(xt, yt, model); // TODO maybe data should be part of the saved tile..?
+
+				Sound.place.play();
+
 				return super.interactOn(true);
 			}
 		}

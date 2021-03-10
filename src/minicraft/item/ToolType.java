@@ -7,13 +7,25 @@ public enum ToolType {
 	Pickaxe (3, 28),
 	Axe (4, 24),
 	Bow (5, 20),
-	Claymore (6, 34);
+	Claymore (6, 34),
+	Shear (0, 42, true);
 
-	public final int sprite; // sprite location on the spritesheet
+	public final int xPos; // X Position of origin
+	public final int yPos; // Y position of origin
 	public final int durability;
+	public final boolean noLevel;
 	
-	ToolType(int sprite, int dur) {
-		this.sprite = sprite;
+	ToolType(int xPos, int dur) {
+		this.xPos = xPos;
+		yPos = 13;
 		durability = dur;
+		noLevel = false;
+	}
+
+	ToolType(int xPos, int dur, boolean noLevel) {
+		yPos = 12;
+		this.xPos = xPos;
+		durability = dur;
+		this.noLevel = noLevel;
 	}
 }

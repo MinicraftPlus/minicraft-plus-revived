@@ -18,6 +18,7 @@ public class Sound {
 	public static final Sound pickup = new Sound("/resources/sound/pickup.wav");
 	public static final Sound craft = new Sound("/resources/sound/craft.wav");
 	public static final Sound back = new Sound("/resources/sound/craft.wav");
+	public static final Sound place = new Sound("/resources/sound/craft.wav");
 	public static final Sound select = new Sound("/resources/sound/select.wav");
 	public static final Sound confirm = new Sound("/resources/sound/confirm.wav");
 	

@@ -9,16 +9,7 @@ import minicraft.gfx.Sprite;
 public class PowerGloveItem extends Item {
 	
 	public PowerGloveItem() {
-		super("Power Glove", new Sprite(0, 12, 0));
-	}
-	
-	public boolean interact(Player player, Entity entity, Direction attackDir) {
-		if (entity instanceof Furniture) { // If the power glove is used on a piece of furniture...
-			Furniture f = (Furniture) entity;
-			f.take(player); // Picks up the furniture
-			return true;
-		}
-		return false; // method returns false if we were not given a furniture entity.
+		super("Power Glove");
 	}
 	
 	public PowerGloveItem clone() {

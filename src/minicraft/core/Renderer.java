@@ -84,7 +84,7 @@ public class Renderer extends Game {
 	}
 	
 	
-	/** renders the current screen. Called in game loop, a bit after tick(). */
+	/** Renders the current screen. Called in game loop, a bit after tick(). */
 	public static void render() {
 		if (!HAS_GUI || screen == null) return; // no point in this if there's no gui... :P
 		
@@ -167,7 +167,6 @@ public class Renderer extends Game {
 	/** Renders the main game GUI (hearts, Stamina bolts, name of the current item, etc.) */
 	private static void renderGui() {
 		// This draws the black square where the selected item would be if you were holding it
-		// yes, this drawing even when you are holding something is important
 		if (!isMode("creative") || player.activeItem != null) {
 			for (int x = 10; x < 26; x++) {
 				screen.render(x * 8, Screen.h - 8, 30 + 30 * 32, 0, 3);

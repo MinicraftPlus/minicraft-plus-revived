@@ -1,17 +1,21 @@
 Minicraft+ version 2.0.7
 
-* Farm tiles will no longer be destroyed if an item is dropped onto it
-* Made crops grow slower
-* Updated some textures; made wood, apples and gold apples look better
-* Made sheeps drop beef
 + Added sheep shearing
-+ Added shear
++ Added shear tool
 + Added potatoes
 + Added baked potatoes as food
 + Made zombies drop potatoes
++ Added a play menu with multiplayer and singleplayer as options
 * Sparks (the airwizard bullets) have been optimised
 * Fixed picked up dungeon chests
 * Tiles now connect to the edge of the world
+* Farm tiles will no longer be destroyed if an item is dropped onto it
+* Made crops grow slower
+* Updated some textures; made wood, apples and gold apples look better
+* Made sheep drop beef
+* Picking up things no longer require stamina
+* Mobs no longer target you and attack you when you are in creative mode
+* Fixed sound not playing on certain actions
 
 
 Minicraft+ version 2.0.6
@@ -244,4 +248,3 @@ Minicraft+ version 1.9
 * Keys to open the chests are dropped by knights
 * A death chest will appear if you die, allowing you to retrieve your stuff.
 * Added an Iron Lantern at the entrance of the purple dungeon
-
