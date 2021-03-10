@@ -131,7 +131,7 @@ public class Updater extends Game {
 			scoreTime--;
 		}
 		
-		boolean hasMenu = menu != null;
+		boolean hadMenu = menu != null;
 		if(isValidServer()) {
 			// this is to keep the game going while online, even with an unfocused window.
 			input.tick();
@@ -152,7 +152,7 @@ public class Updater extends Game {
 				gameTime++;
 			}
 			
-			if (!isValidServer() || menu != null && !hasMenu)
+			if (!isValidServer() || menu != null && !hadMenu) // The "menu != null && !hadMenu" check is a possible fix for a bug. If menu has changed and we're a server, tick.
 				input.tick(); // INPUT TICK; no other class should call this, I think...especially the *Menu classes.
 			
 			if (isValidClient() && Renderer.readyToRenderGameplay) {
