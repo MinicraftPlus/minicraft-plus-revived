@@ -117,6 +117,7 @@ public class ConsoleReader extends Thread {
 		(null, "close the server.") {
 			public void run(String[] args) {
 				System.out.println("Shutting down server...");
+				Game.server.saveWorld();
 				Game.server.endConnection();
 			}
 		},
@@ -136,7 +137,6 @@ public class ConsoleReader extends Thread {
 		(null, "Save the world to file.") {
 			public void run(String[] args) {
 				Game.server.saveWorld();
-				System.out.println("World Saved.");
 			}
 		},
 		
@@ -148,28 +148,16 @@ public class ConsoleReader extends Thread {
 					printHelp(this);
 					return;
 				}
-				
-				switch(args[0].toLowerCase()) {
-					case "s": case "survival":
-						Settings.set("mode", "Survival");
-						break;
-					
-					case "c": case "creative":
-						Settings.set("mode", "Creative");
-						break;
-					
-					case "h": case "hardcore":
-						Settings.set("mode", "Hardcore");
-						break;
-					
-					case "t": case "timed": case "score":
-						Settings.set("mode", "Score");
-						break;
-					
-					default:
+
+				switch (args[0].toLowerCase()) {
+					case "s", "survival" -> Settings.set("mode", "Survival");
+					case "c", "creative" -> Settings.set("mode", "Creative");
+					case "h", "hardcore" -> Settings.set("mode", "Hardcore");
+					case "t", "timed", "score" -> Settings.set("mode", "Score");
+					default -> {
 						System.out.println(args[0] + " is not a valid game mode.");
 						printHelp(this);
-						break;
+					}
 				}
 				
 				Game.server.updateGameVars();
@@ -431,7 +419,7 @@ public class ConsoleReader extends Thread {
 				}
 				
 				try {
-					int radius = new Integer(args[2]);
+					int radius = Integer.valueOf(args[2]);
 					allEntities.addAll(rp.getLevel().getEntitiesInRect(new Rectangle(rp.x, rp.y, radius*2, radius*2, Rectangle.CENTER_DIMS)));
 					allEntities.remove(rp);
 				} catch(NumberFormatException ex) {
@@ -497,8 +485,7 @@ public class ConsoleReader extends Thread {
 			System.out.print("Enter a command: ");
 			String command = stdin.nextLine().trim();
 			if(command.length() == 0) continue;
-			List<String> parsed = new ArrayList<>();
-			parsed.addAll(Arrays.asList(command.split(" ")));
+			List<String> parsed = new ArrayList<>(Arrays.asList(command.split(" ")));
 			int lastIdx = -1;
 			for(int i = 0; i < parsed.size(); i++) {
 				if(parsed.get(i).contains("\"")) {
