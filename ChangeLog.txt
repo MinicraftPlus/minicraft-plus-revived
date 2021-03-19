@@ -16,6 +16,9 @@ Minicraft+ version 2.0.7
 * Picking up things no longer require stamina
 * Mobs no longer target you and attack you when you are in creative mode
 * Fixed sound not playing on certain actions
+* You can only use axes on wood walls, wood doors, and wood floor
+* Shears must be used to destroy wool tiles.
+* Server saves when stopping
 
 
 Minicraft+ version 2.0.6
