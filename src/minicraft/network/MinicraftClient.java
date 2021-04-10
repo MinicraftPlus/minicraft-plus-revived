@@ -6,8 +6,10 @@ import java.net.InetSocketAddress;
 import java.net.Socket;
 import java.net.UnknownHostException;
 import java.util.Arrays;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
+import java.util.PriorityQueue;
 
 import minicraft.core.Game;
 import minicraft.core.Network;
@@ -35,6 +37,11 @@ import minicraft.saveload.Save;
 import minicraft.saveload.Version;
 import minicraft.screen.ContainerDisplay;
 import minicraft.screen.MultiplayerDisplay;
+import org.xbill.DNS.Lookup;
+import org.xbill.DNS.Record;
+import org.xbill.DNS.SRVRecord;
+import org.xbill.DNS.TextParseException;
+import org.xbill.DNS.Type;
 
 import org.jetbrains.annotations.Nullable;
 
@@ -58,6 +65,10 @@ public class MinicraftClient extends MinicraftConnection {
 	private static Socket openSocket(String hostName, MultiplayerDisplay menu, int connectTimeout) {
 		InetAddress hostAddress;
 		Socket socket;
+		
+		socket = connectWithSrv(hostName, menu, connectTimeout);
+		if(socket != null)
+			return socket;
 		
 		if (Game.debug) System.out.println("Getting host address from host name \"" + hostName + "\"...");
 
@@ -100,6 +111,82 @@ public class MinicraftClient extends MinicraftConnection {
 		if (Game.debug) System.out.println("Successfully connected to game server. Returning socket...");
 		
 		return socket;
+	}
+	
+	@Nullable
+	private static Socket connectWithSrv(String hostName, MultiplayerDisplay menu, int connectTimeout) {
+		// Perform an SRV lookup to determine if any exist
+		String query = "_minicraft._tcp." + hostName;
+		Record[] records;
+		
+		try {
+			records = new Lookup(query, Type.SRV).run();
+		} catch(TextParseException e) {
+			if(Game.debug) System.err.println("Error running SRV lookup on '"+hostName+"', skipping.");
+			return null;
+		}
+		
+		if(records == null) {
+			// no records
+			if(Game.debug) System.out.println("No SRV records found.");
+			return null;
+		}
+		
+		// record-sorting queue
+		PriorityQueue<SRVRecord> queue = new PriorityQueue<>((rec1, rec2) -> {
+			// get smaller priority
+			int pComp = Integer.compare(rec1.getPriority(), rec2.getPriority());
+			if(pComp != 0)
+				return pComp;
+			// get larger weight
+			int wComp = Integer.compare(rec2.getWeight(), rec1.getWeight());
+			if(wComp != 0)
+				return wComp;
+			
+			// else equal
+			return 0;
+		});
+		
+		// menu.setWaitMessage("Trying available servers");
+		
+		// run through each record in the right order and try to connect
+		for(Record record: records) {
+			if(Game.debug) System.out.println("Found SRV record: "+record.toString());
+			SRVRecord srec = (SRVRecord) record;
+			if(Game.debug) {
+				System.out.println("SRV record data:");
+				System.out.println("Target: '"+srec.getTarget()+"'");
+				System.out.println("Port: '"+srec.getPort()+"'");
+				System.out.println("Priority: '"+srec.getPriority()+"'");
+				System.out.println("Weight: '"+srec.getWeight()+"'");
+			}
+			
+			queue.add(srec);
+		}
+		
+		// attempt to connect to each record in order of their precedence
+		int serverIdx = 1;
+		while(!queue.isEmpty()) {
+			SRVRecord srec = queue.poll();
+			
+			// remove trailing .
+			String address = srec.getTarget().toString(true);
+			int port = srec.getPort();
+			
+			menu.setWaitMessage("Trying server "+serverIdx+"/"+records.length);
+			try {
+				Socket socket = new Socket();
+				socket.connect(new InetSocketAddress(address, port), connectTimeout);
+				return socket;
+			} catch (IOException ex) {
+				System.err.println("Failed to connect to server "+serverIdx+"/"+records.length+": "+ex.getMessage());
+			}
+			serverIdx++;
+		}
+		
+		menu.setWaitMessage("Trying main server");
+		
+		return null;
 	}
 	
 	public MinicraftClient(String username, MultiplayerDisplay menu, String hostName) { this(username, menu, hostName, DEFAULT_CONNECT_TIMEOUT); }

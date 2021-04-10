@@ -6,6 +6,7 @@ Minicraft+ version 2.0.7
 + Added baked potatoes as food
 + Made zombies drop potatoes
 + Added a play menu with multiplayer and singleplayer as options
++ Added SRV record support; service name is _minicraft
 * Sparks (the airwizard bullets) have been optimised
 * Fixed picked up dungeon chests
 * Tiles now connect to the edge of the world
