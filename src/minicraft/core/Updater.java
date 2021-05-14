@@ -15,6 +15,8 @@ import minicraft.screen.PauseDisplay;
 import minicraft.screen.PlayerDeathDisplay;
 import minicraft.screen.WorldSelectDisplay;
 
+import java.awt.*;
+
 public class Updater extends Game {
 	private Updater() {}
 	
@@ -23,45 +25,69 @@ public class Updater extends Game {
 	public static final int normSpeed = 60; // measured in ticks / second.
 	public static float gamespeed = 1; // measured in MULTIPLES OF NORMSPEED.
 	public static boolean paused = true; // If the game is paused.
-	
+
 	public static int tickCount = 0; // The number of ticks since the beginning of the game day.
 	static int time = 0; // Facilites time of day / sunlight.
 	public static final int dayLength = 64800; //this value determines how long one game day is.
 	public static final int sleepEndTime = dayLength/8; //this value determines when the player "wakes up" in the morning.
 	public static final int sleepStartTime = dayLength/2+dayLength/8; //this value determines when the player allowed to sleep.
 	//public static int noon = 32400; //this value determines when the sky switches from getting lighter to getting darker.
-	
-	public static int gameTime = 0; // This stores the total time (number of ticks) you've been playing your 
+
+	public static int gameTime = 0; // This stores the total time (number of ticks) you've been playing your
 	public static boolean pastDay1 = true; // used to prevent mob spawn on surface on day 1.
 	public static int scoreTime; // time remaining for score mode
-	
-	
+
+	/**
+	 * Indicates if FullScreen Mode has been toggled.
+	 */
+	static boolean FULLSCREEN;
+
 	// AUTOSAVE AND NOTIFICATIONS
-	
+
 	public static int notetick = 0; // "note"= notifications.
-	
+
 	private static final int astime = 7200; //stands for Auto-Save Time (interval)
 	public static int asTick = 0; // The time interval between autosaves.
 	public static boolean saving = false; // If the game is performing a save.
 	public static int savecooldown; // Prevents saving many times too fast, I think.
-	
-	
+
 	public enum Time {
 		Morning (0),
 		Day (dayLength/4),
 		Evening (dayLength/2),
 		Night (dayLength/4*3);
-		
+
 		public int tickTime;
-		
+
 		Time(int ticks) {
 			tickTime = ticks;
 		}
 	}
-	
+
 	// VERY IMPORTANT METHOD!! Makes everything keep happening.
 	// In the end, calls menu.tick() if there's a menu, or level.tick() if no menu.
 	public static void tick() {
+		if (Updater.HAS_GUI && input.getKey("FULLSCREEN").clicked) {
+			Updater.FULLSCREEN = !Updater.FULLSCREEN;
+
+			// Dispose is needed to set undecorated value
+			Initializer.frame.dispose();
+
+			GraphicsDevice device = GraphicsEnvironment.getLocalGraphicsEnvironment().getScreenDevices()[0];
+			if (Updater.FULLSCREEN) {
+				Initializer.frame.setUndecorated(true);
+				device.setFullScreenWindow(Initializer.frame);
+			} else {
+				Initializer.frame.setUndecorated(false);
+				device.setFullScreenWindow(null);
+			}
+
+			// Show frame again
+			Initializer.frame.setVisible(true);
+			// When fullscreen is enabled, focus is lost
+			Renderer.canvas.requestFocus();
+		}
+
 		if (newMenu != menu) {
 			if (menu != null && (newMenu == null || newMenu.getParent() != menu))
 				menu.onExit();

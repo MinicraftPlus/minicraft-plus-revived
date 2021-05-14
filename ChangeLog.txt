@@ -17,7 +17,7 @@ Minicraft+ version 2.0.7
 * Mobs no longer target you and attack you when you are in creative mode
 * Fixed sound not playing on certain actions
 + Added SRV record support; service name is _minicraft
-
++ Added Fullscreen Mode [ default key F11 ]
 
 Minicraft+ version 2.0.6
 
