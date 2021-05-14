@@ -64,28 +64,31 @@ public class Updater extends Game {
 		}
 	}
 
+	static void updateFullscreen() {
+		// Dispose is needed to set undecorated value
+		Initializer.frame.dispose();
+
+		GraphicsDevice device = GraphicsEnvironment.getLocalGraphicsEnvironment().getScreenDevices()[0];
+		if (Updater.FULLSCREEN) {
+			Initializer.frame.setUndecorated(true);
+			device.setFullScreenWindow(Initializer.frame);
+		} else {
+			Initializer.frame.setUndecorated(false);
+			device.setFullScreenWindow(null);
+		}
+
+		// Show frame again
+		Initializer.frame.setVisible(true);
+		// When fullscreen is enabled, focus is lost
+		Renderer.canvas.requestFocus();
+	}
+
 	// VERY IMPORTANT METHOD!! Makes everything keep happening.
 	// In the end, calls menu.tick() if there's a menu, or level.tick() if no menu.
 	public static void tick() {
 		if (Updater.HAS_GUI && input.getKey("FULLSCREEN").clicked) {
 			Updater.FULLSCREEN = !Updater.FULLSCREEN;
-
-			// Dispose is needed to set undecorated value
-			Initializer.frame.dispose();
-
-			GraphicsDevice device = GraphicsEnvironment.getLocalGraphicsEnvironment().getScreenDevices()[0];
-			if (Updater.FULLSCREEN) {
-				Initializer.frame.setUndecorated(true);
-				device.setFullScreenWindow(Initializer.frame);
-			} else {
-				Initializer.frame.setUndecorated(false);
-				device.setFullScreenWindow(null);
-			}
-
-			// Show frame again
-			Initializer.frame.setVisible(true);
-			// When fullscreen is enabled, focus is lost
-			Renderer.canvas.requestFocus();
+			Updater.updateFullscreen();
 		}
 
 		if (newMenu != menu) {

@@ -138,9 +138,10 @@ public class Game {
 		Initializer.createAndDisplayFrame();
 		
 		Renderer.initScreen();
-		
+
+		// Update fullscreen frame if Updater.FULLSCREEN was updated previously
+		Updater.updateFullscreen();
 		Initializer.run();
-		
 		
 		if (debug) System.out.println("Main game loop ended; Terminating application...");
 		System.exit(0);
