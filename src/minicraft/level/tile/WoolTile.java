@@ -11,10 +11,10 @@ import minicraft.item.ToolItem;
 import minicraft.item.ToolType;
 import minicraft.level.Level;
 
-public class Wool extends Tile {
+public class WoolTile extends Tile {
 
-	public Wool(String name, WoolType woolType) {
-		super(name, woolType.sprite);
+	public WoolTile(WoolType woolType) {
+		super(woolType.name, woolType.sprite);
 	}
 
 	public boolean interact(Level level, int xt, int yt, Player player, Item item, Direction attackDir) {
@@ -37,22 +37,24 @@ public class Wool extends Tile {
 	}
 
 	public enum WoolType {
-		BLACK(new Sprite(10, 4, 2, 2, 1)),
-		BLUE(new Sprite(8, 2, 2, 2, 1)),
-		GREEN(new Sprite(10, 2, 2, 2, 1)),
-		NORMAL(new Sprite(8, 0, 2, 2, 1)),
-		RED(new Sprite(10, 0, 2, 2, 1)),
-		YELLOW(new Sprite(8, 4, 2, 2, 1));
+		BLACK("Black Wool", new Sprite(10, 4, 2, 2, 1)),
+		BLUE("Blue Wool", new Sprite(8, 2, 2, 2, 1)),
+		GREEN("Green Wool", new Sprite(10, 2, 2, 2, 1)),
+		NORMAL("Wool", new Sprite(8, 0, 2, 2, 1)),
+		RED("Red Wool", new Sprite(10, 0, 2, 2, 1)),
+		YELLOW("Yellow Wool", new Sprite(8, 4, 2, 2, 1));
 
 		public final Sprite sprite;
+		public final String name;
 
 		/**
 		 * Create a type of wool.
 		 *
 		 * @param sprite The sprite for the type of wool.
 		 */
-		WoolType(Sprite sprite) {
+		WoolType(String name, Sprite sprite) {
 			this.sprite = sprite;
+			this.name = name;
 		}
 	}
 }

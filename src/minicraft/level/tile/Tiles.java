@@ -56,13 +56,13 @@ public final class Tiles {
 		tiles.set(32, new WallTile(Tile.Material.Wood));
 		tiles.set(33, new WallTile(Tile.Material.Stone));
 		tiles.set(34, new WallTile(Tile.Material.Obsidian));
-		tiles.set(35, new Wool("Wool", Wool.WoolType.NORMAL));
+		tiles.set(35, new WoolTile(WoolTile.WoolType.NORMAL));
 		tiles.set(36, new PathTile("Path"));
-		tiles.set(37, new Wool("Red Wool", Wool.WoolType.RED));
-		tiles.set(38, new Wool("Blue Wool", Wool.WoolType.BLUE));
-		tiles.set(39, new Wool("Green Wool", Wool.WoolType.GREEN));
-		tiles.set(40, new Wool("Yellow Wool", Wool.WoolType.YELLOW));
-		tiles.set(41, new Wool("Black Wool", Wool.WoolType.BLACK));
+		tiles.set(37, new WoolTile(WoolTile.WoolType.RED));
+		tiles.set(38, new WoolTile(WoolTile.WoolType.BLUE));
+		tiles.set(39, new WoolTile(WoolTile.WoolType.GREEN));
+		tiles.set(40, new WoolTile(WoolTile.WoolType.YELLOW));
+		tiles.set(41, new WoolTile(WoolTile.WoolType.BLACK));
 		tiles.set(42, new PotatoTile("Potato"));
 
 		// WARNING: don't use this tile for anything!
