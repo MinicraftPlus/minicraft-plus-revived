@@ -31,6 +31,7 @@ import minicraft.item.*;
 import minicraft.level.Level;
 import minicraft.level.tile.Tile;
 import minicraft.level.tile.Tiles;
+import minicraft.network.Analytics;
 import minicraft.saveload.Save;
 import minicraft.screen.CraftingDisplay;
 import minicraft.screen.InfoDisplay;
@@ -995,6 +996,11 @@ public class Player extends Mob implements ItemHolder, ClientTickable {
 	/** What happens when the player dies */
 	@Override
 	public void die() {
+		if(!Network.ISONLINE)
+			Analytics.SinglePlayerDeath.ping();
+		else if(Network.isConnectedClient())
+			Analytics.MultiplayerDeath.ping();
+		
 		score -= score / 3; // subtracts score penalty (minus 1/3 of the original score)
 		resetMultiplier();
 		

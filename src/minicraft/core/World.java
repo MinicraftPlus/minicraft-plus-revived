@@ -5,6 +5,7 @@ import minicraft.entity.furniture.Bed;
 import minicraft.entity.mob.Player;
 import minicraft.entity.mob.RemotePlayer;
 import minicraft.level.Level;
+import minicraft.network.Analytics;
 import minicraft.saveload.Load;
 import minicraft.saveload.Save;
 import minicraft.screen.LoadingDisplay;
@@ -124,13 +125,21 @@ public class World extends Game {
 		if(!isValidClient()) {
 			if(debug) System.out.println("Initializing world non-client...");
 			
+			if(isValidServer())
+				Analytics.MultiplayerGame.ping();
+			else
+				Analytics.SinglePlayerGame.ping();
+			
 			if(WorldSelectDisplay.loadedWorld()) {
 				Load loader = new Load(WorldSelectDisplay.getWorldName());
 				if(isValidServer() && loader.getWorldVersion().compareTo(Game.VERSION) < 0) {
+					Analytics.SaveFileUpdate.ping();
 					new Save(player, true); // overwrite the old player save, to update it.
 					new Save(WorldSelectDisplay.getWorldName()); // save the main world
 				}
 			} else {
+				Analytics.WorldCreation.ping();
+				
 				worldSize = (Integer) Settings.get("size");
 				
 				float loadingInc = 100f / (maxLevelDepth - minLevelDepth + 1); // the .002 is for floating point errors, in case they occur.

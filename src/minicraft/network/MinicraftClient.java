@@ -288,6 +288,9 @@ public class MinicraftClient extends MinicraftConnection {
 				return true;
 			
 			case INIT:
+				// server has validated ability to join
+				Analytics.SessionJoin.ping();
+				
 				if (curState != State.LOGIN) {
 					return false;
 				}

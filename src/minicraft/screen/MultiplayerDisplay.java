@@ -11,6 +11,7 @@ import minicraft.gfx.Ellipsis.SequentialEllipsis;
 import minicraft.gfx.Font;
 import minicraft.gfx.FontStyle;
 import minicraft.gfx.Screen;
+import minicraft.network.Analytics;
 import minicraft.network.MinicraftClient;
 import minicraft.saveload.Save;
 import minicraft.screen.entry.RangeEntry;
@@ -164,6 +165,7 @@ public class MultiplayerDisplay extends Display {
 				if(input.getKey("select").clicked) {
 					setWaitMessage("connecting to server");
 					savedIP = typing;
+					Analytics.SessionAttempt.ping();
 					new Thread(() -> {
 						Game.client = new MinicraftClient(savedUsername, this, typing, connectTimeout.getValue()*1000); // typing = ipAddress
 						if(Game.client.isConnected())
@@ -195,7 +197,7 @@ public class MultiplayerDisplay extends Display {
 	
 	private void login(String email, String password) {
 		setWaitMessage("logging in");
-		
+		Analytics.LoginAttempt.ping();
 		/// HTTP REQUEST - send username and password to server via HTTPS, expecting a UUID in return.
 		Unirest.post(apiDomain+"/login")
 			.field("email", email)
@@ -213,6 +215,7 @@ public class MultiplayerDisplay extends Display {
 						case "success":
 							savedUUID = json.getString("uuid");
 							savedUsername = json.getString("name");
+							Analytics.LoginSuccess.ping();
 							setWaitMessage("saving credentials");
 							new Save();
 							typing = savedIP;
@@ -235,6 +238,7 @@ public class MultiplayerDisplay extends Display {
 	}
 	
 	private void fetchName(String uuid) {
+		Analytics.LoginAttempt.ping();
 		/// HTTP REQUEST - ATTEMPT TO SEND UUID TO SERVER AND UPDATE USERNAME
 		HttpResponse<JsonNode> response = null;
 		
@@ -258,6 +262,7 @@ public class MultiplayerDisplay extends Display {
 				case "success":
 					if(Game.debug) System.out.println("successfully received username from playminicraft server");
 					savedUsername = json.getString("name");
+					Analytics.LoginSuccess.ping();
 					break;
 			}
 		} else// if(Game.debug)
