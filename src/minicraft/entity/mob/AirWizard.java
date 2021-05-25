@@ -11,6 +11,7 @@ import minicraft.gfx.Color;
 import minicraft.gfx.Font;
 import minicraft.gfx.MobSprite;
 import minicraft.gfx.Screen;
+import minicraft.network.Analytics;
 import minicraft.saveload.Save;
 
 public class AirWizard extends EnemyMob {
@@ -172,12 +173,20 @@ public class AirWizard extends EnemyMob {
 		Sound.bossDeath.play(); // play boss-death sound.
 		
 		if(!secondform) {
+			Analytics.AirWizardDeath.ping();
 			Updater.notifyAll("Air Wizard: Defeated!");
-			if (!beaten) Updater.notifyAll("The Dungeon is now open!", -400);
+			if (!beaten) {
+				Analytics.FirstAirWizardDeath.ping();
+				Updater.notifyAll("The Dungeon is now open!", -400);
+			}
 			beaten = true;
 		} else {
+			Analytics.AirWizardIIDeath.ping();
 			Updater.notifyAll("Air Wizard II: Defeated!");
-			if (!(boolean)Settings.get("unlockedskin")) Updater.notifyAll("A costume lies on the ground...", -200);
+			if (!(boolean)Settings.get("unlockedskin")) {
+				Analytics.FirstAirWizardIIDeath.ping();
+				Updater.notifyAll("A costume lies on the ground...", -200);
+			}
 			Settings.set("unlockedskin", true);
 			new Save();
 		}

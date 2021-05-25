@@ -9,6 +9,7 @@ import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.Future;
 
 import minicraft.core.io.InputHandler;
 import minicraft.core.io.Settings;
@@ -16,6 +17,7 @@ import minicraft.core.io.Sound;
 import minicraft.entity.mob.Player;
 import minicraft.level.Level;
 import minicraft.level.tile.Tiles;
+import minicraft.network.Analytics;
 import minicraft.network.MinicraftClient;
 import minicraft.network.MinicraftProtocol;
 import minicraft.network.MinicraftServer;
@@ -109,13 +111,28 @@ public class Game {
 			PrintWriter printer = new PrintWriter(string);
 			throwable.printStackTrace(printer);
 			
-			if(GraphicsEnvironment.isHeadless()) return;
+			Future ping = Analytics.Crashes.ping();
+			
+			if(GraphicsEnvironment.isHeadless()) {
+				// ensure ping finishes before program closes
+				try {
+					ping.get();
+				} catch (Exception ignored) {}
+				return;
+			}
 			
 			JTextArea errorDisplay = new JTextArea(string.toString());
 			errorDisplay.setEditable(false);
 			JScrollPane errorPane = new JScrollPane(errorDisplay);
 			JOptionPane.showMessageDialog(null, errorPane, "An error has occurred", JOptionPane.ERROR_MESSAGE);
+			
+			// ensure ping finishes before program closes
+			try {
+				ping.get();
+			} catch (Exception ignored) {}
 		});
+		
+		Analytics.GameStartup.ping();
 
 		Initializer.parseArgs(args); // Parses the command line arguments
 		
