@@ -4,6 +4,7 @@ import javax.swing.JOptionPane;
 import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
 
+import java.awt.GraphicsEnvironment;
 import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.util.ArrayList;
@@ -107,6 +108,8 @@ public class Game {
 			StringWriter string = new StringWriter();
 			PrintWriter printer = new PrintWriter(string);
 			throwable.printStackTrace(printer);
+			
+			if(GraphicsEnvironment.isHeadless()) return;
 			
 			JTextArea errorDisplay = new JTextArea(string.toString());
 			errorDisplay.setEditable(false);
