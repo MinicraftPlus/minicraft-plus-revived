@@ -9,6 +9,7 @@ import minicraft.core.Network;
 import minicraft.core.io.InputHandler;
 import minicraft.core.io.Localization;
 import minicraft.gfx.Color;
+import minicraft.network.Analytics;
 import minicraft.saveload.Save;
 import minicraft.screen.entry.BlankEntry;
 import minicraft.screen.entry.ListEntry;
@@ -32,6 +33,7 @@ public class PauseDisplay extends Display {
 		if(!Game.ISONLINE) {
 			entries.add(new SelectEntry("Make World Multiplayer", () -> {
 				Game.setMenu(null);
+				Analytics.LocalSession.ping();
 				Network.startMultiplayerServer();
 			}));
 		}

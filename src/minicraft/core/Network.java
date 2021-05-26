@@ -8,6 +8,7 @@ import java.util.Random;
 
 import minicraft.entity.Entity;
 import minicraft.level.Level;
+import minicraft.network.Analytics;
 import minicraft.network.MinicraftServer;
 import minicraft.saveload.Load;
 import minicraft.screen.LoadingDisplay;
@@ -145,6 +146,9 @@ public class Network extends Game {
 				System.err.println("Problem starting new jar file process:");
 				ex.printStackTrace();
 			}
+			
+			// ping that we're technically "starting" a multiplayer session
+			Analytics.MultiplayerGame.ping();
 		}
 		else
 			setMenu(new LoadingDisplay()); // gets things going to load up a (server) world

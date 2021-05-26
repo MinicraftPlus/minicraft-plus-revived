@@ -297,6 +297,7 @@ public class MinicraftServer extends Thread implements MinicraftProtocol {
 	public void saveWorld() {
 		broadcastData(InputType.SAVE, ""); // tell all the other clients to send their data over to be saved.
 		new Save(WorldSelectDisplay.getWorldName());
+		System.out.println("World saved");
 	}
 	
 	public void broadcastNotification(String note, int notetime) {
