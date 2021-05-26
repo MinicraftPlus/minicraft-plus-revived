@@ -5,10 +5,7 @@ import javax.swing.JFrame;
 import javax.swing.WindowConstants;
 
 import java.awt.BorderLayout;
-import java.awt.event.ComponentAdapter;
-import java.awt.event.ComponentEvent;
-import java.awt.event.WindowEvent;
-import java.awt.event.WindowListener;
+import java.awt.event.*;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
 
@@ -18,7 +15,13 @@ import minicraft.screen.WorldSelectDisplay;
 
 public class Initializer extends Game {
 	private Initializer() {}
-	
+
+	/**
+	 * Reference to actual frame, also it may be null.
+	 *
+	 * @see Renderer#HAS_GUI
+	 */
+	static JFrame frame;
 	static int fra, tik; //these store the number of frames and ticks in the previous second; used for fps, at least.
 	
 	public static int getCurFps() { return fra; }
@@ -65,6 +68,9 @@ public class Initializer extends Game {
 				}
 
 				Game.CUSTOM_PORT = customPort;
+			} else if (args[i].equals("--fullscreen")) {
+				// Initializes fullscreen
+				Updater.FULLSCREEN = true;
 			}
 		}
 		Game.debug = debug;
@@ -137,7 +143,7 @@ public class Initializer extends Game {
 		
 		Renderer.canvas.setMinimumSize(new java.awt.Dimension(1, 1));
 		Renderer.canvas.setPreferredSize(Renderer.getWindowSize());
-		JFrame frame = new JFrame(NAME);
+		JFrame frame = Initializer.frame = new JFrame(NAME);
 		frame.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
 		frame.setLayout(new BorderLayout()); // sets the layout of the window
 		frame.add(Renderer.canvas, BorderLayout.CENTER); // Adds the game (which is a canvas) to the center of the screen.
