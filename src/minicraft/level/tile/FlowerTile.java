@@ -14,7 +14,7 @@ import minicraft.item.ToolType;
 import minicraft.level.Level;
 
 public class FlowerTile extends Tile {
-	private static Sprite flowerSprite = new Sprite(3, 8, 1);
+	private static final Sprite flowerSprite = new Sprite(3, 8, 1);
 	
 	protected FlowerTile(String name) {
 		super(name, (ConnectorSprite)null);
@@ -24,7 +24,7 @@ public class FlowerTile extends Tile {
 
 	public boolean tick(Level level, int xt, int yt) {
 		// TODO revise this method.
-		if (random.nextInt(30) != 0) return false;
+		if (random.nextInt(30) != 0) return false; // Skips every 31 tick.
 
 		int xn = xt;
 		int yn = yt;
@@ -68,7 +68,7 @@ public class FlowerTile extends Tile {
 	}
 
 	public boolean hurt(Level level, int x, int y, Mob source, int dmg, Direction attackDir) {
-		level.dropItem(x*16+8, y*16+8, 1, 2, Items.get("Flower"));
+		level.dropItem(x*16+8, y*16+8, 0, 1, Items.get("Flower"));
 		level.dropItem(x*16+8, y*16+8, 0, 1, Items.get("Rose"));
 		level.setTile(x, y, Tiles.get("grass"));
 		return true;

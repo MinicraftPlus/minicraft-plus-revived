@@ -4,7 +4,6 @@ import java.util.ArrayList;
 
 import minicraft.core.Game;
 import minicraft.level.tile.farming.*;
-import minicraft.level.tile.wool.*;
 
 public final class Tiles {
 	/// idea: to save tile names while saving space, I could encode the names in base 64 in the save file...^M
@@ -57,13 +56,13 @@ public final class Tiles {
 		tiles.set(32, new WallTile(Tile.Material.Wood));
 		tiles.set(33, new WallTile(Tile.Material.Stone));
 		tiles.set(34, new WallTile(Tile.Material.Obsidian));
-		tiles.set(35, new NormalWoolTile("Wool"));
+		tiles.set(35, new WoolTile(WoolTile.WoolType.NORMAL));
 		tiles.set(36, new PathTile("Path"));
-		tiles.set(37, new RedWoolTile("Red Wool"));
-		tiles.set(38, new BlueWoolTile("Blue Wool"));
-		tiles.set(39, new GreenWoolTile("Green Wool"));
-		tiles.set(40, new YellowWoolTile("Yellow Wool"));
-		tiles.set(41, new BlackWoolTile("Black Wool"));
+		tiles.set(37, new WoolTile(WoolTile.WoolType.RED));
+		tiles.set(38, new WoolTile(WoolTile.WoolType.BLUE));
+		tiles.set(39, new WoolTile(WoolTile.WoolType.GREEN));
+		tiles.set(40, new WoolTile(WoolTile.WoolType.YELLOW));
+		tiles.set(41, new WoolTile(WoolTile.WoolType.BLACK));
 		tiles.set(42, new PotatoTile("Potato"));
 
 		// WARNING: don't use this tile for anything!
