@@ -112,6 +112,13 @@ public class InputHandler implements KeyListener {
 		keymap.put("PICKUP", "V|P"); // pickup torches / furniture; this replaces the power glove.
 		keymap.put("DROP-ONE", "Q"); // drops the item in your hand, or selected in your inventory, by ones; it won't drop an entire stack
 		keymap.put("DROP-STACK", "SHIFT-Q"); // drops the item in your hand, or selected in your inventory, entirely; even if it's a stack.
+
+		// toggle inventory searcher bar
+		keymap.put("SEARCHER-BAR", "SHIFT-T");
+
+		// seek for next/previous match in inventory searcher bar
+		keymap.put("PAGE-UP", "PAGE_UP");
+		keymap.put("PAGE-DOWN", "PAGE_DOWN");
 		
 		keymap.put("PAUSE", "ESCAPE"); // pause the Game.
 		

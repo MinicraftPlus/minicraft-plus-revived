@@ -15,16 +15,20 @@ class InventoryMenu extends ItemListMenu {
 	private Entity holder;
 	
 	InventoryMenu(Entity holder, Inventory inv, String title) {
-		super(ItemEntry.useItems(inv.getItems()), title);
+		super(InventoryMenu.getBuilder(), ItemEntry.useItems(inv.getItems()), title);
 		this.inv = inv;
 		this.holder = holder;
 	}
 	
 	InventoryMenu(InventoryMenu model) {
-		super(ItemEntry.useItems(model.inv.getItems()), model.getTitle());
+		super(InventoryMenu.getBuilder(), ItemEntry.useItems(model.inv.getItems()), model.getTitle());
 		this.inv = model.inv;
 		this.holder = model.holder;
 		setSelection(model.getSelection());
+	}
+
+	static Builder getBuilder() {
+		return ItemListMenu.getBuilder().setSearcherBar(true);
 	}
 	
 	@Override
