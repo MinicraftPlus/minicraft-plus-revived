@@ -72,7 +72,7 @@ public class Color {
 
 	public static int get(String color) {
 		// omit color character if it's present
-		int leading = color.charAt(0) == Color.COLOR_CHAR ? 1 : 0;
+		int leading = color.length() == 5 ? 1 : 0;
 		return Color.get(color.charAt(leading), color.charAt(1 + leading), color.charAt(2 + leading), color.charAt(3 + leading));
 	}
 	
