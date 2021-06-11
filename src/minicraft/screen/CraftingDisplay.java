@@ -85,27 +85,29 @@ public class CraftingDisplay extends Display {
 	
 	@Override
 	public void tick(InputHandler input) {
-		if(input.getKey("menu").clicked || (isPersonalCrafter && input.getKey("craft").clicked)) {
+		int previousSelection = recipeMenu.getSelection();
+		super.tick(input);
+		if (previousSelection != recipeMenu.getSelection()) {
+			refreshData();
+		}
+
+		if (input.getKey("menu").clicked || (isPersonalCrafter && input.getKey("craft").clicked)) {
 			Game.exitMenu();
 			return;
 		}
 		
-		int prevSel = recipeMenu.getSelection();
-		super.tick(input);
-		if(prevSel != recipeMenu.getSelection())
-			refreshData();
-		
-		if((input.getKey("select").clicked || input.getKey("attack").clicked) && recipeMenu.getSelection() >= 0) {
+		if ((input.getKey("select").clicked || input.getKey("attack").clicked) && recipeMenu.getSelection() >= 0) {
 			// check the selected recipe
-			Recipe r = recipes[recipeMenu.getSelection()];
-			if(r.getCanCraft()) {
-				r.craft(player);
+			Recipe selectedRecipe = recipes[recipeMenu.getSelection()];
+			if (selectedRecipe.getCanCraft()) {
+				selectedRecipe.craft(player);
 
 				Sound.craft.play();
 
 				refreshData();
-				for(Recipe recipe: recipes)
+				for (Recipe recipe: recipes) {
 					recipe.checkCanCraft(player);
+				}
 			}
 		}
 	}
