@@ -109,9 +109,9 @@ public class TexturePackDisplay extends Display {
 		String selectedDown = selected - 1 < 0 ? "" : textureList.get(selected - 1);
 
 		Font.drawCentered("Texture Packs", screen, Screen.h - 180, Color.get(0, 555, 555, 555));
-		Font.drawCentered(TexturePackDisplay.shortNameIfLong(selectedDown), screen, Screen.h - 72, Color.get(0, 222, 222, 222));
-		Font.drawCentered(TexturePackDisplay.shortNameIfLong(textureList.get(selected)), screen, Screen.h - 80, Color.get(0, 555, 555, 555));
-		Font.drawCentered(TexturePackDisplay.shortNameIfLong(selectedUp), screen, Screen.h - 90, Color.get(0, 222, 222, 222));
+		Font.drawCentered(TexturePackDisplay.shortNameIfLong(selectedDown), screen, Screen.h - 72, Color.GRAY);
+		Font.drawCentered(TexturePackDisplay.shortNameIfLong(textureList.get(selected)), screen, Screen.h - 80, Color.GREEN);
+		Font.drawCentered(TexturePackDisplay.shortNameIfLong(selectedUp), screen, Screen.h - 90, Color.GRAY);
 		Font.drawCentered("Arrows keys "+ Game.input.getMapping("MOVE-DOWN") + ", " + Game.input.getMapping("MOVE-UP"), screen, Screen.h - 11, Color.get(0, 222, 222, 222));
 
 		int h = 2;
