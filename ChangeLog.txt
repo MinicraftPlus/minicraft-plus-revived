@@ -9,6 +9,7 @@ Minicraft+ version 2.0.7
 + Added SRV record support; service name is _minicraft
 + Added aggregate analytics for various game states and actions
 + Added Fullscreen Mode [ default key F11 ]
++ Added a new system for texture packs (now they are more accessible)
 * Sparks (the airwizard bullets) have been optimised
 * Fixed picked up dungeon chests
 * Tiles now connect to the edge of the world
