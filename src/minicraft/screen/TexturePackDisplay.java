@@ -82,12 +82,16 @@ public class TexturePackDisplay extends Display {
 
 		if (input.getKey("MOVE-DOWN").clicked && selected > 0) {
 			selected--;
-			shouldUpdate = true;
+
 		}
 		if (input.getKey("MOVE-UP").clicked && selected < textureList.size() - 1) {
 			selected++;
-			shouldUpdate = true;
+
 		}
+		
+        if (input.getKey("SELECT").clicked) {
+            shouldUpdate = true;
+        }
 	}
 
 	// In case the name is too big ...
@@ -117,7 +121,7 @@ public class TexturePackDisplay extends Display {
 		Font.drawCentered(TexturePackDisplay.shortNameIfLong(selectedDown), screen, Screen.h - 70, Color.GRAY); // Unselected space
 		Font.drawCentered(TexturePackDisplay.shortNameIfLong(textureList.get(selected)), screen, Screen.h - 80, Color.GREEN); // Selection
 		Font.drawCentered(TexturePackDisplay.shortNameIfLong(selectedUp), screen, Screen.h - 90, Color.GRAY); // Other unselected space
-		Font.drawCentered("Use "+ Game.input.getMapping("MOVE-DOWN") + ", " + Game.input.getMapping("MOVE-UP"), screen, Screen.h - 11, Color.get(0, 222, 222, 222)); // Controls
+		Font.drawCentered("Use "+ Game.input.getMapping("MOVE-DOWN") + ", " + Game.input.getMapping("MOVE-UP") + ", " + Game.input.getMapping("SELECT"), screen, Screen.h - 11, Color.get(0, 222, 222, 222)); // Controls
 
 		int h = 2;
 		int w = 15;
