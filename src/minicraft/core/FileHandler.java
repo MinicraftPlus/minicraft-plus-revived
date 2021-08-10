@@ -69,6 +69,14 @@ public class FileHandler extends Game {
 		}
 	}
 	
+	public static String getSystemGameDir() {
+		    return systemGameDir;
+	}
+
+	public static String getLocalGameDir() {
+		    return localGameDir;
+	}
+	
 	private static void deleteFolder(File top) {
 		if(top == null) return;
 		if(top.isDirectory()) {
