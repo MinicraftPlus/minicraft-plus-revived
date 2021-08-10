@@ -11,6 +11,7 @@ import minicraft.core.VersionInfo;
 import minicraft.core.World;
 import minicraft.core.io.InputHandler;
 import minicraft.core.io.Localization;
+import minicraft.core.io.Settings;
 import minicraft.entity.mob.RemotePlayer;
 import minicraft.gfx.Color;
 import minicraft.gfx.Font;
@@ -39,6 +40,7 @@ public class TitleDisplay extends Display {
 			new BlankEntry(),
 			new SelectEntry("Play", () -> Game.setMenu(new PlayDisplay())),
 			new SelectEntry("Options", () -> Game.setMenu(new OptionsDisplay())),
+			new SelectEntry("Skins", () -> Game.setMenu(new SkinDisplay())),
 			displayFactory("Help",
 				new SelectEntry("Instructions", () -> Game.setMenu(new BookDisplay(BookData.instructions))),
 				new BlankEntry(),
@@ -52,7 +54,7 @@ public class TitleDisplay extends Display {
 			.createMenu()
 		);
 	}
-	
+
 	@Override
 	public void init(Display parent) {
 		super.init(null); // The TitleScreen never has a parent.
