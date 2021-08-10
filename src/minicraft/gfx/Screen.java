@@ -31,24 +31,42 @@ public class Screen {
 	private SpriteSheet[] sheets;
 	private SpriteSheet[] sheetsCustom;
 
-	public Screen(SpriteSheet itemSheet, SpriteSheet tileSheet, SpriteSheet entitySheet, SpriteSheet guiSheet) {
+	public Screen(SpriteSheet itemSheet, SpriteSheet tileSheet, SpriteSheet entitySheet, SpriteSheet guiSheet, SpriteSheet skinsSheet) {
 
-		sheets = new SpriteSheet[]{itemSheet, tileSheet, entitySheet, guiSheet};
+		sheets = new SpriteSheet[]{itemSheet, tileSheet, entitySheet, guiSheet, skinsSheet};
 
 		/// screen width and height are determined by the actual game window size, meaning the screen is only as big as the window.
 		pixels = new int[Screen.w * Screen.h]; // makes new integer array for all the pixels on the screen.
 	}
 
-	public Screen(SpriteSheet itemSheet, SpriteSheet tileSheet, SpriteSheet entitySheet, SpriteSheet guiSheet,
+	public Screen(SpriteSheet itemSheet, SpriteSheet tileSheet, SpriteSheet entitySheet, SpriteSheet guiSheet, SpriteSheet skinsSheet,
 					SpriteSheet itemSheetCustom, SpriteSheet tileSheetCustom, SpriteSheet entitySheetCustom, SpriteSheet guiSheetCustom) {
-		this(itemSheet, tileSheet, entitySheet, guiSheet);
+		this(itemSheet, tileSheet, entitySheet, guiSheet, skinsSheet);
 
 		sheetsCustom = new SpriteSheet[]{itemSheetCustom, tileSheetCustom, entitySheetCustom, guiSheetCustom};
 	}
 	
 	public Screen(Screen model) {
-		this(model.sheets[0], model.sheets[1], model.sheets[2], model.sheets[3]);
+		this(model.sheets[0], model.sheets[1], model.sheets[2], model.sheets[3], model.sheets[4]);
 	}
+	
+	public void setSheet(SpriteSheet itemSheet, SpriteSheet tileSheet, SpriteSheet entitySheet, SpriteSheet guiSheet, SpriteSheet skinsSheet) {
+		    if (itemSheet != null) {
+		        sheets[0] = itemSheet;
+		    }
+		    if (tileSheet != null) {
+		        sheets[1] = tileSheet;
+		    }
+		    if (entitySheet != null) {
+		        sheets[2] = entitySheet;
+		    }
+		    if (guiSheet != null) {
+		        sheets[3] = guiSheet;
+		    }
+		    if (skinsSheet != null) {
+		    	sheets[4] = skinsSheet;
+			}
+		}
 	
 	/** Clears all the colors on the screen */
 	public void clear(int color) {
