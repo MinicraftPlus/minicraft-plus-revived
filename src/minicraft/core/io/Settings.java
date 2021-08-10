@@ -46,6 +46,8 @@ public class Settings {
 
 		options.put("textures", new ArrayEntry<>("Textures", "Original", "Custom"));
 		options.get("textures").setSelection(0);
+
+		options.put("skins", new ArrayEntry<>("Skin", "Paul", "Paul (Cape)", "Familiar Boy"));
 	}
 	
 	public static void init() {}
