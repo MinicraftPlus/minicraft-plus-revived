@@ -70,12 +70,12 @@ public class TexturePackDisplay extends Display {
 			}
 		}
 
-		screen.setSheet(sheets[0], sheets[1], sheets[2], sheets[3], sheets[4]);
+		screen.setSheet(sheets[0], sheets[1], sheets[2], sheets[3]);
 	}
 
 	@Override
 	public void tick(InputHandler input) {
-		if (input.getKey("menu").clicked || input.getKey("attack").clicked || input.getKey("exit").clicked) {
+		if (input.getKey("exit").clicked) {
 			Game.exitMenu();
 			return;
 		}
