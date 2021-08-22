@@ -38,7 +38,14 @@ public class TitleDisplay extends Display {
 			new StringEntry("Checking for updates...", Color.BLUE),
 			new BlankEntry(),
 			new BlankEntry(),
-			new SelectEntry("Play", () -> Game.setMenu(new PlayDisplay())),
+			new SelectEntry("Play", () -> /*Game.setMenu(new PlayDisplay())*/{
+ 				if (WorldSelectDisplay.getWorldNames().size() > 0)
+ 					Game.setMenu(new Display(true, new Menu.Builder(false, 2, RelPos.CENTER,
+ 						new SelectEntry("Load World", () -> Game.setMenu(new WorldSelectDisplay())),
+ 						new SelectEntry("New World", () -> Game.setMenu(new WorldGenDisplay()))
+ 					).createMenu()));
+ 				else Game.setMenu(new WorldGenDisplay());
+ 			}),
 			new SelectEntry("Options", () -> Game.setMenu(new OptionsDisplay())),
 			new SelectEntry("Skins", () -> Game.setMenu(new SkinDisplay())),
 			displayFactory("Help",
