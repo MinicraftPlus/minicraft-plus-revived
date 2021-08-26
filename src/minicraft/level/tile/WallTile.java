@@ -84,14 +84,17 @@ public class WallTile extends Tile {
 				case Wood: {
 					itemName = "Plank";
 					tilename = "Wood Planks";
+					break;
 				}
 				case Stone: {
 					itemName = "Stone Brick";
 					tilename = "Stone Bricks";
+					break;
 				}
 				case Obsidian: {
 					itemName = "Obsidian Brick";
 					tilename = "Obsidian";
+					break;
 				}
 			}
 
