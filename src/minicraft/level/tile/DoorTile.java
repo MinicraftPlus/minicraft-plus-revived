@@ -25,14 +25,17 @@ public class DoorTile extends Tile {
 			case Wood: {
 				closedSprite = new Sprite(5, 16, 2, 2, 1);
 				openSprite = new Sprite(3, 16, 2, 2, 1);
+				break;
 			}
 			case Stone: {
 				closedSprite = new Sprite(15, 16, 2, 2, 1);
 				openSprite = new Sprite(13, 16, 2, 2, 1);
+				break;
 			}
 			case Obsidian: {
 				closedSprite = new Sprite(25, 16, 2, 2, 1);
 				openSprite = new Sprite(23, 16, 2, 2, 1);
+				break;
 			}
 		}
 		sprite = closedSprite;

@@ -40,7 +40,7 @@ public class FloorTile extends Tile {
 					Item drop;
 					switch (type) {
 						case Wood: drop = Items.get("Plank"); break;
-						default: drop = Items.get(type.name() + " Brick");
+						default: drop = Items.get(type.name() + " Brick"); break;
 					}
 					Sound.monsterHurt.play();
 					level.dropItem(xt * 16 + 8, yt * 16 + 8, drop);
