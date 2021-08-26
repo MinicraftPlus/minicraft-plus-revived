@@ -65,7 +65,6 @@ public class SkinDisplay extends Display {
 			}
 		}
 
-		System.out.println("L:" + (Settings.getIdx("Skins") + offset));
 		selected = Settings.getIdx("Skins") + offset;
 	}
 
@@ -105,9 +104,10 @@ public class SkinDisplay extends Display {
 		new Save();
         if (selected > 3) {
         	offset = (selected - 4);
+			Settings.setIdx("Skins", 4);
+		} else {
+			Settings.setIdx("Skins", selected);
 		}
-        System.out.println("S:" + (selected + offset));
-        Settings.setIdx("Skins", selected);
         Game.exitMenu();
     }
 
