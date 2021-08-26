@@ -179,6 +179,7 @@ public class Save {
 		data.add(String.valueOf(Settings.get("sound")));
 		data.add(String.valueOf(Settings.get("autosave")));
 		data.add(String.valueOf(Settings.get("fps")));
+		data.add(String.valueOf(Settings.getIdx("Skins")));
 		data.add(MultiplayerDisplay.savedIP);
 		data.add(MultiplayerDisplay.savedUUID);
 		data.add(MultiplayerDisplay.savedUsername);
@@ -188,7 +189,7 @@ public class Save {
 		Collections.addAll(keyPairs, Game.input.getKeyPrefs());
 		
 		data.add(String.join(":", keyPairs.toArray(new String[keyPairs.size()])));
-		
+
 		writeToFile(location + "Preferences" + extension, data);
 		
 		if((boolean)Settings.get("unlockedskin"))
