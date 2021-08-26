@@ -118,6 +118,7 @@ public class SkinDisplay extends Display {
         } catch (IOException exception) {
             exception.printStackTrace();
         }
+	new Save();
         Game.exitMenu();
     }
 
