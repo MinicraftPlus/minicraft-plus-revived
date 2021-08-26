@@ -180,7 +180,6 @@ public class Save {
 		data.add(String.valueOf(Settings.get("autosave")));
 		data.add(String.valueOf(Settings.get("fps")));
 		data.add(String.valueOf(Settings.getIdx("Skins")));
-		System.out.println("S:" + Settings.getIdx("Skins"));
 		data.add(MultiplayerDisplay.savedIP);
 		data.add(MultiplayerDisplay.savedUUID);
 		data.add(MultiplayerDisplay.savedUsername);
