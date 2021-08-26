@@ -1,827 +1,380 @@
 package minicraft.saveload;
 
-import java.awt.image.BufferedImage;
-import java.io.BufferedReader;
+import java.io.BufferedWriter;
 import java.io.File;
-import java.io.FileReader;
+import java.io.FileWriter;
 import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
 import java.util.ArrayList;
-import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
 import minicraft.core.Game;
-import minicraft.core.Network;
+import minicraft.core.Renderer;
 import minicraft.core.Updater;
 import minicraft.core.World;
 import minicraft.core.io.Localization;
 import minicraft.core.io.Settings;
 import minicraft.entity.Arrow;
-import minicraft.entity.Direction;
 import minicraft.entity.Entity;
 import minicraft.entity.ItemEntity;
 import minicraft.entity.Spark;
-import minicraft.entity.furniture.*;
+import minicraft.entity.furniture.Chest;
+import minicraft.entity.furniture.Crafter;
+import minicraft.entity.furniture.DeathChest;
+import minicraft.entity.furniture.DungeonChest;
+import minicraft.entity.furniture.Lantern;
+import minicraft.entity.furniture.Spawner;
 import minicraft.entity.mob.*;
-import minicraft.entity.particle.FireParticle;
-import minicraft.entity.particle.SmashParticle;
+import minicraft.entity.particle.Particle;
 import minicraft.entity.particle.TextParticle;
-import minicraft.gfx.Color;
 import minicraft.item.*;
-import minicraft.level.Level;
-import minicraft.level.tile.Tiles;
 import minicraft.network.MinicraftServer;
 import minicraft.screen.LoadingDisplay;
 import minicraft.screen.MultiplayerDisplay;
+import minicraft.screen.WorldSelectDisplay;
 
-import org.jetbrains.annotations.Nullable;
+public class Save {
 
-import javax.imageio.ImageIO;
+	public String location = Game.gameDir;
+	File folder;
 
-public class Load {
-	
-	private String location = Game.gameDir;
-	
-	private static final String extension = Save.extension;
-	private float percentInc;
-	
-	private ArrayList<String> data;
-	private ArrayList<String> extradata; // These two are changed when loading a new file. (see loadFromFile())
-	
-	private Version worldVer;
-	private boolean hasGlobalPrefs = false;
-	
-	{
-		worldVer = null;
-		
-		File testFile = new File(location + "/Preferences" + extension);
-		hasGlobalPrefs = testFile.exists();
-		
+	public static String extension = ".miniplussave";
+
+	List<String> data;
+
+	/**
+	 * This is the main save method. Called by all Save() methods.
+	 * @param worldFolder The folder of where to save
+	 */
+	private Save(File worldFolder) {
 		data = new ArrayList<>();
-		extradata = new ArrayList<>();
-	}
-	
-	public Load(String worldname) { this(worldname, true); }
-	public Load(String worldname, boolean loadGame) {
-		loadFromFile(location + "/saves/" + worldname + "/Game" + extension);
-		if(data.get(0).contains(".")) worldVer = new Version(data.get(0));
-		if(worldVer == null) worldVer = new Version("1.8");
-		
-		if(!hasGlobalPrefs)
-			hasGlobalPrefs = worldVer.compareTo(new Version("1.9.2")) >= 0;
-		
-		if(!loadGame) return;
-		
-		if(worldVer.compareTo(new Version("1.9.2")) < 0)
-			new LegacyLoad(worldname);
-		else {
-			location += "/saves/" + worldname + "/";
-			
-			percentInc = 5 + World.levels.length-1; // for the methods below, and world.
-			
-			percentInc = 100f / percentInc;
-			
-			LoadingDisplay.setPercentage(0);
-			loadGame("Game"); // more of the version will be determined here
-			loadWorld("Level");
-			loadEntities("Entities");
-			loadInventory("Inventory", Game.player.getInventory());
-			loadPlayer("Player", Game.player);
-			if(Game.isMode("creative"))
-				Items.fillCreativeInv(Game.player.getInventory(), false);
-		}
-	}
-	
-	public Load(String worldname, MinicraftServer server) {
-		location += "/saves/" + worldname + "/";
-		File testFile = new File(location + "ServerConfig" + extension);
-		if(testFile.exists())
-			loadServerConfig("ServerConfig", server);
-	}
-	
-	public Load() { this(Game.VERSION); }
-	public Load(Version worldVersion) {
-		this(false);
-		worldVer = worldVersion;
-	}
-	public Load(boolean loadConfig) {
-		if(!loadConfig) return;
-		
-		location += "/";
-		
-		if(hasGlobalPrefs)
-			loadPrefs("Preferences");
-		else
-			new Save();
-		
-		File testFileOld = new File(location + "unlocks" + extension);
-		File testFile = new File(location + "Unlocks" + extension);
-		if (testFileOld.exists() && !testFile.exists()) {
-			testFileOld.renameTo(testFile);
-			new LegacyLoad(testFile);
-		}
-		else if (!testFile.exists()) {
-			try {
-				testFile.createNewFile();
-			} catch(IOException ex) {
-				System.err.println("Could not create Unlocks" + extension + ":");
-				ex.printStackTrace();
+
+
+		if (worldFolder.getParent().equals("saves")) {
+			String worldName = worldFolder.getName();
+			if (!worldName.toLowerCase().equals(worldName)) {
+				if (Game.debug) System.out.println("Renaming world in " + worldFolder + " to lowercase");
+				String path = worldFolder.toString();
+				path = path.substring(0, path.lastIndexOf(worldName));
+				File newFolder = new File(path + worldName.toLowerCase());
+				if (worldFolder.renameTo(newFolder))
+					worldFolder = newFolder;
+				else
+					System.err.println("Failed to rename world folder " + worldFolder + " to " + newFolder);
 			}
 		}
-		
-		loadUnlocks("Unlocks");
+
+		folder = worldFolder;
+		location = worldFolder.getPath() + "/";
+
+		folder.mkdirs();
 	}
-	
-	public Version getWorldVersion() { return worldVer; }
-	
-	public static ArrayList<String> loadFile(String filename) throws IOException {
-		ArrayList<String> lines = new ArrayList<>();
-		
-		InputStream fileStream = Load.class.getResourceAsStream(filename);
-		
-		try (BufferedReader br = new BufferedReader(new InputStreamReader(fileStream))) {
-			
-			String line;
-			while((line = br.readLine()) != null)
-				lines.add(line);
-			
+
+	/**
+	 * This will save world options
+	 * @param worldname The name of the world.
+	 */
+	public Save(String worldname) {
+		this(new File(Game.gameDir+"/saves/" + worldname + "/"));
+
+		if (Game.isValidClient()) {
+			// clients are not allowed to save.
+			Updater.saving = false;
+			return;
 		}
+
+		writeGame("Game");
+		writeWorld("Level");
+		if (!Game.isValidServer()) { // this must be waited for on a server.
+			writePlayer("Player", Game.player);
+			writeInventory("Inventory", Game.player);
+		}
+		writeEntities("Entities");
 		
-		return lines;
+		WorldSelectDisplay.refreshWorldNames();
+		
+		Updater.notifyAll("World Saved!");
+		Updater.asTick = 0;
+		Updater.saving = false;
+	}
+
+	/**
+	 * This will save server config options
+	 * @param worldname The name of the world.
+	 * @param server
+	 */
+	public Save(String worldname, MinicraftServer server) {
+		this(new File(Game.gameDir+"/saves/" + worldname + "/"));
+		
+		if (Game.debug) System.out.println("Writing server config...");
+		writeServerConfig("ServerConfig", server);
+	}
+
+	/** This will save the settings in the settings menu. */
+	public Save() {
+		this(new File(Game.gameDir+"/"));
+		if (Game.debug) System.out.println("Writing preferences and unlocks...");
+		writePrefs();
+	}
+
+	public Save(Player player, boolean writePlayer) {
+		// this is simply for access to writeToFile.
+		this(new File(Game.gameDir+"/saves/"+ WorldSelectDisplay.getWorldName() + "/"));
+		if(writePlayer) {
+			writePlayer("Player", player);
+			writeInventory("Inventory", player);
+		}
 	}
 	
-	private void loadFromFile(String filename) {
-		data.clear();
-		extradata.clear();
-		
-		String total;
+	public static void writeFile(String filename, String[] lines) throws IOException {
+		try (BufferedWriter br = new BufferedWriter(new FileWriter(filename))) {
+			br.write(String.join(System.lineSeparator(), lines));
+		}
+	}
+	
+	public void writeToFile(String filename, List<String> savedata) {
 		try {
-			total = loadFromFile(filename, true);
-			if (total.length() > 0)
-				data.addAll(Arrays.asList(total.split(",")));
-		} catch (IOException ex) {
+			writeToFile(filename, savedata.toArray(new String[0]), true);
+		} catch(IOException ex) {
 			ex.printStackTrace();
 		}
 		
-		if (filename.contains("Level")) {
-			try {
-				total = Load.loadFromFile(filename.substring(0, filename.lastIndexOf("/") + 7) + "data" + extension, true);
-				extradata.addAll(Arrays.asList(total.split(",")));
-			} catch (IOException ex) {
-				ex.printStackTrace();
-			}
+		data.clear();
+		
+		LoadingDisplay.progress(7);
+		if(LoadingDisplay.getPercentage() > 100) {
+			LoadingDisplay.setPercentage(100);
 		}
 		
-		LoadingDisplay.progress(percentInc);
+		Renderer.render(); // AH HA!!! HERE'S AN IMPORTANT STATEMENT!!!!
 	}
 	
-	public static String loadFromFile(String filename, boolean isWorldSave) throws IOException {
-		StringBuilder total = new StringBuilder();
-		
-		try (BufferedReader br = new BufferedReader(new FileReader(filename))) {
-			String curLine;
-			while((curLine = br.readLine()) != null)
-				total.append(curLine).append(isWorldSave ? "" : "\n");
-		}
-		
-		return total.toString();
-	}
-	
-	private void loadUnlocks(String filename) {
-		loadFromFile(location + filename + extension);
-		
-		for(String unlock: data) {
-			if(unlock.equals("AirSkin"))
-				Settings.set("unlockedskin", true);
-			
-			unlock = unlock.replace("HOURMODE", "H_ScoreTime").replace("MINUTEMODE", "M_ScoreTime").replace("M_ScoreTime", "_ScoreTime").replace("2H_ScoreTime", "120_ScoreTime");
-			
-			if(unlock.contains("_ScoreTime"))
-				Settings.getEntry("scoretime").setValueVisibility(Integer.parseInt(unlock.substring(0, unlock.indexOf("_"))), true);
-		}
-	}
-	
-	private void loadGame(String filename) {
-		loadFromFile(location + filename + extension);
-		
-		worldVer = new Version(data.remove(0)); // gets the world version
-		if(worldVer.compareTo(new Version("2.0.4-dev8")) >= 0)
-			loadMode(data.remove(0));
-		
-		Updater.setTime(Integer.parseInt(data.remove(0)));
-		
-		Updater.gameTime = Integer.parseInt(data.remove(0));
-		if(worldVer.compareTo(new Version("1.9.3-dev2")) >= 0) {
-			Updater.pastDay1 = Updater.gameTime > 65000;
-		} else {
-			Updater.gameTime = 65000; // prevents time cheating.
-		}
-		
-		int diffIdx = Integer.parseInt(data.remove(0));
-		if(worldVer.compareTo(new Version("1.9.3-dev3")) < 0)
-			diffIdx--; // account for change in difficulty
-		
-		Settings.setIdx("diff", diffIdx);
-		
-		AirWizard.beaten = Boolean.parseBoolean(data.remove(0));
-	}
-
-	public static BufferedImage[] loadSpriteSheets() throws IOException {
-		BufferedImage[] images = new BufferedImage[] { null, null, null, null };
-
-		File itemFile = new File(Game.gameDir + "/resources/items.png");
-		if (itemFile.exists()) {
-			images[0] = ImageIO.read(itemFile);
-		}
-		File tileFile = new File(Game.gameDir + "/resources/tiles.png");
-		if (tileFile.exists()) {
-			images[1] = ImageIO.read(tileFile);
-		}
-		File entityFile = new File(Game.gameDir + "/resources/entities.png");
-		if (entityFile.exists()) {
-			images[2] = ImageIO.read(entityFile);
-		}
-		File guiFile = new File(Game.gameDir + "/resources/gui.png");
-		if (guiFile.exists()) {
-			images[3] = ImageIO.read(guiFile);
-		}
-		return images;
-	}
-	
-	private void loadMode(String modedata) {
-		int mode;
-		if(modedata.contains(";")) {
-			String[] modeinfo = modedata.split(";");
-			mode = Integer.parseInt(modeinfo[0]);
-			if(worldVer.compareTo(new Version("2.0.3")) <= 0)
-				mode--; // we changed the min mode idx from 1 to 0.
-			if(mode == 3) {
-				Updater.scoreTime = Integer.parseInt(modeinfo[1]);
-				if(worldVer.compareTo(new Version("1.9.4")) >= 0)
-					Settings.set("scoretime", modeinfo[2]);
-			}
-		} else {
-			mode = Integer.parseInt(modedata);
-			if(worldVer.compareTo(new Version("2.0.3")) <= 0)
-				mode--; // we changed the min mode idx from 1 to 0.
-			
-			if(mode == 3) Updater.scoreTime = 300;
-		}
-		
-		Settings.setIdx("mode", mode);
-	}
-	
-	private void loadPrefs(String filename) {
-		loadFromFile(location + filename + extension);
-		
-		Version prefVer = new Version("2.0.2"); // the default, b/c this doesn't really matter much being specific past this if it's not set below.
-		
-		// TODO reformat the preferences file so that it uses key-value pairs. or json. JSON would be good.
-		// TODO then, allow multiple saved accounts.
-		// TODO do both of these in the same version (likely 2.0.5-dev1) because I also want to Make another iteration of LegacyLoad.
-		
-		if(!data.get(2).contains(";")) // signifies that this file was last written to by a version after 2.0.2.
-			prefVer = new Version(data.remove(0));
-		
-		Settings.set("sound", Boolean.parseBoolean(data.remove(0)));
-		Settings.set("autosave", Boolean.parseBoolean(data.remove(0)));
-		
-		if(prefVer.compareTo(new Version("2.0.4-dev2")) >= 0)
-			Settings.set("fps", Integer.parseInt(data.remove(0)));
-
-		if(prefVer.compareTo(new Version("2.0.7-dev5")) >= 0)
-			Settings.setIdx("Skins", Integer.parseInt(data.remove(0)));
-
-		List<String> subdata;
-		
-		if(prefVer.compareTo(new Version("2.0.3-dev1")) < 0) {
-			subdata = data;
-		} else {
-			MultiplayerDisplay.savedIP = data.remove(0);
-			if(prefVer.compareTo(new Version("2.0.3-dev3")) > 0) {
-				MultiplayerDisplay.savedUUID = data.remove(0);
-				MultiplayerDisplay.savedUsername = data.remove(0);
-			}
-			
-			if(prefVer.compareTo(new Version("2.0.4-dev3")) >= 0) {
-				String lang = data.remove(0);
-				Settings.set("language", lang);
-				Localization.changeLanguage(lang);
-			}
-			
-			String keyData = data.get(0);
-			subdata = Arrays.asList(keyData.split(":"));
-		}
-		
-		for (String keymap : subdata) {
-			String[] map = keymap.split(";");
-			Game.input.setKey(map[0], map[1]);
-		}
-	}
-	
-	private void loadServerConfig(String filename, MinicraftServer server) {
-		loadFromFile(location + filename + extension);
-		
-		server.setPlayerCap(Integer.parseInt(data.get(0)));
-	}
-	
-	private void loadWorld(String filename) {
-		for(int l = World.maxLevelDepth; l >= World.minLevelDepth; l--) {
-			LoadingDisplay.setMessage(Level.getDepthString(l));
-			int lvlidx = World.lvlIdx(l);
-			loadFromFile(location + filename + lvlidx + extension);
-			
-			int lvlw = Integer.parseInt(data.get(0));
-			int lvlh = Integer.parseInt(data.get(1));
-
-			boolean hasSeed = worldVer.compareTo(new Version("2.0.7-dev2")) >= 0;
-			long seed = hasSeed ? Long.parseLong(data.get(2)) : 0;
-			Settings.set("size", lvlw);
-			
-			byte[] tiles = new byte[lvlw * lvlh];
-			byte[] tdata = new byte[lvlw * lvlh];
-			
-			for(int x = 0; x < lvlw; x++) {
-				for(int y = 0; y < lvlh; y++) {
-					int tileArrIdx = y + x * lvlw;
-					int tileidx = x + y * lvlw; // the tiles are saved with x outer loop, and y inner loop, meaning that the list reads down, then right one, rather than right, then down one.
-					String tilename = data.get(tileidx + (hasSeed ? 4 : 3));
-					if(worldVer.compareTo(new Version("1.9.4-dev6")) < 0) {
-						int tileID = Integer.parseInt(tilename); // they were id numbers, not names, at this point
-						if(Tiles.oldids.get(tileID) != null)
-							tilename = Tiles.oldids.get(tileID);
-						else {
-							System.out.println("Tile list doesn't contain tile " + tileID);
-							tilename = "grass";
-						}
+	public static void writeToFile(String filename, String[] savedata, boolean isWorldSave) throws IOException {
+		try (BufferedWriter bufferedWriter = new BufferedWriter(new FileWriter(filename))) {
+			for(int i = 0; i < savedata.length; i++) {
+				bufferedWriter.write(savedata[i]);
+				if(isWorldSave) {
+					bufferedWriter.write(",");
+					if(filename.contains("Level5") && i == savedata.length - 1) {
+						bufferedWriter.write(",");
 					}
+				} else
+					bufferedWriter.write("\n");
+			}
+		}
+	}
+	
+	private void writeGame(String filename) {
+		data.add(String.valueOf(Game.VERSION));
+		data.add(Settings.getIdx("mode") + (Game.isMode("score")?";"+Updater.scoreTime+";"+Settings.get("scoretime"):""));
+		data.add(String.valueOf(Updater.tickCount));
+		data.add(String.valueOf(Updater.gameTime));
+		data.add(String.valueOf(Settings.getIdx("diff")));
+		data.add(String.valueOf(AirWizard.beaten));
+		writeToFile(location + filename + extension, data);
+	}
+	
+	private void writePrefs() {
+		data.add(String.valueOf(Game.VERSION));
+		data.add(String.valueOf(Settings.get("sound")));
+		data.add(String.valueOf(Settings.get("autosave")));
+		data.add(String.valueOf(Settings.get("fps")));
+		data.add(String.valueOf(Settings.getIdx("Skins")));
+		System.out.println("S:" + Settings.getIdx("Skins"));
+		data.add(MultiplayerDisplay.savedIP);
+		data.add(MultiplayerDisplay.savedUUID);
+		data.add(MultiplayerDisplay.savedUsername);
+		data.add(Localization.getSelectedLanguage());
+		
+		List<String> keyPairs = new ArrayList<>();
+		Collections.addAll(keyPairs, Game.input.getKeyPrefs());
+		
+		data.add(String.join(":", keyPairs.toArray(new String[keyPairs.size()])));
 
-					if(tilename.equalsIgnoreCase("WOOL") && worldVer.compareTo(new Version("2.0.6-dev4")) < 0) {
-						switch (Integer.parseInt(extradata.get(tileidx))) {
-							case 1:
-								tilename = "Red Wool";
-								break;
-							case 2:
-								tilename = "Yellow Wool";
-								break;
-							case 3:
-								tilename = "Green Wool";
-								break;
-							case 4:
-								tilename = "Blue Wool";
-								break;
-							case 5:
-								tilename = "Black Wool";
-								break;
-							default:
-								tilename = "Wool";
-						}
-					}
-
-					if(l == World.minLevelDepth+1 && tilename.equalsIgnoreCase("LAPIS") && worldVer.compareTo(new Version("2.0.3-dev6")) < 0) {
-						if(Math.random() < 0.8) // don't replace *all* the lapis
-							tilename = "Gem Ore";
-					}
-					tiles[tileArrIdx] = Tiles.get(tilename).id;
-					tdata[tileArrIdx] = Byte.parseByte(extradata.get(tileidx));
+		writeToFile(location + "Preferences" + extension, data);
+		
+		if((boolean)Settings.get("unlockedskin"))
+			data.add("AirSkin");
+		
+		if(Settings.getEntry("scoretime").getValueVisibility(10))
+			data.add("10_ScoreTime");
+		if(Settings.getEntry("scoretime").getValueVisibility(120))
+			data.add("120_ScoreTime");
+		
+		writeToFile(location + "Unlocks" + extension, data);
+	}
+	
+	private void writeServerConfig(String filename, MinicraftServer server) {
+		data.add(String.valueOf(server.getPlayerCap()));
+		
+		writeToFile(location + filename + extension, data);
+	}
+	
+	private void writeWorld(String filename) {
+		LoadingDisplay.setMessage("Levels");
+		for(int l = 0; l < World.levels.length; l++) {
+			String worldSize = String.valueOf(Settings.get("size"));
+			data.add(worldSize);
+			data.add(worldSize);
+			data.add(Long.toString(World.levels[l].getSeed()));
+			data.add(String.valueOf(World.levels[l].depth));
+			
+			for(int x = 0; x < World.levels[l].w; x++) {
+				for(int y = 0; y < World.levels[l].h; y++) {
+					data.add(String.valueOf(World.levels[l].getTile(x, y).name));
 				}
 			}
 			
-			Level parent = World.levels[World.lvlIdx(l+1)];
-			World.levels[lvlidx] = new Level(lvlw, lvlh, seed, l, parent, false);
-			
-			Level curLevel = World.levels[lvlidx];
-			curLevel.tiles = tiles;
-			curLevel.data = tdata;
-			
-			if(Game.debug) curLevel.printTileLocs(Tiles.get("Stairs Down"));
-			
-			if(parent == null) continue;
-			/// confirm that there are stairs in all the places that should have stairs.
-			for(minicraft.gfx.Point p: parent.getMatchingTiles(Tiles.get("Stairs Down"))) {
-				if(curLevel.getTile(p.x, p.y) != Tiles.get("Stairs Up")) {
-					curLevel.printLevelLoc("INCONSISTENT STAIRS detected; placing stairsUp", p.x, p.y);
-					curLevel.setTile(p.x, p.y, Tiles.get("Stairs Up"));
-				}
-			}
-			for(minicraft.gfx.Point p: curLevel.getMatchingTiles(Tiles.get("Stairs Up"))) {
-				if(parent.getTile(p.x, p.y) != Tiles.get("Stairs Down")) {
-					parent.printLevelLoc("INCONSISTENT STAIRS detected; placing stairsDown", p.x, p.y);
-					parent.setTile(p.x, p.y, Tiles.get("Stairs Down"));
-				}
-			}
+			writeToFile(location + filename + l + extension, data);
 		}
+		
+		for(int l = 0; l < World.levels.length; l++) {
+			for(int x = 0; x < World.levels[l].w; x++) {
+				for(int y = 0; y < World.levels[l].h; y++) {
+					data.add(String.valueOf(World.levels[l].getData(x, y)));
+				}
+			}
+			
+			writeToFile(location + filename + l + "data" + extension, data);
+		}
+		
 	}
 	
-	public void loadPlayer(String filename, Player player) {
+	private void writePlayer(String filename, Player player) {
 		LoadingDisplay.setMessage("Player");
-		loadFromFile(location + filename + extension);
-		loadPlayer(player, data);
-	}
-	public void loadPlayer(Player player, List<String> origData) {
-		List<String> data = new ArrayList<>(origData);
-		player.x = Integer.parseInt(data.remove(0));
-		player.y = Integer.parseInt(data.remove(0));
-		player.spawnx = Integer.parseInt(data.remove(0));
-		player.spawny = Integer.parseInt(data.remove(0));
-		player.health = Integer.parseInt(data.remove(0));
-		if(worldVer.compareTo(new Version("2.0.4-dev7")) >= 0)
-			player.hunger = Integer.parseInt(data.remove(0));
-		player.armor = Integer.parseInt(data.remove(0));
-		
-		if(worldVer.compareTo(new Version("2.0.5-dev5")) >= 0 || player.armor > 0 || worldVer.compareTo(new Version("2.0.5-dev4")) == 0 && data.size() > 5) {
-			if(worldVer.compareTo(new Version("2.0.4-dev7")) < 0) {
-				// reverse order b/c we are taking from the end
-				player.curArmor = (ArmorItem) Items.get(data.remove(data.size()-1));
-				player.armorDamageBuffer = Integer.parseInt(data.remove(data.size()-1));
-			}
-			else {
-				player.armorDamageBuffer = Integer.parseInt(data.remove(0));
-				player.curArmor = (ArmorItem) Items.get(data.remove(0), true);
-			}
-		}
-		player.setScore(Integer.parseInt(data.remove(0)));
-		
-		if(worldVer.compareTo(new Version("2.0.4-dev7")) < 0) {
-			int arrowCount = Integer.parseInt(data.remove(0));
-			if(worldVer.compareTo(new Version("2.0.1-dev1")) < 0)
-				player.getInventory().add(Items.get("arrow"), arrowCount);
-		}
-		
-		Game.currentLevel = Integer.parseInt(data.remove(0));
-		Level level = World.levels[Game.currentLevel];
-		if(!player.isRemoved()) player.remove(); // removes the user player from the level, in case they would be added twice.
-		if(!Game.isValidServer() || player != Game.player) {
-			if(level != null)
-				level.add(player);
-			else if(Game.debug)
-				System.out.println(Network.onlinePrefix() + "game level to add player " + player + " to is null.");
-		}
-		
-		if(worldVer.compareTo(new Version("2.0.4-dev8")) < 0) {
-			String modedata = data.remove(0);
-			if(player == Game.player)
-				loadMode(modedata); // only load if you're loading the main player
-		}
-		
-		String potioneffects = data.remove(0);
-		if(!potioneffects.equals("PotionEffects[]")) {
-			String[] effects = potioneffects.replace("PotionEffects[", "").replace("]", "").split(":");
-
-			for (String s : effects) {
-				String[] effect = s.split(";");
-				PotionType pName = Enum.valueOf(PotionType.class, effect[0]);
-				PotionItem.applyPotion(player, pName, Integer.parseInt(effect[1]));
-			}
-		}
-		
-		if(worldVer.compareTo(new Version("1.9.4-dev4")) < 0) {
-			String colors = data.remove(0).replace("[", "").replace("]", "");
-			String[] color = colors.split(";");
-			int[] cols = new int[color.length];
-			for(int i = 0; i < cols.length; i++)
-				cols[i] = Integer.parseInt(color[i]) / 50;
-
-			String col = "" + cols[0] + cols[1] + cols[2];
-			System.out.println("Getting color as " + col);
-			player.shirtColor = Integer.parseInt(col);
-		} else if (worldVer.compareTo(new Version("2.0.6-dev4")) < 0) {
-			String color = data.remove(0);
-			int[] colors = new int[3];
-			for (int i = 0; i < 3; i++)
-				colors[i] = Integer.parseInt(String.valueOf(color.charAt(i)));
-			player.shirtColor = Color.get(1, colors[0] * 51, colors[1] * 51, colors[2] * 51);
-		}
-		else
-			player.shirtColor = Integer.parseInt(data.remove(0));
-		
-		player.skinon = Boolean.parseBoolean(data.remove(0));
+		writePlayer(player, data);
+		writeToFile(location + filename + extension, data);
 	}
 	
-	protected static String subOldName(String name, Version worldVer) {
-		if (worldVer.compareTo(new Version("1.9.4-dev4")) < 0) {
-			name = name.replace("Hatchet", "Axe").replace("Pick", "Pickaxe").replace("Pickaxeaxe", "Pickaxe").replace("Spade", "Shovel").replace("Pow glove", "Power Glove").replace("II", "").replace("W.Bucket", "Water Bucket").replace("L.Bucket", "Lava Bucket").replace("G.Apple", "Gold Apple").replace("St.", "Stone").replace("Ob.", "Obsidian").replace("I.Lantern", "Iron Lantern").replace("G.Lantern", "Gold Lantern").replace("BrickWall", "Wall").replace("Brick", " Brick").replace("Wall", " Wall").replace("  ", " ");
-			if (name.equals("Bucket"))
-				name = "Empty Bucket";
-		}
+	public static void writePlayer(Player player, List<String> data) {
+		data.clear();
+		data.add(String.valueOf(player.x));
+		data.add(String.valueOf(player.y));
+		data.add(String.valueOf(player.spawnx));
+		data.add(String.valueOf(player.spawny));
+		data.add(String.valueOf(player.health));
+		data.add(String.valueOf(player.hunger));
+		data.add(String.valueOf(player.armor));
+		data.add(String.valueOf(player.armorDamageBuffer));
+		data.add(String.valueOf(player.curArmor == null ? "NULL" : player.curArmor.getName()));
+		data.add(String.valueOf(player.getScore()));
+		data.add(String.valueOf(Game.currentLevel));
 		
-		if (worldVer.compareTo(new Version("1.9.4")) < 0) {
-			name = name.replace("I.Armor", "Iron Armor").replace("S.Armor", "Snake Armor").replace("L.Armor", "Leather Armor").replace("G.Armor", "Gold Armor").replace("BrickWall", "Wall");
-		}
-
-		if (worldVer.compareTo(new Version("2.0.6-dev3")) < 0) {
-			name = name.replace("Fishing Rod", "Wood Fishing Rod");
-		}
-
-		// Only runs if the version is less than 2.0.7-dev1.
-		if (worldVer.compareTo(new Version("2.0.7-dev1")) < 0) {
-			if (name.startsWith("Seeds"))
-				name = name.replace("Seeds", "Wheat Seeds");
-		}
-
-		return name;
+		StringBuilder subdata = new StringBuilder("PotionEffects[");
+		
+		for(java.util.Map.Entry<PotionType, Integer> potion: player.potioneffects.entrySet())
+			subdata.append(potion.getKey()).append(";").append(potion.getValue()).append(":");
+		
+		if(player.potioneffects.size() > 0)
+			subdata = new StringBuilder(subdata.substring(0, subdata.length() - (1)) + "]"); // cuts off extra ":" and appends "]"
+		else subdata.append("]");
+		data.add(subdata.toString());
+		
+		data.add(String.valueOf(player.shirtColor));
+		data.add(String.valueOf(player.skinon));
 	}
 	
-	public void loadInventory(String filename, Inventory inventory) {
-		loadFromFile(location + filename + extension);
-		loadInventory(inventory, data);
+	private void writeInventory(String filename, Player player) {
+		writeInventory(player, data);
+		writeToFile(location + filename + extension, data);
 	}
-	public void loadInventory(Inventory inventory, List<String> data) {
-		inventory.clearInv();
-
-		for (String item : data) {
-			if (item.length() == 0) {
-				System.err.println("loadInventory: Item in data list is \"\", skipping item");
-				continue;
-			}
-
-			if (worldVer.compareTo(new Version("2.0.7-dev1")) < 0) {
-				item = subOldName(item, worldVer);
-			}
-
-			if (item.contains("Power Glove")) continue; // just pretend it doesn't exist. Because it doesn't. :P
-
-			// System.out.println("Loading item: " + item);
-
-			if (worldVer.compareTo(new Version("2.0.4")) <= 0 && item.contains(";")) {
-				String[] curData = item.split(";");
-				String itemName = curData[0];
-
-				Item newItem = Items.get(itemName);
-
-				int count = Integer.parseInt(curData[1]);
-
-				if (newItem instanceof StackableItem) {
-					((StackableItem) newItem).count = count;
-					inventory.add(newItem);
-				} else inventory.add(newItem, count);
-			} else {
-				Item toAdd = Items.get(item);
-				inventory.add(toAdd);
-			}
+	public static void writeInventory(Player player, List<String> data) {
+		data.clear();
+		if(player.activeItem != null) {
+			data.add(player.activeItem.getData());
+		}
+		
+		Inventory inventory = player.getInventory();
+		
+		for(int i = 0; i < inventory.invSize(); i++) {
+			data.add(inventory.get(i).getData());
 		}
 	}
 	
-	private void loadEntities(String filename) {
+	private void writeEntities(String filename) {
 		LoadingDisplay.setMessage("Entities");
-		loadFromFile(location + filename + extension);
-		
-		for (int i = 0; i < World.levels.length; i++) {
-			World.levels[i].clearEntities();
-		}
-		for (String name : data) {
-			if (name.startsWith("Player")) continue;
-			loadEntity(name, worldVer, true);
+		for(int l = 0; l < World.levels.length; l++) {
+			for(Entity e: World.levels[l].getEntitiesToSave()) {
+				String saved = writeEntity(e, true);
+				if(saved.length() > 0)
+					data.add(saved);
+			}
 		}
 		
-		for (int i = 0; i < World.levels.length; i++) {
-			World.levels[i].checkChestCount();
-			World.levels[i].checkAirWizard();
-		}
+		writeToFile(location + filename + extension, data);
 	}
 	
-	@Nullable
-	public static Entity loadEntity(String entityData, boolean isLocalSave) {
-		if(isLocalSave) System.out.println("Warning: Assuming version of save file is current while loading entity: " + entityData);
-		return Load.loadEntity(entityData, Game.VERSION, isLocalSave);
-	}
-	@Nullable
-	public static Entity loadEntity(String entityData, Version worldVer, boolean isLocalSave) {
-		entityData = entityData.trim();
-		if (entityData.length() == 0) return null;
+	public static String writeEntity(Entity e, boolean isLocalSave) {
+		String name = e.getClass().getName();
+		name = name.substring(name.lastIndexOf('.')+1);
+		StringBuilder extradata = new StringBuilder();
+		
+		// don't even write ItemEntities or particle effects; Spark... will probably is saved, eventually; it presents an unfair cheat to remove the sparks by reloading the Game.
 
-		String[] stuff = entityData.substring(entityData.indexOf("[") + 1, entityData.indexOf("]")).split(":"); // this gets everything inside the "[...]" after the entity name.
-		List<String> info = new ArrayList<>(Arrays.asList(stuff));
-
-		String entityName = entityData.substring(0, entityData.indexOf("[")); // this gets the text before "[", which is the entity name.
+		//if(e instanceof Particle) return ""; // TODO I don't want to, but there are complications.
 		
-		if (entityName.equals("Player") && Game.debug && Game.isValidClient())
-			System.out.println("CLIENT WARNING: Loading regular player: " + entityData);
+		if(isLocalSave && (e instanceof ItemEntity || e instanceof Arrow || e instanceof RemotePlayer || e instanceof Spark || e instanceof Particle)) // wirte these only when sending a world, not writing it. (RemotePlayers are saved separately, when their info is received.)
+			return "";
 		
-		int x = Integer.parseInt(info.get(0));
-		int y = Integer.parseInt(info.get(1));
+		if(!isLocalSave)
+			extradata.append(":").append(e.eid);
 		
-		int eid = -1;
+		if(!isLocalSave && e instanceof RemotePlayer) {
+			RemotePlayer rp = (RemotePlayer)e;
+			extradata.append(":").append(rp.getData());
+		} // the "else" part is so that remote player, which is a mob, doesn't get the health thing.
+		else if(e instanceof Mob) {
+			Mob m = (Mob)e;
+			extradata.append(":").append(m.health);
+			if(e instanceof EnemyMob)
+				extradata.append(":").append(((EnemyMob) m).lvl);
+			else if (e instanceof Sheep)
+				extradata.append(":").append(((Sheep) m).cut); // Saves if the sheep is cut. If not, we could reload the save and the wool would regenerate.
+		}
+		
+		if(e instanceof Chest) {
+			Chest chest = (Chest)e;
+			
+			for(int ii = 0; ii < chest.getInventory().invSize(); ii++) {
+				Item item = chest.getInventory().get(ii);
+				extradata.append(":").append(item.getData());
+			}
+			
+			if(chest instanceof DeathChest) extradata.append(":").append(((DeathChest) chest).time);
+			if(chest instanceof DungeonChest) extradata.append(":").append(((DungeonChest) chest).isLocked());
+		}
+		
+		if(e instanceof Spawner) {
+			Spawner egg = (Spawner)e;
+			String mobname = egg.mob.getClass().getName();
+			mobname = mobname.substring(mobname.lastIndexOf(".")+1);
+			extradata.append(":").append(mobname).append(":").append(egg.mob instanceof EnemyMob ? ((EnemyMob) egg.mob).lvl : 1);
+		}
+		
+		if (e instanceof Lantern) {
+			extradata.append(":").append(((Lantern) e).type.ordinal());
+		}
+		
+		if (e instanceof Crafter) {
+			name = ((Crafter)e).type.name();
+		}
+		
 		if (!isLocalSave) {
-			eid = Integer.parseInt(info.remove(2));
-			
-			// If I find an entity that is loaded locally, but on another level in the entity data provided, then I ditch the current entity and make a new one from the info provided.
-			Entity existing = Network.getEntity(eid);
-			int entityLevel = Integer.parseInt(info.get(info.size()-1));
-			
-			if (existing != null) {
-				// existing one is out of date; replace it.
-				existing.remove();
-				Game.levels[Game.currentLevel].add(existing);
-				return null;
-			}
-			
-			if (Game.isValidClient()) {
-				if (eid == Game.player.eid)
-					return Game.player; // don't reload the main player via an entity addition, though do add it to the level (will be done elsewhere)
-				if (Game.player instanceof RemotePlayer &&
-					!((RemotePlayer)Game.player).shouldTrack(x >> 4, y >> 4, World.levels[entityLevel])
-				) {
-					// the entity is too far away to bother adding to the level.
-					if(Game.debug) System.out.println("CLIENT: Entity is too far away to bother loading: " + eid);
-					Entity dummy = new Cow();
-					dummy.eid = eid;
-					return dummy; /// we need a dummy b/c it's the only way to pass along to entity id.
-				}
-			}
+			if(e instanceof ItemEntity) extradata.append(":").append(((ItemEntity) e).getData());
+			if(e instanceof Arrow) extradata.append(":").append(((Arrow) e).getData());
+			if(e instanceof Spark) extradata.append(":").append(((Spark) e).getData());
+			if(e instanceof TextParticle) extradata.append(":").append(((TextParticle) e).getData());
 		}
+		//else // is a local save
 		
-		Entity newEntity = null;
+		int depth = 0;
+		if(e.getLevel() == null)
+			System.out.println("WARNING: Saving entity with no level reference: " + e + "; setting level to surface");
+		else
+			depth = e.getLevel().depth;
 		
-		if (entityName.equals("RemotePlayer")) {
-			if (isLocalSave) {
-				System.err.println("Remote player found in local save file.");
-				return null; // don't load them; in fact, they shouldn't be here.
-			}
-			String username = info.get(2);
-			java.net.InetAddress ip;
-			try {
-				ip = java.net.InetAddress.getByName(info.get(3));
-				int port = Integer.parseInt(info.get(4));
-				newEntity = new RemotePlayer(null, ip, port);
-				((RemotePlayer)newEntity).setUsername(username);
-				if(Game.debug) System.out.println("Prob CLIENT: Loaded remote player");
-			} catch(java.net.UnknownHostException ex) {
-				System.err.println("LOAD could not read ip address of remote player in file.");
-				ex.printStackTrace();
-			}
-		} else if (entityName.equals("Spark") && !isLocalSave) {
-			int awID = Integer.parseInt(info.get(2));
-			Entity sparkOwner = Network.getEntity(awID);
-			if (sparkOwner instanceof AirWizard)
-				newEntity = new Spark((AirWizard)sparkOwner, x, y);
-			else {
-				System.err.println("failed to load spark; owner id doesn't point to a correct entity");
-				return null;
-			}
-		} else {
-			int mobLvl = 1;
-			Class c = null;
-			if(!Crafter.names.contains(entityName)) {
-				try {
-					c = Class.forName("minicraft.entity.mob." + entityName);
-				} catch(ClassNotFoundException ignored) {}
-			}
-			
-			newEntity = getEntity(entityName.substring(entityName.lastIndexOf(".")+1), mobLvl);
-		}
-
-		if(newEntity == null)
-			return null;
+		extradata.append(":").append(World.lvlIdx(depth));
 		
-		if(newEntity instanceof Mob && !(newEntity instanceof RemotePlayer)) { // This is structured the same way as in Save.java.
-			Mob mob = (Mob)newEntity;
-			mob.health = Integer.parseInt(info.get(2));
-
-			Class c = null;
-			try {
-				c = Class.forName("minicraft.entity.mob." + entityName);
-			} catch (ClassNotFoundException e) {
-				e.printStackTrace();
-			}
-
-			if (EnemyMob.class.isAssignableFrom(c)) {
-				EnemyMob enemyMob = ((EnemyMob) mob);
-				enemyMob.lvl = Integer.parseInt(info.get(info.size()-2));
-
-				if (enemyMob.lvl == 0) {
-					if (Game.debug) System.out.println("Level 0 mob: " + entityName);
-					enemyMob.lvl = 1;
-				} else if (enemyMob.lvl > enemyMob.getMaxLevel()) {
-					enemyMob.lvl = enemyMob.getMaxLevel();
-				}
-
-				mob = enemyMob;
-			} else if (worldVer.compareTo(new Version("2.0.7-dev1")) >= 0) { // If the version is more or equal to 2.0.7-dev1
-				if (newEntity instanceof Sheep) {
-					Sheep sheep = ((Sheep) mob);
-					if (info.get(3).equalsIgnoreCase("true")) {
-
-						sheep.cut = true;
-					}
-
-					mob = sheep;
-				}
-			}
-
-			newEntity = mob;
-		} else if(newEntity instanceof Chest) {
-			Chest chest = (Chest)newEntity;
-			boolean isDeathChest = chest instanceof DeathChest;
-			boolean isDungeonChest = chest instanceof DungeonChest;
-			List<String> chestInfo = info.subList(2, info.size()-1);
-
-			int endIdx = chestInfo.size()-(isDeathChest||isDungeonChest?1:0);
-			for(int idx = 0; idx < endIdx; idx++) {
-				String itemData = chestInfo.get(idx);
-				if(worldVer.compareTo(new Version("2.0.7-dev1")) < 0)
-					itemData = subOldName(itemData, worldVer);
-								
-				if(itemData.contains("Power Glove")) continue; // ignore it.
-				
-				Item item = Items.get(itemData);
-				chest.getInventory().add(item);
-			}
-			
-			if (isDeathChest) {
-				((DeathChest)chest).time = Integer.parseInt(chestInfo.get(chestInfo.size()-1));
-			} else if (isDungeonChest) {
-				((DungeonChest)chest).setLocked(Boolean.parseBoolean(chestInfo.get(chestInfo.size()-1)));
-				if(((DungeonChest)chest).isLocked()) World.levels[Integer.parseInt(info.get(info.size()-1))].chestCount++;
-			}
-			
-			newEntity = chest;
-		} else if(newEntity instanceof Spawner) {
-			MobAi mob = (MobAi) getEntity(info.get(2).substring(info.get(2).lastIndexOf(".")+1), Integer.parseInt(info.get(3)));
-			if(mob != null)
-				newEntity = new Spawner(mob);
-		} else if(newEntity instanceof Lantern && worldVer.compareTo(new Version("1.9.4")) >= 0 && info.size() > 3) {
-			newEntity = new Lantern(Lantern.Type.values()[Integer.parseInt(info.get(2))]);
-		}
-		
-		if(!isLocalSave) {
-			if(newEntity instanceof Arrow) {
-				int ownerID = Integer.parseInt(info.get(2));
-				Mob m = (Mob)Network.getEntity(ownerID);
-				if(m != null) {
-					Direction dir = Direction.values[Integer.parseInt(info.get(3))];
-					int dmg = Integer.parseInt(info.get(5));
-					newEntity = new Arrow(m, x, y, dir, dmg);
-				}
-			}
-			if(newEntity instanceof ItemEntity) {
-				Item item = Items.get(info.get(2));
-				double zz = Double.parseDouble(info.get(3));
-				int lifetime = Integer.parseInt(info.get(4));
-				int timeleft = Integer.parseInt(info.get(5));
-				double xa = Double.parseDouble(info.get(6));
-				double ya = Double.parseDouble(info.get(7));
-				double za = Double.parseDouble(info.get(8));
-				newEntity = new ItemEntity(item, x, y, zz, lifetime, timeleft, xa, ya, za);
-			}
-			if(newEntity instanceof TextParticle) {
-				int textcol = Integer.parseInt(info.get(3));
-				newEntity = new TextParticle(info.get(2), x, y, textcol);
-				//if (Game.debug) System.out.println("Loaded text particle; color: "+Color.toString(textcol)+", text: " + info.get(2));
-			}
-		}
-		
-		newEntity.eid = eid; // this will be -1 unless set earlier, so a new one will be generated when adding it to the level.
-		if(newEntity instanceof ItemEntity && eid == -1)
-			System.out.println("Warning: Item entity was loaded with no eid");
-		
-		int curLevel = Integer.parseInt(info.get(info.size()-1));
-		if(World.levels[curLevel] != null) {
-			World.levels[curLevel].add(newEntity, x, y);
-			if(Game.debug && newEntity instanceof RemotePlayer)
-				World.levels[curLevel].printEntityStatus("Loaded ", newEntity, "mob.RemotePlayer");
-		} else if(newEntity instanceof RemotePlayer && Game.isValidClient())
-			System.out.println("CLIENT: Remote player not added because on null level");
-		
-		return newEntity;
-	}
-	
-	@Nullable
-	private static Entity getEntity(String string, int moblvl) {
-		switch(string) {
-			case "Player": return null;
-			case "RemotePlayer": return null;
-			case "Cow": return new Cow();
-			case "Sheep": return new Sheep();
-			case "Pig": return new Pig();
-			case "Zombie": return new Zombie(moblvl);
-			case "Slime": return new Slime(moblvl);
-			case "Creeper": return new Creeper(moblvl);
-			case "Skeleton": return new Skeleton(moblvl);
-			case "Knight": return new Knight(moblvl);
-			case "Snake": return new Snake(moblvl);
-			case "AirWizard": return new AirWizard(moblvl>1);
-			case "Spawner": return new Spawner(new Zombie(1));
-			case "Workbench": return new Crafter(Crafter.Type.Workbench);
-			case "Chest": return new Chest();
-			case "DeathChest": return new DeathChest();
-			case "DungeonChest": return new DungeonChest(false);
-			case "Anvil": return new Crafter(Crafter.Type.Anvil);
-			case "Enchanter": return new Crafter(Crafter.Type.Enchanter);
-			case "Loom": return new Crafter(Crafter.Type.Loom);
-			case "Furnace": return new Crafter(Crafter.Type.Furnace);
-			case "Oven": return new Crafter(Crafter.Type.Oven);
-			case "Bed": return new Bed();
-			case "Tnt": return new Tnt();
-			case "Lantern": return new Lantern(Lantern.Type.NORM);
-			case "Arrow": return new Arrow(new Skeleton(0), 0, 0, Direction.NONE, 0);
-			case "ItemEntity": return new ItemEntity(Items.get("unknown"), 0, 0);
-			case "FireParticle": return new FireParticle(0, 0);
-			case "SmashParticle": return new SmashParticle(0, 0);
-			case "TextParticle": return new TextParticle("", 0, 0, 0);
-			default : System.err.println("LOAD ERROR: Unknown or outdated entity requested: " + string);
-				return null;
-		}
+		return name + "[" + e.x + ":" + e.y + extradata + "]";
 	}
 }
