@@ -28,9 +28,9 @@ public class WallTile extends Tile {
 		super(type.name() + " Wall", (ConnectorSprite) null);
 		this.type = type;
 		switch (type) {
-			case Wood -> sprite = new ConnectorSprite(WallTile.class, new Sprite(0, 14, 3, 3, 1, 3), new Sprite(3, 14, 2, 2, 1, 3), new Sprite(1, 15, 2, 2, 1, 0, true));
-			case Stone -> sprite = new ConnectorSprite(WallTile.class, new Sprite(10, 14, 3, 3, 1, 3), new Sprite(13, 14, 2, 2, 1, 3), new Sprite(11, 15, 2, 2, 1, 0, true));
-			case Obsidian -> sprite = new ConnectorSprite(WallTile.class, new Sprite(20, 14, 3, 3, 1, 3), new Sprite(23, 14, 2, 2, 1, 3), new Sprite(21, 15, 2, 2, 1, 0, true));
+			case Wood: sprite = new ConnectorSprite(WallTile.class, new Sprite(0, 14, 3, 3, 1, 3), new Sprite(3, 14, 2, 2, 1, 3), new Sprite(1, 15, 2, 2, 1, 0, true)); break;
+			case Stone: sprite = new ConnectorSprite(WallTile.class, new Sprite(10, 14, 3, 3, 1, 3), new Sprite(13, 14, 2, 2, 1, 3), new Sprite(11, 15, 2, 2, 1, 0, true)); break;
+			case Obsidian: sprite = new ConnectorSprite(WallTile.class, new Sprite(20, 14, 3, 3, 1, 3), new Sprite(23, 14, 2, 2, 1, 3), new Sprite(21, 15, 2, 2, 1, 0, true)); break;
 		}
 		csprite = sprite;
 	}
@@ -81,15 +81,15 @@ public class WallTile extends Tile {
 		if (damage >= sbwHealth) {
 			String itemName = "", tilename = "";
 			switch (type) { // Get what tile to set and what item to drop
-				case Wood -> {
+				case Wood: {
 					itemName = "Plank";
 					tilename = "Wood Planks";
 				}
-				case Stone -> {
+				case Stone: {
 					itemName = "Stone Brick";
 					tilename = "Stone Bricks";
 				}
-				case Obsidian -> {
+				case Obsidian: {
 					itemName = "Obsidian Brick";
 					tilename = "Obsidian";
 				}
