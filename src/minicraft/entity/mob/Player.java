@@ -30,12 +30,7 @@ import minicraft.level.tile.Tile;
 import minicraft.level.tile.Tiles;
 import minicraft.network.Analytics;
 import minicraft.saveload.Save;
-import minicraft.screen.CraftingDisplay;
-import minicraft.screen.InfoDisplay;
-import minicraft.screen.LoadingDisplay;
-import minicraft.screen.PauseDisplay;
-import minicraft.screen.PlayerInvDisplay;
-import minicraft.screen.WorldSelectDisplay;
+import minicraft.screen.*;
 
 import org.jetbrains.annotations.Nullable;
 
@@ -62,8 +57,6 @@ public class Player extends Mob implements ItemHolder, ClientTickable {
 	//private boolean hasSetHome = false;
 	public boolean skinon;
 	//private int homeSetX, homeSetY;
-
-	public String selectedSkin = Settings.get("skins").toString();
 	
 	// the maximum stats that the player can have.
 	public static final int maxStat = 10;
@@ -80,8 +73,6 @@ public class Player extends Mob implements ItemHolder, ClientTickable {
 	public static MobSprite[][] carrySprites;
 	public static MobSprite[][] suitSprites;
 
-	public List<minicraft.gfx.MobSprite[]> SpriteValues[];
-
 	public static MobSprite[][] Capesprites = MobSprite.compilePlayerSpriteAnimations(0, 0);
 	private static MobSprite[][] CapecarrySprites = MobSprite.compilePlayerSpriteAnimations(0, 2); // the sprites while carrying something.
 	private static MobSprite[][] CapesuitSprites = MobSprite.compilePlayerSpriteAnimations(8, 0); // the "airwizard suit" sprites.
@@ -91,6 +82,16 @@ public class Player extends Mob implements ItemHolder, ClientTickable {
 	private static MobSprite[][] FamiliarBoycarrySprites = MobSprite.compilePlayerSpriteAnimations(0, 6); // the sprites while carrying something.
 	private static MobSprite[][] FamiliarBoysuitSprites = MobSprite.compilePlayerSpriteAnimations(8, 4); // the "airwizard suit" sprites.
 	private static MobSprite[][] FamiliarBoycarrySuitSprites = MobSprite.compilePlayerSpriteAnimations(8, 6); // the "airwizard suit" sprites.
+
+	public static MobSprite[][] FamiliarGirlsprites = MobSprite.compilePlayerSpriteAnimations(0, 4);
+	private static MobSprite[][] FamiliarGirlcarrySprites = MobSprite.compilePlayerSpriteAnimations(0, 6); // the sprites while carrying something.
+	private static MobSprite[][] FamiliarGirlsuitSprites = MobSprite.compilePlayerSpriteAnimations(8, 4); // the "airwizard suit" sprites.
+	private static MobSprite[][] FamiliarGirlcarrySuitSprites = MobSprite.compilePlayerSpriteAnimations(8, 6); // the "airwizard suit" sprites.
+
+	public static MobSprite[][] CustomSkinsprites = MobSprite.compilePlayerSpriteAnimations(0, 0);
+	private static MobSprite[][] CustomSkincarrySprites = MobSprite.compilePlayerSpriteAnimations(0, 2); // the sprites while carrying something.
+	private static MobSprite[][] CustomSkinsuitSprites = MobSprite.compilePlayerSpriteAnimations(8, 0); // the "airwizard suit" sprites.
+	private static MobSprite[][] CustomSkincarrySuitSprites = MobSprite.compilePlayerSpriteAnimations(8, 2); // the "airwizard suit" sprites.
 
 
 	private Inventory inventory;
@@ -139,7 +140,7 @@ public class Player extends Mob implements ItemHolder, ClientTickable {
 	// Note: the player's health & max health are inherited from Mob.java
 	
 	public String getDebugHunger() { return hungerStamCnt+"_"+stamHungerTicks; }
-	
+
 	public Player(@Nullable Player previousInstance, InputHandler input) {
 		super(sprites, Player.maxHealth);
 
@@ -778,45 +779,54 @@ public class Player extends Mob implements ItemHolder, ClientTickable {
 		}
 		return dmg;
 	}
-	
+
+	public String selectedSkin() {
+		return SkinDisplay.SkinOutput;
+	}
+
 	@Override
 	public void render(Screen screen) {
 
-		MobSprite[][] spriteSet = new MobSprite[0][];
+		MobSprite[][] spriteSet;
 
-		if (selectedSkin == "Paul") {
+		if (selectedSkin() == SkinDisplay.DEFAULT_SKIN) {
 			sprites = Defaultsprites;
 			carrySuitSprites = DefaultcarrySuitSprites;
 			carrySprites = DefaultcarrySprites;
 			suitSprites = DefaultsuitSprites;
-			if(activeItem instanceof FurnitureItem) {
-				spriteSet = skinon ? carrySuitSprites : carrySprites;
-			} else {
-				spriteSet = skinon ? suitSprites : sprites;
-			}
 		}
-		if (selectedSkin == "Paul (Cape)") {
+		else if (selectedSkin() == SkinDisplay.CAPE_SKIN) {
 			sprites = Capesprites;
 			carrySuitSprites = CapecarrySuitSprites;
 			carrySprites = CapecarrySprites;
 			suitSprites = CapesuitSprites;
-			if (activeItem instanceof FurnitureItem) {
-				spriteSet = skinon ? carrySuitSprites : carrySprites;
-			} else {
-				spriteSet = skinon ? suitSprites : sprites;
-			}
 		}
-		if (selectedSkin == "Familiar Boy") {
+		else if (selectedSkin() == SkinDisplay.FAMILIARBOY_SKIN) {
 			sprites = FamiliarBoysprites;
 			carrySuitSprites = FamiliarBoycarrySuitSprites;
 			carrySprites = FamiliarBoycarrySprites;
 			suitSprites = FamiliarBoysuitSprites;
-			if (activeItem instanceof FurnitureItem) {
-				spriteSet = skinon ? carrySuitSprites : carrySprites;
-			} else {
-				spriteSet = skinon ? suitSprites : sprites;
-			}
 		}
+
+		else if (selectedSkin() == SkinDisplay.FAMILIARGIRL_SKIN) {
+			sprites = FamiliarGirlsprites;
+			carrySuitSprites = FamiliarGirlcarrySuitSprites;
+			carrySprites = FamiliarGirlcarrySprites;
+			suitSprites = FamiliarGirlsuitSprites;
+		}
+		else if (selectedSkin() == SkinDisplay.CUSTOM_SKIN) {
+			sprites = CustomSkinsprites;
+			carrySuitSprites = CustomSkincarrySuitSprites;
+			carrySprites = CustomSkincarrySprites;
+			suitSprites = CustomSkinsuitSprites;
+		}
+
+        if (activeItem instanceof FurnitureItem) {
+            spriteSet = skinon ? carrySuitSprites : carrySprites;
+        } else {
+            spriteSet = skinon ? suitSprites : sprites;
+        }
+
 
 
 		/* offset locations to start drawing the sprite relative to our position */
