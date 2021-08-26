@@ -82,6 +82,11 @@ public class Screen {
 			sheets[3] = guiSheet;
 		}
 	}
+	public void setSkinSheet(SpriteSheet skinSheet){
+		if (skinSheet != null){
+			sheets[4] = skinSheet;
+		}
+	}
 	
 	/** Clears all the colors on the screen */
 	public void clear(int color) {
