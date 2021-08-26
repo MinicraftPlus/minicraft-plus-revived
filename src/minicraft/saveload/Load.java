@@ -313,7 +313,7 @@ public class Load {
 		
 		for (String keymap : subdata) {
 			String[] map = keymap.split(";");
-			Game.input.setKey(map[0], map[1]);
+			Game.input.setKey(map[0], map[0]);
 		}
 	}
 	
