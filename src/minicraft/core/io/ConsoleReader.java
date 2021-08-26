@@ -170,6 +170,7 @@ public class ConsoleReader extends Thread {
 					default: {
 						System.out.println(args[0] + " is not a valid game mode.");
 						printHelp(this);
+						break;
 					}
 				}
 				
