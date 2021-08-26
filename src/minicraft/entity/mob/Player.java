@@ -83,10 +83,10 @@ public class Player extends Mob implements ItemHolder, ClientTickable {
 	private static MobSprite[][] FamiliarBoysuitSprites = MobSprite.compilePlayerSpriteAnimations(8, 4); // the "airwizard suit" sprites.
 	private static MobSprite[][] FamiliarBoycarrySuitSprites = MobSprite.compilePlayerSpriteAnimations(8, 6); // the "airwizard suit" sprites.
 
-	public static MobSprite[][] FamiliarGirlsprites = MobSprite.compilePlayerSpriteAnimations(0, 4);
-	private static MobSprite[][] FamiliarGirlcarrySprites = MobSprite.compilePlayerSpriteAnimations(0, 6); // the sprites while carrying something.
-	private static MobSprite[][] FamiliarGirlsuitSprites = MobSprite.compilePlayerSpriteAnimations(8, 4); // the "airwizard suit" sprites.
-	private static MobSprite[][] FamiliarGirlcarrySuitSprites = MobSprite.compilePlayerSpriteAnimations(8, 6); // the "airwizard suit" sprites.
+	public static MobSprite[][] FamiliarGirlsprites = MobSprite.compilePlayerSpriteAnimations(0, 8);
+	private static MobSprite[][] FamiliarGirlcarrySprites = MobSprite.compilePlayerSpriteAnimations(0, 10); // the sprites while carrying something.
+	private static MobSprite[][] FamiliarGirlsuitSprites = MobSprite.compilePlayerSpriteAnimations(8, 8); // the "airwizard suit" sprites.
+	private static MobSprite[][] FamiliarGirlcarrySuitSprites = MobSprite.compilePlayerSpriteAnimations(8, 10); // the "airwizard suit" sprites.
 
 	public static MobSprite[][] CustomSkinsprites = MobSprite.compilePlayerSpriteAnimations(0, 0);
 	private static MobSprite[][] CustomSkincarrySprites = MobSprite.compilePlayerSpriteAnimations(0, 2); // the sprites while carrying something.
