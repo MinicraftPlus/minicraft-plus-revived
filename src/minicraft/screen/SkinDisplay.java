@@ -31,6 +31,7 @@ public class SkinDisplay extends Display {
 	public final List<String> textureIDList;
 	private final File location;
 
+	private static int offset = 0;
 	private int selected;
 	public static String SkinOutput = SkinDisplay.DEFAULT_SKIN;
 
@@ -64,7 +65,7 @@ public class SkinDisplay extends Display {
 			}
 		}
 
-		selected = Settings.getIdx("Skins");
+		selected = Settings.getIdx("Skins") + offset;
 	}
 
 	public void updateSpriteSheet(Screen screen) throws IOException {
@@ -101,6 +102,12 @@ public class SkinDisplay extends Display {
             exception.printStackTrace();
         }
 		new Save();
+        if (selected > 3) {
+        	offset = (selected - 4);
+			Settings.setIdx("Skins", 4);
+		} else {
+			Settings.setIdx("Skins", selected);
+		}
         Game.exitMenu();
     }
 

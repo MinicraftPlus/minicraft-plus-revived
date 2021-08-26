@@ -150,11 +150,24 @@ public class ConsoleReader extends Thread {
 				}
 
 				switch (args[0].toLowerCase()) {
-					case "s", "survival" -> Settings.set("mode", "Survival");
-					case "c", "creative" -> Settings.set("mode", "Creative");
-					case "h", "hardcore" -> Settings.set("mode", "Hardcore");
-					case "t", "timed", "score" -> Settings.set("mode", "Score");
-					default -> {
+					case "s":
+					case "survival":
+						Settings.set("mode", "Survival");
+						break;
+					case "c":
+					case "creative":
+						Settings.set("mode", "Creative");
+						break;
+					case "h":
+					case "hardcore":
+						Settings.set("mode", "Hardcore");
+						break;
+					case "t":
+					case "timed":
+					case"score":
+						Settings.set("mode", "Score");
+						break;
+					default: {
 						System.out.println(args[0] + " is not a valid game mode.");
 						printHelp(this);
 					}
