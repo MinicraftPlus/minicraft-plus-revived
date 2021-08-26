@@ -289,7 +289,10 @@ public class Load {
 		
 		if(prefVer.compareTo(new Version("2.0.4-dev2")) >= 0)
 			Settings.set("fps", Integer.parseInt(data.remove(0)));
-		
+
+		if(prefVer.compareTo(new Version("2.0.7-dev5")) >= 0)
+			Settings.setIdx("Skins", Integer.parseInt(data.remove(0)));
+
 		List<String> subdata;
 		
 		if(prefVer.compareTo(new Version("2.0.3-dev1")) < 0) {
@@ -313,7 +316,7 @@ public class Load {
 		
 		for (String keymap : subdata) {
 			String[] map = keymap.split(";");
-			Game.input.setKey(map[0], map[0]);
+			Game.input.setKey(map[0], map[1]);
 		}
 	}
 	
