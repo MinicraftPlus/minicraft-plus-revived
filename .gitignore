@@ -4,16 +4,20 @@
 # Backup file
 *.java~
 
-# Text file, b/c I have many w/o need
-*.txt
+# Text files in the root folder
+/*.txt
 
 # hidden files
 /.*
+
+# Gradle
+.gradle/
 
 # build folder
 build/
 bin/
 out/
+classes/
 
 # Log file
 *.log
