@@ -36,6 +36,20 @@ public class Color {
 	public static final int YELLOW = Color.get(1, 255, 255, 0);
 	public static final int MAGENTA = Color.get(1, 255, 0, 255);
 	public static final int CYAN = Color.get(1, 0, 255, 255);
+
+	public static final char COLOR_CHAR = '\u00A7';
+
+	public static final String TRANSPARENT_CODE = Color.toStringCode(Color.TRANSPARENT);
+	public static final String WHITE_CODE = Color.toStringCode(Color.WHITE);
+	public static final String GRAY_CODE = Color.toStringCode(Color.GRAY);
+	public static final String DARK_GRAY_CODE = Color.toStringCode(Color.DARK_GRAY);
+	public static final String BLACK_CODE = Color.toStringCode(Color.BLACK);
+	public static final String RED_CODE = Color.toStringCode(Color.RED);
+	public static final String GREEN_CODE = Color.toStringCode(Color.GREEN);
+	public static final String BLUE_CODE = Color.toStringCode(Color.BLUE);
+	public static final String YELLOW_CODE = Color.toStringCode(Color.YELLOW);
+	public static final String MAGENTA_CODE = Color.toStringCode(Color.MAGENTA);
+	public static final String CYAN_CODE = Color.toStringCode(Color.CYAN);
 	
 	/** This returns a minicraftrgb.
 	 * a should be between 0-1, r,g,and b should be 0-255 */
@@ -44,6 +58,22 @@ public class Color {
 	}
 	public static int get(int a, int copy) {
 		return get(a, copy, copy, copy);
+	}
+
+	public static String toStringCode(int color) {
+		return new String(new char[] {
+				Color.COLOR_CHAR,
+				(char) ((color >> 24) & 0xFF), // Alpha
+				(char) ((color >> 16) & 0xFF), // Red
+				(char) ((color >>  8) & 0xFF), // Blue
+				(char) (color         & 0xFF)  // Green
+		});
+	}
+
+	public static int get(String color) {
+		// omit color character if it's present
+		int leading = color.length() == 5 ? 1 : 0;
+		return Color.get(color.charAt(leading), color.charAt(1 + leading), color.charAt(2 + leading), color.charAt(3 + leading));
 	}
 	
 	private static int limit(int num, int min, int max) {
