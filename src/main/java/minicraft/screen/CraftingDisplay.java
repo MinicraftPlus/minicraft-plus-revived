@@ -77,7 +77,7 @@ public class CraftingDisplay extends Display {
 		HashMap<String, Integer> costMap = recipes[recipeMenu.getSelection()].getCosts();
 		for(String itemName: costMap.keySet()) {
 			Item cost = Items.get(itemName);
-			costList.add(new ItemListing(cost, costMap.get(itemName)+"/"+player.getInventory().count(cost)));
+			costList.add(new ItemListing(cost, player.getInventory().count(cost) + "/" + costMap.get(itemName)));
 		}
 		
 		return costList.toArray(new ItemListing[costList.size()]);
