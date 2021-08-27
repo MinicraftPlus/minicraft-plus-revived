@@ -46,6 +46,7 @@ public class TitleDisplay extends Display {
 				else Game.setMenu(new WorldGenDisplay());
 			}),
 			new SelectEntry("Options", () -> Game.setMenu(new OptionsDisplay())),
+      new SelectEntry("Skins", () -> Game.setMenu(new SkinDisplay())),
 			displayFactory("Help",
 				new SelectEntry("Instructions", () -> Game.setMenu(new BookDisplay(BookData.instructions))),
 				new BlankEntry(),
@@ -175,7 +176,8 @@ public class TitleDisplay extends Display {
 		"Secret Splash!",
 		"Happy birthday Minicraft!",
 		"Happy XMAS!",
-		"Multiplayer Now Included!",
+    "Now with Customizable Skins!",
+    "Skin Update by Litorom1 & El Virus!",
 		"Now with better fishing!",
 		"Now with better tools!",
 		"Now with better chests!",

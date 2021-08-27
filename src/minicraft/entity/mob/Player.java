@@ -1,6 +1,7 @@
 package minicraft.entity.mob;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 
@@ -22,23 +23,14 @@ import minicraft.entity.furniture.DeathChest;
 import minicraft.entity.furniture.Furniture;
 import minicraft.entity.furniture.Tnt;
 import minicraft.entity.particle.TextParticle;
-import minicraft.gfx.Color;
-import minicraft.gfx.MobSprite;
-import minicraft.gfx.Point;
-import minicraft.gfx.Rectangle;
-import minicraft.gfx.Screen;
+import minicraft.gfx.*;
 import minicraft.item.*;
 import minicraft.level.Level;
 import minicraft.level.tile.Tile;
 import minicraft.level.tile.Tiles;
 import minicraft.network.Analytics;
 import minicraft.saveload.Save;
-import minicraft.screen.CraftingDisplay;
-import minicraft.screen.InfoDisplay;
-import minicraft.screen.LoadingDisplay;
-import minicraft.screen.PauseDisplay;
-import minicraft.screen.PlayerInvDisplay;
-import minicraft.screen.WorldSelectDisplay;
+import minicraft.screen.*;
 
 import org.jetbrains.annotations.Nullable;
 
@@ -70,12 +62,38 @@ public class Player extends Mob implements ItemHolder, ClientTickable {
 	public static final int maxStat = 10;
 	public static final int maxHealth = maxStat, maxStamina = maxStat, maxHunger = maxStat;
 	public static final int maxArmor = 100;
-	
-	public static MobSprite[][] sprites =  MobSprite.compileMobSpriteAnimations(0, 16);
-	private static MobSprite[][] carrySprites = MobSprite.compileMobSpriteAnimations(0, 18); // the sprites while carrying something.
-	private static MobSprite[][] suitSprites = MobSprite.compileMobSpriteAnimations(8, 16); // the "airwizard suit" sprites.
-	private static MobSprite[][] carrySuitSprites = MobSprite.compileMobSpriteAnimations(8, 18); // the "airwizard suit" sprites.
-	
+
+	public static MobSprite[][] Defaultsprites = MobSprite.compileMobSpriteAnimations(0, 16);
+	public static MobSprite[][] DefaultcarrySprites = MobSprite.compileMobSpriteAnimations(0, 18); // the sprites while carrying something.
+	private static MobSprite[][] DefaultsuitSprites = MobSprite.compileMobSpriteAnimations(8, 16); // the "airwizard suit" sprites.
+	private static MobSprite[][] DefaultcarrySuitSprites = MobSprite.compileMobSpriteAnimations(8, 18); // the "airwizard suit" sprites.
+
+	public static MobSprite[][] sprites;
+	public static MobSprite[][] carrySuitSprites;
+	public static MobSprite[][] carrySprites;
+	public static MobSprite[][] suitSprites;
+
+	public static MobSprite[][] Capesprites = MobSprite.compilePlayerSpriteAnimations(0, 0);
+	private static MobSprite[][] CapecarrySprites = MobSprite.compilePlayerSpriteAnimations(0, 2); // the sprites while carrying something.
+	private static MobSprite[][] CapesuitSprites = MobSprite.compilePlayerSpriteAnimations(8, 0); // the "airwizard suit" sprites.
+	private static MobSprite[][] CapecarrySuitSprites = MobSprite.compilePlayerSpriteAnimations(8, 2); // the "airwizard suit" sprites.
+
+	public static MobSprite[][] FamiliarBoysprites = MobSprite.compilePlayerSpriteAnimations(0, 4);
+	private static MobSprite[][] FamiliarBoycarrySprites = MobSprite.compilePlayerSpriteAnimations(0, 6); // the sprites while carrying something.
+	private static MobSprite[][] FamiliarBoysuitSprites = MobSprite.compilePlayerSpriteAnimations(8, 4); // the "airwizard suit" sprites.
+	private static MobSprite[][] FamiliarBoycarrySuitSprites = MobSprite.compilePlayerSpriteAnimations(8, 6); // the "airwizard suit" sprites.
+
+	public static MobSprite[][] FamiliarGirlsprites = MobSprite.compilePlayerSpriteAnimations(0, 8);
+	private static MobSprite[][] FamiliarGirlcarrySprites = MobSprite.compilePlayerSpriteAnimations(0, 10); // the sprites while carrying something.
+	private static MobSprite[][] FamiliarGirlsuitSprites = MobSprite.compilePlayerSpriteAnimations(8, 8); // the "airwizard suit" sprites.
+	private static MobSprite[][] FamiliarGirlcarrySuitSprites = MobSprite.compilePlayerSpriteAnimations(8, 10); // the "airwizard suit" sprites.
+
+	public static MobSprite[][] CustomSkinsprites = MobSprite.compilePlayerSpriteAnimations(0, 0);
+	private static MobSprite[][] CustomSkincarrySprites = MobSprite.compilePlayerSpriteAnimations(0, 2); // the sprites while carrying something.
+	private static MobSprite[][] CustomSkinsuitSprites = MobSprite.compilePlayerSpriteAnimations(8, 0); // the "airwizard suit" sprites.
+	private static MobSprite[][] CustomSkincarrySuitSprites = MobSprite.compilePlayerSpriteAnimations(8, 2); // the "airwizard suit" sprites.
+
+
 	private Inventory inventory;
 	
 	public Item activeItem;
@@ -122,10 +140,10 @@ public class Player extends Mob implements ItemHolder, ClientTickable {
 	// Note: the player's health & max health are inherited from Mob.java
 	
 	public String getDebugHunger() { return hungerStamCnt+"_"+stamHungerTicks; }
-	
+
 	public Player(@Nullable Player previousInstance, InputHandler input) {
 		super(sprites, Player.maxHealth);
-		
+
 		x = 24;
 		y = 24;
 		this.input = input;
@@ -761,18 +779,56 @@ public class Player extends Mob implements ItemHolder, ClientTickable {
 		}
 		return dmg;
 	}
-	
+
+	public String selectedSkin() {
+		return SkinDisplay.SkinOutput;
+	}
+
 	@Override
 	public void render(Screen screen) {
-		
-		MobSprite[][] spriteSet; // the default, walking sprites.
 
-		if(activeItem instanceof FurnitureItem) {
-			spriteSet = skinon ? carrySuitSprites : carrySprites;
-		} else {
-			spriteSet = skinon ? suitSprites : sprites;
+		MobSprite[][] spriteSet;
+
+		if (selectedSkin() == SkinDisplay.DEFAULT_SKIN) {
+			sprites = Defaultsprites;
+			carrySuitSprites = DefaultcarrySuitSprites;
+			carrySprites = DefaultcarrySprites;
+			suitSprites = DefaultsuitSprites;
 		}
-		
+		else if (selectedSkin() == SkinDisplay.CAPE_SKIN) {
+			sprites = Capesprites;
+			carrySuitSprites = CapecarrySuitSprites;
+			carrySprites = CapecarrySprites;
+			suitSprites = CapesuitSprites;
+		}
+		else if (selectedSkin() == SkinDisplay.FAMILIARBOY_SKIN) {
+			sprites = FamiliarBoysprites;
+			carrySuitSprites = FamiliarBoycarrySuitSprites;
+			carrySprites = FamiliarBoycarrySprites;
+			suitSprites = FamiliarBoysuitSprites;
+		}
+
+		else if (selectedSkin() == SkinDisplay.FAMILIARGIRL_SKIN) {
+			sprites = FamiliarGirlsprites;
+			carrySuitSprites = FamiliarGirlcarrySuitSprites;
+			carrySprites = FamiliarGirlcarrySprites;
+			suitSprites = FamiliarGirlsuitSprites;
+		}
+		else if (selectedSkin() == SkinDisplay.CUSTOM_SKIN) {
+			sprites = CustomSkinsprites;
+			carrySuitSprites = CustomSkincarrySuitSprites;
+			carrySprites = CustomSkincarrySprites;
+			suitSprites = CustomSkinsuitSprites;
+		}
+
+        if (activeItem instanceof FurnitureItem) {
+            spriteSet = skinon ? carrySuitSprites : carrySprites;
+        } else {
+            spriteSet = skinon ? suitSprites : sprites;
+        }
+
+
+
 		/* offset locations to start drawing the sprite relative to our position */
 		int xo = x - 8; // horizontal
 		int yo = y - 11; // vertical
@@ -820,7 +876,7 @@ public class Player extends Mob implements ItemHolder, ClientTickable {
 		} else {
 			curSprite.renderRow(0, screen, xo, yo, -1, shirtColor);
 		}
-		
+
 		// renders slashes:
 		if (attackTime > 0) {
 			switch (attackDir) {
@@ -874,7 +930,7 @@ public class Player extends Mob implements ItemHolder, ClientTickable {
 					break;
 			}
 		}
-		
+
 		// Renders the furniture if the player is holding one.
 		if (activeItem instanceof FurnitureItem) {
 			Furniture furniture = ((FurnitureItem) activeItem).furniture;
@@ -883,26 +939,26 @@ public class Player extends Mob implements ItemHolder, ClientTickable {
 			furniture.render(screen);
 		}
 	}
-	
+
 	/** What happens when the player interacts with a itemEntity */
 	public void pickupItem(ItemEntity itemEntity) {
 		Sound.pickup.play();
 		itemEntity.remove();
 		addScore(1);
 		if(Game.isMode("creative")) return; // we shall not bother the inventory on creative mode.
-		
+
 		if(itemEntity.item instanceof StackableItem && ((StackableItem)itemEntity.item).stacksWith(activeItem)) // picked up item equals the one in your hand
 			((StackableItem)activeItem).count += ((StackableItem)itemEntity.item).count;
 		else
 			inventory.add(itemEntity.item); // add item to inventory
 	}
-	
+
 	// the player can swim.
 	public boolean canSwim() { return true; }
-	
+
 	// can walk on wool tiles..? quickly..?
 	public boolean canWool() { return true; }
-	
+
 	/**
 	 * Finds a starting position for the player.
 	 * @param level Level which the player wants to start in.
@@ -912,7 +968,7 @@ public class Player extends Mob implements ItemHolder, ClientTickable {
 		random.setSeed(spawnSeed);
 		findStartPos(level);
 	}
-	
+
 	/**
 	 * Finds the starting position for the player in a level.
 	 * @param level The level.
@@ -920,15 +976,15 @@ public class Player extends Mob implements ItemHolder, ClientTickable {
 	public void findStartPos(Level level) { findStartPos(level, true); }
 	public void findStartPos(Level level, boolean setSpawn) {
 		Point spawnPos;
-		
+
 		List<Point> spawnTilePositions = level.getMatchingTiles(Tiles.get("grass"));
-		
+
 		if(spawnTilePositions.size() == 0)
 			spawnTilePositions.addAll(level.getMatchingTiles((t, x, y) -> t.maySpawn()));
-		
+
 		if(spawnTilePositions.size() == 0)
 			spawnTilePositions.addAll(level.getMatchingTiles((t, x, y) -> t.mayPass(level, x, y, Player.this)));
-		
+
 		// there are no tiles in the entire map which the player is allowed to stand on. Not likely.
 		if(spawnTilePositions.size() == 0) {
 			spawnPos = new Point(random.nextInt(level.w/4)+level.w*3/8, random.nextInt(level.h/4)+level.h*3/8);
@@ -936,7 +992,7 @@ public class Player extends Mob implements ItemHolder, ClientTickable {
 		}
 		else // gets random valid spawn tile position.
 			spawnPos = spawnTilePositions.get(random.nextInt(spawnTilePositions.size()));
-		
+
 		if(setSpawn) {
 			// used to save (tile) coordinates of spawnpoint outside of this method.
 			spawnx = spawnPos.x;
@@ -946,7 +1002,7 @@ public class Player extends Mob implements ItemHolder, ClientTickable {
 		this.x = spawnPos.x * 16 + 8; // conversion from tile coords to entity coords.
 		this.y = spawnPos.y * 16 + 8;
 	}
-	
+
 	/**
 	 * Finds a location where the player can respawn in a given level.
 	 * @param level The level.
@@ -955,13 +1011,13 @@ public class Player extends Mob implements ItemHolder, ClientTickable {
 	public boolean respawn(Level level) {
 		if (!level.getTile(spawnx, spawny).maySpawn())
 			findStartPos(level); // if there's no bed to spawn from, and the stored coordinates don't point to a grass tile, then find a new point.
-		
+
 		// move the player to the spawnpoint
 		this.x = spawnx * 16 + 8;
 		this.y = spawny * 16 + 8;
 		return true; // again, why the "return true"'s for methods that never return false?
 	}
-	
+
 	/**
 	 * Uses an amount of stamina to do an action.
 	 * @param cost How much stamina the action requires.
@@ -970,29 +1026,29 @@ public class Player extends Mob implements ItemHolder, ClientTickable {
 	public boolean payStamina(int cost) {
 		if (potioneffects.containsKey(PotionType.Energy)) return true; // if the player has the potion effect for infinite stamina, return true (without subtracting cost).
 		else if (stamina <= 0) return false; // if the player doesn't have enough stamina, then return false; failure.
-		
+
 		if (cost < 0) cost = 0; // error correction
 		stamina -= Math.min(stamina, cost); // subtract the cost from the current stamina
 		if(Game.isValidServer() && this instanceof RemotePlayer)
 			Game.server.getAssociatedThread((RemotePlayer)this).sendStaminaChange(cost);
 		return true; // success
 	}
-	
-	/** 
-	 * Gets the player's light radius underground 
+
+	/**
+	 * Gets the player's light radius underground
 	 */
 	@Override
 	public int getLightRadius() {
 		int r = 5; // the radius of the light.
-		
+
 		if (activeItem != null && activeItem instanceof FurnitureItem) { // if player is holding furniture
 			int rr = ((FurnitureItem) activeItem).furniture.getLightRadius(); // gets furniture light radius
 			if (rr > r) r = rr; // brings player light up to furniture light, if less, since the furnture is not yet part of the level and so doesn't emit light even if it should.
 		}
-		
+
 		return r; // return light radius
 	}
-	
+
 	/** What happens when the player dies */
 	@Override
 	public void die() {
@@ -1000,32 +1056,32 @@ public class Player extends Mob implements ItemHolder, ClientTickable {
 			Analytics.SinglePlayerDeath.ping();
 		else if(Network.isConnectedClient())
 			Analytics.MultiplayerDeath.ping();
-		
+
 		score -= score / 3; // subtracts score penalty (minus 1/3 of the original score)
 		resetMultiplier();
-		
+
 		//make death chest
 		DeathChest dc = new DeathChest(this);
-		
+
 		if (activeItem != null) dc.getInventory().add(activeItem);
 		if (curArmor != null) dc.getInventory().add(curArmor);
-		
+
 		Sound.playerDeath.play();
-		
+
 		if(!Game.ISONLINE)
 			World.levels[Game.currentLevel].add(dc);
 		else if(Game.isConnectedClient())
 			Game.client.sendPlayerDeath(this, dc);
-		
+
 		super.die(); // calls the die() method in Mob.java
 	}
-	
+
 	@Override
 	public void hurt(Tnt tnt, int dmg) {
 		super.hurt(tnt, dmg);
 		payStamina(dmg * 2);
 	}
-	
+
 	/** Hurt the player.
 	 * @param damage How much damage to do to player.
 	 * @param attackDir What direction to attack.
@@ -1035,15 +1091,15 @@ public class Player extends Mob implements ItemHolder, ClientTickable {
 	@Override
 	protected void doHurt(int damage, Direction attackDir) {
 		if (Game.isMode("creative") || hurtTime > 0 || Bed.inBed(this)) return; // can't get hurt in creative, hurt cooldown, or while someone is in bed
-		
+
 		if(Game.isValidServer() && this instanceof RemotePlayer) {
 			// let the clients deal with it.
 			Game.server.broadcastPlayerHurt(eid, damage, attackDir);
 			return;
 		}
-		
+
 		boolean fullPlayer = !(Game.isValidClient() && this != Game.player);
-		
+
 		int healthDam = 0, armorDam = 0;
 		if(fullPlayer) {
 			if (curArmor == null) { // no armor
@@ -1051,13 +1107,13 @@ public class Player extends Mob implements ItemHolder, ClientTickable {
 			} else { // has armor
 				armorDamageBuffer += damage;
 				armorDam += damage;
-				
+
 				while (armorDamageBuffer >= curArmor.level+1) {
 					armorDamageBuffer -= curArmor.level+1;
 					healthDam++;
 				}
 			}
-			
+
 			// adds a text particle telling how much damage was done to the player, and the armor.
 			if(armorDam > 0) {
 				level.add(new TextParticle("" + damage, x, y, Color.GRAY));
@@ -1079,7 +1135,7 @@ public class Player extends Mob implements ItemHolder, ClientTickable {
 		Sound.playerHurt.play();
 		hurtTime = playerHurtTime;
 	}
-	
+
 	@Override
 	public void remove() {
 		if(Game.debug) {
@@ -1088,7 +1144,7 @@ public class Player extends Mob implements ItemHolder, ClientTickable {
 		}
 		super.remove();
 	}
-	
+
 	protected String getUpdateString() {
 		String updates = super.getUpdateString() + ";";
 		updates += "skinon,"+skinon+
@@ -1101,10 +1157,10 @@ public class Player extends Mob implements ItemHolder, ClientTickable {
 		";attackDir,"+attackDir.ordinal()+
 		";activeItem,"+(activeItem==null?"null": activeItem.getData())+
 		";isFishing,"+(isFishing ?"1": "0");
-		
+
 		return updates;
 	}
-	
+
 	@Override
 	protected boolean updateField(String field, String val) {
 		if(super.updateField(field, val)) return true;
@@ -1119,7 +1175,7 @@ public class Player extends Mob implements ItemHolder, ClientTickable {
 			case "mult": multiplier = Integer.parseInt(val); return true;
 			case "attackTime": attackTime = Integer.parseInt(val); return true;
 			case "attackDir": attackDir = Direction.values[Integer.parseInt(val)]; return true;
-			case "activeItem": 
+			case "activeItem":
 				activeItem = Items.get(val, true);
 				attackItem = activeItem != null && activeItem.canAttack() ? activeItem : null;
 				return true;
@@ -1132,21 +1188,21 @@ public class Player extends Mob implements ItemHolder, ClientTickable {
 				}
 				return true;
 		}
-		
+
 		return false;
 	}
-	
+
 	public final String getPlayerData() {
 		List<String> datalist = new ArrayList<>();
 		StringBuilder playerdata = new StringBuilder();
 		playerdata.append(Game.VERSION).append("\n");
-		
+
 		Save.writePlayer(this, datalist);
 		for(String str: datalist)
 			if(str.length() > 0)
 				playerdata.append(str).append(",");
 		playerdata = new StringBuilder(playerdata.substring(0, playerdata.length() - 1) + "\n");
-		
+
 		Save.writeInventory(this, datalist);
 		for(String str: datalist)
 			if(str.length() > 0)
@@ -1155,12 +1211,13 @@ public class Player extends Mob implements ItemHolder, ClientTickable {
 			playerdata.append("null");
 		else
 			playerdata = new StringBuilder(playerdata.substring(0, playerdata.length() - 1));
-		
+
 		return playerdata.toString();
 	}
-	
+
 	@Override
 	public Inventory getInventory() {
 		return inventory;
 	}
+
 }

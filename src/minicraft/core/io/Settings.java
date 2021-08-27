@@ -4,6 +4,7 @@ import java.awt.*;
 import java.util.HashMap;
 
 import minicraft.core.Game;
+import minicraft.screen.SkinDisplay;
 import minicraft.screen.entry.ArrayEntry;
 import minicraft.screen.entry.BooleanEntry;
 import minicraft.screen.entry.RangeEntry;
@@ -46,6 +47,8 @@ public class Settings {
 
 		options.put("textures", new ArrayEntry<>("Textures", "Original", "Custom"));
 		options.get("textures").setSelection(0);
+
+		options.put("skins", new ArrayEntry<>("Skin", SkinDisplay.DEFAULT_SKIN, SkinDisplay.CAPE_SKIN, SkinDisplay.FAMILIARBOY_SKIN, SkinDisplay.FAMILIARGIRL_SKIN, SkinDisplay.CUSTOM_SKIN));
 	}
 	
 	public static void init() {}
