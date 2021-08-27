@@ -7,7 +7,7 @@ Here is a small share of the more major features that this mod adds to the origi
 * Save / Load System for worlds and settings, and respawn after death
 * 4 Selectable Built-in Skins and Custom Skin Support
 * World creation and management options, such as name, size, and terrain type of world, and rename, delete, and copy world
-* Multiplayer mode, complete with dedicated server support, with or without a GUI, as well as an online account system
+* Multiplayer mode, complete with dedicated server support, with or without a GUI, as well as an online account system (Now unofficially supported by [@El-Virus](https://www.github.com/ElVir-Software/minicraft-plus-online))
 * Many more mobs
 * Many more tiles
 * More weapons / tools, such as claymores and torches
@@ -27,7 +27,7 @@ You can find a more comprehensive list of the earlier versions, before 1.9, in [
 
 ##### Features that Chris J added to the mod:
 * Rename, copy world options
-* Multiplayer mode
+* ~~Multiplayer mode~~ (Removed 2.0.7-dev4)
 * Resizable screen size
 * Key Binding customization, so you can change the key controls
 * Saved settings
@@ -39,7 +39,7 @@ You can find a more comprehensive list of the earlier versions, before 1.9, in [
 ##### Features that the PlayMinicraft Team added to the mod:
 * More Skin options - @Litorom
 * Custom Skins Support - @Litorom & @El-Virus
-* Inventory Searcher @alice39
+* Inventory Searcher - @alice39
 * Gradle - @Makkkkus
 
 ### Current Goals
