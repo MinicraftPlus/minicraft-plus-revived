@@ -5,7 +5,7 @@ Minicraft+ is a modded version of Minicraft that adds many more features to the 
 Here is a small share of the more major features that this mod adds to the original minicraft game:
 * More Game modes -- Creative, Hardcore, and Score mode in addition to Survival
 * Save / Load System for worlds and settings, and respawn after death
-* 4 Selectable Built-in Skins and Custom Skin Support (in progress)
+* 4 Selectable Built-in Skins and Custom Skin Support
 * World creation and management options, such as name, size, and terrain type of world, and rename, delete, and copy world
 * Multiplayer mode, complete with dedicated server support, with or without a GUI, as well as an online account system
 * Many more mobs
@@ -35,6 +35,10 @@ You can find a more comprehensive list of the earlier versions, before 1.9, in [
 * Surface lighting being much more gradual, and not stuck to 4 increments.
 * Improvements to mob spawning, including mob despawning, mob count caps, and variable mob spawning rates
 * Many other tidbits and improvements
+
+##### Features that the PlayMinicraft Team added to the mod:
+* More Skin options
+* Custom Skins Support
 
 ### Current Goals
 
