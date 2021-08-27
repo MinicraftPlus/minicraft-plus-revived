@@ -39,6 +39,7 @@ You can find a more comprehensive list of the earlier versions, before 1.9, in [
 ##### Features that the PlayMinicraft Team added to the mod:
 * More Skin options
 * Custom Skins Support
+* Inventory Searcher
 
 ### Current Goals
 
