@@ -1,0 +1,57 @@
+apply plugin: 'java'
+apply plugin: 'application'
+
+project.version = '2.0.7-dev4'
+
+sourceCompatibility = 1.14
+mainClassName = 'minicraft.core.Game'
+[compileJava, compileTestJava]*.options*.encoding = 'UTF-8'
+
+repositories {
+    mavenCentral()
+
+    maven {
+        url "https://www.jabylon.org/maven/"
+    }
+}
+
+dependencies {
+    implementation 'org.jetbrains:annotations:21.0.1'
+    implementation 'org.xbill:dns:2.0.8'
+    implementation 'commons-codec:commons-codec:1.15'
+    implementation 'commons-io:commons-io:2.4'
+    implementation 'commons-logging:commons-logging:1.2'
+    implementation 'dnsjava:dnsjava:3.4.1'
+    implementation 'org.apache.httpcomponents:httpasyncclient:4.1.4'
+    implementation 'org.apache.httpcomponents:httpclient:4.5.13'
+    implementation 'org.apache.httpcomponents:httpcore:4.4.14'
+    implementation 'org.apache.httpcomponents:httpcore-nio:4.4.14'
+    implementation 'org.apache.httpcomponents:httpmime:4.5.13'
+    implementation 'org.json:json:20210307'
+    implementation 'org.slf4j:slf4j-api:1.7.32'
+    implementation 'com.mashape.unirest:unirest-java:1.4.9'
+    testImplementation 'org.hamcrest:hamcrest:2.2'
+    testImplementation 'org.junit.jupiter:junit-jupiter-api:5.7.2'
+}
+
+buildscript {
+    repositories {
+        gradlePluginPortal()
+    }
+    dependencies {
+        classpath 'gradle.plugin.com.github.jengelman.gradle.plugins:shadow:7.0.0'
+    }
+}
+apply plugin: 'com.github.johnrengelman.shadow'
+
+shadowJar {
+    archivesBaseName = 'minicraft_plus'
+    archiveClassifier.set('')
+
+    manifest {
+        attributes('Main-Class': mainClassName,
+                'Implementation-Title': project.name,
+                'Implementation-Version': project.version,
+                'SplashScreen-Image': "Minicraft_Splash_Screen_3.png")
+    }
+}
