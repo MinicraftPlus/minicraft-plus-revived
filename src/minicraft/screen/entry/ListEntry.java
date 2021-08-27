@@ -5,6 +5,8 @@ import minicraft.gfx.Color;
 import minicraft.gfx.Font;
 import minicraft.gfx.Screen;
 
+import java.util.Locale;
+
 public abstract class ListEntry {
 	
 	public static final int COL_UNSLCT = Color.GRAY;
@@ -17,6 +19,22 @@ public abstract class ListEntry {
 	 * @param input InputHandler used to get player input.
 	 */
 	public abstract void tick(InputHandler input);
+
+	public void render(Screen screen, int x, int y, boolean isSelected, String contain, int containColor) {
+		if (!visible) {
+			return;
+		}
+
+		render(screen, x, y, isSelected);
+		if (contain == null || contain.isEmpty()) {
+			return;
+		}
+
+		String string = toString().toLowerCase(Locale.ENGLISH);
+		contain = contain.toLowerCase(Locale.ENGLISH);
+
+		Font.drawColor(string.replaceAll(contain, Color.toStringCode(containColor) + contain + Color.WHITE_CODE), screen, x, y);
+	}
 	
 	/**
 	 * Renders the entry to the given screen.

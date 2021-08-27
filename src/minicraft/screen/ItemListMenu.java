@@ -10,7 +10,8 @@ class ItemListMenu extends Menu {
 			.setPositioning(new Point(9, 9), RelPos.BOTTOM_RIGHT)
 			.setDisplayLength(9)
 			.setSelectable(true)
-			.setScrollPolicies(1, false);
+			.setScrollPolicies(1, false)
+			.setSearcherBar(true);
 	}
 	
 	ItemListMenu(Builder b, ItemEntry[] entries, String title) {

@@ -111,6 +111,9 @@ public class Network extends Game {
 	}
 	
 	public static void startMultiplayerServer() {
+		System.out.println("Error: Multiplayer mode is not enabled in this version. It has been temporarily discontinued due to lack of stability.");
+		if(true) return;
+		
 		if(debug) System.out.println("Starting multiplayer server...");
 		
 		if(HAS_GUI) {

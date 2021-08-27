@@ -11,7 +11,6 @@ import minicraft.core.VersionInfo;
 import minicraft.core.World;
 import minicraft.core.io.InputHandler;
 import minicraft.core.io.Localization;
-import minicraft.core.io.Settings;
 import minicraft.entity.mob.RemotePlayer;
 import minicraft.gfx.Color;
 import minicraft.gfx.Font;
@@ -39,15 +38,15 @@ public class TitleDisplay extends Display {
 			new BlankEntry(),
 			new BlankEntry(),
 			new SelectEntry("Play", () -> /*Game.setMenu(new PlayDisplay())*/{
- 				if (WorldSelectDisplay.getWorldNames().size() > 0)
- 					Game.setMenu(new Display(true, new Menu.Builder(false, 2, RelPos.CENTER,
- 						new SelectEntry("Load World", () -> Game.setMenu(new WorldSelectDisplay())),
- 						new SelectEntry("New World", () -> Game.setMenu(new WorldGenDisplay()))
- 					).createMenu()));
- 				else Game.setMenu(new WorldGenDisplay());
- 			}),
+				if (WorldSelectDisplay.getWorldNames().size() > 0)
+					Game.setMenu(new Display(true, new Menu.Builder(false, 2, RelPos.CENTER,
+						new SelectEntry("Load World", () -> Game.setMenu(new WorldSelectDisplay())),
+						new SelectEntry("New World", () -> Game.setMenu(new WorldGenDisplay()))
+					).createMenu()));
+				else Game.setMenu(new WorldGenDisplay());
+			}),
 			new SelectEntry("Options", () -> Game.setMenu(new OptionsDisplay())),
-			new SelectEntry("Skins", () -> Game.setMenu(new SkinDisplay())),
+      new SelectEntry("Skins", () -> Game.setMenu(new SkinDisplay())),
 			displayFactory("Help",
 				new SelectEntry("Instructions", () -> Game.setMenu(new BookDisplay(BookData.instructions))),
 				new BlankEntry(),
@@ -61,7 +60,7 @@ public class TitleDisplay extends Display {
 			.createMenu()
 		);
 	}
-
+	
 	@Override
 	public void init(Display parent) {
 		super.init(null); // The TitleScreen never has a parent.
@@ -177,15 +176,14 @@ public class TitleDisplay extends Display {
 		"Secret Splash!",
 		"Happy birthday Minicraft!",
 		"Happy XMAS!",
-		"Now with Customizable Skins!",
-		"Skin Update by Litorom1 & El Virus!",
-		"Hmm..two skins look familiar...",
+    "Now with Customizable Skins!",
+    "Skin Update by Litorom1 & El Virus!",
 		"Now with better fishing!",
 		"Now with better tools!",
 		"Now with better chests!",
 		"Now with better dungeons!",
 		"Only on PlayMinicraft.com!",
-		"PlayMinicraft.com is the bomb!",
+		"Playminicraft.com is the bomb!",
 		"The Wiki is weak! Help it!",
 		"Notch is Awesome!",
 		"Dillyg10 is cool as Ice!",
