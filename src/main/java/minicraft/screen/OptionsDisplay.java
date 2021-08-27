@@ -17,7 +17,8 @@ public class OptionsDisplay extends Display {
 				Settings.getEntry("skinon"),
 				new SelectEntry("Change Key Bindings", () -> Game.setMenu(new KeyInputDisplay())),
 				Settings.getEntry("language"),
-				Settings.getEntry("textures")
+				//Settings.getEntry("textures") // old, If you want you can activate it, it does not affect the texture pack system, but it would not make much sense
+				new SelectEntry("Texture packs", () -> Game.setMenu(new TexturePackDisplay())) // New texture packs system
 			)
 			.setTitle("Options")
 			.createMenu()

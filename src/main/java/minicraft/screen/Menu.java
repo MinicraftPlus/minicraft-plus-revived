@@ -1,8 +1,6 @@
 package minicraft.screen;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
+import java.util.*;
 
 import minicraft.core.io.InputHandler;
 import minicraft.core.io.Localization;
@@ -15,6 +13,8 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 public class Menu {
+
+	private static final int LIMIT_TYPING_SEARCHER = 22;
 	
 	@NotNull
 	private ArrayList<ListEntry> entries = new ArrayList<>();
@@ -42,7 +42,19 @@ public class Menu {
 	private int selection = 0;
 	private int dispSelection = 0;
 	private int offset = 0;
-	
+
+	/**
+	 * If there's searcher bar in menu
+	 */
+	private boolean searcherBar;
+	private boolean toggleSearcherBar;
+	private List<Integer> listSearcher;
+	private int listPositionSearcher;
+	private int selectionSearcher;
+	/**
+	 * The actual typed word in searcher bar
+	 */
+	private String typingSearcher;
 	
 	private Menu() {}
 	protected Menu(Menu m) {
@@ -64,6 +76,12 @@ public class Menu {
 		selection = m.selection;
 		dispSelection = m.dispSelection;
 		offset = m.offset;
+
+		searcherBar = m.searcherBar;
+		selectionSearcher = 0;
+		listSearcher = new ArrayList<>();
+		listPositionSearcher = 0;
+		typingSearcher = "";
 	}
 	
 	public void init() {
@@ -128,8 +146,75 @@ public class Menu {
 		if(!selectable || entries.size() == 0) return;
 		
 		int prevSel = selection;
-		if(input.getKey("cursor-up").clicked) selection--;
-		if(input.getKey("cursor-down").clicked) selection++;
+		if (input.getKey("cursor-up").clicked) selection--;
+		if (input.getKey("cursor-down").clicked) selection++;
+		if (input.getKey("shift-cursor-up").clicked && selectionSearcher == 0) selectionSearcher -= 2;
+		if (input.getKey("shift-cursor-down").clicked && selectionSearcher == 0) selectionSearcher += 2;
+		if (prevSel != selection && selectionSearcher != 0) selection = prevSel;
+
+		if (searcherBar && input.getKey("searcher-bar").clicked) {
+			toggleSearcherBar = !toggleSearcherBar;
+			input.addKeyTyped("", null); // clear pressed key
+		}
+
+		if (!listSearcher.isEmpty() && selectionSearcher == 0) {
+			int speed = input.getKey("PAGE-UP").clicked ? -1 : input.getKey("PAGE-DOWN").clicked ? 1 : 0;
+			if (speed != 0) {
+				int listPosition = listPositionSearcher + speed;
+				if (listPosition < 0) {
+					listPosition = listSearcher.size() - 1;
+				}
+				listPositionSearcher = listPosition % listSearcher.size();
+				int position = listSearcher.get(listPositionSearcher);
+
+				int difference = position - selection;
+				selectionSearcher = difference > position ? -difference : difference;
+			}
+		}
+
+		if (toggleSearcherBar && searcherBar) {
+			String typingSearcher = input.addKeyTyped(this.typingSearcher, null);
+			for (String pressedKey : input.getAllPressedKeys()) {
+				if (pressedKey.equals("ENTER")) {
+					continue;
+				}
+
+				input.getKey(pressedKey).clicked = false;
+			}
+
+			// check if word was updated
+			if (typingSearcher.length() <= Menu.LIMIT_TYPING_SEARCHER && typingSearcher.length() != this.typingSearcher.length()) {
+				this.typingSearcher = typingSearcher;
+				listSearcher.clear();
+				listPositionSearcher = 0;
+
+				Iterator<ListEntry> entryIt = entries.iterator();
+				boolean shouldSelect = true;
+				for (int i = 0; entryIt.hasNext(); i++) {
+					ListEntry entry = entryIt.next();
+
+					String stringEntry = entry.toString().toLowerCase(Locale.ENGLISH);
+					String typingString = typingSearcher.toLowerCase(Locale.ENGLISH);
+
+					if (stringEntry.contains(typingString)) {
+						if (shouldSelect) {
+							int difference = i - selection;
+							selectionSearcher = difference > i ? -difference : difference;
+
+							shouldSelect = false;
+						}
+
+						listSearcher.add(i);
+					}
+				}
+			}
+		}
+
+		if (selectionSearcher != 0) {
+			boolean downDirection = selectionSearcher > 0;
+			selectionSearcher += downDirection ? -1 : 1;
+			selection += downDirection ? 1 : -1;
+		}
 		
 		int delta = selection - prevSel;
 		selection = prevSel;
@@ -196,6 +281,26 @@ public class Menu {
 				}
 			}
 		}
+
+		// render searcher bar
+		if (toggleSearcherBar && searcherBar) {
+			int spaceWidth = Font.textWidth(" ");
+			int leading = typingSearcher.length() * spaceWidth / 2;
+			// int xSearcherBar = titleLoc.x + title.length() * spaceWidth / 3 - title.length() / 2;
+			int xSearcherBar = titleLoc.x + title.length() * 8 / 2 - 16;
+
+			if (xSearcherBar - leading < 0) {
+				leading += xSearcherBar - leading;
+			}
+
+			for (int i = 0; i < typingSearcher.length() + 4; i++) {
+				if (hasFrame) {
+					screen.render(xSearcherBar + spaceWidth * i - leading, titleLoc.y - 8, 3 + 21 * 32, 0, 3);
+				}
+
+				Font.draw("> " + typingSearcher + " <", screen, xSearcherBar - leading, titleLoc.y - 8, typingSearcher.length() < Menu.LIMIT_TYPING_SEARCHER ? Color.YELLOW : Color.RED);
+			}
+		}
 		
 		// render the options
 		int y = entryBounds.getTop();
@@ -214,7 +319,11 @@ public class Menu {
 			if(!(entry instanceof BlankEntry)) {
 				Point pos = entryPos.positionRect(new Dimension(entry.getWidth(), ListEntry.getHeight()), new Rectangle(entryBounds.getLeft(), y, entryBounds.getWidth(), ListEntry.getHeight(), Rectangle.CORNER_DIMS));
 				boolean selected = idx == selection;
-				entry.render(screen, pos.x, pos.y, selected);
+				if (toggleSearcherBar && searcherBar) {
+					entry.render(screen, pos.x, pos.y, selected, typingSearcher, Color.YELLOW);
+				} else {
+					entry.render(screen, pos.x, pos.y, selected);
+				}
 				if (selected && entry.isSelectable()) {
 					// draw the arrows
 					Font.draw("> ", screen, pos.x - Font.textWidth("> "), y, ListEntry.COL_SLCT);
@@ -293,6 +402,8 @@ public class Menu {
 		@NotNull private Point anchor = center;
 		@NotNull private RelPos menuPos = RelPos.CENTER;
 		private Dimension menuSize = null;
+
+		private boolean searcherBar;
 		
 		public Builder(boolean hasFrame, int entrySpacing, RelPos entryPos, ListEntry... entries) { this(hasFrame, entrySpacing, entryPos, Arrays.asList(entries)); }
 		public Builder(boolean hasFrame, int entrySpacing, RelPos entryPos, List<ListEntry> entries) {
@@ -367,6 +478,12 @@ public class Menu {
 		public Builder setSelection(int sel, int dispSel) {
 			menu.selection = sel;
 			menu.dispSelection = dispSel;
+			return this;
+		}
+
+		public Builder setSearcherBar(boolean searcherBar) {
+			this.searcherBar = searcherBar;
+
 			return this;
 		}
 		
@@ -513,6 +630,8 @@ public class Menu {
 			if(padding < 0) padding = 0;
 			if(padding > 1) padding = 1;
 			menu.padding = (int)Math.floor(padding * menu.displayLength / 2);
+
+			menu.searcherBar = searcherBar;
 			
 			// done setting defaults/values; return the new menu 
 			
@@ -535,6 +654,7 @@ public class Menu {
 			b.fullTitleColor = fullTitleColor;
 			b.setTitleColor = setTitleColor;
 			b.titleCol = titleCol;
+			b.searcherBar = searcherBar;
 			
 			return b;
 		}

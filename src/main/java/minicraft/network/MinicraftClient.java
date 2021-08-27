@@ -170,7 +170,7 @@ public class MinicraftClient extends MinicraftConnection {
 			SRVRecord srec = queue.poll();
 			
 			// remove trailing .
-			String address = srec.getTarget().toString(true);
+			String address = srec.getTarget().toString();
 			int port = srec.getPort();
 			
 			menu.setWaitMessage("Trying server "+serverIdx+"/"+records.length);

@@ -30,6 +30,7 @@ dependencies {
     implementation 'org.json:json:20210307'
     implementation 'org.slf4j:slf4j-api:1.7.32'
     implementation 'com.mashape.unirest:unirest-java:1.4.9'
+    implementation 'org.apache.xmlgraphics:xmlgraphics-commons:2.6'
     testImplementation 'org.hamcrest:hamcrest:2.2'
     testImplementation 'org.junit.jupiter:junit-jupiter-api:5.7.2'
 }

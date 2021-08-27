@@ -30,6 +30,7 @@ public class PauseDisplay extends Display {
 			new SelectEntry("Options", () -> Game.setMenu(new OptionsDisplay()))
 			));
 		
+		/*
 		if(!Game.ISONLINE) {
 			entries.add(new SelectEntry("Make World Multiplayer", () -> {
 				Game.setMenu(null);
@@ -37,7 +38,7 @@ public class PauseDisplay extends Display {
 				Network.startMultiplayerServer();
 			}));
 		}
-		
+		*/
 		if(!Game.isValidClient()) {
 			entries.add(new SelectEntry("Save Game", () -> {
 				Game.setMenu(null);

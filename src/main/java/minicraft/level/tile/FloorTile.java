@@ -20,9 +20,9 @@ public class FloorTile extends Tile {
 		this.type = type;
 		maySpawn = true;
 		switch (type) {
-			case Wood -> sprite = new Sprite(5, 14, 2, 2, 1, 0);
-			case Stone -> sprite = new Sprite(15, 14, 2, 2, 1, 0);
-			case Obsidian -> sprite = new Sprite(25, 14, 2, 2, 1, 0);
+			case Wood: sprite = new Sprite(5, 14, 2, 2, 1, 0); break;
+			case Stone: sprite = new Sprite(15, 14, 2, 2, 1, 0); break;
+			case Obsidian: sprite = new Sprite(25, 14, 2, 2, 1, 0); break;
 		}
 		super.sprite = sprite;
 	}
@@ -39,8 +39,8 @@ public class FloorTile extends Tile {
 					}
 					Item drop;
 					switch (type) {
-						case Wood -> drop = Items.get("Plank");
-						default -> drop = Items.get(type.name() + " Brick");
+						case Wood: drop = Items.get("Plank"); break;
+						default: drop = Items.get(type.name() + " Brick"); break;
 					}
 					Sound.monsterHurt.play();
 					level.dropItem(xt * 16 + 8, yt * 16 + 8, drop);

@@ -53,14 +53,16 @@ public class Renderer extends Game {
 		SpriteSheet tileSheet = new SpriteSheet(ImageIO.read(Game.class.getResourceAsStream("/resources/textures/tiles.png")));
 		SpriteSheet entitySheet = new SpriteSheet(ImageIO.read(Game.class.getResourceAsStream("/resources/textures/entities.png")));
 		SpriteSheet guiSheet = new SpriteSheet(ImageIO.read(Game.class.getResourceAsStream("/resources/textures/gui.png")));
+		SpriteSheet skinsSheet = new SpriteSheet(ImageIO.read(Game.class.getResourceAsStream("/resources/textures/skins.png")));
 
 		SpriteSheet itemSheetCustom = sheets[0] != null ? new SpriteSheet(sheets[0]) : null;
 		SpriteSheet tileSheetCustom = sheets[1] != null ? new SpriteSheet(sheets[1]) : null;
 		SpriteSheet entitySheetCustom = sheets[2] != null ? new SpriteSheet(sheets[2]) : null;
 		SpriteSheet guiSheetCustom = sheets[3] != null ? new SpriteSheet(sheets[3]) : null;
 
-		screen = new Screen(itemSheet, tileSheet, entitySheet, guiSheet, itemSheetCustom, tileSheetCustom, entitySheetCustom, guiSheetCustom);
-		lightScreen = new Screen(itemSheet, tileSheet, entitySheet, guiSheet, itemSheetCustom, tileSheetCustom, entitySheetCustom, guiSheetCustom);
+
+		screen = new Screen(itemSheet, tileSheet, entitySheet, guiSheet, skinsSheet, itemSheetCustom, tileSheetCustom, entitySheetCustom, guiSheetCustom);
+		lightScreen = new Screen(itemSheet, tileSheet, entitySheet, guiSheet, skinsSheet, itemSheetCustom, tileSheetCustom, entitySheetCustom, guiSheetCustom);
 	}
 	
 	static void initScreen() {
