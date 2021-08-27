@@ -23,6 +23,7 @@ Minicraft+ version 2.0.7
 * Shears must be used to destroy wool tiles.
 * Server saves when stopping
 - dev4: disabled multiplayer functionality
++ Added Indonesian localization
 
 Minicraft+ version 2.0.6
 
