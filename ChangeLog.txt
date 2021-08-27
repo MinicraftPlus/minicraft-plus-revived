@@ -5,11 +5,11 @@ Minicraft+ version 2.0.7
 + Added potatoes
 + Added baked potatoes as food
 + Made zombies drop potatoes
-+ Added a play menu with multiplayer and singleplayer as options
-+ Added SRV record support; service name is _minicraft
++ Added Inventory Searcher Bar (default keys Shift+T to toggle and Next/Back Page to seek)
++ Added Fullscreen Mode (default key F11)
++ Added Indonesian localization
++ Added SRV record support; service name is _minicraft (only accessable through code)
 + Added aggregate analytics for various game states and actions
-+ Added Fullscreen Mode [ default key F11 ]
-+ Added Inventory Searcher Bar [ default keys Shift+T to toggle and Next/Back Page to seek ]
 * Sparks (the airwizard bullets) have been optimised
 * Fixed picked up dungeon chests
 * Tiles now connect to the edge of the world
@@ -17,14 +17,12 @@ Minicraft+ version 2.0.7
 * Made crops grow slower
 * Updated some textures; made wood, apples and gold apples look better
 * Made sheep drop beef
-* Picking up things no longer require stamina
+* Picking up furniture no longer require stamina
 * Mobs no longer target you and attack you when you are in creative mode
 * Fixed sound not playing on certain actions
 * You can only use axes on wood walls, wood doors, and wood floor
-* Shears must be used to destroy wool tiles.
-* Server saves when stopping
-- dev4: disabled multiplayer functionality
-+ Added Indonesian localization
+* Shears must be used to destroy wool tiles
+- Disabled multiplayer functionality
 
 Minicraft+ version 2.0.6
 
