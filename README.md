@@ -37,9 +37,10 @@ You can find a more comprehensive list of the earlier versions, before 1.9, in [
 * Many other tidbits and improvements
 
 ##### Features that the PlayMinicraft Team added to the mod:
-* More Skin options
-* Custom Skins Support
-* Inventory Searcher
+* More Skin options - @Litorom
+* Custom Skins Support - @Litorom
+* Inventory Searcher @alice39
+* Gradle - @Makkkkus
 
 ### Current Goals
 
