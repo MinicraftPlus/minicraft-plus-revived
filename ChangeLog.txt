@@ -8,6 +8,7 @@ Minicraft+ version 2.0.7
 + Added Inventory Searcher Bar (default keys Shift+T to toggle and Next/Back Page to seek)
 + Added Fullscreen Mode (default key F11)
 + Added Indonesian localization
++ Added Hungarian localization
 + Added SRV record support; service name is _minicraft (only accessable through code)
 + Added aggregate analytics for various game states and actions
 * Sparks (the airwizard bullets) have been optimised
