@@ -11,6 +11,9 @@ Minicraft+ version 2.0.7
 + Added Hungarian localization
 + Added SRV record support; service name is _minicraft (only accessable through code)
 + Added aggregate analytics for various game states and actions
++ Added new Skin Menu to change your current Skin
++ Added Built-in Contest Winners' Skins into the Skins Menu
++ Added Custom Skins Support
 * Sparks (the airwizard bullets) have been optimised
 * Fixed picked up dungeon chests
 * Tiles now connect to the edge of the world
