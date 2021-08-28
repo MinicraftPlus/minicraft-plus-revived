@@ -75,14 +75,14 @@ public class RockTile extends Tile {
 		level.add(new TextParticle("" + dmg, x * 16 + 8, y * 16 + 8, Color.RED));
 		if (damage >= maxHealth) {
 			if (dropCoal) {
-				level.dropItem(x*16+8, y*16+8, 2, 4, Items.get("Stone"));
-			} else {
 				level.dropItem(x*16+8, y*16+8, 1, 3, Items.get("Stone"));
 				int coal = 0;
 				if(!Settings.get("diff").equals("Hard")) {
 					coal++;
 				}
 				level.dropItem(x*16+8, y*16+8, coal, coal+1, Items.get("Coal"));
+			} else {
+				level.dropItem(x*16+8, y*16+8, 2, 4, Items.get("Stone"));
 			}
 			level.setTile(x, y, Tiles.get("Dirt"));
 		} else {
