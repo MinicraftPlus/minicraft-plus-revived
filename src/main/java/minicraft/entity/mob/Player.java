@@ -587,46 +587,52 @@ public class Player extends Mob implements ItemHolder, ClientTickable {
 		attackDir = dir; // make the attack direction equal the current direction
 		attackItem = activeItem; // make attackItem equal activeItem
 		
-		// If the player is holding a tool, and has stamina available do this.
-		if (activeItem instanceof ToolItem && stamina - 1 >= 0) {
-			ToolItem tool = (ToolItem) activeItem;
-			
-			if (tool.type == ToolType.Bow && tool.dur > 0 && inventory.count(Items.arrowItem) > 0) { // if the player is holding a bow, and has arrows...
-				if (!Game.isMode("creative")) inventory.removeItem(Items.arrowItem);
-				level.add(new Arrow(this, attackDir, tool.level));
-				attackTime = 10;
-				if (!Game.isMode("creative")) tool.dur--;
-				return; // we have attacked!
-			}
-		}
-		
-		// if we are simply holding an item...
+		// If we are holding an item.
 		if (activeItem != null) {
-			attackTime = 10; // attack time will be set to 10.
+			attackTime = 10;
 			boolean done = false;
+
+			// Fire a bow if we have the stamina and an arrow.
+			if (activeItem instanceof ToolItem && stamina - 1 >= 0) {
+				ToolItem tool = (ToolItem) activeItem;
+				if (tool.type == ToolType.Bow && tool.dur > 0 && inventory.count(Items.arrowItem) > 0) {
+					if (!Game.isMode("creative")) inventory.removeItem(Items.arrowItem);
+					level.add(new Arrow(this, attackDir, tool.level));
+					attackTime = 10;
+					if (!Game.isMode("creative")) tool.dur--;
+					return;
+				}
+			}
 
 			// if the interaction between you and an entity is successful, then return.
 			if (interact(getInteractionBox(INTERACT_DIST))) return;
 			
-			// otherwise, attempt to interact with the tile.
+			// Attempt to interact with the tile.
 			Point t = getInteractionTile();
-			if (t.x >= 0 && t.y >= 0 && t.x < level.w && t.y < level.h) { // if the target coordinates are a valid tile...
+
+			// If the target coordinates are a valid tile.
+			if (t.x >= 0 && t.y >= 0 && t.x < level.w && t.y < level.h) {
+
+				// Get any entities (except dropped items) on the tile.
 				List<Entity> tileEntities = level.getEntitiesInTiles(t.x, t.y, t.x, t.y, false, ItemEntity.class);
+
+				// If there are no other entities than us on the tile.
 				if (tileEntities.size() == 0 || tileEntities.size() == 1 && tileEntities.get(0) == this) {
 					Tile tile = level.getTile(t.x, t.y);
-					if (activeItem.interactOn(tile, level, t.x, t.y, this, attackDir)) { // returns true if your held item successfully interacts with the target tile.
+
+					// If the item successfully interacts with the target tile.
+					if (activeItem.interactOn(tile, level, t.x, t.y, this, attackDir)) {
 						done = true;
-					} else { // item can't interact with tile
-						if (tile.interact(level, t.x, t.y, this, activeItem, attackDir)) { // returns true if the target tile successfully interacts with the item.
-							done = true;
-						}
+
+					// Returns true if the target tile successfully interacts with the item.
+					} else if (tile.interact(level, t.x, t.y, this, activeItem, attackDir)){
+						done = true;
 					}
 				}
 				
 				if (Game.isValidServer() && this instanceof RemotePlayer) {// only do this if no interaction was actually made; b/c a tile update packet will generally happen then anyway.
 					minicraft.network.MinicraftServerThread thread = Game.server.getAssociatedThread((RemotePlayer)this);
-					//if(thread != null)
-						thread.sendTileUpdate(level, t.x, t.y); /// FIXME this part is as a semi-temporary fix for those odd tiles that don't update when they should; instead of having to make another system like the entity additions and removals (and it wouldn't quite work as well for this anyway), this will just update whatever tile the player interacts with (and fails, since a successful interaction changes the tile and therefore updates it anyway).
+					thread.sendTileUpdate(level, t.x, t.y); /// FIXME this part is as a semi-temporary fix for those odd tiles that don't update when they should; instead of having to make another system like the entity additions and removals (and it wouldn't quite work as well for this anyway), this will just update whatever tile the player interacts with (and fails, since a successful interaction changes the tile and therefore updates it anyway).
 				}
 				
 				if (!Game.isMode("creative") && activeItem.isDepleted()) {
@@ -644,6 +650,8 @@ public class Player extends Mob implements ItemHolder, ClientTickable {
 			
 			// attempts to hurt the tile in the appropriate direction.
 			Point t = getInteractionTile();
+
+			// Check if tile is in bounds of the map.
 			if (t.x >= 0 && t.y >= 0 && t.x < level.w && t.y < level.h) {
 				Tile tile = level.getTile(t.x, t.y);
 				used = tile.hurt(level, t.x, t.y, this, random.nextInt(3) + 1, attackDir) || used;

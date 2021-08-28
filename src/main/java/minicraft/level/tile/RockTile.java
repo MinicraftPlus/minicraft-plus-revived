@@ -19,12 +19,15 @@ import minicraft.item.ToolItem;
 import minicraft.item.ToolType;
 import minicraft.level.Level;
 
-/// this is the typical stone you see underground and on the surface, that gives coal.
+// This is the normal stone you see underground and on the surface, that drops coal and stone.
 
 public class RockTile extends Tile {
 	private ConnectorSprite sprite = new ConnectorSprite(RockTile.class, new Sprite(18, 6, 3, 3, 1, 3), new Sprite(21, 8, 2, 2, 1, 3), new Sprite(21, 6, 2, 2, 1, 3));
 	
-	private int coalLvl = 0;
+	private boolean dropCoal = false;
+	private int maxHealth = 50;
+
+	private int damage;
 	
 	protected RockTile(String name) {
 		super(name, (ConnectorSprite)null);
@@ -41,16 +44,16 @@ public class RockTile extends Tile {
 	}
 	
 	public boolean hurt(Level level, int x, int y, Mob source, int dmg, Direction attackDir) {
-		hurt(level, x, y, 1);
+		hurt(level, x, y, dmg);
 		return true;
 	}
 
 	public boolean interact(Level level, int xt, int yt, Player player, Item item, Direction attackDir) {
-		// creative mode can just act like survival here
 		if (item instanceof ToolItem) {
 			ToolItem tool = (ToolItem) item;
 			if (tool.type == ToolType.Pickaxe && player.payStamina(4 - tool.level) && tool.payDurability()) {
-				coalLvl = 1;
+				// Drop coal since we use a pickaxe.
+				dropCoal = true;
 				hurt(level, xt, yt, random.nextInt(10) + (tool.level) * 5 + 10);
 				return true;
 			}
@@ -59,38 +62,36 @@ public class RockTile extends Tile {
 	}
 
 	public void hurt(Level level, int x, int y, int dmg) {
-		int damage = level.getData(x, y) + dmg;
-		int rockHealth = 50;
+		damage = level.getData(x, y) + dmg;
+
 		if (Game.isMode("creative")) {
-			dmg = damage = rockHealth;
-			coalLvl = 1;
+			dmg = damage = maxHealth;
+			dropCoal = true;
 		}
+
 		level.add(new SmashParticle(x * 16, y * 16));
 		Sound.monsterHurt.play();
 
 		level.add(new TextParticle("" + dmg, x * 16 + 8, y * 16 + 8, Color.RED));
-		if (damage >= rockHealth) {
-			int count = random.nextInt(1) + 0;
-			if (coalLvl == 0) {
-				level.dropItem(x*16+8, y*16+8, 1, 4, Items.get("Stone"));
-			}
-			if (coalLvl == 1) {
-				level.dropItem(x*16+8, y*16+8, 1, 2, Items.get("Stone"));
-				int mincoal = 0, maxcoal = 1;
+		if (damage >= maxHealth) {
+			if (dropCoal) {
+				level.dropItem(x*16+8, y*16+8, 2, 4, Items.get("Stone"));
+			} else {
+				level.dropItem(x*16+8, y*16+8, 1, 3, Items.get("Stone"));
+				int coal = 0;
 				if(!Settings.get("diff").equals("Hard")) {
-					mincoal++;
-					maxcoal++;
+					coal++;
 				}
-				level.dropItem(x*16+8, y*16+8, mincoal, maxcoal, Items.get("coal"));
+				level.dropItem(x*16+8, y*16+8, coal, coal+1, Items.get("Coal"));
 			}
-			level.setTile(x, y, Tiles.get("dirt"));
+			level.setTile(x, y, Tiles.get("Dirt"));
 		} else {
 			level.setData(x, y, damage);
 		}
 	}
 
 	public boolean tick(Level level, int xt, int yt) {
-		int damage = level.getData(xt, yt);
+		damage = level.getData(xt, yt);
 		if (damage > 0) {
 			level.setData(xt, yt, damage - 1);
 			return true;

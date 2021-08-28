@@ -670,20 +670,45 @@ public class Level {
 	public List<Entity> getEntitiesInTiles(int xt, int yt, int radius) { return getEntitiesInTiles(xt, yt, radius, false); }
 	@SafeVarargs
 	public final List<Entity> getEntitiesInTiles(int xt, int yt, int radius, boolean includeGiven, Class<? extends Entity>... entityClasses) { return getEntitiesInTiles(xt-radius, yt-radius, xt+radius, yt+radius, includeGiven, entityClasses); }
+
+	/**
+	 * Get entities in a certain area on the level.
+	 * @param xt0 Left
+	 * @param yt0 Top
+	 * @param xt1 Right
+	 * @param yt1 Bottom
+	 */
 	public List<Entity> getEntitiesInTiles(int xt0, int yt0, int xt1, int yt1) { return getEntitiesInTiles(xt0, yt0, xt1, yt1, false); }
+
+	/**
+	 * Get entities in a certain area on the level, and filter them by class.
+	 * @param xt0 Left
+	 * @param yt0 Top
+	 * @param xt1 Right
+	 * @param yt1 Bottom
+	 * @param includeGiven If we should accept entities that match the provided entityClasses. If false, we ignore the provided entityClasses.
+	 * @param entityClasses Entities to accept.
+	 * @return A list of entities in the area.
+	 */
 	@SafeVarargs
 	public final List<Entity> getEntitiesInTiles(int xt0, int yt0, int xt1, int yt1, boolean includeGiven, Class<? extends Entity>... entityClasses) {
 		List<Entity> contained = new ArrayList<>();
-		for(Entity e: getEntityArray()) {
+		for (Entity e: getEntityArray()) {
 			int xt = e.x >> 4;
 			int yt = e.y >> 4;
-			if(xt >= xt0 && xt <= xt1 && yt >= yt0 && yt <= yt1) {
+
+			// Check if entity is in area.
+			if (xt >= xt0 && xt <= xt1 && yt >= yt0 && yt <= yt1) {
 				boolean matches = false;
-				for(int i = 0; !matches && i < entityClasses.length; i++)
-					if(entityClasses[i].isAssignableFrom(e.getClass()))
-						matches = true;
-				
-				if(matches == includeGiven)
+
+				// Look through all entity classes to see if they match the current entity we are at.
+				for (int i = 0; !matches && i < entityClasses.length; i++)
+					// If the current entity and an entity class match.
+					matches = entityClasses[i].isAssignableFrom(e.getClass());
+
+				// Add if the current entity matches an entity class and includeGiven is true.
+				// If includeGiven is false, add if it doesn't match.
+				if (matches == includeGiven)
 					contained.add(e);
 			}
 		}
