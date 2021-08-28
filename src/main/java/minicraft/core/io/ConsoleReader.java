@@ -164,7 +164,7 @@ public class ConsoleReader extends Thread {
 						break;
 					case "t":
 					case "timed":
-					case"score":
+					case "score":
 						Settings.set("mode", "Score");
 						break;
 					default: {
