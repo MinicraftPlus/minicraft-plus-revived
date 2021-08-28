@@ -25,13 +25,13 @@ import org.jetbrains.annotations.Nullable;
 
 public class Localization {
 	
-	private static HashSet<String> knownUnlocalizedStrings = new HashSet<>();
+	private static final HashSet<String> knownUnlocalizedStrings = new HashSet<>();
 	
-	private static HashMap<String, String> localization = new HashMap<>();
+	private static final HashMap<String, String> localization = new HashMap<>();
 	private static String selectedLanguage = "english";
 	
-	private static HashMap<String, Locale> locales = new HashMap<>();
-	private static HashMap<String, String> localizationFiles = new HashMap<>();
+	private static final HashMap<String, Locale> locales = new HashMap<>();
+	private static final HashMap<String, String> localizationFiles = new HashMap<>();
 	
 	private static String[] loadedLanguages = getLanguagesFromDirectory();
 	
@@ -43,25 +43,23 @@ public class Localization {
 	}
 	
 	@NotNull
-	public static String getLocalized(String string) {
-		if(string.matches("^[ ]*$")) return string; // blank, or just whitespace
+	public static String getLocalized(String key) {
+		if(key.matches("^[ ]*$")) return key; // blank, or just whitespace
 		
 		try {
-			double num = Double.parseDouble(string);
-			return string; // this is a number; don't try to localize it
+			double num = Double.parseDouble(key);
+			return key; // this is a number; don't try to localize it
 		} catch(NumberFormatException ignored) {}
 		
-		String localString = localization.get(string);
-		
-		// System.out.println(string +" to "+localString);
+		String localString = localization.get(key);
 		
 		if (Game.debug && localString == null) {
-			if(!knownUnlocalizedStrings.contains(string))
-				System.out.println("The string \"" + string + "\" is not localized, returning itself instead.");
-			knownUnlocalizedStrings.add(string);
+			if(!knownUnlocalizedStrings.contains(key))
+				System.out.println("The string \"" + key + "\" is not localized, returning itself instead.");
+			knownUnlocalizedStrings.add(key);
 		}
 		
-		return (localString == null ? string : localString);
+		return (localString == null ? key : localString);
 	}
 	
 	public static Locale getSelectedLocale() { return locales.getOrDefault(selectedLanguage, Locale.getDefault()); }
@@ -98,7 +96,7 @@ public class Localization {
 	
 	@NotNull
 	private static String getFileAsString() {
-    BufferedReader reader = new BufferedReader(new InputStreamReader(Game.class.getResourceAsStream(localizationFiles.getOrDefault(selectedLanguage, "/resources/localization/english_en-us.mcpl")), StandardCharsets.UTF_8));
+        BufferedReader reader = new BufferedReader(new InputStreamReader(Game.class.getResourceAsStream(localizationFiles.getOrDefault(selectedLanguage, "/resources/localization/english_en-us.mcpl")), StandardCharsets.UTF_8));
 
 
 		return String.join("\n", reader.lines().toArray(String[]::new));

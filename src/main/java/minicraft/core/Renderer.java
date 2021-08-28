@@ -117,19 +117,24 @@ public class Renderer extends Game {
 		
 		BufferStrategy bs = canvas.getBufferStrategy(); // creates a buffer strategy to determine how the graphics should be buffered.
 		Graphics g = bs.getDrawGraphics(); // gets the graphics in which java draws the picture
-		g.fillRect(0, 0, canvas.getWidth(), canvas.getHeight()); // draws the a rect to fill the whole window (to cover last?)
+		g.fillRect(0, 0, canvas.getWidth(), canvas.getHeight()); // draws a rect to fill the whole window (to cover last?)
 
-		// scales the pixels.
+		// Scale the pixels.
 		int ww = getWindowSize().width;
 		int hh = getWindowSize().height;
 		
-		// gets the image offset.
-		int xo = (canvas.getWidth() - ww) / 2 + canvas.getParent().getInsets().left;
-		int yo = (canvas.getHeight() - hh) / 2 + canvas.getParent().getInsets().top;
-		g.drawImage(image, xo, yo, ww, hh, null); //draws the image on the window
-		g.dispose(); // releases any system items that are using this method. (so we don't have crappy framerates)
-		
-		bs.show(); // makes the picture visible. (probably)
+		// Get the image offset.
+		int xOffset = (canvas.getWidth() - ww) / 2 + canvas.getParent().getInsets().left;
+		int yOffset = (canvas.getHeight() - hh) / 2 + canvas.getParent().getInsets().top;
+
+		// Draw the image on the window.
+		g.drawImage(image, xOffset, yOffset, ww, hh, null);
+
+		// Release any system items that are using this method. (so we don't have crappy framerates)
+		g.dispose();
+
+		// Make the picture visible.
+		bs.show();
 	}
 	
 	
