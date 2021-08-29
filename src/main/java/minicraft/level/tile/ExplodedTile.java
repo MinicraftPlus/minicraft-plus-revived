@@ -22,7 +22,7 @@ public class ExplodedTile extends Tile {
 	}
 	
 	public void steppedOn(Level level, int x, int y, Entity entity) {
-		if(entity instanceof Mob)
+		if (entity instanceof Mob)
 			((Mob)entity).hurt(this, x, y, 50);
 	}
 	

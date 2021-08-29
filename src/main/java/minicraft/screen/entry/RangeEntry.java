@@ -3,9 +3,9 @@ package minicraft.screen.entry;
 public class RangeEntry extends ArrayEntry<Integer> {
 	
 	private static Integer[] getIntegerArray(int min, int max) {
-		Integer[] ints = new Integer[max-min+1];
+		Integer[] ints = new Integer[max - min + 1];
 		
-		for(int i = 0; i < ints.length; i++)
+		for (int i = 0; i < ints.length; i++)
 			ints[i] = min+i;
 		
 		return ints;
@@ -24,7 +24,7 @@ public class RangeEntry extends ArrayEntry<Integer> {
 	
 	@Override
 	public void setValue(Object o) {
-		if(!(o instanceof Integer)) return;
+		if (!(o instanceof Integer)) return;
 		
 		setSelection(((Integer)o)-min);
 	}

@@ -28,12 +28,12 @@ public class LinkEntry extends SelectEntry {
 	public LinkEntry(int color, String text, String url) { this(color, text, url, true); }
 	public LinkEntry(int color, String text, String url, String failMsg) { this(color, text, url, failMsg, true); }
 	
-	public LinkEntry(int color, String text, String url, boolean localize) { this(color, text, url, Localization.getLocalized("Go to")+": "+url, localize); }
+	public LinkEntry(int color, String text, String url, boolean localize) { this(color, text, url, Localization.getLocalized("Go to") + ": " + url, localize); }
 	public LinkEntry(int color, String text, String url, String failMsg, boolean localize) {
 		super(text, () -> {
-			if(!checkedDesktop) {
+			if (!checkedDesktop) {
 				checkedDesktop = true;
-				if(Desktop.isDesktopSupported()) {
+				if (Desktop.isDesktopSupported()) {
 					desktop = Desktop.getDesktop();
 					canBrowse = desktop.isSupported(Action.BROWSE);
 				}
@@ -45,14 +45,14 @@ public class LinkEntry extends SelectEntry {
 					URI uri = URI.create(url);
 					Game.setMenu(new TempDisplay(3000, false, true, new Menu.Builder(true, 0, RelPos.CENTER, new StringEntry(Localization.getLocalized(openMsg))).createMenu()));
 					desktop.browse(uri);
-				} catch(IOException e) {
-					System.err.println("Could not parse LinkEntry url \""+url+"\" into valid URI:");
+				} catch (IOException e) {
+					System.err.println("Could not parse LinkEntry url \"" + url + "\" into valid URI:");
 					e.printStackTrace();
 					canBrowse = false;
 				}
 			}
 			
-			if(!canBrowse) {
+			if (!canBrowse) {
 				Game.setMenu(new BookDisplay(failMsg, false));
 			}
 			

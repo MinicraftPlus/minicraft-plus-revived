@@ -19,7 +19,7 @@ public class BookDisplay extends Display {
 	private static final String defaultBook = " \n \0"+"There is nothing of use here."+"\0 \0"+"Still nothing... :P";
 	
 	private static final int spacing = 3;
-	private static final int minX = 15, maxX = 15+8*32, minY = 8*5, maxY = 8*5+8*16;
+	private static final int minX = 15, maxX = 15+8 * 32, minY = 8*5, maxY = 8*5 + 8*16;
 	
 	private String[][] lines;
 	private int page;
@@ -32,20 +32,22 @@ public class BookDisplay extends Display {
 	public BookDisplay(String book, boolean hasTitle) {// this(book, hasTitle, !hasTitle); }
 	//public BookDisplay(String book, boolean hasTitle, boolean hideCountIfOnePage) {
 		page = 0;
-		if(book == null) {
+		
+		if (book == null) {
 			book = defaultBook;
 			hasTitle = false;
 		}
+		
 		book = Localization.getLocalized(book);
 		this.hasTitle = hasTitle;
 		
 		ArrayList<String[]> pages = new ArrayList<>();
 		String[] splitContents = book.split("\0");
-		for(String content: splitContents) {
+		for (String content: splitContents) {
 			String[] remainder = {content};
-			while(remainder[remainder.length-1].length() > 0) {
+			while (remainder[remainder.length-1].length() > 0) {
 				remainder = Font.getLines(remainder[remainder.length-1], maxX-minX, maxY-minY, spacing, true);
-				pages.add(Arrays.copyOf(remainder, remainder.length-1)); // removes the last element of remainder, which is the leftover.
+				pages.add(Arrays.copyOf(remainder, remainder.length-1)); // Removes the last element of remainder, which is the leftover.
 			}
 		}
 		
@@ -56,7 +58,7 @@ public class BookDisplay extends Display {
 		
 		Menu.Builder builder = new Menu.Builder(true, spacing, RelPos.CENTER);
 		
-		Menu pageCount = builder // the small rect for the title
+		Menu pageCount = builder // The small rect for the title
 			.setPositioning(new Point(Screen.w/2, 0), RelPos.BOTTOM)
 			.setEntries(StringEntry.useLines(Color.BLACK, "Page", hasTitle?"Title":"1/"+lines.length))
 			.setSelection(1)
@@ -68,8 +70,8 @@ public class BookDisplay extends Display {
 			.setShouldRender(false);
 		
 		menus = new Menu[lines.length+pageOffset];
-		if(showPageCount) menus[0] = pageCount;
-		for(int i = 0; i < lines.length; i++) {
+		if (showPageCount) menus[0] = pageCount;
+		for (int i = 0; i < lines.length; i++) {
 			menus[i+pageOffset] = builder.setEntries(StringEntry.useLines(Color.WHITE, lines[i])).createMenu();
 		}
 		
@@ -88,8 +90,8 @@ public class BookDisplay extends Display {
 	@Override
 	public void tick(InputHandler input) {
 		if (input.getKey("menu").clicked || input.getKey("exit").clicked)
-			Game.exitMenu(); // this is what closes the book; TODO if books were editable, I would probably remake the book here with the edited pages.
-		if (input.getKey("cursor-left").clicked) turnPage(-1); // this is what turns the page back
-		if (input.getKey("cursor-right").clicked) turnPage(1); // this is what turns the page forward
+			Game.exitMenu(); // This is what closes the book; TODO if books were editable, I would probably remake the book here with the edited pages.
+		if (input.getKey("cursor-left").clicked) turnPage(-1); // This is what turns the page back
+		if (input.getKey("cursor-right").clicked) turnPage(1); // This is what turns the page forward
 	}
 }

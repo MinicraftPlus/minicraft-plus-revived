@@ -3,7 +3,9 @@ package minicraft.level.tile;
 import java.util.ArrayList;
 
 import minicraft.core.Game;
-import minicraft.level.tile.farming.*;
+import minicraft.level.tile.farming.FarmTile;
+import minicraft.level.tile.farming.PotatoTile;
+import minicraft.level.tile.farming.WheatTile;
 
 public final class Tiles {
 	/// idea: to save tile names while saving space, I could encode the names in base 64 in the save file...^M

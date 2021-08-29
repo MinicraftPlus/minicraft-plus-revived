@@ -15,7 +15,6 @@ import minicraft.screen.WorldSelectDisplay.Action;
 import minicraft.screen.entry.InputEntry;
 import minicraft.screen.entry.ListEntry;
 import minicraft.screen.entry.StringEntry;
-import org.jetbrains.annotations.Nullable;
 
 public class WorldEditDisplay extends Display {
 	

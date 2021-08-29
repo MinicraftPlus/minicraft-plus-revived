@@ -11,7 +11,7 @@ public class RecipeEntry extends ItemEntry {
 	
 	public static RecipeEntry[] useRecipes(List<Recipe> recipes) {
 		RecipeEntry[] entries = new RecipeEntry[recipes.size()];
-		for(int i = 0; i < recipes.size(); i++)
+		for (int i = 0; i < recipes.size(); i++)
 			entries[i] = new RecipeEntry(recipes.get(i));
 		return entries;
 	}
@@ -28,7 +28,7 @@ public class RecipeEntry extends ItemEntry {
 	
 	@Override
 	public void render(Screen screen, int x, int y, boolean isSelected) {
-		if(isVisible()) {
+		if (isVisible()) {
 			Font.draw(toString(), screen, x, y, recipe.getCanCraft() ? COL_SLCT : COL_UNSLCT);
 			getItem().sprite.render(screen, x, y);
 		}

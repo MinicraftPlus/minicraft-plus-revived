@@ -30,29 +30,29 @@ public class PotionItem extends StackableItem {
 		this.sprite.color = type.dispColor;
 	}
 	
-	// the return value is used to determine if the potion was used, which means being discarded.
+	// The return value is used to determine if the potion was used, which means being discarded.
 	public boolean interactOn(Tile tile, Level level, int xt, int yt, Player player, Direction attackDir) {
 		return super.interactOn(applyPotion(player, type, true));
 	}
 	
-	/// only ever called to load from file
+	/// Only ever called to load from file
 	public static boolean applyPotion(Player player, PotionType type, int time) {
 		boolean result = applyPotion(player, type, time > 0);
-		if(result && time > 0) player.addPotionEffect(type, time); // overrides time
+		if (result && time > 0) player.addPotionEffect(type, time); // Overrides time
 		return result;
 	}
-	/// main apply potion method
+	/// Main apply potion method
 	public static boolean applyPotion(Player player, PotionType type, boolean addEffect) {
-		if(player.getPotionEffects().containsKey(type) != addEffect) { // if hasEffect, and is disabling, or doesn't have effect, and is enabling...
-			if(!type.toggleEffect(player, addEffect))
-				return false; // usage failed
+		if (player.getPotionEffects().containsKey(type) != addEffect) { // If hasEffect, and is disabling, or doesn't have effect, and is enabling...
+			if (!type.toggleEffect(player, addEffect))
+				return false; // Usage failed
 			
-			// transmit the effect; server never uses potions without this.
+			// Transmit the effect; server never uses potions without this.
 			if (type.transmitEffect() && Game.isValidServer() && player instanceof RemotePlayer) 
 				Game.server.getAssociatedThread((RemotePlayer)player).sendPotionEffect(type, addEffect);
 		}
 		
-		if(addEffect && type.duration > 0) player.potioneffects.put(type, type.duration); // add it
+		if (addEffect && type.duration > 0) player.potioneffects.put(type, type.duration); // Add it
 		else player.potioneffects.remove(type);
 		
 		return true;

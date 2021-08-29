@@ -33,24 +33,24 @@ public class Structure {
 	}
 	
 	public void draw(Level level, int xt, int yt) {
-		for(TilePoint p: tiles)
-			level.setTile(xt+p.x, yt+p.y, p.t);
+		for (TilePoint p: tiles)
+			 level.setTile(xt+p.x, yt+p.y, p.t);
 
-		for(Point p: furniture.keySet())
-			level.add(furniture.get(p).clone(), xt+p.x, yt+p.y, true);
+		for (Point p: furniture.keySet())
+			 level.add(furniture.get(p).clone(), xt+p.x, yt+p.y, true);
 	}
 
 	public void draw(byte[] map, int xt, int yt, int mapWidth) {
-		for(TilePoint p: tiles)
+		for (TilePoint p: tiles)
 			map[(xt + p.x) + (yt + p.y) * mapWidth] = p.t.id;
 	}
 
 	public void setData(String keys, String data) {
-		// so, the keys are single letters, each letter represents a tile
+		// So, the keys are single letters, each letter represents a tile
 		HashMap<String, String> keyPairs = new HashMap<>();
 		String[] stringKeyPairs = keys.split(",");
 
-		// puts all the keys in the keyPairs HashMap
+		// Puts all the keys in the keyPairs HashMap
 		for (int i = 0; i < stringKeyPairs.length; i++) {
 			String[] thisKey = stringKeyPairs[i].split(":");
 			keyPairs.put(thisKey[0], thisKey[1]);
@@ -64,7 +64,7 @@ public class Structure {
 			for (int c = 0; c < dataLines[i].length(); c++) {
 				if (dataLines[i].charAt(c) != '*') {
 					Tile tile = Tiles.get(keyPairs.get(String.valueOf(dataLines[i].charAt(c))));
-					this.setTile(-width / 2 + i, -height / 2 + c, tile);
+					this.setTile(-width / 2 + i, - height / 2 + c, tile);
 				}
 			}
 		}
@@ -82,20 +82,21 @@ public class Structure {
 		
 		@Override
 		public boolean equals(Object o) {
-			if(!(o instanceof TilePoint)) return false;
+			if (!(o instanceof TilePoint)) return false;
 			TilePoint p = (TilePoint) o;
 			return x == p.x && y == p.y && t.id == p.t.id;
 		}
 		
 		@Override
 		public int hashCode() {
-			return x+y*51 + t.id * 131;
+			return x + y * 51 + t.id * 131;
 		}
 	}
 	
 	static final Structure dungeonGate;
 	static final Structure dungeonLock;
 	static final Structure lavaPool;
+	
 	// All the "mobDungeon" structures are for the spawner structures
 	static final Structure mobDungeonCenter;
 	static final Structure mobDungeonNorth;
@@ -105,15 +106,15 @@ public class Structure {
 
 	static final Structure airWizardHouse;
 
-	// used for random villages
+	// Used for random villages
 	static final Structure villageHouseNormal;
 	static final Structure villageHouseTwoDoor;
 
 	static final Structure villageRuinedOverlay1;
 	static final Structure villageRuinedOverlay2;
 
-	// ok, because of the way the system works, these structures are rotated 90 degrees clockwise when placed
-	// then it's flipped on the vertical
+	// Ok, because of the way the system works, these structures are rotated 90 degrees clockwise when placed
+	// Then it's flipped on the vertical
 	static {
 		dungeonGate = new Structure();
 		dungeonGate.setData("O:Obsidian,D:Obsidian Door,W:Obsidian Wall",

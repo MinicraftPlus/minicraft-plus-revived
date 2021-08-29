@@ -35,7 +35,7 @@ public class CloudCactusTile extends Tile {
 
 	public boolean interact(Level level, int xt, int yt, Player player, Item item, Direction attackDir) {
 		if(Game.isMode("creative"))
-			return false; // go directly to hurt method
+			return false; // Go directly to hurt method
 		if (item instanceof ToolItem) {
 			ToolItem tool = (ToolItem) item;
 			if (tool.type == ToolType.Pickaxe) {
@@ -51,13 +51,12 @@ public class CloudCactusTile extends Tile {
 	public void hurt(Level level, int x, int y, int dmg) {
 		int damage = level.getData(x, y) + dmg;
 		int health = 10;
-		if(Game.isMode("creative")) dmg = damage = health;
-		level.add(new SmashParticle(x * 16, y * 16));
+		if (Game.isMode("creative")) dmg = damage = health;
+		level.add(new SmashParticle(x * 16, y * 16));	
 		Sound.monsterHurt.play();
-
 		level.add(new TextParticle("" + dmg, x * 16 + 8, y * 16 + 8, Color.RED));
 		if (damage >= health) {
-			level.setTile(x, y, Tiles.get("cloud"));
+			level.setTile(x, y, Tiles.get("Cloud"));
 		} else
 			level.setData(x, y, damage);
 	}
@@ -66,6 +65,6 @@ public class CloudCactusTile extends Tile {
 		if (entity instanceof AirWizard) return;
 		
 		if(entity instanceof Mob)
-			((Mob)entity).hurt(this, x, y, 1+Settings.getIdx("diff"));
+			((Mob)entity).hurt(this, x, y, 1 + Settings.getIdx("diff"));
 	}
 }

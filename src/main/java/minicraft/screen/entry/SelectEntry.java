@@ -33,7 +33,7 @@ public class SelectEntry extends ListEntry {
 	
 	@Override
 	public void tick(InputHandler input) {
-		if(input.getKey("select").clicked && onSelect != null) {
+		if (input.getKey("select").clicked && onSelect != null) {
 			Sound.confirm.play();
 			onSelect.act();
 		}

@@ -26,23 +26,23 @@ public class DirtTile extends Tile {
 	}
 
 	protected static int dCol(int depth) {
-		switch(depth) {
-			case 0: return Color.get(1, 129, 105, 83); // surface.
-			case -4: return Color.get(1, 76, 30, 100); // dungeons.
-			default: return Color.get(1, 102); // caves.
+		switch (depth) {
+			case 0: return Color.get(1, 129, 105, 83); // Surface.
+			case -4: return Color.get(1, 76, 30, 100); // Dungeons.
+			default: return Color.get(1, 102); // Caves.
 		}
 	}
 
 	protected static int dIdx(int depth) {
-		switch(depth) {
-			case 0: return 0; // surface
-			case -4: return 2; // dungeons
-			default: return 1; // caves
+		switch (depth) {
+			case 0: return 0; // Surface
+			case -4: return 2; // Dungeons
+			default: return 1; // Caves
 		}
 	}
 	
 	public void render(Screen screen, Level level, int x, int y) {
-		levelSprite[dIdx(level.depth)].render(screen, x*16, y*16, 0);
+		levelSprite[dIdx(level.depth)].render(screen, x * 16, y * 16, 0);
 	}
 	
 	public boolean interact(Level level, int xt, int yt, Player player, Item item, Direction attackDir) {
@@ -50,15 +50,15 @@ public class DirtTile extends Tile {
 			ToolItem tool = (ToolItem) item;
 			if (tool.type == ToolType.Shovel) {
 				if (player.payStamina(4 - tool.level) && tool.payDurability()) {
-					level.setTile(xt, yt, Tiles.get("hole"));
+					level.setTile(xt, yt, Tiles.get("Hole"));
 					Sound.monsterHurt.play();
-					level.dropItem(xt*16+8, yt*16+8, Items.get("dirt"));
+					level.dropItem(xt * 16 + 8, yt * 16 + 8, Items.get("dirt"));
 					return true;
 				}
 			}
 			if (tool.type == ToolType.Hoe) {
 				if (player.payStamina(4 - tool.level) && tool.payDurability()) {
-					level.setTile(xt, yt, Tiles.get("farmland"));
+					level.setTile(xt, yt, Tiles.get("Farmland"));
 					Sound.monsterHurt.play();
 					return true;
 				}

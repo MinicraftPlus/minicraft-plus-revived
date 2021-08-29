@@ -1,8 +1,8 @@
 package minicraft.core;
 
-import minicraft.saveload.Version;
-
 import org.json.JSONObject;
+
+import minicraft.saveload.Version;
 
 public class VersionInfo {
 	
@@ -11,7 +11,7 @@ public class VersionInfo {
 	public final String releaseName;
 	
 	public VersionInfo(JSONObject releaseInfo) {
-		String versionTag = releaseInfo.getString("tag_name").substring(1); // cut off the "v" at the beginning
+		String versionTag = releaseInfo.getString("tag_name").substring(1); // Cut off the "v" at the beginning
 		version = new Version(versionTag);
 		
 		releaseUrl = releaseInfo.getString("html_url");

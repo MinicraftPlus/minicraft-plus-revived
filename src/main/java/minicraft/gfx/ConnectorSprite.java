@@ -86,7 +86,7 @@ public class ConnectorSprite {
 		
 	}
 	
-	// it is expected that some tile classes will override this on class instantiation.
+	// It is expected that some tile classes will override this on class instantiation.
 	public boolean connectsTo(Tile tile, boolean isSide) {
 		//System.out.println("original connection check");
 		return tile.getClass() == owner;
@@ -107,12 +107,12 @@ public class ConnectorSprite {
 	public static Sprite makeSprite(int w, int h, int mirror, int sheet, boolean repeat, int... coords) {
 		Sprite.Px[][] pixels = new Sprite.Px[h][w];
 		int i = 0;
-		for(int r = 0; r < h && i < coords.length; r++) {
-			for(int c = 0; c < w && i < coords.length; c++) {
+		for (int r = 0; r < h && i < coords.length; r++) {
+			for (int c = 0; c < w && i < coords.length; c++) {
 				int pos = coords[i];
 				pixels[r][c] = new Sprite.Px(pos%32, pos/32, mirror, sheet);
 				i++;
-				if(i == coords.length && repeat) i = 0;
+				if (i == coords.length && repeat) i = 0;
 			}
 		}
 		

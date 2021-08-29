@@ -29,15 +29,15 @@ public class BucketItem extends StackableItem {
 	protected static ArrayList<Item> getAllInstances() {
 		ArrayList<Item> items = new ArrayList<>();
 		
-		for(Fill fill: Fill.values())
+		for (Fill fill: Fill.values())
 			items.add(new BucketItem(fill));
 		
 		return items;
 	}
 	
 	private static Fill getFilling(Tile tile) {
-		for(Fill fill: Fill.values())
-			if(fill.contained.id == tile.id)
+		for (Fill fill: Fill.values())
+			if (fill.contained.id == tile.id)
 				return fill;
 		
 		return null;
@@ -53,10 +53,10 @@ public class BucketItem extends StackableItem {
 	
 	public boolean interactOn(Tile tile, Level level, int xt, int yt, Player player, Direction attackDir) {
 		Fill fill = getFilling(tile);
-		if(fill == null) return false;
+		if (fill == null) return false;
 
-		if(filling != Fill.Empty) {
-			if(fill == Fill.Empty) {
+		if (filling != Fill.Empty) {
+			if (fill == Fill.Empty) {
 				level.setTile(xt, yt, filling.contained);
 				if (!Game.isMode("creative")) player.activeItem = editBucket(player, Fill.Empty);
 				return true;
@@ -65,9 +65,9 @@ public class BucketItem extends StackableItem {
 				if (!Game.isMode("creative")) player.activeItem = editBucket(player, Fill.Empty);
 				return true;
 			}
-		} else { // this is an empty bucket
+		} else { // This is an empty bucket
 			level.setTile(xt, yt, Tiles.get("hole"));
-			if(!Game.isMode("creative")) player.activeItem = editBucket(player, fill);
+			if (!Game.isMode("creative")) player.activeItem = editBucket(player, fill);
 			return true;
 		}
 		
@@ -76,10 +76,10 @@ public class BucketItem extends StackableItem {
 	
 	/** This method exists due to the fact that buckets are stackable, but only one should be changed at one time. */
 	private BucketItem editBucket(Player player, Fill newFill) {
-		if (count == 0) return null; // this honestly should never happen...
+		if (count == 0) return null; // This honestly should never happen...
 		if (count == 1) return new BucketItem(newFill);
 		
-		// this item object is a stack of buckets.
+		// This item object is a stack of buckets.
 		count--;
 		player.getInventory().add(new BucketItem(newFill));
 		return this;

@@ -13,14 +13,14 @@ public class KeyInputEntry extends SelectEntry {
 		super("", null);
 		
 		this.action = key.substring(0, key.indexOf(";"));
-		setMapping(key.substring(key.indexOf(";")+1));
+		setMapping(key.substring(key.indexOf(";") + 1));
 	}
 	
 	private void setMapping(String mapping) {
 		this.mapping = mapping;
 		
 		StringBuilder buffer = new StringBuilder();
-		for(int spaces = 0; spaces < Screen.w/Font.textWidth(" ") - action.length() - mapping.length(); spaces++)
+		for (int spaces = 0; spaces < Screen.w/Font.textWidth(" ") - action.length() - mapping.length(); spaces++)
 			buffer.append(" ");
 		
 		this.buffer = buffer.toString();
@@ -28,10 +28,10 @@ public class KeyInputEntry extends SelectEntry {
 	
 	@Override
 	public void tick(InputHandler input) {
-		if(input.getKey("c").clicked || input.getKey("enter").clicked)
+		if (input.getKey("c").clicked || input.getKey("enter").clicked)
 			input.changeKeyBinding(action);
-		else if(input.getKey("a").clicked)
-			// add a binding, don't remove previous.
+		else if (input.getKey("a").clicked)
+			// Add a binding, don't remove previous.
 			input.addKeyBinding(action);
 	}
 	

@@ -66,8 +66,8 @@ public class Sprite {
 		sheetLoc = new Rectangle(sx, sy, sw, sh);
 		
 		spritePixels = new Px[sh][sw];
-		for(int r = 0; r < sh; r++)
-			for(int c = 0; c < sw; c++)
+		for (int r = 0; r < sh; r++)
+			for (int c = 0; c < sw; c++)
 				spritePixels[r][c] = new Px(sx+(onepixel?0:c), sy+(onepixel?0:r), mirror, sheet);
 	}
 	public Sprite(int sx, int sy, int sw, int sh, int sheet, boolean onepixel, int[][] mirrors) {
@@ -91,38 +91,38 @@ public class Sprite {
 	}
 
 	public void render(Screen screen, int x, int y) {
-		// here, x and y are screen coordinates.
-		for (int row = 0; row < spritePixels.length; row++) { // loop down through each row
-			renderRow(row, screen, x, y + row*8);
+		// Here, x and y are screen coordinates.
+		for (int row = 0; row < spritePixels.length; row++) { // Loop down through each row
+			renderRow(row, screen, x, y + row * 8);
 		}
 	}
 	public void render(Screen screen, int x, int y, int mirror) {
 		for (int row = 0; row < spritePixels.length; row++) {
-			renderRow(row, screen, x, y + row*8, mirror);
+			renderRow(row, screen, x, y + row * 8, mirror);
 		}
 	}
 	public void render(Screen screen, int x, int y, int mirror, int whiteTint) {
 		for (int row = 0; row < spritePixels.length; row++) {
-			renderRow(row, screen, x, y + row*8, mirror, whiteTint);
+			renderRow(row, screen, x, y + row * 8, mirror, whiteTint);
 		}
 	}
 
 	public void renderRow(int r, Screen screen, int x, int y) {
 		Px[] row = spritePixels[r];
-		for (int c = 0; c < row.length; c++) { // loop across through each column
-			screen.render(x + c*8, y, row[c].sheetPos, row[c].mirror, row[c].sheetNum, this.color); // render the sprite pixel.
+		for (int c = 0; c < row.length; c++) { // Loop across through each column
+			screen.render(x + c * 8, y, row[c].sheetPos, row[c].mirror, row[c].sheetNum, this.color); // Render the sprite pixel.
 		}
 	}
 	public void renderRow(int r, Screen screen, int x, int y, int mirror) {
 		Px[] row = spritePixels[r];
-		for (int c = 0; c < row.length; c++) { // loop across through each column
-			screen.render(x + c*8, y, row[c].sheetPos, mirror, row[c].sheetNum, this.color); // render the sprite pixel.
+		for (int c = 0; c < row.length; c++) { // Loop across through each column
+			screen.render(x + c * 8, y, row[c].sheetPos, mirror, row[c].sheetNum, this.color); // Render the sprite pixel.
 		}
 	}
 	public void renderRow(int r, Screen screen, int x, int y, int mirror, int whiteTint) {
 		Px[] row = spritePixels[r];
 		for (int c = 0; c < row.length; c++) {
-			screen.render(x + c*8, y, row[c].sheetPos, (mirror != -1 ? mirror : row[c].mirror), row[c].sheetNum, whiteTint);
+			screen.render(x + c * 8, y, row[c].sheetPos, (mirror != -1 ? mirror : row[c].mirror), row[c].sheetNum, whiteTint);
 		}
 	}
 
@@ -133,13 +133,13 @@ public class Sprite {
 		renderPixel(c, r, screen, x, y, mirror, this.color);
 	}
 	protected void renderPixel(int c, int r, Screen screen, int x, int y, int mirror, int whiteTint) {
-		screen.render(x, y, spritePixels[r][c].sheetPos, mirror, spritePixels[r][c].sheetNum, whiteTint); // render the sprite pixel.
+		screen.render(x, y, spritePixels[r][c].sheetPos, mirror, spritePixels[r][c].sheetNum, whiteTint); // Render the sprite pixel.
 	}
 	
 	public String toString() {
 		StringBuilder out = new StringBuilder(getClass().getName().replace("minicraft.gfx.", "") + "; pixels:");
-		for(Px[] row: spritePixels)
-			for(Px pixel: row)
+		for (Px[] row: spritePixels)
+			for (Px pixel: row)
 				out.append("\n").append(pixel.toString());
 		out.append("\n");
 		
@@ -154,14 +154,14 @@ public class Sprite {
 		}
 
 		public Px(int sheetX, int sheetY, int mirroring, int sheetNum) {
-			//pixelX and pixelY are the relative positions each pixel should have relative to the top-left-most pixel of the sprite.
+			// pixelX and pixelY are the relative positions each pixel should have relative to the top-left-most pixel of the sprite.
 			sheetPos = sheetX + 32 * sheetY;
 			mirror = mirroring;
 			this.sheetNum = sheetNum;
 		}
 
 		public String toString() {
-			return "SpritePixel:x="+(sheetPos%32)+";y="+(sheetPos/32)+";mirror="+mirror;
+			return "SpritePixel:x=" + (sheetPos%32) + ";y=" + (sheetPos/32) + ";mirror=" + mirror;
 		}
 	}
 }

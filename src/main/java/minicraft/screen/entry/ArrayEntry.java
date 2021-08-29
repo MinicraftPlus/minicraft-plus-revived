@@ -35,7 +35,7 @@ public class ArrayEntry<T> extends ListEntry {
 		this.localize = localize;
 		
 		maxWidth = 0;
-		for(T option: options)
+		for (T option: options)
 			maxWidth = Math.max(maxWidth, Font.textWidth(
 				localize ? Localization.getLocalized(option.toString()) : option.toString()
 			));
@@ -46,9 +46,9 @@ public class ArrayEntry<T> extends ListEntry {
 	
 	public void setSelection(int idx) {
 		boolean diff = idx != selection;
-		if(idx >= 0 && idx < options.length) {
+		if (idx >= 0 && idx < options.length) {
 			selection = idx;
-			if(diff && changeAction != null)
+			if (diff && changeAction != null)
 				changeAction.onChange(getValue());
 		}
 	}
@@ -63,7 +63,7 @@ public class ArrayEntry<T> extends ListEntry {
 	public T getValue() { return options[selection]; }
 	
 	public boolean valueIs(Object value) {
-		if(value instanceof String && options instanceof String[])
+		if (value instanceof String && options instanceof String[])
 			return ((String)value).equalsIgnoreCase((String)getValue());
 		else
 			return getValue().equals(value);
@@ -72,8 +72,8 @@ public class ArrayEntry<T> extends ListEntry {
 	
 	private int getIndex(Object value) {
 		boolean areStrings = value instanceof String && options instanceof String[];
-		for(int i = 0; i < options.length; i++) {
-			if(areStrings && ((String)value).equalsIgnoreCase((String)options[i]) || options[i].equals(value)) {
+		for (int i = 0; i < options.length; i++) {
+			if (areStrings && ((String)value).equalsIgnoreCase((String)options[i]) || options[i].equals(value)) {
 				return i;
 			}
 		}
@@ -84,9 +84,9 @@ public class ArrayEntry<T> extends ListEntry {
 	
 	public void setValueVisibility(Object value, boolean visible) {
 		int idx = getIndex(value);
-		if(idx >= 0) {
+		if (idx >= 0) {
 			optionVis[idx] = visible;
-			if(idx == selection && !visible)
+			if (idx == selection && !visible)
 				moveSelection(1);
 		}
 	}

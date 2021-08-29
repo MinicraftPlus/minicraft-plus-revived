@@ -33,7 +33,7 @@ public abstract class Ellipsis {
 		public String get() {
 			StringBuilder dots = new StringBuilder();
 			int ePos = getInterval();
-			for(int i = 0; i < getIntervalCount(); i++) {
+			for (int i = 0; i < getIntervalCount(); i++) {
 				if (ePos == i)
 					dots.append(".");
 				else
@@ -85,7 +85,7 @@ public abstract class Ellipsis {
 		
 		void setEllipsis(Ellipsis ellipsis) { this.ellipsis = ellipsis; }
 		
-		// called by Ellipsis classes, passing their value.
+		// Called by Ellipsis classes, passing their value.
 		void setIntervalCount(int numIntervals) {
 			intervalCount = numIntervals;
 			countPerInterval = Math.max(1, Math.round(countPerCycle / (float)intervalCount));
@@ -95,8 +95,8 @@ public abstract class Ellipsis {
 		public int getIntervalCount() { return intervalCount; }
 		
 		private void incInterval(int amt) {
-			if(ellipsis != null)
-				for(int i = curInterval+1; i <= curInterval+amt; i++)
+			if (ellipsis != null)
+				for (int i = curInterval+1; i <= curInterval+amt; i++)
 					ellipsis.nextInterval(i%intervalCount);
 			
 			curInterval += amt;
@@ -106,7 +106,7 @@ public abstract class Ellipsis {
 		protected void incCounter(int amt) {
 			counter += amt;
 			int intervals = counter / countPerInterval;
-			if(intervals > 0) {
+			if (intervals > 0) {
 				incInterval(intervals);
 				counter -= intervals * countPerInterval;
 			}
@@ -114,7 +114,7 @@ public abstract class Ellipsis {
 		
 		void start() { started = true; }
 		void update() {
-			if(!started)
+			if (!started)
 				start();
 		}
 		

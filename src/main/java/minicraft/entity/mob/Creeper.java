@@ -1,6 +1,7 @@
 package minicraft.entity.mob;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
 
 import minicraft.core.Game;
 import minicraft.core.io.Settings;
@@ -51,12 +52,12 @@ public class Creeper extends EnemyMob {
 		if (Game.isMode("Creative")) return; // Creeper should not explode if player is in creative mode
 
 		if (fuseTime > 0) {
-			fuseTime--; // fuse getting shorter...
+			fuseTime--; // Fuse getting shorter...
 			xmov = ymov = 0;
 		} else if (fuseLit) { // fuseLit is set to true when fuseTime is set to max, so this happens after fuseTime hits zero, while fuse is lit.
 			xmov = ymov = 0;
 
-			boolean playerInRange = false; // tells if any players are within the blast
+			boolean playerInRange = false; // Tells if any players are within the blast
 
 			// Find if the player is in range and store it in playerInRange.
 			for (Entity e : level.getEntitiesOfClass(Mob.class)) {
@@ -70,22 +71,22 @@ public class Creeper extends EnemyMob {
 				}
 			}
 
-			// basically, if there aren't any players it "defuses" itself and doesn't blow up
+			// Basically, if there aren't any players it "defuses" itself and doesn't blow up
 			if (playerInRange) {
-				// blow up
+				// Blow up
 
 				Sound.explode.play();
 
-				// figure out which tile the mob died on
+				// Figure out which tile the mob died on
 				int xt = x >> 4;
 				int yt = (y - 2) >> 4;
 
-				// used for calculations
+				// Used for calculations
 				int radius = lvl;
 
 				int lvlDamage = BLAST_DAMAGE * lvl;
 
-				// hurt all the entities
+				// Hurt all the entities
 				List<Entity> entitiesInRange = level.getEntitiesInTiles(xt, yt, radius);
 				List<Entity> spawners = new ArrayList<>();
 				Point[] tilePositions = level.getAreaTilePositions(xt, yt, radius);
@@ -127,7 +128,7 @@ public class Creeper extends EnemyMob {
 					}
 				}
 
-				die(); // dying now kind of kills everything. the super class will take care of it.
+				die(); // Dying now kind of kills everything. the super class will take care of it.
 			} else {
 				fuseTime = 0;
 				fuseLit = false;

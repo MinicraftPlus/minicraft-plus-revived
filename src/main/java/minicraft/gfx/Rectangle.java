@@ -62,10 +62,10 @@ public class Rectangle {
 	}
 	
 	public boolean intersects(Rectangle other) {
-		return !( getLeft() > other.getRight() // left side is past the other right side
-		  || other.getLeft() > getRight() // other left side is past the right side
-		  || getBottom() < other.getTop() // other top is below the bottom
-		  || other.getBottom() < getTop() // top is below the other bottom
+		return !( getLeft() > other.getRight() // Left side is past the other right side
+		  || other.getLeft() > getRight() // Other left side is past the right side
+		  || getBottom() < other.getTop() // Other top is below the bottom
+		  || other.getBottom() < getTop() // Top is below the other bottom
 		);
 	}
 	
@@ -88,5 +88,5 @@ public class Rectangle {
 		setPosition(p, anchor);
 	}
 	
-	public String toString() { return super.toString()+"[center="+getCenter()+"; size="+getSize()+"]"; }
+	public String toString() { return super.toString()+"[center=" + getCenter() + "; size=" + getSize() + "]"; }
 }

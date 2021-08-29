@@ -1,8 +1,8 @@
 package minicraft.screen;
 
 import minicraft.core.Game;
-import minicraft.core.io.InputHandler;
 import minicraft.core.World;
+import minicraft.core.io.InputHandler;
 import minicraft.gfx.Screen;
 
 public class LevelTransitionDisplay extends Display {

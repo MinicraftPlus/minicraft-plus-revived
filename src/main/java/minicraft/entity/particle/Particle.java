@@ -20,7 +20,7 @@ public class Particle extends Entity implements ClientTickable {
 	 * @param sprite The particle's sprite
 	 */
 	public Particle(int x, int y, int xr, int lifetime, Sprite sprite) {
-		// make a particle at the given coordinates
+		// Make a particle at the given coordinates
 		super(xr, 1);
 		this.x = x;
 		this.y = y;
@@ -35,7 +35,7 @@ public class Particle extends Entity implements ClientTickable {
 	@Override
 	public void tick() {
 		time++;
-		if(time > lifetime) {
+		if (time > lifetime) {
 			remove();
 		}
 	}

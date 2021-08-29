@@ -10,7 +10,7 @@ public class ItemEntry extends ListEntry {
 	
 	public static ItemEntry[] useItems(List<Item> items) {
 		ItemEntry[] entries = new ItemEntry[items.size()];
-		for(int i = 0; i < items.size(); i++)
+		for (int i = 0; i < items.size(); i++)
 			entries[i] = new ItemEntry(items.get(i));
 		return entries;
 	}
@@ -30,7 +30,7 @@ public class ItemEntry extends ListEntry {
 		item.sprite.render(screen, x, y);
 	}
 	
-	// if you add to the length of the string, and therefore the width of the entry, then it will actually move the entry RIGHT in the inventory, instead of the intended left, because it is auto-positioned to the left side.
+	// If you add to the length of the string, and therefore the width of the entry, then it will actually move the entry RIGHT in the inventory, instead of the intended left, because it is auto-positioned to the left side.
 	@Override
 	public String toString() {
 		return item.getDisplayName();

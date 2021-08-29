@@ -6,8 +6,8 @@ import minicraft.gfx.Screen;
 
 public class TextParticle extends Particle {
 	private String msg; // Message of the text particle
-	private double xa, ya, za; // x,y,z acceleration
-	private double xx, yy, zz; // x,y,z coordinates
+	private double xa, ya, za; // x, y, z acceleration
+	private double xx, yy, zz; // x, y, z coordinates
 	
 	private FontStyle style;
 	
@@ -24,11 +24,11 @@ public class TextParticle extends Particle {
 		
 		style = new FontStyle(col).setShadowType(Color.BLACK, false);
 		this.msg = msg;
-		xx = x; //assigns x pos
-		yy = y; //assigns y pos
-		zz = 2; //assigns z pos to be 2
+		xx = x; // Assigns x pos
+		yy = y; // Assigns y pos
+		zz = 2; // Assigns z pos to be 2
 		
-		//assigns x,y,z acceleration:
+		// Assigns x,y,z acceleration:
 		xa = random.nextGaussian() * 0.3;
 		ya = random.nextGaussian() * 0.2;
 		za = random.nextFloat() * 0.7 + 2;
@@ -38,19 +38,20 @@ public class TextParticle extends Particle {
 	public void tick() {
 		super.tick();
 		
-		//move the particle according to the acceleration
+		// Move the particle according to the acceleration
 		xx += xa;
 		yy += ya;
 		zz += za;
 		if (zz < 0) {
-			//if z pos if less than 0, alter accelerations...
+			
+			// If z pos if less than 0, alter accelerations...
 			zz = 0;
 			za *= -0.5;
 			xa *= 0.6;
 			ya *= 0.6;
 		}
 		za -= 0.15;  // za decreases by 0.15 every tick.
-		//truncate x and y coordinates to integers:
+		// Truncate x and y coordinates to integers:
 		x = (int) xx;
 		y = (int) yy;
 	}
@@ -65,6 +66,6 @@ public class TextParticle extends Particle {
 	 * @return string representation of the particle
 	 */
 	public String getData() {
-		return msg+":"+style.getColor();
+		return msg + ":" + style.getColor();
 	}
 }

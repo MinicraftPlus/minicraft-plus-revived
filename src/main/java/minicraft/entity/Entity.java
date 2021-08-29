@@ -4,6 +4,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 
+import org.jetbrains.annotations.Nullable;
+
 import minicraft.core.Game;
 import minicraft.core.Network;
 import minicraft.core.Updater;
@@ -14,8 +16,6 @@ import minicraft.gfx.Rectangle;
 import minicraft.gfx.Screen;
 import minicraft.item.Item;
 import minicraft.level.Level;
-
-import org.jetbrains.annotations.Nullable;
 
 public abstract class Entity implements Tickable {
 	
@@ -31,17 +31,17 @@ public abstract class Entity implements Tickable {
 	 * These bit shift operators are used to easily get the X & Y coordinates of a tile that the entity is standing on.
 	 */
 	
-	// entity coordinates are per pixel, not per tile; each tile is 16x16 entity pixels.
+	// Entity coordinates are per pixel, not per tile; each tile is 16x16 entity pixels.
 	protected final Random random = new Random();
 	public int x, y; // x, y entity coordinates on the map
 	private int xr, yr; // x, y radius of entity
 	private boolean removed; // Determines if the entity is removed from it's level; checked in Level.java
-	protected Level level; // the level that the entity is on
-	public int col; // current color.
+	protected Level level; // The level that the entity is on
+	public int col; // Current color.
 	
-	public int eid; // this is intended for multiplayer, but I think it could be helpful in single player, too. certainly won't harm anything, I think... as long as finding a valid id doesn't take long...
-	private String prevUpdates = ""; // holds the last value returned from getUpdateString(), for comparison with the next call.
-	private String curDeltas = ""; // holds the updates returned from the last time getUpdates() was called.
+	public int eid; // This is intended for multiplayer, but I think it could be helpful in single player, too. certainly won't harm anything, I think... as long as finding a valid id doesn't take long...
+	private String prevUpdates = ""; // Holds the last value returned from getUpdateString(), for comparison with the next call.
+	private String curDeltas = ""; // Holds the updates returned from the last time getUpdates() was called.
 	private boolean accessedUpdates = false;
 	private long lastUpdate;
 	
@@ -53,7 +53,7 @@ public abstract class Entity implements Tickable {
 	 * @param xr X radius of entity.
 	 * @param yr Y radius of entity.
 	 */
-	public Entity(int xr, int yr) { // add color to this later, in color update
+	public Entity(int xr, int yr) { // Add color to this later, in color update
 		this.xr = xr;
 		this.yr = yr;
 		
@@ -65,10 +65,10 @@ public abstract class Entity implements Tickable {
 		lastUpdate = System.nanoTime();
 	}
 	
-	public abstract void render(Screen screen); // used to render the entity on screen.
+	public abstract void render(Screen screen); // Used to render the entity on screen.
 	
 	@Override
-	public abstract void tick(); // used to update the entity.
+	public abstract void tick(); // Used to update the entity.
 	
 	/**
 	 * Returns true if the entity is removed from the level, otherwise false.
@@ -84,20 +84,23 @@ public abstract class Entity implements Tickable {
 	
 	/** Returns a Rectangle instance using the defined bounds of the entity. */
 	protected Rectangle getBounds() { return new Rectangle(x, y, xr*2, yr*2, Rectangle.CENTER_DIMS); }
-	/** returns true if this entity is found in the rectangle specified by given two coordinates. */
+	
+	/** Returns true if this entity is found in the rectangle specified by given two coordinates. */
 	public boolean isTouching(Rectangle area) { return area.intersects(getBounds()); }
-	/** returns if this entity stops other solid entities from moving. */
-	public boolean isSolid() { return true; } // most entities are solid
+	
+	/** Returns if this entity stops other solid entities from moving. */
+	public boolean isSolid() { return true; } // Most entities are solid
+	
 	/** Determines if the given entity should prevent this entity from moving. */
 	public boolean blocks(Entity e) { return isSolid() && e.isSolid(); }
 	
 	public boolean canSwim() { return false; } // Determines if the entity can swim (extended in sub-classes)
 	public boolean canWool() { return false; } // This, strangely enough, determines if the entity can walk on wool; among some other things..?
 	
-	public int getLightRadius() { return 0; } // used for lanterns... and player? that might be about it, though, so idk if I want to put it here.
+	public int getLightRadius() { return 0; } // Used for lanterns... and player? that might be about it, though, so idk if I want to put it here.
 	
 	
-	/** if this entity is touched by another entity (extended by sub-classes) */
+	/** If this entity is touched by another entity (extended by sub-classes) */
 	protected void touchedBy(Entity entity) {}
 
 	/**
@@ -113,14 +116,14 @@ public abstract class Entity implements Tickable {
 	
 	/** Moves an entity horizontally and vertically. Returns whether entity was unimpeded in it's movement.  */
 	public boolean move(int xd, int yd) {
-		if(Updater.saving || (xd == 0 && yd == 0)) return true; // pretend that it kept moving
+		if (Updater.saving || (xd == 0 && yd == 0)) return true; // Pretend that it kept moving
 		
-		boolean stopped = true; // used to check if the entity has BEEN stopped, COMPLETELY; below checks for a lack of collision.
-		if(move2(xd, 0)) stopped = false; // becomes false if horizontal movement was successful.
-		if(move2(0, yd)) stopped = false; // becomes false if vertical movement was successful.
+		boolean stopped = true; // Used to check if the entity has BEEN stopped, COMPLETELY; below checks for a lack of collision.
+		if (move2(xd, 0)) stopped = false; // Becomes false if horizontal movement was successful.
+		if (move2(0, yd)) stopped = false; // Becomes false if vertical movement was successful.
 		if (!stopped) {
-			int xt = x >> 4; // the x tile coordinate that the entity is standing on.
-			int yt = y >> 4; // the y tile coordinate that the entity is standing on.
+			int xt = x >> 4; // The x tile coordinate that the entity is standing on.
+			int yt = y >> 4; // The y tile coordinate that the entity is standing on.
 			level.getTile(xt, yt).steppedOn(level, xt, yt, this); // Calls the steppedOn() method in a tile's class. (used for tiles like sand (footprints) or lava (burning))
 		}
 		
@@ -137,66 +140,66 @@ public abstract class Entity implements Tickable {
 	 * @return true if the move was successful, false if not.
 	 */
 	protected boolean move2(int xd, int yd) {
-		if(xd == 0 && yd == 0) return true; // was not stopped
+		if (xd == 0 && yd == 0) return true; // Was not stopped
 		
 		boolean interact = true;//!Game.isValidClient() || this instanceof ClientTickable;
 		
-		// gets the tile coordinate of each direction from the sprite...
-		int xto0 = ((x) - xr) >> 4; // to the left
-		int yto0 = ((y) - yr) >> 4; // above
-		int xto1 = ((x) + xr) >> 4; // to the right
-		int yto1 = ((y) + yr) >> 4; // below
+		// Gets the tile coordinate of each direction from the sprite...
+		int xto0 = ((x) - xr) >> 4; // To the left
+		int yto0 = ((y) - yr) >> 4; // Above
+		int xto1 = ((x) + xr) >> 4; // To the right
+		int yto1 = ((y) + yr) >> 4; // Below
 		
-		// gets same as above, but after movement.
+		// Gets same as above, but after movement.
 		int xt0 = ((x + xd) - xr) >> 4;
 		int yt0 = ((y + yd) - yr) >> 4;
 		int xt1 = ((x + xd) + xr) >> 4;
 		int yt1 = ((y + yd) + yr) >> 4;
 		
-		//boolean blocked = false; // if the next tile can block you.
-		for (int yt = yt0; yt <= yt1; yt++) { // cycles through y's of tile after movement
-			for (int xt = xt0; xt <= xt1; xt++) { // cycles through x's of tile after movement
-				if (xt >= xto0 && xt <= xto1 && yt >= yto0 && yt <= yto1) continue; // skip this position if this entity's sprite is touching it
-				// tile positions that make it here are the ones that the entity will be in, but are not in now.
-				if(interact)
+		//boolean blocked = false; // If the next tile can block you.
+		for (int yt = yt0; yt <= yt1; yt++) { // Cycles through y's of tile after movement
+			for (int xt = xt0; xt <= xt1; xt++) { // Cycles through x's of tile after movement
+				if (xt >= xto0 && xt <= xto1 && yt >= yto0 && yt <= yto1) continue; // Skip this position if this entity's sprite is touching it
+				// Tile positions that make it here are the ones that the entity will be in, but are not in now.
+				if (interact)
 					level.getTile(xt, yt).bumpedInto(level, xt, yt, this); // Used in tiles like cactus
-				if (!level.getTile(xt, yt).mayPass(level, xt, yt, this)) { // if the entity can't pass this tile...
-					//blocked = true; // then the entity is blocked
+				if (!level.getTile(xt, yt).mayPass(level, xt, yt, this)) { // If the entity can't pass this tile...
+					//blocked = true; // Then the entity is blocked
 					return false;
 				}
 			}
 		}
 		
-		// these lists are named as if the entity has already moved-- it hasn't, though.
-		List<Entity> wasInside = level.getEntitiesInRect(getBounds()); // gets all of the entities that are inside this entity (aka: colliding) before moving.
+		// These lists are named as if the entity has already moved-- it hasn't, though.
+		List<Entity> wasInside = level.getEntitiesInRect(getBounds()); // Gets all of the entities that are inside this entity (aka: colliding) before moving.
 		
 		int xr = this.xr, yr = this.yr;
-		if(Game.isValidClient() && this instanceof Player) {
+		if (Game.isValidClient() && this instanceof Player) {
 			xr++;
 			yr++;
 		}
 
-		List<Entity> isInside = level.getEntitiesInRect(new Rectangle(x+xd, y+yd, xr*2, yr*2, Rectangle.CENTER_DIMS)); // gets the entities that this entity will touch once moved.
+		List<Entity> isInside = level.getEntitiesInRect(new Rectangle(x+xd, y+yd, xr*2, yr*2, Rectangle.CENTER_DIMS)); // Gets the entities that this entity will touch once moved.
 		if (interact) {
 			for (Entity e : isInside) {
-				/// cycles through entities about to be touched, and calls touchedBy(this) for each of them.
-				if (e == this) continue; // touching yourself doesn't count.
+				/// Cycles through entities about to be touched, and calls touchedBy(this) for each of them.
+				if (e == this) continue; // Touching yourself doesn't count.
 
 				if (e instanceof Player) {
 					if (!(this instanceof Player))
 						touchedBy(e);
 				} else
-					e.touchedBy(this); // call the method. ("touch" the entity)
+					e.touchedBy(this); // Call the method. ("touch" the entity)
 			}
 		}
 		
-		isInside.removeAll(wasInside); // remove all the entities that this one is already touching before moving.
+		isInside.removeAll(wasInside); // Remove all the entities that this one is already touching before moving.
 		for (Entity e : isInside) {
-			if (e == this) continue; // can't interact with yourself
-			if (e.blocks(this)) return false; // if the entity prevents this one from movement, don't move.
+			if (e == this) continue; // Can't interact with yourself
+			if (e.blocks(this)) return false; // If the entity prevents this one from movement, don't move.
 		}
 		
-		// finally, the entity moves!
+		// Finally, the entity moves!
 		x += xd;
 		y += yd;
 		
@@ -208,12 +211,12 @@ public abstract class Entity implements Tickable {
 	
 	/** Removes the entity from the level. */
 	public void remove() {
-		if(removed && !(this instanceof ItemEntity)) // apparently this happens fairly often with item entities.
+		if (removed && !(this instanceof ItemEntity)) // Apparently this happens fairly often with item entities.
 			System.out.println("Note: remove() called on removed entity: " + this);
 		
 		removed = true;
 		
-		if(level == null)
+		if (level == null)
 			System.out.println("Note: remove() called on entity with no level reference: " + getClass());
 		else
 			level.remove(this);
@@ -221,20 +224,20 @@ public abstract class Entity implements Tickable {
 	
 	/** This should ONLY be called by the Level class. To properly remove an entity from a level, use level.remove(entity) */
 	public void remove(Level level) {
-		if(level != this.level) {
+		if (level != this.level) {
 			if(Game.debug) System.out.println("Tried to remove entity " + this + " from level it is not in: " + level + "; in level " + this.level);
 		} else {
-			removed = true; // should already be set.
+			removed = true; // Should already be set.
 			this.level = null;
 		}
 	}
 	
 	/** This should ONLY be called by the Level class. To properly add an entity to a level, use level.add(entity) */
 	public void setLevel(Level level, int x, int y) {
-		if(level == null) {
+		if (level == null) {
 			System.out.println("Tried to set level of entity " + this + " to a null level; Should use remove(level)");
 			return;
-		} else if(level != this.level && Game.isValidServer() && this.level != null) {
+		} else if (level != this.level && Game.isValidServer() && this.level != null) {
 			Game.server.broadcastEntityRemoval(this, this.level, !(this instanceof Player));
 		}
 		
@@ -243,17 +246,17 @@ public abstract class Entity implements Tickable {
 		this.x = x;
 		this.y = y;
 		
-		if(eid < 0)
+		if (eid < 0)
 			eid = Network.generateUniqueEntityId();
 	}
 	
 	public boolean isWithin(int tileRadius, Entity other) {
-		if(level == null || other.getLevel() == null) return false;
-		if(level.depth != other.getLevel().depth) return false; // obviously, if they are on different levels, they can't be next to each other.
+		if (level == null || other.getLevel() == null) return false;
+		if (level.depth != other.getLevel().depth) return false; // Obviously, if they are on different levels, they can't be next to each other.
 		
-		double distance = Math.abs(Math.hypot(x - other.x, y - other.y)); // calculate the distance between the two entities, in entity coordinates.
+		double distance = Math.abs(Math.hypot(x - other.x, y - other.y)); // Calculate the distance between the two entities, in entity coordinates.
 		
-		return Math.round(distance) >> 4 <= tileRadius; // compare the distance (converted to tile units) with the specified radius.
+		return Math.round(distance) >> 4 <= tileRadius; // Compare the distance (converted to tile units) with the specified radius.
 	}
 	
 	/**
@@ -286,10 +289,10 @@ public abstract class Entity implements Tickable {
 	 * @param deltas A string representation of the new entity state.
 	 */
 	public final void update(String deltas) {
-		for(String field: deltas.split(";")) {
-			String fieldName = field.substring(0, field.indexOf(","));
-			String val = field.substring(field.indexOf(",")+1);
-			updateField(fieldName, val);
+		for (String field: deltas.split(";")) {
+			 String fieldName = field.substring(0, field.indexOf(","));
+			 String val = field.substring(field.indexOf(",")+1);
+			 updateField(fieldName, val);
 		}
 		
 		if(Game.isValidClient() && this instanceof MobAi) {
@@ -305,15 +308,15 @@ public abstract class Entity implements Tickable {
 	 * @return true if a variable was updated, false if not.
 	 */
 	protected boolean updateField(String fieldName, String val) {
-		switch(fieldName) {
+		switch (fieldName) {
 			case "eid": eid = Integer.parseInt(val); return true;
 			case "x": x = Integer.parseInt(val); return true;
 			case "y": y = Integer.parseInt(val); return true;
 			case "level":
-				if(val.equals("null")) return true; // this means no level.
+				if (val.equals("null")) return true; // This means no level.
 				Level newLvl = World.levels[Integer.parseInt(val)];
-				if(newLvl != null && level != null) {
-					if(newLvl.depth == level.depth) return true;
+				if (newLvl != null && level != null) {
+					if (newLvl.depth == level.depth) return true;
 					level.remove(this);
 					newLvl.add(this);
 				}
@@ -323,16 +326,16 @@ public abstract class Entity implements Tickable {
 	}
 	
 	/// I think I'll make these "getUpdates()" methods be an established thing, that returns all the things that can change that you need to account for when updating entities across a server.
-	/// by extension, the update() method should always account for all the variables specified here.
+	/// By extension, the update() method should always account for all the variables specified here.
 	/**
 	 * Converts this entity to a string representation which can be sent to
 	 * a server or client.
 	 * @return Networking string representation of this entity.
 	 */
 	protected String getUpdateString() {
-		return "x,"+x+";"
-		+"y,"+y+";"
-		+"level,"+(level==null?"null":World.lvlIdx(level.depth));
+		return "x," + x + ";"
+		+ "y," + y + ";"
+		+ "level," + (level == null?"null":World.lvlIdx(level.depth));
 	}
 	
 	/**
@@ -341,12 +344,12 @@ public abstract class Entity implements Tickable {
 	 * @return Networking string representation of this entity.
 	 */
 	public final String getUpdates(boolean fetchAll) {
-		if(accessedUpdates) {
-			if(fetchAll) return prevUpdates;
+		if (accessedUpdates) {
+			if (fetchAll) return prevUpdates;
 			else return curDeltas;
 		}
 		else {
-			if(fetchAll) return getUpdateString();
+			if (fetchAll) return getUpdateString();
 			else return getUpdates();
 		}
 	}
@@ -356,29 +359,29 @@ public abstract class Entity implements Tickable {
 	 * @return String representation of all the variables which has changed since last time.
 	 */
 	public final String getUpdates() {
-		// if the updates have already been fetched and written, but not flushed, then just return those.
-		if(accessedUpdates) return curDeltas;
-		else accessedUpdates = true; // after this they count as accessed.
+		// If the updates have already been fetched and written, but not flushed, then just return those.
+		if (accessedUpdates) return curDeltas;
+		else accessedUpdates = true; // After this they count as accessed.
 		
-		/// first, get the current string of values, which includes any subclasses.
+		/// First, get the current string of values, which includes any subclasses.
 		String updates = getUpdateString();
 		
-		if(prevUpdates.length() == 0) {
-			// if there were no values saved last call, our job is easy. But this is only the case the first time this is run.
-			prevUpdates = curDeltas = updates; // set the update field for next time
-			return updates; // and we're done!
+		if (prevUpdates.length() == 0) {
+			// If there were no values saved last call, our job is easy. But this is only the case the first time this is run.
+			prevUpdates = curDeltas = updates; // Set the update field for next time
+			return updates; // And we're done!
 		}
 		
-		/// if we did have updates last time, then save them as an array, before overwriting the update field for next time.
+		/// If we did have updates last time, then save them as an array, before overwriting the update field for next time.
 		String[] curUpdates = updates.split(";");
 		String[] prevUpdates = this.prevUpdates.split(";");
 		this.prevUpdates = updates;
 		
-		/// now, we have the current values, and the previous values, as arrays of key-value pairs sep. by commas. Now, the goal is to separate which are actually *updates*, meaning they are different from last time.
+		/// Now, we have the current values, and the previous values, as arrays of key-value pairs sep. by commas. Now, the goal is to separate which are actually *updates*, meaning they are different from last time.
 		
 		StringBuilder deltas = new StringBuilder();
-		for(int i = 0; i < curUpdates.length; i++) { // b/c the string always contains the same number of pairs (and the same keys, in the same order), the indexes of cur and prev updates will be the same.
-			/// loop though each of the updates this call. If it is different from the last one, then add it to the list.
+		for (int i = 0; i < curUpdates.length; i++) { // b/c the string always contains the same number of pairs (and the same keys, in the same order), the indexes of cur and prev updates will be the same.
+			/// Loop though each of the updates this call. If it is different from the last one, then add it to the list.
 			if(!curUpdates[i].equals(prevUpdates[i])) {
 				deltas.append(curUpdates[i]).append(";");
 			}
@@ -386,18 +389,18 @@ public abstract class Entity implements Tickable {
 		
 		curDeltas = deltas.toString();
 		
-		if(curDeltas.length() > 0) curDeltas = curDeltas.substring(0, curDeltas.length()-1); // cuts off extra ";"
+		if (curDeltas.length() > 0) curDeltas = curDeltas.substring(0, curDeltas.length() -1); // Cuts off extra ";"
 		
 		return curDeltas;
 	}
 	
-	/// this marks the entity as having a new state to fetch.
+	/// This marks the entity as having a new state to fetch.
 	public void flushUpdates() { accessedUpdates = false; }
 	
 	public String toString() { return getClass().getSimpleName() + getDataPrints(); }
 	protected List<String> getDataPrints() {
 		List<String> prints = new ArrayList<>();
-		prints.add("eid="+eid);
+		prints.add("eid=" + eid);
 		return prints;
 	}
 	
