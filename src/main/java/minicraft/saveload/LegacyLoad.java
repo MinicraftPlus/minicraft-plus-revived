@@ -44,7 +44,7 @@ import minicraft.level.Level;
 import minicraft.level.tile.Tiles;
 import minicraft.screen.LoadingDisplay;
 
-/// this class is simply a way to seperate all the old, compatibility complications into a seperate file.
+/// This class is simply a way to seperate all the old, compatibility complications into a seperate file.
 public class LegacyLoad {
 	
 	String location = Game.gameDir;
@@ -74,15 +74,15 @@ public class LegacyLoad {
 		location += "/saves/" + worldname + "/";
 		
 		File testFile = new File(location + "KeyPrefs" + extension);
-		if(!testFile.exists()) {
+		if (!testFile.exists()) {
 			worldVer = new Version("1.8");
 			oldSave = true;
 		} else
-			testFile.delete(); // we don't care about it anymore anyway.
+			testFile.delete(); // We don't care about it anymore anyway.
 		
-		// this is used in loadInventory().
+		// This is used in loadInventory().
 		
-		loadGame("Game"); // more of the version will be determined here
+		loadGame("Game"); // More of the version will be determined here
 		loadWorld("Level");
 		loadPlayer("Player", Game.player);
 		loadInventory("Inventory", Game.player.getInventory());
@@ -105,15 +105,15 @@ public class LegacyLoad {
 			
 			String curLine;StringBuilder total = new StringBuilder();
 			ArrayList<String> curData;
-			while((curLine = br.readLine()) != null)
+			while ((curLine = br.readLine()) != null)
 				total.append(curLine);
 			data.addAll(Arrays.asList(total.toString().split(",")));
 			
-			if(filename.contains("Level")) {
+			if (filename.contains("Level")) {
 				total = new StringBuilder();
 				br2 = new BufferedReader(new FileReader(filename.substring(0, filename.lastIndexOf("/") + 7) + "data" + extension));
 				
-				while((curLine = br2.readLine()) != null)
+				while ((curLine = br2.readLine()) != null)
 					total.append(curLine);
 				extradata.addAll(Arrays.asList(total.toString().split(",")));
 			}
@@ -122,15 +122,15 @@ public class LegacyLoad {
 		} finally {
 			try {
 				LoadingDisplay.progress(13);
-				if(LoadingDisplay.getPercentage() > 100) {
+				if (LoadingDisplay.getPercentage() > 100) {
 					LoadingDisplay.setPercentage(100);
 				}
 				
-				if(br != null) {
+				if (br != null) {
 					br.close();
 				}
 				
-				if(br2 != null) {
+				if (br2 != null) {
 					br2.close();
 				}
 			} catch (IOException ex) {
@@ -144,8 +144,8 @@ public class LegacyLoad {
 		String path = file.getPath();
 		loadFromFile(path);
 		
-		for(int i = 0; i < data.size(); i++) {
-			if(data.get(i).length() == 0) {
+		for (int i = 0; i < data.size(); i++) {
+			if (data.get(i).length() == 0) {
 				data.remove(i);
 				i--;
 				continue;
@@ -157,48 +157,48 @@ public class LegacyLoad {
 		
 		try {
 			java.io.BufferedWriter writer = new java.io.BufferedWriter(new java.io.FileWriter(path));
-			for(String unlock: data) {
+			for (String unlock: data) {
 				writer.write(","+unlock);
 			}
 			writer.flush();
 			writer.close();
-		} catch(IOException ex) {
+		} catch (IOException ex) {
 			ex.printStackTrace();
 		}
 	}
 	
-	private int playerac = 0; // this is a temp storage var for use to restore player arrow count.
+	private int playerac = 0; // This is a temp storage var for use to restore player arrow count.
 	
 	public void loadGame(String filename) {
 		loadFromFile(location + filename + extension);
 		boolean hasVersion = data.get(0).contains(".");
-		if(hasVersion) {
-			worldVer = new Version(data.get(0)); // gets the world version
+		if (hasVersion) {
+			worldVer = new Version(data.get(0)); // Gets the world version
 			Updater.setTime(Integer.parseInt(data.get(1)));
-			Updater.gameTime = 65000; // prevents time cheating.
+			Updater.gameTime = 65000; // Prevents time cheating.
 			
-			if(worldVer.compareTo(new Version("1.9.2")) < 0) {
+			if (worldVer.compareTo(new Version("1.9.2")) < 0) {
 				Settings.set("autosave", Boolean.parseBoolean(data.get(3)));
 				Settings.set("sound", Boolean.parseBoolean(data.get(4)));
-				if(worldVer.compareTo(new Version("1.9.2-dev2")) >= 0)
+				if (worldVer.compareTo(new Version("1.9.2-dev2")) >= 0)
 					AirWizard.beaten = Boolean.parseBoolean(data.get(5));
-			} else { // this is 1.9.2 official or after
+			} else { // This is 1.9.2 official or after
 				Settings.setIdx("diff", Integer.parseInt(data.get(3)));
 				AirWizard.beaten = Boolean.parseBoolean(data.get(4));
 			}
 		}
 		else {
-			if(data.size() == 5) {
+			if (data.size() == 5) {
 				worldVer = new Version("1.9");
 				Updater.setTime(Integer.parseInt(data.get(0)));
 				Settings.set("autosave", Boolean.parseBoolean(data.get(3)));
 				Settings.set("sound", Boolean.parseBoolean(data.get(4)));
 			} else { // version == 1.8?
-				if(!oldSave) {
+				if (!oldSave) {
 					System.out.println("UNEXPECTED WORLD VERSION");
 					worldVer = new Version("1.8.1");
 				}
-				// for backwards compatibility
+				// For backwards compatibility
 				Updater.tickCount = Integer.parseInt(data.get(0));
 				playerac = Integer.parseInt(data.get(3));
 				Settings.set("autosave", false);
@@ -207,7 +207,7 @@ public class LegacyLoad {
 	}
 	
 	public void loadWorld(String filename) {
-		for(int l = 0; l < World.levels.length; l++) {
+		for (int l = 0; l < World.levels.length; l++) {
 			loadFromFile(location + filename + l + extension);
 			
 			int lvlw = Integer.parseInt(data.get(0));
@@ -218,10 +218,10 @@ public class LegacyLoad {
 			byte[] tiles = new byte[lvlw * lvlh];
 			byte[] tdata = new byte[lvlw * lvlh];
 			
-			for(int x = 0; x < lvlw - 1; x++) {
-				for(int y = 0; y < lvlh - 1; y++) {
+			for (int x = 0; x < lvlw - 1; x++) {
+				for (int y = 0; y < lvlh - 1; y++) {
 					int tileArrIdx = y + x * lvlw;
-					int tileidx = x + y * lvlw; // the tiles are saved with x outer loop, and y inner loop, meaning that the list reads down, then right one, rather than right, then down one.
+					int tileidx = x + y * lvlw; // The tiles are saved with x outer loop, and y inner loop, meaning that the list reads down, then right one, rather than right, then down one.
 					tiles[tileArrIdx] = Tiles.get(Tiles.oldids.get(Integer.parseInt(data.get(tileidx + 3)))).id;
 					tdata[tileArrIdx] = Byte.parseByte(extradata.get(tileidx));
 				}
@@ -243,9 +243,9 @@ public class LegacyLoad {
 		player.armor = Integer.parseInt(data.get(5));
 		
 		String modedata;
-		if(!oldSave) {
-			if(data.size() >= 14) {
-				if(worldVer == null) worldVer = new Version("1.9.1-pre1");
+		if (!oldSave) {
+			if (data.size() >= 14) {
+				if (worldVer == null) worldVer = new Version("1.9.1-pre1");
 				player.armorDamageBuffer = Integer.parseInt(data.get(13));
 				player.curArmor = (ArmorItem)Items.get(data.get(14));
 			} else player.armor = 0;
@@ -254,7 +254,7 @@ public class LegacyLoad {
 			modedata = data.get(9);
 			
 		} else {
-			// old, 1.8 save.
+			// Old, 1.8 save.
 			Game.currentLevel = Integer.parseInt(data.get(7));
 			modedata = data.get(8);
 		}
@@ -263,7 +263,7 @@ public class LegacyLoad {
 		World.levels[Game.currentLevel].add(player);
 		
 		int mode;
-		if(modedata.contains(";")) {
+		if (modedata.contains(";")) {
 			mode = Integer.parseInt(modedata.substring(0, modedata.indexOf(";")));
 			if (mode == 4)
 				Updater.scoreTime = Integer.parseInt(modedata.substring(modedata.indexOf(";") + 1));
@@ -277,19 +277,19 @@ public class LegacyLoad {
 		
 		boolean hasEffects;
 		int potionIdx = 10;
-		if(oldSave) {
+		if (oldSave) {
 			hasEffects = data.size() > 10 && data.get(data.size()-2).contains("PotionEffects[");
 			potionIdx = data.size() - 2;
 		} else
-			hasEffects = !data.get(10).equals("PotionEffects[]"); // newer save
+			hasEffects = !data.get(10).equals("PotionEffects[]"); // Newer save
 		
-		if(hasEffects) {
+		if (hasEffects) {
 			String[] effects = data.get(potionIdx).replace("PotionEffects[", "").replace("]", "").split(":");
 			
-			for(int i = 0; i < effects.length; i++) {
+			for (int i = 0; i < effects.length; i++) {
 				String[] effect = effects[i].split(";");
 				String pName = effect[0];
-				if(oldSave) pName = pName.replace("P.", "Potion");
+				if (oldSave) pName = pName.replace("P.", "Potion");
 				PotionItem.applyPotion(player, Enum.valueOf(PotionType.class, pName), Integer.parseInt(effect[1]));
 			}
 		}
@@ -298,7 +298,7 @@ public class LegacyLoad {
 		String[] color = colors.split(";");
 		player.shirtColor = Integer.parseInt(color[0]+color[1]+color[2]);
 		
-		if(!oldSave) player.skinon = Boolean.parseBoolean(data.get(12));
+		if (!oldSave) player.skinon = Boolean.parseBoolean(data.get(12));
 		else player.skinon = false;
 	}
 	
@@ -306,20 +306,20 @@ public class LegacyLoad {
 		loadFromFile(location + filename + extension);
 		inventory.clearInv();
 		
-		for(int i = 0; i < data.size(); i++) {
+		for (int i = 0; i < data.size(); i++) {
 			String item = data.get(i);
-			if(i == 0 && oldSave && item.contains(";")) item = item.replace(";0", ";1");
+			if (i == 0 && oldSave && item.contains(";")) item = item.replace(";0", ";1");
 			loadItemToInventory(item, inventory);
 		}
 		
-		if(playerac > 0 && inventory == Game.player.getInventory()) {
+		if (playerac > 0 && inventory == Game.player.getInventory()) {
 			inventory.add(Items.get("arrow"), playerac);
 			playerac = 0;
 		}
 	}
 	
 	public void loadItemToInventory(String item, Inventory inventory) {
-		if(item.contains(";")) {
+		if (item.contains(";")) {
 			String[] curData = item.split(";");
 			String itemName = curData[0];
 			if(oldSave) itemName = subOldName(itemName);
@@ -329,7 +329,7 @@ public class LegacyLoad {
 			int count = Integer.parseInt(curData[1]);
 			inventory.add(newItem, count);
 		} else {
-			if(oldSave) item = subOldName(item);
+			if (oldSave) item = subOldName(item);
 			Item toAdd = Items.get(item);
 			inventory.add(toAdd);
 		}
@@ -346,43 +346,43 @@ public class LegacyLoad {
 	public void loadEntities(String filename, Player player) {
 		loadFromFile(location + filename + extension);
 		
-		for(int i = 0; i < World.levels.length; i++) {
+		for (int i = 0; i < World.levels.length; i++) {
 			World.levels[i].clearEntities();
 		}
 		
-		for(int i = 0; i < data.size(); i++) {
-			List<String> info = Arrays.asList(data.get(i).substring(data.get(i).indexOf("[") + 1, data.get(i).indexOf("]")).split(":")); // this gets everything inside the "[...]" after the entity name.
+		for (int i = 0; i < data.size(); i++) {
+			List<String> info = Arrays.asList(data.get(i).substring(data.get(i).indexOf("[") + 1, data.get(i).indexOf("]")).split(":")); // This gets everything inside the "[...]" after the entity name.
 			
-			String entityName = data.get(i).substring(0, data.get(i).indexOf("[")).replace("bed", "Bed").replace("II", ""); // this gets the text before "[", which is the entity name.
+			String entityName = data.get(i).substring(0, data.get(i).indexOf("[")).replace("bed", "Bed").replace("II", ""); // This gets the text before "[", which is the entity name.
 			int x = Integer.parseInt(info.get(0));
 			int y = Integer.parseInt(info.get(1));
 			
 			int mobLvl = 0;
 			try {
-				if(Class.forName("EnemyMob").isAssignableFrom(Class.forName(entityName)))
+				if (Class.forName("EnemyMob").isAssignableFrom(Class.forName(entityName)))
 					mobLvl = Integer.parseInt(info.get(info.size()-2));
-			} catch(ClassNotFoundException ignored) {}
+			} catch (ClassNotFoundException ignored) {}
 			
 			Entity newEntity = getEntity(entityName, player, mobLvl);
 			
-			if(newEntity != null) { // the method never returns null, but...
+			if (newEntity != null) { // the method never returns null, but...
 				int currentlevel;
-				if(newEntity instanceof Mob) {
+				if (newEntity instanceof Mob) {
 					Mob mob = (Mob)newEntity;
 					mob.health = Integer.parseInt(info.get(2));
 					currentlevel = Integer.parseInt(info.get(info.size()-1));
 					World.levels[currentlevel].add(mob, x, y);
-				} else if(newEntity instanceof Chest) {
+				} else if (newEntity instanceof Chest) {
 					Chest chest = (Chest)newEntity;
 					boolean isDeathChest = chest instanceof DeathChest;
 					boolean isDungeonChest = chest instanceof DungeonChest;
 					List<String> chestInfo = info.subList(2, info.size()-1);
 					
 					int endIdx = chestInfo.size()-(isDeathChest||isDungeonChest?1:0);
-					for(int idx = 0; idx < endIdx; idx++) {
+					for (int idx = 0; idx < endIdx; idx++) {
 						String itemData = chestInfo.get(idx);
-						if(worldVer.compareTo(new Version("1.9.1")) < 0) // if this world is before 1.9.1
-							if(itemData.equals("")) continue; // this skips any null items
+						if (worldVer.compareTo(new Version("1.9.1")) < 0) // if this world is before 1.9.1
+							if (itemData.equals("")) continue; // this skips any null items
 						loadItemToInventory(itemData, chest.getInventory());
 					}
 					
@@ -395,7 +395,7 @@ public class LegacyLoad {
 					currentlevel = Integer.parseInt(info.get(info.size() - 1));
 					World.levels[currentlevel].add(chest instanceof DeathChest ? (DeathChest)chest : chest instanceof DungeonChest ? (DungeonChest)chest : chest, x, y);
 				}
-				else if(newEntity instanceof Spawner) {
+				else if (newEntity instanceof Spawner) {
 					Spawner egg = new Spawner((MobAi)getEntity(info.get(2), player, Integer.parseInt(info.get(3))));
 					currentlevel = Integer.parseInt(info.get(info.size() - 1));
 					World.levels[currentlevel].add(egg, x, y);
@@ -404,12 +404,12 @@ public class LegacyLoad {
 					currentlevel = Integer.parseInt(info.get(2));
 					World.levels[currentlevel].add(newEntity, x, y);
 				}
-			} // end of entity not null conditional
+			} // End of entity not null conditional
 		}
 	}
 	
 	public Entity getEntity(String string, Player player, int moblvl) {
-		switch(string) {
+		switch (string) {
 			case "Player": return player;
 			case "Cow": return new Cow();
 			case "Sheep": return new Sheep();
