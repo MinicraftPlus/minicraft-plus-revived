@@ -41,7 +41,7 @@ public class Version implements Comparable<Version> {
 	public boolean isValid() { return valid; }
 	public static boolean isValid(String version) { return new Version(version, false).isValid(); }
 	
-	// the returned value of this method (-1, 0, or 1) is determined by whether this object is less than, equal to, or greater than the specified object.
+	// The returned value of this method (-1, 0, or 1) is determined by whether this object is less than, equal to, or greater than the specified object.
 	public int compareTo(@NotNull Version ov) {
 		if (make != ov.make) return Integer.compare(make, ov.make);
 		if (major != ov.major) return Integer.compare(major, ov.major);
@@ -51,7 +51,7 @@ public class Version implements Comparable<Version> {
 			if (ov.dev == 0) return -1;
 			return Integer.compare(dev, ov.dev);
 		}
-		return 0; // the versions are equal.
+		return 0; // The versions are equal.
 	}
 	
 	@Override

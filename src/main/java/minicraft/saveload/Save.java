@@ -85,14 +85,14 @@ public class Save {
 		this(new File(Game.gameDir+"/saves/" + worldname + "/"));
 
 		if (Game.isValidClient()) {
-			// clients are not allowed to save.
+			// Clients are not allowed to save.
 			Updater.saving = false;
 			return;
 		}
 
 		writeGame("Game");
 		writeWorld("Level");
-		if (!Game.isValidServer()) { // this must be waited for on a server.
+		if (!Game.isValidServer()) { // This must be waited for on a server.
 			writePlayer("Player", Game.player);
 			writeInventory("Inventory", Game.player);
 		}
@@ -125,9 +125,9 @@ public class Save {
 	}
 
 	public Save(Player player, boolean writePlayer) {
-		// this is simply for access to writeToFile.
+		// This is simply for access to writeToFile.
 		this(new File(Game.gameDir+"/saves/"+ WorldSelectDisplay.getWorldName() + "/"));
-		if(writePlayer) {
+		if (writePlayer) {
 			writePlayer("Player", player);
 			writeInventory("Inventory", player);
 		}
@@ -142,7 +142,7 @@ public class Save {
 	public void writeToFile(String filename, List<String> savedata) {
 		try {
 			writeToFile(filename, savedata.toArray(new String[0]), true);
-		} catch(IOException ex) {
+		} catch (IOException ex) {
 			ex.printStackTrace();
 		}
 		
@@ -158,11 +158,11 @@ public class Save {
 	
 	public static void writeToFile(String filename, String[] savedata, boolean isWorldSave) throws IOException {
 		try (BufferedWriter bufferedWriter = new BufferedWriter(new FileWriter(filename))) {
-			for(int i = 0; i < savedata.length; i++) {
+			for (int i = 0; i < savedata.length; i++) {
 				bufferedWriter.write(savedata[i]);
-				if(isWorldSave) {
+				if (isWorldSave) {
 					bufferedWriter.write(",");
-					if(filename.contains("Level5") && i == savedata.length - 1) {
+					if (filename.contains("Level5") && i == savedata.length - 1) {
 						bufferedWriter.write(",");
 					}
 				} else
@@ -199,12 +199,12 @@ public class Save {
 
 		writeToFile(location + "Preferences" + extension, data);
 		
-		if((boolean)Settings.get("unlockedskin"))
+		if ((boolean)Settings.get("unlockedskin"))
 			data.add("AirSkin");
 		
-		if(Settings.getEntry("scoretime").getValueVisibility(10))
+		if (Settings.getEntry("scoretime").getValueVisibility(10))
 			data.add("10_ScoreTime");
-		if(Settings.getEntry("scoretime").getValueVisibility(120))
+		if (Settings.getEntry("scoretime").getValueVisibility(120))
 			data.add("120_ScoreTime");
 		
 		writeToFile(location + "Unlocks" + extension, data);
@@ -218,15 +218,15 @@ public class Save {
 	
 	private void writeWorld(String filename) {
 		LoadingDisplay.setMessage("Levels");
-		for(int l = 0; l < World.levels.length; l++) {
+		for (int l = 0; l < World.levels.length; l++) {
 			String worldSize = String.valueOf(Settings.get("size"));
 			data.add(worldSize);
 			data.add(worldSize);
 			data.add(Long.toString(World.levels[l].getSeed()));
 			data.add(String.valueOf(World.levels[l].depth));
 			
-			for(int x = 0; x < World.levels[l].w; x++) {
-				for(int y = 0; y < World.levels[l].h; y++) {
+			for (int x = 0; x < World.levels[l].w; x++) {
+				for (int y = 0; y < World.levels[l].h; y++) {
 					data.add(String.valueOf(World.levels[l].getTile(x, y).name));
 				}
 			}
@@ -234,9 +234,9 @@ public class Save {
 			writeToFile(location + filename + l + extension, data);
 		}
 		
-		for(int l = 0; l < World.levels.length; l++) {
-			for(int x = 0; x < World.levels[l].w; x++) {
-				for(int y = 0; y < World.levels[l].h; y++) {
+		for (int l = 0; l < World.levels.length; l++) {
+			for (int x = 0; x < World.levels[l].w; x++) {
+				for (int y = 0; y < World.levels[l].h; y++) {
 					data.add(String.valueOf(World.levels[l].getData(x, y)));
 				}
 			}
@@ -268,11 +268,11 @@ public class Save {
 		
 		StringBuilder subdata = new StringBuilder("PotionEffects[");
 		
-		for(java.util.Map.Entry<PotionType, Integer> potion: player.potioneffects.entrySet())
+		for (java.util.Map.Entry<PotionType, Integer> potion: player.potioneffects.entrySet())
 			subdata.append(potion.getKey()).append(";").append(potion.getValue()).append(":");
 		
-		if(player.potioneffects.size() > 0)
-			subdata = new StringBuilder(subdata.substring(0, subdata.length() - (1)) + "]"); // cuts off extra ":" and appends "]"
+		if (player.potioneffects.size() > 0)
+			subdata = new StringBuilder(subdata.substring(0, subdata.length() - (1)) + "]"); // Cuts off extra ":" and appends "]"
 		else subdata.append("]");
 		data.add(subdata.toString());
 		
@@ -286,23 +286,23 @@ public class Save {
 	}
 	public static void writeInventory(Player player, List<String> data) {
 		data.clear();
-		if(player.activeItem != null) {
+		if (player.activeItem != null) {
 			data.add(player.activeItem.getData());
 		}
 		
 		Inventory inventory = player.getInventory();
 		
-		for(int i = 0; i < inventory.invSize(); i++) {
+		for (int i = 0; i < inventory.invSize(); i++) {
 			data.add(inventory.get(i).getData());
 		}
 	}
 	
 	private void writeEntities(String filename) {
 		LoadingDisplay.setMessage("Entities");
-		for(int l = 0; l < World.levels.length; l++) {
-			for(Entity e: World.levels[l].getEntitiesToSave()) {
+		for (int l = 0; l < World.levels.length; l++) {
+			for (Entity e: World.levels[l].getEntitiesToSave()) {
 				String saved = writeEntity(e, true);
-				if(saved.length() > 0)
+				if (saved.length() > 0)
 					data.add(saved);
 			}
 		}
@@ -315,20 +315,20 @@ public class Save {
 		name = name.substring(name.lastIndexOf('.')+1);
 		StringBuilder extradata = new StringBuilder();
 		
-		// don't even write ItemEntities or particle effects; Spark... will probably is saved, eventually; it presents an unfair cheat to remove the sparks by reloading the Game.
+		// Don't even write ItemEntities or particle effects; Spark... will probably is saved, eventually; it presents an unfair cheat to remove the sparks by reloading the Game.
 
-		//if(e instanceof Particle) return ""; // TODO I don't want to, but there are complications.
+		// If(e instanceof Particle) return ""; // TODO I don't want to, but there are complications.
 		
-		if(isLocalSave && (e instanceof ItemEntity || e instanceof Arrow || e instanceof RemotePlayer || e instanceof Spark || e instanceof Particle)) // wirte these only when sending a world, not writing it. (RemotePlayers are saved separately, when their info is received.)
+		if (isLocalSave && (e instanceof ItemEntity || e instanceof Arrow || e instanceof RemotePlayer || e instanceof Spark || e instanceof Particle)) // wirte these only when sending a world, not writing it. (RemotePlayers are saved separately, when their info is received.)
 			return "";
 		
-		if(!isLocalSave)
+		if (!isLocalSave)
 			extradata.append(":").append(e.eid);
 		
-		if(!isLocalSave && e instanceof RemotePlayer) {
+		if (!isLocalSave && e instanceof RemotePlayer) {
 			RemotePlayer rp = (RemotePlayer)e;
 			extradata.append(":").append(rp.getData());
-		} // the "else" part is so that remote player, which is a mob, doesn't get the health thing.
+		} // The "else" part is so that remote player, which is a mob, doesn't get the health thing.
 		else if(e instanceof Mob) {
 			Mob m = (Mob)e;
 			extradata.append(":").append(m.health);
@@ -338,7 +338,7 @@ public class Save {
 				extradata.append(":").append(((Sheep) m).cut); // Saves if the sheep is cut. If not, we could reload the save and the wool would regenerate.
 		}
 		
-		if(e instanceof Chest) {
+		if (e instanceof Chest) {
 			Chest chest = (Chest)e;
 			
 			for(int ii = 0; ii < chest.getInventory().invSize(); ii++) {
@@ -350,7 +350,7 @@ public class Save {
 			if(chest instanceof DungeonChest) extradata.append(":").append(((DungeonChest) chest).isLocked());
 		}
 		
-		if(e instanceof Spawner) {
+		if (e instanceof Spawner) {
 			Spawner egg = (Spawner)e;
 			String mobname = egg.mob.getClass().getName();
 			mobname = mobname.substring(mobname.lastIndexOf(".")+1);
@@ -366,15 +366,15 @@ public class Save {
 		}
 		
 		if (!isLocalSave) {
-			if(e instanceof ItemEntity) extradata.append(":").append(((ItemEntity) e).getData());
-			if(e instanceof Arrow) extradata.append(":").append(((Arrow) e).getData());
-			if(e instanceof Spark) extradata.append(":").append(((Spark) e).getData());
-			if(e instanceof TextParticle) extradata.append(":").append(((TextParticle) e).getData());
+			if (e instanceof ItemEntity) extradata.append(":").append(((ItemEntity) e).getData());
+			if (e instanceof Arrow) extradata.append(":").append(((Arrow) e).getData());
+			if (e instanceof Spark) extradata.append(":").append(((Spark) e).getData());
+			if (e instanceof TextParticle) extradata.append(":").append(((TextParticle) e).getData());
 		}
 		//else // is a local save
 		
 		int depth = 0;
-		if(e.getLevel() == null)
+		if (e.getLevel() == null)
 			System.out.println("WARNING: Saving entity with no level reference: " + e + "; setting level to surface");
 		else
 			depth = e.getLevel().depth;
