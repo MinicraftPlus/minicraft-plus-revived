@@ -1,9 +1,9 @@
 package minicraft.core.io;
 
-import java.awt.*;
+import java.awt.DisplayMode;
+import java.awt.GraphicsEnvironment;
 import java.util.HashMap;
 
-import minicraft.core.Game;
 import minicraft.screen.SkinDisplay;
 import minicraft.screen.entry.ArrayEntry;
 import minicraft.screen.entry.BooleanEntry;
@@ -53,21 +53,21 @@ public class Settings {
 	
 	public static void init() {}
 	
-	// returns the value of the specified option
+	// Returns the value of the specified option
 	public static Object get(String option) { return options.get(option.toLowerCase()).getValue(); }
 	
-	// returns the index of the value in the list of values for the specified option
+	// Returns the index of the value in the list of values for the specified option
 	public static int getIdx(String option) { return options.get(option.toLowerCase()).getSelection(); }
 	
-	// return the ArrayEntry object associated with the given option name.
+	// Return the ArrayEntry object associated with the given option name.
 	public static ArrayEntry getEntry(String option) { return options.get(option.toLowerCase()); }
 	
-	// sets the value of the given option name, to the given value, provided it is a valid value for that option.
+	// Sets the value of the given option name, to the given value, provided it is a valid value for that option.
 	public static void set(String option, Object value) {
 		options.get(option.toLowerCase()).setValue(value);
 	}
 	
-	// sets the index of the value of the given option, provided it is a valid index
+	// Sets the index of the value of the given option, provided it is a valid index
 	public static void setIdx(String option, int idx) {
 		options.get(option.toLowerCase()).setSelection(idx);
 	}

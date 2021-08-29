@@ -14,9 +14,9 @@ public class DeathChest extends Chest {
 	private static Sprite normalSprite = new Sprite(10, 26, 2, 2, 2);
 	private static Sprite redSprite = new Sprite(10, 24, 2, 2, 2);
 	
-	public int time; // time passed (used for death chest despawn)
-	private int redtick = 0; // this is used to determine the shade of red when the chest is about to expire.
-	private boolean reverse; // what direction the red shade (redtick) is changing.
+	public int time; // Time passed (used for death chest despawn)
+	private int redtick = 0; //This is used to determine the shade of red when the chest is about to expire.
+	private boolean reverse; // What direction the red shade (redtick) is changing.
 	
 	/**
 	 * Creates a custom chest with the name Death Chest
@@ -25,7 +25,7 @@ public class DeathChest extends Chest {
 		super("Death Chest");
 		this.sprite = normalSprite;
 		
-		/// set the expiration time based on the world difficulty.
+		/// Set the expiration time based on the world difficulty.
 		if (Settings.get("diff").equals("Easy")) {
 			time = 300*Updater.normSpeed;
 		} else if (Settings.get("diff").equals("Normal")) {
@@ -42,7 +42,7 @@ public class DeathChest extends Chest {
 		getInventory().addAll(player.getInventory());
 	}
 	
-	// for death chest time count, I imagine.
+	// For death chest time count, I imagine.
 	@Override
 	public void tick() {
 		super.tick();
@@ -52,10 +52,10 @@ public class DeathChest extends Chest {
 			remove();
 		}
 		
-		if (time < 30*Updater.normSpeed) { // if there is less than 30 seconds left...
+		if (time < 30 * Updater.normSpeed) { // If there is less than 30 seconds left...
 			redtick += reverse ? -1 : 1; // inc/dec-rement redtick, changing the red shading.
 			
-			/// these two statements keep the red color oscillating.
+			/// These two statements keep the red color oscillating.
 			if (redtick > 13) {
 				reverse = true;
 				this.sprite = normalSprite;
@@ -67,11 +67,11 @@ public class DeathChest extends Chest {
 		}
 		
 		if (time > 0) {
-			time--; // decrement the time if it is not already zero.
+			time--; // Decrement the time if it is not already zero.
 		}
 		
 		if (time == 0) {
-			die(); // remove the death chest when the time expires, spilling all the contents.
+			die(); // Remove the death chest when the time expires, spilling all the contents.
 		}
 	}
 	

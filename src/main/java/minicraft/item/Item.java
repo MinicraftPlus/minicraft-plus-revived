@@ -2,7 +2,6 @@ package minicraft.item;
 
 import minicraft.core.io.Localization;
 import minicraft.entity.Direction;
-import minicraft.entity.Entity;
 import minicraft.entity.mob.Player;
 import minicraft.gfx.Font;
 import minicraft.gfx.Screen;
@@ -17,7 +16,7 @@ public abstract class Item {
 	private final String name;
 	public Sprite sprite;
 	
-	public boolean used_pending = false; // this is for multiplayer, when an item has been used, and is pending server response as to the outcome, this is set to true so it cannot be used again unless the server responds that the item wasn't used. Which should basically replace the item anyway, soo... yeah. this never gets set back.
+	public boolean used_pending = false; // This is for multiplayer, when an item has been used, and is pending server response as to the outcome, this is set to true so it cannot be used again unless the server responds that the item wasn't used. Which should basically replace the item anyway, soo... yeah. this never gets set back.
 	
 	protected Item(String name) {
 		sprite = Sprite.missingTexture(1, 1);
@@ -73,7 +72,7 @@ public abstract class Item {
 	
 	public final String getName() { return name; }
 	
-	// returns the String that should be used to display this item in a menu or list. 
+	// Returns the String that should be used to display this item in a menu or list. 
 	public String getDisplayName() {
 		return " " + Localization.getLocalized(getName());
 	}

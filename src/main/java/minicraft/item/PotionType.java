@@ -20,6 +20,7 @@ public enum PotionType {
 	Swim (Color.get(1, 17, 17, 85), 4800),
 	Energy (Color.get(1, 172, 80, 57), 8400),
 	Regen (Color.get(1, 168, 54, 146), 1800),
+	
 	Health (Color.get(1, 161, 46, 69), 0) {
 		public boolean toggleEffect(Player player, boolean addEffect) {
 			if(addEffect) player.heal(5);
@@ -34,11 +35,11 @@ public enum PotionType {
 	
 	Escape (Color.get(1, 85, 62, 62), 0) {
 		public boolean toggleEffect(Player player, boolean addEffect) {
-			if(addEffect) {
+			if (addEffect) {
 				int playerDepth = player.getLevel().depth;
 				
-				if(playerDepth == 0) {
-					if(!Game.isValidServer()) {
+				if (playerDepth == 0) {
+					if (!Game.isValidServer()) {
 						// player is in overworld
 						String note = "You can't escape from here!";
 						Game.notifications.add(note);
@@ -50,7 +51,7 @@ public enum PotionType {
 				
 				World.scheduleLevelChange(depthDiff, () -> {
 					Level plevel = World.levels[World.lvlIdx(playerDepth + depthDiff)];
-					if(plevel != null && !plevel.getTile(player.x >> 4, player.y >> 4).mayPass(plevel, player.x >> 4, player.y >> 4, player))
+					if (plevel != null && !plevel.getTile(player.x >> 4, player.y >> 4).mayPass(plevel, player.x >> 4, player.y >> 4, player))
 						player.findStartPos(plevel, false);
 				});
 			}
@@ -69,12 +70,12 @@ public enum PotionType {
 	}
 	
 	public boolean toggleEffect(Player player, boolean addEffect) {
-		return duration > 0; // if you have no duration and do nothing, then you can't be used.
+		return duration > 0; // If you have no duration and do nothing, then you can't be used.
 	}
 	
 	public boolean transmitEffect() {
-		return true; // any effect which could be duplicated and result poorly should not be sent to the server.
-		// for the case of the Health potion, the player health is not transmitted separately until after the potion effect finishes, so having it send just gets the change there earlier.
+		return true; // Any effect which could be duplicated and result poorly should not be sent to the server.
+		// For the case of the Health potion, the player health is not transmitted separately until after the potion effect finishes, so having it send just gets the change there earlier.
 	}
 	
 	public static final PotionType[] values = PotionType.values();

@@ -38,9 +38,10 @@ public class PassiveMob extends MobAi {
 	
 	@Override
 	public void randomizeWalkDir(boolean byChance) {
-		if(xmov == 0 && ymov == 0 && random.nextInt(5) == 0 || byChance || random.nextInt(randomWalkChance) == 0) {
+		if (xmov == 0 && ymov == 0 && random.nextInt(5) == 0 || byChance || random.nextInt(randomWalkChance) == 0) {
 			randomWalkTime = randomWalkDuration;
-			// multiple at end ups the chance of not moving by 50%.
+			
+			// Multiple at end ups the chance of not moving by 50%.
 			xmov = (random.nextInt(3) - 1) * random.nextInt(2);
 			ymov = (random.nextInt(3) - 1) * random.nextInt(2);
 		}
@@ -60,9 +61,9 @@ public class PassiveMob extends MobAi {
 	 */
 	public static boolean checkStartPos(Level level, int x, int y) {
 		
-		int r = (Game.isMode("score") ? 22 : 15) + (Updater.getTime() == Updater.Time.Night ? 0 : 5); // get no-mob radius by
+		int r = (Game.isMode("score") ? 22 : 15) + (Updater.getTime() == Updater.Time.Night ? 0 : 5); // Get no-mob radius by
 		
-		if(!MobAi.checkStartPos(level, x, y, 80, r))
+		if (!MobAi.checkStartPos(level, x, y, 80, r))
 			return false;
 		
 		Tile tile = level.getTile(x >> 4, y >> 4);

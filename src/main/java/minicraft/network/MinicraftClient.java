@@ -6,10 +6,16 @@ import java.net.InetSocketAddress;
 import java.net.Socket;
 import java.net.UnknownHostException;
 import java.util.Arrays;
-import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.PriorityQueue;
+
+import org.jetbrains.annotations.Nullable;
+import org.xbill.DNS.Lookup;
+import org.xbill.DNS.Record;
+import org.xbill.DNS.SRVRecord;
+import org.xbill.DNS.TextParseException;
+import org.xbill.DNS.Type;
 
 import minicraft.core.Game;
 import minicraft.core.Network;
@@ -37,13 +43,6 @@ import minicraft.saveload.Save;
 import minicraft.saveload.Version;
 import minicraft.screen.ContainerDisplay;
 import minicraft.screen.MultiplayerDisplay;
-import org.xbill.DNS.Lookup;
-import org.xbill.DNS.Record;
-import org.xbill.DNS.SRVRecord;
-import org.xbill.DNS.TextParseException;
-import org.xbill.DNS.Type;
-
-import org.jetbrains.annotations.Nullable;
 
 // This class is only used by the client runtime; the server runtime doesn't touch it.
 public class MinicraftClient extends MinicraftConnection {

@@ -37,12 +37,12 @@ public class Arrow extends Entity implements ClientTickable {
 	 * @return string representation of owner, xdir, ydir and damage.
 	 */
 	public String getData() {
-		return owner.eid+":"+dir.ordinal()+":"+damage;
+		return owner.eid + ":" + dir.ordinal() + ":"+damage;
 	}
 	
 	@Override
 	public void tick() {
-		if (x < 0 || x>>4 > level.w || y < 0 || y>>4 > level.h) {
+		if (x < 0 || x >> 4 > level.w || y < 0 || y >> 4 > level.h) {
 			remove(); // Remove when out of bounds
 			return;
 		}

@@ -2,6 +2,14 @@ package minicraft.screen;
 
 import java.io.InputStream;
 
+import org.json.JSONObject;
+
+import com.mashape.unirest.http.HttpResponse;
+import com.mashape.unirest.http.JsonNode;
+import com.mashape.unirest.http.Unirest;
+import com.mashape.unirest.http.async.Callback;
+import com.mashape.unirest.http.exceptions.UnirestException;
+
 import minicraft.core.Action;
 import minicraft.core.Game;
 import minicraft.core.io.InputHandler;
@@ -15,13 +23,6 @@ import minicraft.network.Analytics;
 import minicraft.network.MinicraftClient;
 import minicraft.saveload.Save;
 import minicraft.screen.entry.RangeEntry;
-
-import com.mashape.unirest.http.HttpResponse;
-import com.mashape.unirest.http.JsonNode;
-import com.mashape.unirest.http.Unirest;
-import com.mashape.unirest.http.async.Callback;
-import com.mashape.unirest.http.exceptions.UnirestException;
-import org.json.JSONObject;
 
 public class MultiplayerDisplay extends Display {
 	

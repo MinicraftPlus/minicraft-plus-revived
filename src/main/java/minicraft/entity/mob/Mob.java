@@ -3,7 +3,6 @@ package minicraft.entity.mob;
 import java.util.List;
 
 import minicraft.core.Game;
-import minicraft.entity.Arrow;
 import minicraft.entity.Direction;
 import minicraft.entity.Entity;
 import minicraft.entity.furniture.Tnt;
@@ -49,27 +48,27 @@ public abstract class Mob extends Entity {
 	public void tick() {
 		tickTime++; // Increment our tick counter
 		
-		if(isRemoved()) return;
+		if (isRemoved()) return;
 		
 		if (level != null && level.getTile(x >> 4, y >> 4) == Tiles.get("lava")) // If we are trying to swim in lava
 			hurt(Tiles.get("lava"), x, y, 4); // Inflict 4 damage to ourselves, sourced from the lava Tile, with the direction as the opposite of ours.
-		if (health <= 0) die(); // die if no health
+		if (health <= 0) die(); // Die if no health
 		if (hurtTime > 0) hurtTime--; // If a timer preventing damage temporarily is set, decrement it's value
 		
 
 		/// The code below checks the direction of the knockback, moves the Mob accordingly, and brings the knockback closer to 0.
 		int xd = 0, yd = 0;
-		if(xKnockback != 0) {
+		if (xKnockback != 0) {
 			xd = (int)Math.ceil(xKnockback/2);
 			xKnockback -= xKnockback/Math.abs(xKnockback);
 		}
-		if(yKnockback != 0) {
+		if (yKnockback != 0) {
 			yd = (int)Math.ceil(yKnockback/2);
 			yKnockback -= yKnockback/Math.abs(yKnockback);
 		}
 		
 		// if the player moved via knockback, update the server
-		if((xd != 0 || yd != 0) && Game.isConnectedClient() && this == Game.player)
+		if ((xd != 0 || yd != 0) && Game.isConnectedClient() && this == Game.player)
 			Game.client.move((Player)this, x+xd, y+yd);
 
 		move(xd, yd, false);
@@ -77,14 +76,14 @@ public abstract class Mob extends Entity {
 	
 	@Override
 	public boolean move(int xd, int yd) { return move(xd, yd, true); } // Move the mob, overrides from Entity
-	private boolean move(int xd, int yd, boolean changeDir) { // knockback shouldn't change mob direction
-		if(level == null) return false; // stopped b/c there's no level to move in!
+	private boolean move(int xd, int yd, boolean changeDir) { // Knockback shouldn't change mob direction
+		if (level == null) return false; // Stopped b/c there's no level to move in!
 		
 		int oldxt = x >> 4;
 		int oldyt = y >> 4;
 		
-		if(!(Game.isValidServer() && this instanceof RemotePlayer)) { // this will be the case when the client has sent a move packet to the server. In this case, we DO want to always move.
-			// these should return true b/c the mob is still technically moving; these are just to make it move *slower*.
+		if (!(Game.isValidServer() && this instanceof RemotePlayer)) { // this will be the case when the client has sent a move packet to the server. In this case, we DO want to always move.
+			// These should return true b/c the mob is still technically moving; these are just to make it move *slower*.
 			if (tickTime % 2 == 0 && (isSwimming() || (!(this instanceof Player) && isWooling())))
 				return true;
 			if (tickTime % walkTime == 0 && walkTime > 1)
@@ -94,54 +93,54 @@ public abstract class Mob extends Entity {
 		boolean moved = true;
 		
 		if (hurtTime == 0 || this instanceof Player) { // If a mobAi has been hurt recently and hasn't yet cooled down, it won't perform the movement (by not calling super)
-			if(xd != 0 || yd != 0) {
-				if(changeDir)
-					dir = Direction.getDirection(xd, yd); // set the mob's direction; NEVER set it to NONE
+			if (xd != 0 || yd != 0) {
+				if (changeDir)
+					dir = Direction.getDirection(xd, yd); // Set the mob's direction; NEVER set it to NONE
 				walkDist++;
 			}
 			
-			// this part makes it so you can't move in a direction that you are currently being knocked back from.
-			if(xKnockback != 0)
-				xd = Math.copySign(xd, xKnockback)*-1 != xd ? xd : 0; // if xKnockback and xd have different signs, do nothing, otherwise, set xd to 0.
-			if(yKnockback != 0)
-				yd = Math.copySign(yd, yKnockback)*-1 != yd ? yd : 0; // same as above.
+			// This part makes it so you can't move in a direction that you are currently being knocked back from.
+			if (xKnockback != 0)
+				xd = Math.copySign(xd, xKnockback)*-1 != xd ? xd : 0; // If xKnockback and xd have different signs, do nothing, otherwise, set xd to 0.
+			if (yKnockback != 0)
+				yd = Math.copySign(yd, yKnockback)*-1 != yd ? yd : 0; // Same as above.
 			
 			moved = super.move(xd, yd); // Call the move method from Entity
 		}
 		
-		if(Game.isValidServer() && (xd != 0 || yd != 0))
+		if (Game.isValidServer() && (xd != 0 || yd != 0))
 			updatePlayers(oldxt, oldyt);
 		
 		return moved;
 	}
 	
 	public void updatePlayers(int oldxt, int oldyt) {
-		if(!Game.isValidServer()) return;
+		if (!Game.isValidServer()) return;
 		
 		List<RemotePlayer> prevPlayers = Game.server.getPlayersInRange(level, oldxt, oldyt, true);
 		
 		List<RemotePlayer> activePlayers = Game.server.getPlayersInRange(this, true);
-		for(int i = 0; i < prevPlayers.size(); i++) {
-			if(activePlayers.contains(prevPlayers.get(i))) {
+		for (int i = 0; i < prevPlayers.size(); i++) {
+			if (activePlayers.contains(prevPlayers.get(i))) {
 				activePlayers.remove(prevPlayers.remove(i));
 				i--;
 			}
 		}
-		for(int i = 0; i < activePlayers.size(); i++) {
-			if(prevPlayers.contains(activePlayers.get(i))) {
+		for (int i = 0; i < activePlayers.size(); i++) {
+			if (prevPlayers.contains(activePlayers.get(i))) {
 				prevPlayers.remove(activePlayers.remove(i));
 				i--;
 			}
 		}
-		// the lists should now only contain players that are now out of range, and players that are just now in range.
-		for(RemotePlayer rp: prevPlayers)
-			Game.server.getAssociatedThread(rp).sendEntityRemoval(this.eid);
-		for(RemotePlayer rp: activePlayers)
-			Game.server.getAssociatedThread(rp).sendEntityAddition(this);
+		// The lists should now only contain players that are now out of range, and players that are just now in range.
+		for (RemotePlayer rp: prevPlayers)
+			 Game.server.getAssociatedThread(rp).sendEntityRemoval(this.eid);
+		for (RemotePlayer rp: activePlayers)
+			 Game.server.getAssociatedThread(rp).sendEntityAddition(this);
 	}
 
 	private boolean isWooling() { // supposed to walk at half speed on wool
-		if(level == null) return false;
+		if (level == null) return false;
 		Tile tile = level.getTile(x >> 4, y >> 4);
 		return tile == Tiles.get("wool");
 	}
@@ -151,7 +150,7 @@ public abstract class Mob extends Entity {
 	 * @return true if the mob is on a light tile, false if not.
 	 */
 	public boolean isLight() {
-		if(level == null) return false;
+		if (level == null) return false;
 		return level.isLight(x>>4, y>>4);
 	}
 
@@ -192,7 +191,7 @@ public abstract class Mob extends Entity {
 	 * @param attackDir The direction this mob was attacked from
 	 */
 	public void hurt(Mob mob, int damage, Direction attackDir) { // Hurt the mob, when the source is another mob
-		if (mob instanceof Player && Game.isMode("creative") && mob != this) doHurt(health, attackDir); // kill the mob instantly
+		if (mob instanceof Player && Game.isMode("creative") && mob != this) doHurt(health, attackDir); // Kill the mob instantly
 		else doHurt(damage, attackDir); // Call the method that actually performs damage, and use our provided attackDir
 	}
 	
@@ -208,7 +207,8 @@ public abstract class Mob extends Entity {
 		if (isRemoved() || hurtTime > 0) return; // If the mob has been hurt recently and hasn't cooled down, don't continue
 		
 		health -= damage; // Actually change the health
-		// add the knockback in the correct direction
+		
+		// Add the knockback in the correct direction
 		xKnockback = attackDir.getX()*6;
 		yKnockback = attackDir.getY()*6;
 		hurtTime = 10; // Set a delay before we can be hurt again
@@ -233,18 +233,18 @@ public abstract class Mob extends Entity {
 	@Override
 	protected String getUpdateString() {
 		String updates = super.getUpdateString() + ";";
-		updates += "dir,"+dir.ordinal()+
-		";health,"+health+
-		";hurtTime,"+hurtTime;
+		updates += "dir," + dir.ordinal() +
+		";health," + health +
+		";hurtTime," + hurtTime;
 		
 		return updates;
 	}
 	
 	@Override
 	protected boolean updateField(String field, String val) {
-		if(field.equals("x") || field.equals("y")) walkDist++;
-		if(super.updateField(field, val)) return true;
-		switch(field) {
+		if (field.equals("x") || field.equals("y")) walkDist++;
+		if (super.updateField(field, val)) return true;
+		switch (field) {
 			case "dir": dir = Direction.values[Integer.parseInt(val)]; return true;
 			case "health": health = Integer.parseInt(val); return true;
 			case "hurtTime": hurtTime = Integer.parseInt(val); return true;

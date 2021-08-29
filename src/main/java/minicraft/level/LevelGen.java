@@ -1,23 +1,24 @@
 package minicraft.level;
 
-import javax.swing.ImageIcon;
-import javax.swing.JOptionPane;
 import java.awt.Image;
 import java.awt.image.BufferedImage;
 import java.util.Random;
+
+import javax.swing.ImageIcon;
+import javax.swing.JOptionPane;
+
+import org.jetbrains.annotations.Nullable;
 
 import minicraft.core.Game;
 import minicraft.core.io.Settings;
 import minicraft.level.tile.Tiles;
 import minicraft.screen.WorldGenDisplay;
 
-import org.jetbrains.annotations.Nullable;
-
 public class LevelGen {
 	private static long worldSeed = 0;
 	private static final Random random = new Random(worldSeed);
-	public double[] values; //An array of doubles, used to help making noise for the map
-	private int w, h; // width and height of the map
+	public double[] values; // An array of doubles, used to help making noise for the map
+	private int w, h; // Width and height of the map
 	private static final int stairRadius = 15;
 	
 	/** This creates noise to create random values for level generation */
@@ -27,10 +28,10 @@ public class LevelGen {
 		
 		values = new double[w * h];
 		
-		/// feature size likely determines how big the biomes are, in some way. It tends to be 16 or 32, in the code below. 
+		/// Feature size likely determines how big the biomes are, in some way. It tends to be 16 or 32, in the code below. 
 		for (int y = 0; y < w; y += featureSize) {
 			for (int x = 0; x < w; x += featureSize) {
-				setSample(x, y, random.nextFloat() * 2 - 1); // this method sets the random value from -1 to 1 at the given coordinate.
+				setSample(x, y, random.nextFloat() * 2 - 1); // This method sets the random value from -1 to 1 at the given coordinate.
 			}
 		}
 		
@@ -40,11 +41,11 @@ public class LevelGen {
 		do {
 			int halfStep = stepSize / 2;
 			for (int y = 0; y < h; y += stepSize) { 
-				for (int x = 0; x < w; x += stepSize) { // this loops through the values again, by a given increment...
-					double a = sample(x, y); // fetches the value at the coordinate set previously (it fetches the exact same ones that were just set above)
-					double b = sample(x + stepSize, y); // fetches the value at the next coordinate over. This could possibly loop over at the end, and fetch the first value in the row instead.
-					double c = sample(x, y + stepSize); // fetches the next value down, possibly looping back to the top of the column. 
-					double d = sample(x + stepSize, y + stepSize); // fetches the value one down, one right.
+				for (int x = 0; x < w; x += stepSize) { // This loops through the values again, by a given increment...
+					double a = sample(x, y); // Fetches the value at the coordinate set previously (it fetches the exact same ones that were just set above)
+					double b = sample(x + stepSize, y); // Fetches the value at the next coordinate over. This could possibly loop over at the end, and fetch the first value in the row instead.
+					double c = sample(x, y + stepSize); // Fetches the next value down, possibly looping back to the top of the column. 
+					double d = sample(x + stepSize, y + stepSize); // Fetches the value one down, one right.
 					
 					/**
 					 * This could probably use some explaining... Note: the number values are probably only good the first time around...
@@ -57,11 +58,11 @@ public class LevelGen {
 					 * So, it tends to decrease the 5th -1 or 1 number, sometimes making it of equal value to the other 4 numbers, sort of. It will usually change the end result by 0.5 to 0.25, perhaps; at max.
 					 */
 					double e = (a + b + c + d) / 4.0 + (random.nextFloat() * 2 - 1) * stepSize * scale;
-					setSample(x + halfStep, y + halfStep, e); // this sets the value that is right in the middle of the other 4 to an average of the four, plus a 5th number, which makes it slightly off, differing by about 0.25 or so on average, the first time around.
+					setSample(x + halfStep, y + halfStep, e); // This sets the value that is right in the middle of the other 4 to an average of the four, plus a 5th number, which makes it slightly off, differing by about 0.25 or so on average, the first time around.
 				}
 			}
 			
-			// this loop does the same as before, but it takes into account some of the half steps we set in the last loop.
+			// This loop does the same as before, but it takes into account some of the half steps we set in the last loop.
 			for (int y = 0; y < h; y += stepSize) {
 				for (int x = 0; x < w; x += stepSize) {
 					double a = sample(x, y); // middle (current) tile
@@ -71,12 +72,12 @@ public class LevelGen {
 					double e = sample(x + halfStep, y - halfStep); // mid-right, mid-top tile
 					double f = sample(x - halfStep, y + halfStep); // mid-left, mid-bottom tile
 					
-					// the 0.5 at the end is because we are going by half-steps..?
-					// the H is for the right and surrounding mids, and g is the bottom and surrounding mids. 
-					double H = (a + b + d + e) / 4.0 + (random.nextFloat() * 2 - 1) * stepSize * scale * 0.5; // adds middle, right, mr-mb, mr-mt, and random.
-					double g = (a + c + d + f) / 4.0 + (random.nextFloat() * 2 - 1) * stepSize * scale * 0.5; // adds middle, bottom, mr-mb, ml-mb, and random.
-					setSample(x + halfStep, y, H); // sets the H to the mid-right 
-					setSample(x, y + halfStep, g); // sets the g to the mid-bottom
+					// The 0.5 at the end is because we are going by half-steps..?
+					// The H is for the right and surrounding mids, and g is the bottom and surrounding mids. 
+					double H = (a + b + d + e) / 4.0 + (random.nextFloat() * 2 - 1) * stepSize * scale * 0.5; // Adds middle, right, mr-mb, mr-mt, and random.
+					double g = (a + c + d + f) / 4.0 + (random.nextFloat() * 2 - 1) * stepSize * scale * 0.5; // Adds middle, bottom, mr-mb, ml-mb, and random.
+					setSample(x + halfStep, y, H); // Sets the H to the mid-right 
+					setSample(x, y + halfStep, g); // Sets the g to the mid-bottom
 				}
 			}
 			
@@ -88,12 +89,12 @@ public class LevelGen {
 			stepSize /= 2;
 			scale *= (scaleMod + 0.8);
 			scaleMod *= 0.3;
-		} while (stepSize > 1); // this stops when the stepsize is < 1, aka 0 b/c it's an int. At this point there are no more mid values.
+		} while (stepSize > 1); // This stops when the stepsize is < 1, aka 0 b/c it's an int. At this point there are no more mid values.
 	}
 	
 	private double sample(int x, int y) {
 		return values[(x & (w - 1)) + (y & (h - 1)) * w];
-	} // this merely returns the value, like Level.getTile(x, y).
+	} // This merely returns the value, like Level.getTile(x, y).
 	
 	private void setSample(int x, int y, double value) {
 		/**
@@ -122,7 +123,6 @@ public class LevelGen {
 			return createAndValidateTopMap(w, h);
 		if (level == -4)
 			return createAndValidateDungeon(w, h);
-		
 		if (level > -4 && level < 0)
 			return createAndValidateUndergroundMap(w, h, -level);
 		
@@ -145,8 +145,9 @@ public class LevelGen {
 			if (count[Tiles.get("sand").id & 0xff] < 100) continue;
 			if (count[Tiles.get("grass").id & 0xff] < 100) continue;
 			if (count[Tiles.get("tree").id & 0xff] < 100) continue;
+			
 			if (count[Tiles.get("Stairs Down").id & 0xff] < w / 21)
-				continue; // size 128 = 6 stairs min
+				continue; // Size 128 = 6 stairs min
 			
 			return result;
 			
@@ -168,7 +169,7 @@ public class LevelGen {
 			if (count[(Tiles.get("iron Ore").id & 0xff) + depth - 1] < 20) continue;
 			
 			if (depth < 3 && count[Tiles.get("Stairs Down").id & 0xff] < w / 32)
-				continue; // size 128 = 4 stairs min
+				continue; // Size 128 = 4 stairs min
 			
 			return result;
 			
@@ -214,11 +215,12 @@ public class LevelGen {
 		} while (true);
 	}
 	
-	private static byte[][] createTopMap(int w, int h) { // create surface map?
+	private static byte[][] createTopMap(int w, int h) { // Create surface map
 		// creates a bunch of value maps, some with small size...
 		LevelGen mnoise1 = new LevelGen(w, h, 16);
 		LevelGen mnoise2 = new LevelGen(w, h, 16);
 		LevelGen mnoise3 = new LevelGen(w, h, 16);
+		
 		// ...and some with larger size.
 		LevelGen noise1 = new LevelGen(w, h, 32);
 		LevelGen noise2 = new LevelGen(w, h, 32);
@@ -234,7 +236,7 @@ public class LevelGen {
 				double mval = Math.abs(mnoise1.values[i] - mnoise2.values[i]);
 				mval = Math.abs(mval - mnoise3.values[i]) * 3 - 2;
 				
-				// this calculates a sort of distance based on the current coordinate.
+				// This calculates a sort of distance based on the current coordinate.
 				double xd = x / (w - 1.0) * 2 - 1;
 				double yd = y / (h - 1.0) * 2 - 1;
 				if (xd < 0) xd = -xd;
@@ -425,7 +427,7 @@ public class LevelGen {
 				if (xx >= 0 && yy >= 0 && xx < w && yy < h) {
 					if (map[xx + yy * w] == Tiles.get("grass").id) {
 						map[xx + yy * w] = Tiles.get("flower").id;
-						data[xx + yy * w] = (byte) (col + random.nextInt(4) * 16); // data determines which way the flower faces
+						data[xx + yy * w] = (byte) (col + random.nextInt(4) * 16); // Data determines which way the flower faces
 					}
 				}
 			}
@@ -446,17 +448,17 @@ public class LevelGen {
 		//if (Game.debug) System.out.println("Generating stairs for surface level...");
 		
 		stairsLoop:
-		for (int i = 0; i < w * h / 100; i++) { // loops a certain number of times, more for bigger world sizes.
+		for (int i = 0; i < w * h / 100; i++) { // Loops a certain number of times, more for bigger world sizes.
 			int x = random.nextInt(w - 2) + 1;
 			int y = random.nextInt(h - 2) + 1;
 			
-			// the first loop, which checks to make sure that a new stairs tile will be completely surrounded by rock. 
+			// The first loop, which checks to make sure that a new stairs tile will be completely surrounded by rock. 
 			for (int yy = y - 1; yy <= y + 1; yy++)
 				for (int xx = x - 1; xx <= x + 1; xx++)
 					if (map[xx + yy * w] != Tiles.get("rock").id)
 						continue stairsLoop;
 			
-			// this should prevent any stairsDown tile from being within 30 tiles of any other stairsDown tile.
+			// This should prevent any stairsDown tile from being within 30 tiles of any other stairsDown tile.
 			for (int yy = Math.max(0, y - stairRadius); yy <= Math.min(h - 1, y + stairRadius); yy++)
 				for (int xx = Math.max(0, x - stairRadius); xx <= Math.min(w - 1, x + stairRadius); xx++)
 					if (map[xx + yy * w] == Tiles.get("Stairs Down").id)
@@ -572,10 +574,13 @@ public class LevelGen {
 					if (depth == 3) map[i] = Tiles.get("lava").id;
 					else if (depth == 1) map[i] = Tiles.get("dirt").id;
 					else map[i] = Tiles.get("water").id;
+					
 				} else if (val > -2 && (mval < -1.7 || nval < -1.4)) {
 					map[i] = Tiles.get("dirt").id;
+					
 				} else {
 					map[i] = Tiles.get("rock").id;
+					
 				}
 			}
 		}
@@ -612,7 +617,9 @@ public class LevelGen {
 			for (int i = 0; i < w * h / 380; i++) {
 				for (int j = 0; j < 10; j++) {
 					if (xx < w - r && yy < h - r) {
+						
 						Structure.dungeonLock.draw(map, xx, yy, w);
+						
 						/// The "& 0xff" is a common way to convert a byte to an unsigned int, which basically prevents negative values... except... this doesn't do anything if you flip it back to a byte again...
 						map[xx + yy * w] = (byte) (Tiles.get("Stairs Down").id & 0xff);
 					}
@@ -631,7 +638,7 @@ public class LevelGen {
 					for (int xx = x - 1; xx <= x + 1; xx++)
 						if (map[xx + yy * w] != Tiles.get("rock").id) continue stairsLoop;
 				
-				// this should prevent any stairsDown tile from being within 30 tiles of any other stairsDown tile.
+				// This should prevent any stairsDown tile from being within 30 tiles of any other stairsDown tile.
 				for (int yy = Math.max(0, y - stairRadius); yy <= Math.min(h - 1, y + stairRadius); yy++)
 					for (int xx = Math.max(0, x - stairRadius); xx <= Math.min(w - 1, x + stairRadius); xx++)
 						if (map[xx + yy * w] == Tiles.get("Stairs Down").id) continue stairsLoop;
@@ -700,7 +707,7 @@ public class LevelGen {
 					if (map[xx + yy * w] != Tiles.get("cloud").id) continue stairsLoop;
 				}
 			
-			// this should prevent any stairsDown tile from being within 30 tiles of any other stairsDown tile.
+			// This should prevent any stairsDown tile from being within 30 tiles of any other stairsDown tile.
 			for (int yy = Math.max(0, y - stairRadius); yy <= Math.min(h - 1, y + stairRadius); yy++)
 				for (int xx = Math.max(0, x - stairRadius); xx <= Math.min(w - 1, x + stairRadius); xx++)
 					if (map[xx + yy * w] == Tiles.get("Stairs Down").id) continue stairsLoop;
@@ -752,7 +759,9 @@ public class LevelGen {
 			
 			int lvl = maplvls[idx++ % maplvls.length];
 			if (lvl > 1 || lvl < -4) continue;
+			
 			byte[][] fullmap = LevelGen.createAndValidateMap(w, h, lvl);
+			
 			if (fullmap == null) continue;
 			byte[] map = fullmap[0];
 			

@@ -67,8 +67,8 @@ public class TileItem extends StackableItem {
 		super(name, sprite, count);
 		this.model = model.toUpperCase();
 		this.validTiles = new ArrayList<>();
-		for(String tile: validTiles)
-			this.validTiles.add(tile.toUpperCase());
+		for (String tile: validTiles)
+			 this.validTiles.add(tile.toUpperCase());
 	}
 	
 	public boolean interactOn(Tile tile, Level level, int xt, int yt, Player player, Direction attackDir) {
@@ -85,18 +85,18 @@ public class TileItem extends StackableItem {
 		if (Game.debug) System.out.println(model + " cannot be placed on " + tile.name);
 		
 		String note = "";
-		if(model.contains("WALL")) {
+		if (model.contains("WALL")) {
 			note = "Can only be placed on " + Tiles.getName(validTiles.get(0)) + "!";
 		}
-		else if(model.contains("DOOR")) {
+		else if (model.contains("DOOR")) {
 			note = "Can only be placed on " + Tiles.getName(validTiles.get(0)) + "!";
 		}
-		else if((model.contains("BRICK") || model.contains("PLANK"))) {
+		else if ((model.contains("BRICK") || model.contains("PLANK"))) {
 			note = "Dig a hole first!";
 		}
 		
-		if(note.length() > 0) {
-			if(!Game.isValidServer())
+		if (note.length() > 0) {
+			if (!Game.isValidServer())
 				Game.notifications.add(note);
 			else
 				Game.server.getAssociatedThread((RemotePlayer)player).sendNotification(note, 0);

@@ -8,11 +8,11 @@ import minicraft.gfx.Rectangle;
 import minicraft.gfx.Screen;
 
 public class Spark extends Entity {
-	private int lifeTime; // how much time until the spark disappears
-	private double xa, ya; // the x and y acceleration
-	private double xx, yy; // the x and y positions
-	private int time; // the amount of time that has passed
-	private AirWizard owner; // the AirWizard that created this spark
+	private int lifeTime; // How much time until the spark disappears
+	private double xa, ya; // The x and y acceleration
+	private double xx, yy; // The x and y positions
+	private int time; // The amount of time that has passed
+	private AirWizard owner; // The AirWizard that created this spark
 	
 	/**
 	 * Creates a new spark. Owner is the AirWizard which is spawning this spark.
@@ -37,17 +37,17 @@ public class Spark extends Entity {
 	public void tick() {
 		time++;
 		if (time >= lifeTime) {
-			remove(); // remove this from the world
+			remove(); // Remove this from the world
 			return;
 		}
-		// move the spark:
+		// Move the spark:
 		xx += xa;
 		yy += ya;
 		x = (int) xx;
 		y = (int) yy;
 
-		// if the entity is a mob, but not a Air Wizard, then hurt the mob with 1 damage.
-		List<Entity> toHit = level.getEntitiesInRect(entity -> entity instanceof Mob && !(entity instanceof AirWizard), new Rectangle(x, y, 0, 0, Rectangle.CENTER_DIMS)); // gets the entities in the current position to hit.
+		// If the entity is a mob, but not a Air Wizard, then hurt the mob with 1 damage.
+		List<Entity> toHit = level.getEntitiesInRect(entity -> entity instanceof Mob && !(entity instanceof AirWizard), new Rectangle(x, y, 0, 0, Rectangle.CENTER_DIMS)); // Gets the entities in the current position to hit.
 		toHit.forEach(entity -> ((Mob) entity).hurt(owner, 1));
 	}
 	
@@ -58,14 +58,14 @@ public class Spark extends Entity {
 
 	@Override
 	public void render(Screen screen) {
-		/* this first part is for the blinking effect */
+		/* This first part is for the blinking effect */
 		if (time >= lifeTime - 6 * 20) {
-			if (time / 6 % 2 == 0) return; // if time is divisible by 12, then skip the rest of the code.
+			if (time / 6 % 2 == 0) return; // If time is divisible by 12, then skip the rest of the code.
 		}
 
 		int randmirror = random.nextInt(4);
 
-		screen.render(x - 4, y - 4 - 2, 8 + 24 * 32, randmirror, 2); // renders the spark
+		screen.render(x - 4, y - 4 - 2, 8 + 24 * 32, randmirror, 2); // Renders the spark
 	}
 	
 	/**
@@ -73,6 +73,6 @@ public class Spark extends Entity {
 	 * @return the owners id as a string.
 	 */
 	public String getData() {
-		return owner.eid+"";
+		return owner.eid + "";
 	}
 }

@@ -6,7 +6,7 @@ import minicraft.core.Game;
 import minicraft.core.io.Localization;
 import minicraft.gfx.Sprite;
 
-// some items are direct instances of this class; those instances are the true "items", like stone, wood, wheat, or coal; you can't do anything with them besides use them to make something else.
+// Some items are direct instances of this class; those instances are the true "items", like stone, wood, wheat, or coal; you can't do anything with them besides use them to make something else.
 
 public class StackableItem extends Item {
 	
@@ -52,9 +52,9 @@ public class StackableItem extends Item {
 	
 	public boolean stacksWith(Item other) { return other instanceof StackableItem && other.getName().equals(getName()); }
 	
-	// this is used by (most) subclasses, to standardize the count decrement behavior. This is not the normal interactOn method.
+	// This is used by (most) subclasses, to standardize the count decrement behavior. This is not the normal interactOn method.
 	protected boolean interactOn(boolean subClassSuccess) {
-		if(subClassSuccess && !Game.isMode("creative"))
+		if (subClassSuccess && !Game.isMode("creative"))
 			count--;
 		return subClassSuccess;
 	}
@@ -76,7 +76,7 @@ public class StackableItem extends Item {
 	}
 	
 	public String getData() {
-		return getName() +"_"+count;
+		return getName() + "_"+ count;
 	}
 	
 	@Override

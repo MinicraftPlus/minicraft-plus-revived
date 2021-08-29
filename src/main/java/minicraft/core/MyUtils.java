@@ -5,8 +5,8 @@ public final class MyUtils {
 	private MyUtils() {}
 	
 	public static int clamp(int val, int min, int max) {
-		if(val > max) return max;
-		if(val < min) return min;
+		if (val > max) return max;
+		if (val < min) return min;
 		return val;
 	}
 	
@@ -28,9 +28,9 @@ public final class MyUtils {
 	}
 	
 	public static <T> T fromNetworkStatus(T offline, T client, T server) {
-		if(Game.isValidServer())
+		if (Game.isValidServer())
 			return server;
-		if(Game.isValidClient())
+		if (Game.isValidClient())
 			return client;
 		return offline;
 	}

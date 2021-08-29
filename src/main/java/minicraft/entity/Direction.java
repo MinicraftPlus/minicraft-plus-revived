@@ -17,16 +17,16 @@ public enum Direction {
 	public int getY() { return y; }
 	
 	public static Direction getDirection(int xd, int yd) {
-		if (xd == 0 && yd == 0) return Direction.NONE; // the attack was from the same entity, probably; or at least the exact same space.
+		if (xd == 0 && yd == 0) return Direction.NONE; // The attack was from the same entity, probably; or at least the exact same space.
 		
 		if(Math.abs(xd) > Math.abs(yd)) {
-			// the x distance is more prominent than the y distance
-			if(xd < 0)
+			// The x distance is more prominent than the y distance
+			if (xd < 0)
 				return Direction.LEFT;
 			else
 				return Direction.RIGHT;
 		} else {
-			if(yd < 0)
+			if (yd < 0)
 				return Direction.UP;
 			else
 				return Direction.DOWN;

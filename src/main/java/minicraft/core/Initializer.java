@@ -1,13 +1,16 @@
 package minicraft.core;
 
+import java.awt.BorderLayout;
+import java.awt.event.ComponentAdapter;
+import java.awt.event.ComponentEvent;
+import java.awt.event.WindowEvent;
+import java.awt.event.WindowListener;
+import java.awt.image.BufferedImage;
+import java.io.IOException;
+
 import javax.imageio.ImageIO;
 import javax.swing.JFrame;
 import javax.swing.WindowConstants;
-
-import java.awt.BorderLayout;
-import java.awt.event.*;
-import java.awt.image.BufferedImage;
-import java.io.IOException;
 
 import minicraft.core.io.ConsoleReader;
 import minicraft.network.MinicraftProtocol;
@@ -22,7 +25,7 @@ public class Initializer extends Game {
 	 * @see Renderer#HAS_GUI
 	 */
 	static JFrame frame;
-	static int fra, tik; //these store the number of frames and ticks in the previous second; used for fps, at least.
+	static int fra, tik; // These store the number of frames and ticks in the previous second; used for fps, at least.
 	
 	public static int getCurFps() { return fra; }
 	
@@ -32,7 +35,7 @@ public class Initializer extends Game {
 		boolean autoclient = false;
 		boolean autoserver = false;
 		
-		// parses command line arguments
+		// Parses command line arguments
 		String saveDir = FileHandler.systemGameDir;
 		for (int i = 0; i < args.length; i++) {
 			if (args[i].equals("--debug")) {
@@ -79,7 +82,7 @@ public class Initializer extends Game {
 		
 		FileHandler.determineGameDir(saveDir);
 		
-		Network.autoclient = autoclient; // this will make the game automatically jump to the MultiplayerMenu, and attempt to connect to localhost.
+		Network.autoclient = autoclient; // This will make the game automatically jump to the MultiplayerMenu, and attempt to connect to localhost.
 	}
 	
 	
@@ -97,24 +100,24 @@ public class Initializer extends Game {
 		int ticks = 0;
 		long lastTimer1 = System.currentTimeMillis();
 		
-		//main game loop? calls tick() and render().
+		// Main game loop? calls tick() and render().
 		if(!HAS_GUI)
 			new ConsoleReader().start();
 		
 		while (running) {
 			long now = System.nanoTime();
-			double nsPerTick = 1E9D / Updater.normSpeed; // nanosecs per sec divided by ticks per sec = nanosecs per tick
-			if(menu == null) nsPerTick /= Updater.gamespeed;
-			unprocessed += (now - lastTime) / nsPerTick; //figures out the unprocessed time between now and lastTime.
+			double nsPerTick = 1E9D / Updater.normSpeed; // Nanosecs per sec divided by ticks per sec = nanosecs per tick
+			if (menu == null) nsPerTick /= Updater.gamespeed;
+			unprocessed += (now - lastTime) / nsPerTick; // Figures out the unprocessed time between now and lastTime.
 			lastTime = now;
 			while (unprocessed >= 1) { // If there is unprocessed time, then tick.
 				ticks++;
-				Updater.tick(); // calls the tick method (in which it calls the other tick methods throughout the code.
+				Updater.tick(); // Calls the tick method (in which it calls the other tick methods throughout the code.
 				unprocessed--;
 			}
 			
 			try {
-				Thread.sleep(2); // makes a small pause for 2 milliseconds
+				Thread.sleep(2); // Makes a small pause for 2 milliseconds
 			} catch (InterruptedException e) {
 				e.printStackTrace();
 			}
@@ -126,12 +129,12 @@ public class Initializer extends Game {
 			}
 			
 			if (System.currentTimeMillis() - lastTimer1 > 1000) { //updates every 1 second
-				lastTimer1 += 1000; // adds a second to the timer
+				lastTimer1 += 1000; // Adds a second to the timer
 				
-				fra = frames; //saves total frames in last second
-				tik = ticks; //saves total ticks in last second
-				frames = 0; //resets frames
-				ticks = 0; //resets ticks; ie, frames and ticks only are per second
+				fra = frames; // Saves total frames in last second
+				tik = ticks; // Saves total ticks in last second
+				frames = 0; // Resets frames
+				ticks = 0; // Resets ticks; ie, frames and ticks only are per second
 			}
 		}
 	}
@@ -139,24 +142,24 @@ public class Initializer extends Game {
 	
 	// Creates and displays the JFrame window that the game appears in.
 	static void createAndDisplayFrame() {
-		if(!HAS_GUI) return;
+		if (!HAS_GUI) return;
 		
 		Renderer.canvas.setMinimumSize(new java.awt.Dimension(1, 1));
 		Renderer.canvas.setPreferredSize(Renderer.getWindowSize());
 		JFrame frame = Initializer.frame = new JFrame(NAME);
 		frame.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
-		frame.setLayout(new BorderLayout()); // sets the layout of the window
+		frame.setLayout(new BorderLayout()); // Sets the layout of the window
 		frame.add(Renderer.canvas, BorderLayout.CENTER); // Adds the game (which is a canvas) to the center of the screen.
-		frame.pack(); //squishes everything into the preferredSize.
+		frame.pack(); // Squishes everything into the preferredSize.
 		
 		try {
-			BufferedImage logo = ImageIO.read(Game.class.getResourceAsStream("/resources/logo.png"));
+			BufferedImage logo = ImageIO.read(Game.class.getResourceAsStream("/resources/logo.png")); // Load the window logo
 			frame.setIconImage(logo);
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
 		
-		frame.setLocationRelativeTo(null); // the window will pop up in the middle of the screen when launched.
+		frame.setLocationRelativeTo(null); // The window will pop up in the middle of the screen when launched.
 		
 		frame.addComponentListener(new ComponentAdapter() {
 			public void componentResized(ComponentEvent e) {

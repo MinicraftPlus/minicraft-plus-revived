@@ -1,5 +1,7 @@
 package minicraft.entity.furniture;
 
+import org.jetbrains.annotations.Nullable;
+
 import minicraft.core.Game;
 import minicraft.core.io.Sound;
 import minicraft.entity.Direction;
@@ -11,14 +13,13 @@ import minicraft.gfx.Sprite;
 import minicraft.item.FurnitureItem;
 import minicraft.item.Item;
 import minicraft.item.PowerGloveItem;
-import org.jetbrains.annotations.Nullable;
 
 /** Many furniture classes are very similar; they might not even need to be there at all... */
 
 public class Furniture extends Entity {
 	
-	protected int pushTime = 0, multiPushTime = 0; // time for each push; multi is for multiplayer, to make it so not so many updates are sent.
-	private Direction pushDir = Direction.NONE; // the direction to push the furniture
+	protected int pushTime = 0, multiPushTime = 0; // Time for each push; multi is for multiplayer, to make it so not so many updates are sent.
+	private Direction pushDir = Direction.NONE; // The direction to push the furniture
 	public Sprite sprite;
 	public String name;
 	
@@ -41,7 +42,7 @@ public class Furniture extends Entity {
 	 * @param yr Vertical radius.
 	 */
 	public Furniture(String name, Sprite sprite, int xr, int yr) {
-		// all of these are 2x2 on the spritesheet; radius is for collisions only.
+		// All of these are 2x2 on the spritesheet; radius is for collisions only.
 		super(xr, yr);
 		this.name = name;
 		this.sprite = sprite;
@@ -52,7 +53,7 @@ public class Furniture extends Entity {
 	public Furniture clone() {
 		try {
 			return getClass().newInstance();
-		} catch(Exception ex) {
+		} catch (Exception ex) {
 			ex.printStackTrace();
 		}
 		return new Furniture(name, sprite);
@@ -60,11 +61,11 @@ public class Furniture extends Entity {
 
 	@Override
 	public void tick() {
-		// moves the furniture in the correct direction.
+		// Moves the furniture in the correct direction.
 		move(pushDir.getX(), pushDir.getY());
 		pushDir = Direction.NONE;
 		
-		if (pushTime > 0) pushTime--; // update pushTime by subtracting 1.
+		if (pushTime > 0) pushTime--; // Update pushTime by subtracting 1.
 		else multiPushTime = 0;
 	}
 	
@@ -76,7 +77,7 @@ public class Furniture extends Entity {
 	
 	@Override
 	public boolean blocks(Entity e) {
-		return true; // furniture blocks all entities, even non-solid ones like arrows.
+		return true; // Furniture blocks all entities, even non-solid ones like arrows.
 	}
 	
 	@Override
@@ -96,8 +97,8 @@ public class Furniture extends Entity {
 			if (!Game.ISONLINE) {
 				remove();
 				if (!Game.isMode("creative") && player.activeItem != null && !(player.activeItem instanceof PowerGloveItem))
-					player.getInventory().add(0, player.activeItem); // put whatever item the player is holding into their inventory
-				player.activeItem = new FurnitureItem(this); // make this the player's current item.
+					player.getInventory().add(0, player.activeItem); // Put whatever item the player is holding into their inventory
+				player.activeItem = new FurnitureItem(this); // Make this the player's current item.
 				return true;
 			} else if (Game.isValidServer() && player instanceof RemotePlayer) {
 				remove();
@@ -115,10 +116,10 @@ public class Furniture extends Entity {
 	 */
 	public void tryPush(Player player) {
 		if (pushTime == 0) {
-			pushDir = player.dir; // set pushDir to the player's dir.
-			pushTime = multiPushTime = 10; // set pushTime to 10.
+			pushDir = player.dir; // Set pushDir to the player's dir.
+			pushTime = multiPushTime = 10; // Set pushTime to 10.
 			
-			if(Game.isConnectedClient())
+			if (Game.isConnectedClient())
 				Game.client.pushFurniture(this);
 		}
 	}
@@ -129,7 +130,7 @@ public class Furniture extends Entity {
 	@Override
 	protected String getUpdateString() {
 		return super.getUpdateString()+
-		";pushTime,"+multiPushTime;
+		";pushTime," + multiPushTime;
 	}
 	
 	@Override

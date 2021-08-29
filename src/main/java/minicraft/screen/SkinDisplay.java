@@ -1,5 +1,13 @@
 package minicraft.screen;
 
+import java.io.File;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Objects;
+
+import javax.imageio.ImageIO;
+
 import minicraft.core.FileHandler;
 import minicraft.core.Game;
 import minicraft.core.io.InputHandler;
@@ -10,13 +18,6 @@ import minicraft.gfx.Screen;
 import minicraft.gfx.SpriteSheet;
 import minicraft.saveload.Save;
 
-import javax.imageio.ImageIO;
-import java.io.File;
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Objects;
-
 public class SkinDisplay extends Display {
 
 	public static final String DEFAULT_SKIN = "Paul"; // Default Skin :)
@@ -26,7 +27,8 @@ public class SkinDisplay extends Display {
     public static final String CUSTOM_SKIN = "Custom"; // User's Custom Imported Skin :)
 
 	private static final String[] ENTRY_NAMES = new String[] { "skins.png" }; // Spritesheets
-
+	
+	// TODO: Replace the variables "textureList" and "textureIDList" with "skinList" and "skinIDList"
 	public final List<String> textureList;
 	public final List<String> textureIDList;
 	private final File location;
@@ -60,7 +62,7 @@ public class SkinDisplay extends Display {
 
 		// Read and add the .png file to the skins list
 		for (String fileName : Objects.requireNonNull(location.list())) {
-			if (fileName.endsWith(".png")) { // only .png skins files ok?
+			if (fileName.endsWith(".png")) { // Only .png skins files ok?
 				textureList.add(fileName);
 			}
 		}
@@ -152,10 +154,10 @@ public class SkinDisplay extends Display {
 		int xo = (Screen.w - w * 8) / 2;
 		int yo = 28;
 
-
+		// TODO: Replace the logo with a preview of the skin to be selected
 		for (int y = 0; y < h; y++) {
 			for (int x = 0; x < w; x++) {
-				screen.render(xo + x * 8, yo + y * 8, x + y * 32, 0, 3); // Texture pack logo
+				screen.render(xo + x * 8, yo + y * 8, x + y * 32, 0, 3); // Skin preview?
 			}
 		}
 

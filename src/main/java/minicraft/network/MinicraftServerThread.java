@@ -1,7 +1,5 @@
 package minicraft.network;
 
-import javax.swing.Timer;
-
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -10,6 +8,8 @@ import java.io.IOException;
 import java.net.Socket;
 import java.util.ArrayList;
 import java.util.List;
+
+import javax.swing.Timer;
 
 import minicraft.core.Game;
 import minicraft.core.World;

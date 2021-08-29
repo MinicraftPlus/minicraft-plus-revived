@@ -38,13 +38,13 @@ public class ClothingItem extends StackableItem {
 		this.sprite = sprite;
 	}
 	
-	// put on clothes
+	// Put on clothes
 	public boolean interactOn(Tile tile, Level level, int xt, int yt, Player player, Direction attackDir) {
-		if(player.shirtColor == playerCol) {
+		if (player.shirtColor == playerCol) {
 			return false;
 		} else {
 			player.shirtColor = playerCol;
-			if(Game.isValidClient())
+			if (Game.isValidClient())
 				Game.client.sendShirtColor();
 			return super.interactOn(true);
 		}

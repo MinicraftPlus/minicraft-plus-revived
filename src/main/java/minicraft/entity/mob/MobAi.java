@@ -45,14 +45,14 @@ public abstract class MobAi extends Mob {
 	 * @return true if mob should sleep, false if not.
 	 */
 	protected boolean skipTick() {
-		return slowtick && (tickTime+1) % 4 == 0;
+		return slowtick && (tickTime + 1) % 4 == 0;
 	}
 	
 	@Override
 	public void tick() {
 		super.tick();
 		
-		if(lifetime > 0) {
+		if (lifetime > 0) {
 			age++;
 			if (age > lifetime) {
 				remove();
@@ -60,10 +60,10 @@ public abstract class MobAi extends Mob {
 			}
 		}
 		
-		if(getLevel() != null) {
+		if (getLevel() != null) {
 			boolean foundPlayer = false;
-			for(Player p: level.getPlayers()) {
-				if(p.isWithin(8, this) && p.potioneffects.containsKey(PotionType.Time)) {
+			for (Player p: level.getPlayers()) {
+				if (p.isWithin(8, this) && p.potioneffects.containsKey(PotionType.Time)) {
 					foundPlayer = true;
 					break;
 				}
@@ -72,15 +72,15 @@ public abstract class MobAi extends Mob {
 			slowtick = foundPlayer;
 		}
 		
-		if(skipTick()) return;
+		if (skipTick()) return;
 		
-		if(!move(xmov * speed, ymov * speed)) {
+		if (!move(xmov * speed, ymov * speed)) {
 			xmov = 0;
 			ymov = 0;
 		}
 		
-		if (random.nextInt(randomWalkChance) == 0) { // if the mob could not or did not move, or a random small chance occurred...
-			randomizeWalkDir(true); // set random walk direction.
+		if (random.nextInt(randomWalkChance) == 0) { // If the mob could not or did not move, or a random small chance occurred...
+			randomizeWalkDir(true); // Set random walk direction.
 		}
 		
 		if (randomWalkTime > 0) randomWalkTime--;
@@ -102,7 +102,7 @@ public abstract class MobAi extends Mob {
 	@Override
 	public boolean move(int xd, int yd) {
 		//noinspection SimplifiableIfStatement
-		if(Game.isValidClient()) return false; // client mobAi's should not move at all.
+		if (Game.isValidClient()) return false; // Client mobAi's should not move at all.
 		
 		return super.move(xd, yd);
 	}
@@ -113,7 +113,8 @@ public abstract class MobAi extends Mob {
 		
 		Player player = getClosestPlayer();
 		if (player != null) { // If there is a player in the level
-			/// play the hurt sound only if the player is less than 80 entity coordinates away; or 5 tiles away.
+			
+			/// Play the hurt sound only if the player is less than 80 entity coordinates away; or 5 tiles away.
 			int xd = player.x - x;
 			int yd = player.y - y;
 			if (xd * xd + yd * yd < 80 * 80) {
@@ -135,12 +136,12 @@ public abstract class MobAi extends Mob {
 	 * @param byChance true if the mob should always get a new direction to walk, false if 
 	 * there should be a chance that the mob moves.
 	 */
-	public void randomizeWalkDir(boolean byChance) { // boolean specifies if this method, from where it's called, is called every tick, or after a random chance.
-		if(!byChance && random.nextInt(randomWalkChance) != 0) return;
+	public void randomizeWalkDir(boolean byChance) { // Boolean specifies if this method, from where it's called, is called every tick, or after a random chance.
+		if (!byChance && random.nextInt(randomWalkChance) != 0) return;
 		
-		randomWalkTime = randomWalkDuration; // set the mob to walk about in a random direction for a time
+		randomWalkTime = randomWalkDuration; // Set the mob to walk about in a random direction for a time
 		
-		// set the random direction; randir is from -1 to 1.
+		// Set the random direction; randir is from -1 to 1.
 		xmov = (random.nextInt(3) - 1);
 		ymov = (random.nextInt(3) - 1);
 	}
@@ -154,7 +155,7 @@ public abstract class MobAi extends Mob {
 	protected void dropItem(int mincount, int maxcount, Item... items) {
 		int count = random.nextInt(maxcount-mincount+1) + mincount;
 		for (int i = 0; i < count; i++)
-			level.dropItem(x, y, items);
+			 level.dropItem(x, y, items);
 	}
 	
 	/**
@@ -176,12 +177,12 @@ public abstract class MobAi extends Mob {
 			if (xd * xd + yd * yd < playerDist * playerDist) return false;
 		}
 		
-		int r = level.monsterDensity * soloRadius; // get no-mob radius
+		int r = level.monsterDensity * soloRadius; // Get no-mob radius
 		
 		//noinspection SimplifiableIfStatement
-		if (level.getEntitiesInRect(new Rectangle(x, y, r*2, r*2, Rectangle.CENTER_DIMS)).size() > 0) return false;
+		if (level.getEntitiesInRect(new Rectangle(x, y, r * 2, r * 2, Rectangle.CENTER_DIMS)).size() > 0) return false;
 		
-		return level.getTile(x >> 4, y >> 4).maySpawn(); // the last check.
+		return level.getTile(x >> 4, y >> 4).maySpawn(); // The last check.
 	}
 	
 	/**
@@ -192,9 +193,9 @@ public abstract class MobAi extends Mob {
 	
 	protected void die(int points) { die(points, 0); }
 	protected void die(int points, int multAdd) {
-		for(Player p: level.getPlayers()) {
-			p.addScore(points); // add score for mob death
-			if(multAdd != 0)
+		for (Player p: level.getPlayers()) {
+			p.addScore(points); // Add score for mob death
+			if (multAdd != 0)
 				p.addMultiplier(multAdd);
 		}
 		

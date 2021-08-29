@@ -4,6 +4,8 @@ import java.time.LocalDateTime;
 import java.time.Month;
 import java.util.Random;
 
+import org.jetbrains.annotations.NotNull;
+
 import minicraft.core.Game;
 import minicraft.core.Network;
 import minicraft.core.Renderer;
@@ -23,13 +25,11 @@ import minicraft.screen.entry.ListEntry;
 import minicraft.screen.entry.SelectEntry;
 import minicraft.screen.entry.StringEntry;
 
-import org.jetbrains.annotations.NotNull;
-
 public class TitleDisplay extends Display {
 	private static final Random random = new Random();
 	
 	private int rand;
-	private int count = 0; // this and reverse are for the logo; they produce the fade-in/out effect.
+	private int count = 0; // This and reverse are for the logo; they produce the fade-in/out effect.
 	private boolean reverse = false;
 	
 	public TitleDisplay() {
@@ -46,7 +46,7 @@ public class TitleDisplay extends Display {
 				else Game.setMenu(new WorldGenDisplay());
 			}),
 			new SelectEntry("Options", () -> Game.setMenu(new OptionsDisplay())),
-      new SelectEntry("Skins", () -> Game.setMenu(new SkinDisplay())),
+            new SelectEntry("Skins", () -> Game.setMenu(new SkinDisplay())),
 			displayFactory("Help",
 				new SelectEntry("Instructions", () -> Game.setMenu(new BookDisplay(BookData.instructions))),
 				new BlankEntry(),
@@ -66,10 +66,10 @@ public class TitleDisplay extends Display {
 		super.init(null); // The TitleScreen never has a parent.
 		Renderer.readyToRenderGameplay = false;
 
-		// check version
+		// Check version
 		checkVersion();
 
-		/// this is useful to just ensure that everything is really reset as it should be. 
+		/// This is useful to just ensure that everything is really reset as it should be. 
 		if (Game.server != null) {
 			if (Game.debug) System.out.println("Wrapping up loose server ends.");
 			Game.server.endConnection();
@@ -93,7 +93,7 @@ public class TitleDisplay extends Display {
 		World.levels = new Level[World.levels.length];
 		
 		if(Game.player == null || Game.player instanceof RemotePlayer)
-			// was online, need to reset player
+			// Was online, need to reset player
 			World.resetGame(false);
 	}
 	
@@ -103,7 +103,7 @@ public class TitleDisplay extends Display {
 			Network.findLatestVersion(this::checkVersion);
 		}
 		else {
-			if(latestVersion.version.compareTo(Game.VERSION) > 0) { // link new version
+			if(latestVersion.version.compareTo(Game.VERSION) > 0) { // Link new version
 				menus[0].updateEntry(0, new StringEntry("New: "+latestVersion.releaseName, Color.GREEN));
 				menus[0].updateEntry(1, new LinkEntry(Color.CYAN, "--Select here to Download--", latestVersion.releaseUrl, "Direct link to latest version: " + latestVersion.releaseUrl + "\nCan also be found here with change log: https://www.github.com/chrisj42/minicraft-plus-revived/releases"));
 			}
@@ -153,8 +153,8 @@ public class TitleDisplay extends Display {
 		boolean isGreen = splashes[rand].contains("Green");
 		boolean isRed = splashes[rand].contains("Red");
 		
-		/// this isn't as complicated as it looks. It just gets a color based off of count, which oscilates between 0 and 25.
-		int bcol = 5 - count / 5; // this number ends up being between 1 and 5, inclusive.
+		/// This isn't as complicated as it looks. It just gets a color based off of count, which oscilates between 0 and 25.
+		int bcol = 5 - count / 5; // This number ends up being between 1 and 5, inclusive.
 		int splashColor = isblue ? Color.BLUE : isRed ? Color.RED : isGreen ? Color.GREEN : Color.get(1, bcol*51, bcol*51, bcol*25);
 
 		
@@ -163,9 +163,9 @@ public class TitleDisplay extends Display {
 		Font.draw("Version " + Game.VERSION, screen, 1, 1, Color.get(1, 51));
 		
 		
-		String upString = "("+Game.input.getMapping("cursor-up")+", "+Game.input.getMapping("cursor-down")+Localization.getLocalized(" to select")+")";
-		String selectString = "("+Game.input.getMapping("select")+Localization.getLocalized(" to accept")+")";
-		String exitString = "("+Game.input.getMapping("exit")+ Localization.getLocalized(" to return")+")";
+		String upString = "(" + Game.input.getMapping("cursor-up") + ", "+ Game.input.getMapping("cursor-down")+Localization.getLocalized(" to select") +")";
+		String selectString = "(" + Game.input.getMapping("select") + Localization.getLocalized(" to accept") +")";
+		String exitString = "(" + Game.input.getMapping("exit") + Localization.getLocalized(" to return") +")";
 		
 		Font.drawCentered(upString, screen, Screen.h - 32, Color.get(1, 51));
 		Font.drawCentered(selectString, screen, Screen.h - 22, Color.get(1, 51));
@@ -176,8 +176,8 @@ public class TitleDisplay extends Display {
 		"Secret Splash!",
 		"Happy birthday Minicraft!",
 		"Happy XMAS!",
-    "Now with Customizable Skins!",
-    "Skin Update by Litorom1 & El Virus!",
+        "Now with Customizable Skins!",
+        "Skin Update by Litorom1 & El Virus!",
 		"Now with better fishing!",
 		"Now with better tools!",
 		"Now with better chests!",

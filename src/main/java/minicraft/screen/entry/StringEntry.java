@@ -19,7 +19,7 @@ public class StringEntry extends ListEntry {
 	}
 	public static StringEntry[] useLines(int color, String... lines) {
 		StringEntry[] entries = new StringEntry[lines.length];
-		for(int i = 0; i < lines.length; i++)
+		for (int i = 0; i < lines.length; i++)
 			entries[i] = new StringEntry(lines[i], color);
 		
 		return entries;

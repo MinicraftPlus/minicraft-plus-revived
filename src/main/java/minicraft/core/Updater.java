@@ -1,5 +1,8 @@
 package minicraft.core;
 
+import java.awt.GraphicsDevice;
+import java.awt.GraphicsEnvironment;
+
 import minicraft.core.io.Localization;
 import minicraft.core.io.Settings;
 import minicraft.entity.furniture.Bed;
@@ -15,27 +18,25 @@ import minicraft.screen.PauseDisplay;
 import minicraft.screen.PlayerDeathDisplay;
 import minicraft.screen.WorldSelectDisplay;
 
-import java.awt.*;
-
 public class Updater extends Game {
 	private Updater() {}
 	
 	// TIME AND TICKS
 	
-	public static final int normSpeed = 60; // measured in ticks / second.
-	public static float gamespeed = 1; // measured in MULTIPLES OF NORMSPEED.
+	public static final int normSpeed = 60; // Measured in ticks / second.
+	public static float gamespeed = 1; // Measured in MULTIPLES OF NORMSPEED.
 	public static boolean paused = true; // If the game is paused.
 
 	public static int tickCount = 0; // The number of ticks since the beginning of the game day.
 	static int time = 0; // Facilites time of day / sunlight.
-	public static final int dayLength = 64800; //this value determines how long one game day is.
-	public static final int sleepEndTime = dayLength/8; //this value determines when the player "wakes up" in the morning.
-	public static final int sleepStartTime = dayLength/2+dayLength/8; //this value determines when the player allowed to sleep.
-	//public static int noon = 32400; //this value determines when the sky switches from getting lighter to getting darker.
+	public static final int dayLength = 64800; // This value determines how long one game day is.
+	public static final int sleepEndTime = dayLength/8; // This value determines when the player "wakes up" in the morning.
+	public static final int sleepStartTime = dayLength/2+dayLength/8; // This value determines when the player allowed to sleep.
+	//public static int noon = 32400; // This value determines when the sky switches from getting lighter to getting darker.
 
 	public static int gameTime = 0; // This stores the total time (number of ticks) you've been playing your
-	public static boolean pastDay1 = true; // used to prevent mob spawn on surface on day 1.
-	public static int scoreTime; // time remaining for score mode
+	public static boolean pastDay1 = true; // Used to prevent mob spawn on surface on day 1.
+	public static int scoreTime; // Time remaining for score mode
 
 	/**
 	 * Indicates if FullScreen Mode has been toggled.
@@ -46,7 +47,7 @@ public class Updater extends Game {
 
 	public static int notetick = 0; // "note"= notifications.
 
-	private static final int astime = 7200; //stands for Auto-Save Time (interval)
+	private static final int astime = 7200; // tands for Auto-Save Time (interval)
 	public static int asTick = 0; // The time interval between autosaves.
 	public static boolean saving = false; // If the game is performing a save.
 	public static int savecooldown; // Prevents saving many times too fast, I think.
@@ -123,7 +124,7 @@ public class Updater extends Game {
 				if (isValidServer())
 					server.updateGameVars();
 			}
-			if (tickCount <= sleepStartTime && tickCount >= sleepEndTime) { // it has reached morning.
+			if (tickCount <= sleepStartTime && tickCount >= sleepEndTime) { // It has reached morning.
 				if (Game.debug) System.out.println(Network.onlinePrefix()+"reached morning, getting out of bed");
 				gamespeed = 1;
 				if (isValidServer())
@@ -132,7 +133,7 @@ public class Updater extends Game {
 			}
 		}
 		
-		//auto-save tick; marks when to do autosave.
+		// Auto-save tick; marks when to do autosave.
 		if(!paused || isValidServer())
 			asTick++;
 		if (asTick > astime) {
@@ -162,7 +163,7 @@ public class Updater extends Game {
 		
 		boolean hadMenu = menu != null;
 		if(isValidServer()) {
-			// this is to keep the game going while online, even with an unfocused window.
+			// This is to keep the game going while online, even with an unfocused window.
 			input.tick();
 			for (Level floor : levels) {
 				if (floor == null) continue;
@@ -185,25 +186,25 @@ public class Updater extends Game {
 				input.tick(); // INPUT TICK; no other class should call this, I think...especially the *Menu classes.
 			
 			if (isValidClient() && Renderer.readyToRenderGameplay) {
-				for(int i = 0; i < levels.length; i++)
-					if(levels[i] != null)
+				for (int i = 0; i < levels.length; i++)
+					if (levels[i] != null)
 						levels[i].tick(i == currentLevel);
 			}
 			
 			if (menu != null) {
-				//a menu is active.
+				// A menu is active.
 				if (player != null)
-					player.tick(); // it is CRUCIAL that the player is ticked HERE, before the menu is ticked. I'm not quite sure why... the menus break otherwise, though.
+					player.tick(); // It is CRUCIAL that the player is ticked HERE, before the menu is ticked. I'm not quite sure why... the menus break otherwise, though.
 				menu.tick(input);
 				paused = true;
 			} else {
-				//no menu, currently.
+				// No menu, currently.
 				paused = false;
 				
 				if (!isValidServer()) {
-					//if player is alive, but no level change, nothing happens here.
+					// If player is alive, but no level change, nothing happens here.
 					if (player.isRemoved() && Renderer.readyToRenderGameplay && !Bed.inBed(player)) {
-						//makes delay between death and death menu.
+						// Makes delay between death and death menu.
 						World.playerDeadTime++;
 						if (World.playerDeadTime > 60) {
 							setMenu(new PlayerDeathDisplay());
@@ -213,7 +214,7 @@ public class Updater extends Game {
 						World.pendingLevelChange = 0;
 					}
 					
-					player.tick(); // ticks the player when there's no menu.
+					player.tick(); // Ticks the player when there's no menu.
 					if (isValidClient() && Bed.inBed(player) && !Bed.sleeping() && input.getKey("exit").clicked)
 						Game.client.sendBedExitRequest();
 					
@@ -224,20 +225,20 @@ public class Updater extends Game {
 					}
 				}
 				else if (isValidServer()) {
-					// here is where I should put things like select up/down, backspace to boot, esc to open pause menu, etc.
+					// Here is where I should put things like select up/down, backspace to boot, esc to open pause menu, etc.
 					if (input.getKey("pause").clicked)
 						setMenu(new PauseDisplay());
 				}
 				
-				if (menu == null && input.getKey("F3").clicked) { // shows debug info in upper-left
+				if (menu == null && input.getKey("F3").clicked) { // Shows debug info in upper-left
 					Renderer.showinfo = !Renderer.showinfo;
 				}
 				
-				//for debugging only
+				// For debugging only
 				if (debug && HAS_GUI) {
 					
 					if (input.getKey("ctrl-p").clicked) {
-						// print all players on all levels, and their coordinates.
+						// Print all players on all levels, and their coordinates.
 						System.out.println("Printing players on all levels "+Network.onlinePrefix());
 						for (int i = 0; i < levels.length; i++) {
 							if (levels[i] == null) continue;
@@ -246,9 +247,9 @@ public class Updater extends Game {
 					}
 					
 					if (!ISONLINE || isValidServer()) {
-						// host-only cheats.
+						// Host-only cheats.
 						if (input.getKey("Shift-r").clicked && !isValidServer())
-							World.initWorld(); // for single-player use only.
+							World.initWorld(); // For single-player use only.
 						
 						if (input.getKey("1").clicked) changeTimeOfDay(Time.Morning);
 						if (input.getKey("2").clicked) changeTimeOfDay(Time.Day);
@@ -264,7 +265,7 @@ public class Updater extends Game {
 						if (input.getKey("survival").clicked) Settings.set("mode", "survival");
 						if (input.getKey("shift-t").clicked) Settings.set("mode", "score");
 						if (!Settings.get("mode").equals(prevMode) && isValidServer())
-							server.updateGameVars(); // gamemode changed
+							server.updateGameVars(); // Gamemode changed
 						
 						if (isMode("score") && input.getKey("ctrl-t").clicked) {
 							scoreTime = normSpeed * 5; // 5 seconds
@@ -289,9 +290,9 @@ public class Updater extends Game {
 					
 					
 					if (!ISONLINE || isValidClient()) {
-						// client-only cheats, since they are player-specific.
+						// Client-only cheats, since they are player-specific.
 						
-						if (input.getKey("shift-g").clicked) // this should not be needed, since the inventory should not be altered.
+						if (input.getKey("shift-g").clicked) // This should not be needed, since the inventory should not be altered.
 							Items.fillCreativeInv(player.getInventory());
 						
 						if (input.getKey("ctrl-h").clicked) player.health--;
@@ -299,7 +300,7 @@ public class Updater extends Game {
 						
 						if (input.getKey("0").clicked) player.moveSpeed = 1;
 						if (input.getKey("equals").clicked) player.moveSpeed++;
-						if (input.getKey("minus").clicked && player.moveSpeed > 1) player.moveSpeed--;// -= 0.5D;
+						if (input.getKey("minus").clicked && player.moveSpeed > 1) player.moveSpeed--; // -= 0.5D;
 						
 						if (input.getKey("shift-u").clicked) {
 							levels[currentLevel].setTile(player.x>>4, player.y>>4, Tiles.get("Stairs Up"));
@@ -309,24 +310,24 @@ public class Updater extends Game {
 						}
 						
 						if (isConnectedClient() && input.getKey("alt-t").clicked) {
-							// update the tile with the server's value for it.
+							// Update the tile with the server's value for it.
 							client.requestTile(player.getLevel(), player.x >> 4, player.y >> 4);
 						}
 					}
-				} // end debug only cond.
-			} // end "menu-null" conditional
-		} // end hasfocus conditional
-	} // end tick()
+				} // End debug only cond.
+			} // End "menu-null" conditional
+		} // End hasfocus conditional
+	} // End tick()
 	
 	
-	// this is the proper way to change the tickCount.
+	// This is the proper way to change the tickCount.
 	public static void setTime(int ticks) {
-		if (ticks < Time.Morning.tickTime) ticks = 0; // error correct
-		if (ticks < Time.Day.tickTime) time = 0; // morning
-		else if (ticks < Time.Evening.tickTime) time = 1; // day
-		else if (ticks < Time.Night.tickTime) time = 2; // evening
-		else if (ticks < dayLength) time = 3; // night
-		else { // back to morning
+		if (ticks < Time.Morning.tickTime) ticks = 0; // Error correct
+		if (ticks < Time.Day.tickTime) time = 0; // Morning
+		else if (ticks < Time.Evening.tickTime) time = 1; // Day
+		else if (ticks < Time.Night.tickTime) time = 2; // Evening
+		else if (ticks < dayLength) time = 3; // Night
+		else { // Back to morning
 			time = 0;
 			ticks = 0;
 			pastDay1 = true;
@@ -334,17 +335,17 @@ public class Updater extends Game {
 		tickCount = ticks;
 	}
 	
-	// this is the proper way to change the time of day.
+	// This is the proper way to change the time of day.
 	public static void changeTimeOfDay(Time t) {
 		setTime(t.tickTime);
 		if (isValidServer())
 			server.updateGameVars();
 	}
-	// this one works too.
+	// This one works too.
 	public static void changeTimeOfDay(int t) {
 		Time[] times = Time.values();
 		if (t > 0 && t < times.length)
-			changeTimeOfDay(times[t]); // it just references the other one.
+			changeTimeOfDay(times[t]); // It just references the other one.
 		else
 			System.out.println("Time " + t + " does not exist.");
 	}

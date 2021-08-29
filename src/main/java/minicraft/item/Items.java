@@ -2,10 +2,10 @@ package minicraft.item;
 
 import java.util.ArrayList;
 
-import minicraft.core.Network;
-
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+
+import minicraft.core.Network;
 
 public class Items {
 	
@@ -25,7 +25,7 @@ public class Items {
 		items.add(i);
 	}
 	private static void addAll(ArrayList<Item> items) {
-		for(Item i: items) add(i);
+		for (Item i: items) add(i);
 	}
 	
 	static {
@@ -48,7 +48,7 @@ public class Items {
 	@NotNull
 	public static Item get(String name) {
 		Item i = get(name, false);
-		if (i == null) return new UnknownItem("NULL"); // technically shouldn't ever happen
+		if (i == null) return new UnknownItem("NULL"); // Technically shouldn't ever happen
 		return i;
 	}
 	@Nullable

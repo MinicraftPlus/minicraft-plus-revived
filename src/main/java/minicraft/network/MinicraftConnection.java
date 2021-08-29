@@ -7,11 +7,11 @@ import java.io.PrintWriter;
 import java.net.Socket;
 import java.util.Arrays;
 
-import minicraft.core.Game;
-import minicraft.item.PotionType;
-
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+
+import minicraft.core.Game;
+import minicraft.item.PotionType;
 
 public abstract class MinicraftConnection extends Thread implements MinicraftProtocol {
 	

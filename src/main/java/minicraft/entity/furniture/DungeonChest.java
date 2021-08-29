@@ -2,6 +2,8 @@ package minicraft.entity.furniture;
 
 import java.util.Random;
 
+import org.jetbrains.annotations.Nullable;
+
 import minicraft.core.Game;
 import minicraft.core.Updater;
 import minicraft.core.World;
@@ -17,7 +19,6 @@ import minicraft.item.Inventory;
 import minicraft.item.Item;
 import minicraft.item.Items;
 import minicraft.item.StackableItem;
-import org.jetbrains.annotations.Nullable;
 
 public class DungeonChest extends Chest {
 	private static final Sprite openSprite = new Sprite(14, 24, 2, 2, 2);
@@ -52,27 +53,28 @@ public class DungeonChest extends Chest {
 		if (isLocked) {
 			boolean activeKey = player.activeItem != null && player.activeItem.equals(Items.get("Key"));
 			boolean invKey = player.getInventory().count(Items.get("key")) > 0;
-			if(activeKey || invKey) { // if the player has a key...
-				if (!Game.isMode("creative")) { // remove the key unless on creative mode.
-					if (activeKey) { // remove activeItem
+			
+			if(activeKey || invKey) { // If the player has a key...
+				if (!Game.isMode("creative")) { // Remove the key unless on creative mode.
+					if (activeKey) { // Remove activeItem
 						StackableItem key = (StackableItem)player.activeItem;
 						key.count--;
-					} else { // remove from inv
+					} else { // Remove from inv
 						player.getInventory().removeItem(Items.get("key"));
 					}
 				}
 				
 				isLocked = false;
-				this.sprite = openSprite; // set to the unlocked color
+				this.sprite = openSprite; // Set to the unlocked color
 				
 				level.add(new SmashParticle(x * 16, y * 16));
 				level.add(new TextParticle("-1 key", x, y, Color.RED));
 				level.chestCount--;
-				if(level.chestCount == 0) { // if this was the last chest...
+				if (level.chestCount == 0) { // If this was the last chest...
 					level.dropItem(x, y, 5, Items.get("Gold Apple"));
 					
-					Updater.notifyAll("You hear a noise from the surface!", -100); // notify the player of the developments
-					// add a level 2 airwizard to the middle surface level.
+					Updater.notifyAll("You hear a noise from the surface!", - 100); // Notify the player of the developments
+					// Add a level 2 airwizard to the middle surface level.
 					AirWizard wizard = new AirWizard(true);
 					wizard.x = World.levels[World.lvlIdx(0)].w / 2;
 					wizard.y = World.levels[World.lvlIdx(0)].h / 2;

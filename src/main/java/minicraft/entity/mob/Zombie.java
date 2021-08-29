@@ -1,7 +1,6 @@
 package minicraft.entity.mob;
 
 import minicraft.core.io.Settings;
-import minicraft.gfx.Color;
 import minicraft.gfx.MobSprite;
 import minicraft.item.Items;
 
@@ -28,13 +27,13 @@ public class Zombie extends EnemyMob {
 		if (Settings.get("diff").equals("Normal")) dropItem(1, 3, Items.get("cloth"));
 		if (Settings.get("diff").equals("Hard")) dropItem(1, 2, Items.get("cloth"));
 		
-		if(random.nextInt(60) == 2) {
+		if (random.nextInt(60) == 2) {
 			level.dropItem(x, y, Items.get("iron"));
 		}
 		
-		if(random.nextInt(40) == 19) {
+		if (random.nextInt(40) == 19) {
 			int rand = random.nextInt(3);
-			if(rand == 0) {
+			if (rand == 0) {
 				level.dropItem(x, y, Items.get("green clothes"));
 			} else if(rand == 1) {
 				level.dropItem(x, y, Items.get("red clothes"));
@@ -43,7 +42,7 @@ public class Zombie extends EnemyMob {
 			}
 		}
 
-		if(random.nextInt(100) < 4) {
+		if (random.nextInt(100) < 4) {
 			level.dropItem(x, y, Items.get("Potato"));
 		}
 		

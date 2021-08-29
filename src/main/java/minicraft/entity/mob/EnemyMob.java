@@ -31,7 +31,7 @@ public class EnemyMob extends MobAi {
 	 * @param rwChance The chance of this mob will walk in a random direction (random walk chance)
 	 */
 	public EnemyMob(int lvl, MobSprite[][][] lvlSprites, int health, boolean isFactor, int detectDist, int lifetime, int rwTime, int rwChance) {
-		super(lvlSprites[0], isFactor ? (lvl==0?1:lvl * lvl) * health*((Double)(Math.pow(2, Settings.getIdx("diff")))).intValue() : health, lifetime, rwTime, rwChance);
+		super(lvlSprites[0], isFactor ? (lvl==0?1:lvl * lvl) * health * ((Double)(Math.pow(2, Settings.getIdx("diff")))).intValue() : health, lifetime, rwTime, rwChance);
 		this.lvl = lvl == 0 ? 1 : lvl;
 		this.lvlSprites = java.util.Arrays.copyOf(lvlSprites, lvlSprites.length);
 		this.detectDist = detectDist;
@@ -49,7 +49,7 @@ public class EnemyMob extends MobAi {
 	 * @param rwChance The chance of this mob will walk in a random direction (random walk chance)
 	 */
 	public EnemyMob(int lvl, MobSprite[][][] lvlSprites, int health, boolean isFactor, int detectDist, int rwTime, int rwChance) {
-		this(lvl, lvlSprites, health, isFactor, detectDist, 60*Updater.normSpeed, rwTime, rwChance);
+		this(lvl, lvlSprites, health, isFactor, detectDist, 60 * Updater.normSpeed, rwTime, rwChance);
 	}
 	
 	/**
@@ -72,20 +72,21 @@ public class EnemyMob extends MobAi {
 		super.tick();
 		
 		Player player = getClosestPlayer();
-		if (player != null && !Bed.sleeping() && randomWalkTime <= 0 && !Game.isMode("Creative")) { // checks if player is on zombie's level, if there is no time left on randonimity timer, and if the player is not in creative.
+		if (player != null && !Bed.sleeping() && randomWalkTime <= 0 && !Game.isMode("Creative")) { // Checks if player is on zombie's level, if there is no time left on randonimity timer, and if the player is not in creative.
 			int xd = player.x - x;
 			int yd = player.y - y;
 			if (xd * xd + yd * yd < detectDist * detectDist) {
-				/// if player is less than 6.25 tiles away, then set move dir towards player
-				int sig0 = 1; // this prevents too precise estimates, preventing mobs from bobbing up and down.
+				
+				/// If player is less than 6.25 tiles away, then set move dir towards player
+				int sig0 = 1; // This prevents too precise estimates, preventing mobs from bobbing up and down.
 				this.xmov = this.ymov = 0;
 				if (xd < sig0) this.xmov = -1;
 				if (xd > sig0) this.xmov = +1;
 				if (yd < sig0) this.ymov = -1;
 				if (yd > sig0) this.ymov = +1;
 			} else {
-				// if the enemy was following the player, but has now lost it, it stops moving.
-					//*that would be nice, but I'll just make it move randomly instead.
+				// If the enemy was following the player, but has now lost it, it stops moving.
+					// *That would be nice, but I'll just make it move randomly instead.
 				randomizeWalkDir(false);
 			}
 		}
@@ -98,9 +99,9 @@ public class EnemyMob extends MobAi {
 	}
 	
 	@Override
-	protected void touchedBy(Entity entity) { // if an entity (like the player) touches the enemy mob
+	protected void touchedBy(Entity entity) { // If an entity (like the player) touches the enemy mob
 		super.touchedBy(entity);
-		// hurts the player, damage is based on lvl.
+		// Hurts the player, damage is based on lvl.
 		if(entity instanceof Player) {
 			((Player)entity).hurt(this, lvl * (Settings.get("diff").equals("Hard") ? 2 : 1));
 		}
@@ -127,10 +128,11 @@ public class EnemyMob extends MobAi {
 		y = y >> 4;
 		
 		Tile t = level.getTile(x, y);
+		
 		if(level.depth == -4) {
 			if (t != Tiles.get("Obsidian")) return false;
 		} else if (t != Tiles.get("Stone Door") && t != Tiles.get("Wood Door") && t != Tiles.get("Obsidian Door") && t != Tiles.get("wheat") && t != Tiles.get("farmland")) {
-			// prevents mobs from spawning on lit tiles, farms, or doors (unless in the dungeons)
+			// Prevents mobs from spawning on lit tiles, farms, or doors (unless in the dungeons)
 			return !level.isLight(x, y);
 		} else return false;
 

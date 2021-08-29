@@ -1,14 +1,5 @@
 package minicraft.screen;
 
-import minicraft.core.FileHandler;
-import minicraft.core.Game;
-import minicraft.core.io.InputHandler;
-import minicraft.gfx.Color;
-import minicraft.gfx.Font;
-import minicraft.gfx.Screen;
-import minicraft.gfx.SpriteSheet;
-
-import javax.imageio.ImageIO;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
@@ -17,6 +8,16 @@ import java.util.List;
 import java.util.Objects;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
+
+import javax.imageio.ImageIO;
+
+import minicraft.core.FileHandler;
+import minicraft.core.Game;
+import minicraft.core.io.InputHandler;
+import minicraft.gfx.Color;
+import minicraft.gfx.Font;
+import minicraft.gfx.Screen;
+import minicraft.gfx.SpriteSheet;
 
 public class TexturePackDisplay extends Display {
 
@@ -43,7 +44,7 @@ public class TexturePackDisplay extends Display {
 
 		// Read and add the .zip file to the texture pack list
 		for (String fileName : Objects.requireNonNull(location.list())) {
-			if (fileName.endsWith(".zip")) { // only .zip files ok?
+			if (fileName.endsWith(".zip")) { // Only .zip files ok?
 				textureList.add(fileName);
 			}
 		}

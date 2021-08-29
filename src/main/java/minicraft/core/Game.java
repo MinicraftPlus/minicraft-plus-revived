@@ -1,15 +1,17 @@
 package minicraft.core;
 
-import javax.swing.JOptionPane;
-import javax.swing.JScrollPane;
-import javax.swing.JTextArea;
-
 import java.awt.GraphicsEnvironment;
 import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.Future;
+
+import javax.swing.JOptionPane;
+import javax.swing.JScrollPane;
+import javax.swing.JTextArea;
+
+import org.jetbrains.annotations.Nullable;
 
 import minicraft.core.io.InputHandler;
 import minicraft.core.io.Settings;
@@ -27,10 +29,8 @@ import minicraft.screen.Display;
 import minicraft.screen.MultiplayerDisplay;
 import minicraft.screen.TitleDisplay;
 
-import org.jetbrains.annotations.Nullable;
-
 public class Game {
-	Game() {} // can't instantiate the Game class.
+	Game() {} // Can't instantiate the Game class.
 	
 	public static boolean debug = false;
 	public static boolean packet_debug = false;
@@ -39,7 +39,7 @@ public class Game {
 	public static final String NAME = "Minicraft Plus"; // This is the name on the application window.
 	public static final Version VERSION = new Version("2.0.7");
 	
-	public static InputHandler input; // input used in Game, Player, and just about all the *Menu classes.
+	public static InputHandler input; // Input used in Game, Player, and just about all the *Menu classes.
 	public static Player player;
 	
 	public static String gameDir; // The directory in which all the game files are stored
@@ -54,13 +54,14 @@ public class Game {
 	 */
 	public static int CUSTOM_PORT = MinicraftProtocol.PORT;
 	
-	static Display menu = null, newMenu = null; // the current menu you are on.
+	static Display menu = null, newMenu = null; // The current menu you are on.
+	
 	// Sets the current menu.
 	public static void setMenu(@Nullable Display display) { newMenu = display; }
 	public static void exitMenu() {
 		if (menu == null) {
 			if (debug) System.out.println("Game.exitMenu(): No menu found, returning!");
-			return; // no action required; cannot exit from no menu
+			return; // No action required; cannot exit from no menu
 		}
 		Sound.back.play();
 		newMenu = menu.getParent();
@@ -126,7 +127,7 @@ public class Game {
 			JScrollPane errorPane = new JScrollPane(errorDisplay);
 			JOptionPane.showMessageDialog(null, errorPane, "An error has occurred", JOptionPane.ERROR_MESSAGE);
 			
-			// ensure ping finishes before program closes
+			// Ensure ping finishes before program closes
 			try {
 				ping.get();
 			} catch (Exception ignored) {}
@@ -144,7 +145,7 @@ public class Game {
 
 		World.resetGame(); // "half"-starts a new game, to set up initial variables
 		player.eid = 0;
-		new Load(true); // this loads any saved preferences.
+		new Load(true); // This loads any saved preferences.
 		
 		
 		if (Network.autoclient)
@@ -152,7 +153,7 @@ public class Game {
 		else if (!HAS_GUI)
 			Network.startMultiplayerServer();
 		else
-			setMenu(new TitleDisplay()); //sets menu to the title screen.
+			setMenu(new TitleDisplay()); // Sets menu to the title screen.
 		
 		
 		Initializer.createAndDisplayFrame();

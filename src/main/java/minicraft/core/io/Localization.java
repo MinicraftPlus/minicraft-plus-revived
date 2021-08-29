@@ -18,10 +18,10 @@ import java.util.Locale;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 
-import minicraft.core.Game;
-
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+
+import minicraft.core.Game;
 
 public class Localization {
 	
@@ -36,7 +36,7 @@ public class Localization {
 	private static String[] loadedLanguages = getLanguagesFromDirectory();
 	
 	static {
-		if(loadedLanguages == null)
+		if (loadedLanguages == null)
 			loadedLanguages = new String[] {selectedLanguage};
 		
 		loadSelectedLanguageFile();
@@ -44,17 +44,17 @@ public class Localization {
 	
 	@NotNull
 	public static String getLocalized(String key) {
-		if(key.matches("^[ ]*$")) return key; // blank, or just whitespace
+		if (key.matches("^[ ]*$")) return key; // Blank, or just whitespace
 		
 		try {
 			double num = Double.parseDouble(key);
-			return key; // this is a number; don't try to localize it
+			return key; // This is a number; don't try to localize it
 		} catch(NumberFormatException ignored) {}
 		
 		String localString = localization.get(key);
 		
 		if (Game.debug && localString == null) {
-			if(!knownUnlocalizedStrings.contains(key))
+			if (!knownUnlocalizedStrings.contains(key))
 				System.out.println("The string \"" + key + "\" is not localized, returning itself instead.");
 			knownUnlocalizedStrings.add(key);
 		}
@@ -109,6 +109,7 @@ public class Localization {
 	// Couldn't find a good way to find all the files in a directory when the program is
 	// exported as a jar file so I copied this. Thanks!
 	// https://stackoverflow.com/questions/1429172/how-do-i-list-the-files-inside-a-jar-file/1429275#1429275
+	
 	@Nullable
 	private static String[] getLanguagesFromDirectory() {
 		ArrayList<String> languages = new ArrayList<>();

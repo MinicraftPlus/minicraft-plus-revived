@@ -34,18 +34,18 @@ public class Slime extends EnemyMob {
 		/// jumpTime from 0 to -10 (or less) is the slime deciding where to jump.
 		/// 10 to 0 is it jumping.
 
-		if(jumpTime <= -10 && (xmov != 0 || ymov != 0))
+		if (jumpTime <= -10 && (xmov != 0 || ymov != 0))
 			jumpTime = 10;
 		
 		jumpTime--;
-		if(jumpTime == 0) {
+		if (jumpTime == 0) {
 			xmov = ymov = 0;
 		}
 	}
 	
 	@Override
 	public void randomizeWalkDir(boolean byChance) {
-		if(jumpTime > 0) return; // direction cannot be changed if slime is already jumping.
+		if (jumpTime > 0) return; // Direction cannot be changed if slime is already jumping.
 		super.randomizeWalkDir(byChance);
 	}
 	
@@ -59,11 +59,11 @@ public class Slime extends EnemyMob {
 	@Override
 	public void render(Screen screen) {
 		int oldy = y;
-		if(jumpTime > 0) {
-			walkDist = 8; // set to jumping sprite.
-			y -= 4; // raise up a bit.
+		if (jumpTime > 0) {
+			walkDist = 8; // Set to jumping sprite.
+			y -= 4; // Raise up a bit.
 		}
-		else walkDist = 0; // set to ground sprite.
+		else walkDist = 0; // Set to ground sprite.
 		
 		dir = Direction.DOWN;
 		
@@ -81,15 +81,15 @@ public class Slime extends EnemyMob {
 	@Override
 	protected String getUpdateString() {
 		String updates = super.getUpdateString() + ";";
-		updates += "jumpTime,"+jumpTime;
+		updates += "jumpTime," + jumpTime;
 		
 		return updates;
 	}
 	
 	@Override
 	protected boolean updateField(String field, String val) {
-		if(super.updateField(field, val)) return true;
-		switch(field) {
+		if (super.updateField(field, val)) return true;
+		switch (field) {
 			case "jumpTime":
 				jumpTime = Integer.parseInt(val);
 				return true;

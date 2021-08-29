@@ -35,6 +35,6 @@ public class Insets {
 	}
 	
 	public String toString() {
-		return super.toString()+"[left="+left+",top="+top+",right="+right+",bottom="+bottom+"]";
+		return super.toString()+"[left=" + left + ",top=" + top + ",right=" + right + ",bottom=" + bottom + "]";
 	}
 }

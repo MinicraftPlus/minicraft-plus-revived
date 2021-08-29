@@ -21,16 +21,16 @@ public class Font {
 	public static void draw(String msg, Screen screen, int x, int y, int whiteTint) {
 		msg = msg.toUpperCase(Localization.getSelectedLocale()); //makes all letters uppercase.
 		for (int i = 0; i < msg.length(); i++) { // Loops through all the characters that you typed
-			int ix = chars.indexOf(msg.charAt(i)); // the current letter in the message loop
+			int ix = chars.indexOf(msg.charAt(i)); // The current letter in the message loop
 			if (ix >= 0) {
-				// if that character's position is larger than or equal to 0, then render the character on the screen.
+				// If that character's position is larger than or equal to 0, then render the character on the screen.
 				screen.render(x + i * textWidth(msg.substring(i, i+1)), y, ix + 28 * 32, 0, 3, whiteTint);
 			}
 		}
 	}
 
 	public static void drawColor(String message, Screen screen, int x, int y) {
-		// set default color message if it doesn't have initially
+		// Set default color message if it doesn't have initially
 		if (message.charAt(0) != Color.COLOR_CHAR) {
 			message = Color.WHITE_CODE + message;
 		}
@@ -48,7 +48,7 @@ public class Font {
 				text = data.substring(4);
 				color = data.substring(0, 4); // ARGB value
 			} catch (IndexOutOfBoundsException ignored) {
-				// bad formatted colored string
+				// Bad formatted colored string
 				text = data;
 				color = Color.WHITE_CODE;
 			}
@@ -72,12 +72,12 @@ public class Font {
 
 	public static int textWidth(String text) { return text.length() * 8; }
 	public static int textWidth(String[] para) {
-		// this returns the maximum length of all the lines.
-		if(para == null || para.length == 0) return 0;
+		// This returns the maximum length of all the lines.
+		if (para == null || para.length == 0) return 0;
 		
 		int max = textWidth(para[0]);
 		
-		for(int i = 1; i < para.length; i++)
+		for (int i = 1; i < para.length; i++)
 			max = Math.max(max, textWidth(para[i]));
 		
 		return max;

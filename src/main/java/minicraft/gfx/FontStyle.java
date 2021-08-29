@@ -20,10 +20,10 @@ public class FontStyle {
 	private int shadowColor;
 	private String shadowType;
 	private Point anchor;
-	private RelPos relTextPos = RelPos.CENTER; // aligns the complete block of text with the anchor. 
+	private RelPos relTextPos = RelPos.CENTER; // Aligns the complete block of text with the anchor. 
 	
-	// used only when drawing paragraphs:
-	private RelPos relLinePos = RelPos.CENTER; // when setup for a paragraph with multiple lines, this determines the alignment of each line within the bounds of the paragraph.
+	// Used only when drawing paragraphs:
+	private RelPos relLinePos = RelPos.CENTER; // When setup for a paragraph with multiple lines, this determines the alignment of each line within the bounds of the paragraph.
 	private String[] configuredPara;
 	private Rectangle paraBounds;
 	private int padX = 0, padY = 0;
@@ -35,23 +35,23 @@ public class FontStyle {
 		shadowType = "";
 		anchor = new Point(Screen.w/2, Screen.h/2);
 		
-		/// by default, the styling is set so as to center the text in the middle of the screen, with no shadow.
+		/// By default, the styling is set so as to center the text in the middle of the screen, with no shadow.
 	}
 	
 	
 	// TODO make a constructor that takes another FontStyle and just copies all the protected fields.
 	
 	
-	/// actually draws the text.
+	/// Actually draws the text.
 	public void draw(String msg, Screen screen) {
-		/// the field variables should NOT be modified! modify local vars instead.
+		/// The field variables should NOT be modified! modify local vars instead.
 		
-		/// for centering
+		/// For centering
 		Dimension size = new Dimension(Font.textWidth(msg), Font.textHeight());
 		
 		Rectangle textBounds = relTextPos.positionRect(size, anchor, new Rectangle());
 		
-		if(padX != 0 || padY != 0) {
+		if (padX != 0 || padY != 0) {
 			size.width += padX;
 			size.height += padY;
 			Rectangle textBox = relTextPos.positionRect(size, anchor, new Rectangle());
@@ -62,45 +62,45 @@ public class FontStyle {
 		int xPos = textBounds.getLeft();
 		int yPos = textBounds.getTop();
 		
-		/// for the shadow
+		/// For the shadow
 		char[] sides = shadowType.toCharArray();
-		for(int i = 0; i < 8 && i < sides.length; i++)
-			if(sides[i] == '1')
-				Font.draw(msg, screen, xPos + shadowPosMap[i], yPos + shadowPosMap[i+8], shadowColor);
+		for (int i = 0; i < 8 && i < sides.length; i++)
+			if (sides[i] == '1')
+				Font.draw(msg, screen, xPos + shadowPosMap[i], yPos + shadowPosMap[i + 8], shadowColor);
 	    
-		/// the main drawing of the text:
+		/// The main drawing of the text:
 		Font.draw(msg, screen, xPos, yPos, mainColor);
 	}
 	
 	public void configureForParagraph(String[] para, int spacing) {
-		configuredPara = para; // save the passed in paragraph for later comparison
+		configuredPara = para; // Save the passed in paragraph for later comparison
 		
-		// at this point, the main anchor is meant for the whole paragraph block.
-		// when drawing a line, there's an anchor, and then a position around that anchor.
-		// in a paragraph, it could be the left side, or right, or top... it depends.
-		// either way, the draw method needs to use a different position.
+		// At this point, the main anchor is meant for the whole paragraph block.
+		// When drawing a line, there's an anchor, and then a position around that anchor.
+		// In a paragraph, it could be the left side, or right, or top... it depends.
+		// Either way, the draw method needs to use a different position.
 		
 		Dimension size = new Dimension(Font.textWidth(para), para.length*(Font.textHeight()+spacing));
 		paraBounds = relTextPos.positionRect(size, anchor, new Rectangle());
 	}
 	
 	public void setupParagraphLine(String[] para, int line, int spacing) {
-		if(para == null || line < 0 || line >= para.length) {
+		if (para == null || line < 0 || line >= para.length) {
 			System.err.print("FontStyle.java: ");
-			if(para == null) System.err.print("paragraph is null");
+			if (para == null) System.err.print("paragraph is null");
 			else System.err.print("index "+line+" is invalid");
 			System.err.println("; can't draw line.");
 			return;
 		}
 		
-		if(configuredPara == null || !Arrays.equals(para, configuredPara))
+		if (configuredPara == null || !Arrays.equals(para, configuredPara))
 			configureForParagraph(para, spacing);
 		
 		Rectangle textArea = new Rectangle(paraBounds);
 		textArea.setSize(textArea.getWidth(), Font.textHeight()+spacing, RelPos.TOP_LEFT);
 		textArea.translate(0, line*textArea.getHeight());
 		
-		anchor = textArea.getPosition(relTextPos.getOpposite()); // for the relpos to put the rect in the correct pos, the anchor should be fetched using to opposite relpos. 
+		anchor = textArea.getPosition(relTextPos.getOpposite()); // For the relpos to put the rect in the correct pos, the anchor should be fetched using to opposite relpos. 
 		
 		padX = paraBounds.getWidth() - Font.textWidth(para[line]);
 		padY = spacing;
@@ -125,7 +125,7 @@ public class FontStyle {
 	public FontStyle setXPos(int pos) { return setXPos(pos, true); }
 	public FontStyle setXPos(int pos, boolean resetAlignment) {
 		anchor.x = pos;
-		if(resetAlignment) {
+		if (resetAlignment) {
 			relTextPos = RelPos.getPos(RelPos.RIGHT.xIndex, relTextPos.yIndex);
 			relLinePos = RelPos.getPos(RelPos.LEFT.xIndex, relLinePos.yIndex);
 		}
@@ -135,7 +135,7 @@ public class FontStyle {
 	public FontStyle setYPos(int pos) { return setYPos(pos, true); }
 	public FontStyle setYPos(int pos, boolean resetAlignment) {
 		anchor.y = pos;
-		if(resetAlignment) {
+		if (resetAlignment) {
 			relTextPos = RelPos.getPos(relTextPos.xIndex, RelPos.BOTTOM.yIndex);
 			relLinePos = RelPos.getPos(relLinePos.xIndex, RelPos.TOP.yIndex);
 		}
@@ -151,7 +151,7 @@ public class FontStyle {
 	public FontStyle setRelTextPos(RelPos relPos) { return setRelTextPos(relPos, true); }
 	public FontStyle setRelTextPos(RelPos relPos, boolean setBoth) {
 		this.relTextPos = relPos;
-		if(setBoth) relLinePos = relTextPos.getOpposite();
+		if (setBoth) relLinePos = relTextPos.getOpposite();
 		return this;
 	}
 	
