@@ -57,7 +57,7 @@ public class GrassTile extends Tile {
 				if (player.payStamina(4 - tool.level) && tool.payDurability()) {
 					level.setTile(xt, yt, Tiles.get("Dirt"));
 					Sound.monsterHurt.play();
-					if (random.nextInt(5) == 0) { // 20% chance to drop seeds
+					if (random.nextInt(5) == 0) { // 20% chance to drop Grass seeds
 						level.dropItem(xt * 16 + 8, yt * 16 + 8, 1, Items.get("Grass Seeds"));
 					}
 					return true;
@@ -67,8 +67,8 @@ public class GrassTile extends Tile {
 				if (player.payStamina(4 - tool.level) && tool.payDurability()) {
 					level.setTile(xt, yt, Tiles.get("Dirt"));
 					Sound.monsterHurt.play();
-					if (random.nextInt(5) != 0) { // 80% chance to drop seeds
-						level.dropItem(xt*16+8, yt*16+8, Items.get("Wheat Seeds"));
+					if (random.nextInt(5) != 0) { // 80% chance to drop Wheat seeds
+						level.dropItem(xt * 16 + 8, yt * 16 + 8, Items.get("Wheat Seeds"));
 					}
 					return true;
 				}

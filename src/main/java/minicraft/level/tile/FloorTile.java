@@ -34,7 +34,7 @@ public class FloorTile extends Tile {
 					if (level.depth == 1) {
 						level.setTile(xt, yt, Tiles.get("Cloud"));
 					} else {
-						level.setTile(xt, yt, Tiles.get("hole"));
+						level.setTile(xt, yt, Tiles.get("Hole"));
 					}
 					Item drop;
 					switch (type) {

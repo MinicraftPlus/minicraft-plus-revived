@@ -18,7 +18,7 @@ public class TorchTile extends Tile {
 	public static TorchTile getTorchTile(Tile onTile) {
 		int id = onTile.id & 0xFF;
 		if(id < 128) id += 128;
-		else System.out.println("tried to place torch on torch tile...");
+		else System.out.println("Tried to place torch on torch tile...");
 		
 		if(Tiles.containsTile(id))
 			return (TorchTile)Tiles.get(id);
@@ -39,7 +39,7 @@ public class TorchTile extends Tile {
 	
 	public void render(Screen screen, Level level, int x, int y) {
 		onType.render(screen, level, x, y);
-		sprite.render(screen, x*16 + 4, y*16 + 4);
+		sprite.render(screen, x * 16 + 4, y * 16 + 4);
 	}
 	
 	public int getLightRadius(Level level, int x, int y) {

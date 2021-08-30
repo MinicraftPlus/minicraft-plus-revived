@@ -26,7 +26,7 @@ public class SaplingTile extends Tile {
 	public void render(Screen screen, Level level, int x, int y) {
 		onType.render(screen, level, x, y);
 		
-		sprite.render(screen, x*16, y*16);
+		sprite.render(screen, x * 16, y * 16);
 	}
 
 	public boolean tick(Level level, int x, int y) {

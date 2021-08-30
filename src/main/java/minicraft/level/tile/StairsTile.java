@@ -21,7 +21,7 @@ public class StairsTile extends Tile {
 	
 	@Override
 	public void render(Screen screen, Level level, int x, int y) {
-		sprite.render(screen, x*16, y*16, 0, DirtTile.dCol(level.depth));
+		sprite.render(screen, x * 16, y * 16, 0, DirtTile.dCol(level.depth));
 	}
 
 	@Override
@@ -29,7 +29,7 @@ public class StairsTile extends Tile {
 		super.interact(level, xt, yt, player, item, attackDir);
 
 		// Makes it so you can remove the stairs if you are in creative and debug mode.
-		if(item instanceof PowerGloveItem && Game.isMode("Creative") && Game.debug) {
+		if (item instanceof PowerGloveItem && Game.isMode("Creative") && Game.debug) {
 			level.setTile(xt, yt, Tiles.get("Grass"));
 			Sound.monsterHurt.play();
 			return true;

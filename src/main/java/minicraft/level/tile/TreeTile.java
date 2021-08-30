@@ -25,7 +25,7 @@ public class TreeTile extends Tile {
 	}
 	
 	public void render(Screen screen, Level level, int x, int y) {
-		Tiles.get("grass").render(screen, level, x, y);
+		Tiles.get("Grass").render(screen, level, x, y);
 		
 		boolean u = level.getTile(x, y - 1) == this;
 		boolean l = level.getTile(x - 1, y) == this;
@@ -79,8 +79,8 @@ public class TreeTile extends Tile {
 	
 	@Override
 	public boolean interact(Level level, int xt, int yt, Player player, Item item, Direction attackDir) {
-		if(Game.isMode("creative"))
-			return false; // go directly to hurt method
+		if(Game.isMode("Creative"))
+			return false; // Go directly to hurt method
 		if (item instanceof ToolItem) {
 			ToolItem tool = (ToolItem) item;
 			if (tool.type == ToolType.Axe) {
@@ -95,20 +95,20 @@ public class TreeTile extends Tile {
 
 	public void hurt(Level level, int x, int y, int dmg) {
 		if (random.nextInt(100) == 0)
-			level.dropItem(x*16+8, y*16+8, Items.get("Apple"));
+			level.dropItem(x * 16 + 8, y * 16 + 8, Items.get("Apple"));
 		
 		int damage = level.getData(x, y) + dmg;
 		int treeHealth = 20;
-		if (Game.isMode("creative")) dmg = damage = treeHealth;
+		if (Game.isMode("Creative")) dmg = damage = treeHealth;
 		
 		level.add(new SmashParticle(x*16, y*16));
 		Sound.monsterHurt.play();
 
-		level.add(new TextParticle("" + dmg, x*16+8, y*16+8, Color.RED));
+		level.add(new TextParticle("" + dmg, x * 16 + 8, y * 16 + 8, Color.RED));
 		if (damage >= treeHealth) {
-			level.dropItem(x*16+8, y*16+8, 1, 3, Items.get("Wood"));
-			level.dropItem(x*16+8, y*16+8, 0, 2, Items.get("Acorn"));
-			level.setTile(x, y, Tiles.get("grass"));
+			level.dropItem(x * 16 + 8, y * 16 + 8, 1, 3, Items.get("Wood"));
+			level.dropItem(x * 16 +  8, y * 16 + 8, 0, 2, Items.get("Acorn"));
+			level.setTile(x, y, Tiles.get("Grass"));
 		} else {
 			level.setData(x, y, damage);
 		}

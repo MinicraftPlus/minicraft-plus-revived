@@ -69,7 +69,7 @@ public class Plant extends FarmTile {
             count = random.nextInt(2) + 1;
         }
 
-        level.dropItem(x*16+8, y*16+8, count, Items.get(name));
+        level.dropItem(x * 16 + 8, y * 16 + 8, count, Items.get(name));
 
         if (age >= maxAge && entity instanceof Player) {
             ((Player)entity).addScore(random.nextInt(5) + 1);
