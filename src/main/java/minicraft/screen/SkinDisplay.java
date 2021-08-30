@@ -154,47 +154,24 @@ public class SkinDisplay extends Display {
 
 		for (int y = 0; y < h; y++) {
 			for (int x = 0; x < w; x++) {
-				if (selected == 0) {
+				for (int i = 0; i <= 1; i++) {
 					try {
 						updateSpriteSheet(lastScreen);
 					} catch (IOException exception) {
 						exception.printStackTrace();
 					}
-					screen.render(xo + x * 8, yo + y * 8, x + (y + 16) * 32, 0, 2); // Paul
-				}
-				else if (selected == 1) {
-					try {
-						updateSpriteSheet(lastScreen);
-					} catch (IOException exception) {
-						exception.printStackTrace();
+					if (selected == 0) {
+						screen.render(xo + x * 8, yo + y * 8, x + (y + 16) * 32, 0, 2); // Paul
+					} else if (selected == 1) {
+						screen.render(xo + x * 8, yo + y * 8, x + y * 32, 0, 4); // Paul (Cape)
+					} else if (selected == 2) {
+						screen.render(xo + x * 8, yo + y * 8, x + (y + 4) * 32, 0, 4); // Familiar Boy
+					} else if (selected == 3) {
+						screen.render(xo + x * 8, yo + y * 8, x + (y + 8) * 32, 0, 4); // Familiar Girl
+					} else if (selected > 3) {
+						screen.render(xo + x * 8, yo + y * 8, x + y * 32, 0, 4); // Custom Skin
 					}
-					screen.render(xo + x * 8, yo + y * 8, x + y * 32, 0, 4); // Paul (Cape)
 				}
-				else if (selected == 2) {
-					try {
-						updateSpriteSheet(lastScreen);
-					} catch (IOException exception) {
-						exception.printStackTrace();
-					}
-					screen.render(xo + x * 8, yo + y * 8, x + (y + 4) * 32, 0, 4); // Familiar Boy
-				}
-				else if (selected == 3) {
-					try {
-						updateSpriteSheet(lastScreen);
-					} catch (IOException exception) {
-						exception.printStackTrace();
-					}
-					screen.render(xo + x * 8, yo + y * 8, x + (y + 8) * 32, 0, 4); // Familiar Girl
-				}
-				else if (selected > 3) {
-					try {
-						updateSpriteSheet(lastScreen);
-					} catch (IOException exception) {
-						exception.printStackTrace();
-					}
-					screen.render(xo + x * 8, yo + y * 8, x + y * 32, 0, 4); // Custom Skin
-				}
-
 			}
 		}
 
