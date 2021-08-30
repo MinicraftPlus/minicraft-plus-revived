@@ -28,8 +28,7 @@ public final class Tiles {
 		tiles.set(3, new HoleTile("Hole"));
 		tiles.set(4, new StairsTile("Stairs Up", true));
 		tiles.set(5, new StairsTile("Stairs Down", false));
-		tiles.set(6, new WaterTile("Water"))
-		;
+		tiles.set(6, new WaterTile("Water"));
 		// This is out of order because of lava buckets
 		tiles.set(17, new LavaTile("Lava"));
 

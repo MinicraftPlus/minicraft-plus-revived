@@ -100,7 +100,7 @@ public class Color {
 			}
 			return rgbBytes[0] << 24 | rgbBytes[1] << 16 | rgbBytes[2] << 8 | rgbBytes[3]; // This is: rgb4Sprite
 		} else {
-			return tint(color, amount); // Tthis is: rgbByte
+			return tint(color, amount); // This is: rgbByte
 		}
 	}
 	private static int tint(int rgbByte, int amount) {
