@@ -628,7 +628,7 @@ public class MinicraftServer extends Thread implements MinicraftProtocol {
 					for (Item i: chest.getInventory().getItems())
 						itemDataB.append(i.getData()).append(";");
 					String itemData = itemDataB.toString();
-					itemData = itemData.length() == 0 ? itemData : itemData.substring(0, itemData.length()-1);
+					itemData = itemData.length() == 0 ? itemData : itemData.substring(0, itemData.length() - 1);
 					serverThread.sendItems(itemData);
 					serverThread.sendNotification("Death chest retrieved!", 0);
 					chest.remove();

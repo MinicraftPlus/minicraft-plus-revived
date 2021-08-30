@@ -16,7 +16,7 @@ public class Snake extends EnemyMob {
 	}
 	
 	public Snake(int lvl) {
-		super(lvl, sprites, lvl > 1? 8:7, 100);
+		super(lvl, sprites, lvl > 1 ? 8 : 7, 100);
 	}
 	
 	@Override

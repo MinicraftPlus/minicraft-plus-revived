@@ -65,7 +65,7 @@ public class PauseDisplay extends Display {
 				}
 				
 				items.add(new BlankEntry());
-				items.add(new SelectEntry(Game.isValidServer()?"Cancel":"No", Game::exitMenu));
+				items.add(new SelectEntry(Game.isValidServer() ? "Cancel" : "No", Game::exitMenu));
 				
 				if(Game.isValidServer())
 					items.add(new SelectEntry("Save and Quit", () -> {
@@ -74,7 +74,7 @@ public class PauseDisplay extends Display {
 						Game.setMenu(new TitleDisplay());
 					}));
 				
-				items.add(new SelectEntry(Game.isValidServer()?"Quit without saving":"Yes", () -> Game.setMenu(new TitleDisplay())));
+				items.add(new SelectEntry(Game.isValidServer() ? "Quit without saving" : "Yes", () -> Game.setMenu(new TitleDisplay())));
 				
 				Game.setMenu(new Display(false, true, new Menu.Builder(true, 8, RelPos.CENTER, items
 				).createMenu()));

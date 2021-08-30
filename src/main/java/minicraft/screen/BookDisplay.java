@@ -60,7 +60,7 @@ public class BookDisplay extends Display {
 		
 		Menu pageCount = builder // The small rect for the title
 			.setPositioning(new Point(Screen.w/2, 0), RelPos.BOTTOM)
-			.setEntries(StringEntry.useLines(Color.BLACK, "Page", hasTitle?"Title":"1/"+lines.length))
+			.setEntries(StringEntry.useLines(Color.BLACK, "Page", hasTitle ? "Title" : "1/" + lines.length))
 			.setSelection(1)
 			.createMenu();
 		
@@ -69,7 +69,7 @@ public class BookDisplay extends Display {
 			.setSize(maxX-minX + SpriteSheet.boxWidth*2, maxY-minY + SpriteSheet.boxWidth*2)
 			.setShouldRender(false);
 		
-		menus = new Menu[lines.length+pageOffset];
+		menus = new Menu[lines.length + pageOffset];
 		if (showPageCount) menus[0] = pageCount;
 		for (int i = 0; i < lines.length; i++) {
 			menus[i+pageOffset] = builder.setEntries(StringEntry.useLines(Color.WHITE, lines[i])).createMenu();
@@ -79,10 +79,10 @@ public class BookDisplay extends Display {
 	}
 	
 	private void turnPage(int dir) {
-		if(page+dir >= 0 && page+dir < lines.length) {
+		if(page + dir >= 0 && page + dir < lines.length) {
 			menus[page+pageOffset].shouldRender = false;
 			page += dir;
-			if(showPageCount) menus[0].updateSelectedEntry(new StringEntry(page==0 && hasTitle?"Title":(page+1)+"/"+lines.length, Color.BLACK));
+			if(showPageCount) menus[0].updateSelectedEntry(new StringEntry(page == 0 && hasTitle ? "Title" : (page + 1) + "/" + lines.length, Color.BLACK));
 			menus[page+pageOffset].shouldRender = true;
 		}
 	}

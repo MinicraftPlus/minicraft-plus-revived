@@ -335,7 +335,7 @@ public abstract class Entity implements Tickable {
 	protected String getUpdateString() {
 		return "x," + x + ";"
 		+ "y," + y + ";"
-		+ "level," + (level == null?"null":World.lvlIdx(level.depth));
+		+ "level," + (level == null ? "null" : World.lvlIdx(level.depth));
 	}
 	
 	/**
