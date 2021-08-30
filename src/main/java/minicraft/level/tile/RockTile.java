@@ -64,7 +64,7 @@ public class RockTile extends Tile {
 	public void hurt(Level level, int x, int y, int dmg) {
 		damage = level.getData(x, y) + dmg;
 
-		if (Game.isMode("creative")) {
+		if (Game.isMode("Creative")) {
 			dmg = damage = maxHealth;
 			dropCoal = true;
 		}
@@ -80,9 +80,9 @@ public class RockTile extends Tile {
 				if(!Settings.get("diff").equals("Hard")) {
 					coal++;
 				}
-				level.dropItem(x*16+8, y*16+8, coal, coal+1, Items.get("Coal"));
+				level.dropItem(x * 16 + 8, y * 16 + 8, coal, coal + 1, Items.get("Coal"));
 			} else {
-				level.dropItem(x*16+8, y*16+8, 2, 4, Items.get("Stone"));
+				level.dropItem(x * 16 + 8, y * 16 + 8, 2, 4, Items.get("Stone"));
 			}
 			level.setTile(x, y, Tiles.get("Dirt"));
 		} else {

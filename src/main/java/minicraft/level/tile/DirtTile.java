@@ -52,7 +52,7 @@ public class DirtTile extends Tile {
 				if (player.payStamina(4 - tool.level) && tool.payDurability()) {
 					level.setTile(xt, yt, Tiles.get("Hole"));
 					Sound.monsterHurt.play();
-					level.dropItem(xt * 16 + 8, yt * 16 + 8, Items.get("dirt"));
+					level.dropItem(xt * 16 + 8, yt * 16 + 8, Items.get("Dirt"));
 					return true;
 				}
 			}

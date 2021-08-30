@@ -32,14 +32,14 @@ public class FlowerTile extends Tile {
 		if (random.nextBoolean()) xn += random.nextInt(2) * 2 - 1;
 		else yn += random.nextInt(2) * 2 - 1;
 
-		if (level.getTile(xn, yn) == Tiles.get("dirt")) {
-			level.setTile(xn, yn, Tiles.get("grass"));
+		if (level.getTile(xn, yn) == Tiles.get("Dirt")) {
+			level.setTile(xn, yn, Tiles.get("Grass"));
 		}
 		return false;
 	}
 	
 	public void render(Screen screen, Level level, int x, int y) {
-		Tiles.get("grass").render(screen, level, x, y);
+		Tiles.get("Grass").render(screen, level, x, y);
 		
 		int data = level.getData(x, y);
 		int shape = (data / 16) % 2;
@@ -47,8 +47,8 @@ public class FlowerTile extends Tile {
 		x = x << 4;
 		y = y << 4;
 		
-		flowerSprite.render(screen, x + 8*shape, y);
-		flowerSprite.render(screen, x + 8*(shape==0?1:0), y + 8);
+		flowerSprite.render(screen, x + 8 * shape, y);
+		flowerSprite.render(screen, x + 8 * (shape==0?1:0), y + 8);
 	}
 
 	public boolean interact(Level level, int x, int y, Player player, Item item, Direction attackDir) {
@@ -56,10 +56,10 @@ public class FlowerTile extends Tile {
 			ToolItem tool = (ToolItem) item;
 			if (tool.type == ToolType.Shovel) {
 				if (player.payStamina(2 - tool.level) && tool.payDurability()) {
-					level.setTile(x, y, Tiles.get("grass"));
+					level.setTile(x, y, Tiles.get("Grass"));
 					Sound.monsterHurt.play();
-					level.dropItem(x*16+8, y*16+8, Items.get("Flower"));
-					level.dropItem(x*16+8, y*16+8, Items.get("Rose"));
+					level.dropItem(x * 16 + 8, y * 16 + 8, Items.get("Flower"));
+					level.dropItem(x * 16 + 8, y * 16 + 8, Items.get("Rose"));
 					return true;
 				}
 			}
@@ -68,9 +68,9 @@ public class FlowerTile extends Tile {
 	}
 
 	public boolean hurt(Level level, int x, int y, Mob source, int dmg, Direction attackDir) {
-		level.dropItem(x*16+8, y*16+8, 0, 1, Items.get("Flower"));
-		level.dropItem(x*16+8, y*16+8, 0, 1, Items.get("Rose"));
-		level.setTile(x, y, Tiles.get("grass"));
+		level.dropItem(x *16 + 8, y * 16 + 8, 0, 1, Items.get("Flower"));
+		level.dropItem(x *16 + 8, y * 16 + 8, 0, 1, Items.get("Rose"));
+		level.setTile(x, y, Tiles.get("Grass"));
 		return true;
 	}
 }

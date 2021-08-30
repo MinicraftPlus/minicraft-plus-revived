@@ -8,8 +8,8 @@ import minicraft.level.tile.farming.PotatoTile;
 import minicraft.level.tile.farming.WheatTile;
 
 public final class Tiles {
-	/// idea: to save tile names while saving space, I could encode the names in base 64 in the save file...^M
-    /// then, maybe, I would just replace the id numbers with id names, make them all private, and then make a get(String) method, parameter is tile name.
+	/// Idea: to save tile names while saving space, I could encode the names in base 64 in the save file...^M
+    /// Then, maybe, I would just replace the id numbers with id names, make them all private, and then make a get(String) method, parameter is tile name.
 	
 	public static ArrayList<String> oldids = new ArrayList<>();
 	
@@ -18,7 +18,8 @@ public final class Tiles {
 	public static void initTileList() {
 		if (Game.debug) System.out.println("Initializing tile list...");
 		
-		for(int i = 0; i < 256; i++)
+		// 
+		for (int i = 0; i < 256; i++)
 			tiles.add(null);
 
 		tiles.set(0, new GrassTile("Grass"));
@@ -27,8 +28,9 @@ public final class Tiles {
 		tiles.set(3, new HoleTile("Hole"));
 		tiles.set(4, new StairsTile("Stairs Up", true));
 		tiles.set(5, new StairsTile("Stairs Down", false));
-		tiles.set(6, new WaterTile("Water"));
-		// this is out of order because of lava buckets
+		tiles.set(6, new WaterTile("Water"))
+		;
+		// This is out of order because of lava buckets
 		tiles.set(17, new LavaTile("Lava"));
 
 		tiles.set(7, new RockTile("Rock"));
@@ -132,7 +134,7 @@ public final class Tiles {
 		oldids.set(22, "cloud Cactus");
 		oldids.set(16, "infinite Fall");
 		
-		// light/torch versions, for compatibility with before 1.9.4-dev3. (were removed in making dev3)
+		// Light/torch versions, for compatibility with before 1.9.4-dev3. (were removed in making dev3)
 		oldids.set(100, "grass");
 		oldids.set(101, "sand");
 		oldids.set(102, "tree");
@@ -195,7 +197,7 @@ public final class Tiles {
 		boolean isTorch = false;
 		if(name.startsWith("TORCH")) {
 			isTorch = true;
-			name = name.substring(6); // cuts off torch prefix.
+			name = name.substring(6); // Cuts off torch prefix.
 		}
 
 		if(name.contains("_")) {

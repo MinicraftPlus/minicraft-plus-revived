@@ -70,16 +70,16 @@ public abstract class Tile {
 	
 	/** This method is used by tiles to specify the default "data" they have in a level's data array.
 		Used for starting health, color/type of tile, etc. */
-	// at least, that was the idea at first...
+	// At least, that was the idea at first...
 	public int getDefaultData() {
 		return 0;
 	}
 	
 	/** Render method, used in sub-classes */
 	public void render(Screen screen, Level level, int x, int y) {
-		if(sprite != null)
-			sprite.render(screen, x<<4, y<<4);
-		if(csprite != null)
+		if (sprite != null)
+			sprite.render(screen, x << 4, y << 4);
+		if (csprite != null)
 			csprite.render(screen, level, x, y);
 	}
 	
@@ -145,7 +145,7 @@ public abstract class Tile {
 	public int getData(String data) {
 		try {
 			return Integer.parseInt(data);
-		} catch(NumberFormatException ex) {
+		} catch (NumberFormatException ex) {
 			return 0;
 		}
 	}
@@ -167,7 +167,7 @@ public abstract class Tile {
 			int tileid = curLevel.tiles[pos];
 			int tiledata = curLevel.data[pos];
 			
-			return lvlidx+";"+pos+";"+tileid+";"+tiledata;
+			return lvlidx + ";" + pos + ";" + tileid + ";" + tiledata;
 		} catch(NullPointerException | IndexOutOfBoundsException ignored) {
 		}
 		
@@ -176,7 +176,7 @@ public abstract class Tile {
 	
 	@Override
 	public boolean equals(Object other) {
-		if(!(other instanceof Tile)) return false;
+		if (!(other instanceof Tile)) return false;
 		Tile o = (Tile) other;
 		return name.equals(o.name);
 	}
