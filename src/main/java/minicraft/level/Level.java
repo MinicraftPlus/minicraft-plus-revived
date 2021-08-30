@@ -51,8 +51,8 @@ public class Level {
 	private Random random = new Random();
 	
 	private static final String[] levelNames = {"Sky", "Surface", "Iron", "Gold", "Lava", "Dungeon"};
-	public static String getLevelName(int depth) { return levelNames[-1 * depth +1]; }
-	public static String getDepthString(int depth) { return "Level " + (depth<0?"B" + (-depth):depth); }
+	public static String getLevelName(int depth) { return levelNames[-1 * depth + 1]; }
+	public static String getDepthString(int depth) { return "Level " + (depth < 0 ? "B" + (-depth) : depth); }
 	
 	private static final int MOB_SPAWN_FACTOR = 100; // The chance of a mob actually trying to spawn when trySpawn is called equals: mobCount / maxMobCount * MOB_SPAWN_FACTOR. so, it basically equals the chance, 1/number, of a mob spawning when the mob cap is reached. I hope that makes sense...
 
@@ -659,7 +659,7 @@ public class Level {
 			
 			if (depth == 0 && PassiveMob.checkStartPos(this, nx, ny)) {
 				// Spawns the friendly mobs.
-				if (rnd <= (Updater.getTime()==Updater.Time.Night?22:33)) add((new Cow()), nx, ny);
+				if (rnd <= (Updater.getTime() == Updater.Time.Night ? 22 : 33)) add((new Cow()), nx, ny);
 				else if (rnd >= 68) add((new Pig()), nx, ny);
 				else add((new Sheep()), nx, ny);
 				

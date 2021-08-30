@@ -314,19 +314,19 @@ public class MultiplayerDisplay extends Display {
 				String msg = "Enter email:";
 				if(!typingEmail)
 					msg = "Enter password:";
-				Font.drawCentered(msg, screen, Screen.h/2-6, Color.WHITE);
+				Font.drawCentered(msg, screen, Screen.h / 2 - 6, Color.WHITE);
 				
 				msg = typing;
 				if(!typingEmail)
 					//noinspection ReplaceAllDot
 					msg = msg.replaceAll(".", ".");
-				Font.drawCentered(msg, screen, Screen.h/2+6, (inputIsValid?Color.get(1, 204):Color.RED));
+				Font.drawCentered(msg, screen, Screen.h / 2 + 6, (inputIsValid ? Color.get(1, 204) : Color.RED));
 				if(!inputIsValid) {
-					Font.drawCentered("field is blank", screen, Screen.h/2+20, Color.RED);
+					Font.drawCentered("field is blank", screen, Screen.h / 2 + 20, Color.RED);
 				}
 				
-				Font.drawCentered("get an account at:", screen, Font.textHeight()/2-1, Color.get(1, 153, 204, 255));
-				Font.drawCentered(domain.substring(domain.indexOf("://")+3)+"/register", screen, Font.textHeight()*3/2, Color.get(1, 153, 204, 255));
+				Font.drawCentered("get an account at:", screen, Font.textHeight() / 2 - 1, Color.get(1, 153, 204, 255));
+				Font.drawCentered(domain.substring(domain.indexOf("://") + 3) + "/register", screen, Font.textHeight() * 3 / 2, Color.get(1, 153, 204, 255));
 				
 				break;
 			
@@ -335,8 +335,8 @@ public class MultiplayerDisplay extends Display {
 				break;
 			
 			case LOADING:
-				Font.drawCentered("Loading "+loadingMessage+" from server"+ ellipsis.updateAndGet(), screen, Screen.h/2, Color.WHITE);
-				//Font.drawCentered(transferPercent+"%", screen, Screen.h/2+6, Color.WHITE);
+				Font.drawCentered("Loading " + loadingMessage + " from server" + ellipsis.updateAndGet(), screen, Screen.h / 2, Color.WHITE);
+				//Font.drawCentered(transferPercent + "%", screen, Screen.h / 2 + 6, Color.WHITE);
 				break;
 			
 			case ERROR:

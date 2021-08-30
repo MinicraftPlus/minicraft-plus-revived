@@ -61,28 +61,28 @@ public class ConnectorSprite {
 			if (ul || !checkCorners) full.renderPixel(1, 1, screen, x, y);
 			else sides.renderPixel(0, 0, screen, x, y);
 		} else
-			sparse.renderPixel(l?1:2, u?1:2, screen, x, y);
+			sparse.renderPixel(l ? 1 : 2, u ? 1 : 2, screen, x, y);
 
 		
 		if (u && r) {
-			if (ur || !checkCorners) full.renderPixel(0, 1, screen, x+8, y);
-			else sides.renderPixel(1, 0, screen, x+8, y);
+			if (ur || !checkCorners) full.renderPixel(0, 1, screen, x + 8, y);
+			else sides.renderPixel(1, 0, screen, x + 8, y);
 		} else
-			sparse.renderPixel(r?1:0, u?1:2, screen, x+8, y);
+			sparse.renderPixel(r ? 1 : 0, u ? 1 : 2, screen, x + 8, y);
 
 		
 		if (d && l) {
-			if (dl || !checkCorners) full.renderPixel(1, 0, screen, x, y+8);
-			else sides.renderPixel(0, 1, screen, x, y+8);
+			if (dl || !checkCorners) full.renderPixel(1, 0, screen, x, y + 8);
+			else sides.renderPixel(0, 1, screen, x, y + 8);
 		} else
-			sparse.renderPixel(l?1:2, d?1:0, screen, x, y+8);
+			sparse.renderPixel(l ? 1 : 2, d ? 1 : 0, screen, x, y + 8);
 
 			
 		if (d && r) {
-			if (dr || !checkCorners) full.renderPixel(0, 0, screen, x+8, y+8);
-			else sides.renderPixel(1, 1, screen, x+8, y+8);
+			if (dr || !checkCorners) full.renderPixel(0, 0, screen, x + 8, y + 8);
+			else sides.renderPixel(1, 1, screen, x + 8, y + 8);
 		} else
-			sparse.renderPixel(r?1:0, d?1:0, screen, x+8, y+8);
+			sparse.renderPixel(r ? 1 : 0, d ? 1 : 0, screen, x + 8, y + 8);
 		
 	}
 	

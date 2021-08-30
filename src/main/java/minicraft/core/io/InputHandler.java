@@ -355,7 +355,7 @@ public class InputHandler implements KeyListener {
 		
 		//System.out.println("Toggling " + keytext + " key (keycode " + keycode + ") to "+pressed+".");
 		if( pressed && keyToChange != null && !isMod(keytext) ) {
-			keymap.put(keyToChange, ( overwrite?"":keymap.get(keyToChange)+"|" ) + getCurModifiers()+keytext);
+			keymap.put(keyToChange, ( overwrite ? "" : keymap.get(keyToChange) + "|" ) + getCurModifiers() + keytext);
 			keyChanged = keyToChange;
 			keyToChange = null;
 			return;
@@ -369,9 +369,9 @@ public class InputHandler implements KeyListener {
 	}
 	
 	private String getCurModifiers() {
-		return (getKey("ctrl").down?"CTRL-":"") +
-				(getKey("alt").down?"ALT-":"") +
-				(getKey("shift").down?"SHIFT-":"");
+		return (getKey("ctrl").down ? "CTRL-" : "") +
+				(getKey("alt").down ? "ALT-" : "") +
+				(getKey("shift").down ? "SHIFT-" : "");
 	}
 	
 	/** Used by Save.java, to save user key preferences. */

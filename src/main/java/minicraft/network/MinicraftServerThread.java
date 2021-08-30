@@ -309,6 +309,6 @@ public class MinicraftServerThread extends MinicraftConnection {
 	}
 	
 	public String toString() {
-		return "ServerThread for " + (client==null?"null":client.getUsername());
+		return "ServerThread for " + (client == null ? "null" : client.getUsername());
 	}
 }

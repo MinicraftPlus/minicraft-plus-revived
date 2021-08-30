@@ -1193,8 +1193,8 @@ public class Player extends Mob implements ItemHolder, ClientTickable {
 		";hunger," + hunger +
 		";attackTime," + attackTime +
 		";attackDir," + attackDir.ordinal() +
-		";activeItem," + (activeItem==null?"null": activeItem.getData())+
-		";isFishing," + (isFishing ?"1": "0");
+		";activeItem," + (activeItem == null ? "null" : activeItem.getData()) +
+		";isFishing," + (isFishing ? "1" : "0");
 
 		return updates;
 	}

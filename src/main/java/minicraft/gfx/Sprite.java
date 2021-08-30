@@ -68,7 +68,7 @@ public class Sprite {
 		spritePixels = new Px[sh][sw];
 		for (int r = 0; r < sh; r++)
 			for (int c = 0; c < sw; c++)
-				spritePixels[r][c] = new Px(sx+(onepixel?0:c), sy+(onepixel?0:r), mirror, sheet);
+				spritePixels[r][c] = new Px(sx + (onepixel ? 0 : c), sy + (onepixel ? 0 : r), mirror, sheet);
 	}
 	public Sprite(int sx, int sy, int sw, int sh, int sheet, boolean onepixel, int[][] mirrors) {
 		sheetLoc = new Rectangle(sx, sy, sw, sh);
@@ -76,7 +76,7 @@ public class Sprite {
 		spritePixels = new Px[sh][sw];
 		for (int r = 0; r < sh; r++)
 			for (int c = 0; c < sw; c++)
-				spritePixels[r][c] = new Px(sx+(onepixel?0:c), sy+(onepixel?0:r), mirrors[r][c], sheet);
+				spritePixels[r][c] = new Px(sx + (onepixel? 0 : c), sy + (onepixel ? 0 : r), mirrors[r][c], sheet);
 	}
 
 	public Sprite(Px[][] pixels) {

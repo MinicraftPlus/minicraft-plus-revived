@@ -744,7 +744,7 @@ public class Load {
 			boolean isDungeonChest = chest instanceof DungeonChest;
 			List<String> chestInfo = info.subList(2, info.size()-1);
 
-			int endIdx = chestInfo.size()-(isDeathChest||isDungeonChest?1:0);
+			int endIdx = chestInfo.size() - (isDeathChest || isDungeonChest ? 1 : 0);
 			for (int idx = 0; idx < endIdx; idx++) {
 				String itemData = chestInfo.get(idx);
 				if (worldVer.compareTo(new Version("2.0.7-dev1")) < 0)
