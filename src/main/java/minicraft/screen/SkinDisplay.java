@@ -71,7 +71,6 @@ public class SkinDisplay extends Display {
 
 	public void updateSpriteSheet(Screen screen) throws IOException {
 		SpriteSheet[] sheets = new SpriteSheet[1];
-
 		sheets[0] = new SpriteSheet(ImageIO.read(Game.class.getResourceAsStream("/resources/textures/skins.png")));
 
 		if (selected == 0) {
@@ -149,14 +148,53 @@ public class SkinDisplay extends Display {
 		Font.drawCentered("Use "+ Game.input.getMapping("cursor-down") + ", " + Game.input.getMapping("cursor-up") + ", " + Game.input.getMapping("SELECT"), screen, Screen.h - 11, Color.get(0, 222, 222, 222)); // Controls
 
 		int h = 2;
-		int w = 15;
+		int w = 16;
 		int xo = (Screen.w - w * 8) / 2;
 		int yo = 28;
 
-		// TODO: Replace the logo with a preview of the skin to be selected
 		for (int y = 0; y < h; y++) {
 			for (int x = 0; x < w; x++) {
-				screen.render(xo + x * 8, yo + y * 8, x + y * 32, 0, 3); // Skin preview?
+				if (selected == 0) {
+					try {
+						updateSpriteSheet(lastScreen);
+					} catch (IOException exception) {
+						exception.printStackTrace();
+					}
+					screen.render(xo + x * 8, yo + y * 8, x + (y + 16) * 32, 0, 2); // Paul
+				}
+				else if (selected == 1) {
+					try {
+						updateSpriteSheet(lastScreen);
+					} catch (IOException exception) {
+						exception.printStackTrace();
+					}
+					screen.render(xo + x * 8, yo + y * 8, x + y * 32, 0, 4); // Paul (Cape)
+				}
+				else if (selected == 2) {
+					try {
+						updateSpriteSheet(lastScreen);
+					} catch (IOException exception) {
+						exception.printStackTrace();
+					}
+					screen.render(xo + x * 8, yo + y * 8, x + (y + 4) * 32, 0, 4); // Familiar Boy
+				}
+				else if (selected == 3) {
+					try {
+						updateSpriteSheet(lastScreen);
+					} catch (IOException exception) {
+						exception.printStackTrace();
+					}
+					screen.render(xo + x * 8, yo + y * 8, x + (y + 8) * 32, 0, 4); // Familiar Girl
+				}
+				else if (selected > 3) {
+					try {
+						updateSpriteSheet(lastScreen);
+					} catch (IOException exception) {
+						exception.printStackTrace();
+					}
+					screen.render(xo + x * 8, yo + y * 8, x + y * 32, 0, 4); // Custom Skin
+				}
+
 			}
 		}
 
