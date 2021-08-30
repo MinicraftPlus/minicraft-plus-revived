@@ -268,7 +268,7 @@ public class Renderer extends Game {
 			else if (Updater.scoreTime >= 3600) timeCol = Color.get(330, 555);
 			else timeCol = Color.get(400, 555);
 			
-			Font.draw("Time left " + (hours > 0 ? hours+"h ":"") + minutes + "m " + seconds + "s", screen, Screen.w / 2-9 * 8, 2, timeCol);
+			Font.draw("Time left " + (hours > 0 ? hours + "h " : "") + minutes + "m " + seconds + "s", screen, Screen.w / 2-9 * 8, 2, timeCol);
 			
 			String scoreString = "Current score: " + player.getScore();
 			Font.draw(scoreString, screen, Screen.w - Font.textWidth(scoreString) - 2, 3 + 8, Color.WHITE);

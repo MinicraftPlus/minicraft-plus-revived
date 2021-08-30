@@ -31,7 +31,7 @@ public class RemotePlayer extends Player implements ClientTickable {
 	
 	public RemotePlayer(Player previous, InetAddress ip, int port) { this(previous, false, ip, port); }
 	public RemotePlayer(@Nullable Player previous, boolean isMainPlayer, InetAddress ip, int port) {
-		super(previous, (isMainPlayer?Game.input:new InputHandler()));
+		super(previous, (isMainPlayer ? Game.input : new InputHandler()));
 		this.ipAddress = ip;
 		this.port = port;
 	}

@@ -294,7 +294,7 @@ public class LegacyLoad {
 			}
 		}
 		
-		String colors = data.get(oldSave?data.size()-1:11).replace("[", "").replace("]", "");
+		String colors = data.get(oldSave ? data.size() -1 : 11).replace("[", "").replace("]", "");
 		String[] color = colors.split(";");
 		player.shirtColor = Integer.parseInt(color[0]+color[1]+color[2]);
 		
@@ -378,7 +378,7 @@ public class LegacyLoad {
 					boolean isDungeonChest = chest instanceof DungeonChest;
 					List<String> chestInfo = info.subList(2, info.size()-1);
 					
-					int endIdx = chestInfo.size()-(isDeathChest||isDungeonChest?1:0);
+					int endIdx = chestInfo.size() - (isDeathChest || isDungeonChest ? 1 : 0);
 					for (int idx = 0; idx < endIdx; idx++) {
 						String itemData = chestInfo.get(idx);
 						if (worldVer.compareTo(new Version("1.9.1")) < 0) // if this world is before 1.9.1

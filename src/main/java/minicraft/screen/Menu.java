@@ -318,10 +318,10 @@ public class Menu {
 		boolean special = wrap && entries.size() < displayLength;
 		if(special) {
 			int diff = displayLength - entries.size(); // we have to account for this many entry heights.
-			int extra = diff*(ListEntry.getHeight()+spacing) / 2;
+			int extra = diff*(ListEntry.getHeight() + spacing) / 2;
 			y += extra;
 		}
-		for(int i = offset; i < (wrap?offset+displayLength:Math.min(offset+displayLength, entries.size())); i++) {
+		for(int i = offset; i < (wrap ? offset + displayLength : Math.min(offset + displayLength, entries.size())); i++) {
 			if(special && i-offset >= entries.size()) break;
 			
 			int idx = i % entries.size();

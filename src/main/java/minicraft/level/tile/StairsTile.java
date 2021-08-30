@@ -15,7 +15,7 @@ public class StairsTile extends Tile {
 	private static Sprite up = new Sprite(19, 0, 2, 2, 1, 0);
 	
 	protected StairsTile(String name, boolean leadsUp) {
-		super(name, leadsUp?up:down);
+		super(name, leadsUp ? up : down);
 		maySpawn = false;
 	}
 	

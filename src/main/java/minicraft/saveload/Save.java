@@ -173,7 +173,7 @@ public class Save {
 	
 	private void writeGame(String filename) {
 		data.add(String.valueOf(Game.VERSION));
-		data.add(Settings.getIdx("mode") + (Game.isMode("score")?";"+Updater.scoreTime+";"+Settings.get("scoretime"):""));
+		data.add(Settings.getIdx("mode") + (Game.isMode("score") ? ";" + Updater.scoreTime + ";" + Settings.get("scoretime") : ""));
 		data.add(String.valueOf(Updater.tickCount));
 		data.add(String.valueOf(Updater.gameTime));
 		data.add(String.valueOf(Settings.getIdx("diff")));
