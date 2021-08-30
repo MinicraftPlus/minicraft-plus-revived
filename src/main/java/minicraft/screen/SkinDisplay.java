@@ -27,10 +27,9 @@ public class SkinDisplay extends Display {
     public static final String CUSTOM_SKIN = "Custom"; // User's Custom Imported Skin :)
 
 	private static final String[] ENTRY_NAMES = new String[] { "skins.png" }; // Spritesheets
-	
-	// TODO: Replace the variables "textureList" and "textureIDList" with "skinList" and "skinIDList"
-	public final List<String> textureList;
-	public final List<String> textureIDList;
+
+	public final List<String> skinList;
+	public final List<String> skinIDList;
 	private final File location;
 
 	private static int offset = 0;
@@ -44,17 +43,17 @@ public class SkinDisplay extends Display {
 	 */
 
 	public SkinDisplay() {
-		this.textureList = new ArrayList<>();
-		this.textureIDList = new ArrayList<>();
-		this.textureList.add(SkinDisplay.DEFAULT_SKIN);
-		this.textureList.add(SkinDisplay.CAPE_SKIN);
-		this.textureList.add(SkinDisplay.FAMILIARBOY_SKIN);
-		this.textureList.add(SkinDisplay.FAMILIARGIRL_SKIN);
-		this.textureIDList.add(SkinDisplay.DEFAULT_SKIN);
-		this.textureIDList.add(SkinDisplay.CAPE_SKIN);
-		this.textureIDList.add(SkinDisplay.FAMILIARBOY_SKIN);
-		this.textureIDList.add(SkinDisplay.FAMILIARGIRL_SKIN);
-		this.textureIDList.add(SkinDisplay.CUSTOM_SKIN);
+		this.skinList = new ArrayList<>();
+		this.skinIDList = new ArrayList<>();
+		this.skinList.add(SkinDisplay.DEFAULT_SKIN);
+		this.skinList.add(SkinDisplay.CAPE_SKIN);
+		this.skinList.add(SkinDisplay.FAMILIARBOY_SKIN);
+		this.skinList.add(SkinDisplay.FAMILIARGIRL_SKIN);
+		this.skinIDList.add(SkinDisplay.DEFAULT_SKIN);
+		this.skinIDList.add(SkinDisplay.CAPE_SKIN);
+		this.skinIDList.add(SkinDisplay.FAMILIARBOY_SKIN);
+		this.skinIDList.add(SkinDisplay.FAMILIARGIRL_SKIN);
+		this.skinIDList.add(SkinDisplay.CUSTOM_SKIN);
 
 		// Generate skins folder and/or read it.
 		this.location = new File(FileHandler.getSystemGameDir() + "/" + FileHandler.getLocalGameDir() + "/Skins");
@@ -63,7 +62,7 @@ public class SkinDisplay extends Display {
 		// Read and add the .png file to the skins list
 		for (String fileName : Objects.requireNonNull(location.list())) {
 			if (fileName.endsWith(".png")) { // Only .png skins files ok?
-				textureList.add(fileName);
+				skinList.add(fileName);
 			}
 		}
 
@@ -76,20 +75,20 @@ public class SkinDisplay extends Display {
 		sheets[0] = new SpriteSheet(ImageIO.read(Game.class.getResourceAsStream("/resources/textures/skins.png")));
 
 		if (selected == 0) {
-			SkinOutput = textureIDList.get(0);
+			SkinOutput = skinIDList.get(0);
 		}
 		else if (selected == 1) {
-			SkinOutput = textureIDList.get(1);
+			SkinOutput = skinIDList.get(1);
 		}
 		else if (selected == 2) {
-			SkinOutput = textureIDList.get(2);
+			SkinOutput = skinIDList.get(2);
 		}
 		else if (selected == 3) {
-			SkinOutput = textureIDList.get(3);
+			SkinOutput = skinIDList.get(3);
 		}
 		else if (selected > 3) {
-			SkinOutput = textureIDList.get(4);
-			File imageLocation = new File(location, textureList.get(selected));
+			SkinOutput = skinIDList.get(4);
+			File imageLocation = new File(location, skinList.get(selected));
 			sheets[0] = new SpriteSheet(ImageIO.read(imageLocation));
 		}
 		screen.setSkinSheet(sheets[0]);
@@ -123,7 +122,7 @@ public class SkinDisplay extends Display {
 			selected--;
 
 		}
-		if (input.getKey("cursor-up").clicked && selected < textureList.size() - 1) {
+		if (input.getKey("cursor-up").clicked && selected < skinList.size() - 1) {
 			selected++;
 		}
 	}
@@ -139,13 +138,13 @@ public class SkinDisplay extends Display {
 
 		lastScreen = screen;
 
-		String selectedUp = selected + 1 > textureList.size() - 1 ? "" : textureList.get(selected + 1);
-		String selectedDown = selected - 1 < 0 ? "" : textureList.get(selected - 1);
+		String selectedUp = selected + 1 > skinList.size() - 1 ? "" : skinList.get(selected + 1);
+		String selectedDown = selected - 1 < 0 ? "" : skinList.get(selected - 1);
 
 		// Render the menu
 		Font.drawCentered("Skins", screen, Screen.h - 180, Color.YELLOW); // Title
 		Font.drawCentered(SkinDisplay.shortNameIfLong(selectedDown), screen, Screen.h - 70, Color.GRAY); // Unselected space
-		Font.drawCentered(SkinDisplay.shortNameIfLong(textureList.get(selected)), screen, Screen.h - 80, Color.GREEN); // Selection
+		Font.drawCentered(SkinDisplay.shortNameIfLong(skinList.get(selected)), screen, Screen.h - 80, Color.GREEN); // Selection
 		Font.drawCentered(SkinDisplay.shortNameIfLong(selectedUp), screen, Screen.h - 90, Color.GRAY); // Other unselected space
 		Font.drawCentered("Use "+ Game.input.getMapping("cursor-down") + ", " + Game.input.getMapping("cursor-up") + ", " + Game.input.getMapping("SELECT"), screen, Screen.h - 11, Color.get(0, 222, 222, 222)); // Controls
 
