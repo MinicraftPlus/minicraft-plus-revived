@@ -76,7 +76,7 @@ public class StackableItem extends Item {
 	}
 	
 	public String getData() {
-		return getName() + "_"+ count;
+		return getName() + "_" + count;
 	}
 	
 	@Override
