@@ -110,7 +110,7 @@ public class Load {
 			percentInc = 100f / percentInc;
 			
 			LoadingDisplay.setPercentage(0);
-			loadGame("Game"); // MMore of the version will be determined here
+			loadGame("Game"); // More of the version will be determined here
 			loadWorld("Level");
 			loadEntities("Entities");
 			loadInventory("Inventory", Game.player.getInventory());

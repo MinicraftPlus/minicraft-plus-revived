@@ -52,7 +52,7 @@ public class CloudCactusTile extends Tile {
 		int damage = level.getData(x, y) + dmg;
 		int health = 10;
 		if (Game.isMode("creative")) dmg = damage = health;
-		level.add(new SmashParticle(x * 16, y * 16));	
+		level.add(new SmashParticle(x * 16, y * 16));
 		Sound.monsterHurt.play();
 		level.add(new TextParticle("" + dmg, x * 16 + 8, y * 16 + 8, Color.RED));
 		if (damage >= health) {

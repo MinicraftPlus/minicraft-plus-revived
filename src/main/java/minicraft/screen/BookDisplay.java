@@ -79,10 +79,10 @@ public class BookDisplay extends Display {
 	}
 	
 	private void turnPage(int dir) {
-		if(page + dir >= 0 && page + dir < lines.length) {
+		if (page + dir >= 0 && page + dir < lines.length) {
 			menus[page+pageOffset].shouldRender = false;
 			page += dir;
-			if(showPageCount) menus[0].updateSelectedEntry(new StringEntry(page == 0 && hasTitle ? "Title" : (page + 1) + "/" + lines.length, Color.BLACK));
+			if (showPageCount) menus[0].updateSelectedEntry(new StringEntry(page == 0 && hasTitle ? "Title" : (page + 1) + "/" + lines.length, Color.BLACK));
 			menus[page+pageOffset].shouldRender = true;
 		}
 	}
