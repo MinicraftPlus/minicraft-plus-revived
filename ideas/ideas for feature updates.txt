@@ -10,3 +10,4 @@ Ideas for ways to update or improve existing features.
 [ ] Enchantments
 [X] Allow clients to add a port number to the end of the ip with ":". for example: 12.34.145.1:1122
 [ ] Nether Update that will extend the storyline, add a new boss and maybe a miniboss. 
+[ ] Extension to line 12: End Update that will extend the storyline, add a new boss and maybe a miniboss.
