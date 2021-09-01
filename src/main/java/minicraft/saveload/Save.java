@@ -38,6 +38,7 @@ import minicraft.item.PotionType;
 import minicraft.network.MinicraftServer;
 import minicraft.screen.LoadingDisplay;
 import minicraft.screen.MultiplayerDisplay;
+import minicraft.screen.SkinDisplay;
 import minicraft.screen.WorldSelectDisplay;
 
 public class Save {
@@ -186,7 +187,7 @@ public class Save {
 		data.add(String.valueOf(Settings.get("sound")));
 		data.add(String.valueOf(Settings.get("autosave")));
 		data.add(String.valueOf(Settings.get("fps")));
-		data.add(String.valueOf(Settings.getIdx("Skins")));
+		data.add(String.valueOf(SkinDisplay.getSelected()));
 		data.add(MultiplayerDisplay.savedIP);
 		data.add(MultiplayerDisplay.savedUUID);
 		data.add(MultiplayerDisplay.savedUsername);
@@ -206,7 +207,7 @@ public class Save {
 			data.add("10_ScoreTime");
 		if (Settings.getEntry("scoretime").getValueVisibility(120))
 			data.add("120_ScoreTime");
-		
+
 		writeToFile(location + "Unlocks" + extension, data);
 	}
 	
@@ -277,7 +278,7 @@ public class Save {
 		data.add(subdata.toString());
 		
 		data.add(String.valueOf(player.shirtColor));
-		data.add(String.valueOf(player.skinon));
+		data.add(String.valueOf(player.suitOn));
 	}
 	
 	private void writeInventory(String filename, Player player) {

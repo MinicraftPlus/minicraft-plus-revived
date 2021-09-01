@@ -20,6 +20,6 @@ public class InfiniteFallTile extends Tile {
 	public boolean tick(Level level, int xt, int yt) { return false; }
 
 	public boolean mayPass(Level level, int x, int y, Entity e) {
-		return e instanceof AirWizard || e instanceof Arrow || e instanceof Player && ( ((Player) e).skinon || Game.isMode("creative") );
+		return e instanceof AirWizard || e instanceof Arrow || e instanceof Player && ( ((Player) e).suitOn || Game.isMode("creative") );
 	}
 }

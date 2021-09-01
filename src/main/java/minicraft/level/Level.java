@@ -540,8 +540,7 @@ public class Level {
 	
 	private void sortAndRender(Screen screen, List<Entity> list) {
 		list.sort(spriteSorter);
-		for (int i = 0; i < list.size(); i++) {
-			Entity e = list.get(i);
+		for (Entity e : list) {
 			if (e.getLevel() == this && !e.isRemoved())
 				e.render(screen);
 			else

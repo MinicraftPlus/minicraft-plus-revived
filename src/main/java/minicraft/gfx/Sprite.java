@@ -64,7 +64,7 @@ public class Sprite {
 	}
 	public Sprite(int sx, int sy, int sw, int sh, int sheet, int mirror, boolean onepixel) {
 		sheetLoc = new Rectangle(sx, sy, sw, sh);
-		
+
 		spritePixels = new Px[sh][sw];
 		for (int r = 0; r < sh; r++)
 			for (int c = 0; c < sw; c++)
@@ -110,19 +110,31 @@ public class Sprite {
 	public void renderRow(int r, Screen screen, int x, int y) {
 		Px[] row = spritePixels[r];
 		for (int c = 0; c < row.length; c++) { // Loop across through each column
-			screen.render(x + c * 8, y, row[c].sheetPos, row[c].mirror, row[c].sheetNum, this.color); // Render the sprite pixel.
+			if (row[c].spriteSheet != null) {
+				screen.render(x + c * 8, y, row[c].sheetPos, row[c].mirror, row[c].spriteSheet, this.color, false); // Render the sprite pixel.
+			} else {
+				screen.render(x + c * 8, y, row[c].sheetPos, row[c].mirror, row[c].spriteSheetNum, this.color); // Render the sprite pixel.
+			}
 		}
 	}
 	public void renderRow(int r, Screen screen, int x, int y, int mirror) {
 		Px[] row = spritePixels[r];
 		for (int c = 0; c < row.length; c++) { // Loop across through each column
-			screen.render(x + c * 8, y, row[c].sheetPos, mirror, row[c].sheetNum, this.color); // Render the sprite pixel.
+			if (row[c].spriteSheet != null) {
+				screen.render(x + c * 8, y, row[c].sheetPos, mirror, row[c].spriteSheet, this.color, false); // Render the sprite pixel.
+			} else {
+				screen.render(x + c * 8, y, row[c].sheetPos, mirror, row[c].spriteSheetNum, this.color); // Render the sprite pixel.
+			}
 		}
 	}
 	public void renderRow(int r, Screen screen, int x, int y, int mirror, int whiteTint) {
 		Px[] row = spritePixels[r];
 		for (int c = 0; c < row.length; c++) {
-			screen.render(x + c * 8, y, row[c].sheetPos, (mirror != -1 ? mirror : row[c].mirror), row[c].sheetNum, whiteTint);
+			if (row[c].spriteSheet != null) {
+				screen.render(x + c * 8, y, row[c].sheetPos, (mirror != -1 ? mirror : row[c].mirror), row[c].spriteSheet, whiteTint, false);
+			} else {
+				screen.render(x + c * 8, y, row[c].sheetPos, (mirror != -1 ? mirror : row[c].mirror), row[c].spriteSheetNum, whiteTint);
+			}
 		}
 	}
 
@@ -133,7 +145,11 @@ public class Sprite {
 		renderPixel(c, r, screen, x, y, mirror, this.color);
 	}
 	protected void renderPixel(int c, int r, Screen screen, int x, int y, int mirror, int whiteTint) {
-		screen.render(x, y, spritePixels[r][c].sheetPos, mirror, spritePixels[r][c].sheetNum, whiteTint); // Render the sprite pixel.
+		if (spritePixels[r][c].spriteSheet != null) {
+			screen.render(x, y, spritePixels[r][c].sheetPos, mirror, spritePixels[r][c].spriteSheet, whiteTint, false); // Render the sprite pixel.
+		} else {
+			screen.render(x, y, spritePixels[r][c].sheetPos, mirror, spritePixels[r][c].spriteSheetNum, whiteTint);
+		}
 	}
 	
 	public String toString() {
@@ -147,17 +163,21 @@ public class Sprite {
 	}
 	
 	public static class Px {
-		protected int sheetPos, mirror, sheetNum;
-		
-		public Px(int sheetX, int sheetY, int mirroring) {
-			this(sheetX, sheetY, mirroring, 0);
-		}
+		protected int sheetPos, mirror, spriteSheetNum;
+		protected SpriteSheet spriteSheet;
 
-		public Px(int sheetX, int sheetY, int mirroring, int sheetNum) {
+		public Px(int sheetX, int sheetY, int mirroring, int sheet) {
 			// pixelX and pixelY are the relative positions each pixel should have relative to the top-left-most pixel of the sprite.
 			sheetPos = sheetX + 32 * sheetY;
 			mirror = mirroring;
-			this.sheetNum = sheetNum;
+			this.spriteSheetNum = sheet;
+		}
+
+		public Px(int sheetX, int sheetY, int mirroring, SpriteSheet sheet) {
+			// pixelX and pixelY are the relative positions each pixel should have relative to the top-left-most pixel of the sprite.
+			sheetPos = sheetX + 32 * sheetY;
+			mirror = mirroring;
+			this.spriteSheet = sheet;
 		}
 
 		public String toString() {
