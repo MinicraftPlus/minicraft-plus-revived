@@ -319,7 +319,7 @@ public class Load {
 			Settings.set("fps", Integer.parseInt(data.remove(0)));
 
 		if (prefVer.compareTo(new Version("2.0.7-dev5")) >= 0)
-			SkinDisplay.setSelected(Integer.parseInt(data.remove(0)));
+			SkinDisplay.setSelectedSkinIndex(Integer.parseInt(data.remove(0)));
 
 		List<String> subdata;
 		

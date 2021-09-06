@@ -198,10 +198,14 @@ public class Player extends Mob implements ItemHolder, ClientTickable {
 			spawny = previousInstance.spawny;
 		}
 
-		sprites = SkinDisplay.getSelectedSkin()[0];
-		carrySprites = SkinDisplay.getSelectedSkin()[1];
-		suitSprites = SkinDisplay.getSelectedSkin()[2];
-		carrySuitSprites = SkinDisplay.getSelectedSkin()[3];
+		// Get the current skin we are using as a MobSprite array.
+		MobSprite[][][] selectedSkin = SkinDisplay.getSkinAsMobSprite();
+
+		// Assign the skin to the states.
+		sprites = selectedSkin[0];
+		carrySprites = selectedSkin[1];
+		suitSprites = selectedSkin[2];
+		carrySuitSprites = selectedSkin[3];
 	}
 	
 	public int getMultiplier() { return Game.isMode("score") ? multiplier : 1; }

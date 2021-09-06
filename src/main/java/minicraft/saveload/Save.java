@@ -187,7 +187,7 @@ public class Save {
 		data.add(String.valueOf(Settings.get("sound")));
 		data.add(String.valueOf(Settings.get("autosave")));
 		data.add(String.valueOf(Settings.get("fps")));
-		data.add(String.valueOf(SkinDisplay.getSelected()));
+		data.add(String.valueOf(SkinDisplay.getSelectedSkinIndex()));
 		data.add(MultiplayerDisplay.savedIP);
 		data.add(MultiplayerDisplay.savedUUID);
 		data.add(MultiplayerDisplay.savedUsername);

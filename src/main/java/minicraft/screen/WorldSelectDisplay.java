@@ -61,27 +61,34 @@ public class WorldSelectDisplay extends Display {
 			return worldNames;
 		}
 		
-		//find worlds (init step):
+		// Get folder containing the worlds and load them.
 		File folder = new File(worldsDir);
-		folder.mkdirs();
+
+		// Try to create the saves folder if it doesn't exist.
+		if (folder.mkdirs()) {
+			if (Game.debug) System.out.println("World save folder created.");
+		}
+
+		// Get all the files (worlds) in the folder.
 		File[] listOfFiles = folder.listFiles();
-		
+
 		if(listOfFiles == null) {
 			System.err.println("ERROR: Game location file folder is null, somehow...");
 			return new ArrayList<>();
 		}
 		
 		worldVersions.clear();
-		for (File listOfFile : listOfFiles) {
-			if (listOfFile.isDirectory()) {
-				String path = worldsDir + listOfFile.getName() + "/";
+
+		// Iterate between every file in listOfFiles.
+		for (File file : listOfFiles) {
+			if (file.isDirectory()) {
+				String path = worldsDir + file.getName() + "/";
 				File folder2 = new File(path);
 				folder2.mkdirs();
 				String[] files = folder2.list();
 				if (files != null && files.length > 0 && files[0].endsWith(Save.extension)) {
-					String name = listOfFile.getName();
+					String name = file.getName();
 					worldNames.add(name);
-					//if(Game.debug) System.out.println("World found: " + name);
 					worldVersions.add(new Load(name, false).getWorldVersion());
 				}
 			}

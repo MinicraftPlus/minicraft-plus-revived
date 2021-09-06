@@ -25,7 +25,7 @@ public class SkinDisplay extends Display {
 	private static final List<String> skinNames = new ArrayList<>();
 	private static final int defaultSkins;
 	private static final List<SpriteSheet> customSkins = new ArrayList<>();
-	private static int selected = 0;
+	private static int selectedSkinIndex = 0;
 
 	private int step;
 
@@ -39,11 +39,13 @@ public class SkinDisplay extends Display {
 		// Never remove this
 		defaultSkins = skinNames.size();
 
-		File skinFolder;
+		// Get the folder containing the skins.
+		File skinFolder = new File(FileHandler.getSystemGameDir() + "/" + FileHandler.getLocalGameDir() + "/skins");
 
-		// Generate skins folder and/or read it.
-		skinFolder = new File(FileHandler.getSystemGameDir() + "/" + FileHandler.getLocalGameDir() + "/skins");
-		skinFolder.mkdirs();
+		// Create folder, and see if it was successful.
+		if (skinFolder.mkdirs()) {
+			if (Game.debug) System.out.println("Skin folder created.");
+		}
 
 		// Read and add the .png file to the skins list.
 		for (String fileName : Objects.requireNonNull(skinFolder.list())) {
@@ -76,7 +78,7 @@ public class SkinDisplay extends Display {
 	}
 
 	public SkinDisplay() {
-		if (selected >= skinNames.size()) selected = 0;
+		if (selectedSkinIndex >= skinNames.size()) selectedSkinIndex = 0;
 	}
 
     @Override
@@ -84,8 +86,7 @@ public class SkinDisplay extends Display {
 		// Save the selected skin.
 		new Save();
 
-		// Close menu.
-        Game.setMenu(getParent());
+		// Play confirm sound.
         Sound.confirm.play();
     }
 
@@ -95,12 +96,12 @@ public class SkinDisplay extends Display {
 			Game.exitMenu();
 			return;
 		}
-		if (input.getKey("cursor-down").clicked && selected < skinNames.size() - 1) {
-			selected++;
+		if (input.getKey("cursor-down").clicked && selectedSkinIndex < skinNames.size() - 1) {
+			selectedSkinIndex++;
 			Sound.select.play();
 		}
-		if (input.getKey("cursor-up").clicked && selected > 0) {
-			selected--;
+		if (input.getKey("cursor-up").clicked && selectedSkinIndex > 0) {
+			selectedSkinIndex--;
 			Sound.select.play();
 		}
 	}
@@ -111,10 +112,10 @@ public class SkinDisplay extends Display {
 		step++;
 
 		// Get skin above and below.
-		String selectedUpUp = selected + 2 > skinNames.size() - 2 ? "" : skinNames.get(selected + 2);
-		String selectedUp = selected + 1 > skinNames.size() - 1 ? "" : skinNames.get(selected + 1);
-		String selectedDown = selected - 1 < 0 ? "" : skinNames.get(selected - 1);
-		String selectedDownDown = selected - 2 < 0 ? "" : skinNames.get(selected - 2);
+		String selectedUpUp = selectedSkinIndex + 2 > skinNames.size() - 2 ? "" : skinNames.get(selectedSkinIndex + 2);
+		String selectedUp = selectedSkinIndex + 1 > skinNames.size() - 1 ? "" : skinNames.get(selectedSkinIndex + 1);
+		String selectedDown = selectedSkinIndex - 1 < 0 ? "" : skinNames.get(selectedSkinIndex - 1);
+		String selectedDownDown = selectedSkinIndex - 2 < 0 ? "" : skinNames.get(selectedSkinIndex - 2);
 
 		// Title.
 		Font.drawCentered("Skins", screen, Screen.h - 180, Color.YELLOW);
@@ -122,7 +123,7 @@ public class SkinDisplay extends Display {
 		// Render the menu.
 		Font.drawCentered(SkinDisplay.shortNameIfLong(selectedUpUp), screen, Screen.h - 60, Color.GRAY); // First unselected space
 		Font.drawCentered(SkinDisplay.shortNameIfLong(selectedUp), screen, Screen.h - 70, Color.GRAY); // Second unselected space
-		Font.drawCentered(SkinDisplay.shortNameIfLong(skinNames.get(selected)), screen, Screen.h - 80, Color.GREEN); // Selection
+		Font.drawCentered(SkinDisplay.shortNameIfLong(skinNames.get(selectedSkinIndex)), screen, Screen.h - 80, Color.GREEN); // Selection
 		Font.drawCentered(SkinDisplay.shortNameIfLong(selectedDown), screen, Screen.h - 90, Color.GRAY); // Third space
 		Font.drawCentered(SkinDisplay.shortNameIfLong(selectedDownDown), screen, Screen.h - 100, Color.GRAY); // Fourth space
 
@@ -140,10 +141,10 @@ public class SkinDisplay extends Display {
 		// Render preview of skin.
 		for (int y = 0; y < h; y++)
 			for (int x = 0; x < w; x++)
-				if (selected < defaultSkins) {
-					screen.render(xoffset + x * 8, yoffset + y * 8, spriteIndex * 2 + x + (y + selected * 4) * 32, 0, 4);
+				if (selectedSkinIndex < defaultSkins) {
+					screen.render(xoffset + x * 8, yoffset + y * 8, spriteIndex * 2 + x + (y + selectedSkinIndex * 4) * 32, 0, 4);
 				} else {
-					SpriteSheet spriteSheet = customSkins.get(selected - defaultSkins);
+					SpriteSheet spriteSheet = customSkins.get(selectedSkinIndex - defaultSkins);
 					screen.render(xoffset + x * 8, yoffset + y * 8, spriteIndex * 2 + x + y * 32, 0, spriteSheet, - 1, false);
 				}
 	}
@@ -154,29 +155,29 @@ public class SkinDisplay extends Display {
 		return name.length() > 22 ? name.substring(0, 16) + "..." : name;
 	}
 
-	public static int getSelected() {
-		return selected;
+	public static int getSelectedSkinIndex() {
+		return selectedSkinIndex;
 	}
 
-	public static void setSelected(int selected) {
-		SkinDisplay.selected = selected;
+	public static void setSelectedSkinIndex(int selectedSkinIndex) {
+		SkinDisplay.selectedSkinIndex = selectedSkinIndex;
 	}
 
 	// First array is one of the four animations.
 	@NotNull
-	public static MobSprite[][][] getSelectedSkin() {
+	public static MobSprite[][][] getSkinAsMobSprite() {
 		MobSprite[][][] mobSprites = new MobSprite[4][][];
 
-		if (selected < defaultSkins) {
-			mobSprites[0] = MobSprite.compilePlayerSpriteAnimations(0, SkinDisplay.getSelected() * 4);
-			mobSprites[1] = MobSprite.compilePlayerSpriteAnimations(0, SkinDisplay.getSelected() * 4 + 2);
-			mobSprites[2] = MobSprite.compilePlayerSpriteAnimations(8, SkinDisplay.getSelected() * 4 + 2);
-			mobSprites[3] = MobSprite.compilePlayerSpriteAnimations(8, SkinDisplay.getSelected() * 4);
+		if (selectedSkinIndex < defaultSkins) {
+			mobSprites[0] = MobSprite.compilePlayerSpriteAnimations(0, SkinDisplay.getSelectedSkinIndex() * 4);
+			mobSprites[1] = MobSprite.compilePlayerSpriteAnimations(0, SkinDisplay.getSelectedSkinIndex() * 4 + 2);
+			mobSprites[2] = MobSprite.compilePlayerSpriteAnimations(8, SkinDisplay.getSelectedSkinIndex() * 4 + 2);
+			mobSprites[3] = MobSprite.compilePlayerSpriteAnimations(8, SkinDisplay.getSelectedSkinIndex() * 4);
 		} else {
-			mobSprites[0] = MobSprite.compileCustomPlayerSpriteAnimations(0, 0, customSkins.get(selected - defaultSkins));
-			mobSprites[1] = MobSprite.compileCustomPlayerSpriteAnimations(0, 2, customSkins.get(selected - defaultSkins));
-			mobSprites[2] = MobSprite.compileCustomPlayerSpriteAnimations(8, 2, customSkins.get(selected - defaultSkins));
-			mobSprites[3] = MobSprite.compileCustomPlayerSpriteAnimations(8, 0, customSkins.get(selected - defaultSkins));
+			mobSprites[0] = MobSprite.compileCustomPlayerSpriteAnimations(0, 0, customSkins.get(selectedSkinIndex - defaultSkins));
+			mobSprites[1] = MobSprite.compileCustomPlayerSpriteAnimations(0, 2, customSkins.get(selectedSkinIndex - defaultSkins));
+			mobSprites[2] = MobSprite.compileCustomPlayerSpriteAnimations(8, 2, customSkins.get(selectedSkinIndex - defaultSkins));
+			mobSprites[3] = MobSprite.compileCustomPlayerSpriteAnimations(8, 0, customSkins.get(selectedSkinIndex - defaultSkins));
 		}
 
 		return mobSprites;
