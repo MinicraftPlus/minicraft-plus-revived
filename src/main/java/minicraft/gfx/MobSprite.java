@@ -162,7 +162,11 @@ public class MobSprite extends Sprite {
 	public void renderRow(int r, Screen screen, int x, int y, boolean fullbright) {
 		Px[] row = spritePixels[r];
 		for (int c = 0; c < row.length; c++) { // Loop across through each column
-			screen.render(x + c * 8, y, row[c].sheetPos, row[c].mirror, row[c].spriteSheet, -1, fullbright); // Render the sprite pixel.
+			if (row[c].spriteSheet != null) {
+				screen.render(x + c * 8, y, row[c].sheetPos, row[c].mirror, row[c].spriteSheet, -1, fullbright); // Render the sprite pixel.
+			} else {
+				screen.render(x + c * 8, y, row[c].sheetPos, row[c].mirror, row[c].spriteSheetNum, -1, fullbright); // Render the sprite pixel.
+			}
 		}
 	}
 }
