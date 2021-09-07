@@ -51,29 +51,11 @@ public class Screen {
 	}
 	
 	public void setSheet(SpriteSheet itemSheet, SpriteSheet tileSheet, SpriteSheet entitySheet, SpriteSheet guiSheet, SpriteSheet skinsSheet) {
-		    if (itemSheet != null) {
-		        sheets[0] = itemSheet;
-		    }
-		    if (tileSheet != null) {
-		        sheets[1] = tileSheet;
-		    }
-		    if (entitySheet != null) {
-		        sheets[2] = entitySheet;
-		    }
-		    if (guiSheet != null) {
-		        sheets[3] = guiSheet;
-		    }
-		    if (skinsSheet != null) {
-		    	sheets[4] = skinsSheet;
-			}
-		}
-
-	public void setSheet(SpriteSheet itemSheet, SpriteSheet tileSheet, SpriteSheet entitySheet, SpriteSheet guiSheet) {
 		if (itemSheet != null) {
-			sheets[0] = itemSheet;
+		        sheets[0] = itemSheet;
 		}
 		if (tileSheet != null) {
-			sheets[1] = tileSheet;
+		        sheets[1] = tileSheet;
 		}
 		if (entitySheet != null) {
 			sheets[2] = entitySheet;
@@ -81,10 +63,23 @@ public class Screen {
 		if (guiSheet != null) {
 			sheets[3] = guiSheet;
 		}
+		if (skinsSheet != null) {
+			sheets[4] = skinsSheet;
+		}
 	}
-	public void setSkinSheet(SpriteSheet skinSheet){
-		if (skinSheet != null){
-			sheets[4] = skinSheet;
+
+	public void setSheet(SpriteSheet itemSheet, SpriteSheet tileSheet, SpriteSheet entitySheet, SpriteSheet guiSheet) {
+		if (itemSheet != null) {
+		        sheets[0] = itemSheet;
+		}
+		if (tileSheet != null) {
+		        sheets[1] = tileSheet;
+		}
+		if (entitySheet != null) {
+			sheets[2] = entitySheet;
+		}
+		if (guiSheet != null) {
+			sheets[3] = guiSheet;
 		}
 	}
 	
@@ -104,62 +99,67 @@ public class Screen {
 
     public void render(int xp, int yp, int tile, int bits, int sheet, int whiteTint) { render(xp, yp, tile, bits, sheet, whiteTint, false); }
 
-    /** Renders an object from the sprite sheet based on screen coordinates, tile (SpriteSheet location), colors, and bits (for mirroring). I believe that xp and yp refer to the desired position of the upper-left-most pixel. */
+	/** This method takes care of assigning the correct spritesheet to assign to the sheet variable **/
     public void render(int xp, int yp, int tile, int bits, int sheet, int whiteTint, boolean fullbright) {
-    	
-        // xp and yp are originally in level coordinates, but offset turns them to screen coordinates.
-        xp -= xOffset; //account for screen offset
-        yp -= yOffset;
-        
-        // Determines if the image should be mirrored...
-        boolean mirrorX = (bits & BIT_MIRROR_X) > 0; // Horizontally.
-        boolean mirrorY = (bits & BIT_MIRROR_Y) > 0; // Vertically.
-
-
-		SpriteSheet currentSheet;
-		if (Settings.get("textures").equals("Custom")) {	
-			// Make it custom unless the custom sheet isn't working
+    	SpriteSheet currentSheet;
+		if (Settings.get("textures").equals("Custom")) {
 			currentSheet = sheetsCustom[sheet] != null ? sheetsCustom[sheet] : sheets[sheet];
 		} else {
 			currentSheet = sheets[sheet];
 		}
 
-        int xTile = tile % 32; // Gets x position of the spritesheet "tile"
-        int yTile = tile / 32; // Gets y position
-        int toffs = xTile * 8 + yTile * 8 * currentSheet.width; // Gets the offset of the sprite into the spritesheet pixel array, the 8's represent the size of the box. (8 by 8 pixel sprite boxes)
+		render(xp, yp, tile, bits, currentSheet, whiteTint, fullbright);
+    }
 
-        /// THIS LOOPS FOR EVERY LITTLE PIXEL
-        for (int y = 0; y < 8; y++) { // Loops 8 times (because of the height of the tile)
-            int ys = y; // Current y pixel
-            if (mirrorY) ys = 7 - y; // Reverses the pixel for a mirroring effect
-            if (y + yp < 0 || y + yp >= h) continue; // If the pixel is out of bounds, then skip the rest of the loop.
-            for (int x = 0; x < 8; x++) { // Loops 8 times (because of the width of the tile)
-                if (x + xp < 0 || x + xp >= w) continue; // Skip rest if out of bounds.
+    /** Renders an object from the sprite sheet based on screen coordinates, tile (SpriteSheet location), colors, and bits (for mirroring). I believe that xp and yp refer to the desired position of the upper-left-most pixel. */
+    public void render(int xp, int yp, int tile, int bits, SpriteSheet sheet, int whiteTint, boolean fullbright) {
 
-                int xs = x; // Current x pixel
-                if (mirrorX) xs = 7 - x; // Reverses the pixel for a mirroring effect
+    	if (sheet == null) System.out.println("WTF sheet is null??????");
 
-                int col = currentSheet.pixels[toffs + xs + ys * currentSheet.width]; // Gets the color of the current pixel from the value stored in the sheet.
+		// xp and yp are originally in level coordinates, but offset turns them to screen coordinates.
+		xp -= xOffset; //account for screen offset
+		yp -= yOffset;
 
-                boolean isTransparent = (col >> 24 == 0);
+		// Determines if the image should be mirrored...
+		boolean mirrorX = (bits & BIT_MIRROR_X) > 0; // Horizontally.
+		boolean mirrorY = (bits & BIT_MIRROR_Y) > 0; // Vertically.
 
-                if (!isTransparent) {
-                    if (whiteTint != -1 && col == 0x1FFFFFF) {
-                        // If this is white, write the whiteTint over it
-                        pixels[(x + xp) + (y + yp) * w] = Color.upgrade(whiteTint);
-                    } else {
-                        // Inserts the colors into the image
-                        if (fullbright) {
-                            pixels[(x + xp) + (y + yp) * w] = Color.WHITE;
-                        } else {
+		int xTile = tile % 32; // Gets x position of the spritesheet "tile"
+		int yTile = tile / 32; // Gets y position
+		int toffs = xTile * 8 + yTile * 8 * sheet.width; // Gets the offset of the sprite into the spritesheet pixel array, the 8's represent the size of the box. (8 by 8 pixel sprite boxes)
+
+		// THIS LOOPS FOR EVERY PIXEL
+		for (int y = 0; y < 8; y++) { // Loops 8 times (because of the height of the tile)
+			int ys = y; // Current y pixel
+			if (mirrorY) ys = 7 - y; // Reverses the pixel for a mirroring effect
+			if (y + yp < 0 || y + yp >= h) continue; // If the pixel is out of bounds, then skip the rest of the loop.
+			for (int x = 0; x < 8; x++) { // Loops 8 times (because of the width of the tile)
+				if (x + xp < 0 || x + xp >= w) continue; // Skip rest if out of bounds.
+
+				int xs = x; // Current x pixel
+				if (mirrorX) xs = 7 - x; // Reverses the pixel for a mirroring effect
+
+				int col = sheet.pixels[toffs + xs + ys * sheet.width]; // Gets the color of the current pixel from the value stored in the sheet.
+
+				boolean isTransparent = (col >> 24 == 0);
+
+				if (!isTransparent) {
+					if (whiteTint != -1 && col == 0x1FFFFFF) {
+						// If this is white, write the whiteTint over it
+						pixels[(x + xp) + (y + yp) * w] = Color.upgrade(whiteTint);
+					} else {
+						// Inserts the colors into the image
+						if (fullbright) {
+							pixels[(x + xp) + (y + yp) * w] = Color.WHITE;
+						} else {
 							pixels[(x + xp) + (y + yp) * w] = Color.upgrade(col);
 						}
-                    }
-                }
-            }
-        }
-    }
-	
+					}
+				}
+			}
+		}
+	}
+
 	/** Sets the offset of the screen */
 	public void setOffset(int xOffset, int yOffset) {
 		// This is called in few places, one of which is level.renderBackground, right before all the tiles are rendered. The offset is determined by the Game class (this only place renderBackground is called), by using the screen's width and the player's position in the level.

@@ -63,7 +63,11 @@ public class WorldEditDisplay extends Display {
 		
 		if(input.getKey("select").clicked) { // do action
 			InputEntry entry;
+
+			// The location of the world folder on the disk.
 			File world = new File(worldsDir + worldName);
+
+			// Do the action.
 			switch (action) {
 				case Delete:
 					if(Game.debug) System.out.println("deleting world: " + world);
@@ -105,10 +109,17 @@ public class WorldEditDisplay extends Display {
 					entry = (InputEntry)menus[0].getCurEntry();
 					if(!entry.isValid())
 						break;
-					//user hits enter with a vaild new name; name is set here:
+
+					// User hits enter with a vaild new name; name is set here:
 					String name = entry.getUserInput();
-					if (Game.debug) System.out.println("renaming world " + world + " to new name: " + name);
-					world.renameTo(new File(worldsDir + name));
+
+					// Try to rename the file, if it works, return
+					if (world.renameTo(new File(worldsDir + name))) {
+						if (Game.debug) System.out.println("Renaming world " + world + " to new name: " + name);
+					} else {
+						System.err.println("ERROR: Rename failed in WorldEditDisplay.");
+					}
+
 					Game.exitMenu();
 				break;
 			}

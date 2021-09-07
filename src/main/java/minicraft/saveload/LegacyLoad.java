@@ -298,8 +298,8 @@ public class LegacyLoad {
 		String[] color = colors.split(";");
 		player.shirtColor = Integer.parseInt(color[0]+color[1]+color[2]);
 		
-		if (!oldSave) player.skinon = Boolean.parseBoolean(data.get(12));
-		else player.skinon = false;
+		if (!oldSave) player.suitOn = Boolean.parseBoolean(data.get(12));
+		else player.suitOn = false;
 	}
 	
 	public void loadInventory(String filename, Inventory inventory) {

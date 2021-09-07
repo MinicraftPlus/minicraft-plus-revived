@@ -395,8 +395,7 @@ public class Menu {
 	
 	
 	
-	/// This needs to be in the Menu class, to have access to the private constructor and fields.
-	
+	// This needs to be in the Menu class, to have access to the private constructor and fields.
 	public static class Builder {
 		
 		private static final Point center = new Point(Screen.w/2, Screen.h/2);
@@ -453,7 +452,7 @@ public class Menu {
 		public Builder setTitlePos(RelPos rp) { titlePos = (rp == null ? RelPos.TOP : rp); return this; }
 		
 		public Builder setTitle(String title) { menu.title = title; return this; }
-		
+
 		public Builder setTitle(String title, int color) { return setTitle(title, color, false); }
 		public Builder setTitle(String title, int color, boolean fullColor) {
 			menu.title = title;

@@ -45,10 +45,8 @@ public class Settings {
 			options.get("skinon").setVisible((boolean)value)
 		);
 
-		options.put("textures", new ArrayEntry<>("Textures", "Original", "Custom"));
+		options.put("textures", new ArrayEntry<>("textures", "Original", "Custom"));
 		options.get("textures").setSelection(0);
-
-		options.put("skins", new ArrayEntry<>("Skin", SkinDisplay.DEFAULT_SKIN, SkinDisplay.CAPE_SKIN, SkinDisplay.FAMILIARBOY_SKIN, SkinDisplay.FAMILIARGIRL_SKIN, SkinDisplay.CUSTOM_SKIN));
 	}
 	
 	public static void init() {}
