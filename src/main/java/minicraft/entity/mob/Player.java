@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
+import minicraft.util.Vector2;
 import org.jetbrains.annotations.Nullable;
 
 import minicraft.core.Game;
@@ -414,26 +415,34 @@ public class Player extends Mob implements ItemHolder, ClientTickable {
 		if (Updater.savecooldown > 0 && !Updater.saving)
 			Updater.savecooldown--;
 		
-		
+
+		// Handle player input. Input is handled by the menu if we are in one.
 		if (Game.getMenu() == null && !Bed.inBed(this)) {
-			// This is where movement detection occurs.
-			int xmov = 0, ymov = 0;
-			if (onFallDelay <= 0) { // prevent movement while falling
-				if (input.getKey("move-up").down) ymov--;
-				if (input.getKey("move-down").down) ymov++;
-				if (input.getKey("move-left").down) xmov--;
-				if (input.getKey("move-right").down) xmov++;
+			// Create the raw movement vector.
+			Vector2 vec = new Vector2(0, 0);
+
+			// Move while we are not falling.
+			if (onFallDelay <= 0) {
+				if (input.getKey("move-up").down) vec.y--;
+				if (input.getKey("move-down").down) vec.y++;
+				if (input.getKey("move-left").down) vec.x--;
+				if (input.getKey("move-right").down) vec.x++;
 			}
 			
 			// Executes if not saving; and... essentially halves speed if out of stamina.
-			if ((xmov != 0 || ymov != 0) && (staminaRechargeDelay % 2 == 0 || isSwimming()) && !Updater.saving) {
+			if ((vec.x != 0 || vec.y != 0) && (staminaRechargeDelay % 2 == 0 || isSwimming()) && !Updater.saving) {
 				double spd = moveSpeed * (potioneffects.containsKey(PotionType.Speed) ? 1.5D : 1);
-				int xd = (int) (xmov * spd);
-				int yd = (int) (ymov * spd);
+				int xd = (int) (vec.x * spd);
+				int yd = (int) (vec.y * spd);
+
 				Direction newDir = Direction.getDirection(xd, yd);
 				if (newDir == Direction.NONE) newDir = dir;
+
+				// On multiplayer move the local player.
 				if ((xd != 0 || yd != 0 || newDir != dir) && Game.isConnectedClient() && this == Game.player)
 					Game.client.move(this, x + xd, y + yd);
+
+				// Move the player
 				boolean moved = move(xd, yd); // THIS is where the player moves; part of Mob.java
 				if (moved) stepCount++;
 			}
