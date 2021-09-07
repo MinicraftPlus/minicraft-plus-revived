@@ -51,18 +51,36 @@ public class Screen {
 	}
 	
 	public void setSheet(SpriteSheet itemSheet, SpriteSheet tileSheet, SpriteSheet entitySheet, SpriteSheet guiSheet, SpriteSheet skinsSheet) {
-		sheets[0] = itemSheet;
-		sheets[1] = tileSheet;
-		sheets[2] = entitySheet;
-		sheets[3] = guiSheet;
-		sheets[4] = skinsSheet;
+		if (itemSheet != null) {
+		        sheets[0] = itemSheet;
+		}
+		if (tileSheet != null) {
+		        sheets[1] = tileSheet;
+		}
+		if (entitySheet != null) {
+			sheets[2] = entitySheet;
+		}
+		if (guiSheet != null) {
+			sheets[3] = guiSheet;
+		}
+		if (skinsSheet != null) {
+			sheets[4] = skinsSheet;
+		}
 	}
 
 	public void setSheet(SpriteSheet itemSheet, SpriteSheet tileSheet, SpriteSheet entitySheet, SpriteSheet guiSheet) {
-		sheets[0] = itemSheet;
-		sheets[1] = tileSheet;
-		sheets[2] = entitySheet;
-		sheets[3] = guiSheet;
+		if (itemSheet != null) {
+		        sheets[0] = itemSheet;
+		}
+		if (tileSheet != null) {
+		        sheets[1] = tileSheet;
+		}
+		if (entitySheet != null) {
+			sheets[2] = entitySheet;
+		}
+		if (guiSheet != null) {
+			sheets[3] = guiSheet;
+		}
 	}
 	
 	/** Clears all the colors on the screen */
