@@ -171,13 +171,13 @@ public class SkinDisplay extends Display {
 		if (selectedSkinIndex < defaultSkins) {
 			mobSprites[0] = MobSprite.compilePlayerSpriteAnimations(0, SkinDisplay.getSelectedSkinIndex() * 4);
 			mobSprites[1] = MobSprite.compilePlayerSpriteAnimations(0, SkinDisplay.getSelectedSkinIndex() * 4 + 2);
-			mobSprites[2] = MobSprite.compilePlayerSpriteAnimations(8, SkinDisplay.getSelectedSkinIndex() * 4 + 2);
-			mobSprites[3] = MobSprite.compilePlayerSpriteAnimations(8, SkinDisplay.getSelectedSkinIndex() * 4);
+			mobSprites[2] = MobSprite.compilePlayerSpriteAnimations(8, SkinDisplay.getSelectedSkinIndex() * 4);
+			mobSprites[3] = MobSprite.compilePlayerSpriteAnimations(8, SkinDisplay.getSelectedSkinIndex() * 4 + 2);
 		} else {
 			mobSprites[0] = MobSprite.compileCustomPlayerSpriteAnimations(0, 0, customSkins.get(selectedSkinIndex - defaultSkins));
 			mobSprites[1] = MobSprite.compileCustomPlayerSpriteAnimations(0, 2, customSkins.get(selectedSkinIndex - defaultSkins));
-			mobSprites[2] = MobSprite.compileCustomPlayerSpriteAnimations(8, 2, customSkins.get(selectedSkinIndex - defaultSkins));
-			mobSprites[3] = MobSprite.compileCustomPlayerSpriteAnimations(8, 0, customSkins.get(selectedSkinIndex - defaultSkins));
+			mobSprites[2] = MobSprite.compileCustomPlayerSpriteAnimations(8, 0, customSkins.get(selectedSkinIndex - defaultSkins));
+			mobSprites[3] = MobSprite.compileCustomPlayerSpriteAnimations(8, 2, customSkins.get(selectedSkinIndex - defaultSkins));
 		}
 
 		return mobSprites;

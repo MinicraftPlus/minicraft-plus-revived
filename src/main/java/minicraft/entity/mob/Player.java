@@ -199,6 +199,8 @@ public class Player extends Mob implements ItemHolder, ClientTickable {
 			spawny = previousInstance.spawny;
 		}
 
+		suitOn = (boolean) Settings.get("skinon");
+
 		// Get the current skin we are using as a MobSprite array.
 		MobSprite[][][] selectedSkin = SkinDisplay.getSkinAsMobSprite();
 
@@ -815,7 +817,6 @@ public class Player extends Mob implements ItemHolder, ClientTickable {
         } else {
             spriteSet = suitOn ? suitSprites : sprites;
         }
-
 
 		/* Offset locations to start drawing the sprite relative to our position */
 		int xo = x - 8; // Horizontal

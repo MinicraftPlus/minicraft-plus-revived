@@ -523,8 +523,9 @@ public class Load {
 		}
 		else
 			player.shirtColor = Integer.parseInt(data.remove(0));
-		
-		player.suitOn = Boolean.parseBoolean(data.remove(0));
+
+		// This works for some reason... lol
+		Settings.set("skinon", player.suitOn = Boolean.parseBoolean(data.remove(0)));
 	}
 	
 	protected static String subOldName(String name, Version worldVer) {
