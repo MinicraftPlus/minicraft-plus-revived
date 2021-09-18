@@ -57,6 +57,7 @@ public class Sheep extends PassiveMob {
 				cut = true;
 				dropItem(1, 3, Items.get("Wool"));
 				ageWhenCut = age;
+				((ToolItem) item).payDurability();
 				return true;
 			}
 		}
