@@ -82,14 +82,10 @@ public class Load {
 	private ArrayList<String> extradata; // These two are changed when loading a new file. (see loadFromFile())
 	
 	private Version worldVer;
-	private boolean hasGlobalPrefs = false;
 	
 	{
 		worldVer = null;
-		
-		File testFile = new File(location + "/Preferences" + extension);
-		hasGlobalPrefs = testFile.exists();
-		
+
 		data = new ArrayList<>();
 		extradata = new ArrayList<>();
 	}
@@ -100,8 +96,8 @@ public class Load {
 		if (data.get(0).contains(".")) worldVer = new Version(data.get(0));
 		if (worldVer == null) worldVer = new Version("1.8");
 		
-		if (!hasGlobalPrefs)
-			hasGlobalPrefs = worldVer.compareTo(new Version("1.9.2")) >= 0;
+		//if (!hasGlobalPrefs)
+		//	hasGlobalPrefs = worldVer.compareTo(new Version("1.9.2")) >= 0;
 		
 		if (!loadGame) return;
 		
@@ -139,49 +135,53 @@ public class Load {
 	}
 	public Load(boolean loadConfig) {
 		if (!loadConfig) return;
-		boolean updateToJson = false;
+		boolean resave = false;
 
 
 		location += "/";
 
-		if (hasGlobalPrefs) {
-			if (new File(location + "Preferences.json").exists()) {
-				loadPrefs("Preferences");
-			} else if (new File(location + "Preferences" + extension).exists()) {
-				loadPrefsOld("Preferences");
-				updateToJson = true;
-			} else {
-				System.out.println("Warning: No preferences found.");
-			}
-		}
-		else new Save();
+		// Check if Preferences.json exists. (new version)
+		if (new File(location + "Preferences.json").exists()) {
+			loadPrefs("Preferences");
 
-		// Unlocks
+		// Check if Preferences.miniplussave exists. (old version)
+		} else if (new File(location + "Preferences" + extension).exists()) {
+			loadPrefsOld("Preferences");
+			System.out.println("Upgrading preferences to JSON.");
+			resave = true;
+
+		// No preferences file found.
+		} else {
+			System.out.println("No preferences found, creating new file.");
+			resave = true;
+		}
+
+		// Load unlocks. (new version)
+		File testFileOld = new File(location + "unlocks" + extension);
+		File testFile = new File(location + "Unlocks" + extension);
 		if (new File(location + "Unlocks.json").exists()) {
 			loadUnlocks("Unlocks");
-		} else {
-			File testFileOld = new File(location + "unlocks" + extension);
-			File testFile = new File(location + "Unlocks" + extension);
+		} else if (testFile.exists() || testFileOld.exists()) { // Load old version
 			if (testFileOld.exists() && !testFile.exists()) {
-				testFileOld.renameTo(testFile);
-				new LegacyLoad(testFile);
-			} else if (!testFile.exists()) {
-				try {
-					testFile.createNewFile();
-				} catch (IOException ex) {
-					System.err.println("Could not create Unlocks" + extension + ":");
-					ex.printStackTrace();
+				if (testFileOld.renameTo(testFile)) {
+					new LegacyLoad(testFile);
+				} else {
+					System.out.println("Failed to rename unlocks to Unlocks; loading old version.");
+					new LegacyLoad(testFileOld);
 				}
 			}
 
 			loadUnlocksOld("Unlocks");
-			updateToJson = true;
+			resave = true;
+			System.out.println("Upgrading unlocks to JSON.");
+		} else {
+			System.out.println("No unlocks found, creating new file.");
+			resave = true;
 		}
 
-		// We need to load unlocks before converting over to json.
-		if (updateToJson) {
+		// We need to load everything before we save, so it doesn't overwrite unlocks.
+		if (resave) {
 			new Save();
-			System.out.println("Upgrading preferences or/and unlocks to JSON.");
 		}
 	}
 	
