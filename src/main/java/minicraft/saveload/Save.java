@@ -217,7 +217,7 @@ public class Save {
 	private void writeUnlocks() {
 		JSONObject json = new JSONObject();
 
-		json.put("airskin", (boolean) Settings.get("unlockedskin"));
+		json.put("unlockedAirWizardSuit", (boolean) Settings.get("unlockedskin"));
 
 		JSONArray scoretimes = new JSONArray();
 		if (Settings.getEntry("scoretime").getValueVisibility(10))

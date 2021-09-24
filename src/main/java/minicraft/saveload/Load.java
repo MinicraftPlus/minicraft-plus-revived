@@ -417,7 +417,7 @@ public class Load {
 			return;
 		}
 
-		Settings.set("unlockedskin", json.getBoolean("airskin"));
+		Settings.set("unlockedskin", json.getBoolean("unlockedAirWizardSuit"));
 
 		for (Object i : json.getJSONArray("visibleScoreTimes")) {
 			Settings.getEntry("scoretime").setValueVisibility(i, true); // Minutes
