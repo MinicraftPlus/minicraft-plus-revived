@@ -40,6 +40,8 @@ import minicraft.screen.LoadingDisplay;
 import minicraft.screen.MultiplayerDisplay;
 import minicraft.screen.SkinDisplay;
 import minicraft.screen.WorldSelectDisplay;
+import org.json.JSONArray;
+import org.json.JSONObject;
 
 public class Save {
 
@@ -123,6 +125,7 @@ public class Save {
 		this(new File(Game.gameDir+"/"));
 		if (Game.debug) System.out.println("Writing preferences and unlocks...");
 		writePrefs();
+		writeUnlocks();
 	}
 
 	public Save(Player player, boolean writePlayer) {
@@ -171,6 +174,12 @@ public class Save {
 			}
 		}
 	}
+
+	public static void writeJSONToFile(String filename, String json) throws IOException {
+		try (BufferedWriter bufferedWriter = new BufferedWriter(new FileWriter(filename))) {
+			bufferedWriter.write(json);
+		}
+	}
 	
 	private void writeGame(String filename) {
 		data.add(String.valueOf(Game.VERSION));
@@ -183,32 +192,45 @@ public class Save {
 	}
 	
 	private void writePrefs() {
-		data.add(String.valueOf(Game.VERSION));
-		data.add(String.valueOf(Settings.get("sound")));
-		data.add(String.valueOf(Settings.get("autosave")));
-		data.add(String.valueOf(Settings.get("fps")));
-		data.add(String.valueOf(SkinDisplay.getSelectedSkinIndex()));
-		data.add(MultiplayerDisplay.savedIP);
-		data.add(MultiplayerDisplay.savedUUID);
-		data.add(MultiplayerDisplay.savedUsername);
-		data.add(Localization.getSelectedLanguage());
-		
-		List<String> keyPairs = new ArrayList<>();
-		Collections.addAll(keyPairs, Game.input.getKeyPrefs());
-		
-		data.add(String.join(":", keyPairs.toArray(new String[keyPairs.size()])));
+		JSONObject json = new JSONObject();
 
-		writeToFile(location + "Preferences" + extension, data);
-		
-		if ((boolean)Settings.get("unlockedskin"))
-			data.add("AirSkin");
-		
+		json.put("version", String.valueOf(Game.VERSION));
+		json.put("sound", String.valueOf(Settings.get("sound")));
+		json.put("autosave", String.valueOf(Settings.get("autosave")));
+		json.put("fps", String.valueOf(Settings.get("fps")));
+		json.put("lang", Localization.getSelectedLanguage());
+		json.put("skinIdx", String.valueOf(SkinDisplay.getSelectedSkinIndex()));
+		json.put("savedIP", MultiplayerDisplay.savedIP);
+		json.put("savedUUID", MultiplayerDisplay.savedUUID);
+		json.put("savedUsername", MultiplayerDisplay.savedUsername);
+
+		json.put("keymap", new JSONArray(Game.input.getKeyPrefs()));
+
+		// Save json
+		try {
+			writeJSONToFile(location + "Preferences.json", json.toString());
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+	}
+
+	private void writeUnlocks() {
+		JSONObject json = new JSONObject();
+
+		json.put("airskin", (boolean) Settings.get("unlockedskin"));
+
+		JSONArray scoretimes = new JSONArray();
 		if (Settings.getEntry("scoretime").getValueVisibility(10))
-			data.add("10_ScoreTime");
+			scoretimes.put(10);
 		if (Settings.getEntry("scoretime").getValueVisibility(120))
-			data.add("120_ScoreTime");
+			scoretimes.put(120);
+		json.put("visibleScoreTimes", scoretimes);
 
-		writeToFile(location + "Unlocks" + extension, data);
+		try {
+			writeJSONToFile(location + "Unlocks.json", json.toString());
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
 	}
 	
 	private void writeServerConfig(String filename, MinicraftServer server) {
