@@ -77,7 +77,7 @@ public class TexturePackDisplay extends Display {
 
 	@Override
 	public void tick(InputHandler input) {
-		if (input.getKey("menu").clicked || input.getKey("attack").clicked || input.getKey("exit").clicked) {
+		if (input.getKey("exit").clicked) {
 			Game.exitMenu();
 			return;
 		}
@@ -91,6 +91,7 @@ public class TexturePackDisplay extends Display {
 		}
         if (input.getKey("SELECT").clicked) {
             shouldUpdate = true;
+            Sound.confirm.play();
         }
 	}
 
