@@ -9,6 +9,7 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
 import javax.imageio.ImageIO;
@@ -66,6 +67,9 @@ import minicraft.level.tile.Tiles;
 import minicraft.network.MinicraftServer;
 import minicraft.screen.LoadingDisplay;
 import minicraft.screen.MultiplayerDisplay;
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 public class Load {
 	
@@ -78,14 +82,10 @@ public class Load {
 	private ArrayList<String> extradata; // These two are changed when loading a new file. (see loadFromFile())
 	
 	private Version worldVer;
-	private boolean hasGlobalPrefs = false;
 	
 	{
 		worldVer = null;
-		
-		File testFile = new File(location + "/Preferences" + extension);
-		hasGlobalPrefs = testFile.exists();
-		
+
 		data = new ArrayList<>();
 		extradata = new ArrayList<>();
 	}
@@ -96,8 +96,8 @@ public class Load {
 		if (data.get(0).contains(".")) worldVer = new Version(data.get(0));
 		if (worldVer == null) worldVer = new Version("1.8");
 		
-		if (!hasGlobalPrefs)
-			hasGlobalPrefs = worldVer.compareTo(new Version("1.9.2")) >= 0;
+		//if (!hasGlobalPrefs)
+		//	hasGlobalPrefs = worldVer.compareTo(new Version("1.9.2")) >= 0;
 		
 		if (!loadGame) return;
 		
@@ -135,30 +135,54 @@ public class Load {
 	}
 	public Load(boolean loadConfig) {
 		if (!loadConfig) return;
-		
+		boolean resave = false;
+
+
 		location += "/";
-		
-		if (hasGlobalPrefs)
+
+		// Check if Preferences.json exists. (new version)
+		if (new File(location + "Preferences.json").exists()) {
 			loadPrefs("Preferences");
-		else
-			new Save();
-		
+
+		// Check if Preferences.miniplussave exists. (old version)
+		} else if (new File(location + "Preferences" + extension).exists()) {
+			loadPrefsOld("Preferences");
+			System.out.println("Upgrading preferences to JSON.");
+			resave = true;
+
+		// No preferences file found.
+		} else {
+			System.out.println("No preferences found, creating new file.");
+			resave = true;
+		}
+
+		// Load unlocks. (new version)
 		File testFileOld = new File(location + "unlocks" + extension);
 		File testFile = new File(location + "Unlocks" + extension);
-		if (testFileOld.exists() && !testFile.exists()) {
-			testFileOld.renameTo(testFile);
-			new LegacyLoad(testFile);
-		}
-		else if (!testFile.exists()) {
-			try {
-				testFile.createNewFile();
-			} catch (IOException ex) {
-				System.err.println("Could not create Unlocks" + extension + ":");
-				ex.printStackTrace();
+		if (new File(location + "Unlocks.json").exists()) {
+			loadUnlocks("Unlocks");
+		} else if (testFile.exists() || testFileOld.exists()) { // Load old version
+			if (testFileOld.exists() && !testFile.exists()) {
+				if (testFileOld.renameTo(testFile)) {
+					new LegacyLoad(testFile);
+				} else {
+					System.out.println("Failed to rename unlocks to Unlocks; loading old version.");
+					new LegacyLoad(testFileOld);
+				}
 			}
+
+			loadUnlocksOld("Unlocks");
+			resave = true;
+			System.out.println("Upgrading unlocks to JSON.");
+		} else {
+			System.out.println("No unlocks found, creating new file.");
+			resave = true;
 		}
-		
-		loadUnlocks("Unlocks");
+
+		// We need to load everything before we save, so it doesn't overwrite unlocks.
+		if (resave) {
+			new Save();
+		}
 	}
 	
 	public Version getWorldVersion() { return worldVer; }
@@ -214,20 +238,6 @@ public class Load {
 		}
 		
 		return total.toString();
-	}
-	
-	private void loadUnlocks(String filename) {
-		loadFromFile(location + filename + extension);
-		
-		for (String unlock: data) {
-			if (unlock.equals("AirSkin"))
-				Settings.set("unlockedskin", true);
-			
-			unlock = unlock.replace("HOURMODE", "H_ScoreTime").replace("MINUTEMODE", "M_ScoreTime").replace("M_ScoreTime", "_ScoreTime").replace("2H_ScoreTime", "120_ScoreTime");
-			
-			if (unlock.contains("_ScoreTime"))
-				Settings.getEntry("scoretime").setValueVisibility(Integer.parseInt(unlock.substring(0, unlock.indexOf("_"))), true);
-		}
 	}
 	
 	private void loadGame(String filename) {
@@ -299,22 +309,17 @@ public class Load {
 		
 		Settings.setIdx("mode", mode);
 	}
-	
-	private void loadPrefs(String filename) {
+
+	private void loadPrefsOld(String filename) {
 		loadFromFile(location + filename + extension);
-		
 		Version prefVer = new Version("2.0.2"); // the default, b/c this doesn't really matter much being specific past this if it's not set below.
-		
-		// TODO reformat the preferences file so that it uses key-value pairs. or json. JSON would be good.
-		// TODO then, allow multiple saved accounts.
-		// TODO do both of these in the same version (likely 2.0.5-dev1) because I also want to Make another iteration of LegacyLoad.
-		
+
 		if(!data.get(2).contains(";")) // signifies that this file was last written to by a version after 2.0.2.
 			prefVer = new Version(data.remove(0));
-		
+
 		Settings.set("sound", Boolean.parseBoolean(data.remove(0)));
 		Settings.set("autosave", Boolean.parseBoolean(data.remove(0)));
-		
+
 		if (prefVer.compareTo(new Version("2.0.4-dev2")) >= 0)
 			Settings.set("fps", Integer.parseInt(data.remove(0)));
 
@@ -322,7 +327,7 @@ public class Load {
 			SkinDisplay.setSelectedSkinIndex(Integer.parseInt(data.remove(0)));
 
 		List<String> subdata;
-		
+
 		if (prefVer.compareTo(new Version("2.0.3-dev1")) < 0) {
 			subdata = data;
 		} else {
@@ -331,20 +336,91 @@ public class Load {
 				MultiplayerDisplay.savedUUID = data.remove(0);
 				MultiplayerDisplay.savedUsername = data.remove(0);
 			}
-			
+
 			if(prefVer.compareTo(new Version("2.0.4-dev3")) >= 0) {
 				String lang = data.remove(0);
 				Settings.set("language", lang);
 				Localization.changeLanguage(lang);
 			}
-			
+
 			String keyData = data.get(0);
 			subdata = Arrays.asList(keyData.split(":"));
 		}
-		
+
 		for (String keymap : subdata) {
 			String[] map = keymap.split(";");
 			Game.input.setKey(map[0], map[1]);
+		}
+	}
+
+	private void loadPrefs(String filename) {
+		JSONObject json;
+		try {
+			json = new JSONObject(loadFromFile(location + filename + ".json", false));
+		} catch (JSONException | IOException ex) {
+			ex.printStackTrace();
+			return;
+		}
+
+		/* Start of the parsing */
+		Version prefVer = new Version(json.getString("version"));
+
+		// Settings
+		Settings.set("sound", json.getBoolean("sound"));
+		Settings.set("autosave", json.getBoolean("autosave"));
+		Settings.set("fps", json.getInt("fps"));
+
+		String lang = json.getString("lang");
+		Settings.set("language", lang);
+		Localization.changeLanguage(lang);
+
+		SkinDisplay.setSelectedSkinIndex(json.getInt("skinIdx"));
+
+		// Multiplayer stuff
+		MultiplayerDisplay.savedIP = json.getString("savedIP");
+		MultiplayerDisplay.savedUUID = json.getString("savedUUID");
+		MultiplayerDisplay.savedUsername = json.getString("savedUsername");
+
+		// Load keymap
+		JSONArray keyData = json.getJSONArray("keymap");
+		List<Object> subdata = keyData.toList();
+
+		for (Object key : subdata) {
+			String str = key.toString();
+
+			// Split key and value
+			String[] map = str.split(";");
+			Game.input.setKey(map[0], map[1]);
+		}
+	}
+
+	private void loadUnlocksOld(String filename) {
+		loadFromFile(location + filename + extension);
+
+		for (String unlock: data) {
+			if (unlock.equals("AirSkin"))
+				Settings.set("unlockedskin", true);
+
+			unlock = unlock.replace("HOURMODE", "H_ScoreTime").replace("MINUTEMODE", "M_ScoreTime").replace("M_ScoreTime", "_ScoreTime").replace("2H_ScoreTime", "120_ScoreTime");
+
+			if (unlock.contains("_ScoreTime"))
+				Settings.getEntry("scoretime").setValueVisibility(Integer.parseInt(unlock.substring(0, unlock.indexOf("_"))), true);
+		}
+	}
+
+	private void loadUnlocks(String filename) {
+		JSONObject json;
+		try {
+			json = new JSONObject(loadFromFile(location + filename + ".json", false));
+		} catch (JSONException | IOException ex) {
+			ex.printStackTrace();
+			return;
+		}
+
+		Settings.set("unlockedskin", json.getBoolean("unlockedAirWizardSuit"));
+
+		for (Object i : json.getJSONArray("visibleScoreTimes")) {
+			Settings.getEntry("scoretime").setValueVisibility(i, true); // Minutes
 		}
 	}
 	
