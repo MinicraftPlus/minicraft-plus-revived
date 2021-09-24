@@ -14,6 +14,7 @@ import javax.imageio.ImageIO;
 import minicraft.core.FileHandler;
 import minicraft.core.Game;
 import minicraft.core.io.InputHandler;
+import minicraft.core.io.Sound;
 import minicraft.gfx.Color;
 import minicraft.gfx.Font;
 import minicraft.gfx.Screen;
@@ -76,20 +77,18 @@ public class TexturePackDisplay extends Display {
 
 	@Override
 	public void tick(InputHandler input) {
-		if (input.getKey("exit").clicked) {
+		if (input.getKey("menu").clicked || input.getKey("attack").clicked || input.getKey("exit").clicked) {
 			Game.exitMenu();
 			return;
 		}
-
-		if (input.getKey("cursor-down").clicked && selected > 0) {
-			selected--;
-
-		}
-		if (input.getKey("cursor-up").clicked && selected < textureList.size() - 1) {
+		if (input.getKey("cursor-down").clicked && selected < textureList.size() - 1) {
 			selected++;
-
+			Sound.select.play();
 		}
-		
+		if (input.getKey("cursor-up").clicked && selected > 0) {
+			selected--;
+			Sound.select.play();
+		}
         if (input.getKey("SELECT").clicked) {
             shouldUpdate = true;
         }
@@ -114,14 +113,18 @@ public class TexturePackDisplay extends Display {
 			}
 		}
 
+		String selectedUpUp = selected + 2 > textureList.size() - 2 ? "" : textureList.get(selected + 2);
 		String selectedUp = selected + 1 > textureList.size() - 1 ? "" : textureList.get(selected + 1);
 		String selectedDown = selected - 1 < 0 ? "" : textureList.get(selected - 1);
+		String selectedDownDown = selected - 2 < 0 ? "" : textureList.get(selected - 2);
 
 		// Render the menu
 		Font.drawCentered("Texture Packs", screen, Screen.h - 180, Color.YELLOW); // Title
-		Font.drawCentered(TexturePackDisplay.shortNameIfLong(selectedDown), screen, Screen.h - 70, Color.GRAY); // Unselected space
+		Font.drawCentered(TexturePackDisplay.shortNameIfLong(selectedUpUp), screen, Screen.h - 60, Color.GRAY); // First unselected space
+		Font.drawCentered(TexturePackDisplay.shortNameIfLong(selectedUp), screen, Screen.h - 70, Color.GRAY); // Second unselected space
 		Font.drawCentered(TexturePackDisplay.shortNameIfLong(textureList.get(selected)), screen, Screen.h - 80, Color.GREEN); // Selection
-		Font.drawCentered(TexturePackDisplay.shortNameIfLong(selectedUp), screen, Screen.h - 90, Color.GRAY); // Other unselected space
+		Font.drawCentered(TexturePackDisplay.shortNameIfLong(selectedDown), screen, Screen.h - 90, Color.GRAY); // Third space
+		Font.drawCentered(TexturePackDisplay.shortNameIfLong(selectedDownDown), screen, Screen.h - 100, Color.GRAY); // Fourth space
 		Font.drawCentered("Use "+ Game.input.getMapping("cursor-down") + ", " + Game.input.getMapping("cursor-up") + ", " + Game.input.getMapping("SELECT"), screen, Screen.h - 11, Color.get(0, 222, 222, 222)); // Controls
 
 		int h = 2;
