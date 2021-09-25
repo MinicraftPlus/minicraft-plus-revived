@@ -32,4 +32,4 @@ Check [releases](https://github.com/chrisj42/minicraft-plus-revived/releases) to
 * Support for several languages
 
 ## Extra
-You can find a more comprehensive list of the earlier versions, before 1.9, in this minecraft forum [post](http://www.minecraftforum.net/forums/off-topic/general-gaming/452036-v1-6-minicraft-plus). ([archived copy](https://chrisj42.github.io/minicraft-plus-revived/Old%20changelog.html)) Be aware however, that it's old; it's from many years ago before the original project was abandoned.
+You can find a more comprehensive list of the earlier versions, before 1.9, in this minecraft forum [post (archive)](https://web.archive.org/web/20171124204205/https://www.minecraftforum.net/forums/off-topic/general-gaming/452036-v1-6-minicraft-plus). ([archived copy](https://chrisj42.github.io/minicraft-plus-revived/Old%20changelog.html)) Be aware however, that it's old; it's from many years ago before the original project was abandoned.
