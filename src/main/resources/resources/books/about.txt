@@ -1,3 +1,4 @@
-Modded by David.b and +Dillyg10+ until 1.8, then taken over by Chris J until 2.0.4, and then by afyber. Our goal is to expand Minicraft to be more fun and continuous.
+Minicraft+ was started to expand upon the Minicraft game from 2011. Over the years we have added a lot of new stuff, and gone through many developers.
+Our goal is to expand Minicraft to be more fun and continuous.
 
-Minicraft was originally made by Markus Perrson for ludum dare 22 competition.
+Minicraft was originally made by Markus Persson for the ludum dare 22 competition.

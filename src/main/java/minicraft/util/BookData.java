@@ -7,6 +7,7 @@ import minicraft.saveload.Load;
 public class BookData {
 	
 	public static final String about = loadBook("about");
+	public static final String credits = loadBook("credits");
 	public static final String instructions = loadBook("instructions");
 	public static final String antVenomBook = loadBook("antidous");
 	public static final String storylineGuide = loadBook("story_guide");
