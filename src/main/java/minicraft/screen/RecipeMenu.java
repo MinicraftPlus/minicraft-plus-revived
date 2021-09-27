@@ -23,7 +23,7 @@ class RecipeMenu extends ItemListMenu {
 		return RecipeEntry.useRecipes(recipes);
 	}
 	
-	RecipeMenu(List<Recipe> recipes, String title, Player player) {
+	protected RecipeMenu(List<Recipe> recipes, String title, Player player) {
 		super(getAndSortRecipes(recipes, player), title);
 	}
 }

@@ -14,7 +14,7 @@ class ItemListMenu extends Menu {
 			.setSearcherBar(true);
 	}
 	
-	ItemListMenu(Builder b, ItemEntry[] entries, String title) {
+	protected ItemListMenu(Builder b, ItemEntry[] entries, String title) {
 		super(b
 			.setEntries(entries)
 			.setTitle(title)
@@ -22,7 +22,7 @@ class ItemListMenu extends Menu {
 		);
 	}
 	
-	ItemListMenu(ItemEntry[] entries, String title) {
+	protected ItemListMenu(ItemEntry[] entries, String title) {
 		this(getBuilder(), entries, title);
 	}
 }
