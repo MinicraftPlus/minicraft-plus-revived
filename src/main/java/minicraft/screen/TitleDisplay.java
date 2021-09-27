@@ -4,7 +4,7 @@ import java.time.LocalDateTime;
 import java.time.Month;
 import java.util.Random;
 
-import org.jetbrains.annotations.NotNull;
+import minicraft.util.BookData;
 
 import minicraft.core.Game;
 import minicraft.core.Network;

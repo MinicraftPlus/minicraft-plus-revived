@@ -16,11 +16,12 @@ import minicraft.screen.entry.StringEntry;
 public class BookDisplay extends Display {
 	
 	// null characters "\0" denote page breaks.
-	private static final String defaultBook = " \n \0"+"There is nothing of use here."+"\0 \0"+"Still nothing... :P";
+	private static final String defaultBook = "This is an empty book. This should probably not happen.";
 	
 	private static final int spacing = 3;
 	private static final int minX = 15, maxX = 15+8 * 32, minY = 8*5, maxY = 8*5 + 8*16;
-	
+
+	// First array is page and second is line.
 	private String[][] lines;
 	private int page;
 	
