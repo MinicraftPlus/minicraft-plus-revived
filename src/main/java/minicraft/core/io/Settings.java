@@ -1,7 +1,6 @@
 package minicraft.core.io;
 
-import java.awt.DisplayMode;
-import java.awt.GraphicsEnvironment;
+import java.awt.*;
 import java.util.HashMap;
 
 import minicraft.core.Game;
@@ -81,7 +80,13 @@ public class Settings {
 	private static int getRefreshRate() {
 		if (GraphicsEnvironment.isHeadless()) return 60;
 
-		int hz = GraphicsEnvironment.getLocalGraphicsEnvironment().getDefaultScreenDevice().getDisplayMode().getRefreshRate();
+		int hz;
+		try {
+			hz = GraphicsEnvironment.getLocalGraphicsEnvironment().getDefaultScreenDevice().getDisplayMode().getRefreshRate();
+		} catch (HeadlessException e) {
+			return 60;
+		}
+
 		if (hz == DisplayMode.REFRESH_RATE_UNKNOWN) return 60;
 		if (hz > 300) return 60;
 		if (10 > hz) return 60;
