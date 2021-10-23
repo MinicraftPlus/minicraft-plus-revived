@@ -178,34 +178,105 @@ public class Renderer extends Game {
 	
 	/** Renders the main game GUI (hearts, Stamina bolts, name of the current item, etc.) */
 	private static void renderGui() {
-		// This draws the black square where the selected item would be if you were holding it
+		
+		// This checks if the player is holding a bow, and shows the arrow counter accordingly.
+		if (player.activeItem instanceof ToolItem) {
+			if (((ToolItem)player.activeItem).type == ToolType.Bow) {
+				int ac = player.getInventory().count(Items.arrowItem);
+				
+	                int xx = (Screen.w) / 2 - 32 - player.activeItem.arrAdjusted; // the width of the box
+	                int yy = (Screen.h - 8) - 13; // the height of the box
+	                int w = 3; // length of message in characters.
+	                int h = 1;
+
+	                int x = 170;
+	                int y = 25;
+
+	                // renders the four corners of the box
+	                screen.render(xx - 8, yy - 8, 0 + 21 * 32, 0, 3);
+	                screen.render(xx + w * 8, yy - 8, 0 + 21 * 32, 1, 3);
+	                screen.render(xx - 8, yy + 8, 0 + 21 * 32, 2, 3);
+	                screen.render(xx + w * 8, yy + 8, 0 + 21 * 32, 3, 3);
+
+	                // renders each part of the box...
+	                for (x = 0; x < w; x++) {
+	                    screen.render(xx + x * 8, yy - 8, 1 + 21 * 32, 0, 3); // ...top part
+	                    screen.render(xx + x * 8, yy + 8, 1 + 21 * 32, 2, 3); // ...bottom part
+	                }
+	                for (y = 0; y < h; y++) {
+	                    screen.render(xx - 8, yy + y * 8, 2 + 21 * 32, 0, 3); // ...left part
+	                    screen.render(xx + w * 8, yy + y * 8, 2 + 21 * 32, 1, 3); // ...right part
+	                }
+
+	                // the middle
+	                for (x = 0; x < w; x++) {
+	                    screen.render(xx + x * 8, yy, 3 + 21 * 32, 0, 3);
+	                }
+				
+				// "^" is an infinite symbol.
+				if (isMode("creative") || ac >= 10000) {
+					Font.drawCompleteBackground("	x" + "^", screen, 113  - player.activeItem.arrAdjusted, Screen.h - 24);
+				} else {
+					Font.drawCompleteBackground("	x" + ac, screen, 113 - player.activeItem.arrAdjusted, Screen.h - 24);
+				}
+				
+				// Displays the arrow icon
+				screen.render(11 * 8 + 21 - player.activeItem.arrAdjusted, Screen.h - 24, 4 + 3 * 32, 0, 3);
+			}
+		}
+		
+		// TOOL DURABILITY STATUS
+		if (player.activeItem instanceof ToolItem) {
+			// Draws the text
+			ToolItem tool = (ToolItem) player.activeItem;
+			int dura = tool.dur * 100 / (tool.type.durability * (tool.level+1));
+			int green = (int)(dura * 2.55f);
+			
+            int xx = (Screen.w) / 2 + 8 + player.activeItem.durAdjusted; // the width of the box
+            int yy = (Screen.h - 8) - 13; // the height of the box
+            int w = 3; // length of message in characters.
+            int h = 1;
+
+            int x = 250;
+            int y = 25;
+
+            // renders the four corners of the box
+            screen.render(xx - 8, yy - 8, 0 + 21 * 32, 0, 3);
+            screen.render(xx + w * 8, yy - 8, 0 + 21 * 32, 1, 3);
+            screen.render(xx - 8, yy + 8, 0 + 21 * 32, 2, 3);
+            screen.render(xx + w * 8, yy + 8, 0 + 21 * 32, 3, 3);
+
+            // renders each part of the box...
+            for (x = 0; x < w; x++) {
+                screen.render(xx + x * 8, yy - 8, 1 + 21 * 32, 0, 3); // ...top part
+                screen.render(xx + x * 8, yy + 8, 1 + 21 * 32, 2, 3); // ...bottom part
+            }
+            for (y = 0; y < h; y++) {
+                screen.render(xx - 8, yy + y * 8, 2 + 21 * 32, 0, 3); // ...left part
+                screen.render(xx + w * 8, yy + y * 8, 2 + 21 * 32, 1, 3); // ...right part
+            }
+
+            // the middle
+            for (x = 0; x < w; x++) {
+                screen.render(xx + x * 8, yy, 3 + 21 * 32, 0, 3);
+            }
+			
+			Font.drawCompleteBackground(dura + "%", screen, 148 + player.activeItem.durAdjusted, Screen.h - 24, Color.get(1, 255 - green, green, 0));
+		}
+		
+		// This draws a transparent square where the selected item would be if you were holding it
 		if (!isMode("creative") || player.activeItem != null) {
 			for (int x = 10; x < 26; x++) {
-				screen.render(x * 8, Screen.h - 8, 30 + 30 * 32, 0, 3);
+				screen.render(x * 8, Screen.h - 8, 31 + 30 * 32, 0, 3);
 			}
 		}
 			
 		// Shows active item sprite and name in bottom toolbar.
 		if (player.activeItem != null) {
-			player.activeItem.renderHUD(screen, 10 * 8, Screen.h - 8, Color.WHITE);
+			player.activeItem.renderBetterHUD(screen, 10 * 8, Screen.h - 8, Color.WHITE);
 		}
 
 
-
-		// This checks if the player is holding a bow, and shows the arrow counter accordingly.
-		if (player.activeItem instanceof ToolItem) {
-			if (((ToolItem)player.activeItem).type == ToolType.Bow) {
-				int ac = player.getInventory().count(Items.arrowItem);
-				// "^" is an infinite symbol.
-				if (isMode("creative") || ac >= 10000)
-					Font.drawBackground("	x" + "^", screen, 84, Screen.h - 16);
-				else
-					Font.drawBackground("	x" + ac, screen, 84, Screen.h - 16);
-				// Displays the arrow icon
-				screen.render(10 * 8 + 4, Screen.h - 16, 4 + 3 * 32, 0, 3);
-			}
-		}
-		
 		ArrayList<String> permStatus = new ArrayList<>();
 		if (Updater.saving) permStatus.add("Saving... " + Math.round(LoadingDisplay.getPercentage()) + "%");
 		if (Bed.sleeping()) permStatus.add("Sleeping...");
@@ -280,14 +351,7 @@ public class Renderer extends Game {
 			}
 		}
 		
-		// TOOL DURABILITY STATUS
-		if (player.activeItem instanceof ToolItem) {
-			// Draws the text
-			ToolItem tool = (ToolItem) player.activeItem;
-			int dura = tool.dur * 100 / (tool.type.durability * (tool.level+1));
-			int green = (int)(dura * 2.55f);
-			Font.drawBackground(dura + "%", screen, 164, Screen.h - 16, Color.get(1, 255 - green, green, 0));
-		}
+	
 		
 		// This renders the potions overlay
 		if (player.showpotioneffects && player.potioneffects.size() > 0) {

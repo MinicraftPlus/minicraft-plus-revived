@@ -15,6 +15,8 @@ public abstract class Item {
 	
 	private final String name;
 	public Sprite sprite;
+    public int durAdjusted;
+    public int arrAdjusted;
 	
 	public boolean used_pending = false; // This is for multiplayer, when an item has been used, and is pending server response as to the outcome, this is set to true so it cannot be used again unless the server responds that the item wasn't used. Which should basically replace the item anyway, soo... yeah. this never gets set back.
 	
@@ -33,6 +35,92 @@ public abstract class Item {
 		sprite.render(screen, x, y);
 		Font.drawBackground(dispName, screen, x + 8, y, fontColor);
 	}
+	
+	/** Renders an item on the HUD but with improves */
+	public void renderBetterHUD(Screen screen, int x, int y, int fontColor) {
+        String dispName = getDisplayName();
+
+        switch (dispName.length()) {
+            case 6:   durAdjusted = 0;
+                     break;
+                     
+            case 7:   durAdjusted = 4;
+                     break;
+                     
+            case 8:   durAdjusted = 8;
+            		  arrAdjusted = 0;
+                     break;
+                     
+            case 9:   durAdjusted = 12;
+            		  arrAdjusted = 4;
+                     break;
+                     
+            case 10:  durAdjusted = 16;
+  		              arrAdjusted = 8;
+                     break;
+                     
+            case 11:  durAdjusted = 20;
+                      arrAdjusted = 12;
+                     break;
+                     
+            case 12:  durAdjusted = 24;
+                      arrAdjusted = 16;
+                     break;
+                     
+            case 13:  durAdjusted = 28;
+                      arrAdjusted = 20;
+            	     break;
+            	     
+            case 14:  durAdjusted = 32;
+                      arrAdjusted = 24;
+                     break;
+                     
+            case 15:  durAdjusted = 36;
+                      arrAdjusted = 28;
+            	     break; 
+            	     
+            case 16:  durAdjusted = 40;
+            		  arrAdjusted = 32;
+                     break;
+                     
+            default: // Nothing
+                     break;
+        }
+        
+        int xx = (Screen.w - Font.textWidth(dispName)) / 2; // the width of the box
+        int yy = (Screen.h - 8) - 1; // the height of the box
+        int w = dispName.length() + 1; // length of message in characters.
+        int h = 1;
+
+        // renders the four corners of the box
+        screen.render(xx - 8, yy - 8, 0 + 21 * 32, 0, 3);
+        screen.render(xx + w * 8, yy - 8, 0 + 21 * 32, 1, 3);
+        screen.render(xx - 8, yy + 8, 0 + 21 * 32, 2, 3);
+        screen.render(xx + w * 8, yy + 8, 0 + 21 * 32, 3, 3);
+
+        // renders each part of the box...
+        for (x = 0; x < w; x++) {
+            screen.render(xx + x * 8, yy - 8, 1 + 21 * 32, 0, 3); // ...top part
+            screen.render(xx + x * 8, yy + 8, 1 + 21 * 32, 2, 3); // ...bottom part
+        }
+        for (y = 0; y < h; y++) {
+            screen.render(xx - 8, yy + y * 8, 2 + 21 * 32, 0, 3); // ...left part
+            screen.render(xx + w * 8, yy + y * 8, 2 + 21 * 32, 1, 3); // ...right part
+        }
+
+        // the middle
+        for (x = 0; x < w; x++) {
+            screen.render(xx + x * 8, yy, 3 + 21 * 32, 0, 3);
+        }
+
+        // Item sprite
+        sprite.render(screen, xx, yy);
+
+        // Item name
+        Font.drawCompleteBackground(dispName, screen, xx + 8, yy, fontColor);
+
+    }
+	
 	
 	/** Determines what happens when the player interacts with a tile */
 	public boolean interactOn(Tile tile, Level level, int xt, int yt, Player player, Direction attackDir) {

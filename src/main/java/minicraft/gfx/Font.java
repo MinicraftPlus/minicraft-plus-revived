@@ -58,17 +58,39 @@ public class Font {
 		}
 	}
 
-	public static void drawBackground(String msg, Screen screen, int x, int y) { drawBackground(msg, screen, x, y, -1); }
+	public static void drawBackground(String msg, Screen screen, int x, int y) {
+		drawBackground(msg, screen, x, y, -1); 
+	}
 
 	public static void drawBackground(String msg, Screen screen, int x, int y, int whiteTint) {
 		String newMsg = msg.toUpperCase(Localization.getSelectedLocale());
+		
 		for (int i = 0; i < newMsg.length(); i++) { // Renders the black boxes under the text
-			screen.render(x + i * textWidth(newMsg.substring(i, i+1)), y, 30 + 30 * 32, 0, 3);
+			screen.render(x + i * textWidth(newMsg.substring(i, i + 1)), y, 30 + 30 * 32, 0, 3);
 		}
 
 		// Renders the text
 		draw(msg, screen, x, y, whiteTint);
 	}
+	
+    public static void drawCompleteBackground(String msg, Screen screen, int x, int y) {
+        drawCompleteBackground(msg, screen, x, y, -1);
+    }
+
+    /** Render a transparent square instead of a black square **/
+    public static void drawCompleteBackground(String msg, Screen screen, int x, int y, int whiteTint) {
+        msg = msg.toUpperCase(Localization.getSelectedLocale());
+
+        for (int i = 0; i < msg.length(); i++) {
+            int ix = chars.indexOf(msg.charAt(i));
+            
+            screen.render(x + i * textWidth(msg.substring(i, i + 1)), y, 31 + 30 * 32, 0, 3);
+            if (ix >= 0) {
+                screen.render(x + i * textWidth(msg.substring(i, i + 1)), y, ix + 28 * 32, 0, 3, whiteTint);
+            }
+        }
+    }
+
 
 	public static int textWidth(String text) { return text.length() * 8; }
 	public static int textWidth(String[] para) {
