@@ -1,6 +1,7 @@
 Minicraft+ version 2.1.0
 + Added credits menu
 * Shear loses durability when used on sheep
+* Better status GUI
 
 
 Minicraft+ version 2.0.7
