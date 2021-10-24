@@ -10,6 +10,7 @@ import java.nio.file.StandardCopyOption;
 import java.nio.file.attribute.BasicFileAttributes;
 
 import minicraft.saveload.Save;
+import org.tinylog.Logger;
 
 public class FileHandler extends Game {
 	private FileHandler() {}
@@ -36,14 +37,12 @@ public class FileHandler extends Game {
 		}
 		
 		localGameDir = "/"+local;
-		
-		//System.out.println("system game dir: " + systemGameDir);
 	}
 	
 	
 	static void determineGameDir(String saveDir) {
 		gameDir = saveDir + localGameDir;
-		if(debug) System.out.println("Determined gameDir: " + gameDir);
+		Logger.debug("Determined gameDir: " + gameDir);
 		
 		File testFile = new File(gameDir);
 		testFile.mkdirs();
@@ -58,7 +57,7 @@ public class FileHandler extends Game {
 		}
 		
 		if(OS.contains("mac")) {
-			oldFolder = new File(saveDir+"/.playminicraft");
+			oldFolder = new File(saveDir + "/.playminicraft");
 			if(oldFolder.exists()) {
 				try {
 					copyFolderContents(oldFolder.toPath(), testFile.toPath(), RENAME_COPY, true);

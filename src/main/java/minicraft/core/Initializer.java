@@ -15,6 +15,7 @@ import javax.swing.WindowConstants;
 import minicraft.core.io.ConsoleReader;
 import minicraft.network.MinicraftProtocol;
 import minicraft.screen.WorldSelectDisplay;
+import org.tinylog.Logger;
 
 public class Initializer extends Game {
 	private Initializer() {}
@@ -40,6 +41,7 @@ public class Initializer extends Game {
 		for (int i = 0; i < args.length; i++) {
 			if (args[i].equals("--debug")) {
 				debug = true;
+
 			} else if (args[i].equals("--packetdebug")) {
 				packetdebug = true;
 			} else if (args[i].equals("--savedir") && i+1 < args.length) {
@@ -53,7 +55,7 @@ public class Initializer extends Game {
 					i++;
 					WorldSelectDisplay.setWorldName(args[i], true);
 				} else {
-					System.err.println("A world name is required.");
+					Logger.error("A world name is required.");
 					System.exit(1);
 				}
 			} else if (args[i].equals("--port")) {
@@ -64,10 +66,10 @@ public class Initializer extends Game {
 					try {
 						customPort = Integer.parseInt(portString);
 					} catch (NumberFormatException exception) {
-						System.err.println("Port wasn't a number! Using the default port: " + portString);
+						Logger.error("Port wasn't a number! Using the default port: " + portString);
 					}
 				} else {
-					System.err.println("Missing new port! Using the default port " + MinicraftProtocol.PORT);
+					Logger.error("Missing new port! Using the default port " + MinicraftProtocol.PORT);
 				}
 
 				Game.CUSTOM_PORT = customPort;
@@ -175,9 +177,9 @@ public class Initializer extends Game {
 			public void windowIconified(WindowEvent e) {}
 			public void windowDeiconified(WindowEvent e) {}
 			public void windowOpened(WindowEvent e) {}
-			public void windowClosed(WindowEvent e) { System.out.println("Window closed"); }
+			public void windowClosed(WindowEvent e) { Logger.debug("Window closed"); }
 			public void windowClosing(WindowEvent e) {
-				System.out.println("Window closing");
+				Logger.info("Window closing");
 				quit();
 			}
 		});

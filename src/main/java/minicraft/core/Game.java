@@ -28,6 +28,7 @@ import minicraft.saveload.Version;
 import minicraft.screen.Display;
 import minicraft.screen.MultiplayerDisplay;
 import minicraft.screen.TitleDisplay;
+import org.tinylog.Logger;
 
 public class Game {
 	Game() {} // Can't instantiate the Game class.
@@ -60,7 +61,7 @@ public class Game {
 	public static void setMenu(@Nullable Display display) { newMenu = display; }
 	public static void exitMenu() {
 		if (menu == null) {
-			if (debug) System.out.println("Game.exitMenu(): No menu found, returning!");
+			Logger.debug("No menu found, returning!");
 			return; // No action required; cannot exit from no menu
 		}
 		Sound.back.play();
@@ -141,7 +142,6 @@ public class Game {
 		
 		Tiles.initTileList();
 		Sound.init();
-		Settings.init();
 
 		World.resetGame(); // "half"-starts a new game, to set up initial variables
 		player.eid = 0;
@@ -166,7 +166,7 @@ public class Game {
 		}
 		Initializer.run();
 		
-		if (debug) System.out.println("Main game loop ended; Terminating application...");
+		Logger.debug("Main game loop ended; Terminating application...");
 		System.exit(0);
 	}
 }

@@ -22,6 +22,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import minicraft.core.Game;
+import org.tinylog.Logger;
 
 public class Localization {
 	
@@ -55,7 +56,7 @@ public class Localization {
 		
 		if (Game.debug && localString == null) {
 			if (!knownUnlocalizedStrings.contains(key))
-				System.out.println("The string \"" + key + "\" is not localized, returning itself instead.");
+				Logger.tag("LOC").trace("'{}' is unlocalized.", key);
 			knownUnlocalizedStrings.add(key);
 		}
 		

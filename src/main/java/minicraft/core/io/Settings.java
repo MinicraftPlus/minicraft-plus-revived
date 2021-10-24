@@ -56,8 +56,6 @@ public class Settings {
 		options.get("textures").setSelection(0);
 	}
 	
-	public static void init() {}
-	
 	// Returns the value of the specified option
 	public static Object get(String option) { return options.get(option.toLowerCase()).getValue(); }
 	
