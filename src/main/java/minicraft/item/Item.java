@@ -41,45 +41,45 @@ public abstract class Item {
         String dispName = getDisplayName();
 
         switch (dispName.length()) {
-            case 6:   durAdjusted = 0;
+            case 6:   durAdjusted = -8;
                      break;
                      
-            case 7:   durAdjusted = 4;
+            case 7:   durAdjusted = -4;
                      break;
                      
-            case 8:   durAdjusted = 8;
+            case 8:   durAdjusted = 0;
             		  arrAdjusted = 0;
                      break;
                      
-            case 9:   durAdjusted = 12;
+            case 9:   durAdjusted = 4;
             		  arrAdjusted = 4;
                      break;
                      
-            case 10:  durAdjusted = 16;
+            case 10:  durAdjusted = 8;
   		              arrAdjusted = 8;
                      break;
                      
-            case 11:  durAdjusted = 20;
+            case 11:  durAdjusted = 12;
                       arrAdjusted = 12;
                      break;
                      
-            case 12:  durAdjusted = 24;
+            case 12:  durAdjusted = 16;
                       arrAdjusted = 16;
                      break;
                      
-            case 13:  durAdjusted = 28;
+            case 13:  durAdjusted = 20;
                       arrAdjusted = 20;
             	     break;
             	     
-            case 14:  durAdjusted = 32;
+            case 14:  durAdjusted = 24;
                       arrAdjusted = 24;
                      break;
                      
-            case 15:  durAdjusted = 36;
+            case 15:  durAdjusted = 28;
                       arrAdjusted = 28;
             	     break; 
             	     
-            case 16:  durAdjusted = 40;
+            case 16:  durAdjusted = 32;
             		  arrAdjusted = 32;
                      break;
                      
@@ -89,7 +89,7 @@ public abstract class Item {
         
         int xx = (Screen.w - Font.textWidth(dispName)) / 2; // the width of the box
         int yy = (Screen.h - 8) - 1; // the height of the box
-        int w = dispName.length() + 1; // length of message in characters.
+        int w = dispName.length(); // length of message in characters.
         int h = 1;
 
         // renders the four corners of the box
@@ -117,7 +117,7 @@ public abstract class Item {
         sprite.render(screen, xx, yy);
 
         // Item name
-        Font.drawCompleteBackground(dispName, screen, xx + 8, yy, fontColor);
+        Font.drawCompleteBackground(dispName, screen, xx + 1, yy, fontColor);
 
     }
 	
