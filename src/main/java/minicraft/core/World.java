@@ -14,6 +14,7 @@ import minicraft.screen.LoadingDisplay;
 import minicraft.screen.PlayerDeathDisplay;
 import minicraft.screen.WorldGenDisplay;
 import minicraft.screen.WorldSelectDisplay;
+import org.tinylog.Logger;
 
 public class World extends Game {
 	private World() {}
@@ -59,7 +60,7 @@ public class World extends Game {
 	/** This method is used when respawning, and by initWorld to reset the vars. It does not generate any new terrain. */
 	public static void resetGame() { resetGame(true); }
 	public static void resetGame(boolean keepPlayer) {
-		if (debug) System.out.println("Resetting...");
+		Logger.debug("Resetting...");
 		playerDeadTime = 0;
 		currentLevel = 3;
 		Updater.asTick = 0;
@@ -98,7 +99,7 @@ public class World extends Game {
 	 * For the loading screen updates to work, it it assumed that *this* is called by a thread *other* than the one rendering the current *menu*.
 	 **/
 	public static void initWorld() { // This is a full reset; everything.
-		if(debug) System.out.println("Resetting world...");
+		Logger.debug("Resetting world...");
 		
 		/*if(isValidServer()) {
 			System.err.println("Cannot initialize world while acting as a server runtime; not running initWorld().");

@@ -2,10 +2,10 @@ package minicraft.level.tile;
 
 import java.util.ArrayList;
 
-import minicraft.core.Game;
 import minicraft.level.tile.farming.FarmTile;
 import minicraft.level.tile.farming.PotatoTile;
 import minicraft.level.tile.farming.WheatTile;
+import org.tinylog.Logger;
 
 public final class Tiles {
 	/// Idea: to save tile names while saving space, I could encode the names in base 64 in the save file...^M
@@ -16,7 +16,7 @@ public final class Tiles {
 	private static ArrayList<Tile> tiles = new ArrayList<>();
 	
 	public static void initTileList() {
-		if (Game.debug) System.out.println("Initializing tile list...");
+		Logger.debug("Initializing tile list...");
 		
 		// 
 		for (int i = 0; i < 256; i++)

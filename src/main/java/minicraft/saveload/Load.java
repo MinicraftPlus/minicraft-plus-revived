@@ -9,7 +9,6 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.List;
 
 import javax.imageio.ImageIO;
@@ -70,6 +69,7 @@ import minicraft.screen.MultiplayerDisplay;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+import org.tinylog.Logger;
 
 public class Load {
 	
@@ -147,12 +147,12 @@ public class Load {
 		// Check if Preferences.miniplussave exists. (old version)
 		} else if (new File(location + "Preferences" + extension).exists()) {
 			loadPrefsOld("Preferences");
-			System.out.println("Upgrading preferences to JSON.");
+			Logger.info("Upgrading preferences to JSON.");
 			resave = true;
 
 		// No preferences file found.
 		} else {
-			System.out.println("No preferences found, creating new file.");
+			Logger.warn("No preferences found, creating new file.");
 			resave = true;
 		}
 
@@ -166,20 +166,20 @@ public class Load {
 				if (testFileOld.renameTo(testFile)) {
 					new LegacyLoad(testFile);
 				} else {
-					System.out.println("Failed to rename unlocks to Unlocks; loading old version.");
+					Logger.info("Failed to rename unlocks to Unlocks; loading old version.");
 					new LegacyLoad(testFileOld);
 				}
 			}
 
 			loadUnlocksOld("Unlocks");
 			resave = true;
-			System.out.println("Upgrading unlocks to JSON.");
+			Logger.info("Upgrading unlocks to JSON.");
 		} else {
-			System.out.println("No unlocks found, creating new file.");
+			Logger.warn("No unlocks found, creating new file.");
 			resave = true;
 		}
 
-		// We need to load everything before we save, so it doesn't overwrite unlocks.
+		// We need to load everything before we save, so it doesn't overwrite anything.
 		if (resave) {
 			new Save();
 		}
