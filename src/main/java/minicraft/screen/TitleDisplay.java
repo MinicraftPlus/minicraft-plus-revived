@@ -4,6 +4,7 @@ import java.time.LocalDateTime;
 import java.time.Month;
 import java.util.Random;
 
+import minicraft.util.BookData;
 import org.jetbrains.annotations.NotNull;
 
 import minicraft.core.Game;
@@ -48,13 +49,15 @@ public class TitleDisplay extends Display {
 			new SelectEntry("Options", () -> Game.setMenu(new OptionsMainMenuDisplay())),
             new SelectEntry("Skins", () -> Game.setMenu(new SkinDisplay())),
 			new SelectEntry("Achievements", () -> Game.setMenu(new AchievementsDisplay())),
-			displayFactory("Help",
-				new SelectEntry("Instructions", () -> Game.setMenu(new BookDisplay(BookData.instructions))),
-				new BlankEntry(),
-				new SelectEntry("Storyline Guide", () -> Game.setMenu(new BookDisplay(BookData.storylineGuide))),
-				new BlankEntry(),
-				new SelectEntry("About", () -> Game.setMenu(new BookDisplay(BookData.about)))
-			),
+				new SelectEntry("Help", () ->
+						Game.setMenu(new Display(true, new Menu.Builder(false, 1, RelPos.CENTER,
+								new BlankEntry(),
+								new SelectEntry("Instructions", () -> Game.setMenu(new BookDisplay(BookData.instructions))),
+								new SelectEntry("Storyline Guide", () -> Game.setMenu(new BookDisplay(BookData.storylineGuide))),
+								new SelectEntry("About", () -> Game.setMenu(new BookDisplay(BookData.about))),
+								new SelectEntry("Credits", () -> Game.setMenu(new BookDisplay(BookData.credits)))
+						).setTitle("Help").createMenu()))
+				),
 			new SelectEntry("Quit", Game::quit)
 			)
 			.setPositioning(new Point(Screen.w/2, Screen.h*3/5), RelPos.CENTER)
