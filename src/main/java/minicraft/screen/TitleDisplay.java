@@ -5,6 +5,7 @@ import java.time.Month;
 import java.util.Random;
 
 import minicraft.util.BookData;
+import org.jetbrains.annotations.NotNull;
 
 import minicraft.core.Game;
 import minicraft.core.Network;
@@ -47,16 +48,18 @@ public class TitleDisplay extends Display {
 			}),
 			new SelectEntry("Options", () -> Game.setMenu(new OptionsMainMenuDisplay())),
             new SelectEntry("Skins", () -> Game.setMenu(new SkinDisplay())),
-			new SelectEntry("Help", () ->
-				Game.setMenu(new Display(true, new Menu.Builder(false, 1, RelPos.CENTER,
-					new BlankEntry(),
-					new SelectEntry("Instructions", () -> Game.setMenu(new BookDisplay(BookData.instructions))),
-					new SelectEntry("Storyline Guide", () -> Game.setMenu(new BookDisplay(BookData.storylineGuide))),
-					new SelectEntry("About", () -> Game.setMenu(new BookDisplay(BookData.about))),
-					new SelectEntry("Credits", () -> Game.setMenu(new BookDisplay(BookData.credits)))
-				).setTitle("Help").createMenu()))
-			),
-			new SelectEntry("Quit", Game::quit))
+			new SelectEntry("Achievements", () -> Game.setMenu(new AchievementsDisplay())),
+				new SelectEntry("Help", () ->
+						Game.setMenu(new Display(true, new Menu.Builder(false, 1, RelPos.CENTER,
+								new BlankEntry(),
+								new SelectEntry("Instructions", () -> Game.setMenu(new BookDisplay(BookData.instructions))),
+								new SelectEntry("Storyline Guide", () -> Game.setMenu(new BookDisplay(BookData.storylineGuide))),
+								new SelectEntry("About", () -> Game.setMenu(new BookDisplay(BookData.about))),
+								new SelectEntry("Credits", () -> Game.setMenu(new BookDisplay(BookData.credits)))
+						).setTitle("Help").createMenu()))
+				),
+			new SelectEntry("Quit", Game::quit)
+			)
 			.setPositioning(new Point(Screen.w/2, Screen.h*3/5), RelPos.CENTER)
 			.createMenu()
 		);
@@ -70,7 +73,7 @@ public class TitleDisplay extends Display {
 		// Check version
 		checkVersion();
 
-		// This is useful to just ensure that everything is really reset as it should be.
+		/// This is useful to just ensure that everything is really reset as it should be. 
 		if (Game.server != null) {
 			if (Game.debug) System.out.println("Wrapping up loose server ends.");
 			Game.server.endConnection();
@@ -113,6 +116,11 @@ public class TitleDisplay extends Display {
 			else
 				menus[0].updateEntry(0, new StringEntry("Connection failed, could not check for updates.", Color.RED));
 		}
+	}
+	
+	@NotNull
+	private static SelectEntry displayFactory(String entryText, ListEntry... entries) {
+		return new SelectEntry(entryText, () -> Game.setMenu(new Display(true, new Menu.Builder(false, 2, RelPos.CENTER, entries).createMenu())));
 	}
 	
 	@Override
