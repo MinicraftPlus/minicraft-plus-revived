@@ -1,6 +1,132 @@
 #### Norwegian translation for MinicraftPlus
 #### Created by Christoffer Holmesland
 
+### Achievements
+
+minicraft.achievement.woodcutter
+Woodcutter
+
+minicraft.achievement.woodcutter.desc
+Få tak i tre.
+
+minicraft.achievement.benchmarking
+Benchmarking
+
+minicraft.achievement.benchmarking.desc
+Lag en arbeidsbenk.
+
+minicraft.achievement.upgrade
+Upgrade!
+
+minicraft.achievement.upgrade.desc
+Få tak i et redskap med bedre materiell enn tre.
+
+minicraft.achievement.bow
+Bow down to me!
+
+minicraft.achievement.bow.desc
+Drep et monster med en bue.
+
+minicraft.achievement.fish
+Go Fish!
+
+minicraft.achievement.fish.desc
+Fisk opp en fisk.
+
+minicraft.achievement.doors
+Adooring Protection
+
+minicraft.achievement.doors.desc
+Plasser alle dørtyper
+
+minicraft.achievement.planks
+Walk the Planks!
+
+minicraft.achievement.planks.desc
+Plasser alle typer planke.
+
+minicraft.achievement.clothes
+Have a colourful day!
+
+minicraft.achievement.clothes.desc
+Lag alle mulige fargede klær.
+
+minicraft.achievement.demolition
+Demolition Demo
+
+minicraft.achievement.demolition.desc
+Bruk TNT.
+
+minicraft.achievement.explosive_ending
+An explosive ending
+
+minicraft.achievement.explosive_ending.desc
+Spreng deg opp med et "uhell"
+
+minicraft.achievement.survive_darkness
+Afraid of the Dark?
+
+minicraft.achievement.survive_darkness.desc
+Overlev 5 minutter i mørket.
+
+minicraft.achievement.lava
+Hot Affairs
+
+minicraft.achievement.lava.desc
+Bruk en lava potion for å svømme i lava.
+
+minicraft.achievement.find_gem
+Oooh Shiny!
+
+minicraft.achievement.find_gem.desc
+Finn juvelmalm og utgrav den.
+
+minicraft.achievement.lowest_caves
+Darkness behind light
+
+minicraft.achievement.lowest_caves.desc
+Nå de dypeste huler.
+
+minicraft.achievement.obsidian_dungeon
+Of Knights and Men
+
+minicraft.achievement.obsidian_dungeon.desc
+Nå obsidian fangehullet.
+
+minicraft.achievement.airwizard
+Defeat... the air?
+
+minicraft.achievement.airwizard.desc
+Beseire den første lufttrollmannen!
+
+minicraft.achievement.second_airwizard
+An Airy Feat!
+
+minicraft.achievement.second_airwizard2.desc
+Beseire den andre lufttrollmannen.
+
+minicraft.achievement.eat_all_food
+On a diet
+
+minicraft.achievement.eat_all_food.desc
+Spis hver type mat.
+
+minicraft.achievement.skin
+Fashion Show
+
+minicraft.achievement.skin.desc
+Endre utseendet ditt.
+
+# AchievementsDisplay.java
+Achieved!
+Oppnådd!
+
+Not Achieved
+Ikke oppnådd
+
+Achievement Score:
+Oppnåelse score:
+
 ### entity
 
 # Entity.java
@@ -919,6 +1045,12 @@ Avslutt
  
  to return
  for å gå tilbake
+
+ Skins
+ Utseender
+
+Achievements
+Oppnåelser
 
 # WorldEditMenu.java
 

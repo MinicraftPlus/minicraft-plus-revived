@@ -1,3 +1,131 @@
+### Achievements
+
+# Achievements
+
+minicraft.achievement.woodcutter
+Woodcutter
+
+minicraft.achievement.woodcutter.desc
+Get wood.
+
+minicraft.achievement.benchmarking
+Benchmarking
+
+minicraft.achievement.benchmarking.desc
+Make a workbench.
+
+minicraft.achievement.upgrade
+Upgrade!
+
+minicraft.achievement.upgrade.desc
+Get a tool with a stronger material than wood.
+
+minicraft.achievement.bow
+Bow down to me!
+
+minicraft.achievement.bow.desc
+Kill a Mob with a bow.
+
+minicraft.achievement.fish
+Go Fish!
+
+minicraft.achievement.fish.desc
+Fish up a Fish!
+
+minicraft.achievement.doors
+Adooring Protection
+
+minicraft.achievement.doors.desc
+Place all door types.
+
+minicraft.achievement.planks
+Walk the Planks!
+
+minicraft.achievement.planks.desc
+Place all plank types.
+
+minicraft.achievement.clothes
+Have a colourful day!
+
+minicraft.achievement.clothes.desc
+Craft all colored clothes.
+
+minicraft.achievement.demolition
+Demolition Demo
+
+minicraft.achievement.demolition.desc
+Use TNT.
+
+minicraft.achievement.explosive_ending
+An explosive ending
+
+minicraft.achievement.explosive_ending.desc
+"Accidentally" blow yourself up.
+
+minicraft.achievement.survive_darkness
+Afraid of the Dark?
+
+minicraft.achievement.survive_darkness.desc
+Survive 5 minutes in total darkness.
+
+minicraft.achievement.lava
+Hot Affairs
+
+minicraft.achievement.lava.desc
+Use a lava potion to swim in lava.
+
+minicraft.achievement.find_gem
+Oooh Shiny!
+
+minicraft.achievement.find_gem.desc
+Find Gem Ore and mine it.
+
+minicraft.achievement.lowest_caves
+Darkness behind light
+
+minicraft.achievement.lowest_caves.desc
+Reach the lowest caves.
+
+minicraft.achievement.obsidian_dungeon
+Of Knights and Men
+
+minicraft.achievement.obsidian_dungeon.desc
+Reach the obsidian dungeon.
+
+minicraft.achievement.airwizard
+Defeat... the air?
+
+minicraft.achievement.airwizard.desc
+Defeat the first Air Wizard!
+
+minicraft.achievement.second_airwizard
+An Airy Feat!
+
+minicraft.achievement.second_airwizard.desc
+Defeat the second Air Wizard.
+
+minicraft.achievement.eat_all_food
+On a diet
+
+minicraft.achievement.eat_all_food.desc
+Eat every food item.
+
+minicraft.achievement.skin
+Fashion Show
+
+minicraft.achievement.skin.desc
+Change your skin.
+
+# AchievementsDisplay.java
+Achieved!
+Achieved!
+
+Not Achieved
+Not Achieved
+
+Achievement Score:
+Achievement Score:
+
 ### entity
 
 # Entity.java
@@ -916,6 +1044,12 @@ Quit
  
  to return
  to return
+
+ Skins
+ Skins
+
+Achievements
+Achievements
 
 # WorldEditMenu.java
 

@@ -1,0 +1,97 @@
+[
+  {
+    "id": "minicraft.achievement.woodcutter",
+    "desc": "minicraft.achievement.woodcutter.desc",
+    "score": 5
+  },
+  {
+    "id": "minicraft.achievement.benchmarking",
+    "desc": "minicraft.achievement.benchmarking.desc",
+    "score": 10
+  },
+  {
+    "id": "minicraft.achievement.upgrade",
+    "desc": "minicraft.achievement.upgrade.desc",
+    "score": 10
+  },
+  {
+    "id": "minicraft.achievement.bow",
+    "desc": "minicraft.achievement.bow.desc",
+    "score": 10
+  },
+  {
+    "id": "minicraft.achievement.fish",
+    "desc": "minicraft.achievement.fish.desc",
+    "score": 5
+  },
+  {
+    "id": "minicraft.achievement.doors",
+    "desc": "minicraft.achievement.doors.desc",
+    "score": 5
+  },
+  {
+    "id": "minicraft.achievement.planks",
+    "desc": "minicraft.achievement.planks.desc",
+    "score": 5
+  },
+  {
+    "id": "minicraft.achievement.clothes",
+    "desc": "minicraft.achievement.clothes.desc",
+    "score": 5
+  },
+  {
+    "id": "minicraft.achievement.demolition",
+    "desc": "minicraft.achievement.demolition.desc",
+    "score": 10
+  },
+  {
+    "id": "minicraft.achievement.explosive_ending",
+    "desc": "minicraft.achievement.explosive_ending.desc",
+    "score": 5
+  },
+  {
+    "id": "minicraft.achievement.survive_darkness",
+    "desc": "minicraft.achievement.survive_darkness.desc",
+    "score": 15
+  },
+  {
+    "id": "minicraft.achievement.lava",
+    "desc": "minicraft.achievement.lava.desc",
+    "score": 15
+  },
+  {
+    "id": "minicraft.achievement.find_gem",
+    "desc": "minicraft.achievement.find_gem.desc",
+    "score": 20
+  },
+  {
+    "id": "minicraft.achievement.lowest_caves",
+    "desc": "minicraft.achievement.lowest_caves.desc",
+    "score": 25
+  },
+  {
+    "id": "minicraft.achievement.obsidian_dungeon",
+    "desc": "minicraft.achievement.obsidian_dungeon.desc",
+    "score": 25
+  },
+  {
+    "id": "minicraft.achievement.airwizard",
+    "desc": "minicraft.achievement.airwizard.desc",
+    "score": 25
+  },
+  {
+    "id": "minicraft.achievement.second_airwizard",
+    "desc": "minicraft.achievement.second_airwizard.desc",
+    "score": 25
+  },
+  {
+    "id": "minicraft.achievement.eat_all_food",
+    "desc": "minicraft.achievement.eat_all_food.desc",
+    "score": 25
+  },
+  {
+    "id": "minicraft.achievement.skin",
+    "desc": "minicraft.achievement.skin.desc",
+    "score": 10
+  }
+]
