@@ -138,6 +138,18 @@ public abstract class Tile {
 	public boolean interact(Level level, int xt, int yt, Player player, Item item, Direction attackDir) {
 		return false;
 	}
+
+	/**
+	 * Executed when the tile is exploded.
+	 * The call for this method is done just before the tiles are changed to exploded tiles.
+	 * @param level The level we are on.
+	 * @param xt X position of the tile.
+	 * @param yt Y position of the tile.
+	 * @return true if successful.
+	 */
+	public boolean onExplode(Level level, int xt, int yt) {
+		return false;
+	}
 	
 	/** Sees if the tile connects to a fluid. */
 	public boolean connectsToLiquid() { return connectsToFluid; }

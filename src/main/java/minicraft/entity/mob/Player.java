@@ -1068,8 +1068,8 @@ public class Player extends Mob implements ItemHolder, ClientTickable {
 	}
 
 	@Override
-	public void hurt(Tnt tnt, int dmg) {
-		super.hurt(tnt, dmg);
+	public void onExploded(Tnt tnt, int dmg) {
+		super.onExploded(tnt, dmg);
 		payStamina(dmg * 2);
 	}
 

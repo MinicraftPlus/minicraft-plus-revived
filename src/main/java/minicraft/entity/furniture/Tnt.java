@@ -17,6 +17,7 @@ import minicraft.gfx.Screen;
 import minicraft.gfx.Sprite;
 import minicraft.item.Item;
 import minicraft.level.Level;
+import minicraft.level.tile.Tile;
 import minicraft.level.tile.Tiles;
 
 public class Tnt extends Furniture implements ActionListener {
@@ -57,7 +58,9 @@ public class Tnt extends Furniture implements ActionListener {
 					 float dist = (float) Math.hypot(e.x - x, e.y - y);
 					 int dmg = (int) (BLAST_DAMAGE * (1 - (dist / BLAST_RADIUS))) + 1;
 					 if (e instanceof Mob)
-						((Mob)e).hurt(this, dmg);
+						((Mob)e).onExploded(this, dmg);
+
+					 // Ignite other bombs in range.
 					 if (e instanceof Tnt) {
 						 Tnt tnt = (Tnt) e;
 						 if (!tnt.fuseLit) {
@@ -66,12 +69,21 @@ public class Tnt extends Furniture implements ActionListener {
 							 tnt.ftik = FUSE_TIME * 2 / 3;
 						 }
 					 }
-				 }
-				
-				Sound.explode.play();
+				}
 				
 				int xt = x >> 4;
 				int yt = (y - 2) >> 4;
+
+				// Get the tiles that have been exploded.
+				Tile[] affectedTiles = level.getAreaTiles(xt, yt, 1);
+
+				// Call the onExplode() event.
+				for (int i = 0; i < affectedTiles.length; i++) {
+					// This assumes that range is 1.
+					affectedTiles[i].onExplode(level, xt + i % 3 - 1, yt + i / 3 - 1);
+				}
+
+				Sound.explode.play();
 
 				level.setAreaTiles(xt, yt, 1, Tiles.get("explode"), 0, explosionBlacklist);
 				
@@ -98,11 +110,13 @@ public class Tnt extends Furniture implements ActionListener {
 		explodeTimer.stop();
 		int xt = x >> 4;
 		int yt = (y - 2) >> 4;
+
 		if (levelSave.depth != 1) {
 			levelSave.setAreaTiles(xt, yt, 1, Tiles.get("hole"), 0, explosionBlacklist);
 		} else {
 			levelSave.setAreaTiles(xt, yt, 1, Tiles.get("Infinite Fall"), 0, explosionBlacklist);
 		}
+
 		levelSave = null;
 	}
 	
