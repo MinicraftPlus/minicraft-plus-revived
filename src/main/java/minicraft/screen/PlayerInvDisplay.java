@@ -2,12 +2,17 @@ package minicraft.screen;
 
 import minicraft.core.Game;
 import minicraft.core.io.InputHandler;
+import minicraft.core.io.Localization;
 import minicraft.entity.mob.Player;
+import minicraft.gfx.Color;
+import minicraft.gfx.Font;
+import minicraft.gfx.Screen;
 
 public class PlayerInvDisplay extends Display {
 	
-	private Player player;
-	
+	private final Player player;
+
+
 	public PlayerInvDisplay(Player player) {
 		super(new InventoryMenu(player, player.getInventory(), "Inventory"));
 		this.player = player;
@@ -26,5 +31,13 @@ public class PlayerInvDisplay extends Display {
 			player.activeItem = player.getInventory().remove(menus[0].getSelection());
 			Game.exitMenu();
 		}
+	}
+
+	@Override
+	public void render(Screen screen) {
+		super.render(screen);
+
+		String text = "(" + Game.input.getMapping("SEARCHER-BAR") + ") " + Localization.getLocalized("to search.");
+		Font.draw(text, screen, Screen.w / 2 - text.length(), Screen.h / 2 + 16, Color.WHITE);
 	}
 }
