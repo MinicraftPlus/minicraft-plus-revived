@@ -68,21 +68,15 @@ public class Level {
 	public int chestCount;
 	public int mobCount = 0;
 
-	/**
-	 * I will be using this lock to avoid concurrency exceptions in entities and sparks set
-	 */
-	private final Object entityLock = new Object();
-	private Set<Entity> entities = java.util.Collections.synchronizedSet(new HashSet<>()); // A list of all the entities in the world
-	private Set<Spark> sparks = java.util.Collections.synchronizedSet(new HashSet<>()); // A list of all the sparks in the world
-	private Set<Player> players = java.util.Collections.synchronizedSet(new HashSet<>()); // A list of all the players in the world
-	private List<Entity> entitiesToAdd = new ArrayList<>(); /// entities that will be added to the level on next tick are stored here. This is for the sake of multithreading optimization. (hopefully)
-	private List<Entity> entitiesToRemove = new ArrayList<>(); /// entities that will be removed from the level on next tick are stored here. This is for the sake of multithreading optimization. (hopefully)
+	private final Object entityLock = new Object(); // I will be using this lock to avoid concurrency exceptions in entities and sparks set
+	private final Set<Entity> entities = java.util.Collections.synchronizedSet(new HashSet<>()); // A list of all the entities in the world
+	private final Set<Spark> sparks = java.util.Collections.synchronizedSet(new HashSet<>()); // A list of all the sparks in the world
+	private final Set<Player> players = java.util.Collections.synchronizedSet(new HashSet<>()); // A list of all the players in the world
+	private final List<Entity> entitiesToAdd = new ArrayList<>(); /// entities that will be added to the level on next tick are stored here. This is for the sake of multithreading optimization. (hopefully)
+	private final List<Entity> entitiesToRemove = new ArrayList<>(); /// entities that will be removed from the level on next tick are stored here. This is for the sake of multithreading optimization. (hopefully)
 	
 	// Creates a sorter for all the entities to be rendered.
-	private static Comparator<Entity> spriteSorter = Comparator.comparingInt(new ToIntFunction<Entity>() {
-		@Override
-		public int applyAsInt(Entity e) { return e.y; }
-	});
+	private static Comparator<Entity> spriteSorter = Comparator.comparingInt(e -> e.y);
 	
 	public Entity[] getEntitiesToSave() {
 		Entity[] allEntities = new Entity[entities.size() + sparks.size() + entitiesToAdd.size()];
@@ -94,7 +88,7 @@ public class Level {
 		return allEntities;
 	}
 	
-	/// This is a solely debug method I made, to make printing repetitive stuff easier.
+	// This is a solely a debug method I made, to make printing repetitive stuff easier.
 	// Should be changed to accept prepend and entity, or a tile (as an Object). It will get the coordinates and class name from the object, and will divide coords by 16 if passed an entity.
 	public void printLevelLoc(String prefix, int x, int y) { printLevelLoc(prefix, x, y, ""); }
 	public void printLevelLoc(String prefix, int x, int y, String suffix) {
@@ -164,7 +158,7 @@ public class Level {
 			generateVillages();
 
 		
-		if (parentLevel != null) { // If the level above this one is not null (aka, if this isn't the sky level)
+		if (parentLevel != null) { // If the level above this one is not null (aka, if this isn't a sky level)
 			for (int y = 0; y < h; y++) { // Loop through height
 				for (int x = 0; x < w; x++) { // Loop through width
 					if (parentLevel.getTile(x, y) == Tiles.get("Stairs Down")) { // If the tile in the level above the current one is a stairs down then...
@@ -182,7 +176,7 @@ public class Level {
 					}
 				}
 			}
-		} else { // This is the sky level
+		} else { // This is a sky level
 			boolean placedHouse = false;
 			while (!placedHouse) {
 				
@@ -228,11 +222,15 @@ public class Level {
 			boolean found = false;
 			if (check) {
 				for (Entity e: entitiesToAdd)
-					if (e instanceof AirWizard)
+					if (e instanceof AirWizard) {
 						found = true;
+						break;
+					}
 				for (Entity e: entities)
-					if (e instanceof AirWizard)
+					if (e instanceof AirWizard) {
 						found = true;
+						break;
+					}
 			}
 			
 			if (!found) {
