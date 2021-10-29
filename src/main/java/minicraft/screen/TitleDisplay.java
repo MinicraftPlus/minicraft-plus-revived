@@ -167,13 +167,13 @@ public class TitleDisplay extends Display {
 		Font.draw("Version " + Game.VERSION, screen, 1, 1, Color.get(1, 51));
 		
 		
-		String upString = "(" + Game.input.getMapping("cursor-up") + ", "+ Game.input.getMapping("cursor-down")+Localization.getLocalized(" to select") +")";
+		String upString = "(" + Game.input.getMapping("cursor-up") + ", " + Game.input.getMapping("cursor-down") + Localization.getLocalized(" to select") + ")";
 		String selectString = "(" + Game.input.getMapping("select") + Localization.getLocalized(" to accept") +")";
 		String exitString = "(" + Game.input.getMapping("exit") + Localization.getLocalized(" to return") +")";
 		
-		Font.drawCentered(upString, screen, Screen.h - 32, Color.get(1, 51));
-		Font.drawCentered(selectString, screen, Screen.h - 22, Color.get(1, 51));
-		Font.drawCentered(exitString, screen, Screen.h - 12, Color.get(1, 51));
+		Font.drawCentered(upString, screen, Screen.h - 32, Color.DARK_GRAY);
+		Font.drawCentered(selectString, screen, Screen.h - 22, Color.DARK_GRAY);
+		Font.drawCentered(exitString, screen, Screen.h - 12, Color.DARK_GRAY);
 	}
 	
 	private static final String[] splashes = {

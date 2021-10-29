@@ -81,7 +81,7 @@ public class WorldEditDisplay extends Display {
 					if(WorldSelectDisplay.getWorldNames().size() > 0)
 						Game.setMenu(new WorldSelectDisplay());
 					else
-						Game.setMenu(new PlayDisplay());
+						Game.setMenu(new TitleDisplay());
 				break;
 				
 				case Copy:
