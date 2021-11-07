@@ -999,216 +999,236 @@ public class Player extends Mob implements ItemHolder, ClientTickable {
 	 * @param level The level.
 	 * @return true
 	 */
-	public boolean respawn(Level level) {
-		if (!level.getTile(spawnx, spawny).maySpawn())
-			findStartPos(level); // If there's no bed to spawn from, and the stored coordinates don't point to a grass tile, then find a new point.
+    public void respawn(Level level) 
+    {        
+        if (!level.getTile(spawnx, spawny).maySpawn())
+        {
+            findStartPos(level); // If there's no bed to spawn from, and the stored coordinates don't point to a grass tile, then find a new point.
+            int x = spawnx;
+            int y = spawny;
+            x = (Math.random() > .5) ? -80 : 80;
+            y = (Math.random() > .5) ? -80 : 80;
+            for (int i = 0; i < 20; i++) // Iterate through diagonal line for possible random spawn.
+            {
+                if (!level.getTile(spawnx, spawny).maySpawn())
+                {
+                    x += 4 * (x / -x);
+                    y += 4 * (-y / y);
+                }
+                else 
+                {
+                    spawnx = x ;
+                    spawny = y ;
+                    break;
+                }
+            }
 
-		// Move the player to the spawnpoint
-		this.x = spawnx * 16 + 8;
-		this.y = spawny * 16 + 8;
-		return true; // Again, why the "return true"'s for methods that never return false?
-	}
+        }
+        // Move the player to the spawnpoint
+        this.x = spawnx * 16 + 8;
+        this.y = spawny * 16 + 8;
+    }
 
-	/**
-	 * Uses an amount of stamina to do an action.
-	 * @param cost How much stamina the action requires.
-	 * @return true if the player had enough stamina, false if not.
-	 */
-	public boolean payStamina(int cost) {
-		if (potioneffects.containsKey(PotionType.Energy)) return true; // If the player has the potion effect for infinite stamina, return true (without subtracting cost).
-		else if (stamina <= 0) return false; // If the player doesn't have enough stamina, then return false; failure.
+    /**
+     * Uses an amount of stamina to do an action.
+     * @param cost How much stamina the action requires.
+     * @return true if the player had enough stamina, false if not.
+    */
+    public boolean payStamina(int cost) {
+        if (potioneffects.containsKey(PotionType.Energy)) return true; // If the player has the potion effect for infinite stamina, return true (without subtracting cost).
+        else if (stamina <= 0) return false; // If the player doesn't have enough stamina, then return false; failure.
 
-		if (cost < 0) cost = 0; // Error correction
-		stamina -= Math.min(stamina, cost); // Subtract the cost from the current stamina
-		if (Game.isValidServer() && this instanceof RemotePlayer)
-			Game.server.getAssociatedThread((RemotePlayer)this).sendStaminaChange(cost);
-		return true; // Success
-	}
+        if (cost < 0) cost = 0; // Error correction
+        stamina -= Math.min(stamina, cost); // Subtract the cost from the current stamina
+        if (Game.isValidServer() && this instanceof RemotePlayer)
+        Game.server.getAssociatedThread((RemotePlayer)this).sendStaminaChange(cost);
+        return true; // Success
+    }
 
-	/**
-	 * Gets the player's light radius underground
-	 */
-	@Override
-	public int getLightRadius() {
-		int r = 5; // The radius of the light.
+    /**
+     * Gets the player's light radius underground
+    */
+    @Override
+    public int getLightRadius() {
+        int r = 5; // The radius of the light.
 
-		if (activeItem != null && activeItem instanceof FurnitureItem) { // If player is holding furniture
-			int rr = ((FurnitureItem) activeItem).furniture.getLightRadius(); // Gets furniture light radius
-			if (rr > r) r = rr; // Brings player light up to furniture light, if less, since the furnture is not yet part of the level and so doesn't emit light even if it should.
-		}
+        if (activeItem != null && activeItem instanceof FurnitureItem) { // If player is holding furniture
+            int rr = ((FurnitureItem) activeItem).furniture.getLightRadius(); // Gets furniture light radius
+            if (rr > r) r = rr; // Brings player light up to furniture light, if less, since the furnture is not yet part of the level and so doesn't emit light even if it should.
+        }
 
-		return r; // Return light radius
-	}
+        return r; // Return light radius
+    }
 
-	/** What happens when the player dies */
-	@Override
-	public void die() {
-		if (!Network.ISONLINE)
-			Analytics.SinglePlayerDeath.ping();
-		else if (Network.isConnectedClient())
-			Analytics.MultiplayerDeath.ping();
+    /** What happens when the player dies */
+    @Override
+    public void die() {
+        if (!Network.ISONLINE)
+        Analytics.SinglePlayerDeath.ping();
+        else if (Network.isConnectedClient())
+        Analytics.MultiplayerDeath.ping();
 
-		score -= score / 3; // Subtracts score penalty (minus 1/3 of the original score)
-		resetMultiplier();
+        score -= score / 3; // Subtracts score penalty (minus 1/3 of the original score)
+        resetMultiplier();
 
-		// Make death chest
-		DeathChest dc = new DeathChest(this);
+        // Make death chest
+        DeathChest dc = new DeathChest(this);
 
-		if (activeItem != null) dc.getInventory().add(activeItem);
-		if (curArmor != null) dc.getInventory().add(curArmor);
+        if (activeItem != null) dc.getInventory().add(activeItem);
+        if (curArmor != null) dc.getInventory().add(curArmor);
 
-		Sound.playerDeath.play();
+        Sound.playerDeath.play();
 
-		if (!Game.ISONLINE)
-			World.levels[Game.currentLevel].add(dc);
-		else if (Game.isConnectedClient())
-			Game.client.sendPlayerDeath(this, dc);
+        if (!Game.ISONLINE)
+        World.levels[Game.currentLevel].add(dc);
+        else if (Game.isConnectedClient())
+        Game.client.sendPlayerDeath(this, dc);
 
-		super.die(); // Calls the die() method in Mob.java
-	}
+        super.die(); // Calls the die() method in Mob.java
+    }
 
-	@Override
-	public void onExploded(Tnt tnt, int dmg) {
-		super.onExploded(tnt, dmg);
-		payStamina(dmg * 2);
-	}
+    @Override
+    public void onExploded(Tnt tnt, int dmg) {
+        super.onExploded(tnt, dmg);
+        payStamina(dmg * 2);
+    }
 
-	/** Hurt the player.
-	 * @param damage How much damage to do to player.
-	 * @param attackDir What direction to attack.
-	 */
-	public void hurt(int damage, Direction attackDir) { doHurt(damage, attackDir); }
+    /** Hurt the player.
+     * @param damage How much damage to do to player.
+     * @param attackDir What direction to attack.
+    */
+    public void hurt(int damage, Direction attackDir) { doHurt(damage, attackDir); }
 
-	@Override
-	protected void doHurt(int damage, Direction attackDir) {
-		if (Game.isMode("creative") || hurtTime > 0 || Bed.inBed(this)) return; // Can't get hurt in creative, hurt cooldown, or while someone is in bed
+    @Override
+    protected void doHurt(int damage, Direction attackDir) {
+        if (Game.isMode("creative") || hurtTime > 0 || Bed.inBed(this)) return; // Can't get hurt in creative, hurt cooldown, or while someone is in bed
 
-		if (Game.isValidServer() && this instanceof RemotePlayer) {
-			// Let the clients deal with it.
-			Game.server.broadcastPlayerHurt(eid, damage, attackDir);
-			return;
-		}
+        if (Game.isValidServer() && this instanceof RemotePlayer) {
+            // Let the clients deal with it.
+            Game.server.broadcastPlayerHurt(eid, damage, attackDir);
+            return;
+        }
 
-		boolean fullPlayer = !(Game.isValidClient() && this != Game.player);
+        boolean fullPlayer = !(Game.isValidClient() && this != Game.player);
 
-		int healthDam = 0, armorDam = 0;
-		if (fullPlayer) {
-			if (curArmor == null) { // No armor
-				healthDam = damage; // Subtract that amount
-			} else { // Has armor
-				armorDamageBuffer += damage;
-				armorDam += damage;
+        int healthDam = 0, armorDam = 0;
+        if (fullPlayer) {
+            if (curArmor == null) { // No armor
+                healthDam = damage; // Subtract that amount
+            } else { // Has armor
+                armorDamageBuffer += damage;
+                armorDam += damage;
 
-				while (armorDamageBuffer >= curArmor.level+1) {
-					armorDamageBuffer -= curArmor.level+1;
-					healthDam++;
-				}
-			}
+                while (armorDamageBuffer >= curArmor.level+1) {
+                    armorDamageBuffer -= curArmor.level+1;
+                    healthDam++;
+                }
+            }
 
-			// Adds a text particle telling how much damage was done to the player, and the armor.
-			if (armorDam > 0) {
-				level.add(new TextParticle("" + damage, x, y, Color.GRAY));
-				armor -= armorDam;
-				if (armor <= 0) {
-					healthDam -= armor; // Adds armor damage overflow to health damage (minus b/c armor would be negative)
-					armor = 0;
-					armorDamageBuffer = 0; // Ensures that new armor doesn't inherit partial breaking from this armor.
-					curArmor = null; // Removes armor
-				}
-			}
-		}
+            // Adds a text particle telling how much damage was done to the player, and the armor.
+            if (armorDam > 0) {
+                level.add(new TextParticle("" + damage, x, y, Color.GRAY));
+                armor -= armorDam;
+                if (armor <= 0) {
+                    healthDam -= armor; // Adds armor damage overflow to health damage (minus b/c armor would be negative)
+                    armor = 0;
+                    armorDamageBuffer = 0; // Ensures that new armor doesn't inherit partial breaking from this armor.
+                    curArmor = null; // Removes armor
+                }
+            }
+        }
 
-		if (healthDam > 0 || !fullPlayer) {
-			level.add(new TextParticle("" + damage, x, y, Color.get(-1, 504)));
-			if(fullPlayer) super.doHurt(healthDam, attackDir); // Sets knockback, and takes away health.
-		}
+        if (healthDam > 0 || !fullPlayer) {
+            level.add(new TextParticle("" + damage, x, y, Color.get(-1, 504)));
+            if(fullPlayer) super.doHurt(healthDam, attackDir); // Sets knockback, and takes away health.
+        }
 
-		Sound.playerHurt.play();
-		hurtTime = playerHurtTime;
-	}
+        Sound.playerHurt.play();
+        hurtTime = playerHurtTime;
+    }
 
-	@Override
-	public void remove() {
-		if (Game.debug) {
-			System.out.println(Network.onlinePrefix() + "Removing player from level " + getLevel());
-			//Thread.dumpStack();
-		}
-		super.remove();
-	}
+    @Override
+    public void remove() {
+        if (Game.debug) {
+            System.out.println(Network.onlinePrefix() + "Removing player from level " + getLevel());
+            //Thread.dumpStack();
+        }
+        super.remove();
+    }
 
-	protected String getUpdateString() {
-		String updates = super.getUpdateString() + ";";
-		updates += "skinon," + suitOn +
-		";shirtColor," + shirtColor +
-		";armor," + armor +
-		";stamina," + stamina +
-		";health," + health +
-		";hunger," + hunger +
-		";attackTime," + attackTime +
-		";attackDir," + attackDir.ordinal() +
-		";activeItem," + (activeItem == null ? "null" : activeItem.getData()) +
-		";isFishing," + (isFishing ? "1" : "0");
+    protected String getUpdateString() {
+        String updates = super.getUpdateString() + ";";
+        updates += "skinon," + suitOn +
+        ";shirtColor," + shirtColor +
+        ";armor," + armor +
+        ";stamina," + stamina +
+        ";health," + health +
+        ";hunger," + hunger +
+        ";attackTime," + attackTime +
+        ";attackDir," + attackDir.ordinal() +
+        ";activeItem," + (activeItem == null ? "null" : activeItem.getData()) +
+        ";isFishing," + (isFishing ? "1" : "0");
 
-		return updates;
-	}
+        return updates;
+    }
 
-	@Override
-	protected boolean updateField(String field, String val) {
-		if (super.updateField(field, val)) return true;
-		switch (field) {
-			case "skinon": suitOn = Boolean.parseBoolean(val); return true;
-			case "shirtColor": shirtColor = Integer.parseInt(val); return true;
-			case "armor": armor = Integer.parseInt(val); return true;
-			case "stamina": stamina = Integer.parseInt(val); return true;
-			case "health": health = Integer.parseInt(val); return true;
-			case "hunger": hunger = Integer.parseInt(val); return true;
-			case "score": score = Integer.parseInt(val); return true;
-			case "mult": multiplier = Integer.parseInt(val); return true;
-			case "attackTime": attackTime = Integer.parseInt(val); return true;
-			case "attackDir": attackDir = Direction.values[Integer.parseInt(val)]; return true;
-			case "activeItem":
-				activeItem = Items.get(val, true);
-				attackItem = activeItem != null && activeItem.canAttack() ? activeItem : null;
-				return true;
-			case "isFishing": isFishing = Integer.parseInt(val) == 1; return true;
-			case "potioneffects":
-				potioneffects.clear();
-				for (String potion: val.split(":")) {
-					String[] parts = potion.split("_");
-					potioneffects.put(PotionType.values[Integer.parseInt(parts[0])], Integer.parseInt(parts[1]));
-				}
-				return true;
-		}
+    @Override
+    protected boolean updateField(String field, String val) {
+        if (super.updateField(field, val)) return true;
+        switch (field) {
+            case "skinon": suitOn = Boolean.parseBoolean(val); return true;
+            case "shirtColor": shirtColor = Integer.parseInt(val); return true;
+            case "armor": armor = Integer.parseInt(val); return true;
+            case "stamina": stamina = Integer.parseInt(val); return true;
+            case "health": health = Integer.parseInt(val); return true;
+            case "hunger": hunger = Integer.parseInt(val); return true;
+            case "score": score = Integer.parseInt(val); return true;
+            case "mult": multiplier = Integer.parseInt(val); return true;
+            case "attackTime": attackTime = Integer.parseInt(val); return true;
+            case "attackDir": attackDir = Direction.values[Integer.parseInt(val)]; return true;
+            case "activeItem":
+            activeItem = Items.get(val, true);
+            attackItem = activeItem != null && activeItem.canAttack() ? activeItem : null;
+            return true;
+            case "isFishing": isFishing = Integer.parseInt(val) == 1; return true;
+            case "potioneffects":
+            potioneffects.clear();
+            for (String potion: val.split(":")) {
+                String[] parts = potion.split("_");
+                potioneffects.put(PotionType.values[Integer.parseInt(parts[0])], Integer.parseInt(parts[1]));
+            }
+            return true;
+        }
 
-		return false;
-	}
+        return false;
+    }
 
-	public final String getPlayerData() {
-		List<String> datalist = new ArrayList<>();
-		StringBuilder playerdata = new StringBuilder();
-		playerdata.append(Game.VERSION).append("\n");
+    public final String getPlayerData() {
+        List<String> datalist = new ArrayList<>();
+        StringBuilder playerdata = new StringBuilder();
+        playerdata.append(Game.VERSION).append("\n");
 
-		Save.writePlayer(this, datalist);
-		for (String str: datalist)
-			if (str.length() > 0)
-				playerdata.append(str).append(",");
-		playerdata = new StringBuilder(playerdata.substring(0, playerdata.length() - 1) + "\n");
+        Save.writePlayer(this, datalist);
+        for (String str: datalist)
+        if (str.length() > 0)
+        playerdata.append(str).append(",");
+        playerdata = new StringBuilder(playerdata.substring(0, playerdata.length() - 1) + "\n");
 
-		Save.writeInventory(this, datalist);
-		for (String str: datalist)
-			if (str.length() > 0)
-				playerdata.append(str).append(",");
-		if (datalist.size() == 0)
-			playerdata.append("null");
-		else
-			playerdata = new StringBuilder(playerdata.substring(0, playerdata.length() - 1));
+        Save.writeInventory(this, datalist);
+        for (String str: datalist)
+        if (str.length() > 0)
+        playerdata.append(str).append(",");
+        if (datalist.size() == 0)
+        playerdata.append("null");
+        else
+        playerdata = new StringBuilder(playerdata.substring(0, playerdata.length() - 1));
 
-		return playerdata.toString();
-	}
+        return playerdata.toString();
+    }
 
-	@Override
-	public Inventory getInventory() {
-		return inventory;
-	}
+    @Override
+    public Inventory getInventory() {
+        return inventory;
+    }
 
 }
