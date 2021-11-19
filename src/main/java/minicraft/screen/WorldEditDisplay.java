@@ -9,12 +9,14 @@ import java.util.List;
 import minicraft.core.FileHandler;
 import minicraft.core.Game;
 import minicraft.core.io.InputHandler;
+import minicraft.core.io.Sound;
 import minicraft.gfx.Color;
 import minicraft.screen.Menu.Builder;
 import minicraft.screen.WorldSelectDisplay.Action;
 import minicraft.screen.entry.InputEntry;
 import minicraft.screen.entry.ListEntry;
 import minicraft.screen.entry.StringEntry;
+import org.tinylog.Logger;
 
 public class WorldEditDisplay extends Display {
 	
@@ -61,7 +63,7 @@ public class WorldEditDisplay extends Display {
 	public void tick(InputHandler input) {
 		super.tick(input);
 		
-		if(input.getKey("select").clicked) { // do action
+		if (input.getKey("select").clicked) { // do action
 			InputEntry entry;
 
 			// The location of the world folder on the disk.
@@ -70,13 +72,14 @@ public class WorldEditDisplay extends Display {
 			// Do the action.
 			switch (action) {
 				case Delete:
-					if(Game.debug) System.out.println("deleting world: " + world);
+					Logger.debug("Deleting world: " + world);
 					File[] list = world.listFiles();
 					for (File file : list) {
 						file.delete();
 					}
 					world.delete();
-					
+
+					Sound.confirm.play();
 					WorldSelectDisplay.refreshWorldNames();
 					if(WorldSelectDisplay.getWorldNames().size() > 0)
 						Game.setMenu(new WorldSelectDisplay());
@@ -93,15 +96,17 @@ public class WorldEditDisplay extends Display {
 					String newname = entry.getUserInput();
 					File newworld = new File(worldsDir + newname);
 					newworld.mkdirs();
-					if (Game.debug) System.out.println("copying world " + world + " to world " + newworld);
+					Logger.debug("Copying world {} to world {}.", world, newworld);
 					// walk file tree
 					try {
 						FileHandler.copyFolderContents(new File(worldsDir+oldname).toPath(), newworld.toPath(), FileHandler.REPLACE_EXISTING, false);
 					} catch (IOException e) {
 						e.printStackTrace();
 					}
-					
-					Game.exitMenu();
+
+					Sound.confirm.play();
+					WorldSelectDisplay.refreshWorldNames();
+					Game.setMenu(new WorldSelectDisplay());
 					
 				break;
 				
@@ -115,12 +120,14 @@ public class WorldEditDisplay extends Display {
 
 					// Try to rename the file, if it works, return
 					if (world.renameTo(new File(worldsDir + name))) {
-						if (Game.debug) System.out.println("Renaming world " + world + " to new name: " + name);
+						Logger.debug("Renaming world {} to new name: {}", world, name);
 					} else {
-						System.err.println("ERROR: Rename failed in WorldEditDisplay.");
+						Logger.error("Rename failed in WorldEditDisplay.");
 					}
 
-					Game.exitMenu();
+					Sound.confirm.play();
+					WorldSelectDisplay.refreshWorldNames();
+					Game.setMenu(new WorldSelectDisplay());
 				break;
 			}
 		}
