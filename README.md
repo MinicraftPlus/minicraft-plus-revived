@@ -42,6 +42,6 @@ Because this project uses a build tool called gradle it is very easy to build or
 1. Download the source code by clicking the green code button, and download it as a ZIP.
 2. Extract the contents of the folder.
 3. Open command prompt and enter `cd [folder_location]`, this will open the folder in the command prompt. 
-4. Type `gradlew run` or `gradlew build` to run or build the program. This might take some time. If on unix, add a "./" to the front.
+4. Type `gradlew run` or `gradlew build` to run or build the program. This might take some time. If on unix, add "./" to the front.
    1. If you built the project, the jar file is found in `build/libs`
    2. If you get an error screaming that you're missing java. You need to [set up](https://docs.oracle.com/en/cloud/saas/enterprise-performance-management-common/diepm/epm_set_java_home_104x6dd63633_106x6dd6441c.html) your JAVA_HOME environment variable, or download a JDK if you haven't already.
