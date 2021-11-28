@@ -33,7 +33,7 @@ public abstract class ListEntry {
 		String string = toString().toLowerCase(Locale.ENGLISH);
 		contain = contain.toLowerCase(Locale.ENGLISH);
 
-		Font.drawColor(string.replaceAll(contain, Color.toStringCode(containColor) + contain + Color.WHITE_CODE), screen, x, y);
+		Font.drawColor(string.replace(contain, Color.toStringCode(containColor) + contain + Color.WHITE_CODE), screen, x, y);
 	}
 	
 	/**
