@@ -1,3 +1,131 @@
+### Achievements
+
+# Achievements
+
+minicraft.achievement.woodcutter
+Talador
+
+minicraft.achievement.woodcutter.desc
+Conseguir madera
+
+minicraft.achievement.benchmarking
+Comparativa de mercado
+
+minicraft.achievement.benchmarking.desc
+Hacer un mesa de trabajo.
+
+minicraft.achievement.upgrade
+Actualización!
+
+minicraft.achievement.upgrade.desc
+Consigue una herramienta con un material más resistente que la madera.
+
+minicraft.achievement.bow
+¡Inclínate ante mí!
+
+minicraft.achievement.bow.desc
+Mata a un Mob con un arco.
+
+minicraft.achievement.fish
+¡Arriba los peces!
+
+minicraft.achievement.fish.desc
+¡Pescar un pez!
+
+minicraft.achievement.doors
+Protección de puertas
+
+minicraft.achievement.doors.desc
+Coloque todas las puertas.
+
+minicraft.achievement.planks
+¡Camina por las tablas!
+
+minicraft.achievement.planks.desc
+Coloca todos los tipos de tablas.
+
+minicraft.achievement.clothes
+¡Que tengas un día lleno de color!
+
+minicraft.achievement.clothes.desc
+Consigue ropa de todos los colores.
+
+minicraft.achievement.demolition
+Demostración de demolición
+
+minicraft.achievement.demolition.desc
+Usa dinamita.
+
+minicraft.achievement.explosive_ending
+Un final explosivo.
+
+minicraft.achievement.explosive_ending.desc
+"Accidentalmente" te vuelas a ti mismo.
+
+minicraft.achievement.survive_darkness
+¿Miedo a la oscuridad?
+
+minicraft.achievement.survive_darkness.desc
+Sobrevive 5 minutos en total oscuridad.
+
+minicraft.achievement.lava
+Asuntos candentes
+
+minicraft.achievement.lava.desc
+Usa una poción de lava para nadar en lava.
+
+minicraft.achievement.find_gem
+¡Oooh Brillante!
+
+minicraft.achievement.find_gem.desc
+Encuentra el mineral de gema y hazlo explotar.
+
+minicraft.achievement.lowest_caves
+La oscuridad detrás de la luz
+
+minicraft.achievement.lowest_caves.desc
+Llega a las cuevas más bajas.
+
+minicraft.achievement.obsidian_dungeon
+De caballeros y hombres
+
+minicraft.achievement.obsidian_dungeon.desc
+Llega a la mazmorra de obsidiana.
+
+minicraft.achievement.airwizard
+Derrota... ¿el aire?
+
+minicraft.achievement.airwizard.desc
+¡Derrota al primer Mago del Aire!
+
+minicraft.achievement.second_airwizard
+¡Una hazaña aérea!
+
+minicraft.achievement.second_airwizard.desc
+Derrota al segundo Mago del Aire.
+
+minicraft.achievement.eat_all_food
+A dieta
+
+minicraft.achievement.eat_all_food.desc
+Coma todos los alimentos.
+
+minicraft.achievement.skin
+Desfile de moda
+
+minicraft.achievement.skin.desc
+Cambia de personaje.
+
+# AchievementsDisplay.java
+Achieved!
+¡Conseguido!
+
+Not Achieved
+No se ha conseguido
+
+Achievement Score:
+Puntuación del logro:
+
 ### entity
 
 ## entity.particle
