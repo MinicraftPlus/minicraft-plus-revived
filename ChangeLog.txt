@@ -1,6 +1,11 @@
 Minicraft+ version 2.1.0
 + Added credits menu
++ Added Tiles: Stone, Ornate Stone, Obsidian, and Obsidian Tiles
++ Added Items: Ornate Stone, Obsidian, Obsidian Tiles
++ Added Recipes: 2 Stone makes 2 Ornate Stone, 2 Obsidian makes 2 Obsidian Bricks, 2 Obsidian makes 2 Obsidian Tiles
 * Shear loses durability when used on sheep
+* Changed textures for Wood related tiles, Stone related tiles, and Obsidian related tiles
+* Fixed World copy and renaming functions not updating the list
 
 
 Minicraft+ version 2.0.7
