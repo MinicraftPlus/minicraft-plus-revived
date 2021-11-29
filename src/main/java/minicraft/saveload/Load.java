@@ -773,6 +773,11 @@ public class Load {
 					c = Class.forName("minicraft.entity.mob." + entityName);
 				} catch (ClassNotFoundException ignored) {}
 			}
+
+			// Check for level of AirWizard
+			if(entityName.equals("AirWizard")) {				
+				mobLvl = Integer.parseInt(stuff[3]);
+			}
 			
 			newEntity = getEntity(entityName.substring(entityName.lastIndexOf(".")+1), mobLvl);
 		}
