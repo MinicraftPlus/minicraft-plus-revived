@@ -1,7 +1,8 @@
 Minicraft+ version 2.1.0
 
 + Added credits menu
-+ New decorated stone tile
++ Added decorated stone tile
++ Added new obsidian tile
 * Fixed crash when inputing certain characters into the inventory searcher
 * Made gem pickaxe purple
 * Shear loses durability when used on sheep
