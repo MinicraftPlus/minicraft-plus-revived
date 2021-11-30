@@ -110,7 +110,14 @@ public class WorldSelectDisplay extends Display {
 	
 	@Override
 	public void init(Display parent) {
-		super.init(parent);
+		if (parent instanceof WorldEditDisplay && parent.getParent() != null) {
+			// this should get original parent when World Select Display
+			// changed to World Edit Display
+			super.init(parent.getParent().getParent());
+		} else {
+			super.init(parent);
+		}
+
 		worldName = "";
 		loadedWorld = true;
 		
