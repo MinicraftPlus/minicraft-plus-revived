@@ -169,7 +169,12 @@ public class Localization {
 			DirectoryStream<Path> dir = Files.newDirectoryStream(folderPath);
 			for (Path p : dir) {
 				String filename = p.getFileName().toString();
-				languages.add(filename.replace(".mcpl", ""));
+				String data = filename.replace(".mcpl", "");
+				String lang = data.substring(0, data.indexOf('_'));
+
+				languages.add(lang);
+				localizationFiles.put(lang, "/resources/localization/"+filename);
+				locales.put(lang, Locale.forLanguageTag(data.substring(data.indexOf('_')+1)));
 			}
 		} catch (IOException | URISyntaxException e) {
 			e.printStackTrace();
