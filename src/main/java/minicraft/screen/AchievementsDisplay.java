@@ -10,6 +10,7 @@ import minicraft.core.io.Localization;
 import minicraft.core.io.Sound;
 import minicraft.gfx.*;
 import minicraft.saveload.Save;
+import minicraft.screen.entry.BlankEntry;
 import minicraft.screen.entry.ListEntry;
 import minicraft.screen.entry.SelectEntry;
 import minicraft.screen.entry.StringEntry;
@@ -90,7 +91,7 @@ public class AchievementsDisplay extends Display {
      * Use this to lock or unlock an achievement.
      * @param id Achievement ID
      */
-    public static void setAchievement(int id, boolean unlocked){
+    public static void setAchievement(int id, boolean unlocked) {
         Achievement a = achievements.get(id);
         a.setUnlocked(unlocked);
 
@@ -107,7 +108,7 @@ public class AchievementsDisplay extends Display {
         super.render(screen);
 
         // Title.
-        Font.drawCentered(Localization.getLocalized("Achievements"), screen, 8, Color.YELLOW);
+        Font.drawCentered(Localization.getLocalized("Achievements"), screen, 8, Color.WHITE);
 
         // Achievement score.
         Font.drawCentered(Localization.getLocalized("Achievement Score:") + " " + achievementScore, screen, 32, Color.GRAY);

@@ -118,7 +118,7 @@ public class SkinDisplay extends Display {
 		String selectedDownDown = selectedSkinIndex - 2 < 0 ? "" : skinNames.get(selectedSkinIndex - 2);
 
 		// Title.
-		Font.drawCentered("Skins", screen, Screen.h - 180, Color.YELLOW);
+		Font.drawCentered("Skins", screen, Screen.h - 180, Color.WHITE);
 
 		// Render the menu.
 		Font.drawCentered(SkinDisplay.shortNameIfLong(selectedUpUp), screen, Screen.h - 60, Color.GRAY); // First unselected space
@@ -128,8 +128,8 @@ public class SkinDisplay extends Display {
 		Font.drawCentered(SkinDisplay.shortNameIfLong(selectedDownDown), screen, Screen.h - 100, Color.GRAY); // Fourth space
 
 		// Help text.
-		Font.drawCentered("Use "+ Game.input.getMapping("cursor-down") + " and " + Game.input.getMapping("cursor-up") + " to move.", screen, Screen.h - 19, Color.WHITE);
-		Font.drawCentered(Game.input.getMapping("SELECT") + " to select.", screen, Screen.h - 11, Color.WHITE);
+		Font.drawCentered("Use "+ Game.input.getMapping("cursor-down") + " and " + Game.input.getMapping("cursor-up") + " to move.", screen, Screen.h - 17, Color.GRAY);
+		Font.drawCentered(Game.input.getMapping("SELECT") + " to select.", screen, Screen.h - 9, Color.GRAY);
 
 		int h = 2;
 		int w = 2;
