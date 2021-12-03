@@ -3,6 +3,7 @@ package minicraft.entity.mob;
 import minicraft.core.Game;
 import minicraft.core.io.Sound;
 import minicraft.entity.Direction;
+import minicraft.entity.Entity;
 import minicraft.entity.particle.TextParticle;
 import minicraft.gfx.Color;
 import minicraft.gfx.MobSprite;
@@ -55,8 +56,12 @@ public abstract class MobAi extends Mob {
 		if (lifetime > 0) {
 			age++;
 			if (age > lifetime) {
-				remove();
-				return;
+				boolean playerClose = getLevel().entityNearPlayer((Entity) this);
+
+				if (!playerClose) {
+					remove();
+					return;
+				}
 			}
 		}
 		

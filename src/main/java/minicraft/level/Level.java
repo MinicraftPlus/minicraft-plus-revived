@@ -399,13 +399,7 @@ public class Level {
 			Entity removeThis = (Entity)entities.toArray()[(random.nextInt(entities.size()))];
 			if (removeThis instanceof MobAi) {
 				// Make sure there aren't any close players
-				boolean playerClose = false;
-				for (Player player : players) {
-					if (Math.abs(player.x - removeThis.x) < 128 && Math.abs(player.y - removeThis.x) < 76) {
-						playerClose = true;
-						break;
-					}
-				}
+				boolean playerClose = entityNearPlayer(removeThis);
 
 				if (!playerClose) {
 					remove(removeThis);
@@ -443,6 +437,15 @@ public class Level {
 		
 		if (fullTick && count < maxMobCount && !Game.isValidClient())
 			trySpawn();
+	}
+
+	public boolean entityNearPlayer(Entity entity) {
+		for (Player player : players) {
+			if (Math.abs(player.x - entity.x) < 128 && Math.abs(player.y - entity.y) < 76) {
+				return true;
+			}
+		}
+		return false;
 	}
 	
 	public void printEntityStatus(String entityMessage, Entity entity, String... searching) {
