@@ -67,10 +67,6 @@ public final class Tiles {
 		tiles.set(40, new WoolTile(WoolTile.WoolType.YELLOW));
 		tiles.set(41, new WoolTile(WoolTile.WoolType.BLACK));
 		tiles.set(42, new PotatoTile("Potato"));
-		tiles.set(43, new MaterialTile(Tile.Material.Stone));
-		tiles.set(44, new MaterialTile(Tile.Material.Obsidian));
-		tiles.set(45, new DecorTile(Tile.Material.Stone));
-		tiles.set(46, new DecorTile(Tile.Material.Obsidian));
 
 		// WARNING: don't use this tile for anything!
 		tiles.set(255, new ConnectTile());

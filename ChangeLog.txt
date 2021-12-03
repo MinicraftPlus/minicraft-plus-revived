@@ -1,16 +1,10 @@
 Minicraft+ version 2.1.0
 
 + Added credits menu
-+ Added decorated stone tile
-+ Added new obsidian tile
 * Fixed crash when inputing certain characters into the inventory searcher
 * Fixed issue where level 2 airwizard would load with 250% health
 * Fixed crash when deleting world
-* Made gem pickaxe purple
 * Shear loses durability when used on sheep
-* Changed textures for wood tiles
-* Changed textures for stone tiles
-* Changed textures for obsidian tiles
 * The world list should now update if copying or renaming worlds ingame
 
 
