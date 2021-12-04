@@ -4,6 +4,7 @@ Minicraft+ version 2.1.0
 * Fixed crash when inputing certain characters into the inventory searcher
 * Fixed issue where level 2 airwizard would load with 250% health
 * Fixed crash when deleting world
+* Prevented animals and mobs from despawning while in view
 * Shear loses durability when used on sheep
 * The world list should now update if copying or renaming worlds ingame
 
