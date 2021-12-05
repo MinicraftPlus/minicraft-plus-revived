@@ -2,6 +2,7 @@ package minicraft.screen;
 
 import java.time.LocalDateTime;
 import java.time.Month;
+import java.util.Arrays;
 import java.util.Random;
 
 import minicraft.util.BookData;
@@ -107,33 +108,20 @@ public class TitleDisplay extends Display {
 			Network.findLatestVersion(this::checkVersion);
 		}
 		else {
-			if(latestVersion.version.compareTo(Game.VERSION) > 0) { // Link new version
-				menus[0].updateEntry(0, new StringEntry("New: "+latestVersion.releaseName, Color.GREEN));
-				menus[0].updateEntry(1, new LinkEntry(Color.CYAN, "--Select here to Download--", latestVersion.releaseUrl, "Direct link to latest version: " + latestVersion.releaseUrl + "\nCan also be found here with change log: https://www.github.com/chrisj42/minicraft-plus-revived/releases"));
+			if (latestVersion.version.compareTo(Game.VERSION, true) > 0) {
+				menus[0].updateEntry(0, new StringEntry(Localization.getLocalized("New: ") + latestVersion.releaseName, Color.GREEN));
+				menus[0].updateEntry(1, new LinkEntry(Color.CYAN, "--Select here to Download--", latestVersion.releaseUrl, "Direct link to latest version: " + latestVersion.releaseUrl));
 			}
-			else if(latestVersion.releaseName.length() > 0)
-				menus[0].updateEntry(0, new StringEntry("You have the latest version.", Color.DARK_GRAY));
+			else if (latestVersion.releaseName.length() > 0)
+				menus[0].updateEntry(0, new StringEntry(Localization.getLocalized("You have the latest version."), Color.DARK_GRAY));
 			else
-				menus[0].updateEntry(0, new StringEntry("Connection failed, could not check for updates.", Color.RED));
+				menus[0].updateEntry(0, new StringEntry(Localization.getLocalized("Could not check for updates."), Color.RED));
 		}
 	}
-	
-	@NotNull
-	private static SelectEntry displayFactory(String entryText, ListEntry... entries) {
-		return new SelectEntry(entryText, () -> Game.setMenu(new Display(true, new Menu.Builder(false, 2, RelPos.CENTER, entries).createMenu())));
-	}
-	
+
 	@Override
 	public void tick(InputHandler input) {
 		if (input.getKey("r").clicked && Game.debug) rand = random.nextInt(splashes.length - 3) + 3;
-
-		if (reverse) {
-			count--;
-			if (count == 0) reverse = false;
-		} else {
-			count++;
-			if (count == 25) reverse = true;
-		}
 
 		super.tick(input);
 	}
@@ -156,6 +144,14 @@ public class TitleDisplay extends Display {
 		boolean isblue = splashes[rand].contains("blue");
 		boolean isGreen = splashes[rand].contains("Green");
 		boolean isRed = splashes[rand].contains("Red");
+
+		if (reverse) {
+			count--;
+			if (count == 0) reverse = false;
+		} else {
+			count++;
+			if (count == 25) reverse = true;
+		}
 		
 		/// This isn't as complicated as it looks. It just gets a color based off of count, which oscilates between 0 and 25.
 		int bcol = 5 - count / 5; // This number ends up being between 1 and 5, inclusive.

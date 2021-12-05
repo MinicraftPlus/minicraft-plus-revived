@@ -20,6 +20,7 @@ import minicraft.network.MinicraftServer;
 import minicraft.saveload.Load;
 import minicraft.screen.LoadingDisplay;
 import minicraft.screen.WorldSelectDisplay;
+import org.tinylog.Logger;
 
 public class Network extends Game {
 	private Network() {}
@@ -36,12 +37,12 @@ public class Network extends Game {
 	
 	public static void findLatestVersion(Action callback) {
 		new Thread(() -> {
-			if (debug) System.out.println("Fetching release list from GitHub..."); // Fetch the latest version from GitHub
+			Logger.debug("Fetching release list from GitHub..."); // Fetch the latest version from GitHub
 			try {
 				HttpResponse<JsonNode> response = Unirest.get("https://api.github.com/repos/chrisj42/minicraft-plus-revived/releases").asJson();
 				if (response.getStatus() != 200) {
-					System.err.println("Version request returned status code " + response.getStatus() + ": " + response.getStatusText());
-					System.err.println("Response body: " + response.getBody());
+					Logger.error("Version request returned status code " + response.getStatus() + ": " + response.getStatusText());
+					Logger.error("Response body: " + response.getBody());
 					latestVersion = new VersionInfo(VERSION, "", "");
 				} else {
 					latestVersion = new VersionInfo(response.getBody().getArray().getJSONObject(0));

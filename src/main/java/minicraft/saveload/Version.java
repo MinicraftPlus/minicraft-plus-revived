@@ -40,20 +40,34 @@ public class Version implements Comparable<Version> {
 	
 	public boolean isValid() { return valid; }
 	public static boolean isValid(String version) { return new Version(version, false).isValid(); }
-	
-	// The returned value of this method (-1, 0, or 1) is determined by whether this object is less than, equal to, or greater than the specified object.
+
+	/**
+	 *	The returned value of this method (-1, 0, or 1) is determined by whether this object is less than, equal to, or greater than the specified object.
+	 */
 	public int compareTo(@NotNull Version ov) {
+		return compareTo(ov, false);
+	}
+
+	/**
+	 *	The returned value of this method (-1, 0, or 1) is determined by whether this object is less than, equal to, or greater than the specified object.
+ 	 */
+	public int compareTo(@NotNull Version ov, boolean ignoreDev) {
 		if (make != ov.make) return Integer.compare(make, ov.make);
 		if (major != ov.major) return Integer.compare(major, ov.major);
 		if (minor != ov.minor) return Integer.compare(minor, ov.minor);
-		if (dev != ov.dev) {
-			if (dev == 0) return 1; //0 is the last "dev" version, as it is not a dev.
-			if (ov.dev == 0) return -1;
-			return Integer.compare(dev, ov.dev);
+		if (!ignoreDev) {
+			if (dev != ov.dev) {
+				if (dev == 0) return 1; //0 is the last "dev" version, as it is not a dev.
+				if (ov.dev == 0) return -1;
+				return Integer.compare(dev, ov.dev);
+			}
 		}
+
 		return 0; // The versions are equal.
 	}
 	
 	@Override
 	public String toString() { return make + "." + major + "." + minor + (dev == 0 ? "" : "-dev" + dev); }
+
+	public int[] toArray() { return new int[]{ make, major, minor, dev }; }
 }
