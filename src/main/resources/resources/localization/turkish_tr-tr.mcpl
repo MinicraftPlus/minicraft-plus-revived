@@ -8,10 +8,10 @@ Air Wizard: Defeated!
 Hava Büyücüsü: Yenildi!
 
 The Dungeon is now open!
-Zindan Şimdi Açıldı!
+Zindan açıldı!
 
 A costume lies on the ground...
-Bir Kostüm Yerde Sürünüyor...
+Bir kostüm yerde duruyor...
 
 # Bed.java
 Can't sleep! 
@@ -21,7 +21,7 @@ Min
 Dk
 	
  Sec left!
- Sn Kaldı!
+ Sn kaldı!
 
 # DungeonChest.java
 You hear a noise from the surface!
@@ -37,22 +37,22 @@ Crafting
 Üretim
 
 Set your home!
-Evin Ayarlandı!
+Eviniz ayarlandı!
 
 Can't set home here!
-Evin Buraya Ayarlanamıyor!
+Burası ev ayarlanamıyor!
 
 Home Sweet Home!
 Evim Evim Güzel Evim!
 
 Mode penalty: -2 health
-Mod Cezası: -2 Can
+Mod cezası: -2 can
 
 You don't have a home!
-Senin Evin Yok!
+Eviniz yok!
 
 You can't go home from here!
-Burdan Eve Gidemessin!
+Buradan eve gidemezsiniz!
  
 ### entity end
 
@@ -690,19 +690,19 @@ Are you sure you want to reset all key bindings to the default keys?
 Bütün Kontrolleri Orjinale Döndürmek İstediğine Eminmisin?
 
 enter to confirm
-Entere Bas Ve Kabul Et
+enter tuşuna basarak kabul edin
 
 escape to cancel
-Escape Tuşuna Bas Ve İptal Et
+escape tuşuna basarak iptal edin
 
 Confirm Action
 Eylemi Kabul Et
 
 Press C/Enter to change key binding
-C Tuşuna Bas/Entere Bas Ve Kontrolleri Değiştir
+C veya Enter tuşuna basarak kontrolleri değiştirin
 
 Press A to add key binding
-A Ya Bas Ve Kontrol Değiştir
+A'ya basarak tuş ataması ekle
 
 Shift-D to reset all keys to default
 Kontrolleri Resetlemek İçin Shift-D Bas
@@ -875,13 +875,19 @@ Quit
 Çıkış
 
  to select
- İle Seç
+ ile seç
  
  to accept
- İle Kabul Et
+ ile kabul et
  
  to return
- İle Geri Dön
+ ile geri dön
+
+Skins
+Ciltler
+
+Achievements
+Başarımlar
 
 # WorldEditMenu.java
 
@@ -909,7 +915,7 @@ Enter World Name
 Dünya İsmi Girin
 
 Trouble with world name?
-Dünya İsmi İçin Eminmisiniz?
+Dünya İsmi İçin Emin misiniz?
 
 by default, w and s move the cursor up and down. This can be changed in the key binding menu. To type the letter instead of moving the cursor, hold the shift key while typing the world name.
 Orjinal Kontrollerle W ve S İle Fareyi Yukarı Ve Aşağı Hareket Ettirin. Bu Kontrol Değiştirme Menüsünden Değiştirilebilir.
@@ -1036,6 +1042,6 @@ Irregular
 Düzensiz
 
 Wear Suit
-Aşınma kıyafeti
+Kıyafet Giy
 
 ### minicraft end
