@@ -9,6 +9,7 @@ Minicraft+ version 2.1.0
 * Shear loses durability when used on sheep
 * The world list should now update if copying or renaming worlds in-game
 * Pre-releases are now ignored from version check
+* Fixed stair rendering in sky
 
 
 Minicraft+ version 2.0.7
