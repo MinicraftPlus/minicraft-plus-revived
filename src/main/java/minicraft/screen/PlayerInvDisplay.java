@@ -37,7 +37,8 @@ public class PlayerInvDisplay extends Display {
 	public void render(Screen screen) {
 		super.render(screen);
 
+		// Searcher help text
 		String text = "(" + Game.input.getMapping("SEARCHER-BAR") + ") " + Localization.getLocalized("to search.");
-		Font.draw(text, screen, Screen.w / 2 - text.length(), Screen.h / 2 + 16, Color.WHITE);
+		Font.draw(text, screen, 16, Screen.h / 2 + 2, Color.WHITE);
 	}
 }
