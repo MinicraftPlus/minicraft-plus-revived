@@ -4,13 +4,12 @@ Minicraft+ version 2.1.0
 * Fixed crash when inputting certain characters into the inventory searcher
 * Fixed issue where level 2 airwizard would load with 250% health
 * Fixed crash when deleting world
+* Fixed rendering of stair tiles in sky level
 * Prevented animals and mobs from despawning while in view
 * Prevented furniture from being pushed over stairs
 * Shear loses durability when used on sheep
 * The world list should now update if copying or renaming worlds in-game
 * Pre-releases are now ignored from version check
-* Fixed stair rendering in sky
-
 
 Minicraft+ version 2.0.7
 
