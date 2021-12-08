@@ -1,6 +1,7 @@
 Minicraft+ version 2.1.0
 
 + Added credits menu
++ Added the ability to use some ascii characters in world seed
 * Fixed crash when inputting certain characters into the inventory searcher
 * Fixed issue where level 2 airwizard would load with 250% health
 * Fixed crash when deleting world
