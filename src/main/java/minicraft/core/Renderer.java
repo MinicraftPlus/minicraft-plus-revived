@@ -450,6 +450,6 @@ public class Renderer extends Game {
 	
 	
 	static java.awt.Dimension getWindowSize() {
-		return new java.awt.Dimension(new Float(WIDTH * SCALE).intValue(), new Float(HEIGHT * SCALE).intValue());
+		return new java.awt.Dimension((int) (WIDTH * SCALE), (int) (HEIGHT * SCALE));
 	}
 }

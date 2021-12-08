@@ -10,7 +10,6 @@ import minicraft.core.io.Localization;
 import minicraft.core.io.Sound;
 import minicraft.gfx.*;
 import minicraft.saveload.Save;
-import minicraft.screen.entry.BlankEntry;
 import minicraft.screen.entry.ListEntry;
 import minicraft.screen.entry.SelectEntry;
 import minicraft.screen.entry.StringEntry;

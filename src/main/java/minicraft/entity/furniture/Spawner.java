@@ -115,7 +115,7 @@ public class Spawner extends Furniture {
 				//noinspection JavaReflectionMemberAccess
 				newmob = mob.getClass().getConstructor(int.class).newInstance(lvl);
 			else
-				newmob = mob.getClass().newInstance();
+				newmob = mob.getClass().getDeclaredConstructor().newInstance();
 		} catch (Exception ex) {
 			System.err.println("Spawner ERROR: could not spawn mob; error initializing mob instance:");
 			ex.printStackTrace();

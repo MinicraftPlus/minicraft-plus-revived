@@ -415,7 +415,7 @@ public class ConsoleReader extends Thread {
 			if (args.length == 2) {
 				// Specified @_ level
 				try {
-					allEntities.addAll(Arrays.asList(Game.levels[new Integer(args[1])].getEntityArray()));
+					allEntities.addAll(Arrays.asList(Game.levels[Integer.parseInt(args[1])].getEntityArray()));
 				} catch (NumberFormatException ex) {
 					System.out.println("Invalid entity targeting format: Specified level is not an integer: " + args[1]);
 					return null;

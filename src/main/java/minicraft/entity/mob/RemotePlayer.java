@@ -7,7 +7,6 @@ import org.jetbrains.annotations.Nullable;
 
 import minicraft.core.Game;
 import minicraft.core.io.InputHandler;
-import minicraft.entity.ClientTickable;
 import minicraft.entity.Direction;
 import minicraft.entity.Entity;
 import minicraft.entity.furniture.Bed;
@@ -18,7 +17,7 @@ import minicraft.gfx.Screen;
 import minicraft.level.Level;
 
 /** This is used for players in multiplayer mode. */
-public class RemotePlayer extends Player implements ClientTickable {
+public class RemotePlayer extends Player {
 	
 	/// These are used by the server to determine the distance limit for an entity/tile to be updated/added for a given player.
 	private static final int xSyncRadius = 12;

@@ -48,7 +48,7 @@ public class Localization {
 		if (key.matches("^[ ]*$")) return key; // Blank, or just whitespace
 		
 		try {
-			double num = Double.parseDouble(key);
+			Double.parseDouble(key);
 			return key; // This is a number; don't try to localize it
 		} catch(NumberFormatException ignored) {}
 		

@@ -52,7 +52,7 @@ public class Furniture extends Entity {
 	@Override
 	public Furniture clone() {
 		try {
-			return getClass().newInstance();
+			return getClass().getDeclaredConstructor().newInstance();
 		} catch (Exception ex) {
 			ex.printStackTrace();
 		}
