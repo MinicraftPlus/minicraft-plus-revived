@@ -104,6 +104,7 @@ public class LegacyLoad {
 			br = new BufferedReader(new FileReader(filename));
 			
 			String curLine;StringBuilder total = new StringBuilder();
+			ArrayList<String> curData;
 			while ((curLine = br.readLine()) != null)
 				total.append(curLine);
 			data.addAll(Arrays.asList(total.toString().split(",")));
