@@ -177,9 +177,9 @@ public class Color {
 	public static void main(String[] args) {
 		int r, g, b;
 		
-		r = new Integer(args[0]);
-		g = new Integer(args[1]);
-		b = new Integer(args[2]);
+		r = Integer.parseInt(args[0]);
+		g = Integer.parseInt(args[1]);
+		b = Integer.parseInt(args[2]);
 		
 		System.out.println(rgb(r, g, b));
 	}

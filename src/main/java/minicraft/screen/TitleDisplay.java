@@ -2,11 +2,9 @@ package minicraft.screen;
 
 import java.time.LocalDateTime;
 import java.time.Month;
-import java.util.Arrays;
 import java.util.Random;
 
 import minicraft.util.BookData;
-import org.jetbrains.annotations.NotNull;
 
 import minicraft.core.Game;
 import minicraft.core.Network;
@@ -23,7 +21,6 @@ import minicraft.gfx.Screen;
 import minicraft.level.Level;
 import minicraft.screen.entry.BlankEntry;
 import minicraft.screen.entry.LinkEntry;
-import minicraft.screen.entry.ListEntry;
 import minicraft.screen.entry.SelectEntry;
 import minicraft.screen.entry.StringEntry;
 

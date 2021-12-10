@@ -882,11 +882,6 @@ public class Level {
 		return false;
 	}
 	
-	private boolean noStairs(int x, int y) {
-		return getTile(x, y) != Tiles.get("Stairs Down");
-	}
-	
-	
 	private void generateSpawnerStructures() {
 		for (int i = 0; i < 18 / -depth * (w / 128); i++) {
 			
