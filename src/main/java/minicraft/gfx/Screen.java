@@ -4,7 +4,7 @@ import java.util.Arrays;
 
 import minicraft.core.Renderer;
 import minicraft.core.Updater;
-import minicraft.core.io.Settings;
+import org.jetbrains.annotations.Nullable;
 
 public class Screen {
 	
@@ -29,7 +29,6 @@ public class Screen {
 	// And 3072 the start of the gui sheet
 
 	private SpriteSheet[] sheets;
-	private SpriteSheet[] sheetsCustom;
 
 	public Screen(SpriteSheet itemSheet, SpriteSheet tileSheet, SpriteSheet entitySheet, SpriteSheet guiSheet, SpriteSheet skinsSheet) {
 
@@ -38,24 +37,17 @@ public class Screen {
 		/// Screen width and height are determined by the actual game window size, meaning the screen is only as big as the window.
 		pixels = new int[Screen.w * Screen.h]; // Makes new integer array for all the pixels on the screen.
 	}
-
-	public Screen(SpriteSheet itemSheet, SpriteSheet tileSheet, SpriteSheet entitySheet, SpriteSheet guiSheet, SpriteSheet skinsSheet,
-					SpriteSheet itemSheetCustom, SpriteSheet tileSheetCustom, SpriteSheet entitySheetCustom, SpriteSheet guiSheetCustom) {
-		this(itemSheet, tileSheet, entitySheet, guiSheet, skinsSheet);
-
-		sheetsCustom = new SpriteSheet[]{itemSheetCustom, tileSheetCustom, entitySheetCustom, guiSheetCustom};
-	}
-	
 	public Screen(Screen model) {
 		this(model.sheets[0], model.sheets[1], model.sheets[2], model.sheets[3], model.sheets[4]);
 	}
-	
+
+	@Nullable
 	public void setSheet(SpriteSheet itemSheet, SpriteSheet tileSheet, SpriteSheet entitySheet, SpriteSheet guiSheet, SpriteSheet skinsSheet) {
 		if (itemSheet != null) {
-		        sheets[0] = itemSheet;
+			sheets[0] = itemSheet;
 		}
 		if (tileSheet != null) {
-		        sheets[1] = tileSheet;
+			sheets[1] = tileSheet;
 		}
 		if (entitySheet != null) {
 			sheets[2] = entitySheet;
@@ -68,12 +60,13 @@ public class Screen {
 		}
 	}
 
+	@Nullable
 	public void setSheet(SpriteSheet itemSheet, SpriteSheet tileSheet, SpriteSheet entitySheet, SpriteSheet guiSheet) {
 		if (itemSheet != null) {
-		        sheets[0] = itemSheet;
+			sheets[0] = itemSheet;
 		}
 		if (tileSheet != null) {
-		        sheets[1] = tileSheet;
+			sheets[1] = tileSheet;
 		}
 		if (entitySheet != null) {
 			sheets[2] = entitySheet;
@@ -101,14 +94,7 @@ public class Screen {
 
 	/** This method takes care of assigning the correct spritesheet to assign to the sheet variable **/
     public void render(int xp, int yp, int tile, int bits, int sheet, int whiteTint, boolean fullbright) {
-    	SpriteSheet currentSheet;
-		if (Settings.get("textures").equals("Custom")) {
-			currentSheet = sheetsCustom[sheet] != null ? sheetsCustom[sheet] : sheets[sheet];
-		} else {
-			currentSheet = sheets[sheet];
-		}
-
-		render(xp, yp, tile, bits, currentSheet, whiteTint, fullbright);
+		render(xp, yp, tile, bits, sheets[sheet], whiteTint, fullbright);
     }
 
     /** Renders an object from the sprite sheet based on screen coordinates, tile (SpriteSheet location), colors, and bits (for mirroring). I believe that xp and yp refer to the desired position of the upper-left-most pixel. */

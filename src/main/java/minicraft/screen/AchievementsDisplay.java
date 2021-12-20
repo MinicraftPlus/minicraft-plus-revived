@@ -63,7 +63,7 @@ public class AchievementsDisplay extends Display {
 
     public AchievementsDisplay() {
         super(true, true,
-                new Menu.Builder(false, 2,RelPos.CENTER, stringEntries).setSize(48, 48).createMenu(),
+                new Menu.Builder(false, 2, RelPos.CENTER, stringEntries).setSize(48, 48).createMenu(),
                 new Menu.Builder(false, 2, RelPos.BOTTOM, new StringEntry("")).setSize(200, 32).setPositioning(new Point(Screen.w / 2, Screen.h / 2 + 32), RelPos.BOTTOM).createMenu());
     }
 

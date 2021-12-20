@@ -35,10 +35,7 @@ import minicraft.item.Inventory;
 import minicraft.item.Item;
 import minicraft.item.PotionType;
 import minicraft.network.MinicraftServer;
-import minicraft.screen.LoadingDisplay;
-import minicraft.screen.MultiplayerDisplay;
-import minicraft.screen.SkinDisplay;
-import minicraft.screen.WorldSelectDisplay;
+import minicraft.screen.*;
 import org.json.JSONArray;
 import org.json.JSONObject;
 

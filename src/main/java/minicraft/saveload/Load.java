@@ -1,6 +1,5 @@
 package minicraft.saveload;
 
-import java.awt.image.BufferedImage;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
@@ -10,8 +9,6 @@ import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-
-import javax.imageio.ImageIO;
 
 import minicraft.screen.SkinDisplay;
 import org.jetbrains.annotations.Nullable;
@@ -263,28 +260,6 @@ public class Load {
 		Settings.setIdx("diff", diffIdx);
 		
 		AirWizard.beaten = Boolean.parseBoolean(data.remove(0));
-	}
-
-	public static BufferedImage[] loadSpriteSheets() throws IOException {
-		BufferedImage[] images = new BufferedImage[] { null, null, null, null };
-
-		File itemFile = new File(Game.gameDir + "/resources/items.png");
-		if (itemFile.exists()) {
-			images[0] = ImageIO.read(itemFile);
-		}
-		File tileFile = new File(Game.gameDir + "/resources/tiles.png");
-		if (tileFile.exists()) {
-			images[1] = ImageIO.read(tileFile);
-		}
-		File entityFile = new File(Game.gameDir + "/resources/entities.png");
-		if (entityFile.exists()) {
-			images[2] = ImageIO.read(entityFile);
-		}
-		File guiFile = new File(Game.gameDir + "/resources/gui.png");
-		if (guiFile.exists()) {
-			images[3] = ImageIO.read(guiFile);
-		}
-		return images;
 	}
 	
 	private void loadMode(String modedata) {

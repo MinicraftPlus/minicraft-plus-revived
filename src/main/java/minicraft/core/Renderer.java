@@ -8,8 +8,7 @@ import java.awt.image.DataBufferInt;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Map;
-
-import javax.imageio.ImageIO;
+import java.util.Objects;
 
 import minicraft.entity.furniture.Bed;
 import minicraft.entity.mob.Player;
@@ -26,9 +25,11 @@ import minicraft.item.PotionType;
 import minicraft.item.ToolItem;
 import minicraft.item.ToolType;
 import minicraft.level.Level;
-import minicraft.saveload.Load;
 import minicraft.screen.LoadingDisplay;
 import minicraft.screen.RelPos;
+import org.tinylog.Logger;
+
+import javax.imageio.ImageIO;
 
 public class Renderer extends Game {
 	private Renderer() {}
@@ -50,38 +51,42 @@ public class Renderer extends Game {
 	
 	private static Ellipsis ellipsis = new SmoothEllipsis(new TickUpdater());
 
-	private static void initSpriteSheets() throws IOException {
-		BufferedImage[] sheets = Load.loadSpriteSheets();
+	public static SpriteSheet[] loadDefaultSpriteSheets() {
+		SpriteSheet itemSheet, tileSheet, entitySheet, guiSheet, skinsSheet;
+		try {
+			// These set the sprites to be used.
+			itemSheet = new SpriteSheet(ImageIO.read(Objects.requireNonNull(Game.class.getResourceAsStream("/resources/textures/items.png"))));
+			tileSheet = new SpriteSheet(ImageIO.read(Objects.requireNonNull(Game.class.getResourceAsStream("/resources/textures/tiles.png"))));
+			entitySheet = new SpriteSheet(ImageIO.read(Objects.requireNonNull(Game.class.getResourceAsStream("/resources/textures/entities.png"))));
+			guiSheet = new SpriteSheet(ImageIO.read(Objects.requireNonNull(Game.class.getResourceAsStream("/resources/textures/gui.png"))));
+			skinsSheet = new SpriteSheet(ImageIO.read(Objects.requireNonNull(Game.class.getResourceAsStream("/resources/textures/skins.png"))));
+		} catch (NullPointerException e) {
+			// If a provided InputStream has no name. (in practice meaning it cannot be found.)
+			e.printStackTrace();
+			Logger.error("A sprite sheet was not found.");
+			System.exit(-1);
+			return null;
+		} catch (IOException | IllegalArgumentException e) {
+			// If there is an error reading the file.
+			e.printStackTrace();
+			Logger.error("Could not load a sprite sheet.");
+			System.exit(-1);
+			return null;
+		}
 
-		// These actually set the sprites to be used
-		SpriteSheet itemSheet = new SpriteSheet(ImageIO.read(Game.class.getResourceAsStream("/resources/textures/items.png")));
-		SpriteSheet tileSheet = new SpriteSheet(ImageIO.read(Game.class.getResourceAsStream("/resources/textures/tiles.png")));
-		SpriteSheet entitySheet = new SpriteSheet(ImageIO.read(Game.class.getResourceAsStream("/resources/textures/entities.png")));
-		SpriteSheet guiSheet = new SpriteSheet(ImageIO.read(Game.class.getResourceAsStream("/resources/textures/gui.png")));
-		SpriteSheet skinsSheet = new SpriteSheet(ImageIO.read(Game.class.getResourceAsStream("/resources/textures/skins.png")));
-
-		SpriteSheet itemSheetCustom = sheets[0] != null ? new SpriteSheet(sheets[0]) : null;
-		SpriteSheet tileSheetCustom = sheets[1] != null ? new SpriteSheet(sheets[1]) : null;
-		SpriteSheet entitySheetCustom = sheets[2] != null ? new SpriteSheet(sheets[2]) : null;
-		SpriteSheet guiSheetCustom = sheets[3] != null ? new SpriteSheet(sheets[3]) : null;
-
-
-		screen = new Screen(itemSheet, tileSheet, entitySheet, guiSheet, skinsSheet, itemSheetCustom, tileSheetCustom, entitySheetCustom, guiSheetCustom);
-		lightScreen = new Screen(itemSheet, tileSheet, entitySheet, guiSheet, skinsSheet, itemSheetCustom, tileSheetCustom, entitySheetCustom, guiSheetCustom);
+		return new SpriteSheet[] { itemSheet, tileSheet, entitySheet, guiSheet, skinsSheet };
 	}
-	
+
 	static void initScreen() {
 		if (!HAS_GUI) return;
 		
 		image = new BufferedImage(WIDTH, HEIGHT, BufferedImage.TYPE_INT_RGB);
 		pixels = ((DataBufferInt) image.getRaster().getDataBuffer()).getData();
 
-		try {
-			// This sets up the screens, and loads the different spritesheets.
-			initSpriteSheets();
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
+		SpriteSheet[] sheets = loadDefaultSpriteSheets();
+		screen = new Screen(sheets[0], sheets[1], sheets[2], sheets[3], sheets[4]);
+		lightScreen = new Screen(sheets[0], sheets[1], sheets[2], sheets[3], sheets[4]);
+
 		screen.pixels = pixels;
 		
 		if (HAS_GUI) {
