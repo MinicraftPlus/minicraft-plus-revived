@@ -11,10 +11,12 @@ import java.util.Objects;
 import minicraft.core.FileHandler;
 import minicraft.core.Game;
 import minicraft.core.io.InputHandler;
-import minicraft.core.io.Sound;
 import minicraft.gfx.*;
 import minicraft.saveload.Save;
+import minicraft.screen.entry.ListEntry;
+import minicraft.screen.entry.SelectEntry;
 import org.jetbrains.annotations.NotNull;
+import org.tinylog.Logger;
 
 import javax.imageio.ImageIO;
 
@@ -44,7 +46,7 @@ public class SkinDisplay extends Display {
 
 		// Create folder, and see if it was successful.
 		if (skinFolder.mkdirs()) {
-			if (Game.debug) System.out.println("Skin folder created.");
+			Logger.info("Created texture packs folder at {}.", skinFolder);
 		}
 
 		// Read and add the .png file to the skins list.
@@ -55,6 +57,7 @@ public class SkinDisplay extends Display {
 					image = ImageIO.read(new FileInputStream(skinFolder + "/" + fileName));
 				} catch (IOException e) {
 					e.printStackTrace();
+					Logger.error("Image at {} is invalid.", fileName);
 				}
 
 				// If we found an image.
@@ -70,66 +73,49 @@ public class SkinDisplay extends Display {
 						skinNames.add(fileName.substring(0, fileName.length()-4));
 					} else {
 						// Go here if image has wrong dimensions.
-						System.err.println("Error: Custom skin at " + fileName + "has incorrect width or height. Should be a multiple of 8.");
+						Logger.error("Custom skin at '{}' has incorrect width or height. Should be a multiple of 8.", fileName);
 					}
 				}
 			}
 		}
 	}
 
+	public static List<ListEntry> getSkinsAsEntries() {
+		List<ListEntry> l = new ArrayList<>();
+		for (String s : skinNames) {
+			l.add(new SelectEntry(s, Game::exitMenu));
+		}
+
+		return l;
+	}
+
 	public SkinDisplay() {
-		if (selectedSkinIndex >= skinNames.size()) selectedSkinIndex = 0;
+		super(true, true,
+				new Menu.Builder(false, 2, RelPos.CENTER, getSkinsAsEntries()).setSize(48, 64).createMenu());
+
+		menus[0].setSelection(selectedSkinIndex);
 	}
 
     @Override
     public void onExit() {
 		// Save the selected skin.
 		new Save();
-
-		// Play confirm sound.
-        Sound.confirm.play();
     }
 
 	@Override
 	public void tick(InputHandler input) {
-		if (input.getKey("menu").clicked || input.getKey("attack").clicked || input.getKey("exit").clicked) {
-			Game.exitMenu();
-			return;
-		}
-		if (input.getKey("cursor-down").clicked && selectedSkinIndex < skinNames.size() - 1) {
-			selectedSkinIndex++;
-			Sound.select.play();
-		}
-		if (input.getKey("cursor-up").clicked && selectedSkinIndex > 0) {
-			selectedSkinIndex--;
-			Sound.select.play();
-		}
+		super.tick(input);
+
+		selectedSkinIndex = menus[0].getSelection();
 	}
 
 	@Override
 	public void render(Screen screen) {
-		screen.clear(0);
+		super.render(screen);
 		step++;
-
-		// Get skin above and below.
-		String selectedUpUp = selectedSkinIndex + 2 > skinNames.size() - 2 ? "" : skinNames.get(selectedSkinIndex + 2);
-		String selectedUp = selectedSkinIndex + 1 > skinNames.size() - 1 ? "" : skinNames.get(selectedSkinIndex + 1);
-		String selectedDown = selectedSkinIndex - 1 < 0 ? "" : skinNames.get(selectedSkinIndex - 1);
-		String selectedDownDown = selectedSkinIndex - 2 < 0 ? "" : skinNames.get(selectedSkinIndex - 2);
 
 		// Title.
 		Font.drawCentered("Skins", screen, Screen.h - 180, Color.WHITE);
-
-		// Render the menu.
-		Font.drawCentered(SkinDisplay.shortNameIfLong(selectedUpUp), screen, Screen.h - 60, Color.GRAY); // First unselected space
-		Font.drawCentered(SkinDisplay.shortNameIfLong(selectedUp), screen, Screen.h - 70, Color.GRAY); // Second unselected space
-		Font.drawCentered(SkinDisplay.shortNameIfLong(skinNames.get(selectedSkinIndex)), screen, Screen.h - 80, Color.GREEN); // Selection
-		Font.drawCentered(SkinDisplay.shortNameIfLong(selectedDown), screen, Screen.h - 90, Color.GRAY); // Third space
-		Font.drawCentered(SkinDisplay.shortNameIfLong(selectedDownDown), screen, Screen.h - 100, Color.GRAY); // Fourth space
-
-		// Help text.
-		Font.drawCentered("Use "+ Game.input.getMapping("cursor-down") + " and " + Game.input.getMapping("cursor-up") + " to move.", screen, Screen.h - 17, Color.GRAY);
-		Font.drawCentered(Game.input.getMapping("SELECT") + " to select.", screen, Screen.h - 9, Color.GRAY);
 
 		int h = 2;
 		int w = 2;
@@ -147,12 +133,10 @@ public class SkinDisplay extends Display {
 					SpriteSheet spriteSheet = customSkins.get(selectedSkinIndex - defaultSkins);
 					screen.render(xoffset + x * 8, yoffset + y * 8, spriteIndex * 2 + x + y * 32, 0, spriteSheet, - 1, false);
 				}
-	}
 
-
-	// In case the name is too big ...
-	private static String shortNameIfLong(String name) {
-		return name.length() > 22 ? name.substring(0, 16) + "..." : name;
+		// Help text.
+		Font.drawCentered("Use "+ Game.input.getMapping("cursor-down") + " and " + Game.input.getMapping("cursor-up") + " to move.", screen, Screen.h - 17, Color.DARK_GRAY);
+		Font.drawCentered(Game.input.getMapping("SELECT") + " to select.", screen, Screen.h - 9, Color.DARK_GRAY);
 	}
 
 	public static int getSelectedSkinIndex() {
