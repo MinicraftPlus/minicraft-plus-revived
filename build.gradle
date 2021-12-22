@@ -1,7 +1,7 @@
 apply plugin: 'java'
 apply plugin: 'application'
 
-project.version = '2.1.0-dev1'
+project.version = '2.1.0-dev2'
 
 sourceCompatibility = 8
 mainClassName = 'minicraft.core.Game'
