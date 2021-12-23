@@ -10,6 +10,7 @@ import java.util.Objects;
 
 import minicraft.core.FileHandler;
 import minicraft.core.Game;
+import minicraft.core.Renderer;
 import minicraft.core.io.InputHandler;
 import minicraft.gfx.*;
 import minicraft.saveload.Save;
@@ -26,12 +27,16 @@ import javax.imageio.ImageIO;
 public class SkinDisplay extends Display {
 	private static final List<String> skinNames = new ArrayList<>();
 	private static final int defaultSkins;
-	private static final List<SpriteSheet> customSkins = new ArrayList<>();
+	private static final SpriteSheet defaultSheet;
+	private static final List<SpriteSheet> customSkinSheets = new ArrayList<>();
 	private static int selectedSkinIndex = 0;
 
 	private int step;
 
 	static {
+		// Load the default sprite sheet.
+		defaultSheet = Renderer.loadDefaultSpriteSheets()[4];
+
 		// These are all the generic skins. To add one, just add an entry in this list.
 		skinNames.add("Paul");
 		skinNames.add("Paul with cape");
@@ -67,7 +72,7 @@ public class SkinDisplay extends Display {
 					// Check if sheet is a multiple of 8.
 					if (spriteSheet.width % 8 == 0 && spriteSheet.height % 8 == 0) {
 						// Add the spritesheet to the custom skins list.
-						customSkins.add(spriteSheet);
+						customSkinSheets.add(spriteSheet);
 
 						// Remove the filetype (.png) and to the .
 						skinNames.add(fileName.substring(0, fileName.length()-4));
@@ -100,13 +105,30 @@ public class SkinDisplay extends Display {
     public void onExit() {
 		// Save the selected skin.
 		new Save();
+		selectedSkinIndex = menus[0].getSelection();
     }
+
+	int sel = menus[0].getSelection();
 
 	@Override
 	public void tick(InputHandler input) {
 		super.tick(input);
 
-		selectedSkinIndex = menus[0].getSelection();
+		int prevSel = sel;
+		sel = menus[0].getSelection();
+
+		// Executes every time the selection is updated.
+		if (sel != prevSel) {
+			if (sel >= defaultSkins) {
+				Renderer.screen.setSkinSheet(customSkinSheets.get(sel - defaultSkins));
+				Logger.debug("Skin sheet set to {}.png.", skinNames.get(sel));
+			} else {
+				Renderer.screen.setSkinSheet(defaultSheet);
+				Logger.debug("Skin sheet changed to default sheet.");
+			}
+
+			selectedSkinIndex = menus[0].getSelection();
+		}
 	}
 
 	@Override
@@ -127,10 +149,10 @@ public class SkinDisplay extends Display {
 		// Render preview of skin.
 		for (int y = 0; y < h; y++)
 			for (int x = 0; x < w; x++)
-				if (selectedSkinIndex < defaultSkins) {
-					screen.render(xoffset + x * 8, yoffset + y * 8, spriteIndex * 2 + x + (y + selectedSkinIndex * 4) * 32, 0, 4);
+				if (menus[0].getSelection() < defaultSkins) {
+					screen.render(xoffset + x * 8, yoffset + y * 8, spriteIndex * 2 + x + (y + menus[0].getSelection() * 4) * 32, 0, 4);
 				} else {
-					SpriteSheet spriteSheet = customSkins.get(selectedSkinIndex - defaultSkins);
+					SpriteSheet spriteSheet = customSkinSheets.get(menus[0].getSelection() - defaultSkins);
 					screen.render(xoffset + x * 8, yoffset + y * 8, spriteIndex * 2 + x + y * 32, 0, spriteSheet, - 1, false);
 				}
 
@@ -158,10 +180,10 @@ public class SkinDisplay extends Display {
 			mobSprites[2] = MobSprite.compilePlayerSpriteAnimations(8, SkinDisplay.getSelectedSkinIndex() * 4);
 			mobSprites[3] = MobSprite.compilePlayerSpriteAnimations(8, SkinDisplay.getSelectedSkinIndex() * 4 + 2);
 		} else {
-			mobSprites[0] = MobSprite.compileCustomPlayerSpriteAnimations(0, 0, customSkins.get(selectedSkinIndex - defaultSkins));
-			mobSprites[1] = MobSprite.compileCustomPlayerSpriteAnimations(0, 2, customSkins.get(selectedSkinIndex - defaultSkins));
-			mobSprites[2] = MobSprite.compileCustomPlayerSpriteAnimations(8, 0, customSkins.get(selectedSkinIndex - defaultSkins));
-			mobSprites[3] = MobSprite.compileCustomPlayerSpriteAnimations(8, 2, customSkins.get(selectedSkinIndex - defaultSkins));
+			mobSprites[0] = MobSprite.compilePlayerSpriteAnimations(0, 0);
+			mobSprites[1] = MobSprite.compilePlayerSpriteAnimations(0, 2);
+			mobSprites[2] = MobSprite.compilePlayerSpriteAnimations(8, 0);
+			mobSprites[3] = MobSprite.compilePlayerSpriteAnimations(8, 2);
 		}
 
 		return mobSprites;

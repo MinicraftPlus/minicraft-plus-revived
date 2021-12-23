@@ -95,7 +95,7 @@ public class TexturePackDisplay extends Display {
 				}
 			}
 
-			Renderer.screen.setSheet(sheets[0], sheets[1], sheets[2], sheets[3]);
+			Renderer.screen.setSheets(sheets[0], sheets[1], sheets[2], sheets[3]);
 		} catch(NullPointerException e) {
 			e.printStackTrace();
 			Logger.error("Changing texture pack failed.");

@@ -38,6 +38,7 @@ import minicraft.network.MinicraftServer;
 import minicraft.screen.*;
 import org.json.JSONArray;
 import org.json.JSONObject;
+import org.tinylog.Logger;
 
 public class Save {
 
@@ -112,14 +113,14 @@ public class Save {
 	public Save(String worldname, MinicraftServer server) {
 		this(new File(Game.gameDir+"/saves/" + worldname + "/"));
 		
-		if (Game.debug) System.out.println("Writing server config...");
+		Logger.debug("Writing server config...");
 		writeServerConfig("ServerConfig", server);
 	}
 
 	/** This will save the settings in the settings menu. */
 	public Save() {
 		this(new File(Game.gameDir+"/"));
-		if (Game.debug) System.out.println("Writing preferences and unlocks...");
+		Logger.debug("Writing preferences and unlocks...");
 		writePrefs();
 		writeUnlocks();
 	}

@@ -4,7 +4,7 @@ import java.util.Arrays;
 
 import minicraft.core.Renderer;
 import minicraft.core.Updater;
-import org.jetbrains.annotations.Nullable;
+import org.jetbrains.annotations.NotNull;
 
 public class Screen {
 	
@@ -41,39 +41,20 @@ public class Screen {
 		this(model.sheets[0], model.sheets[1], model.sheets[2], model.sheets[3], model.sheets[4]);
 	}
 
-	@Nullable
-	public void setSheet(SpriteSheet itemSheet, SpriteSheet tileSheet, SpriteSheet entitySheet, SpriteSheet guiSheet, SpriteSheet skinsSheet) {
-		if (itemSheet != null) {
-			sheets[0] = itemSheet;
-		}
-		if (tileSheet != null) {
-			sheets[1] = tileSheet;
-		}
-		if (entitySheet != null) {
-			sheets[2] = entitySheet;
-		}
-		if (guiSheet != null) {
-			sheets[3] = guiSheet;
-		}
-		if (skinsSheet != null) {
-			sheets[4] = skinsSheet;
-		}
+	@NotNull
+	public void setSkinSheet(SpriteSheet skinSheet) {
+		sheets[4] = skinSheet;
 	}
 
-	@Nullable
-	public void setSheet(SpriteSheet itemSheet, SpriteSheet tileSheet, SpriteSheet entitySheet, SpriteSheet guiSheet) {
-		if (itemSheet != null) {
-			sheets[0] = itemSheet;
-		}
-		if (tileSheet != null) {
-			sheets[1] = tileSheet;
-		}
-		if (entitySheet != null) {
-			sheets[2] = entitySheet;
-		}
-		if (guiSheet != null) {
-			sheets[3] = guiSheet;
-		}
+	public void setSheets(SpriteSheet itemSheet, SpriteSheet tileSheet, SpriteSheet entitySheet, SpriteSheet guiSheet) {
+		sheets[0] = itemSheet;
+		sheets[1] = tileSheet;
+		sheets[2] = entitySheet;
+		sheets[3] = guiSheet;
+	}
+
+	public SpriteSheet getSpriteSheet() {
+		return sheets[4];
 	}
 	
 	/** Clears all the colors on the screen */
