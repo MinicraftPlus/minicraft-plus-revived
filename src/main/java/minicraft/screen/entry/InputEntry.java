@@ -1,10 +1,12 @@
 package minicraft.screen.entry;
 
+import jdk.internal.org.jline.reader.UserInterruptException;
 import minicraft.core.io.InputHandler;
 import minicraft.core.io.Localization;
 import minicraft.gfx.Color;
 import minicraft.gfx.Font;
 import minicraft.gfx.Screen;
+import minicraft.util.ClipboardSystem;
 
 public class InputEntry extends ListEntry {
 	
@@ -15,6 +17,8 @@ public class InputEntry extends ListEntry {
 	private String userInput;
 	
 	private ChangeListener listener;
+
+	private ClipboardSystem clipboardSystem = new ClipboardSystem();
 	
 	public InputEntry(String prompt) {
 		this(prompt, null, 0);
@@ -39,6 +43,18 @@ public class InputEntry extends ListEntry {
 		
 		if (maxLength > 0 && userInput.length() > maxLength)
 			userInput = userInput.substring(0, maxLength); // truncates extra
+		if (input.getKey("CTRL-V").clicked) {
+			userInput = userInput + clipboardSystem.getClipboardContents();
+		}
+		if (!userInput.equals("")) {
+			if (input.getKey("CTRL-C").clicked) {
+				clipboardSystem.setClipboardContents(userInput);
+			}
+			if (input.getKey("CTRL-X").clicked) {
+				clipboardSystem.setClipboardContents(userInput);
+				userInput = "";
+			}
+		}
 	}
 	
 	public String getUserInput() { return userInput; }
