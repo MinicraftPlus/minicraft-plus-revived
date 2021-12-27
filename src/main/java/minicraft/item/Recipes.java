@@ -26,7 +26,7 @@ public class Recipes {
 		workbenchRecipes.add(new Recipe("Stone Wall_1", "Stone Brick_3"));
 		workbenchRecipes.add(new Recipe("Stone Door_1", "Stone Brick_5"));
 		workbenchRecipes.add(new Recipe("Obsidian Brick_1", "Raw Obsidian_2"));
-		workbenchRecipes.add(new Recipe("Obsidian Tiles_1", "Raw Obsidian_2"));
+		workbenchRecipes.add(new Recipe("Ornate Obsidian_1", "Raw Obsidian_2"));
 		workbenchRecipes.add(new Recipe("Obsidian Wall_1", "Obsidian Brick_3"));
 		workbenchRecipes.add(new Recipe("Obsidian Door_1", "Obsidian Brick_5"));
 		workbenchRecipes.add(new Recipe("Oven_1", "Stone_15"));
