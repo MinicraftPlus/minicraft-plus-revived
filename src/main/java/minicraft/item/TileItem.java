@@ -28,10 +28,14 @@ public class TileItem extends StackableItem {
 		items.add(new TileItem("Plank", (new Sprite(0, 5, 0)), "Wood Planks", "hole", "water", "cloud"));
 		items.add(new TileItem("Plank Wall", (new Sprite(1, 5, 0)), "Wood Wall", "Wood Planks"));
 		items.add(new TileItem("Wood Door", (new Sprite(2, 5, 0)), "Wood Door", "Wood Planks"));
+		items.add(new TileItem("Stone", (new Sprite(2, 0, 0)), "Stone", "hole", "water", "cloud", "lava"));
 		items.add(new TileItem("Stone Brick", (new Sprite(3, 5, 0)), "Stone Bricks", "hole", "water", "cloud", "lava"));
+		items.add(new TileItem("Ornate Stone", (new Sprite(3, 5, 0)), "Ornate Stone", "hole", "water", "cloud", "lava"));
 		items.add(new TileItem("Stone Wall", (new Sprite(4, 5, 0)), "Stone Wall", "Stone Bricks"));
 		items.add(new TileItem("Stone Door", (new Sprite(5, 5, 0)), "Stone Door", "Stone Bricks"));
+		items.add(new TileItem("Raw Obsidian", (new Sprite(9, 5, 0)), "Raw Obsidian", "hole", "water", "cloud", "lava"));
 		items.add(new TileItem("Obsidian Brick", (new Sprite(6, 5, 0)), "Obsidian", "hole", "water", "cloud", "lava"));
+		items.add(new TileItem("Ornate Obsidian", (new Sprite(6, 5, 0)), "Ornate Obsidian","hole", "water", "cloud", "lava"));
 		items.add(new TileItem("Obsidian Wall", (new Sprite(7, 5, 0)), "Obsidian Wall", "Obsidian"));
 		items.add(new TileItem("Obsidian Door", (new Sprite(8, 5, 0)), "Obsidian Door", "Obsidian"));
 	
