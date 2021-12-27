@@ -15,7 +15,7 @@ public class MaterialTile extends Tile {
 	private Sprite sprite;
 
 	protected MaterialTile(Material type) {
-		super((type == Material.Stone ? "Stone" : type == Material.Obsidian ? "Raw Obsidian" :type.name() + " Bricks"), (Sprite) null);
+		super((type == Material.Stone ? "Stone" : type == Material.Obsidian ? "Raw Obsidian" :type.name()), (Sprite) null);
 		this.type = type;
 		maySpawn = true;
 		switch (type) {

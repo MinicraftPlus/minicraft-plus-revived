@@ -15,7 +15,7 @@ public class DecorTile extends Tile {
 	private Sprite sprite;
 
 	protected DecorTile(Material type) {
-		super((type == Material.Obsidian ? "Obsidian Tiles" : type == Material.Stone ? "Stone" :type.name() + " Bricks"), (Sprite) null);
+		super((type == Material.Obsidian ? "Ornate Obsidian" : type == Material.Stone ? "Ornate Stone" : "Decorated " + type.name()), (Sprite) null);
 		this.type = type;
 		maySpawn = true;
 		switch (type) {
@@ -38,7 +38,7 @@ public class DecorTile extends Tile {
 					Item drop;
 					switch (type) {
 						case Stone: drop = Items.get("Ornate Stone"); break;
-						case Obsidian: drop = Items.get("Obsidian Tiles"); break;
+						case Obsidian: drop = Items.get("Ornate Obsidian"); break;
 						default: throw new IllegalStateException("Unexpected value: " + type);
 					}
 					Sound.monsterHurt.play();
