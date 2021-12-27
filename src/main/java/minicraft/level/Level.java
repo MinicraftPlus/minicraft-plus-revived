@@ -276,14 +276,14 @@ public class Level {
 					boolean xaxis = random.nextBoolean();
 					if (xaxis) {
 						for (int s = x2; s < w - s; s++) {
-							if (getTile(s, y2) == Tiles.get("Obsidian Wall")) {
+							if (getTile(s, y2) == Tiles.get("Obsidian")) {
 								d.x = s * 16 - 24;
 								d.y = y2 * 16 - 24;
 							}
 						}
 					} else { // y axis
 						for (int s = y2; s < y2 - s; s++) {
-							if (getTile(x2, s) == Tiles.get("Obsidian Wall")) {
+							if (getTile(x2, s) == Tiles.get("Obsidian")) {
 								d.x = x2 * 16 - 24;
 								d.y = s * 16 - 24;
 							}
@@ -293,7 +293,7 @@ public class Level {
 						d.x = x2 * 16 - 8;
 						d.y = y2 * 16 - 8;
 					}
-					if (getTile(d.x / 16, d.y / 16) == Tiles.get("Obsidian Wall")) {
+					if (getTile(d.x / 16, d.y / 16) == Tiles.get("Obsidian")) {
 						setTile(d.x / 16, d.y / 16, Tiles.get("Obsidian"));
 					}
 					
