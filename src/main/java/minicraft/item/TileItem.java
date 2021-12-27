@@ -35,7 +35,7 @@ public class TileItem extends StackableItem {
 		items.add(new TileItem("Stone Door", (new Sprite(5, 5, 0)), "Stone Door", "Stone Bricks"));
 		items.add(new TileItem("Raw Obsidian", (new Sprite(9, 5, 0)), "Raw Obsidian", "hole", "water", "cloud", "lava"));
 		items.add(new TileItem("Obsidian Brick", (new Sprite(6, 5, 0)), "Obsidian", "hole", "water", "cloud", "lava"));
-		items.add(new TileItem("Obsidian Tiles", (new Sprite(6, 5, 0)), "Obsidian Tiles","hole", "water", "cloud", "lava"));
+		items.add(new TileItem("Ornate Obsidian", (new Sprite(6, 5, 0)), "Ornate Obsidian","hole", "water", "cloud", "lava"));
 		items.add(new TileItem("Obsidian Wall", (new Sprite(7, 5, 0)), "Obsidian Wall", "Obsidian"));
 		items.add(new TileItem("Obsidian Door", (new Sprite(8, 5, 0)), "Obsidian Door", "Obsidian"));
 	

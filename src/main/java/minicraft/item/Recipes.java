@@ -21,12 +21,12 @@ public class Recipes {
 		
 		workbenchRecipes.add(new Recipe("Torch_2", "Wood_1", "coal_1"));
 		workbenchRecipes.add(new Recipe("Lantern_1", "Wood_8", "slime_4", "glass_3"));
-		workbenchRecipes.add(new Recipe("Stone Brick_2", "Stone_2"));
-		workbenchRecipes.add(new Recipe("Ornate Stone_2", "Stone_2"));
+		workbenchRecipes.add(new Recipe("Stone Brick_1", "Stone_2"));
+		workbenchRecipes.add(new Recipe("Ornate Stone_1", "Stone_2"));
 		workbenchRecipes.add(new Recipe("Stone Wall_1", "Stone Brick_3"));
 		workbenchRecipes.add(new Recipe("Stone Door_1", "Stone Brick_5"));
-		workbenchRecipes.add(new Recipe("Obsidian Brick_2", "Raw Obsidian_2"));
-		workbenchRecipes.add(new Recipe("Obsidian Tiles_2", "Raw Obsidian_2"));
+		workbenchRecipes.add(new Recipe("Obsidian Brick_1", "Raw Obsidian_2"));
+		workbenchRecipes.add(new Recipe("Obsidian Tiles_1", "Raw Obsidian_2"));
 		workbenchRecipes.add(new Recipe("Obsidian Wall_1", "Obsidian Brick_3"));
 		workbenchRecipes.add(new Recipe("Obsidian Door_1", "Obsidian Brick_5"));
 		workbenchRecipes.add(new Recipe("Oven_1", "Stone_15"));
