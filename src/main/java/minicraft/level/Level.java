@@ -277,15 +277,15 @@ public class Level {
 					if (xaxis) {
 						for (int s = x2; s < w - s; s++) {
 							if (getTile(s, y2) == Tiles.get("Obsidian Wall")) {
-								d.x = s * 16 - 24;
-								d.y = y2 * 16 - 24;
+								d.x = s * 20 - 16;
+								d.y = y2 * 24 - 14;
 							}
 						}
 					} else { // y axis
 						for (int s = y2; s < y2 - s; s++) {
 							if (getTile(x2, s) == Tiles.get("Obsidian Wall")) {
-								d.x = x2 * 16 - 24;
-								d.y = s * 16 - 24;
+								d.x = x2 * 23 - 14;
+								d.y = s * 21 - 16;
 							}
 						}
 					}
