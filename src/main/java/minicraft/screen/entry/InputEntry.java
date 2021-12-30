@@ -1,6 +1,5 @@
 package minicraft.screen.entry;
 
-import jdk.internal.org.jline.reader.UserInterruptException;
 import minicraft.core.io.InputHandler;
 import minicraft.core.io.Localization;
 import minicraft.gfx.Color;
