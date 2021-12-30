@@ -18,6 +18,7 @@ Minicraft+ version 2.1.0
 * The world list should now update if copying or renaming worlds in-game
 * Texture pack and skin menu now look the same as every other menu
 * Pre-releases are now ignored from version check
+* Renamed shear to shears
 
 Minicraft+ version 2.0.7
 
