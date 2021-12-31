@@ -402,6 +402,11 @@ Poción
 Power Glove
 Poder de Guante
 
+# ShearItem.java
+
+Shears
+Tijeras
+
 # StackableItem.java
 
 Wood
@@ -595,6 +600,9 @@ CañaDePescar
 
 Claymore
 Casa antigua
+
+Shears
+Tijeras
 
 # TorchItem.java
 

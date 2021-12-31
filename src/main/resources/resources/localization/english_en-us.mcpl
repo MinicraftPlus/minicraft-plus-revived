@@ -410,8 +410,8 @@ Power Glove
 
 # ShearItem.java
 
-Shear
-Shear
+Shears
+Shears
 
 # StackableItem.java
 
@@ -614,6 +614,9 @@ Bow
 
 Claymore
 Claymore
+
+Shears
+Shears
 
 # TorchItem.java
 
