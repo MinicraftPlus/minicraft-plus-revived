@@ -600,7 +600,7 @@ public class Load {
 				name = name.replace("Seeds", "Wheat Seeds");
 		}
 		
-		if (worldVer.compareTo(new Version("2.1.0-dev2")) < 0) {
+		if (worldVer.compareTo(new Version("2.1.0-dev1")) < 0) {
 			if (name.startsWith("Shear"))
 				name = name.replace("Shear", "Shears");
 		}
@@ -626,7 +626,7 @@ public class Load {
 				item = subOldName(item, worldVer);
 			}
 			
-			if (worldVer.compareTo(new Version("2.1.0-dev2")) < 0) {
+			if (worldVer.compareTo(new Version("2.1.0-dev1")) < 0) {
 				item = subOldName(item, worldVer);
 			}
 
