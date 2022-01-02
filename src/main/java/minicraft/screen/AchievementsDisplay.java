@@ -92,13 +92,19 @@ public class AchievementsDisplay extends Display {
      */
     public static void setAchievement(int id, boolean unlocked) {
         Achievement a = achievements.get(id);
+        if (a.getUnlocked() && unlocked) return; // Return if it is already unlocked.
+        if (!a.getUnlocked() && !unlocked) return; // Return if it is already locked.
+
+        // Make the achievement unlocked in memory.
         a.setUnlocked(unlocked);
 
+        // Add or subtract from score
         if (unlocked)
             achievementScore += a.score;
         else
             achievementScore -= a.score;
 
+        // Save the new list of achievements stored in memory.
         new Save();
     }
 
