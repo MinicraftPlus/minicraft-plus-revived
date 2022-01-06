@@ -621,11 +621,6 @@ public class Load {
 				continue;
 			}
 			
-
-			if (worldVer.compareTo(new Version("2.0.7-dev1")) < 0) {
-				item = subOldName(item, worldVer);
-			}
-			
 			if (worldVer.compareTo(new Version("2.1.0-dev1")) < 0) {
 				item = subOldName(item, worldVer);
 			}
