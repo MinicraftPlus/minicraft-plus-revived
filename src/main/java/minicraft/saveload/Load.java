@@ -594,13 +594,14 @@ public class Load {
 			name = name.replace("Fishing Rod", "Wood Fishing Rod");
 		}
 
-		// Only runs if the version is less than 2.0.7-dev1.
+		// Only runs if the worldVer is less than 2.0.7-dev1.
 		if (worldVer.compareTo(new Version("2.0.7-dev1")) < 0) {
 			if (name.startsWith("Seeds"))
 				name = name.replace("Seeds", "Wheat Seeds");
 		}
-		
-		if (worldVer.compareTo(new Version("2.1.0-dev1")) < 0) {
+
+		// Only runs if the worldVer is less than 2.1.0-dev3.
+		if (worldVer.compareTo(new Version("2.1.0-dev3")) < 0) {
 			if (name.startsWith("Shear"))
 				name = name.replace("Shear", "Shears");
 		}
@@ -621,7 +622,7 @@ public class Load {
 				continue;
 			}
 			
-			if (worldVer.compareTo(new Version("2.0.7-dev1")) < 0) {
+			if (worldVer.compareTo(new Version("2.1.0-dev3")) < 0) {
 				item = subOldName(item, worldVer);
 			}
 
@@ -810,7 +811,7 @@ public class Load {
 			int endIdx = chestInfo.size() - (isDeathChest || isDungeonChest ? 1 : 0);
 			for (int idx = 0; idx < endIdx; idx++) {
 				String itemData = chestInfo.get(idx);
-				if (worldVer.compareTo(new Version("2.0.7-dev1")) < 0)
+				if (worldVer.compareTo(new Version("2.1.0-dev3")) < 0)
 					itemData = subOldName(itemData, worldVer);
 								
 				if(itemData.contains("Power Glove")) continue; // Ignore it.

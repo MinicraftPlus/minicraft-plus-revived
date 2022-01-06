@@ -42,14 +42,14 @@ public class Version implements Comparable<Version> {
 	public static boolean isValid(String version) { return new Version(version, false).isValid(); }
 
 	/**
-	 *	The returned value of this method (-1, 0, or 1) is determined by whether this object is less than, equal to, or greater than the specified object.
+	 *	The returned value of this method (-1, 0, or 1) is determined by whether this object is less than, equal to, or greater than the specified object, ov.
 	 */
 	public int compareTo(@NotNull Version ov) {
 		return compareTo(ov, false);
 	}
 
 	/**
-	 *	The returned value of this method (-1, 0, or 1) is determined by whether this object is less than, equal to, or greater than the specified object.
+	 *	The returned value of this method (-1, 0, or 1) is determined by whether this object is less than, equal to, or greater than the specified object, ov.
  	 */
 	public int compareTo(@NotNull Version ov, boolean ignoreDev) {
 		if (make != ov.make) return Integer.compare(make, ov.make);
