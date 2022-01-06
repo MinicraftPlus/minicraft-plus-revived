@@ -8,7 +8,7 @@ public enum ToolType {
 	Axe (4, 24),
 	Bow (5, 20),
 	Claymore (6, 34),
-	Shear (0, 42, true);
+	Shears (0, 42, true);
 
 	public final int xPos; // X Position of origin
 	public final int yPos; // Y position of origin

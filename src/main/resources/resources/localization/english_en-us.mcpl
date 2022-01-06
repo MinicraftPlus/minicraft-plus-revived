@@ -408,11 +408,6 @@ Potion
 Power Glove
 Power Glove
 
-# ShearItem.java
-
-Shear
-Shear
-
 # StackableItem.java
 
 Wood
@@ -614,6 +609,9 @@ Bow
 
 Claymore
 Claymore
+
+Shears
+Shears
 
 # TorchItem.java
 

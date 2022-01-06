@@ -10,8 +10,11 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-import minicraft.screen.SkinDisplay;
 import org.jetbrains.annotations.Nullable;
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+import org.tinylog.Logger;
 
 import minicraft.core.Game;
 import minicraft.core.Network;
@@ -63,10 +66,7 @@ import minicraft.level.tile.Tiles;
 import minicraft.network.MinicraftServer;
 import minicraft.screen.LoadingDisplay;
 import minicraft.screen.MultiplayerDisplay;
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
-import org.tinylog.Logger;
+import minicraft.screen.SkinDisplay;
 
 public class Load {
 	
@@ -599,6 +599,11 @@ public class Load {
 			if (name.startsWith("Seeds"))
 				name = name.replace("Seeds", "Wheat Seeds");
 		}
+		
+		if (worldVer.compareTo(new Version("2.1.0-dev1")) < 0) {
+			if (name.startsWith("Shear"))
+				name = name.replace("Shear", "Shears");
+		}
 
 		return name;
 	}
@@ -615,7 +620,7 @@ public class Load {
 				System.err.println("loadInventory: Item in data list is \"\", skipping item");
 				continue;
 			}
-
+			
 			if (worldVer.compareTo(new Version("2.0.7-dev1")) < 0) {
 				item = subOldName(item, worldVer);
 			}
