@@ -600,8 +600,8 @@ public class Load {
 				name = name.replace("Seeds", "Wheat Seeds");
 		}
 
-		// Only runs if the worldVer is less than 2.1.0-dev3.
-		if (worldVer.compareTo(new Version("2.1.0-dev3")) < 0) {
+		// Only runs if the worldVer is less than 2.1.0-dev2, the versions where shear was renamed to shears.
+		if (worldVer.compareTo(new Version("2.1.0-dev2")) < 0) {
 			if (name.startsWith("Shear"))
 				name = name.replace("Shear", "Shears");
 		}
