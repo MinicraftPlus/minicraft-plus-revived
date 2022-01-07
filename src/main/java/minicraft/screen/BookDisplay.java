@@ -38,8 +38,7 @@ public class BookDisplay extends Display {
 			book = defaultBook;
 			hasTitle = false;
 		}
-		
-		book = Localization.getLocalized(book);
+
 		this.hasTitle = hasTitle;
 		
 		ArrayList<String[]> pages = new ArrayList<>();
