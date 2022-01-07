@@ -60,7 +60,7 @@ public class Save {
 		if (worldFolder.getParent().equals("saves")) {
 			String worldName = worldFolder.getName();
 			if (!worldName.toLowerCase().equals(worldName)) {
-				if (Game.debug) System.out.println("Renaming world in " + worldFolder + " to lowercase");
+				Logger.debug("Renaming world in " + worldFolder + " to lowercase");
 				String path = worldFolder.toString();
 				path = path.substring(0, path.lastIndexOf(worldName));
 				File newFolder = new File(path + worldName.toLowerCase());
@@ -222,6 +222,8 @@ public class Save {
 		if (Settings.getEntry("scoretime").getValueVisibility(120))
 			scoretimes.put(120);
 		json.put("visibleScoreTimes", scoretimes);
+
+		json.put("unlockedAchievements", new JSONArray(AchievementsDisplay.getUnlockedAchievements()));
 
 		try {
 			writeJSONToFile(location + "Unlocks.json", json.toString());

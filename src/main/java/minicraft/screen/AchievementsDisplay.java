@@ -2,6 +2,7 @@ package minicraft.screen;
 
 import java.io.*;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.stream.Collectors;
 
 import minicraft.core.Game;
@@ -21,7 +22,7 @@ import org.tinylog.Logger;
 
 public class AchievementsDisplay extends Display {
 
-    private static final ArrayList<Achievement> achievements = new ArrayList<>();
+    private static final HashMap<String, Achievement> achievements = new HashMap<>();
 
     private static Achievement selectedAchievement;
     private static int achievementScore;
@@ -53,9 +54,9 @@ public class AchievementsDisplay extends Display {
                     obj.getInt("score")
             );
 
-            achievements.add(a);
+            achievements.put(obj.getString("id"), a);
 
-            SelectEntry entry = new SelectEntry(a.name, null, false);
+            SelectEntry entry = new SelectEntry(obj.getString("id"), null, true);
 
             stringEntries.add(entry);
         }
@@ -71,14 +72,14 @@ public class AchievementsDisplay extends Display {
     public void init(@Nullable Display parent) {
         super.init(parent);
 
-        selectedAchievement = achievements.get(menus[0].getSelection());
+        selectedAchievement = achievements.get(((SelectEntry) stringEntries.get(menus[0].getSelection())).getText());
     }
 
     @Override
     public void tick(InputHandler input) {
         super.tick(input);
 
-        selectedAchievement = achievements.get(menus[0].getSelection());
+        selectedAchievement = achievements.get(((SelectEntry) stringEntries.get(menus[0].getSelection())).getText());
     }
 
     @Override
@@ -88,12 +89,22 @@ public class AchievementsDisplay extends Display {
 
     /**
      * Use this to lock or unlock an achievement.
-     * @param id Achievement ID
+     * @param id Achievement ID.
+     * @param unlocked Whether this achievement should be locked or unlocked.
+     * @return True if setting the achievement was successful.
      */
-    public static void setAchievement(int id, boolean unlocked) {
+    public static boolean setAchievement(String id, boolean unlocked) {
+        return setAchievement(id, unlocked, true);
+    }
+
+    private static boolean setAchievement(String id, boolean unlocked, boolean save) {
         Achievement a = achievements.get(id);
-        if (a.getUnlocked() && unlocked) return; // Return if it is already unlocked.
-        if (!a.getUnlocked() && !unlocked) return; // Return if it is already locked.
+
+        // Return if we didn't find any achievements.
+        if (a == null) return false;
+
+        if (a.getUnlocked() && unlocked) return false; // Return if it is already unlocked.
+        if (!a.getUnlocked() && !unlocked) return false;  // Return if it is already locked.
 
         // Make the achievement unlocked in memory.
         a.setUnlocked(unlocked);
@@ -105,7 +116,9 @@ public class AchievementsDisplay extends Display {
             achievementScore -= a.score;
 
         // Save the new list of achievements stored in memory.
-        new Save();
+        if (save) new Save();
+
+        return true;
     }
 
     @Override
@@ -137,5 +150,25 @@ public class AchievementsDisplay extends Display {
         // Play confirm sound.
         Sound.confirm.play();
         new Save();
+    }
+
+    public static String[] getUnlockedAchievements() {
+        ArrayList<String> strings = new ArrayList<>();
+
+        for (String id : achievements.keySet()) {
+            if (achievements.get(id).getUnlocked()) {
+                strings.add(id);
+            }
+        }
+
+        return strings.toArray(new String[0]);
+    }
+
+    public static void setUnlockedAchievements(JSONArray unlockedAchievements) {
+        for (Object id : unlockedAchievements.toList()) {
+            if (!setAchievement(id.toString(), true, false)) {
+                Logger.error("Could not load unlocked achievement with name {}.", id.toString());
+            }
+        }
     }
 }

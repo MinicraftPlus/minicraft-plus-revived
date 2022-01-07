@@ -64,6 +64,7 @@ import minicraft.item.StackableItem;
 import minicraft.level.Level;
 import minicraft.level.tile.Tiles;
 import minicraft.network.MinicraftServer;
+import minicraft.screen.AchievementsDisplay;
 import minicraft.screen.LoadingDisplay;
 import minicraft.screen.MultiplayerDisplay;
 import minicraft.screen.SkinDisplay;
@@ -397,6 +398,10 @@ public class Load {
 		for (Object i : json.getJSONArray("visibleScoreTimes")) {
 			Settings.getEntry("scoretime").setValueVisibility(i, true); // Minutes
 		}
+
+		// Load unlocked achievements.
+		if (json.has("unlockedAchievements"))
+			AchievementsDisplay.setUnlockedAchievements(json.getJSONArray("unlockedAchievements"));
 	}
 	
 	private void loadServerConfig(String filename, MinicraftServer server) {
