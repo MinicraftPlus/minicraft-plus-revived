@@ -50,7 +50,7 @@ public class AchievementsDisplay extends Display {
 
             Achievement a = new Achievement(
                     Localization.getLocalized(obj.getString("id")),
-                    Localization.getLocalized(obj.getString("desc")),
+                    obj.getString("desc"),
                     obj.getInt("score")
             );
 
@@ -139,7 +139,7 @@ public class AchievementsDisplay extends Display {
         }
 
         // Achievement description.
-        menus[1].setEntries(StringEntry.useLines(Font.getLines(selectedAchievement.description, menus[1].getBounds().getSize().width, menus[1].getBounds().getSize().height, 2)));
+        menus[1].setEntries(StringEntry.useLines(Font.getLines(Localization.getLocalized(selectedAchievement.description), menus[1].getBounds().getSize().width, menus[1].getBounds().getSize().height, 2)));
 
         // Help text.
         Font.drawCentered("Use " + Game.input.getMapping("cursor-down") + " and " + Game.input.getMapping("cursor-up") + " to move.", screen, Screen.h - 8, Color.DARK_GRAY);

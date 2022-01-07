@@ -67,8 +67,8 @@ public class Localization {
 	public static String getSelectedLanguage() { return selectedLanguage; }
 	
 	public static void changeLanguage(String newLanguage) {
-		selectedLanguage = newLanguage;
 		localization.clear();
+		selectedLanguage = newLanguage;
 		loadLanguageFile(selectedLanguage);
 	}
 
