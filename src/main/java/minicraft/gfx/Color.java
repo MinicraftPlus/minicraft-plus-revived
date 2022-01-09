@@ -30,12 +30,12 @@ public class Color {
 	public static final int GRAY = Color.get(1, 153);
 	public static final int DARK_GRAY = Color.get(1, 51);
 	public static final int BLACK = Color.get(1, 0);
-	public static final int RED = Color.get(1, 255, 0, 0);
-	public static final int GREEN = Color.get(1, 0, 255, 0);
-	public static final int BLUE = Color.get(1, 0, 0, 255);
+	public static final int RED = Color.get(1, 198, 44, 44);
+	public static final int GREEN = Color.get(1, 77, 212, 77);
+	public static final int BLUE = Color.get(1, 32, 32, 136);
 	public static final int YELLOW = Color.get(1, 255, 255, 0);
 	public static final int MAGENTA = Color.get(1, 255, 0, 255);
-	public static final int CYAN = Color.get(1, 0, 255, 255);
+	public static final int CYAN = Color.get(1, 90, 204, 204);
 
 	public static final char COLOR_CHAR = '\u00A7';
 
@@ -50,7 +50,7 @@ public class Color {
 	public static final String YELLOW_CODE = Color.toStringCode(Color.YELLOW);
 	public static final String MAGENTA_CODE = Color.toStringCode(Color.MAGENTA);
 	public static final String CYAN_CODE = Color.toStringCode(Color.CYAN);
-	
+
 	/** This returns a minicraftrgb.
 	 * a should be between 0-1, r,g,and b should be 0-255 */
 	public static int get(int a, int r, int g, int b) {
