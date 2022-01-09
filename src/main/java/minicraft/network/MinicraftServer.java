@@ -15,7 +15,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import minicraft.core.Game;
-import minicraft.core.MyUtils;
+import minicraft.util.MyUtils;
 import minicraft.core.Network;
 import minicraft.core.Updater;
 import minicraft.core.World;

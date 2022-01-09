@@ -27,6 +27,7 @@ import minicraft.item.ToolType;
 import minicraft.level.Level;
 import minicraft.screen.LoadingDisplay;
 import minicraft.screen.RelPos;
+import minicraft.util.MyUtils;
 import org.tinylog.Logger;
 
 import javax.imageio.ImageIO;

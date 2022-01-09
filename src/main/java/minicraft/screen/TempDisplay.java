@@ -1,7 +1,7 @@
 package minicraft.screen;
 
 import minicraft.core.Game;
-import minicraft.core.MyUtils;
+import minicraft.util.MyUtils;
 
 public class TempDisplay extends Display {
 	

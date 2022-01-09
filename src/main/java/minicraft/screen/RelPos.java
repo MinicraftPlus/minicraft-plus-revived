@@ -1,6 +1,6 @@
 package minicraft.screen;
 
-import minicraft.core.MyUtils;
+import minicraft.util.MyUtils;
 import minicraft.gfx.Dimension;
 import minicraft.gfx.Point;
 import minicraft.gfx.Rectangle;

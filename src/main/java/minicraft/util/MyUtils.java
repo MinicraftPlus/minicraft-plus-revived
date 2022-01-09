@@ -1,4 +1,6 @@
-package minicraft.core;
+package minicraft.util;
+
+import minicraft.core.Game;
 
 public final class MyUtils {
 	
