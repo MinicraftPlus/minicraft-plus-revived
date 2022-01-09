@@ -88,12 +88,14 @@ public class Updater extends Game {
 	// In the end, calls menu.tick() if there's a menu, or level.tick() if no menu.
 	public static void tick() {
 		
-		// move the player for -1, or 1 levels for testing...
-        if (isMode("creative") && input.getKey("MOVE-DOWN").clicked && input.getKey("F3").clicked ) {
-        	Game.setMenu(new LevelTransitionDisplay(-1));
-        } else if (isMode("creative") && input.getKey("MOVE-UP").clicked && input.getKey("F3").clicked ){
-        	Game.setMenu(new LevelTransitionDisplay(1));
-        }
+		// Quick Level change: move the player for -1, or 1 levels
+        	if (isMode("creative") && input.getKey("SHIFT-S").clicked ) {
+        		Game.setMenu(new LevelTransitionDisplay(-1));
+        	
+        	} else if (isMode("creative") && input.getKey("SHIFT-W").clicked ){
+        		Game.setMenu(new LevelTransitionDisplay(1));
+        	
+        	}
 
 		if (Updater.HAS_GUI && input.getKey("FULLSCREEN").clicked) {
 			Updater.FULLSCREEN = !Updater.FULLSCREEN;
