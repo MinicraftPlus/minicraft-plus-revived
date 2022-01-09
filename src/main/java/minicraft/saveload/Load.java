@@ -599,13 +599,19 @@ public class Load {
 			name = name.replace("Fishing Rod", "Wood Fishing Rod");
 		}
 
-		// Only runs if the worldVer is less than 2.0.7-dev1.
+		// If save is older than 2.0.6.
+		if (worldVer.compareTo(new Version("2.0.6")) < 0) {
+			if (name.startsWith("Pork Chop"))
+				name = name.replace("Pork Chop", "Cooked Pork");
+		}
+
+		// If save is older than 2.0.7-dev1.
 		if (worldVer.compareTo(new Version("2.0.7-dev1")) < 0) {
 			if (name.startsWith("Seeds"))
 				name = name.replace("Seeds", "Wheat Seeds");
 		}
 
-		// Only runs if the worldVer is less than 2.1.0-dev2, the versions where shear was renamed to shears.
+		// If save is older than 2.1.0-dev2.
 		if (worldVer.compareTo(new Version("2.1.0-dev2")) < 0) {
 			if (name.startsWith("Shear"))
 				name = name.replace("Shear", "Shears");
