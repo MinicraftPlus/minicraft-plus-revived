@@ -195,6 +195,7 @@ public class Save {
 		JSONObject json = new JSONObject();
 
 		json.put("version", String.valueOf(Game.VERSION));
+		json.put("diff", Settings.get("diff"));
 		json.put("sound", String.valueOf(Settings.get("sound")));
 		json.put("autosave", String.valueOf(Settings.get("autosave")));
 		json.put("fps", String.valueOf(Settings.get("fps")));
