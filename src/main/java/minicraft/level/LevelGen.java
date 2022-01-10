@@ -560,7 +560,7 @@ public class LevelGen {
 				nval = Math.abs(nval - nnoise3.values[i]) * 3 - 2;
 				
 				double wval = Math.abs(wnoise1.values[i] - wnoise2.values[i]);
-				wval = Math.abs(nval - wnoise3.values[i]) * 3 - 2;
+				wval = Math.abs(wval - wnoise3.values[i]) * 3 - 2;
 				
 				double xd = x / (w - 1.0) * 2 - 1;
 				double yd = y / (h - 1.0) * 2 - 1;
