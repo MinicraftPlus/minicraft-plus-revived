@@ -59,28 +59,34 @@ public class ConsoleReader extends Thread {
 		("--all | [cmd]", "describes the function of each command. Specify a command name to read more about how to use it.", "no arguments: prints a list of all available commands, with a short description of each.", "cmd: a command name. will print the short description of that command, along with usage details such as what parameters/arguments it uses, and what function each argument has, and what the defualt behavior is if a given argument is ommitted.", "--all: prints the long description of all the commands.", "Usage symbol meanings:", "\t| = OR; specifies two possible choices for a given argument.", "\t[] = Optional; the arguments within may be specified, but they are not required.", "\t<> = Required; you must include the arguments within for the command to work.", "Note that the usage symbols may be nested, so a <> inside a [] is only required if you do whatever else is inside the [].") {
 			public void run(String[] args) {
 				if (args.length == 0) {
-					System.out.println("Available commands:");
-					for (Command cmd: Command.values)
-						System.out.println(cmd.getGeneralHelp());
 					
+					System.out.println("Available commands:");
+					
+					for (Command cmd: Command.values) {
+						System.out.println(cmd.getGeneralHelp());
+					}
+				
 					return;
 				}
 				
 				Command query = ConsoleReader.getCommandByName(args[0]); // prints its own error message if the command wasn't found.
-				if (query != null)
+				if (query != null) {
 					System.out.println(query.getDetailedHelp());
+				}
 			}
 		},
 		
 		STATUS
 		(null, "display some server stats.", "displays game version, server fps, and number of players connected.") {
 			public void run(String[] args) {
+				
 				System.out.println("Running " + Game.NAME + ' ' + Game.VERSION + (Game.debug ? " (debug mode)" : ""));
 				System.out.println("Fps: " + Initializer.getCurFps());
 				System.out.println("Players connected: " + Game.server.getNumPlayers());
 				
-				for (String info: Game.server.getClientInfo())
+				for (String info: Game.server.getClientInfo()) {
 					 System.out.println("\t"+info);
+				}
 			}
 		},
 		
@@ -89,27 +95,35 @@ public class ConsoleReader extends Thread {
 			
 			public void run(String[] args) {
 				if (args.length == 0) {
-					for (Config c: Config.values)
+					for (Config c: Config.values) {
 						 System.out.println("\t"+c.name() + " = " + c.getValue());
+					}
+					
 				} else {
 					Config configOption = null;
 					try {
 						configOption = Enum.valueOf(Config.class, args[0].toUpperCase(Localization.getSelectedLocale()));
 					} catch (IllegalArgumentException ex) {
-						System.out.println("\""+args[0]+"\" is not a valid config option. run \"config\" for a list of the available config options.");
+						System.out.println("\"" + args[0] + "\" is not a valid config option. run \"config\" for a list of the available config options.");
 					}
+					
 					if (configOption == null) return;
+					
 					if (args.length > 1) { // We want to set the config option.
 						if (args.length > 2) System.out.println("Note: Additional arguments (more than two) will be ignored.");
+						
 						boolean set = configOption.setValue(args[1]);
+						
 						if (set) {
-							System.out.println(configOption.name()+" set successfully.");
+							System.out.println(configOption.name() + " set successfully.");
 							
 							// HERE is where we save the modified config options.
 							new Save(WorldSelectDisplay.getWorldName(), Game.server);
 							new Save();
-						} else
+							
+						} else {
 							System.out.println("Failed to set " + configOption.name());
+						}
 					}
 				}
 			}
@@ -184,7 +198,7 @@ public class ConsoleReader extends Thread {
 		("[timeString]", "sets or prints the time of day." , "no arguments: prints the current time of day, in ticks.", "timeString: sets the time of day to the given value; it can be a number, in which case it is a tick count from 0 to 64000 or so, or one of the following strings: Morning, Day, Evening, Night. the time of day will be set to the beginning of the given time period.") {
 			public void run(String[] args) {
 				if (args.length == 0) {
-					System.out.println("Time of day is: " + Updater.tickCount + " ("+ Updater.getTime()+")");
+					System.out.println("Time of day is: " + Updater.tickCount + " ("+ Updater.getTime() + ")");
 					return;
 				}
 				
@@ -221,7 +235,9 @@ public class ConsoleReader extends Thread {
 					System.out.println("Please specify a message to send.");
 					return;
 				}
+				
 				List<String> usernames = new ArrayList<>();
+				
 				if (args.length > 1) {
 					usernames.addAll(Arrays.asList(args).subList(0, args.length - 1));
 				} else {
@@ -230,20 +246,24 @@ public class ConsoleReader extends Thread {
 				}
 				
 				String message = args[args.length-1];
-				for (MinicraftServerThread clientThread: Game.server.getAssociatedThreads(usernames.toArray(new String[usernames.size()]), true))
+				for (MinicraftServerThread clientThread: Game.server.getAssociatedThreads(usernames.toArray(new String[usernames.size()]), true)) {
 					clientThread.sendNotification(message, 50);
+				}
 			}
 		},
 		
 		TP
 		("<playername> <x y [level] | playername>", "teleports a player to a given location in the world.", "the first player name is the player that will be teleported. the second argument can be either another player, or a set of world coordinates.", "if the second argument is a player name, then the first player will be teleported to the second player, possibly traversing different levels.", "if world coordinates are specified, an x and y coordinate are required. A level depth may optionally be specified to go to a different level; if not specified, the current level is assumed.", "the symbol \"~\" may be used in place of an x or y coordinate, or a level, to mean the current player position on that axis. additionally, an offset may be specified by writing it like so: \"~-3 ~\". this means 3 tiles to the left of the current player position.") { /// future usage: "<x> <y> | "
 			public void run(String[] args) {
+				
 				if (args.length == 0) {
 					System.out.println("You must specify a username, and coordinates or another username to teleport to.");
 					printHelp(this);
 					return;
 				}
+				
 				MinicraftServerThread clientThread = Game.server.getAssociatedThread(args[0]);
+				
 				if (clientThread == null) {
 					System.out.println("Could not find player with username \"" + args[0] + "\"");
 					return;
@@ -261,22 +281,29 @@ public class ConsoleReader extends Thread {
 							try {
 								int lvl = getCoordinate(args[3], (level != null ? level.depth : 0));
 								level = World.levels[World.lvlIdx(lvl)];
+								
 							} catch (NumberFormatException ex) {
 								System.out.println("Specified level index is not a number: " + args[3]);
 								return;
+								
 							} catch (IndexOutOfBoundsException ex) {
 								System.out.println("Invalid level index: " + args[3]);
 								return;
+								
 							}
 						}
 					} catch (NumberFormatException ex) {
 						System.out.println("Invalid command syntax; specify a player or world coordinates for tp destination.");
 						printHelp(this);
 						return;
+		
 					}
+					
 				} else {
+					
 					// User specified the username of another player to tp to.
 					MinicraftServerThread destClientThread = Game.server.getAssociatedThread(args[1]);
+					
 					if (destClientThread == null) {
 						System.out.println("Could not find player with username \"" + args[0] + "\" for tp destination.");
 						return;
@@ -287,25 +314,33 @@ public class ConsoleReader extends Thread {
 						System.out.println("Client no longer exists...");
 						return;
 					}
+					
 					xt = rp.x >> 4;
 					yt = rp.y >> 4;
+					
 					level = rp.getLevel();
 				}
 				
 				if (xt >= 0 && yt >= 0 && level != null && xt < level.w && yt < level.h) {
+					
 					// Perform teleport
 					RemotePlayer playerToMove = clientThread.getClient();
+					
 					if (playerToMove == null) {
 						System.out.println("Can't perform teleport; Client no longer exists...");
 						return;
 					}
+					
 					if (!level.getTile(xt, yt).mayPass(level, xt, yt, playerToMove)) {
 						System.out.println("Specified tile is solid and cannot be moved though.");
 						return;
 					}
+					
 					Level pLevel = playerToMove.getLevel();
-					int nx = xt*16+8;
-					int ny = yt*16+8;
+					
+					int nx = xt * 16 + 8;
+					int ny = yt * 16 + 8;
+					
 					if (pLevel == null || pLevel.depth != level.depth) {
 						playerToMove.remove();
 						level.add(playerToMove, nx, ny);
@@ -342,8 +377,9 @@ public class ConsoleReader extends Thread {
 				}
 				
 				int count = entities.size();
-				for (Entity e: entities)
+				for (Entity e: entities) {
 					e.die();
+				}
 				
 				System.out.println("Removed " + count + " entities.");
 			}
@@ -358,19 +394,32 @@ public class ConsoleReader extends Thread {
 			generalHelp = name + sep + general;
 			
 			this.usage = usage == null ? name : name + " " + usage;
-			if (usage != null) usage = sep+"Usage: "+name+" "+usage;
-			else usage = "";
+			
+			if (usage != null) {
+				usage = sep+"Usage: "+name+" "+usage;
+			} else {
+				usage = "";
+			}
 			
 			detailedHelp = name + usage + sep + general;
-			if (specific != null && specific.length > 0)
+			if (specific != null && specific.length > 0) {
 				detailedHelp += System.lineSeparator()+"\t"+String.join(System.lineSeparator()+"\t", specific);
+			}
 		}
 		
 		public abstract void run(String[] args);
 		
-		public String getUsage() { return usage; }
-		public String getGeneralHelp() { return generalHelp; }
-		public String getDetailedHelp() { return detailedHelp; }
+		public String getUsage() {
+			return usage; 
+		}
+		
+		public String getGeneralHelp() {
+			return generalHelp; 
+		}
+		
+		public String getDetailedHelp() {
+			return detailedHelp; 
+		}
 		
 		public static void printHelp(Command cmd) {
 			System.out.println("Usage: " + cmd.getUsage());
@@ -379,8 +428,13 @@ public class ConsoleReader extends Thread {
 		
 		private static int getCoordinate(String coord, int baseline) throws NumberFormatException {
 			if (coord.contains("~")) {
-				if(coord.equals("~")) return baseline;
-				else return Integer.parseInt(coord.replace("~", "")) + baseline;
+				if(coord.equals("~")) {
+					return baseline;
+					
+				} else {
+					return Integer.parseInt(coord.replace("~", "")) + baseline;
+				}
+				
 			} else
 				return Integer.parseInt(coord);
 		}
@@ -397,8 +451,9 @@ public class ConsoleReader extends Thread {
 			if (args.length == 1) {
 				// Must be player name
 				MinicraftServerThread thread = Game.server.getAssociatedThread(args[0]);
-				if (thread != null)
+				if (thread != null) {
 					matches.add(thread.getClient());
+				}
 				return matches;
 			}
 			
@@ -436,7 +491,7 @@ public class ConsoleReader extends Thread {
 				
 				try {
 					int radius = Integer.valueOf(args[2]);
-					allEntities.addAll(rp.getLevel().getEntitiesInRect(new Rectangle(rp.x, rp.y, radius*2, radius*2, Rectangle.CENTER_DIMS)));
+					allEntities.addAll(rp.getLevel().getEntitiesInRect(new Rectangle(rp.x, rp.y, radius  *2, radius * 2, Rectangle.CENTER_DIMS)));
 					allEntities.remove(rp);
 				} catch (NumberFormatException ex) {
 					System.out.println("Invalid entity targeting format: Specified radius is not an integer: " + args[2]);
@@ -473,8 +528,9 @@ public class ConsoleReader extends Thread {
 			
 			remainingEntities.removeAll(allEntities);
 			
-			if (invert)
+			if (invert) {
 				return remainingEntities;
+			}
 			
 			return allEntities;
 		}
@@ -494,6 +550,7 @@ public class ConsoleReader extends Thread {
 		try {
 			Thread.sleep(500); // this is to let it get past the debug statements at world load, and any others, maybe, if not in debug mode.
 		} catch (InterruptedException ignored) {}
+		
 		System.out.println("Type \"help\" for a list of commands...");
 		
 		while (shouldRun/* && stdin.hasNext()*/) {
@@ -513,22 +570,31 @@ public class ConsoleReader extends Thread {
 							i--;
 						}
 						lastIdx = -1; // Reset the "last quote" variable.
-					} else // Start the quoted String
+					} else { // Start the quoted String
 						lastIdx = i; // Set the "last quote" variable.
+					}
 					
-					parsed.set(i, parsed.get(i).replaceFirst("\"", "")); // Remove the parsed quote character from the string.
-					i--; // So that this string can be parsed again, in case there is another quote.
+					// Remove the parsed quote character from the string.
+					parsed.set(i, parsed.get(i).replaceFirst("\"", "")); 
+					
+					// So that this string can be parsed again, in case there is another quote.
+					i--; 
 				}
 			}
-			//if (Game.debug) System.out.println("Parsed command: " + parsed.toString());
+			
+			// if (Game.debug) System.out.println("Parsed command: " + parsed.toString());
 			
 			Command cmd = getCommandByName(parsed.remove(0)); // Will print its own error message if not found.
-			if (cmd == null)
+			if (cmd == null) {
 				Command.HELP.run(new String[0]);
-			else if (Game.isValidServer() || cmd == Command.HELP)
+				
+			} else if (Game.isValidServer() || cmd == Command.HELP) {
 				cmd.run(parsed.toArray(new String[parsed.size()]));
-			else
+				
+			} else {
 				System.out.println("No server running.");
+				
+			}
 			
 			if (cmd == Command.STOP) shouldRun = false;
 		}
