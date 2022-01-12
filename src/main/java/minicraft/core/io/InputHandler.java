@@ -7,6 +7,7 @@ import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
+import java.util.Map.Entry;
 
 import org.jetbrains.annotations.Nullable;
 
@@ -318,14 +319,17 @@ public class InputHandler implements KeyListener {
 	}*/
 	
 	public ArrayList<String> getAllPressedKeys() {
-		ArrayList<String> keys = new ArrayList<>();
-		for (String keyname: keyboard.keySet().toArray(new String[0]))
-			if (keyboard.get(keyname).down)
-				keys.add(keyname);
-		
-		return keys;
+		ArrayList<String> keyList = new ArrayList<>(keyboard.size());
+
+		for (Entry<String, Key> entry : keyboard.entrySet()) {
+			if (entry.getValue().down) {
+				keyList.add(entry.getKey());
+			}
+		}
+
+		return keyList;
 	}
-	
+
 	/// This gets a key from key text, w/o adding to the key list.
 	private Key getPhysKey(String keytext) {
 		keytext = keytext.toUpperCase();
