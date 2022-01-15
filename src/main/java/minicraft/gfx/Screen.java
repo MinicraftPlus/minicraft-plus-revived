@@ -2,9 +2,10 @@ package minicraft.gfx;
 
 import java.util.Arrays;
 
+import org.jetbrains.annotations.NotNull;
+
 import minicraft.core.Renderer;
 import minicraft.core.Updater;
-import org.jetbrains.annotations.NotNull;
 
 public class Screen {
 	
@@ -75,11 +76,15 @@ public class Screen {
 
 	/** This method takes care of assigning the correct spritesheet to assign to the sheet variable **/
     public void render(int xp, int yp, int tile, int bits, int sheet, int whiteTint, boolean fullbright) {
-		render(xp, yp, tile, bits, sheets[sheet], whiteTint, fullbright);
+		render(xp, yp, tile, bits, sheets[sheet], whiteTint, fullbright, -1);
+    }
+    
+    public void render(int xp, int yp, int tile, int bits, int sheet, int whiteTint, boolean fullbright, int blackTint) {
+    	render(xp, yp, tile, bits, sheets[sheet], -1, false, blackTint); 
     }
 
     /** Renders an object from the sprite sheet based on screen coordinates, tile (SpriteSheet location), colors, and bits (for mirroring). I believe that xp and yp refer to the desired position of the upper-left-most pixel. */
-    public void render(int xp, int yp, int tile, int bits, SpriteSheet sheet, int whiteTint, boolean fullbright) {
+    public void render(int xp, int yp, int tile, int bits, SpriteSheet sheet, int whiteTint, boolean fullbright, int blackTint) {
 		// xp and yp are originally in level coordinates, but offset turns them to screen coordinates.
 		xp -= xOffset; //account for screen offset
 		yp -= yOffset;
@@ -118,7 +123,12 @@ public class Screen {
 						if (fullbright) {
 							pixels[index] = Color.WHITE;
 						} else {
-							pixels[index] = Color.upgrade(col);
+							if (blackTint != -1) {
+								
+								pixels[index] = Color.BLACK;
+							} else {
+								pixels[index] = Color.upgrade(col);
+							}
 						}
 					}
 				}
