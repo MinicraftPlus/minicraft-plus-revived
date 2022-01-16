@@ -108,6 +108,7 @@ public class AchievementsDisplay extends Display {
 
         // Make the achievement unlocked in memory.
         a.setUnlocked(unlocked);
+        Logger.debug("Updating "+id+" Achievement data...");
 
         // Add or subtract from score
         if (unlocked)
