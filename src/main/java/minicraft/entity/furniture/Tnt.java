@@ -19,6 +19,7 @@ import minicraft.item.Item;
 import minicraft.level.Level;
 import minicraft.level.tile.Tile;
 import minicraft.level.tile.Tiles;
+import minicraft.screen.AchievementsDisplay;
 
 public class Tnt extends Furniture implements ActionListener {
 	private static int FUSE_TIME = 90;
@@ -83,6 +84,7 @@ public class Tnt extends Furniture implements ActionListener {
 					affectedTiles[i].onExplode(level, xt + i % 3 - 1, yt + i / 3 - 1);
 				}
 
+				AchievementsDisplay.setAchievement("minicraft.achievement.demolition", true);
 				Sound.explode.play();
 
 				level.setAreaTiles(xt, yt, 1, Tiles.get("explode"), 0, explosionBlacklist);
