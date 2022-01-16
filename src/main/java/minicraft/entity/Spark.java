@@ -5,6 +5,7 @@ import java.util.List;
 import minicraft.core.Game;
 import minicraft.entity.mob.AirWizard;
 import minicraft.entity.mob.Mob;
+import minicraft.gfx.Color;
 import minicraft.gfx.Rectangle;
 import minicraft.gfx.Screen;
 
@@ -77,7 +78,7 @@ public class Spark extends Entity {
 		int xt = 8;
 		int yt = 13;
 
-		screen.render(x - 4, y - 4 + 2, 8 + 24  *32, randmirror, 2, -1, false, 0); // renders the shadow on the ground
+		screen.render(x - 4, y - 4 + 2, 8 + 24 * 32, randmirror, 2, -1, false, Color.BLACK); // renders the shadow on the ground
 		screen.render(x - 4, y - 4 - 2, 8 + 24 * 32, randmirror, 2); // Renders the spark
 	}
 	

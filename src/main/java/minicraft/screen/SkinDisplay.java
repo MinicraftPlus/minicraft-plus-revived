@@ -158,7 +158,7 @@ public class SkinDisplay extends Display {
 					screen.render(xoffset + x * 8, yoffset + y * 8, spriteIndex * 2 + x + (y + menus[0].getSelection() * 4) * 32, 0, 4);
 				} else {
 					SpriteSheet spriteSheet = customSkinSheets.get(menus[0].getSelection() - defaultSkins);
-					screen.render(xoffset + x * 8, yoffset + y * 8, spriteIndex * 2 + x + y * 32, 0, spriteSheet, - 1, false, -1);
+					screen.render(xoffset + x * 8, yoffset + y * 8, spriteIndex * 2 + x + y * 32, 0, spriteSheet, - 1, false, 0);
 				}
 
 		// Help text.

@@ -108,9 +108,9 @@ public class Sprite {
 		}
 	}
 	
-	public void render(Screen screen, int x, int y, int mirror, int whiteTint, int blackTint) {
+	public void render(Screen screen, int x, int y, int mirror, int whiteTint, int color) {
 		for (int row = 0; row < spritePixels.length; row++) {
-			renderRow(row, screen, x, y + row * 8, mirror, whiteTint, blackTint); // blackTint make the sprite complety black
+			renderRow(row, screen, x, y + row * 8, mirror, whiteTint, color); // color: overwrites the colors of the original sprite in a single color
 		}
 	}
 
@@ -133,10 +133,10 @@ public class Sprite {
 		}
 	}
 	
-	public void renderRow(int r, Screen screen, int x, int y, int mirror, int whiteTint, int blackTint) {
+	public void renderRow(int r, Screen screen, int x, int y, int mirror, int whiteTint, int color) {
 		Px[] row = spritePixels[r];
 		for (int c = 0; c < row.length; c++) {
-			screen.render(x + c * 8, y, row[c].sheetPos, (mirror != -1 ? mirror : row[c].mirror), row[c].sheet, whiteTint, false, blackTint);
+			screen.render(x + c * 8, y, row[c].sheetPos, (mirror != -1 ? mirror : row[c].mirror), row[c].sheet, whiteTint, false, color);
 		}
 	}
 

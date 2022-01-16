@@ -76,15 +76,15 @@ public class Screen {
 
 	/** This method takes care of assigning the correct spritesheet to assign to the sheet variable **/
     public void render(int xp, int yp, int tile, int bits, int sheet, int whiteTint, boolean fullbright) {
-		render(xp, yp, tile, bits, sheets[sheet], whiteTint, fullbright, -1);
+		render(xp, yp, tile, bits, sheets[sheet], whiteTint, fullbright, 0);
     }
     
-    public void render(int xp, int yp, int tile, int bits, int sheet, int whiteTint, boolean fullbright, int blackTint) {
-    	render(xp, yp, tile, bits, sheets[sheet], -1, false, blackTint); 
+    public void render(int xp, int yp, int tile, int bits, int sheet, int whiteTint, boolean fullbright, int color) {
+    	render(xp, yp, tile, bits, sheets[sheet], -1, false, color); 
     }
 
     /** Renders an object from the sprite sheet based on screen coordinates, tile (SpriteSheet location), colors, and bits (for mirroring). I believe that xp and yp refer to the desired position of the upper-left-most pixel. */
-    public void render(int xp, int yp, int tile, int bits, SpriteSheet sheet, int whiteTint, boolean fullbright, int blackTint) {
+    public void render(int xp, int yp, int tile, int bits, SpriteSheet sheet, int whiteTint, boolean fullbright, int color) {
 		// xp and yp are originally in level coordinates, but offset turns them to screen coordinates.
 		xp -= xOffset; //account for screen offset
 		yp -= yOffset;
@@ -123,9 +123,9 @@ public class Screen {
 						if (fullbright) {
 							pixels[index] = Color.WHITE;
 						} else {
-							if (blackTint != -1) {
+							if (color != 0) {
 								
-								pixels[index] = Color.BLACK;
+								pixels[index] = color;
 							} else {
 								pixels[index] = Color.upgrade(col);
 							}
