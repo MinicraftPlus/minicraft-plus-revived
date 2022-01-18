@@ -13,6 +13,7 @@ import minicraft.gfx.MobSprite;
 import minicraft.gfx.Screen;
 import minicraft.network.Analytics;
 import minicraft.saveload.Save;
+import minicraft.screen.AchievementsDisplay;
 
 public class AirWizard extends EnemyMob {
 	private static MobSprite[][][] sprites;
@@ -177,6 +178,9 @@ public class AirWizard extends EnemyMob {
 		if(!secondform) {
 			Analytics.AirWizardDeath.ping();
 			Updater.notifyAll("Air Wizard: Defeated!");
+
+			// Achievement:
+			AchievementsDisplay.setAchievement("minicraft.achievement.airwizard", true);
 			if (!beaten) {
 				Analytics.FirstAirWizardDeath.ping();
 				Updater.notifyAll("The Dungeon is now open!", -400);
@@ -185,6 +189,9 @@ public class AirWizard extends EnemyMob {
 		} else {
 			Analytics.AirWizardIIDeath.ping();
 			Updater.notifyAll("Air Wizard II: Defeated!");
+
+			// Second Achievement:
+			AchievementsDisplay.setAchievement("minicraft.achievement.second_airwizard", true);
 			if (!(boolean)Settings.get("unlockedskin")) {
 				Analytics.FirstAirWizardIIDeath.ping();
 				Updater.notifyAll("A costume lies on the ground...", -200);

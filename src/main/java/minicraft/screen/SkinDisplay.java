@@ -103,6 +103,9 @@ public class SkinDisplay extends Display {
 
     @Override
     public void onExit() {
+		// Achieve Fashion Show:
+		AchievementsDisplay.setAchievement("minicraft.achievement.skin", true);
+
 		// Save the selected skin.
 		new Save();
 		selectedSkinIndex = menus[0].getSelection();
