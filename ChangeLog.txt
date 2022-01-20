@@ -22,7 +22,7 @@ Minicraft+ version 2.1.0
 * Texture pack and skin menu now look the same as every other menu
 * Pre-releases are now ignored from version check
 * Renamed shear to shears
-* Saplings should no longer grow if an entity is on itz
+* Saplings should no longer grow if an entity is on it
 
 Minicraft+ version 2.0.7
 
