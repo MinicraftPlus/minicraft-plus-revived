@@ -344,7 +344,7 @@ public class Load {
 		// Settings
 		Settings.set("sound", json.getBoolean("sound"));
 		Settings.set("autosave", json.getBoolean("autosave"));
-		Settings.set("diff", json.getString("diff"));
+		Settings.set("diff", json.has("diff") ? json.getString("diff") : "Normal");
 		Settings.set("fps", json.getInt("fps"));
 
 		String lang = json.getString("lang");
