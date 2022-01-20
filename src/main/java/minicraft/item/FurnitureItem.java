@@ -34,16 +34,16 @@ public class FurnitureItem extends Item {
 		ArrayList<Item> items = new ArrayList<>();
 		
 		/// There should be a spawner for each level of mob, or at least make the level able to be changed.
-		items.add(new FurnitureItem(new Spawner(new Cow())));
-		items.add(new FurnitureItem(new Spawner(new Pig())));
-		items.add(new FurnitureItem(new Spawner(new Sheep())));
-		items.add(new FurnitureItem(new Spawner(new Slime(1))));
-		items.add(new FurnitureItem(new Spawner(new Zombie(1))));
-		items.add(new FurnitureItem(new Spawner(new Creeper(1))));
-		items.add(new FurnitureItem(new Spawner(new Skeleton(1))));
-		items.add(new FurnitureItem(new Spawner(new Snake(1))));
-		items.add(new FurnitureItem(new Spawner(new Knight(1))));
-		items.add(new FurnitureItem(new Spawner(new AirWizard(false))));
+		items.add(new FurnitureItem(new Spawner(new Cow()), 1, 28));
+		items.add(new FurnitureItem(new Spawner(new Pig()), 2, 28));
+		items.add(new FurnitureItem(new Spawner(new Sheep()), 3, 28));
+		items.add(new FurnitureItem(new Spawner(new Slime(1)), 4, 28));
+		items.add(new FurnitureItem(new Spawner(new Zombie(1)), 5, 28));
+		items.add(new FurnitureItem(new Spawner(new Creeper(1)), 6, 28));
+		items.add(new FurnitureItem(new Spawner(new Skeleton(1)), 7, 28));
+		items.add(new FurnitureItem(new Spawner(new Snake(1)), 8, 28));
+		items.add(new FurnitureItem(new Spawner(new Knight(1)), 9, 28));
+		items.add(new FurnitureItem(new Spawner(new AirWizard(false)), 10, 28));
 		
 		items.add(new FurnitureItem(new Chest()));
 		items.add(new FurnitureItem(new DungeonChest(false, true)));
@@ -65,6 +65,7 @@ public class FurnitureItem extends Item {
 	
 	public Furniture furniture; // The furniture of this item
 	public boolean placed; // Value if the furniture has been placed or not.
+	private int sx, sy; // Sprite position
 	
 	private static int getSpritePos(int fpos) {
 		int x = fpos%32;
@@ -75,6 +76,14 @@ public class FurnitureItem extends Item {
 	public FurnitureItem(Furniture furniture) {
 		super(furniture.name, new Sprite(getSpritePos(furniture.sprite.getPos()), 0));
 		this.furniture = furniture; // Assigns the furniture to the item
+		placed = false;
+	}
+	
+	public FurnitureItem(Furniture furniture, int sx , int sy) {
+		super(furniture.name, new Sprite(sx, sy, 1, 1, 0)); // get the sprite directly
+		this.sx = sx;
+		this.sy = sy;
+		this.furniture = furniture;
 		placed = false;
 	}
 	
@@ -108,6 +117,12 @@ public class FurnitureItem extends Item {
 	}
 	
 	public FurnitureItem clone() {
-		return new FurnitureItem(furniture.clone());
+		// in case the item is a spawner, it will use the sprite position (sx, sy)
+		// instead if it is not, the constructor will obtain said sprite
+		if (furniture.name.contains("Spawner")) {
+			return new FurnitureItem(furniture.clone(), sx, sy);
+		} else {
+			return new FurnitureItem(furniture.clone());
+		}
 	}
 }
