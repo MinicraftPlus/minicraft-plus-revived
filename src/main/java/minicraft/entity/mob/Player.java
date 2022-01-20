@@ -4,7 +4,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
-import minicraft.util.Vector2;
 import org.jetbrains.annotations.Nullable;
 
 import minicraft.core.Game;
@@ -57,6 +56,7 @@ import minicraft.screen.PauseDisplay;
 import minicraft.screen.PlayerInvDisplay;
 import minicraft.screen.SkinDisplay;
 import minicraft.screen.WorldSelectDisplay;
+import minicraft.util.Vector2;
 
 public class Player extends Mob implements ItemHolder, ClientTickable {
 	protected InputHandler input;
@@ -826,11 +826,26 @@ public class Player extends Mob implements ItemHolder, ClientTickable {
 		if (isSwimming()) {
 			yo += 4; // y offset is moved up by 4
 			if (level.getTile(x / 16, y / 16) == Tiles.get("water")) {
-				screen.render(xo + 0, yo + 3, 5 + 2 * 32, 0, 3); // Render the water graphic
-				screen.render(xo + 8, yo + 3, 5 + 2 * 32, 1, 3); // Render the mirrored water graphic to the right.
+
+				// animation effect
+			    if (tickTime / 8 % 2 == 0) {
+			    	 screen.render(xo + 0, yo + 3, 5 + 2 * 32, 0, 3); // Render the water graphic
+			    	 screen.render(xo + 8, yo + 3, 5 + 2 * 32, 1, 3); // Render the mirrored water graphic to the right.
+			    } else {
+					screen.render(xo + 0, yo + 3, 5 + 3 * 32, 0, 3);
+					screen.render(xo + 8, yo + 3, 5 + 3 * 32, 1, 3);
+			    }
+				
 			} else if (level.getTile(x / 16, y / 16) == Tiles.get("lava")) {
-				screen.render(xo + 0, yo + 3, 6 + 2 * 32, 1, 3); // Render the lava graphic
-				screen.render(xo + 8, yo + 3, 6 + 2 * 32, 0, 3); // Render the mirrored lava graphic to the right.
+				
+			    if (tickTime / 8 % 2 == 0) {
+					screen.render(xo + 0, yo + 3, 6 + 2 * 32, 1, 3); // Render the lava graphic
+					screen.render(xo + 8, yo + 3, 6 + 2 * 32, 0, 3); // Render the mirrored lava graphic to the right.
+			    } else {
+					screen.render(xo + 0, yo + 3, 6 + 3 * 32, 1, 3);
+					screen.render(xo + 8, yo + 3, 6 + 3 * 32, 0, 3);
+			    }
+				
 			}
 		}
 

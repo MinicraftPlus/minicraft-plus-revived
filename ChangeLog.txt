@@ -5,6 +5,9 @@ Minicraft+ version 2.1.0
 + Added the ability to use some ascii characters in world seed
 + Added ornate obsidian and ornate stone tiles
 + Added raw obsidian and stone tiles
++ Re-added sparks, damage particles and items shadows.
++ Re-added swimming animation.
++ Re-added colored spawners.
 * Fixed crash when inputting certain characters into the inventory searcher
 * Fixed issue where level 2 airwizard would load with 250% health
 * Fixed crash when deleting world

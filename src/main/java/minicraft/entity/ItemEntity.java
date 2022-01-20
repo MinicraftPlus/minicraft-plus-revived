@@ -4,6 +4,7 @@ import java.util.List;
 
 import minicraft.core.Game;
 import minicraft.entity.mob.Player;
+import minicraft.gfx.Color;
 import minicraft.gfx.Screen;
 import minicraft.item.Item;
 
@@ -127,6 +128,7 @@ public class ItemEntity extends Entity implements ClientTickable {
 		if (time >= lifeTime - 6 * 20) {
 			if (time / 6 % 2 == 0) return;
 		}
+		item.sprite.render(screen, x-4, y - 4, 4, -1, Color.BLACK); // item shadow uses black color
 		item.sprite.render(screen, x - 4, y - 4 - (int)(zz));
 	}
 
