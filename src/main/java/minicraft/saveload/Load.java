@@ -261,6 +261,14 @@ public class Load {
 		Settings.setIdx("diff", diffIdx);
 		
 		AirWizard.beaten = Boolean.parseBoolean(data.remove(0));
+		
+		// Check if the AirWizard was beaten in versions prior to 2.1.0
+		if (worldVer.compareTo(new Version("2.1.0-dev2")) < 0) {
+			if (AirWizard.beaten) {
+				Logger.debug("AirWizard was beaten in an old version, giving achievement...");
+				AchievementsDisplay.setAchievement("minicraft.achievement.airwizard", true);
+			}
+		}
 	}
 	
 	private void loadMode(String modedata) {
