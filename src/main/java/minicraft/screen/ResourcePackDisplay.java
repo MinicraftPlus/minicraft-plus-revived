@@ -27,48 +27,48 @@ import minicraft.screen.entry.ListEntry;
 import minicraft.screen.entry.SelectEntry;
 import org.tinylog.Logger;
 
-public class TexturePackDisplay extends Display {
+public class ResourcePackDisplay extends Display {
 
-	private static final String DEFAULT_TEXTURE_PACK = "Default"; // Default texture
+	private static final String DEFAULT_RESOURCE_PACK = "Default"; // Default texture
 	private static final String[] ENTRY_NAMES = new String[] { "items.png", "tiles.png", "entities.png", "gui.png" }; // Spritesheets
 
-	private static final File location = new File(FileHandler.getSystemGameDir() + "/" + FileHandler.getLocalGameDir() + "/TexturePacks");
+	private static final File location = new File(FileHandler.getSystemGameDir() + "/" + FileHandler.getLocalGameDir() + "/ResourcePacks");
 
-	private static List<ListEntry> getAllTexturePacks() {
-		List<ListEntry> textureList = new ArrayList<>();
-		textureList.add(new SelectEntry(TexturePackDisplay.DEFAULT_TEXTURE_PACK, Game::exitMenu, false));
+	private static List<ListEntry> getAllResourcePacks() {
+		List<ListEntry> resourceList = new ArrayList<>();
+		resourceList.add(new SelectEntry(ResourcePackDisplay.DEFAULT_RESOURCE_PACK, Game::exitMenu, false));
 
-		// Generate texture packs folder
+		// Generate resource packs folder
 		if (location.mkdirs()) {
-			Logger.info("Created texture packs folder at {}.", location);
+			Logger.info("Created resource packs folder at {}.", location);
 		}
 
-		// Read and add the .zip file to the texture pack list.
+		// Read and add the .zip file to the resource pack list.
 		for (String fileName : Objects.requireNonNull(location.list())) {
 			// Only accept files ending with .zip.
 			if (fileName.endsWith(".zip")) {
-				textureList.add(new SelectEntry(fileName, Game::exitMenu, false));
+				resourceList.add(new SelectEntry(fileName, Game::exitMenu, false));
 			}
 		}
 
-		return textureList;
+		return resourceList;
 	}
 	
-	public TexturePackDisplay() {
+	public ResourcePackDisplay() {
 		super(true, true,
-				new Menu.Builder(false, 2, RelPos.CENTER, getAllTexturePacks()).setSize(48, 64).createMenu());
+				new Menu.Builder(false, 2, RelPos.CENTER, getAllResourcePacks()).setSize(48, 64).createMenu());
 	}
 
 	@Override
 	public void onExit() {
 		super.onExit();
-		getAllTexturePacks();
+		getAllResourcePacks();
 		updateSheets();
 	}
 
 	private void updateSheets() {
 		try {
-			SpriteSheet[] sheets = new SpriteSheet[TexturePackDisplay.ENTRY_NAMES.length];
+			SpriteSheet[] sheets = new SpriteSheet[ResourcePackDisplay.ENTRY_NAMES.length];
 
 			if (menus[0].getSelection() == 0) {
 				// Load default sprite sheet.
@@ -81,24 +81,24 @@ public class TexturePackDisplay extends Display {
 
 					// Load textures
 					HashMap<String, ZipEntry> textures = resources.get("textures");
-					for (int i = 0; i < TexturePackDisplay.ENTRY_NAMES.length; i++) {
-						ZipEntry entry = textures.get(TexturePackDisplay.ENTRY_NAMES[i]);
+					for (int i = 0; i < ResourcePackDisplay.ENTRY_NAMES.length; i++) {
+						ZipEntry entry = textures.get(ResourcePackDisplay.ENTRY_NAMES[i]);
 						if (entry != null) {
 							try (InputStream inputEntry = zipFile.getInputStream(entry)) {
 								sheets[i] = new SpriteSheet(ImageIO.read(inputEntry));
 							} catch (IOException e) {
 								e.printStackTrace();
-								Logger.error("Loading sheet {} failed. Aborting.", TexturePackDisplay.ENTRY_NAMES[i]);
+								Logger.error("Loading sheet {} failed. Aborting.", ResourcePackDisplay.ENTRY_NAMES[i]);
 								return;
 							}
 						} else {
-							Logger.debug("Couldn't load sheet {}, ignoring.", TexturePackDisplay.ENTRY_NAMES[i]);
+							Logger.debug("Couldn't load sheet {}, ignoring.", ResourcePackDisplay.ENTRY_NAMES[i]);
 						}
 					}
 					// TODO: Extend this to apply to sound (Using resources.get("sound"))
 				} catch (IllegalStateException | IOException e) {
 					e.printStackTrace();
-					Logger.error("Could not load texture pack with name {} at {}.", Objects.requireNonNull(menus[0].getCurEntry()).toString(), location);
+					Logger.error("Could not load resource pack with name {} at {}.", Objects.requireNonNull(menus[0].getCurEntry()).toString(), location);
 					return;
 				} catch (NullPointerException e) {
 					e.printStackTrace();
@@ -109,11 +109,11 @@ public class TexturePackDisplay extends Display {
 			Renderer.screen.setSheets(sheets[0], sheets[1], sheets[2], sheets[3]);
 		} catch(NullPointerException e) {
 			e.printStackTrace();
-			Logger.error("Changing texture pack failed.");
+			Logger.error("Changing resource pack failed.");
 			return;
 		}
 
-		Logger.info("Changed texture pack.");
+		Logger.info("Changed resource pack.");
 	}
 
 
@@ -139,6 +139,8 @@ public class TexturePackDisplay extends Display {
 	public static HashMap<String, HashMap<String, ZipEntry>> generateResourceTree(ZipFile zipFile){
 		HashMap<String, HashMap<String, ZipEntry>> resources = new HashMap<>(); 
 
+		resources.put("textures", new HashMap<>());
+
 		Enumeration<? extends ZipEntry> entries = zipFile.entries();
 		while(entries.hasMoreElements()){
 			ZipEntry entry = entries.nextElement();
@@ -154,7 +156,7 @@ public class TexturePackDisplay extends Display {
 				HashMap<String, ZipEntry> directory = resources.get(matcher.group(1));
 
 				if(directory == null) {
-					continue;
+					directory = resources.get("textures"); // Maintain backwards compatibility
 				}
 
 				String[] validSuffixes = {".json", ".wav", ".png"};
@@ -176,7 +178,7 @@ public class TexturePackDisplay extends Display {
 		super.render(screen);
 
 		// Title
-		Font.drawCentered(Localization.getLocalized("Texture Packs"), screen, Screen.h - 180, Color.WHITE);
+		Font.drawCentered(Localization.getLocalized("Resource Packs"), screen, Screen.h - 180, Color.WHITE);
 
 		// Info text at the bottom.
 		Font.drawCentered("Use "+ Game.input.getMapping("cursor-down") + " and " + Game.input.getMapping("cursor-up") + " to move.", screen, Screen.h - 17, Color.DARK_GRAY);

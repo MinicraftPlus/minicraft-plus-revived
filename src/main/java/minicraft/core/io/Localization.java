@@ -22,7 +22,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import minicraft.core.Game;
-import minicraft.screen.TexturePackDisplay;
+import minicraft.screen.ResourcePackDisplay;
 
 import org.json.JSONObject;
 import org.tinylog.Logger;
@@ -103,9 +103,9 @@ public class Localization {
 			try {
 				String[] path = location.split("/");
 
-				ZipFile zipFile = new ZipFile(new File(TexturePackDisplay.getLocation(), path[0] + ".zip"));
+				ZipFile zipFile = new ZipFile(new File(ResourcePackDisplay.getLocation(), path[0] + ".zip"));
 	
-				HashMap<String, ZipEntry> localizations = TexturePackDisplay.generateResourceTree(zipFile).get("localization"); 
+				HashMap<String, ZipEntry> localizations = ResourcePackDisplay.generateResourceTree(zipFile).get("localization"); 
 	
 				ZipEntry localization = localizations.get(path[path.length - 1]);
 	
@@ -216,11 +216,16 @@ public class Localization {
 	}
 
 	private static void getLanguagesFromResourcePacks(ArrayList<String> languages) {
-		for (String fileName : Objects.requireNonNull(TexturePackDisplay.getLocation().list())) {
+		File location = ResourcePackDisplay.getLocation();
+		if (location.mkdirs()) {
+			Logger.info("Created resource packs folder at {}.", location);
+		}
+
+		for (String fileName : Objects.requireNonNull(location.list())) {
 			try {
-				ZipFile zipFile = new ZipFile(new File(TexturePackDisplay.getLocation(), fileName));
+				ZipFile zipFile = new ZipFile(new File(location, fileName));
 	
-				HashMap<String, HashMap<String, ZipEntry>> resources = TexturePackDisplay.generateResourceTree(zipFile); 
+				HashMap<String, HashMap<String, ZipEntry>> resources = ResourcePackDisplay.generateResourceTree(zipFile); 
 	
 				// Load textures
 				HashMap<String, ZipEntry> localizations = resources.get("localization");
