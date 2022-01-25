@@ -4,8 +4,12 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
+import java.util.Enumeration;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Objects;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 
@@ -70,9 +74,15 @@ public class TexturePackDisplay extends Display {
 				// Load default sprite sheet.
 				sheets = Renderer.loadDefaultSpriteSheets();
 			} else {
-				try (ZipFile zipFile = new ZipFile(new File(location, Objects.requireNonNull(menus[0].getCurEntry()).toString()))) {
+				try {
+					ZipFile zipFile = new ZipFile(new File(location, Objects.requireNonNull(menus[0].getCurEntry()).toString()));
+
+					HashMap<String, HashMap<String, ZipEntry>> resources = generateResourceTree(zipFile); 
+
+					// Load textures
+					HashMap<String, ZipEntry> textures = resources.get("textures");
 					for (int i = 0; i < TexturePackDisplay.ENTRY_NAMES.length; i++) {
-						ZipEntry entry = zipFile.getEntry(TexturePackDisplay.ENTRY_NAMES[i]);
+						ZipEntry entry = textures.get(TexturePackDisplay.ENTRY_NAMES[i]);
 						if (entry != null) {
 							try (InputStream inputEntry = zipFile.getInputStream(entry)) {
 								sheets[i] = new SpriteSheet(ImageIO.read(inputEntry));
@@ -85,6 +95,8 @@ public class TexturePackDisplay extends Display {
 							Logger.debug("Couldn't load sheet {}, ignoring.", TexturePackDisplay.ENTRY_NAMES[i]);
 						}
 					}
+
+					// TODO: Extend this to apply localization and sound (Using resources.get("localization") and resources.get("sound"))
 				} catch (IllegalStateException | IOException e) {
 					e.printStackTrace();
 					Logger.error("Could not load texture pack with name {} at {}.", Objects.requireNonNull(menus[0].getCurEntry()).toString(), location);
@@ -103,6 +115,61 @@ public class TexturePackDisplay extends Display {
 		}
 
 		Logger.info("Changed texture pack.");
+	}
+
+
+	/*
+		Fill hashmap with folder > list of files structure
+
+		Example Folder Structure:
+		textures
+			items.png
+			gui.png
+			entities.png
+			tiles.png
+		localization
+			english_en-us.json
+		sound
+			bossdeath.wav
+		
+		Gets converted into a HashMap of HashMaps that look the same
+		
+		Example getter:
+		resources.get("textures").get("tiles.png")
+	*/
+	private HashMap<String, HashMap<String, ZipEntry>> generateResourceTree(ZipFile zipFile){
+		HashMap<String, HashMap<String, ZipEntry>> resources = new HashMap<String, HashMap<String, ZipEntry>>(); 
+
+		Enumeration<? extends ZipEntry> entries = zipFile.entries();
+		while(entries.hasMoreElements()){
+			ZipEntry entry = entries.nextElement();
+
+			Pattern pattern = Pattern.compile("/(.*?)/");
+			Matcher matcher = pattern.matcher(entry.getName());
+			if (!matcher.find()) {
+				continue;
+			}
+			if(entry.isDirectory()) {
+				resources.put(matcher.group(1), new HashMap<String, ZipEntry>());
+			} else {
+				HashMap<String, ZipEntry> directory = resources.get(matcher.group(1));
+
+				if(directory == null) {
+					continue;
+				}
+
+				String[] validSuffixes = {".json", ".wav", ".png"};
+				for(String suffix: validSuffixes) {
+					if(entry.getName().endsWith(suffix)) {
+						String[] path = entry.getName().split("/");
+						String fileName = path[path.length - 1];
+						directory.put(fileName, entry);
+					}
+				}
+			}
+		}
+
+		return resources;
 	}
 
 	@Override
