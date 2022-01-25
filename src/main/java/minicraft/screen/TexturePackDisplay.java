@@ -95,8 +95,7 @@ public class TexturePackDisplay extends Display {
 							Logger.debug("Couldn't load sheet {}, ignoring.", TexturePackDisplay.ENTRY_NAMES[i]);
 						}
 					}
-
-					// TODO: Extend this to apply localization and sound (Using resources.get("localization") and resources.get("sound"))
+					// TODO: Extend this to apply to sound (Using resources.get("sound"))
 				} catch (IllegalStateException | IOException e) {
 					e.printStackTrace();
 					Logger.error("Could not load texture pack with name {} at {}.", Objects.requireNonNull(menus[0].getCurEntry()).toString(), location);
@@ -137,8 +136,8 @@ public class TexturePackDisplay extends Display {
 		Example getter:
 		resources.get("textures").get("tiles.png")
 	*/
-	private HashMap<String, HashMap<String, ZipEntry>> generateResourceTree(ZipFile zipFile){
-		HashMap<String, HashMap<String, ZipEntry>> resources = new HashMap<String, HashMap<String, ZipEntry>>(); 
+	public static HashMap<String, HashMap<String, ZipEntry>> generateResourceTree(ZipFile zipFile){
+		HashMap<String, HashMap<String, ZipEntry>> resources = new HashMap<>(); 
 
 		Enumeration<? extends ZipEntry> entries = zipFile.entries();
 		while(entries.hasMoreElements()){
@@ -150,7 +149,7 @@ public class TexturePackDisplay extends Display {
 				continue;
 			}
 			if(entry.isDirectory()) {
-				resources.put(matcher.group(1), new HashMap<String, ZipEntry>());
+				resources.put(matcher.group(1), new HashMap<>());
 			} else {
 				HashMap<String, ZipEntry> directory = resources.get(matcher.group(1));
 
@@ -209,4 +208,7 @@ public class TexturePackDisplay extends Display {
 	     */
 	}
 
+	public static File getLocation() {
+		return location;
+	}
 }
