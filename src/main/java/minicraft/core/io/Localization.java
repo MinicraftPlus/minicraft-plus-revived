@@ -1,6 +1,7 @@
 package minicraft.core.io;
 
 import java.io.BufferedReader;
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -14,12 +15,15 @@ import java.nio.file.Paths;
 import java.security.CodeSource;
 import java.util.*;
 import java.util.zip.ZipEntry;
+import java.util.zip.ZipFile;
 import java.util.zip.ZipInputStream;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import minicraft.core.Game;
+import minicraft.screen.ResourcePackDisplay;
+
 import org.json.JSONObject;
 import org.tinylog.Logger;
 
@@ -92,7 +96,24 @@ public class Localization {
 
 		// Load an InputStream from the location provided, and check for errors.
 		// Using getResourceAsStream since we're publishing this as a jar file.
-		InputStream locStream = Game.class.getResourceAsStream(location);
+		InputStream locStream = null;
+		if(location.startsWith("/resources")) {
+			locStream = Game.class.getResourceAsStream(location);
+		} else {
+			try {
+				String[] path = location.split("/");
+
+				ZipFile zipFile = new ZipFile(new File(ResourcePackDisplay.getLocation(), path[0] + ".zip"));
+	
+				HashMap<String, ZipEntry> localizations = ResourcePackDisplay.generateResourceTree(zipFile).get("localization"); 
+	
+				ZipEntry localization = localizations.get(path[path.length - 1]);
+	
+				locStream = zipFile.getInputStream(localization);
+			} catch (IllegalStateException | IOException | NullPointerException e) {
+				e.printStackTrace();
+			}
+		}
 		if (locStream == null) {
 			Logger.error("Error opening localization file at: {}.", location);
 			return "";
@@ -151,7 +172,9 @@ public class Localization {
 			e.printStackTrace();
 			return null;
 		}
-		
+
+		getLanguagesFromResourcePacks(languages);
+
 		return languages.toArray(new String[0]);
 	}
 	
@@ -186,7 +209,52 @@ public class Localization {
 			// just return to the title menu.
 			return null;
 		}
+
+		getLanguagesFromResourcePacks(languages);
 		
 		return languages.toArray(new String[languages.size()]);
+	}
+
+	private static void getLanguagesFromResourcePacks(ArrayList<String> languages) {
+		File location = ResourcePackDisplay.getLocation();
+		if (location.mkdirs()) {
+			Logger.info("Created resource packs folder at {}.", location);
+		}
+
+		for (String fileName : Objects.requireNonNull(location.list())) {
+			try {
+				ZipFile zipFile = new ZipFile(new File(location, fileName));
+	
+				HashMap<String, HashMap<String, ZipEntry>> resources = ResourcePackDisplay.generateResourceTree(zipFile); 
+	
+				// Load textures
+				HashMap<String, ZipEntry> localizations = resources.get("localization");
+				for(String locale: localizations.keySet()) {
+					ZipEntry localization = localizations.get(locale);
+
+					String data = locale.replace(".json", "");
+					String lang = data.substring(0, data.indexOf('_'));
+
+
+					languages.add(lang);
+					localizationFiles.put(lang, localization.getName());
+					locales.put(lang, Locale.forLanguageTag(data.substring(data.indexOf('_')+1)));
+
+					// locales.put(lang, Locale.forLanguageTag(data.substring(data.indexOf('_')+1)));
+		
+					// InputStream inputEntry = zipFile.getInputStream(localization);
+		
+					// Load the file as a BufferedReader.
+					// BufferedReader reader = new BufferedReader(new InputStreamReader(inputEntry, StandardCharsets.UTF_8));
+		
+					// String text = String.join("\n", reader.lines().toArray(String[]::new));
+				}
+			} catch (IllegalStateException | IOException e) {
+				e.printStackTrace();
+				// Logger.error("Could not load texture pack with name {} at {}.", Objects.requireNonNull(menus[0].getCurEntry()).toString(), location);
+			} catch (NullPointerException e) {
+				e.printStackTrace();
+			}
+		}
 	}
 }
