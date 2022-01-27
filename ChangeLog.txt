@@ -23,6 +23,7 @@ Minicraft+ version 2.1.0
 * Pre-releases are now ignored from version check
 * Renamed shear to shears
 * Saplings should no longer grow if an entity is on it
+* Changed texture packs into resource packs
 
 Minicraft+ version 2.0.7
 

@@ -56,7 +56,7 @@ public class SkinDisplay extends Display {
 
 		// Create folder, and see if it was successful.
 		if (skinFolder.mkdirs()) {
-			Logger.info("Created texture packs folder at {}.", skinFolder);
+			Logger.info("Created resource packs folder at {}.", skinFolder);
 		}
 
 		// Read and add the .png file to the skins list.
