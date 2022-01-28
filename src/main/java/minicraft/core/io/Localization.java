@@ -33,6 +33,7 @@ public class Localization {
 	
 	private static final HashMap<String, String> localization = new HashMap<>();
 	private static String selectedLanguage = "english";
+	static Locale lan = Locale.US;
 	
 	private static final HashMap<String, Locale> locales = new HashMap<>();
 	private static final HashMap<String, String> localizationFiles = new HashMap<>();
@@ -65,14 +66,18 @@ public class Localization {
 		return (localString == null ? key : localString);
 	}
 	
-	public static Locale getSelectedLocale() { return locales.getOrDefault(selectedLanguage, Locale.getDefault()); }
+	public static Locale getSelectedLocale() { return selectedLanguage; }
 	
 	@NotNull
-	public static String getSelectedLanguage() { return selectedLanguage; }
-	
-	public static void changeLanguage(String newLanguage) {
+	public static String getSelectedLanguage() {
+		String data = localizationFiles.get(selectedLanguage);
+
+		return data.substring(0, data.indexOf('_'));
+	}
+
+	public static void changeLanguage(@NotNull String newLanguage) {
 		localization.clear();
-		selectedLanguage = newLanguage;
+		selectedLanguage = Locale.forLanguageTag(newLanguage);
 		loadLanguageFile(selectedLanguage);
 	}
 
@@ -97,22 +102,22 @@ public class Localization {
 		// Load an InputStream from the location provided, and check for errors.
 		// Using getResourceAsStream since we're publishing this as a jar file.
 		InputStream locStream = null;
-		if(location.startsWith("/resources")) {
+		if (location.startsWith("/resources")) {
 			locStream = Game.class.getResourceAsStream(location);
 		} else {
-			try {
-				String[] path = location.split("/");
-
-				ZipFile zipFile = new ZipFile(new File(ResourcePackDisplay.getLocation(), path[0] + ".zip"));
-	
-				HashMap<String, ZipEntry> localizations = ResourcePackDisplay.generateResourceTree(zipFile).get("localization"); 
-	
-				ZipEntry localization = localizations.get(path[path.length - 1]);
-	
-				locStream = zipFile.getInputStream(localization);
-			} catch (IllegalStateException | IOException | NullPointerException e) {
-				e.printStackTrace();
-			}
+			//try {
+			//	String[] path = location.split("/");
+//
+			//	ZipFile zipFile = new ZipFile(new File(ResourcePackDisplay.getLocation(), path[0] + ".zip"));
+	//
+			//	HashMap<String, ZipEntry> localizations = ResourcePackDisplay.getPackFromZip(zipFile).get("localization");
+	//
+			//	ZipEntry localization = localizations.get(path[path.length - 1]);
+	//
+			//	locStream = zipFile.getInputStream(localization);
+			//} catch (IllegalStateException | IOException | NullPointerException e) {
+			//	e.printStackTrace();
+			//}
 		}
 		if (locStream == null) {
 			Logger.error("Error opening localization file at: {}.", location);
@@ -128,7 +133,7 @@ public class Localization {
 	}
 	
 	@NotNull
-	public static String[] getLanguages() { return loadedLanguages; }
+	public static String[] getLanguages() { return localizationFiles.keySet().toArray(new String[0]); }
 	
 	// Couldn't find a good way to find all the files in a directory when the program is
 	// exported as a jar file so I copied this. Thanks!
@@ -212,24 +217,21 @@ public class Localization {
 
 		getLanguagesFromResourcePacks(languages);
 		
-		return languages.toArray(new String[languages.size()]);
+		return languages.toArray(new String[0]);
 	}
 
 	private static void getLanguagesFromResourcePacks(ArrayList<String> languages) {
 		File location = ResourcePackDisplay.getLocation();
-		if (location.mkdirs()) {
-			Logger.info("Created resource packs folder at {}.", location);
-		}
 
 		for (String fileName : Objects.requireNonNull(location.list())) {
 			try {
 				ZipFile zipFile = new ZipFile(new File(location, fileName));
 	
-				HashMap<String, HashMap<String, ZipEntry>> resources = ResourcePackDisplay.generateResourceTree(zipFile); 
+				HashMap<String, HashMap<String, ZipEntry>> resources = ResourcePackDisplay.getPackFromZip(zipFile);
 	
 				// Load textures
 				HashMap<String, ZipEntry> localizations = resources.get("localization");
-				for(String locale: localizations.keySet()) {
+				for (String locale: localizations.keySet()) {
 					ZipEntry localization = localizations.get(locale);
 
 					String data = locale.replace(".json", "");
@@ -239,19 +241,10 @@ public class Localization {
 					languages.add(lang);
 					localizationFiles.put(lang, localization.getName());
 					locales.put(lang, Locale.forLanguageTag(data.substring(data.indexOf('_')+1)));
-
-					// locales.put(lang, Locale.forLanguageTag(data.substring(data.indexOf('_')+1)));
-		
-					// InputStream inputEntry = zipFile.getInputStream(localization);
-		
-					// Load the file as a BufferedReader.
-					// BufferedReader reader = new BufferedReader(new InputStreamReader(inputEntry, StandardCharsets.UTF_8));
-		
-					// String text = String.join("\n", reader.lines().toArray(String[]::new));
 				}
 			} catch (IllegalStateException | IOException e) {
 				e.printStackTrace();
-				// Logger.error("Could not load texture pack with name {} at {}.", Objects.requireNonNull(menus[0].getCurEntry()).toString(), location);
+				Logger.error("Could not load texture pack at {}.", location);
 			} catch (NullPointerException e) {
 				e.printStackTrace();
 			}
