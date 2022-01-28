@@ -16,6 +16,7 @@ import minicraft.item.Items;
 import minicraft.item.ToolItem;
 import minicraft.item.ToolType;
 import minicraft.level.Level;
+import minicraft.screen.AchievementsDisplay;
 
 /// this is all the spikey stuff (except "cloud cactus")
 public class OreTile extends Tile {
@@ -96,6 +97,9 @@ public class OreTile extends Tile {
 				count += 2;
 			} else {
 				level.setData(x, y, damage);
+			}
+			if (type.drop.equals(Items.get("gem"))){
+				AchievementsDisplay.setAchievement("minicraft.achievement.find_gem", true);
 			}
 			level.dropItem(x * 16 + 8, y * 16 + 8, count, type.getOre());
 		}
