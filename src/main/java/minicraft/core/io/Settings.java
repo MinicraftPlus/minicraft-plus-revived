@@ -10,7 +10,7 @@ import minicraft.screen.entry.RangeEntry;
 
 public class Settings {
 	
-	private static HashMap<String, ArrayEntry> options = new HashMap<>();
+	private static final HashMap<String, ArrayEntry> options = new HashMap<>();
 	
 	static {
 		options.put("fps", new RangeEntry("Max FPS", 10, 300, getRefreshRate())); // Has to check if the game is running in a headless mode. If it doesn't set the fps to 60
@@ -32,7 +32,7 @@ public class Settings {
 		options.put("unlockedskin", new BooleanEntry("Wear Suit", false));
 		options.put("skinon", new BooleanEntry("Wear Suit", false));
 		
-		options.put("language", new ArrayEntry<>("Language", true, false, Localization.getLanguages()));
+		options.put("language", new ArrayEntry<>("Language", true, false, Localization.getLocales()));
 		options.get("language").setValue(Localization.getSelectedLanguage());
 		
 		

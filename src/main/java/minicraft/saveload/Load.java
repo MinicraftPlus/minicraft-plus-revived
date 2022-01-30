@@ -341,9 +341,8 @@ public class Load {
 		Settings.set("diff", json.has("diff") ? json.getString("diff") : "Normal");
 		Settings.set("fps", json.getInt("fps"));
 
-		String lang = json.getString("lang");
-
-		if (prefVer.compareTo(new Version("2.1.0-dev1")) < 0) {
+		if (prefVer.compareTo(new Version("2.1.0-dev1")) > 0) {
+			String lang = json.getString("lang");
 			Settings.set("language", lang);
 			Localization.changeLanguage(lang);
 		}
