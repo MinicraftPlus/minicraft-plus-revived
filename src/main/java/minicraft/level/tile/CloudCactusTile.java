@@ -14,6 +14,7 @@ import minicraft.gfx.Color;
 import minicraft.gfx.Screen;
 import minicraft.gfx.Sprite;
 import minicraft.item.Item;
+import minicraft.item.Items;
 import minicraft.item.ToolItem;
 import minicraft.item.ToolType;
 import minicraft.level.Level;
@@ -56,21 +57,23 @@ public class CloudCactusTile extends Tile {
 	
 	public void hurt(Level level, int x, int y, int dmg) {
 		int damage = level.getData(x, y) + dmg;
-		int health = 10;
-		if (Game.isMode("creative")) dmg = damage = health;
+		int oreH = random.nextInt(10) + 3;
+
 		level.add(new SmashParticle(x * 16, y * 16));
 		Sound.monsterHurt.play();
-		level.add(new TextParticle("" + dmg, x * 16 + 8, y * 16 + 8, Color.RED));
-		if (damage >= health) {
-			level.setTile(x, y, Tiles.get("Cloud"));
-		} else
-			level.setData(x, y, damage);
-	}
 
-	public void bumpedInto(Level level, int x, int y, Entity entity) {
-		if (entity instanceof AirWizard) return;
-		
-		if(entity instanceof Mob)
-			((Mob)entity).hurt(this, x, y, 1 + Settings.getIdx("diff"));
+		level.add(new TextParticle("" + dmg, x * 16 + 8, y * 16 + 8, Color.RED));
+		int health = 25;
+		if (Game.isMode("creative")) dmg = damage = health;
+		if (dmg > 0) {
+			int count = random.nextInt(1) + 0;
+			if (damage >= oreH) {
+				level.setTile(x, y, Tiles.get("Cloud"));
+				count += 2;
+			} else {
+				level.setData(x, y, damage);
+			}
+			level.dropItem(x * 16 + 8, y * 16 + 8, count, Items.get("Cloud Ore"));
+		}
 	}
 }

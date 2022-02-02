@@ -34,6 +34,7 @@ public class StackableItem extends Item {
 		items.add(new StackableItem("gem", new Sprite(12, 4, 0)));
 		items.add(new StackableItem("Scale", new Sprite(13, 4, 0)));
 		items.add(new StackableItem("Shard", new Sprite(14, 4, 0)));
+		items.add(new StackableItem("Cloud Ore", new Sprite(15, 4, 0)));
 		
 		return items;
 	}
