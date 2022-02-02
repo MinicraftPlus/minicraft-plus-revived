@@ -5,6 +5,7 @@ Minicraft+ version 2.1.0
 + Added the ability to use some ascii characters in world seed
 + Added ornate obsidian and ornate stone tiles
 + Added raw obsidian and stone tiles
++ Added totems that can spawn AirWizards
 + Re-added sparks, damage particles and items shadows.
 + Re-added swimming animation.
 + Re-added colored spawners.
@@ -24,6 +25,7 @@ Minicraft+ version 2.1.0
 * Renamed shear to shears
 * Saplings should no longer grow if an entity is on it
 * Changed texture packs into resource packs
+* You can now mine cloud cactus
 
 Minicraft+ version 2.0.7
 
