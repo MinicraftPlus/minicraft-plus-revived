@@ -1,0 +1,18 @@
+name: publish
+on: [workflow_dispatch] # Manual trigger
+jobs:
+  build:
+    strategy:
+      matrix:
+        java: [ openjdk:8-jdk ]
+    runs-on: ubuntu-20.04
+    container:
+      image: eclipse-temurin:${{ matrix.java }}
+      options: --user root
+    steps:
+      - uses: actions/checkout@v1
+      - uses: gradle/wrapper-validation-action@v1
+      - run: ./gradlew publish --stacktrace
+        env:
+          MAVEN_PUBLISH_TOKEN: ${{ secrets.MAVEN_PUBLISH_TOKEN }}
+          MAVEN_PUBLISH_USERNAME: ${{ secrets.MAVEN_PUBLISH_USERNAME }}
