@@ -52,7 +52,7 @@ shadowJar {
 publishing {
     publications {
         mavenJava(MavenPublication) {
-            artifact(jar)
+            artifact(shadowJar)
             artifact(sourcesJar)
             pom.withXml {
                 subprojects.each {
