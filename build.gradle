@@ -6,8 +6,8 @@ plugins {
 }
 
 project.version = '2.1.0-dev2'
-group = "com.playminicraft"
-archivesBaseName = "minicraft-plus-revived"
+group = "java.minicraft"
+archivesBaseName = "minicraft-plus"
 
 def ENV = System.getenv()
 
@@ -69,9 +69,9 @@ publishing {
     repositories {
         if (ENV.MAVEN_PUBLISH_TOKEN) {
             maven {
-                url 'URL to Maven server'
+                url 'https://repo.repsy.io/mvn/minicraftplus/minicraft'
                 credentials {
-                    username 'BobTheBuildSlave'
+                    username ENV.MAVEN_PUBLISH_USERNAME
                     password ENV.MAVEN_PUBLISH_TOKEN
                 }
                 authentication {
