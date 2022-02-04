@@ -4,7 +4,7 @@ jobs:
   build:
     strategy:
       matrix:
-        java: [ openjdk:8-jdk ]
+        java: [ 8-jdk ]
     runs-on: ubuntu-20.04
     container:
       image: eclipse-temurin:${{ matrix.java }}
