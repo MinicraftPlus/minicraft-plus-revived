@@ -1,7 +1,16 @@
-apply plugin: 'java'
-apply plugin: 'application'
+plugins {
+    id 'java'
+    id 'application'
+    id 'maven-publish'
+    id "com.github.johnrengelman.shadow" version "7.1.2"
+}
 
 project.version = '2.1.0-dev2'
+group = "com.playminicraft"
+archivesBaseName = "minicraft-plus-revived"
+
+def ENV = System.getenv()
+
 
 sourceCompatibility = 8
 mainClassName = 'minicraft.core.Game'
@@ -24,15 +33,9 @@ dependencies {
     implementation 'org.tinylog:tinylog-impl:2.3.2'
 }
 
-buildscript {
-    repositories {
-        gradlePluginPortal()
-    }
-    dependencies {
-        classpath 'gradle.plugin.com.github.jengelman.gradle.plugins:shadow:7.0.0'
-    }
+java {
+    withSourcesJar()
 }
-apply plugin: 'com.github.johnrengelman.shadow'
 
 shadowJar {
     archivesBaseName = 'minicraft_plus'
@@ -44,5 +47,37 @@ shadowJar {
                 'Implementation-Title': project.name,
                 'Implementation-Version': project.version,
                 'SplashScreen-Image': "Minicraft_Splash_Screen_3.png")
+    }
+}
+publishing {
+    publications {
+        mavenJava(MavenPublication) {
+            artifact(jar)
+            artifact(sourcesJar)
+            pom.withXml {
+                subprojects.each {
+                    if (it.name != project.testmods_project) {
+                        depNode.appendNode("groupId", it.group)
+                        depNode.appendNode("artifactId", it.name)
+                        depNode.appendNode("version", it.version)
+                        depNode.appendNode("scope", "compile")
+                    }
+                }
+            }
+        }
+    }
+    repositories {
+        if (ENV.MAVEN_PUBLISH_TOKEN) {
+            maven {
+                url 'URL to Maven server'
+                credentials {
+                    username 'BobTheBuildSlave'
+                    password ENV.MAVEN_PUBLISH_TOKEN
+                }
+                authentication {
+                    basic(BasicAuthentication)
+                }
+            }
+        }
     }
 }
