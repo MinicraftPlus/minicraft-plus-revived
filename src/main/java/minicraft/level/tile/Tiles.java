@@ -19,7 +19,7 @@ public final class Tiles {
 		Logger.debug("Initializing tile list...");
 		
 		// 
-		for (int i = 0; i < 256; i++)
+		for (int i = 0; i < 32768; i++)
 			tiles.add(null);
 
 		tiles.set(0, new GrassTile("Grass"));
@@ -73,7 +73,7 @@ public final class Tiles {
 		tiles.set(46, new DecorTile(Tile.Material.Obsidian));
 
 		// WARNING: don't use this tile for anything!
-		tiles.set(255, new ConnectTile());
+		tiles.set(256, new ConnectTile());
 		
 		for(int i = 0; i < tiles.size(); i++) {
 			if(tiles.get(i) == null) continue;
@@ -85,11 +85,11 @@ public final class Tiles {
 	protected static void add(int id, Tile tile) {
 		tiles.set(id, tile);
 		System.out.println("Adding " + tile.name + " to tile list with id " + id);
-		tile.id = (byte) id;
+		tile.id = (short) id;
 	}
 
 	static {
-		for(int i = 0; i < 256; i++)
+		for(int i = 0; i < 32768; i++)
 			oldids.add(null);
 		
 		oldids.set(0, "grass");
@@ -206,7 +206,7 @@ public final class Tiles {
 		if(name.contains("_")) {
 			name = name.substring(0, name.indexOf("_"));
 		}
-		
+
 		for(Tile t: tiles) {
 			if(t == null) continue;
 			if(t.name.equals(name)) {
@@ -227,16 +227,16 @@ public final class Tiles {
 		overflowCheck = 0;
 		return getting;
 	}
-	
+
 	public static Tile get(int id) {
 		//System.out.println("Requesting tile by id: " + id);
-		if(id < 0) id += 256;
-		
+		if(id < 0) id += 32768;
+
 		if(tiles.get(id) != null) {
 			return tiles.get(id);
 		}
-		else if(id >= 128) {
-			return TorchTile.getTorchTile(get(id-128));
+		else if(id >= 32767) {
+			return TorchTile.getTorchTile(get(id - 32767));
 		}
 		else {
 			System.out.println("TILES.GET: Unknown tile id requested: " + id);

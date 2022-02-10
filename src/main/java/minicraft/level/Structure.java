@@ -40,7 +40,7 @@ public class Structure {
 			 level.add(furniture.get(p).clone(), xt+p.x, yt+p.y, true);
 	}
 
-	public void draw(byte[] map, int xt, int yt, int mapWidth) {
+	public void draw(short[] map, int xt, int yt, int mapWidth) {
 		for (TilePoint p: tiles)
 			map[(xt + p.x) + (yt + p.y) * mapWidth] = p.t.id;
 	}

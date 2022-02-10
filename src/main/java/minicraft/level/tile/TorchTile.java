@@ -16,8 +16,8 @@ public class TorchTile extends Tile {
 	private Tile onType;
 	
 	public static TorchTile getTorchTile(Tile onTile) {
-		int id = onTile.id & 0xFF;
-		if(id < 128) id += 128;
+		int id = onTile.id & 0xFFFF;
+		if(id < 16384) id += 16384;
 		else System.out.println("Tried to place torch on torch tile...");
 		
 		if(Tiles.containsTile(id))

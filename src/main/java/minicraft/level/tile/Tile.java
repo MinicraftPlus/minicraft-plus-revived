@@ -40,7 +40,7 @@ public abstract class Tile {
 	
 	public final String name;
 	
-	public byte id;
+	public short id;
 	
 	public boolean connectsToGrass = false;
 	public boolean connectsToSand = false;

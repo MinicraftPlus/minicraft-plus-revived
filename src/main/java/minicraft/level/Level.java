@@ -59,8 +59,8 @@ public class Level {
 	public int w, h; // Width and height of the level
 	private long seed; // The used seed that was used to generate the world
 	
-	public byte[] tiles; // An array of all the tiles in the world.
-	public byte[] data; // An array of the data of the tiles in the world.
+	public short[] tiles; // An array of all the tiles in the world.
+	public short[] data; // An array of the data of the tiles in the world.
 	
 	public final int depth; // Depth level of the level
 	public int monsterDensity = 16; // Affects the number of monsters that are on the level, bigger the number the less monsters spawn.
@@ -130,7 +130,7 @@ public class Level {
 		this.w = w;
 		this.h = h;
 		this.seed = seed;
-		byte[][] maps; // Multidimensional array (an array within a array), used for the map
+		short[][] maps; // Multidimensional array (an array within a array), used for the map
 		
 		if (level != -4 && level != 0)
 			monsterDensity = 8;
@@ -139,8 +139,8 @@ public class Level {
 		
 		if(!makeWorld) {
 			int arrsize = w * h;
-			tiles = new byte[arrsize];
-			data = new byte[arrsize];
+			tiles = new short[arrsize];
+			data = new short[arrsize];
 			return;
 		}
 		
@@ -581,7 +581,7 @@ public class Level {
 			System.out.println("Client requested a tile update for the " + t.name + " tile at " + x + "," + y);
 		} else {
 			tiles[x + y * w] = t.id;
-			data[x + y * w] = (byte) dataVal;
+			data[x + y * w] = (short) dataVal;
 		}
 		
 		if(Game.isValidServer())
@@ -595,7 +595,7 @@ public class Level {
 	
 	public void setData(int x, int y, int val) {
 		if (x < 0 || y < 0 || x >= w || y >= h) return;
-		data[x + y * w] = (byte) val;
+		data[x + y * w] = (short) val;
 	}
 	
 	public void add(Entity e) { if(e==null) return; add(e, e.x, e.y); }
