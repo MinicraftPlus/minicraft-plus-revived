@@ -19,7 +19,7 @@ public final class Tiles {
 		Logger.debug("Initializing tile list...");
 		
 		// 
-		for (int i = 0; i < 256; i++)
+		for (int i = 0; i < 65536; i++)
 			tiles.add(null);
 
 		tiles.set(0, new GrassTile("Grass"));
@@ -89,7 +89,7 @@ public final class Tiles {
 	}
 
 	static {
-		for(int i = 0; i < 256; i++)
+		for(int i = 0; i < 65536; i++)
 			oldids.add(null);
 		
 		oldids.set(0, "grass");
@@ -230,13 +230,13 @@ public final class Tiles {
 	
 	public static Tile get(int id) {
 		//System.out.println("Requesting tile by id: " + id);
-		if(id < 0) id += 256;
+		if(id < 0) id += 65536;
 		
 		if(tiles.get(id) != null) {
 			return tiles.get(id);
 		}
-		else if(id >= 128) {
-			return TorchTile.getTorchTile(get(id-128));
+		else if(id >= 32768) {
+			return tiles.get((short) id);
 		}
 		else {
 			System.out.println("TILES.GET: Unknown tile id requested: " + id);

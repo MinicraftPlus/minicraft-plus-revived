@@ -215,15 +215,15 @@ public class LegacyLoad {
 			int lvldepth = Integer.parseInt(data.get(2));
 			Settings.set("size", lvlw);
 
-			byte[] tiles = new byte[lvlw * lvlh];
-			byte[] tdata = new byte[lvlw * lvlh];
+			short[] tiles = new short[lvlw * lvlh];
+			short[] tdata = new short[lvlw * lvlh];
 			
 			for (int x = 0; x < lvlw - 1; x++) {
 				for (int y = 0; y < lvlh - 1; y++) {
 					int tileArrIdx = y + x * lvlw;
 					int tileidx = x + y * lvlw; // The tiles are saved with x outer loop, and y inner loop, meaning that the list reads down, then right one, rather than right, then down one.
 					tiles[tileArrIdx] = Tiles.get(Tiles.oldids.get(Integer.parseInt(data.get(tileidx + 3)))).id;
-					tdata[tileArrIdx] = Byte.parseByte(extradata.get(tileidx));
+					tdata[tileArrIdx] = Short.parseShort(extradata.get(tileidx));
 				}
 			}
 

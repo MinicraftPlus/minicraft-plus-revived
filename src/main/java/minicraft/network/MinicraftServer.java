@@ -490,7 +490,7 @@ public class MinicraftServer extends Thread implements MinicraftProtocol {
 				
 				// if it's the same level, it will cancel out.
 				
-				byte[] tiledata = new byte[World.levels[levelidx].tiles.length*2];
+				short[] tiledata = new short[World.levels[levelidx].tiles.length*2];
 				for (int i = 0; i < tiledata.length/2 - 1; i++) {
 					tiledata[i*2] = World.levels[levelidx].tiles[i];
 					tiledata[i*2+1] = World.levels[levelidx].data[i];
@@ -498,7 +498,7 @@ public class MinicraftServer extends Thread implements MinicraftProtocol {
 				serverThread.cachePacketTypes(InputType.tileUpdates);
 				
 				StringBuilder tiledataString = new StringBuilder();
-				for (byte b: tiledata) {
+				for (short b: tiledata) {
 					tiledataString.append(b).append(",");
 				}
 				serverThread.sendData(InputType.TILES, tiledataString.substring(0, tiledataString.length()-1));
