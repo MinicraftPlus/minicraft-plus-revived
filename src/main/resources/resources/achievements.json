@@ -45,16 +45,6 @@
     "score": 10
   },
   {
-    "id": "minicraft.achievement.explosive_ending",
-    "desc": "minicraft.achievement.explosive_ending.desc",
-    "score": 5
-  },
-  {
-    "id": "minicraft.achievement.survive_darkness",
-    "desc": "minicraft.achievement.survive_darkness.desc",
-    "score": 15
-  },
-  {
     "id": "minicraft.achievement.lava",
     "desc": "minicraft.achievement.lava.desc",
     "score": 15
@@ -82,11 +72,6 @@
   {
     "id": "minicraft.achievement.second_airwizard",
     "desc": "minicraft.achievement.second_airwizard.desc",
-    "score": 25
-  },
-  {
-    "id": "minicraft.achievement.eat_all_food",
-    "desc": "minicraft.achievement.eat_all_food.desc",
     "score": 25
   },
   {
