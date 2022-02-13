@@ -46,6 +46,7 @@ import minicraft.item.Item;
 import minicraft.level.tile.Tile;
 import minicraft.level.tile.Tiles;
 import minicraft.level.tile.TorchTile;
+import minicraft.screen.AchievementsDisplay;
 
 public class Level {
 	private Random random = new Random();
@@ -370,6 +371,13 @@ public class Level {
 			}
 
 			entitiesToAdd.remove(entity);
+
+			if (getLevelName(depth).equals("Lava")) {
+				AchievementsDisplay.setAchievement("minicraft.achievement.lowest_caves",true);
+			}
+			if (getLevelName(depth).equals("Dungeon")) {
+				AchievementsDisplay.setAchievement("minicraft.achievement.obsidian_dungeon",true);
+			}
 		}
 		
 		if(fullTick && (!Game.isValidServer() || getPlayers().length > 0)) {
