@@ -1,8 +1,6 @@
 package minicraft.screen;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
+import java.util.*;
 
 import minicraft.core.Game;
 import minicraft.core.io.InputHandler;
@@ -10,15 +8,15 @@ import minicraft.core.io.Sound;
 import minicraft.entity.mob.Player;
 import minicraft.gfx.Point;
 import minicraft.gfx.SpriteSheet;
-import minicraft.item.Item;
-import minicraft.item.Items;
-import minicraft.item.Recipe;
+import minicraft.item.*;
 import minicraft.screen.entry.ItemListing;
+import org.tinylog.Logger;
 
 public class CraftingDisplay extends Display {
 	
 	private Player player;
 	private Recipe[] recipes;
+	private Recipe[] recipesID;
 	
 	private RecipeMenu recipeMenu;
 	private Menu.Builder itemCountMenu, costsMenu;
@@ -100,6 +98,38 @@ public class CraftingDisplay extends Display {
 			// check the selected recipe
 			Recipe selectedRecipe = recipes[recipeMenu.getSelection()];
 			if (selectedRecipe.getCanCraft()) {
+				Logger.debug(selectedRecipe.getProduct().toString());
+				if (selectedRecipe.getProduct().equals(Items.get("Workbench"))){
+					AchievementsDisplay.setAchievement("minicraft.achievement.benchmarking",true);
+				}
+				if (selectedRecipe.getProduct().equals(Items.get("Plank"))){
+					AchievementsDisplay.setAchievement("minicraft.achievement.planks",true);
+				}
+				if (selectedRecipe.getProduct().equals(Items.get("Wood Door"))){
+					AchievementsDisplay.setAchievement("minicraft.achievement.doors",true);
+				}
+				if (selectedRecipe.getProduct().equals(Items.get("Rock Sword")) ||
+						selectedRecipe.getProduct().equals(Items.get("Rock Pickaxe")) ||
+						selectedRecipe.getProduct().equals(Items.get("Rock Axe")) ||
+						selectedRecipe.getProduct().equals(Items.get("Rock Shovel")) ||
+						selectedRecipe.getProduct().equals(Items.get("Rock Hoe")) ||
+						selectedRecipe.getProduct().equals(Items.get("Rock Bow")) ||
+						selectedRecipe.getProduct().equals(Items.get("Rock Claymore"))) {
+					AchievementsDisplay.setAchievement("minicraft.achievement.upgrade", true);
+				}
+				for (int i = 7; i < 15; i++) {
+					if (selectedRecipe.getProduct().equals(Items.get("blue clothes")) ||
+							selectedRecipe.getProduct().equals(Items.get("green clothes")) ||
+							selectedRecipe.getProduct().equals(Items.get("yellow clothes")) ||
+							selectedRecipe.getProduct().equals(Items.get("black clothes")) ||
+							selectedRecipe.getProduct().equals(Items.get("orange clothes")) ||
+							selectedRecipe.getProduct().equals(Items.get("purple clothes")) ||
+							selectedRecipe.getProduct().equals(Items.get("cyan clothes")) ||
+							selectedRecipe.getProduct().equals(Items.get("reg clothes"))) {
+						AchievementsDisplay.setAchievement("minicraft.achievement.clothes", true);
+					}
+				}
+
 				selectedRecipe.craft(player);
 
 				Sound.craft.play();
