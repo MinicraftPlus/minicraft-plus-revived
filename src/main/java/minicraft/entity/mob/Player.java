@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
+import minicraft.screen.*;
 import org.jetbrains.annotations.Nullable;
 
 import minicraft.core.Game;
@@ -49,13 +50,6 @@ import minicraft.level.tile.Tile;
 import minicraft.level.tile.Tiles;
 import minicraft.network.Analytics;
 import minicraft.saveload.Save;
-import minicraft.screen.CraftingDisplay;
-import minicraft.screen.InfoDisplay;
-import minicraft.screen.LoadingDisplay;
-import minicraft.screen.PauseDisplay;
-import minicraft.screen.PlayerInvDisplay;
-import minicraft.screen.SkinDisplay;
-import minicraft.screen.WorldSelectDisplay;
 import minicraft.util.Vector2;
 
 public class Player extends Mob implements ItemHolder, ClientTickable {
@@ -618,6 +612,9 @@ public class Player extends Mob implements ItemHolder, ClientTickable {
 					attackTime = 10;
 					
 					if (!Game.isMode("creative")) tool.dur--;
+
+					AchievementsDisplay.setAchievement("minicraft.achievement.bow",true);
+
 					return;
 				}
 			}
@@ -740,6 +737,9 @@ public class Player extends Mob implements ItemHolder, ClientTickable {
 						// For secret messages :=)
 						Game.notifications.add(itemData.substring(1));
 					} else {
+						if (Items.get(itemData).equals(Items.get("Raw Fish"))) {
+							AchievementsDisplay.setAchievement("minicraft.achievement.fish",true);
+						}
 						level.dropItem(x, y, Items.get(itemData));
 						caught = true;
 						break; // Don't let people catch more than one thing with one use
