@@ -98,7 +98,7 @@ public class CraftingDisplay extends Display {
 			// check the selected recipe
 			Recipe selectedRecipe = recipes[recipeMenu.getSelection()];
 			if (selectedRecipe.getCanCraft()) {
-				Logger.debug(selectedRecipe.getProduct().toString());
+				Logger.debug("Crafting "+selectedRecipe.getProduct().toString());
 				if (selectedRecipe.getProduct().equals(Items.get("Workbench"))){
 					AchievementsDisplay.setAchievement("minicraft.achievement.benchmarking",true);
 				}
