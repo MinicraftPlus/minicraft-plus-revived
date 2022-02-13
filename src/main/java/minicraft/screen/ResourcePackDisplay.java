@@ -3,11 +3,7 @@ package minicraft.screen;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.ArrayList;
-import java.util.Enumeration;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Objects;
+import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.zip.ZipEntry;
@@ -64,6 +60,7 @@ public class ResourcePackDisplay extends Display {
 		super.onExit();
 		getPacksAsEntries();
 		updateSheets();
+		updateLocalization();
 	}
 
 	@Override
@@ -153,7 +150,14 @@ public class ResourcePackDisplay extends Display {
 	}
 
 	private void updateLocalization() {
-
+		// Do this for each resource pack
+		for (String fileName : Objects.requireNonNull(location.list())) {
+			try {
+				Localization.getLanguagesFromResourcePack(new ZipFile(new File(location, fileName)));
+			} catch (IOException e) {
+				Logger.error("Could not load texture pack at {}.", location);
+			}
+		}
 	}
 
 	// TODO: Make resource packs support sound

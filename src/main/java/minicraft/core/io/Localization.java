@@ -34,12 +34,9 @@ public class Localization {
 
 	private static Locale selectedLanguage = Locale.US;
 	private static final HashMap<Locale, String> localizationFiles = new HashMap<>();
-	
-	private static String[] loadedLanguages = getLanguagesFromDirectory();
 
 	static {
-		if (loadedLanguages == null)
-			loadedLanguages = new String[] { "english" };
+		getLanguagesFromDirectory();
 	}
 	
 	@NotNull
@@ -98,6 +95,16 @@ public class Localization {
 
 	@NotNull
 	public static Locale[] getLocales() { return localizationFiles.keySet().toArray(new Locale[0]); }
+
+	@NotNull
+	public static String[] getLocalesString() {
+		ArrayList<String> locs = new ArrayList<>();
+		for (Locale loc : localizationFiles.keySet()) {
+			locs.add(loc.toLanguageTag());
+		}
+
+		return locs.toArray(new String[0]);
+	}
 
 	@NotNull
 	private static String getFileAsString(Locale locale) {
@@ -168,11 +175,15 @@ public class Localization {
 					reads++;
 					String name = e.getName();
 					if (name.startsWith("resources/localization/") && name.endsWith(".json")) {
-						String data = name.replace("resources/localization/", "").replace(".json", "");
-						Locale lang = Locale.forLanguageTag(data.substring(data.indexOf('_')+1));
+						try {
+							String data = name.replace("resources/localization/", "").replace(".json", "");
+							Locale lang = Locale.forLanguageTag(data.substring(data.indexOf('_')+1));
 
-						languages.add(data.substring(0, data.indexOf('_')));
-						localizationFiles.put(lang, '/' + name);
+							languages.add(data.substring(0, data.indexOf('_')));
+							localizationFiles.put(lang, '/' + name);
+						} catch (StringIndexOutOfBoundsException ex) {
+							Logger.error("Could not load localization with path: {}", name);
+						}
 					}
 				}
 			} else {
@@ -189,7 +200,6 @@ public class Localization {
 	
 	// This is only here, so we can run the game in our ide.
 	// This will not work if we're running the game from a jar file.
-	@java.lang.Deprecated
 	@Nullable
 	private static String[] getLanguagesFromDirectoryUsingIDE() {
 		ArrayList<String> languages = new ArrayList<>();
@@ -205,11 +215,15 @@ public class Localization {
 			DirectoryStream<Path> dir = Files.newDirectoryStream(folderPath);
 			for (Path p : dir) {
 				String filename = p.getFileName().toString();
-				String data = filename.replace(".json", "");
-				Locale lang = Locale.forLanguageTag(data.substring(data.indexOf('_')+1));
+				try {
+					String data = filename.replace(".json", "");
+					Locale lang = Locale.forLanguageTag(data.substring(data.indexOf('_') + 1));
 
-				languages.add(data.substring(0, data.indexOf('_')));
-				localizationFiles.put(lang, "/resources/localization/" + filename);
+					languages.add(data.substring(0, data.indexOf('_')));
+					localizationFiles.put(lang, "/resources/localization/" + filename);
+				} catch (StringIndexOutOfBoundsException e) {
+					Logger.error("Could not load localization with path: {}", p);
+				}
 			}
 		} catch (IOException | URISyntaxException e) {
 			e.printStackTrace();
@@ -221,33 +235,19 @@ public class Localization {
 		return languages.toArray(new String[0]);
 	}
 
-	private static void getLanguagesFromResourcePacks(ArrayList<Locale> languages) {
-		File location = ResourcePackDisplay.getLocation();
+	public static void getLanguagesFromResourcePack(ZipFile zipFile) {
+		HashMap<String, HashMap<String, ZipEntry>> resources = ResourcePackDisplay.getPackFromZip(zipFile);
+		try {
+			HashMap<String, ZipEntry> localizations = resources.get("localization");
 
-		for (String fileName : Objects.requireNonNull(location.list())) {
-			try {
-				ZipFile zipFile = new ZipFile(new File(location, fileName));
-	
-				HashMap<String, HashMap<String, ZipEntry>> resources = ResourcePackDisplay.getPackFromZip(zipFile);
-	
-				// Load textures
-				HashMap<String, ZipEntry> localizations = resources.get("localization");
-				for (String locale: localizations.keySet()) {
-					ZipEntry localization = localizations.get(locale);
+			for (String locale : localizations.keySet()) {
+				ZipEntry localization = localizations.get(locale);
 
-					String data = locale.replace(".json", "");
-					Locale lang = Locale.forLanguageTag(data.substring(data.indexOf('_')+1));
+				String data = locale.replace(".json", "");
+				Locale lang = Locale.forLanguageTag(data.substring(data.indexOf('_') + 1));
 
-
-					languages.add(lang);
-					localizationFiles.put(lang, localization.getName());
-				}
-			} catch (IllegalStateException | IOException e) {
-				e.printStackTrace();
-				Logger.error("Could not load texture pack at {}.", location);
-			} catch (NullPointerException e) {
-				e.printStackTrace();
+				localizationFiles.put(lang, localization.getName());
 			}
-		}
+		} catch (NullPointerException ignored) {}
 	}
 }
