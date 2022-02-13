@@ -204,8 +204,8 @@ public class Save {
 		json.put("savedIP", MultiplayerDisplay.savedIP);
 		json.put("savedUUID", MultiplayerDisplay.savedUUID);
 		json.put("savedUsername", MultiplayerDisplay.savedUsername);
-
 		json.put("keymap", new JSONArray(Game.input.getKeyPrefs()));
+		json.put("resourcePack", ResourcePackDisplay.getLoadedPack());
 
 		// Save json
 		try {

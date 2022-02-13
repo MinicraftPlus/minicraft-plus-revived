@@ -48,10 +48,10 @@ public class Screen {
 	}
 
 	public void setSheets(SpriteSheet itemSheet, SpriteSheet tileSheet, SpriteSheet entitySheet, SpriteSheet guiSheet) {
-		sheets[0] = itemSheet;
-		sheets[1] = tileSheet;
-		sheets[2] = entitySheet;
-		sheets[3] = guiSheet;
+		if (itemSheet != null) sheets[0] = itemSheet;
+		if (tileSheet != null) sheets[1] = tileSheet;
+		if (entitySheet != null) sheets[2] = entitySheet;
+		if (guiSheet != null) sheets[3] = guiSheet;
 	}
 
 	public SpriteSheet getSpriteSheet() {

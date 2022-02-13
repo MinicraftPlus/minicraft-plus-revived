@@ -19,7 +19,6 @@ import java.util.zip.ZipFile;
 import java.util.zip.ZipInputStream;
 
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 import minicraft.core.Game;
 import minicraft.screen.ResourcePackDisplay;
@@ -71,6 +70,23 @@ public class Localization {
 	public static void changeLanguage(@NotNull String newLanguage) {
 		localization.clear();
 		selectedLanguage = Locale.forLanguageTag(newLanguage);
+
+		// Check if language is loaded.
+		if (localizationFiles.get(selectedLanguage).isEmpty())
+			selectedLanguage = Locale.US;
+
+		// Load the loc into localization.
+		loadLocFromFile(selectedLanguage);
+	}
+
+	public static void updateLanguage() {
+		localization.clear();
+
+		// Check if language is loaded.
+		if (localizationFiles.get(selectedLanguage).isEmpty())
+			selectedLanguage = Locale.US;
+
+		// Load the loc into localization.
 		loadLocFromFile(selectedLanguage);
 	}
 
@@ -149,10 +165,9 @@ public class Localization {
 	}
 
 	// Couldn't find a good way to find all the files in a directory when the program is
-	// exported as a jar file so I copied this. Thanks!
+	// exported as a jar file, so I copied this. Thanks!
 	// https://stackoverflow.com/questions/1429172/how-do-i-list-the-files-inside-a-jar-file/1429275#1429275
-	@Nullable
-	private static String[] getLanguagesFromDirectory() {
+	private static void getLanguagesFromDirectory() {
 		ArrayList<String> languages = new ArrayList<>();
 		
 		try {
@@ -169,7 +184,8 @@ public class Localization {
 					if (e == null) {
 						if (reads > 0) break;
 						else {
-							return getLanguagesFromDirectoryUsingIDE();
+							getLanguagesFromDirectoryUsingIDE();
+							return;
 						}
 					}
 					reads++;
@@ -188,27 +204,26 @@ public class Localization {
 				}
 			} else {
 				Logger.error("Failed to get code source.");
-				return null;
+				return;
 			}
 		} catch (IOException e) {
 			e.printStackTrace();
-			return null;
+			return;
 		}
 
-		return languages.toArray(new String[0]);
+		languages.toArray(new String[0]);
 	}
 	
 	// This is only here, so we can run the game in our ide.
 	// This will not work if we're running the game from a jar file.
-	@Nullable
-	private static String[] getLanguagesFromDirectoryUsingIDE() {
+	private static void getLanguagesFromDirectoryUsingIDE() {
 		ArrayList<String> languages = new ArrayList<>();
 		
 		try {
 			URL fUrl = Game.class.getResource("/resources/localization/");
 			if (fUrl == null) {
 				Logger.error("Could not find localization folder.");
-				return null;
+				return;
 			}
 
 			Path folderPath = Paths.get(fUrl.toURI());
@@ -222,17 +237,17 @@ public class Localization {
 					languages.add(data.substring(0, data.indexOf('_')));
 					localizationFiles.put(lang, "/resources/localization/" + filename);
 				} catch (StringIndexOutOfBoundsException e) {
-					Logger.error("Could not load localization with path: {}", p);
+					Logger.error("Could not load localization file with path: {}", p);
 				}
 			}
 		} catch (IOException | URISyntaxException e) {
 			e.printStackTrace();
 			// Nothing to do in this menu if we can't load the languages, so we
 			// just return to the title menu.
-			return null;
+			return;
 		}
-		
-		return languages.toArray(new String[0]);
+
+		languages.toArray(new String[0]);
 	}
 
 	public static void getLanguagesFromResourcePack(ZipFile zipFile) {
@@ -242,12 +257,21 @@ public class Localization {
 
 			for (String locale : localizations.keySet()) {
 				ZipEntry localization = localizations.get(locale);
-
 				String data = locale.replace(".json", "");
-				Locale lang = Locale.forLanguageTag(data.substring(data.indexOf('_') + 1));
 
-				localizationFiles.put(lang, localization.getName());
+				try {
+					Locale lang = Locale.forLanguageTag(data.substring(data.indexOf('_') + 1));
+
+					localizationFiles.put(lang, localization.getName());
+				} catch (StringIndexOutOfBoundsException e) {
+					Logger.error("Title of loc file {} in resource pack {} is invalid.", locale, zipFile.getName());
+				}
 			}
 		} catch (NullPointerException ignored) {}
+	}
+
+	public static void reloadLanguages() {
+		localizationFiles.clear();
+		getLanguagesFromDirectory();
 	}
 }

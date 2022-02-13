@@ -14,6 +14,7 @@ import javax.imageio.ImageIO;
 import minicraft.core.FileHandler;
 import minicraft.core.Game;
 import minicraft.core.Renderer;
+import minicraft.core.io.InputHandler;
 import minicraft.core.io.Localization;
 import minicraft.gfx.Color;
 import minicraft.gfx.Font;
@@ -21,26 +22,28 @@ import minicraft.gfx.Screen;
 import minicraft.gfx.SpriteSheet;
 import minicraft.screen.entry.ListEntry;
 import minicraft.screen.entry.SelectEntry;
+import org.jetbrains.annotations.Nullable;
 import org.tinylog.Logger;
 
 public class ResourcePackDisplay extends Display {
 
 	private static final String DEFAULT_RESOURCE_PACK = "Default"; // Default texture
 	private static final String[] ENTRY_NAMES = new String[] { "items.png", "tiles.png", "entities.png", "gui.png" }; // Spritesheets
+	private static final File LOCATION = new File(FileHandler.getSystemGameDir() + "/" + FileHandler.getLocalGameDir() + "/resourcepacks");
 
-	private static final File location = new File(FileHandler.getSystemGameDir() + "/" + FileHandler.getLocalGameDir() + "/resourcepacks");
+	private static String loadedPack = DEFAULT_RESOURCE_PACK;
 
 	private static List<ListEntry> getPacksAsEntries() {
 		List<ListEntry> resourceList = new ArrayList<>();
 		resourceList.add(new SelectEntry(ResourcePackDisplay.DEFAULT_RESOURCE_PACK, Game::exitMenu, false));
 
 		// Generate resource packs folder
-		if (location.mkdirs()) {
-			Logger.info("Created resource packs folder at {}.", location);
+		if (LOCATION.mkdirs()) {
+			Logger.info("Created resource packs folder at {}.", LOCATION);
 		}
 
 		// Read and add the .zip file to the resource pack list.
-		for (String fileName : Objects.requireNonNull(location.list())) {
+		for (String fileName : Objects.requireNonNull(LOCATION.list())) {
 			// Only accept files ending with .zip.
 			if (fileName.endsWith(".zip")) {
 				resourceList.add(new SelectEntry(fileName, Game::exitMenu, false));
@@ -58,9 +61,7 @@ public class ResourcePackDisplay extends Display {
 	@Override
 	public void onExit() {
 		super.onExit();
-		getPacksAsEntries();
-		updateSheets();
-		updateLocalization();
+		updateResourcePack();
 	}
 
 	@Override
@@ -100,17 +101,32 @@ public class ResourcePackDisplay extends Display {
 	     */
 	}
 
-	private void updateSheets() {
+	private void updateResourcePack() {
+		loadedPack = Objects.requireNonNull(menus[0].getCurEntry()).toString();
+
+		ZipFile zipFile = null;
+		if (!loadedPack.equals(DEFAULT_RESOURCE_PACK)) {
+			try {
+				zipFile = new ZipFile(new File(LOCATION, loadedPack));
+			} catch (IOException e) {
+				Logger.error("Could not load resource pack zip at {}.", LOCATION);
+				return;
+			}
+		}
+
+		updateSheets(zipFile);
+		updateLocalization(zipFile);
+	}
+
+	private void updateSheets(@Nullable ZipFile zipFile) {
 		try {
 			SpriteSheet[] sheets = new SpriteSheet[ResourcePackDisplay.ENTRY_NAMES.length];
 
-			if (menus[0].getSelection() == 0) {
+			if (zipFile == null) {
 				// Load default sprite sheet.
 				sheets = Renderer.loadDefaultSpriteSheets();
 			} else {
 				try {
-					ZipFile zipFile = new ZipFile(new File(location, Objects.requireNonNull(menus[0].getCurEntry()).toString()));
-
 					HashMap<String, HashMap<String, ZipEntry>> resources = getPackFromZip(zipFile);
 
 					// Load textures
@@ -129,9 +145,9 @@ public class ResourcePackDisplay extends Display {
 							Logger.debug("Couldn't load sheet {}, ignoring.", ResourcePackDisplay.ENTRY_NAMES[i]);
 						}
 					}
-				} catch (IllegalStateException | IOException e) {
+				} catch (IllegalStateException e) {
 					e.printStackTrace();
-					Logger.error("Could not load resource pack with name {} at {}.", Objects.requireNonNull(menus[0].getCurEntry()).toString(), location);
+					Logger.error("Could not load resource pack with name {}.", zipFile.getName());
 					return;
 				} catch (NullPointerException e) {
 					e.printStackTrace();
@@ -149,15 +165,17 @@ public class ResourcePackDisplay extends Display {
 		Logger.info("Changed resource pack.");
 	}
 
-	private void updateLocalization() {
-		// Do this for each resource pack
-		for (String fileName : Objects.requireNonNull(location.list())) {
-			try {
-				Localization.getLanguagesFromResourcePack(new ZipFile(new File(location, fileName)));
-			} catch (IOException e) {
-				Logger.error("Could not load texture pack at {}.", location);
-			}
+	private void updateLocalization(@Nullable ZipFile zipFile) {
+		// Reload all hard-coded loc-files. (also clears old custom loc)
+		Localization.reloadLanguages();
+
+		// Load the custom loc as long as this isn't the default pack.
+		if (zipFile != null) {
+			Localization.getLanguagesFromResourcePack(zipFile);
 		}
+
+		// Update the loaded loc.
+		Localization.updateLanguage();
 	}
 
 	// TODO: Make resource packs support sound
@@ -194,20 +212,22 @@ public class ResourcePackDisplay extends Display {
 
 			Pattern pattern = Pattern.compile("/(.*?)/");
 			Matcher matcher = pattern.matcher(entry.getName());
-			if (!matcher.find()) {
-				continue;
-			}
+			//if (!matcher.find()) {
+			//	continue;
+			//}
+
 			if (entry.isDirectory()) {
 				resources.put(matcher.group(1), new HashMap<>());
 			} else {
 				HashMap<String, ZipEntry> directory = resources.get(matcher.group(1));
 
+				// If this zip file has no folder as its first entry, assume it is an old texture pack.
 				if (directory == null) {
-					directory = resources.get("textures"); // Maintain backwards compatibility
+					directory = resources.get("textures");
 				}
 
 				String[] validSuffixes = { ".json", ".wav", ".png" };
-				for (String suffix: validSuffixes) {
+				for (String suffix : validSuffixes) {
 					if (entry.getName().endsWith(suffix)) {
 						String[] path = entry.getName().split("/");
 						String fileName = path[path.length - 1];
@@ -221,6 +241,10 @@ public class ResourcePackDisplay extends Display {
 	}
 
 	public static File getLocation() {
-		return location;
+		return LOCATION;
+	}
+
+	public static String getLoadedPack() {
+		return loadedPack;
 	}
 }
