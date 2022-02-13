@@ -11,7 +11,8 @@ public class Recipes {
 	public static final ArrayList<Recipe> enchantRecipes = new ArrayList<>();
 	public static final ArrayList<Recipe> craftRecipes = new ArrayList<>();
 	public static final ArrayList<Recipe> loomRecipes = new ArrayList<>();
-	
+
+	// Add new Recipes to bottom of list or will BREAK certain achievements!
 	static {
 		craftRecipes.add(new Recipe("Workbench_1", "Wood_10"));
 		craftRecipes.add(new Recipe("Torch_2", "Wood_1", "coal_1"));
