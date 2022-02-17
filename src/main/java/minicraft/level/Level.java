@@ -371,13 +371,6 @@ public class Level {
 			}
 
 			entitiesToAdd.remove(entity);
-
-			if (getLevelName(depth).equals("Lava")) {
-				AchievementsDisplay.setAchievement("minicraft.achievement.lowest_caves",true);
-			}
-			if (getLevelName(depth).equals("Dungeon")) {
-				AchievementsDisplay.setAchievement("minicraft.achievement.obsidian_dungeon",true);
-			}
 		}
 		
 		if(fullTick && (!Game.isValidServer() || getPlayers().length > 0)) {
