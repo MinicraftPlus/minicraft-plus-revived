@@ -9,6 +9,7 @@ import minicraft.entity.mob.RemotePlayer;
 import minicraft.gfx.Sprite;
 import minicraft.level.Level;
 import minicraft.level.tile.Tile;
+import minicraft.screen.AchievementsDisplay;
 
 public class PotionItem extends StackableItem {
 	
@@ -32,6 +33,9 @@ public class PotionItem extends StackableItem {
 	
 	// The return value is used to determine if the potion was used, which means being discarded.
 	public boolean interactOn(Tile tile, Level level, int xt, int yt, Player player, Direction attackDir) {
+		if (type.equals(PotionType.Lava)) {
+			AchievementsDisplay.setAchievement("minicraft.achievement.lava",true);
+		}
 		return super.interactOn(applyPotion(player, type, true));
 	}
 	

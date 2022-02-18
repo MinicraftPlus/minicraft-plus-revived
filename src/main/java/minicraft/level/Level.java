@@ -46,6 +46,7 @@ import minicraft.item.Item;
 import minicraft.level.tile.Tile;
 import minicraft.level.tile.Tiles;
 import minicraft.level.tile.TorchTile;
+import minicraft.screen.AchievementsDisplay;
 
 public class Level {
 	private Random random = new Random();
