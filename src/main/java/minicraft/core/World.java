@@ -1,5 +1,6 @@
 package minicraft.core;
 
+import minicraft.screen.*;
 import org.jetbrains.annotations.Nullable;
 
 import minicraft.core.io.Settings;
@@ -10,10 +11,6 @@ import minicraft.level.Level;
 import minicraft.network.Analytics;
 import minicraft.saveload.Load;
 import minicraft.saveload.Save;
-import minicraft.screen.LoadingDisplay;
-import minicraft.screen.PlayerDeathDisplay;
-import minicraft.screen.WorldGenDisplay;
-import minicraft.screen.WorldSelectDisplay;
 import org.tinylog.Logger;
 
 public class World extends Game {
@@ -220,5 +217,12 @@ public class World extends Game {
 			client.requestLevel(currentLevel);
 		} else
 			levels[currentLevel].add(player); // Adds the player to the level.
+
+		if (currentLevel == 0) {
+			AchievementsDisplay.setAchievement("minicraft.achievement.lowest_caves", true);
+		}
+		if (currentLevel == 5) {
+			AchievementsDisplay.setAchievement("minicraft.achievement.obsidian_dungeon", true);
+		}
 	}
 }

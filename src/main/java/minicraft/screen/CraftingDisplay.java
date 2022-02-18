@@ -16,7 +16,6 @@ public class CraftingDisplay extends Display {
 	
 	private Player player;
 	private Recipe[] recipes;
-	private Recipe[] recipesID;
 	
 	private RecipeMenu recipeMenu;
 	private Menu.Builder itemCountMenu, costsMenu;
@@ -98,7 +97,6 @@ public class CraftingDisplay extends Display {
 			// check the selected recipe
 			Recipe selectedRecipe = recipes[recipeMenu.getSelection()];
 			if (selectedRecipe.getCanCraft()) {
-				Logger.debug("Crafting "+selectedRecipe.getProduct().toString());
 				if (selectedRecipe.getProduct().equals(Items.get("Workbench"))){
 					AchievementsDisplay.setAchievement("minicraft.achievement.benchmarking",true);
 				}
@@ -117,17 +115,15 @@ public class CraftingDisplay extends Display {
 						selectedRecipe.getProduct().equals(Items.get("Rock Claymore"))) {
 					AchievementsDisplay.setAchievement("minicraft.achievement.upgrade", true);
 				}
-				for (int i = 7; i < 15; i++) {
-					if (selectedRecipe.getProduct().equals(Items.get("blue clothes")) ||
-							selectedRecipe.getProduct().equals(Items.get("green clothes")) ||
-							selectedRecipe.getProduct().equals(Items.get("yellow clothes")) ||
-							selectedRecipe.getProduct().equals(Items.get("black clothes")) ||
-							selectedRecipe.getProduct().equals(Items.get("orange clothes")) ||
-							selectedRecipe.getProduct().equals(Items.get("purple clothes")) ||
-							selectedRecipe.getProduct().equals(Items.get("cyan clothes")) ||
-							selectedRecipe.getProduct().equals(Items.get("reg clothes"))) {
-						AchievementsDisplay.setAchievement("minicraft.achievement.clothes", true);
-					}
+				if (selectedRecipe.getProduct().equals(Items.get("blue clothes")) ||
+						selectedRecipe.getProduct().equals(Items.get("green clothes")) ||
+						selectedRecipe.getProduct().equals(Items.get("yellow clothes")) ||
+						selectedRecipe.getProduct().equals(Items.get("black clothes")) ||
+						selectedRecipe.getProduct().equals(Items.get("orange clothes")) ||
+						selectedRecipe.getProduct().equals(Items.get("purple clothes")) ||
+						selectedRecipe.getProduct().equals(Items.get("cyan clothes")) ||
+						selectedRecipe.getProduct().equals(Items.get("reg clothes"))) {
+					AchievementsDisplay.setAchievement("minicraft.achievement.clothes", true);
 				}
 
 				selectedRecipe.craft(player);
