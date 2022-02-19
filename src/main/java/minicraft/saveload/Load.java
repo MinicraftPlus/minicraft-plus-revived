@@ -357,11 +357,6 @@ public class Load {
 
 		SkinDisplay.setSelectedSkinIndex(json.getInt("skinIdx"));
 
-		// Multiplayer stuff
-		MultiplayerDisplay.savedIP = json.getString("savedIP");
-		MultiplayerDisplay.savedUUID = json.getString("savedUUID");
-		MultiplayerDisplay.savedUsername = json.getString("savedUsername");
-
 		// Load keymap
 		JSONArray keyData = json.getJSONArray("keymap");
 		List<Object> subdata = keyData.toList();
