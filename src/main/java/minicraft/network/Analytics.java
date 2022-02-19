@@ -9,6 +9,7 @@ import com.mashape.unirest.http.async.Callback;
 import com.mashape.unirest.http.exceptions.UnirestException;
 
 import minicraft.core.Game;
+import org.tinylog.Logger;
 
 public enum Analytics {
 	
@@ -57,18 +58,17 @@ public enum Analytics {
 		return Unirest.get(url).asBinaryAsync(new Callback<InputStream>() {
 			@Override
 			public void completed(HttpResponse<InputStream> response) {
-				if(Game.debug)
-					System.out.println("Ping success for "+name()+", with value "+value);
+				Logger.debug("Ping success for {}, with value {}.", name(), value);
 			}
 			
 			@Override
 			public void failed(UnirestException e) {
-				System.err.println("Ping failed for "+name()+", with value "+value);
+				Logger.warn("Ping failed for {}, with value {}.", name(), value);
 			}
 			
 			@Override
 			public void cancelled() {
-				System.err.println("Ping cancelled for "+name()+", with value "+value);
+				Logger.warn("Ping cancelled for {}, with value {}.", name(), value);
 			}
 		});
 	}

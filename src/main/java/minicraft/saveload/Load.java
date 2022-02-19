@@ -321,12 +321,6 @@ public class Load {
 				MultiplayerDisplay.savedUsername = data.remove(0);
 			}
 
-			if(prefVer.compareTo(new Version("2.0.4-dev3")) >= 0) {
-				String lang = data.remove(0);
-				Settings.set("language", lang);
-				Localization.changeLanguage(lang);
-			}
-
 			String keyData = data.get(0);
 			subdata = Arrays.asList(keyData.split(":"));
 		}
@@ -355,9 +349,11 @@ public class Load {
 		Settings.set("diff", json.has("diff") ? json.getString("diff") : "Normal");
 		Settings.set("fps", json.getInt("fps"));
 
-		String lang = json.getString("lang");
-		Settings.set("language", lang);
-		Localization.changeLanguage(lang);
+		if (prefVer.compareTo(new Version("2.1.0-dev1")) > 0) {
+			String lang = json.getString("lang");
+			Settings.set("language", lang);
+			Localization.changeLanguage(lang);
+		}
 
 		SkinDisplay.setSelectedSkinIndex(json.getInt("skinIdx"));
 

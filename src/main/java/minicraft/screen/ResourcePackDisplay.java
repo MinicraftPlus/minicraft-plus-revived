@@ -3,11 +3,7 @@ package minicraft.screen;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.ArrayList;
-import java.util.Enumeration;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Objects;
+import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.zip.ZipEntry;
@@ -18,6 +14,7 @@ import javax.imageio.ImageIO;
 import minicraft.core.FileHandler;
 import minicraft.core.Game;
 import minicraft.core.Renderer;
+import minicraft.core.io.InputHandler;
 import minicraft.core.io.Localization;
 import minicraft.gfx.Color;
 import minicraft.gfx.Font;
@@ -25,26 +22,28 @@ import minicraft.gfx.Screen;
 import minicraft.gfx.SpriteSheet;
 import minicraft.screen.entry.ListEntry;
 import minicraft.screen.entry.SelectEntry;
+import org.jetbrains.annotations.Nullable;
 import org.tinylog.Logger;
 
 public class ResourcePackDisplay extends Display {
 
 	private static final String DEFAULT_RESOURCE_PACK = "Default"; // Default texture
 	private static final String[] ENTRY_NAMES = new String[] { "items.png", "tiles.png", "entities.png", "gui.png" }; // Spritesheets
+	private static final File LOCATION = new File(FileHandler.getSystemGameDir() + "/" + FileHandler.getLocalGameDir() + "/resourcepacks");
 
-	private static final File location = new File(FileHandler.getSystemGameDir() + "/" + FileHandler.getLocalGameDir() + "/ResourcePacks");
+	private static String loadedPack = DEFAULT_RESOURCE_PACK;
 
-	private static List<ListEntry> getAllResourcePacks() {
+	private static List<ListEntry> getPacksAsEntries() {
 		List<ListEntry> resourceList = new ArrayList<>();
 		resourceList.add(new SelectEntry(ResourcePackDisplay.DEFAULT_RESOURCE_PACK, Game::exitMenu, false));
 
 		// Generate resource packs folder
-		if (location.mkdirs()) {
-			Logger.info("Created resource packs folder at {}.", location);
+		if (LOCATION.mkdirs()) {
+			Logger.info("Created resource packs folder at {}.", LOCATION);
 		}
 
 		// Read and add the .zip file to the resource pack list.
-		for (String fileName : Objects.requireNonNull(location.list())) {
+		for (String fileName : Objects.requireNonNull(LOCATION.list())) {
 			// Only accept files ending with .zip.
 			if (fileName.endsWith(".zip")) {
 				resourceList.add(new SelectEntry(fileName, Game::exitMenu, false));
@@ -56,121 +55,13 @@ public class ResourcePackDisplay extends Display {
 	
 	public ResourcePackDisplay() {
 		super(true, true,
-				new Menu.Builder(false, 2, RelPos.CENTER, getAllResourcePacks()).setSize(48, 64).createMenu());
+				new Menu.Builder(false, 2, RelPos.CENTER, getPacksAsEntries()).setSize(48, 64).createMenu());
 	}
 
 	@Override
 	public void onExit() {
 		super.onExit();
-		getAllResourcePacks();
-		updateSheets();
-	}
-
-	private void updateSheets() {
-		try {
-			SpriteSheet[] sheets = new SpriteSheet[ResourcePackDisplay.ENTRY_NAMES.length];
-
-			if (menus[0].getSelection() == 0) {
-				// Load default sprite sheet.
-				sheets = Renderer.loadDefaultSpriteSheets();
-			} else {
-				try {
-					ZipFile zipFile = new ZipFile(new File(location, Objects.requireNonNull(menus[0].getCurEntry()).toString()));
-
-					HashMap<String, HashMap<String, ZipEntry>> resources = generateResourceTree(zipFile); 
-
-					// Load textures
-					HashMap<String, ZipEntry> textures = resources.get("textures");
-					for (int i = 0; i < ResourcePackDisplay.ENTRY_NAMES.length; i++) {
-						ZipEntry entry = textures.get(ResourcePackDisplay.ENTRY_NAMES[i]);
-						if (entry != null) {
-							try (InputStream inputEntry = zipFile.getInputStream(entry)) {
-								sheets[i] = new SpriteSheet(ImageIO.read(inputEntry));
-							} catch (IOException e) {
-								e.printStackTrace();
-								Logger.error("Loading sheet {} failed. Aborting.", ResourcePackDisplay.ENTRY_NAMES[i]);
-								return;
-							}
-						} else {
-							Logger.debug("Couldn't load sheet {}, ignoring.", ResourcePackDisplay.ENTRY_NAMES[i]);
-						}
-					}
-					// TODO: Extend this to apply to sound (Using resources.get("sound"))
-				} catch (IllegalStateException | IOException e) {
-					e.printStackTrace();
-					Logger.error("Could not load resource pack with name {} at {}.", Objects.requireNonNull(menus[0].getCurEntry()).toString(), location);
-					return;
-				} catch (NullPointerException e) {
-					e.printStackTrace();
-					return;
-				}
-			}
-
-			Renderer.screen.setSheets(sheets[0], sheets[1], sheets[2], sheets[3]);
-		} catch(NullPointerException e) {
-			e.printStackTrace();
-			Logger.error("Changing resource pack failed.");
-			return;
-		}
-
-		Logger.info("Changed resource pack.");
-	}
-
-
-	/*
-		Fill hashmap with folder > list of files structure
-
-		Example Folder Structure:
-		textures
-			items.png
-			gui.png
-			entities.png
-			tiles.png
-		localization
-			english_en-us.json
-		sound
-			bossdeath.wav
-		
-		Gets converted into a HashMap of HashMaps that look the same
-		
-		Example getter:
-		resources.get("textures").get("tiles.png")
-	*/
-	public static HashMap<String, HashMap<String, ZipEntry>> generateResourceTree(ZipFile zipFile){
-		HashMap<String, HashMap<String, ZipEntry>> resources = new HashMap<>(); 
-
-		resources.put("textures", new HashMap<>());
-
-		Enumeration<? extends ZipEntry> entries = zipFile.entries();
-		while(entries.hasMoreElements()){
-			ZipEntry entry = entries.nextElement();
-
-			Pattern pattern = Pattern.compile("/(.*?)/");
-			Matcher matcher = pattern.matcher(entry.getName());
-			if (!matcher.find()) {
-				continue;
-			}
-			if(entry.isDirectory()) {
-				resources.put(matcher.group(1), new HashMap<>());
-			} else {
-				HashMap<String, ZipEntry> directory = resources.get(matcher.group(1));
-
-				if(directory == null) {
-					directory = resources.get("textures"); // Maintain backwards compatibility
-				}
-
-				String[] validSuffixes = {".json", ".wav", ".png"};
-				for(String suffix: validSuffixes) {
-					if(entry.getName().endsWith(suffix)) {
-						String[] path = entry.getName().split("/");
-						String fileName = path[path.length - 1];
-						directory.put(fileName, entry);
-					}
-				}
-			}
-		}
-
-		return resources;
+		updateResourcePack();
 	}
 
 	@Override
@@ -210,7 +101,162 @@ public class ResourcePackDisplay extends Display {
 	     */
 	}
 
+	private void updateResourcePack() {
+		loadedPack = Objects.requireNonNull(menus[0].getCurEntry()).toString();
+
+		ZipFile zipFile = null;
+		if (!loadedPack.equals(DEFAULT_RESOURCE_PACK)) {
+			try {
+				zipFile = new ZipFile(new File(LOCATION, loadedPack));
+			} catch (IOException e) {
+				e.printStackTrace();
+				Logger.error("Could not load resource pack zip at {}.", LOCATION);
+				return;
+			}
+		}
+
+		updateSheets(zipFile);
+		updateLocalization(zipFile);
+	}
+
+	private void updateSheets(@Nullable ZipFile zipFile) {
+		try {
+			SpriteSheet[] sheets = new SpriteSheet[ENTRY_NAMES.length];
+
+			if (zipFile == null) {
+				// Load default sprite sheet.
+				sheets = Renderer.loadDefaultSpriteSheets();
+			} else {
+				try {
+					HashMap<String, HashMap<String, ZipEntry>> resources = getPackFromZip(zipFile);
+
+					// Load textures
+					HashMap<String, ZipEntry> textures = resources.get("textures");
+					for (int i = 0; i < ENTRY_NAMES.length; i++) {
+						ZipEntry entry = textures.get(ENTRY_NAMES[i]);
+						if (entry != null) {
+							try (InputStream inputEntry = zipFile.getInputStream(entry)) {
+								sheets[i] = new SpriteSheet(ImageIO.read(inputEntry));
+							} catch (IOException e) {
+								e.printStackTrace();
+								Logger.error("Loading sheet {} failed. Aborting.", ENTRY_NAMES[i]);
+								return;
+							}
+						} else {
+							Logger.debug("Couldn't load sheet {}, ignoring.", ENTRY_NAMES[i]);
+						}
+					}
+				} catch (IllegalStateException e) {
+					e.printStackTrace();
+					Logger.error("Could not load resource pack with name {}.", zipFile.getName());
+					return;
+				} catch (NullPointerException e) {
+					e.printStackTrace();
+					return;
+				}
+			}
+
+			Renderer.screen.setSheets(sheets[0], sheets[1], sheets[2], sheets[3]);
+		} catch(NullPointerException e) {
+			e.printStackTrace();
+			Logger.error("Changing resource pack failed.");
+			return;
+		}
+
+		Logger.info("Changed resource pack.");
+	}
+
+	private void updateLocalization(@Nullable ZipFile zipFile) {
+
+		// Reload all hard-coded loc-files. (also clears old custom loc)
+		Localization.reloadLanguages();
+
+		// Load the custom loc as long as this isn't the default pack.
+		if (zipFile != null) {
+			ArrayList<String> paths = new ArrayList<>();
+			while (zipFile.entries().hasMoreElements()) {
+				ZipEntry ent = zipFile.entries().nextElement();
+				System.out.println(ent.getName());
+				System.out.println(ent);
+				//if (ent.toString().startsWith("localization/") && ent.toString().endsWith(".json")) {
+				//	paths.add(ent.get)
+				//}
+			}
+
+			Localization.addAndReplaceLanguages(paths.toArray(new String[0]));
+		}
+
+		// Update the loaded loc.
+		Localization.updateLanguage();
+	}
+
+	// TODO: Make resource packs support sound
+	private void updateSounds() { }
+
+	/**
+	 * Get all the resources in a resource pack in a hashmap.
+	 *
+	 * Example folder structure:
+	 * 	- textures
+	 * 		- items.png
+	 * 		- gui.png
+	 * 		- entities.png
+	 * 		- tiles.png
+	 * 	- localization
+	 * 		- english_en-us.json
+	 * 	- sound
+	 * 		- bossdeath.wav
+	 *
+	 * Gets a hashmap containing several hashmaps with all the files inside.
+	 *
+	 * Example getter:
+	 * resources.get("textures").get("tiles.png")
+	 * @param zipFile The resource pack .zip
+	 */
+	public static HashMap<String, HashMap<String, ZipEntry>> getPackFromZip(ZipFile zipFile){
+		HashMap<String, HashMap<String, ZipEntry>> resources = new HashMap<>();
+
+		resources.put("textures", new HashMap<>());
+
+		Enumeration<? extends ZipEntry> entries = zipFile.entries();
+		while (entries.hasMoreElements()){
+			ZipEntry entry = entries.nextElement();
+
+			Pattern pattern = Pattern.compile("/(.*?)/");
+			Matcher matcher = pattern.matcher(entry.getName());
+			if (!matcher.find()) {
+				continue;
+			}
+
+			if (entry.isDirectory()) {
+				resources.put(matcher.group(1), new HashMap<>());
+			} else {
+				HashMap<String, ZipEntry> directory = resources.get(matcher.group(1));
+
+				// If this zip file has no folder as its first entry, assume it is an old texture pack.
+				if (directory == null) {
+					directory = resources.get("textures");
+				}
+
+				String[] validSuffixes = { ".json", ".wav", ".png" };
+				for (String suffix : validSuffixes) {
+					if (entry.getName().endsWith(suffix)) {
+						String[] path = entry.getName().split("/");
+						String fileName = path[path.length - 1];
+						directory.put(fileName, entry);
+					}
+				}
+			}
+		}
+
+		return resources;
+	}
+
 	public static File getLocation() {
-		return location;
+		return LOCATION;
+	}
+
+	public static String getLoadedPack() {
+		return loadedPack;
 	}
 }

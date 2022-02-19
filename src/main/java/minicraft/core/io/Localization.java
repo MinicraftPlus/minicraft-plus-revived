@@ -19,7 +19,6 @@ import java.util.zip.ZipFile;
 import java.util.zip.ZipInputStream;
 
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 import minicraft.core.Game;
 import minicraft.screen.ResourcePackDisplay;
@@ -28,20 +27,17 @@ import org.json.JSONObject;
 import org.tinylog.Logger;
 
 public class Localization {
-	
+
+	public static final Locale DEFAULT_LOCALE = Locale.US;
+
 	private static final HashSet<String> knownUnlocalizedStrings = new HashSet<>();
-	
 	private static final HashMap<String, String> localization = new HashMap<>();
-	private static String selectedLanguage = "english";
-	
-	private static final HashMap<String, Locale> locales = new HashMap<>();
-	private static final HashMap<String, String> localizationFiles = new HashMap<>();
-	
-	private static String[] loadedLanguages = getLanguagesFromDirectory();
-	
+
+	private static Locale selectedLocale = DEFAULT_LOCALE;
+	private static final HashMap<Locale, String> localizationFiles = new HashMap<>();
+
 	static {
-		if (loadedLanguages == null)
-			loadedLanguages = new String[] { selectedLanguage };
+		getLanguagesFromDirectory();
 	}
 	
 	@NotNull
@@ -65,50 +61,90 @@ public class Localization {
 		return (localString == null ? key : localString);
 	}
 	
-	public static Locale getSelectedLocale() { return locales.getOrDefault(selectedLanguage, Locale.getDefault()); }
+	public static Locale getSelectedLocale() { return selectedLocale; }
 	
 	@NotNull
-	public static String getSelectedLanguage() { return selectedLanguage; }
-	
-	public static void changeLanguage(String newLanguage) {
-		localization.clear();
-		selectedLanguage = newLanguage;
-		loadLanguageFile(selectedLanguage);
+	public static String getSelectedLanguage() {
+		String data = localizationFiles.get(selectedLocale);
+		return data.substring(data.lastIndexOf("/")+1, data.indexOf('_'));
 	}
 
-	private static void loadLanguageFile(String fileName) {
-		String fileText = getFileAsString(fileName);
+	public static void changeLanguage(@NotNull String newLanguage) {
+		selectedLocale = Locale.forLanguageTag(newLanguage);
 
+		updateLanguage();
+	}
+
+	public static void updateLanguage() {
+		localization.clear();
+
+		// Check if selectedLanguage is empty.
+		if (selectedLocale == null)
+			selectedLocale = DEFAULT_LOCALE;
+
+		// Check if language is loaded.
+		if (localizationFiles.get(selectedLocale) == null)
+			selectedLocale = DEFAULT_LOCALE;
+
+		// Load the loc into localization.
+		String fileText = getFileAsString(selectedLocale);
+
+		// Attempt to load string as a json object.
 		JSONObject json = new JSONObject(fileText);
+
+		// Put all loc strings in a key-value set.
 		for (String key : json.keySet()) {
 			localization.put(key, json.getString(key));
 		}
 	}
 	
 	@NotNull
-	private static String getFileAsString(String fileName) {
+	public static String[] getLanguages() {
+		ArrayList<String> locs = new ArrayList<>();
+		for (String loc : localizationFiles.values()) {
+			locs.add(loc.substring(loc.lastIndexOf("/") + 1, loc.indexOf('_')));
+		}
+
+		return locs.toArray(new String[0]);
+	}
+
+	@NotNull
+	public static Locale[] getLocales() { return localizationFiles.keySet().toArray(new Locale[0]); }
+
+	@NotNull
+	public static String[] getLocalesString() {
+		ArrayList<String> locs = new ArrayList<>();
+		for (Locale loc : localizationFiles.keySet()) {
+			locs.add(loc.toLanguageTag());
+		}
+
+		return locs.toArray(new String[0]);
+	}
+
+	@NotNull
+	private static String getFileAsString(Locale locale) {
 		// Find path of the selected language, and check for errors.
-		String location = localizationFiles.get(fileName);
+		String location = localizationFiles.get(locale);
 		if (location == null) {
-			Logger.error("Could not find locale with name: {}.", fileName);
+			Logger.error("Could not find locale with name: {}.", locale.toLanguageTag());
 			return "";
 		}
 
 		// Load an InputStream from the location provided, and check for errors.
 		// Using getResourceAsStream since we're publishing this as a jar file.
 		InputStream locStream = null;
-		if(location.startsWith("/resources")) {
+		if (location.startsWith("/resources")) {
 			locStream = Game.class.getResourceAsStream(location);
 		} else {
 			try {
 				String[] path = location.split("/");
 
 				ZipFile zipFile = new ZipFile(new File(ResourcePackDisplay.getLocation(), path[0] + ".zip"));
-	
-				HashMap<String, ZipEntry> localizations = ResourcePackDisplay.generateResourceTree(zipFile).get("localization"); 
-	
+
+				HashMap<String, ZipEntry> localizations = ResourcePackDisplay.getPackFromZip(zipFile).get("localization");
+
 				ZipEntry localization = localizations.get(path[path.length - 1]);
-	
+
 				locStream = zipFile.getInputStream(localization);
 			} catch (IllegalStateException | IOException | NullPointerException e) {
 				e.printStackTrace();
@@ -126,15 +162,11 @@ public class Localization {
 
 		return String.join("\n", reader.lines().toArray(String[]::new));
 	}
-	
-	@NotNull
-	public static String[] getLanguages() { return loadedLanguages; }
-	
+
 	// Couldn't find a good way to find all the files in a directory when the program is
-	// exported as a jar file so I copied this. Thanks!
+	// exported as a jar file, so I copied this. Thanks!
 	// https://stackoverflow.com/questions/1429172/how-do-i-list-the-files-inside-a-jar-file/1429275#1429275
-	@Nullable
-	private static String[] getLanguagesFromDirectory() {
+	private static void getLanguagesFromDirectory() {
 		ArrayList<String> languages = new ArrayList<>();
 		
 		try {
@@ -151,110 +183,92 @@ public class Localization {
 					if (e == null) {
 						if (reads > 0) break;
 						else {
-							return getLanguagesFromDirectoryUsingIDE();
+							getLanguagesFromDirectoryUsingIDE();
+							return;
 						}
 					}
 					reads++;
 					String name = e.getName();
 					if (name.startsWith("resources/localization/") && name.endsWith(".json")) {
-						String data = name.replace("resources/localization/", "").replace(".json", "");
-						String lang = data.substring(0, data.indexOf('_'));
-						languages.add(lang);
-						localizationFiles.put(lang, '/' + name);
-						locales.put(lang, Locale.forLanguageTag(data.substring(data.indexOf('_')+1)));
+						try {
+							String data = name.replace("resources/localization/", "").replace(".json", "");
+							Locale lang = Locale.forLanguageTag(data.substring(data.indexOf('_')+1));
+
+							languages.add(data.substring(0, data.indexOf('_')));
+							localizationFiles.put(lang, '/' + name);
+						} catch (StringIndexOutOfBoundsException ex) {
+							Logger.error("Could not load localization with path: {}", name);
+						}
 					}
 				}
 			} else {
 				Logger.error("Failed to get code source.");
-				return null;
+				return;
 			}
 		} catch (IOException e) {
 			e.printStackTrace();
-			return null;
+			return;
 		}
 
-		getLanguagesFromResourcePacks(languages);
-
-		return languages.toArray(new String[0]);
+		languages.toArray(new String[0]);
 	}
 	
-	// This is only here so we can run the game in our ide.
+	// This is only here, so we can run the game in our ide.
 	// This will not work if we're running the game from a jar file.
-	@java.lang.Deprecated
-	@Nullable
-	private static String[] getLanguagesFromDirectoryUsingIDE() {
+	private static void getLanguagesFromDirectoryUsingIDE() {
 		ArrayList<String> languages = new ArrayList<>();
 		
 		try {
 			URL fUrl = Game.class.getResource("/resources/localization/");
 			if (fUrl == null) {
 				Logger.error("Could not find localization folder.");
-				return null;
+				return;
 			}
 
 			Path folderPath = Paths.get(fUrl.toURI());
 			DirectoryStream<Path> dir = Files.newDirectoryStream(folderPath);
 			for (Path p : dir) {
 				String filename = p.getFileName().toString();
-				String data = filename.replace(".json", "");
-				String lang = data.substring(0, data.indexOf('_'));
+				try {
+					String data = filename.replace(".json", "");
+					Locale lang = Locale.forLanguageTag(data.substring(data.indexOf('_') + 1));
 
-				languages.add(lang);
-				localizationFiles.put(lang, "/resources/localization/" + filename);
-				locales.put(lang, Locale.forLanguageTag(data.substring(data.indexOf('_')+1)));
+					languages.add(data.substring(0, data.indexOf('_')));
+					localizationFiles.put(lang, "/resources/localization/" + filename);
+				} catch (StringIndexOutOfBoundsException e) {
+					Logger.error("Could not load localization file with path: {}", p);
+				}
 			}
 		} catch (IOException | URISyntaxException e) {
 			e.printStackTrace();
-			// Nothing to do in this menu if we can't load the languages so we
+			// Nothing to do in this menu if we can't load the languages, so we
 			// just return to the title menu.
-			return null;
+			return;
 		}
 
-		getLanguagesFromResourcePacks(languages);
-		
-		return languages.toArray(new String[languages.size()]);
+		languages.toArray(new String[0]);
 	}
 
-	private static void getLanguagesFromResourcePacks(ArrayList<String> languages) {
-		File location = ResourcePackDisplay.getLocation();
-		if (location.mkdirs()) {
-			Logger.info("Created resource packs folder at {}.", location);
-		}
+	public static void addAndReplaceLanguages(String[] paths) {
+		for (String path : paths) {
+			String data = path.replace(".json", "");
 
-		for (String fileName : Objects.requireNonNull(location.list())) {
 			try {
-				ZipFile zipFile = new ZipFile(new File(location, fileName));
-	
-				HashMap<String, HashMap<String, ZipEntry>> resources = ResourcePackDisplay.generateResourceTree(zipFile); 
-	
-				// Load textures
-				HashMap<String, ZipEntry> localizations = resources.get("localization");
-				for(String locale: localizations.keySet()) {
-					ZipEntry localization = localizations.get(locale);
+				Locale lang = Locale.forLanguageTag(data.substring(data.indexOf('_') + 1));
 
-					String data = locale.replace(".json", "");
-					String lang = data.substring(0, data.indexOf('_'));
-
-
-					languages.add(lang);
-					localizationFiles.put(lang, localization.getName());
-					locales.put(lang, Locale.forLanguageTag(data.substring(data.indexOf('_')+1)));
-
-					// locales.put(lang, Locale.forLanguageTag(data.substring(data.indexOf('_')+1)));
-		
-					// InputStream inputEntry = zipFile.getInputStream(localization);
-		
-					// Load the file as a BufferedReader.
-					// BufferedReader reader = new BufferedReader(new InputStreamReader(inputEntry, StandardCharsets.UTF_8));
-		
-					// String text = String.join("\n", reader.lines().toArray(String[]::new));
-				}
-			} catch (IllegalStateException | IOException e) {
-				e.printStackTrace();
-				// Logger.error("Could not load texture pack with name {} at {}.", Objects.requireNonNull(menus[0].getCurEntry()).toString(), location);
-			} catch (NullPointerException e) {
-				e.printStackTrace();
+				System.out.println(lang.toLanguageTag() + " and " + path);
+				//localizationFiles.put(lang, path);
+			} catch (StringIndexOutOfBoundsException e) {
+				Logger.error("Title of loc file {} is invalid.", path);
 			}
 		}
+	}
+
+	public static void reloadLanguages() {
+		// Clear array with localization files.
+		localizationFiles.clear();
+
+		// Reload all default localization files.
+		getLanguagesFromDirectory();
 	}
 }
