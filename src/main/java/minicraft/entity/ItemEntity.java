@@ -128,8 +128,8 @@ public class ItemEntity extends Entity implements ClientTickable {
 		if (time >= lifeTime - 6 * 20) {
 			if (time / 6 % 2 == 0) return;
 		}
-		item.sprite.render(screen, x-4, y - 4, 4, -1, Color.BLACK); // item shadow uses black color
-		item.sprite.render(screen, x - 4, y - 4 - (int)(zz));
+		item.sprite.render(screen, x-4, y - 4, 4, -1, Color.get(0, 31)); // Item shadow
+		item.sprite.render(screen, x - 4, y - 4 - (int)(zz)); // Item
 	}
 
 	@Override

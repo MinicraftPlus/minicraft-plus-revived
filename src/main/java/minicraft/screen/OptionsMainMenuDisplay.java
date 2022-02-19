@@ -14,8 +14,7 @@ public class OptionsMainMenuDisplay extends Display {
             Settings.getEntry("sound"),
             new SelectEntry("Change Key Bindings", () -> Game.setMenu(new KeyInputDisplay())),
             Settings.getEntry("language")
-            //Settings.getEntry("textures") // old, If you want you can activate it, it does not affect the texture pack system, but it would not make much sense
-            /*new SelectEntry("Resource packs", () -> Game.setMenu(new ResourcePackDisplay()))*/) // New resource packs system
+            /*new SelectEntry("Resource packs", () -> Game.setMenu(new ResourcePackDisplay()))*/)
             .setTitle("Main Menu Options")
             .createMenu()
         );
