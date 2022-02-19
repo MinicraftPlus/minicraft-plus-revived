@@ -109,6 +109,7 @@ public class ResourcePackDisplay extends Display {
 			try {
 				zipFile = new ZipFile(new File(LOCATION, loadedPack));
 			} catch (IOException e) {
+				e.printStackTrace();
 				Logger.error("Could not load resource pack zip at {}.", LOCATION);
 				return;
 			}
@@ -120,7 +121,7 @@ public class ResourcePackDisplay extends Display {
 
 	private void updateSheets(@Nullable ZipFile zipFile) {
 		try {
-			SpriteSheet[] sheets = new SpriteSheet[ResourcePackDisplay.ENTRY_NAMES.length];
+			SpriteSheet[] sheets = new SpriteSheet[ENTRY_NAMES.length];
 
 			if (zipFile == null) {
 				// Load default sprite sheet.
@@ -131,18 +132,18 @@ public class ResourcePackDisplay extends Display {
 
 					// Load textures
 					HashMap<String, ZipEntry> textures = resources.get("textures");
-					for (int i = 0; i < ResourcePackDisplay.ENTRY_NAMES.length; i++) {
-						ZipEntry entry = textures.get(ResourcePackDisplay.ENTRY_NAMES[i]);
+					for (int i = 0; i < ENTRY_NAMES.length; i++) {
+						ZipEntry entry = textures.get(ENTRY_NAMES[i]);
 						if (entry != null) {
 							try (InputStream inputEntry = zipFile.getInputStream(entry)) {
 								sheets[i] = new SpriteSheet(ImageIO.read(inputEntry));
 							} catch (IOException e) {
 								e.printStackTrace();
-								Logger.error("Loading sheet {} failed. Aborting.", ResourcePackDisplay.ENTRY_NAMES[i]);
+								Logger.error("Loading sheet {} failed. Aborting.", ENTRY_NAMES[i]);
 								return;
 							}
 						} else {
-							Logger.debug("Couldn't load sheet {}, ignoring.", ResourcePackDisplay.ENTRY_NAMES[i]);
+							Logger.debug("Couldn't load sheet {}, ignoring.", ENTRY_NAMES[i]);
 						}
 					}
 				} catch (IllegalStateException e) {
@@ -166,12 +167,23 @@ public class ResourcePackDisplay extends Display {
 	}
 
 	private void updateLocalization(@Nullable ZipFile zipFile) {
+
 		// Reload all hard-coded loc-files. (also clears old custom loc)
 		Localization.reloadLanguages();
 
 		// Load the custom loc as long as this isn't the default pack.
 		if (zipFile != null) {
-			Localization.getLanguagesFromResourcePack(zipFile);
+			ArrayList<String> paths = new ArrayList<>();
+			while (zipFile.entries().hasMoreElements()) {
+				ZipEntry ent = zipFile.entries().nextElement();
+				System.out.println(ent.getName());
+				System.out.println(ent);
+				//if (ent.toString().startsWith("localization/") && ent.toString().endsWith(".json")) {
+				//	paths.add(ent.get)
+				//}
+			}
+
+			Localization.addAndReplaceLanguages(paths.toArray(new String[0]));
 		}
 
 		// Update the loaded loc.
@@ -212,9 +224,9 @@ public class ResourcePackDisplay extends Display {
 
 			Pattern pattern = Pattern.compile("/(.*?)/");
 			Matcher matcher = pattern.matcher(entry.getName());
-			//if (!matcher.find()) {
-			//	continue;
-			//}
+			if (!matcher.find()) {
+				continue;
+			}
 
 			if (entry.isDirectory()) {
 				resources.put(matcher.group(1), new HashMap<>());

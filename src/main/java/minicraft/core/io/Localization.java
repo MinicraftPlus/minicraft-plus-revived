@@ -27,11 +27,13 @@ import org.json.JSONObject;
 import org.tinylog.Logger;
 
 public class Localization {
-	
+
+	public static final Locale DEFAULT_LOCALE = Locale.US;
+
 	private static final HashSet<String> knownUnlocalizedStrings = new HashSet<>();
 	private static final HashMap<String, String> localization = new HashMap<>();
 
-	private static Locale selectedLanguage = Locale.US;
+	private static Locale selectedLocale = DEFAULT_LOCALE;
 	private static final HashMap<Locale, String> localizationFiles = new HashMap<>();
 
 	static {
@@ -59,41 +61,38 @@ public class Localization {
 		return (localString == null ? key : localString);
 	}
 	
-	public static Locale getSelectedLocale() { return selectedLanguage; }
+	public static Locale getSelectedLocale() { return selectedLocale; }
 	
 	@NotNull
 	public static String getSelectedLanguage() {
-		String data = localizationFiles.get(selectedLanguage);
+		String data = localizationFiles.get(selectedLocale);
 		return data.substring(data.lastIndexOf("/")+1, data.indexOf('_'));
 	}
 
 	public static void changeLanguage(@NotNull String newLanguage) {
-		localization.clear();
-		selectedLanguage = Locale.forLanguageTag(newLanguage);
+		selectedLocale = Locale.forLanguageTag(newLanguage);
 
-		// Check if language is loaded.
-		if (localizationFiles.get(selectedLanguage).isEmpty())
-			selectedLanguage = Locale.US;
-
-		// Load the loc into localization.
-		loadLocFromFile(selectedLanguage);
+		updateLanguage();
 	}
 
 	public static void updateLanguage() {
 		localization.clear();
 
+		// Check if selectedLanguage is empty.
+		if (selectedLocale == null)
+			selectedLocale = DEFAULT_LOCALE;
+
 		// Check if language is loaded.
-		if (localizationFiles.get(selectedLanguage).isEmpty())
-			selectedLanguage = Locale.US;
+		if (localizationFiles.get(selectedLocale) == null)
+			selectedLocale = DEFAULT_LOCALE;
 
 		// Load the loc into localization.
-		loadLocFromFile(selectedLanguage);
-	}
+		String fileText = getFileAsString(selectedLocale);
 
-	private static void loadLocFromFile(Locale locale) {
-		String fileText = getFileAsString(locale);
-
+		// Attempt to load string as a json object.
 		JSONObject json = new JSONObject(fileText);
+
+		// Put all loc strings in a key-value set.
 		for (String key : json.keySet()) {
 			localization.put(key, json.getString(key));
 		}
@@ -103,7 +102,7 @@ public class Localization {
 	public static String[] getLanguages() {
 		ArrayList<String> locs = new ArrayList<>();
 		for (String loc : localizationFiles.values()) {
-			locs.add(loc.substring(loc.lastIndexOf("/")+1, loc.indexOf('_')));
+			locs.add(loc.substring(loc.lastIndexOf("/") + 1, loc.indexOf('_')));
 		}
 
 		return locs.toArray(new String[0]);
@@ -250,28 +249,26 @@ public class Localization {
 		languages.toArray(new String[0]);
 	}
 
-	public static void getLanguagesFromResourcePack(ZipFile zipFile) {
-		HashMap<String, HashMap<String, ZipEntry>> resources = ResourcePackDisplay.getPackFromZip(zipFile);
-		try {
-			HashMap<String, ZipEntry> localizations = resources.get("localization");
+	public static void addAndReplaceLanguages(String[] paths) {
+		for (String path : paths) {
+			String data = path.replace(".json", "");
 
-			for (String locale : localizations.keySet()) {
-				ZipEntry localization = localizations.get(locale);
-				String data = locale.replace(".json", "");
+			try {
+				Locale lang = Locale.forLanguageTag(data.substring(data.indexOf('_') + 1));
 
-				try {
-					Locale lang = Locale.forLanguageTag(data.substring(data.indexOf('_') + 1));
-
-					localizationFiles.put(lang, localization.getName());
-				} catch (StringIndexOutOfBoundsException e) {
-					Logger.error("Title of loc file {} in resource pack {} is invalid.", locale, zipFile.getName());
-				}
+				System.out.println(lang.toLanguageTag() + " and " + path);
+				//localizationFiles.put(lang, path);
+			} catch (StringIndexOutOfBoundsException e) {
+				Logger.error("Title of loc file {} is invalid.", path);
 			}
-		} catch (NullPointerException ignored) {}
+		}
 	}
 
 	public static void reloadLanguages() {
+		// Clear array with localization files.
 		localizationFiles.clear();
+
+		// Reload all default localization files.
 		getLanguagesFromDirectory();
 	}
 }
