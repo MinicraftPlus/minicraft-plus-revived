@@ -1,0 +1,1087 @@
+### entity
+
+# Entity.java
+Entities
+Entities
+
+# AirWizard.java
+Air Wizard: Defeated!
+Havayi Jadoogar: Hara Diya!
+
+The Dungeon is now open!
+Dungeon ab khul chuka hai!
+
+A costume lies on the ground...
+Ek costume zameen par padha hai...
+
+# Bed.java
+Can't sleep!
+Nahi so sakte!
+
+Min 
+Min 
+
+ Sec left!
+ Second bacha!
+
+# DungeonChest.java
+You hear a noise from the surface!
+Tumhe zameen se ek awaz ayi!
+
+# DeathChest.java
+Death Chest
+Mrityu Sandookh
+
+# Player.java
+Player
+Khiladi
+
+Crafting
+Banana
+
+Set your home!
+Apne ghar ko set karo!
+
+Can't set home here!
+Yahan ghar set nahi ho sakta!
+
+Home Sweet Home!
+Hamara Pyara Ghar!
+
+Mode penalty: -2 health
+Mode ki penalty: -2 swasth
+
+You don't have a home!
+Aapke paas ghar nahi hai!
+
+You can't go home from here!
+Tum yahan se ghar nahi ja sakte ho!
+ 
+### entity end
+
+### gfx
+### gfx end
+
+### item
+
+# ArmorItem.java
+Leather Armor
+Chamada Ka Kavach
+
+Snake Armor
+Saamp Ka Kavach
+
+Iron Armor
+Lohe Ka Kavach
+
+Gold Armor
+Sone Ka Kavach
+
+Gem Armor
+Ratn Ka Kavach
+
+# BookItem.java
+
+Book
+Kitab
+
+Antidious
+Kahani Antidious
+
+# BucketItem.java
+
+Empty Bucket
+Khali Balti
+
+Water Bucket
+Pani Ki Balti
+
+Lava Bucket
+Lava Ki Balti
+
+ Bucket
+ Balti
+ 
+# ClothingItem.java
+
+Red Clothes
+Lal Kapde
+
+Blue Clothes
+Neele Kapde
+
+Green Clothes
+Hare Kapde
+
+Yellow Clothes
+Peele Kapde
+
+Black Clothes
+Kale Kapde
+
+Orange Clothes
+Narangi Clothes
+
+Purple Clothes
+Bengan Wale Rang Ke Kapde
+
+Cyan Clothes
+Siyaan Kapde
+
+Reg Clothes
+Reg Kapde
+
+# FoodItem.java
+
+Bread
+Roti
+
+Apple
+Seyb
+
+Raw Pork
+Kacha Soowar
+
+Raw Fish
+Kachi Machli
+
+Raw Beef
+Kachi Gaye
+
+Pork Chop
+Soowar Ke Chop
+
+Cooked Fish
+Paki Huyi Machli
+
+Cooked Pork
+Paka Huwa Soowar
+
+Steak
+Steak
+
+Gold Apple
+Sone Ka Seb
+
+Baked Potato
+Ubla Huwa Aalo
+
+# FurnitureItem.java
+
+Cow Spawner
+Gaye Spawner
+
+Pig Spawner
+Soowar Spawner
+
+Sheep Spawner
+Bheyd Spawner
+
+Slime Spawner
+Keechad Wala Bhoot Ka Spawner
+
+Zombie Spawner
+Bhoot Spawner
+
+Creeper Spawner
+Creeper Spawner
+
+Skeleton Spawner
+Hadi Spawner
+
+Snake Spawner
+Saamp Spawner
+
+Knight Spawner
+Veer Spawner
+
+AirWizard Spawner
+HawayiJadoogar Spawner
+
+Workbench
+Kaam Ki Bench
+
+Oven
+Oven
+
+Furnace
+Furnace
+
+Anvil
+Nihai
+
+Enchanter
+Enchanter
+
+Loom
+Silayi
+
+Lantern
+Laaltein
+
+Iron Lantern
+Lohe Ka Laaltein
+
+Gold Lantern
+Sone Ka Laaltein
+
+Tnt
+Bum
+
+Bed
+Bistar
+
+Chest
+Chest
+
+# PotionType.java
+
+None Potion
+Koyi Nahi Potion
+
+Speed Potion
+Teji Ka Potion
+
+Light Potion
+Bati Ka Potion
+
+Swim Potion
+Terhne Ka Potion
+
+Energy Potion
+Energy Ka Potion
+
+Regen Potion
+Wapis Gen Ka Potion
+
+Health Potion
+Swasth Ka Potion
+
+Time Potion
+Same Ka Potion
+
+Lava Potion
+Lava Ka Potion
+
+Shield Potion
+Shield Ka Potion
+
+Haste Potion
+Haste Ka Potion
+
+Escape Potion
+Chupke Se Nikalne Ka Potion
+
+Potion
+Potion
+
+# PowerGloveItem.java
+
+Power Glove
+Shakti Ka Glove
+
+# ShearItem.java
+
+Shear
+Shear
+
+# StackableItem.java
+
+Wood
+Lakdi
+
+Stone
+Pathar
+
+Leather
+Chamada
+
+Wheat
+Aatta
+
+Key
+Chabi
+
+arrow
+teer
+
+string
+dori
+
+Coal
+Koyla
+
+Iron Ore
+Lohe Ka Ore
+
+Lapis
+Lapis
+
+Gold Ore
+Sone Ka Ore
+
+Iron
+Loha
+
+Gold
+Sona
+
+Rose
+Gulab
+
+GunPowder
+GunPowder
+
+Slime
+Keechad
+
+glass
+kanch
+
+cloth
+kapda
+
+gem
+ratn
+
+Scale
+Scale
+
+Shard
+Shard
+
+# TileItem.java
+
+Flower
+Phool
+
+Acorn
+Acorn
+
+Dirt
+Mitti
+
+Plank
+Plank
+
+Plank Wall
+Plank Ki Diwar
+
+Wood Door
+Lakdi Ka Darwaza
+
+Stone Brick
+Pathar Ki Einth
+
+Stone Wall
+Pathar Ki Diwar
+
+Stone Door
+Pathar Ka Darwaza
+
+Obsidian Brick
+Obsidian Ki Einth
+
+Obsidian Wall
+Obsidian Ki Diwar
+
+Obsidian Door
+Obsidian Ka Darwaza
+
+Wool
+Oon
+
+Red Wool
+Lal Oon
+
+Blue Wool
+Neeli Wool
+
+Green Wool
+Hari Wool
+
+Yellow Wool
+Pili Wool
+
+Black Wool
+Kali Wool
+
+Sand
+Ret
+
+Cactus
+Cactus
+
+Wheat Seeds
+Aate Ke Beej
+
+Grass Seeds
+Ghaas Ke Beej
+
+Bone
+Haddi
+
+Cloud
+Baadal
+
+Can only be placed on 
+Usi me rakh sakte hai 
+
+Dig a hole first!
+Ek ched banao pehle!
+
+# ToolItem.java
+
+Wood
+Lakdi
+
+Rock
+Pathar
+
+Iron
+Loha
+
+Gold
+Sona
+
+Gem
+Ratn
+
+Potato
+Aaloo
+
+# FishingRodItem.java
+
+Wood Fishing Rod
+Lakdi Ki Fishing Rod
+
+Iron Fishing Rod
+Lohe Ki Fishing Rod
+
+Gold Fishing Rod
+Sone Ki Fishing Rod
+
+Gem Fishing Rod
+Ratn Ki Fishing Rod
+
+# ToolType.java
+
+Shovel
+Belacha
+
+Hoe
+Kudaal
+
+Sword
+Talwar
+
+Pickaxe
+Pickaxe
+
+Axe
+Kulhadi
+
+Bow
+Dhanush
+
+Claymore
+Claymore
+
+# TorchItem.java
+
+Torch
+Batti
+
+### item end
+
+### level
+
+## tile 
+
+# Tiles.java
+
+Gem Ore
+Ratn Ka Ore
+
+Wood Planks
+Lakdi Ke Planks
+
+Stone Bricks
+Pathar Ke Bricks
+
+Obsidian
+Obsidian
+
+Wood Wall
+Lakdi Ki Diwar
+
+Grass
+Ghaas
+
+Dirt
+Mitti
+
+Natural Rock
+Praakriti Ka Pathar
+
+Flower
+Fool
+
+Hole
+Ched
+
+Stairs Up
+Sidiya Oopar
+
+Stairs Down
+Sidiya Neeche
+
+Water
+Pani
+
+Rock
+Pathar
+
+Tree
+Ped
+
+Tree Sapling
+Ped Ka Sapling
+
+Sand
+Ret
+
+Cactus
+Cactus
+
+Cactus Sapling
+Cactus Ka Sapling
+
+Lava
+Lava
+
+Lava Brick
+Lava Ke Einth
+
+Explode
+Phat
+
+Farmland
+Khet
+
+Wheat
+Aata
+
+Hard Rock
+Thek Pathar
+
+Infinite Fall
+Unant Girna
+
+Cloud
+Baadal
+
+Cloud Cactus
+Baadal Ka Cactus
+
+# OreTile.java
+
+Iron
+Loha
+
+Lapis
+Lapis
+
+Gold
+Sona
+
+Gem
+Ratn
+
+Ore
+Ore
+
+## tile end
+
+### level end
+
+### network
+
+# MinicraftClient.java
+
+host not found
+host nahi mila
+
+unable to get localhost address
+localhost address nahi mil raha
+
+### network end
+
+### saveload
+
+# Save.java
+
+World Saved!
+Duniya Bach Gayi
+
+### saveload end
+
+### screen
+
+## entry
+
+# BooleanEntry.java
+
+On
+Haan
+
+Off
+Band
+
+## entry end
+
+# BookDisplay.java
+
+There is nothing of use here.
+Yahan kuch kam ka nahi hai.
+
+Still nothing... :P
+Abhi bhi kuch nahi... :P
+
+# CraftingMenu.java
+
+Have:
+Pass Hai:
+
+Cost:
+Keymat:
+
+# DeadMenu.java
+
+Time: 
+Samay: 
+
+Score: 
+Score: 
+
+Quit
+Chodna
+
+Respawn
+Wapis Spawn
+
+You died! Aww!
+Tumhari avtar ki mrityu ho gayi :(
+
+# Displays.java
+
+With the default controls...\n\nMove your character with arrow keys or WSAD. Press C to attack and X to open the inventory, and to use items. Select an item in the inventory to equip it.\n\nKill the air wizard to win the game!
+Default controls ke sath...\n\nApne avtar ko aas paas ghumao arrow keys or WSAD ka istamal kar ke. C ko hamla karne ke liye dabao aur inventory ko kholne ke liye aur cheezon ka istamal karne ke liye X dabao. Equip karne ke liye inventory mein cheez ko select karo.\n\nHawayi Jadugar ko mar ke khel jeeto!
+
+# EndGameDisplay.java
+
+Player Score: 
+Khiladi Ka Score: 
+
+<Bonuses>
+<Bonuses>
+
+Final Score: 
+Antim Score: 
+
+Exit to Menu
+Bahar Nikal Kar Menu Jao
+
+# InfoDisplay.java
+
+Time Played: 
+Samay Khela: 
+
+Current Score: 
+Abhi Ka Score: 
+
+Exit
+Nikal
+
+Player Stats
+Player Ki Stats
+
+# KeyInputMenu.java
+
+Controls
+Controls
+
+Press the desired
+Ichit Ko Dabao
+
+key sequence
+key sequence
+
+Are you sure you want to reset all key bindings to the default keys?
+Tum sare button ko default bindig me paaka reset karna chahate ho?
+
+enter to confirm
+confirm karne ke liye enter dabao
+
+escape to cancel
+cancel karne ke liye cancel dabao
+
+Confirm Action
+Action Ko Confirm Karo
+
+Press C/Enter to change key binding
+Key bindings ko change karne ke liye C/Enter dabao
+
+Press A to add key binding
+Key binding add karne ke liye A dabao
+
+Shift-D to reset all keys to default
+Sari keys co reset karne ke liye Shift-D dabao
+
+ESCAPE to Return to menu
+Menu pe wapis jane ke liye ESCAPE dabao
+
+# LoadingDisplay.java
+
+Loading
+Loading
+
+World
+Duniya
+
+# MultiplayerMenu.java
+
+waiting...
+prateeksha...
+
+nothing
+kuch bhi nahi
+
+attempting log in
+log in karne ki koshish
+
+no internet connection, but no login data saved; cannot enter offline mode.
+koyo internet connection nahi, par koyi login data saved nahi; offline mode enter nahi kar sakte.
+
+connecting to server
+server pe connect kar rahe
+
+logging in
+logging in
+
+saving credentials
+credentials save kar rahe
+
+login failed.
+login nahi kar paye.
+
+problem with saved login data; please exit and login again.
+login data ke saath takleef, exit karke wapis login karo.
+
+Internal server error: Couldn't fetch username from uuid
+Internal server wala error: uuid se username nahi le paye
+
+logged in as: 
+is ke jayse log in kara: 
+
+offline mode: local servers only
+offline mode: khali local servers
+
+Enter ip address to connect to:
+Connect jis se karna hai, woh ip address dalo:
+
+Press Shift-Escape to logout
+Logout karne ke liye Shift-Escape dabao
+
+Enter email:
+Email dalo:
+
+Enter password:
+Password dalo:
+
+field is blank
+field khali hai
+
+get an account at:
+account yaha se lo:
+
+Loading 
+Loading 
+
+ from server
+ server se
+ 
+Could not connect to server:
+Server se connect nahi kar paye:
+
+Press 
+Dabao 
+
+ to return
+ wapis jane ke liye
+
+# OptionsMenu.java
+
+Change Key Bindings
+Key bindings change karo
+
+Options
+Vikalp
+
+Change language
+Bhasha Badlo
+
+# PauseMenu.java
+
+Return to Game
+Game pe wapis jao
+
+Options
+Vikalp
+
+Make World Multiplayer
+Duniya Ko Multiplayer Banao
+
+Save Game
+Duniya Bachao
+
+ and 
+ aur 
+ 
+ to Scroll
+ scroll karna
+ 
+: Choose
+: Chunho
+ 
+Paused
+Ruka
+
+Main Menu
+Main Menu
+
+# PauseDisplay.java
+
+No
+Nahi
+
+Yes
+Haan
+
+# PlayerInvMenu.java
+
+Inventory
+Inventory
+
+# TitleMenu.java
+
+Play
+Khelo
+
+Load World
+Duniya Load Karo
+
+New World
+Nayi Duniya
+
+Multiplayer
+Multiplayer
+
+Singleplayer
+Singleplayer
+
+Options
+Vikalp
+
+Help
+Madad
+
+Instructions
+Nirdesh
+
+Storyline Guide
+Kahani
+
+About
+Game Ke Bare Me
+
+Quit
+Niklo
+
+ to select
+ select karo
+ 
+ to accept
+ sweekar karo
+ 
+ to return
+ wapis jane ke liye
+
+# WorldEditMenu.java
+
+New World Name:
+Duniya Ka Naya Naam:
+
+Are you sure you want to delete
+Aapko paka delete karna hai?
+
+This can not be undone!
+Yeh wapis nahi change kar sakte!
+
+ to confirm
+ sweekar
+ 
+ to cancel
+ Nahi sweekar
+
+# WorldGenMenu.java
+
+World Seed
+Duniya Ki Seed
+
+Enter World Name
+Duniya Ka Naam Dalo
+
+Trouble with world name?
+Duniya ke naam ke sath mushkil?
+
+by default, w and s move the cursor up and down. This can be changed in the key binding menu. To type the letter instead of moving the cursor, hold the shift key while typing the world name.
+Default waise, w aur s cursor ko oopar-neeche hilate hai. Yeh baad me key binding menu me change ho sakta ahi. Cursor hilane ke jaga likhne ke liye shift key ko duniya ka naam likhte hooye dabao.
+
+Create World
+Duniya Banao
+
+World Gen Options
+Duniya Gen Vikalp
+
+# WorldSelectMenu.java
+
+ to Copy
+ to Copy
+
+ to Rename
+ to Rename
+
+ to Delete
+ to hatao
+
+ to confirm
+ to sweekar
+ 
+ to return
+ to wapis
+
+Select World
+Duniya Chunhe
+
+Select a World to Delete
+Hatane ke liye ek duniya chunhe
+
+Select a World to Rename
+Naam badalne ke liye duniya chunhe
+
+Select a World to Copy
+Copy karne ke liye duniya chunhe
+
+Higher version, cannot load world!
+Higher version, duniya nahi load kar sakte!
+
+World Version:
+Duniya Ka Version:
+
+# LocalizationMenu.java
+
+Languages
+Bhashaye
+
+Language
+Bhasha
+
+Select
+Chunhe
+
+### screen end
+
+### minicraft
+
+# Settings.java
+
+Max FPS
+Sabse Zyada FPS
+
+Difficulty
+Kathinayi
+
+Easy
+Aasan
+
+Normal
+Aam
+
+Hard
+Mushkil
+
+Game Mode
+Game Ka Mode
+
+Survival
+Survival
+
+Creative
+Creative
+
+Hardcore
+Hardcore
+
+Score
+Score
+
+Time (Score Mode)
+Samay (Score Wala Mode)
+
+Sound
+Aawaz
+
+Autosave
+Autosave
+
+World Size
+Duniya Ka Size
+
+World Theme
+Duniya Ki Vishay
+
+Normal
+Aam
+
+Forest
+Van/Jungle
+
+Desert
+Registan
+
+Plain
+Maidan Jaisa
+
+Hell
+Narg
+
+Terrain Type
+Ilaake Ka Vishay
+
+Island
+Dveep
+
+Box
+Dabha
+
+Mountain
+Pahadi
+
+Irregular
+Irregular
+
+Wear Suit
+Suit Peheno
+
+### minicraft end
