@@ -13,77 +13,69 @@ public final class Tiles {
 	
 	public static ArrayList<String> oldids = new ArrayList<>();
 	
-	private static ArrayList<Tile> tiles = new ArrayList<>();
+	private static HashMap<Short, Tile> tiles = new HashMap<>();
 	
 	public static void initTileList() {
 		Logger.debug("Initializing tile list...");
-		
-		// 
-		for (int i = 0; i < 32768; i++)
-			tiles.add(null);
 
-		tiles.set(0, new GrassTile("Grass"));
-		tiles.set(1, new DirtTile("Dirt"));
-		tiles.set(2, new FlowerTile("Flower"));
-		tiles.set(3, new HoleTile("Hole"));
-		tiles.set(4, new StairsTile("Stairs Up", true));
-		tiles.set(5, new StairsTile("Stairs Down", false));
-		tiles.set(6, new WaterTile("Water"));
+		tiles.put((short)0, new GrassTile("Grass"));
+		tiles.put((short)1, new DirtTile("Dirt"));
+		tiles.put((short)2, new FlowerTile("Flower"));
+		tiles.put((short)3, new HoleTile("Hole"));
+		tiles.put((short)4, new StairsTile("Stairs Up", true));
+		tiles.put((short)5, new StairsTile("Stairs Down", false));
+		tiles.put((short)6, new WaterTile("Water"));
 		// This is out of order because of lava buckets
-		tiles.set(17, new LavaTile("Lava"));
+		tiles.put((short)17, new LavaTile("Lava"));
 
-		tiles.set(7, new RockTile("Rock"));
-		tiles.set(8, new TreeTile("Tree"));
-		tiles.set(9, new SaplingTile("Tree Sapling", Tiles.get("Grass"), Tiles.get("Tree")));
-		tiles.set(10, new SandTile("Sand"));
-		tiles.set(11, new CactusTile("Cactus"));
-		tiles.set(12, new SaplingTile("Cactus Sapling", Tiles.get("Sand"), Tiles.get("Cactus")));
-		tiles.set(13, new OreTile(OreTile.OreType.Iron));
-		tiles.set(14, new OreTile(OreTile.OreType.Gold));
-		tiles.set(15, new OreTile(OreTile.OreType.Gem));
-		tiles.set(16, new OreTile(OreTile.OreType.Lapis));
-		tiles.set(18, new LavaBrickTile("Lava Brick"));
-		tiles.set(19, new ExplodedTile("Explode"));
-		tiles.set(20, new FarmTile("Farmland"));
-		tiles.set(21, new WheatTile("Wheat"));
-		tiles.set(22, new HardRockTile("Hard Rock"));
-		tiles.set(23, new InfiniteFallTile("Infinite Fall"));
-		tiles.set(24, new CloudTile("Cloud"));
-		tiles.set(25, new CloudCactusTile("Cloud Cactus"));
-		tiles.set(26, new DoorTile(Tile.Material.Wood));
-		tiles.set(27, new DoorTile(Tile.Material.Stone));
-		tiles.set(28, new DoorTile(Tile.Material.Obsidian));
-		tiles.set(29, new FloorTile(Tile.Material.Wood));
-		tiles.set(30, new FloorTile(Tile.Material.Stone));
-		tiles.set(31, new FloorTile(Tile.Material.Obsidian));
-		tiles.set(32, new WallTile(Tile.Material.Wood));
-		tiles.set(33, new WallTile(Tile.Material.Stone));
-		tiles.set(34, new WallTile(Tile.Material.Obsidian));
-		tiles.set(35, new WoolTile(WoolTile.WoolType.NORMAL));
-		tiles.set(36, new PathTile("Path"));
-		tiles.set(37, new WoolTile(WoolTile.WoolType.RED));
-		tiles.set(38, new WoolTile(WoolTile.WoolType.BLUE));
-		tiles.set(39, new WoolTile(WoolTile.WoolType.GREEN));
-		tiles.set(40, new WoolTile(WoolTile.WoolType.YELLOW));
-		tiles.set(41, new WoolTile(WoolTile.WoolType.BLACK));
-		tiles.set(42, new PotatoTile("Potato"));
-		tiles.set(43, new MaterialTile(Tile.Material.Stone));
-		tiles.set(44, new MaterialTile(Tile.Material.Obsidian));
-		tiles.set(45, new DecorTile(Tile.Material.Stone));
-		tiles.set(46, new DecorTile(Tile.Material.Obsidian));
+		tiles.put((short)7, new RockTile("Rock"));
+		tiles.put((short)8, new TreeTile("Tree"));
+		tiles.put((short)9, new SaplingTile("Tree Sapling", Tiles.get("Grass"), Tiles.get("Tree")));
+		tiles.put((short)10, new SandTile("Sand"));
+		tiles.put((short)11, new CactusTile("Cactus"));
+		tiles.put((short)12, new SaplingTile("Cactus Sapling", Tiles.get("Sand"), Tiles.get("Cactus")));
+		tiles.put((short)13, new OreTile(OreTile.OreType.OreTypes.get("Iron")));
+		tiles.put((short)14, new OreTile(OreTile.OreType.OreTypes.get("Gold")));
+		tiles.put((short)15, new OreTile(OreTile.OreType.OreTypes.get("Gem")));
+		tiles.put((short)16, new OreTile(OreTile.OreType.OreTypes.get("Lapis")));
+		tiles.put((short)18, new LavaBrickTile("Lava Brick"));
+		tiles.put((short)19, new ExplodedTile("Explode"));
+		tiles.put((short)20, new FarmTile("Farmland"));
+		tiles.put((short)21, new WheatTile("Wheat"));
+		tiles.put((short)22, new HardRockTile("Hard Rock"));
+		tiles.put((short)23, new InfiniteFallTile("Infinite Fall"));
+		tiles.put((short)24, new CloudTile("Cloud"));
+		tiles.put((short)25, new CloudCactusTile("Cloud Cactus"));
+		tiles.put((short)26, new DoorTile(Tile.Material.Wood));
+		tiles.put((short)27, new DoorTile(Tile.Material.Stone));
+		tiles.put((short)28, new DoorTile(Tile.Material.Obsidian));
+		tiles.put((short)29, new FloorTile(Tile.Material.Wood));
+		tiles.put((short)30, new FloorTile(Tile.Material.Stone));
+		tiles.put((short)31, new FloorTile(Tile.Material.Obsidian));
+		tiles.put((short)32, new WallTile(Tile.Material.Wood));
+		tiles.put((short)33, new WallTile(Tile.Material.Stone));
+		tiles.put((short)34, new WallTile(Tile.Material.Obsidian));
+		tiles.put((short)35, new WoolTile(WoolTile.WoolType.NORMAL));
+		tiles.put((short)36, new PathTile("Path"));
+		tiles.put((short)37, new WoolTile(WoolTile.WoolType.RED));
+		tiles.put((short)38, new WoolTile(WoolTile.WoolType.BLUE));
+		tiles.put((short)39, new WoolTile(WoolTile.WoolType.GREEN));
+		tiles.put((short)40, new WoolTile(WoolTile.WoolType.YELLOW));
+		tiles.put((short)41, new WoolTile(WoolTile.WoolType.BLACK));
+		tiles.put((short)42, new PotatoTile("Potato"));
 
 		// WARNING: don't use this tile for anything!
-		tiles.set(256, new ConnectTile());
+		tiles.put((short)255, new ConnectTile());
 		
-		for(int i = 0; i < tiles.size(); i++) {
+		for(short i = 0; i < 256; i++) {
 			if(tiles.get(i) == null) continue;
-			tiles.get(i).id = (byte)i;
+			tiles.get(i).id = (short)i;
 		}
 	}
 	
 
 	protected static void add(int id, Tile tile) {
-		tiles.set(id, tile);
+		tiles.put((short)id, tile);
 		System.out.println("Adding " + tile.name + " to tile list with id " + id);
 		tile.id = (short) id;
 	}
@@ -217,7 +209,7 @@ public final class Tiles {
 		
 		if(getting == null) {
 			System.out.println("TILES.GET: Invalid tile requested: " + name);
-			getting = tiles.get(0);
+			getting = tiles.get((short)0);
 		}
 		
 		if(isTorch) {
@@ -232,20 +224,20 @@ public final class Tiles {
 		//System.out.println("Requesting tile by id: " + id);
 		if(id < 0) id += 32768;
 
-		if(tiles.get(id) != null) {
-			return tiles.get(id);
+		if(tiles.get((short)id) != null) {
+			return tiles.get((short)id);
 		}
 		else if(id >= 32767) {
 			return TorchTile.getTorchTile(get(id - 32767));
 		}
 		else {
 			System.out.println("TILES.GET: Unknown tile id requested: " + id);
-			return tiles.get(0);
+			return tiles.get((short)0);
 		}
 	}
 	
 	public static boolean containsTile(int id) {
-		return tiles.get(id) != null;
+		return tiles.get((short)id) != null;
 	}
 	
 	public static String getName(String descriptName) {
