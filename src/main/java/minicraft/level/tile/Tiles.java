@@ -1,6 +1,7 @@
 package minicraft.level.tile;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 
 import minicraft.level.tile.farming.FarmTile;
 import minicraft.level.tile.farming.PotatoTile;
