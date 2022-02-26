@@ -35,10 +35,10 @@ public final class Tiles {
 		tiles.put((short)10, new SandTile("Sand"));
 		tiles.put((short)11, new CactusTile("Cactus"));
 		tiles.put((short)12, new SaplingTile("Cactus Sapling", Tiles.get("Sand"), Tiles.get("Cactus")));
-		tiles.put((short)13, new OreTile(OreTile.OreType.OreTypes.get("Iron")));
-		tiles.put((short)14, new OreTile(OreTile.OreType.OreTypes.get("Gold")));
-		tiles.put((short)15, new OreTile(OreTile.OreType.OreTypes.get("Gem")));
-		tiles.put((short)16, new OreTile(OreTile.OreType.OreTypes.get("Lapis")));
+		tiles.put((short)13, new OreTile(OreTile.OreType.Iron));
+		tiles.put((short)14, new OreTile(OreTile.OreType.Gold));
+		tiles.put((short)15, new OreTile(OreTile.OreType.Gem));
+		tiles.put((short)16, new OreTile(OreTile.OreType.Lapis));
 		tiles.put((short)18, new LavaBrickTile("Lava Brick"));
 		tiles.put((short)19, new ExplodedTile("Explode"));
 		tiles.put((short)20, new FarmTile("Farmland"));
@@ -200,7 +200,7 @@ public final class Tiles {
 			name = name.substring(0, name.indexOf("_"));
 		}
 
-		for(Tile t: tiles) {
+		for(Tile t: tiles.values()) {
 			if(t == null) continue;
 			if(t.name.equals(name)) {
 				getting = t;
