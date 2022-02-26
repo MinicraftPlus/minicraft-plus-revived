@@ -75,6 +75,7 @@ import minicraft.screen.MultiplayerDisplay;
 import minicraft.screen.SkinDisplay;
 import minicraft.sdt.SDT;
 import minicraft.sdt.SDTLevel;
+import minicraft.sdt.SDTLevelData;
 
 public class Load {
 	
@@ -85,7 +86,8 @@ public class Load {
 	
 	private ArrayList<String> data;
 	private ArrayList<String> extradata; // These two are changed when loading a new file. (see loadFromFile())
-	private SDTLevel leveldata;
+	private SDTLevelData levelextradata;
+	// private SDTLevel leveldata;
 
 	private Version worldVer;
 	
@@ -215,16 +217,21 @@ public class Load {
 		
 		String total;
 		try {
-			total = loadFromFile(filename, true);
-			if (total.length() > 0)
-				data.addAll(Arrays.asList(total.split(",")));
+			// if (filename.contains("Level")) {
+			// 	leveldata = new SDTLevel(loadSDTFile(filename));
+			// }
+			// else {
+				total = loadFromFile(filename, true);
+				if (total.length() > 0)
+					data.addAll(Arrays.asList(total.split(",")));
+			// }
 		} catch (IOException ex) {
 			ex.printStackTrace();
 		}
 		
 		if (filename.contains("Level")) {
 			try {
-				leveldata = new SDTLevel(loadSDTFile(filename.substring(0, filename.lastIndexOf("/") + 7) + extension + "data"));
+				levelextradata = new SDTLevelData(loadSDTFile(filename.substring(0, filename.lastIndexOf("/") + 7) + extension + "data"));
 			} catch (IOException ex) {
 				ex.printStackTrace();
 			}

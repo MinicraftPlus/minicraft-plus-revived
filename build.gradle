@@ -22,6 +22,7 @@ repositories {
     maven {
         url "https://www.jabylon.org/maven/"
     }
+    maven { url 'https://jitpack.io' }
 }
 
 dependencies {
@@ -31,6 +32,7 @@ dependencies {
     implementation 'com.mashape.unirest:unirest-java:1.4.9'
     implementation 'org.tinylog:tinylog-api:2.4.1'
     implementation 'org.tinylog:tinylog-impl:2.4.1'
+    implementation 'com.github.TheNullicorn:Nedit:2.1.0'
 }
 
 java {
@@ -49,35 +51,35 @@ shadowJar {
                 'SplashScreen-Image': "Minicraft_Splash_Screen_3.png")
     }
 }
-publishing {
-    publications {
-        mavenJava(MavenPublication) {
-            artifact(shadowJar)
-            artifact(sourcesJar)
-            pom.withXml {
-                subprojects.each {
-                    if (it.name != project.testmods_project) {
-                        depNode.appendNode("groupId", it.group)
-                        depNode.appendNode("artifactId", it.name)
-                        depNode.appendNode("version", it.version)
-                        depNode.appendNode("scope", "compile")
-                    }
-                }
-            }
-        }
-    }
-    repositories {
-        if (ENV.MAVEN_PUBLISH_TOKEN) {
-            maven {
-                url 'https://repo.repsy.io/mvn/minicraftplus/minicraft'
-                credentials {
-                    username ENV.MAVEN_PUBLISH_USERNAME
-                    password ENV.MAVEN_PUBLISH_TOKEN
-                }
-                authentication {
-                    basic(BasicAuthentication)
-                }
-            }
-        }
-    }
-}
+// publishing {
+//     publications {
+//         mavenJava(MavenPublication) {
+//             artifact(shadowJar)
+//             artifact(sourcesJar)
+//             pom.withXml {
+//                 subprojects.each {
+//                     if (it.name != project.testmods_project) {
+//                         depNode.appendNode("groupId", it.group)
+//                         depNode.appendNode("artifactId", it.name)
+//                         depNode.appendNode("version", it.version)
+//                         depNode.appendNode("scope", "compile")
+//                     }
+//                 }
+//             }
+//         }
+//     }
+//     repositories {
+//         if (ENV.MAVEN_PUBLISH_TOKEN) {
+//             maven {
+//                 url 'https://repo.repsy.io/mvn/minicraftplus/minicraft'
+//                 credentials {
+//                     username ENV.MAVEN_PUBLISH_USERNAME
+//                     password ENV.MAVEN_PUBLISH_TOKEN
+//                 }
+//                 authentication {
+//                     basic(BasicAuthentication)
+//                 }
+//             }
+//         }
+//     }
+// }
