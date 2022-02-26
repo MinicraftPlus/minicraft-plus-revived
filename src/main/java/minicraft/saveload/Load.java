@@ -1,7 +1,10 @@
 package minicraft.saveload;
 
 import java.io.BufferedReader;
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileReader;
 import java.io.IOException;
 import java.io.InputStream;
@@ -9,6 +12,8 @@ import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.zip.DeflaterOutputStream;
+import java.util.zip.InflaterOutputStream;
 
 import org.jetbrains.annotations.Nullable;
 import org.json.JSONArray;
@@ -68,6 +73,8 @@ import minicraft.screen.AchievementsDisplay;
 import minicraft.screen.LoadingDisplay;
 import minicraft.screen.MultiplayerDisplay;
 import minicraft.screen.SkinDisplay;
+import minicraft.sdt.SDT;
+import minicraft.sdt.SDTLevel;
 
 public class Load {
 	
@@ -78,7 +85,8 @@ public class Load {
 	
 	private ArrayList<String> data;
 	private ArrayList<String> extradata; // These two are changed when loading a new file. (see loadFromFile())
-	
+	private SDTLevel leveldata;
+
 	private Version worldVer;
 	
 	{
@@ -216,8 +224,7 @@ public class Load {
 		
 		if (filename.contains("Level")) {
 			try {
-				total = Load.loadFromFile(filename.substring(0, filename.lastIndexOf("/") + 7) + "data" + extension, true);
-				extradata.addAll(Arrays.asList(total.split(",")));
+				leveldata = new SDTLevel(loadSDTFile(filename.substring(0, filename.lastIndexOf("/") + 7) + extension + "data"));
 			} catch (IOException ex) {
 				ex.printStackTrace();
 			}
@@ -342,6 +349,9 @@ public class Load {
 
 		/* Start of the parsing */
 		Version prefVer = new Version(json.getString("version"));
+		// TODO: loading main and level SDT with convertion
+		Version mainSDTver = new Version(json.getString("mainSDTversion"));
+		Version levelSDTver = new Version(json.getString("levelSDTversion"));
 
 		// Settings
 		Settings.set("sound", json.getBoolean("sound"));
@@ -889,6 +899,18 @@ public class Load {
 		return newEntity;
 	}
 	
+	private JSONObject loadSDTFile(String filename) throws IOException {
+		ByteArrayOutputStream out = new ByteArrayOutputStream();
+        InflaterOutputStream infl = new InflaterOutputStream(out);
+		try (FileInputStream is = new FileInputStream(filename)) {
+			infl.write(is.readAllBytes());
+		}
+		infl.flush();
+        infl.close();
+
+        return new JSONObject(new String(out.toByteArray()));
+	}
+
 	@Nullable
 	private static Entity getEntity(String string, int moblvl) {
 		switch (string) {
