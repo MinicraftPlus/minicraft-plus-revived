@@ -77,8 +77,8 @@ public class TileItem extends StackableItem {
 	
 	public boolean interactOn(Tile tile, Level level, int xt, int yt, Player player, Direction attackDir) {
 		for (String tilename : validTiles) {
-			if (tile.matches(level.getData(xt, yt), tilename)) {
-				level.setTile(xt, yt, model); // TODO maybe data should be part of the saved tile..?
+			if (tile.matches(level.getData(xt, yt).getInt("data", 0), tilename)) {
+				level.setTile(xt, yt, Tiles.get(model)); // TODO maybe data should be part of the saved tile..?
 
 				Sound.place.play();
 

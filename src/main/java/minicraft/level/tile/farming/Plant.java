@@ -37,10 +37,10 @@ public class Plant extends FarmTile {
     public boolean tick(Level level, int xt, int yt) {
         if (random.nextInt(2) == 0) return false;
 
-        int age = level.getData(xt, yt);
+        int age = level.getData(xt, yt).getInt("age", 0);
         if (age < maxAge) {
-            if (!IfWater(level, xt, yt)) level.setData(xt, yt, age + 1);
-            else if (IfWater(level, xt, yt)) level.setData(xt, yt, age + 2);
+            if (!IfWater(level, xt, yt)) level.setData(xt, yt, "age", age + 1);
+            else if (IfWater(level, xt, yt)) level.setData(xt, yt, "age", age + 2);
             return true;
         }
 
@@ -58,7 +58,7 @@ public class Plant extends FarmTile {
 
     /** Default harvest method, used for everything that doesn't really need any special behavior. */
     protected void harvest(Level level, int x, int y, Entity entity) {
-        int age = level.getData(x, y);
+        int age = level.getData(x, y).getInt("age", 0);
 
         level.dropItem(x * 16 + 8, y * 16 + 8, 1, Items.get(name + " Seeds"));
 

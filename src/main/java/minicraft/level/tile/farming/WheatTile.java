@@ -12,7 +12,7 @@ public class WheatTile extends Plant {
 
 	@Override
 	public void render(Screen screen, Level level, int x, int y) {
-		int age = level.getData(x, y);
+		int age = level.getData(x, y).getInt("age", 0);
 		int icon = age / (maxAge / 5);
 
 		Tiles.get("Farmland").render(screen, level, x, y);

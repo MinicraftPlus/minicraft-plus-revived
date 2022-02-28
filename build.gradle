@@ -51,35 +51,35 @@ shadowJar {
                 'SplashScreen-Image': "Minicraft_Splash_Screen_3.png")
     }
 }
-// publishing {
-//     publications {
-//         mavenJava(MavenPublication) {
-//             artifact(shadowJar)
-//             artifact(sourcesJar)
-//             pom.withXml {
-//                 subprojects.each {
-//                     if (it.name != project.testmods_project) {
-//                         depNode.appendNode("groupId", it.group)
-//                         depNode.appendNode("artifactId", it.name)
-//                         depNode.appendNode("version", it.version)
-//                         depNode.appendNode("scope", "compile")
-//                     }
-//                 }
-//             }
-//         }
-//     }
-//     repositories {
-//         if (ENV.MAVEN_PUBLISH_TOKEN) {
-//             maven {
-//                 url 'https://repo.repsy.io/mvn/minicraftplus/minicraft'
-//                 credentials {
-//                     username ENV.MAVEN_PUBLISH_USERNAME
-//                     password ENV.MAVEN_PUBLISH_TOKEN
-//                 }
-//                 authentication {
-//                     basic(BasicAuthentication)
-//                 }
-//             }
-//         }
-//     }
-// }
+publishing {
+    publications {
+        mavenJava(MavenPublication) {
+            artifact(shadowJar)
+            artifact(sourcesJar)
+            pom.withXml {
+                subprojects.each {
+                    if (it.name != project.testmods_project) {
+                        depNode.appendNode("groupId", it.group)
+                        depNode.appendNode("artifactId", it.name)
+                        depNode.appendNode("version", it.version)
+                        depNode.appendNode("scope", "compile")
+                    }
+                }
+            }
+        }
+    }
+    repositories {
+        if (ENV.MAVEN_PUBLISH_TOKEN) {
+            maven {
+                url 'https://repo.repsy.io/mvn/minicraftplus/minicraft'
+                credentials {
+                    username ENV.MAVEN_PUBLISH_USERNAME
+                    password ENV.MAVEN_PUBLISH_TOKEN
+                }
+                authentication {
+                    basic(BasicAuthentication)
+                }
+            }
+        }
+    }
+}

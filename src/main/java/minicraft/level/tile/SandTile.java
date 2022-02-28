@@ -41,7 +41,7 @@ public class SandTile extends Tile {
 	}
 	
 	public void render(Screen screen, Level level, int x, int y) {
-		boolean steppedOn = level.getData(x, y) > 0;
+		boolean steppedOn = level.getData(x, y).getInt("damage", 0) > 0;
 		
 		if(steppedOn) csprite.full = SandTile.steppedOn;
 		else csprite.full = SandTile.normal;
@@ -52,9 +52,9 @@ public class SandTile extends Tile {
 	}
 
 	public boolean tick(Level level, int x, int y) {
-		int damage = level.getData(x, y);
+		int damage = level.getData(x, y).getInt("damage", 0);
 		if (damage > 0) {
-			level.setData(x, y, damage - 1);
+			level.setData(x, y, "damage", damage - 1);
 			return true;
 		}
 		return false;
@@ -62,7 +62,7 @@ public class SandTile extends Tile {
 
 	public void steppedOn(Level level, int x, int y, Entity entity) {
 		if (entity instanceof Mob) {
-			level.setData(x, y, 10);
+			level.setData(x, y, "damage", 10);
 		}
 	}
 

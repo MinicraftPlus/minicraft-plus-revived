@@ -2,10 +2,13 @@ package minicraft.saveload;
 
 import java.io.BufferedWriter;
 import java.io.File;
+import java.io.FileOutputStream;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.zip.Deflater;
+import java.util.zip.DeflaterOutputStream;
 
 import minicraft.core.Game;
 import minicraft.core.Renderer;
@@ -159,6 +162,26 @@ public class Save {
 		
 		Renderer.render(); // AH HA!!! HERE'S AN IMPORTANT STATEMENT!!!!
 	}
+	public void writeToFile(String filename, byte[] savedata) {
+		try {
+			FileOutputStream out = new FileOutputStream(filename);
+			DeflaterOutputStream dos = new DeflaterOutputStream(out, new Deflater(9));
+			dos.write(savedata);
+			dos.flush();
+			dos.close();
+		} catch (IOException ex) {
+			ex.printStackTrace();
+		}
+		
+		data.clear();
+		
+		LoadingDisplay.progress(7);
+		if(LoadingDisplay.getPercentage() > 100) {
+			LoadingDisplay.setPercentage(100);
+		}
+		
+		Renderer.render(); // AH HA!!! HERE'S AN IMPORTANT STATEMENT!!!!
+	}
 	
 	public static void writeToFile(String filename, String[] savedata, boolean isWorldSave) throws IOException {
 		try (BufferedWriter bufferedWriter = new BufferedWriter(new FileWriter(filename))) {
@@ -269,7 +292,7 @@ public class Save {
 				}
 			}
 			
-			writeToFile(location + filename + l + "data" + extension, data);
+			writeToFile(location + filename + l + extension + "data", data);
 		}
 		
 	}

@@ -1,5 +1,6 @@
 package minicraft.network;
 
+import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.net.InetAddress;
 import java.net.InetSocketAddress;
@@ -17,6 +18,8 @@ import org.xbill.DNS.SRVRecord;
 import org.xbill.DNS.TextParseException;
 import org.xbill.DNS.Type;
 
+import me.nullicorn.nedit.NBTReader;
+import me.nullicorn.nedit.type.NBTCompound;
 import minicraft.core.Game;
 import minicraft.core.Network;
 import minicraft.core.Renderer;
@@ -324,17 +327,26 @@ public class MinicraftClient extends MinicraftConnection {
 				}
 				
 				String[] tilestrs = alldata.split(",");
-				byte[] tiledata = new byte[tilestrs.length];
-				for (int i = 0; i < tiledata.length; i++)
-					tiledata[i] = Byte.parseByte(tilestrs[i]);
+				MinicraftServer.TileDataPair[] tiledata = new MinicraftServer.TileDataPair[tilestrs.length];
+				for (int i = 0; i < tiledata.length; i++) {
+					byte l = Byte.parseByte(tilestrs[i]);
+					i++;
+					try {
+						tiledata[i] = new MinicraftServer.TileDataPair(l, NBTReader.read(new ByteArrayInputStream(tilestrs[i].getBytes())));
+					} catch (IOException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+						tiledata[i] = new MinicraftServer.TileDataPair(l, new NBTCompound());
+					}
+				}
 				
 				if (tiledata.length / 2 > level.tiles.length) {
 					System.err.println("CLIENT ERROR: Received level tile data is too long for world size; level.tiles.length=" + level.tiles.length + ", tiles in data: " + (tiledata.length / 2) + ". Will truncate tile loading.");
 				}
 				
 				for (int i = 0; i < tiledata.length/2 && i < level.tiles.length; i++) {
-					level.tiles[i] = tiledata[i*2];
-					level.data[i] = tiledata[i*2+1];
+					level.tiles[i] = tiledata[i].left;
+					level.data[i] = tiledata[i].right;
 				}
 				
 				menu.setLoadingMessage("Entities");
@@ -373,7 +385,13 @@ public class MinicraftClient extends MinicraftConnection {
 				if (theLevel == null) return false; // ignore, this is for an unvisited level.
 				int pos = Integer.parseInt(data[1]);
 				theLevel.tiles[pos] = Byte.parseByte(data[2]);
-				theLevel.data[pos] = Byte.parseByte(data[3]);
+				try {
+					theLevel.data[pos] = NBTReader.read(new ByteArrayInputStream(data[3].getBytes()));
+				} catch (IOException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+					theLevel.data[pos] = new NBTCompound();
+				}
 				return true;
 			
 			case ADD:

@@ -21,6 +21,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 import org.tinylog.Logger;
 
+import me.nullicorn.nedit.type.NBTCompound;
 import minicraft.core.Game;
 import minicraft.core.Network;
 import minicraft.core.Updater;
@@ -74,7 +75,6 @@ import minicraft.screen.LoadingDisplay;
 import minicraft.screen.MultiplayerDisplay;
 import minicraft.screen.SkinDisplay;
 import minicraft.sdt.SDT;
-import minicraft.sdt.SDTLevel;
 import minicraft.sdt.SDTLevelData;
 
 public class Load {
@@ -85,7 +85,7 @@ public class Load {
 	private float percentInc;
 	
 	private ArrayList<String> data;
-	private ArrayList<String> extradata; // These two are changed when loading a new file. (see loadFromFile())
+	// private ArrayList<String> extradata; // These two are changed when loading a new file. (see loadFromFile())
 	private SDTLevelData levelextradata;
 	// private SDTLevel leveldata;
 
@@ -95,7 +95,7 @@ public class Load {
 		worldVer = null;
 
 		data = new ArrayList<>();
-		extradata = new ArrayList<>();
+		levelextradata = null;
 	}
 	
 	public Load(String worldname) { this(worldname, true); }
@@ -213,7 +213,7 @@ public class Load {
 	
 	private void loadFromFile(String filename) {
 		data.clear();
-		extradata.clear();
+		levelextradata = null;
 		
 		String total;
 		try {
@@ -441,7 +441,7 @@ public class Load {
 			Settings.set("size", lvlw);
 			
 			short[] tiles = new short[lvlw * lvlh];
-			short[] tdata = new short[lvlw * lvlh];
+			NBTCompound[] tdata = new NBTCompound[lvlw * lvlh];
 			
 			for (int x = 0; x < lvlw; x++) {
 				for (int y = 0; y < lvlh; y++) {
@@ -459,7 +459,7 @@ public class Load {
 					}
 
 					if(tilename.equalsIgnoreCase("WOOL") && worldVer.compareTo(new Version("2.0.6-dev4")) < 0) {
-						switch (Integer.parseInt(extradata.get(tileidx))) {
+						switch ((int)levelextradata.data[tileidx].getByte("color", (byte) 0)) {
 							case 1:
 								tilename = "Red Wool";
 								break;
@@ -485,7 +485,7 @@ public class Load {
 							tilename = "Gem Ore";
 					}
 					tiles[tileArrIdx] = Tiles.get(tilename).id;
-					tdata[tileArrIdx] = Short.parseShort(extradata.get(tileidx));
+					tdata[tileArrIdx] = levelextradata.data[tileidx];
 				}
 			}
 			
@@ -906,7 +906,7 @@ public class Load {
 		return newEntity;
 	}
 	
-	private JSONObject loadSDTFile(String filename) throws IOException {
+	private byte[] loadSDTFile(String filename) throws IOException {
 		ByteArrayOutputStream out = new ByteArrayOutputStream();
         InflaterOutputStream infl = new InflaterOutputStream(out);
 		try (FileInputStream is = new FileInputStream(filename)) {
@@ -915,7 +915,7 @@ public class Load {
 		infl.flush();
         infl.close();
 
-        return new JSONObject(new String(out.toByteArray()));
+        return out.toByteArray();
 	}
 
 	@Nullable

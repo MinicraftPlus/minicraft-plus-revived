@@ -11,6 +11,7 @@ import java.util.Set;
 import java.util.function.Predicate;
 import java.util.function.ToIntFunction;
 
+import me.nullicorn.nedit.type.NBTCompound;
 import minicraft.core.Game;
 import minicraft.core.Network;
 import minicraft.core.Updater;
@@ -61,7 +62,7 @@ public class Level {
 	private long seed; // The used seed that was used to generate the world
 	
 	public short[] tiles; // An array of all the tiles in the world.
-	public short[] data; // An array of the data of the tiles in the world.
+	public NBTCompound[] data; // An array of the data of the tiles in the world.
 	
 	public final int depth; // Depth level of the level
 	public int monsterDensity = 16; // Affects the number of monsters that are on the level, bigger the number the less monsters spawn.
@@ -131,7 +132,7 @@ public class Level {
 		this.w = w;
 		this.h = h;
 		this.seed = seed;
-		short[][] maps; // Multidimensional array (an array within a array), used for the map
+		LevelGen.MapWithData maps; // Multidimensional array (an array within a array), used for the map
 		
 		if (level != -4 && level != 0)
 			monsterDensity = 8;
@@ -141,7 +142,7 @@ public class Level {
 		if(!makeWorld) {
 			int arrsize = w * h;
 			tiles = new short[arrsize];
-			data = new short[arrsize];
+			data = new NBTCompound[arrsize];
 			return;
 		}
 		
@@ -153,8 +154,8 @@ public class Level {
 			return;
 		}
 		
-		tiles = maps[0]; // Assigns the tiles in the map
-		data = maps[1]; // Assigns the data of the tiles
+		tiles = maps.map; // Assigns the tiles in the map
+		data = maps.data; // Assigns the data of the tiles
 
 		if (level < 0)
 			generateSpawnerStructures();
@@ -172,10 +173,10 @@ public class Level {
 						
 						else if (level == 0) { // Surface
 							if (Game.debug) System.out.println("Setting tiles around " + x + "," + y + " to hard rock");
-							setAreaTiles(x, y, 1, Tiles.get("Hard Rock"), 0); // surround the sky stairs with hard rock
+							setAreaTiles(x, y, 1, Tiles.get("Hard Rock"), new NBTCompound()); // surround the sky stairs with hard rock
 						}
 						else // Any other level, the up-stairs should have dirt on all sides.
-							setAreaTiles(x, y, 1, Tiles.get("dirt"), 0);
+							setAreaTiles(x, y, 1, Tiles.get("dirt"), new NBTCompound());
 
 						setTile(x, y, Tiles.get("Stairs Up")); // Set a stairs up tile in the same position on the current level
 					}
@@ -561,42 +562,61 @@ public class Level {
 		return Tiles.get(id);
 	}
 	
-	public void setTile(int x, int y, String tilewithdata) {
-		if (!tilewithdata.contains("_")) {
-			setTile(x, y, Tiles.get(tilewithdata));
-			return;
-		}
-		String name = tilewithdata.substring(0, tilewithdata.indexOf("_"));
-		int data = Tiles.get(name).getData(tilewithdata.substring(name.length()+1));
-		setTile(x, y, Tiles.get(name), data);
-	}
+	// Not Supported
+	// public void setTile(int x, int y, String tilewithdata) {
+	// 	if (!tilewithdata.contains("_")) {
+	// 		setTile(x, y, Tiles.get(tilewithdata));
+	// 		return;
+	// 	}
+	// 	String name = tilewithdata.substring(0, tilewithdata.indexOf("_"));
+	// 	int data = Tiles.get(name).getData(tilewithdata.substring(name.length()+1));
+	// 	setTile(x, y, Tiles.get(name), data);
+	// }
 	
 	public void setTile(int x, int y, Tile t) {
 		setTile(x, y, t, t.getDefaultData());
 	}
 	
-	public void setTile(int x, int y, Tile t, int dataVal) {
+	public void setTile(int x, int y, Tile t, String name, Object dataVal) {
 		if (x < 0 || y < 0 || x >= w || y >= h) return;
 		
 		if (Game.isValidClient() && !Game.isValidServer()) {
 			System.out.println("Client requested a tile update for the " + t.name + " tile at " + x + "," + y);
 		} else {
 			tiles[x + y * w] = t.id;
-			data[x + y * w] = (short) dataVal;
+			data[x + y * w].put(name, dataVal);
+		}
+		
+		if(Game.isValidServer())
+			Game.server.broadcastTileUpdate(this, x, y);
+	}
+
+	public void setTile(int x, int y, Tile t, NBTCompound dataVal) {
+		if (x < 0 || y < 0 || x >= w || y >= h) return;
+		
+		if (Game.isValidClient() && !Game.isValidServer()) {
+			System.out.println("Client requested a tile update for the " + t.name + " tile at " + x + "," + y);
+		} else {
+			tiles[x + y * w] = t.id;
+			data[x + y * w] = dataVal;
 		}
 		
 		if(Game.isValidServer())
 			Game.server.broadcastTileUpdate(this, x, y);
 	}
 	
-	public int getData(int x, int y) {
-		if (x < 0 || y < 0 || x >= w || y >= h) return 0;
-		return data[x + y * w] & 0xff;
+	public NBTCompound getData(int x, int y) {
+		if (x < 0 || y < 0 || x >= w || y >= h) return new NBTCompound();
+		return data[x + y * w];
 	}
 	
-	public void setData(int x, int y, int val) {
+	public void setData(int x, int y, String name, Object val) {
 		if (x < 0 || y < 0 || x >= w || y >= h) return;
-		data[x + y * w] = (short) val;
+		data[x + y * w].put(name, val);
+	}
+	public void setData(int x, int y, NBTCompound val) {
+		if (x < 0 || y < 0 || x >= w || y >= h) return;
+		data[x + y * w] = val;
 	}
 	
 	public void add(Entity e) { if(e==null) return; add(e, e.x, e.y); }
@@ -850,8 +870,18 @@ public class Level {
 		return local.toArray(new Tile[local.size()]);
 	}
 	
-	public void setAreaTiles(int xt, int yt, int r, Tile tile, int data) { setAreaTiles(xt, yt, r, tile, data, false); }
-	public void setAreaTiles(int xt, int yt, int r, Tile tile, int data, boolean overwriteStairs) {
+	public void setAreaTiles(int xt, int yt, int r, Tile tile, String name, Object data) { setAreaTiles(xt, yt, r, tile, name, data, false); }
+	public void setAreaTiles(int xt, int yt, int r, Tile tile, String name, Object data, boolean overwriteStairs) {
+		for(int y = yt - r; y <= yt + r; y++) {
+			for (int x = xt - r; x <= xt + r; x++) {
+				if(overwriteStairs || (!getTile(x, y).name.toLowerCase().contains("stairs")))
+					setTile(x, y, tile, name, data);
+			}
+		}
+	}
+
+	public void setAreaTiles(int xt, int yt, int r, Tile tile, NBTCompound data) { setAreaTiles(xt, yt, r, tile, data, false); }
+	public void setAreaTiles(int xt, int yt, int r, Tile tile, NBTCompound data, boolean overwriteStairs) {
 		for(int y = yt - r; y <= yt + r; y++) {
 			for (int x = xt - r; x <= xt + r; x++) {
 				if(overwriteStairs || (!getTile(x, y).name.toLowerCase().contains("stairs")))
@@ -860,7 +890,15 @@ public class Level {
 		}
 	}
 
-	public void setAreaTiles(int xt, int yt, int r, Tile tile, int data, String[] blacklist) {
+	public void setAreaTiles(int xt, int yt, int r, Tile tile, String name, Object data, String[] blacklist) {
+		for (int y = yt - r; y <= yt + r; y++) {
+			for (int x = xt - r; x <= xt + r; x++) {
+				if (!Arrays.asList(blacklist).contains(getTile(x, y).name.toLowerCase()))
+					setTile(x, y, tile, name, data);
+			}
+		}
+	}
+	public void setAreaTiles(int xt, int yt, int r, Tile tile, NBTCompound data, String[] blacklist) {
 		for (int y = yt - r; y <= yt + r; y++) {
 			for (int x = xt - r; x <= xt + r; x++) {
 				if (!Arrays.asList(blacklist).contains(getTile(x, y).name.toLowerCase()))
@@ -868,7 +906,7 @@ public class Level {
 			}
 		}
 	}
-	
+
 	@FunctionalInterface
 	public interface TileCheck {
 		boolean check(Tile t, int x, int y);

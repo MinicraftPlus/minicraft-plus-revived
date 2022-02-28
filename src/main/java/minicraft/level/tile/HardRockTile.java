@@ -53,7 +53,7 @@ public class HardRockTile extends Tile {
 	}
 
 	public void hurt(Level level, int x, int y, int dmg) {
-		int damage = level.getData(x, y) + dmg;
+		int damage = level.getData(x, y).getInt("damage", 0) + dmg;
 		int hrHealth = 200;
 		if (Game.isMode("Creative")) dmg = damage = hrHealth;
 		level.add(new SmashParticle(x * 16, y * 16));
@@ -65,7 +65,7 @@ public class HardRockTile extends Tile {
 			level.dropItem(x * 16 + 8, y * 16 + 8, 1, 3, Items.get("Stone"));
 			level.dropItem(x * 16 + 8, y * 16 + 8, 0, 1, Items.get("Coal"));
 		} else {
-			level.setData(x, y, damage);
+			level.setData(x, y, "damage", damage);
 		}
 	}
 
@@ -76,9 +76,9 @@ public class HardRockTile extends Tile {
 	}
 
 	public boolean tick(Level level, int xt, int yt) {
-		int damage = level.getData(xt, yt);
+		int damage = level.getData(xt, yt).getInt("damage", 0);
 		if (damage > 0) {
-			level.setData(xt, yt, damage - 1);
+			level.setData(xt, yt, "damage", damage - 1);
 			return true;
 		}
 		return false;

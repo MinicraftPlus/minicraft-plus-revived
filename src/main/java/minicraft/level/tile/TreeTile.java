@@ -61,9 +61,9 @@ public class TreeTile extends Tile {
 	}
 
 	public boolean tick(Level level, int xt, int yt) {
-		int damage = level.getData(xt, yt);
+		int damage = level.getData(xt, yt).getInt("damage", 0);
 		if (damage > 0) {
-			level.setData(xt, yt, damage - 1);
+			level.setData(xt, yt, "damage", damage - 1);
 			return true;
 		}
 		return false;
@@ -99,7 +99,7 @@ public class TreeTile extends Tile {
 		if (random.nextInt(100) == 0)
 			level.dropItem(x * 16 + 8, y * 16 + 8, Items.get("Apple"));
 		
-		int damage = level.getData(x, y) + dmg;
+		int damage = level.getData(x, y).getInt("damage", 0) + dmg;
 		int treeHealth = 20;
 		if (Game.isMode("Creative")) dmg = damage = treeHealth;
 		
@@ -113,7 +113,7 @@ public class TreeTile extends Tile {
 			level.setTile(x, y, Tiles.get("Grass"));
 			AchievementsDisplay.setAchievement("minicraft.achievement.woodcutter", true);
 		} else {
-			level.setData(x, y, damage);
+			level.setData(x, y, "damage", damage);
 		}
 	}
 }

@@ -56,7 +56,7 @@ public class CloudCactusTile extends Tile {
 	}
 	
 	public void hurt(Level level, int x, int y, int dmg) {
-		int damage = level.getData(x, y) + dmg;
+		int damage = level.getData(x, y).getInt("damage", 0) + dmg;
 		int oreH = random.nextInt(10) + 3;
 
 		level.add(new SmashParticle(x * 16, y * 16));
@@ -71,7 +71,7 @@ public class CloudCactusTile extends Tile {
 				level.setTile(x, y, Tiles.get("Cloud"));
 				count += 2;
 			} else {
-				level.setData(x, y, damage);
+				level.setData(x, y, "damage", damage);
 			}
 			level.dropItem(x * 16 + 8, y * 16 + 8, count, Items.get("Cloud Ore"));
 		}

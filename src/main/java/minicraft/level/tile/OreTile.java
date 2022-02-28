@@ -82,7 +82,7 @@ public class OreTile extends Tile {
     }
     
 	public void hurt(Level level, int x, int y, int dmg) {
-		int damage = level.getData(x, y) + 1;
+		int damage = level.getData(x, y).getInt("damage", 0) + 1;
 		int oreH = random.nextInt(10) + 3;
 		if (Game.isMode("Creative")) dmg = damage = oreH;
 		
@@ -96,7 +96,7 @@ public class OreTile extends Tile {
 				level.setTile(x, y, Tiles.get("Dirt"));
 				count += 2;
 			} else {
-				level.setData(x, y, damage);
+				level.setData(x, y, "damage", damage);
 			}
 			if (type.drop.equals(Items.get("gem"))){
 				AchievementsDisplay.setAchievement("minicraft.achievement.find_gem", true);

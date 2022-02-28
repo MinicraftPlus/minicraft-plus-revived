@@ -27,7 +27,7 @@ public class CactusTile extends Tile {
 	}
 
 	public boolean hurt(Level level, int x, int y, Mob source, int dmg, Direction attackDir) {
-		int damage = level.getData(x, y) + dmg;
+		int damage = level.getData(x, y).getInt("damage", 0) + dmg;
 		int cHealth = 10;
 		if (Game.isMode("creative")) dmg = damage = cHealth;
 		level.add(new SmashParticle(x * 16, y * 16));
@@ -39,7 +39,7 @@ public class CactusTile extends Tile {
 			Sound.monsterHurt.play();
 			level.dropItem(x * 16 + 8, y * 16 + 8, 2, 4, Items.get("Cactus"));
 		} else {
-			level.setData(x, y, damage);
+			level.setData(x, y, "damage", damage);
 		}
 		return true;
 	}
@@ -66,9 +66,9 @@ public class CactusTile extends Tile {
 	}
 
 	public boolean tick(Level level, int xt, int yt) {
-		int damage = level.getData(xt, yt);
+		int damage = level.getData(xt, yt).getInt("damage", 0);
 		if (damage > 0) {
-			level.setData(xt, yt, damage - 1);
+			level.setData(xt, yt, "damage", damage - 1);
 			return true;
 		}
 		return false;

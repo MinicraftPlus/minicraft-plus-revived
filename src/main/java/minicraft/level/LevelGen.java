@@ -9,6 +9,7 @@ import javax.swing.JOptionPane;
 
 import org.jetbrains.annotations.Nullable;
 
+import me.nullicorn.nedit.type.NBTCompound;
 import minicraft.core.Game;
 import minicraft.core.io.Settings;
 import minicraft.level.tile.Tiles;
@@ -114,7 +115,7 @@ public class LevelGen {
 	}
 	
 	@Nullable
-	static short[][] createAndValidateMap(int w, int h, int level) {
+	static MapWithData createAndValidateMap(int w, int h, int level) {
 		worldSeed = WorldGenDisplay.getSeed();
 		
 		if (level == 1)
@@ -131,15 +132,15 @@ public class LevelGen {
 		return null;
 	}
 	
-	private static short[][] createAndValidateTopMap(int w, int h) {
+	private static MapWithData createAndValidateTopMap(int w, int h) {
 		random.setSeed(worldSeed);
 		do {
-			short[][] result = createTopMap(w, h);
+			MapWithData result = createTopMap(w, h);
 			
 			int[] count = new int[256];
 			
 			for (int i = 0; i < w * h; i++) {
-				count[result[0][i] & 0xffff]++;
+				count[result.map[i] & 0xffff]++;
 			}
 			if (count[Tiles.get("rock").id & 0xffff] < 100) continue;
 			if (count[Tiles.get("sand").id & 0xffff] < 100) continue;
@@ -154,15 +155,15 @@ public class LevelGen {
 		} while (true);
 	}
 	
-	private static @Nullable short[][] createAndValidateUndergroundMap(int w, int h, int depth) {
+	private static @Nullable MapWithData createAndValidateUndergroundMap(int w, int h, int depth) {
 		random.setSeed(worldSeed);
 		do {
-			short[][] result = createUndergroundMap(w, h, depth);
+			MapWithData result = createUndergroundMap(w, h, depth);
 			
 			int[] count = new int[256];
 			
 			for (int i = 0; i < w * h; i++) {
-				count[result[0][i] & 0xffff]++;
+				count[result.map[i] & 0xffff]++;
 			}
 			if (count[Tiles.get("rock").id & 0xffff] < 100) continue;
 			if (count[Tiles.get("dirt").id & 0xffff] < 100) continue;
@@ -176,16 +177,16 @@ public class LevelGen {
 		} while (true);
 	}
 	
-	private static short[][] createAndValidateDungeon(int w, int h) {
+	private static MapWithData createAndValidateDungeon(int w, int h) {
 		random.setSeed(worldSeed);
 		
 		do {
-			short[][] result = createDungeon(w, h);
+			MapWithData result = createDungeon(w, h);
 			
 			int[] count = new int[256];
 			
 			for (int i = 0; i < w * h; i++) {
-				count[result[0][i] & 0xffff]++;
+				count[result.map[i] & 0xffff]++;
 			}
 			if (count[Tiles.get("Obsidian").id & 0xffff] < 100) continue;
 			if (count[Tiles.get("Obsidian Wall").id & 0xffff] < 100) continue;
@@ -195,16 +196,16 @@ public class LevelGen {
 		} while (true);
 	}
 
-	private static @Nullable short[][] createAndValidateSkyMap(int w, int h) {
+	private static @Nullable MapWithData createAndValidateSkyMap(int w, int h) {
 		random.setSeed(worldSeed);
 		
 		do {
-			short[][] result = createSkyMap(w, h);
+			MapWithData result = createSkyMap(w, h);
 			
 			int[] count = new int[256];
 			
 			for (int i = 0; i < w * h; i++) {
-				count[result[0][i] & 0xffff]++;
+				count[result.map[i] & 0xffff]++;
 			}
 			if (count[Tiles.get("cloud").id & 0xffff] < 2000) continue;
 			if (count[Tiles.get("Stairs Down").id & 0xffff] < w / 64)
@@ -215,7 +216,7 @@ public class LevelGen {
 		} while (true);
 	}
 	
-	private static short[][] createTopMap(int w, int h) { // Create surface map
+	private static MapWithData createTopMap(int w, int h) { // Create surface map
 		// creates a bunch of value maps, some with small size...
 		LevelGen mnoise1 = new LevelGen(w, h, 16);
 		LevelGen mnoise2 = new LevelGen(w, h, 16);
@@ -226,7 +227,7 @@ public class LevelGen {
 		LevelGen noise2 = new LevelGen(w, h, 32);
 		
 		short[] map = new short[w * h];
-		short[] data = new short[w * h];
+		NBTCompound[] data = new NBTCompound[w * h];
 
 		for (int y = 0; y < h; y++) {
 			for (int x = 0; x < w; x++) {
@@ -427,7 +428,7 @@ public class LevelGen {
 				if (xx >= 0 && yy >= 0 && xx < w && yy < h) {
 					if (map[xx + yy * w] == Tiles.get("grass").id) {
 						map[xx + yy * w] = Tiles.get("flower").id;
-						data[xx + yy * w] = (short) (col + random.nextInt(4) * 16); // Data determines which way the flower faces
+						data[xx + yy * w].put("color", (short) (col + random.nextInt(4) * 16)); // Data determines which way the flower faces
 					}
 				}
 			}
@@ -475,15 +476,15 @@ public class LevelGen {
 		//average /= w*h;
 		//System.out.println(average);
 		
-		return new short[][]{map, data};
+		return new MapWithData(map, data);
 	}
 	
-	private static short[][] createDungeon(int w, int h) {
+	private static MapWithData createDungeon(int w, int h) {
 		LevelGen noise1 = new LevelGen(w, h, 8);
 		LevelGen noise2 = new LevelGen(w, h, 8);
 		
 		short[] map = new short[w * h];
-		short[] data = new short[w * h];
+		NBTCompound[] data = new NBTCompound[w * h];
 		
 		for (int y = 0; y < h; y++) {
 			for (int x = 0; x < w; x++) {
@@ -522,10 +523,10 @@ public class LevelGen {
 			Structure.lavaPool.draw(map, x, y, w);
 		}
 		
-		return new short[][]{map, data};
+		return new MapWithData(map, data);
 	}
 	
-	private static short[][] createUndergroundMap(int w, int h, int depth) {
+	private static MapWithData createUndergroundMap(int w, int h, int depth) {
 		LevelGen mnoise1 = new LevelGen(w, h, 16);
 		LevelGen mnoise2 = new LevelGen(w, h, 16);
 		LevelGen mnoise3 = new LevelGen(w, h, 16);
@@ -542,7 +543,7 @@ public class LevelGen {
 		LevelGen noise2 = new LevelGen(w, h, 32);
 		
 		short[] map = new short[w * h];
-		short[] data = new short[w * h];
+		NBTCompound[] data = new NBTCompound[w * h];
 		for (int y = 0; y < h; y++) {
 			for (int x = 0; x < w; x++) {
 				int i = x + y * w;
@@ -649,15 +650,15 @@ public class LevelGen {
 			}
 		}
 		
-		return new short[][]{map, data};
+		return new MapWithData(map, data);
 	}
 	
-	private static short[][] createSkyMap(int w, int h) {
+	private static MapWithData createSkyMap(int w, int h) {
 		LevelGen noise1 = new LevelGen(w, h, 8);
 		LevelGen noise2 = new LevelGen(w, h, 8);
 		
 		short[] map = new short[w * h];
-		short[] data = new short[w * h];
+		NBTCompound[] data = new NBTCompound[w * h];
 		
 		for (int y = 0; y < h; y++) {
 			for (int x = 0; x < w; x++) {
@@ -717,7 +718,16 @@ public class LevelGen {
 			if (count >= w / 64) break;
 		}
 		
-		return new short[][]{map, data};
+		return new MapWithData(map, data);
+	}
+
+	public static class MapWithData {
+		public short[] map;
+		public NBTCompound[] data;
+		MapWithData(short[] m, NBTCompound[] d) {
+			map = m;
+			data = d;
+		}
 	}
 	
 	public static void main(String[] args) {
@@ -760,10 +770,10 @@ public class LevelGen {
 			int lvl = maplvls[idx++ % maplvls.length];
 			if (lvl > 1 || lvl < -4) continue;
 			
-			short[][] fullmap = LevelGen.createAndValidateMap(w, h, lvl);
+			MapWithData fullmap = LevelGen.createAndValidateMap(w, h, lvl);
 			
 			if (fullmap == null) continue;
-			short[] map = fullmap[0];
+			short[] map = fullmap.map;
 			
 			BufferedImage img = new BufferedImage(w, h, BufferedImage.TYPE_INT_RGB);
 			int[] pixels = new int[w * h];

@@ -62,7 +62,7 @@ public class RockTile extends Tile {
 	}
 
 	public void hurt(Level level, int x, int y, int dmg) {
-		damage = level.getData(x, y) + dmg;
+		damage = level.getData(x, y).getInt("damage", 0) + dmg;
 
 		if (Game.isMode("Creative")) {
 			dmg = damage = maxHealth;
@@ -86,14 +86,14 @@ public class RockTile extends Tile {
 			}
 			level.setTile(x, y, Tiles.get("Dirt"));
 		} else {
-			level.setData(x, y, damage);
+			level.setData(x, y, "damage", damage);
 		}
 	}
 
 	public boolean tick(Level level, int xt, int yt) {
-		damage = level.getData(xt, yt);
+		damage = level.getData(xt, yt).getInt("damage", 0);
 		if (damage > 0) {
-			level.setData(xt, yt, damage - 1);
+			level.setData(xt, yt, "damage", damage - 1);
 			return true;
 		}
 		return false;

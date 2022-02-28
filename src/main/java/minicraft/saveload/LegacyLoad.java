@@ -8,6 +8,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+import me.nullicorn.nedit.type.NBTCompound;
 import minicraft.core.Game;
 import minicraft.core.Updater;
 import minicraft.core.World;
@@ -216,14 +217,16 @@ public class LegacyLoad {
 			Settings.set("size", lvlw);
 
 			short[] tiles = new short[lvlw * lvlh];
-			short[] tdata = new short[lvlw * lvlh];
+			NBTCompound[] tdata = new NBTCompound[lvlw * lvlh];
 			
 			for (int x = 0; x < lvlw - 1; x++) {
 				for (int y = 0; y < lvlh - 1; y++) {
 					int tileArrIdx = y + x * lvlw;
 					int tileidx = x + y * lvlw; // The tiles are saved with x outer loop, and y inner loop, meaning that the list reads down, then right one, rather than right, then down one.
 					tiles[tileArrIdx] = Tiles.get(Tiles.oldids.get(Integer.parseInt(data.get(tileidx + 3)))).id;
-					tdata[tileArrIdx] = Short.parseShort(extradata.get(tileidx));
+					NBTCompound c = new NBTCompound();
+					c.put("old", Short.parseShort(extradata.get(tileidx)));
+					tdata[tileArrIdx] = c;
 				}
 			}
 

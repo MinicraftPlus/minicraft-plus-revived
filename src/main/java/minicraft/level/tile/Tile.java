@@ -2,6 +2,7 @@ package minicraft.level.tile;
 
 import java.util.Random;
 
+import me.nullicorn.nedit.type.NBTCompound;
 import minicraft.core.World;
 import minicraft.entity.Direction;
 import minicraft.entity.Entity;
@@ -71,8 +72,8 @@ public abstract class Tile {
 	/** This method is used by tiles to specify the default "data" they have in a level's data array.
 		Used for starting health, color/type of tile, etc. */
 	// At least, that was the idea at first...
-	public int getDefaultData() {
-		return 0;
+	public NBTCompound getDefaultData() {
+		return new NBTCompound();
 	}
 	
 	/** Render method, used in sub-classes */
@@ -177,7 +178,7 @@ public abstract class Tile {
 			int pos = x + curLevel.w * y;
 			
 			int tileid = curLevel.tiles[pos];
-			int tiledata = curLevel.data[pos];
+			NBTCompound tiledata = curLevel.data[pos];
 			
 			return lvlidx + ";" + pos + ";" + tileid + ";" + tiledata;
 		} catch(NullPointerException | IndexOutOfBoundsException ignored) {

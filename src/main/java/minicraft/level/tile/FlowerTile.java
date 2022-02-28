@@ -41,7 +41,7 @@ public class FlowerTile extends Tile {
 	public void render(Screen screen, Level level, int x, int y) {
 		Tiles.get("Grass").render(screen, level, x, y);
 		
-		int data = level.getData(x, y);
+		int data = level.getData(x, y).getInt("color", 0);
 		int shape = (data / 16) % 2;
 		
 		x = x << 4;

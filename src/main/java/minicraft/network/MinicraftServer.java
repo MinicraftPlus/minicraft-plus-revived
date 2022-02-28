@@ -14,6 +14,7 @@ import java.util.TimerTask;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import me.nullicorn.nedit.type.NBTCompound;
 import minicraft.core.Game;
 import minicraft.util.MyUtils;
 import minicraft.core.Network;
@@ -490,16 +491,15 @@ public class MinicraftServer extends Thread implements MinicraftProtocol {
 				
 				// if it's the same level, it will cancel out.
 				
-				short[] tiledata = new short[World.levels[levelidx].tiles.length*2];
+				TileDataPair[] tiledata = new TileDataPair[World.levels[levelidx].tiles.length];
 				for (int i = 0; i < tiledata.length/2 - 1; i++) {
-					tiledata[i*2] = World.levels[levelidx].tiles[i];
-					tiledata[i*2+1] = World.levels[levelidx].data[i];
+					tiledata[i] = new TileDataPair(World.levels[levelidx].tiles[i], World.levels[levelidx].data[i]);
 				}
 				serverThread.cachePacketTypes(InputType.tileUpdates);
 				
 				StringBuilder tiledataString = new StringBuilder();
-				for (short b: tiledata) {
-					tiledataString.append(b).append(",");
+				for (TileDataPair b: tiledata) {
+					tiledataString.append(b.left).append(",").append(b.right.toString()).append(",");
 				}
 				serverThread.sendData(InputType.TILES, tiledataString.substring(0, tiledataString.length()-1));
 				serverThread.sendCachedPackets();
@@ -776,6 +776,15 @@ public class MinicraftServer extends Thread implements MinicraftProtocol {
 		}
 	}
 	
+	public static class TileDataPair {
+		public short left;
+		public NBTCompound right;
+		public TileDataPair(short l, NBTCompound r) {
+			left = l;
+			right = r;
+		}
+	}
+
 	private void broadcastData(InputType inType, String data) { broadcastData(inType, data, (MinicraftServerThread)null); }
 	private void broadcastData(InputType inType, String data, @Nullable MinicraftServerThread clientThreadToExclude) {
 		for (MinicraftServerThread thread: getThreads()) {

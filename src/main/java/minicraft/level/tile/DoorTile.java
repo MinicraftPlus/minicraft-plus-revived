@@ -41,7 +41,7 @@ public class DoorTile extends Tile {
 	}
 
 	public void render(Screen screen, Level level, int x, int y) {
-		boolean closed = level.getData(x, y) == 0;
+		boolean closed = level.getData(x, y).getByte("closed", (byte)0) == 0;
 		Sprite curSprite = closed ? closedSprite : openSprite;
 		curSprite.render(screen, x * 16, y * 16);
 	}
@@ -63,14 +63,14 @@ public class DoorTile extends Tile {
 
 	public boolean hurt(Level level, int x, int y, Mob source, int dmg, Direction attackDir) {
 		if (source instanceof Player) {
-			boolean closed = level.getData(x, y) == 0;
-			level.setData(x, y, closed ? 1 : 0);
+			boolean closed = level.getData(x, y).getByte("closed", (byte)0) == 0;
+			level.setData(x, y, "closed", closed ? 1 : 0);
 		}
 		return false;
 	}
 
 	public boolean mayPass(Level level, int x, int y, Entity e) {
-		boolean closed = level.getData(x, y) == 0;
+		boolean closed = level.getData(x, y).getByte("closed", (byte)0) == 0;
 		return !closed;
 	}
 }

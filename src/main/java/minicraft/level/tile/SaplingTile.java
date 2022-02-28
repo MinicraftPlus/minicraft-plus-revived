@@ -30,14 +30,14 @@ public class SaplingTile extends Tile {
 	}
 
 	public boolean tick(Level level, int x, int y) {
-		int age = level.getData(x, y) + 1;
+		int age = level.getData(x, y).getInt("age", 0)+ 1;
 		if (age > 110) {
 			// Don't grow if there is an entity on this tile.
 			if (!level.isEntityOnTile(x, y)) {
 				level.setTile(x, y, growsTo);
 			}
 		} else {
-			level.setData(x, y, age);
+			level.setData(x, y, "age", age);
 		}
 		return true;
 	}

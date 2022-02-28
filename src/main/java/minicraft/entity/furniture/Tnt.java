@@ -6,6 +6,7 @@ import java.util.List;
 
 import javax.swing.Timer;
 
+import me.nullicorn.nedit.type.NBTCompound;
 import minicraft.core.io.Sound;
 import minicraft.entity.Direction;
 import minicraft.entity.Entity;
@@ -87,7 +88,7 @@ public class Tnt extends Furniture implements ActionListener {
 				AchievementsDisplay.setAchievement("minicraft.achievement.demolition", true);
 				Sound.explode.play();
 
-				level.setAreaTiles(xt, yt, 1, Tiles.get("explode"), 0, explosionBlacklist);
+				level.setAreaTiles(xt, yt, 1, Tiles.get("explode"), new NBTCompound(), explosionBlacklist);
 				
 				levelSave = level;
 				explodeTimer.start();
@@ -114,9 +115,9 @@ public class Tnt extends Furniture implements ActionListener {
 		int yt = (y - 2) >> 4;
 
 		if (levelSave.depth != 1) {
-			levelSave.setAreaTiles(xt, yt, 1, Tiles.get("hole"), 0, explosionBlacklist);
+			levelSave.setAreaTiles(xt, yt, 1, Tiles.get("hole"), new NBTCompound(), explosionBlacklist);
 		} else {
-			levelSave.setAreaTiles(xt, yt, 1, Tiles.get("Infinite Fall"), 0, explosionBlacklist);
+			levelSave.setAreaTiles(xt, yt, 1, Tiles.get("Infinite Fall"), new NBTCompound(), explosionBlacklist);
 		}
 
 		levelSave = null;

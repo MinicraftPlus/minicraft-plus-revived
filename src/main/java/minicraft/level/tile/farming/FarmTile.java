@@ -40,8 +40,8 @@ public class FarmTile extends Tile {
 
     @Override
     public boolean tick(Level level, int xt, int yt) {
-        int age = level.getData(xt, yt);
-        if (age < 5) level.setData(xt, yt, age + 1);
+        int age = level.getData(xt, yt).getInt("age", 0);
+        if (age < 5) level.setData(xt, yt, "age", age + 1);
         return true;
     }
 
@@ -49,7 +49,7 @@ public class FarmTile extends Tile {
     public void steppedOn(Level level, int xt, int yt, Entity entity) {
         if (entity instanceof ItemEntity) return;
         if (random.nextInt(60) != 0) return;
-        if (level.getData(xt, yt) < 5) return;
+        if (level.getData(xt, yt).getInt("age", 0) < 5) return;
         level.setTile(xt, yt, Tiles.get("Dirt"));
     }
 }
