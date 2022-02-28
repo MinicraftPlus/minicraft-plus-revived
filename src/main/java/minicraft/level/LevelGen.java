@@ -9,7 +9,6 @@ import javax.swing.JOptionPane;
 
 import org.jetbrains.annotations.Nullable;
 
-import me.nullicorn.nedit.type.NBTCompound;
 import minicraft.core.Game;
 import minicraft.core.io.Settings;
 import minicraft.level.tile.Tiles;

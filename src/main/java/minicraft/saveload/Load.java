@@ -1,7 +1,6 @@
 package minicraft.saveload;
 
 import java.io.BufferedReader;
-import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
@@ -12,7 +11,6 @@ import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import java.util.zip.DeflaterOutputStream;
 import java.util.zip.InflaterOutputStream;
 
 import org.jetbrains.annotations.Nullable;
@@ -21,7 +19,6 @@ import org.json.JSONException;
 import org.json.JSONObject;
 import org.tinylog.Logger;
 
-import me.nullicorn.nedit.type.NBTCompound;
 import minicraft.core.Game;
 import minicraft.core.Network;
 import minicraft.core.Updater;
@@ -74,7 +71,6 @@ import minicraft.screen.AchievementsDisplay;
 import minicraft.screen.LoadingDisplay;
 import minicraft.screen.MultiplayerDisplay;
 import minicraft.screen.SkinDisplay;
-import minicraft.sdt.SDT;
 import minicraft.sdt.SDTLevelData;
 
 public class Load {
@@ -776,7 +772,7 @@ public class Load {
 			}
 		} else {
 			int mobLvl = 1;
-			Class c = null;
+			Class<?> c = null;
 			if (!Crafter.names.contains(entityName)) {
 				try {
 					c = Class.forName("minicraft.entity.mob." + entityName);
@@ -798,7 +794,7 @@ public class Load {
 			Mob mob = (Mob)newEntity;
 			mob.health = Integer.parseInt(info.get(2));
 
-			Class c = null;
+			Class<?> c = null;
 			try {
 				c = Class.forName("minicraft.entity.mob." + entityName);
 			} catch (ClassNotFoundException e) {

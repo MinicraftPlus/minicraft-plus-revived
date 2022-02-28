@@ -115,7 +115,7 @@ public class Game {
 			PrintWriter printer = new PrintWriter(string);
 			throwable.printStackTrace(printer);
 			
-			Future ping = Analytics.Crashes.ping();
+			Future<?> ping = Analytics.Crashes.ping();
 			
 			if(GraphicsEnvironment.isHeadless()) {
 				// ensure ping finishes before program closes
