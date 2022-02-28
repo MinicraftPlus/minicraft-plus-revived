@@ -441,7 +441,7 @@ public class Load {
 			Settings.set("size", lvlw);
 			
 			short[] tiles = new short[lvlw * lvlh];
-			NBTCompound[] tdata = new NBTCompound[lvlw * lvlh];
+			SDTLevelData tdata = new SDTLevelData(lvlw, lvlh);
 			
 			for (int x = 0; x < lvlw; x++) {
 				for (int y = 0; y < lvlh; y++) {
@@ -485,7 +485,7 @@ public class Load {
 							tilename = "Gem Ore";
 					}
 					tiles[tileArrIdx] = Tiles.get(tilename).id;
-					tdata[tileArrIdx] = levelextradata.data[tileidx];
+					tdata.data[tileArrIdx] = levelextradata.data[tileidx];
 				}
 			}
 			

@@ -48,6 +48,7 @@ import minicraft.level.tile.Tile;
 import minicraft.level.tile.Tiles;
 import minicraft.level.tile.TorchTile;
 import minicraft.screen.AchievementsDisplay;
+import minicraft.sdt.SDTLevelData;
 
 public class Level {
 	private Random random = new Random();
@@ -62,7 +63,7 @@ public class Level {
 	private long seed; // The used seed that was used to generate the world
 	
 	public short[] tiles; // An array of all the tiles in the world.
-	public NBTCompound[] data; // An array of the data of the tiles in the world.
+	public SDTLevelData data; // An array of the data of the tiles in the world.
 	
 	public final int depth; // Depth level of the level
 	public int monsterDensity = 16; // Affects the number of monsters that are on the level, bigger the number the less monsters spawn.
@@ -142,7 +143,7 @@ public class Level {
 		if(!makeWorld) {
 			int arrsize = w * h;
 			tiles = new short[arrsize];
-			data = new NBTCompound[arrsize];
+			data = new SDTLevelData(w, h);
 			return;
 		}
 		
@@ -584,7 +585,7 @@ public class Level {
 			System.out.println("Client requested a tile update for the " + t.name + " tile at " + x + "," + y);
 		} else {
 			tiles[x + y * w] = t.id;
-			data[x + y * w].put(name, dataVal);
+			data.data[x + y * w].put(name, dataVal);
 		}
 		
 		if(Game.isValidServer())
@@ -598,7 +599,7 @@ public class Level {
 			System.out.println("Client requested a tile update for the " + t.name + " tile at " + x + "," + y);
 		} else {
 			tiles[x + y * w] = t.id;
-			data[x + y * w] = dataVal;
+			data.data[x + y * w] = dataVal;
 		}
 		
 		if(Game.isValidServer())
@@ -607,16 +608,16 @@ public class Level {
 	
 	public NBTCompound getData(int x, int y) {
 		if (x < 0 || y < 0 || x >= w || y >= h) return new NBTCompound();
-		return data[x + y * w];
+		return data.data[x + y * w];
 	}
 	
 	public void setData(int x, int y, String name, Object val) {
 		if (x < 0 || y < 0 || x >= w || y >= h) return;
-		data[x + y * w].put(name, val);
+		data.data[x + y * w].put(name, val);
 	}
 	public void setData(int x, int y, NBTCompound val) {
 		if (x < 0 || y < 0 || x >= w || y >= h) return;
-		data[x + y * w] = val;
+		data.data[x + y * w] = val;
 	}
 	
 	public void add(Entity e) { if(e==null) return; add(e, e.x, e.y); }

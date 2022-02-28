@@ -346,7 +346,7 @@ public class MinicraftClient extends MinicraftConnection {
 				
 				for (int i = 0; i < tiledata.length/2 && i < level.tiles.length; i++) {
 					level.tiles[i] = tiledata[i].left;
-					level.data[i] = tiledata[i].right;
+					level.data.data[i] = tiledata[i].right;
 				}
 				
 				menu.setLoadingMessage("Entities");
@@ -386,11 +386,11 @@ public class MinicraftClient extends MinicraftConnection {
 				int pos = Integer.parseInt(data[1]);
 				theLevel.tiles[pos] = Byte.parseByte(data[2]);
 				try {
-					theLevel.data[pos] = NBTReader.read(new ByteArrayInputStream(data[3].getBytes()));
+					theLevel.data.data[pos] = NBTReader.read(new ByteArrayInputStream(data[3].getBytes()));
 				} catch (IOException e) {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
-					theLevel.data[pos] = new NBTCompound();
+					theLevel.data.data[pos] = new NBTCompound();
 				}
 				return true;
 			

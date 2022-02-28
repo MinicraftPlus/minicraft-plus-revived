@@ -44,6 +44,7 @@ import minicraft.item.PotionType;
 import minicraft.level.Level;
 import minicraft.level.tile.Tiles;
 import minicraft.screen.LoadingDisplay;
+import minicraft.sdt.SDTLevelData;
 
 /// This class is simply a way to seperate all the old, compatibility complications into a seperate file.
 public class LegacyLoad {
@@ -217,7 +218,7 @@ public class LegacyLoad {
 			Settings.set("size", lvlw);
 
 			short[] tiles = new short[lvlw * lvlh];
-			NBTCompound[] tdata = new NBTCompound[lvlw * lvlh];
+			SDTLevelData tdata = new SDTLevelData(lvlw, lvlh);
 			
 			for (int x = 0; x < lvlw - 1; x++) {
 				for (int y = 0; y < lvlh - 1; y++) {
@@ -226,7 +227,7 @@ public class LegacyLoad {
 					tiles[tileArrIdx] = Tiles.get(Tiles.oldids.get(Integer.parseInt(data.get(tileidx + 3)))).id;
 					NBTCompound c = new NBTCompound();
 					c.put("old", Short.parseShort(extradata.get(tileidx)));
-					tdata[tileArrIdx] = c;
+					tdata.data[tileArrIdx] = c;
 				}
 			}
 

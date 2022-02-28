@@ -14,6 +14,7 @@ import minicraft.core.Game;
 import minicraft.core.io.Settings;
 import minicraft.level.tile.Tiles;
 import minicraft.screen.WorldGenDisplay;
+import minicraft.sdt.SDTLevelData;
 
 public class LevelGen {
 	private static long worldSeed = 0;
@@ -227,7 +228,7 @@ public class LevelGen {
 		LevelGen noise2 = new LevelGen(w, h, 32);
 		
 		short[] map = new short[w * h];
-		NBTCompound[] data = new NBTCompound[w * h];
+		SDTLevelData data = new SDTLevelData(w, h);
 
 		for (int y = 0; y < h; y++) {
 			for (int x = 0; x < w; x++) {
@@ -428,7 +429,7 @@ public class LevelGen {
 				if (xx >= 0 && yy >= 0 && xx < w && yy < h) {
 					if (map[xx + yy * w] == Tiles.get("grass").id) {
 						map[xx + yy * w] = Tiles.get("flower").id;
-						data[xx + yy * w].put("color", (short) (col + random.nextInt(4) * 16)); // Data determines which way the flower faces
+						data.data[xx + yy * w].put("color", (short) (col + random.nextInt(4) * 16)); // Data determines which way the flower faces
 					}
 				}
 			}
@@ -484,7 +485,7 @@ public class LevelGen {
 		LevelGen noise2 = new LevelGen(w, h, 8);
 		
 		short[] map = new short[w * h];
-		NBTCompound[] data = new NBTCompound[w * h];
+		SDTLevelData data = new SDTLevelData(w, h);
 		
 		for (int y = 0; y < h; y++) {
 			for (int x = 0; x < w; x++) {
@@ -543,7 +544,7 @@ public class LevelGen {
 		LevelGen noise2 = new LevelGen(w, h, 32);
 		
 		short[] map = new short[w * h];
-		NBTCompound[] data = new NBTCompound[w * h];
+		SDTLevelData data = new SDTLevelData(w, h);
 		for (int y = 0; y < h; y++) {
 			for (int x = 0; x < w; x++) {
 				int i = x + y * w;
@@ -658,7 +659,7 @@ public class LevelGen {
 		LevelGen noise2 = new LevelGen(w, h, 8);
 		
 		short[] map = new short[w * h];
-		NBTCompound[] data = new NBTCompound[w * h];
+		SDTLevelData data = new SDTLevelData(w, h);
 		
 		for (int y = 0; y < h; y++) {
 			for (int x = 0; x < w; x++) {
@@ -723,8 +724,8 @@ public class LevelGen {
 
 	public static class MapWithData {
 		public short[] map;
-		public NBTCompound[] data;
-		MapWithData(short[] m, NBTCompound[] d) {
+		public SDTLevelData data;
+		MapWithData(short[] m, SDTLevelData d) {
 			map = m;
 			data = d;
 		}
