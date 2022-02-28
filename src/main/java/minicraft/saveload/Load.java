@@ -19,6 +19,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 import org.tinylog.Logger;
 
+import me.nullicorn.nedit.NBTInputStream;
 import minicraft.core.Game;
 import minicraft.core.Network;
 import minicraft.core.Updater;

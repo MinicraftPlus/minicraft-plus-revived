@@ -11,6 +11,8 @@ import java.util.List;
 
 import me.nullicorn.nedit.*;
 import me.nullicorn.nedit.type.NBTCompound;
+import me.nullicorn.nedit.type.NBTList;
+import me.nullicorn.nedit.type.TagType;
 
 public class SDTLevelData extends SDT {
     public Version DataVersion;
@@ -49,6 +51,16 @@ public class SDTLevelData extends SDT {
         c.put("y", y);
         c.put("properties", new NBTCompound());
         return c;
+    }
+    public NBTCompound toNBT() {
+        NBTCompound res = new NBTCompound();
+        res.put("DataVersion", DataVersion.toString());
+        res.put("w", w);
+        res.put("h", h);
+        NBTList dt = new NBTList(TagType.COMPOUND);
+        dt.addAll(Arrays.asList(data));
+        res.put("data", dt);
+        return res;
     }
 }
 

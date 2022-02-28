@@ -1,6 +1,7 @@
 package minicraft.saveload;
 
 import java.io.BufferedWriter;
+import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.FileWriter;
@@ -42,6 +43,8 @@ import minicraft.screen.*;
 import org.json.JSONArray;
 import org.json.JSONObject;
 import org.tinylog.Logger;
+
+import me.nullicorn.nedit.NBTOutputStream;
 
 public class Save {
 
@@ -286,13 +289,17 @@ public class Save {
 		}
 		
 		for (int l = 0; l < World.levels.length; l++) {
-			for (int x = 0; x < World.levels[l].w; x++) {
-				for (int y = 0; y < World.levels[l].h; y++) {
-					data.add(String.valueOf(World.levels[l].getData(x, y)));
-				}
+			try {
+				ByteArrayOutputStream data = new ByteArrayOutputStream();
+				NBTOutputStream os = new NBTOutputStream(data, false);
+				os.writeFully(World.levels[l].data.toNBT());
+				os.flush();
+				os.close();
+				writeToFile(location + filename + l + extension + "data", data.toByteArray());
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
 			}
-			
-			writeToFile(location + filename + l + extension + "data", data);
 		}
 		
 	}
