@@ -11,6 +11,7 @@ import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.zip.InflaterOutputStream;
 
 import org.jetbrains.annotations.Nullable;
 import org.json.JSONArray;
@@ -18,6 +19,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 import org.tinylog.Logger;
 
+import me.nullicorn.nedit.NBTInputStream;
 import minicraft.core.Game;
 import minicraft.core.Network;
 import minicraft.core.Updater;
@@ -903,9 +905,12 @@ public class Load {
 	
 	private byte[] loadSDTFile(String filename) throws IOException {
 		ByteArrayOutputStream out = new ByteArrayOutputStream();
+        InflaterOutputStream infl = new InflaterOutputStream(out);
 		try (FileInputStream is = new FileInputStream(filename)) {
-			out.write(is.readAllBytes());
+			infl.write(is.readAllBytes());
 		}
+		infl.flush();
+        infl.close();
 
         return out.toByteArray();
 	}

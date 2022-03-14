@@ -3,10 +3,13 @@ package minicraft.saveload;
 import java.io.BufferedWriter;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
+import java.io.FileOutputStream;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.zip.Deflater;
+import java.util.zip.DeflaterOutputStream;
 
 import minicraft.core.Game;
 import minicraft.core.Renderer;
@@ -162,11 +165,13 @@ public class Save {
 		
 		Renderer.render(); // AH HA!!! HERE'S AN IMPORTANT STATEMENT!!!!
 	}
-	public void writeToFile(String filename, String savedata) {
+	public void writeToFile(String filename, byte[] savedata) {
 		try {
-			try (BufferedWriter bufferedWriter = new BufferedWriter(new FileWriter(filename))) {
-				bufferedWriter.write(savedata);
-			}
+			FileOutputStream out = new FileOutputStream(filename);
+			DeflaterOutputStream dos = new DeflaterOutputStream(out, new Deflater(9));
+			dos.write(savedata);
+			dos.flush();
+			dos.close();
 		} catch (IOException ex) {
 			ex.printStackTrace();
 		}
@@ -290,7 +295,7 @@ public class Save {
 				os.writeFully(World.levels[l].data.toNBT());
 				os.flush();
 				os.close();
-				writeToFile(location + filename + l + extension + "data", new String(data.toByteArray()));
+				writeToFile(location + filename + l + extension + "data", data.toByteArray());
 			} catch (IOException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
