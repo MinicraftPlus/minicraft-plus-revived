@@ -1,7 +1,7 @@
 # Minicraft Plus Revived
 Minicraft+ is a modded version of Minicraft that adds many more features to the original version. The original Minicraft game was made by Markus "Notch" Persson in the Ludum Dare 22 contest.  To learn more about Minicraft take a look at [playminicraft.com](https://www.playminicraft.com), or talk to the community at the [Discord](https://discord.me/minicraft).
 
-Check [releases](https://github.com/chrisj42/minicraft-plus-revived/releases) to download the latest version, or older versions.
+Check [releases](https://github.com/minicraftplus/minicraft-plus-revived/releases) to download the latest version, or older versions.
 
 ## Major features
 * More game modes, including:
@@ -32,4 +32,4 @@ Check [releases](https://github.com/chrisj42/minicraft-plus-revived/releases) to
 * Support for several languages
 
 ## Extra
-You can find a more comprehensive list of the earlier versions, before 1.9, in this minecraft forum [post (archive)](https://web.archive.org/web/20171124204205/https://www.minecraftforum.net/forums/off-topic/general-gaming/452036-v1-6-minicraft-plus). ([document archived copy](https://chrisj42.github.io/minicraft-plus-revived/Old%20changelog.html)) Be aware however, that it's old; it's from many years ago before the original project was abandoned.
+You can find a more comprehensive list of the earlier versions, before 1.9, in this minecraft forum [post (archive)](https://web.archive.org/web/20171124204205/https://www.minecraftforum.net/forums/off-topic/general-gaming/452036-v1-6-minicraft-plus). ([document archived copy](https://minicraftplus.github.io/minicraft-plus-revived/Old%20changelog.html)) Be aware however, that it's old; it's from many years ago before the original project was abandoned.
