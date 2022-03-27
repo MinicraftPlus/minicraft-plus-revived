@@ -5,6 +5,8 @@ Minicraft+ is a modded version of Minicraft that adds many more features to the 
 
 Check the [releases](https://github.com/minicraftplus/minicraft-plus-revived/releases) page to download the latest version, or older versions.
 
+Check out our [Fandom Wiki!](https://minicraft.fandom.com/wiki/Minicraft_Wiki)
+
 ## Major features
 * More game modes, including:
   * Creative
