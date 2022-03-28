@@ -455,7 +455,7 @@ public class Load {
 					}
 
 					if(tilename.equalsIgnoreCase("WOOL") && worldVer.compareTo(new Version("2.0.6-dev4")) < 0) {
-						switch ((int)levelextradata.NBTdata[tileidx].getByte("color", (byte) 0)) {
+						switch ((int)levelextradata.data[tileidx].getByte("color", (byte) 0)) {
 							case 1:
 								tilename = "Red Wool";
 								break;
@@ -481,7 +481,7 @@ public class Load {
 							tilename = "Gem Ore";
 					}
 					tiles[tileArrIdx] = Tiles.get(tilename).id;
-					tdata.NBTdata[tileArrIdx] = levelextradata.NBTdata[tileidx];
+					tdata.data[tileArrIdx] = levelextradata.data[tileidx];
 				}
 			}
 			

@@ -39,8 +39,8 @@ public class Plant extends FarmTile {
 
         int age = level.getData(xt, yt).getInt("age", 0);
         if (age < maxAge) {
-            if (!IfWater(level, xt, yt)) level.setNBTValue(xt, yt, "age", age + 1);
-            else if (IfWater(level, xt, yt)) level.setNBTValue(xt, yt, "age", age + 2);
+            if (!IfWater(level, xt, yt)) level.setData(xt, yt, "age", age + 1);
+            else if (IfWater(level, xt, yt)) level.setData(xt, yt, "age", age + 2);
             return true;
         }
 

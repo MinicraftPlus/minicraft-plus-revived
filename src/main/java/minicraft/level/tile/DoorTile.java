@@ -64,7 +64,7 @@ public class DoorTile extends Tile {
 	public boolean hurt(Level level, int x, int y, Mob source, int dmg, Direction attackDir) {
 		if (source instanceof Player) {
 			boolean closed = level.getData(x, y).getByte("closed", (byte)0) == 0;
-			level.setNBTValue(x, y, "closed", closed ? 1 : 0);
+			level.setData(x, y, "closed", closed ? 1 : 0);
 		}
 		return false;
 	}

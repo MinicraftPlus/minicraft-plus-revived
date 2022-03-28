@@ -175,10 +175,10 @@ public class Level {
 						
 						else if (level == 0) { // Surface
 							if (Game.debug) System.out.println("Setting tiles around " + x + "," + y + " to hard rock");
-							setAreaTilesNBT(x, y, 1, Tiles.get("Hard Rock"), new NBTCompound()); // surround the sky stairs with hard rock
+							setAreaTiles(x, y, 1, Tiles.get("Hard Rock"), new NBTCompound()); // surround the sky stairs with hard rock
 						}
 						else // Any other level, the up-stairs should have dirt on all sides.
-							setAreaTilesNBT(x, y, 1, Tiles.get("dirt"), new NBTCompound());
+							setAreaTiles(x, y, 1, Tiles.get("dirt"), new NBTCompound());
 
 						setTile(x, y, Tiles.get("Stairs Up")); // Set a stairs up tile in the same position on the current level
 					}
@@ -579,14 +579,14 @@ public class Level {
 		setTile(x, y, t, t.getDefaultData());
 	}
 	
-	public void setTileWithNBT(int x, int y, Tile t, String name, Object dataVal) {
+	public void setTile(int x, int y, Tile t, String name, Object dataVal) {
 		if (x < 0 || y < 0 || x >= w || y >= h) return;
 		
 		if (Game.isValidClient() && !Game.isValidServer()) {
 			System.out.println("Client requested a tile update for the " + t.name + " tile at " + x + "," + y);
 		} else {
 			tiles[x + y * w] = t.id;
-			data.NBTdata[x + y * w].put(name, dataVal);
+			data.data[x + y * w].put(name, dataVal);
 		}
 		
 		if(Game.isValidServer())
@@ -600,7 +600,7 @@ public class Level {
 			System.out.println("Client requested a tile update for the " + t.name + " tile at " + x + "," + y);
 		} else {
 			tiles[x + y * w] = t.id;
-			data.NBTdata[x + y * w] = dataVal;
+			data.data[x + y * w] = dataVal;
 		}
 		
 		if(Game.isValidServer())
@@ -609,16 +609,16 @@ public class Level {
 	
 	public NBTCompound getData(int x, int y) {
 		if (x < 0 || y < 0 || x >= w || y >= h) return new NBTCompound();
-		return data.NBTdata[x + y * w];
+		return data.data[x + y * w];
 	}
 	
-	public void setNBTValue(int x, int y, String name, Object val) {
+	public void setData(int x, int y, String name, Object val) {
 		if (x < 0 || y < 0 || x >= w || y >= h) return;
-		data.NBTdata[x + y * w].put(name, val);
+		data.data[x + y * w].put(name, val);
 	}
-	public void setNBT(int x, int y, NBTCompound val) {
+	public void setData(int x, int y, NBTCompound val) {
 		if (x < 0 || y < 0 || x >= w || y >= h) return;
-		data.NBTdata[x + y * w] = val;
+		data.data[x + y * w] = val;
 	}
 	
 	public void add(Entity e) { if(e==null) return; add(e, e.x, e.y); }
@@ -872,18 +872,18 @@ public class Level {
 		return local.toArray(new Tile[local.size()]);
 	}
 	
-	public void setAreaTilesNBTValue(int xt, int yt, int r, Tile tile, String name, Object data) { setAreaTilesNBTValue(xt, yt, r, tile, name, data, false); }
-	public void setAreaTilesNBTValue(int xt, int yt, int r, Tile tile, String name, Object data, boolean overwriteStairs) {
+	public void setAreaTiles(int xt, int yt, int r, Tile tile, String name, Object data) { setAreaTiles(xt, yt, r, tile, name, data, false); }
+	public void setAreaTiles(int xt, int yt, int r, Tile tile, String name, Object data, boolean overwriteStairs) {
 		for(int y = yt - r; y <= yt + r; y++) {
 			for (int x = xt - r; x <= xt + r; x++) {
 				if(overwriteStairs || (!getTile(x, y).name.toLowerCase().contains("stairs")))
-					setTileWithNBT(x, y, tile, name, data);
+					setTile(x, y, tile, name, data);
 			}
 		}
 	}
 
-	public void setAreaTilesNBT(int xt, int yt, int r, Tile tile, NBTCompound data) { setAreaTilesNBT(xt, yt, r, tile, data, false); }
-	public void setAreaTilesNBT(int xt, int yt, int r, Tile tile, NBTCompound data, boolean overwriteStairs) {
+	public void setAreaTiles(int xt, int yt, int r, Tile tile, NBTCompound data) { setAreaTiles(xt, yt, r, tile, data, false); }
+	public void setAreaTiles(int xt, int yt, int r, Tile tile, NBTCompound data, boolean overwriteStairs) {
 		for(int y = yt - r; y <= yt + r; y++) {
 			for (int x = xt - r; x <= xt + r; x++) {
 				if(overwriteStairs || (!getTile(x, y).name.toLowerCase().contains("stairs")))
@@ -892,15 +892,15 @@ public class Level {
 		}
 	}
 
-	public void setAreaTilesNBTValue(int xt, int yt, int r, Tile tile, String name, Object data, String[] blacklist) {
+	public void setAreaTiles(int xt, int yt, int r, Tile tile, String name, Object data, String[] blacklist) {
 		for (int y = yt - r; y <= yt + r; y++) {
 			for (int x = xt - r; x <= xt + r; x++) {
 				if (!Arrays.asList(blacklist).contains(getTile(x, y).name.toLowerCase()))
-					setTileWithNBT(x, y, tile, name, data);
+					setTile(x, y, tile, name, data);
 			}
 		}
 	}
-	public void setAreaTilesNBT(int xt, int yt, int r, Tile tile, NBTCompound data, String[] blacklist) {
+	public void setAreaTiles(int xt, int yt, int r, Tile tile, NBTCompound data, String[] blacklist) {
 		for (int y = yt - r; y <= yt + r; y++) {
 			for (int x = xt - r; x <= xt + r; x++) {
 				if (!Arrays.asList(blacklist).contains(getTile(x, y).name.toLowerCase()))

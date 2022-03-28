@@ -19,7 +19,7 @@ public class SDTLevelData extends SDT {
     public static Version Version = new Version("0.0.1")/*Game.levelSDTversion*/;
     public final int w;
     public final int h;
-    public NBTCompound[] NBTdata;
+    public NBTCompound[] data;
     public SDTLevelData(byte[] b) {
         NBTCompound nbt = null;
         try {
@@ -32,16 +32,16 @@ public class SDTLevelData extends SDT {
         h = nbt.getInt("h", 0);
         List<NBTCompound> l = new ArrayList<>();
         nbt.getList("data").iterator().forEachRemaining(o -> l.add((NBTCompound)o));
-        NBTdata = Arrays.copyOf(l.toArray(), l.size(), NBTCompound[].class);
+        data = Arrays.copyOf(l.toArray(), l.size(), NBTCompound[].class);
     }
     public SDTLevelData(int wl, int hl) {
         w = wl;
         h = hl;
         DataVersion = Version;
-        NBTdata = new NBTCompound[w*h];
+        data = new NBTCompound[w*h];
         for (int x = 0; x<w; x++) {
             for (int y = 0; y<h; y++) {
-                NBTdata[x*w+y] = createDataUnit(x, y);
+                data[x*w+y] = createDataUnit(x, y);
             }
         }
     }
@@ -58,7 +58,7 @@ public class SDTLevelData extends SDT {
         res.put("w", w);
         res.put("h", h);
         NBTList dt = new NBTList(TagType.COMPOUND);
-        dt.addAll(Arrays.asList(NBTdata));
+        dt.addAll(Arrays.asList(data));
         res.put("data", dt);
         return res;
     }

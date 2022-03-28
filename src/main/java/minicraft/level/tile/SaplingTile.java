@@ -37,7 +37,7 @@ public class SaplingTile extends Tile {
 				level.setTile(x, y, growsTo);
 			}
 		} else {
-			level.setNBTValue(x, y, "age", age);
+			level.setData(x, y, "age", age);
 		}
 		return true;
 	}

@@ -178,7 +178,7 @@ public abstract class Tile {
 			int pos = x + curLevel.w * y;
 			
 			int tileid = curLevel.tiles[pos];
-			NBTCompound tiledata = curLevel.data.NBTdata[pos];
+			NBTCompound tiledata = curLevel.data.data[pos];
 			
 			return lvlidx + ";" + pos + ";" + tileid + ";" + tiledata;
 		} catch(NullPointerException | IndexOutOfBoundsException ignored) {

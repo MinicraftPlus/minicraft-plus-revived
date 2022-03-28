@@ -227,7 +227,7 @@ public class LegacyLoad {
 					tiles[tileArrIdx] = Tiles.get(Tiles.oldids.get(Integer.parseInt(data.get(tileidx + 3)))).id;
 					NBTCompound c = new NBTCompound();
 					c.put("old", Short.parseShort(extradata.get(tileidx)));
-					tdata.NBTdata[tileArrIdx] = c;
+					tdata.data[tileArrIdx] = c;
 				}
 			}
 
