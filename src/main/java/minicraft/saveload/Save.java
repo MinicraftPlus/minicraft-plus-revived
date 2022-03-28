@@ -165,7 +165,7 @@ public class Save {
 		
 		Renderer.render(); // AH HA!!! HERE'S AN IMPORTANT STATEMENT!!!!
 	}
-	public void writeToFile(String filename, byte[] savedata) {
+	public void writeSDTToFile(String filename, byte[] savedata) {
 		try {
 			FileOutputStream out = new FileOutputStream(filename);
 			DeflaterOutputStream dos = new DeflaterOutputStream(out, new Deflater(9));
@@ -295,7 +295,7 @@ public class Save {
 				os.writeFully(World.levels[l].data.toNBT());
 				os.flush();
 				os.close();
-				writeToFile(location + filename + l + extension + "data", data.toByteArray());
+				writeSDTToFile(location + filename + l + extension + "data", data.toByteArray());
 			} catch (IOException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
