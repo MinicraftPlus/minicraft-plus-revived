@@ -579,7 +579,7 @@ public class Level {
 		setTile(x, y, t, t.getDefaultData());
 	}
 	
-	public void setTile(int x, int y, Tile t, String name, Object dataVal) {
+	public void setTileWithNBT(int x, int y, Tile t, String name, Object dataVal) {
 		if (x < 0 || y < 0 || x >= w || y >= h) return;
 		
 		if (Game.isValidClient() && !Game.isValidServer()) {
@@ -872,12 +872,12 @@ public class Level {
 		return local.toArray(new Tile[local.size()]);
 	}
 	
-	public void setAreaTiles(int xt, int yt, int r, Tile tile, String name, Object data) { setAreaTiles(xt, yt, r, tile, name, data, false); }
-	public void setAreaTiles(int xt, int yt, int r, Tile tile, String name, Object data, boolean overwriteStairs) {
+	public void setAreaTilesWithNBT(int xt, int yt, int r, Tile tile, String name, Object data) { setAreaTilesWithNBT(xt, yt, r, tile, name, data, false); }
+	public void setAreaTilesWithNBT(int xt, int yt, int r, Tile tile, String name, Object data, boolean overwriteStairs) {
 		for(int y = yt - r; y <= yt + r; y++) {
 			for (int x = xt - r; x <= xt + r; x++) {
 				if(overwriteStairs || (!getTile(x, y).name.toLowerCase().contains("stairs")))
-					setTile(x, y, tile, name, data);
+					setTileWithNBT(x, y, tile, name, data);
 			}
 		}
 	}
@@ -892,11 +892,11 @@ public class Level {
 		}
 	}
 
-	public void setAreaTiles(int xt, int yt, int r, Tile tile, String name, Object data, String[] blacklist) {
+	public void setAreaTilesWithNBT(int xt, int yt, int r, Tile tile, String name, Object data, String[] blacklist) {
 		for (int y = yt - r; y <= yt + r; y++) {
 			for (int x = xt - r; x <= xt + r; x++) {
 				if (!Arrays.asList(blacklist).contains(getTile(x, y).name.toLowerCase()))
-					setTile(x, y, tile, name, data);
+					setTileWithNBT(x, y, tile, name, data);
 			}
 		}
 	}
