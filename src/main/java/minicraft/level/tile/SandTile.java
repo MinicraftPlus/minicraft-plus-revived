@@ -54,7 +54,7 @@ public class SandTile extends Tile {
 	public boolean tick(Level level, int x, int y) {
 		int damage = level.getData(x, y).getInt("damage", 0);
 		if (damage > 0) {
-			level.setData(x, y, "damage", damage - 1);
+			level.setNBT(x, y, "damage", damage - 1);
 			return true;
 		}
 		return false;
@@ -62,7 +62,7 @@ public class SandTile extends Tile {
 
 	public void steppedOn(Level level, int x, int y, Entity entity) {
 		if (entity instanceof Mob) {
-			level.setData(x, y, "damage", 10);
+			level.setNBT(x, y, "damage", 10);
 		}
 	}
 

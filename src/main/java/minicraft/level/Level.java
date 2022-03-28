@@ -565,15 +565,15 @@ public class Level {
 	}
 	
 	// Not Supported
-	// public void setTile(int x, int y, String tilewithdata) {
-	// 	if (!tilewithdata.contains("_")) {
-	// 		setTile(x, y, Tiles.get(tilewithdata));
-	// 		return;
-	// 	}
-	// 	String name = tilewithdata.substring(0, tilewithdata.indexOf("_"));
-	// 	int data = Tiles.get(name).getData(tilewithdata.substring(name.length()+1));
-	// 	setTile(x, y, Tiles.get(name), data);
-	// }
+	/*public void setTile(int x, int y, String tilewithdata) {
+		if (!tilewithdata.contains("_")) {
+			setTile(x, y, Tiles.get(tilewithdata));
+			return;
+		}
+		String name = tilewithdata.substring(0, tilewithdata.indexOf("_"));
+		int data = Tiles.get(name).getData(tilewithdata.substring(name.length()+1));
+		setTile(x, y, Tiles.get(name), data);
+	}*/
 	
 	public void setTile(int x, int y, Tile t) {
 		setTile(x, y, t, t.getDefaultData());
@@ -612,7 +612,7 @@ public class Level {
 		return data.NBTdata[x + y * w];
 	}
 	
-	public void setData(int x, int y, String name, Object val) {
+	public void setNBT(int x, int y, String name, Object val) {
 		if (x < 0 || y < 0 || x >= w || y >= h) return;
 		data.NBTdata[x + y * w].put(name, val);
 	}

@@ -63,7 +63,7 @@ public class TreeTile extends Tile {
 	public boolean tick(Level level, int xt, int yt) {
 		int damage = level.getData(xt, yt).getInt("damage", 0);
 		if (damage > 0) {
-			level.setData(xt, yt, "damage", damage - 1);
+			level.setNBT(xt, yt, "damage", damage - 1);
 			return true;
 		}
 		return false;
@@ -113,7 +113,7 @@ public class TreeTile extends Tile {
 			level.setTile(x, y, Tiles.get("Grass"));
 			AchievementsDisplay.setAchievement("minicraft.achievement.woodcutter", true);
 		} else {
-			level.setData(x, y, "damage", damage);
+			level.setNBT(x, y, "damage", damage);
 		}
 	}
 }
