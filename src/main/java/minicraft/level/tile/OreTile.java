@@ -96,7 +96,7 @@ public class OreTile extends Tile {
 				level.setTile(x, y, Tiles.get("Dirt"));
 				count += 2;
 			} else {
-				level.setNBT(x, y, "damage", damage);
+				level.setNBTValue(x, y, "damage", damage);
 			}
 			if (type.drop.equals(Items.get("gem"))){
 				AchievementsDisplay.setAchievement("minicraft.achievement.find_gem", true);

@@ -71,7 +71,7 @@ public class CloudCactusTile extends Tile {
 				level.setTile(x, y, Tiles.get("Cloud"));
 				count += 2;
 			} else {
-				level.setNBT(x, y, "damage", damage);
+				level.setNBTValue(x, y, "damage", damage);
 			}
 			level.dropItem(x * 16 + 8, y * 16 + 8, count, Items.get("Cloud Ore"));
 		}

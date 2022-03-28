@@ -86,14 +86,14 @@ public class RockTile extends Tile {
 			}
 			level.setTile(x, y, Tiles.get("Dirt"));
 		} else {
-			level.setNBT(x, y, "damage", damage);
+			level.setNBTValue(x, y, "damage", damage);
 		}
 	}
 
 	public boolean tick(Level level, int xt, int yt) {
 		damage = level.getData(xt, yt).getInt("damage", 0);
 		if (damage > 0) {
-			level.setNBT(xt, yt, "damage", damage - 1);
+			level.setNBTValue(xt, yt, "damage", damage - 1);
 			return true;
 		}
 		return false;

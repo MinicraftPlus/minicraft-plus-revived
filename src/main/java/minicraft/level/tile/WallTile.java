@@ -100,14 +100,14 @@ public class WallTile extends Tile {
 			level.dropItem(x * 16 + 8, y * 16 + 8, 1, 3 - type.ordinal(), Items.get(itemName));
 			level.setTile(x, y, Tiles.get(tilename));
 		} else {
-			level.setNBT(x, y, "damage", damage);
+			level.setNBTValue(x, y, "damage", damage);
 		}
 	}
 
 	public boolean tick(Level level, int xt, int yt) {
 		int damage = level.getData(xt, yt).getInt("damage", 0);
 		if (damage > 0) {
-			level.setNBT(xt, yt, "damage", damage - 1);
+			level.setNBTValue(xt, yt, "damage", damage - 1);
 			return true;
 		}
 		return false;
