@@ -1,6 +1,6 @@
 package minicraft.sdt;
 
-import minicraft.core.Game;
+// import minicraft.core.Game;
 import minicraft.saveload.Version;
 
 
@@ -8,5 +8,5 @@ import minicraft.saveload.Version;
 
 public class SDT {
     public Version DataVersion;
-    public static Version Version = Game.mainSDTversion;
+    public static Version Version = new Version("0.0.1")/*Game.mainSDTversion*/;
 }

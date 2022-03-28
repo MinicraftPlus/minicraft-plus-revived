@@ -39,8 +39,8 @@ public class Game {
 	
 	public static final String NAME = "Minicraft Plus"; // This is the name on the application window.
 	public static final Version VERSION = new Version("2.1.0-dev2");
-	public static final Version mainSDTversion = new Version("0.0.1");
-	public static final Version levelSDTversion = new Version("0.0.1");
+	// public static final Version mainSDTversion = new Version("0.0.1");
+	// public static final Version levelSDTversion = new Version("0.0.1");
 	
 	public static InputHandler input; // Input used in Game, Player, and just about all the *Menu classes.
 	public static Player player;

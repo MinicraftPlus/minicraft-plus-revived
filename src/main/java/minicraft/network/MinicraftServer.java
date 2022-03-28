@@ -493,7 +493,7 @@ public class MinicraftServer extends Thread implements MinicraftProtocol {
 				
 				TileDataPair[] tiledata = new TileDataPair[World.levels[levelidx].tiles.length];
 				for (int i = 0; i < tiledata.length/2 - 1; i++) {
-					tiledata[i] = new TileDataPair(World.levels[levelidx].tiles[i], World.levels[levelidx].data.data[i]);
+					tiledata[i] = new TileDataPair(World.levels[levelidx].tiles[i], World.levels[levelidx].data.NBTdata[i]);
 				}
 				serverThread.cachePacketTypes(InputType.tileUpdates);
 				

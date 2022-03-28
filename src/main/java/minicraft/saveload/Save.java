@@ -232,8 +232,8 @@ public class Save {
 		json.put("savedUsername", MultiplayerDisplay.savedUsername);
 		json.put("keymap", new JSONArray(Game.input.getKeyPrefs()));
 		json.put("resourcePack", ResourcePackDisplay.getLoadedPack());
-		json.put("mainSDTversion", String.valueOf(Game.mainSDTversion));
-		json.put("levelSDTversion", String.valueOf(Game.levelSDTversion));
+		json.put("mainSDTversion", String.valueOf(new Version("0.0.1")/*Game.mainSDTversion*/));
+		json.put("levelSDTversion", String.valueOf(new Version("0.0.1")/*Game.levelSDTversion*/));
 
 		// Save json
 		try {

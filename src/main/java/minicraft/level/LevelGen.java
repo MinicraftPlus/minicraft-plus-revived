@@ -428,7 +428,7 @@ public class LevelGen {
 				if (xx >= 0 && yy >= 0 && xx < w && yy < h) {
 					if (map[xx + yy * w] == Tiles.get("grass").id) {
 						map[xx + yy * w] = Tiles.get("flower").id;
-						data.data[xx + yy * w].put("color", (short) (col + random.nextInt(4) * 16)); // Data determines which way the flower faces
+						data.NBTdata[xx + yy * w].put("color", (short) (col + random.nextInt(4) * 16)); // Data determines which way the flower faces
 					}
 				}
 			}

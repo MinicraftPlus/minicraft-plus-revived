@@ -585,7 +585,7 @@ public class Level {
 			System.out.println("Client requested a tile update for the " + t.name + " tile at " + x + "," + y);
 		} else {
 			tiles[x + y * w] = t.id;
-			data.data[x + y * w].put(name, dataVal);
+			data.NBTdata[x + y * w].put(name, dataVal);
 		}
 		
 		if(Game.isValidServer())
@@ -599,7 +599,7 @@ public class Level {
 			System.out.println("Client requested a tile update for the " + t.name + " tile at " + x + "," + y);
 		} else {
 			tiles[x + y * w] = t.id;
-			data.data[x + y * w] = dataVal;
+			data.NBTdata[x + y * w] = dataVal;
 		}
 		
 		if(Game.isValidServer())
@@ -608,16 +608,16 @@ public class Level {
 	
 	public NBTCompound getData(int x, int y) {
 		if (x < 0 || y < 0 || x >= w || y >= h) return new NBTCompound();
-		return data.data[x + y * w];
+		return data.NBTdata[x + y * w];
 	}
 	
 	public void setData(int x, int y, String name, Object val) {
 		if (x < 0 || y < 0 || x >= w || y >= h) return;
-		data.data[x + y * w].put(name, val);
+		data.NBTdata[x + y * w].put(name, val);
 	}
 	public void setData(int x, int y, NBTCompound val) {
 		if (x < 0 || y < 0 || x >= w || y >= h) return;
-		data.data[x + y * w] = val;
+		data.NBTdata[x + y * w] = val;
 	}
 	
 	public void add(Entity e) { if(e==null) return; add(e, e.x, e.y); }

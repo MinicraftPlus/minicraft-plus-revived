@@ -68,7 +68,7 @@ public final class Tiles {
 		// WARNING: don't use this tile for anything!
 		tiles.put((short)255, new ConnectTile());
 		
-		for(short i = 0; i < 256; i++) {
+		for(short i : tiles.keySet()) {
 			if(tiles.get(i) == null) continue;
 			tiles.get(i).id = (short)i;
 		}

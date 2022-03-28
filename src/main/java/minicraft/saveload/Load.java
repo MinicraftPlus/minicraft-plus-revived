@@ -19,7 +19,6 @@ import org.json.JSONException;
 import org.json.JSONObject;
 import org.tinylog.Logger;
 
-import me.nullicorn.nedit.NBTInputStream;
 import minicraft.core.Game;
 import minicraft.core.Network;
 import minicraft.core.Updater;
@@ -354,8 +353,8 @@ public class Load {
 		/* Start of the parsing */
 		Version prefVer = new Version(json.getString("version"));
 		// TODO: loading main and level SDT with convertion
-		Version mainSDTver = new Version(json.getString("mainSDTversion"));
-		Version levelSDTver = new Version(json.getString("levelSDTversion"));
+		// Version mainSDTver = new Version(json.getString("mainSDTversion"));
+		// Version levelSDTver = new Version(json.getString("levelSDTversion"));
 
 		// Settings
 		Settings.set("sound", json.getBoolean("sound"));
@@ -456,7 +455,7 @@ public class Load {
 					}
 
 					if(tilename.equalsIgnoreCase("WOOL") && worldVer.compareTo(new Version("2.0.6-dev4")) < 0) {
-						switch ((int)levelextradata.data[tileidx].getByte("color", (byte) 0)) {
+						switch ((int)levelextradata.NBTdata[tileidx].getByte("color", (byte) 0)) {
 							case 1:
 								tilename = "Red Wool";
 								break;
@@ -482,7 +481,7 @@ public class Load {
 							tilename = "Gem Ore";
 					}
 					tiles[tileArrIdx] = Tiles.get(tilename).id;
-					tdata.data[tileArrIdx] = levelextradata.data[tileidx];
+					tdata.NBTdata[tileArrIdx] = levelextradata.NBTdata[tileidx];
 				}
 			}
 			
