@@ -1,8 +1,8 @@
 package minicraft.saveload;
 
 import java.io.BufferedWriter;
-import java.io.ByteArrayOutputStream;
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.FileWriter;
 import java.io.IOException;
@@ -166,26 +166,10 @@ public class Save {
 		
 		Renderer.render(); // AH HA!!! HERE'S AN IMPORTANT STATEMENT!!!!
 	}
-	public void writeNBTComponentToFile(String filename, NBTCompound savedata) {
-		try {
-			FileOutputStream out = new FileOutputStream(filename);
-			DeflaterOutputStream dos = new DeflaterOutputStream(out, new Deflater(9));
-			NBTOutputStream os = new NBTOutputStream(dos, false);
+	public void writeNBTComponentToFile(String filename, NBTCompound savedata) throws FileNotFoundException, IOException {
+		try (NBTOutputStream os = new NBTOutputStream(new DeflaterOutputStream(new FileOutputStream(filename), new Deflater(9)), false)) {
 			os.writeFully(savedata);
-			os.flush();
-			os.close();
-		} catch (IOException ex) {
-			ex.printStackTrace();
 		}
-		
-		data.clear();
-		
-		LoadingDisplay.progress(7);
-		if(LoadingDisplay.getPercentage() > 100) {
-			LoadingDisplay.setPercentage(100);
-		}
-		
-		Renderer.render(); // AH HA!!! HERE'S AN IMPORTANT STATEMENT!!!!
 	}
 	
 	public static void writeToFile(String filename, String[] savedata, boolean isWorldSave) throws IOException {
@@ -291,7 +275,11 @@ public class Save {
 		}
 		
 		for (int l = 0; l < World.levels.length; l++) {
-			writeNBTComponentToFile(location + filename + l + extension + "data", World.levels[l].data.toNBT());
+			try {
+				writeNBTComponentToFile(location + filename + l + extension + "data", World.levels[l].data.toNBT());
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
 		}
 		
 	}
