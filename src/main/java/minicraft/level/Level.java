@@ -1,5 +1,6 @@
 package minicraft.level;
 
+import java.util.AbstractMap;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Comparator;
@@ -133,7 +134,7 @@ public class Level {
 		this.w = w;
 		this.h = h;
 		this.seed = seed;
-		LevelGen.MapWithData maps; // Multidimensional array (an array within a array), used for the map
+		AbstractMap.SimpleEntry<short[], SDTLevelData> maps; // Multidimensional array (an array within a array), used for the map
 		
 		if (level != -4 && level != 0)
 			monsterDensity = 8;
@@ -155,8 +156,8 @@ public class Level {
 			return;
 		}
 		
-		tiles = maps.map; // Assigns the tiles in the map
-		data = maps.data; // Assigns the data of the tiles
+		tiles = maps.getKey(); // Assigns the tiles in the map
+		data = maps.getValue(); // Assigns the data of the tiles
 
 		if (level < 0)
 			generateSpawnerStructures();

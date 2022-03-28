@@ -2,6 +2,7 @@ package minicraft.level;
 
 import java.awt.Image;
 import java.awt.image.BufferedImage;
+import java.util.AbstractMap;
 import java.util.Random;
 
 import javax.swing.ImageIcon;
@@ -115,7 +116,7 @@ public class LevelGen {
 	}
 	
 	@Nullable
-	static MapWithData createAndValidateMap(int w, int h, int level) {
+	static AbstractMap.SimpleEntry<short[], SDTLevelData> createAndValidateMap(int w, int h, int level) {
 		worldSeed = WorldGenDisplay.getSeed();
 		
 		if (level == 1)
@@ -132,15 +133,15 @@ public class LevelGen {
 		return null;
 	}
 	
-	private static MapWithData createAndValidateTopMap(int w, int h) {
+	private static AbstractMap.SimpleEntry<short[], SDTLevelData> createAndValidateTopMap(int w, int h) {
 		random.setSeed(worldSeed);
 		do {
-			MapWithData result = createTopMap(w, h);
+			AbstractMap.SimpleEntry<short[], SDTLevelData> result = createTopMap(w, h);
 			
 			int[] count = new int[256];
 			
 			for (int i = 0; i < w * h; i++) {
-				count[result.map[i] & 0xffff]++;
+				count[result.getKey()[i] & 0xffff]++;
 			}
 			if (count[Tiles.get("rock").id & 0xffff] < 100) continue;
 			if (count[Tiles.get("sand").id & 0xffff] < 100) continue;
@@ -155,15 +156,15 @@ public class LevelGen {
 		} while (true);
 	}
 	
-	private static @Nullable MapWithData createAndValidateUndergroundMap(int w, int h, int depth) {
+	private static @Nullable AbstractMap.SimpleEntry<short[], SDTLevelData> createAndValidateUndergroundMap(int w, int h, int depth) {
 		random.setSeed(worldSeed);
 		do {
-			MapWithData result = createUndergroundMap(w, h, depth);
+			AbstractMap.SimpleEntry<short[], SDTLevelData> result = createUndergroundMap(w, h, depth);
 			
 			int[] count = new int[256];
 			
 			for (int i = 0; i < w * h; i++) {
-				count[result.map[i] & 0xffff]++;
+				count[result.getKey()[i] & 0xffff]++;
 			}
 			if (count[Tiles.get("rock").id & 0xffff] < 100) continue;
 			if (count[Tiles.get("dirt").id & 0xffff] < 100) continue;
@@ -177,16 +178,16 @@ public class LevelGen {
 		} while (true);
 	}
 	
-	private static MapWithData createAndValidateDungeon(int w, int h) {
+	private static AbstractMap.SimpleEntry<short[], SDTLevelData> createAndValidateDungeon(int w, int h) {
 		random.setSeed(worldSeed);
 		
 		do {
-			MapWithData result = createDungeon(w, h);
+			AbstractMap.SimpleEntry<short[], SDTLevelData> result = createDungeon(w, h);
 			
 			int[] count = new int[256];
 			
 			for (int i = 0; i < w * h; i++) {
-				count[result.map[i] & 0xffff]++;
+				count[result.getKey()[i] & 0xffff]++;
 			}
 			if (count[Tiles.get("Obsidian").id & 0xffff] < 100) continue;
 			if (count[Tiles.get("Obsidian Wall").id & 0xffff] < 100) continue;
@@ -196,16 +197,16 @@ public class LevelGen {
 		} while (true);
 	}
 
-	private static @Nullable MapWithData createAndValidateSkyMap(int w, int h) {
+	private static @Nullable AbstractMap.SimpleEntry<short[], SDTLevelData> createAndValidateSkyMap(int w, int h) {
 		random.setSeed(worldSeed);
 		
 		do {
-			MapWithData result = createSkyMap(w, h);
+			AbstractMap.SimpleEntry<short[], SDTLevelData> result = createSkyMap(w, h);
 			
 			int[] count = new int[256];
 			
 			for (int i = 0; i < w * h; i++) {
-				count[result.map[i] & 0xffff]++;
+				count[result.getKey()[i] & 0xffff]++;
 			}
 			if (count[Tiles.get("cloud").id & 0xffff] < 2000) continue;
 			if (count[Tiles.get("Stairs Down").id & 0xffff] < w / 64)
@@ -216,7 +217,7 @@ public class LevelGen {
 		} while (true);
 	}
 	
-	private static MapWithData createTopMap(int w, int h) { // Create surface map
+	private static AbstractMap.SimpleEntry<short[], SDTLevelData> createTopMap(int w, int h) { // Create surface map
 		// creates a bunch of value maps, some with small size...
 		LevelGen mnoise1 = new LevelGen(w, h, 16);
 		LevelGen mnoise2 = new LevelGen(w, h, 16);
@@ -476,10 +477,10 @@ public class LevelGen {
 		//average /= w*h;
 		//System.out.println(average);
 		
-		return new MapWithData(map, data);
+		return new AbstractMap.SimpleEntry<short[], SDTLevelData>(map, data);
 	}
 	
-	private static MapWithData createDungeon(int w, int h) {
+	private static AbstractMap.SimpleEntry<short[], SDTLevelData> createDungeon(int w, int h) {
 		LevelGen noise1 = new LevelGen(w, h, 8);
 		LevelGen noise2 = new LevelGen(w, h, 8);
 		
@@ -523,10 +524,10 @@ public class LevelGen {
 			Structure.lavaPool.draw(map, x, y, w);
 		}
 		
-		return new MapWithData(map, data);
+		return new AbstractMap.SimpleEntry<short[], SDTLevelData>(map, data);
 	}
 	
-	private static MapWithData createUndergroundMap(int w, int h, int depth) {
+	private static AbstractMap.SimpleEntry<short[], SDTLevelData> createUndergroundMap(int w, int h, int depth) {
 		LevelGen mnoise1 = new LevelGen(w, h, 16);
 		LevelGen mnoise2 = new LevelGen(w, h, 16);
 		LevelGen mnoise3 = new LevelGen(w, h, 16);
@@ -650,10 +651,10 @@ public class LevelGen {
 			}
 		}
 		
-		return new MapWithData(map, data);
+		return new AbstractMap.SimpleEntry<short[], SDTLevelData>(map, data);
 	}
 	
-	private static MapWithData createSkyMap(int w, int h) {
+	private static AbstractMap.SimpleEntry<short[], SDTLevelData> createSkyMap(int w, int h) {
 		LevelGen noise1 = new LevelGen(w, h, 8);
 		LevelGen noise2 = new LevelGen(w, h, 8);
 		
@@ -718,16 +719,7 @@ public class LevelGen {
 			if (count >= w / 64) break;
 		}
 		
-		return new MapWithData(map, data);
-	}
-
-	public static class MapWithData {
-		public short[] map;
-		public SDTLevelData data;
-		MapWithData(short[] m, SDTLevelData d) {
-			map = m;
-			data = d;
-		}
+		return new AbstractMap.SimpleEntry<short[], SDTLevelData>(map, data);
 	}
 	
 	public static void main(String[] args) {
@@ -770,10 +762,10 @@ public class LevelGen {
 			int lvl = maplvls[idx++ % maplvls.length];
 			if (lvl > 1 || lvl < -4) continue;
 			
-			MapWithData fullmap = LevelGen.createAndValidateMap(w, h, lvl);
+			AbstractMap.SimpleEntry<short[], SDTLevelData> fullmap = LevelGen.createAndValidateMap(w, h, lvl);
 			
 			if (fullmap == null) continue;
-			short[] map = fullmap.map;
+			short[] map = fullmap.getKey();
 			
 			BufferedImage img = new BufferedImage(w, h, BufferedImage.TYPE_INT_RGB);
 			int[] pixels = new int[w * h];
