@@ -45,6 +45,7 @@ import org.json.JSONObject;
 import org.tinylog.Logger;
 
 import me.nullicorn.nedit.NBTOutputStream;
+import me.nullicorn.nedit.type.NBTCompound;
 
 public class Save {
 
@@ -165,13 +166,14 @@ public class Save {
 		
 		Renderer.render(); // AH HA!!! HERE'S AN IMPORTANT STATEMENT!!!!
 	}
-	public void writeSDTToFile(String filename, byte[] savedata) {
+	public void writeNBTComponentToFile(String filename, NBTCompound savedata) {
 		try {
 			FileOutputStream out = new FileOutputStream(filename);
 			DeflaterOutputStream dos = new DeflaterOutputStream(out, new Deflater(9));
-			dos.write(savedata);
-			dos.flush();
-			dos.close();
+			NBTOutputStream os = new NBTOutputStream(dos, false);
+			os.writeFully(savedata);
+			os.flush();
+			os.close();
 		} catch (IOException ex) {
 			ex.printStackTrace();
 		}
@@ -289,17 +291,7 @@ public class Save {
 		}
 		
 		for (int l = 0; l < World.levels.length; l++) {
-			try {
-				ByteArrayOutputStream data = new ByteArrayOutputStream();
-				NBTOutputStream os = new NBTOutputStream(data, false);
-				os.writeFully(World.levels[l].data.toNBT());
-				os.flush();
-				os.close();
-				writeSDTToFile(location + filename + l + extension + "data", data.toByteArray());
-			} catch (IOException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
+			writeNBTComponentToFile(location + filename + l + extension + "data", World.levels[l].data.toNBT());
 		}
 		
 	}
