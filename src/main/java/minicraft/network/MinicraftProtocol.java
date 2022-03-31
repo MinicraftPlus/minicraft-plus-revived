@@ -16,22 +16,4 @@ public interface MinicraftProtocol {
 		public static final List<InputType> entityUpdates = Arrays.asList(ENTITY, ADD, REMOVE);
 		public static final List<InputType> tileUpdates = Collections.singletonList(TILE);
 	}
-	
-	static InputType getInputType(char idxChar) {
-		InputType inType;
-		int idx = idxChar;
-		idx--; // the "-1" is because 1 is added originally so it does not make a null character, which is used to seperate requests.
-		
-		if(idx < InputType.values.length && idx >= 0)
-			inType = InputType.values[idx];
-		else {
-			System.err.println("Communication Error: Socket data has an invalid input type: " + idx);
-			return null;
-		}
-		
-		return inType;
-	}
-	
-	void endConnection();
-	boolean isConnected();
 }

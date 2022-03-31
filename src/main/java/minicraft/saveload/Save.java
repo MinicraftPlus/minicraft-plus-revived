@@ -27,14 +27,12 @@ import minicraft.entity.mob.AirWizard;
 import minicraft.entity.mob.EnemyMob;
 import minicraft.entity.mob.Mob;
 import minicraft.entity.mob.Player;
-import minicraft.entity.mob.RemotePlayer;
 import minicraft.entity.mob.Sheep;
 import minicraft.entity.particle.Particle;
 import minicraft.entity.particle.TextParticle;
 import minicraft.item.Inventory;
 import minicraft.item.Item;
 import minicraft.item.PotionType;
-import minicraft.network.MinicraftServer;
 import minicraft.screen.*;
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -87,18 +85,10 @@ public class Save {
 	public Save(String worldname) {
 		this(new File(Game.gameDir+"/saves/" + worldname + "/"));
 
-		if (Game.isValidClient()) {
-			// Clients are not allowed to save.
-			Updater.saving = false;
-			return;
-		}
-
 		writeGame("Game");
 		writeWorld("Level");
-		if (!Game.isValidServer()) { // This must be waited for on a server.
-			writePlayer("Player", Game.player);
-			writeInventory("Inventory", Game.player);
-		}
+		writePlayer("Player", Game.player);
+		writeInventory("Inventory", Game.player);
 		writeEntities("Entities");
 		
 		WorldSelectDisplay.refreshWorldNames();
@@ -106,18 +96,6 @@ public class Save {
 		Updater.notifyAll("World Saved!");
 		Updater.asTick = 0;
 		Updater.saving = false;
-	}
-
-	/**
-	 * This will save server config options
-	 * @param worldname The name of the world.
-	 * @param server
-	 */
-	public Save(String worldname, MinicraftServer server) {
-		this(new File(Game.gameDir+"/saves/" + worldname + "/"));
-		
-		Logger.debug("Writing server config...");
-		writeServerConfig("ServerConfig", server);
 	}
 
 	/** This will save the settings in the settings menu. */
@@ -236,12 +214,6 @@ public class Save {
 		}
 	}
 	
-	private void writeServerConfig(String filename, MinicraftServer server) {
-		data.add(String.valueOf(server.getPlayerCap()));
-		
-		writeToFile(location + filename + extension, data);
-	}
-	
 	private void writeWorld(String filename) {
 		LoadingDisplay.setMessage("Levels");
 		for (int l = 0; l < World.levels.length; l++) {
@@ -342,23 +314,17 @@ public class Save {
 		StringBuilder extradata = new StringBuilder();
 		
 		// Don't even write ItemEntities or particle effects; Spark... will probably is saved, eventually; it presents an unfair cheat to remove the sparks by reloading the Game.
-
-		// If(e instanceof Particle) return ""; // TODO I don't want to, but there are complications.
 		
-		if (isLocalSave && (e instanceof ItemEntity || e instanceof Arrow || e instanceof RemotePlayer || e instanceof Spark || e instanceof Particle)) // Write these only when sending a world, not writing it. (RemotePlayers are saved separately, when their info is received.)
+		if (isLocalSave && (e instanceof ItemEntity || e instanceof Arrow || e instanceof Spark || e instanceof Particle)) // Write these only when sending a world, not writing it. (RemotePlayers are saved separately, when their info is received.)
 			return "";
 		
 		if (!isLocalSave)
 			extradata.append(":").append(e.eid);
 		
-		if (!isLocalSave && e instanceof RemotePlayer) {
-			RemotePlayer rp = (RemotePlayer)e;
-			extradata.append(":").append(rp.getData());
-		} // The "else" part is so that remote player, which is a mob, doesn't get the health thing.
-		else if(e instanceof Mob) {
+		if (e instanceof Mob) {
 			Mob m = (Mob)e;
 			extradata.append(":").append(m.health);
-			if(e instanceof EnemyMob)
+			if (e instanceof EnemyMob)
 				extradata.append(":").append(((EnemyMob) m).lvl);
 			else if (e instanceof Sheep)
 				extradata.append(":").append(((Sheep) m).cut); // Saves if the sheep is cut. If not, we could reload the save and the wool would regenerate.

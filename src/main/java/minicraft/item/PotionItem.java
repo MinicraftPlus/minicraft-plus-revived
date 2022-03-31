@@ -2,10 +2,8 @@ package minicraft.item;
 
 import java.util.ArrayList;
 
-import minicraft.core.Game;
 import minicraft.entity.Direction;
 import minicraft.entity.mob.Player;
-import minicraft.entity.mob.RemotePlayer;
 import minicraft.gfx.Sprite;
 import minicraft.level.Level;
 import minicraft.level.tile.Tile;
@@ -50,10 +48,6 @@ public class PotionItem extends StackableItem {
 		if (player.getPotionEffects().containsKey(type) != addEffect) { // If hasEffect, and is disabling, or doesn't have effect, and is enabling...
 			if (!type.toggleEffect(player, addEffect))
 				return false; // Usage failed
-			
-			// Transmit the effect; server never uses potions without this.
-			if (type.transmitEffect() && Game.isValidServer() && player instanceof RemotePlayer) 
-				Game.server.getAssociatedThread((RemotePlayer)player).sendPotionEffect(type, addEffect);
 		}
 		
 		if (addEffect && type.duration > 0) player.potioneffects.put(type, type.duration); // Add it

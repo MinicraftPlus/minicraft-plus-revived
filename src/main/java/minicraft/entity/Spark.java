@@ -63,7 +63,7 @@ public class Spark extends Entity {
 		int randmirror = 0;
 
 		// If we are in a menu, or we are on a server.
-		if (Game.getMenu() == null || Game.ISONLINE) {
+		if (Game.getMenu() == null) {
 			// The blinking effect.
 			if (time >= lifeTime - 6 * 20) {
 				if (time / 6 % 2 == 0) return; // If time is divisible by 12, then skip the rest of the code.

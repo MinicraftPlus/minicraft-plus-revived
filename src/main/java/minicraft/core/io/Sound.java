@@ -92,7 +92,6 @@ public class Sound {
 	
 	public void play() {
 		if (!(boolean)Settings.get("sound") || clip == null) return;
-		if (Game.isValidServer()) return;
 		
 		if (clip.isRunning() || clip.isActive())
 			clip.stop();

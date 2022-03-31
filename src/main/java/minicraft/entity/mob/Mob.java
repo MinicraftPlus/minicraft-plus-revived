@@ -66,10 +66,6 @@ public abstract class Mob extends Entity {
 			yd = (int)Math.ceil(yKnockback/2);
 			yKnockback -= yKnockback/Math.abs(yKnockback);
 		}
-		
-		// if the player moved via knockback, update the server
-		if ((xd != 0 || yd != 0) && Game.isConnectedClient() && this == Game.player)
-			Game.client.move((Player)this, x+xd, y+yd);
 
 		move(xd, yd, false);
 	}
@@ -82,13 +78,11 @@ public abstract class Mob extends Entity {
 		int oldxt = x >> 4;
 		int oldyt = y >> 4;
 		
-		if (!(Game.isValidServer() && this instanceof RemotePlayer)) { // this will be the case when the client has sent a move packet to the server. In this case, we DO want to always move.
-			// These should return true b/c the mob is still technically moving; these are just to make it move *slower*.
-			if (tickTime % 2 == 0 && (isSwimming() || (!(this instanceof Player) && isWooling())))
-				return true;
-			if (tickTime % walkTime == 0 && walkTime > 1)
-				return true;
-		}
+		// These should return true b/c the mob is still technically moving; these are just to make it move *slower*.
+		if (tickTime % 2 == 0 && (isSwimming() || (!(this instanceof Player) && isWooling())))
+			return true;
+		if (tickTime % walkTime == 0 && walkTime > 1)
+			return true;
 		
 		boolean moved = true;
 		
@@ -108,35 +102,7 @@ public abstract class Mob extends Entity {
 			moved = super.move(xd, yd); // Call the move method from Entity
 		}
 		
-		if (Game.isValidServer() && (xd != 0 || yd != 0))
-			updatePlayers(oldxt, oldyt);
-		
 		return moved;
-	}
-	
-	public void updatePlayers(int oldxt, int oldyt) {
-		if (!Game.isValidServer()) return;
-		
-		List<RemotePlayer> prevPlayers = Game.server.getPlayersInRange(level, oldxt, oldyt, true);
-		
-		List<RemotePlayer> activePlayers = Game.server.getPlayersInRange(this, true);
-		for (int i = 0; i < prevPlayers.size(); i++) {
-			if (activePlayers.contains(prevPlayers.get(i))) {
-				activePlayers.remove(prevPlayers.remove(i));
-				i--;
-			}
-		}
-		for (int i = 0; i < activePlayers.size(); i++) {
-			if (prevPlayers.contains(activePlayers.get(i))) {
-				prevPlayers.remove(activePlayers.remove(i));
-				i--;
-			}
-		}
-		// The lists should now only contain players that are now out of range, and players that are just now in range.
-		for (RemotePlayer rp: prevPlayers)
-			 Game.server.getAssociatedThread(rp).sendEntityRemoval(this.eid);
-		for (RemotePlayer rp: activePlayers)
-			 Game.server.getAssociatedThread(rp).sendEntityAddition(this);
 	}
 
 	private boolean isWooling() { // supposed to walk at half speed on wool

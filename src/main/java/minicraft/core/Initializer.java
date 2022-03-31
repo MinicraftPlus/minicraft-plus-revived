@@ -12,9 +12,6 @@ import javax.imageio.ImageIO;
 import javax.swing.JFrame;
 import javax.swing.WindowConstants;
 
-import minicraft.core.io.ConsoleReader;
-import minicraft.network.MinicraftProtocol;
-import minicraft.screen.WorldSelectDisplay;
 import org.tinylog.Logger;
 
 public class Initializer extends Game {
@@ -33,7 +30,6 @@ public class Initializer extends Game {
 	static void parseArgs(String[] args) {
 		boolean debug = false;
 		boolean packetdebug = false;
-		boolean autoclient = false;
 		boolean autoserver = false;
 		
 		// Parses command line arguments
@@ -47,32 +43,6 @@ public class Initializer extends Game {
 			} else if (args[i].equals("--savedir") && i+1 < args.length) {
 				i++;
 				saveDir = args[i];
-			} else if (args[i].equals("--localclient")) {
-				autoclient = true;
-			} else if(args[i].equals("--server")) {
-				autoserver = true;
-				if (i + 1 < args.length) {
-					i++;
-					WorldSelectDisplay.setWorldName(args[i], true);
-				} else {
-					Logger.error("A world name is required.");
-					System.exit(1);
-				}
-			} else if (args[i].equals("--port")) {
-				int customPort = MinicraftProtocol.PORT;
-
-				if (i + 1 < args.length) {
-					String portString = args[++i];
-					try {
-						customPort = Integer.parseInt(portString);
-					} catch (NumberFormatException exception) {
-						Logger.error("Port wasn't a number! Using the default port: " + portString);
-					}
-				} else {
-					Logger.error("Missing new port! Using the default port " + MinicraftProtocol.PORT);
-				}
-
-				Game.CUSTOM_PORT = customPort;
 			} else if (args[i].equals("--fullscreen")) {
 				// Initializes fullscreen
 				Updater.FULLSCREEN = true;
@@ -83,8 +53,6 @@ public class Initializer extends Game {
 		HAS_GUI = !autoserver;
 		
 		FileHandler.determineGameDir(saveDir);
-		
-		Network.autoclient = autoclient; // This will make the game automatically jump to the MultiplayerMenu, and attempt to connect to localhost.
 	}
 	
 	
@@ -101,10 +69,6 @@ public class Initializer extends Game {
 		int frames = 0;
 		int ticks = 0;
 		long lastTimer1 = System.currentTimeMillis();
-		
-		// Main game loop? calls tick() and render().
-		if(!HAS_GUI)
-			new ConsoleReader().start();
 		
 		while (running) {
 			long now = System.nanoTime();

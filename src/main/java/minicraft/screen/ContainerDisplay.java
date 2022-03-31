@@ -68,12 +68,6 @@ public class ContainerDisplay extends Display {
 			int toSel = menus[otherIdx].getSelection();
 			int fromSel = curMenu.getSelection();
 			
-			if(Game.isValidClient() && from == chest.getInventory()) {
-				// just send, take no actual action
-				Game.client.removeFromChest(chest, fromSel, toSel, input.getKey("attack").clicked);
-				return;
-			}
-			
 			Item fromItem = from.get(fromSel);
 			
 			boolean transferAll = input.getKey("attack").clicked || !(fromItem instanceof StackableItem) || ((StackableItem)fromItem).count == 1;
@@ -90,13 +84,9 @@ public class ContainerDisplay extends Display {
 					from.remove(fromSel); // remove it
 			}
 			
-			if(!Game.isValidClient()) {
-				to.add(toSel, toItem);
-				update();
-			} else if(to == chest.getInventory()) {
-				// is online client, and from == player
-				Game.client.addToChest(chest, toSel, toItem);
-			}
+
+			to.add(toSel, toItem);
+			update();
 		}
 	}
 	
