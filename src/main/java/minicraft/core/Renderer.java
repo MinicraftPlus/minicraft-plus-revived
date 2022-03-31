@@ -187,7 +187,7 @@ public class Renderer extends Game {
 		// This draws the black square where the selected item would be if you were holding it
 		if (!isMode("creative") || player.activeItem != null) {
 			for (int x = 10; x < 26; x++) {
-				screen.render(x * 8, Screen.h - 8, 30 + 30 * 32, 0, 3);
+				screen.render(x * 8, Screen.h - 8, 31, 0, 3);
 			}
 		}
 			
