@@ -35,8 +35,6 @@ public class Sound {
 	public static void init() {} // A way to initialize the class without actually doing anything
 	
 	private Sound(String name) {
-		if (!Game.HAS_GUI) return;
-		
 		try {
 			URL url = getClass().getResource(name);
 			
@@ -49,14 +47,12 @@ public class Sound {
 				System.out.println("-source:");
 				Line.Info[] sinfo = AudioSystem.getSourceLineInfo(info);
 				Line.Info[] tinfo = AudioSystem.getTargetLineInfo(info);
-				for (int i = 0; i < sinfo.length; i++)
-				{
-					if (sinfo[i] instanceof DataLine.Info)
-					{
-						DataLine.Info dataLineInfo = (DataLine.Info) sinfo[i];
+				for (Line.Info value : sinfo) {
+					if (value instanceof DataLine.Info) {
+						DataLine.Info dataLineInfo = (DataLine.Info) value;
 						AudioFormat[] supportedFormats = dataLineInfo.getFormats();
-						for (AudioFormat af: supportedFormats)
-							 System.out.println(af);
+						for (AudioFormat af : supportedFormats)
+							System.out.println(af);
 					}
 				}
 				System.out.println("-target:");

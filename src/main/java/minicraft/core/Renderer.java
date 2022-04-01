@@ -79,8 +79,6 @@ public class Renderer extends Game {
 	}
 
 	static void initScreen() {
-		if (!HAS_GUI) return;
-		
 		image = new BufferedImage(WIDTH, HEIGHT, BufferedImage.TYPE_INT_RGB);
 		pixels = ((DataBufferInt) image.getRaster().getDataBuffer()).getData();
 
@@ -89,17 +87,15 @@ public class Renderer extends Game {
 		lightScreen = new Screen(sheets[0], sheets[1], sheets[2], sheets[3], sheets[4]);
 
 		screen.pixels = pixels;
-		
-		if (HAS_GUI) {
-			canvas.createBufferStrategy(3);
-			canvas.requestFocus();
-		}
+
+		canvas.createBufferStrategy(3);
+		canvas.requestFocus();
 	}
 	
 	
 	/** Renders the current screen. Called in game loop, a bit after tick(). */
 	public static void render() {
-		if (!HAS_GUI || screen == null) return; // No point in this if there's no gui... :P
+		if (screen == null) return; // No point in this if there's no gui... :P
 		
 		if (readyToRenderGameplay) {
 			renderLevel();

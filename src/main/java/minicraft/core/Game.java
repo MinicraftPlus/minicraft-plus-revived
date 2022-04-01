@@ -32,7 +32,6 @@ public class Game {
 	
 	public static boolean debug = false;
 	public static boolean packet_debug = false;
-	public static boolean HAS_GUI = true;
 	
 	public static final String NAME = "Minicraft Plus"; // This is the name on the application window.
 	public static final Version VERSION = new Version("2.1.0-dev2");

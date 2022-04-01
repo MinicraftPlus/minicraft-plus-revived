@@ -78,8 +78,7 @@ public class KeyInputDisplay extends Display {
 				menus[2].shouldRender = false;
 				menus[0] = builder.setEntries(getEntries())
 					.setSelection(menus[0].getSelection(), menus[0].getDispSelection())
-					.createMenu()
-				;
+					.createMenu();
 				selection = 0;
 			}
 			

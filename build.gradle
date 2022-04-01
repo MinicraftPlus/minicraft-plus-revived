@@ -25,7 +25,7 @@ repositories {
 }
 
 dependencies {
-    implementation 'org.jetbrains:annotations:22.0.0'
+    implementation 'org.jetbrains:annotations:23.0.0'
     implementation 'org.xbill:dns:2.0.8'
     implementation 'org.json:json:20211205'
     implementation 'com.mashape.unirest:unirest-java:1.4.9'

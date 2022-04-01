@@ -97,7 +97,7 @@ public class Updater extends Game {
         	
         	}
 
-		if (Updater.HAS_GUI && input.getKey("FULLSCREEN").clicked) {
+		if (input.getKey("FULLSCREEN").clicked) {
 			Updater.FULLSCREEN = !Updater.FULLSCREEN;
 			Updater.updateFullscreen();
 		}
@@ -158,20 +158,14 @@ public class Updater extends Game {
 			scoreTime--;
 		}
 
-		Tile.tickCount++;
-
 		// This is the general action statement thing! Regulates menus, mostly.
-		if (!Renderer.canvas.hasFocus() && HAS_GUI) {
+		if (!Renderer.canvas.hasFocus()) {
 			input.releaseAll();
 		}
-		if (Renderer.canvas.hasFocus() || !HAS_GUI) {
+		if (Renderer.canvas.hasFocus()) {
 			gameTime++;
 
 			input.tick(); // INPUT TICK; no other class should call this, I think...especially the *Menu classes.
-
-			for (int i = 0; i < levels.length; i++)
-				if (levels[i] != null)
-					levels[i].tick(i == currentLevel);
 
 			if (menu != null) {
 				// A menu is active.
@@ -182,7 +176,6 @@ public class Updater extends Game {
 			} else {
 				// No menu, currently.
 				paused = false;
-				
 
 				// If player is alive, but no level change, nothing happens here.
 				if (player.isRemoved() && Renderer.readyToRenderGameplay && !Bed.inBed(player)) {
@@ -199,6 +192,7 @@ public class Updater extends Game {
 				player.tick(); // Ticks the player when there's no menu.
 
 				if (level != null) {
+					level.tick(true);
 					Tile.tickCount++;
 				}
 				
@@ -207,7 +201,7 @@ public class Updater extends Game {
 				}
 				
 				// For debugging only
-				if (debug && HAS_GUI) {
+				if (debug) {
 					
 					if (input.getKey("ctrl-p").clicked) {
 						// Print all players on all levels, and their coordinates.

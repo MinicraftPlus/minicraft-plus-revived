@@ -8,7 +8,6 @@ import minicraft.screen.*;
 import org.jetbrains.annotations.Nullable;
 
 import minicraft.core.Game;
-import minicraft.core.Network;
 import minicraft.core.Updater;
 import minicraft.core.World;
 import minicraft.core.io.InputHandler;
@@ -277,7 +276,6 @@ public class Player extends Mob implements ItemHolder, ClientTickable {
 			if (!Bed.inBed(this) && !isSwimming()) {
 				fishingTicks--;
 				if (fishingTicks <= 0) {
-					// Checks to make sure that the client doesn't drop a "fake" item
 					goFishing();
 				}
 			} else {
@@ -1058,7 +1056,7 @@ public class Player extends Mob implements ItemHolder, ClientTickable {
 		if (Game.isMode("creative") || hurtTime > 0 || Bed.inBed(this)) return; // Can't get hurt in creative, hurt cooldown, or while someone is in bed
 
 		int healthDam = 0, armorDam = 0;
-		if (this != Game.player) {
+		if (this == Game.player) {
 			if (curArmor == null) { // No armor
 				healthDam = damage; // Subtract that amount
 			} else { // Has armor
@@ -1084,9 +1082,9 @@ public class Player extends Mob implements ItemHolder, ClientTickable {
 			}
 		}
 
-		if (healthDam > 0) {
+		if (healthDam > 0 || this != Game.player) {
 			level.add(new TextParticle("" + damage, x, y, Color.get(-1, 504)));
-			super.doHurt(healthDam, attackDir); // Sets knockback, and takes away health.
+			if (this == Game.player) super.doHurt(healthDam, attackDir); // Sets knockback, and takes away health.
 		}
 
 		Sound.playerHurt.play();

@@ -19,8 +19,6 @@ public class Initializer extends Game {
 
 	/**
 	 * Reference to actual frame, also it may be null.
-	 *
-	 * @see Renderer#HAS_GUI
 	 */
 	static JFrame frame;
 	static int fra, tik; // These store the number of frames and ticks in the previous second; used for fps, at least.
@@ -30,7 +28,6 @@ public class Initializer extends Game {
 	static void parseArgs(String[] args) {
 		boolean debug = false;
 		boolean packetdebug = false;
-		boolean autoserver = false;
 		
 		// Parses command line arguments
 		String saveDir = FileHandler.systemGameDir;
@@ -50,7 +47,6 @@ public class Initializer extends Game {
 		}
 		Game.debug = debug;
 		Game.packet_debug = packetdebug;
-		HAS_GUI = !autoserver;
 		
 		FileHandler.determineGameDir(saveDir);
 	}
@@ -102,8 +98,6 @@ public class Initializer extends Game {
 	
 	// Creates and displays the JFrame window that the game appears in.
 	static void createAndDisplayFrame() {
-		if (!HAS_GUI) return;
-		
 		Renderer.canvas.setMinimumSize(new java.awt.Dimension(1, 1));
 		Renderer.canvas.setPreferredSize(Renderer.getWindowSize());
 		JFrame frame = Initializer.frame = new JFrame(NAME);

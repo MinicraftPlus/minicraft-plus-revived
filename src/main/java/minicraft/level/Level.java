@@ -344,7 +344,7 @@ public class Level {
 			entitiesToAdd.remove(entity);
 		}
 		
-		if(fullTick) {
+		if (fullTick) {
 			// This prevents any entity (or tile) tick action from happening on a server level with no players.
 
 			for (int i = 0; i < w * h / 50; i++) {
