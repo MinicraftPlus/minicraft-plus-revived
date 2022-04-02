@@ -917,7 +917,7 @@ public class Level {
 
 					 c.populateInvRandom("minidungeon", chance);
 
-					 add(c, sp.x - 16, sp.y - 16);
+					 add(c, sp.x + rpt * 16, sp.y - 16);
 				}
 			}
 		}

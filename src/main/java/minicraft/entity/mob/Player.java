@@ -257,7 +257,6 @@ public class Player extends Mob implements ItemHolder, ClientTickable {
 	@Override
 	public void tick() {
 		if (level == null || isRemoved()) return;
-		
 		if (Game.getMenu() != null) return; // Don't tick player when menu is open
 		
 		super.tick(); // Ticks Mob.java
@@ -387,7 +386,7 @@ public class Player extends Mob implements ItemHolder, ClientTickable {
 			if (hunger == 0 && health > minStarveHealth[diffIdx]) {
 				if (hungerStarveDelay > 0) hungerStarveDelay--;
 				if (hungerStarveDelay == 0) {
-					hurt(this, 1, Direction.NONE); // Do 1 damage to the player
+					directHurt(1, Direction.NONE); // Do 1 damage to the player
 				}
 			}
 		}
@@ -437,7 +436,7 @@ public class Player extends Mob implements ItemHolder, ClientTickable {
 			
 			if (isSwimming() && tickTime % 60 == 0 && !potioneffects.containsKey(PotionType.Swim)) { // If drowning... :P
 				if (stamina > 0) payStamina(1); // Take away stamina
-				else hurt(this, 1, Direction.NONE); // If no stamina, take damage.
+				else directHurt(1, Direction.NONE); // If no stamina, take damage.
 			}
 			
 			if (activeItem != null && (input.getKey("drop-one").clicked || input.getKey("drop-stack").clicked)) {
@@ -1080,6 +1079,28 @@ public class Player extends Mob implements ItemHolder, ClientTickable {
 					curArmor = null; // Removes armor
 				}
 			}
+		}
+
+		if (healthDam > 0 || this != Game.player) {
+			level.add(new TextParticle("" + damage, x, y, Color.get(-1, 504)));
+			if (this == Game.player) super.doHurt(healthDam, attackDir); // Sets knockback, and takes away health.
+		}
+
+		Sound.playerHurt.play();
+		hurtTime = playerHurtTime;
+	}
+
+	/**
+	 * Hurt the player directly. Don't use the armor as a shield.
+	 * @param damage Amount of damage to do to player
+	 * @param attackDir The direction of attack.
+	 */
+	private void directHurt(int damage, Direction attackDir) {
+		if (Game.isMode("creative") || hurtTime > 0 || Bed.inBed(this)) return; // Can't get hurt in creative, hurt cooldown, or while someone is in bed
+
+		int healthDam = 0;
+		if (this == Game.player) {
+			healthDam = damage; // Subtract that amount
 		}
 
 		if (healthDam > 0 || this != Game.player) {
