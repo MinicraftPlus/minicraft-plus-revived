@@ -5,7 +5,7 @@ import java.util.ArrayList;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import minicraft.core.Network;
+import org.tinylog.Logger;
 
 public class Items {
 	
@@ -80,8 +80,7 @@ public class Items {
 		if (name.equalsIgnoreCase("NULL")) {
 			if (allowNull) return null;
 			else {
-				System.err.println("WARNING: Items.get passed argument \"null\" when null is not allowed; returning UnknownItem. StackTrace:");
-				Thread.dumpStack();
+				Logger.warn("Items.get passed argument \"null\" when null is not allowed; returning UnknownItem.");
 				return new UnknownItem("NULL");
 			}
 		}
@@ -105,8 +104,7 @@ public class Items {
 				((ToolItem)i).dur = data;
 			return i;
 		} else {
-			System.out.println(Network.onlinePrefix() + "ITEMS GET: Invalid name requested: \"" + name + "\"");
-			Thread.dumpStack();
+			Logger.error("Requested invalid item with name: '{}'", name);
 			return new UnknownItem(name);
 		}
 	}

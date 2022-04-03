@@ -28,26 +28,12 @@ public class PauseDisplay extends Display {
 			new SelectEntry("Options", () -> Game.setMenu(new OptionsWorldDisplay())),
 			new SelectEntry("Achievements", () -> Game.setMenu(new AchievementsDisplay()))
 			));
-		
-		/*
-		if(!Game.ISONLINE) {
-			entries.add(new SelectEntry("Make World Multiplayer", () -> {
-				Game.setMenu(null);
-				Analytics.LocalSession.ping();
-				Network.startMultiplayerServer();
-			}));
-		}
-		*/
-		if(!Game.isValidClient()) {
-			entries.add(new SelectEntry("Save Game", () -> {
-				Game.setMenu(null);
-				if(!Game.isValidServer())
-					new Save(WorldSelectDisplay.getWorldName());
-				else
-					Game.server.saveWorld();
-			}));
-		}
-		
+
+		entries.add(new SelectEntry("Save Game", () -> {
+			Game.setMenu(null);
+			new Save(WorldSelectDisplay.getWorldName());
+		}));
+
 		entries.addAll(Arrays.asList(
 			new SelectEntry("Main Menu", () -> {
 				ArrayList<ListEntry> items = new ArrayList<>();
@@ -55,27 +41,18 @@ public class PauseDisplay extends Display {
 					"Are you sure you want to",
 					MyUtils.fromNetworkStatus("Exit the Game?", "Leave the Server?", "Close the Server?")
 				)));
-				
-				if(!Game.isValidServer()) {
-					int color = MyUtils.fromNetworkStatus(Color.RED, Color.GREEN, Color.TRANSPARENT);
-					items.addAll(Arrays.asList(StringEntry.useLines(color, "",
-						MyUtils.fromNetworkStatus("All unsaved progress", "Your progress", ""),
-						MyUtils.fromNetworkStatus("will be lost!", "will be saved.", ""),
-						""
-					)));
-				}
+
+				int color = MyUtils.fromNetworkStatus(Color.RED, Color.GREEN, Color.TRANSPARENT);
+				items.addAll(Arrays.asList(StringEntry.useLines(color, "",
+					MyUtils.fromNetworkStatus("All unsaved progress", "Your progress", ""),
+					MyUtils.fromNetworkStatus("will be lost!", "will be saved.", ""),
+					""
+				)));
 				
 				items.add(new BlankEntry());
-				items.add(new SelectEntry(Game.isValidServer() ? "Cancel" : "No", Game::exitMenu));
+				items.add(new SelectEntry("Cancel", Game::exitMenu));
 				
-				if(Game.isValidServer())
-					items.add(new SelectEntry("Save and Quit", () -> {
-						Game.setMenu(new LoadingDisplay());
-						new Save(WorldSelectDisplay.getWorldName());
-						Game.setMenu(new TitleDisplay());
-					}));
-				
-				items.add(new SelectEntry(Game.isValidServer() ? "Quit without saving" : "Yes", () -> Game.setMenu(new TitleDisplay())));
+				items.add(new SelectEntry("Quit without saving", () -> Game.setMenu(new TitleDisplay())));
 				
 				Game.setMenu(new Display(false, true, new Menu.Builder(true, 8, RelPos.CENTER, items
 				).createMenu()));

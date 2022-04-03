@@ -30,13 +30,11 @@ public class PlayerDeathDisplay extends Display {
 		if(!Settings.get("mode").equals("hardcore")) {
 			entries.add(new SelectEntry("Respawn", () -> {
 				World.resetGame();
-				if (!Game.isValidClient())
-					Game.setMenu(null); //sets the menu to nothing
+				Game.setMenu(null); //sets the menu to nothing
 			}));
 		}
-		
-		if(Settings.get("mode").equals("hardcore") || !Game.isValidClient())
-			entries.add(new SelectEntry("Quit", () -> Game.setMenu(new TitleDisplay())));
+
+		entries.add(new SelectEntry("Quit", () -> Game.setMenu(new TitleDisplay())));
 		
 		menus = new Menu[]{
 			new Menu.Builder(true, 0, RelPos.LEFT, entries)

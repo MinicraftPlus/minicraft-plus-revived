@@ -30,10 +30,6 @@ public final class MyUtils {
 	}
 	
 	public static <T> T fromNetworkStatus(T offline, T client, T server) {
-		if (Game.isValidServer())
-			return server;
-		if (Game.isValidClient())
-			return client;
 		return offline;
 	}
 }

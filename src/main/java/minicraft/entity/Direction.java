@@ -4,7 +4,7 @@ public enum Direction {
 	
 	NONE(0, 0), DOWN(0, 1), UP(0, -1), LEFT(-1, 0), RIGHT(1, 0);
 	
-	private int x, y;
+	private final int x, y;
 	
 	Direction(int x, int y) {
 		this.x = x;

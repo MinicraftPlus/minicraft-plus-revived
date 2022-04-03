@@ -44,7 +44,6 @@ import minicraft.entity.mob.Mob;
 import minicraft.entity.mob.MobAi;
 import minicraft.entity.mob.Pig;
 import minicraft.entity.mob.Player;
-import minicraft.entity.mob.RemotePlayer;
 import minicraft.entity.mob.Sheep;
 import minicraft.entity.mob.Skeleton;
 import minicraft.entity.mob.Slime;
@@ -63,7 +62,6 @@ import minicraft.item.PotionType;
 import minicraft.item.StackableItem;
 import minicraft.level.Level;
 import minicraft.level.tile.Tiles;
-import minicraft.network.MinicraftServer;
 import minicraft.screen.AchievementsDisplay;
 import minicraft.screen.LoadingDisplay;
 import minicraft.screen.MultiplayerDisplay;
@@ -117,13 +115,6 @@ public class Load {
 			if (Game.isMode("creative"))
 				Items.fillCreativeInv(Game.player.getInventory(), false);
 		}
-	}
-	
-	public Load(String worldname, MinicraftServer server) {
-		location += "/saves/" + worldname + "/";
-		File testFile = new File(location + "ServerConfig" + extension);
-		if (testFile.exists())
-			loadServerConfig("ServerConfig", server);
 	}
 	
 	public Load() { this(Game.VERSION); }
@@ -404,12 +395,6 @@ public class Load {
 			AchievementsDisplay.setUnlockedAchievements(json.getJSONArray("unlockedAchievements"));
 	}
 	
-	private void loadServerConfig(String filename, MinicraftServer server) {
-		loadFromFile(location + filename + extension);
-		
-		server.setPlayerCap(Integer.parseInt(data.get(0)));
-	}
-	
 	private void loadWorld(String filename) {
 		for(int l = World.maxLevelDepth; l >= World.minLevelDepth; l--) {
 			LoadingDisplay.setMessage(Level.getDepthString(l));
@@ -536,12 +521,10 @@ public class Load {
 		Game.currentLevel = Integer.parseInt(data.remove(0));
 		Level level = World.levels[Game.currentLevel];
 		if (!player.isRemoved()) player.remove(); // Removes the user player from the level, in case they would be added twice.
-		if (!Game.isValidServer() || player != Game.player) {
-			if(level != null)
-				level.add(player);
-			else if(Game.debug)
-				System.out.println(Network.onlinePrefix() + "game level to add player " + player + " to is null.");
-		}
+		if(level != null)
+			level.add(player);
+		else
+			Logger.trace("Game level to add player {} to is null.", player);
 		
 		if (worldVer.compareTo(new Version("2.0.4-dev8")) < 0) {
 			String modedata = data.remove(0);
@@ -580,7 +563,6 @@ public class Load {
 		else
 			player.shirtColor = Integer.parseInt(data.remove(0));
 
-		// This works for some reason... lol
 		Settings.set("skinon", player.suitOn = Boolean.parseBoolean(data.remove(0)));
 	}
 	
@@ -693,9 +675,6 @@ public class Load {
 
 		String entityName = entityData.substring(0, entityData.indexOf("[")); // This gets the text before "[", which is the entity name.
 		
-		if (entityName.equals("Player") && Game.debug && Game.isValidClient())
-			System.out.println("CLIENT WARNING: Loading regular player: " + entityData);
-		
 		int x = Integer.parseInt(info.get(0));
 		int y = Integer.parseInt(info.get(1));
 		
@@ -705,7 +684,6 @@ public class Load {
 			
 			// If I find an entity that is loaded locally, but on another level in the entity data provided, then I ditch the current entity and make a new one from the info provided.
 			Entity existing = Network.getEntity(eid);
-			int entityLevel = Integer.parseInt(info.get(info.size()-1));
 			
 			if (existing != null) {
 				// Existing one is out of date; replace it.
@@ -713,42 +691,11 @@ public class Load {
 				Game.levels[Game.currentLevel].add(existing);
 				return null;
 			}
-			
-			if (Game.isValidClient()) {
-				if (eid == Game.player.eid)
-					return Game.player; // Don't reload the main player via an entity addition, though do add it to the level (will be done elsewhere)
-				if (Game.player instanceof RemotePlayer &&
-					!((RemotePlayer)Game.player).shouldTrack(x >> 4, y >> 4, World.levels[entityLevel])
-				) {
-					// The entity is too far away to bother adding to the level.
-					if(Game.debug) System.out.println("CLIENT: Entity is too far away to bother loading: " + eid);
-					Entity dummy = new Cow();
-					dummy.eid = eid;
-					return dummy; /// We need a dummy b/c it's the only way to pass along to entity id.
-				}
-			}
 		}
 		
 		Entity newEntity = null;
 		
-		if (entityName.equals("RemotePlayer")) {
-			if (isLocalSave) {
-				System.err.println("Remote player found in local save file.");
-				return null; // Don't load them; in fact, they shouldn't be here.
-			}
-			String username = info.get(2);
-			java.net.InetAddress ip;
-			try {
-				ip = java.net.InetAddress.getByName(info.get(3));
-				int port = Integer.parseInt(info.get(4));
-				newEntity = new RemotePlayer(null, ip, port);
-				((RemotePlayer)newEntity).setUsername(username);
-				if (Game.debug) System.out.println("Prob CLIENT: Loaded remote player");
-			} catch (java.net.UnknownHostException ex) {
-				System.err.println("LOAD could not read ip address of remote player in file.");
-				ex.printStackTrace();
-			}
-		} else if (entityName.equals("Spark") && !isLocalSave) {
+		if (entityName.equals("Spark") && !isLocalSave) {
 			int awID = Integer.parseInt(info.get(2));
 			Entity sparkOwner = Network.getEntity(awID);
 			if (sparkOwner instanceof AirWizard)
@@ -777,7 +724,7 @@ public class Load {
 		if (newEntity == null)
 			return null;
 		
-		if (newEntity instanceof Mob && !(newEntity instanceof RemotePlayer)) { // This is structured the same way as in Save.java.
+		if (newEntity instanceof Mob) { // This is structured the same way as in Save.java.
 			Mob mob = (Mob)newEntity;
 			mob.health = Integer.parseInt(info.get(2));
 
@@ -881,10 +828,7 @@ public class Load {
 		int curLevel = Integer.parseInt(info.get(info.size()-1));
 		if (World.levels[curLevel] != null) {
 			World.levels[curLevel].add(newEntity, x, y);
-			if (Game.debug && newEntity instanceof RemotePlayer)
-				World.levels[curLevel].printEntityStatus("Loaded ", newEntity, "mob.RemotePlayer");
-		} else if (newEntity instanceof RemotePlayer && Game.isValidClient())
-			System.out.println("CLIENT: Remote player not added because on null level");
+		}
 		
 		return newEntity;
 	}
