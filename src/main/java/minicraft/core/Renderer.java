@@ -10,6 +10,7 @@ import java.util.ArrayList;
 import java.util.Map;
 import java.util.Objects;
 
+import minicraft.core.io.Settings;
 import minicraft.entity.furniture.Bed;
 import minicraft.entity.mob.Player;
 import minicraft.gfx.Color;
@@ -35,8 +36,9 @@ import javax.imageio.ImageIO;
 public class Renderer extends Game {
 	private Renderer() {}
 	
-	public static final int HEIGHT = 192;
-	public static final int WIDTH = 288;
+	public static final int MAX_SIZE = 288;
+	public static int HEIGHT;
+	public static int WIDTH;
 	static float SCALE = 3;
 	
 	public static Screen screen; // Creates the main screen
@@ -78,7 +80,36 @@ public class Renderer extends Game {
 		return new SpriteSheet[] { itemSheet, tileSheet, entitySheet, guiSheet, skinsSheet };
 	}
 
-	static void initScreen() {
+	public static void setScreenResolution() {
+		int width = 0;
+		int height = 0;
+
+		switch ((String) Settings.get("screenresolution")) {
+			case "Native":
+				java.awt.Dimension size = java.awt.Toolkit.getDefaultToolkit().getScreenSize();
+				width = (int) size.getWidth();
+				height = (int) size.getHeight();
+				break;
+			
+			case "4x3":
+				width = 4;
+				height = 3;
+				break;
+
+			case "16x9":
+				width = 16;
+				height = 9;
+				break;
+			default:
+				break;
+		}
+
+		double s = Math.min((double) Renderer.MAX_SIZE/width, (double) Renderer.MAX_SIZE/height);
+		Renderer.HEIGHT = (int) (height * s);
+		Renderer.WIDTH = (int) (width * s);
+	}
+
+	public static void initScreen() {
 		image = new BufferedImage(WIDTH, HEIGHT, BufferedImage.TYPE_INT_RGB);
 		pixels = ((DataBufferInt) image.getRaster().getDataBuffer()).getData();
 

@@ -338,6 +338,7 @@ public class Load {
 		Settings.set("sound", json.getBoolean("sound"));
 		Settings.set("autosave", json.getBoolean("autosave"));
 		Settings.set("diff", json.has("diff") ? json.getString("diff") : "Normal");
+		Settings.set("screenresolution", json.has("screenresolution") ? json.getString("screenresolution") : "4x3");
 		Settings.set("fps", json.getInt("fps"));
 
 		if (prefVer.compareTo(new Version("2.1.0-dev1")) > 0) {
