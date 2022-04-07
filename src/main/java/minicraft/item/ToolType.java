@@ -1,13 +1,13 @@
 package minicraft.item;
 
 public enum ToolType {
-	Shovel (0, 24), // If there's a second number, it specifies durability.
-	Hoe (1, 20),
-	Sword (2, 42),
-	Pickaxe (3, 28),
-	Axe (4, 24),
-	Bow (5, 20),
-	Claymore (6, 34),
+	Shovel (0, 34), // If there's a second number, it specifies durability.
+	Hoe (1, 30),
+	Sword (2, 52),
+	Pickaxe (3, 38),
+	Axe (4, 34),
+	Bow (5, 30),
+	Claymore (6, 44),
 	Shears (0, 42, true);
 
 	public final int xPos; // X Position of origin

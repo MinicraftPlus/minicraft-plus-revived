@@ -50,10 +50,7 @@ class InventoryMenu extends ItemListMenu {
 			}
 			
 			if(holder.getLevel() != null) {
-				if(Game.isValidClient())
-					Game.client.dropItem(drop);
-				else
-					holder.getLevel().dropItem(holder.x, holder.y, drop);
+				holder.getLevel().dropItem(holder.x, holder.y, drop);
 			}
 		}
 	}

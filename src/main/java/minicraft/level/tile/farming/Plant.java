@@ -13,10 +13,10 @@ import minicraft.level.tile.Tiles;
 
 public class Plant extends FarmTile {
     protected static int maxAge = 100;
-    private String name;
+    private final String name;
 
     protected Plant(String name) {
-        super(name, (Sprite)null);
+        super(name, null);
         this.name = name;
     }
 

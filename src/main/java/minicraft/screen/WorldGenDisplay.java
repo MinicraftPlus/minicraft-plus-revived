@@ -40,7 +40,7 @@ public class WorldGenDisplay extends Display {
 				seed = 31*seed + seedStr.charAt(i);
 			}
 
-			return Long.valueOf(seed);
+			return seed;
 		}
 	}
 	

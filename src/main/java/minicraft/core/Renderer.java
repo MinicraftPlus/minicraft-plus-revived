@@ -79,8 +79,6 @@ public class Renderer extends Game {
 	}
 
 	static void initScreen() {
-		if (!HAS_GUI) return;
-		
 		image = new BufferedImage(WIDTH, HEIGHT, BufferedImage.TYPE_INT_RGB);
 		pixels = ((DataBufferInt) image.getRaster().getDataBuffer()).getData();
 
@@ -89,41 +87,25 @@ public class Renderer extends Game {
 		lightScreen = new Screen(sheets[0], sheets[1], sheets[2], sheets[3], sheets[4]);
 
 		screen.pixels = pixels;
-		
-		if (HAS_GUI) {
-			canvas.createBufferStrategy(3);
-			canvas.requestFocus();
-		}
+
+		canvas.createBufferStrategy(3);
+		canvas.requestFocus();
 	}
 	
 	
 	/** Renders the current screen. Called in game loop, a bit after tick(). */
 	public static void render() {
-		if (!HAS_GUI || screen == null) return; // No point in this if there's no gui... :P
+		if (screen == null) return; // No point in this if there's no gui... :P
 		
 		if (readyToRenderGameplay) {
-			if (isValidServer()) {
-				screen.clear(0);
-				Font.drawCentered("Awaiting client connections"+ ellipsis.updateAndGet(), screen, 10, Color.get(-1, 444));
-				Font.drawCentered("So far:", screen, 20, Color.get(-1, 444));
-				int i = 0;
-				for (String playerString: server.getClientInfo()) {
-					Font.drawCentered(playerString, screen, 30 + i * 10, Color.get(-1, 134));
-					i++;
-				}
-				
-				renderDebugInfo();
-			}
-			else {
-				renderLevel();
-				renderGui();
-			}
+			renderLevel();
+			renderGui();
 		}
 		
 		if (menu != null) // Renders menu, if present.
 			menu.render(screen);
 		
-		if (!canvas.hasFocus() && !ISONLINE) renderFocusNagger(); // Calls the renderFocusNagger() method, which creates the "Click to Focus" message.
+		if (!canvas.hasFocus()) renderFocusNagger(); // Calls the renderFocusNagger() method, which creates the "Click to Focus" message.
 		
 		
 		BufferStrategy bs = canvas.getBufferStrategy(); // Creates a buffer strategy to determine how the graphics should be buffered.
@@ -187,7 +169,7 @@ public class Renderer extends Game {
 		// This draws the black square where the selected item would be if you were holding it
 		if (!isMode("creative") || player.activeItem != null) {
 			for (int x = 10; x < 26; x++) {
-				screen.render(x * 8, Screen.h - 8, 30 + 30 * 32, 0, 3);
+				screen.render(x * 8, Screen.h - 8, 31, 0, 3);
 			}
 		}
 			
@@ -215,21 +197,8 @@ public class Renderer extends Game {
 		ArrayList<String> permStatus = new ArrayList<>();
 		if (Updater.saving) permStatus.add("Saving... " + Math.round(LoadingDisplay.getPercentage()) + "%");
 		if (Bed.sleeping()) permStatus.add("Sleeping...");
-		else if (!Game.isValidServer() && Bed.getPlayersAwake() > 0) {
-			int numAwake = Bed.getPlayersAwake();
-			if (Bed.inBed(Game.player)) {
-				permStatus.add(MyUtils.plural(numAwake, "player") + " still awake");
-				permStatus.add(" ");
-				permStatus.add("Press " + input.getMapping("exit") + " to cancel");
-			}
-			else if(Game.isValidClient()) {
-				// Draw it in a corner
-				int total = Game.client.getPlayerCount();
-				int sleepCount = total - numAwake;
-				if (sleepCount > 0)
-					new FontStyle(Color.WHITE).setRelTextPos(RelPos.BOTTOM_LEFT).setAnchor(Screen.w, 0)
-				.draw(sleepCount + "/" + total + " players sleeping", screen);
-			}
+		if (Bed.inBed(Game.player)) {
+			permStatus.add("Press " + input.getMapping("exit") + " to cancel");
 		}
 		
 		if(permStatus.size() > 0) {
@@ -369,36 +338,31 @@ public class Renderer extends Game {
 			info.add("Day tiks: " + Updater.tickCount + " (" + Updater.getTime() + ")");
 			info.add((Updater.normSpeed * Updater.gamespeed) + " tps");
 			
-			if (!isValidServer()) {
-				info.add("walk spd: " + player.moveSpeed);
-				info.add("X: " + (player.x / 16) + "-" + (player.x % 16));
-				info.add("Y: " + (player.y / 16) + "-" + (player.y % 16));
-				if (levels[currentLevel] != null)
-					info.add("Tile: " + levels[currentLevel].getTile(player.x >> 4, player.y >> 4).name);
-				if (isMode("score")) info.add("Score: " + player.getScore());
-			}
+
+			info.add("walk spd: " + player.moveSpeed);
+			info.add("X: " + (player.x / 16) + "-" + (player.x % 16));
+			info.add("Y: " + (player.y / 16) + "-" + (player.y % 16));
+			if (levels[currentLevel] != null)
+				info.add("Tile: " + levels[currentLevel].getTile(player.x >> 4, player.y >> 4).name);
+			if (isMode("score")) info.add("Score: " + player.getScore());
 			
 			if (levels[currentLevel] != null) {
-				if (!isValidClient())
-					info.add("Mob Cnt: " + levels[currentLevel].mobCount + "/" + levels[currentLevel].maxMobCount);
-				else
-					info.add("Mob Load Cnt: " + levels[currentLevel].mobCount);
+				info.add("Mob Cnt: " + levels[currentLevel].mobCount + "/" + levels[currentLevel].maxMobCount);
 			}
 			
 			// Displays number of chests left, if on dungeon level.
-			if (levels[currentLevel] != null && (isValidServer() || currentLevel == 5 && !isValidClient())) {
+			if (levels[currentLevel] != null && currentLevel == 5) {
 				if (levels[5].chestCount > 0)
 					info.add("Chests: " + levels[5].chestCount);
 				else
 					info.add("Chests: Complete!");
 			}
 			
-			if (!isValidServer()) {
-				info.add("Hunger stam: " + player.getDebugHunger());
-				if (player.armor > 0) {
-					info.add("Armor: " + player.armor);
-					info.add("Dam buffer: " + player.armorDamageBuffer);
-				}
+
+			info.add("Hunger stam: " + player.getDebugHunger());
+			if (player.armor > 0) {
+				info.add("Armor: " + player.armor);
+				info.add("Dam buffer: " + player.armorDamageBuffer);
 			}
 
 			if (levels[currentLevel] != null) {
@@ -406,13 +370,7 @@ public class Renderer extends Game {
 			}
 			
 			FontStyle style = new FontStyle(textcol).setShadowType(Color.BLACK, true).setXPos(1);
-			
-			if (Game.isValidServer()) {
-				style.setYPos(Screen.h).setRelTextPos(RelPos.TOP_RIGHT, true);
-				for (int i = 1; i < info.size(); i++) // Reverse order
-					info.add(0, info.remove(i));
-			} else
-				style.setYPos(2);
+			style.setYPos(2);
 			Font.drawParagraph(info, screen, style, 2);
 		}
 	}

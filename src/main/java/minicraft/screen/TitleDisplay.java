@@ -13,7 +13,6 @@ import minicraft.core.VersionInfo;
 import minicraft.core.World;
 import minicraft.core.io.InputHandler;
 import minicraft.core.io.Localization;
-import minicraft.entity.mob.RemotePlayer;
 import minicraft.gfx.Color;
 import minicraft.gfx.Font;
 import minicraft.gfx.Point;
@@ -71,19 +70,6 @@ public class TitleDisplay extends Display {
 		// Check version
 		checkVersion();
 
-		/// This is useful to just ensure that everything is really reset as it should be. 
-		if (Game.server != null) {
-			if (Game.debug) System.out.println("Wrapping up loose server ends.");
-			Game.server.endConnection();
-			Game.server = null;
-		}
-		if (Game.client != null) {
-			if (Game.debug) System.out.println("Wrapping up loose client ends.");
-			Game.client.endConnection();
-			Game.client = null;
-		}
-		Game.ISONLINE = false;
-
 		LocalDateTime time = LocalDateTime.now();
 		if (time.getMonth() == Month.DECEMBER) {
 			if (time.getDayOfMonth() == 19) rand = 1;
@@ -94,7 +80,7 @@ public class TitleDisplay extends Display {
 		
 		World.levels = new Level[World.levels.length];
 		
-		if(Game.player == null || Game.player instanceof RemotePlayer)
+		if(Game.player == null)
 			// Was online, need to reset player
 			World.resetGame(false);
 	}
@@ -173,8 +159,8 @@ public class TitleDisplay extends Display {
 		"Secret Splash!",
 		"Happy birthday Minicraft!",
 		"Happy XMAS!",
-                "Now with Customizable Skins!",
-                "Skin Update by Litorom1 and El Virus!",
+        "Now with Customizable Skins!",
+        "Skin Update by Litorom1 and El Virus!",
 		"Now with better fishing!",
 		"Now with better tools!",
 		"Now with better chests!",

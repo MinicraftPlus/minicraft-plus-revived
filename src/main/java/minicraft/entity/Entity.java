@@ -174,11 +174,6 @@ public abstract class Entity implements Tickable {
 		List<Entity> wasInside = level.getEntitiesInRect(getBounds()); // Gets all of the entities that are inside this entity (aka: colliding) before moving.
 		
 		int xr = this.xr, yr = this.yr;
-		if (Game.isValidClient() && this instanceof Player) {
-			xr++;
-			yr++;
-		}
-
 		List<Entity> isInside = level.getEntitiesInRect(new Rectangle(x+xd, y+yd, xr*2, yr*2, Rectangle.CENTER_DIMS)); // Gets the entities that this entity will touch once moved.
 		if (interact) {
 			for (Entity e : isInside) {
@@ -237,8 +232,6 @@ public abstract class Entity implements Tickable {
 		if (level == null) {
 			System.out.println("Tried to set level of entity " + this + " to a null level; Should use remove(level)");
 			return;
-		} else if (level != this.level && Game.isValidServer() && this.level != null) {
-			Game.server.broadcastEntityRemoval(this, this.level, !(this instanceof Player));
 		}
 		
 		this.level = level;
@@ -293,10 +286,6 @@ public abstract class Entity implements Tickable {
 			 String fieldName = field.substring(0, field.indexOf(","));
 			 String val = field.substring(field.indexOf(",")+1);
 			 updateField(fieldName, val);
-		}
-		
-		if(Game.isValidClient() && this instanceof MobAi) {
-			lastUpdate = System.nanoTime();
 		}
 	}
 	

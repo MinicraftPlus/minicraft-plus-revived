@@ -44,8 +44,6 @@ public class ClothingItem extends StackableItem {
 			return false;
 		} else {
 			player.shirtColor = playerCol;
-			if (Game.isValidClient())
-				Game.client.sendShirtColor();
 			return super.interactOn(true);
 		}
 	}

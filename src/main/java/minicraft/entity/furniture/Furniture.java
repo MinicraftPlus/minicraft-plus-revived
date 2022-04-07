@@ -7,7 +7,6 @@ import minicraft.core.io.Sound;
 import minicraft.entity.Direction;
 import minicraft.entity.Entity;
 import minicraft.entity.mob.Player;
-import minicraft.entity.mob.RemotePlayer;
 import minicraft.gfx.Screen;
 import minicraft.gfx.Sprite;
 import minicraft.item.FurnitureItem;
@@ -94,18 +93,11 @@ public class Furniture extends Entity {
 	public boolean interact(Player player, @Nullable Item item, Direction attackDir) {
 		if (item instanceof PowerGloveItem) {
 			Sound.monsterHurt.play();
-			if (!Game.ISONLINE) {
 				remove();
 				if (!Game.isMode("creative") && player.activeItem != null && !(player.activeItem instanceof PowerGloveItem))
 					player.getInventory().add(0, player.activeItem); // Put whatever item the player is holding into their inventory
 				player.activeItem = new FurnitureItem(this); // Make this the player's current item.
 				return true;
-			} else if (Game.isValidServer() && player instanceof RemotePlayer) {
-				remove();
-				Game.server.getAssociatedThread((RemotePlayer) player).updatePlayerActiveItem(new FurnitureItem(this));
-				return true;
-			} else
-				System.out.println("WARNING: undefined behavior; online game was not server and ticked furniture: " + this + "; and/or player in online game found that isn't a RemotePlayer: " + player);
 		}
 		return false;
 	}
@@ -118,9 +110,6 @@ public class Furniture extends Entity {
 		if (pushTime == 0) {
 			pushDir = player.dir; // Set pushDir to the player's dir.
 			pushTime = multiPushTime = 10; // Set pushTime to 10.
-			
-			if (Game.isConnectedClient())
-				Game.client.pushFurniture(this);
 		}
 	}
 	

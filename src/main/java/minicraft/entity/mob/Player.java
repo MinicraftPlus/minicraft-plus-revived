@@ -8,7 +8,6 @@ import minicraft.screen.*;
 import org.jetbrains.annotations.Nullable;
 
 import minicraft.core.Game;
-import minicraft.core.Network;
 import minicraft.core.Updater;
 import minicraft.core.World;
 import minicraft.core.io.InputHandler;
@@ -51,6 +50,7 @@ import minicraft.level.tile.Tiles;
 import minicraft.network.Analytics;
 import minicraft.saveload.Save;
 import minicraft.util.Vector2;
+import org.tinylog.Logger;
 
 public class Player extends Mob implements ItemHolder, ClientTickable {
 	protected InputHandler input;
@@ -219,7 +219,7 @@ public class Player extends Mob implements ItemHolder, ClientTickable {
 	}
 	
 	public void tickMultiplier() {
-		if ((Game.ISONLINE || !Updater.paused) && multiplier > 1) {
+		if ((!Updater.paused) && multiplier > 1) {
 			if (multipliertime != 0) multipliertime--;
 			if (multipliertime <= 0) resetMultiplier();
 		}
@@ -228,8 +228,7 @@ public class Player extends Mob implements ItemHolder, ClientTickable {
 	public int getScore() { return score; }
 	public void setScore(int score) { this.score = score; }
 	public void addScore(int points) {
-		if (!Game.isValidClient()) // The server will handle the score.
-			score += points * getMultiplier();
+		score += points * getMultiplier();
 	}
 	
 	/**
@@ -258,13 +257,11 @@ public class Player extends Mob implements ItemHolder, ClientTickable {
 	@Override
 	public void tick() {
 		if (level == null || isRemoved()) return;
-		
-		if (Game.getMenu() != null && !Game.ISONLINE) return; // Don't tick player when menu is open
+		if (Game.getMenu() != null) return; // Don't tick player when menu is open
 		
 		super.tick(); // Ticks Mob.java
-		
-		if (!Game.isValidClient())
-			tickMultiplier();
+
+		tickMultiplier();
 		
 		if (potioneffects.size() > 0 && !Bed.inBed(this)) {
 			for (PotionType potionType: potioneffects.keySet().toArray(new PotionType[0])) {
@@ -278,10 +275,7 @@ public class Player extends Mob implements ItemHolder, ClientTickable {
 			if (!Bed.inBed(this) && !isSwimming()) {
 				fishingTicks--;
 				if (fishingTicks <= 0) {
-					// Checks to make sure that the client doesn't drop a "fake" item
-					if (!Game.isConnectedClient()) {
-						goFishing();
-					}
+					goFishing();
 				}
 			} else {
 				isFishing = false;
@@ -392,7 +386,7 @@ public class Player extends Mob implements ItemHolder, ClientTickable {
 			if (hunger == 0 && health > minStarveHealth[diffIdx]) {
 				if (hungerStarveDelay > 0) hungerStarveDelay--;
 				if (hungerStarveDelay == 0) {
-					hurt(this, 1, Direction.NONE); // Do 1 damage to the player
+					directHurt(1, Direction.NONE); // Do 1 damage to the player
 				}
 			}
 		}
@@ -434,10 +428,6 @@ public class Player extends Mob implements ItemHolder, ClientTickable {
 				Direction newDir = Direction.getDirection(xd, yd);
 				if (newDir == Direction.NONE) newDir = dir;
 
-				// On multiplayer move the local player.
-				if ((xd != 0 || yd != 0 || newDir != dir) && Game.isConnectedClient() && this == Game.player)
-					Game.client.move(this, x + xd, y + yd);
-
 				// Move the player
 				boolean moved = move(xd, yd); // THIS is where the player moves; part of Mob.java
 				if (moved) stepCount++;
@@ -446,7 +436,7 @@ public class Player extends Mob implements ItemHolder, ClientTickable {
 			
 			if (isSwimming() && tickTime % 60 == 0 && !potioneffects.containsKey(PotionType.Swim)) { // If drowning... :P
 				if (stamina > 0) payStamina(1); // Take away stamina
-				else hurt(this, 1, Direction.NONE); // If no stamina, take damage.
+				else directHurt(1, Direction.NONE); // If no stamina, take damage.
 			}
 			
 			if (activeItem != null && (input.getKey("drop-one").clicked || input.getKey("drop-stack").clicked)) {
@@ -459,11 +449,8 @@ public class Player extends Mob implements ItemHolder, ClientTickable {
 				} else if (!Game.isMode("creative")) {
 					activeItem = null; // Remove it from the "inventory"
 				}
-				
-				if (Game.isValidClient())
-					Game.client.dropItem(drop);
-				else
-					level.dropItem(x, y, drop);
+
+				level.dropItem(x, y, drop);
 			}
 			
 			if ((activeItem == null || !activeItem.used_pending) && (input.getKey("attack").clicked) && stamina != 0 && onFallDelay <= 0) { // This only allows attacks when such action is possible.
@@ -471,9 +458,6 @@ public class Player extends Mob implements ItemHolder, ClientTickable {
 				staminaRecharge = 0;
 
 				attack();
-				
-				if (Game.ISONLINE && activeItem != null && activeItem.interactsWithWorld() && !(activeItem instanceof ToolItem))
-					activeItem.used_pending = true;
 			}
 			
 			if (input.getKey("menu").clicked && activeItem != null) {
@@ -491,7 +475,7 @@ public class Player extends Mob implements ItemHolder, ClientTickable {
 
 				if (input.getKey("info").clicked) Game.setMenu(new InfoDisplay());
 
-				if (input.getKey("quicksave").clicked && !Updater.saving && !(this instanceof RemotePlayer) && !Game.isValidClient()) {
+				if (input.getKey("quicksave").clicked && !Updater.saving) {
 					Updater.saving = true;
 					LoadingDisplay.setPercentage(0);
 					new Save(WorldSelectDisplay.getWorldName());
@@ -500,8 +484,6 @@ public class Player extends Mob implements ItemHolder, ClientTickable {
 				if (Game.debug && input.getKey("shift-p").clicked) { // Remove all potion effects
 					for (PotionType potionType : potioneffects.keySet()) {
 						PotionItem.applyPotion(this, potionType, false);
-						if (Game.isConnectedClient() && this == Game.player)
-							Game.client.sendPotionEffect(potionType, false);
 					}
 				}
 
@@ -511,8 +493,7 @@ public class Player extends Mob implements ItemHolder, ClientTickable {
 						activeItem = new PowerGloveItem(); // and replace it with a power glove.
 					}
 					attack(); // Attack (with the power glove)
-					if(!Game.ISONLINE)
-						resolveHeldItem();
+					resolveHeldItem();
 				}
 			}
 			
@@ -521,8 +502,6 @@ public class Player extends Mob implements ItemHolder, ClientTickable {
 				if(attackTime == 0) attackItem = null; // null the attackItem once we are done attacking.
 			}
 		}
-		
-		if (Game.isConnectedClient() && this == Game.player) Game.client.sendPlayerUpdate(this);
 	}
 	
 	/**
@@ -555,13 +534,6 @@ public class Player extends Mob implements ItemHolder, ClientTickable {
 			fishingTicks = maxFishingTicks;
 		}
 
-		// Bit of a FIXME for fishing to work on servers
-		if (activeItem instanceof FishingRodItem && Game.isValidClient()) {
-			Point t = getInteractionTile();
-			Tile tile = level.getTile(t.x, t.y);
-			activeItem.interactOn(tile, level, t.x, t.y, this, attackDir);
-		}
-
 		if (activeItem != null && !activeItem.interactsWithWorld()) {
 			attackDir = dir; // Make the attack direction equal the current direction
 			attackItem = activeItem; // Make attackItem equal activeItem
@@ -569,27 +541,6 @@ public class Player extends Mob implements ItemHolder, ClientTickable {
 			activeItem.interactOn(Tiles.get("rock"), level, 0, 0, this, attackDir);
 			if (!Game.isMode("creative") && activeItem.isDepleted()) {
 				activeItem = null;
-			}
-			return;
-		}
-		
-		// If this is a multiplayer game, than the server will execute the full method instead.
-		if (Game.isConnectedClient()) {
-			attackDir = dir;
-			if(activeItem != null)
-				attackTime = 10;
-			else
-				attackTime = 5;
-			
-			attackItem = activeItem;
-			
-			Game.client.requestInteraction(this);
-			// We are going to use an arrow.
-			if((activeItem instanceof ToolItem) // Is the player currently holding a tool?
-					&& ((stamina - 1) >= 0) // Does the player have any more stamina left?
-					&& (((ToolItem) activeItem).type == ToolType.Bow) // Is the item a bow?
-					&& (inventory.count(Items.arrowItem) > 0)) { // Does the player have an arrow in its inventory?
-				inventory.removeItem(Items.arrowItem); // Remove the arrow from the inventory.
 			}
 			return;
 		}
@@ -643,11 +594,6 @@ public class Player extends Mob implements ItemHolder, ClientTickable {
 					} else if (tile.interact(level, t.x, t.y, this, activeItem, attackDir)){
 						done = true;
 					}
-				}
-				
-				if (Game.isValidServer() && this instanceof RemotePlayer) { // Only do this if no interaction was actually made; b/c a tile update packet will generally happen then anyway.
-					minicraft.network.MinicraftServerThread thread = Game.server.getAssociatedThread((RemotePlayer)this);
-					thread.sendTileUpdate(level, t.x, t.y); /// FIXME this part is as a semi-temporary fix for those odd tiles that don't update when they should; instead of having to make another system like the entity additions and removals (and it wouldn't quite work as well for this anyway), this will just update whatever tile the player interacts with (and fails, since a successful interaction changes the tile and therefore updates it anyway).
 				}
 				
 				if (!Game.isMode("creative") && activeItem.isDepleted()) {
@@ -752,9 +698,6 @@ public class Player extends Mob implements ItemHolder, ClientTickable {
 
 		if (caught) {
 			isFishing = false;
-			if (Game.isValidServer()) {
-				Game.server.broadcastStopFishing(this.eid);
-			}
 		}
 		fishingTicks = maxFishingTicks; // If you didn't catch anything, try again in 120 ticks
 	}
@@ -1055,8 +998,6 @@ public class Player extends Mob implements ItemHolder, ClientTickable {
 
 		if (cost < 0) cost = 0; // Error correction
 		stamina -= Math.min(stamina, cost); // Subtract the cost from the current stamina
-		if (Game.isValidServer() && this instanceof RemotePlayer)
-			Game.server.getAssociatedThread((RemotePlayer)this).sendStaminaChange(cost);
 		return true; // Success
 	}
 
@@ -1078,10 +1019,7 @@ public class Player extends Mob implements ItemHolder, ClientTickable {
 	/** What happens when the player dies */
 	@Override
 	public void die() {
-		if (!Network.ISONLINE)
-			Analytics.SinglePlayerDeath.ping();
-		else if (Network.isConnectedClient())
-			Analytics.MultiplayerDeath.ping();
+		Analytics.SinglePlayerDeath.ping();
 
 		score -= score / 3; // Subtracts score penalty (minus 1/3 of the original score)
 		resetMultiplier();
@@ -1094,10 +1032,8 @@ public class Player extends Mob implements ItemHolder, ClientTickable {
 
 		Sound.playerDeath.play();
 
-		if (!Game.ISONLINE)
-			World.levels[Game.currentLevel].add(dc);
-		else if (Game.isConnectedClient())
-			Game.client.sendPlayerDeath(this, dc);
+
+		World.levels[Game.currentLevel].add(dc);
 
 		super.die(); // Calls the die() method in Mob.java
 	}
@@ -1118,16 +1054,8 @@ public class Player extends Mob implements ItemHolder, ClientTickable {
 	protected void doHurt(int damage, Direction attackDir) {
 		if (Game.isMode("creative") || hurtTime > 0 || Bed.inBed(this)) return; // Can't get hurt in creative, hurt cooldown, or while someone is in bed
 
-		if (Game.isValidServer() && this instanceof RemotePlayer) {
-			// Let the clients deal with it.
-			Game.server.broadcastPlayerHurt(eid, damage, attackDir);
-			return;
-		}
-
-		boolean fullPlayer = !(Game.isValidClient() && this != Game.player);
-
 		int healthDam = 0, armorDam = 0;
-		if (fullPlayer) {
+		if (this == Game.player) {
 			if (curArmor == null) { // No armor
 				healthDam = damage; // Subtract that amount
 			} else { // Has armor
@@ -1153,9 +1081,31 @@ public class Player extends Mob implements ItemHolder, ClientTickable {
 			}
 		}
 
-		if (healthDam > 0 || !fullPlayer) {
+		if (healthDam > 0 || this != Game.player) {
 			level.add(new TextParticle("" + damage, x, y, Color.get(-1, 504)));
-			if(fullPlayer) super.doHurt(healthDam, attackDir); // Sets knockback, and takes away health.
+			if (this == Game.player) super.doHurt(healthDam, attackDir); // Sets knockback, and takes away health.
+		}
+
+		Sound.playerHurt.play();
+		hurtTime = playerHurtTime;
+	}
+
+	/**
+	 * Hurt the player directly. Don't use the armor as a shield.
+	 * @param damage Amount of damage to do to player
+	 * @param attackDir The direction of attack.
+	 */
+	private void directHurt(int damage, Direction attackDir) {
+		if (Game.isMode("creative") || hurtTime > 0 || Bed.inBed(this)) return; // Can't get hurt in creative, hurt cooldown, or while someone is in bed
+
+		int healthDam = 0;
+		if (this == Game.player) {
+			healthDam = damage; // Subtract that amount
+		}
+
+		if (healthDam > 0 || this != Game.player) {
+			level.add(new TextParticle("" + damage, x, y, Color.get(-1, 504)));
+			if (this == Game.player) super.doHurt(healthDam, attackDir); // Sets knockback, and takes away health.
 		}
 
 		Sound.playerHurt.play();
@@ -1164,10 +1114,7 @@ public class Player extends Mob implements ItemHolder, ClientTickable {
 
 	@Override
 	public void remove() {
-		if (Game.debug) {
-			System.out.println(Network.onlinePrefix() + "Removing player from level " + getLevel());
-			//Thread.dumpStack();
-		}
+		Logger.trace("Removing player from level " + getLevel());
 		super.remove();
 	}
 
