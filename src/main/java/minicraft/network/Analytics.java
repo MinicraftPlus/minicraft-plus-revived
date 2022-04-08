@@ -60,7 +60,7 @@ public enum Analytics {
 		return Unirest.get(url).asBinaryAsync(new Callback<InputStream>() {
 			@Override
 			public void completed(HttpResponse<InputStream> response) {
-				Logger.debug("Ping success for {}, with value {}.", name(), value);
+				Logger.trace("Ping success for {}, with value {}.", name(), value);
 			}
 			
 			@Override

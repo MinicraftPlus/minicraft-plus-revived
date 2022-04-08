@@ -72,10 +72,11 @@ public class Localization {
 	public static void changeLanguage(@NotNull String newLanguage) {
 		selectedLocale = Locale.forLanguageTag(newLanguage);
 
-		updateLanguage();
+		reloadLanguage();
 	}
 
-	public static void updateLanguage() {
+	private static void reloadLanguage() {
+		Logger.trace("Reloading language...");
 		localization.clear();
 
 		// Check if selectedLanguage is empty.
@@ -112,7 +113,7 @@ public class Localization {
 	public static Locale[] getLocales() { return localizationFiles.keySet().toArray(new Locale[0]); }
 
 	@NotNull
-	public static String[] getLocalesString() {
+	public static String[] getLocalesAsString() {
 		ArrayList<String> locs = new ArrayList<>();
 		for (Locale loc : localizationFiles.keySet()) {
 			locs.add(loc.toLanguageTag());
@@ -139,7 +140,7 @@ public class Localization {
 			try {
 				String[] path = location.split("/");
 
-				ZipFile zipFile = new ZipFile(new File(ResourcePackDisplay.getLocation(), path[0] + ".zip"));
+				ZipFile zipFile = new ZipFile(new File(ResourcePackDisplay.getFolderLocation(), path[0]));
 
 				HashMap<String, ZipEntry> localizations = ResourcePackDisplay.getPackFromZip(zipFile).get("localization");
 
@@ -150,12 +151,13 @@ public class Localization {
 				e.printStackTrace();
 			}
 		}
+
 		if (locStream == null) {
 			Logger.error("Error opening localization file at: {}.", location);
 			return "";
 		}
 
-		Logger.debug("Loading localization file from {}.", location);
+		Logger.trace("Loading localization file from {}.", location);
 
 		// Load the file as a BufferedReader.
 		BufferedReader reader = new BufferedReader(new InputStreamReader(locStream, StandardCharsets.UTF_8));
@@ -241,27 +243,28 @@ public class Localization {
 			}
 		} catch (IOException | URISyntaxException e) {
 			e.printStackTrace();
-			// Nothing to do in this menu if we can't load the languages, so we
-			// just return to the title menu.
 			return;
 		}
 
 		languages.toArray(new String[0]);
 	}
 
-	public static void addAndReplaceLanguages(String[] paths) {
+	public static void updateLanguages(String[] paths) {
 		for (String path : paths) {
 			String data = path.replace(".json", "");
 
 			try {
+				// Convert language tag into locale.
 				Locale lang = Locale.forLanguageTag(data.substring(data.indexOf('_') + 1));
 
-				System.out.println(lang.toLanguageTag() + " and " + path);
-				//localizationFiles.put(lang, path);
+				localizationFiles.put(lang, path);
 			} catch (StringIndexOutOfBoundsException e) {
 				Logger.error("Title of loc file {} is invalid.", path);
 			}
 		}
+
+		// Update the loaded loc.
+		reloadLanguage();
 	}
 
 	public static void reloadLanguages() {
