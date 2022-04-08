@@ -33,7 +33,7 @@ public class Settings {
 		options.put("skinon", new BooleanEntry("Wear Suit", false));
 		
 		options.put("language", new ArrayEntry<>("Language", true, false, Localization.getLocalesString()));
-		options.get("language").setValue(Localization.getSelectedLanguage());
+		options.get("language").setValue(Localization.getSelectedLocale().toLanguageTag());
 		
 		
 		options.get("mode").setChangeAction(value ->
