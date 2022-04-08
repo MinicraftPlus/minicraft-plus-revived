@@ -17,6 +17,7 @@ import minicraft.core.io.InputHandler;
 import minicraft.core.io.Settings;
 import minicraft.core.io.Sound;
 import minicraft.entity.mob.Player;
+import minicraft.item.Recipes;
 import minicraft.level.Level;
 import minicraft.level.tile.Tiles;
 import minicraft.network.Analytics;
@@ -116,6 +117,7 @@ public class Game {
 		input = new InputHandler(Renderer.canvas);
 		
 		Tiles.initTileList();
+		Recipes.load();
 		Sound.init();
 
 		World.resetGame(); // "half"-starts a new game, to set up initial variables

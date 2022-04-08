@@ -1,0 +1,15 @@
+{
+  "for": ["loom"],
+  "requires": [
+    {
+      "item": "cloth",
+      "amount": 5
+    },
+    {
+      "item": "cactus"
+    }
+  ],
+  "product": {
+    "item": "green_clothes"
+  }
+}

@@ -1,7 +1,9 @@
 package minicraft.item;
 
 import java.util.HashMap;
+import java.util.List;
 
+import javafx.util.Pair;
 import minicraft.core.Game;
 import minicraft.entity.mob.Player;
 
@@ -11,16 +13,14 @@ public class Recipe {
 	private int amount;
 	private boolean canCraft; // Checks if the player can craft the recipe
 	
-	public Recipe(String createdItem, String... reqItems) {
-		canCraft = false;
-		String[] sep = createdItem.split("_");
-		product = sep[0].toUpperCase(); // Assigns the result item
-		amount = Integer.parseInt(sep[1]);
+	public Recipe(String createdItem, int amount, List<Pair<String, Integer>> reqItems) {
+		this.product = createdItem;
+		this.amount = amount;
 		
-		for (int i = 0; i < reqItems.length; i++) {
-			 String[] curSep = reqItems[i].split("_");
-			 String curItem = curSep[0].toUpperCase(); // The current cost that's being added to costs.
-			 int amt = Integer.parseInt(curSep[1]);
+		for (int i = 0; i < reqItems.size(); i++) {
+			 Pair<String, Integer> curSep = reqItems.get(i);
+			 String curItem = curSep.getKey(); // The current cost that's being added to costs.
+			 int amt = curSep.getValue();
 			 boolean added = false;
 			
 			for (String cost: costs.keySet().toArray(new String[0])) { // Loop through the costs that have already been added

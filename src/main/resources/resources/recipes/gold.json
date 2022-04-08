@@ -1,0 +1,15 @@
+{
+  "for": ["furnace"],
+  "requires": [
+    {
+      "item": "gold_ore",
+      "amount": 4
+    },
+    {
+      "item": "coal"
+    }
+  ],
+  "product": {
+    "item": "gold"
+  }
+}

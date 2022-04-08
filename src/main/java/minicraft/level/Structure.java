@@ -1,14 +1,22 @@
 package minicraft.level;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
 
-import minicraft.entity.furniture.Crafter;
+import org.json.JSONArray;
+import org.json.JSONObject;
+import org.tinylog.Logger;
+
 import minicraft.entity.furniture.Furniture;
-import minicraft.entity.furniture.Lantern;
+import minicraft.entity.furniture.Furnitures;
 import minicraft.gfx.Point;
 import minicraft.level.tile.Tile;
 import minicraft.level.tile.Tiles;
+import minicraft.saveload.Load;
 
 // this stores structures that can be drawn at any location.
 public class Structure {
@@ -45,29 +53,64 @@ public class Structure {
 			map[(xt + p.x) + (yt + p.y) * mapWidth] = p.t.id;
 	}
 
-	public void setData(String keys, String data) {
-		// So, the keys are single letters, each letter represents a tile
-		HashMap<String, String> keyPairs = new HashMap<>();
-		String[] stringKeyPairs = keys.split(",");
+	public void setData(Map<String, String> keys, List<String> data) {
+		int width = data.get(0).length();
+		int height = data.size();
 
-		// Puts all the keys in the keyPairs HashMap
-		for (int i = 0; i < stringKeyPairs.length; i++) {
-			String[] thisKey = stringKeyPairs[i].split(":");
-			keyPairs.put(thisKey[0], thisKey[1]);
-		}
-
-		String[] dataLines = data.split("\n");
-		int width = dataLines[0].length();
-		int height = dataLines.length;
-
-		for (int i = 0; i < dataLines.length; i++) {
-			for (int c = 0; c < dataLines[i].length(); c++) {
-				if (dataLines[i].charAt(c) != '*') {
-					Tile tile = Tiles.get(keyPairs.get(String.valueOf(dataLines[i].charAt(c))));
+		for (int i = 0; i < data.size(); i++) {
+			for (int c = 0; c < data.get(i).length(); c++) {
+				if (data.get(i).charAt(c) != ' ') {
+					Tile tile = Tiles.get(keys.get(String.valueOf(data.get(i).charAt(c))));
 					this.setTile(-width / 2 + i, - height / 2 + c, tile);
 				}
 			}
 		}
+	}
+
+	public static Structure load(String id) {
+		Structure struct = new Structure();
+
+		try {
+			JSONObject obj = Load.loadJsonFile("/resources/structures/" + id + ".json");
+	
+			JSONObject keyObj = obj.getJSONObject("key");
+			JSONArray dataObj = obj.getJSONArray("data");
+			
+			HashMap<String, String> keys = new HashMap<>();
+			Iterator<String> keySet = keyObj.keySet().iterator();
+	
+			while (keySet.hasNext()) {
+				String k = keySet.next();
+				keys.put(k, keyObj.getString(k));
+			}
+	
+			List<String> data = new ArrayList<>();
+			for (int i = 0; i < dataObj.length(); i++) data.add(dataObj.getString(i));
+	
+			struct.setData(keys, data);
+	
+			if (obj.has("furniture")) {
+				JSONArray furnitureObj = obj.getJSONArray("furniture");
+	
+				for (int i = 0; i < furnitureObj.length(); i++) {
+					JSONObject furniture = furnitureObj.getJSONObject(i);
+					int x = furniture.getInt("x");
+					int y = furniture.getInt("y");
+					Furniture fur = Furnitures.get(furniture.getString("id"));
+	
+					if (fur != null) {
+						struct.addFurniture(x, y, fur.clone());
+					}
+				}
+			}
+
+			Logger.debug("Loaded Structure: " + id);
+		} catch(Exception e) {
+			System.out.println("Failed to load structure " + id);
+			System.exit(1);
+		}
+
+		return struct;
 	}
 	
 	static class TilePoint {
@@ -116,117 +159,18 @@ public class Structure {
 	// Ok, because of the way the system works, these structures are rotated 90 degrees clockwise when placed
 	// Then it's flipped on the vertical
 	static {
-		dungeonGate = new Structure();
-		dungeonGate.setData("O:Obsidian,D:Obsidian Door,W:Obsidian Wall",
-					"WWDWW\n" +
-					"WOOOW\n" +
-					"DOOOD\n" +
-					"WOOOW\n" +
-					"WWDWW"
-		);
-		dungeonGate.addFurniture(-1, -1, new Lantern(Lantern.Type.IRON));
-
-		dungeonLock = new Structure();
-		dungeonLock.setData("O:Obsidian,W:Obsidian Wall",
-					"WWWWW\n" +
-					"WOOOW\n" +
-					"WOOOW\n" +
-					"WOOOW\n" +
-					"WWWWW"
-		);
-
-		lavaPool = new Structure();
-		lavaPool.setData("L:Lava",
-					"LL\n" +
-					"LL"
-		);
-
-		mobDungeonCenter = new Structure();
-		mobDungeonCenter.setData("B:Stone Bricks,W:Stone Wall",
-					"WWBWW\n" +
-					"WBBBW\n" +
-					"BBBBB\n" +
-					"WBBBW\n" +
-					"WWBWW"
-		);
-		mobDungeonNorth = new Structure();
-		mobDungeonNorth.setData("B:Stone Bricks,W:Stone Wall",
-					"WWWWW\n" +
-					"WBBBB\n" +
-					"BBBBB\n" +
-					"WBBBB\n" +
-					"WWWWW"
-		);
-		mobDungeonSouth = new Structure();
-		mobDungeonSouth.setData("B:Stone Bricks,W:Stone Wall",
-					"WWWWW\n" +
-					"BBBBW\n" +
-					"BBBBB\n" +
-					"BBBBW\n" +
-					"WWWWW"
-		);
-		mobDungeonEast = new Structure();
-		mobDungeonEast.setData("B:Stone Bricks,W:Stone Wall",
-					"WBBBW\n" +
-					"WBBBW\n" +
-					"WBBBW\n" +
-					"WBBBW\n" +
-					"WWBWW"
-		);
-		mobDungeonWest = new Structure();
-		mobDungeonWest.setData("B:Stone Bricks,W:Stone Wall",
-					"WWBWW\n" +
-					"WBBBW\n" +
-					"WBBBW\n" +
-					"WBBBW\n" +
-					"WBBBW"
-		);
-
-		airWizardHouse = new Structure();
-		airWizardHouse.setData("F:Wood Planks,W:Wood Wall,D:Wood Door",
-					"WWWWWWW\n" +
-					"WFFFFFW\n" +
-					"DFFFFFW\n" +
-					"WFFFFFW\n" +
-					"WWWWWWW"
-		);
-		airWizardHouse.addFurniture(-2, 0, new Lantern(Lantern.Type.GOLD));
-		airWizardHouse.addFurniture(0, 0, new Crafter(Crafter.Type.Enchanter));
-
-		villageHouseNormal = new Structure();
-		villageHouseNormal.setData("F:Wood Planks,W:Wood Wall,D:Wood Door,G:Grass",
-					"WWWWW\n" +
-					"WFFFW\n" +
-					"WFFFD\n" +
-					"WFFFG\n" +
-					"WWWWW"
-		);
-
-		villageHouseTwoDoor = new Structure();
-		villageHouseTwoDoor.setData("F:Wood Planks,W:Wood Wall,D:Wood Door,G:Grass",
-					"WWWWW\n" +
-					"WFFFW\n" +
-					"DFFFW\n" +
-					"WFFFW\n" +
-					"WWDWW"
-		);
-
-		villageRuinedOverlay1 = new Structure();
-		villageRuinedOverlay1.setData("G:Grass,F:Wood Planks",
-					"**FG*\n" +
-					"F*GG*\n" +
-					"*G**F\n" +
-					"G*G**\n" +
-					"***G*"
-		);
-
-		villageRuinedOverlay2 = new Structure();
-		villageRuinedOverlay2.setData("G:Grass,F:Wood Planks",
-					"F**G*\n" +
-					"*****\n" +
-					"*GG**\n" +
-					"F**G*\n" +
-					"*F**G"
-		);
+		dungeonGate = load("dungeon_gate");
+		dungeonLock = load("dungeon_lock");
+		lavaPool = load("lava_pool");
+		mobDungeonCenter = load("mob_dungeon_center");
+		mobDungeonNorth = load("mob_dungeon_north");
+		mobDungeonSouth = load("mob_dungeon_south");
+		mobDungeonEast = load("mob_dungeon_east");
+		mobDungeonWest = load("mob_dungeon_west");
+		airWizardHouse = load("airwizard_house");
+		villageHouseNormal = load("village_house_normal");
+		villageHouseTwoDoor = load("village_house_two_door");
+		villageRuinedOverlay1 = load("village_ruined_overlay1");
+		villageRuinedOverlay2 = load("village_ruined_overlay2");
 	}
 }

@@ -1,0 +1,12 @@
+{
+  "for": ["oven"],
+  "requires": [
+    {
+      "item": "wheat",
+      "amount": 4
+    }
+  ],
+  "product": {
+    "item": "bread"
+  }
+}

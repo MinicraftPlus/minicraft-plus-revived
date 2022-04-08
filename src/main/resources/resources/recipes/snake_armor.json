@@ -1,0 +1,12 @@
+{
+  "for": ["workbench"],
+  "requires": [
+    {
+      "item": "scale",
+      "amount": 15
+    }
+  ],
+  "product": {
+    "item": "snake_armor"
+  }
+}

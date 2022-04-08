@@ -1,0 +1,16 @@
+{
+  "for": ["workbench"],
+  "requires": [
+    {
+      "item": "wood",
+      "amount": 10
+    },
+    {
+      "item": "string",
+      "amount": 3
+    }
+  ],
+  "product": {
+    "item": "wood_fishing_rod"
+  }
+}

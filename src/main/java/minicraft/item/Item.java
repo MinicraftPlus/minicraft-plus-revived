@@ -71,6 +71,10 @@ public abstract class Item {
 	}
 	
 	public final String getName() { return name; }
+
+	public String getTranslatedName() {
+		return Localization.getLocalized("item." + getName().toLowerCase().replaceAll(" ", "_"));
+	}
 	
 	// Returns the String that should be used to display this item in a menu or list. 
 	public String getDisplayName() {

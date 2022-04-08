@@ -1,0 +1,26 @@
+{
+  "key": {
+    "F": "wood_planks",
+    "W": "wood_wall",
+    "D": "wood_door"
+  },
+  "data": [
+    "WWWWWWW",
+    "WFFFFFW",
+    "DFFFFFW",
+    "WFFFFFW",
+    "WWWWWWW"
+  ],
+  "furniture": [
+    {
+      "id": "gold_lantern",
+      "x": -2,
+      "y": 0
+    },
+    {
+      "id": "enchanter",
+      "x": 0,
+      "y": 0
+    }
+  ]
+}

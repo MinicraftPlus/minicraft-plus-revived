@@ -1,0 +1,15 @@
+{
+  "for": ["furnace"],
+  "requires": [
+    {
+      "item": "iron_ore",
+      "amount": 4
+    },
+    {
+      "item": "coal"
+    }
+  ],
+  "product": {
+    "item": "iron"
+  }
+}

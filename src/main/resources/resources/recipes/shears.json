@@ -1,0 +1,12 @@
+{
+  "for": ["anvil"],
+  "requires": [
+    {
+      "item": "iron",
+      "amount": 4
+    }
+  ],
+  "product": {
+    "item": "shears"
+  }
+}

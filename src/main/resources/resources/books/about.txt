@@ -1,4 +1,0 @@
-Minicraft+ was started to expand upon the Minicraft game from 2011. Over the years we have added a lot of new stuff, and gone through many developers.
-Our goal is to expand Minicraft to be more fun and continuous.
-
-Minicraft was originally made by Markus Persson for the ludum dare 22 competition.

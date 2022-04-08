@@ -1,0 +1,13 @@
+{
+  "key": {
+    "G": "grass",
+    "F": "wood_planks"
+  },
+  "data": [
+    "  FG ",
+    "F GG ",
+    " G  F",
+    "G G  ",
+    "   G "
+  ]
+}

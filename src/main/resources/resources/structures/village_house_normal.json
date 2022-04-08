@@ -1,0 +1,15 @@
+{
+  "key": {
+    "F": "wood_planks",
+    "W": "wood_wall",
+    "D": "wood_door",
+    "G": "grass"
+  },
+  "data": [
+    "WWWWW",
+    "WFFFW",
+    "WFFFD",
+    "WFFFG",
+    "WWWWW"
+  ]
+}

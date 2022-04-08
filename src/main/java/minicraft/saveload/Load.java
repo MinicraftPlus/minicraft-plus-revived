@@ -228,6 +228,21 @@ public class Load {
 		
 		return total.toString();
 	}
+
+	public static JSONObject loadJsonFile(String path) throws IOException {
+		InputStream fileStream = Load.class.getResourceAsStream(path);
+		StringBuilder data = new StringBuilder();
+
+		try (BufferedReader br = new BufferedReader(new InputStreamReader(fileStream))) {
+
+			String line;
+			while ((line = br.readLine()) != null)
+				data.append(line + "\n");
+
+		}
+
+		return new JSONObject(data.toString());
+	}
 	
 	private void loadGame(String filename) {
 		loadFromFile(location + filename + extension);

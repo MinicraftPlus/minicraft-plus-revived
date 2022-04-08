@@ -49,10 +49,10 @@ public class TitleDisplay extends Display {
 				new SelectEntry("Help", () ->
 						Game.setMenu(new Display(true, new Menu.Builder(false, 1, RelPos.CENTER,
 								new BlankEntry(),
-								new SelectEntry("Instructions", () -> Game.setMenu(new BookDisplay(BookData.instructions))),
-								new SelectEntry("Storyline Guide", () -> Game.setMenu(new BookDisplay(BookData.storylineGuide))),
-								new SelectEntry("About", () -> Game.setMenu(new BookDisplay(BookData.about))),
-								new SelectEntry("Credits", () -> Game.setMenu(new BookDisplay(BookData.credits)))
+								new SelectEntry("Instructions", () -> Game.setMenu(new BookDisplay(BookData.instructions.getData()))),
+								new SelectEntry("Storyline Guide", () -> Game.setMenu(new BookDisplay(BookData.storylineGuide.getData()))),
+								new SelectEntry("About", () -> Game.setMenu(new BookDisplay(BookData.about.getData()))),
+								new SelectEntry("Credits", () -> Game.setMenu(new BookDisplay(BookData.credits.getData())))
 						).setTitle("Help").createMenu()))
 				),
 			new SelectEntry("Quit", Game::quit)

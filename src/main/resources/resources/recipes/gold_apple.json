@@ -1,0 +1,15 @@
+{
+  "for": ["enchant"],
+  "requires": [
+    {
+      "item": "apple"
+    },
+    {
+      "item": "gold",
+      "amount": 8
+    }
+  ],
+  "product": {
+    "item": "gold_apple"
+  }
+}

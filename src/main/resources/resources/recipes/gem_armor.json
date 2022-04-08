@@ -1,0 +1,12 @@
+{
+  "for": ["anvil"],
+  "requires": [
+    {
+      "item": "gem",
+      "amount": 65
+    }
+  ],
+  "product": {
+    "item": "gem_armor"
+  }
+}

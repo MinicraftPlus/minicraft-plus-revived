@@ -1,0 +1,19 @@
+{
+  "for": ["enchant"],
+  "requires": [
+    {
+      "item": "potion"
+    },
+    {
+      "item": "gunpowder",
+      "amount": 3
+    },
+    {
+      "item": "lapis",
+      "amount": 6
+    }
+  ],
+  "product": {
+    "item": "escape_potion"
+  }
+}

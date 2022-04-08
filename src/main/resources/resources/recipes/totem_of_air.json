@@ -1,0 +1,24 @@
+{
+  "for": ["enchant"],
+  "requires": [
+    {
+      "item": "gold",
+      "amount": 10
+    },
+    {
+      "item": "gem",
+      "amount": 10
+    },
+    {
+      "item": "lapis",
+      "amount": 5
+    },
+    {
+      "item": "cloud_ore",
+      "amount": 5
+    }
+  ],
+  "product": {
+    "item": "totem_of_air"
+  }
+}
