@@ -1,11 +1,11 @@
 {
-    "lines": [
-        "minicraft.books.credits.line1",
-        "",
-        "minicraft.books.credits.line2",
-        "minicraft.books.credits.line3",
-        "",
-        "minicraft.books.credits.line4",
-        "minicraft.books.credits.line5"
-    ]
+  "lines": [
+    "minicraft.books.credits.line1",
+    "",
+    "minicraft.books.credits.line2",
+    "minicraft.books.credits.line3",
+    "",
+    "minicraft.books.credits.line4",
+    "minicraft.books.credits.line5"
+  ]
 }
