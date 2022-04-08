@@ -5,16 +5,19 @@ import java.nio.file.DirectoryStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.security.CodeSource;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.zip.ZipInputStream;
+import java.util.zip.ZipEntry;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
 import org.tinylog.Logger;
 
-import javafx.util.Pair;
 import minicraft.core.Game;
 import minicraft.saveload.Load;
+import minicraft.util.Pair;
 
 public class Recipes {
 	
@@ -27,6 +30,48 @@ public class Recipes {
 	public static final ArrayList<Recipe> loomRecipes = new ArrayList<>();
 
 	private static List<JSONObject> getRecipesFiles() {
+		List<JSONObject> files = new ArrayList<>();
+
+		try {
+			CodeSource src = Game.class.getProtectionDomain().getCodeSource();
+			if (src != null) {
+				URL jar = src.getLocation();
+				ZipInputStream zip = new ZipInputStream(jar.openStream());
+				int reads = 0;
+				while (true) {
+					ZipEntry e = zip.getNextEntry();
+					
+					// e is either null if there are no entries left, or if
+					// we're running this from an ide (at least for eclipse)
+					if (e == null) {
+						if (reads > 0) break;
+						else {
+							return getRecipesFilesFromIDE();
+						}
+					}
+					reads++;
+					String name = e.getName();
+					if (name.startsWith("resources/recipes/") && name.endsWith(".json")) {
+						try {
+							files.add(Load.loadJsonFile("/" + name));
+						} catch (StringIndexOutOfBoundsException ex) {
+							Logger.error("Could not load localization with path: {}", name);
+						}
+					}
+				}
+			} else {
+				Logger.error("Failed to get code source.");
+				return files;
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+			return files;
+		}
+
+		return files;
+	}
+
+	private static List<JSONObject> getRecipesFilesFromIDE() {
 		List<JSONObject> files = new ArrayList<>();
 
 		try {
@@ -79,7 +124,8 @@ public class Recipes {
 					String item = r.getString("item");
 					int itemA = r.optInt("amount", 1);
 
-					reqItems.add(new Pair<String, Integer>(item, itemA));
+					Pair<String, Integer> p = new Pair<>(item, itemA);
+					reqItems.add(p);
 				}
 
 				Recipe recipe = new Recipe(createdItem, amount, reqItems);

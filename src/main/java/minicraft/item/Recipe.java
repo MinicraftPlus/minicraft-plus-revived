@@ -3,9 +3,9 @@ package minicraft.item;
 import java.util.HashMap;
 import java.util.List;
 
-import javafx.util.Pair;
 import minicraft.core.Game;
 import minicraft.entity.mob.Player;
+import minicraft.util.Pair;
 
 public class Recipe {
 	private HashMap<String, Integer> costs = new HashMap<String, Integer>();  // A list of costs for the recipe
@@ -19,8 +19,8 @@ public class Recipe {
 		
 		for (int i = 0; i < reqItems.size(); i++) {
 			 Pair<String, Integer> curSep = reqItems.get(i);
-			 String curItem = curSep.getKey(); // The current cost that's being added to costs.
-			 int amt = curSep.getValue();
+			 String curItem = curSep.getLeft(); // The current cost that's being added to costs.
+			 int amt = curSep.getRight();
 			 boolean added = false;
 			
 			for (String cost: costs.keySet().toArray(new String[0])) { // Loop through the costs that have already been added
