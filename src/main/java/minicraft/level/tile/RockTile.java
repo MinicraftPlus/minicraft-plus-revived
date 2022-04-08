@@ -44,6 +44,7 @@ public class RockTile extends Tile {
 	}
 	
 	public boolean hurt(Level level, int x, int y, Mob source, int dmg, Direction attackDir) {
+		dropCoal = false; // Can only be reached when player hits w/o pickaxe, so remove ability to get coal
 		hurt(level, x, y, dmg);
 		return true;
 	}

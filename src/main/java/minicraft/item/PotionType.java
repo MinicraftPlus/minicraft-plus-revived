@@ -39,11 +39,8 @@ public enum PotionType {
 				int playerDepth = player.getLevel().depth;
 				
 				if (playerDepth == 0) {
-					if (!Game.isValidServer()) {
-						// player is in overworld
-						String note = "You can't escape from here!";
-						Game.notifications.add(note);
-					}
+					// player is in overworld
+					Game.notifications.add("You can't escape from here!");
 					return false;
 				}
 				

@@ -3,7 +3,9 @@
 
 Minicraft+ is a modded version of Minicraft that adds many more features to the original version. The original Minicraft game was made by Markus "Notch" Persson in the Ludum Dare 22 contest.  To learn more about Minicraft take a look at [playminicraft.com](https://www.playminicraft.com), or talk to the community at the [Discord](https://discord.me/minicraft).
 
-Check the [releases](https://github.com/chrisj42/minicraft-plus-revived/releases) page to download the latest version, or older versions.
+Check the [releases](https://github.com/minicraftplus/minicraft-plus-revived/releases) page to download the latest version, or older versions.
+
+Check out our [Fandom Wiki!](https://minicraft.fandom.com/wiki/Minicraft_Wiki)
 
 ## Major features
 * More game modes, including:
@@ -34,7 +36,7 @@ Check the [releases](https://github.com/chrisj42/minicraft-plus-revived/releases
 * Support for several languages
 
 ## Current goals and ideas
-Take a look at the [ideas](ideas/) folder or the [issues](https://github.com/chrisj42/minicraft-plus-revived/issues) page.
+Take a look at the [ideas](ideas/) folder or the [issues](https://github.com/minicraftplus/minicraft-plus-revived/issues) page.
 
 ## How to build/run
 Because this project uses a build tool called gradle it is very easy to build or run the project from the source code.

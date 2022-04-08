@@ -6,11 +6,9 @@ import org.jetbrains.annotations.Nullable;
 import minicraft.core.io.Settings;
 import minicraft.entity.furniture.Bed;
 import minicraft.entity.mob.Player;
-import minicraft.entity.mob.RemotePlayer;
 import minicraft.level.Level;
 import minicraft.network.Analytics;
 import minicraft.saveload.Load;
-import minicraft.saveload.Save;
 import org.tinylog.Logger;
 
 public class World extends Game {
@@ -64,15 +62,8 @@ public class World extends Game {
 		Updater.notifications.clear();
 		
 		// Adds a new player
-		if (isValidServer()) {
-			player = null;
-			return;
-		}
 		if (keepPlayer) {
-			if (player instanceof RemotePlayer)
-				player = new RemotePlayer(true, (RemotePlayer) player);
-			else
-				player = new Player(player, input);
+			player = new Player(player, input);
 		} else
 			player = new Player(null, input);
 		
@@ -80,15 +71,9 @@ public class World extends Game {
 		
 		// "shouldRespawn" is false on hardcore, or when making a new world.
 		if (PlayerDeathDisplay.shouldRespawn) { // respawn, don't regenerate level.
-			// if (debug) System.out.println("Current Level = " + currentLevel);
-			if (!isValidClient()) {
-				Level level = levels[currentLevel];
-				player.respawn(level);
-				// if (debug) System.out.println("respawned player in current world");
-				level.add(player); // Adds the player to the current level (always surface here)
-			} else {
-				client.requestRespawn();
-			}
+			Level level = levels[currentLevel];
+			player.respawn(level);
+			level.add(player); // Adds the player to the current level (always surface here)
 		}
 	}
 	
@@ -97,11 +82,6 @@ public class World extends Game {
 	 **/
 	public static void initWorld() { // This is a full reset; everything.
 		Logger.debug("Resetting world...");
-		
-		/*if(isValidServer()) {
-			System.err.println("Cannot initialize world while acting as a server runtime; not running initWorld().");
-			return;
-		}*/
 		
 		PlayerDeathDisplay.shouldRespawn = false;
 		resetGame();
@@ -118,56 +98,41 @@ public class World extends Game {
 		Updater.scoreTime = (Integer) Settings.get("scoretime") * 60 * Updater.normSpeed;
 		
 		LoadingDisplay.setPercentage(0); // This actually isn't necessary, I think; it's just in case.
-		
-		if (!isValidClient()) {
-			if (debug) System.out.println("Initializing world non-client...");
-			
-			if (isValidServer())
-				Analytics.MultiplayerGame.ping();
-			else
-				Analytics.SinglePlayerGame.ping();
-			
-			if (WorldSelectDisplay.loadedWorld()) {
-				Load loader = new Load(WorldSelectDisplay.getWorldName());
-				if  (isValidServer() && loader.getWorldVersion().compareTo(Game.VERSION) < 0) {
-					Analytics.SaveFileUpdate.ping();
-					new Save(player, true); // Overwrite the old player save, to update it.
-					new Save(WorldSelectDisplay.getWorldName()); // Save the main world
-				}
-			} else {
-				Analytics.WorldCreation.ping();
-				
-				worldSize = (Integer) Settings.get("size");
-				
-				float loadingInc = 100f / (maxLevelDepth - minLevelDepth + 1); // The .002 is for floating point errors, in case they occur.
-				for (int i = maxLevelDepth; i >= minLevelDepth; i--) {
-					// i = level depth; the array starts from the top because the parent level is used as a reference, so it should be constructed first. It is expected that the highest level will have a null parent.
-					
-					if (debug) System.out.println("Loading level " + i + "...");
-					
-					LoadingDisplay.setMessage(Level.getDepthString(i));
-					levels[lvlIdx(i)] = new Level(worldSize, worldSize, WorldGenDisplay.getSeed(), i, levels[lvlIdx(i+1)], !WorldSelectDisplay.loadedWorld());
-					
-					LoadingDisplay.progress(loadingInc);
-				}
-				
-				if(debug) System.out.println("Level loading complete.");
-				
-				Level level = levels[currentLevel]; // Sets level to the current level (3; surface)
-				Updater.pastDay1 = false;
-				player.findStartPos(level, WorldGenDisplay.getSeed()); // Finds the start level for the player
-				level.add(player);
-			}
-			
-			Renderer.readyToRenderGameplay = true;
+
+		Logger.trace("Initializing world non-client...");
+
+		if (WorldSelectDisplay.loadedWorld()) {
+			Load loader = new Load(WorldSelectDisplay.getWorldName());
 		} else {
-			levels = new Level[6];
-			currentLevel = 3;
+			Analytics.WorldCreation.ping();
+
+			worldSize = (Integer) Settings.get("size");
+
+			float loadingInc = 100f / (maxLevelDepth - minLevelDepth + 1); // The .002 is for floating point errors, in case they occur.
+			for (int i = maxLevelDepth; i >= minLevelDepth; i--) {
+				// i = level depth; the array starts from the top because the parent level is used as a reference, so it should be constructed first. It is expected that the highest level will have a null parent.
+
+				Logger.trace("Loading level " + i + "...");
+
+				LoadingDisplay.setMessage(Level.getDepthString(i));
+				levels[lvlIdx(i)] = new Level(worldSize, worldSize, WorldGenDisplay.getSeed(), i, levels[lvlIdx(i+1)], !WorldSelectDisplay.loadedWorld());
+
+				LoadingDisplay.progress(loadingInc);
+			}
+
+			Logger.trace("Level loading complete.");
+
+			Level level = levels[currentLevel]; // Sets level to the current level (3; surface)
+			Updater.pastDay1 = false;
+			player.findStartPos(level, WorldGenDisplay.getSeed()); // Finds the start level for the player
+			level.add(player);
 		}
+
+		Renderer.readyToRenderGameplay = true;
 		
 		PlayerDeathDisplay.shouldRespawn = true;
 		
-		if (debug) System.out.println("World initialized.");
+		Logger.trace("World initialized.");
 	}
 	
 	
@@ -176,10 +141,8 @@ public class World extends Game {
 	/** This method is called when you interact with stairs, this will give you the transition effect. While changeLevel(int) just changes the level. */
 	public static void scheduleLevelChange(int dir) { scheduleLevelChange(dir, null); }
 	public static void scheduleLevelChange(int dir, @Nullable Action changeAction) {
-		if (!isValidServer()) {
-			onChangeAction = changeAction;
-			pendingLevelChange = dir;
-		}
+		onChangeAction = changeAction;
+		pendingLevelChange = dir;
 	}
 	
 	/** This method changes the level that the player is currently on.
@@ -187,36 +150,25 @@ public class World extends Game {
 	 * For example, 'changeLevel(1)' will make you go up a level,
 	 while 'changeLevel(-1)' will make you go down a level. */
 	public static void changeLevel(int dir) {
-		if (isValidServer()) {
-			System.out.println("Server tried to change level.");
-			return;
-		}
-		
-		if (onChangeAction != null && !Game.isConnectedClient()) {
+		if (onChangeAction != null) {
 			onChangeAction.act();
 			onChangeAction = null;
 		}
 		
-		if (isConnectedClient())
-			levels[currentLevel].clearEntities(); // Clear all the entities from the last level, so that no artifacts remain. They're loaded dynamically, anyway.
-		else
-			levels[currentLevel].remove(player); // Removes the player from the current level.
+
+		levels[currentLevel].remove(player); // Removes the player from the current level.
 		
 		int nextLevel = currentLevel + dir;
 		if (nextLevel <= -1) nextLevel = levels.length-1; // Fix accidental level underflow
 		if (nextLevel >= levels.length) nextLevel = 0; // Fix accidental level overflow
-		//level = levels[currentLevel]; // Sets the level to the current level
-		if (Game.debug) System.out.println(Network.onlinePrefix()+"setting level from "+currentLevel+" to "+nextLevel);
+		Logger.trace("Setting level from {} to {}", currentLevel, nextLevel);
 		currentLevel = nextLevel;
 		
 		player.x = (player.x >> 4) * 16 + 8; // Sets the player's x coord (to center yourself on the stairs)
 		player.y = (player.y >> 4) * 16 + 8; // Sets the player's y coord (to center yourself on the stairs)
 		
-		if (isConnectedClient()/* && levels[currentLevel] == null*/) {
-			Renderer.readyToRenderGameplay = false;
-			client.requestLevel(currentLevel);
-		} else
-			levels[currentLevel].add(player); // Adds the player to the level.
+
+		levels[currentLevel].add(player); // Adds the player to the level.
 
 		if (currentLevel == 0) {
 			AchievementsDisplay.setAchievement("minicraft.achievement.lowest_caves", true);

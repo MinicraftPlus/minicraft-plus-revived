@@ -12,10 +12,8 @@ import java.util.function.Predicate;
 import java.util.function.ToIntFunction;
 
 import minicraft.core.Game;
-import minicraft.core.Network;
 import minicraft.core.Updater;
 import minicraft.core.io.Settings;
-import minicraft.entity.ClientTickable;
 import minicraft.entity.Entity;
 import minicraft.entity.ItemEntity;
 import minicraft.entity.Spark;
@@ -32,7 +30,6 @@ import minicraft.entity.mob.MobAi;
 import minicraft.entity.mob.PassiveMob;
 import minicraft.entity.mob.Pig;
 import minicraft.entity.mob.Player;
-import minicraft.entity.mob.RemotePlayer;
 import minicraft.entity.mob.Sheep;
 import minicraft.entity.mob.Skeleton;
 import minicraft.entity.mob.Slime;
@@ -46,7 +43,6 @@ import minicraft.item.Item;
 import minicraft.level.tile.Tile;
 import minicraft.level.tile.Tiles;
 import minicraft.level.tile.TorchTile;
-import minicraft.screen.AchievementsDisplay;
 
 public class Level {
 	private Random random = new Random();
@@ -309,38 +305,18 @@ public class Level {
 	private void tickEntity(Entity entity) {
 		if (entity == null) return;
 
-		if (Game.hasConnectedClients() && entity instanceof Player && !(entity instanceof RemotePlayer)) {
-			if (Game.debug)
-				System.out.println("SERVER is removing regular player " + entity + " from level " + this);
-			entity.remove();
-		}
-		
-		if (Game.isValidServer() && entity instanceof Particle) {
-			// There is no need to track this.
-			if (Game.debug)
-				System.out.println("SERVER warning: Found particle in entity list: " + entity + ". Removing from level " + this);
-			entity.remove();
-		}
-
 		if (entity.isRemoved()) {
 			remove(entity);
 			return;
 		}
 
 		if (entity != Game.player) { // Player is ticked separately, others are ticked on server
-			if (!Game.isValidClient())
-				entity.tick(); /// The main entity tick call.
-			else if (entity instanceof ClientTickable)
-				((ClientTickable) entity).clientTick();
+			entity.tick(); /// The main entity tick call.
 		}
 
 		if (entity.isRemoved() || entity.getLevel() != this) {
 			remove(entity);
-			return;
 		}
-
-		if (Game.hasConnectedClients()) // This means it's a server
-			Game.server.broadcastEntityUpdate(entity);
 	}
 
 	public void tick(boolean fullTick) {
@@ -351,20 +327,15 @@ public class Level {
 			boolean inLevel = entities.contains(entity);
 			
 			if (!inLevel) {
-				if (Game.isValidServer())
-					Game.server.broadcastEntityAddition(entity, true);
-				
-				if (!Game.isValidServer() || !(entity instanceof Particle)) {
-					if (Game.debug) printEntityStatus("Adding ", entity, "furniture.DungeonChest", "mob.AirWizard", "mob.Player");
-					
-					synchronized (entityLock) {
-						if (entity instanceof Spark) {
-							sparks.add((Spark) entity);
-						} else {
-							entities.add(entity);
-							if (entity instanceof Player) {
-								players.add((Player) entity);
-							}
+				if (Game.debug) printEntityStatus("Adding ", entity, "furniture.DungeonChest", "mob.AirWizard", "mob.Player");
+
+				synchronized (entityLock) {
+					if (entity instanceof Spark) {
+						sparks.add((Spark) entity);
+					} else {
+						entities.add(entity);
+						if (entity instanceof Player) {
+							players.add((Player) entity);
 						}
 					}
 				}
@@ -373,17 +344,13 @@ public class Level {
 			entitiesToAdd.remove(entity);
 		}
 		
-		if(fullTick && (!Game.isValidServer() || getPlayers().length > 0)) {
+		if (fullTick) {
 			// This prevents any entity (or tile) tick action from happening on a server level with no players.
-			
-			if (!Game.isValidClient()) {
-				for (int i = 0; i < w * h / 50; i++) {
-					int xt = random.nextInt(w);
-					int yt = random.nextInt(w);
-					boolean notableTick = getTile(xt, yt).tick(this, xt, yt);
-					if (Game.isValidServer() && notableTick)
-						Game.server.broadcastTileUpdate(this, xt, yt);
-				}
+
+			for (int i = 0; i < w * h / 50; i++) {
+				int xt = random.nextInt(w);
+				int yt = random.nextInt(w);
+				getTile(xt, yt).tick(this, xt, yt);
 			}
 			
 			// Entity loop
@@ -412,9 +379,6 @@ public class Level {
 		while (entitiesToRemove.size() > 0) {
 			Entity entity = entitiesToRemove.get(0);
 			
-			if (Game.isValidServer() && !(entity instanceof Particle) && entity.getLevel() == this)
-				Game.server.broadcastEntityRemoval(entity, this, true);
-			
 			if (Game.debug) printEntityStatus("Removing ", entity, "mob.Player");
 			
 			entity.remove(this); // This will safely fail if the entity's level doesn't match this one.
@@ -433,10 +397,7 @@ public class Level {
 		
 		mobCount = count;
 		
-		if (Game.isValidServer() && players.size() == 0)
-			return; // Don't try to spawn any mobs when there's no player on the level, on a server.
-		
-		if (fullTick && count < maxMobCount && !Game.isValidClient())
+		if (fullTick && count < maxMobCount)
 			trySpawn();
 	}
 
@@ -457,7 +418,7 @@ public class Level {
 			try {
 				if (Class.forName("minicraft.entity." + search).isAssignableFrom(entity.getClass())) {
 					if (clazz.equals("AirWizard")) clazz += ((AirWizard)entity).secondform ? " II" : "";
-					printLevelLoc(Network.onlinePrefix() + entityMessage + clazz, entity.x >> 4, entity.y >> 4, ": " + entity);
+					printLevelLoc(entityMessage + clazz, entity.x >> 4, entity.y >> 4, ": " + entity);
 					break;
 				}
 			} catch (ClassNotFoundException ex) {
@@ -478,9 +439,6 @@ public class Level {
 			 dropItem(x, y, i);
 	}
 	public ItemEntity dropItem(int x, int y, Item i) {
-		if (Game.isValidClient())
-			System.out.println("Dropping item on client: " + i);
-		
 		int ranx, rany;
 		
 		do {
@@ -513,8 +471,8 @@ public class Level {
 		int h = (Screen.h + 15) >> 4;
 		
 		screen.setOffset(xScroll, yScroll);
-		sortAndRender(screen, getEntitiesInTiles(xo, yo, xo + w, yo + h));
-		
+		sortAndRender(screen, getEntitiesInTiles(xo - 1, yo - 1, xo + w + 1, yo + h + 1));
+
 		screen.setOffset(0, 0);
 	}
 
@@ -577,16 +535,9 @@ public class Level {
 	
 	public void setTile(int x, int y, Tile t, int dataVal) {
 		if (x < 0 || y < 0 || x >= w || y >= h) return;
-		
-		if (Game.isValidClient() && !Game.isValidServer()) {
-			System.out.println("Client requested a tile update for the " + t.name + " tile at " + x + "," + y);
-		} else {
-			tiles[x + y * w] = t.id;
-			data[x + y * w] = (short) dataVal;
-		}
-		
-		if(Game.isValidServer())
-			Game.server.broadcastTileUpdate(this, x, y);
+
+		tiles[x + y * w] = t.id;
+		data[x + y * w] = (short) dataVal;
 	}
 	
 	public int getData(int x, int y) {
@@ -682,11 +633,7 @@ public class Level {
 	}
 	
 	public void clearEntities() {
-		if (!Game.ISONLINE)
-			entities.clear();
-		else
-			for (Entity e: getEntityArray())
-				e.remove();
+		entities.clear();
 	}
 	
 	public Entity[] getEntityArray() {
@@ -970,7 +917,7 @@ public class Level {
 
 					 c.populateInvRandom("minidungeon", chance);
 
-					 add(c, sp.x - 16, sp.y - 16);
+					 add(c, sp.x - 16 + rpt * 32, sp.y - 16);
 				}
 			}
 		}

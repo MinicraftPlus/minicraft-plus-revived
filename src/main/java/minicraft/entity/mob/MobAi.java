@@ -106,8 +106,6 @@ public abstract class MobAi extends Mob {
 	
 	@Override
 	public boolean move(int xd, int yd) {
-		//noinspection SimplifiableIfStatement
-		if (Game.isValidClient()) return false; // Client mobAi's should not move at all.
 		
 		return super.move(xd, yd);
 	}

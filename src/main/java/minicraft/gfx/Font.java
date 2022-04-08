@@ -8,17 +8,19 @@ import minicraft.core.io.Localization;
 
 public class Font {
 	// These are all the characters that will be translated to the screen. (The spaces are important)
-	private static String chars =
+	private static final String chars =
 			"ABCDEFGHIJKLMNOPQRSTUVWXYZ012345"+
 			"6789.,!?'\"-+=/\\%()<>:;^@ÁÉÍÓÚÑ¿¡"+
-			"ÃÊÇÔÕĞÇÜİÖŞÆØÅŰŐ[]#|{}_";
+			"ÃÊÇÔÕĞÇÜİÖŞÆØÅŰŐ[]#|{}_АБВГДЕЁЖЗ"+
+			"ИЙКЛМНОПРСТУФХЦЧШЩЪЫЬЭЮЯ";
 	
 	/* The order of the letters in the chars string is represented in the order that they appear in the sprite-sheet. */
 
 	public static void draw(String msg, Screen screen, int x, int y) { draw(msg, screen, x, y, -1); }
 
 	/** Draws the message to the x & y coordinates on the screen. */
-	public static void draw(String msg, Screen screen, int x, int y, int whiteTint) {
+	public static void
+	draw(String msg, Screen screen, int x, int y, int whiteTint) {
 		msg = msg.toUpperCase(Localization.getSelectedLocale()); //makes all letters uppercase.
 		for (int i = 0; i < msg.length(); i++) { // Loops through all the characters that you typed
 			int ix = chars.indexOf(msg.charAt(i)); // The current letter in the message loop
@@ -63,7 +65,7 @@ public class Font {
 	public static void drawBackground(String msg, Screen screen, int x, int y, int whiteTint) {
 		String newMsg = msg.toUpperCase(Localization.getSelectedLocale());
 		for (int i = 0; i < newMsg.length(); i++) { // Renders the black boxes under the text
-			screen.render(x + i * textWidth(newMsg.substring(i, i+1)), y, 30 + 30 * 32, 0, 3);
+			screen.render(x + i * textWidth(newMsg.substring(i, i+1)), y, 31, 0, 3);
 		}
 
 		// Renders the text
@@ -100,7 +102,7 @@ public class Font {
 	
 	/// all the other drawParagraph() methods end up calling this one.
 	public static void drawParagraph(List<String> lines, Screen screen, FontStyle style, int lineSpacing) {
-		drawParagraph(screen, style, lineSpacing, lines.toArray(new String[lines.size()]));
+		drawParagraph(screen, style, lineSpacing, lines.toArray(new String[0]));
 	}
 	public static void drawParagraph(Screen screen, FontStyle style, int lineSpacing, String... lines) {
 		for(int i = 0; i < lines.length; i++)
@@ -133,7 +135,7 @@ public class Font {
 		if(para.length() > 0 || keepEmptyRemainder)
 			lines.add(para); // add remainder, but don't add empty lines unintentionally.
 		
-		return lines.toArray(new String[lines.size()]);
+		return lines.toArray(new String[0]);
 	}
 	
 	// this returns the position index at which the given string should be split so that the first part is the longest line possible.

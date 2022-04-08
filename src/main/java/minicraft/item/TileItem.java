@@ -8,7 +8,6 @@ import minicraft.core.Game;
 import minicraft.core.io.Sound;
 import minicraft.entity.Direction;
 import minicraft.entity.mob.Player;
-import minicraft.entity.mob.RemotePlayer;
 import minicraft.gfx.Sprite;
 import minicraft.level.Level;
 import minicraft.level.tile.Tile;
@@ -100,10 +99,7 @@ public class TileItem extends StackableItem {
 		}
 		
 		if (note.length() > 0) {
-			if (!Game.isValidServer())
-				Game.notifications.add(note);
-			else
-				Game.server.getAssociatedThread((RemotePlayer)player).sendNotification(note, 0);
+			Game.notifications.add(note);
 		}
 		
 		return super.interactOn(false);

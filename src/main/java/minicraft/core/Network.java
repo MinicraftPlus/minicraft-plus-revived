@@ -15,19 +15,12 @@ import com.mashape.unirest.http.exceptions.UnirestException;
 
 import minicraft.entity.Entity;
 import minicraft.level.Level;
-import minicraft.network.Analytics;
-import minicraft.network.MinicraftServer;
-import minicraft.saveload.Load;
-import minicraft.screen.LoadingDisplay;
-import minicraft.screen.WorldSelectDisplay;
 import org.tinylog.Logger;
 
 public class Network extends Game {
 	private Network() {}
 	
 	private static final Random random = new Random();
-	
-	static boolean autoclient = false; // Used in the initScreen method; jumps to multiplayer menu as client
 	
 	private static VersionInfo latestVersion = null;
 	
@@ -95,86 +88,6 @@ public class Network extends Game {
 		}
 		
 		return true;
-	}
-	
-	public static String onlinePrefix() {
-		if (!ISONLINE) return "";
-		String prefix = "From ";
-		if (isValidServer())
-			prefix += "Server";
-		else if (isValidClient())
-			prefix += "Client";
-		else
-			prefix += "nobody";
-		
-		prefix += ": ";
-		return prefix;
-	}
-	
-
-	@SuppressWarnings("unused")
-	public static void startMultiplayerServer() {
-		System.out.println("Error: Multiplayer mode is not enabled in this version. It has been temporarily discontinued due to lack of stability.");
-		if(true) return;
-		
-		if (debug) System.out.println("Starting multiplayer server...");
-		
-		if (HAS_GUI) {
-			// Here is where we need to start the new client.
-			String jarFilePath = "";
-			try {
-				java.net.URI uri = Game.class.getProtectionDomain().getCodeSource().getLocation().toURI();
-				jarFilePath = uri.getPath();
-				if (FileHandler.OS.contains("windows") && jarFilePath.startsWith("/"))
-					jarFilePath = jarFilePath.substring(1);
-			} catch (URISyntaxException ex) {
-				System.err.println("Problem with jar file URI syntax.");
-				ex.printStackTrace();
-			}
-			List<String> arguments = new ArrayList<>();
-			arguments.add("java");
-			arguments.add("-jar");
-			arguments.add(jarFilePath);
-			
-			if (debug)
-				arguments.add("--debug");
-			
-			// This will just always be added.
-			arguments.add("--savedir");
-			arguments.add(FileHandler.systemGameDir);
-			
-			arguments.add("--localclient");
-			
-			// This *should* start a new JVM from the running jar file...
-			try {
-				new ProcessBuilder(arguments).inheritIO().start();
-			} catch (IOException ex) {
-				System.err.println("Problem starting new jar file process:");
-				ex.printStackTrace();
-			}
-			
-			// Ping that we're technically "starting" a multiplayer session
-			Analytics.MultiplayerGame.ping();
-		}
-		else
-			setMenu(new LoadingDisplay()); // Gets things going to load up a (server) world
-		
-		// Now that that's done, let's turn *this* running JVM into a server:
-		server = new MinicraftServer(Game.CUSTOM_PORT);
-		
-		new Load(WorldSelectDisplay.getWorldName(), server); // Load server config
-		
-		if (latestVersion == null) {
-			System.out.println("VERSIONCHECK: Checking for updates...");
-			findLatestVersion(() -> {
-				if (latestVersion.version.compareTo(Game.VERSION) > 0) // Link new version
-					System.out.println("VERSIONCHECK: Found newer version: Version " + latestVersion.releaseName + " Available! Download direct from \""+latestVersion.releaseUrl +"\". Can also be found with change log at \"https://www.github.com/chrisj42/minicraft-plus-revived/releases\".");
-				else if (latestVersion.releaseName.length() > 0)
-					System.out.println("VERSIONCHECK: No updates found, you have the latest version.");
-				else
-					System.out.println("VERSIONCHECK: Connection failed, could not check for updates.");
-			});
-		}
 	}
 	
 	
