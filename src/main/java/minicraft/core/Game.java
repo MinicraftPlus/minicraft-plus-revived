@@ -90,8 +90,8 @@ public class Game {
 			
 			Future ping = Analytics.Crashes.ping();
 			
-			if(GraphicsEnvironment.isHeadless()) {
-				// ensure ping finishes before program closes
+			if (GraphicsEnvironment.isHeadless()) {
+				// Ensure ping finishes before program closes.
 				try {
 					ping.get();
 				} catch (Exception ignored) {}
@@ -103,7 +103,7 @@ public class Game {
 			JScrollPane errorPane = new JScrollPane(errorDisplay);
 			JOptionPane.showMessageDialog(null, errorPane, "An error has occurred", JOptionPane.ERROR_MESSAGE);
 			
-			// Ensure ping finishes before program closes
+			// Ensure ping finishes before program closes.
 			try {
 				ping.get();
 			} catch (Exception ignored) {}
