@@ -17,8 +17,8 @@ public class OptionsMainMenuDisplay extends Display {
             Settings.getEntry("screenresolution"),
             Settings.getEntry("sound"),
             new SelectEntry("Change Key Bindings", () -> Game.setMenu(new KeyInputDisplay())),
-            Settings.getEntry("language")
-            /*new SelectEntry("Resource packs", () -> Game.setMenu(new ResourcePackDisplay()))*/)
+            Settings.getEntry("language"),
+            new SelectEntry("Resource packs", () -> Game.setMenu(new ResourcePackDisplay())))
             .setTitle("Main Menu Options")
             .createMenu()
         );

@@ -34,7 +34,7 @@ public class Game {
 	public static boolean packet_debug = false;
 	
 	public static final String NAME = "Minicraft Plus"; // This is the name on the application window.
-	public static final Version VERSION = new Version("2.1.0-dev2");
+	public static final Version VERSION = new Version("2.1.0-dev3");
 	
 	public static InputHandler input; // Input used in Game, Player, and just about all the *Menu classes.
 	public static Player player;
@@ -90,8 +90,8 @@ public class Game {
 			
 			Future ping = Analytics.Crashes.ping();
 			
-			if(GraphicsEnvironment.isHeadless()) {
-				// ensure ping finishes before program closes
+			if (GraphicsEnvironment.isHeadless()) {
+				// Ensure ping finishes before program closes.
 				try {
 					ping.get();
 				} catch (Exception ignored) {}
@@ -103,7 +103,7 @@ public class Game {
 			JScrollPane errorPane = new JScrollPane(errorDisplay);
 			JOptionPane.showMessageDialog(null, errorPane, "An error has occurred", JOptionPane.ERROR_MESSAGE);
 			
-			// Ensure ping finishes before program closes
+			// Ensure ping finishes before program closes.
 			try {
 				ping.get();
 			} catch (Exception ignored) {}
