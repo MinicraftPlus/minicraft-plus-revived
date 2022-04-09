@@ -14,7 +14,6 @@ public class StackableItem extends Item {
 		ArrayList<Item> items = new ArrayList<>();
 	
 		items.add(new StackableItem("Wood", new Sprite(1, 0, 0)));
-		items.add(new StackableItem("Stone", new Sprite(2, 0, 0)));
 		items.add(new StackableItem("Leather", new Sprite(8, 0, 0)));
 		items.add(new StackableItem("Wheat", new Sprite(6, 0, 0)));
 		items.add(new StackableItem("Key", new Sprite(0, 4, 0)));
