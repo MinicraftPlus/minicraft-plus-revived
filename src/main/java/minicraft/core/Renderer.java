@@ -80,11 +80,11 @@ public class Renderer extends Game {
 		return new SpriteSheet[] { itemSheet, tileSheet, entitySheet, guiSheet, skinsSheet };
 	}
 
-	public static void setScreenResolution() {
+	public static void setAspectRatio() {
 		int width = 0;
 		int height = 0;
 
-		switch ((String) Settings.get("screenresolution")) {
+		switch ((String) Settings.get("aspectratio")) {
 			case "Native":
 				java.awt.Dimension size = java.awt.Toolkit.getDefaultToolkit().getScreenSize();
 				width = (int) size.getWidth();

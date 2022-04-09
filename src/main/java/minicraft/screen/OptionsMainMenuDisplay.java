@@ -14,7 +14,7 @@ public class OptionsMainMenuDisplay extends Display {
     public OptionsMainMenuDisplay() {
         super(true, new Menu.Builder(false, 6, RelPos.LEFT,
             Settings.getEntry("fps"),
-            Settings.getEntry("screenresolution"),
+            Settings.getEntry("aspectratio"),
             Settings.getEntry("sound"),
             new SelectEntry("Change Key Bindings", () -> Game.setMenu(new KeyInputDisplay())),
             Settings.getEntry("language"),
