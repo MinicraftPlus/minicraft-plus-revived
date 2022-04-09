@@ -49,7 +49,7 @@ public final class Tiles {
 		tiles.set(22, new HardRockTile("Hard Rock"));
 		tiles.set(23, new InfiniteFallTile("Infinite Fall"));
 		tiles.set(24, new CloudTile("Cloud"));
-		tiles.set(25, new CloudCactusTile("Cloud Cactus"));
+		tiles.set(25, new OreTile(OreTile.OreType.Cloud));
 		tiles.set(26, new DoorTile(Tile.Material.Wood));
 		tiles.set(27, new DoorTile(Tile.Material.Stone));
 		tiles.set(28, new DoorTile(Tile.Material.Obsidian));

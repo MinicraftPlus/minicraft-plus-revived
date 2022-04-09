@@ -20,16 +20,16 @@ import minicraft.screen.AchievementsDisplay;
 
 /// this is all the spikey stuff (except "cloud cactus")
 public class OreTile extends Tile {
-	private Sprite sprite;
-	private OreType type;
+	private final OreType type;
 	
 	public enum OreType {
         Iron (Items.get("Iron Ore"), 0),
 		Lapis (Items.get("Lapis"), 2),
 		Gold (Items.get("Gold Ore"), 4),
-		Gem (Items.get("Gem"), 6);
+		Gem (Items.get("Gem"), 6),
+		Cloud (Items.get("Cloud Ore"), 8);
 		
-		private Item drop;
+		private final Item drop;
 		public final int color;
 		
 		OreType(Item drop, int color) {
@@ -37,15 +37,14 @@ public class OreTile extends Tile {
 			this.color = color;
 		}
 		
-		protected Item getOre() {
+		private Item getOre() {
 			return drop.clone();
 		}
     }
 	
 	protected OreTile(OreType o) {
-		super((o == OreTile.OreType.Lapis ? "Lapis" : o.name() + " Ore"), new Sprite(24 + o.color, 0, 2, 2, 1));
+		super((o == OreTile.OreType.Lapis ? "Lapis" : o == OreType.Cloud ? "Cloud Cactus" : o.name() + " Ore"), new Sprite(22 + o.color, 2, 2, 2, 1));
         this.type = o;
-		this.sprite = super.sprite;
 	}
 
 	public void render(Screen screen, Level level, int x, int y) {
@@ -91,9 +90,13 @@ public class OreTile extends Tile {
 
 		level.add(new TextParticle("" + dmg, x * 16 + 8, y * 16 + 8, Color.RED));
 		if (dmg > 0) {
-			int count = random.nextInt(2) + 0;
+			int count = random.nextInt(2);
 			if (damage >= oreH) {
-				level.setTile(x, y, Tiles.get("Dirt"));
+				if (type == OreType.Cloud) {
+					level.setTile(x, y, Tiles.get("Cloud"));
+				} else {
+					level.setTile(x, y, Tiles.get("Dirt"));
+				}
 				count += 2;
 			} else {
 				level.setData(x, y, damage);
