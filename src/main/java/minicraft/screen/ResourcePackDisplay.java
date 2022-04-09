@@ -4,8 +4,6 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.*;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 
@@ -160,7 +158,7 @@ public class ResourcePackDisplay extends Display {
 
 	private void updateLocalization(@Nullable ZipFile zipFile) {
 		// Reload all hard-coded loc-files. (also clears old custom loc)
-		Localization.reloadLanguages();
+		Localization.reloadLocalizationFiles();
 
 		// Load the custom loc as long as this isn't the default pack.
 		if (zipFile != null) {
@@ -173,7 +171,7 @@ public class ResourcePackDisplay extends Display {
 				}
 			}
 
-			Localization.updateLanguages(paths.toArray(new String[0]));
+			Localization.updateLocalizationFiles(paths.toArray(new String[0]));
 		}
 	}
 

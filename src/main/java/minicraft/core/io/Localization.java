@@ -23,6 +23,7 @@ import org.jetbrains.annotations.NotNull;
 import minicraft.core.Game;
 import minicraft.screen.ResourcePackDisplay;
 
+import org.json.JSONException;
 import org.json.JSONObject;
 import org.tinylog.Logger;
 
@@ -37,9 +38,14 @@ public class Localization {
 	private static final HashMap<Locale, String> localizationFiles = new HashMap<>();
 
 	static {
-		getLanguagesFromDirectory();
+		getDefaultLocalizationFiles();
 	}
-	
+
+	/**
+	 * Get the provided key's localization for the currently selected language.
+	 * @param key The key to localize.
+	 * @return A localized string.
+	 */
 	@NotNull
 	public static String getLocalized(String key) {
 		if (key.matches("^[ ]*$")) return key; // Blank, or just whitespace
@@ -60,45 +66,27 @@ public class Localization {
 		
 		return (localString == null ? key : localString);
 	}
-	
+
+	/**
+	 * Gets the currently selected locale.
+	 * @return A locale object.
+	 */
 	public static Locale getSelectedLocale() { return selectedLocale; }
-	
+
+	/**
+	 * Get the currently selected locale, but as a full name without the country code.
+	 * @return A string with the name of the language.
+	 */
 	@NotNull
 	public static String getSelectedLanguage() {
 		String data = localizationFiles.get(selectedLocale);
 		return data.substring(data.lastIndexOf("/")+1, data.indexOf('_'));
 	}
 
-	public static void changeLanguage(@NotNull String newLanguage) {
-		selectedLocale = Locale.forLanguageTag(newLanguage);
-
-		reloadLanguage();
-	}
-
-	private static void reloadLanguage() {
-		Logger.trace("Reloading language...");
-		localization.clear();
-
-		// Check if selectedLanguage is empty.
-		if (selectedLocale == null)
-			selectedLocale = DEFAULT_LOCALE;
-
-		// Check if language is loaded.
-		if (localizationFiles.get(selectedLocale) == null)
-			selectedLocale = DEFAULT_LOCALE;
-
-		// Load the loc into localization.
-		String fileText = getFileAsString(selectedLocale);
-
-		// Attempt to load string as a json object.
-		JSONObject json = new JSONObject(fileText);
-
-		// Put all loc strings in a key-value set.
-		for (String key : json.keySet()) {
-			localization.put(key, json.getString(key));
-		}
-	}
-	
+	/**
+	 * Gets a list of all the known languages.
+	 * @return A list of languages.
+	 */
 	@NotNull
 	public static String[] getLanguages() {
 		ArrayList<String> locs = new ArrayList<>();
@@ -109,9 +97,17 @@ public class Localization {
 		return locs.toArray(new String[0]);
 	}
 
+	/**
+	 * Gets a  list of all the known locales.
+	 * @return A list of locales.
+	 */
 	@NotNull
 	public static Locale[] getLocales() { return localizationFiles.keySet().toArray(new Locale[0]); }
 
+	/**
+	 * Gets a list of all the known locales.
+	 * @return A list of language tags.
+	 */
 	@NotNull
 	public static String[] getLocalesAsString() {
 		ArrayList<String> locs = new ArrayList<>();
@@ -122,8 +118,63 @@ public class Localization {
 		return locs.toArray(new String[0]);
 	}
 
+	/**
+	 * Changes the selected language and loads it.
+	 * If the provided language doesn't exist, it loads the default locale.
+	 * @param newLanguage The language-country code of the language to load.
+	 */
+	public static void changeLanguage(@NotNull String newLanguage) {
+		selectedLocale = Locale.forLanguageTag(newLanguage);
+
+		loadLanguage();
+	}
+
+	/**
+	 * This method gets the currently selected locale and loads it if it exists. If not, it loads the default locale.
+	 * The loaded file is then parsed, and all the entries are added to a hashmap.
+	 */
+	private static void loadLanguage() {
+		Logger.trace("Loading language...");
+		localization.clear();
+
+		// Check if selected localization exists.
+		if (localizationFiles.get(selectedLocale) == null)
+			selectedLocale = DEFAULT_LOCALE;
+
+		// Convert the file into a string we can parse.
+		String fileText = loadLocalizationFile(selectedLocale);
+
+		// Attempt to load the string as a json object.
+		JSONObject json;
+		try {
+			json = new JSONObject(fileText);
+		} catch (JSONException e) {
+			// If it is the default locale, the game is too broken to run, so we should just quit.
+			if (selectedLocale == DEFAULT_LOCALE) {
+				Logger.error("The default locale contains broken json. Terminating...");
+				System.exit(1);
+			} else {
+				// If the default locale isn't loaded, retry with the default locale.
+				Logger.error("The locale we attempted to load contains invalid json. Retrying with default locale.");
+				selectedLocale = DEFAULT_LOCALE;
+				loadLanguage();
+			}
+			return;
+		}
+
+		// Put all loc strings in a key-value set.
+		for (String key : json.keySet()) {
+			localization.put(key, json.getString(key));
+		}
+	}
+
+	/**
+	 * Gets the path of the provided locale by checking if it exists in localizationFiles. Then loads the file as a string.
+	 * @param locale The locale to load.
+	 * @return A sting object with the text of the file. If locale doesn't exist it returns an empty string.
+	 */
 	@NotNull
-	private static String getFileAsString(Locale locale) {
+	private static String loadLocalizationFile(Locale locale) {
 		// Find path of the selected language, and check for errors.
 		String location = localizationFiles.get(locale);
 		if (location == null) {
@@ -165,12 +216,11 @@ public class Localization {
 		return String.join("\n", reader.lines().toArray(String[]::new));
 	}
 
-	// Couldn't find a good way to find all the files in a directory when the program is
-	// exported as a jar file, so I copied this. Thanks!
-	// https://stackoverflow.com/questions/1429172/how-do-i-list-the-files-inside-a-jar-file/1429275#1429275
-	private static void getLanguagesFromDirectory() {
-		ArrayList<String> languages = new ArrayList<>();
-		
+	/**
+	 * Gets a list of paths to where the localization files are located in the jar file, and adds them to the "localizationFiles" HashMap.
+	 * https://stackoverflow.com/questions/1429172/how-do-i-list-the-files-inside-a-jar-file/1429275#1429275
+	 */
+	private static void getDefaultLocalizationFiles() {
 		try {
 			CodeSource src = Game.class.getProtectionDomain().getCodeSource();
 			if (src != null) {
@@ -181,11 +231,11 @@ public class Localization {
 					ZipEntry e = zip.getNextEntry();
 					
 					// e is either null if there are no entries left, or if
-					// we're running this from an ide (at least for eclipse)
+					// we're running this from an ide
 					if (e == null) {
 						if (reads > 0) break;
 						else {
-							getLanguagesFromDirectoryUsingIDE();
+							getDefaultLocalizationFilesUsingIDE();
 							return;
 						}
 					}
@@ -196,7 +246,6 @@ public class Localization {
 							String data = name.replace("resources/localization/", "").replace(".json", "");
 							Locale lang = Locale.forLanguageTag(data.substring(data.indexOf('_')+1));
 
-							languages.add(data.substring(0, data.indexOf('_')));
 							localizationFiles.put(lang, '/' + name);
 						} catch (StringIndexOutOfBoundsException ex) {
 							Logger.error("Could not load localization with path: {}", name);
@@ -211,15 +260,14 @@ public class Localization {
 			e.printStackTrace();
 			return;
 		}
-
-		languages.toArray(new String[0]);
 	}
-	
-	// This is only here, so we can run the game in our ide.
-	// This will not work if we're running the game from a jar file.
-	private static void getLanguagesFromDirectoryUsingIDE() {
-		ArrayList<String> languages = new ArrayList<>();
-		
+
+	/**
+	 * Gets a list of paths to where the localization files are located on your disk, and adds them to the "localizationFiles" HashMap.
+	 * The path is relative to the "resources" folder.
+	 * Will not work if we are running this from a jar.
+	 */
+	private static void getDefaultLocalizationFilesUsingIDE() {
 		try {
 			URL fUrl = Game.class.getResource("/resources/localization/");
 			if (fUrl == null) {
@@ -235,7 +283,6 @@ public class Localization {
 					String data = filename.replace(".json", "");
 					Locale lang = Locale.forLanguageTag(data.substring(data.indexOf('_') + 1));
 
-					languages.add(data.substring(0, data.indexOf('_')));
 					localizationFiles.put(lang, "/resources/localization/" + filename);
 				} catch (StringIndexOutOfBoundsException e) {
 					Logger.error("Could not load localization file with path: {}", p);
@@ -245,11 +292,24 @@ public class Localization {
 			e.printStackTrace();
 			return;
 		}
-
-		languages.toArray(new String[0]);
 	}
 
-	public static void updateLanguages(String[] paths) {
+	/**
+	 * Used by resource packs to reload the default localization files. It clears all references to loaded files, and adds the default locales anew.
+	 */
+	public static void reloadLocalizationFiles() {
+		// Clear array with localization files.
+		localizationFiles.clear();
+
+		// Reload all default localization files.
+		getDefaultLocalizationFiles();
+	}
+
+	/**
+	 * Used by resource packs to replace and add initialized localization files.
+	 * @param paths The paths to the different localization files. It is relative to the loaded pack, and not an absolute path.
+	 */
+	public static void updateLocalizationFiles(String[] paths) {
 		for (String path : paths) {
 			String data = path.replace(".json", "");
 
@@ -259,19 +319,11 @@ public class Localization {
 
 				localizationFiles.put(lang, path);
 			} catch (StringIndexOutOfBoundsException e) {
-				Logger.error("Title of loc file {} is invalid.", path);
+				Logger.error("Title of localization file {} is invalid.", path);
 			}
 		}
 
-		// Update the loaded loc.
-		reloadLanguage();
-	}
-
-	public static void reloadLanguages() {
-		// Clear array with localization files.
-		localizationFiles.clear();
-
-		// Reload all default localization files.
-		getLanguagesFromDirectory();
+		// After we have added the paths to localizationFiles, reload the currently selected language.
+		loadLanguage();
 	}
 }
