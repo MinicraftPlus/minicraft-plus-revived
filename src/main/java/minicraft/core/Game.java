@@ -33,7 +33,6 @@ public class Game {
 	Game() {} // Can't instantiate the Game class.
 	
 	public static boolean debug = false;
-	public static boolean packet_debug = false;
 	
 	public static final String NAME = "Minicraft Plus"; // This is the name on the application window.
 	public static final Version VERSION = new Version("2.1.0-dev3");
@@ -44,13 +43,6 @@ public class Game {
 	public static List<String> notifications = new ArrayList<>();
 
 	public static int MAX_FPS = (int) Settings.get("fps");
-
-	/**
-	 * This specifies a custom port instead of default to server-side using
-	 * --port parameter if something goes wrong in setting the new port
-	 * it'll use the default one {@link MinicraftProtocol#PORT}
-	 */
-	public static int CUSTOM_PORT = MinicraftProtocol.PORT;
 
 	// DISPLAY
 	static Display display = null, newDisplay = null;

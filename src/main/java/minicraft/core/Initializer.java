@@ -27,26 +27,20 @@ public class Initializer extends Game {
 	
 	static void parseArgs(String[] args) {
 		boolean debug = false;
-		boolean packetdebug = false;
 		
 		// Parses command line arguments
 		String saveDir = FileHandler.systemGameDir;
 		for (int i = 0; i < args.length; i++) {
 			if (args[i].equals("--debug")) {
 				debug = true;
-
-			} else if (args[i].equals("--packetdebug")) {
-				packetdebug = true;
 			} else if (args[i].equals("--savedir") && i+1 < args.length) {
 				i++;
 				saveDir = args[i];
 			} else if (args[i].equals("--fullscreen")) {
-				// Initializes fullscreen
 				Updater.FULLSCREEN = true;
 			}
 		}
 		Game.debug = debug;
-		Game.packet_debug = packetdebug;
 		
 		FileHandler.determineGameDir(saveDir);
 	}
