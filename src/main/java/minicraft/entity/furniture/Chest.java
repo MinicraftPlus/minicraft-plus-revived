@@ -33,7 +33,7 @@ public class Chest extends Furniture implements ItemHolder {
 	
 	/** This is what occurs when the player uses the "Menu" command near this */
 	public boolean use(Player player) {
-		Game.setMenu(new ContainerDisplay(player, this));
+		Game.setDisplay(new ContainerDisplay(player, this));
 		return true;
 	}
 
@@ -80,8 +80,8 @@ public class Chest extends Furniture implements ItemHolder {
 		switch(fieldName) {
 			case "inventory":
 				inventory.updateInv(val);
-				if (Game.getMenu() instanceof ContainerDisplay)
-					((ContainerDisplay)Game.getMenu()).onInvUpdate(this);
+				if (Game.getDisplay() instanceof ContainerDisplay)
+					((ContainerDisplay)Game.getDisplay()).onInvUpdate(this);
 				return true;
 		}
 		return false;

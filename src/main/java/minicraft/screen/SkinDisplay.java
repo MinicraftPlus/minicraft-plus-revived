@@ -131,7 +131,7 @@ public class SkinDisplay extends Display {
 	 * If we exited by selecting a skin.
 	 */
 	private static void confirmExit() {
-		Game.exitMenu();
+		Game.exitDisplay();
 
 		// Achieve Fashion Show:
 		AchievementsDisplay.setAchievement("minicraft.achievement.skin", true);

@@ -24,13 +24,13 @@ public class PauseDisplay extends Display {
 		ArrayList<ListEntry> entries = new ArrayList<>();
 		entries.addAll(Arrays.asList(
 			new BlankEntry(),
-			new SelectEntry("Return to Game", () -> Game.setMenu(null)),
-			new SelectEntry("Options", () -> Game.setMenu(new OptionsWorldDisplay())),
-			new SelectEntry("Achievements", () -> Game.setMenu(new AchievementsDisplay()))
+			new SelectEntry("Return to Game", () -> Game.setDisplay(null)),
+			new SelectEntry("Options", () -> Game.setDisplay(new OptionsWorldDisplay())),
+			new SelectEntry("Achievements", () -> Game.setDisplay(new AchievementsDisplay()))
 			));
 
 		entries.add(new SelectEntry("Save Game", () -> {
-			Game.setMenu(null);
+			Game.setDisplay(null);
 			new Save(WorldSelectDisplay.getWorldName());
 		}));
 
@@ -50,11 +50,11 @@ public class PauseDisplay extends Display {
 				)));
 				
 				items.add(new BlankEntry());
-				items.add(new SelectEntry("Cancel", Game::exitMenu));
+				items.add(new SelectEntry("Cancel", Game::exitDisplay));
 				
-				items.add(new SelectEntry("Quit without saving", () -> Game.setMenu(new TitleDisplay())));
+				items.add(new SelectEntry("Quit without saving", () -> Game.setDisplay(new TitleDisplay())));
 				
-				Game.setMenu(new Display(false, true, new Menu.Builder(true, 8, RelPos.CENTER, items
+				Game.setDisplay(new Display(false, true, new Menu.Builder(true, 8, RelPos.CENTER, items
 				).createMenu()));
 			}),
 			
@@ -80,6 +80,6 @@ public class PauseDisplay extends Display {
 	public void tick(InputHandler input) {
 		super.tick(input);
 		if (input.getKey("pause").clicked)
-			Game.exitMenu();
+			Game.exitDisplay();
 	}
 }

@@ -82,9 +82,9 @@ public class WorldEditDisplay extends Display {
 					Sound.confirm.play();
 					WorldSelectDisplay.refreshWorldNames();
 					if(WorldSelectDisplay.getWorldNames().size() > 0)
-						Game.setMenu(new WorldSelectDisplay());
+						Game.setDisplay(new WorldSelectDisplay());
 					else
-						Game.setMenu(new TitleDisplay());
+						Game.setDisplay(new TitleDisplay());
 				break;
 				
 				case Copy:
@@ -106,7 +106,7 @@ public class WorldEditDisplay extends Display {
 
 					Sound.confirm.play();
 					WorldSelectDisplay.refreshWorldNames();
-					Game.setMenu(new WorldSelectDisplay());
+					Game.setDisplay(new WorldSelectDisplay());
 					
 				break;
 				
@@ -127,7 +127,7 @@ public class WorldEditDisplay extends Display {
 
 					Sound.confirm.play();
 					WorldSelectDisplay.refreshWorldNames();
-					Game.setMenu(new WorldSelectDisplay());
+					Game.setDisplay(new WorldSelectDisplay());
 				break;
 			}
 		}

@@ -27,7 +27,7 @@ public class LoadingDisplay extends Display {
 		super(true, false);
 		t = new Timer(500, e -> {
 			World.initWorld();
-			Game.setMenu(null);
+			Game.setDisplay(null);
 		});
 		t.setRepeats(false);
 	}

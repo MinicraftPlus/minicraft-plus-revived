@@ -10,7 +10,6 @@ import minicraft.gfx.Point;
 import minicraft.gfx.SpriteSheet;
 import minicraft.item.*;
 import minicraft.screen.entry.ItemListing;
-import org.tinylog.Logger;
 
 public class CraftingDisplay extends Display {
 	
@@ -89,7 +88,7 @@ public class CraftingDisplay extends Display {
 		}
 
 		if (input.getKey("menu").clicked || (isPersonalCrafter && input.getKey("craft").clicked)) {
-			Game.exitMenu();
+			Game.exitDisplay();
 			return;
 		}
 		

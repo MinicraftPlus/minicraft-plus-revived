@@ -37,22 +37,22 @@ public class TitleDisplay extends Display {
 			new BlankEntry(),
 			new SelectEntry("Play", () -> /*Game.setMenu(new PlayDisplay())*/{
 				if (WorldSelectDisplay.getWorldNames().size() > 0)
-					Game.setMenu(new Display(true, new Menu.Builder(false, 2, RelPos.CENTER,
-						new SelectEntry("Load World", () -> Game.setMenu(new WorldSelectDisplay())),
-						new SelectEntry("New World", () -> Game.setMenu(new WorldGenDisplay()))
+					Game.setDisplay(new Display(true, new Menu.Builder(false, 2, RelPos.CENTER,
+						new SelectEntry("Load World", () -> Game.setDisplay(new WorldSelectDisplay())),
+						new SelectEntry("New World", () -> Game.setDisplay(new WorldGenDisplay()))
 					).createMenu()));
-				else Game.setMenu(new WorldGenDisplay());
+				else Game.setDisplay(new WorldGenDisplay());
 			}),
-			new SelectEntry("Options", () -> Game.setMenu(new OptionsMainMenuDisplay())),
-            new SelectEntry("Skins", () -> Game.setMenu(new SkinDisplay())),
-			new SelectEntry("Achievements", () -> Game.setMenu(new AchievementsDisplay())),
+			new SelectEntry("Options", () -> Game.setDisplay(new OptionsMainMenuDisplay())),
+            new SelectEntry("Skins", () -> Game.setDisplay(new SkinDisplay())),
+			new SelectEntry("Achievements", () -> Game.setDisplay(new AchievementsDisplay())),
 				new SelectEntry("Help", () ->
-						Game.setMenu(new Display(true, new Menu.Builder(false, 1, RelPos.CENTER,
+						Game.setDisplay(new Display(true, new Menu.Builder(false, 1, RelPos.CENTER,
 								new BlankEntry(),
-								new SelectEntry("Instructions", () -> Game.setMenu(new BookDisplay(BookData.instructions))),
-								new SelectEntry("Storyline Guide", () -> Game.setMenu(new BookDisplay(BookData.storylineGuide))),
-								new SelectEntry("About", () -> Game.setMenu(new BookDisplay(BookData.about))),
-								new SelectEntry("Credits", () -> Game.setMenu(new BookDisplay(BookData.credits)))
+								new SelectEntry("Instructions", () -> Game.setDisplay(new BookDisplay(BookData.instructions))),
+								new SelectEntry("Storyline Guide", () -> Game.setDisplay(new BookDisplay(BookData.storylineGuide))),
+								new SelectEntry("About", () -> Game.setDisplay(new BookDisplay(BookData.about))),
+								new SelectEntry("Credits", () -> Game.setDisplay(new BookDisplay(BookData.credits)))
 						).setTitle("Help").createMenu()))
 				),
 			new SelectEntry("Quit", Game::quit)

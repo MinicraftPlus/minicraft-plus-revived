@@ -90,10 +90,10 @@ public class Updater extends Game {
 		
 		// Quick Level change: move the player for -1, or 1 levels
         	if (isMode("creative") && input.getKey("SHIFT-S").clicked ) {
-        		Game.setMenu(new LevelTransitionDisplay(-1));
+        		Game.setDisplay(new LevelTransitionDisplay(-1));
         	
         	} else if (isMode("creative") && input.getKey("SHIFT-W").clicked ){
-        		Game.setMenu(new LevelTransitionDisplay(1));
+        		Game.setDisplay(new LevelTransitionDisplay(1));
         	
         	}
 
@@ -102,14 +102,14 @@ public class Updater extends Game {
 			Updater.updateFullscreen();
 		}
 
-		if (newMenu != menu) {
-			if (menu != null && (newMenu == null || newMenu.getParent() != menu))
-				menu.onExit();
+		if (newDisplay != display) {
+			if (display != null && (newDisplay == null || newDisplay.getParent() != display))
+				display.onExit();
 			
-			if (newMenu != null && (menu == null || newMenu != menu.getParent()))
-				newMenu.init(menu);
+			if (newDisplay != null && (display == null || newDisplay != display.getParent()))
+				newDisplay.init(display);
 			
-			menu = newMenu;
+			display = newDisplay;
 		}
 		
 		Level level = levels[currentLevel];
@@ -150,7 +150,7 @@ public class Updater extends Game {
 		if (isMode("score") && (!paused && !gameOver)) {
 			if (scoreTime <= 0) { // GAME OVER
 				gameOver = true;
-				setMenu(new EndGameDisplay(player));
+				setDisplay(new EndGameDisplay(player));
 			}
 			
 			scoreTime--;
@@ -165,11 +165,11 @@ public class Updater extends Game {
 
 			input.tick(); // INPUT TICK; no other class should call this, I think...especially the *Menu classes.
 
-			if (menu != null) {
+			if (display != null) {
 				// A menu is active.
 				if (player != null)
 					player.tick(); // It is CRUCIAL that the player is ticked HERE, before the menu is ticked. I'm not quite sure why... the menus break otherwise, though.
-				menu.tick(input);
+				display.tick(input);
 				paused = true;
 			} else {
 				// No menu, currently.
@@ -180,10 +180,10 @@ public class Updater extends Game {
 					// Makes delay between death and death menu.
 					World.playerDeadTime++;
 					if (World.playerDeadTime > 60) {
-						setMenu(new PlayerDeathDisplay());
+						setDisplay(new PlayerDeathDisplay());
 					}
 				} else if (World.pendingLevelChange != 0) {
-					setMenu(new LevelTransitionDisplay(World.pendingLevelChange));
+					setDisplay(new LevelTransitionDisplay(World.pendingLevelChange));
 					World.pendingLevelChange = 0;
 				}
 
@@ -194,7 +194,7 @@ public class Updater extends Game {
 					Tile.tickCount++;
 				}
 				
-				if (menu == null && input.getKey("F3").clicked) { // Shows debug info in upper-left
+				if (display == null && input.getKey("F3").clicked) { // Shows debug info in upper-left
 					Renderer.showinfo = !Renderer.showinfo;
 				}
 				

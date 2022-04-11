@@ -27,7 +27,6 @@ import minicraft.item.ToolType;
 import minicraft.level.Level;
 import minicraft.screen.LoadingDisplay;
 import minicraft.screen.RelPos;
-import minicraft.util.MyUtils;
 import org.tinylog.Logger;
 
 import javax.imageio.ImageIO;
@@ -102,8 +101,8 @@ public class Renderer extends Game {
 			renderGui();
 		}
 		
-		if (menu != null) // Renders menu, if present.
-			menu.render(screen);
+		if (display != null) // Renders menu, if present.
+			display.render(screen);
 		
 		if (!canvas.hasFocus()) renderFocusNagger(); // Calls the renderFocusNagger() method, which creates the "Click to Focus" message.
 		

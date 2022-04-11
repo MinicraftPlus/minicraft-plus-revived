@@ -34,7 +34,7 @@ public class ResourcePackDisplay extends Display {
 
 	private static List<ListEntry> getPacksAsEntries() {
 		List<ListEntry> resourceList = new ArrayList<>();
-		resourceList.add(new SelectEntry(ResourcePackDisplay.DEFAULT_RESOURCE_PACK, Game::exitMenu, false));
+		resourceList.add(new SelectEntry(ResourcePackDisplay.DEFAULT_RESOURCE_PACK, Game::exitDisplay, false));
 
 		// Generate resource packs folder
 		if (FOLDER_LOCATION.mkdirs()) {
@@ -45,7 +45,7 @@ public class ResourcePackDisplay extends Display {
 		for (String fileName : Objects.requireNonNull(FOLDER_LOCATION.list())) {
 			// Only accept files ending with .zip.
 			if (fileName.endsWith(".zip")) {
-				resourceList.add(new SelectEntry(fileName, Game::exitMenu, false));
+				resourceList.add(new SelectEntry(fileName, Game::exitDisplay, false));
 			}
 		}
 
