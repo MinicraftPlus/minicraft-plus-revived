@@ -537,7 +537,6 @@ public class Player extends Mob implements ItemHolder, ClientTickable {
 		if (activeItem != null && !activeItem.interactsWithWorld()) {
 			attackDir = dir; // Make the attack direction equal the current direction
 			attackItem = activeItem; // Make attackItem equal activeItem
-			//if (Game.debug) System.out.println(Network.onlinePrefix() + "player is using reflexive item: " + activeItem);
 			activeItem.interactOn(Tiles.get("rock"), level, 0, 0, this, attackDir);
 			if (!Game.isMode("creative") && activeItem.isDepleted()) {
 				activeItem = null;

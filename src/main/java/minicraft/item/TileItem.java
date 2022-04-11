@@ -12,6 +12,7 @@ import minicraft.gfx.Sprite;
 import minicraft.level.Level;
 import minicraft.level.tile.Tile;
 import minicraft.level.tile.Tiles;
+import org.tinylog.Logger;
 
 public class TileItem extends StackableItem {
 	
@@ -84,8 +85,8 @@ public class TileItem extends StackableItem {
 				return super.interactOn(true);
 			}
 		}
-		
-		if (Game.debug) System.out.println(model + " cannot be placed on " + tile.name);
+
+		Logger.debug("{} cannot be placed on {}.", model, tile.name);
 		
 		String note = "";
 		if (model.contains("WALL")) {
@@ -94,7 +95,7 @@ public class TileItem extends StackableItem {
 		else if (model.contains("DOOR")) {
 			note = "Can only be placed on " + Tiles.getName(validTiles.get(0)) + "!";
 		}
-		else if ((model.contains("BRICK") || model.contains("PLANK"))) {
+		else if ((model.contains("BRICK") || model.contains("PLANK") || model.equals("STONE") || model.contains("ORNATE"))) {
 			note = "Dig a hole first!";
 		}
 		
