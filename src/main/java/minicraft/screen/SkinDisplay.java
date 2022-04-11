@@ -93,7 +93,7 @@ public class SkinDisplay extends Display {
 	public static List<ListEntry> getSkinsAsEntries() {
 		List<ListEntry> l = new ArrayList<>();
 		for (String s : skinNames) {
-			l.add(new SelectEntry(s, Game::exitMenu));
+			l.add(new SelectEntry(s, SkinDisplay::confirmExit));
 		}
 
 		return l;
@@ -106,10 +106,10 @@ public class SkinDisplay extends Display {
 		menus[0].setSelection(selectedSkinIndex);
 	}
 
-
-
-    @Override
-    public void onExit() {
+	/**
+	 * If we exited by selecting a skin.
+	 */
+	private static void confirmExit() {
 		Game.exitMenu();
 
 		// Achieve Fashion Show:
@@ -122,6 +122,10 @@ public class SkinDisplay extends Display {
 
 		// Save the selected skin.
 		new Save();
+	}
+
+    @Override
+    public void onExit() {
 		selectedSkinIndex = menus[0].getSelection();
     }
 
