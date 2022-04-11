@@ -1,20 +1,17 @@
 package minicraft.core;
 
-import java.io.IOException;
-import java.net.URISyntaxException;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Random;
 
 import org.jetbrains.annotations.Nullable;
 
-import com.mashape.unirest.http.HttpResponse;
-import com.mashape.unirest.http.JsonNode;
-import com.mashape.unirest.http.Unirest;
-import com.mashape.unirest.http.exceptions.UnirestException;
+import kong.unirest.HttpResponse;
+import kong.unirest.JsonNode;
+import kong.unirest.Unirest;
+import kong.unirest.UnirestException;
 
 import minicraft.entity.Entity;
 import minicraft.level.Level;
+import org.json.JSONObject;
 import org.tinylog.Logger;
 
 public class Network extends Game {
@@ -25,6 +22,7 @@ public class Network extends Game {
 	private static VersionInfo latestVersion = null;
 	
 	// Obviously, this can be null.
+	@Nullable
 	public static VersionInfo getLatestVersion() { return latestVersion; }
 	
 	
@@ -38,7 +36,7 @@ public class Network extends Game {
 					Logger.error("Response body: " + response.getBody());
 					latestVersion = new VersionInfo(VERSION, "", "");
 				} else {
-					latestVersion = new VersionInfo(response.getBody().getArray().getJSONObject(0));
+					latestVersion = new VersionInfo(new JSONObject(response.getBody().getObject().toString()));
 				}
 			} catch (UnirestException e) {
 				e.printStackTrace();

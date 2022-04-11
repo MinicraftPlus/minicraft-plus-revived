@@ -11,6 +11,8 @@ import javax.swing.JOptionPane;
 import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
 
+import kong.unirest.Empty;
+import kong.unirest.HttpResponse;
 import org.jetbrains.annotations.Nullable;
 
 import minicraft.core.io.InputHandler;
@@ -88,10 +90,10 @@ public class Game {
 			PrintWriter printer = new PrintWriter(string);
 			throwable.printStackTrace(printer);
 			
-			Future ping = Analytics.Crashes.ping();
+			Future<HttpResponse<Empty>> ping = Analytics.Crashes.ping();
 			
-			if (GraphicsEnvironment.isHeadless()) {
-				// Ensure ping finishes before program closes.
+			// Ensure ping finishes before program closes.
+			if (GraphicsEnvironment.isHeadless() && ping != null) {
 				try {
 					ping.get();
 				} catch (Exception ignored) {}
@@ -104,9 +106,12 @@ public class Game {
 			JOptionPane.showMessageDialog(null, errorPane, "An error has occurred", JOptionPane.ERROR_MESSAGE);
 			
 			// Ensure ping finishes before program closes.
-			try {
-				ping.get();
-			} catch (Exception ignored) {}
+			if (ping != null) {
+				try {
+					ping.get();
+				} catch (Exception ignored) {
+				}
+			}
 		});
 		
 		Analytics.GameStartup.ping();
