@@ -165,9 +165,7 @@ public class Player extends Mob implements ItemHolder, ClientTickable {
 				return super.remove(idx);
 			}
 		};
-		
-		//if(previousInstance == null)
-		//	inventory.add(Items.arrowItem, acs);
+
 		
 		potioneffects = new HashMap<>();
 		showpotioneffects = true;
@@ -748,6 +746,20 @@ public class Player extends Mob implements ItemHolder, ClientTickable {
 			dmg += ((ToolItem)activeItem).getAttackDamageBonus(e); // Sword/Axe are more effective at dealing damage.
 		}
 		return dmg;
+	}
+
+	/**
+	 * Updates the sprite to render on demand.
+	 */
+	public void updateSprite() {
+		// Get the current skin we are using as a MobSprite array.
+		MobSprite[][][] selectedSkin = SkinDisplay.getSkinAsMobSprite();
+
+		// Assign the skin to the states.
+		sprites = selectedSkin[0];
+		carrySprites = selectedSkin[1];
+		suitSprites = selectedSkin[2];
+		carrySuitSprites = selectedSkin[3];
 	}
 
 	@Override

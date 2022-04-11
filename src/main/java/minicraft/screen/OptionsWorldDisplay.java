@@ -16,7 +16,8 @@ public class OptionsWorldDisplay extends Display {
 				Settings.getEntry("autosave"),
 				new SelectEntry("Change Key Bindings", () -> Game.setMenu(new KeyInputDisplay())),
 				Settings.getEntry("language"),
-				Settings.getEntry("skinon"))
+				Settings.getEntry("skinon"),
+				new SelectEntry("Skins", () -> Game.setMenu(new SkinDisplay())))
 			.setTitle("World Options")
 			.createMenu()
 		);

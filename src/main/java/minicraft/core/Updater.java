@@ -106,8 +106,6 @@ public class Updater extends Game {
 			if (menu != null && (newMenu == null || newMenu.getParent() != menu))
 				menu.onExit();
 			
-			//if (debug) System.out.println("Setting menu from " + newMenu + " to " + display);
-			
 			if (newMenu != null && (menu == null || newMenu != menu.getParent()))
 				newMenu.init(menu);
 			

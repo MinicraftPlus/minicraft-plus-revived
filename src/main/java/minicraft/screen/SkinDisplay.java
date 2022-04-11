@@ -52,22 +52,22 @@ public class SkinDisplay extends Display {
 		defaultSkins = skinNames.size();
 
 		// Get the folder containing the skins.
-		File skinFolder = new File(FileHandler.getSystemGameDir() + "/" + FileHandler.getLocalGameDir() + "/skins");
+		File skinsFolder = new File(FileHandler.getSystemGameDir() + "/" + FileHandler.getLocalGameDir() + "/skins");
 
 		// Create folder, and see if it was successful.
-		if (skinFolder.mkdirs()) {
-			Logger.info("Created resource packs folder at {}.", skinFolder);
+		if (skinsFolder.mkdirs()) {
+			Logger.info("Created resource packs folder at {}.", skinsFolder);
 		}
 
 		// Read and add the .png file to the skins list.
-		for (String fileName : Objects.requireNonNull(skinFolder.list())) {
-			if (fileName.endsWith(".png")) { // Only .png skins files
+		for (String skinPath : Objects.requireNonNull(skinsFolder.list())) {
+			if (skinPath.endsWith(".png")) { // Only .png skins files
 				BufferedImage image = null;
 				try {
-					image = ImageIO.read(new FileInputStream(skinFolder + "/" + fileName));
+					image = ImageIO.read(new FileInputStream(skinsFolder + "/" + skinPath));
 				} catch (IOException e) {
 					e.printStackTrace();
-					Logger.error("Image at {} is invalid.", fileName);
+					Logger.error("Image at {} is invalid.", skinPath);
 				}
 
 				// If we found an image.
@@ -80,10 +80,10 @@ public class SkinDisplay extends Display {
 						customSkinSheets.add(spriteSheet);
 
 						// Remove the filetype (.png) and to the .
-						skinNames.add(fileName.substring(0, fileName.length()-4));
+						skinNames.add(skinPath.substring(0, skinPath.length()-4));
 					} else {
 						// Go here if image has wrong dimensions.
-						Logger.error("Custom skin at '{}' has incorrect width or height. Should be a multiple of 8.", fileName);
+						Logger.error("Custom skin at '{}' has incorrect width or height. Should be a multiple of 8.", skinPath);
 					}
 				}
 			}
@@ -110,6 +110,22 @@ public class SkinDisplay extends Display {
     public void onExit() {
 		// Achieve Fashion Show:
 		AchievementsDisplay.setAchievement("minicraft.achievement.skin", true);
+
+		// Save the selected skin.
+		new Save();
+	}
+
+    @Override
+    public void onExit() {
+		Game.exitMenu();
+
+		// Achieve Fashion Show:
+		AchievementsDisplay.setAchievement("minicraft.achievement.skin", true);
+
+		// Tell the player to apply changes.
+		if (Game.player != null) {
+			Game.player.updateSprite();
+		}
 
 		// Save the selected skin.
 		new Save();
