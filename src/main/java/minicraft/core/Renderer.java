@@ -85,22 +85,17 @@ public class Renderer extends Game {
 		int height = 0;
 
 		switch ((String) Settings.get("aspectratio")) {
-			case "Native":
-				java.awt.Dimension size = java.awt.Toolkit.getDefaultToolkit().getScreenSize();
-				width = (int) size.getWidth();
-				height = (int) size.getHeight();
-				break;
-			
 			case "4x3":
 				width = 4;
 				height = 3;
 				break;
-
 			case "16x9":
 				width = 16;
 				height = 9;
 				break;
 			default:
+				width = 16;
+				height = 9;
 				break;
 		}
 
@@ -109,7 +104,7 @@ public class Renderer extends Game {
 		Renderer.WIDTH = (int) (width * s);
 	}
 
-	public static void initScreen() {
+	public static void initScreen() {		
 		image = new BufferedImage(WIDTH, HEIGHT, BufferedImage.TYPE_INT_RGB);
 		pixels = ((DataBufferInt) image.getRaster().getDataBuffer()).getData();
 

@@ -122,12 +122,10 @@ public class Game {
 		player.eid = 0;
 		new Load(true); // This loads any saved preferences.
 
-		Renderer.setAspectRatio(); // Sets the screen resolution.
-
-		setMenu(new TitleDisplay()); // Sets menu to the title screen.
-
 		Initializer.createAndDisplayFrame();
 		
+		setMenu(new TitleDisplay()); // Sets menu to the title screen.
+
 		Renderer.initScreen();
 
 		// Update fullscreen frame if Updater.FULLSCREEN was updated previously
