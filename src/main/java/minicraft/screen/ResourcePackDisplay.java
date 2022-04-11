@@ -24,8 +24,10 @@ import org.tinylog.Logger;
 
 public class ResourcePackDisplay extends Display {
 
+	private static final String[] SHEET_NAMES = new String[] { "items.png", "tiles.png", "entities.png", "gui.png" };
+	private static final int SHEET_DIMENSIONS = 256;
+
 	private static final String DEFAULT_RESOURCE_PACK = "Default";
-	private static final String[] SPRITESHEET_NAMES = new String[] { "items.png", "tiles.png", "entities.png", "gui.png" };
 	private static final File FOLDER_LOCATION = new File(FileHandler.getSystemGameDir() + "/" + FileHandler.getLocalGameDir() + "/resourcepacks");
 
 	private static String loadedPack = DEFAULT_RESOURCE_PACK;
@@ -57,7 +59,6 @@ public class ResourcePackDisplay extends Display {
 
 	@Override
 	public void onExit() {
-		super.onExit();
 		updateResourcePack();
 	}
 
@@ -106,7 +107,7 @@ public class ResourcePackDisplay extends Display {
 
 	private void updateSheets(@Nullable ZipFile zipFile) {
 		try {
-			SpriteSheet[] sheets = new SpriteSheet[SPRITESHEET_NAMES.length];
+			SpriteSheet[] sheets = new SpriteSheet[SHEET_NAMES.length];
 
 			if (zipFile == null) {
 				// Load default sprite sheet.
@@ -122,18 +123,26 @@ public class ResourcePackDisplay extends Display {
 					if (textures == null) return;
 					if (textures.isEmpty()) return;
 
-					for (int i = 0; i < SPRITESHEET_NAMES.length; i++) {
-						ZipEntry entry = textures.get(SPRITESHEET_NAMES[i]);
+					for (int i = 0; i < SHEET_NAMES.length; i++) {
+						ZipEntry entry = textures.get(SHEET_NAMES[i]);
 						if (entry != null) {
 							try (InputStream inputEntry = zipFile.getInputStream(entry)) {
-								sheets[i] = new SpriteSheet(ImageIO.read(inputEntry));
+								SpriteSheet sheet = new SpriteSheet(ImageIO.read(inputEntry));
+
+								// Check if sheet has the correct dimensions.
+								if (sheet.width == SHEET_DIMENSIONS && sheet.height == SHEET_DIMENSIONS) {
+									sheets[i] = sheet;
+								} else {
+									Logger.error("Sheet with name {} has wrong dimensions. Should be {}px in both directions.", SHEET_NAMES[i], SHEET_DIMENSIONS);
+									return;
+								}
 							} catch (IOException e) {
 								e.printStackTrace();
-								Logger.error("Loading sheet {} failed. Aborting.", SPRITESHEET_NAMES[i]);
+								Logger.error("Loading sheet {} failed. Aborting.", SHEET_NAMES[i]);
 								return;
 							}
 						} else {
-							Logger.debug("Couldn't load sheet {}, ignoring.", SPRITESHEET_NAMES[i]);
+							Logger.debug("Couldn't load sheet {}, ignoring.", SHEET_NAMES[i]);
 						}
 					}
 				} catch (IllegalStateException e) {
