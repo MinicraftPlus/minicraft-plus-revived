@@ -1,0 +1,13 @@
+{
+  "key": {
+    "B": "stone_bricks",
+    "W": "stone_wall"
+  },
+  "data": [
+    "WWWWW",
+    "BBBBW",
+    "BBBBB",
+    "BBBBW",
+    "WWWWW"
+  ]
+}

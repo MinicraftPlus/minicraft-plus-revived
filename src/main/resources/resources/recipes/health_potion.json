@@ -1,0 +1,18 @@
+{
+  "for": ["enchant"],
+  "requires": [
+    {
+      "item": "potion"
+    },
+    {
+      "item": "gunpowder",
+      "amount": 2
+    },
+    {
+      "item": "leather_armor"
+    }
+  ],
+  "product": {
+    "item": "health_potion"
+  }
+}

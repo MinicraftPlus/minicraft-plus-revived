@@ -1,0 +1,12 @@
+{
+  "for": ["workbench"],
+  "requires": [
+    {
+      "item": "stone_brick",
+      "amount": 5
+    }
+  ],
+  "product": {
+    "item": "stone_door"
+  }
+}

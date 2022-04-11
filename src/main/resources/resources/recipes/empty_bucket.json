@@ -1,0 +1,12 @@
+{
+  "for": ["anvil"],
+  "requires": [
+    {
+      "item": "iron",
+      "amount": 5
+    }
+  ],
+  "product": {
+    "item": "empty_bucket"
+  }
+}

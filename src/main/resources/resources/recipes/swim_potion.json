@@ -1,0 +1,15 @@
+{
+  "for": ["enchant"],
+  "requires": [
+    {
+      "item": "potion"
+    },
+    {
+      "item": "raw_fish",
+      "amount": 5
+    }
+  ],
+  "product": {
+    "item": "swim_potion"
+  }
+}

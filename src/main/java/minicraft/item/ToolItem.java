@@ -50,6 +50,11 @@ public class ToolItem extends Item {
 		this.type = type;
 		dur = type.durability;
 	}
+
+	@Override
+	public String getTranslatedName() {
+		return Localization.getLocalized("item." + LEVEL_NAMES[level].toLowerCase().replaceAll(" ", "_") +  "_" + getName().toLowerCase().replaceAll(" ", "_"));
+	}
 	
 	/** Gets the name of this tool (and it's type) as a display string. */
 	@Override

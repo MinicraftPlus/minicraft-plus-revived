@@ -1,0 +1,21 @@
+{
+  "key": {
+    "O": "obsidian",
+    "D": "obsidian_door",
+    "W": "obsidian_wall"
+  },
+  "data": [
+    "WWDWW",
+    "WOOOW",
+    "DOOOD",
+    "WOOOW",
+    "WWDWW"
+  ],
+  "furniture": [
+    {
+      "id": "iron_lantern",
+      "x": -1,
+      "y": -1
+    }
+  ]
+}

@@ -1,6 +1,7 @@
 package minicraft.item;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -19,6 +20,7 @@ public class Items {
 		
 		If you want to access one of those items, you do it through this class, by calling get("item name"); casing does not matter.
 	*/
+	private static HashMap<String, Item> ITEM_REGISTRY = new HashMap<>();
 	private static ArrayList<Item> items = new ArrayList<>();
 	
 	private static void add(Item i) {
@@ -43,6 +45,10 @@ public class Items {
 		addAll(PotionItem.getAllInstances());
 		addAll(FishingRodItem.getAllInstances());
 		addAll(SummonItem.getAllInstances());
+
+		items.forEach(item -> {
+			ITEM_REGISTRY.put(item.getName().toLowerCase().replaceAll(" ", "_"), item);
+		});
 	}
 	
 	/** fetches an item from the list given its name. */
@@ -55,15 +61,15 @@ public class Items {
 	@Nullable
 	public static Item get(String name, boolean allowNull) {
 		name = name.toUpperCase();
-		//System.out.println("fetching name: \"" + name + "\"");
+
 		int data = 1;
 		boolean hadUnderscore = false;
 		if (name.contains("_")) {
 			hadUnderscore = true;
 			try {
-				data = Integer.parseInt(name.substring(name.indexOf("_")+1));
+				data = Integer.parseInt(name.substring(name.lastIndexOf("_")+1));
 			} catch (Exception ex) {
-				ex.printStackTrace();
+				// ex.printStackTrace();
 			}
 			name = name.substring(0, name.indexOf("_"));
 		}
@@ -94,6 +100,20 @@ public class Items {
 				i = cur;
 				break;
 			}
+		}
+
+		Item newItem = ITEM_REGISTRY.get(name.toLowerCase().replaceAll(" ", "_"));
+		if (newItem != null) {
+			newItem = newItem.clone();
+			if (newItem instanceof StackableItem) {
+				((StackableItem)newItem).count = data;
+			}
+
+			if (newItem instanceof ToolItem && hadUnderscore)
+				((ToolItem)newItem).dur = data;
+
+			// Logger.info("Got NewItem: " + name.toLowerCase().replaceAll(" ", "_") + "," + name);
+			return newItem;
 		}
 		
 		if (i != null) {

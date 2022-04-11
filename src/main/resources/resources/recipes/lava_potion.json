@@ -1,0 +1,14 @@
+{
+  "for": ["enchant"],
+  "requires": [
+    {
+      "item": "potion"
+    },
+    {
+      "item": "lava_bucket"
+    }
+  ],
+  "product": {
+    "item": "lava_potion"
+  }
+}

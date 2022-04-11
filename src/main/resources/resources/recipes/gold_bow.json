@@ -1,0 +1,20 @@
+{
+  "for": ["anvil"],
+  "requires": [
+    {
+      "item": "gold",
+      "amount": 5
+    },
+    {
+      "item": "wood",
+      "amount": 5
+    },
+    {
+      "item": "string",
+      "amount": 2
+    }
+  ],
+  "product": {
+    "item": "gold_bow"
+  }
+}

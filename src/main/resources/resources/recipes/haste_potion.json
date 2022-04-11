@@ -1,0 +1,19 @@
+{
+  "for": ["enchant"],
+  "requires": [
+    {
+      "item": "potion"
+    },
+    {
+      "item": "wood",
+      "amount": 5
+    },
+    {
+      "item": "stone",
+      "amount": 5
+    }
+  ],
+  "product": {
+    "item": "haste_potion"
+  }
+}

@@ -1,6 +1,7 @@
 package minicraft.level.tile;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 
 import minicraft.level.tile.farming.FarmTile;
 import minicraft.level.tile.farming.PotatoTile;
@@ -10,7 +11,7 @@ import org.tinylog.Logger;
 public final class Tiles {
 	/// Idea: to save tile names while saving space, I could encode the names in base 64 in the save file...^M
     /// Then, maybe, I would just replace the id numbers with id names, make them all private, and then make a get(String) method, parameter is tile name.
-	
+	private static HashMap<String, Tile> TILE_REGISTRY = new HashMap<>();
 	public static ArrayList<String> oldids = new ArrayList<>();
 	
 	private static ArrayList<Tile> tiles = new ArrayList<>();
@@ -79,6 +80,11 @@ public final class Tiles {
 			if(tiles.get(i) == null) continue;
 			tiles.get(i).id = (byte)i;
 		}
+
+		TILE_REGISTRY.clear();
+		tiles.forEach((tile) -> {
+			if (tile != null) TILE_REGISTRY.put(tile.name.toLowerCase().replaceAll(" ", "_"), tile);
+		});
 	}
 	
 
@@ -183,7 +189,12 @@ public final class Tiles {
 	private static int overflowCheck = 0;
 	public static Tile get(String name) {
 		//System.out.println("Getting from tile list: " + name);
-		
+		Tile newTile = TILE_REGISTRY.get(name.toLowerCase().replaceAll(" ", "_"));
+		if (newTile != null) {
+			// Logger.info("Got NewTile: " + name.toLowerCase().replaceAll(" ", "_") + "," + name);
+			return newTile;
+		}
+
 		name = name.toUpperCase();
 		
 		overflowCheck++;

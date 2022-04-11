@@ -1,0 +1,12 @@
+{
+  "for": ["craft"],
+  "requires": [
+    {
+      "item": "plank",
+      "amount": 3
+    }
+  ],
+  "product": {
+    "item": "wood_door"
+  }
+}

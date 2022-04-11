@@ -1,0 +1,16 @@
+{
+  "for": ["loom"],
+  "requires": [
+    {
+      "item": "wood",
+      "amount": 5
+    },
+    {
+      "item": "wool",
+      "amount": 3
+    }
+  ],
+  "product": {
+    "item": "bed"
+  }
+}

@@ -1,0 +1,20 @@
+{
+  "for": ["anvil"],
+  "requires": [
+    {
+      "item": "gem",
+      "amount": 50
+    },
+    {
+      "item": "wood",
+      "amount": 5
+    },
+    {
+      "item": "string",
+      "amount": 2
+    }
+  ],
+  "product": {
+    "item": "gem_bow"
+  }
+}

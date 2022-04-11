@@ -1,0 +1,15 @@
+{
+  "for": ["craft", "workbench"],
+  "requires": [
+    {
+      "item": "wood"
+    },
+    {
+      "item": "coal"
+    }
+  ],
+  "product": {
+    "item": "torch",
+    "amount": 2
+  }
+}

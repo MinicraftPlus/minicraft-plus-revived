@@ -1,0 +1,12 @@
+{
+  "for": ["workbench"],
+  "requires": [
+    {
+      "item": "obsidian_brick",
+      "amount": 3
+    }
+  ],
+  "product": {
+    "item": "obsidian_wall"
+  }
+}

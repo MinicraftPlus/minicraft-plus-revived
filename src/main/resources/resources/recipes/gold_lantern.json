@@ -1,0 +1,16 @@
+{
+  "for": ["anvil"],
+  "requires": [
+    {
+      "item": "gold",
+      "amount": 10
+    },
+    {
+      "item": "slime",
+      "amount": 5
+    }
+  ],
+  "product": {
+    "item": "gold_lantern"
+  }
+}

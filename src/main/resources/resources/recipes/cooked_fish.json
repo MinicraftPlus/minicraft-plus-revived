@@ -1,0 +1,14 @@
+{
+  "for": ["oven"],
+  "requires": [
+    {
+      "item": "raw_fish"
+    },
+    {
+      "item": "coal"
+    }
+  ],
+  "product": {
+    "item": "cooked_fish"
+  }
+}

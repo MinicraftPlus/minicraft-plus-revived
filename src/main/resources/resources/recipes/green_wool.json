@@ -1,0 +1,14 @@
+{
+  "for": ["loom"],
+  "requires": [
+    {
+      "item": "wool"
+    },
+    {
+      "item": "cactus"
+    }
+  ],
+  "product": {
+    "item": "green_wool"
+  }
+}

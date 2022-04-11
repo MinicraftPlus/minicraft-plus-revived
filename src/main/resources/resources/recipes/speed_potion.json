@@ -1,0 +1,15 @@
+{
+  "for": ["enchant"],
+  "requires": [
+    {
+      "item": "potion"
+    },
+    {
+      "item": "cactus",
+      "amount": 5
+    }
+  ],
+  "product": {
+    "item": "speed_potion"
+  }
+}

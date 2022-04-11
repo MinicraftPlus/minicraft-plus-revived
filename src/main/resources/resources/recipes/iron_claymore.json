@@ -1,0 +1,15 @@
+{
+  "for": ["anvil"],
+  "requires": [
+    {
+      "item": "iron_sword"
+    },
+    {
+      "item": "shard",
+      "amount": 15
+    }
+  ],
+  "product": {
+    "item": "iron_sword"
+  }
+}

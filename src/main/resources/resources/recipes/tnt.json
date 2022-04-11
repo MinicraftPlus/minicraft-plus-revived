@@ -1,0 +1,16 @@
+{
+  "for": ["workbench"],
+  "requires": [
+    {
+      "item": "gunpowder",
+      "amount": 10
+    },
+    {
+      "item": "sand",
+      "amount": 8
+    }
+  ],
+  "product": {
+    "item": "tnt"
+  }
+}

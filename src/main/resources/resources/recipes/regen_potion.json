@@ -1,0 +1,14 @@
+{
+  "for": ["enchant"],
+  "requires": [
+    {
+      "item": "potion"
+    },
+    {
+      "item": "gold_apple"
+    }
+  ],
+  "product": {
+    "item": "regen_potion"
+  }
+}

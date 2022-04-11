@@ -1,0 +1,16 @@
+{
+  "for": ["workbench"],
+  "requires": [
+    {
+      "item": "wood",
+      "amount": 10
+    },
+    {
+      "item": "wool",
+      "amount": 5
+    }
+  ],
+  "product": {
+    "item": "loom"
+  }
+}

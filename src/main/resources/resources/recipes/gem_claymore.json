@@ -1,0 +1,15 @@
+{
+  "for": ["anvil"],
+  "requires": [
+    {
+      "item": "gem_sword"
+    },
+    {
+      "item": "shards",
+      "amount": 15
+    }
+  ],
+  "product": {
+    "item": "gem_claymore"
+  }
+}

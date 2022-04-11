@@ -1,0 +1,16 @@
+{
+  "for": ["workbench"],
+  "requires": [
+    {
+      "item": "rock",
+      "amount": 5
+    },
+    {
+      "item": "wood",
+      "amount": 5
+    }
+  ],
+  "product": {
+    "item": "rock_pickaxe"
+  }
+}

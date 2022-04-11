@@ -1,0 +1,14 @@
+{
+  "for": ["oven"],
+  "requires": [
+    {
+      "item": "raw_beef"
+    },
+    {
+      "item": "coal"
+    }
+  ],
+  "product": {
+    "item": "steak"
+  }
+}
