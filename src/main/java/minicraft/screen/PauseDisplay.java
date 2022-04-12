@@ -19,15 +19,14 @@ public class PauseDisplay extends Display {
 	public PauseDisplay() {
 		String upString = Game.input.getMapping("cursor-up")+ Localization.getLocalized(" and ")+Game.input.getMapping("cursor-down")+Localization.getLocalized(" to Scroll");
 		String selectString = Game.input.getMapping("select")+Localization.getLocalized(": Choose");
-		
-		
-		ArrayList<ListEntry> entries = new ArrayList<>();
-		entries.addAll(Arrays.asList(
-			new BlankEntry(),
-			new SelectEntry("Return to Game", () -> Game.setDisplay(null)),
-			new SelectEntry("Options", () -> Game.setDisplay(new OptionsWorldDisplay())),
-			new SelectEntry("Achievements", () -> Game.setDisplay(new AchievementsDisplay()))
-			));
+
+
+		ArrayList<ListEntry> entries = new ArrayList<>(Arrays.asList(
+				new BlankEntry(),
+				new SelectEntry("Return to Game", () -> Game.setDisplay(null)),
+				new SelectEntry("Options", () -> Game.setDisplay(new OptionsWorldDisplay())),
+				new SelectEntry("Achievements", () -> Game.setDisplay(new AchievementsDisplay()))
+		));
 
 		entries.add(new SelectEntry("Save Game", () -> {
 			Game.setDisplay(null);

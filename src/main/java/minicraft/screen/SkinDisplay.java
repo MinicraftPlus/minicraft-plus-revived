@@ -67,7 +67,7 @@ public class SkinDisplay extends Display {
 		for (String skinPath : Objects.requireNonNull(skinsFolder.list())) {
 			if (skinPath.endsWith(".png")) {
 				if (getSkinAsSheet(skinsFolder + "/" + skinPath) != null) {
-					// Add the spritesheet to the custom skins list.
+					// Add the sprite sheet to the custom skins list.
 					customSkins.add(skinsFolder + "/" + skinPath);
 
 					// Remove the filetype (.png) and to the .
@@ -197,8 +197,8 @@ public class SkinDisplay extends Display {
 
 		int h = 2;
 		int w = 2;
-		int xoffset = Screen.w / 2 - w * 4; // Put this in the center of the screen
-		int yoffset = 38;
+		int xOffset = Screen.w / 2 - w * 4; // Put this in the center of the screen
+		int yOffset = 38;
 
 		int spriteIndex = (step / 40) % 8; // 9 = 8 Frames for sprite
 
@@ -206,9 +206,9 @@ public class SkinDisplay extends Display {
 		for (int y = 0; y < h; y++)
 			for (int x = 0; x < w; x++)
 				if (menus[0].getSelection() < defaultSkins) {
-					screen.render(xoffset + x * 8, yoffset + y * 8, spriteIndex * 2 + x + (y + menus[0].getSelection() * 4) * 32, 0, 4);
+					screen.render(xOffset + x * 8, yOffset + y * 8, spriteIndex * 2 + x + (y + menus[0].getSelection() * 4) * 32, 0, 4);
 				} else {
-					screen.render(xoffset + x * 8, yoffset + y * 8, spriteIndex * 2 + x + y * 32, 0, selectedSkinSheet, - 1, false, 0);
+					screen.render(xOffset + x * 8, yOffset + y * 8, spriteIndex * 2 + x + y * 32, 0, selectedSkinSheet, - 1, false, 0);
 				}
 
 		// Help text.

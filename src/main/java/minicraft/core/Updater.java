@@ -195,7 +195,7 @@ public class Updater extends Game {
 				}
 				
 				if (display == null && input.getKey("F3").clicked) { // Shows debug info in upper-left
-					Renderer.showinfo = !Renderer.showinfo;
+					Renderer.showDebugInfo = !Renderer.showDebugInfo;
 				}
 				
 				// For debugging only
