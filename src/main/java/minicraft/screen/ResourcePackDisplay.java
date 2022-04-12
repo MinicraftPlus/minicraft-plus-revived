@@ -24,15 +24,17 @@ import org.tinylog.Logger;
 
 public class ResourcePackDisplay extends Display {
 
+	private static final String[] SHEET_NAMES = new String[] { "items.png", "tiles.png", "entities.png", "gui.png" };
+	private static final int SHEET_DIMENSIONS = 256;
+
 	private static final String DEFAULT_RESOURCE_PACK = "Default";
-	private static final String[] SPRITESHEET_NAMES = new String[] { "items.png", "tiles.png", "entities.png", "gui.png" };
 	private static final File FOLDER_LOCATION = new File(FileHandler.getSystemGameDir() + "/" + FileHandler.getLocalGameDir() + "/resourcepacks");
 
 	private static String loadedPack = DEFAULT_RESOURCE_PACK;
 
 	private static List<ListEntry> getPacksAsEntries() {
 		List<ListEntry> resourceList = new ArrayList<>();
-		resourceList.add(new SelectEntry(ResourcePackDisplay.DEFAULT_RESOURCE_PACK, Game::exitMenu, false));
+		resourceList.add(new SelectEntry(ResourcePackDisplay.DEFAULT_RESOURCE_PACK, Game::exitDisplay, false));
 
 		// Generate resource packs folder
 		if (FOLDER_LOCATION.mkdirs()) {
@@ -43,7 +45,7 @@ public class ResourcePackDisplay extends Display {
 		for (String fileName : Objects.requireNonNull(FOLDER_LOCATION.list())) {
 			// Only accept files ending with .zip.
 			if (fileName.endsWith(".zip")) {
-				resourceList.add(new SelectEntry(fileName, Game::exitMenu, false));
+				resourceList.add(new SelectEntry(fileName, Game::exitDisplay, false));
 			}
 		}
 
@@ -53,11 +55,17 @@ public class ResourcePackDisplay extends Display {
 	public ResourcePackDisplay() {
 		super(true, true,
 				new Menu.Builder(false, 2, RelPos.CENTER, getPacksAsEntries()).setSize(48, 64).createMenu());
+
+		ListEntry[] ent = menus[0].getEntries();
+		for (int i = 0; i < ent.length; i++) {
+			if (ent[i].toString().equals(loadedPack)) {
+				menus[0].setSelection(i);
+			}
+		}
 	}
 
 	@Override
 	public void onExit() {
-		super.onExit();
 		updateResourcePack();
 	}
 
@@ -86,6 +94,22 @@ public class ResourcePackDisplay extends Display {
 		}
 	}
 
+	public void initResourcePack() {
+		if (!loadedPack.equals(DEFAULT_RESOURCE_PACK)) {
+			ZipFile zipFile;
+			try {
+				zipFile = new ZipFile(new File(FOLDER_LOCATION, loadedPack));
+			} catch (IOException e) {
+				e.printStackTrace();
+				Logger.error("Could not load resource pack zip at {}.", FOLDER_LOCATION + "/" + loadedPack);
+				return;
+			}
+
+			updateSheets(zipFile);
+			updateLocalization(zipFile);
+		}
+	}
+
 	private void updateResourcePack() {
 		loadedPack = Objects.requireNonNull(menus[0].getCurEntry()).toString();
 
@@ -95,7 +119,7 @@ public class ResourcePackDisplay extends Display {
 				zipFile = new ZipFile(new File(FOLDER_LOCATION, loadedPack));
 			} catch (IOException e) {
 				e.printStackTrace();
-				Logger.error("Could not load resource pack zip at {}.", FOLDER_LOCATION);
+				Logger.error("Could not load resource pack zip at {}.", FOLDER_LOCATION + "/" + loadedPack);
 				return;
 			}
 		}
@@ -106,7 +130,7 @@ public class ResourcePackDisplay extends Display {
 
 	private void updateSheets(@Nullable ZipFile zipFile) {
 		try {
-			SpriteSheet[] sheets = new SpriteSheet[SPRITESHEET_NAMES.length];
+			SpriteSheet[] sheets = new SpriteSheet[SHEET_NAMES.length];
 
 			if (zipFile == null) {
 				// Load default sprite sheet.
@@ -122,18 +146,26 @@ public class ResourcePackDisplay extends Display {
 					if (textures == null) return;
 					if (textures.isEmpty()) return;
 
-					for (int i = 0; i < SPRITESHEET_NAMES.length; i++) {
-						ZipEntry entry = textures.get(SPRITESHEET_NAMES[i]);
+					for (int i = 0; i < SHEET_NAMES.length; i++) {
+						ZipEntry entry = textures.get(SHEET_NAMES[i]);
 						if (entry != null) {
 							try (InputStream inputEntry = zipFile.getInputStream(entry)) {
-								sheets[i] = new SpriteSheet(ImageIO.read(inputEntry));
+								SpriteSheet sheet = new SpriteSheet(ImageIO.read(inputEntry));
+
+								// Check if sheet has the correct dimensions.
+								if (sheet.width == SHEET_DIMENSIONS && sheet.height == SHEET_DIMENSIONS) {
+									sheets[i] = sheet;
+								} else {
+									Logger.error("Sheet with name {} has wrong dimensions. Should be {}px in both directions.", SHEET_NAMES[i], SHEET_DIMENSIONS);
+									return;
+								}
 							} catch (IOException e) {
 								e.printStackTrace();
-								Logger.error("Loading sheet {} failed. Aborting.", SPRITESHEET_NAMES[i]);
+								Logger.error("Loading sheet {} failed. Aborting.", SHEET_NAMES[i]);
 								return;
 							}
 						} else {
-							Logger.debug("Couldn't load sheet {}, ignoring.", SPRITESHEET_NAMES[i]);
+							Logger.debug("Couldn't load sheet {}, ignoring.", SHEET_NAMES[i]);
 						}
 					}
 				} catch (IllegalStateException e) {
@@ -239,6 +271,16 @@ public class ResourcePackDisplay extends Display {
 
 	public static File getFolderLocation() {
 		return FOLDER_LOCATION;
+	}
+
+	public void setLoadedPack(String name) {
+		ListEntry[] entries = menus[0].getEntries();
+		for (ListEntry entry : entries) {
+			// If provided pack exists in list, set it.
+			if (entry.toString().equals(name)) {
+				loadedPack = name;
+			}
+		}
 	}
 
 	public static String getLoadedPack() {

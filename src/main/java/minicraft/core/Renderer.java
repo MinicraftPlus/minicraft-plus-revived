@@ -27,7 +27,6 @@ import minicraft.item.ToolType;
 import minicraft.level.Level;
 import minicraft.screen.LoadingDisplay;
 import minicraft.screen.RelPos;
-import minicraft.util.MyUtils;
 import org.tinylog.Logger;
 
 import javax.imageio.ImageIO;
@@ -43,13 +42,12 @@ public class Renderer extends Game {
 	
 	static Canvas canvas = new Canvas();
 	private static BufferedImage image; // Creates an image to be displayed on the screen.
-	private static int[] pixels; // The array of pixels that will be displayed on the screen.
-	
+
 	private static Screen lightScreen; // Creates a front screen to render the darkness in caves (Fog of war).
 	
 	public static boolean readyToRenderGameplay = false;
-	public static boolean showinfo = false;
-	
+	public static boolean showDebugInfo = false;
+
 	private static Ellipsis ellipsis = new SmoothEllipsis(new TickUpdater());
 
 	public static SpriteSheet[] loadDefaultSpriteSheets() {
@@ -79,14 +77,12 @@ public class Renderer extends Game {
 	}
 
 	static void initScreen() {
-		image = new BufferedImage(WIDTH, HEIGHT, BufferedImage.TYPE_INT_RGB);
-		pixels = ((DataBufferInt) image.getRaster().getDataBuffer()).getData();
-
 		SpriteSheet[] sheets = loadDefaultSpriteSheets();
 		screen = new Screen(sheets[0], sheets[1], sheets[2], sheets[3], sheets[4]);
 		lightScreen = new Screen(sheets[0], sheets[1], sheets[2], sheets[3], sheets[4]);
 
-		screen.pixels = pixels;
+		image = new BufferedImage(WIDTH, HEIGHT, BufferedImage.TYPE_INT_RGB);
+		screen.pixels = ((DataBufferInt) image.getRaster().getDataBuffer()).getData();
 
 		canvas.createBufferStrategy(3);
 		canvas.requestFocus();
@@ -96,14 +92,14 @@ public class Renderer extends Game {
 	/** Renders the current screen. Called in game loop, a bit after tick(). */
 	public static void render() {
 		if (screen == null) return; // No point in this if there's no gui... :P
-		
+
 		if (readyToRenderGameplay) {
 			renderLevel();
 			renderGui();
 		}
 		
-		if (menu != null) // Renders menu, if present.
-			menu.render(screen);
+		if (display != null) // Renders menu, if present.
+			display.render(screen);
 		
 		if (!canvas.hasFocus()) renderFocusNagger(); // Calls the renderFocusNagger() method, which creates the "Click to Focus" message.
 		
@@ -331,7 +327,7 @@ public class Renderer extends Game {
 		
 		int textcol = Color.WHITE;
 		
-		if (showinfo) { // Renders show debug info on the screen.
+		if (showDebugInfo) { // Renders show debug info on the screen.
 			ArrayList<String> info = new ArrayList<>();
 			info.add("VERSION: " + Initializer.VERSION);
 			info.add(Initializer.fra + " fps");

@@ -133,10 +133,10 @@ public class WorldSelectDisplay extends Display {
 					if(version.compareTo(Game.VERSION) > 0)
 						return; // cannot load a game saved by a higher version!
 					worldName = name;
-					Game.setMenu(new LoadingDisplay());
+					Game.setDisplay(new LoadingDisplay());
 				}
 				else {
-					Game.setMenu(new WorldEditDisplay(curAction, name));
+					Game.setDisplay(new WorldEditDisplay(curAction, name));
 					curAction = null;
 				}
 			}, false) {

@@ -43,7 +43,7 @@ public class LinkEntry extends SelectEntry {
 				// try to open the download link directly from the browser.
 				try {
 					URI uri = URI.create(url);
-					Game.setMenu(new TempDisplay(3000, false, true, new Menu.Builder(true, 0, RelPos.CENTER, new StringEntry(Localization.getLocalized(openMsg))).createMenu()));
+					Game.setDisplay(new TempDisplay(3000, false, true, new Menu.Builder(true, 0, RelPos.CENTER, new StringEntry(Localization.getLocalized(openMsg))).createMenu()));
 					desktop.browse(uri);
 				} catch (IOException e) {
 					System.err.println("Could not parse LinkEntry url \"" + url + "\" into valid URI:");
@@ -53,7 +53,7 @@ public class LinkEntry extends SelectEntry {
 			}
 			
 			if (!canBrowse) {
-				Game.setMenu(new BookDisplay(failMsg, false));
+				Game.setDisplay(new BookDisplay(failMsg, false));
 			}
 			
 		}, localize);

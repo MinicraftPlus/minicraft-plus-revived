@@ -23,13 +23,13 @@ public class PlayerInvDisplay extends Display {
 		super.tick(input);
 		
 		if(input.getKey("menu").clicked) {
-			Game.exitMenu();
+			Game.exitDisplay();
 			return;
 		}
 		
 		if(input.getKey("attack").clicked && menus[0].getNumOptions() > 0) {
 			player.activeItem = player.getInventory().remove(menus[0].getSelection());
-			Game.exitMenu();
+			Game.exitDisplay();
 		}
 	}
 
