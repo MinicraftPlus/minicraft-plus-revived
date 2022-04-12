@@ -55,6 +55,13 @@ public class ResourcePackDisplay extends Display {
 	public ResourcePackDisplay() {
 		super(true, true,
 				new Menu.Builder(false, 2, RelPos.CENTER, getPacksAsEntries()).setSize(48, 64).createMenu());
+
+		ListEntry[] ent = menus[0].getEntries();
+		for (int i = 0; i < ent.length; i++) {
+			if (ent[i].toString().equals(loadedPack)) {
+				menus[0].setSelection(i);
+			}
+		}
 	}
 
 	@Override
@@ -87,6 +94,22 @@ public class ResourcePackDisplay extends Display {
 		}
 	}
 
+	public void initResourcePack() {
+		if (!loadedPack.equals(DEFAULT_RESOURCE_PACK)) {
+			ZipFile zipFile;
+			try {
+				zipFile = new ZipFile(new File(FOLDER_LOCATION, loadedPack));
+			} catch (IOException e) {
+				e.printStackTrace();
+				Logger.error("Could not load resource pack zip at {}.", FOLDER_LOCATION + "/" + loadedPack);
+				return;
+			}
+
+			updateSheets(zipFile);
+			updateLocalization(zipFile);
+		}
+	}
+
 	private void updateResourcePack() {
 		loadedPack = Objects.requireNonNull(menus[0].getCurEntry()).toString();
 
@@ -96,7 +119,7 @@ public class ResourcePackDisplay extends Display {
 				zipFile = new ZipFile(new File(FOLDER_LOCATION, loadedPack));
 			} catch (IOException e) {
 				e.printStackTrace();
-				Logger.error("Could not load resource pack zip at {}.", FOLDER_LOCATION);
+				Logger.error("Could not load resource pack zip at {}.", FOLDER_LOCATION + "/" + loadedPack);
 				return;
 			}
 		}
@@ -248,6 +271,16 @@ public class ResourcePackDisplay extends Display {
 
 	public static File getFolderLocation() {
 		return FOLDER_LOCATION;
+	}
+
+	public void setLoadedPack(String name) {
+		ListEntry[] entries = menus[0].getEntries();
+		for (ListEntry entry : entries) {
+			// If provided pack exists in list, set it.
+			if (entry.toString().equals(name)) {
+				loadedPack = name;
+			}
+		}
 	}
 
 	public static String getLoadedPack() {

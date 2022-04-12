@@ -13,6 +13,7 @@ import javax.swing.JTextArea;
 
 import kong.unirest.Empty;
 import kong.unirest.HttpResponse;
+import minicraft.screen.ResourcePackDisplay;
 import org.jetbrains.annotations.Nullable;
 
 import minicraft.core.io.InputHandler;
@@ -22,7 +23,6 @@ import minicraft.entity.mob.Player;
 import minicraft.level.Level;
 import minicraft.level.tile.Tiles;
 import minicraft.network.Analytics;
-import minicraft.network.MinicraftProtocol;
 import minicraft.saveload.Load;
 import minicraft.saveload.Version;
 import minicraft.screen.Display;
@@ -125,6 +125,8 @@ public class Game {
 		Initializer.createAndDisplayFrame();
 		
 		Renderer.initScreen();
+
+		new ResourcePackDisplay().initResourcePack();
 
 		// Update fullscreen frame if Updater.FULLSCREEN was updated previously
 		if (Updater.FULLSCREEN) {
