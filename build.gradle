@@ -18,6 +18,7 @@ mainClassName = 'minicraft.core.Game'
 
 repositories {
     mavenCentral()
+    maven { url 'https://jitpack.io' }
 }
 
 dependencies {
