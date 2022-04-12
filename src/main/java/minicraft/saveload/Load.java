@@ -433,7 +433,7 @@ public class Load {
 
 		// Load unlocked achievements.
 		if (json.has("unlockedAchievements"))
-			AchievementsDisplay.setUnlockedAchievements(json.getJSONArray("unlockedAchievements"));
+			AchievementsDisplay.unlockAchievements(json.getJSONArray("unlockedAchievements"));
 	}
 	
 	private void loadWorld(String filename) {

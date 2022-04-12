@@ -17,6 +17,7 @@ import minicraft.screen.entry.StringEntry;
 import minicraft.util.Achievement;
 import org.jetbrains.annotations.Nullable;
 import org.json.JSONArray;
+import org.json.JSONException;
 import org.json.JSONObject;
 import org.tinylog.Logger;
 
@@ -30,35 +31,39 @@ public class AchievementsDisplay extends Display {
     private static final ArrayList<ListEntry> stringEntries = new ArrayList<>();
 
     static {
-
-        // Get achievements from a json filed stored in resources. Relative to project root.
-        String achievementsJson = "";
+        // Get achievements from a json file stored in resources. Relative to project root.
         try (InputStream stream = Game.class.getResourceAsStream("/resources/achievements.json")) {
-            assert stream != null;
-            BufferedReader reader = new BufferedReader(new InputStreamReader(stream));
-            achievementsJson = reader.lines().collect(Collectors.joining("\n"));
+            if (stream != null) {
+                BufferedReader reader = new BufferedReader(new InputStreamReader(stream));
+
+                // Read lines and combine into a string.
+                String achievementsJson = reader.lines().collect(Collectors.joining("\n"));
+
+                // Load json.
+                JSONArray json = new JSONArray(achievementsJson);
+                for (Object object : json) {
+                    JSONObject obj = (JSONObject) object;
+
+                    // Create an achievement with the data.
+                    Achievement a = new Achievement(
+                            Localization.getLocalized(obj.getString("id")),
+                            obj.getString("desc"),
+                            obj.getInt("score")
+                    );
+
+                    achievements.put(obj.getString("id"), a);
+
+                    SelectEntry entry = new SelectEntry(obj.getString("id"), null, true);
+                    stringEntries.add(entry);
+                }
+            } else {
+                Logger.error("Could not find achievements json.");
+            }
         } catch (IOException ex) {
             Logger.error("Could not read achievements from json file.");
-
             ex.printStackTrace();
-        }
-
-        // Read the json and put it in the achievements list.
-        JSONArray json = new JSONArray(achievementsJson);
-        for (Object object : json) {
-            JSONObject obj = (JSONObject) object;
-
-            Achievement a = new Achievement(
-                    Localization.getLocalized(obj.getString("id")),
-                    obj.getString("desc"),
-                    obj.getInt("score")
-            );
-
-            achievements.put(obj.getString("id"), a);
-
-            SelectEntry entry = new SelectEntry(obj.getString("id"), null, true);
-
-            stringEntries.add(entry);
+        } catch (JSONException e) {
+            Logger.error("Achievements json contains invalid json.");
         }
     }
 
@@ -71,8 +76,20 @@ public class AchievementsDisplay extends Display {
     @Override
     public void init(@Nullable Display parent) {
         super.init(parent);
+        if (achievements.isEmpty() || stringEntries.isEmpty()) {
+            Game.setDisplay(new TitleDisplay());
+            Logger.error("Could not open achievements menu because no achievements could be found.");
+            return;
+        }
 
         selectedAchievement = achievements.get(((SelectEntry) stringEntries.get(menus[0].getSelection())).getText());
+    }
+
+    @Override
+    public void onExit() {
+        // Play confirm sound.
+        Sound.confirm.play();
+        new Save();
     }
 
     @Override
@@ -83,8 +100,27 @@ public class AchievementsDisplay extends Display {
     }
 
     @Override
-    protected void onSelectionChange(int oldSel, int newSel) {
-        super.onSelectionChange(oldSel, newSel);
+    public void render(Screen screen) {
+        super.render(screen);
+
+        // Title.
+        Font.drawCentered(Localization.getLocalized("Achievements"), screen, 8, Color.WHITE);
+
+        // Achievement score.
+        Font.drawCentered(Localization.getLocalized("Achievement Score:") + " " + achievementScore, screen, 32, Color.GRAY);
+
+        // Render Achievement Info.
+        if (selectedAchievement.getUnlocked()){
+            Font.drawCentered(Localization.getLocalized("Achieved!"), screen, 48, Color.GREEN);
+        } else {
+            Font.drawCentered(Localization.getLocalized("Not Achieved"), screen, 48, Color.RED);
+        }
+
+        // Achievement description.
+        menus[1].setEntries(StringEntry.useLines(Font.getLines(Localization.getLocalized(selectedAchievement.description), menus[1].getBounds().getSize().width, menus[1].getBounds().getSize().height, 2)));
+
+        // Help text.
+        Font.drawCentered("Use " + Game.input.getMapping("cursor-down") + " and " + Game.input.getMapping("cursor-up") + " to move.", screen, Screen.h - 8, Color.DARK_GRAY);
     }
 
     /**
@@ -122,37 +158,10 @@ public class AchievementsDisplay extends Display {
         return true;
     }
 
-    @Override
-    public void render(Screen screen) {
-        super.render(screen);
-
-        // Title.
-        Font.drawCentered(Localization.getLocalized("Achievements"), screen, 8, Color.WHITE);
-
-        // Achievement score.
-        Font.drawCentered(Localization.getLocalized("Achievement Score:") + " " + achievementScore, screen, 32, Color.GRAY);
-
-        // Render Achievement Info.
-        if (selectedAchievement.getUnlocked()){
-            Font.drawCentered(Localization.getLocalized("Achieved!"), screen, 48, Color.GREEN);
-        } else {
-            Font.drawCentered(Localization.getLocalized("Not Achieved"), screen, 48, Color.RED);
-        }
-
-        // Achievement description.
-        menus[1].setEntries(StringEntry.useLines(Font.getLines(Localization.getLocalized(selectedAchievement.description), menus[1].getBounds().getSize().width, menus[1].getBounds().getSize().height, 2)));
-
-        // Help text.
-        Font.drawCentered("Use " + Game.input.getMapping("cursor-down") + " and " + Game.input.getMapping("cursor-up") + " to move.", screen, Screen.h - 8, Color.DARK_GRAY);
-    }
-
-    @Override
-    public void onExit() {
-        // Play confirm sound.
-        Sound.confirm.play();
-        new Save();
-    }
-
+    /**
+     * Gets an array of all the unlocked achievements.
+     * @return A string array with each unlocked achievement's id in it.
+     */
     public static String[] getUnlockedAchievements() {
         ArrayList<String> strings = new ArrayList<>();
 
@@ -165,10 +174,14 @@ public class AchievementsDisplay extends Display {
         return strings.toArray(new String[0]);
     }
 
-    public static void setUnlockedAchievements(JSONArray unlockedAchievements) {
+    /**
+     * Unlocks a list of achievements.
+     * @param unlockedAchievements An array of all the achievements we want to load, ids.
+     */
+    public static void unlockAchievements(JSONArray unlockedAchievements) {
         for (Object id : unlockedAchievements.toList()) {
             if (!setAchievement(id.toString(), true, false)) {
-                Logger.error("Could not load unlocked achievement with name {}.", id.toString());
+                Logger.warn("Could not load unlocked achievement with name {}.", id.toString());
             }
         }
     }
