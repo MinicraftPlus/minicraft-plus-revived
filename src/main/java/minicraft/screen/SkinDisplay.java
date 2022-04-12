@@ -38,7 +38,7 @@ public class SkinDisplay extends Display {
 	private static final List<String> customSkins = new ArrayList<>();
 	private static int selectedSkinIndex = 0;
 	private static SpriteSheet selectedSkinSheet;
-	private static int tempSelection;
+	private static int tempSelection = 0;
 
 	private int step;
 
@@ -87,7 +87,6 @@ public class SkinDisplay extends Display {
 		super.init(parent);
 
 		menus[0].setSelection(selectedSkinIndex);
-		tempSelection = selectedSkinIndex;
 	}
 
 	public static List<ListEntry> getSkinsAsEntries() {
@@ -171,6 +170,7 @@ public class SkinDisplay extends Display {
 
 					// Refresh menu and save.
 					menus[0].setEntries(getSkinsAsEntries().toArray(new ListEntry[0]));
+					tempSelection = 0;
 					init(getParent());
 					new Save();
 
