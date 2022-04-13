@@ -10,6 +10,7 @@ import java.util.Objects;
 
 import javax.imageio.ImageIO;
 
+import minicraft.core.io.Localization;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.tinylog.Logger;
@@ -193,7 +194,7 @@ public class SkinDisplay extends Display {
 		step++;
 
 		// Title.
-		Font.drawCentered("minicraft.display.skin", screen, Screen.h - 180, Color.WHITE);
+		Font.drawCentered(Localization.getLocalized("minicraft.display.skin"), screen, Screen.h - 180, Color.WHITE);
 
 		int h = 2;
 		int w = 2;
