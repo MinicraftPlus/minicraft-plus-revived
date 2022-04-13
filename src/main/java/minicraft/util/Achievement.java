@@ -18,4 +18,8 @@ public class Achievement {
 	public boolean getUnlocked() {
 		return unlocked;
 	}
+
+	public String getName() {
+		return name;
+	}
 }

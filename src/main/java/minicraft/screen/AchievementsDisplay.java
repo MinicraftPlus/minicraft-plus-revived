@@ -3,6 +3,7 @@ package minicraft.screen;
 import java.io.*;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.stream.Collectors;
 
 import minicraft.core.Game;
@@ -28,8 +29,6 @@ public class AchievementsDisplay extends Display {
     private static Achievement selectedAchievement;
     private static int achievementScore;
 
-    private static final ArrayList<ListEntry> stringEntries = new ArrayList<>();
-
     static {
         // Get achievements from a json file stored in resources. Relative to project root.
         try (InputStream stream = Game.class.getResourceAsStream("/resources/achievements.json")) {
@@ -52,9 +51,6 @@ public class AchievementsDisplay extends Display {
                     );
 
                     achievements.put(obj.getString("id"), a);
-
-                    SelectEntry entry = new SelectEntry(obj.getString("id"), null, true);
-                    stringEntries.add(entry);
                 }
             } else {
                 Logger.error("Could not find achievements json.");
@@ -69,20 +65,23 @@ public class AchievementsDisplay extends Display {
 
     public AchievementsDisplay() {
         super(true, true,
-                new Menu.Builder(false, 2, RelPos.CENTER, stringEntries).setSize(48, 48).createMenu(),
+                new Menu.Builder(false, 2, RelPos.CENTER, getAchievemensAsEntries()).setSize(48, 48).createMenu(),
                 new Menu.Builder(false, 2, RelPos.BOTTOM, new StringEntry("")).setSize(200, 32).setPositioning(new Point(Screen.w / 2, Screen.h / 2 + 32), RelPos.BOTTOM).createMenu());
     }
 
     @Override
     public void init(@Nullable Display parent) {
         super.init(parent);
-        if (achievements.isEmpty() || stringEntries.isEmpty()) {
+        if (achievements.isEmpty()) {
             Game.setDisplay(new TitleDisplay());
             Logger.error("Could not open achievements menu because no achievements could be found.");
             return;
         }
 
-        selectedAchievement = achievements.get(((SelectEntry) stringEntries.get(menus[0].getSelection())).getText());
+        ListEntry curEntry = menus[0].getCurEntry();
+        if (curEntry instanceof SelectEntry) {
+            selectedAchievement = achievements.get(((SelectEntry) curEntry).getText());
+        }
     }
 
     @Override
@@ -96,7 +95,10 @@ public class AchievementsDisplay extends Display {
     public void tick(InputHandler input) {
         super.tick(input);
 
-        selectedAchievement = achievements.get(((SelectEntry) stringEntries.get(menus[0].getSelection())).getText());
+        ListEntry curEntry = menus[0].getCurEntry();
+        if (curEntry instanceof SelectEntry) {
+            selectedAchievement = achievements.get(((SelectEntry) curEntry).getText());
+        }
     }
 
     @Override
@@ -109,15 +111,18 @@ public class AchievementsDisplay extends Display {
         // Achievement score.
         Font.drawCentered(Localization.getLocalized("Achievement Score:") + " " + achievementScore, screen, 32, Color.GRAY);
 
-        // Render Achievement Info.
-        if (selectedAchievement.getUnlocked()){
-            Font.drawCentered(Localization.getLocalized("Achieved!"), screen, 48, Color.GREEN);
-        } else {
-            Font.drawCentered(Localization.getLocalized("Not Achieved"), screen, 48, Color.RED);
-        }
+        if (selectedAchievement != null) {
 
-        // Achievement description.
-        menus[1].setEntries(StringEntry.useLines(Font.getLines(Localization.getLocalized(selectedAchievement.description), menus[1].getBounds().getSize().width, menus[1].getBounds().getSize().height, 2)));
+            // Render Achievement Info.
+            if (selectedAchievement.getUnlocked()) {
+                Font.drawCentered(Localization.getLocalized("Achieved!"), screen, 48, Color.GREEN);
+            } else {
+                Font.drawCentered(Localization.getLocalized("Not Achieved"), screen, 48, Color.RED);
+            }
+
+            // Achievement description.
+            menus[1].setEntries(StringEntry.useLines(Font.getLines(Localization.getLocalized(selectedAchievement.description), menus[1].getBounds().getSize().width, menus[1].getBounds().getSize().height, 2)));
+        }
 
         // Help text.
         Font.drawCentered("Use " + Game.input.getMapping("cursor-down") + " and " + Game.input.getMapping("cursor-up") + " to move.", screen, Screen.h - 8, Color.DARK_GRAY);
@@ -172,6 +177,29 @@ public class AchievementsDisplay extends Display {
         }
 
         return strings.toArray(new String[0]);
+    }
+
+    public static List<ListEntry> getAchievemensAsEntries() {
+        List<ListEntry> l = new ArrayList<>();
+        for (String id : achievements.keySet()) {
+            // Add entry to list.
+            l.add(new SelectEntry(id, null, true)
+            {
+                /**
+                 * Change the color of the selection.
+                 */
+                @Override
+                public int getColor(boolean isSelected) {
+                    if (achievements.get(id).getUnlocked()) {
+                        return Color.GREEN;
+                    } else {
+                        return Color.WHITE;
+                    }
+                }
+            });
+        }
+
+        return l;
     }
 
     /**
