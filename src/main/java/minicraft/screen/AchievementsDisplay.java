@@ -106,18 +106,18 @@ public class AchievementsDisplay extends Display {
         super.render(screen);
 
         // Title.
-        Font.drawCentered(Localization.getLocalized("Achievements"), screen, 8, Color.WHITE);
+        Font.drawCentered(Localization.getLocalized("minicraft.display.achievement"), screen, 8, Color.WHITE);
 
         // Achievement score.
-        Font.drawCentered(Localization.getLocalized("Achievement Score:") + " " + achievementScore, screen, 32, Color.GRAY);
+        Font.drawCentered(Localization.getLocalized("minicraft.display.achievement.score") + " " + achievementScore, screen, 32, Color.GRAY);
 
         if (selectedAchievement != null) {
 
             // Render Achievement Info.
             if (selectedAchievement.getUnlocked()) {
-                Font.drawCentered(Localization.getLocalized("Achieved!"), screen, 48, Color.GREEN);
+                Font.drawCentered(Localization.getLocalized("minicraft.display.achievement.achieved"), screen, 48, Color.GREEN);
             } else {
-                Font.drawCentered(Localization.getLocalized("Not Achieved"), screen, 48, Color.RED);
+                Font.drawCentered(Localization.getLocalized("minicraft.display.achievement.not_achieved"), screen, 48, Color.RED);
             }
 
             // Achievement description.

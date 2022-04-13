@@ -47,10 +47,10 @@ public class SkinDisplay extends Display {
 		defaultSheet = Renderer.loadDefaultSpriteSheets()[4];
 
 		// These are all the generic skins. To add one, just add an entry in this list.
-		skinNames.add("Paul");
-		skinNames.add("Paul with cape");
-		skinNames.add("Familiar boy");
-		skinNames.add("Familiar girl");
+		skinNames.add("minicraft.skin.paul");
+		skinNames.add("minicraft.skin.paul_cape");
+		skinNames.add("minicraft.skin.minecraft_steve");
+		skinNames.add("minicraft.skin.minecraft_alex");
 
 		// Never remove this
 		defaultSkins = skinNames.size();
@@ -193,7 +193,7 @@ public class SkinDisplay extends Display {
 		step++;
 
 		// Title.
-		Font.drawCentered("Skins", screen, Screen.h - 180, Color.WHITE);
+		Font.drawCentered("minicraft.display.skin", screen, Screen.h - 180, Color.WHITE);
 
 		int h = 2;
 		int w = 2;
