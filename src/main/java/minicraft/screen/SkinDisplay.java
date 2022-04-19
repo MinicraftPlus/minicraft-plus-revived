@@ -10,6 +10,7 @@ import java.util.Objects;
 
 import javax.imageio.ImageIO;
 
+import minicraft.core.io.Localization;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.tinylog.Logger;
@@ -38,7 +39,7 @@ public class SkinDisplay extends Display {
 	private static final List<String> customSkins = new ArrayList<>();
 	private static int selectedSkinIndex = 0;
 	private static SpriteSheet selectedSkinSheet;
-	private static int tempSelection;
+	private static int tempSelection = 0;
 
 	private int step;
 
@@ -47,10 +48,10 @@ public class SkinDisplay extends Display {
 		defaultSheet = Renderer.loadDefaultSpriteSheets()[4];
 
 		// These are all the generic skins. To add one, just add an entry in this list.
-		skinNames.add("Paul");
-		skinNames.add("Paul with cape");
-		skinNames.add("Familiar boy");
-		skinNames.add("Familiar girl");
+		skinNames.add("minicraft.skin.paul");
+		skinNames.add("minicraft.skin.paul_cape");
+		skinNames.add("minicraft.skin.minecraft_steve");
+		skinNames.add("minicraft.skin.minecraft_alex");
 
 		// Never remove this
 		defaultSkins = skinNames.size();
@@ -87,7 +88,6 @@ public class SkinDisplay extends Display {
 		super.init(parent);
 
 		menus[0].setSelection(selectedSkinIndex);
-		tempSelection = selectedSkinIndex;
 	}
 
 	public static List<ListEntry> getSkinsAsEntries() {
@@ -171,6 +171,7 @@ public class SkinDisplay extends Display {
 
 					// Refresh menu and save.
 					menus[0].setEntries(getSkinsAsEntries().toArray(new ListEntry[0]));
+					tempSelection = 0;
 					init(getParent());
 					new Save();
 
@@ -193,7 +194,7 @@ public class SkinDisplay extends Display {
 		step++;
 
 		// Title.
-		Font.drawCentered("Skins", screen, Screen.h - 180, Color.WHITE);
+		Font.drawCentered(Localization.getLocalized("minicraft.display.skin"), screen, Screen.h - 180, Color.WHITE);
 
 		int h = 2;
 		int w = 2;

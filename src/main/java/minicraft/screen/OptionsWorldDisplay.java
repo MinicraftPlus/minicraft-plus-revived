@@ -17,7 +17,7 @@ public class OptionsWorldDisplay extends Display {
 				new SelectEntry("Change Key Bindings", () -> Game.setDisplay(new KeyInputDisplay())),
 				Settings.getEntry("language"),
 				Settings.getEntry("skinon"),
-				new SelectEntry("Skins", () -> Game.setDisplay(new SkinDisplay())))
+				new SelectEntry("minicraft.display.skin", () -> Game.setDisplay(new SkinDisplay())))
 			.setTitle("World Options")
 			.createMenu()
 		);
