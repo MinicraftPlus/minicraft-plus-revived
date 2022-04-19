@@ -1,13 +1,12 @@
 package minicraft.sdt;
 
-// import minicraft.core.Game;
+import minicraft.item.Item;
+import minicraft.item.StackableItem;
 import minicraft.saveload.Version;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
 
 import me.nullicorn.nedit.*;
 import me.nullicorn.nedit.type.NBTCompound;
@@ -27,16 +26,20 @@ public class SDTInventory extends SDT {
         }
         DataVersion = new Version(nbt.getString("DataVersion"));
         NBTList is = nbt.getList("items");
-        for (int i = 0; i<is.size(); i++) items.add(is.getCompound(i);
+        for (int i = 0; i<is.size(); i++) items.add(is.getCompound(i));
     }
-    public NBTCompound toNBT() {
+    public static NBTCompound toNBT(Version v, ArrayList<Item> inventory) {
         NBTCompound res = new NBTCompound();
-        res.put("DataVersion", DataVersion.toString());
-        res.put("w", w);
-        res.put("h", h);
+        res.put("DataVersion", v.toString());
         NBTList dt = new NBTList(TagType.COMPOUND);
-        dt.addAll(Arrays.asList(data));
-        res.put("data", dt);
+        for (Item item : inventory) {
+            NBTCompound itemdata = new NBTCompound();
+            itemdata.put("name", item.getName());
+            itemdata.put("data", item.data);
+            if (item instanceof StackableItem) itemdata.put("count", ((StackableItem)item).count);
+            dt.add(itemdata);
+        }
+        res.put("items", dt);
         return res;
     }
 }

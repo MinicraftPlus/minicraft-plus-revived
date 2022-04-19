@@ -1187,10 +1187,10 @@ public class Player extends Mob implements ItemHolder, ClientTickable {
 				playerdata.append(str).append(",");
 		playerdata = new StringBuilder(playerdata.substring(0, playerdata.length() - 1) + "\n");
 
-		Save.writeInventory(this, datalist);
-		for (String str: datalist)
-			if (str.length() > 0)
-				playerdata.append(str).append(",");
+		// Save.writeInventory(this, datalist);
+		// for (String str: datalist)
+		// 	if (str.length() > 0)
+		// 		playerdata.append(str).append(",");
 		if (datalist.size() == 0)
 			playerdata.append("null");
 		else

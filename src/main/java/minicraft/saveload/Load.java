@@ -21,6 +21,7 @@ import org.json.JSONObject;
 import org.tinylog.Logger;
 
 import me.nullicorn.nedit.type.NBTCompound;
+import me.nullicorn.nedit.type.TagType;
 import minicraft.core.Game;
 import minicraft.core.Network;
 import minicraft.core.Updater;
@@ -698,6 +699,13 @@ public class Load {
 			// 	} else inventory.add(newItem, count);
 			// } else {
 				Item toAdd = Items.get(name);
+				NBTCompound itemdata = item.getCompound("data");
+				if (itemdata != null) {
+					if (itemdata.containsTag("data", TagType.COMPOUND)) {
+						toAdd.data = itemdata.getCompound("data");
+					}
+					if (toAdd instanceof StackableItem) ((StackableItem)toAdd).count = itemdata.getInt("count", 1);
+				}
 				inventory.add(toAdd);
 			// }
 		}

@@ -38,6 +38,8 @@ import minicraft.item.Inventory;
 import minicraft.item.Item;
 import minicraft.item.PotionType;
 import minicraft.screen.*;
+import minicraft.sdt.SDTInventory;
+
 import org.json.JSONArray;
 import org.json.JSONObject;
 import org.tinylog.Logger;
@@ -291,20 +293,24 @@ public class Save {
 	}
 	
 	private void writeInventory(String filename, Player player) {
-		writeInventory(player, data);
-		writeToFile(location + filename + extension, data);
+		try {
+			writeNBTComponentToFile(location + filename + extension, SDTInventory.toNBT(SDTInventory.VERSION, writeInventory(player)));
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
 	}
-	public static void writeInventory(Player player, List<String> data) {
-		data.clear();
+	public static ArrayList<Item> writeInventory(Player player) {
+		ArrayList<Item> items = new ArrayList<>();
 		if (player.activeItem != null) {
-			data.add(player.activeItem.getData());
+			items.add(player.activeItem);
 		}
 		
 		Inventory inventory = player.getInventory();
 		
 		for (int i = 0; i < inventory.invSize(); i++) {
-			data.add(inventory.get(i).getData());
+			items.add(inventory.get(i));
 		}
+		return items;
 	}
 	
 	private void writeEntities(String filename) {

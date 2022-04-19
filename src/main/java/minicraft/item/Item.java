@@ -1,5 +1,6 @@
 package minicraft.item;
 
+import me.nullicorn.nedit.type.NBTCompound;
 import minicraft.core.io.Localization;
 import minicraft.entity.Direction;
 import minicraft.entity.mob.Player;
@@ -15,16 +16,19 @@ public abstract class Item {
 	
 	private final String name;
 	public Sprite sprite;
+	public NBTCompound data;
 	
 	public boolean used_pending = false; // This is for multiplayer, when an item has been used, and is pending server response as to the outcome, this is set to true so it cannot be used again unless the server responds that the item wasn't used. Which should basically replace the item anyway, soo... yeah. this never gets set back.
 	
 	protected Item(String name) {
 		sprite = Sprite.missingTexture(1, 1);
 		this.name = name;
+		data = getDefaultData();
 	}
 	protected Item(String name, Sprite sprite) {
 		this.name = name;
 		this.sprite = sprite;
+		data = getDefaultData();
 	}
 
 	/** Renders an item on the HUD */
@@ -78,4 +82,6 @@ public abstract class Item {
 	}
 	
 	public boolean interactsWithWorld() { return true; }
+
+	public NBTCompound getDefaultData() {return new NBTCompound();}
 }
