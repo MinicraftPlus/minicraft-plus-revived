@@ -14,13 +14,11 @@ import me.nullicorn.nedit.type.NBTCompound;
 import me.nullicorn.nedit.type.NBTList;
 import me.nullicorn.nedit.type.TagType;
 
-public class SDTLevelData extends SDT {
+public class SDTInventory extends SDT {
     public Version DataVersion;
     public static Version VERSION = new Version("0.0.1")/*Game.levelSDTversion*/;
-    public final int w;
-    public final int h;
-    public NBTCompound[] data;
-    public SDTLevelData(byte[] b) {
+    public ArrayList<NBTCompound> items = new ArrayList<>();
+    public SDTInventory(byte[] b) {
         NBTCompound nbt = null;
         try {
             nbt = NBTReader.read(new ByteArrayInputStream(b));
@@ -28,29 +26,8 @@ public class SDTLevelData extends SDT {
             e.printStackTrace();
         }
         DataVersion = new Version(nbt.getString("DataVersion"));
-        w = nbt.getInt("w", 0);
-        h = nbt.getInt("h", 0);
-        List<NBTCompound> l = new ArrayList<>();
-        nbt.getList("data").iterator().forEachRemaining(o -> l.add((NBTCompound)o));
-        data = Arrays.copyOf(l.toArray(), l.size(), NBTCompound[].class);
-    }
-    public SDTLevelData(int wl, int hl) {
-        w = wl;
-        h = hl;
-        DataVersion = VERSION;
-        data = new NBTCompound[w*h];
-        for (int x = 0; x<w; x++) {
-            for (int y = 0; y<h; y++) {
-                data[x*w+y] = createDataUnit(x, y);
-            }
-        }
-    }
-    private static NBTCompound createDataUnit(int x, int y) {
-        NBTCompound c = new NBTCompound();
-        c.put("x", x);
-        c.put("y", y);
-        c.put("properties", new NBTCompound());
-        return c;
+        NBTList is = nbt.getList("items");
+        for (int i = 0; i<is.size(); i++) items.add(is.getCompound(i);
     }
     public NBTCompound toNBT() {
         NBTCompound res = new NBTCompound();

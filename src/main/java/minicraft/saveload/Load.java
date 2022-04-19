@@ -20,6 +20,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 import org.tinylog.Logger;
 
+import me.nullicorn.nedit.type.NBTCompound;
 import minicraft.core.Game;
 import minicraft.core.Network;
 import minicraft.core.Updater;
@@ -66,6 +67,7 @@ import minicraft.item.PotionType;
 import minicraft.item.StackableItem;
 import minicraft.level.Level;
 import minicraft.level.tile.Tiles;
+import minicraft.sdt.SDTInventory;
 import minicraft.sdt.SDTLevelData;
 
 public class Load {
@@ -657,42 +659,47 @@ public class Load {
 	}
 	
 	public void loadInventory(String filename, Inventory inventory) {
-		loadFromFile(location + filename + extension);
-		loadInventory(inventory, data);
+		try {
+			loadInventory(inventory, new SDTInventory(loadSDTFile(location + filename + extension)));
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
 	}
-	public void loadInventory(Inventory inventory, List<String> data) {
+	public void loadInventory(Inventory inventory, SDTInventory data) {
 		inventory.clearInv();
 
-		for (String item : data) {
-			if (item.length() == 0) {
+		for (NBTCompound item : data.items) {
+			String name = item.getString("name");
+			if (name.length() == 0) {
 				System.err.println("loadInventory: Item in data list is \"\", skipping item");
 				continue;
 			}
 			
 			if (worldVer.compareTo(new Version("2.1.0-dev3")) < 0) {
-				item = subOldName(item, worldVer);
+				name = subOldName(name, worldVer);
 			}
 
-			if (item.contains("Power Glove")) continue; // Just pretend it doesn't exist. Because it doesn't. :P
+			if (name.contains("Power Glove")) continue; // Just pretend it doesn't exist. Because it doesn't. :P
 
 			// System.out.println("Loading item: " + item);
 
-			if (worldVer.compareTo(new Version("2.0.4")) <= 0 && item.contains(";")) {
-				String[] curData = item.split(";");
-				String itemName = curData[0];
+			// This should be in Legacy load for string
+			// if (worldVer.compareTo(new Version("2.0.4")) <= 0 && item.contains(";")) {
+			// 	String[] curData = item.split(";");
+			// 	String itemName = curData[0];
 
-				Item newItem = Items.get(itemName);
+			// 	Item newItem = Items.get(itemName);
 
-				int count = Integer.parseInt(curData[1]);
+			// 	int count = Integer.parseInt(curData[1]);
 
-				if (newItem instanceof StackableItem) {
-					((StackableItem) newItem).count = count;
-					inventory.add(newItem);
-				} else inventory.add(newItem, count);
-			} else {
-				Item toAdd = Items.get(item);
+			// 	if (newItem instanceof StackableItem) {
+			// 		((StackableItem) newItem).count = count;
+			// 		inventory.add(newItem);
+			// 	} else inventory.add(newItem, count);
+			// } else {
+				Item toAdd = Items.get(name);
 				inventory.add(toAdd);
-			}
+			// }
 		}
 	}
 	
