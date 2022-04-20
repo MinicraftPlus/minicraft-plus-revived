@@ -79,8 +79,8 @@ public class Renderer extends Game {
 	}
 
 	public static void setAspectRatio() {
-		int width = 0;
-		int height = 0;
+		int width;
+		int height;
 
 		switch ((String) Settings.get("aspectratio")) {
 			case "4x3":
@@ -103,9 +103,6 @@ public class Renderer extends Game {
 	}
 
 	public static void initScreen() {		
-		image = new BufferedImage(WIDTH, HEIGHT, BufferedImage.TYPE_INT_RGB);
-		pixels = ((DataBufferInt) image.getRaster().getDataBuffer()).getData();
-
 		SpriteSheet[] sheets = loadDefaultSpriteSheets();
 		screen = new Screen(sheets[0], sheets[1], sheets[2], sheets[3], sheets[4]);
 		lightScreen = new Screen(sheets[0], sheets[1], sheets[2], sheets[3], sheets[4]);

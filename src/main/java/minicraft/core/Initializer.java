@@ -92,7 +92,6 @@ public class Initializer extends Game {
 	
 	// Creates and displays the JFrame window that the game appears in.
 	static void createAndDisplayFrame() {
-		Renderer.setAspectRatio();
 		Renderer.canvas.setMinimumSize(new java.awt.Dimension(1, 1));
 		Renderer.canvas.setPreferredSize(Renderer.getWindowSize());
 		JFrame frame = Initializer.frame = new JFrame(NAME);

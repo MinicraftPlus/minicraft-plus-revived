@@ -19,6 +19,7 @@ import org.tinylog.Logger;
 
 import minicraft.core.Game;
 import minicraft.core.Network;
+import minicraft.core.Renderer;
 import minicraft.core.Updater;
 import minicraft.core.World;
 import minicraft.core.io.Localization;
@@ -141,7 +142,6 @@ public class Load {
 			Logger.warn("No preferences found, creating new file.");
 			resave = true;
 		}
-
 		// Load unlocks. (new version)
 		File testFileOld = new File(location + "unlocks" + extension);
 		File testFile = new File(location + "Unlocks" + extension);
@@ -399,6 +399,8 @@ public class Load {
 			String[] map = str.split(";");
 			Game.input.setKey(map[0], map[1]);
 		}
+
+		Renderer.setAspectRatio(); // Sets the aspect ratio of the game window.
 
 		new ResourcePackDisplay().setLoadedPack(json.getString("resourcePack"));
 	}

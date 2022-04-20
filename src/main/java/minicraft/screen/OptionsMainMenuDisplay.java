@@ -56,7 +56,7 @@ public class OptionsMainMenuDisplay extends Display {
         if (menus[1].shouldRender) {
             if (input.getKey("enter").clicked) {
                 menus[1].shouldRender = false;
-                Game.exitMenu();
+                Game.exitDisplay();
             } else if (input.getKey("exit").clicked) {
                 menus[1].shouldRender = false;
             }
