@@ -73,7 +73,7 @@ public class TileItem extends StackableItem {
 		this.model = model.toUpperCase();
 		this.validTiles = new ArrayList<>();
 		for (String tile: validTiles)
-			 this.validTiles.add(tile);
+			 this.validTiles.add(tile.toUpperCase());
 	}
 	
 	public boolean interactOn(Tile tile, Level level, int xt, int yt, Player player, Direction attackDir) {
