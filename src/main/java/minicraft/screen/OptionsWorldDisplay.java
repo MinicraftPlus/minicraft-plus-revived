@@ -14,9 +14,10 @@ public class OptionsWorldDisplay extends Display {
 				Settings.getEntry("fps"),
 				Settings.getEntry("sound"),
 				Settings.getEntry("autosave"),
-				new SelectEntry("Change Key Bindings", () -> Game.setMenu(new KeyInputDisplay())),
+				new SelectEntry("Change Key Bindings", () -> Game.setDisplay(new KeyInputDisplay())),
 				Settings.getEntry("language"),
-				Settings.getEntry("skinon"))
+				Settings.getEntry("skinon"),
+				new SelectEntry("minicraft.display.skin", () -> Game.setDisplay(new SkinDisplay())))
 			.setTitle("World Options")
 			.createMenu()
 		);

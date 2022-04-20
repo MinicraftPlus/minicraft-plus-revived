@@ -10,6 +10,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+import minicraft.screen.*;
 import org.jetbrains.annotations.Nullable;
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -62,10 +63,6 @@ import minicraft.item.PotionType;
 import minicraft.item.StackableItem;
 import minicraft.level.Level;
 import minicraft.level.tile.Tiles;
-import minicraft.screen.AchievementsDisplay;
-import minicraft.screen.LoadingDisplay;
-import minicraft.screen.MultiplayerDisplay;
-import minicraft.screen.SkinDisplay;
 
 public class Load {
 	
@@ -402,6 +399,8 @@ public class Load {
 			String[] map = str.split(";");
 			Game.input.setKey(map[0], map[1]);
 		}
+
+		new ResourcePackDisplay().setLoadedPack(json.getString("resourcePack"));
 	}
 
 	private void loadUnlocksOld(String filename) {
@@ -435,7 +434,7 @@ public class Load {
 
 		// Load unlocked achievements.
 		if (json.has("unlockedAchievements"))
-			AchievementsDisplay.setUnlockedAchievements(json.getJSONArray("unlockedAchievements"));
+			AchievementsDisplay.unlockAchievements(json.getJSONArray("unlockedAchievements"));
 	}
 	
 	private void loadWorld(String filename) {

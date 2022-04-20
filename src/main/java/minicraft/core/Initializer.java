@@ -27,26 +27,20 @@ public class Initializer extends Game {
 	
 	static void parseArgs(String[] args) {
 		boolean debug = false;
-		boolean packetdebug = false;
 		
 		// Parses command line arguments
 		String saveDir = FileHandler.systemGameDir;
 		for (int i = 0; i < args.length; i++) {
 			if (args[i].equals("--debug")) {
 				debug = true;
-
-			} else if (args[i].equals("--packetdebug")) {
-				packetdebug = true;
 			} else if (args[i].equals("--savedir") && i+1 < args.length) {
 				i++;
 				saveDir = args[i];
 			} else if (args[i].equals("--fullscreen")) {
-				// Initializes fullscreen
 				Updater.FULLSCREEN = true;
 			}
 		}
 		Game.debug = debug;
-		Game.packet_debug = packetdebug;
 		
 		FileHandler.determineGameDir(saveDir);
 	}
@@ -59,7 +53,7 @@ public class Initializer extends Game {
 	 *	-fires the command to render out the screen.
 	 */
 	static void run() {
-		long lastTime = System.nanoTime();
+		long lastTick = System.nanoTime();
 		long lastRender = System.nanoTime();
 		double unprocessed = 0;
 		int frames = 0;
@@ -69,9 +63,9 @@ public class Initializer extends Game {
 		while (running) {
 			long now = System.nanoTime();
 			double nsPerTick = 1E9D / Updater.normSpeed; // Nanosecs per sec divided by ticks per sec = nanosecs per tick
-			if (menu == null) nsPerTick /= Updater.gamespeed;
-			unprocessed += (now - lastTime) / nsPerTick; // Figures out the unprocessed time between now and lastTime.
-			lastTime = now;
+			if (display == null) nsPerTick /= Updater.gamespeed;
+			unprocessed += (now - lastTick) / nsPerTick; // Figures out the unprocessed time between now and lastTick.
+			lastTick = now;
 			while (unprocessed >= 1) { // If there is unprocessed time, then tick.
 				ticks++;
 				Updater.tick(); // Calls the tick method (in which it calls the other tick methods throughout the code.

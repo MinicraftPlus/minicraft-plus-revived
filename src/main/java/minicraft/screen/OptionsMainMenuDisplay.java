@@ -21,10 +21,10 @@ public class OptionsMainMenuDisplay extends Display {
         Menu optionsMenu = new Menu.Builder(false, 6, RelPos.LEFT,
             Settings.getEntry("fps"),
             Settings.getEntry("sound"),
-            new SelectEntry("Change Key Bindings", () -> Game.setMenu(new KeyInputDisplay())),
+            new SelectEntry("Change Key Bindings", () -> Game.setDisplay(new KeyInputDisplay())),
             Settings.getEntry("language"),
             Settings.getEntry("aspectratio"),
-            new SelectEntry("Resource packs", () -> Game.setMenu(new ResourcePackDisplay())))
+            new SelectEntry("Resource packs", () -> Game.setDisplay(new ResourcePackDisplay())))
             .setTitle("Main Menu Options")
             .createMenu();
 

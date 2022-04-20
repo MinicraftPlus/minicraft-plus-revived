@@ -101,7 +101,7 @@ public class World extends Game {
 
 		Logger.trace("Initializing world non-client...");
 
-		if (WorldSelectDisplay.loadedWorld()) {
+		if (WorldSelectDisplay.hasLoadedWorld()) {
 			Load loader = new Load(WorldSelectDisplay.getWorldName());
 		} else {
 			Analytics.WorldCreation.ping();
@@ -115,7 +115,7 @@ public class World extends Game {
 				Logger.trace("Loading level " + i + "...");
 
 				LoadingDisplay.setMessage(Level.getDepthString(i));
-				levels[lvlIdx(i)] = new Level(worldSize, worldSize, WorldGenDisplay.getSeed(), i, levels[lvlIdx(i+1)], !WorldSelectDisplay.loadedWorld());
+				levels[lvlIdx(i)] = new Level(worldSize, worldSize, WorldGenDisplay.getSeed(), i, levels[lvlIdx(i+1)], !WorldSelectDisplay.hasLoadedWorld());
 
 				LoadingDisplay.progress(loadingInc);
 			}

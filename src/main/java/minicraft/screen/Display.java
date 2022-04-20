@@ -45,7 +45,7 @@ public class Display {
 	public void tick(InputHandler input) {
 		
 		if (canExit && input.getKey("exit").clicked) {
-			Game.exitMenu();
+			Game.exitDisplay();
 			return;
 		}
 		

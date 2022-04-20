@@ -2,14 +2,9 @@ package minicraft.screen;
 
 import java.io.InputStream;
 
+import kong.unirest.*;
 import minicraft.network.Analytics;
 import org.json.JSONObject;
-
-import com.mashape.unirest.http.HttpResponse;
-import com.mashape.unirest.http.JsonNode;
-import com.mashape.unirest.http.Unirest;
-import com.mashape.unirest.http.async.Callback;
-import com.mashape.unirest.http.exceptions.UnirestException;
 
 import minicraft.core.Action;
 import minicraft.core.Game;
@@ -64,35 +59,35 @@ public class MultiplayerDisplay extends Display {
 	private void contactAccountServer(Action sitePingCallback) {
 		setWaitMessage("testing connection");
 		
-		Unirest.get(domain).asBinaryAsync(new Callback<InputStream>() {
+		Unirest.get(domain).asEmptyAsync(new Callback<Empty>() {
 			@Override
-			public void completed(HttpResponse<InputStream> httpResponse) {
-				if(httpResponse.getStatus() == 200)
+			public void completed(HttpResponse<Empty> response) {
+				if(response.getStatus() == 200)
 					online = true;
 				else
-					System.err.println("Warning: Minicraft site ping returned status code " + httpResponse.getStatus());
-				
+					System.err.println("Warning: Minicraft site ping returned status code " + response.getStatus());
+
 				if(savedUUID.length() > 0) {
 					setWaitMessage("attempting log in");
 					fetchName(savedUUID);
 				}
-				
+
 				if(curState == State.ERROR)
 					return;
-				
+
 				// at this point, the game is online, and either the player could log in automatically, or has to enter their
 				// email and password.
-				
+
 				if(savedUsername.length() == 0 || savedUUID.length() == 0)
 					curState = State.LOGIN; // the player must log in manually.
 				else {
 					typing = savedIP;
 					curState = State.ENTERIP; // the user has sufficient credentials; skip login phase
 				}
-				
+
 				sitePingCallback.act();
 			}
-			
+
 			@Override
 			public void failed(UnirestException e) {
 				System.err.println("Website ping failed: "+e.getMessage());
@@ -136,7 +131,7 @@ public class MultiplayerDisplay extends Display {
 		}
 
 		if(response != null) {
-			JSONObject json = response.getBody().getObject();
+			kong.unirest.json.JSONObject json = response.getBody().getObject();
 			switch(json.getString("status")) {
 				case "error":
 					setError("problem with saved login data; please exit and login again.", false);

@@ -165,9 +165,7 @@ public class Player extends Mob implements ItemHolder, ClientTickable {
 				return super.remove(idx);
 			}
 		};
-		
-		//if(previousInstance == null)
-		//	inventory.add(Items.arrowItem, acs);
+
 		
 		potioneffects = new HashMap<>();
 		showpotioneffects = true;
@@ -257,7 +255,7 @@ public class Player extends Mob implements ItemHolder, ClientTickable {
 	@Override
 	public void tick() {
 		if (level == null || isRemoved()) return;
-		if (Game.getMenu() != null) return; // Don't tick player when menu is open
+		if (Game.getDisplay() != null) return; // Don't tick player when menu is open
 		
 		super.tick(); // Ticks Mob.java
 
@@ -407,7 +405,7 @@ public class Player extends Mob implements ItemHolder, ClientTickable {
 		
 
 		// Handle player input. Input is handled by the menu if we are in one.
-		if (Game.getMenu() == null && !Bed.inBed(this)) {
+		if (Game.getDisplay() == null && !Bed.inBed(this)) {
 			// Create the raw movement vector.
 			Vector2 vec = new Vector2(0, 0);
 
@@ -465,15 +463,15 @@ public class Player extends Mob implements ItemHolder, ClientTickable {
 				activeItem = null;
 			}
 
-			if (Game.getMenu() == null) {
+			if (Game.getDisplay() == null) {
 				if (input.getKey("menu").clicked && !use()) // !use() = no furniture in front of the player; this prevents player inventory from opening (will open furniture inventory instead)
-					Game.setMenu(new PlayerInvDisplay(this));
+					Game.setDisplay(new PlayerInvDisplay(this));
 				if (input.getKey("pause").clicked)
-					Game.setMenu(new PauseDisplay());
+					Game.setDisplay(new PauseDisplay());
 				if (input.getKey("craft").clicked && !use())
-					Game.setMenu(new CraftingDisplay(Recipes.craftRecipes, "Crafting", this, true));
+					Game.setDisplay(new CraftingDisplay(Recipes.craftRecipes, "Crafting", this, true));
 
-				if (input.getKey("info").clicked) Game.setMenu(new InfoDisplay());
+				if (input.getKey("info").clicked) Game.setDisplay(new InfoDisplay());
 
 				if (input.getKey("quicksave").clicked && !Updater.saving) {
 					Updater.saving = true;
@@ -748,6 +746,20 @@ public class Player extends Mob implements ItemHolder, ClientTickable {
 			dmg += ((ToolItem)activeItem).getAttackDamageBonus(e); // Sword/Axe are more effective at dealing damage.
 		}
 		return dmg;
+	}
+
+	/**
+	 * Updates the sprite to render on demand.
+	 */
+	public void updateSprite() {
+		// Get the current skin we are using as a MobSprite array.
+		MobSprite[][][] selectedSkin = SkinDisplay.getSkinAsMobSprite();
+
+		// Assign the skin to the states.
+		sprites = selectedSkin[0];
+		carrySprites = selectedSkin[1];
+		suitSprites = selectedSkin[2];
+		carrySuitSprites = selectedSkin[3];
 	}
 
 	@Override

@@ -91,7 +91,7 @@ public class Save {
 		writeInventory("Inventory", Game.player);
 		writeEntities("Entities");
 		
-		WorldSelectDisplay.refreshWorldNames();
+		WorldSelectDisplay.updateWorlds();
 		
 		Updater.notifyAll("World Saved!");
 		Updater.asTick = 0;

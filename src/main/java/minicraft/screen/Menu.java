@@ -137,9 +137,13 @@ public class Menu {
 	int getDispSelection() { return dispSelection; }
 	
 	ListEntry[] getEntries() { return entries.toArray(new ListEntry[0]); }
-	void setEntries(ListEntry[] entries) {
+	protected void setEntries(ListEntry[] entries) {
 		this.entries.clear();
 		this.entries.addAll(0, Arrays.asList(entries));
+	}
+	protected void setEntries(List<ListEntry> entries) {
+		this.entries.clear();
+		this.entries.addAll(entries);
 	}
 	@Nullable ListEntry getCurEntry() { return entries.size() == 0 ? null : entries.get(selection); }
 	int getNumOptions() { return entries.size(); }
