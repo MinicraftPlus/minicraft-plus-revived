@@ -1,5 +1,6 @@
 package minicraft.level.tile;
 
+import me.nullicorn.nedit.type.NBTCompound;
 import minicraft.core.Game;
 import minicraft.core.io.Settings;
 import minicraft.core.io.Sound;
@@ -75,5 +76,12 @@ public class CloudCactusTile extends Tile {
 			}
 			level.dropItem(x * 16 + 8, y * 16 + 8, count, Items.get("Cloud Ore"));
 		}
+	}
+
+	@Override
+	public NBTCompound getDefaultData() {
+		NBTCompound data = super.getDefaultData();
+		data.put("damage", 0);
+		return data;
 	}
 }

@@ -1,5 +1,6 @@
 package minicraft.level.tile;
 
+import me.nullicorn.nedit.type.NBTCompound;
 import minicraft.core.Game;
 import minicraft.core.io.Settings;
 import minicraft.core.io.Sound;
@@ -42,6 +43,13 @@ public class CactusTile extends Tile {
 			level.setData(x, y, "damage", damage);
 		}
 		return true;
+	}
+
+	@Override
+	public NBTCompound getDefaultData() {
+		NBTCompound data = super.getDefaultData();
+		data.put("damage", 0);
+		return data;
 	}
 
 	@Override

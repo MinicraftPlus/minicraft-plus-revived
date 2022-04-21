@@ -1,7 +1,10 @@
 package minicraft.level.tile;
 
+import java.io.ByteArrayInputStream;
+import java.io.IOException;
 import java.util.Random;
 
+import me.nullicorn.nedit.NBTReader;
 import me.nullicorn.nedit.type.NBTCompound;
 import minicraft.core.World;
 import minicraft.entity.Direction;
@@ -155,11 +158,14 @@ public abstract class Tile {
 	/** Sees if the tile connects to a fluid. */
 	public boolean connectsToLiquid() { return connectsToFluid; }
 	
-	public int getData(String data) {
+	public NBTCompound getData(String data) {
 		try {
-			return Integer.parseInt(data);
+			return NBTReader.read(new ByteArrayInputStream(data.getBytes()));
 		} catch (NumberFormatException ex) {
-			return 0;
+			return getDefaultData();
+		} catch (IOException e) {
+			e.printStackTrace();
+			return getDefaultData();
 		}
 	}
 	

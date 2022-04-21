@@ -1,5 +1,6 @@
 package minicraft.level.tile;
 
+import me.nullicorn.nedit.type.NBTCompound;
 import minicraft.core.io.Sound;
 import minicraft.entity.Direction;
 import minicraft.entity.Entity;
@@ -44,6 +45,13 @@ public class DoorTile extends Tile {
 		boolean closed = level.getData(x, y).getByte("closed", (byte)0) == 0;
 		Sprite curSprite = closed ? closedSprite : openSprite;
 		curSprite.render(screen, x * 16, y * 16);
+	}
+
+	@Override
+	public NBTCompound getDefaultData() {
+		NBTCompound data = super.getDefaultData();
+		data.put("closed", 0);
+		return data;
 	}
 
 	public boolean interact(Level level, int xt, int yt, Player player, Item item, Direction attackDir) {
