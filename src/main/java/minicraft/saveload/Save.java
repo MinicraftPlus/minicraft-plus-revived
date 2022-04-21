@@ -162,13 +162,19 @@ public class Save {
 	}
 	
 	private void writeGame(String filename) {
-		data.add(String.valueOf(Game.VERSION));
-		data.add(Settings.getIdx("mode") + (Game.isMode("score") ? ";" + Updater.scoreTime + ";" + Settings.get("scoretime") : ""));
-		data.add(String.valueOf(Updater.tickCount));
-		data.add(String.valueOf(Updater.gameTime));
-		data.add(String.valueOf(Settings.getIdx("diff")));
-		data.add(String.valueOf(AirWizard.beaten));
-		writeToFile(location + filename + extension, data);
+		JSONObject data = new JSONObject();
+		data.put("version", Game.VERSION.toString());
+		data.put("mode", Settings.getIdx("mode"));
+		if (Game.isMode("score")) data.put("score", Updater.scoreTime + ";" + Settings.get("scoretime"));
+		data.put("tickCount", Updater.tickCount);
+		data.put("gameTime", Updater.gameTime);
+		data.put("difficulty", Settings.getIdx("diff"));
+		data.put("wizardBeaten", AirWizard.beaten);
+		try {
+			writeJSONToFile(location + filename + extension, data.toString());
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
 	}
 	
 	private void writePrefs() {
@@ -250,36 +256,31 @@ public class Save {
 	
 	private void writePlayer(String filename, Player player) {
 		LoadingDisplay.setMessage("Player");
-		writePlayer(player, data);
-		writeToFile(location + filename + extension, data);
-	}
-	
-	public static void writePlayer(Player player, List<String> data) {
-		data.clear();
-		data.add(String.valueOf(player.x));
-		data.add(String.valueOf(player.y));
-		data.add(String.valueOf(player.spawnx));
-		data.add(String.valueOf(player.spawny));
-		data.add(String.valueOf(player.health));
-		data.add(String.valueOf(player.hunger));
-		data.add(String.valueOf(player.armor));
-		data.add(String.valueOf(player.armorDamageBuffer));
-		data.add(String.valueOf(player.curArmor == null ? "NULL" : player.curArmor.getName()));
-		data.add(String.valueOf(player.getScore()));
-		data.add(String.valueOf(Game.currentLevel));
+		JSONObject data = new JSONObject();
+		data.put("x", player.x);
+		data.put("y", player.y);
+		data.put("spawnX", player.spawnx);
+		data.put("spawnY", player.spawny);
+		data.put("health", player.health);
+		data.put("hunger", player.hunger);
+		data.put("armor", player.armor);
+		data.put("armorDamageBuffer", player.armorDamageBuffer);
+		data.put("curArmor", player.curArmor == null ? "NULL" : player.curArmor.getName());
+		data.put("score", player.getScore());
+		data.put("level", Game.currentLevel);
 		
-		StringBuilder subdata = new StringBuilder("PotionEffects[");
-		
+		JSONArray potions = new JSONArray();
 		for (java.util.Map.Entry<PotionType, Integer> potion: player.potioneffects.entrySet())
-			subdata.append(potion.getKey()).append(";").append(potion.getValue()).append(":");
+			potions.put(potion.getKey()+":"+potion.getValue());
 		
-		if (player.potioneffects.size() > 0)
-			subdata = new StringBuilder(subdata.substring(0, subdata.length() - (1)) + "]"); // Cuts off extra ":" and appends "]"
-		else subdata.append("]");
-		data.add(subdata.toString());
-		
-		data.add(String.valueOf(player.shirtColor));
-		data.add(String.valueOf(player.suitOn));
+		data.put("potions", potions);
+		data.put("shirtColor", player.shirtColor);
+		data.put("suitOn", player.suitOn);
+		try {
+			writeJSONToFile(location + filename + extension, data.toString());
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
 	}
 	
 	private void writeInventory(String filename, Player player) {

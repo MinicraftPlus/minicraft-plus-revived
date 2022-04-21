@@ -86,9 +86,13 @@ public class Load {
 	
 	public Load(String worldname) throws JSONException, IOException { this(worldname, true); }
 	public Load(String worldname, boolean loadGame) throws JSONException, IOException {
-		loadFromFile(location + "/saves/" + worldname + "/Game" + extension);
-		if (data.get(0).contains(".")) worldVer = new Version(data.get(0));
-		if (worldVer == null) worldVer = new Version("1.8");
+		try {
+			worldVer = new Version(new JSONObject(loadFromFile(location + "/saves/" + worldname + "/Game" + extension, true)).getString("version"));
+		} catch (JSONException e) {
+			loadFromFile(location + "/saves/" + worldname + "/Game" + extension);
+			if (data.get(0).contains(".")) worldVer = new Version(data.get(0));
+			if (worldVer == null) worldVer = new Version("1.8");
+		}
 		
 		//if (!hasGlobalPrefs)
 		//	hasGlobalPrefs = worldVer.compareTo(new Version("1.9.2")) >= 0;
@@ -218,36 +222,48 @@ public class Load {
 		return total.toString();
 	}
 	
-	private void loadGame(String filename) {
-		loadFromFile(location + filename + extension);
-		
-		worldVer = new Version(data.remove(0)); // Gets the world version
-		if (worldVer.compareTo(new Version("2.0.4-dev8")) >= 0)
-			loadMode(data.remove(0));
-		
-		Updater.setTime(Integer.parseInt(data.remove(0)));
-		
-		Updater.gameTime = Integer.parseInt(data.remove(0));
-		if (worldVer.compareTo(new Version("1.9.3-dev2")) >= 0) {
-			Updater.pastDay1 = Updater.gameTime > 65000;
-		} else {
-			Updater.gameTime = 65000; // Prevents time cheating.
-		}
-		
-		int diffIdx = Integer.parseInt(data.remove(0));
-		if (worldVer.compareTo(new Version("1.9.3-dev3")) < 0)
-			diffIdx--; // Account for change in difficulty
-		
-		Settings.setIdx("diff", diffIdx);
-		
-		AirWizard.beaten = Boolean.parseBoolean(data.remove(0));
-		
-		// Check if the AirWizard was beaten in versions prior to 2.1.0
-		if (worldVer.compareTo(new Version("2.1.0-dev2")) < 0) {
-			if (AirWizard.beaten) {
-				Logger.debug("AirWizard was beaten in an old version, giving achievement...");
-				AchievementsDisplay.setAchievement("minicraft.achievement.airwizard", true);
+	private void loadGame(String filename) throws IOException {
+		if (worldVer.compareTo(new Version("2.1.0-dev3")) < 0) {
+			loadFromFile(location + filename + extension);
+			
+			worldVer = new Version(data.remove(0)); // Gets the world version
+			if (worldVer.compareTo(new Version("2.0.4-dev8")) >= 0)
+				loadMode(data.remove(0));
+			
+			Updater.setTime(Integer.parseInt(data.remove(0)));
+			
+			Updater.gameTime = Integer.parseInt(data.remove(0));
+			if (worldVer.compareTo(new Version("1.9.3-dev2")) >= 0) {
+				Updater.pastDay1 = Updater.gameTime > 65000;
+			} else {
+				Updater.gameTime = 65000; // Prevents time cheating.
 			}
+			
+			int diffIdx = Integer.parseInt(data.remove(0));
+			if (worldVer.compareTo(new Version("1.9.3-dev3")) < 0)
+				diffIdx--; // Account for change in difficulty
+			
+			Settings.setIdx("diff", diffIdx);
+			
+			AirWizard.beaten = Boolean.parseBoolean(data.remove(0));
+			
+			// Check if the AirWizard was beaten in versions prior to 2.1.0
+			if (worldVer.compareTo(new Version("2.1.0-dev2")) < 0) {
+				if (AirWizard.beaten) {
+					Logger.debug("AirWizard was beaten in an old version, giving achievement...");
+					AchievementsDisplay.setAchievement("minicraft.achievement.airwizard", true);
+				}
+			}
+		} else {
+			JSONObject data = new JSONObject(loadFromFile(location + filename + extension, true));
+			worldVer = new Version(data.getString("version")); // Gets the world version
+			loadMode(data.getInt("mode")+(data.has("score")?";"+data.getString("score"):""));
+			Updater.setTime(data.getInt("tickCount"));
+			Updater.gameTime = data.getInt("gameTime");
+			Updater.pastDay1 = Updater.gameTime > 65000;
+			int diffIdx = data.getInt("difficulty");
+			Settings.setIdx("diff", diffIdx);
+			AirWizard.beaten = data.getBoolean("wizardBeaten");
 		}
 	}
 	
@@ -568,10 +584,43 @@ public class Load {
 		}
 	}
 	
-	public void loadPlayer(String filename, Player player) {
+	public void loadPlayer(String filename, Player player) throws JSONException, IOException {
 		LoadingDisplay.setMessage("Player");
 		loadFromFile(location + filename + extension);
-		loadPlayer(player, data);
+		if (worldVer.compareTo(new Version("2.1.0-dev3")) < 0) loadPlayer(player, data);
+		else {
+			JSONObject data = new JSONObject(loadFromFile(location + filename + extension, true));
+			player.x = data.getInt("x");
+			player.y = data.getInt("y");
+			player.spawnx = data.getInt("spawnX");
+			player.spawny = data.getInt("spawnY");
+			player.health = data.getInt("health");
+			player.hunger = data.getInt("hunger");
+			player.armor = data.getInt("armor");
+			player.armorDamageBuffer = data.getInt("armorDamageBuffer");
+			player.curArmor = (ArmorItem) Items.get(data.getString("curArmor"), true);
+			
+			player.setScore(data.getInt("score"));
+			Game.currentLevel = data.getInt("level");
+			Level level = World.levels[Game.currentLevel];
+			if (!player.isRemoved()) player.remove(); // Removes the user player from the level, in case they would be added twice.
+			if(level != null)
+				level.add(player);
+			else
+				Logger.trace("Game level to add player {} to is null.", player);
+			
+			JSONArray potioneffects = data.getJSONArray("potions");
+			if (potioneffects.length()!=0) {
+				for (int s = 0; s<potioneffects.length(); s++) {
+					String[] effect = potioneffects.getString(s).split(":");
+					PotionType pName = Enum.valueOf(PotionType.class, effect[0]);
+					PotionItem.applyPotion(player, pName, Integer.parseInt(effect[1]));
+				}
+			}
+			player.shirtColor = data.getInt("shirtColor");
+
+			Settings.set("skinon", player.suitOn = data.getBoolean("suitOn"));
+		}
 	}
 	public void loadPlayer(Player player, List<String> origData) {
 		List<String> data = new ArrayList<>(origData);
