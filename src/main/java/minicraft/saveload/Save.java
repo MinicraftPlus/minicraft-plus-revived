@@ -2,14 +2,10 @@ package minicraft.saveload;
 
 import java.io.BufferedWriter;
 import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.zip.Deflater;
-import java.util.zip.DeflaterOutputStream;
 
 import minicraft.core.Game;
 import minicraft.core.Renderer;
@@ -37,15 +33,12 @@ import minicraft.entity.particle.TextParticle;
 import minicraft.item.Inventory;
 import minicraft.item.Item;
 import minicraft.item.PotionType;
+import minicraft.item.StackableItem;
 import minicraft.screen.*;
-import minicraft.sdt.SDTInventory;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
 import org.tinylog.Logger;
-
-import me.nullicorn.nedit.NBTOutputStream;
-import me.nullicorn.nedit.type.NBTCompound;
 
 public class Save {
 
@@ -55,7 +48,7 @@ public class Save {
 	// Used to indent the .json files
 	private static final int indent = 4;
 
-	public static String extension = ".miniplussave";
+	public static String extension = ".json";
 
 	List<String> data;
 
@@ -145,11 +138,6 @@ public class Save {
 		}
 		
 		Renderer.render(); // AH HA!!! HERE'S AN IMPORTANT STATEMENT!!!!
-	}
-	public void writeNBTComponentToFile(String filename, NBTCompound savedata) throws FileNotFoundException, IOException {
-		try (NBTOutputStream os = new NBTOutputStream(new DeflaterOutputStream(new FileOutputStream(filename), new Deflater(9)), false)) {
-			os.writeFully(savedata);
-		}
 	}
 	
 	public static void writeToFile(String filename, String[] savedata, boolean isWorldSave) throws IOException {
@@ -250,7 +238,7 @@ public class Save {
 		
 		for (int l = 0; l < World.levels.length; l++) {
 			try {
-				writeNBTComponentToFile(location + filename + l + extension + "data", World.levels[l].data.toNBT());
+				writeJSONToFile(location + filename + l +"data"+ extension, new JSONArray(World.levels[l].data).toString());
 			} catch (IOException e) {
 				e.printStackTrace();
 			}
@@ -294,7 +282,16 @@ public class Save {
 	
 	private void writeInventory(String filename, Player player) {
 		try {
-			writeNBTComponentToFile(location + filename + extension, SDTInventory.toNBT(SDTInventory.VERSION, writeInventory(player)));
+			ArrayList<Item> inv = writeInventory(player);
+			JSONArray items = new JSONArray();
+			for (Item item : inv) {
+				JSONObject obj = new JSONObject();
+				obj.put("name", item.getName());
+				obj.put("data", item.data);
+				if (item instanceof StackableItem) obj.put("count", ((StackableItem)item).count);
+				items.put(obj);
+			}
+			writeJSONToFile(location + filename + extension, items.toString());
 		} catch (IOException e) {
 			e.printStackTrace();
 		}

@@ -1,9 +1,7 @@
 package minicraft.saveload;
 
 import java.io.BufferedReader;
-import java.io.ByteArrayOutputStream;
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.FileReader;
 import java.io.IOException;
 import java.io.InputStream;
@@ -11,7 +9,6 @@ import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import java.util.zip.InflaterOutputStream;
 
 import minicraft.screen.*;
 import org.jetbrains.annotations.Nullable;
@@ -20,8 +17,6 @@ import org.json.JSONException;
 import org.json.JSONObject;
 import org.tinylog.Logger;
 
-import me.nullicorn.nedit.type.NBTCompound;
-import me.nullicorn.nedit.type.TagType;
 import minicraft.core.Game;
 import minicraft.core.Network;
 import minicraft.core.Updater;
@@ -68,8 +63,6 @@ import minicraft.item.PotionType;
 import minicraft.item.StackableItem;
 import minicraft.level.Level;
 import minicraft.level.tile.Tiles;
-import minicraft.sdt.SDTInventory;
-import minicraft.sdt.SDTLevelData;
 
 public class Load {
 	
@@ -80,7 +73,7 @@ public class Load {
 	
 	private ArrayList<String> data;
 	// private ArrayList<String> extradata; // These two are changed when loading a new file. (see loadFromFile())
-	private SDTLevelData levelextradata;
+	private JSONObject[] levelextradata;
 	// private SDTLevel leveldata;
 
 	private Version worldVer;
@@ -204,21 +197,18 @@ public class Load {
 		
 		String total;
 		try {
-			// if (filename.contains("Level")) {
-			// 	leveldata = new SDTLevel(loadSDTFile(filename));
-			// }
-			// else {
-				total = loadFromFile(filename, true);
-				if (total.length() > 0)
-					data.addAll(Arrays.asList(total.split(",")));
-			// }
+			total = loadFromFile(filename, true);
+			if (total.length() > 0)
+				data.addAll(Arrays.asList(total.split(",")));
 		} catch (IOException ex) {
 			ex.printStackTrace();
 		}
 		
 		if (filename.contains("Level")) {
 			try {
-				levelextradata = new SDTLevelData(loadSDTFile(filename.substring(0, filename.lastIndexOf("/") + 7) + extension + "data"));
+				JSONArray jsonArray = new JSONArray(loadFromFile(filename.substring(0, filename.lastIndexOf("/") + 7) +"data"+ extension, true));
+				levelextradata = new JSONObject[jsonArray.length()];
+				for (int i = 0; i<jsonArray.length(); i++) levelextradata[i] = jsonArray.getJSONObject(i);
 			} catch (IOException ex) {
 				ex.printStackTrace();
 			}
@@ -385,9 +375,6 @@ public class Load {
 
 		/* Start of the parsing */
 		Version prefVer = new Version(json.getString("version"));
-		// TODO: loading main and level SDT with convertion
-		// Version mainSDTver = new Version(json.getString("mainSDTversion"));
-		// Version levelSDTver = new Version(json.getString("levelSDTversion"));
 
 		// Settings
 		Settings.set("sound", json.getBoolean("sound"));
@@ -466,7 +453,7 @@ public class Load {
 			Settings.set("size", lvlw);
 			
 			short[] tiles = new short[lvlw * lvlh];
-			SDTLevelData tdata = new SDTLevelData(lvlw, lvlh);
+			JSONObject[] tdata = new JSONObject[lvlw*lvlh];
 			
 			for (int x = 0; x < lvlw; x++) {
 				for (int y = 0; y < lvlh; y++) {
@@ -484,7 +471,7 @@ public class Load {
 					}
 
 					if(tilename.equalsIgnoreCase("WOOL") && worldVer.compareTo(new Version("2.0.6-dev4")) < 0) {
-						switch ((int)levelextradata.data[tileidx].getByte("color", (byte) 0)) {
+						switch (levelextradata[tileidx].getInt("color")) {
 							case 1:
 								tilename = "Red Wool";
 								break;
@@ -510,7 +497,7 @@ public class Load {
 							tilename = "Gem Ore";
 					}
 					tiles[tileArrIdx] = Tiles.get(tilename).id;
-					tdata.data[tileArrIdx] = levelextradata.data[tileidx];
+					tdata[tileArrIdx] = levelextradata[tileidx];
 				}
 			}
 			
@@ -661,15 +648,16 @@ public class Load {
 	
 	public void loadInventory(String filename, Inventory inventory) {
 		try {
-			loadInventory(inventory, new SDTInventory(loadSDTFile(location + filename + extension)));
+			loadInventory(inventory, new JSONArray(loadFromFile(location + filename + extension, true)));
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
 	}
-	public void loadInventory(Inventory inventory, SDTInventory data) {
+	public void loadInventory(Inventory inventory, JSONArray data) {
 		inventory.clearInv();
 
-		for (NBTCompound item : data.items) {
+		for (int i = 0; i<data.length(); i++) {
+			JSONObject item = data.getJSONObject(i);
 			String name = item.getString("name");
 			if (name.length() == 0) {
 				System.err.println("loadInventory: Item in data list is \"\", skipping item");
@@ -699,13 +687,8 @@ public class Load {
 			// 	} else inventory.add(newItem, count);
 			// } else {
 				Item toAdd = Items.get(name);
-				NBTCompound itemdata = item.getCompound("data");
-				if (itemdata != null) {
-					if (itemdata.containsTag("data", TagType.COMPOUND)) {
-						toAdd.data = itemdata.getCompound("data");
-					}
-					if (toAdd instanceof StackableItem) ((StackableItem)toAdd).count = itemdata.getInt("count", 1);
-				}
+				toAdd.data = item.getJSONObject("data");
+				if (toAdd instanceof StackableItem) ((StackableItem)toAdd).count = item.getInt("count");
 				inventory.add(toAdd);
 			// }
 		}
@@ -775,10 +758,9 @@ public class Load {
 			}
 		} else {
 			int mobLvl = 1;
-			Class<?> c = null;
 			if (!Crafter.names.contains(entityName)) {
 				try {
-					c = Class.forName("minicraft.entity.mob." + entityName);
+					Class.forName("minicraft.entity.mob." + entityName);
 				} catch (ClassNotFoundException ignored) {}
 			}
 
@@ -902,18 +884,6 @@ public class Load {
 		return newEntity;
 	}
 	
-	private byte[] loadSDTFile(String filename) throws IOException {
-		ByteArrayOutputStream out = new ByteArrayOutputStream();
-        InflaterOutputStream infl = new InflaterOutputStream(out);
-		try (FileInputStream is = new FileInputStream(filename)) {
-			infl.write(is.readAllBytes());
-		}
-		infl.flush();
-        infl.close();
-
-        return out.toByteArray();
-	}
-
 	@Nullable
 	private static Entity getEntity(String string, int moblvl) {
 		switch (string) {

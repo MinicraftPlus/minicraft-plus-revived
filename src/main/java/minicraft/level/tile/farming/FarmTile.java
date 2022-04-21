@@ -1,5 +1,7 @@
 package minicraft.level.tile.farming;
 
+import org.json.JSONObject;
+
 import minicraft.core.io.Sound;
 import minicraft.entity.Direction;
 import minicraft.entity.Entity;
@@ -37,10 +39,16 @@ public class FarmTile extends Tile {
         }
         return false;
     }
+    
+	public static JSONObject getDefaultData() {
+		JSONObject obj = new JSONObject();
+		obj.put("age", 0);
+		return obj;
+	}
 
     @Override
     public boolean tick(Level level, int xt, int yt) {
-        int age = level.getData(xt, yt).getInt("age", 0);
+        int age = level.getData(xt, yt).getInt("age");
         if (age < 5) level.setData(xt, yt, "age", age + 1);
         return true;
     }
@@ -49,7 +57,7 @@ public class FarmTile extends Tile {
     public void steppedOn(Level level, int xt, int yt, Entity entity) {
         if (entity instanceof ItemEntity) return;
         if (random.nextInt(60) != 0) return;
-        if (level.getData(xt, yt).getInt("age", 0) < 5) return;
+        if (level.getData(xt, yt).getInt("age") < 5) return;
         level.setTile(xt, yt, Tiles.get("Dirt"));
     }
 }

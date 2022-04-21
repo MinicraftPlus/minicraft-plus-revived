@@ -1,5 +1,7 @@
 package minicraft.level.tile;
 
+import org.json.JSONObject;
+
 import minicraft.core.Game;
 import minicraft.core.io.Sound;
 import minicraft.entity.Direction;
@@ -69,7 +71,7 @@ public class WallTile extends Tile {
 	}
 
 	public void hurt(Level level, int x, int y, int dmg) {
-		int damage = level.getData(x, y).getInt("damage", 0) + dmg;
+		int damage = level.getData(x, y).getInt("damage") + dmg;
 		int sbwHealth = 100;
 		if (Game.isMode("Creative")) dmg = damage = sbwHealth;
 
@@ -103,9 +105,15 @@ public class WallTile extends Tile {
 			level.setData(x, y, "damage", damage);
 		}
 	}
+	
+	public static JSONObject getDefaultData() {
+		JSONObject obj = new JSONObject();
+		obj.put("damage", 0);
+		return obj;
+	}
 
 	public boolean tick(Level level, int xt, int yt) {
-		int damage = level.getData(xt, yt).getInt("damage", 0);
+		int damage = level.getData(xt, yt).getInt("damage");
 		if (damage > 0) {
 			level.setData(xt, yt, "damage", damage - 1);
 			return true;

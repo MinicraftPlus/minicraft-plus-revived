@@ -1,6 +1,7 @@
 package minicraft.level.tile;
 
-import me.nullicorn.nedit.type.NBTCompound;
+import org.json.JSONObject;
+
 import minicraft.core.Game;
 import minicraft.core.io.Settings;
 import minicraft.core.io.Sound;
@@ -28,7 +29,7 @@ public class CactusTile extends Tile {
 	}
 
 	public boolean hurt(Level level, int x, int y, Mob source, int dmg, Direction attackDir) {
-		int damage = level.getData(x, y).getInt("damage", 0) + dmg;
+		int damage = level.getData(x, y).getInt("damage") + dmg;
 		int cHealth = 10;
 		if (Game.isMode("creative")) dmg = damage = cHealth;
 		level.add(new SmashParticle(x * 16, y * 16));
@@ -45,11 +46,10 @@ public class CactusTile extends Tile {
 		return true;
 	}
 
-	@Override
-	public NBTCompound getDefaultData() {
-		NBTCompound data = super.getDefaultData();
-		data.put("damage", 0);
-		return data;
+	public static JSONObject getDefaultData() {
+		JSONObject obj = new JSONObject();
+		obj.put("damage", 0);
+		return obj;
 	}
 
 	@Override
@@ -74,7 +74,7 @@ public class CactusTile extends Tile {
 	}
 
 	public boolean tick(Level level, int xt, int yt) {
-		int damage = level.getData(xt, yt).getInt("damage", 0);
+		int damage = level.getData(xt, yt).getInt("damage");
 		if (damage > 0) {
 			level.setData(xt, yt, "damage", damage - 1);
 			return true;

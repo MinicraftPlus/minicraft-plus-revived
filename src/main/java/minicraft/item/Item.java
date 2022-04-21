@@ -1,6 +1,7 @@
 package minicraft.item;
 
-import me.nullicorn.nedit.type.NBTCompound;
+import org.json.JSONObject;
+
 import minicraft.core.io.Localization;
 import minicraft.entity.Direction;
 import minicraft.entity.mob.Player;
@@ -16,7 +17,7 @@ public abstract class Item {
 	
 	private final String name;
 	public Sprite sprite;
-	public NBTCompound data;
+	public JSONObject data;
 	
 	public boolean used_pending = false; // This is for multiplayer, when an item has been used, and is pending server response as to the outcome, this is set to true so it cannot be used again unless the server responds that the item wasn't used. Which should basically replace the item anyway, soo... yeah. this never gets set back.
 	
@@ -83,5 +84,5 @@ public abstract class Item {
 	
 	public boolean interactsWithWorld() { return true; }
 
-	public NBTCompound getDefaultData() {return new NBTCompound();}
+	public JSONObject getDefaultData() {return new JSONObject();}
 }

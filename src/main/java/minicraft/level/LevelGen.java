@@ -10,11 +10,18 @@ import javax.swing.JOptionPane;
 
 import org.jetbrains.annotations.Nullable;
 
+import org.json.JSONObject;
 import minicraft.core.Game;
 import minicraft.core.io.Settings;
+import minicraft.level.tile.CactusTile;
+import minicraft.level.tile.CloudCactusTile;
+import minicraft.level.tile.OreTile;
+import minicraft.level.tile.RockTile;
+import minicraft.level.tile.SandTile;
 import minicraft.level.tile.Tiles;
+import minicraft.level.tile.TreeTile;
+import minicraft.level.tile.WallTile;
 import minicraft.screen.WorldGenDisplay;
-import minicraft.sdt.SDTLevelData;
 
 public class LevelGen {
 	private static long worldSeed = 0;
@@ -116,7 +123,7 @@ public class LevelGen {
 	}
 	
 	@Nullable
-	static AbstractMap.SimpleEntry<short[], SDTLevelData> createAndValidateMap(int w, int h, int level) {
+	static AbstractMap.SimpleEntry<short[], JSONObject[]> createAndValidateMap(int w, int h, int level) {
 		worldSeed = WorldGenDisplay.getSeed();
 		
 		if (level == 1)
@@ -133,10 +140,10 @@ public class LevelGen {
 		return null;
 	}
 	
-	private static AbstractMap.SimpleEntry<short[], SDTLevelData> createAndValidateTopMap(int w, int h) {
+	private static AbstractMap.SimpleEntry<short[], JSONObject[]> createAndValidateTopMap(int w, int h) {
 		random.setSeed(worldSeed);
 		do {
-			AbstractMap.SimpleEntry<short[], SDTLevelData> result = createTopMap(w, h);
+			AbstractMap.SimpleEntry<short[], JSONObject[]> result = createTopMap(w, h);
 			
 			int[] count = new int[256];
 			
@@ -156,10 +163,10 @@ public class LevelGen {
 		} while (true);
 	}
 	
-	private static @Nullable AbstractMap.SimpleEntry<short[], SDTLevelData> createAndValidateUndergroundMap(int w, int h, int depth) {
+	private static @Nullable AbstractMap.SimpleEntry<short[], JSONObject[]> createAndValidateUndergroundMap(int w, int h, int depth) {
 		random.setSeed(worldSeed);
 		do {
-			AbstractMap.SimpleEntry<short[], SDTLevelData> result = createUndergroundMap(w, h, depth);
+			AbstractMap.SimpleEntry<short[], JSONObject[]> result = createUndergroundMap(w, h, depth);
 			
 			int[] count = new int[256];
 			
@@ -178,11 +185,11 @@ public class LevelGen {
 		} while (true);
 	}
 	
-	private static AbstractMap.SimpleEntry<short[], SDTLevelData> createAndValidateDungeon(int w, int h) {
+	private static AbstractMap.SimpleEntry<short[], JSONObject[]> createAndValidateDungeon(int w, int h) {
 		random.setSeed(worldSeed);
 		
 		do {
-			AbstractMap.SimpleEntry<short[], SDTLevelData> result = createDungeon(w, h);
+			AbstractMap.SimpleEntry<short[], JSONObject[]> result = createDungeon(w, h);
 			
 			int[] count = new int[256];
 			
@@ -197,11 +204,11 @@ public class LevelGen {
 		} while (true);
 	}
 
-	private static @Nullable AbstractMap.SimpleEntry<short[], SDTLevelData> createAndValidateSkyMap(int w, int h) {
+	private static @Nullable AbstractMap.SimpleEntry<short[], JSONObject[]> createAndValidateSkyMap(int w, int h) {
 		random.setSeed(worldSeed);
 		
 		do {
-			AbstractMap.SimpleEntry<short[], SDTLevelData> result = createSkyMap(w, h);
+			AbstractMap.SimpleEntry<short[], JSONObject[]> result = createSkyMap(w, h);
 			
 			int[] count = new int[256];
 			
@@ -217,7 +224,7 @@ public class LevelGen {
 		} while (true);
 	}
 	
-	private static AbstractMap.SimpleEntry<short[], SDTLevelData> createTopMap(int w, int h) { // Create surface map
+	private static AbstractMap.SimpleEntry<short[], JSONObject[]> createTopMap(int w, int h) { // Create surface map
 		// creates a bunch of value maps, some with small size...
 		LevelGen mnoise1 = new LevelGen(w, h, 16);
 		LevelGen mnoise2 = new LevelGen(w, h, 16);
@@ -228,7 +235,8 @@ public class LevelGen {
 		LevelGen noise2 = new LevelGen(w, h, 32);
 		
 		short[] map = new short[w * h];
-		SDTLevelData data = new SDTLevelData(w, h);
+		JSONObject[] data = new JSONObject[w*h];
+		for (int i = 0; i<w*h; i++) data[i] = new JSONObject();
 
 		for (int y = 0; y < h; y++) {
 			for (int x = 0; x < w; x++) {
@@ -258,6 +266,7 @@ public class LevelGen {
 								map[i] = Tiles.get("water").id;
 						} else if (val > 0.5 && mval < -1.5) {
 							map[i] = Tiles.get("rock").id;
+							data[i] = RockTile.getDefaultData();
 						} else {
 							map[i] = Tiles.get("grass").id;
 						}
@@ -273,6 +282,7 @@ public class LevelGen {
 							}
 						} else if (val > 0.5 && mval < -1.5) {
 							map[i] = Tiles.get("rock").id;
+							data[i] = RockTile.getDefaultData();
 						} else {
 							map[i] = Tiles.get("grass").id;
 						}
@@ -290,6 +300,7 @@ public class LevelGen {
 							}
 						} else {
 							map[i] = Tiles.get("rock").id;
+							data[i] = RockTile.getDefaultData();
 						}
 						break;
 					
@@ -303,6 +314,7 @@ public class LevelGen {
 							}
 						} else if (val > 0.5 && mval < -1.5) {
 							map[i] = Tiles.get("rock").id;
+							data[i] = RockTile.getDefaultData();
 						} else {
 							map[i] = Tiles.get("grass").id;
 						}
@@ -327,6 +339,7 @@ public class LevelGen {
 								if (xx >= 0 && yy >= 0 && xx < w && yy < h) {
 									if (map[xx + yy * w] == Tiles.get("grass").id) {
 										map[xx + yy * w] = Tiles.get("sand").id;
+										data[xx + yy * w] = SandTile.getDefaultData();
 									}
 								}
 					}
@@ -350,6 +363,7 @@ public class LevelGen {
 								if (xx >= 0 && yy >= 0 && xx < w && yy < h) {
 									if (map[xx + yy * w] == Tiles.get("grass").id) {
 										map[xx + yy * w] = Tiles.get("sand").id;
+										data[xx + yy * w] = SandTile.getDefaultData();
 									}
 								}
 					}
@@ -367,6 +381,7 @@ public class LevelGen {
 					if (xx >= 0 && yy >= 0 && xx < w && yy < h) {
 						if (map[xx + yy * w] == Tiles.get("grass").id) {
 							map[xx + yy * w] = Tiles.get("tree").id;
+							data[xx + yy * w] = TreeTile.getDefaultData();
 						}
 					}
 				}
@@ -382,6 +397,7 @@ public class LevelGen {
 					if (xx >= 0 && yy >= 0 && xx < w && yy < h) {
 						if (map[xx + yy * w] == Tiles.get("grass").id) {
 							map[xx + yy * w] = Tiles.get("tree").id;
+							data[xx + yy * w] = TreeTile.getDefaultData();
 						}
 					}
 				}
@@ -398,6 +414,7 @@ public class LevelGen {
 					if (xx >= 0 && yy >= 0 && xx < w && yy < h) {
 						if (map[xx + yy * w] == Tiles.get("grass").id) {
 							map[xx + yy * w] = Tiles.get("tree").id;
+							data[xx + yy * w] = TreeTile.getDefaultData();
 						}
 					}
 				}
@@ -413,6 +430,7 @@ public class LevelGen {
 					if (xx >= 0 && yy >= 0 && xx < w && yy < h) {
 						if (map[xx + yy * w] == Tiles.get("grass").id) {
 							map[xx + yy * w] = Tiles.get("tree").id;
+							data[xx + yy * w] = TreeTile.getDefaultData();
 						}
 					}
 				}
@@ -429,7 +447,7 @@ public class LevelGen {
 				if (xx >= 0 && yy >= 0 && xx < w && yy < h) {
 					if (map[xx + yy * w] == Tiles.get("grass").id) {
 						map[xx + yy * w] = Tiles.get("flower").id;
-						data.data[xx + yy * w].put("color", (short) (col + random.nextInt(4) * 16)); // Data determines which way the flower faces
+						data[xx + yy * w].put("color", (col + random.nextInt(4) * 16)); // Data determines which way the flower faces
 					}
 				}
 			}
@@ -441,6 +459,7 @@ public class LevelGen {
 			if (xx >= 0 && yy >= 0 && xx < w && yy < h) {
 				if (map[xx + yy * w] == Tiles.get("sand").id) {
 					map[xx + yy * w] = Tiles.get("cactus").id;
+					data[xx + yy * w] = CactusTile.getDefaultData();
 				}
 			}
 		}
@@ -477,16 +496,17 @@ public class LevelGen {
 		//average /= w*h;
 		//System.out.println(average);
 		
-		return new AbstractMap.SimpleEntry<short[], SDTLevelData>(map, data);
+		return new AbstractMap.SimpleEntry<short[], JSONObject[]>(map, data);
 	}
 	
-	private static AbstractMap.SimpleEntry<short[], SDTLevelData> createDungeon(int w, int h) {
+	private static AbstractMap.SimpleEntry<short[], JSONObject[]> createDungeon(int w, int h) {
 		LevelGen noise1 = new LevelGen(w, h, 8);
 		LevelGen noise2 = new LevelGen(w, h, 8);
 		
 		short[] map = new short[w * h];
-		SDTLevelData data = new SDTLevelData(w, h);
-		
+		JSONObject[] data = new JSONObject[w*h];
+		for (int i = 0; i<w*h; i++) data[i] = new JSONObject();
+
 		for (int y = 0; y < h; y++) {
 			for (int x = 0; x < w; x++) {
 				int i = x + y * w;
@@ -505,6 +525,7 @@ public class LevelGen {
 				
 				if (val < -0.35) {
 					map[i] = Tiles.get("Obsidian Wall").id;
+					data[i] = WallTile.getDefaultData();
 				} else {
 					map[i] = Tiles.get("Obsidian").id;
 				}
@@ -521,13 +542,13 @@ public class LevelGen {
 					if (map[xx + yy * w] != Tiles.get("Obsidian Wall").id) continue lavaLoop;
 				}
 			
-			Structure.lavaPool.draw(map, x, y, w);
+			Structure.lavaPool.draw(map, data, x, y, w);
 		}
 		
-		return new AbstractMap.SimpleEntry<short[], SDTLevelData>(map, data);
+		return new AbstractMap.SimpleEntry<short[], JSONObject[]>(map, data);
 	}
 	
-	private static AbstractMap.SimpleEntry<short[], SDTLevelData> createUndergroundMap(int w, int h, int depth) {
+	private static AbstractMap.SimpleEntry<short[], JSONObject[]> createUndergroundMap(int w, int h, int depth) {
 		LevelGen mnoise1 = new LevelGen(w, h, 16);
 		LevelGen mnoise2 = new LevelGen(w, h, 16);
 		LevelGen mnoise3 = new LevelGen(w, h, 16);
@@ -544,7 +565,8 @@ public class LevelGen {
 		LevelGen noise2 = new LevelGen(w, h, 32);
 		
 		short[] map = new short[w * h];
-		SDTLevelData data = new SDTLevelData(w, h);
+		JSONObject[] data = new JSONObject[w*h];
+		for (int i = 0; i<w*h; i++) data[i] = new JSONObject();
 		for (int y = 0; y < h; y++) {
 			for (int x = 0; x < w; x++) {
 				int i = x + y * w;
@@ -597,6 +619,7 @@ public class LevelGen {
 					if (xx >= r && yy >= r && xx < w - r && yy < h - r) {
 						if (map[xx + yy * w] == Tiles.get("rock").id) {
 							map[xx + yy * w] = (short) ((Tiles.get("iron Ore").id & 0xffff) + depth - 1);
+							data[xx + yy * w] = OreTile.getDefaultData();
 						}
 					}
 				}
@@ -606,6 +629,7 @@ public class LevelGen {
 					if (xx >= r && yy >= r && xx < w - r && yy < h - r) {
 						if (map[xx + yy * w] == Tiles.get("rock").id) {
 							map[xx + yy * w] = (short) (Tiles.get("Lapis").id & 0xffff);
+							data[xx + yy * w] = OreTile.getDefaultData();
 						}
 					}
 				}
@@ -620,7 +644,7 @@ public class LevelGen {
 				for (int j = 0; j < 10; j++) {
 					if (xx < w - r && yy < h - r) {
 						
-						Structure.dungeonLock.draw(map, xx, yy, w);
+						Structure.dungeonLock.draw(map, data, xx, yy, w);
 						
 						/// The "& 0xffff" is a common way to convert a short to an unsigned int, which basically prevents negative values... except... this doesn't do anything if you flip it back to a short again...
 						map[xx + yy * w] = (short) (Tiles.get("Stairs Down").id & 0xffff);
@@ -651,16 +675,17 @@ public class LevelGen {
 			}
 		}
 		
-		return new AbstractMap.SimpleEntry<short[], SDTLevelData>(map, data);
+		return new AbstractMap.SimpleEntry<short[], JSONObject[]>(map, data);
 	}
 	
-	private static AbstractMap.SimpleEntry<short[], SDTLevelData> createSkyMap(int w, int h) {
+	private static AbstractMap.SimpleEntry<short[], JSONObject[]> createSkyMap(int w, int h) {
 		LevelGen noise1 = new LevelGen(w, h, 8);
 		LevelGen noise2 = new LevelGen(w, h, 8);
 		
 		short[] map = new short[w * h];
-		SDTLevelData data = new SDTLevelData(w, h);
-		
+		JSONObject[] data = new JSONObject[w*h];
+		for (int i = 0; i<w*h; i++) data[i] = new JSONObject();
+
 		for (int y = 0; y < h; y++) {
 			for (int x = 0; x < w; x++) {
 				int i = x + y * w;
@@ -696,6 +721,7 @@ public class LevelGen {
 				}
 			
 			map[x + y * w] = Tiles.get("Cloud Cactus").id;
+			data[x + y * w]  = CloudCactusTile.getDefaultData();
 		}
 		
 		int count = 0;
@@ -719,7 +745,7 @@ public class LevelGen {
 			if (count >= w / 64) break;
 		}
 		
-		return new AbstractMap.SimpleEntry<short[], SDTLevelData>(map, data);
+		return new AbstractMap.SimpleEntry<short[], JSONObject[]>(map, data);
 	}
 	
 	public static void main(String[] args) {
@@ -762,7 +788,7 @@ public class LevelGen {
 			int lvl = maplvls[idx++ % maplvls.length];
 			if (lvl > 1 || lvl < -4) continue;
 			
-			AbstractMap.SimpleEntry<short[], SDTLevelData> fullmap = LevelGen.createAndValidateMap(w, h, lvl);
+			AbstractMap.SimpleEntry<short[], JSONObject[]> fullmap = LevelGen.createAndValidateMap(w, h, lvl);
 			
 			if (fullmap == null) continue;
 			short[] map = fullmap.getKey();

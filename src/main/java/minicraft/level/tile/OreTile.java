@@ -1,5 +1,7 @@
 package minicraft.level.tile;
 
+import org.json.JSONObject;
+
 import minicraft.core.Game;
 import minicraft.core.io.Sound;
 import minicraft.entity.Direction;
@@ -79,9 +81,15 @@ public class OreTile extends Tile {
     public Item getOre() {
         return type.getOre();
     }
+
+	public static JSONObject getDefaultData() {
+		JSONObject obj = new JSONObject();
+		obj.put("damage", 0);
+		return obj;
+	}
     
 	public void hurt(Level level, int x, int y, int dmg) {
-		int damage = level.getData(x, y).getInt("damage", 0) + dmg;
+		int damage = level.getData(x, y).getInt("damage") + dmg;
 		int oreH = random.nextInt(10) + 3;
 		if (Game.isMode("Creative")) dmg = damage = oreH;
 		

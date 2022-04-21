@@ -1,5 +1,7 @@
 package minicraft.level.tile;
 
+import org.json.JSONObject;
+
 import minicraft.core.io.Sound;
 import minicraft.entity.Direction;
 import minicraft.entity.Entity;
@@ -41,7 +43,7 @@ public class SandTile extends Tile {
 	}
 	
 	public void render(Screen screen, Level level, int x, int y) {
-		boolean steppedOn = level.getData(x, y).getInt("damage", 0) > 0;
+		boolean steppedOn = level.getData(x, y).getInt("damage") > 0;
 		
 		if(steppedOn) csprite.full = SandTile.steppedOn;
 		else csprite.full = SandTile.normal;
@@ -52,12 +54,18 @@ public class SandTile extends Tile {
 	}
 
 	public boolean tick(Level level, int x, int y) {
-		int damage = level.getData(x, y).getInt("damage", 0);
+		int damage = level.getData(x, y).getInt("damage");
 		if (damage > 0) {
 			level.setData(x, y, "damage", damage - 1);
 			return true;
 		}
 		return false;
+	}
+	
+	public static JSONObject getDefaultData() {
+		JSONObject obj = new JSONObject();
+		obj.put("damage", 0);
+		return obj;
 	}
 
 	public void steppedOn(Level level, int x, int y, Entity entity) {

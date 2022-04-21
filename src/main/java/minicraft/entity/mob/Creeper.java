@@ -3,7 +3,6 @@ package minicraft.entity.mob;
 import java.util.ArrayList;
 import java.util.List;
 
-import me.nullicorn.nedit.type.NBTCompound;
 import minicraft.core.Game;
 import minicraft.core.io.Settings;
 import minicraft.core.io.Sound;
@@ -14,6 +13,8 @@ import minicraft.gfx.MobSprite;
 import minicraft.gfx.Point;
 import minicraft.gfx.Screen;
 import minicraft.item.Items;
+import minicraft.level.tile.HoleTile;
+import minicraft.level.tile.InfiniteFallTile;
 import minicraft.level.tile.Tiles;
 
 public class Creeper extends EnemyMob {
@@ -121,9 +122,9 @@ public class Creeper extends EnemyMob {
 					}
 					if (!hasSpawner) {
 						if (level.depth != 1) {
-							level.setAreaTiles(tilePosition.x, tilePosition.y, 0, Tiles.get("hole"), new NBTCompound());
+							level.setAreaTiles(tilePosition.x, tilePosition.y, 0, Tiles.get("hole"), HoleTile.getDefaultData());
 						} else {
-							level.setAreaTiles(tilePosition.x, tilePosition.y, 0, Tiles.get("Infinite Fall"), new NBTCompound());
+							level.setAreaTiles(tilePosition.x, tilePosition.y, 0, Tiles.get("Infinite Fall"), InfiniteFallTile.getDefaultData());
 						}
 
 					}

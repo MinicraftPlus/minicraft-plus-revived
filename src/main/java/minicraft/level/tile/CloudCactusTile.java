@@ -1,6 +1,7 @@
 package minicraft.level.tile;
 
-import me.nullicorn.nedit.type.NBTCompound;
+import org.json.JSONObject;
+
 import minicraft.core.Game;
 import minicraft.core.io.Settings;
 import minicraft.core.io.Sound;
@@ -57,7 +58,7 @@ public class CloudCactusTile extends Tile {
 	}
 	
 	public void hurt(Level level, int x, int y, int dmg) {
-		int damage = level.getData(x, y).getInt("damage", 0) + dmg;
+		int damage = level.getData(x, y).getInt("damage") + dmg;
 		int oreH = random.nextInt(10) + 3;
 
 		level.add(new SmashParticle(x * 16, y * 16));
@@ -78,10 +79,9 @@ public class CloudCactusTile extends Tile {
 		}
 	}
 
-	@Override
-	public NBTCompound getDefaultData() {
-		NBTCompound data = super.getDefaultData();
-		data.put("damage", 0);
-		return data;
+	public static JSONObject getDefaultData() {
+		JSONObject obj = new JSONObject();
+		obj.put("damage", 0);
+		return obj;
 	}
 }

@@ -1,5 +1,7 @@
 package minicraft.level.tile;
 
+import org.json.JSONObject;
+
 import minicraft.core.Game;
 import minicraft.core.io.Sound;
 import minicraft.entity.Direction;
@@ -53,7 +55,7 @@ public class HardRockTile extends Tile {
 	}
 
 	public void hurt(Level level, int x, int y, int dmg) {
-		int damage = level.getData(x, y).getInt("damage", 0) + dmg;
+		int damage = level.getData(x, y).getInt("damage") + dmg;
 		int hrHealth = 200;
 		if (Game.isMode("Creative")) dmg = damage = hrHealth;
 		level.add(new SmashParticle(x * 16, y * 16));
@@ -69,6 +71,12 @@ public class HardRockTile extends Tile {
 		}
 	}
 
+	public static JSONObject getDefaultData() {
+		JSONObject obj = new JSONObject();
+		obj.put("damage", 0);
+		return obj;
+	}
+
 	@Override
 	public void render(Screen screen, Level level, int x, int y) {
 		sprite.sparse.color = DirtTile.dCol(level.depth);
@@ -76,7 +84,7 @@ public class HardRockTile extends Tile {
 	}
 
 	public boolean tick(Level level, int xt, int yt) {
-		int damage = level.getData(xt, yt).getInt("damage", 0);
+		int damage = level.getData(xt, yt).getInt("damage");
 		if (damage > 0) {
 			level.setData(xt, yt, "damage", damage - 1);
 			return true;

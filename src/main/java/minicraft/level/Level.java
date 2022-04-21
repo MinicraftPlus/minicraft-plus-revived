@@ -1,5 +1,6 @@
 package minicraft.level;
 
+import java.lang.reflect.InvocationTargetException;
 import java.util.AbstractMap;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -12,7 +13,7 @@ import java.util.Set;
 import java.util.function.Predicate;
 import java.util.function.ToIntFunction;
 
-import me.nullicorn.nedit.type.NBTCompound;
+import org.json.JSONObject;
 import minicraft.core.Game;
 import minicraft.core.Updater;
 import minicraft.core.io.Settings;
@@ -41,10 +42,11 @@ import minicraft.gfx.Point;
 import minicraft.gfx.Rectangle;
 import minicraft.gfx.Screen;
 import minicraft.item.Item;
+import minicraft.level.tile.DirtTile;
+import minicraft.level.tile.HardRockTile;
 import minicraft.level.tile.Tile;
 import minicraft.level.tile.Tiles;
 import minicraft.level.tile.TorchTile;
-import minicraft.sdt.SDTLevelData;
 
 public class Level {
 	private Random random = new Random();
@@ -59,7 +61,7 @@ public class Level {
 	private long seed; // The used seed that was used to generate the world
 	
 	public short[] tiles; // An array of all the tiles in the world.
-	public SDTLevelData data; // An array of the data of the tiles in the world.
+	public JSONObject[] data; // An array of the data of the tiles in the world.
 	
 	public final int depth; // Depth level of the level
 	public int monsterDensity = 16; // Affects the number of monsters that are on the level, bigger the number the less monsters spawn.
@@ -129,7 +131,7 @@ public class Level {
 		this.w = w;
 		this.h = h;
 		this.seed = seed;
-		AbstractMap.SimpleEntry<short[], SDTLevelData> maps; // Multidimensional array (an array within a array), used for the map
+		AbstractMap.SimpleEntry<short[], JSONObject[]> maps; // Multidimensional array (an array within a array), used for the map
 		
 		if (level != -4 && level != 0)
 			monsterDensity = 8;
@@ -139,7 +141,7 @@ public class Level {
 		if(!makeWorld) {
 			int arrsize = w * h;
 			tiles = new short[arrsize];
-			data = new SDTLevelData(w, h);
+			data = new JSONObject[arrsize];
 			return;
 		}
 		
@@ -170,10 +172,10 @@ public class Level {
 						
 						else if (level == 0) { // Surface
 							if (Game.debug) System.out.println("Setting tiles around " + x + "," + y + " to hard rock");
-							setAreaTiles(x, y, 1, Tiles.get("Hard Rock"), new NBTCompound()); // surround the sky stairs with hard rock
+							setAreaTiles(x, y, 1, Tiles.get("Hard Rock"), HardRockTile.getDefaultData()); // surround the sky stairs with hard rock
 						}
 						else // Any other level, the up-stairs should have dirt on all sides.
-							setAreaTiles(x, y, 1, Tiles.get("dirt"), new NBTCompound());
+							setAreaTiles(x, y, 1, Tiles.get("dirt"), DirtTile.getDefaultData());
 
 						setTile(x, y, Tiles.get("Stairs Up")); // Set a stairs up tile in the same position on the current level
 					}
@@ -533,35 +535,40 @@ public class Level {
 	}*/
 	
 	public void setTile(int x, int y, Tile t) {
-		setTile(x, y, t, t.getDefaultData());
+		try {
+			setTile(x, y, t, (JSONObject)t.getClass().getMethod("getDefaultData").invoke(null, new Object[0]));
+		} catch (IllegalAccessException | IllegalArgumentException | InvocationTargetException | NoSuchMethodException
+				| SecurityException e) {
+			e.printStackTrace();
+		}
 	}
 	
 	public void setTile(int x, int y, Tile t, String name, Object dataVal) {
 		if (x < 0 || y < 0 || x >= w || y >= h) return;
 
 		tiles[x + y * w] = t.id;
-		data.data[x + y * w].put(name, dataVal);
+		data[x + y * w].put(name, dataVal);
 	}
 
-	public void setTile(int x, int y, Tile t, NBTCompound dataVal) {
+	public void setTile(int x, int y, Tile t, JSONObject dataVal) {
 		if (x < 0 || y < 0 || x >= w || y >= h) return;
 
 		tiles[x + y * w] = t.id;
-		data.data[x + y * w] = dataVal;
+		data[x + y * w] = dataVal;
 	}
 	
-	public NBTCompound getData(int x, int y) {
-		if (x < 0 || y < 0 || x >= w || y >= h) return new NBTCompound();
-		return data.data[x + y * w];
+	public JSONObject getData(int x, int y) {
+		if (x < 0 || y < 0 || x >= w || y >= h) return new JSONObject();
+		return data[x + y * w];
 	}
 	
 	public void setData(int x, int y, String name, Object val) {
 		if (x < 0 || y < 0 || x >= w || y >= h) return;
-		data.data[x + y * w].put(name, val);
+		data[x + y * w].put(name, val);
 	}
-	public void setData(int x, int y, NBTCompound val) {
+	public void setData(int x, int y, JSONObject val) {
 		if (x < 0 || y < 0 || x >= w || y >= h) return;
-		data.data[x + y * w] = val;
+		data[x + y * w] = val;
 	}
 	
 	public void add(Entity e) { if(e==null) return; add(e, e.x, e.y); }
@@ -821,8 +828,8 @@ public class Level {
 		}
 	}
 
-	public void setAreaTiles(int xt, int yt, int r, Tile tile, NBTCompound data) { setAreaTiles(xt, yt, r, tile, data, false); }
-	public void setAreaTiles(int xt, int yt, int r, Tile tile, NBTCompound data, boolean overwriteStairs) {
+	public void setAreaTiles(int xt, int yt, int r, Tile tile, JSONObject data) { setAreaTiles(xt, yt, r, tile, data, false); }
+	public void setAreaTiles(int xt, int yt, int r, Tile tile, JSONObject data, boolean overwriteStairs) {
 		for(int y = yt - r; y <= yt + r; y++) {
 			for (int x = xt - r; x <= xt + r; x++) {
 				if(overwriteStairs || (!getTile(x, y).name.toLowerCase().contains("stairs")))
@@ -839,7 +846,7 @@ public class Level {
 			}
 		}
 	}
-	public void setAreaTiles(int xt, int yt, int r, Tile tile, NBTCompound data, String[] blacklist) {
+	public void setAreaTiles(int xt, int yt, int r, Tile tile, JSONObject data, String[] blacklist) {
 		for (int y = yt - r; y <= yt + r; y++) {
 			for (int x = xt - r; x <= xt + r; x++) {
 				if (!Arrays.asList(blacklist).contains(getTile(x, y).name.toLowerCase()))

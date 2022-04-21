@@ -1,11 +1,9 @@
 package minicraft.level.tile;
 
-import java.io.ByteArrayInputStream;
-import java.io.IOException;
 import java.util.Random;
 
-import me.nullicorn.nedit.NBTReader;
-import me.nullicorn.nedit.type.NBTCompound;
+import org.json.JSONObject;
+
 import minicraft.core.World;
 import minicraft.entity.Direction;
 import minicraft.entity.Entity;
@@ -75,8 +73,8 @@ public abstract class Tile {
 	/** This method is used by tiles to specify the default "data" they have in a level's data array.
 		Used for starting health, color/type of tile, etc. */
 	// At least, that was the idea at first...
-	public NBTCompound getDefaultData() {
-		return new NBTCompound();
+	public static JSONObject getDefaultData() {
+		return new JSONObject();
 	}
 	
 	/** Render method, used in sub-classes */
@@ -158,13 +156,10 @@ public abstract class Tile {
 	/** Sees if the tile connects to a fluid. */
 	public boolean connectsToLiquid() { return connectsToFluid; }
 	
-	public NBTCompound getData(String data) {
+	public JSONObject getData(String data) {
 		try {
-			return NBTReader.read(new ByteArrayInputStream(data.getBytes()));
+			return new JSONObject(data);
 		} catch (NumberFormatException ex) {
-			return getDefaultData();
-		} catch (IOException e) {
-			e.printStackTrace();
 			return getDefaultData();
 		}
 	}
@@ -184,7 +179,7 @@ public abstract class Tile {
 			int pos = x + curLevel.w * y;
 			
 			int tileid = curLevel.tiles[pos];
-			NBTCompound tiledata = curLevel.data.data[pos];
+			JSONObject tiledata = curLevel.data[pos];
 			
 			return lvlidx + ";" + pos + ";" + tileid + ";" + tiledata;
 		} catch(NullPointerException | IndexOutOfBoundsException ignored) {

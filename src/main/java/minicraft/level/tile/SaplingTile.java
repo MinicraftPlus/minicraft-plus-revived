@@ -1,5 +1,7 @@
 package minicraft.level.tile;
 
+import org.json.JSONObject;
+
 import minicraft.core.io.Sound;
 import minicraft.entity.Direction;
 import minicraft.entity.mob.Mob;
@@ -30,7 +32,7 @@ public class SaplingTile extends Tile {
 	}
 
 	public boolean tick(Level level, int x, int y) {
-		int age = level.getData(x, y).getInt("age", 0)+ 1;
+		int age = level.getData(x, y).getInt("age")+ 1;
 		if (age > 110) {
 			// Don't grow if there is an entity on this tile.
 			if (!level.isEntityOnTile(x, y)) {
@@ -40,6 +42,12 @@ public class SaplingTile extends Tile {
 			level.setData(x, y, "age", age);
 		}
 		return true;
+	}
+
+	public static JSONObject getDefaultData() {
+		JSONObject obj = new JSONObject();
+		obj.put("age", 0);
+		return obj;
 	}
 
 	public boolean hurt(Level level, int x, int y, Mob source, int dmg, Direction attackDir) {

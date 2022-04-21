@@ -1,5 +1,8 @@
 package minicraft.level.tile;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import minicraft.core.Game;
 import minicraft.core.io.Settings;
 import minicraft.core.io.Sound;
@@ -63,7 +66,7 @@ public class RockTile extends Tile {
 	}
 
 	public void hurt(Level level, int x, int y, int dmg) {
-		damage = level.getData(x, y).getInt("damage", 0) + dmg;
+		damage = level.getData(x, y).getInt("damage") + dmg;
 
 		if (Game.isMode("Creative")) {
 			dmg = damage = maxHealth;
@@ -91,12 +94,24 @@ public class RockTile extends Tile {
 		}
 	}
 
+	public static JSONObject getDefaultData() {
+		JSONObject obj = new JSONObject();
+		obj.put("damage", 0);
+		return obj;
+	}
+
 	public boolean tick(Level level, int xt, int yt) {
-		damage = level.getData(xt, yt).getInt("damage", 0);
-		if (damage > 0) {
-			level.setData(xt, yt, "damage", damage - 1);
-			return true;
+		try {
+			damage = level.getData(xt, yt).getInt("damage");
+			if (damage > 0) {
+				level.setData(xt, yt, "damage", damage - 1);
+				return true;
+			}
+			return false;
+		} catch (JSONException e) {
+			System.out.println(xt+";"+yt);
+			e.printStackTrace();
+			return false;
 		}
-		return false;
 	}
 }

@@ -8,7 +8,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-import me.nullicorn.nedit.type.NBTCompound;
+import org.json.JSONObject;
 import minicraft.core.Game;
 import minicraft.core.Updater;
 import minicraft.core.World;
@@ -44,7 +44,6 @@ import minicraft.item.PotionType;
 import minicraft.level.Level;
 import minicraft.level.tile.Tiles;
 import minicraft.screen.LoadingDisplay;
-import minicraft.sdt.SDTLevelData;
 
 /// This class is simply a way to seperate all the old, compatibility complications into a seperate file.
 public class LegacyLoad {
@@ -218,16 +217,16 @@ public class LegacyLoad {
 			Settings.set("size", lvlw);
 
 			short[] tiles = new short[lvlw * lvlh];
-			SDTLevelData tdata = new SDTLevelData(lvlw, lvlh);
+			JSONObject[] tdata = new JSONObject[lvlw * lvlh];
 			
 			for (int x = 0; x < lvlw - 1; x++) {
 				for (int y = 0; y < lvlh - 1; y++) {
 					int tileArrIdx = y + x * lvlw;
 					int tileidx = x + y * lvlw; // The tiles are saved with x outer loop, and y inner loop, meaning that the list reads down, then right one, rather than right, then down one.
 					tiles[tileArrIdx] = Tiles.get(Tiles.oldids.get(Integer.parseInt(data.get(tileidx + 3)))).id;
-					NBTCompound c = new NBTCompound();
+					JSONObject c = new JSONObject();
 					c.put("old", Short.parseShort(extradata.get(tileidx)));
-					tdata.data[tileArrIdx] = c;
+					tdata[tileArrIdx] = c;
 				}
 			}
 
