@@ -35,7 +35,7 @@ public class TitleDisplay extends Display {
 			new StringEntry("Checking for updates...", Color.BLUE),
 			new BlankEntry(),
 			new BlankEntry(),
-			new SelectEntry("Play", () -> /*Game.setMenu(new PlayDisplay())*/{
+			new SelectEntry("Play", () -> {
 				if (WorldSelectDisplay.getWorldNames().size() > 0)
 					Game.setDisplay(new Display(true, new Menu.Builder(false, 2, RelPos.CENTER,
 						new SelectEntry("Load World", () -> Game.setDisplay(new WorldSelectDisplay())),
@@ -44,17 +44,17 @@ public class TitleDisplay extends Display {
 				else Game.setDisplay(new WorldGenDisplay());
 			}),
 			new SelectEntry("Options", () -> Game.setDisplay(new OptionsMainMenuDisplay())),
-            new SelectEntry("Skins", () -> Game.setDisplay(new SkinDisplay())),
-			new SelectEntry("Achievements", () -> Game.setDisplay(new AchievementsDisplay())),
-				new SelectEntry("Help", () ->
-						Game.setDisplay(new Display(true, new Menu.Builder(false, 1, RelPos.CENTER,
-								new BlankEntry(),
-								new SelectEntry("Instructions", () -> Game.setDisplay(new BookDisplay(BookData.instructions))),
-								new SelectEntry("Storyline Guide", () -> Game.setDisplay(new BookDisplay(BookData.storylineGuide))),
-								new SelectEntry("About", () -> Game.setDisplay(new BookDisplay(BookData.about))),
-								new SelectEntry("Credits", () -> Game.setDisplay(new BookDisplay(BookData.credits)))
-						).setTitle("Help").createMenu()))
-				),
+            new SelectEntry("minicraft.display.skin", () -> Game.setDisplay(new SkinDisplay())),
+			new SelectEntry("minicraft.display.achievement", () -> Game.setDisplay(new AchievementsDisplay())),
+			new SelectEntry("Help", () ->
+				Game.setDisplay(new Display(true, new Menu.Builder(false, 1, RelPos.CENTER,
+					new BlankEntry(),
+					new SelectEntry("Instructions", () -> Game.setDisplay(new BookDisplay(BookData.instructions))),
+					new SelectEntry("Storyline Guide", () -> Game.setDisplay(new BookDisplay(BookData.storylineGuide))),
+					new SelectEntry("About", () -> Game.setDisplay(new BookDisplay(BookData.about))),
+					new SelectEntry("Credits", () -> Game.setDisplay(new BookDisplay(BookData.credits)))
+				).setTitle("Help").createMenu()))
+			),
 			new SelectEntry("Quit", Game::quit)
 			)
 			.setPositioning(new Point(Screen.w/2, Screen.h*3/5), RelPos.CENTER)

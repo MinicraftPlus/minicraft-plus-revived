@@ -25,7 +25,7 @@ public class PauseDisplay extends Display {
 				new BlankEntry(),
 				new SelectEntry("Return to Game", () -> Game.setDisplay(null)),
 				new SelectEntry("Options", () -> Game.setDisplay(new OptionsWorldDisplay())),
-				new SelectEntry("Achievements", () -> Game.setDisplay(new AchievementsDisplay()))
+				new SelectEntry("minicraft.display.achievement", () -> Game.setDisplay(new AchievementsDisplay()))
 		));
 
 		entries.add(new SelectEntry("Save Game", () -> {
@@ -35,10 +35,9 @@ public class PauseDisplay extends Display {
 
 		entries.addAll(Arrays.asList(
 			new SelectEntry("Main Menu", () -> {
-				ArrayList<ListEntry> items = new ArrayList<>();
-				items.addAll(Arrays.asList(StringEntry.useLines(
-					"Are you sure you want to",
-					MyUtils.fromNetworkStatus("Exit the Game?", "Leave the Server?", "Close the Server?")
+				ArrayList<ListEntry> items = new ArrayList<>(Arrays.asList(StringEntry.useLines(
+						"Are you sure you want to",
+						MyUtils.fromNetworkStatus("Exit the Game?", "Leave the Server?", "Close the Server?")
 				)));
 
 				int color = MyUtils.fromNetworkStatus(Color.RED, Color.GREEN, Color.TRANSPARENT);

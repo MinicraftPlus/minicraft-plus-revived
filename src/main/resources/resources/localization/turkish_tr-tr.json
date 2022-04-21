@@ -1,4 +1,5 @@
 {
+  "minicraft.display.achievement": "Başarımlar",
   "Air Wizard: Defeated!": "Hava Büyücüsü: Yenildi!",
   "The Dungeon is now open!": "Zindan açıldı!",
   "A costume lies on the ground...": "Bir kostüm yerde duruyor...",
@@ -125,8 +126,6 @@
   "Grass Seeds": "Çimen Tohumu",
   "Bone": "Kemik",
   "Cloud": "Bulut",
-  "Can only be placed on ": "Üstüne Yerleştirilebilir",
-  "Dig a hole first!": "Önce Bir Delik Kazmalısın!",
   "Rock": "Taş",
   "Gem": "Kristal",
   "Fishing Rod": "Olta",
@@ -241,8 +240,6 @@
   "About": "Hakkında",
   " to select": " ile seç",
   " to accept": " ile kabul et",
-  "Skins": "Ciltler",
-  "Achievements": "Başarımlar",
   "New World Name:": "Dünya İsmi:",
   "Are you sure you want to delete": "Silmek İçin Eminmisiniz?",
   "This can not be undone!": "Bu Tamamlanamıyor!",
@@ -286,5 +283,6 @@
   "Box": "Kutu",
   "Mountain": "Dağ",
   "Irregular": "Düzensiz",
-  "Wear Suit": "Kıyafet Giy"
+  "Wear Suit": "Kıyafet Giy",
+  "minicraft.display.skin": "Ciltler"
 }
