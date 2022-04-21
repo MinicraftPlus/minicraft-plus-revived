@@ -1,6 +1,5 @@
 package minicraft.level.tile;
 
-import org.json.JSONException;
 import org.json.JSONObject;
 
 import minicraft.core.Game;
@@ -101,17 +100,11 @@ public class RockTile extends Tile {
 	}
 
 	public boolean tick(Level level, int xt, int yt) {
-		try {
-			damage = level.getData(xt, yt).getInt("damage");
-			if (damage > 0) {
-				level.setData(xt, yt, "damage", damage - 1);
-				return true;
-			}
-			return false;
-		} catch (JSONException e) {
-			System.out.println(xt+";"+yt);
-			e.printStackTrace();
-			return false;
+		damage = level.getData(xt, yt).getInt("damage");
+		if (damage > 0) {
+			level.setData(xt, yt, "damage", damage - 1);
+			return true;
 		}
+		return false;
 	}
 }
