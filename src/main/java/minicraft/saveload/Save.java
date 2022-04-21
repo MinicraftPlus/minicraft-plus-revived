@@ -221,24 +221,26 @@ public class Save {
 	private void writeWorld(String filename) {
 		LoadingDisplay.setMessage("Levels");
 		for (int l = 0; l < World.levels.length; l++) {
-			String worldSize = String.valueOf(Settings.get("size"));
-			data.add(worldSize);
-			data.add(worldSize);
-			data.add(Long.toString(World.levels[l].getSeed()));
-			data.add(String.valueOf(World.levels[l].depth));
+			JSONObject data = new JSONObject();
+			int worldSize = (Integer) Settings.get("size");
+			data.put("width", worldSize);
+			data.put("height", worldSize);
+			data.put("seed", World.levels[l].getSeed());
+			data.put("depth", World.levels[l].depth);
 			
+			JSONArray tiles = new JSONArray();
 			for (int x = 0; x < World.levels[l].w; x++) {
 				for (int y = 0; y < World.levels[l].h; y++) {
-					data.add(String.valueOf(World.levels[l].getTile(x, y).name));
+					JSONObject tile = new JSONObject();
+					tile.put("name", World.levels[l].getTile(x, y).name);
+					tile.put("data", World.levels[l].data[x+y*World.levels[l].w]);
+					tiles.put(tile);
 				}
 			}
+			data.put("tiles", tiles);
 			
-			writeToFile(location + filename + l + extension, data);
-		}
-		
-		for (int l = 0; l < World.levels.length; l++) {
 			try {
-				writeJSONToFile(location + filename + l +"data"+ extension, new JSONArray(World.levels[l].data).toString());
+				writeJSONToFile(location + filename + l + extension, data.toString());
 			} catch (IOException e) {
 				e.printStackTrace();
 			}

@@ -1,6 +1,7 @@
 package minicraft.screen;
 
 import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 
 import minicraft.core.Game;
@@ -14,6 +15,8 @@ import minicraft.saveload.Save;
 import minicraft.saveload.Version;
 import minicraft.screen.entry.SelectEntry;
 import minicraft.screen.WorldEditDisplay.Action;
+
+import org.json.JSONException;
 import org.tinylog.Logger;
 
 public class WorldSelectDisplay extends Display {
@@ -149,7 +152,12 @@ public class WorldSelectDisplay extends Display {
 				if (files != null && files.length > 0 && files[0].endsWith(Save.extension)) {
 					String name = file.getName();
 					worldNames.add(name);
-					worldVersions.add(new Load(name, false).getWorldVersion());
+					try {
+						worldVersions.add(new Load(name, false).getWorldVersion());
+					} catch (JSONException | IOException e) {
+						e.printStackTrace();
+						return;
+					}
 				}
 			}
 		}

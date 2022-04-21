@@ -1,7 +1,11 @@
 package minicraft.core;
 
 import minicraft.screen.*;
+
+import java.io.IOException;
+
 import org.jetbrains.annotations.Nullable;
+import org.json.JSONException;
 
 import minicraft.core.io.Settings;
 import minicraft.entity.furniture.Bed;
@@ -102,7 +106,12 @@ public class World extends Game {
 		Logger.trace("Initializing world non-client...");
 
 		if (WorldSelectDisplay.hasLoadedWorld()) {
-			Load loader = new Load(WorldSelectDisplay.getWorldName());
+			try {
+				Load loader = new Load(WorldSelectDisplay.getWorldName());
+			} catch (JSONException | IOException e) {
+				e.printStackTrace();
+				return;
+			}
 		} else {
 			Analytics.WorldCreation.ping();
 

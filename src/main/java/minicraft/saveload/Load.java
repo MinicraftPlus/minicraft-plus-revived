@@ -74,7 +74,6 @@ public class Load {
 	private ArrayList<String> data;
 	// private ArrayList<String> extradata; // These two are changed when loading a new file. (see loadFromFile())
 	private JSONObject[] levelextradata;
-	// private SDTLevel leveldata;
 
 	private Version worldVer;
 	
@@ -85,8 +84,8 @@ public class Load {
 		levelextradata = null;
 	}
 	
-	public Load(String worldname) { this(worldname, true); }
-	public Load(String worldname, boolean loadGame) {
+	public Load(String worldname) throws JSONException, IOException { this(worldname, true); }
+	public Load(String worldname, boolean loadGame) throws JSONException, IOException {
 		loadFromFile(location + "/saves/" + worldname + "/Game" + extension);
 		if (data.get(0).contains(".")) worldVer = new Version(data.get(0));
 		if (worldVer == null) worldVer = new Version("1.8");
@@ -202,16 +201,6 @@ public class Load {
 				data.addAll(Arrays.asList(total.split(",")));
 		} catch (IOException ex) {
 			ex.printStackTrace();
-		}
-		
-		if (filename.contains("Level")) {
-			try {
-				JSONArray jsonArray = new JSONArray(loadFromFile(filename.substring(0, filename.lastIndexOf("/") + 7) +"data"+ extension, true));
-				levelextradata = new JSONObject[jsonArray.length()];
-				for (int i = 0; i<jsonArray.length(); i++) levelextradata[i] = jsonArray.getJSONObject(i);
-			} catch (IOException ex) {
-				ex.printStackTrace();
-			}
 		}
 		
 		LoadingDisplay.progress(percentInc);
@@ -439,89 +428,141 @@ public class Load {
 			AchievementsDisplay.unlockAchievements(json.getJSONArray("unlockedAchievements"));
 	}
 	
-	private void loadWorld(String filename) {
-		for(int l = World.maxLevelDepth; l >= World.minLevelDepth; l--) {
-			LoadingDisplay.setMessage(Level.getDepthString(l));
-			int lvlidx = World.lvlIdx(l);
-			loadFromFile(location + filename + lvlidx + extension);
-			
-			int lvlw = Integer.parseInt(data.get(0));
-			int lvlh = Integer.parseInt(data.get(1));
-
-			boolean hasSeed = worldVer.compareTo(new Version("2.0.7-dev2")) >= 0;
-			long seed = hasSeed ? Long.parseLong(data.get(2)) : 0;
-			Settings.set("size", lvlw);
-			
-			short[] tiles = new short[lvlw * lvlh];
-			JSONObject[] tdata = new JSONObject[lvlw*lvlh];
-			
-			for (int x = 0; x < lvlw; x++) {
-				for (int y = 0; y < lvlh; y++) {
-					int tileArrIdx = y + x * lvlw;
-					int tileidx = x + y * lvlw; // the tiles are saved with x outer loop, and y inner loop, meaning that the list reads down, then right one, rather than right, then down one.
-					String tilename = data.get(tileidx + (hasSeed ? 4 : 3));
-					if (worldVer.compareTo(new Version("1.9.4-dev6")) < 0) {
-						int tileID = Integer.parseInt(tilename); // they were id numbers, not names, at this point
-						if (Tiles.oldids.get(tileID) != null)
-							tilename = Tiles.oldids.get(tileID);
-						else {
-							System.out.println("Tile list doesn't contain tile " + tileID);
-							tilename = "grass";
+	private void loadWorld(String filename) throws JSONException, IOException {
+		if (worldVer.compareTo(new Version("2.0.7-dev3")) <= 0) {
+			for(int l = World.maxLevelDepth; l >= World.minLevelDepth; l--) {
+				LoadingDisplay.setMessage(Level.getDepthString(l));
+				int lvlidx = World.lvlIdx(l);
+				loadFromFile(location + filename + lvlidx + extension);
+				
+				int lvlw = Integer.parseInt(data.get(0));
+				int lvlh = Integer.parseInt(data.get(1));
+	
+				boolean hasSeed = worldVer.compareTo(new Version("2.0.7-dev2")) >= 0;
+				long seed = hasSeed ? Long.parseLong(data.get(2)) : 0;
+				Settings.set("size", lvlw);
+				
+				short[] tiles = new short[lvlw * lvlh];
+				JSONObject[] tdata = new JSONObject[lvlw*lvlh];
+				
+				for (int x = 0; x < lvlw; x++) {
+					for (int y = 0; y < lvlh; y++) {
+						int tileArrIdx = y + x * lvlw;
+						int tileidx = x + y * lvlw; // the tiles are saved with x outer loop, and y inner loop, meaning that the list reads down, then right one, rather than right, then down one.
+						String tilename = data.get(tileidx + (hasSeed ? 4 : 3));
+						if (worldVer.compareTo(new Version("1.9.4-dev6")) < 0) {
+							int tileID = Integer.parseInt(tilename); // they were id numbers, not names, at this point
+							if (Tiles.oldids.get(tileID) != null)
+								tilename = Tiles.oldids.get(tileID);
+							else {
+								System.out.println("Tile list doesn't contain tile " + tileID);
+								tilename = "grass";
+							}
 						}
-					}
-
-					if(tilename.equalsIgnoreCase("WOOL") && worldVer.compareTo(new Version("2.0.6-dev4")) < 0) {
-						switch (levelextradata[tileArrIdx].getInt("color")) {
-							case 1:
-								tilename = "Red Wool";
-								break;
-							case 2:
-								tilename = "Yellow Wool";
-								break;
-							case 3:
-								tilename = "Green Wool";
-								break;
-							case 4:
-								tilename = "Blue Wool";
-								break;
-							case 5:
-								tilename = "Black Wool";
-								break;
-							default:
-								tilename = "Wool";
+	
+						if(tilename.equalsIgnoreCase("WOOL") && worldVer.compareTo(new Version("2.0.6-dev4")) < 0) {
+							switch (levelextradata[tileidx].getInt("color")) {
+								case 1:
+									tilename = "Red Wool";
+									break;
+								case 2:
+									tilename = "Yellow Wool";
+									break;
+								case 3:
+									tilename = "Green Wool";
+									break;
+								case 4:
+									tilename = "Blue Wool";
+									break;
+								case 5:
+									tilename = "Black Wool";
+									break;
+								default:
+									tilename = "Wool";
+							}
 						}
+	
+						if(l == World.minLevelDepth+1 && tilename.equalsIgnoreCase("LAPIS") && worldVer.compareTo(new Version("2.0.3-dev6")) < 0) {
+							if(Math.random() < 0.8) // don't replace *all* the lapis
+								tilename = "Gem Ore";
+						}
+						tiles[tileArrIdx] = Tiles.get(tilename).id;
+						tdata[tileArrIdx] = levelextradata[tileidx];
 					}
-
-					if(l == World.minLevelDepth+1 && tilename.equalsIgnoreCase("LAPIS") && worldVer.compareTo(new Version("2.0.3-dev6")) < 0) {
-						if(Math.random() < 0.8) // don't replace *all* the lapis
-							tilename = "Gem Ore";
+				}
+				
+				Level parent = World.levels[World.lvlIdx(l+1)];
+				World.levels[lvlidx] = new Level(lvlw, lvlh, seed, l, parent, false);
+				
+				Level curLevel = World.levels[lvlidx];
+				curLevel.tiles = tiles;
+				curLevel.data = tdata;
+				
+				if (Game.debug) curLevel.printTileLocs(Tiles.get("Stairs Down"));
+				
+				if (parent == null) continue;
+				/// confirm that there are stairs in all the places that should have stairs.
+				for (minicraft.gfx.Point p: parent.getMatchingTiles(Tiles.get("Stairs Down"))) {
+					if (curLevel.getTile(p.x, p.y) != Tiles.get("Stairs Up")) {
+						curLevel.printLevelLoc("INCONSISTENT STAIRS detected; placing stairsUp", p.x, p.y);
+						curLevel.setTile(p.x, p.y, Tiles.get("Stairs Up"));
 					}
-					tiles[tileArrIdx] = Tiles.get(tilename).id;
-					tdata[tileArrIdx] = levelextradata[tileArrIdx];
+				}
+				for (minicraft.gfx.Point p: curLevel.getMatchingTiles(Tiles.get("Stairs Up"))) {
+					if (parent.getTile(p.x, p.y) != Tiles.get("Stairs Down")) {
+						parent.printLevelLoc("INCONSISTENT STAIRS detected; placing stairsDown", p.x, p.y);
+						parent.setTile(p.x, p.y, Tiles.get("Stairs Down"));
+					}
 				}
 			}
-			
-			Level parent = World.levels[World.lvlIdx(l+1)];
-			World.levels[lvlidx] = new Level(lvlw, lvlh, seed, l, parent, false);
-			
-			Level curLevel = World.levels[lvlidx];
-			curLevel.tiles = tiles;
-			curLevel.data = tdata;
-			
-			if (Game.debug) curLevel.printTileLocs(Tiles.get("Stairs Down"));
-			
-			if (parent == null) continue;
-			/// confirm that there are stairs in all the places that should have stairs.
-			for (minicraft.gfx.Point p: parent.getMatchingTiles(Tiles.get("Stairs Down"))) {
-				if (curLevel.getTile(p.x, p.y) != Tiles.get("Stairs Up")) {
-					curLevel.printLevelLoc("INCONSISTENT STAIRS detected; placing stairsUp", p.x, p.y);
-					curLevel.setTile(p.x, p.y, Tiles.get("Stairs Up"));
+		} else {
+			for(int l = World.maxLevelDepth; l >= World.minLevelDepth; l--) {
+				LoadingDisplay.setMessage(Level.getDepthString(l));
+				int lvlidx = World.lvlIdx(l);
+				JSONObject data = new JSONObject(loadFromFile(location + filename + lvlidx + extension, true));
+				
+				int lvlw = data.getInt("width");
+				int lvlh = data.getInt("height");
+	
+				long seed = data.getLong("seed");
+				Settings.set("size", lvlw);
+				
+				short[] tiles = new short[lvlw * lvlh];
+				JSONObject[] tdata = new JSONObject[lvlw*lvlh];
+				
+				JSONArray saveTiles = data.getJSONArray("tiles");
+				for (int x = 0; x < lvlw; x++) {
+					for (int y = 0; y < lvlh; y++) {
+						int tileArrIdx = y + x * lvlw;
+						int tileidx = x + y * lvlw; // the tiles are saved with x outer loop, and y inner loop, meaning that the list reads down, then right one, rather than right, then down one.
+						JSONObject tile = saveTiles.getJSONObject(tileidx);
+						tiles[tileArrIdx] = Tiles.get(tile.getString("name")).id;
+						tdata[tileArrIdx] = tile.getJSONObject("data");
+					}
 				}
-			}
-			for (minicraft.gfx.Point p: curLevel.getMatchingTiles(Tiles.get("Stairs Up"))) {
-				if (parent.getTile(p.x, p.y) != Tiles.get("Stairs Down")) {
-					parent.printLevelLoc("INCONSISTENT STAIRS detected; placing stairsDown", p.x, p.y);
-					parent.setTile(p.x, p.y, Tiles.get("Stairs Down"));
+				
+				Level parent = World.levels[World.lvlIdx(l+1)];
+				World.levels[lvlidx] = new Level(lvlw, lvlh, seed, l, parent, false);
+				
+				Level curLevel = World.levels[lvlidx];
+				curLevel.tiles = tiles;
+				curLevel.data = tdata;
+				
+				if (Game.debug) curLevel.printTileLocs(Tiles.get("Stairs Down"));
+				
+				if (parent == null) continue;
+				/// confirm that there are stairs in all the places that should have stairs.
+				for (minicraft.gfx.Point p: parent.getMatchingTiles(Tiles.get("Stairs Down"))) {
+					if (curLevel.getTile(p.x, p.y) != Tiles.get("Stairs Up")) {
+						curLevel.printLevelLoc("INCONSISTENT STAIRS detected; placing stairsUp", p.x, p.y);
+						curLevel.setTile(p.x, p.y, Tiles.get("Stairs Up"));
+					}
+				}
+				for (minicraft.gfx.Point p: curLevel.getMatchingTiles(Tiles.get("Stairs Up"))) {
+					if (parent.getTile(p.x, p.y) != Tiles.get("Stairs Down")) {
+						parent.printLevelLoc("INCONSISTENT STAIRS detected; placing stairsDown", p.x, p.y);
+						parent.setTile(p.x, p.y, Tiles.get("Stairs Down"));
+					}
 				}
 			}
 		}
