@@ -13,6 +13,7 @@ import javax.swing.JTextArea;
 
 import kong.unirest.Empty;
 import kong.unirest.HttpResponse;
+import minicraft.core.io.Localization;
 import minicraft.screen.ResourcePackDisplay;
 import org.jetbrains.annotations.Nullable;
 
@@ -118,20 +119,24 @@ public class Game {
 		player.eid = 0;
 		new Load(true); // This loads any saved preferences.
 
+		// Load the selected language.
+		Localization.loadLanguage();
+
+		Initializer.createAndDisplayFrame();
+
+		Renderer.initScreen();
 
 		setDisplay(new TitleDisplay()); // Sets menu to the title screen.
 
-
-		Initializer.createAndDisplayFrame();
-		
-		Renderer.initScreen();
-
+		// Loads the resorce pack locaded in save.
 		new ResourcePackDisplay().initResourcePack();
 
 		// Update fullscreen frame if Updater.FULLSCREEN was updated previously
 		if (Updater.FULLSCREEN) {
 			Updater.updateFullscreen();
 		}
+
+		// Actually start the game.
 		Initializer.run();
 		
 		Logger.debug("Main game loop ended; Terminating application...");
