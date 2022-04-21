@@ -14,7 +14,6 @@ import org.json.JSONObject;
 import minicraft.core.Game;
 import minicraft.core.io.Settings;
 import minicraft.level.tile.CactusTile;
-import minicraft.level.tile.CloudCactusTile;
 import minicraft.level.tile.OreTile;
 import minicraft.level.tile.RockTile;
 import minicraft.level.tile.SandTile;
@@ -721,7 +720,6 @@ public class LevelGen {
 				}
 			
 			map[x + y * w] = Tiles.get("Cloud Cactus").id;
-			data[x + y * w]  = CloudCactusTile.getDefaultData();
 		}
 		
 		int count = 0;
