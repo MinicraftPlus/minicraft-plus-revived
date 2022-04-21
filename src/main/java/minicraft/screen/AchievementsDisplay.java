@@ -152,8 +152,11 @@ public class AchievementsDisplay extends Display {
         Logger.debug("Updating data of achievement with id: {}.", id);
 
         // Add or subtract from score
-        if (unlocked)
+        if (unlocked) {
             achievementScore += a.score;
+            // Tells the player that they achieved an achievement.
+            Game.notifications.add(Localization.getLocalized("minicraft.notification.achievement_unlocked") + " " + Localization.getLocalized(id));
+        }
         else
             achievementScore -= a.score;
 

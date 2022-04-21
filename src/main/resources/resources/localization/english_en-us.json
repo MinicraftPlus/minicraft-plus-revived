@@ -346,5 +346,6 @@
   "minicraft.skin.minecraft_steve": "Familiar boy",
   "minicraft.skin.minecraft_alex": "Familiar girl",
   "minicraft.notification.invalid_placement": "Can only be placed on",
-  "minicraft.notification.dig_hole": "Dig a hole first!"
+  "minicraft.notification.dig_hole": "Dig a hole first!",
+  "minicraft.notification.achievement_unlocked": "Achievement Unlocked:"
 }
