@@ -384,7 +384,6 @@ public class Load {
 		if (prefVer.compareTo(new Version("2.1.0-dev1")) > 0) {
 			String lang = json.getString("lang");
 			Settings.set("language", lang);
-			Localization.changeLanguage(lang);
 		}
 
 		SkinDisplay.setSelectedSkinIndex(json.getInt("skinIdx"));
