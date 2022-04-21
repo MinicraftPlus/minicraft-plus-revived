@@ -378,6 +378,7 @@ public class Load {
 		Settings.set("autosave", json.getBoolean("autosave"));
 		Settings.set("diff", json.has("diff") ? json.getString("diff") : "Normal");
 		Settings.set("aspectratio", json.has("aspectratio") ? json.getString("aspectratio") : "4x3");
+		Renderer.setAspectRatio(); // Sets the aspect ratio of the game window.
 		Settings.set("fps", json.getInt("fps"));
 
 		if (prefVer.compareTo(new Version("2.1.0-dev1")) > 0) {
@@ -399,8 +400,6 @@ public class Load {
 			String[] map = str.split(";");
 			Game.input.setKey(map[0], map[1]);
 		}
-
-		Renderer.setAspectRatio(); // Sets the aspect ratio of the game window.
 
 		new ResourcePackDisplay().setLoadedPack(json.getString("resourcePack"));
 	}
