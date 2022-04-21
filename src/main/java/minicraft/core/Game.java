@@ -119,14 +119,13 @@ public class Game {
 		player.eid = 0;
 		new Load(true); // This loads any saved preferences.
 
-		// Load the selected language.
-		Localization.loadLanguage();
+    Localization.loadLanguage();
 
 		Initializer.createAndDisplayFrame();
+		
+		setDisplay(new TitleDisplay()); // Sets menu to the title screen.
 
 		Renderer.initScreen();
-
-		setDisplay(new TitleDisplay()); // Sets menu to the title screen.
 
 		// Loads the resorce pack locaded in save.
 		new ResourcePackDisplay().initResourcePack();

@@ -34,7 +34,7 @@ public class TitleDisplay extends Display {
 		super(true, false, new Menu.Builder(false, 2, RelPos.CENTER,
 			new StringEntry("Checking for updates...", Color.BLUE),
 			new BlankEntry(),
-			new BlankEntry(),
+
 			new SelectEntry("Play", () -> {
 				if (WorldSelectDisplay.getWorldNames().size() > 0)
 					Game.setDisplay(new Display(true, new Menu.Builder(false, 2, RelPos.CENTER,
@@ -116,7 +116,7 @@ public class TitleDisplay extends Display {
 		int h = 2; // Height of squares (on the spritesheet)
 		int w = 15; // Width of squares (on the spritesheet)
 		int xo = (Screen.w - w * 8) / 2; // X location of the title
-		int yo = 28; // Y location of the title
+		int yo = 18; // Y location of the title
 		
 		for (int y = 0; y < h; y++) {
 			for (int x = 0; x < w; x++) {
@@ -141,7 +141,7 @@ public class TitleDisplay extends Display {
 		int splashColor = isblue ? Color.BLUE : isRed ? Color.RED : isGreen ? Color.GREEN : Color.get(1, bcol*51, bcol*51, bcol*25);
 
 		
-		Font.drawCentered(splashes[rand], screen, 52, splashColor);
+		Font.drawCentered(splashes[rand], screen, 40, splashColor);
 		
 		Font.draw("Version " + Game.VERSION, screen, 1, 1, Color.get(1, 51));
 		
@@ -150,9 +150,9 @@ public class TitleDisplay extends Display {
 		String selectString = "(" + Game.input.getMapping("select") + Localization.getLocalized(" to accept") +")";
 		String exitString = "(" + Game.input.getMapping("exit") + Localization.getLocalized(" to return") +")";
 		
-		Font.drawCentered(upString, screen, Screen.h - 32, Color.DARK_GRAY);
-		Font.drawCentered(selectString, screen, Screen.h - 22, Color.DARK_GRAY);
-		Font.drawCentered(exitString, screen, Screen.h - 12, Color.DARK_GRAY);
+		Font.drawCentered(upString, screen, Screen.h - 30, Color.DARK_GRAY);
+		Font.drawCentered(selectString, screen, Screen.h - 20, Color.DARK_GRAY);
+		Font.drawCentered(exitString, screen, Screen.h - 10, Color.DARK_GRAY);
 	}
 	
 	private static final String[] splashes = {

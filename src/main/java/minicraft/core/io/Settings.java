@@ -52,6 +52,8 @@ public class Settings {
 
 		options.put("textures", new ArrayEntry<>("textures", "Original", "Custom"));
 		options.get("textures").setSelection(0);
+
+		options.put("aspectratio", new ArrayEntry<>("Aspect Ratio", "4x3", "16x9"));
 	}
 	
 	// Returns the value of the specified option
