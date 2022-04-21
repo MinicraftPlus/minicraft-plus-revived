@@ -91,10 +91,10 @@ public class TileItem extends StackableItem {
 		
 		String note = "";
 		if (model.contains("WALL")) {
-			note = Localization.getLocalized("minicraft.notification.invalid_placement") + " " + Localization.getLocalized(this.validTiles.get(0)) + "!";
+			note = Localization.getLocalized("minicraft.notification.invalid_placement") + " " + Tiles.getName(validTiles.get(0)) + "!";
 		}
 		else if (model.contains("DOOR")) {
-			note = Localization.getLocalized("minicraft.notification.invalid_placement") + " " + Localization.getLocalized(this.validTiles.get(0)) + "!";
+			note = Localization.getLocalized("minicraft.notification.invalid_placement") + " " + Tiles.getName(validTiles.get(0)) + "!";
 		}
 		else if ((model.contains("BRICK") || model.contains("PLANK") || model.equals("STONE") || model.contains("ORNATE"))) {
 			note = Localization.getLocalized("minicraft.notification.dig_hole");
