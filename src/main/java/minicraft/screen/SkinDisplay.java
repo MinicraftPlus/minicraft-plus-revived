@@ -199,7 +199,7 @@ public class SkinDisplay extends Display {
 		int h = 2;
 		int w = 2;
 		int xOffset = Screen.w / 2 - w * 4; // Put this in the center of the screen
-		int yOffset = 38;
+		int yOffset = 40;
 
 		int spriteIndex = (step / 40) % 8; // 9 = 8 Frames for sprite
 

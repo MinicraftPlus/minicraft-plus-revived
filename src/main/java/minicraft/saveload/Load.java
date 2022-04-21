@@ -19,6 +19,7 @@ import org.tinylog.Logger;
 
 import minicraft.core.Game;
 import minicraft.core.Network;
+import minicraft.core.Renderer;
 import minicraft.core.Updater;
 import minicraft.core.World;
 import minicraft.core.io.Localization;
@@ -141,7 +142,6 @@ public class Load {
 			Logger.warn("No preferences found, creating new file.");
 			resave = true;
 		}
-
 		// Load unlocks. (new version)
 		File testFileOld = new File(location + "unlocks" + extension);
 		File testFile = new File(location + "Unlocks" + extension);
@@ -377,12 +377,13 @@ public class Load {
 		Settings.set("sound", json.getBoolean("sound"));
 		Settings.set("autosave", json.getBoolean("autosave"));
 		Settings.set("diff", json.has("diff") ? json.getString("diff") : "Normal");
+		Settings.set("aspectratio", json.has("aspectratio") ? json.getString("aspectratio") : "4x3");
+		Renderer.setAspectRatio(); // Sets the aspect ratio of the game window.
 		Settings.set("fps", json.getInt("fps"));
 
 		if (prefVer.compareTo(new Version("2.1.0-dev1")) > 0) {
 			String lang = json.getString("lang");
 			Settings.set("language", lang);
-			Localization.changeLanguage(lang);
 		}
 
 		SkinDisplay.setSelectedSkinIndex(json.getInt("skinIdx"));
