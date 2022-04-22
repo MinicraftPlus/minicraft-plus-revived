@@ -83,7 +83,7 @@ public class Load {
 		worldVer = null;
 
 		data = new ArrayList<>();
-		extradata = null;
+		extradata = new ArrayList<>();
 	}
 	
 	public Load(String worldname) throws JSONException, IOException { this(worldname, true); }
@@ -609,9 +609,10 @@ public class Load {
 	
 	public void loadPlayer(String filename, Player player) throws JSONException, IOException {
 		LoadingDisplay.setMessage("Player");
-		loadFromFile(location + filename + legacyExtension);
-		if (worldVer.compareTo(new Version("2.1.0-dev4")) < 0) loadPlayer(player, data);
-		else {
+		if (worldVer.compareTo(new Version("2.1.0-dev4")) < 0) {
+			loadFromFile(location + filename + legacyExtension);
+			loadPlayer(player, data);
+		} else {
 			JSONObject data = new JSONObject(loadFromFile(location + filename + extension, true));
 			player.x = data.getInt("x");
 			player.y = data.getInt("y");
