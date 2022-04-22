@@ -10,6 +10,7 @@ import java.util.ArrayList;
 import java.util.Map;
 import java.util.Objects;
 
+import minicraft.core.io.Settings;
 import minicraft.entity.furniture.Bed;
 import minicraft.entity.mob.Player;
 import minicraft.gfx.Color;
@@ -34,8 +35,9 @@ import javax.imageio.ImageIO;
 public class Renderer extends Game {
 	private Renderer() {}
 	
-	public static final int HEIGHT = 192;
-	public static final int WIDTH = 288;
+	public static final int MAX_SIZE = 288;
+	public static int HEIGHT;
+	public static int WIDTH;
 	static float SCALE = 3;
 	
 	public static Screen screen; // Creates the main screen
@@ -76,7 +78,31 @@ public class Renderer extends Game {
 		return new SpriteSheet[] { itemSheet, tileSheet, entitySheet, guiSheet, skinsSheet };
 	}
 
-	static void initScreen() {
+	public static void setAspectRatio() {
+		int width;
+		int height;
+
+		switch ((String) Settings.get("aspectratio")) {
+			case "4x3":
+				width = 4;
+				height = 3;
+				break;
+			case "16x9":
+				width = 16;
+				height = 9;
+				break;
+			default:
+				width = 16;
+				height = 9;
+				break;
+		}
+
+		double s = Math.min((double) Renderer.MAX_SIZE/width, (double) Renderer.MAX_SIZE/height);
+		Renderer.HEIGHT = (int) (height * s);
+		Renderer.WIDTH = (int) (width * s);
+	}
+
+	public static void initScreen() {		
 		SpriteSheet[] sheets = loadDefaultSpriteSheets();
 		screen = new Screen(sheets[0], sheets[1], sheets[2], sheets[3], sheets[4]);
 		lightScreen = new Screen(sheets[0], sheets[1], sheets[2], sheets[3], sheets[4]);

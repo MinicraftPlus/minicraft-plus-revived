@@ -19,8 +19,8 @@ bin/
 out/
 classes/
 
-# Log file
-*.log
+# Log files
+logs/
 
 # BlueJ files
 *.ctxt
