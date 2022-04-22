@@ -155,7 +155,7 @@ public class WorldSelectDisplay extends Display {
 					try {
 						worldVersions.add(new Load(name, false).getWorldVersion());
 					} catch (JSONException | IOException e) {
-						e.printStackTrace();
+						Thread.getDefaultUncaughtExceptionHandler().uncaughtException(Thread.currentThread(), e);
 						return;
 					}
 				}

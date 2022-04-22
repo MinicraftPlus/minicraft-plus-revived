@@ -109,7 +109,7 @@ public class World extends Game {
 			try {
 				Load loader = new Load(WorldSelectDisplay.getWorldName());
 			} catch (JSONException | IOException e) {
-				e.printStackTrace();
+				Thread.getDefaultUncaughtExceptionHandler().uncaughtException(Thread.currentThread(), e);
 				return;
 			}
 		} else {
