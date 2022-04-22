@@ -53,3 +53,4 @@ logs/
 !.gitignore
 !ChangeLog.txt
 !Credits.txt
+!gradle/wrapper/*
