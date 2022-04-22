@@ -456,7 +456,7 @@ public class Load {
 	}
 	
 	private void loadWorld(String filename) throws JSONException, IOException {
-		if (worldVer.compareTo(new Version("2.0.7-dev3")) <= 0) {
+		if (worldVer.compareTo(new Version("2.0.7-dev4")) <= 0) {
 			for(int l = World.maxLevelDepth; l >= World.minLevelDepth; l--) {
 				LoadingDisplay.setMessage(Level.getDepthString(l));
 				int lvlidx = World.lvlIdx(l);
@@ -558,7 +558,7 @@ public class Load {
 			for(int l = World.maxLevelDepth; l >= World.minLevelDepth; l--) {
 				LoadingDisplay.setMessage(Level.getDepthString(l));
 				int lvlidx = World.lvlIdx(l);
-				JSONObject data = new JSONObject(loadFromFile(location + filename + lvlidx + legacyExtension, true));
+				JSONObject data = new JSONObject(loadFromFile(location + filename + lvlidx + extension, true));
 				
 				int lvlw = data.getInt("width");
 				int lvlh = data.getInt("height");
@@ -645,6 +645,7 @@ public class Load {
 			Settings.set("skinon", player.suitOn = data.getBoolean("suitOn"));
 		}
 	}
+	/** Legacy Load Player */
 	public void loadPlayer(Player player, List<String> origData) {
 		List<String> data = new ArrayList<>(origData);
 		player.x = Integer.parseInt(data.remove(0));
@@ -787,6 +788,7 @@ public class Load {
 				e.printStackTrace();
 			}
 	}
+	/** Legacy Load Inventory */
 	public void loadInventory(Inventory inventory, List<String> data) {
 		inventory.clearInv();
 
@@ -825,7 +827,7 @@ public class Load {
 	
 	private void loadEntities(String filename) {
 		LoadingDisplay.setMessage("Entities");
-		loadFromFile(location + filename + extension);
+		loadFromFile(location + filename + (worldVer.compareTo(new Version("2.1.0-dev4")) < 0?legacyExtension:extension));
 		
 		for (int i = 0; i < World.levels.length; i++) {
 			World.levels[i].clearEntities();
