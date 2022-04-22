@@ -6,6 +6,7 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -62,6 +63,7 @@ import minicraft.item.PotionItem;
 import minicraft.item.PotionType;
 import minicraft.item.StackableItem;
 import minicraft.level.Level;
+import minicraft.level.tile.Tile;
 import minicraft.level.tile.Tiles;
 
 public class Load {
@@ -69,11 +71,11 @@ public class Load {
 	private String location = Game.gameDir;
 	
 	private static final String extension = Save.extension;
+	private static final String legacyExtension = ".miniplussave";
 	private float percentInc;
 	
 	private ArrayList<String> data;
-	// private ArrayList<String> extradata; // These two are changed when loading a new file. (see loadFromFile())
-	private JSONObject[] levelextradata;
+	private ArrayList<String> extradata; // These two are changed when loading a new file. (see loadFromFile())
 
 	private Version worldVer;
 	
@@ -81,7 +83,7 @@ public class Load {
 		worldVer = null;
 
 		data = new ArrayList<>();
-		levelextradata = null;
+		extradata = null;
 	}
 	
 	public Load(String worldname) throws JSONException, IOException { this(worldname, true); }
@@ -196,7 +198,7 @@ public class Load {
 	
 	private void loadFromFile(String filename) {
 		data.clear();
-		levelextradata = null;
+		extradata.clear();
 		
 		String total;
 		try {
@@ -205,6 +207,15 @@ public class Load {
 				data.addAll(Arrays.asList(total.split(",")));
 		} catch (IOException ex) {
 			ex.printStackTrace();
+		}
+		
+		if (filename.contains("Level")) {
+			try {
+				total = Load.loadFromFile(filename.substring(0, filename.lastIndexOf("/") + 7) + "data" + extension, true);
+				extradata.addAll(Arrays.asList(total.split(",")));
+			} catch (IOException ex) {
+				ex.printStackTrace();
+			}
 		}
 		
 		LoadingDisplay.progress(percentInc);
@@ -223,9 +234,9 @@ public class Load {
 	}
 	
 	private void loadGame(String filename) throws IOException {
-		if (worldVer.compareTo(new Version("2.1.0-dev3")) < 0) {
-			loadFromFile(location + filename + extension);
-			
+		if (worldVer.compareTo(new Version("2.1.0-dev4")) < 0) {
+			loadFromFile(location + filename + legacyExtension);
+		
 			worldVer = new Version(data.remove(0)); // Gets the world version
 			if (worldVer.compareTo(new Version("2.0.4-dev8")) >= 0)
 				loadMode(data.remove(0));
@@ -291,7 +302,7 @@ public class Load {
 	}
 
 	private void loadPrefsOld(String filename) {
-		loadFromFile(location + filename + extension);
+		loadFromFile(location + filename + legacyExtension);
 		Version prefVer = new Version("2.0.2"); // the default, b/c this doesn't really matter much being specific past this if it's not set below.
 
 		if(!data.get(2).contains(";")) // signifies that this file was last written to by a version after 2.0.2.
@@ -411,7 +422,7 @@ public class Load {
 	}
 
 	private void loadUnlocksOld(String filename) {
-		loadFromFile(location + filename + extension);
+		loadFromFile(location + filename + legacyExtension);
 
 		for (String unlock: data) {
 			if (unlock.equals("AirSkin"))
@@ -449,7 +460,7 @@ public class Load {
 			for(int l = World.maxLevelDepth; l >= World.minLevelDepth; l--) {
 				LoadingDisplay.setMessage(Level.getDepthString(l));
 				int lvlidx = World.lvlIdx(l);
-				loadFromFile(location + filename + lvlidx + extension);
+				loadFromFile(location + filename + lvlidx + legacyExtension);
 				
 				int lvlw = Integer.parseInt(data.get(0));
 				int lvlh = Integer.parseInt(data.get(1));
@@ -459,7 +470,7 @@ public class Load {
 				Settings.set("size", lvlw);
 				
 				short[] tiles = new short[lvlw * lvlh];
-				JSONObject[] tdata = new JSONObject[lvlw*lvlh];
+				JSONObject[] tdata = new JSONObject[lvlw * lvlh];
 				
 				for (int x = 0; x < lvlw; x++) {
 					for (int y = 0; y < lvlh; y++) {
@@ -477,7 +488,7 @@ public class Load {
 						}
 	
 						if(tilename.equalsIgnoreCase("WOOL") && worldVer.compareTo(new Version("2.0.6-dev4")) < 0) {
-							switch (levelextradata[tileidx].getInt("color")) {
+							switch (Integer.parseInt(extradata.get(tileidx))) {
 								case 1:
 									tilename = "Red Wool";
 									break;
@@ -503,7 +514,19 @@ public class Load {
 								tilename = "Gem Ore";
 						}
 						tiles[tileArrIdx] = Tiles.get(tilename).id;
-						tdata[tileArrIdx] = levelextradata[tileidx];
+						JSONObject obj;
+						try {
+							obj = (JSONObject)Tiles.get(tilename).getClass().getMethod("getDefaultData").invoke(null, new Object[0]);
+						} catch (IllegalAccessException | IllegalArgumentException | InvocationTargetException
+								| NoSuchMethodException | SecurityException e) {
+							e.printStackTrace();
+							obj = Tile.getDefaultData();
+						}
+						int originalData = Short.parseShort(extradata.get(tileidx));
+						if (tilename.toUpperCase().contains("FLOWER")) obj.put("color", originalData);
+						if (obj.has("damage")) obj.put("damage", originalData);
+						if (obj.has("age")) obj.put("age", originalData);
+						tdata[tileArrIdx] = obj;
 					}
 				}
 				
@@ -535,7 +558,7 @@ public class Load {
 			for(int l = World.maxLevelDepth; l >= World.minLevelDepth; l--) {
 				LoadingDisplay.setMessage(Level.getDepthString(l));
 				int lvlidx = World.lvlIdx(l);
-				JSONObject data = new JSONObject(loadFromFile(location + filename + lvlidx + extension, true));
+				JSONObject data = new JSONObject(loadFromFile(location + filename + lvlidx + legacyExtension, true));
 				
 				int lvlw = data.getInt("width");
 				int lvlh = data.getInt("height");
@@ -586,8 +609,8 @@ public class Load {
 	
 	public void loadPlayer(String filename, Player player) throws JSONException, IOException {
 		LoadingDisplay.setMessage("Player");
-		loadFromFile(location + filename + extension);
-		if (worldVer.compareTo(new Version("2.1.0-dev3")) < 0) loadPlayer(player, data);
+		loadFromFile(location + filename + legacyExtension);
+		if (worldVer.compareTo(new Version("2.1.0-dev4")) < 0) loadPlayer(player, data);
 		else {
 			JSONObject data = new JSONObject(loadFromFile(location + filename + extension, true));
 			player.x = data.getInt("x");
@@ -737,50 +760,66 @@ public class Load {
 	}
 	
 	public void loadInventory(String filename, Inventory inventory) {
-		try {
-			loadInventory(inventory, new JSONArray(loadFromFile(location + filename + extension, true)));
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
+		if (worldVer.compareTo(new Version("2.1.0-dev4")) < 0) {
+			loadFromFile(location + filename + legacyExtension);
+			loadInventory(inventory, data);
+		} else
+			try {
+				JSONArray data = new JSONArray(loadFromFile(location + filename + extension, true));
+				inventory.clearInv();
+
+				for (int i = 0; i<data.length(); i++) {
+					JSONObject item = data.getJSONObject(i);
+					String name = item.getString("name");
+					if (name.length() == 0) {
+						System.err.println("loadInventory: Item in data list is \"\", skipping item");
+						continue;
+					}
+							
+					if (name.contains("Power Glove")) continue; // Just pretend it doesn't exist. Because it doesn't. :P
+		
+					Item toAdd = Items.get(name);
+					toAdd.data = item.getJSONObject("data");
+					if (toAdd instanceof StackableItem) ((StackableItem)toAdd).count = item.getInt("count");
+					inventory.add(toAdd);
+				}
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
 	}
-	public void loadInventory(Inventory inventory, JSONArray data) {
+	public void loadInventory(Inventory inventory, List<String> data) {
 		inventory.clearInv();
 
-		for (int i = 0; i<data.length(); i++) {
-			JSONObject item = data.getJSONObject(i);
-			String name = item.getString("name");
-			if (name.length() == 0) {
+		for (String item : data) {
+			if (item.length() == 0) {
 				System.err.println("loadInventory: Item in data list is \"\", skipping item");
 				continue;
 			}
 			
 			if (worldVer.compareTo(new Version("2.1.0-dev3")) < 0) {
-				name = subOldName(name, worldVer);
+				item = subOldName(item, worldVer);
 			}
 
-			if (name.contains("Power Glove")) continue; // Just pretend it doesn't exist. Because it doesn't. :P
+			if (item.contains("Power Glove")) continue; // Just pretend it doesn't exist. Because it doesn't. :P
 
 			// System.out.println("Loading item: " + item);
 
-			// This should be in Legacy load for string
-			// if (worldVer.compareTo(new Version("2.0.4")) <= 0 && item.contains(";")) {
-			// 	String[] curData = item.split(";");
-			// 	String itemName = curData[0];
+			if (worldVer.compareTo(new Version("2.0.4")) <= 0 && item.contains(";")) {
+				String[] curData = item.split(";");
+				String itemName = curData[0];
 
-			// 	Item newItem = Items.get(itemName);
+				Item newItem = Items.get(itemName);
 
-			// 	int count = Integer.parseInt(curData[1]);
+				int count = Integer.parseInt(curData[1]);
 
-			// 	if (newItem instanceof StackableItem) {
-			// 		((StackableItem) newItem).count = count;
-			// 		inventory.add(newItem);
-			// 	} else inventory.add(newItem, count);
-			// } else {
-				Item toAdd = Items.get(name);
-				toAdd.data = item.getJSONObject("data");
-				if (toAdd instanceof StackableItem) ((StackableItem)toAdd).count = item.getInt("count");
+				if (newItem instanceof StackableItem) {
+					((StackableItem) newItem).count = count;
+					inventory.add(newItem);
+				} else inventory.add(newItem, count);
+			} else {
+				Item toAdd = Items.get(item);
 				inventory.add(toAdd);
-			// }
+			}
 		}
 	}
 	
