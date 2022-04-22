@@ -603,7 +603,7 @@ public class LevelGen {
 					
 				} else {
 					map[i] = Tiles.get("rock").id;
-					
+					data[i] = RockTile.getDefaultData();
 				}
 			}
 		}
