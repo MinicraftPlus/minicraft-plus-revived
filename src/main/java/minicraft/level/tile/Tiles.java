@@ -46,7 +46,7 @@ public final class Tiles {
 		tiles.put((short)22, new HardRockTile("Hard Rock"));
 		tiles.put((short)23, new InfiniteFallTile("Infinite Fall"));
 		tiles.put((short)24, new CloudTile("Cloud"));
-		tiles.put((short)25, new CloudCactusTile("Cloud Cactus"));
+		tiles.put((short)25, new OreTile(OreTile.OreType.Cloud));
 		tiles.put((short)26, new DoorTile(Tile.Material.Wood));
 		tiles.put((short)27, new DoorTile(Tile.Material.Stone));
 		tiles.put((short)28, new DoorTile(Tile.Material.Obsidian));
@@ -64,6 +64,10 @@ public final class Tiles {
 		tiles.put((short)40, new WoolTile(WoolTile.WoolType.YELLOW));
 		tiles.put((short)41, new WoolTile(WoolTile.WoolType.BLACK));
 		tiles.put((short)42, new PotatoTile("Potato"));
+		tiles.put((short)43, new MaterialTile(Tile.Material.Stone));
+		tiles.put((short)44, new MaterialTile(Tile.Material.Obsidian));
+		tiles.put((short)45, new DecorTile(Tile.Material.Stone));
+		tiles.put((short)46, new DecorTile(Tile.Material.Obsidian));
 
 		// WARNING: don't use this tile for anything!
 		tiles.put((short)255, new ConnectTile());

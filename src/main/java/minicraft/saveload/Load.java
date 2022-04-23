@@ -10,6 +10,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+import minicraft.screen.*;
 import org.jetbrains.annotations.Nullable;
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -18,6 +19,7 @@ import org.tinylog.Logger;
 
 import minicraft.core.Game;
 import minicraft.core.Network;
+import minicraft.core.Renderer;
 import minicraft.core.Updater;
 import minicraft.core.World;
 import minicraft.core.io.Localization;
@@ -62,10 +64,6 @@ import minicraft.item.PotionType;
 import minicraft.item.StackableItem;
 import minicraft.level.Level;
 import minicraft.level.tile.Tiles;
-import minicraft.screen.AchievementsDisplay;
-import minicraft.screen.LoadingDisplay;
-import minicraft.screen.MultiplayerDisplay;
-import minicraft.screen.SkinDisplay;
 
 public class Load {
 	
@@ -144,7 +142,6 @@ public class Load {
 			Logger.warn("No preferences found, creating new file.");
 			resave = true;
 		}
-
 		// Load unlocks. (new version)
 		File testFileOld = new File(location + "unlocks" + extension);
 		File testFile = new File(location + "Unlocks" + extension);
@@ -301,8 +298,50 @@ public class Load {
 		if (prefVer.compareTo(new Version("2.0.7-dev5")) >= 0)
 			SkinDisplay.setSelectedSkinIndex(Integer.parseInt(data.remove(0)));
 
-		List<String> subdata;
+		// Get legacy language and convert it into the current format.
+		if (prefVer.compareTo(new Version("2.0.3-dev1")) >= 0) {
+			// Get language and convert into locale.
+			String lang;
+			switch (data.remove(0)) {
+				case "english":
+					lang = "en-us";
+					break;
+				case "french":
+					lang = "fr-fr";
+					break;
+				case "hungarian":
+					lang = "hu-hu";
+					break;
+				case "indonesia":
+					lang = "id-id";
+					break;
+				case "italiano":
+					lang = "it-it";
+					break;
+				case "norwegian":
+					lang = "nb-no";
+					break;
+				case "portugues":
+					lang = "pt-pt";
+					break;
+				case "spanish":
+					lang = "es-es";
+					break;
+				case "turkish":
+					lang = "tr-tr";
+					break;
+				default:
+					lang = null;
+					break;
+			}
 
+			if (lang != null) {
+				Settings.set("language", lang);
+				Localization.changeLanguage(lang);
+			}
+		}
+
+		List<String> subdata;
 		if (prefVer.compareTo(new Version("2.0.3-dev1")) < 0) {
 			subdata = data;
 		} else {
@@ -338,12 +377,13 @@ public class Load {
 		Settings.set("sound", json.getBoolean("sound"));
 		Settings.set("autosave", json.getBoolean("autosave"));
 		Settings.set("diff", json.has("diff") ? json.getString("diff") : "Normal");
+		Settings.set("aspectratio", json.has("aspectratio") ? json.getString("aspectratio") : "4x3");
+		Renderer.setAspectRatio(); // Sets the aspect ratio of the game window.
 		Settings.set("fps", json.getInt("fps"));
 
 		if (prefVer.compareTo(new Version("2.1.0-dev1")) > 0) {
 			String lang = json.getString("lang");
 			Settings.set("language", lang);
-			Localization.changeLanguage(lang);
 		}
 
 		SkinDisplay.setSelectedSkinIndex(json.getInt("skinIdx"));
@@ -359,6 +399,8 @@ public class Load {
 			String[] map = str.split(";");
 			Game.input.setKey(map[0], map[1]);
 		}
+
+		new ResourcePackDisplay().setLoadedPack(json.getString("resourcePack"));
 	}
 
 	private void loadUnlocksOld(String filename) {
@@ -392,7 +434,7 @@ public class Load {
 
 		// Load unlocked achievements.
 		if (json.has("unlockedAchievements"))
-			AchievementsDisplay.setUnlockedAchievements(json.getJSONArray("unlockedAchievements"));
+			AchievementsDisplay.unlockAchievements(json.getJSONArray("unlockedAchievements"));
 	}
 	
 	private void loadWorld(String filename) {

@@ -32,8 +32,8 @@ public class Settings {
 		options.put("unlockedskin", new BooleanEntry("Wear Suit", false));
 		options.put("skinon", new BooleanEntry("Wear Suit", false));
 		
-		options.put("language", new ArrayEntry<>("Language", true, false, Localization.getLocalesString()));
-		options.get("language").setValue(Localization.getSelectedLanguage());
+		options.put("language", new ArrayEntry<>("Language", true, false, Localization.getLocalesAsString()));
+		options.get("language").setValue(Localization.getSelectedLocale().toLanguageTag());
 		
 		
 		options.get("mode").setChangeAction(value ->
@@ -52,6 +52,8 @@ public class Settings {
 
 		options.put("textures", new ArrayEntry<>("textures", "Original", "Custom"));
 		options.get("textures").setSelection(0);
+
+		options.put("aspectratio", new ArrayEntry<>("Aspect Ratio", "4x3", "16x9"));
 	}
 	
 	// Returns the value of the specified option

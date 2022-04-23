@@ -18,16 +18,17 @@ public class LoadingDisplay extends Display {
 	
 	private static float percentage = 0;
 	private static String progressType = "";
-	
-	private Timer t;
+
+	private final Timer t;
+	private final Ellipsis ellipsis = new SmoothEllipsis(new TimeUpdater());
+
 	private String msg = "";
-	private Ellipsis ellipsis = new SmoothEllipsis(new TimeUpdater());
-	
+
 	public LoadingDisplay() {
 		super(true, false);
 		t = new Timer(500, e -> {
 			World.initWorld();
-			Game.setMenu(null);
+			Game.setDisplay(null);
 		});
 		t.setRepeats(false);
 	}
@@ -37,7 +38,7 @@ public class LoadingDisplay extends Display {
 		super.init(parent);
 		percentage = 0;
 		progressType = "World";
-		if(WorldSelectDisplay.loadedWorld())
+		if (WorldSelectDisplay.hasLoadedWorld())
 			msg = "Loading";
 		else
 			msg = "Generating";
@@ -47,7 +48,7 @@ public class LoadingDisplay extends Display {
 	@Override
 	public void onExit() {
 		percentage = 0;
-		if(!WorldSelectDisplay.loadedWorld()) {
+		if (!WorldSelectDisplay.hasLoadedWorld()) {
 			msg = "Saving";
 			progressType = "World";
 			new Save(WorldSelectDisplay.getWorldName());

@@ -47,7 +47,7 @@ public class ContainerDisplay extends Display {
 		super.tick(input);
 		
 		if(input.getKey("menu").clicked || chest.isRemoved()) {
-			Game.setMenu(null);
+			Game.setDisplay(null);
 			return;
 		}
 		

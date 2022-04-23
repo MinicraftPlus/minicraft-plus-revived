@@ -1,14 +1,11 @@
 package minicraft.network;
 
-import java.io.InputStream;
-import java.util.concurrent.Future;
+import java.util.concurrent.*;
 
-import com.mashape.unirest.http.HttpResponse;
-import com.mashape.unirest.http.Unirest;
-import com.mashape.unirest.http.async.Callback;
-import com.mashape.unirest.http.exceptions.UnirestException;
+import kong.unirest.*;
 
 import minicraft.core.Game;
+import org.jetbrains.annotations.Nullable;
 import org.tinylog.Logger;
 
 public enum Analytics {
@@ -51,14 +48,15 @@ public enum Analytics {
 		this.token = token;
 	}
 	
-	public Future<HttpResponse<InputStream>> ping() { return ping(1); }
-	public Future<HttpResponse<InputStream>> ping(int value) {
+	@Nullable public Future<HttpResponse<Empty>> ping() { return ping(1); }
+	@Nullable public Future<HttpResponse<Empty>> ping(int value) {
+		if (Game.debug) return null;
 		final String url = "https://pingdat.io?t="+token+"&v="+value;
 		
-		return Unirest.get(url).asBinaryAsync(new Callback<InputStream>() {
+		return Unirest.get(url).asEmptyAsync(new Callback<Empty>() {
 			@Override
-			public void completed(HttpResponse<InputStream> response) {
-				Logger.debug("Ping success for {}, with value {}.", name(), value);
+			public void completed(HttpResponse<Empty> response) {
+				Logger.trace("Ping success for {}, with value {}.", name(), value);
 			}
 			
 			@Override

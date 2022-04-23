@@ -24,5 +24,4 @@ public class VersionInfo {
 		this.releaseUrl = releaseUrl;
 		this.releaseName = releaseName;
 	}
-	
 }

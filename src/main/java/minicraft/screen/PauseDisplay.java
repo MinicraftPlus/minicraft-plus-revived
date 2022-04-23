@@ -19,27 +19,25 @@ public class PauseDisplay extends Display {
 	public PauseDisplay() {
 		String upString = Game.input.getMapping("cursor-up")+ Localization.getLocalized(" and ")+Game.input.getMapping("cursor-down")+Localization.getLocalized(" to Scroll");
 		String selectString = Game.input.getMapping("select")+Localization.getLocalized(": Choose");
-		
-		
-		ArrayList<ListEntry> entries = new ArrayList<>();
-		entries.addAll(Arrays.asList(
-			new BlankEntry(),
-			new SelectEntry("Return to Game", () -> Game.setMenu(null)),
-			new SelectEntry("Options", () -> Game.setMenu(new OptionsWorldDisplay())),
-			new SelectEntry("Achievements", () -> Game.setMenu(new AchievementsDisplay()))
-			));
+
+
+		ArrayList<ListEntry> entries = new ArrayList<>(Arrays.asList(
+				new BlankEntry(),
+				new SelectEntry("Return to Game", () -> Game.setDisplay(null)),
+				new SelectEntry("Options", () -> Game.setDisplay(new OptionsWorldDisplay())),
+				new SelectEntry("minicraft.display.achievement", () -> Game.setDisplay(new AchievementsDisplay()))
+		));
 
 		entries.add(new SelectEntry("Save Game", () -> {
-			Game.setMenu(null);
+			Game.setDisplay(null);
 			new Save(WorldSelectDisplay.getWorldName());
 		}));
 
 		entries.addAll(Arrays.asList(
 			new SelectEntry("Main Menu", () -> {
-				ArrayList<ListEntry> items = new ArrayList<>();
-				items.addAll(Arrays.asList(StringEntry.useLines(
-					"Are you sure you want to",
-					MyUtils.fromNetworkStatus("Exit the Game?", "Leave the Server?", "Close the Server?")
+				ArrayList<ListEntry> items = new ArrayList<>(Arrays.asList(StringEntry.useLines(
+						"Are you sure you want to",
+						MyUtils.fromNetworkStatus("Exit the Game?", "Leave the Server?", "Close the Server?")
 				)));
 
 				int color = MyUtils.fromNetworkStatus(Color.RED, Color.GREEN, Color.TRANSPARENT);
@@ -50,11 +48,11 @@ public class PauseDisplay extends Display {
 				)));
 				
 				items.add(new BlankEntry());
-				items.add(new SelectEntry("Cancel", Game::exitMenu));
+				items.add(new SelectEntry("Cancel", Game::exitDisplay));
 				
-				items.add(new SelectEntry("Quit without saving", () -> Game.setMenu(new TitleDisplay())));
+				items.add(new SelectEntry("Quit without saving", () -> Game.setDisplay(new TitleDisplay())));
 				
-				Game.setMenu(new Display(false, true, new Menu.Builder(true, 8, RelPos.CENTER, items
+				Game.setDisplay(new Display(false, true, new Menu.Builder(true, 8, RelPos.CENTER, items
 				).createMenu()));
 			}),
 			
@@ -80,6 +78,6 @@ public class PauseDisplay extends Display {
 	public void tick(InputHandler input) {
 		super.tick(input);
 		if (input.getKey("pause").clicked)
-			Game.exitMenu();
+			Game.exitDisplay();
 	}
 }

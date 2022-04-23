@@ -23,6 +23,7 @@ import minicraft.entity.furniture.Bed;
 import minicraft.entity.furniture.DeathChest;
 import minicraft.entity.furniture.Furniture;
 import minicraft.entity.furniture.Tnt;
+import minicraft.entity.particle.Particle;
 import minicraft.entity.particle.TextParticle;
 import minicraft.gfx.Color;
 import minicraft.gfx.MobSprite;
@@ -165,9 +166,7 @@ public class Player extends Mob implements ItemHolder, ClientTickable {
 				return super.remove(idx);
 			}
 		};
-		
-		//if(previousInstance == null)
-		//	inventory.add(Items.arrowItem, acs);
+
 		
 		potioneffects = new HashMap<>();
 		showpotioneffects = true;
@@ -257,7 +256,7 @@ public class Player extends Mob implements ItemHolder, ClientTickable {
 	@Override
 	public void tick() {
 		if (level == null || isRemoved()) return;
-		if (Game.getMenu() != null) return; // Don't tick player when menu is open
+		if (Game.getDisplay() != null) return; // Don't tick player when menu is open
 		
 		super.tick(); // Ticks Mob.java
 
@@ -407,7 +406,7 @@ public class Player extends Mob implements ItemHolder, ClientTickable {
 		
 
 		// Handle player input. Input is handled by the menu if we are in one.
-		if (Game.getMenu() == null && !Bed.inBed(this)) {
+		if (Game.getDisplay() == null && !Bed.inBed(this)) {
 			// Create the raw movement vector.
 			Vector2 vec = new Vector2(0, 0);
 
@@ -465,15 +464,15 @@ public class Player extends Mob implements ItemHolder, ClientTickable {
 				activeItem = null;
 			}
 
-			if (Game.getMenu() == null) {
+			if (Game.getDisplay() == null) {
 				if (input.getKey("menu").clicked && !use()) // !use() = no furniture in front of the player; this prevents player inventory from opening (will open furniture inventory instead)
-					Game.setMenu(new PlayerInvDisplay(this));
+					Game.setDisplay(new PlayerInvDisplay(this));
 				if (input.getKey("pause").clicked)
-					Game.setMenu(new PauseDisplay());
+					Game.setDisplay(new PauseDisplay());
 				if (input.getKey("craft").clicked && !use())
-					Game.setMenu(new CraftingDisplay(Recipes.craftRecipes, "Crafting", this, true));
+					Game.setDisplay(new CraftingDisplay(Recipes.craftRecipes, "Crafting", this, true));
 
-				if (input.getKey("info").clicked) Game.setMenu(new InfoDisplay());
+				if (input.getKey("info").clicked) Game.setDisplay(new InfoDisplay());
 
 				if (input.getKey("quicksave").clicked && !Updater.saving) {
 					Updater.saving = true;
@@ -537,7 +536,6 @@ public class Player extends Mob implements ItemHolder, ClientTickable {
 		if (activeItem != null && !activeItem.interactsWithWorld()) {
 			attackDir = dir; // Make the attack direction equal the current direction
 			attackItem = activeItem; // Make attackItem equal activeItem
-			//if (Game.debug) System.out.println(Network.onlinePrefix() + "player is using reflexive item: " + activeItem);
 			activeItem.interactOn(Tiles.get("rock"), level, 0, 0, this, attackDir);
 			if (!Game.isMode("creative") && activeItem.isDepleted()) {
 				activeItem = null;
@@ -580,7 +578,7 @@ public class Player extends Mob implements ItemHolder, ClientTickable {
 			if (t.x >= 0 && t.y >= 0 && t.x < level.w && t.y < level.h) {
 
 				// Get any entities (except dropped items) on the tile.
-				List<Entity> tileEntities = level.getEntitiesInTiles(t.x, t.y, t.x, t.y, false, ItemEntity.class);
+				List<Entity> tileEntities = level.getEntitiesInTiles(t.x, t.y, t.x, t.y, false, ItemEntity.class, Particle.class);
 
 				// If there are no other entities than us on the tile.
 				if (tileEntities.size() == 0 || tileEntities.size() == 1 && tileEntities.get(0) == this) {
@@ -749,6 +747,20 @@ public class Player extends Mob implements ItemHolder, ClientTickable {
 			dmg += ((ToolItem)activeItem).getAttackDamageBonus(e); // Sword/Axe are more effective at dealing damage.
 		}
 		return dmg;
+	}
+
+	/**
+	 * Updates the sprite to render on demand.
+	 */
+	public void updateSprite() {
+		// Get the current skin we are using as a MobSprite array.
+		MobSprite[][][] selectedSkin = SkinDisplay.getSkinAsMobSprite();
+
+		// Assign the skin to the states.
+		sprites = selectedSkin[0];
+		carrySprites = selectedSkin[1];
+		suitSprites = selectedSkin[2];
+		carrySuitSprites = selectedSkin[3];
 	}
 
 	@Override

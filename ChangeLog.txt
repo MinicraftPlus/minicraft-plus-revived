@@ -7,6 +7,7 @@ Minicraft+ version 2.1.0
 + Added ornate obsidian and ornate stone tiles
 + Added raw obsidian and stone tiles
 + Added totems that can spawn AirWizards
++ Added resource packs
 + Re-added sparks, damage particles and items shadows
 + Re-added swimming animation
 + Re-added colored spawners
@@ -16,6 +17,7 @@ Minicraft+ version 2.1.0
 * Fixed rendering of stair tiles in sky level
 * Fixed rendering of cloud cactus in sky level
 * Fixed time rendering for potions not following m:ss format
+* Fixed some hits not hitting properly (0 attack damage)
 * Gem tools are now purple
 * Prevented animals and mobs from despawning while in view
 * Prevented furniture from being pushed over stairs

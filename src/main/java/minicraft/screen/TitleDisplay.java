@@ -34,27 +34,27 @@ public class TitleDisplay extends Display {
 		super(true, false, new Menu.Builder(false, 2, RelPos.CENTER,
 			new StringEntry("Checking for updates...", Color.BLUE),
 			new BlankEntry(),
-			new BlankEntry(),
-			new SelectEntry("Play", () -> /*Game.setMenu(new PlayDisplay())*/{
+
+			new SelectEntry("Play", () -> {
 				if (WorldSelectDisplay.getWorldNames().size() > 0)
-					Game.setMenu(new Display(true, new Menu.Builder(false, 2, RelPos.CENTER,
-						new SelectEntry("Load World", () -> Game.setMenu(new WorldSelectDisplay())),
-						new SelectEntry("New World", () -> Game.setMenu(new WorldGenDisplay()))
+					Game.setDisplay(new Display(true, new Menu.Builder(false, 2, RelPos.CENTER,
+						new SelectEntry("Load World", () -> Game.setDisplay(new WorldSelectDisplay())),
+						new SelectEntry("New World", () -> Game.setDisplay(new WorldGenDisplay()))
 					).createMenu()));
-				else Game.setMenu(new WorldGenDisplay());
+				else Game.setDisplay(new WorldGenDisplay());
 			}),
-			new SelectEntry("Options", () -> Game.setMenu(new OptionsMainMenuDisplay())),
-            new SelectEntry("Skins", () -> Game.setMenu(new SkinDisplay())),
-			new SelectEntry("Achievements", () -> Game.setMenu(new AchievementsDisplay())),
-				new SelectEntry("Help", () ->
-						Game.setMenu(new Display(true, new Menu.Builder(false, 1, RelPos.CENTER,
-								new BlankEntry(),
-								new SelectEntry("Instructions", () -> Game.setMenu(new BookDisplay(BookData.instructions))),
-								new SelectEntry("Storyline Guide", () -> Game.setMenu(new BookDisplay(BookData.storylineGuide))),
-								new SelectEntry("About", () -> Game.setMenu(new BookDisplay(BookData.about))),
-								new SelectEntry("Credits", () -> Game.setMenu(new BookDisplay(BookData.credits)))
-						).setTitle("Help").createMenu()))
-				),
+			new SelectEntry("Options", () -> Game.setDisplay(new OptionsMainMenuDisplay())),
+            new SelectEntry("minicraft.display.skin", () -> Game.setDisplay(new SkinDisplay())),
+			new SelectEntry("minicraft.display.achievement", () -> Game.setDisplay(new AchievementsDisplay())),
+			new SelectEntry("Help", () ->
+				Game.setDisplay(new Display(true, new Menu.Builder(false, 1, RelPos.CENTER,
+					new BlankEntry(),
+					new SelectEntry("Instructions", () -> Game.setDisplay(new BookDisplay(BookData.instructions))),
+					new SelectEntry("Storyline Guide", () -> Game.setDisplay(new BookDisplay(BookData.storylineGuide))),
+					new SelectEntry("About", () -> Game.setDisplay(new BookDisplay(BookData.about))),
+					new SelectEntry("Credits", () -> Game.setDisplay(new BookDisplay(BookData.credits)))
+				).setTitle("Help").createMenu()))
+			),
 			new SelectEntry("Quit", Game::quit)
 			)
 			.setPositioning(new Point(Screen.w/2, Screen.h*3/5), RelPos.CENTER)
@@ -116,7 +116,7 @@ public class TitleDisplay extends Display {
 		int h = 2; // Height of squares (on the spritesheet)
 		int w = 15; // Width of squares (on the spritesheet)
 		int xo = (Screen.w - w * 8) / 2; // X location of the title
-		int yo = 28; // Y location of the title
+		int yo = 18; // Y location of the title
 		
 		for (int y = 0; y < h; y++) {
 			for (int x = 0; x < w; x++) {
@@ -141,7 +141,7 @@ public class TitleDisplay extends Display {
 		int splashColor = isblue ? Color.BLUE : isRed ? Color.RED : isGreen ? Color.GREEN : Color.get(1, bcol*51, bcol*51, bcol*25);
 
 		
-		Font.drawCentered(splashes[rand], screen, 52, splashColor);
+		Font.drawCentered(splashes[rand], screen, 40, splashColor);
 		
 		Font.draw("Version " + Game.VERSION, screen, 1, 1, Color.get(1, 51));
 		
@@ -150,9 +150,9 @@ public class TitleDisplay extends Display {
 		String selectString = "(" + Game.input.getMapping("select") + Localization.getLocalized(" to accept") +")";
 		String exitString = "(" + Game.input.getMapping("exit") + Localization.getLocalized(" to return") +")";
 		
-		Font.drawCentered(upString, screen, Screen.h - 32, Color.DARK_GRAY);
-		Font.drawCentered(selectString, screen, Screen.h - 22, Color.DARK_GRAY);
-		Font.drawCentered(exitString, screen, Screen.h - 12, Color.DARK_GRAY);
+		Font.drawCentered(upString, screen, Screen.h - 30, Color.DARK_GRAY);
+		Font.drawCentered(selectString, screen, Screen.h - 20, Color.DARK_GRAY);
+		Font.drawCentered(exitString, screen, Screen.h - 10, Color.DARK_GRAY);
 	}
 	
 	private static final String[] splashes = {

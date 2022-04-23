@@ -57,7 +57,7 @@ public class EndGameDisplay extends Display {
 		// add any unlocks
 		entries.addAll(Arrays.asList(getAndWriteUnlocks()));
 		
-		entries.add(new SelectEntry("Exit to Menu", () -> Game.setMenu(new TitleDisplay())));
+		entries.add(new SelectEntry("Exit to Menu", () -> Game.setDisplay(new TitleDisplay())));
 		
 		menus = new Menu[] {
 			new Menu.Builder(true, 0, RelPos.LEFT, entries).createMenu()

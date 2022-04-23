@@ -91,7 +91,7 @@ public class Save {
 		writeInventory("Inventory", Game.player);
 		writeEntities("Entities");
 		
-		WorldSelectDisplay.refreshWorldNames();
+		WorldSelectDisplay.updateWorlds();
 		
 		Updater.notifyAll("World Saved!");
 		Updater.asTick = 0;
@@ -177,6 +177,7 @@ public class Save {
 		json.put("sound", String.valueOf(Settings.get("sound")));
 		json.put("autosave", String.valueOf(Settings.get("autosave")));
 		json.put("fps", String.valueOf(Settings.get("fps")));
+		json.put("aspectratio", String.valueOf(Settings.get("aspectratio")));
 		json.put("lang", Localization.getSelectedLocale().toLanguageTag());
 		json.put("skinIdx", String.valueOf(SkinDisplay.getSelectedSkinIndex()));
 		json.put("savedIP", MultiplayerDisplay.savedIP);

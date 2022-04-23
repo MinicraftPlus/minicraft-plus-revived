@@ -11,6 +11,10 @@ import javax.swing.JOptionPane;
 import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
 
+import kong.unirest.Empty;
+import kong.unirest.HttpResponse;
+import minicraft.core.io.Localization;
+import minicraft.screen.ResourcePackDisplay;
 import org.jetbrains.annotations.Nullable;
 
 import minicraft.core.io.InputHandler;
@@ -20,7 +24,6 @@ import minicraft.entity.mob.Player;
 import minicraft.level.Level;
 import minicraft.level.tile.Tiles;
 import minicraft.network.Analytics;
-import minicraft.network.MinicraftProtocol;
 import minicraft.saveload.Load;
 import minicraft.saveload.Version;
 import minicraft.screen.Display;
@@ -31,10 +34,9 @@ public class Game {
 	Game() {} // Can't instantiate the Game class.
 	
 	public static boolean debug = false;
-	public static boolean packet_debug = false;
 	
 	public static final String NAME = "Minicraft Plus"; // This is the name on the application window.
-	public static final Version VERSION = new Version("2.1.0-dev2");
+	public static final Version VERSION = new Version("2.1.0-dev3");
 	
 	public static InputHandler input; // Input used in Game, Player, and just about all the *Menu classes.
 	public static Player player;
@@ -43,27 +45,21 @@ public class Game {
 
 	public static int MAX_FPS = (int) Settings.get("fps");
 
-	/**
-	 * This specifies a custom port instead of default to server-side using
-	 * --port parameter if something goes wrong in setting the new port
-	 * it'll use the default one {@link MinicraftProtocol#PORT}
-	 */
-	public static int CUSTOM_PORT = MinicraftProtocol.PORT;
-
-	static Display menu = null, newMenu = null; // The current menu you are on.
-
-	// Sets the current menu.
-	public static void setMenu(@Nullable Display display) { newMenu = display; }
-	public static void exitMenu() {
-		if (menu == null) {
-			Logger.debug("No menu found, returning!");
-			return; // No action required; cannot exit from no menu
+	// DISPLAY
+	static Display display = null, newDisplay = null;
+	public static void setDisplay(@Nullable Display display) { newDisplay = display; }
+	public static void exitDisplay() {
+		if (display == null) {
+			Logger.warn("Game tried to exit display, but no menu is open.");
+			return;
 		}
 		Sound.back.play();
-		newMenu = menu.getParent();
+		newDisplay = display.getParent();
 	}
-	public static Display getMenu() { return newMenu; }
+	@Nullable
+	public static Display getDisplay() { return newDisplay; }
 
+	// GAMEMODE
 	public static boolean isMode(String mode) { return ((String)Settings.get("mode")).equalsIgnoreCase(mode); }
 
 	// LEVEL
@@ -75,9 +71,7 @@ public class Game {
 	static boolean gameOver = false; // If the player wins this is set to true.
 
 	static boolean running = true;
-	public static void quit() {
-		running = false;
-	}
+	public static void quit() { running = false; }
 
 
 	public static void main(String[] args) {
@@ -88,10 +82,10 @@ public class Game {
 			PrintWriter printer = new PrintWriter(string);
 			throwable.printStackTrace(printer);
 			
-			Future ping = Analytics.Crashes.ping();
+			Future<HttpResponse<Empty>> ping = Analytics.Crashes.ping();
 			
-			if(GraphicsEnvironment.isHeadless()) {
-				// ensure ping finishes before program closes
+			// Ensure ping finishes before program closes.
+			if (GraphicsEnvironment.isHeadless() && ping != null) {
 				try {
 					ping.get();
 				} catch (Exception ignored) {}
@@ -103,10 +97,13 @@ public class Game {
 			JScrollPane errorPane = new JScrollPane(errorDisplay);
 			JOptionPane.showMessageDialog(null, errorPane, "An error has occurred", JOptionPane.ERROR_MESSAGE);
 			
-			// Ensure ping finishes before program closes
-			try {
-				ping.get();
-			} catch (Exception ignored) {}
+			// Ensure ping finishes before program closes.
+			if (ping != null) {
+				try {
+					ping.get();
+				} catch (Exception ignored) {
+				}
+			}
 		});
 		
 		Analytics.GameStartup.ping();
@@ -122,18 +119,23 @@ public class Game {
 		player.eid = 0;
 		new Load(true); // This loads any saved preferences.
 
-
-		setMenu(new TitleDisplay()); // Sets menu to the title screen.
-
+    Localization.loadLanguage();
 
 		Initializer.createAndDisplayFrame();
 		
+		setDisplay(new TitleDisplay()); // Sets menu to the title screen.
+
 		Renderer.initScreen();
+
+		// Loads the resorce pack locaded in save.
+		new ResourcePackDisplay().initResourcePack();
 
 		// Update fullscreen frame if Updater.FULLSCREEN was updated previously
 		if (Updater.FULLSCREEN) {
 			Updater.updateFullscreen();
 		}
+
+		// Actually start the game.
 		Initializer.run();
 		
 		Logger.debug("Main game loop ended; Terminating application...");

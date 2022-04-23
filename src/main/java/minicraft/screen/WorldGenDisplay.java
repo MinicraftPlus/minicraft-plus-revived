@@ -69,7 +69,7 @@ public class WorldGenDisplay extends Display {
 		
 		InputEntry nameField = makeWorldNameInput("Enter World Name", WorldSelectDisplay.getWorldNames(), "");
 		
-		SelectEntry nameHelp = new SelectEntry("Trouble with world name?", () -> Game.setMenu(new BookDisplay("it seems you've set letters as the controls to move the cursor up and down, which is probably annoying. This can be changed in the key binding menu as the \"cursor-XXX\" keys. For now, to type the letter instead of moving the cursor, hold the shift key while typing."))) {
+		SelectEntry nameHelp = new SelectEntry("Trouble with world name?", () -> Game.setDisplay(new BookDisplay("it seems you've set letters as the controls to move the cursor up and down, which is probably annoying. This can be changed in the key binding menu as the \"cursor-XXX\" keys. For now, to type the letter instead of moving the cursor, hold the shift key while typing."))) {
 			@Override
 			public int getColor(boolean isSelected) {
 				return Color.get(1, 204);
@@ -103,7 +103,7 @@ public class WorldGenDisplay extends Display {
 				new SelectEntry("Create World", () -> {
 					if(!nameField.isValid()) return;
 					WorldSelectDisplay.setWorldName(nameField.getUserInput(), false);
-					Game.setMenu(new LoadingDisplay());
+					Game.setDisplay(new LoadingDisplay());
 				}) {
 					@Override
 					public void render(Screen screen, int x, int y, boolean isSelected) {

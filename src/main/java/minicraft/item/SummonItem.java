@@ -32,24 +32,39 @@ public class SummonItem extends StackableItem {
 	/** What happens when the player uses the item on a tile */
 	public boolean interactOn(Tile tile, Level level, int xt, int yt, Player player, Direction attackDir) {
 		boolean success = false;
-		if (mob.equals("Air Wizard")) {
-			AirWizard aw = new AirWizard(false);
-			level.add(aw, player.x+8, player.y+8, false);
-			Logger.debug("Summoned new Air Wizard");
-			success = true;
+
+		switch (mob) {
+			case "Air Wizard":
+				// Check if we are on the right level
+				// TODO: This doesn't work with stamina.
+				if (level.depth != 1) break;
+
+				AirWizard aw = new AirWizard(false);
+				level.add(aw, player.x+8, player.y+8, false);
+				Logger.debug("Summoned new Air Wizard");
+				success = true;
+				break;
+			case "Air Wizard II":
+				// Check if we are on the right level
+				// TODO: This doesn't work with stamina.
+				if (level.depth != 1) break;
+
+				aw = new AirWizard(true);
+				level.add(aw, player.x+8, player.y+8, false);
+				Logger.debug("Summoned new Air Wizard II");
+				success = true;
+				break;
+			default:
+				Logger.warn("Could not create SummonItem with mob, {}", mob);
+				break;
 		}
-		if (mob.equals("Air Wizard II")) {
-			AirWizard aw = new AirWizard(true);
-			level.add(aw, player.x+8, player.y+8, false);
-			Logger.debug("Summoned new Air Wizard II");
-			success = true;
-		}
+
 		return super.interactOn(success);
 	}
-	
+
 	@Override
 	public boolean interactsWithWorld() { return false; }
-	
+
 	public SummonItem clone() {
 		return new SummonItem(getName(), sprite, count, mob);
 	}

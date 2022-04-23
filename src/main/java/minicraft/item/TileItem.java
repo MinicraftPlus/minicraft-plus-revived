@@ -5,6 +5,7 @@ import java.util.Arrays;
 import java.util.List;
 
 import minicraft.core.Game;
+import minicraft.core.io.Localization;
 import minicraft.core.io.Sound;
 import minicraft.entity.Direction;
 import minicraft.entity.mob.Player;
@@ -12,6 +13,7 @@ import minicraft.gfx.Sprite;
 import minicraft.level.Level;
 import minicraft.level.tile.Tile;
 import minicraft.level.tile.Tiles;
+import org.tinylog.Logger;
 
 public class TileItem extends StackableItem {
 	
@@ -84,18 +86,18 @@ public class TileItem extends StackableItem {
 				return super.interactOn(true);
 			}
 		}
-		
-		if (Game.debug) System.out.println(model + " cannot be placed on " + tile.name);
+
+		Logger.debug("{} cannot be placed on {}.", model, tile.name);
 		
 		String note = "";
 		if (model.contains("WALL")) {
-			note = "Can only be placed on " + Tiles.getName(validTiles.get(0)) + "!";
+			note = Localization.getLocalized("minicraft.notification.invalid_placement") + " " + Tiles.getName(validTiles.get(0)) + "!";
 		}
 		else if (model.contains("DOOR")) {
-			note = "Can only be placed on " + Tiles.getName(validTiles.get(0)) + "!";
+			note = Localization.getLocalized("minicraft.notification.invalid_placement") + " " + Tiles.getName(validTiles.get(0)) + "!";
 		}
-		else if ((model.contains("BRICK") || model.contains("PLANK"))) {
-			note = "Dig a hole first!";
+		else if ((model.contains("BRICK") || model.contains("PLANK") || model.equals("STONE") || model.contains("ORNATE"))) {
+			note = Localization.getLocalized("minicraft.notification.dig_hole");
 		}
 		
 		if (note.length() > 0) {
