@@ -2,7 +2,6 @@ package minicraft.item;
 
 import java.util.ArrayList;
 
-import minicraft.core.Game;
 import minicraft.entity.Direction;
 import minicraft.entity.mob.Player;
 import minicraft.gfx.Color;

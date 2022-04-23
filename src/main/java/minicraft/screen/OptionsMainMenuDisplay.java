@@ -5,7 +5,6 @@ import minicraft.core.io.InputHandler;
 import minicraft.core.io.Localization;
 import minicraft.core.io.Settings;
 import minicraft.gfx.Color;
-import minicraft.gfx.Font;
 import minicraft.gfx.Screen;
 import minicraft.saveload.Save;
 import minicraft.screen.entry.SelectEntry;
