@@ -3,7 +3,6 @@ package minicraft.entity.mob;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
-import java.util.stream.Collectors;
 
 import minicraft.screen.*;
 import org.jetbrains.annotations.Nullable;
@@ -579,7 +578,7 @@ public class Player extends Mob implements ItemHolder, ClientTickable {
 			if (t.x >= 0 && t.y >= 0 && t.x < level.w && t.y < level.h) {
 
 				// Get any entities (except dropped items) on the tile.
-				List<Entity> tileEntities = level.getEntitiesInTiles(t.x, t.y, t.x, t.y, false, ItemEntity.class).stream().filter(e -> !(e instanceof Particle)).collect(Collectors.toList());
+				List<Entity> tileEntities = level.getEntitiesInTiles(t.x, t.y, t.x, t.y, false, ItemEntity.class, Particle.class);
 
 				// If there are no other entities than us on the tile.
 				if (tileEntities.size() == 0 || tileEntities.size() == 1 && tileEntities.get(0) == this) {
