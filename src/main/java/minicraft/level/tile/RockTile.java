@@ -30,7 +30,11 @@ public class RockTile extends Tile {
 	private int maxHealth = 50;
 
 	private int damage;
-	
+	public final JSONObject initialDefaultData = new JSONObject();
+	{
+		initialDefaultData.put("damage", 0);
+	}
+
 	protected RockTile(String name) {
 		super(name, (ConnectorSprite)null);
 		csprite = sprite;
@@ -91,12 +95,6 @@ public class RockTile extends Tile {
 		} else {
 			level.setData(x, y, "damage", damage);
 		}
-	}
-
-	public static JSONObject getDefaultData() {
-		JSONObject obj = new JSONObject();
-		obj.put("damage", 0);
-		return obj;
 	}
 
 	public boolean tick(Level level, int xt, int yt) {

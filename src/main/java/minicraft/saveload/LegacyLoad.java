@@ -224,9 +224,12 @@ public class LegacyLoad {
 					int tileArrIdx = y + x * lvlw;
 					int tileidx = x + y * lvlw; // The tiles are saved with x outer loop, and y inner loop, meaning that the list reads down, then right one, rather than right, then down one.
 					tiles[tileArrIdx] = Tiles.get(Tiles.oldids.get(Integer.parseInt(data.get(tileidx + 3)))).id;
-					JSONObject c = new JSONObject();
-					c.put("old", Short.parseShort(extradata.get(tileidx)));
-					tdata[tileArrIdx] = c;
+					int originalData = Short.parseShort(extradata.get(tileidx));
+					JSONObject obj = Tiles.get(tiles[tileArrIdx]).initialDefaultData;
+					if (Tiles.get(tiles[tileArrIdx]).name.toUpperCase().contains("FLOWER")) obj.put("color", originalData);
+					if (obj.has("damage")) obj.put("damage", originalData);
+					if (obj.has("age")) obj.put("age", originalData);
+					tdata[tileArrIdx] = obj;
 				}
 			}
 

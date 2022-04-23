@@ -22,6 +22,10 @@ import minicraft.screen.AchievementsDisplay;
 import minicraft.util.Achievement;
 
 public class TreeTile extends Tile {
+	public final JSONObject initialDefaultData = new JSONObject();
+	{
+		initialDefaultData.put("damage", 0);
+	}
 	
 	protected TreeTile(String name) {
 		super(name, (ConnectorSprite)null);
@@ -81,12 +85,6 @@ public class TreeTile extends Tile {
 		return true;
 	}
 	
-	public static JSONObject getDefaultData() {
-		JSONObject obj = new JSONObject();
-		obj.put("damage", 0);
-		return obj;
-	}
-
 	@Override
 	public boolean interact(Level level, int xt, int yt, Player player, Item item, Direction attackDir) {
 		if(Game.isMode("Creative"))

@@ -6,7 +6,6 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -64,7 +63,6 @@ import minicraft.item.PotionItem;
 import minicraft.item.PotionType;
 import minicraft.item.StackableItem;
 import minicraft.level.Level;
-import minicraft.level.tile.Tile;
 import minicraft.level.tile.Tiles;
 
 public class Load {
@@ -88,13 +86,16 @@ public class Load {
 	}
 	
 	public Load(String worldname) throws JSONException, IOException { this(worldname, true); }
-	public Load(String worldname, boolean loadGame) throws JSONException, IOException {
+	public Load(String worldname, boolean loadGame) {
 		try {
 			worldVer = new Version(new JSONObject(loadFromFile(location + "/saves/" + worldname + "/Game" + extension, true)).getString("version"));
 		} catch (JSONException e) {
 			loadFromFile(location + "/saves/" + worldname + "/Game" + extension);
 			if (data.get(0).contains(".")) worldVer = new Version(data.get(0));
 			if (worldVer == null) worldVer = new Version("1.8");
+		} catch (IOException e) {
+			Thread.getDefaultUncaughtExceptionHandler().uncaughtException(Thread.currentThread(), e);
+			return;
 		}
 		
 		//if (!hasGlobalPrefs)
@@ -233,7 +234,7 @@ public class Load {
 		return total.toString();
 	}
 	
-	private void loadGame(String filename) throws IOException {
+	private void loadGame(String filename) {
 		if (worldVer.compareTo(new Version("2.1.0-dev4")) < 0) {
 			loadFromFile(location + filename + legacyExtension);
 		
@@ -266,7 +267,13 @@ public class Load {
 				}
 			}
 		} else {
-			JSONObject data = new JSONObject(loadFromFile(location + filename + extension, true));
+			JSONObject data;
+			try {
+				data = new JSONObject(loadFromFile(location + filename + extension, true));
+			} catch (JSONException | IOException e) {
+				Thread.getDefaultUncaughtExceptionHandler().uncaughtException(Thread.currentThread(), e);
+				return;
+			}
 			worldVer = new Version(data.getString("version")); // Gets the world version
 			loadMode(data.getInt("mode")+(data.has("score")?";"+data.getString("score"):""));
 			Updater.setTime(data.getInt("tickCount"));
@@ -456,8 +463,8 @@ public class Load {
 			AchievementsDisplay.unlockAchievements(json.getJSONArray("unlockedAchievements"));
 	}
 	
-	private void loadWorld(String filename) throws JSONException, IOException {
-		if (worldVer.compareTo(new Version("2.0.7-dev4")) <= 0) {
+	private void loadWorld(String filename) {
+		if (worldVer.compareTo(new Version("2.0.7-dev4")) < 0) {
 			for(int l = World.maxLevelDepth; l >= World.minLevelDepth; l--) {
 				LoadingDisplay.setMessage(Level.getDepthString(l));
 				int lvlidx = World.lvlIdx(l);
@@ -515,14 +522,7 @@ public class Load {
 								tilename = "Gem Ore";
 						}
 						tiles[tileArrIdx] = Tiles.get(tilename).id;
-						JSONObject obj;
-						try {
-							obj = (JSONObject)Tiles.get(tilename).getClass().getMethod("getDefaultData").invoke(null, new Object[0]);
-						} catch (IllegalAccessException | IllegalArgumentException | InvocationTargetException
-								| NoSuchMethodException | SecurityException e) {
-							e.printStackTrace();
-							obj = Tile.getDefaultData();
-						}
+						JSONObject obj = Tiles.get(tilename).initialDefaultData;
 						int originalData = Short.parseShort(extradata.get(tileidx));
 						if (tilename.toUpperCase().contains("FLOWER")) obj.put("color", originalData);
 						if (obj.has("damage")) obj.put("damage", originalData);
@@ -559,7 +559,13 @@ public class Load {
 			for(int l = World.maxLevelDepth; l >= World.minLevelDepth; l--) {
 				LoadingDisplay.setMessage(Level.getDepthString(l));
 				int lvlidx = World.lvlIdx(l);
-				JSONObject data = new JSONObject(loadFromFile(location + filename + lvlidx + extension, true));
+				JSONObject data;
+				try {
+					data = new JSONObject(loadFromFile(location + filename + lvlidx + extension, true));
+				} catch (JSONException | IOException e) {
+					Thread.getDefaultUncaughtExceptionHandler().uncaughtException(Thread.currentThread(), e);
+					return;
+				}
 				
 				int lvlw = data.getInt("width");
 				int lvlh = data.getInt("height");
@@ -608,13 +614,19 @@ public class Load {
 		}
 	}
 	
-	public void loadPlayer(String filename, Player player) throws JSONException, IOException {
+	public void loadPlayer(String filename, Player player) {
 		LoadingDisplay.setMessage("Player");
 		if (worldVer.compareTo(new Version("2.1.0-dev4")) < 0) {
 			loadFromFile(location + filename + legacyExtension);
 			loadPlayer(player, data);
 		} else {
-			JSONObject data = new JSONObject(loadFromFile(location + filename + extension, true));
+			JSONObject data;
+			try {
+				data = new JSONObject(loadFromFile(location + filename + extension, true));
+			} catch (JSONException | IOException e) {
+				Thread.getDefaultUncaughtExceptionHandler().uncaughtException(Thread.currentThread(), e);
+				return;
+			}
 			player.x = data.getInt("x");
 			player.y = data.getInt("y");
 			player.spawnx = data.getInt("spawnX");

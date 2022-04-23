@@ -14,6 +14,10 @@ public class SaplingTile extends Tile {
 	
 	private Tile onType;
 	private Tile growsTo;
+	public final JSONObject initialDefaultData = new JSONObject();
+	{
+		initialDefaultData.put("age", 0);
+	}
 	
 	protected SaplingTile(String name, Tile onType, Tile growsTo) {
 		super(name, sprite);
@@ -42,12 +46,6 @@ public class SaplingTile extends Tile {
 			level.setData(x, y, "age", age);
 		}
 		return true;
-	}
-
-	public static JSONObject getDefaultData() {
-		JSONObject obj = new JSONObject();
-		obj.put("age", 0);
-		return obj;
 	}
 
 	public boolean hurt(Level level, int x, int y, Mob source, int dmg, Direction attackDir) {

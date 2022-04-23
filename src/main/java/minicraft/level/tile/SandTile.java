@@ -18,6 +18,10 @@ import minicraft.level.Level;
 
 public class SandTile extends Tile {
 	static Sprite steppedOn, normal = new Sprite(9, 6, 2, 2, 1);
+	public final JSONObject initialDefaultData = new JSONObject();
+	{
+		initialDefaultData.put("damage", 0);
+	}
 	static {
 		Sprite.Px[][] pixels = new Sprite.Px[2][2];
 		pixels[0][0] = new Sprite.Px(9, 8, 0, 1);
@@ -62,12 +66,6 @@ public class SandTile extends Tile {
 		return false;
 	}
 	
-	public static JSONObject getDefaultData() {
-		JSONObject obj = new JSONObject();
-		obj.put("damage", 0);
-		return obj;
-	}
-
 	public void steppedOn(Level level, int x, int y, Entity entity) {
 		if (entity instanceof Mob) {
 			level.setData(x, y, "damage", 10);

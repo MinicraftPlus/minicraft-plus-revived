@@ -17,6 +17,10 @@ import minicraft.level.tile.Tiles;
 
 public class FarmTile extends Tile {
     private static Sprite sprite = new Sprite(12, 0, 2, 2, 1, true, new int[][] {{1, 0}, {0, 1}});
+	public final JSONObject initialDefaultData = new JSONObject();
+	{
+		initialDefaultData.put("age", 0);
+	}
 
     public FarmTile(String name) {
         super(name, sprite);
@@ -40,12 +44,6 @@ public class FarmTile extends Tile {
         return false;
     }
     
-	public static JSONObject getDefaultData() {
-		JSONObject obj = new JSONObject();
-		obj.put("age", 0);
-		return obj;
-	}
-
     @Override
     public boolean tick(Level level, int xt, int yt) {
         int age = level.getData(xt, yt).getInt("age");

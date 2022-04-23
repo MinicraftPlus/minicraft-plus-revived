@@ -42,8 +42,6 @@ import minicraft.gfx.Point;
 import minicraft.gfx.Rectangle;
 import minicraft.gfx.Screen;
 import minicraft.item.Item;
-import minicraft.level.tile.DirtTile;
-import minicraft.level.tile.HardRockTile;
 import minicraft.level.tile.Tile;
 import minicraft.level.tile.Tiles;
 import minicraft.level.tile.TorchTile;
@@ -172,10 +170,10 @@ public class Level {
 						
 						else if (level == 0) { // Surface
 							if (Game.debug) System.out.println("Setting tiles around " + x + "," + y + " to hard rock");
-							setAreaTiles(x, y, 1, Tiles.get("Hard Rock"), HardRockTile.getDefaultData()); // surround the sky stairs with hard rock
+							setAreaTiles(x, y, 1, Tiles.get("Hard Rock"), Tiles.get("Hard Rock").initialDefaultData); // surround the sky stairs with hard rock
 						}
 						else // Any other level, the up-stairs should have dirt on all sides.
-							setAreaTiles(x, y, 1, Tiles.get("dirt"), DirtTile.getDefaultData());
+							setAreaTiles(x, y, 1, Tiles.get("dirt"), Tiles.get("dirt").initialDefaultData);
 
 						setTile(x, y, Tiles.get("Stairs Up")); // Set a stairs up tile in the same position on the current level
 					}
@@ -827,19 +825,11 @@ public class Level {
 		}
 	}
 
-	public void setAreaTiles(int xt, int yt, int r, Tile tile, String name, Object data, String[] blacklist) {
-		for (int y = yt - r; y <= yt + r; y++) {
-			for (int x = xt - r; x <= xt + r; x++) {
-				if (!Arrays.asList(blacklist).contains(getTile(x, y).name.toLowerCase()))
-					setTile(x, y, tile, name, data);
-			}
-		}
-	}
 	public void setAreaTiles(int xt, int yt, int r, Tile tile, JSONObject data, String[] blacklist) {
 		for (int y = yt - r; y <= yt + r; y++) {
 			for (int x = xt - r; x <= xt + r; x++) {
 				if (!Arrays.asList(blacklist).contains(getTile(x, y).name.toLowerCase()))
-					setTile(x, y, tile, data);
+					for (String n : data.keySet()) setTile(x, y, tile, n, data.get(n));
 			}
 		}
 	}

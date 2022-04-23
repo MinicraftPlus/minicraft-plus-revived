@@ -13,13 +13,7 @@ import org.jetbrains.annotations.Nullable;
 import org.json.JSONObject;
 import minicraft.core.Game;
 import minicraft.core.io.Settings;
-import minicraft.level.tile.CactusTile;
-import minicraft.level.tile.OreTile;
-import minicraft.level.tile.RockTile;
-import minicraft.level.tile.SandTile;
 import minicraft.level.tile.Tiles;
-import minicraft.level.tile.TreeTile;
-import minicraft.level.tile.WallTile;
 import minicraft.screen.WorldGenDisplay;
 
 public class LevelGen {
@@ -265,7 +259,7 @@ public class LevelGen {
 								map[i] = Tiles.get("water").id;
 						} else if (val > 0.5 && mval < -1.5) {
 							map[i] = Tiles.get("rock").id;
-							data[i] = RockTile.getDefaultData();
+							data[i] = Tiles.get("rock").initialDefaultData;
 						} else {
 							map[i] = Tiles.get("grass").id;
 						}
@@ -281,7 +275,7 @@ public class LevelGen {
 							}
 						} else if (val > 0.5 && mval < -1.5) {
 							map[i] = Tiles.get("rock").id;
-							data[i] = RockTile.getDefaultData();
+							data[i] = Tiles.get("rock").initialDefaultData;
 						} else {
 							map[i] = Tiles.get("grass").id;
 						}
@@ -299,7 +293,7 @@ public class LevelGen {
 							}
 						} else {
 							map[i] = Tiles.get("rock").id;
-							data[i] = RockTile.getDefaultData();
+							data[i] = Tiles.get("rock").initialDefaultData;
 						}
 						break;
 					
@@ -313,7 +307,7 @@ public class LevelGen {
 							}
 						} else if (val > 0.5 && mval < -1.5) {
 							map[i] = Tiles.get("rock").id;
-							data[i] = RockTile.getDefaultData();
+							data[i] = Tiles.get("rock").initialDefaultData;
 						} else {
 							map[i] = Tiles.get("grass").id;
 						}
@@ -338,7 +332,7 @@ public class LevelGen {
 								if (xx >= 0 && yy >= 0 && xx < w && yy < h) {
 									if (map[xx + yy * w] == Tiles.get("grass").id) {
 										map[xx + yy * w] = Tiles.get("sand").id;
-										data[xx + yy * w] = SandTile.getDefaultData();
+										data[xx + yy * w] = Tiles.get("sand").initialDefaultData;
 									}
 								}
 					}
@@ -362,7 +356,7 @@ public class LevelGen {
 								if (xx >= 0 && yy >= 0 && xx < w && yy < h) {
 									if (map[xx + yy * w] == Tiles.get("grass").id) {
 										map[xx + yy * w] = Tiles.get("sand").id;
-										data[xx + yy * w] = SandTile.getDefaultData();
+										data[xx + yy * w] = Tiles.get("sand").initialDefaultData;
 									}
 								}
 					}
@@ -380,7 +374,7 @@ public class LevelGen {
 					if (xx >= 0 && yy >= 0 && xx < w && yy < h) {
 						if (map[xx + yy * w] == Tiles.get("grass").id) {
 							map[xx + yy * w] = Tiles.get("tree").id;
-							data[xx + yy * w] = TreeTile.getDefaultData();
+							data[xx + yy * w] = Tiles.get("tree").initialDefaultData;
 						}
 					}
 				}
@@ -396,7 +390,7 @@ public class LevelGen {
 					if (xx >= 0 && yy >= 0 && xx < w && yy < h) {
 						if (map[xx + yy * w] == Tiles.get("grass").id) {
 							map[xx + yy * w] = Tiles.get("tree").id;
-							data[xx + yy * w] = TreeTile.getDefaultData();
+							data[xx + yy * w] = Tiles.get("tree").initialDefaultData;
 						}
 					}
 				}
@@ -413,7 +407,7 @@ public class LevelGen {
 					if (xx >= 0 && yy >= 0 && xx < w && yy < h) {
 						if (map[xx + yy * w] == Tiles.get("grass").id) {
 							map[xx + yy * w] = Tiles.get("tree").id;
-							data[xx + yy * w] = TreeTile.getDefaultData();
+							data[xx + yy * w] = Tiles.get("tree").initialDefaultData;
 						}
 					}
 				}
@@ -429,7 +423,7 @@ public class LevelGen {
 					if (xx >= 0 && yy >= 0 && xx < w && yy < h) {
 						if (map[xx + yy * w] == Tiles.get("grass").id) {
 							map[xx + yy * w] = Tiles.get("tree").id;
-							data[xx + yy * w] = TreeTile.getDefaultData();
+							data[xx + yy * w] = Tiles.get("tree").initialDefaultData;
 						}
 					}
 				}
@@ -458,7 +452,7 @@ public class LevelGen {
 			if (xx >= 0 && yy >= 0 && xx < w && yy < h) {
 				if (map[xx + yy * w] == Tiles.get("sand").id) {
 					map[xx + yy * w] = Tiles.get("cactus").id;
-					data[xx + yy * w] = CactusTile.getDefaultData();
+					data[xx + yy * w] = Tiles.get("cactus").initialDefaultData;
 				}
 			}
 		}
@@ -524,7 +518,7 @@ public class LevelGen {
 				
 				if (val < -0.35) {
 					map[i] = Tiles.get("Obsidian Wall").id;
-					data[i] = WallTile.getDefaultData();
+					data[i] = Tiles.get("Obsidian Wall").initialDefaultData;
 				} else {
 					map[i] = Tiles.get("Obsidian").id;
 				}
@@ -603,7 +597,7 @@ public class LevelGen {
 					
 				} else {
 					map[i] = Tiles.get("rock").id;
-					data[i] = RockTile.getDefaultData();
+					data[i] = Tiles.get("rock").initialDefaultData;
 				}
 			}
 		}
@@ -618,7 +612,7 @@ public class LevelGen {
 					if (xx >= r && yy >= r && xx < w - r && yy < h - r) {
 						if (map[xx + yy * w] == Tiles.get("rock").id) {
 							map[xx + yy * w] = (short) ((Tiles.get("iron Ore").id & 0xffff) + depth - 1);
-							data[xx + yy * w] = OreTile.getDefaultData();
+							data[xx + yy * w] = Tiles.get("iron Ore").initialDefaultData;
 						}
 					}
 				}
@@ -628,7 +622,7 @@ public class LevelGen {
 					if (xx >= r && yy >= r && xx < w - r && yy < h - r) {
 						if (map[xx + yy * w] == Tiles.get("rock").id) {
 							map[xx + yy * w] = (short) (Tiles.get("Lapis").id & 0xffff);
-							data[xx + yy * w] = OreTile.getDefaultData();
+							data[xx + yy * w] = Tiles.get("Lapis").initialDefaultData;
 						}
 					}
 				}

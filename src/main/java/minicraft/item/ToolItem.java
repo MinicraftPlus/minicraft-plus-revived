@@ -32,7 +32,8 @@ public class ToolItem extends Item {
 	
 	public ToolType type; // Type of tool (Sword, hoe, axe, pickaxe, shovel)
 	public int level; // Level of said tool
-	public int dur; // The durability of the tool
+	// Move to data?
+	// public int dur; // The durability of the tool
 	
 	/** Tool Item, requires a tool type (ToolType.Sword, ToolType.Axe, ToolType.Hoe, etc) and a level (0 = wood, 2 = iron, 4 = gem, etc) */
 	public ToolItem(ToolType type, int level) {
@@ -41,14 +42,14 @@ public class ToolItem extends Item {
 		this.type = type;
 		this.level = level;
 		
-		dur = type.durability * (level + 1); // Initial durability fetched from the ToolType
+		data.put("dur", type.durability * (level + 1)); // Initial durability fetched from the ToolType
 	}
 
 	public ToolItem(ToolType type) {
 		super(type.name(), new Sprite(type.xPos, type.yPos, 0));
 
 		this.type = type;
-		dur = type.durability;
+		data.put("dur", type.durability);
 	}
 	
 	/** Gets the name of this tool (and it's type) as a display string. */
@@ -59,7 +60,7 @@ public class ToolItem extends Item {
 	}
 	
 	public boolean isDepleted() {
-		return dur <= 0 && type.durability > 0;
+		return data.getInt("dur") <= 0 && type.durability > 0;
 	}
 	
 	/** You can attack mobs with tools. */
@@ -68,8 +69,8 @@ public class ToolItem extends Item {
 	}
 	
 	public boolean payDurability() {
-		if (dur <= 0) return false;
-		if (!Game.isMode("creative")) dur--;
+		if (data.getInt("dur") <= 0) return false;
+		if (!Game.isMode("creative")) data.put("dur", data.getInt("dur")-1);
 		return true;
 	}
 	
@@ -96,7 +97,7 @@ public class ToolItem extends Item {
 	
 	@Override
 	public String getData() {
-		return super.getData() + "_" + dur;
+		return super.getData() + "_" + data.getInt("dur");
 	}
 	
 	/** Sees if this item equals another. */
@@ -119,7 +120,7 @@ public class ToolItem extends Item {
 		} else {
 			ti = new ToolItem(type, level);
 		}
-		ti.dur = dur;
+		ti.data.put("dur", data.getInt("dur"));
 		return ti;
 	}
 }

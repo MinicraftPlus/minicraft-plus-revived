@@ -53,6 +53,10 @@ public abstract class Tile {
 	protected Sprite sprite;
 	protected ConnectorSprite csprite;
 	
+	/** This method is used by tiles to specify the default "data" they have in a level's data array.
+	Used for starting health, color/type of tile, etc. */
+	public final JSONObject initialDefaultData = new JSONObject();
+
 	{
 		light = 1;
 		maySpawn = false;
@@ -67,14 +71,6 @@ public abstract class Tile {
 	protected Tile(String name, ConnectorSprite sprite) {
 		this.name = name.toUpperCase();
 		csprite = sprite;
-	}
-
-	
-	/** This method is used by tiles to specify the default "data" they have in a level's data array.
-		Used for starting health, color/type of tile, etc. */
-	// At least, that was the idea at first...
-	public static JSONObject getDefaultData() {
-		return new JSONObject();
 	}
 	
 	/** Render method, used in sub-classes */
@@ -160,7 +156,7 @@ public abstract class Tile {
 		try {
 			return new JSONObject(data);
 		} catch (NumberFormatException ex) {
-			return getDefaultData();
+			return new JSONObject(initialDefaultData.toString());
 		}
 	}
 	

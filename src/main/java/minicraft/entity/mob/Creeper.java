@@ -13,8 +13,6 @@ import minicraft.gfx.MobSprite;
 import minicraft.gfx.Point;
 import minicraft.gfx.Screen;
 import minicraft.item.Items;
-import minicraft.level.tile.HoleTile;
-import minicraft.level.tile.InfiniteFallTile;
 import minicraft.level.tile.Tiles;
 
 public class Creeper extends EnemyMob {
@@ -122,9 +120,9 @@ public class Creeper extends EnemyMob {
 					}
 					if (!hasSpawner) {
 						if (level.depth != 1) {
-							level.setAreaTiles(tilePosition.x, tilePosition.y, 0, Tiles.get("hole"), HoleTile.getDefaultData());
+							level.setAreaTiles(tilePosition.x, tilePosition.y, 0, Tiles.get("hole"), Tiles.get("hole").initialDefaultData);
 						} else {
-							level.setAreaTiles(tilePosition.x, tilePosition.y, 0, Tiles.get("Infinite Fall"), InfiniteFallTile.getDefaultData());
+							level.setAreaTiles(tilePosition.x, tilePosition.y, 0, Tiles.get("Infinite Fall"), Tiles.get("Infinite Fall").initialDefaultData);
 						}
 
 					}

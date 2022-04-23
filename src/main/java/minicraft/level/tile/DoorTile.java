@@ -18,6 +18,10 @@ public class DoorTile extends Tile {
 	protected Material type;
 	private Sprite closedSprite;
 	private Sprite openSprite;
+	public final JSONObject initialDefaultData = new JSONObject();
+	{
+		initialDefaultData.put("closed", 0);
+	}
 
 	protected DoorTile(Material type) {
 		super(type.name() + " Door", (Sprite) null);
@@ -46,12 +50,6 @@ public class DoorTile extends Tile {
 		boolean closed = level.getData(x, y).getInt("closed") == 0;
 		Sprite curSprite = closed ? closedSprite : openSprite;
 		curSprite.render(screen, x * 16, y * 16);
-	}
-
-	public static JSONObject getDefaultData() {
-		JSONObject data = new JSONObject();
-		data.put("closed", 0);
-		return data;
 	}
 
 	public boolean interact(Level level, int xt, int yt, Player player, Item item, Direction attackDir) {

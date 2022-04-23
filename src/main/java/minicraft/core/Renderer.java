@@ -281,7 +281,7 @@ public class Renderer extends Game {
 		if (player.activeItem instanceof ToolItem) {
 			// Draws the text
 			ToolItem tool = (ToolItem) player.activeItem;
-			int dura = tool.dur * 100 / (tool.type.durability * (tool.level+1));
+			int dura = tool.data.getInt("dur") * 100 / (tool.type.durability * (tool.level+1));
 			int green = (int)(dura * 2.55f);
 			Font.drawBackground(dura + "%", screen, 164, Screen.h - 16, Color.get(1, 255 - green, green, 0));
 		}

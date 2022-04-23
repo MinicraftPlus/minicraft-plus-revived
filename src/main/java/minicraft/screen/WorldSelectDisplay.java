@@ -152,12 +152,7 @@ public class WorldSelectDisplay extends Display {
 				if (files != null && files.length > 0 && files[0].endsWith(Save.extension)) {
 					String name = file.getName();
 					worldNames.add(name);
-					try {
-						worldVersions.add(new Load(name, false).getWorldVersion());
-					} catch (JSONException | IOException e) {
-						Thread.getDefaultUncaughtExceptionHandler().uncaughtException(Thread.currentThread(), e);
-						return;
-					}
+					worldVersions.add(new Load(name, false).getWorldVersion());
 				}
 			}
 		}

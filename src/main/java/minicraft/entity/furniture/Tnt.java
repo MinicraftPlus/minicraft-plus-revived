@@ -17,9 +17,6 @@ import minicraft.gfx.Screen;
 import minicraft.gfx.Sprite;
 import minicraft.item.Item;
 import minicraft.level.Level;
-import minicraft.level.tile.ExplodedTile;
-import minicraft.level.tile.HoleTile;
-import minicraft.level.tile.InfiniteFallTile;
 import minicraft.level.tile.Tile;
 import minicraft.level.tile.Tiles;
 import minicraft.screen.AchievementsDisplay;
@@ -90,7 +87,7 @@ public class Tnt extends Furniture implements ActionListener {
 				AchievementsDisplay.setAchievement("minicraft.achievement.demolition", true);
 				Sound.explode.play();
 
-				level.setAreaTiles(xt, yt, 1, Tiles.get("explode"), ExplodedTile.getDefaultData(), explosionBlacklist);
+				level.setAreaTiles(xt, yt, 1, Tiles.get("explode"), Tiles.get("explode").initialDefaultData, explosionBlacklist);
 				
 				levelSave = level;
 				explodeTimer.start();
@@ -117,9 +114,9 @@ public class Tnt extends Furniture implements ActionListener {
 		int yt = (y - 2) >> 4;
 
 		if (levelSave.depth != 1) {
-			levelSave.setAreaTiles(xt, yt, 1, Tiles.get("hole"), HoleTile.getDefaultData(), explosionBlacklist);
+			levelSave.setAreaTiles(xt, yt, 1, Tiles.get("hole"), Tiles.get("hole").initialDefaultData, explosionBlacklist);
 		} else {
-			levelSave.setAreaTiles(xt, yt, 1, Tiles.get("Infinite Fall"), InfiniteFallTile.getDefaultData(), explosionBlacklist);
+			levelSave.setAreaTiles(xt, yt, 1, Tiles.get("Infinite Fall"), Tiles.get("Infinite Fall").initialDefaultData, explosionBlacklist);
 		}
 
 		levelSave = null;

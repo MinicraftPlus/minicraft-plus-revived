@@ -23,7 +23,11 @@ import minicraft.screen.AchievementsDisplay;
 /// this is all the spikey stuff (except "cloud cactus")
 public class OreTile extends Tile {
 	private final OreType type;
-	
+	public final JSONObject initialDefaultData = new JSONObject();
+	{
+		initialDefaultData.put("damage", 0);
+	}
+
 	public enum OreType {
         Iron (Items.get("Iron Ore"), 0),
 		Lapis (Items.get("Lapis"), 2),
@@ -82,12 +86,6 @@ public class OreTile extends Tile {
         return type.getOre();
     }
 
-	public static JSONObject getDefaultData() {
-		JSONObject obj = new JSONObject();
-		obj.put("damage", 0);
-		return obj;
-	}
-    
 	public void hurt(Level level, int x, int y, int dmg) {
 		int damage = level.getData(x, y).getInt("damage") + dmg;
 		int oreH = random.nextInt(10) + 3;

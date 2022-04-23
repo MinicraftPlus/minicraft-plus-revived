@@ -24,6 +24,10 @@ public class WallTile extends Tile {
 	private static final String obrickMsg = "The airwizard must be defeated first.";
 	protected Material type;
 	private ConnectorSprite sprite;
+	public final JSONObject initialDefaultData = new JSONObject();
+	{
+		initialDefaultData.put("damage", 0);
+	}
 
 	protected WallTile(Material type) {
 		super(type.name() + " Wall", (ConnectorSprite) null);
@@ -106,12 +110,6 @@ public class WallTile extends Tile {
 		}
 	}
 	
-	public static JSONObject getDefaultData() {
-		JSONObject obj = new JSONObject();
-		obj.put("damage", 0);
-		return obj;
-	}
-
 	public boolean tick(Level level, int xt, int yt) {
 		int damage = level.getData(xt, yt).getInt("damage");
 		if (damage > 0) {

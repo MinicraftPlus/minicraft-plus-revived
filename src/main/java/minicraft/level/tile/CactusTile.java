@@ -18,7 +18,10 @@ import minicraft.level.Level;
 
 public class CactusTile extends Tile {
 	private static Sprite sprite = new Sprite(6, 0, 2, 2, 1);
-	
+	public final JSONObject initialDefaultData = new JSONObject();
+	{
+		initialDefaultData.put("damage", 0);
+	}
 	protected CactusTile(String name) {
 		super(name, sprite);
 		connectsToSand = true;
@@ -44,12 +47,6 @@ public class CactusTile extends Tile {
 			level.setData(x, y, "damage", damage);
 		}
 		return true;
-	}
-
-	public static JSONObject getDefaultData() {
-		JSONObject obj = new JSONObject();
-		obj.put("damage", 0);
-		return obj;
 	}
 
 	@Override
