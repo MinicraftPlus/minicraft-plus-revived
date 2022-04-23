@@ -30,10 +30,12 @@ import minicraft.entity.mob.Player;
 import minicraft.entity.mob.Sheep;
 import minicraft.entity.particle.Particle;
 import minicraft.entity.particle.TextParticle;
+import minicraft.item.BookItem;
 import minicraft.item.Inventory;
 import minicraft.item.Item;
 import minicraft.item.PotionType;
 import minicraft.item.StackableItem;
+import minicraft.item.ToolItem;
 import minicraft.screen.*;
 
 import org.json.JSONArray;
@@ -289,7 +291,10 @@ public class Save {
 			for (Item item : inv) {
 				JSONObject obj = new JSONObject();
 				obj.put("name", item.getName());
-				obj.put("data", item.data);
+				JSONObject data = new JSONObject(item.data.toString());
+				if (item instanceof ToolItem) data.put("dur", ((ToolItem)item).dur);
+				if (item instanceof BookItem) data.put("book", ((BookItem)item).book);
+				obj.put("data", data);
 				if (item instanceof StackableItem) obj.put("count", ((StackableItem)item).count);
 				items.put(obj);
 			}

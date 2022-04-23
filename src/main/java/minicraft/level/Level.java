@@ -1,6 +1,5 @@
 package minicraft.level;
 
-import java.lang.reflect.InvocationTargetException;
 import java.util.AbstractMap;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -522,12 +521,7 @@ public class Level {
 	}
 		
 	public void setTile(int x, int y, Tile t) {
-		try {
-			setTile(x, y, t, (JSONObject)t.getClass().getMethod("getDefaultData").invoke(null, new Object[0]));
-		} catch (IllegalAccessException | IllegalArgumentException | InvocationTargetException | NoSuchMethodException
-				| SecurityException e) {
-			Thread.getDefaultUncaughtExceptionHandler().uncaughtException(Thread.currentThread(), e);
-		}
+		setTile(x, y, t, t.initialDefaultData);
 	}
 	
 	public void setTile(int x, int y, Tile t, String name, Object dataVal) {
@@ -541,7 +535,7 @@ public class Level {
 		if (x < 0 || y < 0 || x >= w || y >= h) return;
 
 		tiles[x + y * w] = t.id;
-		data[x + y * w] = dataVal;
+		data[x + y * w] = new JSONObject(dataVal.toString());
 	}
 	
 	public JSONObject getData(int x, int y) {

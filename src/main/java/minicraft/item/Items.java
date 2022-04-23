@@ -101,7 +101,7 @@ public class Items {
 			if (i instanceof StackableItem)
 				((StackableItem)i).count = data;
 			if (i instanceof ToolItem && hadUnderscore)
-				i.data.put("dur", data);
+				((ToolItem)i).dur = data;
 			return i;
 		} else {
 			Logger.error("Requested invalid item with name: '{}'", name);

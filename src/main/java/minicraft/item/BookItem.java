@@ -20,21 +20,20 @@ public class BookItem extends Item {
 		return items;
 	}
 	
-	// I am not really sure about this
-	// protected String book; // TODO this is not saved yet; it could be, for editable books.
+	public String book; // TODO this is not saved yet; it could be, for editable books.
 	private final boolean hasTitlePage;
 	private Sprite sprite;
 	
 	private BookItem(String title, Sprite sprite, String book) { this(title, sprite, book, false); }
 	private BookItem(String title, Sprite sprite, String book, boolean hasTitlePage) {
 		super(title, sprite);
-		data.put("book", book);
+		this.book = book;
 		this.hasTitlePage = hasTitlePage;
 		this.sprite = sprite;
 	}
 	
 	public boolean interactOn(Tile tile, Level level, int xt, int yt, Player player, Direction attackDir) {
-		Game.setDisplay(new BookDisplay(data.getString("book"), hasTitlePage));
+		Game.setDisplay(new BookDisplay(book, hasTitlePage));
 		return true;
 	}
 	
@@ -42,6 +41,6 @@ public class BookItem extends Item {
 	public boolean interactsWithWorld() { return false; }
 	
 	public BookItem clone() {
-		return new BookItem(getName(), sprite, data.getString("book"), hasTitlePage);
+		return new BookItem(getName(), sprite, book, hasTitlePage);
 	}
 }

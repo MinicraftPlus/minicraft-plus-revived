@@ -56,12 +56,14 @@ import minicraft.entity.particle.SmashParticle;
 import minicraft.entity.particle.TextParticle;
 import minicraft.gfx.Color;
 import minicraft.item.ArmorItem;
+import minicraft.item.BookItem;
 import minicraft.item.Inventory;
 import minicraft.item.Item;
 import minicraft.item.Items;
 import minicraft.item.PotionItem;
 import minicraft.item.PotionType;
 import minicraft.item.StackableItem;
+import minicraft.item.ToolItem;
 import minicraft.level.Level;
 import minicraft.level.tile.Tiles;
 
@@ -796,6 +798,14 @@ public class Load {
 					Item toAdd = Items.get(name);
 					toAdd.data = item.getJSONObject("data");
 					if (toAdd instanceof StackableItem) ((StackableItem)toAdd).count = item.getInt("count");
+					if (toAdd instanceof ToolItem) {
+						((ToolItem)toAdd).dur = toAdd.data.getInt("dur");
+						toAdd.data.remove("dur");
+					}
+					if (toAdd instanceof BookItem) {
+						((BookItem)toAdd).book = toAdd.data.getString("book");
+						toAdd.data.remove("book");
+					}
 					inventory.add(toAdd);
 				}
 			} catch (IOException e) {
