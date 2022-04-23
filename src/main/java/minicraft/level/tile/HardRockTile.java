@@ -23,7 +23,6 @@ import minicraft.level.Level;
 public class HardRockTile extends Tile {
 	// Theoretically the full sprite should never be used, so we can use a placeholder
 	private static ConnectorSprite sprite = new ConnectorSprite(HardRockTile.class, new Sprite(18, 9, 3, 3, 1, 3), new Sprite(21, 10, 2, 2, 1, 3), Sprite.missingTexture(2, 2));
-	public final JSONObject initialDefaultData = new JSONObject();
 	{
 		initialDefaultData.put("damage", 0);
 	}

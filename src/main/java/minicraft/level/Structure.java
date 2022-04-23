@@ -43,15 +43,10 @@ public class Structure {
 			 level.add(furniture.get(p).clone(), xt+p.x, yt+p.y, true);
 	}
 
-	public void draw(short[] map, JSONObject[] data, int xt, int yt, int mapWidth) {
+	// This should only be called only by Level
+	public void draw(short[] map, int xt, int yt, int mapWidth) {
 		for (TilePoint p: tiles) {
 			map[(xt + p.x) + (yt + p.y) * mapWidth] = p.t.id;
-			try {
-				data[(xt + p.x) + (yt + p.y) * mapWidth] = (JSONObject)p.t.getClass().getMethod("getDefaultData").invoke(null, new Object[0]);
-			} catch (IllegalAccessException | IllegalArgumentException | InvocationTargetException
-					| NoSuchMethodException | SecurityException e) {
-				e.printStackTrace();
-			};
 		}
 	}
 

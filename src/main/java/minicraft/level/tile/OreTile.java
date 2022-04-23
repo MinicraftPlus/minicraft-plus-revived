@@ -23,7 +23,6 @@ import minicraft.screen.AchievementsDisplay;
 /// this is all the spikey stuff (except "cloud cactus")
 public class OreTile extends Tile {
 	private final OreType type;
-	public final JSONObject initialDefaultData = new JSONObject();
 	{
 		initialDefaultData.put("damage", 0);
 	}

@@ -18,7 +18,6 @@ import minicraft.level.Level;
 
 public class CactusTile extends Tile {
 	private static Sprite sprite = new Sprite(6, 0, 2, 2, 1);
-	public final JSONObject initialDefaultData = new JSONObject();
 	{
 		initialDefaultData.put("damage", 0);
 	}

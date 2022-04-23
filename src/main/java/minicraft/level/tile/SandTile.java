@@ -18,7 +18,6 @@ import minicraft.level.Level;
 
 public class SandTile extends Tile {
 	static Sprite steppedOn, normal = new Sprite(9, 6, 2, 2, 1);
-	public final JSONObject initialDefaultData = new JSONObject();
 	{
 		initialDefaultData.put("damage", 0);
 	}

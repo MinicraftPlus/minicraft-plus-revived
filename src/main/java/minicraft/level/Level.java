@@ -200,6 +200,11 @@ public class Level {
 		checkAirWizard();
 		
 		if (Game.debug) printTileLocs(Tiles.get("Stairs Down"));
+
+		for (int i = 0; i<tiles.length; i++) {
+			JSONObject initial = Tiles.get(tiles[i]).initialDefaultData;
+			for (String n : initial.keySet()) data[i].put(n, initial.get(n));
+		}
 	}
 
 	public Level(int w, int h, int level, Level parentLevel, boolean makeWorld) {

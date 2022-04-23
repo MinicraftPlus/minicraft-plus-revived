@@ -24,7 +24,6 @@ public class WallTile extends Tile {
 	private static final String obrickMsg = "The airwizard must be defeated first.";
 	protected Material type;
 	private ConnectorSprite sprite;
-	public final JSONObject initialDefaultData = new JSONObject();
 	{
 		initialDefaultData.put("damage", 0);
 	}

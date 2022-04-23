@@ -259,7 +259,6 @@ public class LevelGen {
 								map[i] = Tiles.get("water").id;
 						} else if (val > 0.5 && mval < -1.5) {
 							map[i] = Tiles.get("rock").id;
-							data[i] = Tiles.get("rock").initialDefaultData;
 						} else {
 							map[i] = Tiles.get("grass").id;
 						}
@@ -275,7 +274,6 @@ public class LevelGen {
 							}
 						} else if (val > 0.5 && mval < -1.5) {
 							map[i] = Tiles.get("rock").id;
-							data[i] = Tiles.get("rock").initialDefaultData;
 						} else {
 							map[i] = Tiles.get("grass").id;
 						}
@@ -293,7 +291,6 @@ public class LevelGen {
 							}
 						} else {
 							map[i] = Tiles.get("rock").id;
-							data[i] = Tiles.get("rock").initialDefaultData;
 						}
 						break;
 					
@@ -307,7 +304,6 @@ public class LevelGen {
 							}
 						} else if (val > 0.5 && mval < -1.5) {
 							map[i] = Tiles.get("rock").id;
-							data[i] = Tiles.get("rock").initialDefaultData;
 						} else {
 							map[i] = Tiles.get("grass").id;
 						}
@@ -332,7 +328,6 @@ public class LevelGen {
 								if (xx >= 0 && yy >= 0 && xx < w && yy < h) {
 									if (map[xx + yy * w] == Tiles.get("grass").id) {
 										map[xx + yy * w] = Tiles.get("sand").id;
-										data[xx + yy * w] = Tiles.get("sand").initialDefaultData;
 									}
 								}
 					}
@@ -356,7 +351,6 @@ public class LevelGen {
 								if (xx >= 0 && yy >= 0 && xx < w && yy < h) {
 									if (map[xx + yy * w] == Tiles.get("grass").id) {
 										map[xx + yy * w] = Tiles.get("sand").id;
-										data[xx + yy * w] = Tiles.get("sand").initialDefaultData;
 									}
 								}
 					}
@@ -374,7 +368,6 @@ public class LevelGen {
 					if (xx >= 0 && yy >= 0 && xx < w && yy < h) {
 						if (map[xx + yy * w] == Tiles.get("grass").id) {
 							map[xx + yy * w] = Tiles.get("tree").id;
-							data[xx + yy * w] = Tiles.get("tree").initialDefaultData;
 						}
 					}
 				}
@@ -390,7 +383,6 @@ public class LevelGen {
 					if (xx >= 0 && yy >= 0 && xx < w && yy < h) {
 						if (map[xx + yy * w] == Tiles.get("grass").id) {
 							map[xx + yy * w] = Tiles.get("tree").id;
-							data[xx + yy * w] = Tiles.get("tree").initialDefaultData;
 						}
 					}
 				}
@@ -407,7 +399,6 @@ public class LevelGen {
 					if (xx >= 0 && yy >= 0 && xx < w && yy < h) {
 						if (map[xx + yy * w] == Tiles.get("grass").id) {
 							map[xx + yy * w] = Tiles.get("tree").id;
-							data[xx + yy * w] = Tiles.get("tree").initialDefaultData;
 						}
 					}
 				}
@@ -423,7 +414,6 @@ public class LevelGen {
 					if (xx >= 0 && yy >= 0 && xx < w && yy < h) {
 						if (map[xx + yy * w] == Tiles.get("grass").id) {
 							map[xx + yy * w] = Tiles.get("tree").id;
-							data[xx + yy * w] = Tiles.get("tree").initialDefaultData;
 						}
 					}
 				}
@@ -452,7 +442,6 @@ public class LevelGen {
 			if (xx >= 0 && yy >= 0 && xx < w && yy < h) {
 				if (map[xx + yy * w] == Tiles.get("sand").id) {
 					map[xx + yy * w] = Tiles.get("cactus").id;
-					data[xx + yy * w] = Tiles.get("cactus").initialDefaultData;
 				}
 			}
 		}
@@ -518,7 +507,6 @@ public class LevelGen {
 				
 				if (val < -0.35) {
 					map[i] = Tiles.get("Obsidian Wall").id;
-					data[i] = Tiles.get("Obsidian Wall").initialDefaultData;
 				} else {
 					map[i] = Tiles.get("Obsidian").id;
 				}
@@ -535,7 +523,7 @@ public class LevelGen {
 					if (map[xx + yy * w] != Tiles.get("Obsidian Wall").id) continue lavaLoop;
 				}
 			
-			Structure.lavaPool.draw(map, data, x, y, w);
+			Structure.lavaPool.draw(map, x, y, w);
 		}
 		
 		return new AbstractMap.SimpleEntry<short[], JSONObject[]>(map, data);
@@ -597,7 +585,6 @@ public class LevelGen {
 					
 				} else {
 					map[i] = Tiles.get("rock").id;
-					data[i] = Tiles.get("rock").initialDefaultData;
 				}
 			}
 		}
@@ -612,7 +599,6 @@ public class LevelGen {
 					if (xx >= r && yy >= r && xx < w - r && yy < h - r) {
 						if (map[xx + yy * w] == Tiles.get("rock").id) {
 							map[xx + yy * w] = (short) ((Tiles.get("iron Ore").id & 0xffff) + depth - 1);
-							data[xx + yy * w] = Tiles.get("iron Ore").initialDefaultData;
 						}
 					}
 				}
@@ -622,7 +608,6 @@ public class LevelGen {
 					if (xx >= r && yy >= r && xx < w - r && yy < h - r) {
 						if (map[xx + yy * w] == Tiles.get("rock").id) {
 							map[xx + yy * w] = (short) (Tiles.get("Lapis").id & 0xffff);
-							data[xx + yy * w] = Tiles.get("Lapis").initialDefaultData;
 						}
 					}
 				}
@@ -637,7 +622,7 @@ public class LevelGen {
 				for (int j = 0; j < 10; j++) {
 					if (xx < w - r && yy < h - r) {
 						
-						Structure.dungeonLock.draw(map, data, xx, yy, w);
+						Structure.dungeonLock.draw(map, xx, yy, w);
 						
 						/// The "& 0xffff" is a common way to convert a short to an unsigned int, which basically prevents negative values... except... this doesn't do anything if you flip it back to a short again...
 						map[xx + yy * w] = (short) (Tiles.get("Stairs Down").id & 0xffff);

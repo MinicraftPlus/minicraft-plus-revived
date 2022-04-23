@@ -14,7 +14,6 @@ public class SaplingTile extends Tile {
 	
 	private Tile onType;
 	private Tile growsTo;
-	public final JSONObject initialDefaultData = new JSONObject();
 	{
 		initialDefaultData.put("age", 0);
 	}

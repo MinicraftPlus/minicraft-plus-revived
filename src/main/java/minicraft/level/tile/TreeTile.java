@@ -22,7 +22,6 @@ import minicraft.screen.AchievementsDisplay;
 import minicraft.util.Achievement;
 
 public class TreeTile extends Tile {
-	public final JSONObject initialDefaultData = new JSONObject();
 	{
 		initialDefaultData.put("damage", 0);
 	}

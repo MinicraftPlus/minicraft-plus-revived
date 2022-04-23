@@ -17,7 +17,6 @@ import minicraft.level.tile.Tiles;
 
 public class FarmTile extends Tile {
     private static Sprite sprite = new Sprite(12, 0, 2, 2, 1, true, new int[][] {{1, 0}, {0, 1}});
-	public final JSONObject initialDefaultData = new JSONObject();
 	{
 		initialDefaultData.put("age", 0);
 	}

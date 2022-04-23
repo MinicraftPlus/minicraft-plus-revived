@@ -30,7 +30,6 @@ public class RockTile extends Tile {
 	private int maxHealth = 50;
 
 	private int damage;
-	public final JSONObject initialDefaultData = new JSONObject();
 	{
 		initialDefaultData.put("damage", 0);
 	}
