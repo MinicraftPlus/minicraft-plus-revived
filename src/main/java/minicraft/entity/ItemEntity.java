@@ -2,7 +2,6 @@ package minicraft.entity;
 
 import java.util.List;
 
-import minicraft.core.Game;
 import minicraft.entity.mob.Player;
 import minicraft.gfx.Color;
 import minicraft.gfx.Screen;

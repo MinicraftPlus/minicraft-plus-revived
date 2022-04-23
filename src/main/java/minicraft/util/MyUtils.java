@@ -1,7 +1,5 @@
 package minicraft.util;
 
-import minicraft.core.Game;
-
 public final class MyUtils {
 	
 	private MyUtils() {}
