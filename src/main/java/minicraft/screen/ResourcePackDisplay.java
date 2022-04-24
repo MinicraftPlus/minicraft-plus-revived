@@ -15,6 +15,7 @@ import minicraft.core.Renderer;
 import minicraft.core.io.Localization;
 import minicraft.gfx.Color;
 import minicraft.gfx.Font;
+import minicraft.gfx.Point;
 import minicraft.gfx.Screen;
 import minicraft.gfx.SpriteSheet;
 import minicraft.screen.entry.ListEntry;
@@ -54,7 +55,10 @@ public class ResourcePackDisplay extends Display {
 	
 	public ResourcePackDisplay() {
 		super(true, true,
-				new Menu.Builder(false, 2, RelPos.CENTER, getPacksAsEntries()).setSize(48, 64).createMenu());
+				new Menu.Builder(false, 2, RelPos.CENTER, getPacksAsEntries())
+				.setSize(48, 64)
+				.setPositioning(new Point(Screen.w/2, Screen.h*3/5), RelPos.CENTER)
+				.createMenu());
 
 		ListEntry[] ent = menus[0].getEntries();
 		for (int i = 0; i < ent.length; i++) {
@@ -74,7 +78,7 @@ public class ResourcePackDisplay extends Display {
 		super.render(screen);
 
 		// Title
-		Font.drawCentered(Localization.getLocalized("Resource Packs"), screen, Screen.h - 180, Color.WHITE);
+		Font.drawCentered(Localization.getLocalized("Resource Packs"), screen, Screen.h / 2 - 64, Color.WHITE);
 
 		// Info text at the bottom.
 		Font.drawCentered("Use "+ Game.input.getMapping("cursor-down") + " and " + Game.input.getMapping("cursor-up") + " to move.", screen, Screen.h - 17, Color.DARK_GRAY);
@@ -84,7 +88,7 @@ public class ResourcePackDisplay extends Display {
 		int h = 2;
 		int w = 15;
 		int xo = (Screen.w - w * 8) / 2;
-		int yo = 28;
+		int yo = Screen.h / 2 - 40;
 
 		for (int y = 0; y < h; y++) {
 			for (int x = 0; x < w; x++) {

@@ -22,6 +22,7 @@ import minicraft.core.io.InputHandler;
 import minicraft.gfx.Color;
 import minicraft.gfx.Font;
 import minicraft.gfx.MobSprite;
+import minicraft.gfx.Point;
 import minicraft.gfx.Screen;
 import minicraft.gfx.SpriteSheet;
 import minicraft.saveload.Save;
@@ -80,7 +81,11 @@ public class SkinDisplay extends Display {
 
 	public SkinDisplay() {
 		super(true, true,
-				new Menu.Builder(false, 2, RelPos.CENTER, getSkinsAsEntries()).setSize(48, 64).createMenu());
+				new Menu.Builder(false, 2, RelPos.CENTER, getSkinsAsEntries())
+				.setSize(48, 64)
+				.setPositioning(new Point(Screen.w/2, Screen.h*3/5), RelPos.CENTER)
+				.createMenu()
+			);
 	}
 
 	@Override
@@ -194,12 +199,12 @@ public class SkinDisplay extends Display {
 		step++;
 
 		// Title.
-		Font.drawCentered(Localization.getLocalized("minicraft.display.skin"), screen, Screen.h - 180, Color.WHITE);
+		Font.drawCentered(Localization.getLocalized("minicraft.display.skin"), screen, (Screen.h / 2 - 64), Color.WHITE);
 
 		int h = 2;
 		int w = 2;
 		int xOffset = Screen.w / 2 - w * 4; // Put this in the center of the screen
-		int yOffset = 40;
+		int yOffset = Screen.h/ 2 - 40; // Player sprite Y position
 
 		int spriteIndex = (step / 40) % 8; // 9 = 8 Frames for sprite
 
@@ -214,7 +219,7 @@ public class SkinDisplay extends Display {
 
 		// Help text.
 		Font.drawCentered("Use "+ Game.input.getMapping("cursor-down") + " and " + Game.input.getMapping("cursor-up") + " to move.", screen, Screen.h - 17, Color.DARK_GRAY);
-		Font.drawCentered(Game.input.getMapping("SELECT") + " to select, and " + Game.input.getMapping("EXIT") + " to cancel." , screen, Screen.h - 9, Color.DARK_GRAY);
+		Font.drawCentered(Game.input.getMapping("SELECT") + " to select, " + Game.input.getMapping("EXIT") + " to cancel." , screen, Screen.h - 9, Color.DARK_GRAY);
 	}
 
 	public static int getSelectedSkinIndex() {

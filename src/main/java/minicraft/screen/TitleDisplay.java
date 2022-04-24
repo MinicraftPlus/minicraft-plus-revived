@@ -44,7 +44,6 @@ public class TitleDisplay extends Display {
 				else Game.setDisplay(new WorldGenDisplay());
 			}),
 			new SelectEntry("Options", () -> Game.setDisplay(new OptionsMainMenuDisplay())),
-            new SelectEntry("minicraft.display.skin", () -> Game.setDisplay(new SkinDisplay())),
 			new SelectEntry("minicraft.display.achievement", () -> Game.setDisplay(new AchievementsDisplay())),
 			new SelectEntry("Help", () ->
 				Game.setDisplay(new Display(true, new Menu.Builder(false, 1, RelPos.CENTER,
@@ -116,7 +115,7 @@ public class TitleDisplay extends Display {
 		int h = 2; // Height of squares (on the spritesheet)
 		int w = 15; // Width of squares (on the spritesheet)
 		int xo = (Screen.w - w * 8) / 2; // X location of the title
-		int yo = 18; // Y location of the title
+		int yo = Screen.h / 2 - 58; // Y location of the title
 		
 		for (int y = 0; y < h; y++) {
 			for (int x = 0; x < w; x++) {
@@ -141,7 +140,7 @@ public class TitleDisplay extends Display {
 		int splashColor = isblue ? Color.BLUE : isRed ? Color.RED : isGreen ? Color.GREEN : Color.get(1, bcol*51, bcol*51, bcol*25);
 
 		
-		Font.drawCentered(splashes[rand], screen, 40, splashColor);
+		Font.drawCentered(splashes[rand], screen, (Screen.h / 2) - 33, splashColor);
 		
 		Font.draw("Version " + Game.VERSION, screen, 1, 1, Color.get(1, 51));
 		
