@@ -409,12 +409,12 @@ public class InputHandler implements KeyListener {
 	}
 	
 	private static final String control = "\\p{Print}"; // Should match only printable characters.
-	public String addKeyTyped(String typing, @Nullable String pattern) {return addKeyTyped(typing, pattern, true);}
+	public String addKeyTyped(String typing, @Nullable String pattern) { return addKeyTyped(typing, pattern, true); }
 	public String addKeyTyped(String typing, @Nullable String pattern, boolean ignoreBr) {
 		if (lastKeyTyped.length() > 0) {
 			String letter = lastKeyTyped;
 			lastKeyTyped = "";
-			if ( ( (!ignoreBr&&letter.matches("\n")) || letter.matches(control)) && (pattern == null || letter.matches(pattern)) )
+			if (((!ignoreBr && letter.matches("\n")) || letter.matches(control)) && (pattern == null || letter.matches(pattern)))
 				typing += letter;
 		}
 		

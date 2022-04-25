@@ -4,6 +4,8 @@ import java.util.HashMap;
 
 import minicraft.core.Game;
 import minicraft.entity.mob.Player;
+import minicraft.gfx.Sprite;
+import minicraft.util.BookData;
 
 public class Recipe {
 	private HashMap<String, Integer> costs = new HashMap<String, Integer>();  // A list of costs for the recipe
@@ -37,7 +39,11 @@ public class Recipe {
 	}
 	
 	public Item getProduct() {
-		return Items.get(product);
+		Item item = Items.get(product);
+		if (item instanceof BookItem) {
+			item = new BookItem(new BookData(), new Sprite(0, 8, 0));
+		}
+		return item;
 	}
 	public HashMap<String, Integer> getCosts() { return costs; }
 	

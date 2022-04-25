@@ -58,6 +58,8 @@ public class Recipes {
 		workbenchRecipes.add(new Recipe("Leather Armor_1", "leather_10"));
 		workbenchRecipes.add(new Recipe("Snake Armor_1", "scale_15"));
 
+		workbenchRecipes.add(new Recipe("Editable Book_1", "leather_3", "wood_5"));
+
 		loomRecipes.add(new Recipe("String_2", "Wool_1"));
 		loomRecipes.add(new Recipe("red wool_1", "Wool_1", "rose_1"));
 		loomRecipes.add(new Recipe("blue wool_1", "Wool_1", "Lapis_1"));
