@@ -42,7 +42,7 @@ public class PlayerInvDisplay extends Display {
 		String text = "(" + Game.input.getMapping("SEARCHER-BAR") + ") " + Localization.getLocalized("to search.");
 		
 		// Position the search tip according to the aspect ratio
-		if (Settings.get("aspectratio") == "16x9") {
+		if (OptionsMainMenuDisplay.originalAspectRatio == "16x9") {
 			Font.draw(text, screen, 12, Screen.h/ 2 + 16, Color.WHITE);
 		} else {
 			Font.draw(text, screen, 12, Screen.h/ 2 - 10, Color.WHITE);

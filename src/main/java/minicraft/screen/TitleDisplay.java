@@ -29,12 +29,13 @@ public class TitleDisplay extends Display {
 	private int rand;
 	private int count = 0; // This and reverse are for the logo; they produce the fade-in/out effect.
 	private boolean reverse = false;
+	private int TitleY;
 	
 	public TitleDisplay() {
+			
 		super(true, false, new Menu.Builder(false, 2, RelPos.CENTER,
 			new StringEntry("Checking for updates...", Color.BLUE),
 			new BlankEntry(),
-
 			new SelectEntry("Play", () -> {
 				if (WorldSelectDisplay.getWorldNames().size() > 0)
 					Game.setDisplay(new Display(true, new Menu.Builder(false, 2, RelPos.CENTER,
@@ -44,6 +45,7 @@ public class TitleDisplay extends Display {
 				else Game.setDisplay(new WorldGenDisplay());
 			}),
 			new SelectEntry("Options", () -> Game.setDisplay(new OptionsMainMenuDisplay())),
+            new SelectEntry("minicraft.display.skin", () -> Game.setDisplay(new SkinDisplay())),
 			new SelectEntry("minicraft.display.achievement", () -> Game.setDisplay(new AchievementsDisplay())),
 			new SelectEntry("Help", () ->
 				Game.setDisplay(new Display(true, new Menu.Builder(false, 1, RelPos.CENTER,
@@ -56,7 +58,7 @@ public class TitleDisplay extends Display {
 			),
 			new SelectEntry("Quit", Game::quit)
 			)
-			.setPositioning(new Point(Screen.w/2, Screen.h*3/5), RelPos.CENTER)
+			.setPositioning(new Point(Screen.w/2, Screen.h*3/5 - 8), RelPos.CENTER)
 			.createMenu()
 		);
 	}
@@ -64,6 +66,13 @@ public class TitleDisplay extends Display {
 	@Override
 	public void init(Display parent) {
 		super.init(null); // The TitleScreen never has a parent.
+		
+		if (OptionsMainMenuDisplay.originalAspectRatio == "16x9") {
+			TitleY = Screen.h / 2 - 64;
+		} else {
+			TitleY = Screen.h / 2 - 58;
+		}
+		
 		Renderer.readyToRenderGameplay = false;
 
 		// Check version
@@ -115,7 +124,7 @@ public class TitleDisplay extends Display {
 		int h = 2; // Height of squares (on the spritesheet)
 		int w = 15; // Width of squares (on the spritesheet)
 		int xo = (Screen.w - w * 8) / 2; // X location of the title
-		int yo = Screen.h / 2 - 58; // Y location of the title
+		int yo = TitleY; // Y location of the title
 		
 		for (int y = 0; y < h; y++) {
 			for (int x = 0; x < w; x++) {
@@ -138,9 +147,12 @@ public class TitleDisplay extends Display {
 		/// This isn't as complicated as it looks. It just gets a color based off of count, which oscilates between 0 and 25.
 		int bcol = 5 - count / 5; // This number ends up being between 1 and 5, inclusive.
 		int splashColor = isblue ? Color.BLUE : isRed ? Color.RED : isGreen ? Color.GREEN : Color.get(1, bcol*51, bcol*51, bcol*25);
-
 		
-		Font.drawCentered(splashes[rand], screen, (Screen.h / 2) - 33, splashColor);
+		if (OptionsMainMenuDisplay.originalAspectRatio == "16x9") {
+			Font.drawCentered(splashes[rand], screen, (Screen.h / 2) - 44, splashColor);
+		} else {
+			Font.drawCentered(splashes[rand], screen, (Screen.h / 2) - 38, splashColor);
+		}
 		
 		Font.draw("Version " + Game.VERSION, screen, 1, 1, Color.get(1, 51));
 		

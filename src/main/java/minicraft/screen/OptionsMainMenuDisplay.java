@@ -1,6 +1,8 @@
 package minicraft.screen;
 
 import minicraft.core.Game;
+import minicraft.core.Initializer;
+import minicraft.core.Renderer;
 import minicraft.core.io.InputHandler;
 import minicraft.core.io.Localization;
 import minicraft.core.io.Settings;
@@ -13,7 +15,7 @@ import minicraft.screen.entry.StringEntry;
 
 public class OptionsMainMenuDisplay extends Display {
 
-    String originalAspectRatio = (String) Settings.get("aspectratio");
+    public static String originalAspectRatio = (String) Settings.get("aspectratio");
 
     public OptionsMainMenuDisplay() {
         super(true);
@@ -25,7 +27,6 @@ public class OptionsMainMenuDisplay extends Display {
             Settings.getEntry("language"),
             Settings.getEntry("aspectratio"),
             new BlankEntry(),
-            new SelectEntry("minicraft.display.skin", () -> Game.setDisplay(new SkinDisplay())),
             new SelectEntry("Resource packs", () -> Game.setDisplay(new ResourcePackDisplay())))
             .setTitle("Main Menu Options")
             .createMenu();

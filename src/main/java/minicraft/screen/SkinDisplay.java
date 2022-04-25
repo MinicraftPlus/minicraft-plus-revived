@@ -219,7 +219,7 @@ public class SkinDisplay extends Display {
 
 		// Help text.
 		Font.drawCentered("Use "+ Game.input.getMapping("cursor-down") + " and " + Game.input.getMapping("cursor-up") + " to move.", screen, Screen.h - 17, Color.DARK_GRAY);
-		Font.drawCentered(Game.input.getMapping("SELECT") + " to select, " + Game.input.getMapping("EXIT") + " to cancel." , screen, Screen.h - 9, Color.DARK_GRAY);
+		Font.drawCentered(Game.input.getMapping("SELECT") + " to select, and " + Game.input.getMapping("EXIT") + " to cancel." , screen, Screen.h - 9, Color.DARK_GRAY);
 	}
 
 	public static int getSelectedSkinIndex() {
