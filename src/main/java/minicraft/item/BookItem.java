@@ -59,6 +59,6 @@ public class BookItem extends Item {
 	public boolean interactsWithWorld() { return false; }
 	
 	public BookItem clone() {
-		return editable? new BookItem(getName(), sprite, staticBook, hasTitlePage): new BookItem(book, sprite);
+		return !editable? new BookItem(getName(), sprite, staticBook, hasTitlePage): new BookItem(book, sprite);
 	}
 }

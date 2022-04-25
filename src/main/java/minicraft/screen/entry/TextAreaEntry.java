@@ -43,7 +43,7 @@ public class TextAreaEntry extends InputEntry {
 		this.maxLine = maxLn;
 		this.lineSpacing = lineSp;
 		
-		userInput = Arrays.asList(initValue.split("\n"));
+		userInput = new ArrayList<>(Arrays.asList(initValue.split("\n")));
 	}
 	
 	@Override
@@ -102,7 +102,7 @@ public class TextAreaEntry extends InputEntry {
 			return;
 		} else if (input.getKey("end").clicked) {
 			int cursorY = cursor / Short.MAX_VALUE;
-			cursor = userInput.get(cursorY).length()-1 + cursorY*Short.MAX_VALUE;
+			cursor = userInput.get(cursorY).length() + cursorY*Short.MAX_VALUE;
 			return;
 		} else if (input.getKey("home").clicked) {
 			int cursorY = cursor / Short.MAX_VALUE;
@@ -122,8 +122,8 @@ public class TextAreaEntry extends InputEntry {
 		if (newChar.length() > 1) newChar = newChar.substring(1, 2);
 		if (newChar.equals("\n")) {
 			int cursorY = cursor / Short.MAX_VALUE;
-			userInput.add(cursorY + 1, "");
-			cursor = 0+(cursorY + 1)*Short.MAX_VALUE;
+			userInput.add(cursorY+1, "");
+			cursor = 0+(cursorY+1)*Short.MAX_VALUE;
 		} else if (newChar.length() == 0) {
 			int cursorX = cursor % Short.MAX_VALUE;
 			int cursorY = cursor / Short.MAX_VALUE;
@@ -136,9 +136,9 @@ public class TextAreaEntry extends InputEntry {
 			} else {
 				if (cursorX == 0) {
 					if (cursorY != 0) {
-						cursor = userInput.get(cursorY-1).length() + (cursorY-1)*Short.MAX_VALUE;
 						userInput.set(cursorY-1, userInput.get(cursorY-1)+curString);
 						userInput.remove(cursorY);
+						cursor = userInput.get(cursorY-1).length() + (cursorY-1)*Short.MAX_VALUE;
 					}
 				} else {
 					userInput.set(cursorY, new StringBuilder(curString).deleteCharAt(cursorX-1).toString());
@@ -205,7 +205,8 @@ public class TextAreaEntry extends InputEntry {
 		int lineCount = 0;
 		int maxLen = maxLength == 0 ? Short.MAX_VALUE : maxLength;
 		for (String l : userInput) {
-			String[] ln = Font.getLines(l, maxLen, Short.MAX_VALUE, 0, true);
+			String[] ln = Font.getLines(l, maxLen*8, Short.MAX_VALUE, 0, true);
+			if (ln.length>1 && ln[ln.length-1].length()==0) ln = Arrays.copyOfRange(ln, 0, ln.length-1);
 			for (String ll : ln) lns.add(ll);
 			if (lineCount == (int)cursor / Short.MAX_VALUE) {
 				newCursor = cursor % Short.MAX_VALUE % maxLen // X

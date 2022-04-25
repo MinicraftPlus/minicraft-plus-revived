@@ -49,7 +49,7 @@ public class BookData {
 		this.author = author;
 	}
 	public BookData() {
-		this(genNewID(), "", "", false, "");
+		this(genNewID(), "", "", true, "");
 	}
 	public BookData(JSONObject data) {
 		this(data.getString("id"), data.getString("title"), data.getString("content"), data.getBoolean("editable"), data.getString("author"));
