@@ -39,10 +39,10 @@ public class Recipe {
 	}
 	
 	public Item getProduct() {
-		Item item = Items.get(product);
-		if (item instanceof BookItem) {
+		Item item;
+		if (product.equals("EDITABLE BOOK")) {
 			item = new BookItem(new BookData(), new Sprite(0, 8, 0));
-		}
+		} else item = Items.get(product);
 		return item;
 	}
 	public HashMap<String, Integer> getCosts() { return costs; }
