@@ -454,7 +454,7 @@ public class Level {
 		int xo = xScroll >> 4; // Latches to the nearest tile coordinate
 		int yo = yScroll >> 4;
 		int w = (Screen.w) >> 4; // There used to be a "+15" as in below method
-		int h = (Screen.h) >> 4;
+		int h = (Screen.h + 8) >> 4; // Fix: + 8 lowers the rendering of the level a bit below the screen so that it is not affected by the aspect ratio
 		screen.setOffset(xScroll, yScroll);
 		for (int y = yo; y <= h + yo; y++) {
 			for (int x = xo; x <= w + xo; x++) {
