@@ -17,7 +17,6 @@ import minicraft.item.ToolItem;
 import minicraft.item.ToolType;
 import minicraft.level.Level;
 import minicraft.screen.AchievementsDisplay;
-import minicraft.util.Achievement;
 
 public class TreeTile extends Tile {
 	
