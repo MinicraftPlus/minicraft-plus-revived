@@ -86,9 +86,8 @@ public class TreeTile extends Tile {
 		if (item instanceof ToolItem) {
 			ToolItem tool = (ToolItem) item;
 			if (tool.type == ToolType.Axe) {
-				int dmg = random.nextInt(10) + tool.damage;
-				if (player.payStamina(4 - tool.level) && tool.payDurability(dmg)) {
-					hurt(level, xt, yt, dmg);
+				if (player.payStamina(4 - tool.level) && tool.payDurability()) {
+					hurt(level, xt, yt, tool.getDamage());
 					return true;
 				}
 			}

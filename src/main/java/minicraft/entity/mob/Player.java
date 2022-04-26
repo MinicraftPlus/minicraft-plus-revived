@@ -610,16 +610,14 @@ public class Player extends Mob implements ItemHolder, ClientTickable {
 			// Attempts to hurt the tile in the appropriate direction.
 			Point t = getInteractionTile();
 
-			int dmg = 0;
 			// Check if tile is in bounds of the map.
 			if (t.x >= 0 && t.y >= 0 && t.x < level.w && t.y < level.h) {
 				Tile tile = level.getTile(t.x, t.y);
-				dmg = random.nextInt(3) + 1;
-				used = tile.hurt(level, t.x, t.y, this, dmg, attackDir) || used;
+				used = tile.hurt(level, t.x, t.y, this, random.nextInt(3) + 1, attackDir) || used;
 			}
 			
 			if (used && activeItem instanceof ToolItem)
-				((ToolItem)activeItem).payDurability(dmg);
+				((ToolItem)activeItem).payDurability();
 		}
 	}
 	
