@@ -52,10 +52,11 @@ public class RockTile extends Tile {
 	public boolean interact(Level level, int xt, int yt, Player player, Item item, Direction attackDir) {
 		if (item instanceof ToolItem) {
 			ToolItem tool = (ToolItem) item;
-			if (tool.type == ToolType.Pickaxe && player.payStamina(4 - tool.level) && tool.payDurability()) {
+			int dmg = random.nextInt(10) + tool.damage;
+			if (tool.type == ToolType.Pickaxe && player.payStamina(4 - tool.level) && tool.payDurability(dmg)) {
 				// Drop coal since we use a pickaxe.
 				dropCoal = true;
-				hurt(level, xt, yt, random.nextInt(10) + (tool.level) * 5 + 10);
+				hurt(level, xt, yt, dmg);
 				return true;
 			}
 		}

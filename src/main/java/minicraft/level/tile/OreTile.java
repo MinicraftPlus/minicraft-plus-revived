@@ -67,8 +67,9 @@ public class OreTile extends Tile {
 		if (item instanceof ToolItem) {
 			ToolItem tool = (ToolItem) item;
 			if (tool.type == ToolType.Pickaxe) {
-				if (player.payStamina(6 - tool.level) && tool.payDurability()) {
-					hurt(level, xt, yt, 1);
+				int dmg = random.nextInt(5)+tool.damage-5;
+				if (player.payStamina(6 - tool.level) && tool.payDurability(dmg)) {
+					hurt(level, xt, yt, dmg);
 					return true;
 				}
 			}
@@ -82,7 +83,7 @@ public class OreTile extends Tile {
     
 	public void hurt(Level level, int x, int y, int dmg) {
 		int damage = level.getData(x, y) + dmg;
-		int oreH = random.nextInt(10) + 3;
+		int oreH = random.nextInt(10)*4 + 20;
 		if (Game.isMode("Creative")) dmg = damage = oreH;
 		
 		level.add(new SmashParticle(x * 16, y * 16));

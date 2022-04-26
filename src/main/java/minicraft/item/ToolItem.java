@@ -33,6 +33,7 @@ public class ToolItem extends Item {
 	public ToolType type; // Type of tool (Sword, hoe, axe, pickaxe, shovel)
 	public int level; // Level of said tool
 	public int dur; // The durability of the tool
+	public int damage; // The damage of the tool
 	
 	/** Tool Item, requires a tool type (ToolType.Sword, ToolType.Axe, ToolType.Hoe, etc) and a level (0 = wood, 2 = iron, 4 = gem, etc) */
 	public ToolItem(ToolType type, int level) {
@@ -40,6 +41,7 @@ public class ToolItem extends Item {
 		
 		this.type = type;
 		this.level = level;
+		this.damage = level*5 + 10;
 		
 		dur = type.durability * (level + 1); // Initial durability fetched from the ToolType
 	}
@@ -67,6 +69,12 @@ public class ToolItem extends Item {
 		return type != ToolType.Shears;
 	}
 	
+	public boolean payDurability(int damage) {
+		if (dur <= 0) return false;
+		int d = damage/(level*10) * 3;
+		if (!Game.isMode("creative")) dur -= d>4? 4: d<1? 1: d;
+		return true;
+	}
 	public boolean payDurability() {
 		if (dur <= 0) return false;
 		if (!Game.isMode("creative")) dur--;
@@ -75,20 +83,20 @@ public class ToolItem extends Item {
 	
 	/** Gets the attack damage bonus from an item/tool (sword/axe) */
 	public int getAttackDamageBonus(Entity e) {
-		if (!payDurability())
-			return 0;
-		
 		if (e instanceof Mob) {
+			int dmg = 0;
 			if (type == ToolType.Axe) {
-				return (level + 1) * 2 + random.nextInt(4); // Wood axe damage: 2-5; gem axe damage: 10-13.
-			}
-			if (type == ToolType.Sword) {
-				return (level + 1) * 3 + random.nextInt(2 + level * level); // Wood: 3-5 damage; gem: 15-32 damage.
-			}
-			if (type == ToolType.Claymore) {
-				return (level + 1) * 3 + random.nextInt(4 + level * level * 3); // Wood: 3-6 damage; gem: 15-66 damage.
-			}
-			return 1; // All other tools do very little damage to mobs.
+				dmg = (level + 1) * 2 + random.nextInt(4); // Wood axe damage: 2-5; gem axe damage: 10-13.
+			} else if (type == ToolType.Sword) {
+				dmg = (level + 1) * 3 + random.nextInt(2 + level * level); // Wood: 3-5 damage; gem: 15-32 damage.
+			} else if (type == ToolType.Claymore) {
+				dmg = (level + 1) * 3 + random.nextInt(4 + level * level * 3); // Wood: 3-6 damage; gem: 15-66 damage.
+			} else if (type == ToolType.Pickaxe) {
+				dmg = (level + 1) + random.nextInt(2); // Wood: 3-6 damage; gem: 15-66 damage.
+			} else dmg = 1; // All other tools do very little damage to mobs.
+			if (!payDurability(dmg))
+				return 0;
+			else return dmg;
 		}
 		
 		return 0;
