@@ -14,7 +14,9 @@ public class PlayerInvDisplay extends Display {
 
 
 	public PlayerInvDisplay(Player player) {
-		super(new InventoryMenu(player, player.getInventory(), "Inventory"));
+		Menu[] menus = new Menu[] {new InventoryMenu(player, player.getInventory(), "Inventory")};
+		this.menus = menus;
+		selection = 0;
 		this.player = player;
 	}
 	

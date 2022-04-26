@@ -36,7 +36,7 @@ public class BookItem extends Item {
 		this.sprite = sprite;
 	}
 	public BookItem(BookData book, Sprite sprite) {
-		super("Book - "+book.title, sprite);
+		super("Editable Book", sprite);
 		editable = book.editable;
 		this.book = book;
 		if (!editable) {
