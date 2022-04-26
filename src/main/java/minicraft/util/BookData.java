@@ -77,6 +77,10 @@ public class BookData {
 		return id;
 	}
 
+	public static String intIDToString(int intID) {
+		return String.format("%08d", intID);
+	}
+
 	public static void saveBook(BookData book) {
 		new File(Game.gameDir + "/saves/" + WorldSelectDisplay.getWorldName() + "/books/").mkdirs();
 		JSONObject json = new JSONObject();

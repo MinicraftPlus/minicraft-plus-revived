@@ -7,6 +7,8 @@ import org.jetbrains.annotations.Nullable;
 
 import org.tinylog.Logger;
 
+import minicraft.util.BookData;
+
 public class Items {
 	
 	// I've checked -- this is only used for making the creative inventory, and in Load.java.
@@ -96,6 +98,9 @@ public class Items {
 			}
 		}
 		
+		if (name.equalsIgnoreCase("Editable Book")) {
+			return new BookItem(BookData.loadBook(BookData.intIDToString(data)), Items.get("Book").sprite);
+		}
 		if (i != null) {
 			i = i.clone();
 			if (i instanceof StackableItem)

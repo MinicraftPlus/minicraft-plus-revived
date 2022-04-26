@@ -53,6 +53,16 @@ public class BookItem extends Item {
 		else Game.setDisplay(new BookDisplay(staticBook, hasTitlePage));
 		return true;
 	}
+
+	@Override
+	public String getData() {
+		return super.getData()+(editable? "_"+book.id: "");
+	}
+
+	@Override
+	public String getDescription() {
+		return super.getDescription()+(editable? "\n"+book.title: "");
+	}
 	
 	@Override
 	public boolean interactsWithWorld() { return false; }

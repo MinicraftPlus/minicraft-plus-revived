@@ -15,7 +15,6 @@ public abstract class Item {
 	
 	private final String name;
 	public Sprite sprite;
-	public String description;
 	
 	public boolean used_pending = false; // This is for multiplayer, when an item has been used, and is pending server response as to the outcome, this is set to true so it cannot be used again unless the server responds that the item wasn't used. Which should basically replace the item anyway, soo... yeah. this never gets set back.
 	
@@ -69,6 +68,10 @@ public abstract class Item {
 	/** Gets the necessary data to send over a connection. This data should always be directly input-able into Items.get() to create a valid item with the given properties. */
 	public String getData() {
 		return name;
+	}
+
+	public String getDescription() {
+		return getName();
 	}
 	
 	public final String getName() { return name; }
