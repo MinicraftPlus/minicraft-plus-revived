@@ -1,0 +1,11 @@
+{
+    "[*]": {
+        "files.insertFinalNewline": true,
+        "files.trimTrailingWhitespace": true
+    },
+    "[java]": {
+        "editor.tabSize": 4,
+        "editor.detectIndentation": false,
+        "editor.insertSpaces": false
+    },
+}
