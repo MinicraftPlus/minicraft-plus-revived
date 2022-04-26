@@ -1,7 +1,8 @@
 {
     "[*]": {
         "files.insertFinalNewline": true,
-        "files.trimTrailingWhitespace": true
+        "files.trimTrailingWhitespace": true,
+        "files.encoding": "utf8"
     },
     "[java]": {
         "editor.tabSize": 4,
