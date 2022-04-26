@@ -32,15 +32,15 @@ import org.tinylog.Logger;
 
 public class Game {
 	Game() {} // Can't instantiate the Game class.
-	
+
 	public static boolean debug = false;
-	
+
 	public static final String NAME = "Minicraft Plus"; // This is the name on the application window.
 	public static final Version VERSION = new Version("2.1.0-dev3");
-	
+
 	public static InputHandler input; // Input used in Game, Player, and just about all the *Menu classes.
 	public static Player player;
-	
+
 	public static List<String> notifications = new ArrayList<>();
 
 	public static int MAX_FPS = (int) Settings.get("fps");
@@ -81,9 +81,9 @@ public class Game {
 			StringWriter string = new StringWriter();
 			PrintWriter printer = new PrintWriter(string);
 			throwable.printStackTrace(printer);
-			
+
 			Future<HttpResponse<Empty>> ping = Analytics.Crashes.ping();
-			
+
 			// Ensure ping finishes before program closes.
 			if (GraphicsEnvironment.isHeadless() && ping != null) {
 				try {
@@ -91,12 +91,12 @@ public class Game {
 				} catch (Exception ignored) {}
 				return;
 			}
-			
+
 			JTextArea errorDisplay = new JTextArea(string.toString());
 			errorDisplay.setEditable(false);
 			JScrollPane errorPane = new JScrollPane(errorDisplay);
 			JOptionPane.showMessageDialog(null, errorPane, "An error has occurred", JOptionPane.ERROR_MESSAGE);
-			
+
 			// Ensure ping finishes before program closes.
 			if (ping != null) {
 				try {
@@ -105,24 +105,26 @@ public class Game {
 				}
 			}
 		});
-		
+
 		Analytics.GameStartup.ping();
 
 		Initializer.parseArgs(args); // Parses the command line arguments
-		
+
 		input = new InputHandler(Renderer.canvas);
-		
+
 		Tiles.initTileList();
 		Sound.init();
 
 		World.resetGame(); // "half"-starts a new game, to set up initial variables
 		player.eid = 0;
 		new Load(true); // This loads any saved preferences.
+		MAX_FPS = (int) Settings.get("fps");
 
-    Localization.loadLanguage();
+		Localization.changeLanguage((String)Settings.get("language"));
+    	Localization.loadLanguage();
 
 		Initializer.createAndDisplayFrame();
-		
+
 		setDisplay(new TitleDisplay()); // Sets menu to the title screen.
 
 		Renderer.initScreen();
@@ -137,7 +139,7 @@ public class Game {
 
 		// Actually start the game.
 		Initializer.run();
-		
+
 		Logger.debug("Main game loop ended; Terminating application...");
 		System.exit(0);
 	}
