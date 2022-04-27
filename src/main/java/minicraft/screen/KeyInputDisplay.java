@@ -1,7 +1,10 @@
 package minicraft.screen;
 
+import java.util.stream.Stream;
+
 import minicraft.core.Game;
 import minicraft.core.io.InputHandler;
+import minicraft.core.io.Localization;
 import minicraft.gfx.Color;
 import minicraft.gfx.Font;
 import minicraft.gfx.Point;
@@ -43,7 +46,7 @@ public class KeyInputDisplay extends Display {
 				.createMenu(),
 
 			popupBuilder
-				.setEntries(StringEntry.useLines(Color.RED, "Are you sure you want to reset", "all key bindings", "to the default keys?", "enter to confirm", "escape to cancel"))
+				.setEntries(StringEntry.useLines(Color.RED, Stream.concat(Stream.of(Localization.getLocalized("Are you sure you want to reset\nall key bindings\nto the default keys?").split("\n")), Stream.of("enter to confirm", "escape to cancel")).toArray(String[]::new)))
 				.setTitle("Confirm Action")
 				.createMenu()
 		};
