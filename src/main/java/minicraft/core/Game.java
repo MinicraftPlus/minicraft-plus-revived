@@ -121,7 +121,6 @@ public class Game {
 		MAX_FPS = (int) Settings.get("fps");
 
 		Localization.changeLanguage((String)Settings.get("language"));
-    	Localization.loadLanguage();
 
 		Initializer.createAndDisplayFrame();
 
