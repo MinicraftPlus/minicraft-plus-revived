@@ -46,7 +46,7 @@ public class KeyInputDisplay extends Display {
 				.createMenu(),
 
 			popupBuilder
-				.setEntries(StringEntry.useLines(Color.RED, Stream.concat(Stream.of(Localization.getLocalized("Are you sure you want to reset\nall key bindings\nto the default keys?").split("\n")), Stream.of("enter to confirm", "escape to cancel")).toArray(String[]::new)))
+				.setEntries(StringEntry.useLines(Color.RED, "Confirm setting key bindings.1", "Confirm setting key bindings.2", "Confirm setting key bindings.3", "enter to confirm", "escape to cancel"))
 				.setTitle("Confirm Action")
 				.createMenu()
 		};
