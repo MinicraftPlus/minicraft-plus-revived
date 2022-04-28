@@ -1,0 +1,8 @@
+[
+    {
+        "id": "minicraft.quest.get_wood",
+        "desc": "minicraft.quest.get_wood.desc",
+        "unlocks": [],
+        "unlocked": true
+    }
+]

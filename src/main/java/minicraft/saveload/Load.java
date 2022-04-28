@@ -523,6 +523,19 @@ public class Load {
 				}
 			}
 		}
+		if (new File(location+"Quests.json").exists()) {
+			try {
+				JSONObject questsObj = new JSONObject(loadFromFile(location+"Quests.json", true));
+				JSONArray unlockedQuests = questsObj.getJSONArray("unlocked");
+				JSONArray doneQuests = questsObj.getJSONArray("done");
+				JSONArray undoneQuests = questsObj.getJSONArray("undone");
+				for (int i = 0; i<unlockedQuests.length()) {
+					QuestsDisplay.
+				}
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+		}
 	}
 	
 	public void loadPlayer(String filename, Player player) {

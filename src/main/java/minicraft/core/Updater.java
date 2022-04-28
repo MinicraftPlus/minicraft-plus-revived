@@ -15,6 +15,7 @@ import minicraft.saveload.Save;
 import minicraft.screen.EndGameDisplay;
 import minicraft.screen.LevelTransitionDisplay;
 import minicraft.screen.PlayerDeathDisplay;
+import minicraft.screen.QuestsDisplay;
 import minicraft.screen.WorldSelectDisplay;
 import org.tinylog.Logger;
 
@@ -191,6 +192,7 @@ public class Updater extends Game {
 
 				if (level != null) {
 					level.tick(true);
+					Renderer.guiDisplay.tick(input);
 					Tile.tickCount++;
 				}
 				
