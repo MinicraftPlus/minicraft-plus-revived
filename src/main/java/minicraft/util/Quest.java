@@ -22,4 +22,6 @@ public class Quest {
     public void unlock() { unlocked = true; }
 
     public boolean getUnlocked() { return unlocked; }
+
+    public void lock() { unlocked = false; }
 }

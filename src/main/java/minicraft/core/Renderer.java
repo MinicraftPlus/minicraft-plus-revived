@@ -27,7 +27,7 @@ import minicraft.item.ToolItem;
 import minicraft.item.ToolType;
 import minicraft.level.Level;
 import minicraft.screen.LoadingDisplay;
-import minicraft.screen.PlayerGUIDisplay;
+import minicraft.screen.QuestsDisplay;
 import minicraft.screen.RelPos;
 import org.tinylog.Logger;
 
@@ -50,7 +50,7 @@ public class Renderer extends Game {
 	
 	public static boolean readyToRenderGameplay = false;
 	public static boolean showDebugInfo = false;
-	public static PlayerGUIDisplay guiDisplay;
+	public static QuestsDisplay questsDisplay;
 
 	private static Ellipsis ellipsis = new SmoothEllipsis(new TickUpdater());
 
@@ -115,7 +115,7 @@ public class Renderer extends Game {
 		canvas.createBufferStrategy(3);
 		canvas.requestFocus();
 
-		guiDisplay = new PlayerGUIDisplay();
+		questsDisplay = new QuestsDisplay(true);
 	}
 	
 	
@@ -349,7 +349,8 @@ public class Renderer extends Game {
 				}
 			}
 		}
-		guiDisplay.render(screen);
+		questsDisplay.render(screen);
+		
 		renderDebugInfo();
 	}
 	

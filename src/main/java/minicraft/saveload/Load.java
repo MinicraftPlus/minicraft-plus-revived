@@ -8,6 +8,7 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
 
 import minicraft.screen.*;
@@ -528,13 +529,18 @@ public class Load {
 				JSONObject questsObj = new JSONObject(loadFromFile(location+"Quests.json", true));
 				JSONArray unlockedQuests = questsObj.getJSONArray("unlocked");
 				JSONArray doneQuests = questsObj.getJSONArray("done");
-				JSONArray undoneQuests = questsObj.getJSONArray("undone");
-				for (int i = 0; i<unlockedQuests.length()) {
-					QuestsDisplay.
-				}
+				JSONObject questData = questsObj.getJSONObject("data");
+				ArrayList<String> unlocked = new ArrayList<>();
+				ArrayList<String> done = new ArrayList<>();
+				for (int i = 0; i<unlockedQuests.length(); i++) unlocked.add(unlockedQuests.getString(i));
+				for (int i = 0; i<doneQuests.length(); i++) done.add(doneQuests.getString(i));
+				QuestsDisplay.loadGameQuests(unlocked, done, questData.toMap());
 			} catch (IOException e) {
 				e.printStackTrace();
+				QuestsDisplay.loadGameQuests(new ArrayList<>(), new ArrayList<>());
 			}
+		} else {
+			QuestsDisplay.loadGameQuests(new ArrayList<>(), new ArrayList<>());
 		}
 	}
 	

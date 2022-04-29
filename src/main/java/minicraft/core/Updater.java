@@ -192,7 +192,7 @@ public class Updater extends Game {
 
 				if (level != null) {
 					level.tick(true);
-					Renderer.guiDisplay.tick(input);
+					Renderer.questsDisplay.tick(input);
 					Tile.tickCount++;
 				}
 				
