@@ -46,7 +46,7 @@ public class KeyInputDisplay extends Display {
 				.createMenu(),
 
 			popupBuilder
-				.setEntries(StringEntry.useLines(Color.RED, "Confirm setting key bindings.1", "Confirm setting key bindings.2", "Confirm setting key bindings.3", "enter to confirm", "escape to cancel"))
+				.setEntries(StringEntry.useLines(Color.RED, "Confirm resetting key bindings.1", "Confirm resetting key bindings.2", "Confirm resetting key bindings.3", "enter to confirm", "escape to cancel"))
 				.setTitle("Confirm Action")
 				.createMenu()
 		};
