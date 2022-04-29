@@ -21,27 +21,27 @@ import minicraft.screen.AchievementsDisplay;
 /// this is all the spikey stuff (except "cloud cactus")
 public class OreTile extends Tile {
 	private final OreType type;
-	
+
 	public enum OreType {
         Iron (Items.get("Iron Ore"), 0),
 		Lapis (Items.get("Lapis"), 2),
 		Gold (Items.get("Gold Ore"), 4),
 		Gem (Items.get("Gem"), 6),
 		Cloud (Items.get("Cloud Ore"), 8);
-		
+
 		private final Item drop;
 		public final int color;
-		
+
 		OreType(Item drop, int color) {
 			this.drop = drop;
 			this.color = color;
 		}
-		
+
 		private Item getOre() {
 			return drop.clone();
 		}
     }
-	
+
 	protected OreTile(OreType o) {
 		super((o == OreTile.OreType.Lapis ? "Lapis" : o == OreType.Cloud ? "Cloud Cactus" : o.name() + " Ore"), new Sprite(22 + o.color, 2, 2, 2, 1));
         this.type = o;
@@ -75,16 +75,16 @@ public class OreTile extends Tile {
 		}
 		return false;
 	}
-	
+
     public Item getOre() {
         return type.getOre();
     }
-    
+
 	public void hurt(Level level, int x, int y, int dmg) {
 		int damage = level.getData(x, y) + dmg;
 		int oreH = random.nextInt(10) + 3;
 		if (Game.isMode("Creative")) dmg = damage = oreH;
-		
+
 		level.add(new SmashParticle(x * 16, y * 16));
 		Sound.monsterHurt.play();
 
@@ -102,7 +102,7 @@ public class OreTile extends Tile {
 				level.setData(x, y, damage);
 			}
 			if (type.drop.equals(Items.get("gem"))){
-				AchievementsDisplay.setAchievement("minicraft.achievement.find_gem", true);
+				if (!Game.isMode("creative")) AchievementsDisplay.setAchievement("minicraft.achievement.find_gem", true);
 			}
 			level.dropItem(x * 16 + 8, y * 16 + 8, count, type.getOre());
 		}
