@@ -1,6 +1,9 @@
 package minicraft.core;
 
 import minicraft.screen.*;
+
+import java.util.ArrayList;
+
 import org.jetbrains.annotations.Nullable;
 
 import minicraft.core.io.Settings;
@@ -126,6 +129,7 @@ public class World extends Game {
 			Updater.pastDay1 = false;
 			player.findStartPos(level, WorldGenDisplay.getSeed()); // Finds the start level for the player
 			level.add(player);
+			QuestsDisplay.loadGameQuests(new ArrayList<>(), new ArrayList<>());
 		}
 
 		Renderer.readyToRenderGameplay = true;

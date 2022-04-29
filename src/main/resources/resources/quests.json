@@ -4,5 +4,10 @@
         "desc": "minicraft.quest.get_wood.desc",
         "unlocks": [],
         "unlocked": true
+    },
+    {
+        "id": "minicraft.quest.kill",
+        "desc": "minicraft.quest.kill.desc",
+        "unlocks": []
     }
 ]

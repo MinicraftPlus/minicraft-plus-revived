@@ -347,5 +347,9 @@
   "minicraft.skin.minecraft_alex": "Familiar girl",
   "minicraft.notification.invalid_placement": "Can only be placed on",
   "minicraft.notification.dig_hole": "Dig a hole first!",
-  "minicraft.notification.achievement_unlocked": "Achievement Unlocked:"
+  "minicraft.notification.achievement_unlocked": "Achievement Unlocked:",
+  "minicraft.notification.quest_done": "Quest done:",
+  "minicraft.display.quests": "Quests",
+  "minicraft.quest.get_wood": "Getting Wood",
+  "minicraft.quest.get_wood.desc": "Getting your first wood."
 }
