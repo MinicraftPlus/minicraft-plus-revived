@@ -135,10 +135,10 @@ public class AchievementsDisplay extends Display {
      * @return True if setting the achievement was successful.
      */
     public static boolean setAchievement(String id, boolean unlocked) {
-        return setAchievement(id, unlocked, true);
+        return setAchievement(id, unlocked, true, false);
     }
 
-    private static boolean setAchievement(String id, boolean unlocked, boolean save) {
+    private static boolean setAchievement(String id, boolean unlocked, boolean save, boolean isMenu) {
         Achievement a = achievements.get(id);
 
         // Return if we didn't find any achievements.
@@ -148,8 +148,10 @@ public class AchievementsDisplay extends Display {
         if (!a.getUnlocked() && !unlocked) return false;  // Return if it is already locked.
 
         // Make the achievement unlocked in memory.
-        a.setUnlocked(unlocked);
-        Logger.debug("Updating data of achievement with id: {}.", id);
+		if (!Game.isMode("creative") || isMenu) {
+        	a.setUnlocked(unlocked);
+        	Logger.debug("Updating data of achievement with id: {}.", id);
+		}
 
         // Add or subtract from score
         if (unlocked) {
