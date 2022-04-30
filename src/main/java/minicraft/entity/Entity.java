@@ -10,7 +10,6 @@ import minicraft.core.Game;
 import minicraft.core.Network;
 import minicraft.core.Updater;
 import minicraft.core.World;
-import minicraft.entity.mob.MobAi;
 import minicraft.entity.mob.Player;
 import minicraft.gfx.Rectangle;
 import minicraft.gfx.Screen;

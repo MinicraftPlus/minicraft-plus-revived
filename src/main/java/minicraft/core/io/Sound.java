@@ -12,7 +12,6 @@ import javax.sound.sampled.LineEvent;
 import javax.sound.sampled.LineUnavailableException;
 import javax.sound.sampled.UnsupportedAudioFileException;
 
-import minicraft.core.Game;
 import org.tinylog.Logger;
 
 public class Sound {
