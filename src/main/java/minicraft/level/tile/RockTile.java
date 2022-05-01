@@ -55,7 +55,7 @@ public class RockTile extends Tile {
 			if (tool.type == ToolType.Pickaxe && player.payStamina(4 - tool.level) && tool.payDurability()) {
 				// Drop coal since we use a pickaxe.
 				dropCoal = true;
-				hurt(level, xt, yt, random.nextInt(10) + (tool.level) * 5 + 10);
+				hurt(level, xt, yt, tool.getDamage());
 				return true;
 			}
 		}

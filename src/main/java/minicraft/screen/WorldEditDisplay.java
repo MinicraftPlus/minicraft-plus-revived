@@ -134,6 +134,7 @@ public class WorldEditDisplay extends Display {
 						// Try to rename the file, if it works, return
 						if (world.renameTo(new File(worldsDir + name))) {
 							Logger.debug("Renaming world {} to new name: {}", world, name);
+							WorldSelectDisplay.updateWorlds();
 						} else {
 							Logger.error("Rename failed in WorldEditDisplay.");
 						}

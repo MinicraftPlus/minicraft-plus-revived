@@ -139,7 +139,7 @@ public class SkinDisplay extends Display {
 		Game.exitDisplay();
 
 		// Achieve Fashion Show:
-		AchievementsDisplay.setAchievement("minicraft.achievement.skin", true);
+		AchievementsDisplay.setAchievement(true, "minicraft.achievement.skin", true);
 
 		// Tell the player to apply changes.
 		if (Game.player != null) {
