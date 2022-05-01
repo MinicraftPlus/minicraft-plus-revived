@@ -3,6 +3,7 @@ package minicraft.screen;
 import minicraft.core.Game;
 import minicraft.core.io.InputHandler;
 import minicraft.core.io.Localization;
+import minicraft.core.io.Settings;
 import minicraft.entity.mob.Player;
 import minicraft.gfx.Color;
 import minicraft.gfx.Font;
@@ -39,6 +40,13 @@ public class PlayerInvDisplay extends Display {
 
 		// Searcher help text
 		String text = "(" + Game.input.getMapping("SEARCHER-BAR") + ") " + Localization.getLocalized("to search.");
-		Font.draw(text, screen, 16, Screen.h / 2 + 2, Color.WHITE);
+		
+		// Position the search tip according to the aspect ratio
+		if (OptionsMainMenuDisplay.originalAspectRatio == "16x9") {
+			Font.draw(text, screen, 12, Screen.h/ 2 + 16, Color.WHITE);
+		} else {
+			Font.draw(text, screen, 12, Screen.h/ 2 - 10, Color.WHITE);
+		}
+		
 	}
 }

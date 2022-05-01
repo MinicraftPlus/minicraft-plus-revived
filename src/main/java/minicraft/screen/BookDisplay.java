@@ -18,7 +18,7 @@ public class BookDisplay extends Display {
 	private static final String defaultBook = "This book has no text.";
 	
 	private static final int spacing = 3;
-	private static final int minX = 15, maxX = 15+8 * 32, minY = 8*5, maxY = 8*5 + 8*16;
+	private static int minX = 15, maxX = 15+8 * 32, minY = 8*5, maxY = 8*5 + 8*16;
 
 	// First array is page and second is line.
 	private String[][] lines;
@@ -36,6 +36,12 @@ public class BookDisplay extends Display {
 		if (book == null) {
 			book = defaultBook;
 			hasTitle = false;
+		}
+		
+		if (OptionsMainMenuDisplay.originalAspectRatio == "16x9") {
+			maxY = 8*5 + 8*12; // 16x9? less height
+		} else {
+			maxY = 8*5 + 8*16;
 		}
 
 		this.hasTitle = hasTitle;
@@ -88,8 +94,10 @@ public class BookDisplay extends Display {
 	
 	@Override
 	public void tick(InputHandler input) {
-		if (input.getKey("menu").clicked || input.getKey("exit").clicked)
-			Game.exitDisplay(); // This is what closes the book; TODO if books were editable, I would probably remake the book here with the edited pages.
+		if (input.getKey("menu").clicked || input.getKey("exit").clicked){
+			// This is what closes the book; TODO if books were editable, I would probably remake the book here with the edited pages
+			Game.exitDisplay();
+		}
 		if (input.getKey("cursor-left").clicked) turnPage(-1); // This is what turns the page back
 		if (input.getKey("cursor-right").clicked) turnPage(1); // This is what turns the page forward
 	}
