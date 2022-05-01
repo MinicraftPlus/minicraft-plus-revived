@@ -577,7 +577,7 @@ public class Player extends Mob implements ItemHolder, ClientTickable {
 			// If the target coordinates are a valid tile.
 			if (t.x >= 0 && t.y >= 0 && t.x < level.w && t.y < level.h) {
 
-				// Get any entities (except dropped items) on the tile.
+				// Get any entities (except dropped items and particles) on the tile.
 				List<Entity> tileEntities = level.getEntitiesInTiles(t.x, t.y, t.x, t.y, false, ItemEntity.class, Particle.class);
 
 				// If there are no other entities than us on the tile.

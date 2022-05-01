@@ -34,7 +34,7 @@ public class OptionsMainMenuDisplay extends Display {
         Menu popupMenu = new Menu.Builder(true, 4, RelPos.CENTER)
             .setShouldRender(false)
             .setSelectable(false)
-            .setEntries(StringEntry.useLines(Color.RED, "A restart is required", "enter to confirm", "escape to cancel"))
+            .setEntries(StringEntry.useLines(Color.RED, true, "A restart is required", "minicraft.display.popup.enter_confirm", "minicraft.display.popup.escape_cancel"))
             .setTitle("Confirm Action")
             .createMenu();
 
@@ -47,7 +47,7 @@ public class OptionsMainMenuDisplay extends Display {
     @Override
 	public void render(Screen screen) {
 		super.render(screen);
-        
+
         // Forcefully render the popup menu above everything else
         if(menus[1].shouldRender) {
             menus[1].render(screen);

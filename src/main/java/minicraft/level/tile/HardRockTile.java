@@ -42,7 +42,7 @@ public class HardRockTile extends Tile {
 			ToolItem tool = (ToolItem) item;
 			if (tool.type == ToolType.Pickaxe && tool.level == 4) {
 				if (player.payStamina(4 - tool.level) && tool.payDurability()) {
-					hurt(level, xt, yt, random.nextInt(10) + (tool.level) * 5 + 10);
+					hurt(level, xt, yt, tool.getDamage());
 					return true;
 				}
 			} else {
