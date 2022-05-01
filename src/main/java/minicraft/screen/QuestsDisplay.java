@@ -184,10 +184,12 @@ public class QuestsDisplay extends Display {
 		unlockedQuests.add(quest);
 		Game.notifications.add(Localization.getLocalized("minicraft.notification.quest_unlocked") + " " + Localization.getLocalized(name));
 	}
-	public static void doneQuest(String name) {
+	public static void doneQuest(String name) { doneQuest(name, true); }
+	public static void doneQuest(String name, boolean mustUnlocked) {
 		Quest quest = quests.get(name);
 		if (quest == null) return;
 		if (doneQuests.contains(quest)) return;
+		if (mustUnlocked && !quest.getUnlocked()) return;
 		doneQuests.add(quest);
 		Game.notifications.add(Localization.getLocalized("minicraft.notification.quest_done") + " " + Localization.getLocalized(name));
 		for (String q : quest.getUnlocks()) unlockQuest(q);
@@ -282,6 +284,8 @@ public class QuestsDisplay extends Display {
 		boolean isUnlocked = quest.getUnlocked();
 		boolean isDone = doneQuests.contains(quest);
 		e.add(isUnlocked? isDone? new StringEntry("Done", Color.GREEN): new StringEntry("Unlocked", Color.WHITE): new StringEntry("Locked", Color.GRAY));
+		e.add(new StringEntry(""));
+		e.add(new StringEntry("Status: "+(questStatus.get(quest.id) == null? "None": questStatus.get(quest.id).toString())));
 		e.add(new StringEntry(""));
 		for (String s : Localization.getLocalized(quest.description).split("\n")) e.add(new StringEntry(s));
 		menus[0].shouldRender = false;
