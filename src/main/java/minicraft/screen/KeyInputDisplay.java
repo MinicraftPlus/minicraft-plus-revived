@@ -1,5 +1,6 @@
 package minicraft.screen;
 
+import java.util.Arrays;
 import java.util.stream.Stream;
 
 import minicraft.core.Game;
@@ -46,7 +47,7 @@ public class KeyInputDisplay extends Display {
 				.createMenu(),
 
 			popupBuilder
-				.setEntries(StringEntry.useLines(Color.RED, "Confirm resetting key bindings.1", "Confirm resetting key bindings.2", "Confirm resetting key bindings.3", "enter to confirm", "escape to cancel"))
+				.setEntries(StringEntry.useLines(Color.RED, true, "minicraft.display.key_input.confirm_popup", "minicraft.display.keys_desc.enter_confirm", "minicraft.display.keys_desc.escape_cancel"))
 				.setTitle("Confirm Action")
 				.createMenu()
 		};
