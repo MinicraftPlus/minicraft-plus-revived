@@ -8,6 +8,7 @@ import java.util.Random;
 import java.util.stream.Collectors;
 
 import org.json.JSONObject;
+import org.tinylog.Logger;
 
 import minicraft.core.Game;
 import minicraft.saveload.Load;
@@ -22,7 +23,8 @@ public class BookData {
 	public static final String instructions = loadStaticBook("instructions");
 	public static final String antVenomBook = loadStaticBook("antidous");
 	public static final String storylineGuide = loadStaticBook("story_guide");
-	
+	private static String saveDir;
+
 	private static String loadStaticBook(String bookTitle) {
 		String book;
 		try {
@@ -32,7 +34,7 @@ public class BookData {
 			ex.printStackTrace();
 			book = "";
 		}
-		
+
 		return book;
 	}
 
@@ -41,6 +43,7 @@ public class BookData {
 	public boolean editable;
 	public String author;
 	public final String id;
+
 	public BookData(String id, String title, String content, boolean editable, String author) {
 		this.id = id;
 		this.title = title;
@@ -57,15 +60,26 @@ public class BookData {
 
 	public static BookData loadBook(String bookID) {
 		try {
-			return new BookData(new JSONObject(Load.loadFromFile(Game.gameDir + "/saves/" + WorldSelectDisplay.getWorldName() + "/books/" + bookID + ".book", true)));
+			updateSaveDir();
+			return new BookData(new JSONObject(Load.loadFromFile(saveDir + bookID + ".book", true)));
 		} catch (IOException e) {
+			Logger.error("Cannot load book: "+bookID);
+			if (!new File(saveDir + bookID + ".book").exists()) {
+				Logger.warn("Book "+bookID+" does not exist, creating new book.");
+				return new BookData(bookID, "", "", true, "");
+			}
 			e.printStackTrace();
 			return new BookData(bookID, "", "", false, "");
 		}
 	}
 
+	private static void updateSaveDir() {
+		saveDir = Game.gameDir + "/saves/" + WorldSelectDisplay.getWorldName() + "/books/";
+	}
+
 	private static String genNewID() {
-		File dir = new File(Game.gameDir + "/saves/" + WorldSelectDisplay.getWorldName() + "/books/");
+		updateSaveDir();
+		File dir = new File(saveDir);
 		dir.mkdirs();
 		List<String> existIDs = Arrays.asList(dir.list((file, name) -> name.endsWith(".book"))).stream().map(b -> b.substring(0, 8)).collect(Collectors.toList());
 		boolean valid = false;
@@ -82,13 +96,15 @@ public class BookData {
 	}
 
 	public static void saveBook(BookData book) {
-		new File(Game.gameDir + "/saves/" + WorldSelectDisplay.getWorldName() + "/books/").mkdirs();
+		updateSaveDir();
+		new File(saveDir).mkdirs();
 		JSONObject json = new JSONObject();
 		json.put("id", book.id);
 		json.put("title", book.title);
 		json.put("content", book.content);
 		json.put("editable", book.editable);
 		json.put("author", book.author);
+
 		try {
 			Save.writeJSONToFile(Game.gameDir + "/saves/" + WorldSelectDisplay.getWorldName() + "/books/" + book.id + ".book", json.toString());
 		} catch (IOException e) {

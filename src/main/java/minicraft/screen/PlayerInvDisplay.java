@@ -12,14 +12,15 @@ import minicraft.gfx.Screen;
 import minicraft.screen.entry.StringEntry;
 
 public class PlayerInvDisplay extends Display {
-	
+
 	private final Player player;
 	private String itemDescription = "";
 	private Menu.Builder builder;
 
 	public PlayerInvDisplay(Player player) {
 		builder = new Menu.Builder(true, 3, RelPos.TOP_LEFT);
-		
+		selection = 0;
+		this.player = player;
 		Menu[] menus = new Menu[2];
 		menus[0] = new InventoryMenu(player, player.getInventory(), "Inventory");
 		itemDescription = player.getInventory().get(menus[0].getSelection()).getDescription();
@@ -28,10 +29,8 @@ public class PlayerInvDisplay extends Display {
 			.setSelectable(false)
 			.createMenu();
 		this.menus = menus;
-		selection = 0;
-		this.player = player;
 	}
-	
+
 	@Override
 	public void tick(InputHandler input) {
 		super.tick(input);
@@ -39,7 +38,7 @@ public class PlayerInvDisplay extends Display {
 			Game.exitDisplay();
 			return;
 		}
-		
+
 		if(input.getKey("attack").clicked && menus[0].getNumOptions() > 0) {
 			player.activeItem = player.getInventory().remove(menus[0].getSelection());
 			Game.exitDisplay();
@@ -55,7 +54,7 @@ public class PlayerInvDisplay extends Display {
 			.createMenu(); // This resizes menu
 		// Searcher help text
 		String text = "(" + Game.input.getMapping("SEARCHER-BAR") + ") " + Localization.getLocalized("to search.");
-		
+
 		// Position the search tip according to the aspect ratio
 		if (OptionsMainMenuDisplay.originalAspectRatio == "16x9") {
 			Font.draw(text, screen, 12, Screen.h/ 2 + 16 + (11) * menus[1].getEntries().length, Color.WHITE);

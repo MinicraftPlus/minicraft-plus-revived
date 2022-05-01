@@ -12,23 +12,17 @@ import minicraft.gfx.Screen;
 import minicraft.util.ClipboardSystem;
 
 public class TextAreaEntry extends InputEntry {
-	private String prompt;
-	private String regex;
-	private int maxLength;
 	private int maxLine;
 	private int lineSpacing;
 
 	private int cursor = 0;
 	private int renderCursor;
-	
+
 	private List<String> userInput;
-	
-	private ChangeListener listener;
+
 	private ChangeListener pageUpListener;
 	private ChangeListener pageDownListener;
 
-	private ClipboardSystem clipboardSystem = new ClipboardSystem();
-	
 	public TextAreaEntry(String prompt) {
 		this(prompt, null, 0, 0, 0);
 	}
@@ -42,10 +36,10 @@ public class TextAreaEntry extends InputEntry {
 		this.maxLength = maxLen > Short.MAX_VALUE ? Short.MAX_VALUE : maxLen;
 		this.maxLine = maxLn;
 		this.lineSpacing = lineSp;
-		
+
 		userInput = new ArrayList<>(Arrays.asList(initValue.split("\n")));
 	}
-	
+
 	@Override
 	public void tick(InputHandler input) {
 		int maxLen = maxLength == 0 ? Short.MAX_VALUE : maxLength;
@@ -66,6 +60,7 @@ public class TextAreaEntry extends InputEntry {
 				}
 			} else cursor = cursorX + maxLen+cursorY*Short.MAX_VALUE;
 			return;
+
 		} else if (input.getKey("cursor-up").clicked) {
 			int cursorX = cursor % Short.MAX_VALUE;
 			int cursorY = cursor / Short.MAX_VALUE;
@@ -82,6 +77,7 @@ public class TextAreaEntry extends InputEntry {
 				}
 			} else cursor = cursorX - maxLen+cursorY*Short.MAX_VALUE;
 			return;
+
 		} else if (input.getKey("cursor-left").clicked) {
 			int cursorX = cursor % Short.MAX_VALUE;
 			int cursorY = cursor / Short.MAX_VALUE;
@@ -91,6 +87,7 @@ public class TextAreaEntry extends InputEntry {
 				cursor = nextString.length() + (cursorY - 1)*Short.MAX_VALUE;
 			} else cursor--;
 			return;
+
 		} else if (input.getKey("cursor-right").clicked) {
 			int cursorX = cursor % Short.MAX_VALUE;
 			int cursorY = cursor / Short.MAX_VALUE;
@@ -100,17 +97,21 @@ public class TextAreaEntry extends InputEntry {
 				cursor = 0+(cursorY+1) * Short.MAX_VALUE;
 			} else cursor++;
 			return;
+
 		} else if (input.getKey("end").clicked) {
 			int cursorY = cursor / Short.MAX_VALUE;
 			cursor = userInput.get(cursorY).length() + cursorY*Short.MAX_VALUE;
 			return;
+
 		} else if (input.getKey("home").clicked) {
 			int cursorY = cursor / Short.MAX_VALUE;
 			cursor = 0+cursorY * Short.MAX_VALUE;
 			return;
+
 		} else if (input.getKey("page-up").clicked) {
 			if (pageUpListener!=null) pageUpListener.onChange(null);
 			return;
+
 		} else if (input.getKey("page-down").clicked) {
 			if (pageDownListener!=null) pageDownListener.onChange(null);
 			return;
@@ -119,7 +120,7 @@ public class TextAreaEntry extends InputEntry {
 		String newChar = input.addKeyTyped("0", regex, false);
 		boolean noAdd = false;
 		if (newChar.length() == 1) noAdd = true;
-		if (newChar.length() > 1) newChar = newChar.substring(1, 2);
+		else if (newChar.length() > 1) newChar = newChar.substring(1, 2);
 		if (newChar.equals("\n")) {
 			int cursorY = cursor / Short.MAX_VALUE;
 			userInput.add(cursorY+1, "");
@@ -176,16 +177,20 @@ public class TextAreaEntry extends InputEntry {
 			cursor = cursorX + cursorY*Short.MAX_VALUE;
 			noAdd = false;
 		}
+
 		if (input.getKey("CTRL-C").clicked) {
 			clipboardSystem.setClipboardContents(userInput.get(cursor / Short.MAX_VALUE));
+
 		} else if (input.getKey("CTRL-X").clicked) {
 			int cursorY = cursor / Short.MAX_VALUE;
 			clipboardSystem.setClipboardContents(userInput.get(cursorY));
 			userInput.remove(cursorY);
 			cursor = cursorY == 0 ? 0 : userInput.get(cursorY-1).length() + (cursorY-1)*Short.MAX_VALUE;
 			noAdd = false;
+
 		} else if (input.getKey("CTRL-SHIFT-C").clicked) {
 			clipboardSystem.setClipboardContents(getUserInput());
+
 		} else if (input.getKey("CTRL-SHIFT-X").clicked) {
 			clipboardSystem.setClipboardContents(getUserInput());
 			userInput.removeAll(userInput);
@@ -193,12 +198,13 @@ public class TextAreaEntry extends InputEntry {
 			cursor = 0;
 			noAdd = false;
 		}
+
 		if (noAdd && listener != null)
 			listener.onChange(userInput);
 	}
-	
+
 	public String getUserInput() { return String.join("\n", userInput); }
-	
+
 	public String[] getLines() {
 		List<String> lns = new ArrayList<>();
 		int newCursor = cursor;
@@ -215,7 +221,9 @@ public class TextAreaEntry extends InputEntry {
 			}
 			lineCount++;
 		}
+
 		renderCursor = newCursor;
+
 		return lns.toArray(new String[0]);
 	}
 
@@ -226,7 +234,7 @@ public class TextAreaEntry extends InputEntry {
 	public int getCursor() { return cursor; }
 
 	public int getRenderCursor() { return renderCursor; }
-	
+
 	public String getPrompt() { return prompt; }
 
 	public void setPrompt(String n) { prompt = n; }
@@ -234,13 +242,13 @@ public class TextAreaEntry extends InputEntry {
 	public void render(Screen screen, int x, int y, boolean isSelected) {
 		Font.drawParagraph(screen, new FontStyle(isValid() ? isSelected ? Color.GREEN : COL_UNSLCT : Color.RED).setXPos(x).setYPos(y), lineSpacing, Arrays.copyOfRange(getLines(), 0, maxLine));
 	}
-	
+
 	public boolean isValid() {
 		boolean match = true;
 		for (String l : userInput) if (!l.matches(regex)) {match = false; break;}
 		return match;
 	}
-	
+
 	public void setChangeListener(ChangeListener l) {
 		listener = l;
 	}
@@ -248,7 +256,7 @@ public class TextAreaEntry extends InputEntry {
 	public void setPageUpListener(ChangeListener l) {
 		pageUpListener = l;
 	}
-	
+
 	public void setPageDownListener(ChangeListener l) {
 		pageDownListener = l;
 	}
