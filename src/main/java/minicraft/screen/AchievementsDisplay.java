@@ -135,7 +135,7 @@ public class AchievementsDisplay extends Display {
      * @return True if setting the achievement was successful.
      */
     public static boolean setAchievement(String id, boolean unlocked) {
-        return setAchievement(id, unlocked, true, true);
+        return setAchievement(id, unlocked, true, false);
     }
 	public static boolean setAchievement(boolean allowCreative, String id, boolean unlocked) { return setAchievement(id, unlocked, true, allowCreative); }
 
