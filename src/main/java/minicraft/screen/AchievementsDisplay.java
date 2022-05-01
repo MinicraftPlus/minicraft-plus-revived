@@ -137,13 +137,13 @@ public class AchievementsDisplay extends Display {
     public static boolean setAchievement(String id, boolean unlocked) {
         return setAchievement(id, unlocked, true, true);
     }
-	public static boolean setAchievement(boolean checkCreative, String id, boolean unlocked) { return setAchievement(id, unlocked, true, checkCreative); }
+	public static boolean setAchievement(boolean allowCreative, String id, boolean unlocked) { return setAchievement(id, unlocked, true, allowCreative); }
 
-	private static boolean setAchievement(String id, boolean unlocked, boolean save, boolean checkCreative) {
+	private static boolean setAchievement(String id, boolean unlocked, boolean save, boolean allowCreative) {
         Achievement a = achievements.get(id);
 
 		// Return if it is in creative mode
-		if (checkCreative && !Game.isMode("creative")) return false;
+		if (!allowCreative && Game.isMode("creative")) return false;
         // Return if we didn't find any achievements.
         if (a == null) return false;
 
