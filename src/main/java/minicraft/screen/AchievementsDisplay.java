@@ -135,12 +135,15 @@ public class AchievementsDisplay extends Display {
      * @return True if setting the achievement was successful.
      */
     public static boolean setAchievement(String id, boolean unlocked) {
-        return setAchievement(id, unlocked, true);
+        return setAchievement(id, unlocked, true, true);
     }
+	public static boolean setAchievement(boolean checkCreative, String id, boolean unlocked) { return setAchievement(id, unlocked, true, checkCreative); }
 
-    private static boolean setAchievement(String id, boolean unlocked, boolean save) {
+	private static boolean setAchievement(String id, boolean unlocked, boolean save, boolean checkCreative) {
         Achievement a = achievements.get(id);
 
+		// Return if it is in creative mode
+		if (checkCreative && !Game.isMode("creative")) return false;
         // Return if we didn't find any achievements.
         if (a == null) return false;
 
@@ -211,7 +214,7 @@ public class AchievementsDisplay extends Display {
      */
     public static void unlockAchievements(JSONArray unlockedAchievements) {
         for (Object id : unlockedAchievements.toList()) {
-            if (!setAchievement(id.toString(), true, false)) {
+            if (!setAchievement(id.toString(), true, false, false)) {
                 Logger.warn("Could not load unlocked achievement with name {}.", id.toString());
             }
         }
