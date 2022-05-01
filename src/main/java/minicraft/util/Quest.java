@@ -24,4 +24,6 @@ public class Quest {
     public boolean getUnlocked() { return unlocked; }
 
     public void lock() { unlocked = false; }
+
+	public ArrayList<String> getUnlocks() { return unlocks; }
 }

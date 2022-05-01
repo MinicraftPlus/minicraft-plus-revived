@@ -2,7 +2,7 @@
     {
         "id": "minicraft.quest.get_wood",
         "desc": "minicraft.quest.get_wood.desc",
-        "unlocks": [],
+        "unlocks": ["minicraft.quest.kill"],
         "unlocked": true
     },
     {
