@@ -245,7 +245,10 @@ public class Renderer extends Game {
 				Updater.notetick = 0;
 			}
 			List<String> print = new ArrayList<>();
-			for (String n : notifications) for (String l : Font.getLines(n, Screen.w, Screen.h, 0)) print.add(l);
+			for (String n : notifications) {
+				for (String l : Font.getLines(n, Screen.w, Screen.h, 0))
+					print.add(l);
+			}
 
 			// Draw each current notification, with shadow text effect.
 			FontStyle style = new FontStyle(Color.WHITE).setShadowType(Color.DARK_GRAY, false)
