@@ -34,7 +34,7 @@ public class OptionsMainMenuDisplay extends Display {
         Menu popupMenu = new Menu.Builder(true, 4, RelPos.CENTER)
             .setShouldRender(false)
             .setSelectable(false)
-            .setEntries(StringEntry.useLines(Color.RED, true, "A restart is required", "minicraft.display.keys_desc.enter_confirm", "minicraft.display.keys_desc.escape_cancel"))
+            .setEntries(StringEntry.useLines(Color.RED, true, "A restart is required", "minicraft.display.pop_up.enter_confirm", "minicraft.display.pop_up.escape_cancel"))
             .setTitle("Confirm Action")
             .createMenu();
 
