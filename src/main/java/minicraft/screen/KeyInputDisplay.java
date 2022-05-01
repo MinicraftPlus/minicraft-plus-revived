@@ -47,7 +47,7 @@ public class KeyInputDisplay extends Display {
 				.createMenu(),
 
 			popupBuilder
-				.setEntries(StringEntry.useLines(Color.RED, "minicraft.display.key_input.confirm_popup", "minicraft.display.pop_up.enter_confirm", "minicraft.display.pop_up.escape_cancel"))
+				.setEntries(StringEntry.useLines(Color.RED, "minicraft.display.key_input.confirm_popup", "minicraft.display.popup.enter_confirm", "minicraft.display.popup.escape_cancel"))
 				.setTitle("Confirm Action")
 				.createMenu()
 		};
