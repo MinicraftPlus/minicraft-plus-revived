@@ -14,18 +14,19 @@ public class ExplodedTile extends Tile {
 			return !isSide || tile.connectsToLiquid();
 		}
 	};
-	
+
 	protected ExplodedTile(String name) {
 		super(name, sprite);
 		connectsToSand = true;
 		connectsToFluid = true;
 	}
-	
-	public void steppedOn(Level level, int x, int y, Entity entity) {
-		if (entity instanceof Mob)
-			((Mob)entity).hurt(this, x, y, 50);
-	}
-	
+
+	// What is the use of this code?
+	// public void steppedOn(Level level, int x, int y, Entity entity) {
+	// 	if (entity instanceof Mob)
+	// 		((Mob)entity).hurt(this, x, y, 50);
+	// }
+
 	public boolean mayPass(Level level, int x, int y, Entity e) {
 		return true;
 	}
