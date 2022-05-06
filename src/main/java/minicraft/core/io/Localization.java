@@ -317,6 +317,7 @@ public class Localization {
 				// Convert language tag into locale.
 				Locale lang = Locale.forLanguageTag(data.substring(data.indexOf('_') + 1));
 
+				
 				localizationFiles.put(lang, path);
 			} catch (StringIndexOutOfBoundsException e) {
 				Logger.error("Title of localization file {} is invalid.", path);

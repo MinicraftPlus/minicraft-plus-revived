@@ -145,9 +145,11 @@ public class ResourcePackDisplay extends Display {
 					// Load textures
 					HashMap<String, ZipEntry> textures = resources.get("textures");
 
-					// No need to continue if there aren't any sheets to load.
-					if (textures == null) return;
-					if (textures.isEmpty()) return;
+					// Load default sheets instead if there aren't any sheets to load.
+					if (textures == null || textures.isEmpty()) {
+						Renderer.screen.setSheets(sheets[0], sheets[1], sheets[2], sheets[3]);
+						return;
+					}
 
 					for (int i = 0; i < SHEET_NAMES.length; i++) {
 						ZipEntry entry = textures.get(SHEET_NAMES[i]);
@@ -199,11 +201,12 @@ public class ResourcePackDisplay extends Display {
 		if (zipFile != null) {
 			ArrayList<String> paths = new ArrayList<>();
 			HashMap<String, HashMap<String, ZipEntry>> resources = getPackFromZip(zipFile);
-			for (Entry<String, ZipEntry> entry : resources.get("localization").entrySet()) {
-				if (entry.getKey().endsWith(".json")) {
-					paths.add(loadedPack + "/" + entry.getKey());
+			if (resources.containsKey("localization"))
+				for (Entry<String, ZipEntry> entry : resources.get("localization").entrySet()) {
+					if (entry.getKey().endsWith(".json")) {
+						paths.add(loadedPack + "/" + entry.getKey());
+					}
 				}
-			}
 
 			Localization.updateLocalizationFiles(paths.toArray(new String[0]));
 		}
