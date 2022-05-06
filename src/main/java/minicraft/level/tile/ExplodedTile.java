@@ -21,12 +21,6 @@ public class ExplodedTile extends Tile {
 		connectsToFluid = true;
 	}
 
-	// What is the use of this code?
-	// public void steppedOn(Level level, int x, int y, Entity entity) {
-	// 	if (entity instanceof Mob)
-	// 		((Mob)entity).hurt(this, x, y, 50);
-	// }
-
 	public boolean mayPass(Level level, int x, int y, Entity e) {
 		return true;
 	}

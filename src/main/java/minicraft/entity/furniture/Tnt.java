@@ -24,7 +24,7 @@ import minicraft.screen.AchievementsDisplay;
 public class Tnt extends Furniture implements ActionListener {
 	private static int FUSE_TIME = 90;
 	private static int BLAST_RADIUS = 32;
-	private static int BLAST_DAMAGE = 30;
+	private static int BLAST_DAMAGE = 80;
 
 	private int ftik = 0;
 	private boolean fuseLit = false;
