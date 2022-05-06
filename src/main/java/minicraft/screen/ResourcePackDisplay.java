@@ -199,16 +199,16 @@ public class ResourcePackDisplay extends Display {
 
 		// Load the custom loc as long as this isn't the default pack.
 		if (zipFile != null) {
-			ArrayList<String> paths = new ArrayList<>();
+			HashMap<String, String> locs = new HashMap<>();
 			HashMap<String, HashMap<String, ZipEntry>> resources = getPackFromZip(zipFile);
 			if (resources.containsKey("localization"))
 				for (Entry<String, ZipEntry> entry : resources.get("localization").entrySet()) {
 					if (entry.getKey().endsWith(".json")) {
-						paths.add(loadedPack + "/" + entry.getKey());
+						locs.put(entry.getKey(), Localization.loadJSONFromZipEntry(zipFile, entry.getValue()));
 					}
 				}
 
-			Localization.updateLocalizationFiles(paths.toArray(new String[0]));
+			Localization.updateLocalizationFiles(locs, true);
 		}
 	}
 
