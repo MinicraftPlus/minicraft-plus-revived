@@ -5,7 +5,6 @@ import java.util.Arrays;
 
 import minicraft.core.Game;
 import minicraft.core.World;
-import minicraft.core.io.Settings;
 import minicraft.gfx.Point;
 import minicraft.gfx.SpriteSheet;
 import minicraft.saveload.Save;

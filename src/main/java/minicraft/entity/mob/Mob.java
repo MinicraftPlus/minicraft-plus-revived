@@ -1,7 +1,5 @@
 package minicraft.entity.mob;
 
-import java.util.List;
-
 import minicraft.core.Game;
 import minicraft.entity.Direction;
 import minicraft.entity.Entity;
