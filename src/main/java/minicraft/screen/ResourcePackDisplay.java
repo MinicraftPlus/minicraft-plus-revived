@@ -4,6 +4,7 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.*;
+import java.util.Map.Entry;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 
@@ -134,12 +135,10 @@ public class ResourcePackDisplay extends Display {
 
 	private void updateSheets(@Nullable ZipFile zipFile) {
 		try {
-			SpriteSheet[] sheets = new SpriteSheet[SHEET_NAMES.length];
+			// Load default sprite sheet.
+			SpriteSheet[] sheets = Renderer.loadDefaultSpriteSheets();
 
-			if (zipFile == null) {
-				// Load default sprite sheet.
-				sheets = Renderer.loadDefaultSpriteSheets();
-			} else {
+			if (zipFile != null) {
 				try {
 					HashMap<String, HashMap<String, ZipEntry>> resources = getPackFromZip(zipFile);
 
@@ -199,11 +198,10 @@ public class ResourcePackDisplay extends Display {
 		// Load the custom loc as long as this isn't the default pack.
 		if (zipFile != null) {
 			ArrayList<String> paths = new ArrayList<>();
-			Enumeration<? extends ZipEntry> entries = zipFile.entries();
-			while (entries.hasMoreElements()) {
-				ZipEntry ent = entries.nextElement();
-				if (ent.getName().startsWith("localization/") && ent.getName().endsWith(".json")) {
-					paths.add(loadedPack + "/" + ent.getName());
+			HashMap<String, HashMap<String, ZipEntry>> resources = getPackFromZip(zipFile);
+			for (Entry<String, ZipEntry> entry : resources.get("localization").entrySet()) {
+				if (entry.getKey().endsWith(".json")) {
+					paths.add(loadedPack + "/" + entry.getKey());
 				}
 			}
 
