@@ -16,26 +16,25 @@ import minicraft.screen.entry.StringEntry;
 public class PlayerDeathDisplay extends Display {
 	// this is an IMPORTANT bool, determines if the user should respawn or not. :)
 	public static boolean shouldRespawn = true;
-	
+
 	public PlayerDeathDisplay() {
 		super(false, false);
-		
-		ArrayList<ListEntry> entries = new ArrayList<>();
-		entries.addAll(Arrays.asList(
+
+		ArrayList<ListEntry> entries = new ArrayList<>(Arrays.asList(
 			new StringEntry("Time: " + InfoDisplay.getTimeString()),
 			new StringEntry("Score: " + Game.player.getScore()),
 			new BlankEntry()
 		));
-		
-		if(!Settings.get("mode").equals("hardcore")) {
+
+		if(!Game.isMode("hardcore")) {
 			entries.add(new SelectEntry("Respawn", () -> {
 				World.resetGame();
-				Game.setDisplay(null); //sets the menu to nothing
+				Game.setDisplay(null);
 			}));
 		}
 
 		entries.add(new SelectEntry("Quit", () -> Game.setDisplay(new TitleDisplay())));
-		
+
 		menus = new Menu[]{
 			new Menu.Builder(true, 0, RelPos.LEFT, entries)
 				.setPositioning(new Point(SpriteSheet.boxWidth, SpriteSheet.boxWidth * 3), RelPos.BOTTOM_RIGHT)
@@ -43,6 +42,5 @@ public class PlayerDeathDisplay extends Display {
 				.setTitlePos(RelPos.TOP_LEFT)
 				.createMenu()
 		};
-		
 	}
 }
