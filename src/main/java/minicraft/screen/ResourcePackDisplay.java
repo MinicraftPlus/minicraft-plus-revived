@@ -52,7 +52,7 @@ public class ResourcePackDisplay extends Display {
 
 		return resourceList;
 	}
-	
+
 	public ResourcePackDisplay() {
 		super(true, true,
 				new Menu.Builder(false, 2, RelPos.CENTER, getPacksAsEntries())
@@ -246,8 +246,8 @@ public class ResourcePackDisplay extends Display {
 			// Only allow two levels of folders.
 			if (path.length <= 2) {
 				// Check if entry is a folder. If it is, add it to the first map, if not, add it to the second map.
+				String[] validNames = { "textures", "localization", "sound" };
 				if (entry.isDirectory()) {
-					String[] validNames = { "textures", "localization", "sound" };
 					for (String name : validNames) {
 						if (path[0].equals(name)) {
 							resources.put(path[0], new HashMap<>());
@@ -258,7 +258,16 @@ public class ResourcePackDisplay extends Display {
 					if (path.length == 1) continue;
 
 					HashMap<String, ZipEntry> directory = resources.get(path[0]);
-					if (directory == null) continue;
+					if (directory == null) {
+						// If it is not exist, create it.
+						for (String name : validNames) {
+							if (path[0].equals(name)) {
+								resources.put(path[0], new HashMap<>());
+							}
+						}
+						directory = resources.get(path[0]);
+						if (directory == null) continue;
+					};
 
 					String[] validSuffixes = { ".json", ".wav", ".png" };
 					for (String suffix : validSuffixes) {
