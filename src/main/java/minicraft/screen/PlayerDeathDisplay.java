@@ -20,17 +20,16 @@ public class PlayerDeathDisplay extends Display {
 	public PlayerDeathDisplay() {
 		super(false, false);
 
-		ArrayList<ListEntry> entries = new ArrayList<>();
-		entries.addAll(Arrays.asList(
+		ArrayList<ListEntry> entries = new ArrayList<>(Arrays.asList(
 			new StringEntry("Time: " + InfoDisplay.getTimeString()),
 			new StringEntry("Score: " + Game.player.getScore()),
 			new BlankEntry()
 		));
 
-		if(!Settings.get("mode").toString().equalsIgnoreCase("hardcore")) {
+		if(!Game.isMode("hardcore")) {
 			entries.add(new SelectEntry("Respawn", () -> {
 				World.resetGame();
-				Game.setDisplay(null); //sets the menu to nothing
+				Game.setDisplay(null);
 			}));
 		}
 
@@ -43,6 +42,5 @@ public class PlayerDeathDisplay extends Display {
 				.setTitlePos(RelPos.TOP_LEFT)
 				.createMenu()
 		};
-
 	}
 }
