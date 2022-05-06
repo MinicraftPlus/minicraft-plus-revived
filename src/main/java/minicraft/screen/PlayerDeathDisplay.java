@@ -8,6 +8,7 @@ import minicraft.core.World;
 import minicraft.core.io.Settings;
 import minicraft.gfx.Point;
 import minicraft.gfx.SpriteSheet;
+import minicraft.saveload.Save;
 import minicraft.screen.entry.BlankEntry;
 import minicraft.screen.entry.ListEntry;
 import minicraft.screen.entry.SelectEntry;
@@ -32,7 +33,11 @@ public class PlayerDeathDisplay extends Display {
 				Game.setDisplay(null);
 			}));
 		}
-
+		
+		entries.add(new SelectEntry("Save and Quit", () -> {
+			new Save(WorldSelectDisplay.getWorldName());
+			Game.setDisplay(new TitleDisplay());
+		}));
 		entries.add(new SelectEntry("Quit", () -> Game.setDisplay(new TitleDisplay())));
 
 		menus = new Menu[]{
