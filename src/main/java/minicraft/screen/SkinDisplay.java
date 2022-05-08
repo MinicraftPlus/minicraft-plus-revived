@@ -15,7 +15,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.tinylog.Logger;
 
-import minicraft.core.FileHandler;
+import minicraft.core.io.FileHandler;
 import minicraft.core.Game;
 import minicraft.core.Renderer;
 import minicraft.core.io.InputHandler;

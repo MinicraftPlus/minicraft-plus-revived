@@ -9,7 +9,7 @@ import java.util.zip.ZipFile;
 
 import javax.imageio.ImageIO;
 
-import minicraft.core.FileHandler;
+import minicraft.core.io.FileHandler;
 import minicraft.core.Game;
 import minicraft.core.Renderer;
 import minicraft.core.io.Localization;
@@ -52,7 +52,7 @@ public class ResourcePackDisplay extends Display {
 
 		return resourceList;
 	}
-	
+
 	public ResourcePackDisplay() {
 		super(true, true,
 				new Menu.Builder(false, 2, RelPos.CENTER, getPacksAsEntries())

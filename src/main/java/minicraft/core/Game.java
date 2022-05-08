@@ -31,7 +31,7 @@ import minicraft.screen.TitleDisplay;
 import org.tinylog.Logger;
 
 public class Game {
-	Game() {} // Can't instantiate the Game class.
+	protected Game() {} // Can't instantiate the Game class.
 
 	public static boolean debug = false;
 

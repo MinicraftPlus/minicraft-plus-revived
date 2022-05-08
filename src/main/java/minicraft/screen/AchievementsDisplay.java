@@ -15,7 +15,7 @@ import minicraft.saveload.Save;
 import minicraft.screen.entry.ListEntry;
 import minicraft.screen.entry.SelectEntry;
 import minicraft.screen.entry.StringEntry;
-import minicraft.util.Achievement;
+import minicraft.core.Achievement;
 import org.jetbrains.annotations.Nullable;
 import org.json.JSONArray;
 import org.json.JSONException;

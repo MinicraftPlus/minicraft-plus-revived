@@ -7,7 +7,7 @@ import java.util.Random;
 import org.jetbrains.annotations.Nullable;
 
 import minicraft.core.Game;
-import minicraft.core.Network;
+import minicraft.network.Network;
 import minicraft.core.Updater;
 import minicraft.core.World;
 import minicraft.entity.mob.Player;
@@ -17,7 +17,7 @@ import minicraft.item.Item;
 import minicraft.level.Level;
 
 public abstract class Entity implements Tickable {
-	
+
 	/* I guess I should explain something real quick. The coordinates between tiles and entities are different.
 	 * The world coordinates for tiles is 128x128
 	 * The world coordinates for entities is 2048x2048
@@ -29,7 +29,7 @@ public abstract class Entity implements Tickable {
 	 *
 	 * These bit shift operators are used to easily get the X & Y coordinates of a tile that the entity is standing on.
 	 */
-	
+
 	// Entity coordinates are per pixel, not per tile; each tile is 16x16 entity pixels.
 	protected final Random random = new Random();
 	public int x, y; // x, y entity coordinates on the map
@@ -37,13 +37,13 @@ public abstract class Entity implements Tickable {
 	private boolean removed; // Determines if the entity is removed from it's level; checked in Level.java
 	protected Level level; // The level that the entity is on
 	public int col; // Current color.
-	
+
 	public int eid; // This is intended for multiplayer, but I think it could be helpful in single player, too. certainly won't harm anything, I think... as long as finding a valid id doesn't take long...
 	private String prevUpdates = ""; // Holds the last value returned from getUpdateString(), for comparison with the next call.
 	private String curDeltas = ""; // Holds the updates returned from the last time getUpdates() was called.
 	private boolean accessedUpdates = false;
 	private long lastUpdate;
-	
+
 	/**
 	 * Default constructor for the Entity class.
 	 * Assings null/none values to the instace variables.
@@ -55,50 +55,50 @@ public abstract class Entity implements Tickable {
 	public Entity(int xr, int yr) { // Add color to this later, in color update
 		this.xr = xr;
 		this.yr = yr;
-		
+
 		level = null;
 		removed = true;
 		col = 0;
-		
+
 		eid = -1;
 		lastUpdate = System.nanoTime();
 	}
-	
+
 	public abstract void render(Screen screen); // Used to render the entity on screen.
-	
+
 	@Override
 	public abstract void tick(); // Used to update the entity.
-	
+
 	/**
 	 * Returns true if the entity is removed from the level, otherwise false.
 	 * @return removed
 	 */
 	public boolean isRemoved() { return removed/* || level == null*/; }
-	
+
 	/**
 	 * Returns the level which this entity belongs in.
 	 * @return level
 	 */
 	public Level getLevel() { return level; }
-	
+
 	/** Returns a Rectangle instance using the defined bounds of the entity. */
 	protected Rectangle getBounds() { return new Rectangle(x, y, xr*2, yr*2, Rectangle.CENTER_DIMS); }
-	
+
 	/** Returns true if this entity is found in the rectangle specified by given two coordinates. */
 	public boolean isTouching(Rectangle area) { return area.intersects(getBounds()); }
-	
+
 	/** Returns if this entity stops other solid entities from moving. */
 	public boolean isSolid() { return true; } // Most entities are solid
-	
+
 	/** Determines if the given entity should prevent this entity from moving. */
 	public boolean blocks(Entity e) { return isSolid() && e.isSolid(); }
-	
+
 	public boolean canSwim() { return false; } // Determines if the entity can swim (extended in sub-classes)
 	public boolean canWool() { return false; } // This, strangely enough, determines if the entity can walk on wool; among some other things..?
-	
+
 	public int getLightRadius() { return 0; } // Used for lanterns... and player? that might be about it, though, so idk if I want to put it here.
-	
-	
+
+
 	/** If this entity is touched by another entity (extended by sub-classes) */
 	protected void touchedBy(Entity entity) {}
 
@@ -112,11 +112,11 @@ public abstract class Entity implements Tickable {
 	public boolean interact(Player player, @Nullable Item item, Direction attackDir) {
 		return false;
 	}
-	
+
 	/** Moves an entity horizontally and vertically. Returns whether entity was unimpeded in it's movement.  */
 	public boolean move(int xd, int yd) {
 		if (Updater.saving || (xd == 0 && yd == 0)) return true; // Pretend that it kept moving
-		
+
 		boolean stopped = true; // Used to check if the entity has BEEN stopped, COMPLETELY; below checks for a lack of collision.
 		if (move2(xd, 0)) stopped = false; // Becomes false if horizontal movement was successful.
 		if (move2(0, yd)) stopped = false; // Becomes false if vertical movement was successful.
@@ -125,10 +125,10 @@ public abstract class Entity implements Tickable {
 			int yt = y >> 4; // The y tile coordinate that the entity is standing on.
 			level.getTile(xt, yt).steppedOn(level, xt, yt, this); // Calls the steppedOn() method in a tile's class. (used for tiles like sand (footprints) or lava (burning))
 		}
-		
+
 		return !stopped;
 	}
-	
+
 	/**
 	 * Moves the entity a long only one direction.
 	 * If xd != 0 then ya should be 0.
@@ -140,21 +140,21 @@ public abstract class Entity implements Tickable {
 	 */
 	protected boolean move2(int xd, int yd) {
 		if (xd == 0 && yd == 0) return true; // Was not stopped
-		
+
 		boolean interact = true;//!Game.isValidClient() || this instanceof ClientTickable;
-		
+
 		// Gets the tile coordinate of each direction from the sprite...
 		int xto0 = ((x) - xr) >> 4; // To the left
 		int yto0 = ((y) - yr) >> 4; // Above
 		int xto1 = ((x) + xr) >> 4; // To the right
 		int yto1 = ((y) + yr) >> 4; // Below
-		
+
 		// Gets same as above, but after movement.
 		int xt0 = ((x + xd) - xr) >> 4;
 		int yt0 = ((y + yd) - yr) >> 4;
 		int xt1 = ((x + xd) + xr) >> 4;
 		int yt1 = ((y + yd) + yr) >> 4;
-		
+
 		//boolean blocked = false; // If the next tile can block you.
 		for (int yt = yt0; yt <= yt1; yt++) { // Cycles through y's of tile after movement
 			for (int xt = xt0; xt <= xt1; xt++) { // Cycles through x's of tile after movement
@@ -168,10 +168,10 @@ public abstract class Entity implements Tickable {
 				}
 			}
 		}
-		
+
 		// These lists are named as if the entity has already moved-- it hasn't, though.
 		List<Entity> wasInside = level.getEntitiesInRect(getBounds()); // Gets all of the entities that are inside this entity (aka: colliding) before moving.
-		
+
 		int xr = this.xr, yr = this.yr;
 		List<Entity> isInside = level.getEntitiesInRect(new Rectangle(x+xd, y+yd, xr*2, yr*2, Rectangle.CENTER_DIMS)); // Gets the entities that this entity will touch once moved.
 		if (interact) {
@@ -186,36 +186,36 @@ public abstract class Entity implements Tickable {
 					e.touchedBy(this); // Call the method. ("touch" the entity)
 			}
 		}
-		
+
 		isInside.removeAll(wasInside); // Remove all the entities that this one is already touching before moving.
 		for (Entity e : isInside) {
 			if (e == this) continue; // Can't interact with yourself
 			if (e.blocks(this)) return false; // If the entity prevents this one from movement, don't move.
 		}
-		
+
 		// Finally, the entity moves!
 		x += xd;
 		y += yd;
-		
+
 		return true; // the move was successful.
 	}
 
 	/** This exists as a way to signify that the entity has been removed through player action and/or world action; basically, it's actually gone, not just removed from a level because it's out of range or something. Calls to this method are used to, say, drop items. */
 	public void die() { remove(); }
-	
+
 	/** Removes the entity from the level. */
 	public void remove() {
 		if (removed && !(this instanceof ItemEntity)) // Apparently this happens fairly often with item entities.
 			System.out.println("Note: remove() called on removed entity: " + this);
-		
+
 		removed = true;
-		
+
 		if (level == null)
 			System.out.println("Note: remove() called on entity with no level reference: " + getClass());
 		else
 			level.remove(this);
 	}
-	
+
 	/** This should ONLY be called by the Level class. To properly remove an entity from a level, use level.remove(entity) */
 	public void remove(Level level) {
 		if (level != this.level) {
@@ -225,40 +225,40 @@ public abstract class Entity implements Tickable {
 			this.level = null;
 		}
 	}
-	
+
 	/** This should ONLY be called by the Level class. To properly add an entity to a level, use level.add(entity) */
 	public void setLevel(Level level, int x, int y) {
 		if (level == null) {
 			System.out.println("Tried to set level of entity " + this + " to a null level; Should use remove(level)");
 			return;
 		}
-		
+
 		this.level = level;
 		removed = false;
 		this.x = x;
 		this.y = y;
-		
+
 		if (eid < 0)
 			eid = Network.generateUniqueEntityId();
 	}
-	
+
 	public boolean isWithin(int tileRadius, Entity other) {
 		if (level == null || other.getLevel() == null) return false;
 		if (level.depth != other.getLevel().depth) return false; // Obviously, if they are on different levels, they can't be next to each other.
-		
+
 		double distance = Math.abs(Math.hypot(x - other.x, y - other.y)); // Calculate the distance between the two entities, in entity coordinates.
-		
+
 		return Math.round(distance) >> 4 <= tileRadius; // Compare the distance (converted to tile units) with the specified radius.
 	}
-	
+
 	/**
 	 * Returns the closest player to this entity.
 	 * @return the closest player.
 	 */
-	protected Player getClosestPlayer() { 
+	protected Player getClosestPlayer() {
 		return getClosestPlayer(true);
 	}
-	
+
 	/**
 	 * Returns the closes player to this entity.
 	 * If this is called on a player it can return itself.
@@ -268,12 +268,12 @@ public abstract class Entity implements Tickable {
 	protected Player getClosestPlayer(boolean returnSelf) {
 		if (this instanceof Player && returnSelf)
 			return (Player) this;
-		
+
 		if (level == null) return null;
-		
+
 		return level.getClosestPlayer(x, y);
 	}
-	
+
 	/**
 	 * I think this is used to update a entity over a network.
 	 * The server will send a correction of this entity's state
@@ -287,7 +287,7 @@ public abstract class Entity implements Tickable {
 			 updateField(fieldName, val);
 		}
 	}
-	
+
 	/**
 	 * Updates one of the entity's fields based on a string pair.
 	 * Used to parse data from a server.
@@ -312,7 +312,7 @@ public abstract class Entity implements Tickable {
 		}
 		return false;
 	}
-	
+
 	/// I think I'll make these "getUpdates()" methods be an established thing, that returns all the things that can change that you need to account for when updating entities across a server.
 	/// By extension, the update() method should always account for all the variables specified here.
 	/**
@@ -325,7 +325,7 @@ public abstract class Entity implements Tickable {
 		+ "y," + y + ";"
 		+ "level," + (level == null ? "null" : World.lvlIdx(level.depth));
 	}
-	
+
 	/**
 	 * Returns a string representation of this entity.
 	 * @param fetchAll true if all variables should be returned, false if only the ones who have changed should be returned.
@@ -341,7 +341,7 @@ public abstract class Entity implements Tickable {
 			else return getUpdates();
 		}
 	}
-	
+
 	/**
 	 * Determines what has been updated and only return that.
 	 * @return String representation of all the variables which has changed since last time.
@@ -350,23 +350,23 @@ public abstract class Entity implements Tickable {
 		// If the updates have already been fetched and written, but not flushed, then just return those.
 		if (accessedUpdates) return curDeltas;
 		else accessedUpdates = true; // After this they count as accessed.
-		
+
 		/// First, get the current string of values, which includes any subclasses.
 		String updates = getUpdateString();
-		
+
 		if (prevUpdates.length() == 0) {
 			// If there were no values saved last call, our job is easy. But this is only the case the first time this is run.
 			prevUpdates = curDeltas = updates; // Set the update field for next time
 			return updates; // And we're done!
 		}
-		
+
 		/// If we did have updates last time, then save them as an array, before overwriting the update field for next time.
 		String[] curUpdates = updates.split(";");
 		String[] prevUpdates = this.prevUpdates.split(";");
 		this.prevUpdates = updates;
-		
+
 		/// Now, we have the current values, and the previous values, as arrays of key-value pairs sep. by commas. Now, the goal is to separate which are actually *updates*, meaning they are different from last time.
-		
+
 		StringBuilder deltas = new StringBuilder();
 		for (int i = 0; i < curUpdates.length; i++) { // b/c the string always contains the same number of pairs (and the same keys, in the same order), the indexes of cur and prev updates will be the same.
 			/// Loop though each of the updates this call. If it is different from the last one, then add it to the list.
@@ -374,29 +374,29 @@ public abstract class Entity implements Tickable {
 				deltas.append(curUpdates[i]).append(";");
 			}
 		}
-		
+
 		curDeltas = deltas.toString();
-		
+
 		if (curDeltas.length() > 0) curDeltas = curDeltas.substring(0, curDeltas.length() -1); // Cuts off extra ";"
-		
+
 		return curDeltas;
 	}
-	
+
 	/// This marks the entity as having a new state to fetch.
 	public void flushUpdates() { accessedUpdates = false; }
-	
+
 	public String toString() { return getClass().getSimpleName() + getDataPrints(); }
 	protected List<String> getDataPrints() {
 		List<String> prints = new ArrayList<>();
 		prints.add("eid=" + eid);
 		return prints;
 	}
-	
+
 	@Override
 	public final boolean equals(Object other) {
 		return other instanceof Entity && hashCode() == other.hashCode();
 	}
-	
+
 	@Override
 	public final int hashCode() { return eid; }
 }
