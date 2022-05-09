@@ -97,9 +97,9 @@ public class TitleDisplay extends Display {
 				menus[0].updateEntry(1, new LinkEntry(Color.CYAN, "--Select here to Download--", latestVersion.releaseUrl, "Direct link to latest version: " + latestVersion.releaseUrl));
 			}
 			else if (latestVersion.releaseName.length() > 0)
-				menus[0].updateEntry(0, new StringEntry(Localization.getLocalized("You have the latest version."), Color.DARK_GRAY));
+				menus[0].updateEntry(0, new StringEntry("You have the latest version.", Color.DARK_GRAY, true));
 			else
-				menus[0].updateEntry(0, new StringEntry(Localization.getLocalized("Could not check for updates."), Color.RED));
+				menus[0].updateEntry(0, new StringEntry("Could not check for updates.", Color.RED, true));
 		}
 	}
 

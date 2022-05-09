@@ -38,7 +38,7 @@ public class StringEntry extends ListEntry {
 	public StringEntry(String text) {
 		this(text, DEFAULT_COLOR);
 	}
-	public StringEntry(String text, int color) { this(text, color, true); }
+	public StringEntry(String text, int color) { this(text, color, false); }
 	public StringEntry(String text, int color, boolean localize) {
 		setSelectable(false);
 		this.text = localize? Localization.getLocalized(text): text;
