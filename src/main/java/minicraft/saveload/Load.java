@@ -377,8 +377,6 @@ public class Load {
 		Settings.set("sound", json.getBoolean("sound"));
 		Settings.set("autosave", json.getBoolean("autosave"));
 		Settings.set("diff", json.has("diff") ? json.getString("diff") : "Normal");
-		Settings.set("aspectratio", json.has("aspectratio") ? json.getString("aspectratio") : "4x3");
-		Renderer.setAspectRatio(); // Sets the aspect ratio of the game window.
 		Settings.set("fps", json.getInt("fps"));
 
 		if (prefVer.compareTo(new Version("2.1.0-dev1")) > 0) {

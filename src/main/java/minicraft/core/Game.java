@@ -122,6 +122,7 @@ public class Game {
 
 		Localization.changeLanguage((String)Settings.get("language"));
 
+		// Load the selected language.
 		Initializer.createAndDisplayFrame();
 
 		setDisplay(new TitleDisplay()); // Sets menu to the title screen.

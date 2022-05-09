@@ -199,12 +199,12 @@ public class SkinDisplay extends Display {
 		step++;
 
 		// Title.
-		Font.drawCentered(Localization.getLocalized("minicraft.display.skin"), screen, (Screen.h / 2 - 64), Color.WHITE);
+		Font.drawCentered(Localization.getLocalized("minicraft.display.skin"), screen, 16, Color.WHITE);
 
 		int h = 2;
 		int w = 2;
 		int xOffset = Screen.w / 2 - w * 4; // Put this in the center of the screen
-		int yOffset = Screen.h/ 2 - 40; // Player sprite Y position
+		int yOffset = 40; // Player sprite Y position
 
 		int spriteIndex = (step / 40) % 8; // 9 = 8 Frames for sprite
 

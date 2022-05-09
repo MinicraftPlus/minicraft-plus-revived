@@ -8,7 +8,6 @@ Minicraft+ version 2.1.0
 + Added raw obsidian and stone tiles
 + Added totems that can spawn AirWizards
 + Added resource packs
-+ Added an option to change the aspect ratio
 + Re-added sparks, damage particles and items shadows
 + Re-added swimming animation
 + Re-added colored spawners

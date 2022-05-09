@@ -78,7 +78,7 @@ public class ResourcePackDisplay extends Display {
 		super.render(screen);
 
 		// Title
-		Font.drawCentered(Localization.getLocalized("Resource Packs"), screen, (Screen.h / 2 - 64), Color.WHITE);
+		Font.drawCentered(Localization.getLocalized("Resource Packs"), screen, 16, Color.WHITE);
 
 		// Info text at the bottom.
 		Font.drawCentered("Use "+ Game.input.getMapping("cursor-down") + " and " + Game.input.getMapping("cursor-up") + " to move.", screen, Screen.h - 17, Color.DARK_GRAY);
@@ -88,7 +88,7 @@ public class ResourcePackDisplay extends Display {
 		int h = 2;
 		int w = 15;
 		int xo = (Screen.w - w * 8) / 2;
-		int yo = Screen.h / 2 - 44;
+		int yo = 28;
 
 		for (int y = 0; y < h; y++) {
 			for (int x = 0; x < w; x++) {

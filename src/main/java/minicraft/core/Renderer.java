@@ -36,9 +36,8 @@ import javax.imageio.ImageIO;
 public class Renderer extends Game {
 	private Renderer() {}
 
-	public static final int MAX_SIZE = 288;
-	public static int HEIGHT;
-	public static int WIDTH;
+	public static int HEIGHT = 192;
+	public static int WIDTH = 288;
 	static float SCALE = 3;
 
 	public static Screen screen; // Creates the main screen
@@ -77,30 +76,6 @@ public class Renderer extends Game {
 		}
 
 		return new SpriteSheet[] { itemSheet, tileSheet, entitySheet, guiSheet, skinsSheet };
-	}
-
-	public static void setAspectRatio() {
-		int width;
-		int height;
-
-		switch ((String) Settings.get("aspectratio")) {
-			case "4x3":
-				width = 4;
-				height = 3;
-				break;
-			case "16x9":
-				width = 16;
-				height = 9;
-				break;
-			default:
-				width = 16;
-				height = 9;
-				break;
-		}
-
-		double s = Math.min((double) Renderer.MAX_SIZE/width, (double) Renderer.MAX_SIZE/height);
-		Renderer.HEIGHT = (int) (height * s);
-		Renderer.WIDTH = (int) (width * s);
 	}
 
 	public static void initScreen() {
