@@ -9,6 +9,7 @@ import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Locale;
 
 import minicraft.screen.*;
 import org.jetbrains.annotations.Nullable;
@@ -461,12 +462,12 @@ public class Load {
 						if (Tiles.oldids.get(tileID) != null)
 							tilename = Tiles.oldids.get(tileID);
 						else {
-							System.out.println("Tile list doesn't contain tile " + tileID);
+							Logger.warn("Tile list doesn't contain tile " + tileID);
 							tilename = "grass";
 						}
 					}
 
-					if(tilename.equalsIgnoreCase("WOOL") && worldVer.compareTo(new Version("2.0.6-dev4")) < 0) {
+					if (tilename.equalsIgnoreCase("Wool") && worldVer.compareTo(new Version("2.0.6-dev4")) < 0) {
 						switch (Integer.parseInt(extradata.get(tileidx))) {
 							case 1:
 								tilename = "Red Wool";
@@ -486,12 +487,22 @@ public class Load {
 							default:
 								tilename = "Wool";
 						}
+					} else if (l == World.minLevelDepth+1 && tilename.equalsIgnoreCase("Lapis") && worldVer.compareTo(new Version("2.0.3-dev6")) < 0) {
+						if (Math.random() < 0.8) // don't replace *all* the lapis
+							tilename = "Gem Ore";
+					} else if (tilename.equalsIgnoreCase("Cloud Cactus")) {
+
+						// Check the eight tiles around the cloud cactus to see if it is empty.
+						for (int yy = y - 1; yy <= y + 1; yy++) {
+							for (int xx = x - 1; xx <= x + 1; xx++) {
+								if (data.get(xx + yy * lvlw + (hasSeed ? 4 : 3)).equalsIgnoreCase("Infinite Fall")) {
+									tilename = "Infinite Fall";
+									break;
+								}
+							}
+						}
 					}
 
-					if(l == World.minLevelDepth+1 && tilename.equalsIgnoreCase("LAPIS") && worldVer.compareTo(new Version("2.0.3-dev6")) < 0) {
-						if(Math.random() < 0.8) // don't replace *all* the lapis
-							tilename = "Gem Ore";
-					}
 					tiles[tileArrIdx] = Tiles.get(tilename).id;
 					tdata[tileArrIdx] = Short.parseShort(extradata.get(tileidx));
 				}

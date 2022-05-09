@@ -42,9 +42,10 @@ import minicraft.item.Item;
 import minicraft.level.tile.Tile;
 import minicraft.level.tile.Tiles;
 import minicraft.level.tile.TorchTile;
+import org.tinylog.Logger;
 
 public class Level {
-	private Random random = new Random();
+	private final Random random = new Random();
 
 	private static final String[] levelNames = {"Sky", "Surface", "Iron", "Gold", "Lava", "Dungeon"};
 	public static String getLevelName(int depth) { return levelNames[-1 * depth + 1]; }
@@ -53,7 +54,7 @@ public class Level {
 	private static final int MOB_SPAWN_FACTOR = 100; // The chance of a mob actually trying to spawn when trySpawn is called equals: mobCount / maxMobCount * MOB_SPAWN_FACTOR. so, it basically equals the chance, 1/number, of a mob spawning when the mob cap is reached. I hope that makes sense...
 
 	public int w, h; // Width and height of the level
-	private long seed; // The used seed that was used to generate the world
+	private final long seed; // The used seed that was used to generate the world
 
 	public short[] tiles; // An array of all the tiles in the world.
 	public short[] data; // An array of the data of the tiles in the world.
@@ -140,11 +141,11 @@ public class Level {
 			return;
 		}
 
-		if (Game.debug) System.out.println("Making level " + level + "...");
+		Logger.debug("Making level " + level + "...");
 
 		maps = LevelGen.createAndValidateMap(w, h, level);
 		if (maps == null) {
-			System.err.println("Level Gen ERROR: Returned maps array is null");
+			Logger.error("Level generation: Returned maps array is null");
 			return;
 		}
 
@@ -166,7 +167,7 @@ public class Level {
 							Structure.dungeonGate.draw(this, x, y);
 
 						else if (level == 0) { // Surface
-							if (Game.debug) System.out.println("Setting tiles around " + x + "," + y + " to hard rock");
+							Logger.trace("Setting tiles around " + x + "," + y + " to hard rock");
 							setAreaTiles(x, y, 1, Tiles.get("Hard Rock"), 0); // surround the sky stairs with hard rock
 						}
 						else // Any other level, the up-stairs should have dirt on all sides.
