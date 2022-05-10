@@ -23,26 +23,26 @@ import minicraft.level.Level;
 
 public class RockTile extends Tile {
 	private ConnectorSprite sprite = new ConnectorSprite(RockTile.class, new Sprite(18, 6, 3, 3, 1, 3), new Sprite(21, 8, 2, 2, 1, 3), new Sprite(21, 6, 2, 2, 1, 3));
-	
+
 	private boolean dropCoal = false;
 	private int maxHealth = 50;
 
 	private int damage;
-	
+
 	protected RockTile(String name) {
 		super(name, (ConnectorSprite)null);
 		csprite = sprite;
 	}
-	
+
 	public void render(Screen screen, Level level, int x, int y) {
 		sprite.sparse.color = DirtTile.dCol(level.depth);
 		sprite.render(screen, level, x, y);
 	}
-	
+
 	public boolean mayPass(Level level, int x, int y, Entity e) {
 		return false;
 	}
-	
+
 	public boolean hurt(Level level, int x, int y, Mob source, int dmg, Direction attackDir) {
 		dropCoal = false; // Can only be reached when player hits w/o pickaxe, so remove ability to get coal
 		hurt(level, x, y, dmg);
@@ -52,7 +52,7 @@ public class RockTile extends Tile {
 	public boolean interact(Level level, int xt, int yt, Player player, Item item, Direction attackDir) {
 		if (item instanceof ToolItem) {
 			ToolItem tool = (ToolItem) item;
-			if (tool.type == ToolType.Pickaxe && player.payStamina(4 - tool.level) && tool.payDurability()) {
+			if (tool.type == ToolType.Pickaxe && player.payStamina(5 - tool.level) && tool.payDurability()) {
 				// Drop coal since we use a pickaxe.
 				dropCoal = true;
 				hurt(level, xt, yt, tool.getDamage());
@@ -75,16 +75,19 @@ public class RockTile extends Tile {
 
 		level.add(new TextParticle("" + dmg, x * 16 + 8, y * 16 + 8, Color.RED));
 		if (damage >= maxHealth) {
+			int stone = 1;
 			if (dropCoal) {
-				level.dropItem(x*16+8, y*16+8, 1, 3, Items.get("Stone"));
-				int coal = 0;
+				stone += random.nextInt(3) + 1;
+
+				int coal = 1;
 				if(!Settings.get("diff").equals("Hard")) {
-					coal++;
+					coal += 1;
 				}
-				level.dropItem(x * 16 + 8, y * 16 + 8, coal, coal + 1, Items.get("Coal"));
-			} else {
-				level.dropItem(x * 16 + 8, y * 16 + 8, 2, 4, Items.get("Stone"));
+
+				level.dropItem(x * 16 + 8, y * 16 + 8, 0, coal, Items.get("Coal"));
 			}
+
+			level.dropItem(x * 16 + 8, y * 16 + 8, stone, Items.get("Stone"));
 			level.setTile(x, y, Tiles.get("Dirt"));
 		} else {
 			level.setData(x, y, damage);
