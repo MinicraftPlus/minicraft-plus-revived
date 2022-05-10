@@ -120,8 +120,6 @@ public class Game {
 		new Load(true); // This loads any saved preferences.
 		MAX_FPS = (int) Settings.get("fps");
 
-		Localization.changeLanguage((String)Settings.get("language"));
-
 		// Load the selected language.
 		Initializer.createAndDisplayFrame();
 

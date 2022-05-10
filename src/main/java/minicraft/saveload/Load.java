@@ -9,7 +9,6 @@ import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import java.util.Locale;
 
 import minicraft.screen.*;
 import org.jetbrains.annotations.Nullable;
@@ -20,7 +19,6 @@ import org.tinylog.Logger;
 
 import minicraft.core.Game;
 import minicraft.network.Network;
-import minicraft.core.Renderer;
 import minicraft.core.Updater;
 import minicraft.core.World;
 import minicraft.core.io.Localization;
@@ -380,9 +378,12 @@ public class Load {
 		Settings.set("diff", json.has("diff") ? json.getString("diff") : "Normal");
 		Settings.set("fps", json.getInt("fps"));
 
-		if (prefVer.compareTo(new Version("2.1.0-dev1")) > 0) {
+		if (json.has("lang")) {
 			String lang = json.getString("lang");
 			Settings.set("language", lang);
+			Localization.changeLanguage(lang);
+		} else {
+			Localization.loadLanguage();
 		}
 
 		SkinDisplay.setSelectedSkinIndex(json.getInt("skinIdx"));

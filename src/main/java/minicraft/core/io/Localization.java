@@ -133,7 +133,7 @@ public class Localization {
 	 * This method gets the currently selected locale and loads it if it exists. If not, it loads the default locale.
 	 * The loaded file is then parsed, and all the entries are added to a hashmap.
 	 */
-	private static void loadLanguage() {
+	public static void loadLanguage() {
 		Logger.trace("Loading language...");
 		localization.clear();
 
