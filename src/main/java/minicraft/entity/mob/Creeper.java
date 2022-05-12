@@ -71,10 +71,10 @@ public class Creeper extends EnemyMob {
 				}
 			}
 
-			// Basically, if there aren't any players it "defuses" itself and doesn't blow up
+			// Handles what happens when it blows up.
+			// It will only blow up if there are any players nearby.
 			if (playerInRange) {
-				// Blow up
-
+				// Play explosion sound
 				Sound.explode.play();
 
 				// Figure out which tile the mob died on
@@ -82,8 +82,9 @@ public class Creeper extends EnemyMob {
 				int yt = (y - 2) >> 4;
 
 				// Used for calculations
-				int radius = lvl + 1;
+				int radius = lvl;
 
+				// The total amount of damage we want to apply.
 				int lvlDamage = BLAST_DAMAGE * lvl;
 
 				// Hurt all the entities
@@ -130,6 +131,7 @@ public class Creeper extends EnemyMob {
 
 				die(); // Dying now kind of kills everything. the super class will take care of it.
 			} else {
+				// If there aren't any players it will defuse itself and won't blow up.
 				fuseTime = 0;
 				fuseLit = false;
 			}
