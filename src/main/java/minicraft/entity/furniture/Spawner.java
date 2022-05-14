@@ -1,8 +1,5 @@
 package minicraft.entity.furniture;
 
-import java.util.ArrayList;
-import java.util.Random;
-
 import minicraft.core.Game;
 import minicraft.core.io.Sound;
 import minicraft.entity.Direction;
@@ -14,12 +11,10 @@ import minicraft.entity.particle.TextParticle;
 import minicraft.gfx.Color;
 import minicraft.gfx.Point;
 import minicraft.gfx.Sprite;
-import minicraft.item.FurnitureItem;
-import minicraft.item.Item;
-import minicraft.item.PotionType;
-import minicraft.item.PowerGloveItem;
-import minicraft.item.ToolItem;
-import minicraft.item.ToolType;
+import minicraft.item.*;
+
+import java.util.ArrayList;
+import java.util.Random;
 
 public class Spawner extends Furniture {
 
@@ -208,24 +203,4 @@ public class Spawner extends Furniture {
 	}
 
 	public Furniture clone() { return new Spawner(mob); }
-
-	@Override
-	protected String getUpdateString() {
-		String updates = super.getUpdateString() + ";";
-		updates += "health,"+health+
-		";lvl," + lvl;
-
-		return updates;
-	}
-
-	@Override
-	protected boolean updateField(String field, String val) {
-		if (super.updateField(field, val)) return true;
-		switch (field) {
-			case "health": health = Integer.parseInt(val); return true;
-			case "lvl": lvl = Integer.parseInt(val); return true;
-		}
-
-		return false;
-	}
 }

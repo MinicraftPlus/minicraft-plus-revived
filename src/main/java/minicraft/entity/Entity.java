@@ -1,20 +1,18 @@
 package minicraft.entity;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Random;
-
-import org.jetbrains.annotations.Nullable;
-
 import minicraft.core.Game;
-import minicraft.network.Network;
 import minicraft.core.Updater;
-import minicraft.core.World;
 import minicraft.entity.mob.Player;
 import minicraft.gfx.Rectangle;
 import minicraft.gfx.Screen;
 import minicraft.item.Item;
 import minicraft.level.Level;
+import minicraft.network.Network;
+import org.jetbrains.annotations.Nullable;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Random;
 
 public abstract class Entity implements Tickable {
 
@@ -34,15 +32,12 @@ public abstract class Entity implements Tickable {
 	protected final Random random = new Random();
 	public int x, y; // x, y entity coordinates on the map
 	private int xr, yr; // x, y radius of entity
-	private boolean removed; // Determines if the entity is removed from it's level; checked in Level.java
-	protected Level level; // The level that the entity is on
+	private boolean removed; // If the entity is to be removed from the level.
+	protected Level level; // The level that the entity is on.
 	public int col; // Current color.
 
-	public int eid; // This is intended for multiplayer, but I think it could be helpful in single player, too. certainly won't harm anything, I think... as long as finding a valid id doesn't take long...
-	private String prevUpdates = ""; // Holds the last value returned from getUpdateString(), for comparison with the next call.
-	private String curDeltas = ""; // Holds the updates returned from the last time getUpdates() was called.
-	private boolean accessedUpdates = false;
-	private long lastUpdate;
+	// Numeric unique identifier for the entity.
+	public int eid;
 
 	/**
 	 * Default constructor for the Entity class.
@@ -61,7 +56,6 @@ public abstract class Entity implements Tickable {
 		col = 0;
 
 		eid = -1;
-		lastUpdate = System.nanoTime();
 	}
 
 	public abstract void render(Screen screen); // Used to render the entity on screen.
@@ -273,117 +267,6 @@ public abstract class Entity implements Tickable {
 
 		return level.getClosestPlayer(x, y);
 	}
-
-	/**
-	 * I think this is used to update a entity over a network.
-	 * The server will send a correction of this entity's state
-	 * which will then be updated.
-	 * @param deltas A string representation of the new entity state.
-	 */
-	public final void update(String deltas) {
-		for (String field: deltas.split(";")) {
-			 String fieldName = field.substring(0, field.indexOf(","));
-			 String val = field.substring(field.indexOf(",")+1);
-			 updateField(fieldName, val);
-		}
-	}
-
-	/**
-	 * Updates one of the entity's fields based on a string pair.
-	 * Used to parse data from a server.
-	 * @param fieldName Which variable is being updated.
-	 * @param val The new value.
-	 * @return true if a variable was updated, false if not.
-	 */
-	protected boolean updateField(String fieldName, String val) {
-		switch (fieldName) {
-			case "eid": eid = Integer.parseInt(val); return true;
-			case "x": x = Integer.parseInt(val); return true;
-			case "y": y = Integer.parseInt(val); return true;
-			case "level":
-				if (val.equals("null")) return true; // This means no level.
-				Level newLvl = World.levels[Integer.parseInt(val)];
-				if (newLvl != null && level != null) {
-					if (newLvl.depth == level.depth) return true;
-					level.remove(this);
-					newLvl.add(this);
-				}
-				return true;
-		}
-		return false;
-	}
-
-	/// I think I'll make these "getUpdates()" methods be an established thing, that returns all the things that can change that you need to account for when updating entities across a server.
-	/// By extension, the update() method should always account for all the variables specified here.
-	/**
-	 * Converts this entity to a string representation which can be sent to
-	 * a server or client.
-	 * @return Networking string representation of this entity.
-	 */
-	protected String getUpdateString() {
-		return "x," + x + ";"
-		+ "y," + y + ";"
-		+ "level," + (level == null ? "null" : World.lvlIdx(level.depth));
-	}
-
-	/**
-	 * Returns a string representation of this entity.
-	 * @param fetchAll true if all variables should be returned, false if only the ones who have changed should be returned.
-	 * @return Networking string representation of this entity.
-	 */
-	public final String getUpdates(boolean fetchAll) {
-		if (accessedUpdates) {
-			if (fetchAll) return prevUpdates;
-			else return curDeltas;
-		}
-		else {
-			if (fetchAll) return getUpdateString();
-			else return getUpdates();
-		}
-	}
-
-	/**
-	 * Determines what has been updated and only return that.
-	 * @return String representation of all the variables which has changed since last time.
-	 */
-	public final String getUpdates() {
-		// If the updates have already been fetched and written, but not flushed, then just return those.
-		if (accessedUpdates) return curDeltas;
-		else accessedUpdates = true; // After this they count as accessed.
-
-		/// First, get the current string of values, which includes any subclasses.
-		String updates = getUpdateString();
-
-		if (prevUpdates.length() == 0) {
-			// If there were no values saved last call, our job is easy. But this is only the case the first time this is run.
-			prevUpdates = curDeltas = updates; // Set the update field for next time
-			return updates; // And we're done!
-		}
-
-		/// If we did have updates last time, then save them as an array, before overwriting the update field for next time.
-		String[] curUpdates = updates.split(";");
-		String[] prevUpdates = this.prevUpdates.split(";");
-		this.prevUpdates = updates;
-
-		/// Now, we have the current values, and the previous values, as arrays of key-value pairs sep. by commas. Now, the goal is to separate which are actually *updates*, meaning they are different from last time.
-
-		StringBuilder deltas = new StringBuilder();
-		for (int i = 0; i < curUpdates.length; i++) { // b/c the string always contains the same number of pairs (and the same keys, in the same order), the indexes of cur and prev updates will be the same.
-			/// Loop though each of the updates this call. If it is different from the last one, then add it to the list.
-			if(!curUpdates[i].equals(prevUpdates[i])) {
-				deltas.append(curUpdates[i]).append(";");
-			}
-		}
-
-		curDeltas = deltas.toString();
-
-		if (curDeltas.length() > 0) curDeltas = curDeltas.substring(0, curDeltas.length() -1); // Cuts off extra ";"
-
-		return curDeltas;
-	}
-
-	/// This marks the entity as having a new state to fetch.
-	public void flushUpdates() { accessedUpdates = false; }
 
 	public String toString() { return getClass().getSimpleName() + getDataPrints(); }
 	protected List<String> getDataPrints() {

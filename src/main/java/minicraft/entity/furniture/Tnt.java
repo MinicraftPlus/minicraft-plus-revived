@@ -1,11 +1,5 @@
 package minicraft.entity.furniture;
 
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.util.List;
-
-import javax.swing.Timer;
-
 import minicraft.core.io.Sound;
 import minicraft.entity.Direction;
 import minicraft.entity.Entity;
@@ -20,6 +14,11 @@ import minicraft.level.Level;
 import minicraft.level.tile.Tile;
 import minicraft.level.tile.Tiles;
 import minicraft.screen.AchievementsDisplay;
+
+import javax.swing.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.util.List;
 
 public class Tnt extends Furniture implements ActionListener {
 	private static int FUSE_TIME = 90;
@@ -128,26 +127,6 @@ public class Tnt extends Furniture implements ActionListener {
 			fuseLit = true;
 			Sound.fuse.play();
 			return true;
-		}
-
-		return false;
-	}
-
-	@Override
-	protected String getUpdateString() {
-		String updates = super.getUpdateString() + ";";
-		updates += "fuseLit," + fuseLit+
-		";ftik," + ftik;
-
-		return updates;
-	}
-
-	@Override
-	protected boolean updateField(String field, String val) {
-		if (super.updateField(field, val)) return true;
-		switch (field) {
-			case "fuseLit": fuseLit = Boolean.parseBoolean(val); return true;
-			case "ftik": ftik = Integer.parseInt(val); return true;
 		}
 
 		return false;

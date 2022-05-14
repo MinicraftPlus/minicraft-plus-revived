@@ -1,8 +1,5 @@
 package minicraft.entity.mob;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import minicraft.core.Game;
 import minicraft.core.io.Settings;
 import minicraft.core.io.Sound;
@@ -14,6 +11,9 @@ import minicraft.gfx.Point;
 import minicraft.gfx.Screen;
 import minicraft.item.Items;
 import minicraft.level.tile.Tiles;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class Creeper extends EnemyMob {
 	private static MobSprite[][][] sprites;
@@ -173,32 +173,5 @@ public class Creeper extends EnemyMob {
 		// Only drop items if the creeper has not exploded
 		if (!fuseLit) dropItem(1, 4 - Settings.getIdx("diff"), Items.get("Gunpowder"));
 		super.die();
-	}
-
-	@Override
-	protected String getUpdateString() {
-		String updates = super.getUpdateString() + ";";
-		updates += "fuseTime," + fuseTime +
-				";fuseLit," + fuseLit;
-
-		return updates;
-	}
-
-	@Override
-	protected boolean updateField(String field, String val) {
-		if (super.updateField(field, val)) return true;
-		switch (field) {
-			case "fuseTime":
-				fuseTime = Integer.parseInt(val);
-				return true;
-
-			case "fuseLit":
-				boolean wasLit = fuseLit;
-				fuseLit = Boolean.parseBoolean(val);
-				if (fuseLit && !wasLit)
-					Sound.fuse.play();
-		}
-
-		return false;
 	}
 }
