@@ -799,7 +799,7 @@ public class Load {
 
 			newEntity = chest;
 		} else if (newEntity instanceof Spawner) {
-			MobAi mob = (MobAi) getEntity(info.get(2).substring(info.get(2).lastIndexOf(".")+1), Integer.parseInt(info.get(3)));
+			MobAi mob = (MobAi) getEntity(info.get(2).substring(info.get(2).lastIndexOf(".") + 1), Integer.parseInt(info.get(3)));
 			if (mob != null)
 				newEntity = new Spawner(mob);
 		} else if (newEntity instanceof Lantern && worldVer.compareTo(new Version("1.9.4")) >= 0 && info.size() > 3) {
@@ -846,20 +846,22 @@ public class Load {
 	}
 
 	@Nullable
-	private static Entity getEntity(String string, int moblvl) {
+	private static Entity getEntity(String string, int mobLevel) {
 		switch (string) {
 			case "Player": return null;
 			case "RemotePlayer": return null;
 			case "Cow": return new Cow();
 			case "Sheep": return new Sheep();
 			case "Pig": return new Pig();
-			case "Zombie": return new Zombie(moblvl);
-			case "Slime": return new Slime(moblvl);
-			case "Creeper": return new Creeper(moblvl);
-			case "Skeleton": return new Skeleton(moblvl);
-			case "Knight": return new Knight(moblvl);
-			case "Snake": return new Snake(moblvl);
-			case "AirWizard": return new AirWizard(moblvl>1);
+			case "Zombie": return new Zombie(mobLevel);
+			case "Slime": return new Slime(mobLevel);
+			case "Creeper": return new Creeper(mobLevel);
+			case "Skeleton": return new Skeleton(mobLevel);
+			case "Knight": return new Knight(mobLevel);
+			case "Snake": return new Snake(mobLevel);
+			case "AirWizard":
+				if (mobLevel > 1) return null;
+				return new AirWizard();
 			case "Spawner": return new Spawner(new Zombie(1));
 			case "Workbench": return new Crafter(Crafter.Type.Workbench);
 			case "Chest": return new Chest();

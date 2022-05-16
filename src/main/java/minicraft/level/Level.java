@@ -1,16 +1,5 @@
 package minicraft.level;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Comparator;
-import java.util.HashSet;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Random;
-import java.util.Set;
-import java.util.function.Predicate;
-import java.util.function.ToIntFunction;
-
 import minicraft.core.Game;
 import minicraft.core.Updater;
 import minicraft.core.io.Settings;
@@ -20,21 +9,7 @@ import minicraft.entity.Spark;
 import minicraft.entity.furniture.Chest;
 import minicraft.entity.furniture.DungeonChest;
 import minicraft.entity.furniture.Spawner;
-import minicraft.entity.mob.AirWizard;
-import minicraft.entity.mob.Cow;
-import minicraft.entity.mob.Creeper;
-import minicraft.entity.mob.EnemyMob;
-import minicraft.entity.mob.Knight;
-import minicraft.entity.mob.Mob;
-import minicraft.entity.mob.MobAi;
-import minicraft.entity.mob.PassiveMob;
-import minicraft.entity.mob.Pig;
-import minicraft.entity.mob.Player;
-import minicraft.entity.mob.Sheep;
-import minicraft.entity.mob.Skeleton;
-import minicraft.entity.mob.Slime;
-import minicraft.entity.mob.Snake;
-import minicraft.entity.mob.Zombie;
+import minicraft.entity.mob.*;
 import minicraft.gfx.Point;
 import minicraft.gfx.Rectangle;
 import minicraft.gfx.Screen;
@@ -43,6 +18,10 @@ import minicraft.level.tile.Tile;
 import minicraft.level.tile.Tiles;
 import minicraft.level.tile.TorchTile;
 import org.tinylog.Logger;
+
+import java.util.*;
+import java.util.function.Predicate;
+import java.util.function.ToIntFunction;
 
 public class Level {
 	private final Random random = new Random();
@@ -235,7 +214,7 @@ public class Level {
 			}
 
 			if (!found) {
-				AirWizard aw = new AirWizard(false);
+				AirWizard aw = new AirWizard();
 				add(aw, w/2, h/2, true);
 			}
 		}
@@ -417,7 +396,6 @@ public class Level {
 		for (String search: searching) {
 			try {
 				if (Class.forName("minicraft.entity." + search).isAssignableFrom(entity.getClass())) {
-					if (clazz.equals("AirWizard")) clazz += ((AirWizard)entity).secondform ? " II" : "";
 					printLevelLoc(entityMessage + clazz, entity.x >> 4, entity.y >> 4, ": " + entity);
 					break;
 				}

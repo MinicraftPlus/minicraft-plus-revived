@@ -1,11 +1,8 @@
 package minicraft.entity.furniture;
 
 import minicraft.core.Game;
-import minicraft.core.Updater;
-import minicraft.core.World;
 import minicraft.entity.Direction;
 import minicraft.entity.Entity;
-import minicraft.entity.mob.AirWizard;
 import minicraft.entity.mob.Player;
 import minicraft.entity.particle.SmashParticle;
 import minicraft.entity.particle.TextParticle;
@@ -71,13 +68,6 @@ public class DungeonChest extends Chest {
 				level.chestCount--;
 				if (level.chestCount == 0) { // If this was the last chest...
 					level.dropItem(x, y, 5, Items.get("Gold Apple"));
-
-					Updater.notifyAll("You hear a noise from the surface!", - 100); // Notify the player of the developments
-					// Add a level 2 airwizard to the middle surface level.
-					AirWizard wizard = new AirWizard(true);
-					wizard.x = World.levels[World.lvlIdx(0)].w / 2;
-					wizard.y = World.levels[World.lvlIdx(0)].h / 2;
-					World.levels[World.lvlIdx(0)].add(wizard);
 				}
 
 				return super.use(player); // the player unlocked the chest.

@@ -1,33 +1,15 @@
 package minicraft.item;
 
-import java.util.ArrayList;
-
 import minicraft.core.Game;
 import minicraft.core.io.Sound;
 import minicraft.entity.Direction;
-import minicraft.entity.furniture.Bed;
-import minicraft.entity.furniture.Chest;
-import minicraft.entity.furniture.Crafter;
-import minicraft.entity.furniture.DungeonChest;
-import minicraft.entity.furniture.Furniture;
-import minicraft.entity.furniture.Lantern;
-import minicraft.entity.furniture.Spawner;
-import minicraft.entity.furniture.Tnt;
-import minicraft.entity.mob.AirWizard;
-import minicraft.entity.mob.Cow;
-import minicraft.entity.mob.Creeper;
-import minicraft.entity.mob.Knight;
-import minicraft.entity.mob.MobAi;
-import minicraft.entity.mob.Pig;
-import minicraft.entity.mob.Player;
-import minicraft.entity.mob.Sheep;
-import minicraft.entity.mob.Skeleton;
-import minicraft.entity.mob.Slime;
-import minicraft.entity.mob.Snake;
-import minicraft.entity.mob.Zombie;
+import minicraft.entity.furniture.*;
+import minicraft.entity.mob.*;
 import minicraft.gfx.Sprite;
 import minicraft.level.Level;
 import minicraft.level.tile.Tile;
+
+import java.util.ArrayList;
 
 public class FurnitureItem extends Item {
 
@@ -44,7 +26,7 @@ public class FurnitureItem extends Item {
 		items.add(new FurnitureItem(new Spawner(new Skeleton(1)), 7, 28));
 		items.add(new FurnitureItem(new Spawner(new Snake(1)), 8, 28));
 		items.add(new FurnitureItem(new Spawner(new Knight(1)), 9, 28));
-		items.add(new FurnitureItem(new Spawner(new AirWizard(false)), 10, 28));
+		items.add(new FurnitureItem(new Spawner(new AirWizard()), 10, 28));
 
 		items.add(new FurnitureItem(new Chest()));
 		items.add(new FurnitureItem(new DungeonChest(false, true)));

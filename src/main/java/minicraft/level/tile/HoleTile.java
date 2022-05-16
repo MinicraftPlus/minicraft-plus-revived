@@ -13,18 +13,20 @@ public class HoleTile extends Tile {
 			return tile.connectsToLiquid();
 		}
 	};
-	
+
 	protected HoleTile(String name) {
 		super(name, sprite);
 		connectsToSand = true;
 		connectsToFluid = true;
 	}
-	
+
+	@Override
 	public void render(Screen screen, Level level, int x, int y) {
 		sprite.sparse.color = DirtTile.dCol(level.depth);
 		sprite.render(screen, level, x, y);
 	}
 
+	@Override
 	public boolean mayPass(Level level, int x, int y, Entity e) {
 		return e.canSwim();
 	}

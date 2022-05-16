@@ -365,14 +365,13 @@ public class LegacyLoad {
 					}
 
 					currentlevel = Integer.parseInt(info.get(info.size() - 1));
-					World.levels[currentlevel].add(chest instanceof DeathChest ? (DeathChest)chest : chest instanceof DungeonChest ? (DungeonChest)chest : chest, x, y);
-				}
-				else if (newEntity instanceof Spawner) {
-					Spawner egg = new Spawner((MobAi)getEntity(info.get(2), player, Integer.parseInt(info.get(3))));
+					World.levels[currentlevel].add(chest instanceof DeathChest ? chest : chest instanceof DungeonChest ? (DungeonChest)chest : chest, x, y);
+				} else if (newEntity instanceof Spawner) {
+					MobAi mob = (MobAi) getEntity(info.get(2), player, Integer.parseInt(info.get(3)));
 					currentlevel = Integer.parseInt(info.get(info.size() - 1));
-					World.levels[currentlevel].add(egg, x, y);
-				}
-				else {
+					if (mob != null)
+						World.levels[currentlevel].add(new Spawner(mob), x, y);
+				} else {
 					currentlevel = Integer.parseInt(info.get(2));
 					World.levels[currentlevel].add(newEntity, x, y);
 				}
@@ -380,19 +379,21 @@ public class LegacyLoad {
 		}
 	}
 
-	public Entity getEntity(String string, Player player, int moblvl) {
+	public Entity getEntity(String string, Player player, int mobLevel) {
 		switch (string) {
 			case "Player": return player;
 			case "Cow": return new Cow();
 			case "Sheep": return new Sheep();
 			case "Pig": return new Pig();
-			case "Zombie": return new Zombie(moblvl);
-			case "Slime": return new Slime(moblvl);
-			case "Creeper": return new Creeper(moblvl);
-			case "Skeleton": return new Skeleton(moblvl);
-			case "Knight": return new Knight(moblvl);
-			case "Snake": return new Snake(moblvl);
-			case "AirWizard": return new AirWizard(moblvl>1);
+			case "Zombie": return new Zombie(mobLevel);
+			case "Slime": return new Slime(mobLevel);
+			case "Creeper": return new Creeper(mobLevel);
+			case "Skeleton": return new Skeleton(mobLevel);
+			case "Knight": return new Knight(mobLevel);
+			case "Snake": return new Snake(mobLevel);
+			case "AirWizard":
+				if (mobLevel > 1) return null;
+				return new AirWizard();
 			case "Spawner": return new Spawner(new Zombie(1));
 			case "Workbench": return new Crafter(Crafter.Type.Workbench);
 			case "Chest": return new Chest();

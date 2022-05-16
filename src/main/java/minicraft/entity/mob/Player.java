@@ -100,8 +100,6 @@ public class Player extends Mob implements ItemHolder, ClientTickable {
 
 	// Note: the player's health & max health are inherited from Mob.java
 
-	public String getDebugHunger() { return hungerStamCnt+"_"+stamHungerTicks; }
-
 	public Player(@Nullable Player previousInstance, InputHandler input) {
 		super(sprites, Player.maxHealth);
 
@@ -1088,4 +1086,5 @@ public class Player extends Mob implements ItemHolder, ClientTickable {
 		return inventory;
 	}
 
+	public String getDebugHunger() { return hungerStamCnt + "_" + stamHungerTicks; }
 }

@@ -28,7 +28,7 @@ public class SummonItem extends StackableItem {
 		super(name, sprite, count);
 		this.mob = mob;
 	}
-	
+
 	/** What happens when the player uses the item on a tile */
 	public boolean interactOn(Tile tile, Level level, int xt, int yt, Player player, Direction attackDir) {
 		boolean success = false;
@@ -39,19 +39,9 @@ public class SummonItem extends StackableItem {
 				// TODO: This doesn't work with stamina.
 				if (level.depth != 1) break;
 
-				AirWizard aw = new AirWizard(false);
+				AirWizard aw = new AirWizard();
 				level.add(aw, player.x+8, player.y+8, false);
 				Logger.debug("Summoned new Air Wizard");
-				success = true;
-				break;
-			case "Air Wizard II":
-				// Check if we are on the right level
-				// TODO: This doesn't work with stamina.
-				if (level.depth != 1) break;
-
-				aw = new AirWizard(true);
-				level.add(aw, player.x+8, player.y+8, false);
-				Logger.debug("Summoned new Air Wizard II");
 				success = true;
 				break;
 			default:

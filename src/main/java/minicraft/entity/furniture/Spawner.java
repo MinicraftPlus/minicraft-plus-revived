@@ -12,6 +12,7 @@ import minicraft.gfx.Color;
 import minicraft.gfx.Point;
 import minicraft.gfx.Sprite;
 import minicraft.item.*;
+import org.tinylog.Logger;
 
 import java.util.ArrayList;
 import java.util.Random;
@@ -111,7 +112,7 @@ public class Spawner extends Furniture {
 			else
 				newmob = mob.getClass().getDeclaredConstructor().newInstance();
 		} catch (Exception ex) {
-			System.err.println("Spawner ERROR: could not spawn mob; error initializing mob instance:");
+			Logger.error("Spawner ERROR: could not spawn mob; error initializing mob instance:");
 			ex.printStackTrace();
 			return;
 		}
@@ -129,7 +130,6 @@ public class Spawner extends Furniture {
 
 		newmob.x = spawnPos.x << 4;
 		newmob.y = spawnPos.y << 4;
-		//if (Game.debug) level.printLevelLoc("spawning new " + mob, (newmob.x >> 4), (newmob.y >> 4), "...");
 
 		level.add(newmob);
 		Sound.monsterHurt.play();
@@ -185,7 +185,6 @@ public class Spawner extends Furniture {
 	}
 
 	@Override
-	@SuppressWarnings("JavaReflectionMemberAccess")
 	public boolean use(Player player) {
 		if (Game.isMode("creative") && mob instanceof EnemyMob) {
 			lvl++;
@@ -202,5 +201,6 @@ public class Spawner extends Furniture {
 		return false;
 	}
 
+	@Override
 	public Furniture clone() { return new Spawner(mob); }
 }

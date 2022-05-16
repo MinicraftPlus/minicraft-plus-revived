@@ -1,26 +1,32 @@
 package minicraft.screen;
 
-import java.io.*;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.stream.Collectors;
-
+import minicraft.core.Achievement;
 import minicraft.core.Game;
 import minicraft.core.io.InputHandler;
 import minicraft.core.io.Localization;
 import minicraft.core.io.Sound;
-import minicraft.gfx.*;
+import minicraft.gfx.Color;
+import minicraft.gfx.Font;
+import minicraft.gfx.Point;
+import minicraft.gfx.Screen;
 import minicraft.saveload.Save;
 import minicraft.screen.entry.ListEntry;
 import minicraft.screen.entry.SelectEntry;
 import minicraft.screen.entry.StringEntry;
-import minicraft.core.Achievement;
 import org.jetbrains.annotations.Nullable;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.tinylog.Logger;
+
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.stream.Collectors;
 
 public class AchievementsDisplay extends Display {
 
@@ -157,7 +163,8 @@ public class AchievementsDisplay extends Display {
         // Add or subtract from score
         if (unlocked) {
             achievementScore += a.score;
-            // Tells the player that they achieved an achievement.
+
+            // Tells the player that they got an achievement.
             Game.notifications.add(Localization.getLocalized("minicraft.notification.achievement_unlocked") + " " + Localization.getLocalized(id));
         }
         else

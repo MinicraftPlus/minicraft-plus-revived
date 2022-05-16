@@ -13,13 +13,14 @@ public class WaterTile extends Tile {
 			return tile.connectsToFluid;
 		}
 	};
-	
+
 	protected WaterTile(String name) {
 		super(name, (ConnectorSprite)null);
 		csprite = sprite;
 		connectsToFluid = true;
 	}
-	
+
+	@Override
 	public void render(Screen screen, Level level, int x, int y) {
 		long seed = (tickCount + (x / 2 - y) * 4311) / 10 * 54687121l + x * 3271612l + y * 3412987161l;
 		sprite.full = Sprite.randomDots(seed, 0);
@@ -27,10 +28,12 @@ public class WaterTile extends Tile {
 		sprite.render(screen, level, x, y);
 	}
 
+	@Override
 	public boolean mayPass(Level level, int x, int y, Entity e) {
 		return e.canSwim();
 	}
 
+	@Override
 	public boolean tick(Level level, int xt, int yt) {
 		int xn = xt;
 		int yn = yt;
@@ -41,7 +44,7 @@ public class WaterTile extends Tile {
 		if (level.getTile(xn, yn) == Tiles.get("Hole")) {
 			level.setTile(xn, yn, this);
 		}
-		
+
 		// These set only the non-diagonally adjacent lava tiles to obsidian
 		for (int x = -1; x < 2; x++) {
 			if (level.getTile(xt + x, yt) == Tiles.get("Lava"))
