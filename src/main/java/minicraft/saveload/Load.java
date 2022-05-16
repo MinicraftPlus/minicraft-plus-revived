@@ -1,15 +1,21 @@
 package minicraft.saveload;
 
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileReader;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-
+import minicraft.core.Game;
+import minicraft.core.Updater;
+import minicraft.core.World;
+import minicraft.core.io.Localization;
+import minicraft.core.io.Settings;
+import minicraft.entity.*;
+import minicraft.entity.furniture.*;
+import minicraft.entity.mob.*;
+import minicraft.entity.particle.FireParticle;
+import minicraft.entity.particle.SmashParticle;
+import minicraft.entity.particle.TextParticle;
+import minicraft.gfx.Color;
+import minicraft.item.*;
+import minicraft.level.Level;
+import minicraft.level.tile.Tiles;
+import minicraft.network.Network;
 import minicraft.screen.*;
 import org.jetbrains.annotations.Nullable;
 import org.json.JSONArray;
@@ -17,52 +23,10 @@ import org.json.JSONException;
 import org.json.JSONObject;
 import org.tinylog.Logger;
 
-import minicraft.core.Game;
-import minicraft.network.Network;
-import minicraft.core.Updater;
-import minicraft.core.World;
-import minicraft.core.io.Localization;
-import minicraft.core.io.Settings;
-import minicraft.entity.Arrow;
-import minicraft.entity.Direction;
-import minicraft.entity.Entity;
-import minicraft.entity.ItemEntity;
-import minicraft.entity.Spark;
-import minicraft.entity.furniture.Bed;
-import minicraft.entity.furniture.Chest;
-import minicraft.entity.furniture.Crafter;
-import minicraft.entity.furniture.DeathChest;
-import minicraft.entity.furniture.DungeonChest;
-import minicraft.entity.furniture.Lantern;
-import minicraft.entity.furniture.Spawner;
-import minicraft.entity.furniture.Tnt;
-import minicraft.entity.mob.AirWizard;
-import minicraft.entity.mob.Cow;
-import minicraft.entity.mob.Creeper;
-import minicraft.entity.mob.EnemyMob;
-import minicraft.entity.mob.Knight;
-import minicraft.entity.mob.Mob;
-import minicraft.entity.mob.MobAi;
-import minicraft.entity.mob.Pig;
-import minicraft.entity.mob.Player;
-import minicraft.entity.mob.Sheep;
-import minicraft.entity.mob.Skeleton;
-import minicraft.entity.mob.Slime;
-import minicraft.entity.mob.Snake;
-import minicraft.entity.mob.Zombie;
-import minicraft.entity.particle.FireParticle;
-import minicraft.entity.particle.SmashParticle;
-import minicraft.entity.particle.TextParticle;
-import minicraft.gfx.Color;
-import minicraft.item.ArmorItem;
-import minicraft.item.Inventory;
-import minicraft.item.Item;
-import minicraft.item.Items;
-import minicraft.item.PotionItem;
-import minicraft.item.PotionType;
-import minicraft.item.StackableItem;
-import minicraft.level.Level;
-import minicraft.level.tile.Tiles;
+import java.io.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
 public class Load {
 
@@ -407,9 +371,6 @@ public class Load {
 		loadFromFile(location + filename + extension);
 
 		for (String unlock: data) {
-			if (unlock.equals("AirSkin"))
-				Settings.set("unlockedskin", true);
-
 			unlock = unlock.replace("HOURMODE", "H_ScoreTime").replace("MINUTEMODE", "M_ScoreTime").replace("M_ScoreTime", "_ScoreTime").replace("2H_ScoreTime", "120_ScoreTime");
 
 			if (unlock.contains("_ScoreTime"))
@@ -425,8 +386,6 @@ public class Load {
 			ex.printStackTrace();
 			return;
 		}
-
-		Settings.set("unlockedskin", json.getBoolean("unlockedAirWizardSuit"));
 
 		for (Object i : json.getJSONArray("visibleScoreTimes")) {
 			Settings.getEntry("scoretime").setValueVisibility(i, true); // Minutes
@@ -615,7 +574,8 @@ public class Load {
 		else
 			player.shirtColor = Integer.parseInt(data.remove(0));
 
-		Settings.set("skinon", player.suitOn = Boolean.parseBoolean(data.remove(0)));
+		// Just delete the slot reserved for loading legacy skins.
+		data.remove(0);
 	}
 
 	protected static String subOldName(String name, Version worldVer) {

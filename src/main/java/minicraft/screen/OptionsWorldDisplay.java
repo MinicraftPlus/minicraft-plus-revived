@@ -7,7 +7,7 @@ import minicraft.saveload.Save;
 import minicraft.screen.entry.SelectEntry;
 
 public class OptionsWorldDisplay extends Display {
-	
+
 	public OptionsWorldDisplay() {
 		super(true, new Menu.Builder(false, 6, RelPos.LEFT,
 				Settings.getEntry("diff"),
@@ -16,13 +16,12 @@ public class OptionsWorldDisplay extends Display {
 				Settings.getEntry("autosave"),
 				new SelectEntry("Change Key Bindings", () -> Game.setDisplay(new KeyInputDisplay())),
 				Settings.getEntry("language"),
-				Settings.getEntry("skinon"),
 				new SelectEntry("minicraft.display.skin", () -> Game.setDisplay(new SkinDisplay())))
 			.setTitle("World Options")
 			.createMenu()
 		);
 	}
-	
+
 	@Override
 	public void onExit() {
 		Localization.changeLanguage((String)Settings.get("language"));

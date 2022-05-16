@@ -1,12 +1,11 @@
 package minicraft.core.io;
 
-import java.awt.*;
-import java.util.HashMap;
-
-import minicraft.core.Game;
 import minicraft.screen.entry.ArrayEntry;
 import minicraft.screen.entry.BooleanEntry;
 import minicraft.screen.entry.RangeEntry;
+
+import java.awt.*;
+import java.util.HashMap;
 
 public class Settings {
 
@@ -29,9 +28,6 @@ public class Settings {
 		options.put("theme", new ArrayEntry<>("World Theme", "Normal", "Forest", "Desert", "Plain", "Hell"));
 		options.put("type", new ArrayEntry<>("Terrain Type", "Island", "Box", "Mountain", "Irregular"));
 
-		options.put("unlockedskin", new BooleanEntry("Wear Suit", false));
-		options.put("skinon", new BooleanEntry("Wear Suit", false));
-
 		options.put("language", new ArrayEntry<>("Language", true, false, Localization.getLocalesAsString()));
 		options.get("language").setValue(Localization.getSelectedLocale().toLanguageTag());
 
@@ -39,16 +35,6 @@ public class Settings {
 		options.get("mode").setChangeAction(value ->
 			options.get("scoretime").setVisible("Score".equals(value))
 		);
-
-		options.get("unlockedskin").setChangeAction(value ->
-				options.get("skinon").setVisible((boolean)value)
-		);
-
-		options.get("skinon").setChangeAction(value -> {
-			if (Game.player != null) {
-				Game.player.suitOn = (boolean) value;
-			}
-		});
 
 		options.put("textures", new ArrayEntry<>("textures", "Original", "Custom"));
 		options.get("textures").setSelection(0);

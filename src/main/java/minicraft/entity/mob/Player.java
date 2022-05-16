@@ -46,9 +46,6 @@ public class Player extends Mob implements ItemHolder, ClientTickable {
 
 	// These 2 ints are ints saved from the first spawn - this way the spawn pos is always saved.
 	public int spawnx = 0, spawny = 0; // These are stored as tile coordinates, not entity coordinates.
-	//public boolean bedSpawn = false;
-
-	public boolean suitOn;
 
 	// The maximum stats that the player can have.
 	public static final int maxStat = 10;
@@ -56,9 +53,7 @@ public class Player extends Mob implements ItemHolder, ClientTickable {
 	public static final int maxArmor = 100;
 
 	public static MobSprite[][] sprites;
-	public static MobSprite[][] carrySuitSprites;
 	public static MobSprite[][] carrySprites;
-	public static MobSprite[][] suitSprites;
 
 	private Inventory inventory;
 
@@ -167,16 +162,7 @@ public class Player extends Mob implements ItemHolder, ClientTickable {
 			spawny = previousInstance.spawny;
 		}
 
-		suitOn = (boolean) Settings.get("skinon");
-
-		// Get the current skin we are using as a MobSprite array.
-		MobSprite[][][] selectedSkin = SkinDisplay.getSkinAsMobSprite();
-
-		// Assign the skin to the states.
-		sprites = selectedSkin[0];
-		carrySprites = selectedSkin[1];
-		suitSprites = selectedSkin[2];
-		carrySuitSprites = selectedSkin[3];
+		updateSprites();
 	}
 
 	public int getMultiplier() { return Game.isMode("score") ? multiplier : 1; }
@@ -727,26 +713,18 @@ public class Player extends Mob implements ItemHolder, ClientTickable {
 	/**
 	 * Updates the sprite to render on demand.
 	 */
-	public void updateSprite() {
+	public void updateSprites() {
 		// Get the current skin we are using as a MobSprite array.
 		MobSprite[][][] selectedSkin = SkinDisplay.getSkinAsMobSprite();
 
 		// Assign the skin to the states.
 		sprites = selectedSkin[0];
 		carrySprites = selectedSkin[1];
-		suitSprites = selectedSkin[2];
-		carrySuitSprites = selectedSkin[3];
 	}
 
 	@Override
 	public void render(Screen screen) {
-		MobSprite[][] spriteSet;
-
-        if (activeItem instanceof FurnitureItem) {
-            spriteSet = suitOn ? carrySuitSprites : carrySprites;
-        } else {
-            spriteSet = suitOn ? suitSprites : sprites;
-        }
+		MobSprite[][] spriteSet = activeItem instanceof FurnitureItem ? carrySprites : sprites;
 
 		/* Offset locations to start drawing the sprite relative to our position */
 		int xo = x - 8; // Horizontal
