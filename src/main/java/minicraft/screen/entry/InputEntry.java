@@ -5,19 +5,19 @@ import minicraft.core.io.Localization;
 import minicraft.gfx.Color;
 import minicraft.gfx.Font;
 import minicraft.gfx.Screen;
-import minicraft.util.ClipboardSystem;
+import minicraft.core.io.ClipboardHandler;
 
 public class InputEntry extends ListEntry {
 
-	protected String prompt;
-	protected String regex;
-	protected int maxLength;
+	private String prompt;
+	private String regex;
+	private int maxLength;
 
 	private String userInput;
 
-	protected ChangeListener listener;
+	private ChangeListener listener;
 
-	protected ClipboardSystem clipboardSystem = new ClipboardSystem();
+	private ClipboardHandler clipboardHandler = new ClipboardHandler();
 
 	public InputEntry(String prompt) {
 		this(prompt, null, 0);
@@ -43,14 +43,14 @@ public class InputEntry extends ListEntry {
 		if (maxLength > 0 && userInput.length() > maxLength)
 			userInput = userInput.substring(0, maxLength); // truncates extra
 		if (input.getKey("CTRL-V").clicked) {
-			userInput = userInput + clipboardSystem.getClipboardContents();
+			userInput = userInput + clipboardHandler.getClipboardContents();
 		}
 		if (!userInput.equals("")) {
 			if (input.getKey("CTRL-C").clicked) {
-				clipboardSystem.setClipboardContents(userInput);
+				clipboardHandler.setClipboardContents(userInput);
 			}
 			if (input.getKey("CTRL-X").clicked) {
-				clipboardSystem.setClipboardContents(userInput);
+				clipboardHandler.setClipboardContents(userInput);
 				userInput = "";
 			}
 		}

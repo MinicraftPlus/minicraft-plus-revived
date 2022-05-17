@@ -7,9 +7,9 @@ import minicraft.gfx.Color;
 import minicraft.level.Level;
 
 public enum PotionType {
-	None (Color.get(1, 22, 22, 137), 0),
+	None (Color.get(1, 41, 51, 255), 0),
 	
-	Speed (Color.get(1, 23, 46, 23), 4200) {
+	Speed (Color.get(1, 105, 209, 105), 4200) {
 		public boolean toggleEffect(Player player, boolean addEffect) {
 			player.moveSpeed += (double)( addEffect ? 1 : (player.moveSpeed > 1 ? -1 : 0) );
 			return true;
@@ -17,23 +17,23 @@ public enum PotionType {
 	},
 	
 	Light (Color.get(1, 183, 183, 91), 6000),
-	Swim (Color.get(1, 17, 17, 85), 4800),
-	Energy (Color.get(1, 172, 80, 57), 8400),
-	Regen (Color.get(1, 168, 54, 146), 1800),
+	Swim (Color.get(1, 51, 51, 255), 4800),
+	Energy (Color.get(1, 237, 110, 78), 8400),
+	Regen (Color.get(1, 219, 70, 189), 1800),
 	
-	Health (Color.get(1, 161, 46, 69), 0) {
+	Health (Color.get(1, 194, 56, 84), 0) {
 		public boolean toggleEffect(Player player, boolean addEffect) {
 			if(addEffect) player.heal(5);
 			return true;
 		}
 	},
 	
-	Time (Color.get(1, 102), 1800),
-	Lava (Color.get(1, 129, 37, 37), 7200),
-	Shield (Color.get(1, 65, 65, 157), 5400),
-	Haste (Color.get(1, 106, 37, 106), 4800),
+	Time (Color.get(1, 163), 1800),
+	Lava (Color.get(1, 199, 58, 58), 7200),
+	Shield (Color.get(1, 84, 84, 204), 5400),
+	Haste (Color.get(1, 201, 71, 201), 4800),
 	
-	Escape (Color.get(1, 85, 62, 62), 0) {
+	Escape (Color.get(1, 222, 162, 162), 0) {
 		public boolean toggleEffect(Player player, boolean addEffect) {
 			if (addEffect) {
 				int playerDepth = player.getLevel().depth;

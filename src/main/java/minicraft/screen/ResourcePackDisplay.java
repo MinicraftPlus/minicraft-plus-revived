@@ -4,12 +4,13 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.*;
+import java.util.Map.Entry;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 
 import javax.imageio.ImageIO;
 
-import minicraft.core.FileHandler;
+import minicraft.core.io.FileHandler;
 import minicraft.core.Game;
 import minicraft.core.Renderer;
 import minicraft.core.io.Localization;
@@ -52,7 +53,7 @@ public class ResourcePackDisplay extends Display {
 
 		return resourceList;
 	}
-	
+
 	public ResourcePackDisplay() {
 		super(true, true,
 				new Menu.Builder(false, 2, RelPos.CENTER, getPacksAsEntries())
@@ -78,7 +79,7 @@ public class ResourcePackDisplay extends Display {
 		super.render(screen);
 
 		// Title
-		Font.drawCentered(Localization.getLocalized("Resource Packs"), screen, (Screen.h / 2 - 64), Color.WHITE);
+		Font.drawCentered(Localization.getLocalized("Resource Packs"), screen, 16, Color.WHITE);
 
 		// Info text at the bottom.
 		Font.drawCentered("Use "+ Game.input.getMapping("cursor-down") + " and " + Game.input.getMapping("cursor-up") + " to move.", screen, Screen.h - 17, Color.DARK_GRAY);
@@ -88,7 +89,7 @@ public class ResourcePackDisplay extends Display {
 		int h = 2;
 		int w = 15;
 		int xo = (Screen.w - w * 8) / 2;
-		int yo = Screen.h / 2 - 44;
+		int yo = 28;
 
 		for (int y = 0; y < h; y++) {
 			for (int x = 0; x < w; x++) {
@@ -134,21 +135,21 @@ public class ResourcePackDisplay extends Display {
 
 	private void updateSheets(@Nullable ZipFile zipFile) {
 		try {
-			SpriteSheet[] sheets = new SpriteSheet[SHEET_NAMES.length];
+			// Load default sprite sheet.
+			SpriteSheet[] sheets = Renderer.loadDefaultSpriteSheets();
 
-			if (zipFile == null) {
-				// Load default sprite sheet.
-				sheets = Renderer.loadDefaultSpriteSheets();
-			} else {
+			if (zipFile != null) {
 				try {
 					HashMap<String, HashMap<String, ZipEntry>> resources = getPackFromZip(zipFile);
 
 					// Load textures
 					HashMap<String, ZipEntry> textures = resources.get("textures");
 
-					// No need to continue if there aren't any sheets to load.
-					if (textures == null) return;
-					if (textures.isEmpty()) return;
+					// Load default sheets instead if there aren't any sheets to load.
+					if (textures == null || textures.isEmpty()) {
+						Renderer.screen.setSheets(sheets[0], sheets[1], sheets[2], sheets[3]);
+						return;
+					}
 
 					for (int i = 0; i < SHEET_NAMES.length; i++) {
 						ZipEntry entry = textures.get(SHEET_NAMES[i]);
@@ -199,13 +200,13 @@ public class ResourcePackDisplay extends Display {
 		// Load the custom loc as long as this isn't the default pack.
 		if (zipFile != null) {
 			ArrayList<String> paths = new ArrayList<>();
-			Enumeration<? extends ZipEntry> entries = zipFile.entries();
-			while (entries.hasMoreElements()) {
-				ZipEntry ent = entries.nextElement();
-				if (ent.getName().startsWith("localization/") && ent.getName().endsWith(".json")) {
-					paths.add(loadedPack + "/" + ent.getName());
+			HashMap<String, HashMap<String, ZipEntry>> resources = getPackFromZip(zipFile);
+			if (resources.containsKey("localization"))
+				for (Entry<String, ZipEntry> entry : resources.get("localization").entrySet()) {
+					if (entry.getKey().endsWith(".json")) {
+						paths.add(loadedPack + "/" + entry.getKey());
+					}
 				}
-			}
 
 			Localization.updateLocalizationFiles(paths.toArray(new String[0]));
 		}
@@ -246,8 +247,8 @@ public class ResourcePackDisplay extends Display {
 			// Only allow two levels of folders.
 			if (path.length <= 2) {
 				// Check if entry is a folder. If it is, add it to the first map, if not, add it to the second map.
+				String[] validNames = { "textures", "localization", "sound" };
 				if (entry.isDirectory()) {
-					String[] validNames = { "textures", "localization", "sound" };
 					for (String name : validNames) {
 						if (path[0].equals(name)) {
 							resources.put(path[0], new HashMap<>());
@@ -258,7 +259,16 @@ public class ResourcePackDisplay extends Display {
 					if (path.length == 1) continue;
 
 					HashMap<String, ZipEntry> directory = resources.get(path[0]);
-					if (directory == null) continue;
+					if (directory == null) {
+						// If it is not exist, create it.
+						for (String name : validNames) {
+							if (path[0].equals(name)) {
+								resources.put(path[0], new HashMap<>());
+							}
+						}
+						directory = resources.get(path[0]);
+						if (directory == null) continue;
+					};
 
 					String[] validSuffixes = { ".json", ".wav", ".png" };
 					for (String suffix : validSuffixes) {

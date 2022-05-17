@@ -1,10 +1,5 @@
 package minicraft.entity.furniture;
 
-import java.io.IOException;
-import java.util.List;
-
-import org.jetbrains.annotations.Nullable;
-
 import minicraft.core.Game;
 import minicraft.entity.Direction;
 import minicraft.entity.ItemHolder;
@@ -15,6 +10,10 @@ import minicraft.item.Item;
 import minicraft.item.Items;
 import minicraft.saveload.Load;
 import minicraft.screen.ContainerDisplay;
+import org.jetbrains.annotations.Nullable;
+
+import java.io.IOException;
+import java.util.List;
 
 public class Chest extends Furniture implements ItemHolder {
 	private Inventory inventory; // Inventory of the chest
@@ -27,10 +26,10 @@ public class Chest extends Furniture implements ItemHolder {
 	 */
 	public Chest(String name) {
 		super(name, new Sprite(10, 26, 2, 2, 2), 3, 3); // Name of the chest
-		
+
 		inventory = new Inventory(); // Initialize the inventory.
 	}
-	
+
 	/** This is what occurs when the player uses the "Menu" command near this */
 	public boolean use(Player player) {
 		Game.setDisplay(new ContainerDisplay(player, this));
@@ -66,32 +65,12 @@ public class Chest extends Furniture implements ItemHolder {
 			return super.interact(player, item, attackDir);
 		return false;
 	}
-	
-	@Override
-	protected String getUpdateString() {
-		String updates = super.getUpdateString()+";";
-		updates += "inventory,"+inventory.getItemData();
-		return updates;
-	}
-	
-	@Override
-	protected boolean updateField(String fieldName, String val) {
-		if (super.updateField(fieldName, val)) return true;
-		switch(fieldName) {
-			case "inventory":
-				inventory.updateInv(val);
-				if (Game.getDisplay() instanceof ContainerDisplay)
-					((ContainerDisplay)Game.getDisplay()).onInvUpdate(this);
-				return true;
-		}
-		return false;
-	}
-	
+
 	@Override
 	public Inventory getInventory() {
 		return inventory;
 	}
-	
+
 	@Override
 	public void die() {
 		if (level != null) {

@@ -1,7 +1,6 @@
 package minicraft.level.tile;
 
 import minicraft.entity.Entity;
-import minicraft.entity.mob.Mob;
 import minicraft.gfx.ConnectorSprite;
 import minicraft.gfx.Sprite;
 import minicraft.level.Level;
@@ -14,18 +13,13 @@ public class ExplodedTile extends Tile {
 			return !isSide || tile.connectsToLiquid();
 		}
 	};
-	
+
 	protected ExplodedTile(String name) {
 		super(name, sprite);
 		connectsToSand = true;
 		connectsToFluid = true;
 	}
-	
-	public void steppedOn(Level level, int x, int y, Entity entity) {
-		if (entity instanceof Mob)
-			((Mob)entity).hurt(this, x, y, 50);
-	}
-	
+
 	public boolean mayPass(Level level, int x, int y, Entity e) {
 		return true;
 	}

@@ -10,48 +10,48 @@ import minicraft.screen.entry.KeyInputEntry;
 import minicraft.screen.entry.StringEntry;
 
 public class KeyInputDisplay extends Display {
-	
+
 	private boolean listeningForBind, confirmReset;
-	
+
 	private static Menu.Builder builder;
-	
+
 	private static KeyInputEntry[] getEntries() {
 		String[] prefs = Game.input.getKeyPrefs();
 		KeyInputEntry[] entries = new KeyInputEntry[prefs.length];
-		
+
 		for (int i = 0; i < entries.length; i++)
 			entries[i] = new KeyInputEntry(prefs[i]);
-		
+
 		return entries;
 	}
-	
+
 	public KeyInputDisplay() {
 		super(true);
 		builder = new Menu.Builder(false, 0, RelPos.CENTER, getEntries())
 			.setTitle("Controls")
 			.setPositioning(new Point(Screen.w/2, Screen.h - Font.textHeight()*5), RelPos.TOP);
-		
+
 		Menu.Builder popupBuilder = new Menu.Builder(true, 4, RelPos.CENTER)
 			.setShouldRender(false)
 			.setSelectable(false);
-		
+
 		menus = new Menu[] {
 			builder.createMenu(),
-			
+
 			popupBuilder
 				.setEntries(StringEntry.useLines(Color.YELLOW, "Press the desired", "key sequence"))
 				.createMenu(),
-			
+
 			popupBuilder
-				.setEntries(StringEntry.useLines(Color.RED, "Are you sure you want to reset all key bindings to the default keys?", "enter to confirm", "escape to cancel"))
+				.setEntries(StringEntry.useLines(Color.RED, "minicraft.display.key_input.confirm_popup", "minicraft.display.popup.enter_confirm", "minicraft.display.popup.escape_cancel"))
 				.setTitle("Confirm Action")
 				.createMenu()
 		};
-		
+
 		listeningForBind = false;
 		confirmReset = false;
 	}
-	
+
 	@Override
 	public void tick(InputHandler input) {
 		if(listeningForBind) {
@@ -62,10 +62,10 @@ public class KeyInputDisplay extends Display {
 				menus[0].updateSelectedEntry(new KeyInputEntry(input.getChangedKey()));
 				selection = 0;
 			}
-			
+
 			return;
 		}
-		
+
 		if(confirmReset) {
 			if(input.getKey("exit").clicked) {
 				confirmReset = false;
@@ -81,12 +81,12 @@ public class KeyInputDisplay extends Display {
 					.createMenu();
 				selection = 0;
 			}
-			
+
 			return;
 		}
-		
+
 		super.tick(input); // ticks menu
-		
+
 		if(input.keyToChange != null) {
 			listeningForBind = true;
 			selection = 1;
@@ -97,13 +97,13 @@ public class KeyInputDisplay extends Display {
 			menus[selection].shouldRender = true;
 		}
 	}
-	
+
 	public void render(Screen screen) {
 		if(selection == 0) // not necessary to put in if statement now, but it's probably more efficient anyway
 			screen.clear(0);
-		
+
 		super.render(screen);
-		
+
 		if(!listeningForBind && !confirmReset) {
 			String[] lines = {
 				"Press C/Enter to change key binding",

@@ -57,7 +57,7 @@ public class WallTile extends Tile {
 			if (tool.type == type.getRequiredTool()) {
 				if (level.depth != -3 || type != Material.Obsidian || AirWizard.beaten) {
 					if (player.payStamina(4 - tool.level) && tool.payDurability()) {
-						hurt(level, xt, yt, random.nextInt(10) + (tool.level) * 5 + 10);
+						hurt(level, xt, yt, tool.getDamage());
 						return true;
 					}
 				} else {

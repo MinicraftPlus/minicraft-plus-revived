@@ -49,21 +49,21 @@ public class Localization {
 	@NotNull
 	public static String getLocalized(String key) {
 		if (key.matches("^[ ]*$")) return key; // Blank, or just whitespace
-		
+
 		try {
 			Double.parseDouble(key);
 			return key; // This is a number; don't try to localize it
 		} catch(NumberFormatException ignored) {}
-		
+
 		String localString = localization.get(key);
-		
+
 		if (Game.debug && localString == null) {
 			if (!knownUnlocalizedStrings.contains(key)) {
 				Logger.tag("LOC").trace("'{}' is unlocalized.", key);
 				knownUnlocalizedStrings.add(key);
 			}
 		}
-		
+
 		return (localString == null ? key : localString);
 	}
 
@@ -229,7 +229,7 @@ public class Localization {
 				int reads = 0;
 				while (true) {
 					ZipEntry e = zip.getNextEntry();
-					
+
 					// e is either null if there are no entries left, or if
 					// we're running this from an ide
 					if (e == null) {
@@ -317,6 +317,7 @@ public class Localization {
 				// Convert language tag into locale.
 				Locale lang = Locale.forLanguageTag(data.substring(data.indexOf('_') + 1));
 
+				
 				localizationFiles.put(lang, path);
 			} catch (StringIndexOutOfBoundsException e) {
 				Logger.error("Title of localization file {} is invalid.", path);

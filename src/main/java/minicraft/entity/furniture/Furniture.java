@@ -1,7 +1,5 @@
 package minicraft.entity.furniture;
 
-import org.jetbrains.annotations.Nullable;
-
 import minicraft.core.Game;
 import minicraft.core.io.Sound;
 import minicraft.entity.Direction;
@@ -12,26 +10,27 @@ import minicraft.gfx.Sprite;
 import minicraft.item.FurnitureItem;
 import minicraft.item.Item;
 import minicraft.item.PowerGloveItem;
+import org.jetbrains.annotations.Nullable;
 
 /** Many furniture classes are very similar; they might not even need to be there at all... */
 
 public class Furniture extends Entity {
-	
+
 	protected int pushTime = 0, multiPushTime = 0; // Time for each push; multi is for multiplayer, to make it so not so many updates are sent.
 	private Direction pushDir = Direction.NONE; // The direction to push the furniture
 	public Sprite sprite;
 	public String name;
-	
+
 	/**
 	 * Constructor for the furniture entity.
 	 * Size will be set to 3.
 	 * @param name Name of the furniture.
 	 * @param sprite Furniture sprite.
 	 */
-	public Furniture(String name, Sprite sprite) { 
+	public Furniture(String name, Sprite sprite) {
 		this(name, sprite, 3, 3);
 	}
-	
+
 	/**
 	 * Constructor for the furniture entity.
 	 * Radius is only used for collision detection.
@@ -47,7 +46,7 @@ public class Furniture extends Entity {
 		this.sprite = sprite;
 		col = sprite.color;
 	}
-	
+
 	@Override
 	public Furniture clone() {
 		try {
@@ -63,22 +62,22 @@ public class Furniture extends Entity {
 		// Moves the furniture in the correct direction.
 		move(pushDir.getX(), pushDir.getY());
 		pushDir = Direction.NONE;
-		
+
 		if (pushTime > 0) pushTime--; // Update pushTime by subtracting 1.
 		else multiPushTime = 0;
 	}
-	
+
 	/** Draws the furniture on the screen. */
 	public void render(Screen screen) { sprite.render(screen, x-8, y-8); }
-	
+
 	/** Called when the player presses the MENU key in front of this. */
 	public boolean use(Player player) { return false; }
-	
+
 	@Override
 	public boolean blocks(Entity e) {
 		return true; // Furniture blocks all entities, even non-solid ones like arrows.
 	}
-	
+
 	@Override
 	protected void touchedBy(Entity entity) {
 		if (entity instanceof Player)
@@ -112,24 +111,7 @@ public class Furniture extends Entity {
 			pushTime = multiPushTime = 10; // Set pushTime to 10.
 		}
 	}
-	
+
 	@Override
 	public boolean canWool() { return true; }
-	
-	@Override
-	protected String getUpdateString() {
-		return super.getUpdateString()+
-		";pushTime," + multiPushTime;
-	}
-	
-	@Override
-	protected boolean updateField(String field, String val) {
-		if (super.updateField(field, val)) return true;
-
-		switch (field) {
-			case "pushTime": pushTime = Integer.parseInt(val); return true;
-		}
-		
-		return false;
-	}
 }
