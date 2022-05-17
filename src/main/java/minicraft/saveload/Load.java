@@ -1,16 +1,21 @@
 package minicraft.saveload;
 
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileReader;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.List;
-
+import minicraft.core.Game;
+import minicraft.core.Updater;
+import minicraft.core.World;
+import minicraft.core.io.Localization;
+import minicraft.core.io.Settings;
+import minicraft.entity.*;
+import minicraft.entity.furniture.*;
+import minicraft.entity.mob.*;
+import minicraft.entity.particle.FireParticle;
+import minicraft.entity.particle.SmashParticle;
+import minicraft.entity.particle.TextParticle;
+import minicraft.gfx.Color;
+import minicraft.item.*;
+import minicraft.level.Level;
+import minicraft.level.tile.Tiles;
+import minicraft.network.Network;
 import minicraft.screen.*;
 import org.jetbrains.annotations.Nullable;
 import org.json.JSONArray;
@@ -18,53 +23,10 @@ import org.json.JSONException;
 import org.json.JSONObject;
 import org.tinylog.Logger;
 
-import minicraft.core.Game;
-import minicraft.core.Network;
-import minicraft.core.Renderer;
-import minicraft.core.Updater;
-import minicraft.core.World;
-import minicraft.core.io.Localization;
-import minicraft.core.io.Settings;
-import minicraft.entity.Arrow;
-import minicraft.entity.Direction;
-import minicraft.entity.Entity;
-import minicraft.entity.ItemEntity;
-import minicraft.entity.Spark;
-import minicraft.entity.furniture.Bed;
-import minicraft.entity.furniture.Chest;
-import minicraft.entity.furniture.Crafter;
-import minicraft.entity.furniture.DeathChest;
-import minicraft.entity.furniture.DungeonChest;
-import minicraft.entity.furniture.Lantern;
-import minicraft.entity.furniture.Spawner;
-import minicraft.entity.furniture.Tnt;
-import minicraft.entity.mob.AirWizard;
-import minicraft.entity.mob.Cow;
-import minicraft.entity.mob.Creeper;
-import minicraft.entity.mob.EnemyMob;
-import minicraft.entity.mob.Knight;
-import minicraft.entity.mob.Mob;
-import minicraft.entity.mob.MobAi;
-import minicraft.entity.mob.Pig;
-import minicraft.entity.mob.Player;
-import minicraft.entity.mob.Sheep;
-import minicraft.entity.mob.Skeleton;
-import minicraft.entity.mob.Slime;
-import minicraft.entity.mob.Snake;
-import minicraft.entity.mob.Zombie;
-import minicraft.entity.particle.FireParticle;
-import minicraft.entity.particle.SmashParticle;
-import minicraft.entity.particle.TextParticle;
-import minicraft.gfx.Color;
-import minicraft.item.ArmorItem;
-import minicraft.item.Inventory;
-import minicraft.item.Item;
-import minicraft.item.Items;
-import minicraft.item.PotionItem;
-import minicraft.item.PotionType;
-import minicraft.item.StackableItem;
-import minicraft.level.Level;
-import minicraft.level.tile.Tiles;
+import java.io.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
 public class Load {
 
@@ -378,13 +340,14 @@ public class Load {
 		Settings.set("sound", json.getBoolean("sound"));
 		Settings.set("autosave", json.getBoolean("autosave"));
 		Settings.set("diff", json.has("diff") ? json.getString("diff") : "Normal");
-		Settings.set("aspectratio", json.has("aspectratio") ? json.getString("aspectratio") : "4x3");
-		Renderer.setAspectRatio(); // Sets the aspect ratio of the game window.
 		Settings.set("fps", json.getInt("fps"));
 
-		if (prefVer.compareTo(new Version("2.1.0-dev1")) > 0) {
+		if (json.has("lang")) {
 			String lang = json.getString("lang");
 			Settings.set("language", lang);
+			Localization.changeLanguage(lang);
+		} else {
+			Localization.loadLanguage();
 		}
 
 		SkinDisplay.setSelectedSkinIndex(json.getInt("skinIdx"));
@@ -408,9 +371,6 @@ public class Load {
 		loadFromFile(location + filename + extension);
 
 		for (String unlock: data) {
-			if (unlock.equals("AirSkin"))
-				Settings.set("unlockedskin", true);
-
 			unlock = unlock.replace("HOURMODE", "H_ScoreTime").replace("MINUTEMODE", "M_ScoreTime").replace("M_ScoreTime", "_ScoreTime").replace("2H_ScoreTime", "120_ScoreTime");
 
 			if (unlock.contains("_ScoreTime"))
@@ -426,8 +386,6 @@ public class Load {
 			ex.printStackTrace();
 			return;
 		}
-
-		Settings.set("unlockedskin", json.getBoolean("unlockedAirWizardSuit"));
 
 		for (Object i : json.getJSONArray("visibleScoreTimes")) {
 			Settings.getEntry("scoretime").setValueVisibility(i, true); // Minutes
@@ -464,12 +422,12 @@ public class Load {
 						if (Tiles.oldids.get(tileID) != null)
 							tilename = Tiles.oldids.get(tileID);
 						else {
-							System.out.println("Tile list doesn't contain tile " + tileID);
+							Logger.warn("Tile list doesn't contain tile " + tileID);
 							tilename = "grass";
 						}
 					}
 
-					if(tilename.equalsIgnoreCase("WOOL") && worldVer.compareTo(new Version("2.0.6-dev4")) < 0) {
+					if (tilename.equalsIgnoreCase("Wool") && worldVer.compareTo(new Version("2.0.6-dev4")) < 0) {
 						switch (Integer.parseInt(extradata.get(tileidx))) {
 							case 1:
 								tilename = "Red Wool";
@@ -489,12 +447,22 @@ public class Load {
 							default:
 								tilename = "Wool";
 						}
+					} else if (l == World.minLevelDepth+1 && tilename.equalsIgnoreCase("Lapis") && worldVer.compareTo(new Version("2.0.3-dev6")) < 0) {
+						if (Math.random() < 0.8) // don't replace *all* the lapis
+							tilename = "Gem Ore";
+					} else if (tilename.equalsIgnoreCase("Cloud Cactus")) {
+
+						// Check the eight tiles around the cloud cactus to see if it is empty.
+						for (int yy = y - 1; yy <= y + 1; yy++) {
+							for (int xx = x - 1; xx <= x + 1; xx++) {
+								if (data.get(xx + yy * lvlw + (hasSeed ? 4 : 3)).equalsIgnoreCase("Infinite Fall")) {
+									tilename = "Infinite Fall";
+									break;
+								}
+							}
+						}
 					}
 
-					if(l == World.minLevelDepth+1 && tilename.equalsIgnoreCase("LAPIS") && worldVer.compareTo(new Version("2.0.3-dev6")) < 0) {
-						if(Math.random() < 0.8) // don't replace *all* the lapis
-							tilename = "Gem Ore";
-					}
 					tiles[tileArrIdx] = Tiles.get(tilename).id;
 					tdata[tileArrIdx] = Short.parseShort(extradata.get(tileidx));
 				}
@@ -626,7 +594,8 @@ public class Load {
 		else
 			player.shirtColor = Integer.parseInt(data.remove(0));
 
-		Settings.set("skinon", player.suitOn = Boolean.parseBoolean(data.remove(0)));
+		// Just delete the slot reserved for loading legacy skins.
+		data.remove(0);
 	}
 
 	protected static String subOldName(String name, Version worldVer) {
@@ -850,7 +819,7 @@ public class Load {
 
 			newEntity = chest;
 		} else if (newEntity instanceof Spawner) {
-			MobAi mob = (MobAi) getEntity(info.get(2).substring(info.get(2).lastIndexOf(".")+1), Integer.parseInt(info.get(3)));
+			MobAi mob = (MobAi) getEntity(info.get(2).substring(info.get(2).lastIndexOf(".") + 1), Integer.parseInt(info.get(3)));
 			if (mob != null)
 				newEntity = new Spawner(mob);
 		} else if (newEntity instanceof Lantern && worldVer.compareTo(new Version("1.9.4")) >= 0 && info.size() > 3) {
@@ -897,20 +866,22 @@ public class Load {
 	}
 
 	@Nullable
-	private static Entity getEntity(String string, int moblvl) {
+	private static Entity getEntity(String string, int mobLevel) {
 		switch (string) {
 			case "Player": return null;
 			case "RemotePlayer": return null;
 			case "Cow": return new Cow();
 			case "Sheep": return new Sheep();
 			case "Pig": return new Pig();
-			case "Zombie": return new Zombie(moblvl);
-			case "Slime": return new Slime(moblvl);
-			case "Creeper": return new Creeper(moblvl);
-			case "Skeleton": return new Skeleton(moblvl);
-			case "Knight": return new Knight(moblvl);
-			case "Snake": return new Snake(moblvl);
-			case "AirWizard": return new AirWizard(moblvl>1);
+			case "Zombie": return new Zombie(mobLevel);
+			case "Slime": return new Slime(mobLevel);
+			case "Creeper": return new Creeper(mobLevel);
+			case "Skeleton": return new Skeleton(mobLevel);
+			case "Knight": return new Knight(mobLevel);
+			case "Snake": return new Snake(mobLevel);
+			case "AirWizard":
+				if (mobLevel > 1) return null;
+				return new AirWizard();
 			case "Spawner": return new Spawner(new Zombie(1));
 			case "Workbench": return new Crafter(Crafter.Type.Workbench);
 			case "Chest": return new Chest();

@@ -1,13 +1,5 @@
 package minicraft.saveload;
 
-import java.io.BufferedWriter;
-import java.io.File;
-import java.io.FileWriter;
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map.Entry;
-
 import minicraft.core.Game;
 import minicraft.core.Renderer;
 import minicraft.core.Updater;
@@ -18,17 +10,8 @@ import minicraft.entity.Arrow;
 import minicraft.entity.Entity;
 import minicraft.entity.ItemEntity;
 import minicraft.entity.Spark;
-import minicraft.entity.furniture.Chest;
-import minicraft.entity.furniture.Crafter;
-import minicraft.entity.furniture.DeathChest;
-import minicraft.entity.furniture.DungeonChest;
-import minicraft.entity.furniture.Lantern;
-import minicraft.entity.furniture.Spawner;
-import minicraft.entity.mob.AirWizard;
-import minicraft.entity.mob.EnemyMob;
-import minicraft.entity.mob.Mob;
-import minicraft.entity.mob.Player;
-import minicraft.entity.mob.Sheep;
+import minicraft.entity.furniture.*;
+import minicraft.entity.mob.*;
 import minicraft.entity.particle.Particle;
 import minicraft.entity.particle.TextParticle;
 import minicraft.item.Inventory;
@@ -40,6 +23,13 @@ import minicraft.util.Quest;
 import org.json.JSONArray;
 import org.json.JSONObject;
 import org.tinylog.Logger;
+
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 
 public class Save {
 
@@ -180,7 +170,6 @@ public class Save {
 		json.put("sound", String.valueOf(Settings.get("sound")));
 		json.put("autosave", String.valueOf(Settings.get("autosave")));
 		json.put("fps", String.valueOf(Settings.get("fps")));
-		json.put("aspectratio", String.valueOf(Settings.get("aspectratio")));
 		json.put("lang", Localization.getSelectedLocale().toLanguageTag());
 		json.put("skinIdx", String.valueOf(SkinDisplay.getSelectedSkinIndex()));
 		json.put("savedIP", MultiplayerDisplay.savedIP);
@@ -199,8 +188,6 @@ public class Save {
 
 	private void writeUnlocks() {
 		JSONObject json = new JSONObject();
-
-		json.put("unlockedAirWizardSuit", (boolean) Settings.get("unlockedskin"));
 
 		JSONArray scoretimes = new JSONArray();
 		if (Settings.getEntry("scoretime").getValueVisibility(10))
@@ -295,7 +282,6 @@ public class Save {
 		data.add(subdata.toString());
 
 		data.add(String.valueOf(player.shirtColor));
-		data.add(String.valueOf(player.suitOn));
 	}
 
 	private void writeInventory(String filename, Player player) {

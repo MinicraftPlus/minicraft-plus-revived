@@ -8,7 +8,6 @@ Minicraft+ version 2.1.0
 + Added raw obsidian and stone tiles
 + Added totems that can spawn AirWizards
 + Added resource packs
-+ Added an option to change the aspect ratio
 + Re-added sparks, damage particles and items shadows
 + Re-added swimming animation
 + Re-added colored spawners
@@ -30,6 +29,8 @@ Minicraft+ version 2.1.0
 * Saplings should no longer grow if an entity is on it
 * Changed texture packs into resource packs
 * You can now mine cloud cactus
+- Removed suits
+- Removed second air wizard
 
 Minicraft+ version 2.0.7
 

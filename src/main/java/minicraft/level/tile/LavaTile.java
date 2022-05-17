@@ -13,25 +13,28 @@ public class LavaTile extends Tile {
 			return tile.connectsToFluid;
 		}
 	};
-	
+
 	protected LavaTile(String name) {
 		super(name, (ConnectorSprite)null);
 		super.csprite = sprite;
 		connectsToSand = true;
 		connectsToFluid = true;
 	}
-	
+
+	@Override
 	public void render(Screen screen, Level level, int x, int y) {
 		long seed = (tickCount + (x / 2 - y) * 4311) / 10 * 54687121l + x * 3271612l + y * 3412987161l;
 		sprite.full = Sprite.randomDots(seed, 1);
 		sprite.sparse.color = DirtTile.dCol(level.depth);
 		sprite.render(screen, level, x, y);
 	}
-	
+
+	@Override
 	public boolean mayPass(Level level, int x, int y, Entity e) {
 		return e.canSwim();
 	}
 
+	@Override
 	public boolean tick(Level level, int xt, int yt) {
 		int xn = xt;
 		int yn = yt;
@@ -45,6 +48,7 @@ public class LavaTile extends Tile {
 		return false;
 	}
 
+	@Override
 	public int getLightRadius(Level level, int x, int y) {
 		return 6;
 	}

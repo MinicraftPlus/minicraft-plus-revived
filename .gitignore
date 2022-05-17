@@ -4,8 +4,9 @@
 # Backup file
 *.java~
 
-# Text files in the root folder
+# Text files
 /*.txt
+logs/
 
 # hidden files
 /.*

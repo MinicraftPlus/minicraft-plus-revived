@@ -13,39 +13,33 @@ import minicraft.gfx.SpriteSheet;
 import minicraft.screen.entry.StringEntry;
 
 public class BookDisplay extends Display {
-	
+
 	// null characters "\0" denote page breaks.
 	private static final String defaultBook = "This book has no text.";
-	
+
 	private static final int spacing = 3;
-	private static int minX = 15, maxX = 15+8 * 32, minY = 8*5, maxY = 8*5 + 8*16;
+	private static final int minX = 15, maxX = 15+8 * 32, minY = 8*5, maxY = 8*5 + 8*16;
 
 	// First array is page and second is line.
 	private String[][] lines;
 	private int page;
-	
+
 	private final boolean hasTitle;
 	private final boolean showPageCount;
 	private final int pageOffset;
-	
+
 	public BookDisplay(String book) { this(book, false); }
 	public BookDisplay(String book, boolean hasTitle) {// this(book, hasTitle, !hasTitle); }
 	//public BookDisplay(String book, boolean hasTitle, boolean hideCountIfOnePage) {
 		page = 0;
-		
+
 		if (book == null) {
 			book = defaultBook;
 			hasTitle = false;
 		}
-		
-		if (OptionsMainMenuDisplay.originalAspectRatio == "16x9") {
-			maxY = 8*5 + 8*12; // 16x9? less height
-		} else {
-			maxY = 8*5 + 8*16;
-		}
 
 		this.hasTitle = hasTitle;
-		
+
 		ArrayList<String[]> pages = new ArrayList<>();
 		String[] splitContents = book.split("\0");
 		for (String content: splitContents) {
@@ -55,34 +49,34 @@ public class BookDisplay extends Display {
 				pages.add(Arrays.copyOf(remainder, remainder.length-1)); // Removes the last element of remainder, which is the leftover.
 			}
 		}
-		
+
 		lines = pages.toArray(new String[pages.size()][]);
-		
+
 		showPageCount = hasTitle || lines.length != 1;
 		pageOffset = showPageCount ? 1 : 0;
-		
+
 		Menu.Builder builder = new Menu.Builder(true, spacing, RelPos.CENTER);
-		
+
 		Menu pageCount = builder // The small rect for the title
 			.setPositioning(new Point(Screen.w/2, 0), RelPos.BOTTOM)
 			.setEntries(StringEntry.useLines(Color.BLACK, "Page", hasTitle ? "Title" : "1/" + lines.length))
 			.setSelection(1)
 			.createMenu();
-		
+
 		builder
 			.setPositioning(new Point(Screen.w/2, pageCount.getBounds().getBottom() + spacing), RelPos.BOTTOM)
 			.setSize(maxX-minX + SpriteSheet.boxWidth*2, maxY-minY + SpriteSheet.boxWidth*2)
 			.setShouldRender(false);
-		
+
 		menus = new Menu[lines.length + pageOffset];
 		if (showPageCount) menus[0] = pageCount;
 		for (int i = 0; i < lines.length; i++) {
 			menus[i+pageOffset] = builder.setEntries(StringEntry.useLines(Color.WHITE, lines[i])).createMenu();
 		}
-		
+
 		menus[page+pageOffset].shouldRender = true;
 	}
-	
+
 	private void turnPage(int dir) {
 		if (page + dir >= 0 && page + dir < lines.length) {
 			menus[page+pageOffset].shouldRender = false;
@@ -91,13 +85,10 @@ public class BookDisplay extends Display {
 			menus[page+pageOffset].shouldRender = true;
 		}
 	}
-	
+
 	@Override
 	public void tick(InputHandler input) {
-		if (input.getKey("menu").clicked || input.getKey("exit").clicked){
-			// This is what closes the book; TODO if books were editable, I would probably remake the book here with the edited pages
-			Game.exitDisplay();
-		}
+		if (input.getKey("menu").clicked || input.getKey("exit").clicked) Game.exitDisplay(); // Close the menu.
 		if (input.getKey("cursor-left").clicked) turnPage(-1); // This is what turns the page back
 		if (input.getKey("cursor-right").clicked) turnPage(1); // This is what turns the page forward
 	}

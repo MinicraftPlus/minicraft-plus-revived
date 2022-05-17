@@ -6,7 +6,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-import minicraft.core.FileHandler;
+import minicraft.core.io.FileHandler;
 import minicraft.core.Game;
 import minicraft.core.io.InputHandler;
 import minicraft.core.io.Localization;
@@ -134,6 +134,7 @@ public class WorldEditDisplay extends Display {
 						// Try to rename the file, if it works, return
 						if (world.renameTo(new File(worldsDir + name))) {
 							Logger.debug("Renaming world {} to new name: {}", world, name);
+							WorldSelectDisplay.updateWorlds();
 						} else {
 							Logger.error("Rename failed in WorldEditDisplay.");
 						}

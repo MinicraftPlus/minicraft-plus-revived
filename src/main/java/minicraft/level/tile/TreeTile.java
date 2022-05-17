@@ -20,15 +20,15 @@ import minicraft.screen.AchievementsDisplay;
 import minicraft.screen.QuestsDisplay;
 
 public class TreeTile extends Tile {
-	
+
 	protected TreeTile(String name) {
 		super(name, (ConnectorSprite)null);
 		connectsToGrass = true;
 	}
-	
+
 	public void render(Screen screen, Level level, int x, int y) {
 		Tiles.get("Grass").render(screen, level, x, y);
-		
+
 		boolean u = level.getTile(x, y - 1) == this;
 		boolean l = level.getTile(x - 1, y) == this;
 		boolean r = level.getTile(x + 1, y) == this;
@@ -72,13 +72,13 @@ public class TreeTile extends Tile {
 	public boolean mayPass(Level level, int x, int y, Entity e) {
 		return false;
 	}
-	
+
 	@Override
 	public boolean hurt(Level level, int x, int y, Mob source, int dmg, Direction attackDir) {
 		hurt(level, x, y, dmg);
 		return true;
 	}
-	
+
 	@Override
 	public boolean interact(Level level, int xt, int yt, Player player, Item item, Direction attackDir) {
 		if(Game.isMode("Creative"))
@@ -87,7 +87,7 @@ public class TreeTile extends Tile {
 			ToolItem tool = (ToolItem) item;
 			if (tool.type == ToolType.Axe) {
 				if (player.payStamina(4 - tool.level) && tool.payDurability()) {
-					hurt(level, xt, yt, random.nextInt(10) + (tool.level) * 5 + 10);
+					hurt(level, xt, yt, tool.getDamage());
 					return true;
 				}
 			}
@@ -98,11 +98,11 @@ public class TreeTile extends Tile {
 	public void hurt(Level level, int x, int y, int dmg) {
 		if (random.nextInt(100) == 0)
 			level.dropItem(x * 16 + 8, y * 16 + 8, Items.get("Apple"));
-		
+
 		int damage = level.getData(x, y) + dmg;
 		int treeHealth = 20;
 		if (Game.isMode("Creative")) dmg = damage = treeHealth;
-		
+
 		level.add(new SmashParticle(x*16, y*16));
 		Sound.monsterHurt.play();
 

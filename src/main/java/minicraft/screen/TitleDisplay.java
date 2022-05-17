@@ -7,7 +7,7 @@ import java.util.Random;
 import minicraft.util.BookData;
 
 import minicraft.core.Game;
-import minicraft.core.Network;
+import minicraft.network.Network;
 import minicraft.core.Renderer;
 import minicraft.core.VersionInfo;
 import minicraft.core.World;
@@ -25,14 +25,13 @@ import minicraft.screen.entry.StringEntry;
 
 public class TitleDisplay extends Display {
 	private static final Random random = new Random();
-	
+
 	private int rand;
 	private int count = 0; // This and reverse are for the logo; they produce the fade-in/out effect.
 	private boolean reverse = false;
-	private int TitleY;
-	
+
 	public TitleDisplay() {
-			
+
 		super(true, false, new Menu.Builder(false, 2, RelPos.CENTER,
 			new StringEntry("Checking for updates...", Color.BLUE),
 			new BlankEntry(),
@@ -58,21 +57,15 @@ public class TitleDisplay extends Display {
 			),
 			new SelectEntry("Quit", Game::quit)
 			)
-			.setPositioning(new Point(Screen.w/2, Screen.h*3/5 - 8), RelPos.CENTER)
+			.setPositioning(new Point(Screen.w/2, Screen.h*3/5), RelPos.CENTER)
 			.createMenu()
 		);
 	}
-	
+
 	@Override
 	public void init(Display parent) {
 		super.init(null); // The TitleScreen never has a parent.
-		
-		if (OptionsMainMenuDisplay.originalAspectRatio == "16x9") {
-			TitleY = Screen.h / 2 - 64;
-		} else {
-			TitleY = Screen.h / 2 - 58;
-		}
-		
+
 		Renderer.readyToRenderGameplay = false;
 
 		// Check version
@@ -85,14 +78,14 @@ public class TitleDisplay extends Display {
 		} else {
 			rand = random.nextInt(splashes.length - 3) + 3;
 		}
-		
+
 		World.levels = new Level[World.levels.length];
-		
+
 		if(Game.player == null)
 			// Was online, need to reset player
 			World.resetGame(false);
 	}
-	
+
 	private void checkVersion() {
 		VersionInfo latestVersion = Network.getLatestVersion();
 		if(latestVersion == null) {
@@ -104,9 +97,9 @@ public class TitleDisplay extends Display {
 				menus[0].updateEntry(1, new LinkEntry(Color.CYAN, "--Select here to Download--", latestVersion.releaseUrl, "Direct link to latest version: " + latestVersion.releaseUrl));
 			}
 			else if (latestVersion.releaseName.length() > 0)
-				menus[0].updateEntry(0, new StringEntry(Localization.getLocalized("You have the latest version."), Color.DARK_GRAY));
+				menus[0].updateEntry(0, new StringEntry("You have the latest version.", Color.DARK_GRAY, true));
 			else
-				menus[0].updateEntry(0, new StringEntry(Localization.getLocalized("Could not check for updates."), Color.RED));
+				menus[0].updateEntry(0, new StringEntry("Could not check for updates.", Color.RED, true));
 		}
 	}
 
@@ -116,22 +109,22 @@ public class TitleDisplay extends Display {
 
 		super.tick(input);
 	}
-	
+
 	@Override
 	public void render(Screen screen) {
 		super.render(screen);
-		
+
 		int h = 2; // Height of squares (on the spritesheet)
 		int w = 15; // Width of squares (on the spritesheet)
 		int xo = (Screen.w - w * 8) / 2; // X location of the title
-		int yo = TitleY; // Y location of the title
-		
+		int yo = 18; // Y location of the title
+
 		for (int y = 0; y < h; y++) {
 			for (int x = 0; x < w; x++) {
 				screen.render(xo + x * 8, yo + y * 8, x + y * 32, 0, 3);
 			}
 		}
-		
+
 		boolean isblue = splashes[rand].contains("blue");
 		boolean isGreen = splashes[rand].contains("Green");
 		boolean isRed = splashes[rand].contains("Red");
@@ -143,29 +136,25 @@ public class TitleDisplay extends Display {
 			count++;
 			if (count == 25) reverse = true;
 		}
-		
+
 		/// This isn't as complicated as it looks. It just gets a color based off of count, which oscilates between 0 and 25.
 		int bcol = 5 - count / 5; // This number ends up being between 1 and 5, inclusive.
 		int splashColor = isblue ? Color.BLUE : isRed ? Color.RED : isGreen ? Color.GREEN : Color.get(1, bcol*51, bcol*51, bcol*25);
-		
-		if (OptionsMainMenuDisplay.originalAspectRatio == "16x9") {
-			Font.drawCentered(splashes[rand], screen, (Screen.h / 2) - 44, splashColor);
-		} else {
-			Font.drawCentered(splashes[rand], screen, (Screen.h / 2) - 38, splashColor);
-		}
-		
+
+		Font.drawCentered(splashes[rand], screen, (Screen.h / 2) - 44, splashColor);
+
 		Font.draw("Version " + Game.VERSION, screen, 1, 1, Color.get(1, 51));
-		
-		
+
+
 		String upString = "(" + Game.input.getMapping("cursor-up") + ", " + Game.input.getMapping("cursor-down") + Localization.getLocalized(" to select") + ")";
 		String selectString = "(" + Game.input.getMapping("select") + Localization.getLocalized(" to accept") +")";
 		String exitString = "(" + Game.input.getMapping("exit") + Localization.getLocalized(" to return") +")";
-		
+
 		Font.drawCentered(upString, screen, Screen.h - 30, Color.DARK_GRAY);
 		Font.drawCentered(selectString, screen, Screen.h - 20, Color.DARK_GRAY);
 		Font.drawCentered(exitString, screen, Screen.h - 10, Color.DARK_GRAY);
 	}
-	
+
 	private static final String[] splashes = {
 		"Secret Splash!",
 		"Happy birthday Minicraft!",
