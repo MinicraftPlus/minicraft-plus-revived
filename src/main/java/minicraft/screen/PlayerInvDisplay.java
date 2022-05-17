@@ -14,7 +14,6 @@ public class PlayerInvDisplay extends Display {
 
 	private final Player player;
 
-	private final Player player;
 	private String itemDescription = "";
 	private Menu.Builder builder;
 

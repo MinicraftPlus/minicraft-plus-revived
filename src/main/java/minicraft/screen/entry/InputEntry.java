@@ -9,15 +9,15 @@ import minicraft.core.io.ClipboardHandler;
 
 public class InputEntry extends ListEntry {
 
-	private String prompt;
-	private String regex;
-	private int maxLength;
+	protected String prompt;
+	protected String regex;
+	protected int maxLength;
 
 	private String userInput;
 
-	private ChangeListener listener;
+	protected ChangeListener listener;
 
-	private ClipboardHandler clipboardHandler = new ClipboardHandler();
+	protected ClipboardHandler clipboardHandler = new ClipboardHandler();
 
 	public InputEntry(String prompt) {
 		this(prompt, null, 0);

@@ -9,7 +9,6 @@ import minicraft.gfx.Color;
 import minicraft.gfx.Font;
 import minicraft.gfx.FontStyle;
 import minicraft.gfx.Screen;
-import minicraft.util.ClipboardSystem;
 
 public class TextAreaEntry extends InputEntry {
 	private int maxLine;
@@ -154,7 +153,7 @@ public class TextAreaEntry extends InputEntry {
 			cursor++;
 		}
 		if (input.getKey("CTRL-V").clicked) {
-			String[] newLns = clipboardSystem.getClipboardContents().split("\n");
+			String[] newLns = clipboardHandler.getClipboardContents().split("\n");
 			int cursorX = cursor % Short.MAX_VALUE;
 			int cursorY = cursor / Short.MAX_VALUE;
 			String curString = userInput.get(cursorY);
@@ -179,20 +178,20 @@ public class TextAreaEntry extends InputEntry {
 		}
 
 		if (input.getKey("CTRL-C").clicked) {
-			clipboardSystem.setClipboardContents(userInput.get(cursor / Short.MAX_VALUE));
+			clipboardHandler.setClipboardContents(userInput.get(cursor / Short.MAX_VALUE));
 
 		} else if (input.getKey("CTRL-X").clicked) {
 			int cursorY = cursor / Short.MAX_VALUE;
-			clipboardSystem.setClipboardContents(userInput.get(cursorY));
+			clipboardHandler.setClipboardContents(userInput.get(cursorY));
 			userInput.remove(cursorY);
 			cursor = cursorY == 0 ? 0 : userInput.get(cursorY-1).length() + (cursorY-1)*Short.MAX_VALUE;
 			noAdd = false;
 
 		} else if (input.getKey("CTRL-SHIFT-C").clicked) {
-			clipboardSystem.setClipboardContents(getUserInput());
+			clipboardHandler.setClipboardContents(getUserInput());
 
 		} else if (input.getKey("CTRL-SHIFT-X").clicked) {
-			clipboardSystem.setClipboardContents(getUserInput());
+			clipboardHandler.setClipboardContents(getUserInput());
 			userInput.removeAll(userInput);
 			userInput.add("");
 			cursor = 0;
