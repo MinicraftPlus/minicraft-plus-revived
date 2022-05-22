@@ -16,7 +16,6 @@ public class SummonItem extends StackableItem {
 		ArrayList<Item> items = new ArrayList<>();
 
 		items.add(new SummonItem("Totem of Air", new Sprite(0, 19, 0), "Air Wizard"));
-		items.add(new SummonItem("Totem of Wind", new Sprite(1, 19, 0), "Air Wizard II"));
 
 		return items;
 	}

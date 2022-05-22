@@ -3,7 +3,7 @@ package minicraft.item;
 import java.util.ArrayList;
 
 public class Recipes {
-	
+
 	public static final ArrayList<Recipe> anvilRecipes = new ArrayList<>();
 	public static final ArrayList<Recipe> ovenRecipes = new ArrayList<>();
 	public static final ArrayList<Recipe> furnaceRecipes = new ArrayList<>();
@@ -18,7 +18,7 @@ public class Recipes {
 		craftRecipes.add(new Recipe("plank_2", "Wood_1"));
 		craftRecipes.add(new Recipe("Plank Wall_1", "plank_3"));
 		craftRecipes.add(new Recipe("Wood Door_1", "plank_5"));
-		
+
 		workbenchRecipes.add(new Recipe("Torch_2", "Wood_1", "coal_1"));
 		workbenchRecipes.add(new Recipe("Lantern_1", "Wood_8", "slime_4", "glass_3"));
 		workbenchRecipes.add(new Recipe("Stone Brick_1", "Stone_2"));
@@ -65,7 +65,7 @@ public class Recipes {
 		loomRecipes.add(new Recipe("yellow wool_1", "Wool_1", "Flower_1"));
 		loomRecipes.add(new Recipe("black wool_1", "Wool_1", "coal_1"));
 		loomRecipes.add(new Recipe("Bed_1", "Wood_5", "Wool_3"));
-		
+
 		loomRecipes.add(new Recipe("blue clothes_1", "cloth_5", "Lapis_1"));
 		loomRecipes.add(new Recipe("green clothes_1", "cloth_5", "Cactus_1"));
 		loomRecipes.add(new Recipe("yellow clothes_1", "cloth_5", "Flower_1"));
@@ -74,9 +74,9 @@ public class Recipes {
 		loomRecipes.add(new Recipe("purple clothes_1", "cloth_5", "Lapis_1", "rose_1"));
 		loomRecipes.add(new Recipe("cyan clothes_1", "cloth_5", "Lapis_1", "Cactus_1"));
 		loomRecipes.add(new Recipe("reg clothes_1", "cloth_5"));
-		
+
 		loomRecipes.add(new Recipe("Leather Armor_1", "leather_10"));
-		
+
 		anvilRecipes.add(new Recipe("Iron Armor_1", "iron_10"));
 		anvilRecipes.add(new Recipe("Gold Armor_1", "gold_10"));
 		anvilRecipes.add(new Recipe("Gem Armor_1", "gem_65"));
@@ -105,17 +105,17 @@ public class Recipes {
 		anvilRecipes.add(new Recipe("Gem Shovel_1", "Wood_5", "gem_50"));
 		anvilRecipes.add(new Recipe("Gem Bow_1", "Wood_5", "gem_50", "string_2"));
 		anvilRecipes.add(new Recipe("Shears_1", "Iron_4"));
-		
+
 		furnaceRecipes.add(new Recipe("iron_1", "iron Ore_4", "coal_1"));
 		furnaceRecipes.add(new Recipe("gold_1", "gold Ore_4", "coal_1"));
 		furnaceRecipes.add(new Recipe("glass_1", "sand_4", "coal_1"));
-		
+
 		ovenRecipes.add(new Recipe("cooked pork_1", "raw pork_1", "coal_1"));
 		ovenRecipes.add(new Recipe("steak_1", "raw beef_1", "coal_1"));
 		ovenRecipes.add(new Recipe("cooked fish_1", "raw fish_1", "coal_1"));
 		ovenRecipes.add(new Recipe("bread_1", "wheat_4"));
 		ovenRecipes.add(new Recipe("Baked Potato_1", "Potato_1"));
-		
+
 		enchantRecipes.add(new Recipe("Gold Apple_1", "apple_1", "gold_8"));
 		enchantRecipes.add(new Recipe("potion_1", "glass_1", "Lapis_3"));
 		enchantRecipes.add(new Recipe("speed potion_1", "potion_1", "Cactus_5"));
@@ -128,6 +128,5 @@ public class Recipes {
 		enchantRecipes.add(new Recipe("Health Potion_1", "potion_1", "GunPowder_2", "Leather Armor_1"));
 		enchantRecipes.add(new Recipe("Escape Potion_1", "potion_1", "GunPowder_3", "Lapis_7"));
 		enchantRecipes.add(new Recipe("Totem of Air_1", "gold_10", "gem_10", "Lapis_5","Cloud Ore_5"));
-		enchantRecipes.add(new Recipe("Totem of Wind_1", "gold_10", "gem_10", "Lapis_5","Cloud Ore_5"));
 	}
 }
