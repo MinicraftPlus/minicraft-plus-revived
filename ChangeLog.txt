@@ -6,29 +6,30 @@ Minicraft+ version 2.1.0
 + Added the ability to use some ascii characters in world seed
 + Added ornate obsidian and ornate stone tiles
 + Added raw obsidian and stone tiles
-+ Added totems that can spawn AirWizards
++ Added a totem that will spawn the air wizard
 + Added resource packs
-+ Re-added sparks, damage particles and items shadows
++ Re-added sparks
++ Re-added damage particles
++ Re-added item shadows
 + Re-added swimming animation
 + Re-added colored spawners
 * Fixed crash when inputting certain characters into the inventory searcher
-* Fixed issue where level 2 airwizard would load with 250% health
 * Fixed crash when deleting world
 * Fixed rendering of stair tiles in sky level
 * Fixed rendering of cloud cactus in sky level
 * Fixed time rendering for potions not following m:ss format
 * Fixed some hits not hitting properly (0 attack damage)
-* Gem tools are now purple
-* Prevented animals and mobs from despawning while in view
-* Prevented furniture from being pushed over stairs
+* Made gem tools purple
+* Prevented animals and mobs from de-spawning while in view
+* Prevented furniture from being pushed over stair tiles
 * Shear loses durability when used on sheep
 * The world list should now update if copying or renaming worlds in-game
-* Texture pack and skin menu now look the same as every other menu
+* Texture pack and skin menu now use the standardised menu look
 * Pre-releases are now ignored from version check
 * Renamed shear to shears
 * Saplings should no longer grow if an entity is on it
-* Changed texture packs into resource packs
-* You can now mine cloud cactus
+* Made cloud cactus into an ore you can mine and use
+- Removed texture packs
 - Removed suits
 - Removed second air wizard
 
