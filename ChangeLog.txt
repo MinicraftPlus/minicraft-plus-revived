@@ -24,7 +24,7 @@ Minicraft+ version 2.1.0
 * Prevented furniture from being pushed over stair tiles
 * Shear loses durability when used on sheep
 * The world list should now update if copying or renaming worlds in-game
-* Texture pack and skin menu now use the standardised menu look
+* Resource packs and skins menu now use the standardised menu look
 * Pre-releases are now ignored from version check
 * Renamed shear to shears
 * Saplings should no longer grow if an entity is on it
