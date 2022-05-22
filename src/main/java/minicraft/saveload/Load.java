@@ -595,19 +595,16 @@ public class Load {
 			name = name.replace("Fishing Rod", "Wood Fishing Rod");
 		}
 
-		// If save is older than 2.0.6.
 		if (worldVer.compareTo(new Version("2.0.6")) < 0) {
 			if (name.startsWith("Pork Chop"))
 				name = name.replace("Pork Chop", "Cooked Pork");
 		}
 
-		// If save is older than 2.0.7-dev1.
 		if (worldVer.compareTo(new Version("2.0.7-dev1")) < 0) {
 			if (name.startsWith("Seeds"))
 				name = name.replace("Seeds", "Wheat Seeds");
 		}
 
-		// If save is older than 2.1.0-dev2.
 		if (worldVer.compareTo(new Version("2.1.0-dev2")) < 0) {
 			if (name.startsWith("Shear"))
 				name = name.replace("Shear", "Shears");
@@ -625,17 +622,15 @@ public class Load {
 
 		for (String item : data) {
 			if (item.length() == 0) {
-				System.err.println("loadInventory: Item in data list is \"\", skipping item");
+				Logger.error("loadInventory: Item in data list is \"\", skipping item");
 				continue;
 			}
 
-			if (worldVer.compareTo(new Version("2.1.0-dev3")) < 0) {
-				item = subOldName(item, worldVer);
-			}
+			// Apply name changes.
+			item = subOldName(item, worldVer);
 
-			if (item.contains("Power Glove")) continue; // Just pretend it doesn't exist. Because it doesn't. :P
-
-			// System.out.println("Loading item: " + item);
+			if (item.contains("Power Glove")) continue; // Ignore the power glove.
+			if (item.contains("Totem of Wind")) continue;
 
 			if (worldVer.compareTo(new Version("2.0.4")) <= 0 && item.contains(";")) {
 				String[] curData = item.split(";");
@@ -650,8 +645,7 @@ public class Load {
 					inventory.add(newItem);
 				} else inventory.add(newItem, count);
 			} else {
-				Item toAdd = Items.get(item);
-				inventory.add(toAdd);
+				inventory.add(Items.get(item));
 			}
 		}
 	}
@@ -674,11 +668,6 @@ public class Load {
 		}
 	}
 
-	@Nullable
-	public static Entity loadEntity(String entityData, boolean isLocalSave) {
-		if (isLocalSave) System.out.println("Warning: Assuming version of save file is current while loading entity: " + entityData);
-		return Load.loadEntity(entityData, Game.VERSION, isLocalSave);
-	}
 	@Nullable
 	public static Entity loadEntity(String entityData, Version worldVer, boolean isLocalSave) {
 		entityData = entityData.trim();
@@ -782,11 +771,10 @@ public class Load {
 
 			int endIdx = chestInfo.size() - (isDeathChest || isDungeonChest ? 1 : 0);
 			for (int idx = 0; idx < endIdx; idx++) {
-				String itemData = chestInfo.get(idx);
-				if (worldVer.compareTo(new Version("2.1.0-dev3")) < 0)
-					itemData = subOldName(itemData, worldVer);
+				String itemData = subOldName(chestInfo.get(idx), worldVer);
 
-				if(itemData.contains("Power Glove")) continue; // Ignore it.
+				if (itemData.contains("Power Glove")) continue;
+				if (itemData.contains("Totem of Wind")) continue;
 
 				Item item = Items.get(itemData);
 				chest.getInventory().add(item);
@@ -837,7 +825,7 @@ public class Load {
 
 		newEntity.eid = eid; // This will be -1 unless set earlier, so a new one will be generated when adding it to the level.
 		if (newEntity instanceof ItemEntity && eid == -1)
-			System.out.println("Warning: Item entity was loaded with no eid");
+			Logger.warn("Item entity was loaded with no eid");
 
 		int curLevel = Integer.parseInt(info.get(info.size()-1));
 		if (World.levels[curLevel] != null) {
@@ -882,7 +870,7 @@ public class Load {
 			case "FireParticle": return new FireParticle(0, 0);
 			case "SmashParticle": return new SmashParticle(0, 0);
 			case "TextParticle": return new TextParticle("", 0, 0, 0);
-			default : System.err.println("LOAD ERROR: Unknown or outdated entity requested: " + string);
+			default : Logger.error("LOAD ERROR: Unknown or outdated entity requested: " + string);
 				return null;
 		}
 	}

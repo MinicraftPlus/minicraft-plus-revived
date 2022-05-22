@@ -1,5 +1,7 @@
 package minicraft.item;
 
+import minicraft.core.Game;
+import minicraft.core.io.Localization;
 import minicraft.entity.Direction;
 import minicraft.entity.mob.AirWizard;
 import minicraft.entity.mob.Player;
@@ -35,13 +37,19 @@ public class SummonItem extends StackableItem {
 		switch (mob) {
 			case "Air Wizard":
 				// Check if we are on the right level
-				// TODO: This doesn't work with stamina.
-				if (level.depth != 1) break;
+				if (level.depth == 1) {
 
-				AirWizard aw = new AirWizard();
-				level.add(aw, player.x+8, player.y+8, false);
-				Logger.debug("Summoned new Air Wizard");
-				success = true;
+					// Pay stamina
+					if (player.payStamina(2)) {
+						AirWizard aw = new AirWizard();
+						level.add(aw, player.x + 8, player.y + 8, false);
+						Logger.debug("Summoned new Air Wizard");
+						success = true;
+					}
+				} else {
+					Game.notifications.add(Localization.getLocalized("minicraft.notification.wrong_level_sky"));
+				}
+
 				break;
 			default:
 				Logger.warn("Could not create SummonItem with mob, {}", mob);
