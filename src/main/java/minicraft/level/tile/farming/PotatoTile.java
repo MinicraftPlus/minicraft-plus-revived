@@ -1,5 +1,6 @@
 package minicraft.level.tile.farming;
 
+import minicraft.core.io.Sound;
 import minicraft.entity.Entity;
 import minicraft.entity.mob.Player;
 import minicraft.gfx.Screen;
@@ -7,7 +8,7 @@ import minicraft.item.Items;
 import minicraft.level.Level;
 import minicraft.level.tile.Tiles;
 
-public class PotatoTile extends Plant {
+public class PotatoTile extends PlantTile {
     public PotatoTile(String name) {
         super(name);
     }
@@ -45,6 +46,9 @@ public class PotatoTile extends Plant {
         if (age >= maxAge && entity instanceof Player) {
             ((Player)entity).addScore(random.nextInt(4) + 1);
         }
+
+		// Play sound.
+		Sound.monsterHurt.play();
 
         level.setTile(x, y, Tiles.get("Dirt"));
     }

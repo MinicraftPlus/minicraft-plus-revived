@@ -4,7 +4,7 @@ import minicraft.gfx.Screen;
 import minicraft.level.Level;
 import minicraft.level.tile.Tiles;
 
-public class WheatTile extends Plant {
+public class WheatTile extends PlantTile {
 
 	public WheatTile(String name) {
 		super(name);

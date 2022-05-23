@@ -8,6 +8,7 @@ Minicraft+ version 2.1.0
 + Added raw obsidian and stone tiles
 + Added a totem that will spawn the air wizard
 + Added resource packs
++ Added sound when harvesting plants
 + Re-added sparks
 + Re-added damage particles
 + Re-added item shadows
