@@ -364,7 +364,8 @@ public class Load {
 			Game.input.setKey(map[0], map[1]);
 		}
 
-		new ResourcePackDisplay().setLoadedPack(json.getString("resourcePack"));
+		if (json.has("resourcePack"))
+			new ResourcePackDisplay().setLoadedPack(json.getString("resourcePack"));
 	}
 
 	private void loadUnlocksOld(String filename) {
