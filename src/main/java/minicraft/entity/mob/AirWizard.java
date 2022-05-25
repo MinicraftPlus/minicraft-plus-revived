@@ -30,6 +30,11 @@ public class AirWizard extends EnemyMob {
 	private int attackType = 0;
 
 	/**
+	 * This is used by the spawner to spawn air wizards. Lvl is unused.
+	 */
+	public AirWizard(int lvl) { this(); }
+
+	/**
 	 * Constructor for the AirWizard.
 	 */
 	public AirWizard() {
