@@ -10,7 +10,7 @@ import minicraft.entity.mob.Mob;
 import minicraft.gfx.Sprite;
 
 public class ToolItem extends Item {
-	
+
 	protected static ArrayList<Item> getAllInstances() {
 		ArrayList<Item> items = new ArrayList<>();
 
@@ -22,27 +22,27 @@ public class ToolItem extends Item {
 				items.add(new ToolItem(tool));
 			}
 		}
-		
+
 		return items;
 	}
-	
+
 	private Random random = new Random();
-	
+
 	public static final String[] LEVEL_NAMES = {"Wood", "Rock", "Iron", "Gold", "Gem"}; // The names of the different levels. A later level means a stronger tool.
-	
+
 	public ToolType type; // Type of tool (Sword, hoe, axe, pickaxe, shovel)
 	public int level; // Level of said tool
 	public int dur; // The durability of the tool
 	private int damage; // The damage of the tool
-	
+
 	/** Tool Item, requires a tool type (ToolType.Sword, ToolType.Axe, ToolType.Hoe, etc) and a level (0 = wood, 2 = iron, 4 = gem, etc) */
 	public ToolItem(ToolType type, int level) {
 		super(LEVEL_NAMES[level] + " " + type.name(), new Sprite(type.xPos, type.yPos + level, 0));
-		
+
 		this.type = type;
 		this.level = level;
 		this.damage = level * 5 + 10;
-		
+
 		dur = type.durability * (level + 1); // Initial durability fetched from the ToolType
 	}
 
@@ -52,18 +52,18 @@ public class ToolItem extends Item {
 		this.type = type;
 		dur = type.durability;
 	}
-	
+
 	/** Gets the name of this tool (and it's type) as a display string. */
 	@Override
 	public String getDisplayName() {
 		if (!type.noLevel) return " " + Localization.getLocalized(LEVEL_NAMES[level]) + " " + Localization.getLocalized(type.toString());
 		else return " " + Localization.getLocalized(type.toString());
 	}
-	
+
 	public boolean isDepleted() {
 		return dur <= 0 && type.durability > 0;
 	}
-	
+
 	/** You can attack mobs with tools. */
 	public boolean canAttack() {
 		return type != ToolType.Shears;
@@ -78,7 +78,7 @@ public class ToolItem extends Item {
 	public int getDamage() {
 		return random.nextInt(5) + damage;
 	}
-	
+
 	/** Gets the attack damage bonus from an item/tool (sword/axe) */
 	public int getAttackDamageBonus(Entity e) {
 		if (!payDurability())
@@ -95,15 +95,15 @@ public class ToolItem extends Item {
 				return (level + 1) + random.nextInt(2); // Wood: 3-6 damage; gem: 15-66 damage.
 			return 1;
 		}
-		
+
 		return 0;
 	}
-	
+
 	@Override
 	public String getData() {
 		return super.getData() + "_" + dur;
 	}
-	
+
 	/** Sees if this item equals another. */
 	@Override
 	public boolean equals(Item item) {
@@ -113,10 +113,10 @@ public class ToolItem extends Item {
 		}
 		return false;
 	}
-	
+
 	@Override
 	public int hashCode() { return type.name().hashCode() + level; }
-	
+
 	public ToolItem clone() {
 		ToolItem ti;
 		if (type.noLevel) {
