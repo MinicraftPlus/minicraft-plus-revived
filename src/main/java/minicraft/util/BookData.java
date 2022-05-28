@@ -3,14 +3,18 @@ package minicraft.util;
 import java.io.File;
 import java.io.IOException;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Random;
 import java.util.stream.Collectors;
 
+import org.json.JSONException;
 import org.json.JSONObject;
 import org.tinylog.Logger;
 
 import minicraft.core.Game;
+import minicraft.core.io.Localization;
 import minicraft.saveload.Load;
 import minicraft.saveload.Save;
 import minicraft.screen.WorldSelectDisplay;
@@ -18,25 +22,36 @@ import minicraft.screen.WorldSelectDisplay;
 public class BookData {
 	private static Random random = new Random();
 
-	public static final String about = loadStaticBook("about");
-	public static final String credits = loadStaticBook("credits");
-	public static final String instructions = loadStaticBook("instructions");
-	public static final String antVenomBook = loadStaticBook("antidous");
-	public static final String storylineGuide = loadStaticBook("story_guide");
-	private static String saveDir;
+	public enum StaticBook {
+		about ("about"),
+		credits ("credits"),
+		instructions("instructions"),
+		antVenomBook ("antidous"),
+		storylineGuide ("story_guide");
 
-	private static String loadStaticBook(String bookTitle) {
-		String book;
-		try {
-			book = String.join("\n", Load.loadFile("/resources/books/" + bookTitle + ".txt"));
-			book = book.replaceAll("\\\\0", "\0");
-		} catch (IOException ex) {
-			ex.printStackTrace();
-			book = "";
+		private HashMap<Locale, String> localizations = new HashMap<>();
+
+		StaticBook(String bookName) {
+			JSONObject locs;
+			try {
+				locs = new JSONObject(Load.loadFromFile("/resources/books/" + bookName + ".json", false).replaceAll("\u0000", "\0"));
+			} catch (IOException | JSONException ex) {
+				ex.printStackTrace();
+				locs = new JSONObject();
+			}
+			for (String k : locs.keySet()) {
+				localizations.put(Locale.forLanguageTag(k.substring(k.lastIndexOf("_")+1)), locs.getString(k));
+			}
+			if (!localizations.containsKey(Localization.DEFAULT_LOCALE)) localizations.put(Localization.DEFAULT_LOCALE, "");
 		}
 
-		return book;
+		public String getLocalization(Locale lang) {
+			if (!localizations.containsKey(lang)) return localizations.get(Localization.DEFAULT_LOCALE);
+			else return localizations.get(lang);
+		}
 	}
+
+	private static String saveDir;
 
 	public String title;
 	public String content;
