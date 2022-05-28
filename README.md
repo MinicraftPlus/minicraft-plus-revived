@@ -1,11 +1,9 @@
 # Minicraft Plus Revived
 ![Minicraft+](https://user-images.githubusercontent.com/37084190/138313821-75ac3112-7044-45c1-bdbb-d89f2333c2c0.png)
 
-Minicraft+ is a modded version of Minicraft that adds many more features to the original version. The original Minicraft game was made by Markus "Notch" Persson in the Ludum Dare 22 contest.  To learn more about Minicraft take a look at [playminicraft.com](https://www.playminicraft.com), or talk to the community at the [Discord](https://discord.me/minicraft).
+Minicraft+ is a modded version of Minicraft that adds many more features to the original version. The original Minicraft game was made by Markus "Notch" Persson in the Ludum Dare 22 contest.  To learn more about Minicraft take a look at [playminicraft.com](https://www.playminicraft.com), talk to the community at the [Discord](https://discord.me/minicraft), or check out our [Fandom Wiki!](https://minicraft.fandom.com/wiki/Minicraft_Wiki)
 
 Check the [releases](https://github.com/minicraftplus/minicraft-plus-revived/releases) page to download the latest version, or older versions.
-
-Check out our [Fandom Wiki!](https://minicraft.fandom.com/wiki/Minicraft_Wiki)
 
 ## Major features
 * More game modes, including:
@@ -26,11 +24,12 @@ Check out our [Fandom Wiki!](https://minicraft.fandom.com/wiki/Minicraft_Wiki)
 * Beds
 * Mob spawners with loot
 * Ruined structures with loot
-* An expanded storyline: 4th dungeon level, and second boss
+* An expanded world: 4th dungeon level
 * Resizable screen size
 * Key binding customization
 * Tutorials
-* Texture Packs
+* Achievements
+* Resource Packs
 * Much more gradual lighting
 * 4 Selectable built-in skins and custom skin support
 * Support for several languages

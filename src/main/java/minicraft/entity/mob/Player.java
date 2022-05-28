@@ -90,7 +90,6 @@ public class Player extends Mob implements ItemHolder, ClientTickable {
 	private int cooldowninfo; // Prevents you from toggling the info pane on and off super fast.
 	private int regentick; // Counts time between each time the regen potion effect heals you.
 
-	//private final int acs = 25; // Default ("start") arrow count
 	public int shirtColor = Color.get(1, 51, 51, 0); // Player shirt color.
 
 	public boolean isFishing = false;

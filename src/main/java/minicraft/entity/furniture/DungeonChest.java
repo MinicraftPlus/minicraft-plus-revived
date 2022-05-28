@@ -25,7 +25,7 @@ public class DungeonChest extends Chest {
 
 	/**
 	 * Creates a custom chest with the name Dungeon Chest.
-	 * @param populateInv
+	 * @param populateInv Populate the inventory of the DungeonChest using the loot table system.
 	 */
 	public DungeonChest(boolean populateInv) {
 		this(populateInv, false);
@@ -66,7 +66,9 @@ public class DungeonChest extends Chest {
 				level.add(new SmashParticle(x * 16, y * 16));
 				level.add(new TextParticle("-1 key", x, y, Color.RED));
 				level.chestCount--;
-				if (level.chestCount == 0) { // If this was the last chest...
+
+				// If this is the last chest.
+				if (level.chestCount == 0) {
 					level.dropItem(x, y, 5, Items.get("Gold Apple"));
 				}
 
@@ -79,12 +81,14 @@ public class DungeonChest extends Chest {
 	}
 
 	/**
-	 * Populate the inventory of the DungeonChest using the loot table system
+	 * Populate the inventory of the DungeonChest using the loot table system.
 	 */
 	private void populateInv() {
-		Inventory inv = getInventory(); // Yes, I'm that lazy. ;P
-		inv.clearInv(); // clear the inventory.
+		// Clear inventory.
+		Inventory inv = getInventory();
+		inv.clearInv();
 
+		// Populate inventory.
 		populateInvRandom("dungeonchest", 0);
 	}
 
@@ -99,7 +103,9 @@ public class DungeonChest extends Chest {
 		sprite = locked ? DungeonChest.lockSprite : DungeonChest.openSprite;
 	}
 
-	/** what happens if the player tries to push a Dungeon Chest. */
+	/**
+	 * what happens if the player tries to push a Dungeon Chest.
+	 */
 	@Override
 	protected void touchedBy(Entity entity) {
 		if(!isLocked) // can only be pushed if unlocked.
