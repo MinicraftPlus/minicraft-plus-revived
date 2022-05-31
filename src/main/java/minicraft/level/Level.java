@@ -74,7 +74,7 @@ public class Level {
 	public void printLevelLoc(String prefix, int x, int y, String suffix) {
 		String levelName = getLevelName(depth);
 
-		System.out.println(prefix + " on " + levelName + " level (" + x + "," + y + ")" + suffix);
+		Logger.info("{} on {} level ({}, {}){}", prefix, levelName, x, y, suffix);
 	}
 
 	public void printTileLocs(Tile t) {
@@ -236,7 +236,7 @@ public class Level {
 			for (Entity e: entities)
 				if (e instanceof DungeonChest)
 					numChests++;
-			if (Game.debug) System.out.println("Found " + numChests + " chests.");
+			Logger.debug("Found " + numChests + " chests.");
 		}
 
 		/// Make DungeonChests!
