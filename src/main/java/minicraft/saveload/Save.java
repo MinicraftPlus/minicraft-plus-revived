@@ -249,6 +249,7 @@ public class Save {
 		fileObj.put("unlocked", unlockedQuests);
 		fileObj.put("done", doneQuests);
 		fileObj.put("data", questData);
+		fileObj.put("tutorials", Settings.getIdx("tutorials"));
 		try {
 			writeJSONToFile(location + "Quests.json", fileObj.toString());
 		} catch (IOException e1) {

@@ -35,6 +35,7 @@ public class QuestsDisplay extends Display {
 	private boolean entrySelected = false;
 
 	static {
+		// TODO Implementing tutorials and story mode
 		try {
 			JSONArray json = new JSONArray(String.join("", Load.loadFile("/resources/quests.json")));
 			for (int i = 0; i < json.length(); i++) {
@@ -153,7 +154,7 @@ public class QuestsDisplay extends Display {
 		if (quest == null) return;
 		if (completeQuest.contains(quest)) return;
 		if (mustUnlocked && !quest.getUnlocked()) return;
-		
+
 		completeQuest.add(quest);
 		Game.notifications.add(Localization.getLocalized("minicraft.notification.quest_done") + " " + Localization.getLocalized(name));
 		for (String q : quest.getUnlocks()) unlockQuest(q);

@@ -242,6 +242,8 @@ public class Load {
 
 			if (mode == 3) Updater.scoreTime = 300;
 		}
+		if (worldVer.compareTo(new Version("2.2.0")) < 0)
+			if (mode > 0) mode++;
 
 		Settings.setIdx("mode", mode);
 	}
@@ -499,6 +501,8 @@ public class Load {
 				JSONArray unlockedQuests = questsObj.getJSONArray("unlocked");
 				JSONArray doneQuests = questsObj.getJSONArray("done");
 				JSONObject questData = questsObj.getJSONObject("data");
+				Settings.setIdx("tutorials", questsObj.getInt("tutorials"));
+
 				ArrayList<String> unlocked = new ArrayList<>();
 				ArrayList<String> done = new ArrayList<>();
 				HashMap<String, String> questStatus = new HashMap<>();
