@@ -352,7 +352,7 @@ public class Renderer extends Game {
 
 		new Menu.Builder(true, 0, RelPos.RIGHT)
 			.setPositioning(new Point(Screen.w-9, 9), RelPos.BOTTOM_LEFT)
-			.setDisplayLength(3)
+			.setDisplayLength(undoneQuests.size() > 3 ? 3 : undoneQuests.size())
 			.setTitle("Quests")
 			.setSelectable(false)
 			.setEntries(StringEntry.useLines(undoneQuests.toArray(new String[0])))
