@@ -18,6 +18,8 @@ mainClassName = 'minicraft.core.Game'
 
 repositories {
     mavenCentral()
+
+    maven { url 'https://jitpack.io' }
 }
 
 dependencies {
@@ -26,6 +28,7 @@ dependencies {
     implementation 'com.konghq:unirest-java:3.13.7'
     implementation 'org.tinylog:tinylog-api:2.4.1'
     implementation 'org.tinylog:tinylog-impl:2.4.1'
+    implementation 'com.github.JnCrMx:discord-game-sdk4j:v0.5.5'
 }
 
 java {

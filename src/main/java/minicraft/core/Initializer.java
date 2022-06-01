@@ -12,8 +12,10 @@ import javax.imageio.ImageIO;
 import javax.swing.JFrame;
 import javax.swing.WindowConstants;
 
-import minicraft.core.io.FileHandler;
 import org.tinylog.Logger;
+
+import de.jcm.discordgamesdk.Core;
+import minicraft.core.io.FileHandler;
 
 public class Initializer extends Game {
 	private Initializer() {}
@@ -53,7 +55,7 @@ public class Initializer extends Game {
 	 *	-fires the ticks needed to run the game
 	 *	-fires the command to render out the screen.
 	 */
-	static void run() {
+	static void run(Core discordCore) {
 		long lastTick = System.nanoTime();
 		long lastRender = System.nanoTime();
 		double unprocessed = 0;
@@ -77,6 +79,10 @@ public class Initializer extends Game {
 				frames++;
 				lastRender = System.nanoTime();
 				Renderer.render();
+			}
+
+			if (discordCore != null) {
+				discordCore.runCallbacks();
 			}
 
 			if (System.currentTimeMillis() - lastTimer1 > 1000) { //updates every 1 second

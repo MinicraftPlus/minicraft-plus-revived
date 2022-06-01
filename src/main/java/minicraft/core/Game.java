@@ -1,8 +1,10 @@
 package minicraft.core;
 
 import java.awt.GraphicsEnvironment;
+import java.io.File;
 import java.io.PrintWriter;
 import java.io.StringWriter;
+import java.time.Instant;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.Future;
@@ -11,12 +13,15 @@ import javax.swing.JOptionPane;
 import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
 
+import org.jetbrains.annotations.Nullable;
+import org.tinylog.Logger;
+
+import de.jcm.discordgamesdk.Core;
+import de.jcm.discordgamesdk.CreateParams;
+import de.jcm.discordgamesdk.activity.Activity;
 import kong.unirest.Empty;
 import kong.unirest.HttpResponse;
-import minicraft.core.io.Localization;
-import minicraft.screen.ResourcePackDisplay;
-import org.jetbrains.annotations.Nullable;
-
+import minicraft.core.io.DownloadNativeLibrary;
 import minicraft.core.io.InputHandler;
 import minicraft.core.io.Settings;
 import minicraft.core.io.Sound;
@@ -27,8 +32,8 @@ import minicraft.network.Analytics;
 import minicraft.saveload.Load;
 import minicraft.saveload.Version;
 import minicraft.screen.Display;
+import minicraft.screen.ResourcePackDisplay;
 import minicraft.screen.TitleDisplay;
-import org.tinylog.Logger;
 
 public class Game {
 	protected Game() {} // Can't instantiate the Game class.
@@ -106,6 +111,29 @@ public class Game {
 			}
 		});
 
+		Core discordCore = null;
+		try {
+			File discordLibrary = DownloadNativeLibrary.downloadDiscordLibrary();
+			if (discordLibrary == null) {
+				System.err.println("Error downloading Discord SDK.");
+				System.exit(-1);
+			}
+
+			Core.init(discordLibrary);
+			CreateParams params = new CreateParams();
+			params.setClientID(981579446538633267L);
+			params.setFlags(CreateParams.getDefaultFlags());
+
+			discordCore = new Core(params);
+			Activity activity = new Activity();
+			activity.assets().setLargeImage("logo");
+			activity.timestamps().setStart(Instant.now());
+
+			discordCore.activityManager().updateActivity(activity);
+		} catch(Exception e) {
+			e.printStackTrace();
+		}
+
 		Analytics.GameStartup.ping();
 
 		Initializer.parseArgs(args); // Parses the command line arguments
@@ -136,7 +164,7 @@ public class Game {
 		}
 
 		// Actually start the game.
-		Initializer.run();
+		Initializer.run(discordCore);
 
 		Logger.debug("Main game loop ended; Terminating application...");
 		System.exit(0);
