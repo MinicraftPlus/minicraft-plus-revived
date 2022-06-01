@@ -502,16 +502,23 @@ public class Load {
 				ArrayList<String> unlocked = new ArrayList<>();
 				ArrayList<String> done = new ArrayList<>();
 				HashMap<String, String> questStatus = new HashMap<>();
-				for (int i = 0; i<unlockedQuests.length(); i++) unlocked.add(unlockedQuests.getString(i));
-				for (int i = 0; i<doneQuests.length(); i++) done.add(doneQuests.getString(i));
-				for (String i : questData.keySet()) questStatus.put(i, questData.getString(i));
+
+				for (int i = 0; i<unlockedQuests.length(); i++)
+					unlocked.add(unlockedQuests.getString(i));
+				for (int i = 0; i<doneQuests.length(); i++)
+					done.add(doneQuests.getString(i));
+				for (String i : questData.keySet())
+					questStatus.put(i, questData.getString(i));
+
 				QuestsDisplay.loadGameQuests(unlocked, done, questStatus);
 			} catch (IOException e) {
 				e.printStackTrace();
-				QuestsDisplay.loadGameQuests(new ArrayList<>(), new ArrayList<>());
+				Logger.error("Unable to load Quests.json, loading default quests instead.");
+				QuestsDisplay.resetGameQuests();
 			}
 		} else {
-			QuestsDisplay.loadGameQuests(new ArrayList<>(), new ArrayList<>());
+			Logger.debug("Quests.json not found, loading default quests instead.");
+			QuestsDisplay.resetGameQuests();
 		}
 	}
 

@@ -1,6 +1,7 @@
 package minicraft.util;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 
 public class Quest {
     public final String id, description;
@@ -16,7 +17,7 @@ public class Quest {
         this.id = name;
         description = des;
         this.unlocked = unlocked;
-        for (String u : unlocks) this.unlocks.add(u);
+        this.unlocks.addAll(Arrays.asList(unlocks));
     }
 
     public void unlock() { unlocked = true; }
