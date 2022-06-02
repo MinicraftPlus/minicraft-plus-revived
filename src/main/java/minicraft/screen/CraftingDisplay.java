@@ -124,8 +124,8 @@ public class CraftingDisplay extends Display {
 						selectedRecipe.getProduct().equals(Items.get("reg clothes"))) {
 					AchievementsDisplay.setAchievement("minicraft.achievement.clothes", true);
 				}
-				
-				if (((ToolItem)selectedRecipe.getProduct()).type.equals(ToolType.Sword)) {
+
+				if (((ToolItem) selectedRecipe.getProduct()).type.equals(ToolType.Sword)) {
 					QuestsDisplay.completeQuest("minicraft.quest.craft_first_sword");
 				}
 
@@ -134,7 +134,7 @@ public class CraftingDisplay extends Display {
 				Sound.craft.play();
 
 				refreshData();
-				for (Recipe recipe: recipes) {
+				for (Recipe recipe : recipes) {
 					recipe.checkCanCraft(player);
 				}
 			}

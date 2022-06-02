@@ -344,14 +344,16 @@ public class Renderer extends Game {
 		ArrayList<String> undoneQuests = new ArrayList<>();
 		ArrayList<Quest> doneQuests = QuestsDisplay.getCompleteQuest();
 		HashMap<String, QuestsDisplay.QuestStatus> questStatus = QuestsDisplay.getStatusQuests();
-		for (Quest q : QuestsDisplay.getUnlockedQuests())
-			if (!doneQuests.contains(q))
+		for (Quest q : QuestsDisplay.getUnlockedQuests()) {
+			if (!doneQuests.contains(q)) {
 				undoneQuests.add(
-					Localization.getLocalized(q.id) + (questStatus.get(q.id) != null? " | "+questStatus.get(q.id): "")
+					Localization.getLocalized(q.id) + (questStatus.get(q.id) != null ? " | " + questStatus.get(q.id) : "")
 				);
+			}
+		}
 
 		new Menu.Builder(true, 0, RelPos.RIGHT)
-			.setPositioning(new Point(Screen.w-9, 9), RelPos.BOTTOM_LEFT)
+			.setPositioning(new Point(Screen.w - 9, 9), RelPos.BOTTOM_LEFT)
 			.setDisplayLength(undoneQuests.size() > 3 ? 3 : undoneQuests.size())
 			.setTitle("Quests")
 			.setSelectable(false)

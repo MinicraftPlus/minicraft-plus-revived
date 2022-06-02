@@ -507,14 +507,14 @@ public class Load {
 				ArrayList<String> done = new ArrayList<>();
 				HashMap<String, String> questStatus = new HashMap<>();
 
-				for (int i = 0; i<unlockedQuests.length(); i++) {
+				for (int i = 0; i < unlockedQuests.length(); i++) {
 					unlocked.add(unlockedQuests.getString(i));
 				}
 
-				for (int i = 0; i<doneQuests.length(); i++) {
+				for (int i = 0; i < doneQuests.length(); i++) {
 					done.add(doneQuests.getString(i));
 				}
-				
+
 				for (String i : questData.keySet()) {
 					questStatus.put(i, questData.getString(i));
 				}

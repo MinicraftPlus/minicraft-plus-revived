@@ -52,8 +52,9 @@ public class QuestsDisplay extends Display {
 				if (unlocked)
 					initiallyUnlocked.add(id);
 
-				quests.put(id, unlocked? new Quest(id, obj.getString("desc"), unlocked, unlocks): new Quest(id, obj.getString("desc"), unlocks));
+				quests.put(id, unlocked ? new Quest(id, obj.getString("desc"), unlocked, unlocks) : new Quest(id, obj.getString("desc"), unlocks));
 			}
+
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
