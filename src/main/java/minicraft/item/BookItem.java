@@ -11,13 +11,12 @@ import minicraft.level.Level;
 import minicraft.level.tile.Tile;
 import minicraft.util.BookData;
 import minicraft.screen.BookDisplay;
-import minicraft.screen.EditableBookDisplay;
 
 public class BookItem extends Item {
 
 	protected static ArrayList<Item> getAllInstances() {
 		ArrayList<Item> items = new ArrayList<Item>();
-		items.add(new BookItem("Book", new Sprite(0, 8, 0), null));
+		items.add(new BookItem("Sample Book", new Sprite(0, 8, 0), BookData.StaticBook.credits));
 		items.add(new BookItem("Antidious", new Sprite(1, 8, 0), BookData.StaticBook.antVenomBook, true));
 		return items;
 	}

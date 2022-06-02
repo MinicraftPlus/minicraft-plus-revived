@@ -5,7 +5,6 @@ import java.util.HashMap;
 import minicraft.core.Game;
 import minicraft.entity.mob.Player;
 import minicraft.gfx.Sprite;
-import minicraft.util.BookData;
 import minicraft.util.BookData.EditableBookData;
 
 public class Recipe {

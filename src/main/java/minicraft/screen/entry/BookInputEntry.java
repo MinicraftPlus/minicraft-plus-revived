@@ -17,7 +17,7 @@ import minicraft.gfx.Screen;
 
 public class BookInputEntry extends InputEntry {
 	private int lineSpacing;
-	private int maxLines = 20;
+	private static final int maxLines = 20;
 
 	private int curPage = 0;
 	private List<BookPage> userInput;
@@ -36,9 +36,9 @@ public class BookInputEntry extends InputEntry {
 	}
 
 	private class BookPage {
-		private List<BookLine> lines;
+		public List<BookLine> lines;
 		/** Current line pointed */
-		private int pointer = 0;
+		public int pointer = 0;
 
 		public BookPage(@NotNull String iniVal) {
 			lines = Arrays.stream(iniVal.split("\n")).map(v -> new BookLine(v)).collect(Collectors.toList());
@@ -60,6 +60,7 @@ public class BookInputEntry extends InputEntry {
 				c += l.lineCount();
 				if (c >= pointer) {
 					over = c-pointer;
+					ln = l;
 					break;
 				}
 			}
@@ -130,20 +131,54 @@ public class BookInputEntry extends InputEntry {
 		}
 
 		public void pointerHome() {
-			// TODO
+			lines.get(pointer).pointer = 0;
 		}
 		public void pointerEnd() {
-			// TODO
+			BookLine curL = lines.get(pointer);
+			curL.pointer = curL.length();
 		}
 
 		public void insert(@NotNull String str) {
-			// TODO
+			String[] ins = str.split("\n");
+			BookLine curL = lines.get(pointer);
+			int count = 0;
+			System.out.println(ins.length);
+			for (String s : ins) {
+				if (lines.size() + 1 == maxLines) {
+					if (curL.length() % maxLength + s.length() > maxLength) {
+						curL.insertVal(s.substring(0, curL.length() % maxLength + s.length() - maxLength));
+					} else {
+						curL.insertVal(s);
+					}
+					return;
+				}
+
+				curL.insertVal(s);
+				if (count + 1 < ins.length) lines.add(pointer++, new BookLine(curL.getLine().substring(curL.pointer)));
+				curL = lines.get(pointer);
+				count++;
+			}
 		}
 		public void backspace() {
-			// TODO
+			BookLine curL = lines.get(pointer);
+			if (curL.pointer > 0) {
+				curL.line.deleteCharAt(curL.pointer-- - 1);
+			} else if (pointer > 0) {
+				BookLine l = lines.get(pointer--);
+				pointerEnd();
+				l.insertVal(curL.getLine());
+			}
 		}
 		public void deleteCurLine() {
-			// TODO
+			lines.remove(pointer);
+			if (lines.size() == 0){
+				lines.add(new BookLine(""));
+			}
+
+			if (pointer > 0) {
+				pointer--;
+				pointerEnd();
+			}
 		}
 
 		/** This value counts in the line counts (Y of display cursor) <p>
@@ -159,9 +194,9 @@ public class BookInputEntry extends InputEntry {
 			return p;
 		}
 
-		private class BookLine {
-			private StringBuilder line;
-			private int pointer = 0;
+		public class BookLine {
+			public StringBuilder line;
+			public int pointer = 0;
 
 			public BookLine(@NotNull String iniVal) { line = new StringBuilder(iniVal); }
 
@@ -179,7 +214,10 @@ public class BookInputEntry extends InputEntry {
 				return n;
 			}
 
-			public void insertVal(@NotNull String v) { line.insert(pointer, v); }
+			public void insertVal(@NotNull String v) {
+				line.insert(pointer, v);
+				pointer += v.length();
+			}
 		}
 	}
 
@@ -260,7 +298,7 @@ public class BookInputEntry extends InputEntry {
 	public String[] getLines() {
 		List<String> lns = new ArrayList<>();
 		for (BookPage.BookLine line : curPage().lines) {
-			String[] ln = Font.getLines(line.getLine(), maxLines*8, Short.MAX_VALUE, 0, true);
+			String[] ln = Font.getLines(line.getLine(), maxLength*8, Short.MAX_VALUE, 0, true);
 			if (ln.length>1 && ln[ln.length-1].length()==0) ln = Arrays.copyOfRange(ln, 0, ln.length-1);
 			for (String ll : ln) lns.add(ll);
 		}

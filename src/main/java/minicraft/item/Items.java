@@ -105,10 +105,10 @@ public class Items {
 			EditableBookData d = new EditableBookData();
 			d.title = strData.substring(0, strData.indexOf("\0"));
 			d.content = strData.substring(strData.indexOf("\0")+1);
-			return new EditableBookItem(d, Items.get("Book").sprite);
+			return new EditableBookItem(d, Items.get("Sample Book").sprite);
 		}
 		if (name.equalsIgnoreCase("Book")) {
-			return new BookItem(BookData.loadBook(BookData.intIDToString(data)), Items.get("Book").sprite);
+			return new BookItem(BookData.loadBook(BookData.intIDToString(data)), Items.get("Sample Book").sprite);
 		}
 		if (i != null) {
 			i = i.clone();

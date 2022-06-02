@@ -1,8 +1,5 @@
 package minicraft.screen;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-
 import minicraft.core.Game;
 import minicraft.core.io.InputHandler;
 import minicraft.gfx.Color;
@@ -11,7 +8,6 @@ import minicraft.gfx.FontStyle;
 import minicraft.gfx.Point;
 import minicraft.gfx.Screen;
 import minicraft.item.BookItem;
-import minicraft.item.EditableBookItem;
 import minicraft.item.Items;
 import minicraft.screen.entry.InputEntry;
 import minicraft.screen.entry.StringEntry;
@@ -38,7 +34,6 @@ public class EditableBookDisplay extends Display {
 		this.book = book;
 
 		bookInputEntry = new BookInputEntry(book.title, book.content);
-		refreshEntryData();
 		bookInputEntry.setChangeListener(o -> {
 			refreshEntryData();
 		});
@@ -66,6 +61,8 @@ public class EditableBookDisplay extends Display {
 			.setShouldRender(false)
 			.createMenu();
 		menus[0] = nullMenu;
+
+		refreshEntryData();
 	}
 
 	private void refreshEntryData() {
@@ -100,7 +97,7 @@ public class EditableBookDisplay extends Display {
 			Game.player.activeItem = null;
 			// This should apply book author in multiplayer is added
 			BookData newBook = new BookData(BookData.genNewID(), book.title, bookInputEntry.getUserInput(), "");
-			Game.player.getInventory().add(new BookItem(newBook, Items.get("Book").sprite));
+			Game.player.getInventory().add(new BookItem(newBook, Items.get("Sample Book").sprite));
 			BookData.saveBook(newBook);
 			Game.exitDisplay();
 			return;
