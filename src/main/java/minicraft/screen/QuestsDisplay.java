@@ -92,29 +92,29 @@ public class QuestsDisplay extends Display {
 		};
 
 		builder = new Menu.Builder(true, 0, RelPos.CENTER)
-			.setPositioning(new Point(Screen.w/2, Screen.h/2), RelPos.CENTER)
+			.setPositioning(new Point(Screen.w / 2, Screen.h / 2), RelPos.CENTER)
 			.setSelectable(false)
 			.setShouldRender(false);
 
 		menus = new Menu[] {
 			new Menu.Builder(false, 0, RelPos.CENTER)
-				.setPositioning(new Point(Screen.w/2, Screen.h/2 - 20), RelPos.CENTER)
+				.setPositioning(new Point(Screen.w / 2, Screen.h / 2 - 20), RelPos.CENTER)
 				.setDisplayLength(5)
 				.setSelectable(true)
 				.createMenu(),
 			builder.createMenu(),
 			new Menu.Builder(false, 0, RelPos.LEFT)
-				.setPositioning(new Point(Screen.w/2 - 8*7, 30), RelPos.RIGHT)
+				.setPositioning(new Point(Screen.w / 2 - 8 * 7, 30), RelPos.RIGHT)
 				.setEntries(new StringEntry("Unlocked", Color.GRAY))
 				.setSelectable(false)
 				.createMenu(),
 			new Menu.Builder(false, 0, RelPos.LEFT)
-				.setPositioning(new Point(Screen.w/2 + 8*2, 30), RelPos.RIGHT)
+				.setPositioning(new Point(Screen.w / 2 + 8 * 2, 30), RelPos.RIGHT)
 				.setEntries(new StringEntry("Done", Color.GRAY))
 				.setSelectable(false)
 				.createMenu(),
 			new Menu.Builder(false, 0, RelPos.CENTER)
-				.setPositioning(new Point(Screen.w/2, Screen.h/2 + 35), RelPos.CENTER)
+				.setPositioning(new Point(Screen.w / 2, Screen.h / 2 + 35), RelPos.CENTER)
 				.setEntries(new StringEntry(Localization.getLocalized("minicraft.display.quests.no_desc")))
 				.setSelectable(false)
 				.createMenu()
@@ -200,6 +200,7 @@ public class QuestsDisplay extends Display {
 			if (!unlockedQuests.contains(q))
 				unlockedQuests.add(q);
 		}
+
 		for (String n : done) completeQuest.add(getQuest(n));
 		for (Entry<String, String> e : data.entrySet()) questStatus.put(e.getKey(), QuestStatus.fromStringType(e.getValue()));
 	}
@@ -219,11 +220,12 @@ public class QuestsDisplay extends Display {
 		if (input.getKey("cursor-left").clicked) if (selectedEntry > 0) {
 			selectedEntry--;
 			updateEntries();
-		};
+		}
+
 		if (input.getKey("cursor-right").clicked) if (selectedEntry < 1) {
 			selectedEntry++;
 			updateEntries();
-		};
+		}
 
 		if (menus[0].getCurEntry() != null) {
 			menus[4].setEntries(StringEntry.useLines(
@@ -251,11 +253,11 @@ public class QuestsDisplay extends Display {
 			"Unlocked", "Done"
 		};
 
-		for (int i = 0; i<2; i++) {
+		for (int i = 0; i < 2; i++) {
 			menus[i+2].updateEntry(0, new StringEntry(entryNames[i], (i == selectedEntry) ? Color.WHITE : Color.GRAY));
 		}
 
-		if (menus[0].getSelection() >= menus[0].getEntries().length) menus[0].setSelection(menus[0].getEntries().length-1);;
+		if (menus[0].getSelection() >= menus[0].getEntries().length) menus[0].setSelection(menus[0].getEntries().length - 1);;
 	}
 
 	private void entrySelected(Quest quest) {
@@ -267,7 +269,7 @@ public class QuestsDisplay extends Display {
 		boolean isDone = completeQuest.contains(quest);
 		e.add(isUnlocked ? (isDone ? new StringEntry("Done", Color.GREEN) : new StringEntry("Unlocked", Color.WHITE)) : new StringEntry("Locked", Color.GRAY));
 		e.add(new StringEntry(""));
-		e.add(new StringEntry("Status: "+(questStatus.get(quest.id) == null? "None": questStatus.get(quest.id).toString())));
+		e.add(new StringEntry("Status: " + (questStatus.get(quest.id) == null ? "None" : questStatus.get(quest.id).toString())));
 		e.add(new StringEntry(""));
 
 		for (String s : Localization.getLocalized(quest.description).split("\n"))
@@ -320,7 +322,7 @@ public class QuestsDisplay extends Display {
 
 		@Override
 		public String toString() {
-			return val.toString()+(hasMax? "/"+maxVal.toString(): "");
+			return val.toString() + (hasMax ? "/"+maxVal.toString() : "");
 		}
 
 		public String toQuestString() {

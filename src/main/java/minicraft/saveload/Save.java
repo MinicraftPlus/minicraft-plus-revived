@@ -242,9 +242,11 @@ public class Save {
 		for (Quest q : QuestsDisplay.getUnlockedQuests()) {
 			unlockedQuests.put(q.id);
 		}
+		
 		for (Quest q : QuestsDisplay.getCompleteQuest()) {
 			doneQuests.put(q.id);
 		}
+
 		for (Entry<String, QuestsDisplay.QuestStatus> e : QuestsDisplay.getStatusQuests().entrySet()) {
 			questData.put(e.getKey(), e.getValue().toQuestString());
 		}
