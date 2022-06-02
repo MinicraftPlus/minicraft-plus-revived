@@ -239,12 +239,15 @@ public class Save {
 		JSONArray doneQuests = new JSONArray();
 		JSONObject questData = new JSONObject();
 
-		for (Quest q : QuestsDisplay.getUnlockedQuests())
+		for (Quest q : QuestsDisplay.getUnlockedQuests()) {
 			unlockedQuests.put(q.id);
-		for (Quest q : QuestsDisplay.getCompleteQuest())
+		}
+		for (Quest q : QuestsDisplay.getCompleteQuest()) {
 			doneQuests.put(q.id);
-		for (Entry<String, QuestsDisplay.QuestStatus> e : QuestsDisplay.getStatusQuests().entrySet())
+		}
+		for (Entry<String, QuestsDisplay.QuestStatus> e : QuestsDisplay.getStatusQuests().entrySet()) {
 			questData.put(e.getKey(), e.getValue().toQuestString());
+		}
 
 		fileObj.put("unlocked", unlockedQuests);
 		fileObj.put("done", doneQuests);
@@ -253,7 +256,7 @@ public class Save {
 
 		try {
 			writeJSONToFile(location + "Quests.json", fileObj.toString());
-			
+
 		} catch (IOException e1) {
 			e1.printStackTrace();
 			Logger.error("Unable to write Quests.json.");
