@@ -28,6 +28,8 @@ public class Settings {
 		options.put("theme", new ArrayEntry<>("World Theme", "Normal", "Forest", "Desert", "Plain", "Hell"));
 		options.put("type", new ArrayEntry<>("Terrain Type", "Island", "Box", "Mountain", "Irregular"));
 
+		options.put("tutorials", new ArrayEntry<>("Tutorials", "No", "Yes"));
+
 		options.put("language", new ArrayEntry<>("Language", true, false, Localization.getLocalesAsString()));
 		options.get("language").setValue(Localization.getSelectedLocale().toLanguageTag());
 
