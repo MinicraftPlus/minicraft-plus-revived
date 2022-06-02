@@ -8,28 +8,29 @@ import org.jetbrains.annotations.Nullable;
 import org.tinylog.Logger;
 
 import minicraft.util.BookData;
+import minicraft.util.BookData.EditableBookData;
 
 public class Items {
-	
+
 	// I've checked -- this is only used for making the creative inventory, and in Load.java.
 	// ...well, that used to be true...
-	
+
 	/**
 		Ok, so here's the actual big idea:
-		
+
 		This class is meant to define all the different kinds of items in minicraft. Item(Type).java might be what maps the different item sprites in the spritesheet to a name, but it doesn't really define anything final. This class has all the items you could possibly have, and every form of them, more or less.
-		
+
 		If you want to access one of those items, you do it through this class, by calling get("item name"); casing does not matter.
 	*/
 	private static ArrayList<Item> items = new ArrayList<>();
-	
+
 	private static void add(Item i) {
 		items.add(i);
 	}
 	private static void addAll(ArrayList<Item> items) {
 		for (Item i: items) add(i);
 	}
-	
+
 	static {
 		add(new PowerGloveItem());
 		addAll(FurnitureItem.getAllInstances());
@@ -46,7 +47,7 @@ public class Items {
 		addAll(FishingRodItem.getAllInstances());
 		addAll(SummonItem.getAllInstances());
 	}
-	
+
 	/** fetches an item from the list given its name. */
 	@NotNull
 	public static Item get(String name) {
@@ -59,6 +60,7 @@ public class Items {
 		name = name.toUpperCase();
 		//System.out.println("fetching name: \"" + name + "\"");
 		int data = 1;
+		String strData = "";
 		boolean hadUnderscore = false;
 		if (name.contains("_")) {
 			hadUnderscore = true;
@@ -66,6 +68,7 @@ public class Items {
 				data = Integer.parseInt(name.substring(name.indexOf("_")+1));
 			} catch (Exception ex) {
 				ex.printStackTrace();
+				strData = name.substring(name.indexOf("_")+1);
 			}
 			name = name.substring(0, name.indexOf("_"));
 		}
@@ -78,7 +81,7 @@ public class Items {
 			}
 			name = name.substring(0, name.indexOf(";"));
 		}
-		
+
 		if (name.equalsIgnoreCase("NULL")) {
 			if (allowNull) return null;
 			else {
@@ -86,10 +89,10 @@ public class Items {
 				return new UnknownItem("NULL");
 			}
 		}
-		
+
 		if (name.equals("UNKNOWN"))
 			return new UnknownItem("BLANK");
-		
+
 		Item i = null;
 		for (Item cur: items) {
 			if (cur.getName().equalsIgnoreCase(name)) {
@@ -97,8 +100,14 @@ public class Items {
 				break;
 			}
 		}
-		
+
 		if (name.equalsIgnoreCase("Editable Book")) {
+			EditableBookData d = new EditableBookData();
+			d.title = strData.substring(0, strData.indexOf("\0"));
+			d.content = strData.substring(strData.indexOf("\0")+1);
+			return new EditableBookItem(d, Items.get("Book").sprite);
+		}
+		if (name.equalsIgnoreCase("Book")) {
 			return new BookItem(BookData.loadBook(BookData.intIDToString(data)), Items.get("Book").sprite);
 		}
 		if (i != null) {
@@ -113,9 +122,9 @@ public class Items {
 			return new UnknownItem(name);
 		}
 	}
-	
+
 	public static Item arrowItem = get("arrow");
-	
+
 	public static void fillCreativeInv(Inventory inv) { fillCreativeInv(inv, true); }
 	public static void fillCreativeInv(Inventory inv, boolean addAll) {
 		for (Item item: items) {
@@ -125,4 +134,4 @@ public class Items {
 		}
 	}
 }
-	
+

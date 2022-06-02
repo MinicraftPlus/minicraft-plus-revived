@@ -24,7 +24,7 @@ public class PlayerInvDisplay extends Display {
 		Menu[] menus = new Menu[2];
 		menus[0] = new InventoryMenu(player, player.getInventory(), "Inventory");
 		itemDescription = player.getInventory().get(menus[0].getSelection()).getDescription();
-		menus[1] = builder.setPositioning(new Point(9, menus[0].getBounds().getBottom()+9), RelPos.BOTTOM_RIGHT)
+		menus[1] = builder.setPositioning(new Point(9, menus[0].getBounds().getBottom()+27), RelPos.BOTTOM_RIGHT)
 			.setEntries(StringEntry.useLines(Color.WHITE, itemDescription.split("\n")))
 			.setSelectable(false)
 			.createMenu();

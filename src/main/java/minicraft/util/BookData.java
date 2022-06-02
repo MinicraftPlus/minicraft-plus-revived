@@ -34,7 +34,7 @@ public class BookData {
 		StaticBook(String bookName) {
 			JSONObject locs;
 			try {
-				locs = new JSONObject(Load.loadFromFile("/resources/books/" + bookName + ".json", false).replaceAll("\u0000", "\0"));
+				locs = new JSONObject(String.join("\n", Load.loadFile("/resources/books/" + bookName + ".json")).replaceAll("\u0000", "\0"));
 			} catch (IOException | JSONException ex) {
 				ex.printStackTrace();
 				locs = new JSONObject();
@@ -55,22 +55,22 @@ public class BookData {
 
 	public String title;
 	public String content;
-	public boolean editable;
 	public String author;
 	public final String id;
 
-	public BookData(String id, String title, String content, boolean editable, String author) {
+	public BookData(String id, String title, String content, String author) {
 		this.id = id;
 		this.title = title;
 		this.content = content;
-		this.editable = editable;
 		this.author = author;
 	}
-	public BookData() {
-		this(genNewID(), "", "", true, "");
-	}
 	public BookData(JSONObject data) {
-		this(data.getString("id"), data.getString("title"), data.getString("content"), data.getBoolean("editable"), data.getString("author"));
+		this(data.getString("id"), data.getString("title"), data.getString("content"), data.getString("author"));
+	}
+
+	public static class EditableBookData {
+		public String title = "New Book";
+		public String content = "";
 	}
 
 	public static BookData loadBook(String bookID) {
@@ -80,11 +80,11 @@ public class BookData {
 		} catch (IOException e) {
 			Logger.error("Cannot load book: "+bookID);
 			if (!new File(saveDir + bookID + ".book").exists()) {
-				Logger.warn("Book "+bookID+" does not exist, creating new book.");
-				return new BookData(bookID, "", "", true, "");
+				Logger.warn("Book "+bookID+" does not exist, creating new empty book.");
+				return new BookData(bookID, "", "", "");
 			}
 			e.printStackTrace();
-			return new BookData(bookID, "", "", false, "");
+			return new BookData(bookID, "", "", "");
 		}
 	}
 
@@ -92,7 +92,7 @@ public class BookData {
 		saveDir = Game.gameDir + "/saves/" + WorldSelectDisplay.getWorldName() + "/books/";
 	}
 
-	private static String genNewID() {
+	public static String genNewID() {
 		updateSaveDir();
 		File dir = new File(saveDir);
 		dir.mkdirs();
@@ -117,7 +117,6 @@ public class BookData {
 		json.put("id", book.id);
 		json.put("title", book.title);
 		json.put("content", book.content);
-		json.put("editable", book.editable);
 		json.put("author", book.author);
 
 		try {

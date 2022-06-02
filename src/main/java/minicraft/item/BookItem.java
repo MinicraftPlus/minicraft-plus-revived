@@ -23,7 +23,6 @@ public class BookItem extends Item {
 	}
 
 	private BookData book;
-	private boolean editable;
 	private BookData.StaticBook staticBook;
 	private boolean hasTitlePage;
 	private Sprite sprite;
@@ -32,25 +31,20 @@ public class BookItem extends Item {
 	private BookItem(String title, Sprite sprite, BookData.StaticBook book) { this(title, sprite, book, false); }
 	private BookItem(String title, Sprite sprite, BookData.StaticBook book, boolean hasTitlePage) {
 		super(title, sprite);
-		editable = false;
 		this.staticBook = book;
 		this.hasTitlePage = hasTitlePage;
 		this.sprite = sprite;
 		isStatic = true;
 	}
 	public BookItem(BookData book, Sprite sprite) {
-		super("Editable Book", sprite);
-		editable = book.editable;
+		super("Book", sprite);
 		this.book = book;
 		this.sprite = sprite;
 		isStatic = false;
 	}
 
-	public boolean isEditable() { return editable; }
-
 	public boolean interactOn(Tile tile, Level level, int xt, int yt, Player player, Direction attackDir) {
-		if (editable) Game.setDisplay(new EditableBookDisplay(book));
-		else Game.setDisplay(new BookDisplay(isStatic? staticBook.getLocalization(Localization.getSelectedLocale()): book.content, hasTitlePage));
+		Game.setDisplay(new BookDisplay(isStatic? staticBook.getLocalization(Localization.getSelectedLocale()): book.content, hasTitlePage));
 		return true;
 	}
 
