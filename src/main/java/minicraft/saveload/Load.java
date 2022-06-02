@@ -242,8 +242,6 @@ public class Load {
 
 			if (mode == 3) Updater.scoreTime = 300;
 		}
-		if (worldVer.compareTo(new Version("2.2.0")) < 0)
-			if (mode > 0) mode++;
 
 		Settings.setIdx("mode", mode);
 	}

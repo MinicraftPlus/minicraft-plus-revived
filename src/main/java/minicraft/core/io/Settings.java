@@ -15,7 +15,7 @@ public class Settings {
 		options.put("fps", new RangeEntry("Max FPS", 10, 300, getRefreshRate())); // Has to check if the game is running in a headless mode. If it doesn't set the fps to 60
 		options.put("diff", new ArrayEntry<>("Difficulty", "Easy", "Normal", "Hard"));
 		options.get("diff").setSelection(1);
-		options.put("mode", new ArrayEntry<>("Game Mode", "Survival", "Story", "Creative", "Hardcore", "Score"));
+		options.put("mode", new ArrayEntry<>("Game Mode", "Survival", "Creative", "Hardcore", "Score"));
 
 		options.put("scoretime", new ArrayEntry<>("Time (Score Mode)", 10, 20, 40, 60, 120));
 		options.get("scoretime").setValueVisibility(10, false);
