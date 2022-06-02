@@ -41,12 +41,13 @@ public class QuestsDisplay extends Display {
 			for (int i = 0; i < json.length(); i++) {
 				JSONObject obj = json.getJSONObject(i);
 				String id = obj.getString("id");
-				// Is unlocked initially
-				boolean unlocked = obj.optBoolean("unlocked", false);
+				boolean unlocked = obj.optBoolean("unlocked", false); // Is unlocked initially
 				JSONArray unlocksJson = obj.getJSONArray("unlocks");
+
 				String[] unlocks = new String[unlocksJson.length()];
 				for (int j = 0; j < unlocksJson.length(); j++) unlocks[j] = unlocksJson.getString(j);
 				if (unlocked) initiallyUnlocked.add(id);
+
 				quests.put(id, unlocked? new Quest(id, obj.getString("desc"), unlocked, unlocks): new Quest(id, obj.getString("desc"), unlocks));
 			}
 		} catch (IOException e) {
@@ -70,18 +71,22 @@ public class QuestsDisplay extends Display {
 					else return Color.GRAY;
 				}
 			};
+
 			questWithLocalized.put(select.getText(), quest);
 			if (isDone) done.add(select);
 			if (isUnlocked) unlocked.add(select);
 		}
+
 		questEntries = new SelectEntry[][] {
 			unlocked.toArray(new SelectEntry[0]),
 			done.toArray(new SelectEntry[0])
 		};
+
 		builder = new Menu.Builder(true, 0, RelPos.CENTER)
 			.setPositioning(new Point(Screen.w/2, Screen.h/2), RelPos.CENTER)
 			.setSelectable(false)
 			.setShouldRender(false);
+
 		menus = new Menu[] {
 			new Menu.Builder(false, 0, RelPos.CENTER)
 				.setPositioning(new Point(Screen.w/2, Screen.h/2 - 20), RelPos.CENTER)
@@ -105,6 +110,7 @@ public class QuestsDisplay extends Display {
 				.setSelectable(false)
 				.createMenu()
 		};
+
 		selectedEntry = 0;
 		updateEntries();
 	}
@@ -144,6 +150,7 @@ public class QuestsDisplay extends Display {
 		Quest quest = quests.get(name);
 		if (quest == null) return;
 		if (unlockedQuests.contains(quest)) return;
+
 		quest.unlock();
 		unlockedQuests.add(quest);
 		Game.notifications.add(Localization.getLocalized("minicraft.notification.quest_unlocked") + " " + Localization.getLocalized(name));
@@ -164,6 +171,7 @@ public class QuestsDisplay extends Display {
 		unlockedQuests.clear();
 		completeQuest.clear();
 		questStatus.clear();
+
 		for (Quest quest : quests.values()) {
 			if (initiallyUnlocked.contains(quest.id)) {
 				quest.unlock();
@@ -177,6 +185,7 @@ public class QuestsDisplay extends Display {
 	public static void loadGameQuests(ArrayList<String> unlocked, ArrayList<String> done) { loadGameQuests(unlocked, done, new HashMap<>()); }
 	public static void loadGameQuests(ArrayList<String> unlocked, ArrayList<String> done, Map<String, String> data) {
 		resetGameQuests();
+
 		for (String n : unlocked) {
 			Quest q = getQuest(n);
 			if (!unlockedQuests.contains(q)) unlockedQuests.add(q);
@@ -194,7 +203,9 @@ public class QuestsDisplay extends Display {
 			}
 			return;
 		}
+
 		super.tick(input);
+
 		if (input.getKey("cursor-left").clicked) if (selectedEntry > 0) {
 			selectedEntry--;
 			updateEntries();
@@ -203,8 +214,13 @@ public class QuestsDisplay extends Display {
 			selectedEntry++;
 			updateEntries();
 		};
-		if (menus[0].getCurEntry() != null) menus[4].setEntries(StringEntry.useLines(Localization.getLocalized(questWithLocalized.get(((SelectEntry)menus[0].getCurEntry()).getText()).description).split("\n")));
-		else menus[4].setEntries(StringEntry.useLines(Localization.getLocalized("minicraft.display.quests.no_desc")));
+
+		if (menus[0].getCurEntry() != null)
+			menus[4].setEntries(StringEntry.useLines(
+				Localization.getLocalized(questWithLocalized.get(((SelectEntry) menus[0].getCurEntry()).getText()).description).split("\n")
+			));
+		else
+			menus[4].setEntries(StringEntry.useLines(Localization.getLocalized("minicraft.display.quests.no_desc")));
 	}
 
 	@Override
@@ -213,17 +229,20 @@ public class QuestsDisplay extends Display {
 			menus[1].render(screen);
 			return;
 		}
+
 		super.render(screen);
 	}
 
 	private void updateEntries() {
 		menus[0].setEntries(questEntries[selectedEntry]);
+
 		String[] entryNames = new String[] {
 			"Unlocked", "Done"
 		};
+
 		for (int i = 0; i<2; i++)
-			if (i == selectedEntry) menus[i+2].updateEntry(0, new StringEntry(entryNames[i], Color.WHITE));
-			else menus[i+2].updateEntry(0, new StringEntry(entryNames[i], Color.GRAY));
+			menus[i+2].updateEntry(0, new StringEntry(entryNames[i], (i == selectedEntry) ? Color.WHITE : Color.GRAY));
+
 		if (menus[0].getSelection() >= menus[0].getEntries().length) menus[0].setSelection(menus[0].getEntries().length-1);;
 	}
 
@@ -231,13 +250,17 @@ public class QuestsDisplay extends Display {
 		entrySelected = true;
 		ArrayList<ListEntry> e = new ArrayList<>();
 		e.add(new StringEntry(Localization.getLocalized(quest.id)));
+
 		boolean isUnlocked = quest.getUnlocked();
 		boolean isDone = completeQuest.contains(quest);
 		e.add(isUnlocked? isDone? new StringEntry("Done", Color.GREEN): new StringEntry("Unlocked", Color.WHITE): new StringEntry("Locked", Color.GRAY));
 		e.add(new StringEntry(""));
 		e.add(new StringEntry("Status: "+(questStatus.get(quest.id) == null? "None": questStatus.get(quest.id).toString())));
 		e.add(new StringEntry(""));
-		for (String s : Localization.getLocalized(quest.description).split("\n")) e.add(new StringEntry(s));
+
+		for (String s : Localization.getLocalized(quest.description).split("\n"))
+			e.add(new StringEntry(s));
+
 		menus[0].shouldRender = false;
 		menus[1] = builder.setEntries(e).createMenu();
 	}
@@ -271,7 +294,9 @@ public class QuestsDisplay extends Display {
 			if (hasMax) {
 				String[] m = text.split("/");
 				return new QuestStatus(type, hasMax, type.typeConverter.fromString(m[0]), type.typeConverter.fromString(m[1]));
-			} else return new QuestStatus(type, hasMax, type.typeConverter.fromString(text), null);
+				
+			} else
+				return new QuestStatus(type, hasMax, type.typeConverter.fromString(text), null);
 		}
 
 		/** String format follow to {@link #toQuestString()} */

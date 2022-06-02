@@ -515,11 +515,13 @@ public class Load {
 					questStatus.put(i, questData.getString(i));
 
 				QuestsDisplay.loadGameQuests(unlocked, done, questStatus);
+
 			} catch (IOException e) {
 				e.printStackTrace();
 				Logger.error("Unable to load Quests.json, loading default quests instead.");
 				QuestsDisplay.resetGameQuests();
 			}
+			
 		} else {
 			Logger.debug("Quests.json not found, loading default quests instead.");
 			QuestsDisplay.resetGameQuests();

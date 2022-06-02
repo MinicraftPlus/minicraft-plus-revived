@@ -250,8 +250,10 @@ public class Save {
 		fileObj.put("done", doneQuests);
 		fileObj.put("data", questData);
 		fileObj.put("tutorials", Settings.getIdx("tutorials"));
+
 		try {
 			writeJSONToFile(location + "Quests.json", fileObj.toString());
+			
 		} catch (IOException e1) {
 			e1.printStackTrace();
 			Logger.error("Unable to write Quests.json.");
