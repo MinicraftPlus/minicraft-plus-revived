@@ -127,6 +127,7 @@ public class Game {
 			discordCore = new Core(params);
 			Activity activity = new Activity();
 			activity.assets().setLargeImage("logo");
+			activity.assets().setLargeText(Game.NAME + " " + VERSION);
 			activity.timestamps().setStart(Instant.now());
 
 			discordCore.activityManager().updateActivity(activity);
