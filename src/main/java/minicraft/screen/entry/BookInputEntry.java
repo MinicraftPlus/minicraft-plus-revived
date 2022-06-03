@@ -17,7 +17,7 @@ import minicraft.gfx.Screen;
 
 public class BookInputEntry extends InputEntry {
 	private int lineSpacing;
-	private static final int maxLines = 20;
+	private static final int maxLines = 16;
 
 	private int curPage = 0;
 	private List<BookPage> userInput;
@@ -52,19 +52,18 @@ public class BookInputEntry extends InputEntry {
 			return c;
 		}
 
-		private Entry<BookLine, Integer> getCurLine() {
+		private BookLine getCurLine() {
 			int c = 0;
-			int over = 0;
 			BookLine ln = null;
+			int lc = lineCount();
 			for (BookLine l : lines) {
 				c += l.lineCount();
-				if (c >= pointer) {
-					over = c-pointer;
+				if (c >= lc) {
 					ln = l;
 					break;
 				}
 			}
-			return new AbstractMap.SimpleEntry<>(ln, over);
+			return ln;
 		}
 
 		public void pointerUp() {
@@ -139,13 +138,12 @@ public class BookInputEntry extends InputEntry {
 		}
 
 		public void insert(@NotNull String str) {
-			String[] ins = str.split("\n");
+			String[] ins = str.split("\n", -1);
 			BookLine curL = lines.get(pointer);
 			int count = 0;
-			System.out.println(ins.length);
 			for (String s : ins) {
-				if (lines.size() + 1 == maxLines) {
-					if (curL.length() % maxLength + s.length() > maxLength) {
+				if (lineCount() == maxLines) {
+					if (curL.length() % maxLength + s.length() >= maxLength) {
 						curL.insertVal(s.substring(0, curL.length() % maxLength + s.length() - maxLength));
 					} else {
 						curL.insertVal(s);
@@ -153,9 +151,12 @@ public class BookInputEntry extends InputEntry {
 					return;
 				}
 
+				if (count != 0) {
+					lines.add(pointer++ + 1, new BookLine(curL.getLine().substring(curL.pointer)));
+					curL = lines.get(pointer);
+				}
+
 				curL.insertVal(s);
-				if (count + 1 < ins.length) lines.add(pointer++, new BookLine(curL.getLine().substring(curL.pointer)));
-				curL = lines.get(pointer);
 				count++;
 			}
 		}
@@ -167,6 +168,7 @@ public class BookInputEntry extends InputEntry {
 				BookLine l = lines.get(pointer--);
 				pointerEnd();
 				l.insertVal(curL.getLine());
+				lines.remove(curL);
 			}
 		}
 		public void deleteCurLine() {
@@ -186,10 +188,12 @@ public class BookInputEntry extends InputEntry {
 		*/
 		public int getRelativePointer() {
 			int p = 0;
-			for (int i = 0; i < pointer; i++) {
-				if (i == pointer -1) p += Math.ceilDiv(lines.get(i).pointer, maxLength);
-				else
+			for (int i = 0; i <= pointer; i++) {
+				if (i == pointer) {
+					p += lines.get(i).pointer / maxLength;
+				} else {
 					p += lines.get(i).lineCount();
+				}
 			}
 			return p;
 		}
@@ -246,16 +250,25 @@ public class BookInputEntry extends InputEntry {
 			if (curPage > 0) {
 				curPage--;
 				curPage().pointer = 0;
-				curPage().lines.get(0).pointer = 0;
+				curPage().pointerHome();
+
+				// Delete the last page if the last page is empty
+				BookPage lastPage = userInput.get(userInput.size() - 1);
+				if (lastPage.lines.size() == 1 && lastPage.lines.get(0).length() == 0) {
+					userInput.remove(userInput.size() - 1);
+				}
 			}
 			return;
 
 		} else if (input.getKey("page-down").clicked) {
-			if (curPage + 1 < userInput.size()) {
-				curPage++;
-				curPage().pointer = 0;
-				curPage().lines.get(0).pointer = 0;
+			// Adding a new page if the current page is the last page
+			if (curPage + 1 == userInput.size()) {
+				userInput.add(new BookPage(""));
 			}
+
+			curPage++;
+			curPage().pointer = 0;
+			curPage().pointerHome();
 			return;
 		}
 
@@ -277,10 +290,10 @@ public class BookInputEntry extends InputEntry {
 			noAdd = false;
 
 		} else if (input.getKey("CTRL-C").clicked) {
-			clipboardHandler.setClipboardContents(curPage().getCurLine().getKey().getLine());
+			clipboardHandler.setClipboardContents(curPage().getCurLine().getLine());
 
 		} else if (input.getKey("CTRL-X").clicked) {
-			clipboardHandler.setClipboardContents(curPage().getCurLine().getKey().getLine());
+			clipboardHandler.setClipboardContents(curPage().getCurLine().getLine());
 			curPage().deleteCurLine();
 			noAdd = false;
 		} // SHIFT-CTRL-X and SHIFT-CTRL-C are not decided to be added (Getting whole page content)
@@ -306,7 +319,7 @@ public class BookInputEntry extends InputEntry {
 		return lns.toArray(new String[0]);
 	}
 
-	public int getCursorX() { return curPage().getCurLine().getKey().pointer % maxLength; }
+	public int getCursorX() { return curPage().getCurLine().pointer % maxLength; }
 	public int getCursorY() { return curPage().getRelativePointer(); }
 
 	public String getPrompt() { return prompt; }
