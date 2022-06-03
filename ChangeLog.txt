@@ -1,3 +1,11 @@
+Minicraft+ version 2.2.0
+
+
+Minicraft+ patch 2.1.1
+
+* Fixed air wizard spawner
+* Fixed player spawning outside the map
+
 Minicraft+ version 2.1.0
 
 + Added achievements
@@ -33,6 +41,10 @@ Minicraft+ version 2.1.0
 - Removed texture packs
 - Removed suits
 - Removed second air wizard
+
+------------------------------------------------------------------------
+- MAKE VERSIONS AFTER THIS WORK AS PATCHES TO ALREADY RELEASED UPDATES -
+------------------------------------------------------------------------
 
 Minicraft+ version 2.0.7
 
