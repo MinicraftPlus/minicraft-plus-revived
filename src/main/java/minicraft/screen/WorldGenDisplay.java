@@ -119,6 +119,7 @@ public class WorldGenDisplay extends Display {
 				Settings.getEntry("size"),
 				Settings.getEntry("theme"),
 				Settings.getEntry("type"),
+				Settings.getEntry("tutorials"),
 				worldSeed
 			)
 				.setDisplayLength(5)

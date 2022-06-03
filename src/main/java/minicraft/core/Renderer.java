@@ -7,10 +7,12 @@ import java.awt.image.BufferedImage;
 import java.awt.image.DataBufferInt;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 
+import minicraft.core.io.Localization;
 import minicraft.core.io.Settings;
 import minicraft.entity.furniture.Bed;
 import minicraft.entity.mob.Player;
@@ -20,6 +22,7 @@ import minicraft.gfx.Ellipsis.DotUpdater.TickUpdater;
 import minicraft.gfx.Ellipsis.SmoothEllipsis;
 import minicraft.gfx.Font;
 import minicraft.gfx.FontStyle;
+import minicraft.gfx.Point;
 import minicraft.gfx.Screen;
 import minicraft.gfx.SpriteSheet;
 import minicraft.item.Items;
@@ -28,7 +31,12 @@ import minicraft.item.ToolItem;
 import minicraft.item.ToolType;
 import minicraft.level.Level;
 import minicraft.screen.LoadingDisplay;
+import minicraft.screen.Menu;
+import minicraft.screen.QuestsDisplay;
 import minicraft.screen.RelPos;
+import minicraft.screen.entry.StringEntry;
+import minicraft.util.Quest;
+
 import org.tinylog.Logger;
 
 import javax.imageio.ImageIO;
@@ -328,7 +336,31 @@ public class Renderer extends Game {
 			}
 		}
 
+		renderQuestsDisplay();
+
 		renderDebugInfo();
+	}
+
+	private static void renderQuestsDisplay() {
+		ArrayList<String> undoneQuests = new ArrayList<>();
+		ArrayList<Quest> doneQuests = QuestsDisplay.getCompleteQuest();
+		HashMap<String, QuestsDisplay.QuestStatus> questStatus = QuestsDisplay.getStatusQuests();
+		for (Quest q : QuestsDisplay.getUnlockedQuests()) {
+			if (!doneQuests.contains(q)) {
+				undoneQuests.add(
+					Localization.getLocalized(q.id) + (questStatus.get(q.id) != null ? " | " + questStatus.get(q.id) : "")
+				);
+			}
+		}
+
+		new Menu.Builder(true, 0, RelPos.RIGHT)
+			.setPositioning(new Point(Screen.w - 9, 9), RelPos.BOTTOM_LEFT)
+			.setDisplayLength(undoneQuests.size() > 3 ? 3 : undoneQuests.size())
+			.setTitle("Quests")
+			.setSelectable(false)
+			.setEntries(StringEntry.useLines(undoneQuests.toArray(new String[0])))
+			.createMenu()
+			.render(screen);
 	}
 
 	private static void renderDebugInfo() {

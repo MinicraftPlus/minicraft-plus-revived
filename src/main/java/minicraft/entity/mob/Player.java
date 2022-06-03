@@ -873,7 +873,7 @@ public class Player extends Mob implements ItemHolder, ClientTickable {
 	/**
 	 * Finds a starting position for the player.
 	 * @param level Level which the player wants to start in.
-	 * @param spawnSeed Spawnseed.
+	 * @param spawnSeed Spawn seed.
 	 */
 	public void findStartPos(Level level, long spawnSeed) {
 		random.setSeed(spawnSeed);
@@ -900,15 +900,16 @@ public class Player extends Mob implements ItemHolder, ClientTickable {
 		if (spawnTilePositions.size() == 0) {
 			spawnPos = new Point(random.nextInt(level.w/4)+level.w*3/8, random.nextInt(level.h/4)+level.h*3/8);
 			level.setTile(spawnPos.x, spawnPos.y, Tiles.get("grass"));
-		}
-		else // Gets random valid spawn tile position.
+		} else { // Gets random valid spawn tile position.
 			spawnPos = spawnTilePositions.get(random.nextInt(spawnTilePositions.size()));
+		}
 
 		if(setSpawn) {
-			// Used to save (tile) coordinates of spawnpoint outside of this method.
+			// Used to save (tile) coordinates of spawn point outside this method.
 			spawnx = spawnPos.x;
 			spawny = spawnPos.y;
 		}
+
 		// Set (entity) coordinates of player to the center of the tile.
 		this.x = spawnPos.x * 16 + 8; // conversion from tile coords to entity coords.
 		this.y = spawnPos.y * 16 + 8;
@@ -917,37 +918,16 @@ public class Player extends Mob implements ItemHolder, ClientTickable {
 	/**
 	 * Finds a location where the player can respawn in a given level.
 	 * @param level The level.
-	 * @return true
 	 */
     public void respawn(Level level) {
-        if (!level.getTile(spawnx, spawny).maySpawn())
-        {
+        if (!level.getTile(spawnx, spawny).maySpawn()) {
             findStartPos(level); // If there's no bed to spawn from, and the stored coordinates don't point to a grass tile, then find a new point.
-            int x = spawnx;
-            int y = spawny;
-            x = (Math.random() > .5) ? -80 : 80;
-            y = (Math.random() > .5) ? -80 : 80;
-            for (int i = 0; i < 20; i++) // Iterate through diagonal line for possible random spawn.
-            {
-                if (!level.getTile(spawnx, spawny).maySpawn())
-                {
-                    x += 4 * (x / -x);
-                    y += 4 * (-y / y);
-                }
-                else
-                {
-                    spawnx = x ;
-                    spawny = y ;
-                    break;
-                }
-            }
+		}
 
-        }
-        // Move the player to the spawnpoint
+        // Move the player to the spawn point
         this.x = spawnx * 16 + 8;
         this.y = spawny * 16 + 8;
-        }
-
+	}
 
 	/**
 	 * Uses an amount of stamina to do an action.
@@ -994,7 +974,7 @@ public class Player extends Mob implements ItemHolder, ClientTickable {
 
 		Sound.playerDeath.play();
 
-
+		// Add the death chest to the world.
 		World.levels[Game.currentLevel].add(dc);
 
 		super.die(); // Calls the die() method in Mob.java
