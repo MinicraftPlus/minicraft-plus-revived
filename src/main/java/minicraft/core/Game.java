@@ -104,6 +104,8 @@ public class Game {
 				} catch (Exception ignored) {
 				}
 			}
+
+			quit();
 		});
 
 		Analytics.GameStartup.ping();
