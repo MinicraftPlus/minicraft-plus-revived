@@ -125,9 +125,11 @@ public class CraftingDisplay extends Display {
 					AchievementsDisplay.setAchievement("minicraft.achievement.clothes", true);
 				}
 
-				if (((ToolItem) selectedRecipe.getProduct()).type.equals(ToolType.Sword)) {
-					QuestsDisplay.completeQuest("minicraft.quest.craft_first_sword");
-				}
+				try {
+					if (((ToolItem) selectedRecipe.getProduct()).type.equals(ToolType.Sword)) {
+						QuestsDisplay.completeQuest("minicraft.quest.craft_first_sword");
+					}
+				} catch (ClassCastException ignore) {}
 
 				selectedRecipe.craft(player);
 
