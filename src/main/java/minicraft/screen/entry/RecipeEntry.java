@@ -36,6 +36,6 @@ public class RecipeEntry extends ItemEntry {
 	
 	@Override
 	public String toString() {
-		return super.toString() + (recipe.getAmount() > 1 ? " x" + recipe.getAmount() : "");
+		return " "+ " " + (recipe.getAmount() > 1 ? " x" + recipe.getAmount() : "");
 	}
 }
