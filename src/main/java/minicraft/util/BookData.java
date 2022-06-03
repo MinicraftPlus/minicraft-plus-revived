@@ -1,128 +1,74 @@
 package minicraft.util;
 
-import java.io.File;
 import java.io.IOException;
-import java.util.Arrays;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Locale;
-import java.util.Random;
-import java.util.stream.Collectors;
 
 import org.json.JSONException;
 import org.json.JSONObject;
-import org.tinylog.Logger;
 
-import minicraft.core.Game;
 import minicraft.core.io.Localization;
 import minicraft.saveload.Load;
-import minicraft.saveload.Save;
-import minicraft.screen.WorldSelectDisplay;
 
 public class BookData {
-	private static Random random = new Random();
-
-	public enum StaticBook {
-		about ("about"),
-		credits ("credits"),
-		instructions("instructions"),
-		antVenomBook ("antidous"),
-		storylineGuide ("story_guide");
-
-		private HashMap<Locale, String> localizations = new HashMap<>();
-
-		StaticBook(String bookName) {
-			JSONObject locs;
-			try {
-				locs = new JSONObject(String.join("\n", Load.loadFile("/resources/books/" + bookName + ".json")).replaceAll("\u0000", "\0"));
-			} catch (IOException | JSONException ex) {
-				ex.printStackTrace();
-				locs = new JSONObject();
-			}
-			for (String k : locs.keySet()) {
-				localizations.put(Locale.forLanguageTag(k.substring(k.lastIndexOf("_")+1)), locs.getString(k));
-			}
-			if (!localizations.containsKey(Localization.DEFAULT_LOCALE)) localizations.put(Localization.DEFAULT_LOCALE, "");
-		}
-
-		public String getLocalization(Locale lang) {
-			if (!localizations.containsKey(lang)) return localizations.get(Localization.DEFAULT_LOCALE);
-			else return localizations.get(lang);
-		}
-	}
-
-	private static String saveDir;
+	public static final BookData about = loadStaticBook("about", "About");
+	public static final BookData credits = loadStaticBook("credits", "Credits");
+	public static final BookData instructions = loadStaticBook("instructions", "Instructions");
+	public static final BookData antVenomBook = loadStaticBook("antidous", "Antidious Venomi");
+	public static final BookData storylineGuide = loadStaticBook("story_guide", "Storyline Guide");
 
 	public String title;
 	public String content;
 	public String author;
-	public final String id;
 
-	public BookData(String id, String title, String content, String author) {
-		this.id = id;
+	public BookData(String title, String content, String author) {
 		this.title = title;
 		this.content = content;
 		this.author = author;
-	}
-	public BookData(JSONObject data) {
-		this(data.getString("id"), data.getString("title"), data.getString("content"), data.getString("author"));
 	}
 
 	public static class EditableBookData {
 		public String title = "New Book";
 		public String content = "";
+
+		public String toString() { return title + "\0" + content.replaceAll(",", "\u0000").replaceAll("\0", "\u0001"); }
+		public EditableBookData fromData(String data) {
+			String[] dt = data.split("\0", 2);
+			EditableBookData book = new EditableBookData();
+			book.title = dt[0];
+			book.content = dt[1].replaceAll("\u0000", ",").replaceAll("\u0001", "\0");
+			return book;
+		}
 	}
 
-	public static BookData loadBook(String bookID) {
+	private static BookData loadStaticBook(String bookName, String title) {
+		JSONObject locs;
 		try {
-			updateSaveDir();
-			return new BookData(new JSONObject(Load.loadFromFile(saveDir + bookID + ".book", true)));
-		} catch (IOException e) {
-			Logger.error("Cannot load book: "+bookID);
-			if (!new File(saveDir + bookID + ".book").exists()) {
-				Logger.warn("Book "+bookID+" does not exist, creating new empty book.");
-				return new BookData(bookID, "", "", "");
-			}
-			e.printStackTrace();
-			return new BookData(bookID, "", "", "");
+			locs = new JSONObject(String.join("\n", Load.loadFile("/resources/books/" + bookName + ".json")).replaceAll("\u0000", "\0"));
+		} catch (IOException | JSONException ex) {
+			ex.printStackTrace();
+			locs = new JSONObject();
+		}
+
+		HashMap<Locale, String> localizations = new HashMap<>();
+		for (String k : locs.keySet()) {
+			localizations.put(Locale.forLanguageTag(k.substring(k.lastIndexOf("_")+1)), locs.getString(k));
+		}
+		if (!localizations.containsKey(Localization.DEFAULT_LOCALE)) localizations.put(Localization.DEFAULT_LOCALE, "");
+
+		if (!localizations.containsKey(Localization.getSelectedLocale())) {
+			return new BookData(title, localizations.get(Localization.DEFAULT_LOCALE), "Minicraft+");
+		} else {
+			return new BookData(title, localizations.get(Localization.getSelectedLocale()), "Minicraft+");
 		}
 	}
 
-	private static void updateSaveDir() {
-		saveDir = Game.gameDir + "/saves/" + WorldSelectDisplay.getWorldName() + "/books/";
+	public String toString() {
+		return title + "\0" + author + "\0" + content.replaceAll(",", "\u0000").replaceAll("\0", "\u0001");
 	}
 
-	public static String genNewID() {
-		updateSaveDir();
-		File dir = new File(saveDir);
-		dir.mkdirs();
-		List<String> existIDs = Arrays.asList(dir.list((file, name) -> name.endsWith(".book"))).stream().map(b -> b.substring(0, 8)).collect(Collectors.toList());
-		boolean valid = false;
-		String id = "";
-		while (!valid) {
-			id = String.format("%08d", random.nextInt(99999999));
-			if (!existIDs.contains(id)) valid = true;
-		}
-		return id;
-	}
-
-	public static String intIDToString(int intID) {
-		return String.format("%08d", intID);
-	}
-
-	public static void saveBook(BookData book) {
-		updateSaveDir();
-		new File(saveDir).mkdirs();
-		JSONObject json = new JSONObject();
-		json.put("id", book.id);
-		json.put("title", book.title);
-		json.put("content", book.content);
-		json.put("author", book.author);
-
-		try {
-			Save.writeJSONToFile(Game.gameDir + "/saves/" + WorldSelectDisplay.getWorldName() + "/books/" + book.id + ".book", json.toString());
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
+	public static BookData fromData(String data) {
+		String[] dt = data.split("\0", 3);
+		return new BookData(dt[0], dt[2], dt[1].replaceAll("\u0000", ",").replaceAll("\u0001", "\0"));
 	}
 }

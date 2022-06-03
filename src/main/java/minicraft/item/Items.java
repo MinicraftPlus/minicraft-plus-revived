@@ -36,7 +36,7 @@ public class Items {
 		addAll(FurnitureItem.getAllInstances());
 		addAll(TorchItem.getAllInstances());
 		addAll(BucketItem.getAllInstances());
-		addAll(BookItem.getAllInstances());
+		addAll(WrittenBookItem.getAllInstances());
 		addAll(TileItem.getAllInstances());
 		addAll(ToolItem.getAllInstances());
 		addAll(FoodItem.getAllInstances());
@@ -57,8 +57,6 @@ public class Items {
 	}
 	@Nullable
 	public static Item get(String name, boolean allowNull) {
-		name = name.toUpperCase();
-		//System.out.println("fetching name: \"" + name + "\"");
 		int data = 1;
 		String strData = "";
 		boolean hadUnderscore = false;
@@ -82,6 +80,7 @@ public class Items {
 			name = name.substring(0, name.indexOf(";"));
 		}
 
+		name = name.toUpperCase();
 		if (name.equalsIgnoreCase("NULL")) {
 			if (allowNull) return null;
 			else {
@@ -105,11 +104,13 @@ public class Items {
 			EditableBookData d = new EditableBookData();
 			d.title = strData.substring(0, strData.indexOf("\0"));
 			d.content = strData.substring(strData.indexOf("\0")+1);
-			return new EditableBookItem(d, Items.get("Sample Book").sprite);
+			return new EditableBookItem(d);
 		}
-		if (name.equalsIgnoreCase("Book")) {
-			return new BookItem(BookData.loadBook(BookData.intIDToString(data)), Items.get("Sample Book").sprite);
+
+		if (name.equalsIgnoreCase("Written Book")) {
+			return new WrittenBookItem(BookData.fromData(strData));
 		}
+
 		if (i != null) {
 			i = i.clone();
 			if (i instanceof StackableItem)

@@ -41,7 +41,7 @@ public class Recipe {
 	public Item getProduct() {
 		Item item;
 		if (product.equals("EDITABLE BOOK")) {
-			item = new EditableBookItem(new EditableBookData(), new Sprite(0, 8, 0));
+			item = new EditableBookItem(new EditableBookData());
 		} else item = Items.get(product);
 		return item;
 	}

@@ -11,12 +11,9 @@ import minicraft.gfx.Point;
 import minicraft.gfx.Screen;
 import minicraft.gfx.SpriteSheet;
 import minicraft.screen.entry.StringEntry;
+import minicraft.util.BookData;
 
 public class BookDisplay extends Display {
-
-	// null characters "\0" denote page breaks.
-	private static final String defaultBook = "This book has no text.";
-
 	private static final int spacing = 3;
 	private static final int minX = 15, maxX = 15+8 * 32, minY = 8*5, maxY = 8*5 + 8*16;
 
@@ -24,24 +21,11 @@ public class BookDisplay extends Display {
 	private String[][] lines;
 	private int page;
 
-	private final boolean hasTitle;
-	private final boolean showPageCount;
-	private final int pageOffset;
-
-	public BookDisplay(String book) { this(book, false); }
-	public BookDisplay(String book, boolean hasTitle) {// this(book, hasTitle, !hasTitle); }
-	//public BookDisplay(String book, boolean hasTitle, boolean hideCountIfOnePage) {
+	public BookDisplay(BookData book) {
 		page = 0;
 
-		if (book == null) {
-			book = defaultBook;
-			hasTitle = false;
-		}
-
-		this.hasTitle = hasTitle;
-
 		ArrayList<String[]> pages = new ArrayList<>();
-		String[] splitContents = book.split("\0");
+		String[] splitContents = book.content.split("\0");
 		for (String content: splitContents) {
 			String[] remainder = {content};
 			while (remainder[remainder.length-1].length() > 0) {
@@ -52,14 +36,11 @@ public class BookDisplay extends Display {
 
 		lines = pages.toArray(new String[pages.size()][]);
 
-		showPageCount = hasTitle || lines.length != 1;
-		pageOffset = showPageCount ? 1 : 0;
-
 		Menu.Builder builder = new Menu.Builder(true, spacing, RelPos.CENTER);
 
 		Menu pageCount = builder // The small rect for the title
 			.setPositioning(new Point(Screen.w/2, 0), RelPos.BOTTOM)
-			.setEntries(StringEntry.useLines(Color.BLACK, "Page", hasTitle ? "Title" : "1/" + lines.length))
+			.setEntries(StringEntry.useLines(Color.BLACK, "Page 1/" + lines.length, book.title))
 			.setSelection(1)
 			.createMenu();
 
@@ -68,21 +49,21 @@ public class BookDisplay extends Display {
 			.setSize(maxX-minX + SpriteSheet.boxWidth*2, maxY-minY + SpriteSheet.boxWidth*2)
 			.setShouldRender(false);
 
-		menus = new Menu[lines.length + pageOffset];
-		if (showPageCount) menus[0] = pageCount;
+		menus = new Menu[lines.length + 1];
+		menus[0] = pageCount;
 		for (int i = 0; i < lines.length; i++) {
-			menus[i+pageOffset] = builder.setEntries(StringEntry.useLines(Color.WHITE, lines[i])).createMenu();
+			menus[i+1] = builder.setEntries(StringEntry.useLines(Color.WHITE, lines[i])).createMenu();
 		}
 
-		menus[page+pageOffset].shouldRender = true;
+		menus[page+1].shouldRender = true;
 	}
 
 	private void turnPage(int dir) {
 		if (page + dir >= 0 && page + dir < lines.length) {
-			menus[page+pageOffset].shouldRender = false;
+			menus[page+1].shouldRender = false;
 			page += dir;
-			if (showPageCount) menus[0].updateSelectedEntry(new StringEntry(page == 0 && hasTitle ? "Title" : (page + 1) + "/" + lines.length, Color.BLACK));
-			menus[page+pageOffset].shouldRender = true;
+			menus[0].updateEntry(0, new StringEntry("Page " + (page + 1) + "/" + lines.length, Color.BLACK));
+			menus[page+1].shouldRender = true;
 		}
 	}
 

@@ -13,10 +13,9 @@ public class EditableBookItem extends Item {
 
 	private EditableBookData book;
 
-	public EditableBookItem(EditableBookData book, Sprite sprite) {
-		super("Editable Book", sprite);
+	public EditableBookItem(EditableBookData book) {
+		super("Editable Book", new Sprite(2, 8, 0));
 		this.book = book;
-		this.sprite = sprite;
 	}
 
 	public boolean interactOn(Tile tile, Level level, int xt, int yt, Player player, Direction attackDir) {
@@ -31,10 +30,10 @@ public class EditableBookItem extends Item {
 
 	@Override
 	public String getDescription() {
-		return super.getDescription() + ("\n" + book.title);
+		return super.getDescription() + "\nTitle: " + book.title;
 	}
 
 	public EditableBookItem clone() {
-		return new EditableBookItem(book, sprite);
+		return new EditableBookItem(book);
 	}
 }

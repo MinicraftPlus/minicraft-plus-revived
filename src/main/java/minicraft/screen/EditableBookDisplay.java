@@ -7,7 +7,7 @@ import minicraft.gfx.Font;
 import minicraft.gfx.FontStyle;
 import minicraft.gfx.Point;
 import minicraft.gfx.Screen;
-import minicraft.item.BookItem;
+import minicraft.item.WrittenBookItem;
 import minicraft.item.Items;
 import minicraft.screen.entry.InputEntry;
 import minicraft.screen.entry.StringEntry;
@@ -95,10 +95,9 @@ public class EditableBookDisplay extends Display {
 			return;
 		} else if (input.getKey("CTRL-SHIFT-S").clicked) {
 			Game.player.activeItem = null;
-			// This should apply book author in multiplayer is added
-			BookData newBook = new BookData(BookData.genNewID(), book.title, bookInputEntry.getUserInput(), "");
-			Game.player.getInventory().add(new BookItem(newBook, Items.get("Sample Book").sprite));
-			BookData.saveBook(newBook);
+
+			// This should apply book author when multiplayer is added
+			Game.player.getInventory().add(new WrittenBookItem(new BookData(book.title, bookInputEntry.getUserInput(), "Player")));
 			Game.exitDisplay();
 			return;
 		} else if (input.getKey("SHIFT-5").clicked) {
