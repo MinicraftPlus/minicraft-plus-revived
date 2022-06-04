@@ -4,6 +4,7 @@ import minicraft.core.io.InputHandler;
 import minicraft.entity.Entity;
 import minicraft.item.Inventory;
 import minicraft.item.Item;
+import minicraft.item.Items;
 import minicraft.item.StackableItem;
 import minicraft.screen.entry.ItemEntry;
 
@@ -11,6 +12,7 @@ class InventoryMenu extends ItemListMenu {
 
 	private final Inventory inv;
 	private final Entity holder;
+	protected boolean creativeInv = false;
 
 	InventoryMenu(Entity holder, Inventory inv, String title) {
 		super(ItemListMenu.getBuilder(), ItemEntry.useItems(inv.getItems()), title);
@@ -37,13 +39,15 @@ class InventoryMenu extends ItemListMenu {
 			Item invItem = entry.getItem();
 			Item drop = invItem.clone();
 
-			if(dropOne && drop instanceof StackableItem && ((StackableItem)drop).count > 1) {
-				// just drop one from the stack
-				((StackableItem)drop).count = 1;
-				((StackableItem)invItem).count--;
-			} else {
-				// drop the whole item.
-				removeSelectedEntry();
+			if (!creativeInv) {
+				if(dropOne && drop instanceof StackableItem && ((StackableItem)drop).count > 1) {
+					// just drop one from the stack
+					((StackableItem)drop).count = 1;
+					((StackableItem)invItem).count--;
+				} else {
+					// drop the whole item.
+					removeSelectedEntry();
+				}
 			}
 
 			if(holder.getLevel() != null) {

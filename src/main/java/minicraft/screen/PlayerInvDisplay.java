@@ -30,7 +30,9 @@ public class PlayerInvDisplay extends Display {
 			creativeInv = Items.getCreativeModeInventory();
 			menus = new Menu[] {
 				menus[0],
-				new InventoryMenu(player, creativeInv, "Items")
+				new InventoryMenu(player, creativeInv, "Items") {{
+					super.creativeInv = true;
+				}}
 			};
 
 			menus[1].translate(menus[0].getBounds().getWidth() + padding, 0);
@@ -125,16 +127,16 @@ public class PlayerInvDisplay extends Display {
 	protected void onSelectionChange(int oldSel, int newSel) {
 		super.onSelectionChange(oldSel, newSel);
 		if (creativeMode) {
+			// Hide Items Inventory when not selecting it.
+			if (selection == 0) menus[1].shouldRender = false;
+			else menus[1].shouldRender = true;
+
 			if(oldSel == newSel) return; // this also serves as a protection against access to menus[0] when such may not exist.
 			int shift = 0;
 			if(newSel == 0) shift = padding - menus[0].getBounds().getLeft();
 			if(newSel == 1) shift = (Screen.w - padding) - menus[1].getBounds().getRight();
 			for(Menu m: menus)
 				m.translate(shift, 0);
-
-			// Hide Items Inventory when not selecting it.
-			if (selection == 0) menus[1].shouldRender = false;
-			else menus[1].shouldRender = true;
 		}
 	}
 
