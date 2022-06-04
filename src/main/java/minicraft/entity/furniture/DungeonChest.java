@@ -51,13 +51,11 @@ public class DungeonChest extends Chest {
 			boolean invKey = player.getInventory().count(Items.get("key")) > 0;
 
 			if(activeKey || invKey) { // If the player has a key...
-				if (!Game.isMode("creative")) { // Remove the key unless on creative mode.
-					if (activeKey) { // Remove activeItem
-						StackableItem key = (StackableItem)player.activeItem;
-						key.count--;
-					} else { // Remove from inv
-						player.getInventory().removeItem(Items.get("key"));
-					}
+				if (activeKey) { // Remove activeItem
+					StackableItem key = (StackableItem)player.activeItem;
+					key.count--;
+				} else { // Remove from inv
+					player.getInventory().removeItem(Items.get("key"));
 				}
 
 				isLocked = false;

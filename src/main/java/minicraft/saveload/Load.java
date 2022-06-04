@@ -74,8 +74,6 @@ public class Load {
 			loadEntities("Entities");
 			loadInventory("Inventory", Game.player.getInventory());
 			loadPlayer("Player", Game.player);
-			if (Game.isMode("creative"))
-				Items.fillCreativeInv(Game.player.getInventory(), false);
 		}
 	}
 
