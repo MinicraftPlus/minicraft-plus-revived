@@ -576,7 +576,7 @@ public class Load {
 			player.shirtColor = Integer.parseInt(data.remove(0));
 
 		// Just delete the slot reserved for loading legacy skins.
-		if (worldVer.compareTo(new Version("2.1.0")) > 0) {
+		if (worldVer.compareTo(new Version("2.1.0")) < 0) {
 			data.remove(0);
 		}
 	}
