@@ -1,22 +1,7 @@
 package minicraft.core;
 
-import java.awt.GraphicsEnvironment;
-import java.io.PrintWriter;
-import java.io.StringWriter;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.concurrent.Future;
-
-import javax.swing.JOptionPane;
-import javax.swing.JScrollPane;
-import javax.swing.JTextArea;
-
 import kong.unirest.Empty;
 import kong.unirest.HttpResponse;
-import minicraft.core.io.Localization;
-import minicraft.screen.ResourcePackDisplay;
-import org.jetbrains.annotations.Nullable;
-
 import minicraft.core.io.InputHandler;
 import minicraft.core.io.Settings;
 import minicraft.core.io.Sound;
@@ -27,8 +12,18 @@ import minicraft.network.Analytics;
 import minicraft.saveload.Load;
 import minicraft.saveload.Version;
 import minicraft.screen.Display;
+import minicraft.screen.ResourcePackDisplay;
 import minicraft.screen.TitleDisplay;
+import org.jetbrains.annotations.Nullable;
 import org.tinylog.Logger;
+
+import javax.swing.*;
+import java.awt.*;
+import java.io.PrintWriter;
+import java.io.StringWriter;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.concurrent.Future;
 
 public class Game {
 	protected Game() {} // Can't instantiate the Game class.
@@ -36,7 +31,7 @@ public class Game {
 	public static boolean debug = false;
 
 	public static final String NAME = "Minicraft Plus"; // This is the name on the application window.
-	public static final Version VERSION = new Version("2.1.0");
+	public static final Version VERSION = new Version("2.2.0-dev1");
 
 	public static InputHandler input; // Input used in Game, Player, and just about all the *Menu classes.
 	public static Player player;

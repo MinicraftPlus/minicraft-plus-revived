@@ -5,7 +5,7 @@ plugins {
     id "com.github.johnrengelman.shadow" version "7.1.2"
 }
 
-project.version = '2.1.0'
+project.version = '2.2.0-dev1'
 group = "java.minicraft"
 archivesBaseName = "minicraft-plus"
 
