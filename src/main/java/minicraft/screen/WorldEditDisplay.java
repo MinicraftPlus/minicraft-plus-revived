@@ -177,7 +177,7 @@ public class WorldEditDisplay extends Display {
 			if(action == Action.Rename)
 				names.remove(worldName);
 			entries.add(new StringEntry("New World Name:", action.color));
-			entries.add(WorldGenDisplay.makeWorldNameInput("", names, worldName));
+			entries.add(WorldGenDisplay.makeWorldNameInput("", names, worldName, false));
 		}
 
 		entries.addAll(Arrays.asList(StringEntry.useLines(Color.WHITE, "",
