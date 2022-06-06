@@ -39,7 +39,7 @@ public class DeathChest extends Chest {
 		this();
 		this.x = player.x;
 		this.y = player.y;
-		getInventory().addAll(player.getInventory());
+		getInventory().addAll(player.getInventory(), false);
 	}
 
 	// For death chest time count, I imagine.
@@ -88,7 +88,7 @@ public class DeathChest extends Chest {
 	@Override
 	public void touchedBy(Entity other) {
 		if(other instanceof Player) {
-			((Player)other).getInventory().addAll(getInventory());
+			((Player)other).getInventory().addAll(getInventory(), true); // Player might lose items?
 			remove();
 			Game.notifications.add("Death chest retrieved!");
 		}

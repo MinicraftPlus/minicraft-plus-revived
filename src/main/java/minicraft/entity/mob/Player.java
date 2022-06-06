@@ -105,17 +105,18 @@ public class Player extends Mob implements ItemHolder, ClientTickable {
 		x = 24;
 		y = 24;
 		this.input = input;
+		// Since this implementation will be deleted by Better Creative Mode Inventory might not implemented correctly
 		inventory = new Inventory() {
 
 			@Override
-			public void add(int idx, Item item) {
+			public int add(int idx, Item item, boolean invLimit) {
 				if (Game.isMode("creative")) {
-					if (count(item) > 0) return;
+					if (count(item) > 0) return 0;
 					item = item.clone();
 					if (item instanceof StackableItem)
 						((StackableItem)item).count = 1;
 				}
-				super.add(idx, item);
+				return super.add(idx, item, invLimit);
 			}
 
 			@Override
@@ -126,7 +127,7 @@ public class Player extends Mob implements ItemHolder, ClientTickable {
 						((StackableItem)cur).count = 1;
 					if (count(cur) == 1) {
 						super.remove(idx);
-						super.add(0, cur);
+						super.add(0, cur, true);
 						return cur.clone();
 					}
 				}
@@ -418,8 +419,22 @@ public class Player extends Mob implements ItemHolder, ClientTickable {
 			}
 
 			if (input.getKey("menu").clicked && activeItem != null) {
-				inventory.add(0, activeItem);
-				activeItem = null;
+				int returned = inventory.add(0, activeItem, true);
+				if (activeItem instanceof StackableItem) {
+					StackableItem stackable = (StackableItem)activeItem;
+					if (returned == stackable.count) {
+						activeItem = null;
+					} else {
+						stackable.count -= returned;
+						getLevel().dropItem(x, y, stackable);
+						activeItem = null;
+					}
+				} else if (returned > 0) {
+					activeItem = null;
+				} else {
+					getLevel().dropItem(x, y, activeItem);
+					activeItem = null;
+				}
 			}
 
 			if (Game.getDisplay() == null) {
@@ -467,9 +482,17 @@ public class Player extends Mob implements ItemHolder, ClientTickable {
 	 */
 	public void resolveHeldItem() {
 		if (!(activeItem instanceof PowerGloveItem)) { // If you are now holding something other than a power glove...
-			if (prevItem != null && !Game.isMode("creative")) // and you had a previous item that we should care about...
-				inventory.add(0, prevItem); // Then add that previous item to your inventory so it isn't lost.
-			// If something other than a power glove is being held, but the previous item is null, then nothing happens; nothing added to inventory, and current item remains as the new one.
+			if (prevItem != null && !Game.isMode("creative")) { // and you had a previous item that we should care about...
+				int returned = inventory.add(0, prevItem, true); // Then add that previous item to your inventory so it isn't lost.
+				if (prevItem instanceof StackableItem) {
+					if (returned < ((StackableItem)prevItem).count) {
+						((StackableItem)prevItem).count -= returned;
+						getLevel().dropItem(x, y, prevItem);
+					}
+				} else if (returned == 0) {
+					getLevel().dropItem(x, y, prevItem);
+				}
+			}// If something other than a power glove is being held, but the previous item is null, then nothing happens; nothing added to inventory, and current item remains as the new one.
 		} else
 			activeItem = prevItem; // Otherwise, if you're holding a power glove, then the held item didn't change, so we can remove the power glove and make it what it was before.
 
@@ -852,16 +875,23 @@ public class Player extends Mob implements ItemHolder, ClientTickable {
 	/** What happens when the player interacts with a itemEntity */
 	public void pickupItem(ItemEntity itemEntity) {
 
-		Sound.pickup.play();
-
-		itemEntity.remove();
-		addScore(1);
 		if (Game.isMode("creative")) return; // We shall not bother the inventory on creative mode.
 
-		if (itemEntity.item instanceof StackableItem && ((StackableItem)itemEntity.item).stacksWith(activeItem)) // Picked up item equals the one in your hand
+		int picked = 0;
+		if (itemEntity.item instanceof StackableItem && ((StackableItem)itemEntity.item).stacksWith(activeItem)) { // Picked up item equals the one in your hand
 			((StackableItem)activeItem).count += ((StackableItem)itemEntity.item).count;
-		else
-			inventory.add(itemEntity.item); // Add item to inventory
+			picked = ((StackableItem)itemEntity.item).count;
+		} else
+			picked = inventory.add(itemEntity.item, true); // Add item to inventory
+
+		if (picked == ((StackableItem)itemEntity.item).count) {
+			Sound.pickup.play();
+
+			itemEntity.remove();
+			addScore(1);
+		} else {
+			((StackableItem)itemEntity.item).count -= picked;
+		}
 	}
 
 	// The player can swim.
@@ -969,8 +999,8 @@ public class Player extends Mob implements ItemHolder, ClientTickable {
 		// Make death chest
 		DeathChest dc = new DeathChest(this);
 
-		if (activeItem != null) dc.getInventory().add(activeItem);
-		if (curArmor != null) dc.getInventory().add(curArmor);
+		if (activeItem != null) dc.getInventory().add(activeItem, false);
+		if (curArmor != null) dc.getInventory().add(curArmor, false);
 
 		Sound.playerDeath.play();
 

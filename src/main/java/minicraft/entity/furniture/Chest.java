@@ -49,7 +49,7 @@ public class Chest extends Furniture implements ItemHolder {
 					// Adds the "fallback" items to ensure there's some stuff
 					String[] fallbacks = line.substring(1).split(":");
 					for (String item : fallbacks) {
-						inventory.add(Items.get(item.split(",")[0]), Integer.parseInt(item.split(",")[1]));
+						inventory.add(Items.get(item.split(",")[0]), Integer.parseInt(item.split(",")[1]), false);
 					}
 				}
 			}

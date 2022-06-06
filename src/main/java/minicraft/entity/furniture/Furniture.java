@@ -94,7 +94,7 @@ public class Furniture extends Entity {
 			Sound.monsterHurt.play();
 				remove();
 				if (!Game.isMode("creative") && player.activeItem != null && !(player.activeItem instanceof PowerGloveItem))
-					player.getInventory().add(0, player.activeItem); // Put whatever item the player is holding into their inventory
+					player.getLevel().dropItem(player.x, player.y, player.activeItem); // Put whatever item the player is holding into their inventory
 				player.activeItem = new FurnitureItem(this); // Make this the player's current item.
 				return true;
 		}

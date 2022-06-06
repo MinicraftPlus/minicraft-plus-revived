@@ -285,7 +285,7 @@ public class LegacyLoad {
 		}
 
 		if (playerac > 0 && inventory == Game.player.getInventory()) {
-			inventory.add(Items.get("arrow"), playerac);
+			inventory.add(Items.get("arrow"), playerac, false);
 			playerac = 0;
 		}
 	}
@@ -299,11 +299,11 @@ public class LegacyLoad {
 			//System.out.println("Item to fetch: " + itemName + "; count=" + curData[1]);
 			Item newItem = Items.get(itemName);
 			int count = Integer.parseInt(curData[1]);
-			inventory.add(newItem, count);
+			inventory.add(newItem, count, false);
 		} else {
 			if (oldSave) item = subOldName(item);
 			Item toAdd = Items.get(item);
-			inventory.add(toAdd);
+			inventory.add(toAdd, false);
 		}
 	}
 

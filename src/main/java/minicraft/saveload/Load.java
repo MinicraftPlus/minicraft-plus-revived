@@ -566,7 +566,7 @@ public class Load {
 		if (worldVer.compareTo(new Version("2.0.4-dev7")) < 0) {
 			int arrowCount = Integer.parseInt(data.remove(0));
 			if (worldVer.compareTo(new Version("2.0.1-dev1")) < 0)
-				player.getInventory().add(Items.get("arrow"), arrowCount);
+				player.getInventory().add(Items.get("arrow"), arrowCount, false);
 		}
 
 		Game.currentLevel = Integer.parseInt(data.remove(0));
@@ -682,10 +682,10 @@ public class Load {
 
 				if (newItem instanceof StackableItem) {
 					((StackableItem) newItem).count = count;
-					inventory.add(newItem);
-				} else inventory.add(newItem, count);
+					inventory.add(newItem, false);
+				} else inventory.add(newItem, count, false);
 			} else {
-				inventory.add(Items.get(item));
+				inventory.add(Items.get(item), false);
 			}
 		}
 	}
@@ -817,7 +817,7 @@ public class Load {
 				if (itemData.contains("Totem of Wind")) continue;
 
 				Item item = Items.get(itemData);
-				chest.getInventory().add(item);
+				chest.getInventory().add(item, false);
 			}
 
 			if (isDeathChest) {
