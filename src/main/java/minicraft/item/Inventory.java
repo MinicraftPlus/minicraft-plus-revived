@@ -35,13 +35,6 @@ public class Inventory {
 	 */
 	public Item remove(int idx) { return items.remove(idx); }
 
-	public int addAll(Inventory other, boolean invLimit) {
-		int total = 0;
-		for (Item i: other.getItems())
-			total += add(i.clone(), invLimit);
-		return total;
-	}
-
 	/** Adds an item to the inventory */
 	public int add(@Nullable Item item, boolean invLimit) {
 		if (item != null)

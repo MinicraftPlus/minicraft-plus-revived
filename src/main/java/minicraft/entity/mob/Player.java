@@ -425,8 +425,7 @@ public class Player extends Mob implements ItemHolder, ClientTickable {
 					if (returned == stackable.count) {
 						activeItem = null;
 					} else {
-						stackable.count -= returned;
-						getLevel().dropItem(x, y, stackable);
+						getLevel().dropItem(x, y, stackable.clone());
 						activeItem = null;
 					}
 				} else if (returned > 0) {
@@ -486,8 +485,7 @@ public class Player extends Mob implements ItemHolder, ClientTickable {
 				int returned = inventory.add(0, prevItem, true); // Then add that previous item to your inventory so it isn't lost.
 				if (prevItem instanceof StackableItem) {
 					if (returned < ((StackableItem)prevItem).count) {
-						((StackableItem)prevItem).count -= returned;
-						getLevel().dropItem(x, y, prevItem);
+						getLevel().dropItem(x, y, prevItem.clone());
 					}
 				} else if (returned == 0) {
 					getLevel().dropItem(x, y, prevItem);
@@ -875,21 +873,20 @@ public class Player extends Mob implements ItemHolder, ClientTickable {
 	/** What happens when the player interacts with a itemEntity */
 	public void pickupItem(ItemEntity itemEntity) {
 		int picked = 0;
-		System.out.println(itemEntity.item);
+		int total = 1;
 		if (itemEntity.item instanceof StackableItem && ((StackableItem)itemEntity.item).stacksWith(activeItem)) { // Picked up item equals the one in your hand
 			((StackableItem)activeItem).count += ((StackableItem)itemEntity.item).count;
 			picked = ((StackableItem)itemEntity.item).count;
-		} else
+		} else {
+			if (itemEntity.item instanceof StackableItem) total = ((StackableItem)itemEntity.item).count;
 			picked = inventory.add(itemEntity.item, true); // Add item to inventory
+		}
 
-		if (itemEntity.item instanceof StackableItem && picked == ((StackableItem)itemEntity.item).count
-		|| !(itemEntity.item instanceof StackableItem) && picked > 0) {
+		if (picked == total) {
 			Sound.pickup.play();
 
 			itemEntity.remove();
 			addScore(1);
-		} else if (itemEntity.item instanceof StackableItem) {
-			((StackableItem)itemEntity.item).count -= picked;
 		}
 	}
 

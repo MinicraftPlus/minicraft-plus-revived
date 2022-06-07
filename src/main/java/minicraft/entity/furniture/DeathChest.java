@@ -9,6 +9,9 @@ import minicraft.gfx.Color;
 import minicraft.gfx.Font;
 import minicraft.gfx.Screen;
 import minicraft.gfx.Sprite;
+import minicraft.item.Inventory;
+import minicraft.item.Item;
+import minicraft.item.StackableItem;
 
 public class DeathChest extends Chest {
 	private static Sprite normalSprite = new Sprite(10, 26, 2, 2, 2);
@@ -39,7 +42,10 @@ public class DeathChest extends Chest {
 		this();
 		this.x = player.x;
 		this.y = player.y;
-		getInventory().addAll(player.getInventory(), false);
+		Inventory inv = getInventory();
+		for (Item i : player.getInventory().getItems()) {
+			inv.add(i.clone(), false);
+		}
 	}
 
 	// For death chest time count, I imagine.
@@ -88,7 +94,17 @@ public class DeathChest extends Chest {
 	@Override
 	public void touchedBy(Entity other) {
 		if(other instanceof Player) {
-			((Player)other).getInventory().addAll(getInventory(), true); // Player might lose items?
+			Inventory playerInv = ((Player)other).getInventory();
+			for (Item i : getInventory().getItems()) {
+				int total = 1;
+				if (i instanceof StackableItem) total = ((StackableItem)i).count;
+
+				int returned = playerInv.add(i, true);
+				if (returned < total) {
+					Game.notifications.add("Your inventory is full!");
+					return;
+				}
+			}
 			remove();
 			Game.notifications.add("Death chest retrieved!");
 		}
