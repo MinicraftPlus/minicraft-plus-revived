@@ -15,14 +15,15 @@ import minicraft.saveload.Save;
 import minicraft.screen.EndGameDisplay;
 import minicraft.screen.LevelTransitionDisplay;
 import minicraft.screen.PlayerDeathDisplay;
+import minicraft.screen.QuestsDisplay;
 import minicraft.screen.WorldSelectDisplay;
 import org.tinylog.Logger;
 
 public class Updater extends Game {
 	private Updater() {}
-	
+
 	// TIME AND TICKS
-	
+
 	public static final int normSpeed = 60; // Measured in ticks / second.
 	public static float gamespeed = 1; // Measured in MULTIPLES OF NORMSPEED.
 	public static boolean paused = true; // If the game is paused.
@@ -87,14 +88,14 @@ public class Updater extends Game {
 	// VERY IMPORTANT METHOD!! Makes everything keep happening.
 	// In the end, calls menu.tick() if there's a menu, or level.tick() if no menu.
 	public static void tick() {
-		
+
 		// Quick Level change: move the player for -1, or 1 levels
         	if (isMode("creative") && input.getKey("SHIFT-S").clicked ) {
         		Game.setDisplay(new LevelTransitionDisplay(-1));
-        	
+
         	} else if (isMode("creative") && input.getKey("SHIFT-W").clicked ){
         		Game.setDisplay(new LevelTransitionDisplay(1));
-        	
+
         	}
 
 		if (input.getKey("FULLSCREEN").clicked) {
@@ -105,13 +106,13 @@ public class Updater extends Game {
 		if (newDisplay != display) {
 			if (display != null && (newDisplay == null || newDisplay.getParent() != display))
 				display.onExit();
-			
+
 			if (newDisplay != null && (display == null || newDisplay != display.getParent()))
 				newDisplay.init(display);
-			
+
 			display = newDisplay;
 		}
-		
+
 		Level level = levels[currentLevel];
 		if (Bed.sleeping()) {
 			// IN BED
@@ -129,7 +130,7 @@ public class Updater extends Game {
 				Bed.restorePlayers();
 			}
 		}
-		
+
 		// Auto-save tick; marks when to do autosave.
 		if(!paused)
 			asTick++;
@@ -138,21 +139,21 @@ public class Updater extends Game {
 
 				new Save(WorldSelectDisplay.getWorldName());
 			}
-			
+
 			asTick = 0;
 		}
-		
+
 		// Increment tickCount if the game is not paused
 		if (!paused) setTime(tickCount+1);
-		
+
 		// SCORE MODE ONLY
-		
+
 		if (isMode("score") && (!paused && !gameOver)) {
 			if (scoreTime <= 0) { // GAME OVER
 				gameOver = true;
 				setDisplay(new EndGameDisplay(player));
 			}
-			
+
 			scoreTime--;
 		}
 
@@ -193,14 +194,14 @@ public class Updater extends Game {
 					level.tick(true);
 					Tile.tickCount++;
 				}
-				
+
 				if (display == null && input.getKey("F3").clicked) { // Shows debug info in upper-left
 					Renderer.showDebugInfo = !Renderer.showDebugInfo;
 				}
-				
+
 				// For debugging only
 				if (debug) {
-					
+
 					if (input.getKey("ctrl-p").clicked) {
 						// Print all players on all levels, and their coordinates.
 						System.out.println("Printing players on all levels.");
@@ -266,8 +267,8 @@ public class Updater extends Game {
 			} // End "menu-null" conditional
 		} // End hasfocus conditional
 	} // End tick()
-	
-	
+
+
 	// This is the proper way to change the tickCount.
 	public static void setTime(int ticks) {
 		if (ticks < Time.Morning.tickTime) ticks = 0; // Error correct
@@ -282,7 +283,7 @@ public class Updater extends Game {
 		}
 		tickCount = ticks;
 	}
-	
+
 	// This is the proper way to change the time of day.
 	public static void changeTimeOfDay(Time t) {
 		setTime(t.tickTime);
@@ -295,12 +296,12 @@ public class Updater extends Game {
 		else
 			System.out.println("Time " + t + " does not exist.");
 	}
-	
+
 	public static Time getTime() {
 		Time[] times = Time.values();
 		return times[time];
 	}
-	
+
 	/** This adds a notification to all player games. */
 	public static void notifyAll(String msg) {
 		notifyAll(msg, 0);
