@@ -1,7 +1,6 @@
 package minicraft.core;
 
 import java.awt.GraphicsEnvironment;
-import java.io.File;
 import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.time.Instant;
@@ -21,7 +20,6 @@ import de.jcm.discordgamesdk.CreateParams;
 import de.jcm.discordgamesdk.activity.Activity;
 import kong.unirest.Empty;
 import kong.unirest.HttpResponse;
-import minicraft.core.io.DownloadNativeLibrary;
 import minicraft.core.io.InputHandler;
 import minicraft.core.io.Settings;
 import minicraft.core.io.Sound;
@@ -113,16 +111,11 @@ public class Game {
 
 		Core discordCore = null;
 		try {
-			File discordLibrary = DownloadNativeLibrary.downloadDiscordLibrary();
-			if (discordLibrary == null) {
-				System.err.println("Error downloading Discord SDK.");
-				System.exit(-1);
-			}
-
-			Core.init(discordLibrary);
+			Core.initDownload();
 			CreateParams params = new CreateParams();
 			params.setClientID(981579446538633267L);
 			params.setFlags(CreateParams.getDefaultFlags());
+			params.setFlags(CreateParams.Flags.NO_REQUIRE_DISCORD);
 
 			discordCore = new Core(params);
 			Activity activity = new Activity();
