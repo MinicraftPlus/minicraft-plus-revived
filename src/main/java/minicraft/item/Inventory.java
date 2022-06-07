@@ -86,6 +86,12 @@ public class Inventory {
 					if (invLimit) {
 						if (stack.count < stack.maxCount) {
 							int r = stack.maxCount - stack.count;
+							System.out.print("1: ");
+							System.out.println(stack);
+							System.out.println(Integer.toHexString(System.identityHashCode(stack)));
+							System.out.print("2: ");
+							System.out.println(toTake);
+							System.out.println(Integer.toHexString(System.identityHashCode(toTake)));
 							if (r >= toTake.count) {
 								// Matching implies that the other item is stackable, too.
 								stack.count += toTake.count;
@@ -104,7 +110,7 @@ public class Inventory {
 
 			if (invLimit) {
 				if (items.size() < maxItem) {
-					items.add(slot, toTake); // Add the item to the items list
+					items.add(toTake); // Add the item to the items list
 					return total;
 				} else {
 					return total - toTake.count;

@@ -93,6 +93,13 @@ public class ContainerDisplay extends Display {
 					} else {
 						from.remove(fromSel);
 					}
+					update();
+				} else {
+					int moved = to.add(toSel, toItem, true);
+					if (moved == 1) {
+						from.remove(fromSel);
+						update();
+					}
 				}
 			} else {
 				if(!transferAll) {
