@@ -111,6 +111,16 @@ public class Items {
 
 	public static Item arrowItem = get("arrow");
 
+	public static int getCount(Item item) {
+		if (item instanceof StackableItem) {
+			return ((StackableItem) item).count;
+		} else if (item != null) {
+			return 1;
+		} else {
+			return 0;
+		}
+	}
+
 	public static void fillCreativeInv(Inventory inv) { fillCreativeInv(inv, true); }
 	public static void fillCreativeInv(Inventory inv, boolean addAll) {
 		for (Item item: items) {

@@ -97,7 +97,15 @@ public class Inventory {
 
 			if (invLimit) {
 				if (items.size() < maxItem) {
-					items.add(toTake); // Add the item to the items list
+					int c = Math.ceilDiv(toTake.count, 100);
+					for (int i = 0; i < c; i++) {
+						StackableItem adding = toTake.clone();
+						adding.count = i + 1 == c && toTake.count % 100 > 0 ? toTake.count % 100 : 100;
+						if (adding.count == 0) break;
+						if (items.size() == maxItem) return total - toTake.count;
+						items.add(adding); // Add the item to the items list
+						toTake.count -= adding.count;
+					}
 					return total;
 				} else {
 					return total - toTake.count;
