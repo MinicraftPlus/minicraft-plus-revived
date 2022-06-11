@@ -60,6 +60,12 @@ public class PlayerInvDisplay extends Display {
 
 			Inventory from, to;
 			if (selection == 0) {
+				if (input.getKey("attack").clicked && menus[0].getNumOptions() > 0) {
+					player.activeItem = player.getInventory().remove(menus[0].getSelection());
+					Game.exitDisplay();
+					return;
+				}
+
 				from = player.getInventory();
 				to = creativeInv;
 
