@@ -35,6 +35,7 @@ Minicraft+ version 2.1.0
 - Removed texture packs
 - Removed suits
 - Removed second air wizard
+- Removed option of changing skin in the options display because of a crash.
 
 -------------------------------------------------------------------------
 - Made make-versions be treated as patches to already existing versions -
