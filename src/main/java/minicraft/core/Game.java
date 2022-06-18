@@ -3,6 +3,7 @@ package minicraft.core;
 import kong.unirest.Empty;
 import kong.unirest.HttpResponse;
 import minicraft.core.io.InputHandler;
+import minicraft.core.io.Localization;
 import minicraft.core.io.Settings;
 import minicraft.core.io.Sound;
 import minicraft.entity.mob.Player;
@@ -111,6 +112,9 @@ public class Game {
 
 		Tiles.initTileList();
 		Sound.init();
+
+		// Load default loc.
+		Localization.loadLanguage();
 
 		World.resetGame(); // "half"-starts a new game, to set up initial variables
 		player.eid = 0;

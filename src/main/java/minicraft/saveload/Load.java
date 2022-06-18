@@ -105,6 +105,7 @@ public class Load {
 			Logger.warn("No preferences found, creating new file.");
 			resave = true;
 		}
+
 		// Load unlocks. (new version)
 		File testFileOld = new File(location + "unlocks" + extension);
 		File testFile = new File(location + "Unlocks" + extension);
@@ -346,8 +347,6 @@ public class Load {
 			String lang = json.getString("lang");
 			Settings.set("language", lang);
 			Localization.changeLanguage(lang);
-		} else {
-			Localization.loadLanguage();
 		}
 
 		SkinDisplay.setSelectedSkinIndex(json.getInt("skinIdx"));

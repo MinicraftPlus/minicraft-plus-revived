@@ -32,10 +32,11 @@ Minicraft+ version 2.1.0
 * Made cloud cactus into an ore you can mine and use
 * Fixed air wizard spawner
 * Fixed player spawning outside the map
+* Fixed localization not being loaded on first launch
 - Removed texture packs
 - Removed suits
 - Removed second air wizard
-- Removed option of changing skin in the options display because of a crash.
+- Removed option of changing skin in the options display because of a crash
 
 -------------------------------------------------------------------------
 - Made make-versions be treated as patches to already existing versions -
