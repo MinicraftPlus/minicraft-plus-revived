@@ -32,6 +32,8 @@ public class Creeper extends EnemyMob {
 
 	private int fuseTime = 0;
 	private boolean fuseLit = false;
+	
+	private final String[] explosionBlacklist = new String[] { "hard rock", "obsidian wall", "raw obsidian"};
 
 	public Creeper(int lvl) {
 		super(lvl, sprites, 10, 50);
@@ -121,9 +123,9 @@ public class Creeper extends EnemyMob {
 					}
 					if (!hasSpawner) {
 						if (level.depth != 1) {
-							level.setAreaTiles(tilePosition.x, tilePosition.y, 0, Tiles.get("hole"), 0);
+							level.setAreaTiles(tilePosition.x, tilePosition.y, 0, Tiles.get("hole"), 0, explosionBlacklist);
 						} else {
-							level.setAreaTiles(tilePosition.x, tilePosition.y, 0, Tiles.get("Infinite Fall"), 0);
+							level.setAreaTiles(tilePosition.x, tilePosition.y, 0, Tiles.get("Infinite Fall"), 0, explosionBlacklist);
 						}
 
 					}
