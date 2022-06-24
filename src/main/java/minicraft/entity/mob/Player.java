@@ -721,8 +721,6 @@ public class Player extends Mob implements ItemHolder, ClientTickable {
 
 	@Override
 	public void render(Screen screen) {
-		MobSprite[][] spriteSet = activeItem instanceof FurnitureItem ? carrySprites : sprites;
-
 		/* Offset locations to start drawing the sprite relative to our position */
 		int xo = x - 8; // Horizontal
 		int yo = y - 11; // Vertical
@@ -766,10 +764,12 @@ public class Player extends Mob implements ItemHolder, ClientTickable {
 			col = Color.WHITE; // Make the sprite white.
 		}
 
+		MobSprite[][] spriteSet = activeItem instanceof FurnitureItem ? carrySprites : sprites;
+
 		// Renders falling
 		MobSprite curSprite;
 		if (onFallDelay > 0) {
-			// What this does is make falling look really cool
+			// This makes falling look really cool.
 			float spriteToUse = onFallDelay / 2f;
 			while (spriteToUse > spriteSet.length - 1) {
 				spriteToUse -= 4;
@@ -780,10 +780,10 @@ public class Player extends Mob implements ItemHolder, ClientTickable {
 		}
 
 		// Render each corner of the sprite
-		if (!isSwimming()) { // Don't render the bottom half if swimming.
-			curSprite.render(screen, xo, yo - 4 * onFallDelay, -1, shirtColor);
-		} else {
+		if (isSwimming()) {
 			curSprite.renderRow(0, screen, xo, yo, -1, shirtColor);
+		} else { // Don't render the bottom half if swimming.
+			curSprite.render(screen, xo, yo - 4 * onFallDelay, -1, shirtColor);
 		}
 
 		// Renders slashes:

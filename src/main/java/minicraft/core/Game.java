@@ -3,6 +3,7 @@ package minicraft.core;
 import kong.unirest.Empty;
 import kong.unirest.HttpResponse;
 import minicraft.core.io.InputHandler;
+import minicraft.core.io.Localization;
 import minicraft.core.io.Settings;
 import minicraft.core.io.Sound;
 import minicraft.entity.mob.Player;
@@ -31,6 +32,7 @@ public class Game {
 	public static boolean debug = false;
 
 	public static final String NAME = "Minicraft Plus"; // This is the name on the application window.
+
 	public static final Version VERSION = new Version("2.2.0-dev1");
 
 	public static InputHandler input; // Input used in Game, Player, and just about all the *Menu classes.
@@ -109,6 +111,9 @@ public class Game {
 
 		Tiles.initTileList();
 		Sound.init();
+
+		// Load default loc.
+		Localization.loadLanguage();
 
 		World.resetGame(); // "half"-starts a new game, to set up initial variables
 		player.eid = 0;

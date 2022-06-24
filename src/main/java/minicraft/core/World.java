@@ -1,17 +1,14 @@
 package minicraft.core;
 
-import minicraft.screen.*;
-
-import java.util.ArrayList;
-
-import org.jetbrains.annotations.Nullable;
-
 import minicraft.core.io.Settings;
 import minicraft.entity.furniture.Bed;
 import minicraft.entity.mob.Player;
 import minicraft.level.Level;
 import minicraft.network.Analytics;
 import minicraft.saveload.Load;
+import minicraft.screen.*;
+import java.util.ArrayList;
+import org.jetbrains.annotations.Nullable;
 import org.tinylog.Logger;
 
 public class World extends Game {
@@ -19,6 +16,15 @@ public class World extends Game {
 
 	public static final int[] idxToDepth = {-3, -2, -1, 0, 1, -4}; /// This is to map the level depths to each level's index in Game's levels array. This must ALWAYS be the same length as the levels array, of course.
 	public static final int minLevelDepth, maxLevelDepth;
+
+	static int worldSize = 128; // The size of the world
+
+	static int playerDeadTime; // The time after you die before the dead menu shows up.
+	static int pendingLevelChange; // Used to determine if the player should change levels or not.
+
+	@Nullable
+	public static Action onChangeAction; // Allows action to be stored during a change schedule that should only occur once the screen is blacked out.
+
 	static {
 		int min, max;
 		min = max = idxToDepth[0];
@@ -31,19 +37,7 @@ public class World extends Game {
 		minLevelDepth = min;
 		maxLevelDepth = max;
 	}
-
-	static int worldSize = 128; // The size of the world
-	public static int lvlw = worldSize; // The width of the world
-	public static int lvlh = worldSize; // The height of the world
-
-	static int playerDeadTime; // The time after you die before the dead menu shows up.
-	static int pendingLevelChange; // Used to determine if the player should change levels or not.
-
-	@Nullable
-	public static Action onChangeAction; // Allows action to be stored during a change schedule that should only occur once the screen is blacked out.
-
-	/// SCORE MODE
-
+  
 	/** This is for a contained way to find the index in the levels array of a level, based on it's depth. This is also helpful because add a new level in the future could change this. */
 	public static int lvlIdx(int depth) {
 		if (depth > maxLevelDepth) return lvlIdx(minLevelDepth);
@@ -67,8 +61,9 @@ public class World extends Game {
 		// Adds a new player
 		if (keepPlayer) {
 			player = new Player(player, input);
-		} else
+		} else {
 			player = new Player(null, input);
+		}
 
 		if (levels[currentLevel] == null) return;
 
@@ -140,8 +135,6 @@ public class World extends Game {
 	}
 
 
-
-
 	/** This method is called when you interact with stairs, this will give you the transition effect. While changeLevel(int) just changes the level. */
 	public static void scheduleLevelChange(int dir) { scheduleLevelChange(dir, null); }
 	public static void scheduleLevelChange(int dir, @Nullable Action changeAction) {
@@ -159,7 +152,6 @@ public class World extends Game {
 			onChangeAction = null;
 		}
 
-
 		levels[currentLevel].remove(player); // Removes the player from the current level.
 
 		int nextLevel = currentLevel + dir;
@@ -171,13 +163,11 @@ public class World extends Game {
 		player.x = (player.x >> 4) * 16 + 8; // Sets the player's x coord (to center yourself on the stairs)
 		player.y = (player.y >> 4) * 16 + 8; // Sets the player's y coord (to center yourself on the stairs)
 
-
 		levels[currentLevel].add(player); // Adds the player to the level.
 
 		if (currentLevel == 0) {
 			AchievementsDisplay.setAchievement("minicraft.achievement.lowest_caves", true);
-		}
-		if (currentLevel == 5) {
+		} else if (currentLevel == 5) {
 			AchievementsDisplay.setAchievement("minicraft.achievement.obsidian_dungeon", true);
 		}
 	}
