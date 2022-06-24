@@ -25,7 +25,8 @@ public class PauseDisplay extends Display {
 				new BlankEntry(),
 				new SelectEntry("Return to Game", () -> Game.setDisplay(null)),
 				new SelectEntry("Options", () -> Game.setDisplay(new OptionsWorldDisplay())),
-				new SelectEntry("minicraft.display.achievement", () -> Game.setDisplay(new AchievementsDisplay()))
+				new SelectEntry("minicraft.display.achievement", () -> Game.setDisplay(new AchievementsDisplay())),
+				new SelectEntry("minicraft.display.quests", () -> Game.setDisplay(new QuestsDisplay()))
 		));
 
 		entries.add(new SelectEntry("Save Game", () -> {

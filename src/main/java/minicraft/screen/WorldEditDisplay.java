@@ -1,13 +1,7 @@
 package minicraft.screen;
 
-import java.io.File;
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-
-import minicraft.core.io.FileHandler;
 import minicraft.core.Game;
+import minicraft.core.io.FileHandler;
 import minicraft.core.io.InputHandler;
 import minicraft.core.io.Localization;
 import minicraft.core.io.Sound;
@@ -21,6 +15,12 @@ import minicraft.screen.entry.SelectEntry;
 import minicraft.screen.entry.StringEntry;
 import org.jetbrains.annotations.Nullable;
 import org.tinylog.Logger;
+
+import java.io.File;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
 /**
  * Used to edit worlds. These actions include renaming, deleting, and copying worlds.

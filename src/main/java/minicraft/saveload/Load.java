@@ -26,6 +26,7 @@ import org.tinylog.Logger;
 import java.io.*;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
 
 public class Load {
@@ -491,6 +492,44 @@ public class Load {
 					parent.setTile(p.x, p.y, Tiles.get("Stairs Down"));
 				}
 			}
+		}
+
+		if (new File(location+"Quests.json").exists()) {
+			try {
+				JSONObject questsObj = new JSONObject(loadFromFile(location + "Quests.json", true));
+				JSONArray unlockedQuests = questsObj.getJSONArray("unlocked");
+				JSONArray doneQuests = questsObj.getJSONArray("done");
+				JSONObject questData = questsObj.getJSONObject("data");
+
+				Settings.setIdx("tutorials", questsObj.getInt("tutorials"));
+
+				ArrayList<String> unlocked = new ArrayList<>();
+				ArrayList<String> done = new ArrayList<>();
+				HashMap<String, String> questStatus = new HashMap<>();
+
+				for (int i = 0; i < unlockedQuests.length(); i++) {
+					unlocked.add(unlockedQuests.getString(i));
+				}
+
+				for (int i = 0; i < doneQuests.length(); i++) {
+					done.add(doneQuests.getString(i));
+				}
+
+				for (String i : questData.keySet()) {
+					questStatus.put(i, questData.getString(i));
+				}
+
+				QuestsDisplay.loadGameQuests(unlocked, done, questStatus);
+
+			} catch (IOException e) {
+				e.printStackTrace();
+				Logger.error("Unable to load Quests.json, loading default quests instead.");
+				QuestsDisplay.resetGameQuests();
+			}
+
+		} else {
+			Logger.debug("Quests.json not found, loading default quests instead.");
+			QuestsDisplay.resetGameQuests();
 		}
 	}
 

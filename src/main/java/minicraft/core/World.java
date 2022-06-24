@@ -7,6 +7,7 @@ import minicraft.level.Level;
 import minicraft.network.Analytics;
 import minicraft.saveload.Load;
 import minicraft.screen.*;
+import java.util.ArrayList;
 import org.jetbrains.annotations.Nullable;
 import org.tinylog.Logger;
 
@@ -36,7 +37,7 @@ public class World extends Game {
 		minLevelDepth = min;
 		maxLevelDepth = max;
 	}
-
+  
 	/** This is for a contained way to find the index in the levels array of a level, based on it's depth. This is also helpful because add a new level in the future could change this. */
 	public static int lvlIdx(int depth) {
 		if (depth > maxLevelDepth) return lvlIdx(minLevelDepth);
@@ -123,6 +124,7 @@ public class World extends Game {
 			Updater.pastDay1 = false;
 			player.findStartPos(level, WorldGenDisplay.getSeed()); // Finds the start level for the player
 			level.add(player);
+			QuestsDisplay.resetGameQuests();
 		}
 
 		Renderer.readyToRenderGameplay = true;
@@ -131,6 +133,7 @@ public class World extends Game {
 
 		Logger.trace("World initialized.");
 	}
+
 
 	/** This method is called when you interact with stairs, this will give you the transition effect. While changeLevel(int) just changes the level. */
 	public static void scheduleLevelChange(int dir) { scheduleLevelChange(dir, null); }

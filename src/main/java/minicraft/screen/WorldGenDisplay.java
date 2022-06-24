@@ -1,11 +1,5 @@
 package minicraft.screen;
 
-import java.util.Arrays;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Random;
-import java.util.regex.Pattern;
-
 import minicraft.core.Game;
 import minicraft.core.io.Localization;
 import minicraft.core.io.Settings;
@@ -14,6 +8,12 @@ import minicraft.gfx.Font;
 import minicraft.gfx.Screen;
 import minicraft.screen.entry.InputEntry;
 import minicraft.screen.entry.SelectEntry;
+
+import java.util.Arrays;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Random;
+import java.util.regex.Pattern;
 
 public class WorldGenDisplay extends Display {
 
@@ -121,6 +121,7 @@ public class WorldGenDisplay extends Display {
 				Settings.getEntry("size"),
 				Settings.getEntry("theme"),
 				Settings.getEntry("type"),
+				Settings.getEntry("tutorials"),
 				worldSeed
 			)
 				.setDisplayLength(5)
