@@ -18,8 +18,6 @@ import minicraft.item.Inventory;
 import minicraft.item.Item;
 import minicraft.item.PotionType;
 import minicraft.screen.*;
-import minicraft.util.Quest;
-
 import org.json.JSONArray;
 import org.json.JSONObject;
 import org.tinylog.Logger;
@@ -30,7 +28,6 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map.Entry;
 
 public class Save {
 
@@ -234,35 +231,6 @@ public class Save {
 			writeToFile(location + filename + l + "data" + extension, data);
 		}
 
-		JSONObject fileObj = new JSONObject();
-		JSONArray unlockedQuests = new JSONArray();
-		JSONArray doneQuests = new JSONArray();
-		JSONObject questData = new JSONObject();
-
-		for (Quest q : QuestsDisplay.getUnlockedQuests()) {
-			unlockedQuests.put(q.id);
-		}
-		
-		for (Quest q : QuestsDisplay.getCompleteQuest()) {
-			doneQuests.put(q.id);
-		}
-
-		for (Entry<String, QuestsDisplay.QuestStatus> e : QuestsDisplay.getStatusQuests().entrySet()) {
-			questData.put(e.getKey(), e.getValue().toQuestString());
-		}
-
-		fileObj.put("unlocked", unlockedQuests);
-		fileObj.put("done", doneQuests);
-		fileObj.put("data", questData);
-		fileObj.put("tutorials", Settings.getIdx("tutorials"));
-
-		try {
-			writeJSONToFile(location + "Quests.json", fileObj.toString());
-
-		} catch (IOException e1) {
-			e1.printStackTrace();
-			Logger.error("Unable to write Quests.json.");
-		}
 	}
 
 	private void writePlayer(String filename, Player player) {

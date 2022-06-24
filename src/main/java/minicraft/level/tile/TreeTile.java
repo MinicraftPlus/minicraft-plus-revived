@@ -17,7 +17,6 @@ import minicraft.item.ToolItem;
 import minicraft.item.ToolType;
 import minicraft.level.Level;
 import minicraft.screen.AchievementsDisplay;
-import minicraft.screen.QuestsDisplay;
 
 public class TreeTile extends Tile {
 
@@ -112,7 +111,6 @@ public class TreeTile extends Tile {
 			level.dropItem(x * 16 +  8, y * 16 + 8, 0, 2, Items.get("Acorn"));
 			level.setTile(x, y, Tiles.get("Grass"));
 			AchievementsDisplay.setAchievement("minicraft.achievement.woodcutter", true);
-			QuestsDisplay.completeQuest("minicraft.quest.get_wood");
 		} else {
 			level.setData(x, y, damage);
 		}

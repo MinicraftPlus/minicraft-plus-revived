@@ -12,7 +12,6 @@ import minicraft.saveload.Save;
 import minicraft.screen.EndGameDisplay;
 import minicraft.screen.LevelTransitionDisplay;
 import minicraft.screen.PlayerDeathDisplay;
-import minicraft.screen.QuestsDisplay;
 import minicraft.screen.WorldSelectDisplay;
 import org.tinylog.Logger;
 
