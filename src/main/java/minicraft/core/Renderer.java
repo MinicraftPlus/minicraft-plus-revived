@@ -15,6 +15,8 @@ import java.util.Objects;
 import minicraft.core.io.Localization;
 import minicraft.core.io.Settings;
 import minicraft.entity.furniture.Bed;
+import minicraft.entity.mob.AirWizard;
+import minicraft.entity.mob.ObsidianKnight;
 import minicraft.entity.mob.Player;
 import minicraft.gfx.Color;
 import minicraft.gfx.Ellipsis;
@@ -296,6 +298,20 @@ public class Renderer extends Game {
 
 		// This is the status icons, like health hearts, stamina bolts, and hunger "burgers".
 		if (!isMode("creative")) {
+				for (int i = 1; i <= 30; i++) {
+					if (i < 11) {
+						screen.render((i - 1) * 8, Screen.h - 16, 0 + 3 * 32, 0, 3); // Empty Hearts
+					}
+					if (i < player.health + 1 && i < 11) {
+						screen.render((i - 1) * 8, Screen.h - 16, 0 + 2 * 32, 0, 3);  // Red Hearts
+					}
+					if (i < player.health + 1 && i < 21 && i >= 11) {
+						screen.render((i - 11) * 8, Screen.h - 16, 0 + 4 * 32, 0, 3); // Yellow Hearts
+					}
+					if (i < player.health + 1 && i >= 21) {
+						screen.render((i - 21) * 8, Screen.h - 16, 0 + 5 * 32, 0, 3); // Obsidian Hearts
+					}
+			}
 			for (int i = 0; i < Player.maxStat; i++) {
 
 				// Renders armor
@@ -305,11 +321,12 @@ public class Renderer extends Game {
 				}
 
 				// Renders your current red hearts, or black hearts for damaged health.
-				if (i < player.health) {
-					screen.render(i * 8, Screen.h - 16, 0 + 2 * 32, 0, 3);
+
+				/*if (i < player.health) {
+					screen.render(i * 8, Screen.h - 16, 0 + 2 * 32, 0, 3);  //red
 				} else {
 					screen.render(i * 8, Screen.h - 16, 0 + 3 * 32, 0, 3);
-				}
+				}*/
 
 				if (player.staminaRechargeDelay > 0) {
 					// Creates the white/gray blinking effect when you run out of stamina.
@@ -336,9 +353,47 @@ public class Renderer extends Game {
 			}
 		}
 
-		renderQuestsDisplay();
+		// Renders the bossbar
+		if (!player.isRemoved()) {
+			if (AirWizard.active && (player.getLevel().depth == 1)) renderBossbar(AirWizard.length, "Air wizard");
+			if (ObsidianKnight.active && (player.getLevel().depth == -4))
+				renderBossbar(ObsidianKnight.length, "Obsidian Knight");
+		}
+		//renderQuestsDisplay();
 
 		renderDebugInfo();
+	}
+
+	public static void renderBossbar(int length, String title) {
+
+		int x = Screen.w / 4 - 24;
+		int y = Screen.h / 8 - 24;
+
+		int max_bar_length = 100;
+		int bar_length = length; // Bossbar size.
+
+		int INACTIVE_BOSSBAR = 6; // sprite x position
+		int ACTIVE_BOSSBAR = 7; // sprite x position
+
+
+		screen.render(x + (max_bar_length * 2) , y , 0 + INACTIVE_BOSSBAR * 32, 1, 3); // left corner
+
+		// The middle
+		for (int bx = 0; bx < max_bar_length; bx++) {
+			for (int by = 0; by < 1; by++) {
+				screen.render(x + bx * 2, y + by * 8, 3 + INACTIVE_BOSSBAR * 32, 0, 3);
+			}
+		}
+
+		screen.render(x - 5 , y , 0 + ACTIVE_BOSSBAR * 32, 0, 3); // right corner
+
+		for (int bx = 0; bx < bar_length; bx++) {
+			for (int by = 0; by < 1; by++) {
+				screen.render(x + bx * 2, y + by * 8, 3 + ACTIVE_BOSSBAR * 32, 0, 3);
+			}
+		}
+
+		Font.drawCentered(title, screen, y + 8, Color.WHITE);
 	}
 
 	private static void renderQuestsDisplay() {

@@ -5,7 +5,6 @@ import minicraft.core.Updater;
 import minicraft.core.io.Sound;
 import minicraft.entity.Direction;
 import minicraft.entity.Entity;
-import minicraft.entity.Spark;
 import minicraft.gfx.Color;
 import minicraft.gfx.Font;
 import minicraft.gfx.MobSprite;
@@ -14,18 +13,22 @@ import minicraft.item.Items;
 import minicraft.network.Analytics;
 import minicraft.screen.AchievementsDisplay;
 
-public class AirWizard extends EnemyMob {
-	private static final MobSprite[][][] sprites;
+public class ObsidianKnight extends EnemyMob {
+	private static final MobSprite[][][] armored;
+	private static final MobSprite[][][] broken;
+	public static boolean beaten = false;
+	public static boolean active = false;
+	private static boolean phase1 = true;
+
 	static {
-		sprites = new MobSprite[2][4][2];
+		armored = new MobSprite[2][4][2];
+		broken = new MobSprite[2][4][2];
 		for (int i = 0; i < 2; i++) {
-			MobSprite[][] list  = MobSprite.compileMobSpriteAnimations(8, 20 + (i * 2));
-			sprites[i] = list;
+			armored[i] = MobSprite.compileMobSpriteAnimations(0, 16 + (i * 2));
+			broken[i] = MobSprite.compileMobSpriteAnimations(0, 18 + (i * 2));
 		}
 	}
 
-	public static boolean beaten = false;
-	public static boolean active = true;
 
 	private int attackDelay = 0;
 	private int attackTime = 0;
@@ -33,19 +36,17 @@ public class AirWizard extends EnemyMob {
 	public static int length;
 
 	/**
-	 * This is used by the spawner to spawn air wizards. Lvl is unused.
+	 * Constructor for the ObsidianKnight.
 	 */
-	public AirWizard(int lvl) { this(); }
+	public ObsidianKnight() {
+		super(1, armored, 5000, false, 16 * 8, -1, 10, 50);
 
-	/**
-	 * Constructor for the AirWizard.
-	 */
-	public AirWizard() {
-		super(1, sprites, 2000, false, 16 * 8, -1, 10, 50);
+		Updater.notifyAll("The Obsidian Knight has awoken!"); // On spawn tell player.
 
+		phase1 = true;
 		active = true;
-		speed = 2;
-		walkTime = 2;
+		speed = 1;
+		walkTime = 3;
 	}
 
 	@Override
@@ -54,8 +55,17 @@ public class AirWizard extends EnemyMob {
 
 		length = health / (maxHealth / 100);
 
+		//Achieve phase2
+		if (health <= 2500) {
+			phase1 = false;
+		}
+		if (!phase1){
+			lvlSprites = broken;
+		}
+
 		if (Game.isMode("Creative")) return; // Should not attack if player is in creative
 
+		//TODO: Obsidian Knight Attack patterns (Currently AirWizard placeholder)
 		if (attackDelay > 0) {
 			xmov = ymov = 0;
 			int dir = (attackDelay - 45) / 4 % 4; // The direction of attack.
@@ -81,7 +91,7 @@ public class AirWizard extends EnemyMob {
 			attackTime *= 0.92; // attackTime will decrease by 7% every time.
 			double dir = attackTime * 0.25 * (attackTime % 2 * 2 - 1); // Assigns a local direction variable from the attack time.
 			double speed = 0.7 + attackType * 0.2; // speed is dependent on the attackType. (higher attackType, faster speeds)
-			level.add(new Spark(this, Math.cos(dir) * speed, Math.sin(dir) * speed)); // Adds a spark entity with the cosine and sine of dir times speed.
+			//level.add(new Spark(this, Math.cos(dir) * speed, Math.sin(dir) * speed)); // Adds a spark entity with the cosine and sine of dir times speed.
 			return; // Skips the rest of the code (attackTime was > 0; ie we're attacking.)
 		}
 
@@ -158,29 +168,29 @@ public class AirWizard extends EnemyMob {
 		}
 	}
 
-	/** What happens when the air wizard dies */
+	/** What happens when the obsidian knight dies */
 	@Override
 	public void die() {
 		Player[] players = level.getPlayers();
 		if (players.length > 0) { // If the player is still here
 			for (Player p: players) {
-				p.addScore(100000); // Give the player 100K points.
-				dropItem(5, 10, Items.get("cloud ore")); // Drop cloud ore to guarantee respawn.
+				p.addScore(300000); // Give the player 300K points.
+				dropItem(15, 25, Items.get("shard"));
+				dropItem(1, 1, Items.get("Obsidian Heart")); // Drop it's precious item.
 			}
 		}
 
 		Sound.bossDeath.play();
 
-		Analytics.AirWizardDeath.ping();
-		Updater.notifyAll("Air Wizard Defeated!");
+		//Analytics.AirWizardDeath.ping();
+		Updater.notifyAll("Obsidian Knight Defeated!");
 
 
-		// If this is the first time we beat the air wizard.
+		// If this is the first time we beat the obsidian knight.
 		if (!beaten) {
-			AchievementsDisplay.setAchievement("minicraft.achievement.airwizard", true);
+			//AchievementsDisplay.setAchievement("minicraft.achievement.obsidianknight", true);
 
-			Analytics.FirstAirWizardDeath.ping();
-			Updater.notifyAll("The Dungeon is now open!", -400);
+			//Analytics.FirstAirWizardDeath.ping();
 		}
 
 		beaten = true;
@@ -188,7 +198,4 @@ public class AirWizard extends EnemyMob {
 
 		super.die(); // Calls the die() method in EnemyMob.java
 	}
-
-	@Override
-	public int getMaxLevel() { return 2; }
 }

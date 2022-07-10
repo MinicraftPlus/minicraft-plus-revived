@@ -545,6 +545,8 @@ public class Load {
 		player.spawnx = Integer.parseInt(data.remove(0));
 		player.spawny = Integer.parseInt(data.remove(0));
 		player.health = Integer.parseInt(data.remove(0));
+		if (worldVer.compareTo(new Version("2.2.0-dev1")) >= 0)
+			Player.extraHealth = Integer.parseInt(data.remove(0));
 		if (worldVer.compareTo(new Version("2.0.4-dev7")) >= 0)
 			player.hunger = Integer.parseInt(data.remove(0));
 		player.armor = Integer.parseInt(data.remove(0));
@@ -909,6 +911,8 @@ public class Load {
 			case "FireParticle": return new FireParticle(0, 0);
 			case "SmashParticle": return new SmashParticle(0, 0);
 			case "TextParticle": return new TextParticle("", 0, 0, 0);
+			case "KnightStatue": return new KnightStatue();
+			case "ObsidianKnight": return  new ObsidianKnight();
 			default : Logger.error("LOAD ERROR: Unknown or outdated entity requested: " + string);
 				return null;
 		}

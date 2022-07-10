@@ -47,6 +47,7 @@
   "minicraft.notification.dig_hole": "Dig a hole first!",
   "minicraft.notification.achievement_unlocked": "Achivement unlocked:",
   "minicraft.notification.wrong_level_sky": "Can only be summoned on the sky level",
+  "minicraft.notification.wrong_level_dungeon": "Can only be summoned on the dungeon level",
   "You have the latest version.": "You have the latest version.",
   "Entities": "Entities",
   "Air Wizard: Defeated!": "Air Wizard: Defeated!",
