@@ -7,7 +7,6 @@ import minicraft.level.Level;
 import minicraft.network.Analytics;
 import minicraft.saveload.Load;
 import minicraft.screen.*;
-import java.util.ArrayList;
 import java.util.Random;
 
 import org.jetbrains.annotations.Nullable;
@@ -105,13 +104,13 @@ public class World extends Game {
 		Logger.trace("Initializing world non-client...");
 
 		if (WorldSelectDisplay.hasLoadedWorld()) {
-			Load loader = new Load(WorldSelectDisplay.getWorldName());
+			new Load(WorldSelectDisplay.getWorldName());
 		} else {
 			Analytics.WorldCreation.ping();
 
 			worldSize = (Integer) Settings.get("size");
 
-			seed = WorldGenDisplay.getSeed();
+			seed = WorldGenDisplay.getSeed().orElse(new Random().nextLong());
 			random = new Random(seed);
 
 			float loadingInc = 100f / (maxLevelDepth - minLevelDepth + 1); // The .002 is for floating point errors, in case they occur.
@@ -130,7 +129,7 @@ public class World extends Game {
 
 			Level level = levels[currentLevel]; // Sets level to the current level (3; surface)
 			Updater.pastDay1 = false;
-			player.findStartPos(level, WorldGenDisplay.getSeed()); // Finds the start level for the player
+			player.findStartPos(level, seed); // Finds the start level for the player
 			level.add(player);
 			QuestsDisplay.resetGameQuests();
 		}
