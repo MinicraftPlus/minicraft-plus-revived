@@ -113,6 +113,7 @@ public class Load {
 			Logger.warn("No preferences found, creating new file.");
 			resave = true;
 		}
+
 		// Load unlocks. (new version)
 		File testFileOld = new File(location + "unlocks" + extension);
 		File testFile = new File(location + "Unlocks" + extension);
@@ -354,8 +355,6 @@ public class Load {
 			String lang = json.getString("lang");
 			Settings.set("language", lang);
 			Localization.changeLanguage(lang);
-		} else {
-			Localization.loadLanguage();
 		}
 
 		SkinDisplay.setSelectedSkinIndex(json.getInt("skinIdx"));
@@ -622,7 +621,7 @@ public class Load {
 			player.shirtColor = Integer.parseInt(data.remove(0));
 
 		// Just delete the slot reserved for loading legacy skins.
-		if (worldVer.compareTo(new Version("2.1.0")) > 0) {
+		if (worldVer.compareTo(new Version("2.1.0")) < 0) {
 			data.remove(0);
 		}
 	}

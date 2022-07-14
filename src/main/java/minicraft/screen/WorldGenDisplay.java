@@ -1,11 +1,5 @@
 package minicraft.screen;
 
-import java.util.Arrays;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Random;
-import java.util.regex.Pattern;
-
 import minicraft.core.Game;
 import minicraft.core.io.Localization;
 import minicraft.core.io.Settings;
@@ -14,6 +8,12 @@ import minicraft.gfx.Font;
 import minicraft.gfx.Screen;
 import minicraft.screen.entry.InputEntry;
 import minicraft.screen.entry.SelectEntry;
+
+import java.util.Arrays;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Random;
+import java.util.regex.Pattern;
 
 public class WorldGenDisplay extends Display {
 
@@ -44,7 +44,7 @@ public class WorldGenDisplay extends Display {
 		}
 	}
 
-	public static InputEntry makeWorldNameInput(String prompt, List<String> takenNames, String initValue) {
+	public static InputEntry makeWorldNameInput(String prompt, List<String> takenNames, String initValue, boolean isGen) {
 		return new InputEntry(prompt, worldNameRegex, 36, initValue) {
 			@Override
 			public boolean isValid() {
@@ -64,7 +64,9 @@ public class WorldGenDisplay extends Display {
 
 			@Override
 			public void render(Screen screen, int x, int y, boolean isSelected) {
-				super.render(screen, getUserInput().length() > 11? x - (getUserInput().length()-11) * 8: x, y, isSelected);
+				super.render(screen, isGen?
+					(getUserInput().length() > 11? x - (getUserInput().length()-11) * 8: x):
+					x, y, isSelected);
 			}
 		};
 	}
@@ -72,7 +74,7 @@ public class WorldGenDisplay extends Display {
 	public WorldGenDisplay() {
 		super(true);
 
-		InputEntry nameField = makeWorldNameInput("Enter World Name", WorldSelectDisplay.getWorldNames(), "");
+		InputEntry nameField = makeWorldNameInput("Enter World Name", WorldSelectDisplay.getWorldNames(), "", true);
 
 		SelectEntry nameHelp = new SelectEntry("Trouble with world name?", () -> Game.setDisplay(new BookDisplay("it seems you've set letters as the controls to move the cursor up and down, which is probably annoying. This can be changed in the key binding menu as the \"cursor-XXX\" keys. For now, to type the letter instead of moving the cursor, hold the shift key while typing."))) {
 			@Override

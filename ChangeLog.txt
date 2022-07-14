@@ -1,11 +1,3 @@
-Minicraft+ version 2.2.0
-
-
-Minicraft+ patch 2.1.1
-
-* Fixed air wizard spawner
-* Fixed player spawning outside the map
-
 Minicraft+ version 2.1.0
 
 + Added achievements
@@ -38,13 +30,17 @@ Minicraft+ version 2.1.0
 * Renamed shear to shears
 * Saplings should no longer grow if an entity is on it
 * Made cloud cactus into an ore you can mine and use
+* Fixed air wizard spawner
+* Fixed player spawning outside the map
+* Fixed localization not being loaded on first launch
 - Removed texture packs
 - Removed suits
 - Removed second air wizard
+- Removed option of changing skin in the options display because of a crash
 
-------------------------------------------------------------------------
-- MAKE VERSIONS AFTER THIS WORK AS PATCHES TO ALREADY RELEASED UPDATES -
-------------------------------------------------------------------------
+-------------------------------------------------------------------------
+- Made make-versions be treated as patches to already existing versions -
+-------------------------------------------------------------------------
 
 Minicraft+ version 2.0.7
 
