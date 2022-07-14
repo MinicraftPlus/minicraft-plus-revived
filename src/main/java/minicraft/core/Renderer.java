@@ -60,6 +60,8 @@ public class Renderer extends Game {
 
 	private static Ellipsis ellipsis = new SmoothEllipsis(new TickUpdater());
 
+	private static int potionRenderOffset = 0;
+
 	public static SpriteSheet[] loadDefaultSpriteSheets() {
 		SpriteSheet itemSheet, tileSheet, entitySheet, guiSheet, skinsSheet;
 		try {
@@ -288,8 +290,8 @@ public class Renderer extends Game {
 				int pTime = effects[i].getValue() / Updater.normSpeed;
 				int minutes = pTime / 60;
 				int seconds = pTime % 60;
-				Font.drawBackground("("+input.getMapping("potionEffects")+" to hide!)", screen, 180, 9);
-				Font.drawBackground(pType + " (" + minutes + ":" + (seconds<10?"0"+seconds:seconds) + ")", screen, 180, 17 + i * Font.textHeight(), pType.dispColor);
+				Font.drawBackground("("+input.getMapping("potionEffects")+" to hide!)", screen, 180, 9 + potionRenderOffset);
+				Font.drawBackground(pType + " (" + minutes + ":" + (seconds<10?"0"+seconds:seconds) + ")", screen, 180, 17 + i * Font.textHeight() + potionRenderOffset, pType.dispColor);
 			}
 		}
 
@@ -342,6 +344,8 @@ public class Renderer extends Game {
 	}
 
 	private static void renderQuestsDisplay() {
+		if (!(boolean) Settings.get("showquests")) return;
+
 		ArrayList<String> undoneQuests = new ArrayList<>();
 		ArrayList<Quest> doneQuests = QuestsDisplay.getCompleteQuest();
 		HashMap<String, QuestsDisplay.QuestStatus> questStatus = QuestsDisplay.getStatusQuests();
@@ -353,14 +357,19 @@ public class Renderer extends Game {
 			}
 		}
 
-		new Menu.Builder(true, 0, RelPos.RIGHT)
-			.setPositioning(new Point(Screen.w - 9, 9), RelPos.BOTTOM_LEFT)
-			.setDisplayLength(undoneQuests.size() > 3 ? 3 : undoneQuests.size())
-			.setTitle("Quests")
-			.setSelectable(false)
-			.setEntries(StringEntry.useLines(undoneQuests.toArray(new String[0])))
-			.createMenu()
-			.render(screen);
+		if (undoneQuests.size() > 0) {
+			potionRenderOffset = 9 + (undoneQuests.size() > 3 ? 3 : undoneQuests.size()) * 8 + 8 * 2;
+			new Menu.Builder(true, 0, RelPos.RIGHT)
+				.setPositioning(new Point(Screen.w - 9, 9), RelPos.BOTTOM_LEFT)
+				.setDisplayLength(undoneQuests.size() > 3 ? 3 : undoneQuests.size())
+				.setTitle("Quests")
+				.setSelectable(false)
+				.setEntries(StringEntry.useLines(undoneQuests.toArray(new String[0])))
+				.createMenu()
+				.render(screen);
+		} else {
+			potionRenderOffset = 0;
+		}
 	}
 
 	private static void renderDebugInfo() {

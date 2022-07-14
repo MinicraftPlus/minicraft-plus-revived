@@ -12,6 +12,7 @@ import org.json.JSONObject;
 import minicraft.core.Game;
 import minicraft.core.io.InputHandler;
 import minicraft.core.io.Localization;
+import minicraft.core.io.Settings;
 import minicraft.gfx.Color;
 import minicraft.gfx.Point;
 import minicraft.gfx.Screen;
@@ -35,24 +36,30 @@ public class QuestsDisplay extends Display {
 	private boolean entrySelected = false;
 
 	static {
-		// TODO Implementing tutorials and story mode
+		// TODO Implementing tutorials and quests
+		// TODO Unlocking recipes
+
 		try {
 			JSONArray json = new JSONArray(String.join("", Load.loadFile("/resources/quests.json")));
 			for (int i = 0; i < json.length(); i++) {
 				JSONObject obj = json.getJSONObject(i);
 				String id = obj.getString("id");
 				boolean unlocked = obj.optBoolean("unlocked", false); // Is unlocked initially
-				JSONArray unlocksJson = obj.getJSONArray("unlocks");
+				boolean tutorial = obj.optBoolean("tutorial", false); // Is tutorial
+				JSONArray unlocksJson = obj.optJSONArray("unlocks");
 
-				String[] unlocks = new String[unlocksJson.length()];
-				for (int j = 0; j < unlocksJson.length(); j++) {
-					unlocks[j] = unlocksJson.getString(j);
+				String[] unlocks = new String[0];
+				if (unlocksJson != null) {
+					unlocks = new String[unlocksJson.length()];
+					for (int j = 0; j < unlocksJson.length(); j++) {
+						unlocks[j] = unlocksJson.getString(j);
+					}
 				}
 
 				if (unlocked)
 					initiallyUnlocked.add(id);
 
-				quests.put(id, unlocked ? new Quest(id, obj.getString("desc"), unlocked, unlocks) : new Quest(id, obj.getString("desc"), unlocks));
+				quests.put(id, new Quest(id, obj.getString("desc"), unlocked, tutorial, unlocks));
 			}
 
 		} catch (IOException e) {
@@ -66,7 +73,7 @@ public class QuestsDisplay extends Display {
 		ArrayList<SelectEntry> unlocked = new ArrayList<>();
 		questWithLocalized = new HashMap<>();
 		for (Quest quest : quests.values()) {
-			boolean isUnlocked = quest.getUnlocked();
+			boolean isUnlocked = quest.isUnlocked();
 			boolean isDone = completeQuest.contains(quest);
 			SelectEntry select = new SelectEntry(Localization.getLocalized(quest.id), () -> entrySelected(quest), true) {
 				@Override
@@ -118,6 +125,11 @@ public class QuestsDisplay extends Display {
 				.setPositioning(new Point(Screen.w / 2, Screen.h / 2 + 35), RelPos.CENTER)
 				.setEntries(new StringEntry(Localization.getLocalized("minicraft.display.quests.no_desc")))
 				.setSelectable(false)
+				.createMenu(),
+			new Menu.Builder(false, 0, RelPos.CENTER)
+				.setPositioning(new Point(Screen.w / 2, 10), RelPos.CENTER)
+				.setEntries(new StringEntry(Settings.getEntry("quests") + "; " + Settings.getEntry("tutorials"), Color.WHITE))
+				.setSelectable(false)
 				.createMenu()
 		};
 
@@ -160,6 +172,7 @@ public class QuestsDisplay extends Display {
 		Quest quest = quests.get(name);
 		if (quest == null) return;
 		if (unlockedQuests.contains(quest)) return;
+		if (!checkAbility(quest)) return;
 
 		quest.unlock();
 		unlockedQuests.add(quest);
@@ -170,11 +183,20 @@ public class QuestsDisplay extends Display {
 		Quest quest = quests.get(name);
 		if (quest == null) return;
 		if (completeQuest.contains(quest)) return;
-		if (mustUnlocked && !quest.getUnlocked()) return;
+		if (mustUnlocked && !quest.isUnlocked()) return;
 
 		completeQuest.add(quest);
 		Game.notifications.add(Localization.getLocalized("minicraft.notification.quest_done") + " " + Localization.getLocalized(name));
 		for (String q : quest.getUnlocks()) unlockQuest(q);
+	}
+
+	public static boolean checkAbility(Quest quest) {
+		if (quest == null) return false;
+
+		if ((boolean) Settings.get("tutorials") && quest.isTutorial()) return true;
+		if ((boolean) Settings.get("quests") && !quest.isTutorial()) return true;
+
+		return false;
 	}
 
 	public static void resetGameQuests() {
@@ -183,7 +205,7 @@ public class QuestsDisplay extends Display {
 		questStatus.clear();
 
 		for (Quest quest : quests.values()) {
-			if (initiallyUnlocked.contains(quest.id)) {
+			if (initiallyUnlocked.contains(quest.id) && checkAbility(quest)) {
 				quest.unlock();
 				unlockedQuests.add(quest);
 			} else {
@@ -266,7 +288,7 @@ public class QuestsDisplay extends Display {
 		ArrayList<ListEntry> e = new ArrayList<>();
 		e.add(new StringEntry(Localization.getLocalized(quest.id)));
 
-		boolean isUnlocked = quest.getUnlocked();
+		boolean isUnlocked = quest.isUnlocked();
 		boolean isDone = completeQuest.contains(quest);
 		e.add(isUnlocked ? (isDone ? new StringEntry("Done", Color.GREEN) : new StringEntry("Unlocked", Color.WHITE)) : new StringEntry("Locked", Color.GRAY));
 		e.add(new StringEntry(""));

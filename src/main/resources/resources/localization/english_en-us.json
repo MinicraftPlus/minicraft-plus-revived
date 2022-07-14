@@ -36,6 +36,7 @@
   "minicraft.display.achievement.not_achieved": "Not Achieved",
   "minicraft.display.achievement.score": "Achievement Score:",
   "minicraft.display.key_input.confirm_popup": "Are you sure you want to reset all key bindings to the default keys?",
+  "minicraft.display.options_off_tutorial.confirm_popup": "Are you sure you want to turn off the tutorials forever?",
   "minicraft.display.popup.enter_confirm": "enter to confirm",
   "minicraft.display.popup.escape_cancel": "escape to cancel",
   "minicraft.display.skin": "Skins",

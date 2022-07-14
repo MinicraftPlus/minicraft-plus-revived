@@ -4,6 +4,7 @@ import java.util.*;
 
 import minicraft.core.Game;
 import minicraft.core.io.InputHandler;
+import minicraft.core.io.Settings;
 import minicraft.core.io.Sound;
 import minicraft.entity.mob.Player;
 import minicraft.gfx.Point;
@@ -21,6 +22,12 @@ public class CraftingDisplay extends Display {
 
 	private boolean isPersonalCrafter;
 
+	private static ArrayList<Recipe> unlockedRecipes = new ArrayList<>();
+
+	static {
+
+	}
+
 	public CraftingDisplay(List<Recipe> recipes, String title, Player player) { this(recipes, title, player, false); }
 	public CraftingDisplay(List<Recipe> recipes, String title, Player player, boolean isPersonal) {
 		for(Recipe recipe: recipes)
@@ -28,6 +35,7 @@ public class CraftingDisplay extends Display {
 
 		this.isPersonalCrafter = isPersonal;
 
+		if ((boolean) Settings.get("tutorials")) recipes = recipes.stream().filter(recipe -> unlockedRecipes.contains(recipe)).toList();
 		if(!isPersonal)
 			recipeMenu = new RecipeMenu(recipes, title, player);
 		else

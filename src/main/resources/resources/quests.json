@@ -1,23 +1,22 @@
 [
-    {
-        "id": "minicraft.quest.get_wood",
-        "desc": "minicraft.quest.get_wood.desc",
-        "unlocks": ["minicraft.quest.craft_first_sword"],
-        "unlocked": true
-    },
-    {
-        "id": "minicraft.quest.kill",
-        "desc": "minicraft.quest.kill.desc",
-        "unlocks": ["minicraft.quest.find_npc"]
-    },
-    {
-        "id": "minicraft.quest.craft_first_sword",
-        "desc": "minicraft.quest.craft_first_sword.desc",
-        "unlocks": ["minicraft.quest.kill"]
-    },
-    {
-        "id": "minicraft.quest.find_npc",
-        "desc": "minicraft.quest.find_npc.desc",
-        "unlocks": []
-    }
+  {
+    "id": "minicraft.quest.get_wood",
+    "desc": "minicraft.quest.get_wood.desc",
+    "unlocks": ["minicraft.quest.craft_first_sword"],
+    "unlocked": true
+  },
+  {
+    "id": "minicraft.quest.kill",
+    "desc": "minicraft.quest.kill.desc",
+    "unlocks": ["minicraft.quest.find_npc"]
+  },
+  {
+    "id": "minicraft.quest.craft_first_sword",
+    "desc": "minicraft.quest.craft_first_sword.desc",
+    "unlocks": ["minicraft.quest.kill"]
+  },
+  {
+    "id": "minicraft.quest.tutorials.kill_tree",
+    "desc": "minicraft.quest.tutorials.kill_tree.desc"
+  }
 ]

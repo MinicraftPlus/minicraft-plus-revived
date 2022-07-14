@@ -28,7 +28,9 @@ public class Settings {
 		options.put("theme", new ArrayEntry<>("World Theme", "Normal", "Forest", "Desert", "Plain", "Hell"));
 		options.put("type", new ArrayEntry<>("Terrain Type", "Island", "Box", "Mountain", "Irregular"));
 
-		options.put("tutorials", new ArrayEntry<>("Tutorials", "No", "Yes"));
+		options.put("tutorials", new BooleanEntry("Tutorials", false));
+		options.put("quests", new BooleanEntry("Quests", false));
+		options.put("showquests", new BooleanEntry("Quests Panel", true));
 
 		options.put("language", new ArrayEntry<>("Language", true, false, Localization.getLocalesAsString()));
 		options.get("language").setValue(Localization.getSelectedLocale().toLanguageTag());

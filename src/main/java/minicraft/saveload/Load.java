@@ -222,6 +222,11 @@ public class Load {
 				AchievementsDisplay.setAchievement("minicraft.achievement.airwizard", true);
 			}
 		}
+
+		if (worldVer.compareTo(new Version("2.2.0-dev1")) >= 0) {
+			Settings.set("quests", Boolean.parseBoolean(data.remove(0)));
+			Settings.set("tutorials", Boolean.parseBoolean(data.remove(0)));
+		}
 	}
 
 	private void loadMode(String modedata) {
@@ -343,6 +348,7 @@ public class Load {
 		Settings.set("autosave", json.getBoolean("autosave"));
 		Settings.set("diff", json.has("diff") ? json.getString("diff") : "Normal");
 		Settings.set("fps", json.getInt("fps"));
+		Settings.set("showquests", json.optBoolean("showquests", true));
 
 		if (json.has("lang")) {
 			String lang = json.getString("lang");
@@ -500,8 +506,6 @@ public class Load {
 				JSONArray unlockedQuests = questsObj.getJSONArray("unlocked");
 				JSONArray doneQuests = questsObj.getJSONArray("done");
 				JSONObject questData = questsObj.getJSONObject("data");
-
-				Settings.setIdx("tutorials", questsObj.getInt("tutorials"));
 
 				ArrayList<String> unlocked = new ArrayList<>();
 				ArrayList<String> done = new ArrayList<>();

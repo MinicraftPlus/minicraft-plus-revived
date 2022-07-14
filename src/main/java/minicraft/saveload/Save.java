@@ -160,6 +160,8 @@ public class Save {
 		data.add(String.valueOf(Updater.gameTime));
 		data.add(String.valueOf(Settings.getIdx("diff")));
 		data.add(String.valueOf(AirWizard.beaten));
+		data.add(String.valueOf(Settings.get("quests")));
+		data.add(String.valueOf(Settings.get("tutorials")));
 		writeToFile(location + filename + extension, data);
 	}
 
@@ -178,6 +180,7 @@ public class Save {
 		json.put("savedUsername", MultiplayerDisplay.savedUsername);
 		json.put("keymap", new JSONArray(Game.input.getKeyPrefs()));
 		json.put("resourcePack", ResourcePackDisplay.getLoadedPack());
+		json.put("showquests", String.valueOf(Settings.get("showquests")));
 
 		// Save json
 		try {
@@ -242,7 +245,7 @@ public class Save {
 		for (Quest q : QuestsDisplay.getUnlockedQuests()) {
 			unlockedQuests.put(q.id);
 		}
-		
+
 		for (Quest q : QuestsDisplay.getCompleteQuest()) {
 			doneQuests.put(q.id);
 		}
@@ -254,7 +257,6 @@ public class Save {
 		fileObj.put("unlocked", unlockedQuests);
 		fileObj.put("done", doneQuests);
 		fileObj.put("data", questData);
-		fileObj.put("tutorials", Settings.getIdx("tutorials"));
 
 		try {
 			writeJSONToFile(location + "Quests.json", fileObj.toString());
