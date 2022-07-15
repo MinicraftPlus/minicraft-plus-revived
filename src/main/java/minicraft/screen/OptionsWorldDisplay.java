@@ -1,5 +1,6 @@
 package minicraft.screen;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import minicraft.core.Game;
@@ -67,14 +68,14 @@ public class OptionsWorldDisplay extends Display {
 	}
 
 	private List<ListEntry> getEntries() {
-		return List.of(Settings.getEntry("diff"),
+		return new ArrayList<>(List.of(Settings.getEntry("diff"),
 			Settings.getEntry("fps"),
 			Settings.getEntry("sound"),
 			Settings.getEntry("autosave"),
 			Settings.getEntry("showquests"),
 			new SelectEntry("Change Key Bindings", () -> Game.setDisplay(new KeyInputDisplay())),
 			Settings.getEntry("language")
-		);
+		));
 	}
 
 	@Override

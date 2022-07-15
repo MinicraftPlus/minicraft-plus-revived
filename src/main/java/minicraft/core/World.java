@@ -37,7 +37,7 @@ public class World extends Game {
 		minLevelDepth = min;
 		maxLevelDepth = max;
 	}
-  
+
 	/** This is for a contained way to find the index in the levels array of a level, based on it's depth. This is also helpful because add a new level in the future could change this. */
 	public static int lvlIdx(int depth) {
 		if (depth > maxLevelDepth) return lvlIdx(minLevelDepth);
@@ -125,6 +125,7 @@ public class World extends Game {
 			player.findStartPos(level, WorldGenDisplay.getSeed()); // Finds the start level for the player
 			level.add(player);
 			QuestsDisplay.resetGameQuests();
+			CraftingDisplay.resetUnlocks();
 		}
 
 		Renderer.readyToRenderGameplay = true;

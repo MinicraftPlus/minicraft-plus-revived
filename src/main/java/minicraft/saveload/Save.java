@@ -237,33 +237,35 @@ public class Save {
 			writeToFile(location + filename + l + "data" + extension, data);
 		}
 
-		JSONObject fileObj = new JSONObject();
-		JSONArray unlockedQuests = new JSONArray();
-		JSONArray doneQuests = new JSONArray();
-		JSONObject questData = new JSONObject();
+		if ((boolean) Settings.get("quests") || (boolean) Settings.get("tutorials")) {
+			JSONObject fileObj = new JSONObject();
+			JSONArray unlockedQuests = new JSONArray();
+			JSONArray doneQuests = new JSONArray();
+			JSONObject questData = new JSONObject();
 
-		for (Quest q : QuestsDisplay.getUnlockedQuests()) {
-			unlockedQuests.put(q.id);
-		}
+			for (Quest q : QuestsDisplay.getUnlockedQuests()) {
+				unlockedQuests.put(q.id);
+			}
 
-		for (Quest q : QuestsDisplay.getCompleteQuest()) {
-			doneQuests.put(q.id);
-		}
+			for (Quest q : QuestsDisplay.getCompleteQuest()) {
+				doneQuests.put(q.id);
+			}
 
-		for (Entry<String, QuestsDisplay.QuestStatus> e : QuestsDisplay.getStatusQuests().entrySet()) {
-			questData.put(e.getKey(), e.getValue().toQuestString());
-		}
+			for (Entry<String, QuestsDisplay.QuestStatus> e : QuestsDisplay.getStatusQuests().entrySet()) {
+				questData.put(e.getKey(), e.getValue().toQuestString());
+			}
 
-		fileObj.put("unlocked", unlockedQuests);
-		fileObj.put("done", doneQuests);
-		fileObj.put("data", questData);
+			fileObj.put("unlocked", unlockedQuests);
+			fileObj.put("done", doneQuests);
+			fileObj.put("data", questData);
 
-		try {
-			writeJSONToFile(location + "Quests.json", fileObj.toString());
+			try {
+				writeJSONToFile(location + "Quests.json", fileObj.toString());
 
-		} catch (IOException e1) {
-			e1.printStackTrace();
-			Logger.error("Unable to write Quests.json.");
+			} catch (IOException e1) {
+				e1.printStackTrace();
+				Logger.error("Unable to write Quests.json.");
+			}
 		}
 	}
 

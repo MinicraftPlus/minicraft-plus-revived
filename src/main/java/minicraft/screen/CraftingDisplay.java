@@ -1,6 +1,7 @@
 package minicraft.screen;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 import minicraft.core.Game;
 import minicraft.core.io.InputHandler;
@@ -24,10 +25,6 @@ public class CraftingDisplay extends Display {
 
 	private static ArrayList<Recipe> unlockedRecipes = new ArrayList<>();
 
-	static {
-
-	}
-
 	public CraftingDisplay(List<Recipe> recipes, String title, Player player) { this(recipes, title, player, false); }
 	public CraftingDisplay(List<Recipe> recipes, String title, Player player, boolean isPersonal) {
 		for(Recipe recipe: recipes)
@@ -35,7 +32,8 @@ public class CraftingDisplay extends Display {
 
 		this.isPersonalCrafter = isPersonal;
 
-		if ((boolean) Settings.get("tutorials")) recipes = recipes.stream().filter(recipe -> unlockedRecipes.contains(recipe)).toList();
+		if ((boolean) Settings.get("tutorials")) recipes = recipes.stream().filter(recipe -> unlockedRecipes.contains(recipe)).collect(Collectors.toList());
+
 		if(!isPersonal)
 			recipeMenu = new RecipeMenu(recipes, title, player);
 		else
@@ -60,6 +58,8 @@ public class CraftingDisplay extends Display {
 	}
 
 	private void refreshData() {
+		if (recipes.length == 0) return;
+
 		Menu prev = menus[2];
 		menus[2] = costsMenu
 			.setEntries(getCurItemCosts())
@@ -78,6 +78,8 @@ public class CraftingDisplay extends Display {
 
 	private ItemListing[] getCurItemCosts() {
 		ArrayList<ItemListing> costList = new ArrayList<>();
+		if (recipes.length == 0) return new ItemListing[0];
+
 		HashMap<String, Integer> costMap = recipes[recipeMenu.getSelection()].getCosts();
 		for(String itemName: costMap.keySet()) {
 			Item cost = Items.get(itemName);
@@ -147,5 +149,21 @@ public class CraftingDisplay extends Display {
 				}
 			}
 		}
+	}
+
+	public static void resetUnlocks() {
+		if ((boolean) Settings.get("tutorials")) {
+			unlockedRecipes.add(new Recipe("Workbench_1", "Wood_10"));
+			unlockedRecipes.add(new Recipe("Torch_2", "Wood_1", "coal_1"));
+			unlockedRecipes.add(new Recipe("plank_2", "Wood_1"));
+			unlockedRecipes.add(new Recipe("Plank Wall_1", "plank_3"));
+			unlockedRecipes.add(new Recipe("Wood Door_1", "plank_5"));
+		} else {
+			unlockedRecipes.clear();
+		}
+	}
+
+	public static void unlockRecipe(Recipe recipe) {
+		unlockedRecipes.add(recipe);
 	}
 }

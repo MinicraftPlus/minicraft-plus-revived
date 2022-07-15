@@ -16,6 +16,7 @@ import minicraft.core.io.Settings;
 import minicraft.gfx.Color;
 import minicraft.gfx.Point;
 import minicraft.gfx.Screen;
+import minicraft.item.Recipe;
 import minicraft.saveload.Load;
 import minicraft.screen.entry.ListEntry;
 import minicraft.screen.entry.SelectEntry;
@@ -47,6 +48,7 @@ public class QuestsDisplay extends Display {
 				boolean unlocked = obj.optBoolean("unlocked", false); // Is unlocked initially
 				boolean tutorial = obj.optBoolean("tutorial", false); // Is tutorial
 				JSONArray unlocksJson = obj.optJSONArray("unlocks");
+				JSONObject recipesJson = obj.optJSONObject("recipes");
 
 				String[] unlocks = new String[0];
 				if (unlocksJson != null) {
@@ -59,7 +61,18 @@ public class QuestsDisplay extends Display {
 				if (unlocked)
 					initiallyUnlocked.add(id);
 
-				quests.put(id, new Quest(id, obj.getString("desc"), unlocked, tutorial, unlocks));
+				if (recipesJson != null) {
+					ArrayList<Recipe> recipes = new ArrayList<>();
+					for (String product : recipesJson.keySet()) {
+						JSONArray costsJson = recipesJson.getJSONArray(product);
+						String[] costs = new String[costsJson.length()];
+						for (int j = 0; j < costsJson.length(); j++) {
+							costs[j] = costsJson.getString(j);
+						}
+					}
+					quests.put(id, new Quest(id, obj.getString("desc"), unlocked, tutorial, recipes, unlocks));
+				} else
+					quests.put(id, new Quest(id, obj.getString("desc"), unlocked, tutorial, unlocks));
 			}
 
 		} catch (IOException e) {
@@ -176,7 +189,7 @@ public class QuestsDisplay extends Display {
 
 		quest.unlock();
 		unlockedQuests.add(quest);
-		Game.notifications.add(Localization.getLocalized("minicraft.notification.quest_unlocked") + " " + Localization.getLocalized(name));
+		Game.notifications.add(Localization.getLocalized("minicraft.notification.quest_unlocked") + ": " + Localization.getLocalized(name));
 	}
 	public static void completeQuest(String name) { completeQuest(name, true); }
 	public static void completeQuest(String name, boolean mustUnlocked) {
@@ -186,7 +199,8 @@ public class QuestsDisplay extends Display {
 		if (mustUnlocked && !quest.isUnlocked()) return;
 
 		completeQuest.add(quest);
-		Game.notifications.add(Localization.getLocalized("minicraft.notification.quest_done") + " " + Localization.getLocalized(name));
+		quest.getRecipes().forEach(recipe -> CraftingDisplay.unlockRecipe(recipe));
+		Game.notifications.add(Localization.getLocalized("minicraft.notification.quest_completed") + ": " + Localization.getLocalized(name));
 		for (String q : quest.getUnlocks()) unlockQuest(q);
 	}
 

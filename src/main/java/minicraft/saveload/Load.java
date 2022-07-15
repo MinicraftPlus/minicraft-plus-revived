@@ -500,12 +500,14 @@ public class Load {
 			}
 		}
 
+		if ((boolean) Settings.get("quests") || (boolean) Settings.get("tutorials"))
 		if (new File(location+"Quests.json").exists()) {
 			try {
 				JSONObject questsObj = new JSONObject(loadFromFile(location + "Quests.json", true));
 				JSONArray unlockedQuests = questsObj.getJSONArray("unlocked");
 				JSONArray doneQuests = questsObj.getJSONArray("done");
 				JSONObject questData = questsObj.getJSONObject("data");
+				
 
 				ArrayList<String> unlocked = new ArrayList<>();
 				ArrayList<String> done = new ArrayList<>();

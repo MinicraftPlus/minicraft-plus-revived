@@ -17,6 +17,7 @@
   },
   {
     "id": "minicraft.quest.tutorials.kill_tree",
-    "desc": "minicraft.quest.tutorials.kill_tree.desc"
+    "desc": "minicraft.quest.tutorials.kill_tree.desc",
+    "unlocked": true
   }
 ]
