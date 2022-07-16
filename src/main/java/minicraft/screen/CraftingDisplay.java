@@ -23,7 +23,7 @@ public class CraftingDisplay extends Display {
 
 	private boolean isPersonalCrafter;
 
-	private static ArrayList<Recipe> unlockedRecipes = new ArrayList<>();
+	private static ArrayList<Recipe> lockedRecipes = new ArrayList<>();
 
 	public CraftingDisplay(List<Recipe> recipes, String title, Player player) { this(recipes, title, player, false); }
 	public CraftingDisplay(List<Recipe> recipes, String title, Player player, boolean isPersonal) {
@@ -32,7 +32,7 @@ public class CraftingDisplay extends Display {
 
 		this.isPersonalCrafter = isPersonal;
 
-		if ((boolean) Settings.get("tutorials")) recipes = recipes.stream().filter(recipe -> unlockedRecipes.contains(recipe)).collect(Collectors.toList());
+		recipes = recipes.stream().filter(recipe -> !lockedRecipes.contains(recipe)).collect(Collectors.toList());
 
 		if(!isPersonal)
 			recipeMenu = new RecipeMenu(recipes, title, player);
@@ -152,18 +152,51 @@ public class CraftingDisplay extends Display {
 	}
 
 	public static void resetUnlocks() {
-		if ((boolean) Settings.get("tutorials")) {
-			unlockedRecipes.add(new Recipe("Workbench_1", "Wood_10"));
-			unlockedRecipes.add(new Recipe("Torch_2", "Wood_1", "coal_1"));
-			unlockedRecipes.add(new Recipe("plank_2", "Wood_1"));
-			unlockedRecipes.add(new Recipe("Plank Wall_1", "plank_3"));
-			unlockedRecipes.add(new Recipe("Wood Door_1", "plank_5"));
-		} else {
-			unlockedRecipes.clear();
-		}
+		lockedRecipes.clear();
+
+		lockedRecipes.addAll(Recipes.anvilRecipes);
+		lockedRecipes.addAll(Recipes.ovenRecipes);
+		lockedRecipes.addAll(Recipes.furnaceRecipes);
+		lockedRecipes.addAll(Recipes.workbenchRecipes);
+		lockedRecipes.addAll(Recipes.enchantRecipes);
+		lockedRecipes.addAll(Recipes.craftRecipes);
+		lockedRecipes.addAll(Recipes.loomRecipes);
+
+		if (!(boolean) Settings.get("tutorials")) unlockLeft();
+	}
+
+	public static void unlockLeft() {
+		if ((boolean) Settings.get("quests")) {
+			List<Recipe> locks = List.of(
+				new Recipe("Gem Armor_1", "gem_65"),
+				new Recipe("Gem Sword_1", "Wood_5", "gem_50"),
+				new Recipe("Gem Claymore_1", "Gem Sword_1", "shard_15"),
+				new Recipe("Gem Axe_1", "Wood_5", "gem_50"),
+				new Recipe("Gem Hoe_1", "Wood_5", "gem_50"),
+				new Recipe("Gem Pickaxe_1", "Wood_5", "gem_50"),
+				new Recipe("Gem Shovel_1", "Wood_5", "gem_50"),
+				new Recipe("Gem Bow_1", "Wood_5", "gem_50", "string_2"),
+				new Recipe("Totem of Air_1", "gold_10", "gem_10", "Lapis_5","Cloud Ore_5")
+			);
+
+			for (Recipe recipe : new ArrayList<>(lockedRecipes)) {
+				if (!locks.contains(recipe)) {
+					lockedRecipes.remove(recipe);
+				}
+			}
+		} else lockedRecipes.clear();
 	}
 
 	public static void unlockRecipe(Recipe recipe) {
-		unlockedRecipes.add(recipe);
+		lockedRecipes.remove(recipe);
+	}
+
+	public static ArrayList<Recipe> getLockedRecipes() {
+		return new ArrayList<>(lockedRecipes);
+	}
+
+	public static void loadLockedRecipes(ArrayList<Recipe> recipes) {
+		lockedRecipes.clear();
+		lockedRecipes.addAll(recipes);
 	}
 }

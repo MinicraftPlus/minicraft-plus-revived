@@ -8,6 +8,7 @@ import java.util.Map.Entry;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
+import org.tinylog.Logger;
 
 import minicraft.core.Game;
 import minicraft.core.io.InputHandler;
@@ -69,6 +70,8 @@ public class QuestsDisplay extends Display {
 						for (int j = 0; j < costsJson.length(); j++) {
 							costs[j] = costsJson.getString(j);
 						}
+
+						recipes.add(new Recipe(product, costs));
 					}
 					quests.put(id, new Quest(id, obj.getString("desc"), unlocked, tutorial, recipes, unlocks));
 				} else
@@ -158,13 +161,13 @@ public class QuestsDisplay extends Display {
 		return new ArrayList<>(quests.values());
 	}
 	public static ArrayList<Quest> getUnlockedQuests() {
-		return unlockedQuests;
+		return new ArrayList<>(unlockedQuests);
 	}
-	public static ArrayList<Quest> getCompleteQuest() {
-		return completeQuest;
+	public static ArrayList<Quest> getCompletedQuest() {
+		return new ArrayList<>(completeQuest);
 	}
 	public static HashMap<String, QuestStatus> getStatusQuests() {
-		return questStatus;
+		return new HashMap<>(questStatus);
 	}
 
 	public static boolean isQuestDone(String name) {
@@ -191,6 +194,15 @@ public class QuestsDisplay extends Display {
 		unlockedQuests.add(quest);
 		Game.notifications.add(Localization.getLocalized("minicraft.notification.quest_unlocked") + ": " + Localization.getLocalized(name));
 	}
+	public static void refreshQuestLocks() {
+		for (Quest quest : quests.values()) {
+			if (unlockedQuests.contains(quest) && !quest.isUnlocked()) {
+				unlockedQuests.remove(quest);
+			} else if (!unlockedQuests.contains(quest) && quest.isUnlocked()) {
+				unlockedQuests.add(quest);
+			}
+		}
+	}
 	public static void completeQuest(String name) { completeQuest(name, true); }
 	public static void completeQuest(String name, boolean mustUnlocked) {
 		Quest quest = quests.get(name);
@@ -199,16 +211,38 @@ public class QuestsDisplay extends Display {
 		if (mustUnlocked && !quest.isUnlocked()) return;
 
 		completeQuest.add(quest);
-		quest.getRecipes().forEach(recipe -> CraftingDisplay.unlockRecipe(recipe));
 		Game.notifications.add(Localization.getLocalized("minicraft.notification.quest_completed") + ": " + Localization.getLocalized(name));
+		quest.getRecipes().forEach(recipe -> CraftingDisplay.unlockRecipe(recipe));
+		if ((boolean) Settings.get("tutorials") &&
+			quests.values().stream().filter(q -> q.isTutorial() && !completeQuest.contains(q)).count() == 0) { // Tutorial completed
+			Logger.debug("Tutorial completed.");
+			tutorialCompleted();
+
+			Game.notifications.add(Localization.getLocalized("minicraft.notification.tutorial_completed"));
+		}
+
 		for (String q : quest.getUnlocks()) unlockQuest(q);
+	}
+
+	/** Call only when the tutorial is completed. */
+	public static void tutorialCompleted() {
+		Settings.set("tutorials", false);
+		CraftingDisplay.unlockLeft();
+		if ((boolean) Settings.get("quests")) { // Unlock initial quests
+			for (Quest q : quests.values()) {
+				if (initiallyUnlocked.contains(q.id) && !unlockedQuests.contains(q)) {
+					q.unlock();
+					unlockedQuests.add(q);
+				}
+			}
+		}
 	}
 
 	public static boolean checkAbility(Quest quest) {
 		if (quest == null) return false;
 
-		if ((boolean) Settings.get("tutorials") && quest.isTutorial()) return true;
-		if ((boolean) Settings.get("quests") && !quest.isTutorial()) return true;
+		if ((boolean) Settings.get("tutorials") && quest.isTutorial()) return true; // The quest is tutorial and in tutorial mode
+		if ((boolean) Settings.get("quests") && !(boolean) Settings.get("tutorials") && !quest.isTutorial()) return true; // The quest is normal quest and not in tutorial mode
 
 		return false;
 	}

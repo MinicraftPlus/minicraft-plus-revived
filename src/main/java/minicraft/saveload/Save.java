@@ -17,6 +17,7 @@ import minicraft.entity.particle.TextParticle;
 import minicraft.item.Inventory;
 import minicraft.item.Item;
 import minicraft.item.PotionType;
+import minicraft.item.Recipe;
 import minicraft.screen.*;
 import minicraft.util.Quest;
 
@@ -242,12 +243,13 @@ public class Save {
 			JSONArray unlockedQuests = new JSONArray();
 			JSONArray doneQuests = new JSONArray();
 			JSONObject questData = new JSONObject();
+			JSONObject lockedRecipes = new JSONObject();
 
 			for (Quest q : QuestsDisplay.getUnlockedQuests()) {
 				unlockedQuests.put(q.id);
 			}
 
-			for (Quest q : QuestsDisplay.getCompleteQuest()) {
+			for (Quest q : QuestsDisplay.getCompletedQuest()) {
 				doneQuests.put(q.id);
 			}
 
@@ -255,9 +257,16 @@ public class Save {
 				questData.put(e.getKey(), e.getValue().toQuestString());
 			}
 
+			for (Recipe recipe : CraftingDisplay.getLockedRecipes()) {
+				JSONArray costs = new JSONArray();
+				recipe.getCosts().forEach((c, i) -> costs.put(c + "_" + i));
+				lockedRecipes.put(recipe.getProduct().getName() + "_" + recipe.getAmount(), costs);
+			}
+
 			fileObj.put("unlocked", unlockedQuests);
 			fileObj.put("done", doneQuests);
 			fileObj.put("data", questData);
+			fileObj.put("lockedRecipes", lockedRecipes);
 
 			try {
 				writeJSONToFile(location + "Quests.json", fileObj.toString());

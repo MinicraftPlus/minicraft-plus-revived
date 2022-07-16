@@ -347,7 +347,7 @@ public class Renderer extends Game {
 		if (!(boolean) Settings.get("showquests")) return;
 
 		ArrayList<String> undoneQuests = new ArrayList<>();
-		ArrayList<Quest> doneQuests = QuestsDisplay.getCompleteQuest();
+		ArrayList<Quest> doneQuests = QuestsDisplay.getCompletedQuest();
 		HashMap<String, QuestsDisplay.QuestStatus> questStatus = QuestsDisplay.getStatusQuests();
 		for (Quest q : QuestsDisplay.getUnlockedQuests()) {
 			if (!doneQuests.contains(q)) {

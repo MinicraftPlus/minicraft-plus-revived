@@ -13,6 +13,7 @@ import minicraft.screen.entry.BlankEntry;
 import minicraft.screen.entry.ListEntry;
 import minicraft.screen.entry.SelectEntry;
 import minicraft.screen.entry.StringEntry;
+import minicraft.util.Quest;
 
 public class OptionsWorldDisplay extends Display {
 	private boolean confirmOff = false;
@@ -46,15 +47,18 @@ public class OptionsWorldDisplay extends Display {
 
 	@Override
 	public void tick(InputHandler input) {
-		if(confirmOff) {
-			if(input.getKey("exit").clicked) {
+		if (confirmOff) {
+			if (input.getKey("exit").clicked) {
 				confirmOff = false;
 				menus[1].shouldRender = false;
 				selection = 0;
-			}
-			else if(input.getKey("select").clicked) {
+			} else if (input.getKey("select").clicked) {
 				confirmOff = false;
-				Settings.set("tutorials", false);
+				QuestsDisplay.tutorialCompleted();
+				ArrayList<Quest> completdQuests = QuestsDisplay.getCompletedQuest();
+				QuestsDisplay.getUnlockedQuests().stream().filter(q -> !completdQuests.contains(q) && q.isTutorial()).forEach(q -> q.lock());;
+				QuestsDisplay.refreshQuestLocks();
+
 				menus[1].shouldRender = false;
 				menus[0].setEntries(getEntries());
 				menus[0].setSelection(0);

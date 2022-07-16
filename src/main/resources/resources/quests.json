@@ -1,23 +1,91 @@
 [
   {
-    "id": "minicraft.quest.get_wood",
-    "desc": "minicraft.quest.get_wood.desc",
-    "unlocks": ["minicraft.quest.craft_first_sword"],
-    "unlocked": true
-  },
-  {
-    "id": "minicraft.quest.kill",
-    "desc": "minicraft.quest.kill.desc",
-    "unlocks": ["minicraft.quest.find_npc"]
-  },
-  {
-    "id": "minicraft.quest.craft_first_sword",
-    "desc": "minicraft.quest.craft_first_sword.desc",
-    "unlocks": ["minicraft.quest.kill"]
-  },
-  {
     "id": "minicraft.quest.tutorials.kill_tree",
     "desc": "minicraft.quest.tutorials.kill_tree.desc",
+    "unlocks": ["minicraft.quest.tutorials.craft_workbench"],
+    "recipes": {
+      "Workbench_1": ["Wood_10"],
+      "Torch_2": ["Wood_1", "coal_1"],
+      "plank_2": ["Wood_1"],
+      "Plank Wall_1": ["plank_3"],
+      "Wood Door_1": ["plank_5"]
+    },
+    "unlocked": true,
+    "tutorial": true
+  },
+  {
+    "id": "minicraft.quest.tutorials.craft_workbench",
+    "desc": "minicraft.quest.tutorials.craft_workbench.desc",
+    "unlocks": ["minicraft.quest.tutorials.craft_wooden_tool"],
+    "recipes": {
+      "Wood Sword_1": ["Wood_5"],
+      "Wood Axe_1": ["Wood_5"],
+      "Wood Hoe_1": ["Wood_5"],
+      "Wood Pickaxe_1": ["Wood_5"],
+      "Wood Shovel_1": ["Wood_5"],
+      "Wood Bow_1": ["Wood_5", "string_2"]
+    },
+    "tutorial": true
+  },
+  {
+    "id": "minicraft.quest.tutorials.craft_wooden_tool",
+    "desc": "minicraft.quest.tutorials.craft_wooden_tool.desc",
+    "unlocks": ["minicraft.quest.tutorials.kill_cow"],
+    "tutorial": true
+  },
+  {
+    "id": "minicraft.quest.tutorials.kill_cow",
+    "desc": "minicraft.quest.tutorials.kill_cow.desc",
+    "unlocks": ["minicraft.quest.tutorials.first_armor"],
+    "recipes": {
+      "Leather Armor_1": ["leather_10"]
+    },
+    "tutorial": true
+  },
+  {
+    "id": "minicraft.quest.tutorials.first_armor",
+    "desc": "minicraft.quest.tutorials.first_armor.desc",
+    "unlocks": ["minicraft.quest.tutorials.break_rock"],
+    "tutorial": true
+  },
+  {
+    "id": "minicraft.quest.tutorials.break_rock",
+    "desc": "minicraft.quest.tutorials.break_rock.desc",
+    "unlocks": ["minicraft.quest.congret_end_of_tutorial"],
+    "tutorial": true
+  },
+  {
+    "id": "minicraft.quest.congret_end_of_tutorial",
+    "desc": "minicraft.quest.congret_end_of_tutorial.desc"
+  },
+  {
+    "id": "minicraft.quest.iron_armor",
+    "desc": "minicraft.quest.iron_armor.desc",
+    "unlocks": ["minicraft.quest.get_gem", "minicraft.quest.first_potion"],
     "unlocked": true
+  },
+  {
+    "id": "minicraft.quest.first_potion",
+    "desc": "minicraft.quest.first_potion.desc"
+  },
+  {
+    "id": "minicraft.quest.get_gem",
+    "desc": "minicraft.quest.get_gem.desc",
+    "unlocks": ["minicraft.quest.gem_armor"],
+    "recipes": {
+      "Gem Armor_1": ["gem_65"],
+      "Gem Sword_1": ["Wood_5", "gem_50"],
+      "Gem Claymore_1": ["Gem Sword_1", "shard_15"],
+      "Gem Axe_1": ["Wood_5", "gem_50"],
+      "Gem Hoe_1": ["Wood_5", "gem_50"],
+      "Gem Pickaxe_1": ["Wood_5", "gem_50"],
+      "Gem Shovel_1": ["Wood_5", "gem_50"],
+      "Gem Bow_1": ["Wood_5", "gem_50", "string_2"],
+      "Totem of Air_1": ["gold_10", "gem_10", "Lapis_5","Cloud Ore_5"]
+    }
+  },
+  {
+    "id": "minicraft.quest.gem_armor",
+    "desc": "minicraft.quest.gem_armor.desc"
   }
 ]
