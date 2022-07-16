@@ -12,7 +12,7 @@ import minicraft.screen.entry.SelectEntry;
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
-import java.util.Random;
+import java.util.OptionalLong;
 import java.util.regex.Pattern;
 
 public class WorldGenDisplay extends Display {
@@ -21,16 +21,16 @@ public class WorldGenDisplay extends Display {
 
 	private static InputEntry worldSeed = new InputEntry("World Seed", "[-!\"#%/()=+,a-zA-Z0-9]+", 20);
 
-	public static long getSeed() {
+	public static OptionalLong getSeed() {
 		String seedStr = worldSeed.getUserInput();
 
 		// If there is no input seed, generate random number
 		if(seedStr.length() == 0)
-			return new Random().nextLong();
+			return OptionalLong.empty();
 
 		// If the seed is only numbers, just use numbers
 		if(Pattern.matches("[-]?[0-9]*", seedStr)) {
-			return Long.parseLong(seedStr);
+			return OptionalLong.of(Long.parseLong(seedStr));
 		} else {
 			// If the seed is some combination of numbers/letters, hash them into a floating point number
 			long seed = 1125899906842597L; // rather large prime number
@@ -40,7 +40,7 @@ public class WorldGenDisplay extends Display {
 				seed = 31*seed + seedStr.charAt(i);
 			}
 
-			return seed;
+			return OptionalLong.of(seed);
 		}
 	}
 
