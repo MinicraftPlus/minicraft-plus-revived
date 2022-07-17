@@ -101,19 +101,6 @@ public class ContainerDisplay extends Display {
 						update();
 					}
 				}
-			} else {
-				if(!transferAll) {
-					((StackableItem)fromItem).count--; // this is known to be valid.
-					((StackableItem)toItem).count = 1;
-					// items are setup for sending.
-				}
-				else { // transfer whole item/stack.
-					if(! (Game.isMode("creative") && from == player.getInventory()) )
-						from.remove(fromSel); // remove it
-				}
-
-				to.add(toSel, toItem, false);
-				update();
 			}
 		}
 	}
