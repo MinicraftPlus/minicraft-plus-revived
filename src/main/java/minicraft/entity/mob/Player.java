@@ -87,6 +87,8 @@ public class Player extends Mob implements ItemHolder, ClientTickable {
 
 	public HashMap<PotionType, Integer> potioneffects; // The potion effects currently applied to the player
 	public boolean showpotioneffects; // Whether to display the current potion effects on screen
+	public boolean simpPotionEffects;
+	public boolean renderGUI;
 	private int cooldowninfo; // Prevents you from toggling the info pane on and off super fast.
 	private int regentick; // Counts time between each time the regen potion effect heals you.
 
@@ -138,6 +140,8 @@ public class Player extends Mob implements ItemHolder, ClientTickable {
 
 		potioneffects = new HashMap<>();
 		showpotioneffects = true;
+		simpPotionEffects = false;
+		renderGUI = true;
 
 		cooldowninfo = 0;
 		regentick = 0;
@@ -241,11 +245,19 @@ public class Player extends Mob implements ItemHolder, ClientTickable {
 			}
 		}
 
-		if(cooldowninfo > 0) cooldowninfo--;
+		if (cooldowninfo > 0) cooldowninfo--;
 
-		if(input.getKey("potionEffects").clicked && cooldowninfo == 0) {
+		if (input.getKey("potionEffects").clicked && cooldowninfo == 0) {
 			cooldowninfo = 10;
 			showpotioneffects = !showpotioneffects;
+		}
+
+		if (input.getKey("simpPotionEffects").clicked) {
+			simpPotionEffects = !simpPotionEffects;
+		}
+
+		if (input.getKey("hideGUI").clicked) {
+			renderGUI = !renderGUI;
 		}
 
 		Tile onTile = level.getTile(x >> 4, y >> 4); // Gets the current tile the player is on.
