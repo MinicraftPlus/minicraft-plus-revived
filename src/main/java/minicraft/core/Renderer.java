@@ -107,7 +107,7 @@ public class Renderer extends Game {
 
 		if (readyToRenderGameplay) {
 			renderLevel();
-			renderGui();
+			if (player.renderGUI) renderGui();
 		}
 
 		if (display != null) // Renders menu, if present.
@@ -209,7 +209,7 @@ public class Renderer extends Game {
 			permStatus.add("Press " + input.getMapping("exit") + " to cancel");
 		}
 
-		if(permStatus.size() > 0) {
+		if (permStatus.size() > 0) {
 			FontStyle style = new FontStyle(Color.WHITE).setYPos(Screen.h / 2 - 25)
 				.setRelTextPos(RelPos.TOP)
 				.setShadowType(Color.DARK_GRAY, false);
@@ -285,13 +285,20 @@ public class Renderer extends Game {
 			Map.Entry<PotionType, Integer>[] effects = player.potioneffects.entrySet().toArray(new Map.Entry[0]);
 
 			// The key is potion type, value is remaining potion duration.
-			for (int i = 0; i < effects.length; i++) {
-				PotionType pType = effects[i].getKey();
-				int pTime = effects[i].getValue() / Updater.normSpeed;
-				int minutes = pTime / 60;
-				int seconds = pTime % 60;
-				Font.drawBackground("("+input.getMapping("potionEffects")+" to hide!)", screen, 180, 9 + potionRenderOffset);
-				Font.drawBackground(pType + " (" + minutes + ":" + (seconds<10?"0"+seconds:seconds) + ")", screen, 180, 17 + i * Font.textHeight() + potionRenderOffset, pType.dispColor);
+			if (!player.simpPotionEffects) {
+				for (int i = 0; i < effects.length; i++) {
+					PotionType pType = effects[i].getKey();
+					int pTime = effects[i].getValue() / Updater.normSpeed;
+					int minutes = pTime / 60;
+					int seconds = pTime % 60;
+					Font.drawBackground("("+input.getMapping("potionEffects")+" to hide!)", screen, 180, 9);
+					Font.drawBackground(pType + " (" + minutes + ":" + (seconds<10?"0"+seconds:seconds) + ")", screen, 180, 17 + i * Font.textHeight(), pType.dispColor);
+				}
+			} else {
+				for (int i = 0; i < effects.length; i++) {
+					PotionType pType = effects[i].getKey();
+					Font.drawBackground(pType.toString().substring(0, 1), screen, Screen.w - 17 - (effects.length - 1 - i) * 8, 9, pType.dispColor);
+				}
 			}
 		}
 
