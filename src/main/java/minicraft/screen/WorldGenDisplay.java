@@ -1,11 +1,5 @@
 package minicraft.screen;
 
-import java.util.Arrays;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Random;
-import java.util.regex.Pattern;
-
 import minicraft.core.Game;
 import minicraft.core.io.Localization;
 import minicraft.core.io.Settings;
@@ -15,22 +9,28 @@ import minicraft.gfx.Screen;
 import minicraft.screen.entry.InputEntry;
 import minicraft.screen.entry.SelectEntry;
 
+import java.util.Arrays;
+import java.util.HashSet;
+import java.util.List;
+import java.util.OptionalLong;
+import java.util.regex.Pattern;
+
 public class WorldGenDisplay extends Display {
 
 	private static final String worldNameRegex = "[a-zA-Z0-9 ]+";
 
 	private static InputEntry worldSeed = new InputEntry("World Seed", "[-!\"#%/()=+,a-zA-Z0-9]+", 20);
 
-	public static long getSeed() {
+	public static OptionalLong getSeed() {
 		String seedStr = worldSeed.getUserInput();
 
 		// If there is no input seed, generate random number
 		if(seedStr.length() == 0)
-			return new Random().nextLong();
+			return OptionalLong.empty();
 
 		// If the seed is only numbers, just use numbers
 		if(Pattern.matches("[-]?[0-9]*", seedStr)) {
-			return Long.parseLong(seedStr);
+			return OptionalLong.of(Long.parseLong(seedStr));
 		} else {
 			// If the seed is some combination of numbers/letters, hash them into a floating point number
 			long seed = 1125899906842597L; // rather large prime number
@@ -40,11 +40,11 @@ public class WorldGenDisplay extends Display {
 				seed = 31*seed + seedStr.charAt(i);
 			}
 
-			return seed;
+			return OptionalLong.of(seed);
 		}
 	}
 
-	public static InputEntry makeWorldNameInput(String prompt, List<String> takenNames, String initValue) {
+	public static InputEntry makeWorldNameInput(String prompt, List<String> takenNames, String initValue, boolean isGen) {
 		return new InputEntry(prompt, worldNameRegex, 36, initValue) {
 			@Override
 			public boolean isValid() {
@@ -64,7 +64,9 @@ public class WorldGenDisplay extends Display {
 
 			@Override
 			public void render(Screen screen, int x, int y, boolean isSelected) {
-				super.render(screen, getUserInput().length() > 11? x - (getUserInput().length()-11) * 8: x, y, isSelected);
+				super.render(screen, isGen?
+					(getUserInput().length() > 11? x - (getUserInput().length()-11) * 8: x):
+					x, y, isSelected);
 			}
 		};
 	}
@@ -72,7 +74,7 @@ public class WorldGenDisplay extends Display {
 	public WorldGenDisplay() {
 		super(true);
 
-		InputEntry nameField = makeWorldNameInput("Enter World Name", WorldSelectDisplay.getWorldNames(), "");
+		InputEntry nameField = makeWorldNameInput("Enter World Name", WorldSelectDisplay.getWorldNames(), "", true);
 
 		SelectEntry nameHelp = new SelectEntry("Trouble with world name?", () -> Game.setDisplay(new BookDisplay("it seems you've set letters as the controls to move the cursor up and down, which is probably annoying. This can be changed in the key binding menu as the \"cursor-XXX\" keys. For now, to type the letter instead of moving the cursor, hold the shift key while typing."))) {
 			@Override

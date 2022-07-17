@@ -1,13 +1,6 @@
 package minicraft.screen;
 
-import java.time.LocalDateTime;
-import java.time.Month;
-import java.util.Random;
-
-import minicraft.util.BookData;
-
 import minicraft.core.Game;
-import minicraft.network.Network;
 import minicraft.core.Renderer;
 import minicraft.core.VersionInfo;
 import minicraft.core.World;
@@ -18,10 +11,16 @@ import minicraft.gfx.Font;
 import minicraft.gfx.Point;
 import minicraft.gfx.Screen;
 import minicraft.level.Level;
+import minicraft.network.Network;
 import minicraft.screen.entry.BlankEntry;
 import minicraft.screen.entry.LinkEntry;
 import minicraft.screen.entry.SelectEntry;
 import minicraft.screen.entry.StringEntry;
+import minicraft.util.BookData;
+
+import java.time.LocalDateTime;
+import java.time.Month;
+import java.util.Random;
 
 public class TitleDisplay extends Display {
 	private static final Random random = new Random();
@@ -95,11 +94,11 @@ public class TitleDisplay extends Display {
 			if (latestVersion.version.compareTo(Game.VERSION, true) > 0) {
 				menus[0].updateEntry(0, new StringEntry(Localization.getLocalized("New: ") + latestVersion.releaseName, Color.GREEN));
 				menus[0].updateEntry(1, new LinkEntry(Color.CYAN, "--Select here to Download--", latestVersion.releaseUrl, "Direct link to latest version: " + latestVersion.releaseUrl));
-			}
-			else if (latestVersion.releaseName.length() > 0)
+			} else if (latestVersion.releaseName.length() > 0) {
 				menus[0].updateEntry(0, new StringEntry("You have the latest version.", Color.DARK_GRAY, true));
-			else
+			} else {
 				menus[0].updateEntry(0, new StringEntry("Could not check for updates.", Color.RED, true));
+			}
 		}
 	}
 

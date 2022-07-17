@@ -12,15 +12,24 @@ Original game by Markus "Notch" Persson.
 
 ### Code contributions from
 * A.L.I.C.E
+* BenCheung0422
 * Christoffer Holmesland
 * El-Virus
 * Litorom1
 * TheBigEye
 * lino-levan
 * rocketedsocks
-* BenCheung0422
 
 ### Art contributions from
 * TheBigEye
 * JamesTDG
 * Geek_Joystick
+
+### Localisation contributions from
+* A.L.I.C.E
+* Christoffer Holmesland
+* GladfanIsHere
+* Litorom1
+* Sussiogamer1
+* Terra
+* TheBigEye

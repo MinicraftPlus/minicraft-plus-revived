@@ -24,7 +24,7 @@ import java.util.function.Predicate;
 import java.util.function.ToIntFunction;
 
 public class Level {
-	private final Random random = new Random();
+	private final Random random;
 
 	private static final String[] levelNames = {"Sky", "Surface", "Iron", "Gold", "Lava", "Dungeon"};
 	public static String getLevelName(int depth) { return levelNames[-1 * depth + 1]; }
@@ -106,6 +106,7 @@ public class Level {
 		this.w = w;
 		this.h = h;
 		this.seed = seed;
+		random = new Random(seed);
 		short[][] maps; // Multidimensional array (an array within a array), used for the map
 
 		if (level != -4 && level != 0)
@@ -122,7 +123,7 @@ public class Level {
 
 		Logger.debug("Making level " + level + "...");
 
-		maps = LevelGen.createAndValidateMap(w, h, level);
+		maps = LevelGen.createAndValidateMap(w, h, level, seed);
 		if (maps == null) {
 			Logger.error("Level generation: Returned maps array is null");
 			return;

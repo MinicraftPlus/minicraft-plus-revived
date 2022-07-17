@@ -87,6 +87,8 @@ public class Player extends Mob implements ItemHolder, ClientTickable {
 
 	public HashMap<PotionType, Integer> potioneffects; // The potion effects currently applied to the player
 	public boolean showpotioneffects; // Whether to display the current potion effects on screen
+	public boolean simpPotionEffects;
+	public boolean renderGUI;
 	private int cooldowninfo; // Prevents you from toggling the info pane on and off super fast.
 	private int regentick; // Counts time between each time the regen potion effect heals you.
 
@@ -137,6 +139,8 @@ public class Player extends Mob implements ItemHolder, ClientTickable {
 
 		potioneffects = new HashMap<>();
 		showpotioneffects = true;
+		simpPotionEffects = false;
+		renderGUI = true;
 
 		cooldowninfo = 0;
 		regentick = 0;
@@ -237,11 +241,19 @@ public class Player extends Mob implements ItemHolder, ClientTickable {
 			}
 		}
 
-		if(cooldowninfo > 0) cooldowninfo--;
+		if (cooldowninfo > 0) cooldowninfo--;
 
-		if(input.getKey("potionEffects").clicked && cooldowninfo == 0) {
+		if (input.getKey("potionEffects").clicked && cooldowninfo == 0) {
 			cooldowninfo = 10;
 			showpotioneffects = !showpotioneffects;
+		}
+
+		if (input.getKey("simpPotionEffects").clicked) {
+			simpPotionEffects = !simpPotionEffects;
+		}
+
+		if (input.getKey("hideGUI").clicked) {
+			renderGUI = !renderGUI;
 		}
 
 		Tile onTile = level.getTile(x >> 4, y >> 4); // Gets the current tile the player is on.
@@ -718,8 +730,6 @@ public class Player extends Mob implements ItemHolder, ClientTickable {
 
 	@Override
 	public void render(Screen screen) {
-		MobSprite[][] spriteSet = activeItem instanceof FurnitureItem ? carrySprites : sprites;
-
 		/* Offset locations to start drawing the sprite relative to our position */
 		int xo = x - 8; // Horizontal
 		int yo = y - 11; // Vertical
@@ -763,10 +773,12 @@ public class Player extends Mob implements ItemHolder, ClientTickable {
 			col = Color.WHITE; // Make the sprite white.
 		}
 
+		MobSprite[][] spriteSet = activeItem instanceof FurnitureItem ? carrySprites : sprites;
+
 		// Renders falling
 		MobSprite curSprite;
 		if (onFallDelay > 0) {
-			// What this does is make falling look really cool
+			// This makes falling look really cool.
 			float spriteToUse = onFallDelay / 2f;
 			while (spriteToUse > spriteSet.length - 1) {
 				spriteToUse -= 4;
@@ -777,10 +789,10 @@ public class Player extends Mob implements ItemHolder, ClientTickable {
 		}
 
 		// Render each corner of the sprite
-		if (!isSwimming()) { // Don't render the bottom half if swimming.
-			curSprite.render(screen, xo, yo - 4 * onFallDelay, -1, shirtColor);
-		} else {
+		if (isSwimming()) {
 			curSprite.renderRow(0, screen, xo, yo, -1, shirtColor);
+		} else { // Don't render the bottom half if swimming.
+			curSprite.render(screen, xo, yo - 4 * onFallDelay, -1, shirtColor);
 		}
 
 		// Renders slashes:
