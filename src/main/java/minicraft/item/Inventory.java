@@ -97,7 +97,7 @@ public class Inventory {
 
 			if (invLimit) {
 				if (items.size() < maxItem) {
-					int c = Math.ceilDiv(toTake.count, 100);
+					int c = (int) Math.ceil(toTake.count/100.0);
 					for (int i = 0; i < c; i++) {
 						StackableItem adding = toTake.clone();
 						adding.count = i + 1 == c && toTake.count % 100 > 0 ? toTake.count % 100 : 100;
