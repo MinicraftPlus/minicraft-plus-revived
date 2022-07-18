@@ -54,14 +54,12 @@ public class ContainerDisplay extends Display {
 		Menu curMenu = menus[selection];
 		int otherIdx = getOtherIdx();
 
-		if(curMenu.getNumOptions() > 0 && (input.getKey("attack").clicked || input.getKey("drop-one").clicked)) {
+		if((input.getKey("attack").clicked || input.getKey("drop-one").clicked)) {
 			// switch inventories
 			Inventory from, to;
-			boolean toPlayer = false;
 			if(selection == 0) {
 				from = chest.getInventory();
 				to = player.getInventory();
-				toPlayer = true;
 			} else {
 				from = player.getInventory();
 				to = chest.getInventory();
@@ -76,30 +74,28 @@ public class ContainerDisplay extends Display {
 
 			Item toItem = fromItem.clone();
 
-			if (toPlayer) {
-				if (fromItem instanceof StackableItem) {
-					int move = 1;
-					if (!transferAll) {
-						((StackableItem)toItem).count = 1;
-					} else {
-						move = ((StackableItem)fromItem).count;
-					}
-
-					int moved = to.add(toSel, toItem, true);
-					if (moved < move) {
-						((StackableItem)fromItem).count -= moved;
-					} else if (!transferAll) {
-						((StackableItem)fromItem).count--;
-					} else {
-						from.remove(fromSel);
-					}
-					update();
+			if (fromItem instanceof StackableItem) {
+				int move = 1;
+				if (!transferAll) {
+					((StackableItem)toItem).count = 1;
 				} else {
-					int moved = to.add(toSel, toItem, true);
-					if (moved == 1) {
-						from.remove(fromSel);
-						update();
-					}
+					move = ((StackableItem)fromItem).count;
+				}
+
+				int moved = to.add(toSel, toItem, true);
+				if (moved < move) {
+					((StackableItem)fromItem).count -= moved;
+				} else if (!transferAll) {
+					((StackableItem)fromItem).count--;
+				} else {
+					from.remove(fromSel);
+				}
+				update();
+			} else {
+				int moved = to.add(toSel, toItem, true);
+				if (moved == 1) {
+					from.remove(fromSel);
+					update();
 				}
 			}
 		}

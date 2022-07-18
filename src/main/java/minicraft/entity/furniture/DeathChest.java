@@ -20,6 +20,8 @@ public class DeathChest extends Chest {
 	public int time; // Time passed (used for death chest despawn)
 	private int redtick = 0; //This is used to determine the shade of red when the chest is about to expire.
 	private boolean reverse; // What direction the red shade (redtick) is changing.
+	private Inventory inventory; // Implement the inventory locally instead.
+	// TODO Implement inventory when merging both #364 and #360
 
 	/**
 	 * Creates a custom chest with the name Death Chest
