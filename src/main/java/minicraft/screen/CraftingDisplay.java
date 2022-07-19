@@ -108,14 +108,11 @@ public class CraftingDisplay extends Display {
 			if (selectedRecipe.getCanCraft()) {
 				if (selectedRecipe.getProduct().equals(Items.get("Workbench"))){
 					AchievementsDisplay.setAchievement("minicraft.achievement.benchmarking",true);
-				}
-				if (selectedRecipe.getProduct().equals(Items.get("Plank"))){
+				} else if (selectedRecipe.getProduct().equals(Items.get("Plank"))){
 					AchievementsDisplay.setAchievement("minicraft.achievement.planks",true);
-				}
-				if (selectedRecipe.getProduct().equals(Items.get("Wood Door"))){
+				} else if (selectedRecipe.getProduct().equals(Items.get("Wood Door"))){
 					AchievementsDisplay.setAchievement("minicraft.achievement.doors",true);
-				}
-				if (selectedRecipe.getProduct().equals(Items.get("Rock Sword")) ||
+				} else if (selectedRecipe.getProduct().equals(Items.get("Rock Sword")) ||
 						selectedRecipe.getProduct().equals(Items.get("Rock Pickaxe")) ||
 						selectedRecipe.getProduct().equals(Items.get("Rock Axe")) ||
 						selectedRecipe.getProduct().equals(Items.get("Rock Shovel")) ||
@@ -123,8 +120,7 @@ public class CraftingDisplay extends Display {
 						selectedRecipe.getProduct().equals(Items.get("Rock Bow")) ||
 						selectedRecipe.getProduct().equals(Items.get("Rock Claymore"))) {
 					AchievementsDisplay.setAchievement("minicraft.achievement.upgrade", true);
-				}
-				if (selectedRecipe.getProduct().equals(Items.get("blue clothes")) ||
+				} else if (selectedRecipe.getProduct().equals(Items.get("blue clothes")) ||
 						selectedRecipe.getProduct().equals(Items.get("green clothes")) ||
 						selectedRecipe.getProduct().equals(Items.get("yellow clothes")) ||
 						selectedRecipe.getProduct().equals(Items.get("black clothes")) ||
@@ -133,10 +129,6 @@ public class CraftingDisplay extends Display {
 						selectedRecipe.getProduct().equals(Items.get("cyan clothes")) ||
 						selectedRecipe.getProduct().equals(Items.get("reg clothes"))) {
 					AchievementsDisplay.setAchievement("minicraft.achievement.clothes", true);
-				}
-
-				if (((ToolItem) selectedRecipe.getProduct()).type.equals(ToolType.Sword)) {
-					QuestsDisplay.completeQuest("minicraft.quest.craft_first_sword");
 				}
 
 				selectedRecipe.craft(player);
@@ -153,16 +145,17 @@ public class CraftingDisplay extends Display {
 
 	public static void resetUnlocks() {
 		lockedRecipes.clear();
+		if ((boolean) Settings.get("tutorials") || (boolean) Settings.get("quests")) {
+			lockedRecipes.addAll(Recipes.anvilRecipes);
+			lockedRecipes.addAll(Recipes.ovenRecipes);
+			lockedRecipes.addAll(Recipes.furnaceRecipes);
+			lockedRecipes.addAll(Recipes.workbenchRecipes);
+			lockedRecipes.addAll(Recipes.enchantRecipes);
+			lockedRecipes.addAll(Recipes.craftRecipes);
+			lockedRecipes.addAll(Recipes.loomRecipes);
 
-		lockedRecipes.addAll(Recipes.anvilRecipes);
-		lockedRecipes.addAll(Recipes.ovenRecipes);
-		lockedRecipes.addAll(Recipes.furnaceRecipes);
-		lockedRecipes.addAll(Recipes.workbenchRecipes);
-		lockedRecipes.addAll(Recipes.enchantRecipes);
-		lockedRecipes.addAll(Recipes.craftRecipes);
-		lockedRecipes.addAll(Recipes.loomRecipes);
-
-		if (!(boolean) Settings.get("tutorials")) unlockLeft();
+			if (!(boolean) Settings.get("tutorials")) unlockLeft();
+		}
 	}
 
 	public static void unlockLeft() {

@@ -54,10 +54,7 @@ public class OptionsWorldDisplay extends Display {
 				selection = 0;
 			} else if (input.getKey("select").clicked) {
 				confirmOff = false;
-				QuestsDisplay.tutorialCompleted();
-				ArrayList<Quest> completdQuests = QuestsDisplay.getCompletedQuest();
-				QuestsDisplay.getUnlockedQuests().stream().filter(q -> !completdQuests.contains(q) && q.isTutorial()).forEach(q -> q.lock());;
-				QuestsDisplay.refreshQuestLocks();
+				QuestsDisplay.tutorialOff();
 
 				menus[1].shouldRender = false;
 				menus[0].setEntries(getEntries());
