@@ -114,8 +114,8 @@ public class LevelGen {
 	}
 
 	@Nullable
-	static short[][] createAndValidateMap(int w, int h, int level) {
-		worldSeed = WorldGenDisplay.getSeed();
+	static short[][] createAndValidateMap(int w, int h, int level, long seed) {
+		worldSeed = seed;
 
 		if (level == 1)
 			return createAndValidateSkyMap(w, h);
@@ -762,7 +762,7 @@ public class LevelGen {
 			int lvl = maplvls[idx++ % maplvls.length];
 			if (lvl > 1 || lvl < -4) continue;
 
-			short[][] fullmap = LevelGen.createAndValidateMap(w, h, lvl);
+			short[][] fullmap = LevelGen.createAndValidateMap(w, h, lvl, LevelGen.worldSeed);
 
 			if (fullmap == null) continue;
 			short[] map = fullmap[0];
