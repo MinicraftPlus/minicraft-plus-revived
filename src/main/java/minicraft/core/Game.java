@@ -1,7 +1,5 @@
 package minicraft.core;
 
-import kong.unirest.Empty;
-import kong.unirest.HttpResponse;
 import minicraft.core.io.InputHandler;
 import minicraft.core.io.Localization;
 import minicraft.core.io.Settings;
@@ -18,13 +16,8 @@ import minicraft.screen.TitleDisplay;
 import org.jetbrains.annotations.Nullable;
 import org.tinylog.Logger;
 
-import javax.swing.*;
-import java.awt.*;
-import java.io.PrintWriter;
-import java.io.StringWriter;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.concurrent.Future;
 
 public class Game {
 	protected Game() {} // Can't instantiate the Game class.
@@ -72,36 +65,7 @@ public class Game {
 
 
 	public static void main(String[] args) {
-		Thread.setDefaultUncaughtExceptionHandler((thread, throwable) -> {
-			throwable.printStackTrace();
-
-			StringWriter string = new StringWriter();
-			PrintWriter printer = new PrintWriter(string);
-			throwable.printStackTrace(printer);
-
-			Future<HttpResponse<Empty>> ping = Analytics.Crashes.ping();
-
-			// Ensure ping finishes before program closes.
-			if (GraphicsEnvironment.isHeadless() && ping != null) {
-				try {
-					ping.get();
-				} catch (Exception ignored) {}
-				return;
-			}
-
-			JTextArea errorDisplay = new JTextArea(string.toString());
-			errorDisplay.setEditable(false);
-			JScrollPane errorPane = new JScrollPane(errorDisplay);
-			JOptionPane.showMessageDialog(null, errorPane, "An error has occurred", JOptionPane.ERROR_MESSAGE);
-
-			// Ensure ping finishes before program closes.
-			if (ping != null) {
-				try {
-					ping.get();
-				} catch (Exception ignored) {
-				}
-			}
-		});
+		Thread.setDefaultUncaughtExceptionHandler(CrashHandler::crashHandle);
 
 		Analytics.GameStartup.ping();
 

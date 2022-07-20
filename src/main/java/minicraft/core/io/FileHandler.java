@@ -9,6 +9,7 @@ import java.nio.file.Path;
 import java.nio.file.StandardCopyOption;
 import java.nio.file.attribute.BasicFileAttributes;
 
+import minicraft.core.CrashHandler;
 import minicraft.core.Game;
 import minicraft.saveload.Save;
 import org.tinylog.Logger;
@@ -52,7 +53,7 @@ public class FileHandler extends Game {
 			try {
 				copyFolderContents(oldFolder.toPath(), testFile.toPath(), RENAME_COPY, true);
 			} catch (IOException e) {
-				e.printStackTrace();
+				CrashHandler.errorHandle(e);
 			}
 		}
 
@@ -62,7 +63,7 @@ public class FileHandler extends Game {
 				try {
 					copyFolderContents(oldFolder.toPath(), testFile.toPath(), RENAME_COPY, true);
 				} catch (IOException e) {
-					e.printStackTrace();
+					CrashHandler.errorHandle(e);
 				}
 			}
 		}
@@ -111,8 +112,8 @@ public class FileHandler extends Game {
 				Path newFile = new File(newFilename).toPath();
 				try {
 					Files.copy(file, newFile, StandardCopyOption.REPLACE_EXISTING);
-				} catch(Exception ex) {
-					ex.printStackTrace();
+				} catch (IOException ex) {
+					CrashHandler.errorHandle(ex);
 				}
 				return FileVisitResult.CONTINUE;
 			}
