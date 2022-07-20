@@ -105,7 +105,7 @@ public class Initializer extends Game {
 			BufferedImage logo = ImageIO.read(Game.class.getResourceAsStream("/resources/logo.png")); // Load the window logo
 			frame.setIconImage(logo);
 		} catch (IOException e) {
-			e.printStackTrace();
+			CrashHandler.errorHandle(e);
 		}
 
 		frame.setLocationRelativeTo(null); // The window will pop up in the middle of the screen when launched.
@@ -149,8 +149,7 @@ public class Initializer extends Game {
 		String exceptionStr;
 		try {
 			exceptionStr = bytestream.toString("UTF-8");
-		}
-		catch(Exception ex) {
+		} catch (Exception ex) {
 			exceptionStr = "Unavailable";
 		}
 		return exceptionStr;
