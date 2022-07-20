@@ -1,5 +1,6 @@
-{
-  "minicraft.quest.stronger": {
+[
+  {
+    "id": "minicraft.quest.stronger",
     "desc": "minicraft.quest.stronger.desc",
     "leads_to": ["minicraft.quest.road_of_gem"],
     "quests": [
@@ -15,7 +16,8 @@
     ],
     "unlocked": true
   },
-  "minicraft.quest.road_of_gem": {
+  {
+    "id": "minicraft.quest.road_of_gem",
     "desc": "minicraft.quest.road_of_gem.desc",
     "quests": [
       {
@@ -42,4 +44,4 @@
       }
     }
   }
-}
+]

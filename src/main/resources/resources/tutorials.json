@@ -1,5 +1,6 @@
-{
-  "minicraft.quest.tutorial.get_started": {
+[
+  {
+    "id": "minicraft.quest.tutorial.get_started",
     "desc": "minicraft.quest.tutorial.get_started.desc",
     "leads_to": [],
     "quests": [
@@ -36,4 +37,4 @@
     ],
     "unlocked": true
   }
-}
+]
