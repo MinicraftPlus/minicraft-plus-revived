@@ -9,6 +9,8 @@ import java.awt.datatransfer.DataFlavor;
 import java.awt.datatransfer.UnsupportedFlavorException;
 import java.io.*;
 
+import minicraft.core.CrashHandler;
+
 public final class ClipboardHandler implements ClipboardOwner {
 
     @Override
@@ -36,8 +38,8 @@ public final class ClipboardHandler implements ClipboardOwner {
         if ((contents != null) && contents.isDataFlavorSupported(DataFlavor.stringFlavor)) {
             try {
                 result = (String) contents.getTransferData(DataFlavor.stringFlavor);
-            } catch (UnsupportedFlavorException | IOException ex){
-                ex.printStackTrace();
+            } catch (UnsupportedFlavorException | IOException ex) {
+				CrashHandler.errorHandle(ex);
             }
         }
 
