@@ -112,7 +112,7 @@ public class FileHandler extends Game {
 				Path newFile = new File(newFilename).toPath();
 				try {
 					Files.copy(file, newFile, StandardCopyOption.REPLACE_EXISTING);
-				} catch (Exception ex) {
+				} catch (IOException ex) {
 					CrashHandler.errorHandle(ex);
 				}
 				return FileVisitResult.CONTINUE;
