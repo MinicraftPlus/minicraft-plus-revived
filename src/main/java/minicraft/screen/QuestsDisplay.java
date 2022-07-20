@@ -62,14 +62,13 @@ public class QuestsDisplay extends Display {
 	}
 
 	private static void loadQuestFile(String filename, boolean tutorial) throws IOException {
-		JSONArray json = new JSONArray(String.join("", Load.loadFile(filename)));
-		for (int i = 0; i < json.length(); i++) {
-			loadSeries(json.getJSONObject(i), tutorial);
+		JSONObject json = new JSONObject(String.join("", Load.loadFile(filename)));
+		for (String id : json.keySet()) {
+			loadSeries(id, json.getJSONObject(id), tutorial);
 		}
 	}
 
-	private static void loadSeries(JSONObject json, boolean tutorial) {
-		String id = json.getString("id");
+	private static void loadSeries(String id, JSONObject json, boolean tutorial) {
 		boolean unlocked = json.optBoolean("unlocked", false); // Is unlocked initially
 		JSONArray unlocksJson = json.optJSONArray("leads_to");
 		JSONArray questsJson = json.getJSONArray("quests");
