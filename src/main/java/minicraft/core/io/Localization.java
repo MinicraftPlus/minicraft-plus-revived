@@ -20,6 +20,7 @@ import java.util.zip.ZipInputStream;
 
 import org.jetbrains.annotations.NotNull;
 
+import minicraft.core.CrashHandler;
 import minicraft.core.Game;
 import minicraft.screen.ResourcePackDisplay;
 
@@ -151,8 +152,7 @@ public class Localization {
 		} catch (JSONException e) {
 			// If it is the default locale, the game is too broken to run, so we should just quit.
 			if (selectedLocale == DEFAULT_LOCALE) {
-				Logger.error("The default locale contains broken json. Terminating...");
-				System.exit(1);
+				CrashHandler.crashHandle(e, new CrashHandler.ErrorInfo("Localization Could not be Loaded", CrashHandler.ErrorInfo.ErrorType.SERIOUS, "The default locale contains broken json."));
 			} else {
 				// If the default locale isn't loaded, retry with the default locale.
 				Logger.error("The locale we attempted to load contains invalid json. Retrying with default locale.");
@@ -199,7 +199,7 @@ public class Localization {
 
 				locStream = zipFile.getInputStream(localization);
 			} catch (IllegalStateException | IOException | NullPointerException e) {
-				e.printStackTrace();
+				CrashHandler.errorHandle(e);
 			}
 		}
 
@@ -257,7 +257,7 @@ public class Localization {
 				return;
 			}
 		} catch (IOException e) {
-			e.printStackTrace();
+			CrashHandler.errorHandle(e);
 			return;
 		}
 	}
@@ -289,7 +289,7 @@ public class Localization {
 				}
 			}
 		} catch (IOException | URISyntaxException e) {
-			e.printStackTrace();
+			CrashHandler.errorHandle(e);
 			return;
 		}
 	}
@@ -317,7 +317,7 @@ public class Localization {
 				// Convert language tag into locale.
 				Locale lang = Locale.forLanguageTag(data.substring(data.indexOf('_') + 1));
 
-				
+
 				localizationFiles.put(lang, path);
 			} catch (StringIndexOutOfBoundsException e) {
 				Logger.error("Title of localization file {} is invalid.", path);

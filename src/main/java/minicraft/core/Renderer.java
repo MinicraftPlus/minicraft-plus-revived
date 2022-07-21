@@ -12,6 +12,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 
+import minicraft.core.CrashHandler.ErrorInfo;
 import minicraft.core.io.Localization;
 import minicraft.core.io.Settings;
 import minicraft.entity.furniture.Bed;
@@ -73,15 +74,11 @@ public class Renderer extends Game {
 			skinsSheet = new SpriteSheet(ImageIO.read(Objects.requireNonNull(Game.class.getResourceAsStream("/resources/textures/skins.png"))));
 		} catch (NullPointerException e) {
 			// If a provided InputStream has no name. (in practice meaning it cannot be found.)
-			e.printStackTrace();
-			Logger.error("A sprite sheet was not found.");
-			System.exit(-1);
+			CrashHandler.crashHandle(e, new ErrorInfo("Sprite Sheet Not Found", ErrorInfo.ErrorType.UNEXPECTED, true, "A sprite sheet was not found."));
 			return null;
 		} catch (IOException | IllegalArgumentException e) {
 			// If there is an error reading the file.
-			e.printStackTrace();
-			Logger.error("Could not load a sprite sheet.");
-			System.exit(-1);
+			CrashHandler.crashHandle(e, new ErrorInfo("Sprite Sheet Could Not Be Loaded", ErrorInfo.ErrorType.UNEXPECTED, true, "Could not load a sprite sheet."));
 			return null;
 		}
 

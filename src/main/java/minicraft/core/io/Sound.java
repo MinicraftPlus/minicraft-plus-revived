@@ -14,6 +14,8 @@ import javax.sound.sampled.UnsupportedAudioFileException;
 
 import org.tinylog.Logger;
 
+import minicraft.core.CrashHandler;
+
 public class Sound {
 	// Creates sounds from their respective files
 	public static final Sound playerHurt = new Sound("/resources/sound/playerhurt.wav");
@@ -28,20 +30,20 @@ public class Sound {
 	public static final Sound place = new Sound("/resources/sound/craft.wav");
 	public static final Sound select = new Sound("/resources/sound/select.wav");
 	public static final Sound confirm = new Sound("/resources/sound/confirm.wav");
-	
+
 	private Clip clip; // Creates a audio clip to be played
-	
+
 	public static void init() {} // A way to initialize the class without actually doing anything
-	
+
 	private Sound(String name) {
 		try {
 			URL url = getClass().getResource(name);
-			
+
 			DataLine.Info info = new DataLine.Info(Clip.class, AudioSystem.getAudioFileFormat(url).getFormat());
-			
+
 			if (!AudioSystem.isLineSupported(info)) {
 				Logger.error("ERROR: Audio format of file " + name + " is not supported: " + AudioSystem.getAudioFileFormat(url));
-				
+
 				System.out.println("Supported audio formats:");
 				System.out.println("-source:");
 				Line.Info[] sinfo = AudioSystem.getSourceLineInfo(info);
@@ -65,38 +67,37 @@ public class Sound {
 							 System.out.println(af);
 					}
 				}
-				
+
 				return;
 			}
-			
+
 			clip = (Clip)AudioSystem.getLine(info);
 			clip.open(AudioSystem.getAudioInputStream(url));
-			
+
 			clip.addLineListener(e -> {
 				if (e.getType() == LineEvent.Type.STOP) {
 					clip.flush();
 					clip.setFramePosition(0);
 				}
 			});
-			
+
 		} catch (LineUnavailableException | UnsupportedAudioFileException | IOException e) {
-			Logger.error("Could not load sound file " + name);
-			e.printStackTrace();
+			CrashHandler.errorHandle(e, new CrashHandler.ErrorInfo("Sound file Could not Load", CrashHandler.ErrorInfo.ErrorType.REPORT, "Could not load sound file " + name));
 		}
 	}
-	
+
 	public void play() {
 		if (!(boolean)Settings.get("sound") || clip == null) return;
-		
+
 		if (clip.isRunning() || clip.isActive())
 			clip.stop();
-		
+
 		clip.start();
 	}
-	
+
 	public void loop(boolean start) {
 		if (!(boolean)Settings.get("sound") || clip == null) return;
-		
+
 		if (start)
 			clip.loop(Clip.LOOP_CONTINUOUSLY);
 		else
