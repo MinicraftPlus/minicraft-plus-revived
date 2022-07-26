@@ -1,9 +1,11 @@
 package minicraft.screen;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 import minicraft.core.Game;
 import minicraft.core.io.InputHandler;
+import minicraft.core.io.Settings;
 import minicraft.core.io.Sound;
 import minicraft.entity.mob.Player;
 import minicraft.gfx.Point;
@@ -21,12 +23,16 @@ public class CraftingDisplay extends Display {
 
 	private boolean isPersonalCrafter;
 
+	private static ArrayList<Recipe> lockedRecipes = new ArrayList<>();
+
 	public CraftingDisplay(List<Recipe> recipes, String title, Player player) { this(recipes, title, player, false); }
 	public CraftingDisplay(List<Recipe> recipes, String title, Player player, boolean isPersonal) {
 		for(Recipe recipe: recipes)
 			recipe.checkCanCraft(player);
 
 		this.isPersonalCrafter = isPersonal;
+
+		recipes = recipes.stream().filter(recipe -> !lockedRecipes.contains(recipe)).collect(Collectors.toList());
 
 		if(!isPersonal)
 			recipeMenu = new RecipeMenu(recipes, title, player);
@@ -52,6 +58,8 @@ public class CraftingDisplay extends Display {
 	}
 
 	private void refreshData() {
+		if (recipes.length == 0) return;
+
 		Menu prev = menus[2];
 		menus[2] = costsMenu
 			.setEntries(getCurItemCosts())
@@ -70,6 +78,8 @@ public class CraftingDisplay extends Display {
 
 	private ItemListing[] getCurItemCosts() {
 		ArrayList<ItemListing> costList = new ArrayList<>();
+		if (recipes.length == 0) return new ItemListing[0];
+
 		HashMap<String, Integer> costMap = recipes[recipeMenu.getSelection()].getCosts();
 		for(String itemName: costMap.keySet()) {
 			Item cost = Items.get(itemName);
@@ -98,14 +108,11 @@ public class CraftingDisplay extends Display {
 			if (selectedRecipe.getCanCraft()) {
 				if (selectedRecipe.getProduct().equals(Items.get("Workbench"))){
 					AchievementsDisplay.setAchievement("minicraft.achievement.benchmarking",true);
-				}
-				if (selectedRecipe.getProduct().equals(Items.get("Plank"))){
+				} else if (selectedRecipe.getProduct().equals(Items.get("Plank"))){
 					AchievementsDisplay.setAchievement("minicraft.achievement.planks",true);
-				}
-				if (selectedRecipe.getProduct().equals(Items.get("Wood Door"))){
+				} else if (selectedRecipe.getProduct().equals(Items.get("Wood Door"))){
 					AchievementsDisplay.setAchievement("minicraft.achievement.doors",true);
-				}
-				if (selectedRecipe.getProduct().equals(Items.get("Rock Sword")) ||
+				} else if (selectedRecipe.getProduct().equals(Items.get("Rock Sword")) ||
 						selectedRecipe.getProduct().equals(Items.get("Rock Pickaxe")) ||
 						selectedRecipe.getProduct().equals(Items.get("Rock Axe")) ||
 						selectedRecipe.getProduct().equals(Items.get("Rock Shovel")) ||
@@ -113,8 +120,7 @@ public class CraftingDisplay extends Display {
 						selectedRecipe.getProduct().equals(Items.get("Rock Bow")) ||
 						selectedRecipe.getProduct().equals(Items.get("Rock Claymore"))) {
 					AchievementsDisplay.setAchievement("minicraft.achievement.upgrade", true);
-				}
-				if (selectedRecipe.getProduct().equals(Items.get("blue clothes")) ||
+				} else if (selectedRecipe.getProduct().equals(Items.get("blue clothes")) ||
 						selectedRecipe.getProduct().equals(Items.get("green clothes")) ||
 						selectedRecipe.getProduct().equals(Items.get("yellow clothes")) ||
 						selectedRecipe.getProduct().equals(Items.get("black clothes")) ||
@@ -123,10 +129,6 @@ public class CraftingDisplay extends Display {
 						selectedRecipe.getProduct().equals(Items.get("cyan clothes")) ||
 						selectedRecipe.getProduct().equals(Items.get("reg clothes"))) {
 					AchievementsDisplay.setAchievement("minicraft.achievement.clothes", true);
-				}
-
-				if (((ToolItem) selectedRecipe.getProduct()).type.equals(ToolType.Sword)) {
-					QuestsDisplay.completeQuest("minicraft.quest.craft_first_sword");
 				}
 
 				selectedRecipe.craft(player);
@@ -139,5 +141,55 @@ public class CraftingDisplay extends Display {
 				}
 			}
 		}
+	}
+
+	public static void resetUnlocks() {
+		lockedRecipes.clear();
+		if ((boolean) Settings.get("tutorials") || (boolean) Settings.get("quests")) {
+			lockedRecipes.addAll(Recipes.anvilRecipes);
+			lockedRecipes.addAll(Recipes.ovenRecipes);
+			lockedRecipes.addAll(Recipes.furnaceRecipes);
+			lockedRecipes.addAll(Recipes.workbenchRecipes);
+			lockedRecipes.addAll(Recipes.enchantRecipes);
+			lockedRecipes.addAll(Recipes.craftRecipes);
+			lockedRecipes.addAll(Recipes.loomRecipes);
+
+			if (!(boolean) Settings.get("tutorials")) unlockLeft();
+		}
+	}
+
+	public static void unlockLeft() {
+		if ((boolean) Settings.get("quests")) {
+			List<Recipe> locks = List.of(
+				new Recipe("Gem Armor_1", "gem_65"),
+				new Recipe("Gem Sword_1", "Wood_5", "gem_50"),
+				new Recipe("Gem Claymore_1", "Gem Sword_1", "shard_15"),
+				new Recipe("Gem Axe_1", "Wood_5", "gem_50"),
+				new Recipe("Gem Hoe_1", "Wood_5", "gem_50"),
+				new Recipe("Gem Pickaxe_1", "Wood_5", "gem_50"),
+				new Recipe("Gem Shovel_1", "Wood_5", "gem_50"),
+				new Recipe("Gem Bow_1", "Wood_5", "gem_50", "string_2"),
+				new Recipe("Totem of Air_1", "gold_10", "gem_10", "Lapis_5","Cloud Ore_5")
+			);
+
+			for (Recipe recipe : new ArrayList<>(lockedRecipes)) {
+				if (!locks.contains(recipe)) {
+					lockedRecipes.remove(recipe);
+				}
+			}
+		} else lockedRecipes.clear();
+	}
+
+	public static void unlockRecipe(Recipe recipe) {
+		lockedRecipes.remove(recipe);
+	}
+
+	public static ArrayList<Recipe> getLockedRecipes() {
+		return new ArrayList<>(lockedRecipes);
+	}
+
+	public static void loadLockedRecipes(ArrayList<Recipe> recipes) {
+		lockedRecipes.clear();
+		lockedRecipes.addAll(recipes);
 	}
 }

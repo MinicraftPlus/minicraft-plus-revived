@@ -132,6 +132,7 @@ public class World extends Game {
 			player.findStartPos(level, seed); // Finds the start level for the player
 			level.add(player);
 			QuestsDisplay.resetGameQuests();
+			CraftingDisplay.resetUnlocks();
 		}
 
 		Renderer.readyToRenderGameplay = true;

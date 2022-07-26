@@ -224,6 +224,11 @@ public class Load {
 				AchievementsDisplay.setAchievement("minicraft.achievement.airwizard", true);
 			}
 		}
+
+		if (worldVer.compareTo(new Version("2.2.0-dev1")) >= 0) {
+			Settings.set("quests", Boolean.parseBoolean(data.remove(0)));
+			Settings.set("tutorials", Boolean.parseBoolean(data.remove(0)));
+		}
 	}
 
 	private void loadMode(String modedata) {
@@ -345,6 +350,7 @@ public class Load {
 		Settings.set("autosave", json.getBoolean("autosave"));
 		Settings.set("diff", json.has("diff") ? json.getString("diff") : "Normal");
 		Settings.set("fps", json.getInt("fps"));
+		Settings.set("showquests", json.optBoolean("showquests", true));
 
 		if (json.has("lang")) {
 			String lang = json.getString("lang");
@@ -496,42 +502,55 @@ public class Load {
 			}
 		}
 
-		if (new File(location+"Quests.json").exists()) {
-			try {
-				JSONObject questsObj = new JSONObject(loadFromFile(location + "Quests.json", true));
-				JSONArray unlockedQuests = questsObj.getJSONArray("unlocked");
-				JSONArray doneQuests = questsObj.getJSONArray("done");
-				JSONObject questData = questsObj.getJSONObject("data");
+		if ((boolean) Settings.get("quests") || (boolean) Settings.get("tutorials")) {
+			if (new File(location+"Quests.json").exists()) {
+				try {
+					JSONObject questsObj = new JSONObject(loadFromFile(location + "Quests.json", true));
+					JSONArray unlockedQuests = questsObj.getJSONArray("unlocked");
+					JSONArray doneQuests = questsObj.getJSONArray("done");
+					JSONObject questData = questsObj.getJSONObject("data");
+					JSONObject lockedRecipes = questsObj.getJSONObject("lockedRecipes");
 
-				Settings.setIdx("tutorials", questsObj.getInt("tutorials"));
+					ArrayList<String> unlocked = new ArrayList<>();
+					ArrayList<String> done = new ArrayList<>();
+					HashMap<String, String> questStatus = new HashMap<>();
+					ArrayList<Recipe> recipeLocks = new ArrayList<>();
 
-				ArrayList<String> unlocked = new ArrayList<>();
-				ArrayList<String> done = new ArrayList<>();
-				HashMap<String, String> questStatus = new HashMap<>();
+					for (int i = 0; i < unlockedQuests.length(); i++) {
+						unlocked.add(unlockedQuests.getString(i));
+					}
 
-				for (int i = 0; i < unlockedQuests.length(); i++) {
-					unlocked.add(unlockedQuests.getString(i));
+					for (int i = 0; i < doneQuests.length(); i++) {
+						done.add(doneQuests.getString(i));
+					}
+
+					for (String i : questData.keySet()) {
+						questStatus.put(i, questData.getString(i));
+					}
+
+					for (String i : lockedRecipes.keySet()) {
+						JSONArray costsJson = lockedRecipes.getJSONArray(i);
+						String[] costs = new String[costsJson.length()];
+						for (int j = 0; j < costsJson.length(); j++) {
+							costs[j] = costsJson.getString(j);
+						}
+
+						recipeLocks.add(new Recipe(i, costs));
+					}
+
+					QuestsDisplay.loadGameQuests(unlocked, done, questStatus);
+					CraftingDisplay.loadLockedRecipes(recipeLocks);
+
+				} catch (IOException e) {
+					e.printStackTrace();
+					Logger.error("Unable to load Quests.json, loading default quests instead.");
+					QuestsDisplay.resetGameQuests();
 				}
 
-				for (int i = 0; i < doneQuests.length(); i++) {
-					done.add(doneQuests.getString(i));
-				}
-
-				for (String i : questData.keySet()) {
-					questStatus.put(i, questData.getString(i));
-				}
-
-				QuestsDisplay.loadGameQuests(unlocked, done, questStatus);
-
-			} catch (IOException e) {
-				e.printStackTrace();
-				Logger.error("Unable to load Quests.json, loading default quests instead.");
+			} else {
+				Logger.debug("Quests.json not found, loading default quests instead.");
 				QuestsDisplay.resetGameQuests();
 			}
-
-		} else {
-			Logger.debug("Quests.json not found, loading default quests instead.");
-			QuestsDisplay.resetGameQuests();
 		}
 	}
 

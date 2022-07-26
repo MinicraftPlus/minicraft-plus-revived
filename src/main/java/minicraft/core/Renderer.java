@@ -12,6 +12,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 
+import minicraft.core.CrashHandler.ErrorInfo;
 import minicraft.core.io.Localization;
 import minicraft.core.io.Settings;
 import minicraft.entity.furniture.Bed;
@@ -34,8 +35,10 @@ import minicraft.screen.LoadingDisplay;
 import minicraft.screen.Menu;
 import minicraft.screen.QuestsDisplay;
 import minicraft.screen.RelPos;
+import minicraft.screen.entry.ListEntry;
 import minicraft.screen.entry.StringEntry;
 import minicraft.util.Quest;
+import minicraft.util.Quest.QuestSeries;
 
 import org.tinylog.Logger;
 
@@ -60,6 +63,8 @@ public class Renderer extends Game {
 
 	private static Ellipsis ellipsis = new SmoothEllipsis(new TickUpdater());
 
+	private static int potionRenderOffset = 0;
+
 	public static SpriteSheet[] loadDefaultSpriteSheets() {
 		SpriteSheet itemSheet, tileSheet, entitySheet, guiSheet, skinsSheet;
 		try {
@@ -71,15 +76,11 @@ public class Renderer extends Game {
 			skinsSheet = new SpriteSheet(ImageIO.read(Objects.requireNonNull(Game.class.getResourceAsStream("/resources/textures/skins.png"))));
 		} catch (NullPointerException e) {
 			// If a provided InputStream has no name. (in practice meaning it cannot be found.)
-			e.printStackTrace();
-			Logger.error("A sprite sheet was not found.");
-			System.exit(-1);
+			CrashHandler.crashHandle(e, new ErrorInfo("Sprite Sheet Not Found", ErrorInfo.ErrorType.UNEXPECTED, true, "A sprite sheet was not found."));
 			return null;
 		} catch (IOException | IllegalArgumentException e) {
 			// If there is an error reading the file.
-			e.printStackTrace();
-			Logger.error("Could not load a sprite sheet.");
-			System.exit(-1);
+			CrashHandler.crashHandle(e, new ErrorInfo("Sprite Sheet Could Not Be Loaded", ErrorInfo.ErrorType.UNEXPECTED, true, "Could not load a sprite sheet."));
 			return null;
 		}
 
@@ -241,7 +242,6 @@ public class Renderer extends Game {
 
 
 		// SCORE MODE ONLY:
-
 		if (isMode("score")) {
 			int seconds = (int)Math.ceil(Updater.scoreTime / (double)Updater.normSpeed);
 			int minutes = seconds / 60;
@@ -290,7 +290,7 @@ public class Renderer extends Game {
 					int minutes = pTime / 60;
 					int seconds = pTime % 60;
 					Font.drawBackground("("+input.getMapping("potionEffects")+" to hide!)", screen, 180, 9);
-					Font.drawBackground(pType + " (" + minutes + ":" + (seconds<10?"0"+seconds:seconds) + ")", screen, 180, 17 + i * Font.textHeight(), pType.dispColor);
+					Font.drawBackground(pType + " (" + minutes + ":" + (seconds<10?"0"+seconds:seconds) + ")", screen, 180, 17 + i * Font.textHeight() + potionRenderOffset, pType.dispColor);
 				}
 			} else {
 				for (int i = 0; i < effects.length; i++) {
@@ -344,30 +344,40 @@ public class Renderer extends Game {
 		}
 
 		renderQuestsDisplay();
-
 		renderDebugInfo();
 	}
 
 	private static void renderQuestsDisplay() {
-		ArrayList<String> undoneQuests = new ArrayList<>();
-		ArrayList<Quest> doneQuests = QuestsDisplay.getCompleteQuest();
+		if (!(boolean) Settings.get("showquests")) return;
+
+		boolean expanding = Game.player.questExpanding > 0;
+		int length = expanding ? 5 : 2;
+		ArrayList<ListEntry> questsShown = new ArrayList<>();
+		ArrayList<Quest> doneQuests = QuestsDisplay.getCompletedQuest();
 		HashMap<String, QuestsDisplay.QuestStatus> questStatus = QuestsDisplay.getStatusQuests();
 		for (Quest q : QuestsDisplay.getUnlockedQuests()) {
 			if (!doneQuests.contains(q)) {
-				undoneQuests.add(
-					Localization.getLocalized(q.id) + (questStatus.get(q.id) != null ? " | " + questStatus.get(q.id) : "")
+				QuestSeries series = q.getSeries();
+				questsShown.add(expanding?
+					new StringEntry(Localization.getLocalized(q.id) + " (" + QuestsDisplay.getSeriesQuestsCompleted(series) + "/" + series.getSeriesQuests().size() + ")" + (questStatus.get(q.id) != null ? " | " + questStatus.get(q.id) : ""), series.tutorial ? Color.CYAN : Color.WHITE):
+					new StringEntry(Localization.getLocalized(series.id) + " (" + QuestsDisplay.getSeriesQuestsCompleted(series) + "/" + series.getSeriesQuests().size() + ")", series.tutorial ? Color.CYAN : Color.WHITE)
 				);
 			}
 		}
 
-		new Menu.Builder(true, 0, RelPos.RIGHT)
-			.setPositioning(new Point(Screen.w - 9, 9), RelPos.BOTTOM_LEFT)
-			.setDisplayLength(undoneQuests.size() > 3 ? 3 : undoneQuests.size())
-			.setTitle("Quests")
-			.setSelectable(false)
-			.setEntries(StringEntry.useLines(undoneQuests.toArray(new String[0])))
-			.createMenu()
-			.render(screen);
+		if (questsShown.size() > 0) {
+			potionRenderOffset = 9 + (questsShown.size() > 3 ? 3 : questsShown.size()) * 8 + 8 * 2;
+			new Menu.Builder(true, 0, RelPos.RIGHT)
+				.setPositioning(new Point(Screen.w - 9, 9), RelPos.BOTTOM_LEFT)
+				.setDisplayLength(questsShown.size() > length ? length : questsShown.size())
+				.setTitle("Quests")
+				.setSelectable(false)
+				.setEntries(questsShown)
+				.createMenu()
+				.render(screen);
+		} else {
+			potionRenderOffset = 0;
+		}
 	}
 
 	private static void renderDebugInfo() {

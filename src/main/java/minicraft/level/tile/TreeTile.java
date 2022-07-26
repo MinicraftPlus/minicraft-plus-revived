@@ -112,7 +112,7 @@ public class TreeTile extends Tile {
 			level.dropItem(x * 16 +  8, y * 16 + 8, 0, 2, Items.get("Acorn"));
 			level.setTile(x, y, Tiles.get("Grass"));
 			AchievementsDisplay.setAchievement("minicraft.achievement.woodcutter", true);
-			QuestsDisplay.completeQuest("minicraft.quest.get_wood");
+			QuestsDisplay.questCompleted("minicraft.quest.tutorial.get_started.kill_tree");
 		} else {
 			level.setData(x, y, damage);
 		}

@@ -17,6 +17,7 @@ import minicraft.entity.particle.TextParticle;
 import minicraft.item.Inventory;
 import minicraft.item.Item;
 import minicraft.item.PotionType;
+import minicraft.item.Recipe;
 import minicraft.screen.*;
 import minicraft.util.Quest;
 
@@ -161,6 +162,8 @@ public class Save {
 		data.add(String.valueOf(Updater.gameTime));
 		data.add(String.valueOf(Settings.getIdx("diff")));
 		data.add(String.valueOf(AirWizard.beaten));
+		data.add(String.valueOf(Settings.get("quests")));
+		data.add(String.valueOf(Settings.get("tutorials")));
 		writeToFile(location + filename + extension, data);
 	}
 
@@ -179,6 +182,7 @@ public class Save {
 		json.put("savedUsername", MultiplayerDisplay.savedUsername);
 		json.put("keymap", new JSONArray(Game.input.getKeyPrefs()));
 		json.put("resourcePack", ResourcePackDisplay.getLoadedPack());
+		json.put("showquests", String.valueOf(Settings.get("showquests")));
 
 		// Save json
 		try {
@@ -235,34 +239,43 @@ public class Save {
 			writeToFile(location + filename + l + "data" + extension, data);
 		}
 
-		JSONObject fileObj = new JSONObject();
-		JSONArray unlockedQuests = new JSONArray();
-		JSONArray doneQuests = new JSONArray();
-		JSONObject questData = new JSONObject();
+		if ((boolean) Settings.get("quests") || (boolean) Settings.get("tutorials")) {
+			JSONObject fileObj = new JSONObject();
+			JSONArray unlockedQuests = new JSONArray();
+			JSONArray doneQuests = new JSONArray();
+			JSONObject questData = new JSONObject();
+			JSONObject lockedRecipes = new JSONObject();
 
-		for (Quest q : QuestsDisplay.getUnlockedQuests()) {
-			unlockedQuests.put(q.id);
-		}
+			for (Quest q : QuestsDisplay.getUnlockedQuests()) {
+				unlockedQuests.put(q.id);
+			}
 
-		for (Quest q : QuestsDisplay.getCompleteQuest()) {
-			doneQuests.put(q.id);
-		}
+			for (Quest q : QuestsDisplay.getCompletedQuest()) {
+				doneQuests.put(q.id);
+			}
 
-		for (Entry<String, QuestsDisplay.QuestStatus> e : QuestsDisplay.getStatusQuests().entrySet()) {
-			questData.put(e.getKey(), e.getValue().toQuestString());
-		}
+			for (Entry<String, QuestsDisplay.QuestStatus> e : QuestsDisplay.getStatusQuests().entrySet()) {
+				questData.put(e.getKey(), e.getValue().toQuestString());
+			}
 
-		fileObj.put("unlocked", unlockedQuests);
-		fileObj.put("done", doneQuests);
-		fileObj.put("data", questData);
-		fileObj.put("tutorials", Settings.getIdx("tutorials"));
+			for (Recipe recipe : CraftingDisplay.getLockedRecipes()) {
+				JSONArray costs = new JSONArray();
+				recipe.getCosts().forEach((c, i) -> costs.put(c + "_" + i));
+				lockedRecipes.put(recipe.getProduct().getName() + "_" + recipe.getAmount(), costs);
+			}
 
-		try {
-			writeJSONToFile(location + "Quests.json", fileObj.toString());
+			fileObj.put("unlocked", unlockedQuests);
+			fileObj.put("done", doneQuests);
+			fileObj.put("data", questData);
+			fileObj.put("lockedRecipes", lockedRecipes);
 
-		} catch (IOException e1) {
-			e1.printStackTrace();
-			Logger.error("Unable to write Quests.json.");
+			try {
+				writeJSONToFile(location + "Quests.json", fileObj.toString());
+
+			} catch (IOException e1) {
+				e1.printStackTrace();
+				Logger.error("Unable to write Quests.json.");
+			}
 		}
 	}
 

@@ -88,7 +88,7 @@ public class WorldGenDisplay extends Display {
 		HashSet<String> controls = new HashSet<>();
 		controls.addAll(Arrays.asList(Game.input.getMapping("cursor-up").split("/")));
 		controls.addAll(Arrays.asList(Game.input.getMapping("cursor-down").split("/")));
-		for(String key: controls) {
+		for (String key: controls) {
 			if(key.matches("^\\w$")) {
 				nameHelp.setVisible(true);
 				break;
@@ -121,6 +121,7 @@ public class WorldGenDisplay extends Display {
 				Settings.getEntry("size"),
 				Settings.getEntry("theme"),
 				Settings.getEntry("type"),
+				Settings.getEntry("quests"),
 				Settings.getEntry("tutorials"),
 				worldSeed
 			)

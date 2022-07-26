@@ -3,6 +3,7 @@ package minicraft.level.tile;
 import java.util.ArrayList;
 import java.util.HashMap;
 
+import minicraft.core.CrashHandler;
 import minicraft.level.tile.farming.FarmTile;
 import minicraft.level.tile.farming.PotatoTile;
 import minicraft.level.tile.farming.WheatTile;
@@ -11,11 +12,11 @@ import org.tinylog.Logger;
 public final class Tiles {
 	/// Idea: to save tile names while saving space, I could encode the names in base 64 in the save file...^M
     /// Then, maybe, I would just replace the id numbers with id names, make them all private, and then make a get(String) method, parameter is tile name.
-	
+
 	public static ArrayList<String> oldids = new ArrayList<>();
-	
+
 	private static HashMap<Short, Tile> tiles = new HashMap<>();
-	
+
 	public static void initTileList() {
 		Logger.debug("Initializing tile list...");
 
@@ -71,13 +72,13 @@ public final class Tiles {
 
 		// WARNING: don't use this tile for anything!
 		tiles.put((short)255, new ConnectTile());
-		
+
 		for(short i = 0; i < 256; i++) {
 			if(tiles.get(i) == null) continue;
 			tiles.get(i).id = (short)i;
 		}
 	}
-	
+
 
 	protected static void add(int id, Tile tile) {
 		tiles.put((short)id, tile);
@@ -88,7 +89,7 @@ public final class Tiles {
 	static {
 		for(int i = 0; i < 32768; i++)
 			oldids.add(null);
-		
+
 		oldids.set(0, "grass");
 		oldids.set(1, "rock");
 		oldids.set(2, "water");
@@ -133,7 +134,7 @@ public final class Tiles {
 		oldids.set(21, "gem Ore");
 		oldids.set(22, "cloud Cactus");
 		oldids.set(16, "infinite Fall");
-		
+
 		// Light/torch versions, for compatibility with before 1.9.4-dev3. (were removed in making dev3)
 		oldids.set(100, "grass");
 		oldids.set(101, "sand");
@@ -162,7 +163,7 @@ public final class Tiles {
 		oldids.set(63, "Obsidian");
 		oldids.set(64, "tree Sapling");
 		oldids.set(65, "cactus Sapling");
-		
+
 		oldids.set(44, "torch grass");
 		oldids.set(40, "torch sand");
 		oldids.set(46, "torch dirt");
@@ -176,24 +177,23 @@ public final class Tiles {
 		oldids.set(54, "torch yellow wool");
 		oldids.set(55, "torch black wool");
 	}
-	
+
 	private static int overflowCheck = 0;
 	public static Tile get(String name) {
 		//System.out.println("Getting from tile list: " + name);
-		
+
 		name = name.toUpperCase();
-		
+
 		overflowCheck++;
-		
+
 		if(overflowCheck > 50) {
-			System.out.println("STACKOVERFLOW prevented in Tiles.get(), on: " + name);
-			System.exit(1);
+			CrashHandler.crashHandle(new StackOverflowError("Tiles#get: " + name), new CrashHandler.ErrorInfo("Tile fetching Stacking", CrashHandler.ErrorInfo.ErrorType.SERIOUS, "STACKOVERFLOW prevented in Tiles.get(), on: " + name));
 		}
-		
+
 		//System.out.println("Fetching tile " + name);
-		
+
 		Tile getting = null;
-		
+
 		boolean isTorch = false;
 		if(name.startsWith("TORCH")) {
 			isTorch = true;
@@ -211,16 +211,16 @@ public final class Tiles {
 				break;
 			}
 		}
-		
+
 		if(getting == null) {
 			System.out.println("TILES.GET: Invalid tile requested: " + name);
 			getting = tiles.get((short)0);
 		}
-		
+
 		if(isTorch) {
 			getting = TorchTile.getTorchTile(getting);
 		}
-		
+
 		overflowCheck = 0;
 		return getting;
 	}
@@ -240,11 +240,11 @@ public final class Tiles {
 			return tiles.get((short)0);
 		}
 	}
-	
+
 	public static boolean containsTile(int id) {
 		return tiles.get((short)id) != null;
 	}
-	
+
 	public static String getName(String descriptName) {
 		if(!descriptName.contains("_")) return descriptName;
 		int data;
