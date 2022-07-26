@@ -89,6 +89,7 @@ public class Player extends Mob implements ItemHolder, ClientTickable {
 	public boolean showpotioneffects; // Whether to display the current potion effects on screen
 	public boolean simpPotionEffects;
 	public boolean renderGUI;
+	public int questExpanding; // Lets the display keeps expanded.
 	private int cooldowninfo; // Prevents you from toggling the info pane on and off super fast.
 	private int regentick; // Counts time between each time the regen potion effect heals you.
 
@@ -144,6 +145,7 @@ public class Player extends Mob implements ItemHolder, ClientTickable {
 
 		cooldowninfo = 0;
 		regentick = 0;
+		questExpanding = 0;
 
 		attackDir = dir;
 		armor = 0;
@@ -245,6 +247,7 @@ public class Player extends Mob implements ItemHolder, ClientTickable {
 		}
 
 		if (cooldowninfo > 0) cooldowninfo--;
+		if (questExpanding > 0) questExpanding--;
 
 		if (input.getKey("potionEffects").clicked && cooldowninfo == 0) {
 			cooldowninfo = 10;
@@ -257,6 +260,10 @@ public class Player extends Mob implements ItemHolder, ClientTickable {
 
 		if (input.getKey("hideGUI").clicked) {
 			renderGUI = !renderGUI;
+		}
+
+		if (input.getKey("expandQuestDisplay").clicked) {
+			questExpanding = 30;
 		}
 
 		Tile onTile = level.getTile(x >> 4, y >> 4); // Gets the current tile the player is on.

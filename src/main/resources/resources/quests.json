@@ -1,23 +1,45 @@
-[
-    {
-        "id": "minicraft.quest.get_wood",
-        "desc": "minicraft.quest.get_wood.desc",
-        "unlocks": ["minicraft.quest.craft_first_sword"],
-        "unlocked": true
-    },
-    {
-        "id": "minicraft.quest.kill",
-        "desc": "minicraft.quest.kill.desc",
-        "unlocks": ["minicraft.quest.find_npc"]
-    },
-    {
-        "id": "minicraft.quest.craft_first_sword",
-        "desc": "minicraft.quest.craft_first_sword.desc",
-        "unlocks": ["minicraft.quest.kill"]
-    },
-    {
-        "id": "minicraft.quest.find_npc",
-        "desc": "minicraft.quest.find_npc.desc",
-        "unlocks": []
+{
+  "minicraft.quest.stronger": {
+    "desc": "minicraft.quest.stronger.desc",
+    "leads_to": ["minicraft.quest.road_of_gem"],
+    "quests": [
+      {
+        "id": "minicraft.quest.stronger.iron_armor",
+        "desc": "minicraft.quest.stronger.iron_armor.desc",
+        "leads_to": ["minicraft.quest.stronger.first_potion"]
+      },
+      {
+        "id": "minicraft.quest.stronger.first_potion",
+        "desc": "minicraft.quest.stronger.first_potion.desc"
+      }
+    ],
+    "unlocked": true
+  },
+  "minicraft.quest.road_of_gem": {
+    "desc": "minicraft.quest.road_of_gem.desc",
+    "quests": [
+      {
+        "id": "minicraft.quest.road_of_gem.get_gem",
+        "desc": "minicraft.quest.road_of_gem.get_gem.desc",
+        "leads_to": ["minicraft.quest.road_of_gem.gem_armor"]
+      },
+      {
+        "id": "minicraft.quest.road_of_gem.gem_armor",
+        "desc": "minicraft.quest.road_of_gem.gem_armor.desc"
+      }
+    ],
+    "rewards": {
+      "recipes": {
+        "Gem Armor_1": ["gem_65"],
+        "Gem Sword_1": ["Wood_5", "gem_50"],
+        "Gem Claymore_1": ["Gem Sword_1", "shard_15"],
+        "Gem Axe_1": ["Wood_5", "gem_50"],
+        "Gem Hoe_1": ["Wood_5", "gem_50"],
+        "Gem Pickaxe_1": ["Wood_5", "gem_50"],
+        "Gem Shovel_1": ["Wood_5", "gem_50"],
+        "Gem Bow_1": ["Wood_5", "gem_50", "string_2"],
+        "Totem of Air_1": ["gold_10", "gem_10", "Lapis_5","Cloud Ore_5"]
+      }
     }
-]
+  }
+}
