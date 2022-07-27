@@ -70,7 +70,7 @@ public class ContainerDisplay extends Display {
 
 			Item fromItem = from.get(fromSel);
 
-			boolean transferAll = !(fromItem instanceof StackableItem) || ((StackableItem)fromItem).count == 1;
+			boolean transferAll = input.getKey("attack").clicked || !(fromItem instanceof StackableItem) || ((StackableItem)fromItem).count == 1;
 
 			Item toItem = fromItem.clone();
 
