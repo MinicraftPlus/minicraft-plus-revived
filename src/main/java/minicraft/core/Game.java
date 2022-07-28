@@ -16,7 +16,6 @@ import minicraft.screen.TitleDisplay;
 import minicraft.util.Logging;
 
 import org.jetbrains.annotations.Nullable;
-import org.tinylog.Logger;
 
 import java.util.ArrayList;
 import java.util.List;

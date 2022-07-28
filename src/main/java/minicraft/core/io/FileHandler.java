@@ -14,8 +14,6 @@ import minicraft.core.Game;
 import minicraft.saveload.Save;
 import minicraft.util.Logging;
 
-import org.tinylog.Logger;
-
 public class FileHandler extends Game {
 	private FileHandler() {}
 
@@ -94,7 +92,7 @@ public class FileHandler extends Game {
 
 	public static void copyFolderContents(Path origFolder, Path newFolder, int ifExisting, boolean deleteOriginal) throws IOException {
 		// I can determine the local folder structure with origFolder.relativize(file), then use newFolder.resolve(relative).
-		Logging.GAMEHANDLER.info("Copying contents of folder " + origFolder + " to new folder " + newFolder);
+		Logging.RESOURCEHANDLER.info("Copying contents of folder " + origFolder + " to new folder " + newFolder);
 
 		Files.walkFileTree(origFolder, new FileVisitor<Path>() {
 			public FileVisitResult visitFile(Path file, BasicFileAttributes attr) {

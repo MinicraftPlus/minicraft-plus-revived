@@ -1,7 +1,6 @@
 package minicraft.util;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 
 import minicraft.core.Action;
 import minicraft.item.Item;

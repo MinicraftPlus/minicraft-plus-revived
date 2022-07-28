@@ -17,11 +17,12 @@ import minicraft.level.Level;
 import minicraft.level.tile.Tiles;
 import minicraft.network.Network;
 import minicraft.screen.*;
+import minicraft.util.Logging;
+
 import org.jetbrains.annotations.Nullable;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
-import org.tinylog.Logger;
 
 import java.io.*;
 import java.util.ArrayList;
@@ -98,12 +99,12 @@ public class Load {
 		// Check if Preferences.miniplussave exists. (old version)
 		} else if (new File(location + "Preferences" + extension).exists()) {
 			loadPrefsOld("Preferences");
-			Logger.info("Upgrading preferences to JSON.");
+			Logging.SAVELOAD.info("Upgrading preferences to JSON.");
 			resave = true;
 
 		// No preferences file found.
 		} else {
-			Logger.warn("No preferences found, creating new file.");
+			Logging.SAVELOAD.warn("No preferences found, creating new file.");
 			resave = true;
 		}
 
@@ -117,16 +118,16 @@ public class Load {
 				if (testFileOld.renameTo(testFile)) {
 					new LegacyLoad(testFile);
 				} else {
-					Logger.info("Failed to rename unlocks to Unlocks; loading old version.");
+					Logging.SAVELOAD.info("Failed to rename unlocks to Unlocks; loading old version.");
 					new LegacyLoad(testFileOld);
 				}
 			}
 
 			loadUnlocksOld("Unlocks");
 			resave = true;
-			Logger.info("Upgrading unlocks to JSON.");
+			Logging.SAVELOAD.info("Upgrading unlocks to JSON.");
 		} else {
-			Logger.warn("No unlocks found, creating new file.");
+			Logging.SAVELOAD.warn("No unlocks found, creating new file.");
 			resave = true;
 		}
 
@@ -222,7 +223,7 @@ public class Load {
 		// Check if the AirWizard was beaten in versions prior to 2.1.0
 		if (worldVer.compareTo(new Version("2.1.0-dev2")) < 0) {
 			if (AirWizard.beaten) {
-				Logger.debug("AirWizard was beaten in an old version, giving achievement...");
+				Logging.SAVELOAD.debug("AirWizard was beaten in an old version, giving achievement...");
 				AchievementsDisplay.setAchievement("minicraft.achievement.airwizard", true);
 			}
 		}
@@ -433,7 +434,7 @@ public class Load {
 						if (Tiles.oldids.get(tileID) != null)
 							tilename = Tiles.oldids.get(tileID);
 						else {
-							Logger.warn("Tile list doesn't contain tile " + tileID);
+							Logging.SAVELOAD.warn("Tile list doesn't contain tile " + tileID);
 							tilename = "grass";
 						}
 					}
@@ -545,12 +546,12 @@ public class Load {
 
 				} catch (IOException e) {
 					e.printStackTrace();
-					Logger.error("Unable to load Quests.json, loading default quests instead.");
+					Logging.SAVELOAD.error("Unable to load Quests.json, loading default quests instead.");
 					QuestsDisplay.resetGameQuests();
 				}
 
 			} else {
-				Logger.debug("Quests.json not found, loading default quests instead.");
+				Logging.SAVELOAD.debug("Quests.json not found, loading default quests instead.");
 				QuestsDisplay.resetGameQuests();
 			}
 		}
@@ -597,7 +598,7 @@ public class Load {
 		if(level != null)
 			level.add(player);
 		else
-			Logger.trace("Game level to add player {} to is null.", player);
+			Logging.SAVELOAD.trace("Game level to add player {} to is null.", player);
 
 		if (worldVer.compareTo(new Version("2.0.4-dev8")) < 0) {
 			String modedata = data.remove(0);
@@ -684,7 +685,7 @@ public class Load {
 
 		for (String item : data) {
 			if (item.length() == 0) {
-				Logger.error("loadInventory: Item in data list is \"\", skipping item");
+				Logging.SAVELOAD.error("loadInventory: Item in data list is \"\", skipping item");
 				continue;
 			}
 
@@ -771,7 +772,7 @@ public class Load {
 			}
 		} else {
 			int mobLvl = 1;
-			Class c = null;
+			Class<?> c = null;
 			if (!Crafter.names.contains(entityName)) {
 				try {
 					c = Class.forName("minicraft.entity.mob." + entityName);
@@ -793,7 +794,7 @@ public class Load {
 			Mob mob = (Mob)newEntity;
 			mob.health = Integer.parseInt(info.get(2));
 
-			Class c = null;
+			Class<?> c = null;
 			try {
 				c = Class.forName("minicraft.entity.mob." + entityName);
 			} catch (ClassNotFoundException e) {
@@ -887,7 +888,7 @@ public class Load {
 
 		newEntity.eid = eid; // This will be -1 unless set earlier, so a new one will be generated when adding it to the level.
 		if (newEntity instanceof ItemEntity && eid == -1)
-			Logger.warn("Item entity was loaded with no eid");
+			Logging.SAVELOAD.warn("Item entity was loaded with no eid");
 
 		int curLevel = Integer.parseInt(info.get(info.size()-1));
 		if (World.levels[curLevel] != null) {
@@ -932,7 +933,7 @@ public class Load {
 			case "FireParticle": return new FireParticle(0, 0);
 			case "SmashParticle": return new SmashParticle(0, 0);
 			case "TextParticle": return new TextParticle("", 0, 0, 0);
-			default : Logger.error("LOAD ERROR: Unknown or outdated entity requested: " + string);
+			default : Logging.SAVELOAD.error("LOAD ERROR: Unknown or outdated entity requested: " + string);
 				return null;
 		}
 	}

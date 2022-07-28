@@ -12,7 +12,6 @@ import org.jetbrains.annotations.Nullable;
 import minicraft.core.Game;
 import minicraft.core.io.Settings;
 import minicraft.level.tile.Tiles;
-import minicraft.screen.WorldGenDisplay;
 
 public class LevelGen {
 	private static long worldSeed = 0;

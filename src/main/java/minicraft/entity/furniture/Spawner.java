@@ -66,7 +66,7 @@ public class Spawner extends Furniture {
 	 * @param c The class.
 	 * @return String representation of the classname.
 	 */
-	private static String getClassName(Class c) {
+	private static String getClassName(Class<?> c) {
 		String fullName = c.getCanonicalName();
 		return fullName.substring(fullName.lastIndexOf(".")+1);
 	}
@@ -112,7 +112,7 @@ public class Spawner extends Furniture {
 			else
 				newmob = mob.getClass().getDeclaredConstructor().newInstance();
 		} catch (Exception ex) {
-			Logger.error("Spawner ERROR: could not spawn mob; error initializing mob instance:");
+			Logger.tag("Spawner").error("Spawner ERROR: could not spawn mob; error initializing mob instance:");
 			ex.printStackTrace();
 			return;
 		}

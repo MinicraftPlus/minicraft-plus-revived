@@ -15,8 +15,6 @@ import minicraft.screen.PlayerDeathDisplay;
 import minicraft.screen.WorldSelectDisplay;
 import minicraft.util.Logging;
 
-import org.tinylog.Logger;
-
 import java.awt.*;
 
 public class Updater extends Game {

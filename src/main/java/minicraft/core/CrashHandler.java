@@ -22,7 +22,6 @@ import javax.swing.UIManager;
 import javax.swing.WindowConstants;
 
 import org.jetbrains.annotations.Nullable;
-import org.tinylog.Logger;
 
 import kong.unirest.Empty;
 import kong.unirest.HttpResponse;
