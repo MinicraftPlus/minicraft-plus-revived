@@ -12,7 +12,6 @@ import minicraft.saveload.Save;
 import minicraft.screen.EndGameDisplay;
 import minicraft.screen.LevelTransitionDisplay;
 import minicraft.screen.PlayerDeathDisplay;
-import minicraft.screen.QuestsDisplay;
 import minicraft.screen.WorldSelectDisplay;
 import org.tinylog.Logger;
 
@@ -222,7 +221,6 @@ public class Updater extends Game {
 					String prevMode = (String)Settings.get("mode");
 					if (input.getKey("creative").clicked) {
 						Settings.set("mode", "creative");
-						Items.fillCreativeInv(player.getInventory(), false);
 					}
 					if (input.getKey("survival").clicked) Settings.set("mode", "survival");
 					if (input.getKey("shift-t").clicked) Settings.set("mode", "score");
@@ -243,11 +241,6 @@ public class Updater extends Game {
 						if (gamespeed > 1) gamespeed--;
 						else if (normSpeed*gamespeed > 5) gamespeed /= 2;
 					}
-
-
-					// Client-only cheats, since they are player-specific.
-					if (input.getKey("shift-g").clicked) // This should not be needed, since the inventory should not be altered.
-						Items.fillCreativeInv(player.getInventory());
 
 					if (input.getKey("ctrl-h").clicked) player.health--;
 					if (input.getKey("ctrl-b").clicked) player.hunger--;

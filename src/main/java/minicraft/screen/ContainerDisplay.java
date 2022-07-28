@@ -54,7 +54,7 @@ public class ContainerDisplay extends Display {
 		Menu curMenu = menus[selection];
 		int otherIdx = getOtherIdx();
 
-		if((input.getKey("attack").clicked || input.getKey("drop-one").clicked)) {
+		if((input.getKey("attack").clicked)) {
 			// switch inventories
 			Inventory from, to;
 			if(selection == 0) {

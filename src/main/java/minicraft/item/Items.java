@@ -121,12 +121,15 @@ public class Items {
 		}
 	}
 
-	public static void fillCreativeInv(Inventory inv) { fillCreativeInv(inv, true); }
-	public static void fillCreativeInv(Inventory inv, boolean addAll) {
-		for (Item item: items) {
-			if (item instanceof PowerGloveItem) continue;
-			if (addAll || inv.count(item) == 0)
-				inv.add(item.clone(), false);
+	public static CreativeModeInventory getCreativeModeInventory() {
+		return new CreativeModeInventory();
+	}
+
+	public static class CreativeModeInventory extends Inventory {
+		CreativeModeInventory() {
+			items.forEach(i -> {
+				if (!(i instanceof PowerGloveItem)) add(i.clone());
+			});
 		}
 	}
 }

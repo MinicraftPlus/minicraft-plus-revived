@@ -89,6 +89,7 @@ public class Player extends Mob implements ItemHolder, ClientTickable {
 	public boolean showpotioneffects; // Whether to display the current potion effects on screen
 	public boolean simpPotionEffects;
 	public boolean renderGUI;
+	public int questExpanding; // Lets the display keeps expanded.
 	private int cooldowninfo; // Prevents you from toggling the info pane on and off super fast.
 	private int regentick; // Counts time between each time the regen potion effect heals you.
 
@@ -108,35 +109,7 @@ public class Player extends Mob implements ItemHolder, ClientTickable {
 		y = 24;
 		this.input = input;
 		// Since this implementation will be deleted by Better Creative Mode Inventory might not implemented correctly
-		inventory = new Inventory() {
-
-			@Override
-			public int add(int idx, Item item, boolean invLimit) {
-				if (Game.isMode("creative")) {
-					if (count(item) > 0) return 0;
-					item = item.clone();
-					if (item instanceof StackableItem)
-						((StackableItem)item).count = 1;
-				}
-				return super.add(idx, item, invLimit);
-			}
-
-			@Override
-			public Item remove(int idx) {
-				if (Game.isMode("creative")) {
-					Item cur = get(idx);
-					if (cur instanceof StackableItem)
-						((StackableItem)cur).count = 1;
-					if (count(cur) == 1) {
-						super.remove(idx);
-						super.add(0, cur, true);
-						return cur.clone();
-					}
-				}
-				return super.remove(idx);
-			}
-		};
-
+		inventory = new Inventory();
 
 		potioneffects = new HashMap<>();
 		showpotioneffects = true;
@@ -145,6 +118,7 @@ public class Player extends Mob implements ItemHolder, ClientTickable {
 
 		cooldowninfo = 0;
 		regentick = 0;
+		questExpanding = 0;
 
 		attackDir = dir;
 		armor = 0;
@@ -155,9 +129,6 @@ public class Player extends Mob implements ItemHolder, ClientTickable {
 
 		hungerStamCnt = maxHungerStams[Settings.getIdx("diff")];
 		stamHungerTicks = maxHungerTicks;
-
-		if (Game.isMode("creative"))
-			Items.fillCreativeInv(inventory);
 
 		if (previousInstance != null) {
 			spawnx = previousInstance.spawnx;
@@ -246,6 +217,7 @@ public class Player extends Mob implements ItemHolder, ClientTickable {
 		}
 
 		if (cooldowninfo > 0) cooldowninfo--;
+		if (questExpanding > 0) questExpanding--;
 
 		if (input.getKey("potionEffects").clicked && cooldowninfo == 0) {
 			cooldowninfo = 10;
@@ -258,6 +230,10 @@ public class Player extends Mob implements ItemHolder, ClientTickable {
 
 		if (input.getKey("hideGUI").clicked) {
 			renderGUI = !renderGUI;
+		}
+
+		if (input.getKey("expandQuestDisplay").clicked) {
+			questExpanding = 30;
 		}
 
 		Tile onTile = level.getTile(x >> 4, y >> 4); // Gets the current tile the player is on.
@@ -416,7 +392,7 @@ public class Player extends Mob implements ItemHolder, ClientTickable {
 					// Drop one from stack
 					((StackableItem)activeItem).count--;
 					((StackableItem)drop).count = 1;
-				} else if (!Game.isMode("creative")) {
+				} else {
 					activeItem = null; // Remove it from the "inventory"
 				}
 
@@ -493,7 +469,7 @@ public class Player extends Mob implements ItemHolder, ClientTickable {
 	 */
 	public void resolveHeldItem() {
 		if (!(activeItem instanceof PowerGloveItem)) { // If you are now holding something other than a power glove...
-			if (prevItem != null && !Game.isMode("creative")) { // and you had a previous item that we should care about...
+			if (prevItem != null) { // and you had a previous item that we should care about...
 				int returned = inventory.add(0, prevItem, true); // Then add that previous item to your inventory so it isn't lost.
 				if (prevItem instanceof StackableItem) {
 					if (returned < ((StackableItem)prevItem).count) {
@@ -528,7 +504,7 @@ public class Player extends Mob implements ItemHolder, ClientTickable {
 			attackDir = dir; // Make the attack direction equal the current direction
 			attackItem = activeItem; // Make attackItem equal activeItem
 			activeItem.interactOn(Tiles.get("rock"), level, 0, 0, this, attackDir);
-			if (!Game.isMode("creative") && activeItem.isDepleted()) {
+			if (activeItem.isDepleted()) {
 				activeItem = null;
 			}
 			return;
@@ -547,7 +523,7 @@ public class Player extends Mob implements ItemHolder, ClientTickable {
 				ToolItem tool = (ToolItem) activeItem;
 				if (tool.type == ToolType.Bow && tool.dur > 0 && inventory.count(Items.arrowItem) > 0) {
 
-					if (!Game.isMode("creative")) inventory.removeItem(Items.arrowItem);
+					inventory.removeItem(Items.arrowItem);
 					level.add(new Arrow(this, attackDir, tool.level));
 					attackTime = 10;
 
@@ -585,7 +561,7 @@ public class Player extends Mob implements ItemHolder, ClientTickable {
 					}
 				}
 
-				if (!Game.isMode("creative") && activeItem.isDepleted()) {
+				if (activeItem.isDepleted()) {
 					// If the activeItem has 0 items left, then "destroy" it.
 					activeItem = null;
 				}

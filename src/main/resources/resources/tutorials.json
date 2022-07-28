@@ -1,0 +1,39 @@
+{
+  "minicraft.quest.tutorial.get_started": {
+    "desc": "minicraft.quest.tutorial.get_started.desc",
+    "leads_to": [],
+    "quests": [
+      {
+        "id": "minicraft.quest.tutorial.get_started.kill_tree",
+        "desc": "minicraft.quest.tutorial.get_started.kill_tree.desc",
+        "leads_to": ["minicraft.quest.tutorial.get_started.craft_wooden_axe"],
+        "reward": {
+          "recipes": {
+            "Workbench_1": ["Wood_10"],
+            "Wood Axe_1": ["Wood_5"]
+          }
+        }
+      },
+      {
+        "id": "minicraft.quest.tutorial.get_started.craft_wooden_axe",
+        "desc": "minicraft.quest.tutorial.get_started.craft_wooden_axe.desc",
+        "leads_to": ["minicraft.quest.tutorial.get_started.craft_wooden_pickaxe"]
+      },
+      {
+        "id": "minicraft.quest.tutorial.get_started.craft_wooden_pickaxe",
+        "desc": "minicraft.quest.tutorial.get_started.craft_wooden_pickaxe.desc",
+        "leads_to": ["minicraft.quest.tutorial.get_started.break_rocks"],
+        "reward": {
+          "recipes": {
+            "Wood Pickaxe_1": ["Wood_5"]
+          }
+        }
+      },
+      {
+        "id": "minicraft.quest.tutorial.get_started.break_rocks",
+        "desc": "minicraft.quest.tutorial.get_started.break_rocks.desc"
+      }
+    ],
+    "unlocked": true
+  }
+}
