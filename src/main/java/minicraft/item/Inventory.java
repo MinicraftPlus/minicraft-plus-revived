@@ -11,7 +11,9 @@ import minicraft.entity.furniture.Furniture;
 public class Inventory {
 	private final Random random = new Random();
 	private final List<Item> items = new ArrayList<>(); // The list of items that is in the inventory.
-	private final int maxItem = 27;
+
+	protected int maxItem = 27;
+	protected boolean unlimited = false;
 
 	/**
 	 * Returns all the items which are in this inventory.
@@ -36,9 +38,9 @@ public class Inventory {
 	public Item remove(int idx) { return items.remove(idx); }
 
 	/** Adds an item to the inventory */
-	public int add(@Nullable Item item, boolean invLimit) {
+	public int add(@Nullable Item item) {
 		if (item != null)
-			return add(items.size(), item, invLimit);  // Adds the item to the end of the inventory list
+			return add(items.size(), item);  // Adds the item to the end of the inventory list
 		return 0;
 	}
 
@@ -47,10 +49,10 @@ public class Inventory {
 	 * @param item Item to be added.
 	 * @param num Amount of items to add.
 	 */
-	public int add(Item item, int num, boolean invLimit) {
+	public int add(Item item, int num) {
 		int total = 0;
 		for (int i = 0; i < num; i++)
-			total += add(item.clone(), invLimit);
+			total += add(item.clone());
 		return total;
 	}
 
@@ -59,7 +61,7 @@ public class Inventory {
 	 * @param slot Index to place item at.
 	 * @param item Item to be added.
 	 */
-	public int add(int slot, Item item, boolean invLimit) {
+	public int add(int slot, Item item) {
 
 		// Do not add to inventory if it is a PowerGlove
 		if (item instanceof PowerGloveItem) {
@@ -76,7 +78,7 @@ public class Inventory {
 				if (toTake.stacksWith(value)) {
 					StackableItem stack = (StackableItem) value;
 
-					if (invLimit) {
+					if (!unlimited) {
 						if (stack.count < stack.maxCount) {
 							int r = stack.maxCount - stack.count;
 							if (r >= toTake.count) {
@@ -95,7 +97,7 @@ public class Inventory {
 				}
 			}
 
-			if (invLimit) {
+			if (!unlimited) {
 				if (items.size() < maxItem) {
 					int c = (int) Math.ceil(toTake.count/100.0);
 					for (int i = 0; i < c; i++) {
@@ -116,7 +118,7 @@ public class Inventory {
 			}
 		}
 
-		if (invLimit) {
+		if (!unlimited) {
 			if (items.size() < maxItem) {
 				items.add(slot, item); // Add the item to the items list
 				return 1;
@@ -233,7 +235,7 @@ public class Inventory {
 		if (items.length() == 0) return; // There are no items to add.
 
 		for (String item: items.split(":")) // This still generates a 1-item array when "items" is blank... [""].
-			add(Items.get(item), false);
+			add(Items.get(item));
 	}
 
 	/**
@@ -248,7 +250,7 @@ public class Inventory {
 		if (!allOrNothing || random.nextInt(chance) == 0)
 			for (int i = 0; i < num; i++)
 				if (allOrNothing || random.nextInt(chance) == 0)
-					add(item.clone(), false);
+					add(item.clone());
 	}
 	public void tryAdd(int chance, @Nullable Item item, int num) {
 		if (item == null) return;

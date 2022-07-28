@@ -54,7 +54,8 @@ public class ContainerDisplay extends Display {
 		Menu curMenu = menus[selection];
 		int otherIdx = getOtherIdx();
 
-		if((input.getKey("attack").clicked)) {
+		if((input.getKey("attack").clicked) || input.getKey("shift-enter").clicked) {
+			if (curMenu.getEntries().length == 0) return;
 			// switch inventories
 			Inventory from, to;
 			if(selection == 0) {
@@ -70,7 +71,7 @@ public class ContainerDisplay extends Display {
 
 			Item fromItem = from.get(fromSel);
 
-			boolean transferAll = input.getKey("attack").clicked || !(fromItem instanceof StackableItem) || ((StackableItem)fromItem).count == 1;
+			boolean transferAll = input.getKey("shift-enter").clicked || !(fromItem instanceof StackableItem) || ((StackableItem)fromItem).count == 1;
 
 			Item toItem = fromItem.clone();
 
@@ -82,7 +83,7 @@ public class ContainerDisplay extends Display {
 					move = ((StackableItem)fromItem).count;
 				}
 
-				int moved = to.add(toSel, toItem, true);
+				int moved = to.add(toSel, toItem);
 				if (moved < move) {
 					((StackableItem)fromItem).count -= moved;
 				} else if (!transferAll) {
@@ -92,7 +93,7 @@ public class ContainerDisplay extends Display {
 				}
 				update();
 			} else {
-				int moved = to.add(toSel, toItem, true);
+				int moved = to.add(toSel, toItem);
 				if (moved == 1) {
 					from.remove(fromSel);
 					update();

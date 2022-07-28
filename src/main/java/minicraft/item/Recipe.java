@@ -75,7 +75,7 @@ public class Recipe {
 		// Rdd the crafted items.
 		for (int i = 0; i < amount; i++) {
 			Item product = getProduct();
-			if (player.getInventory().add(product, true) == 0)
+			if (player.getInventory().add(product) == 0)
 				player.getLevel().dropItem(player.x, player.y, product);
 		}
 

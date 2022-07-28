@@ -407,7 +407,7 @@ public class Player extends Mob implements ItemHolder, ClientTickable {
 			}
 
 			if (input.getKey("menu").clicked && activeItem != null) {
-				int returned = inventory.add(0, activeItem, true);
+				int returned = inventory.add(0, activeItem);
 				if (activeItem instanceof StackableItem) {
 					StackableItem stackable = (StackableItem)activeItem;
 					if (returned == stackable.count) {
@@ -470,7 +470,7 @@ public class Player extends Mob implements ItemHolder, ClientTickable {
 	public void resolveHeldItem() {
 		if (!(activeItem instanceof PowerGloveItem)) { // If you are now holding something other than a power glove...
 			if (prevItem != null) { // and you had a previous item that we should care about...
-				int returned = inventory.add(0, prevItem, true); // Then add that previous item to your inventory so it isn't lost.
+				int returned = inventory.add(0, prevItem); // Then add that previous item to your inventory so it isn't lost.
 				if (prevItem instanceof StackableItem) {
 					if (returned < ((StackableItem)prevItem).count) {
 						getLevel().dropItem(x, y, prevItem.clone());
@@ -826,6 +826,8 @@ public class Player extends Mob implements ItemHolder, ClientTickable {
 						attackItem.sprite.render(screen, xo + 4, yo + 8 + 4);
 					}
 					break;
+				case NONE:
+					break;
 			}
 		}
 
@@ -867,7 +869,7 @@ public class Player extends Mob implements ItemHolder, ClientTickable {
 			picked = ((StackableItem)itemEntity.item).count;
 		} else {
 			if (itemEntity.item instanceof StackableItem) total = ((StackableItem)itemEntity.item).count;
-			picked = inventory.add(itemEntity.item, true); // Add item to inventory
+			picked = inventory.add(itemEntity.item); // Add item to inventory
 		}
 
 		if (picked == total) {
@@ -983,8 +985,8 @@ public class Player extends Mob implements ItemHolder, ClientTickable {
 		// Make death chest
 		DeathChest dc = new DeathChest(this);
 
-		if (activeItem != null) dc.getInventory().add(activeItem, false);
-		if (curArmor != null) dc.getInventory().add(curArmor, false);
+		if (activeItem != null) dc.getInventory().add(activeItem);
+		if (curArmor != null) dc.getInventory().add(curArmor);
 
 		Sound.playerDeath.play();
 

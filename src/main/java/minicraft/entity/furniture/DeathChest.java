@@ -20,8 +20,7 @@ public class DeathChest extends Chest {
 	public int time; // Time passed (used for death chest despawn)
 	private int redtick = 0; //This is used to determine the shade of red when the chest is about to expire.
 	private boolean reverse; // What direction the red shade (redtick) is changing.
-	private Inventory inventory; // Implement the inventory locally instead.
-	// TODO Implement inventory when merging both #364 and #360
+	private Inventory inventory = new Inventory() {{ unlimited = true; }}; // Implement the inventory locally instead.
 
 	/**
 	 * Creates a custom chest with the name Death Chest
@@ -44,9 +43,8 @@ public class DeathChest extends Chest {
 		this();
 		this.x = player.x;
 		this.y = player.y;
-		Inventory inv = getInventory();
 		for (Item i : player.getInventory().getItems()) {
-			inv.add(i.clone(), false);
+			inventory.add(i.clone());
 		}
 	}
 
@@ -56,7 +54,7 @@ public class DeathChest extends Chest {
 		super.tick();
 		//name = "Death Chest:"; // add the current
 
-		if (getInventory().invSize() == 0) {
+		if (inventory.invSize() == 0) {
 			remove();
 		}
 
@@ -97,18 +95,26 @@ public class DeathChest extends Chest {
 	public void touchedBy(Entity other) {
 		if(other instanceof Player) {
 			Inventory playerInv = ((Player)other).getInventory();
-			for (Item i : getInventory().getItems()) {
+			for (Item i : inventory.getItems()) {
 				int total = 1;
 				if (i instanceof StackableItem) total = ((StackableItem)i).count;
 
-				int returned = playerInv.add(i, true);
+				int returned = playerInv.add(i);
 				if (returned < total) {
 					Game.notifications.add("Your inventory is full!");
 					return;
 				}
+
+				inventory.removeItem(i);
 			}
+
 			remove();
 			Game.notifications.add("Death chest retrieved!");
 		}
+	}
+
+	@Override
+	public Inventory getInventory() {
+		return inventory;
 	}
 }

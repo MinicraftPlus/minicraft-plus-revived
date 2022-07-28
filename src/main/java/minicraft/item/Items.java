@@ -127,6 +127,7 @@ public class Items {
 
 	public static class CreativeModeInventory extends Inventory {
 		CreativeModeInventory() {
+			unlimited = true;
 			items.forEach(i -> {
 				if (!(i instanceof PowerGloveItem)) add(i.clone());
 			});
