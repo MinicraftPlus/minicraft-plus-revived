@@ -13,6 +13,8 @@ import minicraft.screen.EndGameDisplay;
 import minicraft.screen.LevelTransitionDisplay;
 import minicraft.screen.PlayerDeathDisplay;
 import minicraft.screen.WorldSelectDisplay;
+import minicraft.util.Logging;
+
 import org.tinylog.Logger;
 
 import java.awt.*;
@@ -118,12 +120,12 @@ public class Updater extends Game {
 				gamespeed = 20;
 			}
 			if (tickCount > sleepEndTime) {
-				Logger.trace("Passing midnight in bed.");
+				Logging.WORLD.trace("Passing midnight in bed.");
 				pastDay1 = true;
 				tickCount = 0;
 			}
 			if (tickCount <= sleepStartTime && tickCount >= sleepEndTime) { // It has reached morning.
-				Logger.trace("Reached morning, getting out of bed.");
+				Logging.WORLD.trace("Reached morning, getting out of bed.");
 				gamespeed = 1;
 				Bed.restorePlayers();
 			}
