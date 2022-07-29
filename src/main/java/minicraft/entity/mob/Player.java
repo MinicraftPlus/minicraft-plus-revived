@@ -111,31 +111,31 @@ public class Player extends Mob implements ItemHolder, ClientTickable {
 		this.input = input;
 		inventory = new Inventory() {
 
-			@Override
-			public void add(int idx, Item item) {
-				if (Game.isMode("creative")) {
-					if (count(item) > 0) return;
-					item = item.clone();
-					if (item instanceof StackableItem)
-						((StackableItem)item).count = 1;
-				}
-				super.add(idx, item);
-			}
+			// @Override
+			// public void add(int idx, Item item) {
+			// 	if (Game.isMode("creative")) {
+			// 		if (count(item) > 0) return;
+			// 		item = item.clone();
+			// 		if (item instanceof StackableItem)
+			// 			((StackableItem)item).count = 1;
+			// 	}
+			// 	super.add(idx, item);
+			// }
 
-			@Override
-			public Item remove(int idx) {
-				if (Game.isMode("creative")) {
-					Item cur = get(idx);
-					if (cur instanceof StackableItem)
-						((StackableItem)cur).count = 1;
-					if (count(cur) == 1) {
-						super.remove(idx);
-						super.add(0, cur);
-						return cur.clone();
-					}
-				}
-				return super.remove(idx);
-			}
+			// @Override
+			// public Item remove(int idx) {
+			// 	if (Game.isMode("creative")) {
+			// 		Item cur = get(idx);
+			// 		if (cur instanceof StackableItem)
+			// 			((StackableItem)cur).count = 1;
+			// 		if (count(cur) == 1) {
+			// 			super.remove(idx);
+			// 			super.add(0, cur);
+			// 			return cur.clone();
+			// 		}
+			// 	}
+			// 	return super.remove(idx);
+			// }
 		};
 
 
@@ -157,9 +157,6 @@ public class Player extends Mob implements ItemHolder, ClientTickable {
 
 		hungerStamCnt = maxHungerStams[Settings.getIdx("diff")];
 		stamHungerTicks = maxHungerTicks;
-
-		if (Game.isMode("creative"))
-			Items.fillCreativeInv(inventory);
 
 		if (previousInstance != null) {
 			spawnx = previousInstance.spawnx;
@@ -423,7 +420,7 @@ public class Player extends Mob implements ItemHolder, ClientTickable {
 					// Drop one from stack
 					((StackableItem)activeItem).count--;
 					((StackableItem)drop).count = 1;
-				} else if (!Game.isMode("creative")) {
+				} else {
 					activeItem = null; // Remove it from the "inventory"
 				}
 
@@ -487,7 +484,7 @@ public class Player extends Mob implements ItemHolder, ClientTickable {
 	 */
 	public void resolveHeldItem() {
 		if (!(activeItem instanceof PowerGloveItem)) { // If you are now holding something other than a power glove...
-			if (prevItem != null && !Game.isMode("creative")) // and you had a previous item that we should care about...
+			if (prevItem != null) // and you had a previous item that we should care about...
 				inventory.add(0, prevItem); // Then add that previous item to your inventory so it isn't lost.
 			// If something other than a power glove is being held, but the previous item is null, then nothing happens; nothing added to inventory, and current item remains as the new one.
 		} else
@@ -515,7 +512,7 @@ public class Player extends Mob implements ItemHolder, ClientTickable {
 			attackDir = dir; // Make the attack direction equal the current direction
 			attackItem = activeItem; // Make attackItem equal activeItem
 			activeItem.interactOn(Tiles.get("rock"), level, 0, 0, this, attackDir);
-			if (!Game.isMode("creative") && activeItem.isDepleted()) {
+			if (activeItem.isDepleted()) {
 				activeItem = null;
 			}
 			return;
@@ -534,7 +531,7 @@ public class Player extends Mob implements ItemHolder, ClientTickable {
 				ToolItem tool = (ToolItem) activeItem;
 				if (tool.type == ToolType.Bow && tool.dur > 0 && inventory.count(Items.arrowItem) > 0) {
 
-					if (!Game.isMode("creative")) inventory.removeItem(Items.arrowItem);
+					inventory.removeItem(Items.arrowItem);
 					level.add(new Arrow(this, attackDir, tool.level));
 					attackTime = 10;
 
@@ -572,7 +569,7 @@ public class Player extends Mob implements ItemHolder, ClientTickable {
 					}
 				}
 
-				if (!Game.isMode("creative") && activeItem.isDepleted()) {
+				if (activeItem.isDepleted()) {
 					// If the activeItem has 0 items left, then "destroy" it.
 					activeItem = null;
 				}
@@ -876,7 +873,6 @@ public class Player extends Mob implements ItemHolder, ClientTickable {
 
 		itemEntity.remove();
 		addScore(1);
-		if (Game.isMode("creative")) return; // We shall not bother the inventory on creative mode.
 
 		if (itemEntity.item instanceof StackableItem && ((StackableItem)itemEntity.item).stacksWith(activeItem)) // Picked up item equals the one in your hand
 			((StackableItem)activeItem).count += ((StackableItem)itemEntity.item).count;
