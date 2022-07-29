@@ -111,12 +111,23 @@ public class Items {
 
 	public static Item arrowItem = get("arrow");
 
+	public static int getCount(Item item) {
+		if (item instanceof StackableItem) {
+			return ((StackableItem) item).count;
+		} else if (item != null) {
+			return 1;
+		} else {
+			return 0;
+		}
+	}
+
 	public static CreativeModeInventory getCreativeModeInventory() {
 		return new CreativeModeInventory();
 	}
 
 	public static class CreativeModeInventory extends Inventory {
 		CreativeModeInventory() {
+			unlimited = true;
 			items.forEach(i -> {
 				if (!(i instanceof PowerGloveItem)) add(i.clone());
 			});
