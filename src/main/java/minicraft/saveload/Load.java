@@ -42,6 +42,8 @@ public class Load {
 
 	private Version worldVer;
 
+	private DeathChest deathChest;
+
 	{
 		worldVer = null;
 
@@ -75,6 +77,11 @@ public class Load {
 			loadEntities("Entities");
 			loadInventory("Inventory", Game.player.getInventory());
 			loadPlayer("Player", Game.player);
+
+			if (deathChest != null && deathChest.getInventory().invSize() > 0) {
+				Game.player.getLevel().add(deathChest, Game.player.x, Game.player.y);
+				Logger.debug("Added DeathChest which contains exceed items.");
+			}
 		}
 	}
 
@@ -675,6 +682,7 @@ public class Load {
 	}
 
 	public void loadInventory(String filename, Inventory inventory) {
+		deathChest = new DeathChest();
 		loadFromFile(location + filename + extension);
 		loadInventory(inventory, data);
 	}
@@ -703,11 +711,23 @@ public class Load {
 
 				if (newItem instanceof StackableItem) {
 					((StackableItem) newItem).count = count;
-					inventory.add(newItem);
-				} else inventory.add(newItem, count);
+					loadItem(inventory, newItem);
+				} else {
+					for (int i = 0; i < count; i++) loadItem(inventory, newItem);
+				}
 			} else {
-				inventory.add(Items.get(item));
+				loadItem(inventory, Items.get(item));
 			}
+		}
+	}
+
+	private void loadItem(Inventory inventory, Item item) {
+		int total = 1;
+		if (item instanceof StackableItem) total = ((StackableItem) item).count;
+		int loaded = inventory.add(item);
+
+		if (loaded < total) {
+			deathChest.getInventory().add(item.clone());
 		}
 	}
 

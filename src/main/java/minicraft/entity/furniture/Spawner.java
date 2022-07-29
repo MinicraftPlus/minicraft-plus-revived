@@ -174,7 +174,7 @@ public class Spawner extends Furniture {
 		if (item instanceof PowerGloveItem && Game.isMode("creative")) {
 			level.remove(this);
 			if (!(player.activeItem instanceof PowerGloveItem))
-				player.getInventory().add(0, player.activeItem);
+				player.getLevel().dropItem(player.x, player.y, player.activeItem);
 			player.activeItem = new FurnitureItem(this);
 			return true;
 		}

@@ -54,7 +54,8 @@ public class ContainerDisplay extends Display {
 		Menu curMenu = menus[selection];
 		int otherIdx = getOtherIdx();
 
-		if(curMenu.getNumOptions() > 0 && (input.getKey("attack").clicked)) {
+		if((input.getKey("attack").clicked) || input.getKey("shift-enter").clicked) {
+			if (curMenu.getEntries().length == 0) return;
 			// switch inventories
 			Inventory from, to;
 			if(selection == 0) {
@@ -70,22 +71,34 @@ public class ContainerDisplay extends Display {
 
 			Item fromItem = from.get(fromSel);
 
-			boolean transferAll = input.getKey("attack").clicked || !(fromItem instanceof StackableItem) || ((StackableItem)fromItem).count == 1;
+			boolean transferAll = input.getKey("shift-enter").clicked || !(fromItem instanceof StackableItem) || ((StackableItem)fromItem).count == 1;
 
 			Item toItem = fromItem.clone();
 
-			if(!transferAll) {
-				((StackableItem)fromItem).count--; // this is known to be valid.
-				((StackableItem)toItem).count = 1;
-				// items are setup for sending.
-			}
-			else { // transfer whole item/stack.
-				from.remove(fromSel); // remove it
-			}
+			if (fromItem instanceof StackableItem) {
+				int move = 1;
+				if (!transferAll) {
+					((StackableItem)toItem).count = 1;
+				} else {
+					move = ((StackableItem)fromItem).count;
+				}
 
-
-			to.add(toSel, toItem);
-			update();
+				int moved = to.add(toSel, toItem);
+				if (moved < move) {
+					((StackableItem)fromItem).count -= moved;
+				} else if (!transferAll) {
+					((StackableItem)fromItem).count--;
+				} else {
+					from.remove(fromSel);
+				}
+				update();
+			} else {
+				int moved = to.add(toSel, toItem);
+				if (moved == 1) {
+					from.remove(fromSel);
+					update();
+				}
+			}
 		}
 	}
 

@@ -109,35 +109,8 @@ public class Player extends Mob implements ItemHolder, ClientTickable {
 		x = 24;
 		y = 24;
 		this.input = input;
-		inventory = new Inventory() {
-
-			// @Override
-			// public void add(int idx, Item item) {
-			// 	if (Game.isMode("creative")) {
-			// 		if (count(item) > 0) return;
-			// 		item = item.clone();
-			// 		if (item instanceof StackableItem)
-			// 			((StackableItem)item).count = 1;
-			// 	}
-			// 	super.add(idx, item);
-			// }
-
-			// @Override
-			// public Item remove(int idx) {
-			// 	if (Game.isMode("creative")) {
-			// 		Item cur = get(idx);
-			// 		if (cur instanceof StackableItem)
-			// 			((StackableItem)cur).count = 1;
-			// 		if (count(cur) == 1) {
-			// 			super.remove(idx);
-			// 			super.add(0, cur);
-			// 			return cur.clone();
-			// 		}
-			// 	}
-			// 	return super.remove(idx);
-			// }
-		};
-
+		// Since this implementation will be deleted by Better Creative Mode Inventory might not implemented correctly
+		inventory = new Inventory();
 
 		potioneffects = new HashMap<>();
 		showpotioneffects = true;
@@ -435,8 +408,21 @@ public class Player extends Mob implements ItemHolder, ClientTickable {
 			}
 
 			if (input.getKey("menu").clicked && activeItem != null) {
-				inventory.add(0, activeItem);
-				activeItem = null;
+				int returned = inventory.add(0, activeItem);
+				if (activeItem instanceof StackableItem) {
+					StackableItem stackable = (StackableItem)activeItem;
+					if (returned == stackable.count) {
+						activeItem = null;
+					} else {
+						getLevel().dropItem(x, y, stackable.clone());
+						activeItem = null;
+					}
+				} else if (returned > 0) {
+					activeItem = null;
+				} else {
+					getLevel().dropItem(x, y, activeItem);
+					activeItem = null;
+				}
 			}
 
 			if (Game.getDisplay() == null) {
@@ -484,9 +470,16 @@ public class Player extends Mob implements ItemHolder, ClientTickable {
 	 */
 	public void resolveHeldItem() {
 		if (!(activeItem instanceof PowerGloveItem)) { // If you are now holding something other than a power glove...
-			if (prevItem != null) // and you had a previous item that we should care about...
-				inventory.add(0, prevItem); // Then add that previous item to your inventory so it isn't lost.
-			// If something other than a power glove is being held, but the previous item is null, then nothing happens; nothing added to inventory, and current item remains as the new one.
+			if (prevItem != null) { // and you had a previous item that we should care about...
+				int returned = inventory.add(0, prevItem); // Then add that previous item to your inventory so it isn't lost.
+				if (prevItem instanceof StackableItem) {
+					if (returned < ((StackableItem)prevItem).count) {
+						getLevel().dropItem(x, y, prevItem.clone());
+					}
+				} else if (returned == 0) {
+					getLevel().dropItem(x, y, prevItem);
+				}
+			}// If something other than a power glove is being held, but the previous item is null, then nothing happens; nothing added to inventory, and current item remains as the new one.
 		} else
 			activeItem = prevItem; // Otherwise, if you're holding a power glove, then the held item didn't change, so we can remove the power glove and make it what it was before.
 
@@ -834,6 +827,8 @@ public class Player extends Mob implements ItemHolder, ClientTickable {
 						attackItem.sprite.render(screen, xo + 4, yo + 8 + 4);
 					}
 					break;
+				case NONE:
+					break;
 			}
 		}
 
@@ -868,16 +863,22 @@ public class Player extends Mob implements ItemHolder, ClientTickable {
 
 	/** What happens when the player interacts with a itemEntity */
 	public void pickupItem(ItemEntity itemEntity) {
-
-		Sound.pickup.play();
-
-		itemEntity.remove();
-		addScore(1);
-
-		if (itemEntity.item instanceof StackableItem && ((StackableItem)itemEntity.item).stacksWith(activeItem)) // Picked up item equals the one in your hand
+		int picked = 0;
+		int total = 1;
+		if (itemEntity.item instanceof StackableItem && ((StackableItem)itemEntity.item).stacksWith(activeItem)) { // Picked up item equals the one in your hand
 			((StackableItem)activeItem).count += ((StackableItem)itemEntity.item).count;
-		else
-			inventory.add(itemEntity.item); // Add item to inventory
+			picked = ((StackableItem)itemEntity.item).count;
+		} else {
+			if (itemEntity.item instanceof StackableItem) total = ((StackableItem)itemEntity.item).count;
+			picked = inventory.add(itemEntity.item); // Add item to inventory
+		}
+
+		if (picked == total) {
+			Sound.pickup.play();
+
+			itemEntity.remove();
+			addScore(1);
+		}
 	}
 
 	// The player can swim.

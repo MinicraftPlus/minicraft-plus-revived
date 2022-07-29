@@ -9,6 +9,9 @@ import minicraft.gfx.Color;
 import minicraft.gfx.Font;
 import minicraft.gfx.Screen;
 import minicraft.gfx.Sprite;
+import minicraft.item.Inventory;
+import minicraft.item.Item;
+import minicraft.item.StackableItem;
 
 public class DeathChest extends Chest {
 	private static Sprite normalSprite = new Sprite(10, 26, 2, 2, 2);
@@ -17,6 +20,7 @@ public class DeathChest extends Chest {
 	public int time; // Time passed (used for death chest despawn)
 	private int redtick = 0; //This is used to determine the shade of red when the chest is about to expire.
 	private boolean reverse; // What direction the red shade (redtick) is changing.
+	private Inventory inventory = new Inventory() {{ unlimited = true; }}; // Implement the inventory locally instead.
 
 	/**
 	 * Creates a custom chest with the name Death Chest
@@ -39,7 +43,9 @@ public class DeathChest extends Chest {
 		this();
 		this.x = player.x;
 		this.y = player.y;
-		getInventory().addAll(player.getInventory());
+		for (Item i : player.getInventory().getItems()) {
+			inventory.add(i.clone());
+		}
 	}
 
 	// For death chest time count, I imagine.
@@ -48,7 +54,7 @@ public class DeathChest extends Chest {
 		super.tick();
 		//name = "Death Chest:"; // add the current
 
-		if (getInventory().invSize() == 0) {
+		if (inventory.invSize() == 0) {
 			remove();
 		}
 
@@ -88,9 +94,27 @@ public class DeathChest extends Chest {
 	@Override
 	public void touchedBy(Entity other) {
 		if(other instanceof Player) {
-			((Player)other).getInventory().addAll(getInventory());
+			Inventory playerInv = ((Player)other).getInventory();
+			for (Item i : inventory.getItems()) {
+				int total = 1;
+				if (i instanceof StackableItem) total = ((StackableItem)i).count;
+
+				int returned = playerInv.add(i);
+				if (returned < total) {
+					Game.notifications.add("Your inventory is full!");
+					return;
+				}
+
+				inventory.removeItem(i);
+			}
+
 			remove();
 			Game.notifications.add("Death chest retrieved!");
 		}
+	}
+
+	@Override
+	public Inventory getInventory() {
+		return inventory;
 	}
 }
