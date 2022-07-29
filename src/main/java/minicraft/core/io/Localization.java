@@ -49,7 +49,7 @@ public class Localization {
 	 * @return A localized string.
 	 */
 	@NotNull
-	public static String getLocalized(String key, Object... arguments) { // TODO
+	public static String getLocalized(String key, Object... arguments) {
 		if (key.matches("^[ ]*$")) return key; // Blank, or just whitespace
 
 		try {
@@ -64,6 +64,10 @@ public class Localization {
 				Logger.tag("LOC").trace("'{}' is unlocalized.", key);
 				knownUnlocalizedStrings.add(key);
 			}
+		}
+
+		if (localString != null) {
+			localString = String.format(getSelectedLocale(), localString, arguments);
 		}
 
 		return (localString == null ? key : localString);
@@ -179,7 +183,7 @@ public class Localization {
 		// Find path of the selected language, and check for errors.
 		String location = localizationFiles.get(locale);
 		if (location == null) {
-			Logger.error("Could not find locale with name: {}.", locale.toLanguageTag());
+			CrashHandler.errorHandle(new NullPointerException(), new CrashHandler.ErrorInfo("Localization Not Found", CrashHandler.ErrorInfo.ErrorType.HANDLED, String.format("Could not find locale with name: {}.", locale.toLanguageTag())));
 			return "";
 		}
 

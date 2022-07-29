@@ -44,7 +44,7 @@ public class EndGameDisplay extends Display {
 
 		// calculate the score
 		entries.add(new StringEntry("Player Score: " + Game.player.getScore(), Color.WHITE));
-		entries.add(new StringEntry("minicraft.display.end_game.bonuses", Color.YELLOW));
+		entries.add(new StringEntry("minicraft.displays.end_game.display.bonuses", Color.YELLOW));
 
 		finalScore = Game.player.getScore();
 		for(String item: scoredItems)
@@ -55,7 +55,7 @@ public class EndGameDisplay extends Display {
 		// add any unlocks
 		entries.addAll(Arrays.asList(getAndWriteUnlocks()));
 
-		entries.add(new SelectEntry("minicraft.display.end_game.exit", () -> Game.setDisplay(new TitleDisplay())));
+		entries.add(new SelectEntry("minicraft.displays.end_game.exit", () -> Game.setDisplay(new TitleDisplay())));
 
 		menus = new Menu[] {
 			new Menu.Builder(true, 0, RelPos.LEFT, entries).createMenu()

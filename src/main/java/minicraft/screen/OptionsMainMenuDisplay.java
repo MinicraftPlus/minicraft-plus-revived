@@ -15,7 +15,7 @@ public class OptionsMainMenuDisplay extends Display {
 			Settings.getEntry("fps"),
 			Settings.getEntry("sound"),
 			Settings.getEntry("showquests"),
-			new SelectEntry("minicraft.display.options.change_key_bindings", () -> Game.setDisplay(new KeyInputDisplay())),
+			new SelectEntry("minicraft.display.options_display.change_key_bindings", () -> Game.setDisplay(new KeyInputDisplay())),
 			Settings.getEntry("language"),
 			new SelectEntry("Resource packs", () -> Game.setDisplay(new ResourcePackDisplay()))
 		)

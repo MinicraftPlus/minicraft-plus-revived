@@ -193,7 +193,7 @@ public class SkinDisplay extends Display {
 		step++;
 
 		// Title.
-		Font.drawCentered(Localization.getLocalized("minicraft.display.skin"), screen, 16, Color.WHITE);
+		Font.drawCentered(Localization.getLocalized("minicraft.displays.skin"), screen, 16, Color.WHITE);
 
 		int h = 2;
 		int w = 2;

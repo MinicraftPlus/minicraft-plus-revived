@@ -710,7 +710,7 @@ public class Load {
 	}
 
 	private void loadEntities(String filename) {
-		LoadingDisplay.setMessage("minicraft.display.loading.entities");
+		LoadingDisplay.setMessage("minicraft.displays.loading.message.entities");
 		loadFromFile(location + filename + extension);
 
 		for (int i = 0; i < World.levels.length; i++) {

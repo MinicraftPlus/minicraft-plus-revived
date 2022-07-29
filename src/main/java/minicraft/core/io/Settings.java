@@ -39,9 +39,6 @@ public class Settings {
 		options.get("mode").setChangeAction(value ->
 			options.get("scoretime").setVisible("minicraft.settings.mode.score".equals(value))
 		);
-
-		options.put("textures", new ArrayEntry<>("textures", "Original", "Custom"));
-		options.get("textures").setSelection(0);
 	}
 
 	// Returns the value of the specified option

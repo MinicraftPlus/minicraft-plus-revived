@@ -329,7 +329,7 @@ public class Save {
 	}
 
 	private void writeEntities(String filename) {
-		LoadingDisplay.setMessage("minicraft.display.loading.entities");
+		LoadingDisplay.setMessage("minicraft.displays.loading.message.entities");
 		for (int l = 0; l < World.levels.length; l++) {
 			for (Entity e: World.levels[l].getEntitiesToSave()) {
 				String saved = writeEntity(e, true);

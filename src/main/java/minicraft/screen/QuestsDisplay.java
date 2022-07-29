@@ -195,7 +195,7 @@ public class QuestsDisplay extends Display {
 				.createMenu(),
 			new Menu.Builder(false, 0, RelPos.CENTER)
 				.setPositioning(new Point(Screen.w / 2, Screen.h / 2 + 35), RelPos.CENTER)
-				.setEntries(new StringEntry(Localization.getLocalized("minicraft.display.quests.no_desc")))
+				.setEntries(new StringEntry(Localization.getLocalized("minicraft.displays.quests.display.no_quest_desc")))
 				.setSelectable(false)
 				.createMenu(),
 			new Menu.Builder(false, 0, RelPos.CENTER)
@@ -567,7 +567,7 @@ public class QuestsDisplay extends Display {
 		if (menus[0].getCurEntry() != null) {
 			menus[3].setEntries(StringEntry.useLines(Localization.getLocalized(entrySeries[selectedEntry][menus[0].getSelection()].description)));
 		} else {
-			menus[3].setEntries(StringEntry.useLines(Localization.getLocalized("minicraft.display.quests.no_desc")));
+			menus[3].setEntries(StringEntry.useLines(Localization.getLocalized("minicraft.displays.quests.display.no_quest_desc")));
 		}
 	}
 

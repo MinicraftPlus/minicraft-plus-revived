@@ -34,27 +34,27 @@ public class TitleDisplay extends Display {
 		super(true, false, new Menu.Builder(false, 2, RelPos.CENTER,
 			new StringEntry("Checking for updates...", Color.BLUE),
 			new BlankEntry(),
-			new SelectEntry("minicraft.display.title.play", () -> {
+			new SelectEntry("minicraft.displays.title.play", () -> {
 				if (WorldSelectDisplay.getWorldNames().size() > 0)
 					Game.setDisplay(new Display(true, new Menu.Builder(false, 2, RelPos.CENTER,
-						new SelectEntry("minicraft.display.title.load_world", () -> Game.setDisplay(new WorldSelectDisplay())),
-						new SelectEntry("minicraft.display.title.new_world", () -> Game.setDisplay(new WorldGenDisplay()))
+						new SelectEntry("minicraft.displays.title.play.load_world", () -> Game.setDisplay(new WorldSelectDisplay())),
+						new SelectEntry("minicraft.displays.title.play.new_world", () -> Game.setDisplay(new WorldGenDisplay()))
 					).createMenu()));
 				else Game.setDisplay(new WorldGenDisplay());
 			}),
-			new SelectEntry("minicraft.display.options", () -> Game.setDisplay(new OptionsMainMenuDisplay())),
-            new SelectEntry("minicraft.display.skin", () -> Game.setDisplay(new SkinDisplay())),
-			new SelectEntry("minicraft.display.achievement", () -> Game.setDisplay(new AchievementsDisplay())),
-			new SelectEntry("minicraft.display.title.help", () ->
+			new SelectEntry("minicraft.display.options_display", () -> Game.setDisplay(new OptionsMainMenuDisplay())),
+            new SelectEntry("minicraft.displays.skin", () -> Game.setDisplay(new SkinDisplay())),
+			new SelectEntry("minicraft.displays.achievements", () -> Game.setDisplay(new AchievementsDisplay())),
+			new SelectEntry("minicraft.displays.title.help", () ->
 				Game.setDisplay(new Display(true, new Menu.Builder(false, 1, RelPos.CENTER,
 					new BlankEntry(),
-					new SelectEntry("minicraft.display.title.instructions", () -> Game.setDisplay(new BookDisplay(BookData.instructions))),
-					new SelectEntry("minicraft.display.title.storyline_guide", () -> Game.setDisplay(new BookDisplay(BookData.storylineGuide))),
-					new SelectEntry("minicraft.display.title.about", () -> Game.setDisplay(new BookDisplay(BookData.about))),
-					new SelectEntry("Credits", () -> Game.setDisplay(new BookDisplay(BookData.credits)))
-				).setTitle("minicraft.display.title.help").createMenu()))
+					new SelectEntry("minicraft.displays.title.help.instructions", () -> Game.setDisplay(new BookDisplay(BookData.instructions))),
+					new SelectEntry("minicraft.displays.title.help.storyline_guide", () -> Game.setDisplay(new BookDisplay(BookData.storylineGuide))),
+					new SelectEntry("minicraft.displays.title.help.about", () -> Game.setDisplay(new BookDisplay(BookData.about))),
+					new SelectEntry("minicraft.displays.title.help.credits", () -> Game.setDisplay(new BookDisplay(BookData.credits)))
+				).setTitle("minicraft.displays.title.help").createMenu()))
 			),
-			new SelectEntry("minicraft.display.title.quit", Game::quit)
+			new SelectEntry("minicraft.displays.title.quit", Game::quit)
 			)
 			.setPositioning(new Point(Screen.w/2, Screen.h*3/5), RelPos.CENTER)
 			.createMenu()
@@ -95,7 +95,7 @@ public class TitleDisplay extends Display {
 				menus[0].updateEntry(0, new StringEntry(Localization.getLocalized("New: ") + latestVersion.releaseName, Color.GREEN));
 				menus[0].updateEntry(1, new LinkEntry(Color.CYAN, "--Select here to Download--", latestVersion.releaseUrl, "Direct link to latest version: " + latestVersion.releaseUrl));
 			} else if (latestVersion.releaseName.length() > 0) {
-				menus[0].updateEntry(0, new StringEntry("minicraft.display.title.latest_already", Color.DARK_GRAY, true));
+				menus[0].updateEntry(0, new StringEntry("minicraft.displays.title.display.latest_already", Color.DARK_GRAY, true));
 			} else {
 				menus[0].updateEntry(0, new StringEntry("Could not check for updates.", Color.RED, true));
 			}

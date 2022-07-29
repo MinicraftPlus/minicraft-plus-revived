@@ -94,7 +94,7 @@ public class WorldSelectDisplay extends Display {
 			int col = Color.WHITE;
 			if (version.compareTo(Game.VERSION) > 0) {
 				col = Color.RED;
-				Font.drawCentered(Localization.getLocalized("minicraft.display.world_select.world_too_new"), screen, Font.textHeight() * 5, col);
+				Font.drawCentered(Localization.getLocalized("minicraft.displays.world_select.display.world_too_new"), screen, Font.textHeight() * 5, col);
 			}
 			Font.drawCentered(Localization.getLocalized("World Version:") + " " + (version.compareTo(new Version("1.9.2")) <= 0 ? "~" : "") + version, screen, Font.textHeight() * 7/2, col);
 		}
@@ -108,7 +108,7 @@ public class WorldSelectDisplay extends Display {
 			y += Font.textHeight();
 		}
 
-		Font.drawCentered(Localization.getLocalized("minicraft.display.world_select.select_world"), screen, 0, Color.WHITE);
+		Font.drawCentered(Localization.getLocalized("minicraft.displays.world_select.select_world"), screen, 0, Color.WHITE);
 	}
 
 	public static void updateWorlds() {

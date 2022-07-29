@@ -27,7 +27,7 @@ public class PlayerDeathDisplay extends Display {
 		));
 
 		if(!Game.isMode("hardcore")) {
-			entries.add(new SelectEntry("minicraft.display.player_death.respawn", () -> {
+			entries.add(new SelectEntry("minicraft.displays.player_death.respawn", () -> {
 				World.resetGame();
 				Game.setDisplay(null);
 			}));
@@ -37,12 +37,12 @@ public class PlayerDeathDisplay extends Display {
 			new Save(WorldSelectDisplay.getWorldName());
 			Game.setDisplay(new TitleDisplay());
 		}));
-		entries.add(new SelectEntry("minicraft.display.player_death.quit", () -> Game.setDisplay(new TitleDisplay())));
+		entries.add(new SelectEntry("minicraft.displays.player_death.quit", () -> Game.setDisplay(new TitleDisplay())));
 
 		menus = new Menu[]{
 			new Menu.Builder(true, 0, RelPos.LEFT, entries)
 				.setPositioning(new Point(SpriteSheet.boxWidth, SpriteSheet.boxWidth * 3), RelPos.BOTTOM_RIGHT)
-				.setTitle("minicraft.display.player_death.title_died")
+				.setTitle("minicraft.displays.player_death.title")
 				.setTitlePos(RelPos.TOP_LEFT)
 				.createMenu()
 		};

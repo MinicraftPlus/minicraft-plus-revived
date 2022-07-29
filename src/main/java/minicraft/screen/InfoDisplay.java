@@ -18,7 +18,7 @@ public class InfoDisplay extends Display {
 			"----------------------------",
 			Game.input.getMapping("select")+"/"+Game.input.getMapping("exit")+":Exit"
 			))
-			.setTitle("minicraft.display.info.title_stats")
+			.setTitle("minicraft.displays.info.title")
 			.setTitlePos(RelPos.TOP_LEFT)
 			.setPositioning(new Point(SpriteSheet.boxWidth, SpriteSheet.boxWidth), RelPos.BOTTOM_RIGHT)
 			.createMenu()

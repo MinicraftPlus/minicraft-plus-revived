@@ -23,19 +23,19 @@ public class PauseDisplay extends Display {
 
 		ArrayList<ListEntry> entries = new ArrayList<>(Arrays.asList(
 				new BlankEntry(),
-				new SelectEntry("minicraft.display.paused.return", () -> Game.setDisplay(null)),
-				new SelectEntry("minicraft.display.options", () -> Game.setDisplay(new OptionsWorldDisplay())),
-				new SelectEntry("minicraft.display.achievement", () -> Game.setDisplay(new AchievementsDisplay())),
-				new SelectEntry("minicraft.display.quests", () -> Game.setDisplay(new QuestsDisplay()))
+				new SelectEntry("minicraft.displays.paused.return", () -> Game.setDisplay(null)),
+				new SelectEntry("minicraft.display.options_display", () -> Game.setDisplay(new OptionsWorldDisplay())),
+				new SelectEntry("minicraft.displays.achievements", () -> Game.setDisplay(new AchievementsDisplay())),
+				new SelectEntry("minicraft.displays.quests", () -> Game.setDisplay(new QuestsDisplay()))
 		));
 
-		entries.add(new SelectEntry("minicraft.display.paused.save", () -> {
+		entries.add(new SelectEntry("minicraft.displays.paused.save", () -> {
 			Game.setDisplay(null);
 			new Save(WorldSelectDisplay.getWorldName());
 		}));
 
 		entries.addAll(Arrays.asList(
-			new SelectEntry("minicraft.display.paused.menu", () -> {
+			new SelectEntry("minicraft.displays.paused.menu", () -> {
 				ArrayList<ListEntry> items = new ArrayList<>(Arrays.asList(StringEntry.useLines(
 						"Are you sure you want to",
 						MyUtils.fromNetworkStatus("Exit the Game?", "Leave the Server?", "Close the Server?")
@@ -65,7 +65,7 @@ public class PauseDisplay extends Display {
 
 		menus = new Menu[] {
 			new Menu.Builder(true, 4, RelPos.CENTER, entries)
-				.setTitle("minicraft.display.paused.title", Color.YELLOW)
+				.setTitle("minicraft.displays.paused", Color.YELLOW)
 				.createMenu()
 		};
 	}

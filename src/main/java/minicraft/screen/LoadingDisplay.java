@@ -37,11 +37,11 @@ public class LoadingDisplay extends Display {
 	public void init(Display parent) {
 		super.init(parent);
 		percentage = 0;
-		progressType = "minicraft.display.loading.message.world";
+		progressType = "minicraft.displays.loading.message.world";
 		if (WorldSelectDisplay.hasLoadedWorld())
-			msg = "minicraft.display.loading.message.loading";
+			msg = "minicraft.displays.loading.message.loading";
 		else
-			msg = "minicraft.display.loading.message.generating";
+			msg = "minicraft.displays.loading.message.generating";
 		t.start();
 	}
 
@@ -50,7 +50,7 @@ public class LoadingDisplay extends Display {
 		percentage = 0;
 		if (!WorldSelectDisplay.hasLoadedWorld()) {
 			msg = "Saving";
-			progressType = "minicraft.display.loading.message.world";
+			progressType = "minicraft.displays.loading.message.world";
 			new Save(WorldSelectDisplay.getWorldName());
 			Game.notifications.clear();
 		}
