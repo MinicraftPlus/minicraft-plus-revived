@@ -36,6 +36,7 @@ public class PlayerInvDisplay extends Display {
 			};
 
 			menus[1].translate(menus[0].getBounds().getWidth() + padding, 0);
+			update();
 
 			if(menus[0].getNumOptions() == 0) onSelectionChange(0, 1);
 		} else creativeInv = null;
