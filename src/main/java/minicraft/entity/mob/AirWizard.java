@@ -48,7 +48,7 @@ public class AirWizard extends EnemyMob {
 	public void tick() {
 		super.tick();
 
-		if (Game.isMode("Creative")) return; // Should not attack if player is in creative
+		if (Game.isMode("minicraft.settings.mode.creative")) return; // Should not attack if player is in creative
 
 		if (attackDelay > 0) {
 			xmov = ymov = 0;
@@ -172,7 +172,7 @@ public class AirWizard extends EnemyMob {
 			AchievementsDisplay.setAchievement("minicraft.achievement.airwizard", true);
 
 			Analytics.FirstAirWizardDeath.ping();
-			Updater.notifyAll("The Dungeon is now open!", -400);
+			Updater.notifyAll("minicraft.notification.dungeon_opened", -400);
 		}
 
 		beaten = true;

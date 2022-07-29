@@ -15,7 +15,7 @@ import minicraft.screen.entry.SelectEntry;
 import minicraft.screen.entry.StringEntry;
 
 public class PauseDisplay extends Display {
-	
+
 	public PauseDisplay() {
 		String upString = Game.input.getMapping("cursor-up")+ Localization.getLocalized(" and ")+Game.input.getMapping("cursor-down")+Localization.getLocalized(" to Scroll");
 		String selectString = Game.input.getMapping("select")+Localization.getLocalized(": Choose");
@@ -23,19 +23,19 @@ public class PauseDisplay extends Display {
 
 		ArrayList<ListEntry> entries = new ArrayList<>(Arrays.asList(
 				new BlankEntry(),
-				new SelectEntry("Return to Game", () -> Game.setDisplay(null)),
-				new SelectEntry("Options", () -> Game.setDisplay(new OptionsWorldDisplay())),
+				new SelectEntry("minicraft.display.paused.return", () -> Game.setDisplay(null)),
+				new SelectEntry("minicraft.display.options", () -> Game.setDisplay(new OptionsWorldDisplay())),
 				new SelectEntry("minicraft.display.achievement", () -> Game.setDisplay(new AchievementsDisplay())),
 				new SelectEntry("minicraft.display.quests", () -> Game.setDisplay(new QuestsDisplay()))
 		));
 
-		entries.add(new SelectEntry("Save Game", () -> {
+		entries.add(new SelectEntry("minicraft.display.paused.save", () -> {
 			Game.setDisplay(null);
 			new Save(WorldSelectDisplay.getWorldName());
 		}));
 
 		entries.addAll(Arrays.asList(
-			new SelectEntry("Main Menu", () -> {
+			new SelectEntry("minicraft.display.paused.menu", () -> {
 				ArrayList<ListEntry> items = new ArrayList<>(Arrays.asList(StringEntry.useLines(
 						"Are you sure you want to",
 						MyUtils.fromNetworkStatus("Exit the Game?", "Leave the Server?", "Close the Server?")
@@ -47,34 +47,34 @@ public class PauseDisplay extends Display {
 					MyUtils.fromNetworkStatus("will be lost!", "will be saved.", ""),
 					""
 				)));
-				
+
 				items.add(new BlankEntry());
 				items.add(new SelectEntry("Cancel", Game::exitDisplay));
-				
+
 				items.add(new SelectEntry("Quit without saving", () -> Game.setDisplay(new TitleDisplay())));
-				
+
 				Game.setDisplay(new Display(false, true, new Menu.Builder(true, 8, RelPos.CENTER, items
 				).createMenu()));
 			}),
-			
+
 			new BlankEntry(),
-			
+
 			new StringEntry(upString, Color.GRAY),
 			new StringEntry(selectString, Color.GRAY)
 		));
-		
+
 		menus = new Menu[] {
 			new Menu.Builder(true, 4, RelPos.CENTER, entries)
-				.setTitle("Paused", Color.YELLOW)
+				.setTitle("minicraft.display.paused.title", Color.YELLOW)
 				.createMenu()
 		};
 	}
-	
+
 	@Override
 	public void init(Display parent) {
 		super.init(null); // ignore; pause menus always lead back to the game
 	}
-	
+
 	@Override
 	public void tick(InputHandler input) {
 		super.tick(input);

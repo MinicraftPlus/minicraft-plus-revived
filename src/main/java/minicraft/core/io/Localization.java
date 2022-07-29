@@ -45,10 +45,11 @@ public class Localization {
 	/**
 	 * Get the provided key's localization for the currently selected language.
 	 * @param key The key to localize.
+	 * @param arguments The additional arguments to format the localized string.
 	 * @return A localized string.
 	 */
 	@NotNull
-	public static String getLocalized(String key) {
+	public static String getLocalized(String key, Object... arguments) { // TODO
 		if (key.matches("^[ ]*$")) return key; // Blank, or just whitespace
 
 		try {

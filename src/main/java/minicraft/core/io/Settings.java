@@ -12,32 +12,32 @@ public class Settings {
 	private static final HashMap<String, ArrayEntry> options = new HashMap<>();
 
 	static {
-		options.put("fps", new RangeEntry("Max FPS", 10, 300, getRefreshRate())); // Has to check if the game is running in a headless mode. If it doesn't set the fps to 60
-		options.put("diff", new ArrayEntry<>("Difficulty", "Easy", "Normal", "Hard"));
+		options.put("fps", new RangeEntry("minicraft.settings.fps", 10, 300, getRefreshRate())); // Has to check if the game is running in a headless mode. If it doesn't set the fps to 60
+		options.put("diff", new ArrayEntry<>("minicraft.settings.difficulty", "minicraft.settings.difficulty.easy", "minicraft.settings.difficulty.normal", "minicraft.settings.difficulty.hard"));
 		options.get("diff").setSelection(1);
-		options.put("mode", new ArrayEntry<>("Game Mode", "Survival", "Creative", "Hardcore", "Score"));
+		options.put("mode", new ArrayEntry<>("minicraft.settings.mode", "minicraft.settings.mode.survival", "minicraft.settings.mode.creative", "minicraft.settings.mode.hardcore", "minicraft.settings.mode.score"));
 
-		options.put("scoretime", new ArrayEntry<>("Time (Score Mode)", 10, 20, 40, 60, 120));
+		options.put("scoretime", new ArrayEntry<>("minicraft.settings.scoretime", 10, 20, 40, 60, 120));
 		options.get("scoretime").setValueVisibility(10, false);
 		options.get("scoretime").setValueVisibility(120, false);
 
-		options.put("sound", new BooleanEntry("Sound", true));
-		options.put("autosave", new BooleanEntry("Autosave", true));
+		options.put("sound", new BooleanEntry("minicraft.settings.sound", true));
+		options.put("autosave", new BooleanEntry("minicraft.settings.autosave", true));
 
-		options.put("size", new ArrayEntry<>("World Size", 128, 256, 512));
-		options.put("theme", new ArrayEntry<>("World Theme", "Normal", "Forest", "Desert", "Plain", "Hell"));
-		options.put("type", new ArrayEntry<>("Terrain Type", "Island", "Box", "Mountain", "Irregular"));
+		options.put("size", new ArrayEntry<>("minicraft.settings.size", 128, 256, 512));
+		options.put("theme", new ArrayEntry<>("minicraft.settings.theme", "minicraft.settings.theme.normal", "minicraft.settings.theme.forest", "minicraft.settings.theme.desert", "minicraft.settings.theme.plain", "minicraft.settings.theme.hell"));
+		options.put("type", new ArrayEntry<>("minicraft.settings.type", "minicraft.settings.type.island", "minicraft.settings.type.box", "minicraft.settings.type.mountain", "minicraft.settings.type.irregular"));
 
 		options.put("tutorials", new BooleanEntry("Tutorials", false));
 		options.put("quests", new BooleanEntry("Quests", false));
 		options.put("showquests", new BooleanEntry("Quests Panel", true));
 
-		options.put("language", new ArrayEntry<>("Language", true, false, Localization.getLocalesAsString()));
+		options.put("language", new ArrayEntry<>("minicraft.settings.language", true, Localization.getLocalesAsString()));
 		options.get("language").setValue(Localization.getSelectedLocale().toLanguageTag());
 
 
 		options.get("mode").setChangeAction(value ->
-			options.get("scoretime").setVisible("Score".equals(value))
+			options.get("scoretime").setVisible("minicraft.settings.mode.score".equals(value))
 		);
 
 		options.put("textures", new ArrayEntry<>("textures", "Original", "Custom"));

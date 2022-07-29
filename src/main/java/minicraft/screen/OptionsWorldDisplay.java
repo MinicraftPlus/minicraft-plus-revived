@@ -40,7 +40,7 @@ public class OptionsWorldDisplay extends Display {
 				.setShouldRender(false)
 				.setSelectable(false)
 				.setEntries(StringEntry.useLines(Color.RED, "minicraft.display.options_off_tutorial.confirm_popup", "minicraft.display.popup.enter_confirm", "minicraft.display.popup.escape_cancel"))
-				.setTitle("Confirm Action")
+				.setTitle("minicraft.display.popup.title_confirm")
 				.createMenu()
 		};
 	}
@@ -74,7 +74,7 @@ public class OptionsWorldDisplay extends Display {
 			Settings.getEntry("sound"),
 			Settings.getEntry("autosave"),
 			Settings.getEntry("showquests"),
-			new SelectEntry("Change Key Bindings", () -> Game.setDisplay(new KeyInputDisplay())),
+			new SelectEntry("minicraft.display.options.change_key_bindings", () -> Game.setDisplay(new KeyInputDisplay())),
 			Settings.getEntry("language")
 		));
 	}

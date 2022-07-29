@@ -28,7 +28,7 @@ public class KeyInputDisplay extends Display {
 	public KeyInputDisplay() {
 		super(true);
 		builder = new Menu.Builder(false, 0, RelPos.CENTER, getEntries())
-			.setTitle("Controls")
+			.setTitle("minicraft.display.key_input.title_controls")
 			.setPositioning(new Point(Screen.w/2, Screen.h - Font.textHeight()*5), RelPos.TOP);
 
 		Menu.Builder popupBuilder = new Menu.Builder(true, 4, RelPos.CENTER)
@@ -39,12 +39,12 @@ public class KeyInputDisplay extends Display {
 			builder.createMenu(),
 
 			popupBuilder
-				.setEntries(StringEntry.useLines(Color.YELLOW, "Press the desired", "key sequence"))
+				.setEntries(StringEntry.useLines(Color.YELLOW, "minicraft.display.key_input.popup.press_key_sequence"))
 				.createMenu(),
 
 			popupBuilder
 				.setEntries(StringEntry.useLines(Color.RED, "minicraft.display.key_input.confirm_popup", "minicraft.display.popup.enter_confirm", "minicraft.display.popup.escape_cancel"))
-				.setTitle("Confirm Action")
+				.setTitle("minicraft.display.popup.title_confirm")
 				.createMenu()
 		};
 

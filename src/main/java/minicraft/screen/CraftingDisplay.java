@@ -43,12 +43,12 @@ public class CraftingDisplay extends Display {
 		this.recipes = recipes.toArray(new Recipe[recipes.size()]);
 
 		itemCountMenu = new Menu.Builder(true, 0, RelPos.LEFT)
-			.setTitle("Have:")
+			.setTitle("minicraft.display.crafting.title_have")
 			.setTitlePos(RelPos.TOP_LEFT)
 			.setPositioning(new Point(recipeMenu.getBounds().getRight()+SpriteSheet.boxWidth, recipeMenu.getBounds().getTop()), RelPos.BOTTOM_RIGHT);
 
 		costsMenu = new Menu.Builder(true, 0, RelPos.LEFT)
-			.setTitle("Cost:")
+			.setTitle("minicraft.display.crafting.title_cost")
 			.setTitlePos(RelPos.TOP_LEFT)
 			.setPositioning(new Point(itemCountMenu.createMenu().getBounds().getLeft(), recipeMenu.getBounds().getBottom()), RelPos.TOP_RIGHT);
 

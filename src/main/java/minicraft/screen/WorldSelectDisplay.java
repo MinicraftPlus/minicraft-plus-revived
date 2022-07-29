@@ -33,7 +33,7 @@ public class WorldSelectDisplay extends Display {
 	public WorldSelectDisplay() {
 		super(true);
 	}
-	
+
 	@Override
 	public void init(Display parent) {
 		if (parent instanceof WorldEditDisplay && parent.getParent() != null) {
@@ -49,9 +49,9 @@ public class WorldSelectDisplay extends Display {
 
 		// Update world list
 		updateWorlds();
-		
+
 		SelectEntry[] entries = new SelectEntry[worldNames.size()];
-		
+
 		for (int i = 0; i < entries.length; i++) {
 			final String name = worldNames.get(i);
 			final Version version = worldVersions.get(i);
@@ -71,7 +71,7 @@ public class WorldSelectDisplay extends Display {
 				.createMenu()
 		};
 	}
-	
+
 	@Override
 	public void tick(InputHandler input) {
 		super.tick(input);
@@ -83,22 +83,22 @@ public class WorldSelectDisplay extends Display {
 			}
 		}
 	}
-	
+
 	@Override
 	public void render(Screen screen) {
 		super.render(screen);
-		
+
 		int sel = menus[0].getSelection();
 		if (sel >= 0 && sel < worldVersions.size()) {
 			Version version = worldVersions.get(sel);
 			int col = Color.WHITE;
 			if (version.compareTo(Game.VERSION) > 0) {
 				col = Color.RED;
-				Font.drawCentered(Localization.getLocalized("Higher version, cannot load world!"), screen, Font.textHeight() * 5, col);
+				Font.drawCentered(Localization.getLocalized("minicraft.display.world_select.world_too_new"), screen, Font.textHeight() * 5, col);
 			}
 			Font.drawCentered(Localization.getLocalized("World Version:") + " " + (version.compareTo(new Version("1.9.2")) <= 0 ? "~" : "") + version, screen, Font.textHeight() * 7/2, col);
 		}
-		
+
 		Font.drawCentered(Game.input.getMapping("select") + Localization.getLocalized(" to confirm"), screen, Screen.h - 60, Color.GRAY);
 		Font.drawCentered(Game.input.getMapping("exit") + Localization.getLocalized(" to return"), screen, Screen.h - 40, Color.GRAY);
 
@@ -108,7 +108,7 @@ public class WorldSelectDisplay extends Display {
 			y += Font.textHeight();
 		}
 
-		Font.drawCentered(Localization.getLocalized("Select World"), screen, 0, Color.WHITE);
+		Font.drawCentered(Localization.getLocalized("minicraft.display.world_select.select_world"), screen, 0, Color.WHITE);
 	}
 
 	public static void updateWorlds() {

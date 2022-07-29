@@ -444,7 +444,7 @@ public class Player extends Mob implements ItemHolder, ClientTickable {
 				if (input.getKey("pause").clicked)
 					Game.setDisplay(new PauseDisplay());
 				if (input.getKey("craft").clicked && !use())
-					Game.setDisplay(new CraftingDisplay(Recipes.craftRecipes, "Crafting", this, true));
+					Game.setDisplay(new CraftingDisplay(Recipes.craftRecipes, "minicraft.display.crafting", this, true));
 
 				if (input.getKey("info").clicked) Game.setDisplay(new InfoDisplay());
 

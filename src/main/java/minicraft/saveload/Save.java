@@ -171,7 +171,6 @@ public class Save {
 		JSONObject json = new JSONObject();
 
 		json.put("version", String.valueOf(Game.VERSION));
-		json.put("diff", Settings.get("diff"));
 		json.put("sound", String.valueOf(Settings.get("sound")));
 		json.put("autosave", String.valueOf(Settings.get("autosave")));
 		json.put("fps", String.valueOf(Settings.get("fps")));
@@ -330,7 +329,7 @@ public class Save {
 	}
 
 	private void writeEntities(String filename) {
-		LoadingDisplay.setMessage("Entities");
+		LoadingDisplay.setMessage("minicraft.display.loading.entities");
 		for (int l = 0; l < World.levels.length; l++) {
 			for (Entity e: World.levels[l].getEntitiesToSave()) {
 				String saved = writeEntity(e, true);

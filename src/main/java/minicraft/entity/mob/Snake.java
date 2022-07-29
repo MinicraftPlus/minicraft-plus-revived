@@ -14,11 +14,11 @@ public class Snake extends EnemyMob {
 			sprites[i] = list;
 		}
 	}
-	
+
 	public Snake(int lvl) {
 		super(lvl, sprites, lvl > 1 ? 8 : 7, 100);
 	}
-	
+
 	@Override
 	protected void touchedBy(Entity entity) {
 		if (entity instanceof Player) {
@@ -26,14 +26,14 @@ public class Snake extends EnemyMob {
 			((Player)entity).hurt(this, damage);
 		}
 	}
-	
+
 	public void die() {
-		int num = Settings.get("diff").equals("Hard") ? 1 : 0;
+		int num = Settings.get("diff").equals("minicraft.settings.difficulty.hard") ? 1 : 0;
 		dropItem(num, num + 1, Items.get("scale"));
-		
+
 		if (random.nextInt(24 / lvl / (Settings.getIdx("diff") + 1)) == 0)
 			dropItem(1, 1, Items.get("key"));
-		
+
 		super.die();
 	}
 }

@@ -168,15 +168,15 @@ public class WorldEditDisplay extends Display {
 		ArrayList<ListEntry> entries = new ArrayList<>();
 		if (action == Action.Delete) {
 			entries.addAll(Arrays.asList(
-					new StringEntry("Are you sure you want to delete", action.color),
+					new StringEntry("minicraft.display.world_edit.popup.delete_confirm", action.color),
 					new StringEntry("\"" + worldName + "\"?", Color.tint(action.color, 1, true)),
-					new StringEntry("This can not be undone!", action.color)
+					new StringEntry("minicraft.display.world_edit.popup.delete_confirm1", action.color)
 			));
 		} else {
 			List<String> names = WorldSelectDisplay.getWorldNames();
 			if(action == Action.Rename)
 				names.remove(worldName);
-			entries.add(new StringEntry("New World Name:", action.color));
+			entries.add(new StringEntry("minicraft.display.world_edit", action.color));
 			entries.add(WorldGenDisplay.makeWorldNameInput("", names, worldName, false));
 		}
 

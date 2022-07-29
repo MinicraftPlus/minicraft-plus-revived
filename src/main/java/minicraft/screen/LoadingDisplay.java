@@ -15,7 +15,7 @@ import minicraft.gfx.Screen;
 import minicraft.saveload.Save;
 
 public class LoadingDisplay extends Display {
-	
+
 	private static float percentage = 0;
 	private static String progressType = "";
 
@@ -32,40 +32,40 @@ public class LoadingDisplay extends Display {
 		});
 		t.setRepeats(false);
 	}
-	
+
 	@Override
 	public void init(Display parent) {
 		super.init(parent);
 		percentage = 0;
-		progressType = "World";
+		progressType = "minicraft.display.loading.message.world";
 		if (WorldSelectDisplay.hasLoadedWorld())
-			msg = "Loading";
+			msg = "minicraft.display.loading.message.loading";
 		else
-			msg = "Generating";
+			msg = "minicraft.display.loading.message.generating";
 		t.start();
 	}
-	
+
 	@Override
 	public void onExit() {
 		percentage = 0;
 		if (!WorldSelectDisplay.hasLoadedWorld()) {
 			msg = "Saving";
-			progressType = "World";
+			progressType = "minicraft.display.loading.message.world";
 			new Save(WorldSelectDisplay.getWorldName());
 			Game.notifications.clear();
 		}
 	}
-	
+
 	public static void setPercentage(float percent) {
 		percentage = percent;
 	}
 	public static float getPercentage() { return percentage; }
 	public static void setMessage(String progressType) { LoadingDisplay.progressType = progressType; }
-	
+
 	public static void progress(float amt) {
 		percentage = Math.min(100, percentage + amt);
 	}
-	
+
 	@Override
 	public void render(Screen screen) {
 		super.render(screen);
