@@ -32,7 +32,7 @@ public class TitleDisplay extends Display {
 	public TitleDisplay() {
 
 		super(true, false, new Menu.Builder(false, 2, RelPos.CENTER,
-			new StringEntry("Checking for updates...", Color.BLUE),
+			new StringEntry("minicraft.displays.title.display.checking", Color.BLUE),
 			new BlankEntry(),
 			new SelectEntry("minicraft.displays.title.play", () -> {
 				if (WorldSelectDisplay.getWorldNames().size() > 0)
@@ -92,12 +92,12 @@ public class TitleDisplay extends Display {
 		}
 		else {
 			if (latestVersion.version.compareTo(Game.VERSION, true) > 0) {
-				menus[0].updateEntry(0, new StringEntry(Localization.getLocalized("New: ") + latestVersion.releaseName, Color.GREEN));
-				menus[0].updateEntry(1, new LinkEntry(Color.CYAN, "--Select here to Download--", latestVersion.releaseUrl, "Direct link to latest version: " + latestVersion.releaseUrl));
+				menus[0].updateEntry(0, new StringEntry(Localization.getLocalized("minicraft.displays.title.display.new_version", latestVersion.releaseName), Color.GREEN));
+				menus[0].updateEntry(1, new LinkEntry(Color.CYAN, Localization.getLocalized("minicraft.displays.title.select_to_download"), latestVersion.releaseUrl, Localization.getLocalized("minicraft.displays.title.link_to_version", latestVersion.releaseUrl)));
 			} else if (latestVersion.releaseName.length() > 0) {
 				menus[0].updateEntry(0, new StringEntry("minicraft.displays.title.display.latest_already", Color.DARK_GRAY, true));
 			} else {
-				menus[0].updateEntry(0, new StringEntry("Could not check for updates.", Color.RED, true));
+				menus[0].updateEntry(0, new StringEntry("minicraft.displays.title.display.cannot_check", Color.RED, true));
 			}
 		}
 	}
@@ -142,12 +142,12 @@ public class TitleDisplay extends Display {
 
 		Font.drawCentered(splashes[rand], screen, (Screen.h / 2) - 44, splashColor);
 
-		Font.draw("Version " + Game.VERSION, screen, 1, 1, Color.get(1, 51));
+		Font.draw(Localization.getLocalized("minicraft.displays.title.display.version", Game.VERSION), screen, 1, 1, Color.get(1, 51));
 
 
-		String upString = "(" + Game.input.getMapping("cursor-up") + ", " + Game.input.getMapping("cursor-down") + Localization.getLocalized(" to select") + ")";
-		String selectString = "(" + Game.input.getMapping("select") + Localization.getLocalized(" to accept") +")";
-		String exitString = "(" + Game.input.getMapping("exit") + Localization.getLocalized(" to return") +")";
+		String upString = Localization.getLocalized("minicraft.displays.title.display.help.0", Game.input.getMapping("cursor-up"), Game.input.getMapping("cursor-down"));
+		String selectString = Localization.getLocalized("minicraft.displays.title.display.help.1", Game.input.getMapping("select"));
+		String exitString = Localization.getLocalized("minicraft.displays.title.display.help.2", Game.input.getMapping("exit"));
 
 		Font.drawCentered(upString, screen, Screen.h - 30, Color.DARK_GRAY);
 		Font.drawCentered(selectString, screen, Screen.h - 20, Color.DARK_GRAY);

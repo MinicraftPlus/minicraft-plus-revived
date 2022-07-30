@@ -16,16 +16,16 @@ import minicraft.level.tile.Tiles;
 import org.tinylog.Logger;
 
 public class TileItem extends StackableItem {
-	
+
 	protected static ArrayList<Item> getAllInstances() {
 		ArrayList<Item> items = new ArrayList<>();
-		
+
 		/// TileItem sprites all have 1x1 sprites.
 		items.add(new TileItem("Flower", (new Sprite(4, 0, 0)), "flower", "grass"));
 		items.add(new TileItem("Acorn", (new Sprite(7, 3, 0)), "tree Sapling", "grass"));
 		items.add(new TileItem("Dirt", (new Sprite(0, 0, 0)), "dirt", "hole", "water", "lava"));
 		items.add(new TileItem("Natural Rock", (new Sprite(2, 0, 0)), "rock", "hole", "dirt", "sand", "grass", "path", "water", "lava"));
-		
+
 		items.add(new TileItem("Plank", (new Sprite(0, 5, 0)), "Wood Planks", "hole", "water", "cloud"));
 		items.add(new TileItem("Plank Wall", (new Sprite(1, 5, 0)), "Wood Wall", "Wood Planks"));
 		items.add(new TileItem("Wood Door", (new Sprite(2, 5, 0)), "Wood Door", "Wood Planks"));
@@ -39,14 +39,14 @@ public class TileItem extends StackableItem {
 		items.add(new TileItem("Ornate Obsidian", (new Sprite(6, 5, 0)), "Ornate Obsidian","hole", "water", "cloud", "lava"));
 		items.add(new TileItem("Obsidian Wall", (new Sprite(7, 5, 0)), "Obsidian Wall", "Obsidian"));
 		items.add(new TileItem("Obsidian Door", (new Sprite(8, 5, 0)), "Obsidian Door", "Obsidian"));
-	
+
 		items.add(new TileItem("Wool", (new Sprite(5, 3, 0)), "Wool", "hole", "water"));
 		items.add(new TileItem("Red Wool", (new Sprite(4, 3, 0)), "Red Wool", "hole", "water"));
 		items.add(new TileItem("Blue Wool", (new Sprite(3, 3, 0)), "Blue Wool", "hole", "water"));
 		items.add(new TileItem("Green Wool", (new Sprite(2, 3, 0)), "Green Wool", "hole", "water"));
 		items.add(new TileItem("Yellow Wool", (new Sprite(1, 3, 0)), "Yellow Wool", "hole", "water"));
 		items.add(new TileItem("Black Wool", (new Sprite(0, 3, 0)), "Black Wool", "hole", "water"));
-		
+
 		items.add(new TileItem("Sand", (new Sprite(6, 3, 0)), "sand", "hole", "water", "lava"));
 		items.add(new TileItem("Cactus", (new Sprite(8, 3, 0)), "cactus Sapling", "sand"));
 		items.add(new TileItem("Bone", (new Sprite(9, 3, 0)), "tree", "tree Sapling"));
@@ -58,10 +58,10 @@ public class TileItem extends StackableItem {
 
 		return items;
 	}
-	
+
 	public final String model;
 	public final List<String> validTiles;
-	
+
 	protected TileItem(String name, Sprite sprite, String model, String... validTiles) {
 		this(name, sprite, 1, model, Arrays.asList(validTiles));
 	}
@@ -75,7 +75,7 @@ public class TileItem extends StackableItem {
 		for (String tile: validTiles)
 			 this.validTiles.add(tile.toUpperCase());
 	}
-	
+
 	public boolean interactOn(Tile tile, Level level, int xt, int yt, Player player, Direction attackDir) {
 		for (String tilename : validTiles) {
 			if (tile.matches(level.getData(xt, yt), tilename)) {
@@ -88,33 +88,33 @@ public class TileItem extends StackableItem {
 		}
 
 		Logger.debug("{} cannot be placed on {}.", model, tile.name);
-		
+
 		String note = "";
 		if (model.contains("WALL")) {
-			note = Localization.getLocalized("minicraft.notification.invalid_placement") + " " + Tiles.getName(validTiles.get(0)) + "!";
+			note = Localization.getLocalized("minicraft.notification.invalid_placement", Tiles.getName(validTiles.get(0)));
 		}
 		else if (model.contains("DOOR")) {
-			note = Localization.getLocalized("minicraft.notification.invalid_placement") + " " + Tiles.getName(validTiles.get(0)) + "!";
+			note = Localization.getLocalized("minicraft.notification.invalid_placement", Tiles.getName(validTiles.get(0)));
 		}
 		else if ((model.contains("BRICK") || model.contains("PLANK") || model.equals("STONE") || model.contains("ORNATE"))) {
 			note = Localization.getLocalized("minicraft.notification.dig_hole");
 		}
-		
+
 		if (note.length() > 0) {
 			Game.notifications.add(note);
 		}
-		
+
 		return super.interactOn(false);
 	}
-	
+
 	@Override
 	public boolean equals(Item other) {
 		return super.equals(other) && model.equals(((TileItem)other).model);
 	}
-	
+
 	@Override
 	public int hashCode() { return super.hashCode() + model.hashCode(); }
-	
+
 	public TileItem clone() {
 		return new TileItem(getName(), sprite, count, model, validTiles);
 	}

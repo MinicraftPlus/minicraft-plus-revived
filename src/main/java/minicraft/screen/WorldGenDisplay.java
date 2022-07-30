@@ -107,7 +107,7 @@ public class WorldGenDisplay extends Display {
 				Settings.getEntry("mode"),
 				Settings.getEntry("scoretime"),
 
-				new SelectEntry("Create World", () -> {
+				new SelectEntry("minicraft.displays.world_gen.create_world", () -> {
 					if(!nameField.isValid()) return;
 					WorldSelectDisplay.setWorldName(nameField.getUserInput(), false);
 					Game.setDisplay(new LoadingDisplay());

@@ -2,6 +2,7 @@ package minicraft.entity.furniture;
 
 import minicraft.core.Game;
 import minicraft.core.Updater;
+import minicraft.core.io.Localization;
 import minicraft.core.io.Settings;
 import minicraft.entity.Entity;
 import minicraft.entity.mob.Player;
@@ -109,7 +110,7 @@ public class DeathChest extends Chest {
 			}
 
 			remove();
-			Game.notifications.add("Death chest retrieved!");
+			Game.notifications.add(Localization.getLocalized("minicraft.notification.death_chest_retrieved"));
 		}
 	}
 

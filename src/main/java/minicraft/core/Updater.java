@@ -44,6 +44,7 @@ public class Updater extends Game {
 
 	// AUTOSAVE AND NOTIFICATIONS
 
+	public static boolean updateNoteTick = false;
 	public static int notetick = 0; // "note"= notifications.
 
 	private static final int astime = 7200; // tands for Auto-Save Time (interval)
@@ -88,10 +89,10 @@ public class Updater extends Game {
 	public static void tick() {
 
 		// Quick Level change: move the player for -1, or 1 levels
-        	if (isMode("creative") && input.getKey("SHIFT-S").clicked ) {
+        	if (isMode("minicraft.settings.mode.creative") && input.getKey("SHIFT-S").clicked ) {
         		Game.setDisplay(new LevelTransitionDisplay(-1));
 
-        	} else if (isMode("creative") && input.getKey("SHIFT-W").clicked ){
+        	} else if (isMode("minicraft.settings.mode.creative") && input.getKey("SHIFT-W").clicked ){
         		Game.setDisplay(new LevelTransitionDisplay(1));
 
         	}
@@ -146,7 +147,7 @@ public class Updater extends Game {
 
 		// SCORE MODE ONLY
 
-		if (isMode("score") && (!paused && !gameOver)) {
+		if (isMode("minicraft.settings.mode.score") && (!paused && !gameOver)) {
 			if (scoreTime <= 0) { // GAME OVER
 				gameOver = true;
 				setDisplay(new EndGameDisplay());
@@ -154,6 +155,8 @@ public class Updater extends Game {
 
 			scoreTime--;
 		}
+
+		if (updateNoteTick) notetick++;
 
 		// This is the general action statement thing! Regulates menus, mostly.
 		if (!Renderer.canvas.hasFocus()) {
@@ -193,7 +196,7 @@ public class Updater extends Game {
 					Tile.tickCount++;
 				}
 
-				if (display == null && input.getKey("F3").clicked) { // Shows debug info in upper-left
+				if (display == null && input.getKey("toggleDebug").clicked) { // Shows debug info in upper-left
 					Renderer.showDebugInfo = !Renderer.showDebugInfo;
 				}
 
@@ -222,10 +225,10 @@ public class Updater extends Game {
 					if (input.getKey("creative").clicked) {
 						Settings.set("mode", "creative");
 					}
-					if (input.getKey("survival").clicked) Settings.set("mode", "survival");
-					if (input.getKey("shift-t").clicked) Settings.set("mode", "score");
+					if (input.getKey("survival").clicked) Settings.set("mode", "minicraft.settings.mode.survival");
+					if (input.getKey("shift-t").clicked) Settings.set("mode", "minicraft.settings.mode.score");
 
-					if (isMode("score") && input.getKey("ctrl-t").clicked) {
+					if (isMode("minicraft.settings.mode.score") && input.getKey("ctrl-t").clicked) {
 						scoreTime = normSpeed * 5; // 5 seconds
 					}
 

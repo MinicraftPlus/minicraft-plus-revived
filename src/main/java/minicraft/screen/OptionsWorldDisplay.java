@@ -1,6 +1,7 @@
 package minicraft.screen;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import minicraft.core.Game;
@@ -25,7 +26,7 @@ public class OptionsWorldDisplay extends Display {
 
 		if ((boolean) Settings.get("tutorials")) {
 			entries.add(new BlankEntry());
-			entries.add(new SelectEntry("Turn off tutorials", () -> {
+			entries.add(new SelectEntry("minicraft.displays.options_world.turn_off_tutorials", () -> {
 				confirmOff = true;
 				selection = 1;
 				menus[selection].shouldRender = true;
@@ -34,12 +35,13 @@ public class OptionsWorldDisplay extends Display {
 
 		menus = new Menu[] {
 			new Menu.Builder(false, 6, RelPos.LEFT, entries)
-					.setTitle("World Options")
+					.setTitle("minicraft.displays.options_world")
 					.createMenu(),
 			new Menu.Builder(true, 4, RelPos.CENTER)
 				.setShouldRender(false)
 				.setSelectable(false)
-				.setEntries(StringEntry.useLines(Color.RED, "minicraft.display.options_off_tutorial.confirm_popup", "minicraft.display.popup.enter_confirm", "minicraft.display.popup.escape_cancel"))
+				.setEntries(StringEntry.useLines(Color.RED, "minicraft.displays.options_world.off_tutorials_confirm_popup",
+					"minicraft.display.popup.enter_confirm", "minicraft.display.popup.escape_cancel"))
 				.setTitle("minicraft.display.popup.title_confirm")
 				.createMenu()
 		};
@@ -69,7 +71,7 @@ public class OptionsWorldDisplay extends Display {
 	}
 
 	private List<ListEntry> getEntries() {
-		return new ArrayList<>(List.of(Settings.getEntry("diff"),
+		return new ArrayList<>(Arrays.asList(Settings.getEntry("diff"),
 			Settings.getEntry("fps"),
 			Settings.getEntry("sound"),
 			Settings.getEntry("autosave"),

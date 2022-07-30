@@ -1,6 +1,5 @@
 package minicraft.screen;
 
-import minicraft.core.Achievement;
 import minicraft.core.Game;
 import minicraft.core.io.InputHandler;
 import minicraft.core.io.Localization;
@@ -13,6 +12,8 @@ import minicraft.saveload.Save;
 import minicraft.screen.entry.ListEntry;
 import minicraft.screen.entry.SelectEntry;
 import minicraft.screen.entry.StringEntry;
+import minicraft.util.Achievement;
+
 import org.jetbrains.annotations.Nullable;
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -131,7 +132,7 @@ public class AchievementsDisplay extends Display {
         }
 
         // Help text.
-        Font.drawCentered("Use " + Game.input.getMapping("cursor-down") + " and " + Game.input.getMapping("cursor-up") + " to move.", screen, Screen.h - 8, Color.DARK_GRAY);
+        Font.drawCentered(Localization.getLocalized("minicraft.displays.achievements.display.help", Game.input.getMapping("cursor-down"), Game.input.getMapping("cursor-up")), screen, Screen.h - 8, Color.DARK_GRAY);
     }
 
     /**
@@ -149,7 +150,7 @@ public class AchievementsDisplay extends Display {
         Achievement a = achievements.get(id);
 
 		// Return if it is in creative mode
-		if (!allowCreative && Game.isMode("creative")) return false;
+		if (!allowCreative && Game.isMode("minicraft.settings.mode.creative")) return false;
         // Return if we didn't find any achievements.
         if (a == null) return false;
 
@@ -165,7 +166,7 @@ public class AchievementsDisplay extends Display {
             achievementScore += a.score;
 
             // Tells the player that they got an achievement.
-            Game.notifications.add(Localization.getLocalized("minicraft.notification.achievement_unlocked") + " " + Localization.getLocalized(id));
+            Game.notifications.add(Localization.getLocalized("minicraft.notification.achievement_unlocked", Localization.getLocalized(id)));
         }
         else
             achievementScore -= a.score;

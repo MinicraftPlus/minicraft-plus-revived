@@ -73,7 +73,7 @@ public class Slime extends EnemyMob {
 	}
 
 	public void die() {
-		dropItem(1, Game.isMode("score") ? 2 : 4 - Settings.getIdx("diff"), Items.get("slime"));
+		dropItem(1, Game.isMode("minicraft.settings.mode.score") ? 2 : 4 - Settings.getIdx("diff"), Items.get("slime"));
 
 		super.die(); // Parent death call
 	}

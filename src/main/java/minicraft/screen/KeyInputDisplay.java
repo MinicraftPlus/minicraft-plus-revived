@@ -2,6 +2,7 @@ package minicraft.screen;
 
 import minicraft.core.Game;
 import minicraft.core.io.InputHandler;
+import minicraft.core.io.Localization;
 import minicraft.gfx.Color;
 import minicraft.gfx.Font;
 import minicraft.gfx.Point;
@@ -43,7 +44,8 @@ public class KeyInputDisplay extends Display {
 				.createMenu(),
 
 			popupBuilder
-				.setEntries(StringEntry.useLines(Color.RED, "minicraft.displays.key_input.popup_display.confirm_reset", "minicraft.display.popup.enter_confirm", "minicraft.display.popup.escape_cancel"))
+				.setEntries(StringEntry.useLines(Color.RED, "minicraft.displays.key_input.popup_display.confirm_reset",
+					"minicraft.display.popup.enter_confirm", "minicraft.display.popup.escape_cancel"))
 				.setTitle("minicraft.display.popup.title_confirm")
 				.createMenu()
 		};
@@ -106,10 +108,10 @@ public class KeyInputDisplay extends Display {
 
 		if(!listeningForBind && !confirmReset) {
 			String[] lines = {
-				"Press C/Enter to change key binding",
-				"Press A to add key binding",
-				"Shift-D to reset all keys to default",
-				Game.input.getMapping("exit")+" to Return to menu"
+				Localization.getLocalized("minicraft.displays.key_input.display.help.0"),
+				Localization.getLocalized("minicraft.displays.key_input.display.help.1"),
+				Localization.getLocalized("minicraft.displays.key_input.display.help.2"),
+				Localization.getLocalized("minicraft.displays.key_input.display.help.3", Game.input.getMapping("exit"))
 			};
 			for(int i = 0; i < lines.length; i++)
 				Font.drawCentered(lines[i], screen, Screen.h-Font.textHeight()*(4-i), Color.WHITE);

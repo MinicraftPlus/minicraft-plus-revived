@@ -49,7 +49,7 @@ public class LoadingDisplay extends Display {
 	public void onExit() {
 		percentage = 0;
 		if (!WorldSelectDisplay.hasLoadedWorld()) {
-			msg = "Saving";
+			msg = "minicraft.displays.loading.message.saving";
 			progressType = "minicraft.displays.loading.message.world";
 			new Save(WorldSelectDisplay.getWorldName());
 			Game.notifications.clear();

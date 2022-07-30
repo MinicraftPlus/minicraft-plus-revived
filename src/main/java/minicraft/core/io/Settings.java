@@ -28,6 +28,7 @@ public class Settings {
 		options.put("theme", new ArrayEntry<>("minicraft.settings.theme", "minicraft.settings.theme.normal", "minicraft.settings.theme.forest", "minicraft.settings.theme.desert", "minicraft.settings.theme.plain", "minicraft.settings.theme.hell"));
 		options.put("type", new ArrayEntry<>("minicraft.settings.type", "minicraft.settings.type.island", "minicraft.settings.type.box", "minicraft.settings.type.mountain", "minicraft.settings.type.irregular"));
 
+		// TODO localize these labels
 		options.put("tutorials", new BooleanEntry("Tutorials", false));
 		options.put("quests", new BooleanEntry("Quests", false));
 		options.put("showquests", new BooleanEntry("Quests Panel", true));

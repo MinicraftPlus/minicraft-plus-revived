@@ -2,6 +2,7 @@ package minicraft.entity.mob;
 
 import minicraft.core.Game;
 import minicraft.core.Updater;
+import minicraft.core.io.Localization;
 import minicraft.core.io.Sound;
 import minicraft.entity.Direction;
 import minicraft.entity.Entity;
@@ -164,8 +165,7 @@ public class AirWizard extends EnemyMob {
 		Sound.bossDeath.play();
 
 		Analytics.AirWizardDeath.ping();
-		Updater.notifyAll("Air Wizard Defeated!");
-
+		Updater.notifyAll(Localization.getLocalized("minicraft.notification.air_wizard_defeated"));
 
 		// If this is the first time we beat the air wizard.
 		if (!beaten) {

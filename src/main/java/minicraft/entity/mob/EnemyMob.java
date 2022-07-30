@@ -119,7 +119,7 @@ public class EnemyMob extends MobAi {
 	 * @return true if the mob can spawn here, false if not.
 	 */
 	public static boolean checkStartPos(Level level, int x, int y) { // Find a place to spawn the mob
-		int r = (level.depth == -4 ? (Game.isMode("score") ? 22 : 15) : 13);
+		int r = (level.depth == -4 ? (Game.isMode("minicraft.settings.mode.score") ? 22 : 15) : 13);
 
 		if(!MobAi.checkStartPos(level, x, y, 60, r))
 			return false;

@@ -54,7 +54,7 @@ public class StackableItem extends Item {
 
 	// This is used by (most) subclasses, to standardize the count decrement behavior. This is not the normal interactOn method.
 	protected boolean interactOn(boolean subClassSuccess) {
-		if (subClassSuccess && !Game.isMode("creative"))
+		if (subClassSuccess && !Game.isMode("minicraft.settings.mode.creative"))
 			count--;
 		return subClassSuccess;
 	}

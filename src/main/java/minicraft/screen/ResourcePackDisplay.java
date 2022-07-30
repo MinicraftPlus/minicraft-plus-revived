@@ -79,11 +79,11 @@ public class ResourcePackDisplay extends Display {
 		super.render(screen);
 
 		// Title
-		Font.drawCentered(Localization.getLocalized("Resource Packs"), screen, 16, Color.WHITE);
+		Font.drawCentered(Localization.getLocalized("minicraft.displays.resource_packs.display.title"), screen, 16, Color.WHITE);
 
 		// Info text at the bottom.
-		Font.drawCentered("Use "+ Game.input.getMapping("cursor-down") + " and " + Game.input.getMapping("cursor-up") + " to move.", screen, Screen.h - 17, Color.DARK_GRAY);
-		Font.drawCentered(Game.input.getMapping("SELECT") + " to select.", screen, Screen.h - 9, Color.DARK_GRAY);
+		Font.drawCentered(Localization.getLocalized("minicraft.displays.resource_packs.display.help.move", Game.input.getMapping("cursor-down"), Game.input.getMapping("cursor-up")), screen, Screen.h - 17, Color.DARK_GRAY);
+		Font.drawCentered(Localization.getLocalized("minicraft.displays.resource_packs.display.help.select", Game.input.getMapping("SELECT")), screen, Screen.h - 9, Color.DARK_GRAY);
 
 		// Does not work as intended because the sprite sheets aren't updated when changing selection.
 		int h = 2;

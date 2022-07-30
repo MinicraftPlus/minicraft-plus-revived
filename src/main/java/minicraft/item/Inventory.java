@@ -60,6 +60,7 @@ public class Inventory {
 	 * Adds an item to a specific spot in the inventory.
 	 * @param slot Index to place item at.
 	 * @param item Item to be added.
+	 * @return The number of items added.
 	 */
 	public int add(int slot, Item item) {
 

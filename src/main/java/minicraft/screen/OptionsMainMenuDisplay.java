@@ -17,9 +17,9 @@ public class OptionsMainMenuDisplay extends Display {
 			Settings.getEntry("showquests"),
 			new SelectEntry("minicraft.display.options_display.change_key_bindings", () -> Game.setDisplay(new KeyInputDisplay())),
 			Settings.getEntry("language"),
-			new SelectEntry("Resource packs", () -> Game.setDisplay(new ResourcePackDisplay()))
+			new SelectEntry("minicraft.displays.options_main_menu.resource_packs", () -> Game.setDisplay(new ResourcePackDisplay()))
 		)
-			.setTitle("Main Menu Options")
+			.setTitle("minicraft.displays.options_main_menu")
 			.createMenu();
 
         menus = new Menu[]{

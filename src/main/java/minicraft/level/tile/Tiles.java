@@ -82,7 +82,7 @@ public final class Tiles {
 
 	protected static void add(int id, Tile tile) {
 		tiles.put((short)id, tile);
-		System.out.println("Adding " + tile.name + " to tile list with id " + id);
+		Logger.debug("Adding " + tile.name + " to tile list with id " + id);
 		tile.id = (short) id;
 	}
 
@@ -213,7 +213,7 @@ public final class Tiles {
 		}
 
 		if(getting == null) {
-			System.out.println("TILES.GET: Invalid tile requested: " + name);
+			Logger.info("TILES.GET: Invalid tile requested: " + name);
 			getting = tiles.get((short)0);
 		}
 
@@ -236,7 +236,7 @@ public final class Tiles {
 			return TorchTile.getTorchTile(get(id - 32767));
 		}
 		else {
-			System.out.println("TILES.GET: Unknown tile id requested: " + id);
+			Logger.info("TILES.GET: Unknown tile id requested: " + id);
 			return tiles.get((short)0);
 		}
 	}

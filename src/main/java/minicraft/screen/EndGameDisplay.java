@@ -3,6 +3,7 @@ package minicraft.screen;
 import minicraft.core.Game;
 import minicraft.core.Updater;
 import minicraft.core.io.InputHandler;
+import minicraft.core.io.Localization;
 import minicraft.core.io.Settings;
 import minicraft.gfx.Color;
 import minicraft.gfx.Screen;
@@ -43,14 +44,14 @@ public class EndGameDisplay extends Display {
 		ArrayList<ListEntry> entries = new ArrayList<>();
 
 		// calculate the score
-		entries.add(new StringEntry("Player Score: " + Game.player.getScore(), Color.WHITE));
+		entries.add(new StringEntry(Localization.getLocalized("minicraft.displays.end_game.display.player_score", Game.player.getScore()), Color.WHITE));
 		entries.add(new StringEntry("minicraft.displays.end_game.display.bonuses", Color.YELLOW));
 
 		finalScore = Game.player.getScore();
 		for(String item: scoredItems)
 			addBonus(item);
 
-		entries.add(new StringEntry("Final Score: " + finalScore));
+		entries.add(new StringEntry(Localization.getLocalized("minicraft.displays.end_game.display.final_score", finalScore)));
 
 		// add any unlocks
 		entries.addAll(Arrays.asList(getAndWriteUnlocks()));
@@ -97,7 +98,7 @@ public class EndGameDisplay extends Display {
 
 		StringEntry[] entries = new StringEntry[unlocks.size()];
 		for (int i = 0; i < entries.length; i++)
-			entries[i] = new StringEntry("Unlocked! " + unlocks.get(i) + " Score Time");
+			entries[i] = new StringEntry(Localization.getLocalized("minicraft.displays.end_game.display.unlocked", unlocks.get(i)));
 
 		new Save(); // Write preferences and unlocks.
 

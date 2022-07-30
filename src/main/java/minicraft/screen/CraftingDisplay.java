@@ -161,7 +161,7 @@ public class CraftingDisplay extends Display {
 
 	public static void unlockLeft() {
 		if ((boolean) Settings.get("quests")) {
-			List<Recipe> locks = List.of(
+			List<Recipe> locks = Arrays.asList(
 				new Recipe("Gem Armor_1", "gem_65"),
 				new Recipe("Gem Sword_1", "Wood_5", "gem_50"),
 				new Recipe("Gem Claymore_1", "Gem Sword_1", "shard_15"),

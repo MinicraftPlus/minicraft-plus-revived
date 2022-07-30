@@ -1,4 +1,4 @@
-package minicraft.core;
+package minicraft.util;
 
 public class Achievement {
 	public final String name, description;

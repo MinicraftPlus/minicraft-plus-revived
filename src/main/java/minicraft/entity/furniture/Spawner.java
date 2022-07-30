@@ -148,7 +148,7 @@ public class Spawner extends Furniture {
 			Sound.monsterHurt.play();
 
 			int dmg;
-			if (Game.isMode("creative"))
+			if (Game.isMode("minicraft.settings.mode.creative"))
 				dmg = health;
 			else {
 				dmg = tool.level + random.nextInt(2);
@@ -171,7 +171,7 @@ public class Spawner extends Furniture {
 			return true;
 		}
 
-		if (item instanceof PowerGloveItem && Game.isMode("creative")) {
+		if (item instanceof PowerGloveItem && Game.isMode("minicraft.settings.mode.creative")) {
 			level.remove(this);
 			if (!(player.activeItem instanceof PowerGloveItem))
 				player.getLevel().dropItem(player.x, player.y, player.activeItem);
@@ -186,7 +186,7 @@ public class Spawner extends Furniture {
 
 	@Override
 	public boolean use(Player player) {
-		if (Game.isMode("creative") && mob instanceof EnemyMob) {
+		if (Game.isMode("minicraft.settings.mode.creative") && mob instanceof EnemyMob) {
 			lvl++;
 			if (lvl > maxMobLevel) lvl = 1;
 			try {

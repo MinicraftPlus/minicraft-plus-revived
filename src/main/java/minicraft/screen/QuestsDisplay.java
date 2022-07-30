@@ -2,6 +2,7 @@ package minicraft.screen;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -58,6 +59,7 @@ public class QuestsDisplay extends Display {
 			Logger.error("Failed to load quests.");
 		}
 
+		// TODO Localize this class
 		// TODO Setting callback messages for some tutorials
 	}
 
@@ -185,12 +187,12 @@ public class QuestsDisplay extends Display {
 				.createMenu(),
 			new Menu.Builder(false, 0, RelPos.LEFT)
 				.setPositioning(new Point(Screen.w / 2 - 8 * 11, 30), RelPos.RIGHT)
-				.setEntries(new StringEntry("Unlocked", Color.GRAY))
+				.setEntries(new StringEntry("minicraft.displays.quests.display.header.unlocked", Color.GRAY))
 				.setSelectable(false)
 				.createMenu(),
 			new Menu.Builder(false, 0, RelPos.LEFT)
 				.setPositioning(new Point(Screen.w / 2 + 8 * 2, 30), RelPos.RIGHT)
-				.setEntries(new StringEntry("Completed", Color.GRAY))
+				.setEntries(new StringEntry("minicraft.displays.quests.display.header.completed", Color.GRAY))
 				.setSelectable(false)
 				.createMenu(),
 			new Menu.Builder(false, 0, RelPos.CENTER)
@@ -221,10 +223,10 @@ public class QuestsDisplay extends Display {
 			);
 
 			entries.add(new StringEntry("Tutorial: " + (series.tutorial ? "Yes" : "No"), series.tutorial ? Color.CYAN : Color.WHITE));
-			entries.addAll(List.of(StringEntry.useLines("Description: " + Localization.getLocalized(series.description))));
+			entries.addAll(Arrays.asList(StringEntry.useLines("Description: " + Localization.getLocalized(series.description))));
 
 			ArrayList<Quest> ongoingQuests = getOngoingSeriesQuests(series);
-			entries.addAll(List.of(StringEntry.useLines(ongoingQuests.size() + " ongoing quests" + (ongoingQuests.size() > 0 ? ": " : "") + String.join(", ", ongoingQuests.stream().map(q -> Localization.getLocalized(q.id)).toList()))));
+			entries.addAll(Arrays.asList(StringEntry.useLines(ongoingQuests.size() + " ongoing quests" + (ongoingQuests.size() > 0 ? ": " : "") + String.join(", ", ongoingQuests.stream().map(q -> Localization.getLocalized(q.id)).toList()))));
 
 			entries.add(new BlankEntry());
 			entries.add(new SelectEntry("View all quests of this series", () -> Game.setDisplay(new QuestListDisplay(series.getSeriesQuests()))));
@@ -297,7 +299,7 @@ public class QuestsDisplay extends Display {
 
 					entries.add(new StringEntry("Status: " + (questStatus.get(quest.id) == null ? "None" : questStatus.get(quest.id).toString())));
 					entries.add(new BlankEntry());
-					entries.addAll(List.of(StringEntry.useLines(Localization.getLocalized(quest.description))));
+					entries.addAll(Arrays.asList(StringEntry.useLines(Localization.getLocalized(quest.description))));
 
 					menus = new Menu[] {
 						new Menu.Builder(true, 1, RelPos.CENTER)

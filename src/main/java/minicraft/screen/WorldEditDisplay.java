@@ -22,7 +22,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-/**
+/** TODO Try merging this to WorldSelectDisplay
  * Used to edit worlds. These actions include renaming, deleting, and copying worlds.
  */
 public class WorldEditDisplay extends Display {
