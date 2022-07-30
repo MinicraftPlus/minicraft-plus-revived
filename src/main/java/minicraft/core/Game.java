@@ -13,8 +13,9 @@ import minicraft.saveload.Version;
 import minicraft.screen.Display;
 import minicraft.screen.ResourcePackDisplay;
 import minicraft.screen.TitleDisplay;
+import minicraft.util.Logging;
+
 import org.jetbrains.annotations.Nullable;
-import org.tinylog.Logger;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -40,7 +41,7 @@ public class Game {
 	public static void setDisplay(@Nullable Display display) { newDisplay = display; }
 	public static void exitDisplay() {
 		if (display == null) {
-			Logger.warn("Game tried to exit display, but no menu is open.");
+			Logging.GAMEHANDLER.warn("Game tried to exit display, but no menu is open.");
 			return;
 		}
 		Sound.back.play();
@@ -102,7 +103,7 @@ public class Game {
 		// Actually start the game.
 		Initializer.run();
 
-		Logger.debug("Main game loop ended; Terminating application...");
+		Logging.GAMEHANDLER.debug("Main game loop ended; Terminating application...");
 		System.exit(0);
 	}
 }

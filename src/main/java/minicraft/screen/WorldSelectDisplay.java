@@ -13,8 +13,8 @@ import minicraft.saveload.Load;
 import minicraft.saveload.Save;
 import minicraft.saveload.Version;
 import minicraft.screen.entry.SelectEntry;
+import minicraft.util.Logging;
 import minicraft.screen.WorldEditDisplay.Action;
-import org.tinylog.Logger;
 
 public class WorldSelectDisplay extends Display {
 
@@ -112,21 +112,21 @@ public class WorldSelectDisplay extends Display {
 	}
 
 	public static void updateWorlds() {
-		Logger.debug("Updating worlds list.");
+		Logging.GAMEHANDLER.debug("Updating worlds list.");
 
 		// Get folder containing the worlds and load them.
 		File worldSavesFolder = new File(worldsDir);
 
 		// Try to create the saves folder if it doesn't exist.
 		if (worldSavesFolder.mkdirs()) {
-			Logger.trace("World save folder created.");
+			Logging.GAMEHANDLER.trace("World save folder created.");
 		}
 
 		// Get all the files (worlds) in the folder.
 		File[] worlds = worldSavesFolder.listFiles();
 
 		if (worlds == null) {
-			Logger.error("Game location file folder is null, somehow...");
+			Logging.GAMEHANDLER.error("Game location file folder is null, somehow...");
 			return;
 		}
 
@@ -135,7 +135,7 @@ public class WorldSelectDisplay extends Display {
 
 		// Check if there are no files in folder.
 		if (worlds.length == 0) {
-			Logger.debug("No worlds in folder. Won't bother loading.");
+			Logging.GAMEHANDLER.debug("No worlds in folder. Won't bother loading.");
 			return;
 		}
 

@@ -19,11 +19,11 @@ import minicraft.item.Item;
 import minicraft.item.PotionType;
 import minicraft.item.Recipe;
 import minicraft.screen.*;
+import minicraft.util.Logging;
 import minicraft.util.Quest;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
-import org.tinylog.Logger;
 
 import java.io.BufferedWriter;
 import java.io.File;
@@ -56,7 +56,7 @@ public class Save {
 		if (worldFolder.getParent().equals("saves")) {
 			String worldName = worldFolder.getName();
 			if (!worldName.toLowerCase().equals(worldName)) {
-				Logger.debug("Renaming world in " + worldFolder + " to lowercase");
+				Logging.SAVELOAD.debug("Renaming world in " + worldFolder + " to lowercase");
 				String path = worldFolder.toString();
 				path = path.substring(0, path.lastIndexOf(worldName));
 				File newFolder = new File(path + worldName.toLowerCase());
@@ -96,7 +96,7 @@ public class Save {
 	/** This will save the settings in the settings menu. */
 	public Save() {
 		this(new File(Game.gameDir+"/"));
-		Logger.debug("Writing preferences and unlocks...");
+		Logging.SAVELOAD.debug("Writing preferences and unlocks...");
 		writePrefs();
 		writeUnlocks();
 	}
@@ -273,7 +273,7 @@ public class Save {
 
 			} catch (IOException e1) {
 				e1.printStackTrace();
-				Logger.error("Unable to write Quests.json.");
+				Logging.SAVELOAD.error("Unable to write Quests.json.");
 			}
 		}
 	}

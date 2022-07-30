@@ -18,7 +18,7 @@ public final class Tiles {
 	private static HashMap<Short, Tile> tiles = new HashMap<>();
 
 	public static void initTileList() {
-		Logger.debug("Initializing tile list...");
+		Logger.tag("Tiles").debug("Initializing tile list...");
 
 		tiles.put((short)0, new GrassTile("Grass"));
 		tiles.put((short)1, new DirtTile("Dirt"));

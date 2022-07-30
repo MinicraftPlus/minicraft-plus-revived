@@ -13,8 +13,9 @@ import minicraft.screen.entry.InputEntry;
 import minicraft.screen.entry.ListEntry;
 import minicraft.screen.entry.SelectEntry;
 import minicraft.screen.entry.StringEntry;
+import minicraft.util.Logging;
+
 import org.jetbrains.annotations.Nullable;
-import org.tinylog.Logger;
 
 import java.io.File;
 import java.io.IOException;
@@ -98,7 +99,7 @@ public class WorldEditDisplay extends Display {
 				// Do the action.
 				switch (action) {
 					case Delete:
-						Logger.debug("Deleting world: " + world);
+						Logging.GAMEHANDLER.debug("Deleting world: " + world);
 						File[] list = world.listFiles();
 						for (File file : list) {
 							file.delete();
@@ -114,7 +115,7 @@ public class WorldEditDisplay extends Display {
 						String newname = entry.getUserInput();
 						File newworld = new File(worldsDir + newname);
 						newworld.mkdirs();
-						Logger.debug("Copying world {} to world {}.", world, newworld);
+						Logging.GAMEHANDLER.debug("Copying world {} to world {}.", world, newworld);
 						// walk file tree
 						try {
 							FileHandler.copyFolderContents(new File(worldsDir + worldName).toPath(), newworld.toPath(), FileHandler.REPLACE_EXISTING, false);
@@ -133,10 +134,10 @@ public class WorldEditDisplay extends Display {
 
 						// Try to rename the file, if it works, return
 						if (world.renameTo(new File(worldsDir + name))) {
-							Logger.debug("Renaming world {} to new name: {}", world, name);
+							Logging.GAMEHANDLER.debug("Renaming world {} to new name: {}", world, name);
 							WorldSelectDisplay.updateWorlds();
 						} else {
-							Logger.error("Rename failed in WorldEditDisplay.");
+							Logging.GAMEHANDLER.error("Rename failed in WorldEditDisplay.");
 						}
 						break;
 				}

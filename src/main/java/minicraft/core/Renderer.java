@@ -40,8 +40,6 @@ import minicraft.screen.entry.StringEntry;
 import minicraft.util.Quest;
 import minicraft.util.Quest.QuestSeries;
 
-import org.tinylog.Logger;
-
 import javax.imageio.ImageIO;
 
 public class Renderer extends Game {

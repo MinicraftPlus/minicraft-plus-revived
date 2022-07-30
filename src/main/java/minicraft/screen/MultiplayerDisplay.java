@@ -1,10 +1,7 @@
 package minicraft.screen;
 
-import java.io.InputStream;
-
 import kong.unirest.*;
 import minicraft.network.Analytics;
-import org.json.JSONObject;
 
 import minicraft.core.Action;
 import minicraft.core.Game;
@@ -141,7 +138,7 @@ public class MultiplayerDisplay extends Display {
 					break;
 
 				case "success":
-					Logger.debug("Successfully received username from playminicraft server.");
+					Logger.tag("Network").debug("Successfully received username from playminicraft server.");
 					savedUsername = json.getString("name");
 					Analytics.LoginSuccess.ping();
 					break;

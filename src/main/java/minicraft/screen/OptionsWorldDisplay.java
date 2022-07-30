@@ -14,7 +14,6 @@ import minicraft.screen.entry.BlankEntry;
 import minicraft.screen.entry.ListEntry;
 import minicraft.screen.entry.SelectEntry;
 import minicraft.screen.entry.StringEntry;
-import minicraft.util.Quest;
 
 public class OptionsWorldDisplay extends Display {
 	private boolean confirmOff = false;

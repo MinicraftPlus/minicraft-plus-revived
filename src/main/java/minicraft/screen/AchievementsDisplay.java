@@ -13,12 +13,12 @@ import minicraft.screen.entry.ListEntry;
 import minicraft.screen.entry.SelectEntry;
 import minicraft.screen.entry.StringEntry;
 import minicraft.util.Achievement;
+import minicraft.util.Logging;
 
 import org.jetbrains.annotations.Nullable;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
-import org.tinylog.Logger;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -60,13 +60,13 @@ public class AchievementsDisplay extends Display {
                     achievements.put(obj.getString("id"), a);
                 }
             } else {
-                Logger.error("Could not find achievements json.");
+                Logging.ACHIEVEMENT.error("Could not find achievements json.");
             }
         } catch (IOException ex) {
-            Logger.error("Could not read achievements from json file.");
+            Logging.ACHIEVEMENT.error("Could not read achievements from json file.");
             ex.printStackTrace();
         } catch (JSONException e) {
-            Logger.error("Achievements json contains invalid json.");
+            Logging.ACHIEVEMENT.error("Achievements json contains invalid json.");
         }
     }
 
@@ -81,7 +81,7 @@ public class AchievementsDisplay extends Display {
         super.init(parent);
         if (achievements.isEmpty()) {
             Game.setDisplay(new TitleDisplay());
-            Logger.error("Could not open achievements menu because no achievements could be found.");
+            Logging.ACHIEVEMENT.error("Could not open achievements menu because no achievements could be found.");
             return;
         }
 
@@ -159,7 +159,7 @@ public class AchievementsDisplay extends Display {
 
         // Make the achievement unlocked in memory.
         a.setUnlocked(unlocked);
-        Logger.debug("Updating data of achievement with id: {}.", id);
+        Logging.ACHIEVEMENT.debug("Updating data of achievement with id: {}.", id);
 
         // Add or subtract from score
         if (unlocked) {
@@ -223,7 +223,7 @@ public class AchievementsDisplay extends Display {
     public static void unlockAchievements(JSONArray unlockedAchievements) {
         for (Object id : unlockedAchievements.toList()) {
             if (!setAchievement(id.toString(), true, false, false)) {
-                Logger.warn("Could not load unlocked achievement with name {}.", id.toString());
+                Logging.ACHIEVEMENT.warn("Could not load unlocked achievement with name {}.", id.toString());
             }
         }
     }

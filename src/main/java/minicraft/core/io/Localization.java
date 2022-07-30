@@ -23,6 +23,7 @@ import org.jetbrains.annotations.NotNull;
 import minicraft.core.CrashHandler;
 import minicraft.core.Game;
 import minicraft.screen.ResourcePackDisplay;
+import minicraft.util.Logging;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -140,7 +141,7 @@ public class Localization {
 	 * The loaded file is then parsed, and all the entries are added to a hashmap.
 	 */
 	public static void loadLanguage() {
-		Logger.trace("Loading language...");
+		Logging.RESOURCEHANDLER_LOCALIZATION.trace("Loading language...");
 		localization.clear();
 
 		// Check if selected localization exists.
@@ -160,7 +161,7 @@ public class Localization {
 				CrashHandler.crashHandle(e, new CrashHandler.ErrorInfo("Localization Could not be Loaded", CrashHandler.ErrorInfo.ErrorType.SERIOUS, "The default locale contains broken json."));
 			} else {
 				// If the default locale isn't loaded, retry with the default locale.
-				Logger.error("The locale we attempted to load contains invalid json. Retrying with default locale.");
+				Logging.RESOURCEHANDLER_LOCALIZATION.error("The locale we attempted to load contains invalid json. Retrying with default locale.");
 				selectedLocale = DEFAULT_LOCALE;
 				loadLanguage();
 			}
@@ -209,11 +210,11 @@ public class Localization {
 		}
 
 		if (locStream == null) {
-			Logger.error("Error opening localization file at: {}.", location);
+			Logging.RESOURCEHANDLER_LOCALIZATION.error("Error opening localization file at: {}.", location);
 			return "";
 		}
 
-		Logger.trace("Loading localization file from {}.", location);
+		Logging.RESOURCEHANDLER_LOCALIZATION.trace("Loading localization file from {}.", location);
 
 		// Load the file as a BufferedReader.
 		BufferedReader reader = new BufferedReader(new InputStreamReader(locStream, StandardCharsets.UTF_8));
@@ -253,12 +254,12 @@ public class Localization {
 
 							localizationFiles.put(lang, '/' + name);
 						} catch (StringIndexOutOfBoundsException ex) {
-							Logger.error("Could not load localization with path: {}", name);
+							Logging.RESOURCEHANDLER_LOCALIZATION.error("Could not load localization with path: {}", name);
 						}
 					}
 				}
 			} else {
-				Logger.error("Failed to get code source.");
+				Logging.RESOURCEHANDLER_LOCALIZATION.error("Failed to get code source.");
 				return;
 			}
 		} catch (IOException e) {
@@ -276,7 +277,7 @@ public class Localization {
 		try {
 			URL fUrl = Game.class.getResource("/resources/localization/");
 			if (fUrl == null) {
-				Logger.error("Could not find localization folder.");
+				Logging.RESOURCEHANDLER_LOCALIZATION.error("Could not find localization folder.");
 				return;
 			}
 
@@ -290,7 +291,7 @@ public class Localization {
 
 					localizationFiles.put(lang, "/resources/localization/" + filename);
 				} catch (StringIndexOutOfBoundsException e) {
-					Logger.error("Could not load localization file with path: {}", p);
+					Logging.RESOURCEHANDLER_LOCALIZATION.error("Could not load localization file with path: {}", p);
 				}
 			}
 		} catch (IOException | URISyntaxException e) {
@@ -325,7 +326,7 @@ public class Localization {
 
 				localizationFiles.put(lang, path);
 			} catch (StringIndexOutOfBoundsException e) {
-				Logger.error("Title of localization file {} is invalid.", path);
+				Logging.RESOURCEHANDLER_LOCALIZATION.error("Title of localization file {} is invalid.", path);
 			}
 		}
 

@@ -7,6 +7,8 @@ import minicraft.level.Level;
 import minicraft.network.Analytics;
 import minicraft.saveload.Load;
 import minicraft.screen.*;
+import minicraft.util.Logging;
+
 import java.util.Random;
 
 import org.jetbrains.annotations.Nullable;
@@ -56,7 +58,7 @@ public class World extends Game {
 	/** This method is used when respawning, and by initWorld to reset the vars. It does not generate any new terrain. */
 	public static void resetGame() { resetGame(true); }
 	public static void resetGame(boolean keepPlayer) {
-		Logger.debug("Resetting...");
+		Logging.WORLD.debug("Resetting...");
 		playerDeadTime = 0;
 		currentLevel = 3;
 		Updater.asTick = 0;
@@ -83,7 +85,7 @@ public class World extends Game {
 	 * For the loading screen updates to work, it it assumed that *this* is called by a thread *other* than the one rendering the current *menu*.
 	 **/
 	public static void initWorld() { // This is a full reset; everything.
-		Logger.debug("Resetting world...");
+		Logging.WORLD.debug("Resetting world...");
 
 		PlayerDeathDisplay.shouldRespawn = false;
 		resetGame();
@@ -101,7 +103,9 @@ public class World extends Game {
 
 		LoadingDisplay.setPercentage(0); // This actually isn't necessary, I think; it's just in case.
 
-		Logger.trace("Initializing world non-client...");
+		Logging.WORLD.trace("Initializing world non-client...");
+
+		Logging.WORLDNAMED = Logger.tags("World", WorldSelectDisplay.getWorldName().toUpperCase());
 
 		if (WorldSelectDisplay.hasLoadedWorld()) {
 			new Load(WorldSelectDisplay.getWorldName());
@@ -117,7 +121,7 @@ public class World extends Game {
 			for (int i = maxLevelDepth; i >= minLevelDepth; i--) {
 				// i = level depth; the array starts from the top because the parent level is used as a reference, so it should be constructed first. It is expected that the highest level will have a null parent.
 
-				Logger.trace("Loading level " + i + "...");
+				Logging.WORLD.trace("Loading level " + i + "...");
 
 				LoadingDisplay.setMessage(Level.getDepthString(i));
 				levels[lvlIdx(i)] = new Level(worldSize, worldSize, random.nextLong(), i, levels[lvlIdx(i+1)], !WorldSelectDisplay.hasLoadedWorld());
@@ -125,7 +129,7 @@ public class World extends Game {
 				LoadingDisplay.progress(loadingInc);
 			}
 
-			Logger.trace("Level loading complete.");
+			Logging.WORLD.trace("Level loading complete.");
 
 			Level level = levels[currentLevel]; // Sets level to the current level (3; surface)
 			Updater.pastDay1 = false;
@@ -139,7 +143,7 @@ public class World extends Game {
 
 		PlayerDeathDisplay.shouldRespawn = true;
 
-		Logger.trace("World initialized.");
+		Logging.WORLD.trace("World initialized.");
 	}
 
 	public static long getWorldSeed() { return seed; }
@@ -167,7 +171,7 @@ public class World extends Game {
 		int nextLevel = currentLevel + dir;
 		if (nextLevel <= -1) nextLevel = levels.length-1; // Fix accidental level underflow
 		if (nextLevel >= levels.length) nextLevel = 0; // Fix accidental level overflow
-		Logger.trace("Setting level from {} to {}", currentLevel, nextLevel);
+		Logging.WORLD.trace("Setting level from {} to {}", currentLevel, nextLevel);
 		currentLevel = nextLevel;
 
 		player.x = (player.x >> 4) * 16 + 8; // Sets the player's x coord (to center yourself on the stairs)

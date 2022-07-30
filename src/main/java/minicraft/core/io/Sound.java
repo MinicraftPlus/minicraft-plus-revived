@@ -12,9 +12,8 @@ import javax.sound.sampled.LineEvent;
 import javax.sound.sampled.LineUnavailableException;
 import javax.sound.sampled.UnsupportedAudioFileException;
 
-import org.tinylog.Logger;
-
 import minicraft.core.CrashHandler;
+import minicraft.util.Logging;
 
 public class Sound {
 	// Creates sounds from their respective files
@@ -42,7 +41,7 @@ public class Sound {
 			DataLine.Info info = new DataLine.Info(Clip.class, AudioSystem.getAudioFileFormat(url).getFormat());
 
 			if (!AudioSystem.isLineSupported(info)) {
-				Logger.error("ERROR: Audio format of file " + name + " is not supported: " + AudioSystem.getAudioFileFormat(url));
+				Logging.RESOURCEHANDLER_SOUND.error("ERROR: Audio format of file " + name + " is not supported: " + AudioSystem.getAudioFileFormat(url));
 
 				System.out.println("Supported audio formats:");
 				System.out.println("-source:");
