@@ -17,7 +17,7 @@ import minicraft.item.Item;
 import minicraft.level.tile.Tile;
 import minicraft.level.tile.Tiles;
 import minicraft.level.tile.TorchTile;
-import org.tinylog.Logger;
+import minicraft.util.Logging;
 
 import java.util.*;
 import java.util.function.Predicate;
@@ -74,7 +74,7 @@ public class Level {
 	public void printLevelLoc(String prefix, int x, int y, String suffix) {
 		String levelName = getLevelName(depth);
 
-		Logger.info("{} on {} level ({}, {}){}", prefix, levelName, x, y, suffix);
+		Logging.WORLDNAMED.info("{} on {} level ({}, {}){}", prefix, levelName, x, y, suffix);
 	}
 
 	public void printTileLocs(Tile t) {
@@ -121,11 +121,11 @@ public class Level {
 			return;
 		}
 
-		Logger.debug("Making level " + level + "...");
+		Logging.WORLD.debug("Making level " + level + "...");
 
 		maps = LevelGen.createAndValidateMap(w, h, level, seed);
 		if (maps == null) {
-			Logger.error("Level generation: Returned maps array is null");
+			Logging.WORLD.error("Level generation: Returned maps array is null");
 			return;
 		}
 
@@ -147,7 +147,7 @@ public class Level {
 							Structure.dungeonGate.draw(this, x, y);
 
 						else if (level == 0) { // Surface
-							Logger.trace("Setting tiles around " + x + "," + y + " to hard rock");
+							Logging.WORLD.trace("Setting tiles around " + x + "," + y + " to hard rock");
 							setAreaTiles(x, y, 1, Tiles.get("Hard Rock"), 0); // surround the sky stairs with hard rock
 						}
 						else // Any other level, the up-stairs should have dirt on all sides.
@@ -237,7 +237,7 @@ public class Level {
 			for (Entity e: entities)
 				if (e instanceof DungeonChest)
 					numChests++;
-			Logger.debug("Found " + numChests + " chests.");
+			Logging.WORLDNAMED.debug("Found " + numChests + " chests.");
 		}
 
 		/// Make DungeonChests!

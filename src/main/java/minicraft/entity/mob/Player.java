@@ -21,6 +21,7 @@ import minicraft.level.tile.Tiles;
 import minicraft.network.Analytics;
 import minicraft.saveload.Save;
 import minicraft.screen.*;
+import minicraft.util.Logging;
 import minicraft.util.Vector2;
 import org.jetbrains.annotations.Nullable;
 import org.tinylog.Logger;
@@ -1072,7 +1073,7 @@ public class Player extends Mob implements ItemHolder, ClientTickable {
 
 	@Override
 	public void remove() {
-		Logger.trace("Removing player from level " + getLevel());
+		Logging.WORLD.trace("Removing player from level " + getLevel());
 		super.remove();
 	}
 

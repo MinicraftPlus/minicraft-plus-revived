@@ -21,8 +21,9 @@ import minicraft.gfx.Screen;
 import minicraft.gfx.SpriteSheet;
 import minicraft.screen.entry.ListEntry;
 import minicraft.screen.entry.SelectEntry;
+import minicraft.util.Logging;
+
 import org.jetbrains.annotations.Nullable;
-import org.tinylog.Logger;
 
 public class ResourcePackDisplay extends Display {
 
@@ -40,7 +41,7 @@ public class ResourcePackDisplay extends Display {
 
 		// Generate resource packs folder
 		if (FOLDER_LOCATION.mkdirs()) {
-			Logger.info("Created resource packs folder at {}.", FOLDER_LOCATION);
+			Logging.RESOURCEHANDLER_RESOURCEPACK.info("Created resource packs folder at {}.", FOLDER_LOCATION);
 		}
 
 		// Read and add the .zip file to the resource pack list.
@@ -106,7 +107,7 @@ public class ResourcePackDisplay extends Display {
 				zipFile = new ZipFile(new File(FOLDER_LOCATION, loadedPack));
 			} catch (IOException e) {
 				e.printStackTrace();
-				Logger.error("Could not load resource pack zip at {}.", FOLDER_LOCATION + "/" + loadedPack);
+				Logging.RESOURCEHANDLER_RESOURCEPACK.error("Could not load resource pack zip at {}.", FOLDER_LOCATION + "/" + loadedPack);
 				return;
 			}
 
@@ -124,7 +125,7 @@ public class ResourcePackDisplay extends Display {
 				zipFile = new ZipFile(new File(FOLDER_LOCATION, loadedPack));
 			} catch (IOException e) {
 				e.printStackTrace();
-				Logger.error("Could not load resource pack zip at {}.", FOLDER_LOCATION + "/" + loadedPack);
+				Logging.RESOURCEHANDLER_RESOURCEPACK.error("Could not load resource pack zip at {}.", FOLDER_LOCATION + "/" + loadedPack);
 				return;
 			}
 		}
@@ -161,21 +162,21 @@ public class ResourcePackDisplay extends Display {
 								if (sheet.width == SHEET_DIMENSIONS && sheet.height == SHEET_DIMENSIONS) {
 									sheets[i] = sheet;
 								} else {
-									Logger.error("Sheet with name {} has wrong dimensions. Should be {}px in both directions.", SHEET_NAMES[i], SHEET_DIMENSIONS);
+									Logging.RESOURCEHANDLER_RESOURCEPACK.error("Sheet with name {} has wrong dimensions. Should be {}px in both directions.", SHEET_NAMES[i], SHEET_DIMENSIONS);
 									return;
 								}
 							} catch (IOException e) {
 								e.printStackTrace();
-								Logger.error("Loading sheet {} failed. Aborting.", SHEET_NAMES[i]);
+								Logging.RESOURCEHANDLER_RESOURCEPACK.error("Loading sheet {} failed. Aborting.", SHEET_NAMES[i]);
 								return;
 							}
 						} else {
-							Logger.debug("Couldn't load sheet {}, ignoring.", SHEET_NAMES[i]);
+							Logging.RESOURCEHANDLER_RESOURCEPACK.debug("Couldn't load sheet {}, ignoring.", SHEET_NAMES[i]);
 						}
 					}
 				} catch (IllegalStateException e) {
 					e.printStackTrace();
-					Logger.error("Could not load resource pack with name {}.", zipFile.getName());
+					Logging.RESOURCEHANDLER_RESOURCEPACK.error("Could not load resource pack with name {}.", zipFile.getName());
 					return;
 				} catch (NullPointerException e) {
 					e.printStackTrace();
@@ -186,11 +187,11 @@ public class ResourcePackDisplay extends Display {
 			Renderer.screen.setSheets(sheets[0], sheets[1], sheets[2], sheets[3]);
 		} catch(NullPointerException e) {
 			e.printStackTrace();
-			Logger.error("Changing resource pack failed.");
+			Logging.RESOURCEHANDLER_RESOURCEPACK.error("Changing resource pack failed.");
 			return;
 		}
 
-		Logger.info("Changed resource pack.");
+		Logging.RESOURCEHANDLER_RESOURCEPACK.info("Changed resource pack.");
 	}
 
 	private void updateLocalization(@Nullable ZipFile zipFile) {

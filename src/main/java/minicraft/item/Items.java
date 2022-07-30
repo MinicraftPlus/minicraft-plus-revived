@@ -80,7 +80,7 @@ public class Items {
 		if (name.equalsIgnoreCase("NULL")) {
 			if (allowNull) return null;
 			else {
-				Logger.warn("Items.get passed argument \"null\" when null is not allowed; returning UnknownItem.");
+				Logger.tag("Item").warn("Items.get passed argument \"null\" when null is not allowed; returning UnknownItem.");
 				return new UnknownItem("NULL");
 			}
 		}
@@ -104,7 +104,7 @@ public class Items {
 				((ToolItem)i).dur = data;
 			return i;
 		} else {
-			Logger.error("Requested invalid item with name: '{}'", name);
+			Logger.tag("Item").error("Requested invalid item with name: '{}'", name);
 			return new UnknownItem(name);
 		}
 	}

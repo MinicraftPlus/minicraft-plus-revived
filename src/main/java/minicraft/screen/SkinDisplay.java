@@ -9,9 +9,10 @@ import minicraft.gfx.*;
 import minicraft.saveload.Save;
 import minicraft.screen.entry.ListEntry;
 import minicraft.screen.entry.SelectEntry;
+import minicraft.util.Logging;
+
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.tinylog.Logger;
 
 import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
@@ -55,7 +56,7 @@ public class SkinDisplay extends Display {
 
 		// Create folder, and see if it was successful.
 		if (skinsFolder.mkdirs()) {
-			Logger.info("Created resource packs folder at {}.", skinsFolder);
+			Logging.RESOURCEHANDLER_SKIN.info("Created resource packs folder at {}.", skinsFolder);
 		}
 
 		// Read and add the .png file to the skins list.
@@ -102,10 +103,10 @@ public class SkinDisplay extends Display {
 		try {
 			image = ImageIO.read(new FileInputStream(path));
 		} catch (IOException e) {
-			Logger.error("Could not read image at path {}. The file is probably missing or formatted wrong.", path);
+			Logging.RESOURCEHANDLER_SKIN.error("Could not read image at path {}. The file is probably missing or formatted wrong.", path);
 			return null;
 		} catch (SecurityException e) {
-			Logger.error("Access to file located at {} was denied. Check if game is given permission.", path);
+			Logging.RESOURCEHANDLER_SKIN.error("Access to file located at {} was denied. Check if game is given permission.", path);
 			return null;
 		}
 
@@ -118,7 +119,7 @@ public class SkinDisplay extends Display {
 				return spriteSheet;
 			} else {
 				// Go here if image has wrong dimensions.
-				Logger.error("Custom skin at '{}' has incorrect width or height. Should be a multiple of 8.", path);
+				Logging.RESOURCEHANDLER_SKIN.error("Custom skin at '{}' has incorrect width or height. Should be a multiple of 8.", path);
 			}
 		}
 
@@ -173,15 +174,15 @@ public class SkinDisplay extends Display {
 					init(getParent());
 					new Save();
 
-					Logger.error("Error setting skin. Removed skin from list and set skin back to default.");
+					Logging.RESOURCEHANDLER_SKIN.error("Error setting skin. Removed skin from list and set skin back to default.");
 					return;
 				}
 
 				Renderer.screen.setSkinSheet(selectedSkinSheet);
-				Logger.debug("Skin sheet set to {}.png.", skinNames.get(tempSelection));
+				Logging.RESOURCEHANDLER_SKIN.debug("Skin sheet set to {}.png.", skinNames.get(tempSelection));
 			} else {
 				Renderer.screen.setSkinSheet(defaultSheet);
-				Logger.debug("Skin sheet changed to default sheet.");
+				Logging.RESOURCEHANDLER_SKIN.debug("Skin sheet changed to default sheet.");
 			}
 		}
 	}

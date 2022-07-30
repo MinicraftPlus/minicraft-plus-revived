@@ -3,6 +3,7 @@ package minicraft.core;
 import minicraft.core.CrashHandler.ErrorInfo.ErrorType;
 import minicraft.core.io.ClipboardHandler;
 import minicraft.network.Analytics;
+import minicraft.util.Logging;
 
 import java.awt.*;
 import java.io.PrintWriter;
@@ -21,7 +22,6 @@ import javax.swing.UIManager;
 import javax.swing.WindowConstants;
 
 import org.jetbrains.annotations.Nullable;
-import org.tinylog.Logger;
 
 import kong.unirest.Empty;
 import kong.unirest.HttpResponse;
@@ -48,7 +48,7 @@ public class CrashHandler {
 			return;
 		}
 
-		Logger.error("Crash: " + info.type.name + ": " + info.title + (info.message != null ? ": " + info.message : ""));
+		Logging.CRASHHANDLER.error("Crash: " + info.type.name + ": " + info.title + (info.message != null ? ": " + info.message : ""));
 
 		JDialog dialog = new JDialog(Initializer.frame, "Crash: " + info.type.name, true); // Displays the error type.
 
@@ -95,7 +95,7 @@ public class CrashHandler {
 		}
 
 		// Exits the program when the dialog closes.
-		Logger.error("Application closes due to the crash.");
+		Logging.CRASHHANDLER.error("Application closes due to the crash.");
 		System.exit(info.type.exitCode);
 	}
 
@@ -121,7 +121,7 @@ public class CrashHandler {
 			return;
 		}
 
-		Logger.error(info.type.name + ": " + info.title + (info.message != null ? ": " + info.message : ""));
+		Logging.CRASHHANDLER.error(info.type.name + ": " + info.title + (info.message != null ? ": " + info.message : ""));
 
 		JDialog dialog = new JDialog(Initializer.frame, "Error: " + info.type.name, true); // Displays the error type.
 
@@ -213,7 +213,7 @@ public class CrashHandler {
 					}
 				}
 
-				Logger.error("Application closes due to the error.");
+				Logging.CRASHHANDLER.error("Application closes due to the error.");
 				System.exit(info.type.exitCode);
 			});
 
