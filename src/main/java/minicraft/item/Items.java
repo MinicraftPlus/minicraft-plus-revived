@@ -43,6 +43,7 @@ public class Items {
 		addAll(PotionItem.getAllInstances());
 		addAll(FishingRodItem.getAllInstances());
 		addAll(SummonItem.getAllInstances());
+		addAll(HeartItem.getAllInstances());
 	}
 
 	/** fetches an item from the list given its name. */
@@ -134,4 +135,3 @@ public class Items {
 		}
 	}
 }
-

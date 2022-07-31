@@ -5,6 +5,7 @@ import java.util.HashSet;
 
 import minicraft.entity.furniture.Crafter;
 import minicraft.entity.furniture.Furniture;
+import minicraft.entity.furniture.KnightStatue;
 import minicraft.entity.furniture.Lantern;
 import minicraft.gfx.Point;
 import minicraft.level.tile.Tile;
@@ -12,10 +13,10 @@ import minicraft.level.tile.Tiles;
 
 // this stores structures that can be drawn at any location.
 public class Structure {
-	
+
 	private HashSet<TilePoint> tiles;
 	private HashMap<Point, Furniture> furniture;
-	
+
 	public Structure() {
 		tiles = new HashSet<>();
 		furniture = new HashMap<>();
@@ -24,14 +25,14 @@ public class Structure {
 		this.tiles = struct.tiles;
 		this.furniture = struct.furniture;
 	}
-	
+
 	public void setTile(int x, int y, Tile tile) {
 		tiles.add(new TilePoint(x, y, tile));
 	}
 	public void addFurniture(int x, int y, Furniture furniture) {
 		this.furniture.put(new Point(x, y), furniture);
 	}
-	
+
 	public void draw(Level level, int xt, int yt) {
 		for (TilePoint p: tiles)
 			 level.setTile(xt+p.x, yt+p.y, p.t);
@@ -69,34 +70,35 @@ public class Structure {
 			}
 		}
 	}
-	
+
 	static class TilePoint {
 		int x, y;
 		Tile t;
-		
+
 		public TilePoint(int x, int y, Tile tile) {
 			this.x = x;
 			this.y = y;
 			this.t = tile;
 		}
-		
+
 		@Override
 		public boolean equals(Object o) {
 			if (!(o instanceof TilePoint)) return false;
 			TilePoint p = (TilePoint) o;
 			return x == p.x && y == p.y && t.id == p.t.id;
 		}
-		
+
 		@Override
 		public int hashCode() {
 			return x + y * 51 + t.id * 131;
 		}
 	}
-	
+
 	static final Structure dungeonGate;
 	static final Structure dungeonLock;
+	static final Structure dungeonBossRoom;
 	static final Structure lavaPool;
-	
+
 	// All the "mobDungeon" structures are for the spawner structures
 	static final Structure mobDungeonCenter;
 	static final Structure mobDungeonNorth;
@@ -134,6 +136,19 @@ public class Structure {
 					"WOOOW\n" +
 					"WWWWW"
 		);
+		dungeonBossRoom = new Structure();
+		dungeonBossRoom.setData("O:Ornate Obsidian,W:Obsidian Wall",
+			"WWWWWWWWW\n" +
+				"WOOOOOOOW\n" +
+				"WOOOOOOOW\n" +
+				"WOOOOOOOW\n" +
+				"WOOOOOOOW\n" +
+				"WOOOOOOOW\n" +
+				"WOOOOOOOW\n" +
+				"WOOOOOOOW\n" +
+				"WWWWWWWWW"
+		);
+		dungeonBossRoom.addFurniture(0,0,new KnightStatue());
 
 		lavaPool = new Structure();
 		lavaPool.setData("L:Lava",

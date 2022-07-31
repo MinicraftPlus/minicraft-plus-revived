@@ -144,9 +144,10 @@ public class Level {
 			for (int y = 0; y < h; y++) { // Loop through height
 				for (int x = 0; x < w; x++) { // Loop through width
 					if (parentLevel.getTile(x, y) == Tiles.get("Stairs Down")) { // If the tile in the level above the current one is a stairs down then...
-						if (level == -4) /// Make the obsidian wall formation around the stair in the dungeon level
+						if (level == -4) {/// Make the obsidian wall formation around the stair in the dungeon level
 							Structure.dungeonGate.draw(this, x, y);
-
+							Structure.dungeonBossRoom.draw(this, x+10,y+10);
+						}
 						else if (level == 0) { // Surface
 							Logging.WORLD.trace("Setting tiles around " + x + "," + y + " to hard rock");
 							setAreaTiles(x, y, 1, Tiles.get("Hard Rock"), 0); // surround the sky stairs with hard rock
