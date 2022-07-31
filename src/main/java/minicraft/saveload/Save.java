@@ -63,7 +63,7 @@ public class Save {
 				if (worldFolder.renameTo(newFolder))
 					worldFolder = newFolder;
 				else
-					System.err.println("Failed to rename world folder " + worldFolder + " to " + newFolder);
+					Logging.SAVELOAD.error("Failed to rename world folder " + worldFolder + " to " + newFolder);
 			}
 		}
 
@@ -400,7 +400,7 @@ public class Save {
 
 		int depth = 0;
 		if (e.getLevel() == null)
-			System.out.println("WARNING: Saving entity with no level reference: " + e + "; setting level to surface");
+			Logging.SAVELOAD.warn("Saving entity with no level reference: " + e + "; setting level to surface");
 		else
 			depth = e.getLevel().depth;
 

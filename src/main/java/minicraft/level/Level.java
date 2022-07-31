@@ -92,7 +92,7 @@ public class Level {
 			}
 		}
 
-		System.out.println("Found " + numfound + " entities in level of depth " + depth);
+		Logging.WORLDNAMED.info("Found " + numfound + " entities in level of depth " + depth);
 	}
 
 	private void updateMobCap() {

@@ -8,6 +8,7 @@ import javax.swing.ImageIcon;
 import javax.swing.JOptionPane;
 
 import org.jetbrains.annotations.Nullable;
+import org.tinylog.Logger;
 
 import minicraft.core.Game;
 import minicraft.core.io.Settings;
@@ -125,7 +126,7 @@ public class LevelGen {
 		if (level > -4 && level < 0)
 			return createAndValidateUndergroundMap(w, h, -level);
 
-		System.err.println("LevelGen ERROR: level index is not valid. Could not generate a level.");
+		Logger.tag("LevelGen").error("Level index is not valid. Could not generate a level.");
 
 		return null;
 	}

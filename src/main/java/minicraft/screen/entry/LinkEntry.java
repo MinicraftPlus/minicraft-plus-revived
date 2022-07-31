@@ -5,6 +5,8 @@ import java.awt.Desktop.Action;
 import java.io.IOException;
 import java.net.URI;
 
+import org.tinylog.Logger;
+
 import minicraft.core.Game;
 import minicraft.core.io.Localization;
 import minicraft.screen.BookDisplay;
@@ -47,7 +49,7 @@ public class LinkEntry extends SelectEntry {
 					Game.setDisplay(new TempDisplay(3000, false, true, new Menu.Builder(true, 0, RelPos.CENTER, new StringEntry(Localization.getLocalized(openMsg))).createMenu()));
 					desktop.browse(uri);
 				} catch (IOException e) {
-					System.err.println("Could not parse LinkEntry url \"" + url + "\" into valid URI:");
+					Logger.tag("Network").error("Could not parse LinkEntry url \"" + url + "\" into valid URI:");
 					e.printStackTrace();
 					canBrowse = false;
 				}

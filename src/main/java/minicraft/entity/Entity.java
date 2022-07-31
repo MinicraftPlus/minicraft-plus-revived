@@ -9,6 +9,7 @@ import minicraft.item.Item;
 import minicraft.level.Level;
 import minicraft.network.Network;
 import org.jetbrains.annotations.Nullable;
+import org.tinylog.Logger;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -200,12 +201,12 @@ public abstract class Entity implements Tickable {
 	/** Removes the entity from the level. */
 	public void remove() {
 		if (removed && !(this instanceof ItemEntity)) // Apparently this happens fairly often with item entities.
-			System.out.println("Note: remove() called on removed entity: " + this);
+			Logger.tag("Entity").debug("Note: remove() called on removed entity: " + this);
 
 		removed = true;
 
 		if (level == null)
-			System.out.println("Note: remove() called on entity with no level reference: " + getClass());
+			Logger.tag("Entity").debug("Note: remove() called on entity with no level reference: " + getClass());
 		else
 			level.remove(this);
 	}
@@ -213,7 +214,7 @@ public abstract class Entity implements Tickable {
 	/** This should ONLY be called by the Level class. To properly remove an entity from a level, use level.remove(entity) */
 	public void remove(Level level) {
 		if (level != this.level) {
-			if(Game.debug) System.out.println("Tried to remove entity " + this + " from level it is not in: " + level + "; in level " + this.level);
+			if(Game.debug) Logger.tag("Entity").debug("Tried to remove entity " + this + " from level it is not in: " + level + "; in level " + this.level);
 		} else {
 			removed = true; // Should already be set.
 			this.level = null;
@@ -223,7 +224,7 @@ public abstract class Entity implements Tickable {
 	/** This should ONLY be called by the Level class. To properly add an entity to a level, use level.add(entity) */
 	public void setLevel(Level level, int x, int y) {
 		if (level == null) {
-			System.out.println("Tried to set level of entity " + this + " to a null level; Should use remove(level)");
+			Logger.tag("Entity").debug("Tried to set level of entity " + this + " to a null level; Should use remove(level)");
 			return;
 		}
 

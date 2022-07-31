@@ -205,7 +205,7 @@ public class Updater extends Game {
 
 					if (input.getKey("ctrl-p").clicked) {
 						// Print all players on all levels, and their coordinates.
-						System.out.println("Printing players on all levels.");
+						Logging.WORLD.info("Printing players on all levels.");
 						for (Level value : levels) {
 							if (value == null) continue;
 							value.printEntityLocs(Player.class);
@@ -289,7 +289,7 @@ public class Updater extends Game {
 		if (t > 0 && t < times.length)
 			changeTimeOfDay(times[t]); // It just references the other one.
 		else
-			System.out.println("Time " + t + " does not exist.");
+			Logging.WORLD.info("Time " + t + " does not exist.");
 	}
 
 	public static Time getTime() {

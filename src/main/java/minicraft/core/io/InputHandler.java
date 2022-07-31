@@ -10,6 +10,7 @@ import java.util.LinkedHashMap;
 import java.util.Map.Entry;
 
 import org.jetbrains.annotations.Nullable;
+import org.tinylog.Logger;
 
 import minicraft.core.Game;
 
@@ -352,7 +353,7 @@ public class InputHandler implements KeyListener {
 		if (keyNames.containsKey(keycode))
 			keytext = keyNames.get(keycode);
 		else {
-			System.out.println("INPUT: Could not find keyname for keycode \"" + keycode + "\"");
+			Logger.tag("INPUT").error("INPUT: Could not find keyname for keycode \"" + keycode + "\"");
 			return;
 		}
 

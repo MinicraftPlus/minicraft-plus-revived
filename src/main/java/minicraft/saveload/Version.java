@@ -1,6 +1,7 @@
 package minicraft.saveload;
 
 import org.jetbrains.annotations.NotNull;
+import org.tinylog.Logger;
 
 public class Version implements Comparable<Version> {
 	private int make, major, minor, dev;
@@ -12,14 +13,14 @@ public class Version implements Comparable<Version> {
 		try {
 			if (nums.length > 0) make = Integer.parseInt(nums[0]);
 			else make = 0;
-			
+
 			if (nums.length > 1) major = Integer.parseInt(nums[1]);
 			else major = 0;
-			
+
 			String min;
 			if (nums.length > 2) min = nums[2];
 			else min = "";
-			
+
 			if (min.contains("-")) {
 				String[] mindev = min.split("-");
 				minor = Integer.parseInt(mindev[0]);
@@ -30,14 +31,14 @@ public class Version implements Comparable<Version> {
 				dev = 0;
 			}
 		} catch (NumberFormatException ex) {
-			if (printError) System.err.println("INVALID version number: \"" + version + "\"");
+			if (printError) Logger.tag("Version").error("INVALID version number: \"" + version + "\"");
 			valid = false;
 		} catch (Exception ex) {
 			if (printError) ex.printStackTrace();
 			valid = false;
 		}
 	}
-	
+
 	public boolean isValid() { return valid; }
 	public static boolean isValid(String version) { return new Version(version, false).isValid(); }
 
@@ -70,7 +71,7 @@ public class Version implements Comparable<Version> {
 
 		return 0; // The versions are equal.
 	}
-	
+
 	@Override
 	public String toString() { return make + "." + major + "." + minor + (dev == 0 ? "" : "-dev" + dev); }
 

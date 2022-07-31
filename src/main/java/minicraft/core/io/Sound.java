@@ -43,8 +43,8 @@ public class Sound {
 			if (!AudioSystem.isLineSupported(info)) {
 				Logging.RESOURCEHANDLER_SOUND.error("ERROR: Audio format of file " + name + " is not supported: " + AudioSystem.getAudioFileFormat(url));
 
-				System.out.println("Supported audio formats:");
-				System.out.println("-source:");
+				Logging.RESOURCEHANDLER_SOUND.error("Supported audio formats:");
+				Logging.RESOURCEHANDLER_SOUND.error("-source:");
 				Line.Info[] sinfo = AudioSystem.getSourceLineInfo(info);
 				Line.Info[] tinfo = AudioSystem.getTargetLineInfo(info);
 				for (Line.Info value : sinfo) {
@@ -52,10 +52,10 @@ public class Sound {
 						DataLine.Info dataLineInfo = (DataLine.Info) value;
 						AudioFormat[] supportedFormats = dataLineInfo.getFormats();
 						for (AudioFormat af : supportedFormats)
-							System.out.println(af);
+							Logging.RESOURCEHANDLER_SOUND.error(af);
 					}
 				}
-				System.out.println("-target:");
+				Logging.RESOURCEHANDLER_SOUND.error("-target:");
 				for (int i = 0; i < tinfo.length; i++)
 				{
 					if (tinfo[i] instanceof DataLine.Info)
@@ -63,7 +63,7 @@ public class Sound {
 						DataLine.Info dataLineInfo = (DataLine.Info) tinfo[i];
 						AudioFormat[] supportedFormats = dataLineInfo.getFormats();
 						for (AudioFormat af: supportedFormats)
-							 System.out.println(af);
+							Logging.RESOURCEHANDLER_SOUND.error(af);
 					}
 				}
 

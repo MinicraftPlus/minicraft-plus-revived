@@ -105,7 +105,7 @@ public class World extends Game {
 
 		Logging.WORLD.trace("Initializing world non-client...");
 
-		Logging.WORLDNAMED = Logger.tags("World", WorldSelectDisplay.getWorldName().toUpperCase());
+		Logging.WORLDNAMED = Logger.tag("World/" + WorldSelectDisplay.getWorldName().toUpperCase());
 
 		if (WorldSelectDisplay.hasLoadedWorld()) {
 			new Load(WorldSelectDisplay.getWorldName());

@@ -67,7 +67,7 @@ public class Network extends Game {
 		do {
 			tries++;
 			if (tries == 1000)
-				System.out.println("Note: Trying 1000th time to find valid entity id...(Will continue)");
+				Logger.tag("Network").info("Note: Trying 1000th time to find valid entity id...(Will continue)");
 
 			eid = random.nextInt();
 		} while (!idIsAvailable(eid));
