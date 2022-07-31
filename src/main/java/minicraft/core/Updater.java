@@ -223,7 +223,7 @@ public class Updater extends Game {
 
 					String prevMode = (String)Settings.get("mode");
 					if (input.getKey("creative").clicked) {
-						Settings.set("mode", "creative");
+						Settings.set("mode", "minicraft.settings.mode.creative");
 					}
 					if (input.getKey("survival").clicked) Settings.set("mode", "minicraft.settings.mode.survival");
 					if (input.getKey("shift-t").clicked) Settings.set("mode", "minicraft.settings.mode.score");
