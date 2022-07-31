@@ -116,7 +116,7 @@ public class AchievementsDisplay extends Display {
         Font.drawCentered(Localization.getLocalized("minicraft.displays.achievements"), screen, 8, Color.WHITE);
 
         // Achievement score.
-        Font.drawCentered(Localization.getLocalized("minicraft.displays.achievements.display.score") + " " + achievementScore, screen, 32, Color.GRAY);
+        Font.drawCentered(Localization.getLocalized("minicraft.displays.achievements.display.score", achievementScore), screen, 32, Color.GRAY);
 
         if (selectedAchievement != null) {
 

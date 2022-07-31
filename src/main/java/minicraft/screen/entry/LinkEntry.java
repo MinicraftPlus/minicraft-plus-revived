@@ -9,6 +9,7 @@ import minicraft.core.Game;
 import minicraft.core.io.Localization;
 import minicraft.screen.BookDisplay;
 import minicraft.screen.Menu;
+import minicraft.screen.PopupDisplay;
 import minicraft.screen.RelPos;
 import minicraft.screen.TempDisplay;
 
@@ -53,7 +54,7 @@ public class LinkEntry extends SelectEntry {
 			}
 
 			if (!canBrowse) {
-				Game.setDisplay(new BookDisplay(failMsg, false));
+				Game.setDisplay(new PopupDisplay(null, failMsg));
 			}
 
 		}, localize);
