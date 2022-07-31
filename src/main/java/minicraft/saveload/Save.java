@@ -88,7 +88,7 @@ public class Save {
 
 		WorldSelectDisplay.updateWorlds();
 
-		Updater.notifyAll("World Saved!");
+		Updater.notifyAll("minicraft.notification.world_saved");
 		Updater.asTick = 0;
 		Updater.saving = false;
 	}
@@ -211,7 +211,7 @@ public class Save {
 	}
 
 	private void writeWorld(String filename) {
-		LoadingDisplay.setMessage("Levels");
+		LoadingDisplay.setMessage("minicraft.displays.loading.message.levels");
 		for (int l = 0; l < World.levels.length; l++) {
 			String worldSize = String.valueOf(Settings.get("size"));
 			data.add(worldSize);

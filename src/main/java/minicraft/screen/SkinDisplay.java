@@ -20,7 +20,6 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
 
@@ -132,6 +131,7 @@ public class SkinDisplay extends Display {
 	 */
 	private static void confirmExit() {
 		Game.exitDisplay();
+		selectedSkinIndex = tempSelection;
 
 		// Achieve Fashion Show:
 		AchievementsDisplay.setAchievement(true, "minicraft.achievement.skin", true);
@@ -143,7 +143,6 @@ public class SkinDisplay extends Display {
 
 		// Save the selected skin.
 		new Save();
-		selectedSkinIndex = tempSelection;
 	}
 
 

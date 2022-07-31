@@ -74,6 +74,8 @@
   "minicraft.displays.key_input.title": "Controls",
   "minicraft.displays.loading.message.entities": "Entities",
   "minicraft.displays.loading.message.generating": "Generating",
+  "minicraft.displays.loading.message.level": "Level %s",
+  "minicraft.displays.loading.message.levels": "Levels",
   "minicraft.displays.loading.message.loading": "Loading",
   "minicraft.displays.loading.message.saving": "Saving",
   "minicraft.displays.loading.message.world": "World",

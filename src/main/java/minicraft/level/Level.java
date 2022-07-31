@@ -2,6 +2,7 @@ package minicraft.level;
 
 import minicraft.core.Game;
 import minicraft.core.Updater;
+import minicraft.core.io.Localization;
 import minicraft.core.io.Settings;
 import minicraft.entity.Entity;
 import minicraft.entity.ItemEntity;
@@ -28,7 +29,7 @@ public class Level {
 
 	private static final String[] levelNames = {"Sky", "Surface", "Iron", "Gold", "Lava", "Dungeon"};
 	public static String getLevelName(int depth) { return levelNames[-1 * depth + 1]; }
-	public static String getDepthString(int depth) { return "Level " + (depth < 0 ? "B" + (-depth) : depth); }
+	public static String getDepthString(int depth) { return Localization.getLocalized("minicraft.displays.loading.message.level", depth < 0 ? "B" + (-depth) : depth); }
 
 	private static final int MOB_SPAWN_FACTOR = 100; // The chance of a mob actually trying to spawn when trySpawn is called equals: mobCount / maxMobCount * MOB_SPAWN_FACTOR. so, it basically equals the chance, 1/number, of a mob spawning when the mob cap is reached. I hope that makes sense...
 
