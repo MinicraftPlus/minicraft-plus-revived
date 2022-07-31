@@ -2,6 +2,7 @@ package minicraft.entity.mob;
 
 import minicraft.core.Game;
 import minicraft.core.Updater;
+import minicraft.core.io.Localization;
 import minicraft.core.io.Sound;
 import minicraft.entity.Direction;
 import minicraft.entity.Entity;
@@ -48,7 +49,7 @@ public class AirWizard extends EnemyMob {
 	public void tick() {
 		super.tick();
 
-		if (Game.isMode("Creative")) return; // Should not attack if player is in creative
+		if (Game.isMode("minicraft.settings.mode.creative")) return; // Should not attack if player is in creative
 
 		if (attackDelay > 0) {
 			xmov = ymov = 0;
@@ -164,15 +165,14 @@ public class AirWizard extends EnemyMob {
 		Sound.bossDeath.play();
 
 		Analytics.AirWizardDeath.ping();
-		Updater.notifyAll("Air Wizard Defeated!");
-
+		Updater.notifyAll(Localization.getLocalized("minicraft.notification.air_wizard_defeated"));
 
 		// If this is the first time we beat the air wizard.
 		if (!beaten) {
 			AchievementsDisplay.setAchievement("minicraft.achievement.airwizard", true);
 
 			Analytics.FirstAirWizardDeath.ping();
-			Updater.notifyAll("The Dungeon is now open!", -400);
+			Updater.notifyAll("minicraft.notification.dungeon_opened", -400);
 		}
 
 		beaten = true;

@@ -23,14 +23,14 @@ public class PlayerInvDisplay extends Display {
 	private final Inventory creativeInv;
 
 	public PlayerInvDisplay(Player player) {
-		super(new InventoryMenu(player, player.getInventory(), "Inventory"));
+		super(new InventoryMenu(player, player.getInventory(), "minicraft.display.menus.inventory"));
 
-		creativeMode = Game.isMode("creative");
+		creativeMode = Game.isMode("minicraft.settings.mode.creative");
 		if (creativeMode) {
 			creativeInv = Items.getCreativeModeInventory();
 			menus = new Menu[] {
 				menus[0],
-				new InventoryMenu(player, creativeInv, "Items") {{
+				new InventoryMenu(player, creativeInv, "minicraft.displays.player_inv.container_title.items") {{
 					super.creativeInv = true;
 				}}
 			};
@@ -125,7 +125,7 @@ public class PlayerInvDisplay extends Display {
 		super.render(screen);
 
 		// Searcher help text
-		String text = "(" + Game.input.getMapping("SEARCHER-BAR") + ") " + Localization.getLocalized("to search.");
+		String text = Localization.getLocalized("minicraft.displays.player_inv.display.help", Game.input.getMapping("SEARCHER-BAR"));
 
 		Font.draw(text, screen, 12, Screen.h/ 2 + 8, Color.WHITE);
 	}

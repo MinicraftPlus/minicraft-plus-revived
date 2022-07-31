@@ -1,6 +1,7 @@
 package minicraft.entity.furniture;
 
 import minicraft.core.Game;
+import minicraft.core.io.Localization;
 import minicraft.entity.Direction;
 import minicraft.entity.Entity;
 import minicraft.entity.mob.Player;
@@ -62,7 +63,7 @@ public class DungeonChest extends Chest {
 				this.sprite = openSprite; // Set to the unlocked color
 
 				level.add(new SmashParticle(x * 16, y * 16));
-				level.add(new TextParticle("-1 key", x, y, Color.RED));
+				level.add(new TextParticle(Localization.getLocalized("minicraft.text_particales.key_consumed"), x, y, Color.RED));
 				level.chestCount--;
 
 				// If this is the last chest.

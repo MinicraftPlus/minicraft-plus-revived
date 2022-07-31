@@ -21,27 +21,27 @@ import minicraft.screen.AchievementsDisplay;
 /// this is all the spikey stuff (except "cloud cactus")
 public class OreTile extends Tile {
 	private final OreType type;
-	
+
 	public enum OreType {
         Iron (Items.get("Iron Ore"), 0),
 		Lapis (Items.get("Lapis"), 2),
 		Gold (Items.get("Gold Ore"), 4),
 		Gem (Items.get("Gem"), 6),
 		Cloud (Items.get("Cloud Ore"), 8);
-		
+
 		private final Item drop;
 		public final int color;
-		
+
 		OreType(Item drop, int color) {
 			this.drop = drop;
 			this.color = color;
 		}
-		
+
 		private Item getOre() {
 			return drop.clone();
 		}
     }
-	
+
 	protected OreTile(OreType o) {
 		super((o == OreTile.OreType.Lapis ? "Lapis" : o == OreType.Cloud ? "Cloud Cactus" : o.name() + " Ore"), new Sprite(22 + o.color, 2, 2, 2, 1));
         this.type = o;
@@ -62,7 +62,7 @@ public class OreTile extends Tile {
 	}
 
 	public boolean interact(Level level, int xt, int yt, Player player, Item item, Direction attackDir) {
-		if(Game.isMode("Creative"))
+		if(Game.isMode("minicraft.settings.mode.creative"))
 			return false; // Go directly to hurt method
 		if (item instanceof ToolItem) {
 			ToolItem tool = (ToolItem) item;
@@ -75,16 +75,16 @@ public class OreTile extends Tile {
 		}
 		return false;
 	}
-	
+
     public Item getOre() {
         return type.getOre();
     }
-    
+
 	public void hurt(Level level, int x, int y, int dmg) {
 		int damage = level.getData(x, y) + dmg;
 		int oreH = random.nextInt(10) * 4 + 20;
-		if (Game.isMode("Creative")) dmg = damage = oreH;
-		
+		if (Game.isMode("minicraft.settings.mode.creative")) dmg = damage = oreH;
+
 		level.add(new SmashParticle(x * 16, y * 16));
 		Sound.monsterHurt.play();
 

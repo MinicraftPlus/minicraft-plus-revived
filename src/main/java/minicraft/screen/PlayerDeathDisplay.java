@@ -5,6 +5,7 @@ import java.util.Arrays;
 
 import minicraft.core.Game;
 import minicraft.core.World;
+import minicraft.core.io.Localization;
 import minicraft.gfx.Point;
 import minicraft.gfx.SpriteSheet;
 import minicraft.saveload.Save;
@@ -21,28 +22,28 @@ public class PlayerDeathDisplay extends Display {
 		super(false, false);
 
 		ArrayList<ListEntry> entries = new ArrayList<>(Arrays.asList(
-			new StringEntry("Time: " + InfoDisplay.getTimeString()),
-			new StringEntry("Score: " + Game.player.getScore()),
+			new StringEntry(Localization.getLocalized("minicraft.displays.player_death.display.time", InfoDisplay.getTimeString())),
+			new StringEntry(Localization.getLocalized("minicraft.displays.player_death.display.score", Game.player.getScore())),
 			new BlankEntry()
 		));
 
-		if(!Game.isMode("hardcore")) {
-			entries.add(new SelectEntry("Respawn", () -> {
+		if(!Game.isMode("minicraft.settings.mode.hardcore")) {
+			entries.add(new SelectEntry("minicraft.displays.player_death.respawn", () -> {
 				World.resetGame();
 				Game.setDisplay(null);
 			}));
 		}
-		
-		entries.add(new SelectEntry("Save and Quit", () -> {
+
+		entries.add(new SelectEntry("minicraft.displays.player_death.save_quit", () -> {
 			new Save(WorldSelectDisplay.getWorldName());
 			Game.setDisplay(new TitleDisplay());
 		}));
-		entries.add(new SelectEntry("Quit", () -> Game.setDisplay(new TitleDisplay())));
+		entries.add(new SelectEntry("minicraft.displays.player_death.quit", () -> Game.setDisplay(new TitleDisplay())));
 
 		menus = new Menu[]{
 			new Menu.Builder(true, 0, RelPos.LEFT, entries)
 				.setPositioning(new Point(SpriteSheet.boxWidth, SpriteSheet.boxWidth * 3), RelPos.BOTTOM_RIGHT)
-				.setTitle("You died! Aww!")
+				.setTitle("minicraft.displays.player_death.title")
 				.setTitlePos(RelPos.TOP_LEFT)
 				.createMenu()
 		};

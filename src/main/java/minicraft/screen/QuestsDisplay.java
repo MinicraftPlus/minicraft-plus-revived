@@ -2,6 +2,7 @@ package minicraft.screen;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -28,6 +29,7 @@ import minicraft.screen.entry.BlankEntry;
 import minicraft.screen.entry.ListEntry;
 import minicraft.screen.entry.SelectEntry;
 import minicraft.screen.entry.StringEntry;
+import minicraft.util.Logging;
 import minicraft.util.Quest;
 import minicraft.util.Quest.QuestReward;
 import minicraft.util.Quest.QuestSeries;
@@ -54,9 +56,10 @@ public class QuestsDisplay extends Display {
 			loadQuestFile("/resources/tutorials.json", true);
 		} catch (IOException e) {
 			e.printStackTrace();
-			Logger.tag("Quest").error("Failed to load quests.");
+			Logging.QUEST.error("Failed to load quests.");
 		}
 
+		// TODO Localize this class
 		// TODO Setting callback messages for some tutorials
 	}
 
@@ -184,17 +187,17 @@ public class QuestsDisplay extends Display {
 				.createMenu(),
 			new Menu.Builder(false, 0, RelPos.LEFT)
 				.setPositioning(new Point(Screen.w / 2 - 8 * 11, 30), RelPos.RIGHT)
-				.setEntries(new StringEntry("Unlocked", Color.GRAY))
+				.setEntries(new StringEntry("minicraft.displays.quests.display.header.unlocked", Color.GRAY))
 				.setSelectable(false)
 				.createMenu(),
 			new Menu.Builder(false, 0, RelPos.LEFT)
 				.setPositioning(new Point(Screen.w / 2 + 8 * 2, 30), RelPos.RIGHT)
-				.setEntries(new StringEntry("Completed", Color.GRAY))
+				.setEntries(new StringEntry("minicraft.displays.quests.display.header.completed", Color.GRAY))
 				.setSelectable(false)
 				.createMenu(),
 			new Menu.Builder(false, 0, RelPos.CENTER)
 				.setPositioning(new Point(Screen.w / 2, Screen.h / 2 + 35), RelPos.CENTER)
-				.setEntries(new StringEntry(Localization.getLocalized("minicraft.display.quests.no_desc")))
+				.setEntries(new StringEntry(Localization.getLocalized("minicraft.displays.quests.display.no_quest_desc")))
 				.setSelectable(false)
 				.createMenu(),
 			new Menu.Builder(false, 0, RelPos.CENTER)
@@ -220,10 +223,10 @@ public class QuestsDisplay extends Display {
 			);
 
 			entries.add(new StringEntry("Tutorial: " + (series.tutorial ? "Yes" : "No"), series.tutorial ? Color.CYAN : Color.WHITE));
-			entries.addAll(List.of(StringEntry.useLines("Description: " + Localization.getLocalized(series.description))));
+			entries.addAll(Arrays.asList(StringEntry.useLines("Description: " + Localization.getLocalized(series.description))));
 
 			ArrayList<Quest> ongoingQuests = getOngoingSeriesQuests(series);
-			entries.addAll(List.of(StringEntry.useLines(ongoingQuests.size() + " ongoing quests" + (ongoingQuests.size() > 0 ? ": " : "") + String.join(", ", ongoingQuests.stream().map(q -> Localization.getLocalized(q.id)).toList()))));
+			entries.addAll(Arrays.asList(StringEntry.useLines(ongoingQuests.size() + " ongoing quests" + (ongoingQuests.size() > 0 ? ": " : "") + String.join(", ", ongoingQuests.stream().map(q -> Localization.getLocalized(q.id)).toList()))));
 
 			entries.add(new BlankEntry());
 			entries.add(new SelectEntry("View all quests of this series", () -> Game.setDisplay(new QuestListDisplay(series.getSeriesQuests()))));
@@ -296,7 +299,7 @@ public class QuestsDisplay extends Display {
 
 					entries.add(new StringEntry("Status: " + (questStatus.get(quest.id) == null ? "None" : questStatus.get(quest.id).toString())));
 					entries.add(new BlankEntry());
-					entries.addAll(List.of(StringEntry.useLines(Localization.getLocalized(quest.description))));
+					entries.addAll(Arrays.asList(StringEntry.useLines(Localization.getLocalized(quest.description))));
 
 					menus = new Menu[] {
 						new Menu.Builder(true, 1, RelPos.CENTER)
@@ -420,7 +423,7 @@ public class QuestsDisplay extends Display {
 
 		if ((boolean) Settings.get("tutorials") &&
 			series.values().stream().filter(s -> s.tutorial && !completedSeries.contains(s)).count() == 0) { // Tutorial completed
-			Logger.tag("Quest").debug("Tutorial completed.");
+			Logging.QUEST.debug("Tutorial completed.");
 			tutorialOff(); // Turns off tutorial
 
 			Game.notifications.add(Localization.getLocalized("minicraft.notification.tutorial_completed"));
@@ -453,7 +456,7 @@ public class QuestsDisplay extends Display {
 
 		if ((boolean) Settings.get("tutorials") &&
 			QuestsDisplay.series.values().stream().filter(s -> s.tutorial && !completedSeries.contains(s)).count() == 0) { // Tutorial completed
-			Logger.tag("Quest").debug("Tutorial completed.");
+			Logging.QUEST.debug("Tutorial completed.");
 			tutorialOff(); // Turns off tutorial
 
 			Game.notifications.add(Localization.getLocalized("minicraft.notification.tutorial_completed"));
@@ -566,7 +569,7 @@ public class QuestsDisplay extends Display {
 		if (menus[0].getCurEntry() != null) {
 			menus[3].setEntries(StringEntry.useLines(Localization.getLocalized(entrySeries[selectedEntry][menus[0].getSelection()].description)));
 		} else {
-			menus[3].setEntries(StringEntry.useLines(Localization.getLocalized("minicraft.display.quests.no_desc")));
+			menus[3].setEntries(StringEntry.useLines(Localization.getLocalized("minicraft.displays.quests.display.no_quest_desc")));
 		}
 	}
 

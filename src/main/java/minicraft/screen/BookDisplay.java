@@ -5,6 +5,7 @@ import java.util.Arrays;
 
 import minicraft.core.Game;
 import minicraft.core.io.InputHandler;
+import minicraft.core.io.Localization;
 import minicraft.gfx.Color;
 import minicraft.gfx.Font;
 import minicraft.gfx.Point;
@@ -15,7 +16,7 @@ import minicraft.screen.entry.StringEntry;
 public class BookDisplay extends Display {
 
 	// null characters "\0" denote page breaks.
-	private static final String defaultBook = "This book has no text.";
+	private static final String defaultBook = "minicraft.displays.book.default_book";
 
 	private static final int spacing = 3;
 	private static final int minX = 15, maxX = 15+8 * 32, minY = 8*5, maxY = 8*5 + 8*16;
@@ -34,7 +35,7 @@ public class BookDisplay extends Display {
 		page = 0;
 
 		if (book == null) {
-			book = defaultBook;
+			book = Localization.getLocalized(defaultBook);
 			hasTitle = false;
 		}
 

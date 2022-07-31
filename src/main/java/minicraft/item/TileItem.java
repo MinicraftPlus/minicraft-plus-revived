@@ -56,6 +56,14 @@ public class TileItem extends StackableItem {
 		items.add(new TileItem("Potato", (new Sprite(18, 0, 0)), "potato", "farmland"));
 		items.add(new TileItem("Grass Seeds", (new Sprite(3, 0, 0)), "grass", "dirt"));
 
+		// Creative mode available tiles:
+		items.add(new TileItem("Farmland", Sprite.missingTexture(1, 1), "farmland", "dirt", "grass", "hole"));
+		items.add(new TileItem("Exploded", Sprite.missingTexture(1, 1), "explode", "dirt", "grass"));
+		items.add(new TileItem("hole", Sprite.missingTexture(1, 1), "hole", "dirt", "grass"));
+		items.add(new TileItem("lava", Sprite.missingTexture(1, 1), "lava", "dirt", "grass", "hole"));
+		items.add(new TileItem("path", Sprite.missingTexture(1, 1), "path", "dirt", "grass", "hole"));
+		items.add(new TileItem("water", Sprite.missingTexture(1, 1), "water", "dirt", "grass", "hole"));
+
 		return items;
 	}
 
@@ -87,14 +95,14 @@ public class TileItem extends StackableItem {
 			}
 		}
 
-		Logger.tag("Item").debug("{} cannot be placed on {}.", model, tile.name);
+		Logger.tag("TileItem").debug("{} cannot be placed on {}.", model, tile.name);
 
 		String note = "";
 		if (model.contains("WALL")) {
-			note = Localization.getLocalized("minicraft.notification.invalid_placement") + " " + Tiles.getName(validTiles.get(0)) + "!";
+			note = Localization.getLocalized("minicraft.notification.invalid_placement", Tiles.getName(validTiles.get(0)));
 		}
 		else if (model.contains("DOOR")) {
-			note = Localization.getLocalized("minicraft.notification.invalid_placement") + " " + Tiles.getName(validTiles.get(0)) + "!";
+			note = Localization.getLocalized("minicraft.notification.invalid_placement", Tiles.getName(validTiles.get(0)));
 		}
 		else if ((model.contains("BRICK") || model.contains("PLANK") || model.equals("STONE") || model.contains("ORNATE"))) {
 			note = Localization.getLocalized("minicraft.notification.dig_hole");

@@ -131,6 +131,7 @@ public class SkinDisplay extends Display {
 	 */
 	private static void confirmExit() {
 		Game.exitDisplay();
+		selectedSkinIndex = tempSelection;
 
 		// Achieve Fashion Show:
 		AchievementsDisplay.setAchievement(true, "minicraft.achievement.skin", true);
@@ -142,7 +143,6 @@ public class SkinDisplay extends Display {
 
 		// Save the selected skin.
 		new Save();
-		selectedSkinIndex = tempSelection;
 	}
 
 
@@ -193,7 +193,7 @@ public class SkinDisplay extends Display {
 		step++;
 
 		// Title.
-		Font.drawCentered(Localization.getLocalized("minicraft.display.skin"), screen, 16, Color.WHITE);
+		Font.drawCentered(Localization.getLocalized("minicraft.displays.skin"), screen, 16, Color.WHITE);
 
 		int h = 2;
 		int w = 2;
@@ -212,8 +212,8 @@ public class SkinDisplay extends Display {
 				}
 
 		// Help text.
-		Font.drawCentered("Use "+ Game.input.getMapping("cursor-down") + " and " + Game.input.getMapping("cursor-up") + " to move.", screen, Screen.h - 17, Color.DARK_GRAY);
-		Font.drawCentered(Game.input.getMapping("SELECT") + " to select, and " + Game.input.getMapping("EXIT") + " to cancel." , screen, Screen.h - 9, Color.DARK_GRAY);
+		Font.drawCentered(Localization.getLocalized("minicraft.displays.resource_packs.display.help.move", Game.input.getMapping("cursor-down"), Game.input.getMapping("cursor-up")), screen, Screen.h - 17, Color.DARK_GRAY);
+		Font.drawCentered(Localization.getLocalized("minicraft.displays.skin.display.help.select", Game.input.getMapping("SELECT"), Game.input.getMapping("EXIT")), screen, Screen.h - 9, Color.DARK_GRAY);
 	}
 
 	public static int getSelectedSkinIndex() {

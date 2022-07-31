@@ -1,6 +1,7 @@
 package minicraft.util;
 
 import java.util.Collection;
+import java.util.Collections;
 import java.util.EnumSet;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -148,7 +149,7 @@ public class TinylogLoggingConfiguration {
 		properties.put("ID", ID);
 		properties.put("writingthread", Boolean.toString(true));
 
-		return Map.of(new ConsoleWriter(properties), new WriterConfig(ID, computeLevelsFromMinimum(level), new TagList(true)));
+		return Collections.singletonMap(new ConsoleWriter(properties), new WriterConfig(ID, computeLevelsFromMinimum(level), new TagList(true)));
 	}
 
 		/**

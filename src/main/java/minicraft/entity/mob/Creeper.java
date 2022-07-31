@@ -32,7 +32,7 @@ public class Creeper extends EnemyMob {
 
 	private int fuseTime = 0;
 	private boolean fuseLit = false;
-	
+
 	private final String[] explosionBlacklist = new String[] { "hard rock", "obsidian wall", "raw obsidian"};
 
 	public Creeper(int lvl) {
@@ -51,7 +51,7 @@ public class Creeper extends EnemyMob {
 	public void tick() {
 		super.tick();
 
-		if (Game.isMode("Creative")) return; // Creeper should not explode if player is in creative mode
+		if (Game.isMode("minicraft.settings.mode.creative")) return; // Creeper should not explode if player is in creative mode
 
 		if (fuseTime > 0) {
 			fuseTime--; // Fuse getting shorter...
@@ -155,7 +155,7 @@ public class Creeper extends EnemyMob {
 
 	@Override
 	protected void touchedBy(Entity entity) {
-		if (Game.isMode("Creative")) return;
+		if (Game.isMode("minicraft.settings.mode.creative")) return;
 
 		if (entity instanceof Player) {
 			if (fuseTime == 0 && !fuseLit) {

@@ -2,7 +2,7 @@ package minicraft.screen;
 
 import kong.unirest.*;
 import minicraft.network.Analytics;
-
+import minicraft.util.Logging;
 import minicraft.core.Action;
 import minicraft.core.Game;
 import minicraft.core.io.InputHandler;
@@ -14,6 +14,8 @@ import minicraft.gfx.FontStyle;
 import minicraft.gfx.Screen;
 import org.tinylog.Logger;
 
+/** @deprecated As multiplayer mode removed. This class is not localized. */
+@Deprecated
 public class MultiplayerDisplay extends Display {
 
 	private static final String domain = "https://playminicraft.com";
@@ -136,7 +138,7 @@ public class MultiplayerDisplay extends Display {
 					break;
 
 				case "success":
-					Logger.tag("Network").debug("Successfully received username from playminicraft server.");
+					Logging.NETWORK.debug("Successfully received username from playminicraft server.");
 					savedUsername = json.getString("name");
 					Analytics.LoginSuccess.ping();
 					break;

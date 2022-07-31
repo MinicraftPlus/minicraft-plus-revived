@@ -1,21 +1,21 @@
 package minicraft.gfx;
 
 public class Color {
-	
+
 	/* To explain this class, you have to know how Bit-Shifting works.
 	 	David made a small post, so go here if you don't already know: http://minicraftforums.com/viewtopic.php?f=9&t=2256
-		
+
 		Note: this class still confuses me a bit, lol. -David
-		
+
 		On bit shifting: the new bits will always be zero, UNLESS it is a negative number aka the left-most bit is 1. Then, shifting right will fill with 1's, it seems.
 	*/
-	
+
 	/*
 		To provide a method to the madness, all methods ending in "Color" are copies of the methods of the same name without the "Color" part, except they convert the given value to 24bit Java RGB rather than the normal, minicraft 13-bit total RGB.
 		Methods containing the word "get" deal with converting the minicraft rgb to something else, and unGet for the other way.
-		
+
 		Another point:
-		
+
 		rgbByte = int using 8 bits to store the r, g, and b.
 		rgbInt = int using 24 bits to store r, g, and b, with 8 bits each; this is the classic 0-255 scale for each color component, compacted into one integer variable.
 		rgb4Sprite = int using the 4 bytes in an int to store each of the 4 rgbBytes used for coloring a sprite.
@@ -24,7 +24,7 @@ public class Color {
 
 		So, the methods ending in "Color" deal with rgbInts, while their counterparts deal with rgbBytes.
 	*/
-	
+
 	public static final int TRANSPARENT = Color.get(0, 0);
 	public static final int WHITE = Color.get(1, 255);
 	public static final int GRAY = Color.get(1, 153);
@@ -75,22 +75,22 @@ public class Color {
 		int leading = color.length() == 5 ? 1 : 0;
 		return Color.get(color.charAt(leading), color.charAt(1 + leading), color.charAt(2 + leading), color.charAt(3 + leading));
 	}
-	
+
 	private static int limit(int num, int min, int max) {
 		if (num < min) num = min;
 		if (num > max) num = max;
 		return num;
 	}
-	
+
 	// This makes an int that you would pass to the get(a,b,c,d), or get(d), method, from three separate 8-bit r,g,b values.
 	public static int rgb(int red, int green, int blue) { // rgbInt array -> rgbReadable
 		red = limit(red, 0, 250);
 		green = limit(green, 0, 250);
 		blue = limit(blue, 0, 250);
-		
+
 		return red / 50 * 100 + green / 50 * 10 + blue / 50; // This is: rgbReadable
 	}
-	
+
 	/** This method darkens or lightens a color by the specified amount. */
 	public static int tint(int color, int amount, boolean isSpriteCol) {
 		if (isSpriteCol) {
@@ -104,26 +104,26 @@ public class Color {
 		}
 	}
 	private static int tint(int rgbByte, int amount) {
-		if (rgbByte == 255) return 255; // See description of bit shifting above; it will hold the 255 value, not -1  
-		
+		if (rgbByte == 255) return 255; // See description of bit shifting above; it will hold the 255 value, not -1
+
 		int[] rgb = decodeRGB(rgbByte); // This returns the rgb values as 0-5 numbers.
 		for (int i = 0; i < rgb.length; i++)
 			rgb[i] = limit(rgb[i]+amount, 0, 5);
-		
+
 		return rgb[0] * 36 + rgb[1] * 6 + rgb[2]; // This is: rgbByte
 	}
-	
+
 	/** seperates a 4-part sprite color (rgb4Sprite) into it's original 4 component colors (which are each rgbBytes) */
 	/// Reverse of Color.get(a, b, c, d).
 	public static int[] separateEncodedSprite(int rgb4Sprite) { return separateEncodedSprite(rgb4Sprite, false); }
 	public static int[] separateEncodedSprite(int rgb4Sprite, boolean convertToReadable) {
-		
+
 		// The numbers are stored, most to least shifted, as d, c, b, a.
 		int a = (rgb4Sprite >> 24) & 0xFF; // See note at top; this is to remove left-hand 1's.
 		int b = (rgb4Sprite & 0x00_FF_00_00) >> 16;
 		int c = (rgb4Sprite & 0x00_00_FF_00) >> 8;
 		int d = (rgb4Sprite & 0x00_00_00_FF);
-		
+
 		if(convertToReadable) {
 			// They become rgbReadable
 			a = unGet(a);
@@ -131,10 +131,10 @@ public class Color {
 			c = unGet(c);
 			d = unGet(d);
 		} // Else, they are rgbByte
-		
+
 		return new int[] {a, b, c, d};
 	}
-	
+
 	/** This turns a 216 scale rgb int into a 0-5 scale "concatenated" rgb int. (aka rgbByte -> r/g/b Readables) */
 	public static int[] decodeRGB(int rgbByte) {
 		int r = (rgbByte / 36) % 6;
@@ -142,45 +142,45 @@ public class Color {
 		int b = rgbByte % 6;
 		return new int[] {r, g, b};
 	}
-	
+
 	public static int unGet(int rgbByte) { // rgbByte -> rgbReadable
 		int[] cols = decodeRGB(rgbByte);
 		return cols[0]*100 + cols[1]*10 + cols[2];
 	}
-	
+
 	/// This turns a 25-bit minicraft color into a 24-bit rgb color.
 	protected static int upgrade(int rgbMinicraft) {
 
 		return rgbMinicraft & 0xFF_FF_FF;
 	}
-	
+
 	protected static int tintColor(int rgbInt, int amount) {
 		if (rgbInt < 0) return rgbInt; // This is "transparent".
-		
+
 		int[] comps = decodeRGBColor(rgbInt);
-		
+
 		for (int i = 0; i < comps.length; i++)
 			comps[i] = limit(comps[i]+amount, 0, 255);
-		
+
 		return comps[0] << 16 | comps[1] << 8 | comps[2];
 	}
-	
+
 	protected static int[] decodeRGBColor(int rgbInt) {
 		int r = (rgbInt & 0xFF_00_00) >> 16;
 		int g = (rgbInt & 0x00_FF_00) >> 8;
 		int b = (rgbInt & 0x00_00_FF);
-		
+
 		return new int[] {r, g, b};
 	}
-	
+
 	/// This is for color testing.
 	public static void main(String[] args) {
 		int r, g, b;
-		
+
 		r = Integer.parseInt(args[0]);
 		g = Integer.parseInt(args[1]);
 		b = Integer.parseInt(args[2]);
-		
+
 		System.out.println(rgb(r, g, b));
 	}
 

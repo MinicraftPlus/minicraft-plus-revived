@@ -43,12 +43,12 @@ public class CraftingDisplay extends Display {
 		this.recipes = recipes.toArray(new Recipe[recipes.size()]);
 
 		itemCountMenu = new Menu.Builder(true, 0, RelPos.LEFT)
-			.setTitle("Have:")
+			.setTitle("minicraft.displays.crafting.container_title.have")
 			.setTitlePos(RelPos.TOP_LEFT)
 			.setPositioning(new Point(recipeMenu.getBounds().getRight()+SpriteSheet.boxWidth, recipeMenu.getBounds().getTop()), RelPos.BOTTOM_RIGHT);
 
 		costsMenu = new Menu.Builder(true, 0, RelPos.LEFT)
-			.setTitle("Cost:")
+			.setTitle("minicraft.displays.crafting.container_title.cost")
 			.setTitlePos(RelPos.TOP_LEFT)
 			.setPositioning(new Point(itemCountMenu.createMenu().getBounds().getLeft(), recipeMenu.getBounds().getBottom()), RelPos.TOP_RIGHT);
 
@@ -161,7 +161,7 @@ public class CraftingDisplay extends Display {
 
 	public static void unlockLeft() {
 		if ((boolean) Settings.get("quests")) {
-			List<Recipe> locks = List.of(
+			List<Recipe> locks = Arrays.asList(
 				new Recipe("Gem Armor_1", "gem_65"),
 				new Recipe("Gem Sword_1", "Wood_5", "gem_50"),
 				new Recipe("Gem Claymore_1", "Gem Sword_1", "shard_15"),

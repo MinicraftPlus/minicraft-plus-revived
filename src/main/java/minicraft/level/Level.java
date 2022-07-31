@@ -2,6 +2,7 @@ package minicraft.level;
 
 import minicraft.core.Game;
 import minicraft.core.Updater;
+import minicraft.core.io.Localization;
 import minicraft.core.io.Settings;
 import minicraft.entity.Entity;
 import minicraft.entity.ItemEntity;
@@ -28,7 +29,7 @@ public class Level {
 
 	private static final String[] levelNames = {"Sky", "Surface", "Iron", "Gold", "Lava", "Dungeon"};
 	public static String getLevelName(int depth) { return levelNames[-1 * depth + 1]; }
-	public static String getDepthString(int depth) { return "Level " + (depth < 0 ? "B" + (-depth) : depth); }
+	public static String getDepthString(int depth) { return Localization.getLocalized("minicraft.displays.loading.message.level", depth < 0 ? "B" + (-depth) : depth); }
 
 	private static final int MOB_SPAWN_FACTOR = 100; // The chance of a mob actually trying to spawn when trySpawn is called equals: mobCount / maxMobCount * MOB_SPAWN_FACTOR. so, it basically equals the chance, 1/number, of a mob spawning when the mob cap is reached. I hope that makes sense...
 
@@ -92,7 +93,7 @@ public class Level {
 			}
 		}
 
-		System.out.println("Found " + numfound + " entities in level of depth " + depth);
+		Logging.WORLDNAMED.info("Found " + numfound + " entities in level of depth " + depth);
 	}
 
 	private void updateMobCap() {
@@ -606,7 +607,7 @@ public class Level {
 	public void removeAllEnemies() {
 		for (Entity e: getEntityArray()) {
 			if (e instanceof EnemyMob)
-				if (!(e instanceof AirWizard) || Game.isMode("creative")) // Don't remove the airwizard bosses! Unless in creative, since you can spawn more.
+				if (!(e instanceof AirWizard) || Game.isMode("minicraft.settings.mode.creative")) // Don't remove the airwizard bosses! Unless in creative, since you can spawn more.
 					e.remove();
 		}
 	}

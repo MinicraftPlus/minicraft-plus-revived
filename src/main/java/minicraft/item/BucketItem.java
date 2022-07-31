@@ -58,16 +58,16 @@ public class BucketItem extends StackableItem {
 		if (filling != Fill.Empty) {
 			if (fill == Fill.Empty) {
 				level.setTile(xt, yt, filling.contained);
-				if (!Game.isMode("creative")) player.activeItem = editBucket(player, Fill.Empty);
+				if (!Game.isMode("minicraft.settings.mode.creative")) player.activeItem = editBucket(player, Fill.Empty);
 				return true;
 			} else if (fill == Fill.Lava && filling == Fill.Water) {
 				level.setTile(xt, yt, Tiles.get("Obsidian"));
-				if (!Game.isMode("creative")) player.activeItem = editBucket(player, Fill.Empty);
+				if (!Game.isMode("minicraft.settings.mode.creative")) player.activeItem = editBucket(player, Fill.Empty);
 				return true;
 			}
 		} else { // This is an empty bucket
 			level.setTile(xt, yt, Tiles.get("hole"));
-			if (!Game.isMode("creative")) player.activeItem = editBucket(player, fill);
+			if (!Game.isMode("minicraft.settings.mode.creative")) player.activeItem = editBucket(player, fill);
 			return true;
 		}
 

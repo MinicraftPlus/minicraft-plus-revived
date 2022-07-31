@@ -7,6 +7,7 @@ import java.util.Random;
 import org.jetbrains.annotations.Nullable;
 
 import minicraft.entity.furniture.Furniture;
+import minicraft.util.Logging;
 
 public class Inventory {
 	private final Random random = new Random();
@@ -60,13 +61,13 @@ public class Inventory {
 	 * Adds an item to a specific spot in the inventory.
 	 * @param slot Index to place item at.
 	 * @param item Item to be added.
+	 * @return The number of items added.
 	 */
 	public int add(int slot, Item item) {
 
 		// Do not add to inventory if it is a PowerGlove
 		if (item instanceof PowerGloveItem) {
-			System.out.println("WARNING: tried to add power glove to inventory. stack trace:");
-			Thread.dumpStack();
+			Logging.INVENTORY.warn("Tried to add power glove to inventory. stack trace:", new Exception());
 			return 0;
 		}
 
@@ -148,13 +149,13 @@ public class Inventory {
 			removed += amountRemoving;
 			if (removed == count) break;
 			if (removed > count) { // Just in case...
-				System.out.println("SCREW UP while removing items from stack: " + (removed-count) + " too many.");
+				Logging.INVENTORY.info("SCREW UP while removing items from stack: " + (removed-count) + " too many.");
 				break;
 			}
 			// If not all have been removed, look for another stack.
 		}
 
-		if (removed < count) System.out.println("Inventory: could not remove all items; " + (count-removed) + " left.");
+		if (removed < count) Logging.INVENTORY.info("Inventory: could not remove all items; " + (count-removed) + " left.");
 		return removed;
 	}
 
@@ -189,7 +190,7 @@ public class Inventory {
 		}
 
 		if (count > 0)
-			System.out.println("WARNING: could not remove " + count + " " + given + (count>1?"s":"") + " from inventory");
+			Logging.INVENTORY.warn("Could not remove " + count + " " + given + (count>1?"s":"") + " from inventory");
 	}
 
 	/** Returns the how many of an item you have in the inventory. */

@@ -49,7 +49,7 @@ public class Recipe {
 	}
 	/** Checks if the player can craft the recipe */
 	private boolean getCanCraft(Player player) {
-		if (Game.isMode("creative")) return true;
+		if (Game.isMode("minicraft.settings.mode.creative")) return true;
 
 		for (String cost: costs.keySet().toArray(new String[0])) { // Cycles through the costs list
 			/// This method ONLY WORKS if costs does not contain two elements such that inventory.count will count an item it contains as matching more than once.
@@ -65,7 +65,7 @@ public class Recipe {
 	public boolean craft(Player player) {
 		if (!getCanCraft(player)) return false;
 
-		if (!Game.isMode("creative")) {
+		if (!Game.isMode("minicraft.settings.mode.creative")) {
 			// Remove the cost items from the inventory.
 			for (String cost: costs.keySet().toArray(new String[0])) {
 				player.getInventory().removeItems(Items.get(cost), costs.get(cost));

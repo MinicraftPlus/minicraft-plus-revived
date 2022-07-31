@@ -160,7 +160,7 @@ public class Renderer extends Game {
 		level.renderSprites(screen, xScroll, yScroll); // Renders level sprites on screen
 
 		// This creates the darkness in the caves
-		if ((currentLevel != 3 || Updater.tickCount < Updater.dayLength/4 || Updater.tickCount > Updater.dayLength/2) && !isMode("creative")) {
+		if ((currentLevel != 3 || Updater.tickCount < Updater.dayLength/4 || Updater.tickCount > Updater.dayLength/2) && !isMode("minicraft.settings.mode.creative")) {
 			lightScreen.clear(0); // This doesn't mean that the pixel will be black; it means that the pixel will be DARK, by default; lightScreen is about light vs. dark, not necessarily a color. The light level it has is compared with the minimum light values in dither to decide whether to leave the cell alone, or mark it as "dark", which will do different things depending on the game level and time of day.
 			int brightnessMultiplier = player.potioneffects.containsKey(PotionType.Light) ? 12 : 8; // Brightens all light sources by a factor of 1.5 when the player has the Light potion effect. (8 above is normal)
 			level.renderLight(lightScreen, xScroll, yScroll, brightnessMultiplier); // Finds (and renders) all the light from objects (like the player, lanterns, and lava).
@@ -172,7 +172,7 @@ public class Renderer extends Game {
 	/** Renders the main game GUI (hearts, Stamina bolts, name of the current item, etc.) */
 	private static void renderGui() {
 		// This draws the black square where the selected item would be if you were holding it
-		if (!isMode("creative") || player.activeItem != null) {
+		if (!isMode("minicraft.settings.mode.creative") || player.activeItem != null) {
 			for (int x = 10; x < 26; x++) {
 				screen.render(x * 8, Screen.h - 8, 31, 0, 3);
 			}
@@ -190,7 +190,7 @@ public class Renderer extends Game {
 			if (((ToolItem)player.activeItem).type == ToolType.Bow) {
 				int ac = player.getInventory().count(Items.arrowItem);
 				// "^" is an infinite symbol.
-				if (isMode("creative") || ac >= 10000)
+				if (isMode("minicraft.settings.mode.creative") || ac >= 10000)
 					Font.drawBackground("	x" + "^", screen, 84, Screen.h - 16);
 				else
 					Font.drawBackground("	x" + ac, screen, 84, Screen.h - 16);
@@ -200,10 +200,10 @@ public class Renderer extends Game {
 		}
 
 		ArrayList<String> permStatus = new ArrayList<>();
-		if (Updater.saving) permStatus.add("Saving... " + Math.round(LoadingDisplay.getPercentage()) + "%");
-		if (Bed.sleeping()) permStatus.add("Sleeping...");
+		if (Updater.saving) permStatus.add(Localization.getLocalized("minicraft.display.gui.perm_status.saving", Math.round(LoadingDisplay.getPercentage())));
+		if (Bed.sleeping()) permStatus.add(Localization.getLocalized("minicraft.display.gui.perm_status.sleeping"));
 		if (Bed.inBed(Game.player)) {
-			permStatus.add("Press " + input.getMapping("exit") + " to cancel");
+			permStatus.add(Localization.getLocalized("minicraft.display.gui.perm_status.sleep_cancel", input.getMapping("exit")));
 		}
 
 		if (permStatus.size() > 0) {
@@ -216,13 +216,14 @@ public class Renderer extends Game {
 
 		// NOTIFICATIONS
 
+		Updater.updateNoteTick = false;
 		if (permStatus.size() == 0 && notifications.size() > 0) {
-			Updater.notetick++;
+			Updater.updateNoteTick = true;
 			if (notifications.size() > 3) { // Only show 3 notifs max at one time; erase old notifs.
 				notifications = notifications.subList(notifications.size() - 3, notifications.size());
 			}
 
-			if (Updater.notetick > 120) { // Display time per notification.
+			if (Updater.notetick > 180) { // Display time per notification.
 				notifications.remove(0);
 				Updater.notetick = 0;
 			}
@@ -240,7 +241,7 @@ public class Renderer extends Game {
 
 
 		// SCORE MODE ONLY:
-		if (isMode("score")) {
+		if (isMode("minicraft.settings.mode.score")) {
 			int seconds = (int)Math.ceil(Updater.scoreTime / (double)Updater.normSpeed);
 			int minutes = seconds / 60;
 			int hours = minutes / 60;
@@ -252,9 +253,9 @@ public class Renderer extends Game {
 			else if (Updater.scoreTime >= 3600) timeCol = Color.get(330, 555);
 			else timeCol = Color.get(400, 555);
 
-			Font.draw("Time left " + (hours > 0 ? hours + "h " : "") + minutes + "m " + seconds + "s", screen, Screen.w / 2-9 * 8, 2, timeCol);
+			Font.draw(Localization.getLocalized("minicraft.display.gui.score.time_left", hours > 0 ? hours + "h " : "", minutes, seconds), screen, Screen.w / 2-9 * 8, 2, timeCol);
 
-			String scoreString = "Current score: " + player.getScore();
+			String scoreString = Localization.getLocalized("minicraft.display.gui.score.current_score", player.getScore());
 			Font.draw(scoreString, screen, Screen.w - Font.textWidth(scoreString) - 2, 3 + 8, Color.WHITE);
 
 			if (player.getMultiplier() > 1) {
@@ -268,9 +269,8 @@ public class Renderer extends Game {
 		if (player.activeItem instanceof ToolItem) {
 			// Draws the text
 			ToolItem tool = (ToolItem) player.activeItem;
-			int dura = tool.dur * 100 / (tool.type.durability * (tool.level+1));
-			if (dura == 0 && tool.dur != 0) dura = 1;
-			int green = (int)(dura * 2.55f);
+			int dura = tool.dur * 100 / (tool.type.durability * (tool.level + 1));
+			int green = (int)(dura * 2.55f); // Let duration show as normal.
 			Font.drawBackground(dura + "%", screen, 164, Screen.h - 16, Color.get(1, 255 - green, green, 0));
 		}
 
@@ -287,8 +287,8 @@ public class Renderer extends Game {
 					int pTime = effects[i].getValue() / Updater.normSpeed;
 					int minutes = pTime / 60;
 					int seconds = pTime % 60;
-					Font.drawBackground("("+input.getMapping("potionEffects")+" to hide!)", screen, 180, 9);
-					Font.drawBackground(pType + " (" + minutes + ":" + (seconds<10?"0"+seconds:seconds) + ")", screen, 180, 17 + i * Font.textHeight() + potionRenderOffset, pType.dispColor);
+					Font.drawBackground(Localization.getLocalized("minicraft.display.gui.potion_effects.hide_hint", input.getMapping("potionEffects")), screen, 180, 9);
+					Font.drawBackground(Localization.getLocalized("minicraft.display.gui.potion_effects.potion_dur", pType, minutes, seconds), screen, 180, 17 + i * Font.textHeight() + potionRenderOffset, pType.dispColor);
 				}
 			} else {
 				for (int i = 0; i < effects.length; i++) {
@@ -298,9 +298,8 @@ public class Renderer extends Game {
 			}
 		}
 
-
 		// This is the status icons, like health hearts, stamina bolts, and hunger "burgers".
-		if (!isMode("creative")) {
+		if (!isMode("minicraft.settings.mode.creative")) {
 			for (int i = 0; i < Player.maxStat; i++) {
 
 				// Renders armor
@@ -379,6 +378,7 @@ public class Renderer extends Game {
 	}
 
 	private static void renderDebugInfo() {
+		// Should not localize debug info.
 
 		int textcol = Color.WHITE;
 
@@ -389,13 +389,12 @@ public class Renderer extends Game {
 			info.add("Day tiks: " + Updater.tickCount + " (" + Updater.getTime() + ")");
 			info.add((Updater.normSpeed * Updater.gamespeed) + " tps");
 
-
 			info.add("walk spd: " + player.moveSpeed);
 			info.add("X: " + (player.x / 16) + "-" + (player.x % 16));
 			info.add("Y: " + (player.y / 16) + "-" + (player.y % 16));
 			if (levels[currentLevel] != null)
 				info.add("Tile: " + levels[currentLevel].getTile(player.x >> 4, player.y >> 4).name);
-			if (isMode("score")) info.add("Score: " + player.getScore());
+			if (isMode("minicraft.settings.mode.score")) info.add("Score: " + player.getScore());
 
 			if (levels[currentLevel] != null) {
 				info.add("Mob Cnt: " + levels[currentLevel].mobCount + "/" + levels[currentLevel].maxMobCount);

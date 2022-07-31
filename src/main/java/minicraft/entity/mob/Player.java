@@ -139,7 +139,7 @@ public class Player extends Mob implements ItemHolder, ClientTickable {
 		updateSprites();
 	}
 
-	public int getMultiplier() { return Game.isMode("score") ? multiplier : 1; }
+	public int getMultiplier() { return Game.isMode("minicraft.settings.mode.score") ? multiplier : 1; }
 
 	void resetMultiplier() {
 		multiplier = 1;
@@ -147,7 +147,7 @@ public class Player extends Mob implements ItemHolder, ClientTickable {
 	}
 
 	public void addMultiplier(int value) {
-		if (!Game.isMode("score")) return;
+		if (!Game.isMode("minicraft.settings.mode.score")) return;
 		multiplier = Math.min(MAX_MULTIPLIER, multiplier+value);
 		multipliertime = Math.max(multipliertime, mtm - 5);
 	}
@@ -229,7 +229,7 @@ public class Player extends Mob implements ItemHolder, ClientTickable {
 			simpPotionEffects = !simpPotionEffects;
 		}
 
-		if (input.getKey("hideGUI").clicked) {
+		if (input.getKey("toggleHUD").clicked) {
 			renderGUI = !renderGUI;
 		}
 
@@ -248,7 +248,7 @@ public class Player extends Mob implements ItemHolder, ClientTickable {
 			onStairDelay = 10; // Resets the delay, if on a stairs tile, but the delay is greater than 0. In other words, this prevents you from ever activating a level change on a stair tile, UNTIL you get off the tile for 10+ ticks.
 		} else if (onStairDelay > 0) onStairDelay--; // Decrements stairDelay if it's > 0, but not on stair tile... does the player get removed from the tile beforehand, or something?
 
-		if (onTile == Tiles.get("Infinite Fall") && !Game.isMode("creative")) {
+		if (onTile == Tiles.get("Infinite Fall") && !Game.isMode("minicraft.settings.mode.creative")) {
 			if (onFallDelay <= 0) {
 				World.scheduleLevelChange(-1);
 				onFallDelay = 40;
@@ -256,7 +256,7 @@ public class Player extends Mob implements ItemHolder, ClientTickable {
 			}
 		} else if (onFallDelay > 0) onFallDelay--;
 
-		if (Game.isMode("creative")) {
+		if (Game.isMode("minicraft.settings.mode.creative")) {
 			// Prevent stamina/hunger decay in creative mode.
 			stamina = maxStamina;
 			hunger = maxHunger;
@@ -431,7 +431,7 @@ public class Player extends Mob implements ItemHolder, ClientTickable {
 				if (input.getKey("pause").clicked)
 					Game.setDisplay(new PauseDisplay());
 				if (input.getKey("craft").clicked && !use())
-					Game.setDisplay(new CraftingDisplay(Recipes.craftRecipes, "Crafting", this, true));
+					Game.setDisplay(new CraftingDisplay(Recipes.craftRecipes, "minicraft.displays.crafting", this, true));
 
 				if (input.getKey("info").clicked) Game.setDisplay(new InfoDisplay());
 
@@ -528,7 +528,7 @@ public class Player extends Mob implements ItemHolder, ClientTickable {
 					level.add(new Arrow(this, attackDir, tool.level));
 					attackTime = 10;
 
-					if (!Game.isMode("creative")) tool.dur--;
+					if (!Game.isMode("minicraft.settings.mode.creative")) tool.dur--;
 
 					AchievementsDisplay.setAchievement("minicraft.achievement.bow",true);
 
@@ -1011,7 +1011,7 @@ public class Player extends Mob implements ItemHolder, ClientTickable {
 
 	@Override
 	protected void doHurt(int damage, Direction attackDir) {
-		if (Game.isMode("creative") || hurtTime > 0 || Bed.inBed(this)) return; // Can't get hurt in creative, hurt cooldown, or while someone is in bed
+		if (Game.isMode("minicraft.settings.mode.creative") || hurtTime > 0 || Bed.inBed(this)) return; // Can't get hurt in creative, hurt cooldown, or while someone is in bed
 
 		int healthDam = 0, armorDam = 0;
 		if (this == Game.player) {
@@ -1055,7 +1055,7 @@ public class Player extends Mob implements ItemHolder, ClientTickable {
 	 * @param attackDir The direction of attack.
 	 */
 	private void directHurt(int damage, Direction attackDir) {
-		if (Game.isMode("creative") || hurtTime > 0 || Bed.inBed(this)) return; // Can't get hurt in creative, hurt cooldown, or while someone is in bed
+		if (Game.isMode("minicraft.settings.mode.creative") || hurtTime > 0 || Bed.inBed(this)) return; // Can't get hurt in creative, hurt cooldown, or while someone is in bed
 
 		int healthDam = 0;
 		if (this == Game.player) {

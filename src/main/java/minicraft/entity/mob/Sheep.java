@@ -66,9 +66,9 @@ public class Sheep extends PassiveMob {
 
 	public void die() {
 		int min = 0, max = 0;
-		if (Settings.get("diff").equals("Easy")) {min = 1; max = 3;}
-		if (Settings.get("diff").equals("Normal")) {min = 1; max = 2;}
-		if (Settings.get("diff").equals("Hard")) {min = 0; max = 2;}
+		if (Settings.get("diff").equals("minicraft.settings.difficulty.easy")) {min = 1; max = 3;}
+		if (Settings.get("diff").equals("minicraft.settings.difficulty.normal")) {min = 1; max = 2;}
+		if (Settings.get("diff").equals("minicraft.settings.difficulty.hard")) {min = 0; max = 2;}
 
 		if (!cut) dropItem(min, max, Items.get("wool"));
 		dropItem(min, max, Items.get("Raw Beef"));

@@ -5,7 +5,7 @@ import java.util.ArrayList;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import org.tinylog.Logger;
+import minicraft.util.Logging;
 
 public class Items {
 
@@ -80,7 +80,7 @@ public class Items {
 		if (name.equalsIgnoreCase("NULL")) {
 			if (allowNull) return null;
 			else {
-				Logger.tag("Item").warn("Items.get passed argument \"null\" when null is not allowed; returning UnknownItem.");
+				Logging.ITEMS.warn("Items.get passed argument \"null\" when null is not allowed; returning UnknownItem.");
 				return new UnknownItem("NULL");
 			}
 		}
@@ -104,7 +104,7 @@ public class Items {
 				((ToolItem)i).dur = data;
 			return i;
 		} else {
-			Logger.tag("Item").error("Requested invalid item with name: '{}'", name);
+			Logging.ITEMS.error("Requested invalid item with name: '{}'", name);
 			return new UnknownItem(name);
 		}
 	}

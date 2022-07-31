@@ -1,5 +1,6 @@
 package minicraft.entity.furniture;
 
+import minicraft.core.CrashHandler;
 import minicraft.core.Game;
 import minicraft.entity.Direction;
 import minicraft.entity.ItemHolder;
@@ -54,8 +55,7 @@ public class Chest extends Furniture implements ItemHolder {
 				}
 			}
 		} catch (IOException e) {
-			System.out.println("Couldn't read loot table \"" + lootTable + ".txt" + "\"");
-			e.printStackTrace();
+			CrashHandler.errorHandle(e, new CrashHandler.ErrorInfo("Loot table", CrashHandler.ErrorInfo.ErrorType.REPORT, "Couldn't read loot table \"" + lootTable + ".txt" + "\""));
 		}
 	}
 

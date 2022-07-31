@@ -104,7 +104,7 @@ public class FurnitureItem extends Item {
 			furniture.y = yt * 16 + 8;
 
 			level.add(furniture); // Adds the furniture to the world
-			if (Game.isMode("creative"))
+			if (Game.isMode("minicraft.settings.mode.creative"))
 				furniture = furniture.clone();
 			else
 				placed = true; // The value becomes true, which removes it from the player's active item

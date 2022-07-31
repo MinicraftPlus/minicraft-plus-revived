@@ -11,6 +11,7 @@ import minicraft.item.*;
 import minicraft.level.Level;
 import minicraft.level.tile.Tiles;
 import minicraft.screen.LoadingDisplay;
+import minicraft.util.Logging;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -70,7 +71,7 @@ public class LegacyLoad {
 
 		if (deathChest != null && deathChest.getInventory().invSize() > 0) {
 			Game.player.getLevel().add(deathChest, Game.player.x, Game.player.y);
-			Logger.debug("Added DeathChest which contains exceed items.");
+			Logging.SAVELOAD.debug("Added DeathChest which contains exceed items.");
 		}
 	}
 
@@ -179,7 +180,7 @@ public class LegacyLoad {
 				Settings.set("sound", Boolean.parseBoolean(data.get(4)));
 			} else { // version == 1.8?
 				if (!oldSave) {
-					System.out.println("UNEXPECTED WORLD VERSION");
+					Logging.SAVELOAD.warn("UNEXPECTED WORLD VERSION");
 					worldVer = new Version("1.8.1");
 				}
 				// For backwards compatibility
@@ -431,7 +432,7 @@ public class LegacyLoad {
 			case "Lantern": return new Lantern(Lantern.Type.NORM);
 			case "IronLantern": return new Lantern(Lantern.Type.IRON);
 			case "GoldLantern": return new Lantern(Lantern.Type.GOLD);
-			default : System.out.println("LEGACYLOAD: Unknown or outdated entity requested: " + string);
+			default : Logger.tag("SaveLoad/LegacyLoad").warn("Unknown or outdated entity requested: " + string);
 				return null;
 		}
 	}

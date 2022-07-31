@@ -43,7 +43,7 @@ public class SummonItem extends StackableItem {
 					if (player.payStamina(2)) {
 						AirWizard aw = new AirWizard();
 						level.add(aw, player.x + 8, player.y + 8, false);
-						Logger.tag("Item").debug("Summoned new Air Wizard");
+						Logger.tag("SummonItem").debug("Summoned new Air Wizard");
 						success = true;
 					}
 				} else {
@@ -52,7 +52,7 @@ public class SummonItem extends StackableItem {
 
 				break;
 			default:
-				Logger.tag("Item").warn("Could not create SummonItem with mob, {}", mob);
+				Logger.tag("SummonItem").warn("Could not create SummonItem with mob, {}", mob);
 				break;
 		}
 

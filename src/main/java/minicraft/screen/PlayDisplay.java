@@ -6,7 +6,8 @@ import minicraft.screen.entry.BlankEntry;
 import minicraft.screen.entry.SelectEntry;
 import minicraft.screen.entry.StringEntry;
 
-
+/** @deprecated This class is not used as this is replaced by an anonymous class in {@link TitleDisplay}. */
+@Deprecated
 public class PlayDisplay extends Display {
 	public PlayDisplay() {
 		super(true, true, new Menu.Builder(false, 2, RelPos.CENTER,

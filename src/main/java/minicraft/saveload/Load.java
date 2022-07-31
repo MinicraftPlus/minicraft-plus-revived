@@ -81,7 +81,7 @@ public class Load {
 
 			if (deathChest != null && deathChest.getInventory().invSize() > 0) {
 				Game.player.getLevel().add(deathChest, Game.player.x, Game.player.y);
-				Logger.debug("Added DeathChest which contains exceed items.");
+				Logging.SAVELOAD.debug("Added DeathChest which contains exceed items.");
 			}
 		}
 	}
@@ -357,7 +357,6 @@ public class Load {
 		// Settings
 		Settings.set("sound", json.getBoolean("sound"));
 		Settings.set("autosave", json.getBoolean("autosave"));
-		Settings.set("diff", json.has("diff") ? json.getString("diff") : "Normal");
 		Settings.set("fps", json.getInt("fps"));
 		Settings.set("showquests", json.optBoolean("showquests", true));
 
@@ -631,7 +630,7 @@ public class Load {
 				cols[i] = Integer.parseInt(color[i]) / 50;
 
 			String col = "" + cols[0] + cols[1] + cols[2];
-			System.out.println("Getting color as " + col);
+			Logging.SAVELOAD.debug("Getting color as " + col);
 			player.shirtColor = Integer.parseInt(col);
 		} else if (worldVer.compareTo(new Version("2.0.6-dev4")) < 0) {
 			String color = data.remove(0);
@@ -733,7 +732,7 @@ public class Load {
 	}
 
 	private void loadEntities(String filename) {
-		LoadingDisplay.setMessage("Entities");
+		LoadingDisplay.setMessage("minicraft.displays.loading.message.entities");
 		loadFromFile(location + filename + extension);
 
 		for (int i = 0; i < World.levels.length; i++) {
@@ -786,7 +785,7 @@ public class Load {
 			if (sparkOwner instanceof AirWizard)
 				newEntity = new Spark((AirWizard)sparkOwner, x, y);
 			else {
-				System.err.println("failed to load spark; owner id doesn't point to a correct entity");
+				Logging.SAVELOAD.error("Failed to load spark; owner id doesn't point to a correct entity");
 				return null;
 			}
 		} else {
@@ -825,7 +824,7 @@ public class Load {
 				enemyMob.lvl = Integer.parseInt(info.get(info.size()-2));
 
 				if (enemyMob.lvl == 0) {
-					if (Game.debug) System.out.println("Level 0 mob: " + entityName);
+					Logging.SAVELOAD.debug("Level 0 mob: " + entityName);
 					enemyMob.lvl = 1;
 				} else if (enemyMob.lvl > enemyMob.getMaxLevel()) {
 					enemyMob.lvl = enemyMob.getMaxLevel();

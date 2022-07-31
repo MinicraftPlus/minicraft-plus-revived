@@ -19,7 +19,7 @@ public class WorldGenDisplay extends Display {
 
 	private static final String worldNameRegex = "[a-zA-Z0-9 ]+";
 
-	private static InputEntry worldSeed = new InputEntry("World Seed", "[-!\"#%/()=+,a-zA-Z0-9]+", 20);
+	private static InputEntry worldSeed = new InputEntry("minicraft.displays.world_gen.world_seed", "[-!\"#%/()=+,a-zA-Z0-9]+", 20);
 
 	public static OptionalLong getSeed() {
 		String seedStr = worldSeed.getUserInput();
@@ -74,9 +74,9 @@ public class WorldGenDisplay extends Display {
 	public WorldGenDisplay() {
 		super(true);
 
-		InputEntry nameField = makeWorldNameInput("Enter World Name", WorldSelectDisplay.getWorldNames(), "", true);
+		InputEntry nameField = makeWorldNameInput("minicraft.displays.world_gen.enter_world", WorldSelectDisplay.getWorldNames(), "", true);
 
-		SelectEntry nameHelp = new SelectEntry("Trouble with world name?", () -> Game.setDisplay(new BookDisplay("it seems you've set letters as the controls to move the cursor up and down, which is probably annoying. This can be changed in the key binding menu as the \"cursor-XXX\" keys. For now, to type the letter instead of moving the cursor, hold the shift key while typing."))) {
+		SelectEntry nameHelp = new SelectEntry("minicraft.displays.world_gen.troublesome_input", () -> Game.setDisplay(new PopupDisplay(null, null, "minicraft.displays.world_gen.troublesome_input.msg"))) {
 			@Override
 			public int getColor(boolean isSelected) {
 				return Color.get(1, 204);
@@ -95,7 +95,7 @@ public class WorldGenDisplay extends Display {
 			}
 		}
 
-		worldSeed = new InputEntry("World Seed", "[-!\"#%/()=+,a-zA-Z0-9]+", 20) {
+		worldSeed = new InputEntry("minicraft.displays.world_gen.world_seed", "[-!\"#%/()=+,a-zA-Z0-9]+", 20) {
 			@Override
 			public boolean isValid() { return true; }
 		};
@@ -107,7 +107,7 @@ public class WorldGenDisplay extends Display {
 				Settings.getEntry("mode"),
 				Settings.getEntry("scoretime"),
 
-				new SelectEntry("Create World", () -> {
+				new SelectEntry("minicraft.displays.world_gen.create_world", () -> {
 					if(!nameField.isValid()) return;
 					WorldSelectDisplay.setWorldName(nameField.getUserInput(), false);
 					Game.setDisplay(new LoadingDisplay());
@@ -127,7 +127,7 @@ public class WorldGenDisplay extends Display {
 			)
 				.setDisplayLength(5)
 				.setScrollPolicies(0.8f, false)
-				.setTitle("World Gen Options")
+				.setTitle("minicraft.displays.world_gen.title")
 				.createMenu()
 		};
 	}

@@ -63,7 +63,7 @@ public class Save {
 				if (worldFolder.renameTo(newFolder))
 					worldFolder = newFolder;
 				else
-					System.err.println("Failed to rename world folder " + worldFolder + " to " + newFolder);
+					Logging.SAVELOAD.error("Failed to rename world folder " + worldFolder + " to " + newFolder);
 			}
 		}
 
@@ -88,7 +88,7 @@ public class Save {
 
 		WorldSelectDisplay.updateWorlds();
 
-		Updater.notifyAll("World Saved!");
+		Updater.notifyAll("minicraft.notification.world_saved");
 		Updater.asTick = 0;
 		Updater.saving = false;
 	}
@@ -157,7 +157,7 @@ public class Save {
 	private void writeGame(String filename) {
 		data.add(String.valueOf(Game.VERSION));
 		data.add(String.valueOf(World.getWorldSeed()));
-		data.add(Settings.getIdx("mode") + (Game.isMode("score") ? ";" + Updater.scoreTime + ";" + Settings.get("scoretime") : ""));
+		data.add(Settings.getIdx("mode") + (Game.isMode("minicraft.settings.mode.score") ? ";" + Updater.scoreTime + ";" + Settings.get("scoretime") : ""));
 		data.add(String.valueOf(Updater.tickCount));
 		data.add(String.valueOf(Updater.gameTime));
 		data.add(String.valueOf(Settings.getIdx("diff")));
@@ -171,7 +171,6 @@ public class Save {
 		JSONObject json = new JSONObject();
 
 		json.put("version", String.valueOf(Game.VERSION));
-		json.put("diff", Settings.get("diff"));
 		json.put("sound", String.valueOf(Settings.get("sound")));
 		json.put("autosave", String.valueOf(Settings.get("autosave")));
 		json.put("fps", String.valueOf(Settings.get("fps")));
@@ -212,7 +211,7 @@ public class Save {
 	}
 
 	private void writeWorld(String filename) {
-		LoadingDisplay.setMessage("Levels");
+		LoadingDisplay.setMessage("minicraft.displays.loading.message.levels");
 		for (int l = 0; l < World.levels.length; l++) {
 			String worldSize = String.valueOf(Settings.get("size"));
 			data.add(worldSize);
@@ -330,7 +329,7 @@ public class Save {
 	}
 
 	private void writeEntities(String filename) {
-		LoadingDisplay.setMessage("Entities");
+		LoadingDisplay.setMessage("minicraft.displays.loading.message.entities");
 		for (int l = 0; l < World.levels.length; l++) {
 			for (Entity e: World.levels[l].getEntitiesToSave()) {
 				String saved = writeEntity(e, true);
@@ -401,7 +400,7 @@ public class Save {
 
 		int depth = 0;
 		if (e.getLevel() == null)
-			System.out.println("WARNING: Saving entity with no level reference: " + e + "; setting level to surface");
+			Logging.SAVELOAD.warn("Saving entity with no level reference: " + e + "; setting level to surface");
 		else
 			depth = e.getLevel().depth;
 
