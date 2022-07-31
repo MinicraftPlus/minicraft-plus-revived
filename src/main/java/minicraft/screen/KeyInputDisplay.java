@@ -1,6 +1,7 @@
 package minicraft.screen;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 
 import minicraft.core.Game;
 import minicraft.core.io.InputHandler;
@@ -18,11 +19,29 @@ public class KeyInputDisplay extends Display {
 	private static KeyInputEntry[] getEntries() {
 		String[] prefs = Game.input.getKeyPrefs();
 		KeyInputEntry[] entries = new KeyInputEntry[prefs.length];
+		HashSet<String> duplicated = getDuplicatedMappings();
 
 		for (int i = 0; i < entries.length; i++)
-			entries[i] = new KeyInputEntry(prefs[i]);
+			entries[i] = new KeyInputEntry(prefs[i], duplicated);
 
 		return entries;
+	}
+
+	private static HashSet<String> getDuplicatedMappings() {
+		HashSet<String> existedMappings = new HashSet<>();
+		HashSet<String> duplicated = new HashSet<>();
+		for (String pref : Game.input.getKeyPrefs()) {
+			String[] mappings = pref.substring(pref.indexOf(";") + 1).split("\\|");
+			for (String mapping : mappings) {
+				if (existedMappings.contains(mapping)) {
+					duplicated.add(mapping);
+				} else {
+					existedMappings.add(mapping);
+				}
+			}
+		}
+
+		return duplicated;
 	}
 
 	public KeyInputDisplay() {
@@ -44,8 +63,10 @@ public class KeyInputDisplay extends Display {
 			ArrayList<PopupDisplay.PopupActionCallback> callbacks = new ArrayList<>();
 			callbacks.add(new PopupDisplay.PopupActionCallback(null, popup -> {
 				if (input.keyToChange == null) {
-					// the key has just been set
-					menus[0].updateSelectedEntry(new KeyInputEntry(input.getChangedKey()));
+					// the key has just been set, refreshes key bindings.
+					menus[0] = builder.setEntries(getEntries())
+						.setSelection(menus[0].getSelection(), menus[0].getDispSelection())
+						.createMenu();
 					Game.exitDisplay();
 					return true;
 				}
