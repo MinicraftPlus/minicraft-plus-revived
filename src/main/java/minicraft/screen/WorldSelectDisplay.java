@@ -113,10 +113,10 @@ public class WorldSelectDisplay extends Display {
 				}
 
 				Sound.confirm.play();
+				updateWorlds();
+				updateEntries();
 				if (WorldSelectDisplay.getWorldNames().size() > 0) {
 					Game.exitDisplay();
-					updateWorlds();
-					updateEntries();
 				} else {
 					Game.exitDisplay();
 					Game.exitDisplay();
@@ -160,10 +160,10 @@ public class WorldSelectDisplay extends Display {
 				}
 
 				Sound.confirm.play();
+				updateWorlds();
+				updateEntries();
 				if (WorldSelectDisplay.getWorldNames().size() > 0) {
 					Game.exitDisplay();
-					updateWorlds();
-					updateEntries();
 				} else {
 					Game.exitDisplay();
 					Game.exitDisplay();
@@ -200,10 +200,10 @@ public class WorldSelectDisplay extends Display {
 				world.delete();
 
 				Sound.confirm.play();
+				updateWorlds();
+				updateEntries();
 				if (WorldSelectDisplay.getWorldNames().size() > 0) {
 					Game.exitDisplay();
-					updateWorlds();
-					updateEntries();
 					if (menus[0].getSelection() >= worldNames.size()) {
 						menus[0].setSelection(worldNames.size() - 1);
 					}

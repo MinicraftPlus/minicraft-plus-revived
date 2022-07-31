@@ -56,6 +56,14 @@ public class TileItem extends StackableItem {
 		items.add(new TileItem("Potato", (new Sprite(18, 0, 0)), "potato", "farmland"));
 		items.add(new TileItem("Grass Seeds", (new Sprite(3, 0, 0)), "grass", "dirt"));
 
+		// Creative mode available tiles:
+		items.add(new TileItem("Farmland", Sprite.missingTexture(1, 1), "farmland", "dirt", "grass", "hole"));
+		items.add(new TileItem("Exploded", Sprite.missingTexture(1, 1), "explode", "dirt", "grass"));
+		items.add(new TileItem("hole", Sprite.missingTexture(1, 1), "hole", "dirt", "grass"));
+		items.add(new TileItem("lava", Sprite.missingTexture(1, 1), "lava", "dirt", "grass", "hole"));
+		items.add(new TileItem("path", Sprite.missingTexture(1, 1), "path", "dirt", "grass", "hole"));
+		items.add(new TileItem("water", Sprite.missingTexture(1, 1), "water", "dirt", "grass", "hole"));
+
 		return items;
 	}
 
