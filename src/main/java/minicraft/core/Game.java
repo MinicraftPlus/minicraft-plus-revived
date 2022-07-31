@@ -34,7 +34,7 @@ public class Game {
 
 	public static List<String> notifications = new ArrayList<>();
 
-	public static int MAX_FPS = (int) Settings.get("fps");
+	public static int MAX_FPS;
 
 	// DISPLAY
 	static Display display = null, newDisplay = null;
@@ -68,22 +68,26 @@ public class Game {
 	public static void main(String[] args) {
 		Thread.setDefaultUncaughtExceptionHandler(CrashHandler::crashHandle);
 
+		Initializer.parseArgs(args); // Parses the command line arguments
+		// Applying Game#debug first.
+
 		Analytics.GameStartup.ping();
 
-		Initializer.parseArgs(args); // Parses the command line arguments
+		// Load default loc.
+		Localization.loadLanguage();
+		/* DO NOT trigger any other classes before this.
+		* Including static initialization.
+		*/
 
 		input = new InputHandler(Renderer.canvas);
 
 		Tiles.initTileList();
 		Sound.init();
 
-		// Load default loc.
-		Localization.loadLanguage();
-
 		World.resetGame(); // "half"-starts a new game, to set up initial variables
 		player.eid = 0;
 		new Load(true); // This loads any saved preferences.
-		MAX_FPS = (int) Settings.get("fps");
+		MAX_FPS = (int) Settings.get("fps"); // DO NOT put this above.
 
 		// Load the selected language.
 		Initializer.createAndDisplayFrame();

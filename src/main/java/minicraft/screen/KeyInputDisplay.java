@@ -31,10 +31,6 @@ public class KeyInputDisplay extends Display {
 			.setTitle("minicraft.displays.key_input.title")
 			.setPositioning(new Point(Screen.w/2, Screen.h - Font.textHeight()*5), RelPos.TOP);
 
-		Menu.Builder popupBuilder = new Menu.Builder(true, 4, RelPos.CENTER)
-			.setShouldRender(false)
-			.setSelectable(false);
-
 		menus = new Menu[] {
 			builder.createMenu()
 		};

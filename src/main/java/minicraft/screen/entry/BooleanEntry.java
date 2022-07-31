@@ -13,8 +13,8 @@ public class BooleanEntry extends ArrayEntry<Boolean> {
 	@Override
 	protected String getLocalizationOption(Boolean option) {
 		return option ?
-			Localization.getLocalized("minicraft.display.entries.boolean.true") :
-			Localization.getLocalized("minicraft.display.entries.boolean.false");
+			"minicraft.display.entries.boolean.true" :
+			"minicraft.display.entries.boolean.false";
 	}
 
 	@Override
