@@ -2,7 +2,7 @@ package minicraft.screen;
 
 import kong.unirest.*;
 import minicraft.network.Analytics;
-
+import minicraft.util.Logging;
 import minicraft.core.Action;
 import minicraft.core.Game;
 import minicraft.core.io.InputHandler;
@@ -138,7 +138,7 @@ public class MultiplayerDisplay extends Display {
 					break;
 
 				case "success":
-					Logger.tag("Network").debug("Successfully received username from playminicraft server.");
+					Logging.NETWORK.debug("Successfully received username from playminicraft server.");
 					savedUsername = json.getString("name");
 					Analytics.LoginSuccess.ping();
 					break;

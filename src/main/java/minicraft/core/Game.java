@@ -73,11 +73,10 @@ public class Game {
 
 		Analytics.GameStartup.ping();
 
-		// Load default loc.
+		/* Load default loc.
+		* DO NOT trigger any other classes before this.
+		* Including static initialization.*/
 		Localization.loadLanguage();
-		/* DO NOT trigger any other classes before this.
-		* Including static initialization.
-		*/
 
 		input = new InputHandler(Renderer.canvas);
 

@@ -7,6 +7,8 @@ import minicraft.core.CrashHandler;
 import minicraft.level.tile.farming.FarmTile;
 import minicraft.level.tile.farming.PotatoTile;
 import minicraft.level.tile.farming.WheatTile;
+import minicraft.util.Logging;
+
 import org.tinylog.Logger;
 
 public final class Tiles {
@@ -18,7 +20,7 @@ public final class Tiles {
 	private static HashMap<Short, Tile> tiles = new HashMap<>();
 
 	public static void initTileList() {
-		Logger.tag("Tiles").debug("Initializing tile list...");
+		Logging.TILES.debug("Initializing tile list...");
 
 		tiles.put((short)0, new GrassTile("Grass"));
 		tiles.put((short)1, new DirtTile("Dirt"));
@@ -82,7 +84,7 @@ public final class Tiles {
 
 	protected static void add(int id, Tile tile) {
 		tiles.put((short)id, tile);
-		Logger.tag("Tiles").debug("Adding " + tile.name + " to tile list with id " + id);
+		Logging.TILES.debug("Adding " + tile.name + " to tile list with id " + id);
 		tile.id = (short) id;
 	}
 
@@ -213,7 +215,7 @@ public final class Tiles {
 		}
 
 		if(getting == null) {
-			Logger.tag("Tiles").info("Invalid tile requested: " + name);
+			Logging.TILES.info("Invalid tile requested: " + name);
 			getting = tiles.get((short)0);
 		}
 
@@ -236,7 +238,7 @@ public final class Tiles {
 			return TorchTile.getTorchTile(get(id - 32767));
 		}
 		else {
-			Logger.tag("Tiles").info("Unknown tile id requested: " + id);
+			Logging.TILES.info("Unknown tile id requested: " + id);
 			return tiles.get((short)0);
 		}
 	}

@@ -14,6 +14,8 @@ import kong.unirest.UnirestException;
 
 import minicraft.entity.Entity;
 import minicraft.level.Level;
+import minicraft.util.Logging;
+
 import org.json.JSONObject;
 import org.tinylog.Logger;
 
@@ -30,12 +32,12 @@ public class Network extends Game {
 
 	public static void findLatestVersion(Action callback) {
 		new Thread(() -> {
-			Logger.tag("Network").debug("Fetching release list from GitHub..."); // Fetch the latest version from GitHub
+			Logging.NETWORK.debug("Fetching release list from GitHub..."); // Fetch the latest version from GitHub
 			try {
 				HttpResponse<JsonNode> response = Unirest.get("https://api.github.com/repos/chrisj42/minicraft-plus-revived/releases").asJson();
 				if (response.getStatus() != 200) {
-					Logger.tag("Network").error("Version request returned status code " + response.getStatus() + ": " + response.getStatusText());
-					Logger.tag("Network").error("Response body: " + response.getBody());
+					Logging.NETWORK.error("Version request returned status code " + response.getStatus() + ": " + response.getStatusText());
+					Logging.NETWORK.error("Response body: " + response.getBody());
 					latestVersion = new VersionInfo(VERSION, "", "");
 				} else {
 					latestVersion = new VersionInfo(new JSONObject(response.getBody().getArray().getJSONObject(0).toString()));
@@ -67,7 +69,7 @@ public class Network extends Game {
 		do {
 			tries++;
 			if (tries == 1000)
-				Logger.tag("Network").info("Note: Trying 1000th time to find valid entity id...(Will continue)");
+				Logging.NETWORK.info("Note: Trying 1000th time to find valid entity id...(Will continue)");
 
 			eid = random.nextInt();
 		} while (!idIsAvailable(eid));

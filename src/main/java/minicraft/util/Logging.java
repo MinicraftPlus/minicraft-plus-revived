@@ -22,6 +22,12 @@ public final class Logging {
 	public static final TaggedLogger RESOURCEHANDLER_RESOURCEPACK = Logger.tag("Resource Handler/Resource Pack");
 	public static final TaggedLogger SAVELOAD = Logger.tag("SaveLoad");
 	public static final TaggedLogger ACHIEVEMENT = Logger.tag("Achievement");
+	public static final TaggedLogger ENTITY = Logger.tag("Entity");
+	public static final TaggedLogger INVENTORY = Logger.tag("Inventory");
+	public static final TaggedLogger ITEMS = Logger.tag("Items");
+	public static final TaggedLogger TILES = Logger.tag("Tiles");
+	public static final TaggedLogger NETWORK = Logger.tag("Network");
+	public static final TaggedLogger QUEST = Logger.tag("Quest");
 
 	/** This is defined dynamically. */
 	public static TaggedLogger WORLDNAMED = Logger.tag(null);

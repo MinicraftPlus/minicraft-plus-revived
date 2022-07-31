@@ -5,9 +5,9 @@ import java.util.List;
 import java.util.Random;
 
 import org.jetbrains.annotations.Nullable;
-import org.tinylog.Logger;
 
 import minicraft.entity.furniture.Furniture;
+import minicraft.util.Logging;
 
 public class Inventory {
 	private final Random random = new Random();
@@ -67,7 +67,7 @@ public class Inventory {
 
 		// Do not add to inventory if it is a PowerGlove
 		if (item instanceof PowerGloveItem) {
-			Logger.tag("Inventory").warn("Tried to add power glove to inventory. stack trace:", new Exception());
+			Logging.INVENTORY.warn("Tried to add power glove to inventory. stack trace:", new Exception());
 			return 0;
 		}
 
@@ -149,13 +149,13 @@ public class Inventory {
 			removed += amountRemoving;
 			if (removed == count) break;
 			if (removed > count) { // Just in case...
-				Logger.tag("Inventory").info("SCREW UP while removing items from stack: " + (removed-count) + " too many.");
+				Logging.INVENTORY.info("SCREW UP while removing items from stack: " + (removed-count) + " too many.");
 				break;
 			}
 			// If not all have been removed, look for another stack.
 		}
 
-		if (removed < count) Logger.tag("Inventory").info("Inventory: could not remove all items; " + (count-removed) + " left.");
+		if (removed < count) Logging.INVENTORY.info("Inventory: could not remove all items; " + (count-removed) + " left.");
 		return removed;
 	}
 
@@ -190,7 +190,7 @@ public class Inventory {
 		}
 
 		if (count > 0)
-			Logger.tag("Inventory").warn("Could not remove " + count + " " + given + (count>1?"s":"") + " from inventory");
+			Logging.INVENTORY.warn("Could not remove " + count + " " + given + (count>1?"s":"") + " from inventory");
 	}
 
 	/** Returns the how many of an item you have in the inventory. */

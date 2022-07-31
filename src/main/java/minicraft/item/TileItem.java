@@ -95,7 +95,7 @@ public class TileItem extends StackableItem {
 			}
 		}
 
-		Logger.tag("Item").debug("{} cannot be placed on {}.", model, tile.name);
+		Logger.tag("TileItem").debug("{} cannot be placed on {}.", model, tile.name);
 
 		String note = "";
 		if (model.contains("WALL")) {

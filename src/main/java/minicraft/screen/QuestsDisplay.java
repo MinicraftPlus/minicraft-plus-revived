@@ -29,6 +29,7 @@ import minicraft.screen.entry.BlankEntry;
 import minicraft.screen.entry.ListEntry;
 import minicraft.screen.entry.SelectEntry;
 import minicraft.screen.entry.StringEntry;
+import minicraft.util.Logging;
 import minicraft.util.Quest;
 import minicraft.util.Quest.QuestReward;
 import minicraft.util.Quest.QuestSeries;
@@ -55,7 +56,7 @@ public class QuestsDisplay extends Display {
 			loadQuestFile("/resources/tutorials.json", true);
 		} catch (IOException e) {
 			e.printStackTrace();
-			Logger.tag("Quest").error("Failed to load quests.");
+			Logging.QUEST.error("Failed to load quests.");
 		}
 
 		// TODO Localize this class
@@ -422,7 +423,7 @@ public class QuestsDisplay extends Display {
 
 		if ((boolean) Settings.get("tutorials") &&
 			series.values().stream().filter(s -> s.tutorial && !completedSeries.contains(s)).count() == 0) { // Tutorial completed
-			Logger.tag("Quest").debug("Tutorial completed.");
+			Logging.QUEST.debug("Tutorial completed.");
 			tutorialOff(); // Turns off tutorial
 
 			Game.notifications.add(Localization.getLocalized("minicraft.notification.tutorial_completed"));
@@ -455,7 +456,7 @@ public class QuestsDisplay extends Display {
 
 		if ((boolean) Settings.get("tutorials") &&
 			QuestsDisplay.series.values().stream().filter(s -> s.tutorial && !completedSeries.contains(s)).count() == 0) { // Tutorial completed
-			Logger.tag("Quest").debug("Tutorial completed.");
+			Logging.QUEST.debug("Tutorial completed.");
 			tutorialOff(); // Turns off tutorial
 
 			Game.notifications.add(Localization.getLocalized("minicraft.notification.tutorial_completed"));

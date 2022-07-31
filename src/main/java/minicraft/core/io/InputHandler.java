@@ -353,7 +353,7 @@ public class InputHandler implements KeyListener {
 		if (keyNames.containsKey(keycode))
 			keytext = keyNames.get(keycode);
 		else {
-			Logger.tag("INPUT").error("INPUT: Could not find keyname for keycode \"" + keycode + "\"");
+			Logger.tag("INPUT").error("Could not find keyname for keycode \"" + keycode + "\"");
 			return;
 		}
 
