@@ -1,6 +1,7 @@
 package minicraft.core.io;
 
 import com.studiohartman.jamepad.*;
+import minicraft.util.Logging;
 import org.tinylog.Logger;
 
 public class ControllerHandler extends ControllerManager {
@@ -14,7 +15,7 @@ public class ControllerHandler extends ControllerManager {
 		try {
 			Logger.debug("Controller Detected: " + controllerManager.getControllerIndex(0).getName());
 		} catch (ControllerUnpluggedException e) {
-			throw new RuntimeException(e);
+			Logging.CONTROLLER.debug("No Controllers Detected, moving on.");
 		}
 
 	}

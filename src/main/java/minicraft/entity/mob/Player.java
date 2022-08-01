@@ -1,8 +1,10 @@
 package minicraft.entity.mob;
 
+import com.studiohartman.jamepad.ControllerButton;
 import minicraft.core.Game;
 import minicraft.core.Updater;
 import minicraft.core.World;
+import minicraft.core.io.ControllerHandler;
 import minicraft.core.io.InputHandler;
 import minicraft.core.io.Settings;
 import minicraft.core.io.Sound;
@@ -31,7 +33,7 @@ import java.util.List;
 
 public class Player extends Mob implements ItemHolder, ClientTickable {
 	protected InputHandler input;
-
+	protected ControllerHandler controlInput = new ControllerHandler();
 	private static final int playerHurtTime = 30;
 	public static final int INTERACT_DIST = 12;
 	private static final int ATTACK_DIST = 20;

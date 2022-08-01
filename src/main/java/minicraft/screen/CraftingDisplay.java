@@ -4,6 +4,7 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 import minicraft.core.Game;
+import minicraft.core.io.ControllerHandler;
 import minicraft.core.io.InputHandler;
 import minicraft.core.io.Settings;
 import minicraft.core.io.Sound;

@@ -1,6 +1,7 @@
 package minicraft.screen;
 
 import kong.unirest.*;
+import minicraft.core.io.ControllerHandler;
 import minicraft.network.Analytics;
 import minicraft.util.Logging;
 import minicraft.core.Action;
@@ -113,8 +114,7 @@ public class MultiplayerDisplay extends Display {
 	}
 
 	@Override
-	public void tick(InputHandler input) {
-	}
+	public void tick(InputHandler input, ControllerHandler controlInput) {}
 
 	private void fetchName(String uuid) {
 		Analytics.LoginAttempt.ping();

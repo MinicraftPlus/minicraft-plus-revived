@@ -1,6 +1,7 @@
 package minicraft.screen;
 
 import minicraft.core.Game;
+import minicraft.core.io.ControllerHandler;
 import minicraft.core.io.InputHandler;
 import minicraft.core.io.Localization;
 import minicraft.entity.ItemHolder;
@@ -45,8 +46,8 @@ public class PlayerInvDisplay extends Display {
 	}
 
 	@Override
-	public void tick(InputHandler input) {
-		super.tick(input);
+	public void tick(InputHandler input, ControllerHandler controlInput) {
+		super.tick(input, controlInput);
 
 		if(input.getKey("menu").clicked) {
 			Game.exitDisplay();

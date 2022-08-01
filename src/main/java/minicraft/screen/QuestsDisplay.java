@@ -8,6 +8,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
+import minicraft.core.io.ControllerHandler;
 import org.json.JSONArray;
 import org.json.JSONObject;
 import org.tinylog.Logger;
@@ -237,8 +238,8 @@ public class QuestsDisplay extends Display {
 					.setEntries(StringEntry.useLines(Color.RED, "minicraft.display.tutorial_skip.confirm_popup", "minicraft.display.popup.enter_confirm", "minicraft.display.popup.escape_cancel"))
 					.createMenu()) {
 						@Override
-						public void tick(InputHandler input) {
-							super.tick(input);
+						public void tick(InputHandler input, ControllerHandler controlInput) {
+							super.tick(input, controlInput);
 							if (input.getKey("select").clicked) {
 								skipSeries(series);
 								display.reloadEntries();
@@ -553,8 +554,8 @@ public class QuestsDisplay extends Display {
 	}
 
 	@Override
-	public void tick(InputHandler input) {
-		super.tick(input);
+	public void tick(InputHandler input, ControllerHandler controlInput) {
+		super.tick(input, controlInput);
 
 		if (input.getKey("cursor-left").clicked) if (selectedEntry > 0) {
 			selectedEntry--;
