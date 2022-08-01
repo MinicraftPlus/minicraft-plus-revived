@@ -24,7 +24,7 @@ public class ControllerHandler extends ControllerManager {
 		try {
 			return controllerIndex.isButtonJustPressed(button);
 		} catch (ControllerUnpluggedException e) {
-			throw new RuntimeException(e);
+			return false;
 		}
 	}
 }
