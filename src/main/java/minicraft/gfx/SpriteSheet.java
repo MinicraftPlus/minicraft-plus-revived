@@ -3,16 +3,16 @@ package minicraft.gfx;
 import java.awt.image.BufferedImage;
 
 public class SpriteSheet {
-	
+
 	public static final int boxWidth = 8;
-	
+
 	public int width, height; // Width and height of the sprite sheet
 	public int[] pixels; // Integer array of the image's pixels
-	
-	public SpriteSheet(BufferedImage image) {
+
+	/** Default with maximum size of image. */
+	public SpriteSheet(BufferedImage image) { this(image, image.getWidth(), image.getHeight()); }
+	public SpriteSheet(BufferedImage image, int width, int height) {
 		// Sets width and height to that of the image
-		width = image.getWidth();
-		height = image.getHeight();
 		pixels = image.getRGB(0, 0, width, height, null, 0, width); // Gets the color array of the image pixels
 
 		for (int i = 0; i < pixels.length; i++) { // Loops through all the pixels

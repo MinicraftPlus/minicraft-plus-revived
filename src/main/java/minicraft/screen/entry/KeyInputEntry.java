@@ -32,7 +32,7 @@ public class KeyInputEntry extends SelectEntry {
 				newMapping += Color.RED_CODE;
 			else
 				newMapping += Color.WHITE_CODE + Color.GRAY_CODE;
-				
+
 			newMapping += k + "|";
 		}
 

@@ -31,7 +31,6 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map.Entry;
 
 public class Save {
 
@@ -180,7 +179,7 @@ public class Save {
 		json.put("savedUUID", MultiplayerDisplay.savedUUID);
 		json.put("savedUsername", MultiplayerDisplay.savedUsername);
 		json.put("keymap", new JSONArray(Game.input.getKeyPrefs()));
-		json.put("resourcePack", ResourcePackDisplay.getLoadedPack());
+		// json.put("resourcePack", ResourcePackDisplay.getLoadedPack()); TODO
 		json.put("showquests", String.valueOf(Settings.get("showquests")));
 
 		// Save json
@@ -242,7 +241,7 @@ public class Save {
 			JSONObject fileObj = new JSONObject();
 			JSONArray unlockedQuests = new JSONArray();
 			JSONArray doneQuests = new JSONArray();
-			JSONObject questData = new JSONObject();
+			JSONObject questData = new JSONObject(QuestsDisplay.getStatusQuests());
 			JSONObject lockedRecipes = new JSONObject();
 
 			for (Quest q : QuestsDisplay.getUnlockedQuests()) {
@@ -251,10 +250,6 @@ public class Save {
 
 			for (Quest q : QuestsDisplay.getCompletedQuest()) {
 				doneQuests.put(q.id);
-			}
-
-			for (Entry<String, QuestsDisplay.QuestStatus> e : QuestsDisplay.getStatusQuests().entrySet()) {
-				questData.put(e.getKey(), e.getValue().toQuestString());
 			}
 
 			for (Recipe recipe : CraftingDisplay.getLockedRecipes()) {

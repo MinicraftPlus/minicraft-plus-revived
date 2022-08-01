@@ -380,8 +380,8 @@ public class Load {
 			Game.input.setKey(map[0], map[1]);
 		}
 
-		if (json.has("resourcePack"))
-			new ResourcePackDisplay().setLoadedPack(json.getString("resourcePack"));
+		// if (json.has("resourcePack")) // TODO
+		// 	new ResourcePackDisplay().setLoadedPack(json.getString("resourcePack"));
 	}
 
 	private void loadUnlocksOld(String filename) {
@@ -521,7 +521,6 @@ public class Load {
 
 					ArrayList<String> unlocked = new ArrayList<>();
 					ArrayList<String> done = new ArrayList<>();
-					HashMap<String, String> questStatus = new HashMap<>();
 					ArrayList<Recipe> recipeLocks = new ArrayList<>();
 
 					for (int i = 0; i < unlockedQuests.length(); i++) {
@@ -530,10 +529,6 @@ public class Load {
 
 					for (int i = 0; i < doneQuests.length(); i++) {
 						done.add(doneQuests.getString(i));
-					}
-
-					for (String i : questData.keySet()) {
-						questStatus.put(i, questData.getString(i));
 					}
 
 					for (String i : lockedRecipes.keySet()) {
@@ -546,7 +541,7 @@ public class Load {
 						recipeLocks.add(new Recipe(i, costs));
 					}
 
-					QuestsDisplay.loadGameQuests(unlocked, done, questStatus);
+					QuestsDisplay.loadGameQuests(unlocked, done, questData);
 					CraftingDisplay.loadLockedRecipes(recipeLocks);
 
 				} catch (IOException e) {

@@ -2,6 +2,7 @@ package minicraft.core.io;
 
 import java.io.IOException;
 import java.net.URL;
+import java.util.Objects;
 
 import javax.sound.sampled.AudioFormat;
 import javax.sound.sampled.AudioSystem;
@@ -17,31 +18,46 @@ import minicraft.util.Logging;
 
 public class Sound {
 	// Creates sounds from their respective files
-	public static final Sound playerHurt = new Sound("/resources/sound/playerhurt.wav");
-	public static final Sound playerDeath = new Sound("/resources/sound/death.wav");
-	public static final Sound monsterHurt = new Sound("/resources/sound/monsterhurt.wav");
-	public static final Sound bossDeath = new Sound("/resources/sound/bossdeath.wav");
-	public static final Sound fuse = new Sound("/resources/sound/fuse.wav");
-	public static final Sound explode = new Sound("/resources/sound/explode.wav");
-	public static final Sound pickup = new Sound("/resources/sound/pickup.wav");
-	public static final Sound craft = new Sound("/resources/sound/craft.wav");
-	public static final Sound back = new Sound("/resources/sound/craft.wav");
-	public static final Sound place = new Sound("/resources/sound/craft.wav");
-	public static final Sound select = new Sound("/resources/sound/select.wav");
-	public static final Sound confirm = new Sound("/resources/sound/confirm.wav");
+	public static final Sound playerHurt = Objects.requireNonNull(loadLocalSound("/resources/sound/playerhurt.wav"));
+	public static final Sound playerDeath = Objects.requireNonNull(loadLocalSound("/resources/sound/death.wav"));
+	public static final Sound monsterHurt = Objects.requireNonNull(loadLocalSound("/resources/sound/monsterhurt.wav"));
+	public static final Sound bossDeath = Objects.requireNonNull(loadLocalSound("/resources/sound/bossdeath.wav"));
+	public static final Sound fuse = Objects.requireNonNull(loadLocalSound("/resources/sound/fuse.wav"));
+	public static final Sound explode = Objects.requireNonNull(loadLocalSound("/resources/sound/explode.wav"));
+	public static final Sound pickup = Objects.requireNonNull(loadLocalSound("/resources/sound/pickup.wav"));
+	public static final Sound craft = Objects.requireNonNull(loadLocalSound("/resources/sound/craft.wav"));
+	public static final Sound back = Objects.requireNonNull(loadLocalSound("/resources/sound/craft.wav"));
+	public static final Sound place = Objects.requireNonNull(loadLocalSound("/resources/sound/craft.wav"));
+	public static final Sound select = Objects.requireNonNull(loadLocalSound("/resources/sound/select.wav"));
+	public static final Sound confirm = Objects.requireNonNull(loadLocalSound("/resources/sound/confirm.wav"));
 
 	private Clip clip; // Creates a audio clip to be played
 
 	public static void init() {} // A way to initialize the class without actually doing anything
 
-	private Sound(String name) {
-		try {
-			URL url = getClass().getResource(name);
+	private Sound(Clip clip) {
+		this.clip = clip;
+	}
 
+	private static Sound loadLocalSound(String name) {
+		URL url = Sound.class.getResource(name);
+		return loadSound(url);
+	}
+	public static Sound loadExternalSound(URL url, String defaultName) {
+		Sound sound = loadSound(url);
+		if (sound == null) {
+			return loadLocalSound(defaultName);
+		}
+
+		return sound;
+	}
+
+	private static Sound loadSound(URL url) {
+		try {
 			DataLine.Info info = new DataLine.Info(Clip.class, AudioSystem.getAudioFileFormat(url).getFormat());
 
 			if (!AudioSystem.isLineSupported(info)) {
-				Logging.RESOURCEHANDLER_SOUND.error("ERROR: Audio format of file " + name + " is not supported: " + AudioSystem.getAudioFileFormat(url));
+				Logging.RESOURCEHANDLER_SOUND.error("ERROR: Audio format of file \"" + url + "\" is not supported: " + AudioSystem.getAudioFileFormat(url));
 
 				Logging.RESOURCEHANDLER_SOUND.error("Supported audio formats:");
 				Logging.RESOURCEHANDLER_SOUND.error("-source:");
@@ -67,10 +83,10 @@ public class Sound {
 					}
 				}
 
-				return;
+				return null;
 			}
 
-			clip = (Clip)AudioSystem.getLine(info);
+			Clip clip = (Clip)AudioSystem.getLine(info);
 			clip.open(AudioSystem.getAudioInputStream(url));
 
 			clip.addLineListener(e -> {
@@ -80,8 +96,11 @@ public class Sound {
 				}
 			});
 
+			return new Sound(clip);
+
 		} catch (LineUnavailableException | UnsupportedAudioFileException | IOException e) {
-			CrashHandler.errorHandle(e, new CrashHandler.ErrorInfo("Sound file Could not Load", CrashHandler.ErrorInfo.ErrorType.REPORT, "Could not load sound file " + name));
+			CrashHandler.errorHandle(e, new CrashHandler.ErrorInfo("Sound file Could not Load", CrashHandler.ErrorInfo.ErrorType.REPORT, "Could not load sound file " + url));
+			return null;
 		}
 	}
 

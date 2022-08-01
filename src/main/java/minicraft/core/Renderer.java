@@ -7,7 +7,6 @@ import java.awt.image.BufferedImage;
 import java.awt.image.DataBufferInt;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -25,6 +24,7 @@ import minicraft.gfx.Font;
 import minicraft.gfx.FontStyle;
 import minicraft.gfx.Point;
 import minicraft.gfx.Screen;
+import minicraft.gfx.SpriteLinker;
 import minicraft.gfx.SpriteSheet;
 import minicraft.item.Items;
 import minicraft.item.PotionType;
@@ -35,12 +35,15 @@ import minicraft.screen.LoadingDisplay;
 import minicraft.screen.Menu;
 import minicraft.screen.QuestsDisplay;
 import minicraft.screen.RelPos;
+import minicraft.screen.ResourcePackDisplay;
 import minicraft.screen.entry.ListEntry;
 import minicraft.screen.entry.StringEntry;
 import minicraft.util.Quest;
 import minicraft.util.Quest.QuestSeries;
 
 import javax.imageio.ImageIO;
+
+import org.json.JSONObject;
 
 public class Renderer extends Game {
 	private Renderer() {}
@@ -50,6 +53,7 @@ public class Renderer extends Game {
 	static float SCALE = 3;
 
 	public static Screen screen; // Creates the main screen
+	public static SpriteLinker spriteLinker; // The sprite linker for sprites
 
 	static Canvas canvas = new Canvas();
 	private static BufferedImage image; // Creates an image to be displayed on the screen.
@@ -86,6 +90,7 @@ public class Renderer extends Game {
 	}
 
 	public static void initScreen() {
+		ResourcePackDisplay.initPacks(); // TODO
 		SpriteSheet[] sheets = loadDefaultSpriteSheets();
 		screen = new Screen(sheets[0], sheets[1], sheets[2], sheets[3], sheets[4]);
 		lightScreen = new Screen(sheets[0], sheets[1], sheets[2], sheets[3], sheets[4]);
@@ -351,12 +356,12 @@ public class Renderer extends Game {
 		int length = expanding ? 5 : 2;
 		ArrayList<ListEntry> questsShown = new ArrayList<>();
 		ArrayList<Quest> doneQuests = QuestsDisplay.getCompletedQuest();
-		HashMap<String, QuestsDisplay.QuestStatus> questStatus = QuestsDisplay.getStatusQuests();
+		JSONObject questStatus = QuestsDisplay.getStatusQuests();
 		for (Quest q : QuestsDisplay.getUnlockedQuests()) {
 			if (!doneQuests.contains(q)) {
 				QuestSeries series = q.getSeries();
 				questsShown.add(expanding?
-					new StringEntry(Localization.getLocalized(q.id) + " (" + QuestsDisplay.getSeriesQuestsCompleted(series) + "/" + series.getSeriesQuests().size() + ")" + (questStatus.get(q.id) != null ? " | " + questStatus.get(q.id) : ""), series.tutorial ? Color.CYAN : Color.WHITE):
+					new StringEntry(Localization.getLocalized(q.id) + " (" + QuestsDisplay.getSeriesQuestsCompleted(series) + "/" + series.getSeriesQuests().size() + ")" + (questStatus.has(q.id) ? " | " + questStatus.get(q.id) : ""), series.tutorial ? Color.CYAN : Color.WHITE):
 					new StringEntry(Localization.getLocalized(series.id) + " (" + QuestsDisplay.getSeriesQuestsCompleted(series) + "/" + series.getSeriesQuests().size() + ")", series.tutorial ? Color.CYAN : Color.WHITE)
 				);
 			}

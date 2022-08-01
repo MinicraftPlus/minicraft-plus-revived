@@ -255,4 +255,8 @@ public final class Tiles {
 		data = Integer.parseInt(parts[1]);
 		return get(descriptName).getName(data);
 	}
+
+	public static HashMap<Short, Tile> getAll() {
+		return new HashMap<>(tiles);
+	}
 }

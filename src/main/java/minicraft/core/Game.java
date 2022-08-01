@@ -96,7 +96,7 @@ public class Game {
 		Renderer.initScreen();
 
 		// Loads the resorce pack locaded in save.
-		new ResourcePackDisplay().initResourcePack();
+		// new ResourcePackDisplay().initResourcePack();
 
 		// Update fullscreen frame if Updater.FULLSCREEN was updated previously
 		if (Updater.FULLSCREEN) {
