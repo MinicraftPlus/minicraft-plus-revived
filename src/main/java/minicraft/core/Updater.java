@@ -89,13 +89,13 @@ public class Updater extends Game {
 	public static void tick() {
 
 		// Quick Level change: move the player for -1, or 1 levels
-        	if (isMode("minicraft.settings.mode.creative") && input.getKey("SHIFT-S").clicked ) {
-        		Game.setDisplay(new LevelTransitionDisplay(-1));
+		if (isMode("minicraft.settings.mode.creative") && input.getKey("SHIFT-S").clicked ) {
+			Game.setDisplay(new LevelTransitionDisplay(-1));
 
-        	} else if (isMode("minicraft.settings.mode.creative") && input.getKey("SHIFT-W").clicked ){
-        		Game.setDisplay(new LevelTransitionDisplay(1));
+		} else if (isMode("minicraft.settings.mode.creative") && input.getKey("SHIFT-W").clicked ){
+			Game.setDisplay(new LevelTransitionDisplay(1));
 
-        	}
+		}
 
 		if (input.getKey("FULLSCREEN").clicked) {
 			Updater.FULLSCREEN = !Updater.FULLSCREEN;
@@ -171,7 +171,7 @@ public class Updater extends Game {
 				// A menu is active.
 				if (player != null)
 					player.tick(); // It is CRUCIAL that the player is ticked HERE, before the menu is ticked. I'm not quite sure why... the menus break otherwise, though.
-				display.tick(input);
+				display.tick(input, controlInput);
 				paused = true;
 			} else {
 				// No menu, currently.

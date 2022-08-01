@@ -2,6 +2,7 @@ package minicraft.screen;
 
 import minicraft.core.Game;
 import minicraft.core.Updater;
+import minicraft.core.io.ControllerHandler;
 import minicraft.core.io.InputHandler;
 import minicraft.core.io.Localization;
 import minicraft.gfx.Point;
@@ -27,7 +28,7 @@ public class InfoDisplay extends Display {
 	}
 
 	@Override
-	public void tick(InputHandler input) {
+	public void tick(InputHandler input, ControllerHandler controlInput) {
 		if (input.getKey("select").clicked || input.getKey("exit").clicked)
 			Game.exitDisplay();
 	}

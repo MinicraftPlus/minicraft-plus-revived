@@ -1,8 +1,10 @@
 package minicraft.entity.mob;
 
+import com.studiohartman.jamepad.ControllerButton;
 import minicraft.core.Game;
 import minicraft.core.Updater;
 import minicraft.core.World;
+import minicraft.core.io.ControllerHandler;
 import minicraft.core.io.InputHandler;
 import minicraft.core.io.Settings;
 import minicraft.core.io.Sound;
@@ -31,7 +33,7 @@ import java.util.List;
 
 public class Player extends Mob implements ItemHolder, ClientTickable {
 	protected InputHandler input;
-
+	protected ControllerHandler controlInput = new ControllerHandler();
 	private static final int playerHurtTime = 30;
 	public static final int INTERACT_DIST = 12;
 	private static final int ATTACK_DIST = 20;
@@ -277,7 +279,7 @@ public class Player extends Mob implements ItemHolder, ClientTickable {
 
 			// Recharge a bolt for each multiple of maxStaminaRecharge.
 			while (staminaRecharge > maxStaminaRecharge) {
-				   staminaRecharge -= maxStaminaRecharge;
+				staminaRecharge -= maxStaminaRecharge;
 				if (stamina < maxStamina) stamina++; // Recharge one stamina bolt per "charge".
 			}
 		}
@@ -360,10 +362,13 @@ public class Player extends Mob implements ItemHolder, ClientTickable {
 
 			// Move while we are not falling.
 			if (onFallDelay <= 0) {
-				if (input.getKey("move-up").down) vec.y--;
-				if (input.getKey("move-down").down) vec.y++;
-				if (input.getKey("move-left").down) vec.x--;
-				if (input.getKey("move-right").down) vec.x++;
+				// controlInput.buttonPressed is used because otherwise the player will move one even if held down.
+				if (input.isHeld("move-up", controlInput)) vec.y--;
+				if (input.isHeld("move-down", controlInput)) vec.y++;
+				if (input.isHeld("move-left", controlInput)) vec.x--;
+				if (input.isHeld("move-right", controlInput)) vec.x++;
+
+
 			}
 
 			// Executes if not saving; and... essentially halves speed if out of stamina.
@@ -386,10 +391,10 @@ public class Player extends Mob implements ItemHolder, ClientTickable {
 				else directHurt(1, Direction.NONE); // If no stamina, take damage.
 			}
 
-			if (activeItem != null && (input.getKey("drop-one").clicked || input.getKey("drop-stack").clicked)) {
+			if (activeItem != null && (input.isClicked("drop-one", controlInput) || input.isClicked("drop-stack", controlInput))) {
 				Item drop = activeItem.clone();
 
-				if (input.getKey("drop-one").clicked && drop instanceof StackableItem && ((StackableItem)drop).count > 1) {
+				if (input.isClicked("drop-one", controlInput) && drop instanceof StackableItem && ((StackableItem)drop).count > 1) {
 					// Drop one from stack
 					((StackableItem)activeItem).count--;
 					((StackableItem)drop).count = 1;
@@ -400,14 +405,14 @@ public class Player extends Mob implements ItemHolder, ClientTickable {
 				level.dropItem(x, y, drop);
 			}
 
-			if ((activeItem == null || !activeItem.used_pending) && (input.getKey("attack").clicked) && stamina != 0 && onFallDelay <= 0) { // This only allows attacks when such action is possible.
+			if ((activeItem == null || !activeItem.used_pending) && (input.isClicked("attack", controlInput)) && stamina != 0 && onFallDelay <= 0) { // This only allows attacks when such action is possible.
 				if (!potioneffects.containsKey(PotionType.Energy)) stamina--;
 				staminaRecharge = 0;
 
 				attack();
 			}
 
-			if (input.getKey("menu").clicked && activeItem != null) {
+			if (input.isClicked("menu", controlInput) && activeItem != null) {
 				int returned = inventory.add(0, activeItem);
 				if (activeItem instanceof StackableItem) {
 					StackableItem stackable = (StackableItem)activeItem;
@@ -426,11 +431,11 @@ public class Player extends Mob implements ItemHolder, ClientTickable {
 			}
 
 			if (Game.getDisplay() == null) {
-				if (input.getKey("menu").clicked && !use()) // !use() = no furniture in front of the player; this prevents player inventory from opening (will open furniture inventory instead)
+				if (input.isClicked("menu", controlInput) && !use()) // !use() = no furniture in front of the player; this prevents player inventory from opening (will open furniture inventory instead)
 					Game.setDisplay(new PlayerInvDisplay(this));
-				if (input.getKey("pause").clicked)
+				if (input.isClicked("pause", controlInput))
 					Game.setDisplay(new PauseDisplay());
-				if (input.getKey("craft").clicked && !use())
+				if (input.isClicked("craft", controlInput) && !use())
 					Game.setDisplay(new CraftingDisplay(Recipes.craftRecipes, "minicraft.displays.crafting", this, true));
 
 				if (input.getKey("info").clicked) Game.setDisplay(new InfoDisplay());
@@ -447,7 +452,7 @@ public class Player extends Mob implements ItemHolder, ClientTickable {
 					}
 				}
 
-				if (input.getKey("pickup").clicked && (activeItem == null || !activeItem.used_pending)) {
+				if (input.isClicked("pickup", controlInput) && (activeItem == null || !activeItem.used_pending)) {
 					if (!(activeItem instanceof PowerGloveItem)) { // If you are not already holding a power glove (aka in the middle of a separate interaction)...
 						prevItem = activeItem; // Then save the current item...
 						activeItem = new PowerGloveItem(); // and replace it with a power glove.
@@ -556,7 +561,7 @@ public class Player extends Mob implements ItemHolder, ClientTickable {
 					if (activeItem.interactOn(tile, level, t.x, t.y, this, attackDir)) {
 						done = true;
 
-					// Returns true if the target tile successfully interacts with the item.
+						// Returns true if the target tile successfully interacts with the item.
 					} else if (tile.interact(level, t.x, t.y, this, activeItem, attackDir)){
 						done = true;
 					}
@@ -741,23 +746,23 @@ public class Player extends Mob implements ItemHolder, ClientTickable {
 			if (level.getTile(x / 16, y / 16) == Tiles.get("water")) {
 
 				// animation effect
-			    if (tickTime / 8 % 2 == 0) {
-			    	 screen.render(xo + 0, yo + 3, 5 + 2 * 32, 0, 3); // Render the water graphic
-			    	 screen.render(xo + 8, yo + 3, 5 + 2 * 32, 1, 3); // Render the mirrored water graphic to the right.
-			    } else {
+				if (tickTime / 8 % 2 == 0) {
+					screen.render(xo + 0, yo + 3, 5 + 2 * 32, 0, 3); // Render the water graphic
+					screen.render(xo + 8, yo + 3, 5 + 2 * 32, 1, 3); // Render the mirrored water graphic to the right.
+				} else {
 					screen.render(xo + 0, yo + 3, 5 + 3 * 32, 0, 3);
 					screen.render(xo + 8, yo + 3, 5 + 3 * 32, 1, 3);
-			    }
+				}
 
 			} else if (level.getTile(x / 16, y / 16) == Tiles.get("lava")) {
 
-			    if (tickTime / 8 % 2 == 0) {
+				if (tickTime / 8 % 2 == 0) {
 					screen.render(xo + 0, yo + 3, 6 + 2 * 32, 1, 3); // Render the lava graphic
 					screen.render(xo + 8, yo + 3, 6 + 2 * 32, 0, 3); // Render the mirrored lava graphic to the right.
-			    } else {
+				} else {
 					screen.render(xo + 0, yo + 3, 6 + 3 * 32, 1, 3);
 					screen.render(xo + 8, yo + 3, 6 + 3 * 32, 0, 3);
-			    }
+				}
 
 			}
 		}
@@ -936,14 +941,14 @@ public class Player extends Mob implements ItemHolder, ClientTickable {
 	 * Finds a location where the player can respawn in a given level.
 	 * @param level The level.
 	 */
-    public void respawn(Level level) {
-        if (!level.getTile(spawnx, spawny).maySpawn()) {
-            findStartPos(level); // If there's no bed to spawn from, and the stored coordinates don't point to a grass tile, then find a new point.
+	public void respawn(Level level) {
+		if (!level.getTile(spawnx, spawny).maySpawn()) {
+			findStartPos(level); // If there's no bed to spawn from, and the stored coordinates don't point to a grass tile, then find a new point.
 		}
 
-        // Move the player to the spawn point
-        this.x = spawnx * 16 + 8;
-        this.y = spawny * 16 + 8;
+		// Move the player to the spawn point
+		this.x = spawnx * 16 + 8;
+		this.y = spawny * 16 + 8;
 	}
 
 	/**
