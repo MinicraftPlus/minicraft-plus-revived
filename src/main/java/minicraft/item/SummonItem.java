@@ -4,7 +4,6 @@ import minicraft.core.Game;
 import minicraft.core.io.Localization;
 import minicraft.entity.Direction;
 import minicraft.entity.mob.AirWizard;
-import minicraft.entity.mob.ObsidianKnight;
 import minicraft.entity.mob.Player;
 import minicraft.gfx.Sprite;
 import minicraft.level.Level;
@@ -19,7 +18,6 @@ public class SummonItem extends StackableItem {
 		ArrayList<Item> items = new ArrayList<>();
 
 		items.add(new SummonItem("Totem of Air", new Sprite(0, 19, 0), "Air Wizard"));
-		items.add(new SummonItem("Obsidian Poppet", new Sprite(0, 0, 0), "Obsidian Knight")); //TODO: Obsidian Poppet Textures
 
 		return items;
 	}
@@ -50,22 +48,6 @@ public class SummonItem extends StackableItem {
 					}
 				} else {
 					Game.notifications.add(Localization.getLocalized("minicraft.notification.wrong_level_sky"));
-				}
-
-				break;
-			case "Obsidian Knight":
-				// Check if we are on the right level
-				if (level.depth == -4) {
-
-					// Pay stamina
-					if (player.payStamina(2)) {
-						ObsidianKnight ob = new ObsidianKnight();
-						level.add(ob, player.x + 8, player.y + 8, false);
-						Logger.debug("Summoned new Obsidian Knight");
-						success = true;
-					}
-				} else {
-					Game.notifications.add(Localization.getLocalized("minicraft.notification.wrong_level_dungeon"));
 				}
 
 				break;

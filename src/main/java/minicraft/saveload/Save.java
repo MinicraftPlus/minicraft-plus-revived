@@ -291,7 +291,6 @@ public class Save {
 		data.add(String.valueOf(player.spawnx));
 		data.add(String.valueOf(player.spawny));
 		data.add(String.valueOf(player.health));
-		data.add(String.valueOf(player.extraHealth));
 		data.add(String.valueOf(player.hunger));
 		data.add(String.valueOf(player.armor));
 		data.add(String.valueOf(player.armorDamageBuffer));

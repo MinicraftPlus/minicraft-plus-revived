@@ -11,7 +11,6 @@ import minicraft.gfx.Color;
 import minicraft.gfx.Font;
 import minicraft.gfx.MobSprite;
 import minicraft.gfx.Screen;
-import minicraft.item.Items;
 import minicraft.network.Analytics;
 import minicraft.screen.AchievementsDisplay;
 
@@ -26,12 +25,10 @@ public class AirWizard extends EnemyMob {
 	}
 
 	public static boolean beaten = false;
-	public static boolean active = true;
 
 	private int attackDelay = 0;
 	private int attackTime = 0;
 	private int attackType = 0;
-	public static int length;
 
 	/**
 	 * This is used by the spawner to spawn air wizards. Lvl is unused.
@@ -44,7 +41,6 @@ public class AirWizard extends EnemyMob {
 	public AirWizard() {
 		super(1, sprites, 2000, false, 16 * 8, -1, 10, 50);
 
-		active = true;
 		speed = 2;
 		walkTime = 2;
 	}
@@ -52,11 +48,9 @@ public class AirWizard extends EnemyMob {
 	@Override
 	public void tick() {
 		super.tick();
-    
-		length = health / (maxHealth / 100);
 
 		if (Game.isMode("minicraft.settings.mode.creative")) return; // Should not attack if player is in creative
-    
+
 		if (attackDelay > 0) {
 			xmov = ymov = 0;
 			int dir = (attackDelay - 45) / 4 % 4; // The direction of attack.
@@ -164,10 +158,8 @@ public class AirWizard extends EnemyMob {
 	public void die() {
 		Player[] players = level.getPlayers();
 		if (players.length > 0) { // If the player is still here
-			for (Player p: players) {
-				p.addScore(100000); // Give the player 100K points.
-				dropItem(5, 10, Items.get("cloud ore")); // Drop cloud ore to guarantee respawn.
-			}
+			for (Player p: players)
+				 p.addScore(100000); // Give the player 100K points.
 		}
 
 		Sound.bossDeath.play();
@@ -184,7 +176,6 @@ public class AirWizard extends EnemyMob {
 		}
 
 		beaten = true;
-		active = false;
 
 		super.die(); // Calls the die() method in EnemyMob.java
 	}
