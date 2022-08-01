@@ -13,7 +13,7 @@ public class ControllerHandler extends ControllerManager {
 		controllerIndex = controllerManager.getControllerIndex(0);
 		controllerManager.update();
 		try {
-			Logger.debug("Controller Detected: " + controllerManager.getControllerIndex(0).getName());
+			Logging.CONTROLLER.debug("Controller Detected: " + controllerManager.getControllerIndex(0).getName());
 		} catch (ControllerUnpluggedException e) {
 			Logging.CONTROLLER.debug("No Controllers Detected, moving on.");
 		}
