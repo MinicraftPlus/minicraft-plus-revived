@@ -1,6 +1,7 @@
 package minicraft.screen;
 
 import minicraft.core.Game;
+import minicraft.core.io.ControllerHandler;
 import minicraft.core.io.InputHandler;
 import minicraft.entity.ItemHolder;
 import minicraft.entity.furniture.Chest;
@@ -43,8 +44,8 @@ public class ContainerDisplay extends Display {
 	private int getOtherIdx() { return (selection+1) % 2; }
 
 	@Override
-	public void tick(InputHandler input) {
-		super.tick(input);
+	public void tick(InputHandler input, ControllerHandler controlInput) {
+		super.tick(input, controlInput);
 
 		if(input.getKey("menu").clicked || chest.isRemoved()) {
 			Game.setDisplay(null);

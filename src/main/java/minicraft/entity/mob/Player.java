@@ -277,7 +277,7 @@ public class Player extends Mob implements ItemHolder, ClientTickable {
 
 			// Recharge a bolt for each multiple of maxStaminaRecharge.
 			while (staminaRecharge > maxStaminaRecharge) {
-				   staminaRecharge -= maxStaminaRecharge;
+				staminaRecharge -= maxStaminaRecharge;
 				if (stamina < maxStamina) stamina++; // Recharge one stamina bolt per "charge".
 			}
 		}
@@ -364,6 +364,12 @@ public class Player extends Mob implements ItemHolder, ClientTickable {
 				if (input.getKey("move-down").down) vec.y++;
 				if (input.getKey("move-left").down) vec.x--;
 				if (input.getKey("move-right").down) vec.x++;
+
+				//Controllers
+				if (controlInput.buttonPressed(ControllerButton.DPAD_UP)) vec.y--;
+				if (controlInput.buttonPressed(ControllerButton.DPAD_DOWN)) vec.y++;
+				if (controlInput.buttonPressed(ControllerButton.DPAD_RIGHT)) vec.x--;
+				if (controlInput.buttonPressed(ControllerButton.DPAD_LEFT)) vec.y++;
 			}
 
 			// Executes if not saving; and... essentially halves speed if out of stamina.
@@ -426,11 +432,11 @@ public class Player extends Mob implements ItemHolder, ClientTickable {
 			}
 
 			if (Game.getDisplay() == null) {
-				if (input.getKey("menu").clicked && !use()) // !use() = no furniture in front of the player; this prevents player inventory from opening (will open furniture inventory instead)
+				if (input.getKey("menu").clicked && !use() || controlInput.buttonPressed(ControllerButton.X) && !use()) // !use() = no furniture in front of the player; this prevents player inventory from opening (will open furniture inventory instead)
 					Game.setDisplay(new PlayerInvDisplay(this));
-				if (input.getKey("pause").clicked)
+				if (input.getKey("pause").clicked || controlInput.buttonPressed(ControllerButton.START))
 					Game.setDisplay(new PauseDisplay());
-				if (input.getKey("craft").clicked && !use())
+				if (input.getKey("craft").clicked && !use() || controlInput.buttonPressed(ControllerButton.Y) && !use())
 					Game.setDisplay(new CraftingDisplay(Recipes.craftRecipes, "minicraft.displays.crafting", this, true));
 
 				if (input.getKey("info").clicked) Game.setDisplay(new InfoDisplay());
@@ -556,7 +562,7 @@ public class Player extends Mob implements ItemHolder, ClientTickable {
 					if (activeItem.interactOn(tile, level, t.x, t.y, this, attackDir)) {
 						done = true;
 
-					// Returns true if the target tile successfully interacts with the item.
+						// Returns true if the target tile successfully interacts with the item.
 					} else if (tile.interact(level, t.x, t.y, this, activeItem, attackDir)){
 						done = true;
 					}
@@ -741,23 +747,23 @@ public class Player extends Mob implements ItemHolder, ClientTickable {
 			if (level.getTile(x / 16, y / 16) == Tiles.get("water")) {
 
 				// animation effect
-			    if (tickTime / 8 % 2 == 0) {
-			    	 screen.render(xo + 0, yo + 3, 5 + 2 * 32, 0, 3); // Render the water graphic
-			    	 screen.render(xo + 8, yo + 3, 5 + 2 * 32, 1, 3); // Render the mirrored water graphic to the right.
-			    } else {
+				if (tickTime / 8 % 2 == 0) {
+					screen.render(xo + 0, yo + 3, 5 + 2 * 32, 0, 3); // Render the water graphic
+					screen.render(xo + 8, yo + 3, 5 + 2 * 32, 1, 3); // Render the mirrored water graphic to the right.
+				} else {
 					screen.render(xo + 0, yo + 3, 5 + 3 * 32, 0, 3);
 					screen.render(xo + 8, yo + 3, 5 + 3 * 32, 1, 3);
-			    }
+				}
 
 			} else if (level.getTile(x / 16, y / 16) == Tiles.get("lava")) {
 
-			    if (tickTime / 8 % 2 == 0) {
+				if (tickTime / 8 % 2 == 0) {
 					screen.render(xo + 0, yo + 3, 6 + 2 * 32, 1, 3); // Render the lava graphic
 					screen.render(xo + 8, yo + 3, 6 + 2 * 32, 0, 3); // Render the mirrored lava graphic to the right.
-			    } else {
+				} else {
 					screen.render(xo + 0, yo + 3, 6 + 3 * 32, 1, 3);
 					screen.render(xo + 8, yo + 3, 6 + 3 * 32, 0, 3);
-			    }
+				}
 
 			}
 		}
@@ -936,14 +942,14 @@ public class Player extends Mob implements ItemHolder, ClientTickable {
 	 * Finds a location where the player can respawn in a given level.
 	 * @param level The level.
 	 */
-    public void respawn(Level level) {
-        if (!level.getTile(spawnx, spawny).maySpawn()) {
-            findStartPos(level); // If there's no bed to spawn from, and the stored coordinates don't point to a grass tile, then find a new point.
+	public void respawn(Level level) {
+		if (!level.getTile(spawnx, spawny).maySpawn()) {
+			findStartPos(level); // If there's no bed to spawn from, and the stored coordinates don't point to a grass tile, then find a new point.
 		}
 
-        // Move the player to the spawn point
-        this.x = spawnx * 16 + 8;
-        this.y = spawny * 16 + 8;
+		// Move the player to the spawn point
+		this.x = spawnx * 16 + 8;
+		this.y = spawny * 16 + 8;
 	}
 
 	/**

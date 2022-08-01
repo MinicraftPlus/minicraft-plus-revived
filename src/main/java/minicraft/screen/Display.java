@@ -1,5 +1,7 @@
 package minicraft.screen;
 
+import com.studiohartman.jamepad.ControllerButton;
+import minicraft.core.io.ControllerHandler;
 import org.jetbrains.annotations.Nullable;
 
 import minicraft.core.Game;
@@ -42,9 +44,9 @@ public class Display {
 
 	public Display getParent() { return parent; }
 
-	public void tick(InputHandler input) {
+	public void tick(InputHandler input, ControllerHandler controlInput) {
 
-		if (canExit && input.getKey("exit").clicked) {
+		if (canExit && input.getKey("exit").clicked || canExit && controlInput.buttonPressed(ControllerButton.B)) {
 			Game.exitDisplay();
 			return;
 		}

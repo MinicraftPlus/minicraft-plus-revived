@@ -90,9 +90,9 @@ public class CraftingDisplay extends Display {
 	}
 
 	@Override
-	public void tick(InputHandler input) {
+	public void tick(InputHandler input, ControllerHandler controlInput) {
 		int previousSelection = recipeMenu.getSelection();
-		super.tick(input);
+		super.tick(input, controlInput);
 		if (previousSelection != recipeMenu.getSelection()) {
 			refreshData();
 		}
@@ -114,21 +114,21 @@ public class CraftingDisplay extends Display {
 				} else if (selectedRecipe.getProduct().equals(Items.get("Wood Door"))){
 					AchievementsDisplay.setAchievement("minicraft.achievement.doors",true);
 				} else if (selectedRecipe.getProduct().equals(Items.get("Rock Sword")) ||
-						selectedRecipe.getProduct().equals(Items.get("Rock Pickaxe")) ||
-						selectedRecipe.getProduct().equals(Items.get("Rock Axe")) ||
-						selectedRecipe.getProduct().equals(Items.get("Rock Shovel")) ||
-						selectedRecipe.getProduct().equals(Items.get("Rock Hoe")) ||
-						selectedRecipe.getProduct().equals(Items.get("Rock Bow")) ||
-						selectedRecipe.getProduct().equals(Items.get("Rock Claymore"))) {
+					selectedRecipe.getProduct().equals(Items.get("Rock Pickaxe")) ||
+					selectedRecipe.getProduct().equals(Items.get("Rock Axe")) ||
+					selectedRecipe.getProduct().equals(Items.get("Rock Shovel")) ||
+					selectedRecipe.getProduct().equals(Items.get("Rock Hoe")) ||
+					selectedRecipe.getProduct().equals(Items.get("Rock Bow")) ||
+					selectedRecipe.getProduct().equals(Items.get("Rock Claymore"))) {
 					AchievementsDisplay.setAchievement("minicraft.achievement.upgrade", true);
 				} else if (selectedRecipe.getProduct().equals(Items.get("blue clothes")) ||
-						selectedRecipe.getProduct().equals(Items.get("green clothes")) ||
-						selectedRecipe.getProduct().equals(Items.get("yellow clothes")) ||
-						selectedRecipe.getProduct().equals(Items.get("black clothes")) ||
-						selectedRecipe.getProduct().equals(Items.get("orange clothes")) ||
-						selectedRecipe.getProduct().equals(Items.get("purple clothes")) ||
-						selectedRecipe.getProduct().equals(Items.get("cyan clothes")) ||
-						selectedRecipe.getProduct().equals(Items.get("reg clothes"))) {
+					selectedRecipe.getProduct().equals(Items.get("green clothes")) ||
+					selectedRecipe.getProduct().equals(Items.get("yellow clothes")) ||
+					selectedRecipe.getProduct().equals(Items.get("black clothes")) ||
+					selectedRecipe.getProduct().equals(Items.get("orange clothes")) ||
+					selectedRecipe.getProduct().equals(Items.get("purple clothes")) ||
+					selectedRecipe.getProduct().equals(Items.get("cyan clothes")) ||
+					selectedRecipe.getProduct().equals(Items.get("reg clothes"))) {
 					AchievementsDisplay.setAchievement("minicraft.achievement.clothes", true);
 				}
 

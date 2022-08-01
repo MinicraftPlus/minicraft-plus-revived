@@ -3,9 +3,10 @@ package minicraft.screen;
 import java.util.ArrayList;
 import java.util.Arrays;
 
+import com.studiohartman.jamepad.ControllerButton;
 import minicraft.core.Game;
+import minicraft.core.io.ControllerHandler;
 import minicraft.core.io.InputHandler;
-import minicraft.core.io.Localization;
 import minicraft.gfx.Color;
 import minicraft.gfx.Font;
 import minicraft.gfx.Point;
@@ -16,7 +17,7 @@ import minicraft.screen.entry.StringEntry;
 public class BookDisplay extends Display {
 
 	// null characters "\0" denote page breaks.
-	private static final String defaultBook = "minicraft.displays.book.default_book";
+	private static final String defaultBook = "This book has no text.";
 
 	private static final int spacing = 3;
 	private static final int minX = 15, maxX = 15+8 * 32, minY = 8*5, maxY = 8*5 + 8*16;
@@ -35,7 +36,7 @@ public class BookDisplay extends Display {
 		page = 0;
 
 		if (book == null) {
-			book = Localization.getLocalized(defaultBook);
+			book = defaultBook;
 			hasTitle = false;
 		}
 
@@ -88,9 +89,9 @@ public class BookDisplay extends Display {
 	}
 
 	@Override
-	public void tick(InputHandler input) {
-		if (input.getKey("menu").clicked || input.getKey("exit").clicked) Game.exitDisplay(); // Close the menu.
-		if (input.getKey("cursor-left").clicked) turnPage(-1); // This is what turns the page back
-		if (input.getKey("cursor-right").clicked) turnPage(1); // This is what turns the page forward
+	public void tick(InputHandler input, ControllerHandler controlInput) {
+		if (input.getKey("menu").clicked || input.getKey("exit").clicked || controlInput.buttonPressed(ControllerButton.BACK)) Game.exitDisplay(); // Close the menu.
+		if (input.getKey("cursor-left").clicked || controlInput.buttonPressed(ControllerButton.DPAD_LEFT)) turnPage(-1); // This is what turns the page back
+		if (input.getKey("cursor-right").clicked || controlInput.buttonPressed(ControllerButton.DPAD_RIGHT)) turnPage(1); // This is what turns the page forward
 	}
 }
