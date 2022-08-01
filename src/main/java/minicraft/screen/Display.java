@@ -46,7 +46,7 @@ public class Display {
 
 	public void tick(InputHandler input, ControllerHandler controlInput) {
 
-		if (canExit && input.getKey("exit").clicked || canExit && controlInput.buttonPressed(ControllerButton.B)) {
+		if (canExit && input.isClicked("exit", controlInput)) {
 			Game.exitDisplay();
 			return;
 		}
@@ -81,7 +81,7 @@ public class Display {
 		}
 
 		if (!changedSelection)
-			menus[selection].tick(input);
+			menus[selection].tick(input, controlInput);
 	}
 
 	protected void onSelectionChange(int oldSel, int newSel) {

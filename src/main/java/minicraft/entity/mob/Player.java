@@ -362,16 +362,13 @@ public class Player extends Mob implements ItemHolder, ClientTickable {
 
 			// Move while we are not falling.
 			if (onFallDelay <= 0) {
-				if (input.getKey("move-up").down) vec.y--;
-				if (input.getKey("move-down").down) vec.y++;
-				if (input.getKey("move-left").down) vec.x--;
-				if (input.getKey("move-right").down) vec.x++;
+				// controlInput.buttonPressed is used because otherwise the player will move one even if held down.
+				if (input.isHeld("move-up", controlInput)) vec.y--;
+				if (input.isHeld("move-down", controlInput)) vec.y++;
+				if (input.isHeld("move-left", controlInput)) vec.x--;
+				if (input.isHeld("move-right", controlInput)) vec.x++;
 
-				//Controllers
-				if (controlInput.buttonPressed(ControllerButton.DPAD_UP)) vec.y--;
-				if (controlInput.buttonPressed(ControllerButton.DPAD_DOWN)) vec.y++;
-				if (controlInput.buttonPressed(ControllerButton.DPAD_RIGHT)) vec.x--;
-				if (controlInput.buttonPressed(ControllerButton.DPAD_LEFT)) vec.y++;
+
 			}
 
 			// Executes if not saving; and... essentially halves speed if out of stamina.
@@ -394,10 +391,10 @@ public class Player extends Mob implements ItemHolder, ClientTickable {
 				else directHurt(1, Direction.NONE); // If no stamina, take damage.
 			}
 
-			if (activeItem != null && (input.getKey("drop-one").clicked || input.getKey("drop-stack").clicked)) {
+			if (activeItem != null && (input.isClicked("drop-one", controlInput) || input.isClicked("drop-stack", controlInput))) {
 				Item drop = activeItem.clone();
 
-				if (input.getKey("drop-one").clicked && drop instanceof StackableItem && ((StackableItem)drop).count > 1) {
+				if (input.isClicked("drop-one", controlInput) && drop instanceof StackableItem && ((StackableItem)drop).count > 1) {
 					// Drop one from stack
 					((StackableItem)activeItem).count--;
 					((StackableItem)drop).count = 1;
@@ -408,14 +405,14 @@ public class Player extends Mob implements ItemHolder, ClientTickable {
 				level.dropItem(x, y, drop);
 			}
 
-			if ((activeItem == null || !activeItem.used_pending) && (input.getKey("attack").clicked) && stamina != 0 && onFallDelay <= 0) { // This only allows attacks when such action is possible.
+			if ((activeItem == null || !activeItem.used_pending) && (input.isClicked("attack", controlInput)) && stamina != 0 && onFallDelay <= 0) { // This only allows attacks when such action is possible.
 				if (!potioneffects.containsKey(PotionType.Energy)) stamina--;
 				staminaRecharge = 0;
 
 				attack();
 			}
 
-			if (input.getKey("menu").clicked && activeItem != null) {
+			if (input.isClicked("menu", controlInput) && activeItem != null) {
 				int returned = inventory.add(0, activeItem);
 				if (activeItem instanceof StackableItem) {
 					StackableItem stackable = (StackableItem)activeItem;
@@ -434,11 +431,11 @@ public class Player extends Mob implements ItemHolder, ClientTickable {
 			}
 
 			if (Game.getDisplay() == null) {
-				if (input.getKey("menu").clicked && !use() || controlInput.buttonPressed(ControllerButton.X) && !use()) // !use() = no furniture in front of the player; this prevents player inventory from opening (will open furniture inventory instead)
+				if (input.isClicked("menu", controlInput) && !use()) // !use() = no furniture in front of the player; this prevents player inventory from opening (will open furniture inventory instead)
 					Game.setDisplay(new PlayerInvDisplay(this));
-				if (input.getKey("pause").clicked || controlInput.buttonPressed(ControllerButton.START))
+				if (input.isClicked("pause", controlInput))
 					Game.setDisplay(new PauseDisplay());
-				if (input.getKey("craft").clicked && !use() || controlInput.buttonPressed(ControllerButton.Y) && !use())
+				if (input.isClicked("craft", controlInput) && !use())
 					Game.setDisplay(new CraftingDisplay(Recipes.craftRecipes, "minicraft.displays.crafting", this, true));
 
 				if (input.getKey("info").clicked) Game.setDisplay(new InfoDisplay());
@@ -455,7 +452,7 @@ public class Player extends Mob implements ItemHolder, ClientTickable {
 					}
 				}
 
-				if (input.getKey("pickup").clicked && (activeItem == null || !activeItem.used_pending) || controlInput.buttonPressed(ControllerButton.LEFTBUMPER) && (activeItem == null || !activeItem.used_pending)) {
+				if (input.isClicked("pickup", controlInput) && (activeItem == null || !activeItem.used_pending)) {
 					if (!(activeItem instanceof PowerGloveItem)) { // If you are not already holding a power glove (aka in the middle of a separate interaction)...
 						prevItem = activeItem; // Then save the current item...
 						activeItem = new PowerGloveItem(); // and replace it with a power glove.

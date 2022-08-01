@@ -71,7 +71,7 @@ public class PauseDisplay extends Display {
 	@Override
 	public void tick(InputHandler input, ControllerHandler controlInput) {
 		super.tick(input, controlInput);
-		if (input.getKey("pause").clicked)
+		if (input.isClicked("pause", controlInput))
 			Game.exitDisplay();
 	}
 }

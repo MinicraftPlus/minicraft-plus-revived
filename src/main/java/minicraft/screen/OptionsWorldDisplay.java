@@ -50,11 +50,11 @@ public class OptionsWorldDisplay extends Display {
 	@Override
 	public void tick(InputHandler input, ControllerHandler controlInput) {
 		if (confirmOff) {
-			if (input.getKey("exit").clicked) {
+			if (input.isClicked("exit", controlInput)) {
 				confirmOff = false;
 				menus[1].shouldRender = false;
 				selection = 0;
-			} else if (input.getKey("select").clicked) {
+			} else if (input.isClicked("select", controlInput)) {
 				confirmOff = false;
 				QuestsDisplay.tutorialOff();
 

@@ -47,7 +47,7 @@ public class ContainerDisplay extends Display {
 	public void tick(InputHandler input, ControllerHandler controlInput) {
 		super.tick(input, controlInput);
 
-		if(input.getKey("menu").clicked || chest.isRemoved()) {
+		if(input.isClicked("menu", controlInput) || chest.isRemoved()) {
 			Game.setDisplay(null);
 			return;
 		}
@@ -55,7 +55,7 @@ public class ContainerDisplay extends Display {
 		Menu curMenu = menus[selection];
 		int otherIdx = getOtherIdx();
 
-		if((input.getKey("attack").clicked) || input.getKey("shift-enter").clicked) {
+		if((input.isClicked("attack", controlInput)) || input.getKey("shift-enter").clicked) {
 			if (curMenu.getEntries().length == 0) return;
 			// switch inventories
 			Inventory from, to;

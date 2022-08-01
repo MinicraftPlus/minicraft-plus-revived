@@ -42,7 +42,7 @@ public class PopupDisplay extends Display {
 	public void tick(InputHandler input, ControllerHandler controlInput) {
 		if (callbacks != null) {
 			for (PopupActionCallback callback : callbacks) {
-				if (callback.key == null || input.getKey(callback.key).clicked) {
+				if (callback.key == null || input.isClicked(callback.key, controlInput)) {
 					if (callback.callback != null && callback.callback.acts(menus[0])) {
 						// This overrides the original #tick check.
 						return;

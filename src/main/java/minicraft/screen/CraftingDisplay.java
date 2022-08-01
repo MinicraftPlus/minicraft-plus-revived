@@ -98,12 +98,12 @@ public class CraftingDisplay extends Display {
 			refreshData();
 		}
 
-		if (input.getKey("menu").clicked || (isPersonalCrafter && input.getKey("craft").clicked)) {
+		if (input.isClicked("menu", controlInput) || (isPersonalCrafter && input.isClicked("craft", controlInput))) {
 			Game.exitDisplay();
 			return;
 		}
 
-		if ((input.getKey("select").clicked || input.getKey("attack").clicked) && recipeMenu.getSelection() >= 0) {
+		if ((input.isClicked("select", controlInput) || input.isClicked("attack", controlInput)) && recipeMenu.getSelection() >= 0) {
 			// check the selected recipe
 			if (recipes.length == 0) return;
 			Recipe selectedRecipe = recipes[recipeMenu.getSelection()];

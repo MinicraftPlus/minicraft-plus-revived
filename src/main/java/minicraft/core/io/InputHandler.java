@@ -153,6 +153,14 @@ public class InputHandler implements KeyListener {
 		}
 	}
 
+	/** For game controllers. */
+	public boolean isClicked(String key, ControllerHandler controlInput) {
+		return controlInput.isKeyPressed(key) || getKey(key).clicked;
+	}
+	public boolean isHeld(String key, ControllerHandler controlInput) {
+		return controlInput.isKeyDown(key) || getKey(key).down;
+	}
+
 	// The Key class.
 	public class Key {
 		// presses = how many times the Key has been pressed.

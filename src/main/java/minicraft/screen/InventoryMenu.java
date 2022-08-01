@@ -1,5 +1,6 @@
 package minicraft.screen;
 
+import minicraft.core.io.ControllerHandler;
 import minicraft.core.io.InputHandler;
 import minicraft.entity.Entity;
 import minicraft.item.Inventory;
@@ -28,12 +29,12 @@ class InventoryMenu extends ItemListMenu {
 	}
 
 	@Override
-	public void tick(InputHandler input) {
-		super.tick(input);
+	public void tick(InputHandler input, ControllerHandler controlInput) {
+		super.tick(input, controlInput);
 
-		boolean dropOne = input.getKey("drop-one").clicked;
+		boolean dropOne = input.isClicked("drop-one", controlInput);
 
-		if(getNumOptions() > 0 && (dropOne || input.getKey("drop-stack").clicked)) {
+		if(getNumOptions() > 0 && (dropOne || input.isClicked("drop-stack", controlInput))) {
 			ItemEntry entry = ((ItemEntry)getCurEntry());
 			if(entry == null) return;
 			Item invItem = entry.getItem();

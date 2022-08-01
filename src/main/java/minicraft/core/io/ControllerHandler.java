@@ -44,6 +44,9 @@ public class ControllerHandler extends ControllerManager {
 		buttonmap.put("PICKUP", ControllerButton.LEFTBUMPER);
 
 		buttonmap.put("PAUSE", ControllerButton.START);
+
+		buttonmap.put("DROP-ONE", ControllerButton.RIGHTBUMPER);
+		buttonmap.put("DROP-STACK", ControllerButton.RIGHTSTICK);
 	}
 
 	public boolean buttonPressed(ControllerButton button) {
@@ -52,5 +55,21 @@ public class ControllerHandler extends ControllerManager {
 		} catch (ControllerUnpluggedException e) {
 			return false;
 		}
+	}
+
+	public boolean buttonDown(ControllerButton button) {
+		try {
+			return controllerIndex.isButtonPressed(button);
+		} catch (ControllerUnpluggedException e){
+			return false;
+		}
+	}
+
+	public boolean isKeyPressed(String key) {
+		return buttonPressed(buttonmap.get(key.toUpperCase()));
+	}
+
+	public boolean isKeyDown(String key) {
+		return buttonDown(buttonmap.get(key.toUpperCase()));
 	}
 }
