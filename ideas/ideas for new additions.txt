@@ -25,3 +25,4 @@ Additions
 ++++
 Changes
 [ ] Make friendly mobs able to be fed and bred, and led.
+[ ] Make FurnitureItem use the sprites of Furniture instead of their owns for the new rendering engine.

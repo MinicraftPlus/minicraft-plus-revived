@@ -7,6 +7,7 @@ import minicraft.entity.Entity;
 import minicraft.entity.mob.Player;
 import minicraft.gfx.Screen;
 import minicraft.gfx.Sprite;
+import minicraft.gfx.SpriteLinker.LinkedSpriteSheet;
 import minicraft.item.FurnitureItem;
 import minicraft.item.Item;
 import minicraft.item.PowerGloveItem;
@@ -19,6 +20,7 @@ public class Furniture extends Entity {
 	protected int pushTime = 0, multiPushTime = 0; // Time for each push; multi is for multiplayer, to make it so not so many updates are sent.
 	private Direction pushDir = Direction.NONE; // The direction to push the furniture
 	public Sprite sprite;
+	public LinkedSpriteSheet itemSprite;
 	public String name;
 
 	/**
@@ -27,8 +29,9 @@ public class Furniture extends Entity {
 	 * @param name Name of the furniture.
 	 * @param sprite Furniture sprite.
 	 */
-	public Furniture(String name, Sprite sprite) {
+	public Furniture(String name, Sprite sprite, LinkedSpriteSheet itemSprite) {
 		this(name, sprite, 3, 3);
+		this.itemSprite = itemSprite;
 	}
 
 	/**
@@ -54,7 +57,7 @@ public class Furniture extends Entity {
 		} catch (Exception ex) {
 			ex.printStackTrace();
 		}
-		return new Furniture(name, sprite);
+		return new Furniture(name, sprite, itemSprite);
 	}
 
 	@Override

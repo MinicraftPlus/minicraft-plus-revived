@@ -6,6 +6,8 @@ import minicraft.entity.mob.Player;
 import minicraft.gfx.Font;
 import minicraft.gfx.Screen;
 import minicraft.gfx.Sprite;
+import minicraft.gfx.SpriteLinker.LinkedSpriteSheet;
+import minicraft.gfx.SpriteLinker.SpriteType;
 import minicraft.level.Level;
 import minicraft.level.tile.Tile;
 
@@ -14,15 +16,15 @@ public abstract class Item {
 	/* Note: Most of the stuff in the class is expanded upon in StackableItem/PowerGloveItem/FurnitureItem/etc */
 
 	private final String name;
-	public Sprite sprite;
+	public LinkedSpriteSheet sprite;
 
 	public boolean used_pending = false; // This is for multiplayer, when an item has been used, and is pending server response as to the outcome, this is set to true so it cannot be used again unless the server responds that the item wasn't used. Which should basically replace the item anyway, soo... yeah. this never gets set back.
 
 	protected Item(String name) {
-		sprite = Sprite.missingTexture(1, 1);
+		sprite = Sprite.missingTexture(SpriteType.Item);
 		this.name = name;
 	}
-	protected Item(String name, Sprite sprite) {
+	protected Item(String name, LinkedSpriteSheet sprite) {
 		this.name = name;
 		this.sprite = sprite;
 	}
@@ -30,7 +32,7 @@ public abstract class Item {
 	/** Renders an item on the HUD */
 	public void renderHUD(Screen screen, int x, int y, int fontColor) {
 		String dispName = getDisplayName();
-		sprite.render(screen, x, y);
+		sprite.getSpriteOrMissing(SpriteType.Item).render(screen, x, y);
 		Font.drawBackground(dispName, screen, x + 8, y, fontColor);
 	}
 

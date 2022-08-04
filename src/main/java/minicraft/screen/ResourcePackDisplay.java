@@ -44,18 +44,22 @@ public class ResourcePackDisplay extends Display {
 	 * Current complete structure of resource packs:
 	 * <root>
 	 * 	├──	pack.json
-	 * 	└──	assets (The structure will be changed in 3.0 to fit the new IDs)
+	 * 	└──	assets
 	 * 		├──	textures
-	 * 		│	├──	entities
-	 * 		│	│	└──	<class name lower case>.png
-	 * 		│	├──	items
-	 * 		│	│	└──	<name from {@code minicraft.item.Item#getName()}>.png
-	 * 		│	├──	tiles
-	 * 		│	│	└──	<tile ID>.png # pretty human-readable
-	 * 		│	└──	gui.png
+	 * 		│	├──	entity
+	 * 		│	│	└──	<entity_name>.png
+	 * 		│	├──	item
+	 * 		│	│	└──	<item_name>.png
+	 * 		│	├──	tile
+	 * 		│	│	└──	<tile_name>.png
+	 * 		│	└──	gui
+	 * 		│		├──	font.png
+	 * 		│		├──	hud.png
+	 * 		│		└──	title.png
 	 * 		├──	localization
-	 * 		│	└──	<name>_<locale>.png
+	 * 		│	└──	<name>_<locale>.json
 	 * 		├──	sound
+	 * 		│	└──	<name>.wav
 	 * 		└──	[Not planned]
 	 *
 	 * pack.json

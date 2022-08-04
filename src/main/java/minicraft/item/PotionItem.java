@@ -4,31 +4,31 @@ import java.util.ArrayList;
 
 import minicraft.entity.Direction;
 import minicraft.entity.mob.Player;
-import minicraft.gfx.Sprite;
+import minicraft.gfx.SpriteLinker.LinkedSpriteSheet;
+import minicraft.gfx.SpriteLinker.SpriteType;
 import minicraft.level.Level;
 import minicraft.level.tile.Tile;
 import minicraft.screen.AchievementsDisplay;
 
 public class PotionItem extends StackableItem {
-	
+
 	protected static ArrayList<Item> getAllInstances() {
 		ArrayList<Item> items = new ArrayList<>();
-		
+
 		for(PotionType type: PotionType.values())
 			items.add(new PotionItem(type));
-		
+
 		return items;
 	}
-	
+
 	public PotionType type;
-	
+
 	private PotionItem(PotionType type) { this(type, 1); }
 	private PotionItem(PotionType type, int count) {
-		super(type.name, new Sprite(0, 7, 0), count);
+		super(type.name, new LinkedSpriteSheet(SpriteType.Item, "potion").setColor(type.dispColor), count);
 		this.type = type;
-		this.sprite.color = type.dispColor;
 	}
-	
+
 	// The return value is used to determine if the potion was used, which means being discarded.
 	public boolean interactOn(Tile tile, Level level, int xt, int yt, Player player, Direction attackDir) {
 		if (type.equals(PotionType.Lava)) {
@@ -36,7 +36,7 @@ public class PotionItem extends StackableItem {
 		}
 		return super.interactOn(applyPotion(player, type, true));
 	}
-	
+
 	/// Only ever called to load from file
 	public static boolean applyPotion(Player player, PotionType type, int time) {
 		boolean result = applyPotion(player, type, time > 0);
@@ -49,24 +49,24 @@ public class PotionItem extends StackableItem {
 			if (!type.toggleEffect(player, addEffect))
 				return false; // Usage failed
 		}
-		
+
 		if (addEffect && type.duration > 0) player.potioneffects.put(type, type.duration); // Add it
 		else player.potioneffects.remove(type);
-		
+
 		return true;
 	}
-	
+
 	@Override
 	public boolean equals(Item other) {
 		return super.equals(other) && ((PotionItem)other).type == type;
 	}
-	
+
 	@Override
 	public int hashCode() { return super.hashCode() + type.name.hashCode(); }
-	
+
 	@Override
 	public boolean interactsWithWorld() { return false; }
-	
+
 	public PotionItem clone() {
 		return new PotionItem(type, count);
 	}

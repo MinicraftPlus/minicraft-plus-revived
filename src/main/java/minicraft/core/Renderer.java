@@ -68,13 +68,9 @@ public class Renderer extends Game {
 	private static int potionRenderOffset = 0;
 
 	public static SpriteSheet[] loadDefaultSpriteSheets() {
-		SpriteSheet itemSheet, tileSheet, entitySheet, guiSheet, skinsSheet;
+		SpriteSheet skinsSheet;
 		try {
 			// These set the sprites to be used.
-			itemSheet = new SpriteSheet(ImageIO.read(Objects.requireNonNull(Game.class.getResourceAsStream("/resources/textures/items.png"))));
-			tileSheet = new SpriteSheet(ImageIO.read(Objects.requireNonNull(Game.class.getResourceAsStream("/resources/textures/tiles.png"))));
-			entitySheet = new SpriteSheet(ImageIO.read(Objects.requireNonNull(Game.class.getResourceAsStream("/resources/textures/entities.png"))));
-			guiSheet = new SpriteSheet(ImageIO.read(Objects.requireNonNull(Game.class.getResourceAsStream("/resources/textures/gui.png"))));
 			skinsSheet = new SpriteSheet(ImageIO.read(Objects.requireNonNull(Game.class.getResourceAsStream("/resources/textures/skins.png"))));
 		} catch (NullPointerException e) {
 			// If a provided InputStream has no name. (in practice meaning it cannot be found.)
@@ -91,7 +87,6 @@ public class Renderer extends Game {
 
 	public static void initScreen() {
 		ResourcePackDisplay.initPacks(); // TODO
-		SpriteSheet[] sheets = loadDefaultSpriteSheets();
 		screen = new Screen(sheets[0], sheets[1], sheets[2], sheets[3], sheets[4]);
 		lightScreen = new Screen(sheets[0], sheets[1], sheets[2], sheets[3], sheets[4]);
 

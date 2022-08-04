@@ -8,83 +8,68 @@ import minicraft.core.Renderer;
 import minicraft.core.Updater;
 
 public class Screen {
-	
+
 	public static final int w = Renderer.WIDTH; // Width of the screen
 	public static final int h = Renderer.HEIGHT; // Height of the screen
 	public static final Point center = new Point(w/2, h/2);
-	
+
 	private static final int MAXDARK = 128;
-	
+
 	/// x and y offset of screen:
 	private int xOffset;
 	private int yOffset;
-	
+
 	// Used for mirroring an image:
 	private static final int BIT_MIRROR_X = 0x01; // Written in hexadecimal; binary: 01
 	private static final int BIT_MIRROR_Y = 0x02; // Binary: 10
-	
+
 	public int[] pixels; // Pixels on the screen
 
 	// Since each sheet is 256x256 pixels, each one has 1024 8x8 "tiles"
 	// So 0 is the start of the item sheet 1024 the start of the tile sheet, 2048 the start of the entity sheet,
 	// And 3072 the start of the gui sheet
 
-	private SpriteSheet[] sheets;
+	private SpriteSheet skinSheet;
 
-	public Screen(SpriteSheet itemSheet, SpriteSheet tileSheet, SpriteSheet entitySheet, SpriteSheet guiSheet, SpriteSheet skinsSheet) {
-
-		sheets = new SpriteSheet[]{itemSheet, tileSheet, entitySheet, guiSheet, skinsSheet};
+	public Screen(SpriteSheet skinsSheet) {
+		skinSheet = skinsSheet;
 
 		/// Screen width and height are determined by the actual game window size, meaning the screen is only as big as the window.
 		pixels = new int[Screen.w * Screen.h]; // Makes new integer array for all the pixels on the screen.
 	}
 	public Screen(Screen model) {
-		this(model.sheets[0], model.sheets[1], model.sheets[2], model.sheets[3], model.sheets[4]);
+		this(model.skinSheet);
 	}
 
 	@NotNull
 	public void setSkinSheet(SpriteSheet skinSheet) {
-		sheets[4] = skinSheet;
+		this.skinSheet = skinSheet;
+	}
+	public SpriteSheet getSkinSheet() {
+		return skinSheet;
 	}
 
-	public void setSheets(SpriteSheet itemSheet, SpriteSheet tileSheet, SpriteSheet entitySheet, SpriteSheet guiSheet) {
-		if (itemSheet != null) sheets[0] = itemSheet;
-		if (tileSheet != null) sheets[1] = tileSheet;
-		if (entitySheet != null) sheets[2] = entitySheet;
-		if (guiSheet != null) sheets[3] = guiSheet;
-	}
-
-	public SpriteSheet getSpriteSheet() {
-		return sheets[4];
-	}
-	
 	/** Clears all the colors on the screen */
 	public void clear(int color) {
 		// Turns each pixel into a single color (clearing the screen!)
 		Arrays.fill(pixels, color);
 	}
-	
+
 	public void render(int[] pixelColors) {
 		System.arraycopy(pixelColors, 0, pixels, 0, Math.min(pixelColors.length, pixels.length));
 	}
 
-	public void render(int xp, int yp, int tile, int bits) { render(xp, yp, tile, bits, 0); }
+	public void render(int xp, int yp, int xt, int yt, int bits, SpriteSheet sheet) { render(xp, yp, xt, yt, bits, sheet, -1); }
 
-	public void render(int xp, int yp, int tile, int bits, int sheet) { render(xp, yp, tile, bits, sheet, -1); }
-
-    public void render(int xp, int yp, int tile, int bits, int sheet, int whiteTint) { render(xp, yp, tile, bits, sheet, whiteTint, false); }
+    public void render(int xp, int yp, int xt, int yt, int bits, SpriteSheet sheet, int whiteTint) { render(xp, yp, xt, yt, bits, sheet, whiteTint, false); }
 
 	/** This method takes care of assigning the correct spritesheet to assign to the sheet variable **/
-    public void render(int xp, int yp, int tile, int bits, int sheet, int whiteTint, boolean fullbright) {
-		render(xp, yp, tile, bits, sheets[sheet], whiteTint, fullbright, 0);
-    }
-    
-    public void render(int xp, int yp, int tile, int bits, int sheet, int whiteTint, boolean fullbright, int color) {
-    	render(xp, yp, tile, bits, sheets[sheet], -1, false, color); 
+    public void render(int xp, int yp, int xt, int yt, int bits, SpriteSheet sheet, int whiteTint, boolean fullbright) {
+		render(xp, yp, xt, yt, bits, sheet, whiteTint, fullbright, 0);
     }
 
     /** Renders an object from the sprite sheet based on screen coordinates, tile (SpriteSheet location), colors, and bits (for mirroring). I believe that xp and yp refer to the desired position of the upper-left-most pixel. */
-    public void render(int xp, int yp, int tile, int bits, SpriteSheet sheet, int whiteTint, boolean fullbright, int color) {
+    public void render(int xp, int yp, int xt, int yt, int bits, SpriteSheet sheet, int whiteTint, boolean fullbright, int color) {
 		// xp and yp are originally in level coordinates, but offset turns them to screen coordinates.
 		xp -= xOffset; //account for screen offset
 		yp -= yOffset;
@@ -93,8 +78,8 @@ public class Screen {
 		boolean mirrorX = (bits & BIT_MIRROR_X) > 0; // Horizontally.
 		boolean mirrorY = (bits & BIT_MIRROR_Y) > 0; // Vertically.
 
-		int xTile = tile % 32; // Gets x position of the spritesheet "tile"
-		int yTile = tile / 32; // Gets y position
+		int xTile = xt; // Gets x position of the spritesheet "tile"
+		int yTile = yt; // Gets y position
 		int toffs = xTile * 8 + yTile * 8 * sheet.width; // Gets the offset of the sprite into the spritesheet pixel array, the 8's represent the size of the box. (8 by 8 pixel sprite boxes)
 
 		// THIS LOOPS FOR EVERY PIXEL
@@ -124,7 +109,7 @@ public class Screen {
 							pixels[index] = Color.WHITE;
 						} else {
 							if (color != 0) {
-								
+
 								pixels[index] = color;
 							} else {
 								pixels[index] = Color.upgrade(col);
@@ -140,11 +125,11 @@ public class Screen {
 	public void setOffset(int xOffset, int yOffset) {
 		// This is called in few places, one of which is level.renderBackground, right before all the tiles are rendered. The offset is determined by the Game class (this only place renderBackground is called), by using the screen's width and the player's position in the level.
 		// In other words, the offset is a conversion factor from level coordinates to screen coordinates. It makes a certain coord in the level the upper left corner of the screen, when subtracted from the tile coord.
-		
+
 		this.xOffset = xOffset;
 		this.yOffset = yOffset;
 	}
-	
+
 	/* Used for the scattered dots at the edge of the light radius underground.
 
 		These values represent the minimum light level, on a scale from 0 to 25 (255/10), 0 being no light, 25 being full light (which will be portrayed as transparent on the overlay lightScreen pixels) that a pixel must have in order to remain lit (not black).
@@ -158,33 +143,33 @@ public class Screen {
 		3, 11, 1, 9,
 		15, 7, 13, 5
 	};
-	
+
 	/** Overlays the screen with pixels */
     public void overlay(Screen screen2, int currentLevel, int xa, int ya) {
 		double tintFactor = 0;
 		if (currentLevel >= 3 && currentLevel < 5) {
 			int transTime = Updater.dayLength / 4;
 			double relTime = (Updater.tickCount % transTime) * 1.0 / transTime;
-			
+
 			switch (Updater.getTime()) {
 				case Morning: tintFactor = Updater.pastDay1 ? (1-relTime) * MAXDARK : 0; break;
 				case Day: tintFactor = 0; break;
 				case Evening: tintFactor = relTime * MAXDARK; break;
 				case Night: tintFactor = MAXDARK; break;
 			}
-			
+
 			if (currentLevel > 3) tintFactor -= (tintFactor < 10 ? tintFactor : 10);
 			tintFactor *= -1; // All previous operations were assuming this was a darkening factor.
 		}
 		else if(currentLevel >= 5)
 			tintFactor = -MAXDARK;
-        
+
 		int[] oPixels = screen2.pixels;  // The Integer array of pixels to overlay the screen with.
 		int i = 0; // Current pixel on the screen
 		for (int y = 0; y < h; y++) { // loop through height of screen
             for (int x = 0; x < w; x++) { // loop through width of screen
 				if (oPixels[i] / 10 <= dither[((x + xa) & 3) + ((y + ya) & 3) * 4]) {
-					
+
                     /// The above if statement is simply comparing the light level stored in oPixels with the minimum light level stored in dither. if it is determined that the oPixels[i] is less than the minimum requirements, the pixel is considered "dark", and the below is executed...
 					if (currentLevel < 3) { // if in caves...
                         /// in the caves, not being lit means being pitch black.
@@ -194,7 +179,7 @@ public class Screen {
 						pixels[i] = Color.tintColor(pixels[i], (int)tintFactor); // darkens the color one shade.
                     }
                 }
-				
+
 				// Increase the tinting of all colors by 20.
 				pixels[i] = Color.tintColor(pixels[i], 20);
                 i++; // Moves to the next pixel.
@@ -211,20 +196,20 @@ public class Screen {
 		int x1 = x + r;
 		int y0 = y - r;
 		int y1 = y + r;
-		
+
 		// Prevent light from rendering off the screen:
 		if (x0 < 0) x0 = 0;
 		if (y0 < 0) y0 = 0;
 		if (x1 > w) x1 = w;
 		if (y1 > h) y1 = h;
-		
+
 		for (int yy = y0; yy < y1; yy++) { // Loop through each y position
 			int yd = yy - y; // Get distance to the previous y position.
 			yd = yd * yd; // Square that distance
 			for (int xx = x0; xx < x1; xx++) { // Loop though each x pos
 				int xd = xx - x; // Get x delta
 				int dist = xd * xd + yd; // Square x delta, then add the y delta, to get total distance.
-				
+
 				if (dist <= r * r) {
 					// If the distance from the center (x,y) is less or equal to the radius...
 					int br = 255 - dist * 255 / (r * r); // area where light will be rendered. // r*r is becuase dist is still x*x+y*y, of pythag theorem.

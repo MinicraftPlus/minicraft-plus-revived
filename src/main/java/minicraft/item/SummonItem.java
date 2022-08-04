@@ -5,7 +5,8 @@ import minicraft.core.io.Localization;
 import minicraft.entity.Direction;
 import minicraft.entity.mob.AirWizard;
 import minicraft.entity.mob.Player;
-import minicraft.gfx.Sprite;
+import minicraft.gfx.SpriteLinker.LinkedSpriteSheet;
+import minicraft.gfx.SpriteLinker.SpriteType;
 import minicraft.level.Level;
 import minicraft.level.tile.Tile;
 import org.tinylog.Logger;
@@ -17,15 +18,15 @@ public class SummonItem extends StackableItem {
 	protected static ArrayList<Item> getAllInstances() {
 		ArrayList<Item> items = new ArrayList<>();
 
-		items.add(new SummonItem("Totem of Air", new Sprite(0, 19, 0), "Air Wizard"));
+		items.add(new SummonItem("Totem of Air", new LinkedSpriteSheet(SpriteType.Item, "air_totem"), "Air Wizard"));
 
 		return items;
 	}
 
 	private final String mob;
 
-	private SummonItem(String name, Sprite sprite, String mob) { this(name, sprite, 1, mob); }
-	private SummonItem(String name, Sprite sprite, int count, String mob) {
+	private SummonItem(String name, LinkedSpriteSheet sprite, String mob) { this(name, sprite, 1, mob); }
+	private SummonItem(String name, LinkedSpriteSheet sprite, int count, String mob) {
 		super(name, sprite, count);
 		this.mob = mob;
 	}

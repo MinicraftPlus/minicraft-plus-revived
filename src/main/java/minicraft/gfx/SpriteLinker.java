@@ -1,132 +1,111 @@
 package minicraft.gfx;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 
 import minicraft.core.Renderer;
-import minicraft.item.Item;
-import minicraft.item.Items;
-import minicraft.level.tile.Tiles;
 
 public class SpriteLinker {
-	/* Keys are without .png */
-	private static final ArrayList<String> itemKeys = new ArrayList<>();
-	private static final ArrayList<String> guiKeys = new ArrayList<>();
-	private static final ArrayList<String> tileKeys = new ArrayList<>();
-	private static final ArrayList<String> entityKeys = new ArrayList<>();
+	private final HashMap<String, SpriteSheet> entitySheets = new HashMap<>();
+	private final HashMap<String, SpriteSheet> guiSheets = new HashMap<>();
+	private final HashMap<String, SpriteSheet> itemSheets = new HashMap<>();
+	private final HashMap<String, SpriteSheet> tileSheets = new HashMap<>();
 
-	static {
-		for (Item item : Items.getAll()) {
-			itemKeys.add(item.getName());
-		}
-
-		for (short tile : Tiles.getAll().keySet()) {
-			tileKeys.add(String.valueOf(tile));
-		}
-
-		guiKeys.add("font");
-		guiKeys.add("title");
-		guiKeys.add("hud");
-
-		entityKeys.add("arrow");
-		entityKeys.add("spark");
-		entityKeys.add("bed");
-		entityKeys.add("chest");
-		entityKeys.add("workbench");
-		entityKeys.add("oven");
-		entityKeys.add("furnace");
-		entityKeys.add("anvil");
-		entityKeys.add("enchanter");
-		entityKeys.add("loom");
-		entityKeys.add("deathchest");
-		entityKeys.add("dungeonchest");
-		entityKeys.add("lantern");
-		entityKeys.add("iron lantern");
-		entityKeys.add("gold lantern");
-		entityKeys.add("spawner");
-		entityKeys.add("tnt");
-		entityKeys.add("airwizard");
-		entityKeys.add("cow");
-		entityKeys.add("creeper");
-		entityKeys.add("knight");
-		entityKeys.add("pig");
-		entityKeys.add("sheep");
-		entityKeys.add("skeleton");
-		entityKeys.add("slime");
-		entityKeys.add("snake");
-		entityKeys.add("zombie");
-		entityKeys.add("cow");
-		entityKeys.add("fireparticle");
-		entityKeys.add("smashparticle");
+	public void resetSprites() {
+		entitySheets.clear();
+		guiSheets.clear();
+		itemSheets.clear();
+		tileSheets.clear();
 	}
 
-	private final HashMap<String, Sprite> itemSprites = new HashMap<>();
-	private final HashMap<String, Sprite> guiSprites = new HashMap<>();
-	private final HashMap<String, Sprite> tileSprites = new HashMap<>();
-	private final HashMap<String, MobSprite[][]> entitySprites = new HashMap<>();
-
-	public ArrayList<String> getSpriteKeys(SpriteType t) {
+	/** The safe size check which will be required for the higher resolution sprites must be used
+	 * before this method invoked. But in new rendering engine.
+	 * @param t The sheet type.
+	 * @param key The sheet key.
+	 * @param spriteSheet The sheet.
+	 */
+	public void setSprite(SpriteType t, String key, SpriteSheet spriteSheet) {
 		switch (t) {
-			case Entity: return new ArrayList<>(entityKeys);
-			case Gui: return new ArrayList<>(guiKeys);
-			case Item: return new ArrayList<>(itemKeys);
-			case Tile: return new ArrayList<>(tileKeys);
-			default: return new ArrayList<>();
-		}
-	}
-
-	public void setSprite(SpriteType t, String key, Sprite sprite) {
-		switch (t) {
-			case Gui: guiSprites.put(key, sprite); break;
-			case Item: itemSprites.put(key, sprite); break;
-			case Tile: tileSprites.put(key, sprite); break;
+			case Entity: entitySheets.put(key, spriteSheet); break;
+			case Gui: guiSheets.put(key, spriteSheet); break;
+			case Item: itemSheets.put(key, spriteSheet); break;
+			case Tile: tileSheets.put(key, spriteSheet); break;
 			default:
 				break;
 		}
 	}
-	public void setMobSprites(String key, MobSprite[][] sprite) {
-		entitySprites.put(key, sprite);
-	}
 
-	public Sprite getSprite(SpriteType t, String key) {
+	public SpriteSheet getSpriteSheet(SpriteType t, String key) {
 		switch (t) {
-			case Gui: return guiSprites.get(key);
-			case Item: return itemSprites.get(key);
-			case Tile: return tileSprites.get(key);
+			case Entity: return entitySheets.get(key);
+			case Gui: return guiSheets.get(key);
+			case Item: return itemSheets.get(key);
+			case Tile: return tileSheets.get(key);
 			default: return null;
 		}
-	}
-	public MobSprite[][] getMobSprites(String key) {
-		return entitySprites.get(key);
 	}
 
 	public static enum SpriteType {
 		Item, Gui, Tile, Entity; // Only for resource packs; Skin is not applied.
 	}
 
-	public static class LinkedSprite {
+	public static class LinkedSpriteSheet {
 		private final String key;
-		private HashMap<String, Sprite> linkedMap;
-		private HashMap<String, MobSprite[][]> linkedEntityMap;
+		private HashMap<String, SpriteSheet> linkedMap;
+		private int x, y, w, h, color = -1;
 
-		public LinkedSprite(SpriteType t, String key) {
+		public LinkedSpriteSheet(SpriteType t, String key) {
 			this.key = key;
 			switch (t) {
-				case Entity: linkedEntityMap = Renderer.spriteLinker.entitySprites; break;
-				case Gui: linkedMap = Renderer.spriteLinker.guiSprites; break;
-				case Item: linkedMap = Renderer.spriteLinker.itemSprites; break;
-				case Tile: linkedMap = Renderer.spriteLinker.tileSprites; break;
+				case Entity: linkedMap = Renderer.spriteLinker.entitySheets; break;
+				case Gui: linkedMap = Renderer.spriteLinker.guiSheets; break;
+				case Item: linkedMap = Renderer.spriteLinker.itemSheets; break;
+				case Tile: linkedMap = Renderer.spriteLinker.tileSheets; break;
 			}
 		}
 
+		public LinkedSpriteSheet setSpriteSize(int w, int h) {
+			this.w = w;
+			this.h = h;
+			return this;
+		}
+		public LinkedSpriteSheet setSpritePos(int x, int y) {
+			this.x = x;
+			this.y = y;
+			return this;
+		}
+		public LinkedSpriteSheet setSpriteDim(int x, int y, int w, int h) {
+			setSpriteSize(w, h);
+			setSpritePos(x, y);
+			return this;
+		}
+		public LinkedSpriteSheet setColor(int color) {
+			this.color = color;
+			return this;
+		}
+
+		public SpriteSheet getSheet() { return linkedMap.get(key); }
 		public Sprite getSprite() {
-			if (linkedMap != null)
-				return linkedMap.get(key);
+			SpriteSheet sheet = linkedMap.get(key);
+			if (sheet != null) {
+				if (w <= 0) w = sheet.width;
+				if (h <= 0) h = sheet.height;
+				Sprite sprite = new Sprite(x, y, w, h, sheet);
+				sprite.color = color;
+				return sprite;
+			}
+
 			return null;
 		}
+		public Sprite getSpriteOrMissing(SpriteType type) {
+			Sprite sprite = getSprite();
+			return sprite != null ? sprite : Sprite.missingTexture(type).getSprite();
+		}
 		public MobSprite[][] getMobSprites() {
-			if (linkedEntityMap != null)
-				return linkedEntityMap.get(key);
+			SpriteSheet sheet = linkedMap.get(key);
+			if (sheet != null) {
+				return MobSprite.compileMobSpriteAnimations(x, y, sheet);
+			}
+
 			return null;
 		}
 	}
