@@ -1,5 +1,7 @@
 package minicraft.gfx;
 
+import minicraft.gfx.SpriteLinker.LinkedSpriteSheet;
+import minicraft.gfx.SpriteLinker.SpriteType;
 import minicraft.level.Level;
 import minicraft.level.tile.ConnectTile;
 import minicraft.level.tile.Tile;
@@ -15,21 +17,21 @@ public class ConnectorSprite {
 
 	*/
 
-	public Sprite sparse, sides, full;
+	public LinkedSpriteSheet sparse, sides, full;
 	private Class<? extends Tile> owner;
 	private boolean checkCorners;
 
-	public ConnectorSprite(Class<? extends Tile> owner, Sprite sparse, Sprite sides, Sprite full) {
+	public ConnectorSprite(Class<? extends Tile> owner, LinkedSpriteSheet sparse, LinkedSpriteSheet sides, LinkedSpriteSheet full) {
 		this(owner, sparse, sides, full, true);
 	}
-	public ConnectorSprite(Class<? extends Tile> owner, Sprite sparse, Sprite sides, Sprite full, boolean cornersMatter) {
+	public ConnectorSprite(Class<? extends Tile> owner, LinkedSpriteSheet sparse, LinkedSpriteSheet sides, LinkedSpriteSheet full, boolean cornersMatter) {
 		this.owner = owner;
 		this.sparse = sparse;
 		this.sides = sides;
 		this.full = full;
 		this.checkCorners = cornersMatter;
 	}
-	public ConnectorSprite(Class<? extends Tile> owner, Sprite sparse, Sprite full) {
+	public ConnectorSprite(Class<? extends Tile> owner, LinkedSpriteSheet sparse, LinkedSpriteSheet full) {
 		this(owner, sparse, sparse, full, false);
 	}
 
@@ -58,31 +60,31 @@ public class ConnectorSprite {
 
 
 		if (u && l) {
-			if (ul || !checkCorners) full.renderPixel(1, 1, screen, x, y);
-			else sides.renderPixel(0, 0, screen, x, y);
+			if (ul || !checkCorners) full.getSpriteOrMissing(SpriteType.Tile).renderPixel(1, 1, screen, x, y);
+			else sides.getSpriteOrMissing(SpriteType.Tile).renderPixel(0, 0, screen, x, y);
 		} else
-			sparse.renderPixel(l ? 1 : 2, u ? 1 : 2, screen, x, y);
+			sparse.getSpriteOrMissing(SpriteType.Tile).renderPixel(l ? 1 : 2, u ? 1 : 2, screen, x, y);
 
 
 		if (u && r) {
-			if (ur || !checkCorners) full.renderPixel(0, 1, screen, x + 8, y);
-			else sides.renderPixel(1, 0, screen, x + 8, y);
+			if (ur || !checkCorners) full.getSpriteOrMissing(SpriteType.Tile).renderPixel(0, 1, screen, x + 8, y);
+			else sides.getSpriteOrMissing(SpriteType.Tile).renderPixel(1, 0, screen, x + 8, y);
 		} else
-			sparse.renderPixel(r ? 1 : 0, u ? 1 : 2, screen, x + 8, y);
+			sparse.getSpriteOrMissing(SpriteType.Tile).renderPixel(r ? 1 : 0, u ? 1 : 2, screen, x + 8, y);
 
 
 		if (d && l) {
-			if (dl || !checkCorners) full.renderPixel(1, 0, screen, x, y + 8);
-			else sides.renderPixel(0, 1, screen, x, y + 8);
+			if (dl || !checkCorners) full.getSpriteOrMissing(SpriteType.Tile).renderPixel(1, 0, screen, x, y + 8);
+			else sides.getSpriteOrMissing(SpriteType.Tile).renderPixel(0, 1, screen, x, y + 8);
 		} else
-			sparse.renderPixel(l ? 1 : 2, d ? 1 : 0, screen, x, y + 8);
+			sparse.getSpriteOrMissing(SpriteType.Tile).renderPixel(l ? 1 : 2, d ? 1 : 0, screen, x, y + 8);
 
 
 		if (d && r) {
-			if (dr || !checkCorners) full.renderPixel(0, 0, screen, x + 8, y + 8);
-			else sides.renderPixel(1, 1, screen, x + 8, y + 8);
+			if (dr || !checkCorners) full.getSpriteOrMissing(SpriteType.Tile).renderPixel(0, 0, screen, x + 8, y + 8);
+			else sides.getSpriteOrMissing(SpriteType.Tile).renderPixel(1, 1, screen, x + 8, y + 8);
 		} else
-			sparse.renderPixel(r ? 1 : 0, d ? 1 : 0, screen, x + 8, y + 8);
+			sparse.getSpriteOrMissing(SpriteType.Tile).renderPixel(r ? 1 : 0, d ? 1 : 0, screen, x + 8, y + 8);
 
 	}
 

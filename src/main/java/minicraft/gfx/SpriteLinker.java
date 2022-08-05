@@ -3,6 +3,7 @@ package minicraft.gfx;
 import java.util.HashMap;
 
 import minicraft.core.Renderer;
+import minicraft.util.Logging;
 
 public class SpriteLinker {
 	private final HashMap<String, SpriteSheet> entitySheets = new HashMap<>();
@@ -51,7 +52,10 @@ public class SpriteLinker {
 	public static class LinkedSpriteSheet {
 		private final String key;
 		private HashMap<String, SpriteSheet> linkedMap;
-		private int x, y, w, h, color = -1;
+		private int x, y, w, h, color = -1, mirror = 0, number = 0;
+		private int[][] mirrors = null;
+		private boolean onepixel = false;
+		private MobSpriteType mobType = MobSpriteType.Animations;
 
 		public LinkedSpriteSheet(SpriteType t, String key) {
 			this.key = key;
@@ -82,20 +86,35 @@ public class SpriteLinker {
 			this.color = color;
 			return this;
 		}
+		public LinkedSpriteSheet setMirror(int mirror) {
+			this.mirror = mirror;
+			return this;
+		}
+		public LinkedSpriteSheet setMirrors(int[][] mirrors) {
+			this.mirrors = mirrors;
+			return this;
+		}
+		public LinkedSpriteSheet setOnePixel(boolean onepixel) {
+			this.onepixel = onepixel;
+			return this;
+		}
 
 		public SpriteSheet getSheet() { return linkedMap.get(key); }
+		/** {@link #getSpriteOrMissing(SpriteType)} would be more prefered to this. */
 		public Sprite getSprite() {
 			SpriteSheet sheet = linkedMap.get(key);
 			if (sheet != null) {
 				if (w <= 0) w = sheet.width;
 				if (h <= 0) h = sheet.height;
-				Sprite sprite = new Sprite(x, y, w, h, sheet);
+				Sprite sprite = mirrors == null ? new Sprite(x, y, w, h, sheet, mirror, onepixel) : new Sprite(x, y, w, h, sheet, onepixel, mirrors);
 				sprite.color = color;
 				return sprite;
 			}
 
+			Logging.SPRITE.warn("Sprite with resource ID not found: {}", key);
 			return null;
 		}
+		/** This method would be prefered to {@link #getSprite()}. */
 		public Sprite getSpriteOrMissing(SpriteType type) {
 			Sprite sprite = getSprite();
 			return sprite != null ? sprite : Sprite.missingTexture(type).getSprite();
@@ -103,10 +122,26 @@ public class SpriteLinker {
 		public MobSprite[][] getMobSprites() {
 			SpriteSheet sheet = linkedMap.get(key);
 			if (sheet != null) {
-				return MobSprite.compileMobSpriteAnimations(x, y, sheet);
+				if (w <= 0) w = sheet.width;
+				if (h <= 0) h = sheet.height;
+				switch (mobType) {
+					case Animations: return MobSprite.compileMobSpriteAnimations(x, y, sheet);
+					case List: return new MobSprite[][]{MobSprite.compileSpriteList(x, y, w, h, mirror, number, sheet)};
+				}
 			}
 
 			return null;
+		}
+
+		private enum MobSpriteType { Animations, List }
+		public LinkedSpriteSheet setMobSpriteAnimations() {
+			mobType = MobSpriteType.Animations;
+			return this;
+		}
+		public LinkedSpriteSheet setSpriteList(int number) {
+			mobType = MobSpriteType.List;
+			this.number = number;
+			return this;
 		}
 	}
 }

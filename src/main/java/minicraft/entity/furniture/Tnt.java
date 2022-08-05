@@ -8,7 +8,8 @@ import minicraft.entity.mob.Player;
 import minicraft.gfx.Color;
 import minicraft.gfx.Rectangle;
 import minicraft.gfx.Screen;
-import minicraft.gfx.Sprite;
+import minicraft.gfx.SpriteLinker.LinkedSpriteSheet;
+import minicraft.gfx.SpriteLinker.SpriteType;
 import minicraft.item.Item;
 import minicraft.level.Level;
 import minicraft.level.tile.Tile;
@@ -36,7 +37,7 @@ public class Tnt extends Furniture implements ActionListener {
 	 * Creates a new tnt furniture.
 	 */
 	public Tnt() {
-		super("Tnt", new Sprite(28, 26, 2, 2, 2), 3, 2);
+		super("Tnt", new LinkedSpriteSheet(SpriteType.Entity, "tnt"), new LinkedSpriteSheet(SpriteType.Item, "tnt"), 3, 2);
 		fuseLit = false;
 		ftik = 0;
 

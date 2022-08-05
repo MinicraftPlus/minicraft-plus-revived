@@ -9,14 +9,15 @@ import minicraft.entity.mob.Player;
 import minicraft.gfx.Color;
 import minicraft.gfx.Font;
 import minicraft.gfx.Screen;
-import minicraft.gfx.Sprite;
+import minicraft.gfx.SpriteLinker.LinkedSpriteSheet;
+import minicraft.gfx.SpriteLinker.SpriteType;
 import minicraft.item.Inventory;
 import minicraft.item.Item;
 import minicraft.item.StackableItem;
 
 public class DeathChest extends Chest {
-	private static Sprite normalSprite = new Sprite(10, 26, 2, 2, 2);
-	private static Sprite redSprite = new Sprite(10, 24, 2, 2, 2);
+	private static LinkedSpriteSheet normalSprite = new LinkedSpriteSheet(SpriteType.Entity, "chest");
+	private static LinkedSpriteSheet redSprite = new LinkedSpriteSheet(SpriteType.Entity, "red_chest");
 
 	public int time; // Time passed (used for death chest despawn)
 	private int redtick = 0; //This is used to determine the shade of red when the chest is about to expire.
@@ -27,7 +28,7 @@ public class DeathChest extends Chest {
 	 * Creates a custom chest with the name Death Chest
 	 */
 	public DeathChest() {
-		super("Death Chest");
+		super("Death Chest", new LinkedSpriteSheet(SpriteType.Item, "dungeon_chest"));
 		this.sprite = normalSprite;
 
 		/// Set the expiration time based on the world difficulty.

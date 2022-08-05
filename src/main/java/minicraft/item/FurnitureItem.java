@@ -5,8 +5,6 @@ import minicraft.core.io.Sound;
 import minicraft.entity.Direction;
 import minicraft.entity.furniture.*;
 import minicraft.entity.mob.*;
-import minicraft.gfx.SpriteLinker.LinkedSpriteSheet;
-import minicraft.gfx.SpriteLinker.SpriteType;
 import minicraft.level.Level;
 import minicraft.level.tile.Tile;
 
@@ -18,31 +16,31 @@ public class FurnitureItem extends Item {
 		ArrayList<Item> items = new ArrayList<>();
 
 		/// There should be a spawner for each level of mob, or at least make the level able to be changed.
-		items.add(new FurnitureItem(new Spawner(new Cow()), new LinkedSpriteSheet(SpriteType.Item, "cow_spawner")));
-		items.add(new FurnitureItem(new Spawner(new Pig()), new LinkedSpriteSheet(SpriteType.Item, "pig_spawner")));
-		items.add(new FurnitureItem(new Spawner(new Sheep()), new LinkedSpriteSheet(SpriteType.Item, "sheep_spawner")));
-		items.add(new FurnitureItem(new Spawner(new Slime(1)), new LinkedSpriteSheet(SpriteType.Item, "slime_spawner")));
-		items.add(new FurnitureItem(new Spawner(new Zombie(1)), new LinkedSpriteSheet(SpriteType.Item, "zombie_spawner")));
-		items.add(new FurnitureItem(new Spawner(new Creeper(1)), new LinkedSpriteSheet(SpriteType.Item, "creeper_spawner")));
-		items.add(new FurnitureItem(new Spawner(new Skeleton(1)), new LinkedSpriteSheet(SpriteType.Item, "skeleton_spawner")));
-		items.add(new FurnitureItem(new Spawner(new Snake(1)), new LinkedSpriteSheet(SpriteType.Item, "snake_spawner")));
-		items.add(new FurnitureItem(new Spawner(new Knight(1)), new LinkedSpriteSheet(SpriteType.Item, "knight_spawner")));
-		items.add(new FurnitureItem(new Spawner(new AirWizard()), new LinkedSpriteSheet(SpriteType.Item, "air_wizard_spawner")));
+		items.add(new FurnitureItem(new Spawner(new Cow())));
+		items.add(new FurnitureItem(new Spawner(new Pig())));
+		items.add(new FurnitureItem(new Spawner(new Sheep())));
+		items.add(new FurnitureItem(new Spawner(new Slime(1))));
+		items.add(new FurnitureItem(new Spawner(new Zombie(1))));
+		items.add(new FurnitureItem(new Spawner(new Creeper(1))));
+		items.add(new FurnitureItem(new Spawner(new Skeleton(1))));
+		items.add(new FurnitureItem(new Spawner(new Snake(1))));
+		items.add(new FurnitureItem(new Spawner(new Knight(1))));
+		items.add(new FurnitureItem(new Spawner(new AirWizard())));
 
-		items.add(new FurnitureItem(new Chest(), new LinkedSpriteSheet(SpriteType.Item, "chest")));
-		items.add(new FurnitureItem(new DungeonChest(false, true), new LinkedSpriteSheet(SpriteType.Item, "dungeon_chest")));
+		items.add(new FurnitureItem(new Chest()));
+		items.add(new FurnitureItem(new DungeonChest(false, true)));
 
 		// Add the various types of crafting furniture
 		for (Crafter.Type type: Crafter.Type.values()) {
-			items.add(new FurnitureItem(new Crafter(type), new LinkedSpriteSheet(SpriteType.Item, type.toString().toLowerCase())));
+			items.add(new FurnitureItem(new Crafter(type)));
 		}
 		// Add the various lanterns
 		for (Lantern.Type type: Lantern.Type.values()) {
-			 items.add(new FurnitureItem(new Lantern(type), new LinkedSpriteSheet(SpriteType.Item, type.toString().toLowerCase())));
+			 items.add(new FurnitureItem(new Lantern(type)));
 		}
 
-		items.add(new FurnitureItem(new Tnt(), new LinkedSpriteSheet(SpriteType.Item, "tnt")));
-		items.add(new FurnitureItem(new Bed(), new LinkedSpriteSheet(SpriteType.Item, "bed")));
+		items.add(new FurnitureItem(new Tnt()));
+		items.add(new FurnitureItem(new Bed()));
 
 		return items;
 	}
@@ -50,8 +48,8 @@ public class FurnitureItem extends Item {
 	public Furniture furniture; // The furniture of this item
 	public boolean placed; // Value if the furniture has been placed or not.
 
-	public FurnitureItem(Furniture furniture, LinkedSpriteSheet sheet) {
-		super(furniture.name, sheet);
+	public FurnitureItem(Furniture furniture) {
+		super(furniture.name, furniture.itemSprite);
 		this.furniture = furniture; // Assigns the furniture to the item
 		placed = false;
 	}
@@ -88,6 +86,6 @@ public class FurnitureItem extends Item {
 	public FurnitureItem clone() {
 		// in case the item is a spawner, it will use the sprite position (sx, sy)
 		// instead if it is not, the constructor will obtain said sprite
-		return new FurnitureItem(furniture.clone(), sprite);
+		return new FurnitureItem(furniture.clone());
 	}
 }

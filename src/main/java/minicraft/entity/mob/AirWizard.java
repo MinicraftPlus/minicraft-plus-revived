@@ -9,20 +9,17 @@ import minicraft.entity.Entity;
 import minicraft.entity.Spark;
 import minicraft.gfx.Color;
 import minicraft.gfx.Font;
-import minicraft.gfx.MobSprite;
 import minicraft.gfx.Screen;
+import minicraft.gfx.SpriteLinker.LinkedSpriteSheet;
+import minicraft.gfx.SpriteLinker.SpriteType;
 import minicraft.network.Analytics;
 import minicraft.screen.AchievementsDisplay;
 
 public class AirWizard extends EnemyMob {
-	private static final MobSprite[][][] sprites;
-	static {
-		sprites = new MobSprite[2][4][2];
-		for (int i = 0; i < 2; i++) {
-			MobSprite[][] list  = MobSprite.compileMobSpriteAnimations(8, 20 + (i * 2));
-			sprites[i] = list;
-		}
-	}
+	private static final LinkedSpriteSheet[] sprites = new LinkedSpriteSheet[] {
+		new LinkedSpriteSheet(SpriteType.Entity, "air_wizard").setSpritePos(0, 0),
+		new LinkedSpriteSheet(SpriteType.Entity, "air_wizard").setSpritePos(0, 2)
+	};
 
 	public static boolean beaten = false;
 
@@ -31,7 +28,7 @@ public class AirWizard extends EnemyMob {
 	private int attackType = 0;
 
 	/**
-	 * This is used by the spawner to spawn air wizards. Lvl is unused.
+	 * This is used by the spawner to spawn air wizards. {@code lvl} is unused.
 	 */
 	public AirWizard(int lvl) { this(); }
 

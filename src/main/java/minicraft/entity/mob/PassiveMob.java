@@ -3,8 +3,8 @@ package minicraft.entity.mob;
 import minicraft.core.Game;
 import minicraft.core.Updater;
 import minicraft.core.io.Settings;
-import minicraft.gfx.MobSprite;
 import minicraft.gfx.Screen;
+import minicraft.gfx.SpriteLinker.LinkedSpriteSheet;
 import minicraft.level.Level;
 import minicraft.level.tile.Tile;
 import minicraft.level.tile.Tiles;
@@ -17,7 +17,7 @@ public class PassiveMob extends MobAi {
 	 * healthFactor = 3.
 	 * @param sprites The mob's sprites.
 	 */
-	public PassiveMob(MobSprite[][] sprites) {
+	public PassiveMob(LinkedSpriteSheet sprites) {
 		this(sprites, 3);
 	}
 
@@ -27,7 +27,7 @@ public class PassiveMob extends MobAi {
 	 * @param healthFactor Determines the mobs health. Will be multiplied by the difficulty
 	 * and then added with 5.
 	 */
-	public PassiveMob(MobSprite[][] sprites, int healthFactor) {
+	public PassiveMob(LinkedSpriteSheet sprites, int healthFactor) {
 		super(sprites, 5 + healthFactor * Settings.getIdx("diff"), 5*60*Updater.normSpeed, 45, 40);
 	}
 

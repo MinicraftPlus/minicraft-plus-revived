@@ -4,7 +4,6 @@ import java.util.ArrayList;
 
 import minicraft.entity.Direction;
 import minicraft.entity.mob.Player;
-import minicraft.gfx.Sprite;
 import minicraft.gfx.SpriteLinker.LinkedSpriteSheet;
 import minicraft.gfx.SpriteLinker.SpriteType;
 import minicraft.level.Level;

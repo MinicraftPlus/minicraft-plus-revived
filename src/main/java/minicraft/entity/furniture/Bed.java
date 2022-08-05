@@ -6,7 +6,8 @@ import minicraft.core.Game;
 import minicraft.core.Updater;
 import minicraft.core.io.Localization;
 import minicraft.entity.mob.Player;
-import minicraft.gfx.Sprite;
+import minicraft.gfx.SpriteLinker.LinkedSpriteSheet;
+import minicraft.gfx.SpriteLinker.SpriteType;
 import minicraft.level.Level;
 
 public class Bed extends Furniture {
@@ -18,7 +19,7 @@ public class Bed extends Furniture {
 	 * Creates a new furniture with the name Bed and the bed sprite and color.
 	 */
 	public Bed() {
-		super("Bed", new Sprite(30, 26, 2, 2, 2), 3, 2);
+		super("Bed", new LinkedSpriteSheet(SpriteType.Entity, "bed"), new LinkedSpriteSheet(SpriteType.Item, "bed"), 3, 2);
 	}
 
 	/** Called when the player attempts to get in bed. */

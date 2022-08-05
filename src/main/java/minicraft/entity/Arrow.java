@@ -2,11 +2,13 @@ package minicraft.entity;
 
 import java.util.List;
 
+import minicraft.core.Renderer;
 import minicraft.entity.mob.Mob;
 import minicraft.entity.mob.Player;
 import minicraft.gfx.Color;
 import minicraft.gfx.Rectangle;
 import minicraft.gfx.Screen;
+import minicraft.gfx.SpriteLinker.SpriteType;
 
 public class Arrow extends Entity implements ClientTickable {
 	private Direction dir;
@@ -76,12 +78,11 @@ public class Arrow extends Entity implements ClientTickable {
 	@Override
 	public void render(Screen screen) {
 		int xt = 0;
-		int yt = 2;
 
 		if(dir == Direction.LEFT) xt = 1;
 		if(dir == Direction.UP) xt = 2;
 		if(dir == Direction.DOWN) xt = 3;
 
-		screen.render(x - 4, y - 4, xt, yt, 0);
+		screen.render(x - 4, y - 4, xt, 0, 0, Renderer.spriteLinker.getSpriteSheet(SpriteType.Entity, "arrow"));
 	}
 }

@@ -3,19 +3,18 @@ package minicraft.entity.mob;
 import minicraft.core.Game;
 import minicraft.core.io.Settings;
 import minicraft.entity.Direction;
-import minicraft.gfx.MobSprite;
 import minicraft.gfx.Screen;
+import minicraft.gfx.SpriteLinker.LinkedSpriteSheet;
+import minicraft.gfx.SpriteLinker.SpriteType;
 import minicraft.item.Items;
 
 public class Slime extends EnemyMob {
-	private static MobSprite[][][] sprites;
-	static {
-		sprites = new MobSprite[4][1][2];
-		for (int i = 0; i < 4; i++) {
-			MobSprite[] list = MobSprite.compileSpriteList(0, 0 + (i * 2), 2, 2, 0, 2);
-			sprites[i][0] = list;
-		}
-	}
+	private static LinkedSpriteSheet[] sprites = new LinkedSpriteSheet[] {
+		new LinkedSpriteSheet(SpriteType.Entity, "slime").setSpriteList(2),
+		new LinkedSpriteSheet(SpriteType.Entity, "slime").setSpriteList(2).setSpritePos(0, 2),
+		new LinkedSpriteSheet(SpriteType.Entity, "slime").setSpriteList(2).setSpritePos(0, 4),
+		new LinkedSpriteSheet(SpriteType.Entity, "slime").setSpriteList(2).setSpritePos(0, 6)
+	};
 
 	private int jumpTime = 0; // jumpTimer, also acts as a rest timer before the next jump
 

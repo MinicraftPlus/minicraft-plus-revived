@@ -6,9 +6,10 @@ import minicraft.core.io.Sound;
 import minicraft.entity.Direction;
 import minicraft.entity.Entity;
 import minicraft.entity.furniture.Spawner;
-import minicraft.gfx.MobSprite;
 import minicraft.gfx.Point;
 import minicraft.gfx.Screen;
+import minicraft.gfx.SpriteLinker.LinkedSpriteSheet;
+import minicraft.gfx.SpriteLinker.SpriteType;
 import minicraft.item.Items;
 import minicraft.level.tile.Tiles;
 
@@ -16,15 +17,12 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class Creeper extends EnemyMob {
-	private static MobSprite[][][] sprites;
-
-	static {
-		sprites = new MobSprite[4][1][2];
-		for (int i = 0; i < 4; i++) {
-			MobSprite[] list = MobSprite.compileSpriteList(4, 0 + (i * 2), 2, 2, 0, 2);
-			sprites[i][0] = list;
-		}
-	}
+	private static LinkedSpriteSheet[] sprites = new LinkedSpriteSheet[] {
+		new LinkedSpriteSheet(SpriteType.Entity, "creeper").setSpritePos(0, 0).setSpriteList(2),
+		new LinkedSpriteSheet(SpriteType.Entity, "creeper").setSpritePos(0, 2).setSpriteList(2),
+		new LinkedSpriteSheet(SpriteType.Entity, "creeper").setSpritePos(0, 4).setSpriteList(2),
+		new LinkedSpriteSheet(SpriteType.Entity, "creeper").setSpritePos(0, 6).setSpriteList(2)
+	};
 
 	private static final int MAX_FUSE_TIME = 60;
 	private static final int TRIGGER_RADIUS = 64;

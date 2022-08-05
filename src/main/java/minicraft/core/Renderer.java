@@ -67,7 +67,7 @@ public class Renderer extends Game {
 
 	private static int potionRenderOffset = 0;
 
-	public static SpriteSheet[] loadDefaultSpriteSheets() {
+	public static SpriteSheet loadDefaultSkinSheet() {
 		SpriteSheet skinsSheet;
 		try {
 			// These set the sprites to be used.
@@ -78,11 +78,11 @@ public class Renderer extends Game {
 			return null;
 		} catch (IOException | IllegalArgumentException e) {
 			// If there is an error reading the file.
-			CrashHandler.crashHandle(e, new ErrorInfo("Sprite Sheet Could Not Be Loaded", ErrorInfo.ErrorType.UNEXPECTED, true, "Could not load a sprite sheet."));
+			CrashHandler.crashHandle(e, new ErrorInfo("Sprite Sheet Could Not be Loaded", ErrorInfo.ErrorType.UNEXPECTED, true, "Could not load a sprite sheet."));
 			return null;
 		}
 
-		return new SpriteSheet[] { itemSheet, tileSheet, entitySheet, guiSheet, skinsSheet };
+		return skinsSheet;
 	}
 
 	public static void initScreen() {

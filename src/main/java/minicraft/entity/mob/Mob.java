@@ -6,14 +6,14 @@ import minicraft.entity.Entity;
 import minicraft.entity.furniture.Tnt;
 import minicraft.entity.particle.TextParticle;
 import minicraft.gfx.Color;
-import minicraft.gfx.MobSprite;
+import minicraft.gfx.SpriteLinker.LinkedSpriteSheet;
 import minicraft.item.PotionType;
 import minicraft.level.tile.Tile;
 import minicraft.level.tile.Tiles;
 
 public abstract class Mob extends Entity {
 
-	protected MobSprite[][] sprites; // This contains all the mob's sprites, sorted first by direction (index corresponding to the dir variable), and then by walk animation state.
+	protected LinkedSpriteSheet sprites; // This contains all the mob's sprites, sorted first by direction (index corresponding to the dir variable), and then by walk animation state.
 	public int walkDist = 0; // How far we've walked currently, incremented after each movement. This is used to change the sprite; "(walkDist >> 3) & 1" switches between a value of 0 and 1 every 8 increments of walkDist.
 
 	public Direction dir = Direction.DOWN; // The direction the mob is facing, used in attacking and rendering. 0 is down, 1 is up, 2 is left, 3 is right
@@ -31,7 +31,7 @@ public abstract class Mob extends Entity {
 	 * @param sprites All of this mob's sprites.
 	 * @param health The mob's max health.
 	 */
-	public Mob(MobSprite[][] sprites, int health) {
+	public Mob(LinkedSpriteSheet sprites, int health) {
 		super(4, 3);
 		this.sprites = sprites;
 		this.health = this.maxHealth = health;

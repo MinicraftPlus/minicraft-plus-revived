@@ -40,7 +40,7 @@ public class SkinDisplay extends Display {
 
 	static {
 		// Load the default sprite sheet.
-		defaultSheet = Renderer.loadDefaultSpriteSheets()[4];
+		defaultSheet = Renderer.loadDefaultSkinSheet();
 
 		// These are all the generic skins. To add one, just add an entry in this list.
 		skinNames.add("minicraft.skin.paul");
@@ -66,7 +66,7 @@ public class SkinDisplay extends Display {
 					// Add the sprite sheet to the custom skins list.
 					customSkins.add(skinsFolder + "/" + skinPath);
 
-					// Remove the filetype (.png) and to the .
+					// Remove the png file extension and to the .
 					skinNames.add(skinPath.substring(0, skinPath.length() - 4));
 				}
 			}
@@ -206,9 +206,9 @@ public class SkinDisplay extends Display {
 		for (int y = 0; y < h; y++)
 			for (int x = 0; x < w; x++)
 				if (menus[0].getSelection() < defaultSkins) {
-					screen.render(xOffset + x * 8, yOffset + y * 8, spriteIndex * 2 + x + (y + menus[0].getSelection() * 4) * 32, 0, 4);
+					screen.render(xOffset + x * 8, yOffset + y * 8, spriteIndex * 2 + x, y + menus[0].getSelection() * 4, 0, Renderer.screen.getSkinSheet());
 				} else {
-					screen.render(xOffset + x * 8, yOffset + y * 8, spriteIndex * 2 + x + y * 32, 0, selectedSkinSheet, - 1, false, 0);
+					screen.render(xOffset + x * 8, yOffset + y * 8, spriteIndex * 2 + x, y, 0, selectedSkinSheet, - 1, false, 0);
 				}
 
 		// Help text.
@@ -230,11 +230,11 @@ public class SkinDisplay extends Display {
 		MobSprite[][][] mobSprites = new MobSprite[2][][];
 
 		if (selectedSkinIndex < defaultSkins) {
-			mobSprites[0] = MobSprite.compilePlayerSpriteAnimations(0, SkinDisplay.getSelectedSkinIndex() * 4);
-			mobSprites[1] = MobSprite.compilePlayerSpriteAnimations(0, SkinDisplay.getSelectedSkinIndex() * 4 + 2);
+			mobSprites[0] = MobSprite.compilePlayerSpriteAnimations(0, SkinDisplay.getSelectedSkinIndex() * 4, Renderer.screen.getSkinSheet());
+			mobSprites[1] = MobSprite.compilePlayerSpriteAnimations(0, SkinDisplay.getSelectedSkinIndex() * 4 + 2, Renderer.screen.getSkinSheet());
 		} else {
-			mobSprites[0] = MobSprite.compilePlayerSpriteAnimations(0, 0);
-			mobSprites[1] = MobSprite.compilePlayerSpriteAnimations(0, 2);
+			mobSprites[0] = MobSprite.compilePlayerSpriteAnimations(0, 0, Renderer.screen.getSkinSheet());
+			mobSprites[1] = MobSprite.compilePlayerSpriteAnimations(0, 2, Renderer.screen.getSkinSheet());
 		}
 
 		return mobSprites;

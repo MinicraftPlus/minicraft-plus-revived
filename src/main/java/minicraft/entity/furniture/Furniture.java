@@ -1,13 +1,12 @@
 package minicraft.entity.furniture;
 
-import minicraft.core.Game;
 import minicraft.core.io.Sound;
 import minicraft.entity.Direction;
 import minicraft.entity.Entity;
 import minicraft.entity.mob.Player;
 import minicraft.gfx.Screen;
-import minicraft.gfx.Sprite;
 import minicraft.gfx.SpriteLinker.LinkedSpriteSheet;
+import minicraft.gfx.SpriteLinker.SpriteType;
 import minicraft.item.FurnitureItem;
 import minicraft.item.Item;
 import minicraft.item.PowerGloveItem;
@@ -19,7 +18,7 @@ public class Furniture extends Entity {
 
 	protected int pushTime = 0, multiPushTime = 0; // Time for each push; multi is for multiplayer, to make it so not so many updates are sent.
 	private Direction pushDir = Direction.NONE; // The direction to push the furniture
-	public Sprite sprite;
+	public LinkedSpriteSheet sprite;
 	public LinkedSpriteSheet itemSprite;
 	public String name;
 
@@ -29,9 +28,8 @@ public class Furniture extends Entity {
 	 * @param name Name of the furniture.
 	 * @param sprite Furniture sprite.
 	 */
-	public Furniture(String name, Sprite sprite, LinkedSpriteSheet itemSprite) {
-		this(name, sprite, 3, 3);
-		this.itemSprite = itemSprite;
+	public Furniture(String name, LinkedSpriteSheet sprite, LinkedSpriteSheet itemSprite) {
+		this(name, sprite, itemSprite, 3, 3);
 	}
 
 	/**
@@ -42,12 +40,12 @@ public class Furniture extends Entity {
 	 * @param xr Horizontal radius.
 	 * @param yr Vertical radius.
 	 */
-	public Furniture(String name, Sprite sprite, int xr, int yr) {
+	public Furniture(String name, LinkedSpriteSheet sprite, LinkedSpriteSheet itemSprite, int xr, int yr) {
 		// All of these are 2x2 on the spritesheet; radius is for collisions only.
 		super(xr, yr);
 		this.name = name;
 		this.sprite = sprite;
-		col = sprite.color;
+		this.itemSprite = itemSprite;
 	}
 
 	@Override
@@ -71,7 +69,7 @@ public class Furniture extends Entity {
 	}
 
 	/** Draws the furniture on the screen. */
-	public void render(Screen screen) { sprite.render(screen, x-8, y-8); }
+	public void render(Screen screen) { sprite.getSpriteOrMissing(SpriteType.Entity).render(screen, x-8, y-8); }
 
 	/** Called when the player presses the MENU key in front of this. */
 	public boolean use(Player player) { return false; }

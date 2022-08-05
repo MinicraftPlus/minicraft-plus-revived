@@ -325,7 +325,7 @@ public class ResourcePackDisplay extends Display {
 	private void updateSheets(@Nullable ZipFile zipFile) {
 		try {
 			// Load default sprite sheet.
-			SpriteSheet[] sheets = Renderer.loadDefaultSpriteSheets();
+			SpriteSheet[] sheets = Renderer.loadDefaultSkinSheet();
 
 			if (zipFile != null) {
 				try {
