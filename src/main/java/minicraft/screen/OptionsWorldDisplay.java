@@ -5,6 +5,7 @@ import java.util.Arrays;
 import java.util.List;
 
 import minicraft.core.Game;
+import minicraft.core.io.ControllerHandler;
 import minicraft.core.io.InputHandler;
 import minicraft.core.io.Localization;
 import minicraft.core.io.Settings;
@@ -47,13 +48,13 @@ public class OptionsWorldDisplay extends Display {
 	}
 
 	@Override
-	public void tick(InputHandler input) {
+	public void tick(InputHandler input, ControllerHandler controlInput) {
 		if (confirmOff) {
-			if (input.getKey("exit").clicked) {
+			if (input.isClicked("exit", controlInput)) {
 				confirmOff = false;
 				menus[1].shouldRender = false;
 				selection = 0;
-			} else if (input.getKey("select").clicked) {
+			} else if (input.isClicked("select", controlInput)) {
 				confirmOff = false;
 				QuestsDisplay.tutorialOff();
 
@@ -66,7 +67,7 @@ public class OptionsWorldDisplay extends Display {
 			return;
 		}
 
-		super.tick(input); // ticks menu
+		super.tick(input, controlInput); // ticks menu
 	}
 
 	private List<ListEntry> getEntries() {

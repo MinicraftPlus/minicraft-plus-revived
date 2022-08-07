@@ -1,9 +1,6 @@
 package minicraft.core;
 
-import minicraft.core.io.InputHandler;
-import minicraft.core.io.Localization;
-import minicraft.core.io.Settings;
-import minicraft.core.io.Sound;
+import minicraft.core.io.*;
 import minicraft.entity.mob.Player;
 import minicraft.level.Level;
 import minicraft.level.tile.Tiles;
@@ -30,6 +27,7 @@ public class Game {
 	public static final Version VERSION = new Version("2.2.0-dev1");
 
 	public static InputHandler input; // Input used in Game, Player, and just about all the *Menu classes.
+	public static ControllerHandler controlInput; // controlInput used in Menu Classes for Controllers
 	public static Player player;
 
 	public static List<String> notifications = new ArrayList<>();
@@ -74,11 +72,12 @@ public class Game {
 		Analytics.GameStartup.ping();
 
 		/* Load default loc.
-		* DO NOT trigger any other classes before this.
-		* Including static initialization.*/
+		 * DO NOT trigger any other classes before this.
+		 * Including static initialization.*/
 		Localization.loadLanguage();
 
 		input = new InputHandler(Renderer.canvas);
+		controlInput = new ControllerHandler();
 
 		Tiles.initTileList();
 		Sound.init();

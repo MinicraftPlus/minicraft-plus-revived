@@ -6,6 +6,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
 
+import minicraft.core.io.ControllerHandler;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -163,12 +164,12 @@ public class Menu {
 		titleLoc.translate(xoff, yoff);
 	}
 
-	public void tick(InputHandler input) {
+	public void tick(InputHandler input, ControllerHandler controlInput) {
 		if(!selectable || entries.size() == 0) return;
 
 		int prevSel = selection;
-		if (input.getKey("cursor-up").clicked) selection--;
-		if (input.getKey("cursor-down").clicked) selection++;
+		if (input.isClicked("cursor-up", controlInput)) selection--;
+		if (input.isClicked("cursor-down", controlInput)) selection++;
 		if (input.getKey("shift-cursor-up").clicked && selectionSearcher == 0) selectionSearcher -= 2;
 		if (input.getKey("shift-cursor-down").clicked && selectionSearcher == 0) selectionSearcher += 2;
 		if (prevSel != selection && selectionSearcher != 0) selection = prevSel;
@@ -392,7 +393,6 @@ public class Menu {
 				boolean yend = y == bounds.getTop() || y == bottom;
 				int spriteoffset = (xend && yend ? 0 : (yend ? 1 : (xend ? 2 : 3))); // determines which sprite to use
 				int mirrors = ( x == right ? 1 : 0 ) + ( y == bottom ? 2 : 0 ); // gets mirroring
-
 
 				screen.render(x, y, spriteoffset, 3, mirrors, Renderer.spriteLinker.getSpriteSheet(SpriteType.Gui, "hud"));
 

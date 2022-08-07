@@ -2,6 +2,7 @@ package minicraft.screen;
 
 import java.util.ArrayList;
 
+import minicraft.core.io.ControllerHandler;
 import org.jetbrains.annotations.Nullable;
 
 import minicraft.core.io.InputHandler;
@@ -38,10 +39,10 @@ public class PopupDisplay extends Display {
 	}
 
 	@Override
-	public void tick(InputHandler input) {
+	public void tick(InputHandler input, ControllerHandler controlInput) {
 		if (callbacks != null) {
 			for (PopupActionCallback callback : callbacks) {
-				if (callback.key == null || input.getKey(callback.key).clicked) {
+				if (callback.key == null || input.isClicked(callback.key, controlInput)) {
 					if (callback.callback != null && callback.callback.acts(menus[0])) {
 						// This overrides the original #tick check.
 						return;
@@ -51,7 +52,7 @@ public class PopupDisplay extends Display {
 		}
 
 		// Continues with this if no callback returns true.
-		super.tick(input);
+		super.tick(input, controlInput);
 	}
 
 	public static class PopupActionCallback {

@@ -1,6 +1,7 @@
 package minicraft.screen;
 
 import minicraft.core.Game;
+import minicraft.core.io.ControllerHandler;
 import minicraft.core.io.InputHandler;
 import minicraft.entity.ItemHolder;
 import minicraft.entity.furniture.Chest;
@@ -43,10 +44,10 @@ public class ContainerDisplay extends Display {
 	private int getOtherIdx() { return (selection+1) % 2; }
 
 	@Override
-	public void tick(InputHandler input) {
-		super.tick(input);
+	public void tick(InputHandler input, ControllerHandler controlInput) {
+		super.tick(input, controlInput);
 
-		if(input.getKey("menu").clicked || chest.isRemoved()) {
+		if(input.isClicked("menu", controlInput) || chest.isRemoved()) {
 			Game.setDisplay(null);
 			return;
 		}
@@ -54,7 +55,7 @@ public class ContainerDisplay extends Display {
 		Menu curMenu = menus[selection];
 		int otherIdx = getOtherIdx();
 
-		if((input.getKey("attack").clicked) || input.getKey("shift-enter").clicked) {
+		if((input.isClicked("attack", controlInput)) || input.getKey("shift-enter").clicked) {
 			if (curMenu.getEntries().length == 0) return;
 			// switch inventories
 			Inventory from, to;
