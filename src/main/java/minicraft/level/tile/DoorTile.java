@@ -7,6 +7,8 @@ import minicraft.entity.mob.Mob;
 import minicraft.entity.mob.Player;
 import minicraft.gfx.Screen;
 import minicraft.gfx.Sprite;
+import minicraft.gfx.SpriteLinker.LinkedSpriteSheet;
+import minicraft.gfx.SpriteLinker.SpriteType;
 import minicraft.item.Item;
 import minicraft.item.Items;
 import minicraft.item.ToolItem;
@@ -14,35 +16,32 @@ import minicraft.level.Level;
 
 public class DoorTile extends Tile {
 	protected Material type;
-	private Sprite closedSprite;
-	private Sprite openSprite;
+	private LinkedSpriteSheet closedSprite;
+	private LinkedSpriteSheet openSprite;
 
 	protected DoorTile(Material type) {
-		super(type.name() + " Door", (Sprite) null);
+		super(type.name() + " Door", (LinkedSpriteSheet) null);
 		this.type = type;
 		switch (type) {
-			case Wood: {
-				closedSprite = new Sprite(5, 16, 2, 2, 1);
-				openSprite = new Sprite(3, 16, 2, 2, 1);
+			case Wood:
+				closedSprite = new LinkedSpriteSheet(SpriteType.Tile, "wood_door").setSpriteDim(2, 0, 2, 2);
+				openSprite = new LinkedSpriteSheet(SpriteType.Tile, "wood_door").setSpriteSize(2, 2);
 				break;
-			}
-			case Stone: {
-				closedSprite = new Sprite(15, 16, 2, 2, 1);
-				openSprite = new Sprite(13, 16, 2, 2, 1);
+			case Stone:
+				closedSprite = new LinkedSpriteSheet(SpriteType.Tile, "stone_door").setSpriteDim(2, 0, 2, 2);
+				openSprite = new LinkedSpriteSheet(SpriteType.Tile, "stone_door").setSpriteSize(2, 2);
 				break;
-			}
-			case Obsidian: {
-				closedSprite = new Sprite(25, 16, 2, 2, 1);
-				openSprite = new Sprite(23, 16, 2, 2, 1);
+			case Obsidian:
+				closedSprite = new LinkedSpriteSheet(SpriteType.Tile, "obsidian_door").setSpriteDim(2, 0, 2, 2);
+				openSprite = new LinkedSpriteSheet(SpriteType.Tile, "obsidian_door").setSpriteSize(2, 2);
 				break;
-			}
 		}
 		sprite = closedSprite;
 	}
 
 	public void render(Screen screen, Level level, int x, int y) {
 		boolean closed = level.getData(x, y) == 0;
-		Sprite curSprite = closed ? closedSprite : openSprite;
+		Sprite curSprite = (closed ? closedSprite : openSprite).getSpriteOrMissing(SpriteType.Tile);
 		curSprite.render(screen, x * 16, y * 16);
 	}
 

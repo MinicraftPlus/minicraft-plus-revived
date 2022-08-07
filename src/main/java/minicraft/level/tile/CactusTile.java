@@ -10,12 +10,13 @@ import minicraft.entity.particle.SmashParticle;
 import minicraft.entity.particle.TextParticle;
 import minicraft.gfx.Color;
 import minicraft.gfx.Screen;
-import minicraft.gfx.Sprite;
+import minicraft.gfx.SpriteLinker.LinkedSpriteSheet;
+import minicraft.gfx.SpriteLinker.SpriteType;
 import minicraft.item.Items;
 import minicraft.level.Level;
 
 public class CactusTile extends Tile {
-	private static Sprite sprite = new Sprite(6, 0, 2, 2, 1);
+	private static LinkedSpriteSheet sprite = new LinkedSpriteSheet(SpriteType.Tile, "cactus");
 
 	protected CactusTile(String name) {
 		super(name, sprite);
@@ -48,7 +49,7 @@ public class CactusTile extends Tile {
 	public void render(Screen screen, Level level, int x, int y) {
 		Tiles.get("Sand").render(screen, level, x, y);
 
-		sprite.render(screen, x << 4, y << 4);
+		sprite.getSpriteOrMissing(SpriteType.Tile).render(screen, x << 4, y << 4);
 	}
 
 	public void bumpedInto(Level level, int x, int y, Entity entity) {

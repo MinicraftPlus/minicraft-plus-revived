@@ -5,7 +5,8 @@ import minicraft.entity.Direction;
 import minicraft.entity.Entity;
 import minicraft.entity.mob.Player;
 import minicraft.gfx.ConnectorSprite;
-import minicraft.gfx.Sprite;
+import minicraft.gfx.SpriteLinker.LinkedSpriteSheet;
+import minicraft.gfx.SpriteLinker.SpriteType;
 import minicraft.item.Item;
 import minicraft.item.Items;
 import minicraft.item.ToolItem;
@@ -13,13 +14,14 @@ import minicraft.item.ToolType;
 import minicraft.level.Level;
 
 public class CloudTile extends Tile {
-	private static ConnectorSprite sprite = new ConnectorSprite(CloudTile.class, new Sprite(0, 22, 3, 3, 1, 3), new Sprite(3, 24, 2, 2, 1, 3), new Sprite(3, 22, 2, 2, 1))
+	private static ConnectorSprite sprite = new ConnectorSprite(CloudTile.class, new LinkedSpriteSheet(SpriteType.Tile, "cloud").setSpriteSize(3, 3).setMirror(3),
+		new LinkedSpriteSheet(SpriteType.Tile, "cloud").setSpriteDim(3, 2, 2, 2).setMirror(3), new LinkedSpriteSheet(SpriteType.Tile, "cloud").setSpriteDim(3, 0, 2, 2))
 	{
 		public boolean connectsTo(Tile tile, boolean isSide) {
 			return tile != Tiles.get("Infinite Fall");
 		}
 	};
-	
+
 	protected CloudTile(String name) {
 		super(name, sprite);
 	}

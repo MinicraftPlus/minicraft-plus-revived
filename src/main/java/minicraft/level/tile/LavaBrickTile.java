@@ -6,18 +6,17 @@ import minicraft.entity.Entity;
 import minicraft.entity.mob.Mob;
 import minicraft.entity.mob.Player;
 import minicraft.gfx.Sprite;
+import minicraft.gfx.SpriteLinker.SpriteType;
 import minicraft.item.Item;
 import minicraft.item.ToolItem;
 import minicraft.item.ToolType;
 import minicraft.level.Level;
 
 public class LavaBrickTile extends Tile {
-	private static Sprite sprite = new Sprite(19, 2, 2, 2, 1);
-	
 	protected LavaBrickTile(String name) {
-		super(name, sprite);
+		super(name, Sprite.missingTexture(SpriteType.Tile));
 	}
-	
+
 	public boolean interact(Level level, int xt, int yt, Player player, Item item, Direction attackDir) {
 		if (item instanceof ToolItem) {
 			ToolItem tool = (ToolItem) item;

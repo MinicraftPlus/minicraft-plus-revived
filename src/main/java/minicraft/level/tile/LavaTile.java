@@ -4,10 +4,12 @@ import minicraft.entity.Entity;
 import minicraft.gfx.ConnectorSprite;
 import minicraft.gfx.Screen;
 import minicraft.gfx.Sprite;
+import minicraft.gfx.SpriteLinker.LinkedSpriteSheet;
+import minicraft.gfx.SpriteLinker.SpriteType;
 import minicraft.level.Level;
 
 public class LavaTile extends Tile {
-	private ConnectorSprite sprite = new ConnectorSprite(LavaTile.class, new Sprite(12, 9, 3, 3, 1, 3), Sprite.dots(0))
+	private ConnectorSprite sprite = new ConnectorSprite(LavaTile.class, new LinkedSpriteSheet(SpriteType.Tile, "lava").setSpriteSize(2, 2).setMirror(3), null)
 	{
 		public boolean connectsTo(Tile tile, boolean isSide) {
 			return tile.connectsToFluid;
@@ -24,8 +26,8 @@ public class LavaTile extends Tile {
 	@Override
 	public void render(Screen screen, Level level, int x, int y) {
 		long seed = (tickCount + (x / 2 - y) * 4311) / 10 * 54687121l + x * 3271612l + y * 3412987161l;
-		sprite.full = Sprite.randomDots(seed, 1);
-		sprite.sparse.color = DirtTile.dCol(level.depth);
+		sprite.full = Sprite.randomTiles(seed, "lava");
+		sprite.sparse.setColor(DirtTile.dCol(level.depth));
 		sprite.render(screen, level, x, y);
 	}
 

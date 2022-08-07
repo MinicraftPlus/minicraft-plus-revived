@@ -6,7 +6,8 @@ import minicraft.entity.mob.Mob;
 import minicraft.entity.mob.Player;
 import minicraft.gfx.ConnectorSprite;
 import minicraft.gfx.Screen;
-import minicraft.gfx.Sprite;
+import minicraft.gfx.SpriteLinker.LinkedSpriteSheet;
+import minicraft.gfx.SpriteLinker.SpriteType;
 import minicraft.item.Item;
 import minicraft.item.Items;
 import minicraft.item.ToolItem;
@@ -14,8 +15,8 @@ import minicraft.item.ToolType;
 import minicraft.level.Level;
 
 public class FlowerTile extends Tile {
-	private static final Sprite flowerSprite = new Sprite(3, 8, 1);
-	
+	private static final LinkedSpriteSheet flowerSprite = new LinkedSpriteSheet(SpriteType.Tile, "grass").setSpriteDim(2, 3, 1, 1);
+
 	protected FlowerTile(String name) {
 		super(name, (ConnectorSprite)null);
 		connectsToGrass = true;
@@ -37,18 +38,18 @@ public class FlowerTile extends Tile {
 		}
 		return false;
 	}
-	
+
 	public void render(Screen screen, Level level, int x, int y) {
 		Tiles.get("Grass").render(screen, level, x, y);
-		
+
 		int data = level.getData(x, y);
 		int shape = (data / 16) % 2;
-		
+
 		x = x << 4;
 		y = y << 4;
-		
-		flowerSprite.render(screen, x + 8 * shape, y);
-		flowerSprite.render(screen, x + 8 * (shape == 0 ? 1 : 0), y + 8);
+
+		flowerSprite.getSpriteOrMissing(SpriteType.Tile).render(screen, x + 8 * shape, y);
+		flowerSprite.getSpriteOrMissing(SpriteType.Tile).render(screen, x + 8 * (shape == 0 ? 1 : 0), y + 8);
 	}
 
 	public boolean interact(Level level, int x, int y, Player player, Item item, Direction attackDir) {

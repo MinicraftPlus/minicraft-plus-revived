@@ -12,6 +12,8 @@ import minicraft.gfx.Color;
 import minicraft.gfx.ConnectorSprite;
 import minicraft.gfx.Screen;
 import minicraft.gfx.Sprite;
+import minicraft.gfx.SpriteLinker.LinkedSpriteSheet;
+import minicraft.gfx.SpriteLinker.SpriteType;
 import minicraft.item.Item;
 import minicraft.item.Items;
 import minicraft.item.ToolItem;
@@ -20,7 +22,8 @@ import minicraft.level.Level;
 
 public class HardRockTile extends Tile {
 	// Theoretically the full sprite should never be used, so we can use a placeholder
-	private static ConnectorSprite sprite = new ConnectorSprite(HardRockTile.class, new Sprite(18, 9, 3, 3, 1, 3), new Sprite(21, 10, 2, 2, 1, 3), Sprite.missingTexture(2, 2));
+	private static ConnectorSprite sprite = new ConnectorSprite(HardRockTile.class, new LinkedSpriteSheet(SpriteType.Tile, "hardrock")
+		.setSpriteSize(3, 3).setMirror(3), new LinkedSpriteSheet(SpriteType.Tile, "hardrock").setSpriteDim(3, 0, 2, 2).setMirror(3), Sprite.missingTexture(SpriteType.Tile));
 
 	protected HardRockTile(String name) {
 		super(name, sprite);
@@ -73,7 +76,7 @@ public class HardRockTile extends Tile {
 
 	@Override
 	public void render(Screen screen, Level level, int x, int y) {
-		sprite.sparse.color = DirtTile.dCol(level.depth);
+		sprite.sparse.setColor(DirtTile.dCol(level.depth));
 		super.render(screen, level, x, y);
 	}
 

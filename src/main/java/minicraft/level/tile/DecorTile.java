@@ -4,7 +4,8 @@ import minicraft.core.io.Sound;
 import minicraft.entity.Direction;
 import minicraft.entity.Entity;
 import minicraft.entity.mob.Player;
-import minicraft.gfx.Sprite;
+import minicraft.gfx.SpriteLinker.LinkedSpriteSheet;
+import minicraft.gfx.SpriteLinker.SpriteType;
 import minicraft.item.Item;
 import minicraft.item.Items;
 import minicraft.item.ToolItem;
@@ -12,17 +13,16 @@ import minicraft.level.Level;
 
 public class DecorTile extends Tile {
 	protected Material type;
-	private Sprite sprite;
 
 	protected DecorTile(Material type) {
-		super((type == Material.Obsidian ? "Ornate Obsidian" : type == Material.Stone ? "Ornate Stone" : "Decorated " + type.name()), (Sprite) null);
+		super((type == Material.Obsidian ? "Ornate Obsidian" : type == Material.Stone ? "Ornate Stone" : "Decorated " + type.name()), (LinkedSpriteSheet) null);
 		this.type = type;
 		maySpawn = true;
 		switch (type) {
-			case Stone: sprite = new Sprite(17,16,2,2,1,0); break;
-			case Obsidian: sprite = new Sprite(27,16,2,2,1,0); break;
+			case Stone: sprite = new LinkedSpriteSheet(SpriteType.Tile, "ornate_stone"); break;
+			case Obsidian: sprite = new LinkedSpriteSheet(SpriteType.Tile, "ornate_obsidian"); break;
+			default: break;
 		}
-		super.sprite = sprite;
 	}
 
 	public boolean interact(Level level, int xt, int yt, Player player, Item item, Direction attackDir) {

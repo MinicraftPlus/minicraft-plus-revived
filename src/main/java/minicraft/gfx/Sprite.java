@@ -27,10 +27,14 @@ public class Sprite {
 		}
 	}
 
-	// public static Sprite randomDots(long seed, int offset) { TODO
-	// 	ran.setSeed(seed);
-	// 	return ConnectorSprite.makeSprite(2, 2, ran.nextInt(4), 1, false, (2 + ran.nextInt(4)) + offset * 32, (2 + ran.nextInt(4)) + offset * 32, (2 + ran.nextInt(4)) + offset * 32, (2 + ran.nextInt(4)) + offset * 32);
-	// }
+	public static LinkedSpriteSheet randomTiles(long seed, String key) {
+		ran.setSeed(seed);
+		return new LinkedSpriteSheet(SpriteType.Tile, key).setSpriteDim(ran.nextInt(4), 3, 1, 1).setOnePixel(true).setMirrors(
+			new int[][]{new int[]{2 + ran.nextInt(4), 0}, new int[]{2 + ran.nextInt(4), 0}, new int[]{2 + ran.nextInt(4), 0}, new int[]{2 + ran.nextInt(4), 0}}
+		);
+		// return ConnectorSprite.makeSprite(2, 2, ran.nextInt(4), sheet, false, new int[]{2 + ran.nextInt(4), 0}, new int[]{2 + ran.nextInt(4), 0},
+		// 	new int[]{2 + ran.nextInt(4), 0}, new int[]{2 + ran.nextInt(4), 0});
+	}
 
 	protected Px[][] spritePixels;
 	public int color = -1;

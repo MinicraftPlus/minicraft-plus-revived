@@ -9,7 +9,8 @@ import minicraft.entity.mob.Mob;
 import minicraft.entity.mob.Player;
 import minicraft.gfx.ConnectorSprite;
 import minicraft.gfx.Screen;
-import minicraft.gfx.Sprite;
+import minicraft.gfx.SpriteLinker.LinkedSpriteSheet;
+import minicraft.gfx.SpriteLinker.SpriteType;
 import minicraft.item.Item;
 import minicraft.item.ToolType;
 import minicraft.level.Level;
@@ -48,7 +49,7 @@ public abstract class Tile {
 	public int light;
 	protected boolean maySpawn;
 
-	protected Sprite sprite;
+	protected LinkedSpriteSheet sprite;
 	protected ConnectorSprite csprite;
 
 	{
@@ -58,7 +59,7 @@ public abstract class Tile {
 		csprite = null;
 	}
 
-	protected Tile(String name, Sprite sprite) {
+	protected Tile(String name, LinkedSpriteSheet sprite) {
 		this.name = name.toUpperCase();
 		this.sprite = sprite;
 	}
@@ -78,7 +79,7 @@ public abstract class Tile {
 	/** Render method, used in sub-classes */
 	public void render(Screen screen, Level level, int x, int y) {
 		if (sprite != null)
-			sprite.render(screen, x << 4, y << 4);
+			sprite.getSpriteOrMissing(SpriteType.Tile).render(screen, x << 4, y << 4);
 		if (csprite != null)
 			csprite.render(screen, level, x, y);
 	}

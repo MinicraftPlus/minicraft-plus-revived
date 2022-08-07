@@ -11,7 +11,8 @@ import minicraft.entity.particle.SmashParticle;
 import minicraft.entity.particle.TextParticle;
 import minicraft.gfx.Color;
 import minicraft.gfx.ConnectorSprite;
-import minicraft.gfx.Sprite;
+import minicraft.gfx.SpriteLinker.LinkedSpriteSheet;
+import minicraft.gfx.SpriteLinker.SpriteType;
 import minicraft.item.Item;
 import minicraft.item.Items;
 import minicraft.item.ToolItem;
@@ -21,17 +22,18 @@ public class WallTile extends Tile {
 
 	private static final String obrickMsg = "minicraft.notification.defeat_air_wizard_first";
 	protected Material type;
-	private ConnectorSprite sprite;
 
 	protected WallTile(Material type) {
 		super(type.name() + " Wall", (ConnectorSprite) null);
 		this.type = type;
 		switch (type) {
-			case Wood: sprite = new ConnectorSprite(WallTile.class, new Sprite(0, 14, 3, 3, 1, 3), new Sprite(3, 14, 2, 2, 1, 3), new Sprite(1, 15, 2, 2, 1, 0, true)); break;
-			case Stone: sprite = new ConnectorSprite(WallTile.class, new Sprite(10, 14, 3, 3, 1, 3), new Sprite(13, 14, 2, 2, 1, 3), new Sprite(11, 15, 2, 2, 1, 0, true)); break;
-			case Obsidian: sprite = new ConnectorSprite(WallTile.class, new Sprite(20, 14, 3, 3, 1, 3), new Sprite(23, 14, 2, 2, 1, 3), new Sprite(21, 15, 2, 2, 1, 0, true)); break;
+			case Wood: csprite = new ConnectorSprite(WallTile.class, new LinkedSpriteSheet(SpriteType.Tile , "wood_wall").setSpriteSize(3, 3).setMirror(3),
+				new LinkedSpriteSheet(SpriteType.Tile , "wood_wall").setSpriteDim(3, 0, 2, 2).setMirror(3), new LinkedSpriteSheet(SpriteType.Tile , "wood_wall").setSpriteDim(1, 1, 2, 2).setOnePixel(true)); break;
+			case Stone: csprite = new ConnectorSprite(WallTile.class, new LinkedSpriteSheet(SpriteType.Tile , "stone_wall").setSpriteSize(3, 3).setMirror(3),
+				new LinkedSpriteSheet(SpriteType.Tile , "stone_wall").setSpriteDim(3, 0, 2, 2).setMirror(3), new LinkedSpriteSheet(SpriteType.Tile , "stone_wall").setSpriteDim(1, 1, 2, 2).setOnePixel(true)); break;
+			case Obsidian: csprite = new ConnectorSprite(WallTile.class, new LinkedSpriteSheet(SpriteType.Tile , "obsidian_wall").setSpriteSize(3, 3).setMirror(3),
+				new LinkedSpriteSheet(SpriteType.Tile , "obsidian_wall").setSpriteDim(3, 0, 2, 2).setMirror(3), new LinkedSpriteSheet(SpriteType.Tile , "obsidian_wall").setSpriteDim(1, 1, 2, 2).setOnePixel(true)); break;
 		}
-		csprite = sprite;
 	}
 
 	public boolean mayPass(Level level, int x, int y, Entity e) {

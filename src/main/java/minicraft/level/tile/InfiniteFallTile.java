@@ -6,13 +6,13 @@ import minicraft.entity.Entity;
 import minicraft.entity.mob.AirWizard;
 import minicraft.entity.mob.Player;
 import minicraft.gfx.Screen;
-import minicraft.gfx.Sprite;
+import minicraft.gfx.SpriteLinker.LinkedSpriteSheet;
 import minicraft.level.Level;
 
 public class InfiniteFallTile extends Tile {
 
 	protected InfiniteFallTile(String name) {
-		super(name, (Sprite)null);
+		super(name, (LinkedSpriteSheet)null);
 	}
 
 	@Override

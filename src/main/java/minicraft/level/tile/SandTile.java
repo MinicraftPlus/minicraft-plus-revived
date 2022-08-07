@@ -7,7 +7,8 @@ import minicraft.entity.mob.Mob;
 import minicraft.entity.mob.Player;
 import minicraft.gfx.ConnectorSprite;
 import minicraft.gfx.Screen;
-import minicraft.gfx.Sprite;
+import minicraft.gfx.SpriteLinker.LinkedSpriteSheet;
+import minicraft.gfx.SpriteLinker.SpriteType;
 import minicraft.item.Item;
 import minicraft.item.Items;
 import minicraft.item.ToolItem;
@@ -15,39 +16,32 @@ import minicraft.item.ToolType;
 import minicraft.level.Level;
 
 public class SandTile extends Tile {
-	static Sprite steppedOn, normal = new Sprite(9, 6, 2, 2, 1);
-	static {
-		Sprite.Px[][] pixels = new Sprite.Px[2][2];
-		pixels[0][0] = new Sprite.Px(9, 8, 0, 1);
-		pixels[0][1] = new Sprite.Px(10, 6, 0, 1);
-		pixels[1][0] = new Sprite.Px(9, 7, 0, 1);
-		pixels[1][1] = new Sprite.Px(9, 8, 0, 1);
-		steppedOn = new Sprite(pixels);
-	}
-	
-	private ConnectorSprite sprite = new ConnectorSprite(SandTile.class, new Sprite(6, 6, 3, 3, 1, 3), normal)
+	static LinkedSpriteSheet steppedOn = new LinkedSpriteSheet(SpriteType.Tile, "sand_stepped"),
+	normal = new LinkedSpriteSheet(SpriteType.Tile, "sand").setSpriteDim(3, 0, 2, 2);
+
+	private ConnectorSprite sprite = new ConnectorSprite(SandTile.class, new LinkedSpriteSheet(SpriteType.Tile, "sand").setSpriteSize(3, 3).setMirror(3), normal)
 	{
 		public boolean connectsTo(Tile tile, boolean isSide) {
 			if(!isSide) return true;
 			return tile.connectsToSand;
 		}
 	};
-	
+
 	protected SandTile(String name) {
 		super(name, (ConnectorSprite)null);
 		csprite = sprite;
 		connectsToSand = true;
 		maySpawn = true;
 	}
-	
+
 	public void render(Screen screen, Level level, int x, int y) {
 		boolean steppedOn = level.getData(x, y) > 0;
-		
+
 		if(steppedOn) csprite.full = SandTile.steppedOn;
 		else csprite.full = SandTile.normal;
 
-		csprite.sparse.color = DirtTile.dCol(level.depth);
-		
+		csprite.sparse.setColor(DirtTile.dCol(level.depth));
+
 		csprite.render(screen, level, x, y);
 	}
 

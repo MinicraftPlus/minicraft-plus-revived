@@ -5,7 +5,8 @@ import minicraft.entity.Direction;
 import minicraft.entity.mob.Player;
 import minicraft.gfx.ConnectorSprite;
 import minicraft.gfx.Screen;
-import minicraft.gfx.Sprite;
+import minicraft.gfx.SpriteLinker.LinkedSpriteSheet;
+import minicraft.gfx.SpriteLinker.SpriteType;
 import minicraft.item.Item;
 import minicraft.item.Items;
 import minicraft.item.ToolItem;
@@ -13,14 +14,15 @@ import minicraft.item.ToolType;
 import minicraft.level.Level;
 
 public class GrassTile extends Tile {
-	private static ConnectorSprite sprite = new ConnectorSprite(GrassTile.class, new Sprite(0, 6, 3, 3, 1, 3), new Sprite(3, 6, 2, 2, 1))
+	private static ConnectorSprite sprite = new ConnectorSprite(GrassTile.class,
+		new LinkedSpriteSheet(SpriteType.Tile, "grass").setSpriteSize(3, 3).setMirror(3), new LinkedSpriteSheet(SpriteType.Tile, "grass").setSpriteDim(3, 0, 2, 2))
 	{
 		public boolean connectsTo(Tile tile, boolean isSide) {
 			if(!isSide) return true;
 			return tile.connectsToGrass;
 		}
 	};
-	
+
 	protected GrassTile(String name) {
 		super(name, sprite);
 		csprite.sides = csprite.sparse;
@@ -31,10 +33,10 @@ public class GrassTile extends Tile {
 	public boolean tick(Level level, int xt, int yt) {
 		// TODO revise this method.
 		if (random.nextInt(40) != 0) return false;
-		
+
 		int xn = xt;
 		int yn = yt;
-		
+
 		if (random.nextBoolean()) xn += random.nextInt(2) * 2 - 1;
 		else yn += random.nextInt(2) * 2 - 1;
 
@@ -46,7 +48,7 @@ public class GrassTile extends Tile {
 
 	@Override
 	public void render(Screen screen, Level level, int x, int y) {
-		sprite.sparse.color = DirtTile.dCol(level.depth);
+		sprite.sparse.setColor(DirtTile.dCol(level.depth));
 		sprite.render(screen, level, x, y);
 	}
 

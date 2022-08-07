@@ -5,7 +5,8 @@ import minicraft.entity.Direction;
 import minicraft.entity.mob.Player;
 import minicraft.gfx.Color;
 import minicraft.gfx.Screen;
-import minicraft.gfx.Sprite;
+import minicraft.gfx.SpriteLinker.LinkedSpriteSheet;
+import minicraft.gfx.SpriteLinker.SpriteType;
 import minicraft.item.Item;
 import minicraft.item.Items;
 import minicraft.item.ToolItem;
@@ -13,13 +14,12 @@ import minicraft.item.ToolType;
 import minicraft.level.Level;
 
 public class DirtTile extends Tile {
-	private static Sprite[] levelSprite = new Sprite[4];
-	static {
-		levelSprite[0] = new Sprite(12, 2, 2, 2, 1);
-		levelSprite[1] = new Sprite(14, 2, 2, 2, 1);
-		levelSprite[2] = new Sprite(12, 4, 2, 2, 1);
-	}
-	
+	private static LinkedSpriteSheet[] levelSprite = new LinkedSpriteSheet[] {
+		new LinkedSpriteSheet(SpriteType.Tile, "dirt"),
+		new LinkedSpriteSheet(SpriteType.Tile, "gray_dirt"),
+		new LinkedSpriteSheet(SpriteType.Tile, "purple_dirt")
+	};
+
 	protected DirtTile(String name) {
 		super(name, levelSprite[0]);
 		maySpawn = true;
@@ -41,11 +41,11 @@ public class DirtTile extends Tile {
 			default: return 1; // Caves
 		}
 	}
-	
+
 	public void render(Screen screen, Level level, int x, int y) {
-		levelSprite[dIdx(level.depth)].render(screen, x * 16, y * 16, 0);
+		levelSprite[dIdx(level.depth)].getSpriteOrMissing(SpriteType.Tile).render(screen, x * 16, y * 16, 0);
 	}
-	
+
 	public boolean interact(Level level, int xt, int yt, Player player, Item item, Direction attackDir) {
 		if (item instanceof ToolItem) {
 			ToolItem tool = (ToolItem) item;

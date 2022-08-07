@@ -10,7 +10,8 @@ import minicraft.entity.particle.SmashParticle;
 import minicraft.entity.particle.TextParticle;
 import minicraft.gfx.Color;
 import minicraft.gfx.Screen;
-import minicraft.gfx.Sprite;
+import minicraft.gfx.SpriteLinker.LinkedSpriteSheet;
+import minicraft.gfx.SpriteLinker.SpriteType;
 import minicraft.item.Item;
 import minicraft.item.Items;
 import minicraft.item.ToolItem;
@@ -23,18 +24,18 @@ public class OreTile extends Tile {
 	private final OreType type;
 
 	public enum OreType {
-        Iron (Items.get("Iron Ore"), 0),
-		Lapis (Items.get("Lapis"), 2),
-		Gold (Items.get("Gold Ore"), 4),
-		Gem (Items.get("Gem"), 6),
-		Cloud (Items.get("Cloud Ore"), 8);
+        Iron (Items.get("Iron Ore"), new LinkedSpriteSheet(SpriteType.Tile, "iron_ore")),
+		Lapis (Items.get("Lapis"), new LinkedSpriteSheet(SpriteType.Tile, "lapis_ore")),
+		Gold (Items.get("Gold Ore"), new LinkedSpriteSheet(SpriteType.Tile, "gold_ore")),
+		Gem (Items.get("Gem"), new LinkedSpriteSheet(SpriteType.Tile, "gem_ore")),
+		Cloud (Items.get("Cloud Ore"), new LinkedSpriteSheet(SpriteType.Tile, "cloud_ore"));
 
 		private final Item drop;
-		public final int color;
+		public final LinkedSpriteSheet sheet;
 
-		OreType(Item drop, int color) {
+		OreType(Item drop, LinkedSpriteSheet sheet) {
 			this.drop = drop;
-			this.color = color;
+			this.sheet = sheet;
 		}
 
 		private Item getOre() {
@@ -43,13 +44,13 @@ public class OreTile extends Tile {
     }
 
 	protected OreTile(OreType o) {
-		super((o == OreTile.OreType.Lapis ? "Lapis" : o == OreType.Cloud ? "Cloud Cactus" : o.name() + " Ore"), new Sprite(22 + o.color, 2, 2, 2, 1));
+		super((o == OreTile.OreType.Lapis ? "Lapis" : o == OreType.Cloud ? "Cloud Cactus" : o.name() + " Ore"), o.sheet);
         this.type = o;
 	}
 
 	public void render(Screen screen, Level level, int x, int y) {
-		sprite.color = DirtTile.dCol(level.depth);
-		sprite.render(screen, x * 16, y * 16);
+		sprite.setColor(DirtTile.dCol(level.depth));
+		sprite.getSpriteOrMissing(SpriteType.Tile).render(screen, x * 16, y * 16);
 	}
 
 	public boolean mayPass(Level level, int x, int y, Entity e) {

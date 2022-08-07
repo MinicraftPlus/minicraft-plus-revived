@@ -1,6 +1,7 @@
 package minicraft.level.tile;
 
 import minicraft.core.Game;
+import minicraft.core.Renderer;
 import minicraft.core.io.Sound;
 import minicraft.entity.Direction;
 import minicraft.entity.Entity;
@@ -11,6 +12,8 @@ import minicraft.entity.particle.TextParticle;
 import minicraft.gfx.Color;
 import minicraft.gfx.ConnectorSprite;
 import minicraft.gfx.Screen;
+import minicraft.gfx.SpriteSheet;
+import minicraft.gfx.SpriteLinker.SpriteType;
 import minicraft.item.Item;
 import minicraft.item.Items;
 import minicraft.item.ToolItem;
@@ -38,25 +41,30 @@ public class TreeTile extends Tile {
 		boolean dl = level.getTile(x - 1, y + 1) == this;
 		boolean dr = level.getTile(x + 1, y + 1) == this;
 
+		SpriteSheet sprite = Renderer.spriteLinker.getSpriteSheet(SpriteType.Tile, "tree");
+
 		if (u && ul && l) {
-			screen.render(x * 16 + 0, y * 16 + 0, 1 + 1 * 32, 0, 1);
+			screen.render(x * 16 + 0, y * 16 + 0, 1, 1, 0, sprite);
 		} else {
-			screen.render(x * 16 + 0, y * 16 + 0, 0 + 0 * 32, 0, 1);
+			screen.render(x * 16 + 0, y * 16 + 0, 0, 0, 0, sprite);
 		}
+
 		if (u && ur && r) {
-			screen.render(x * 16 + 8, y * 16 + 0, 1 + 2 * 32, 0, 1);
+			screen.render(x * 16 + 8, y * 16 + 0, 1, 2, 0, sprite);
 		} else {
-			screen.render(x * 16 + 8, y * 16 + 0, 1 + 0 * 32, 0, 1);
+			screen.render(x * 16 + 8, y * 16 + 0, 1, 0, 0, sprite);
 		}
+
 		if (d && dl && l) {
-			screen.render(x * 16 + 0, y * 16 + 8, 1 + 2 * 32, 0, 1);
+			screen.render(x * 16 + 0, y * 16 + 8, 1, 2, 0, sprite);
 		} else {
-			screen.render(x * 16 + 0, y * 16 + 8, 0 + 1 * 32, 0, 1);
+			screen.render(x * 16 + 0, y * 16 + 8, 0, 1, 0, sprite);
 		}
+
 		if (d && dr && r) {
-			screen.render(x * 16 + 8, y * 16 + 8, 1 + 1 * 32, 0, 1);
+			screen.render(x * 16 + 8, y * 16 + 8, 1, 1, 0, sprite);
 		} else {
-			screen.render(x * 16 + 8, y * 16 + 8, 1 + 3 * 32, 0, 1);
+			screen.render(x * 16 + 8, y * 16 + 8, 1, 3, 0, sprite);
 		}
 	}
 
