@@ -73,8 +73,8 @@ public abstract class Mob extends Entity {
 	private boolean move(int xd, int yd, boolean changeDir) { // Knockback shouldn't change mob direction
 		if (level == null) return false; // Stopped b/c there's no level to move in!
 
-		int oldxt = x >> 4;
-		int oldyt = y >> 4;
+		//int oldxt = x >> 4; // Unused
+		//int oldyt = y >> 4; // Unused
 
 		// These should return true b/c the mob is still technically moving; these are just to make it move *slower*.
 		if (tickTime % 2 == 0 && (isSwimming() || (!(this instanceof Player) && isWooling())))

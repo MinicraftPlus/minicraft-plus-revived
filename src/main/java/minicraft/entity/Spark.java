@@ -75,8 +75,8 @@ public class Spark extends Entity {
 		}
 		
 		
-		int xt = 8;
-		int yt = 13;
+		//int xt = 8; // Unused
+		//int yt = 13; // Unused
 
 		screen.render(x - 4, y - 4 + 2, 8 + 24 * 32, randmirror, 2, -1, false, Color.BLACK); // renders the shadow on the ground
 		screen.render(x - 4, y - 4 - 2, 8 + 24 * 32, randmirror, 2); // Renders the spark

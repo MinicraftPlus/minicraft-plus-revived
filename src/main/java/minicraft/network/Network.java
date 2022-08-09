@@ -17,7 +17,6 @@ import minicraft.level.Level;
 import minicraft.util.Logging;
 
 import org.json.JSONObject;
-import org.tinylog.Logger;
 
 public class Network extends Game {
 	private Network() {}

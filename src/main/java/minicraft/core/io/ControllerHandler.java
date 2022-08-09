@@ -2,7 +2,6 @@ package minicraft.core.io;
 
 import com.studiohartman.jamepad.*;
 import minicraft.util.Logging;
-import org.tinylog.Logger;
 
 import java.util.HashMap;
 

@@ -13,7 +13,6 @@ import minicraft.gfx.Ellipsis.SequentialEllipsis;
 import minicraft.gfx.Font;
 import minicraft.gfx.FontStyle;
 import minicraft.gfx.Screen;
-import org.tinylog.Logger;
 
 /** @deprecated As multiplayer mode removed. This class is not localized. */
 @Deprecated
