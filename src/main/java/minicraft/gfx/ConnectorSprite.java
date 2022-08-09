@@ -1,7 +1,6 @@
 package minicraft.gfx;
 
 import minicraft.gfx.SpriteLinker.LinkedSpriteSheet;
-import minicraft.gfx.SpriteLinker.SpriteType;
 import minicraft.level.Level;
 import minicraft.level.tile.ConnectTile;
 import minicraft.level.tile.Tile;
@@ -60,31 +59,31 @@ public class ConnectorSprite {
 
 
 		if (u && l) {
-			if (ul || !checkCorners) full.getSpriteOrMissing(SpriteType.Tile).renderPixel(1, 1, screen, x, y);
-			else sides.getSpriteOrMissing(SpriteType.Tile).renderPixel(0, 0, screen, x, y);
+			if (ul || !checkCorners) full.getSprite().renderPixel(1, 1, screen, x, y);
+			else sides.getSprite().renderPixel(0, 0, screen, x, y);
 		} else
-			sparse.getSpriteOrMissing(SpriteType.Tile).renderPixel(l ? 1 : 2, u ? 1 : 2, screen, x, y);
+			sparse.getSprite().renderPixel(l ? 1 : 2, u ? 1 : 2, screen, x, y);
 
 
 		if (u && r) {
-			if (ur || !checkCorners) full.getSpriteOrMissing(SpriteType.Tile).renderPixel(0, 1, screen, x + 8, y);
-			else sides.getSpriteOrMissing(SpriteType.Tile).renderPixel(1, 0, screen, x + 8, y);
+			if (ur || !checkCorners) full.getSprite().renderPixel(0, 1, screen, x + 8, y);
+			else sides.getSprite().renderPixel(1, 0, screen, x + 8, y);
 		} else
-			sparse.getSpriteOrMissing(SpriteType.Tile).renderPixel(r ? 1 : 0, u ? 1 : 2, screen, x + 8, y);
+			sparse.getSprite().renderPixel(r ? 1 : 0, u ? 1 : 2, screen, x + 8, y);
 
 
 		if (d && l) {
-			if (dl || !checkCorners) full.getSpriteOrMissing(SpriteType.Tile).renderPixel(1, 0, screen, x, y + 8);
-			else sides.getSpriteOrMissing(SpriteType.Tile).renderPixel(0, 1, screen, x, y + 8);
+			if (dl || !checkCorners) full.getSprite().renderPixel(1, 0, screen, x, y + 8);
+			else sides.getSprite().renderPixel(0, 1, screen, x, y + 8);
 		} else
-			sparse.getSpriteOrMissing(SpriteType.Tile).renderPixel(l ? 1 : 2, d ? 1 : 0, screen, x, y + 8);
+			sparse.getSprite().renderPixel(l ? 1 : 2, d ? 1 : 0, screen, x, y + 8);
 
 
 		if (d && r) {
-			if (dr || !checkCorners) full.getSpriteOrMissing(SpriteType.Tile).renderPixel(0, 0, screen, x + 8, y + 8);
-			else sides.getSpriteOrMissing(SpriteType.Tile).renderPixel(1, 1, screen, x + 8, y + 8);
+			if (dr || !checkCorners) full.getSprite().renderPixel(0, 0, screen, x + 8, y + 8);
+			else sides.getSprite().renderPixel(1, 1, screen, x + 8, y + 8);
 		} else
-			sparse.getSpriteOrMissing(SpriteType.Tile).renderPixel(r ? 1 : 0, d ? 1 : 0, screen, x + 8, y + 8);
+			sparse.getSprite().renderPixel(r ? 1 : 0, d ? 1 : 0, screen, x + 8, y + 8);
 
 	}
 

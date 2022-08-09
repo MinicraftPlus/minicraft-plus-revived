@@ -50,7 +50,7 @@ public class OreTile extends Tile {
 
 	public void render(Screen screen, Level level, int x, int y) {
 		sprite.setColor(DirtTile.dCol(level.depth));
-		sprite.getSpriteOrMissing(SpriteType.Tile).render(screen, x * 16, y * 16);
+		sprite.getSprite().render(screen, x * 16, y * 16);
 	}
 
 	public boolean mayPass(Level level, int x, int y, Entity e) {

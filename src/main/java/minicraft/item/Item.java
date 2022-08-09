@@ -32,7 +32,7 @@ public abstract class Item {
 	/** Renders an item on the HUD */
 	public void renderHUD(Screen screen, int x, int y, int fontColor) {
 		String dispName = getDisplayName();
-		sprite.getSpriteOrMissing(SpriteType.Item).render(screen, x, y);
+		sprite.getSprite().render(screen, x, y);
 		Font.drawBackground(dispName, screen, x + 8, y, fontColor);
 	}
 

@@ -1,11 +1,9 @@
 package minicraft.screen;
 
-import com.studiohartman.jamepad.ControllerButton;
 import minicraft.core.Game;
 import minicraft.core.io.ControllerHandler;
 import minicraft.core.io.InputHandler;
 import minicraft.core.io.Localization;
-import minicraft.entity.ItemHolder;
 import minicraft.entity.mob.Player;
 import minicraft.gfx.Color;
 import minicraft.gfx.Font;

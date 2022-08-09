@@ -4,14 +4,10 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Map.Entry;
 
 import minicraft.core.io.ControllerHandler;
 import org.json.JSONArray;
 import org.json.JSONObject;
-import org.tinylog.Logger;
 
 import minicraft.core.Game;
 import minicraft.core.World;

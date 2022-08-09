@@ -48,8 +48,8 @@ public class FlowerTile extends Tile {
 		x = x << 4;
 		y = y << 4;
 
-		flowerSprite.getSpriteOrMissing(SpriteType.Tile).render(screen, x + 8 * shape, y);
-		flowerSprite.getSpriteOrMissing(SpriteType.Tile).render(screen, x + 8 * (shape == 0 ? 1 : 0), y + 8);
+		flowerSprite.getSprite().render(screen, x + 8 * shape, y);
+		flowerSprite.getSprite().render(screen, x + 8 * (shape == 0 ? 1 : 0), y + 8);
 	}
 
 	public boolean interact(Level level, int x, int y, Player player, Item item, Direction attackDir) {

@@ -24,7 +24,7 @@ public class StairsTile extends Tile {
 
 	@Override
 	public void render(Screen screen, Level level, int x, int y) {
-		sprite.getSpriteOrMissing(SpriteType.Tile).render(screen, x * 16, y * 16, 0, DirtTile.dCol(level.depth));
+		sprite.getSprite().render(screen, x * 16, y * 16, 0, DirtTile.dCol(level.depth));
 	}
 
 	public boolean mayPass(Level level, int x, int y, Entity e) {

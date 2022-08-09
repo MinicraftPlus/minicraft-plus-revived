@@ -6,7 +6,6 @@ import minicraft.entity.Entity;
 import minicraft.entity.mob.Player;
 import minicraft.gfx.Screen;
 import minicraft.gfx.SpriteLinker.LinkedSpriteSheet;
-import minicraft.gfx.SpriteLinker.SpriteType;
 import minicraft.item.FurnitureItem;
 import minicraft.item.Item;
 import minicraft.item.PowerGloveItem;
@@ -69,7 +68,7 @@ public class Furniture extends Entity {
 	}
 
 	/** Draws the furniture on the screen. */
-	public void render(Screen screen) { sprite.getSpriteOrMissing(SpriteType.Entity).render(screen, x-8, y-8); }
+	public void render(Screen screen) { sprite.getSprite().render(screen, x-8, y-8); }
 
 	/** Called when the player presses the MENU key in front of this. */
 	public boolean use(Player player) { return false; }

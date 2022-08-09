@@ -184,14 +184,14 @@ public class Localization {
 		// Find path of the selected language, and check for errors.
 		String location = localizationFiles.get(locale);
 		if (location == null) {
-			CrashHandler.errorHandle(new NullPointerException(), new CrashHandler.ErrorInfo("Localization Not Found", CrashHandler.ErrorInfo.ErrorType.HANDLED, String.format("Could not find locale with name: {}.", locale.toLanguageTag())));
+			CrashHandler.errorHandle(new NullPointerException(), new CrashHandler.ErrorInfo("Localization Not Found", CrashHandler.ErrorInfo.ErrorType.HANDLED, String.format("Could not find locale with name: %s.", locale.toLanguageTag())));
 			return "";
 		}
 
 		// Load an InputStream from the location provided, and check for errors.
 		// Using getResourceAsStream since we're publishing this as a jar file.
 		InputStream locStream = null;
-		if (location.startsWith("/resources")) {
+		if (location.startsWith("/assets")) {
 			locStream = Game.class.getResourceAsStream(location);
 		} else {
 			try {
@@ -247,9 +247,9 @@ public class Localization {
 					}
 					reads++;
 					String name = e.getName();
-					if (name.startsWith("resources/localization/") && name.endsWith(".json")) {
+					if (name.startsWith("assets/localization/") && name.endsWith(".json")) {
 						try {
-							String data = name.replace("resources/localization/", "").replace(".json", "");
+							String data = name.replace("assets/localization/", "").replace(".json", "");
 							Locale lang = Locale.forLanguageTag(data.substring(data.indexOf('_')+1));
 
 							localizationFiles.put(lang, '/' + name);
@@ -275,7 +275,7 @@ public class Localization {
 	 */
 	private static void getDefaultLocalizationFilesUsingIDE() {
 		try {
-			URL fUrl = Game.class.getResource("/resources/localization/");
+			URL fUrl = Game.class.getResource("/assets/localization/");
 			if (fUrl == null) {
 				Logging.RESOURCEHANDLER_LOCALIZATION.error("Could not find localization folder.");
 				return;
@@ -289,7 +289,7 @@ public class Localization {
 					String data = filename.replace(".json", "");
 					Locale lang = Locale.forLanguageTag(data.substring(data.indexOf('_') + 1));
 
-					localizationFiles.put(lang, "/resources/localization/" + filename);
+					localizationFiles.put(lang, "/assets/localization/" + filename);
 				} catch (StringIndexOutOfBoundsException e) {
 					Logging.RESOURCEHANDLER_LOCALIZATION.error("Could not load localization file with path: {}", p);
 				}

@@ -4,7 +4,6 @@ import java.util.List;
 
 import minicraft.core.io.InputHandler;
 import minicraft.gfx.Screen;
-import minicraft.gfx.SpriteLinker.SpriteType;
 import minicraft.item.Item;
 
 public class ItemEntry extends ListEntry {
@@ -28,7 +27,7 @@ public class ItemEntry extends ListEntry {
 	@Override
 	public void render(Screen screen, int x, int y, boolean isSelected) {
 		super.render(screen, x, y, true);
-		item.sprite.getSpriteOrMissing(SpriteType.Item).render(screen, x, y);
+		item.sprite.getSprite().render(screen, x, y);
 	}
 
 	// If you add to the length of the string, and therefore the width of the entry, then it will actually move the entry RIGHT in the inventory, instead of the intended left, because it is auto-positioned to the left side.

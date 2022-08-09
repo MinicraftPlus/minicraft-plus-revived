@@ -1,6 +1,5 @@
 package minicraft.entity.mob;
 
-import com.studiohartman.jamepad.ControllerButton;
 import minicraft.core.Game;
 import minicraft.core.Updater;
 import minicraft.core.World;
@@ -812,28 +811,28 @@ public class Player extends Mob implements ItemHolder, ClientTickable {
 					screen.render(xo + 0, yo - 4, 3, 0, 0, hudSheet.getSheet()); // Render left half-slash
 					screen.render(xo + 8, yo - 4, 3, 0, 1, hudSheet.getSheet()); // Render right half-slash (mirror of left).
 					if (attackItem != null && !(attackItem instanceof PowerGloveItem)) { // If the player had an item when they last attacked...
-						attackItem.sprite.getSpriteOrMissing(SpriteType.Item).render(screen, xo + 4, yo - 4, 1); // Then render the icon of the item, mirrored
+						attackItem.sprite.getSprite().render(screen, xo + 4, yo - 4, 1); // Then render the icon of the item, mirrored
 					}
 					break;
 				case LEFT:  // Attacking to the left... (Same as above)
 					screen.render(xo - 4, yo, 4, 0, 1, hudSheet.getSheet());
 					screen.render(xo - 4, yo + 8, 4, 0, 3, hudSheet.getSheet());
 					if (attackItem != null && !(attackItem instanceof PowerGloveItem)) {
-						attackItem.sprite.getSpriteOrMissing(SpriteType.Item).render(screen, xo - 4, yo + 4, 1);
+						attackItem.sprite.getSprite().render(screen, xo - 4, yo + 4, 1);
 					}
 					break;
 				case RIGHT:  // Attacking to the right (Same as above)
 					screen.render(xo + 8 + 4, yo, 4, 2, 0, hudSheet.getSheet());
 					screen.render(xo + 8 + 4, yo + 8, 4, 2, 2, hudSheet.getSheet());
 					if (attackItem != null && !(attackItem instanceof PowerGloveItem)) {
-						attackItem.sprite.getSpriteOrMissing(SpriteType.Item).render(screen, xo + 8 + 4, yo + 4);
+						attackItem.sprite.getSprite().render(screen, xo + 8 + 4, yo + 4);
 					}
 					break;
 				case DOWN:  // Attacking downwards (Same as above)
 					screen.render(xo + 0, yo + 8 + 4, 3, 2, 2, hudSheet.getSheet());
 					screen.render(xo + 8, yo + 8 + 4, 3, 2, 3, hudSheet.getSheet());
 					if (attackItem != null && !(attackItem instanceof PowerGloveItem)) {
-						attackItem.sprite.getSpriteOrMissing(SpriteType.Item).render(screen, xo + 4, yo + 8 + 4);
+						attackItem.sprite.getSprite().render(screen, xo + 4, yo + 8 + 4);
 					}
 					break;
 				case NONE:
@@ -845,16 +844,16 @@ public class Player extends Mob implements ItemHolder, ClientTickable {
 		if (isFishing) {
 			switch (dir) {
 				case UP:
-					activeItem.sprite.getSpriteOrMissing(SpriteType.Item).render(screen, xo + 4, yo - 4, 1);
+					activeItem.sprite.getSprite().render(screen, xo + 4, yo - 4, 1);
 					break;
 				case LEFT:
-					activeItem.sprite.getSpriteOrMissing(SpriteType.Item).render(screen, xo - 4, yo + 4, 1);
+					activeItem.sprite.getSprite().render(screen, xo - 4, yo + 4, 1);
 					break;
 				case RIGHT:
-					activeItem.sprite.getSpriteOrMissing(SpriteType.Item).render(screen, xo + 8 + 4, yo + 4, 0);
+					activeItem.sprite.getSprite().render(screen, xo + 8 + 4, yo + 4, 0);
 					break;
 				case DOWN:
-					activeItem.sprite.getSpriteOrMissing(SpriteType.Item).render(screen, xo + 4, yo + 8 + 4, 0);
+					activeItem.sprite.getSprite().render(screen, xo + 4, yo + 8 + 4, 0);
 					break;
 				case NONE:
 					break;

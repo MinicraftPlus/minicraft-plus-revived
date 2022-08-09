@@ -10,7 +10,6 @@ import minicraft.entity.mob.Player;
 import minicraft.gfx.ConnectorSprite;
 import minicraft.gfx.Screen;
 import minicraft.gfx.SpriteLinker.LinkedSpriteSheet;
-import minicraft.gfx.SpriteLinker.SpriteType;
 import minicraft.item.Item;
 import minicraft.item.ToolType;
 import minicraft.level.Level;
@@ -79,7 +78,7 @@ public abstract class Tile {
 	/** Render method, used in sub-classes */
 	public void render(Screen screen, Level level, int x, int y) {
 		if (sprite != null)
-			sprite.getSpriteOrMissing(SpriteType.Tile).render(screen, x << 4, y << 4);
+			sprite.getSprite().render(screen, x << 4, y << 4);
 		if (csprite != null)
 			csprite.render(screen, level, x, y);
 	}

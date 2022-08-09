@@ -5,7 +5,6 @@ import java.util.List;
 import minicraft.core.io.InputHandler;
 import minicraft.gfx.Font;
 import minicraft.gfx.Screen;
-import minicraft.gfx.SpriteLinker.SpriteType;
 import minicraft.item.Recipe;
 
 public class RecipeEntry extends ItemEntry {
@@ -31,7 +30,7 @@ public class RecipeEntry extends ItemEntry {
 	public void render(Screen screen, int x, int y, boolean isSelected) {
 		if (isVisible()) {
 			Font.draw(toString(), screen, x, y, recipe.getCanCraft() ? COL_SLCT : COL_UNSLCT);
-			getItem().sprite.getSpriteOrMissing(SpriteType.Item).render(screen, x, y);
+			getItem().sprite.getSprite().render(screen, x, y);
 		}
 	}
 

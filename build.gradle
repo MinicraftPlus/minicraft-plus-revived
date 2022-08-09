@@ -19,7 +19,7 @@ mainClassName = 'minicraft.core.Game'
 
 repositories {
     mavenCentral()
-    maven { url "https://plugins.gradle.org/m2/" }
+    jcenter()
     maven { url "https://jitpack.io" }
 }
 

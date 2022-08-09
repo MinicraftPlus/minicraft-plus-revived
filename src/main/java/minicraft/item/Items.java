@@ -43,8 +43,6 @@ public class Items {
 		addAll(PotionItem.getAllInstances());
 		addAll(FishingRodItem.getAllInstances());
 		addAll(SummonItem.getAllInstances());
-
-		for (Item item : items) System.out.println("DisName: " + item + ";;;" + item.getName());
 	}
 
 	public static ArrayList<Item> getAll() {

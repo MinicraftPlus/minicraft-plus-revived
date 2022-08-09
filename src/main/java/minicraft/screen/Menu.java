@@ -10,7 +10,6 @@ import minicraft.core.io.ControllerHandler;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import minicraft.core.Renderer;
 import minicraft.core.io.InputHandler;
 import minicraft.core.io.Localization;
 import minicraft.core.io.Sound;
@@ -22,6 +21,7 @@ import minicraft.gfx.Point;
 import minicraft.gfx.Rectangle;
 import minicraft.gfx.Screen;
 import minicraft.gfx.SpriteSheet;
+import minicraft.gfx.SpriteLinker.LinkedSpriteSheet;
 import minicraft.gfx.SpriteLinker.SpriteType;
 import minicraft.screen.entry.BlankEntry;
 import minicraft.screen.entry.ListEntry;
@@ -69,6 +69,8 @@ public class Menu {
 	 * The actual typed word in searcher bar
 	 */
 	private String typingSearcher;
+
+	private LinkedSpriteSheet hudSheet = new LinkedSpriteSheet(SpriteType.Gui, "hud");
 
 	private Menu() {}
 	protected Menu(Menu m) {
@@ -295,12 +297,12 @@ public class Menu {
 		if(title.length() > 0) {
 			if (drawVertically) {
 				for (int i = 0; i < title.length(); i++) {
-					if (hasFrame) screen.render(titleLoc.x, titleLoc.y + i * Font.textHeight(), 3, 3, 0, Renderer.spriteLinker.getSpriteSheet(SpriteType.Gui, "hud"));
+					if (hasFrame) screen.render(titleLoc.x, titleLoc.y + i * Font.textHeight(), 3, 3, 0, hudSheet.getSheet());
 					Font.draw(title.substring(i, i + 1), screen, titleLoc.x, titleLoc.y + i * Font.textHeight(), titleColor);
 				}
 			} else {
 				for (int i = 0; i < title.length(); i++) {
-					if (hasFrame) screen.render(titleLoc.x + i * Font.textWidth(" "), titleLoc.y, 3, 3, 0, Renderer.spriteLinker.getSpriteSheet(SpriteType.Gui, "hud"));
+					if (hasFrame) screen.render(titleLoc.x + i * Font.textWidth(" "), titleLoc.y, 3, 3, 0, hudSheet.getSheet());
 					Font.draw(title.substring(i, i + 1), screen, titleLoc.x + i * Font.textWidth(" "), titleLoc.y, titleColor);
 				}
 			}
@@ -319,7 +321,7 @@ public class Menu {
 
 			for (int i = 0; i < typingSearcher.length() + 4; i++) {
 				if (hasFrame) {
-					screen.render(xSearcherBar + spaceWidth * i - leading, titleLoc.y - 8, 3, 3, 0, Renderer.spriteLinker.getSpriteSheet(SpriteType.Gui, "hud"));
+					screen.render(xSearcherBar + spaceWidth * i - leading, titleLoc.y - 8, 3, 3, 0, hudSheet.getSheet());
 				}
 
 				Font.draw("> " + typingSearcher + " <", screen, xSearcherBar - leading, titleLoc.y - 8, typingSearcher.length() < Menu.LIMIT_TYPING_SEARCHER ? Color.YELLOW : Color.RED);
@@ -394,7 +396,7 @@ public class Menu {
 				int spriteoffset = (xend && yend ? 0 : (yend ? 1 : (xend ? 2 : 3))); // determines which sprite to use
 				int mirrors = ( x == right ? 1 : 0 ) + ( y == bottom ? 2 : 0 ); // gets mirroring
 
-				screen.render(x, y, spriteoffset, 3, mirrors, Renderer.spriteLinker.getSpriteSheet(SpriteType.Gui, "hud"));
+				screen.render(x, y, spriteoffset, 3, mirrors, hudSheet.getSheet());
 
 				if(x < right && x + SpriteSheet.boxWidth > right)
 					x = right - SpriteSheet.boxWidth;

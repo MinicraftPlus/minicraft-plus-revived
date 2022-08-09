@@ -18,18 +18,18 @@ import minicraft.util.Logging;
 
 public class Sound {
 	// Creates sounds from their respective files
-	public static final Sound playerHurt = Objects.requireNonNull(loadLocalSound("/resources/sound/playerhurt.wav"));
-	public static final Sound playerDeath = Objects.requireNonNull(loadLocalSound("/resources/sound/death.wav"));
-	public static final Sound monsterHurt = Objects.requireNonNull(loadLocalSound("/resources/sound/monsterhurt.wav"));
-	public static final Sound bossDeath = Objects.requireNonNull(loadLocalSound("/resources/sound/bossdeath.wav"));
-	public static final Sound fuse = Objects.requireNonNull(loadLocalSound("/resources/sound/fuse.wav"));
-	public static final Sound explode = Objects.requireNonNull(loadLocalSound("/resources/sound/explode.wav"));
-	public static final Sound pickup = Objects.requireNonNull(loadLocalSound("/resources/sound/pickup.wav"));
-	public static final Sound craft = Objects.requireNonNull(loadLocalSound("/resources/sound/craft.wav"));
-	public static final Sound back = Objects.requireNonNull(loadLocalSound("/resources/sound/craft.wav"));
-	public static final Sound place = Objects.requireNonNull(loadLocalSound("/resources/sound/craft.wav"));
-	public static final Sound select = Objects.requireNonNull(loadLocalSound("/resources/sound/select.wav"));
-	public static final Sound confirm = Objects.requireNonNull(loadLocalSound("/resources/sound/confirm.wav"));
+	public static final Sound playerHurt = Objects.requireNonNull(loadLocalSound("/assets/sound/playerhurt.wav"));
+	public static final Sound playerDeath = Objects.requireNonNull(loadLocalSound("/assets/sound/death.wav"));
+	public static final Sound monsterHurt = Objects.requireNonNull(loadLocalSound("/assets/sound/monsterhurt.wav"));
+	public static final Sound bossDeath = Objects.requireNonNull(loadLocalSound("/assets/sound/bossdeath.wav"));
+	public static final Sound fuse = Objects.requireNonNull(loadLocalSound("/assets/sound/fuse.wav"));
+	public static final Sound explode = Objects.requireNonNull(loadLocalSound("/assets/sound/explode.wav"));
+	public static final Sound pickup = Objects.requireNonNull(loadLocalSound("/assets/sound/pickup.wav"));
+	public static final Sound craft = Objects.requireNonNull(loadLocalSound("/assets/sound/craft.wav"));
+	public static final Sound back = Objects.requireNonNull(loadLocalSound("/assets/sound/craft.wav"));
+	public static final Sound place = Objects.requireNonNull(loadLocalSound("/assets/sound/craft.wav"));
+	public static final Sound select = Objects.requireNonNull(loadLocalSound("/assets/sound/select.wav"));
+	public static final Sound confirm = Objects.requireNonNull(loadLocalSound("/assets/sound/confirm.wav"));
 
 	private Clip clip; // Creates a audio clip to be played
 

@@ -41,7 +41,7 @@ public class Chest extends Furniture implements ItemHolder {
 
 	public void populateInvRandom(String lootTable, int depth) {
 		try {
-			String[] lines = Load.loadFile("/resources/chestloot/" + lootTable + ".txt").toArray(new String[]{});
+			String[] lines = Load.loadFile("/resources/data/chestloot/" + lootTable + ".txt").toArray(new String[]{});
 
 			for (String line : lines) {
 				//System.out.println(line);

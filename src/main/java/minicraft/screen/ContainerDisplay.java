@@ -41,7 +41,7 @@ public class ContainerDisplay extends Display {
 			m.translate(shift, 0);
 	}
 
-	private int getOtherIdx() { return (selection+1) % 2; }
+	private int getOtherIdx() { return selection ^ 1; }
 
 	@Override
 	public void tick(InputHandler input, ControllerHandler controlInput) {

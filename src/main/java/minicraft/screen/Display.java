@@ -1,6 +1,5 @@
 package minicraft.screen;
 
-import com.studiohartman.jamepad.ControllerButton;
 import minicraft.core.io.ControllerHandler;
 import org.jetbrains.annotations.Nullable;
 
@@ -92,6 +91,15 @@ public class Display {
 	public void render(Screen screen) {
 		if (clearScreen)
 			screen.clear(0);
+		else if (setParent && parent != null) {
+			if (parent.setParent) {
+				parent.setParent = false;
+				parent.render(screen); // Renders the parent display as background.
+				parent.setParent = true;
+			} else {
+				parent.render(screen); // Renders the parent display as background.
+			}
+		}
 
 		if (menus.length == 0)
 			return;

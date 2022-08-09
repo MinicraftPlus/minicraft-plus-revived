@@ -49,7 +49,7 @@ public class CactusTile extends Tile {
 	public void render(Screen screen, Level level, int x, int y) {
 		Tiles.get("Sand").render(screen, level, x, y);
 
-		sprite.getSpriteOrMissing(SpriteType.Tile).render(screen, x << 4, y << 4);
+		sprite.getSprite().render(screen, x << 4, y << 4);
 	}
 
 	public void bumpedInto(Level level, int x, int y, Entity entity) {

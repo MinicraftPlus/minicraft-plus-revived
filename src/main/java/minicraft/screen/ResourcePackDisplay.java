@@ -2,6 +2,8 @@ package minicraft.screen;
 
 import java.io.Closeable;
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.MalformedURLException;
@@ -11,7 +13,6 @@ import java.nio.file.FileSystems;
 import java.nio.file.Path;
 import java.nio.file.StandardWatchEventKinds;
 import java.nio.file.WatchEvent;
-import java.nio.file.WatchKey;
 import java.nio.file.WatchService;
 import java.util.*;
 import java.util.Map.Entry;
@@ -30,7 +31,7 @@ import minicraft.gfx.Font;
 import minicraft.gfx.Point;
 import minicraft.gfx.Screen;
 import minicraft.gfx.SpriteSheet;
-import minicraft.saveload.Load;
+import minicraft.gfx.SpriteLinker.SpriteType;
 import minicraft.screen.entry.ListEntry;
 import minicraft.screen.entry.SelectEntry;
 import minicraft.util.Logging;
@@ -69,53 +70,103 @@ public class ResourcePackDisplay extends Display {
 	 */
 
 
-	private static final ArrayList<ResourcePack> resourcePacks = new ArrayList<>();
-
-	private static final String[] SHEET_NAMES = new String[] { "items.png", "tiles.png", "entities.png", "gui.png" };
-	private static final int SHEET_DIMENSIONS = 256;
-
+	private static final ArrayList<ResourcePack> resourcePacks = new ArrayList<>(); // Packs that are not loaded.
 	private static final File FOLDER_LOCATION = new File(FileHandler.getSystemGameDir() + "/" + FileHandler.getLocalGameDir() + "/resourcepacks");
 
 	private static final ResourcePack defaultPack; // Used to check if the resource pack default.
-	private static ArrayList<ResourcePack> loadedPacks;
+	private static final SpriteSheet defaultLogo;
+	private static ArrayList<ResourcePack> loadedPacks = new ArrayList<>();
+	private static ArrayList<ResourcePack> loadQuery = new ArrayList<>();
+
+	private static final int padding = 10;
 
 	private WatcherThread fileWatcher;
+	private ArrayList<ListEntry> entries0;
+	private ArrayList<ListEntry> entries1;
+	private Menu.Builder builder0;
+	private Menu.Builder builder1;
 
 	static {
 		// Add the default pack.
-		defaultPack = Objects.requireNonNull(loadPackMetadata(new File(Game.class.getResource("/resources").getFile())));
+		defaultPack = Objects.requireNonNull(loadPackMetadata(Game.class.getProtectionDomain().getCodeSource().getLocation()));
+		defaultPack.refreshPack();
 		loadedPacks.add(defaultPack);
-	}
-
-	private static List<ListEntry> getPacksAsEntries() {
-		List<ListEntry> resourceList = new ArrayList<>();
-		// resourceList.add(new SelectEntry(ResourcePackDisplay.DEFAULT_RESOURCE_PACK, Game::exitDisplay, false));
-
-
-		return resourceList;
+		try {
+			defaultLogo = new SpriteSheet(ImageIO.read(ResourcePackDisplay.class.getResourceAsStream("/resources/default_pack.png")));
+		} catch (IOException e) {
+			CrashHandler.crashHandle(e);
+			throw new RuntimeException();
+		}
 	}
 
 	public ResourcePackDisplay() {
-		super(true, true,
-				new Menu.Builder(false, 2, RelPos.CENTER, getPacksAsEntries())
-				.setSize(48, 64)
-				.setPositioning(new Point(Screen.w/2, Screen.h*3/5), RelPos.CENTER)
-				.createMenu());
+		super(true, true);
+
+		builder0 = new Menu.Builder(false, 2, RelPos.LEFT)
+			.setDisplayLength(8)
+			.setPositioning(new Point(0, 60), RelPos.BOTTOM_RIGHT);
+
+		builder1 = new Menu.Builder(false, 2, RelPos.RIGHT)
+			.setDisplayLength(8)
+			.setPositioning(new Point(Screen.w, 60), RelPos.BOTTOM_LEFT);
+
+		reloadEntries();
+
+		menus = new Menu[] {
+			builder0.setEntries(entries0)
+				.createMenu(),
+			builder1.setEntries(entries1)
+				.createMenu()
+		};
+
+		menus[1].translate(menus[0].getBounds().getWidth() + padding, 0);
 
 		fileWatcher = new WatcherThread();
-
-		// TODO
-		// ListEntry[] ent = menus[0].getEntries();
-		// for (int i = 0; i < ent.length; i++) {
-		// 	if (ent[i].toString().equals(loadedPack)) {
-		// 		menus[0].setSelection(i);
-		// 	}
-		// }
 	}
 
-	private static class WatcherThread extends Thread implements Closeable {
+	@Override
+	protected void onSelectionChange(int oldSel, int newSel) {
+		super.onSelectionChange(oldSel, newSel);
+		if(oldSel == newSel) return; // this also serves as a protection against access to menus[0] when such may not exist.
+		int shift = 0;
+		if(newSel == 0) shift = padding - menus[0].getBounds().getLeft();
+		if(newSel == 1) shift = (Screen.w - padding) - menus[1].getBounds().getRight();
+		for(Menu m: menus)
+			m.translate(shift, 0);
+	}
+
+	private void reloadEntries() {
+		entries0.clear();
+		for (ResourcePack pack : resourcePacks) {
+			entries0.add(new SelectEntry(pack.name, Game::exitDisplay));
+		}
+
+		entries1.clear();
+		for (ResourcePack pack : loadedPacks) {
+			entries1.add(new SelectEntry(pack.name, Game::exitDisplay));
+		}
+	}
+
+	private void refreshEntries() {
+		reloadEntries();
+		Menu[] newMenus = new Menu[] {
+			builder0.setEntries(entries0)
+				.createMenu(),
+			builder1.setEntries(entries1)
+				.createMenu()
+		};
+
+		newMenus[0].setSelection(menus[0].getSelection());
+		newMenus[1].setSelection(menus[1].getSelection());
+
+		menus = newMenus;
+
+		menus[selection ^ 1].translate(menus[selection].getBounds().getWidth() + padding, 0);
+	}
+
+	private class WatcherThread extends Thread implements Closeable {
 		private WatchService watcher;
-		private volatile boolean running;
+		private volatile boolean running = true;
 
 		WatcherThread() {
 			super("Resource Pack File Watcher");
@@ -134,6 +185,7 @@ public class ResourcePackDisplay extends Display {
 		public void run() {
 			while (running) {
 				try {
+					ArrayList<URL> urls = new ArrayList<>();
 					for (WatchEvent<?> event : watcher.take().pollEvents()) {
 						if (event.kind() == StandardWatchEventKinds.OVERFLOW)
 							continue;
@@ -142,11 +194,16 @@ public class ResourcePackDisplay extends Display {
 						WatchEvent<Path> ev = (WatchEvent<Path>) event;
         				Path filename = ev.context();
 						try {
-							refreshResourcePacks(List.of(FOLDER_LOCATION.toPath().resolve(filename).toFile().toURI().toURL()));
+							urls.add(FOLDER_LOCATION.toPath().resolve(filename).toFile().toURI().toURL());
 						} catch (IOException e) {
 							e.printStackTrace();
 							continue;
 						}
+					}
+
+					if (urls.size() > 0) {
+						refreshResourcePacks(urls);
+						refreshEntries();
 					}
 				} catch (InterruptedException e) {
 					return;
@@ -164,7 +221,7 @@ public class ResourcePackDisplay extends Display {
 
 	@Override
 	public void onExit() {
-		resourcePacks.removeIf(p -> !loadedPacks.contains(p)); // Releases unloaded packs.
+		resourcePacks.clear(); // Releases unloaded packs.
 		fileWatcher.close(); // Removes watcher.
 		reloadResources();
 	}
@@ -174,32 +231,37 @@ public class ResourcePackDisplay extends Display {
 		super.render(screen);
 
 		// Title
-		Font.drawCentered(Localization.getLocalized("minicraft.displays.resource_packs.display.title"), screen, 16, Color.WHITE);
+		Font.drawCentered(Localization.getLocalized("minicraft.displays.resource_packs.display.title"), screen, 6, Color.WHITE);
 
 		// Info text at the bottom.
 		Font.drawCentered(Localization.getLocalized("minicraft.displays.resource_packs.display.help.move", Game.input.getMapping("cursor-down"), Game.input.getMapping("cursor-up")), screen, Screen.h - 17, Color.DARK_GRAY);
 		Font.drawCentered(Localization.getLocalized("minicraft.displays.resource_packs.display.help.select", Game.input.getMapping("SELECT")), screen, Screen.h - 9, Color.DARK_GRAY);
 
-		// Does not work as intended because the sprite sheets aren't updated when changing selection.
-		int h = 2;
-		int w = 15;
+
+		SpriteSheet logo = selection == 0 ? resourcePacks.get(menus[selection].getSelection()).logo : loadedPacks.get(menus[selection].getSelection()).logo;
+		int h = logo.height;
+		int w = logo.width;
 		int xo = (Screen.w - w * 8) / 2;
-		int yo = 28;
+		int yo = 28 + (h >= 32 ? -8 : 0);
 
 		for (int y = 0; y < h; y++) {
 			for (int x = 0; x < w; x++) {
-				// Texture pack logo
-				screen.render(xo + x * 8, yo + y * 8, x + y * 32, 0, 3);
+				// Resource pack logo
+				screen.render(xo + x * 8, yo + y * 8, x, y, 0, logo);
 			}
 		}
 	}
 
-	public static class ResourcePack {
+	private static class ResourcePack implements Closeable {
 		private final URL packRoot;
 		/** 0 - before 2.2.0; 1 - 2.2.0-latest */
 		private final int packFormat;
 		private final String name;
 		private final String description;
+		private SpriteSheet logo;
+
+		private boolean opened = false;
+		private ZipFile zipFile = null;
 
 		private ResourcePack(URL packRoot, int packFormat, String name, String desc) {
 			this.packRoot = packRoot;
@@ -208,32 +270,85 @@ public class ResourcePackDisplay extends Display {
 			this.description = desc;
 		}
 
+		/** This does not include metadata refresh. */
 		private void refreshPack() {
-			// TODO
+			// Refresh pack logo.png.
+			try {
+				File png = new File(packRoot.getPath()).toPath().resolve("pack.png").toFile();
+				if (png.exists()) {
+					logo = new SpriteSheet(ImageIO.read(png));
+
+					// Logo size verification.
+					int h = logo.height;
+					int w = logo.width;
+					if (h == 0 || w == 0 || h % 8 != 0 || w % 8 != 0 ||
+						h > 32 || w > Screen.w) {
+						throw new IOException(String.format("Unacceptable logo size: %s;%s", w, h));
+					}
+				} else {
+					Logging.RESOURCEHANDLER_RESOURCEPACK.trace("Pack logo not found, loading default logo instead.");
+					logo = defaultLogo;
+				}
+
+			} catch (IOException e) {
+				e.printStackTrace();
+				Logging.RESOURCEHANDLER_RESOURCEPACK.warn("Unable to load logo, loading default logo instead.");
+				if (this == defaultPack) {
+					try {
+						logo = new SpriteSheet(ImageIO.read(getClass().getResourceAsStream("/resources/logo.png")));
+					} catch (IOException e1) {
+						CrashHandler.crashHandle(e1);
+					}
+				} else logo = defaultLogo;
+			}
+		}
+
+		private boolean openStream() {
+			try {
+				zipFile = new ZipFile(new File(packRoot.toURI()));
+				return opened = true;
+			} catch (IOException | URISyntaxException e) {
+				e.printStackTrace();
+				return opened = false;
+			}
+		}
+
+		@Override
+		public void close() throws IOException {
+			if (opened) {
+				zipFile.close();
+				zipFile = null;
+				opened = false;
+			}
+		}
+
+		private InputStream getResourceAsStream(String path) throws IOException {
+			return zipFile.getInputStream(zipFile.getEntry(path));
+		}
+		private ArrayList<String> getFiles(String path) {
+			ArrayList<String> paths = new ArrayList<>();
+			for (Enumeration<? extends ZipEntry> e = zipFile.entries(); e.hasMoreElements();) {
+				ZipEntry entry = e.nextElement();
+				Path parent;
+				if ((parent = Path.of(entry.getName()).getParent()) != null && parent.equals(Path.of(path))) {
+					paths.add(entry.getName());
+				}
+			}
+
+			return paths;
 		}
 	}
 
-	public static ResourcePack loadPackMetadata(File file) {
-		if (file.exists()) {
-			if (file.isDirectory()) {
-				try {
-					JSONObject meta = new JSONObject(Load.loadFromFile(file.toPath().resolve("/pack.json").toString(), true));
-					return new ResourcePack(file.toURI().toURL(), meta.getInt("pack_format"),
-						meta.optString("name", file.getName()), meta.optString("description", "No description"));
-				} catch (JSONException | IOException e) {
-					CrashHandler.errorHandle(e, new CrashHandler.ErrorInfo("Cannot Load Resource Pack",
-						CrashHandler.ErrorInfo.ErrorType.REPORT, String.format("Unable to load directory resource pack: %s.", file.getPath())));
-				}
-			} else {
-				try (ZipFile zip = new ZipFile(file)) {
-					JSONObject meta = new JSONObject(Load.loadFromFile(zip.getEntry("/pack.json").getName(), true));
-					return new ResourcePack(file.toURI().toURL(),
-						meta.getInt("pack_format"), meta.optString("name", file.getName()), meta.optString("description", "No description"));
-				} catch (IOException e) {
-					CrashHandler.errorHandle(e, new CrashHandler.ErrorInfo("Cannot Load Resource Pack",
-						CrashHandler.ErrorInfo.ErrorType.REPORT, String.format("Unable to load zipped resource pack: %s.", file.getPath())));
-				}
+	public static ResourcePack loadPackMetadata(URL file) {
+		try (ZipFile zip = new ZipFile(new File(file.toURI()))) {
+			try (InputStream in = zip.getInputStream(zip.getEntry("pack.json"))) {
+				JSONObject meta = new JSONObject(new String(in.readAllBytes()));
+				return new ResourcePack(file.toURI().toURL(),
+					meta.getInt("pack_format"), meta.optString("name", new File(file.toURI()).getName()), meta.optString("description", "No description"));
 			}
+		} catch (JSONException | IOException | URISyntaxException e) {
+			CrashHandler.errorHandle(e, new CrashHandler.ErrorInfo("Cannot Load Resource Pack",
+				CrashHandler.ErrorInfo.ErrorType.REPORT, String.format("Unable to load resource pack: %s.", file.getPath())));
 		}
 
 		return null;
@@ -247,7 +362,7 @@ public class ResourcePackDisplay extends Display {
 
 		ArrayList<URL> urls = new ArrayList<>();
 		// Read and add the .zip file to the resource pack list. Only accept files ending with .zip or directory.
-		for (File file : Objects.requireNonNull(FOLDER_LOCATION.listFiles((dur, name) ->  name.endsWith(".zip") || dur.isDirectory()))) {
+		for (File file : Objects.requireNonNull(FOLDER_LOCATION.listFiles((dur, name) ->  name.endsWith(".zip")))) {
 			try {
 				urls.add(file.toPath().toUri().toURL());
 			} catch (MalformedURLException e) {
@@ -256,6 +371,7 @@ public class ResourcePackDisplay extends Display {
 		}
 
 		refreshResourcePacks(urls);
+		reloadResources();
 	}
 
 	private static ResourcePack findPackByURL(URL url) {
@@ -265,16 +381,24 @@ public class ResourcePackDisplay extends Display {
 			}
 		}
 
+		for (ResourcePack pack : loadedPacks) {
+			if (pack.packRoot.equals(url)) {
+				return pack;
+			}
+		}
+
 		return null;
 	}
 
-	public static void refreshResourcePacks(List<URL> urls) {
+	// TODO world-wide resource pack support
+	private static void refreshResourcePacks(List<URL> urls) {
 		for (URL url : urls) {
 			ResourcePack pack = findPackByURL(url);
 			if (pack != null) { // Refresh the current.
 				pack.refreshPack();
 			} else { // Add new pack.
-				pack = loadPackMetadata(new File(url.getFile()));
+				pack = loadPackMetadata(url);
+				pack.refreshPack();
 				if (pack != null) {
 					resourcePacks.add(pack);
 				}
@@ -318,68 +442,49 @@ public class ResourcePackDisplay extends Display {
 	// 	updateLocalization(zipFile);
 	// }
 
-	private void reloadResources() {
-
-	}
-
-	private void updateSheets(@Nullable ZipFile zipFile) {
-		try {
-			// Load default sprite sheet.
-			SpriteSheet[] sheets = Renderer.loadDefaultSkinSheet();
-
-			if (zipFile != null) {
+	private static void reloadResources() {
+		// TODO
+		loadQuery.clear();
+		loadQuery.addAll(loadedPacks);
+		Collections.reverse(loadQuery);
+		Renderer.spriteLinker.resetSprites();
+		for (ResourcePack pack : loadQuery) {
+			if (pack.openStream()) {
 				try {
-					HashMap<String, HashMap<String, ZipEntry>> resources = getPackFromZip(zipFile);
-
-					// Load textures
-					HashMap<String, ZipEntry> textures = resources.get("textures");
-
-					// Load default sheets instead if there aren't any sheets to load.
-					if (textures == null || textures.isEmpty()) {
-						Renderer.screen.setSheets(sheets[0], sheets[1], sheets[2], sheets[3]);
-						return;
-					}
-
-					for (int i = 0; i < SHEET_NAMES.length; i++) {
-						ZipEntry entry = textures.get(SHEET_NAMES[i]);
-						if (entry != null) {
-							try (InputStream inputEntry = zipFile.getInputStream(entry)) {
-								SpriteSheet sheet = new SpriteSheet(ImageIO.read(inputEntry));
-
-								// Check if sheet has the correct dimensions.
-								if (sheet.width == SHEET_DIMENSIONS && sheet.height == SHEET_DIMENSIONS) {
-									sheets[i] = sheet;
-								} else {
-									Logging.RESOURCEHANDLER_RESOURCEPACK.error("Sheet with name {} has wrong dimensions. Should be {}px in both directions.", SHEET_NAMES[i], SHEET_DIMENSIONS);
-									return;
-								}
-							} catch (IOException e) {
-								e.printStackTrace();
-								Logging.RESOURCEHANDLER_RESOURCEPACK.error("Loading sheet {} failed. Aborting.", SHEET_NAMES[i]);
-								return;
-							}
-						} else {
-							Logging.RESOURCEHANDLER_RESOURCEPACK.debug("Couldn't load sheet {}, ignoring.", SHEET_NAMES[i]);
-						}
-					}
-				} catch (IllegalStateException e) {
-					e.printStackTrace();
-					Logging.RESOURCEHANDLER_RESOURCEPACK.error("Could not load resource pack with name {}.", zipFile.getName());
-					return;
-				} catch (NullPointerException e) {
-					e.printStackTrace();
-					return;
+					loadTextrues(pack);
+					pack.close();
+				} catch (IOException e) {
+					CrashHandler.errorHandle(e);
 				}
 			}
-
-			Renderer.screen.setSheets(sheets[0], sheets[1], sheets[2], sheets[3]);
-		} catch(NullPointerException e) {
-			e.printStackTrace();
-			Logging.RESOURCEHANDLER_RESOURCEPACK.error("Changing resource pack failed.");
-			return;
 		}
 
-		Logging.RESOURCEHANDLER_RESOURCEPACK.info("Changed resource pack.");
+		Renderer.spriteLinker.updateLinkedSheets();
+	}
+
+	private static void loadTextrues(ResourcePack pack) throws IOException {
+		for (String t : pack.getFiles("assets/textures/")) {
+			switch (t) {
+				case "assets/textures/entity/": loadTextures(pack, SpriteType.Entity); break;
+				case "assets/textures/gui/": loadTextures(pack, SpriteType.Gui); break;
+				case "assets/textures/item/": loadTextures(pack, SpriteType.Item); break;
+				case "assets/textures/tile/": loadTextures(pack, SpriteType.Tile); break;
+			}
+		}
+	}
+
+	private static void loadTextures(ResourcePack pack, SpriteType type) throws IOException {
+		String path = "assets/textures/";
+		switch (type) {
+			case Entity: path += "entity/"; break;
+			case Gui: path += "gui/"; break;
+			case Item: path += "item/"; break;
+			case Tile: path += "tile/"; break;
+		}
+
+		for (String p : pack.getFiles(path)) {
+			Renderer.spriteLinker.setSprite(type, p.substring(path.length(), p.length() - 4), new SpriteSheet(ImageIO.read(pack.getResourceAsStream(p))));
+		}
 	}
 
 	private void updateLocalization(@Nullable ZipFile zipFile) {

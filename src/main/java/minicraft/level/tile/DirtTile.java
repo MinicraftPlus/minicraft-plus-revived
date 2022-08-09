@@ -43,7 +43,7 @@ public class DirtTile extends Tile {
 	}
 
 	public void render(Screen screen, Level level, int x, int y) {
-		levelSprite[dIdx(level.depth)].getSpriteOrMissing(SpriteType.Tile).render(screen, x * 16, y * 16, 0);
+		levelSprite[dIdx(level.depth)].getSprite().render(screen, x * 16, y * 16, 0);
 	}
 
 	public boolean interact(Level level, int xt, int yt, Player player, Item item, Direction attackDir) {

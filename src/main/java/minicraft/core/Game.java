@@ -2,13 +2,13 @@ package minicraft.core;
 
 import minicraft.core.io.*;
 import minicraft.entity.mob.Player;
+import minicraft.gfx.SpriteLinker.SpriteType;
 import minicraft.level.Level;
 import minicraft.level.tile.Tiles;
 import minicraft.network.Analytics;
 import minicraft.saveload.Load;
 import minicraft.saveload.Version;
 import minicraft.screen.Display;
-import minicraft.screen.ResourcePackDisplay;
 import minicraft.screen.TitleDisplay;
 import minicraft.util.Logging;
 
@@ -82,17 +82,17 @@ public class Game {
 		Tiles.initTileList();
 		Sound.init();
 
-		World.resetGame(); // "half"-starts a new game, to set up initial variables
-		player.eid = 0;
-		new Load(true); // This loads any saved preferences.
-		MAX_FPS = (int) Settings.get("fps"); // DO NOT put this above.
-
 		// Load the selected language.
 		Initializer.createAndDisplayFrame();
 
 		setDisplay(new TitleDisplay()); // Sets menu to the title screen.
 
 		Renderer.initScreen();
+
+		World.resetGame(); // "half"-starts a new game, to set up initial variables
+		player.eid = 0;
+		new Load(true); // This loads any saved preferences.
+		MAX_FPS = (int) Settings.get("fps"); // DO NOT put this above.
 
 		// Loads the resorce pack locaded in save.
 		// new ResourcePackDisplay().initResourcePack();

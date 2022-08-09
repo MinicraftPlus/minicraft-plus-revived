@@ -41,7 +41,7 @@ public class DoorTile extends Tile {
 
 	public void render(Screen screen, Level level, int x, int y) {
 		boolean closed = level.getData(x, y) == 0;
-		Sprite curSprite = (closed ? closedSprite : openSprite).getSpriteOrMissing(SpriteType.Tile);
+		Sprite curSprite = (closed ? closedSprite : openSprite).getSprite();
 		curSprite.render(screen, x * 16, y * 16);
 	}
 
