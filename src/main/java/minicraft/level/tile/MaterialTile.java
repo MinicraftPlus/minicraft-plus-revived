@@ -21,6 +21,7 @@ public class MaterialTile extends Tile {
 		switch (type) {
 			case Stone: sprite = new Sprite(17,14,2,2,1,0); break;
 			case Obsidian: sprite = new Sprite(27,14,2,2,1,0); break;
+			default: break;
 		}
 		super.sprite = sprite;
 	}

@@ -1,6 +1,5 @@
 package minicraft.entity.mob;
 
-import com.studiohartman.jamepad.ControllerButton;
 import minicraft.core.Game;
 import minicraft.core.Updater;
 import minicraft.core.World;
@@ -26,7 +25,6 @@ import minicraft.screen.*;
 import minicraft.util.Logging;
 import minicraft.util.Vector2;
 import org.jetbrains.annotations.Nullable;
-import org.tinylog.Logger;
 
 import java.util.HashMap;
 import java.util.List;
