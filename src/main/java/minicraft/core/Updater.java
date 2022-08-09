@@ -220,7 +220,7 @@ public class Updater extends Game {
 					if (input.getKey("3").clicked) changeTimeOfDay(Time.Evening);
 					if (input.getKey("4").clicked) changeTimeOfDay(Time.Night);
 
-					String prevMode = (String)Settings.get("mode");
+					//String prevMode = (String)Settings.get("mode"); // Unused
 					if (input.getKey("creative").clicked) {
 						Settings.set("mode", "minicraft.settings.mode.creative");
 					}
@@ -231,7 +231,7 @@ public class Updater extends Game {
 						scoreTime = normSpeed * 5; // 5 seconds
 					}
 
-					float prevSpeed = gamespeed;
+					//float prevSpeed = gamespeed; // Unused
 					if (input.getKey("shift-0").clicked)
 						gamespeed = 1;
 

@@ -507,7 +507,7 @@ public class ResourcePackDisplay extends Display {
 	}
 
 	// TODO: Make resource packs support sound
-	private void updateSounds() { }
+	// private void updateSounds() { }
 
 	/**
 	 * Get all the resources in a resource pack in a hashmap.
