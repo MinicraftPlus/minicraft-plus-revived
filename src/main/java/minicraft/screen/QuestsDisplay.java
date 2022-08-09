@@ -7,6 +7,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.stream.Collectors;
 
 import minicraft.core.io.ControllerHandler;
 import org.json.JSONArray;
@@ -227,7 +228,7 @@ public class QuestsDisplay extends Display {
 			entries.addAll(Arrays.asList(StringEntry.useLines("Description: " + Localization.getLocalized(series.description))));
 
 			ArrayList<Quest> ongoingQuests = getOngoingSeriesQuests(series);
-			entries.addAll(Arrays.asList(StringEntry.useLines(ongoingQuests.size() + " ongoing quests" + (ongoingQuests.size() > 0 ? ": " : "") + String.join(", ", ongoingQuests.stream().map(q -> Localization.getLocalized(q.id)).toList()))));
+			entries.addAll(Arrays.asList(StringEntry.useLines(ongoingQuests.size() + " ongoing quests" + (ongoingQuests.size() > 0 ? ": " : "") + String.join(", ", ongoingQuests.stream().map(q -> Localization.getLocalized(q.id)).collect(Collectors.toList())))));
 
 			entries.add(new BlankEntry());
 			entries.add(new SelectEntry("View all quests of this series", () -> Game.setDisplay(new QuestListDisplay(series.getSeriesQuests()))));
@@ -361,7 +362,7 @@ public class QuestsDisplay extends Display {
 		return num;
 	}
 	public static ArrayList<Quest> getOngoingSeriesQuests(QuestSeries series) {
-		return new ArrayList<>(series.getSeriesQuests().stream().filter(q -> !completedQuest.contains(q) && q.unlocked).toList());
+		return new ArrayList<>(series.getSeriesQuests().stream().filter(q -> !completedQuest.contains(q) && q.unlocked).collect(Collectors.toList()));
 	}
 
 	public static void unlockQuest(String id) { unlockQuest(quests.get(id)); }
@@ -490,7 +491,7 @@ public class QuestsDisplay extends Display {
 		Settings.set("tutorials", false);
 
 		// Locks all uncompleted tutorial series and quests.
-		for (Quest quest : unlockedQuests.stream().filter(q -> !completedQuest.contains(q) && q.getSeries().tutorial).toList()) {
+		for (Quest quest : unlockedQuests.stream().filter(q -> !completedQuest.contains(q) && q.getSeries().tutorial).collect(Collectors.toList())) {
 			quest.unlocked = false;
 			unlockedQuests.remove(quest);
 			quest.getSeries().unlocked = false;
