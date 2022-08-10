@@ -14,8 +14,8 @@ class InventoryMenu extends ItemListMenu {
 	private final Entity holder;
 	protected boolean creativeInv = false;
 
-	InventoryMenu(Entity holder, Inventory inv, String title) {
-		super(ItemListMenu.getBuilder(), ItemEntry.useItems(inv.getItems()), title);
+	InventoryMenu(Entity holder, Inventory inv, String title, RelPos entryPos) {
+		super(ItemListMenu.getBuilder(entryPos), ItemEntry.useItems(inv.getItems()), title);
 		this.inv = inv;
 		this.holder = holder;
 	}

@@ -1,5 +1,11 @@
 {
   "pack_format": 1,
-  "name": "Default Texture",
-  "description": "The built-in default texture in Minicraft+."
+  "name": "Default",
+  "description": "The built-in default resources in Minicraft+.",
+  "language": {
+    "en-us": {
+      "name": "English",
+      "region": "US"
+    }
+  }
 }

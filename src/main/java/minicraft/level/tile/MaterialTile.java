@@ -41,7 +41,7 @@ public class MaterialTile extends Tile {
 						case Obsidian: drop = Items.get("Raw Obsidian"); break;
 						default: throw new IllegalStateException("Unexpected value: " + type);
 					}
-					Sound.monsterHurt.play();
+					Sound.play("monsterhurt");
 					level.dropItem(xt * 16 + 8, yt * 16 + 8, drop);
 					return true;
 				}

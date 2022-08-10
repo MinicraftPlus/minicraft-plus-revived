@@ -372,8 +372,18 @@ public class Load {
 			Game.input.setKey(map[0], map[1]);
 		}
 
-		// if (json.has("resourcePack")) // TODO
-		// 	new ResourcePackDisplay().setLoadedPack(json.getString("resourcePack"));
+		JSONArray packsJSON = json.optJSONArray("resourcePacks");
+		if (packsJSON != null) {
+			String[] packs = new String[packsJSON.length()];
+			for (int i = 0; i < packs.length; i++) {
+				packs[i] = packsJSON.getString(i);
+			}
+
+			ResourcePackDisplay.loadResourcePacks(packs);
+			ResourcePackDisplay.reloadResources();
+		}
+
+		ResourcePackDisplay.releaseUnloadedPacks();
 	}
 
 	private void loadUnlocksOld(String filename) {

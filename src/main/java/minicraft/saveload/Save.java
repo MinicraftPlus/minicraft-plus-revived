@@ -176,7 +176,7 @@ public class Save {
 		json.put("lang", Localization.getSelectedLocale().toLanguageTag());
 		json.put("skinIdx", String.valueOf(SkinDisplay.getSelectedSkinIndex()));
 		json.put("keymap", new JSONArray(Game.input.getKeyPrefs()));
-		// json.put("resourcePack", ResourcePackDisplay.getLoadedPack()); TODO
+		json.put("resourcePacks", new JSONArray(ResourcePackDisplay.getLoadedPacks()));
 		json.put("showquests", String.valueOf(Settings.get("showquests")));
 
 		// Save json

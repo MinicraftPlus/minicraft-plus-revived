@@ -112,7 +112,7 @@ public class TreeTile extends Tile {
 		if (Game.isMode("minicraft.settings.mode.creative")) dmg = damage = treeHealth;
 
 		level.add(new SmashParticle(x*16, y*16));
-		Sound.monsterHurt.play();
+		Sound.play("monsterhurt");
 
 		level.add(new TextParticle("" + dmg, x * 16 + 8, y * 16 + 8, Color.RED));
 		if (damage >= treeHealth) {

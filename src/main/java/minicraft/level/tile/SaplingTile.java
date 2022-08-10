@@ -45,7 +45,7 @@ public class SaplingTile extends Tile {
 
 	public boolean hurt(Level level, int x, int y, Mob source, int dmg, Direction attackDir) {
 		level.setTile(x, y, onType);
-		Sound.monsterHurt.play();
+		Sound.play("monsterhurt");
 		return true;
 	}
 }

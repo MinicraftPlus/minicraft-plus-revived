@@ -1,9 +1,8 @@
 package minicraft.screen;
 
+import java.io.BufferedInputStream;
 import java.io.Closeable;
 import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.MalformedURLException;
@@ -14,8 +13,12 @@ import java.nio.file.Path;
 import java.nio.file.StandardWatchEventKinds;
 import java.nio.file.WatchEvent;
 import java.nio.file.WatchService;
-import java.util.*;
-import java.util.Map.Entry;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Enumeration;
+import java.util.List;
+import java.util.Locale;
+import java.util.Objects;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 
@@ -28,6 +31,7 @@ import minicraft.core.CrashHandler;
 import minicraft.core.Game;
 import minicraft.core.Renderer;
 import minicraft.core.io.Localization;
+import minicraft.core.io.Settings;
 import minicraft.core.io.Sound;
 import minicraft.gfx.Color;
 import minicraft.gfx.Font;
@@ -35,11 +39,13 @@ import minicraft.gfx.Point;
 import minicraft.gfx.Screen;
 import minicraft.gfx.SpriteSheet;
 import minicraft.gfx.SpriteLinker.SpriteType;
+import minicraft.saveload.Save;
+import minicraft.screen.entry.ArrayEntry;
 import minicraft.screen.entry.ListEntry;
 import minicraft.screen.entry.SelectEntry;
+import minicraft.util.BookData;
 import minicraft.util.Logging;
 
-import org.jetbrains.annotations.Nullable;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -75,6 +81,8 @@ public class ResourcePackDisplay extends Display {
 
 	private static final ArrayList<ResourcePack> resourcePacks = new ArrayList<>(); // Packs that are not loaded.
 	private static final File FOLDER_LOCATION = new File(FileHandler.getSystemGameDir() + "/" + FileHandler.getLocalGameDir() + "/resourcepacks");
+	@SuppressWarnings("unused")
+	private static final int VERSION = 1;
 
 	private static final ResourcePack defaultPack; // Used to check if the resource pack default.
 	private static final SpriteSheet defaultLogo;
@@ -147,7 +155,7 @@ public class ResourcePackDisplay extends Display {
 	private void reloadEntries() {
 		entries0.clear();
 		for (ResourcePack pack : resourcePacks) {
-			entries0.add(new SelectEntry(pack.name, () -> {}) {
+			entries0.add(new SelectEntry(pack.name, () -> Game.setDisplay(new PopupDisplay(null, pack.name, pack.description)), false) {
 				@Override
 				public int getColor(boolean isSelected) {
 					if (selection == 1) return SelectEntry.COL_UNSLCT;
@@ -158,7 +166,7 @@ public class ResourcePackDisplay extends Display {
 
 		entries1.clear();
 		for (ResourcePack pack : loadedPacks) {
-			entries1.add(new SelectEntry(pack.name, () -> {}) {
+			entries1.add(new SelectEntry(pack.name, () -> Game.setDisplay(new PopupDisplay(null, pack.name, pack.description)), false) {
 				@Override
 				public int getColor(boolean isSelected) {
 					if (selection == 0) return SelectEntry.COL_UNSLCT;
@@ -253,6 +261,7 @@ public class ResourcePackDisplay extends Display {
 	public void onExit() {
 		resourcePacks.clear(); // Releases unloaded packs.
 		fileWatcher.close(); // Removes watcher.
+		new Save();
 		if (changed) reloadResources();
 	}
 
@@ -261,14 +270,14 @@ public class ResourcePackDisplay extends Display {
 		// Overrides the default tick handler.
 		if (input.getKey("right").clicked) {
 			if (selection == 0) {
-				Sound.select.play();
+				Sound.play("select");
 				onSelectionChange(0, 1);
 			}
 
 			return;
 		} else if (input.getKey("left").clicked) {
 			if (selection == 1) {
-				Sound.select.play();
+				Sound.play("select");
 				onSelectionChange(1, 0);
 			}
 
@@ -278,7 +287,7 @@ public class ResourcePackDisplay extends Display {
 				loadedPacks.add(resourcePacks.remove(menus[0].getSelection()));
 				changed = true;
 				refreshEntries();
-				Sound.select.play();
+				Sound.play("select");
 			}
 
 			return;
@@ -287,25 +296,27 @@ public class ResourcePackDisplay extends Display {
 				resourcePacks.add(loadedPacks.remove(menus[1].getSelection()));
 				changed = true;
 				refreshEntries();
-				Sound.select.play();
+				Sound.play("select");
 			}
 
 			return;
 		} else if (input.getKey("shift-up").clicked) {
 			if (selection == 1 && menus[1].getSelection() > 0) {
+				if (loadedPacks.get(menus[1].getSelection()) == defaultPack) return; // Default pack remains bottom.
 				loadedPacks.add(menus[1].getSelection() - 1, loadedPacks.remove(menus[1].getSelection()));
 				changed = true;
 				refreshEntries();
-				Sound.select.play();
+				Sound.play("select");
 			}
 
 			return;
 		} else if (input.getKey("shift-down").clicked) {
 			if (selection == 1 && menus[1].getSelection() < loadedPacks.size() - 1) {
+				if (loadedPacks.get(menus[1].getSelection() + 1) == defaultPack) return; // Default pack remains bottom.
 				loadedPacks.add(menus[1].getSelection() + 1, loadedPacks.remove(menus[1].getSelection()));
 				changed = true;
 				refreshEntries();
-				Sound.select.play();
+				Sound.play("select");
 			}
 
 			return;
@@ -344,8 +355,10 @@ public class ResourcePackDisplay extends Display {
 	}
 
 	private static class ResourcePack implements Closeable {
-		private final URL packRoot;
+		private URL packRoot;
+
 		/** 0 - before 2.2.0; 1 - 2.2.0-latest */
+		@SuppressWarnings("unused")
 		private final int packFormat;
 		private final String name;
 		private final String description;
@@ -419,12 +432,19 @@ public class ResourcePackDisplay extends Display {
 		private InputStream getResourceAsStream(String path) throws IOException {
 			return zipFile.getInputStream(zipFile.getEntry(path));
 		}
-		private ArrayList<String> getFiles(String path) {
+
+		@FunctionalInterface
+		private static interface FilesFilter {
+			public abstract boolean check(Path path, boolean isDir);
+		}
+
+		private ArrayList<String> getFiles(String path, FilesFilter filter) {
 			ArrayList<String> paths = new ArrayList<>();
 			for (Enumeration<? extends ZipEntry> e = zipFile.entries(); e.hasMoreElements();) {
 				ZipEntry entry = e.nextElement();
 				Path parent;
-				if ((parent = Path.of(entry.getName()).getParent()) != null && parent.equals(Path.of(path))) {
+				if ((parent = Path.of(entry.getName()).getParent()) != null && parent.equals(Path.of(path)) &&
+						(filter == null || filter.check(Path.of(entry.getName()), entry.isDirectory()))) {
 					paths.add(entry.getName());
 				}
 			}
@@ -443,6 +463,9 @@ public class ResourcePackDisplay extends Display {
 		} catch (JSONException | IOException | URISyntaxException e) {
 			CrashHandler.errorHandle(e, new CrashHandler.ErrorInfo("Cannot Load Resource Pack",
 				CrashHandler.ErrorInfo.ErrorType.REPORT, String.format("Unable to load resource pack: %s.", file.getPath())));
+		} catch (NullPointerException e) { // pack.json is missing.
+			CrashHandler.errorHandle(e, new CrashHandler.ErrorInfo("Resource Pack not Supported",
+				CrashHandler.ErrorInfo.ErrorType.HANDLED, String.format("Earlier version formatted resource pack detected: %s.", file.getPath())));
 		}
 
 		return null;
@@ -501,50 +524,61 @@ public class ResourcePackDisplay extends Display {
 		resourcePacks.sort((p1, p2) -> p1.name.compareTo(p2.name));
 	}
 
-	// public void initResourcePack() {
-	// 	if (!loadedPack.equals(DEFAULT_RESOURCE_PACK)) {
-	// 		ZipFile zipFile;
-	// 		try {
-	// 			zipFile = new ZipFile(new File(FOLDER_LOCATION, loadedPack));
-	// 		} catch (IOException e) {
-	// 			e.printStackTrace();
-	// 			Logging.RESOURCEHANDLER_RESOURCEPACK.error("Could not load resource pack zip at {}.", FOLDER_LOCATION + "/" + loadedPack);
-	// 			return;
-	// 		}
+	public static void releaseUnloadedPacks() {
+		resourcePacks.clear(); // Releases unloaded packs.
+	}
 
-	// 		updateSheets(zipFile);
-	// 		updateLocalization(zipFile);
-	// 	}
-	// }
+	public static void changeDefaultPackURL(URL url) {
+		defaultPack.packRoot = url;
+	}
 
-	// private void updateResourcePack() {
-	// 	loadedPack = Objects.requireNonNull(menus[0].getCurEntry()).toString();
+	public static void loadResourcePacks(String[] names) {
+		for (String name : names) {
+			for (ResourcePack pack : new ArrayList<>(resourcePacks)) {
+				try {
+					if (Path.of(pack.packRoot.toURI()).equals(FOLDER_LOCATION.toPath().resolve(name))) {
+						resourcePacks.remove(pack);
+						loadedPacks.add(loadedPacks.indexOf(defaultPack), pack);
+					}
+				} catch (URISyntaxException e) {
+					e.printStackTrace();
+					Logging.RESOURCEHANDLER_RESOURCEPACK.debug("URL invalid.");
+				}
+			}
+		}
+	}
 
-	// 	ZipFile zipFile = null;
-	// 	if (!loadedPack.equals(DEFAULT_RESOURCE_PACK)) {
-	// 		try {
-	// 			zipFile = new ZipFile(new File(FOLDER_LOCATION, loadedPack));
-	// 		} catch (IOException e) {
-	// 			e.printStackTrace();
-	// 			Logging.RESOURCEHANDLER_RESOURCEPACK.error("Could not load resource pack zip at {}.", FOLDER_LOCATION + "/" + loadedPack);
-	// 			return;
-	// 		}
-	// 	}
+	public static ArrayList<String> getLoadedPacks() {
+		ArrayList<String> packs = new ArrayList<>();
+		for (ResourcePack pack : loadedPacks) {
+			if (pack != defaultPack) {
+				try {
+					packs.add(new File(pack.packRoot.toURI()).getName());
+				} catch (URISyntaxException e) {
+					CrashHandler.errorHandle(e);
+				}
+			}
+		}
 
-	// 	updateSheets(zipFile);
-	// 	updateLocalization(zipFile);
-	// }
+		return packs;
+	}
 
+	@SuppressWarnings("unchecked")
 	public static void reloadResources() {
-		// TODO
 		loadQuery.clear();
 		loadQuery.addAll(loadedPacks);
 		Collections.reverse(loadQuery);
 		Renderer.spriteLinker.resetSprites();
+		Localization.resetLocalizations();
+		BookData.resetBooks();
+		Sound.resetSounds();
 		for (ResourcePack pack : loadQuery) {
 			if (pack.openStream()) {
 				try {
-					loadTextrues(pack);
+					loadTextures(pack);
+					loadLocalization(pack);
+					loadBooks(pack);
+					loadSounds(pack);
 					pack.close();
 				} catch (IOException e) {
 					CrashHandler.errorHandle(e);
@@ -553,10 +587,12 @@ public class ResourcePackDisplay extends Display {
 		}
 
 		Renderer.spriteLinker.updateLinkedSheets();
+		Localization.loadLanguage();
+		((ArrayEntry<Localization.LocaleInformation>) Settings.getEntry("language")).setOptions(Localization.getLocales());
 	}
 
-	private static void loadTextrues(ResourcePack pack) throws IOException {
-		for (String t : pack.getFiles("assets/textures/")) {
+	private static void loadTextures(ResourcePack pack) throws IOException {
+		for (String t : pack.getFiles("assets/textures/", null)) {
 			switch (t) {
 				case "assets/textures/entity/": loadTextures(pack, SpriteType.Entity); break;
 				case "assets/textures/gui/": loadTextures(pack, SpriteType.Gui); break;
@@ -575,116 +611,69 @@ public class ResourcePackDisplay extends Display {
 			case Tile: path += "tile/"; break;
 		}
 
-		for (String p : pack.getFiles(path)) {
+		for (String p : pack.getFiles(path, (p, isDir) -> p.toString().endsWith(".png") && !isDir)) {
 			Renderer.spriteLinker.setSprite(type, p.substring(path.length(), p.length() - 4), new SpriteSheet(ImageIO.read(pack.getResourceAsStream(p))));
 		}
 	}
 
-	private void updateLocalization(@Nullable ZipFile zipFile) {
-		// Reload all hard-coded loc-files. (also clears old custom loc)
-		Localization.reloadLocalizationFiles();
-
-		// Load the custom loc as long as this isn't the default pack.
-		if (zipFile != null) {
-			ArrayList<String> paths = new ArrayList<>();
-			HashMap<String, HashMap<String, ZipEntry>> resources = getPackFromZip(zipFile);
-			if (resources.containsKey("localization"))
-				for (Entry<String, ZipEntry> entry : resources.get("localization").entrySet()) {
-					if (entry.getKey().endsWith(".json")) {
-						// paths.add(loadedPack + "/" + entry.getKey());
-					}
-				}
-
-			Localization.updateLocalizationFiles(paths.toArray(new String[0]));
+	private static void loadLocalization(ResourcePack pack) {
+		JSONObject langJSON = null;
+		try {
+			langJSON = new JSONObject(new String(pack.getResourceAsStream("pack.json").readAllBytes())).optJSONObject("language");
+		} catch (JSONException | IOException e1) {
+			e1.printStackTrace();
 		}
-	}
-
-	// TODO: Make resource packs support sound
-	// private void updateSounds() { }
-
-	/**
-	 * Get all the resources in a resource pack in a hashmap.
-	 *
-	 * Example folder structure:
-	 * 	- textures
-	 * 		- items.png
-	 * 		- gui.png
-	 * 		- entities.png
-	 * 		- tiles.png
-	 * 	- localization
-	 * 		- english_en-us.json
-	 * 	- sound
-	 * 		- bossdeath.wav
-	 *
-	 * Gets a hashmap containing several hashmaps with all the files inside.
-	 *
-	 * Example getter:
-	 * resources.get("textures").get("tiles.png")
-	 * @param zipFile The resource pack .zip
-	 */
-	public static HashMap<String, HashMap<String, ZipEntry>> getPackFromZip(ZipFile zipFile) {
-		HashMap<String, HashMap<String, ZipEntry>> resources = new HashMap<>();
-
-		Enumeration<? extends ZipEntry> entries = zipFile.entries();
-		while (entries.hasMoreElements()){
-			ZipEntry entry = entries.nextElement();
-
-			String[] path = entry.getName().split("/");
-
-			// Only allow two levels of folders.
-			if (path.length <= 2) {
-				// Check if entry is a folder. If it is, add it to the first map, if not, add it to the second map.
-				String[] validNames = { "textures", "localization", "sound" };
-				if (entry.isDirectory()) {
-					for (String name : validNames) {
-						if (path[0].equals(name)) {
-							resources.put(path[0], new HashMap<>());
-						}
-					}
-				} else {
-					// If it is a file in the root folder, ignore it.
-					if (path.length == 1) continue;
-
-					HashMap<String, ZipEntry> directory = resources.get(path[0]);
-					if (directory == null) {
-						// If it is not exist, create it.
-						for (String name : validNames) {
-							if (path[0].equals(name)) {
-								resources.put(path[0], new HashMap<>());
-							}
-						}
-						directory = resources.get(path[0]);
-						if (directory == null) continue;
-					};
-
-					String[] validSuffixes = { ".json", ".wav", ".png" };
-					for (String suffix : validSuffixes) {
-						if (path[1].endsWith(suffix)) {
-							directory.put(path[1], entry);
-						}
-					}
+		if (langJSON != null) {
+			for (String loc : langJSON.keySet()) {
+				try {
+					Locale locale = Locale.forLanguageTag(loc);
+					JSONObject info = langJSON.getJSONObject(loc);
+					Localization.addLocale(locale, new Localization.LocaleInformation(locale, info.getString("name"), info.getString("region")));
+				} catch (JSONException e) {
+					Logging.RESOURCEHANDLER_RESOURCEPACK.debug(e, "Invalid localization configuration in pack: {}", pack.name);
 				}
 			}
 		}
 
-		return resources;
+		for (String f : pack.getFiles("assets/localization/", (path, isDir) -> path.toString().endsWith(".json") && !isDir)) {
+			String str = Path.of(f).getFileName().toString();
+			try {
+				Localization.addLocalization(Locale.forLanguageTag(str.substring(0, str.length() - 5)),
+					new String(pack.getResourceAsStream(f).readAllBytes()));
+			} catch (IOException e) {
+				Logging.RESOURCEHANDLER_LOCALIZATION.debug(e, "Unable to load localization: {} in pack : {}", f, pack.name);
+			}
+		}
+	}
+
+	private static void loadBooks(ResourcePack pack) {
+		for (String path : pack.getFiles("assets/books", (path, isDir) -> path.toString().endsWith(".txt") && !isDir))  {
+			try {
+				switch (path) {
+					case "assets/books/about.txt": BookData.about = BookData.loadBook(new String(pack.getResourceAsStream(path).readAllBytes())); break;
+					case "assets/books/credits.txt": BookData.credits = BookData.loadBook(new String(pack.getResourceAsStream(path).readAllBytes())); break;
+					case "assets/books/instructions.txt": BookData.instructions = BookData.loadBook(new String(pack.getResourceAsStream(path).readAllBytes())); break;
+					case "assets/books/antidous.txt": BookData.antVenomBook = BookData.loadBook(new String(pack.getResourceAsStream(path).readAllBytes())); break;
+					case "assets/books/story_guide.txt": BookData.storylineGuide = BookData.loadBook(new String(pack.getResourceAsStream(path).readAllBytes())); break;
+				}
+			} catch (IOException e) {
+				Logging.RESOURCEHANDLER_LOCALIZATION.debug(e, "Unable to load book: {} in pack : {}", path, pack.name);
+			}
+		}
+	}
+
+	private static void loadSounds(ResourcePack pack) {
+		for (String f : pack.getFiles("assets/sound/", (path, isDir) -> path.toString().endsWith(".wav") && !isDir)) {
+			String name = Path.of(f).getFileName().toString();
+			try {
+				Sound.loadSound(name.substring(0, name.length() - 4), new BufferedInputStream(pack.getResourceAsStream(f)), pack.name);
+			} catch (IOException e) {
+				Logging.RESOURCEHANDLER_LOCALIZATION.debug(e, "Unable to load audio: {} in pack : {}", f, pack.name);
+			}
+		}
 	}
 
 	public static File getFolderLocation() {
 		return FOLDER_LOCATION;
 	}
-
-	// public void setLoadedPack(String name) {
-	// 	ListEntry[] entries = menus[0].getEntries();
-	// 	for (ListEntry entry : entries) {
-	// 		// If provided pack exists in list, set it.
-	// 		if (entry.toString().equals(name)) {
-	// 			loadedPack = name;
-	// 		}
-	// 	}
-	// }
-
-	// public static String getLoadedPack() {
-	// 	return loadedPack;
-	// }
 }

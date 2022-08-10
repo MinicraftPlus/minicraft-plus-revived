@@ -66,7 +66,7 @@ public class Tnt extends Furniture implements ActionListener {
 						 Tnt tnt = (Tnt) e;
 						 if (!tnt.fuseLit) {
 							 tnt.fuseLit = true;
-							 Sound.fuse.play();
+							 Sound.play("fuse");
 							 tnt.ftik = FUSE_TIME * 2 / 3;
 						 }
 					 }
@@ -85,7 +85,7 @@ public class Tnt extends Furniture implements ActionListener {
 				}
 
 				AchievementsDisplay.setAchievement("minicraft.achievement.demolition", true);
-				Sound.explode.play();
+				Sound.play("explode");
 
 				level.setAreaTiles(xt, yt, 1, Tiles.get("explode"), 0, explosionBlacklist);
 
@@ -126,7 +126,7 @@ public class Tnt extends Furniture implements ActionListener {
 	public boolean interact(Player player, Item heldItem, Direction attackDir) {
 		if (!fuseLit) {
 			fuseLit = true;
-			Sound.fuse.play();
+			Sound.play("fuse");
 			return true;
 		}
 

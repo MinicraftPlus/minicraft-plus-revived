@@ -882,7 +882,7 @@ public class Player extends Mob implements ItemHolder, ClientTickable {
 		}
 
 		if (picked == total) {
-			Sound.pickup.play();
+			Sound.play("pickup");
 
 			itemEntity.remove();
 			addScore(1);
@@ -997,7 +997,7 @@ public class Player extends Mob implements ItemHolder, ClientTickable {
 		if (activeItem != null) dc.getInventory().add(activeItem);
 		if (curArmor != null) dc.getInventory().add(curArmor);
 
-		Sound.playerDeath.play();
+		Sound.play("death");
 
 		// Add the death chest to the world.
 		World.levels[Game.currentLevel].add(dc);
@@ -1053,7 +1053,7 @@ public class Player extends Mob implements ItemHolder, ClientTickable {
 			if (this == Game.player) super.doHurt(healthDam, attackDir); // Sets knockback, and takes away health.
 		}
 
-		Sound.playerHurt.play();
+		Sound.play("playerhurt");
 		hurtTime = playerHurtTime;
 	}
 
@@ -1075,7 +1075,7 @@ public class Player extends Mob implements ItemHolder, ClientTickable {
 			if (this == Game.player) super.doHurt(healthDam, attackDir); // Sets knockback, and takes away health.
 		}
 
-		Sound.playerHurt.play();
+		Sound.play("playerhurt");
 		hurtTime = playerHurtTime;
 	}
 

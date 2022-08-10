@@ -50,7 +50,7 @@ public class TorchTile extends Tile {
 	public boolean interact(Level level, int xt, int yt, Player player, Item item, Direction attackDir) {
 		if(item instanceof PowerGloveItem) {
 			level.setTile(xt, yt, this.onType);
-			Sound.monsterHurt.play();
+			Sound.play("monsterhurt");
 			level.dropItem(xt*16+8, yt*16+8, Items.get("Torch"));
 			return true;
 		} else {

@@ -151,7 +151,7 @@ public class Spawner extends Furniture {
 		newmob.y = spawnPos.y << 4;
 
 		level.add(newmob);
-		Sound.monsterHurt.play();
+		Sound.play("monsterhurt");
 		for (int i = 0; i < 6; i++) {
 			 int randX = rnd.nextInt(16);
 			 int randY = rnd.nextInt(12);
@@ -164,7 +164,7 @@ public class Spawner extends Furniture {
 		if (item instanceof ToolItem) {
 			ToolItem tool = (ToolItem)item;
 
-			Sound.monsterHurt.play();
+			Sound.play("monsterhurt");
 
 			int dmg;
 			if (Game.isMode("minicraft.settings.mode.creative"))
@@ -183,7 +183,7 @@ public class Spawner extends Furniture {
 			level.add(new TextParticle("" + dmg, x, y, Color.get(-1, 200, 300, 400)));
 			if (health <= 0) {
 				level.remove(this);
-				Sound.playerDeath.play();
+				Sound.play("death");
 				player.addScore(500);
 			}
 

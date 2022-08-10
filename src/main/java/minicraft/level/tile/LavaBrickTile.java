@@ -23,7 +23,7 @@ public class LavaBrickTile extends Tile {
 			if (tool.type == ToolType.Pickaxe) {
 				if (player.payStamina(4 - tool.level) && tool.payDurability()) {
 					level.setTile(xt, yt, Tiles.get("Lava"));
-					Sound.monsterHurt.play();
+					Sound.play("monsterhurt");
 					return true;
 				}
 			}

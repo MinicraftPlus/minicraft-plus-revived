@@ -2,7 +2,6 @@ package minicraft.core;
 
 import minicraft.core.io.*;
 import minicraft.entity.mob.Player;
-import minicraft.gfx.SpriteLinker.SpriteType;
 import minicraft.level.Level;
 import minicraft.level.tile.Tiles;
 import minicraft.network.Analytics;
@@ -42,7 +41,7 @@ public class Game {
 			Logging.GAMEHANDLER.warn("Game tried to exit display, but no menu is open.");
 			return;
 		}
-		Sound.back.play();
+		Sound.play("craft");
 		newDisplay = display.getParent();
 	}
 	@Nullable
@@ -71,16 +70,10 @@ public class Game {
 
 		Analytics.GameStartup.ping();
 
-		/* Load default loc.
-		 * DO NOT trigger any other classes before this.
-		 * Including static initialization.*/
-		Localization.loadLanguage();
-
 		input = new InputHandler(Renderer.canvas);
 		controlInput = new ControllerHandler();
 
 		Tiles.initTileList();
-		Sound.init();
 
 		// Load the selected language.
 		Initializer.createAndDisplayFrame();

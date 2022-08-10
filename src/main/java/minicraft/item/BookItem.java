@@ -17,22 +17,27 @@ public class BookItem extends Item {
 	protected static ArrayList<Item> getAllInstances() {
 		ArrayList<Item> items = new ArrayList<Item>();
 		items.add(new BookItem("Book", new LinkedSpriteSheet(SpriteType.Item, "book"), null));
-		items.add(new BookItem("Antidious", new LinkedSpriteSheet(SpriteType.Item, "antidious_book"), BookData.antVenomBook, true));
+		items.add(new BookItem("Antidious", new LinkedSpriteSheet(SpriteType.Item, "antidious_book"), () -> BookData.antVenomBook, true));
 		return items;
 	}
 
-	protected String book; // TODO this is not saved yet; it could be, for editable books.
+	@FunctionalInterface
+	public static interface BookContent {
+		public abstract String collect();
+	}
+
+	protected BookContent book; // TODO this is not saved yet; it could be, for editable books.
 	private final boolean hasTitlePage;
 
-	private BookItem(String title, LinkedSpriteSheet sprite, String book) { this(title, sprite, book, false); }
-	private BookItem(String title, LinkedSpriteSheet sprite, String book, boolean hasTitlePage) {
+	private BookItem(String title, LinkedSpriteSheet sprite, BookContent book) { this(title, sprite, book, false); }
+	private BookItem(String title, LinkedSpriteSheet sprite, BookContent book, boolean hasTitlePage) {
 		super(title, sprite);
 		this.book = book;
 		this.hasTitlePage = hasTitlePage;
 	}
 
 	public boolean interactOn(Tile tile, Level level, int xt, int yt, Player player, Direction attackDir) {
-		Game.setDisplay(new BookDisplay(book, hasTitlePage));
+		Game.setDisplay(new BookDisplay(book.collect(), hasTitlePage));
 		return true;
 	}
 

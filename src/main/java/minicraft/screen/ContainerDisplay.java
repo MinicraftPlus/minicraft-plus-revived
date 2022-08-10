@@ -19,7 +19,7 @@ public class ContainerDisplay extends Display {
 	private Chest chest;
 
 	public ContainerDisplay(Player player, Chest chest) {
-		super(new InventoryMenu(chest, chest.getInventory(), chest.name), new InventoryMenu(player, player.getInventory(), "minicraft.display.menus.inventory"));
+		super(new InventoryMenu(chest, chest.getInventory(), chest.name, RelPos.LEFT), new InventoryMenu(player, player.getInventory(), "minicraft.display.menus.inventory", RelPos.RIGHT));
 		//pInv = player.getInventory();
 		//cInv = chest.getInventory();
 		this.player = player;

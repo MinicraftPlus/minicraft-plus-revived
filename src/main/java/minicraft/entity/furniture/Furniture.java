@@ -91,7 +91,7 @@ public class Furniture extends Entity {
 	@Override
 	public boolean interact(Player player, @Nullable Item item, Direction attackDir) {
 		if (item instanceof PowerGloveItem) {
-			Sound.monsterHurt.play();
+			Sound.play("monsterhurt");
 				remove();
 				if (player.activeItem != null && !(player.activeItem instanceof PowerGloveItem))
 					player.getLevel().dropItem(player.x, player.y, player.activeItem); // Put whatever item the player is holding into their inventory

@@ -73,7 +73,7 @@ public class RockTile extends Tile {
 		}
 
 		level.add(new SmashParticle(x * 16, y * 16));
-		Sound.monsterHurt.play();
+		Sound.play("monsterhurt");
 
 		level.add(new TextParticle("" + dmg, x * 16 + 8, y * 16 + 8, Color.RED));
 		if (damage >= maxHealth) {

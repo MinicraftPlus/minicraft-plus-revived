@@ -46,7 +46,7 @@ public class PotatoTile extends PlantTile {
         }
 
 		// Play sound.
-		Sound.monsterHurt.play();
+		Sound.play("monsterhurt");
 
         level.setTile(x, y, Tiles.get("Dirt"));
     }

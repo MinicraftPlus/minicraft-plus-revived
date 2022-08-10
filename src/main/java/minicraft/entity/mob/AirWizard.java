@@ -159,7 +159,7 @@ public class AirWizard extends EnemyMob {
 				 p.addScore(100000); // Give the player 100K points.
 		}
 
-		Sound.bossDeath.play();
+		Sound.play("bossdeath");
 
 		Analytics.AirWizardDeath.ping();
 		Updater.notifyAll(Localization.getLocalized("minicraft.notification.air_wizard_defeated"));
