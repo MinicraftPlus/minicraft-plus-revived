@@ -18,10 +18,10 @@ import java.util.List;
 
 public class Creeper extends EnemyMob {
 	private static LinkedSpriteSheet[] sprites = new LinkedSpriteSheet[] {
-		new LinkedSpriteSheet(SpriteType.Entity, "creeper").setSpritePos(0, 0).setSpriteList(2),
-		new LinkedSpriteSheet(SpriteType.Entity, "creeper").setSpritePos(0, 2).setSpriteList(2),
-		new LinkedSpriteSheet(SpriteType.Entity, "creeper").setSpritePos(0, 4).setSpriteList(2),
-		new LinkedSpriteSheet(SpriteType.Entity, "creeper").setSpritePos(0, 6).setSpriteList(2)
+		new LinkedSpriteSheet(SpriteType.Entity, "creeper").setSpriteDim(0, 0, 2, 2).setSpriteList(2),
+		new LinkedSpriteSheet(SpriteType.Entity, "creeper").setSpriteDim(0, 2, 2, 2).setSpriteList(2),
+		new LinkedSpriteSheet(SpriteType.Entity, "creeper").setSpriteDim(0, 4, 2, 2).setSpriteList(2),
+		new LinkedSpriteSheet(SpriteType.Entity, "creeper").setSpriteDim(0, 6, 2, 2).setSpriteList(2)
 	};
 
 	private static final int MAX_FUSE_TIME = 60;

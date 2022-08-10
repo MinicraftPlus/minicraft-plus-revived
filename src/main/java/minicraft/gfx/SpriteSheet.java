@@ -12,6 +12,8 @@ public class SpriteSheet {
 	/** Default with maximum size of image. */
 	public SpriteSheet(BufferedImage image) { this(image, image.getWidth(), image.getHeight()); }
 	public SpriteSheet(BufferedImage image, int width, int height) {
+		this.width = width;
+		this.height = height;
 		// Sets width and height to that of the image
 		pixels = image.getRGB(0, 0, width, height, null, 0, width); // Gets the color array of the image pixels
 

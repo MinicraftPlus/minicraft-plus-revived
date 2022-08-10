@@ -21,11 +21,14 @@ import java.util.zip.ZipFile;
 
 import javax.imageio.ImageIO;
 
+import minicraft.core.io.ControllerHandler;
 import minicraft.core.io.FileHandler;
+import minicraft.core.io.InputHandler;
 import minicraft.core.CrashHandler;
 import minicraft.core.Game;
 import minicraft.core.Renderer;
 import minicraft.core.io.Localization;
+import minicraft.core.io.Sound;
 import minicraft.gfx.Color;
 import minicraft.gfx.Font;
 import minicraft.gfx.Point;
@@ -81,15 +84,15 @@ public class ResourcePackDisplay extends Display {
 	private static final int padding = 10;
 
 	private WatcherThread fileWatcher;
-	private ArrayList<ListEntry> entries0;
-	private ArrayList<ListEntry> entries1;
+	private ArrayList<ListEntry> entries0 = new ArrayList<>();
+	private ArrayList<ListEntry> entries1 = new ArrayList<>();
 	private Menu.Builder builder0;
 	private Menu.Builder builder1;
+	private boolean changed = false;
 
 	static {
 		// Add the default pack.
 		defaultPack = Objects.requireNonNull(loadPackMetadata(Game.class.getProtectionDomain().getCodeSource().getLocation()));
-		defaultPack.refreshPack();
 		loadedPacks.add(defaultPack);
 		try {
 			defaultLogo = new SpriteSheet(ImageIO.read(ResourcePackDisplay.class.getResourceAsStream("/resources/default_pack.png")));
@@ -101,6 +104,7 @@ public class ResourcePackDisplay extends Display {
 
 	public ResourcePackDisplay() {
 		super(true, true);
+		initPacks();
 
 		builder0 = new Menu.Builder(false, 2, RelPos.LEFT)
 			.setDisplayLength(8)
@@ -119,7 +123,8 @@ public class ResourcePackDisplay extends Display {
 				.createMenu()
 		};
 
-		menus[1].translate(menus[0].getBounds().getWidth() + padding, 0);
+		if (menus[1].getBounds().getLeft() - menus[0].getBounds().getRight() < padding)
+			menus[1].translate(menus[0].getBounds().getRight() - menus[1].getBounds().getLeft() + padding, 0);
 
 		fileWatcher = new WatcherThread();
 	}
@@ -127,23 +132,39 @@ public class ResourcePackDisplay extends Display {
 	@Override
 	protected void onSelectionChange(int oldSel, int newSel) {
 		super.onSelectionChange(oldSel, newSel);
-		if(oldSel == newSel) return; // this also serves as a protection against access to menus[0] when such may not exist.
-		int shift = 0;
-		if(newSel == 0) shift = padding - menus[0].getBounds().getLeft();
-		if(newSel == 1) shift = (Screen.w - padding) - menus[1].getBounds().getRight();
-		for(Menu m: menus)
-			m.translate(shift, 0);
+		if (oldSel == newSel) return; // this also serves as a protection against access to menus[0] when such may not exist.
+		menus[0].translate(-menus[0].getBounds().getLeft(), 0);
+		menus[1].translate(Screen.w - menus[1].getBounds().getRight(), 0);
+		if (newSel == 0) {
+			if (menus[1].getBounds().getLeft() - menus[0].getBounds().getRight() < padding)
+				menus[1].translate(menus[0].getBounds().getRight() - menus[1].getBounds().getLeft() + padding, 0);
+		} else if (newSel == 1) {
+			if (menus[1].getBounds().getLeft() - menus[0].getBounds().getRight() < padding)
+				menus[0].translate(-(menus[0].getBounds().getRight() - menus[1].getBounds().getLeft() + padding), 0);
+		}
 	}
 
 	private void reloadEntries() {
 		entries0.clear();
 		for (ResourcePack pack : resourcePacks) {
-			entries0.add(new SelectEntry(pack.name, Game::exitDisplay));
+			entries0.add(new SelectEntry(pack.name, () -> {}) {
+				@Override
+				public int getColor(boolean isSelected) {
+					if (selection == 1) return SelectEntry.COL_UNSLCT;
+					return super.getColor(isSelected);
+				}
+			});
 		}
 
 		entries1.clear();
 		for (ResourcePack pack : loadedPacks) {
-			entries1.add(new SelectEntry(pack.name, Game::exitDisplay));
+			entries1.add(new SelectEntry(pack.name, () -> {}) {
+				@Override
+				public int getColor(boolean isSelected) {
+					if (selection == 0) return SelectEntry.COL_UNSLCT;
+					return super.getColor(isSelected);
+				}
+			});
 		}
 	}
 
@@ -179,6 +200,7 @@ public class ResourcePackDisplay extends Display {
 			}
 
 			start();
+			Logging.RESOURCEHANDLER_RESOURCEPACK.debug("WatcherThread started.");
 		}
 
 		@Override
@@ -202,12 +224,19 @@ public class ResourcePackDisplay extends Display {
 					}
 
 					if (urls.size() > 0) {
+						Logging.RESOURCEHANDLER_RESOURCEPACK.debug("Refreshing resource packs.");
 						refreshResourcePacks(urls);
 						refreshEntries();
 					}
 				} catch (InterruptedException e) {
+					Logging.RESOURCEHANDLER_RESOURCEPACK.trace("File watcher terminated.");
 					return;
 				}
+
+				if (Thread.interrupted()) {
+					Logging.RESOURCEHANDLER_RESOURCEPACK.trace("File watcher terminated.");
+					return;
+            	}
 			}
 
 			Logging.RESOURCEHANDLER_RESOURCEPACK.trace("File watcher terminated.");
@@ -215,7 +244,8 @@ public class ResourcePackDisplay extends Display {
 
 		@Override
 		public void close() {
-			running = false;
+			running = false; // This does no effect...
+			interrupt();
 		}
 	}
 
@@ -223,7 +253,65 @@ public class ResourcePackDisplay extends Display {
 	public void onExit() {
 		resourcePacks.clear(); // Releases unloaded packs.
 		fileWatcher.close(); // Removes watcher.
-		reloadResources();
+		if (changed) reloadResources();
+	}
+
+	@Override
+	public void tick(InputHandler input, ControllerHandler controlInput) {
+		// Overrides the default tick handler.
+		if (input.getKey("right").clicked) {
+			if (selection == 0) {
+				Sound.select.play();
+				onSelectionChange(0, 1);
+			}
+
+			return;
+		} else if (input.getKey("left").clicked) {
+			if (selection == 1) {
+				Sound.select.play();
+				onSelectionChange(1, 0);
+			}
+
+			return;
+		} else if (input.getKey("shift-right").clicked) {
+			if (selection == 0 && resourcePacks.size() > 0) {
+				loadedPacks.add(resourcePacks.remove(menus[0].getSelection()));
+				changed = true;
+				refreshEntries();
+				Sound.select.play();
+			}
+
+			return;
+		} else if (input.getKey("shift-left").clicked) {
+			if (selection == 1 && loadedPacks.get(menus[1].getSelection()) != defaultPack) {
+				resourcePacks.add(loadedPacks.remove(menus[1].getSelection()));
+				changed = true;
+				refreshEntries();
+				Sound.select.play();
+			}
+
+			return;
+		} else if (input.getKey("shift-up").clicked) {
+			if (selection == 1 && menus[1].getSelection() > 0) {
+				loadedPacks.add(menus[1].getSelection() - 1, loadedPacks.remove(menus[1].getSelection()));
+				changed = true;
+				refreshEntries();
+				Sound.select.play();
+			}
+
+			return;
+		} else if (input.getKey("shift-down").clicked) {
+			if (selection == 1 && menus[1].getSelection() < loadedPacks.size() - 1) {
+				loadedPacks.add(menus[1].getSelection() + 1, loadedPacks.remove(menus[1].getSelection()));
+				changed = true;
+				refreshEntries();
+				Sound.select.play();
+			}
+
+			return;
+		}
+
+		super.tick(input, controlInput);
 	}
 
 	@Override
@@ -237,17 +325,20 @@ public class ResourcePackDisplay extends Display {
 		Font.drawCentered(Localization.getLocalized("minicraft.displays.resource_packs.display.help.move", Game.input.getMapping("cursor-down"), Game.input.getMapping("cursor-up")), screen, Screen.h - 17, Color.DARK_GRAY);
 		Font.drawCentered(Localization.getLocalized("minicraft.displays.resource_packs.display.help.select", Game.input.getMapping("SELECT")), screen, Screen.h - 9, Color.DARK_GRAY);
 
+		ArrayList<ResourcePack> packs = selection == 0 ? resourcePacks : loadedPacks;
+		if (packs.size() > 0) {
+			@SuppressWarnings("resource")
+			SpriteSheet logo = packs.get(menus[selection].getSelection()).logo;
+			int h = logo.height / 8;
+			int w = logo.width / 8;
+			int xo = (Screen.w - logo.width) / 2;
+			int yo = 36 - logo.height / 2;
 
-		SpriteSheet logo = selection == 0 ? resourcePacks.get(menus[selection].getSelection()).logo : loadedPacks.get(menus[selection].getSelection()).logo;
-		int h = logo.height;
-		int w = logo.width;
-		int xo = (Screen.w - w * 8) / 2;
-		int yo = 28 + (h >= 32 ? -8 : 0);
-
-		for (int y = 0; y < h; y++) {
-			for (int x = 0; x < w; x++) {
-				// Resource pack logo
-				screen.render(xo + x * 8, yo + y * 8, x, y, 0, logo);
+			for (int y = 0; y < h; y++) {
+				for (int x = 0; x < w; x++) {
+					// Resource pack logo
+					screen.render(xo + x * 8, yo + y * 8, x, y, 0, logo);
+				}
 			}
 		}
 	}
@@ -268,15 +359,17 @@ public class ResourcePackDisplay extends Display {
 			this.packFormat = packFormat;
 			this.name = name;
 			this.description = desc;
+			refreshPack();
 		}
 
 		/** This does not include metadata refresh. */
 		private void refreshPack() {
 			// Refresh pack logo.png.
 			try {
-				File png = new File(packRoot.getPath()).toPath().resolve("pack.png").toFile();
-				if (png.exists()) {
-					logo = new SpriteSheet(ImageIO.read(png));
+				openStream();
+				InputStream in = getResourceAsStream("pack.png");
+				if (in != null) {
+					logo = new SpriteSheet(ImageIO.read(in));
 
 					// Logo size verification.
 					int h = logo.height;
@@ -289,8 +382,9 @@ public class ResourcePackDisplay extends Display {
 					Logging.RESOURCEHANDLER_RESOURCEPACK.trace("Pack logo not found, loading default logo instead.");
 					logo = defaultLogo;
 				}
+				close();
 
-			} catch (IOException e) {
+			} catch (IOException | NullPointerException e) {
 				e.printStackTrace();
 				Logging.RESOURCEHANDLER_RESOURCEPACK.warn("Unable to load logo, loading default logo instead.");
 				if (this == defaultPack) {
@@ -371,7 +465,6 @@ public class ResourcePackDisplay extends Display {
 		}
 
 		refreshResourcePacks(urls);
-		reloadResources();
 	}
 
 	private static ResourcePack findPackByURL(URL url) {
@@ -442,7 +535,7 @@ public class ResourcePackDisplay extends Display {
 	// 	updateLocalization(zipFile);
 	// }
 
-	private static void reloadResources() {
+	public static void reloadResources() {
 		// TODO
 		loadQuery.clear();
 		loadQuery.addAll(loadedPacks);

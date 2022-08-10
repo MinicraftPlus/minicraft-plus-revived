@@ -28,7 +28,7 @@ public class Font {
 			int ix = chars.indexOf(msg.charAt(i)); // The current letter in the message loop
 			if (ix >= 0) {
 				// If that character's position is larger than or equal to 0, then render the character on the screen.
-				screen.render(x + i * textWidth(msg.substring(i, i+1)), y, ix % 32, 28, 0, Renderer.spriteLinker.getSpriteSheet(SpriteType.Gui, "font"), whiteTint);
+				screen.render(x + i * textWidth(msg.substring(i, i+1)), y, ix % 32, ix / 32, 0, Renderer.spriteLinker.getSpriteSheet(SpriteType.Gui, "font"), whiteTint);
 			}
 		}
 	}

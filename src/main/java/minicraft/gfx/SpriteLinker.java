@@ -1,6 +1,7 @@
 package minicraft.gfx;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 
 import javax.security.auth.DestroyFailedException;
@@ -139,7 +140,7 @@ public class SpriteLinker {
 		}
 		public MobSprite[][] getMobSprites() {
 			if (!useMobSprites) {
-				reloaded = true;
+				reloaded = false;
 				useMobSprites = true;
 			}
 
@@ -154,15 +155,15 @@ public class SpriteLinker {
 		private void reloadSprite() {
 			SpriteSheet sheet = linkedMap.get(key);
 			if (sheet != null) {
-				if (w <= 0) w = sheet.width;
-				if (h <= 0) h = sheet.height;
+				if (w <= 0) w = sheet.width / 8;
+				if (h <= 0) h = sheet.height / 8;
 				sprite = mirrors == null ? new Sprite(x, y, w, h, sheet, mirror, onepixel) : new Sprite(x, y, w, h, sheet, onepixel, mirrors);
 				sprite.color = color;
 				mobSprites = null;
 				if (useMobSprites) {
 					switch (mobType) {
-						case Animations: mobSprites = MobSprite.compileMobSpriteAnimations(x, y, sheet);
-						case List: mobSprites = new MobSprite[][]{MobSprite.compileSpriteList(x, y, w, h, mirror, number, sheet)};
+						case Animations: mobSprites = MobSprite.compileMobSpriteAnimations(x, y, sheet); break;
+						case List: mobSprites = new MobSprite[][]{MobSprite.compileSpriteList(x, y, w, h, mirror, number, sheet)}; break;
 					}
 				}
 			} else {

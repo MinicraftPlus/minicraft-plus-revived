@@ -171,7 +171,6 @@ public class Updater extends Game {
 				if (player != null)
 					player.tick(); // It is CRUCIAL that the player is ticked HERE, before the menu is ticked. I'm not quite sure why... the menus break otherwise, though.
 				display.tick(input, controlInput);
-				paused = true;
 			} else {
 				// No menu, currently.
 				paused = false;

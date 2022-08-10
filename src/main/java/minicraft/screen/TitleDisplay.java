@@ -117,10 +117,10 @@ public class TitleDisplay extends Display {
 		super.render(screen);
 
 		SpriteSheet sheet = Renderer.spriteLinker.getSpriteSheet(SpriteType.Gui, "title");
-		int h = sheet.height; // Height of squares (on the spritesheet)
-		int w = sheet.width; // Width of squares (on the spritesheet)
-		int xo = (Screen.w - w) / 2; // X location of the title
-		int yo = 18; // Y location of the title
+		int h = sheet.height / 8; // Height of squares (on the spritesheet)
+		int w = sheet.width / 8; // Width of squares (on the spritesheet)
+		int xo = (Screen.w - sheet.width) / 2; // X location of the title
+		int yo = 26 - sheet.height / 2; // Y location of the title
 
 		for (int y = 0; y < h; y++) {
 			for (int x = 0; x < w; x++) {

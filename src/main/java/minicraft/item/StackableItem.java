@@ -15,7 +15,7 @@ public class StackableItem extends Item {
 		ArrayList<Item> items = new ArrayList<>();
 
 		items.add(new StackableItem("Wood", new LinkedSpriteSheet(SpriteType.Item, "wood")));
-		items.add(new StackableItem("Leather", new LinkedSpriteSheet(SpriteType.Item, "leater")));
+		items.add(new StackableItem("Leather", new LinkedSpriteSheet(SpriteType.Item, "leather")));
 		items.add(new StackableItem("Wheat", new LinkedSpriteSheet(SpriteType.Item, "wheat")));
 		items.add(new StackableItem("Key", new LinkedSpriteSheet(SpriteType.Item, "key")));
 		items.add(new StackableItem("arrow", new LinkedSpriteSheet(SpriteType.Item, "arrow")));

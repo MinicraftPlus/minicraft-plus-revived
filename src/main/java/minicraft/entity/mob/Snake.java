@@ -8,7 +8,7 @@ import minicraft.item.Items;
 
 public class Snake extends EnemyMob {
 	private static LinkedSpriteSheet[] sprites = new LinkedSpriteSheet[] {
-		new LinkedSpriteSheet(SpriteType.Entity, "snake"),
+		new LinkedSpriteSheet(SpriteType.Entity, "snake").setSpritePos(0, 0),
 		new LinkedSpriteSheet(SpriteType.Entity, "snake").setSpritePos(0, 2),
 		new LinkedSpriteSheet(SpriteType.Entity, "snake").setSpritePos(0, 4),
 		new LinkedSpriteSheet(SpriteType.Entity, "snake").setSpritePos(0, 6)

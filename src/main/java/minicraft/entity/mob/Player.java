@@ -822,15 +822,15 @@ public class Player extends Mob implements ItemHolder, ClientTickable {
 					}
 					break;
 				case RIGHT:  // Attacking to the right (Same as above)
-					screen.render(xo + 8 + 4, yo, 4, 2, 0, hudSheet.getSheet());
-					screen.render(xo + 8 + 4, yo + 8, 4, 2, 2, hudSheet.getSheet());
+					screen.render(xo + 8 + 4, yo, 4, 0, 0, hudSheet.getSheet());
+					screen.render(xo + 8 + 4, yo + 8, 4, 0, 2, hudSheet.getSheet());
 					if (attackItem != null && !(attackItem instanceof PowerGloveItem)) {
 						attackItem.sprite.getSprite().render(screen, xo + 8 + 4, yo + 4);
 					}
 					break;
 				case DOWN:  // Attacking downwards (Same as above)
-					screen.render(xo + 0, yo + 8 + 4, 3, 2, 2, hudSheet.getSheet());
-					screen.render(xo + 8, yo + 8 + 4, 3, 2, 3, hudSheet.getSheet());
+					screen.render(xo + 0, yo + 8 + 4, 3, 0, 2, hudSheet.getSheet());
+					screen.render(xo + 8, yo + 8 + 4, 3, 0, 3, hudSheet.getSheet());
 					if (attackItem != null && !(attackItem instanceof PowerGloveItem)) {
 						attackItem.sprite.getSprite().render(screen, xo + 4, yo + 8 + 4);
 					}

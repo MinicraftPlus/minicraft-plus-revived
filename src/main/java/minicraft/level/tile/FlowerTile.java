@@ -15,7 +15,7 @@ import minicraft.item.ToolType;
 import minicraft.level.Level;
 
 public class FlowerTile extends Tile {
-	private static final LinkedSpriteSheet flowerSprite = new LinkedSpriteSheet(SpriteType.Tile, "grass").setSpriteDim(2, 3, 1, 1);
+	private static final LinkedSpriteSheet flowerSprite = new LinkedSpriteSheet(SpriteType.Tile, "grass").setSpriteDim(3, 2, 1, 1);
 
 	protected FlowerTile(String name) {
 		super(name, (ConnectorSprite)null);

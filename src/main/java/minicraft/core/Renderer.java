@@ -90,7 +90,8 @@ public class Renderer extends Game {
 	}
 
 	public static void initScreen() {
-		ResourcePackDisplay.initPacks(); // TODO
+		ResourcePackDisplay.initPacks();
+		ResourcePackDisplay.reloadResources();
 		SpriteSheet sheet = loadDefaultSkinSheet();
 		screen = new Screen(sheet);
 		lightScreen = new Screen(sheet);
@@ -181,7 +182,7 @@ public class Renderer extends Game {
 		// This draws the black square where the selected item would be if you were holding it
 		if (!isMode("minicraft.settings.mode.creative") || player.activeItem != null) {
 			for (int x = 10; x < 26; x++) {
-				screen.render(x * 8, Screen.h - 8, 2, 5, 0, hudSheet.getSheet());
+				screen.render(x * 8, Screen.h - 8, 5, 2, 0, hudSheet.getSheet());
 			}
 		}
 

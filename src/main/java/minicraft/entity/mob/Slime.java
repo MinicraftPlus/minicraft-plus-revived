@@ -10,10 +10,10 @@ import minicraft.item.Items;
 
 public class Slime extends EnemyMob {
 	private static LinkedSpriteSheet[] sprites = new LinkedSpriteSheet[] {
-		new LinkedSpriteSheet(SpriteType.Entity, "slime").setSpriteList(2),
-		new LinkedSpriteSheet(SpriteType.Entity, "slime").setSpriteList(2).setSpritePos(0, 2),
-		new LinkedSpriteSheet(SpriteType.Entity, "slime").setSpriteList(2).setSpritePos(0, 4),
-		new LinkedSpriteSheet(SpriteType.Entity, "slime").setSpriteList(2).setSpritePos(0, 6)
+		new LinkedSpriteSheet(SpriteType.Entity, "slime").setSpriteList(2).setSpriteDim(0, 0, 2, 2),
+		new LinkedSpriteSheet(SpriteType.Entity, "slime").setSpriteList(2).setSpriteDim(0, 2, 2, 2),
+		new LinkedSpriteSheet(SpriteType.Entity, "slime").setSpriteList(2).setSpriteDim(0, 4, 2, 2),
+		new LinkedSpriteSheet(SpriteType.Entity, "slime").setSpriteList(2).setSpriteDim(0, 6, 2, 2)
 	};
 
 	private int jumpTime = 0; // jumpTimer, also acts as a rest timer before the next jump
