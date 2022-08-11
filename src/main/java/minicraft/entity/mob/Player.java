@@ -1,10 +1,8 @@
 package minicraft.entity.mob;
 
-import com.studiohartman.jamepad.ControllerButton;
 import minicraft.core.Game;
 import minicraft.core.Updater;
 import minicraft.core.World;
-import minicraft.core.io.ControllerHandler;
 import minicraft.core.io.InputHandler;
 import minicraft.core.io.Settings;
 import minicraft.core.io.Sound;
@@ -26,14 +24,12 @@ import minicraft.screen.*;
 import minicraft.util.Logging;
 import minicraft.util.Vector2;
 import org.jetbrains.annotations.Nullable;
-import org.tinylog.Logger;
 
 import java.util.HashMap;
 import java.util.List;
 
 public class Player extends Mob implements ItemHolder, ClientTickable {
 	protected InputHandler input;
-	protected ControllerHandler controlInput = new ControllerHandler();
 	private static final int playerHurtTime = 30;
 	public static final int INTERACT_DIST = 12;
 	private static final int ATTACK_DIST = 20;
@@ -363,10 +359,10 @@ public class Player extends Mob implements ItemHolder, ClientTickable {
 			// Move while we are not falling.
 			if (onFallDelay <= 0) {
 				// controlInput.buttonPressed is used because otherwise the player will move one even if held down.
-				if (input.isHeld("move-up", controlInput)) vec.y--;
-				if (input.isHeld("move-down", controlInput)) vec.y++;
-				if (input.isHeld("move-left", controlInput)) vec.x--;
-				if (input.isHeld("move-right", controlInput)) vec.x++;
+				if (input.isHeld("move-up")) vec.y--;
+				if (input.isHeld("move-down")) vec.y++;
+				if (input.isHeld("move-left")) vec.x--;
+				if (input.isHeld("move-right")) vec.x++;
 
 
 			}
@@ -391,10 +387,10 @@ public class Player extends Mob implements ItemHolder, ClientTickable {
 				else directHurt(1, Direction.NONE); // If no stamina, take damage.
 			}
 
-			if (activeItem != null && (input.isClicked("drop-one", controlInput) || input.isClicked("drop-stack", controlInput))) {
+			if (activeItem != null && (input.isClicked("drop-one") || input.isClicked("drop-stack"))) {
 				Item drop = activeItem.clone();
 
-				if (input.isClicked("drop-one", controlInput) && drop instanceof StackableItem && ((StackableItem)drop).count > 1) {
+				if (input.isClicked("drop-one") && drop instanceof StackableItem && ((StackableItem)drop).count > 1) {
 					// Drop one from stack
 					((StackableItem)activeItem).count--;
 					((StackableItem)drop).count = 1;
@@ -405,14 +401,14 @@ public class Player extends Mob implements ItemHolder, ClientTickable {
 				level.dropItem(x, y, drop);
 			}
 
-			if ((activeItem == null || !activeItem.used_pending) && (input.isClicked("attack", controlInput)) && stamina != 0 && onFallDelay <= 0) { // This only allows attacks when such action is possible.
+			if ((activeItem == null || !activeItem.used_pending) && (input.isClicked("attack")) && stamina != 0 && onFallDelay <= 0) { // This only allows attacks when such action is possible.
 				if (!potioneffects.containsKey(PotionType.Energy)) stamina--;
 				staminaRecharge = 0;
 
 				attack();
 			}
 
-			if (input.isClicked("menu", controlInput) && activeItem != null) {
+			if (input.isClicked("menu") && activeItem != null) {
 				int returned = inventory.add(0, activeItem);
 				if (activeItem instanceof StackableItem) {
 					StackableItem stackable = (StackableItem)activeItem;
@@ -431,11 +427,11 @@ public class Player extends Mob implements ItemHolder, ClientTickable {
 			}
 
 			if (Game.getDisplay() == null) {
-				if (input.isClicked("menu", controlInput) && !use()) // !use() = no furniture in front of the player; this prevents player inventory from opening (will open furniture inventory instead)
+				if (input.isClicked("menu") && !use()) // !use() = no furniture in front of the player; this prevents player inventory from opening (will open furniture inventory instead)
 					Game.setDisplay(new PlayerInvDisplay(this));
-				if (input.isClicked("pause", controlInput))
+				if (input.isClicked("pause"))
 					Game.setDisplay(new PauseDisplay());
-				if (input.isClicked("craft", controlInput) && !use())
+				if (input.isClicked("craft") && !use())
 					Game.setDisplay(new CraftingDisplay(Recipes.craftRecipes, "minicraft.displays.crafting", this, true));
 
 				if (input.getKey("info").clicked) Game.setDisplay(new InfoDisplay());
@@ -452,7 +448,7 @@ public class Player extends Mob implements ItemHolder, ClientTickable {
 					}
 				}
 
-				if (input.isClicked("pickup", controlInput) && (activeItem == null || !activeItem.used_pending)) {
+				if (input.isClicked("pickup") && (activeItem == null || !activeItem.used_pending)) {
 					if (!(activeItem instanceof PowerGloveItem)) { // If you are not already holding a power glove (aka in the middle of a separate interaction)...
 						prevItem = activeItem; // Then save the current item...
 						activeItem = new PowerGloveItem(); // and replace it with a power glove.

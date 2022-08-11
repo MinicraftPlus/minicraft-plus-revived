@@ -1,10 +1,6 @@
 package minicraft.screen;
 
-import java.util.ArrayList;
-import java.util.HashSet;
-
 import minicraft.core.Game;
-import minicraft.core.io.ControllerHandler;
 import minicraft.core.io.InputHandler;
 import minicraft.core.io.Localization;
 import minicraft.gfx.Color;
@@ -13,6 +9,9 @@ import minicraft.gfx.Point;
 import minicraft.gfx.Screen;
 import minicraft.screen.entry.KeyInputEntry;
 import minicraft.screen.entry.StringEntry;
+
+import java.util.ArrayList;
+import java.util.HashSet;
 
 public class KeyInputDisplay extends Display {
 	private static Menu.Builder builder;
@@ -57,8 +56,8 @@ public class KeyInputDisplay extends Display {
 	}
 
 	@Override
-	public void tick(InputHandler input, ControllerHandler controlInput) {
-		super.tick(input, controlInput); // ticks menu
+	public void tick(InputHandler input) {
+		super.tick(input); // ticks menu
 
 		if (input.keyToChange != null) {
 			ArrayList<PopupDisplay.PopupActionCallback> callbacks = new ArrayList<>();

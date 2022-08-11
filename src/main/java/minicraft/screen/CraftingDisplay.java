@@ -1,18 +1,23 @@
 package minicraft.screen;
 
-import java.util.*;
-import java.util.stream.Collectors;
-
 import minicraft.core.Game;
-import minicraft.core.io.ControllerHandler;
 import minicraft.core.io.InputHandler;
 import minicraft.core.io.Settings;
 import minicraft.core.io.Sound;
 import minicraft.entity.mob.Player;
 import minicraft.gfx.Point;
 import minicraft.gfx.SpriteSheet;
-import minicraft.item.*;
+import minicraft.item.Item;
+import minicraft.item.Items;
+import minicraft.item.Recipe;
+import minicraft.item.Recipes;
 import minicraft.screen.entry.ItemListing;
+
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.List;
+import java.util.stream.Collectors;
 
 public class CraftingDisplay extends Display {
 
@@ -91,19 +96,19 @@ public class CraftingDisplay extends Display {
 	}
 
 	@Override
-	public void tick(InputHandler input, ControllerHandler controlInput) {
+	public void tick(InputHandler input) {
 		int previousSelection = recipeMenu.getSelection();
-		super.tick(input, controlInput);
+		super.tick(input);
 		if (previousSelection != recipeMenu.getSelection()) {
 			refreshData();
 		}
 
-		if (input.isClicked("menu", controlInput) || (isPersonalCrafter && input.isClicked("craft", controlInput))) {
+		if (input.isClicked("menu") || (isPersonalCrafter && input.isClicked("craft"))) {
 			Game.exitDisplay();
 			return;
 		}
 
-		if ((input.isClicked("select", controlInput) || input.isClicked("attack", controlInput)) && recipeMenu.getSelection() >= 0) {
+		if ((input.isClicked("select") || input.isClicked("attack")) && recipeMenu.getSelection() >= 0) {
 			// check the selected recipe
 			if (recipes.length == 0) return;
 			Recipe selectedRecipe = recipes[recipeMenu.getSelection()];

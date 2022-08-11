@@ -2,7 +2,6 @@ package minicraft.screen;
 
 import minicraft.core.Game;
 import minicraft.core.Updater;
-import minicraft.core.io.ControllerHandler;
 import minicraft.core.io.InputHandler;
 import minicraft.core.io.Localization;
 import minicraft.core.io.Settings;
@@ -71,8 +70,8 @@ public class EndGameDisplay extends Display {
 	}
 
 	@Override
-	public void tick(InputHandler input, ControllerHandler controlInput) {
-		super.tick(input, controlInput);
+	public void tick(InputHandler input) {
+		super.tick(input);
 		if (displayTimer > 0) displayTimer--;
 		else if (inputDelay > 0) inputDelay--;
 	}

@@ -11,7 +11,6 @@ import minicraft.screen.Display;
 import minicraft.screen.ResourcePackDisplay;
 import minicraft.screen.TitleDisplay;
 import minicraft.util.Logging;
-
 import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
@@ -27,7 +26,7 @@ public class Game {
 	public static final Version VERSION = new Version("2.2.0-dev1");
 
 	public static InputHandler input; // Input used in Game, Player, and just about all the *Menu classes.
-	public static ControllerHandler controlInput; // controlInput used in Menu Classes for Controllers
+	public static final ControllerHandler controlInput = new ControllerHandler(); // controlInput used in Menu Classes for Controllers
 	public static Player player;
 
 	public static List<String> notifications = new ArrayList<>();
@@ -77,7 +76,6 @@ public class Game {
 		Localization.loadLanguage();
 
 		input = new InputHandler(Renderer.canvas);
-		controlInput = new ControllerHandler();
 
 		Tiles.initTileList();
 		Sound.init();

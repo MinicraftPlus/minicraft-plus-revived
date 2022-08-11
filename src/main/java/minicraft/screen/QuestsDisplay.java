@@ -1,19 +1,5 @@
 package minicraft.screen;
 
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Map.Entry;
-import java.util.stream.Collectors;
-
-import minicraft.core.io.ControllerHandler;
-import org.json.JSONArray;
-import org.json.JSONObject;
-import org.tinylog.Logger;
-
 import minicraft.core.Game;
 import minicraft.core.World;
 import minicraft.core.io.InputHandler;
@@ -35,6 +21,16 @@ import minicraft.util.Logging;
 import minicraft.util.Quest;
 import minicraft.util.Quest.QuestReward;
 import minicraft.util.Quest.QuestSeries;
+import org.json.JSONArray;
+import org.json.JSONObject;
+
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Map.Entry;
+import java.util.stream.Collectors;
 
 public class QuestsDisplay extends Display {
 	private final static HashMap<String, Quest> quests = new HashMap<>();
@@ -239,9 +235,9 @@ public class QuestsDisplay extends Display {
 					.setEntries(StringEntry.useLines(Color.RED, "minicraft.display.tutorial_skip.confirm_popup", "minicraft.display.popup.enter_confirm", "minicraft.display.popup.escape_cancel"))
 					.createMenu()) {
 						@Override
-						public void tick(InputHandler input, ControllerHandler controlInput) {
-							super.tick(input, controlInput);
-							if (input.isClicked("select", controlInput)) {
+						public void tick(InputHandler input) {
+							super.tick(input);
+							if (input.isClicked("select")) {
 								skipSeries(series);
 								display.reloadEntries();
 								if (display.menus[0].getSelection() > display.seriesEntries[display.selectedEntry].length) {
@@ -555,15 +551,15 @@ public class QuestsDisplay extends Display {
 	}
 
 	@Override
-	public void tick(InputHandler input, ControllerHandler controlInput) {
-		super.tick(input, controlInput);
+	public void tick(InputHandler input) {
+		super.tick(input);
 
-		if (input.isClicked("cursor-left", controlInput)) if (selectedEntry > 0) {
+		if (input.isClicked("cursor-left")) if (selectedEntry > 0) {
 			selectedEntry--;
 			updateEntries();
 		}
 
-		if (input.isClicked("cursor-right", controlInput)) if (selectedEntry < 1) {
+		if (input.isClicked("cursor-right")) if (selectedEntry < 1) {
 			selectedEntry++;
 			updateEntries();
 		}

@@ -1,14 +1,7 @@
 package minicraft.util;
 
-import java.util.Collection;
-import java.util.Collections;
-import java.util.EnumSet;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Map;
-import java.util.Set;
-import java.util.Map.Entry;
-
+import minicraft.core.Game;
+import minicraft.util.TinylogLoggingConfiguration.WriterConfig.TagList;
 import org.tinylog.Level;
 import org.tinylog.Supplier;
 import org.tinylog.configuration.Configuration;
@@ -23,8 +16,8 @@ import org.tinylog.runtime.Timestamp;
 import org.tinylog.writers.ConsoleWriter;
 import org.tinylog.writers.Writer;
 
-import minicraft.core.Game;
-import minicraft.util.TinylogLoggingConfiguration.WriterConfig.TagList;
+import java.util.*;
+import java.util.Map.Entry;
 
 public class TinylogLoggingConfiguration {
 	public static class WriterConfig {
@@ -93,7 +86,7 @@ public class TinylogLoggingConfiguration {
 				if (tag == null || tag.isEmpty()) {
 					tagList = new TagList(true);
 				} else if (tag.equals("-")) {
-					tagList = new TagList(Set.of());
+					tagList = new TagList(new HashSet<>());
 				} else {
 					HashSet<String> tags = new HashSet<>();
 					String[] tagArray = tag.split(",");

@@ -1,7 +1,6 @@
 package minicraft.screen;
 
 import minicraft.core.Game;
-import minicraft.core.io.ControllerHandler;
 import minicraft.core.io.InputHandler;
 import minicraft.core.io.Localization;
 import minicraft.core.io.Sound;
@@ -15,7 +14,6 @@ import minicraft.screen.entry.SelectEntry;
 import minicraft.screen.entry.StringEntry;
 import minicraft.util.Achievement;
 import minicraft.util.Logging;
-
 import org.jetbrains.annotations.Nullable;
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -100,8 +98,8 @@ public class AchievementsDisplay extends Display {
     }
 
     @Override
-	public void tick(InputHandler input, ControllerHandler controlInput) {
-		super.tick(input, controlInput);
+	public void tick(InputHandler input) {
+		super.tick(input);
 
         ListEntry curEntry = menus[0].getCurEntry();
         if (curEntry instanceof SelectEntry) {

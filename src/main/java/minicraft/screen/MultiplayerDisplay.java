@@ -1,19 +1,13 @@
 package minicraft.screen;
 
 import kong.unirest.*;
-import minicraft.core.io.ControllerHandler;
-import minicraft.network.Analytics;
-import minicraft.util.Logging;
 import minicraft.core.Action;
 import minicraft.core.Game;
 import minicraft.core.io.InputHandler;
-import minicraft.gfx.Color;
-import minicraft.gfx.Ellipsis;
+import minicraft.gfx.*;
 import minicraft.gfx.Ellipsis.SequentialEllipsis;
-import minicraft.gfx.Font;
-import minicraft.gfx.FontStyle;
-import minicraft.gfx.Screen;
-import org.tinylog.Logger;
+import minicraft.network.Analytics;
+import minicraft.util.Logging;
 
 /** @deprecated As multiplayer mode removed. This class is not localized. */
 @Deprecated
@@ -114,7 +108,7 @@ public class MultiplayerDisplay extends Display {
 	}
 
 	@Override
-	public void tick(InputHandler input, ControllerHandler controlInput) {}
+	public void tick(InputHandler input) {}
 
 	private void fetchName(String uuid) {
 		Analytics.LoginAttempt.ping();

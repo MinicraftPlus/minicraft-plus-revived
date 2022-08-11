@@ -1,13 +1,11 @@
 package minicraft.screen;
 
-import java.util.ArrayList;
-
-import minicraft.core.io.ControllerHandler;
-import org.jetbrains.annotations.Nullable;
-
 import minicraft.core.io.InputHandler;
 import minicraft.screen.entry.ListEntry;
 import minicraft.screen.entry.StringEntry;
+import org.jetbrains.annotations.Nullable;
+
+import java.util.ArrayList;
 
 /** Light-weighted exitable display with single menu. */
 public class PopupDisplay extends Display {
@@ -39,10 +37,10 @@ public class PopupDisplay extends Display {
 	}
 
 	@Override
-	public void tick(InputHandler input, ControllerHandler controlInput) {
+	public void tick(InputHandler input) {
 		if (callbacks != null) {
 			for (PopupActionCallback callback : callbacks) {
-				if (callback.key == null || input.isClicked(callback.key, controlInput)) {
+				if (callback.key == null || input.isClicked(callback.key)) {
 					if (callback.callback != null && callback.callback.acts(menus[0])) {
 						// This overrides the original #tick check.
 						return;
@@ -52,7 +50,7 @@ public class PopupDisplay extends Display {
 		}
 
 		// Continues with this if no callback returns true.
-		super.tick(input, controlInput);
+		super.tick(input);
 	}
 
 	public static class PopupActionCallback {

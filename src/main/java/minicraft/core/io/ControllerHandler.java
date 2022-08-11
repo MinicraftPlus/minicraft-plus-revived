@@ -1,16 +1,18 @@
 package minicraft.core.io;
 
-import com.studiohartman.jamepad.*;
+import com.studiohartman.jamepad.ControllerButton;
+import com.studiohartman.jamepad.ControllerIndex;
+import com.studiohartman.jamepad.ControllerManager;
+import com.studiohartman.jamepad.ControllerUnpluggedException;
 import minicraft.util.Logging;
-import org.tinylog.Logger;
 
 import java.util.HashMap;
 
 public class ControllerHandler extends ControllerManager {
-	private ControllerManager controllerManager = new ControllerManager();
-	private ControllerIndex controllerIndex;
+	private final ControllerIndex controllerIndex;
 
 	public ControllerHandler() {
+		ControllerManager controllerManager = new ControllerManager();
 		controllerManager.initSDLGamepad();
 		controllerIndex = controllerManager.getControllerIndex(0);
 		controllerManager.update();
@@ -23,30 +25,30 @@ public class ControllerHandler extends ControllerManager {
 		initButtonMap();
 	}
 
-	private HashMap<String, ControllerButton> buttonmap = new HashMap<>();
+	private final HashMap<String, ControllerButton> buttonMap = new HashMap<>();
 	private void initButtonMap() {
-		buttonmap.put("MOVE-UP", ControllerButton.DPAD_UP);
-		buttonmap.put("MOVE-DOWN", ControllerButton.DPAD_DOWN);
-		buttonmap.put("MOVE-LEFT", ControllerButton.DPAD_LEFT);
-		buttonmap.put("MOVE-RIGHT", ControllerButton.DPAD_RIGHT);
+		buttonMap.put("MOVE-UP", ControllerButton.DPAD_UP);
+		buttonMap.put("MOVE-DOWN", ControllerButton.DPAD_DOWN);
+		buttonMap.put("MOVE-LEFT", ControllerButton.DPAD_LEFT);
+		buttonMap.put("MOVE-RIGHT", ControllerButton.DPAD_RIGHT);
 
-		buttonmap.put("CURSOR-UP", ControllerButton.DPAD_UP);
-		buttonmap.put("CURSOR-DOWN", ControllerButton.DPAD_DOWN);
-		buttonmap.put("CURSOR-LEFT", ControllerButton.DPAD_LEFT);
-		buttonmap.put("CURSOR-RIGHT", ControllerButton.DPAD_RIGHT);
+		buttonMap.put("CURSOR-UP", ControllerButton.DPAD_UP);
+		buttonMap.put("CURSOR-DOWN", ControllerButton.DPAD_DOWN);
+		buttonMap.put("CURSOR-LEFT", ControllerButton.DPAD_LEFT);
+		buttonMap.put("CURSOR-RIGHT", ControllerButton.DPAD_RIGHT);
 
-		buttonmap.put("SELECT", ControllerButton.A);
-		buttonmap.put("EXIT", ControllerButton.B);
+		buttonMap.put("SELECT", ControllerButton.A);
+		buttonMap.put("EXIT", ControllerButton.B);
 
-		buttonmap.put("ATTACK", ControllerButton.A);
-		buttonmap.put("MENU", ControllerButton.X);
-		buttonmap.put("CRAFT", ControllerButton.Y);
-		buttonmap.put("PICKUP", ControllerButton.LEFTBUMPER);
+		buttonMap.put("ATTACK", ControllerButton.A);
+		buttonMap.put("MENU", ControllerButton.X);
+		buttonMap.put("CRAFT", ControllerButton.Y);
+		buttonMap.put("PICKUP", ControllerButton.LEFTBUMPER);
 
-		buttonmap.put("PAUSE", ControllerButton.START);
+		buttonMap.put("PAUSE", ControllerButton.START);
 
-		buttonmap.put("DROP-ONE", ControllerButton.RIGHTBUMPER);
-		buttonmap.put("DROP-STACK", ControllerButton.RIGHTSTICK);
+		buttonMap.put("DROP-ONE", ControllerButton.RIGHTBUMPER);
+		buttonMap.put("DROP-STACK", ControllerButton.RIGHTSTICK);
 	}
 
 	public boolean buttonPressed(ControllerButton button) {
@@ -66,10 +68,10 @@ public class ControllerHandler extends ControllerManager {
 	}
 
 	public boolean isKeyPressed(String key) {
-		return buttonPressed(buttonmap.get(key.toUpperCase()));
+		return buttonPressed(buttonMap.get(key.toUpperCase()));
 	}
 
 	public boolean isKeyDown(String key) {
-		return buttonDown(buttonmap.get(key.toUpperCase()));
+		return buttonDown(buttonMap.get(key.toUpperCase()));
 	}
 }

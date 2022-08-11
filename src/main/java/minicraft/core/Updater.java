@@ -4,7 +4,6 @@ import minicraft.core.io.Localization;
 import minicraft.core.io.Settings;
 import minicraft.entity.furniture.Bed;
 import minicraft.entity.mob.Player;
-import minicraft.item.Items;
 import minicraft.level.Level;
 import minicraft.level.tile.Tile;
 import minicraft.level.tile.Tiles;
@@ -171,7 +170,7 @@ public class Updater extends Game {
 				// A menu is active.
 				if (player != null)
 					player.tick(); // It is CRUCIAL that the player is ticked HERE, before the menu is ticked. I'm not quite sure why... the menus break otherwise, though.
-				display.tick(input, controlInput);
+				display.tick(input);
 				paused = true;
 			} else {
 				// No menu, currently.
