@@ -5,6 +5,7 @@ import minicraft.core.io.InputHandler;
 import minicraft.entity.Entity;
 import minicraft.item.Inventory;
 import minicraft.item.Item;
+import minicraft.item.Items;
 import minicraft.item.StackableItem;
 import minicraft.screen.entry.ItemEntry;
 
