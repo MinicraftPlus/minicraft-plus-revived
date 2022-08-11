@@ -9,6 +9,8 @@ import minicraft.level.tile.farming.PotatoTile;
 import minicraft.level.tile.farming.WheatTile;
 import minicraft.util.Logging;
 
+import org.tinylog.Logger;
+
 public final class Tiles {
 	/// Idea: to save tile names while saving space, I could encode the names in base 64 in the save file...^M
     /// Then, maybe, I would just replace the id numbers with id names, make them all private, and then make a get(String) method, parameter is tile name.

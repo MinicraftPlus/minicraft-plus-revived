@@ -22,11 +22,11 @@ import minicraft.core.io.Settings;
 import minicraft.entity.furniture.Bed;
 import minicraft.entity.mob.Player;
 import minicraft.gfx.Color;
-// import minicraft.gfx.Ellipsis;
-// import minicraft.gfx.Ellipsis.DotUpdater.TickUpdater;
+import minicraft.gfx.Ellipsis.DotUpdater.TickUpdater;
 import minicraft.gfx.SpriteLinker.LinkedSpriteSheet;
 import minicraft.gfx.SpriteLinker.SpriteType;
-// import minicraft.gfx.Ellipsis.SmoothEllipsis;
+import minicraft.gfx.Ellipsis.SmoothEllipsis;
+import minicraft.gfx.Ellipsis;
 import minicraft.gfx.Font;
 import minicraft.gfx.FontStyle;
 import minicraft.gfx.Point;
@@ -70,7 +70,7 @@ public class Renderer extends Game {
 	public static boolean readyToRenderGameplay = false;
 	public static boolean showDebugInfo = false;
 
-	//private static Ellipsis ellipsis = new SmoothEllipsis(new TickUpdater()); // Unused
+	private static Ellipsis ellipsis = new SmoothEllipsis(new TickUpdater());
 
 	private static int potionRenderOffset = 0;
 

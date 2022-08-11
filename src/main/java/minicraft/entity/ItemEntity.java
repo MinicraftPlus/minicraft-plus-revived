@@ -16,8 +16,8 @@ public class ItemEntity extends Entity implements ClientTickable {
 
 	// Solely for multiplayer use.
 	private boolean pickedUp = false;
-	// private long pickupTimestamp; // Unused
-
+	private long pickupTimestamp;
+	
 	/**
 	 * Creates an item entity of the item item at position (x,y) with size 2*2.
 	 * @param item Item to add as item entity

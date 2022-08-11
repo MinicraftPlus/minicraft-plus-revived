@@ -21,7 +21,6 @@ public class DecorTile extends Tile {
 		switch (type) {
 			case Stone: sprite = new LinkedSpriteSheet(SpriteType.Tile, "ornate_stone"); break;
 			case Obsidian: sprite = new LinkedSpriteSheet(SpriteType.Tile, "ornate_obsidian"); break;
-			default: break;
 		}
 	}
 

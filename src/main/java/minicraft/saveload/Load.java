@@ -23,6 +23,7 @@ import org.jetbrains.annotations.Nullable;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+import org.tinylog.Logger;
 
 import java.io.*;
 import java.net.MalformedURLException;
@@ -335,6 +336,12 @@ public class Load {
 		if (prefVer.compareTo(new Version("2.0.3-dev1")) < 0) {
 			subdata = data;
 		} else {
+			MultiplayerDisplay.savedIP = data.remove(0);
+			if(prefVer.compareTo(new Version("2.0.3-dev3")) > 0) {
+				MultiplayerDisplay.savedUUID = data.remove(0);
+				MultiplayerDisplay.savedUsername = data.remove(0);
+			}
+
 			String keyData = data.get(0);
 			subdata = Arrays.asList(keyData.split(":"));
 		}
@@ -355,7 +362,7 @@ public class Load {
 		}
 
 		/* Start of the parsing */
-		//Version prefVer = new Version(json.getString("version")); //Unused
+		Version prefVer = new Version(json.getString("version"));
 
 		// Settings
 		Settings.set("sound", json.getBoolean("sound"));
