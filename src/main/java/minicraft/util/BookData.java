@@ -1,12 +1,14 @@
 package minicraft.util;
 
+import minicraft.item.BookItem;
+
 public class BookData {
 
-	public static String about;
-	public static String credits;
-	public static String instructions;
-	public static String antVenomBook;
-	public static String storylineGuide;
+	public static BookItem.BookContent about;
+	public static BookItem.BookContent credits;
+	public static BookItem.BookContent instructions;
+	public static BookItem.BookContent antVenomBook;
+	public static BookItem.BookContent storylineGuide;
 
 	public static void resetBooks() {
 		about = null;

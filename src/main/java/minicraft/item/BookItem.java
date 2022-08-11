@@ -17,7 +17,7 @@ public class BookItem extends Item {
 	protected static ArrayList<Item> getAllInstances() {
 		ArrayList<Item> items = new ArrayList<Item>();
 		items.add(new BookItem("Book", new LinkedSpriteSheet(SpriteType.Item, "book"), null));
-		items.add(new BookItem("Antidious", new LinkedSpriteSheet(SpriteType.Item, "antidious_book"), () -> BookData.antVenomBook, true));
+		items.add(new BookItem("Antidious", new LinkedSpriteSheet(SpriteType.Item, "antidious_book"), () -> BookData.antVenomBook.collect(), true));
 		return items;
 	}
 

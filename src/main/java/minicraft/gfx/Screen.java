@@ -70,6 +70,8 @@ public class Screen {
 
     /** Renders an object from the sprite sheet based on screen coordinates, tile (SpriteSheet location), colors, and bits (for mirroring). I believe that xp and yp refer to the desired position of the upper-left-most pixel. */
     public void render(int xp, int yp, int xt, int yt, int bits, SpriteSheet sheet, int whiteTint, boolean fullbright, int color) {
+		if (sheet == null) return; // Verifying that sheet is not null.
+
 		// xp and yp are originally in level coordinates, but offset turns them to screen coordinates.
 		xp -= xOffset; //account for screen offset
 		yp -= yOffset;

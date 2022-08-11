@@ -2,12 +2,17 @@ package minicraft.core.io;
 
 import java.io.File;
 import java.io.IOException;
+import java.net.URL;
 import java.nio.file.FileVisitResult;
 import java.nio.file.FileVisitor;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.StandardCopyOption;
 import java.nio.file.attribute.BasicFileAttributes;
+import java.security.CodeSource;
+import java.util.ArrayList;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipInputStream;
 
 import minicraft.core.CrashHandler;
 import minicraft.core.Game;
@@ -132,4 +137,34 @@ public class FileHandler extends Game {
 			deleteFolder(origFolder.toFile());
 	}
 
+	/** https://stackoverflow.com/questions/1429172/how-do-i-list-the-files-inside-a-jar-file/1429275#1429275 */
+	public static ArrayList<String> listResources() {
+		ArrayList<String> names = new ArrayList<>();
+		try {
+			CodeSource src = Game.class.getProtectionDomain().getCodeSource();
+			if (src != null) {
+				URL jar = src.getLocation();
+				ZipInputStream zip = new ZipInputStream(jar.openStream());
+				int reads = 0;
+				while (zip.available() == 1) {
+					ZipEntry e = zip.getNextEntry();
+
+					// e is either null if there are no entries left
+					if (e == null) {
+						if (reads > 0) break;
+					}
+					reads++;
+					names.add(e.getName());
+				}
+			} else {
+				Logging.RESOURCEHANDLER_LOCALIZATION.error("Failed to get code source.");
+				return names;
+			}
+
+			return names;
+		} catch (IOException e) {
+			CrashHandler.errorHandle(e);
+			return names;
+		}
+	}
 }

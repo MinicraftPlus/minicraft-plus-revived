@@ -14,6 +14,7 @@ import java.nio.file.StandardWatchEventKinds;
 import java.nio.file.WatchEvent;
 import java.nio.file.WatchService;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.Enumeration;
 import java.util.List;
@@ -54,6 +55,7 @@ public class ResourcePackDisplay extends Display {
 	 * Current complete structure of resource packs:
 	 * <root>
 	 * 	├──	pack.json
+	 * 	├──	pack.png
 	 * 	└──	assets
 	 * 		├──	textures
 	 * 		│	├──	entity
@@ -70,12 +72,17 @@ public class ResourcePackDisplay extends Display {
 	 * 		│	└──	<name>_<locale>.json
 	 * 		├──	sound
 	 * 		│	└──	<name>.wav
-	 * 		└──	[Not planned]
+	 * 		└──	books
+	 * 			└──	<name>.txt
 	 *
 	 * pack.json
 	 * ├──	(name) String
 	 * ├──	(description) String
-	 * └──	pack_format int
+	 * ├──	pack_format int
+	 * └──	language object
+	 * 		└──	<locale>
+	 * 			├──	name String
+	 * 			└──	region String
 	 */
 
 
@@ -86,6 +93,7 @@ public class ResourcePackDisplay extends Display {
 
 	private static final ResourcePack defaultPack; // Used to check if the resource pack default.
 	private static final SpriteSheet defaultLogo;
+	private static final URL defaultURL;
 	private static ArrayList<ResourcePack> loadedPacks = new ArrayList<>();
 	private static ArrayList<ResourcePack> loadQuery = new ArrayList<>();
 
@@ -100,7 +108,8 @@ public class ResourcePackDisplay extends Display {
 
 	static {
 		// Add the default pack.
-		defaultPack = Objects.requireNonNull(loadPackMetadata(Game.class.getProtectionDomain().getCodeSource().getLocation()));
+		defaultURL = Game.class.getProtectionDomain().getCodeSource().getLocation();
+		defaultPack = Objects.requireNonNull(loadPackMetadata(defaultURL));
 		loadedPacks.add(defaultPack);
 		try {
 			defaultLogo = new SpriteSheet(ImageIO.read(ResourcePackDisplay.class.getResourceAsStream("/resources/default_pack.png")));
@@ -284,7 +293,7 @@ public class ResourcePackDisplay extends Display {
 			return;
 		} else if (input.getKey("shift-right").clicked) {
 			if (selection == 0 && resourcePacks.size() > 0) {
-				loadedPacks.add(resourcePacks.remove(menus[0].getSelection()));
+				loadedPacks.add(loadedPacks.indexOf(defaultPack), resourcePacks.remove(menus[0].getSelection()));
 				changed = true;
 				refreshEntries();
 				Sound.play("select");
@@ -506,7 +515,6 @@ public class ResourcePackDisplay extends Display {
 		return null;
 	}
 
-	// TODO world-wide resource pack support
 	private static void refreshResourcePacks(List<URL> urls) {
 		for (URL url : urls) {
 			ResourcePack pack = findPackByURL(url);
@@ -530,6 +538,9 @@ public class ResourcePackDisplay extends Display {
 
 	public static void changeDefaultPackURL(URL url) {
 		defaultPack.packRoot = url;
+	}
+	public static void changeDefaultPackURLToDefault() {
+		defaultPack.packRoot = defaultURL;
 	}
 
 	public static void loadResourcePacks(String[] names) {
@@ -588,7 +599,9 @@ public class ResourcePackDisplay extends Display {
 
 		Renderer.spriteLinker.updateLinkedSheets();
 		Localization.loadLanguage();
-		((ArrayEntry<Localization.LocaleInformation>) Settings.getEntry("language")).setOptions(Localization.getLocales());
+		ArrayList<Localization.LocaleInformation> options = new ArrayList<>(Arrays.asList(Localization.getLocales()));
+		options.sort((a, b) -> a.name.compareTo(b.name));
+		((ArrayEntry<Localization.LocaleInformation>) Settings.getEntry("language")).setOptions(options.toArray(new Localization.LocaleInformation[0]));
 	}
 
 	private static void loadTextures(ResourcePack pack) throws IOException {
@@ -649,12 +662,13 @@ public class ResourcePackDisplay extends Display {
 	private static void loadBooks(ResourcePack pack) {
 		for (String path : pack.getFiles("assets/books", (path, isDir) -> path.toString().endsWith(".txt") && !isDir))  {
 			try {
+				String book = BookData.loadBook(new String(pack.getResourceAsStream(path).readAllBytes()));
 				switch (path) {
-					case "assets/books/about.txt": BookData.about = BookData.loadBook(new String(pack.getResourceAsStream(path).readAllBytes())); break;
-					case "assets/books/credits.txt": BookData.credits = BookData.loadBook(new String(pack.getResourceAsStream(path).readAllBytes())); break;
-					case "assets/books/instructions.txt": BookData.instructions = BookData.loadBook(new String(pack.getResourceAsStream(path).readAllBytes())); break;
-					case "assets/books/antidous.txt": BookData.antVenomBook = BookData.loadBook(new String(pack.getResourceAsStream(path).readAllBytes())); break;
-					case "assets/books/story_guide.txt": BookData.storylineGuide = BookData.loadBook(new String(pack.getResourceAsStream(path).readAllBytes())); break;
+					case "assets/books/about.txt": BookData.about = () -> book; break;
+					case "assets/books/credits.txt": BookData.credits = () -> book; break;
+					case "assets/books/instructions.txt": BookData.instructions = () -> book; break;
+					case "assets/books/antidous.txt": BookData.antVenomBook = () -> book; break;
+					case "assets/books/story_guide.txt": BookData.storylineGuide = () -> book; break;
 				}
 			} catch (IOException e) {
 				Logging.RESOURCEHANDLER_LOCALIZATION.debug(e, "Unable to load book: {} in pack : {}", path, pack.name);

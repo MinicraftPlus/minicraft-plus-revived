@@ -1,9 +1,11 @@
 package minicraft.saveload;
 
+import minicraft.core.CrashHandler;
 import minicraft.core.Game;
 import minicraft.core.Renderer;
 import minicraft.core.Updater;
 import minicraft.core.World;
+import minicraft.core.io.FileHandler;
 import minicraft.core.io.Localization;
 import minicraft.core.io.Settings;
 import minicraft.entity.Arrow;
@@ -27,10 +29,13 @@ import org.json.JSONObject;
 
 import java.io.BufferedWriter;
 import java.io.File;
+import java.io.FileOutputStream;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipOutputStream;
 
 public class Save {
 
@@ -102,7 +107,7 @@ public class Save {
 
 	public Save(Player player, boolean writePlayer) {
 		// This is simply for access to writeToFile.
-		this(new File(Game.gameDir+"/saves/"+ WorldSelectDisplay.getWorldName() + "/"));
+		this(new File(Game.gameDir+"/saves/"+WorldSelectDisplay.getWorldName() + "/"));
 		if (writePlayer) {
 			writePlayer("Player", player);
 			writeInventory("Inventory", player);
@@ -164,6 +169,21 @@ public class Save {
 		data.add(String.valueOf(Settings.get("quests")));
 		data.add(String.valueOf(Settings.get("tutorials")));
 		writeToFile(location + filename + extension, data);
+
+		File zip = new File(folder, "resources.zip");
+		if (!zip.exists()) {
+			try (ZipOutputStream out = new ZipOutputStream(new FileOutputStream(zip))) {
+				for (String name : FileHandler.listResources()) {
+					if (name.startsWith("assets/") || name.equals("pack.json") || name.equals("pack.png")) {
+						out.putNextEntry(new ZipEntry(name));
+						if (!name.endsWith("/")) out.write(Game.class.getResourceAsStream("/" + name).readAllBytes());
+						out.closeEntry();
+					}
+				}
+			} catch (IOException e) {
+				CrashHandler.errorHandle(e);
+			}
+		}
 	}
 
 	private void writePrefs() {

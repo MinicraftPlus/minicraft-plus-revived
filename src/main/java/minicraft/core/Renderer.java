@@ -2,10 +2,15 @@ package minicraft.core;
 
 import java.awt.Canvas;
 import java.awt.Graphics;
+import java.awt.geom.AffineTransform;
+import java.awt.image.AffineTransformOp;
 import java.awt.image.BufferStrategy;
 import java.awt.image.BufferedImage;
 import java.awt.image.DataBufferInt;
+import java.io.File;
 import java.io.IOException;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -140,6 +145,35 @@ public class Renderer extends Game {
 
 		// Make the picture visible.
 		bs.show();
+
+		if (Updater.screenshot > 0) {
+			new File(Game.gameDir + "/screenshots/").mkdirs();
+			int count = 1;
+			LocalDateTime datetime = LocalDateTime.now();
+			String stamp = DateTimeFormatter.ofPattern("yyyy-MM-dd_HH.mm.ss").format(datetime);
+			File file = new File(String.format("%s/screenshots/%s.png", Game.gameDir, stamp));
+			while (file.exists()) {
+				file = new File(String.format("%s/screenshots/%s_%s.png", Game.gameDir, stamp, count));
+				count++;
+			}
+
+			try {
+				BufferedImage before = image;
+				int w = before.getWidth();
+				int h = before.getHeight();
+				int scale = (Integer) Settings.get("screenshot");
+				BufferedImage after = new BufferedImage(w * scale, h * scale, BufferedImage.TYPE_INT_ARGB);
+				AffineTransform at = new AffineTransform();
+				at.scale(scale, scale);
+				AffineTransformOp scaleOp = new AffineTransformOp(at, AffineTransformOp.TYPE_BILINEAR);
+				after = scaleOp.filter(before, after);
+				ImageIO.write(after, "png", file);
+			} catch (IOException e) {
+				CrashHandler.errorHandle(e);
+			}
+
+			Updater.screenshot--;
+		}
 	}
 
 

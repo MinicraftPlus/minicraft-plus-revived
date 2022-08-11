@@ -79,6 +79,7 @@ public class OptionsWorldDisplay extends Display {
 			Settings.getEntry("showquests"),
 			new SelectEntry("minicraft.display.options_display.change_key_bindings", () -> Game.setDisplay(new KeyInputDisplay())),
 			Settings.getEntry("language"),
+			Settings.getEntry("screenshot"),
 			new SelectEntry("minicraft.displays.options_main_menu.resource_packs", () -> Game.setDisplay(new ResourcePackDisplay()))
 		));
 	}

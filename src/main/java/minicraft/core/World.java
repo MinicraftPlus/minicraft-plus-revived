@@ -121,7 +121,7 @@ public class World extends Game {
 			for (int i = maxLevelDepth; i >= minLevelDepth; i--) {
 				// i = level depth; the array starts from the top because the parent level is used as a reference, so it should be constructed first. It is expected that the highest level will have a null parent.
 
-				Logging.WORLD.trace("Loading level " + i + "...");
+				Logging.WORLD.trace("Generating level " + i + "...");
 
 				LoadingDisplay.setMessage(Level.getDepthString(i));
 				levels[lvlIdx(i)] = new Level(worldSize, worldSize, random.nextLong(), i, levels[lvlIdx(i+1)], !WorldSelectDisplay.hasLoadedWorld());
@@ -129,7 +129,7 @@ public class World extends Game {
 				LoadingDisplay.progress(loadingInc);
 			}
 
-			Logging.WORLD.trace("Level loading complete.");
+			Logging.WORLD.trace("Level generation complete.");
 
 			Level level = levels[currentLevel]; // Sets level to the current level (3; surface)
 			Updater.pastDay1 = false;
