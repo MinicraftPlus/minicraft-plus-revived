@@ -3,6 +3,7 @@ package minicraft.screen;
 import java.util.ArrayList;
 import java.util.Arrays;
 
+import com.studiohartman.jamepad.ControllerButton;
 import minicraft.core.Game;
 import minicraft.core.io.ControllerHandler;
 import minicraft.core.io.InputHandler;

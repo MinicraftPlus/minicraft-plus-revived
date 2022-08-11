@@ -21,7 +21,6 @@ public class DecorTile extends Tile {
 		switch (type) {
 			case Stone: sprite = new Sprite(17,16,2,2,1,0); break;
 			case Obsidian: sprite = new Sprite(27,16,2,2,1,0); break;
-			default: break;
 		}
 		super.sprite = sprite;
 	}
