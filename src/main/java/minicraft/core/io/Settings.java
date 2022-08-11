@@ -13,7 +13,7 @@ public class Settings {
 
 	static {
 		options.put("fps", new RangeEntry("minicraft.settings.fps", 10, 300, getRefreshRate())); // Has to check if the game is running in a headless mode. If it doesn't set the fps to 60
-		options.put("screenshot", new ArrayEntry<>("minicraft.settings.screenshot_scale", 1, 2, 5, 10, 15, 20, 25, 30, 35, 40, 50, 60, 80, 100, 120, 150, 200, 300, 500, 800, 1000)); // Has to check if the game is running in a headless mode. If it doesn't set the fps to 60
+		options.put("screenshot", new ArrayEntry<>("minicraft.settings.screenshot_scale", 1, 2, 5, 10, 15, 20, 25, 30, 35, 40, 50, 60, 80, 100, 120, 150, 200, 300, 500, 800, 1000, 5000, 1000000)); // The magnification of screenshot.
 		options.put("diff", new ArrayEntry<>("minicraft.settings.difficulty", "minicraft.settings.difficulty.easy", "minicraft.settings.difficulty.normal", "minicraft.settings.difficulty.hard"));
 		options.get("diff").setSelection(1);
 		options.put("mode", new ArrayEntry<>("minicraft.settings.mode", "minicraft.settings.mode.survival", "minicraft.settings.mode.creative", "minicraft.settings.mode.hardcore", "minicraft.settings.mode.score"));
