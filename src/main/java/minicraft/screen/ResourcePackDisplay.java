@@ -275,7 +275,7 @@ public class ResourcePackDisplay extends Display {
 	}
 
 	@Override
-	public void tick(InputHandler input, ControllerHandler controlInput) {
+	public void tick(InputHandler input) {
 		// Overrides the default tick handler.
 		if (input.getKey("right").clicked) {
 			if (selection == 0) {
@@ -331,7 +331,7 @@ public class ResourcePackDisplay extends Display {
 			return;
 		}
 
-		super.tick(input, controlInput);
+		super.tick(input);
 	}
 
 	@Override

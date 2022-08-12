@@ -68,8 +68,6 @@ import ar.com.hjg.pngj.ImageInfo;
 import ar.com.hjg.pngj.PngWriter;
 import ar.com.hjg.pngj.chunks.PngChunkSBIT;
 
-import sun.awt.image.IntegerInterleavedRaster;
-
 public class Renderer extends Game {
 	private Renderer() {}
 
@@ -181,7 +179,7 @@ public class Renderer extends Game {
 				BufferedImage before = BigBufferedImage.create(w, h, BufferedImage.TYPE_INT_RGB);
 				before.getRaster().setRect(image.getData());
 				int scale = (Integer) Settings.get("screenshot");
-				BufferedImage after = BigBufferedImage.create(scale * w, scale * h, BufferedImage.TYPE_INT_RGB);
+				// BufferedImage after = BigBufferedImage.create(scale * w, scale * h, BufferedImage.TYPE_INT_RGB);
 				AffineTransform at = new AffineTransform();
 				at.scale(scale, scale); // Setting the scaling.
 				AffineTransformOp scaleOp = new AffineTransformOp(at, AffineTransformOp.TYPE_BICUBIC);
@@ -209,23 +207,29 @@ public class Renderer extends Game {
 
 				// png.end();
 
-				try (ImageOutputStream out = ImageIO.createImageOutputStream(file)) {
-					// writer.setOutput(out);
-					after = scaleOp.filter(before, after); // Applying scaling.
-					ImageIO.write(after, "png", out);
-					// ImageWriteParam param = writer.getDefaultWriteParam();
-					// for (int xPos = 0; xPos < scale; xPos++) {
-					// 	for (int yPos = 0; yPos < scale; yPos++) {
-					// 		java.awt.Point location = new java.awt.Point(xPos * w, yPos * h);
-					// 		after = Raster.createWritableRaster(before.getSampleModel(), location);
-					// 		param.setDestinationOffset(location);
-					// 		writer.write(null, new IIOImage(new BufferedImage(colorModel, buf, colorModel.isAlphaPremultiplied(), null), null, null), param);
-					// 	}
-					// }
+				// try (ImageOutputStream out = ImageIO.createImageOutputStream(file)) {
+				// 	// writer.setOutput(out);
+				// 	after = scaleOp.filter(before, after); // Applying scaling.
+				// 	ImageIO.write(after, "png", out);
+				// 	// ImageWriteParam param = writer.getDefaultWriteParam();
+				// 	// for (int xPos = 0; xPos < scale; xPos++) {
+				// 	// 	for (int yPos = 0; yPos < scale; yPos++) {
+				// 	// 		java.awt.Point location = new java.awt.Point(xPos * w, yPos * h);
+				// 	// 		after = Raster.createWritableRaster(before.getSampleModel(), location);
+				// 	// 		param.setDestinationOffset(location);
+				// 	// 		writer.write(null, new IIOImage(new BufferedImage(colorModel, buf, colorModel.isAlphaPremultiplied(), null), null, null), param);
+				// 	// 	}
+				// 	// }
 
-					// writer.dispose();
-					// out.flush();
-				}
+				// 	// writer.dispose();
+				// 	// out.flush();
+				// }
+
+				// Temp solution: with lower scales. (1-10) only. 25, 30, 35, 40, 50, 60, 80, 100, 120, 150 are removed.
+				// Use this solution without larger scales which use up a lot memory.
+				// With 20, up to around 360MB
+				BufferedImage after = scaleOp.filter(before, null);
+				ImageIO.write(after, "png", file);
 			} catch (IOException e) {
 				CrashHandler.errorHandle(e);
 			}
