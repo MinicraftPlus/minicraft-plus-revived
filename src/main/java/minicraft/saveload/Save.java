@@ -1,11 +1,9 @@
 package minicraft.saveload;
 
-import minicraft.core.CrashHandler;
 import minicraft.core.Game;
 import minicraft.core.Renderer;
 import minicraft.core.Updater;
 import minicraft.core.World;
-import minicraft.core.io.FileHandler;
 import minicraft.core.io.Localization;
 import minicraft.core.io.Settings;
 import minicraft.entity.Arrow;
@@ -29,13 +27,10 @@ import org.json.JSONObject;
 
 import java.io.BufferedWriter;
 import java.io.File;
-import java.io.FileOutputStream;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.zip.ZipEntry;
-import java.util.zip.ZipOutputStream;
 
 public class Save {
 
@@ -169,22 +164,6 @@ public class Save {
 		data.add(String.valueOf(Settings.get("quests")));
 		data.add(String.valueOf(Settings.get("tutorials")));
 		writeToFile(location + filename + extension, data);
-
-		// Generating world-bundle resources.
-		File zip = new File(folder, "resources.zip");
-		if (!zip.exists()) { // We can add resource updates with the previous versions.
-			try (ZipOutputStream out = new ZipOutputStream(new FileOutputStream(zip))) {
-				for (String name : FileHandler.listResources()) { // Copy only assets and pack configuration.
-					if (name.startsWith("assets/") || name.equals("pack.json") || name.equals("pack.png")) {
-						out.putNextEntry(new ZipEntry(name));
-						if (!name.endsWith("/")) out.write(Game.class.getResourceAsStream("/" + name).readAllBytes());
-						out.closeEntry();
-					}
-				}
-			} catch (IOException e) {
-				CrashHandler.errorHandle(e);
-			}
-		}
 	}
 
 	private void writePrefs() {

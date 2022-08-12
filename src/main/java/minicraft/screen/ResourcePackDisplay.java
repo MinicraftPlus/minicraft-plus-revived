@@ -1,15 +1,19 @@
 package minicraft.screen;
 
 import java.io.BufferedInputStream;
+import java.io.BufferedReader;
 import java.io.Closeable;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.net.MalformedURLException;
 import java.net.URISyntaxException;
 import java.net.URL;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.FileSystems;
 import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.nio.file.StandardWatchEventKinds;
 import java.nio.file.WatchEvent;
 import java.nio.file.WatchService;
@@ -25,7 +29,6 @@ import java.util.zip.ZipFile;
 
 import javax.imageio.ImageIO;
 
-import minicraft.core.io.ControllerHandler;
 import minicraft.core.io.FileHandler;
 import minicraft.core.io.InputHandler;
 import minicraft.core.CrashHandler;
@@ -93,7 +96,6 @@ public class ResourcePackDisplay extends Display {
 
 	private static final ResourcePack defaultPack; // Used to check if the resource pack default.
 	private static final SpriteSheet defaultLogo;
-	private static final URL defaultURL;
 	private static ArrayList<ResourcePack> loadedPacks = new ArrayList<>();
 	private static ArrayList<ResourcePack> loadQuery = new ArrayList<>();
 
@@ -108,8 +110,7 @@ public class ResourcePackDisplay extends Display {
 
 	static {
 		// Add the default pack.
-		defaultURL = Game.class.getProtectionDomain().getCodeSource().getLocation();
-		defaultPack = Objects.requireNonNull(loadPackMetadata(defaultURL));
+		defaultPack = Objects.requireNonNull(loadPackMetadata(Game.class.getProtectionDomain().getCodeSource().getLocation()));
 		loadedPacks.add(defaultPack);
 		try {
 			defaultLogo = new SpriteSheet(ImageIO.read(ResourcePackDisplay.class.getResourceAsStream("/resources/default_pack.png")));
@@ -453,8 +454,8 @@ public class ResourcePackDisplay extends Display {
 			for (Enumeration<? extends ZipEntry> e = zipFile.entries(); e.hasMoreElements();) {
 				ZipEntry entry = e.nextElement();
 				Path parent;
-				if ((parent = Path.of(entry.getName()).getParent()) != null && parent.equals(Path.of(path)) &&
-						(filter == null || filter.check(Path.of(entry.getName()), entry.isDirectory()))) {
+				if ((parent = Paths.get(entry.getName()).getParent()) != null && parent.equals(Paths.get(path)) &&
+						(filter == null || filter.check(Paths.get(entry.getName()), entry.isDirectory()))) {
 					paths.add(entry.getName());
 				}
 			}
@@ -463,10 +464,15 @@ public class ResourcePackDisplay extends Display {
 		}
 	}
 
+	public static String readStringFromInputStream(InputStream in) {
+		BufferedReader reader = new BufferedReader(new InputStreamReader(in, StandardCharsets.UTF_8));
+		return String.join("\n", reader.lines().toArray(String[]::new));
+	}
+
 	public static ResourcePack loadPackMetadata(URL file) {
 		try (ZipFile zip = new ZipFile(new File(file.toURI()))) {
 			try (InputStream in = zip.getInputStream(zip.getEntry("pack.json"))) {
-				JSONObject meta = new JSONObject(new String(in.readAllBytes()));
+				JSONObject meta = new JSONObject(readStringFromInputStream(in));
 				return new ResourcePack(file.toURI().toURL(),
 					meta.getInt("pack_format"), meta.optString("name", new File(file.toURI()).getName()), meta.optString("description", "No description"));
 			}
@@ -537,18 +543,11 @@ public class ResourcePackDisplay extends Display {
 		resourcePacks.clear(); // Releases unloaded packs.
 	}
 
-	public static void changeDefaultPackURL(URL url) {
-		defaultPack.packRoot = url;
-	}
-	public static void changeDefaultPackURLToDefault() {
-		defaultPack.packRoot = defaultURL;
-	}
-
 	public static void loadResourcePacks(String[] names) {
 		for (String name : names) {
 			for (ResourcePack pack : new ArrayList<>(resourcePacks)) {
 				try {
-					if (Path.of(pack.packRoot.toURI()).equals(FOLDER_LOCATION.toPath().resolve(name))) {
+					if (Paths.get(pack.packRoot.toURI()).equals(FOLDER_LOCATION.toPath().resolve(name))) {
 						resourcePacks.remove(pack);
 						loadedPacks.add(loadedPacks.indexOf(defaultPack), pack);
 					}
@@ -635,7 +634,7 @@ public class ResourcePackDisplay extends Display {
 	private static void loadLocalization(ResourcePack pack) {
 		JSONObject langJSON = null;
 		try {
-			langJSON = new JSONObject(new String(pack.getResourceAsStream("pack.json").readAllBytes())).optJSONObject("language");
+			langJSON = new JSONObject(readStringFromInputStream(pack.getResourceAsStream("pack.json"))).optJSONObject("language");
 		} catch (JSONException | IOException e1) {
 			Logging.RESOURCEHANDLER_RESOURCEPACK.debug(e1, "Unable to load pack.json in pack: {}", pack.name);
 		}
@@ -653,9 +652,9 @@ public class ResourcePackDisplay extends Display {
 		}
 
 		for (String f : pack.getFiles("assets/localization/", (path, isDir) -> path.toString().endsWith(".json") && !isDir)) {
-			String str = Path.of(f).getFileName().toString();
+			String str = Paths.get(f).getFileName().toString();
 			try { // JSON verification.
-				String json = new String(pack.getResourceAsStream(f).readAllBytes());
+				String json = readStringFromInputStream(pack.getResourceAsStream(f));
 				JSONObject obj = new JSONObject(json);
 				for (String k : obj.keySet()) {
 					obj.getString(k);
@@ -674,7 +673,7 @@ public class ResourcePackDisplay extends Display {
 	private static void loadBooks(ResourcePack pack) {
 		for (String path : pack.getFiles("assets/books", (path, isDir) -> path.toString().endsWith(".txt") && !isDir))  {
 			try {
-				String book = BookData.loadBook(new String(pack.getResourceAsStream(path).readAllBytes()));
+				String book = BookData.loadBook(readStringFromInputStream(pack.getResourceAsStream(path)));
 				switch (path) {
 					case "assets/books/about.txt": BookData.about = () -> book; break;
 					case "assets/books/credits.txt": BookData.credits = () -> book; break;
@@ -690,7 +689,7 @@ public class ResourcePackDisplay extends Display {
 
 	private static void loadSounds(ResourcePack pack) {
 		for (String f : pack.getFiles("assets/sound/", (path, isDir) -> path.toString().endsWith(".wav") && !isDir)) {
-			String name = Path.of(f).getFileName().toString();
+			String name = Paths.get(f).getFileName().toString();
 			try {
 				Sound.loadSound(name.substring(0, name.length() - 4), new BufferedInputStream(pack.getResourceAsStream(f)), pack.name);
 			} catch (IOException e) {

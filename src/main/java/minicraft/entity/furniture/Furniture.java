@@ -1,6 +1,5 @@
 package minicraft.entity.furniture;
 
-import minicraft.core.Game;
 import minicraft.core.io.Sound;
 import minicraft.entity.Direction;
 import minicraft.entity.Entity;

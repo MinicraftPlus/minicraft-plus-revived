@@ -32,8 +32,6 @@ public class Sprite {
 		return new LinkedSpriteSheet(SpriteType.Tile, key).setSpriteDim(ran.nextInt(4), 3, 2, 2).setOnePixel(true).setMirrors(
 			new int[][]{new int[]{2 + ran.nextInt(4), 0}, new int[]{2 + ran.nextInt(4), 0}, new int[]{2 + ran.nextInt(4), 0}, new int[]{2 + ran.nextInt(4), 0}}
 		);
-		// return ConnectorSprite.makeSprite(2, 2, ran.nextInt(4), sheet, false, new int[]{2 + ran.nextInt(4), 0}, new int[]{2 + ran.nextInt(4), 0},
-		// 	new int[]{2 + ran.nextInt(4), 0}, new int[]{2 + ran.nextInt(4), 0});
 	}
 
 	protected Px[][] spritePixels;

@@ -42,11 +42,7 @@ public class PauseDisplay extends Display {
 				items.add(new BlankEntry());
 				items.add(new SelectEntry("minicraft.displays.pause.display.exit_popup.cancel", Game::exitDisplay));
 
-				items.add(new SelectEntry("minicraft.displays.pause.display.exit_popup.quit", () -> {
-					Game.setDisplay(new TitleDisplay());
-					ResourcePackDisplay.changeDefaultPackURLToDefault();
-					ResourcePackDisplay.reloadResources();
-				}));
+				items.add(new SelectEntry("minicraft.displays.pause.display.exit_popup.quit", () -> Game.setDisplay(new TitleDisplay())));
 
 				Game.setDisplay(new Display(false, true, new Menu.Builder(true, 8, RelPos.CENTER, items
 				).createMenu()));

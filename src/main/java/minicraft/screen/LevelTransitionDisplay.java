@@ -2,7 +2,6 @@ package minicraft.screen;
 
 import minicraft.core.Game;
 import minicraft.core.World;
-import minicraft.core.io.ControllerHandler;
 import minicraft.core.io.InputHandler;
 import minicraft.gfx.Screen;
 import minicraft.gfx.SpriteLinker.LinkedSpriteSheet;

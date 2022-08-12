@@ -6,17 +6,12 @@ import java.awt.geom.AffineTransform;
 import java.awt.image.AffineTransformOp;
 import java.awt.image.BufferStrategy;
 import java.awt.image.BufferedImage;
-import java.awt.image.ColorModel;
 import java.awt.image.DataBufferInt;
-import java.awt.image.Raster;
-import java.awt.image.WritableRaster;
 import java.io.File;
 import java.io.IOException;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -54,19 +49,9 @@ import minicraft.screen.entry.StringEntry;
 import minicraft.util.Quest;
 import minicraft.util.Quest.QuestSeries;
 
-import javax.imageio.IIOImage;
 import javax.imageio.ImageIO;
-import javax.imageio.ImageTypeSpecifier;
-import javax.imageio.ImageWriteParam;
-import javax.imageio.ImageWriter;
-import javax.imageio.stream.ImageOutputStream;
 
 import org.json.JSONObject;
-
-import ar.com.hjg.pngj.FilterType;
-import ar.com.hjg.pngj.ImageInfo;
-import ar.com.hjg.pngj.PngWriter;
-import ar.com.hjg.pngj.chunks.PngChunkSBIT;
 
 public class Renderer extends Game {
 	private Renderer() {}

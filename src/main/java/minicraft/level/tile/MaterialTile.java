@@ -21,6 +21,7 @@ public class MaterialTile extends Tile {
 		switch (type) {
 			case Stone: sprite = new LinkedSpriteSheet(SpriteType.Tile, "stone"); break;
 			case Obsidian: sprite = new LinkedSpriteSheet(SpriteType.Tile, "obsidian"); break;
+			default:
 		}
 	}
 

@@ -23,10 +23,8 @@ import org.jetbrains.annotations.Nullable;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
-import org.tinylog.Logger;
 
 import java.io.*;
-import java.net.MalformedURLException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -237,16 +235,6 @@ public class Load {
 		if (worldVer.compareTo(new Version("2.2.0-dev1")) >= 0) {
 			Settings.set("quests", Boolean.parseBoolean(data.remove(0)));
 			Settings.set("tutorials", Boolean.parseBoolean(data.remove(0)));
-		}
-
-		File zip = new File(location + "resources.zip"); // Search if there is world-bundle resources.
-		if (zip.exists() && zip.isFile()) {
-			try {
-				ResourcePackDisplay.changeDefaultPackURL(zip.toURI().toURL());
-				ResourcePackDisplay.reloadResources();
-			} catch (MalformedURLException e) {
-				e.printStackTrace();
-			}
 		}
 	}
 

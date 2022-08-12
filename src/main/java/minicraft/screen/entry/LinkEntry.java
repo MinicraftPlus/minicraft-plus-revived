@@ -9,7 +9,6 @@ import org.tinylog.Logger;
 
 import minicraft.core.Game;
 import minicraft.core.io.Localization;
-import minicraft.screen.BookDisplay;
 import minicraft.screen.Menu;
 import minicraft.screen.PopupDisplay;
 import minicraft.screen.RelPos;
