@@ -17,7 +17,6 @@ import java.util.Map;
 import java.util.Objects;
 
 import minicraft.core.CrashHandler.ErrorInfo;
-import minicraft.core.io.BigBufferedImage;
 import minicraft.core.io.Localization;
 import minicraft.core.io.Settings;
 import minicraft.entity.furniture.Bed;
@@ -161,7 +160,7 @@ public class Renderer extends Game {
 			try { // https://stackoverflow.com/a/4216635
 				int w = image.getWidth();
 				int h = image.getHeight();
-				BufferedImage before = BigBufferedImage.create(w, h, BufferedImage.TYPE_INT_RGB);
+				BufferedImage before = new BufferedImage(w, h, BufferedImage.TYPE_INT_RGB);
 				before.getRaster().setRect(image.getData());
 				int scale = (Integer) Settings.get("screenshot");
 				// BufferedImage after = BigBufferedImage.create(scale * w, scale * h, BufferedImage.TYPE_INT_RGB);
