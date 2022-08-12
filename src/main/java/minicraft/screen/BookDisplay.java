@@ -1,18 +1,12 @@
 package minicraft.screen;
 
+import minicraft.core.Game;
+import minicraft.core.io.InputHandler;
+import minicraft.gfx.*;
+import minicraft.screen.entry.StringEntry;
+
 import java.util.ArrayList;
 import java.util.Arrays;
-
-import com.studiohartman.jamepad.ControllerButton;
-import minicraft.core.Game;
-import minicraft.core.io.ControllerHandler;
-import minicraft.core.io.InputHandler;
-import minicraft.gfx.Color;
-import minicraft.gfx.Font;
-import minicraft.gfx.Point;
-import minicraft.gfx.Screen;
-import minicraft.gfx.SpriteSheet;
-import minicraft.screen.entry.StringEntry;
 
 public class BookDisplay extends Display {
 
@@ -89,9 +83,9 @@ public class BookDisplay extends Display {
 	}
 
 	@Override
-	public void tick(InputHandler input, ControllerHandler controlInput) {
-		if (input.isClicked("menu", controlInput) || input.isClicked("exit", controlInput)) Game.exitDisplay(); // Close the menu.
-		if (input.isClicked("cursor-left", controlInput)) turnPage(-1); // This is what turns the page back
-		if (input.isClicked("cursor-right", controlInput)) turnPage(1); // This is what turns the page forward
+	public void tick(InputHandler input) {
+		if (input.isClicked("menu") || input.isClicked("exit")) Game.exitDisplay(); // Close the menu.
+		if (input.isClicked("cursor-left")) turnPage(-1); // This is what turns the page back
+		if (input.isClicked("cursor-right")) turnPage(1); // This is what turns the page forward
 	}
 }

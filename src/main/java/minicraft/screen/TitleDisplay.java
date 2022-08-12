@@ -4,7 +4,6 @@ import minicraft.core.Game;
 import minicraft.core.Renderer;
 import minicraft.core.VersionInfo;
 import minicraft.core.World;
-import minicraft.core.io.ControllerHandler;
 import minicraft.core.io.InputHandler;
 import minicraft.core.io.Localization;
 import minicraft.gfx.Color;
@@ -106,10 +105,10 @@ public class TitleDisplay extends Display {
 	}
 
 	@Override
-	public void tick(InputHandler input, ControllerHandler controlInput) {
+	public void tick(InputHandler input) {
 		if (input.getKey("r").clicked && Game.debug) rand = random.nextInt(splashes.length - 3) + 3;
 
-		super.tick(input, controlInput);
+		super.tick(input);
 	}
 
 	@Override

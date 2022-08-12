@@ -1,12 +1,10 @@
 package minicraft.screen;
 
-import java.io.File;
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Arrays;
-
 import minicraft.core.Game;
-import minicraft.core.io.*;
+import minicraft.core.io.FileHandler;
+import minicraft.core.io.InputHandler;
+import minicraft.core.io.Localization;
+import minicraft.core.io.Sound;
 import minicraft.gfx.Color;
 import minicraft.gfx.Font;
 import minicraft.gfx.Screen;
@@ -18,6 +16,11 @@ import minicraft.screen.entry.ListEntry;
 import minicraft.screen.entry.SelectEntry;
 import minicraft.screen.entry.StringEntry;
 import minicraft.util.Logging;
+
+import java.io.File;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Arrays;
 
 public class WorldSelectDisplay extends Display {
 
@@ -73,8 +76,8 @@ public class WorldSelectDisplay extends Display {
 	}
 
 	@Override
-	public void tick(InputHandler input, ControllerHandler controlInput) {
-		super.tick(input, controlInput);
+	public void tick(InputHandler input) {
+		super.tick(input);
 
 		if (input.getKey("SHIFT-C").clicked) {
 			ArrayList<ListEntry> entries = new ArrayList<>();

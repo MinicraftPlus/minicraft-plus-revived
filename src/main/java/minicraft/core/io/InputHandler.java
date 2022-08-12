@@ -1,6 +1,10 @@
 package minicraft.core.io;
 
-import java.awt.Component;
+import minicraft.core.Game;
+import org.jetbrains.annotations.Nullable;
+import org.tinylog.Logger;
+
+import java.awt.*;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.lang.reflect.Field;
@@ -8,11 +12,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.Map.Entry;
-
-import org.jetbrains.annotations.Nullable;
-import org.tinylog.Logger;
-
-import minicraft.core.Game;
 
 public class InputHandler implements KeyListener {
 	/**
@@ -154,12 +153,22 @@ public class InputHandler implements KeyListener {
 		}
 	}
 
-	/** For game controllers. */
-	public boolean isClicked(String key, ControllerHandler controlInput) {
-		return controlInput.isKeyPressed(key) || getKey(key).clicked;
+	/**
+	 * Check if key has been clicked.
+	 * @param key The key to check.
+	 * @return If it has been clicked.
+	 */
+	public boolean isClicked(String key) {
+		return Game.controlInput.isKeyPressed(key) || getKey(key).clicked;
 	}
-	public boolean isHeld(String key, ControllerHandler controlInput) {
-		return controlInput.isKeyDown(key) || getKey(key).down;
+
+	/**
+	 * Check if key is being held down.
+	 * @param key The key being held down.
+	 * @return If the key is being held down.
+	 */
+	public boolean isHeld(String key) {
+		return Game.controlInput.isKeyDown(key) || getKey(key).down;
 	}
 
 	// The Key class.

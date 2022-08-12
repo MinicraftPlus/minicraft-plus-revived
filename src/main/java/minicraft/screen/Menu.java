@@ -1,30 +1,17 @@
 package minicraft.screen;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Locale;
-
-import minicraft.core.io.ControllerHandler;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-
 import minicraft.core.io.InputHandler;
 import minicraft.core.io.Localization;
 import minicraft.core.io.Sound;
-import minicraft.gfx.Color;
-import minicraft.gfx.Dimension;
-import minicraft.gfx.Font;
-import minicraft.gfx.Insets;
-import minicraft.gfx.Point;
-import minicraft.gfx.Rectangle;
-import minicraft.gfx.Screen;
-import minicraft.gfx.SpriteSheet;
 import minicraft.gfx.SpriteLinker.LinkedSpriteSheet;
 import minicraft.gfx.SpriteLinker.SpriteType;
+import minicraft.gfx.*;
 import minicraft.screen.entry.BlankEntry;
 import minicraft.screen.entry.ListEntry;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
+import java.util.*;
 
 public class Menu {
 
@@ -166,12 +153,12 @@ public class Menu {
 		titleLoc.translate(xoff, yoff);
 	}
 
-	public void tick(InputHandler input, ControllerHandler controlInput) {
+	public void tick(InputHandler input) {
 		if(!selectable || entries.size() == 0) return;
 
 		int prevSel = selection;
-		if (input.isClicked("cursor-up", controlInput)) selection--;
-		if (input.isClicked("cursor-down", controlInput)) selection++;
+		if (input.isClicked("cursor-up")) selection--;
+		if (input.isClicked("cursor-down")) selection++;
 		if (input.getKey("shift-cursor-up").clicked && selectionSearcher == 0) selectionSearcher -= 2;
 		if (input.getKey("shift-cursor-down").clicked && selectionSearcher == 0) selectionSearcher += 2;
 		if (prevSel != selection && selectionSearcher != 0) selection = prevSel;

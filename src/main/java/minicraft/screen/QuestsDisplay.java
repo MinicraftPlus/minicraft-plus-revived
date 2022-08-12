@@ -6,7 +6,6 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.stream.Collectors;
 
-import minicraft.core.io.ControllerHandler;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
@@ -235,9 +234,9 @@ public class QuestsDisplay extends Display {
 					.setEntries(StringEntry.useLines(Color.RED, "minicraft.display.tutorial_skip.confirm_popup", "minicraft.display.popup.enter_confirm", "minicraft.display.popup.escape_cancel"))
 					.createMenu()) {
 						@Override
-						public void tick(InputHandler input, ControllerHandler controlInput) {
-							super.tick(input, controlInput);
-							if (input.isClicked("select", controlInput)) {
+						public void tick(InputHandler input) {
+							super.tick(input);
+							if (input.isClicked("select")) {
 								skipSeries(series);
 								display.reloadEntries();
 								if (display.menus[0].getSelection() > display.seriesEntries[display.selectedEntry].length) {
@@ -550,15 +549,15 @@ public class QuestsDisplay extends Display {
 	}
 
 	@Override
-	public void tick(InputHandler input, ControllerHandler controlInput) {
-		super.tick(input, controlInput);
+	public void tick(InputHandler input) {
+		super.tick(input);
 
-		if (input.isClicked("cursor-left", controlInput)) if (selectedEntry > 0) {
+		if (input.isClicked("cursor-left")) if (selectedEntry > 0) {
 			selectedEntry--;
 			updateEntries();
 		}
 
-		if (input.isClicked("cursor-right", controlInput)) if (selectedEntry < 1) {
+		if (input.isClicked("cursor-right")) if (selectedEntry < 1) {
 			selectedEntry++;
 			updateEntries();
 		}

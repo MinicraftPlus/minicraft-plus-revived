@@ -1,11 +1,6 @@
 package minicraft.screen;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-
 import minicraft.core.Game;
-import minicraft.core.io.ControllerHandler;
-import minicraft.util.MyUtils;
 import minicraft.core.io.InputHandler;
 import minicraft.core.io.Localization;
 import minicraft.gfx.Color;
@@ -14,6 +9,9 @@ import minicraft.screen.entry.BlankEntry;
 import minicraft.screen.entry.ListEntry;
 import minicraft.screen.entry.SelectEntry;
 import minicraft.screen.entry.StringEntry;
+
+import java.util.ArrayList;
+import java.util.Arrays;
 
 public class PauseDisplay extends Display {
 
@@ -73,9 +71,9 @@ public class PauseDisplay extends Display {
 	}
 
 	@Override
-	public void tick(InputHandler input, ControllerHandler controlInput) {
-		super.tick(input, controlInput);
-		if (input.isClicked("pause", controlInput))
+	public void tick(InputHandler input) {
+		super.tick(input);
+		if (input.isClicked("pause"))
 			Game.exitDisplay();
 	}
 }

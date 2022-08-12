@@ -1,14 +1,11 @@
 package minicraft.screen;
 
-import com.studiohartman.jamepad.ControllerButton;
-import minicraft.core.io.ControllerHandler;
-import org.jetbrains.annotations.Nullable;
-
 import minicraft.core.Game;
 import minicraft.core.io.InputHandler;
 import minicraft.core.io.Sound;
 import minicraft.gfx.Screen;
 import minicraft.screen.entry.ArrayEntry;
+import org.jetbrains.annotations.Nullable;
 
 public class Display {
 
@@ -44,9 +41,9 @@ public class Display {
 
 	public Display getParent() { return parent; }
 
-	public void tick(InputHandler input, ControllerHandler controlInput) {
+	public void tick(InputHandler input) {
 
-		if (canExit && input.isClicked("exit", controlInput)) {
+		if (canExit && input.isClicked("exit")) {
 			Game.exitDisplay();
 			return;
 		}
@@ -81,7 +78,7 @@ public class Display {
 		}
 
 		if (!changedSelection)
-			menus[selection].tick(input, controlInput);
+			menus[selection].tick(input);
 	}
 
 	protected void onSelectionChange(int oldSel, int newSel) {
