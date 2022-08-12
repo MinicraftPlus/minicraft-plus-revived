@@ -342,8 +342,9 @@ public class ResourcePackDisplay extends Display {
 		Font.drawCentered(Localization.getLocalized("minicraft.displays.resource_packs.display.title"), screen, 6, Color.WHITE);
 
 		// Info text at the bottom.
-		Font.drawCentered(Localization.getLocalized("minicraft.displays.resource_packs.display.help.move", Game.input.getMapping("cursor-down"), Game.input.getMapping("cursor-up")), screen, Screen.h - 17, Color.DARK_GRAY);
-		Font.drawCentered(Localization.getLocalized("minicraft.displays.resource_packs.display.help.select", Game.input.getMapping("SELECT")), screen, Screen.h - 9, Color.DARK_GRAY);
+		Font.drawCentered(Localization.getLocalized("minicraft.displays.resource_packs.display.help.move", Game.input.getMapping("cursor-down"), Game.input.getMapping("cursor-up")), screen, Screen.h - 25, Color.DARK_GRAY);
+		Font.drawCentered(Localization.getLocalized("minicraft.displays.resource_packs.display.help.select", Game.input.getMapping("SELECT")), screen, Screen.h - 17, Color.DARK_GRAY);
+		Font.drawCentered(Localization.getLocalized("minicraft.displays.resource_packs.display.help.position"), screen, Screen.h - 9, Color.DARK_GRAY);
 
 		ArrayList<ResourcePack> packs = selection == 0 ? resourcePacks : loadedPacks;
 		if (packs.size() > 0) {
@@ -401,14 +402,14 @@ public class ResourcePackDisplay extends Display {
 						throw new IOException(String.format("Unacceptable logo size: %s;%s", w, h));
 					}
 				} else {
-					Logging.RESOURCEHANDLER_RESOURCEPACK.trace("Pack logo not found, loading default logo instead.");
+					Logging.RESOURCEHANDLER_RESOURCEPACK.trace("Pack logo not found in pack: {}, loading default logo instead.", name);
 					logo = defaultLogo;
 				}
 				close();
 
 			} catch (IOException | NullPointerException e) {
 				e.printStackTrace();
-				Logging.RESOURCEHANDLER_RESOURCEPACK.warn("Unable to load logo, loading default logo instead.");
+				Logging.RESOURCEHANDLER_RESOURCEPACK.warn("Unable to load logo in pack: {}, loading default logo instead.", name);
 				if (this == defaultPack) {
 					try {
 						logo = new SpriteSheet(ImageIO.read(getClass().getResourceAsStream("/resources/logo.png")));
@@ -474,7 +475,7 @@ public class ResourcePackDisplay extends Display {
 				CrashHandler.ErrorInfo.ErrorType.REPORT, String.format("Unable to load resource pack: %s.", file.getPath())));
 		} catch (NullPointerException e) { // pack.json is missing.
 			CrashHandler.errorHandle(e, new CrashHandler.ErrorInfo("Resource Pack not Supported",
-				CrashHandler.ErrorInfo.ErrorType.HANDLED, String.format("Earlier version formatted resource pack detected: %s.", file.getPath())));
+				CrashHandler.ErrorInfo.ErrorType.HANDLED, String.format("Missing pack.json in resource pack: %s.", file.getPath())));
 		}
 
 		return null;
@@ -579,6 +580,8 @@ public class ResourcePackDisplay extends Display {
 		loadQuery.clear();
 		loadQuery.addAll(loadedPacks);
 		Collections.reverse(loadQuery);
+
+		// Clear all previously loaded resources.
 		Renderer.spriteLinker.resetSprites();
 		Localization.resetLocalizations();
 		BookData.resetBooks();
@@ -634,8 +637,9 @@ public class ResourcePackDisplay extends Display {
 		try {
 			langJSON = new JSONObject(new String(pack.getResourceAsStream("pack.json").readAllBytes())).optJSONObject("language");
 		} catch (JSONException | IOException e1) {
-			e1.printStackTrace();
+			Logging.RESOURCEHANDLER_RESOURCEPACK.debug(e1, "Unable to load pack.json in pack: {}", pack.name);
 		}
+
 		if (langJSON != null) {
 			for (String loc : langJSON.keySet()) {
 				try {
@@ -650,11 +654,19 @@ public class ResourcePackDisplay extends Display {
 
 		for (String f : pack.getFiles("assets/localization/", (path, isDir) -> path.toString().endsWith(".json") && !isDir)) {
 			String str = Path.of(f).getFileName().toString();
-			try {
-				Localization.addLocalization(Locale.forLanguageTag(str.substring(0, str.length() - 5)),
-					new String(pack.getResourceAsStream(f).readAllBytes()));
+			try { // JSON verification.
+				String json = new String(pack.getResourceAsStream(f).readAllBytes());
+				JSONObject obj = new JSONObject(json);
+				for (String k : obj.keySet()) {
+					obj.getString(k);
+				}
+
+				// Add verified localization.
+				Localization.addLocalization(Locale.forLanguageTag(str.substring(0, str.length() - 5)), json);
 			} catch (IOException e) {
 				Logging.RESOURCEHANDLER_LOCALIZATION.debug(e, "Unable to load localization: {} in pack : {}", f, pack.name);
+			} catch (JSONException e) {
+				Logging.RESOURCEHANDLER_LOCALIZATION.debug(e, "Invalid JSON format detected in localization: {} in pack : {}", f, pack.name);
 			}
 		}
 	}

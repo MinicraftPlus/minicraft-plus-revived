@@ -170,10 +170,11 @@ public class Save {
 		data.add(String.valueOf(Settings.get("tutorials")));
 		writeToFile(location + filename + extension, data);
 
+		// Generating world-bundle resources.
 		File zip = new File(folder, "resources.zip");
-		if (!zip.exists()) {
+		if (!zip.exists()) { // We can add resource updates with the previous versions.
 			try (ZipOutputStream out = new ZipOutputStream(new FileOutputStream(zip))) {
-				for (String name : FileHandler.listResources()) {
+				for (String name : FileHandler.listResources()) { // Copy only assets and pack configuration.
 					if (name.startsWith("assets/") || name.equals("pack.json") || name.equals("pack.png")) {
 						out.putNextEntry(new ZipEntry(name));
 						if (!name.endsWith("/")) out.write(Game.class.getResourceAsStream("/" + name).readAllBytes());

@@ -104,7 +104,7 @@ public class Localization {
 			selectedLocale = DEFAULT_LOCALE;
 
 		// Attempt to load the string as a json object.
-		try {
+		try { // This JSON has been verified before.
 			JSONObject json;
 			for (String text : unloadedLocalization.get(selectedLocale)) {
 				json = new JSONObject(text);

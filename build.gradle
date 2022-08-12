@@ -34,6 +34,7 @@ dependencies {
     implementation 'com.badlogicgames.gdx:gdx-controllers:1.9.13'
     implementation 'uk.co.electronstudio.sdl2gdx:sdl2gdx:1.0.4'
     implementation 'com.github.WilliamAHartman:Jamepad:1.4.0'
+    implementation 'ar.com.hjg:pngj:2.1.0'
 }
 
 java {

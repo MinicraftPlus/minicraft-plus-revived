@@ -102,13 +102,13 @@ public class ConnectorSprite {
 		}
 	}
 
-	public static Sprite makeSprite(int w, int h, int mirror, SpriteSheet sheet, boolean repeat, int[]... coords) {
+	public static Sprite makeSprite(int w, int h, int mirror, SpriteSheet sheet, boolean repeat, Point... coords) {
 		Sprite.Px[][] pixels = new Sprite.Px[h][w];
 		int i = 0;
 		for (int r = 0; r < h && i < coords.length; r++) {
 			for (int c = 0; c < w && i < coords.length; c++) {
-				int[] pos = coords[i];
-				pixels[r][c] = new Sprite.Px(pos[0], pos[1], mirror, sheet);
+				Point pos = coords[i];
+				pixels[r][c] = new Sprite.Px(pos.x, pos.y, mirror, sheet);
 				i++;
 				if (i == coords.length && repeat) i = 0;
 			}

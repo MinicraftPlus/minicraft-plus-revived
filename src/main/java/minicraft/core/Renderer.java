@@ -6,17 +6,23 @@ import java.awt.geom.AffineTransform;
 import java.awt.image.AffineTransformOp;
 import java.awt.image.BufferStrategy;
 import java.awt.image.BufferedImage;
+import java.awt.image.ColorModel;
 import java.awt.image.DataBufferInt;
+import java.awt.image.Raster;
+import java.awt.image.WritableRaster;
 import java.io.File;
 import java.io.IOException;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 
 import minicraft.core.CrashHandler.ErrorInfo;
+import minicraft.core.io.BigBufferedImage;
 import minicraft.core.io.Localization;
 import minicraft.core.io.Settings;
 import minicraft.entity.furniture.Bed;
@@ -48,9 +54,21 @@ import minicraft.screen.entry.StringEntry;
 import minicraft.util.Quest;
 import minicraft.util.Quest.QuestSeries;
 
+import javax.imageio.IIOImage;
 import javax.imageio.ImageIO;
+import javax.imageio.ImageTypeSpecifier;
+import javax.imageio.ImageWriteParam;
+import javax.imageio.ImageWriter;
+import javax.imageio.stream.ImageOutputStream;
 
 import org.json.JSONObject;
+
+import ar.com.hjg.pngj.FilterType;
+import ar.com.hjg.pngj.ImageInfo;
+import ar.com.hjg.pngj.PngWriter;
+import ar.com.hjg.pngj.chunks.PngChunkSBIT;
+
+import sun.awt.image.IntegerInterleavedRaster;
 
 public class Renderer extends Game {
 	private Renderer() {}
@@ -157,17 +175,57 @@ public class Renderer extends Game {
 				count++;
 			}
 
-			try {
-				BufferedImage before = image;
-				int w = before.getWidth();
-				int h = before.getHeight();
+			try { // https://stackoverflow.com/a/4216635
+				int w = image.getWidth();
+				int h = image.getHeight();
+				BufferedImage before = BigBufferedImage.create(w, h, BufferedImage.TYPE_INT_RGB);
+				before.getRaster().setRect(image.getData());
 				int scale = (Integer) Settings.get("screenshot");
-				BufferedImage after = new BufferedImage(w * scale, h * scale, BufferedImage.TYPE_INT_ARGB);
+				BufferedImage after = BigBufferedImage.create(scale * w, scale * h, BufferedImage.TYPE_INT_RGB);
 				AffineTransform at = new AffineTransform();
-				at.scale(scale, scale);
-				AffineTransformOp scaleOp = new AffineTransformOp(at, AffineTransformOp.TYPE_BILINEAR);
-				after = scaleOp.filter(before, after);
-				ImageIO.write(after, "png", file);
+				at.scale(scale, scale); // Setting the scaling.
+				AffineTransformOp scaleOp = new AffineTransformOp(at, AffineTransformOp.TYPE_BICUBIC);
+
+				// FINDING SOLUTION
+
+				// ImageTypeSpecifier type = ImageTypeSpecifier.createFromRenderedImage(image);
+				// Iterator<ImageWriter> iter = ImageIO.getImageWriters(type, "png");
+				// ImageWriter writer = iter.next(); // Getting the writer.
+				// ColorModel colorModel = image.getColorModel();
+				// PngWriter png = new PngWriter(file, new ImageInfo(scale * w, scale * h, 8, true));
+				// BufferedImage sample = new BufferedImage(scale * w, scale, BufferedImage.TYPE_INT_RGB);
+				// BufferedImage test = new BufferedImage(scale * w, 96, BufferedImage.TYPE_INT_RGB);
+				// png.setFilterType(FilterType.FILTER_NONE);
+				// for (int r = 0; r < h; r++) {
+				// 	after = Raster.createWritableRaster(sample.getSampleModel(), null);
+				// 	after = scaleOp.filter(before.createChild(0, r, w, 1, 0, r, null), after); // Applying scaling.
+				// 	int[] data = ((DataBufferInt) after.getDataBuffer()).getData();
+				// 	System.out.println(Arrays.toString(data));
+				// 	for (int y = 0; y < scale; y++) {
+				// 		System.out.println(Arrays.toString(Arrays.copyOfRange(data, y * w, (y+1) * w)));
+				// 		png.writeRowInt(Arrays.copyOfRange(data, y * w, (y+1) * w));
+				// 	}
+				// }
+
+				// png.end();
+
+				try (ImageOutputStream out = ImageIO.createImageOutputStream(file)) {
+					// writer.setOutput(out);
+					after = scaleOp.filter(before, after); // Applying scaling.
+					ImageIO.write(after, "png", out);
+					// ImageWriteParam param = writer.getDefaultWriteParam();
+					// for (int xPos = 0; xPos < scale; xPos++) {
+					// 	for (int yPos = 0; yPos < scale; yPos++) {
+					// 		java.awt.Point location = new java.awt.Point(xPos * w, yPos * h);
+					// 		after = Raster.createWritableRaster(before.getSampleModel(), location);
+					// 		param.setDestinationOffset(location);
+					// 		writer.write(null, new IIOImage(new BufferedImage(colorModel, buf, colorModel.isAlphaPremultiplied(), null), null, null), param);
+					// 	}
+					// }
+
+					// writer.dispose();
+					// out.flush();
+				}
 			} catch (IOException e) {
 				CrashHandler.errorHandle(e);
 			}

@@ -239,7 +239,7 @@ public class Load {
 			Settings.set("tutorials", Boolean.parseBoolean(data.remove(0)));
 		}
 
-		File zip = new File(location + "resources.zip");
+		File zip = new File(location + "resources.zip"); // Search if there is world-bundle resources.
 		if (zip.exists() && zip.isFile()) {
 			try {
 				ResourcePackDisplay.changeDefaultPackURL(zip.toURI().toURL());
