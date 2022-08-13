@@ -4,7 +4,7 @@ import minicraft.core.Game;
 import minicraft.core.World;
 import minicraft.core.io.InputHandler;
 import minicraft.gfx.Screen;
-import minicraft.gfx.SpriteLinker.LinkedSpriteSheet;
+import minicraft.gfx.SpriteLinker.LinkedSprite;
 import minicraft.gfx.SpriteLinker.SpriteType;
 
 public class LevelTransitionDisplay extends Display {
@@ -14,7 +14,7 @@ public class LevelTransitionDisplay extends Display {
 	private int dir; // Direction that you are changing levels. (going up or down stairs)
 	private int time = 0; // Time it spends on this menu
 
-	private LinkedSpriteSheet hudSheet = new LinkedSpriteSheet(SpriteType.Gui, "hud");
+	private LinkedSprite hudSheet = new LinkedSprite(SpriteType.Gui, "hud");
 
 	public LevelTransitionDisplay(int dir) {
 		super(false,false);

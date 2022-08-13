@@ -1,5 +1,7 @@
 package minicraft.gfx;
 
+/** @deprecated because of standardization. */
+@Deprecated
 public class MobSprite extends Sprite {
 	/**
 		This class is meant specifically for mobs, becuase they have a special way of flipping and such. It's not only the pixels, as much as the whole sprite flips.

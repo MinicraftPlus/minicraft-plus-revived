@@ -23,7 +23,7 @@ import minicraft.entity.furniture.Bed;
 import minicraft.entity.mob.Player;
 import minicraft.gfx.Color;
 import minicraft.gfx.Ellipsis.DotUpdater.TickUpdater;
-import minicraft.gfx.SpriteLinker.LinkedSpriteSheet;
+import minicraft.gfx.SpriteLinker.LinkedSprite;
 import minicraft.gfx.SpriteLinker.SpriteType;
 import minicraft.gfx.Ellipsis.SmoothEllipsis;
 import minicraft.gfx.Ellipsis;
@@ -74,7 +74,7 @@ public class Renderer extends Game {
 
 	private static int potionRenderOffset = 0;
 
-	private static LinkedSpriteSheet hudSheet;
+	private static LinkedSprite hudSheet;
 
 	public static SpriteSheet loadDefaultSkinSheet() {
 		SpriteSheet skinsSheet;
@@ -103,7 +103,7 @@ public class Renderer extends Game {
 
 		image = new BufferedImage(WIDTH, HEIGHT, BufferedImage.TYPE_INT_RGB);
 		screen.pixels = ((DataBufferInt) image.getRaster().getDataBuffer()).getData();
-		hudSheet = new LinkedSpriteSheet(SpriteType.Gui, "hud");
+		hudSheet = new LinkedSprite(SpriteType.Gui, "hud");
 
 		canvas.createBufferStrategy(3);
 		canvas.requestFocus();
@@ -168,50 +168,8 @@ public class Renderer extends Game {
 				at.scale(scale, scale); // Setting the scaling.
 				AffineTransformOp scaleOp = new AffineTransformOp(at, AffineTransformOp.TYPE_BICUBIC);
 
-				// FINDING SOLUTION
-
-				// ImageTypeSpecifier type = ImageTypeSpecifier.createFromRenderedImage(image);
-				// Iterator<ImageWriter> iter = ImageIO.getImageWriters(type, "png");
-				// ImageWriter writer = iter.next(); // Getting the writer.
-				// ColorModel colorModel = image.getColorModel();
-				// PngWriter png = new PngWriter(file, new ImageInfo(scale * w, scale * h, 8, true));
-				// BufferedImage sample = new BufferedImage(scale * w, scale, BufferedImage.TYPE_INT_RGB);
-				// BufferedImage test = new BufferedImage(scale * w, 96, BufferedImage.TYPE_INT_RGB);
-				// png.setFilterType(FilterType.FILTER_NONE);
-				// for (int r = 0; r < h; r++) {
-				// 	after = Raster.createWritableRaster(sample.getSampleModel(), null);
-				// 	after = scaleOp.filter(before.createChild(0, r, w, 1, 0, r, null), after); // Applying scaling.
-				// 	int[] data = ((DataBufferInt) after.getDataBuffer()).getData();
-				// 	System.out.println(Arrays.toString(data));
-				// 	for (int y = 0; y < scale; y++) {
-				// 		System.out.println(Arrays.toString(Arrays.copyOfRange(data, y * w, (y+1) * w)));
-				// 		png.writeRowInt(Arrays.copyOfRange(data, y * w, (y+1) * w));
-				// 	}
-				// }
-
-				// png.end();
-
-				// try (ImageOutputStream out = ImageIO.createImageOutputStream(file)) {
-				// 	// writer.setOutput(out);
-				// 	after = scaleOp.filter(before, after); // Applying scaling.
-				// 	ImageIO.write(after, "png", out);
-				// 	// ImageWriteParam param = writer.getDefaultWriteParam();
-				// 	// for (int xPos = 0; xPos < scale; xPos++) {
-				// 	// 	for (int yPos = 0; yPos < scale; yPos++) {
-				// 	// 		java.awt.Point location = new java.awt.Point(xPos * w, yPos * h);
-				// 	// 		after = Raster.createWritableRaster(before.getSampleModel(), location);
-				// 	// 		param.setDestinationOffset(location);
-				// 	// 		writer.write(null, new IIOImage(new BufferedImage(colorModel, buf, colorModel.isAlphaPremultiplied(), null), null, null), param);
-				// 	// 	}
-				// 	// }
-
-				// 	// writer.dispose();
-				// 	// out.flush();
-				// }
-
-				// Temp solution: with lower scales. (1-10) only. 25, 30, 35, 40, 50, 60, 80, 100, 120, 150 are removed.
 				// Use this solution without larger scales which use up a lot memory.
-				// With 20, up to around 360MB
+				// With scale 20, up to around 360MB overall RAM use.
 				BufferedImage after = scaleOp.filter(before, null);
 				ImageIO.write(after, "png", file);
 			} catch (IOException e) {

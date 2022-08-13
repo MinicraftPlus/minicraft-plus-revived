@@ -1,6 +1,6 @@
 package minicraft.entity.particle;
 
-import minicraft.gfx.SpriteLinker.LinkedSpriteSheet;
+import minicraft.gfx.SpriteLinker.LinkedSprite;
 import minicraft.gfx.SpriteLinker.SpriteType;
 
 public class SmashParticle extends Particle {
@@ -14,6 +14,6 @@ public class SmashParticle extends Particle {
 	 * @param y Y map position
 	 */
 	public SmashParticle(int x, int y) {
-		super(x, y, 10, new LinkedSpriteSheet(SpriteType.Gui, "hud").setMirrors(mirrors).setOnePixel(true).setSpriteDim(3, 1, 2, 2));
+		super(x, y, 10, new LinkedSprite(SpriteType.Gui, "hud").setMirrors(mirrors).setOnePixel(true).setSpriteDim(3, 1, 2, 2));
 	}
 }

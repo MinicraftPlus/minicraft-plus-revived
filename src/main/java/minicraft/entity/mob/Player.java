@@ -14,7 +14,7 @@ import minicraft.entity.furniture.Tnt;
 import minicraft.entity.particle.Particle;
 import minicraft.entity.particle.TextParticle;
 import minicraft.gfx.*;
-import minicraft.gfx.SpriteLinker.LinkedSpriteSheet;
+import minicraft.gfx.SpriteLinker.LinkedSprite;
 import minicraft.gfx.SpriteLinker.SpriteType;
 import minicraft.item.*;
 import minicraft.level.Level;
@@ -101,7 +101,7 @@ public class Player extends Mob implements ItemHolder, ClientTickable {
 	public int fishingTicks = maxFishingTicks;
 	public int fishingLevel;
 
-	private LinkedSpriteSheet hudSheet;
+	private LinkedSprite hudSheet;
 
 	// Note: the player's health & max health are inherited from Mob.java
 
@@ -138,7 +138,7 @@ public class Player extends Mob implements ItemHolder, ClientTickable {
 			spawny = previousInstance.spawny;
 		}
 
-		hudSheet = new LinkedSpriteSheet(SpriteType.Gui, "hud");
+		hudSheet = new LinkedSprite(SpriteType.Gui, "hud");
 
 		updateSprites();
 	}

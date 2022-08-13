@@ -1,16 +1,16 @@
 package minicraft.entity.mob;
 
 import minicraft.core.io.Settings;
-import minicraft.gfx.SpriteLinker.LinkedSpriteSheet;
+import minicraft.gfx.SpriteLinker.LinkedSprite;
 import minicraft.gfx.SpriteLinker.SpriteType;
 import minicraft.item.Items;
 
 public class Knight extends EnemyMob {
-	private static LinkedSpriteSheet[] sprites = new LinkedSpriteSheet[] {
-		new LinkedSpriteSheet(SpriteType.Entity, "creeper").setSpritePos(0, 0),
-		new LinkedSpriteSheet(SpriteType.Entity, "creeper").setSpritePos(0, 2),
-		new LinkedSpriteSheet(SpriteType.Entity, "creeper").setSpritePos(0, 4),
-		new LinkedSpriteSheet(SpriteType.Entity, "creeper").setSpritePos(0, 6)
+	private static LinkedSprite[] sprites = new LinkedSprite[] {
+		new LinkedSprite(SpriteType.Entity, "creeper").setSpritePos(0, 0),
+		new LinkedSprite(SpriteType.Entity, "creeper").setSpritePos(0, 2),
+		new LinkedSprite(SpriteType.Entity, "creeper").setSpritePos(0, 4),
+		new LinkedSprite(SpriteType.Entity, "creeper").setSpritePos(0, 6)
 	};
 
 	/**

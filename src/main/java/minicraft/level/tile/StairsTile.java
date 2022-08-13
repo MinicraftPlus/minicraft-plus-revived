@@ -7,15 +7,15 @@ import minicraft.entity.Entity;
 import minicraft.entity.furniture.Furniture;
 import minicraft.entity.mob.Player;
 import minicraft.gfx.Screen;
-import minicraft.gfx.SpriteLinker.LinkedSpriteSheet;
+import minicraft.gfx.SpriteLinker.LinkedSprite;
 import minicraft.gfx.SpriteLinker.SpriteType;
 import minicraft.item.Item;
 import minicraft.item.PowerGloveItem;
 import minicraft.level.Level;
 
 public class StairsTile extends Tile {
-	private static LinkedSpriteSheet down = new LinkedSpriteSheet(SpriteType.Tile, "stairs_down");
-	private static LinkedSpriteSheet up = new LinkedSpriteSheet(SpriteType.Tile, "stairs_up");
+	private static LinkedSprite down = new LinkedSprite(SpriteType.Tile, "stairs_down");
+	private static LinkedSprite up = new LinkedSprite(SpriteType.Tile, "stairs_up");
 
 	protected StairsTile(String name, boolean leadsUp) {
 		super(name, leadsUp ? up : down);

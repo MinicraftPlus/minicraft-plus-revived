@@ -9,7 +9,7 @@ import minicraft.entity.mob.Mob;
 import minicraft.entity.mob.Player;
 import minicraft.gfx.ConnectorSprite;
 import minicraft.gfx.Screen;
-import minicraft.gfx.SpriteLinker.LinkedSpriteSheet;
+import minicraft.gfx.SpriteLinker.LinkedSprite;
 import minicraft.item.Item;
 import minicraft.item.ToolType;
 import minicraft.level.Level;
@@ -48,7 +48,7 @@ public abstract class Tile {
 	public int light;
 	protected boolean maySpawn;
 
-	protected LinkedSpriteSheet sprite;
+	protected LinkedSprite sprite;
 	protected ConnectorSprite csprite;
 
 	{
@@ -58,7 +58,7 @@ public abstract class Tile {
 		csprite = null;
 	}
 
-	protected Tile(String name, LinkedSpriteSheet sprite) {
+	protected Tile(String name, LinkedSprite sprite) {
 		this.name = name.toUpperCase();
 		this.sprite = sprite;
 	}

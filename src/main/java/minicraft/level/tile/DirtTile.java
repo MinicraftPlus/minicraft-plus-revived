@@ -5,7 +5,7 @@ import minicraft.entity.Direction;
 import minicraft.entity.mob.Player;
 import minicraft.gfx.Color;
 import minicraft.gfx.Screen;
-import minicraft.gfx.SpriteLinker.LinkedSpriteSheet;
+import minicraft.gfx.SpriteLinker.LinkedSprite;
 import minicraft.gfx.SpriteLinker.SpriteType;
 import minicraft.item.Item;
 import minicraft.item.Items;
@@ -14,10 +14,10 @@ import minicraft.item.ToolType;
 import minicraft.level.Level;
 
 public class DirtTile extends Tile {
-	private static LinkedSpriteSheet[] levelSprite = new LinkedSpriteSheet[] {
-		new LinkedSpriteSheet(SpriteType.Tile, "dirt"),
-		new LinkedSpriteSheet(SpriteType.Tile, "gray_dirt"),
-		new LinkedSpriteSheet(SpriteType.Tile, "purple_dirt")
+	private static LinkedSprite[] levelSprite = new LinkedSprite[] {
+		new LinkedSprite(SpriteType.Tile, "dirt"),
+		new LinkedSprite(SpriteType.Tile, "gray_dirt"),
+		new LinkedSprite(SpriteType.Tile, "purple_dirt")
 	};
 
 	protected DirtTile(String name) {

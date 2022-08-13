@@ -7,7 +7,7 @@ import minicraft.entity.mob.Mob;
 import minicraft.entity.mob.Player;
 import minicraft.gfx.ConnectorSprite;
 import minicraft.gfx.Screen;
-import minicraft.gfx.SpriteLinker.LinkedSpriteSheet;
+import minicraft.gfx.SpriteLinker.LinkedSprite;
 import minicraft.gfx.SpriteLinker.SpriteType;
 import minicraft.item.Item;
 import minicraft.item.Items;
@@ -16,10 +16,10 @@ import minicraft.item.ToolType;
 import minicraft.level.Level;
 
 public class SandTile extends Tile {
-	static LinkedSpriteSheet steppedOn = new LinkedSpriteSheet(SpriteType.Tile, "sand_stepped"),
-	normal = new LinkedSpriteSheet(SpriteType.Tile, "sand").setSpriteDim(3, 0, 2, 2);
+	static LinkedSprite steppedOn = new LinkedSprite(SpriteType.Tile, "sand_stepped"),
+	normal = new LinkedSprite(SpriteType.Tile, "sand").setSpriteDim(3, 0, 2, 2);
 
-	private ConnectorSprite sprite = new ConnectorSprite(SandTile.class, new LinkedSpriteSheet(SpriteType.Tile, "sand").setSpriteSize(3, 3).setMirror(3), normal)
+	private ConnectorSprite sprite = new ConnectorSprite(SandTile.class, new LinkedSprite(SpriteType.Tile, "sand").setSpriteSize(3, 3).setMirror(3), normal)
 	{
 		public boolean connectsTo(Tile tile, boolean isSide) {
 			if(!isSide) return true;

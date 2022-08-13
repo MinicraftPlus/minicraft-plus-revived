@@ -12,7 +12,7 @@ import minicraft.entity.particle.TextParticle;
 import minicraft.gfx.Color;
 import minicraft.gfx.ConnectorSprite;
 import minicraft.gfx.Screen;
-import minicraft.gfx.SpriteLinker.LinkedSpriteSheet;
+import minicraft.gfx.SpriteLinker.LinkedSprite;
 import minicraft.gfx.SpriteLinker.SpriteType;
 import minicraft.item.Item;
 import minicraft.item.Items;
@@ -23,8 +23,8 @@ import minicraft.level.Level;
 // This is the normal stone you see underground and on the surface, that drops coal and stone.
 
 public class RockTile extends Tile {
-	private ConnectorSprite sprite = new ConnectorSprite(RockTile.class, new LinkedSpriteSheet(SpriteType.Tile, "rock").setSpriteSize(3, 3).setMirror(3),
-		new LinkedSpriteSheet(SpriteType.Tile, "rock").setSpriteDim(3, 2, 2, 2).setMirror(3), new LinkedSpriteSheet(SpriteType.Tile, "rock").setSpriteDim(3, 0, 2, 2).setMirror(3));
+	private ConnectorSprite sprite = new ConnectorSprite(RockTile.class, new LinkedSprite(SpriteType.Tile, "rock").setSpriteSize(3, 3).setMirror(3),
+		new LinkedSprite(SpriteType.Tile, "rock").setSpriteDim(3, 2, 2, 2).setMirror(3), new LinkedSprite(SpriteType.Tile, "rock").setSpriteDim(3, 0, 2, 2).setMirror(3));
 
 	private boolean dropCoal = false;
 	private int maxHealth = 50;

@@ -1,10 +1,12 @@
 package minicraft.gfx;
 
-import minicraft.gfx.SpriteLinker.LinkedSpriteSheet;
+import minicraft.gfx.SpriteLinker.LinkedSprite;
 import minicraft.level.Level;
 import minicraft.level.tile.ConnectTile;
 import minicraft.level.tile.Tile;
 
+/** @deprecated because of standardization. */
+@Deprecated
 public class ConnectorSprite {
 	/**
 		This class is meant for those tiles that look different when they are touching other tiles of their type; aka, they "connect" to them.
@@ -16,21 +18,21 @@ public class ConnectorSprite {
 
 	*/
 
-	public LinkedSpriteSheet sparse, sides, full;
+	public LinkedSprite sparse, sides, full;
 	private Class<? extends Tile> owner;
 	private boolean checkCorners;
 
-	public ConnectorSprite(Class<? extends Tile> owner, LinkedSpriteSheet sparse, LinkedSpriteSheet sides, LinkedSpriteSheet full) {
+	public ConnectorSprite(Class<? extends Tile> owner, LinkedSprite sparse, LinkedSprite sides, LinkedSprite full) {
 		this(owner, sparse, sides, full, true);
 	}
-	public ConnectorSprite(Class<? extends Tile> owner, LinkedSpriteSheet sparse, LinkedSpriteSheet sides, LinkedSpriteSheet full, boolean cornersMatter) {
+	public ConnectorSprite(Class<? extends Tile> owner, LinkedSprite sparse, LinkedSprite sides, LinkedSprite full, boolean cornersMatter) {
 		this.owner = owner;
 		this.sparse = sparse;
 		this.sides = sides;
 		this.full = full;
 		this.checkCorners = cornersMatter;
 	}
-	public ConnectorSprite(Class<? extends Tile> owner, LinkedSpriteSheet sparse, LinkedSpriteSheet full) {
+	public ConnectorSprite(Class<? extends Tile> owner, LinkedSprite sparse, LinkedSprite full) {
 		this(owner, sparse, sparse, full, false);
 	}
 

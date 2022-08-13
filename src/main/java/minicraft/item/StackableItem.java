@@ -4,7 +4,7 @@ import java.util.ArrayList;
 
 import minicraft.core.Game;
 import minicraft.core.io.Localization;
-import minicraft.gfx.SpriteLinker.LinkedSpriteSheet;
+import minicraft.gfx.SpriteLinker.LinkedSprite;
 import minicraft.gfx.SpriteLinker.SpriteType;
 
 // Some items are direct instances of this class; those instances are the true "items", like stone, wood, wheat, or coal; you can't do anything with them besides use them to make something else.
@@ -14,27 +14,27 @@ public class StackableItem extends Item {
 	protected static ArrayList<Item> getAllInstances() {
 		ArrayList<Item> items = new ArrayList<>();
 
-		items.add(new StackableItem("Wood", new LinkedSpriteSheet(SpriteType.Item, "wood")));
-		items.add(new StackableItem("Leather", new LinkedSpriteSheet(SpriteType.Item, "leather")));
-		items.add(new StackableItem("Wheat", new LinkedSpriteSheet(SpriteType.Item, "wheat")));
-		items.add(new StackableItem("Key", new LinkedSpriteSheet(SpriteType.Item, "key")));
-		items.add(new StackableItem("arrow", new LinkedSpriteSheet(SpriteType.Item, "arrow")));
-		items.add(new StackableItem("string", new LinkedSpriteSheet(SpriteType.Item, "string")));
-		items.add(new StackableItem("Coal", new LinkedSpriteSheet(SpriteType.Item, "coal")));
-		items.add(new StackableItem("Iron Ore", new LinkedSpriteSheet(SpriteType.Item, "iron_ore")));
-		items.add(new StackableItem("Lapis", new LinkedSpriteSheet(SpriteType.Item, "lapis")));
-		items.add(new StackableItem("Gold Ore", new LinkedSpriteSheet(SpriteType.Item, "gold_ore")));
-		items.add(new StackableItem("Iron", new LinkedSpriteSheet(SpriteType.Item, "iron_ingot")));
-		items.add(new StackableItem("Gold", new LinkedSpriteSheet(SpriteType.Item, "gold_ingot")));
-		items.add(new StackableItem("Rose", new LinkedSpriteSheet(SpriteType.Item, "red_flower")));
-		items.add(new StackableItem("Gunpowder", new LinkedSpriteSheet(SpriteType.Item, "gunpowder")));
-		items.add(new StackableItem("Slime", new LinkedSpriteSheet(SpriteType.Item, "slime")));
-		items.add(new StackableItem("glass", new LinkedSpriteSheet(SpriteType.Item, "glass")));
-		items.add(new StackableItem("cloth", new LinkedSpriteSheet(SpriteType.Item, "cloth")));
-		items.add(new StackableItem("gem", new LinkedSpriteSheet(SpriteType.Item, "gem")));
-		items.add(new StackableItem("Scale", new LinkedSpriteSheet(SpriteType.Item, "scale")));
-		items.add(new StackableItem("Shard", new LinkedSpriteSheet(SpriteType.Item, "shard")));
-		items.add(new StackableItem("Cloud Ore", new LinkedSpriteSheet(SpriteType.Item, "cloud_ore")));
+		items.add(new StackableItem("Wood", new LinkedSprite(SpriteType.Item, "wood")));
+		items.add(new StackableItem("Leather", new LinkedSprite(SpriteType.Item, "leather")));
+		items.add(new StackableItem("Wheat", new LinkedSprite(SpriteType.Item, "wheat")));
+		items.add(new StackableItem("Key", new LinkedSprite(SpriteType.Item, "key")));
+		items.add(new StackableItem("arrow", new LinkedSprite(SpriteType.Item, "arrow")));
+		items.add(new StackableItem("string", new LinkedSprite(SpriteType.Item, "string")));
+		items.add(new StackableItem("Coal", new LinkedSprite(SpriteType.Item, "coal")));
+		items.add(new StackableItem("Iron Ore", new LinkedSprite(SpriteType.Item, "iron_ore")));
+		items.add(new StackableItem("Lapis", new LinkedSprite(SpriteType.Item, "lapis")));
+		items.add(new StackableItem("Gold Ore", new LinkedSprite(SpriteType.Item, "gold_ore")));
+		items.add(new StackableItem("Iron", new LinkedSprite(SpriteType.Item, "iron_ingot")));
+		items.add(new StackableItem("Gold", new LinkedSprite(SpriteType.Item, "gold_ingot")));
+		items.add(new StackableItem("Rose", new LinkedSprite(SpriteType.Item, "red_flower")));
+		items.add(new StackableItem("Gunpowder", new LinkedSprite(SpriteType.Item, "gunpowder")));
+		items.add(new StackableItem("Slime", new LinkedSprite(SpriteType.Item, "slime")));
+		items.add(new StackableItem("glass", new LinkedSprite(SpriteType.Item, "glass")));
+		items.add(new StackableItem("cloth", new LinkedSprite(SpriteType.Item, "cloth")));
+		items.add(new StackableItem("gem", new LinkedSprite(SpriteType.Item, "gem")));
+		items.add(new StackableItem("Scale", new LinkedSprite(SpriteType.Item, "scale")));
+		items.add(new StackableItem("Shard", new LinkedSprite(SpriteType.Item, "shard")));
+		items.add(new StackableItem("Cloud Ore", new LinkedSprite(SpriteType.Item, "cloud_ore")));
 
 		return items;
 	}
@@ -42,11 +42,11 @@ public class StackableItem extends Item {
 	public int count;
 	public int maxCount = 100;
 
-	protected StackableItem(String name, LinkedSpriteSheet sprite) {
+	protected StackableItem(String name, LinkedSprite sprite) {
 		super(name, sprite);
 		count = 1;
 	}
-	protected StackableItem(String name, LinkedSpriteSheet sprite, int count) {
+	protected StackableItem(String name, LinkedSprite sprite, int count) {
 		this(name, sprite);
 		this.count = count;
 	}

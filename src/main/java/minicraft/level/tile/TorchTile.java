@@ -6,7 +6,7 @@ import minicraft.core.io.Sound;
 import minicraft.entity.Direction;
 import minicraft.entity.mob.Player;
 import minicraft.gfx.Screen;
-import minicraft.gfx.SpriteLinker.LinkedSpriteSheet;
+import minicraft.gfx.SpriteLinker.LinkedSprite;
 import minicraft.gfx.SpriteLinker.SpriteType;
 import minicraft.item.Item;
 import minicraft.item.Items;
@@ -31,7 +31,7 @@ public class TorchTile extends Tile {
 	}
 
 	private TorchTile(Tile onType) {
-		super("Torch "+ onType.name, new LinkedSpriteSheet(SpriteType.Item, "torch"));
+		super("Torch "+ onType.name, new LinkedSprite(SpriteType.Item, "torch"));
 		this.onType = onType;
 		this.connectsToSand = onType.connectsToSand;
 		this.connectsToGrass = onType.connectsToGrass;

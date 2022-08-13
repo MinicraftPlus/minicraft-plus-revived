@@ -5,7 +5,7 @@ import minicraft.entity.Direction;
 import minicraft.entity.mob.Player;
 import minicraft.gfx.ConnectorSprite;
 import minicraft.gfx.Screen;
-import minicraft.gfx.SpriteLinker.LinkedSpriteSheet;
+import minicraft.gfx.SpriteLinker.LinkedSprite;
 import minicraft.gfx.SpriteLinker.SpriteType;
 import minicraft.item.Item;
 import minicraft.item.Items;
@@ -15,7 +15,7 @@ import minicraft.level.Level;
 
 public class GrassTile extends Tile {
 	private static ConnectorSprite sprite = new ConnectorSprite(GrassTile.class,
-		new LinkedSpriteSheet(SpriteType.Tile, "grass").setSpriteSize(3, 3).setMirror(3), new LinkedSpriteSheet(SpriteType.Tile, "grass").setSpriteDim(3, 0, 2, 2))
+		new LinkedSprite(SpriteType.Tile, "grass").setSpriteSize(3, 3).setMirror(3), new LinkedSprite(SpriteType.Tile, "grass").setSpriteDim(3, 0, 2, 2))
 	{
 		public boolean connectsTo(Tile tile, boolean isSide) {
 			if(!isSide) return true;

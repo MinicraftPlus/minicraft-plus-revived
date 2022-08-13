@@ -4,16 +4,16 @@ import minicraft.core.Game;
 import minicraft.core.io.Settings;
 import minicraft.entity.Direction;
 import minicraft.gfx.Screen;
-import minicraft.gfx.SpriteLinker.LinkedSpriteSheet;
+import minicraft.gfx.SpriteLinker.LinkedSprite;
 import minicraft.gfx.SpriteLinker.SpriteType;
 import minicraft.item.Items;
 
 public class Slime extends EnemyMob {
-	private static LinkedSpriteSheet[] sprites = new LinkedSpriteSheet[] {
-		new LinkedSpriteSheet(SpriteType.Entity, "slime").setSpriteList(2).setSpriteDim(0, 0, 2, 2),
-		new LinkedSpriteSheet(SpriteType.Entity, "slime").setSpriteList(2).setSpriteDim(0, 2, 2, 2),
-		new LinkedSpriteSheet(SpriteType.Entity, "slime").setSpriteList(2).setSpriteDim(0, 4, 2, 2),
-		new LinkedSpriteSheet(SpriteType.Entity, "slime").setSpriteList(2).setSpriteDim(0, 6, 2, 2)
+	private static LinkedSprite[] sprites = new LinkedSprite[] {
+		new LinkedSprite(SpriteType.Entity, "slime").setSpriteList(2).setSpriteDim(0, 0, 2, 2),
+		new LinkedSprite(SpriteType.Entity, "slime").setSpriteList(2).setSpriteDim(0, 2, 2, 2),
+		new LinkedSprite(SpriteType.Entity, "slime").setSpriteList(2).setSpriteDim(0, 4, 2, 2),
+		new LinkedSprite(SpriteType.Entity, "slime").setSpriteList(2).setSpriteDim(0, 6, 2, 2)
 	};
 
 	private int jumpTime = 0; // jumpTimer, also acts as a rest timer before the next jump

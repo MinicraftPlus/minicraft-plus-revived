@@ -4,7 +4,7 @@ import java.util.ArrayList;
 
 import minicraft.entity.Direction;
 import minicraft.entity.mob.Player;
-import minicraft.gfx.SpriteLinker.LinkedSpriteSheet;
+import minicraft.gfx.SpriteLinker.LinkedSprite;
 import minicraft.gfx.SpriteLinker.SpriteType;
 import minicraft.level.Level;
 import minicraft.level.tile.Tile;
@@ -25,7 +25,7 @@ public class PotionItem extends StackableItem {
 
 	private PotionItem(PotionType type) { this(type, 1); }
 	private PotionItem(PotionType type, int count) {
-		super(type.name, new LinkedSpriteSheet(SpriteType.Item, "potion").setColor(type.dispColor), count);
+		super(type.name, new LinkedSprite(SpriteType.Item, "potion").setColor(type.dispColor), count);
 		this.type = type;
 	}
 

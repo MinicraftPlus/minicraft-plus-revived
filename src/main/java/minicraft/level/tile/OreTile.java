@@ -10,7 +10,7 @@ import minicraft.entity.particle.SmashParticle;
 import minicraft.entity.particle.TextParticle;
 import minicraft.gfx.Color;
 import minicraft.gfx.Screen;
-import minicraft.gfx.SpriteLinker.LinkedSpriteSheet;
+import minicraft.gfx.SpriteLinker.LinkedSprite;
 import minicraft.gfx.SpriteLinker.SpriteType;
 import minicraft.item.Item;
 import minicraft.item.Items;
@@ -24,16 +24,16 @@ public class OreTile extends Tile {
 	private final OreType type;
 
 	public enum OreType {
-        Iron (Items.get("Iron Ore"), new LinkedSpriteSheet(SpriteType.Tile, "iron_ore")),
-		Lapis (Items.get("Lapis"), new LinkedSpriteSheet(SpriteType.Tile, "lapis_ore")),
-		Gold (Items.get("Gold Ore"), new LinkedSpriteSheet(SpriteType.Tile, "gold_ore")),
-		Gem (Items.get("Gem"), new LinkedSpriteSheet(SpriteType.Tile, "gem_ore")),
-		Cloud (Items.get("Cloud Ore"), new LinkedSpriteSheet(SpriteType.Tile, "cloud_ore"));
+        Iron (Items.get("Iron Ore"), new LinkedSprite(SpriteType.Tile, "iron_ore")),
+		Lapis (Items.get("Lapis"), new LinkedSprite(SpriteType.Tile, "lapis_ore")),
+		Gold (Items.get("Gold Ore"), new LinkedSprite(SpriteType.Tile, "gold_ore")),
+		Gem (Items.get("Gem"), new LinkedSprite(SpriteType.Tile, "gem_ore")),
+		Cloud (Items.get("Cloud Ore"), new LinkedSprite(SpriteType.Tile, "cloud_ore"));
 
 		private final Item drop;
-		public final LinkedSpriteSheet sheet;
+		public final LinkedSprite sheet;
 
-		OreType(Item drop, LinkedSpriteSheet sheet) {
+		OreType(Item drop, LinkedSprite sheet) {
 			this.drop = drop;
 			this.sheet = sheet;
 		}

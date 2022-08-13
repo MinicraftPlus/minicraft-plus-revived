@@ -19,7 +19,7 @@ import minicraft.entity.particle.FireParticle;
 import minicraft.entity.particle.TextParticle;
 import minicraft.gfx.Color;
 import minicraft.gfx.Point;
-import minicraft.gfx.SpriteLinker.LinkedSpriteSheet;
+import minicraft.gfx.SpriteLinker.LinkedSprite;
 import minicraft.gfx.SpriteLinker.SpriteType;
 import minicraft.item.*;
 import org.tinylog.Logger;
@@ -65,16 +65,16 @@ public class Spawner extends Furniture {
 	 * @param m Mob which will be spawned.
 	 */
 	public Spawner(MobAi m) {
-		super(getClassName(m.getClass()) + " Spawner", new LinkedSpriteSheet(SpriteType.Entity, "spawner"), m instanceof Cow ? new LinkedSpriteSheet(SpriteType.Item, "cow_spawner"):
-			m instanceof Pig ? new LinkedSpriteSheet(SpriteType.Item, "pig_spawner"):
-			m instanceof Sheep ? new LinkedSpriteSheet(SpriteType.Item, "sheep_spawner"):
-			m instanceof Slime ? new LinkedSpriteSheet(SpriteType.Item, "slime_spawner"):
-			m instanceof Zombie ? new LinkedSpriteSheet(SpriteType.Item, "zombie_spawner"):
-			m instanceof Creeper ? new LinkedSpriteSheet(SpriteType.Item, "creeper_spawner"):
-			m instanceof Skeleton ? new LinkedSpriteSheet(SpriteType.Item, "skeleton_spawner"):
-			m instanceof Snake ? new LinkedSpriteSheet(SpriteType.Item, "snake_spawner"):
-			m instanceof Knight ? new LinkedSpriteSheet(SpriteType.Item, "knight_spawner"):
-			new LinkedSpriteSheet(SpriteType.Item, "air_wizard_spawner"), 7, 2);
+		super(getClassName(m.getClass()) + " Spawner", new LinkedSprite(SpriteType.Entity, "spawner"), m instanceof Cow ? new LinkedSprite(SpriteType.Item, "cow_spawner"):
+			m instanceof Pig ? new LinkedSprite(SpriteType.Item, "pig_spawner"):
+			m instanceof Sheep ? new LinkedSprite(SpriteType.Item, "sheep_spawner"):
+			m instanceof Slime ? new LinkedSprite(SpriteType.Item, "slime_spawner"):
+			m instanceof Zombie ? new LinkedSprite(SpriteType.Item, "zombie_spawner"):
+			m instanceof Creeper ? new LinkedSprite(SpriteType.Item, "creeper_spawner"):
+			m instanceof Skeleton ? new LinkedSprite(SpriteType.Item, "skeleton_spawner"):
+			m instanceof Snake ? new LinkedSprite(SpriteType.Item, "snake_spawner"):
+			m instanceof Knight ? new LinkedSprite(SpriteType.Item, "knight_spawner"):
+			new LinkedSprite(SpriteType.Item, "air_wizard_spawner"), 7, 2);
 		health = 100;
 		initMob(m);
 		resetSpawnInterval();

@@ -3,13 +3,13 @@ package minicraft.level.tile;
 import minicraft.entity.Entity;
 import minicraft.gfx.ConnectorSprite;
 import minicraft.gfx.Screen;
-import minicraft.gfx.SpriteLinker.LinkedSpriteSheet;
+import minicraft.gfx.SpriteLinker.LinkedSprite;
 import minicraft.gfx.SpriteLinker.SpriteType;
 import minicraft.level.Level;
 
 public class HoleTile extends Tile {
-	private static ConnectorSprite sprite = new ConnectorSprite(HoleTile.class, new LinkedSpriteSheet(SpriteType.Tile, "hole").setSpriteSize(3, 3)
-		.setMirror(3), new LinkedSpriteSheet(SpriteType.Tile, "hole").setSpriteDim(3, 0, 2, 2))
+	private static ConnectorSprite sprite = new ConnectorSprite(HoleTile.class, new LinkedSprite(SpriteType.Tile, "hole").setSpriteSize(3, 3)
+		.setMirror(3), new LinkedSprite(SpriteType.Tile, "hole").setSpriteDim(3, 0, 2, 2))
 	{
 		public boolean connectsTo(Tile tile, boolean isSide) {
 			return tile.connectsToLiquid();

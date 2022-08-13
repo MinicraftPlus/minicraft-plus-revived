@@ -11,7 +11,7 @@ import minicraft.entity.particle.SmashParticle;
 import minicraft.entity.particle.TextParticle;
 import minicraft.gfx.Color;
 import minicraft.gfx.ConnectorSprite;
-import minicraft.gfx.SpriteLinker.LinkedSpriteSheet;
+import minicraft.gfx.SpriteLinker.LinkedSprite;
 import minicraft.gfx.SpriteLinker.SpriteType;
 import minicraft.item.Item;
 import minicraft.item.Items;
@@ -27,12 +27,12 @@ public class WallTile extends Tile {
 		super(type.name() + " Wall", (ConnectorSprite) null);
 		this.type = type;
 		switch (type) {
-			case Wood: csprite = new ConnectorSprite(WallTile.class, new LinkedSpriteSheet(SpriteType.Tile , "wood_wall").setSpriteSize(3, 3).setMirror(3),
-				new LinkedSpriteSheet(SpriteType.Tile , "wood_wall").setSpriteDim(3, 0, 2, 2).setMirror(3), new LinkedSpriteSheet(SpriteType.Tile , "wood_wall").setSpriteDim(1, 1, 2, 2).setOnePixel(true)); break;
-			case Stone: csprite = new ConnectorSprite(WallTile.class, new LinkedSpriteSheet(SpriteType.Tile , "stone_wall").setSpriteSize(3, 3).setMirror(3),
-				new LinkedSpriteSheet(SpriteType.Tile , "stone_wall").setSpriteDim(3, 0, 2, 2).setMirror(3), new LinkedSpriteSheet(SpriteType.Tile , "stone_wall").setSpriteDim(1, 1, 2, 2).setOnePixel(true)); break;
-			case Obsidian: csprite = new ConnectorSprite(WallTile.class, new LinkedSpriteSheet(SpriteType.Tile , "obsidian_wall").setSpriteSize(3, 3).setMirror(3),
-				new LinkedSpriteSheet(SpriteType.Tile , "obsidian_wall").setSpriteDim(3, 0, 2, 2).setMirror(3), new LinkedSpriteSheet(SpriteType.Tile , "obsidian_wall").setSpriteDim(1, 1, 2, 2).setOnePixel(true)); break;
+			case Wood: csprite = new ConnectorSprite(WallTile.class, new LinkedSprite(SpriteType.Tile , "wood_wall").setSpriteSize(3, 3).setMirror(3),
+				new LinkedSprite(SpriteType.Tile , "wood_wall").setSpriteDim(3, 0, 2, 2).setMirror(3), new LinkedSprite(SpriteType.Tile , "wood_wall").setSpriteDim(1, 1, 2, 2).setOnePixel(true)); break;
+			case Stone: csprite = new ConnectorSprite(WallTile.class, new LinkedSprite(SpriteType.Tile , "stone_wall").setSpriteSize(3, 3).setMirror(3),
+				new LinkedSprite(SpriteType.Tile , "stone_wall").setSpriteDim(3, 0, 2, 2).setMirror(3), new LinkedSprite(SpriteType.Tile , "stone_wall").setSpriteDim(1, 1, 2, 2).setOnePixel(true)); break;
+			case Obsidian: csprite = new ConnectorSprite(WallTile.class, new LinkedSprite(SpriteType.Tile , "obsidian_wall").setSpriteSize(3, 3).setMirror(3),
+				new LinkedSprite(SpriteType.Tile , "obsidian_wall").setSpriteDim(3, 0, 2, 2).setMirror(3), new LinkedSprite(SpriteType.Tile , "obsidian_wall").setSpriteDim(1, 1, 2, 2).setOnePixel(true)); break;
 		}
 	}
 

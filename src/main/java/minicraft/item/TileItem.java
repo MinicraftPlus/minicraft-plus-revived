@@ -10,7 +10,7 @@ import minicraft.core.io.Sound;
 import minicraft.entity.Direction;
 import minicraft.entity.mob.Player;
 import minicraft.gfx.Sprite;
-import minicraft.gfx.SpriteLinker.LinkedSpriteSheet;
+import minicraft.gfx.SpriteLinker.LinkedSprite;
 import minicraft.gfx.SpriteLinker.SpriteType;
 import minicraft.level.Level;
 import minicraft.level.tile.Tile;
@@ -23,40 +23,40 @@ public class TileItem extends StackableItem {
 		ArrayList<Item> items = new ArrayList<>();
 
 		/// TileItem sprites all have 1x1 sprites.
-		items.add(new TileItem("Flower", new LinkedSpriteSheet(SpriteType.Item, "white_flower"), "flower", "grass"));
-		items.add(new TileItem("Acorn", new LinkedSpriteSheet(SpriteType.Item, "acorn"), "tree Sapling", "grass"));
-		items.add(new TileItem("Dirt", new LinkedSpriteSheet(SpriteType.Item, "dirt"), "dirt", "hole", "water", "lava"));
-		items.add(new TileItem("Natural Rock", new LinkedSpriteSheet(SpriteType.Item, "stone"), "rock", "hole", "dirt", "sand", "grass", "path", "water", "lava"));
+		items.add(new TileItem("Flower", new LinkedSprite(SpriteType.Item, "white_flower"), "flower", "grass"));
+		items.add(new TileItem("Acorn", new LinkedSprite(SpriteType.Item, "acorn"), "tree Sapling", "grass"));
+		items.add(new TileItem("Dirt", new LinkedSprite(SpriteType.Item, "dirt"), "dirt", "hole", "water", "lava"));
+		items.add(new TileItem("Natural Rock", new LinkedSprite(SpriteType.Item, "stone"), "rock", "hole", "dirt", "sand", "grass", "path", "water", "lava"));
 
-		items.add(new TileItem("Plank", new LinkedSpriteSheet(SpriteType.Item, "plank"), "Wood Planks", "hole", "water", "cloud"));
-		items.add(new TileItem("Plank Wall", new LinkedSpriteSheet(SpriteType.Item, "plank_wall"), "Wood Wall", "Wood Planks"));
-		items.add(new TileItem("Wood Door", new LinkedSpriteSheet(SpriteType.Item, "wood_door"), "Wood Door", "Wood Planks"));
-		items.add(new TileItem("Stone", new LinkedSpriteSheet(SpriteType.Item, "stone"), "Stone", "hole", "water", "cloud", "lava"));
-		items.add(new TileItem("Stone Brick", new LinkedSpriteSheet(SpriteType.Item, "stone_brick"), "Stone Bricks", "hole", "water", "cloud", "lava"));
-		items.add(new TileItem("Ornate Stone", new LinkedSpriteSheet(SpriteType.Item, "stone_brick"), "Ornate Stone", "hole", "water", "cloud", "lava"));
-		items.add(new TileItem("Stone Wall", new LinkedSpriteSheet(SpriteType.Item, "stone_wall"), "Stone Wall", "Stone Bricks"));
-		items.add(new TileItem("Stone Door", new LinkedSpriteSheet(SpriteType.Item, "stone_wall"), "Stone Door", "Stone Bricks"));
-		items.add(new TileItem("Raw Obsidian", new LinkedSpriteSheet(SpriteType.Item, "obsidian"), "Raw Obsidian", "hole", "water", "cloud", "lava"));
-		items.add(new TileItem("Obsidian Brick", new LinkedSpriteSheet(SpriteType.Item, "obsidian_brick"), "Obsidian", "hole", "water", "cloud", "lava"));
-		items.add(new TileItem("Ornate Obsidian", new LinkedSpriteSheet(SpriteType.Item, "obsidian_brick"), "Ornate Obsidian","hole", "water", "cloud", "lava"));
-		items.add(new TileItem("Obsidian Wall", new LinkedSpriteSheet(SpriteType.Item, "obsidian_wall"), "Obsidian Wall", "Obsidian"));
-		items.add(new TileItem("Obsidian Door", new LinkedSpriteSheet(SpriteType.Item, "obsidian_door"), "Obsidian Door", "Obsidian"));
+		items.add(new TileItem("Plank", new LinkedSprite(SpriteType.Item, "plank"), "Wood Planks", "hole", "water", "cloud"));
+		items.add(new TileItem("Plank Wall", new LinkedSprite(SpriteType.Item, "plank_wall"), "Wood Wall", "Wood Planks"));
+		items.add(new TileItem("Wood Door", new LinkedSprite(SpriteType.Item, "wood_door"), "Wood Door", "Wood Planks"));
+		items.add(new TileItem("Stone", new LinkedSprite(SpriteType.Item, "stone"), "Stone", "hole", "water", "cloud", "lava"));
+		items.add(new TileItem("Stone Brick", new LinkedSprite(SpriteType.Item, "stone_brick"), "Stone Bricks", "hole", "water", "cloud", "lava"));
+		items.add(new TileItem("Ornate Stone", new LinkedSprite(SpriteType.Item, "stone_brick"), "Ornate Stone", "hole", "water", "cloud", "lava"));
+		items.add(new TileItem("Stone Wall", new LinkedSprite(SpriteType.Item, "stone_wall"), "Stone Wall", "Stone Bricks"));
+		items.add(new TileItem("Stone Door", new LinkedSprite(SpriteType.Item, "stone_wall"), "Stone Door", "Stone Bricks"));
+		items.add(new TileItem("Raw Obsidian", new LinkedSprite(SpriteType.Item, "obsidian"), "Raw Obsidian", "hole", "water", "cloud", "lava"));
+		items.add(new TileItem("Obsidian Brick", new LinkedSprite(SpriteType.Item, "obsidian_brick"), "Obsidian", "hole", "water", "cloud", "lava"));
+		items.add(new TileItem("Ornate Obsidian", new LinkedSprite(SpriteType.Item, "obsidian_brick"), "Ornate Obsidian","hole", "water", "cloud", "lava"));
+		items.add(new TileItem("Obsidian Wall", new LinkedSprite(SpriteType.Item, "obsidian_wall"), "Obsidian Wall", "Obsidian"));
+		items.add(new TileItem("Obsidian Door", new LinkedSprite(SpriteType.Item, "obsidian_door"), "Obsidian Door", "Obsidian"));
 
-		items.add(new TileItem("Wool", new LinkedSpriteSheet(SpriteType.Item, "wool"), "Wool", "hole", "water"));
-		items.add(new TileItem("Red Wool", new LinkedSpriteSheet(SpriteType.Item, "red_wool"), "Red Wool", "hole", "water"));
-		items.add(new TileItem("Blue Wool", new LinkedSpriteSheet(SpriteType.Item, "blue_wool"), "Blue Wool", "hole", "water"));
-		items.add(new TileItem("Green Wool", new LinkedSpriteSheet(SpriteType.Item, "green_wool"), "Green Wool", "hole", "water"));
-		items.add(new TileItem("Yellow Wool", new LinkedSpriteSheet(SpriteType.Item, "yellow_wool"), "Yellow Wool", "hole", "water"));
-		items.add(new TileItem("Black Wool", new LinkedSpriteSheet(SpriteType.Item, "black_wool"), "Black Wool", "hole", "water"));
+		items.add(new TileItem("Wool", new LinkedSprite(SpriteType.Item, "wool"), "Wool", "hole", "water"));
+		items.add(new TileItem("Red Wool", new LinkedSprite(SpriteType.Item, "red_wool"), "Red Wool", "hole", "water"));
+		items.add(new TileItem("Blue Wool", new LinkedSprite(SpriteType.Item, "blue_wool"), "Blue Wool", "hole", "water"));
+		items.add(new TileItem("Green Wool", new LinkedSprite(SpriteType.Item, "green_wool"), "Green Wool", "hole", "water"));
+		items.add(new TileItem("Yellow Wool", new LinkedSprite(SpriteType.Item, "yellow_wool"), "Yellow Wool", "hole", "water"));
+		items.add(new TileItem("Black Wool", new LinkedSprite(SpriteType.Item, "black_wool"), "Black Wool", "hole", "water"));
 
-		items.add(new TileItem("Sand", new LinkedSpriteSheet(SpriteType.Item, "sand"), "sand", "hole", "water", "lava"));
-		items.add(new TileItem("Cactus", new LinkedSpriteSheet(SpriteType.Item, "cactus"), "cactus Sapling", "sand"));
-		items.add(new TileItem("Bone", new LinkedSpriteSheet(SpriteType.Item, "bone"), "tree", "tree Sapling"));
-		items.add(new TileItem("Cloud", new LinkedSpriteSheet(SpriteType.Item, "cloud"), "cloud", "Infinite Fall"));
+		items.add(new TileItem("Sand", new LinkedSprite(SpriteType.Item, "sand"), "sand", "hole", "water", "lava"));
+		items.add(new TileItem("Cactus", new LinkedSprite(SpriteType.Item, "cactus"), "cactus Sapling", "sand"));
+		items.add(new TileItem("Bone", new LinkedSprite(SpriteType.Item, "bone"), "tree", "tree Sapling"));
+		items.add(new TileItem("Cloud", new LinkedSprite(SpriteType.Item, "cloud"), "cloud", "Infinite Fall"));
 
-		items.add(new TileItem("Wheat Seeds", new LinkedSpriteSheet(SpriteType.Item, "seed"), "wheat", "farmland"));
-		items.add(new TileItem("Potato", new LinkedSpriteSheet(SpriteType.Item, "potato"), "potato", "farmland"));
-		items.add(new TileItem("Grass Seeds", new LinkedSpriteSheet(SpriteType.Item, "seed"), "grass", "dirt"));
+		items.add(new TileItem("Wheat Seeds", new LinkedSprite(SpriteType.Item, "seed"), "wheat", "farmland"));
+		items.add(new TileItem("Potato", new LinkedSprite(SpriteType.Item, "potato"), "potato", "farmland"));
+		items.add(new TileItem("Grass Seeds", new LinkedSprite(SpriteType.Item, "seed"), "grass", "dirt"));
 
 		// Creative mode available tiles:
 		items.add(new TileItem("Farmland", Sprite.missingTexture(SpriteType.Item), "farmland", "dirt", "grass", "hole"));
@@ -72,13 +72,13 @@ public class TileItem extends StackableItem {
 	public final String model;
 	public final List<String> validTiles;
 
-	protected TileItem(String name, LinkedSpriteSheet sprite, String model, String... validTiles) {
+	protected TileItem(String name, LinkedSprite sprite, String model, String... validTiles) {
 		this(name, sprite, 1, model, Arrays.asList(validTiles));
 	}
-	protected TileItem(String name, LinkedSpriteSheet sprite, int count, String model, String... validTiles) {
+	protected TileItem(String name, LinkedSprite sprite, int count, String model, String... validTiles) {
 		this(name, sprite, count, model, Arrays.asList(validTiles));
 	}
-	protected TileItem(String name, LinkedSpriteSheet sprite, int count, String model, List<String> validTiles) {
+	protected TileItem(String name, LinkedSprite sprite, int count, String model, List<String> validTiles) {
 		super(name, sprite, count);
 		this.model = model.toUpperCase();
 		this.validTiles = new ArrayList<>();

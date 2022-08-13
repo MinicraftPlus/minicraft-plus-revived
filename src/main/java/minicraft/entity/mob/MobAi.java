@@ -8,7 +8,7 @@ import minicraft.gfx.Color;
 import minicraft.gfx.MobSprite;
 import minicraft.gfx.Rectangle;
 import minicraft.gfx.Screen;
-import minicraft.gfx.SpriteLinker.LinkedSpriteSheet;
+import minicraft.gfx.SpriteLinker.LinkedSprite;
 import minicraft.item.Item;
 import minicraft.item.PotionType;
 import minicraft.level.Level;
@@ -30,7 +30,7 @@ public abstract class MobAi extends Mob {
 	 * @param rwTime How long the mob will walk in a random direction. (random walk duration)
 	 * @param rwChance The chance of this mob will walk in a random direction (random walk chance)
 	 */
-	protected MobAi(LinkedSpriteSheet sprites, int maxHealth, int lifetime, int rwTime, int rwChance) {
+	protected MobAi(LinkedSprite sprites, int maxHealth, int lifetime, int rwTime, int rwChance) {
 		super(sprites, maxHealth);
 		this.lifetime = lifetime;
 		randomWalkTime = 0;

@@ -5,7 +5,7 @@ import java.util.ArrayList;
 import minicraft.core.Game;
 import minicraft.entity.Direction;
 import minicraft.entity.mob.Player;
-import minicraft.gfx.SpriteLinker.LinkedSpriteSheet;
+import minicraft.gfx.SpriteLinker.LinkedSprite;
 import minicraft.gfx.SpriteLinker.SpriteType;
 import minicraft.level.Level;
 import minicraft.level.tile.Tile;
@@ -16,8 +16,8 @@ public class BookItem extends Item {
 
 	protected static ArrayList<Item> getAllInstances() {
 		ArrayList<Item> items = new ArrayList<Item>();
-		items.add(new BookItem("Book", new LinkedSpriteSheet(SpriteType.Item, "book"), null));
-		items.add(new BookItem("Antidious", new LinkedSpriteSheet(SpriteType.Item, "antidious_book"), () -> BookData.antVenomBook.collect(), true));
+		items.add(new BookItem("Book", new LinkedSprite(SpriteType.Item, "book"), null));
+		items.add(new BookItem("Antidious", new LinkedSprite(SpriteType.Item, "antidious_book"), () -> BookData.antVenomBook.collect(), true));
 		return items;
 	}
 
@@ -29,8 +29,8 @@ public class BookItem extends Item {
 	protected BookContent book; // TODO this is not saved yet; it could be, for editable books.
 	private final boolean hasTitlePage;
 
-	private BookItem(String title, LinkedSpriteSheet sprite, BookContent book) { this(title, sprite, book, false); }
-	private BookItem(String title, LinkedSpriteSheet sprite, BookContent book, boolean hasTitlePage) {
+	private BookItem(String title, LinkedSprite sprite, BookContent book) { this(title, sprite, book, false); }
+	private BookItem(String title, LinkedSprite sprite, BookContent book, boolean hasTitlePage) {
 		super(title, sprite);
 		this.book = book;
 		this.hasTitlePage = hasTitlePage;

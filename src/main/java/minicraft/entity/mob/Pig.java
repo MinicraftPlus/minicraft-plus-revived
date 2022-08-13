@@ -1,12 +1,12 @@
 package minicraft.entity.mob;
 
 import minicraft.core.io.Settings;
-import minicraft.gfx.SpriteLinker.LinkedSpriteSheet;
+import minicraft.gfx.SpriteLinker.LinkedSprite;
 import minicraft.gfx.SpriteLinker.SpriteType;
 import minicraft.item.Items;
 
 public class Pig extends PassiveMob {
-	private static LinkedSpriteSheet sprites = new LinkedSpriteSheet(SpriteType.Entity, "pig");
+	private static LinkedSprite sprites = new LinkedSprite(SpriteType.Entity, "pig");
 
 	/**
 	 * Creates a pig.

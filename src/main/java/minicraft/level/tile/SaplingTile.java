@@ -4,12 +4,12 @@ import minicraft.core.io.Sound;
 import minicraft.entity.Direction;
 import minicraft.entity.mob.Mob;
 import minicraft.gfx.Screen;
-import minicraft.gfx.SpriteLinker.LinkedSpriteSheet;
+import minicraft.gfx.SpriteLinker.LinkedSprite;
 import minicraft.gfx.SpriteLinker.SpriteType;
 import minicraft.level.Level;
 
 public class SaplingTile extends Tile {
-	private static LinkedSpriteSheet sprite = new LinkedSpriteSheet(SpriteType.Tile, "sapling");
+	private static LinkedSprite sprite = new LinkedSprite(SpriteType.Tile, "sapling");
 
 	private Tile onType;
 	private Tile growsTo;

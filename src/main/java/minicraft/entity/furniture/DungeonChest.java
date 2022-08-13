@@ -7,7 +7,7 @@ import minicraft.entity.mob.Player;
 import minicraft.entity.particle.SmashParticle;
 import minicraft.entity.particle.TextParticle;
 import minicraft.gfx.Color;
-import minicraft.gfx.SpriteLinker.LinkedSpriteSheet;
+import minicraft.gfx.SpriteLinker.LinkedSprite;
 import minicraft.gfx.SpriteLinker.SpriteType;
 import minicraft.item.Inventory;
 import minicraft.item.Item;
@@ -18,8 +18,8 @@ import org.jetbrains.annotations.Nullable;
 import java.util.Random;
 
 public class DungeonChest extends Chest {
-	private static final LinkedSpriteSheet openSprite = new LinkedSpriteSheet(SpriteType.Entity, "dungeon_chest");
-	private static final LinkedSpriteSheet lockSprite = new LinkedSpriteSheet(SpriteType.Entity, "white_chest");
+	private static final LinkedSprite openSprite = new LinkedSprite(SpriteType.Entity, "dungeon_chest");
+	private static final LinkedSprite lockSprite = new LinkedSprite(SpriteType.Entity, "white_chest");
 
 	public Random random = new Random();
 	private boolean isLocked;

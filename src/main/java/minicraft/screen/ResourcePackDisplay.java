@@ -50,6 +50,7 @@ import minicraft.screen.entry.SelectEntry;
 import minicraft.util.BookData;
 import minicraft.util.Logging;
 
+import org.jetbrains.annotations.NotNull;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -108,7 +109,7 @@ public class ResourcePackDisplay extends Display {
 	private Menu.Builder builder1;
 	private boolean changed = false;
 
-	static {
+	static { // Initializing the default pack and logo.
 		// Add the default pack.
 		defaultPack = Objects.requireNonNull(loadPackMetadata(Game.class.getProtectionDomain().getCodeSource().getLocation()));
 		loadedPacks.add(defaultPack);
@@ -120,6 +121,7 @@ public class ResourcePackDisplay extends Display {
 		}
 	}
 
+	/** Initializing the Display. */
 	public ResourcePackDisplay() {
 		super(true, true);
 		initPacks();
@@ -162,8 +164,9 @@ public class ResourcePackDisplay extends Display {
 		}
 	}
 
+	/** Reloading the entries to refresh the current pack list. */
 	private void reloadEntries() {
-		entries0.clear();
+		entries0.clear(); // First list: unloaded.
 		for (ResourcePack pack : resourcePacks) {
 			entries0.add(new SelectEntry(pack.name, () -> Game.setDisplay(new PopupDisplay(null, pack.name, pack.description)), false) {
 				@Override
@@ -174,7 +177,7 @@ public class ResourcePackDisplay extends Display {
 			});
 		}
 
-		entries1.clear();
+		entries1.clear(); // Second list: to be loaded.
 		for (ResourcePack pack : loadedPacks) {
 			entries1.add(new SelectEntry(pack.name, () -> Game.setDisplay(new PopupDisplay(null, pack.name, pack.description)), false) {
 				@Override
@@ -186,6 +189,7 @@ public class ResourcePackDisplay extends Display {
 		}
 	}
 
+	/** Applying the reloaded entries into the display. */
 	private void refreshEntries() {
 		reloadEntries();
 		Menu[] newMenus = new Menu[] {
@@ -200,9 +204,11 @@ public class ResourcePackDisplay extends Display {
 
 		menus = newMenus;
 
+		/** Translate position. */
 		menus[selection ^ 1].translate(menus[selection].getBounds().getWidth() + padding, 0);
 	}
 
+	/** Watching the directory changes. */
 	private class WatcherThread extends Thread implements Closeable {
 		private WatchService watcher;
 		private volatile boolean running = true;
@@ -223,7 +229,7 @@ public class ResourcePackDisplay extends Display {
 
 		@Override
 		public void run() {
-			while (running) {
+			while (running) { // I don't know why `running` cannot be false.
 				try {
 					ArrayList<URL> urls = new ArrayList<>();
 					for (WatchEvent<?> event : watcher.take().pollEvents()) {
@@ -233,6 +239,7 @@ public class ResourcePackDisplay extends Display {
 						@SuppressWarnings("unchecked")
 						WatchEvent<Path> ev = (WatchEvent<Path>) event;
         				Path filename = ev.context();
+
 						try {
 							urls.add(FOLDER_LOCATION.toPath().resolve(filename).toFile().toURI().toURL());
 						} catch (IOException e) {
@@ -278,21 +285,21 @@ public class ResourcePackDisplay extends Display {
 	@Override
 	public void tick(InputHandler input) {
 		// Overrides the default tick handler.
-		if (input.getKey("right").clicked) {
+		if (input.getKey("right").clicked) { // Move cursor to the second list.
 			if (selection == 0) {
 				Sound.play("select");
 				onSelectionChange(0, 1);
 			}
 
 			return;
-		} else if (input.getKey("left").clicked) {
+		} else if (input.getKey("left").clicked) { // Move cursor to the first list.
 			if (selection == 1) {
 				Sound.play("select");
 				onSelectionChange(1, 0);
 			}
 
 			return;
-		} else if (input.getKey("shift-right").clicked) {
+		} else if (input.getKey("shift-right").clicked) { // Move the selected pack to the second list.
 			if (selection == 0 && resourcePacks.size() > 0) {
 				loadedPacks.add(loadedPacks.indexOf(defaultPack), resourcePacks.remove(menus[0].getSelection()));
 				changed = true;
@@ -301,7 +308,7 @@ public class ResourcePackDisplay extends Display {
 			}
 
 			return;
-		} else if (input.getKey("shift-left").clicked) {
+		} else if (input.getKey("shift-left").clicked) { // Move the selected pack to the first list.
 			if (selection == 1 && loadedPacks.get(menus[1].getSelection()) != defaultPack) {
 				resourcePacks.add(loadedPacks.remove(menus[1].getSelection()));
 				changed = true;
@@ -310,7 +317,7 @@ public class ResourcePackDisplay extends Display {
 			}
 
 			return;
-		} else if (input.getKey("shift-up").clicked) {
+		} else if (input.getKey("shift-up").clicked) { // Move up the selected pack in the second list.
 			if (selection == 1 && menus[1].getSelection() > 0) {
 				if (loadedPacks.get(menus[1].getSelection()) == defaultPack) return; // Default pack remains bottom.
 				loadedPacks.add(menus[1].getSelection() - 1, loadedPacks.remove(menus[1].getSelection()));
@@ -320,7 +327,7 @@ public class ResourcePackDisplay extends Display {
 			}
 
 			return;
-		} else if (input.getKey("shift-down").clicked) {
+		} else if (input.getKey("shift-down").clicked) { // Move down the selected pack in the second list.
 			if (selection == 1 && menus[1].getSelection() < loadedPacks.size() - 1) {
 				if (loadedPacks.get(menus[1].getSelection() + 1) == defaultPack) return; // Default pack remains bottom.
 				loadedPacks.add(menus[1].getSelection() + 1, loadedPacks.remove(menus[1].getSelection()));
@@ -365,18 +372,19 @@ public class ResourcePackDisplay extends Display {
 		}
 	}
 
+	/** The object representation of resource pack. */
 	private static class ResourcePack implements Closeable {
 		private URL packRoot;
 
 		/** 0 - before 2.2.0; 1 - 2.2.0-latest */
 		@SuppressWarnings("unused")
-		private final int packFormat;
-		private final String name;
-		private final String description;
-		private SpriteSheet logo;
+		private final int packFormat; // The pack format of the pack.
+		private final String name; // The name of the pack.
+		private final String description; // The description of the pack.
+		private SpriteSheet logo; // The logo of the pack.
 
-		private boolean opened = false;
-		private ZipFile zipFile = null;
+		private boolean opened = false; // If the zip file stream is opened.
+		private ZipFile zipFile = null; // The zip file stream.
 
 		private ResourcePack(URL packRoot, int packFormat, String name, String desc) {
 			this.packRoot = packRoot;
@@ -387,7 +395,7 @@ public class ResourcePackDisplay extends Display {
 		}
 
 		/** This does not include metadata refresh. */
-		private void refreshPack() {
+		public void refreshPack() {
 			// Refresh pack logo.png.
 			try {
 				openStream();
@@ -421,6 +429,10 @@ public class ResourcePackDisplay extends Display {
 			}
 		}
 
+		/**
+		 * Open the stream of the zip file.
+		 * @return {@code true} if the stream has successfully been opened.
+		 */
 		private boolean openStream() {
 			try {
 				zipFile = new ZipFile(new File(packRoot.toURI()));
@@ -431,6 +443,7 @@ public class ResourcePackDisplay extends Display {
 			}
 		}
 
+		/** Closing the stream of the zip file if opened. */
 		@Override
 		public void close() throws IOException {
 			if (opened) {
@@ -440,15 +453,28 @@ public class ResourcePackDisplay extends Display {
 			}
 		}
 
+		/**
+		 * Getting the stream by the path.
+		 * @param path The path of the entry.
+		 * @return The input stream of the specified entry.
+		 * @throws IOException if an I/O error has occurred.
+		 */
 		private InputStream getResourceAsStream(String path) throws IOException {
 			return zipFile.getInputStream(zipFile.getEntry(path));
 		}
 
 		@FunctionalInterface
-		private static interface FilesFilter {
+		private static interface FilesFilter { // Literally functioned.
 			public abstract boolean check(Path path, boolean isDir);
 		}
 
+		/**
+		 * Getting the subfiles under the specified entry directrory.
+		 * @param path The directory to be listed.
+		 * @param filter The filter to be applied.
+		 * @return The filtered (if any) subfile and subfolder list. Empty if not or invalid path.
+		 */
+		@NotNull
 		private ArrayList<String> getFiles(String path, FilesFilter filter) {
 			ArrayList<String> paths = new ArrayList<>();
 			for (Enumeration<? extends ZipEntry> e = zipFile.entries(); e.hasMoreElements();) {
@@ -464,11 +490,21 @@ public class ResourcePackDisplay extends Display {
 		}
 	}
 
+	/**
+	 * Reading the string from the input stream.
+	 * @param in The input stream to be read.
+	 * @return The returned string.
+	 */
 	public static String readStringFromInputStream(InputStream in) {
 		BufferedReader reader = new BufferedReader(new InputStreamReader(in, StandardCharsets.UTF_8));
 		return String.join("\n", reader.lines().toArray(String[]::new));
 	}
 
+	/**
+	 * Loading pack metadata of the pack.
+	 * @param file The path of the pack.
+	 * @return The loaded pack with metadata.
+	 */
 	public static ResourcePack loadPackMetadata(URL file) {
 		try (ZipFile zip = new ZipFile(new File(file.toURI()))) {
 			try (InputStream in = zip.getInputStream(zip.getEntry("pack.json"))) {
@@ -487,6 +523,7 @@ public class ResourcePackDisplay extends Display {
 		return null;
 	}
 
+	/** Intializing the packs from directory and loaded. */
 	public static void initPacks() {
 		// Generate resource packs folder
 		if (FOLDER_LOCATION.mkdirs()) {
@@ -503,9 +540,28 @@ public class ResourcePackDisplay extends Display {
 			}
 		}
 
+		// Adding all unadded packs for refreshing.
+		URL theURL;
+		for (ResourcePack pack : resourcePacks) {
+			if (!urls.contains(theURL = pack.packRoot)) {
+				urls.add(theURL);
+			}
+		}
+
+		for (ResourcePack pack : loadedPacks) {
+			if (pack == defaultPack && !urls.contains(theURL = pack.packRoot)) {
+				urls.add(theURL);
+			}
+		}
+
 		refreshResourcePacks(urls);
 	}
 
+	/**
+	 * Finding the pack by pack's file URL.
+	 * @param url The url for query.
+	 * @return The found resource pack. {@code null} if not found.
+	 */
 	private static ResourcePack findPackByURL(URL url) {
 		for (ResourcePack pack : resourcePacks) {
 			if (pack.packRoot.equals(url)) {
@@ -522,12 +578,21 @@ public class ResourcePackDisplay extends Display {
 		return null;
 	}
 
+	/**
+	 * Refreshing the pack list by the urls.
+	 * @param urls The packs' url to be refreshed.
+	 */
 	private static void refreshResourcePacks(List<URL> urls) {
 		for (URL url : urls) {
 			ResourcePack pack = findPackByURL(url);
 			if (pack != null) { // Refresh the current.
-				pack.refreshPack();
-			} else { // Add new pack.
+				if (new File(url.toURI()).exists())
+					pack.refreshPack();
+				else { // Remove if not exist.
+					resourcePacks.remove(pack);
+					loadedPacks.remove(pack);
+				}
+			} else { // Add new pack as it should be exist.
 				pack = loadPackMetadata(url);
 				pack.refreshPack();
 				if (pack != null) {
@@ -539,10 +604,15 @@ public class ResourcePackDisplay extends Display {
 		resourcePacks.sort((p1, p2) -> p1.name.compareTo(p2.name));
 	}
 
+	/** Releasing the unloaded packs. */
 	public static void releaseUnloadedPacks() {
 		resourcePacks.clear(); // Releases unloaded packs.
 	}
 
+	/**
+	 * Loading the resource packs when loading preferences. This should only be called by {@link minicraft.saveload.Load}.
+	 * @param names The names of the packs.
+	 */
 	public static void loadResourcePacks(String[] names) {
 		for (String name : names) {
 			for (ResourcePack pack : new ArrayList<>(resourcePacks)) {
@@ -559,6 +629,10 @@ public class ResourcePackDisplay extends Display {
 		}
 	}
 
+	/**
+	 * Getting the names of the loaded packs. This should only be called by {@link minicraft.saveload.Save}.
+	 * @return The names of currently loaded packs.
+	 */
 	public static ArrayList<String> getLoadedPacks() {
 		ArrayList<String> packs = new ArrayList<>();
 		for (ResourcePack pack : loadedPacks) {
@@ -574,6 +648,7 @@ public class ResourcePackDisplay extends Display {
 		return packs;
 	}
 
+	/** Reloading all the resources with the currently packs to be loaded. */
 	@SuppressWarnings("unchecked")
 	public static void reloadResources() {
 		loadQuery.clear();
@@ -606,6 +681,11 @@ public class ResourcePackDisplay extends Display {
 		((ArrayEntry<Localization.LocaleInformation>) Settings.getEntry("language")).setOptions(options.toArray(new Localization.LocaleInformation[0]));
 	}
 
+	/**
+	 * Loading the textures of the pack.
+	 * @param pack The pack to be loaded.
+	 * @throws IOException if I/O exception occurs.
+	 */
 	private static void loadTextures(ResourcePack pack) throws IOException {
 		for (String t : pack.getFiles("assets/textures/", null)) {
 			switch (t) {
@@ -617,6 +697,12 @@ public class ResourcePackDisplay extends Display {
 		}
 	}
 
+	/**
+	 * Loading the categories of textures from the pack.
+	 * @param pack The pack to be loaded.
+	 * @param type The category of textures.
+	 * @throws IOException if I/O exception occurs.
+	 */
 	private static void loadTextures(ResourcePack pack, SpriteType type) throws IOException {
 		String path = "assets/textures/";
 		switch (type) {
@@ -631,6 +717,10 @@ public class ResourcePackDisplay extends Display {
 		}
 	}
 
+	/**
+	 * Loading localization from the pack.
+	 * @param pack The pack to be loaded.
+	 */
 	private static void loadLocalization(ResourcePack pack) {
 		JSONObject langJSON = null;
 		try {
@@ -670,6 +760,10 @@ public class ResourcePackDisplay extends Display {
 		}
 	}
 
+	/**
+	 * Loading the books from the pack.
+	 * @param pack The pack to be loaded.
+	 */
 	private static void loadBooks(ResourcePack pack) {
 		for (String path : pack.getFiles("assets/books", (path, isDir) -> path.toString().endsWith(".txt") && !isDir))  {
 			try {
@@ -687,6 +781,10 @@ public class ResourcePackDisplay extends Display {
 		}
 	}
 
+	/**
+	 * Loading sounds from the pack.
+	 * @param pack The pack to be loaded.
+	 */
 	private static void loadSounds(ResourcePack pack) {
 		for (String f : pack.getFiles("assets/sound/", (path, isDir) -> path.toString().endsWith(".wav") && !isDir)) {
 			String name = Paths.get(f).getFileName().toString();
@@ -696,9 +794,5 @@ public class ResourcePackDisplay extends Display {
 				Logging.RESOURCEHANDLER_LOCALIZATION.debug(e, "Unable to load audio: {} in pack : {}", f, pack.name);
 			}
 		}
-	}
-
-	public static File getFolderLocation() {
-		return FOLDER_LOCATION;
 	}
 }

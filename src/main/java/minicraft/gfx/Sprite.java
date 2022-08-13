@@ -3,7 +3,7 @@ package minicraft.gfx;
 import java.awt.Rectangle;
 import java.util.Random;
 
-import minicraft.gfx.SpriteLinker.LinkedSpriteSheet;
+import minicraft.gfx.SpriteLinker.LinkedSprite;
 import minicraft.gfx.SpriteLinker.SpriteType;
 
 public class Sprite {
@@ -18,18 +18,18 @@ public class Sprite {
 
 	static Random ran = new Random();
 
-	public static LinkedSpriteSheet missingTexture(SpriteType type) {
+	public static LinkedSprite missingTexture(SpriteType type) {
 		switch (type) {
-			case Entity: return new LinkedSpriteSheet(SpriteType.Entity, "missing_entity");
-			case Item: return new LinkedSpriteSheet(SpriteType.Item, "missing_item");
-			case Tile: return new LinkedSpriteSheet(SpriteType.Tile, "missing_tile");
+			case Entity: return new LinkedSprite(SpriteType.Entity, "missing_entity");
+			case Item: return new LinkedSprite(SpriteType.Item, "missing_item");
+			case Tile: return new LinkedSprite(SpriteType.Tile, "missing_tile");
 			default: return null;
 		}
 	}
 
-	public static LinkedSpriteSheet randomTiles(long seed, String key) {
+	public static LinkedSprite randomTiles(long seed, String key) {
 		ran.setSeed(seed);
-		return new LinkedSpriteSheet(SpriteType.Tile, key).setSpriteDim(ran.nextInt(4), 3, 2, 2).setOnePixel(true).setMirrors(
+		return new LinkedSprite(SpriteType.Tile, key).setSpriteDim(ran.nextInt(4), 3, 2, 2).setOnePixel(true).setMirrors(
 			new int[][]{new int[]{2 + ran.nextInt(4), 0}, new int[]{2 + ran.nextInt(4), 0}, new int[]{2 + ran.nextInt(4), 0}, new int[]{2 + ran.nextInt(4), 0}}
 		);
 	}

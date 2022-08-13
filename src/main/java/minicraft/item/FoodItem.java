@@ -4,7 +4,7 @@ import java.util.ArrayList;
 
 import minicraft.entity.Direction;
 import minicraft.entity.mob.Player;
-import minicraft.gfx.SpriteLinker.LinkedSpriteSheet;
+import minicraft.gfx.SpriteLinker.LinkedSprite;
 import minicraft.gfx.SpriteLinker.SpriteType;
 import minicraft.level.Level;
 import minicraft.level.tile.Tile;
@@ -14,16 +14,16 @@ public class FoodItem extends StackableItem {
 	protected static ArrayList<Item> getAllInstances() {
 		ArrayList<Item> items = new ArrayList<>();
 
-		items.add(new FoodItem("Baked Potato", new LinkedSpriteSheet(SpriteType.Item, "baked_potato"), 1));
-		items.add(new FoodItem("Apple", new LinkedSpriteSheet(SpriteType.Item, "apple"), 1));
-		items.add(new FoodItem("Raw Pork", new LinkedSpriteSheet(SpriteType.Item, "pork"), 1));
-		items.add(new FoodItem("Raw Fish", new LinkedSpriteSheet(SpriteType.Item, "fish"), 1));
-		items.add(new FoodItem("Raw Beef", new LinkedSpriteSheet(SpriteType.Item, "beef"), 1));
-		items.add(new FoodItem("Bread", new LinkedSpriteSheet(SpriteType.Item, "bread"), 2));
-		items.add(new FoodItem("Cooked Fish", new LinkedSpriteSheet(SpriteType.Item, "cooked_fish"), 3));
-		items.add(new FoodItem("Cooked Pork", new LinkedSpriteSheet(SpriteType.Item, "cooked_pork"), 3));
-		items.add(new FoodItem("Steak", new LinkedSpriteSheet(SpriteType.Item, "cooked_beef"), 3));
-		items.add(new FoodItem("Gold Apple", new LinkedSpriteSheet(SpriteType.Item, "golden_apple"), 10));
+		items.add(new FoodItem("Baked Potato", new LinkedSprite(SpriteType.Item, "baked_potato"), 1));
+		items.add(new FoodItem("Apple", new LinkedSprite(SpriteType.Item, "apple"), 1));
+		items.add(new FoodItem("Raw Pork", new LinkedSprite(SpriteType.Item, "pork"), 1));
+		items.add(new FoodItem("Raw Fish", new LinkedSprite(SpriteType.Item, "fish"), 1));
+		items.add(new FoodItem("Raw Beef", new LinkedSprite(SpriteType.Item, "beef"), 1));
+		items.add(new FoodItem("Bread", new LinkedSprite(SpriteType.Item, "bread"), 2));
+		items.add(new FoodItem("Cooked Fish", new LinkedSprite(SpriteType.Item, "cooked_fish"), 3));
+		items.add(new FoodItem("Cooked Pork", new LinkedSprite(SpriteType.Item, "cooked_pork"), 3));
+		items.add(new FoodItem("Steak", new LinkedSprite(SpriteType.Item, "cooked_beef"), 3));
+		items.add(new FoodItem("Gold Apple", new LinkedSprite(SpriteType.Item, "golden_apple"), 10));
 
 		return items;
 	}
@@ -31,8 +31,8 @@ public class FoodItem extends StackableItem {
 	private int feed; // The amount of hunger the food "satisfies" you by.
 	private int staminaCost; // The amount of stamina it costs to consume the food.
 
-	private FoodItem(String name, LinkedSpriteSheet sprite, int feed) { this(name, sprite, 1, feed); }
-	private FoodItem(String name, LinkedSpriteSheet sprite, int count, int feed) {
+	private FoodItem(String name, LinkedSprite sprite, int feed) { this(name, sprite, 1, feed); }
+	private FoodItem(String name, LinkedSprite sprite, int count, int feed) {
 		super(name, sprite, count);
 		this.feed = feed;
 		staminaCost = 5;

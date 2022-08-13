@@ -4,7 +4,7 @@ import java.util.ArrayList;
 
 import minicraft.core.Game;
 import minicraft.entity.mob.Player;
-import minicraft.gfx.SpriteLinker.LinkedSpriteSheet;
+import minicraft.gfx.SpriteLinker.LinkedSprite;
 import minicraft.gfx.SpriteLinker.SpriteType;
 import minicraft.item.Recipe;
 import minicraft.item.Recipes;
@@ -13,19 +13,19 @@ import minicraft.screen.CraftingDisplay;
 public class Crafter extends Furniture {
 
 	public enum Type {
-		Workbench (new LinkedSpriteSheet(SpriteType.Entity, "workbench"), new LinkedSpriteSheet(SpriteType.Item, "workbench"), 3, 2, Recipes.workbenchRecipes),
-		Oven (new LinkedSpriteSheet(SpriteType.Entity, "oven"), new LinkedSpriteSheet(SpriteType.Item, "oven"), 3, 2, Recipes.ovenRecipes),
-		Furnace (new LinkedSpriteSheet(SpriteType.Entity, "furnace"), new LinkedSpriteSheet(SpriteType.Item, "furnace"), 3, 2, Recipes.furnaceRecipes),
-		Anvil (new LinkedSpriteSheet(SpriteType.Entity, "anvil"), new LinkedSpriteSheet(SpriteType.Item, "anvil"), 3, 2, Recipes.anvilRecipes),
-		Enchanter (new LinkedSpriteSheet(SpriteType.Entity, "enchanter"), new LinkedSpriteSheet(SpriteType.Item, "enchanter"), 7, 2, Recipes.enchantRecipes),
-		Loom (new LinkedSpriteSheet(SpriteType.Entity, "loom"), new LinkedSpriteSheet(SpriteType.Item, "loom"), 7, 2, Recipes.loomRecipes);
+		Workbench (new LinkedSprite(SpriteType.Entity, "workbench"), new LinkedSprite(SpriteType.Item, "workbench"), 3, 2, Recipes.workbenchRecipes),
+		Oven (new LinkedSprite(SpriteType.Entity, "oven"), new LinkedSprite(SpriteType.Item, "oven"), 3, 2, Recipes.ovenRecipes),
+		Furnace (new LinkedSprite(SpriteType.Entity, "furnace"), new LinkedSprite(SpriteType.Item, "furnace"), 3, 2, Recipes.furnaceRecipes),
+		Anvil (new LinkedSprite(SpriteType.Entity, "anvil"), new LinkedSprite(SpriteType.Item, "anvil"), 3, 2, Recipes.anvilRecipes),
+		Enchanter (new LinkedSprite(SpriteType.Entity, "enchanter"), new LinkedSprite(SpriteType.Item, "enchanter"), 7, 2, Recipes.enchantRecipes),
+		Loom (new LinkedSprite(SpriteType.Entity, "loom"), new LinkedSprite(SpriteType.Item, "loom"), 7, 2, Recipes.loomRecipes);
 
 		public ArrayList<Recipe> recipes;
-		protected LinkedSpriteSheet sprite;
-		protected LinkedSpriteSheet itemSprite;
+		protected LinkedSprite sprite;
+		protected LinkedSprite itemSprite;
 		protected int xr, yr;
 
-		Type(LinkedSpriteSheet sprite, LinkedSpriteSheet itemSprite, int xr, int yr, ArrayList<Recipe> list) {
+		Type(LinkedSprite sprite, LinkedSprite itemSprite, int xr, int yr, ArrayList<Recipe> list) {
 			this.sprite = sprite;
 			this.itemSprite = itemSprite;
 			this.xr = xr;

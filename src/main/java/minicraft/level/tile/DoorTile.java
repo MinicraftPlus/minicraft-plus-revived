@@ -7,7 +7,7 @@ import minicraft.entity.mob.Mob;
 import minicraft.entity.mob.Player;
 import minicraft.gfx.Screen;
 import minicraft.gfx.Sprite;
-import minicraft.gfx.SpriteLinker.LinkedSpriteSheet;
+import minicraft.gfx.SpriteLinker.LinkedSprite;
 import minicraft.gfx.SpriteLinker.SpriteType;
 import minicraft.item.Item;
 import minicraft.item.Items;
@@ -16,24 +16,24 @@ import minicraft.level.Level;
 
 public class DoorTile extends Tile {
 	protected Material type;
-	private LinkedSpriteSheet closedSprite;
-	private LinkedSpriteSheet openSprite;
+	private LinkedSprite closedSprite;
+	private LinkedSprite openSprite;
 
 	protected DoorTile(Material type) {
-		super(type.name() + " Door", (LinkedSpriteSheet) null);
+		super(type.name() + " Door", (LinkedSprite) null);
 		this.type = type;
 		switch (type) {
 			case Wood:
-				closedSprite = new LinkedSpriteSheet(SpriteType.Tile, "wood_door").setSpriteDim(2, 0, 2, 2);
-				openSprite = new LinkedSpriteSheet(SpriteType.Tile, "wood_door").setSpriteSize(2, 2);
+				closedSprite = new LinkedSprite(SpriteType.Tile, "wood_door").setSpriteDim(2, 0, 2, 2);
+				openSprite = new LinkedSprite(SpriteType.Tile, "wood_door").setSpriteSize(2, 2);
 				break;
 			case Stone:
-				closedSprite = new LinkedSpriteSheet(SpriteType.Tile, "stone_door").setSpriteDim(2, 0, 2, 2);
-				openSprite = new LinkedSpriteSheet(SpriteType.Tile, "stone_door").setSpriteSize(2, 2);
+				closedSprite = new LinkedSprite(SpriteType.Tile, "stone_door").setSpriteDim(2, 0, 2, 2);
+				openSprite = new LinkedSprite(SpriteType.Tile, "stone_door").setSpriteSize(2, 2);
 				break;
 			case Obsidian:
-				closedSprite = new LinkedSpriteSheet(SpriteType.Tile, "obsidian_door").setSpriteDim(2, 0, 2, 2);
-				openSprite = new LinkedSpriteSheet(SpriteType.Tile, "obsidian_door").setSpriteSize(2, 2);
+				closedSprite = new LinkedSprite(SpriteType.Tile, "obsidian_door").setSpriteDim(2, 0, 2, 2);
+				openSprite = new LinkedSprite(SpriteType.Tile, "obsidian_door").setSpriteSize(2, 2);
 				break;
 		}
 		sprite = closedSprite;

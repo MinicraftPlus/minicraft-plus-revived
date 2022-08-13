@@ -3,7 +3,7 @@ package minicraft.screen;
 import minicraft.core.io.InputHandler;
 import minicraft.core.io.Localization;
 import minicraft.core.io.Sound;
-import minicraft.gfx.SpriteLinker.LinkedSpriteSheet;
+import minicraft.gfx.SpriteLinker.LinkedSprite;
 import minicraft.gfx.SpriteLinker.SpriteType;
 import minicraft.gfx.*;
 import minicraft.screen.entry.BlankEntry;
@@ -57,7 +57,7 @@ public class Menu {
 	 */
 	private String typingSearcher;
 
-	private LinkedSpriteSheet hudSheet = new LinkedSpriteSheet(SpriteType.Gui, "hud");
+	private LinkedSprite hudSheet = new LinkedSprite(SpriteType.Gui, "hud");
 
 	private Menu() {}
 	protected Menu(Menu m) {

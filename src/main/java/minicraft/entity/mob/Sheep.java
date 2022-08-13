@@ -7,7 +7,7 @@ import minicraft.core.io.Settings;
 import minicraft.entity.Direction;
 import minicraft.gfx.MobSprite;
 import minicraft.gfx.Screen;
-import minicraft.gfx.SpriteLinker.LinkedSpriteSheet;
+import minicraft.gfx.SpriteLinker.LinkedSprite;
 import minicraft.gfx.SpriteLinker.SpriteType;
 import minicraft.item.Item;
 import minicraft.item.Items;
@@ -15,8 +15,8 @@ import minicraft.item.ToolItem;
 import minicraft.item.ToolType;
 
 public class Sheep extends PassiveMob {
-	private static final LinkedSpriteSheet sprites = new LinkedSpriteSheet(SpriteType.Entity, "sheep");
-	private static final LinkedSpriteSheet cutSprites = new LinkedSpriteSheet(SpriteType.Entity, "sheep").setSpritePos(0, 2);
+	private static final LinkedSprite sprites = new LinkedSprite(SpriteType.Entity, "sheep");
+	private static final LinkedSprite cutSprites = new LinkedSprite(SpriteType.Entity, "sheep").setSpritePos(0, 2);
 
 	private static final int WOOL_GROW_TIME = 3 * 60 * Updater.normSpeed; // Three minutes
 

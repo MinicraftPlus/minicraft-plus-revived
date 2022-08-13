@@ -3,7 +3,7 @@ package minicraft.level.tile;
 import minicraft.core.io.Sound;
 import minicraft.entity.Direction;
 import minicraft.entity.mob.Player;
-import minicraft.gfx.SpriteLinker.LinkedSpriteSheet;
+import minicraft.gfx.SpriteLinker.LinkedSprite;
 import minicraft.gfx.SpriteLinker.SpriteType;
 import minicraft.item.Item;
 import minicraft.item.Items;
@@ -12,7 +12,7 @@ import minicraft.item.ToolType;
 import minicraft.level.Level;
 
 public class PathTile extends Tile {
-    private static LinkedSpriteSheet sprite = new LinkedSpriteSheet(SpriteType.Tile, "path");
+    private static LinkedSprite sprite = new LinkedSprite(SpriteType.Tile, "path");
 
     public PathTile(String name) {
         super(name, sprite);

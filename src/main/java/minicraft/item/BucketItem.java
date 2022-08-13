@@ -5,7 +5,7 @@ import java.util.ArrayList;
 import minicraft.core.Game;
 import minicraft.entity.Direction;
 import minicraft.entity.mob.Player;
-import minicraft.gfx.SpriteLinker.LinkedSpriteSheet;
+import minicraft.gfx.SpriteLinker.LinkedSprite;
 import minicraft.gfx.SpriteLinker.SpriteType;
 import minicraft.level.Level;
 import minicraft.level.tile.Tile;
@@ -48,7 +48,7 @@ public class BucketItem extends StackableItem {
 
 	private BucketItem(Fill fill) { this(fill, 1); }
 	private BucketItem(Fill fill, int count) {
-		super(fill.toString() + " Bucket", new LinkedSpriteSheet(SpriteType.Item, fill == Fill.Empty ? "bucket" :
+		super(fill.toString() + " Bucket", new LinkedSprite(SpriteType.Item, fill == Fill.Empty ? "bucket" :
 			fill == Fill.Lava ? "lava_bucket" : "water_bucket"), count);
 		this.filling = fill;
 	}

@@ -10,13 +10,13 @@ import minicraft.entity.particle.SmashParticle;
 import minicraft.entity.particle.TextParticle;
 import minicraft.gfx.Color;
 import minicraft.gfx.Screen;
-import minicraft.gfx.SpriteLinker.LinkedSpriteSheet;
+import minicraft.gfx.SpriteLinker.LinkedSprite;
 import minicraft.gfx.SpriteLinker.SpriteType;
 import minicraft.item.Items;
 import minicraft.level.Level;
 
 public class CactusTile extends Tile {
-	private static LinkedSpriteSheet sprite = new LinkedSpriteSheet(SpriteType.Tile, "cactus");
+	private static LinkedSprite sprite = new LinkedSprite(SpriteType.Tile, "cactus");
 
 	protected CactusTile(String name) {
 		super(name, sprite);

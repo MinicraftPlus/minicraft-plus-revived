@@ -1,6 +1,6 @@
 package minicraft.entity.furniture;
 
-import minicraft.gfx.SpriteLinker.LinkedSpriteSheet;
+import minicraft.gfx.SpriteLinker.LinkedSprite;
 import minicraft.gfx.SpriteLinker.SpriteType;
 
 public class Lantern extends Furniture {
@@ -26,8 +26,8 @@ public class Lantern extends Furniture {
 	 * @param type Type of lantern.
 	 */
 	public Lantern(Lantern.Type type) {
-		super(type.title, new LinkedSpriteSheet(SpriteType.Entity, type == Type.NORM ? "lantern" :
-			type == Type.IRON ? "iron_lantern" : "gold_lantern"), new LinkedSpriteSheet(SpriteType.Item, type == Type.NORM ? "lantern" :
+		super(type.title, new LinkedSprite(SpriteType.Entity, type == Type.NORM ? "lantern" :
+			type == Type.IRON ? "iron_lantern" : "gold_lantern"), new LinkedSprite(SpriteType.Item, type == Type.NORM ? "lantern" :
 			type == Type.IRON ? "iron_lantern" : "gold_lantern"), 3, 2);
 		this.type = type;
 	}

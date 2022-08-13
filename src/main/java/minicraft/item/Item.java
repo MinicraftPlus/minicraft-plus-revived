@@ -6,7 +6,7 @@ import minicraft.entity.mob.Player;
 import minicraft.gfx.Font;
 import minicraft.gfx.Screen;
 import minicraft.gfx.Sprite;
-import minicraft.gfx.SpriteLinker.LinkedSpriteSheet;
+import minicraft.gfx.SpriteLinker.LinkedSprite;
 import minicraft.gfx.SpriteLinker.SpriteType;
 import minicraft.level.Level;
 import minicraft.level.tile.Tile;
@@ -16,7 +16,7 @@ public abstract class Item {
 	/* Note: Most of the stuff in the class is expanded upon in StackableItem/PowerGloveItem/FurnitureItem/etc */
 
 	private final String name;
-	public LinkedSpriteSheet sprite;
+	public LinkedSprite sprite;
 
 	public boolean used_pending = false; // This is for multiplayer, when an item has been used, and is pending server response as to the outcome, this is set to true so it cannot be used again unless the server responds that the item wasn't used. Which should basically replace the item anyway, soo... yeah. this never gets set back.
 
@@ -24,7 +24,7 @@ public abstract class Item {
 		sprite = Sprite.missingTexture(SpriteType.Item);
 		this.name = name;
 	}
-	protected Item(String name, LinkedSpriteSheet sprite) {
+	protected Item(String name, LinkedSprite sprite) {
 		this.name = name;
 		this.sprite = sprite;
 	}
